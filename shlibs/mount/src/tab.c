@@ -126,13 +126,13 @@ int mnt_tab_get_nents(mnt_tab *tb)
  *
  * See also mnt_new_cache().
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_tab_set_cache(mnt_tab *tb, mnt_cache *mpc)
 {
 	assert(tb);
 	if (!tb)
-		return -1;
+		return -EINVAL;
 	tb->cache = mpc;
 	return 0;
 }
@@ -156,7 +156,7 @@ mnt_cache *mnt_tab_get_cache(mnt_tab *tb)
  *
  * Adds a new entry to tab.
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_tab_add_fs(mnt_tab *tb, mnt_fs *fs)
 {
@@ -164,7 +164,7 @@ int mnt_tab_add_fs(mnt_tab *tb, mnt_fs *fs)
 	assert(fs);
 
 	if (!tb || !fs)
-		return -1;
+		return -EINVAL;
 
 	list_add_tail(&fs->ents, &tb->ents);
 
@@ -182,7 +182,7 @@ int mnt_tab_add_fs(mnt_tab *tb, mnt_fs *fs)
  * @tb: tab pointer
  * @fs: new entry
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_tab_remove_fs(mnt_tab *tb, mnt_fs *fs)
 {
@@ -190,10 +190,8 @@ int mnt_tab_remove_fs(mnt_tab *tb, mnt_fs *fs)
 	assert(fs);
 
 	if (!tb || !fs)
-		return -1;
-
+		return -EINVAL;
 	list_del(&fs->ents);
-
 	tb->nents--;
 	return 0;
 }
@@ -215,7 +213,7 @@ int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root)
 	assert(root);
 
 	if (!tb || !root)
-		return -1;
+		return -EINVAL;
 
 	DBG(DEBUG_TAB, fprintf(stderr, "libmount: tab %p: lookup root fs\n", tb));
 
@@ -231,7 +229,7 @@ int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root)
 		}
 	}
 
-	return root_id ? 0 : -1;
+	return root_id ? 0 : -EINVAL;
 }
 
 /**
@@ -244,7 +242,7 @@ int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root)
  * Note that filesystems are returned in the order how was mounted (according to
  * IDs in /proc/self/mountinfo).
  *
- * Returns: 0 on success, -1 in case of error or 1 at end of list.
+ * Returns: 0 on success, negative number in case of error or 1 at end of list.
  */
 int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
 			mnt_fs *parent, mnt_fs **chld)
@@ -253,7 +251,7 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
 	int parent_id, lastchld_id = 0, chld_id = 0;
 
 	if (!tb || !itr || !parent)
-		return -1;
+		return -EINVAL;
 
 	DBG(DEBUG_TAB, fprintf(stderr,
 		"libmount: tab %p: lookup next child of %s\n",
@@ -261,7 +259,7 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
 
 	parent_id = mnt_fs_get_id(parent);
 	if (!parent_id)
-		return -1;
+		return -EINVAL;
 
 	/* get ID of the previously returned child */
 	if (itr->head && itr->p != itr->head) {
@@ -302,7 +300,7 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
  * @itr: iterator
  * @fs: returns the next tab entry
  *
- * Returns: 0 on success, -1 in case of error or 1 at end of list.
+ * Returns: 0 on success, negative number in case of error or 1 at end of list.
  *
  * Example (list all mountpoints from fstab in backward order):
  * <informalexample>
@@ -323,15 +321,14 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
  */
 int mnt_tab_next_fs(mnt_tab *tb, mnt_iter *itr, mnt_fs **fs)
 {
-	int rc;
+	int rc = 1;
 
 	assert(tb);
 	assert(itr);
 	assert(fs);
 
 	if (!tb || !itr || !fs)
-		return -1;
-	rc = 1;
+		return -EINVAL;
 	*fs = NULL;
 
 	if (!itr->head)
@@ -354,14 +351,14 @@ int mnt_tab_next_fs(mnt_tab *tb, mnt_iter *itr, mnt_fs **fs)
  *
  * This function allows search in @tb.
  *
- * Returns: -1 in case of error, 1 at end of table or 0 o success.
+ * Returns: negative number in case of error, 1 at end of table or 0 o success.
  */
 int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 		int (*match_func)(mnt_fs *, void *), void *userdata,
 		mnt_fs **fs)
 {
 	if (!tb || !itr || !fs || !match_func)
-		return -1;
+		return -EINVAL;
 
 	DBG(DEBUG_TAB, fprintf(stderr,
 		"libmount: tab %p: lookup next fs\n", tb));
@@ -391,7 +388,7 @@ int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
  *
  * Sets @iter to the position of @fs in the file @tb.
  *
- * Returns: 0 on success, -1 in case of error.
+ * Returns: 0 on success, negative number in case of error.
  */
 int mnt_tab_set_iter(mnt_tab *tb, mnt_iter *itr, mnt_fs *fs)
 {
@@ -400,7 +397,7 @@ int mnt_tab_set_iter(mnt_tab *tb, mnt_iter *itr, mnt_fs *fs)
 	assert(fs);
 
 	if (!tb || !itr || !fs)
-		return -1;
+		return -EINVAL;
 
 	MNT_ITER_INIT(itr, &tb->ents);
 	itr->p = &fs->ents;
@@ -429,6 +426,9 @@ mnt_fs *mnt_tab_find_target(mnt_tab *tb, const char *path, int direction)
 
 	assert(tb);
 	assert(path);
+
+	if (!tb || !path)
+		return NULL;
 
 	DBG(DEBUG_TAB, fprintf(stderr,
 		"libmount: tab %p: lookup target: %s\n", tb, path));
