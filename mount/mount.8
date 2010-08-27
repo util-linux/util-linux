@@ -2632,10 +2632,13 @@ The syntax of external mount helpers is:
 .RB [ \-sfnv ]
 .RB [ \-o
 .IR options ]
+.RB [ \-t
+.IR type.subtype ]
 .RE
 
-where the <suffix> is filesystem type and \-sfnvo options have same meaning like
-standard mount options.
+where the <type> is filesystem type and \-sfnvo options have same meaning like
+standard mount options. The \-t option is used  for filesystems with subtypes
+support (for example /sbin/mount.fuse -t fuse.sshfs).
 
 .SH FILES
 .TP 18n
