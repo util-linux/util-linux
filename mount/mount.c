@@ -664,13 +664,22 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
 
 	path = strtok(search_path, ":");
 	while (path) {
+		int type_opt = 0;
+
 		res = snprintf(mountprog, sizeof(mountprog), "%s/mount.%s",
 			       path, type);
 		path = strtok(NULL, ":");
 		if (res >= sizeof(mountprog) || res < 0)
 			continue;
 
-		if (stat(mountprog, &statbuf))
+		res = stat(mountprog, &statbuf);
+		if (res == -1 && errno == ENOENT && strchr(type, '.')) {
+			/* If type ends with ".subtype" try without it */
+			*strrchr(mountprog, '.') = '\0';
+			type_opt = 1;
+			res = stat(mountprog, &statbuf);
+		}
+		if (res)
 			continue;
 
 		if (verbose)
@@ -678,7 +687,7 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
 
 		switch (fork()) {
 		case 0: { /* child */
-			char *oo, *mountargs[10];
+			char *oo, *mountargs[12];
 			int i = 0;
 
 			if (setgid(getgid()) < 0)
@@ -703,7 +712,11 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
 				mountargs[i++] = "-o";			/* 8 */
 				mountargs[i++] = oo;			/* 9 */
 			}
-			mountargs[i] = NULL;				/* 10 */
+			if (type_opt) {
+				mountargs[i++] = "-t";			/* 10 */
+				mountargs[i++] = (char *) type;		/* 11 */
+			}
+			mountargs[i] = NULL;				/* 12 */
 
 			if (verbose > 2) {
 				i = 0;

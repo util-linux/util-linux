@@ -103,11 +103,20 @@ check_special_umountprog(const char *spec, const char *node,
 		return 0;
 
 	if (strlen(type) < 100) {
+		int type_opt = 0;
+
 		sprintf(umountprog, "/sbin/umount.%s", type);
-		if (stat(umountprog, &statbuf) == 0) {
+		res = stat(umountprog, &statbuf);
+		if (res == -1 && errno == ENOENT && strchr(type, '.')) {
+			/* If type ends with ".subtype" try without it */
+			*strrchr(umountprog, '.') = '\0';
+			type_opt = 1;
+			res = stat(umountprog, &statbuf);
+		}
+		if (res == 0) {
 			res = fork();
 			if (res == 0) {
-				char *umountargs[8];
+				char *umountargs[10];
 				int i = 0;
 
 				if(setgid(getgid()) < 0)
@@ -128,6 +137,10 @@ check_special_umountprog(const char *spec, const char *node,
 					umountargs[i++] = "-v";
 				if (remount)
 					umountargs[i++] = "-r";
+				if (type_opt) {
+					umountargs[i++] = "-t";
+					umountargs[i++] = (char *) type;
+				}
 				umountargs[i] = NULL;
 				execv(umountprog, umountargs);
 				exit(1);	/* exec failed */
