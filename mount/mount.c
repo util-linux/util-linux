@@ -491,9 +491,11 @@ parse_opts (const char *options, int *flags, char **extra_opts) {
 	if (readwrite)
 		*flags &= ~MS_RDONLY;
 
-	if (mounttype & MS_PROPAGATION)
-		*flags &= ~MS_BIND;
 	*flags |= mounttype;
+
+	/* The propagation flags should not be used together with any other flags */
+	if (*flags & MS_PROPAGATION)
+		*flags &= MS_PROPAGATION;
 }
 
 /* Try to build a canonical options string.  */
