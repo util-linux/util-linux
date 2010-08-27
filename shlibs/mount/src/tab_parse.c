@@ -81,7 +81,7 @@ static int next_word_skip(char **s)
 {
 	*s = skip_spaces(*s);
 	if (!**s)
-		return 1;
+		return -EINVAL;
 	*s = skip_nonspaces(*s);
 	return 0;
 }
@@ -95,17 +95,19 @@ static int next_number(char **s, int *num)
 
 	*s = skip_spaces(*s);
 	if (!**s)
-		return -1;
+		return -EINVAL;
+
 	*num = strtol(*s, &end, 10);
 	if (end == NULL || *s == end)
-	       return -1;
+		return -EINVAL;
 
 	*s = end;
 
 	/* valid end of number is space or terminator */
 	if (*end == ' ' || *end == '\t' || *end == '\0')
 		return 0;
-	return -1;
+
+	return -EINVAL;
 }
 
 /*
@@ -113,36 +115,45 @@ static int next_number(char **s, int *num)
  */
 static int mnt_tab_parse_file_line(mnt_fs *fs, char *s)
 {
+	int rc = 0;
+
 	/* SOURCE */
-	if (__mnt_fs_set_source(fs, next_word(&s)) != 0)
-		return 1;
+	rc =__mnt_fs_set_source(fs, next_word(&s));
+	if (rc)
+		goto err;
 
 	/* TARGET */
 	fs->target = next_word(&s);
 	if (!fs->target)
-		return 1;
+		goto err;
 
 	/* TYPE */
-	if (__mnt_fs_set_fstype(fs, next_word(&s)) != 0)
-		return 1;
+	rc = __mnt_fs_set_fstype(fs, next_word(&s));
+	if (rc)
+		goto err;
 
 	/* OPTS */
 	fs->optstr = next_word(&s);
 	if (!fs->optstr)
-		return 1;
+		goto err;
+
 	/* default */
 	fs->passno = fs->freq = 0;
 
 	/* FREQ (optional) */
 	if (next_number(&s, &fs->freq) != 0) {
 		if (*s)
-			return 1;
+			goto err;;
 
 	/* PASSNO (optional) */
 	} else if (next_number(&s, &fs->passno) != 0 && *s)
-		return 1;
+		goto err;
 
 	return 0;
+err:
+	if (rc)
+		return rc;
+	return errno == ENOMEM ? -ENOMEM : -EINVAL;
 }
 
 /*
@@ -151,36 +162,38 @@ static int mnt_tab_parse_file_line(mnt_fs *fs, char *s)
 static int mnt_parse_mountinfo_line(mnt_fs *fs, char *s)
 {
 	unsigned int maj, min;
+	int rc = 0;
 
 	/* ID */
 	if (next_number(&s, &fs->id) != 0)
-		return 1;
+		goto err;
 
 	/* PARENT */
 	if (next_number(&s, &fs->parent) != 0)
-		return 1;
+		goto err;
 
 	/* <maj>:<min> */
 	s = skip_spaces(s);
 	if (!*s || sscanf(s, "%u:%u", &maj, &min) != 2)
-		return 1;
+		goto err;
+
 	fs->devno = makedev(maj, min);
 	next_word_skip(&s);
 
 	/* MOUNTROOT */
 	fs->root = next_word(&s);
 	if (!fs->root)
-		return 1;
+		goto err;
 
 	/* TARGET (mountpoit) */
 	fs->target = next_word(&s);
 	if (!fs->target)
-		return 1;
+		goto err;
 
 	/* OPTIONS (fs-independent) */
 	fs->vfs_optstr = next_word(&s);
 	if (!fs->vfs_optstr)
-		return 1;
+		goto err;
 
 	/* optional fields (ignore) */
 	do {
@@ -191,26 +204,33 @@ static int mnt_parse_mountinfo_line(mnt_fs *fs, char *s)
 			break;
 		}
 		if (s && next_word_skip(&s) != 0)
-			return 1;
+			goto err;
 	} while (s);
 
 	/* FSTYPE */
-	if (__mnt_fs_set_fstype(fs, next_word(&s)) != 0)
-		return 1;
+	rc =__mnt_fs_set_fstype(fs, next_word(&s));
+	if (rc)
+		goto err;
 
 	/* SOURCE or "none" */
-	if (__mnt_fs_set_source(fs, next_word(&s)) != 0)
-		return 1;
+	rc = __mnt_fs_set_source(fs, next_word(&s));
+	if (rc)
+		goto err;
 
 	/* OPTIONS (fs-dependent) */
 	fs->fs_optstr = next_word(&s);
 	if (!fs->fs_optstr)
-		return 1;
+		goto err;
+
 	if (!strcmp(fs->fs_optstr, "none")) {
 		free(fs->fs_optstr);
 		fs->fs_optstr = NULL;
 	}
 	return 0;
+err:
+	if (rc)
+		return rc;
+	return errno == ENOMEM ? -ENOMEM : -EINVAL;
 }
 
 /*
@@ -298,6 +318,7 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
 {
 	char buf[BUFSIZ];
 	char *s;
+	int rc;
 
 	assert(tb);
 	assert(f);
@@ -306,7 +327,7 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
 	/* read the next non-blank non-comment line */
 	do {
 		if (fgets(buf, sizeof(buf), f) == NULL)
-			return -1;
+			return -EINVAL;
 		++*nlines;
 		s = index (buf, '\n');
 		if (!s) {
@@ -351,7 +372,7 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
 	if (!fs->optstr && (fs->vfs_optstr || fs->fs_optstr)) {
 		fs->optstr = merge_optstr(fs->vfs_optstr, fs->fs_optstr);
 		if (!fs->optstr)
-			return -1;
+			return -ENOMEM;
 	}
 
 	DBG(DEBUG_TAB, fprintf(stderr,
@@ -366,10 +387,11 @@ err:
 	DBG(DEBUG_TAB, fprintf(stderr,
 		"libmount: tab %p: %s:%d: parse error\n", tb, filename, *nlines));
 
-	if (tb->errcb && tb->errcb(tb, filename, *nlines, 0))
-		return -1;	/* fatal error */
+	rc = 1;		/* recoverable error */
 
-	return 1;		/* recoverable error */
+	if (tb->errcb)
+		rc = tb->errcb(tb, filename, *nlines, 0);
+	return rc;
 }
 
 /**
@@ -378,11 +400,12 @@ err:
  * @f: file stream
  * @filename: filename used for debug and error messages
  *
- * Returns: 0 on success, -1 in case of error.
+ * Returns: 0 on success, negative number in case of error.
  */
 int mnt_tab_parse_stream(mnt_tab *tb, FILE *f, const char *filename)
 {
 	int nlines = 0;
+	int rc = -1;
 
 	assert(tb);
 	assert(f);
@@ -392,11 +415,10 @@ int mnt_tab_parse_stream(mnt_tab *tb, FILE *f, const char *filename)
 		fprintf(stderr, "libmount: tab %p: start parsing %s\n", tb, filename));
 
 	while (!feof(f)) {
-		int rc;
 		mnt_fs *fs = mnt_new_fs();
 
 		if (!fs)
-			goto error;
+			goto err;
 
 		rc = mnt_tab_parse_next(tb, f, fs, filename, &nlines);
 		if (!rc)
@@ -407,17 +429,17 @@ int mnt_tab_parse_stream(mnt_tab *tb, FILE *f, const char *filename)
 				continue;	/* recoverable error */
 			if (feof(f))
 				break;
-			goto error;		/* fatal error */
+			goto err;		/* fatal error */
 		}
 	}
 
 	DBG(DEBUG_TAB,
 		fprintf(stderr, "libmount: tab %p: stop parsing %s\n", tb, filename));
 	return 0;
-error:
-	DBG(DEBUG_TAB,
-		fprintf(stderr, "libmount: tab %p: error parsing %s\n", tb, filename));
-	return -1;
+err:
+	DBG(DEBUG_TAB, fprintf(stderr,
+		"libmount: tab %p: error parsing %s (rc=%d)\n", tb, filename, rc));
+	return rc;
 }
 
 /**
@@ -427,39 +449,29 @@ error:
  *
  * Parses whole table (e.g. /etc/mtab) and appends new records to the @tab.
  *
- * <informalexample>
- *   <programlisting>
- *	mnt_tab *tb = mnt_new_tab();
- *	int rc;
- *
- *	rc = mnt_tab_parse_file(tb, "/etc/fstab");
- *	if (!rc)
- *		mnt_fprintf_tab(tb, stdout, NULL);
- *	mnt_free_tab(tb);
- *   </programlisting>
- * </informalexample>
- *
  * The libmount parser ignores broken (syntax error) lines, these lines are
  * reported to caller by errcb() function (see mnt_tab_set_parser_errcb()).
  *
- * Returns: 0 on success, -1 in case of error.
+ * Returns: 0 on success, negative number in case of error.
  */
 int mnt_tab_parse_file(mnt_tab *tb, const char *filename)
 {
 	FILE *f;
-	int rc = -1;
+	int rc;
 
 	assert(tb);
 	assert(filename);
 
 	if (!filename || !tb)
-		return -1;
+		return -EINVAL;
 
 	f = fopen(filename, "r");
 	if (f) {
 		rc = mnt_tab_parse_stream(tb, f, filename);
 		fclose(f);
-	}
+	} else
+		return -errno;
+
 	return rc;
 }
 
@@ -496,10 +508,15 @@ mnt_tab *mnt_new_tab_from_file(const char *filename)
  * @cb: pointer to callback function
  *
  * The error callback function is called by table parser (mnt_tab_parse_file())
- * in case of sytax error. If the callback function does not return zero then
- * parsing is aborted.
+ * in case of syntax error. The callback function could be used for errors
+ * evaluation, libmount will continue/stop parsing according to callback return
+ * codes:
  *
- * Returns: 0 on success or -1 in case of error.
+ *   <0  : fatal error (abort parsing)
+ *    0	 : success (parsing continue)
+ *   >0  : recoverable error (the line is ignored, parsing continue).
+ *
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_tab_set_parser_errcb(mnt_tab *tb,
 		int (*cb)(mnt_tab *tb, const char *filename, int line, int flag))
@@ -524,7 +541,8 @@ int mnt_tab_set_parser_errcb(mnt_tab *tb,
  *
  * See also mnt_tab_set_parser_errcb().
  *
- * Returns: 0 on success (least one record has been sucessfully parsed) or -1.
+ * Returns: 0 on success (least one record has been successfully parsed) or
+ *          negative number in case of error.
  */
 int mnt_tab_parse_fstab(mnt_tab *tb)
 {
@@ -535,7 +553,7 @@ int mnt_tab_parse_fstab(mnt_tab *tb)
 
 	assert(tb);
 	if (!tb)
-		return -1;
+		return -EINVAL;
 
 	num = mnt_tab_get_nents(tb);
 
@@ -548,7 +566,7 @@ int mnt_tab_parse_fstab(mnt_tab *tb)
 		}
 	}
 
-	/* TODO: it would be nice to have a scandir() implemenation that
+	/* TODO: it would be nice to have a scandir() implementaion that
 	 *       is able to use already opened directory */
 	n = scandir(_PATH_MNTTAB_DIR, &namelist, NULL, versionsort);
 	if (n <= 0)
@@ -661,7 +679,7 @@ static mnt_fs *mnt_tab_merge_userspace_fs(mnt_tab *tb, mnt_fs *uf)
  *
  * See also mnt_tab_set_parser_errcb().
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_tab_parse_mtab(mnt_tab *tb)
 {
