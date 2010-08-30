@@ -46,6 +46,7 @@
 #include <term.h>		/* for setupterm() */
 #include <stdlib.h>		/* for getenv() */
 #include <limits.h>		/* for INT_MAX */
+#include <signal.h>		/* for signal() */
 #include "nls.h"
 
 #include "widechar.h"
@@ -75,6 +76,8 @@ void outc(wint_t c, int width);
 void setmode(int newmode);
 static void setcol(int newcol);
 static void needcol(int col);
+static void exitbuf(void);
+static void sig_handler(int signo);
 
 #define	IESC	'\033'
 #define	SO	'\016'
@@ -122,6 +125,9 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
+	signal(SIGINT, sig_handler);
+	signal(SIGTERM, sig_handler);
+
 	termtype = getenv("TERM");
 	if (termtype == NULL || (argv[0][0] == 'c' && !isatty(1)))
 		termtype = "lpr";
@@ -168,12 +174,16 @@ int main(int argc, char **argv)
 		f = fopen(argv[optind],"r");
 		if (f == NULL) {
 			perror(argv[optind]);
+			exitbuf();
 			exit(1);
 		} else
 			filter(f);
 	}
-	if (ferror(stdout) || fclose(stdout))
+	if (ferror(stdout) || fclose(stdout)) {
+		exitbuf();
 		return 1;
+	}
+	exitbuf();
 	return 0;
 }
 
@@ -600,4 +610,15 @@ needcol(int col) {
 			exit(1);
 		}
 	}
+}
+
+static void sig_handler(int signo)
+{
+	exitbuf();
+	exit(EXIT_SUCCESS);
+}
+
+static void exitbuf(void)
+{
+	free(obuf);
 }
