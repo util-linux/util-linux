@@ -40,11 +40,11 @@
 .\" Tue Jun 15 20:02:18 1999: added LABEL and UUID
 .\" Sat Jul 14 2001: Michael K. Johnson <johnsonm@redhat.com> added -O
 .\"
-.TH FSTAB 5 "15 June 1999" "Linux 2.2" "Linux Programmer's Manual"
+.TH FSTAB 5 "August 2010" "Linux 2.6" "Linux Programmer's Manual"
 .SH NAME
 fstab \- static information about the filesystems
 .SH SYNOPSIS
-.B #include <fstab.h>
+.B /etc/fstab
 .SH DESCRIPTION
 The file
 .B fstab
@@ -64,9 +64,10 @@ sequentially iterate through
 .B fstab
 doing their thing.
 
-The first field,
-.RI ( fs_spec ),
-describes the block special device or
+.B The first field
+.RI ( fs_spec ).
+.RS
+This field describes the block special device or
 remote filesystem to be mounted.
 .LP
 For ordinary mounts it will hold (a link to) a block special
@@ -86,16 +87,20 @@ writing LABEL=<label> or UUID=<uuid>,
 e.g., `LABEL=Boot' or `UUID=3e6be9de\%-8139\%-11d1\%-9106\%-a43f08d823a6'.
 This will make the system more robust: adding or removing a SCSI disk
 changes the disk device name but not the filesystem volume label.
+.RE
 
-The second field,
-.RI ( fs_file ),
-describes the mount point for the filesystem.  For swap partitions, this
+.B The second field
+.RI ( fs_file ).
+.RS
+This field describes the mount point for the filesystem.  For swap partitions, this
 field should be specified as `none'. If the name of the mount point
 contains spaces these can be escaped as `\\040'.
+.RE
 
-The third field,
-.RI ( fs_vfstype ),
-describes the type of the filesystem.  Linux supports lots
+.B The third field
+.RI ( fs_vfstype ).
+.RS
+This field describes the type of the filesystem.  Linux supports lots
 of filesystem types, such as
 .IR adfs ,
 .IR affs ,
@@ -131,8 +136,10 @@ of filesystem types, such as
 .IR xfs ,
 and possibly others. For more details, see
 .BR mount (8).
+
 For the filesystems currently supported by the running kernel, see
 .IR /proc/filesystems .
+
 An entry
 .I swap
 denotes a file or partition to be used
@@ -149,43 +156,59 @@ is useful for bind or move mounts.
 .BR mount (8)
 and
 .BR umount (8)
-support filesystem subtypes. The subtype is defined by '.subtype' suffix.  For
+support filesystem
+.IR subtypes .
+The subtype is defined by '.subtype' suffix.  For
 example 'fuse.sshfs'. It's recommended to use subtype notation rather than add
 any prefix to the first fstab field (for example 'sshfs#example.com' is
 depreacated). 
+.RE
 
-The fourth field,
-.RI ( fs_mntops ),
-describes the mount options associated with the filesystem.
+.B The fourth field
+.RI ( fs_mntops ).
+.RS
+This field describes the mount options associated with the filesystem.
 
 It is formatted as a comma separated list of options.  It contains at least
 the type of mount plus any additional options appropriate to the filesystem
-type.  For documentation on the available options for non-nfs file systems,
-see
+type. For documentation on the available options, see
 .BR mount (8).
-For documentation on all nfs-specific options have a look at
-.BR nfs (5).
-Common for all types of file system are the options ``noauto''
-(do not mount when "mount -a" is given, e.g., at boot time), ``user''
-(allow a user to mount), and ``owner''
-(allow device owner to mount), and ``comment''
-(e.g., for use by fstab-maintaining programs).
-The ``owner'' and ``comment'' options are Linux-specific.
-For more details, see
-.BR mount (8).
+Basic file system independent options are:
+.TP
+.B defaults
+use default options: rw, suid, dev, exec, auto, nouser, and async.
+.TP
+.B noauto
+do not mount when "mount -a" is given (e.g., at boot time)
+.TP
+.B user
+allow a user to mount
+.TP
+.B owner
+allow device owner to mount
+.TP
+.B comment
+for use by fstab-maintaining programs
+.TP
+.B nofail
+do not report errors for this device if it does not exist.
+.RE
 
-The fifth field,
-.RI ( fs_freq ),
-is used for these filesystems by the
+.B The fifth field
+.RI ( fs_freq ).
+.RS
+This field is used for these filesystems by the
 .BR dump (8)
 command to determine which filesystems need to be dumped.  If the fifth
 field is not present, a value of zero is returned and
 .B dump
 will assume that the filesystem does not need to be dumped.
+.RE
 
-The sixth field,
-.RI ( fs_passno ),
-is used by the
+.B The sixth field
+.RI ( fs_passno ).
+.RS
+This field is used by the
 .BR fsck (8)
 program to determine the order in which filesystem checks are done at
 reboot time.  The root filesystem should be specified with a
@@ -198,19 +221,23 @@ parallelism available in the hardware.  If the sixth field is not present
 or zero, a value of zero is returned and
 .B fsck
 will assume that the filesystem does not need to be checked.
+.RE
 
 The proper way to read records from
 .B fstab
 is to use the routines
 .BR getmntent (3).
 .SH FILES
-.I /etc/fstab
+.IR /etc/fstab ,
+.I <fstab.h>
 .SH "SEE ALSO"
-.BR getmntent (3),
 .BR mount (8),
 .BR swapon (8),
 .BR fs (5),
-.BR nfs (5)
+.BR nfs (5),
+.BR xfs (5),
+.BR proc (5),
+.BR getmntent (3)
 .SH HISTORY
 The ancestor of this
 .B fstab
