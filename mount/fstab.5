@@ -146,6 +146,14 @@ An entry
 .I none
 is useful for bind or move mounts.
 
+.BR mount (8)
+and
+.BR umount (8)
+support filesystem subtypes. The subtype is defined by '.subtype' suffix.  For
+example 'fuse.sshfs'. It's recommended to use subtype notation rather than add
+any prefix to the first fstab field (for example 'sshfs#example.com' is
+depreacated). 
+
 The fourth field,
 .RI ( fs_mntops ),
 describes the mount options associated with the filesystem.
