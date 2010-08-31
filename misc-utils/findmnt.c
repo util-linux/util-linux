@@ -417,7 +417,8 @@ static mnt_fs *get_next_fs(mnt_tab *tb, mnt_iter *itr)
 		 */
 		fs = mnt_tab_find_source(tb, get_match(COL_SOURCE),
 					mnt_iter_get_direction(itr));
-		if (!fs)
+
+		if (!fs && !(flags & FL_NOSWAPMATCH))
 			fs = mnt_tab_find_target(tb, get_match(COL_SOURCE),
 					mnt_iter_get_direction(itr));
 	} else {
