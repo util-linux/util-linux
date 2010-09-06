@@ -197,7 +197,6 @@ int heads = 0;
 int sectors = 0;
 long long cylinders = 0;
 int cylinder_size = 0;		/* heads * sectors */
-long long total_size = 0;	/* actual_size rounded down */
 long long actual_size = 0;	/* (in 512-byte sectors) - set using ioctl */
 				/* explicitly given user values */
 int user_heads = 0, user_sectors = 0;
@@ -779,7 +778,7 @@ del_part(int i) {
     if (i < num_parts - 1)
 	p_info[i].last_sector = p_info[i+1].first_sector - 1;
     else
-	p_info[i].last_sector = total_size - 1;
+	p_info[i].last_sector = actual_size - 1;
 
     p_info[i].offset = 0;
     p_info[i].flags = 0;
@@ -828,18 +827,13 @@ add_part(int num, int id, int flags, long long first, long long last,
 	return -1;
     }
 
-    if (first >= total_size) {
+    if (first >= actual_size) {
 	*errmsg = _("Partition begins after end-of-disk");
 	return -1;
     }
 
     if (last >= actual_size) {
 	*errmsg = _("Partition ends after end-of-disk");
-	return -1;
-    }
-
-    if (last >= total_size) {
-	*errmsg = _("Partition ends in the final partial cylinder");
 	return -1;
     }
 
@@ -1535,8 +1529,7 @@ decide_on_geometry(void) {
     if (user_cylinders > 0)
 	    cylinders = user_cylinders;
 
-    total_size = cylinder_size*cylinders;
-    if (total_size > actual_size)
+    if (cylinder_size * cylinders > actual_size)
 	    print_warning(_("You specified more cylinders than fit on disk"));
 }
 
@@ -1544,7 +1537,7 @@ static void
 clear_p_info(void) {
     num_parts = 1;
     p_info[0].first_sector = 0;
-    p_info[0].last_sector = total_size - 1;
+    p_info[0].last_sector = actual_size - 1;
     p_info[0].offset = 0;
     p_info[0].flags = 0;
     p_info[0].id = FREE_SPACE;
@@ -2327,7 +2320,7 @@ change_geometry(void) {
     if (ret_val) {
 	long long disk_end;
 
-	disk_end = total_size-1;
+	disk_end = actual_size-1;
 
 	if (p_info[num_parts-1].last_sector > disk_end) {
 	    while (p_info[num_parts-1].first_sector > disk_end) {
