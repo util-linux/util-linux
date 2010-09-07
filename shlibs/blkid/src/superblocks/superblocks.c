@@ -487,10 +487,9 @@ int blkid_probe_set_magic(blkid_probe pr, blkid_loff_t offset,
 	int rc = 0;
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
 
-	if (chn->flags & BLKID_SUBLKS_MAGIC) {
-		if (magic && len)
-			rc = blkid_probe_set_value(pr, "SBMAGIC", magic, len);
-		if (!rc && offset)
+	if (magic && len && (chn->flags & BLKID_SUBLKS_MAGIC)) {
+		rc = blkid_probe_set_value(pr, "SBMAGIC", magic, len);
+		if (!rc)
 			rc = blkid_probe_sprintf_value(pr, "SBMAGIC_OFFSET",
 					"%llu",	offset);
 	}
