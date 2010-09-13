@@ -86,8 +86,7 @@ static int mnt_optstr_parse_next(char **optstr,	 char **name, size_t *namesz,
 	return 1;				/* end of optstr */
 
 error:
-	DBG(DEBUG_OPTIONS, fprintf(stderr,
-			"libmount: parse error: \"%s\"\n", optstr0));
+	DBG(OPTIONS, mnt_debug("parse error: \"%s\"", optstr0));
 	return -EINVAL;
 }
 
@@ -124,8 +123,7 @@ static int mnt_optstr_locate_option(char *optstr, const char *name, char **begin
 		}
 	} while(1);
 
-	DBG(DEBUG_OPTIONS, fprintf(stderr,
-			"libmount: can't found '%s' option\n", name));
+	DBG(OPTIONS, mnt_debug("can't found '%s' option", name));
 	return rc;
 }
 
@@ -455,8 +453,7 @@ int mnt_optstr_get_mountflags(const char *optstr, unsigned long *flags)
 		}
 	}
 
-	DBG(DEBUG_OPTIONS, fprintf(stderr,
-		"libmount: optstr '%s': mountflags 0x%08lx\n", optstr, *flags));
+	DBG(OPTIONS, mnt_debug("%s: mountflags 0x%08lx", optstr, *flags));
 	return 0;
 }
 

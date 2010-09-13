@@ -12,6 +12,7 @@
  */
 
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include "mountP.h"
 
@@ -29,7 +30,7 @@ int libmount_debug_mask;
  */
 void mnt_init_debug(int mask)
 {
-	if (libmount_debug_mask & DEBUG_INIT)
+	if (libmount_debug_mask & MNT_DEBUG_INIT)
 		return;
 	if (!mask) {
 		char *str = mnt_getenv_safe("LIBMOUNT_DEBUG");
@@ -41,5 +42,5 @@ void mnt_init_debug(int mask)
 	if (libmount_debug_mask)
 		printf("libmount: debug mask set to 0x%04x.\n",
 				libmount_debug_mask);
-	libmount_debug_mask |= DEBUG_INIT;
+	libmount_debug_mask |= MNT_DEBUG_INIT;
 }

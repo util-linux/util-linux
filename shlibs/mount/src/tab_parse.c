@@ -334,13 +334,12 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
 			/* Missing final newline?  Otherwise extremely */
 			/* long line - assume file was corrupted */
 			if (feof(f)) {
-				DBG(DEBUG_TAB, fprintf(stderr,
-					"libmount: WARNING: no final newline at the end of %s\n",
-					filename));
+				DBG(TAB, mnt_debug_h(tb,
+					"%s: no final newline",	filename));
 				s = index (buf, '\0');
 			} else {
-				DBG(DEBUG_TAB, fprintf(stderr,
-					"libmount: %s: %d: missing newline at line\n",
+				DBG(TAB, mnt_debug_h(tb,
+					"%s:%d: missing newline at line",
 					filename, *nlines));
 				goto err;
 			}
@@ -351,8 +350,7 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
 		s = skip_spaces(buf);
 	} while (*s == '\0' || *s == '#');
 
-	DBG(DEBUG_TAB, fprintf(stderr, "libmount: %s:%d: %s\n",
-		filename, *nlines, s));
+	DBG(TAB, mnt_debug_h(tb, "%s:%d: %s", filename, *nlines, s));
 
 	if (!tb->fmt)
 		tb->fmt = detect_fmt(s);
@@ -375,17 +373,15 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
 			return -ENOMEM;
 	}
 
-	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: tab %p: %s:%d: SOURCE:%s, MNTPOINT:%s, TYPE:%s, "
-				  "OPTS:%s, FREQ:%d, PASSNO:%d\n",
-		tb, filename, *nlines,
+	DBG(TAB, mnt_debug_h(tb, "%s:%d: SOURCE:%s, MNTPOINT:%s, TYPE:%s, "
+				  "OPTS:%s, FREQ:%d, PASSNO:%d",
+		filename, *nlines,
 		fs->source, fs->target, fs->fstype,
 		fs->optstr, fs->freq, fs->passno));
 
 	return 0;
 err:
-	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: tab %p: %s:%d: parse error\n", tb, filename, *nlines));
+	DBG(TAB, mnt_debug_h(tb, "%s:%d: parse error", tb, filename, *nlines));
 
 	rc = 1;		/* recoverable error */
 
@@ -411,8 +407,7 @@ int mnt_tab_parse_stream(mnt_tab *tb, FILE *f, const char *filename)
 	assert(f);
 	assert(filename);
 
-	DBG(DEBUG_TAB,
-		fprintf(stderr, "libmount: tab %p: start parsing %s\n", tb, filename));
+	DBG(TAB, mnt_debug_h(tb, "%s: start parsing", filename));
 
 	while (!feof(f)) {
 		mnt_fs *fs = mnt_new_fs();
@@ -433,12 +428,10 @@ int mnt_tab_parse_stream(mnt_tab *tb, FILE *f, const char *filename)
 		}
 	}
 
-	DBG(DEBUG_TAB,
-		fprintf(stderr, "libmount: tab %p: stop parsing %s\n", tb, filename));
+	DBG(TAB, mnt_debug_h(tb, "%s: stop parsing", filename));
 	return 0;
 err:
-	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: tab %p: error parsing %s (rc=%d)\n", tb, filename, rc));
+	DBG(TAB, mnt_debug_h(tb, "%s: parse error (rc=%d)", filename, rc));
 	return rc;
 }
 
@@ -618,8 +611,7 @@ done:
 
 	num = mnt_tab_get_nents(tb) - num;
 
-	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: tab %p: fstab contains %d records\n", tb, num));
+	DBG(TAB, mnt_debug_h(tb, "fstab contains %d records", num));
 
 	return num > 0 ? 0 : -1;
 }

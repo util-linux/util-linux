@@ -410,8 +410,7 @@ char *mnt_get_mountpoint(const char *path)
 
 	memcpy(mnt, "/", 2);
 done:
-	DBG(DEBUG_UTILS, fprintf(stderr,
-		"libmount: utils: fs-root for %s is %s\n", path, mnt));
+	DBG(UTILS, mnt_debug("fs-root for %s is %s", path, mnt));
 	return mnt;
 err:
 	free(mnt);

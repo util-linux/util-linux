@@ -74,6 +74,8 @@ mnt_lock *mnt_new_lock(const char *datafile, pid_t id)
 	ml->lockfile_fd = -1;
 	ml->linkfile = ln;
 	ml->lockfile = lo;
+
+	DBG(LOCKS, mnt_debug_h(ml, "alloc"));
 	return ml;
 err:
 	free(lo);
@@ -93,6 +95,7 @@ void mnt_free_lock(mnt_lock *ml)
 {
 	if (!ml)
 		return;
+	DBG(LOCKS, mnt_debug_h(ml, "free"));
 	free(ml->lockfile);
 	free(ml->linkfile);
 	free(ml);
@@ -152,8 +155,7 @@ static int mnt_wait_lock(mnt_lock *ml, struct flock *fl, time_t maxtime)
 
 	sigaction(SIGALRM, &sa, &osa);
 
-	DBG(DEBUG_LOCKS, fprintf(stderr,
-		"LOCK: (%d) waiting for F_SETLKW.\n", getpid()));
+	DBG(LOCKS, mnt_debug_h(ml, "(%d) waiting for F_SETLKW", getpid()));
 
 	alarm(maxtime - now.tv_sec);
 	if (fcntl(ml->lockfile_fd, F_SETLKW, fl) == -1)
@@ -163,8 +165,8 @@ static int mnt_wait_lock(mnt_lock *ml, struct flock *fl, time_t maxtime)
 	/* restore old sigaction */
 	sigaction(SIGALRM, &osa, NULL);
 
-	DBG(DEBUG_LOCKS, fprintf(stderr,
-		"LOCK: (%d) leaving mnt_wait_setlkw(), rc=%d.\n", getpid(), ret));
+	DBG(LOCKS, mnt_debug_h(ml, "(%d) leaving mnt_wait_setlkw(), rc=%d",
+				getpid(), ret));
 	return ret;
 }
 
@@ -229,8 +231,7 @@ void mnt_unlock_file(mnt_lock *ml)
 	if (!ml)
 		return;
 
-	DBG(DEBUG_LOCKS, fprintf(stderr,
-			"LOCK: (%d) unlocking/cleaning.\n", getpid()));
+	DBG(LOCKS, mnt_debug_h(ml, "(%d) unlocking/cleaning", getpid()));
 
 	if (ml->locked == 0 && ml->lockfile && ml->linkfile)
 	{
@@ -393,7 +394,7 @@ int mnt_lock_file(mnt_lock *ml)
 		if (ml->locked) {
 			/* We made the link. Now claim the lock. */
 			if (fcntl (ml->lockfile_fd, F_SETLK, &flock) == -1) {
-				DBG(DEBUG_LOCKS, fprintf(stderr,
+				DBG(LOCKS, mnt_debug_h(ml,
 					"%s: can't F_SETLK lockfile, errno=%d\n",
 					lockfile, errno));
 				/* proceed, since it was us who created the lockfile anyway */
@@ -404,7 +405,7 @@ int mnt_lock_file(mnt_lock *ml)
 			int err = mnt_wait_lock(ml, &flock, maxtime.tv_sec);
 
 			if (err == 1) {
-				DBG(DEBUG_LOCKS, fprintf(stderr,
+				DBG(LOCKS, mnt_debug_h(ml,
 					"%s: can't create link: time out (perhaps "
 					"there is a stale lock file?)", lockfile));
 				rc = -ETIMEDOUT;
@@ -419,7 +420,7 @@ int mnt_lock_file(mnt_lock *ml)
 			ml->lockfile_fd = -1;
 		}
 	}
-	DBG(DEBUG_LOCKS, fprintf(stderr,
+	DBG(LOCKS, mnt_debug_h(ml,
 			"LOCK: %s: (%d) successfully locked\n",
 			lockfile, getpid()));
 	unlink(linkfile);

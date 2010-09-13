@@ -69,7 +69,11 @@ struct _mnt_cache {
  */
 mnt_cache *mnt_new_cache(void)
 {
-	return calloc(1, sizeof(struct _mnt_cache));
+	mnt_cache *cache = calloc(1, sizeof(struct _mnt_cache));
+	if (!cache)
+		return NULL;
+	DBG(CACHE, mnt_debug_h(cache, "alloc"));
+	return cache;
 }
 
 /**
@@ -84,6 +88,9 @@ void mnt_free_cache(mnt_cache *cache)
 
 	if (!cache)
 		return;
+
+	DBG(CACHE, mnt_debug_h(cache, "free"));
+
 	for (i = 0; i < cache->nents; i++) {
 		struct mnt_cache_entry *e = &cache->ents[i];
 		if (e->real != e->native)
@@ -122,8 +129,7 @@ static int mnt_cache_add_entry(mnt_cache *cache, char *native,
 	e->flag = flag;
 	cache->nents++;
 
-	DBG(DEBUG_CACHE,
-		printf("cache: add entry[%2zd] (%s): %s: %s\n",
+	DBG(CACHE, mnt_debug_h(cache, "add entry [%2zd] (%s): %s: %s",
 			cache->nents,
 			(flag & MNT_CACHE_ISPATH) ? "path" : "tag",
 			real, native));
@@ -249,7 +255,7 @@ int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 	if (!cache || !devname)
 		return -EINVAL;
 
-	DBG(DEBUG_CACHE, printf("cache: tags for %s requested\n", devname));
+	DBG(CACHE, mnt_debug_h(cache, "tags for %s requested", devname));
 
 	/* check is device is already cached */
 	for (i = 0; i < cache->nents; i++) {
@@ -261,8 +267,7 @@ int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 			return 0;
 	}
 
-	DBG(DEBUG_CACHE,
-		printf("cache: reading tags for: %s\n", devname));
+	DBG(CACHE, mnt_debug_h(cache, "reading tags for: %s", devname));
 
 	pr = blkid_new_probe_from_filename(devname);
 	if (!pr)

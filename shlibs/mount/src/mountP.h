@@ -34,21 +34,51 @@
 #define CONFIG_LIBMOUNT_DEBUG
 #endif
 
-#define DEBUG_INIT	(1 << 1)
-#define DEBUG_CACHE	(1 << 2)
-#define DEBUG_OPTIONS	(1 << 3)
-#define DEBUG_LOCKS	(1 << 4)
-#define DEBUG_TAB	(1 << 5)
-#define DEBUG_MTAB	(1 << 6)
-#define DEBUG_UTILS	(1 << 7)
-#define DEBUG_ALL	0xFFFF
+#define MNT_DEBUG_INIT		(1 << 1)
+#define MNT_DEBUG_CACHE		(1 << 2)
+#define MNT_DEBUG_OPTIONS	(1 << 3)
+#define MNT_DEBUG_LOCKS		(1 << 4)
+#define MNT_DEBUG_TAB		(1 << 5)
+#define MNT_DEBUG_MTAB		(1 << 6)
+#define MNT_DEBUG_UTILS		(1 << 7)
+#define MNT_DEBUG_CXT		(1 << 8)
+#define MNT_DEBUG_ALL		0xFFFF
 
 #ifdef CONFIG_LIBMOUNT_DEBUG
-#include <stdio.h>
+# include <stdio.h>
+# include <stdarg.h>
+
+# define DBG(m,x)	do { \
+				if ((MNT_DEBUG_ ## m) & libmount_debug_mask) {\
+					fprintf(stderr, "libmount: %s: ", # m); \
+					x; \
+				} \
+			} while(0)
+
 extern int libmount_debug_mask;
-#define DBG(m,x)	if ((m) & libmount_debug_mask) x
-#else
-#define DBG(m,x)
+
+static inline void mnt_debug(const char *mesg, ...)
+{
+	va_list ap;
+	va_start(ap, mesg);
+	vfprintf(stderr, mesg, ap);
+	va_end(ap);
+	fputc('\n', stderr);
+}
+
+static inline void mnt_debug_h(void *handler, const char *mesg, ...)
+{
+	va_list ap;
+
+	fprintf(stderr, "[%p]: ", handler);
+	va_start(ap, mesg);
+	vfprintf(stderr, mesg, ap);
+	va_end(ap);
+	fputc('\n', stderr);
+}
+
+#else /* !CONFIG_LIBMOUNT_DEBUG */
+# define DBG(m,x)
 #endif
 
 /* extension for files in the /etc/fstab.d directory */

@@ -75,7 +75,7 @@ mnt_tab *mnt_new_tab(void)
 	if (!tb)
 		return NULL;
 
-	DBG(DEBUG_TAB, fprintf(stderr, "libmount: new tab %p\n", tb));
+	DBG(TAB, mnt_debug_h(tb, "alloc"));
 
 	INIT_LIST_HEAD(&tb->ents);
 	return tb;
@@ -91,6 +91,8 @@ void mnt_free_tab(mnt_tab *tb)
 {
 	if (!tb)
 		return;
+
+	DBG(TAB, mnt_debug_h(tb, "free"));
 
 	while (!list_empty(&tb->ents)) {
 		mnt_fs *fs = list_entry(tb->ents.next, mnt_fs, ents);
@@ -168,11 +170,8 @@ int mnt_tab_add_fs(mnt_tab *tb, mnt_fs *fs)
 
 	list_add_tail(&fs->ents, &tb->ents);
 
-	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: tab %p: add entry: %s %s\n",
-		tb, mnt_fs_get_source(fs),
-		mnt_fs_get_target(fs)));
-
+	DBG(TAB, mnt_debug_h(tb, "add entry: %s %s",
+			mnt_fs_get_source(fs), mnt_fs_get_target(fs)));
 	tb->nents++;
 	return 0;
 }
@@ -215,7 +214,7 @@ int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root)
 	if (!tb || !root)
 		return -EINVAL;
 
-	DBG(DEBUG_TAB, fprintf(stderr, "libmount: tab %p: lookup root fs\n", tb));
+	DBG(TAB, mnt_debug_h(tb, "lookup root fs", tb));
 
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
@@ -253,9 +252,8 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
 	if (!tb || !itr || !parent)
 		return -EINVAL;
 
-	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: tab %p: lookup next child of %s\n",
-		tb, mnt_fs_get_target(parent)));
+	DBG(TAB, mnt_debug_h(tb, "lookup next child of %s",
+				mnt_fs_get_target(parent)));
 
 	parent_id = mnt_fs_get_id(parent);
 	if (!parent_id)
@@ -360,8 +358,7 @@ int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 	if (!tb || !itr || !fs || !match_func)
 		return -EINVAL;
 
-	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: tab %p: lookup next fs\n", tb));
+	DBG(TAB, mnt_debug_h(tb, "lookup next fs", tb));
 
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &tb->ents);
@@ -430,8 +427,7 @@ mnt_fs *mnt_tab_find_target(mnt_tab *tb, const char *path, int direction)
 	if (!tb || !path)
 		return NULL;
 
-	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: tab %p: lookup target: %s\n", tb, path));
+	DBG(TAB, mnt_debug_h(tb, "lookup target: %s", path));
 
 	/* native @target */
 	mnt_reset_iter(&itr, direction);
@@ -488,8 +484,7 @@ mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
 	assert(tb);
 	assert(path);
 
-	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: tab %p: lookup srcpath: %s\n", tb, path));
+	DBG(TAB, mnt_debug_h(tb, "lookup srcpath: %s", path));
 
 	/* native paths */
 	mnt_reset_iter(&itr, direction);
@@ -590,8 +585,7 @@ mnt_fs *mnt_tab_find_tag(mnt_tab *tb, const char *tag,
 	if (!tb || !tag || !val)
 		return NULL;
 
-	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: tab %p: lookup by TAG: %s %s\n", tb, tag, val));
+	DBG(TAB, mnt_debug_h(tb, "lookup by TAG: %s %s", tag, val));
 
 	/* look up by TAG */
 	mnt_reset_iter(&itr, direction);
@@ -633,8 +627,7 @@ mnt_fs *mnt_tab_find_source(mnt_tab *tb, const char *source, int direction)
 	if (!tb || !source)
 		return NULL;
 
-	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: tab %p: lookup SOURCE: %s\n", tb, source));
+	DBG(TAB, mnt_debug_h(tb, "lookup SOURCE: %s", source));
 
 	if (strchr(source, '=')) {
 		char *tag, *val;
