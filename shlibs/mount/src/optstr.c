@@ -520,7 +520,7 @@ int test_set(struct mtest *ts, int argc, char *argv[])
 	rc = mnt_optstr_set_option(&optstr, name, value);
 	if (!rc)
 		printf("result: >%s<\n", optstr);
-	return rc
+	return rc;
 }
 
 int test_get(struct mtest *ts, int argc, char *argv[])
@@ -542,7 +542,7 @@ int test_get(struct mtest *ts, int argc, char *argv[])
 		if (sz) {
 			printf(", argument: size=%zd data=", sz);
 			if (fwrite(val, 1, sz, stdout) != sz)
-				goto done;
+				return -1;
 		}
 		printf("\n");
 	} else if (rc == 1)
