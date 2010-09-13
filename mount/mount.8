@@ -136,9 +136,19 @@ or
 The recommended setup is to use LABEL=<label> or UUID=<uuid> tags rather than
 .B /dev/disk/by-{label,uuid}
 udev symlinks in the /etc/fstab file. The tags are
-more readable, robust and portable. The mount(8) command internally uses udev
+more readable, robust and portable. The
+.BR mount (8)
+command internally uses udev
 symlinks, so use the symlinks in /etc/fstab is not advantage over LABEL=/UUID=.
-For more details see libblkid(3).
+For more details see
+.BR libblkid (3).
+
+Note that
+.BR mount (8)
+uses UUIDs as strings. The UUIDs from command line or
+.BR fstab (5)
+are not converted to internal binary representation. The string representation
+of the UUID should be based on lower case characters.
 
 The
 .I proc

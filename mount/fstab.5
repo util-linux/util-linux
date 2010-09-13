@@ -87,6 +87,11 @@ writing LABEL=<label> or UUID=<uuid>,
 e.g., `LABEL=Boot' or `UUID=3e6be9de\%-8139\%-11d1\%-9106\%-a43f08d823a6'.
 This will make the system more robust: adding or removing a SCSI disk
 changes the disk device name but not the filesystem volume label.
+.LP
+Note that
+.BR mount (8)
+uses UUIDs as strings. The string representation of the UUID should be based on
+lower case characters.
 .RE
 
 .B The second field
