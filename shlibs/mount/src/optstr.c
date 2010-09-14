@@ -190,11 +190,12 @@ static int __mnt_optstr_append_option(char **optstr,
 
 /**
  * mnt_optstr_append_option:
- * @optstr: option string or NULL
+ * @optstr: option string or NULL, returns reallocated string
  * @name: value name
  * @value: value
  *
- * Returns: reallocated (or newly allocated) @optstr with ,name=value
+ * Returns: 0 on success or -1 in case of error. After error the @optstr should
+ *          be unmodified.
  */
 int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
 {
@@ -207,6 +208,35 @@ int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
 	vsz = value ? strlen(value) : 0;
 
 	return __mnt_optstr_append_option(optstr, name, nsz, value, vsz);
+}
+
+/**
+ * mnt_optstr_prepend_option:
+ * @optstr: option string or NULL, returns reallocated string
+ * @name: value name
+ * @value: value
+ *
+ * Returns: 0 on success or -1 in case of error. After error the @optstr should
+ *          be unmodified.
+ */
+int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value)
+{
+	int rc = 0;
+	char *tmp = *optstr;
+
+	*optstr = NULL;
+
+	rc = mnt_optstr_append_option(optstr, name, value);
+	if (!rc)
+		rc = mnt_optstr_append_option(optstr, tmp, NULL);
+	if (!rc) {
+		free(tmp);
+		return 0;
+	}
+
+	free(*optstr);
+	*optstr = tmp;
+	return rc;
 }
 
 /**
@@ -479,6 +509,26 @@ int test_append(struct mtest *ts, int argc, char *argv[])
 	return rc;
 }
 
+int test_prepend(struct mtest *ts, int argc, char *argv[])
+{
+	const char *value = NULL, *name;
+	char *optstr;
+	int rc;
+
+	if (argc < 3)
+		return -EINVAL;
+	optstr = strdup(argv[1]);
+	name = argv[2];
+
+	if (argc == 4)
+		value = argv[3];
+
+	rc = mnt_optstr_prepend_option(&optstr, name, value);
+	if (!rc)
+		printf("result: >%s<\n", optstr);
+	return rc;
+}
+
 int test_split(struct mtest *ts, int argc, char *argv[])
 {
 	char *optstr, *user = NULL, *fs = NULL, *vfs = NULL;
@@ -574,6 +624,7 @@ int main(int argc, char *argv[])
 {
 	struct mtest tss[] = {
 		{ "--append", test_append, "<optstr> <name> [<value>]  append value to optstr" },
+		{ "--prepend",test_prepend,"<optstr> <name> [<value>]  prepend  value to optstr" },
 		{ "--set",    test_set,    "<optstr> <name> [<value>]  (un)set value" },
 		{ "--get",    test_get,    "<optstr> <name>            search name in optstr" },
 		{ "--remove", test_remove, "<optstr> <name>            remove name in optstr" },
