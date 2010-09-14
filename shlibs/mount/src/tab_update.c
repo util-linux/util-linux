@@ -585,16 +585,16 @@ int mnt_prepare_update(mnt_update *upd)
 		return 0;
 
 	/*
-	 * A) classic /etc/mtab
+	 * A) classic /etc/mtab or /etc/fstab update
 	 */
 	if (upd->format != MNT_FMT_MOUNTINFO)
 		return 0;
 
 	/*
 	 * B) /var/run/mount/mountinfo
+	 *  - remove all non-userspace mount options
 	 */
 	if (upd->mountflags & MS_REMOUNT) {
-		/* remount */
 		if (mnt_split_optstr(o, &u, NULL, NULL, MNT_NOMTAB, 0))
 			goto err;
 		if (__mnt_fs_set_optstr(upd->fs, u, FALSE))

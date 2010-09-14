@@ -484,10 +484,38 @@ int mnt_fs_append_optstr(mnt_fs *fs, const char *optstr)
 }
 
 /**
+ * mnt_fs_prepend_optstr:
+ * @fs: fstab/mtab/mountinfo entry
+ * @optstr: mount options
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_fs_prepend_optstr(mnt_fs *fs, const char *optstr)
+{
+	char *v = NULL, *f = NULL;
+	int rc;
+
+	assert(fs);
+
+	if (!fs)
+		return -EINVAL;
+	if (!optstr)
+		return 0;
+
+	rc = mnt_split_optstr((char *) optstr, NULL, &v, &f, 0, 0);
+	if (!rc)
+		rc = mnt_optstr_prepend_option(&fs->optstr, optstr, NULL);
+	if (!rc && v)
+		rc = mnt_optstr_prepend_option(&fs->vfs_optstr, v, NULL);
+	if (!rc && f)
+	       rc = mnt_optstr_prepend_option(&fs->fs_optstr, f, NULL);
+
+	return rc;
+}
+
+/**
  * mnt_fs_get_fs_optstr:
  * @fs: fstab/mtab/mountinfo entry pointer
- *
- * This function works for "mountinfo" files only.
  *
  * Returns: pointer to superblock (fs-depend) mount option string or NULL.
  */
@@ -500,8 +528,6 @@ const char *mnt_fs_get_fs_optstr(mnt_fs *fs)
 /**
  * mnt_fs_get_vfs_optstr:
  * @fs: fstab/mtab entry pointer
- *
- * This function works for "mountinfo" files only.
  *
  * Returns: pointer to fs-independent (VFS) mount option string or NULL.
  */

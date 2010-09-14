@@ -116,6 +116,7 @@ static int next_number(char **s, int *num)
 static int mnt_tab_parse_file_line(mnt_fs *fs, char *s)
 {
 	int rc = 0;
+	char *p = NULL;
 
 	/* SOURCE */
 	rc =__mnt_fs_set_source(fs, next_word(&s));
@@ -133,8 +134,8 @@ static int mnt_tab_parse_file_line(mnt_fs *fs, char *s)
 		goto err;
 
 	/* OPTS */
-	fs->optstr = next_word(&s);
-	if (!fs->optstr)
+	p = next_word(&s);
+	if (!p || mnt_fs_set_optstr(fs, p))
 		goto err;
 
 	/* default */
@@ -151,6 +152,7 @@ static int mnt_tab_parse_file_line(mnt_fs *fs, char *s)
 
 	return 0;
 err:
+	free(p);
 	if (rc)
 		return rc;
 	return errno == ENOMEM ? -ENOMEM : -EINVAL;

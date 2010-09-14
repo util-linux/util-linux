@@ -19,6 +19,7 @@ global:
 	mnt_free_optls;
 	mnt_free_tab;
 	mnt_fs_append_optstr;
+	mnt_fs_prepend_optstr;
 	mnt_fs_append_userspace_optstr;
 	mnt_fs_get_devno;
 	mnt_fs_get_freq;
