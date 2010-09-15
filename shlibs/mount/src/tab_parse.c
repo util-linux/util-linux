@@ -352,7 +352,7 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
 		s = skip_spaces(buf);
 	} while (*s == '\0' || *s == '#');
 
-	DBG(TAB, mnt_debug_h(tb, "%s:%d: %s", filename, *nlines, s));
+	/*DBG(TAB, mnt_debug_h(tb, "%s:%d: %s", filename, *nlines, s));*/
 
 	if (!tb->fmt)
 		tb->fmt = detect_fmt(s);
@@ -374,13 +374,13 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
 		if (!fs->optstr)
 			return -ENOMEM;
 	}
-
+/*
 	DBG(TAB, mnt_debug_h(tb, "%s:%d: SOURCE:%s, MNTPOINT:%s, TYPE:%s, "
 				  "OPTS:%s, FREQ:%d, PASSNO:%d",
 		filename, *nlines,
 		fs->source, fs->target, fs->fstype,
 		fs->optstr, fs->freq, fs->passno));
-
+*/
 	return 0;
 err:
 	DBG(TAB, mnt_debug_h(tb, "%s:%d: parse error", tb, filename, *nlines));

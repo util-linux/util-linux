@@ -449,8 +449,11 @@ mnt_fs *mnt_tab_find_target(mnt_tab *tb, const char *path, int direction)
 	mnt_reset_iter(&itr, direction);
 	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
 		char *p;
-		if (!fs->target)
+
+		if (!fs->target || !(fs->flags & MNT_FS_SWAP) ||
+		    (*fs->target == '/' && *(fs->target + 1) == '\0'))
 		       continue;
+
 		p = mnt_resolve_path(fs->target, tb->cache);
 		if (strcmp(cn, p) == 0)
 			return fs;
@@ -546,6 +549,8 @@ mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
 	if (ntags <= mnt_tab_get_nents(tb)) {
 		mnt_reset_iter(&itr, direction);
 		while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+			if (fs->flags & (MNT_FS_NET | MNT_FS_PSEUDO))
+				continue;
 			p = mnt_fs_get_srcpath(fs);
 			if (p)
 				p = mnt_resolve_path(p, tb->cache);

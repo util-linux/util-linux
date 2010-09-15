@@ -175,6 +175,7 @@ struct _mnt_fs {
  */
 #define MNT_FS_PSEUDO	(1 << 1) /* pseudo filesystem */
 #define MNT_FS_NET	(1 << 2) /* network filesystem */
+#define MNT_FS_SWAP	(1 << 3) /* swap device */
 
 /*
  * mtab/fstab/mountinfo file
