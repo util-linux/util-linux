@@ -95,6 +95,13 @@ typedef struct _mnt_tab mnt_tab;
  */
 typedef struct _mnt_update mnt_update;
 
+/**
+ * mnt_context
+ *
+ * Mount/umount status
+ */
+typedef struct _mnt_context mnt_context;
+
 /*
  * Tab file format
  */
