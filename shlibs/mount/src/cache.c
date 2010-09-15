@@ -267,8 +267,6 @@ int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 			return 0;
 	}
 
-	DBG(CACHE, mnt_debug_h(cache, "reading tags for: %s", devname));
-
 	pr = blkid_new_probe_from_filename(devname);
 	if (!pr)
 		return -1;
@@ -280,6 +278,8 @@ int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 
 	if (blkid_do_safeprobe(pr))
 		goto error;
+
+	DBG(CACHE, mnt_debug_h(cache, "reading tags for: %s", devname));
 
 	for (i = 0; i < ARRAY_SIZE(tags); i++) {
 		const char *data;

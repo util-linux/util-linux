@@ -227,7 +227,7 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
 	*optstr = NULL;
 
 	rc = mnt_optstr_append_option(optstr, name, value);
-	if (!rc)
+	if (!rc && tmp)
 		rc = mnt_optstr_append_option(optstr, tmp, NULL);
 	if (!rc) {
 		free(tmp);
@@ -236,6 +236,8 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
 
 	free(*optstr);
 	*optstr = tmp;
+
+	DBG(OPTS, mnt_debug("failed to prepend '%s[=%s]' to '%s'", name, value, optstr));
 	return rc;
 }
 
