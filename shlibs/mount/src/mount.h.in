@@ -163,6 +163,7 @@ extern int mnt_split_optstr(const char *optstr,
 			    int ifnore_user, int ignore_vfs);
 
 extern int mnt_optstr_get_mountflags(const char *optstr, unsigned long *flags);
+extern int mnt_optstr_get_userspace_mountflags(const char *optstr, unsigned long *flags);
 
 /* iter.c */
 enum {

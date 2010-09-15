@@ -438,6 +438,36 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs,
 	return 0;
 }
 
+static int mnt_optstr_get_flags(const char *optstr, const struct mnt_optmap *map,
+			unsigned long *flags, int mask_fltr)
+{
+	struct mnt_optmap const *maps[1];
+	char *name, *str = (char *) optstr;
+	size_t namesz = 0;
+
+	assert(optstr);
+
+	if (!optstr || !flags || !map)
+		return -EINVAL;
+
+	maps[0] = map;
+
+	while(!mnt_optstr_next_option(&str, &name, &namesz, NULL, NULL)) {
+		const struct mnt_optmap *ent;
+
+		if (mnt_optmap_get_entry(maps, 1, name, namesz, &ent)) {
+
+			if (mask_fltr && !(ent->mask & mask_fltr))
+				continue;
+			if (ent->mask & MNT_INVERT)
+				*flags &= ~ent->id;
+			else
+				*flags |= ent->id;
+		}
+	}
+
+	return 0;
+}
 
 /**
  * mnt_optstr_get_mountflags:
@@ -460,33 +490,34 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs,
  */
 int mnt_optstr_get_mountflags(const char *optstr, unsigned long *flags)
 {
-	struct mnt_optmap const *maps[1];
-	char *name, *str = (char *) optstr;
-	size_t namesz = 0;
+	return mnt_optstr_get_flags(optstr,
+				    mnt_get_builtin_optmap(MNT_LINUX_MAP),
+				    flags,
+				    MNT_MFLAG);
+}
 
-	assert(optstr);
-
-	if (!optstr || !flags)
-		return -EINVAL;
-
-	maps[0] = mnt_get_builtin_optmap(MNT_LINUX_MAP);
-
-	while(!mnt_optstr_next_option(&str, &name, &namesz, NULL, NULL)) {
-		const struct mnt_optmap *ent;
-
-		if (mnt_optmap_get_entry(maps, 1, name, namesz, &ent)) {
-
-			if (!(ent->mask & MNT_MFLAG))
-				continue;
-			if (ent->mask & MNT_INVERT)
-				*flags &= ~ent->id;
-			else
-				*flags |= ent->id;
-		}
-	}
-
-	DBG(OPTIONS, mnt_debug("%s: mountflags 0x%08lx", optstr, *flags));
-	return 0;
+/**
+ * mnt_optstr_get_userspace_mountflags:
+ * @optstr: string with comma separated list of options
+ * @flags: returns mount flags
+ *
+ * The mountflags are IDs from all MNT_USERSPACE_MAP options
+ * map. See "struct mnt_optmap". These flags are not used for mount(2) syscall.
+ *
+ * For example:
+ *
+ *	"bind,exec,loop"   --returns->   MNT_MS_LOOP
+ *
+ * Note that @flags are not zeroized by this function.
+ *
+ * Returns: 0 on success or negative number in case of error
+ */
+int mnt_optstr_get_userspace_mountflags(const char *optstr, unsigned long *flags)
+{
+	return mnt_optstr_get_flags(optstr,
+				    mnt_get_builtin_optmap(MNT_USERSPACE_MAP),
+				    flags,
+				    0);
 }
 
 #ifdef TEST_PROGRAM
@@ -551,6 +582,32 @@ int test_split(struct mtest *ts, int argc, char *argv[])
 	free(user);
 	free(vfs);
 	free(fs);
+	free(optstr);
+	return rc;
+}
+
+int test_flags(struct mtest *ts, int argc, char *argv[])
+{
+	char *optstr;
+	int rc;
+	unsigned long fl = 0;
+
+	if (argc < 2)
+		return -EINVAL;
+
+	optstr = strdup(argv[1]);
+
+	rc = mnt_optstr_get_mountflags(optstr, &fl);
+	if (rc)
+		return rc;
+	printf("mountflags:           0x%08lx\n", fl);
+
+	fl = 0;
+	rc = mnt_optstr_get_userspace_mountflags(optstr, &fl);
+	if (rc)
+		return rc;
+	printf("userspace-mountflags: 0x%08lx\n", fl);
+
 	free(optstr);
 	return rc;
 }
@@ -631,6 +688,7 @@ int main(int argc, char *argv[])
 		{ "--get",    test_get,    "<optstr> <name>            search name in optstr" },
 		{ "--remove", test_remove, "<optstr> <name>            remove name in optstr" },
 		{ "--split",  test_split,  "<optstr>                   split into FS, VFS and userspace" },
+		{ "--flags",  test_flags,  "<optstr>                   convert options to MS_* flags" },
 		{ NULL }
 	};
 	return  mnt_run_test(tss, argc, argv);

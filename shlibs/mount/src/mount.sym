@@ -109,6 +109,7 @@ global:
 	mnt_optstr_append_option;
 	mnt_optstr_prepend_option;
 	mnt_optstr_get_mountflags;
+	mnt_optstr_get_userspace_mountflags;
 	mnt_optstr_get_option;
 	mnt_optstr_next_option;
 	mnt_optstr_remove_option;
