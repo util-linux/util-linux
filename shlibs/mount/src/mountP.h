@@ -39,9 +39,11 @@
 #define MNT_DEBUG_OPTIONS	(1 << 3)
 #define MNT_DEBUG_LOCKS		(1 << 4)
 #define MNT_DEBUG_TAB		(1 << 5)
-#define MNT_DEBUG_MTAB		(1 << 6)
-#define MNT_DEBUG_UTILS		(1 << 7)
-#define MNT_DEBUG_CXT		(1 << 8)
+#define MNT_DEBUG_FS		(1 << 6)
+#define MNT_DEBUG_OPTS		(1 << 7)
+#define MNT_DEBUG_UPDATE	(1 << 8)
+#define MNT_DEBUG_UTILS		(1 << 9)
+#define MNT_DEBUG_CXT		(1 << 10)
 #define MNT_DEBUG_ALL		0xFFFF
 
 #ifdef CONFIG_LIBMOUNT_DEBUG

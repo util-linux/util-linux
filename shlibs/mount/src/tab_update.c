@@ -82,7 +82,7 @@ mnt_update *mnt_new_update(int action, unsigned long mountflags, const mnt_fs *f
 	if (!upd)
 		return NULL;
 
-	DBG(MTAB, mnt_debug_h(upd, "allocate"));
+	DBG(UPDATE, mnt_debug_h(upd, "allocate"));
 
 	if (action)
 		mnt_update_set_action(upd, action);
@@ -104,7 +104,7 @@ void mnt_free_update(mnt_update *upd)
 	if (!upd)
 		return;
 
-	DBG(MTAB, mnt_debug_h(upd, "free"));
+	DBG(UPDATE, mnt_debug_h(upd, "free"));
 
 	mnt_free_lock(upd->lc);
 	free(upd->filename);
@@ -376,7 +376,7 @@ static int update_file(const char *filename, int fmt, mnt_tab *tb)
 	if (!tb)
 		goto error;
 
-	DBG(MTAB, mnt_debug("%s: update from tab %p", filename, tb));
+	DBG(UPDATE, mnt_debug("%s: update from tab %p", filename, tb));
 
 	if (snprintf(tmpname, sizeof(tmpname), "%s.tmp", filename)
 						>= sizeof(tmpname))
@@ -413,7 +413,7 @@ static int update_file(const char *filename, int fmt, mnt_tab *tb)
 
 	return 0;
 error:
-	DBG(MTAB, mnt_debug("%s: update from tab %p failed", filename, tb));
+	DBG(UPDATE, mnt_debug("%s: update from tab %p failed", filename, tb));
 	if (f)
 		fclose(f);
 	return -1;
@@ -546,7 +546,7 @@ int mnt_prepare_update(mnt_update *upd)
 	if (!upd || !upd->fs)
 		return -1;
 
-	DBG(MTAB, mnt_debug_h(upd,
+	DBG(UPDATE, mnt_debug_h(upd,
 		"prepare update (target %s, source %s, optstr %s)",
 		mnt_fs_get_target(upd->fs),
 		mnt_fs_get_source(upd->fs),
@@ -575,9 +575,11 @@ int mnt_prepare_update(mnt_update *upd)
 	/* TODO: cannonicalize source and target paths on mnt->fs */
 
 	if (upd->format != MNT_FMT_FSTAB) {
+		unsigned long fl = 0;
+
 		o = mnt_fs_get_optstr(upd->fs);
-		if (o)
-			mnt_optstr_get_mountflags(o, &upd->mountflags);
+		if (o && !mnt_optstr_get_mountflags(o, &fl))
+			upd->mountflags |= fl;
 	}
 
 	/* umount */
@@ -618,15 +620,15 @@ int mnt_prepare_update(mnt_update *upd)
 			goto err;
 	}
 
-	DBG(MTAB, mnt_debug_h(upd, "prepare update: success"));
+	DBG(UPDATE, mnt_debug_h(upd, "prepare update: success"));
 	free(u);
 	return 0;
 err:
-	DBG(MTAB, mnt_debug_h(upd, "prepare update: failed"));
+	DBG(UPDATE, mnt_debug_h(upd, "prepare update: failed"));
 	free(u);
 	return -1;
 nothing:
-	DBG(MTAB, mnt_debug_h(upd, "prepare update: unnecessary"));
+	DBG(UPDATE, mnt_debug_h(upd, "prepare update: unnecessary"));
 	free(u);
 	return 1;
 }
@@ -638,7 +640,7 @@ static int add_entry(mnt_update *upd)
 
 	assert(upd);
 
-	DBG(MTAB, mnt_debug_h(upd, "add entry"));
+	DBG(UPDATE, mnt_debug_h(upd, "add entry"));
 
 	if (upd->lc)
 		mnt_lock_file(upd->lc);
@@ -668,7 +670,7 @@ static int remove_entry(mnt_update *upd)
 	target = mnt_fs_get_target(upd->fs);
 	assert(target);
 
-	DBG(MTAB, mnt_debug_h(upd, "remove entry (target %s)", target));
+	DBG(UPDATE, mnt_debug_h(upd, "remove entry (target %s)", target));
 
 	if (upd->lc)
 		mnt_lock_file(upd->lc);
@@ -706,7 +708,7 @@ static int modify_target(mnt_update *upd)
 	if (!upd->old_target)
 		return -1;
 
-	DBG(MTAB, mnt_debug_h(upd, "modify target (%s->%s)",
+	DBG(UPDATE, mnt_debug_h(upd, "modify target (%s->%s)",
 		upd->old_target, mnt_fs_get_target(upd->fs)));
 
 	if (upd->lc)
@@ -741,7 +743,7 @@ static int modify_options(mnt_update *upd)
 	assert(target);
 	assert(upd->filename);
 
-	DBG(MTAB, mnt_debug_h(upd, "modify options (target %s)", target));
+	DBG(UPDATE, mnt_debug_h(upd, "modify options (target %s)", target));
 
 	if (upd->lc)
 		mnt_lock_file(upd->lc);
@@ -788,7 +790,7 @@ int mnt_update_file(mnt_update *upd)
 	if (!upd || !upd->fs)
 		return -1;
 
-	DBG(MTAB, mnt_debug_h(upd, "update (target %s)",
+	DBG(UPDATE, mnt_debug_h(upd, "update (target %s)",
 		mnt_fs_get_target(upd->fs)));
 	/*
 	 * umount
