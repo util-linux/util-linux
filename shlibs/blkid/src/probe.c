@@ -626,6 +626,9 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	if (fstat(fd, &sb))
 		goto err;
 
+	if (!S_ISBLK(sb.st_mode) && !S_ISCHR(sb.st_mode) && !S_ISREG(sb.st_mode))
+		goto err;
+
 	pr->mode = sb.st_mode;
 	if (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode))
 		pr->devno = sb.st_rdev;
