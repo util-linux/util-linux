@@ -132,6 +132,10 @@ int mnt_fstype_is_pseudofs(const char *type)
 	    strcmp(type, "dlmfs") == 0 ||
 	    strcmp(type, "cpuset") == 0 ||
 	    strcmp(type, "securityfs") == 0 ||
+	    strcmp(type, "rpc_pipefs") == 0 ||
+	    strcmp(type, "fusectl") == 0 ||
+	    strcmp(type, "binfmt_misc") == 0 ||
+	    strcmp(type, "fuse.gvfs-fuse-daemon") == 0 ||
 	    strcmp(type, "debugfs") == 0 ||
 	    strcmp(type, "spufs") == 0)
 		return 1;
