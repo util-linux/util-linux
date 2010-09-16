@@ -840,6 +840,9 @@ option allows you to explicitly label the root inode of a FS being mounted
 before that FS or inode because visable to userspace. This was found to be
 useful for things like stateless linux.
 
+Note that kernel rejects any remount request that includes the context
+option even if unchanged from the current context.
+
 For more details, see
 .BR selinux (8)
 
