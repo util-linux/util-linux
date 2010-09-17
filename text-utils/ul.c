@@ -47,6 +47,8 @@
 #include <stdlib.h>		/* for getenv() */
 #include <limits.h>		/* for INT_MAX */
 #include <signal.h>		/* for signal() */
+#include <err.h>
+#include <errno.h>
 #include "nls.h"
 
 #include "widechar.h"
@@ -144,9 +146,9 @@ int main(int argc, char **argv)
 
 		default:
 			fprintf(stderr,
-				_("usage: %s [ -i ] [ -tTerm ] file...\n"),
-				argv[0]);
-			exit(1);
+				_("Usage: %s [ -i ] [ -tTerm ] file...\n"),
+				program_invocation_short_name);
+			return EXIT_FAILURE;
 		}
 	setupterm(termtype, 1, &ret);
 	switch(ret) {
@@ -155,7 +157,7 @@ int main(int argc, char **argv)
 		break;
 
 	default:
-		fprintf(stderr,_("trouble reading terminfo"));
+		warnx(_("trouble reading terminfo"));
 		/* fall through to ... */
 
 	case 0:
@@ -167,24 +169,20 @@ int main(int argc, char **argv)
 	if (    (tigetflag("os") && ENTER_BOLD==NULL ) ||
 		(tigetflag("ul") && ENTER_UNDERLINE==NULL && UNDER_CHAR==NULL))
 			must_overstrike = 1;
+	atexit(exitbuf);
 	initbuf();
 	if (optind == argc)
 		filter(stdin);
 	else for (; optind<argc; optind++) {
 		f = fopen(argv[optind],"r");
-		if (f == NULL) {
-			perror(argv[optind]);
-			exitbuf();
-			exit(1);
-		} else
-			filter(f);
+		if (!f)
+			err(EXIT_FAILURE, _("%s: open failed"), argv[optind]);
+		filter(f);
 	}
-	if (ferror(stdout) || fclose(stdout)) {
-		exitbuf();
-		return 1;
-	}
-	exitbuf();
-	return 0;
+	if (ferror(stdout) || fclose(stdout))
+		return EXIT_FAILURE;
+
+	return EXIT_SUCCESS;
 }
 
 void filter(FILE *f)
@@ -248,10 +246,10 @@ void filter(FILE *f)
 			continue;
 
 		default:
-			fprintf(stderr,
-				_("Unknown escape sequence in input: %o, %o\n"),
+			errx(EXIT_FAILURE,
+				_("unknown escape sequence in input: %o, %o"),
 				IESC, c);
-			exit(1);
+			break;
 		}
 		continue;
 
@@ -431,10 +429,8 @@ void initbuf(void)
 	if (obuf == NULL) {	/* First time. */
 		obuflen = INITBUF;
 		obuf = malloc(sizeof(struct CHAR) * obuflen);
-		if (obuf == NULL) {
-			fprintf(stderr, _("Unable to allocate buffer.\n"));
-			exit(1);
-		}
+		if (obuf == NULL)
+			err(EXIT_FAILURE, _("unable to allocate buffer"));
 	}
 
 	/* assumes NORMAL == 0 */
@@ -495,7 +491,7 @@ void initinfo(void)
 		ENTER_REVERSE = ENTER_STANDOUT;
 	if (!EXIT_ATTRIBUTES && EXIT_STANDOUT)
 		EXIT_ATTRIBUTES = EXIT_STANDOUT;
-	
+
 	/*
 	 * Note that we use REVERSE for the alternate character set,
 	 * not the as/ae capabilities.  This is because we are modelling
@@ -591,11 +587,8 @@ needcol(int col) {
 	/* If col >= obuflen, expand obuf until obuflen > col. */
 	while (col >= obuflen) {
 		/* Paranoid check for obuflen == INT_MAX. */
-		if (obuflen == INT_MAX) {
-			fprintf(stderr,
-				_("Input line too long.\n"));
-			exit(1);
-		}
+		if (obuflen == INT_MAX)
+			errx(EXIT_FAILURE, _("Input line too long."));
 
 		/* Similar paranoia: double only up to INT_MAX. */
 		obuflen = ((INT_MAX / 2) < obuflen)
@@ -604,21 +597,18 @@ needcol(int col) {
 
 		/* Now we can try to expand obuf. */
 		obuf = realloc(obuf, sizeof(struct CHAR) * obuflen);
-		if (obuf == NULL) {
-			fprintf(stderr,
-				_("Out of memory when growing buffer.\n"));
-			exit(1);
-		}
+		if (obuf == NULL)
+			err(EXIT_FAILURE, _("growing buffer failed"));
 	}
 }
 
 static void sig_handler(int signo)
 {
-	exitbuf();
 	exit(EXIT_SUCCESS);
 }
 
 static void exitbuf(void)
 {
 	free(obuf);
+	obuf = NULL;
 }
