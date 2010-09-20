@@ -1308,38 +1308,46 @@ cdrom_setspeed(const char *spec) {
 }
 
 /*
- * Check if @node is read-only filesystem by access() or futimens().
- *
- * Note that access(2) uses real-UID (= useless for suid programs)
- * and euidaccess(2) does not check for read-only FS.
+ * Check if @path is on read-only filesystem independently on file permissions.
  */
 static int
-is_readonly(const char *node)
+is_readonly(const char *path)
 {
-	int res = 0;
+	int fd;
 
-	if (getuid() == geteuid()) {
-		if (access(node, W_OK) == -1 && errno == EROFS)
-			res = 1;
-	}
+	if (access(path, W_OK) == 0)
+		return 0;
+	if (errno == EROFS)
+		return 1;
+	if (errno != EACCES)
+		return 0;
+
 #ifdef HAVE_FUTIMENS
-	else {
+	/*
+	 * access(2) returns EACCES on read-only FS:
+	 *
+	 * - for set-uid application if one component of the path is not
+	 *   accessible for the current rUID. (Note that euidaccess(2) does not
+	 *   check for EROFS at all).
+	 *
+	 * - for read-write filesystem with read-only VFS node (aka -o remount,ro,bind)
+	 */
+	fd = open(path, O_RDONLY);
+	if (fd >= 0) {
 		struct timespec times[2];
-		int fd = open(node, O_RDONLY);
-
-		if (fd < 0)
-			goto done;
+		int errsv = 0;
 
 		times[0].tv_nsec = UTIME_NOW;	/* atime */
 		times[1].tv_nsec = UTIME_OMIT;	/* mtime */
 
-		if (futimens(fd, times) == -1 && errno == EROFS)
-			res = 1;
+		if (futimens(fd, times) == -1)
+			errsv = errno;
 		close(fd);
+
+		return errsv == EROFS;
 	}
-done:
 #endif
-	return res;
+	return 0;
 }
 
 /*
