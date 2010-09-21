@@ -13,9 +13,13 @@
 #include <string.h>
 #include <errno.h>
 
+#ifdef HAVE_LIBSELINUX
+#include <selinux/selinux.h>
+#include <selinux/context.h>
+#endif
+
 #include "c.h"
 #include "mountP.h"
-
 
 /*
  * Mount context -- high-level API
@@ -873,8 +877,6 @@ static int mnt_context_subst_optstr(mnt_context *cxt)
 {
 	int rc = 0;
 	char *o, *o0;
-	char *val = NULL;
-	size_t valsz = 0;
 
 	if (!cxt || !cxt->fs)
 		return -EINVAL;
@@ -883,37 +885,68 @@ static int mnt_context_subst_optstr(mnt_context *cxt)
 	if (!o)
 		return 0;
 
-	if (!mnt_optstr_get_option(o, "uid", &val, &valsz) && val &&
-	    !strncmp(val, "useruid", 7)) {
-		char id[40];
+	rc = mnt_optstr_translate_uid(&o);
+	if (rc < 0)
+		return rc;
 
-		snprintf(id, sizeof(id), "%u", getuid());
-		rc = mnt_optstr_set_option(&o, "uid", id);
-		if (rc)
-			return rc;
+	rc = mnt_optstr_translate_gid(&o);
+	if (rc < 0)
+		return rc;
+
+#ifdef HAVE_LIBSELINUX
+	unsigned long flags;
+
+	mnt_context_get_mountflags(cxt, &flags);
+
+	if ((flags & MS_REMOUNT) || !is_selinux_enabled()) {
+		/*
+		 * Ignore SELinux context options
+		 */
+		rc = mnt_optstr_remove_option(&o, "context");
+		if (rc >= 0)
+			rc = mnt_optstr_remove_option(&o, "fscontext");
+		if (rc >= 0)
+			rc = mnt_optstr_remove_option(&o, "defcontext");
+		if (rc >= 0)
+			rc = mnt_optstr_remove_option(&o, "rootcontext");
+	} else {
+		/*
+		 * Translate SELinux context from human to raw format
+		 */
+		rc = mnt_optstr_translate_selinux(&o, "context");
+		if (rc >= 0)
+			rc = mnt_optstr_translate_selinux(&o, "fscontext");
+		if (rc >= 0)
+			rc = mnt_optstr_translate_selinux(&o, "defcontext");
+		if (rc >= 0)
+			rc = mnt_optstr_translate_selinux(&o, "rootcontext");
 	}
 
-	val = NULL, valsz = 0;
-
-	if (!mnt_optstr_get_option(o, "gid", &val, &valsz) && val &&
-	    !strncmp(val, "usergid", 7)) {
-		char id[40];
-
-		snprintf(id, sizeof(id), "%u", getgid());
-		rc = mnt_optstr_set_option(&o, "gid", id);
-		if (rc)
-			return rc;
-	}
-
-	if (o != o0)
+	if (rc)
+		return rc;
+#endif
+	if (o != o0) {
 		rc = mnt_fs_set_optstr(cxt->fs, o);
-
+		free(o);
+	}
 	return rc;
 }
 
-static int mnt_context_check_permissions(mnt_context *cxt)
+static int mnt_context_evaluate_permissions(mnt_context *cxt)
 {
-	return 0; /* TODO */
+	unsigned long u_flags;
+
+	mnt_context_get_userspace_mountflags(cxt, &u_flags);
+
+	if (u_flags & (MNT_MS_OWNER | MNT_MS_GROUP))
+		cxt->mountflags |= MS_OWNERSECURE;
+
+	if (u_flags & (MNT_MS_USER | MNT_MS_USERS))
+		cxt->mountflags |= MS_SECURE;
+
+
+
+	return 0;
 }
 
 static int mnt_context_prepare_srcpath(mnt_context *cxt)
@@ -1032,7 +1065,7 @@ int mnt_context_prepare_mount(mnt_context *cxt)
 	if (rc)
 		goto err;
 
-	rc = mnt_context_check_permissions(cxt);
+	rc = mnt_context_evaluate_permissions(cxt);
 	if (rc)
 		goto err;
 
@@ -1046,6 +1079,8 @@ int mnt_context_prepare_mount(mnt_context *cxt)
 
 
 	/* TODO: prepare mtab update */
+
+	/* TODO: replace generic optstr with fs_optstr */
 
 	DBG(CXT, mnt_debug_h(cxt, "sucessfully prepared"));
 	return 0;

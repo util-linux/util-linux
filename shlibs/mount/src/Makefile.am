@@ -28,6 +28,12 @@ libmount_la_DEPENDENCIES = $(libmount_la_LIBADD) mount.sym mount.h.in
 libmount_la_LDFLAGS = -Wl,--version-script=$(ul_libmount_srcdir)/mount.sym \
                       -version-info $(LIBMOUNT_VERSION_INFO)
 
+TESTS_LIBS = $(UUID_LIBS)
+
+if HAVE_SELINUX
+TESTS_LIBS += $(SELINUX_LIBS)
+endif
+
 EXTRA_DIST = mount.sym mount.h.in
 CLEANFILES = $(tests)
 
@@ -54,5 +60,5 @@ tests: all $(tests)
 test_%: %.c
 	$(COMPILE) -DTEST_PROGRAM $< .libs/libmount.a \
 		$(ul_libblkid_builddir)/.libs/libblkid.a -o $@ \
-		$(UUID_LIBS)
+		$(TESTS_LIBS)
 
