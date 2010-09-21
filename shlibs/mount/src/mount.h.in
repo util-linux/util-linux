@@ -172,6 +172,10 @@ extern int mnt_split_optstr(const char *optstr,
 extern int mnt_optstr_get_mountflags(const char *optstr, unsigned long *flags);
 extern int mnt_optstr_get_userspace_mountflags(const char *optstr, unsigned long *flags);
 
+extern int mnt_optstr_translate_gid(char **optstr);
+extern int mnt_optstr_translate_uid(char **optstr);
+extern int mnt_optstr_translate_selinux(char **optstr, const char *name);
+
 /* iter.c */
 enum {
 

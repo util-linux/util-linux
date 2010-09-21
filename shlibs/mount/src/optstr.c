@@ -19,6 +19,15 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#ifdef HAVE_LIBSELINUX
+#include <selinux/selinux.h>
+#include <selinux/context.h>
+#endif
+
+#include <ctype.h>
 
 #include "nls.h"
 #include "mountP.h"
@@ -520,6 +529,162 @@ int mnt_optstr_get_userspace_mountflags(const char *optstr, unsigned long *flags
 				    0);
 }
 
+/**
+ * mnt_optstr_translate_selinux:
+ * @optstr: string with comma separated list of options
+ * @name: context option name (fscontext. rootcontext, ...)
+ *
+ * Translates SELinux context from human to raw format. The function does not
+ * modify @optstr and returns zero if libmount is compiled without SELinux
+ * support.
+ *
+ * Returns: 0 on success, negative number in case of error,
+ *          and 1 if not found the @name
+ */
+int mnt_optstr_translate_selinux(char **optstr, const char *name)
+{
+	int rc = 0;
+
+#ifdef HAVE_LIBSELINUX
+	security_context_t raw = NULL;
+	char *val = NULL, *p;
+	size_t valsz = 0;
+
+	/* TODO: it would be more efective to use mnt_optstr_locate_option(),
+	 *       save begin and end of the option and after context string
+	 *       translation replace stuff between begin and end pointers.
+	 *
+	 *       See also mnt_context_subst_optstr() where is the same problem
+	 *       with uid=/gid=.
+	 */
+	rc = mnt_optstr_get_option(*optstr, name, &val, &valsz);
+	if (rc)
+		return rc;
+	if (!valsz)
+		return -EINVAL;
+
+	/* the selinux contexts are quoted */
+	if (*val == '"') {
+		if (valsz <= 2 || *(val + valsz - 1) != '"')
+			return -EINVAL;		/* improperly quoted option string */
+		val++;
+		valsz -= 2;
+	}
+
+	val = strndup(val, valsz);
+	if (!val)
+		return -ENOMEM;
+
+	/* translate the context */
+	rc = selinux_trans_to_raw_context((security_context_t) val, &raw);
+	free(val);
+	if (rc == -1 ||	!raw)
+		return -EINVAL;
+
+	/* create quoted string from the raw context */
+	valsz = strlen((char *) raw);
+	if (!valsz)
+		return -EINVAL;
+	p = val = malloc(valsz + 3);
+	if (!val)
+		return -ENOMEM;
+
+	*p++ = '"';
+	memcpy(p, raw, valsz);
+	p += valsz;
+	*p++ = '"';
+	*p = '\0';
+
+	freecon(raw);
+
+	rc = mnt_optstr_set_option(optstr, name, val);
+	free(val);
+#endif
+	return rc;
+}
+
+static int optrstr_set_uint(char **optstr, const char *name, unsigned int num)
+{
+	char buf[40];
+	snprintf(buf, sizeof(buf), "%u", num);
+	return mnt_optstr_set_option(optstr, name, buf);
+}
+
+/**
+ * mnt_optstr_translate_uid:
+ * @optstr: string with comma separated list of options
+ *
+ * Translates "uid=<username>" or "uid=useruid" ro the real UID.
+ *
+ * Returns: 0 on success, negative number in case of error,
+ *          and 1 if not found uid= option.
+ */
+int mnt_optstr_translate_uid(char **optstr)
+{
+	char *val = NULL;
+	size_t valsz = 0;
+	int rc;
+
+	rc = mnt_optstr_get_option(*optstr, "uid", &val, &valsz);
+	if (rc || !val)
+		return rc;
+
+	if (!strncmp(val, "useruid", 7))
+		rc = optrstr_set_uint(optstr, "uid", getuid());
+
+	else if (!isdigit(*val)) {
+		uid_t id;
+		char *p = strndup(val, valsz);
+		if (!p)
+			return -ENOMEM;
+		rc = mnt_get_uid(p, &id);
+		free(p);
+
+		if (!rc)
+			rc = optrstr_set_uint(optstr, "uid", id);
+	}
+
+	return rc;
+}
+
+/**
+ * mnt_optstr_translate_gid:
+ * @optstr: string with comma separated list of options
+ *
+ * Translates "gid=<groupname>" or "gid=usergid" to the real GID.
+ *
+ * Returns: 0 on success, negative number in case of error,
+ *          and 1 if not found gid= option.
+ */
+int mnt_optstr_translate_gid(char **optstr)
+{
+	char *val = NULL;
+	size_t valsz = 0;
+	int rc;
+
+	rc = mnt_optstr_get_option(*optstr, "gid", &val, &valsz);
+	if (rc || !val)
+		return rc;
+
+	if (!strncmp(val, "usergid", 7))
+		rc = optrstr_set_uint(optstr, "gid", getgid());
+
+	else if (!isdigit(*val)) {
+		gid_t id;
+		char *p = strndup(val, valsz);
+		if (!p)
+			return -ENOMEM;
+		rc = mnt_get_gid(p, &id);
+		free(p);
+
+		if (!rc)
+			rc = optrstr_set_uint(optstr, "gid", id);
+	}
+
+	return rc;
+}
+
+
 #ifdef TEST_PROGRAM
 
 int test_append(struct mtest *ts, int argc, char *argv[])
@@ -678,6 +843,37 @@ int test_remove(struct mtest *ts, int argc, char *argv[])
 	return rc;
 }
 
+int test_trans(struct mtest *ts, int argc, char *argv[])
+{
+	char *optstr;
+	int rc;
+
+	if (argc < 2)
+		return -EINVAL;
+
+	optstr = strdup(argv[1]);
+
+	printf("optstr: %s\n", optstr);
+
+	rc = mnt_optstr_translate_uid(&optstr);
+	if (rc < 0)
+		return rc;
+	printf("translated uid: %s\n", optstr);
+
+	rc = mnt_optstr_translate_gid(&optstr);
+	if (rc < 0)
+		return rc;
+	printf("translated gid: %s\n", optstr);
+
+	rc = mnt_optstr_translate_selinux(&optstr, "context");
+	if (rc < 0)
+		return rc;
+	printf("translated context: %s\n", optstr);
+
+	free(optstr);
+	return rc == 1 ? 0 : rc;
+
+}
 
 int main(int argc, char *argv[])
 {
@@ -689,6 +885,8 @@ int main(int argc, char *argv[])
 		{ "--remove", test_remove, "<optstr> <name>            remove name in optstr" },
 		{ "--split",  test_split,  "<optstr>                   split into FS, VFS and userspace" },
 		{ "--flags",  test_flags,  "<optstr>                   convert options to MS_* flags" },
+		{ "--trans",  test_trans,  "<optstr>                   translate uid=, gid= and context=" },
+
 		{ NULL }
 	};
 	return  mnt_run_test(tss, argc, argv);
