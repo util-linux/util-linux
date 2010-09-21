@@ -107,6 +107,9 @@ extern int endswith(const char *s, const char *sx);
 extern int startswith(const char *s, const char *sx);
 
 extern char *mnt_get_username(const uid_t uid);
+extern int mnt_get_uid(const char *username, uid_t *uid);
+extern int mnt_get_gid(const char *groupname, gid_t *gid);
+
 extern int mnt_has_regular_mtab(void);
 
 extern char *mnt_get_mountpoint(const char *path);

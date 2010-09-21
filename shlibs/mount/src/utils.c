@@ -27,6 +27,7 @@
 #include <sys/types.h>
 #include <fcntl.h>
 #include <pwd.h>
+#include <grp.h>
 
 #include "strutils.h"
 #include "pathnames.h"
@@ -314,6 +315,48 @@ char *mnt_get_username(const uid_t uid)
 
 	free(buf);
 	return username;
+}
+
+int mnt_get_uid(const char *username, uid_t *uid)
+{
+        struct passwd pwd;
+	struct passwd *pw;
+	size_t sz = sysconf(_SC_GETPW_R_SIZE_MAX);
+	char *buf;
+
+	if (sz <= 0)
+		sz = 16384;        /* Should be more than enough */
+
+	buf = malloc(sz);
+	if (!buf)
+		return -ENOMEM;
+
+	if (!getpwnam_r(username, &pwd, buf, sz, &pw) && pw)
+		*uid= pw->pw_uid;
+
+	free(buf);
+	return 0;
+}
+
+int mnt_get_gid(const char *groupname, gid_t *gid)
+{
+        struct group grp;
+	struct group *gr;
+	size_t sz = sysconf(_SC_GETGR_R_SIZE_MAX);
+	char *buf;
+
+	if (sz <= 0)
+		sz = 16384;        /* Should be more than enough */
+
+	buf = malloc(sz);
+	if (!buf)
+		return -ENOMEM;
+
+	if (!getgrnam_r(groupname, &grp, buf, sz, &gr) && gr)
+		*gid= gr->gr_gid;
+
+	free(buf);
+	return 0;
 }
 
 /*
