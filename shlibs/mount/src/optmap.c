@@ -139,6 +139,8 @@ static const struct mnt_optmap linux_flags_map[] =
 
 /*
  * userspace mount option (built-in MNT_USERSPACE_MAP)
+ *
+ * TODO: offset=, sizelimit=, encryption=, vfs=
  */
 static const struct mnt_optmap userspace_opts_map[] =
 {
