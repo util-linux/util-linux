@@ -1213,14 +1213,14 @@ get_boot(enum action what) {
 	if (what == create_empty_dos)
 		goto got_dos_table;		/* skip reading disk */
 
-	if ((fd = open(disk_device, type_open)) < 0) {
-	    if ((fd = open(disk_device, O_RDONLY)) < 0) {
-		if (what == try_only)
-		    return 1;
-		fatal(unable_to_open);
-	    } else
-		printf(_("You will not be able to write "
-			 "the partition table.\n"));
+	if (what != try_only) {
+		if ((fd = open(disk_device, type_open)) < 0) {
+			if ((fd = open(disk_device, O_RDONLY)) < 0)
+				fatal(unable_to_open);
+			else
+				printf(_("You will not be able to write "
+					    "the partition table.\n"));
+		}
 	}
 
 	if (512 != read(fd, MBRbuffer, 512)) {
