@@ -172,9 +172,9 @@ extern int mnt_split_optstr(const char *optstr,
 extern int mnt_optstr_get_mountflags(const char *optstr, unsigned long *flags);
 extern int mnt_optstr_get_userspace_mountflags(const char *optstr, unsigned long *flags);
 
-extern int mnt_optstr_translate_gid(char **optstr);
-extern int mnt_optstr_translate_uid(char **optstr);
-extern int mnt_optstr_translate_selinux(char **optstr, const char *name);
+extern int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next);
+extern int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next);
+extern int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, char **next);
 
 /* iter.c */
 enum {

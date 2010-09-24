@@ -33,6 +33,19 @@
 #include "mountP.h"
 
 /*
+ * Option location
+ */
+struct mnt_optloc {
+	char	*begin;
+	char	*end;
+	char	*value;
+	size_t	valsz;
+	size_t  namesz;
+};
+
+#define mnt_init_optloc(_ol)	(memset((_ol), 0, sizeof(struct mnt_optloc)))
+
+/*
  * Parses the first option from @optstr. The @optstr pointer is set to begin of
  * the next option.
  *
@@ -105,8 +118,8 @@ error:
  *
  * Returns negative number on parse error, 1 when not found and 0 on success.
  */
-static int mnt_optstr_locate_option(char *optstr, const char *name, char **begin,
-					char **end, char **value, size_t *valsz)
+static int mnt_optstr_locate_option(char *optstr, const char *name,
+					struct mnt_optloc *ol)
 {
 	char *n;
 	size_t namesz, nsz;
@@ -118,16 +131,15 @@ static int mnt_optstr_locate_option(char *optstr, const char *name, char **begin
 	namesz = strlen(name);
 
 	do {
-		rc = mnt_optstr_parse_next(&optstr, &n, &nsz, value, valsz);
+		rc = mnt_optstr_parse_next(&optstr, &n, &nsz,
+					&ol->value, &ol->valsz);
 		if (rc)
 			break;
 
 		if (namesz == nsz && strncmp(n, name, nsz) == 0) {
-			if (begin)
-				*begin = n;
-			if (end)
-				*end = *(optstr - 1) == ',' ?
-					optstr - 1 : optstr;
+			ol->begin = n;
+			ol->end = *(optstr - 1) == ',' ? optstr - 1 : optstr;
+			ol->namesz = nsz;
 			return 0;
 		}
 	} while(1);
@@ -246,7 +258,7 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
 	free(*optstr);
 	*optstr = tmp;
 
-	DBG(OPTS, mnt_debug("failed to prepend '%s[=%s]' to '%s'", name, value, optstr));
+	DBG(OPTIONS, mnt_debug("failed to prepend '%s[=%s]' to '%s'", name, value, optstr));
 	return rc;
 }
 
@@ -263,39 +275,83 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
 int mnt_optstr_get_option(char *optstr, const char *name,
 				char **value, size_t *valsz)
 {
-	return mnt_optstr_locate_option(optstr, name, NULL, NULL, value, valsz);
+	struct mnt_optloc ol;
+	int rc;
+
+	mnt_init_optloc(&ol);
+
+	rc = mnt_optstr_locate_option(optstr, name, &ol);
+	if (!rc) {
+		if (value)
+			*value = ol.value;
+		if (valsz)
+			*valsz = ol.valsz;
+	}
+	return rc;
 }
 
-/* Removes substring located between @begin and @end from @str
- * -- result never starts or ends with comma or contains two commas
+/*
+ * The result never starts or ends with comma or contains two commas
  *    (e.g. ",aaa,bbb" or "aaa,,bbb" or "aaa,")
  */
-static void remove_substring(char *str, char *begin, char *end)
+int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end)
 {
 	size_t sz = strlen(end);
 
-	if ((begin == str || *(begin - 1) == ',') && *end == ',')
+	if (!optstr || !begin || !end)
+		return -EINVAL;
+
+	if ((begin == *optstr || *(begin - 1) == ',') && *end == ',')
 		end++;
 
 	memmove(begin, end, sz + 1);
 	if (!*begin && *(begin - 1) == ',')
 		*(begin - 1) = '\0';
+
+	return 0;
 }
 
-/* insert '=substr' to @str on position @pos */
-static int insert_substring(char **str, char *pos, const char *substr)
+/* insert 'substr' or '=substr' to @str on position @pos */
+static int insert_substring(char **str, char *pos, const char *substr, char **next)
 {
-	char *p;
-	size_t ssz = strlen(substr);	/* substring size */
+	size_t subsz = strlen(substr);			/* substring size */
+	size_t strsz = strlen(*str);
+	size_t possz = strlen(pos);
+	size_t posoff;
+	char *p = NULL;
+	int sep;
 
-	p = realloc(*str, strlen(*str) + 1 + ssz);
+	/* is it necessary to prepend '=' before the substring ? */
+	sep = !(pos > *str && *(pos - 1) == '=');
+
+	/* save an offset of the place where we need add substr */
+	posoff = pos - *str;
+
+	p = realloc(*str, strsz + sep + subsz + 1);
 	if (!p)
 		return -ENOMEM;
-	*str = p;
 
-	memmove(pos + ssz + 1, pos, strlen(pos) + 1);
-	*pos++ = '=';
-	memcpy(pos, substr, ssz);
+	/* zeroize new allocated memory -- valgind loves is... */
+	memset(p + strsz, 0, sep + subsz + 1);
+
+	/* set pointers to the reallocated string */
+	*str = p;
+	pos = p + posoff;
+
+	if (possz)
+		/* create a room for new substring */
+		memmove(pos + subsz + sep, pos, possz + 1);
+	if (sep)
+		*pos++ = '=';
+
+	memcpy(pos, substr, subsz);
+
+	if (next) {
+		/* set pointer to the next option */
+		*next = pos + subsz + sep + 1;
+		if (**next == ',')
+			(*next)++;
+	}
 	return 0;
 }
 
@@ -312,41 +368,41 @@ static int insert_substring(char **str, char *pos, const char *substr)
  */
 int mnt_optstr_set_option(char **optstr, const char *name, const char *value)
 {
-	char *val = NULL, *begin, *end, *nameend;
-	size_t valsz;
+	struct mnt_optloc ol;
+	char *nameend;
 	int rc = 1;
 
 	if (!optstr)
 		return -EINVAL;
+
+	mnt_init_optloc(&ol);
+
 	if (*optstr)
-		rc = mnt_optstr_locate_option(*optstr, name,
-					&begin, &end, &val, &valsz);
+		rc = mnt_optstr_locate_option(*optstr, name, &ol);
 	if (rc < 0)
-		/* parse error */
-		return rc;
+		return rc;			/* parse error */
 	if (rc == 1)
-		/* not found */
-		return mnt_optstr_append_option(optstr, name, value);
+		return mnt_optstr_append_option(optstr, name, value);	/* not found */
 
-	nameend = begin + strlen(name);
+	nameend = ol.begin + ol.namesz;
 
-	if (value == NULL && val && valsz)
+	if (value == NULL && ol.value && ol.valsz)
 		/* remove unwanted "=value" */
-		remove_substring(*optstr, nameend, end);
+		mnt_optstr_remove_option_at(optstr, nameend, ol.end);
 
-	else if (value && val == NULL)
+	else if (value && ol.value == NULL)
 		/* insert "=value" */
-		rc = insert_substring(optstr, nameend, value);
+		rc = insert_substring(optstr, nameend, value, NULL);
 
-	else if (value && val && strlen(value) == valsz)
+	else if (value && ol.value && strlen(value) == ol.valsz)
 		/* simply replace =value */
-		memcpy(val, value, valsz);
+		memcpy(ol.value, value, ol.valsz);
 
-	else if (value && val) {
-		remove_substring(*optstr, nameend, end);
-		rc = insert_substring(optstr, nameend, value);
+	else if (value && ol.value) {
+		mnt_optstr_remove_option_at(optstr, nameend, ol.end);
+		rc = insert_substring(optstr, nameend, value, NULL);
 	}
-	return 0;
+	return rc;
 }
 
 /**
@@ -359,15 +415,16 @@ int mnt_optstr_set_option(char **optstr, const char *name, const char *value)
  */
 int mnt_optstr_remove_option(char **optstr, const char *name)
 {
-	char *begin, *end;
+	struct mnt_optloc ol;
 	int rc;
 
-	rc = mnt_optstr_locate_option(*optstr, name,
-				&begin, &end, NULL, NULL);
+	mnt_init_optloc(&ol);
+
+	rc = mnt_optstr_locate_option(*optstr, name, &ol);
 	if (rc != 0)
 		return rc;
 
-	remove_substring(*optstr, begin, end);
+	mnt_optstr_remove_option_at(optstr, ol.begin, ol.end);
 	return 0;
 }
 
@@ -530,157 +587,178 @@ int mnt_optstr_get_userspace_mountflags(const char *optstr, unsigned long *flags
 }
 
 /**
- * mnt_optstr_translate_selinux:
+ * mnt_optstr_fix_selinux:
  * @optstr: string with comma separated list of options
- * @name: context option name (fscontext. rootcontext, ...)
+ * @value: pointer to the begin of the context value
+ * @valsz: size of the value
+ * @next: returns pointer to the next option (optional argument)
  *
  * Translates SELinux context from human to raw format. The function does not
  * modify @optstr and returns zero if libmount is compiled without SELinux
  * support.
  *
- * Returns: 0 on success, negative number in case of error,
- *          and 1 if not found the @name
+ * Returns: 0 on success, negative number in case of error.
  */
-int mnt_optstr_translate_selinux(char **optstr, const char *name)
+int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, char **next)
 {
 	int rc = 0;
 
 #ifdef HAVE_LIBSELINUX
 	security_context_t raw = NULL;
-	char *val = NULL, *p;
-	size_t valsz = 0;
+	char *p, *val, *begin, *end;
+	size_t sz;
 
-	/* TODO: it would be more efective to use mnt_optstr_locate_option(),
-	 *       save begin and end of the option and after context string
-	 *       translation replace stuff between begin and end pointers.
-	 *
-	 *       See also mnt_context_subst_optstr() where is the same problem
-	 *       with uid=/gid=.
-	 */
-	rc = mnt_optstr_get_option(*optstr, name, &val, &valsz);
-	if (rc)
-		return rc;
-	if (!valsz)
+	if (!optstr || !*optstr || !value || !valsz)
 		return -EINVAL;
 
+	begin = value;
+	end = value + valsz;
+
 	/* the selinux contexts are quoted */
-	if (*val == '"') {
-		if (valsz <= 2 || *(val + valsz - 1) != '"')
+	if (*value == '"') {
+		if (valsz <= 2 || *(value + valsz - 1) != '"')
 			return -EINVAL;		/* improperly quoted option string */
-		val++;
+		value++;
 		valsz -= 2;
 	}
 
-	val = strndup(val, valsz);
-	if (!val)
+	p = strndup(value, valsz);
+	if (!p)
 		return -ENOMEM;
 
 	/* translate the context */
-	rc = selinux_trans_to_raw_context((security_context_t) val, &raw);
-	free(val);
+	rc = selinux_trans_to_raw_context((security_context_t) p, &raw);
+	free(p);
 	if (rc == -1 ||	!raw)
 		return -EINVAL;
 
 	/* create quoted string from the raw context */
-	valsz = strlen((char *) raw);
-	if (!valsz)
+	sz = strlen((char *) raw);
+	if (!sz)
 		return -EINVAL;
+
 	p = val = malloc(valsz + 3);
 	if (!val)
 		return -ENOMEM;
 
 	*p++ = '"';
-	memcpy(p, raw, valsz);
-	p += valsz;
+	memcpy(p, raw, sz);
+	p += sz;
 	*p++ = '"';
 	*p = '\0';
 
 	freecon(raw);
 
-	rc = mnt_optstr_set_option(optstr, name, val);
+	/* set new context */
+	mnt_optstr_remove_option_at(optstr, begin, end);
+	rc = insert_substring(optstr, begin, val, next);
 	free(val);
 #endif
 	return rc;
 }
 
-static int optrstr_set_uint(char **optstr, const char *name, unsigned int num)
+static int set_uint_value(char **optstr, unsigned int num,
+			char *begin, char *end, char **next)
 {
 	char buf[40];
 	snprintf(buf, sizeof(buf), "%u", num);
-	return mnt_optstr_set_option(optstr, name, buf);
+
+	mnt_optstr_remove_option_at(optstr, begin, end);
+	return insert_substring(optstr, begin, buf, next);
 }
 
 /**
- * mnt_optstr_translate_uid:
+ * mnt_optstr_fix_uid:
  * @optstr: string with comma separated list of options
+ * @value: pointer to the begin of the uid value
+ * @valsz: size of the value
+ * @next: returns pointer to the next option (optional argument)
+
+ * Translates "<username>" or "useruid" to the real UID.
  *
- * Translates "uid=<username>" or "uid=useruid" ro the real UID.
+ * For example:
+ *	if (!mnt_optstr_get_option(optstr, "uid", &val, &valsz))
+ *		mnt_optstr_fix_uid(&optstr, val, valsz, NULL);
  *
- * Returns: 0 on success, negative number in case of error,
- *          and 1 if not found uid= option.
+ * Returns: 0 on success, negative number in case of error.
  */
-int mnt_optstr_translate_uid(char **optstr)
+int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next)
 {
-	char *val = NULL;
-	size_t valsz = 0;
-	int rc;
+	int rc = 0;
+	char *end;
 
-	rc = mnt_optstr_get_option(*optstr, "uid", &val, &valsz);
-	if (rc || !val)
-		return rc;
+	if (!optstr || !*optstr || !value || !valsz)
+		return -EINVAL;
 
-	if (!strncmp(val, "useruid", 7))
-		rc = optrstr_set_uint(optstr, "uid", getuid());
+	end = value + valsz;
 
-	else if (!isdigit(*val)) {
+	if (valsz == 7 && !strncmp(value, "useruid", 7) &&
+	    (*(value + 7) == ',' || !*(value + 7)))
+		rc = set_uint_value(optstr, getuid(), value, end, next);
+
+	else if (!isdigit(*value)) {
 		uid_t id;
-		char *p = strndup(val, valsz);
+		char *p = strndup(value, valsz);
 		if (!p)
 			return -ENOMEM;
 		rc = mnt_get_uid(p, &id);
 		free(p);
 
 		if (!rc)
-			rc = optrstr_set_uint(optstr, "uid", id);
+			rc = set_uint_value(optstr, id, value, end, next);
+
+	} else if (next) {
+		/* nothing */
+		*next = value + valsz;
+		if (**next == ',')
+			(*next)++;
 	}
 
 	return rc;
 }
 
 /**
- * mnt_optstr_translate_gid:
+ * mnt_optstr_fix_gid:
  * @optstr: string with comma separated list of options
+ * @value: pointer to the begin of the uid value
+ * @valsz: size of the value
+ * @next: returns pointer to the next option (optional argument)
+
+ * Translates "<groupname>" or "usergid" to the real GID.
  *
- * Translates "gid=<groupname>" or "gid=usergid" to the real GID.
- *
- * Returns: 0 on success, negative number in case of error,
- *          and 1 if not found gid= option.
+ * Returns: 0 on success, negative number in case of error.
  */
-int mnt_optstr_translate_gid(char **optstr)
+int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next)
 {
-	char *val = NULL;
-	size_t valsz = 0;
-	int rc;
+	int rc = 0;
+	char *end;
 
-	rc = mnt_optstr_get_option(*optstr, "gid", &val, &valsz);
-	if (rc || !val)
-		return rc;
+	if (!optstr || !*optstr || !value || !valsz)
+		return -EINVAL;
 
-	if (!strncmp(val, "usergid", 7))
-		rc = optrstr_set_uint(optstr, "gid", getgid());
+	end = value + valsz;
 
-	else if (!isdigit(*val)) {
+	if (valsz == 7 && !strncmp(value, "usergid", 7) &&
+	    (*(value + 7) == ',' || !*(value + 7)))
+		rc = set_uint_value(optstr, getgid(), value, end, next);
+
+	else if (!isdigit(*value)) {
 		gid_t id;
-		char *p = strndup(val, valsz);
+		char *p = strndup(value, valsz);
 		if (!p)
 			return -ENOMEM;
 		rc = mnt_get_gid(p, &id);
 		free(p);
 
 		if (!rc)
-			rc = optrstr_set_uint(optstr, "gid", id);
-	}
+			rc = set_uint_value(optstr, id, value, end, next);
 
+	} else if (next) {
+		/* nothing */
+		*next = value + valsz;
+		if (**next == ',')
+			(*next)++;
+	}
 	return rc;
 }
 
@@ -794,6 +872,7 @@ int test_set(struct mtest *ts, int argc, char *argv[])
 	rc = mnt_optstr_set_option(&optstr, name, value);
 	if (!rc)
 		printf("result: >%s<\n", optstr);
+	free(optstr);
 	return rc;
 }
 
@@ -843,35 +922,36 @@ int test_remove(struct mtest *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_trans(struct mtest *ts, int argc, char *argv[])
+int test_fix(struct mtest *ts, int argc, char *argv[])
 {
 	char *optstr;
-	int rc;
+	int rc = 0;
+	char *name, *val, *next;
+	size_t valsz, namesz;
 
 	if (argc < 2)
 		return -EINVAL;
 
-	optstr = strdup(argv[1]);
+	next = optstr = strdup(argv[1]);
 
 	printf("optstr: %s\n", optstr);
 
-	rc = mnt_optstr_translate_uid(&optstr);
-	if (rc < 0)
-		return rc;
-	printf("translated uid: %s\n", optstr);
+	while (!mnt_optstr_next_option(&next, &name, &namesz, &val, &valsz)) {
 
-	rc = mnt_optstr_translate_gid(&optstr);
-	if (rc < 0)
-		return rc;
-	printf("translated gid: %s\n", optstr);
+		if (!strncmp(name, "uid", 3))
+			rc = mnt_optstr_fix_uid(&optstr, val, valsz, &next);
+		else if (!strncmp(name, "gid", 3))
+			rc = mnt_optstr_fix_gid(&optstr, val, valsz, &next);
+		else if (!strncmp(name, "context", 7))
+			rc = mnt_optstr_fix_secontext(&optstr, val, valsz, &next);
+		if (rc)
+			break;
+	}
 
-	rc = mnt_optstr_translate_selinux(&optstr, "context");
-	if (rc < 0)
-		return rc;
-	printf("translated context: %s\n", optstr);
+	printf("fixed:  %s\n", optstr);
 
 	free(optstr);
-	return rc == 1 ? 0 : rc;
+	return rc;
 
 }
 
@@ -885,7 +965,7 @@ int main(int argc, char *argv[])
 		{ "--remove", test_remove, "<optstr> <name>            remove name in optstr" },
 		{ "--split",  test_split,  "<optstr>                   split into FS, VFS and userspace" },
 		{ "--flags",  test_flags,  "<optstr>                   convert options to MS_* flags" },
-		{ "--trans",  test_trans,  "<optstr>                   translate uid=, gid= and context=" },
+		{ "--fix",    test_fix,    "<optstr>                   fix uid=, gid= and context=" },
 
 		{ NULL }
 	};

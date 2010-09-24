@@ -319,11 +319,14 @@ char *mnt_get_username(const uid_t uid)
 
 int mnt_get_uid(const char *username, uid_t *uid)
 {
+	int rc = -1;
         struct passwd pwd;
 	struct passwd *pw;
 	size_t sz = sysconf(_SC_GETPW_R_SIZE_MAX);
 	char *buf;
 
+	if (!username || !uid)
+		return -EINVAL;
 	if (sz <= 0)
 		sz = 16384;        /* Should be more than enough */
 
@@ -331,20 +334,28 @@ int mnt_get_uid(const char *username, uid_t *uid)
 	if (!buf)
 		return -ENOMEM;
 
-	if (!getpwnam_r(username, &pwd, buf, sz, &pw) && pw)
+	if (!getpwnam_r(username, &pwd, buf, sz, &pw) && pw) {
 		*uid= pw->pw_uid;
+		rc = 0;
+	} else {
+		DBG(UTILS, mnt_debug(
+			"cannot convert '%s' username to UID", username));
+	}
 
 	free(buf);
-	return 0;
+	return rc;
 }
 
 int mnt_get_gid(const char *groupname, gid_t *gid)
 {
+	int rc = -1;
         struct group grp;
 	struct group *gr;
 	size_t sz = sysconf(_SC_GETGR_R_SIZE_MAX);
 	char *buf;
 
+	if (!groupname || !gid)
+		return -EINVAL;
 	if (sz <= 0)
 		sz = 16384;        /* Should be more than enough */
 
@@ -352,11 +363,45 @@ int mnt_get_gid(const char *groupname, gid_t *gid)
 	if (!buf)
 		return -ENOMEM;
 
-	if (!getgrnam_r(groupname, &grp, buf, sz, &gr) && gr)
+	if (!getgrnam_r(groupname, &grp, buf, sz, &gr) && gr) {
 		*gid= gr->gr_gid;
+		rc = 0;
+	} else {
+		DBG(UTILS, mnt_debug(
+			"cannot convert '%s' groupname to GID", groupname));
+	}
 
 	free(buf);
-	return 0;
+	return rc;
+}
+
+int mnt_in_group(gid_t gid)
+{
+	int rc = 0, n, i;
+	gid_t *grps = NULL;
+
+	if (getgid() == gid)
+		return 1;
+
+	n = getgroups(0, NULL);
+	if (n <= 0)
+		goto done;
+
+	grps = malloc(n * sizeof(*grps));
+	if (!grps)
+		goto done;
+
+	if (getgroups(n, grps) == n) {
+		for (i = 0; i < n; i++) {
+			if (grps[i] == gid) {
+				rc = 1;
+				break;
+			}
+		}
+	}
+done:
+	free(grps);
+	return rc;
 }
 
 /*

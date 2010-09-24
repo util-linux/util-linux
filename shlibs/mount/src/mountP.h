@@ -109,6 +109,7 @@ extern int startswith(const char *s, const char *sx);
 extern char *mnt_get_username(const uid_t uid);
 extern int mnt_get_uid(const char *username, uid_t *uid);
 extern int mnt_get_gid(const char *groupname, gid_t *gid);
+extern int mnt_in_group(gid_t gid);
 
 extern int mnt_has_regular_mtab(void);
 
@@ -204,6 +205,9 @@ extern int mnt_optmap_enum_to_number(const struct mnt_optmap *mapent,
                         const char *rawdata, size_t len);
 extern const char *mnt_optmap_get_type(const struct mnt_optmap *mapent);
 extern int mnt_optmap_require_value(const struct mnt_optmap *mapent);
+
+/* optstr.c */
+extern int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end);
 
 /* fs.c */
 extern int __mnt_fs_set_source(mnt_fs *fs, char *source);
