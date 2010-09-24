@@ -533,18 +533,19 @@ err:
  * This function has to be always called before mount(2). The mnt_update_file()
  * should not be called if mnt_prepare_update() returns non-zero value.
  *
- * Returns: 0 on success, 1 if update is unnecessary, -1 in case of error
+ * Returns: 0 on success, 1 if update is unnecessary, negative in case of error
  */
 int mnt_prepare_update(mnt_update *upd)
 {
 	char *u = NULL;
 	const char *o = NULL;
+	int rc = 0;
 
 	assert(upd);
 	assert(upd->fs);
 
 	if (!upd || !upd->fs)
-		return -1;
+		return -EINVAL;
 
 	DBG(UPDATE, mnt_debug_h(upd,
 		"prepare update (target %s, source %s, optstr %s)",
@@ -555,13 +556,17 @@ int mnt_prepare_update(mnt_update *upd)
 	if (!upd->filename) {
 		const char *p = mnt_get_writable_mtab_path();
 		if (!p) {
-			if (errno)
-			       goto err;	/* EACCES? */
+			if (errno) {
+				rc = -errno;
+				goto err;	/* EACCES? */
+			}
 			goto nothing;		/* no mtab */
 		}
 		upd->filename = strdup(p);
-		if (!upd->filename)
+		if (!upd->filename) {
+			rc = -ENOMEM;
 			goto err;
+		}
 	}
 	if (!upd->format) {
 		if (endswith(upd->filename, "mountinfo"))
@@ -597,39 +602,45 @@ int mnt_prepare_update(mnt_update *upd)
 	 *  - remove all non-userspace mount options
 	 */
 	if (upd->mountflags & MS_REMOUNT) {
-		if (mnt_split_optstr(o, &u, NULL, NULL, MNT_NOMTAB, 0))
+		rc = mnt_split_optstr(o, &u, NULL, NULL, MNT_NOMTAB, 0);
+		if (rc)
 			goto err;
-		if (__mnt_fs_set_optstr(upd->fs, u, FALSE))
+		rc = __mnt_fs_set_optstr_ptr(upd->fs, u, FALSE);
+		if (rc)
 			goto err;
-
+		u = NULL;
 	} else {
 		if (!o)
 			goto nothing;	/* no options */
-		if (mnt_split_optstr(o, &u, NULL, NULL, MNT_NOMTAB, 0))
+		rc = mnt_split_optstr(o, &u, NULL, NULL, MNT_NOMTAB, 0);
+		if (rc)
 			goto err;
 		if (!u)
 			goto nothing;	/* no userpsace options */
-		if (set_fs_root(upd, upd->fs))
+		rc = set_fs_root(upd, upd->fs);
+		if (rc)
 			goto err;
-		__mnt_fs_set_optstr(upd->fs, u, FALSE);
+		rc = __mnt_fs_set_optstr_ptr(upd->fs, u, FALSE);
+		if (rc)
+			goto err;
+		u = NULL;
 	}
 
 	if (!upd->nolock && !upd->lc) {
 		upd->lc = mnt_new_lock(upd->filename, 0);
-		if (!upd->lc)
+		if (!upd->lc) {
+			rc = -ENOMEM;
 			goto err;
+		}
 	}
 
 	DBG(UPDATE, mnt_debug_h(upd, "prepare update: success"));
-	free(u);
 	return 0;
 err:
+	free(u);
 	DBG(UPDATE, mnt_debug_h(upd, "prepare update: failed"));
-	free(u);
-	return -1;
+	return rc;
 nothing:
-	DBG(UPDATE, mnt_debug_h(upd, "prepare update: unnecessary"));
-	free(u);
 	return 1;
 }
 
@@ -759,7 +770,7 @@ static int modify_options(mnt_update *upd)
 		mnt_tab_remove_fs(tb, fs);
 		rem_fs = fs;
 	} else
-		__mnt_fs_set_optstr(fs, mnt_fs_get_optstr(upd->fs), FALSE);
+		rc = __mnt_fs_set_optstr(fs, mnt_fs_get_optstr(upd->fs), FALSE);
 
 	if (!update_file(upd->filename, upd->format, tb))
 		rc = 0;

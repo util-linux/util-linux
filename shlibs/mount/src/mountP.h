@@ -210,8 +210,9 @@ extern int mnt_optmap_require_value(const struct mnt_optmap *mapent);
 extern int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end);
 
 /* fs.c */
-extern int __mnt_fs_set_source(mnt_fs *fs, char *source);
-extern int __mnt_fs_set_fstype(mnt_fs *fs, char *fstype);
+extern int __mnt_fs_set_source_ptr(mnt_fs *fs, char *source);
+extern int __mnt_fs_set_fstype_ptr(mnt_fs *fs, char *fstype);
+extern int __mnt_fs_set_optstr_ptr(mnt_fs *fs, char *optstr, int split);
 extern int __mnt_fs_set_optstr(mnt_fs *fs, const char *optstr, int split);
 
 #endif /* _LIBMOUNT_PRIVATE_H */

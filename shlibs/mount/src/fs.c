@@ -189,24 +189,29 @@ const char *mnt_fs_get_source(mnt_fs *fs)
 }
 
 /* Used by parser mnt_file ONLY (@source has to be allocated) */
-int __mnt_fs_set_source(mnt_fs *fs, char *source)
+int __mnt_fs_set_source_ptr(mnt_fs *fs, char *source)
 {
+	char *t = NULL, *v = NULL;
+
 	assert(fs);
 
 	if (source && !strcmp(source, "none"))
 		source = NULL;
 
 	if (source && strchr(source, '=')) {
-		char *name, *val;
-
-		if (blkid_parse_tag_string(source, &name, &val) != 0)
+		if (blkid_parse_tag_string(source, &t, &v) != 0)
 			return -1;
-
-		fs->tagval = val;
-		fs->tagname = name;
 	}
 
+	if (fs->source != source)
+		free(fs->source);
+
+	free(fs->tagname);
+	free(fs->tagval);
+
 	fs->source = source;
+	fs->tagname = t;
+	fs->tagval = v;
 	return 0;
 }
 
@@ -222,6 +227,7 @@ int __mnt_fs_set_source(mnt_fs *fs, char *source)
 int mnt_fs_set_source(mnt_fs *fs, const char *source)
 {
 	char *p;
+	int rc;
 
 	if (!fs && !source)
 		return -EINVAL;
@@ -229,12 +235,10 @@ int mnt_fs_set_source(mnt_fs *fs, const char *source)
 	if (!p)
 		return -ENOMEM;
 
-	free(fs->tagval);
-	free(fs->tagname);
-	free(fs->source);
-	fs->tagval = fs->tagname = fs->source = NULL;
-
-	return __mnt_fs_set_source(fs, p);
+	rc = __mnt_fs_set_source_ptr(fs, p);
+	if (rc)
+		free(p);
+	return rc;
 }
 
 /**
@@ -332,12 +336,15 @@ const char *mnt_fs_get_fstype(mnt_fs *fs)
 }
 
 /* Used by mnt_file parser only */
-int __mnt_fs_set_fstype(mnt_fs *fs, char *fstype)
+int __mnt_fs_set_fstype_ptr(mnt_fs *fs, char *fstype)
 {
 	assert(fs);
 
 	if (!fstype)
 		return -EINVAL;
+
+	if (fstype != fs->fstype)
+		free(fs->fstype);
 
 	fs->fstype = fstype;
 	fs->flags &= ~MNT_FS_PSEUDO;
@@ -366,15 +373,17 @@ int __mnt_fs_set_fstype(mnt_fs *fs, char *fstype)
 int mnt_fs_set_fstype(mnt_fs *fs, const char *fstype)
 {
 	char *p;
+	int rc;
 
 	if (!fs || !fstype)
 		return -EINVAL;
 	p = strdup(fstype);
 	if (!p)
 		return -ENOMEM;
-	free(fs->fstype);
-
-	return __mnt_fs_set_fstype(fs, p);
+	rc =  __mnt_fs_set_fstype_ptr(fs, p);
+	if (rc)
+		free(p);
+	return rc;
 }
 
 /**
@@ -389,37 +398,49 @@ const char *mnt_fs_get_optstr(mnt_fs *fs)
 	return fs ? fs->optstr : NULL;
 }
 
-int __mnt_fs_set_optstr(mnt_fs *fs, const char *optstr, int split)
+int __mnt_fs_set_optstr_ptr(mnt_fs *fs, char *ptr, int split)
 {
-	char *p = NULL, *v = NULL, *f = NULL;
+	char *v = NULL, *f = NULL;
 
 	assert(fs);
 
 	if (!fs)
 		return -EINVAL;
-	if (optstr) {
+	if (ptr) {
 		int rc = 0;
 
 		if (split)
-			rc = mnt_split_optstr((char *) optstr, NULL, &v, &f, 0, 0);
+			rc = mnt_split_optstr((char *) ptr, NULL, &v, &f, 0, 0);
 		if (rc)
 			return rc;
-		p = strdup(optstr);
-		if (!p) {
-			free(v);
-			free(f);
-			return -ENOMEM;
-		}
 	}
 
-	free(fs->optstr);
+	if (ptr != fs->optstr)
+		free(fs->optstr);
+
 	free(fs->fs_optstr);
 	free(fs->vfs_optstr);
 
-	fs->optstr = p;
+	fs->optstr = ptr;
 	fs->fs_optstr = f;
 	fs->vfs_optstr = v;
 	return 0;
+}
+
+int __mnt_fs_set_optstr(mnt_fs *fs, const char *optstr, int split)
+{
+	char *p;
+	int rc;
+
+	assert(fs);
+
+	p = strdup(optstr);
+	if (!p)
+		return -ENOMEM;
+	rc = __mnt_fs_set_optstr_ptr(fs, p, split);
+	if (rc)
+		free(p);		/* error, deallocate */
+	return rc;
 }
 
 /**

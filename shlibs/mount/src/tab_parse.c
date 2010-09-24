@@ -57,24 +57,24 @@ static size_t next_word_size(char *s, char **start, char **end)
 	return e - s;
 }
 
-static char *next_word(char **s)
+static int next_word(char **s, char **next)
 {
 	size_t sz;
-	char *res, *end;
+	char *end;
 
 	assert(s);
 
 	sz = next_word_size(*s, s, &end) + 1;
 	if (sz == 1)
-		return NULL;
+		return -EINVAL;
 
-	res = malloc(sz);
-	if (!res)
-		return NULL;
+	*next = malloc(sz);
+	if (!*next)
+		return -ENOMEM;
 
-	unmangle_to_buffer(*s, res, sz);
+	unmangle_to_buffer(*s, *next, sz);
 	*s = end + 1;
-	return res;
+	return 0;
 }
 
 static int next_word_skip(char **s)
@@ -115,47 +115,53 @@ static int next_number(char **s, int *num)
  */
 static int mnt_tab_parse_file_line(mnt_fs *fs, char *s)
 {
-	int rc = 0;
-	char *p = NULL;
+	int rc = 0, col;
 
-	/* SOURCE */
-	rc =__mnt_fs_set_source(fs, next_word(&s));
-	if (rc)
-		goto err;
+	fs->passno = fs->freq = 0;	/* default */
 
-	/* TARGET */
-	fs->target = next_word(&s);
-	if (!fs->target)
-		goto err;
+	for (col = 0; rc == 0 && col < 4; col++) {
+		char *p = NULL;
 
-	/* TYPE */
-	rc = __mnt_fs_set_fstype(fs, next_word(&s));
-	if (rc)
-		goto err;
+		rc = next_word(&s, &p);
+		if (rc)
+			goto done;
 
-	/* OPTS */
-	p = next_word(&s);
-	if (!p || mnt_fs_set_optstr(fs, p))
-		goto err;
-
-	/* default */
-	fs->passno = fs->freq = 0;
+		switch(col) {
+		/* SOURCE */
+		case 0:
+			rc =__mnt_fs_set_source_ptr(fs, p);
+			break;
+		/* TARGET */
+		case 1:
+			fs->target = p;
+			break;
+		/* TYPE */
+		case 2:
+			rc = __mnt_fs_set_fstype_ptr(fs, p);
+			break;
+		/* OPTS */
+		case 3:
+			rc = __mnt_fs_set_optstr_ptr(fs, p, TRUE);
+			break;
+		}
+		if (rc) {
+			free(p);
+			goto done;
+		}
+	}
 
 	/* FREQ (optional) */
-	if (next_number(&s, &fs->freq) != 0) {
-		if (*s)
-			goto err;;
+	rc = next_number(&s, &fs->freq);
+	if (rc && !*s)
+		rc = 0;		/* no error, end of line, freq is optional */
 
-	/* PASSNO (optional) */
-	} else if (next_number(&s, &fs->passno) != 0 && *s)
-		goto err;
-
-	return 0;
-err:
-	free(p);
-	if (rc)
-		return rc;
-	return errno == ENOMEM ? -ENOMEM : -EINVAL;
+	else {
+		rc = next_number(&s, &fs->passno);
+		if (rc && !*s)
+			rc = 0;
+	}
+done:
+	return rc;
 }
 
 /*
@@ -163,76 +169,86 @@ err:
  */
 static int mnt_parse_mountinfo_line(mnt_fs *fs, char *s)
 {
+	int rc = 0, col;
 	unsigned int maj, min;
-	int rc = 0;
+	char *p = NULL;
 
 	/* ID */
-	if (next_number(&s, &fs->id) != 0)
-		goto err;
+	rc = next_number(&s, &fs->id);
+	if (rc)
+		goto done;
 
 	/* PARENT */
-	if (next_number(&s, &fs->parent) != 0)
-		goto err;
+	rc = next_number(&s, &fs->parent);
+	if (rc)
+		goto done;
 
 	/* <maj>:<min> */
 	s = skip_spaces(s);
 	if (!*s || sscanf(s, "%u:%u", &maj, &min) != 2)
-		goto err;
+		rc = -EINVAL;
+	else {
+		fs->devno = makedev(maj, min);
+		next_word_skip(&s);
+	}
 
-	fs->devno = makedev(maj, min);
-	next_word_skip(&s);
+	for (col = 3; rc == 0 && col < 9; col++) {
+		rc = next_word(&s, &p);
+		if (rc)
+			break;
 
-	/* MOUNTROOT */
-	fs->root = next_word(&s);
-	if (!fs->root)
-		goto err;
+		switch(col) {
+		/* MOUNTROOT */
+		case 3:
+			fs->root = p;
+			break;
 
-	/* TARGET (mountpoit) */
-	fs->target = next_word(&s);
-	if (!fs->target)
-		goto err;
+		/* TARGET (mountpoit) */
+		case 4:
+			fs->target = p;
+			break;
 
-	/* OPTIONS (fs-independent) */
-	fs->vfs_optstr = next_word(&s);
-	if (!fs->vfs_optstr)
-		goto err;
+		/* OPTIONS (fs-independent) */
+		case 5:
+			fs->vfs_optstr = p;
 
-	/* optional fields (ignore) */
-	do {
-		s = skip_spaces(s);
-		if (s && *s == '-' &&
-		    (*(s + 1) == ' ' || *(s + 1) == '\t')) {
-			s++;
+			/* ignore optional fields behind options */
+			do {
+				s = skip_spaces(s);
+				if (s && *s == '-' &&
+				    (*(s + 1) == ' ' || *(s + 1) == '\t')) {
+					s++;
+					break;
+				}
+				next_word_skip(&s);
+			} while (s);
+			break;
+
+		/* FSTYPE */
+		case 6:
+			rc =__mnt_fs_set_fstype_ptr(fs, p);
+			break;
+
+		/* SOURCE or "none" */
+		case 7:
+			rc = __mnt_fs_set_source_ptr(fs, p);
+			break;
+
+		/* OPTIONS (fs-dependent) */
+		case 8:
+			fs->fs_optstr = p;
+
+			if (!strcmp(fs->fs_optstr, "none")) {
+				free(fs->fs_optstr);
+				fs->fs_optstr = NULL;
+			}
 			break;
 		}
-		if (s && next_word_skip(&s) != 0)
-			goto err;
-	} while (s);
-
-	/* FSTYPE */
-	rc =__mnt_fs_set_fstype(fs, next_word(&s));
-	if (rc)
-		goto err;
-
-	/* SOURCE or "none" */
-	rc = __mnt_fs_set_source(fs, next_word(&s));
-	if (rc)
-		goto err;
-
-	/* OPTIONS (fs-dependent) */
-	fs->fs_optstr = next_word(&s);
-	if (!fs->fs_optstr)
-		goto err;
-
-	if (!strcmp(fs->fs_optstr, "none")) {
-		free(fs->fs_optstr);
-		fs->fs_optstr = NULL;
 	}
-	return 0;
-err:
 	if (rc)
-		return rc;
-	return errno == ENOMEM ? -ENOMEM : -EINVAL;
+		free(p);
+done:
+	return rc;
 }
 
 /*
