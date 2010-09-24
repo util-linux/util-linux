@@ -69,10 +69,8 @@ struct mnt_optmap
 /*
  * mount options map masks
  */
-#define MNT_MFLAG	(1 << 1) /* use the mask as mount(2) flag */
-#define MNT_MDATA	(1 << 2) /* use the option as mount(2) data */
-#define MNT_INVERT	(1 << 3) /* invert the mountflag */
-#define MNT_NOMTAB	(1 << 4) /* skip in the mtab option string */
+#define MNT_INVERT	(1 << 1) /* invert the mountflag */
+#define MNT_NOMTAB	(1 << 2) /* skip in the mtab option string */
 
 /**
  * mnt_fs:
@@ -169,8 +167,12 @@ extern int mnt_split_optstr(const char *optstr,
 			    char **user, char **vfs, char **fs,
 			    int ifnore_user, int ignore_vfs);
 
+extern int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
+				const struct mnt_optmap *map);
 extern int mnt_optstr_get_mountflags(const char *optstr, unsigned long *flags);
 extern int mnt_optstr_get_userspace_mountflags(const char *optstr, unsigned long *flags);
+extern int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
+                                const struct mnt_optmap *map);
 
 extern int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next);
 extern int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next);

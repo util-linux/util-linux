@@ -504,8 +504,26 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs,
 	return 0;
 }
 
-static int mnt_optstr_get_flags(const char *optstr, const struct mnt_optmap *map,
-			unsigned long *flags, int mask_fltr)
+/**
+ * mnt_optstr_get_flags:
+ * @optstr: string with comma separated list of options
+ * @flags: returns mount flags
+ *
+ * Returns in @flags IDs of options from @optstr as defined in the @map.
+ *
+ * For example:
+ *
+ *	"bind,exec,foo,bar"   --returns->   MS_BIND
+ *
+ *	"bind,noexec,foo,bar" --returns->   MS_BIND|MS_NOEXEC
+ *
+ * Note that @flags are not zeroized by this function.
+ *
+ * Returns: 0 on success or negative number in case of error
+ */
+
+int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
+		const struct mnt_optmap *map)
 {
 	struct mnt_optmap const *maps[1];
 	char *name, *str = (char *) optstr;
@@ -522,9 +540,6 @@ static int mnt_optstr_get_flags(const char *optstr, const struct mnt_optmap *map
 		const struct mnt_optmap *ent;
 
 		if (mnt_optmap_get_entry(maps, 1, name, namesz, &ent)) {
-
-			if (mask_fltr && !(ent->mask & mask_fltr))
-				continue;
 			if (ent->mask & MNT_INVERT)
 				*flags &= ~ent->id;
 			else
@@ -540,9 +555,8 @@ static int mnt_optstr_get_flags(const char *optstr, const struct mnt_optmap *map
  * @optstr: string with comma separated list of options
  * @flags: returns mount flags
  *
- * The mountflags are IDs from all MNT_MFLAG options from MNT_LINUX_MAP options
- * map. See "struct mnt_optmap".  For more details about mountflags see
- * mount(2) syscall.
+ * For more details about mountflags see mount(2) syscall. The flags are
+ * generated according to MNT_LINUX_MAP.
  *
  * For example:
  *
@@ -556,10 +570,8 @@ static int mnt_optstr_get_flags(const char *optstr, const struct mnt_optmap *map
  */
 int mnt_optstr_get_mountflags(const char *optstr, unsigned long *flags)
 {
-	return mnt_optstr_get_flags(optstr,
-				    mnt_get_builtin_optmap(MNT_LINUX_MAP),
-				    flags,
-				    MNT_MFLAG);
+	return mnt_optstr_get_flags(optstr, flags,
+				    mnt_get_builtin_optmap(MNT_LINUX_MAP));
 }
 
 /**
@@ -580,10 +592,85 @@ int mnt_optstr_get_mountflags(const char *optstr, unsigned long *flags)
  */
 int mnt_optstr_get_userspace_mountflags(const char *optstr, unsigned long *flags)
 {
-	return mnt_optstr_get_flags(optstr,
-				    mnt_get_builtin_optmap(MNT_USERSPACE_MAP),
-				    flags,
-				    0);
+	return mnt_optstr_get_flags(optstr, flags,
+				    mnt_get_builtin_optmap(MNT_USERSPACE_MAP));
+}
+
+/**
+ * mnt_optstr_apply_flags:
+ * @optstr: string with comma separated list of options
+ * @flags: returns mount flags
+ * @map: options map
+ *
+ * Removes/adds options to the @optstr according to flags. For example:
+ *
+ *	MS_NOATIME and "foo,bar,noexec"   --returns->  "foo,bar,noatime"
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
+				const struct mnt_optmap *map)
+{
+	struct mnt_optmap const *maps[1];
+	char *name, *next, *val;
+	size_t namesz = 0, valsz = 0;
+	unsigned long fl;
+	int rc = 0;
+
+	assert(optstr);
+
+	if (!optstr || !map)
+		return -EINVAL;
+
+	maps[0] = map;
+	next = *optstr;
+	fl = flags;
+
+	/* scan @optstr and remove options that are missing in the @flags */
+	while(!mnt_optstr_next_option(&next, &name, &namesz, &val, &valsz)) {
+		const struct mnt_optmap *ent;
+
+		if (mnt_optmap_get_entry(maps, 1, name, namesz, &ent)) {
+
+			/* remove unwanted option */
+			if ((ent->mask & MNT_INVERT) || !(fl & ent->id)) {
+				char *end = val ? val + valsz : name + namesz;
+				next = name;
+				rc = mnt_optstr_remove_option_at(optstr, name, end);
+				if (rc)
+					return rc;
+			}
+			if (!(ent->mask & MNT_INVERT))
+				fl &= ~ent->id;
+		}
+	}
+
+	/* add missing options */
+	if (fl) {
+		const struct mnt_optmap *ent;
+		char *p;
+
+		for (ent = map; ent && ent->name; ent++) {
+			if ((ent->mask & MNT_INVERT) || !(fl & ent->id))
+				continue;
+
+			/* don't add options which require values (e.g. offset=%d) */
+			p = strchr(ent->name, '=');
+			if (p && p > ent->name && *(p - 1) != '[')
+				continue;
+
+			/* prepare name for value with optional value (e.g. loop[=%s]) */
+			if (p) {
+				p = strndup(ent->name, p - ent->name);
+				if (!p)
+					return -ENOMEM;
+				mnt_optstr_append_option(optstr, p, NULL);
+				free(p);
+			} else
+				mnt_optstr_append_option(optstr, ent->name, NULL);
+		}
+	}
+	return rc;
 }
 
 /**
@@ -855,6 +942,36 @@ int test_flags(struct mtest *ts, int argc, char *argv[])
 	return rc;
 }
 
+int test_apply(struct mtest *ts, int argc, char *argv[])
+{
+	char *optstr;
+	int rc, map;
+	unsigned long flags;
+
+	if (argc < 4)
+		return -EINVAL;
+
+	if (!strcmp(argv[1], "--user"))
+		map = MNT_USERSPACE_MAP;
+	else if (!strcmp(argv[1], "--linux"))
+		map = MNT_LINUX_MAP;
+	else {
+		fprintf(stderr, "unknown option '%s'\n", argv[1]);
+		return -EINVAL;
+	}
+
+	optstr = strdup(argv[2]);
+	flags = strtoul(argv[3], NULL, 16);
+
+	printf("flags:  0x%08lx\n", flags);
+
+	rc = mnt_optstr_apply_flags(&optstr, flags, mnt_get_builtin_optmap(map));
+	printf("optstr: %s\n", optstr);
+
+	free(optstr);
+	return rc;
+}
+
 int test_set(struct mtest *ts, int argc, char *argv[])
 {
 	const char *value = NULL, *name;
@@ -965,6 +1082,7 @@ int main(int argc, char *argv[])
 		{ "--remove", test_remove, "<optstr> <name>            remove name in optstr" },
 		{ "--split",  test_split,  "<optstr>                   split into FS, VFS and userspace" },
 		{ "--flags",  test_flags,  "<optstr>                   convert options to MS_* flags" },
+		{ "--apply",  test_apply,  "--{linux,user} <optstr> <mask>    apply mask to optstr" },
 		{ "--fix",    test_fix,    "<optstr>                   fix uid=, gid= and context=" },
 
 		{ NULL }

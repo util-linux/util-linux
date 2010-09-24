@@ -26,7 +26,7 @@
  *
  *	@id: (in the map unique identifier or a mountflags, e.g MS_RDONLY)
  *
- *	@mask: (MNT_INVERT, MNT_MDATA, MNT_MFLAG, MNT_NOMTAB)
+ *	@mask: (MNT_INVERT, MNT_NOMTAB)
  *
  * The option argument type is defined by:
  *
@@ -56,9 +56,9 @@
  *     #define MY_MS_BAR   (1 << 2)
  *
  *     mnt_optmap myoptions[] = {
- *       { "foo",   MY_MS_FOO, MNT_MFLAG },
- *       { "nofoo", MY_MS_FOO, MNT_MFLAG | MNT_INVERT },
- *       { "bar=%s",MY_MS_BAR, MNT_MDATA },
+ *       { "foo",   MY_MS_FOO },
+ *       { "nofoo", MY_MS_FOO | MNT_INVERT },
+ *       { "bar=%s",MY_MS_BAR },
  *       { NULL }
  *     };
  *   </programlisting>
@@ -86,53 +86,53 @@
  */
 static const struct mnt_optmap linux_flags_map[] =
 {
-   { "ro",       MS_RDONLY, MNT_MFLAG },               /* read-only */
-   { "rw",       MS_RDONLY, MNT_MFLAG | MNT_INVERT },  /* read-write */
-   { "exec",     MS_NOEXEC, MNT_MFLAG | MNT_INVERT },  /* permit execution of binaries */
-   { "noexec",   MS_NOEXEC, MNT_MFLAG },               /* don't execute binaries */
-   { "suid",     MS_NOSUID, MNT_MFLAG | MNT_INVERT },  /* honor suid executables */
-   { "nosuid",   MS_NOSUID, MNT_MFLAG },               /* don't honor suid executables */
-   { "dev",      MS_NODEV,  MNT_MFLAG | MNT_INVERT },  /* interpret device files  */
-   { "nodev",    MS_NODEV,  MNT_MFLAG },               /* don't interpret devices */
+   { "ro",       MS_RDONLY },                 /* read-only */
+   { "rw",       MS_RDONLY, MNT_INVERT },     /* read-write */
+   { "exec",     MS_NOEXEC, MNT_INVERT },     /* permit execution of binaries */
+   { "noexec",   MS_NOEXEC },                 /* don't execute binaries */
+   { "suid",     MS_NOSUID, MNT_INVERT },     /* honor suid executables */
+   { "nosuid",   MS_NOSUID },                 /* don't honor suid executables */
+   { "dev",      MS_NODEV, MNT_INVERT },      /* interpret device files  */
+   { "nodev",    MS_NODEV },                  /* don't interpret devices */
 
-   { "sync",     MS_SYNCHRONOUS, MNT_MFLAG },          /* synchronous I/O */
-   { "async",    MS_SYNCHRONOUS, MNT_MFLAG | MNT_INVERT }, /* asynchronous I/O */
+   { "sync",     MS_SYNCHRONOUS },            /* synchronous I/O */
+   { "async",    MS_SYNCHRONOUS, MNT_INVERT },/* asynchronous I/O */
 
-   { "dirsync",  MS_DIRSYNC, MNT_MFLAG },              /* synchronous directory modifications */
-   { "remount",  MS_REMOUNT, MNT_MFLAG },              /* Alter flags of mounted FS */
-   { "bind",     MS_BIND,    MNT_MFLAG },              /* Remount part of tree elsewhere */
-   { "rbind",    MS_BIND|MS_REC, MNT_MFLAG },          /* Idem, plus mounted subtrees */
+   { "dirsync",  MS_DIRSYNC },                /* synchronous directory modifications */
+   { "remount",  MS_REMOUNT },                /* Alter flags of mounted FS */
+   { "bind",     MS_BIND },                   /* Remount part of tree elsewhere */
+   { "rbind",    MS_BIND | MS_REC },          /* Idem, plus mounted subtrees */
 #ifdef MS_NOSUB
-   { "sub",      MS_NOSUB,  MNT_MFLAG | MNT_INVERT },  /* allow submounts */
-   { "nosub",    MS_NOSUB,  MNT_MFLAG },               /* don't allow submounts */
+   { "sub",      MS_NOSUB, MNT_INVERT },      /* allow submounts */
+   { "nosub",    MS_NOSUB },                  /* don't allow submounts */
 #endif
 #ifdef MS_SILENT
-   { "quiet",	 MS_SILENT, MNT_MFLAG },               /* be quiet  */
-   { "loud",     MS_SILENT, MNT_MFLAG | MNT_INVERT },  /* print out messages. */
+   { "quiet",	 MS_SILENT },                 /* be quiet  */
+   { "loud",     MS_SILENT, MNT_INVERT },     /* print out messages. */
 #endif
 #ifdef MS_MANDLOCK
-   { "mand",     MS_MANDLOCK, MNT_MFLAG },             /* Allow mandatory locks on this FS */
-   { "nomand",   MS_MANDLOCK, MNT_MFLAG | MNT_INVERT },/* Forbid mandatory locks on this FS */
+   { "mand",     MS_MANDLOCK },               /* Allow mandatory locks on this FS */
+   { "nomand",   MS_MANDLOCK, MNT_INVERT },   /* Forbid mandatory locks on this FS */
 #endif
 #ifdef MS_NOATIME
-   { "atime",    MS_NOATIME, MNT_MFLAG | MNT_INVERT }, /* Update access time */
-   { "noatime",	 MS_NOATIME, MNT_MFLAG },              /* Do not update access time */
+   { "atime",    MS_NOATIME, MNT_INVERT },    /* Update access time */
+   { "noatime",	 MS_NOATIME },                /* Do not update access time */
 #endif
 #ifdef MS_I_VERSION
-   { "iversion", MS_I_VERSION,   MNT_MFLAG },          /* Update inode I_version time */
-   { "noiversion", MS_I_VERSION, MNT_MFLAG | MNT_INVERT}, /* Don't update inode I_version time */
+   { "iversion", MS_I_VERSION },              /* Update inode I_version time */
+   { "noiversion", MS_I_VERSION,  MNT_INVERT},/* Don't update inode I_version time */
 #endif
 #ifdef MS_NODIRATIME
-   { "diratime", MS_NODIRATIME,   MNT_MFLAG | MNT_INVERT }, /* Update dir access times */
-   { "nodiratime", MS_NODIRATIME, MNT_MFLAG },         /* Do not update dir access times */
+   { "diratime", MS_NODIRATIME, MNT_INVERT }, /* Update dir access times */
+   { "nodiratime", MS_NODIRATIME },           /* Do not update dir access times */
 #endif
 #ifdef MS_RELATIME
-   { "relatime", MS_RELATIME,   MNT_MFLAG },           /* Update access times relative to mtime/ctime */
-   { "norelatime", MS_RELATIME, MNT_MFLAG | MNT_INVERT }, /* Update access time without regard to mtime/ctime */
+   { "relatime", MS_RELATIME },               /* Update access times relative to mtime/ctime */
+   { "norelatime", MS_RELATIME, MNT_INVERT }, /* Update access time without regard to mtime/ctime */
 #endif
 #ifdef MS_STRICTATIME
-   { "strictatime", MS_STRICTATIME, MNT_MFLAG },       /* Strict atime semantics */
-   { "nostrictatime", MS_STRICTATIME, MNT_MFLAG | MNT_INVERT }, /* kernel default atime */
+   { "strictatime", MS_STRICTATIME },         /* Strict atime semantics */
+   { "nostrictatime", MS_STRICTATIME, MNT_INVERT }, /* kernel default atime */
 #endif
    { NULL, 0, 0 }
 };
