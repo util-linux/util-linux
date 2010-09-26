@@ -1805,7 +1805,8 @@ mount_one (const char *spec, const char *node, const char *types,
 	}
 
 	/* Handle possible LABEL= and UUID= forms of spec */
-	if (types == NULL || (strncmp(types, "nfs", 3) &&
+	if (types == NULL || (strncmp(types, "9p", 2) &&
+			      strncmp(types, "nfs", 3) &&
 			      strncmp(types, "cifs", 4) &&
 			      strncmp(types, "smbfs", 5))) {
 		nspec = spec_to_devname(spec);
