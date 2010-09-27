@@ -312,7 +312,7 @@ int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end)
 }
 
 /* insert 'substr' or '=substr' to @str on position @pos */
-static int insert_substring(char **str, char *pos, const char *substr, char **next)
+static int insert_value(char **str, char *pos, const char *substr, char **next)
 {
 	size_t subsz = strlen(substr);			/* substring size */
 	size_t strsz = strlen(*str);
@@ -392,7 +392,7 @@ int mnt_optstr_set_option(char **optstr, const char *name, const char *value)
 
 	else if (value && ol.value == NULL)
 		/* insert "=value" */
-		rc = insert_substring(optstr, nameend, value, NULL);
+		rc = insert_value(optstr, nameend, value, NULL);
 
 	else if (value && ol.value && strlen(value) == ol.valsz)
 		/* simply replace =value */
@@ -400,7 +400,7 @@ int mnt_optstr_set_option(char **optstr, const char *name, const char *value)
 
 	else if (value && ol.value) {
 		mnt_optstr_remove_option_at(optstr, nameend, ol.end);
-		rc = insert_substring(optstr, nameend, value, NULL);
+		rc = insert_value(optstr, nameend, value, NULL);
 	}
 	return rc;
 }
@@ -597,7 +597,7 @@ int mnt_optstr_get_userspace_mountflags(const char *optstr, unsigned long *flags
 }
 
 /**
- * mnt_optstr_apply_flags:
+ * mnt_optstr_apply_mountflags:
  * @optstr: string with comma separated list of options
  * @flags: returns mount flags
  * @map: options map
@@ -738,7 +738,7 @@ int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, char **ne
 
 	/* set new context */
 	mnt_optstr_remove_option_at(optstr, begin, end);
-	rc = insert_substring(optstr, begin, val, next);
+	rc = insert_value(optstr, begin, val, next);
 	free(val);
 #endif
 	return rc;
@@ -751,7 +751,7 @@ static int set_uint_value(char **optstr, unsigned int num,
 	snprintf(buf, sizeof(buf), "%u", num);
 
 	mnt_optstr_remove_option_at(optstr, begin, end);
-	return insert_substring(optstr, begin, buf, next);
+	return insert_value(optstr, begin, buf, next);
 }
 
 /**
@@ -880,7 +880,7 @@ int mnt_optstr_fix_user(char **optstr, char *value, size_t valsz, char **next)
 			/* remove old value */
 			mnt_optstr_remove_option_at(optstr, value, value + valsz);
 
-		rc = insert_substring(optstr, value, username, next);
+		rc = insert_value(optstr, value, username, next);
 	}
 
 	free(username);
