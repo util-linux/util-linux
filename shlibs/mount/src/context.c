@@ -101,7 +101,8 @@ mnt_context *mnt_new_context()
 	/* if we're really root and aren't running setuid */
 	cxt->restricted = (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
 
-	DBG(CXT, mnt_debug_h(cxt, "allocate"));
+	DBG(CXT, mnt_debug_h(cxt, "allocate %s",
+				cxt->restricted ? "[RESTRICTED]" : ""));
 
 	return cxt;
 }
@@ -620,6 +621,17 @@ static mnt_cache *mnt_context_get_cache(mnt_context *cxt)
  * @cxt: mount context
  * @flags: mount(2) flags (MS_* flags)
  *
+ * Note that mount context allows to define mount options by mount flags. It
+ * means you can for example use
+ *
+ *	mnt_context_set_mountflags(cxt, MS_NOEXEC | MS_NOSUID);
+ *
+ * rather than
+ *
+ *	mnt_context_set_optstr(cxt, "noexec,nosuid");
+ *
+ * these both calls have the same effect.
+ *
  * Returns: 0 on success, negative number in case of error.
  */
 int mnt_context_set_mountflags(mnt_context *cxt, unsigned long flags)
@@ -672,6 +684,8 @@ static int mnt_context_is_remount(mnt_context *cxt)
  * mnt_context_set_userspace_mountflags:
  * @cxt: mount context
  * @flags: mount(2) flags (MNT_MS_* flags, e.g. MNT_MS_LOOP)
+ *
+ * See also notest for mnt_context_set_mountflags().
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -873,78 +887,145 @@ err:
 	return rc;
 }
 
-static int mnt_context_subst_optstr(mnt_context *cxt)
+/*
+ * this has to be called after mnt_context_evaluate_permissions()
+ */
+static int mnt_context_fix_optstr(mnt_context *cxt)
 {
-	int rc = 0;
-	char *o, *o0;
+	int rc = 0, rem_se = 0;
+	char *next, **optstr;
+	char *name, *val;
+	size_t namesz, valsz;
 
-	if (!cxt || !cxt->fs)
+	if (!cxt)
 		return -EINVAL;
-
-	o0 = o = (char *) mnt_fs_get_optstr(cxt->fs);
-	if (!o)
+	if (!cxt->fs)
 		return 0;
 
-	rc = mnt_optstr_translate_uid(&o);
-	if (rc < 0)
-		return rc;
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	rc = mnt_optstr_translate_gid(&o);
-	if (rc < 0)
-		return rc;
+	/*
+	 * we directly work with optstr pointer here
+	 */
+	optstr = &cxt->fs->optstr;
+	if (!optstr)
+		return 0;
+
+	/*
+	 * Sync mount options with mount flags
+	 */
+	rc = mnt_optstr_apply_flags(optstr, cxt->mountflags,
+				mnt_get_builtin_optmap(MNT_LINUX_MAP));
+	if (rc)
+		goto done;
+
+	rc = mnt_optstr_apply_flags(optstr, cxt->user_mountflags,
+				mnt_get_builtin_optmap(MNT_USERSPACE_MAP));
+	if (rc)
+		goto done;
+
+	next = *optstr;
 
 #ifdef HAVE_LIBSELINUX
-	unsigned long flags;
-
-	mnt_context_get_mountflags(cxt, &flags);
-
-	if ((flags & MS_REMOUNT) || !is_selinux_enabled()) {
-		/*
-		 * Ignore SELinux context options
-		 */
-		rc = mnt_optstr_remove_option(&o, "context");
-		if (rc >= 0)
-			rc = mnt_optstr_remove_option(&o, "fscontext");
-		if (rc >= 0)
-			rc = mnt_optstr_remove_option(&o, "defcontext");
-		if (rc >= 0)
-			rc = mnt_optstr_remove_option(&o, "rootcontext");
-	} else {
-		/*
-		 * Translate SELinux context from human to raw format
-		 */
-		rc = mnt_optstr_translate_selinux(&o, "context");
-		if (rc >= 0)
-			rc = mnt_optstr_translate_selinux(&o, "fscontext");
-		if (rc >= 0)
-			rc = mnt_optstr_translate_selinux(&o, "defcontext");
-		if (rc >= 0)
-			rc = mnt_optstr_translate_selinux(&o, "rootcontext");
-	}
-
-	if (rc)
-		return rc;
+	rem_se = (cxt->mountflags & MS_REMOUNT) || !is_selinux_enabled();
 #endif
-	if (o != o0) {
-		rc = mnt_fs_set_optstr(cxt->fs, o);
-		free(o);
+	DBG(CXT, mnt_debug_h(cxt, "fixing mount options: '%s'", *optstr));
+
+	while (!mnt_optstr_next_option(&next, &name, &namesz, &val, &valsz)) {
+
+		if (namesz == 3 && !strncmp(name, "uid", 3))
+			rc = mnt_optstr_fix_uid(optstr, val, valsz, &next);
+		else if (namesz == 3 && !strncmp(name, "gid", 3))
+			rc = mnt_optstr_fix_gid(optstr, val, valsz, &next);
+#ifdef HAVE_LIBSELINUX
+		else if (namesz >= 7 && (!strncmp(name, "context", 7) ||
+					 !strncmp(name, "fscontext", 9) ||
+					 !strncmp(name, "defcontext", 10) ||
+					 !strncmp(name, "rootcontext", 11))) {
+			if (rem_se) {
+				/* remove context= option */
+				next = name;
+				rc = mnt_optstr_remove_option_at(optstr,
+							name, val + valsz);
+			} else
+				rc = mnt_optstr_fix_secontext(optstr,
+							val, valsz, &next);
+		}
+#endif
+		else if (namesz == 4 && (cxt->user_mountflags && MNT_MS_USER) &&
+			 !strncmp(name, "user", 4))
+			rc = mnt_optstr_fix_user(optstr,
+					val ? val : name + namesz, valsz, &next);
+
+		if (rc)
+			goto done;
 	}
+
+done:
+	DBG(CXT, mnt_debug_h(cxt, "fixed options [rc=%d]: '%s'", rc, *optstr));
 	return rc;
 }
 
+/*
+ * this has to be called before mnt_context_fix_optstr()
+ */
 static int mnt_context_evaluate_permissions(mnt_context *cxt)
 {
 	unsigned long u_flags;
+	const char *srcpath;
+
+	if (!cxt)
+		return -EINVAL;
+	if (!cxt->fs)
+		return 0;
 
 	mnt_context_get_userspace_mountflags(cxt, &u_flags);
 
-	if (u_flags & (MNT_MS_OWNER | MNT_MS_GROUP))
-		cxt->mountflags |= MS_OWNERSECURE;
+	if (!mnt_context_is_restricted(cxt)) {
+		/*
+		 * superuser mount
+		 */
+		cxt->user_mountflags &= ~MNT_MS_OWNER;
+		cxt->user_mountflags &= ~MNT_MS_GROUP;
+		cxt->user_mountflags &= ~MNT_MS_USER;
+		cxt->user_mountflags &= ~MNT_MS_USERS;
+	} else {
+		/*
+		 * user mount
+		 */
+		if (u_flags & (MNT_MS_OWNER | MNT_MS_GROUP))
+			cxt->mountflags |= MS_OWNERSECURE;
 
-	if (u_flags & (MNT_MS_USER | MNT_MS_USERS))
-		cxt->mountflags |= MS_SECURE;
+		if (u_flags & (MNT_MS_USER | MNT_MS_USERS))
+			cxt->mountflags |= MS_SECURE;
 
+		srcpath = mnt_fs_get_srcpath(cxt->fs);
+		if (!srcpath)
+			return -EINVAL;
 
+		/*
+		 * MS_OWNER: Allow owners to mount when fstab contains the
+		 * owner option.  Note that this should never be used in a high
+		 * security environment, but may be useful to give people at
+		 * the console the possibility of mounting a floppy.  MS_GROUP:
+		 * Allow members of device group to mount. (Martin Dickopp)
+		 */
+		if (u_flags & (MNT_MS_OWNER | MNT_MS_GROUP)) {
+			struct stat sb;
+
+			if (strncmp(srcpath, "/dev/", 5) == 0 &&
+			    stat(srcpath, &sb) == 0 &&
+			    (((u_flags & MNT_MS_OWNER) && getuid() == sb.st_uid) ||
+			     ((u_flags & MNT_MS_GROUP) && mnt_in_group(sb.st_gid))))
+
+				cxt->user_mountflags |= MNT_MS_USER;
+		}
+
+		if (!(cxt->user_mountflags & (MNT_MS_USER | MNT_MS_USERS))) {
+			DBG(CXT, mnt_debug_h(cxt, "permissions evaluation ends with -EPERMS"));
+			return -EPERM;
+		}
+	}
 
 	return 0;
 }
@@ -1012,6 +1093,26 @@ static int mnt_context_detect_fstype(mnt_context *cxt)
 	return 0; /* TODO */
 }
 
+static int mnt_context_merge_mountflags(mnt_context *cxt)
+{
+	unsigned long fl = 0;
+	int rc;
+
+	rc = mnt_context_get_mountflags(cxt, &fl);
+	if (rc)
+		return rc;
+	cxt->mountflags = fl;
+
+	fl = 0;
+	rc = mnt_context_get_userspace_mountflags(cxt, &fl);
+	if (rc)
+		return rc;
+	cxt->user_mountflags = fl;
+
+	cxt->flags |= MNT_FL_MOUNTFLAGS_MERGED;
+	return 0;
+}
+
 /**
  * mnt_context_prepare_mount:
  * @cxt: mount context
@@ -1035,6 +1136,7 @@ int mnt_context_prepare_mount(mnt_context *cxt)
 
 	if (!cxt)
 		return -EINVAL;
+
 	if (!cxt->spec && !(cxt->fs && (mnt_fs_get_source(cxt->fs) ||
 			                mnt_fs_get_target(cxt->fs))))
 		return -EINVAL;
@@ -1043,29 +1145,15 @@ int mnt_context_prepare_mount(mnt_context *cxt)
 	if (rc)
 		goto err;
 
-	/* prepare mount flags */
-	{
-		unsigned long fl = 0;
+	rc = mnt_context_merge_mountflags(cxt);
+	if (rc)
+		return rc;
 
-		rc = mnt_context_get_mountflags(cxt, &fl);
-		if (rc)
-			return rc;
-		cxt->mountflags = fl;
-
-		fl = 0;
-		rc = mnt_context_get_userspace_mountflags(cxt, &fl);
-		if (rc)
-			return rc;
-		cxt->user_mountflags = fl;
-
-		cxt->flags |= MNT_FL_MOUNTFLAGS_MERGED;
-	}
-
-	rc = mnt_context_subst_optstr(cxt);
+	rc = mnt_context_evaluate_permissions(cxt);
 	if (rc)
 		goto err;
 
-	rc = mnt_context_evaluate_permissions(cxt);
+	rc = mnt_context_fix_optstr(cxt);
 	if (rc)
 		goto err;
 
