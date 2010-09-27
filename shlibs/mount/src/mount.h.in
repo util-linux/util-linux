@@ -177,6 +177,7 @@ extern int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 extern int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next);
 extern int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next);
 extern int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, char **next);
+extern int mnt_optstr_fix_user(char **optstr, char *value, size_t valsz, char **next);
 
 /* iter.c */
 enum {

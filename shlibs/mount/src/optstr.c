@@ -849,6 +849,43 @@ int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next)
 	return rc;
 }
 
+/**
+ * mnt_optstr_fix_user:
+ * @optstr: string with comma separated list of options
+ * @value: pointer to place where has to start the value
+ * @valsz: size of the value or zero if value not define
+ * @next: returns pointer to the next option (optional argument)
+
+ * Add/replace username. This is usually used to convert "user" (without value)
+ * to to "user=<username>" -- in this case the @value has to pointer behind the
+ * "user" option name; in case you want to replace already defined <username>
+ * then the @valsz must be greater than zero.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_optstr_fix_user(char **optstr, char *value, size_t valsz, char **next)
+{
+	char *username;
+	int rc = 0;
+
+	if (!optstr || !value)
+		return -EINVAL;
+
+	username = mnt_get_username(getuid());
+	if (!username)
+		return -ENOMEM;
+
+	if (!valsz || strncmp(value, username, valsz)) {
+		if (valsz)
+			/* remove old value */
+			mnt_optstr_remove_option_at(optstr, value, value + valsz);
+
+		rc = insert_substring(optstr, value, username, next);
+	}
+
+	free(username);
+	return rc;
+}
 
 #ifdef TEST_PROGRAM
 
@@ -1061,6 +1098,9 @@ int test_fix(struct mtest *ts, int argc, char *argv[])
 			rc = mnt_optstr_fix_gid(&optstr, val, valsz, &next);
 		else if (!strncmp(name, "context", 7))
 			rc = mnt_optstr_fix_secontext(&optstr, val, valsz, &next);
+		else if (!strncmp(name, "user", 4))
+			rc = mnt_optstr_fix_user(&optstr,
+					val ? val : name + namesz, valsz, &next);
 		if (rc)
 			break;
 	}
@@ -1083,7 +1123,7 @@ int main(int argc, char *argv[])
 		{ "--split",  test_split,  "<optstr>                   split into FS, VFS and userspace" },
 		{ "--flags",  test_flags,  "<optstr>                   convert options to MS_* flags" },
 		{ "--apply",  test_apply,  "--{linux,user} <optstr> <mask>    apply mask to optstr" },
-		{ "--fix",    test_fix,    "<optstr>                   fix uid=, gid= and context=" },
+		{ "--fix",    test_fix,    "<optstr>                   fix uid=, gid=, user, and context=" },
 
 		{ NULL }
 	};

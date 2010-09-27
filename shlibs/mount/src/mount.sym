@@ -82,6 +82,7 @@ global:
 	mnt_optstr_fix_gid;
 	mnt_optstr_fix_selinux;
 	mnt_optstr_fix_uid;
+	mnt_optstr_fix_user;
 	mnt_optstr_apply_flags;
 	mnt_optstr_get_flags;
 	mnt_parse_version_string;
