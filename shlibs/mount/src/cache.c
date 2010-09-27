@@ -60,6 +60,9 @@ struct _mnt_cache {
 	 *    better to reuse the blkid_cache.
 	 */
 	blkid_cache		bc;
+	blkid_probe		pr;
+
+	char			*filename;
 };
 
 /**
@@ -98,8 +101,10 @@ void mnt_free_cache(mnt_cache *cache)
 		free(e->native);
 	}
 	free(cache->ents);
+	free(cache->filename);
 	if (cache->bc)
 		blkid_put_cache(cache->bc);
+	blkid_free_probe(cache->pr);
 	free(cache);
 }
 
@@ -233,6 +238,41 @@ const char *mnt_cache_find_tag(mnt_cache *cache,
 	return NULL;
 }
 
+/*
+ * returns (in @res) blkid prober, the @cache argument is optional
+ */
+static int mnt_cache_get_probe(mnt_cache *cache, const char *devname,
+			   blkid_probe *res)
+{
+	blkid_probe pr = cache ? cache->pr : NULL;
+
+	assert(devname);
+	assert(res);
+
+	if (cache && cache->pr && strcmp(devname, cache->filename)) {
+		blkid_free_probe(cache->pr);
+		free(cache->filename);
+		cache->filename = NULL;
+		pr = cache->pr = NULL;
+	}
+
+	if (!pr) {
+		pr = blkid_new_probe_from_filename(devname);
+		if (!pr)
+			return -1;
+		if (cache) {
+			cache->pr = pr;
+			cache->filename = strdup(devname);
+			if (!cache->filename)
+				return -ENOMEM;
+		}
+
+	}
+
+	*res = pr;
+	return 0;
+}
+
 /**
  * mnt_cache_read_tags
  * @cache: pointer to mnt_cache instance
@@ -245,9 +285,9 @@ const char *mnt_cache_find_tag(mnt_cache *cache,
  */
 int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 {
-	int i, ntags = 0;
-	static blkid_probe pr;
-	const char *tags[] = { "LABEL", "UUID" };
+	int i, ntags = 0, rc;
+	blkid_probe pr;
+	const char *tags[] = { "LABEL", "UUID", "TYPE" };
 
 	assert(cache);
 	assert(devname);
@@ -267,16 +307,17 @@ int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 			return 0;
 	}
 
-	pr = blkid_new_probe_from_filename(devname);
-	if (!pr)
-		return -1;
+	rc = mnt_cache_get_probe(cache, devname, &pr);
+	if (rc)
+		return rc;
 
-	blkid_probe_enable_superblocks(pr, 1);
+	blkid_probe_enable_superblocks(cache->pr, 1);
 
-	blkid_probe_set_superblocks_flags(pr,
-			BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID);
+	blkid_probe_set_superblocks_flags(cache->pr,
+			BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID |
+			BLKID_SUBLKS_TYPE);
 
-	if (blkid_do_safeprobe(pr))
+	if (blkid_do_safeprobe(cache->pr))
 		goto error;
 
 	DBG(CACHE, mnt_debug_h(cache, "reading tags for: %s", devname));
@@ -285,7 +326,7 @@ int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 		const char *data;
 		char *dev;
 
-		if (blkid_probe_lookup_value(pr, tags[i], &data, NULL))
+		if (blkid_probe_lookup_value(cache->pr, tags[i], &data, NULL))
 			continue;
 		if (mnt_cache_find_tag(cache, tags[i], data))
 			continue; /* already cached */
@@ -303,7 +344,6 @@ int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 
 	return ntags ? 0 : 1;
 error:
-	blkid_free_probe(pr);
 	return -1;
 }
 
@@ -357,6 +397,38 @@ char *mnt_cache_find_tag_value(mnt_cache *cache,
 	}
 
 	return NULL;
+}
+
+/**
+ * mnt_get_fstype:
+ * @devname: device name
+ * @cache: cache for results or NULL
+ *
+ * Returns: fileststem type or NULL in case of error. The result has to be
+ * deallocated by free() if @cache is NULL.
+ */
+char *mnt_get_fstype(const char *devname, mnt_cache *cache)
+{
+	blkid_probe pr;
+	const char *data;
+	char *type = NULL;
+
+	if (cache)
+		return mnt_cache_find_tag_value(cache, devname, "TYPE");
+
+	if (mnt_cache_get_probe(NULL, devname, &pr))
+		return NULL;
+
+	blkid_probe_enable_superblocks(pr, 1);
+
+	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_TYPE);
+
+	if (!blkid_do_safeprobe(pr) &&
+	    !blkid_probe_lookup_value(pr, "TYPE", &data, NULL))
+		type = strdup(data);
+
+	blkid_free_probe(pr);
+	return type;
 }
 
 /**
@@ -526,6 +598,7 @@ int test_read_tags(struct mtest *ts, int argc, char *argv[])
 {
 	char line[BUFSIZ];
 	mnt_cache *cache;
+	int i;
 
 	cache = mnt_new_cache();
 	if (!cache)
@@ -536,6 +609,9 @@ int test_read_tags(struct mtest *ts, int argc, char *argv[])
 
 		if (line[sz - 1] == '\n')
 			line[sz - 1] = '\0';
+
+		if (!strcmp(line, "quit"))
+			break;
 
 		if (*line == '/') {
 			if (mnt_cache_read_tags(cache, line) < 0)
@@ -557,6 +633,16 @@ int test_read_tags(struct mtest *ts, int argc, char *argv[])
 				printf("%s: not cached\n", line);
 		}
 	}
+
+	for (i = 0; i < cache->nents; i++) {
+		struct mnt_cache_entry *e = &cache->ents[i];
+		if (!(e->flag & MNT_CACHE_ISTAG))
+			continue;
+
+		printf("%15s : %5s : %s\n", e->real, e->native,
+				e->native + strlen(e->native) + 1);
+	}
+
 	mnt_free_cache(cache);
 	return 0;
 
@@ -567,7 +653,7 @@ int main(int argc, char *argv[])
 	struct mtest ts[] = {
 		{ "--resolve-path", test_resolve_path, "  resolve paths from stdin" },
 		{ "--resolve-spec", test_resolve_spec, "  evaluate specs from stdin" },
-		{ "--read-tags", test_read_tags,       "  read devname or TAG from stdin" },
+		{ "--read-tags", test_read_tags,       "  read devname or TAG from stdin (\"quit\" to exit)" },
 		{ NULL }
 	};
 

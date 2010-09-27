@@ -149,6 +149,7 @@ extern char *mnt_cache_find_tag_value(mnt_cache *cache,
 extern char *mnt_resolve_path(const char *path, mnt_cache *cache);
 extern char *mnt_resolve_tag(const char *token, const char *value, mnt_cache *cache);
 extern char *mnt_resolve_spec(const char *spec, mnt_cache *cache);
+extern char *mnt_get_fstype(const char *devname, mnt_cache *cache);
 
 /* optstr.c */
 extern int mnt_optstr_next_option(char **optstr, char **name, size_t *namesz,

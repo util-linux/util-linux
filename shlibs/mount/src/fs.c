@@ -340,9 +340,6 @@ int __mnt_fs_set_fstype_ptr(mnt_fs *fs, char *fstype)
 {
 	assert(fs);
 
-	if (!fstype)
-		return -EINVAL;
-
 	if (fstype != fs->fstype)
 		free(fs->fstype);
 
@@ -351,13 +348,14 @@ int __mnt_fs_set_fstype_ptr(mnt_fs *fs, char *fstype)
 	fs->flags &= ~MNT_FS_NET;
 
 	/* save info about pseudo filesystems */
-	if (mnt_fstype_is_pseudofs(fs->fstype))
-		fs->flags |= MNT_FS_PSEUDO;
-	else if (mnt_fstype_is_netfs(fs->fstype))
-		fs->flags |= MNT_FS_NET;
-	else if (!strcmp(fs->fstype, "swap"))
-		fs->flags |= MNT_FS_SWAP;
-
+	if (fs->fstype) {
+		if (mnt_fstype_is_pseudofs(fs->fstype))
+			fs->flags |= MNT_FS_PSEUDO;
+		else if (mnt_fstype_is_netfs(fs->fstype))
+			fs->flags |= MNT_FS_NET;
+		else if (!strcmp(fs->fstype, "swap"))
+			fs->flags |= MNT_FS_SWAP;
+	}
 	return 0;
 }
 
@@ -372,14 +370,16 @@ int __mnt_fs_set_fstype_ptr(mnt_fs *fs, char *fstype)
  */
 int mnt_fs_set_fstype(mnt_fs *fs, const char *fstype)
 {
-	char *p;
+	char *p = NULL;
 	int rc;
 
-	if (!fs || !fstype)
+	if (!fs)
 		return -EINVAL;
-	p = strdup(fstype);
-	if (!p)
-		return -ENOMEM;
+	if (fstype) {
+		p = strdup(fstype);
+		if (!p)
+			return -ENOMEM;
+	}
 	rc =  __mnt_fs_set_fstype_ptr(fs, p);
 	if (rc)
 		free(p);

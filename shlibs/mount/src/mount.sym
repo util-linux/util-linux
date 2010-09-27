@@ -90,6 +90,7 @@ global:
 	mnt_resolve_path;
 	mnt_resolve_spec;
 	mnt_resolve_tag;
+	mnt_get_fstype;
 	mnt_split_optstr;
 	mnt_tab_add_fs;
 	mnt_tab_find_next_fs;

@@ -1090,7 +1090,41 @@ static int mnt_context_prepare_srcpath(mnt_context *cxt)
 
 static int mnt_context_detect_fstype(mnt_context *cxt)
 {
-	return 0; /* TODO */
+	char *type = NULL;
+
+	if (!cxt || !cxt->fs)
+		return -EINVAL;
+
+	if (cxt->mountflags & (MS_BIND | MS_MOVE | MS_PROPAGATION)) {
+		mnt_fs_set_fstype(cxt->fs, "none");
+		return 0;
+	}
+
+	type = (char *) mnt_fs_get_fstype(cxt->fs);
+	if (type && !strcmp(type, "auto")) {
+		mnt_fs_set_fstype(cxt->fs, NULL);
+		type = NULL;
+	}
+
+	if (!type && !(cxt->flags & MS_REMOUNT)) {
+		mnt_cache *cache;
+		const char *dev = mnt_fs_get_srcpath(cxt->fs);
+
+		if (!dev)
+			return -EINVAL;
+
+		cache = mnt_context_get_cache(cxt);
+		type = mnt_get_fstype(dev, cache);
+
+		if (!type)
+			return -EINVAL;
+		mnt_fs_set_fstype(cxt->fs, type);
+		if (!cache)
+			free(type);	/* type is not cached */
+		return 0;
+	}
+
+	return 0;
 }
 
 static int mnt_context_merge_mountflags(mnt_context *cxt)
