@@ -622,6 +622,8 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 	if (!optstr || !map)
 		return -EINVAL;
 
+	DBG(CXT, mnt_debug("appling 0x%08lu flags '%s'", flags, *optstr));
+
 	maps[0] = map;
 	next = *optstr;
 	fl = flags;
@@ -638,7 +640,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 				next = name;
 				rc = mnt_optstr_remove_option_at(optstr, name, end);
 				if (rc)
-					return rc;
+					goto err;
 			}
 			if (!(ent->mask & MNT_INVERT))
 				fl &= ~ent->id;
@@ -662,14 +664,20 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 			/* prepare name for value with optional value (e.g. loop[=%s]) */
 			if (p) {
 				p = strndup(ent->name, p - ent->name);
-				if (!p)
-					return -ENOMEM;
+				if (!p) {
+					rc = -ENOMEM;
+					goto err;
+				}
 				mnt_optstr_append_option(optstr, p, NULL);
 				free(p);
 			} else
 				mnt_optstr_append_option(optstr, ent->name, NULL);
 		}
 	}
+
+	return rc;
+err:
+	DBG(CXT, mnt_debug("failed to apply flags [rc=%d]", rc));
 	return rc;
 }
 
@@ -698,6 +706,8 @@ int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, char **ne
 	if (!optstr || !*optstr || !value || !valsz)
 		return -EINVAL;
 
+	DBG(CXT, mnt_debug("fixing SELinux context"));
+
 	begin = value;
 	end = value + valsz;
 
@@ -713,11 +723,17 @@ int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, char **ne
 	if (!p)
 		return -ENOMEM;
 
+
 	/* translate the context */
 	rc = selinux_trans_to_raw_context((security_context_t) p, &raw);
+
+	DBG(CXT, mnt_debug("SELinux context '%s' translated to '%s'",
+			p, rc == -1 ? "FAILED" : (char *) raw));
+
 	free(p);
 	if (rc == -1 ||	!raw)
 		return -EINVAL;
+
 
 	/* create quoted string from the raw context */
 	sz = strlen((char *) raw);
@@ -777,6 +793,8 @@ int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next)
 	if (!optstr || !*optstr || !value || !valsz)
 		return -EINVAL;
 
+	DBG(CXT, mnt_debug("fixing uid"));
+
 	end = value + valsz;
 
 	if (valsz == 7 && !strncmp(value, "useruid", 7) &&
@@ -822,6 +840,8 @@ int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next)
 
 	if (!optstr || !*optstr || !value || !valsz)
 		return -EINVAL;
+
+	DBG(CXT, mnt_debug("fixing gid"));
 
 	end = value + valsz;
 
@@ -870,6 +890,8 @@ int mnt_optstr_fix_user(char **optstr, char *value, size_t valsz, char **next)
 
 	if (!optstr || !value)
 		return -EINVAL;
+
+	DBG(CXT, mnt_debug("fixing user"));
 
 	username = mnt_get_username(getuid());
 	if (!username)
