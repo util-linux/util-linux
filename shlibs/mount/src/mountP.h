@@ -59,7 +59,8 @@
 
 extern int libmount_debug_mask;
 
-static inline void mnt_debug(const char *mesg, ...)
+static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
+mnt_debug(const char *mesg, ...)
 {
 	va_list ap;
 	va_start(ap, mesg);
@@ -68,7 +69,8 @@ static inline void mnt_debug(const char *mesg, ...)
 	fputc('\n', stderr);
 }
 
-static inline void mnt_debug_h(void *handler, const char *mesg, ...)
+static inline void __attribute__ ((__format__ (__printf__, 2, 3)))
+mnt_debug_h(void *handler, const char *mesg, ...)
 {
 	va_list ap;
 

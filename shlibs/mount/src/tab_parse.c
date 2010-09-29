@@ -399,7 +399,7 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
 */
 	return 0;
 err:
-	DBG(TAB, mnt_debug_h(tb, "%s:%d: parse error", tb, filename, *nlines));
+	DBG(TAB, mnt_debug_h(tb, "%s:%d: parse error", filename, *nlines));
 
 	rc = 1;		/* recoverable error */
 

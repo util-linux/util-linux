@@ -214,7 +214,7 @@ int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root)
 	if (!tb || !root)
 		return -EINVAL;
 
-	DBG(TAB, mnt_debug_h(tb, "lookup root fs", tb));
+	DBG(TAB, mnt_debug_h(tb, "lookup root fs"));
 
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
@@ -358,7 +358,7 @@ int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 	if (!tb || !itr || !fs || !match_func)
 		return -EINVAL;
 
-	DBG(TAB, mnt_debug_h(tb, "lookup next fs", tb));
+	DBG(TAB, mnt_debug_h(tb, "lookup next fs"));
 
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &tb->ents);
