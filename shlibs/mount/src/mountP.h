@@ -57,6 +57,8 @@
 				} \
 			} while(0)
 
+# define DBG_FLUSH	do { fflush(stderr); } while(0)
+
 extern int libmount_debug_mask;
 
 static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
@@ -83,6 +85,7 @@ mnt_debug_h(void *handler, const char *mesg, ...)
 
 #else /* !CONFIG_LIBMOUNT_DEBUG */
 # define DBG(m,x)
+# define DBG_FLUSH
 #endif
 
 /* extension for files in the /etc/fstab.d directory */

@@ -402,16 +402,18 @@ char *mnt_cache_find_tag_value(mnt_cache *cache,
 /**
  * mnt_get_fstype:
  * @devname: device name
+ * @ambi: returns TRUE if probing result is ambivalent (optional argument)
  * @cache: cache for results or NULL
  *
  * Returns: fileststem type or NULL in case of error. The result has to be
  * deallocated by free() if @cache is NULL.
  */
-char *mnt_get_fstype(const char *devname, mnt_cache *cache)
+char *mnt_get_fstype(const char *devname, int *ambi, mnt_cache *cache)
 {
 	blkid_probe pr;
 	const char *data;
 	char *type = NULL;
+	int rc;
 
 	if (cache)
 		return mnt_cache_find_tag_value(cache, devname, "TYPE");
@@ -423,9 +425,13 @@ char *mnt_get_fstype(const char *devname, mnt_cache *cache)
 
 	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_TYPE);
 
-	if (!blkid_do_safeprobe(pr) &&
-	    !blkid_probe_lookup_value(pr, "TYPE", &data, NULL))
+	rc = blkid_do_safeprobe(pr);
+
+	if (!rc && !blkid_probe_lookup_value(pr, "TYPE", &data, NULL))
 		type = strdup(data);
+
+	if (ambi)
+		*ambi = rc == -2 ? TRUE : FALSE;
 
 	blkid_free_probe(pr);
 	return type;

@@ -13,6 +13,9 @@
 #include <string.h>
 #include <errno.h>
 
+#include <sys/wait.h>
+#include <sys/mount.h>
+
 #ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>
 #include <selinux/context.h>
@@ -49,6 +52,12 @@ struct _mnt_context
 	mnt_cache	*cache;		/* paths cache */
 
 	int	flags;		/* private context flags */
+	int	ambi;		/* libblkid returns ambivalent result */
+
+	char	*helper_name;	/* name of the used /sbin/[u]mount.<type> helper */
+	int	helper_status;	/* helper wait(2) status */
+
+	int	syscall_errno;	/* mount(2) or umount(2) error */
 };
 
 /* flags */
@@ -124,6 +133,7 @@ void mnt_free_context(mnt_context *cxt)
 	free(cxt->fstype_pattern);
 	free(cxt->optstr_pattern);
 	free(cxt->spec);
+	free(cxt->helper_name);
 
 	if (!(cxt->flags & MNT_FL_EXTERN_FS))
 		mnt_free_fs(cxt->fs);
@@ -178,12 +188,17 @@ int mnt_reset_context(mnt_context *cxt)
 	cxt->mtab = NULL;
 
 	free(cxt->spec);
+	free(cxt->helper_name);
+
 	cxt->spec = NULL;
+	cxt->helper_name = NULL;
 
 	cxt->mountflags = 0;
 	cxt->user_mountflags = 0;
 	cxt->mountdata = NULL;
 	cxt->flags = MNT_FL_DEFAULT;
+	cxt->syscall_errno = 0;
+	cxt->helper_status = 0;
 
 	/* restore non-resetable flags */
 	cxt->flags |= (fl & MNT_FL_EXTERN_FSTAB);
@@ -926,6 +941,9 @@ static int mnt_context_fix_optstr(mnt_context *cxt)
 	if (!optstr)
 		return 0;
 
+	/* The propagation flags should not be used together with any other flags */
+	if (cxt->mountflags & MS_PROPAGATION)
+		cxt->mountflags &= MS_PROPAGATION;
 	/*
 	 * Sync mount options with mount flags
 	 */
@@ -1103,17 +1121,17 @@ static int mnt_context_prepare_srcpath(mnt_context *cxt)
 	return 0;
 }
 
-static int mnt_context_detect_fstype(mnt_context *cxt)
+static int mnt_context_guess_fstype(mnt_context *cxt)
 {
-	char *type = NULL;
+	char *type;
+	const char *dev;
+	mnt_cache *cache;
 
 	if (!cxt || !cxt->fs)
 		return -EINVAL;
 
-	if (cxt->mountflags & (MS_BIND | MS_MOVE | MS_PROPAGATION)) {
-		mnt_fs_set_fstype(cxt->fs, "none");
-		return 0;
-	}
+	if (cxt->mountflags & (MS_BIND | MS_MOVE | MS_PROPAGATION))
+		goto none;
 
 	type = (char *) mnt_fs_get_fstype(cxt->fs);
 	if (type && !strcmp(type, "auto")) {
@@ -1121,24 +1139,30 @@ static int mnt_context_detect_fstype(mnt_context *cxt)
 		type = NULL;
 	}
 
-	if (!type && !(cxt->flags & MS_REMOUNT)) {
-		mnt_cache *cache;
-		const char *dev = mnt_fs_get_srcpath(cxt->fs);
+	if (type)
+		goto done;
+	if (cxt->flags & MS_REMOUNT)
+		goto none;
+	dev = mnt_fs_get_srcpath(cxt->fs);
+	if (!dev)
+		goto err;
 
-		if (!dev)
-			return -EINVAL;
+	cache = mnt_context_get_cache(cxt);
+	type = mnt_get_fstype(dev, &cxt->ambi, cache);
+	if (!type)
+		goto err;
 
-		cache = mnt_context_get_cache(cxt);
-		type = mnt_get_fstype(dev, cache);
-
-		if (!type)
-			return -EINVAL;
-		mnt_fs_set_fstype(cxt->fs, type);
-		if (!cache)
-			free(type);	/* type is not cached */
-	}
-
+	mnt_fs_set_fstype(cxt->fs, type);
+	if (!cache)
+		free(type);	/* type is not cached */
+done:
+	DBG(CXT, mnt_debug_h(cxt, "detected FS type: %s", type));
 	return 0;
+none:
+	return mnt_fs_set_fstype(cxt->fs, "none");
+err:
+	DBG(CXT, mnt_debug_h(cxt, "failed to detect FS type"));
+	return -EINVAL;
 }
 
 static int mnt_context_merge_mountflags(mnt_context *cxt)
@@ -1165,17 +1189,22 @@ static int mnt_context_prepare_update(mnt_context *cxt, int act)
 {
 	int rc;
 
-	if (cxt->update) {
-		mnt_free_update(cxt->update);
-		cxt->update = NULL;
-	}
-
 	if (cxt->flags & MNT_FL_NOMTAB)
 		return 0;
 
-	cxt->update = mnt_new_update(act, cxt->mountflags, cxt->fs);
-	if (!cxt->update)
-		return -ENOMEM;
+	if (!cxt->update) {
+		cxt->update = mnt_new_update(act, cxt->mountflags, cxt->fs);
+		if (!cxt->update)
+			return -ENOMEM;
+	} else {
+		rc = mnt_update_set_action(cxt->update, act);
+		if (!rc)
+			rc = mnt_update_set_mountflags(cxt->update, cxt->mountflags);
+		if (!rc)
+			rc = mnt_update_set_fs(cxt->update, cxt->fs);
+		if (rc)
+			return rc;
+	}
 
 	if (cxt->flags & MNT_FL_NOLOCK)
 		mnt_update_disable_lock(cxt->update, TRUE);
@@ -1264,14 +1293,13 @@ int mnt_context_prepare_mount(mnt_context *cxt)
 	if (rc)
 		goto err;
 
-	rc = mnt_context_detect_fstype(cxt);
+	rc = mnt_context_guess_fstype(cxt);
 	if (rc)
 		goto err;
 
 	rc = mnt_context_prepare_update(cxt, MNT_ACT_MOUNT);
 	if (rc)
 		goto err;
-
 
 	DBG(CXT, mnt_debug_h(cxt, "sucessfully prepared"));
 	return 0;
@@ -1280,15 +1308,216 @@ err:
 	return rc;
 }
 
-int mnt_context_mount_fs(mnt_context *cxt)
+static int exec_mount_helper(mnt_context *cxt, const char *prog,
+					const char *subtype)
 {
-	if (!cxt)
+	DBG_FLUSH;
+
+	switch (fork()) {
+	case 0:
+	{
+		char *o;
+		const char *args[12];
+		int i = 0;
+
+		if (setgid(getgid()) < 0)
+			exit(EXIT_FAILURE);
+
+		if (setuid(getuid()) < 0)
+			exit(EXIT_FAILURE);
+
+		o = (char *) mnt_fs_get_fs_optstr(cxt->fs);
+
+		args[i++] = prog;			/* 1 */
+		args[i++] = mnt_fs_get_srcpath(cxt->fs);	/* 2 */
+		args[i++] = mnt_fs_get_target(cxt->fs);	/* 3 */
+
+		if (cxt->flags & MNT_FL_SLOPPY)
+			args[i++] = "-s";		/* 4 */
+		if (cxt->flags & MNT_FL_FAKE)
+			args[i++] = "-f";		/* 5 */
+		if (cxt->flags & MNT_FL_NOMTAB)
+			args[i++] = "-n";		/* 6 */
+		if (cxt->flags & MNT_FL_VERBOSE)
+			args[i++] = "-v";		/* 7 */
+		if (o) {
+			args[i++] = "-o";		/* 8 */
+			args[i++] = o;			/* 9 */
+		}
+		if (subtype) {
+			args[i++] = "-t";		/* 10 */
+			args[i++] = subtype;	/* 11 */
+		}
+		args[i] = NULL;				/* 12 */
+
+		execv(prog, (char * const *) args);
+		exit(EXIT_FAILURE);
+	}
+	default:
+	{
+		int st;
+		wait(&st);
+		cxt->helper_status = WIFEXITED(st) ? WEXITSTATUS(st) : -1;
+		cxt->helper_name = strdup(prog);
+
+		DBG(CXT, mnt_debug_h(cxt, "%s executed [status=%d]",
+					prog, cxt->helper_status));
+		return 0;
+	}
+
+	case -1:
+		DBG(CXT, mnt_debug_h(cxt, "fork() failed"));
+		return -errno;
+	}
+}
+
+/*
+ * Returns: 0 on success, 1 if helper not found and negative number in case of
+ * error.
+ */
+static int mnt_context_call_helper(mnt_context *cxt,
+			const char *name, const char *type)
+{
+	char search_path[] = FS_SEARCH_PATH;		/* from config.h */
+	char *p = NULL, *path;
+
+	assert(cxt);
+
+	if (!(cxt->flags & MNT_FL_NOHELPERS) ||
+	    !type || !strcmp(type, "none"))
+		return 1;
+
+	path = strtok_r(search_path, ":", &p);
+	while (path) {
+		char helper[PATH_MAX];
+		struct stat st;
+		const char *subtype = NULL;
+		int rc;
+
+		rc = snprintf(helper, sizeof(helper), "%s/%s.%s",
+						name, path, type);
+		path = strtok_r(NULL, ":", &p);
+
+		if (rc >= sizeof(helper) || rc < 0)
+			continue;
+
+		rc = stat(helper, &st);
+		if (rc == -1 && errno == ENOENT && strchr(type, '.')) {
+			/* If type ends with ".subtype" try without it */
+			*strrchr(helper, '.') = '\0';
+			subtype = type;
+			rc = stat(helper, &st);
+		}
+		if (rc)
+			continue;
+
+		return exec_mount_helper(cxt, helper, subtype);
+	}
+
+	DBG(CXT, mnt_debug_h(cxt, "%s.%s helper not found", name, type));
+	return 1;
+}
+
+static int mnt_context_do_mount(mnt_context *cxt, const char *type)
+{
+	int rc;
+	const char *src, *target;
+	unsigned long flags;
+
+	assert(cxt);
+	assert(type);
+	assert(cxt->fs);
+
+	flags = cxt->mountflags;
+	src = mnt_fs_get_srcpath(cxt->fs);
+	target = mnt_fs_get_target(cxt->fs);
+
+	DBG(CXT, mnt_debug_h(cxt,
+			"mounting [fstype=%s, source=%s, target=%s, "
+		        "fs_optstr='%s', vfs_optstr='%s', "
+			"mountflags=%08lx, mountdata=%s",
+
+			type, src, target,
+			mnt_fs_get_fs_optstr(cxt->fs),
+			mnt_fs_get_vfs_optstr(cxt->fs),
+			flags,
+			cxt->mountdata ? "yes" : "<none>"));
+
+	rc = mnt_context_call_helper(cxt, "mount", type);
+	if (rc <= 0)
+		return rc;
+
+	if (!src || !target)
 		return -EINVAL;
 
-	DBG(CXT, mnt_debug_h(cxt, "mounting:"));
-	DBG(CXT, mnt_fs_print_debug(cxt->fs, stderr));
-	DBG(CXT, mnt_debug_h(cxt, "mountflags: 0x%lx", cxt->mountflags));
+	if (!(flags & MS_MGC_MSK))
+		flags |= MS_MGC_VAL;
 
+	DBG(CXT, mnt_debug_h(cxt, "calling mount(2)"));
+
+	if (mount(src, target, type, flags, cxt->mountdata)) {
+		cxt->syscall_errno = errno;
+		DBG(CXT, mnt_debug_h(cxt, "mount(2) failed [errno=%d]",
+						cxt->syscall_errno));
+		return -cxt->syscall_errno;
+	}
+
+	DBG(CXT, mnt_debug_h(cxt, "mount(2) success"));
+	return 0;
+}
+
+/**
+ * mnt_context_mount_fs:
+ * @cxt: mount context
+ *
+ * Mount filesystem by mount(2) or fork()+exec(/sbin/mount.<type>).
+ *
+ * See also mnt_context_disable_helpers().
+ *
+ * Returns: 0 on success, and negative number in case of error.
+ */
+int mnt_context_mount_fs(mnt_context *cxt)
+{
+	int rc = -EINVAL;
+	const char *type;
+
+	if (!cxt || !cxt->fs || (cxt->fs->flags & MNT_FS_SWAP))
+		return -EINVAL;
+
+	type = mnt_fs_get_fstype(cxt->fs);
+
+	if (!(cxt->flags & MNT_FL_MOUNTDATA))
+		cxt->mountdata = (char *) mnt_fs_get_fs_optstr(cxt->fs);
+
+	if (type && !strchr(type, ','))
+		rc = mnt_context_do_mount(cxt, type);
+
+	/* TODO: try all filesystems from comma separated list of types */
+
+	/* TODO: try all filesystems from /proc/filesystems and /etc/filesystems */
+
+	/* TODO: if mtab update is expected then checkif the target is really
+	 *       mounted read-write to avoid 'ro' in mtab and 'rw' in /proc/mounts.
+	 */
+
+	return rc;
+}
+
+/* TODO: mnt_context_post_mount() */
+
+/**
+ * mnt_context_get_mount_error:
+ * @cxt: mount context
+ * @buf: buffer for error message
+ * @bufsiz: size of buffer
+ *
+ * Generates human readable error message for failed mnt_context_mount_fs().
+ *
+ * Returns: 0 on success, and negative number in case of error.
+ */
+int mnt_context_get_mount_error(mnt_context *cxt, char *buf, size_t bufsiz)
+{
+	/* TODO: based on cxt->syscall_errno or cxt->helper_status */
 	return 0;
 }
 
@@ -1328,11 +1557,13 @@ int test_mount(struct mtest *ts, int argc, char *argv[])
 
 	rc = mnt_context_prepare_mount(cxt);
 	if (rc)
-		fprintf(stderr, "failed to prepare mount\n");
+		printf("failed to prepare mount\n");
 	else {
 		rc = mnt_context_mount_fs(cxt);
 		if (rc)
-			fprintf(stderr, "failed to mount\n");
+			printf("failed to mount\n");
+		else
+			printf("successfully mounted");
 	}
 
 	mnt_free_context(cxt);
