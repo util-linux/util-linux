@@ -61,6 +61,7 @@ struct _mnt_context
 #define MNT_FL_LAZY		(1 << 7)
 #define MNT_FL_FORCE		(1 << 8)
 #define MNT_FL_NOCANONICALIZE	(1 << 9)
+#define MNT_FL_NOLOCK		(1 << 10)	/* don't lock mtab file */
 
 #define MNT_FL_EXTERN_FS	(1 << 15)	/* cxt->fs is not private */
 #define MNT_FL_EXTERN_FSTAB	(1 << 16)	/* cxt->fstab is not private */
@@ -339,9 +340,23 @@ int mnt_context_enable_fake(mnt_context *cxt, int enable)
  *
  * Returns: 0 on success, negative number in case of error.
  */
-int mnt_context_disable_nomtab(mnt_context *cxt, int disable)
+int mnt_context_disable_mtab(mnt_context *cxt, int disable)
 {
 	return mnt_context_set_flag(cxt, MNT_FL_NOMTAB, disable);
+}
+
+/**
+ * mnt_context_disable_lock:
+ * @cxt: mount context
+ * @disable: TRUE or FALSE
+ *
+ * Disable/enable mtab lock.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_disable_lock(mnt_context *cxt, int disable)
+{
+	return mnt_context_set_flag(cxt, MNT_FL_NOLOCK, disable);
 }
 
 /**
@@ -1121,7 +1136,6 @@ static int mnt_context_detect_fstype(mnt_context *cxt)
 		mnt_fs_set_fstype(cxt->fs, type);
 		if (!cache)
 			free(type);	/* type is not cached */
-		return 0;
 	}
 
 	return 0;
@@ -1145,6 +1159,61 @@ static int mnt_context_merge_mountflags(mnt_context *cxt)
 
 	cxt->flags |= MNT_FL_MOUNTFLAGS_MERGED;
 	return 0;
+}
+
+static int mnt_context_prepare_update(mnt_context *cxt, int act)
+{
+	int rc;
+
+	if (cxt->update) {
+		mnt_free_update(cxt->update);
+		cxt->update = NULL;
+	}
+
+	if (cxt->flags & MNT_FL_NOMTAB)
+		return 0;
+
+	cxt->update = mnt_new_update(act, cxt->mountflags, cxt->fs);
+	if (!cxt->update)
+		return -ENOMEM;
+
+	if (cxt->flags & MNT_FL_NOLOCK)
+		mnt_update_disable_lock(cxt->update, TRUE);
+
+	rc = mnt_prepare_update(cxt->update);
+
+	if (rc == 1)
+		/* mtab update is unnecessary for this system */
+		rc = 0;
+
+	return rc;
+}
+
+/**
+ * mnt_context_get_lock:
+ * @cxt: mount context
+ *
+ * The lock is available after mnt_context_prepare_mount() or
+ * mnt_context_prepare_umount().
+ *
+ * The application that uses libmount context does not have to care about
+ * mtab locking, but with a small exceptions: the application has to be able to
+ * remove the lock file when interrupted by signal. It means that properly written
+ * mount(8)-like application has to call mnt_unlock_file() from a signal handler.
+ *
+ * See also mnt_unlock_file(), mnt_context_disable_lock() and
+ * mnt_context_disable_mtab().
+ *
+ * It's not error if this function returns NULL (it usually means that the
+ * context is not prepared yet, or mtab update is unnecessary).
+ *
+ * Returns: pointer to lock struct.
+ */
+mnt_lock *mnt_context_get_lock(mnt_context *cxt)
+{
+	if (!cxt || !cxt->update || (cxt->flags & (MNT_FL_NOMTAB | MNT_FL_NOLOCK)))
+		return NULL;
+	return mnt_update_get_lock(cxt->update);
 }
 
 /**
@@ -1199,10 +1268,10 @@ int mnt_context_prepare_mount(mnt_context *cxt)
 	if (rc)
 		goto err;
 
+	rc = mnt_context_prepare_update(cxt, MNT_ACT_MOUNT);
+	if (rc)
+		goto err;
 
-	/* TODO: prepare mtab update */
-
-	/* TODO: replace generic optstr with fs_optstr */
 
 	DBG(CXT, mnt_debug_h(cxt, "sucessfully prepared"));
 	return 0;

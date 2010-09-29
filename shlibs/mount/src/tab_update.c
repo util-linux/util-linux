@@ -229,7 +229,8 @@ int mnt_update_set_mountflags(mnt_update *upd, unsigned long flags)
  * Note that after mnt_update_disable_lock(mt, TRUE) or after mnt_free_update()
  * the lock will be automatically deallocated.
  *
- * Returns: libmount lock handler or NULL if locking is disabled.
+ * Returns: libmount lock handler or NULL if locking is disabled or update is
+ * not prepared yet.
  */
 mnt_lock *mnt_update_get_lock(mnt_update *upd)
 {
