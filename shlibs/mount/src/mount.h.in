@@ -296,7 +296,7 @@ extern int mnt_update_set_old_target(mnt_update *upd, const char *target);
 extern int mnt_update_set_fs(mnt_update *upd, const mnt_fs *fs);
 
 extern int mnt_prepare_update(mnt_update *upd);
-extern int mnt_update_mtab(mnt_update *upd);
+extern int mnt_update_file(mnt_update *upd);
 extern int mnt_update_is_pointless(mnt_update *upd);
 
 /*

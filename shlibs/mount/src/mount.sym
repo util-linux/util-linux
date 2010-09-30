@@ -15,7 +15,7 @@ global:
 	mnt_free_fs;
 	mnt_free_iter;
 	mnt_free_lock;
-	mnt_free_mtab;
+	mnt_free_update;
 	mnt_free_optls;
 	mnt_free_tab;
 	mnt_fs_append_optstr;
@@ -67,7 +67,7 @@ global:
 	mnt_new_fs;
 	mnt_new_iter;
 	mnt_new_lock;
-	mnt_new_mtab;
+	mnt_new_update;
 	mnt_new_optls;
 	mnt_new_tab;
 	mnt_new_tab_from_file;
@@ -117,7 +117,7 @@ global:
 	mnt_unmangle;
 	mnt_update_disable_lock;
 	mnt_update_get_lock;
-	mnt_update_mtab;
+	mnt_update_file;
 	mnt_update_prepare_update;
 	mnt_update_set_action;
 	mnt_update_set_filename;
