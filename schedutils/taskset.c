@@ -32,6 +32,8 @@
 #include "cpuset.h"
 #include "nls.h"
 
+#include "schedutils.h"
+
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fprintf(out,
@@ -87,7 +89,7 @@ int main(int argc, char *argv[])
 	while ((opt = getopt_long(argc, argv, "+pchV", longopts, NULL)) != -1) {
 		switch (opt) {
 		case 'p':
-			pid = atoi(argv[argc - 1]);
+			pid = getnum(argv[argc - 1], _("failed to parse pid"));
 			break;
 		case 'c':
 			c_opt = 1;

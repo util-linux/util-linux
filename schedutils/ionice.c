@@ -18,6 +18,8 @@
 
 #include "nls.h"
 
+#include "schedutils.h"
+
 static int tolerant;
 
 static inline int ioprio_set(int which, int who, int ioprio)
@@ -91,28 +93,6 @@ static void usage(int rc)
 	exit(rc);
 }
 
-static long getnum(const char *str)
-{
-	long num;
-	char *end = NULL;
-
-	if (str == NULL || *str == '\0')
-		goto err;
-	errno = 0;
-	num = strtol(str, &end, 10);
-
-	if (errno || (end && *end))
-		goto err;
-
-	return num;
-err:
-	if (errno)
-		err(EXIT_SUCCESS, _("cannot parse number '%s'"), str);
-	else
-		errx(EXIT_SUCCESS, _("cannot parse number '%s'"), str);
-	return 0;
-}
-
 int main(int argc, char *argv[])
 {
 	int ioprio = 4, set = 0, ioclass = IOPRIO_CLASS_BE, c;
@@ -125,15 +105,15 @@ int main(int argc, char *argv[])
 	while ((c = getopt(argc, argv, "+n:c:p:th")) != EOF) {
 		switch (c) {
 		case 'n':
-			ioprio = getnum(optarg);
+			ioprio = getnum(optarg, _("failed to parse class data"));
 			set |= 1;
 			break;
 		case 'c':
-			ioclass = getnum(optarg);
+			ioclass = getnum(optarg, _("failed to parse class"));
 			set |= 2;
 			break;
 		case 'p':
-			pid = getnum(optarg);
+			pid = getnum(optarg, _("failed to parse pid"));
 			break;
 		case 't':
 			tolerant = 1;
@@ -167,7 +147,7 @@ int main(int argc, char *argv[])
 		ioprio_print(pid);
 
 		for(; argv[optind]; ++optind) {
-			pid = getnum(argv[optind]);
+			pid = getnum(argv[optind], _("failed to parse pid"));
 			ioprio_print(pid);
 		}
 	} else {
@@ -176,7 +156,7 @@ int main(int argc, char *argv[])
 
 			for(; argv[optind]; ++optind)
 			{
-				pid = getnum(argv[optind]);
+				pid = getnum(argv[optind], _("failed to parse pid"));
 				ioprio_setpid(pid, ioprio, ioclass);
 			}
 		}
