@@ -248,7 +248,7 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
 	*optstr = NULL;
 
 	rc = mnt_optstr_append_option(optstr, name, value);
-	if (!rc && tmp)
+	if (!rc && tmp && *tmp)
 		rc = mnt_optstr_append_option(optstr, tmp, NULL);
 	if (!rc) {
 		free(tmp);
@@ -629,22 +629,59 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 	next = *optstr;
 	fl = flags;
 
-	/* scan @optstr and remove options that are missing in the @flags */
-	while(!mnt_optstr_next_option(&next, &name, &namesz, &val, &valsz)) {
-		const struct mnt_optmap *ent;
+	/*
+	 * There is convetion that 'rw/ro' flags is always at the begin of
+	 * the string (athough the 'rw' is unnecessary).
+	 */
+	if (map == mnt_get_builtin_optmap(MNT_LINUX_MAP)) {
+		const char *o = (fl & MS_RDONLY) ? "ro" : "rw";
 
-		if (mnt_optmap_get_entry(maps, 1, name, namesz, &ent)) {
+		if (next &&
+		    (!strncmp(next, "rw", 2) || !strncmp(next, "ro", 2)) &&
+		    (*(next + 2) == '\0' || *(next + 2) == ',')) {
 
-			/* remove unwanted option */
-			if ((ent->mask & MNT_INVERT) || !(fl & ent->id)) {
-				char *end = val ? val + valsz : name + namesz;
-				next = name;
-				rc = mnt_optstr_remove_option_at(optstr, name, end);
-				if (rc)
-					goto err;
+			/* already set, be paranoid and fix it */
+			memcpy(next, o, 2);
+		} else {
+			rc = mnt_optstr_prepend_option(optstr, o, NULL);
+			if (rc)
+				goto err;
+			next = *optstr;		/* because realloc() */
+		}
+		fl &= ~MS_RDONLY;
+		next += 2;
+		if (*next == ',')
+			next++;
+	}
+
+	if (next && *next) {
+		/*
+		 * scan @optstr and remove options that are missing in
+		 * the @flags
+		 */
+		while(!mnt_optstr_next_option(&next, &name, &namesz,
+							&val, &valsz)) {
+			const struct mnt_optmap *ent;
+
+			if (mnt_optmap_get_entry(maps, 1, name, namesz, &ent)) {
+				/*
+				 * remove unwanted option (rw/ro is already set)
+				 */
+				if (ent->id == MS_RDONLY ||
+				    (ent->mask & MNT_INVERT) ||
+				    !(fl & ent->id)) {
+
+					char *end = val ? val + valsz :
+							  name + namesz;
+					next = name;
+					rc = mnt_optstr_remove_option_at(
+							optstr, name, end);
+					if (rc)
+						goto err;
+				}
+				if (!(ent->mask & MNT_INVERT))
+					fl &= ~ent->id;
 			}
-			if (!(ent->mask & MNT_INVERT))
-				fl &= ~ent->id;
 		}
 	}
 
