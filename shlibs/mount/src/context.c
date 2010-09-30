@@ -1489,21 +1489,48 @@ int mnt_context_mount_fs(mnt_context *cxt)
 	if (!(cxt->flags & MNT_FL_MOUNTDATA))
 		cxt->mountdata = (char *) mnt_fs_get_fs_optstr(cxt->fs);
 
-	if (type && !strchr(type, ','))
+	if (type && !strchr(type, ',')) {
 		rc = mnt_context_do_mount(cxt, type);
-
+		if (rc)
+			return rc;
+	}
 	/* TODO: try all filesystems from comma separated list of types */
 
 	/* TODO: try all filesystems from /proc/filesystems and /etc/filesystems */
 
-	/* TODO: if mtab update is expected then checkif the target is really
-	 *       mounted read-write to avoid 'ro' in mtab and 'rw' in /proc/mounts.
-	 */
-
 	return rc;
 }
 
-/* TODO: mnt_context_post_mount() */
+/**
+ * mnt_context_post_mount:
+ * @cxt: mount context
+ *
+ * Updates mtab, etc. This function should be always called after
+ * mnt_context_do_mount().
+ *
+ * Returns: 0 on success, and negative number in case of error.
+ */
+int mnt_context_post_mount(mnt_context *cxt)
+{
+	int rc = 0;
+
+	if (!cxt)
+		return -EINVAL;
+	/*
+	 * Update /etc/mtab or /var/run/mount/mountinfo
+	 */
+	if (!cxt->syscall_errno && !cxt->helper_name &&
+	    !(cxt->flags & MNT_FL_NOMTAB) &&
+	    cxt->update && !mnt_update_is_pointless(cxt->update)) {
+
+		/* TODO: if mtab update is expected then checkif the target is really
+		 *       mounted read-write to avoid 'ro' in mtab and 'rw' in /proc/mounts.
+		 */
+		rc = mnt_update_file(cxt->update);
+	}
+
+	return rc;
+}
 
 /**
  * mnt_context_get_mount_error:
@@ -1522,6 +1549,16 @@ int mnt_context_get_mount_error(mnt_context *cxt, char *buf, size_t bufsiz)
 }
 
 #ifdef TEST_PROGRAM
+
+mnt_lock *lock;
+
+static void lock_fallback(void)
+{
+	if (lock) {
+		mnt_unlock_file(lock);
+		mnt_free_lock(lock);
+	}
+}
 
 int test_mount(struct mtest *ts, int argc, char *argv[])
 {
@@ -1559,11 +1596,19 @@ int test_mount(struct mtest *ts, int argc, char *argv[])
 	if (rc)
 		printf("failed to prepare mount\n");
 	else {
+		lock = mnt_context_get_lock(cxt);
+		if (lock)
+			atexit(lock_fallback);
+
 		rc = mnt_context_mount_fs(cxt);
 		if (rc)
 			printf("failed to mount\n");
-		else
+		else {
 			printf("successfully mounted");
+			rc = mnt_context_post_mount(cxt);
+			if (rc)
+				printf("mtab update failed\n");
+		}
 	}
 
 	mnt_free_context(cxt);
