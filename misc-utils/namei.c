@@ -60,6 +60,7 @@ struct namei {
 	struct namei	*next;		/* next item */
 	int		level;
 	int		mountpoint;	/* is mount point */
+	int		noent;		/* is this item not existing */
 };
 
 struct idcache {
@@ -250,8 +251,10 @@ new_namei(struct namei *parent, const char *path, const char *fname, int lev)
 	nm->name = strdup(fname);
 	if (!nm->name)
 		err(EXIT_FAILURE, _("out of memory?"));
-	if (lstat(path, &nm->st) == -1)
-		err(EXIT_FAILURE, _("could not stat '%s'"), path);
+
+	nm->noent = (lstat(path, &nm->st) == -1);
+	if (nm->noent)
+		return nm;
 
 	if (S_ISLNK(nm->st.st_mode))
 		readlink_to_namei(nm, path);
@@ -331,7 +334,6 @@ add_namei(struct namei *parent, const char *orgpath, int start, struct namei **l
 	return first;
 }
 
-
 static int
 follow_symlinks(struct namei *nm)
 {
@@ -340,6 +342,8 @@ follow_symlinks(struct namei *nm)
 	for (; nm; nm = nm->next) {
 		struct namei *next, *last;
 
+		if (nm->noent)
+			continue;
 		if (!S_ISLNK(nm->st.st_mode))
 			continue;
 		if (++symcount > MAXSYMLINKS) {
@@ -394,7 +398,7 @@ strmode(mode_t mode, char *str)
 	str[10] = '\0';
 }
 
-static void
+static int
 print_namei(struct namei *nm, char *path)
 {
 	struct namei *prev = NULL;
@@ -405,6 +409,11 @@ print_namei(struct namei *nm, char *path)
 
 	for (; nm; prev = nm, nm = nm->next) {
 		char md[11];
+
+		if (nm->noent) {
+			printf(_("%s - No such file or directory\n"), nm->name);
+			return -1;
+		}
 
 		strmode(nm->st.st_mode, md);
 
@@ -439,6 +448,7 @@ print_namei(struct namei *nm, char *path)
 		else
 			printf(" %s\n", nm->name);
 	}
+	return 0;
 }
 
 static void
@@ -482,6 +492,7 @@ main(int argc, char **argv)
 {
 	extern int optind;
 	int c;
+	int rc = EXIT_SUCCESS;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -522,25 +533,29 @@ main(int argc, char **argv)
 		struct stat st;
 
 		if (stat(path, &st) != 0)
-			err(EXIT_FAILURE, _("failed to stat: %s"), path);
+			rc = EXIT_FAILURE;
 
 		nm = add_namei(NULL, path, 0, NULL);
 		if (nm) {
 			int sml = 0;
 			if (!(flags & NAMEI_NOLINKS))
 				sml = follow_symlinks(nm);
-			print_namei(nm, path);
+			if (print_namei(nm, path)) {
+				rc = EXIT_FAILURE;
+				continue;
+			}
 			free_namei(nm);
-			if (sml == -1)
-				errx(EXIT_FAILURE,
-					_("%s: exceeded limit of symlinks"),
-					path);
+			if (sml == -1) {
+				rc = EXIT_FAILURE;
+				warnx(_("%s: exceeded limit of symlinks"), path);
+				continue;
+			}
 		}
 	}
 
 	free_idcache(ucache);
 	free_idcache(gcache);
 
-	return EXIT_SUCCESS;
+	return rc;
 }
 
