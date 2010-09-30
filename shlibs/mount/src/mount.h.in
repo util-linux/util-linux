@@ -285,6 +285,8 @@ extern int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 extern mnt_update *mnt_new_update(int action, unsigned long mountflags, const mnt_fs *fs);
 extern void mnt_free_update(mnt_update *upd);
 extern int mnt_update_set_filename(mnt_update *upd, const char *filename);
+extern const char *mnt_update_get_filename(mnt_update *upd);
+extern int mnt_update_get_format(mnt_update *upd);
 extern int mnt_update_set_action(mnt_update *upd, int action);
 extern int mnt_update_set_format(mnt_update *upd, int format);
 extern int mnt_update_set_mountflags(mnt_update *upd, unsigned long flags);
@@ -295,6 +297,7 @@ extern int mnt_update_set_fs(mnt_update *upd, const mnt_fs *fs);
 
 extern int mnt_prepare_update(mnt_update *upd);
 extern int mnt_update_mtab(mnt_update *upd);
+extern int mnt_update_is_pointless(mnt_update *upd);
 
 /*
  * mount(8) userspace options masks (MNT_MAP_USERSPACE map)

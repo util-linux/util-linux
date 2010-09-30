@@ -64,6 +64,7 @@ struct _mnt_update {
 	int		nolock;		/* don't alloca private mnt_lock */
 	mnt_fs		*fs;		/* entry */
 	mnt_lock	*lc;		/* lock or NULL */
+	int		pointless;	/* update is unnecessary */
 };
 
 /**
@@ -137,6 +138,20 @@ int mnt_update_set_filename(mnt_update *upd, const char *filename)
 }
 
 /**
+ * mnt_update_get_filename
+ * @upd: update
+ *
+ * Note that function returns NULL if the filename has not been defined (see
+ * mnt_update_set_filename()) or mnt_prepare_update() has not been called.
+ *
+ * Returns: filename or NULL.
+ */
+const char *mnt_update_get_filename(mnt_update *upd)
+{
+	return upd ? upd->filename : NULL;
+}
+
+/**
  * mnt_update_set_action:
  * @upd: update
  * @action: MNT_ACT_{MOUNT,UMOUNT}
@@ -175,9 +190,26 @@ int mnt_update_set_format(mnt_update *upd, int format)
 }
 
 /**
+ * mnt_update_get_format
+ * @upd: update
+ *
+ * Note that function returns zero if the format has not been defined (see
+ * mnt_update_set_format()) or mnt_prepare_update() has not been called.
+ *
+ * Returns: MNT_FMT_{MTAB,FSTAB,MOUNTINFO} or 0.
+ */
+int mnt_update_get_format(mnt_update *upd)
+{
+	return upd ? upd->format : 0;
+}
+
+/**
  * mnt_update_set_fs:
  * @upd: update
  * @fs: filesystem to write to file
+ *
+ * This function replaces the current setting related to the current FS. Note that
+ * format, old target and mountflags are not reseted.
  *
  * Returns; 0 on success, -1 in case of error.
  */
@@ -196,6 +228,7 @@ int mnt_update_set_fs(mnt_update *upd, const mnt_fs *fs)
 
 	mnt_free_fs(upd->fs);
 	upd->fs = x;
+	upd->pointless = FALSE;
 	return 0;
 }
 
@@ -518,6 +551,20 @@ err:
 }
 
 /**
+ * mnt_update_is_pointless:
+ * @upd: update
+ *
+ * This function returns 1 if the previous mnt_prepare_update() call returned 1
+ * too.
+ *
+ * Returns: status of the update.
+ */
+int mnt_update_is_pointless(mnt_update *upd)
+{
+	return upd ? upd->pointless : 0;
+}
+
+/**
  * mnt_prepare_update:
  * @upd: update
  *
@@ -642,6 +689,8 @@ err:
 	DBG(UPDATE, mnt_debug_h(upd, "prepare update: failed"));
 	return rc;
 nothing:
+	upd->pointless = TRUE;
+	DBG(UPDATE, mnt_debug_h(upd, "prepare update: pointless"));
 	return 1;
 }
 
@@ -788,7 +837,8 @@ done:
  * @upd: update
  *
  * Updates the update file. The behavior of this function is undefined if
- * mnt_prepare_update() has not been called.
+ * mnt_prepare_update() has not been called. The request to update file will
+ * be ignored for pointless updates (see mnt_update_is_pointless()).
  *
  * Returns: 0 on success, -1 in case of error.
  */
@@ -801,6 +851,11 @@ int mnt_update_file(mnt_update *upd)
 
 	if (!upd || !upd->fs)
 		return -1;
+
+	if (upd->pointless) {
+		DBG(UPDATE, mnt_debug_h(upd, "ingnore update requiest (pointless)"));
+		return 0;
+	}
 
 	DBG(UPDATE, mnt_debug_h(upd, "update (target %s)",
 		mnt_fs_get_target(upd->fs)));

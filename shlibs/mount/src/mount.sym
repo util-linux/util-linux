@@ -125,6 +125,8 @@ global:
 	mnt_update_set_fs;
 	mnt_update_set_mountflags;
 	mnt_update_set_old_target;
+	mnt_update_get_format;
+	mnt_update_get_filename;
 local:
 	*;
 };
