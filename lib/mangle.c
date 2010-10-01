@@ -115,10 +115,19 @@ int main(int argc, char *argv[])
 
 	else if (!strcmp(argv[1], "--unmangle")) {
 		char *x = unmangle(argv[2]);
-		if (x)
+
+		if (x) {
 			printf("unmangled: '%s'\n", x);
-		else
-			err(EXIT_FAILURE, "unmangle failed");
+			free(x);
+		}
+
+		x = strdup(argv[2]);
+		unmangle_to_buffer(x, x, strlen(x) + 1);
+
+		if (x) {
+			printf("self-unmangled: '%s'\n", x);
+			free(x);
+		}
 	}
 
 	return EXIT_SUCCESS;

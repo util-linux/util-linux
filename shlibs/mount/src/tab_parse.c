@@ -29,138 +29,44 @@ static inline char *skip_spaces(char *s)
 	return s;
 }
 
-static inline char *skip_nonspaces(char *s)
-{
-	assert(s);
-
-	while (*s && !(*s == ' ' || *s == '\t'))
-		s++;
-	return s;
-}
-
-static size_t next_word_size(char *s, char **start, char **end)
-{
-	char *e;
-
-	assert(s);
-
-	s = skip_spaces(s);
-	if (!*s)
-		return 0;
-	e = skip_nonspaces(s);
-
-	if (start)
-		*start = s;
-	if (end)
-		*end = e;
-
-	return e - s;
-}
-
-static int next_word(char **s, char **next)
-{
-	size_t sz;
-	char *end;
-
-	assert(s);
-
-	sz = next_word_size(*s, s, &end) + 1;
-	if (sz == 1)
-		return -EINVAL;
-
-	*next = malloc(sz);
-	if (!*next)
-		return -ENOMEM;
-
-	unmangle_to_buffer(*s, *next, sz);
-	*s = end + 1;
-	return 0;
-}
-
-static int next_word_skip(char **s)
-{
-	*s = skip_spaces(*s);
-	if (!**s)
-		return -EINVAL;
-	*s = skip_nonspaces(*s);
-	return 0;
-}
-
-static int next_number(char **s, int *num)
-{
-	char *end = NULL;
-
-	assert(num);
-	assert(s);
-
-	*s = skip_spaces(*s);
-	if (!**s)
-		return -EINVAL;
-
-	*num = strtol(*s, &end, 10);
-	if (end == NULL || *s == end)
-		return -EINVAL;
-
-	*s = end;
-
-	/* valid end of number is space or terminator */
-	if (*end == ' ' || *end == '\t' || *end == '\0')
-		return 0;
-
-	return -EINVAL;
-}
-
 /*
  * Parses one line from {fs,m}tab
  */
 static int mnt_tab_parse_file_line(mnt_fs *fs, char *s)
 {
-	int rc = 0, col;
+	int rc;
+	char *src, *fstype, *optstr;
 
-	fs->passno = fs->freq = 0;	/* default */
+	rc = sscanf(s,	"%ms "	/* (1) source */
+			"%ms "	/* (2) target */
+			"%ms "	/* (3) FS type */
+			"%ms "  /* (4) options */
+			"%u "	/* (5) freq */
+			"%u ",	/* (6) passno */
 
-	for (col = 0; rc == 0 && col < 4; col++) {
-		char *p = NULL;
+			&src,
+			&fs->target,
+			&fstype,
+			&optstr,
+			&fs->freq,
+			&fs->passno);
 
-		rc = next_word(&s, &p);
-		if (rc)
-			goto done;
+	if (rc >= 4 && rc <= 6) {
+		unmangle_string(src);
+		unmangle_string(fs->target);
+		unmangle_string(fstype);
+		unmangle_string(optstr);
 
-		switch(col) {
-		/* SOURCE */
-		case 0:
-			rc =__mnt_fs_set_source_ptr(fs, p);
-			break;
-		/* TARGET */
-		case 1:
-			fs->target = p;
-			break;
-		/* TYPE */
-		case 2:
-			rc = __mnt_fs_set_fstype_ptr(fs, p);
-			break;
-		/* OPTS */
-		case 3:
-			rc = __mnt_fs_set_optstr_ptr(fs, p, TRUE);
-			break;
-		}
-		if (rc) {
-			free(p);
-			goto done;
-		}
+		rc = __mnt_fs_set_source_ptr(fs, src);
+		if (!rc)
+			rc = __mnt_fs_set_fstype_ptr(fs, fstype);
+		if (!rc)
+			rc = __mnt_fs_set_optstr_ptr(fs, optstr, TRUE);
+	} else {
+		DBG(TAB, mnt_debug( "parse error: [field=%d]: '%s'", rc, s));
+		rc = -EINVAL;
 	}
 
-	/* FREQ (optional) */
-	rc = next_number(&s, &fs->freq);
-	if (rc && !*s)
-		rc = 0;		/* no error, end of line, freq is optional */
-
-	else {
-		rc = next_number(&s, &fs->passno);
-		if (rc && !*s)
-			rc = 0;
-	}
-done:
 	return rc;
 }
 
@@ -169,85 +75,55 @@ done:
  */
 static int mnt_parse_mountinfo_line(mnt_fs *fs, char *s)
 {
-	int rc = 0, col;
+	int rc;
 	unsigned int maj, min;
-	char *p = NULL;
+	char *fstype, *src;
 
-	/* ID */
-	rc = next_number(&s, &fs->id);
-	if (rc)
-		goto done;
+	rc = sscanf(s,	"%u "		/* (1) id */
+			"%u "		/* (2) parent */
+			"%u:%u "	/* (3) maj:min */
+			"%ms "		/* (4) mountroot */
+			"%ms "		/* (5) target */
+			"%ms"		/* (6) vfs options (fs-independent) */
+			"%*[^-]"	/* (7) optional fields */
+			"- "		/* (8) separator */
+			"%ms "		/* (9) FS type */
+			"%ms "		/* (10) source */
+			"%ms",		/* (11) fs options (fs specific) */
 
-	/* PARENT */
-	rc = next_number(&s, &fs->parent);
-	if (rc)
-		goto done;
+			&fs->id,
+			&fs->parent,
+			&maj, &min,
+			&fs->root,
+			&fs->target,
+			&fs->vfs_optstr,
+			&fstype,
+			&src,
+			&fs->fs_optstr);
 
-	/* <maj>:<min> */
-	s = skip_spaces(s);
-	if (!*s || sscanf(s, "%u:%u", &maj, &min) != 2)
-		rc = -EINVAL;
-	else {
+	if (rc == 10) {
 		fs->devno = makedev(maj, min);
-		next_word_skip(&s);
+
+		unmangle_string(fs->root);
+		unmangle_string(fs->target);
+		unmangle_string(fs->vfs_optstr);
+		unmangle_string(fstype);
+
+		if (!strcmp(src, "none")) {
+			free(src);
+			src = NULL;
+		} else
+			unmangle_string(src);
+
+		unmangle_string(fs->fs_optstr);
+
+		rc = __mnt_fs_set_fstype_ptr(fs, fstype);
+		if (!rc)
+			rc = __mnt_fs_set_source_ptr(fs, src);
+	} else {
+		DBG(TAB, mnt_debug("parse error [field=%d]: '%s'", rc, s));
+		rc = -EINVAL;
 	}
-
-	for (col = 3; rc == 0 && col < 9; col++) {
-		rc = next_word(&s, &p);
-		if (rc)
-			break;
-
-		switch(col) {
-		/* MOUNTROOT */
-		case 3:
-			fs->root = p;
-			break;
-
-		/* TARGET (mountpoit) */
-		case 4:
-			fs->target = p;
-			break;
-
-		/* OPTIONS (fs-independent) */
-		case 5:
-			fs->vfs_optstr = p;
-
-			/* ignore optional fields behind options */
-			do {
-				s = skip_spaces(s);
-				if (s && *s == '-' &&
-				    (*(s + 1) == ' ' || *(s + 1) == '\t')) {
-					s++;
-					break;
-				}
-				next_word_skip(&s);
-			} while (s);
-			break;
-
-		/* FSTYPE */
-		case 6:
-			rc =__mnt_fs_set_fstype_ptr(fs, p);
-			break;
-
-		/* SOURCE or "none" */
-		case 7:
-			rc = __mnt_fs_set_source_ptr(fs, p);
-			break;
-
-		/* OPTIONS (fs-dependent) */
-		case 8:
-			fs->fs_optstr = p;
-
-			if (!strcmp(fs->fs_optstr, "none")) {
-				free(fs->fs_optstr);
-				fs->fs_optstr = NULL;
-			}
-			break;
-		}
-	}
-	if (rc)
-		free(p);
-done:
 	return rc;
 }
 
@@ -258,17 +134,10 @@ done:
  */
 static int detect_fmt(char *line)
 {
-	int num;
+	unsigned int a, b;
 
-	/* ID */
-	if (next_number(&line, &num) != 0)
-		return MNT_FMT_FSTAB;
-
-	/* PARENT */
-	if (next_number(&line, &num) != 0)
-		return MNT_FMT_FSTAB;
-
-	return MNT_FMT_MOUNTINFO;
+	return sscanf(line, "%u %u", &a, &b) == 2 ?
+			MNT_FMT_MOUNTINFO : MNT_FMT_FSTAB;
 }
 
 
@@ -374,12 +243,10 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
 		tb->fmt = detect_fmt(s);
 
 	if (tb->fmt == MNT_FMT_FSTAB) {
-		/* parse /etc/{fs,m}tab */
 		if (mnt_tab_parse_file_line(fs, s) != 0)
 			goto err;
 
 	} else if (tb->fmt == MNT_FMT_MOUNTINFO) {
-		/* parse /proc/self/mountinfo */
 		if (mnt_parse_mountinfo_line(fs, s) != 0)
 			goto err;
 	}
