@@ -48,6 +48,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <err.h>
+#include <errno.h>
+#include <getopt.h>
 #include "nls.h"
 
 #include "widechar.h"
@@ -68,7 +70,6 @@ static void  input __P((FILE *));
 static void  maketbl __P((void));
 static void  print __P((void));
 static void  r_columnate __P((void));
-static void  usage __P((void));
 
 int termwidth = 80;		/* default terminal width */
 
@@ -79,6 +80,34 @@ wchar_t **list;			/* array of pointers to records */
 wchar_t default_separator[] = { '\t', ' ', 0 };
 wchar_t *separator = default_separator;	/* field separator for table option */
 
+struct option longopts[] =
+{
+	{ "help",	0, 0, 'h' },
+	{ "columns",	0, 0, 'c' },
+	{ "table",	0, 0, 't' },
+	{ "separator",	0, 0, 's' },
+	{ "fillrows",	0, 0, 'x' },
+	{ NULL,		0, 0, 0 },
+};
+
+static void __attribute__((__noreturn__)) usage(int rc)
+{
+	FILE *out = rc == EXIT_FAILURE ? stderr : stdout;
+
+	fprintf(out, _("\nUsage: %s [options] [file ...]\n"),
+				program_invocation_short_name);
+	fprintf(out, _("\nOptions:\n"));
+
+	fprintf(out, _(
+	" -h, --help               displays this help text\n"
+	" -c, --columns <width>    width of output in number of characters\n"
+	" -t, --table              create a table\n"
+	" -s, --separator <string> table delimeter\n"
+	" -x, --fillrows           fill rows before columns\n"));
+
+	fprintf(out, _("\nFor more information see column(1).\n"));
+	exit(rc);
+}
 int
 main(int argc, char **argv)
 {
@@ -86,9 +115,6 @@ main(int argc, char **argv)
 	FILE *fp;
 	int ch, tflag, xflag;
 	char *p;
-
-	extern char *__progname;
-	__progname = argv[0];
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -101,8 +127,12 @@ main(int argc, char **argv)
 		termwidth = win.ws_col;
 
 	tflag = xflag = 0;
-	while ((ch = getopt(argc, argv, "c:s:tx")) != -1)
+	while ((ch = getopt_long(argc, argv, "h?c:s:tx", longopts, NULL)) != -1)
 		switch(ch) {
+		case 'h':
+		case '?':
+		        usage(EXIT_SUCCESS);
+		        break;
 		case 'c':
 			termwidth = atoi(optarg);
 			break;
@@ -115,9 +145,8 @@ main(int argc, char **argv)
 		case 'x':
 			xflag = 1;
 			break;
-		case '?':
 		default:
-			usage();
+			usage(EXIT_FAILURE);
 		}
 	argc -= optind;
 	argv += optind;
@@ -366,11 +395,4 @@ emalloc(size)
 	return (p);
 }
 
-static void
-usage()
-{
 
-	(void)fprintf(stderr,
-	    _("usage: column [-tx] [-c columns] [file ...]\n"));
-	exit(1);
-}
