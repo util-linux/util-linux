@@ -54,7 +54,7 @@ struct _mnt_context
 	int	flags;		/* private context flags */
 	int	ambi;		/* libblkid returns ambivalent result */
 
-	char	*helper_name;	/* name of the used /sbin/[u]mount.<type> helper */
+	char	*helper;	/* name of the used /sbin/[u]mount.<type> helper */
 	int	helper_status;	/* helper wait(2) status */
 
 	char	*orig_user;	/* original (non-fixed) user= option */
@@ -136,7 +136,7 @@ void mnt_free_context(mnt_context *cxt)
 	free(cxt->fstype_pattern);
 	free(cxt->optstr_pattern);
 	free(cxt->spec);
-	free(cxt->helper_name);
+	free(cxt->helper);
 	free(cxt->orig_user);
 
 	if (!(cxt->flags & MNT_FL_EXTERN_FS))
@@ -192,11 +192,11 @@ int mnt_reset_context(mnt_context *cxt)
 	cxt->mtab = NULL;
 
 	free(cxt->spec);
-	free(cxt->helper_name);
+	free(cxt->helper);
 	free(cxt->orig_user);
 
 	cxt->spec = NULL;
-	cxt->helper_name = NULL;
+	cxt->helper = NULL;
 
 	cxt->mountflags = 0;
 	cxt->user_mountflags = 0;
@@ -1252,11 +1252,72 @@ static int mnt_context_merge_mountflags(mnt_context *cxt)
 	return 0;
 }
 
+/*
+ * The default is to use fstype from cxt->fs, this could be overwritten by
+ * @type. The @act is MNT_ACT_{MOUNT,UMOUNT}.
+ *
+ * Returns: 0 on success or negative number in case of error. Note that success
+ * does not mean that there is any usable helper, you have to check cxt->helper.
+ */
+static int mnt_context_prepare_helper(mnt_context *cxt, int act, const char *type)
+{
+	char search_path[] = FS_SEARCH_PATH;		/* from config.h */
+	char *p = NULL, *path;
+	const char *name;
+
+	assert(cxt);
+	assert(cxt->fs);
+
+	name = MNT_ACT_MOUNT ? "mount" : "umount";
+
+	if (!type)
+		type = mnt_fs_get_fstype(cxt->fs);
+
+	if ((cxt->flags & MNT_FL_NOHELPERS) || !type ||
+	    !strcmp(type, "none") || (cxt->fs->flags & MNT_FS_SWAP))
+		return 0;
+
+	path = strtok_r(search_path, ":", &p);
+	while (path) {
+		char helper[PATH_MAX];
+		struct stat st;
+		int rc;
+
+		rc = snprintf(helper, sizeof(helper), "%s/%s.%s",
+						path, name, type);
+		path = strtok_r(NULL, ":", &p);
+
+		if (rc >= sizeof(helper) || rc < 0)
+			continue;
+
+		rc = stat(helper, &st);
+		if (rc == -1 && errno == ENOENT && strchr(type, '.')) {
+			/* If type ends with ".subtype" try without it */
+			*strrchr(helper, '.') = '\0';
+			rc = stat(helper, &st);
+		}
+
+		DBG(CXT, mnt_debug_h(cxt, "%s ... %s", helper,
+					rc ? "not found" : "found"));
+		if (rc)
+			continue;
+
+		if (cxt->helper)
+			free(cxt->helper);
+		cxt->helper = strdup(helper);
+		if (!cxt->helper)
+			return -ENOMEM;
+		return 0;
+	}
+
+	return 0;
+}
+
 static int mnt_context_prepare_update(mnt_context *cxt, int act)
 {
 	int rc;
 
-	if (cxt->flags & MNT_FL_NOMTAB)
+	if ((cxt->flags & MNT_FL_NOMTAB) || cxt->helper)
 		return 0;
 
 	if (!cxt->update) {
@@ -1341,49 +1402,38 @@ int mnt_context_prepare_mount(mnt_context *cxt)
 		return -EINVAL;
 
 	rc = mnt_context_apply_fstab(cxt);
-	if (rc)
-		goto err;
+	if (!rc)
+		rc = mnt_context_merge_mountflags(cxt);
+	if (!rc)
+		rc = mnt_context_evaluate_permissions(cxt);
+	if (!rc)
+		rc = mnt_context_fix_optstr(cxt);
+	if (!rc)
+		rc = mnt_context_prepare_srcpath(cxt);
+	if (!rc)
+		rc = mnt_context_guess_fstype(cxt);
+	if (!rc)
+		rc = mnt_context_prepare_helper(cxt, MNT_ACT_MOUNT, NULL);
+	if (!rc)
+		rc = mnt_context_prepare_update(cxt, MNT_ACT_MOUNT);
 
-	rc = mnt_context_merge_mountflags(cxt);
-	if (rc)
-		return rc;
+	if (!rc) {
+		DBG(CXT, mnt_debug_h(cxt, "sucessfully prepared"));
+		return 0;
+	}
 
-	rc = mnt_context_evaluate_permissions(cxt);
-	if (rc)
-		goto err;
-
-	rc = mnt_context_fix_optstr(cxt);
-	if (rc)
-		goto err;
-
-	rc = mnt_context_prepare_srcpath(cxt);
-	if (rc)
-		goto err;
-
-	rc = mnt_context_guess_fstype(cxt);
-	if (rc)
-		goto err;
-
-	rc = mnt_context_prepare_update(cxt, MNT_ACT_MOUNT);
-	if (rc)
-		goto err;
-
-	DBG(CXT, mnt_debug_h(cxt, "sucessfully prepared"));
-	return 0;
-err:
 	DBG(CXT, mnt_debug_h(cxt, "prepare failed"));
 	return rc;
 }
 
-static int exec_mount_helper(mnt_context *cxt, const char *prog,
-					const char *subtype)
+static int exec_mount_helper(mnt_context *cxt)
 {
 	char *o = NULL;
 	int rc;
 
 	assert(cxt);
 	assert(cxt->fs);
-	assert(prog);
+	assert(cxt->helper);
 
 	rc = mnt_context_get_helper_optstr(cxt, &o);
 	if (rc)
@@ -1394,7 +1444,7 @@ static int exec_mount_helper(mnt_context *cxt, const char *prog,
 	switch (fork()) {
 	case 0:
 	{
-		const char *args[12];
+		const char *args[12], *type;
 		int i = 0;
 
 		if (setgid(getgid()) < 0)
@@ -1403,8 +1453,9 @@ static int exec_mount_helper(mnt_context *cxt, const char *prog,
 		if (setuid(getuid()) < 0)
 			exit(EXIT_FAILURE);
 
+		type = mnt_fs_get_fstype(cxt->fs);
 
-		args[i++] = prog;			/* 1 */
+		args[i++] = cxt->helper;			/* 1 */
 		args[i++] = mnt_fs_get_srcpath(cxt->fs);	/* 2 */
 		args[i++] = mnt_fs_get_target(cxt->fs);	/* 3 */
 
@@ -1420,9 +1471,9 @@ static int exec_mount_helper(mnt_context *cxt, const char *prog,
 			args[i++] = "-o";		/* 8 */
 			args[i++] = o;			/* 9 */
 		}
-		if (subtype) {
+		if (type && !endswith(cxt->helper, type)) {
 			args[i++] = "-t";		/* 10 */
-			args[i++] = subtype;	/* 11 */
+			args[i++] = type;		/* 11 */
 		}
 		args[i] = NULL;				/* 12 */
 #ifdef CONFIG_LIBMOUNT_DEBUG
@@ -1432,7 +1483,7 @@ static int exec_mount_helper(mnt_context *cxt, const char *prog,
 							i, args[i]));
 #endif
 		DBG_FLUSH;
-		execv(prog, (char * const *) args);
+		execv(cxt->helper, (char * const *) args);
 		exit(EXIT_FAILURE);
 	}
 	default:
@@ -1440,10 +1491,9 @@ static int exec_mount_helper(mnt_context *cxt, const char *prog,
 		int st;
 		wait(&st);
 		cxt->helper_status = WIFEXITED(st) ? WEXITSTATUS(st) : -1;
-		cxt->helper_name = strdup(prog);
 
 		DBG(CXT, mnt_debug_h(cxt, "%s executed [status=%d]",
-					prog, cxt->helper_status));
+					cxt->helper, cxt->helper_status));
 		rc = 0;
 		break;
 	}
@@ -1460,83 +1510,31 @@ done:
 }
 
 /*
- * Returns: 0 on success, 1 if helper not found and negative number in case of
- * error.
+ * The default is to use fstype from cxt->fs, this could be overwritten by
+ * @try_type argument.
  */
-static int mnt_context_call_helper(mnt_context *cxt,
-			const char *name, const char *type)
-{
-	char search_path[] = FS_SEARCH_PATH;		/* from config.h */
-	char *p = NULL, *path;
-
-	assert(cxt);
-
-	if ((cxt->flags & MNT_FL_NOHELPERS) ||
-	    !type || !strcmp(type, "none"))
-		return 1;
-
-	path = strtok_r(search_path, ":", &p);
-	while (path) {
-		char helper[PATH_MAX];
-		struct stat st;
-		const char *subtype = NULL;
-		int rc;
-
-		rc = snprintf(helper, sizeof(helper), "%s/%s.%s",
-						path, name, type);
-		path = strtok_r(NULL, ":", &p);
-
-		if (rc >= sizeof(helper) || rc < 0)
-			continue;
-
-		rc = stat(helper, &st);
-		if (rc == -1 && errno == ENOENT && strchr(type, '.')) {
-			/* If type ends with ".subtype" try without it */
-			*strrchr(helper, '.') = '\0';
-			subtype = type;
-			rc = stat(helper, &st);
-		}
-
-		DBG(CXT, mnt_debug_h(cxt, "%s ... %s", helper,
-					rc ? "not found" : "found"));
-		if (rc)
-			continue;
-
-		return exec_mount_helper(cxt, helper, subtype);
-	}
-
-	DBG(CXT, mnt_debug_h(cxt, "%s.%s helper not found", name, type));
-	return 1;
-}
-
-static int mnt_context_do_mount(mnt_context *cxt, const char *type)
+static int mnt_context_do_mount(mnt_context *cxt, const char *try_type)
 {
 	int rc;
-	const char *src, *target;
+	const char *src, *target, *type;
 	unsigned long flags;
 
 	assert(cxt);
-	assert(type);
 	assert(cxt->fs);
+
+	if (try_type && !cxt->helper) {
+		rc = mnt_context_prepare_helper(cxt, MNT_ACT_MOUNT, try_type);
+		if (!rc)
+			return rc;
+	}
+	if (cxt->helper)
+		return exec_mount_helper(cxt);
+
+	type = try_type ? : mnt_fs_get_fstype(cxt->fs);
 
 	flags = cxt->mountflags;
 	src = mnt_fs_get_srcpath(cxt->fs);
 	target = mnt_fs_get_target(cxt->fs);
-
-	DBG(CXT, mnt_debug_h(cxt,
-			"mounting [fstype=%s, source=%s, target=%s, "
-		        "fs_optstr='%s', vfs_optstr='%s', "
-			"mountflags=%08lx, mountdata=%s",
-
-			type, src, target,
-			mnt_fs_get_fs_optstr(cxt->fs),
-			mnt_fs_get_vfs_optstr(cxt->fs),
-			flags,
-			cxt->mountdata ? "yes" : "<none>"));
-
-	rc = mnt_context_call_helper(cxt, "mount", type);
-	if (rc <= 0)
-		return rc;
 
 	if (!src || !target)
 		return -EINVAL;
@@ -1544,7 +1542,11 @@ static int mnt_context_do_mount(mnt_context *cxt, const char *type)
 	if (!(flags & MS_MGC_MSK))
 		flags |= MS_MGC_VAL;
 
-	DBG(CXT, mnt_debug_h(cxt, "calling mount(2)"));
+	DBG(CXT, mnt_debug_h(cxt, "calling mount(2) "
+			"[source=%s, target=%s, type=%s, "
+			" mountflags=%08lx, mountdata=%s]",
+			src, target, type,
+			flags, cxt->mountdata ? "yes" : "<none>"));
 
 	if (mount(src, target, type, flags, cxt->mountdata)) {
 		cxt->syscall_errno = errno;
@@ -1575,16 +1577,17 @@ int mnt_context_mount_fs(mnt_context *cxt)
 	if (!cxt || !cxt->fs || (cxt->fs->flags & MNT_FS_SWAP))
 		return -EINVAL;
 
-	type = mnt_fs_get_fstype(cxt->fs);
-
 	if (!(cxt->flags & MNT_FL_MOUNTDATA))
 		cxt->mountdata = (char *) mnt_fs_get_fs_optstr(cxt->fs);
 
+	type = mnt_fs_get_fstype(cxt->fs);
+
 	if (type && !strchr(type, ',')) {
-		rc = mnt_context_do_mount(cxt, type);
+		rc = mnt_context_do_mount(cxt, NULL);
 		if (rc)
 			return rc;
 	}
+
 	/* TODO: try all filesystems from comma separated list of types */
 
 	/* TODO: try all filesystems from /proc/filesystems and /etc/filesystems */
@@ -1610,7 +1613,7 @@ int mnt_context_post_mount(mnt_context *cxt)
 	/*
 	 * Update /etc/mtab or /var/run/mount/mountinfo
 	 */
-	if (!cxt->syscall_errno && !cxt->helper_name &&
+	if (!cxt->syscall_errno && !cxt->helper &&
 	    !(cxt->flags & MNT_FL_NOMTAB) &&
 	    cxt->update && !mnt_update_is_pointless(cxt->update)) {
 
