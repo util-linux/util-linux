@@ -202,6 +202,68 @@ struct _mnt_tab {
 };
 
 
+/*
+ * Mount context -- high-level API
+ */
+struct _mnt_context
+{
+	int	action;		/* MNT_ACT_{MOUNT,UMOUNT} */
+
+	int	restricted;	/* root or not? */
+
+	char	*fstype_pattern;	/* for mnt_match_fstype() */
+	char	*optstr_pattern;	/* for mnt_match_options() */
+
+	char	*spec;		/* unresolved source OR target */
+	mnt_fs	*fs;		/* filesystem description (type, mountpopint, device, ...) */
+
+	mnt_tab	*fstab;		/* fstab (or mtab for some remounts) entires */
+	mnt_tab *mtab;		/* mtab entries */
+	int	optsmode;	/* fstab optstr mode MNT_OPTSMODE_{AUTO,FORCE,IGNORE} */
+
+	unsigned long	mountflags;	/* final mount(2) flags */
+	const void	*mountdata;	/* final mount(2) data, string or binary data */
+
+	unsigned long	user_mountflags;	/* MNT_MS_* (loop=, user=, ...) */
+
+	mnt_update	*update;	/* mtab update */
+	mnt_cache	*cache;		/* paths cache */
+
+	int	flags;		/* private context flags */
+	int	ambi;		/* libblkid returns ambivalent result */
+
+	char	*helper;	/* name of the used /sbin/[u]mount.<type> helper */
+	int	helper_status;	/* helper wait(2) status */
+
+	char	*orig_user;	/* original (non-fixed) user= option */
+
+	int	syscall_errno;	/* mount(2) or umount(2) error */
+};
+
+/* flags */
+#define MNT_FL_NOMTAB		(1 << 1)
+#define MNT_FL_FAKE		(1 << 2)
+#define MNT_FL_SLOPPY		(1 << 3)
+#define MNT_FL_VERBOSE		(1 << 4)
+#define MNT_FL_NOHELPERS	(1 << 5)
+#define MNT_FL_LOOPDEL		(1 << 6)
+#define MNT_FL_LAZY		(1 << 7)
+#define MNT_FL_FORCE		(1 << 8)
+#define MNT_FL_NOCANONICALIZE	(1 << 9)
+#define MNT_FL_NOLOCK		(1 << 10)	/* don't lock mtab file */
+
+#define MNT_FL_EXTERN_FS	(1 << 15)	/* cxt->fs is not private */
+#define MNT_FL_EXTERN_FSTAB	(1 << 16)	/* cxt->fstab is not private */
+#define MNT_FL_EXTERN_CACHE	(1 << 17)	/* cxt->cache is not private */
+
+#define MNT_FL_MOUNTDATA	(1 << 20)
+#define MNT_FL_FSTAB_APPLIED	(1 << 21)
+#define MNT_FL_MOUNTFLAGS_MERGED (1 << 22)	/* MS_* flags was read from optstr */
+#define MNT_FL_SAVED_USER	(1 << 23)
+
+/* default flags */
+#define MNT_FL_DEFAULT		0
+
 /* optmap.c */
 extern const struct mnt_optmap *mnt_optmap_get_entry(struct mnt_optmap const **maps,
                              int nmaps, const char *name,
@@ -219,5 +281,12 @@ extern int __mnt_fs_set_source_ptr(mnt_fs *fs, char *source);
 extern int __mnt_fs_set_fstype_ptr(mnt_fs *fs, char *fstype);
 extern int __mnt_fs_set_optstr_ptr(mnt_fs *fs, char *optstr, int split);
 extern int __mnt_fs_set_optstr(mnt_fs *fs, const char *optstr, int split);
+
+/* context.c */
+extern int mnt_context_prepare_srcpath(mnt_context *cxt);
+extern int mnt_context_guess_fstype(mnt_context *cxt);
+extern int mnt_context_prepare_helper(mnt_context *cxt, const char *name, const char *type);
+extern int mnt_context_prepare_update(mnt_context *cxt, int act);
+extern mnt_fs *mnt_context_get_fs(mnt_context *cxt);
 
 #endif /* _LIBMOUNT_PRIVATE_H */

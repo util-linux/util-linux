@@ -11,7 +11,8 @@ nodist_mountinc_HEADERS = mount.h
 usrlib_exec_LTLIBRARIES = libmount.la
 libmount_la_SOURCES =	mountP.h version.c utils.c test.c init.c cache.c \
 			optstr.c optmap.c iter.c lock.c \
-			fs.c tab.c tab_parse.c tab_update.c context.c \
+			fs.c tab.c tab_parse.c tab_update.c \
+			context.c context_mount.c \
 			$(mountinc_HEADERS) \
 			$(top_srcdir)/lib/at.c \
 			$(top_srcdir)/include/list.h \
