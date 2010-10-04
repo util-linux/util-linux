@@ -31,72 +31,45 @@
 .\"
 .\"     @(#)column.1	8.1 (Berkeley) 6/6/93
 .\"
-.Dd June 6, 1993
-.Os
-.Dt COLUMN 1
-.Sh NAME
-.Nm column
-.Nd columnate lists
-.Sh SYNOPSIS
-.Nm column
-.Op Fl tx
-.Op Fl c Ar columns
-.Op Fl s Ar sep
-.Op Ar
-.Sh DESCRIPTION
-The
-.Nm column
-utility formats its input into multiple columns.
-Rows are filled before columns.
-Input is taken from
-.Ar file
-operands, or, by default, from the standard input.
-Empty lines are ignored.
-.Pp
-The options are as follows:
-.Bl -tag -width Ds
-.It Fl c
-Output is formatted for a display
-.Ar columns
-wide.
-.It Fl s
-Specify a set of characters to be used to delimit columns for the
-.Fl t
-option.
-.It Fl t
+.TH COLUMN 1 "Local"
+.SH NAME
+column - columnate lists
+.SH SYNOPSIS
+.B column
+.RI [ options ]
+.IR file ...
+.SH DESCRIPTION
+The column utility formats its input into multiple columns. Rows
+are filled before columns. Input is taken from file or, by
+default, from the standard input. Empty lines are ignored.
+.PP
+.SH OPTIONS
+.IP "\fB\-c, \-\-columns\fP \fIwidth\fP"
+Output is formatted to a width specified as number of charcaters.
+.IP "\fB\-t, \-\-table\fP"
 Determine the number of columns the input contains and create a table.
 Columns are delimited with whitespace, by default, or with the characters
-supplied using the
-.Fl s
-option.
-Useful for pretty-printing displays.
-.It Fl x
+supplied using the separator. Table output is useful for pretty-printing.
+.IP "\fB\-s, \-\-separator\fP \fIseparator\fP"
+Specify table separator (default is whitespace).
+.IP "\fB\-x, \-\-fillrows\fP"
 Fill columns before filling rows.
-.El
-.Pp
-.Nm Column
-exits 0 on success, >0 if an error occurred.
-.Sh ENVIRONMENT
-.Bl -tag -width COLUMNS
-.It Ev COLUMNS
-The environment variable
-.Ev COLUMNS
-is used to determine the size of
+.IP "\fB\-h, \-\-help\fP"
+Print help and exit.
+.SH ENVIRONMENT
+The environment variable COLUMNS is used to determine the size of
 the screen if no other information is available.
-.El
-.Sh EXAMPLES
-.Dl (printf \&"PERM LINKS OWNER GROUP SIZE MONTH DAY HH:MM/YEAR\ NAME\en\&"\ \&\e
-.Dl \&; ls -l \&| sed 1d) \&| column -t
-.Sh SEE ALSO
-.Xr colrm 1 ,
-.Xr ls 1 ,
-.Xr paste 1 ,
-.Xr sort 1
-.Sh HISTORY
-The
-.Nm
-command appeared in 
-.Bx 4.3 Reno .
-.Sh AVAILABILITY
+.SH EXAMPLES
+.nf
+sed 's/#.*//' /etc/fstab | column -t
+.nf
+.SH "SEE ALSO"
+.BR colrm (1),
+.BR ls (1),
+.BR paste (1),
+.BR sort (1)
+.SH HISTORY
+The column command appeared in 4.3BSD-Reno.
+.SH AVAILABILITY
 The column command is part of the util-linux-ng package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
