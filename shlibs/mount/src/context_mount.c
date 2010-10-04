@@ -24,140 +24,6 @@
 #include "c.h"
 #include "mountP.h"
 
-static int is_remount(mnt_context *cxt)
-{
-	unsigned long fl = 0;
-
-	if (cxt->mountflags & MS_REMOUNT)
-		return 1;
-	if (!mnt_context_get_mountflags(cxt, &fl) && (fl & MS_REMOUNT))
-		return 1;
-	return 0;
-}
-
-static int apply_tab(mnt_context *cxt, mnt_tab *tb)
-{
-	mnt_fs *fs = NULL;
-	const char *src = NULL, *tgt = NULL;
-	int rc;
-
-	if (!cxt->fs)
-		return -EINVAL;
-
-	src = mnt_fs_get_source(cxt->fs);
-	tgt = mnt_fs_get_target(cxt->fs);
-
-	if (tgt && src)
-		;	/* TODO: search pair for MNT_OPTSMODE_FORCE */
-	else if (src)
-		fs = mnt_tab_find_source(tb, src, MNT_ITER_FORWARD);
-	else if (tgt)
-		fs = mnt_tab_find_target(tb, tgt, MNT_ITER_FORWARD);
-	else if (cxt->spec) {
-		fs = mnt_tab_find_source(tb, cxt->spec, MNT_ITER_FORWARD);
-
-		if (!fs && (strncmp(cxt->spec, "LABEL=", 6) ||
-			    strncmp(cxt->spec, "UUID=", 5)))
-			fs = mnt_tab_find_target(tb, cxt->spec, MNT_ITER_FORWARD);
-	}
-
-	if (!fs)
-		return -EINVAL;
-
-	DBG(CXT, mnt_debug_h(cxt, "apply entry:"));
-	DBG(CXT, mnt_fs_print_debug(fs, stderr));
-
-	/* copy from fstab to our FS description
-	 */
-	rc = mnt_fs_set_source(cxt->fs, mnt_fs_get_source(fs));
-	if (!rc)
-		rc = mnt_fs_set_target(cxt->fs, mnt_fs_get_target(fs));
-
-	if (!rc && !mnt_fs_get_fstype(cxt->fs))
-		rc = mnt_fs_set_fstype(cxt->fs, mnt_fs_get_fstype(fs));
-
-	if (!rc && cxt->optsmode != MNT_OPTSMODE_IGNORE)
-		rc = mnt_fs_prepend_optstr(cxt->fs, mnt_fs_get_optstr(fs));
-
-	if (!rc)
-		cxt->flags |= MNT_FL_FSTAB_APPLIED;
-
-	return rc;
-}
-
-static int apply_fstab(mnt_context *cxt)
-{
-	int rc;
-	mnt_cache *cache;
-	const char *src = NULL, *tgt = NULL;
-
-	if (!cxt || (!cxt->spec && !cxt->fs))
-		return -EINVAL;
-
-	if (cxt->flags & MNT_FL_FSTAB_APPLIED)
-		return 0;
-
-	if (cxt->fs) {
-		src = mnt_fs_get_source(cxt->fs);
-		tgt = mnt_fs_get_target(cxt->fs);
-	}
-
-	/* fstab is not required if source and target are specified */
-	if (src && tgt && !(cxt->optsmode == MNT_OPTSMODE_FORCE ||
-			    cxt->optsmode == MNT_OPTSMODE_MTABFORCE))
-		return 0;
-
-	DBG(CXT, mnt_debug_h(cxt,
-		"trying to apply fstab (src=%s, target=%s, spec=%s)",
-		src, tgt, cxt->spec));
-
-	/* initialize fstab */
-	if (!cxt->fstab) {
-		cxt->fstab = mnt_new_tab();
-		if (!cxt->fstab)
-			goto errnomem;
-		cxt->flags &= ~MNT_FL_EXTERN_FSTAB;
-		rc = mnt_tab_parse_fstab(cxt->fstab);
-		if (rc)
-			goto err;
-	}
-
-	cache = mnt_context_get_cache(cxt);	/* NULL if MNT_FL_NOCANONICALIZE is enabled */
-
-	/*  never touch an external fstab */
-	if (!(cxt->flags & MNT_FL_EXTERN_FSTAB))
-		mnt_tab_set_cache(cxt->fstab, cache);
-
-	/* let's initialize cxt->fs */
-	mnt_context_get_fs(cxt);
-
-	/* try fstab */
-	rc = apply_tab(cxt, cxt->fstab);
-
-	/* try mtab */
-	if (rc || (cxt->optsmode == MNT_OPTSMODE_MTABFORCE && is_remount(cxt))) {
-
-		cxt->mtab = mnt_new_tab();
-		if (!cxt->mtab)
-			goto errnomem;
-		rc = mnt_tab_parse_mtab(cxt->mtab);
-		if (rc)
-			goto err;
-
-		mnt_tab_set_cache(cxt->mtab, cache);
-		rc = apply_tab(cxt, cxt->mtab);
-		if (rc)
-			goto err;
-	}
-	return 0;
-
-errnomem:
-	rc = ENOMEM;
-err:
-	DBG(CXT, mnt_debug_h(cxt, "failed to found entry in fstab/mtab"));
-	return rc;
-}
-
 /*
  * this has to be called after mnt_context_evaluate_permissions()
  */
@@ -526,11 +392,11 @@ int mnt_context_prepare_mount(mnt_context *cxt)
 	if (!cxt)
 		return -EINVAL;
 
-	if (!cxt->spec && !(cxt->fs && (mnt_fs_get_source(cxt->fs) ||
-			                mnt_fs_get_target(cxt->fs))))
+	if (!cxt->fs || (!mnt_fs_get_source(cxt->fs) &&
+			 !mnt_fs_get_target(cxt->fs)))
 		return -EINVAL;
 
-	rc = apply_fstab(cxt);
+	rc = mnt_context_apply_fstab(cxt);
 	if (!rc)
 		rc = merge_mountflags(cxt);
 	if (!rc)
@@ -671,8 +537,8 @@ int test_mount(struct mtest *ts, int argc, char *argv[])
 	}
 
 	if (argc == idx + 1)
-		/* mount <spec> */
-		mnt_context_set_spec(cxt, argv[idx++]);
+		/* mount <mountpont>|<device> */
+		mnt_context_set_target(cxt, argv[idx++]);
 
 	else if (argc == idx + 2) {
 		/* mount <device> <mountpoint> */

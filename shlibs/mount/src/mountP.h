@@ -214,7 +214,6 @@ struct _mnt_context
 	char	*fstype_pattern;	/* for mnt_match_fstype() */
 	char	*optstr_pattern;	/* for mnt_match_options() */
 
-	char	*spec;		/* unresolved source OR target */
 	mnt_fs	*fs;		/* filesystem description (type, mountpopint, device, ...) */
 
 	mnt_tab	*fstab;		/* fstab (or mtab for some remounts) entires */
