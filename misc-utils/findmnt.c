@@ -547,7 +547,7 @@ int main(int argc, char *argv[])
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"cd:ehifo:O:klmnrst:uS:T:", longopts, NULL)) != -1) {
+				"acd:ehifo:O:klmnrst:uS:T:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			tt_flags |= TT_FL_ASCII;
