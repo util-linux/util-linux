@@ -784,10 +784,13 @@ reread_ioctl(int fd) {
     errno = ENOSYS;
 #endif
     {
+	/* perror might change errno */
+	int err = errno;
+
 	perror("BLKRRPART");
 
 	/* 2.6.8 returns EIO for a zero table */
-	if (errno == EBUSY)
+	if (err == EBUSY)
 		return -1;
     }
     return 0;
