@@ -94,6 +94,7 @@ global:
 	mnt_split_optstr;
 	mnt_tab_add_fs;
 	mnt_tab_find_next_fs;
+	mnt_tab_find_pair;
 	mnt_tab_find_source;
 	mnt_tab_find_srcpath;
 	mnt_tab_find_tag;

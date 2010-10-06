@@ -276,6 +276,8 @@ extern mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction
 extern mnt_fs *mnt_tab_find_tag(mnt_tab *tb, const char *tag,
 				const char *val, int direction);
 extern mnt_fs *mnt_tab_find_source(mnt_tab *tb, const char *source, int direction);
+extern mnt_fs *mnt_tab_find_pair(mnt_tab *tb, const char *source,
+				const char *target, int direction);
 
 extern int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 			int (*match_func)(mnt_fs *, void *), void *userdata,

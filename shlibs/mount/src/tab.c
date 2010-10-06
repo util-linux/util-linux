@@ -650,6 +650,45 @@ mnt_fs *mnt_tab_find_source(mnt_tab *tb, const char *source, int direction)
 	return fs;
 }
 
+/**
+ * mnt_tab_find_pair
+ * @tb: tab pointer
+ * @source: TAG or path
+ * @target: mountpoint
+ * @direction: MNT_ITER_{FORWARD,BACKWARD}
+ *
+ * This function is implemented by mnt_fs_match_source() and
+ * mnt_fs_match_target() functions. It means that this is more expensive that
+ * others mnt_tab_find_* function, because every @tab entry is fully evaluated.
+ *
+ * Returns: a tab entry or NULL.
+ */
+mnt_fs *mnt_tab_find_pair(mnt_tab *tb, const char *source,
+			const char *target, int direction)
+{
+	mnt_fs *fs = NULL;
+	mnt_iter itr;
+
+	assert(tb);
+	assert(source);
+	assert(target);
+
+	if (!tb || !source || !target)
+		return NULL;
+
+	DBG(TAB, mnt_debug_h(tb, "lookup SOURCE: %s TARGET: %s", source, target));
+
+	mnt_reset_iter(&itr, direction);
+	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+
+		if (mnt_fs_match_target(fs, target, tb->cache) &&
+		    mnt_fs_match_source(fs, source, tb->cache))
+			return fs;
+	}
+
+	return NULL;
+}
+
 #ifdef TEST_PROGRAM
 
 static int parser_errcb(mnt_tab *tb, const char *filename, int line, int flag)
@@ -682,6 +721,7 @@ int test_copy_fs(struct mtest *ts, int argc, char *argv[])
 {
 	mnt_tab *tb;
 	mnt_fs *fs;
+	int rc = -1;
 
 	tb = create_tab(argv[1]);
 	if (!tb)
@@ -689,28 +729,30 @@ int test_copy_fs(struct mtest *ts, int argc, char *argv[])
 
 	fs = mnt_tab_find_target(tb, "/", MNT_ITER_FORWARD);
 	if (!fs)
-		goto err;
+		goto done;
 
 	printf("ORIGINAL:\n");
 	mnt_fs_print_debug(fs, stdout);
 
 	fs = mnt_copy_fs(fs);
 	if (!fs)
-		goto err;
+		goto done;
 
 	printf("COPY:\n");
 	mnt_fs_print_debug(fs, stdout);
 	mnt_free_fs(fs);
-err:
+	rc = 0;
+done:
 	mnt_free_tab(tb);
-	return 0;
+	return rc;
 }
 
 int test_parse(struct mtest *ts, int argc, char *argv[])
 {
-	mnt_tab *tb;
-	mnt_iter *itr;
+	mnt_tab *tb = NULL;
+	mnt_iter *itr = NULL;
 	mnt_fs *fs;
+	int rc = -1;
 
 	tb = create_tab(argv[1]);
 	if (!tb)
@@ -718,38 +760,40 @@ int test_parse(struct mtest *ts, int argc, char *argv[])
 
 	itr = mnt_new_iter(MNT_ITER_FORWARD);
 	if (!itr)
-		goto err;
+		goto done;
 
 	while(mnt_tab_next_fs(tb, itr, &fs) == 0)
 		mnt_fs_print_debug(fs, stdout);
-err:
+	rc = 0;
+done:
 	mnt_free_iter(itr);
 	mnt_free_tab(tb);
-	return 0;
+	return rc;
 }
 
 int test_find(struct mtest *ts, int argc, char *argv[], int dr)
 {
 	mnt_tab *tb;
 	mnt_fs *fs = NULL;
-	mnt_cache *mpc;
+	mnt_cache *mpc = NULL;
 	const char *file, *find, *what;
+	int rc = -1;
 
 	if (argc != 4) {
 		fprintf(stderr, "try --help\n");
-		goto err;
+		return -EINVAL;
 	}
 
 	file = argv[1], find = argv[2], what = argv[3];
 
 	tb = create_tab(file);
 	if (!tb)
-		goto err;
+		goto done;
 
 	/* create a cache for canonicalized paths */
 	mpc = mnt_new_cache();
 	if (!mpc)
-		goto err;
+		goto done;
 	mnt_tab_set_cache(tb, mpc);
 
 	if (strcasecmp(find, "source") == 0)
@@ -770,12 +814,12 @@ int test_find(struct mtest *ts, int argc, char *argv[], int dr)
 		}
 		printf("|%s|%s\n", mnt_fs_get_target(fs),
 				mnt_fs_get_optstr(fs));
+		rc = 0;
 	}
+done:
 	mnt_free_tab(tb);
 	mnt_free_cache(mpc);
-	return 0;
-err:
-	return -1;
+	return rc;
 }
 
 int test_find_bw(struct mtest *ts, int argc, char *argv[])
@@ -788,12 +832,34 @@ int test_find_fw(struct mtest *ts, int argc, char *argv[])
 	return test_find(ts, argc, argv, MNT_ITER_FORWARD);
 }
 
+int test_find_pair(struct mtest *ts, int argc, char *argv[])
+{
+	mnt_tab *tb;
+	mnt_fs *fs;
+	int rc = -1;
+
+	tb = create_tab(argv[1]);
+	if (!tb)
+		return -1;
+
+	fs = mnt_tab_find_pair(tb, argv[2], argv[3], MNT_ITER_FORWARD);
+	if (!fs)
+		goto done;
+
+	mnt_fs_print_debug(fs, stdout);
+	rc = 0;
+done:
+	mnt_free_tab(tb);
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
 	struct mtest tss[] = {
 	{ "--parse",    test_parse,        "<file>  parse and print tab" },
 	{ "--find-forward",  test_find_fw, "<file> <source|target> <string>" },
 	{ "--find-backward", test_find_bw, "<file> <source|target> <string>" },
+	{ "--find-pair",     test_find_pair, "<file> <source> <target>" },
 	{ "--copy-fs",       test_copy_fs, "<file>  copy root FS from the file" },
 	{ NULL }
 	};
