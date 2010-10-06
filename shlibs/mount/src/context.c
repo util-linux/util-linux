@@ -510,6 +510,80 @@ int mnt_context_set_fstab(mnt_context *cxt, mnt_tab *tb)
 }
 
 /**
+ * mnt_context_get_fstab:
+ * @cxt: mount context
+ * @tb: returns fstab
+ *
+ * See also mnt_tab_parse_fstab() for more details about fstab.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_get_fstab(mnt_context *cxt, mnt_tab **tb)
+{
+	mnt_cache *cache;
+
+	if (!cxt)
+		return -EINVAL;
+
+	if (!cxt->fstab) {
+		int rc;
+
+		cxt->fstab = mnt_new_tab();
+		if (!cxt->fstab)
+			return -ENOMEM;
+		cxt->flags &= ~MNT_FL_EXTERN_FSTAB;
+		rc = mnt_tab_parse_fstab(cxt->fstab);
+		if (rc)
+			return rc;
+	}
+
+	cache = mnt_context_get_cache(cxt);
+
+	/*  never touch an external fstab */
+	if (!(cxt->flags & MNT_FL_EXTERN_FSTAB))
+		mnt_tab_set_cache(cxt->fstab, cache);
+
+	if (tb)
+		*tb = cxt->fstab;
+	return 0;
+}
+
+/**
+ * mnt_context_get_mtab:
+ * @cxt: mount context
+ * @tb: returns mtab
+ *
+ * See also mnt_tab_parse_mtab() for more details about mtab/mountinfo.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_get_mtab(mnt_context *cxt, mnt_tab **tb)
+{
+	mnt_cache *cache;
+
+	if (!cxt)
+		return -EINVAL;
+
+	if (!cxt->mtab) {
+		int rc;
+
+		cxt->mtab = mnt_new_tab();
+		if (!cxt->fstab)
+			return -ENOMEM;
+		rc = mnt_tab_parse_mtab(cxt->mtab);
+		if (rc)
+			return rc;
+	}
+
+	cache = mnt_context_get_cache(cxt);
+	mnt_tab_set_cache(cxt->mtab, cache);
+
+	if (tb)
+		*tb = cxt->mtab;
+	return 0;
+}
+
+/**
  * mnt_context_set_cache:
  * @cxt: mount context
  * @cache: cache instance or nULL
@@ -947,7 +1021,7 @@ static int is_remount(mnt_context *cxt)
 	return 0;
 }
 
-static int apply_tab(mnt_context *cxt, mnt_tab *tb)
+static int apply_tab(mnt_context *cxt, mnt_tab *tb, int direction)
 {
 	mnt_fs *fs = NULL;
 	const char *src = NULL, *tgt = NULL;
@@ -963,9 +1037,9 @@ static int apply_tab(mnt_context *cxt, mnt_tab *tb)
 		;	/* TODO: search pair for MNT_OPTSMODE_FORCE */
 	else {
 		if (src)
-			fs = mnt_tab_find_source(tb, src, MNT_ITER_FORWARD);
+			fs = mnt_tab_find_source(tb, src, direction);
 		else if (tgt)
-			fs = mnt_tab_find_target(tb, tgt, MNT_ITER_FORWARD);
+			fs = mnt_tab_find_target(tb, tgt, direction);
 
 		if (!fs) {
 			/* swap source and target (if @src is not LABEL/UUID),
@@ -977,11 +1051,9 @@ static int apply_tab(mnt_context *cxt, mnt_tab *tb)
 			 * example bind mount, symlink to device, ...).
 			 */
 			if (src && !mnt_fs_get_tag(cxt->fs, NULL, NULL))
-				fs = mnt_tab_find_target(tb, src,
-							MNT_ITER_FORWARD);
+				fs = mnt_tab_find_target(tb, src, direction);
 			if (!fs && tgt)
-				fs = mnt_tab_find_source(tb, tgt,
-							MNT_ITER_FORWARD);
+				fs = mnt_tab_find_source(tb, tgt, direction);
 		}
 	}
 
@@ -1004,7 +1076,7 @@ static int apply_tab(mnt_context *cxt, mnt_tab *tb)
 		rc = mnt_fs_prepend_optstr(cxt->fs, mnt_fs_get_optstr(fs));
 
 	if (!rc)
-		cxt->flags |= MNT_FL_FSTAB_APPLIED;
+		cxt->flags |= MNT_FL_TAB_APPLIED;
 
 	return rc;
 }
@@ -1012,13 +1084,13 @@ static int apply_tab(mnt_context *cxt, mnt_tab *tb)
 int mnt_context_apply_fstab(mnt_context *cxt)
 {
 	int rc;
-	mnt_cache *cache;
+	mnt_tab *fstab, *mtab;
 	const char *src = NULL, *tgt = NULL;
 
 	if (!cxt || !cxt->fs)
 		return -EINVAL;
 
-	if (cxt->flags & MNT_FL_FSTAB_APPLIED)
+	if (cxt->flags & MNT_FL_TAB_APPLIED)
 		return 0;
 
 	if (cxt->fs) {
@@ -1034,48 +1106,27 @@ int mnt_context_apply_fstab(mnt_context *cxt)
 	DBG(CXT, mnt_debug_h(cxt,
 		"trying to apply fstab (src=%s, target=%s)", src, tgt));
 
-	/* initialize fstab */
-	if (!cxt->fstab) {
-		cxt->fstab = mnt_new_tab();
-		if (!cxt->fstab)
-			goto errnomem;
-		cxt->flags &= ~MNT_FL_EXTERN_FSTAB;
-		rc = mnt_tab_parse_fstab(cxt->fstab);
-		if (rc)
-			goto err;
-	}
-
-	cache = mnt_context_get_cache(cxt);	/* NULL if MNT_FL_NOCANONICALIZE is enabled */
-
-	/*  never touch an external fstab */
-	if (!(cxt->flags & MNT_FL_EXTERN_FSTAB))
-		mnt_tab_set_cache(cxt->fstab, cache);
+	rc = mnt_context_get_fstab(cxt, &fstab);
+	if (rc)
+		goto err;
 
 	/* let's initialize cxt->fs */
 	mnt_context_get_fs(cxt);
 
 	/* try fstab */
-	rc = apply_tab(cxt, cxt->fstab);
+	rc = apply_tab(cxt, fstab, MNT_ITER_FORWARD);
 
 	/* try mtab */
 	if (rc || (cxt->optsmode == MNT_OPTSMODE_MTABFORCE && is_remount(cxt))) {
 
-		cxt->mtab = mnt_new_tab();
-		if (!cxt->mtab)
-			goto errnomem;
-		rc = mnt_tab_parse_mtab(cxt->mtab);
-		if (rc)
-			goto err;
-
-		mnt_tab_set_cache(cxt->mtab, cache);
-		rc = apply_tab(cxt, cxt->mtab);
+		rc = mnt_context_get_mtab(cxt, &mtab);
+		if (!rc)
+			rc = apply_tab(cxt, mtab, MNT_ITER_BACKWARD);
 		if (rc)
 			goto err;
 	}
 	return 0;
 
-errnomem:
-	rc = ENOMEM;
 err:
 	DBG(CXT, mnt_debug_h(cxt, "failed to found entry in fstab/mtab"));
 	return rc;

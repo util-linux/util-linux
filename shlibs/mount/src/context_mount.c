@@ -152,7 +152,7 @@ static int generate_helper_optstr(mnt_context *cxt, char **optstr)
 
 
 /*
- * this has to be called before mnt_context_fix_optstr()
+ * this has to be called before fix_optstr()
  */
 static int evaluate_permissions(mnt_context *cxt)
 {

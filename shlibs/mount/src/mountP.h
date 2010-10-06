@@ -256,7 +256,7 @@ struct _mnt_context
 #define MNT_FL_EXTERN_CACHE	(1 << 17)	/* cxt->cache is not private */
 
 #define MNT_FL_MOUNTDATA	(1 << 20)
-#define MNT_FL_FSTAB_APPLIED	(1 << 21)
+#define MNT_FL_TAB_APPLIED	(1 << 21)	/* mtab/fstab merged to cxt->fs */
 #define MNT_FL_MOUNTFLAGS_MERGED (1 << 22)	/* MS_* flags was read from optstr */
 #define MNT_FL_SAVED_USER	(1 << 23)
 
