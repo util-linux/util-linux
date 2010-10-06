@@ -173,7 +173,7 @@ path_fopen(const char *mode, int exit_on_error, const char *path, ...)
 	va_list ap;
 
 	va_start(ap, path);
-	fd = path_vfopen("r", exit_on_error, path, ap);
+	fd = path_vfopen(mode, exit_on_error, path, ap);
 	va_end(ap);
 
 	return fd;
