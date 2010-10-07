@@ -392,6 +392,10 @@ swapon_checks(const char *special)
 			warnx(_("%s: insecure permissions %04o, %04o suggested."),
 				special, st.st_mode & 07777,
 				~permMask & 0666);
+
+		if (S_ISREG(st.st_mode) && st.st_uid != 0)
+			warnx(_("%s: insecure file owner %d, 0 (root) suggested."),
+				special, st.st_uid);
 	}
 
 	/* test for holes by LBT */
