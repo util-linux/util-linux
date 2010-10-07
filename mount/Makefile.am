@@ -33,7 +33,7 @@ mount_CFLAGS = $(SUID_CFLAGS) $(cflags_common)
 mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 mount_LDADD = $(ldadd_common)
 
-umount_SOURCES = umount.c $(srcs_mount)
+umount_SOURCES = umount.c $(srcs_mount) $(top_srcdir)/lib/strtosize.c
 umount_CFLAGS = $(SUID_CFLAGS) $(cflags_common)
 umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 umount_LDADD = $(ldadd_common)

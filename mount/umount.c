@@ -20,6 +20,7 @@
 #include "fstab.h"
 #include "env.h"
 #include "nls.h"
+#include "strtosize.h"
 
 #if defined(MNT_FORCE)
 /* Interesting ... it seems libc knows about MNT_FORCE and presumably
@@ -463,7 +464,7 @@ get_value(const char *list, const char *s) {
 static int
 is_valid_loop(struct mntentchn *mc, struct mntentchn *fs)
 {
-	unsigned long long offset = 0;
+	uintmax_t offset = 0;
 	char *p;
 
 	/* check if it begins with /dev/loop */
@@ -477,8 +478,11 @@ is_valid_loop(struct mntentchn *mc, struct mntentchn *fs)
 
 	/* check for offset option in fstab */
 	p = get_value(fs->m.mnt_opts, "offset=");
-	if (p)
-		offset = strtoull(p, NULL, 10);
+	if (p && strtosize(p, &offset)) {
+		if (verbose > 1)
+			printf(_("failed to parse 'offset=%s' options\n"), p);
+		return 0;
+	}
 
 	/* check association */
 	if (loopfile_used_with((char *) mc->m.mnt_fsname,
