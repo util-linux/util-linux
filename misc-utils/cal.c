@@ -64,6 +64,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <err.h>
+#include <errno.h>
 
 #include "c.h"
 #include "nls.h"
@@ -257,20 +258,13 @@ void monthly3(int, int, int);
 void trim_trailing_spaces(char *);
 void usage(void);
 void headers_init(void);
-extern char *__progname;
 
 int
 main(int argc, char **argv) {
 	struct tm *local_time;
 	time_t now;
 	int ch, day, month, year, yflag;
-	char *progname, *p;
 	int num_months = NUM_MONTHS;
-
-	progname = argv[0];
-	if ((p = strrchr(progname, '/')) != NULL)
-		progname = p+1;
-	__progname = progname;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -345,9 +339,9 @@ main(int argc, char **argv) {
 			yflag = 1;
 			break;
 		case 'V':
-			printf(_("%s from %s\n"),
-			       progname, PACKAGE_STRING);
-			return 0;
+			printf(_("%s from %s\n"), program_invocation_short_name,
+			       PACKAGE_STRING);
+			return EXIT_SUCCESS;
 		case '?':
 		default:
 			usage();
@@ -403,7 +397,8 @@ main(int argc, char **argv) {
 		monthly(day, month, year);
 	else if (num_months == 3)
 		monthly3(day, month, year);
-	exit(0);
+
+	return EXIT_SUCCESS;
 }
 
 void headers_init(void)
@@ -783,6 +778,7 @@ void
 usage()
 {
 
-	fprintf(stderr, _("usage: cal [-13smjyV] [[[day] month] year]\n"));
-	exit(1);
+	fprintf(stderr, _("usage: %s [-13smjyV] [[[day] month] year]\n"),
+			program_invocation_short_name);
+	exit(EXIT_FAILURE);
 }
