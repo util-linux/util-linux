@@ -8,20 +8,9 @@ libblkid
  - add -<BE|LE> suffix to test images for native-endian filesystems (e.g. swap)
    and add support for such functionality to tests/ts/blkid/low-probe
 
- - add values:
+ - add FSSIZE value  -- filesystem size (klibc requirement)
 
-	FSSIZE   -- filesystem size (klibc requirement)
-
- - add reference counters to the binary interfaces. Currently, all chain 
-   data are allocated in blkid_probe and cannot be used independently on 
-   the probing stuff.
-
-	blkid_topology tp = blkdi_probe_get_topology(pr)
-
-	blkid_ref(tp);
-	...
-	blkid_unref(tp);
-
+ - add support for dasd PT (used for example on s390)
 
 blkid(8)
 -------
@@ -64,15 +53,20 @@ fdisk(s)
 
  * add GPT support
 
+partx
+-----
+
+  * partx: add an option to make it usable in shell scripts without having
+    to parse its output with sed
+
+  * use libblkid for PTs parsing
+
 misc
 ----
 
  * switch_root:
      - move all mountpoints to the newroot (there are hardcoded /proc /sys and /dev paths now)
      - add --dont-move[=<list of dirs>] options
-
- * partx: add to it an option to make it usable in shell scripts without having
-   to parse its output with sed
 
  * use ngettext() for strings with plurals, for example
 
@@ -83,21 +77,9 @@ misc
               "%d used sectors", sectors),
               sectors);
 
- * check for program_invocation_short_name in ./configure.ac and add 
-   lib/progname.c fallback for libc without this feature (for example
-   use the 1st field from /proc/#/cmdline)
-
  * use something better than gtk-doc (doxyden?)
 
- * partx: copy sun.c, mac.c and dash.c from kpartx
-   git://git.kernel.org/pub/scm/linux/storage/multipath-tools/.git
-
- * swapon -s  -- LABELs support
-
-   Although mkswap has recently been -L option to create a label nothing appears to
-   have been change to swapon to display said labels. (rh#430386)
-
- * use TZ=UTC for tests
+ * use TZ=UTC and LANG=en_US.UTF-8 for tests
 
  * add NLS and err.h stuff to schedutils (chrt.c, taskset.c)
 
