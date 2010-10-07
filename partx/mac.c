@@ -36,7 +36,7 @@ read_mac_pt(int fd, struct slice all, struct slice *sp, int ns) {
 	struct mac_driver_desc *md;
         struct mac_partition *part;
 	unsigned secsize;
-	char *data;
+	unsigned char *data;
 	int blk, blocks_in_map;
         int n = 0;
 

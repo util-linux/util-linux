@@ -20,6 +20,7 @@ struct slice {
 typedef int (ptreader)(int fd, struct slice all, struct slice *sp, int ns);
 
 extern ptreader read_dos_pt, read_bsd_pt, read_solaris_pt, read_unixware_pt, read_gpt_pt;
+extern ptreader read_sun_pt, read_mac_pt;
 
 unsigned char *getblock(int fd, unsigned int secnr);
 

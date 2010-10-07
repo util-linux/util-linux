@@ -68,7 +68,7 @@ read_sun_pt(int fd, struct slice all, struct slice *sp, int ns) {
 	struct sun_raw_part *s;
 	unsigned int offset = all.start, end;
 	int i, j, n;
-	char *bp;
+	unsigned char *bp;
 
 	bp = getblock(fd, offset);
 	if (bp == NULL)
@@ -122,10 +122,6 @@ read_sun_pt(int fd, struct slice all, struct slice *sp, int ns) {
 					fprintf(stderr,
 						"sun_disklabel: slice %d overlaps with %d\n", i , j);
 					sp[i].size = 0;
-				}
-			} else {
-				if (end <= sp[j].start + sp[j].size) {
-					sp[i].container = j + 1;
 				}
 			}
 		}
