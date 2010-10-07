@@ -6,4 +6,8 @@ f: namei1/namei2/b
  d namei1
  d namei2
  - b
-namei: failed to stat: namei1/namei2/a/b: Not a directory
+f: namei1/namei2/a/b
+ d namei1
+ d namei2
+ - a
+b - No such file or directory
