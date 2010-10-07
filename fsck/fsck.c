@@ -887,10 +887,17 @@ static int ignore(struct fs_info *fs)
 	/*
 	 * ignore devices that don't exist and have the "nofail" mount option
 	 */
-	if (!device_exists(fs->device) && opt_in_list("nofail", fs->opts)) {
+	if (!device_exists(fs->device)) {
+		if (opt_in_list("nofail", fs->opts)) {
+			if (verbose)
+				printf(_("%s: skipping nonexistent device\n"),
+								fs->device);
+			return 1;
+		}
 		if (verbose)
-			printf(_("%s: skipping nonexistent device\n"), fs->device);
-		return 1;
+			printf(_("%s: nonexistent device (\"nofail\" fstab "
+				 "option may be used to skip this device)\n"),
+				 fs->device);
 	}
 
 	interpret_type(fs);
