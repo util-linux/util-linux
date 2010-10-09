@@ -322,12 +322,13 @@ input(fp)
 		for (p = buf; *p && iswspace(*p); ++p);
 		if (!*p)
 			continue;
-		if (!(p = wcschr(p, '\n'))) {
+		if (!(p = wcschr(p, '\n')) && !feof(fp)) {
 			warnx(_("line too long"));
 			eval = 1;
 			continue;
 		}
-		*p = '\0';
+		if (!feof(fp))
+			*p = '\0';
 		len = wcs_width(buf);	/* len = p - buf; */
 		if (maxlength < len)
 			maxlength = len;
