@@ -193,6 +193,8 @@ extern void blkid_dev_iterate_end(blkid_dev_iterate iter)
 	if (!iter || iter->magic != DEV_ITERATE_MAGIC)
 		return;
 	iter->magic = 0;
+	free(iter->search_type);
+	free(iter->search_value);
 	free(iter);
 }
 
