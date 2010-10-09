@@ -159,7 +159,7 @@ main(int argc, char **argv)
 			(void)fclose(fp);
 		} else {
 			warn("%s", *argv);
-			eval = 1;
+			eval = EXIT_FAILURE;
 		}
 
 	if (!entries)
@@ -174,7 +174,7 @@ main(int argc, char **argv)
 	else
 		r_columnate();
 	if (ferror(stdout) || fclose(stdout))
-		eval = 1;
+		eval = EXIT_FAILURE;
 	exit(eval);
 }
 
@@ -280,7 +280,7 @@ maketbl()
 					       * sizeof(wchar_t *))) ||
 			!(lens = realloc(lens, ((u_int)maxcols + DEFCOLS)
 					       * sizeof(int))))
-			err(1, NULL);
+			err(EXIT_FAILURE, _("out of memory?"));
 		    memset((char *)lens + maxcols * sizeof(int),
 			   0, DEFCOLS * sizeof(int));
 		    maxcols += DEFCOLS;
@@ -313,7 +313,7 @@ input(fp)
 	FILE *fp;
 {
 	static int maxentry;
-	int len;
+	int len, lineno = 1, reportedline = 0;
 	wchar_t *p, buf[MAXLINELEN];
 
 	if (!list)
@@ -323,10 +323,14 @@ input(fp)
 		if (!*p)
 			continue;
 		if (!(p = wcschr(p, '\n')) && !feof(fp)) {
-			warnx(_("line too long"));
-			eval = 1;
+			if (reportedline < lineno) {
+				warnx(_("line %d is too long, output will be truncated"), lineno);
+				reportedline = lineno;
+			}
+			eval = EXIT_FAILURE;
 			continue;
 		}
+		lineno++;
 		if (!feof(fp))
 			*p = '\0';
 		len = wcs_width(buf);	/* len = p - buf; */
@@ -336,7 +340,7 @@ input(fp)
 			maxentry += DEFNUM;
 			if (!(list = realloc(list,
 			    (u_int)maxentry * sizeof(wchar_t *))))
-				err(1, NULL);
+				err(EXIT_FAILURE, _("out of memory?"));
 		}
 		list[entries++] = wcsdup(buf);
 	}
@@ -391,7 +395,7 @@ emalloc(size)
 	char *p;
 
 	if (!(p = malloc(size)))
-		err(1, NULL);
+		err(EXIT_FAILURE, _("out of memory?"));
 	memset(p, 0, size);
 	return (p);
 }
