@@ -250,6 +250,7 @@ struct _mnt_context
 #define MNT_FL_FORCE		(1 << 8)
 #define MNT_FL_NOCANONICALIZE	(1 << 9)
 #define MNT_FL_NOLOCK		(1 << 10)	/* don't lock mtab file */
+#define MNT_FL_RDONLY_UMOUNT	(1 << 11)	/* remount,ro after EBUSY umount(2) */
 
 #define MNT_FL_EXTERN_FS	(1 << 15)	/* cxt->fs is not private */
 #define MNT_FL_EXTERN_FSTAB	(1 << 16)	/* cxt->fstab is not private */

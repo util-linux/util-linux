@@ -246,7 +246,7 @@ static int exec_helper(mnt_context *cxt)
 
 	rc = generate_helper_optstr(cxt, &o);
 	if (rc)
-		goto done;
+		return -EINVAL;
 
 	DBG_FLUSH;
 
@@ -313,8 +313,6 @@ static int exec_helper(mnt_context *cxt)
 		break;
 	}
 
-done:
-	free(o);
 	return rc;
 }
 
@@ -351,20 +349,22 @@ static int do_mount(mnt_context *cxt, const char *try_type)
 	if (!(flags & MS_MGC_MSK))
 		flags |= MS_MGC_VAL;
 
-	DBG(CXT, mnt_debug_h(cxt, "calling mount(2) "
+	DBG(CXT, mnt_debug_h(cxt, "%smount(2) "
 			"[source=%s, target=%s, type=%s, "
 			" mountflags=%08lx, mountdata=%s]",
+			(cxt->flags & MNT_FL_FAKE) ? "(FAKE) " : "",
 			src, target, type,
 			flags, cxt->mountdata ? "yes" : "<none>"));
 
-	if (mount(src, target, type, flags, cxt->mountdata)) {
-		cxt->syscall_errno = errno;
-		DBG(CXT, mnt_debug_h(cxt, "mount(2) failed [errno=%d]",
-						cxt->syscall_errno));
-		return -cxt->syscall_errno;
+	if (!(cxt->flags & MNT_FL_FAKE)) {
+		if (mount(src, target, type, flags, cxt->mountdata)) {
+			cxt->syscall_errno = errno;
+			DBG(CXT, mnt_debug_h(cxt, "mount(2) failed [errno=%d]",
+							cxt->syscall_errno));
+			return -cxt->syscall_errno;
+		}
+		DBG(CXT, mnt_debug_h(cxt, "mount(2) success"));
 	}
-
-	DBG(CXT, mnt_debug_h(cxt, "mount(2) success"));
 	return 0;
 }
 
@@ -502,81 +502,3 @@ int mnt_context_mount_strerror(mnt_context *cxt, char *buf, size_t bufsiz)
 	return 0;
 }
 
-#ifdef TEST_PROGRAM
-
-mnt_lock *lock;
-
-static void lock_fallback(void)
-{
-	if (lock) {
-		mnt_unlock_file(lock);
-		mnt_free_lock(lock);
-	}
-}
-
-int test_mount(struct mtest *ts, int argc, char *argv[])
-{
-	int idx = 1, rc = 0;
-	mnt_context *cxt;
-
-	if (argc < 2)
-		return -EINVAL;
-
-	cxt = mnt_new_context();
-	if (!cxt)
-		return -ENOMEM;
-
-	if (!strcmp(argv[idx], "-o")) {
-		mnt_context_set_optstr(cxt, argv[idx + 1]);
-		idx += 2;
-	}
-	if (!strcmp(argv[idx], "-t")) {
-		/* TODO: use mnt_context_set_fstype_pattern() */
-		mnt_context_set_fstype(cxt, argv[idx + 1]);
-		idx += 2;
-	}
-
-	if (argc == idx + 1)
-		/* mount <mountpont>|<device> */
-		mnt_context_set_target(cxt, argv[idx++]);
-
-	else if (argc == idx + 2) {
-		/* mount <device> <mountpoint> */
-		mnt_context_set_source(cxt, argv[idx++]);
-		mnt_context_set_target(cxt, argv[idx++]);
-	}
-
-	rc = mnt_context_prepare_mount(cxt);
-	if (rc)
-		printf("failed to prepare mount\n");
-	else {
-		lock = mnt_context_get_lock(cxt);
-		if (lock)
-			atexit(lock_fallback);
-
-		rc = mnt_context_do_mount(cxt);
-		if (rc)
-			printf("failed to mount\n");
-		else {
-			printf("successfully mounted");
-			rc = mnt_context_post_mount(cxt);
-			if (rc)
-				printf("mtab update failed\n");
-		}
-	}
-
-	mnt_free_context(cxt);
-	return rc;
-}
-
-int main(int argc, char *argv[])
-{
-	struct mtest tss[] = {
-	{ "--mount",    test_mount,        "[-o <opts>] [-t <type>] <spec> | <src> <target>" },
-	{ NULL }
-	};
-
-	return mnt_run_test(tss, argc, argv);
-}
-
-#endif /* TEST_PROGRAM */

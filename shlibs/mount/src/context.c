@@ -218,6 +218,21 @@ int mnt_context_enable_lazy(mnt_context *cxt, int enable)
 }
 
 /**
+ * mnt_context_enable_rdonly_umount:
+ * @cxt: mount context
+ * @enable: TRUE or FALSE
+ *
+ * Enable/disable read-only remount on failed umount(2)
+ * (see umount(8) man page, option -r).
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_enable_rdonly_umount(mnt_context *cxt, int enable)
+{
+	return set_flag(cxt, MNT_FL_RDONLY_UMOUNT, enable);
+}
+
+/**
  * mnt_context_disable_helpers:
  * @cxt: mount context
  * @disable: TRUE or FALSE
@@ -568,7 +583,7 @@ int mnt_context_get_mtab(mnt_context *cxt, mnt_tab **tb)
 		int rc;
 
 		cxt->mtab = mnt_new_tab();
-		if (!cxt->fstab)
+		if (!cxt->mtab)
 			return -ENOMEM;
 		rc = mnt_tab_parse_mtab(cxt->mtab);
 		if (rc)
@@ -980,6 +995,11 @@ int mnt_context_prepare_helper(mnt_context *cxt, const char *name,
 int mnt_context_prepare_update(mnt_context *cxt, int act)
 {
 	int rc;
+	const char *tgt = cxt->fs ? mnt_fs_get_target(cxt->fs) : NULL;
+
+	if (act == MNT_ACT_UMOUNT && tgt && !strcmp(tgt, "/"))
+		/* Don't try to touch mtab if umounting root FS */
+		cxt->flags |= MNT_FL_NOMTAB;
 
 	if ((cxt->flags & MNT_FL_NOMTAB) || cxt->helper)
 		return 0;
@@ -1131,3 +1151,146 @@ err:
 	DBG(CXT, mnt_debug_h(cxt, "failed to found entry in fstab/mtab"));
 	return rc;
 }
+
+
+#ifdef TEST_PROGRAM
+
+mnt_lock *lock;
+
+static void lock_fallback(void)
+{
+	if (lock) {
+		mnt_unlock_file(lock);
+		mnt_free_lock(lock);
+	}
+}
+
+int test_mount(struct mtest *ts, int argc, char *argv[])
+{
+	int idx = 1, rc = 0;
+	mnt_context *cxt;
+
+	if (argc < 2)
+		return -EINVAL;
+
+	cxt = mnt_new_context();
+	if (!cxt)
+		return -ENOMEM;
+
+	if (!strcmp(argv[idx], "-o")) {
+		mnt_context_set_optstr(cxt, argv[idx + 1]);
+		idx += 2;
+	}
+	if (!strcmp(argv[idx], "-t")) {
+		/* TODO: use mnt_context_set_fstype_pattern() */
+		mnt_context_set_fstype(cxt, argv[idx + 1]);
+		idx += 2;
+	}
+
+	if (argc == idx + 1)
+		/* mount <mountpont>|<device> */
+		mnt_context_set_target(cxt, argv[idx++]);
+
+	else if (argc == idx + 2) {
+		/* mount <device> <mountpoint> */
+		mnt_context_set_source(cxt, argv[idx++]);
+		mnt_context_set_target(cxt, argv[idx++]);
+	}
+
+	rc = mnt_context_prepare_mount(cxt);
+	if (rc)
+		printf("failed to prepare mount\n");
+	else {
+		lock = mnt_context_get_lock(cxt);
+		if (lock)
+			atexit(lock_fallback);
+
+		rc = mnt_context_do_mount(cxt);
+		if (rc)
+			printf("failed to mount\n");
+		else {
+			printf("successfully mounted");
+			rc = mnt_context_post_mount(cxt);
+			if (rc)
+				printf("mtab update failed\n");
+		}
+	}
+
+	mnt_free_context(cxt);
+	return rc;
+}
+
+int test_umount(struct mtest *ts, int argc, char *argv[])
+{
+	int idx = 1, rc = 0;
+	mnt_context *cxt;
+
+	if (argc < 2)
+		return -EINVAL;
+
+	cxt = mnt_new_context();
+	if (!cxt)
+		return -ENOMEM;
+
+	if (!strcmp(argv[idx], "-t")) {
+		mnt_context_set_fstype(cxt, argv[idx + 1]);
+		idx += 2;
+	}
+
+	if (!strcmp(argv[idx], "-f")) {
+		mnt_context_enable_force(cxt, TRUE);
+		idx++;
+	}
+
+	if (!strcmp(argv[idx], "-l")) {
+		mnt_context_enable_lazy(cxt, TRUE);
+		idx++;
+	}
+
+	if (!strcmp(argv[idx], "-r")) {
+		mnt_context_enable_rdonly_umount(cxt, TRUE);
+		idx++;
+	}
+
+	if (argc == idx + 1) {
+		/* mount <mountpont>|<device> */
+		mnt_context_set_target(cxt, argv[idx++]);
+	} else {
+		rc = -EINVAL;
+		goto err;
+	}
+
+	rc = mnt_context_prepare_umount(cxt);
+	if (rc)
+		printf("failed to prepare umount\n");
+	else {
+		lock = mnt_context_get_lock(cxt);
+		if (lock)
+			atexit(lock_fallback);
+
+		rc = mnt_context_do_umount(cxt);
+		if (rc)
+			printf("failed to umount\n");
+		else {
+			printf("successfully umounted");
+			rc = mnt_context_post_umount(cxt);
+			if (rc)
+				printf("mtab update failed\n");
+		}
+	}
+err:
+	mnt_free_context(cxt);
+	return rc;
+}
+
+int main(int argc, char *argv[])
+{
+	struct mtest tss[] = {
+	{ "--mount",  test_mount,  "[-o <opts>] [-t <type>] <spec>|<src> <target>" },
+	{ "--umount", test_umount, "[-t <type>] [-f][-l][-r] <src>|<target>" },
+	{ NULL }};
+
+	return mnt_run_test(tss, argc, argv);
+}
+
+#endif /* TEST_PROGRAM */
