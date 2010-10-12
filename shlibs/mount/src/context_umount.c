@@ -28,6 +28,9 @@ static int lookup_umount_fs(mnt_context *cxt)
 	mnt_tab *mtab;
 	mnt_fs *fs;
 
+	assert(cxt);
+	assert(cxt->fs);
+
 	tgt = mnt_fs_get_target(cxt->fs);
 	if (!tgt) {
 		DBG(CXT, mnt_debug_h(cxt, "umount: undefined target"));
@@ -135,6 +138,10 @@ static int evaluate_permissions(mnt_context *cxt)
 	int rc, ok = 0;
 	mnt_fs *fs;
 
+	assert(cxt);
+	assert(cxt->fs);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+
 	if (!cxt || !cxt->fs)
 		return -EINVAL;
 
@@ -148,9 +155,9 @@ static int evaluate_permissions(mnt_context *cxt)
 		goto eperm;
 	}
 
-	mnt_context_get_userspace_mountflags(cxt, &u_flags);
+	if (!(cxt->flags & MNT_FL_NOHELPERS) &&
+	     (cxt->user_mountflags & MNT_MS_UHELPER)) {
 
-	if (!(cxt->flags & MNT_FL_NOHELPERS) && (u_flags & MNT_MS_UHELPER)) {
 		char *suffix = NULL;
 		char *o = (char *) mnt_fs_get_optstr(cxt->fs);
 		size_t valsz;
@@ -216,7 +223,7 @@ static int evaluate_permissions(mnt_context *cxt)
 	 * The options `user', `owner' and `group' only allow unmounting by the
 	 * user that mounted (visible in mtab).
 	 */
-	optstr = mnt_fs_get_optstr(fs);
+	optstr = mnt_fs_get_optstr(fs);		/* FSTAB mount options! */
 	if (!optstr)
 		goto eperm;
 
@@ -267,6 +274,7 @@ static int exec_helper(mnt_context *cxt)
 	assert(cxt);
 	assert(cxt->fs);
 	assert(cxt->helper);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
 	DBG_FLUSH;
 
@@ -341,6 +349,7 @@ static int do_umount(mnt_context *cxt)
 
 	assert(cxt);
 	assert(cxt->fs);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
 	if (cxt->helper)
 		return exec_helper(cxt);
@@ -431,6 +440,8 @@ int mnt_context_prepare_umount(mnt_context *cxt)
 	cxt->helper = NULL;
 
 	rc = lookup_umount_fs(cxt);
+	if (!rc)
+		rc = mnt_context_merge_mountflags(cxt);
 	if (!rc)
 		rc = evaluate_permissions(cxt);
 	if (!rc && !cxt->helper)

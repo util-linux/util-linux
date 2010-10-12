@@ -52,7 +52,7 @@
 
 # define DBG(m,x)	do { \
 				if ((MNT_DEBUG_ ## m) & libmount_debug_mask) {\
-					fprintf(stderr, "libmount: %s: ", # m); \
+					fprintf(stderr, "libmount: %8s: ", # m); \
 					x; \
 				} \
 			} while(0)
@@ -288,5 +288,6 @@ extern int mnt_context_guess_fstype(mnt_context *cxt);
 extern int mnt_context_prepare_helper(mnt_context *cxt, const char *name, const char *type);
 extern int mnt_context_prepare_update(mnt_context *cxt, int act);
 extern mnt_fs *mnt_context_get_fs(mnt_context *cxt);
+extern int mnt_context_merge_mountflags(mnt_context *cxt);
 
 #endif /* _LIBMOUNT_PRIVATE_H */

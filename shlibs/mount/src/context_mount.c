@@ -34,12 +34,16 @@ static int fix_optstr(mnt_context *cxt)
 	char *name, *val;
 	size_t namesz, valsz;
 
+	assert(cxt);
+	assert(cxt->fs);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+
 	if (!cxt)
 		return -EINVAL;
 	if (!cxt->fs)
 		return 0;
 
-	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+	DBG(CXT, mnt_debug_h(cxt, "mount: fixing optstr"));
 
 	/*
 	 * we directly work with optstr pointer here
@@ -52,7 +56,7 @@ static int fix_optstr(mnt_context *cxt)
 	if (cxt->mountflags & MS_PROPAGATION)
 		cxt->mountflags &= MS_PROPAGATION;
 
-	if (!mnt_optstr_get_option(*optstr, "user", &val, &valsz)) {
+	if (*optstr && !mnt_optstr_get_option(*optstr, "user", &val, &valsz)) {
 		if (val) {
 			cxt->orig_user = strndup(val, valsz);
 			if (!cxt->orig_user) {
@@ -159,10 +163,16 @@ static int evaluate_permissions(mnt_context *cxt)
 	unsigned long u_flags;
 	const char *srcpath;
 
+	assert(cxt);
+	assert(cxt->fs);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+
 	if (!cxt)
 		return -EINVAL;
 	if (!cxt->fs)
 		return 0;
+
+	DBG(CXT, mnt_debug_h(cxt, "mount: evaluating permissions"));
 
 	mnt_context_get_userspace_mountflags(cxt, &u_flags);
 
@@ -215,26 +225,6 @@ static int evaluate_permissions(mnt_context *cxt)
 	return 0;
 }
 
-static int merge_mountflags(mnt_context *cxt)
-{
-	unsigned long fl = 0;
-	int rc;
-
-	rc = mnt_context_get_mountflags(cxt, &fl);
-	if (rc)
-		return rc;
-	cxt->mountflags = fl;
-
-	fl = 0;
-	rc = mnt_context_get_userspace_mountflags(cxt, &fl);
-	if (rc)
-		return rc;
-	cxt->user_mountflags = fl;
-
-	cxt->flags |= MNT_FL_MOUNTFLAGS_MERGED;
-	return 0;
-}
-
 static int exec_helper(mnt_context *cxt)
 {
 	char *o = NULL;
@@ -243,6 +233,9 @@ static int exec_helper(mnt_context *cxt)
 	assert(cxt);
 	assert(cxt->fs);
 	assert(cxt->helper);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+
+	DBG(CXT, mnt_debug_h(cxt, "mount: executing helper %s", cxt->helper));
 
 	rc = generate_helper_optstr(cxt, &o);
 	if (rc)
@@ -328,6 +321,7 @@ static int do_mount(mnt_context *cxt, const char *try_type)
 
 	assert(cxt);
 	assert(cxt->fs);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
 	if (try_type && !cxt->helper) {
 		rc = mnt_context_prepare_helper(cxt, "mount", try_type);
@@ -396,9 +390,11 @@ int mnt_context_prepare_mount(mnt_context *cxt)
 			 !mnt_fs_get_target(cxt->fs)))
 		return -EINVAL;
 
+	DBG(CXT, mnt_debug_h(cxt, "mount: preparing"));
+
 	rc = mnt_context_apply_fstab(cxt);
 	if (!rc)
-		rc = merge_mountflags(cxt);
+		rc = mnt_context_merge_mountflags(cxt);
 	if (!rc)
 		rc = evaluate_permissions(cxt);
 	if (!rc)
@@ -436,8 +432,14 @@ int mnt_context_do_mount(mnt_context *cxt)
 	int rc = -EINVAL;
 	const char *type;
 
+	assert(cxt);
+	assert(cxt->fs);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+
 	if (!cxt || !cxt->fs || (cxt->fs->flags & MNT_FS_SWAP))
 		return -EINVAL;
+
+	DBG(CXT, mnt_debug_h(cxt, "mount: do mount"));
 
 	if (!(cxt->flags & MNT_FL_MOUNTDATA))
 		cxt->mountdata = (char *) mnt_fs_get_fs_optstr(cxt->fs);
@@ -469,6 +471,10 @@ int mnt_context_do_mount(mnt_context *cxt)
 int mnt_context_post_mount(mnt_context *cxt)
 {
 	int rc = 0;
+
+	assert(cxt);
+	assert(cxt->fs);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
 	if (!cxt)
 		return -EINVAL;

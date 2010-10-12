@@ -818,8 +818,14 @@ int mnt_context_prepare_srcpath(mnt_context *cxt)
 	const char *t, *v, *src;
 	int rc = 0;
 
+	assert(cxt);
+	assert(cxt->fs);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+
 	if (!cxt || !cxt->fs)
 		return -EINVAL;
+
+	DBG(CXT, mnt_debug_h(cxt, "preparing source path"));
 
 	src = mnt_fs_get_source(cxt->fs);
 
@@ -827,7 +833,7 @@ int mnt_context_prepare_srcpath(mnt_context *cxt)
 	if (!src || (cxt->fs->flags & (MNT_FS_PSEUDO | MNT_FS_NET)))
 		return 0;
 
-	DBG(CXT, mnt_debug_h(cxt, "preparing srcpath '%s'", src));
+	DBG(CXT, mnt_debug_h(cxt, "srcpath '%s'", src));
 
 	cache = mnt_context_get_cache(cxt);
 	type = mnt_fs_get_fstype(cxt->fs);
@@ -881,6 +887,10 @@ int mnt_context_guess_fstype(mnt_context *cxt)
 	char *type;
 	const char *dev;
 	int rc = -EINVAL;
+
+	assert(cxt);
+	assert(cxt->fs);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
 	if (!cxt || !cxt->fs)
 		return -EINVAL;
@@ -945,6 +955,7 @@ int mnt_context_prepare_helper(mnt_context *cxt, const char *name,
 
 	assert(cxt);
 	assert(cxt->fs);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
 	if (!type)
 		type = mnt_fs_get_fstype(cxt->fs);
@@ -989,6 +1000,30 @@ int mnt_context_prepare_helper(mnt_context *cxt, const char *name,
 	return 0;
 }
 
+int mnt_context_merge_mountflags(mnt_context *cxt)
+{
+	unsigned long fl = 0;
+	int rc;
+
+	assert(cxt);
+
+	DBG(CXT, mnt_debug_h(cxt, "merging mount flags"));
+
+	rc = mnt_context_get_mountflags(cxt, &fl);
+	if (rc)
+		return rc;
+	cxt->mountflags = fl;
+
+	fl = 0;
+	rc = mnt_context_get_userspace_mountflags(cxt, &fl);
+	if (rc)
+		return rc;
+	cxt->user_mountflags = fl;
+
+	cxt->flags |= MNT_FL_MOUNTFLAGS_MERGED;
+	return 0;
+}
+
 /*
  * Prepare /etc/mtab or /var/run/mount/mountinfo update
  */
@@ -996,6 +1031,10 @@ int mnt_context_prepare_update(mnt_context *cxt, int act)
 {
 	int rc;
 	const char *tgt = cxt->fs ? mnt_fs_get_target(cxt->fs) : NULL;
+
+	assert(cxt);
+	assert(cxt->fs);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
 	if (act == MNT_ACT_UMOUNT && tgt && !strcmp(tgt, "/"))
 		/* Don't try to touch mtab if umounting root FS */
@@ -1046,6 +1085,9 @@ static int apply_tab(mnt_context *cxt, mnt_tab *tb, int direction)
 	mnt_fs *fs = NULL;
 	const char *src = NULL, *tgt = NULL;
 	int rc;
+
+	assert(cxt);
+	assert(cxt->fs);
 
 	if (!cxt->fs)
 		return -EINVAL;
@@ -1107,11 +1149,16 @@ int mnt_context_apply_fstab(mnt_context *cxt)
 	mnt_tab *fstab, *mtab;
 	const char *src = NULL, *tgt = NULL;
 
+	assert(cxt);
+	assert(cxt->fs);
+
 	if (!cxt || !cxt->fs)
 		return -EINVAL;
 
 	if (cxt->flags & MNT_FL_TAB_APPLIED)
 		return 0;
+
+	DBG(CXT, mnt_debug_h(cxt, "appling fstab"));
 
 	if (cxt->fs) {
 		src = mnt_fs_get_source(cxt->fs);
@@ -1209,7 +1256,7 @@ int test_mount(struct mtest *ts, int argc, char *argv[])
 		if (rc)
 			printf("failed to mount\n");
 		else {
-			printf("successfully mounted");
+			printf("successfully mounted\n");
 			rc = mnt_context_post_mount(cxt);
 			if (rc)
 				printf("mtab update failed\n");
@@ -1272,7 +1319,7 @@ int test_umount(struct mtest *ts, int argc, char *argv[])
 		if (rc)
 			printf("failed to umount\n");
 		else {
-			printf("successfully umounted");
+			printf("successfully umounted\n");
 			rc = mnt_context_post_umount(cxt);
 			if (rc)
 				printf("mtab update failed\n");

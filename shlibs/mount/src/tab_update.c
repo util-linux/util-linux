@@ -596,7 +596,7 @@ int mnt_prepare_update(mnt_update *upd)
 		return -EINVAL;
 
 	DBG(UPDATE, mnt_debug_h(upd,
-		"prepare update (target %s, source %s, optstr %s)",
+		"prepare update (target=%s, source=%s, optstr=%s)",
 		mnt_fs_get_target(upd->fs),
 		mnt_fs_get_source(upd->fs),
 		mnt_fs_get_optstr(upd->fs)));
@@ -616,6 +616,9 @@ int mnt_prepare_update(mnt_update *upd)
 			goto err;
 		}
 	}
+
+	DBG(UPDATE, mnt_debug_h(upd, "filename: %s", upd->filename));
+
 	if (!upd->format) {
 		if (endswith(upd->filename, "mountinfo"))
 			upd->format = MNT_FMT_MOUNTINFO;
