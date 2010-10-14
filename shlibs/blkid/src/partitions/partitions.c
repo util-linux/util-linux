@@ -515,35 +515,12 @@ int blkid_is_nested_dimension(blkid_partition par,
 static int idinfo_probe(blkid_probe pr, const struct blkid_idinfo *id)
 {
 	const struct blkid_idmag *mag;
-	int hasmag = 0;
 	int rc = 1;		/* = nothing detected */
 
 	if (pr->size <= 0 || (id->minsz && id->minsz > pr->size))
 		goto nothing;	/* the device is too small */
 
-	mag = id->magics ? &id->magics[0] : NULL;
-
-	/* try to detect by magic string */
-	while(mag && mag->magic) {
-		int idx;
-		unsigned char *buf;
-
-		idx = mag->kboff + (mag->sboff >> 10);
-		buf = blkid_probe_get_buffer(pr, idx << 10, 1024);
-
-		if (buf && !memcmp(mag->magic,
-				buf + (mag->sboff & 0x3ff), mag->len)) {
-			DBG(DEBUG_LOWPROBE, printf(
-				"%s: magic sboff=%u, kboff=%ld\n",
-				id->name, mag->sboff, mag->kboff));
-			hasmag = 1;
-			break;
-		}
-		mag++;
-	}
-
-	if (hasmag == 0 && id->magics && id->magics[0].magic)
-		/* magic string(s) defined, but not found */
+	if (blkid_probe_get_idmag(pr, id, NULL, &mag))
 		goto nothing;
 
 	/* final check by probing function */

@@ -714,6 +714,45 @@ int blkid_probe_set_dimension(blkid_probe pr,
 	return 0;
 }
 
+int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
+			blkid_loff_t *offset, const struct blkid_idmag **res)
+{
+	const struct blkid_idmag *mag = NULL;
+	blkid_loff_t off = 0;
+
+	if (id)
+		mag = id->magics ? &id->magics[0] : NULL;
+	if (res)
+		*res = NULL;
+
+	/* try to detect by magic string */
+	while(mag && mag->magic) {
+		unsigned char *buf;
+
+		off = (mag->kboff + (mag->sboff >> 10)) << 10;
+		buf = blkid_probe_get_buffer(pr, off, 1024);
+
+		if (buf && !memcmp(mag->magic,
+				buf + (mag->sboff & 0x3ff), mag->len)) {
+			DBG(DEBUG_LOWPROBE, printf(
+				"\tmagic sboff=%u, kboff=%ld\n",
+				mag->sboff, mag->kboff));
+			if (offset)
+				*offset = off + (mag->sboff & 0x3ff);
+			if (res)
+				*res = mag;
+			return 0;
+		}
+		mag++;
+	}
+
+	if (id->magics && id->magics[0].magic)
+		/* magic string(s) defined, but not found */
+		return 1;
+
+	return 0;
+}
+
 static inline void blkid_probe_start(blkid_probe pr)
 {
 	if (pr) {

@@ -386,6 +386,9 @@ extern int blkid_probe_get_dimension(blkid_probe pr,
 extern int blkid_probe_set_dimension(blkid_probe pr,
 	                blkid_loff_t off, blkid_loff_t size);
 
+extern int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
+			blkid_loff_t *offset, const struct blkid_idmag **res);
+
 /* returns superblok according to 'struct blkid_idmag' */
 #define blkid_probe_get_sb(_pr, _mag, type) \
 			((type *) blkid_probe_get_buffer((_pr),\

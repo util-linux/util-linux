@@ -322,10 +322,8 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 
 	for ( ; i < ARRAY_SIZE(idinfos); i++) {
 		const struct blkid_idinfo *id;
-		const struct blkid_idmag *mag;
+		const struct blkid_idmag *mag = NULL;
 		blkid_loff_t off = 0;
-
-		int hasmag = 0;
 
 		chn->idx = i;
 
@@ -351,27 +349,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 
 		DBG(DEBUG_LOWPROBE, printf("[%d] %s:\n", i, id->name));
 
-		/* try to detect by magic string */
-		while(mag && mag->magic) {
-			unsigned char *buf;
-
-			off = (mag->kboff + (mag->sboff >> 10)) << 10;
-			buf = blkid_probe_get_buffer(pr, off, 1024);
-
-			if (buf && !memcmp(mag->magic,
-					buf + (mag->sboff & 0x3ff), mag->len)) {
-				DBG(DEBUG_LOWPROBE, printf(
-					"\tmagic sboff=%u, kboff=%ld\n",
-					mag->sboff, mag->kboff));
-				hasmag = 1;
-				off += mag->sboff & 0x3ff;
-				break;
-			}
-			mag++;
-		}
-
-		if (hasmag == 0 && id->magics && id->magics[0].magic)
-			/* magic string(s) defined, but not found */
+		if (blkid_probe_get_idmag(pr, id, &off, &mag))
 			continue;
 
 		/* final check by probing function */
@@ -391,7 +369,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 
 		blkid_probe_set_usage(pr, id->usage);
 
-		if (hasmag)
+		if (mag)
 			blkid_probe_set_magic(pr, off, mag->len,
 					(unsigned char *) mag->magic);
 
