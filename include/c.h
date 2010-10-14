@@ -62,4 +62,10 @@
 	_max1 > _max2 ? _max1 : _max2; })
 #endif
 
+static inline __attribute__((const)) int is_power_of_2(unsigned long num)
+{
+	return (num != 0 && ((num & (num - 1)) == 0));
+}
+
+
 #endif /* UTIL_LINUX_C_H */

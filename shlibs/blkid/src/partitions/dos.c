@@ -16,7 +16,9 @@
 #include "partitions.h"
 #include "dos.h"
 #include "aix.h"
-#include "fat.h"
+
+/* see superblocks/vfat.c */
+extern int blkid_probe_is_vfat(blkid_probe pr);
 
 static const struct dos_subtypes {
 	unsigned char type;
@@ -149,15 +151,9 @@ static int probe_dos_pt(blkid_probe pr, const struct blkid_idmag *mag)
 	 * either the boot sector of a FAT filesystem or a DOS-type
 	 * partition table.
 	 */
-	{
-		struct msdos_super_block *ms =
-				(struct msdos_super_block *) data;
-
-		if (ms->ms_fats && ms->ms_reserved &&
-		    ms->ms_cluster_size &&
-		    blkid_fat_valid_media(ms) &&
-		    blkid_fat_valid_sectorsize(ms, NULL))
-			goto nothing;		/* FAT */
+	if (blkid_probe_is_vfat(pr)) {
+		DBG(DEBUG_LOWPROBE, printf("probably FAT -- ignore\n"));
+		goto nothing;
 	}
 
 	p0 = (struct dos_partition *) (data + BLKID_MSDOS_PT_OFFSET);
@@ -166,15 +162,19 @@ static int probe_dos_pt(blkid_probe pr, const struct blkid_idmag *mag)
 	 * Reject PT where boot indicator is not 0 or 0x80.
 	 */
 	for (p = p0, i = 0; i < 4; i++, p++)
-		if (p->boot_ind != 0 && p->boot_ind != 0x80)
+		if (p->boot_ind != 0 && p->boot_ind != 0x80) {
+			DBG(DEBUG_LOWPROBE, printf("missing boot indicator -- ignore\n"));
 			goto nothing;
+		}
 
 	/*
 	 * GPT uses valid MBR
 	 */
 	for (p = p0, i = 0; i < 4; i++, p++) {
-		if (p->sys_type == BLKID_GPT_PARTITION)
+		if (p->sys_type == BLKID_GPT_PARTITION) {
+			DBG(DEBUG_LOWPROBE, printf("probably GPT -- ignore\n"));
 			goto nothing;
+		}
 	}
 
 	/*

@@ -18,8 +18,62 @@
 
 #include "superblocks.h"
 
-/* {msdos,vfat}_super_block is defined in ../fat.h */
-#include "fat.h"
+/* Yucky misaligned values */
+struct vfat_super_block {
+/* 00*/	unsigned char	vs_ignored[3];
+/* 03*/	unsigned char	vs_sysid[8];
+/* 0b*/	unsigned char	vs_sector_size[2];
+/* 0d*/	uint8_t		vs_cluster_size;
+/* 0e*/	uint16_t	vs_reserved;
+/* 10*/	uint8_t		vs_fats;
+/* 11*/	unsigned char	vs_dir_entries[2];
+/* 13*/	unsigned char	vs_sectors[2];
+/* 15*/	unsigned char	vs_media;
+/* 16*/	uint16_t	vs_fat_length;
+/* 18*/	uint16_t	vs_secs_track;
+/* 1a*/	uint16_t	vs_heads;
+/* 1c*/	uint32_t	vs_hidden;
+/* 20*/	uint32_t	vs_total_sect;
+/* 24*/	uint32_t	vs_fat32_length;
+/* 28*/	uint16_t	vs_flags;
+/* 2a*/	uint8_t		vs_version[2];
+/* 2c*/	uint32_t	vs_root_cluster;
+/* 30*/	uint16_t	vs_fsinfo_sector;
+/* 32*/	uint16_t	vs_backup_boot;
+/* 34*/	uint16_t	vs_reserved2[6];
+/* 40*/	unsigned char	vs_unknown[3];
+/* 43*/	unsigned char	vs_serno[4];
+/* 47*/	unsigned char	vs_label[11];
+/* 52*/	unsigned char   vs_magic[8];
+/* 5a*/	unsigned char	vs_dummy2[0x1fe - 0x5a];
+/*1fe*/	unsigned char	vs_pmagic[2];
+} __attribute__((packed));
+
+/* Yucky misaligned values */
+struct msdos_super_block {
+/* 00*/	unsigned char	ms_ignored[3];
+/* 03*/	unsigned char	ms_sysid[8];
+/* 0b*/	unsigned char	ms_sector_size[2];
+/* 0d*/	uint8_t		ms_cluster_size;
+/* 0e*/	uint16_t	ms_reserved;
+/* 10*/	uint8_t		ms_fats;
+/* 11*/	unsigned char	ms_dir_entries[2];
+/* 13*/	unsigned char	ms_sectors[2]; /* =0 iff V3 or later */
+/* 15*/	unsigned char	ms_media;
+/* 16*/	uint16_t	ms_fat_length; /* Sectors per FAT */
+/* 18*/	uint16_t	ms_secs_track;
+/* 1a*/	uint16_t	ms_heads;
+/* 1c*/	uint32_t	ms_hidden;
+/* V3 BPB */
+/* 20*/	uint32_t	ms_total_sect; /* iff ms_sectors == 0 */
+/* V4 BPB */
+/* 24*/	unsigned char	ms_unknown[3]; /* Phys drive no., resvd, V4 sig (0x29) */
+/* 27*/	unsigned char	ms_serno[4];
+/* 2b*/	unsigned char	ms_label[11];
+/* 36*/	unsigned char   ms_magic[8];
+/* 3e*/	unsigned char	ms_dummy2[0x1fe - 0x3e];
+/*1fe*/	unsigned char	ms_pmagic[2];
+} __attribute__((packed));
 
 struct vfat_dir_entry {
 	uint8_t		name[11];
@@ -56,6 +110,9 @@ struct fat32_fsinfo {
 #define FAT_ENTRY_FREE			0xe5
 
 static const char *no_name = "NO NAME    ";
+
+#define unaligned_le16(x) \
+		(((unsigned char *) x)[0] + (((unsigned char *) x)[1] << 8))
 
 /*
  * Look for LABEL (name) in the FAT root directory.
@@ -112,54 +169,106 @@ static unsigned char *search_fat_label(blkid_probe pr,
 	return NULL;
 }
 
-/*
- * The FAT filesystem could be without a magic string in superblock
- * (e.g. old floppies).  This heuristic for FAT detection is inspired
- * by libvolume_id and the Linux kernel.
- */
-static int probe_fat_nomagic(blkid_probe pr, const struct blkid_idmag *mag)
+static int fat_valid_superblock(const struct blkid_idmag *mag,
+			struct msdos_super_block *ms,
+			struct vfat_super_block *vs,
+			uint32_t *cluster_count, uint32_t *fat_size)
 {
-	struct msdos_super_block *ms;
+	uint16_t sector_size, dir_entries, reserved;
+	uint32_t sect_count, __fat_size, dir_size, __cluster_count, fat_length;
+	uint32_t max_count;
 
-	ms = blkid_probe_get_sb(pr, mag, struct msdos_super_block);
-	if (!ms)
-		return -1;
+	/* extra check for FATs without magic strings */
+	if (mag->len <= 2) {
+		/* Old floppies have a valid MBR signature */
+		if (ms->ms_pmagic[0] != 0x55 || ms->ms_pmagic[1] != 0xAA)
+			return 0;
 
-	/* Old floppies have a valid MBR signature */
-	if (ms->ms_pmagic[0] != 0x55 || ms->ms_pmagic[1] != 0xAA)
-		return 1;
-
-	/* heads check */
-	if (ms->ms_heads == 0)
-		return 1;
-
-	/* cluster size check*/
-	if (ms->ms_cluster_size == 0 ||
-	    (ms->ms_cluster_size & (ms->ms_cluster_size-1)))
-		return 1;
-
-	/* media check */
-	if (!blkid_fat_valid_media(ms))
-		return 1;
+		if (ms->ms_heads == 0)
+			return 0;
+		/*
+		 * OS/2 and apparently DFSee will place a FAT12/16-like
+		 * pseudo-superblock in the first 512 bytes of non-FAT
+		 * filesystems --- at least JFS and HPFS, and possibly others.
+		 * So we explicitly check for those filesystems at the
+		 * FAT12/16 filesystem magic field identifier, and if they are
+		 * present, we rule this out as a FAT filesystem, despite the
+		 * FAT-like pseudo-header.
+		 */
+		if ((memcmp(ms->ms_magic, "JFS     ", 8) == 0) ||
+		    (memcmp(ms->ms_magic, "HPFS    ", 8) == 0))
+			return 0;
+	}
 
 	/* fat counts(Linux kernel expects at least 1 FAT table) */
 	if (!ms->ms_fats)
-		return 1;
+		return 0;
+	if (!ms->ms_reserved)
+		return 0;
+	if (!(0xf8 <= ms->ms_media || ms->ms_media == 0xf0))
+		return 0;
+	if (!is_power_of_2(ms->ms_cluster_size))
+		return 0;
 
-	/*
-	 * OS/2 and apparently DFSee will place a FAT12/16-like
-	 * pseudo-superblock in the first 512 bytes of non-FAT
-	 * filesystems --- at least JFS and HPFS, and possibly others.
-	 * So we explicitly check for those filesystems at the
-	 * FAT12/16 filesystem magic field identifier, and if they are
-	 * present, we rule this out as a FAT filesystem, despite the
-	 * FAT-like pseudo-header.
-         */
-	if ((memcmp(ms->ms_magic, "JFS     ", 8) == 0) ||
-	    (memcmp(ms->ms_magic, "HPFS    ", 8) == 0))
-		return 1;
+	sector_size = unaligned_le16(&ms->ms_sector_size);
+	if (!is_power_of_2(sector_size) ||
+	    sector_size < 512 || sector_size > 4096)
+		return 0;
 
-	return 0;
+	dir_entries = unaligned_le16(&ms->ms_dir_entries);
+	reserved =  le16_to_cpu(ms->ms_reserved);
+	sect_count = unaligned_le16(&ms->ms_sectors);
+
+	if (sect_count == 0)
+		sect_count = le32_to_cpu(ms->ms_total_sect);
+
+	fat_length = le16_to_cpu(ms->ms_fat_length);
+	if (fat_length == 0)
+		fat_length = le32_to_cpu(vs->vs_fat32_length);
+
+	__fat_size = fat_length * ms->ms_fats;
+	dir_size = ((dir_entries * sizeof(struct vfat_dir_entry)) +
+					(sector_size-1)) / sector_size;
+
+	__cluster_count = (sect_count - (reserved + __fat_size + dir_size)) /
+							ms->ms_cluster_size;
+	if (!ms->ms_fat_length && vs->vs_fat32_length)
+		max_count = FAT32_MAX;
+	else
+		max_count = __cluster_count > FAT12_MAX ? FAT16_MAX : FAT12_MAX;
+
+	if (__cluster_count > max_count)
+		return 0;
+
+	if (fat_size)
+		*fat_size = __fat_size;
+	if (cluster_count)
+		*cluster_count = __cluster_count;
+
+	return 1;	/* valid */
+}
+
+/*
+ * This function is used by MBR partition table parser to avoid
+ * misinterpretation of FAT filesystem.
+ */
+int blkid_probe_is_vfat(blkid_probe pr)
+{
+	struct vfat_super_block *vs;
+	struct msdos_super_block *ms;
+	const struct blkid_idmag *mag = NULL;
+
+	if (blkid_probe_get_idmag(pr, &vfat_idinfo, NULL, &mag) || !mag)
+		return 0;
+
+	ms = blkid_probe_get_sb(pr, mag, struct msdos_super_block);
+	if (!ms)
+		return 0;
+	vs = blkid_probe_get_sb(pr, mag, struct vfat_super_block);
+	if (!vs)
+		return 0;
+
+	return fat_valid_superblock(mag, ms, vs, NULL, NULL);
 }
 
 /* FAT label extraction from the root directory taken from Kay
@@ -168,59 +277,28 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct vfat_super_block *vs;
 	struct msdos_super_block *ms;
-	const unsigned char *vol_label = 0, *tmp;
-	unsigned char *vol_serno, vol_label_buf[11];
-	int maxloop = 100;
-	uint16_t sector_size, dir_entries, reserved;
-	uint32_t sect_count, fat_size, dir_size, cluster_count, fat_length;
-	uint32_t buf_size, start_data_sect, next, root_start, root_dir_entries;
+	const unsigned char *vol_label = 0;
+	unsigned char *vol_serno = NULL, vol_label_buf[11];
+	uint16_t sector_size = 0, reserved;
+	uint32_t cluster_count, fat_size;
 	const char *version = NULL;
-
-	/* non-standard magic strings */
-	if (mag->len <= 2 && probe_fat_nomagic(pr, mag) != 0)
-		return 1;
-
-	vs = blkid_probe_get_sb(pr, mag, struct vfat_super_block);
-	if (!vs)
-		return -1;
 
 	ms = blkid_probe_get_sb(pr, mag, struct msdos_super_block);
 	if (!ms)
-		return -1;
-
-	/* sector size check */
-	if (!blkid_fat_valid_sectorsize(ms, &sector_size))
+		return 0;
+	vs = blkid_probe_get_sb(pr, mag, struct vfat_super_block);
+	if (!vs)
+		return 0;
+	if (!fat_valid_superblock(mag, ms, vs, &cluster_count, &fat_size))
 		return 1;
 
-	tmp = (unsigned char *) &ms->ms_dir_entries;
-	dir_entries = tmp[0] + (tmp[1] << 8);
+	sector_size = unaligned_le16(&ms->ms_sector_size);
 	reserved =  le16_to_cpu(ms->ms_reserved);
-	tmp = (unsigned char *) &ms->ms_sectors;
-	sect_count = tmp[0] + (tmp[1] << 8);
-	if (sect_count == 0)
-		sect_count = le32_to_cpu(ms->ms_total_sect);
-
-	fat_length = le16_to_cpu(ms->ms_fat_length);
-	if (fat_length == 0)
-		fat_length = le32_to_cpu(vs->vs_fat32_length);
-
-	fat_size = fat_length * ms->ms_fats;
-	dir_size = ((dir_entries * sizeof(struct vfat_dir_entry)) +
-			(sector_size-1)) / sector_size;
-
-	cluster_count = sect_count - (reserved + fat_size + dir_size);
-	if (ms->ms_cluster_size == 0)
-		return 1;
-	cluster_count /= ms->ms_cluster_size;
-
-	if (cluster_count > FAT32_MAX)
-		return 1;
 
 	if (ms->ms_fat_length) {
 		/* the label may be an attribute in the root directory */
-		root_start = (reserved + fat_size) * sector_size;
-		root_dir_entries = vs->vs_dir_entries[0] +
-			(vs->vs_dir_entries[1] << 8);
+		uint32_t root_start = (reserved + fat_size) * sector_size;
+		uint32_t root_dir_entries = unaligned_le16(&vs->vs_dir_entries);
 
 		vol_label = search_fat_label(pr, root_start, root_dir_entries);
 		if (vol_label) {
@@ -239,17 +317,17 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 			version = "FAT12";
 		else if (cluster_count < FAT16_MAX)
 			version = "FAT16";
-	} else {
+
+	} else if (vs->vs_fat32_length) {
 		unsigned char *buf;
 		uint16_t fsinfo_sect;
+		int maxloop = 100;
 
 		/* Search the FAT32 root dir for the label attribute */
-		buf_size = vs->vs_cluster_size * sector_size;
-		start_data_sect = reserved + fat_size;
+		uint32_t buf_size = vs->vs_cluster_size * sector_size;
+		uint32_t start_data_sect = reserved + fat_size;
+		uint32_t next = le32_to_cpu(vs->vs_root_cluster);
 
-		version = "FAT32";
-
-		next = le32_to_cpu(vs->vs_root_cluster);
 		while (next && --maxloop) {
 			uint32_t next_sect_off;
 			uint64_t next_off, fat_entry_off;
@@ -278,6 +356,8 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 			/* set next cluster */
 			next = le32_to_cpu(*((uint32_t *) buf) & 0x0fffffff);
 		}
+
+		version = "FAT32";
 
 		if (!vol_label || !memcmp(vol_label, no_name, 11))
 			vol_label = vs->vs_label;
@@ -312,9 +392,9 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_probe_set_label(pr, (unsigned char *) vol_label, 11);
 
 	/* We can't just print them as %04X, because they are unaligned */
-	blkid_probe_sprintf_uuid(pr, vol_serno, 4, "%02X%02X-%02X%02X",
-		vol_serno[3], vol_serno[2], vol_serno[1], vol_serno[0]);
-
+	if (vol_serno)
+		blkid_probe_sprintf_uuid(pr, vol_serno, 4, "%02X%02X-%02X%02X",
+			vol_serno[3], vol_serno[2], vol_serno[1], vol_serno[0]);
 	if (version)
 		blkid_probe_set_version(pr, version);
 
