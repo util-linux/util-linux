@@ -22,7 +22,7 @@ libmount_la_SOURCES =	mountP.h version.c utils.c test.c init.c cache.c \
 
 nodist_libmount_la_SOURCES = mountP.h
 
-libmount_la_LIBADD = $(ul_libblkid_la)
+libmount_la_LIBADD = $(ul_libblkid_la) $(SELINUX_LIBS)
 
 libmount_la_DEPENDENCIES = $(libmount_la_LIBADD) mount.sym mount.h.in
 
