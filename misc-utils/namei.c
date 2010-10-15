@@ -19,6 +19,7 @@
  *	Arkadiusz Mikiewicz (1999-02-22)
  *	Li Zefan (2007-09-10).
  */
+
 #include <stdio.h>
 #include <unistd.h>
 #include <getopt.h>
@@ -34,6 +35,7 @@
 #include <grp.h>
 
 #include "c.h"
+#include "xalloc.h"
 #include "nls.h"
 #include "widechar.h"
 
@@ -194,9 +196,7 @@ readlink_to_namei(struct namei *nm, const char *path)
 		if (nm->relstart)
 			sz += nm->relstart + 1;
 	}
-	nm->abslink = malloc(sz + 1);
-	if (!nm->abslink)
-		err(EXIT_FAILURE, _("out of memory?"));
+	nm->abslink = xmalloc(sz + 1);
 
 	if (*sym != '/' && nm->relstart) {
 		/* create the absolute path from the relative symlink */

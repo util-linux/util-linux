@@ -34,6 +34,7 @@
 #include <blkid.h>
 
 #include "nls.h"
+#include "xalloc.h"
 #include "strtosize.h"
 
 struct wipe_desc {
@@ -133,15 +134,6 @@ add_offset(struct wipe_desc *wp0, loff_t offset, int zap)
 	wp->next = wp0;
 	wp->zap = zap;
 	return wp;
-}
-
-static inline void *
-xmalloc(size_t sz)
-{
-	void *x = malloc(sz);
-	if (!x)
-		err(EXIT_FAILURE, _("malloc failed"));
-	return x;
 }
 
 static inline char *

@@ -117,6 +117,7 @@
 #endif
 
 #include "c.h"
+#include "xalloc.h"
 #include "nls.h"
 
 #if __GNU_LIBRARY__ < 5

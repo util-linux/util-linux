@@ -17,7 +17,9 @@ for i in $@; do N=`echo "$i" | sed "s/$FROM/$TO/g"`; mv "$i" "$N"; done
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
+
 #include "nls.h"
+#include "xalloc.h"
 
 static char *progname;
 
@@ -33,11 +35,7 @@ do_rename(char *from, char *to, char *s) {
 	flen = strlen(from);
 	tlen = strlen(to);
 	slen = strlen(s);
-	newname = malloc(tlen+slen+1);
-	if (newname == NULL) {
-		fprintf(stderr, _("%s: out of memory\n"), progname);
-		exit(1);
-	}
+	newname = xmalloc(tlen+slen+1);
 
 	p = s;
 	q = newname;
