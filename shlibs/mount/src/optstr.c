@@ -630,7 +630,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 	fl = flags;
 
 	/*
-	 * There is convetion that 'rw/ro' flags is always at the begin of
+	 * There is a convetion that 'rw/ro' flags is always at the begin of
 	 * the string (athough the 'rw' is unnecessary).
 	 */
 	if (map == mnt_get_builtin_optmap(MNT_LINUX_MAP)) {
@@ -696,11 +696,12 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 
 			/* don't add options which require values (e.g. offset=%d) */
 			p = strchr(ent->name, '=');
-			if (p && p > ent->name && *(p - 1) != '[')
-				continue;
-
-			/* prepare name for value with optional value (e.g. loop[=%s]) */
 			if (p) {
+				if (*(p - 1) == '[')
+					p--;			/* name[=%s] */
+				else
+					continue;		/* name=%s */
+
 				p = strndup(ent->name, p - ent->name);
 				if (!p) {
 					rc = -ENOMEM;
