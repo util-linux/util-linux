@@ -1,0 +1,3 @@
+user : user=kzak,loop=/dev/loop0
+vfs  : noexec,nosuid
+fs   : aaa,bbb=BBB,ccc
