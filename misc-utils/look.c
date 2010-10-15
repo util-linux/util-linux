@@ -59,8 +59,10 @@
 #include <strings.h>
 #include <ctype.h>
 #include <getopt.h>
-#include "pathnames.h"
+
 #include "nls.h"
+#include "xalloc.h"
+#include "pathnames.h"
 
 #define	EQUAL		0
 #define	GREATER		1
@@ -75,7 +77,6 @@ char *comparbuf;
 
 static char *binary_search (char *, char *);
 static int compare (char *, char *);
-static void err (const char *fmt, ...);
 static char *linear_search (char *, char *);
 static int look (char *, char *);
 static void print_from (char *, char *);
@@ -101,7 +102,7 @@ main(int argc, char *argv[])
 	while ((ch = getopt(argc, argv, "adft:")) != -1)
 		switch(ch) {
 		case 'a':
-   		        file = _PATH_WORDS_ALT;
+		        file = _PATH_WORDS_ALT;
 		        break;
 		case 'd':
 			dflag = 1;
@@ -136,7 +137,7 @@ main(int argc, char *argv[])
 		*++p = '\0';
 
 	if ((fd = open(file, O_RDONLY, 0)) < 0 || fstat(fd, &sb))
-		err("%s: %s", file, strerror(errno));
+		err(EXIT_FAILURE, "%s", file);
 	front = mmap(NULL, (size_t) sb.st_size, PROT_READ,
 #ifdef MAP_FILE
 		     MAP_FILE |
@@ -144,11 +145,11 @@ main(int argc, char *argv[])
 		     MAP_SHARED, fd, (off_t) 0);
 	if
 #ifdef MAP_FAILED
-	   (front == MAP_FAILED)
+		(front == MAP_FAILED)
 #else
-	   ((void *)(front) <= (void *)0)
+		((void *)(front) <= (void *)0)
 #endif
-		err("%s: %s", file, strerror(errno));
+			err(EXIT_FAILURE, "%s", file);
 
 #if 0
 	/* workaround for mmap problem (rmiller@duskglow.com) */
@@ -177,9 +178,7 @@ look(char *front, char *back)
 	} else
 		stringlen = strlen(string);
 
-	comparbuf = malloc(stringlen+1);
-	if (comparbuf == NULL)
-		err(_("Out of memory"));
+	comparbuf = xmalloc(stringlen+1);
 
 	front = binary_search(front, back);
 	front = linear_search(front, back);
@@ -296,7 +295,7 @@ print_from(char *front, char *back)
 			eol = 0;
 			while (front < back && !eol) {
 				if (putchar(*front) == EOF)
-					err("stdout: %s", strerror(errno));
+					err(EXIT_FAILURE, "stdout");
 				if (*front++ == '\n')
 					eol = 1;
 			}
@@ -353,33 +352,4 @@ usage()
 {
 	(void)fprintf(stderr, _("usage: look [-dfa] [-t char] string [file]\n"));
 	exit(2);
-}
-
-#if __STDC__
-#include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
-void
-#if __STDC__
-err(const char *fmt, ...)
-#else
-err(fmt, va_alist)
-	char *fmt;
-	va_dcl
-#endif
-{
-	va_list ap;
-#if __STDC__
-	va_start(ap, fmt);
-#else
-	va_start(ap);
-#endif
-	(void)fprintf(stderr, "look: ");
-	(void)vfprintf(stderr, fmt, ap);
-	va_end(ap);
-	(void)fprintf(stderr, "\n");
-	exit(2);
-	/* NOTREACHED */
 }
