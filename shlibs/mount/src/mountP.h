@@ -195,8 +195,7 @@ struct _mnt_tab {
 
 	mnt_cache	*cache;		/* canonicalized paths/tags cache */
 
-        int		(*errcb)(mnt_tab *tb, const char *filename,
-						int line, int flag);
+        int		(*errcb)(mnt_tab *tb, const char *filename, int line);
 
 	struct list_head	ents;	/* list of entries (mentry) */
 };

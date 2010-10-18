@@ -691,10 +691,11 @@ mnt_fs *mnt_tab_find_pair(mnt_tab *tb, const char *source,
 
 #ifdef TEST_PROGRAM
 
-static int parser_errcb(mnt_tab *tb, const char *filename, int line, int flag)
+static int parser_errcb(mnt_tab *tb, const char *filename, int line)
 {
 	fprintf(stderr, "%s:%d: parse error\n", filename, line);
-	return 0;
+
+	return 1;	/* all errors are recoverable -- this is default */
 }
 
 mnt_tab *create_tab(const char *file)
@@ -713,6 +714,7 @@ mnt_tab *create_tab(const char *file)
 		goto err;
 	return tb;
 err:
+	fprintf(stderr, "%s: parsing failed\n", file);
 	mnt_free_tab(tb);
 	return NULL;
 }

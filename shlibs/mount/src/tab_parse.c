@@ -29,29 +29,48 @@ static inline char *skip_spaces(char *s)
 	return s;
 }
 
+static int next_number(char **s, int *num)
+{
+	char *end = NULL;
+
+	assert(num);
+	assert(s);
+
+	*s = skip_spaces(*s);
+	if (!**s)
+		return -1;
+	*num = strtol(*s, &end, 10);
+	if (end == NULL || *s == end)
+	       return -1;
+
+	*s = end;
+
+	/* valid end of number is space or terminator */
+	if (*end == ' ' || *end == '\t' || *end == '\0')
+		return 0;
+	return -1;
+}
+
 /*
  * Parses one line from {fs,m}tab
  */
 static int mnt_tab_parse_file_line(mnt_fs *fs, char *s)
 {
-	int rc;
+	int rc, n = 0;
 	char *src, *fstype, *optstr;
 
 	rc = sscanf(s,	"%ms "	/* (1) source */
 			"%ms "	/* (2) target */
 			"%ms "	/* (3) FS type */
 			"%ms "  /* (4) options */
-			"%u "	/* (5) freq */
-			"%u ",	/* (6) passno */
-
+			"%n",	/* byte count */
 			&src,
 			&fs->target,
 			&fstype,
 			&optstr,
-			&fs->freq,
-			&fs->passno);
+			&n);
 
-	if (rc >= 4 && rc <= 6) {
+	if (rc == 4) {
 		unmangle_string(src);
 		unmangle_string(fs->target);
 		unmangle_string(fstype);
@@ -63,8 +82,21 @@ static int mnt_tab_parse_file_line(mnt_fs *fs, char *s)
 		if (!rc)
 			rc = __mnt_fs_set_optstr_ptr(fs, optstr, TRUE);
 	} else {
-		DBG(TAB, mnt_debug( "parse error: [field=%d]: '%s'", rc, s));
+		DBG(TAB, mnt_debug( "parse error: [sscanf rc=%d]: '%s'", rc, s));
 		rc = -EINVAL;
+	}
+
+	if (rc)
+		return rc;	/* error */
+
+	fs->passno = fs->freq = 0;
+	s = skip_spaces(s + n);
+	if (*s) {
+		if (next_number(&s, &fs->freq) != 0) {
+			if (*s)
+				rc = -EINVAL;
+		} else if (next_number(&s, &fs->passno) != 0 && *s)
+			rc = -EINVAL;
 	}
 
 	return rc;
@@ -205,7 +237,6 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
 {
 	char buf[BUFSIZ];
 	char *s;
-	int rc;
 
 	assert(tb);
 	assert(f);
@@ -268,11 +299,10 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
 err:
 	DBG(TAB, mnt_debug_h(tb, "%s:%d: parse error", filename, *nlines));
 
-	rc = 1;		/* recoverable error */
-
-	if (tb->errcb)
-		rc = tb->errcb(tb, filename, *nlines, 0);
-	return rc;
+	/* by default all errors are recoverable, otherwise behavior depends on
+	 * errcb() function. See mnt_tab_set_parser_errcb().
+	 */
+	return tb->errcb ? tb->errcb(tb, filename, *nlines) : 1;
 }
 
 /**
@@ -397,7 +427,7 @@ mnt_tab *mnt_new_tab_from_file(const char *filename)
  * Returns: 0 on success or negative number in case of error.
  */
 int mnt_tab_set_parser_errcb(mnt_tab *tb,
-		int (*cb)(mnt_tab *tb, const char *filename, int line, int flag))
+		int (*cb)(mnt_tab *tb, const char *filename, int line))
 {
 	assert(tb);
 	tb->errcb = cb;
