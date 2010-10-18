@@ -806,16 +806,7 @@ int test_find(struct mtest *ts, int argc, char *argv[], int dr)
 	if (!fs)
 		fprintf(stderr, "%s: not found %s '%s'\n", file, find, what);
 	else {
-		const char *s = mnt_fs_get_srcpath(fs);
-		if (s)
-			printf("%s", s);
-		else {
-			const char *tag, *val;
-			mnt_fs_get_tag(fs, &tag, &val);
-			printf("%s=%s", tag, val);
-		}
-		printf("|%s|%s\n", mnt_fs_get_target(fs),
-				mnt_fs_get_optstr(fs));
+		mnt_fs_print_debug(fs, stdout);
 		rc = 0;
 	}
 done:

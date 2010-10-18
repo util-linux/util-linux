@@ -1,6 +1,6 @@
 
-top_builddir=@top_builddir@
-top_srcdir=@top_srcdir@
+top_builddir=@abs_top_builddir@
+top_srcdir=@abs_top_srcdir@
 
 # Misc settings
 TS_TESTUSER=${TS_TESTUSER:-"test"}
@@ -15,7 +15,9 @@ TS_HELPER_ISMOUNTED="$top_builddir/lib/test_ismounted"
 TS_HELPER_STRTOSIZE="$top_builddir/lib/test_strtosize"
 TS_HELPER_CPUSET="$top_builddir/lib/test_cpuset"
 
+# libmount
 TS_HELPER_OPTSTR="$top_builddir/shlibs/mount/src/test_optstr"
+TS_HELPER_TABFILES="$top_builddir/shlibs/mount/src/test_tab"
 
 # TODO: use partx
 TS_HELPER_PARTITIONS="$top_builddir/shlibs/blkid/samples/partitions"
