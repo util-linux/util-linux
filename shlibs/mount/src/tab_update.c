@@ -602,7 +602,10 @@ int mnt_prepare_update(mnt_update *upd)
 		mnt_fs_get_optstr(upd->fs)));
 
 	if (!upd->filename) {
-		const char *p = mnt_get_writable_mtab_path();
+		const char *p = mnt_getenv_safe("LIBMOUNT_MTAB");
+
+		if (!p)
+			p = mnt_get_writable_mtab_path();
 		if (!p) {
 			if (errno) {
 				rc = -errno;

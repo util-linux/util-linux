@@ -458,20 +458,22 @@ int mnt_tab_parse_fstab(mnt_tab *tb)
 	DIR *dir = NULL;
 	FILE *f;
 	struct dirent **namelist = NULL;
+	const char *env;
 
 	assert(tb);
 	if (!tb)
 		return -EINVAL;
 
 	num = mnt_tab_get_nents(tb);
+	env = mnt_getenv_safe("LIBMOUNT_FSTAB");
 
-	/* classic fstab */
-	{
-		f = fopen(_PATH_MNTTAB, "r");
-		if (f) {
-			mnt_tab_parse_stream(tb, f, _PATH_MNTTAB);
-			fclose(f);
-		}
+	f = fopen(env ? : _PATH_MNTTAB, "r");
+	if (f) {
+		mnt_tab_parse_stream(tb, f, _PATH_MNTTAB);
+		fclose(f);
+
+		if (env)
+			goto done;	/* ignore /etc/fstab.d if $LIBMOUNT_FSTAB defined */
 	}
 
 	/* TODO: it would be nice to have a scandir() implementaion that
@@ -594,9 +596,10 @@ int mnt_tab_parse_mtab(mnt_tab *tb)
 	mnt_tab *u_tb;
 	mnt_fs *u_fs;
 	mnt_iter itr;
+	const char *env = mnt_getenv_safe("LIBMOUNT_MTAB");
 
-	if (mnt_has_regular_mtab()) {
-		rc = mnt_tab_parse_file(tb, _PATH_MOUNTED);
+	if ((env && !endswith(env, "mountinfo")) || mnt_has_regular_mtab()) {
+		rc = mnt_tab_parse_file(tb, env ? : _PATH_MOUNTED);
 		if (!rc)
 			return 0;		/* system with regular mtab */
 	}
@@ -608,7 +611,7 @@ int mnt_tab_parse_mtab(mnt_tab *tb)
 		return mnt_tab_parse_file(tb, _PATH_PROC_MOUNTS);
 
 	/* try to read userspace specific information from /var/run/mount */
-	u_tb = mnt_new_tab_from_file(MNT_PATH_MOUNTINFO);
+	u_tb = mnt_new_tab_from_file(env ? : MNT_PATH_MOUNTINFO);
 	if (!u_tb)
 		return 0;	/* private mountinfo does not exist */
 
