@@ -7,6 +7,8 @@ TS_DESC="tags"
 ts_init "$*"
 ts_skip_nonroot
 
+TESTPROG="$TS_HELPER_LIBMOUNT_TAB"
+
 #
 # Init device
 #
@@ -32,7 +34,6 @@ UUID="de1bc6e9-34ab-4151-a1d7-900042eee8d9"
 mkfs.ext3 -F -L $LABEL $DEVICE -U $UUID &> /dev/null || ts_die "Cannot make ext3 on $DEVICE" $DEVICE
 ts_device_has_uuid $DEVICE || ts_die "Cannot found UUID on $DEVICE" $DEVICE
 
-TESTPROG="$TS_HELPER_TABFILES"
 FSTAB="$TS_OUTDIR/fstab"
 
 #
