@@ -75,7 +75,7 @@ mnt_lock *mnt_new_lock(const char *datafile, pid_t id)
 	ml->linkfile = ln;
 	ml->lockfile = lo;
 
-	DBG(LOCKS, mnt_debug_h(ml, "alloc"));
+	DBG(LOCKS, mnt_debug_h(ml, "alloc: linkfile=%s, lockfile=%s", ln, lo));
 	return ml;
 err:
 	free(lo);
@@ -482,17 +482,34 @@ void sig_handler(int sig)
 
 int test_lock(struct mtest *ts, int argc, char *argv[])
 {
-	const char *datafile;
-	int verbose = 0, loops, l;
+	time_t synctime = 0;
+	unsigned int usecs;
+	struct timeval tv;
+	const char *datafile = NULL;
+	int verbose = 0, loops = 0, l, idx = 1;
 
 	if (argc < 3)
-		return -1;
+		return -EINVAL;
 
-	datafile = argv[1];
-	loops = atoi(argv[2]);
-
-	if (argc == 5 && strcmp(argv[4], "--verbose") == 0)
+	if (strcmp(argv[idx], "--synctime") == 0) {
+		synctime = (time_t) atol(argv[idx + 1]);
+		idx += 2;
+	}
+	if (idx < argc && strcmp(argv[idx], "--verbose") == 0) {
 		verbose = 1;
+		idx++;
+	}
+
+	if (idx < argc)
+		datafile = argv[idx++];
+	if (idx < argc)
+		loops = atoi(argv[idx++]);
+
+	if (!datafile || !loops)
+		return -EINVAL;
+
+	fprintf(stderr, "%d: start: synctime=%u, verbose=%d, datafile=%s, loops=%d\n",
+		 getpid(), (int) synctime, verbose, datafile, loops);
 
 	atexit(clean_lock);
 
@@ -507,6 +524,16 @@ int test_lock(struct mtest *ts, int argc, char *argv[])
 
 		while (sigismember(&sa.sa_mask, ++sig) != -1 && sig != SIGCHLD)
 			sigaction (sig, &sa, (struct sigaction *) 0);
+	}
+
+	/* start the test in exactly defined time */
+	if (synctime) {
+		gettimeofday(&tv, NULL);
+		if (synctime && synctime - tv.tv_sec > 1) {
+			usecs = ((synctime - tv.tv_sec) * 1000000UL) -
+						(1000000UL - tv.tv_usec);
+			usleep(usecs);
+		}
 	}
 
 	for (l = 0; l < loops; l++) {
@@ -525,6 +552,13 @@ int test_lock(struct mtest *ts, int argc, char *argv[])
 		mnt_unlock_file(lock);
 		mnt_free_lock(lock);
 		lock = NULL;
+
+		/* The mount command usually finish after mtab update. We
+		 * simulate this via short sleep -- it's also enough to make
+		 * concurrent processes happy.
+		 */
+		if (synctime)
+			usleep(25000);
 	}
 
 	return 0;
@@ -537,7 +571,8 @@ int test_lock(struct mtest *ts, int argc, char *argv[])
 int main(int argc, char *argv[])
 {
 	struct mtest tss[] = {
-	{ "--lock", test_lock,  "  <datafile> <loops> [--verbose]   increment number in datafile" },
+	{ "--lock", test_lock,  " [--synctime <time_t>] [--verbose] <datafile> <loops> "
+				"increment a number in datafile" },
 	{ NULL }
 	};
 
