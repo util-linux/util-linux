@@ -75,6 +75,22 @@ function ts_has_option {
 	echo -n $ALL | sed 's/ //g' | awk 'BEGIN { FS="="; RS="--" } /('$NAME'$|'$NAME'=)/ { print "yes" }'
 }
 
+function ts_init_core_env {
+	TS_NS="$TS_COMPONENT/$TS_TESTNAME"
+	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME"
+	TS_DIFF="$TS_DIFFDIR/$TS_TESTNAME"
+	TS_EXPECTED="$TS_TOPDIR/expected/$TS_NS"
+	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME}-mnt"
+}
+
+function ts_init_core_subtest_env {
+	TS_NS="$TS_COMPONENT/$TS_TESTNAME-$TS_SUBNAME"
+	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME-$TS_SUBNAME"
+	TS_DIFF="$TS_DIFFDIR/$TS_TESTNAME-$TS_SUBNAME"
+	TS_EXPECTED="$TS_TOPDIR/expected/$TS_NS"
+	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME-$TS_SUBNAME}-mnt"
+}
+
 function ts_init_env {
 	local mydir=$(ts_abspath $(dirname $0))
 
@@ -94,15 +110,12 @@ function ts_init_env {
 	TS_NSUBTESTS=0
 	TS_NSUBFAILED=0
 
-	TS_NS="$TS_COMPONENT/$TS_TESTNAME"
 	TS_SELF="$TS_SUBDIR"
 
 	TS_OUTDIR="$TS_TOPDIR/output/$TS_COMPONENT"
-	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME"
 	TS_DIFFDIR="$TS_TOPDIR/diff/$TS_COMPONENT"
-	TS_DIFF="$TS_DIFFDIR/$TS_TESTNAME"
-	TS_EXPECTED="$TS_TOPDIR/expected/$TS_NS"
-	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME}-mnt"
+
+	ts_init_core_env
 
 	TS_VERBOSE=$(ts_has_option "verbose" "$*")
 
@@ -144,10 +157,7 @@ function ts_init_subtest {
 
 	TS_SUBNAME="$1"
 
-	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME-$TS_SUBNAME"
-	TS_DIFF="$TS_DIFFDIR/$TS_TESTNAME-$TS_SUBNAME"
-	TS_EXPECTED="$TS_TOPDIR/expected/$TS_NS-$TS_SUBNAME"
-	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME-$TS_SUBNAME}-mnt"
+	ts_init_core_subtest_env
 
 	[ $TS_NSUBTESTS -eq 0 ] && echo
 	TS_NSUBTESTS=$(( $TS_NSUBTESTS + 1 ))
@@ -206,6 +216,10 @@ function ts_finalize_subtest {
 	fi
 
 	[ $res -ne 0 ] && TS_NSUBFAILED=$(( $TS_NSUBFAILED + 1 ))
+
+	# reset environment back to parental test
+	ts_init_core_env
+
 	return $res
 }
 
