@@ -231,7 +231,6 @@ void mnt_unlock_file(mnt_lock *ml)
 	if (!ml)
 		return;
 
-	DBG(LOCKS, mnt_debug_h(ml, "(%d) unlocking/cleaning", getpid()));
 
 	if (ml->locked == 0 && ml->lockfile && ml->linkfile)
 	{
@@ -247,6 +246,10 @@ void mnt_unlock_file(mnt_lock *ml)
 		    lo.st_dev == li.st_dev && lo.st_ino == li.st_ino)
 			ml->locked = 1;
 	}
+
+	DBG(LOCKS, mnt_debug_h(ml, "(%d) %s", getpid(),
+			ml->locked ? "unlocking" : "cleaning"));
+
 	if (ml->linkfile)
 		unlink(ml->linkfile);
 	if (ml->lockfile_fd >= 0)
@@ -468,7 +471,6 @@ void increment_data(const char *filename, int verbose, int loopno)
 
 void clean_lock(void)
 {
-	fprintf(stderr, "%d: cleaning\n", getpid());
 	if (!lock)
 		return;
 	mnt_unlock_file(lock);
@@ -508,8 +510,9 @@ int test_lock(struct mtest *ts, int argc, char *argv[])
 	if (!datafile || !loops)
 		return -EINVAL;
 
-	fprintf(stderr, "%d: start: synctime=%u, verbose=%d, datafile=%s, loops=%d\n",
-		 getpid(), (int) synctime, verbose, datafile, loops);
+	if (verbose)
+		fprintf(stderr, "%d: start: synctime=%u, datafile=%s, loops=%d\n",
+			 getpid(), (int) synctime, datafile, loops);
 
 	atexit(clean_lock);
 

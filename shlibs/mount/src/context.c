@@ -547,7 +547,7 @@ int mnt_context_get_fstab(mnt_context *cxt, mnt_tab **tb)
 		if (!cxt->fstab)
 			return -ENOMEM;
 		cxt->flags &= ~MNT_FL_EXTERN_FSTAB;
-		rc = mnt_tab_parse_fstab(cxt->fstab);
+		rc = mnt_tab_parse_fstab(cxt->fstab, NULL);
 		if (rc)
 			return rc;
 	}
@@ -585,7 +585,7 @@ int mnt_context_get_mtab(mnt_context *cxt, mnt_tab **tb)
 		cxt->mtab = mnt_new_tab();
 		if (!cxt->mtab)
 			return -ENOMEM;
-		rc = mnt_tab_parse_mtab(cxt->mtab);
+		rc = mnt_tab_parse_mtab(cxt->mtab, NULL);
 		if (rc)
 			return rc;
 	}

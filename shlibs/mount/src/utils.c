@@ -417,19 +417,55 @@ int mnt_has_regular_mtab(void)
 }
 
 /**
+ * mnt_get_fstab_path:
+ *
+ * Returns: path to /etc/fstab or $LIBMOUNT_FSTAB.
+ */
+const char *mnt_get_fstab_path(void)
+{
+	const char *p = mnt_getenv_safe("LIBMOUNT_FSTAB");
+	return p ? : _PATH_MNTTAB;
+}
+
+/**
+ * mnt_get_mtab_path:
+ *
+ * This function returns *default* location of the mtab file. The result does not have to
+ * be writable. See also mnt_get_writable_mtab_path().
+ *
+ * It's possible that libmount uses /proc/self/mountinfo together with
+ * /var/run/mount/mountinfo file (or files). The ideal solution is to use
+ * mnt_tab_parse_mtab() that provides abstraction and returns mtab records
+ * independently on the way how things are managed by libmount.
+ *
+ * Returns: path to /etc/mtab or $LIBMOUNT_MTAB.
+ */
+const char *mnt_get_mtab_path(void)
+{
+	const char *p = mnt_getenv_safe("LIBMOUNT_MTAB");
+	return p ? : _PATH_MOUNTED;
+}
+
+/**
  * mnt_get_writable_mtab_path:
  *
- * It's not error if this function return NULL and errno is not set. In case of
+ * It's not error if this function returns NULL and errno is not set. In case of
  * error the errno is set by open(2).
  *
- * Returns: pointer to the static string with path to mtab or NULL.
+ * Note that writable mtab does not have to contains all necessary information.
+ * For example /var/run/mount/mountinfo is used for userspace mount options
+ * only. FS depend information are usually maintaibed by kernel only.
+ *
+ * Returns: pointer to the static string with path to mtab or NULL if writable
+ *          mtab is unsupported.
  */
 const char *mnt_get_writable_mtab_path(void)
 {
 	struct stat mst, ist;
 	int mtab, info;
+	const char *path = mnt_get_mtab_path();
 
-	mtab = !lstat(_PATH_MOUNTED, &mst);
+	mtab = !lstat(path, &mst);
 	info = !stat(MNT_PATH_RUNDIR, &ist);
 
 	errno = 0;
@@ -444,12 +480,12 @@ const char *mnt_get_writable_mtab_path(void)
 		return NULL;	/* probably EACCES */
 	}
 
-	/* B) classis system with /etc/mtab */
+	/* B) classis system with /etc/mtab or $LIBMOUNT_MTAB */
 	if (mtab && S_ISREG(mst.st_mode)) {
-		int fd = open(_PATH_MOUNTED, O_RDWR, 0644);
+		int fd = open(path, O_RDWR, 0644);
 		if (fd >= 0) {
 			close(fd);
-			return _PATH_MOUNTED;
+			return path;
 		}
 		return NULL;    /* probably EACCES */
 	}

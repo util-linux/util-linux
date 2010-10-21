@@ -132,6 +132,8 @@ extern int mnt_fstype_is_pseudofs(const char *type);
 extern int mnt_match_fstype(const char *type, const char *pattern);
 extern int mnt_match_options(const char *optstr, const char *pattern);
 extern const char *mnt_get_writable_mtab_path(void);
+extern const char *mnt_get_fstab_path(void);
+extern const char *mnt_get_mtab_path(void);
 
 /* cache.c */
 extern mnt_cache *mnt_new_cache(void);
@@ -251,8 +253,8 @@ extern int mnt_fs_print_debug(mnt_fs *ent, FILE *file);
 extern mnt_tab *mnt_new_tab_from_file(const char *filename);
 extern int mnt_tab_parse_stream(mnt_tab *tb, FILE *f, const char *filename);
 extern int mnt_tab_parse_file(mnt_tab *tb, const char *filename);
-extern int mnt_tab_parse_fstab(mnt_tab *tb);
-extern int mnt_tab_parse_mtab(mnt_tab *tb);
+extern int mnt_tab_parse_fstab(mnt_tab *tb, const char *filename);
+extern int mnt_tab_parse_mtab(mnt_tab *tb, const char *filename);
 extern int mnt_tab_set_parser_errcb(mnt_tab *tb,
                 int (*cb)(mnt_tab *tb, const char *filename, int line));
 

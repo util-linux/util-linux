@@ -437,6 +437,7 @@ int mnt_tab_set_parser_errcb(mnt_tab *tb,
 /**
  * mnt_tab_parse_fstab:
  * @tb: table
+ * @filename: overwrites default (/etc/fstab or $LIBMOUNT_FSTAB) or NULL
  *
  * This function parses /etc/fstab or /etc/fstab.d and appends new lines to the
  * @tab. If the system contains classic fstab file and also fstab.d directory
@@ -452,28 +453,30 @@ int mnt_tab_set_parser_errcb(mnt_tab *tb,
  * Returns: 0 on success (least one record has been successfully parsed) or
  *          negative number in case of error.
  */
-int mnt_tab_parse_fstab(mnt_tab *tb)
+int mnt_tab_parse_fstab(mnt_tab *tb, const char *filename)
 {
 	int num, n = 0, i;
 	DIR *dir = NULL;
 	FILE *f;
 	struct dirent **namelist = NULL;
-	const char *env;
 
 	assert(tb);
 	if (!tb)
 		return -EINVAL;
 
 	num = mnt_tab_get_nents(tb);
-	env = mnt_getenv_safe("LIBMOUNT_FSTAB");
 
-	f = fopen(env ? : _PATH_MNTTAB, "r");
+	if (!filename)
+		filename = mnt_get_fstab_path();
+
+	f = fopen(filename, "r");
 	if (f) {
-		mnt_tab_parse_stream(tb, f, _PATH_MNTTAB);
+		mnt_tab_parse_stream(tb, f, filename);
 		fclose(f);
 
-		if (env)
-			goto done;	/* ignore /etc/fstab.d if $LIBMOUNT_FSTAB defined */
+		if (strcmp(filename, _PATH_MNTTAB))
+			/* /etc/fstab.d sould be used together with /etc/fstab only */
+			goto done;
 	}
 
 	/* TODO: it would be nice to have a scandir() implementaion that
@@ -581,46 +584,66 @@ static mnt_fs *mnt_tab_merge_userspace_fs(mnt_tab *tb, mnt_fs *uf)
 /**
  * mnt_tab_parse_mtab:
  * @tb: table
+ * @filename: overwrites default (/etc/mtab or $LIBMOUNT_MTAB) or NULL
  *
  * This function parses /etc/mtab or {/proc/self,/var/run/mount}/mountinfo or
  * /proc/mounts. Note that the /var/run/mount/mountinfo file is optional and
  * contains userspace specific mount options only.
  *
+ * Note that /var/run/mount/mountinfo is ignored if /etc/mtab is writable or
+ * $LIBMOUNT_MTAB or @filename does not end with "mountinfo" postfix.
+ *
  * See also mnt_tab_set_parser_errcb().
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_tab_parse_mtab(mnt_tab *tb)
+int mnt_tab_parse_mtab(mnt_tab *tb, const char *filename)
 {
 	int rc;
-	mnt_tab *u_tb;
-	mnt_fs *u_fs;
-	mnt_iter itr;
-	const char *env = mnt_getenv_safe("LIBMOUNT_MTAB");
 
-	if ((env && !endswith(env, "mountinfo")) || mnt_has_regular_mtab()) {
-		rc = mnt_tab_parse_file(tb, env ? : _PATH_MOUNTED);
+	if (!filename)
+		filename = mnt_get_writable_mtab_path();
+
+	/*
+	 * Regular mtab file
+	 */
+	if (filename && !endswith(filename, "mountinfo")) {
+		rc = mnt_tab_parse_file(tb, filename);
 		if (!rc)
-			return 0;		/* system with regular mtab */
+			return 0;
+		filename = NULL;
 	}
 
-	/* read kernel information from /proc/self/mountinfo */
+	/*
+	 * useless /etc/mtab or /var/run/mount/mountinfo is supported
+	 * -- read kernel information from /proc/self/mountinfo
+	 */
 	rc = mnt_tab_parse_file(tb, _PATH_PROC_MOUNTINFO);
 	if (rc)
 		/* hmm, old kernel? ...try /proc/mounts */
 		return mnt_tab_parse_file(tb, _PATH_PROC_MOUNTS);
 
-	/* try to read userspace specific information from /var/run/mount */
-	u_tb = mnt_new_tab_from_file(env ? : MNT_PATH_MOUNTINFO);
-	if (!u_tb)
-		return 0;	/* private mountinfo does not exist */
+	/*
+	 * try to read userspace specific information from
+	 * /var/run/mount/mountinfo
+	 */
+	if (filename) {
+		mnt_tab *u_tb = mnt_new_tab_from_file(filename);
 
-	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
+		assert(endswith(filename, "mountinfo"));
 
-	/*  merge userspace options into mountinfo from kernel */
-	while(mnt_tab_next_fs(u_tb, &itr, &u_fs) == 0)
-		mnt_tab_merge_userspace_fs(tb, u_fs);
+		if (u_tb) {
+			mnt_fs *u_fs;
+			mnt_iter itr;
 
-	mnt_free_tab(u_tb);
+			mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
+
+			/*  merge userspace options into mountinfo from kernel */
+			while(mnt_tab_next_fs(u_tb, &itr, &u_fs) == 0)
+				mnt_tab_merge_userspace_fs(tb, u_fs);
+
+			mnt_free_tab(u_tb);
+		}
+	}
 	return 0;
 }

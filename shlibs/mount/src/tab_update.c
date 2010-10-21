@@ -27,6 +27,12 @@
  *   /var/run/mount/mountinfo file (the file format compatible to
  *   /proc/self/mountinfo)
  *
+ * Note that mnt_update_* interface does not manage mount options. It's callers
+ * responsibility set the right mount options (for example merge options from
+ * mtab with command line on MS_REMOUNT).
+ *
+ * The small exception is the /var/run/mount/mountinfo file where are store
+ * userspace mount options only. This is done by mnt_prepare_update().
  *
  * The mtab is always updated in two steps. The first step is to prepare a new
  * update entry -- mnt_prepare_update(), this step has to be done before
@@ -126,11 +132,11 @@ int mnt_update_set_filename(mnt_update *upd, const char *filename)
 
 	assert(upd);
 	if (!upd)
-		return -1;
+		return -EINVAL;
 	if (filename) {
 		p = strdup(filename);
 		if (!p)
-			return -1;
+			return -ENOMEM;
 	}
 	free(upd->filename);
 	upd->filename = p;
@@ -164,7 +170,7 @@ int mnt_update_set_action(mnt_update *upd, int action)
 {
 	assert(upd);
 	if (!upd)
-		return -1;
+		return -EINVAL;
 	upd->action = action;
 	return 0;
 }
@@ -184,7 +190,7 @@ int mnt_update_set_format(mnt_update *upd, int format)
 {
 	assert(upd);
 	if (!upd)
-		return -1;
+		return -EINVAL;
 	upd->format = format;
 	return 0;
 }
@@ -219,11 +225,11 @@ int mnt_update_set_fs(mnt_update *upd, const mnt_fs *fs)
 
 	assert(upd);
 	if (!upd)
-		return -1;
+		return -EINVAL;
 	if (fs) {
 		x = mnt_copy_fs(fs);
 		if (!x)
-			return -1;
+			return -ENOMEM;
 	}
 
 	mnt_free_fs(upd->fs);
@@ -247,7 +253,7 @@ int mnt_update_set_mountflags(mnt_update *upd, unsigned long flags)
 {
 	assert(upd);
 	if (!upd)
-		return -1;
+		return -EINVAL;
 	upd->mountflags = flags;
 	return 0;
 }
@@ -305,8 +311,8 @@ int mnt_update_set_old_target(mnt_update *upd, const char *target)
 	char *p = NULL;
 
 	if (!upd)
-		return -1;
-	if (p) {
+		return -EINVAL;
+	if (target) {
 		p = strdup(target);
 		if (!p)
 			return -1;
@@ -331,7 +337,7 @@ static int fprintf_mountinfo_fs(FILE *f, mnt_fs *fs)
 	assert(f);
 
 	if (!fs || !f)
-		return -1;
+		return -EINVAL;
 	devno = mnt_fs_get_devno(fs);
 	source = mangle(mnt_fs_get_source(fs));
 	root = mangle(mnt_fs_get_root(fs));
@@ -372,7 +378,7 @@ static int fprintf_mtab_fs(FILE *f, mnt_fs *fs)
 	assert(f);
 
 	if (!fs || !f)
-		return -1;
+		return -EINVAL;
 
 	m1 = mangle(mnt_fs_get_source(fs));
 	m2 = mangle(mnt_fs_get_target(fs));
@@ -408,7 +414,7 @@ static int update_file(const char *filename, int fmt, mnt_tab *tb)
 
 	assert(tb);
 	if (!tb)
-		goto error;
+		return -EINVAL;
 
 	DBG(UPDATE, mnt_debug("%s: update from tab %p", filename, tb));
 
@@ -450,7 +456,7 @@ error:
 	DBG(UPDATE, mnt_debug("%s: update from tab %p failed", filename, tb));
 	if (f)
 		fclose(f);
-	return -1;
+	return errno ? -errno : -1;
 }
 
 static int set_fs_root(mnt_update *upd, mnt_fs *fs)
@@ -602,10 +608,8 @@ int mnt_prepare_update(mnt_update *upd)
 		mnt_fs_get_optstr(upd->fs)));
 
 	if (!upd->filename) {
-		const char *p = mnt_getenv_safe("LIBMOUNT_MTAB");
+		const char *p = mnt_get_writable_mtab_path();
 
-		if (!p)
-			p = mnt_get_writable_mtab_path();
 		if (!p) {
 			if (errno) {
 				rc = -errno;
@@ -631,6 +635,10 @@ int mnt_prepare_update(mnt_update *upd)
 			upd->format = MNT_FMT_MTAB;
 	}
 
+	DBG(UPDATE, mnt_debug_h(upd, "format: %s",
+			upd->format == MNT_FMT_MOUNTINFO ? "mountinfo" :
+			upd->format == MNT_FMT_FSTAB ? "fstab" : "mtab"));
+
 	/* TODO: cannonicalize source and target paths on mnt->fs */
 
 	if (upd->format != MNT_FMT_FSTAB) {
@@ -643,13 +651,13 @@ int mnt_prepare_update(mnt_update *upd)
 
 	/* umount */
 	if (upd->action == MNT_ACT_UMOUNT)
-		return 0;
+		goto done;
 
 	/*
 	 * A) classic /etc/mtab or /etc/fstab update
 	 */
 	if (upd->format != MNT_FMT_MOUNTINFO)
-		return 0;
+		goto done;
 
 	/*
 	 * B) /var/run/mount/mountinfo
@@ -680,6 +688,7 @@ int mnt_prepare_update(mnt_update *upd)
 		u = NULL;
 	}
 
+done:
 	if (!upd->nolock && !upd->lc) {
 		upd->lc = mnt_new_lock(upd->filename, 0);
 		if (!upd->lc) {
@@ -908,15 +917,17 @@ static int update(mnt_update *upd)
 	rc = mnt_prepare_update(upd);
 	if (!rc) {
 		/* setup lock fallback */
+		int rc;
+
 		lock = mnt_update_get_lock(upd);
 		atexit(lock_fallback);
 
-		return mnt_update_file(upd);
+		rc = mnt_update_file(upd);
+		lock = NULL;
+		return rc;
 	}
-	if (rc == 1) {
-		printf("update: update is not reuquired\n");
+	if (rc == 1)
 		return 0;
-	}
 	fprintf(stderr, "update: failed to prepare update\n");
 	return -1;
 }
@@ -966,7 +977,8 @@ int test_add_fstab(struct mtest *ts, int argc, char *argv[])
 		return -1;
 
 	mnt_update_disable_lock(upd, TRUE);		/* lock is unnecessary */
-	mnt_update_set_filename(upd, _PATH_MNTTAB);	/* fstab */
+
+	mnt_update_set_filename(upd, mnt_get_fstab_path());
 	mnt_update_set_format(upd, MNT_FMT_FSTAB);
 
 	rc = update(upd);
