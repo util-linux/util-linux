@@ -20,6 +20,7 @@ TS_HELPER_LIBMOUNT_OPTSTR="$top_builddir/shlibs/mount/src/test_optstr"
 TS_HELPER_LIBMOUNT_TAB="$top_builddir/shlibs/mount/src/test_tab"
 TS_HELPER_LIBMOUNT_UTILS="$top_builddir/shlibs/mount/src/test_utils"
 TS_HELPER_LIBMOUNT_LOCK="$top_builddir/shlibs/mount/src/test_lock"
+TS_HELPER_LIBMOUNT_UPDATE="$top_builddir/shlibs/mount/src/test_tab_update"
 
 # TODO: use partx
 TS_HELPER_PARTITIONS="$top_builddir/shlibs/blkid/samples/partitions"
