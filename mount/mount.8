@@ -663,11 +663,6 @@ Creating a file
 .I /etc/filesystems
 can be useful to change the probe order (e.g., to try vfat before msdos
 or ext3 before ext2) or if you use a kernel module autoloader.
-Warning: the probing uses a heuristic (the presence of appropriate `magic'),
-and could recognize the wrong filesystem type, possibly with catastrophic
-consequences. If your data is valuable, don't ask
-.B mount
-to guess.
 
 More than one type may be specified in a comma separated
 list.  The list of filesystem types can be prefixed with
