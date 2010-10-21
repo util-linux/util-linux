@@ -1142,6 +1142,7 @@ include/Makefile
 lib/Makefile
 login-utils/Makefile
 Makefile
+man/ru/Makefile
 misc-utils/chkdupexe:misc-utils/chkdupexe.pl
 misc-utils/Makefile
 mount/Makefile

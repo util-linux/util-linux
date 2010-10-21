@@ -14,6 +14,8 @@ if BUILD_LIBMOUNT
 SHLIBS_DIRS += shlibs/mount
 endif
 
+MAN_DIRS = man/ru
+
 SUBDIRS = \
 	include \
 	disk-utils \
@@ -21,6 +23,7 @@ SUBDIRS = \
 	getopt \
 	lib \
 	$(SHLIBS_DIRS) \
+	$(MAN_DIRS) \
 	login-utils \
 	misc-utils \
 	po \
