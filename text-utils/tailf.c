@@ -29,7 +29,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <malloc.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -40,7 +39,9 @@
 #ifdef HAVE_INOTIFY_INIT
 #include <sys/inotify.h>
 #endif
+
 #include "nls.h"
+#include "xalloc.h"
 #include "usleep.h"
 
 #define DEFAULT_LINES  10
@@ -57,7 +58,7 @@ tailf(const char *filename, int lines)
 	if (!(str = fopen(filename, "r")))
 		err(EXIT_FAILURE, _("cannot open \"%s\" for read"), filename);
 
-	buf = malloc(lines * BUFSIZ);
+	buf = xmalloc(lines * BUFSIZ);
 	p = buf;
 	while (fgets(p, BUFSIZ, str)) {
 		if (++tail >= lines) {
