@@ -189,3 +189,17 @@ canonicalize_path(const char *path)
 }
 
 
+#ifdef TEST_PROGRAM
+int main(int argc, char **argv)
+{
+	if (argc < 2) {
+		fprintf(stderr, "usage: %s <device>\n", argv[0]);
+		exit(EXIT_FAILURE);
+	}
+
+	fprintf(stdout, "orig: %s\n", argv[1]);
+	fprintf(stdout, "real: %s\n", canonicalize_path(argv[1]));
+
+	exit(EXIT_SUCCESS);
+}
+#endif
