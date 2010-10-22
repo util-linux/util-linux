@@ -49,8 +49,9 @@
 #include <signal.h>		/* for signal() */
 #include <err.h>
 #include <errno.h>
-#include "nls.h"
 
+#include "nls.h"
+#include "xalloc.h"
 #include "widechar.h"
 
 #ifdef HAVE_WIDECHAR
@@ -426,9 +427,7 @@ void initbuf(void)
 {
 	if (obuf == NULL) {	/* First time. */
 		obuflen = INITBUF;
-		obuf = malloc(sizeof(struct CHAR) * obuflen);
-		if (obuf == NULL)
-			err(EXIT_FAILURE, _("unable to allocate buffer"));
+		obuf = xmalloc(sizeof(struct CHAR) * obuflen);
 	}
 
 	/* assumes NORMAL == 0 */
@@ -594,9 +593,7 @@ needcol(int col) {
 			: obuflen * 2;
 
 		/* Now we can try to expand obuf. */
-		obuf = realloc(obuf, sizeof(struct CHAR) * obuflen);
-		if (obuf == NULL)
-			err(EXIT_FAILURE, _("growing buffer failed"));
+		obuf = xrealloc(obuf, sizeof(struct CHAR) * obuflen);
 	}
 }
 
