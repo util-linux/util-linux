@@ -60,6 +60,7 @@
 #include <term.h>
 
 #include "nls.h"
+#include "xalloc.h"
 #include "widechar.h"
 
 #define	READBUF		LINE_MAX	/* size of input buffer */
@@ -210,21 +211,6 @@ static void
 quit(int status)
 {
 	exit(status < 0100 ? status : 077);
-}
-
-/*
- * Memory allocator including check.
- */
-static char *
-smalloc(size_t s)
-{
-        char *m = (char *)malloc(s);
-        if (m == NULL) {
-		const char *p = _("Out of memory\n");
-                write(2, p, strlen(p));
-                quit(++exitstatus);
-        }
-        return m;
 }
 
 /*
@@ -549,7 +535,7 @@ endline(unsigned col, char *s)
 static void
 cline(void)
 {
-	char *buf = (char *)smalloc(ttycols + 2);
+	char *buf = xmalloc(ttycols + 2);
 	memset(buf, ' ', ttycols + 2);
 	buf[0] = '\r';
 	buf[ttycols + 1] = '\r';
@@ -601,7 +587,7 @@ getcount(char *cmdstr)
 
 	if (*cmdstr == '\0')
 		return 1;
-	buf = (char *)smalloc(strlen(cmdstr) + 1);
+	buf = xmalloc(strlen(cmdstr) + 1);
 	strcpy(buf, cmdstr);
 	if (cmd.key != '\0') {
 		if (cmd.key == '/' || cmd.key == '?' || cmd.key == '^') {
