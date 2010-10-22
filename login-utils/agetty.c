@@ -703,6 +703,13 @@ termio_init(tp, op)
      struct termios *tp;
      struct options *op;
 {
+    speed_t ispeed, ospeed;
+
+    if (op->flags & F_KEEPSPEED) {
+	ispeed = cfgetispeed(tp);		/* save the original setting */
+	ospeed = cfgetospeed(tp);
+    } else
+	ospeed = ispeed = op->speeds[FIRST_SPEED];
 
     /*
      * Initial termios settings: 8-bit characters, raw-mode, blocking i/o.
@@ -713,18 +720,21 @@ termio_init(tp, op)
     /* flush input and output queues, important for modems! */
     (void) tcflush(0, TCIOFLUSH);
 
+    tp->c_iflag = tp->c_lflag = tp->c_oflag = 0;
+
     if (!(op->flags & F_KEEPCFLAGS))
 	tp->c_cflag = CS8 | HUPCL | CREAD | (tp->c_cflag & CLOCAL);
 
-    if (!(op->flags & F_KEEPSPEED)) {
-	    cfsetispeed(tp, op->speeds[FIRST_SPEED]);
-	    cfsetospeed(tp, op->speeds[FIRST_SPEED]);
-    }
+    /* Note that the speed is stored in the c_cflag termios field, so we have
+     * set the speed always when the cflag se reseted.
+     */
+    cfsetispeed(tp, ispeed);
+    cfsetospeed(tp, ospeed);
+
     if (op->flags & F_LOCAL) {
 	tp->c_cflag |= CLOCAL;
     }
 
-    tp->c_iflag = tp->c_lflag = tp->c_oflag = 0;
 #ifdef HAVE_STRUCT_TERMIOS_C_LINE
     tp->c_line = 0;
 #endif
@@ -984,9 +994,18 @@ next_speed(tp, op)
      struct termios *tp;
      struct options *op;
 {
-    static int baud_index = FIRST_SPEED;/* current speed index */
+    static int baud_index = -1;
 
-    baud_index = (baud_index + 1) % op->numspeed;
+    if (baud_index == -1)
+	/*
+	 * if the F_KEEPSPEED flags is set then the FIRST_SPEED is not
+	 * tested yet (see termio_init()).
+	 */
+	baud_index = (op->flags & F_KEEPSPEED) ? FIRST_SPEED :
+		                                 1 % op->numspeed;
+    else
+	baud_index = (baud_index + 1) % op->numspeed;
+
     cfsetispeed(tp, op->speeds[baud_index]);
     cfsetospeed(tp, op->speeds[baud_index]);
     (void) tcsetattr(0, TCSANOW, tp);
