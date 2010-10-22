@@ -36,6 +36,8 @@
 	libcurses (and hence can be in /bin with libcurses being in /usr/lib
 	which may not be mounted). However, when termcap is not present curses
 	can still be used.
+	2010-10-21 Davidlohr Bueso <dave@gnu.org>
+	- modified mem allocation handling for util-linux-ng
 */
 
 #include <stdio.h>
@@ -55,7 +57,9 @@
 #include <sys/file.h>
 #include <sys/wait.h>
 #include "xstrncpy.h"
+
 #include "nls.h"
+#include "xalloc.h"
 #include "widechar.h"
 
 #define _REGEX_RE_COMP
@@ -2015,22 +2019,14 @@ int expand (char **outbuf, char *inbuf) {
 
     xtra = strlen (fnames[fnum]) + strlen (shell_line) + 1;
     tempsz = 200 + xtra;
-    temp = malloc(tempsz);
-    if (!temp) {
-	    error (_("Out of memory"));
-	    return -1;
-    }
+    temp = xmalloc(tempsz);
     inpstr = inbuf;
     outstr = temp;
     while ((c = *inpstr++) != '\0'){
 	offset = outstr-temp;
 	if (tempsz-offset-1 < xtra) {
 		tempsz += 200 + xtra;
-		temp = realloc(temp, tempsz);
-		if (!temp) {
-			error (_("Out of memory"));
-			return -1;
-		}
+		temp = xrealloc(temp, tempsz);
 		outstr = temp + offset;
 	}
 	switch (c) {
