@@ -573,7 +573,7 @@ swapon_all(void) {
 
 	while ((fstab = getmntent(fp)) != NULL) {
 		const char *special;
-		int skip = 0;
+		int skip = 0, nofail = ifexists;
 		int pri = priority;
 		char *opt, *opts;
 
@@ -588,6 +588,8 @@ swapon_all(void) {
 				pri = atoi(opt+4);
 			if (strcmp(opt, "noauto") == 0)
 				skip = 1;
+			if (strcmp(opt, "nofail") == 0)
+				nofail = 1;
 		}
 		free(opts);
 
@@ -596,13 +598,13 @@ swapon_all(void) {
 
 		special = fsprobe_get_devname_by_spec(fstab->mnt_fsname);
 		if (!special) {
-			if (!ifexists)
+			if (!nofail)
 				status |= cannot_find(fstab->mnt_fsname);
 			continue;
 		}
 
 		if (!is_in_proc_swaps(special) &&
-		    (!ifexists || !access(special, R_OK)))
+		    (!nofail || !access(special, R_OK)))
 			status |= do_swapon(special, pri, CANONIC);
 
 		free((void *) special);

@@ -113,6 +113,12 @@ Devices that are already being used as swap are silently skipped.
 .TP
 .B "\-e, \-\-ifexists"
 Silently skip devices that do not exist.
+The
+.I /etc/fstab
+mount option
+.BI nofail
+may be also used to skip non-existing device.
+
 .TP
 .B "\-f, \-\-fixpgsz"
 Reinitialize (exec /sbin/mkswap) the swap space if its page size does not
