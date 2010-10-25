@@ -54,6 +54,7 @@ Enable/disable:
 .br
 .in +5
 .B swapon
+.RB [ \-d ]
 .RB [ \-f ]
 .RB [ \-p
 .IR priority ]
@@ -110,6 +111,16 @@ All devices marked as ``swap'' in
 .I /etc/fstab
 are made available, except for those with the ``noauto'' option.
 Devices that are already being used as swap are silently skipped.
+.TP
+.B "\-d, \-\-discard"
+Swapping will discard clusters of swap pages in between freeing them
+and re-writing to them, if the swap device supports that.
+The
+.I /etc/fstab
+mount option
+.BI discard
+may be also used to enable discard flag.
+
 .TP
 .B "\-e, \-\-ifexists"
 Silently skip devices that do not exist.

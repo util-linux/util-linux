@@ -30,6 +30,10 @@
 # include <sys/swap.h>
 #endif
 
+#ifndef SWAP_FLAG_DISCARD
+# define SWAP_FLAG_DISCARD	0x10000 /* discard swap cluster after use */
+#endif
+
 #ifndef SWAPON_HAS_TWO_ARGS
 /* libc is insane, let's call the kernel */
 # include <sys/syscall.h>
@@ -54,6 +58,7 @@ enum {
 
 int all;
 int priority = -1;	/* non-prioritized swap by default */
+int discard;
 
 /* If true, don't complain if the device/file doesn't exist */
 int ifexists;
@@ -65,6 +70,7 @@ char *progname;
 static struct option longswaponopts[] = {
 		/* swapon only */
 	{ "priority", required_argument, 0, 'p' },
+	{ "discard", 0, 0, 'd' },
 	{ "ifexists", 0, 0, 'e' },
 	{ "summary", 0, 0, 's' },
 	{ "fixpgsz", 0, 0, 'f' },
@@ -92,7 +98,7 @@ static void
 swapon_usage(FILE *fp, int n) {
 	fprintf(fp, _("\nUsage:\n"
 	" %1$s -a [-e] [-v] [-f]             enable all swaps from /etc/fstab\n"
-	" %1$s [-p priority] [-v] [-f] <special>  enable given swap\n"
+	" %1$s [-p priority] [-d] [-v] [-f] <special>  enable given swap\n"
 	" %1$s -s                            display swap usage summary\n"
 	" %1$s -h                            display help\n"
 	" %1$s -V                            display version\n\n"), progname);
@@ -471,7 +477,7 @@ err:
 }
 
 static int
-do_swapon(const char *orig_special, int prio, int canonic) {
+do_swapon(const char *orig_special, int prio, int fl_discard, int canonic) {
 	int status;
 	const char *special = orig_special;
 	int flags = 0;
@@ -497,6 +503,9 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 			   << SWAP_FLAG_PRIO_SHIFT);
 	}
 #endif
+	if (fl_discard)
+		flags |= SWAP_FLAG_DISCARD;
+
 	status = swapon(special, flags);
 	if (status < 0)
 		warn(_("%s: swapon failed"), orig_special);
@@ -511,15 +520,17 @@ cannot_find(const char *special) {
 }
 
 static int
-swapon_by_label(const char *label, int prio) {
+swapon_by_label(const char *label, int prio, int dsc) {
 	const char *special = fsprobe_get_devname_by_label(label);
-	return special ? do_swapon(special, prio, CANONIC) : cannot_find(label);
+	return special ? do_swapon(special, prio, dsc, CANONIC) :
+			 cannot_find(label);
 }
 
 static int
-swapon_by_uuid(const char *uuid, int prio) {
+swapon_by_uuid(const char *uuid, int prio, int dsc) {
 	const char *special = fsprobe_get_devname_by_uuid(uuid);
-	return special ? do_swapon(special, prio, CANONIC) : cannot_find(uuid);
+	return special ? do_swapon(special, prio, dsc, CANONIC) :
+			 cannot_find(uuid);
 }
 
 static int
@@ -574,7 +585,7 @@ swapon_all(void) {
 	while ((fstab = getmntent(fp)) != NULL) {
 		const char *special;
 		int skip = 0, nofail = ifexists;
-		int pri = priority;
+		int pri = priority, dsc = discard;
 		char *opt, *opts;
 
 		if (!streq(fstab->mnt_type, MNTTYPE_SWAP))
@@ -586,6 +597,8 @@ swapon_all(void) {
 		     opt = strtok(NULL, ",")) {
 			if (strncmp(opt, "pri=", 4) == 0)
 				pri = atoi(opt+4);
+			if (strcmp(opt, "discard") == 0)
+				dsc = 1;
 			if (strcmp(opt, "noauto") == 0)
 				skip = 1;
 			if (strcmp(opt, "nofail") == 0)
@@ -605,7 +618,7 @@ swapon_all(void) {
 
 		if (!is_in_proc_swaps(special) &&
 		    (!nofail || !access(special, R_OK)))
-			status |= do_swapon(special, pri, CANONIC);
+			status |= do_swapon(special, pri, dsc, CANONIC);
 
 		free((void *) special);
 	}
@@ -638,7 +651,7 @@ main_swapon(int argc, char *argv[]) {
 	int status = 0;
 	int c, i;
 
-	while ((c = getopt_long(argc, argv, "ahefp:svVL:U:",
+	while ((c = getopt_long(argc, argv, "ahdefp:svVL:U:",
 				longswaponopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':		/* all */
@@ -655,6 +668,9 @@ main_swapon(int argc, char *argv[]) {
 			break;
 		case 'U':
 			addu(optarg);
+			break;
+		case 'd':
+			discard = 1;
 			break;
 		case 'e':               /* ifexists */
 		        ifexists = 1;
@@ -690,13 +706,13 @@ main_swapon(int argc, char *argv[]) {
 		status |= swapon_all();
 
 	for (i = 0; i < llct; i++)
-		status |= swapon_by_label(llist[i], priority);
+		status |= swapon_by_label(llist[i], priority, discard);
 
 	for (i = 0; i < ulct; i++)
-		status |= swapon_by_uuid(ulist[i], priority);
+		status |= swapon_by_uuid(ulist[i], priority, discard);
 
 	while (*argv != NULL)
-		status |= do_swapon(*argv++, priority, !CANONIC);
+		status |= do_swapon(*argv++, priority, discard, !CANONIC);
 
 	return status;
 }
