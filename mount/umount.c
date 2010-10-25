@@ -267,15 +267,20 @@ umount_one (const char *spec, const char *node, const char *type,
 		res = mount(spec, node, NULL,
 			    MS_MGC_VAL | MS_REMOUNT | MS_RDONLY, NULL);
 		if (res == 0) {
-			struct my_mntent remnt;
 			fprintf(stderr,
 				_("umount: %s busy - remounted read-only\n"),
 				spec);
-			remnt.mnt_type = remnt.mnt_fsname = NULL;
-			remnt.mnt_dir = xstrdup(node);
-			remnt.mnt_opts = xstrdup("ro");
-			if (!nomtab)
+			if (mc && !nomtab) {
+				/* update mtab if the entry is there */
+				struct my_mntent remnt;
+				remnt.mnt_fsname = mc->m.mnt_fsname;
+				remnt.mnt_dir = mc->m.mnt_dir;
+				remnt.mnt_type = mc->m.mnt_type;
+				remnt.mnt_opts = "ro";
+				remnt.mnt_freq = 0;
+				remnt.mnt_passno = 0;
 				update_mtab(node, &remnt);
+			}
 			return 0;
 		} else if (errno != EBUSY) { 	/* hmm ... */
 			perror("remount");
