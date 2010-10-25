@@ -225,17 +225,18 @@ static const char *devdirs[] = { "/devices", "/devfs", "/dev", NULL };
  * @short_description: mix of various utils for low-level and high-level API
  */
 
-/**
- * blkid_devno_to_devname:
- * @devno: device number
- *
- * This function finds the pathname to a block device with a given
- * device number.
- *
- * Returns: a pointer to allocated memory to the pathname on success,
- * and NULL on failure.
- */
-char *blkid_devno_to_devname(dev_t devno)
+/* returns basename and keeps dirname in the @path */
+static char *stripoff_last_component(char *path)
+{
+	char *p = strrchr(path, '/');
+
+	if (!p)
+		return NULL;
+	*p = '\0';
+	return ++p;
+}
+
+static char *scandev_devno_to_devname(dev_t devno)
 {
 	struct dir_list *list = NULL, *new_list = NULL;
 	char *devname = NULL;
@@ -270,6 +271,59 @@ char *blkid_devno_to_devname(dev_t devno)
 	free_dirlist(&list);
 	free_dirlist(&new_list);
 
+	return devname;
+}
+
+static char *sysfs_devno_to_devname(dev_t dev)
+{
+	char path[PATH_MAX];
+	char linkpath[PATH_MAX];
+	struct stat st;
+	char *name;
+	int rc;
+
+	rc = snprintf(path, sizeof(path), "/sys/dev/block/%d:%d",
+			major(dev), minor(dev));
+	if (rc < 0 || rc + 1 > sizeof(path))
+		return NULL;
+
+	rc = readlink(path, linkpath, sizeof(linkpath) - 1);
+	if (rc < 0)
+		return NULL;
+	linkpath[rc] = '\0';
+
+	name = stripoff_last_component(linkpath);	/* basename */
+	if (!name)
+		return NULL;
+
+	rc = snprintf(path, sizeof(path), "/dev/%s", name);
+	if (rc < 0 || rc + 1 > sizeof(path))
+		return NULL;
+
+	if (!stat(path, &st) && S_ISBLK(st.st_mode) && st.st_rdev == dev)
+		return strdup(path);
+
+	return NULL;
+}
+
+/**
+ * blkid_devno_to_devname:
+ * @devno: device number
+ *
+ * This function finds the pathname to a block device with a given
+ * device number.
+ *
+ * Returns: a pointer to allocated memory to the pathname on success,
+ * and NULL on failure.
+ */
+char *blkid_devno_to_devname(dev_t devno)
+{
+	char *devname = NULL;
+
+	devname = sysfs_devno_to_devname(devno);
+	if (!devname)
+		devname = scandev_devno_to_devname(devno);
+
 	if (!devname) {
 		DBG(DEBUG_DEVNO,
 		    printf("blkid: couldn't find devno 0x%04lx\n",
@@ -279,21 +333,9 @@ char *blkid_devno_to_devname(dev_t devno)
 		    printf("found devno 0x%04llx as %s\n", (long long)devno, devname));
 	}
 
-
 	return devname;
 }
 
-
-/* returns basename and keeps dirname in the @path */
-static char *stripoff_last_component(char *path)
-{
-	char *p = strrchr(path, '/');
-
-	if (!p)
-		return NULL;
-	*p = '\0';
-	return ++p;
-}
 
 /**
  * blkid_devno_to_wholedisk:
