@@ -7,7 +7,7 @@
 fsck \- check and repair a Linux file system
 .SH SYNOPSIS
 .B fsck
-.RB [ \-sAVRTMNP ]
+.RB [ \-lsAVRTMNP ]
 .RB [ \-C
 .RI [ fd ]]
 .RB [ \-t
@@ -79,6 +79,17 @@ and finally in the directories listed in the PATH environment
 variable.  Please see the file system-specific checker manual pages for
 further details.
 .SH OPTIONS
+.TP
+.B \-l
+Lock whole-disk device by exclusive
+.BR flock (2).
+This option can be used with one device only (e.g. -A and -l are mutually
+exclusive). This option is recommended when more
+.B fsck (8)
+instances are executed in the same time. The option is ignored when used for
+multiple devices or for non-rotating disk. The fsck does not lock underlying
+devices if executed to check stacked devices (e.g. MD or DM) -- this feature is
+not implemented yet.
 .TP
 .B \-s
 Serialize

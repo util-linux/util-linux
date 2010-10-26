@@ -31,6 +31,8 @@
 #include <sys/wait.h>
 #include <sys/signal.h>
 #include <sys/stat.h>
+#include <sys/file.h>
+#include <fcntl.h>
 #include <limits.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -87,6 +89,7 @@ char *devices[MAX_DEVICES];
 char *args[MAX_ARGS];
 int num_devices, num_args;
 
+int lockdisk = 0;
 int verbose = 0;
 int doall = 0;
 int noexecute = 0;
@@ -216,8 +219,96 @@ static void parse_escape(char *word)
 	*q = 0;
 }
 
+static dev_t get_disk(const char *device)
+{
+	struct stat st;
+	dev_t disk;
+
+	if (!stat(device, &st) &&
+	    !blkid_devno_to_wholedisk(st.st_rdev, NULL, 0, &disk))
+		return disk;
+
+	return 0;
+}
+
+static int is_irrotational_disk(dev_t disk)
+{
+	char path[PATH_MAX];
+	FILE *f;
+	int rc, x;
+
+	rc = snprintf(path, sizeof(path),
+			"/sys/dev/block/%d:%d/queue/rotational",
+			major(disk), minor(disk));
+
+	if (rc < 0 || rc + 1 > sizeof(path))
+		return 0;
+
+	f = fopen(path, "r");
+	if (!f)
+		return 0;
+
+	rc = fscanf(f, "%u", &x);
+	fclose(f);
+
+	return rc == 1 ? !x : 0;
+}
+
+static void lock_disk(struct fsck_instance *inst)
+{
+	dev_t disk = inst->fs->disk ? : get_disk(inst->fs->device);
+	char *diskname;
+
+	if (!disk || is_irrotational_disk(disk))
+		return;
+
+	diskname = blkid_devno_to_devname(disk);
+	if (!diskname)
+		return;
+
+	if (verbose)
+		printf(_("Locking disk %s ... "), diskname);
+
+	inst->lock = open(diskname, O_CLOEXEC | O_RDONLY);
+	if (inst->lock >= 0) {
+		int rc = -1;
+
+		/* inform users that we're waiting on the lock */
+		if (verbose &&
+		    (rc = flock(inst->lock, LOCK_EX | LOCK_NB)) != 0 &&
+		    errno == EWOULDBLOCK)
+			printf(_("(waiting) "));
+
+		if (rc != 0 && flock(inst->lock, LOCK_EX) != 0) {
+			close(inst->lock);			/* failed */
+			inst->lock = -1;
+		}
+	}
+
+	if (verbose)
+		printf("%s.\n", inst->lock >= 0 ? _("success") : _("failed"));
+
+	free(diskname);
+	return;
+}
+
+static void unlock_disk(struct fsck_instance *inst)
+{
+	if (inst->lock >= 0) {
+		/* explicitly unlock, don't rely on close(), maybe some library
+		 * (e.g. liblkid) has still open the device.
+		 */
+		flock(inst->lock, LOCK_UN);
+		close(inst->lock);
+	}
+}
+
+
+
 static void free_instance(struct fsck_instance *i)
 {
+	if (lockdisk)
+		unlock_disk(i);
 	free(i->prog);
 	free(i);
 	return;
@@ -471,6 +562,13 @@ static int execute(const char *type, struct fs_info *fs, int interactive)
 		printf("\n");
 	}
 
+
+	inst->fs = fs;
+	inst->lock = -1;
+
+	if (lockdisk)
+		lock_disk(inst);
+
 	/* Fork and execute the correct program. */
 	if (noexecute)
 		pid = -1;
@@ -494,7 +592,6 @@ static int execute(const char *type, struct fs_info *fs, int interactive)
 	inst->prog = string_copy(prog);
 	inst->type = string_copy(type);
 	inst->start_time = time(0);
-	inst->fs = fs;
 	inst->next = NULL;
 
 	/*
@@ -977,14 +1074,9 @@ static int disk_already_active(struct fs_info *fs)
 		return 1;
 
 	if (!fs->disk) {
-		struct stat st;
-		dev_t disk;
-
-		if (!stat(fs->device, &st) &&
-		    !blkid_devno_to_wholedisk(st.st_rdev, NULL, 0, &disk)) {
-			fs->disk = disk;
-			fs->stacked = count_slaves(disk);
-		}
+		fs->disk = get_disk(fs->device);
+		if (fs->disk)
+			fs->stacked = count_slaves(fs->disk);
 	}
 
 	/*
@@ -1230,6 +1322,9 @@ static void PRS(int argc, char *argv[])
 					}
 				}
 				break;
+			case 'l':
+				lockdisk++;
+				break;
 			case 'V':
 				verbose++;
 				break;
@@ -1339,6 +1434,12 @@ int main(int argc, char *argv[])
 
 	if ((num_devices == 1) || (serialize))
 		interactive = 1;
+
+	if (lockdisk && (doall || num_devices > 1)) {
+		fprintf(stderr, _("%s: the -l option can be used with one "
+				  "device only -- ignore\n"), progname);
+		lockdisk = 0;
+	}
 
 	/* If -A was specified ("check all"), do that! */
 	if (doall)
