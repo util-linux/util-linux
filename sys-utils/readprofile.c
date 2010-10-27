@@ -49,6 +49,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/utsname.h>
+
+#include "xalloc.h"
 #include "nls.h"
 
 #define S_LEN 128
@@ -59,22 +61,6 @@ static char *prgname;
 static char defaultmap[]="/boot/System.map";
 static char defaultpro[]="/proc/profile";
 static char optstring[]="M:m:np:itvarVbs";
-
-static void *
-xmalloc (size_t size) {
-	void *t;
-
-	if (size == 0)
-		return NULL;
-
-	t = malloc (size);
-	if (t == NULL) {
-		fprintf(stderr, _("out of memory"));
-		exit(1);
-	}
-
-	return t;
-}
 
 static FILE *
 myopen(char *name, char *mode, int *flag) {
@@ -242,10 +228,7 @@ main(int argc, char **argv) {
 		exit(1);
 	}
 
-	if (!(buf=malloc(len))) {
-		fprintf(stderr,"%s: malloc(): %s\n", prgname, strerror(errno));
-		exit(1);
-	}
+	buf = xmalloc(len);
 
 	if (read(proFd,buf,len) != len) {
 		fprintf(stderr,"%s: %s: %s\n",prgname,proFile,strerror(errno));

@@ -63,6 +63,7 @@
 #endif
 #endif
 
+#include "xalloc.h"
 #include "nls.h"
 				/* Until it gets put in the kernel,
 				   toggle by hand. */
@@ -315,12 +316,8 @@ int main(int argc, char *argv[]) {
 
   /* query stuff after this line */
   
-  cmon = (struct cyclades_control *) malloc(sizeof (struct cyclades_control)
-					    * numfiles);
-  if(!cmon) {
-    perror(_("malloc failed"));
-    exit(1);
-  }
+  cmon = xmalloc(sizeof(struct cyclades_control) * numfiles);
+
   if(signal(SIGINT, summary)||
      signal(SIGQUIT, summary)||
      signal(SIGTERM, summary)) {

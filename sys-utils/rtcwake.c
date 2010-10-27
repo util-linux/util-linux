@@ -36,6 +36,7 @@
 #include <linux/rtc.h>
 
 #include "nls.h"
+#include "xalloc.h"
 #include "pathnames.h"
 #include "usleep.h"
 
@@ -423,11 +424,7 @@ int main(int argc, char **argv)
 	if (strncmp(devname, "/dev/", strlen("/dev/")) != 0) {
 		char *new_devname;
 
-		new_devname = malloc(strlen(devname) + strlen("/dev/") + 1);
-		if (!new_devname) {
-			perror(_("malloc() failed"));
-			exit(EXIT_FAILURE);
-		}
+		new_devname = xmalloc(strlen(devname) + strlen("/dev/") + 1);
 
 		strcpy(new_devname, "/dev/");
 		strcat(new_devname, devname);
