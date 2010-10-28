@@ -54,7 +54,7 @@
 #endif
 
 
-static void show_usage(int rc)
+static void __attribute__((__noreturn__)) show_usage(int rc)
 {
 	FILE *out = rc == EXIT_SUCCESS ? stdout : stderr;
 
