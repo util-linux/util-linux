@@ -331,7 +331,7 @@ void do_write(char *tty, char *mytty, uid_t myuid) {
 static void
 done(int dummy) {
 	(void)printf("EOF\r\n");
-	exit(0);
+	_exit(0);
 }
 
 /*

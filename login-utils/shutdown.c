@@ -132,7 +132,7 @@ int_handler(int sig)
 	unlink(_PATH_NOLOGIN);
 	signal(SIGINT, SIG_DFL);
 	my_puts(_("Shutdown process aborted"));
-	exit(1);
+	_exit(1);
 }
 
 static int

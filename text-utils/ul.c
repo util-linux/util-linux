@@ -604,7 +604,7 @@ needcol(int col) {
 
 static void sig_handler(int signo)
 {
-	exit(EXIT_SUCCESS);
+	_exit(EXIT_SUCCESS);
 }
 
 static void exitbuf(void)

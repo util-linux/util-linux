@@ -473,6 +473,6 @@ onintr(int signo) {
 	ct = utmp_ctime(&utmpbuf);
 	printf(_("\ninterrupted %10.10s %5.5s \n"), ct, ct + 11);
 	if (signo == SIGINT)
-		exit(1);
+		_exit(1);
 	(void)fflush(stdout);			/* fix required for rsh */
 }
