@@ -1313,8 +1313,6 @@ cdrom_setspeed(const char *spec) {
 static int
 is_readonly(const char *path)
 {
-	int fd;
-
 	if (access(path, W_OK) == 0)
 		return 0;
 	if (errno == EROFS)
@@ -1332,19 +1330,14 @@ is_readonly(const char *path)
 	 *
 	 * - for read-write filesystem with read-only VFS node (aka -o remount,ro,bind)
 	 */
-	fd = open(path, O_RDONLY);
-	if (fd >= 0) {
+	{
 		struct timespec times[2];
-		int errsv = 0;
 
 		times[0].tv_nsec = UTIME_NOW;	/* atime */
 		times[1].tv_nsec = UTIME_OMIT;	/* mtime */
 
-		if (futimens(fd, times) == -1)
-			errsv = errno;
-		close(fd);
-
-		return errsv == EROFS;
+		if (utimensat(AT_FDCWD, path, times, 0) == -1)
+			return errno == EROFS;
 	}
 #endif
 	return 0;
