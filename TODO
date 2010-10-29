@@ -1,7 +1,6 @@
 libblkid
 --------
 
-
  - remove strerrr() from debug messages (use %m) to make BLKID_DEBUG= output
    thread-safe
 
@@ -19,6 +18,12 @@ blkid(8)
  
   - add a new option (-r) that allows to print removable block devices that
     are missing in /proc/partitions, see blkid_probe_all_removable().
+
+agetty:
+------
+
+  - review code and make it more simple for normal console (see mingetty)
+  - merge functionality from unmaintained mingetty package to agetty
 
 wipefs
 ------
