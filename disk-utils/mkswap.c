@@ -175,11 +175,6 @@ init_signature_page(void) {
 }
 
 static void
-deinit_signature_page(void) {
-	free(signature_page);
-}
-
-static void
 write_signature(char *sig) {
 	char *sp = (char *) signature_page;
 
@@ -538,7 +533,6 @@ main(int argc, char ** argv) {
 #endif
 
 	init_signature_page();	/* get pagesize */
-	atexit(deinit_signature_page);
 
 	if (!device_name) {
 		fprintf(stderr,

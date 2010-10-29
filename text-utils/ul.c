@@ -78,7 +78,6 @@ void outc(wint_t c, int width);
 void setmode(int newmode);
 static void setcol(int newcol);
 static void needcol(int col);
-static void exitbuf(void);
 static void sig_handler(int signo);
 
 #define	IESC	'\033'
@@ -169,7 +168,6 @@ int main(int argc, char **argv)
 	if (    (tigetflag("os") && ENTER_BOLD==NULL ) ||
 		(tigetflag("ul") && ENTER_UNDERLINE==NULL && UNDER_CHAR==NULL))
 			must_overstrike = 1;
-	atexit(exitbuf);
 	initbuf();
 	if (optind == argc)
 		filter(stdin);
@@ -607,8 +605,3 @@ static void sig_handler(int signo)
 	_exit(EXIT_SUCCESS);
 }
 
-static void exitbuf(void)
-{
-	free(obuf);
-	obuf = NULL;
-}
