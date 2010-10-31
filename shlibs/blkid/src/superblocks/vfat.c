@@ -380,6 +380,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 
 			fsinfo = (struct fat32_fsinfo *) buf;
 			if (memcmp(fsinfo->signature1, "\x52\x52\x61\x41", 4) != 0 &&
+			    memcmp(fsinfo->signature1, "\x52\x52\x64\x41", 4) != 0 &&
 			    memcmp(fsinfo->signature1, "\x00\x00\x00\x00", 4) != 0)
 				return -1;
 			if (memcmp(fsinfo->signature2, "\x72\x72\x41\x61", 4) != 0 &&
