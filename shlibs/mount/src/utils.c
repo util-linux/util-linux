@@ -407,13 +407,15 @@ done:
 /*
  * Returns 1 if /etc/mtab is a reqular file.
  */
-int mnt_has_regular_mtab(void)
+int mnt_has_regular_mtab(const char **mtab)
 {
 	struct stat st;
+	const char *x = mnt_get_mtab_path();
 
-	if (lstat(_PATH_MOUNTED, &st) == 0 && S_ISREG(st.st_mode))
-		return 1;
-	return 0;
+	if (mtab)
+		*mtab = x;
+
+	return (lstat(x, &st) == 0 && S_ISREG(st.st_mode));
 }
 
 /**
@@ -430,13 +432,8 @@ const char *mnt_get_fstab_path(void)
 /**
  * mnt_get_mtab_path:
  *
- * This function returns *default* location of the mtab file. The result does not have to
- * be writable. See also mnt_get_writable_mtab_path().
- *
- * It's possible that libmount uses /proc/self/mountinfo together with
- * /var/run/mount/mountinfo file (or files). The ideal solution is to use
- * mnt_tab_parse_mtab() that provides abstraction and returns mtab records
- * independently on the way how things are managed by libmount.
+ * This function returns *default* location of the mtab file. The result does
+ * not have to be writable. See also mnt_get_writable_mtab_path().
  *
  * Returns: path to /etc/mtab or $LIBMOUNT_MTAB.
  */
@@ -447,52 +444,64 @@ const char *mnt_get_mtab_path(void)
 }
 
 /**
+ * mnt_get_utab_path:
+ *
+ * This function returns *default* location of the utab file.
+ *
+ * Returns: path to /dev/.mount/utab or $LIBMOUNT_UTAB.
+ */
+const char *mnt_get_utab_path(void)
+{
+	const char *p = mnt_getenv_safe("LIBMOUNT_UTAB");
+	return p ? : MNT_PATH_UTAB;
+}
+
+/**
  * mnt_get_writable_mtab_path:
- *
- * It's not error if this function returns NULL and errno is not set. In case of
- * error the errno is set by open(2).
- *
- * Note that writable mtab does not have to contains all necessary information.
- * For example /var/run/mount/mountinfo is used for userspace mount options
- * only. FS depend information are usually maintaibed by kernel only.
  *
  * Returns: pointer to the static string with path to mtab or NULL if writable
  *          mtab is unsupported.
  */
 const char *mnt_get_writable_mtab_path(void)
 {
-	struct stat mst, ist;
-	int mtab, info;
+	struct stat st;
 	const char *path = mnt_get_mtab_path();
 
-	mtab = !lstat(path, &mst);
-	info = !stat(MNT_PATH_RUNDIR, &ist);
-
-	errno = 0;
-
-	/* A) mtab is symlink, /var/run/mount is available */
-	if (mtab && S_ISLNK(mst.st_mode) && info) {
-		int fd = open(MNT_PATH_MOUNTINFO, O_RDWR | O_CREAT, 0644);
-		if (fd >= 0) {
-			close(fd);
-			return MNT_PATH_MOUNTINFO;
-		}
-		return NULL;	/* probably EACCES */
-	}
-
-	/* B) classis system with /etc/mtab or $LIBMOUNT_MTAB */
-	if (mtab && S_ISREG(mst.st_mode)) {
+	if (lstat(path, &st) && S_ISREG(st.st_mode)) {
 		int fd = open(path, O_RDWR, 0644);
 		if (fd >= 0) {
 			close(fd);
 			return path;
 		}
-		return NULL;    /* probably EACCES */
 	}
 
 	return NULL;
 }
 
+/* returns file descriptor or -errno, @name returns uniques filename
+ */
+int mnt_open_uniq_filename(const char *filename, char **name, int flags)
+{
+	int rc, fd;
+	char *n;
+
+	assert(filename);
+
+	if (name)
+		*name = NULL;
+
+	rc = asprintf(&n, "%s.XXXXXX", filename);
+	if (rc <= 0)
+		return -errno;
+
+	fd = mkostemp(n, flags | O_EXCL);
+	if (fd >= 0 && name)
+		*name = n;
+	else
+		free(n);
+
+	return fd < 0 ? -errno : fd;
+}
 
 /* returns basename and keeps dirname in the @path, if @path is "/" (root)
  * then returns empty string */
