@@ -93,8 +93,6 @@ struct line_str {
 	int	l_max_col;		/* max column in the line */
 };
 
-void usage(void);
-void wrerr(void);
 void free_line(LINE *l);
 void flush_line(LINE *l);
 void flush_lines(int);
@@ -114,6 +112,17 @@ int pass_unknown_seqs;		/* whether to pass unknown control sequences */
 	if (putwchar(ch) == WEOF) \
 		wrerr();
 
+static void __attribute__((__noreturn__)) usage()
+{
+	errx(EXIT_FAILURE, _("usage: %s [-bfpx] [-l nline]"),
+			program_invocation_short_name);
+}
+
+static void __attribute__((__noreturn__)) wrerr()
+{
+	errx(EXIT_FAILURE, _("write error."));
+}
+
 int main(int argc, char **argv)
 {
 	register wint_t ch;
@@ -127,12 +136,12 @@ int main(int argc, char **argv)
 	int this_line;			/* line l points to */
 	int nflushd_lines;		/* number of lines that were flushed */
 	int adjust, opt, warned;
-	int ret = 0;
+	int ret = EXIT_SUCCESS;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	
+
 	max_bufd_lines = 128;
 	compress_spaces = 1;		/* compress spaces into tabs */
 	pass_unknown_seqs = 0;          /* remove unknown escape sequences */
@@ -148,11 +157,8 @@ int main(int argc, char **argv)
 			compress_spaces = 1;
 			break;
 		case 'l':		/* buffered line count */
-			if ((max_bufd_lines = atoi(optarg)) <= 0) {
-				(void)fprintf(stderr,
-				    _("col: bad -l argument %s.\n"), optarg);
-				exit(1);
-			}
+			if ((max_bufd_lines = atoi(optarg)) <= 0)
+				errx(EXIT_FAILURE, _("bad -l argument %s."), optarg);
 			break;
 		case 'p':
 			pass_unknown_seqs = 1;
@@ -175,16 +181,16 @@ int main(int argc, char **argv)
 	cur_line = max_line = nflushd_lines = this_line = 0;
 	cur_set = last_set = CS_NORMAL;
 	lines = l = alloc_line();
-	
+
 	while (feof(stdin)==0) {
 		errno = 0;
 		if ((ch = getwchar()) == WEOF) {
 			if (errno==EILSEQ) {
-				perror("col");
-				ret = 1;
+				warn(NULL);
+				ret = EXIT_FAILURE;
 			}
 			break;
-		}	
+		}
 		if (!iswgraph(ch)) {
 			switch (ch) {
 			case BS:		/* can't go back further */
@@ -274,9 +280,9 @@ int main(int argc, char **argv)
 						}
 					} else {
 						if (!warned++)
-							fprintf(stderr,
-								_("col: warning: can't back up %s.\n"), cur_line < 0 ?
-								_("past first line") : _("-- line already flushed"));
+							warnx(
+			_("warning: can't back up %s."), cur_line < 0 ?
+			_("past first line") : _("-- line already flushed"));
 						cur_line -= nmove;
 					}
 				}
@@ -341,7 +347,7 @@ int main(int argc, char **argv)
 		nblank_lines = 2;
 	flush_blanks();
 	if (ferror(stdout) || fclose(stdout))
-		return 1;
+		return EXIT_FAILURE;
 	return ret;
 }
 
@@ -530,14 +536,4 @@ void free_line(LINE *l)
 	line_freelist = l;
 }
 
-void usage()
-{
-	(void)fprintf(stderr, _("usage: col [-bfpx] [-l nline]\n"));
-	exit(1);
-}
 
-void wrerr()
-{
-	(void)fprintf(stderr, _("col: write error.\n"));
-	exit(1);
-}
