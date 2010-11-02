@@ -297,7 +297,7 @@ void mnt_unlock_file(mnt_lock *ml)
  *		int sig = 0;
  *		const char *mtab;
  *
- *		if (!(mtab = mnt_get_writable_mtab_path()))
+ *		if (!(mtab = mnt_get_mtab_path()))
  *			return 0;			// system without mtab
  *		if (!(ml = mnt_new_lock(mtab, 0)))
  *			return -1;			// error
