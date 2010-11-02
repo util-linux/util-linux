@@ -415,6 +415,7 @@ const struct blkid_idinfo vfat_idinfo =
 		{ .magic = "MSDOS",    .len = 5, .sboff = 0x36 },
 		{ .magic = "FAT16   ", .len = 8, .sboff = 0x36 },
 		{ .magic = "FAT12   ", .len = 8, .sboff = 0x36 },
+		{ .magic = "FAT     ", .len = 8, .sboff = 0x36 },
 		{ .magic = "\353",     .len = 1, },
 		{ .magic = "\351",     .len = 1, },
 		{ .magic = "\125\252", .len = 2, .sboff = 0x1fe },
