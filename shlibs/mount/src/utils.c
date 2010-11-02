@@ -407,15 +407,29 @@ done:
 /*
  * Returns 1 if /etc/mtab is a reqular file.
  */
-int mnt_has_regular_mtab(const char **mtab)
+int mnt_has_regular_mtab(const char **mtab, int *writeable)
 {
 	struct stat st;
-	const char *x = mnt_get_mtab_path();
+	int rc;
+	const char *x = mtab && *mtab ? *mtab : mnt_get_mtab_path();
 
-	if (mtab)
+	if (mtab && !*mtab)
 		*mtab = x;
+	rc = (lstat(x, &st) == 0 && S_ISREG(st.st_mode));
 
-	return (lstat(x, &st) == 0 && S_ISREG(st.st_mode));
+	if (writable) {
+		if (rc) {
+			/* TODO: use utimensat() */
+			int fd = open(path, O_RDWR, 0644);
+			if (fd >= 0) {
+				close(fd);
+				*writable = 1;
+				return rc;
+			}
+		}
+		*writable = 0;
+	}
+	return rc;
 }
 
 /**
@@ -456,27 +470,6 @@ const char *mnt_get_utab_path(void)
 	return p ? : MNT_PATH_UTAB;
 }
 
-/**
- * mnt_get_writable_mtab_path:
- *
- * Returns: pointer to the static string with path to mtab or NULL if writable
- *          mtab is unsupported.
- */
-const char *mnt_get_writable_mtab_path(void)
-{
-	struct stat st;
-	const char *path = mnt_get_mtab_path();
-
-	if (lstat(path, &st) && S_ISREG(st.st_mode)) {
-		int fd = open(path, O_RDWR, 0644);
-		if (fd >= 0) {
-			close(fd);
-			return path;
-		}
-	}
-
-	return NULL;
-}
 
 /* returns file descriptor or -errno, @name returns uniques filename
  */

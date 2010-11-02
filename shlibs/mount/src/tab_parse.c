@@ -13,6 +13,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #include "nls.h"
 #include "at.h"
@@ -383,6 +384,66 @@ int mnt_tab_parse_file(mnt_tab *tb, const char *filename)
 	return rc;
 }
 
+static int mnt_tab_parse_dir(mnt_tab *tb, const char *dirname)
+{
+	int n = 0, i;
+	DIR *dir = NULL;
+	struct dirent **namelist = NULL;
+
+	/* TODO: it would be nice to have a scandir() implementaion that
+	 *       is able to use already opened directory */
+	n = scandir(dirname, &namelist, NULL, versionsort);
+	if (n <= 0)
+		return 0;
+
+	/* let use "at" functions rather than play crazy games with paths... */
+	dir = opendir(dirname);
+	if (!dir)
+		return -errno;
+
+	for (i = 0; i < n; i++) {
+		struct dirent *d = namelist[i];
+		struct stat st;
+		size_t namesz;
+		FILE *f;
+
+#ifdef _DIRENT_HAVE_D_TYPE
+		if (d->d_type != DT_UNKNOWN && d->d_type != DT_REG &&
+		    d->d_type != DT_LNK)
+			continue;
+#endif
+		if (*d->d_name == '.')
+			continue;
+
+#define MNT_MNTTABDIR_EXTSIZ	(sizeof(MNT_MNTTABDIR_EXT) - 1)
+
+		namesz = strlen(d->d_name);
+		if (!namesz || namesz < MNT_MNTTABDIR_EXTSIZ + 1 ||
+		    strcmp(d->d_name + (namesz - MNT_MNTTABDIR_EXTSIZ),
+			    MNT_MNTTABDIR_EXT))
+				continue;
+
+		if (fstat_at(dirfd(dir), _PATH_MNTTAB_DIR, d->d_name, &st, 0) ||
+		    !S_ISREG(st.st_mode))
+			continue;
+
+		f = fopen_at(dirfd(dir), _PATH_MNTTAB_DIR,
+					d->d_name, O_RDONLY, "r");
+		if (f) {
+			mnt_tab_parse_stream(tb, f, d->d_name);
+			fclose(f);
+		}
+	}
+
+	for (i = 0; i < n; i++)
+		free(namelist[i]);
+	free(namelist);
+	if (dir)
+		closedir(dir);
+	return 0;
+}
+
+
 /**
  * mnt_new_tab_from_file:
  * @filename: /etc/{m,fs}tab or /proc/self/mountinfo path
@@ -404,6 +465,28 @@ mnt_tab *mnt_new_tab_from_file(const char *filename)
 		return NULL;
 	tb = mnt_new_tab();
 	if (tb && mnt_tab_parse_file(tb, filename) != 0) {
+		mnt_free_tab(tb);
+		tb = NULL;
+	}
+	return tb;
+}
+
+/**
+ * mnt_new_tab_from_dir
+ * @dirname: for example /etc/fstab.d or /dev/.mount/utabs
+ *
+ * Returns: newly allocated tab on success and NULL in case of error.
+ */
+mnt_tab *mnt_new_tab_from_dir(const char *dirname)
+{
+	mnt_tab *tb;
+
+	assert(dirname);
+
+	if (!dirname)
+		return NULL;
+	tb = mnt_new_tab();
+	if (tb && mnt_tab_parse_dir(tb, dirname) != 0) {
 		mnt_free_tab(tb);
 		tb = NULL;
 	}
@@ -450,90 +533,35 @@ int mnt_tab_set_parser_errcb(mnt_tab *tb,
  *
  * See also mnt_tab_set_parser_errcb().
  *
- * Returns: 0 on success (least one record has been successfully parsed) or
- *          negative number in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_tab_parse_fstab(mnt_tab *tb, const char *filename)
 {
-	int num, n = 0, i;
-	DIR *dir = NULL;
 	FILE *f;
-	struct dirent **namelist = NULL;
 
 	assert(tb);
+
 	if (!tb)
 		return -EINVAL;
-
-	num = mnt_tab_get_nents(tb);
-
 	if (!filename)
 		filename = mnt_get_fstab_path();
 
 	f = fopen(filename, "r");
 	if (f) {
-		mnt_tab_parse_stream(tb, f, filename);
+		int rc = mnt_tab_parse_stream(tb, f, filename);
 		fclose(f);
+
+		if (rc)
+			return rc;
 
 		if (strcmp(filename, _PATH_MNTTAB))
 			/* /etc/fstab.d sould be used together with /etc/fstab only */
-			goto done;
+			return 0;
 	}
 
-	/* TODO: it would be nice to have a scandir() implementaion that
-	 *       is able to use already opened directory */
-	n = scandir(_PATH_MNTTAB_DIR, &namelist, NULL, versionsort);
-	if (n <= 0)
-		goto done;
-
-	/* let use "at" functions rather than play crazy games with paths... */
-	dir = opendir(_PATH_MNTTAB_DIR);
-	if (!dir)
-		goto done;
-
-	for (i = 0; i < n; i++) {
-		struct dirent *d = namelist[i];
-		struct stat st;
-		size_t namesz;
-
-#ifdef _DIRENT_HAVE_D_TYPE
-		if (d->d_type != DT_UNKNOWN && d->d_type != DT_REG &&
-		    d->d_type != DT_LNK)
-			continue;
-#endif
-		if (*d->d_name == '.')
-			continue;
-
-#define MNT_MNTTABDIR_EXTSIZ	(sizeof(MNT_MNTTABDIR_EXT) - 1)
-
-		namesz = strlen(d->d_name);
-		if (!namesz || namesz < MNT_MNTTABDIR_EXTSIZ + 1 ||
-		    strcmp(d->d_name + (namesz - MNT_MNTTABDIR_EXTSIZ),
-			    MNT_MNTTABDIR_EXT))
-				continue;
-
-		if (fstat_at(dirfd(dir), _PATH_MNTTAB_DIR, d->d_name, &st, 0) ||
-		    !S_ISREG(st.st_mode))
-			continue;
-
-		f = fopen_at(dirfd(dir), _PATH_MNTTAB_DIR,
-					d->d_name, O_RDONLY, "r");
-		if (f) {
-			mnt_tab_parse_stream(tb, f, d->d_name);
-			fclose(f);
-		}
-	}
-done:
-	for (i = 0; i < n; i++)
-		free(namelist[i]);
-	free(namelist);
-	if (dir)
-		closedir(dir);
-
-	num = mnt_tab_get_nents(tb) - num;
-
-	DBG(TAB, mnt_debug_h(tb, "fstab contains %d records", num));
-
-	return num > 0 ? 0 : -1;
+	if (!access(_PATH_MNTTAB_DIR, R_OK))
+		return mnt_tab_parse_dir(tb, _PATH_MNTTAB_DIR);
+	return 0;
 }
 
 /*
@@ -586,12 +614,8 @@ static mnt_fs *mnt_tab_merge_userspace_fs(mnt_tab *tb, mnt_fs *uf)
  * @tb: table
  * @filename: overwrites default (/etc/mtab or $LIBMOUNT_MTAB) or NULL
  *
- * This function parses /etc/mtab or {/proc/self,/var/run/mount}/mountinfo or
- * /proc/mounts. Note that the /var/run/mount/mountinfo file is optional and
- * contains userspace specific mount options only.
- *
- * Note that /var/run/mount/mountinfo is ignored if /etc/mtab is writable or
- * $LIBMOUNT_MTAB or @filename does not end with "mountinfo" postfix.
+ * This function parses /etc/mtab or /proc/self/mountinfo +
+ * /dev/.mount/utabs/<*>.mtab or /proc/mounts.
  *
  * See also mnt_tab_set_parser_errcb().
  *
@@ -600,22 +624,17 @@ static mnt_fs *mnt_tab_merge_userspace_fs(mnt_tab *tb, mnt_fs *uf)
 int mnt_tab_parse_mtab(mnt_tab *tb, const char *filename)
 {
 	int rc;
+	const char *utab = NULL;
 
-	if (!filename)
-		filename = mnt_get_writable_mtab_path();
-
-	/*
-	 * Regular mtab file
-	 */
-	if (filename && !endswith(filename, "mountinfo")) {
+	if (mnt_has_regular_mtab(&filename, NULL)) {
 		rc = mnt_tab_parse_file(tb, filename);
 		if (!rc)
 			return 0;
-		filename = NULL;
+		filename = NULL;	/* failed */
 	}
 
 	/*
-	 * useless /etc/mtab or /var/run/mount/mountinfo is supported
+	 * useless /etc/mtab
 	 * -- read kernel information from /proc/self/mountinfo
 	 */
 	rc = mnt_tab_parse_file(tb, _PATH_PROC_MOUNTINFO);
@@ -624,13 +643,11 @@ int mnt_tab_parse_mtab(mnt_tab *tb, const char *filename)
 		return mnt_tab_parse_file(tb, _PATH_PROC_MOUNTS);
 
 	/*
-	 * try to read userspace specific information from
-	 * /var/run/mount/mountinfo
+	 * try to read userspace specific information from /dev/.mount/utabs/
 	 */
-	if (filename) {
-		mnt_tab *u_tb = mnt_new_tab_from_file(filename);
-
-		assert(endswith(filename, "mountinfo"));
+	utab = mnt_get_utab_path();
+	if (utab) {
+		mnt_tab *u_tb = mnt_new_tab_from_dir(utab);
 
 		if (u_tb) {
 			mnt_fs *u_fs;
