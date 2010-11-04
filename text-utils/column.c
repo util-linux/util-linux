@@ -308,8 +308,10 @@ maketbl()
 			for (i = lens[coloff] - t->len[coloff] + 2; i > 0; i--)
 				putwchar(' ');
 		}
-		fputws(t->list[coloff], stdout);
-		putwchar('\n');
+		if (coloff < t->cols) {
+			fputws(t->list[coloff], stdout);
+			putwchar('\n');
+		}
 	}
 }
 
