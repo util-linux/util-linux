@@ -2,14 +2,7 @@
 
 #include "clock.h"
 
-#ifndef __m68k__
-
-struct clock_ops *
-probe_for_kd_clock() {
-	return NULL;
-}
-
-#else /* __m68k__ */
+#ifdef __m68k__
 
 #include <unistd.h>		/* for close() */
 #include <fcntl.h>		/* for O_RDONLY */
@@ -19,25 +12,25 @@ probe_for_kd_clock() {
 #include "nls.h"
 #include "usleep.h"
 
+/* Get defines for KDGHWCLK and KDSHWCLK (m68k) */
+#include <linux/kd.h>
+
+/* Even on m68k, if KDGHWCLK (antique) is not defined, don't build this */
+
+#endif
+
+#if !defined(__m68k__) || !defined(KDGHWCLK)
+
+struct clock_ops *
+probe_for_kd_clock() {
+	return NULL;
+}
+
+#else /* __m68k__ && KDGHWCLK */
+
 static int con_fd = -1;		/* opened by probe_for_kd_clock() */
 				/* never closed */
 static char *con_fd_filename;	/* usually "/dev/tty1" */
-
-/* Get defines for KDGHWCLK and KDSHWCLK (m68k) */
-#include <linux/kd.h>
-#ifndef KDGHWCLK
-#define KDGHWCLK        0x4B50     /* get hardware clock */
-#define KDSHWCLK        0x4B51     /* set hardware clock */
-struct hwclk_time {
-        unsigned        sec;    /* 0..59 */
-        unsigned        min;    /* 0..59 */
-        unsigned        hour;   /* 0..23 */
-        unsigned        day;    /* 1..31 */
-        unsigned        mon;    /* 0..11 */
-        unsigned        year;   /* 70... */
-        int             wday;   /* 0..6, 0 is Sunday, -1 means unknown/don't set */
-};
-#endif
 
 static int
 synchronize_to_clock_tick_kd(void) {
@@ -183,4 +176,4 @@ probe_for_kd_clock() {
 	}
 	return ret;
 }
-#endif /* __m68k__ */
+#endif /* __m68k__ && KDGHWCLK */
