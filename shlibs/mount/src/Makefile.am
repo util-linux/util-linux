@@ -58,7 +58,7 @@ tests = test_version test_cache test_optstr test_lock \
 		  test_tab test_utils test_tab_update
 
 tests: all $(tests)
-test_%: %.c
+test_%: %.c all
 	$(COMPILE) -DTEST_PROGRAM $< .libs/libmount.a \
 		$(ul_libblkid_builddir)/.libs/libblkid.a -o $@ \
 		$(TESTS_LIBS)

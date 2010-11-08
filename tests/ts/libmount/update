@@ -54,11 +54,4 @@ $TESTPROG --remove /mnt/gogo
 cp $LIBMOUNT_MTAB $TS_OUTPUT	# save the mtab aside
 ts_finalize_subtest		# checks the mtab
 
-ts_init_subtest "fstab-add"
-$TESTPROG --add-fstab /dev/sda1 /mnt/foo ext3 "rw,bbb,ccc,fff=FFF,ddd,noexec" 1 2
-$TESTPROG --add-fstab /dev/sda2 /mnt/bar auto "defaults" 1 2
-$TESTPROG --add-fstab /dev/sda3 /mnt/bar auto "rw,context=\"some,selinux,junk\",noatime" 1 2
-cp $LIBMOUNT_FSTAB $TS_OUTPUT	# save the fstab aside
-ts_finalize_subtest		# checks the fstab
-
 ts_finalize
