@@ -363,61 +363,6 @@ static int do_mount(mnt_context *cxt, const char *try_type)
 }
 
 /**
- * mnt_context_prepare_mount:
- * @cxt: mount context
- *
- * This function:
- *	- read information from fstab (if necessary)
- *	- cleanup mount options
- *	- check premissions
- *	- prepare device (e.g. loop device)
- *	- detect FS type (if necessary)
- *	- generate mount flags and mount data (if not set yet)
- *	- prepare for mtab update (if necessary)
- *
- * It's strongly recommended to use this function before mnt_context_mount_fs().
- *
- * Returns: 0 on success, and negative number in case of error.
- */
-int mnt_context_prepare_mount(mnt_context *cxt)
-{
-	int rc = 0;
-
-	if (!cxt)
-		return -EINVAL;
-
-	if (!cxt->fs || (!mnt_fs_get_source(cxt->fs) &&
-			 !mnt_fs_get_target(cxt->fs)))
-		return -EINVAL;
-
-	DBG(CXT, mnt_debug_h(cxt, "mount: preparing"));
-
-	rc = mnt_context_apply_fstab(cxt);
-	if (!rc)
-		rc = mnt_context_merge_mountflags(cxt);
-	if (!rc)
-		rc = evaluate_permissions(cxt);
-	if (!rc)
-		rc = fix_optstr(cxt);
-	if (!rc)
-		rc = mnt_context_prepare_srcpath(cxt);
-	if (!rc)
-		rc = mnt_context_guess_fstype(cxt);
-	if (!rc)
-		rc = mnt_context_prepare_helper(cxt, "mount", NULL);
-	if (!rc)
-		rc = mnt_context_prepare_update(cxt, MNT_ACT_MOUNT);
-
-	if (!rc) {
-		DBG(CXT, mnt_debug_h(cxt, "sucessfully prepared"));
-		return 0;
-	}
-
-	DBG(CXT, mnt_debug_h(cxt, "prepare failed"));
-	return rc;
-}
-
-/**
  * mnt_context_do_mount:
  * @cxt: mount context
  *
@@ -438,6 +383,33 @@ int mnt_context_do_mount(mnt_context *cxt)
 
 	if (!cxt || !cxt->fs || (cxt->fs->flags & MNT_FS_SWAP))
 		return -EINVAL;
+	if (!mnt_fs_get_source(cxt->fs) && !mnt_fs_get_target(cxt->fs))
+		return -EINVAL;
+
+	cxt->action = MNT_ACT_MOUNT;
+
+	DBG(CXT, mnt_debug_h(cxt, "mount: preparing"));
+
+	rc = mnt_context_apply_fstab(cxt);
+	if (!rc)
+		rc = mnt_context_merge_mountflags(cxt);
+	if (!rc)
+		rc = evaluate_permissions(cxt);
+	if (!rc)
+		rc = fix_optstr(cxt);
+	if (!rc)
+		rc = mnt_context_prepare_srcpath(cxt);
+	if (!rc)
+		rc = mnt_context_guess_fstype(cxt);
+	if (!rc)
+		rc = mnt_context_prepare_helper(cxt, "mount", NULL);
+	if (!rc)
+		rc = mnt_context_prepare_update(cxt);
+
+	if (rc) {
+		DBG(CXT, mnt_debug_h(cxt, "mount: preparing failed"));
+		return rc;
+	}
 
 	DBG(CXT, mnt_debug_h(cxt, "mount: do mount"));
 
@@ -456,55 +428,10 @@ int mnt_context_do_mount(mnt_context *cxt)
 
 	/* TODO: try all filesystems from /proc/filesystems and /etc/filesystems */
 
-	return rc;
-}
-
-/**
- * mnt_context_post_mount:
- * @cxt: mount context
- *
- * Updates mtab, etc. This function should be always called after
- * mnt_context_do_mount().
- *
- * Returns: 0 on success, and negative number in case of error.
- */
-int mnt_context_post_mount(mnt_context *cxt)
-{
-	int rc = 0;
-
-	assert(cxt);
-	assert(cxt->fs);
-	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
-
-	if (!cxt)
-		return -EINVAL;
-	/*
-	 * Update /etc/mtab or /var/run/mount/mountinfo
+	/* TODO: if mtab update is expected then check if the
+	 * target is really mounted read-write to avoid 'ro' in
+	 * mtab and 'rw' in /proc/mounts.
 	 */
-	if (!cxt->syscall_errno && !cxt->helper &&
-	    !(cxt->flags & MNT_FL_NOMTAB) &&
-	    cxt->update && !mnt_update_is_pointless(cxt->update)) {
-
-		/* TODO: if mtab update is expected then checkif the target is really
-		 *       mounted read-write to avoid 'ro' in mtab and 'rw' in /proc/mounts.
-		 */
-		rc = mnt_update_file(cxt->update);
-	}
-
-	return rc;
-}
-
-/**
- * mnt_context_mount_strerror
- * @cxt: mount context
- * @buf: buffer
- * @bufsiz: size of the buffer
- *
- * Returns: 0 or negative number in case of error.
- */
-int mnt_context_mount_strerror(mnt_context *cxt, char *buf, size_t bufsiz)
-{
-	/* TODO: based on cxt->syscall_errno or cxt->helper_status */
-	return 0;
+	return mnt_context_update_tabs(cxt);
 }
 

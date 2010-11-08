@@ -39,6 +39,12 @@ mnt_context *mnt_new_context()
 	DBG(CXT, mnt_debug_h(cxt, "allocate %s",
 				cxt->restricted ? "[RESTRICTED]" : ""));
 
+	mnt_has_regular_mtab(&cxt->mtab_path, &cxt->mtab_writable);
+
+	if (!cxt->mtab_writable)
+		/* use /dev/.mount/utab if /etc/mtab is useless */
+		mnt_has_regular_mtab(&cxt->utab_path, &cxt->utab_writable);
+
 	return cxt;
 }
 
@@ -53,22 +59,20 @@ void mnt_free_context(mnt_context *cxt)
 	if (!cxt)
 		return;
 
+	mnt_reset_context(cxt);
+
 	DBG(CXT, mnt_debug_h(cxt, "free"));
 
 	free(cxt->fstype_pattern);
 	free(cxt->optstr_pattern);
-	free(cxt->helper);
-	free(cxt->orig_user);
 
-	if (!(cxt->flags & MNT_FL_EXTERN_FS))
-		mnt_free_fs(cxt->fs);
 	if (!(cxt->flags & MNT_FL_EXTERN_FSTAB))
 		mnt_free_tab(cxt->fstab);
 	if (!(cxt->flags & MNT_FL_EXTERN_CACHE))
 		mnt_free_cache(cxt->cache);
 
+	mnt_free_lock(cxt->lock);
 	mnt_free_update(cxt->update);
-	mnt_free_tab(cxt->mtab);
 
 	free(cxt);
 }
@@ -101,22 +105,18 @@ int mnt_reset_context(mnt_context *cxt)
 
 	fl = cxt->flags;
 
-	if (cxt->update)
-		mnt_update_set_fs(cxt->update, NULL);
-
 	if (!(cxt->flags & MNT_FL_EXTERN_FS))
 		mnt_free_fs(cxt->fs);
 
 	mnt_free_tab(cxt->mtab);
 
-	cxt->fs = NULL;
-	cxt->mtab = NULL;
-
 	free(cxt->helper);
 	free(cxt->orig_user);
 
+	cxt->fs = NULL;
+	cxt->mtab = NULL;
 	cxt->helper = NULL;
-
+	cxt->orig_user = NULL;
 	cxt->mountflags = 0;
 	cxt->user_mountflags = 0;
 	cxt->mountdata = NULL;
@@ -585,7 +585,7 @@ int mnt_context_get_mtab(mnt_context *cxt, mnt_tab **tb)
 		cxt->mtab = mnt_new_tab();
 		if (!cxt->mtab)
 			return -ENOMEM;
-		rc = mnt_tab_parse_mtab(cxt->mtab, NULL);
+		rc = mnt_tab_parse_mtab(cxt->mtab, cxt->mtab_path);
 		if (rc)
 			return rc;
 	}
@@ -650,9 +650,6 @@ mnt_cache *mnt_context_get_cache(mnt_context *cxt)
  * mnt_context_get_lock:
  * @cxt: mount context
  *
- * The lock is available after mnt_context_prepare_mount() or
- * mnt_context_prepare_umount().
- *
  * The application that uses libmount context does not have to care about
  * mtab locking, but with a small exceptions: the application has to be able to
  * remove the lock file when interrupted by signal. It means that properly written
@@ -661,16 +658,20 @@ mnt_cache *mnt_context_get_cache(mnt_context *cxt)
  * See also mnt_unlock_file(), mnt_context_disable_lock() and
  * mnt_context_disable_mtab().
  *
- * It's not error if this function returns NULL (it usually means that the
- * context is not prepared yet, or mtab update is unnecessary).
+ * This function returns NULL if mtab file is not writable or nolock or nomtab
+ * flags is enabled.
  *
- * Returns: pointer to lock struct.
+ * Returns: pointer to lock struct or NULL.
  */
 mnt_lock *mnt_context_get_lock(mnt_context *cxt)
 {
-	if (!cxt || !cxt->update || (cxt->flags & (MNT_FL_NOMTAB | MNT_FL_NOLOCK)))
+	if (!cxt || (cxt->flags & MNT_FL_NOMTAB) || !cxt->mtab_writable)
 		return NULL;
-	return mnt_update_get_lock(cxt->update);
+
+	if (!cxt->lock && cxt->mtab_path)
+		cxt->lock = mnt_new_lock(cxt->mtab_path, 0);
+
+	return cxt->lock;
 }
 
 /**
@@ -1025,48 +1026,63 @@ int mnt_context_merge_mountflags(mnt_context *cxt)
 }
 
 /*
- * Prepare /etc/mtab or /var/run/mount/mountinfo update
+ * Prepare /etc/mtab or /dev/.mount/utab
  */
-int mnt_context_prepare_update(mnt_context *cxt, int act)
+int mnt_context_prepare_update(mnt_context *cxt)
 {
 	int rc;
-	const char *tgt = cxt->fs ? mnt_fs_get_target(cxt->fs) : NULL;
+	const char *target;
 
 	assert(cxt);
 	assert(cxt->fs);
+	assert(cxt->action);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-	if (act == MNT_ACT_UMOUNT && tgt && !strcmp(tgt, "/"))
+	target = mnt_fs_get_target(cxt->fs);
+
+	if (cxt->action == MNT_ACT_UMOUNT && target && !strcmp(target, "/"))
 		/* Don't try to touch mtab if umounting root FS */
 		cxt->flags |= MNT_FL_NOMTAB;
 
 	if ((cxt->flags & MNT_FL_NOMTAB) || cxt->helper)
 		return 0;
+	if (!cxt->mtab_writable && !cxt->utab_writable)
+		return 0;
 
 	if (!cxt->update) {
-		cxt->update = mnt_new_update(act, cxt->mountflags, cxt->fs);
+		cxt->update = mnt_new_update(!cxt->mtab_writable);
 		if (!cxt->update)
 			return -ENOMEM;
-	} else {
-		rc = mnt_update_set_action(cxt->update, act);
-		if (!rc)
-			rc = mnt_update_set_mountflags(cxt->update, cxt->mountflags);
-		if (!rc)
-			rc = mnt_update_set_fs(cxt->update, cxt->fs);
-		if (rc)
-			return rc;
 	}
 
-	if (cxt->flags & MNT_FL_NOLOCK)
-		mnt_update_disable_lock(cxt->update, TRUE);
+	rc = mnt_update_set_fs(cxt->update, cxt->mountflags,
+			  mnt_fs_get_target(cxt->fs),
+			  cxt->action == MNT_ACT_UMOUNT ? NULL : cxt->fs);
 
-	rc = mnt_prepare_update(cxt->update);
+	return rc < 0 ? rc : 0;
+}
 
-	if (rc == 1)
-		/* mtab update is unnecessary for this system */
-		rc = 0;
+int mnt_context_update_tabs(mnt_context *cxt)
+{
+	const char *filename;
+	mnt_lock *lock = NULL;
 
-	return rc;
+	assert(cxt);
+
+	if (cxt->flags & MNT_FL_NOMTAB)
+		return 0;
+	if (!cxt->update || !mnt_update_is_ready(cxt->update))
+		return 0;
+
+	if (mnt_update_is_userspace_only(cxt->update))
+		filename = cxt->utab_path;
+	else {
+		filename = cxt->mtab_path;
+		lock = mnt_context_get_lock(cxt);
+	}
+	assert(filename);
+
+	return mnt_update_tab(cxt->update, filename, lock);
 }
 
 static int is_remount(mnt_context *cxt)
@@ -1199,6 +1215,19 @@ err:
 	return rc;
 }
 
+/**
+ * mnt_context_strerror
+ * @cxt: context
+ * @buf: buffer
+ * @bufsiz: size of the buffer
+ *
+ * Returns: 0 or negative number in case of error.
+ */
+int mnt_context_strerror(mnt_context *cxt, char *buf, size_t bufsiz)
+{
+	/* TODO: based on cxt->syscall_errno or cxt->helper_status */
+	return 0;
+}
 
 #ifdef TEST_PROGRAM
 

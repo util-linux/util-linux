@@ -87,6 +87,18 @@ int startswith(const char *s, const char *sx)
         return !strncmp(s, sx, off);
 }
 
+/* returns basename and keeps dirname in the @path, if @path is "/" (root)
+ * then returns empty string */
+static char *stripoff_last_component(char *path)
+{
+	char *p = path ? strrchr(path, '/') : NULL;
+
+	if (!p)
+		return NULL;
+	*p = '\0';
+	return ++p;
+}
+
 /**
  * mnt_mangle:
  * @str: string
@@ -404,32 +416,116 @@ done:
 	return rc;
 }
 
-/*
- * Returns 1 if /etc/mtab is a reqular file.
+static int try_write(const char *filename)
+{
+	int fd;
+
+	if (!filename)
+		return -EINVAL;
+
+	fd = open(filename, O_RDWR, 0644);
+	if (fd >= 0) {
+		close(fd);
+		return 0;
+	}
+	return -errno;
+}
+
+/**
+ * mnt_has_regular_mtab:
+ * @mtab: returns path to mtab
+ * @writable: returns 1 if the file is writable
+ *
+ * If the file does not exist and @writable argument is not NULL then it will
+ * try to create the file
+ *
+ * Returns: 1 if /etc/mtab is a reqular file, and 0 in case of error (check
+ *          errno for more details).
  */
-int mnt_has_regular_mtab(const char **mtab, int *writeable)
+int mnt_has_regular_mtab(const char **mtab, int *writable)
 {
 	struct stat st;
 	int rc;
-	const char *x = mtab && *mtab ? *mtab : mnt_get_mtab_path();
+	const char *filename = mtab && *mtab ? *mtab : mnt_get_mtab_path();
 
 	if (mtab && !*mtab)
-		*mtab = x;
-	rc = (lstat(x, &st) == 0 && S_ISREG(st.st_mode));
+		*mtab = filename;
+
+	DBG(UTILS, mnt_debug("mtab: %s", filename));
+
+	rc = lstat(filename, &st);
+
+	if (rc == 0) {
+		/* file exist */
+		if (S_ISREG(st.st_mode)) {
+			if (writable)
+				*writable = !try_write(filename);
+			return 1;
+		}
+		return 0;	/* it's not regular file */
+	}
+
+	/* try to create the file */
+	if (writable) {
+		*writable = !try_write(filename);
+		return *writable;
+	}
+
+	return 0;
+}
+/**
+ *
+ * mnt_has_regular_utab:
+ * @utab: returns path to utab (usually /dev/.mount/utab)
+ * @writable: returns 1 if the file is writable
+ *
+ * If the file does not exist and @writable argument is not NULL then it will
+ * try to create the directory (e.g. /dev/.mount) and the file.
+ *
+ * Returns: 1 if /etc/utab is a reqular file, and 0 in case of error (check
+ *          errno for more details).
+ */
+
+int mnt_has_regular_utab(const char **utab, int *writable)
+{
+	struct stat st;
+	int rc;
+	const char *filename = utab && *utab ? *utab : mnt_get_utab_path();
+
+	if (utab && !*utab)
+		*utab = filename;
+
+	DBG(UTILS, mnt_debug("utab: %s", filename));
+
+	rc = lstat(filename, &st);
+
+	if (rc == 0) {
+		/* file exist */
+		if (S_ISREG(st.st_mode)) {
+			if (writable)
+				*writable = try_write(filename);
+			return 1;
+		}
+		return 0;	/* it's not regular file */
+	}
 
 	if (writable) {
-		if (rc) {
-			/* TODO: use utimensat() */
-			int fd = open(path, O_RDWR, 0644);
-			if (fd >= 0) {
-				close(fd);
-				*writable = 1;
-				return rc;
-			}
-		}
-		*writable = 0;
+		char *dirname = strdup(filename);
+
+		if (!dirname)
+			return 0;
+
+		stripoff_last_component(dirname);	/* remove filename */
+
+		rc = mkdir(dirname, 755);
+		free(dirname);
+		if (rc && errno != EEXIST)
+			return 0;			/* probably EACCES */
+
+		*writable = !try_write(filename);
+		return *writable;
 	}
-	return rc;
+	return 0;
 }
 
 /**
@@ -494,18 +590,6 @@ int mnt_open_uniq_filename(const char *filename, char **name, int flags)
 		free(n);
 
 	return fd < 0 ? -errno : fd;
-}
-
-/* returns basename and keeps dirname in the @path, if @path is "/" (root)
- * then returns empty string */
-static char *stripoff_last_component(char *path)
-{
-	char *p = strrchr(path, '/');
-
-	if (!p)
-		return NULL;
-	*p = '\0';
-	return ++p;
 }
 
 char *mnt_get_mountpoint(const char *path)

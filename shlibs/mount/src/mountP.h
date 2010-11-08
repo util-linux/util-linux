@@ -92,8 +92,7 @@ mnt_debug_h(void *handler, const char *mesg, ...)
 #define MNT_MNTTABDIR_EXT	".fstab"
 
 /* library private paths */
-#define MNT_PATH_RUNDIR		"/var/run/mount"
-#define MNT_PATH_MOUNTINFO	MNT_PATH_RUNDIR "/mountinfo"
+#define MNT_PATH_UTAB	"/dev/.mount/utab"
 
 #ifdef TEST_PROGRAM
 struct mtest {
@@ -116,10 +115,9 @@ extern int mnt_get_uid(const char *username, uid_t *uid);
 extern int mnt_get_gid(const char *groupname, gid_t *gid);
 extern int mnt_in_group(gid_t gid);
 
-extern int mnt_has_regular_mtab(void);
-
 extern char *mnt_get_mountpoint(const char *path);
 extern char *mnt_get_fs_root(const char *path, const char *mountpoint);
+extern int mnt_open_uniq_filename(const char *filename, char **name, int flags);
 
 /*
  * Generic iterator
@@ -207,7 +205,6 @@ struct _mnt_tab {
 struct _mnt_context
 {
 	int	action;		/* MNT_ACT_{MOUNT,UMOUNT} */
-
 	int	restricted;	/* root or not? */
 
 	char	*fstype_pattern;	/* for mnt_match_fstype() */
@@ -224,8 +221,15 @@ struct _mnt_context
 
 	unsigned long	user_mountflags;	/* MNT_MS_* (loop=, user=, ...) */
 
-	mnt_update	*update;	/* mtab update */
-	mnt_cache	*cache;		/* paths cache */
+	mnt_cache	*cache;	/* paths cache */
+	mnt_lock	*lock;	/* mtab lock */
+	mnt_update	*update;/* mtab/utab update */
+
+	const char	*mtab_path; /* writable mtab */
+	int		mtab_writable; /* ismtab writeable */
+
+	const char	*utab_path; /* writable mtab */
+	int		utab_writable; /* ismtab writeable */
 
 	int	flags;		/* private context flags */
 	int	ambi;		/* libblkid returns ambivalent result */
@@ -285,8 +289,9 @@ extern int __mnt_fs_set_optstr(mnt_fs *fs, const char *optstr, int split);
 extern int mnt_context_prepare_srcpath(mnt_context *cxt);
 extern int mnt_context_guess_fstype(mnt_context *cxt);
 extern int mnt_context_prepare_helper(mnt_context *cxt, const char *name, const char *type);
-extern int mnt_context_prepare_update(mnt_context *cxt, int act);
+extern int mnt_context_prepare_update(mnt_context *cxt);
 extern mnt_fs *mnt_context_get_fs(mnt_context *cxt);
 extern int mnt_context_merge_mountflags(mnt_context *cxt);
+extern int mnt_context_update_tabs(mnt_context *cxt);
 
 #endif /* _LIBMOUNT_PRIVATE_H */

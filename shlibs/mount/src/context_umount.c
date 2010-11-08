@@ -413,31 +413,28 @@ static int do_umount(mnt_context *cxt)
 }
 
 /**
- * mnt_context_prepare_umount:
+ * mnt_context_do_umount:
  * @cxt: mount context
  *
- * This function:
- *	- read information from fstab/mtab (if necessary)
- *	- check premissions
- *	- prepare for mtab update (if necessary)
+ * Umount filesystem by umount(2) or fork()+exec(/sbin/umount.<type>).
  *
- * It's strongly recommended to use this function before mnt_context_do_umount().
+ * See also mnt_context_disable_helpers().
  *
  * Returns: 0 on success, and negative number in case of error.
  */
-int mnt_context_prepare_umount(mnt_context *cxt)
+int mnt_context_do_umount(mnt_context *cxt)
 {
-	int rc = 0;
+	int rc;
 
-	if (!cxt)
+	if (!cxt || !cxt->fs || (cxt->fs->flags & MNT_FS_SWAP))
 		return -EINVAL;
-
-	if (!cxt->fs || (!mnt_fs_get_source(cxt->fs) &&
-			 !mnt_fs_get_target(cxt->fs)))
+	if (!mnt_fs_get_source(cxt->fs) && !mnt_fs_get_target(cxt->fs))
 		return -EINVAL;
 
 	free(cxt->helper);	/* be paranoid */
 	cxt->helper = NULL;
+
+	cxt->action = MNT_ACT_UMOUNT;
 
 	rc = lookup_umount_fs(cxt);
 	if (!rc)
@@ -452,51 +449,15 @@ int mnt_context_prepare_umount(mnt_context *cxt)
 		cxt->flags &= ~MNT_FL_LOOPDEL;
 */
 	if (!rc)
-		rc = mnt_context_prepare_update(cxt, MNT_ACT_UMOUNT);
-	if (!rc) {
-		DBG(CXT, mnt_debug_h(cxt, "umount sucessfully prepared"));
-		return 0;
+		rc = mnt_context_prepare_update(cxt);
+	if (rc) {
+		DBG(CXT, mnt_debug_h(cxt, "prepared umount failed"));
+		return rc;
 	}
 
-	DBG(CXT, mnt_debug_h(cxt, "umount prepare failed"));
-	return rc;
-}
-
-/**
- * mnt_context_do_umount:
- * @cxt: mount context
- *
- * Umount filesystem by umount(2) or fork()+exec(/sbin/umount.<type>).
- *
- * See also mnt_context_disable_helpers().
- *
- * Returns: 0 on success, and negative number in case of error.
- */
-int mnt_context_do_umount(mnt_context *cxt)
-{
-	if (!cxt || !cxt->fs || (cxt->fs->flags & MNT_FS_SWAP))
-		return -EINVAL;
-
-	return do_umount(cxt);
-}
-
-/**
- * mnt_context_post_umount:
- * @cxt: mount context
- *
- * Updates mtab and detroy loopdev etc. This function should be always called after
- * mnt_context_do_umount().
- *
- * Returns: 0 on success, and negative number in case of error.
- */
-int mnt_context_post_umount(mnt_context *cxt)
-{
-	int rc = 0;
-
-	if (!cxt)
-		return -EINVAL;
-	if (cxt->syscall_errno || cxt->helper)
-		return 0;
+	rc = do_umount(cxt);
+	if (rc)
+		return rc;
 /* TODO
 	if (cxt->flags & MNT_FL_LOOPDEL)
 		rc = mnt_loopdev_clean(mnt_fs_get_source(cxt->fs));
@@ -507,34 +468,23 @@ int mnt_context_post_umount(mnt_context *cxt)
 	if ((cxt->flags & MNT_FL_RDONLY_UMOUNT) &&
 	    (cxt->mountflags & (MS_RDONLY | MS_REMOUNT))) {
 		/*
-		 * refresh update to handle remount to read-only
+		 * update options to handle remount to read-only
 		 */
-		rc = mnt_context_prepare_update(cxt, MNT_ACT_MOUNT);
-		if (rc)
-			return rc;
-	}
+		const char *o = mnt_fs_get_optstr(cxt->fs);
+		char *n = o ? strdup(o) : NULL;
 
-	/*
-	 * Update /etc/mtab or /var/run/mount/mountinfo
-	 */
-	if (cxt->update && !mnt_update_is_pointless(cxt->update)) {
-		rc = mnt_update_file(cxt->update);
+		if (n)
+			mnt_optstr_remove_option(&n, "rw");
+		rc = mnt_optstr_prepend_option(&n, "ro", NULL);
 		if (!rc)
-			return rc;
-	}
-	return rc;
-}
+			rc = __mnt_fs_set_optstr_ptr(cxt->fs, n, FALSE);
 
-/**
- * mnt_context_umount_strerror
- * @cxt: mount context
- * @buf: buffer
- * @bufsiz: size of the buffer
- *
- * Returns: 0 or negative number in case of error.
- */
-int mnt_context_umount_strerror(mnt_context *cxt, char *buf, size_t bufsiz)
-{
-	/* TODO: based on cxt->syscall_errno or cxt->helper_status */
-	return 0;
+		if (!rc && cxt->update &&
+		    !mnt_update_is_userspace_only(cxt->update))
+			/* refresh options in /etc/mtab as well*/
+			rc = mnt_update_set_fs(cxt->update,
+					       cxt->mountflags, NULL, cxt->fs);
+	}
+
+	return rc ? : mnt_context_update_tabs(cxt);
 }

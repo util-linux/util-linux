@@ -424,7 +424,7 @@ int mnt_lock_file(mnt_lock *ml)
 		}
 	}
 	DBG(LOCKS, mnt_debug_h(ml,
-			"LOCK: %s: (%d) successfully locked\n",
+			"%s: (%d) successfully locked\n",
 			lockfile, getpid()));
 	unlink(linkfile);
 	return 0;
