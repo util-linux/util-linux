@@ -676,16 +676,20 @@ static int update(const char *target, mnt_fs *fs, unsigned long mountflags)
 
 		if (rc && writable)
 			upd = mnt_new_update(TRUE);
-		else
-			return -EACCES;
+		else {
+			fprintf(stderr, "utab useless: %m\n");
+			return -1;
+		}
 	}
 
 	rc = mnt_update_set_fs(upd, mountflags, target, fs);
-	if (rc)
-		goto done;
 	if (rc == 1) {
-		fprintf(stderr, "update is unnecessary\n");
+		/* update is unnecessary */
 		rc = 0;
+		goto done;
+	}
+	if (rc) {
+		fprintf(stderr, "failed to set FS\n");
 		goto done;
 	}
 

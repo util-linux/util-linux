@@ -148,7 +148,11 @@ static int mnt_parse_mountinfo_line(mnt_fs *fs, char *s)
 		} else
 			unmangle_string(src);
 
-		unmangle_string(fs->fs_optstr);
+		if (!strcmp(fs->fs_optstr, "none")) {
+			free(fs->fs_optstr);
+			fs->fs_optstr = NULL;
+		} else
+			unmangle_string(fs->fs_optstr);
 
 		rc = __mnt_fs_set_fstype_ptr(fs, fstype);
 		if (!rc)

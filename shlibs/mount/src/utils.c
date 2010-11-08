@@ -448,6 +448,8 @@ int mnt_has_regular_mtab(const char **mtab, int *writable)
 	int rc;
 	const char *filename = mtab && *mtab ? *mtab : mnt_get_mtab_path();
 
+	if (writable)
+		*writable = 0;
 	if (mtab && !*mtab)
 		*mtab = filename;
 
@@ -462,17 +464,21 @@ int mnt_has_regular_mtab(const char **mtab, int *writable)
 				*writable = !try_write(filename);
 			return 1;
 		}
-		return 0;	/* it's not regular file */
+		goto done;
 	}
 
 	/* try to create the file */
 	if (writable) {
 		*writable = !try_write(filename);
-		return *writable;
+		if (*writable)
+			return 1;
 	}
 
+done:
+	DBG(UTILS, mnt_debug("%s: irregular/non-writable", filename));
 	return 0;
 }
+
 /**
  *
  * mnt_has_regular_utab:
@@ -492,6 +498,8 @@ int mnt_has_regular_utab(const char **utab, int *writable)
 	int rc;
 	const char *filename = utab && *utab ? *utab : mnt_get_utab_path();
 
+	if (writable)
+		*writable = 0;
 	if (utab && !*utab)
 		*utab = filename;
 
@@ -503,28 +511,31 @@ int mnt_has_regular_utab(const char **utab, int *writable)
 		/* file exist */
 		if (S_ISREG(st.st_mode)) {
 			if (writable)
-				*writable = try_write(filename);
+				*writable = !try_write(filename);
 			return 1;
 		}
-		return 0;	/* it's not regular file */
+		goto done;	/* it's not regular file */
 	}
 
 	if (writable) {
 		char *dirname = strdup(filename);
 
 		if (!dirname)
-			return 0;
+			goto done;
 
 		stripoff_last_component(dirname);	/* remove filename */
 
 		rc = mkdir(dirname, 755);
 		free(dirname);
 		if (rc && errno != EEXIST)
-			return 0;			/* probably EACCES */
+			goto done;			/* probably EACCES */
 
 		*writable = !try_write(filename);
-		return *writable;
+		if (*writable)
+			return 1;
 	}
+done:
+	DBG(UTILS, mnt_debug("%s: irregular/non-writable file", filename));
 	return 0;
 }
 
