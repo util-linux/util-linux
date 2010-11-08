@@ -23,10 +23,9 @@ TESTPROG="$TS_HELPER_LIBMOUNT_UPDATE"
 # Traditional /etc/mtab
 #
 export LIBMOUNT_MTAB=$TS_OUTPUT.mtab
-export LIBMOUNT_FSTAB=$TS_OUTPUT.fstab
 
+rm $LIBMOUNT_MTAB
 > $LIBMOUNT_MTAB
-> $LIBMOUNT_FSTAB
 
 ts_init_subtest "mtab-mount"
 $TESTPROG --add /dev/sda1 /mnt/foo ext3 "rw,bbb,ccc,fff=FFF,ddd,noexec"
@@ -52,6 +51,39 @@ ts_init_subtest "mtab-umount"
 $TESTPROG --remove /mnt/bar
 $TESTPROG --remove /mnt/gogo
 cp $LIBMOUNT_MTAB $TS_OUTPUT	# save the mtab aside
+ts_finalize_subtest		# checks the mtab
+
+#
+# utab
+#
+rm $LIBMOUNT_MTAB
+ln -s /proc/mounts $LIBMOUNT_MTAB
+
+export LIBMOUNT_UTAB=$TS_OUTPUT.utab
+> $LIBMOUNT_UTAB
+
+ts_init_subtest "utab-mount"
+$TESTPROG --add /dev/sda1 /mnt/foo ext3 "rw,bbb,ccc,fff=FFF,ddd,noexec"
+$TESTPROG --add /dev/sdb1 /mnt/bar ext3 "ro,user"
+$TESTPROG --add /dev/sda2 /mnt/xyz ext3 "rw,loop=/dev/loop0,uhelper=hal"
+cp $LIBMOUNT_UTAB $TS_OUTPUT	# save the mtab aside
+ts_finalize_subtest		# checks the mtab
+
+ts_init_subtest "utab-move"
+$TESTPROG --move /mnt/bar /mnt/newbar
+$TESTPROG --move /mnt/xyz /mnt/newxyz
+cp $LIBMOUNT_UTAB $TS_OUTPUT	# save the mtab aside
+ts_finalize_subtest		# checks the mtab
+
+ts_init_subtest "utab-remount"
+$TESTPROG --remount /mnt/newbar "ro,noatime"
+$TESTPROG --remount /mnt/newxyz "rw,user"
+cp $LIBMOUNT_UTAB $TS_OUTPUT	# save the mtab aside
+ts_finalize_subtest		# checks the mtab
+
+ts_init_subtest "utab-umount"
+$TESTPROG --remove /mnt/newbar
+cp $LIBMOUNT_UTAB $TS_OUTPUT	# save the mtab aside
 ts_finalize_subtest		# checks the mtab
 
 ts_finalize

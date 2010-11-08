@@ -1,0 +1,2 @@
+0 0 0:0 / /mnt/newbar user - ext3 /dev/sdb1 none
+0 0 0:0 / /mnt/newxyz loop=/dev/loop0,uhelper=hal - ext3 /dev/sda2 none
