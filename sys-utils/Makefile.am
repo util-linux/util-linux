@@ -28,8 +28,6 @@ endif
 cytune_SOURCES = cytune.c cyclades.h
 tunelp_SOURCES = tunelp.c lp.h
 
-info_TEXINFOS = ipc.texi
-
 
 if BUILD_FALLOCATE
 usrbin_exec_PROGRAMS += fallocate
