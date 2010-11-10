@@ -135,6 +135,9 @@ extern const char *mnt_get_fstab_path(void);
 extern const char *mnt_get_mtab_path(void);
 extern const char *mnt_get_utab_path(void);
 
+extern int mnt_get_filesystems(char ***filesystems, const char *pattern);
+extern void mnt_free_filesystems(char **filesystems);
+
 extern int mnt_has_regular_mtab(const char **mtab, int *writable);
 extern int mnt_has_regular_utab(const char **utab, int *writable);
 
@@ -345,6 +348,7 @@ extern int mnt_context_set_userspace_mountflags(mnt_context *cxt, unsigned long 
 extern int mnt_context_get_userspace_mountflags(mnt_context *cxt, unsigned long *flags);
 extern int mnt_context_set_mountdata(mnt_context *cxt, void *data);
 extern int mnt_context_apply_fstab(mnt_context *cxt);
+extern int mnt_context_get_status(mnt_context *cxt);
 
 /*
  * mount(8) userspace options masks (MNT_MAP_USERSPACE map)

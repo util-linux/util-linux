@@ -33,6 +33,9 @@ mnt_context *mnt_new_context()
 	ruid = getuid();
 	euid = geteuid();
 
+	cxt->syscall_status = 1;	/* not called yet */
+	cxt->helper_exec_status = 1;
+
 	/* if we're really root and aren't running setuid */
 	cxt->restricted = (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
 
@@ -115,13 +118,15 @@ int mnt_reset_context(mnt_context *cxt)
 
 	cxt->fs = NULL;
 	cxt->mtab = NULL;
+	cxt->ambi = 0;
 	cxt->helper = NULL;
 	cxt->orig_user = NULL;
 	cxt->mountflags = 0;
 	cxt->user_mountflags = 0;
 	cxt->mountdata = NULL;
 	cxt->flags = MNT_FL_DEFAULT;
-	cxt->syscall_errno = 0;
+	cxt->syscall_status = 1;
+	cxt->helper_exec_status = 1;
 	cxt->helper_status = 0;
 
 	/* restore non-resetable flags */
@@ -418,6 +423,8 @@ int mnt_context_set_target(mnt_context *cxt, const char *target)
  */
 int mnt_context_set_fstype(mnt_context *cxt, const char *fstype)
 {
+	if (fstype && strchr(fstype, ','))
+		return -EINVAL;
 	return mnt_fs_set_fstype(mnt_context_get_fs(cxt), fstype);
 }
 
@@ -909,6 +916,9 @@ int mnt_context_guess_fstype(mnt_context *cxt)
 		goto done;
 	if (cxt->flags & MS_REMOUNT)
 		goto none;
+	if (cxt->fstype_pattern)
+		goto done;
+
 	dev = mnt_fs_get_srcpath(cxt->fs);
 	if (!dev)
 		goto err;
@@ -931,7 +941,7 @@ int mnt_context_guess_fstype(mnt_context *cxt)
 	if (rc)
 		goto err;
 done:
-	DBG(CXT, mnt_debug_h(cxt, "detected FS type: %s",
+	DBG(CXT, mnt_debug_h(cxt, "FS type: %s",
 				mnt_fs_get_fstype(cxt->fs)));
 	return 0;
 none:
@@ -1159,6 +1169,15 @@ static int apply_tab(mnt_context *cxt, mnt_tab *tb, int direction)
 	return rc;
 }
 
+/**
+ * mnt_context_apply_fstab:
+ * @cxt: mount context
+ *
+ * This function is optional if mnt_context_do_mount() is used. See also
+ * mnt_context_set_optsmode().
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
 int mnt_context_apply_fstab(mnt_context *cxt)
 {
 	int rc;
@@ -1209,10 +1228,20 @@ int mnt_context_apply_fstab(mnt_context *cxt)
 			goto err;
 	}
 	return 0;
-
 err:
 	DBG(CXT, mnt_debug_h(cxt, "failed to found entry in fstab/mtab"));
 	return rc;
+}
+
+/**
+ * mnt_context_get_status:
+ * @cxt: mount context
+ *
+ * Returns: 1 if mount.<type> or mount(2) syscall was successfull or 0.
+ */
+int mnt_context_get_status(mnt_context *cxt)
+{
+	return cxt && (!cxt->syscall_status || !cxt->helper_exec_status);
 }
 
 /**

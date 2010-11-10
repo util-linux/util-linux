@@ -236,10 +236,11 @@ struct _mnt_context
 
 	char	*helper;	/* name of the used /sbin/[u]mount.<type> helper */
 	int	helper_status;	/* helper wait(2) status */
+	int	helper_exec_status; /* 1: not called yet, 0: success, <0: -errno */
 
 	char	*orig_user;	/* original (non-fixed) user= option */
 
-	int	syscall_errno;	/* mount(2) or umount(2) error */
+	int	syscall_status;	/* 1: not called yet, 0: success, <0: -errno */
 };
 
 /* flags */
@@ -293,5 +294,8 @@ extern int mnt_context_prepare_update(mnt_context *cxt);
 extern mnt_fs *mnt_context_get_fs(mnt_context *cxt);
 extern int mnt_context_merge_mountflags(mnt_context *cxt);
 extern int mnt_context_update_tabs(mnt_context *cxt);
+
+/* tab_update.c */
+extern mnt_fs *mnt_update_get_fs(mnt_update *upd);
 
 #endif /* _LIBMOUNT_PRIVATE_H */

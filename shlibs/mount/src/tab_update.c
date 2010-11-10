@@ -152,6 +152,13 @@ int mnt_update_set_fs(mnt_update *upd, int mountflags,
 	return 0;
 }
 
+/*
+ * Returns update filesystem or NULL
+ */
+mnt_fs *mnt_update_get_fs(mnt_update *upd)
+{
+	return upd ? upd->fs : NULL;
+}
 
 /*
  * Allocates (but does not write) utab entry for mount/remount. This function

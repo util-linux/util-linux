@@ -275,6 +275,7 @@ static int exec_helper(mnt_context *cxt)
 	assert(cxt->fs);
 	assert(cxt->helper);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+	assert(cxt->helper_exec_status == 1);
 
 	DBG_FLUSH;
 
@@ -329,12 +330,12 @@ static int exec_helper(mnt_context *cxt)
 
 		DBG(CXT, mnt_debug_h(cxt, "%s executed [status=%d]",
 					cxt->helper, cxt->helper_status));
-		rc = 0;
+		cxt->helper_exec_status = rc = 0;
 		break;
 	}
 
 	case -1:
-		rc = -errno;
+		cxt->helper_exec_status = rc = -errno;
 		DBG(CXT, mnt_debug_h(cxt, "fork() failed"));
 		break;
 	}
@@ -350,6 +351,7 @@ static int do_umount(mnt_context *cxt)
 	assert(cxt);
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+	assert(cxt->syscall_status == 1);
 
 	if (cxt->helper)
 		return exec_helper(cxt);
@@ -375,38 +377,37 @@ static int do_umount(mnt_context *cxt)
 		rc = umount(target);
 
 	if (rc < 0)
-		cxt->syscall_errno = errno;
-
+		cxt->syscall_status = -errno;
 	/*
 	 * try remount read-only
 	 */
-	if (rc < 0 && cxt->syscall_errno == EBUSY &&
+	if (rc < 0 && cxt->syscall_status == -EBUSY &&
 	    (cxt->flags & MNT_FL_RDONLY_UMOUNT) && src) {
 
 		cxt->mountflags |= MS_REMOUNT | MS_RDONLY;
 		cxt->flags &= ~MNT_FL_LOOPDEL;
 		DBG(CXT, mnt_debug_h(cxt, "umount(2) failed [errno=%d] -- "
 					"tring remount read-only",
-					cxt->syscall_errno));
+					-cxt->syscall_status));
 
 		rc = mount(src, target, NULL,
 			    MS_MGC_VAL | MS_REMOUNT | MS_RDONLY, NULL);
 		if (rc < 0) {
-			cxt->syscall_errno = errno;
+			cxt->syscall_status = -errno;
 			DBG(CXT, mnt_debug_h(cxt, "read-only re-mount(2) failed "
 					"[errno=%d]",
-					cxt->syscall_errno));
-			return -cxt->syscall_errno;
+					-cxt->syscall_status));
+			return cxt->syscall_status;
 		}
-		cxt->syscall_errno = 0;
+		cxt->syscall_status = 0;
 		DBG(CXT, mnt_debug_h(cxt, "read-only re-mount(2) success"));
 		return 0;
 	}
 
 	if (rc < 0) {
 		DBG(CXT, mnt_debug_h(cxt, "umount(2) failed [errno=%d]",
-					cxt->syscall_errno));
-		return -cxt->syscall_errno;
+					-cxt->syscall_status));
+		return -cxt->syscall_status;
 	}
 	DBG(CXT, mnt_debug_h(cxt, "umount(2) success"));
 	return 0;

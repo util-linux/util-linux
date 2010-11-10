@@ -257,8 +257,8 @@ static int exec_helper(mnt_context *cxt)
 
 		type = mnt_fs_get_fstype(cxt->fs);
 
-		args[i++] = cxt->helper;			/* 1 */
-		args[i++] = mnt_fs_get_srcpath(cxt->fs);	/* 2 */
+		args[i++] = cxt->helper;		/* 1 */
+		args[i++] = mnt_fs_get_srcpath(cxt->fs);/* 2 */
 		args[i++] = mnt_fs_get_target(cxt->fs);	/* 3 */
 
 		if (cxt->flags & MNT_FL_SLOPPY)
@@ -296,12 +296,12 @@ static int exec_helper(mnt_context *cxt)
 
 		DBG(CXT, mnt_debug_h(cxt, "%s executed [status=%d]",
 					cxt->helper, cxt->helper_status));
-		rc = 0;
+		cxt->helper_exec_status = rc = 0;
 		break;
 	}
 
 	case -1:
-		rc = -errno;
+		cxt->helper_exec_status = rc = -errno;
 		DBG(CXT, mnt_debug_h(cxt, "fork() failed"));
 		break;
 	}
@@ -315,13 +315,14 @@ static int exec_helper(mnt_context *cxt)
  */
 static int do_mount(mnt_context *cxt, const char *try_type)
 {
-	int rc;
+	int rc = 0;
 	const char *src, *target, *type;
 	unsigned long flags;
 
 	assert(cxt);
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+
 
 	if (try_type && !cxt->helper) {
 		rc = mnt_context_prepare_helper(cxt, "mount", try_type);
@@ -331,14 +332,14 @@ static int do_mount(mnt_context *cxt, const char *try_type)
 	if (cxt->helper)
 		return exec_helper(cxt);
 
-	type = try_type ? : mnt_fs_get_fstype(cxt->fs);
-
 	flags = cxt->mountflags;
 	src = mnt_fs_get_srcpath(cxt->fs);
 	target = mnt_fs_get_target(cxt->fs);
 
 	if (!src || !target)
 		return -EINVAL;
+
+	type = try_type ? : mnt_fs_get_fstype(cxt->fs);
 
 	if (!(flags & MS_MGC_MSK))
 		flags |= MS_MGC_VAL;
@@ -352,14 +353,68 @@ static int do_mount(mnt_context *cxt, const char *try_type)
 
 	if (!(cxt->flags & MNT_FL_FAKE)) {
 		if (mount(src, target, type, flags, cxt->mountdata)) {
-			cxt->syscall_errno = errno;
+			cxt->syscall_status = -errno;
 			DBG(CXT, mnt_debug_h(cxt, "mount(2) failed [errno=%d]",
-							cxt->syscall_errno));
-			return -cxt->syscall_errno;
+							-cxt->syscall_status));
+			return cxt->syscall_status;
 		}
 		DBG(CXT, mnt_debug_h(cxt, "mount(2) success"));
+		cxt->syscall_status = 0;
 	}
-	return 0;
+
+	if (try_type && cxt->update) {
+		mnt_fs *fs = mnt_update_get_fs(cxt->update);
+		if (fs)
+			rc = mnt_fs_set_fstype(fs, try_type);
+	}
+	return rc;
+}
+
+static int do_mount_by_pattern(mnt_context *cxt, const char *pattern)
+{
+	int neg = pattern && strncmp(pattern, "no", 2) == 0;
+	int rc = -EINVAL;
+	char **filesystems, **fp;
+
+	assert(cxt);
+
+	if (!neg && pattern) {
+		/*
+		 * try all types from the list
+		 */
+		char *p, *p0;
+
+		p0 = p = strdup(pattern);
+		if (!p)
+			return -ENOMEM;
+		do {
+			char *end = strchr(p, ',');
+			if (end)
+				*end = '\0';
+			rc = do_mount(cxt, p);
+			p = end ? end + 1 : NULL;
+		} while (!mnt_context_get_status(cxt) && p);
+
+		free(p0);
+
+		if (mnt_context_get_status(cxt))
+			return rc;
+	}
+
+	/*
+	 * try /etc/filesystems and /proc/filesystems
+	 */
+	rc = mnt_get_filesystems(&filesystems, neg ? pattern : NULL);
+	if (rc)
+		return rc;
+
+	for (fp = filesystems; *fp; fp++) {
+		rc = do_mount(cxt, *fp);
+		if (mnt_context_get_status(cxt))
+			break;
+	}
+	mnt_free_filesystems(filesystems);
+	return rc;
 }
 
 /**
@@ -370,16 +425,20 @@ static int do_mount(mnt_context *cxt, const char *try_type)
  *
  * See also mnt_context_disable_helpers().
  *
- * Returns: 0 on success, and negative number in case of error.
+ * Returns: 0 on success, and negative number in case of error. WARNING: error
+ *          does not mean that mount(2) syscall or mount.<type> helper wasn't
+ *          sucessfully called. Check mnt_context_get_status() after error!
  */
 int mnt_context_do_mount(mnt_context *cxt)
 {
-	int rc = -EINVAL;
+	int rc = -EINVAL, x;
 	const char *type;
 
 	assert(cxt);
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+	assert(cxt->helper_exec_status == 1);
+	assert(cxt->syscall_status == 1);
 
 	if (!cxt || !cxt->fs || (cxt->fs->flags & MNT_FS_SWAP))
 		return -EINVAL;
@@ -417,21 +476,16 @@ int mnt_context_do_mount(mnt_context *cxt)
 		cxt->mountdata = (char *) mnt_fs_get_fs_optstr(cxt->fs);
 
 	type = mnt_fs_get_fstype(cxt->fs);
-
-	if (type && !strchr(type, ',')) {
+	if (type)
 		rc = do_mount(cxt, NULL);
-		if (rc)
-			return rc;
-	}
-
-	/* TODO: try all filesystems from comma separated list of types */
-
-	/* TODO: try all filesystems from /proc/filesystems and /etc/filesystems */
+	else
+		rc = do_mount_by_pattern(cxt, cxt->fstype_pattern);
 
 	/* TODO: if mtab update is expected then check if the
 	 * target is really mounted read-write to avoid 'ro' in
 	 * mtab and 'rw' in /proc/mounts.
 	 */
-	return mnt_context_update_tabs(cxt);
+	x = mnt_context_update_tabs(cxt);
+	return rc ? rc : x;
 }
 

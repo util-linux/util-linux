@@ -305,6 +305,93 @@ int mnt_match_options(const char *optstr, const char *pattern)
 	return 1;
 }
 
+void mnt_free_filesystems(char **filesystems)
+{
+	char **p;
+
+	if (!filesystems)
+		return;
+	for (p = filesystems; *p; p++)
+		free(*p);
+	free(filesystems);
+}
+
+static int add_filesystem(char ***filesystems, char *name)
+{
+	int n = 0;
+
+	assert(filesystems);
+	assert(name);
+
+	if (*filesystems) {
+		char **p;
+		for (n = 0, p = *filesystems; *p; p++, n++) {
+			if (strcmp(*p, name) == 0)
+				return 0;
+		}
+	}
+
+	#define MYCHUNK	16
+
+	if (n == 0 || !((n + 1) % MYCHUNK)) {
+		size_t items = ((n + 1 + MYCHUNK) / MYCHUNK) * MYCHUNK;
+		char **x = realloc(*filesystems, items * sizeof(char *));
+
+		if (!x)
+			goto err;
+		*filesystems = x;
+	}
+	name = strdup(name);
+	if (!name)
+		goto err;
+	(*filesystems)[n] = name;
+	(*filesystems)[n + 1] = NULL;
+	return 0;
+err:
+	mnt_free_filesystems(*filesystems);
+	return -ENOMEM;
+}
+
+static int get_filesystems(const char *filename, char ***filesystems, const char *pattern)
+{
+	FILE *f;
+	char line[128];
+
+	f = fopen(filename, "r");
+	if (!f)
+		return 0;
+
+	while (fgets(line, sizeof(line), f)) {
+		char name[sizeof(line)];
+		int rc;
+
+		if (*line == '#' || strncmp(line, "nodev", 5) == 0)
+			continue;
+		if (sscanf(line, " %128[^\n ]\n", name) != 1)
+			continue;
+		if (pattern && !mnt_match_fstype(name, pattern))
+			continue;
+		rc = add_filesystem(filesystems, name);
+		if (rc)
+			return rc;
+	}
+	return 0;
+}
+
+int mnt_get_filesystems(char ***filesystems, const char *pattern)
+{
+	int rc;
+
+	if (!filesystems)
+		return -EINVAL;
+	*filesystems = NULL;
+
+	rc = get_filesystems(_PATH_FILESYSTEMS, filesystems, pattern);
+	if (rc)
+		return rc;
+	return get_filesystems(_PATH_PROC_FILESYSTEMS, filesystems, pattern);
+}
+
 /*
  * Returns allocated string with username or NULL.
  */
@@ -721,11 +808,27 @@ int test_fsroot(struct mtest *ts, int argc, char *argv[])
 	return 0;
 }
 
+int test_filesystems(struct mtest *ts, int argc, char *argv[])
+{
+	char **filesystems = NULL;
+	int rc;
+
+	rc = mnt_get_filesystems(&filesystems, argc ? argv[1] : NULL);
+	if (!rc) {
+		char **p;
+		for (p = filesystems; *p; p++)
+			printf("%s\n", *p);
+		mnt_free_filesystems(filesystems);
+	}
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
 	struct mtest tss[] = {
 	{ "--match-fstype",  test_match_fstype,    "<type> <pattern>     FS types matching" },
 	{ "--match-options", test_match_options,   "<options> <pattern>  options matching" },
+	{ "--filesystems",   test_filesystems,	   "[<pattern>] list /{etc,proc}/filesystems" },
 	{ "--starts-with",   test_startswith,      "<string> <prefix>" },
 	{ "--ends-with",     test_endswith,        "<string> <prefix>" },
 	{ "--mountpoint",    test_mountpoint,      "<path>" },
