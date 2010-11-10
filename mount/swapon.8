@@ -113,14 +113,14 @@ are made available, except for those with the ``noauto'' option.
 Devices that are already being used as swap are silently skipped.
 .TP
 .B "\-d, \-\-discard"
-Swapping will discard clusters of swap pages in between freeing them
-and re-writing to them, if the swap device supports that.
+Discard freed swap pages before they are reused, if the swap
+device supports the discard or trim operation.  This may improve
+performance on some Solid State Devices, but often it does not.
 The
 .I /etc/fstab
 mount option
 .BI discard
 may be also used to enable discard flag.
-
 .TP
 .B "\-e, \-\-ifexists"
 Silently skip devices that do not exist.
