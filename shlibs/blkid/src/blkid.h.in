@@ -203,6 +203,7 @@ extern int blkid_probe_is_wholedisk(blkid_probe pr);
 extern blkid_loff_t blkid_probe_get_size(blkid_probe pr);
 extern blkid_loff_t blkid_probe_get_offset(blkid_probe pr);
 extern unsigned int blkid_probe_get_sectorsize(blkid_probe pr);
+extern blkid_loff_t blkid_probe_get_sectors(blkid_probe pr);
 
 extern int blkid_probe_get_fd(blkid_probe pr);
 

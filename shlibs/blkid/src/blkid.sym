@@ -100,6 +100,7 @@ global:
 	blkid_probe_get_devno;
 	blkid_probe_get_partitions;
 	blkid_probe_get_sectorsize;
+	blkid_probe_get_sectors;
 	blkid_probe_get_size;
 	blkid_probe_get_topology;
 	blkid_probe_invert_partitions_filter;

@@ -42,6 +42,7 @@ blkid_new_probe
 blkid_new_probe_from_filename
 blkid_probe_get_devno
 blkid_probe_get_sectorsize
+blkid_probe_get_sectors
 blkid_probe_get_size
 blkid_probe_set_device
 blkid_reset_probe

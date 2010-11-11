@@ -1188,6 +1188,17 @@ unsigned int blkid_probe_get_sectorsize(blkid_probe pr)
 }
 
 /**
+ * blkid_probe_get_sectors:
+ * @pr: probe
+ *
+ * Returns: 512-byte sector count or -1 in case of error.
+ */
+blkid_loff_t blkid_probe_get_sectors(blkid_probe pr)
+{
+	return pr ? pr->size >> 9 : -1;
+}
+
+/**
  * blkid_probe_numof_values:
  * @pr: probe
  *
