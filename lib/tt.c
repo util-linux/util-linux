@@ -15,9 +15,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <termios.h>
-#ifdef HAVE_LANGINFO_H
-#include <langinfo.h>
-#endif
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
@@ -138,7 +135,7 @@ struct tt *tt_new_table(int flags)
 	INIT_LIST_HEAD(&tb->tb_lines);
 	INIT_LIST_HEAD(&tb->tb_columns);
 
-#if defined(HAVE_WIDECHAR) && defined(HAVE_LANGINFO_H)
+#if defined(HAVE_WIDECHAR)
 	if (!(flags & TT_FL_ASCII) && !strcmp(nl_langinfo(CODESET), "UTF-8"))
 		tb->symbols = &utf8_tt_symbols;
 	else
