@@ -66,6 +66,9 @@ endif
 endif
 
 cal_SOURCES = cal.c $(top_srcdir)/lib/mbsalign.c
+if !HAVE_LANGINFO
+cal_SOURCES += $(top_srcdir)/lib/langinfo.c
+endif
 if HAVE_TINFO
 cal_LDADD = -ltinfo @NCURSES_LIBS@
 else

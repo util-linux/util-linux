@@ -141,10 +141,6 @@ const char	*Senter="", *Sexit="";/* enter and exit standout mode */
 int		Slen;		/* strlen of Senter+Sexit */
 char		*Hrow;		/* pointer to highlighted row in month */
 
-#ifdef HAVE_LANGINFO_H
-# include <langinfo.h>
-#endif
-
 #include "widechar.h"
 
 /* allow compile-time define to over-ride default */
@@ -409,12 +405,6 @@ void headers_init(void)
   strcpy(day_headings,"");
   strcpy(j_day_headings,"");
 
-#ifdef HAVE_LANGINFO_H
-# define weekday(wd)	nl_langinfo(ABDAY_1+wd)
-#else
-# define weekday(wd)	_time_info->abbrev_wkday[wd]
-#endif
-
   for(i = 0 ; i < 7 ; i++ ) {
      ssize_t space_left;
      wd = (i + weekstart) % 7;
@@ -424,25 +414,18 @@ void headers_init(void)
      space_left = sizeof(day_headings) - (cur_dh - day_headings);
      if(space_left <= 2)
         break;
-     cur_dh += center_str(weekday(wd), cur_dh, space_left, 2);
+     cur_dh += center_str(nl_langinfo(ABDAY_1+wd), cur_dh, space_left, 2);
 
      if (i)
         strcat(cur_j_dh++, " ");
      space_left = sizeof(j_day_headings) - (cur_j_dh - j_day_headings);
      if(space_left <= 3)
         break;
-     cur_j_dh += center_str(weekday(wd), cur_j_dh, space_left, 3);
+     cur_j_dh += center_str(nl_langinfo(ABDAY_1+wd), cur_j_dh, space_left, 3);
   }
 
-#undef weekday
-
-  for (i = 0; i < 12; i++) {
-#ifdef HAVE_LANGINFO_H
+  for (i = 0; i < 12; i++)
      full_month[i] = nl_langinfo(MON_1+i);
-#else
-     full_month[i] = _time_info->full_month[i];
-#endif
-  }
 }
 
 void
