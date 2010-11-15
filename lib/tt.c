@@ -138,7 +138,7 @@ struct tt *tt_new_table(int flags)
 	INIT_LIST_HEAD(&tb->tb_lines);
 	INIT_LIST_HEAD(&tb->tb_columns);
 
-#ifdef HAVE_WIDECHAR
+#if defined(HAVE_WIDECHAR) && defined(HAVE_LANGINFO_H)
 	if (!(flags & TT_FL_ASCII) && !strcmp(nl_langinfo(CODESET), "UTF-8"))
 		tb->symbols = &utf8_tt_symbols;
 	else
