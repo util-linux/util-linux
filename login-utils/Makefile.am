@@ -11,6 +11,10 @@ EXTRA_DIST = README.getty  README.modems-with-agetty  README.poeigl
 if BUILD_AGETTY
 sbin_PROGRAMS += agetty
 dist_man_MANS += agetty.8
+agetty_SOURCES = agetty.c
+if !HAVE_LANGINFO
+agetty_SOURCES += $(top_srcdir)/lib/langinfo.c
+endif
 endif
 
 if BUILD_INIT

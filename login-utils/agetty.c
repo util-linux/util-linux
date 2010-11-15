@@ -910,12 +910,6 @@ do_prompt(op, tp)
 		  case 'd':
 		  case 't':
 		    {
-		      /* TODO: use nl_langinfo() */
-		      char *weekday[] = { "Sun", "Mon", "Tue", "Wed", "Thu",
-					  "Fri", "Sat" };
-		      char *month[] = { "Jan", "Feb", "Mar", "Apr", "May",
-					"Jun", "Jul", "Aug", "Sep", "Oct",
-					"Nov", "Dec" };
 		      time_t now;
 		      struct tm *tm;
 
@@ -924,14 +918,14 @@ do_prompt(op, tp)
 
 		      if (c == 'd')
 			(void) printf ("%s %s %d  %d",
-				weekday[tm->tm_wday], month[tm->tm_mon],
-				tm->tm_mday, 
+				nl_langinfo(ABDAY_1 + tm->tm_wday),
+				nl_langinfo(ABMON_1 + tm->tm_mon),
+				tm->tm_mday,
 				tm->tm_year < 70 ? tm->tm_year + 2000 :
 				tm->tm_year + 1900);
 		      else
 			(void) printf ("%02d:%02d:%02d",
 				tm->tm_hour, tm->tm_min, tm->tm_sec);
-		      
 		      break;
 		    }
 
