@@ -110,7 +110,6 @@ AC_CHECK_HEADERS(
 	[err.h \
 	errno.h \
 	getopt.h \
-	langinfo.h \
 	linux/fd.h \
 	linux/tiocl.h \
 	linux/version.h \
@@ -146,9 +145,15 @@ AC_CHECK_HEADERS(
 	sys/user.h \
 	sys/resource.h \
 	unistd.h ])
+
 AC_CHECK_HEADERS([linux/raw.h],
 		 [AM_CONDITIONAL([HAVE_RAW], [true])],
 		 [AM_CONDITIONAL([HAVE_RAW], [false])])
+
+AC_CHECK_HEADERS([langinfo.h],
+		[AM_CONDITIONAL([HAVE_LANGINFO], [true])],
+		[AM_CONDITIONAL([HAVE_LANGINFO], [false])])
+
 
 AC_CHECK_DECLS([_NL_TIME_WEEK_1STDAY],[],[],[[#include <langinfo.h>]])
 
