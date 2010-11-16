@@ -907,6 +907,15 @@ time is only updated if the previous access time was earlier than the
 current modify or change time. (Similar to noatime, but doesn't break
 mutt or other applications that need to know if a file has been read
 since the last time it was modified.)
+
+Since Linux 2.6.30, the kernel defaults to the behavior provided by this
+option (unless
+.B noatime
+was  specified), and the
+.B strictatime
+option is required to obtain traditional semantics. In addition, since Linux
+2.6.30, the file's last access time is always  updated  if  it  is more than 1
+day old.
 .TP
 .B norelatime
 Do not use
