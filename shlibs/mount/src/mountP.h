@@ -60,15 +60,6 @@ extern int mnt_run_test(struct mtest *tests, int argc, char *argv[]);
 
 /* utils.c */
 extern char *mnt_getenv_safe(const char *arg);
-#ifndef HAVE_STRNLEN
-extern size_t strnlen(const char *s, size_t maxlen);
-#endif
-#ifndef HAVE_STRNDUP
-extern char *strndup(const char *s, size_t n);
-#endif
-#ifndef HAVE_STRNCHR
-extern char *strnchr(const char *s, size_t maxlen, int c);
-#endif
 extern char *mnt_get_username(const uid_t uid);
 
 /*

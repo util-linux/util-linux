@@ -18,7 +18,7 @@
 
 #include "nls.h"
 
-#include "schedutils.h"
+#include "strutils.h"
 
 static int tolerant;
 
@@ -105,15 +105,15 @@ int main(int argc, char *argv[])
 	while ((c = getopt(argc, argv, "+n:c:p:th")) != EOF) {
 		switch (c) {
 		case 'n':
-			ioprio = getnum(optarg, _("failed to parse class data"));
+			ioprio = strtol_or_err(optarg, _("failed to parse class data"));
 			set |= 1;
 			break;
 		case 'c':
-			ioclass = getnum(optarg, _("failed to parse class"));
+			ioclass = strtol_or_err(optarg, _("failed to parse class"));
 			set |= 2;
 			break;
 		case 'p':
-			pid = getnum(optarg, _("failed to parse pid"));
+			pid = strtol_or_err(optarg, _("failed to parse pid"));
 			break;
 		case 't':
 			tolerant = 1;
@@ -147,7 +147,7 @@ int main(int argc, char *argv[])
 		ioprio_print(pid);
 
 		for(; argv[optind]; ++optind) {
-			pid = getnum(argv[optind], _("failed to parse pid"));
+			pid = strtol_or_err(argv[optind], _("failed to parse pid"));
 			ioprio_print(pid);
 		}
 	} else {
@@ -156,7 +156,7 @@ int main(int argc, char *argv[])
 
 			for(; argv[optind]; ++optind)
 			{
-				pid = getnum(argv[optind], _("failed to parse pid"));
+				pid = strtol_or_err(argv[optind], _("failed to parse pid"));
 				ioprio_setpid(pid, ioprio, ioclass);
 			}
 		}

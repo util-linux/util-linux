@@ -20,11 +20,10 @@ dist_noinst_HEADERS = \
 	nls.h \
 	pathnames.h \
 	setproctitle.h \
-	strtosize.h \
+	strutils.h \
 	swapheader.h \
 	tt.h \
 	usleep.h \
 	wholedisk.h \
 	widechar.h \
-	writeall.h \
-	xstrncpy.h
+	writeall.h

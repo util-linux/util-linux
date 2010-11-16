@@ -28,12 +28,12 @@ cflags_common = $(AM_CFLAGS)
 ldflags_static = -all-static
 
 mount_SOURCES = mount.c $(srcs_mount) $(top_srcdir)/lib/setproctitle.c \
-		$(top_srcdir)/lib/strtosize.c
+		$(top_srcdir)/lib/strutils.c
 mount_CFLAGS = $(SUID_CFLAGS) $(cflags_common)
 mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 mount_LDADD = $(ldadd_common)
 
-umount_SOURCES = umount.c $(srcs_mount) $(top_srcdir)/lib/strtosize.c
+umount_SOURCES = umount.c $(srcs_mount) $(top_srcdir)/lib/strutils.c
 umount_CFLAGS = $(SUID_CFLAGS) $(cflags_common)
 umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 umount_LDADD = $(ldadd_common)
@@ -45,7 +45,7 @@ swapon_CFLAGS = $(cflags_common)
 swapon_LDADD = $(ldadd_common)
 
 losetup_SOURCES = lomount.c $(srcs_common) loop.h lomount.h \
-		$(top_srcdir)/lib/strtosize.c
+		$(top_srcdir)/lib/strutils.c
 losetup_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)
 
 mount_static_LDADD =

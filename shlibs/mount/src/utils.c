@@ -51,45 +51,6 @@ char *mnt_getenv_safe(const char *arg)
 #endif
 }
 
-/* TODO: move strn<...> functions to top-level lib/strn.c */
-#ifndef HAVE_STRNLEN
-size_t strnlen(const char *s, size_t maxlen)
-{
-	int i;
-
-	for (i = 0; i < maxlen; i++) {
-		if (s[i] == '\0')
-			return i + 1;
-	}
-	return maxlen;
-}
-#endif
-
-#ifndef HAVE_STRNCHR
-char *strnchr(const char *s, size_t maxlen, int c)
-{
-	for (; maxlen-- && *s != '\0'; ++s)
-		if (*s == (char)c)
-			return (char *)s;
-	return NULL;
-}
-#endif
-
-#ifndef HAVE_STRNDUP
-char *strndup(const char *s, size_t n)
-{
-  size_t len = strnlen (s, n);
-  char *new = (char *) malloc (len + 1);
-
-  if (new == NULL)
-    return NULL;
-
-  new[len] = '\0';
-  return (char *) memcpy (new, s, len);
-}
-#endif
-
-
 /**
  * mnt_fstype_is_pseudofs:
  * @type: filesystem name

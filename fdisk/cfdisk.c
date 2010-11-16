@@ -99,7 +99,7 @@
 
 #include "nls.h"
 #include "blkdev.h"
-#include "xstrncpy.h"
+#include "strutils.h"
 #include "common.h"
 #include "gpt.h"
 #include "mbsalign.h"

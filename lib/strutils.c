@@ -1,4 +1,25 @@
 /*
+ * Copyright (C) 2010 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2010 Davidlohr Bueso <dave@gnu.org>
+ */
+
+#include <stdlib.h>
+#include <inttypes.h>
+#include <ctype.h>
+#include <errno.h>
+#include <err.h>
+
+static int do_scale_by_power (uintmax_t *x, int base, int power)
+{
+	while (power--) {
+		if (UINTMAX_MAX / base < *x)
+			return -2;
+		*x *= base;
+	}
+	return 0;
+}
+
+/*
  * strtosize() - convert string to size (uintmax_t).
  *
  * Supported suffixes:
@@ -17,26 +38,7 @@
  *
  * Note that the function does not accept numbers with '-' (negative sign)
  * prefix.
- *
- * Returns 0 on success, -1 in case of error, -2 in case of overflow.
- *
- * Copyright (C) 2010 Karel Zak <kzak@redhat.com>
  */
-#include <stdio.h>
-#include <inttypes.h>
-#include <ctype.h>
-#include <errno.h>
-
-static int do_scale_by_power (uintmax_t *x, int base, int power)
-{
-	while (power--) {
-		if (UINTMAX_MAX / base < *x)
-			return -2;
-		*x *= base;
-	}
-	return 0;
-}
-
 int strtosize(const char *str, uintmax_t *res)
 {
 	char *p;
@@ -123,26 +125,62 @@ err:
 	return -1;
 }
 
-#ifdef TEST_PROGRAM
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <err.h>
-
-int main(int argc, char *argv[])
+#ifndef HAVE_STRNLEN
+size_t strnlen(const char *s, size_t maxlen)
 {
-	uintmax_t size = 0;
+        int i;
 
-	if (argc < 2) {
-		fprintf(stderr, "usage: %s <number>[suffix]\n",	argv[0]);
-		exit(EXIT_FAILURE);
-	}
-
-	if (strtosize(argv[1], &size))
-		errx(EXIT_FAILURE, "invalid size '%s' value", argv[1]);
-
-	printf("%25s : %20ju\n", argv[1], size);
-	return EXIT_FAILURE;
+        for (i = 0; i < maxlen; i++) {
+                if (s[i] == '\0')
+                        return i + 1;
+        }
+        return maxlen;
 }
-#endif /* TEST_PROGRAM */
+#endif
 
+#ifndef HAVE_STRNCHR
+char *strnchr(const char *s, size_t maxlen, int c)
+{
+	for (; maxlen-- && *s != '\0'; ++s)
+		if (*s == (char)c)
+			return (char *)s;
+	return NULL;
+}
+#endif
+
+#ifndef HAVE_STRNDUP
+char *strndup(const char *s, size_t n)
+{
+	size_t len = strnlen(s, n);
+	char *new = (char *) malloc((len + 1) * sizeof(char));
+	if (!new)
+		return NULL;
+	new[len] = '\0';
+	return (char *) memcpy(new, s, len);
+}
+#endif
+
+/*
+ * same as strtol(3) but exit on failure instead of returning crap
+ */
+long strtol_or_err(const char *str, const char *errmesg)
+{
+       long num;
+       char *end = NULL;
+
+       if (str == NULL || *str == '\0')
+               goto err;
+       errno = 0;
+       num = strtol(str, &end, 10);
+
+       if (errno || (end && *end))
+               goto err;
+
+       return num;
+err:
+       if (errno)
+               err(EXIT_FAILURE, "%s: '%s'", errmesg, str);
+       else
+               errx(EXIT_FAILURE, "%s: '%s'", errmesg, str);
+       return 0;
+}

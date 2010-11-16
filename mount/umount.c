@@ -20,7 +20,7 @@
 #include "fstab.h"
 #include "env.h"
 #include "nls.h"
-#include "strtosize.h"
+#include "strutils.h"
 
 #if defined(MNT_FORCE)
 /* Interesting ... it seems libc knows about MNT_FORCE and presumably

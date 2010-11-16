@@ -33,7 +33,7 @@
 #include "c.h"
 #include "writeall.h"
 #include "swapheader.h"
-#include "xstrncpy.h"
+#include "strutils.h"
 #include "nls.h"
 
 #define SWAP_UUID_OFFSET	(offsetof(struct swap_header_v1_2, uuid))

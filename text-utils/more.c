@@ -56,7 +56,7 @@
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <sys/wait.h>
-#include "xstrncpy.h"
+#include "strutils.h"
 
 #include "nls.h"
 #include "xalloc.h"

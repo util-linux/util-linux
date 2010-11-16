@@ -31,7 +31,7 @@
 
 #include "pathnames.h"
 #include "login.h"
-#include "xstrncpy.h"
+#include "strutils.h"
 
 #ifndef TTY_MAJOR
 #define TTY_MAJOR 4

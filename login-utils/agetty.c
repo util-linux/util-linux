@@ -32,7 +32,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 
-#include "xstrncpy.h"
+#include "strutils.h"
 #include "nls.h"
 #include "pathnames.h"
 

@@ -35,7 +35,7 @@
 
 #include "nls.h"
 #include "xalloc.h"
-#include "strtosize.h"
+#include "strutils.h"
 
 struct wipe_desc {
 	loff_t		offset;		/* magic string offset */

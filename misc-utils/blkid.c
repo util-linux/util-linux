@@ -41,7 +41,7 @@ extern int optind;
 #include <blkid.h>
 
 #include "ismounted.h"
-#include "strtosize.h"
+#include "strutils.h"
 
 const char *progname = "blkid";
 

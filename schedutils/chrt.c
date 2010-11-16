@@ -32,7 +32,7 @@
 #include "c.h"
 #include "nls.h"
 
-#include "schedutils.h"
+#include "strutils.h"
 
 /* the SCHED_BATCH is supported since Linux 2.6.16
  *  -- temporary workaround for people with old glibc headers
@@ -240,7 +240,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'p':
 			errno = 0;
-			pid = getnum(argv[argc - 1], _("failed to parse pid"));
+			pid = strtol_or_err(argv[argc - 1], _("failed to parse pid"));
 			break;
 		case 'r':
 			policy = SCHED_RR;
@@ -268,7 +268,7 @@ int main(int argc, char *argv[])
 	}
 
 	errno = 0;
-	priority = getnum(argv[optind], _("failed to parse priority"));
+	priority = strtol_or_err(argv[optind], _("failed to parse priority"));
 
 #ifdef SCHED_RESET_ON_FORK
 	/* sanity check */

@@ -37,12 +37,12 @@ if BUILD_LIBBLKID
 sbin_PROGRAMS += blkid findfs wipefs
 dist_man_MANS += blkid.8 findfs.8 wipefs.8
 blkid_SOURCES = blkid.c $(top_srcdir)/lib/ismounted.c \
-		$(top_srcdir)/lib/strtosize.c
+		$(top_srcdir)/lib/strutils.c
 blkid_LDADD = $(ul_libblkid_la)
 blkid_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 findfs_LDADD = $(ul_libblkid_la)
 findfs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
-wipefs_SOURCES = wipefs.c $(top_srcdir)/lib/strtosize.c
+wipefs_SOURCES = wipefs.c $(top_srcdir)/lib/strutils.c
 wipefs_LDADD = $(ul_libblkid_la)
 wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 if HAVE_STATIC_BLKID

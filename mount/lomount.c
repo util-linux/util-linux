@@ -18,7 +18,7 @@
 
 #include "loop.h"
 #include "lomount.h"
-#include "xstrncpy.h"
+#include "strutils.h"
 #include "nls.h"
 #include "sundries.h"
 #include "xmalloc.h"
@@ -886,7 +886,7 @@ find_unused_loop_device (void) {
 #include <getopt.h>
 #include <stdarg.h>
 
-#include "strtosize.h"
+#include "strutils.h"
 
 static void
 usage(FILE *f) {

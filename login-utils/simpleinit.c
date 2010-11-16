@@ -45,7 +45,7 @@
 #include "my_crypt.h"
 #include "pathnames.h"
 #include "linux_reboot.h"
-#include "xstrncpy.h"
+#include "strutils.h"
 #include "nls.h"
 #include "simpleinit.h"
 

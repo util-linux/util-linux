@@ -64,7 +64,7 @@ static char version_string[] = "vipw 1.4";
 #include <unistd.h>
 
 #include "setpwnam.h"
-#include "xstrncpy.h"
+#include "strutils.h"
 #include "nls.h"
 
 #ifdef HAVE_LIBSELINUX

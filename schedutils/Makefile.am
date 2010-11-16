@@ -2,7 +2,7 @@ include $(top_srcdir)/config/include-Makefile.am
 
 if BUILD_SCHEDUTILS
 
-srcs_common = schedutils.c schedutils.h
+srcs_common = $(top_srcdir)/lib/strutils.c
 
 usrbin_exec_PROGRAMS = chrt
 dist_man_MANS = chrt.1

@@ -58,7 +58,7 @@
 #include <utmp.h>
 
 #include "nls.h"
-#include "xstrncpy.h"
+#include "strutils.h"
 #include "ttymsg.h"
 #include "pathnames.h"
 #include "carefulputc.h"

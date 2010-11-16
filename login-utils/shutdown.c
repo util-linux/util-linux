@@ -74,7 +74,7 @@
 #include <sys/utsname.h>
 #include "linux_reboot.h"
 #include "pathnames.h"
-#include "xstrncpy.h"
+#include "strutils.h"
 #include "nls.h"
 #include "usleep.h"
 

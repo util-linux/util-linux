@@ -44,7 +44,7 @@
 #endif
 
 #include "nls.h"
-#include "strtosize.h"
+#include "strutils.h"
 
 
 static void __attribute__((__noreturn__)) usage(FILE *out)

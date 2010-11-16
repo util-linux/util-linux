@@ -41,7 +41,7 @@
 #include "env.h"
 #include "nls.h"
 #include "blkdev.h"
-#include "strtosize.h"
+#include "strutils.h"
 
 #define DO_PS_FIDDLING
 

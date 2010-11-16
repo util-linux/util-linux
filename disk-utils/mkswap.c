@@ -48,7 +48,7 @@
 
 #include "linux_version.h"
 #include "swapheader.h"
-#include "xstrncpy.h"
+#include "strutils.h"
 #include "nls.h"
 #include "blkdev.h"
 #include "pathnames.h"

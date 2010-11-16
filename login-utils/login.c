@@ -113,7 +113,7 @@
 #include "pathnames.h"
 #include "my_crypt.h"
 #include "login.h"
-#include "xstrncpy.h"
+#include "strutils.h"
 #include "nls.h"
 
 
