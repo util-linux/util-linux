@@ -171,6 +171,10 @@ static int check_mntent(const char *file, int *mount_flags,
 				   mtpt, mtlen);
 	if (retval == 0 && (*mount_flags != 0))
 		return 0;
+	if (access("/proc/mounts", R_OK) == 0) {
+		*mount_flags = 0;
+		return retval;
+	}
 #endif /* __linux__ */
 #if defined(MOUNTED) || defined(_PATH_MOUNTED)
 #ifndef MOUNTED
