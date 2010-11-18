@@ -394,12 +394,16 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 		struct tt_column *cl =
 				list_entry(p, struct tt_column, cl_columns);
 
-		cl->width_min = mbs_width(cl->name);
+		if (cl->name)
+			cl->width_min = mbs_width(cl->name);
 
 		if (cl->width < cl->width_min)
 			cl->width = cl->width_min;
+
 		else if (cl->width_hint >= 1 &&
+			 cl->width < (int) cl->width_hint &&
 			 cl->width_min < (int) cl->width_hint)
+
 			cl->width = (int) cl->width_hint;
 
 		width += cl->width + (is_last_column(tb, cl) ? 0 : 1);
@@ -412,7 +416,8 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 		struct tt_column *cl = list_entry(
 			tb->tb_columns.prev, struct tt_column, cl_columns);
 
-		cl->width += tb->termwidth - width;
+		if (!(cl->flags & TT_FL_RIGHT))
+			cl->width += tb->termwidth - width;
 		goto leave;
 	}
 
@@ -434,7 +439,7 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 				continue;	/* never truncate columns with absolute sizes */
 			if (cl->flags & TT_FL_TREE)
 				continue;	/* never truncate the tree */
-			if (trunc_only && !(cl->flags & TT_FL_TRUNCATE))
+			if (trunc_only && !(cl->flags & TT_FL_TRUNC))
 				continue;
 			if (cl->width == cl->width_min)
 				continue;
@@ -458,7 +463,7 @@ leave:
 		struct tt_column *cl =
 			list_entry(p, struct tt_column, cl_columns);
 
-		fprintf(stderr, "width: %s=%d [%d]\n",
+		fprintf(stderr, "width: %s=%d [hint=%d]\n",
 			cl->name, cl->width,
 			cl->width_hint > 1 ? (int) cl->width_hint :
 					     (int) (cl->width_hint * tb->termwidth));
@@ -498,20 +503,28 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 		width = len;
 
 	/* truncate data */
-	if (len > width && (cl->flags & TT_FL_TRUNCATE)) {
+	if (len > width && (cl->flags & TT_FL_TRUNC)) {
 		len = mbs_truncate(data, width);
 		if (!data || len == (size_t) -1) {
 			len = 0;
 			data = NULL;
 		}
 	}
-	if (data)
-		fputs(data, stdout);
+	if (data) {
+		if (!(tb->flags & TT_FL_RAW) && (cl->flags & TT_FL_RIGHT)) {
+			int xw = cl->width;
+			fprintf(stdout, "%*s", xw, data);
+			if (len < xw)
+				len = xw;
+		}
+		else
+			fputs(data, stdout);
+	}
 	for (i = len; i < width; i++)
 		fputc(' ', stdout);		/* padding */
 
 	if (!is_last_column(tb, cl)) {
-		if (len > width && !(cl->flags & TT_FL_TRUNCATE)) {
+		if (len > width && !(cl->flags & TT_FL_TRUNC)) {
 			fputc('\n', stdout);
 			for (i = 0; i <= cl->seqnum; i++) {
 				struct tt_column *x = tt_get_column(tb, i);
@@ -633,6 +646,43 @@ int tt_print_table(struct tt *tb)
 	return 0;
 }
 
+int tt_parse_columns_list(const char *list, int cols[], int *ncols,
+			int (name2id)(const char *, size_t))
+{
+	const char *begin = NULL, *p;
+
+	if (!list || !*list || !cols || !ncols || !name2id)
+		return -1;
+
+	*ncols = 0;
+
+	for (p = list; p && *p; p++) {
+		const char *end = NULL;
+		int id;
+
+		if (!begin)
+			begin = p;		/* begin of the column name */
+		if (*p == ',')
+			end = p;		/* terminate the name */
+		if (*(p + 1) == '\0')
+			end = p + 1;		/* end of string */
+		if (!begin || !end)
+			continue;
+		if (end <= begin)
+			return -1;
+
+		id = name2id(begin, end - begin);
+		if (id == -1)
+			return -1;
+		cols[ *ncols ] = id;
+		(*ncols)++;
+		begin = NULL;
+		if (end && !*end)
+			break;
+	}
+	return 0;
+}
+
 #ifdef TEST_PROGRAM
 #include <err.h>
 #include <errno.h>
@@ -666,7 +716,7 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, "table initialization failed");
 
 	tt_define_column(tb, "NAME", 0.3, notree ? 0 : TT_FL_TREE);
-	tt_define_column(tb, "FOO", 0.3, TT_FL_TRUNCATE);
+	tt_define_column(tb, "FOO", 0.3, TT_FL_TRUNC);
 	tt_define_column(tb, "BAR", 0.3, 0);
 	tt_define_column(tb, "PATH", 0.3, 0);
 

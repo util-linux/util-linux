@@ -12,11 +12,12 @@
 #include "list.h"
 
 enum {
-	TT_FL_TRUNCATE   = (1 << 1),
+	TT_FL_TRUNC      = (1 << 1),
 	TT_FL_TREE       = (1 << 2),
 	TT_FL_RAW        = (1 << 3),
 	TT_FL_ASCII      = (1 << 4),
-	TT_FL_NOHEADINGS = (1 << 5)
+	TT_FL_NOHEADINGS = (1 << 5),
+	TT_FL_RIGHT	 = (1 << 6),
 };
 
 struct tt {
@@ -67,5 +68,8 @@ extern struct tt_column *tt_get_column(struct tt *tb, int colnum);
 extern struct tt_line *tt_add_line(struct tt *tb, struct tt_line *parent);
 
 extern int tt_line_set_data(struct tt_line *ln, int colnum, const char *data);
+
+extern int tt_parse_columns_list(const char *list, int cols[], int *ncols,
+				int (name2id)(const char *, size_t));
 
 #endif /* UTIL_LINUX_TT_H */
