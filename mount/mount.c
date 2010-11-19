@@ -378,6 +378,56 @@ append_context(const char *optname, char *optdata, char **extra_opts)
 	freecon(raw);
 	return 0;
 }
+
+/* returns newly allocated string without *context= options */
+static char *remove_context_options(char *opts)
+{
+	char *begin = NULL, *end = NULL, *p;
+	int open_quote = 0, changed = 0;
+
+	if (!opts)
+		return NULL;
+
+	opts = xstrdup(opts);
+
+	for (p = opts; p && *p; p++) {
+		if (!begin)
+			begin = p;		/* begin of the option item */
+		if (*p == '"')
+			open_quote ^= 1;	/* reverse the status */
+		if (open_quote)
+			continue;		/* still in quoted block */
+		if (*p == ',')
+			end = p;		/* terminate the option item */
+		else if (*(p + 1) == '\0')
+			end = p + 1;		/* end of optstr */
+		if (!begin || !end)
+			continue;
+
+		if (strncmp(begin, "context=", 8) == 0 ||
+		    strncmp(begin, "fscontext=", 10) == 0 ||
+		    strncmp(begin, "defcontext=", 11) == 0 ||
+	            strncmp(begin, "rootcontext=", 12) == 0) {
+			size_t sz;
+
+			if ((begin == opts || *(begin - 1) == ',') && *end == ',')
+				end++;
+			sz = strlen(end);
+
+			memmove(begin, end, sz + 1);
+			if (!*begin && *(begin - 1) == ',')
+				*(begin - 1) = '\0';
+
+			p = begin;
+			changed = 1;
+		}
+	}
+
+	if (changed && verbose)
+		printf (_("mount: SELinux *context= options are ignore on remount.\n"));
+
+	return opts;
+}
 #endif
 
 /*
@@ -1382,6 +1432,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 
   parse_opts (opts, &flags, &extra_opts);
   extra_opts1 = extra_opts;
+  mount_opts = extra_opts;
 
   /* quietly succeed for fstab entries that don't get mounted automatically */
   if (mount_all && (flags & MS_NOAUTO))
@@ -1396,8 +1447,6 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
       die(EX_USAGE, _("mount: according to mtab, "
                       "%s is already mounted on %s\n"),
 		      spec, node);
-
-  mount_opts = extra_opts;
 
   if (opt_speed)
       cdrom_setspeed(spec);
@@ -1419,12 +1468,17 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   if (flags & (MS_BIND | MS_MOVE | MS_PROPAGATION))
       types = "none";
 
+#ifdef HAVE_LIBSELINUX
+  if ((flags & MS_REMOUNT) && mount_opts)
+      mount_opts = remove_context_options(mount_opts);
+#endif
+
   /*
    * Call mount.TYPE for types that require a separate mount program.
    * For the moment these types are ncpfs and smbfs. Maybe also vxfs.
    * All such special things must occur isolated in the types string.
    */
-  if (check_special_mountprog(spec, node, types, flags, extra_opts, &status)) {
+  if (check_special_mountprog(spec, node, types, flags, mount_opts, &status)) {
       res = status;
       goto out;
   }
@@ -1718,6 +1772,8 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   }
 #endif
 
+  if (extra_opts1 != mount_opts)
+	  my_free(mount_opts);
   my_free(extra_opts1);
   my_free(spec1);
   my_free(node1);
