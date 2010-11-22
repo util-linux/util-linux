@@ -499,7 +499,7 @@ int main(int argc, char *argv[])
 	struct tt *tt = NULL;
 	int tt_flags = 0;
 
-	int i, c, rc = EXIT_FAILURE;
+	int i, c, nlines = 0, rc = EXIT_FAILURE;
 
 	struct option longopts[] = {
 	    { "ascii",        0, 0, 'a' },
@@ -720,6 +720,7 @@ int main(int argc, char *argv[])
 		while((fs = get_next_fs(tb, itr))) {
 			if (!add_line(tt, fs, NULL))
 				goto leave;
+			nlines++;
 			if (flags & FL_FIRSTONLY)
 				break;
 		}
@@ -729,7 +730,9 @@ int main(int argc, char *argv[])
 	 * Print the output table
 	 */
 	tt_print_table(tt);
-	rc = EXIT_SUCCESS;
+
+	if (is_listall_mode() || nlines)
+		rc = EXIT_SUCCESS;
 leave:
 	tt_free_table(tt);
 
