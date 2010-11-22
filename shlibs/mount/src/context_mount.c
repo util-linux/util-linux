@@ -377,6 +377,7 @@ static int do_mount_by_pattern(mnt_context *cxt, const char *pattern)
 	char **filesystems, **fp;
 
 	assert(cxt);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
 	if (!neg && pattern) {
 		/*
@@ -436,7 +437,6 @@ int mnt_context_do_mount(mnt_context *cxt)
 
 	assert(cxt);
 	assert(cxt->fs);
-	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 	assert(cxt->helper_exec_status == 1);
 	assert(cxt->syscall_status == 1);
 

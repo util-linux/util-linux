@@ -350,6 +350,9 @@ extern int mnt_context_set_mountdata(mnt_context *cxt, void *data);
 extern int mnt_context_apply_fstab(mnt_context *cxt);
 extern int mnt_context_get_status(mnt_context *cxt);
 
+extern int mnt_context_do_mount(mnt_context *cxt);
+extern int mnt_context_do_umount(mnt_context *cxt);
+
 /*
  * mount(8) userspace options masks (MNT_MAP_USERSPACE map)
  */

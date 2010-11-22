@@ -1079,9 +1079,11 @@ int mnt_context_update_tabs(mnt_context *cxt)
 
 	assert(cxt);
 
-	if (cxt->flags & MNT_FL_NOMTAB)
+	if ((cxt->flags & MNT_FL_NOMTAB) && cxt->helper)
 		return 0;
 	if (!cxt->update || !mnt_update_is_ready(cxt->update))
+		return 0;
+	if (cxt->syscall_status)
 		return 0;
 
 	if (mnt_update_is_userspace_only(cxt->update))
@@ -1264,10 +1266,8 @@ mnt_lock *lock;
 
 static void lock_fallback(void)
 {
-	if (lock) {
+	if (lock)
 		mnt_unlock_file(lock);
-		mnt_free_lock(lock);
-	}
 }
 
 int test_mount(struct mtest *ts, int argc, char *argv[])
@@ -1302,24 +1302,13 @@ int test_mount(struct mtest *ts, int argc, char *argv[])
 		mnt_context_set_target(cxt, argv[idx++]);
 	}
 
-	rc = mnt_context_prepare_mount(cxt);
-	if (rc)
-		printf("failed to prepare mount\n");
-	else {
-		lock = mnt_context_get_lock(cxt);
-		if (lock)
-			atexit(lock_fallback);
+	lock = mnt_context_get_lock(cxt);
+	if (lock)
+		atexit(lock_fallback);
 
-		rc = mnt_context_do_mount(cxt);
-		if (rc)
-			printf("failed to mount\n");
-		else {
-			printf("successfully mounted\n");
-			rc = mnt_context_post_mount(cxt);
-			if (rc)
-				printf("mtab update failed\n");
-		}
-	}
+	rc = mnt_context_do_mount(cxt);
+	if (rc)
+		printf("failed to mount %s\n", strerror(errno));
 
 	mnt_free_context(cxt);
 	return rc;
@@ -1365,24 +1354,13 @@ int test_umount(struct mtest *ts, int argc, char *argv[])
 		goto err;
 	}
 
-	rc = mnt_context_prepare_umount(cxt);
-	if (rc)
-		printf("failed to prepare umount\n");
-	else {
-		lock = mnt_context_get_lock(cxt);
-		if (lock)
-			atexit(lock_fallback);
+	lock = mnt_context_get_lock(cxt);
+	if (lock)
+		atexit(lock_fallback);
 
-		rc = mnt_context_do_umount(cxt);
-		if (rc)
-			printf("failed to umount\n");
-		else {
-			printf("successfully umounted\n");
-			rc = mnt_context_post_umount(cxt);
-			if (rc)
-				printf("mtab update failed\n");
-		}
-	}
+	rc = mnt_context_do_umount(cxt);
+	if (rc)
+		printf("failed to umount\n");
 err:
 	mnt_free_context(cxt);
 	return rc;
