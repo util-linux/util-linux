@@ -319,7 +319,7 @@ leave:
 }
 
 /* error callback */
-static int parser_errcb(mnt_tab *tb, const char *filename, int line, int flag)
+static int parser_errcb(mnt_tab *tb, const char *filename, int line)
 {
 	warn(_("%s: parse error at line %d"), filename, line);
 	return 0;
@@ -339,9 +339,9 @@ static mnt_tab *parse_tabfile(const char *path)
 	mnt_tab_set_parser_errcb(tb, parser_errcb);
 
 	if (!strcmp(path, _PATH_MNTTAB))
-		rc = mnt_tab_parse_fstab(tb);
+		rc = mnt_tab_parse_fstab(tb, NULL);
 	else if (!strcmp(path, _PATH_MOUNTED))
-		rc = mnt_tab_parse_mtab(tb);
+		rc = mnt_tab_parse_mtab(tb, NULL);
 	else
 		rc = mnt_tab_parse_file(tb, path);
 
