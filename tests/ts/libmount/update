@@ -23,8 +23,6 @@ TESTPROG="$TS_HELPER_LIBMOUNT_UPDATE"
 # Traditional /etc/mtab
 #
 export LIBMOUNT_MTAB=$TS_OUTPUT.mtab
-
-rm $LIBMOUNT_MTAB
 > $LIBMOUNT_MTAB
 
 ts_init_subtest "mtab-mount"
@@ -56,7 +54,7 @@ ts_finalize_subtest		# checks the mtab
 #
 # utab
 #
-rm $LIBMOUNT_MTAB
+rm -f $LIBMOUNT_MTAB
 ln -s /proc/mounts $LIBMOUNT_MTAB
 
 export LIBMOUNT_UTAB=$TS_OUTPUT.utab
