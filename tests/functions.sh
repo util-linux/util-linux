@@ -86,9 +86,10 @@ function ts_init_core_env {
 function ts_init_core_subtest_env {
 	TS_NS="$TS_COMPONENT/$TS_TESTNAME-$TS_SUBNAME"
 	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME-$TS_SUBNAME"
+	> $TS_OUTPUT
 	TS_DIFF="$TS_DIFFDIR/$TS_TESTNAME-$TS_SUBNAME"
 	TS_EXPECTED="$TS_TOPDIR/expected/$TS_NS"
-	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME-$TS_SUBNAME}-mnt"
+	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-mnt"
 }
 
 function ts_init_env {
@@ -191,7 +192,7 @@ function ts_init_suid {
 function ts_gen_diff {
 	local res=0
 
-	if [ -s $TS_OUTPUT ]; then
+	if [ -s "$TS_OUTPUT" ]; then
 		diff -u $TS_EXPECTED $TS_OUTPUT > $TS_DIFF
 		[ -s $TS_DIFF ] && res=1
 	else
@@ -203,7 +204,7 @@ function ts_gen_diff {
 function ts_finalize_subtest {
 	local res=0
 
-	if [ -s $TS_EXPECTED ]; then
+	if [ -s "$TS_EXPECTED" ]; then
 		ts_gen_diff
 		if [ $? -eq 1 ]; then
 			ts_failed_subtest "$1"

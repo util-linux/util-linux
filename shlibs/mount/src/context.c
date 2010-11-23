@@ -1318,6 +1318,8 @@ int test_mount(struct mtest *ts, int argc, char *argv[])
 	rc = mnt_context_do_mount(cxt);
 	if (rc)
 		printf("failed to mount %s\n", strerror(errno));
+	else
+		printf("successfully mounted\n");
 
 	mnt_free_context(cxt);
 	return rc;
@@ -1370,6 +1372,8 @@ int test_umount(struct mtest *ts, int argc, char *argv[])
 	rc = mnt_context_do_umount(cxt);
 	if (rc)
 		printf("failed to umount\n");
+	else
+		printf("successfully umounted\n");
 err:
 	mnt_free_context(cxt);
 	return rc;

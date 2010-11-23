@@ -60,5 +60,7 @@ TS_CMD_LSCPU=${TS_CMD_LSCPU-"$top_builddir/sys-utils/lscpu"}
 
 TS_CMD_BLKID=${TS_CMD_BLKID-"$top_builddir/misc-utils/blkid"}
 TS_CMD_PARTX=${TS_CMD_PARTX-"$top_builddir/partx/partx"}
+TS_CMD_FINDMNT=${TS_CMD_FINDMNT-"$top_builddir/misc-utils/findmnt"}
+
 TS_CMD_FDISK=${TS_CMD_FDISK-"$top_builddir/fdisk/fdisk"}
 
