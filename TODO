@@ -14,7 +14,7 @@ libblkid
 blkid(8)
 -------
 
-  - add something like "blkid --list-all" to list all supported filesystems/raids
+  - add something like "blkid --list-known" to list all supported filesystems/raids
  
   - add a new option (-r) that allows to print removable block devices that
     are missing in /proc/partitions, see blkid_probe_all_removable().
@@ -56,7 +56,7 @@ fdisk(s)
 
  * fdisk/* refactoring
 
- * add GPT support
+ * add GPT support (probably implement libfdisk)
 
 partx
 -----
@@ -143,9 +143,6 @@ misc
 	  do {
 		try to mount all unmounted entries
 	  } while (not all mounted && at least one new was successfully mounted)
-
- * agetty: use nl_langinfo() for days and months rather than hardcoded
-   English names.
 
  * rewrite ipcs to use /proc/sys/kernel rather than unreliable syscalls
    (there are problems with 32bit userspace on 64bit kernel)
