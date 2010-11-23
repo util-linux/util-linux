@@ -431,14 +431,13 @@ int __blkid_probe_invert_filter(blkid_probe pr, int chain)
 	struct blkid_chain *chn;
 	unsigned long *fltr;
 
-	fltr = blkid_probe_get_filter(pr, chain, FALSE);
-	if (!fltr)
-		return -1;
-
 	chn = &pr->chains[chain];
 
+	if (!chn->driver->has_fltr || !chn->fltr)
+		return -1;
+
 	for (i = 0; i < blkid_bmp_nwords(chn->driver->nidinfos); i++)
-		fltr[i] = ~fltr[i];
+		chn->fltr[i] = ~chn->fltr[i];
 
 	DBG(DEBUG_LOWPROBE, printf("probing filter inverted\n"));
 	/* blkid_probe_dump_filter(pr, chain); */

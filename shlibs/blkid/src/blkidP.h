@@ -437,7 +437,7 @@ extern size_t blkid_rtrim_whitespace(unsigned char *str);
 		((bmp)[ blkid_bmp_idx_byte(item) ] |= blkid_bmp_idx_bit(item))
 
 #define blkid_bmp_unset_item(bmp, item)	\
-		((bmp)[ bmp_idx_byte(item) ] &= ~bmp_idx_bit(item))
+		((bmp)[ blkid_bmp_idx_byte(item) ] &= ~blkid_bmp_idx_bit(item))
 
 #define blkid_bmp_get_item(bmp, item)	\
 		((bmp)[ blkid_bmp_idx_byte(item) ] & blkid_bmp_idx_bit(item))
