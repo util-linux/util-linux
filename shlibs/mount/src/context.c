@@ -1079,13 +1079,22 @@ int mnt_context_update_tabs(mnt_context *cxt)
 
 	assert(cxt);
 
-	if ((cxt->flags & MNT_FL_NOMTAB) && cxt->helper)
+	if (cxt->flags & MNT_FL_NOMTAB) {
+		DBG(CXT, mnt_debug_h(cxt, "don't update: NOMTAB flag"));
 		return 0;
-	if (!cxt->update || !mnt_update_is_ready(cxt->update))
+	}
+	if (cxt->helper) {
+		DBG(CXT, mnt_debug_h(cxt, "don't update: external helper"));
 		return 0;
-	if (cxt->syscall_status)
+	}
+	if (!cxt->update || !mnt_update_is_ready(cxt->update)) {
+		DBG(CXT, mnt_debug_h(cxt, "don't update: no update prepared"));
 		return 0;
-
+	}
+	if (cxt->syscall_status) {
+		DBG(CXT, mnt_debug_h(cxt, "don't update: syscall failed"));
+		return 0;
+	}
 	if (mnt_update_is_userspace_only(cxt->update))
 		filename = cxt->utab_path;
 	else {

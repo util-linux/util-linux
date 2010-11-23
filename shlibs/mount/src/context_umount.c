@@ -31,6 +31,8 @@ static int lookup_umount_fs(mnt_context *cxt)
 	assert(cxt);
 	assert(cxt->fs);
 
+	DBG(CXT, mnt_debug_h(cxt, "umount: lookup FS"));
+
 	tgt = mnt_fs_get_target(cxt->fs);
 	if (!tgt) {
 		DBG(CXT, mnt_debug_h(cxt, "umount: undefined target"));
@@ -409,6 +411,7 @@ static int do_umount(mnt_context *cxt)
 					-cxt->syscall_status));
 		return -cxt->syscall_status;
 	}
+	cxt->syscall_status = 0;
 	DBG(CXT, mnt_debug_h(cxt, "umount(2) success"));
 	return 0;
 }
@@ -473,6 +476,8 @@ int mnt_context_do_umount(mnt_context *cxt)
 		 */
 		const char *o = mnt_fs_get_optstr(cxt->fs);
 		char *n = o ? strdup(o) : NULL;
+
+		DBG(CXT, mnt_debug_h(cxt, "fix remount-on-umount update"));
 
 		if (n)
 			mnt_optstr_remove_option(&n, "rw");
