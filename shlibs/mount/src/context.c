@@ -46,7 +46,7 @@ mnt_context *mnt_new_context()
 
 	if (!cxt->mtab_writable)
 		/* use /dev/.mount/utab if /etc/mtab is useless */
-		mnt_has_regular_mtab(&cxt->utab_path, &cxt->utab_writable);
+		mnt_has_regular_utab(&cxt->utab_path, &cxt->utab_writable);
 
 	return cxt;
 }
@@ -1054,11 +1054,18 @@ int mnt_context_prepare_update(mnt_context *cxt)
 		/* Don't try to touch mtab if umounting root FS */
 		cxt->flags |= MNT_FL_NOMTAB;
 
-	if ((cxt->flags & MNT_FL_NOMTAB) || cxt->helper)
+	if (cxt->flags & MNT_FL_NOMTAB) {
+		DBG(CXT, mnt_debug_h(cxt, "skip update: NOMTAB flag"));
 		return 0;
-	if (!cxt->mtab_writable && !cxt->utab_writable)
+	}
+	if (cxt->helper) {
+		DBG(CXT, mnt_debug_h(cxt, "skip update: external helper"));
 		return 0;
-
+	}
+	if (!cxt->mtab_writable && !cxt->utab_writable) {
+		DBG(CXT, mnt_debug_h(cxt, "skip update: no writable destination"));
+		return 0;
+	}
 	if (!cxt->update) {
 		cxt->update = mnt_new_update(!cxt->mtab_writable);
 		if (!cxt->update)
@@ -1385,6 +1392,9 @@ int main(int argc, char *argv[])
 	{ "--mount",  test_mount,  "[-o <opts>] [-t <type>] <spec>|<src> <target>" },
 	{ "--umount", test_umount, "[-t <type>] [-f][-l][-r] <src>|<target>" },
 	{ NULL }};
+
+
+	umask(S_IWGRP|S_IWOTH);	/* to be compatible with mount(8) */
 
 	return mnt_run_test(tss, argc, argv);
 }

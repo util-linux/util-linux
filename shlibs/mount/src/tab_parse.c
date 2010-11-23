@@ -631,6 +631,9 @@ int mnt_tab_parse_mtab(mnt_tab *tb, const char *filename)
 	const char *utab = NULL;
 
 	if (mnt_has_regular_mtab(&filename, NULL)) {
+
+		DBG(TAB, mnt_debug_h(tb, "force %s usage", filename));
+
 		rc = mnt_tab_parse_file(tb, filename);
 		if (!rc)
 			return 0;
@@ -647,11 +650,11 @@ int mnt_tab_parse_mtab(mnt_tab *tb, const char *filename)
 		return mnt_tab_parse_file(tb, _PATH_PROC_MOUNTS);
 
 	/*
-	 * try to read userspace specific information from /dev/.mount/utabs/
+	 * try to read userspace specific information from /dev/.mount/utabs
 	 */
 	utab = mnt_get_utab_path();
 	if (utab) {
-		mnt_tab *u_tb = mnt_new_tab_from_dir(utab);
+		mnt_tab *u_tb = mnt_new_tab_from_file(utab);
 
 		if (u_tb) {
 			mnt_fs *u_fs;

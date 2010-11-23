@@ -458,7 +458,8 @@ static int utab_lock(const char *filename)
 
 	DBG(UPDATE, mnt_debug("%s: locking", lfile));
 
-	fd = open(lfile, O_RDONLY|O_CREAT|O_CLOEXEC, S_IRUSR|S_IWUSR);
+	fd = open(lfile, O_RDONLY|O_CREAT|O_CLOEXEC, S_IWUSR|
+			                             S_IRUSR|S_IRGRP|S_IROTH);
 	free(lfile);
 
 	if (fd < 0)

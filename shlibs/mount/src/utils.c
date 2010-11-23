@@ -37,6 +37,8 @@
 
 char *mnt_getenv_safe(const char *arg)
 {
+	return getenv(arg);
+
 	if ((getuid() != geteuid()) || (getgid() != getegid()))
 		return NULL;
 #if HAVE_PRCTL
@@ -510,7 +512,8 @@ static int try_write(const char *filename)
 	if (!filename)
 		return -EINVAL;
 
-	fd = open(filename, O_RDWR, 0644);
+	fd = open(filename, O_RDWR|O_CREAT, S_IWUSR| \
+					    S_IRUSR|S_IRGRP|S_IROTH);
 	if (fd >= 0) {
 		close(fd);
 		return 0;
@@ -612,7 +615,9 @@ int mnt_has_regular_utab(const char **utab, int *writable)
 
 		stripoff_last_component(dirname);	/* remove filename */
 
-		rc = mkdir(dirname, 755);
+		rc = mkdir(dirname, S_IWUSR|
+				    S_IRUSR|S_IRGRP|S_IROTH|
+				    S_IXUSR|S_IXGRP|S_IXOTH);
 		free(dirname);
 		if (rc && errno != EEXIST)
 			goto done;			/* probably EACCES */
