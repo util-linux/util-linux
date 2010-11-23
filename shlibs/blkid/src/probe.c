@@ -429,7 +429,6 @@ int __blkid_probe_invert_filter(blkid_probe pr, int chain)
 {
 	int i;
 	struct blkid_chain *chn;
-	unsigned long *fltr;
 
 	chn = &pr->chains[chain];
 
