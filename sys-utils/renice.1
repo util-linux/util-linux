@@ -107,11 +107,11 @@ all processes owned by users daemon and root.
 .Pp
 Users other than the super-user may only alter the priority of
 processes they own,
-and can only monotonically increase their ``nice value''
+and can only monotonically increase their ``nice value'' (for security reasons)
 within the range 0 to
 .Dv PRIO_MAX
-(20).
-(This prevents overriding administrative fiats.)
+(20),
+unless a nice resource limit is set (Linux 2.6.12 and higher).
 The super-user
 may alter the priority of any process
 and set the priority to any value in the range
