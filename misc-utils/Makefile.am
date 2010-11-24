@@ -20,6 +20,8 @@ CLEANFILES = chkdupexe
 dist_man_MANS = cal.1 chkdupexe.1 ddate.1 logger.1 look.1 mcookie.1 \
 	namei.1 script.1 whereis.1 scriptreplay.1
 
+namei_SOURCES = namei.c $(top_srcdir)/lib/strutils.c
+
 if BUILD_LIBUUID
 usrbin_exec_PROGRAMS += uuidgen
 dist_man_MANS += uuidgen.1

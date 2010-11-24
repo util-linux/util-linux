@@ -3,6 +3,7 @@
 
 #include <inttypes.h>
 #include <string.h>
+#include <sys/types.h>
 
 extern int strtosize(const char *str, uintmax_t *res);
 extern long strtol_or_err(const char *str, const char *errmesg);
@@ -23,4 +24,7 @@ static inline void xstrncpy(char *dest, const char *src, size_t n)
 	strncpy(dest, src, n-1);
 	dest[n-1] = 0;
 }
+
+extern void strmode(mode_t mode, char *str);
+
 #endif
