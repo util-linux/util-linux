@@ -43,4 +43,13 @@ void *xcalloc(const size_t nelems, const size_t size)
         return ret;
 }
 
+static inline char *xstrdup(const char *str)
+{
+	char *ret = strdup(str);
+
+	if (!ret && str)
+		err(EXIT_FAILURE, "cannot duplicate string");
+	return ret;
+}
+
 #endif

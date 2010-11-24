@@ -136,15 +136,6 @@ add_offset(struct wipe_desc *wp0, loff_t offset, int zap)
 	return wp;
 }
 
-static inline char *
-xstrdup(const char *s)
-{
-	char *x = strdup(s);
-	if (!x)
-		err(EXIT_FAILURE, _("strdup failed"));
-	return x;
-}
-
 static struct wipe_desc *
 get_offset_from_probe(struct wipe_desc *wp, blkid_probe pr, int zap)
 {
