@@ -6,11 +6,16 @@ bin_PROGRAMS =
 sbin_PROGRAMS =
 usrsbin_exec_PROGRAMS =
 
-usrbin_exec_PROGRAMS = cal ddate logger look mcookie \
+usrbin_exec_PROGRAMS = cal ddate logger look lsblk mcookie \
 	namei script whereis scriptreplay
 EXTRA_DIST += README.cal README.ddate README.namei README.namei2
 
 mcookie_SOURCES = mcookie.c $(top_srcdir)/lib/md5.c
+lsblk_SOURCES = lsblk.c \
+		$(top_srcdir)/lib/canonicalize.c \
+		$(top_srcdir)/lib/ismounted.c \
+		$(top_srcdir)/lib/tt.c \
+		$(top_srcdir)/lib/strutils.c
 script_LDADD =
 
 usrbin_exec_SCRIPTS = chkdupexe
@@ -18,7 +23,7 @@ usrbin_exec_SCRIPTS = chkdupexe
 CLEANFILES = chkdupexe
 
 dist_man_MANS = cal.1 chkdupexe.1 ddate.1 logger.1 look.1 mcookie.1 \
-	namei.1 script.1 whereis.1 scriptreplay.1
+	lsblk.1 namei.1 script.1 whereis.1 scriptreplay.1
 
 namei_SOURCES = namei.c $(top_srcdir)/lib/strutils.c
 
@@ -47,6 +52,8 @@ findfs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 wipefs_SOURCES = wipefs.c $(top_srcdir)/lib/strutils.c
 wipefs_LDADD = $(ul_libblkid_la)
 wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+lsblk_LDADD = $(ul_libblkid_la)
+lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 if HAVE_STATIC_BLKID
 sbin_PROGRAMS += blkid.static
 blkid_static_SOURCES = $(blkid_SOURCES)

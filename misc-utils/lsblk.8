@@ -1,0 +1,66 @@
+.\" -*- nroff -*-
+.TH LSBLK 8 "Apr 2010" "Version 1.0"
+.SH NAME
+lsblk \- list block devices
+.SH SYNOPSIS
+.B lsblk
+.RB [ options ]
+.sp
+.B lsblk
+.RB [ options ]
+.IR device...
+.SH DESCRIPTION
+.B lsblk
+will list information about all or selected block devices. The
+.B lsblk
+command reads
+.I sysfs
+filesystem to gather information.
+.PP
+The command prints all block devices (except RAM disks) in the tree-like format
+by default. See
+.B "lsblk --help"
+to get list of all available columns.
+.SH OPTIONS
+.IP "\fB\-a, \-\-all\fP"
+List all block devices.
+.IP "\fB\-b, \-\-bytes\fP"
+Print the SIZE column in bytes rather than in human readable format.
+.IP "\fB\-e, \-\-exclude \fIlist\fP
+Exclude devices by comma delimited list of major device numbers. Note that RAM
+disks (major=1) are excluded by default.
+.IP "\fB\-f, \-\-fs\fP
+Output info about filesystems. This option is equivalent to -o NAME,FSTYPE,LABEL,MOUNTPOINT.
+The authoritative information about filesystems and raids are provided by
+.BR blkid (8)
+command.
+.IP "\fB\-h, \-\-help\fP"
+Print help and exit.
+.IP "\fB\-i, \-\-ascii\fP"
+Use ascii characters for tree formatting.
+.IP "\fB\-m, \-\-perms\fP
+Output info about device owner, group and mode. This option is equivalent to -o NAME,SIZE,OWNER,GROUP,MODE.
+.IP "\fB\-l, \-\-list\fP"
+Use the list output format.
+.IP "\fB\-n, \-\-noheadings\fP"
+Do not print a header line.
+.IP "\fB\-o, \-\-output \fIlist\fP"
+Define output columns.  Use
+.B "--help"
+to get list of all supported columns.
+.IP "\fB\-r, \-\-raw\fP"
+Use raw output format.
+.IP "\fB\-t, \-\-topology\fP"
+Output info about block device topology. This option is equivalent to -o NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED.
+.SH AUTHORS
+.nf
+Milan Broz <mbroz@redhat.com>
+Karel Zak <kzak@redhat.com>
+.fi
+.SH SEE ALSO
+.BR findmnt (8),
+.BR blkid (8),
+.BR ls (1)
+.SH AVAILABILITY
+The lsblk command is part of the util-linux-ng package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.

@@ -18,3 +18,4 @@ findfs
 blkid
 wipefs
 findmnt
+lsblk
