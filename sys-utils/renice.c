@@ -124,14 +124,14 @@ main(int argc, char **argv)
 			register struct passwd *pwd = getpwnam(*argv);
 
 			if (pwd == NULL) {
-				warnx(_("%s: unknown user"), *argv);
+				warnx(_("unknown user %s"), *argv);
 				continue;
 			}
 			who = pwd->pw_uid;
 		} else {
 			who = strtol(*argv, &endptr, 10);
 			if (who < 0 || *endptr) {
-				warnx(_("%s: bad value"), *argv);
+				warnx(_("bad value %s"), *argv);
 				continue;
 			}
 		}
