@@ -5,6 +5,7 @@ dmesg
 fallocate
 flock
 fsfreeze
+fstrim
 i386.8
 ia64.8
 ipcmk
