@@ -1,5 +1,5 @@
 /*
- * lsblk(1) - list block devices
+ * lsblk(8) - list block devices
  *
  * Copyright (C) 2010 Red Hat, Inc. All rights reserved.
  * Written by Milan Broz <mbroz@redhat.com>
@@ -915,7 +915,7 @@ static int __attribute__((__noreturn__)) help(FILE *out)
 	for (i = 0; i < __NCOLUMNS; i++)
 		fprintf(out, " %10s  %s\n", infos[i].name, gettext(infos[i].help));
 
-	fprintf(out, _("\nFor more information see lsblk(1).\n"));
+	fprintf(out, _("\nFor more information see lsblk(8).\n"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
