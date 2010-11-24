@@ -44,6 +44,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <err.h>
 #include "nls.h"
 
 static int donice(int,int,int);
@@ -123,16 +124,14 @@ main(int argc, char **argv)
 			register struct passwd *pwd = getpwnam(*argv);
 
 			if (pwd == NULL) {
-				fprintf(stderr, _("renice: %s: unknown user\n"),
-					*argv);
+				warnx(_("%s: unknown user"), *argv);
 				continue;
 			}
 			who = pwd->pw_uid;
 		} else {
 			who = strtol(*argv, &endptr, 10);
 			if (who < 0 || *endptr) {
-				fprintf(stderr, _("renice: %s: bad value\n"),
-					*argv);
+				warnx(_("%s: bad value"), *argv);
 				continue;
 			}
 		}
@@ -148,20 +147,17 @@ donice(int which, int who, int prio) {
 	errno = 0;
 	oldprio = getpriority(which, who);
 	if (oldprio == -1 && errno) {
-		fprintf(stderr, "renice: %d: ", who);
-		perror(_("getpriority"));
+		warn(_("%d: getpriority"), who);
 		return 1;
 	}
 	if (setpriority(which, who, prio) < 0) {
-		fprintf(stderr, "renice: %d: ", who);
-		perror(_("setpriority"));
+		warn(_("%d: setpriority"), who);
 		return 1;
 	}
 	errno = 0;
 	newprio = getpriority(which, who);
 	if (newprio == -1 && errno) {
-		fprintf(stderr, "renice: %d: ", who);
-		perror(_("getpriority"));
+		warn(_("%d: getpriority"), who);
 		return 1;
 	}
 
