@@ -46,9 +46,9 @@
 #include <errno.h>
 #include "nls.h"
 
-int donice(int,int,int);
+static int donice(int,int,int);
 
-void usage(int rc)
+static void usage(int rc)
 {
 	printf( _("\nUsage:\n"
 		" renice [-n] priority [-p|--pid] pid  [... pid]\n"
@@ -141,7 +141,7 @@ main(int argc, char **argv)
 	return errs != 0 ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
-int
+static int
 donice(int which, int who, int prio) {
 	int oldprio, newprio;
 
