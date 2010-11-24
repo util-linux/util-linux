@@ -87,7 +87,7 @@ int main(int argc, char **argv)
 	    { "help",      0, 0, 'h' },
 	    { "keep-size", 0, 0, 'n' },
 	    { "offset",    1, 0, 'o' },
-	    { "lenght",    1, 0, 'l' },
+	    { "length",    1, 0, 'l' },
 	    { NULL,        0, 0, 0 }
 	};
 
