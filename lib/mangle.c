@@ -79,17 +79,20 @@ static inline const char *skip_nonspaces(const char *s)
 /*
  * Returns mallocated buffer or NULL in case of error.
  */
-char *unmangle(const char *s)
+char *unmangle(const char *s, const char **end)
 {
 	char *buf;
-	const char *end;
+	const char *e;
 	size_t sz;
 
 	if (!s)
 		return NULL;
 
-	end = skip_nonspaces(s);
-	sz = end - s + 1;
+	e = skip_nonspaces(s);
+	sz = e - s + 1;
+
+	if (end)
+		*end = e;
 
 	buf = malloc(sz);
 	if (!buf)
@@ -114,7 +117,7 @@ int main(int argc, char *argv[])
 		printf("mangled: '%s'\n", mangle(argv[2]));
 
 	else if (!strcmp(argv[1], "--unmangle")) {
-		char *x = unmangle(argv[2]);
+		char *x = unmangle(argv[2], NULL);
 
 		if (x) {
 			printf("unmangled: '%s'\n", x);

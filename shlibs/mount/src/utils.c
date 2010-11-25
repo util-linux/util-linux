@@ -124,7 +124,7 @@ char *mnt_mangle(const char *str)
  */
 char *mnt_unmangle(const char *str)
 {
-	return unmangle(str);
+	return unmangle(str, NULL);
 }
 
 /**

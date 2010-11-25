@@ -94,6 +94,8 @@ mnt_debug_h(void *handler, const char *mesg, ...)
 /* library private paths */
 #define MNT_PATH_UTAB	"/dev/.mount/utab"
 
+#define MNT_UTAB_HEADER	"# libmount utab file\n"
+
 #ifdef TEST_PROGRAM
 struct mtest {
 	const char	*name;
@@ -148,6 +150,7 @@ struct _mnt_iter {
 
 /*
  * This struct represents one entry in mtab/fstab/mountinfo file.
+ * (note that fstab[1] means the first column from fstab, and so on...)
  */
 struct _mnt_fs {
 	struct list_head ents;
@@ -156,7 +159,9 @@ struct _mnt_fs {
 	int		parent;		/* moutninfo[2]: parent */
 	dev_t		devno;		/* moutninfo[3]: st_dev */
 
-	char		*source;	/* fstab[1]: mountinfo[10]:
+	char		*bindsrc;	/* utab, full path from fstab[1] for bind mounts */
+
+	char		*source;	/* fstab[1], mountinfo[10]:
                                          * source dev, file, dir or TAG */
 	char		*tagname;	/* fstab[1]: tag name - "LABEL", "UUID", ..*/
 	char		*tagval;	/*           tag value */
@@ -196,6 +201,19 @@ struct _mnt_tab {
         int		(*errcb)(mnt_tab *tb, const char *filename, int line);
 
 	struct list_head	ents;	/* list of entries (mentry) */
+};
+
+extern mnt_tab *__mnt_new_tab_from_file(const char *filename, int fmt);
+
+/*
+ * Tab file format
+ */
+enum {
+	MNT_FMT_GUESS,
+	MNT_FMT_FSTAB,			/* /etc/{fs,m}tab */
+	MNT_FMT_MTAB = MNT_FMT_FSTAB,	/* alias */
+	MNT_FMT_MOUNTINFO,		/* /proc/#/mountinfo */
+	MNT_FMT_UTAB			/* /dev/.mount/utab */
 };
 
 

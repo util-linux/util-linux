@@ -179,7 +179,7 @@ read_proc_swaps(void) {
 			break;
 		swapFiles = q;
 
-		if ((p = unmangle(line)) == NULL)
+		if ((p = unmangle(line, NULL)) == NULL)
 			break;
 
 		swapFiles[numSwaps++] = canonicalize_path(p);
@@ -220,7 +220,7 @@ display_summary(void)
 		*p = '\0';
 		for (++p; *p && isblank((unsigned int) *p); p++);
 
-		dev = unmangle(line);
+		dev = unmangle(line, NULL);
 		if (!dev)
 			continue;
 		cn = canonicalize_path(dev);

@@ -55,7 +55,7 @@ static int next_number(char **s, int *num)
 /*
  * Parses one line from {fs,m}tab
  */
-static int mnt_tab_parse_file_line(mnt_fs *fs, char *s)
+static int mnt_parse_tab_line(mnt_fs *fs, char *s)
 {
 	int rc, n = 0;
 	char *src, *fstype, *optstr;
@@ -83,7 +83,7 @@ static int mnt_tab_parse_file_line(mnt_fs *fs, char *s)
 		if (!rc)
 			rc = __mnt_fs_set_optstr_ptr(fs, optstr, TRUE);
 	} else {
-		DBG(TAB, mnt_debug( "parse error: [sscanf rc=%d]: '%s'", rc, s));
+		DBG(TAB, mnt_debug("tab parse error: [sscanf rc=%d]: '%s'", rc, s));
 		rc = -EINVAL;
 	}
 
@@ -94,10 +94,14 @@ static int mnt_tab_parse_file_line(mnt_fs *fs, char *s)
 	s = skip_spaces(s + n);
 	if (*s) {
 		if (next_number(&s, &fs->freq) != 0) {
-			if (*s)
+			if (*s) {
+				DBG(TAB, mnt_debug("tab parse error: [freq]"));
 				rc = -EINVAL;
-		} else if (next_number(&s, &fs->passno) != 0 && *s)
+			}
+		} else if (next_number(&s, &fs->passno) != 0 && *s) {
+			DBG(TAB, mnt_debug("tab parse error: [passno]"));
 			rc = -EINVAL;
+		}
 	}
 
 	return rc;
@@ -158,23 +162,84 @@ static int mnt_parse_mountinfo_line(mnt_fs *fs, char *s)
 		if (!rc)
 			rc = __mnt_fs_set_source_ptr(fs, src);
 	} else {
-		DBG(TAB, mnt_debug("parse error [field=%d]: '%s'", rc, s));
+		DBG(TAB, mnt_debug(
+			"mountinfo parse error [sscanf rc=%d]: '%s'", rc, s));
 		rc = -EINVAL;
 	}
 	return rc;
 }
 
 /*
+ * Parses one line from utab file
+ */
+static int mnt_parse_utab_line(mnt_fs *fs, const char *s)
+{
+	const char *p = s;
+
+	assert(fs);
+	assert(s);
+	assert(!fs->source);
+	assert(!fs->target);
+
+	while (p && *p) {
+		while (*p == ' ') p++;
+		if (!*p)
+			break;
+
+		if (!fs->source && !strncmp(p, "SRC=", 4)) {
+			char *v = unmangle(p + 4, &p);
+			if (!v)
+				goto enomem;
+			if (strcmp(v, "none"))
+				__mnt_fs_set_source_ptr(fs, v);
+
+		} else if (!fs->target && !strncmp(p, "TARGET=", 7)) {
+			fs->target = unmangle(p + 7, &p);
+			if (!fs->target)
+				goto enomem;
+
+		} else if (!fs->root && !strncmp(p, "ROOT=", 5)) {
+			fs->root = unmangle(p + 5, &p);
+			if (!fs->root)
+				goto enomem;
+
+		} else if (!fs->bindsrc && !strncmp(p, "BINDSRC=", 8)) {
+			fs->bindsrc = unmangle(p + 8, &p);
+			if (!fs->bindsrc)
+				goto enomem;
+
+		} else if (!fs->optstr && !strncmp(p, "OPTS=", 5)) {
+			fs->optstr = unmangle(p + 5, &p);
+			if (!fs->optstr)
+				goto enomem;
+		} else {
+			/* unknown variable */
+			while (*p && *p != ' ') p++;
+		}
+	}
+
+	return 0;
+enomem:
+	DBG(TAB, mnt_debug("utab parse error: ENOMEM"));
+	return -ENOMEM;
+}
+
+/*
  * Returns {m,fs}tab or mountinfo file format (MNT_FMT_*)
  *
- * The "mountinfo" format is always: "<number> <number> ... "
+ * Note that we aren't tring to guess utab file format, because this file has
+ * to be always parsed by private libmount routines with explicitly defined
+ * format.
+ *
+ * mountinfo: "<number> <number> ... "
  */
-static int detect_fmt(char *line)
+static int guess_tab_format(char *line)
 {
 	unsigned int a, b;
 
-	return sscanf(line, "%u %u", &a, &b) == 2 ?
-			MNT_FMT_MOUNTINFO : MNT_FMT_FSTAB;
+	if (sscanf(line, "%u %u", &a, &b) == 2)
+		return MNT_FMT_MOUNTINFO;
+	return MNT_FMT_FSTAB;
 }
 
 
@@ -273,36 +338,39 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
 		s = skip_spaces(buf);
 	} while (*s == '\0' || *s == '#');
 
-	/*DBG(TAB, mnt_debug_h(tb, "%s:%d: %s", filename, *nlines, s));*/
-
-	if (!tb->fmt)
-		tb->fmt = detect_fmt(s);
+	if (tb->fmt == MNT_FMT_GUESS)
+		tb->fmt = guess_tab_format(s);
 
 	if (tb->fmt == MNT_FMT_FSTAB) {
-		if (mnt_tab_parse_file_line(fs, s) != 0)
+		if (mnt_parse_tab_line(fs, s) != 0)
 			goto err;
 
 	} else if (tb->fmt == MNT_FMT_MOUNTINFO) {
 		if (mnt_parse_mountinfo_line(fs, s) != 0)
 			goto err;
+
+	} else if (tb->fmt == MNT_FMT_UTAB) {
+		if (mnt_parse_utab_line(fs, s) != 0)
+			goto err;
 	}
+
 
 	/* merge fs_optstr and vfs_optstr into optstr (necessary for "mountinfo") */
 	if (!fs->optstr && (fs->vfs_optstr || fs->fs_optstr)) {
 		fs->optstr = merge_optstr(fs->vfs_optstr, fs->fs_optstr);
-		if (!fs->optstr)
+		if (!fs->optstr) {
+			DBG(TAB, mnt_debug_h(tb, "failed to merge optstr"));
 			return -ENOMEM;
+		}
 	}
-/*
-	DBG(TAB, mnt_debug_h(tb, "%s:%d: SOURCE:%s, MNTPOINT:%s, TYPE:%s, "
-				  "OPTS:%s, FREQ:%d, PASSNO:%d",
-		filename, *nlines,
-		fs->source, fs->target, fs->fstype,
-		fs->optstr, fs->freq, fs->passno));
-*/
+
+	/*DBG(TAB, mnt_fs_print_debug(fs, stderr));*/
+
 	return 0;
 err:
-	DBG(TAB, mnt_debug_h(tb, "%s:%d: parse error", filename, *nlines));
+	DBG(TAB, mnt_debug_h(tb, "%s:%d: %s parse error", filename, *nlines,
+				tb->fmt == MNT_FMT_MOUNTINFO ? "mountinfo" :
+				tb->fmt == MNT_FMT_FSTAB ? "fstab" : "utab"));
 
 	/* by default all errors are recoverable, otherwise behavior depends on
 	 * errcb() function. See mnt_tab_set_parser_errcb().
@@ -447,6 +515,27 @@ static int mnt_tab_parse_dir(mnt_tab *tb, const char *dirname)
 	return 0;
 }
 
+mnt_tab *__mnt_new_tab_from_file(const char *filename, int fmt)
+{
+	mnt_tab *tb;
+	struct stat st;
+
+	assert(filename);
+
+	if (!filename)
+		return NULL;
+	if (stat(filename, &st) || st.st_size == 0)
+		return NULL;
+	tb = mnt_new_tab();
+	if (tb) {
+		tb->fmt = fmt;
+		if (mnt_tab_parse_file(tb, filename) != 0) {
+			mnt_free_tab(tb);
+			tb = NULL;
+		}
+	}
+	return tb;
+}
 
 /**
  * mnt_new_tab_from_file:
@@ -461,18 +550,7 @@ static int mnt_tab_parse_dir(mnt_tab *tb, const char *dirname)
  */
 mnt_tab *mnt_new_tab_from_file(const char *filename)
 {
-	mnt_tab *tb;
-
-	assert(filename);
-
-	if (!filename)
-		return NULL;
-	tb = mnt_new_tab();
-	if (tb && mnt_tab_parse_file(tb, filename) != 0) {
-		mnt_free_tab(tb);
-		tb = NULL;
-	}
-	return tb;
+	return __mnt_new_tab_from_file(filename, MNT_FMT_GUESS);
 }
 
 /**
@@ -550,6 +628,8 @@ int mnt_tab_parse_fstab(mnt_tab *tb, const char *filename)
 	if (!filename)
 		filename = mnt_get_fstab_path();
 
+	tb->fmt = MNT_FMT_FSTAB;
+
 	f = fopen(filename, "r");
 	if (f) {
 		int rc = mnt_tab_parse_stream(tb, f, filename);
@@ -588,9 +668,11 @@ static mnt_fs *mnt_tab_merge_userspace_fs(mnt_tab *tb, mnt_fs *uf)
 	if (!tb || !uf)
 		return NULL;
 
+	DBG(TAB, mnt_debug_h(tb, "merging userspace fs"));
+
 	src = mnt_fs_get_srcpath(uf);
 	target = mnt_fs_get_target(uf);
-	optstr = mnt_fs_get_vfs_optstr(uf);
+	optstr = mnt_fs_get_optstr(uf);
 	root = mnt_fs_get_root(uf);
 
 	if (!src || !target || !optstr || !root)
@@ -608,8 +690,14 @@ static mnt_fs *mnt_tab_merge_userspace_fs(mnt_tab *tb, mnt_fs *uf)
 			break;
 	}
 
-	if (fs)
+	if (fs) {
+		DBG(TAB, mnt_debug_h(tb, "found fs -- appending userspace optstr"));
 		mnt_fs_append_userspace_optstr(fs, optstr);
+		mnt_fs_set_bindsrc(fs, mnt_fs_get_bindsrc(uf));
+
+		DBG(TAB, mnt_debug_h(tb, "found fs:"));
+		DBG(TAB, mnt_fs_print_debug(fs, stderr));
+	}
 	return fs;
 }
 
@@ -644,17 +732,20 @@ int mnt_tab_parse_mtab(mnt_tab *tb, const char *filename)
 	 * useless /etc/mtab
 	 * -- read kernel information from /proc/self/mountinfo
 	 */
+	tb->fmt = MNT_FMT_MOUNTINFO;
 	rc = mnt_tab_parse_file(tb, _PATH_PROC_MOUNTINFO);
-	if (rc)
+	if (rc) {
 		/* hmm, old kernel? ...try /proc/mounts */
+		tb->fmt = MNT_FMT_MTAB;
 		return mnt_tab_parse_file(tb, _PATH_PROC_MOUNTS);
+	}
 
 	/*
 	 * try to read userspace specific information from /dev/.mount/utabs
 	 */
 	utab = mnt_get_utab_path();
 	if (utab) {
-		mnt_tab *u_tb = mnt_new_tab_from_file(utab);
+		mnt_tab *u_tb = __mnt_new_tab_from_file(utab, MNT_FMT_UTAB);
 
 		if (u_tb) {
 			mnt_fs *u_fs;

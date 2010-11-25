@@ -126,17 +126,13 @@ my_getmntent (mntFILE *mfp) {
 		s = skip_spaces(buf);
 	} while (*s == '\0' || *s == '#');
 
-	me.mnt_fsname = unmangle(s);
-	s = skip_nonspaces(s);
+	me.mnt_fsname = unmangle(s, &s);
 	s = skip_spaces(s);
-	me.mnt_dir = unmangle(s);
-	s = skip_nonspaces(s);
+	me.mnt_dir = unmangle(s, &s);
 	s = skip_spaces(s);
-	me.mnt_type = unmangle(s);
-	s = skip_nonspaces(s);
+	me.mnt_type = unmangle(s, &s);
 	s = skip_spaces(s);
-	me.mnt_opts = unmangle(s);
-	s = skip_nonspaces(s);
+	me.mnt_opts = unmangle(s, &s);
 	s = skip_spaces(s);
 
 	if (isdigit(*s)) {

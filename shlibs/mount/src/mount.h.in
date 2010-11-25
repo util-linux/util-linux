@@ -101,15 +101,6 @@ typedef struct _mnt_update mnt_update;
 typedef struct _mnt_context mnt_context;
 
 /*
- * Tab file format
- */
-enum {
-	MNT_FMT_FSTAB = 1,              /* /etc/{fs,m}tab */
-	MNT_FMT_MTAB = MNT_FMT_FSTAB,	/* alias */
-	MNT_FMT_MOUNTINFO               /* /proc/#/mountinfo */
-};
-
-/*
  * Actions
  */
 enum {
@@ -243,6 +234,8 @@ extern int mnt_fs_get_passno(mnt_fs *ent);
 extern int mnt_fs_set_passno(mnt_fs *ent, int passno);
 extern const char *mnt_fs_get_root(mnt_fs *fs);
 extern int mnt_fs_set_root(mnt_fs *fs, const char *root);
+extern const char *mnt_fs_get_bindsrc(mnt_fs *fs);
+extern int mnt_fs_set_bindsrc(mnt_fs *fs, const char *src);
 extern int mnt_fs_get_id(mnt_fs *fs);
 extern int mnt_fs_get_parent_id(mnt_fs *fs);
 extern dev_t mnt_fs_get_devno(mnt_fs *fs);

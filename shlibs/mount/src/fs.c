@@ -50,6 +50,7 @@ void mnt_free_fs(mnt_fs *fs)
 	list_del(&fs->ents);
 
 	free(fs->source);
+	free(fs->bindsrc);
 	free(fs->tagname);
 	free(fs->tagval);
 	free(fs->root);
@@ -654,6 +655,42 @@ int mnt_fs_set_root(mnt_fs *fs, const char *root)
 }
 
 /**
+ * mnt_fs_get_bindsrc:
+ * @fs: /dev/.mount/utab entry
+ *
+ * Returns: full path that was used for mount(2) on MS_BIND
+ */
+const char *mnt_fs_get_bindsrc(mnt_fs *fs)
+{
+	assert(fs);
+	return fs ? fs->bindsrc : NULL;
+}
+
+/**
+ * mnt_fs_set_bindsrc:
+ * @fs: filesystem
+ * @src: path
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_fs_set_bindsrc(mnt_fs *fs, const char *src)
+{
+	char *p = NULL;
+
+	assert(fs);
+	if (!fs)
+		return -EINVAL;
+	if (src) {
+		p = strdup(src);
+		if (!p)
+			return -ENOMEM;
+	}
+	free(fs->bindsrc);
+	fs->bindsrc = p;
+	return 0;
+}
+
+/**
  * mnt_fs_get_id:
  * @fs: /proc/self/mountinfo entry
  *
@@ -863,20 +900,25 @@ int mnt_fs_print_debug(mnt_fs *fs, FILE *file)
 	if (!fs)
 		return -EINVAL;
 	fprintf(file, "------ fs: %p\n", fs);
-	fprintf(file, "source: %s\n", mnt_fs_get_source(fs));
-	fprintf(file, "target: %s\n", mnt_fs_get_target(fs));
-	fprintf(file, "fstype: %s\n", mnt_fs_get_fstype(fs));
-	fprintf(file, "optstr: %s\n", mnt_fs_get_optstr(fs));
+	fprintf(file, "source:  %s\n", mnt_fs_get_source(fs));
+	fprintf(file, "target:  %s\n", mnt_fs_get_target(fs));
+	fprintf(file, "fstype:  %s\n", mnt_fs_get_fstype(fs));
+	fprintf(file, "optstr:  %s\n", mnt_fs_get_optstr(fs));
+
+	if (mnt_fs_get_root(fs))
+		fprintf(file, "root:    %s\n", mnt_fs_get_root(fs));
+	if (mnt_fs_get_bindsrc(fs))
+		fprintf(file, "bindsrc: %s\n", mnt_fs_get_bindsrc(fs));
 	if (mnt_fs_get_freq(fs))
-		fprintf(file, "freq:   %d\n", mnt_fs_get_freq(fs));
+		fprintf(file, "freq:    %d\n", mnt_fs_get_freq(fs));
 	if (mnt_fs_get_passno(fs))
-		fprintf(file, "pass:   %d\n", mnt_fs_get_passno(fs));
+		fprintf(file, "pass:    %d\n", mnt_fs_get_passno(fs));
 	if (mnt_fs_get_id(fs))
-		fprintf(file, "id:     %d\n", mnt_fs_get_id(fs));
+		fprintf(file, "id:      %d\n", mnt_fs_get_id(fs));
 	if (mnt_fs_get_parent_id(fs))
-		fprintf(file, "parent: %d\n", mnt_fs_get_parent_id(fs));
+		fprintf(file, "parent:  %d\n", mnt_fs_get_parent_id(fs));
 	if (mnt_fs_get_devno(fs))
-		fprintf(file, "devno:  %d:%d\n", major(mnt_fs_get_devno(fs)),
+		fprintf(file, "devno:   %d:%d\n", major(mnt_fs_get_devno(fs)),
 						 minor(mnt_fs_get_devno(fs)));
 	return 0;
 }

@@ -35,7 +35,7 @@ struct _mnt_update {
 };
 
 static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent);
-static int get_fs_root(mnt_fs *fs, unsigned long mountflags, char **result);
+static int set_fs_root(mnt_fs *fs, unsigned long mountflags);
 
 /**
  * mnt_new_update:
@@ -212,7 +212,7 @@ static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent)
 	u = NULL;
 
 	if (!(mountflags & MS_REMOUNT)) {
-		rc = get_fs_root(fs, mountflags, &(*ent)->root);
+		rc = set_fs_root(*ent, mountflags);
 		if (rc)
 			goto err;
 	}
@@ -225,7 +225,7 @@ err:
 	return rc;
 }
 
-static int get_fs_root(mnt_fs *fs, unsigned long mountflags, char **result)
+static int set_fs_root(mnt_fs *fs, unsigned long mountflags)
 {
 	char *root = NULL, *mnt = NULL;
 	const char *fstype, *optstr;
@@ -233,7 +233,6 @@ static int get_fs_root(mnt_fs *fs, unsigned long mountflags, char **result)
 	int rc = -ENOMEM;
 
 	assert(fs);
-	assert(result);
 
 	DBG(UPDATE, mnt_debug("setting FS root"));
 
@@ -248,15 +247,19 @@ static int get_fs_root(mnt_fs *fs, unsigned long mountflags, char **result)
 		mnt_fs *src_fs;
 
 		src = mnt_fs_get_srcpath(fs);
-		if (src)
+		if (src) {
+			rc = mnt_fs_set_bindsrc(fs, src);
+			if (rc)
+				goto err;
 			mnt = mnt_get_mountpoint(src);
+		}
 		if (!mnt) {
 			rc = -EINVAL;
 			goto err;
 		}
 		root = mnt_get_fs_root(src, mnt);
 
-		tb = mnt_new_tab_from_file(_PATH_PROC_MOUNTINFO);
+		tb = __mnt_new_tab_from_file(_PATH_PROC_MOUNTINFO, MNT_FMT_MOUNTINFO);
 		if (!tb)
 			goto dflt;
 		src_fs = mnt_tab_find_target(tb, mnt, MNT_ITER_BACKWARD);
@@ -265,7 +268,9 @@ static int get_fs_root(mnt_fs *fs, unsigned long mountflags, char **result)
 
 		/* set device name and fs */
 		src = mnt_fs_get_srcpath(src_fs);
-		mnt_fs_set_source(fs, src);
+		rc = mnt_fs_set_source(fs, src);
+		if (rc)
+			goto err;
 
 		mnt_fs_set_fstype(fs, mnt_fs_get_fstype(src_fs));
 
@@ -294,7 +299,6 @@ static int get_fs_root(mnt_fs *fs, unsigned long mountflags, char **result)
 		char *vol = NULL, *p;
 		size_t sz, volsz = 0;
 
-		// TODO: remove this stupid cast...
 		if (mnt_optstr_get_option((char *) optstr, "subvol", &vol, &volsz))
 			goto dflt;
 
@@ -317,7 +321,10 @@ dflt:
 		if (!root)
 			goto err;
 	}
-	*result = root;
+	fs->root = root;
+
+	DBG(UPDATE, mnt_debug("FS root result: %s", root));
+
 	free(mnt);
 	return 0;
 err:
@@ -358,44 +365,43 @@ static int fprintf_mtab_fs(FILE *f, mnt_fs *fs)
 
 static int fprintf_utab_fs(FILE *f, mnt_fs *fs)
 {
-	char *root = NULL, *target = NULL, *optstr = NULL,
-	     *fstype = NULL, *source = NULL;
-	int rc = -1;
-	dev_t devno;
+	char *p;
 
 	assert(fs);
 	assert(f);
 
 	if (!fs || !f)
 		return -EINVAL;
-	devno = mnt_fs_get_devno(fs);
-	source = mangle(mnt_fs_get_source(fs));
-	root = mangle(mnt_fs_get_root(fs));
-	target = mangle(mnt_fs_get_target(fs));
-	fstype = mangle(mnt_fs_get_fstype(fs));
-	optstr = mangle(mnt_fs_get_optstr(fs));
 
-	if (!root || !target || !optstr)
-		goto done;
+	p = mangle(mnt_fs_get_source(fs));
+	if (p) {
+		fprintf(f, "SRC=%s ", p);
+		free(p);
+	}
+	p = mangle(mnt_fs_get_target(fs));
+	if (p) {
+		fprintf(f, "TARGET=%s ", p);
+		free(p);
+	}
+	p = mangle(mnt_fs_get_root(fs));
+	if (p) {
+		fprintf(f, "ROOT=%s ", p);
+		free(p);
+	}
+	p = mangle(mnt_fs_get_bindsrc(fs));
+	if (p) {
+		fprintf(f, "BINDSRC=%s ", p);
+		free(p);
+	}
+	p = mangle(mnt_fs_get_optstr(fs));
+	if (p) {
+		fprintf(f, "OPTS=%s", p);
+		free(p);
+	}
 
-	rc = fprintf(f, "%i %i %u:%u %s %s %s - %s %s %s\n",
-			mnt_fs_get_id(fs),
-			mnt_fs_get_parent_id(fs),
-			major(devno), minor(devno),
-			root,
-			target,
-			optstr,
-			fstype ? fstype : "auto",
-			source ? source : "none",
-			"none");
-	rc = 0;
-done:
-	free(root);
-	free(target);
-	free(optstr);
-	free(fstype);
-	free(source);
-	return rc;
+	fputc('\n', f);
+
+	return 0;
 }
 
 static int update_tab(mnt_update *upd, const char *filename, mnt_tab *tb)
@@ -515,7 +521,7 @@ static int update_add_entry(mnt_update *upd, const char *filename, mnt_lock *lc)
 static int update_remove_entry(mnt_update *upd, const char *filename, mnt_lock *lc)
 {
 	mnt_tab *tb;
-	int rc = -EINVAL, u_lc = -1;
+	int rc = 0, u_lc = -1;
 
 	assert(upd);
 	assert(upd->target);
@@ -527,7 +533,8 @@ static int update_remove_entry(mnt_update *upd, const char *filename, mnt_lock *
 	else if (upd->userspace_only)
 		u_lc = utab_lock(filename);
 
-	tb = mnt_new_tab_from_file(filename);
+	tb = __mnt_new_tab_from_file(filename,
+			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
 	if (tb) {
 		mnt_fs *rem = mnt_tab_find_target(tb, upd->target, MNT_ITER_BACKWARD);
 		if (rem) {
@@ -547,7 +554,7 @@ static int update_remove_entry(mnt_update *upd, const char *filename, mnt_lock *
 static int update_modify_target(mnt_update *upd, const char *filename, mnt_lock *lc)
 {
 	mnt_tab *tb = NULL;
-	int rc = -EINVAL, u_lc = -1;
+	int rc = 0, u_lc = -1;
 
 	DBG(UPDATE, mnt_debug_h(upd, "%s: modify target", filename));
 
@@ -556,7 +563,8 @@ static int update_modify_target(mnt_update *upd, const char *filename, mnt_lock 
 	else if (upd->userspace_only)
 		u_lc = utab_lock(filename);
 
-	tb = mnt_new_tab_from_file(filename);
+	tb = __mnt_new_tab_from_file(filename,
+			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
 	if (tb) {
 		mnt_fs *cur = mnt_tab_find_target(tb, upd->target, MNT_ITER_BACKWARD);
 		if (cur) {
@@ -576,7 +584,7 @@ static int update_modify_target(mnt_update *upd, const char *filename, mnt_lock 
 static int update_modify_options(mnt_update *upd, const char *filename, mnt_lock *lc)
 {
 	mnt_tab *tb = NULL;
-	int rc = -EINVAL, u_lc = -1;
+	int rc = 0, u_lc = -1;
 
 	assert(upd);
 	assert(upd->fs);
@@ -588,7 +596,8 @@ static int update_modify_options(mnt_update *upd, const char *filename, mnt_lock
 	else if (upd->userspace_only)
 		u_lc = utab_lock(filename);
 
-	tb = mnt_new_tab_from_file(filename);
+	tb = __mnt_new_tab_from_file(filename,
+			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
 	if (tb) {
 		mnt_fs *cur = mnt_tab_find_target(tb,
 					mnt_fs_get_target(upd->fs),

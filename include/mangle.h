@@ -8,7 +8,7 @@
 extern char *mangle(const char *s);
 
 extern void unmangle_to_buffer(const char *s, char *buf, size_t len);
-extern char *unmangle(const char *s);
+extern char *unmangle(const char *s, const char **end);
 
 static inline void unmangle_string(char *s)
 {

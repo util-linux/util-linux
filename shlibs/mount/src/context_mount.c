@@ -354,7 +354,7 @@ static int do_mount(mnt_context *cxt, const char *try_type)
 	if (!(cxt->flags & MNT_FL_FAKE)) {
 		if (mount(src, target, type, flags, cxt->mountdata)) {
 			cxt->syscall_status = -errno;
-			DBG(CXT, mnt_debug_h(cxt, "mount(2) failed [errno=%d]",
+			DBG(CXT, mnt_debug_h(cxt, "mount(2) failed [errno=%d %m]",
 							-cxt->syscall_status));
 			return cxt->syscall_status;
 		}

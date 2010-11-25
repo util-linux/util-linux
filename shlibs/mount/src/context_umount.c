@@ -83,7 +83,10 @@ static int lookup_umount_fs(mnt_context *cxt)
 		rc = mnt_fs_set_fstype(cxt->fs, mnt_fs_get_fstype(fs));
 	if (!rc)
 		rc = mnt_fs_set_optstr(cxt->fs, mnt_fs_get_optstr(fs));
+	if (!rc && mnt_fs_get_bindsrc(fs))
+		rc = mnt_fs_set_bindsrc(cxt->fs, mnt_fs_get_bindsrc(fs));
 
+	DBG(CXT, mnt_debug_h(cxt, "umount: mtab applied"));
 	cxt->flags |= MNT_FL_TAB_APPLIED;
 	return rc;
 }
@@ -150,6 +153,8 @@ static int evaluate_permissions(mnt_context *cxt)
 	if (!mnt_context_is_restricted(cxt))
 		 return 0;		/* superuser mount */
 
+	DBG(CXT, mnt_debug_h(cxt, "umount: evaluating permissions"));
+
 	if (!(cxt->flags & MNT_FL_TAB_APPLIED)) {
 		DBG(CXT, mnt_debug_h(cxt,
 				"cannot found %s in mtab and you are not root",
@@ -186,6 +191,12 @@ static int evaluate_permissions(mnt_context *cxt)
 
 	tgt = mnt_fs_get_target(cxt->fs);
 	src = mnt_fs_get_source(cxt->fs);
+
+	if (mnt_fs_get_bindsrc(cxt->fs)) {
+		src = mnt_fs_get_bindsrc(cxt->fs);
+		DBG(CXT, mnt_debug_h(cxt,
+				"umount: using bind source: %s", src));
+	}
 
 	/* If fstab contains the two lines
 	 *	/dev/sda1 /mnt/zip auto user,noauto  0 0
