@@ -28,6 +28,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <time.h>
+#include <err.h>
 
 #include <sys/ioctl.h>
 #include <sys/time.h>
@@ -39,6 +40,7 @@
 #include "xalloc.h"
 #include "pathnames.h"
 #include "usleep.h"
+#include "strutils.h"
 
 /* constants from legacy PC/AT hardware */
 #define	RTC_PF	0x40
@@ -46,8 +48,6 @@
 #define	RTC_UF	0x10
 
 #define MAX_LINE		1024
-
-static char		*progname;
 
 #define VERSION_STRING		"rtcwake from " PACKAGE_STRING
 #define RTC_PATH		"/sys/class/rtc/%s/device/power/wakeup"
@@ -81,20 +81,25 @@ static struct option long_options[] = {
 	{0,		0,			0, 0  }
 };
 
-static void usage(int retval)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	printf(_("usage: %s [options]\n"
+	fprintf(out, _("Usage: %s [options]\n\nOptions:\n"),
+	                        program_invocation_short_name);
+
+	fprintf(out, _(
 		"    -d | --device <device>    select rtc device (rtc0|rtc1|...)\n"
 		"    -n | --dry-run            does everything, but suspend\n"
 		"    -l | --local              RTC uses local timezone\n"
-		"    -m | --mode               standby|mem|... sleep mode\n"
+		"    -m | --mode <mode>        standby|mem|... sleep mode\n"
 		"    -s | --seconds <seconds>  seconds to sleep\n"
 		"    -t | --time <time_t>      time to wake\n"
 		"    -u | --utc                RTC uses UTC\n"
 		"    -v | --verbose            verbose messages\n"
-		"    -V | --version            show version\n"),
-			progname);
-	exit(retval);
+		"    -V | --version            show version\n"));
+
+	fprintf(out, _("\nFor more information see rtcwake(8).\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 static int is_wakeup_enabled(const char *devname)
@@ -106,7 +111,7 @@ static int is_wakeup_enabled(const char *devname)
 	snprintf(buf, sizeof buf, RTC_PATH, devname + strlen("/dev/"));
 	f = fopen(buf, "r");
 	if (!f) {
-		perror(buf);
+		warn(_("open failed: %s"), buf);
 		return 0;
 	}
 	s = fgets(buf, sizeof buf, f);
@@ -143,12 +148,12 @@ static int get_basetimes(int fd)
 	 * precisely (+/- a second) as we can read them.
 	 */
 	if (ioctl(fd, RTC_RD_TIME, &rtc) < 0) {
-		perror(_("read rtc time"));
+		warn(_("read rtc time failed"));
 		return -1;
 	}
 	sys_time = time(0);
 	if (sys_time == (time_t)-1) {
-		perror(_("read system time"));
+		warn(_("read system time failed"));
 		return -1;
 	}
 
@@ -166,7 +171,7 @@ static int get_basetimes(int fd)
 	rtc_time = mktime(&tm);
 
 	if (rtc_time == (time_t)-1) {
-		perror(_("convert rtc time"));
+		warn(_("convert rtc time failed"));
 		return -1;
 	}
 
@@ -226,15 +231,15 @@ static int setup_alarm(int fd, time_t *wakeup)
 		* works for alarms < 24 hours from now */
 		if ((rtc_time + (24 * 60 * 60)) > *wakeup) {
 			if (ioctl(fd, RTC_ALM_SET, &wake.time) < 0) {
-				perror(_("set rtc alarm"));
+				warn(_("set rtc alarm failed"));
 				return -1;
 			}
 			if (ioctl(fd, RTC_AIE_ON, 0) < 0) {
-				perror(_("enable rtc alarm"));
+				warn(_("enable rtc alarm failed"));
 				return -1;
 			}
 		} else {
-			perror(_("set rtc wake alarm"));
+			warn(_("set rtc wake alarm failed"));
 			return -1;
 		}
 	}
@@ -247,7 +252,7 @@ static void suspend_system(const char *suspend)
 	FILE	*f = fopen(SYS_POWER_STATE_PATH, "w");
 
 	if (!f) {
-		perror(SYS_POWER_STATE_PATH);
+		warn(_("open failed: %s"), SYS_POWER_STATE_PATH);
 		return;
 	}
 
@@ -318,7 +323,7 @@ static int print_alarm(int fd)
 		 */
 		wake.enabled = 1;
 		if (ioctl(fd, RTC_ALM_READ, &wake.time) < 0) {
-			perror(_("read rtc alarm\n"));
+			warn(_("read rtc alarm failed"));
 			return -1;
 		}
 	}
@@ -341,14 +346,14 @@ static int print_alarm(int fd)
 
 	alarm = mktime(&tm);
 	if (alarm == (time_t)-1) {
-		perror(_("convert time failed.\n"));
+		warn(_("convert time failed"));
 		return -1;
 	}
 
 	/* 0 if both UTC, or expresses diff if RTC in local time */
 	alarm += sys_time - rtc_time;
 
-	printf(_("alarm: on  %s\n"), ctime(&alarm));
+	printf(_("alarm: on  %s"), ctime(&alarm));
 	return 0;
 }
 
@@ -366,8 +371,6 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-
-	progname = basename(argv[0]);
 
 	while ((t = getopt_long(argc, argv, "ahd:lm:ns:t:uVv",
 					long_options, NULL)) != EOF) {
@@ -405,10 +408,10 @@ int main(int argc, char **argv)
 				suspend = strdup(optarg);
 				break;
 			}
-			fprintf(stderr,
-				_("%s: unrecognized suspend state '%s'\n"),
-				progname, optarg);
-			usage(EXIT_FAILURE);
+
+			errx(EXIT_FAILURE, _("unrecognized suspend state '%s'"),
+									optarg);
+			break;
 
 		case 'n':
 			dryrun = 1;
@@ -416,28 +419,16 @@ int main(int argc, char **argv)
 
 			/* alarm time, seconds-to-sleep (relative) */
 		case 's':
-			t = atoi(optarg);
-			if (t < 0) {
-				fprintf(stderr,
-					_("%s: illegal interval %s seconds\n"),
-					progname, optarg);
-				usage(EXIT_FAILURE);
-			}
-			seconds = t;
+			seconds = strtol_or_err(optarg,
+					_("failed to parse seconds value"));
 			break;
 
 			/* alarm time, time_t (absolute, seconds since
 			 * 1/1 1970 UTC)
 			 */
 		case 't':
-			t = atoi(optarg);
-			if (t < 0) {
-				fprintf(stderr,
-					_("%s: illegal time_t value %s\n"),
-					progname, optarg);
-				usage(EXIT_FAILURE);
-			}
-			alarm = t;
+			alarm = strtol_or_err(optarg,
+					_("failed to parse time_t value"));
 			break;
 
 		case 'u':
@@ -449,20 +440,20 @@ int main(int argc, char **argv)
 			break;
 
 		case 'V':
-			printf(_("%s: version %s\n"), progname, VERSION_STRING);
+			printf("%s\n", VERSION_STRING);
 			exit(EXIT_SUCCESS);
 
 		case 'h':
-			usage(EXIT_SUCCESS);
-
+			usage(stdout);
 		default:
-			usage(EXIT_FAILURE);
+			usage(stderr);
 		}
 	}
 
 	if (clock_mode == CM_AUTO) {
 		if (read_clock_mode() < 0) {
-			printf(_("%s: assuming RTC uses UTC ...\n"), progname);
+			printf(_("%s: assuming RTC uses UTC ...\n"),
+					program_invocation_short_name);
 			clock_mode = CM_UTC;
 		}
 	}
@@ -473,8 +464,8 @@ int main(int argc, char **argv)
 	if (!alarm && !seconds && strcmp(suspend,"disable") &&
 				  strcmp(suspend,"show")) {
 
-		fprintf(stderr, _("%s: must provide wake time\n"), progname);
-		usage(EXIT_FAILURE);
+		warnx(_("must provide wake time (see -t and -s options)"));
+		usage(stderr);
 	}
 
 	/* when devname doesn't start with /dev, append it */
@@ -490,11 +481,8 @@ int main(int argc, char **argv)
 	}
 
 	if (strcmp(suspend, "on") != 0 && strcmp(suspend, "no") != 0
-			&& !is_wakeup_enabled(devname)) {
-		fprintf(stderr, _("%s: %s not enabled for wakeup events\n"),
-				progname, devname);
-		exit(EXIT_FAILURE);
-	}
+			&& !is_wakeup_enabled(devname))
+		errx(EXIT_FAILURE, _("%s not enabled for wakeup events"), devname);
 
 	/* this RTC must exist and (if we'll sleep) be wakeup-enabled */
 #ifdef O_CLOEXEC
@@ -502,10 +490,8 @@ int main(int argc, char **argv)
 #else
 	fd = open(devname, O_RDONLY);
 #endif
-	if (fd < 0) {
-		perror(devname);
-		exit(EXIT_FAILURE);
-	}
+	if (fd < 0)
+		err(EXIT_FAILURE, _("open failed: %s"), devname);
 
 	/* relative or absolute alarm time, normalized to time_t */
 	if (get_basetimes(fd) < 0)
@@ -519,12 +505,9 @@ int main(int argc, char **argv)
 		 * modes are not set
 		 */
 		if (alarm) {
-			if (alarm < sys_time) {
-				fprintf(stderr,
-					_("%s: time doesn't go backward to %s\n"),
-					progname, ctime(&alarm));
-				exit(EXIT_FAILURE);
-			}
+			if (alarm < sys_time)
+				errx(EXIT_FAILURE, _("time doesn't go backward to %s"),
+						ctime(&alarm));
 			alarm += sys_time - rtc_time;
 		} else
 			alarm = rtc_time + seconds + 1;
@@ -532,8 +515,13 @@ int main(int argc, char **argv)
 		if (setup_alarm(fd, &alarm) < 0)
 			exit(EXIT_FAILURE);
 
-		printf(_("%s: wakeup from \"%s\" using %s at %s\n"),
-				progname, suspend, devname,
+		if (strcmp(suspend, "no") == 0 || strcmp(suspend, "on") == 0)
+			printf(_("%s: wakeup using %s at %s"),
+				program_invocation_short_name, devname,
+				ctime(&alarm));
+		else
+			printf(_("%s: wakeup from \"%s\" using %s at %s"),
+				program_invocation_short_name, suspend, devname,
 				ctime(&alarm));
 		fflush(stdout);
 		usleep(10 * 1000);
@@ -542,7 +530,7 @@ int main(int argc, char **argv)
 	if (strcmp(suspend, "no") == 0) {
 		if (verbose)
 			printf(_("suspend mode: no; leaving\n"));
-		  dryrun = 1;	/* to skip disabling alarm at the end */
+		dryrun = 1;	/* to skip disabling alarm at the end */
 
 	} else if (strcmp(suspend, "off") == 0) {
 		char *arg[4];
@@ -559,8 +547,7 @@ int main(int argc, char **argv)
 		if (!dryrun) {
 			execv(arg[0], arg);
 
-			fprintf(stderr, _("%s: unable to execute %s: %s\n"),
-				progname, _PATH_SHUTDOWN, strerror(errno));
+			warn(_("unable to execute %s"),	_PATH_SHUTDOWN);
 			rc = EXIT_FAILURE;
 		}
 
@@ -574,7 +561,7 @@ int main(int argc, char **argv)
 			do {
 				t = read(fd, &data, sizeof data);
 				if (t < 0) {
-					perror(_("rtc read"));
+					warn(_("rtc read failed"));
 					break;
 				}
 				if (verbose)
@@ -602,9 +589,8 @@ int main(int argc, char **argv)
 	}
 
 	if (!dryrun && ioctl(fd, RTC_AIE_OFF, 0) < 0)
-		perror(_("disable rtc alarm interrupt"));
+		warn(_("disable rtc alarm interrupt failed"));
 
 	close(fd);
-
 	return rc;
 }
