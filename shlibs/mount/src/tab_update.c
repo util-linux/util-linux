@@ -35,7 +35,7 @@ struct _mnt_update {
 };
 
 static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent);
-static int set_fs_root(mnt_fs *fs, unsigned long mountflags);
+static int set_fs_root(mnt_fs *result, mnt_fs *fs, unsigned long mountflags);
 
 /**
  * mnt_new_update:
@@ -212,7 +212,7 @@ static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent)
 	u = NULL;
 
 	if (!(mountflags & MS_REMOUNT)) {
-		rc = set_fs_root(*ent, mountflags);
+		rc = set_fs_root(*ent, fs, mountflags);
 		if (rc)
 			goto err;
 	}
@@ -225,7 +225,7 @@ err:
 	return rc;
 }
 
-static int set_fs_root(mnt_fs *fs, unsigned long mountflags)
+static int set_fs_root(mnt_fs *result, mnt_fs *fs, unsigned long mountflags)
 {
 	char *root = NULL, *mnt = NULL;
 	const char *fstype, *optstr;
@@ -233,6 +233,7 @@ static int set_fs_root(mnt_fs *fs, unsigned long mountflags)
 	int rc = -ENOMEM;
 
 	assert(fs);
+	assert(result);
 
 	DBG(UPDATE, mnt_debug("setting FS root"));
 
@@ -248,7 +249,7 @@ static int set_fs_root(mnt_fs *fs, unsigned long mountflags)
 
 		src = mnt_fs_get_srcpath(fs);
 		if (src) {
-			rc = mnt_fs_set_bindsrc(fs, src);
+			rc = mnt_fs_set_bindsrc(result, src);
 			if (rc)
 				goto err;
 			mnt = mnt_get_mountpoint(src);
@@ -268,11 +269,11 @@ static int set_fs_root(mnt_fs *fs, unsigned long mountflags)
 
 		/* set device name and fs */
 		src = mnt_fs_get_srcpath(src_fs);
-		rc = mnt_fs_set_source(fs, src);
+		rc = mnt_fs_set_source(result, src);
 		if (rc)
 			goto err;
 
-		mnt_fs_set_fstype(fs, mnt_fs_get_fstype(src_fs));
+		mnt_fs_set_fstype(result, mnt_fs_get_fstype(src_fs));
 
 		/* on btrfs the subvolume is used as fs-root in
 		 * /proc/self/mountinfo, so we have get the original subvolume
@@ -321,7 +322,7 @@ dflt:
 		if (!root)
 			goto err;
 	}
-	fs->root = root;
+	result->root = root;
 
 	DBG(UPDATE, mnt_debug("FS root result: %s", root));
 

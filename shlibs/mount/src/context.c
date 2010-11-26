@@ -756,8 +756,8 @@ int mnt_context_set_userspace_mountflags(mnt_context *cxt, unsigned long flags)
  * @cxt: mount context
  * @flags: returns mount flags
  *
- * Converts mount options string to MNT_MS_* flags and bitewise-OR the result with
- * already defined flags (see mnt_context_set_userspace_mountflags()).
+ * Converts mount options string to MNT_MS_* flags and bitewise-OR the result
+ * with already defined flags (see mnt_context_set_userspace_mountflags()).
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -995,7 +995,7 @@ int mnt_context_prepare_helper(mnt_context *cxt, const char *name,
 			rc = stat(helper, &st);
 		}
 
-		DBG(CXT, mnt_debug_h(cxt, "%s ... %s", helper,
+		DBG(CXT, mnt_debug_h(cxt, "%-25s ... %s", helper,
 					rc ? "not found" : "found"));
 		if (rc)
 			continue;

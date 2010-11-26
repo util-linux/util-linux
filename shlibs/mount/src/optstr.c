@@ -520,7 +520,8 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs,
  *
  *	"bind,noexec,foo,bar" --returns->   MS_BIND|MS_NOEXEC
  *
- * Note that @flags are not zeroized by this function.
+ * Note that @flags are not zeroized by this function! This function set/unset
+ * bites in the @flags only.
  *
  * Returns: 0 on success or negative number in case of error
  */
@@ -567,7 +568,8 @@ int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
  *
  *	"bind,noexec,foo,bar" --returns->   MS_BIND|MS_NOEXEC
  *
- * Note that @flags are not zeroized by this function.
+ * Note that @flags are not zeroized by this function! This function set/unset
+ * bites in the @flags only.
  *
  * Returns: 0 on success or negative number in case of error
  */
@@ -589,7 +591,8 @@ int mnt_optstr_get_mountflags(const char *optstr, unsigned long *flags)
  *
  *	"bind,exec,loop"   --returns->   MNT_MS_LOOP
  *
- * Note that @flags are not zeroized by this function.
+ * Note that @flags are not zeroized by this function! This function set/unset
+ * bites in the @flags only.
  *
  * Returns: 0 on success or negative number in case of error
  */

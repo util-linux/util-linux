@@ -126,7 +126,7 @@ done:
 }
 
 /*
- * Converts already evalulated and fixed options to the form that is comaptible
+ * Converts already evalulated and fixed options to the form that is compatible
  * with /sbin/mount.<type> helpers.
  *
  * Retursn newly allocated string.
@@ -160,7 +160,7 @@ static int generate_helper_optstr(mnt_context *cxt, char **optstr)
  */
 static int evaluate_permissions(mnt_context *cxt)
 {
-	unsigned long u_flags;
+	unsigned long u_flags = 0;
 	const char *srcpath;
 
 	assert(cxt);

@@ -138,7 +138,7 @@ static int mnt_loopdev_associated_fs(const char *devname, mnt_fs *fs)
 static int evaluate_permissions(mnt_context *cxt)
 {
 	mnt_tab *fstab;
-	unsigned long u_flags;
+	unsigned long u_flags = 0;
 	const char *tgt, *src, *optstr;
 	int rc, ok = 0;
 	mnt_fs *fs;
@@ -243,9 +243,11 @@ static int evaluate_permissions(mnt_context *cxt)
 	if (mnt_optstr_get_userspace_mountflags(optstr, &u_flags))
 		goto eperm;
 
-	if (u_flags & MNT_MS_USERS)
-		/* promiscuous setting in fstab */
+	if (u_flags & MNT_MS_USERS) {
+		DBG(CXT, mnt_debug_h(cxt,
+			"umount: promiscuous setting ('users') in fstab"));
 		return 0;
+	}
 	/*
 	 * Check user=<username> setting from mtab if there is user, owner or
 	 * group option in /etc/fstab
@@ -253,14 +255,18 @@ static int evaluate_permissions(mnt_context *cxt)
 	if ((u_flags & MNT_MS_USER) || (u_flags & MNT_MS_OWNER) ||
 	    (u_flags & MNT_MS_GROUP)) {
 
-		char *curr_user = mnt_get_username(getuid());
+		char *curr_user = NULL;
 		char *mtab_user = NULL;
 		size_t sz;
 
+		DBG(CXT, mnt_debug_h(cxt,
+				"umount: checking user=<username> from mtab"));
+
+		curr_user = mnt_get_username(getuid());
+
 		if (!curr_user) {
 			DBG(CXT, mnt_debug_h(cxt, "umount %s: cannot "
-					"convert %d to username",
-					tgt, getuid()));
+				"convert %d to username", tgt, getuid()));
 			goto eperm;
 		}
 
