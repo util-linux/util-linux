@@ -298,6 +298,60 @@ static int read_clock_mode(void)
 	return 0;
 }
 
+/**
+ * print basic alarm settings
+ */
+static int print_alarm(int fd)
+{
+	struct rtc_wkalrm wake;
+	struct rtc_time rtc;
+	struct tm tm;
+	time_t alarm;
+
+	 /* First try the preferred RTC_WKALM_RD */
+	if (ioctl(fd, RTC_WKALM_RD, &wake) < 0) {
+		/* Fall back on the non-preferred way of reading wakeups; only
+		 * works for alarms < 24 hours from now
+		 *
+		 * set wake.enabled to 1 and determine from value of the year-1
+		 * means disabled
+		 */
+		wake.enabled = 1;
+		if (ioctl(fd, RTC_ALM_READ, &wake.time) < 0) {
+			perror(_("read rtc alarm\n"));
+			return -1;
+		}
+	}
+
+	if (wake.enabled != 1 || wake.time.tm_year == -1) {
+		printf(_("alarm: off\n"));
+		return 0;
+	}
+
+	rtc = wake.time;
+
+	memset(&tm, 0, sizeof tm);
+	tm.tm_sec = rtc.tm_sec;
+	tm.tm_min = rtc.tm_min;
+	tm.tm_hour = rtc.tm_hour;
+	tm.tm_mday = rtc.tm_mday;
+	tm.tm_mon = rtc.tm_mon;
+	tm.tm_year = rtc.tm_year;
+	tm.tm_isdst = -1;  /* assume the system knows better than the RTC */
+
+	alarm = mktime(&tm);
+	if (alarm == (time_t)-1) {
+		perror(_("convert time failed.\n"));
+		return -1;
+	}
+
+	/* 0 if both UTC, or expresses diff if RTC in local time */
+	alarm += sys_time - rtc_time;
+
+	printf(_("alarm: on  %s\n"), ctime(&alarm));
+	return 0;
+}
+
 int main(int argc, char **argv)
 {
 	char		*devname = DEFAULT_DEVICE;
@@ -346,6 +400,7 @@ int main(int argc, char **argv)
 					|| strcmp(optarg, "no") == 0
 					|| strcmp(optarg, "off") == 0
 					|| strcmp(optarg, "disable") == 0
+					|| strcmp(optarg, "show") == 0
 			   ) {
 				suspend = strdup(optarg);
 				break;
@@ -415,7 +470,9 @@ int main(int argc, char **argv)
 		printf(clock_mode == CM_UTC ? _("Using UTC time.\n") :
 				_("Using local time.\n"));
 
-	if (!alarm && !seconds && strcmp(suspend,"disable")) {
+	if (!alarm && !seconds && strcmp(suspend,"disable") &&
+				  strcmp(suspend,"show")) {
+
 		fprintf(stderr, _("%s: must provide wake time\n"), progname);
 		usage(EXIT_FAILURE);
 	}
@@ -456,31 +513,36 @@ int main(int argc, char **argv)
 	if (verbose)
 		printf(_("alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"),
 				alarm, sys_time, rtc_time, seconds);
-	if (alarm) {
-		if (alarm < sys_time) {
-			fprintf(stderr,
-				_("%s: time doesn't go backward to %s\n"),
-				progname, ctime(&alarm));
+
+	if (strcmp(suspend, "show") && strcmp(suspend, "disable")) {
+		/* care about alarm setup only if the show|disable
+		 * modes are not set
+		 */
+		if (alarm) {
+			if (alarm < sys_time) {
+				fprintf(stderr,
+					_("%s: time doesn't go backward to %s\n"),
+					progname, ctime(&alarm));
+				exit(EXIT_FAILURE);
+			}
+			alarm += sys_time - rtc_time;
+		} else
+			alarm = rtc_time + seconds + 1;
+
+		if (setup_alarm(fd, &alarm) < 0)
 			exit(EXIT_FAILURE);
-		}
-		alarm += sys_time - rtc_time;
-	} else
-		alarm = rtc_time + seconds + 1;
 
-	if (setup_alarm(fd, &alarm) < 0)
-		exit(EXIT_FAILURE);
-
-	printf(_("%s: wakeup from \"%s\" using %s at %s\n"),
-			progname, suspend, devname,
-			ctime(&alarm));
-	fflush(stdout);
-	usleep(10 * 1000);
+		printf(_("%s: wakeup from \"%s\" using %s at %s\n"),
+				progname, suspend, devname,
+				ctime(&alarm));
+		fflush(stdout);
+		usleep(10 * 1000);
+	}
 
 	if (strcmp(suspend, "no") == 0) {
 		if (verbose)
 			printf(_("suspend mode: no; leaving\n"));
-		close(fd);
-		exit(EXIT_SUCCESS);
+		  dryrun = 1;	/* to skip disabling alarm at the end */
 
 	} else if (strcmp(suspend, "off") == 0) {
 		char *arg[4];
@@ -524,6 +586,14 @@ int main(int argc, char **argv)
 		/* just break, alarm gets disabled in the end */
 		if (verbose)
 			printf(_("suspend mode: disable; disabling alarm\n"));
+
+	} else if(strcmp(suspend,"show") == 0) {
+		if (verbose)
+			printf(_("suspend mode: show; printing alarm info\n"));
+		if (print_alarm(fd))
+			rc = EXIT_FAILURE;
+		dryrun = 1;	/* don't really disable alarm in the end, just show */
+
 	} else {
 		if (verbose)
 			printf(_("suspend mode: %s; suspending system\n"), suspend);
