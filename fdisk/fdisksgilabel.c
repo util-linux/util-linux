@@ -489,6 +489,9 @@ verify_sgi(int verbose)
 		}
 		start = sgi_get_start_sector(Index[i])
 			+ sgi_get_num_sectors(Index[i]);
+		/* Align free space on cylinder boundary */
+		if (start % cylsize)
+			start += cylsize - (start % cylsize);
 		if (debug > 1) {
 			if (verbose)
 				printf("%2d:%12d\t%12d\t%12d\n", Index[i],
