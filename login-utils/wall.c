@@ -58,6 +58,7 @@
 #include <utmp.h>
 
 #include "nls.h"
+#include "xalloc.h"
 #include "strutils.h"
 #include "ttymsg.h"
 #include "pathnames.h"
@@ -242,10 +243,8 @@ makemsg(fname)
 		exit(1);
 	}
 	mbufsize = sbuf.st_size;
-	if (!(mbuf = malloc((u_int)mbufsize))) {
-		(void)fprintf(stderr, _("%s: Out of memory!\n"), progname);
-		exit(1);
-	}
+	mbuf = xmalloc(mbufsize);
+
 	if (fread(mbuf, sizeof(*mbuf), mbufsize, fp) != mbufsize) {
 		(void)fprintf(stderr, _("%s: can't read temporary file.\n"), progname);
 		exit(1);
