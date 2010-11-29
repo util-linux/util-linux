@@ -115,7 +115,7 @@
 #include "login.h"
 #include "strutils.h"
 #include "nls.h"
-
+#include "xalloc.h"
 
 #ifdef HAVE_SECURITY_PAM_MISC_H
 #  include <security/pam_appl.h>
@@ -1240,12 +1240,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
 
     /* if the shell field has a space: treat it like a shell script */
     if (strchr(pwd->pw_shell, ' ')) {
-	buff = malloc(strlen(pwd->pw_shell) + 6);
-
-	if (!buff) {
-	    fprintf(stderr, _("login: no memory for shell script.\n"));
-	    exit(0);
-	}
+	buff = xmalloc(strlen(pwd->pw_shell) + 6);
 
 	strcpy(buff, "exec ");
 	strcat(buff, pwd->pw_shell);
