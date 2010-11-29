@@ -102,6 +102,8 @@ static int probe_swsuspend(blkid_probe pr, const struct blkid_idmag *mag)
 		return swap_set_info(pr, "ulsuspend");
 	if (!memcmp(mag->magic, TOI_MAGIC_STRING, mag->len))
 		return swap_set_info(pr, "tuxonice");
+	if (!memcmp(mag->magic, "LINHIB0001", mag->len))
+		return swap_set_info(pr, "linhib0001");
 
 	return -1;	/* no signature detected */
 }
@@ -141,18 +143,28 @@ const struct blkid_idinfo swsuspend_idinfo =
 		{ "S1SUSPEND", 9, 0, 0xff6 },
 		{ "S2SUSPEND", 9, 0, 0xff6 },
 		{ "ULSUSPEND", 9, 0, 0xff6 },
+		{ "LINHIB0001",10,0, 0xff6 },
+
 		{ "S1SUSPEND", 9, 0, 0x1ff6 },
 		{ "S2SUSPEND", 9, 0, 0x1ff6 },
 		{ "ULSUSPEND", 9, 0, 0x1ff6 },
+		{ "LINHIB0001",10,0, 0x1ff6 },
+
 		{ "S1SUSPEND", 9, 0, 0x3ff6 },
 		{ "S2SUSPEND", 9, 0, 0x3ff6 },
 		{ "ULSUSPEND", 9, 0, 0x3ff6 },
+		{ "LINHIB0001",10,0, 0x3ff6 },
+
 		{ "S1SUSPEND", 9, 0, 0x7ff6 },
 		{ "S2SUSPEND", 9, 0, 0x7ff6 },
 		{ "ULSUSPEND", 9, 0, 0x7ff6 },
+		{ "LINHIB0001",10,0, 0x7ff6 },
+
 		{ "S1SUSPEND", 9, 0, 0xfff6 },
 		{ "S2SUSPEND", 9, 0, 0xfff6 },
 		{ "ULSUSPEND", 9, 0, 0xfff6 },
+		{ "LINHIB0001",10,0, 0xfff6 },
+
 		{ NULL }
 	}
 };

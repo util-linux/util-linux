@@ -298,7 +298,8 @@ swap_detect_signature(const char *buf, int *sig)
 	else if (memcmp(buf, "S1SUSPEND", 9) == 0 ||
 		 memcmp(buf, "S2SUSPEND", 9) == 0 ||
 		 memcmp(buf, "ULSUSPEND", 9) == 0 ||
-		 memcmp(buf, "\xed\xc3\x02\xe9\x98\x56\xe5\x0c", 8) == 0)
+		 memcmp(buf, "\xed\xc3\x02\xe9\x98\x56\xe5\x0c", 8) == 0 ||
+		 memcmp(buf, "LINHIB0001", 10) == 0)
 		*sig = SIG_SWSUSPEND;
 	else
 		return 0;
