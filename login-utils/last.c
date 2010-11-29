@@ -49,6 +49,7 @@
 
 #include "pathnames.h"
 #include "nls.h"
+#include "xalloc.h"
 
 #define	SECDAY	(24*60*60)			/* seconds in a day */
 #define	NO	0				/* false/no */
@@ -376,10 +377,7 @@ static void
 addarg(int type, char *arg) {
 	register ARG	*cur;
 
-	if (!(cur = (ARG *)malloc((unsigned int)sizeof(ARG)))) {
-		fputs(_("last: malloc failure.\n"), stderr);
-		exit(1);
-	}
+	cur = xmalloc(sizeof(ARG));
 	cur->next = arglist;
 	cur->type = type;
 	cur->name = arg;
@@ -394,10 +392,7 @@ TTY *
 addtty(char *ttyname) {
 	register TTY	*cur;
 
-	if (!(cur = (TTY *)malloc((unsigned int)sizeof(TTY)))) {
-		fputs(_("last: malloc failure.\n"), stderr);
-		exit(1);
-	}
+	cur = xmalloc(sizeof(TTY));
 	cur->next = ttylist;
 	cur->logout = currentout;
 	memcpy(cur->tty, ttyname, LMAX);
@@ -445,10 +440,7 @@ ttyconv(char *arg) {
 	 */
 	if (strlen(arg) == 2) {
 		/* either 6 for "ttyxx" or 8 for "console" */
-		if (!(mval = malloc((unsigned int)8))) {
-			fputs(_("last: malloc failure.\n"), stderr);
-			exit(1);
-		}
+		mval = xmalloc(8);
 		if (!strcmp(arg, "co"))
 			(void)strcpy(mval, "console");
 		else {
