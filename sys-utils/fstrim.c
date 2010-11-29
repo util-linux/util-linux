@@ -21,7 +21,7 @@
  *
  * This program uses FITRIM ioctl to discard parts or the whole filesystem
  * online (mounted). You can specify range (start and length) to be
- * discarded, or simply discard while filesystem.
+ * discarded, or simply discard whole filesystem.
  */
 
 #include <string.h>
