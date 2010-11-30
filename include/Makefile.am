@@ -26,4 +26,5 @@ dist_noinst_HEADERS = \
 	usleep.h \
 	wholedisk.h \
 	widechar.h \
-	writeall.h
+	writeall.h \
+	xalloc.h
