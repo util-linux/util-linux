@@ -24,7 +24,6 @@ fdisk/i386_sys_types.c
 fdisk/partitiontype.c
 fdisk/partname.c
 fdisk/sfdisk.c
-fsck/base_device.c
 fsck/fsck.c
 getopt/getopt.c
 hwclock/clock-ppc.c
@@ -39,12 +38,13 @@ lib/crc32.c
 lib/env.c
 lib/fsprobe.c
 lib/ismounted.c
+lib/langinfo.c
 lib/linux_version.c
 lib/mangle.c
 lib/mbsalign.c
 lib/md5.c
 lib/setproctitle.c
-lib/strtosize.c
+lib/strutils.c
 lib/tt.c
 lib/wholedisk.c
 login-utils/agetty.c
@@ -72,6 +72,7 @@ misc-utils/findmnt.c
 misc-utils/kill.c
 misc-utils/logger.c
 misc-utils/look.c
+misc-utils/lsblk.c
 misc-utils/mcookie.c
 misc-utils/namei.c
 misc-utils/procs.c
@@ -100,8 +101,10 @@ partx/crc32.c
 partx/delpart.c
 partx/dos.c
 partx/gpt.c
+partx/mac.c
 partx/partx.c
 partx/solaris.c
+partx/sun.c
 partx/unixware.c
 schedutils/chrt.c
 schedutils/ionice.c
@@ -158,6 +161,7 @@ shlibs/blkid/src/superblocks/luks.c
 shlibs/blkid/src/superblocks/lvm.c
 shlibs/blkid/src/superblocks/minix.c
 shlibs/blkid/src/superblocks/netware.c
+shlibs/blkid/src/superblocks/nilfs.c
 shlibs/blkid/src/superblocks/ntfs.c
 shlibs/blkid/src/superblocks/nvidia_raid.c
 shlibs/blkid/src/superblocks/ocfs.c
@@ -222,6 +226,7 @@ sys-utils/dmesg.c
 sys-utils/fallocate.c
 sys-utils/flock.c
 sys-utils/fsfreeze.c
+sys-utils/fstrim.c
 sys-utils/ipcmk.c
 sys-utils/ipcrm.c
 sys-utils/ipcs.c
