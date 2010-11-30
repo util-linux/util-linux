@@ -1,6 +1,6 @@
 # Hungarian translation of util-linux-ng
 # Copyright (C) 2002, 2007, 2008 Free Software Foundation, Inc.
-# This file is distributed under the same license as the util-linux-ng package.
+# This file is distributed under the same license as the util-linux package.
 # Gábor István <stive@mezobereny.hu>, 2002.
 # Gabor Kelemen <kelemeng@gnome.hu>, 2007, 2008.
 msgid ""

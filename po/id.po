@@ -1,6 +1,6 @@
 # Pesan Bahasa Indonesia untuk util-linux
 # Copyright (C) 2005 Adrian Bunk <bunk@stusta.de>
-# This file is distributed under the same license as the util-linux-ng package.
+# This file is distributed under the same license as the util-linux package.
 # Permission is granted to freely copy and distribute
 # this file and modified versions, provided that this
 # header is not removed and modified versions are marked

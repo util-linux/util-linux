@@ -1,6 +1,6 @@
 # Italian messages for util-linux-ng.
 # Copyright (C) 2000, 2005, 2006, 2008 Free Software Foundation, Inc.
-# This file is distributed under the same license as the util-linux-ng package.
+# This file is distributed under the same license as the util-linux package.
 # Marco Colombo <m.colombo@ed.ac.uk>, 2005, 2006, 2008.
 # Beth Powell <bpowell@turbolinux.com>, 2000.
 #

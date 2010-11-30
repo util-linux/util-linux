@@ -1,5 +1,5 @@
 # Dutch translations for util-linux-ng.
-# This file is distributed under the same license as the util-linux-ng package.
+# This file is distributed under the same license as the util-linux package.
 #
 # block    -> blok
 # sector   -> sector

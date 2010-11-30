@@ -1,6 +1,6 @@
 # Messages français pour util-linux-ng.
 # Copyright © 2008 Free Software Foundation, Inc.
-# This file is distributed under the same license as the util-linux-ng package.
+# This file is distributed under the same license as the util-linux package.
 # Michel Robitaille <robitail@IRO.UMontreal.CA>, traducteur depuis/since 1996.
 # Nicolas Provost <nprovost@quadriv.com>, 2009.
 #

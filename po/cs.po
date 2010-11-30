@@ -4,7 +4,7 @@
 # as such.
 #
 # Czech translation of util-linux. 
-# This file is distributed under the same license as the util-linux-ng package.
+# This file is distributed under the same license as the util-linux package.
 #
 # Jiří Pavlovský <pavlovsk@ff.cuni.cz>, 1999 - 2001.
 # Petr Písař <petr.pisar@atlas.cz>, 2006.

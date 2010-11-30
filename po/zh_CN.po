@@ -1,6 +1,6 @@
 # translation of util-linux-ng-2.14.1-rc2.po to
 # Copyright (C) 2008
-# This file is distributed under the same license as the util-linux-ng package.
+# This file is distributed under the same license as the util-linux package.
 #
 # Ray Wang <wanglei1123@gmail.com>, 2008.
 msgid ""

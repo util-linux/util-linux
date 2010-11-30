@@ -1,6 +1,6 @@
 # Basque translation of util-linux-ng.
 # Copyright (C) 2010 Free Software Foundation, Inc.
-# This file is distributed under the same license as the util-linux-ng package.
+# This file is distributed under the same license as the util-linux package.
 # Mikel Olasagasti Uranga <hey_neken@mundurat.net>, 2005, 2009, 2010.
 # , fuzzy
 #

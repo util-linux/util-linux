@@ -1,5 +1,5 @@
 # Finnish messages for util-linux
-# This file is distributed under the same license as the util-linux-ng package.
+# This file is distributed under the same license as the util-linux package.
 # Copyright © 2002-2003, 2005, 2007-2009 Lauri Nurmi <lanurmi@iki.fi>
 # Lauri Nurmi <lanurmi@iki.fi>, 2002-2003, 2005, 2007-2009.
 #

@@ -1,6 +1,6 @@
 # Vietnamese translation for Util-Linux-NG.
 # Copyright © 2010 Free Software Foundation, Inc.
-# This file is distributed under the same license as the util-linux-ng package.
+# This file is distributed under the same license as the util-linux package.
 # Phan Vinh Thinh <teppi82@gmail.com>, 2005-2007
 # Clytie Siddall <clytie@riverland.net.au>, 2007-2010.
 #
