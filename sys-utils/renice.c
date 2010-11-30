@@ -49,16 +49,27 @@
 
 static int donice(int,int,int);
 
-static void usage(int rc)
+static int __attribute__((__noreturn__)) usage(FILE *out)
 {
-	printf( _("\nUsage:\n"
-		" renice [-n] priority [-p|--pid] pid  [... pid]\n"
-		" renice [-n] priority  -g|--pgrp pgrp [... pgrp]\n"
-		" renice [-n] priority  -u|--user user [... user]\n"
-		" renice -h | --help\n"
-		" renice -v | --version\n\n"));
+	fprintf(out, _(
+		"\nUsage:\n"
+		" %1$s [-n] <priority> [-p] <pid> [<pid>  ...]\n"
+		" %1$s [-n] <priority>  -g <pgrp> [<pgrp> ...]\n"
+		" %1$s [-n] <priority>  -u <user> [<user> ...]\n"),
+		program_invocation_short_name);
 
-	exit(rc);
+	fprintf(out, _(
+		"\nOptions:\n"
+		" -g, --pgrp <id>        interpret as process group ID\n"
+		" -h, --help             print help\n"
+		" -n, --priority <num>   set the nice increment value\n"
+		" -p, --pid <id>         force to be interpreted as process ID\n"
+		" -u, --user <name|id>   interpret as username or user ID\n"
+		" -v, --version          print version\n"));
+
+	fprintf(out, _("\nFor more information see renice(1).\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 /*
@@ -83,7 +94,7 @@ main(int argc, char **argv)
 	if (argc == 1) {
 		if (strcmp(*argv, "-h") == 0 ||
 		    strcmp(*argv, "--help") == 0)
-			usage(EXIT_SUCCESS);
+			usage(stdout);
 
 		if (strcmp(*argv, "-v") == 0 ||
 		    strcmp(*argv, "--version") == 0) {
@@ -93,7 +104,7 @@ main(int argc, char **argv)
 	}
 
 	if (argc < 2)
-		usage(EXIT_FAILURE);
+		usage(stderr);
 
 	if (strcmp(*argv, "-n") == 0 || strcmp(*argv, "--priority") == 0) {
 		argc--;
@@ -102,7 +113,7 @@ main(int argc, char **argv)
 
 	prio = strtol(*argv, &endptr, 10);
 	if (*endptr)
-		usage(EXIT_FAILURE);
+		usage(stderr);
 
 	argc--;
 	argv++;
