@@ -1,6 +1,5 @@
 
-                            utils-linux-ng
-           (fork of util-linux, based on version 2.13-pre7)
+                            utils-linux
 
 MAINTAINER:
 
@@ -19,6 +18,8 @@ AUTHORS (merged projects & commands):
                        Karel Zak <kzak@redhat.com>
       findmnt:         Karel Zak <kzak@redhat.com>
       flock:           H. Peter Anvin <hpa@zytor.com>
+      fstrim:          Lukas Czerner <lczerner@redhat.com>
+      fsfreeze:        Hajime Taira <htaira@redhat.com>
       getopt:          Frodo Looijaard <frodol@dds.nl>
       hwclock:         Bryan Henderson <bryanh@giraffe-data.com>
       ipcmk:           Hayden James <hayden.james@gmail.com>
@@ -27,6 +28,8 @@ AUTHORS (merged projects & commands):
       libmount:        Karel Zak <kzak@redhat.com>
       libuuid:         Theodore Ts'o <tytso@mit.edu>
       lscpu:           Cai Qian <qcai@redhat.com>
+      lsblk:           Milan Broz <mbroz@redhat.com>
+                       Karel Zak <kzak@redhat.com>
       rtcwake:         David Brownell <david-b@pacbell.net>
                        Bernhard Walle <bwalle@suse.de>
       schedutils:      Robert Love <rlove@rlove.org>

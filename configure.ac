@@ -1,4 +1,4 @@
-AC_INIT(util-linux-ng, 2.18, kzak@redhat.com)
+AC_INIT(util-linux, 2.18, kzak@redhat.com)
 
 AC_PREREQ(2.60)
 
@@ -393,10 +393,10 @@ if test "x$have_blkid" = xyes; then
   AC_DEFINE(HAVE_LIBBLKID, 1, [Define to 1 if you have the -lblkid.])
 else
   if test "x$build_mount" = xyes; then
-    AC_MSG_ERROR([libblkid is needed to build util-linux-ng mount])
+    AC_MSG_ERROR([libblkid is needed to build util-linux mount])
   fi
   if test "x$enable_fsck" = xyes; then
-    AC_MSG_ERROR([libblkid is needed to build util-linux-ng fsck])
+    AC_MSG_ERROR([libblkid is needed to build util-linux fsck])
   fi
 fi
 AM_CONDITIONAL(HAVE_BLKID, test "x$have_blkid" = xyes)

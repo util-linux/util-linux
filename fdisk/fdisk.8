@@ -185,7 +185,7 @@ program and Linux partitions with the Linux fdisk or Linux cfdisk program.
 .BI "\-b " sectorsize
 Specify the sector size of the disk.  Valid values are 512, 1024, 2048 or 4096.
 (Recent kernels know the sector size.  Use this only on old kernels or
-to override the kernel's ideas.)  Since util-linux-ng-2.17, fdisk differentiates
+to override the kernel's ideas.)  Since util-linux-2.17, fdisk differentiates
 between logical and physical sector size.  This option changes both sector sizes to
 .IB sectorsize .
 .TP
@@ -279,5 +279,5 @@ The option `dump partition table to file' is missing.
 .BR partprobe (8),
 .BR kpartx (8)
 .SH AVAILABILITY
-The fdisk command is part of the util-linux-ng package and is available from
-ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
+The fdisk command is part of the util-linux package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux/.

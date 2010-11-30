@@ -37,7 +37,7 @@
 	which may not be mounted). However, when termcap is not present curses
 	can still be used.
 	2010-10-21 Davidlohr Bueso <dave@gnu.org>
-	- modified mem allocation handling for util-linux-ng
+	- modified mem allocation handling for util-linux
 */
 
 #include <stdio.h>

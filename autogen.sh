@@ -16,14 +16,14 @@ HAS_GTKDOC=1
 
 (autopoint --version) < /dev/null > /dev/null 2>&1 || {
         echo
-        echo "You must have autopoint installed to generate util-linux-ng build system.."
+        echo "You must have autopoint installed to generate util-linux build system.."
         echo "Download the appropriate package for your distribution,"
         echo "or see http://www.gnu.org/software/gettext"
         DIE=1
 }
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
 	echo
-	echo "You must have autoconf installed to generate util-linux-ng build system."
+	echo "You must have autoconf installed to generate util-linux build system."
 	echo
 	echo "Download the appropriate package for your distribution,"
 	echo "or see http://www.gnu.org/software/autoconf"
@@ -32,7 +32,7 @@ HAS_GTKDOC=1
 
 #(libtool --version) < /dev/null > /dev/null 2>&1 || {
 #	echo
-#	echo "You must have libtool-2 installed to generate util-linux-ng build system."
+#	echo "You must have libtool-2 installed to generate util-linux build system."
 #	echo "Download the appropriate package for your distribution,"
 #	echo "or see http://www.gnu.org/software/libtool"
 #	DIE=1
@@ -40,7 +40,7 @@ HAS_GTKDOC=1
 
 (automake --version) < /dev/null > /dev/null 2>&1 || {
 	echo
-	echo "You must have automake installed to generate util-linux-ng build system."
+	echo "You must have automake installed to generate util-linux build system."
 	echo 
 	echo "Download the appropriate package for your distribution,"
 	echo "or see http://www.gnu.org/software/automake"
@@ -48,7 +48,7 @@ HAS_GTKDOC=1
 }
 (autoheader --version) < /dev/null > /dev/null 2>&1 || {
 	echo
-	echo "You must have autoheader installed to generate util-linux-ng build system."
+	echo "You must have autoheader installed to generate util-linux build system."
 	echo 
 	echo "Download the appropriate package for your distribution,"
 	echo "or see http://www.gnu.org/software/autoheader"
@@ -60,7 +60,7 @@ if test "$DIE" -eq 1; then
 fi
 
 test -f mount/mount.c || {
-	echo "You must run this script in the top-level util-linux-ng directory"
+	echo "You must run this script in the top-level util-linux directory"
 	exit 1
 }
 

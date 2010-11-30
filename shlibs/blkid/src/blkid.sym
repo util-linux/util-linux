@@ -39,7 +39,7 @@ local:
 
 
 /*
- * version(s) since util-linux-ng 2.15
+ * version(s) since util-linux 2.15
  */
 BLKID_2.15 {
 global:
@@ -67,7 +67,7 @@ global:
 } BLKID_1.0;
 
 /*
- * version(s) since util-linux-ng 2.17
+ * version(s) since util-linux 2.17
  */
 BLKID_2.17 {
 global:
@@ -117,7 +117,7 @@ global:
 } BLKID_2.15;
 
 /*
- * version(s) since util-linux-ng 2.18
+ * version(s) since util-linux 2.18
  */
 BLKID_2.18 {
 global:

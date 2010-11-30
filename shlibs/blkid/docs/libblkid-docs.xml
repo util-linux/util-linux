@@ -35,8 +35,8 @@ The low-level probing code, topology and partitions support was written
 by Karel Zak. Currently, the library is mainatned by Karel Zak.
     </para>
     <para>
-The library is part of the util-linux-ng package since version 2.15 and is
-available from ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
+The library is part of the util-linux package since version 2.15 and is
+available from ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
     </para>
   </partintro>
   <xi:include href="xml/libblkid-config.xml"/>

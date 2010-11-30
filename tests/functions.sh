@@ -1,7 +1,7 @@
 #
 # Copyright (C) 2007 Karel Zak <kzak@redhat.com>
 #
-# This file is part of util-linux-ng.
+# This file is part of util-linux.
 #
 # This file is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -344,7 +344,7 @@ function ts_swapoff {
 }
 
 function ts_fstab_open {
-	echo "# <!-- util-linux-ng test entry" >> /etc/fstab
+	echo "# <!-- util-linux test entry" >> /etc/fstab
 }
 
 function ts_fstab_close {
@@ -368,13 +368,13 @@ function ts_fstab_add {
 
 function ts_fstab_clean {
 	sed --in-place "
-/# <!-- util-linux-ng/!b
+/# <!-- util-linux/!b
 :a
 /# -->/!{
   N
   ba
 }
-s/# <!-- util-linux-ng.*-->//;
+s/# <!-- util-linux.*-->//;
 /^$/d" /etc/fstab
 }
 

@@ -1,6 +1,6 @@
 
- Notes for util-linux-ng developers
- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ Notes for util-linux developers
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 AUTOTOOLS:
 
@@ -88,7 +88,7 @@ CODING STYLE:
 
 SCM (source code management):
 
-     git clone git://git.kernel.org/pub/scm/utils/util-linux-ng/util-linux-ng.git util-linux-ng
+     git clone git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git util-linux
 
 
     * maintenance (stable) branch

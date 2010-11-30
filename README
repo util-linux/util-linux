@@ -1,31 +1,32 @@
 
-                          util-linux-ng
-           (fork of util-linux, based on version 2.13-pre7)
+                                  util-linux
 
-         util-linux is a random collection of Linux utilities
+              util-linux is a random collection of Linux utilities
+
+     Note that in years 2006-2010 this project used the name "util-linux-ng".
 
 WEB PAGE:
 
-     http://kernel.org/~kzak/util-linux-ng/
+     http://kernel.org/~kzak/util-linux/
 
 
 MAILING LIST:
 
       E-MAIL: util-linux-ng@vger.kernel.org
-      URL:    http://vger.kernel.org/vger-lists.html#util-linux-ng
+      URL:    http://vger.kernel.org/vger-lists.html#util-linux
 
 
 DOWNLOAD:
 
-      ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/
+      ftp://ftp.kernel.org/pub/linux/utils/util-linux/
 
 
 SOURCE CODE:
 
       Web interface:
-          http://git.kernel.org/?p=utils/util-linux-ng/util-linux-ng.git
+          http://git.kernel.org/?p=utils/util-linux/util-linux.git
       Checkout:
-          git clone git://git.kernel.org/pub/scm/utils/util-linux-ng/util-linux-ng.git util-linux-ng
+          git clone git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git util-linux
 
 NLS (PO TRANSLATIONS):
 
@@ -34,7 +35,7 @@ NLS (PO TRANSLATIONS):
 
 NEUTRALITY:
 
-      The stuff in util-linux-ng should be rather distribution-neutral.
+      The stuff in util-linux should be rather distribution-neutral.
       No RPMs/DEBs/... are provided - get yours from your distributor.
 
 
@@ -51,9 +52,7 @@ VERSION SCHEMA:
 
       Development releases:
 
-         <major>.<minor><suffix>
-
-             suffix = "devel" or "-rc<N>"
+         <major>.<minor>-rc<N>
 
 
 COMPILATION:

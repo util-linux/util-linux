@@ -76,7 +76,7 @@ fsprobe_known_fstype(const char *fstype)
 
 #ifdef HAVE_LIBBLKID_INTERNAL
 /*
- * libblkid from util-linux-ng
+ * libblkid from util-linux
  * -- recommended
  */
 static blkid_probe blprobe;

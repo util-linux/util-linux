@@ -1,6 +1,6 @@
 #
 # WARNING: this is not gtk-doc.make file from gtk-doc project. This
-#          file has been modified to match with util-linux-ng requirements:
+#          file has been modified to match with util-linux requirements:
 #
 #          * install files to $datadir
 #          * don't maintain generated files in git repository
