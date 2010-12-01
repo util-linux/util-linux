@@ -18,7 +18,6 @@
  *
  *  1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *  - added Native Language Support
- *    
  *
  */
 
@@ -31,14 +30,17 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <errno.h>
+#include <err.h>
 #include <ctype.h>
 #include <getopt.h>
+
 #include "my_crypt.h"
 #include "islocal.h"
 #include "setpwnam.h"
 #include "strutils.h"
 #include "nls.h"
 #include "env.h"
+#include "xalloc.h"
 
 #ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>
@@ -55,7 +57,7 @@
 	if ((_rc) != PAM_SUCCESS) { \
 	    fprintf(stderr, "\n%s\n", pam_strerror((_ph), (_rc))); \
 	    pam_end((_ph), (_rc)); \
-	    exit(1); \
+	    exit(EXIT_FAILURE); \
 	} \
     } while(0)
 
@@ -80,19 +82,24 @@ struct finfo {
 };
 
 static boolean parse_argv (int argc, char *argv[], struct finfo *pinfo);
-static void usage (FILE *fp);
 static void parse_passwd (struct passwd *pw, struct finfo *pinfo);
 static void ask_info (struct finfo *oldfp, struct finfo *newfp);
 static char *prompt (char *question, char *def_val);
 static int check_gecos_string (char *msg, char *gecos);
 static boolean set_changed_data (struct finfo *oldfp, struct finfo *newfp);
 static int save_new_data (struct finfo *pinfo);
-static void *xmalloc (int bytes);
-
-#define memzero(ptr, size) memset((char *) ptr, 0, size)
 
 /* we do not accept gecos field sizes longer than MAX_FIELD_SIZE */
 #define MAX_FIELD_SIZE		256
+
+static void __attribute__((__noreturn__)) usage(FILE *fp)
+{
+    fprintf (fp, _("Usage: %s [ -f full-name ] [ -o office ] "), whoami);
+    fprintf (fp, _("[ -p office-phone ]\n	[ -h home-phone ] "));
+    fprintf (fp, _("[ --help ] [ --version ]\n"));
+
+    exit(fp == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
 
 int main (int argc, char **argv) {
     char *cp;
@@ -123,28 +130,24 @@ int main (int argc, char **argv) {
      *	specified for.
      */
     uid = getuid ();
-    memzero (&oldf, sizeof (oldf));
-    memzero (&newf, sizeof (newf));
+    memset(&oldf, 0, sizeof(oldf));
+    memset(&newf, 0, sizeof (newf));
 
     interactive = parse_argv (argc, argv, &newf);
     if (! newf.username) {
 	parse_passwd (getpwuid (uid), &oldf);
-	if (! oldf.username) {
-	    fprintf (stderr, _("%s: you (user %d) don't exist.\n"), whoami, uid);
-	    return (-1); }
+	if (! oldf.username)
+	    errx(EXIT_FAILURE, _("%s: you (user %d) don't exist."), whoami, uid);
     }
     else {
 	parse_passwd (getpwnam (newf.username), &oldf);
-	if (! oldf.username) {
-	    cp = newf.username;
-	    fprintf (stderr, _("%s: user \"%s\" does not exist.\n"), whoami, cp);
-	    return (-1); }
+	if (! oldf.username)
+	    errx(EXIT_FAILURE, _("%s: user \"%s\" does not exist."),
+			    whoami, newf.username);
     }
 
-    if (!(is_local(oldf.username))) {
-       fprintf (stderr, _("%s: can only change local entries.\n"), whoami);
-       exit(1);
-    }
+    if (!(is_local(oldf.username)))
+       errx(EXIT_FAILURE, _("can only change local entries"));
 
 #ifdef HAVE_LIBSELINUX
     if (is_selinux_enabled() > 0) {
@@ -152,26 +155,23 @@ int main (int argc, char **argv) {
 	if (checkAccess(oldf.username,PASSWD__CHFN)!=0) {
 	  security_context_t user_context;
 	  if (getprevcon(&user_context) < 0)
-	    user_context=(security_context_t) strdup(_("Unknown user context"));
-	  fprintf(stderr, _("%s: %s is not authorized to change the finger info of %s\n"),
-		  whoami, user_context, oldf.username);
-	  freecon(user_context);
-	  exit(1);
+	    user_context = NULL;
+
+	  errx(EXIT_FAILURE, _("%s: %s is not authorized to change "
+			"the finger info of %s"),
+			 whoami, user_context ? : _("Unknown user context"),
+			 oldf.username);
 	}
       }
-      if (setupDefaultContext("/etc/passwd") != 0) {
-	fprintf(stderr,_("%s: Can't set default context for /etc/passwd"),
-		whoami);
-	exit(1);
-      }
+      if (setupDefaultContext("/etc/passwd"))
+        errx(EXIT_FAILURE, _("can't set default context for /etc/passwd"));
     }
 #endif
 
     /* Reality check */
     if (uid != 0 && uid != oldf.pw->pw_uid) {
 	errno = EACCES;
-	perror (whoami);
-	return (-1);
+	err(EXIT_FAILURE, NULL);
     }
 
     printf (_("Changing finger information for %s.\n"), oldf.username);
@@ -184,11 +184,9 @@ int main (int argc, char **argv) {
 	int retcode;
 
 	retcode = pam_start("chfn", oldf.username, &conv, &pamh);
-	if(retcode != PAM_SUCCESS) {
-	    fprintf(stderr, _("%s: PAM failure, aborting: %s\n"),
+	if(retcode != PAM_SUCCESS)
+	    errx(EXIT_FAILURE, _("%s: PAM failure, aborting: %s"),
 		    whoami, pam_strerror(pamh, retcode));
-	    exit(1);
-	}
 
 	retcode = pam_authenticate(pamh, 0);
 	PAM_FAIL_CHECK(pamh, retcode);
@@ -212,7 +210,7 @@ int main (int argc, char **argv) {
 	if(strncmp(oldf.pw->pw_passwd,
 		   crypt(pwdstr, oldf.pw->pw_passwd), 13)) {
 	    puts(_("Incorrect password."));
-	    exit(1);
+	    exit(EXIT_FAILURE);
 	}
     }
 # endif /* HAVE_SECURITY_PAM_MISC_H */
@@ -223,7 +221,7 @@ int main (int argc, char **argv) {
 
     if (! set_changed_data (&oldf, &newf)) {
 	printf (_("Finger information not changed.\n"));
-	return 0;
+	return EXIT_SUCCESS;
     }
     status = save_new_data (&oldf);
     return status;
@@ -260,17 +258,13 @@ static boolean parse_argv (argc, argv, pinfo)
 	/* version?  output version and exit. */
 	if (c == 'v') {
 	    printf ("%s\n", PACKAGE_STRING);
-	    exit (0);
+	    exit (EXIT_SUCCESS);
 	}
-	if (c == 'u') {
+	if (c == 'u')
 	    usage (stdout);
-	    exit (0);
-	}
 	/* all other options must have an argument. */
-	if (! optarg) {
+	if (! optarg)
 	    usage (stderr);
-	    exit (-1);
-	}
 	/* ok, we were given an argument */
 	info_given = true;
 	status = 0;
@@ -302,31 +296,16 @@ static boolean parse_argv (argc, argv, pinfo)
 	    break;
 	default:
 	    usage (stderr);
-	    status = (-1);
 	}
 	if (status < 0) exit (status);
     }
     /* done parsing arguments.	check for a username. */
     if (optind < argc) {
-	if (optind + 1 < argc) {
+	if (optind + 1 < argc)
 	    usage (stderr);
-	    exit (-1);
-	}
 	pinfo->username = argv[optind];
     }
     return (! info_given);
-}
-
-/*
- *  usage () --
- *	print out a usage message.
- */
-static void usage (fp)
-    FILE *fp;
-{
-    fprintf (fp, _("Usage: %s [ -f full-name ] [ -o office ] "), whoami);
-    fprintf (fp, _("[ -p office-phone ]\n	[ -h home-phone ] "));
-    fprintf (fp, _("[ --help ] [ --version ]\n"));
 }
 
 /*
@@ -345,7 +324,7 @@ static void parse_passwd (pw, pinfo)
 	pinfo->pw = pw;
 	pinfo->username = pw->pw_name;
 	/* use pw_gecos - we take a copy since PAM destroys the original */
-	gecos = strdup(pw->pw_gecos);
+	gecos = xstrdup(pw->pw_gecos);
 	cp = (gecos ? gecos : "");
 	pinfo->full_name = cp;
 	cp = strchr (cp, ',');
@@ -398,7 +377,7 @@ static char *prompt (question, def_val)
 	*buf = 0;
 	if (fgets (buf, sizeof (buf), stdin) == NULL) {
 	    printf (_("\nAborted.\n"));
-	    exit (-1);
+	    exit (EXIT_FAILURE);
 	}
 	/* remove the newline at the end of buf. */
 	ans = buf;
@@ -439,15 +418,15 @@ static int check_gecos_string (msg, gecos)
 	if (c == ',' || c == ':' || c == '=' || c == '"' || c == '\n') {
 	    if (msg) printf ("%s: ", msg);
 	    printf (_("'%c' is not allowed.\n"), c);
-	    return (-1);
+	    return -1;
 	}
 	if (iscntrl (c)) {
 	    if (msg) printf ("%s: ", msg);
 	    printf (_("Control characters are not allowed.\n"));
-	    return (-1);
+	    return -1;
 	}
     }
-    return (0);
+    return 0;
 }
 
 /*
@@ -509,24 +488,8 @@ static int save_new_data (pinfo)
     if (setpwnam (pinfo->pw) < 0) {
 	perror ("setpwnam");
 	printf( _("Finger information *NOT* changed.  Try again later.\n" ));
-	return (-1);
+	return -1;
     }
     printf (_("Finger information changed.\n"));
     return 0;
-}
-
-/*
- *  xmalloc () -- malloc that never fails.
- */
-static void *xmalloc (bytes)
-    int bytes;
-{
-    void *vp;
-
-    vp = malloc (bytes);
-    if (! vp && bytes > 0) {
-	perror (_("malloc failed"));
-	exit (-1);
-    }
-    return vp;
 }
