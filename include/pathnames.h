@@ -82,6 +82,7 @@
 #define _PATH_PROC_MOUNTINFO	"/proc/self/mountinfo"
 
 #define _PATH_SYS_BLOCK		"/sys/block"
+#define _PATH_SYS_DEVBLOCK	"/sys/dev/block"
 
 #ifndef _PATH_MOUNTED
 # ifdef MOUNTED					/* deprecated */

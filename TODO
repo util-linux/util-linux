@@ -4,6 +4,25 @@ login-utils:
  - clean up error codes
  - use err() and warn() macros rather than fprintf(stderr, ...)
 
+
+losetup
+-------
+
+ - don't use ioclts if sysfs supports loop attributes (since 2.6.37,
+   block/loopN/loop/* files)
+
+    - don't open loopdev in looplist_next(), check if /sys/block/loopN/loop
+      exists and returns ll.name rather than file descriptor
+
+    - add sysfs based version of show_loop() and use it for non-root users
+
+sysfs
+-----
+
+ - add lib/sysfs.c with functions that read block device attributes from /sys.
+   For more details see devno.c from libblkid, lsblk.c and lomount.c.
+
+
 libblkid
 --------
 
@@ -16,6 +35,7 @@ libblkid
  - add FSSIZE value  -- filesystem size (klibc requirement)
 
  - add support for dasd PT (used for example on s390)
+
 
 blkid(8)
 -------
