@@ -42,24 +42,21 @@
  * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
- * 
+ * 2010-12-01 Marek Polacek <mmpolacek@gmail.com>
+ * - cleanups
  */
 
-#include <sys/types.h>
-#include <sys/stat.h>
-
+#include <err.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <err.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "nls.h"
 
-int
-main(argc, argv)
-	int argc;
-	char *argv[];
+int main(int argc, char *argv[])
 {
 	struct stat sb;
 	char *tty;
@@ -69,46 +66,47 @@ main(argc, argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-
 	while ((ch = getopt(argc, argv, "")) != -1)
 		switch (ch) {
 		case '?':
 		default:
 			goto usage;
 		}
+
 	argc -= optind;
 	argv += optind;
 
 	if ((tty = ttyname(STDERR_FILENO)) == NULL)
-		err(1, "ttyname");
-	if (stat(tty, &sb) < 0)
-		err(1, "%s", tty);
+		err(EXIT_FAILURE, _("ttyname failed"));
 
-	if (*argv == NULL) {
+	if (stat(tty, &sb) < 0)
+		err(EXIT_FAILURE, _("stat %s failed"), tty);
+
+	if (!*argv) {
 		if (sb.st_mode & (S_IWGRP | S_IWOTH)) {
-			(void)fprintf(stdout, _("is y\n"));
-			exit(0);
+			puts(_("is y"));
+			return EXIT_SUCCESS;
 		}
-		(void)fprintf(stdout, _("is n\n"));
-		exit(1);
+		puts(_("is n"));
+		return EXIT_FAILURE;
 	}
 
 	switch (*argv[0]) {
 	case 'y':
 #ifdef USE_TTY_GROUP
 		if (chmod(tty, sb.st_mode | S_IWGRP) < 0)
-			err(1, "%s", tty);
 #else
 		if (chmod(tty, sb.st_mode | S_IWGRP | S_IWOTH) < 0)
-			err(1, "%s", tty);
 #endif
-		exit(0);
+			err(EXIT_FAILURE, _("change %s mode failed"), tty);
+		return EXIT_SUCCESS;
 	case 'n':
 		if (chmod(tty, sb.st_mode & ~(S_IWGRP|S_IWOTH)) < 0)
-			err(1, "%s", tty);
-		exit(1);
+			 err(EXIT_FAILURE, _("change %s mode failed"), tty);
+		return EXIT_FAILURE;
 	}
 
-usage:	(void)fprintf(stderr, _("usage: mesg [y | n]\n"));
-	exit(2);
+usage:
+	fprintf(stderr, _("Usage: %s [y | n]"), program_invocation_short_name);
+	return EXIT_FAILURE;
 }
