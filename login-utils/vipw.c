@@ -60,6 +60,7 @@ static char version_string[] = "vipw 1.4";
 #include <signal.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <err.h>
 #include <paths.h>
 #include <unistd.h>
 
@@ -86,7 +87,7 @@ static void
 copyfile(int from, int to) {
 	int nr, nw, off;
 	char buf[8*1024];
-	
+
 	while ((nr = read(from, buf, sizeof(buf))) > 0)
 		for (off = 0; off < nr; nr -= nw, off += nw)
 			if ((nw = write(to, buf + off, nr)) < 0)
@@ -131,7 +132,7 @@ static int
 pw_lock(void) {
 	int lockfd, fd, ret;
 
-	/* 
+	/*
 	 * If the password file doesn't exist, the system is hosed.
 	 * Might as well try to build one.  Set the close-on-exec bit so
 	 * that users can't get at the encrypted passwords while editing.
@@ -149,16 +150,14 @@ pw_lock(void) {
 	}
 #endif
 
-	if ((fd = open(tmptmp_file, O_WRONLY|O_CREAT, 0600)) == -1) {
-	  (void)fprintf(stderr,
-		   "%s: %s: %s\n", progname, tmptmp_file, strerror(errno));
-	  exit(1);
-	}
+	if ((fd = open(tmptmp_file, O_WRONLY|O_CREAT, 0600)) == -1)
+	    err(EXIT_FAILURE, _("%s: open failed"), tmptmp_file);
+
 	ret = link(tmptmp_file, tmp_file);
 	(void)unlink(tmptmp_file);
 	if (ret == -1) {
 	    if (errno == EEXIST)
-		(void)fprintf(stderr, 
+		(void)fprintf(stderr,
 			      _("%s: the %s file is busy (%s present)\n"),
 			      progname,
 			      program == VIPW ? "password" : "group",
@@ -168,7 +167,7 @@ pw_lock(void) {
 		(void)fprintf(stderr, _("%s: can't link %s: %s\n"), progname,
 			      tmp_file, strerror(errsv));
 	    }
-	    exit(1);
+	    exit(EXIT_FAILURE);
 	}
 
 	lockfd = open(orig_file, O_RDONLY, 0);
@@ -177,13 +176,13 @@ pw_lock(void) {
 		(void)fprintf(stderr, "%s: %s: %s\n",
 		    progname, orig_file, strerror(errno));
 		unlink(tmp_file);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	copyfile(lockfd, fd);
 	(void)close(lockfd);
 	(void)close(fd);
-	return(1);
+	return 1;
 }
 
 static void
@@ -213,10 +212,10 @@ pw_unlock(void) {
 
 	if (rename(tmp_file, orig_file) == -1) {
 		int errsv = errno;
-		fprintf(stderr, 
-			_("%s: can't unlock %s: %s (your changes are still in %s)\n"), 
+		fprintf(stderr,
+			_("%s: can't unlock %s: %s (your changes are still in %s)\n"),
 			progname, orig_file, strerror(errsv), tmp_file);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	unlink(tmp_file);
 }
@@ -236,17 +235,18 @@ pw_edit(int notsetuid) {
 		p = editor;
 
 	pid = fork();
-	if (pid < 0) {
-		(void)fprintf(stderr, _("%s: Cannot fork\n"), progname);
-		exit(1);
-	}
+	if (pid < 0)
+		err(EXIT_FAILURE, _("fork failed"));
+
 	if (!pid) {
 		if (notsetuid) {
 			(void)setgid(getgid());
 			(void)setuid(getuid());
 		}
 		execlp(editor, p, tmp_file, NULL);
-		_exit(1);
+
+		/* Shouldn't get here */
+		_exit(EXIT_FAILURE);
 	}
 	for (;;) {
 	    pid = waitpid(pid, &pstat, WUNTRACED);
@@ -325,10 +325,10 @@ int main(int argc, char *argv[]) {
 		xstrncpy(tmptmp_file, PTMPTMP_FILE, sizeof(tmptmp_file));
 	}
 
-	if ((argc > 1) && 
+	if ((argc > 1) &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
 		printf("%s\n", version_string);
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
 	edit_file(0);
@@ -358,5 +358,5 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
