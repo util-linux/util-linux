@@ -109,6 +109,33 @@ static char *loopfile_from_sysfs(const char *device)
 	return res;
 }
 
+char *loopdev_get_loopfile(const char *device)
+{
+	char *res = loopfile_from_sysfs(device);
+
+	if (!res) {
+		struct loop_info lo;
+		struct loop_info64 lo64;
+		int fd;
+
+		if ((fd = open(device, O_RDONLY)) < 0)
+			return NULL;
+
+		if (ioctl(fd, LOOP_GET_STATUS64, &lo64) == 0) {
+			lo64.lo_file_name[LO_NAME_SIZE-2] = '*';
+			lo64.lo_file_name[LO_NAME_SIZE-1] = 0;
+			res = xstrdup((char *) lo64.lo_file_name);
+
+		} else if (ioctl(fd, LOOP_GET_STATUS, &lo) == 0) {
+			lo.lo_name[LO_NAME_SIZE-2] = '*';
+			lo.lo_name[LO_NAME_SIZE-1] = 0;
+			res = xstrdup((char *) lo.lo_name);
+		}
+		close(fd);
+	}
+	return res;
+}
+
 int
 is_loop_device (const char *device) {
 	struct stat st;

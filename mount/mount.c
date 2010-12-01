@@ -249,9 +249,23 @@ parse_string_opt(char *s) {
 /* Report on a single mount.  */
 static void
 print_one (const struct my_mntent *me) {
+
+	char *fsname = NULL;
+
 	if (mount_quiet)
 		return;
-	printf ("%s on %s", me->mnt_fsname, me->mnt_dir);
+
+	/* users assume backing file name rather than /dev/loopN in
+	 * mount(8) output if the device has been initialized by mount(8).
+	 */
+	if (strncmp(me->mnt_fsname, "/dev/loop", 9) == 0 &&
+	    is_loop_autoclear(me->mnt_fsname))
+		fsname = loopdev_get_loopfile(me->mnt_fsname);
+
+	if (!fsname)
+		fsname = (char *) me->mnt_fsname;
+
+	printf ("%s on %s", fsname, me->mnt_dir);
 	if (me->mnt_type != NULL && *(me->mnt_type) != '\0')
 		printf (" type %s", me->mnt_type);
 	if (me->mnt_opts != NULL)
@@ -1206,9 +1220,19 @@ loop_check(const char **spec, const char **type, int *flags,
       if (verbose)
 	printf(_("mount: skipping the setup of a loop device\n"));
     } else {
-      /* use autoclear loopdev on system without regular mtab only */
-      int loop_opts = mtab_is_writable() ? 0 : SETLOOP_AUTOCLEAR;
+      int loop_opts;
       int res;
+
+      /* since 2.6.37 we don't have to store backing filename to mtab
+       * because kernel provides the name in /sys
+       */
+      if (get_linux_version() >= KERNEL_VERSION(2, 6, 37) ||
+	  mtab_is_writable() == 0) {
+
+	if (verbose)
+	  printf(_("mount: enabling autoclear loopdev flag\n"));
+	loop_opts = SETLOOP_AUTOCLEAR;
+      }
 
       if (*flags & MS_RDONLY)
         loop_opts |= SETLOOP_RDONLY;
