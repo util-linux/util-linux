@@ -47,6 +47,7 @@
 #include <sys/time.h>
 #include <sys/uio.h>
 
+#include <err.h>
 #include <paths.h>
 #include <ctype.h>
 #include <pwd.h>
@@ -111,7 +112,7 @@ main(int argc, char **argv) {
 		default:
 usage:
 			(void)fprintf(stderr, _("usage: %s [file]\n"), progname);
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 	argc -= optind;
 	argv += optind;
@@ -145,7 +146,7 @@ usage:
 			(void)fprintf(stderr, "%s: %s\n", progname, p);
 	}
 	endutent();
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 void
@@ -164,10 +165,9 @@ makemsg(fname)
 		tmpname[sizeof(_PATH_TMP) + 20];
 
 	(void)sprintf(tmpname, "%s/wall.XXXXXX", _PATH_TMP);
-	if (!(fd = mkstemp(tmpname)) || !(fp = fdopen(fd, "r+"))) {
-		(void)fprintf(stderr, _("%s: can't open temporary file.\n"), progname);
-		exit(1);
-	}
+	if (!(fd = mkstemp(tmpname)) || !(fp = fdopen(fd, "r+")))
+		errx(EXIT_FAILURE, _("can't open temporary file"));
+
 	(void)unlink(tmpname);
 
 	if (!nobanner) {
@@ -209,16 +209,12 @@ makemsg(fname)
 		 * instead of "wall file".
 		 */
 		int uid = getuid();
-		if (uid && (uid != geteuid() || getgid() != getegid())) {
-			fprintf(stderr, _("%s: will not read %s - use stdin.\n"),
-				progname, fname);
-			exit(1);
-		}
-		if (!freopen(fname, "r", stdin)) {
-			fprintf(stderr, _("%s: can't read %s.\n"),
-				progname, fname);
-			exit(1);
-		}
+		if (uid && (uid != geteuid() || getgid() != getegid()))
+			errx(EXIT_FAILURE, _("will not read %s - use stdin."),
+			     fname);
+
+		if (!freopen(fname, "r", stdin))
+			errx(EXIT_FAILURE, _("can't read %s."), fname);
 	}
 
 	while (fgets(lbuf, sizeof(lbuf), stdin)) {
@@ -237,17 +233,14 @@ makemsg(fname)
 	fprintf(fp, "%79s\r\n", " ");
 	rewind(fp);
 
-	if (fstat(fd, &sbuf)) {
-		fprintf(stderr, _("%s: can't stat temporary file.\n"),
-			progname);
-		exit(1);
-	}
+	if (fstat(fd, &sbuf))
+		err(EXIT_FAILURE, _("fstat failed"));
+
 	mbufsize = sbuf.st_size;
 	mbuf = xmalloc(mbufsize);
 
-	if (fread(mbuf, sizeof(*mbuf), mbufsize, fp) != mbufsize) {
-		(void)fprintf(stderr, _("%s: can't read temporary file.\n"), progname);
-		exit(1);
-	}
+	if (fread(mbuf, sizeof(*mbuf), mbufsize, fp) != mbufsize)
+		err(EXIT_FAILURE, _("fread failed"));
+
 	(void)close(fd);
 }
