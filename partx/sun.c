@@ -4,7 +4,7 @@
  * Copyrights of the original file apply
  * Copyright (c) 2007 Hannes Reinecke
  *
- * Integrated to partx (utils-linux-ng)
+ * Integrated to partx
  *       Davidlohr Bueso <dave@gnu.org>
  */
 

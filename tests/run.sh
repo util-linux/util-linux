@@ -35,7 +35,7 @@ if [ -n "$1" ]; then
 fi
 
 echo
-echo "------------------ Utils-linux-ng regression tests ------------------"
+echo "------------------ Utils-linux regression tests ------------------"
 echo
 echo "                    For development purpose only.                    "
 echo "                 Don't execute on production system!                 "

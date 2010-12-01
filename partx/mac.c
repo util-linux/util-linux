@@ -1,7 +1,7 @@
 /*
  * Lifted from kpartx's mac.c
  *
- * Integrated to partx (utils-linux-ng)
+ * Integrated to partx
  *       Davidlohr Bueso <dave@gnu.org>
  */
 
