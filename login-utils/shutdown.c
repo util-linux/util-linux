@@ -106,7 +106,7 @@ char	halt_action[256];		/* to find out what to do upon halt */
 #define WRCRLF	write(fd, "\r\n", 2)
 #define ERRSTRING strerror(errno)
 
-#define UMOUNT_ARGS		"umount", "-a", "-t", "nodevfs"
+#define UMOUNT_ARGS		"umount", "-a", "-t", "nodevfs,devtmpfs"
 #define SWAPOFF_ARGS            "swapoff", "-a"
 
 void
@@ -114,7 +114,7 @@ usage(void)
 {
 	fprintf(stderr,
 		_("Usage: shutdown [-h|-r] [-fqs] [now|hh:ss|+mins]\n"));
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
 static void
@@ -126,13 +126,13 @@ my_puts(char *s)
 	fflush(stdout);
 }
 
-void 
+void
 int_handler(int sig)
 {
 	unlink(_PATH_NOLOGIN);
 	signal(SIGINT, SIG_DFL);
 	my_puts(_("Shutdown process aborted"));
-	_exit(1);
+	_exit(EXIT_FAILURE);
 }
 
 static int
@@ -161,11 +161,8 @@ main(int argc, char *argv[])
         textdomain(PACKAGE);
 
 #ifndef DEBUGGING
-	if(setreuid (0, 0)) {
-		fprintf(stderr, _("%s: Only root can shut a system down.\n"),
-			argv[0]);
-		exit(1);
-	}
+	if(setreuid (0, 0))
+		errx(EXIT_FAILURE, _("only root can shut a system down."));
 #endif
 
 	if(*argv[0] == '-') argv[0]++;	/* allow shutdown as login shell */
@@ -202,7 +199,7 @@ main(int argc, char *argv[])
 		opt_fast = 0;
 		timeout = 2*60;
 	}
-		
+
 	c = 0;
 	while(++c < argc) {
 		if(argv[c][0] == '-') {
@@ -211,7 +208,7 @@ main(int argc, char *argv[])
 				case 'C':
 					opt_use_config_file = 1;
 					break;
-				case 'h': 
+				case 'h':
 					opt_reboot = 0;
 					break;
 				case 'r':
@@ -225,8 +222,7 @@ main(int argc, char *argv[])
 					break;
 				case 's':
 					opt_single = 1;
-					break;
-				    
+
 				default:
 					usage();
 				}
@@ -242,24 +238,22 @@ main(int argc, char *argv[])
 			time_t tics;
 			struct tm *tt;
 			int now, then;
-				
+
 			if((colon = strchr(argv[c], ':'))) {
 				*colon = '\0';
 				hour = atoi(argv[c]);
 				minute = atoi(++colon);
 			} else usage();
-				
+
 			(void) time(&tics);
 			tt = localtime(&tics);
-				
+
 			now = 3600 * tt->tm_hour + 60 * tt->tm_min;
 			then = 3600 * hour + 60 * minute;
 			timeout = then - now;
-			if(timeout < 0) {
-				fprintf(stderr, _("That must be tomorrow, "
-					          "can't you wait till then?\n"));
-				exit(1);
-			}
+			if(timeout < 0)
+				errx(EXIT_FAILURE, _("that must be tomorrow, "
+					          "can't you wait till then?"));
 		} else {
 			xstrncpy(message, argv[c], sizeof(message));
 			opt_msgset = 1;
@@ -298,11 +292,11 @@ main(int argc, char *argv[])
 		/* now ask for message, gets() is insecure */
 		int cnt = sizeof(message)-1;
 		char *ptr;
-		
+
 		printf("Why? "); fflush(stdout);
-		
+
 		ptr = message;
-		while(--cnt >= 0 && (*ptr = getchar()) && *ptr != '\n') { 
+		while(--cnt >= 0 && (*ptr = getchar()) && *ptr != '\n') {
 			ptr++;
 		}
 		*ptr = '\0';
@@ -314,7 +308,7 @@ main(int argc, char *argv[])
 	printf("timeout = %d, quiet = %d, reboot = %d\n",
 		timeout, opt_quiet, opt_reboot);
 #endif
-	
+
 	/* so much for option-processing, now begin termination... */
 	if(!(whom = getlogin()) || !*whom) whom = "ghost";
 	if(strlen(whom) > 40) whom[40] = 0; /* see write_user() */
@@ -332,7 +326,6 @@ main(int argc, char *argv[])
 		timeout = 5*60;
 	}
 
-	
 	if((fd = open(_PATH_NOLOGIN, O_WRONLY|O_CREAT, 0644)) >= 0) {
 		/* keep xgettext happy and leave \r\n outside strings */
 		WRCRLF;
@@ -344,7 +337,7 @@ main(int argc, char *argv[])
 		WRCRLF;
 		close(fd);
 	}
-	
+
 	signal(SIGPIPE, SIG_IGN);
 
 	if(timeout > 0) {
@@ -378,7 +371,7 @@ main(int argc, char *argv[])
 	if(opt_single)
 		if((fd = open(_PATH_SINGLE, O_CREAT|O_WRONLY, 0644)) >= 0)
 			close(fd);
-		
+
 	sync();
 
 	signal(SIGTERM, SIG_IGN);
@@ -439,7 +432,7 @@ main(int argc, char *argv[])
 		do_halt(halt_action);
 	}
 	/* NOTREACHED */
-	exit(0); /* to quiet gcc */
+	exit(EXIT_SUCCESS); /* to quiet gcc */
 }
 
 /*** end of main() ***/
@@ -522,10 +515,10 @@ wall(void)
 {
 	/* write to all users, that the system is going down. */
 	struct utmp *ut;
-		
+
 	utmpname(_PATH_UTMP);
 	setutent();
-	
+
 	while((ut = getutent())) {
 		if(ut->ut_type == USER_PROCESS)
 			write_user(ut);
@@ -539,14 +532,14 @@ write_wtmp(void)
 	/* write in wtmp that we are dying */
 	int fd;
 	struct utmp ut;
-	
+
 	memset((char *)&ut, 0, sizeof(ut));
 	strcpy(ut.ut_line, "~");
 	memcpy(ut.ut_name, "shutdown", sizeof(ut.ut_name));
 
 	time(&ut.ut_time);
 	ut.ut_type = BOOT_TIME;
-	
+
 	if((fd = open(_PATH_WTMP, O_WRONLY|O_APPEND, 0644)) >= 0) {
 		write(fd, (char *)&ut, sizeof(ut));
 		close(fd);
@@ -577,7 +570,7 @@ swap_off(void)
 		execlp("swapoff", SWAPOFF_ARGS, NULL);
 		my_puts(_("Cannot exec swapoff, "
 			  "hoping umount will do the trick."));
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 	while ((result = wait(&status)) != -1 && result != pid)
 		;
@@ -608,7 +601,7 @@ unmount_disks(void)
 
 		execlp("umount", UMOUNT_ARGS, NULL);
 		my_puts(_("Cannot exec umount, giving up on umount."));
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 	while ((result = wait(&status)) != -1 && result != pid)
 		;
@@ -627,7 +620,7 @@ unmount_disks_ourselves(void)
 	int i;
 	int n;
 	char *filesys;
-	
+
 	sync();
 	if (!(mtab = setmntent(_PATH_MOUNTED, "r"))) {
 		my_puts("shutdown: Cannot open " _PATH_MOUNTED ".");
