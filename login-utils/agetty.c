@@ -360,7 +360,6 @@ main(argc, argv)
 
     (void) execl(options.login, options.login, "--", logname, NULL);
     error(_("%s: can't exec %s: %m"), options.tty, options.login);
-    exit(0);  /* quiet GCC */
 }
 
 /* parse-args - parse command-line arguments */
@@ -1050,13 +1049,13 @@ char   *get_logname(op, cp, tp)
 
 	    if (read(0, &c, 1) < 1) {
 		if (errno == EINTR || errno == EIO)
-		    exit(0);
+		    exit(EXIT_SUCCESS);
 		error(_("%s: read: %m"), op->tty);
 	    }
 	    /* Do BREAK handling elsewhere. */
 
 	    if ((c == 0) && op->numspeed > 1)
-		return (0);
+		return EXIT_SUCCESS;
 	    /* Do parity bit handling. */
 
 	    if (op->eightbits) {
@@ -1093,7 +1092,7 @@ char   *get_logname(op, cp, tp)
 		}
 		break;
 	    case CTL('D'):
-		exit(0);
+		exit(EXIT_SUCCESS);
 	    default:
 		if (!isascii(ascval) || !isprint(ascval)) {
 		     /* ignore garbage characters */ ;
@@ -1113,7 +1112,7 @@ char   *get_logname(op, cp, tp)
 	    if (isupper(*bp))
 		*bp = tolower(*bp);		/* map name to lower case */
     }
-    return (logname);
+    return logname;
 }
 
 /* termio_final - set the final tty mode bits */
@@ -1201,11 +1200,11 @@ caps_lock(s)
 
     for (capslock = 0; *s; s++) {
 	if (islower(*s))
-	    return (0);
+	    return EXIT_SUCCESS;
 	if (capslock == 0)
 	    capslock = isupper(*s);
     }
-    return (capslock);
+    return capslock;
 }
 
 /* bcode - convert speed string to speed code; return 0 on failure */
@@ -1218,17 +1217,16 @@ bcode(s)
 
     for (sp = speedtab; sp->speed; sp++)
 	if (sp->speed == speed)
-	    return (sp->code);
-    return (0);
+	    return sp->code;
+    return 0;
 }
 
 /* usage - explain */
 
-void
-usage()
+void __attribute__((__noreturn__)) usage(void)
 {
     fprintf(stderr, _("Usage: %s [-8hiLmsUw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\nor\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"), progname);
-    exit(1);
+    exit(EXIT_FAILURE);
 }
 
 /* error - report errors to console or syslog; only understands %s and %m */
