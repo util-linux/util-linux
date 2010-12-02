@@ -11,3 +11,4 @@ initctl
 last
 shutdown
 simpleinit
+mesg
