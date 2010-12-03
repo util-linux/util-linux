@@ -1,2 +1,2 @@
-0 0 0:0 / /mnt/bar user - ext3 /dev/sdb1 none
-0 0 0:0 / /mnt/xyz loop=/dev/loop0,uhelper=hal - ext3 /dev/sda2 none
+SRC=/dev/sdb1 TARGET=/mnt/bar ROOT=/ OPTS=user
+SRC=/dev/sda2 TARGET=/mnt/xyz ROOT=/ OPTS=loop=/dev/loop0,uhelper=hal

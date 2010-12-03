@@ -900,25 +900,25 @@ int mnt_fs_print_debug(mnt_fs *fs, FILE *file)
 	if (!fs)
 		return -EINVAL;
 	fprintf(file, "------ fs: %p\n", fs);
-	fprintf(file, "source:  %s\n", mnt_fs_get_source(fs));
-	fprintf(file, "target:  %s\n", mnt_fs_get_target(fs));
-	fprintf(file, "fstype:  %s\n", mnt_fs_get_fstype(fs));
-	fprintf(file, "optstr:  %s\n", mnt_fs_get_optstr(fs));
+	fprintf(file, "source: %s\n", mnt_fs_get_source(fs));
+	fprintf(file, "target: %s\n", mnt_fs_get_target(fs));
+	fprintf(file, "fstype: %s\n", mnt_fs_get_fstype(fs));
+	fprintf(file, "optstr: %s\n", mnt_fs_get_optstr(fs));
 
 	if (mnt_fs_get_root(fs))
-		fprintf(file, "root:    %s\n", mnt_fs_get_root(fs));
+		fprintf(file, "root:   %s\n", mnt_fs_get_root(fs));
 	if (mnt_fs_get_bindsrc(fs))
 		fprintf(file, "bindsrc: %s\n", mnt_fs_get_bindsrc(fs));
 	if (mnt_fs_get_freq(fs))
-		fprintf(file, "freq:    %d\n", mnt_fs_get_freq(fs));
+		fprintf(file, "freq:   %d\n", mnt_fs_get_freq(fs));
 	if (mnt_fs_get_passno(fs))
-		fprintf(file, "pass:    %d\n", mnt_fs_get_passno(fs));
+		fprintf(file, "pass:   %d\n", mnt_fs_get_passno(fs));
 	if (mnt_fs_get_id(fs))
-		fprintf(file, "id:      %d\n", mnt_fs_get_id(fs));
+		fprintf(file, "id:     %d\n", mnt_fs_get_id(fs));
 	if (mnt_fs_get_parent_id(fs))
-		fprintf(file, "parent:  %d\n", mnt_fs_get_parent_id(fs));
+		fprintf(file, "parent: %d\n", mnt_fs_get_parent_id(fs));
 	if (mnt_fs_get_devno(fs))
-		fprintf(file, "devno:   %d:%d\n", major(mnt_fs_get_devno(fs)),
+		fprintf(file, "devno:  %d:%d\n", major(mnt_fs_get_devno(fs)),
 						 minor(mnt_fs_get_devno(fs)));
 	return 0;
 }

@@ -124,13 +124,11 @@ extern int mnt_match_fstype(const char *type, const char *pattern);
 extern int mnt_match_options(const char *optstr, const char *pattern);
 extern const char *mnt_get_fstab_path(void);
 extern const char *mnt_get_mtab_path(void);
-extern const char *mnt_get_utab_path(void);
 
 extern int mnt_get_filesystems(char ***filesystems, const char *pattern);
 extern void mnt_free_filesystems(char **filesystems);
 
 extern int mnt_has_regular_mtab(const char **mtab, int *writable);
-extern int mnt_has_regular_utab(const char **utab, int *writable);
 
 /* cache.c */
 extern mnt_cache *mnt_new_cache(void);
@@ -286,13 +284,12 @@ extern int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 		        mnt_fs **fs);
 
 /* tab_update.c */
-extern mnt_update *mnt_new_update(int userspace_only);
+extern mnt_update *mnt_new_update(void);
 extern void mnt_free_update(mnt_update *upd);
 extern int mnt_update_is_ready(mnt_update *upd);
 extern int mnt_update_set_fs(mnt_update *upd, int mountflags,
 	                      const char *target, mnt_fs *fs);
-extern int mnt_update_tab(mnt_update *upd, const char *filename, mnt_lock *lc);
-extern int mnt_update_is_userspace_only(mnt_update *upd);;
+extern int mnt_update_tab(mnt_update *upd, mnt_lock *lc);
 
 
 /* context.c */

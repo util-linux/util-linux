@@ -29,6 +29,7 @@
 struct _mnt_update {
 	char		*target;
 	mnt_fs		*fs;
+	char		*filename;
 	unsigned long	mountflags;
 	int		userspace_only;
 	int		ready;
@@ -39,11 +40,10 @@ static int set_fs_root(mnt_fs *result, mnt_fs *fs, unsigned long mountflags);
 
 /**
  * mnt_new_update:
- * @userspace_only: TRUE/FALSE -- maintain userspace mount options only
  *
  * Returns: newly allocated update handler
  */
-mnt_update *mnt_new_update(int userspace_only)
+mnt_update *mnt_new_update(void)
 {
 	mnt_update *upd;
 
@@ -51,7 +51,6 @@ mnt_update *mnt_new_update(int userspace_only)
 	if (!upd)
 		return NULL;
 
-	upd->userspace_only = userspace_only;
 	DBG(UPDATE, mnt_debug_h(upd, "allocate"));
 
 	return upd;
@@ -72,7 +71,49 @@ void mnt_free_update(mnt_update *upd)
 
 	mnt_free_fs(upd->fs);
 	free(upd->target);
+	free(upd->filename);
 	free(upd);
+}
+
+/*
+ * Returns 0 on success, 1 if not file available, -1 in case of error.
+ */
+int mnt_update_set_filename(mnt_update *upd, const char *filename, int userspace_only)
+{
+	const char *path = NULL;
+	int rw = 0;
+
+	assert(upd);
+
+	/* filename explicitly defined */
+	if (filename) {
+		char *p = strdup(filename);
+		if (!p)
+			return -ENOMEM;
+
+		upd->userspace_only = userspace_only;
+		free(upd->filename);
+		upd->filename = p;
+	}
+
+	if (upd->filename)
+		return 0;
+
+	/* detect tab filename -- /etc/mtab or /dev/.mount/utab
+	 */
+	mnt_has_regular_mtab(&path, &rw);
+	if (!rw) {
+		path = NULL;
+		mnt_has_regular_utab(&path, &rw);
+		if (!rw)
+			return 1;
+		upd->userspace_only = TRUE;
+	}
+	upd->filename = strdup(path);
+	if (!upd->filename)
+		return -ENOMEM;
+
+	return 0;
 }
 
 /**
@@ -88,19 +129,6 @@ int mnt_update_is_ready(mnt_update *upd)
 }
 
 /**
- * mnt_update_is_userspace_only:
- * @upd: update handler
- *
- * Returns: 1 if @upd cares about userspace mount options only (see
- *          mnt_new_update().
- */
-int mnt_update_is_userspace_only(mnt_update *upd)
-{
-	return upd ? upd->userspace_only : FALSE;
-}
-
-
-/**
  * mnt_update_set_fs:
  * @upd: update handler
  * @mountflags: MS_* flags
@@ -112,6 +140,8 @@ int mnt_update_is_userspace_only(mnt_update *upd)
 int mnt_update_set_fs(mnt_update *upd, int mountflags,
 		      const char *target, mnt_fs *fs)
 {
+	int rc;
+
 	assert(upd);
 	assert(target || fs);
 
@@ -128,6 +158,10 @@ int mnt_update_set_fs(mnt_update *upd, int mountflags,
 	upd->fs = NULL;
 	upd->target = NULL;
 	upd->mountflags = mountflags;
+
+	rc = mnt_update_set_filename(upd, NULL, 0);
+	if (rc)
+		return rc;	/* error or no file available (rc = 1) */
 
 	if (fs) {
 		if (upd->userspace_only && !(mountflags & MS_MOVE)) {
@@ -405,18 +439,18 @@ static int fprintf_utab_fs(FILE *f, mnt_fs *fs)
 	return 0;
 }
 
-static int update_tab(mnt_update *upd, const char *filename, mnt_tab *tb)
+static int update_tab(mnt_update *upd, mnt_tab *tb)
 {
 	FILE *f;
 	int rc, fd;
 	char *uq = NULL;
 
-	if (!tb || !filename)
+	if (!tb || !upd->filename)
 		return -EINVAL;
 
-	DBG(UPDATE, mnt_debug_h(upd, "%s: updating", filename));
+	DBG(UPDATE, mnt_debug_h(upd, "%s: updating", upd->filename));
 
-	fd = mnt_open_uniq_filename(filename, &uq, O_WRONLY);
+	fd = mnt_open_uniq_filename(upd->filename, &uq, O_WRONLY);
 	if (fd < 0)
 		return fd;	/* error */
 
@@ -437,12 +471,12 @@ static int update_tab(mnt_update *upd, const char *filename, mnt_tab *tb)
 		fd = fileno(f);
 		rc = fchmod(fd, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) ? -errno : 0;
 
-		if (!rc &&stat(filename, &st) == 0)
+		if (!rc && stat(upd->filename, &st) == 0)
 			/* Copy uid/gid from the present file before renaming. */
 			rc = fchown(fd, st.st_uid, st.st_gid) ? -errno : 0;
 
 		fclose(f);
-		rc = rename(uq, filename) ? -errno : 0;
+		rc = rename(uq, upd->filename) ? -errno : 0;
 	} else {
 		rc = -errno;
 		close(fd);
@@ -487,7 +521,7 @@ static void utab_unlock(int fd)
 	}
 }
 
-static int update_add_entry(mnt_update *upd, const char *filename, mnt_lock *lc)
+static int update_add_entry(mnt_update *upd, mnt_lock *lc)
 {
 	FILE *f;
 	int rc = 0, u_lc = -1;
@@ -495,21 +529,21 @@ static int update_add_entry(mnt_update *upd, const char *filename, mnt_lock *lc)
 	assert(upd);
 	assert(upd->fs);
 
-	DBG(UPDATE, mnt_debug_h(upd, "%s: add entry", filename));
+	DBG(UPDATE, mnt_debug_h(upd, "%s: add entry", upd->filename));
 
 	if (lc)
 		mnt_lock_file(lc);
 	else if (upd->userspace_only)
-		u_lc = utab_lock(filename);
+		u_lc = utab_lock(upd->filename);
 
-	f = fopen(filename, "a+");
+	f = fopen(upd->filename, "a+");
 	if (f) {
 		rc = upd->userspace_only ? fprintf_utab_fs(f, upd->fs) :
 					   fprintf_mtab_fs(f, upd->fs);
-		DBG(UPDATE, mnt_debug_h(upd, "%s: add [rc=%d]", filename, rc));
+		DBG(UPDATE, mnt_debug_h(upd, "%s: add [rc=%d]", upd->filename, rc));
 		fclose(f);
 	} else {
-		DBG(UPDATE, mnt_debug_h(upd, "%s: failed: %m", filename));
+		DBG(UPDATE, mnt_debug_h(upd, "%s: failed: %m", upd->filename));
 		rc = -errno;
 	}
 	if (lc)
@@ -519,7 +553,7 @@ static int update_add_entry(mnt_update *upd, const char *filename, mnt_lock *lc)
 	return rc;
 }
 
-static int update_remove_entry(mnt_update *upd, const char *filename, mnt_lock *lc)
+static int update_remove_entry(mnt_update *upd, mnt_lock *lc)
 {
 	mnt_tab *tb;
 	int rc = 0, u_lc = -1;
@@ -527,20 +561,20 @@ static int update_remove_entry(mnt_update *upd, const char *filename, mnt_lock *
 	assert(upd);
 	assert(upd->target);
 
-	DBG(UPDATE, mnt_debug_h(upd, "%s: remove entry", filename));
+	DBG(UPDATE, mnt_debug_h(upd, "%s: remove entry", upd->filename));
 
 	if (lc)
 		mnt_lock_file(lc);
 	else if (upd->userspace_only)
-		u_lc = utab_lock(filename);
+		u_lc = utab_lock(upd->filename);
 
-	tb = __mnt_new_tab_from_file(filename,
+	tb = __mnt_new_tab_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
 	if (tb) {
 		mnt_fs *rem = mnt_tab_find_target(tb, upd->target, MNT_ITER_BACKWARD);
 		if (rem) {
 			mnt_tab_remove_fs(tb, rem);
-			rc = update_tab(upd, filename, tb);
+			rc = update_tab(upd, tb);
 			mnt_free_fs(rem);
 		}
 		mnt_free_tab(tb);
@@ -552,26 +586,26 @@ static int update_remove_entry(mnt_update *upd, const char *filename, mnt_lock *
 	return rc;
 }
 
-static int update_modify_target(mnt_update *upd, const char *filename, mnt_lock *lc)
+static int update_modify_target(mnt_update *upd, mnt_lock *lc)
 {
 	mnt_tab *tb = NULL;
 	int rc = 0, u_lc = -1;
 
-	DBG(UPDATE, mnt_debug_h(upd, "%s: modify target", filename));
+	DBG(UPDATE, mnt_debug_h(upd, "%s: modify target", upd->filename));
 
 	if (lc)
 		mnt_lock_file(lc);
 	else if (upd->userspace_only)
-		u_lc = utab_lock(filename);
+		u_lc = utab_lock(upd->filename);
 
-	tb = __mnt_new_tab_from_file(filename,
+	tb = __mnt_new_tab_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
 	if (tb) {
 		mnt_fs *cur = mnt_tab_find_target(tb, upd->target, MNT_ITER_BACKWARD);
 		if (cur) {
 			rc = mnt_fs_set_target(cur, mnt_fs_get_target(upd->fs));
 			if (!rc)
-				rc = update_tab(upd, filename, tb);
+				rc = update_tab(upd, tb);
 		}
 		mnt_free_tab(tb);
 	}
@@ -582,7 +616,7 @@ static int update_modify_target(mnt_update *upd, const char *filename, mnt_lock 
 	return rc;
 }
 
-static int update_modify_options(mnt_update *upd, const char *filename, mnt_lock *lc)
+static int update_modify_options(mnt_update *upd, mnt_lock *lc)
 {
 	mnt_tab *tb = NULL;
 	int rc = 0, u_lc = -1;
@@ -590,14 +624,14 @@ static int update_modify_options(mnt_update *upd, const char *filename, mnt_lock
 	assert(upd);
 	assert(upd->fs);
 
-	DBG(UPDATE, mnt_debug_h(upd, "%s: modify options", filename));
+	DBG(UPDATE, mnt_debug_h(upd, "%s: modify options", upd->filename));
 
 	if (lc)
 		mnt_lock_file(lc);
 	else if (upd->userspace_only)
-		u_lc = utab_lock(filename);
+		u_lc = utab_lock(upd->filename);
 
-	tb = __mnt_new_tab_from_file(filename,
+	tb = __mnt_new_tab_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
 	if (tb) {
 		mnt_fs *cur = mnt_tab_find_target(tb,
@@ -606,7 +640,7 @@ static int update_modify_options(mnt_update *upd, const char *filename, mnt_lock
 		if (cur) {
 			rc = mnt_fs_set_optstr(cur, mnt_fs_get_optstr(upd->fs));
 			if (!rc)
-				rc = update_tab(upd, filename, tb);
+				rc = update_tab(upd, tb);
 		}
 		mnt_free_tab(tb);
 	}
@@ -620,38 +654,37 @@ static int update_modify_options(mnt_update *upd, const char *filename, mnt_lock
 
 /**
  * mnt_update_tab:
- * @filename: mtab of utab filename
  * @lc: lock
  *
- * High-level API to update /etc/mtab or /dev/.mount/utab.
+ * High-level API to update /etc/mtab (or private /dev/.mount/utab file).
  *
  * Returns: 0 on success, negative number on error.
  */
-int mnt_update_tab(mnt_update *upd, const char *filename, mnt_lock *lc)
+int mnt_update_tab(mnt_update *upd, mnt_lock *lc)
 {
 	int rc = -EINVAL;
 
 	assert(upd);
-	assert(filename);
 
-	DBG(UPDATE, mnt_debug_h(upd, "%s: update tab", filename));
-
-	if (!filename || !upd)
+	if (!upd->filename || !upd)
 		return -EINVAL;
 	if (!upd->ready)
 		return 0;
 
+	DBG(UPDATE, mnt_debug_h(upd, "%s: update tab", upd->filename));
+
 	if (!upd->fs && upd->target)
-		rc = update_remove_entry(upd, filename, lc);	/* umount */
+		rc = update_remove_entry(upd, lc);	/* umount */
 	else if (upd->mountflags & MS_MOVE)
-		rc = update_modify_target(upd, filename, lc);	/* move */
+		rc = update_modify_target(upd, lc);	/* move */
 	else if (upd->mountflags & MS_REMOUNT)
-		rc = update_modify_options(upd, filename, lc);	/* remount */
+		rc = update_modify_options(upd, lc);	/* remount */
 	else if (upd->fs)
-		rc = update_add_entry(upd, filename, lc);	/* mount */
+		rc = update_add_entry(upd, lc);	/* mount */
 
 	upd->ready = FALSE;
-	DBG(UPDATE, mnt_debug_h(upd, "%s: update tab: done [rc=%d]", filename, rc));
+	DBG(UPDATE, mnt_debug_h(upd, "%s: update tab: done [rc=%d]",
+				upd->filename, rc));
 	return rc;
 }
 
@@ -672,33 +705,19 @@ static int update(const char *target, mnt_fs *fs, unsigned long mountflags)
 	int rc, writable = 0;
 	const char *filename = NULL;
 	mnt_update *upd;
-	mnt_lock *lock = NULL;
 
 	DBG(UPDATE, mnt_debug("update test"));
 
 	rc = mnt_has_regular_mtab(&filename, &writable);
 	if (rc && writable) {
-		upd = mnt_new_update(FALSE);
+		/* normal mtab, lock required */
 		lock = mnt_new_lock(filename, 0);
-
-		/* note that proper solution is to call mnt_unlock_file() from
-		 * signal handler. The atexit() could be ignore if program ends
-		 * by _exit(). The _exit() function is usually used in signal
-		 * handlers.
-		 */
-		atexit(lock_fallback);
-
-	} else {
-		filename = NULL;
-		rc = mnt_has_regular_utab(&filename, &writable);
-
-		if (rc && writable)
-			upd = mnt_new_update(TRUE);
-		else {
-			fprintf(stderr, "utab useless: %m\n");
-			return -1;
-		}
+		if (lock)
+			atexit(lock_fallback);
 	}
+	upd = mnt_new_update();
+	if (!upd)
+		return -ENOMEM;
 
 	rc = mnt_update_set_fs(upd, mountflags, target, fs);
 	if (rc == 1) {
@@ -713,7 +732,7 @@ static int update(const char *target, mnt_fs *fs, unsigned long mountflags)
 
 	/* [... here should be mount(2) call ...]  */
 
-	rc = mnt_update_tab(upd, filename, lock);
+	rc = mnt_update_tab(upd, lock);
 done:
 	return rc;
 }

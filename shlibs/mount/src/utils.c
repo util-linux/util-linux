@@ -569,11 +569,8 @@ done:
 	return 0;
 }
 
-/**
- *
- * mnt_has_regular_utab:
- * @utab: returns path to utab (usually /dev/.mount/utab)
- * @writable: returns 1 if the file is writable
+/*
+ * Don't export this to libmount API -- utab is private library stuff.
  *
  * If the file does not exist and @writable argument is not NULL then it will
  * try to create the directory (e.g. /dev/.mount) and the file.
@@ -656,10 +653,8 @@ const char *mnt_get_mtab_path(void)
 	return p ? : _PATH_MOUNTED;
 }
 
-/**
- * mnt_get_utab_path:
- *
- * This function returns *default* location of the utab file.
+/*
+ * Don't export this to libmount API -- utab is private library stuff.
  *
  * Returns: path to /dev/.mount/utab or $LIBMOUNT_UTAB.
  */

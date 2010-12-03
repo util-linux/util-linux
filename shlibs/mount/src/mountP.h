@@ -103,7 +103,7 @@ struct mtest {
 	const char	*usage;
 };
 
-/* utils.c */
+/* test.c */
 extern int mnt_run_test(struct mtest *tests, int argc, char *argv[]);
 #endif
 
@@ -120,6 +120,8 @@ extern int mnt_in_group(gid_t gid);
 extern char *mnt_get_mountpoint(const char *path);
 extern char *mnt_get_fs_root(const char *path, const char *mountpoint);
 extern int mnt_open_uniq_filename(const char *filename, char **name, int flags);
+extern int mnt_has_regular_utab(const char **utab, int *writable);
+extern const char *mnt_get_utab_path(void);
 
 /*
  * Generic iterator
@@ -315,5 +317,6 @@ extern int mnt_context_update_tabs(mnt_context *cxt);
 
 /* tab_update.c */
 extern mnt_fs *mnt_update_get_fs(mnt_update *upd);
+extern int mnt_update_set_filename(mnt_update *upd, const char *filename, int userspace_only);
 
 #endif /* _LIBMOUNT_PRIVATE_H */

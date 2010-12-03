@@ -1,1 +1,1 @@
-0 0 0:0 / /mnt/newxyz user - ext3 /dev/sda2 none
+SRC=/dev/sda2 TARGET=/mnt/newxyz ROOT=/ OPTS=user

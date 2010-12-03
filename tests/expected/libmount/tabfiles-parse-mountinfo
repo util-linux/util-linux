@@ -3,6 +3,7 @@ source: /proc
 target: /proc
 fstype: proc
 optstr: rw,relatime
+root:   /
 id:     15
 parent: 20
 devno:  0:3
@@ -11,6 +12,7 @@ source: /sys
 target: /sys
 fstype: sysfs
 optstr: rw,relatime
+root:   /
 id:     16
 parent: 20
 devno:  0:15
@@ -19,6 +21,7 @@ source: udev
 target: /dev
 fstype: devtmpfs
 optstr: rw,relatime,size=1983516k,nr_inodes=495879,mode=755
+root:   /
 id:     17
 parent: 20
 devno:  0:5
@@ -27,6 +30,7 @@ source: devpts
 target: /dev/pts
 fstype: devpts
 optstr: rw,relatime,gid=5,mode=620,ptmxmode=000
+root:   /
 id:     18
 parent: 17
 devno:  0:10
@@ -35,6 +39,7 @@ source: tmpfs
 target: /dev/shm
 fstype: tmpfs
 optstr: rw,relatime
+root:   /
 id:     19
 parent: 17
 devno:  0:16
@@ -43,6 +48,7 @@ source: /dev/sda4
 target: /
 fstype: ext3
 optstr: rw,noatime,errors=continue,user_xattr,acl,barrier=0,data=ordered
+root:   /
 id:     20
 parent: 1
 devno:  8:4
@@ -51,6 +57,7 @@ source: tmpfs
 target: /sys/fs/cgroup
 fstype: tmpfs
 optstr: rw,nosuid,nodev,noexec,relatime,mode=755
+root:   /
 id:     21
 parent: 16
 devno:  0:17
@@ -59,6 +66,7 @@ source: cgroup
 target: /sys/fs/cgroup/systemd
 fstype: cgroup
 optstr: rw,nosuid,nodev,noexec,relatime,release_agent=/lib/systemd/systemd-cgroups-agent,name=systemd
+root:   /
 id:     22
 parent: 21
 devno:  0:18
@@ -67,6 +75,7 @@ source: cgroup
 target: /sys/fs/cgroup/cpuset
 fstype: cgroup
 optstr: rw,nosuid,nodev,noexec,relatime,cpuset
+root:   /
 id:     23
 parent: 21
 devno:  0:19
@@ -75,6 +84,7 @@ source: cgroup
 target: /sys/fs/cgroup/ns
 fstype: cgroup
 optstr: rw,nosuid,nodev,noexec,relatime,ns
+root:   /
 id:     24
 parent: 21
 devno:  0:20
@@ -83,6 +93,7 @@ source: cgroup
 target: /sys/fs/cgroup/cpu
 fstype: cgroup
 optstr: rw,nosuid,nodev,noexec,relatime,cpu
+root:   /
 id:     25
 parent: 21
 devno:  0:21
@@ -91,6 +102,7 @@ source: cgroup
 target: /sys/fs/cgroup/cpuacct
 fstype: cgroup
 optstr: rw,nosuid,nodev,noexec,relatime,cpuacct
+root:   /
 id:     26
 parent: 21
 devno:  0:22
@@ -99,6 +111,7 @@ source: cgroup
 target: /sys/fs/cgroup/memory
 fstype: cgroup
 optstr: rw,nosuid,nodev,noexec,relatime,memory
+root:   /
 id:     27
 parent: 21
 devno:  0:23
@@ -107,6 +120,7 @@ source: cgroup
 target: /sys/fs/cgroup/devices
 fstype: cgroup
 optstr: rw,nosuid,nodev,noexec,relatime,devices
+root:   /
 id:     28
 parent: 21
 devno:  0:24
@@ -115,6 +129,7 @@ source: cgroup
 target: /sys/fs/cgroup/freezer
 fstype: cgroup
 optstr: rw,nosuid,nodev,noexec,relatime,freezer
+root:   /
 id:     29
 parent: 21
 devno:  0:25
@@ -123,6 +138,7 @@ source: cgroup
 target: /sys/fs/cgroup/net_cls
 fstype: cgroup
 optstr: rw,nosuid,nodev,noexec,relatime,net_cls
+root:   /
 id:     30
 parent: 21
 devno:  0:26
@@ -131,6 +147,7 @@ source: cgroup
 target: /sys/fs/cgroup/blkio
 fstype: cgroup
 optstr: rw,nosuid,nodev,noexec,relatime,blkio
+root:   /
 id:     31
 parent: 21
 devno:  0:27
@@ -139,6 +156,7 @@ source: systemd-1
 target: /sys/kernel/security
 fstype: autofs
 optstr: rw,relatime,fd=22,pgrp=1,timeout=300,minproto=5,maxproto=5,direct
+root:   /
 id:     32
 parent: 16
 devno:  0:28
@@ -147,6 +165,7 @@ source: systemd-1
 target: /dev/hugepages
 fstype: autofs
 optstr: rw,relatime,fd=23,pgrp=1,timeout=300,minproto=5,maxproto=5,direct
+root:   /
 id:     33
 parent: 17
 devno:  0:29
@@ -155,6 +174,7 @@ source: systemd-1
 target: /sys/kernel/debug
 fstype: autofs
 optstr: rw,relatime,fd=24,pgrp=1,timeout=300,minproto=5,maxproto=5,direct
+root:   /
 id:     34
 parent: 16
 devno:  0:30
@@ -163,6 +183,7 @@ source: systemd-1
 target: /proc/sys/fs/binfmt_misc
 fstype: autofs
 optstr: rw,relatime,fd=25,pgrp=1,timeout=300,minproto=5,maxproto=5,direct
+root:   /
 id:     35
 parent: 15
 devno:  0:31
@@ -171,6 +192,7 @@ source: systemd-1
 target: /dev/mqueue
 fstype: autofs
 optstr: rw,relatime,fd=26,pgrp=1,timeout=300,minproto=5,maxproto=5,direct
+root:   /
 id:     36
 parent: 17
 devno:  0:32
@@ -179,6 +201,7 @@ source: /proc/bus/usb
 target: /proc/bus/usb
 fstype: usbfs
 optstr: rw,relatime
+root:   /
 id:     37
 parent: 15
 devno:  0:14
@@ -187,6 +210,7 @@ source: hugetlbfs
 target: /dev/hugepages
 fstype: hugetlbfs
 optstr: rw,relatime
+root:   /
 id:     38
 parent: 33
 devno:  0:33
@@ -195,6 +219,7 @@ source: mqueue
 target: /dev/mqueue
 fstype: mqueue
 optstr: rw,relatime
+root:   /
 id:     39
 parent: 36
 devno:  0:12
@@ -203,6 +228,7 @@ source: /dev/sda6
 target: /boot
 fstype: ext3
 optstr: rw,noatime,errors=continue,barrier=0,data=ordered
+root:   /
 id:     40
 parent: 20
 devno:  8:6
@@ -211,6 +237,7 @@ source: /dev/mapper/kzak-home
 target: /home/kzak
 fstype: ext4
 optstr: rw,noatime,barrier=1,data=ordered
+root:   /
 id:     41
 parent: 20
 devno:  253:0
@@ -219,6 +246,7 @@ source: (null)
 target: /proc/sys/fs/binfmt_misc
 fstype: binfmt_misc
 optstr: rw,relatime
+root:   /
 id:     42
 parent: 35
 devno:  0:34
@@ -227,6 +255,7 @@ source: fusectl
 target: /sys/fs/fuse/connections
 fstype: fusectl
 optstr: rw,relatime
+root:   /
 id:     43
 parent: 16
 devno:  0:35
@@ -235,6 +264,7 @@ source: gvfs-fuse-daemon
 target: /home/kzak/.gvfs
 fstype: fuse.gvfs-fuse-daemon
 optstr: rw,nosuid,nodev,relatime,user_id=500,group_id=500
+root:   /
 id:     44
 parent: 41
 devno:  0:36
@@ -243,6 +273,7 @@ source: sunrpc
 target: /var/lib/nfs/rpc_pipefs
 fstype: rpc_pipefs
 optstr: rw,relatime
+root:   /
 id:     45
 parent: 20
 devno:  0:37
@@ -251,6 +282,7 @@ source: //foo.home/bar/
 target: /mnt/sounds
 fstype: cifs
 optstr: rw,relatime,unc=\\foo.home\bar,username=kzak,domain=SRGROUP,uid=0,noforceuid,gid=0,noforcegid,addr=192.168.111.1,posixpaths,serverino,acl,rsize=16384,wsize=57344
+root:   /
 id:     47
 parent: 20
 devno:  0:38

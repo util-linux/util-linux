@@ -1067,9 +1067,13 @@ int mnt_context_prepare_update(mnt_context *cxt)
 		return 0;
 	}
 	if (!cxt->update) {
-		cxt->update = mnt_new_update(!cxt->mtab_writable);
+		cxt->update = mnt_new_update();
 		if (!cxt->update)
 			return -ENOMEM;
+
+		mnt_update_set_filename(cxt->update,
+				cxt->mtab_writable ? cxt->mtab_path : cxt->utab_path,
+				!cxt->mtab_writable);
 	}
 
 	rc = mnt_update_set_fs(cxt->update, cxt->mountflags,
@@ -1081,9 +1085,6 @@ int mnt_context_prepare_update(mnt_context *cxt)
 
 int mnt_context_update_tabs(mnt_context *cxt)
 {
-	const char *filename;
-	mnt_lock *lock = NULL;
-
 	assert(cxt);
 
 	if (cxt->flags & MNT_FL_NOMTAB) {
@@ -1102,15 +1103,8 @@ int mnt_context_update_tabs(mnt_context *cxt)
 		DBG(CXT, mnt_debug_h(cxt, "don't update: syscall failed"));
 		return 0;
 	}
-	if (mnt_update_is_userspace_only(cxt->update))
-		filename = cxt->utab_path;
-	else {
-		filename = cxt->mtab_path;
-		lock = mnt_context_get_lock(cxt);
-	}
-	assert(filename);
 
-	return mnt_update_tab(cxt->update, filename, lock);
+	return mnt_update_tab(cxt->update, mnt_context_get_lock(cxt));
 }
 
 static int is_remount(mnt_context *cxt)

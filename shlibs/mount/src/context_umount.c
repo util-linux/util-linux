@@ -502,9 +502,8 @@ int mnt_context_do_umount(mnt_context *cxt)
 		if (!rc)
 			rc = __mnt_fs_set_optstr_ptr(cxt->fs, n, FALSE);
 
-		if (!rc && cxt->update &&
-		    !mnt_update_is_userspace_only(cxt->update))
-			/* refresh options in /etc/mtab as well*/
+		/* refresh options in /etc/mtab as well */
+		if (!rc && cxt->update && cxt->mtab_writable)
 			rc = mnt_update_set_fs(cxt->update,
 					       cxt->mountflags, NULL, cxt->fs);
 	}

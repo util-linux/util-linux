@@ -555,7 +555,7 @@ mnt_tab *mnt_new_tab_from_file(const char *filename)
 
 /**
  * mnt_new_tab_from_dir
- * @dirname: for example /etc/fstab.d or /dev/.mount/utabs
+ * @dirname: for example /etc/fstab.d
  *
  * Returns: newly allocated tab on success and NULL in case of error.
  */
@@ -707,7 +707,7 @@ static mnt_fs *mnt_tab_merge_userspace_fs(mnt_tab *tb, mnt_fs *uf)
  * @filename: overwrites default (/etc/mtab or $LIBMOUNT_MTAB) or NULL
  *
  * This function parses /etc/mtab or /proc/self/mountinfo +
- * /dev/.mount/utabs/<*>.mtab or /proc/mounts.
+ * /dev/.mount/utabs or /proc/mounts.
  *
  * See also mnt_tab_set_parser_errcb().
  *

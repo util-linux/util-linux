@@ -1,2 +1,2 @@
-0 0 0:0 / /mnt/newbar user - ext3 /dev/sdb1 none
-0 0 0:0 / /mnt/newxyz loop=/dev/loop0,uhelper=hal - ext3 /dev/sda2 none
+SRC=/dev/sdb1 TARGET=/mnt/newbar ROOT=/ OPTS=user
+SRC=/dev/sda2 TARGET=/mnt/newxyz ROOT=/ OPTS=loop=/dev/loop0,uhelper=hal
