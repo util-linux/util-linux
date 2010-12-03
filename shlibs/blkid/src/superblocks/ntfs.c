@@ -130,7 +130,7 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	while (1) {
 		attr = (struct file_attribute *) (buf_mft + attr_off);
-		attr_len = le16_to_cpu(attr->len);
+		attr_len = le32_to_cpu(attr->len);
 		attr_type = le32_to_cpu(attr->type);
 		val_off = le16_to_cpu(attr->value_offset);
 		val_len = le32_to_cpu(attr->value_len);
