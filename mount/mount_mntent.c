@@ -27,13 +27,6 @@ skip_spaces(char *s) {
 	return s;
 }
 
-static char *
-skip_nonspaces(char *s) {
-	while (*s && !is_space_or_tab(*s))
-		s++;
-	return s;
-}
-
 /*
  * fstat'ing the file and allocating a buffer holding all of it
  * may be a bad idea: if the file is /proc/mounts, the stat

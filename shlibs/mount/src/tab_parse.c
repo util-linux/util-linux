@@ -182,40 +182,44 @@ static int mnt_parse_utab_line(mnt_fs *fs, const char *s)
 	assert(!fs->target);
 
 	while (p && *p) {
+		char *end = NULL;
+
 		while (*p == ' ') p++;
 		if (!*p)
 			break;
 
 		if (!fs->source && !strncmp(p, "SRC=", 4)) {
-			char *v = unmangle(p + 4, &p);
+			char *v = unmangle(p + 4, &end);
 			if (!v)
 				goto enomem;
 			if (strcmp(v, "none"))
 				__mnt_fs_set_source_ptr(fs, v);
 
 		} else if (!fs->target && !strncmp(p, "TARGET=", 7)) {
-			fs->target = unmangle(p + 7, &p);
+			fs->target = unmangle(p + 7, &end);
 			if (!fs->target)
 				goto enomem;
 
 		} else if (!fs->root && !strncmp(p, "ROOT=", 5)) {
-			fs->root = unmangle(p + 5, &p);
+			fs->root = unmangle(p + 5, &end);
 			if (!fs->root)
 				goto enomem;
 
 		} else if (!fs->bindsrc && !strncmp(p, "BINDSRC=", 8)) {
-			fs->bindsrc = unmangle(p + 8, &p);
+			fs->bindsrc = unmangle(p + 8, &end);
 			if (!fs->bindsrc)
 				goto enomem;
 
 		} else if (!fs->optstr && !strncmp(p, "OPTS=", 5)) {
-			fs->optstr = unmangle(p + 5, &p);
+			fs->optstr = unmangle(p + 5, &end);
 			if (!fs->optstr)
 				goto enomem;
 		} else {
 			/* unknown variable */
 			while (*p && *p != ' ') p++;
 		}
+		if (end)
+			p = end;
 	}
 
 	return 0;
