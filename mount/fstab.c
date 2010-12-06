@@ -148,10 +148,55 @@ read_mntentchn(mntFILE *mfp, const char *fnam, struct mntentchn *mc0) {
 	my_endmntent(mfp);
 }
 
+#ifdef HAVE_LIBMOUNT_MOUNT
+
+#define USE_UNSTABLE_LIBMOUNT_API
+#include <mount.h>			/* libmount */
+
+static void read_mounttable()
+{
+	struct mntentchn *mc0 = &mounttable, *mc = mc0;
+	mnt_tab *tb = mnt_new_tab();
+	mnt_iter *itr = mnt_new_iter(MNT_ITER_FORWARD);
+	mnt_fs *fs;
+
+	got_mtab = 1;
+	mc->nxt = mc->prev = NULL;
+
+	if (!tb || !itr)
+		goto err;
+	if (mnt_tab_parse_mtab(tb, NULL))
+		goto err;
+
+	while(mnt_tab_next_fs(tb, itr, &fs) == 0) {
+		const char *type = mnt_fs_get_fstype(fs);
+		struct my_mntent *mnt = NULL;
+
+		if (type && strcmp(type, MNTTYPE_IGNORE) == 0)
+			continue;
+		if (mnt_fs_to_mntent(fs, (struct mntent **) &mnt))
+			goto err;
+		mc->nxt = xmalloc(sizeof(*mc));
+		mc->nxt->prev = mc;
+		mc = mc->nxt;
+		mc->m = *mnt;
+		mc->nxt = mc0;
+	}
+
+	mc0->prev = mc;
+	return;
+err:
+	error(_("warning: failed to read mtab"));
+	mnt_free_tab(tb);
+	mnt_free_iter(itr);
+	mc->nxt = mc->prev = NULL;
+}
+
+#else /* !HAVE_LIBMOUNT_MOUNT */
+
 /*
  * Read /etc/mtab.  If that fails, try /proc/mounts.
  * This produces a linked list. The list head mounttable is a dummy.
- * Return 0 on success.
  */
 static void
 read_mounttable() {
@@ -180,6 +225,7 @@ read_mounttable() {
 	}
 	read_mntentchn(mfp, fnam, mc);
 }
+#endif /* HAVE_LIBMOUNT_MOUNT */
 
 static void
 read_fstab() {
