@@ -22,6 +22,10 @@ TS_DESC="mtab lock"
 ts_init "$*"
 ts_skip_nonroot
 
+if [ ! -x "$TS_CMD_MTABLOCK" ]; then
+	ts_slip "not compiled"
+fi
+
 #
 # Be careful with number of processes. Don't forget that there is time limit
 # when the mount waits on the mtab lock. If you define too much processes some

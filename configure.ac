@@ -422,6 +422,20 @@ AC_DEFINE_UNQUOTED(LIBMOUNT_VERSION, "$LIBMOUNT_VERSION", [libmount version stri
 AM_CONDITIONAL(BUILD_LIBMOUNT, test "x$enable_libmount" = xyes)
 
 
+AC_ARG_ENABLE([libmount-mount],
+  AS_HELP_STRING([--enable-libmount-mount], [link mount(8) with libmount (EXPERIMENTAL)]),
+  [], enable_libmount_mount=no
+)
+
+case "$enable_libmount:$enable_libmount_mount" in
+no:yes)
+  AC_MSG_ERROR([cannot link mount(8) with libmount when libmount is disabled]) ;;
+yes:yes)
+  AC_DEFINE(HAVE_LIBMOUNT_MOUNT, 1, [use libmount for mount(8)])
+esac
+AM_CONDITIONAL(BUILD_LIBMOUNT_MOUNT, test "x$enable_libmount_mount" = xyes)
+
+
 UTIL_CHECK_LIB(util, openpty)
 UTIL_CHECK_LIB(termcap, tgetnum)
 

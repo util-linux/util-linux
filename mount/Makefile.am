@@ -88,9 +88,26 @@ mount_LDADD += $(SELINUX_LIBS)
 mount_static_LDADD += $(SELINUX_LIBS_STATIC)
 endif
 
+if BUILD_LIBMOUNT_MOUNT
+mount_LDADD += $(ul_libmount_la)
+mount_CFLAGS += $(AM_CFLAGS) -I$(ul_libmount_incdir)
+umount_LDADD += $(ul_libmount_la)
+umount_CFLAGS += $(AM_CFLAGS) -I$(ul_libmount_incdir)
+if HAVE_STATIC_MOUNT
+mount_static_LDADD += $(ul_libmount_la)
+mount_static_CFLAGS += $(AM_CFLAGS) -I$(ul_libmount_incdir)
+endif
+if HAVE_STATIC_UMOUNT
+umount_static_LDADD += $(ul_libmount_la)
+umount_static_CFLAGS += $(AM_CFLAGS) -I$(ul_libmount_incdir)
+endif
+endif
+
+if !BUILD_LIBMOUNT_MOUNT
 noinst_PROGRAMS = mtab_lock_test
 mtab_lock_test_SOURCES = fstab.c $(srcs_common) $(hdrs_mount)
 mtab_lock_test_CPPFLAGS = -DMAIN_TEST_MTABLOCK $(AM_CPPFLAGS)
+endif
 
 install-exec-hook:
 	cd $(DESTDIR)$(sbindir) && ln -sf swapon swapoff
