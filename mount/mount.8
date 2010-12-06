@@ -337,17 +337,28 @@ or fstab entry is:
 .RE
 
 After this call the same contents is accessible in two places.
-One can also remount a single file (on a single file).
+One can also remount a single file (on a single file). It's also
+possible to use the bind mount to create a mountpoint from a regular
+directory, for example:
 
-This call attaches only (part of) a single filesystem, not possible
+.RS
+.br
+.B mount --bind
+.I foo foo
+.RE
+
+The bind mount call attaches only (part of) a single filesystem, not possible
 submounts. The entire file hierarchy including submounts is attached
 a second place using
+
 .RS
 .br
 .B mount --rbind
 .I olddir newdir
 .RE
+
 or shortoption
+
 .RS
 .br
 .B mount -R
@@ -388,7 +399,8 @@ command (then mount(8) does not read /etc/mtab), then you have to use bind flag
 
 .B The move operation.
 .RS
-Since Linux 2.5.1 it is possible to atomically move a mounted tree
+Since Linux 2.5.1 it is possible to atomically move a
+.B mounted tree
 to another place. The call is
 .RS
 .br
@@ -403,6 +415,9 @@ or shortoption
 .RE
 This will cause the contents which previously appeared under olddir to be
 accessed under newdir.  The physical location of the files is not changed.
+Note that the
+.I olddir
+has to be a mountpoint.
 .RE
 
 .B The shared subtrees operations.
