@@ -17,11 +17,11 @@
 
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <getopt.h>
 #include <nls.h>
+
+#include "xalloc.h"
 
 #ifndef DEFAULT_FSTYPE
 # define DEFAULT_FSTYPE		"ext2"
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
   if (argc == 2 &&
       (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
 	  printf(_("%s (%s)\n"), program_name, PACKAGE_STRING);
-	  exit(0);
+	  exit(EXIT_SUCCESS);
   }
 
   /* Check commandline options. */
@@ -68,11 +68,8 @@ int main(int argc, char *argv[])
       more = 1;
       break;		/* start of specific arguments */
     }
-  if (optind == argc) {
-    fprintf(stderr,
-      _("Usage: mkfs [-V] [-t fstype] [fs-options] device [size]\n"));
-    return -1;
-  }
+  if (optind == argc)
+	  errx(EXIT_FAILURE, _("Usage: mkfs [-V] [-t fstype] [fs-options] device [size]"));
   
   /* If -t wasn't specified, use the default */
   if (fstype == NULL)
@@ -83,19 +80,11 @@ int main(int argc, char *argv[])
   if (!oldpath)
 	  oldpath = "/bin";
 
-  newpath = (char *) malloc(strlen(oldpath) + sizeof(SEARCH_PATH) + 3);
-  if (!newpath) {
-    fprintf(stderr, _("%s: Out of memory!\n"), "mkfs");
-    exit(1);
-  }
+  newpath = xmalloc(strlen(oldpath) + sizeof(SEARCH_PATH) + 3);
   sprintf(newpath, "%s:%s\n", SEARCH_PATH, oldpath);
   putenv(newpath);
 
-  progname = (char *) malloc(sizeof(PROGNAME) + strlen(fstype) + 1);
-  if (!progname) {
-    fprintf(stderr, _("%s: Out of memory!\n"), "mkfs");
-    exit(1);
-  }
+  progname = xmalloc(sizeof(PROGNAME) + strlen(fstype) + 1);
   sprintf(progname, PROGNAME, fstype);
   argv[--optind] = progname;
 
