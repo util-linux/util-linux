@@ -130,6 +130,8 @@ global:
 	mnt_update_set_old_target;
 	mnt_update_get_format;
 	mnt_update_get_filename;
+	mnt_fs_to_mntent;
+	mnt_free_mntent;
 local:
 	*;
 };

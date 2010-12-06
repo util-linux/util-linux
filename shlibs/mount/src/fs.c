@@ -63,18 +63,34 @@ void mnt_free_fs(mnt_fs *fs)
 	free(fs);
 }
 
-static inline int cpy_str_item(void *new, const void *old, size_t offset)
+static inline int cpy_str(char **dest, const char *src)
+{
+	size_t sz;
+	char *x;
+
+	assert(dest);
+
+	if (!src) {
+		free(*dest);
+		*dest = NULL;
+		return 0;	/* source (old) is empty */
+	}
+
+	sz = strlen(src) + 1;
+	x = realloc(*dest, sz);
+	if (!x)
+		return -ENOMEM;
+	*dest = x;
+	memcpy(*dest, src, sz);
+	return 0;
+}
+
+static inline int cpy_str_at_offset(void *new, const void *old, size_t offset)
 {
 	char **o = (char **) (old + offset);
 	char **n = (char **) (new + offset);
 
-	if (!*o)
-		return 0;	/* source (old) is empty */
-
-	*n = strdup(*o);
-	if (!*n)
-		return -ENOMEM;
-	return 0;
+	return cpy_str(n, *o);
 }
 
 /**
@@ -97,23 +113,23 @@ mnt_fs *mnt_copy_fs(const mnt_fs *fs)
 	n->parent     = fs->parent;
 	n->devno      = fs->devno;
 
-	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, source)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, source)))
 		goto err;
-	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, tagname)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, tagname)))
 		goto err;
-	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, tagval)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, tagval)))
 		goto err;
-	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, root)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, root)))
 		goto err;
-	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, target)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, target)))
 		goto err;
-	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, fstype)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, fstype)))
 		goto err;
-	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, optstr)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, optstr)))
 		goto err;
-	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, vfs_optstr)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, vfs_optstr)))
 		goto err;
-	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, fs_optstr)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, fs_optstr)))
 		goto err;
 	n->freq       = fs->freq;
 	n->passno     = fs->passno;
@@ -921,4 +937,67 @@ int mnt_fs_print_debug(mnt_fs *fs, FILE *file)
 		fprintf(file, "devno:  %d:%d\n", major(mnt_fs_get_devno(fs)),
 						 minor(mnt_fs_get_devno(fs)));
 	return 0;
+}
+
+/**
+ * mnt_free_mntent:
+ * @mnt: mount entry
+ *
+ * Deallocates "mntent.h" mount entry.
+ */
+void mnt_free_mntent(struct mntent *mnt)
+{
+	if (mnt) {
+		free(mnt->mnt_fsname);
+		free(mnt->mnt_dir);
+		free(mnt->mnt_type);
+		free(mnt->mnt_opts);
+		free(mnt);
+	}
+}
+
+/**
+ * mnt_fs_to_mntent:
+ * @fs: filesystem
+ * @mnt: mount description (as described in mntent.h)
+ *
+ * Copies information from @fs to struct mntent @mnt. If @mnt is already set
+ * then the struct mntent items are reallocated and updated. See also
+ * mnt_free_mntent().
+ *
+ * Returns: 0 on success and negative number in case of error.
+ */
+int mnt_fs_to_mntent(mnt_fs *fs, struct mntent **mnt)
+{
+	int rc;
+	struct mntent *m;
+
+	if (!fs || !mnt)
+		return -EINVAL;
+
+	m = *mnt;
+	if (!m) {
+		m = calloc(1, sizeof(*m));
+		if (!m)
+			return -ENOMEM;
+	}
+
+	if ((rc = cpy_str(&m->mnt_fsname, mnt_fs_get_source(fs))))
+		goto err;
+	if ((rc = cpy_str(&m->mnt_dir, mnt_fs_get_target(fs))))
+		goto err;
+	if ((rc = cpy_str(&m->mnt_type, mnt_fs_get_fstype(fs))))
+		goto err;
+	if ((rc = cpy_str(&m->mnt_opts, mnt_fs_get_optstr(fs))))
+		goto err;
+	m->mnt_freq = mnt_fs_get_freq(fs);
+	m->mnt_passno = mnt_fs_get_passno(fs);
+
+	*mnt = m;
+
+	return 0;
+err:
+	if (m != *mnt)
+		mnt_free_mntent(m);
+	return rc;
 }

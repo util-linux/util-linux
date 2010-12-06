@@ -30,6 +30,7 @@ extern "C" {
 #endif
 
 #include <stdio.h>
+#include <mntent.h>
 
 #define LIBMOUNT_VERSION   "@LIBMOUNT_VERSION@"
 
@@ -245,6 +246,9 @@ extern int mnt_fs_match_source(mnt_fs *fs, const char *source, mnt_cache *cache)
 extern int mnt_fs_match_fstype(mnt_fs *fs, const char *types);
 extern int mnt_fs_match_options(mnt_fs *fs, const char *options);
 extern int mnt_fs_print_debug(mnt_fs *ent, FILE *file);
+
+extern void mnt_free_mntent(struct mntent *mnt);
+extern int mnt_fs_to_mntent(mnt_fs *fs, struct mntent **mnt);
 
 /* tab-parse.c */
 extern mnt_tab *mnt_new_tab_from_file(const char *filename);
