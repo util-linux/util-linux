@@ -249,7 +249,8 @@ static int mnt_cache_get_probe(mnt_cache *cache, const char *devname,
 	assert(devname);
 	assert(res);
 
-	if (cache && cache->pr && strcmp(devname, cache->filename)) {
+	if (cache && cache->pr && (!cache->filename ||
+				   strcmp(devname, cache->filename))) {
 		blkid_free_probe(cache->pr);
 		free(cache->filename);
 		cache->filename = NULL;
@@ -405,7 +406,7 @@ char *mnt_cache_find_tag_value(mnt_cache *cache,
  * @ambi: returns TRUE if probing result is ambivalent (optional argument)
  * @cache: cache for results or NULL
  *
- * Returns: fileststem type or NULL in case of error. The result has to be
+ * Returns: filesystem type or NULL in case of error. The result has to be
  * deallocated by free() if @cache is NULL.
  */
 char *mnt_get_fstype(const char *devname, int *ambi, mnt_cache *cache)
