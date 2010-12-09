@@ -3,12 +3,15 @@
  * Copyright (C) 2010 Davidlohr Bueso <dave@gnu.org>
  */
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
 #include <ctype.h>
 #include <errno.h>
 #include <err.h>
 #include <sys/stat.h>
+#include <locale.h>
+#include <string.h>
 
 static int do_scale_by_power (uintmax_t *x, int base, int power)
 {
@@ -223,4 +226,50 @@ void strmode(mode_t mode, char *str)
 		? (mode & S_IXOTH ? 't' : 'T')
 		: (mode & S_IXOTH ? 'x' : '-'));
 	str[10] = '\0';
+}
+
+/*
+ * returns exponent (2^x=n) in range KiB..PiB
+ */
+static int get_exp(uint64_t n)
+{
+	int shft;
+
+	for (shft = 10; shft <= 60; shft += 10) {
+		if (n < (1ULL << shft))
+			break;
+	}
+	return shft - 10;
+}
+
+char *size_to_human_string(uint64_t bytes)
+{
+	char buf[32];
+	int dec, frac, exp;
+	const char *letters = "BKMGTP";
+	char c;
+
+	exp  = get_exp(bytes);
+	c    = *(letters + (exp ? exp / 10 : 0));
+	dec  = exp ? bytes / (1ULL << exp) : bytes;
+	frac = exp ? bytes % (1ULL << exp) : 0;
+
+	if (frac) {
+		/* round */
+		frac = (frac / (1ULL << (exp - 10)) + 50) / 100;
+		if (frac == 10)
+			dec++, frac = 0;
+	}
+
+	if (frac) {
+		struct lconv const *l = localeconv();
+		char *dp = l ? l->decimal_point : NULL;
+
+		if (!dp || !*dp)
+			dp = ".";
+		snprintf(buf, sizeof(buf), "%d%s%d%c", dec, dp, frac, c);
+	} else
+		snprintf(buf, sizeof(buf), "%d%c", dec, c);
+
+	return strdup(buf);
 }

@@ -1,48 +1,112 @@
 .\" partx.8 --
 .\" Copyright 2007 Karel Zak <kzak@redhat.com>
 .\" Copyright 2007 Red Hat, Inc.
+.\" Copyright 2010 Davidlohr Bueso <dave@gnu.org>
 .\" May be distributed under the GNU General Public License
-.TH PARTX 8 "11 Jan 2007"
+.TH PARTX 8 "28 Oct 2010"
 .SH NAME
 partx \-
-telling the kernel about presence and numbering of on-disk partitions.
+tell the linux kernel about presence and numbering of on-disk partitions.
 .SH SYNOPSIS
 .B partx
-.RB [ \-a | \-d | \-l ]
-.RB [ \-\-type
+.RB [ \-a | \-d | \-s ]
+.RB [ \-t
 .IR TYPE ]
-.RB [ \-\-nr
-.IR M-N ]
-.RI [ partition ]
+.RB [ \-n
+.IR M:N ]
+.RI [ \- ]
 .I disk
+
+.B partx
+.RB [ \-a | \-d | \-s ]
+.RB [ \-t
+.IR TYPE ]
+.I partition
+.RI [ disk ]
+
 .SH DESCRIPTION
-Given a block device (
-.B disk
-) and a partition table
-.B type
-, try to parse the partition table, and list the
+Given a device or disk-image, try to parse the partition table, and list the
 contents. Optionally add or remove partitions.
 
-This is not an fdisk - adding and removing partitions
+The
+.I disk
+argument is optional when a 
+.I partition 
+argument is provided. It's possible to force scannig on partition (for example
+to list nested subpartitions), then the string "-" has to be used, for example:
+
+.RS
+.br
+.B partx \-\-show \- /dev/sda3
+.RE
+
+This will use sda3 as a whole-disk rather than a partition.
+
+.B This is not an fdisk
+\- adding and removing partitions
 is not a change of the disk, but just telling the kernel
 about presence and numbering of on-disk partitions.
 
 .SH OPTIONS
-.TP
-.B \-a
+.IP "\fB\-a, \-\-add\fP"
 add specified partitions or read disk and add all partitions
-.TP
-.B \-d
+.IP "\fB\-b, \-\-bytes\fP"
+Print the SIZE column in bytes rather than in human readable format.
+.IP "\fB\-d, \-\-delete\fP"
 delete specified or all partitions
+.IP "\fB\-l, \-\-list\fP"
+list partitions. Note that the all numbers are in 512-byte sectors. This output
+format is DEPRECATED in favour of \fB\-\-show\fP. Don't use it in newly written
+scripts.
+.IP "\fB\-g, \-\-noheadings\fP"
+Do not print a header line.
+.IP "\fB\-o, \-\-output \fIlist\fP"
+Define output columns for \fB\-\-show\fP and  \fB\-\-raw\fP output. If output format is
+not specified then \fB\-\-show\fP is enable by default. Use \fB\-\-help\fP to 
+get list of all supported columns.
+.IP "\fB\-r, \-\-raw\fP"
+Use raw output format.
+.IP "\fB\-s, \-\-show\fP"
+list partitions. All numbers (except SIZE) are in 512-byte sectors. The output
+columns could be (re)defined by \fB\-\-output\fP option.
+.IP "\fB\-t, \-\-type \fItype\fP"
+Specify the partition table type -- dos, bsd, solaris, unixware or gpt.
+.IP "\fB\-n, \-\-nr \fIM:N\fP"
+Specify the range of partitions. For backward compatibility is also supported
+range definition in <M-N> format. The range could be specified by negative 
+numbers, for example "--nr :-1" means last partition, and "--nr -2:-1" means 
+last two partition. Supported range specifications:
+.RS
 .TP
-.B \-l
-list partitions. Note that the all numbers are in 512-byte sectors.
+.B <M>
+Specify only one partition (e.g. --nr 3).
 .TP
-.BI --type " TYPE"
-Specify the partition type -- dos, bsd, solaris, unixware or gpt.
+.B <M:>
+Specify lower limit only (e.g. --nr 2:).
 .TP
-.BI --nr " M-N"
-Specify the range of partitions (e.g --nr 2-4).
+.B <:N>
+Specify upper limit only (e.g. --nr :4).
+.TP
+.B <M:N>
+or
+.B <M-N>
+Specify lower and upper limits (e.g. --nr 2:4).
+.RE
+.SH EXAMPLES
+.IP "\fBpartx \-\-show /dev/sdb3\fP"
+.IP "\fBpartx \-\-show --nr 3 /dev/sdb\fP"
+.IP "\fBpartx \-\-show /dev/sdb3 /dev/sdb\fP"
+List partition 3 of /dev/sdb.
+.IP "\fBpartx \-\-show \- /dev/sdb3\fP"
+List all subpartitions on /dev/sdb3 (the device is used as whole-disk).
+.IP "\fBpartx \-o START -g --nr 3 /dev/sdb\fP"
+Print the start sector of partition 5 on /dev/sda without header.
+.IP "\fBpartx \-o SECTORS,SIZE /dev/sda5 /dev/sda\fP"
+List the length in sectors and human readable size of partition 5 on /dev/sda.
+.IP "\fBpartx \-\-add --nr 3:5 /dev/sdd\fP"
+Add all available partitions from 3 to 5 (inclusive) on /dev/sdd.
+.IP "\fBpartx \-d --nr :-1 /dev/sdd\fP"
+Removes last partition on /dev/sdd.
 
 .SH SEE ALSO
 .BR addpart (8),
@@ -51,6 +115,13 @@ Specify the range of partitions (e.g --nr 2-4).
 .BR parted (8),
 .BR partprobe (8)
 
+.SH SEE ALSO
+.nf
+Davidlohr Bueso <dave@gnu.org>
+Karel Zak <kzak@redhat.com>
+.fi
+
+The original version was written by Andries E. Brouwer <aeb@cwi.nl>.
 .SH AVAILABILITY
 The partx command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.

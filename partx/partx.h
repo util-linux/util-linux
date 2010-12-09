@@ -1,32 +1,44 @@
-#ifndef PARTX_H_INCLUDED
-#define PARTX_H_INCLUDED
+#ifndef UTIL_LINUX_PARTX_H
+#define UTIL_LINUX_PARTX_H
 
-/*
- * For each partition type there is a routine that takes
- * a block device and a range, and returns the list of
- * slices found there in the supplied array SP that can
- * hold NS entries. The return value is the number of
- * entries stored, or -1 if the appropriate type is not
- * present.
- */
+#include <sys/ioctl.h>
+#include <linux/blkpg.h>
 
+static inline int partx_del_partition(int fd, int partno)
+{
+	struct blkpg_ioctl_arg a;
+	struct blkpg_partition p;
 
-/* units: 512 byte sectors */
-struct slice {
-	unsigned int start;
-	unsigned int size;
-};
+	p.pno = partno;
+	p.start = 0;
+	p.length = 0;
+	p.devname[0] = 0;
+	p.volname[0] = 0;
+	a.op = BLKPG_DEL_PARTITION;
+	a.flags = 0;
+	a.datalen = sizeof(p);
+	a.data = &p;
 
-typedef int (ptreader)(int fd, struct slice all, struct slice *sp, int ns);
-
-extern ptreader read_dos_pt, read_bsd_pt, read_solaris_pt, read_unixware_pt, read_gpt_pt;
-extern ptreader read_sun_pt, read_mac_pt;
-
-unsigned char *getblock(int fd, unsigned int secnr);
-
-static inline int
-four2int(unsigned char *p) {
-	return p[0] + (p[1]<<8) + (p[2]<<16) + (p[3]<<24);
+	return ioctl(fd, BLKPG, &a);
 }
 
-#endif /* PARTX_H_INCLUDED */
+static inline int partx_add_partition(int fd, int partno,
+			unsigned long start, unsigned long size)
+{
+	struct blkpg_ioctl_arg a;
+	struct blkpg_partition p;
+
+	p.pno = partno;
+	p.start = start << 9;
+	p.length = size << 9;
+	p.devname[0] = 0;
+	p.volname[0] = 0;
+	a.op = BLKPG_ADD_PARTITION;
+	a.flags = 0;
+	a.datalen = sizeof(p);
+	a.data = &p;
+
+	return ioctl(fd, BLKPG, &a);
+}
+
+#endif /*  UTIL_LINUX_PARTX_H */

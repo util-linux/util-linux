@@ -26,5 +26,6 @@ static inline void xstrncpy(char *dest, const char *src, size_t n)
 }
 
 extern void strmode(mode_t mode, char *str);
+extern char *size_to_human_string(uint64_t bytes);
 
 #endif
