@@ -2100,6 +2100,8 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
     def = orig ? orig->size : (pno > 4 && pct > 1) ? 0 : ml1;
     if (fno < 2 || !*(fields[1]))
       p.size = def;
+    else if (!strcmp(fields[1], "+"))
+      p.size = ml1;
     else {
 	if (get_ul(fields[1], &ul, def / unitsize(0), 0))
 	  return 0;
