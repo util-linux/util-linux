@@ -51,6 +51,8 @@ enum {
 	COL_NAME,
 	COL_UUID,
 	COL_TYPE,
+	COL_FLAGS,
+	COL_SCHEME,
 	__NCOLUMNS
 };
 
@@ -75,14 +77,16 @@ struct colinfo {
 
 /* columns descriptions */
 struct colinfo infos[__NCOLUMNS] = {
-	[COL_PARTNO]   = { "PART",    0.25, TT_FL_RIGHT, N_("partition number") },
+	[COL_PARTNO]   = { "NR",    0.25, TT_FL_RIGHT, N_("partition number") },
 	[COL_START]    = { "START",   0.30, TT_FL_RIGHT, N_("start of the partition in sectors") },
 	[COL_END]      = { "END",     0.30, TT_FL_RIGHT, N_("end of the partition in sectors") },
 	[COL_SECTORS]  = { "SECTORS", 0.30, TT_FL_RIGHT, N_("number of sectors") },
 	[COL_SIZE]     = { "SIZE",    0.30, TT_FL_RIGHT, N_("human readable size") },
 	[COL_NAME]     = { "NAME",    0.30, TT_FL_TRUNC, N_("partition name") },
 	[COL_UUID]     = { "UUID",    36, 0, N_("partition UUID")},
-	[COL_TYPE]     = { "TYPE",    1, TT_FL_RIGHT, N_("partition type; Extended, Primary or Logical")},
+	[COL_SCHEME]   = { "SCHEME",  0.1, TT_FL_TRUNC, N_("partition table type (dos, gpt, ...)")},
+	[COL_FLAGS]    = { "FLAGS",   0.1, TT_FL_TRUNC, N_("partition flags")},
+	[COL_TYPE]     = { "TYPE",    1, TT_FL_RIGHT, N_("partition type hex or uuid")},
 };
 /* array with IDs of enabled columns */
 static int columns[__NCOLUMNS], ncolumns;
@@ -418,32 +422,46 @@ static void add_tt_line(struct tt *tt, blkid_partition par)
 			if (partx_flags & FL_BYTES)
 				rc = asprintf(&str, "%ju", (uintmax_t)
 					blkid_partition_get_size(par) << 9);
-			else {
+			else
 				str = size_to_human_string(
 					blkid_partition_get_size(par) << 9);
-				if (str)
-					rc = 1;
-			}
 			break;
 		case COL_NAME:
 			str = (char *) blkid_partition_get_name(par);
+			if (str)
+				str = xstrdup(str);
 			break;
 		case COL_UUID:
 			str = (char *) blkid_partition_get_uuid(par);
+			if (str)
+				str = xstrdup(str);
 			break;
 		case COL_TYPE:
-			if (blkid_partition_is_primary(par))
-				str = xstrdup("P"), rc = 1;
-			else if (blkid_partition_is_logical(par))
-				str = xstrdup("L"), rc = 1;
-			else if (blkid_partition_is_extended(par))
-				str = xstrdup("E"), rc = 1;
+			str = (char *) blkid_partition_get_type_string(par);
+			if (str)
+				str = xstrdup(str);
+			else
+				rc = asprintf(&str, "0x%x",
+					blkid_partition_get_type(par));
 			break;
+		case COL_FLAGS:
+			rc = asprintf(&str, "0x%llx", blkid_partition_get_flags(par));
+			break;
+		case COL_SCHEME:
+		{
+			blkid_parttable tab = blkid_partition_get_table(par);
+			if (tab) {
+				str = (char *) blkid_parttable_get_type(tab);
+				if (str)
+					str = xstrdup(str);
+			}
+			break;
+		}
 		default:
 			break;
 		}
 
-		if (str && rc)
+		if (rc || str)
 			tt_line_set_data(line, i, str);
 	}
 }
