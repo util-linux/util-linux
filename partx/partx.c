@@ -594,7 +594,7 @@ static int __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, _(
 		"\nUsage:\n"
-		" %s [-a|-d|-s] [--nr <N-M> | <device>] <wholedisk>\n"),
+		" %s [-a|-d|-s] [--nr <N:M> | <device>] <wholedisk>\n"),
 		program_invocation_short_name);
 
 	fprintf(out, _(
