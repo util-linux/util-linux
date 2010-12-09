@@ -49,5 +49,6 @@ TS_CMD_HWCLOCK=${TS_CMD_HWCLOCK-"$TOPDIR/hwclock/hwclock"}
 TS_CMD_LSCPU=${TS_CMD_LSCPU-"$TOPDIR/sys-utils/lscpu"}
 
 TS_CMD_BLKID=${TS_CMD_BLKID-"$TOPDIR/misc-utils/blkid"}
+TS_CMD_PARTX=${TS_CMD_PARTX-"$TOPDIR/partx/partx"}
 
 TS_CMD_FDISK=${TS_CMD_FDISK-"$TOPDIR/fdisk/fdisk"}
