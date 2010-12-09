@@ -1,18 +1,13 @@
-/* very primitive wrapper around the `add partition' ioctl */
 #include <stdio.h>
-#include <fcntl.h>
 #include <stdlib.h>
-#include <sys/ioctl.h>
-#ifdef HAVE_LINUX_COMPILER_H
-#include <linux/compiler.h>
-#endif
-#include <linux/blkpg.h>
+#include <fcntl.h>
+
+#include "partx.h"
 
 int
-main(int argc, char **argv){
+main(int argc, char **argv)
+{
 	int fd;
-	struct blkpg_ioctl_arg a;
-	struct blkpg_partition p;
 
 	if (argc != 5) {
 		fprintf(stderr,
@@ -24,20 +19,13 @@ main(int argc, char **argv){
 		perror(argv[1]);
 		exit(1);
 	}
-	p.pno = atoi(argv[2]);
-	p.start = 512 * atoll(argv[3]);
-	p.length = 512 * atoll(argv[4]);
-	p.devname[0] = 0;
-	p.volname[0] = 0;
-	a.op = BLKPG_ADD_PARTITION;
-	a.flags = 0;
-	a.datalen = sizeof(p);
-	a.data = &p;
 
-	if (ioctl(fd, BLKPG, &a) == -1) {
+	if (partx_add_partition(fd, atoi(argv[2]),
+				512 * atoll(argv[3]),
+				512 * atoll(argv[4]))) {
 		perror("BLKPG");
 		exit(1);
 	}
-	    
+
 	return 0;
 }
