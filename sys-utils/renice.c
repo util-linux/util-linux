@@ -154,25 +154,31 @@ main(int argc, char **argv)
 static int
 donice(int which, int who, int prio) {
 	int oldprio, newprio;
+	const char *idtype = _("process ID");
+
+	if (which == PRIO_USER)
+		idtype = _("user ID");
+	else if (which == PRIO_PGRP)
+		idtype = _("process group ID");
 
 	errno = 0;
 	oldprio = getpriority(which, who);
 	if (oldprio == -1 && errno) {
-		warn(_("%d: getpriority"), who);
+		warn(_("failed to get priority for %d (%s)"), who, idtype);
 		return 1;
 	}
 	if (setpriority(which, who, prio) < 0) {
-		warn(_("%d: setpriority"), who);
+		warn(_("failed to set priority for %d (%s)"), who, idtype);
 		return 1;
 	}
 	errno = 0;
 	newprio = getpriority(which, who);
 	if (newprio == -1 && errno) {
-		warn(_("%d: getpriority"), who);
+		warn(_("failed to get priority for %d (%s)"), who, idtype);
 		return 1;
 	}
 
-	printf(_("%d: old priority %d, new priority %d\n"),
-	       who, oldprio, newprio);
+	printf(_("%d (%s) old priority %d, new priority %d\n"),
+	       who, idtype, oldprio, newprio);
 	return 0;
 }
