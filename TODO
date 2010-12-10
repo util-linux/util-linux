@@ -84,14 +84,6 @@ fdisk(s)
 
  * add GPT support (probably implement libfdisk)
 
-partx
------
-
-  * partx: add an option to make it usable in shell scripts without having
-    to parse its output with sed
-
-  * use libblkid for PTs parsing
-
 misc
 ----
 
