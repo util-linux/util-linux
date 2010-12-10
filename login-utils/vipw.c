@@ -191,7 +191,9 @@ pw_unlock(void) {
   
 	sprintf(tmp, "%s%s", orig_file, ".OLD");
 	unlink(tmp);
-	link(orig_file, tmp);
+
+	if (link(orig_file, tmp))
+		warn(_("%s: create a link to %s failed"), orig_file, tmp);
 
 #ifdef HAVE_LIBSELINUX
 	if (is_selinux_enabled() > 0) {
