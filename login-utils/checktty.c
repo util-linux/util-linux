@@ -321,13 +321,13 @@ main(int argc, char **argv)
 		if (getaddrinfo(item->ip, NULL, &hints, &info)==0 && info) {
 			if (info->ai_family == AF_INET)	{
 			    struct sockaddr_in *sa =
-				    	(struct sockaddr_in *) info->ai_addr;
+					(struct sockaddr_in *) info->ai_addr;
 			    memcpy(hostaddress, &(sa->sin_addr),
 					sizeof(sa->sin_addr));
 			}
 			else if (info->ai_family == AF_INET6) {
 			    struct sockaddr_in6 *sa =
-				    	(struct sockaddr_in6 *) info->ai_addr;
+					(struct sockaddr_in6 *) info->ai_addr;
 			    memcpy(hostaddress, &(sa->sin6_addr),
 					sizeof(sa->sin6_addr));
 			}
@@ -340,7 +340,7 @@ main(int argc, char **argv)
 			printf("getaddrinfo() failed\n");
 
 	}
-	return 0;
+	return EXIT_SUCCESS;
 }
 #endif /* MAIN_TEST_CHECKTTY */
 
@@ -553,7 +553,7 @@ checktty(const char *user, const char *tty, struct passwd *pwd)
 	/* there was a default rule, but user didn't match, reject! */
 	printf(_("Login on %s from %s denied by default.\n"), tty, hostname);
 	badlogin(user);
-	sleepexit(1);
+	sleepexit(EXIT_FAILURE);
     }
 
     if (found_match) {
@@ -564,7 +564,7 @@ checktty(const char *user, const char *tty, struct passwd *pwd)
 
 	printf(_("Login on %s from %s denied.\n"), tty, hostname);
 	badlogin(user);
-	sleepexit(1);
+	sleepexit(EXIT_FAILURE);
     }
 
     /* users not matched in /etc/usertty are by default allowed access
