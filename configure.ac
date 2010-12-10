@@ -1144,6 +1144,7 @@ fsck/Makefile
 getopt/Makefile
 hwclock/Makefile
 include/Makefile
+simpleinit/Makefile
 lib/Makefile
 login-utils/Makefile
 Makefile

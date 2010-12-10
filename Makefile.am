@@ -42,6 +42,10 @@ SUBDIRS += \
 	partx
 endif
 
+if BUILD_INIT
+SUBDIRS += simpleinit
+endif
+
 if BUILD_MOUNT
 SUBDIRS += mount
 endif

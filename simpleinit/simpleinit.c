@@ -42,12 +42,17 @@
 #ifdef SHADOW_PWD
 #  include <shadow.h>
 #endif
-#include "my_crypt.h"
+
+#if defined (__GNU_LIBRARY__) && __GNU_LIBRARY__ > 1
+#include <crypt.h>
+#endif
+
 #include "pathnames.h"
 #include "linux_reboot.h"
 #include "strutils.h"
 #include "nls.h"
 #include "simpleinit.h"
+
 
 #define CMDSIZ     150	/* max size of a line in inittab */
 #define NUMCMD     30	/* max number of lines in inittab */

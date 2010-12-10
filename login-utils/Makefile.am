@@ -17,21 +17,6 @@ agetty_SOURCES += $(top_srcdir)/lib/langinfo.c
 endif
 endif
 
-if BUILD_INIT
-
-sbin_PROGRAMS += simpleinit shutdown initctl
-dist_man_MANS += fastboot.8 fasthalt.8 halt.8 reboot.8 simpleinit.8 shutdown.8 \
-	initctl.8
-
-simpleinit_SOURCES = simpleinit.c my_crypt.h simpleinit.h
-initctl_SOURCES = initctl.c simpleinit.h
-
-if NEED_LIBCRYPT
-simpleinit_LDADD = -lcrypt
-endif
-
-endif # BUILD_INIT
-
 if BUILD_LAST
 usrbin_exec_PROGRAMS += last
 dist_man_MANS += last.1
@@ -116,24 +101,6 @@ install-exec-hook::
 	chmod g+s $(DESTDIR)$(usrbin_execdir)/wall
 endif
 endif
-endif
-
-if BUILD_INIT
-
-install-exec-hook::
-	cd $(DESTDIR)$(sbindir) && ln -sf shutdown reboot
-	cd $(DESTDIR)$(sbindir) && ln -sf shutdown fastboot
-	cd $(DESTDIR)$(sbindir) && ln -sf shutdown halt
-	cd $(DESTDIR)$(sbindir) && ln -sf shutdown fasthalt
-	cd $(DESTDIR)$(sbindir) && ln -sf initctl need
-	cd $(DESTDIR)$(sbindir) && ln -sf initctl display-services
-	cd $(DESTDIR)$(sbindir) && ln -sf initctl provide
-
-install-data-hook:
-	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 need.8
-	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 display-services.8
-	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 provide.8
-
 endif
 
 noinst_PROGRAMS = checktty_test islocal_test

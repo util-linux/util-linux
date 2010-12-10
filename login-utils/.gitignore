@@ -7,8 +7,5 @@ chsh
 login
 newgrp
 vipw
-initctl
 last
-shutdown
-simpleinit
 mesg
