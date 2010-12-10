@@ -539,7 +539,10 @@ main(int argc, char **argv)
 	ttt.c_cflag &= ~HUPCL;
 
 	/* These can fail, e.g. with ttyn on a read-only filesystem */
-	fchown(0, 0, 0);
+	if (fchown(0, 0, 0)) {
+		; /* glibc warn_unused_result */
+	}
+
 	fchmod(0, TTY_MODE);
 
 	/* Kill processes left on this tty */
@@ -1010,16 +1013,22 @@ Michael Riepe <michael@stud.uni-hannover.de>
     logaudit(tty_name, username, hostname, pwd, 1);
     dolastlog(quietlog);
 
-    fchown(0, pwd->pw_uid,
-	  (gr = getgrnam(TTYGRPNAME)) ? gr->gr_gid : pwd->pw_gid);
+    if (fchown(0, pwd->pw_uid,
+	  (gr = getgrnam(TTYGRPNAME)) ? gr->gr_gid : pwd->pw_gid))
+        warn(_("change terminal owner failed"));
+
     fchmod(0, TTY_MODE);
 
 #ifdef LOGIN_CHOWN_VCS
     /* if tty is one of the VC's then change owner and mode of the
        special /dev/vcs devices as well */
     if (consoletty(0)) {
-	chown(vcsn, pwd->pw_uid, (gr ? gr->gr_gid : pwd->pw_gid));
-	chown(vcsan, pwd->pw_uid, (gr ? gr->gr_gid : pwd->pw_gid));
+
+	if (chown(vcsn, pwd->pw_uid, (gr ? gr->gr_gid : pwd->pw_gid)))
+	    warn(_("change terminal owner failed"));
+	if (chown(vcsan, pwd->pw_uid, (gr ? gr->gr_gid : pwd->pw_gid)))
+	    warn(_("change terminal owner failed"));
+
 	chmod(vcsn, TTY_MODE);
 	chmod(vcsan, TTY_MODE);
     }
@@ -1387,8 +1396,11 @@ motd(void) {
       return;
     oldint = signal(SIGINT, sigint);
     if (setjmp(motdinterrupt) == 0)
-      while ((nchars = read(fd, tbuf, sizeof(tbuf))) > 0)
-	write(fileno(stdout), tbuf, nchars);
+      while ((nchars = read(fd, tbuf, sizeof(tbuf))) > 0) {
+	if (write(fileno(stdout), tbuf, nchars)) {
+		;	/* glibc warn_unused_result */
+	}
+      }
     signal(SIGINT, oldint);
     close(fd);
 }
@@ -1405,8 +1417,11 @@ checknologin(void) {
     char tbuf[8192];
 
     if ((fd = open(_PATH_NOLOGIN, O_RDONLY, 0)) >= 0) {
-	while ((nchars = read(fd, tbuf, sizeof(tbuf))) > 0)
-	  write(fileno(stdout), tbuf, nchars);
+	while ((nchars = read(fd, tbuf, sizeof(tbuf))) > 0) {
+	  if (write(fileno(stdout), tbuf, nchars)) {
+		;	/* glibc warn_unused_result */
+	  }
+	}
 	close(fd);
 	sleepexit(EXIT_SUCCESS);
     }
@@ -1449,7 +1464,8 @@ dolastlog(int quiet) {
 	if (hostname)
 	    xstrncpy(ll.ll_host, hostname, sizeof(ll.ll_host));
 
-	write(fd, (char *)&ll, sizeof(ll));
+	if (write(fd, (char *)&ll, sizeof(ll)) < 0)
+	    warn(_("write lastlog failed"));
 	close(fd);
     }
 }
