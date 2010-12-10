@@ -56,6 +56,12 @@
 #include <sys/stat.h>
 #include "nls.h"
 
+/* exit codes */
+
+#define IS_ALLOWED        0  /* Receiving messages is allowed.  */
+#define IS_NOT_ALLOWED    1  /* Receiving messages is not allowed.  */
+#define MESG_EXIT_FAILURE 2  /* An error occurred.  */
+
 int main(int argc, char *argv[])
 {
 	struct stat sb;
@@ -77,18 +83,18 @@ int main(int argc, char *argv[])
 	argv += optind;
 
 	if ((tty = ttyname(STDERR_FILENO)) == NULL)
-		err(EXIT_FAILURE, _("ttyname failed"));
+		err(MESG_EXIT_FAILURE, _("ttyname failed"));
 
 	if (stat(tty, &sb) < 0)
-		err(EXIT_FAILURE, _("stat %s failed"), tty);
+		err(MESG_EXIT_FAILURE, _("stat %s failed"), tty);
 
 	if (!*argv) {
 		if (sb.st_mode & (S_IWGRP | S_IWOTH)) {
 			puts(_("is y"));
-			return EXIT_SUCCESS;
+			return IS_ALLOWED;
 		}
 		puts(_("is n"));
-		return EXIT_FAILURE;
+		return IS_NOT_ALLOWED;
 	}
 
 	switch (*argv[0]) {
@@ -98,15 +104,15 @@ int main(int argc, char *argv[])
 #else
 		if (chmod(tty, sb.st_mode | S_IWGRP | S_IWOTH) < 0)
 #endif
-			err(EXIT_FAILURE, _("change %s mode failed"), tty);
-		return EXIT_SUCCESS;
+			err(MESG_EXIT_FAILURE, _("change %s mode failed"), tty);
+		return IS_ALLOWED;
 	case 'n':
 		if (chmod(tty, sb.st_mode & ~(S_IWGRP|S_IWOTH)) < 0)
-			 err(EXIT_FAILURE, _("change %s mode failed"), tty);
-		return EXIT_FAILURE;
+			 err(MESG_EXIT_FAILURE, _("change %s mode failed"), tty);
+		return IS_NOT_ALLOWED;
 	}
 
 usage:
 	fprintf(stderr, _("Usage: %s [y | n]"), program_invocation_short_name);
-	return EXIT_FAILURE;
+	return MESG_EXIT_FAILURE;
 }
