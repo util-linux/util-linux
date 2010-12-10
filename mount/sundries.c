@@ -115,8 +115,8 @@ error (const char *fmt, ...) {
 }
 
 /* Fatal error.  Print message and exit.  */
- __attribute__ ((noreturn)) void
-die(int err, const char *fmt, ...) {
+void __attribute__ ((noreturn)) die(int err, const char *fmt, ...)
+{
 	va_list args;
 
 	va_start(args, fmt);

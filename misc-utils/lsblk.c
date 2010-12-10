@@ -841,7 +841,7 @@ static void parse_excludes(const char *str)
 	}
 }
 
-static int __attribute__((__noreturn__)) help(FILE *out)
+static void __attribute__((__noreturn__)) help(FILE *out)
 {
 	int i;
 
@@ -874,7 +874,7 @@ static int __attribute__((__noreturn__)) help(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static int __attribute__((__noreturn__))
+static void __attribute__((__noreturn__))
 errx_mutually_exclusive(const char *opts)
 {
 	errx(EXIT_FAILURE, "%s %s", opts, _("options are mutually exclusive"));

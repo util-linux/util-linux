@@ -49,7 +49,7 @@
 
 static int donice(int,int,int);
 
-static int __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fprintf(out, _(
 		"\nUsage:\n"

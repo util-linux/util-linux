@@ -82,7 +82,7 @@ static char *prompt (char *question, char *def_val);
 static int check_shell (char *shell);
 static boolean get_shell_list (char *shell);
 
-static int __attribute__((__noreturn__)) usage (FILE *fp)
+static void __attribute__((__noreturn__)) usage (FILE *fp)
 {
     fprintf (fp,
 	     _("Usage: %s [ -s shell ] [ --list-shells ] "
