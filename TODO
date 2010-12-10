@@ -1,9 +1,7 @@
 login-utils:
 -----------
 
- - clean up error codes
  - use err() and warn() macros rather than fprintf(stderr, ...)
-
 
 losetup
 -------
