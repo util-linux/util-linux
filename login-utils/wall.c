@@ -48,6 +48,7 @@
 #include <sys/uio.h>
 
 #include <err.h>
+#include <errno.h>
 #include <paths.h>
 #include <ctype.h>
 #include <pwd.h>
@@ -81,8 +82,6 @@ int nobanner;
 int mbufsize;
 char *mbuf;
 
-char *progname = "wall";
-
 int
 main(int argc, char **argv) {
 	extern int optind;
@@ -96,11 +95,6 @@ main(int argc, char **argv) {
         bindtextdomain(PACKAGE, LOCALEDIR);
         textdomain(PACKAGE);
 
-	progname = argv[0];
-	p = strrchr(progname, '/');
-	if (p)
-	     progname = p+1;
-
 	while ((ch = getopt(argc, argv, "n")) != -1)
 		switch (ch) {
 		case 'n':
@@ -111,7 +105,8 @@ main(int argc, char **argv) {
 		case '?':
 		default:
 usage:
-			(void)fprintf(stderr, _("usage: %s [file]\n"), progname);
+			fprintf(stderr, _("usage: %s [file]\n"),
+					program_invocation_short_name);
 			exit(EXIT_FAILURE);
 		}
 	argc -= optind;
@@ -143,7 +138,7 @@ usage:
 
 		xstrncpy(line, utmpptr->ut_line, sizeof(utmpptr->ut_line));
 		if ((p = ttymsg(&iov, 1, line, 60*5)) != NULL)
-			(void)fprintf(stderr, "%s: %s\n", progname, p);
+			warnx("%s", p);
 	}
 	endutent();
 	exit(EXIT_SUCCESS);
