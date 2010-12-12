@@ -55,10 +55,13 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	if (!(p = strrchr(argv[0], 'o')) || strcmp(p, "od"))
+	if (!(p = strrchr(argv[0], 'o')) || strcmp(p, "od")) {
 		newsyntax(argc, &argv);
-	else
-		oldsyntax(argc, &argv);
+	} else {
+		fprintf(stderr,
+			_("Calling hexdump as od has been deprecated in favour to GNU coreutils od.\n"));
+		return(1);
+	}
 
 	/* figure out the data block size */
 	for (blocksize = 0, tfs = fshead; tfs; tfs = tfs->nextfs) {

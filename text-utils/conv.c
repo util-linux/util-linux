@@ -48,8 +48,6 @@ conv_c(PR *pr, u_char *p)
 		goto strpr;
 	/* case '\a': */
 	case '\007':
-		if (deprecated)		/* od didn't know about \a */
-			break;
 		str = "\\a";
 		goto strpr;
 	case '\b':
@@ -68,8 +66,6 @@ conv_c(PR *pr, u_char *p)
 		str = "\\t";
 		goto strpr;
 	case '\v':
-		if (deprecated)
-			break;
 		str = "\\v";
 		goto strpr;
 	default:
@@ -99,16 +95,10 @@ conv_u(PR *pr, u_char *p)
 						/* od used nl, not lf */
 	if (*p <= 0x1f) {
 		*pr->cchar = 's';
-		if (deprecated && *p == 0x0a)
-			(void)printf(pr->fmt, "nl");
-		else
-			(void)printf(pr->fmt, list[*p]);
+		(void)printf(pr->fmt, list[*p]);
 	} else if (*p == 0x7f) {
 		*pr->cchar = 's';
 		(void)printf(pr->fmt, "del");
-	} else if (deprecated && *p == 0x20) {	/* od replaced space with sp */
-		*pr->cchar = 's';
-		(void)printf(pr->fmt, " sp");
 	} else if (isprint(*p)) {
 		*pr->cchar = 'c';
 		(void)printf(pr->fmt, *p);

@@ -92,5 +92,4 @@ void usage(void);
 void conv_c(PR *, u_char *);
 void conv_u(PR *, u_char *);
 int  next(char **);
-void oldsyntax(int, char ***);
 void newsyntax(int, char ***);
