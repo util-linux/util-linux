@@ -168,15 +168,8 @@ extern int mnt_split_optstr(const char *optstr,
 
 extern int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 				const struct mnt_optmap *map);
-extern int mnt_optstr_get_mountflags(const char *optstr, unsigned long *flags);
-extern int mnt_optstr_get_userspace_mountflags(const char *optstr, unsigned long *flags);
 extern int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
                                 const struct mnt_optmap *map);
-
-extern int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next);
-extern int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next);
-extern int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, char **next);
-extern int mnt_optstr_fix_user(char **optstr, char *value, size_t valsz, char **next);
 
 /* iter.c */
 enum {
@@ -220,13 +213,38 @@ extern const char *mnt_fs_get_target(mnt_fs *ent);
 extern int mnt_fs_set_target(mnt_fs *ent, const char *target);
 extern const char *mnt_fs_get_fstype(mnt_fs *ent);
 extern int mnt_fs_set_fstype(mnt_fs *ent, const char *fstype);
-extern const char *mnt_fs_get_optstr(mnt_fs *ent);
-extern int mnt_fs_set_optstr(mnt_fs *ent, const char *optstr);
-extern int mnt_fs_append_optstr(mnt_fs *fs, const char *optstr);
-extern int mnt_fs_prepend_optstr(mnt_fs *fs, const char *optstr);
-extern int mnt_fs_append_userspace_optstr(mnt_fs *fs, const char *optstr);
-extern const char *mnt_fs_get_vfs_optstr(mnt_fs *ent);
-extern const char *mnt_fs_get_fs_optstr(mnt_fs *ent);
+
+extern char *mnt_fs_strdup_options(mnt_fs *fs);
+extern int mnt_fs_set_options(mnt_fs *fs, const char *optstr);
+
+extern int mnt_fs_get_option(mnt_fs *ent, const char *name,
+				char **value, size_t *valsz);
+
+extern int mnt_fs_append_options(mnt_fs *fs, const char *optstr);
+extern int mnt_fs_prepend_options(mnt_fs *fs, const char *optstr);
+
+extern const char *mnt_fs_get_fs_options(mnt_fs *fs);
+extern int mnt_fs_set_fs_options(mnt_fs *fs, const char *optstr);
+extern int mnt_fs_append_fs_options(mnt_fs *fs, const char *optstr);
+extern int mnt_fs_prepend_fs_options(mnt_fs *fs, const char *optstr);
+
+extern const char *mnt_fs_get_vfs_options(mnt_fs *fs);
+extern int mnt_fs_set_vfs_options(mnt_fs *fs, const char *optstr);
+extern int mnt_fs_append_vfs_options(mnt_fs *fs, const char *optstr);
+extern int mnt_fs_prepend_vfs_options(mnt_fs *fs, const char *optstr);
+
+extern const char *mnt_fs_get_userspace_options(mnt_fs *fs);
+extern int mnt_fs_set_userspace_options(mnt_fs *fs, const char *optstr);
+extern int mnt_fs_append_userspace_options(mnt_fs *fs, const char *optstr);
+extern int mnt_fs_prepend_userspace_options(mnt_fs *fs, const char *optstr);
+
+extern const char *mnt_fs_get_attributes(mnt_fs *fs);
+extern int mnt_fs_set_attributes(mnt_fs *fs, const char *optstr);
+extern int mnt_fs_get_attribute(mnt_fs *fs, const char *name,
+				char **value, size_t *valsz);
+extern int mnt_fs_append_attributes(mnt_fs *fs, const char *optstr);
+extern int mnt_fs_prepend_attributes(mnt_fs *fs, const char *optstr);
+
 extern int mnt_fs_get_freq(mnt_fs *ent);
 extern int mnt_fs_set_freq(mnt_fs *ent, int freq);
 extern int mnt_fs_get_passno(mnt_fs *ent);
@@ -238,8 +256,6 @@ extern int mnt_fs_set_bindsrc(mnt_fs *fs, const char *src);
 extern int mnt_fs_get_id(mnt_fs *fs);
 extern int mnt_fs_get_parent_id(mnt_fs *fs);
 extern dev_t mnt_fs_get_devno(mnt_fs *fs);
-extern int mnt_fs_get_option(mnt_fs *ent, const char *name,
-				char **value, size_t *valsz);
 
 extern int mnt_fs_match_target(mnt_fs *fs, const char *target, mnt_cache *cache);
 extern int mnt_fs_match_source(mnt_fs *fs, const char *source, mnt_cache *cache);
@@ -326,10 +342,10 @@ extern int mnt_context_set_fs(mnt_context *cxt, mnt_fs *fs);
 extern int mnt_context_set_source(mnt_context *cxt, const char *source);
 extern int mnt_context_set_target(mnt_context *cxt, const char *target);
 extern int mnt_context_set_fstype(mnt_context *cxt, const char *fstype);
-extern int mnt_context_set_optstr(mnt_context *cxt, const char *optstr);
-extern int mnt_context_append_optstr(mnt_context *cxt, const char *optstr);
+extern int mnt_context_set_options(mnt_context *cxt, const char *optstr);
+extern int mnt_context_append_options(mnt_context *cxt, const char *optstr);
 extern int mnt_context_set_fstype_pattern(mnt_context *cxt, const char *pattern);
-extern int mnt_context_set_optstr_pattern(mnt_context *cxt, const char *pattern);
+extern int mnt_context_set_options_pattern(mnt_context *cxt, const char *pattern);
 extern int mnt_context_set_fstab(mnt_context *cxt, mnt_tab *tb);
 extern int mnt_context_get_fstab(mnt_context *cxt, mnt_tab **tb);
 extern int mnt_context_get_mtab(mnt_context *cxt, mnt_tab **tb);
@@ -350,7 +366,6 @@ extern int mnt_context_do_umount(mnt_context *cxt);
 /*
  * mount(8) userspace options masks (MNT_MAP_USERSPACE map)
  */
-#define MNT_MS_DFLTS	(1 << 1)
 #define MNT_MS_NOAUTO	(1 << 2)
 #define MNT_MS_USER	(1 << 3)
 #define MNT_MS_USERS	(1 << 4)

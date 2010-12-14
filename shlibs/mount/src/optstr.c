@@ -125,6 +125,9 @@ static int mnt_optstr_locate_option(char *optstr, const char *name,
 	size_t namesz, nsz;
 	int rc;
 
+	if (!optstr)
+		return 1;
+
 	assert(name);
 	assert(optstr);
 
@@ -223,7 +226,7 @@ int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
 	size_t vsz, nsz;
 
 	if (!name)
-		return -EINVAL;
+		return 0;
 
 	nsz = strlen(name);
 	vsz = value ? strlen(value) : 0;
@@ -480,6 +483,9 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs,
 		const struct mnt_optmap *m =
 			 mnt_optmap_get_entry(maps, 2, name, namesz, &ent);
 
+		if (ent && !ent->id)
+			continue;	/* ignore undefined options (comments) */
+
 		if (m && m == maps[0] && vfs) {
 			if (ignore_vfs && (ent->mask & ignore_vfs))
 				continue;
@@ -544,6 +550,8 @@ int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 		const struct mnt_optmap *ent;
 
 		if (mnt_optmap_get_entry(maps, 1, name, namesz, &ent)) {
+			if (!ent->id)
+				continue;
 			if (ent->mask & MNT_INVERT)
 				*flags &= ~ent->id;
 			else
@@ -552,54 +560,6 @@ int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 	}
 
 	return 0;
-}
-
-/**
- * mnt_optstr_get_mountflags:
- * @optstr: string with comma separated list of options
- * @flags: returns mount flags
- *
- * For more details about mountflags see mount(2) syscall. The flags are
- * generated according to MNT_LINUX_MAP.
- *
- * For example:
- *
- *	"bind,exec,foo,bar"   --returns->   MS_BIND
- *
- *	"bind,noexec,foo,bar" --returns->   MS_BIND|MS_NOEXEC
- *
- * Note that @flags are not zeroized by this function! This function set/unset
- * bites in the @flags only.
- *
- * Returns: 0 on success or negative number in case of error
- */
-int mnt_optstr_get_mountflags(const char *optstr, unsigned long *flags)
-{
-	return mnt_optstr_get_flags(optstr, flags,
-				    mnt_get_builtin_optmap(MNT_LINUX_MAP));
-}
-
-/**
- * mnt_optstr_get_userspace_mountflags:
- * @optstr: string with comma separated list of options
- * @flags: returns mount flags
- *
- * The mountflags are IDs from all MNT_USERSPACE_MAP options
- * map. See "struct mnt_optmap". These flags are not used for mount(2) syscall.
- *
- * For example:
- *
- *	"bind,exec,loop"   --returns->   MNT_MS_LOOP
- *
- * Note that @flags are not zeroized by this function! This function set/unset
- * bites in the @flags only.
- *
- * Returns: 0 on success or negative number in case of error
- */
-int mnt_optstr_get_userspace_mountflags(const char *optstr, unsigned long *flags)
-{
-	return mnt_optstr_get_flags(optstr, flags,
-				    mnt_get_builtin_optmap(MNT_USERSPACE_MAP));
 }
 
 /**
@@ -672,6 +632,8 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 				/*
 				 * remove unwanted option (rw/ro is already set)
 				 */
+				if (!ent->id)
+					continue;
 				if (ent->id == MS_RDONLY ||
 				    (ent->mask & MNT_INVERT) ||
 				    !(fl & ent->id)) {
@@ -725,8 +687,7 @@ err:
 	return rc;
 }
 
-/**
- * mnt_optstr_fix_selinux:
+/*
  * @optstr: string with comma separated list of options
  * @value: pointer to the begin of the context value
  * @valsz: size of the value
@@ -814,8 +775,7 @@ static int set_uint_value(char **optstr, unsigned int num,
 	return insert_value(optstr, begin, buf, next);
 }
 
-/**
- * mnt_optstr_fix_uid:
+/*
  * @optstr: string with comma separated list of options
  * @value: pointer to the begin of the uid value
  * @valsz: size of the value
@@ -866,8 +826,7 @@ int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next)
 	return rc;
 }
 
-/**
- * mnt_optstr_fix_gid:
+/*
  * @optstr: string with comma separated list of options
  * @value: pointer to the begin of the uid value
  * @valsz: size of the value
@@ -913,40 +872,35 @@ int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next)
 	return rc;
 }
 
-/**
- * mnt_optstr_fix_user:
- * @optstr: string with comma separated list of options
- * @value: pointer to place where has to start the value
- * @valsz: size of the value or zero if value not define
- * @next: returns pointer to the next option (optional argument)
-
- * Add/replace username. This is usually used to convert "user" (without value)
- * to to "user=<username>" -- in this case the @value has to pointer behind the
- * "user" option name; in case you want to replace already defined <username>
- * then the @valsz must be greater than zero.
+/*
+ * Converts "user" to "user=<username>".
  *
  * Returns: 0 on success, negative number in case of error.
  */
-int mnt_optstr_fix_user(char **optstr, char *value, size_t valsz, char **next)
+int mnt_optstr_fix_user(char **optstr)
 {
 	char *username;
+	struct mnt_optloc ol;
 	int rc = 0;
 
-	if (!optstr || !value)
-		return -EINVAL;
-
 	DBG(CXT, mnt_debug("fixing user"));
+
+	mnt_init_optloc(&ol);
+
+	rc = mnt_optstr_locate_option(*optstr, "user", &ol);
+	if (rc)
+		return rc == 1 ? 0 : rc;	/* 1: user= not found */
 
 	username = mnt_get_username(getuid());
 	if (!username)
 		return -ENOMEM;
 
-	if (!valsz || strncmp(value, username, valsz)) {
-		if (valsz)
+	if (!ol.valsz || strncmp(ol.value, username, ol.valsz)) {
+		if (ol.valsz)
 			/* remove old value */
-			mnt_optstr_remove_option_at(optstr, value, value + valsz);
+			mnt_optstr_remove_option_at(optstr, ol.value, ol.end);
 
-		rc = insert_value(optstr, value, username, next);
+		rc = insert_value(optstr, ol.value, username, NULL);
 	}
 
 	free(username);
@@ -1030,13 +984,13 @@ int test_flags(struct mtest *ts, int argc, char *argv[])
 
 	optstr = strdup(argv[1]);
 
-	rc = mnt_optstr_get_mountflags(optstr, &fl);
+	rc = mnt_optstr_get_flags(optstr, &fl, mnt_get_builtin_optmap(MNT_LINUX_MAP));
 	if (rc)
 		return rc;
 	printf("mountflags:           0x%08lx\n", fl);
 
 	fl = 0;
-	rc = mnt_optstr_get_userspace_mountflags(optstr, &fl);
+	rc = mnt_optstr_get_flags(optstr, &fl, mnt_get_builtin_optmap(MNT_USERSPACE_MAP));
 	if (rc)
 		return rc;
 	printf("userspace-mountflags: 0x%08lx\n", fl);
@@ -1164,12 +1118,11 @@ int test_fix(struct mtest *ts, int argc, char *argv[])
 			rc = mnt_optstr_fix_gid(&optstr, val, valsz, &next);
 		else if (!strncmp(name, "context", 7))
 			rc = mnt_optstr_fix_secontext(&optstr, val, valsz, &next);
-		else if (!strncmp(name, "user", 4))
-			rc = mnt_optstr_fix_user(&optstr,
-					val ? val : name + namesz, valsz, &next);
 		if (rc)
 			break;
 	}
+	if (rc)
+		rc = mnt_optstr_fix_user(&optstr);
 
 	printf("fixed:  %s\n", optstr);
 

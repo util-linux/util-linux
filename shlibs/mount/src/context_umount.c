@@ -81,8 +81,14 @@ static int lookup_umount_fs(mnt_context *cxt)
 
 	if (!rc && !mnt_fs_get_fstype(cxt->fs))
 		rc = mnt_fs_set_fstype(cxt->fs, mnt_fs_get_fstype(fs));
+
 	if (!rc)
-		rc = mnt_fs_set_optstr(cxt->fs, mnt_fs_get_optstr(fs));
+		rc = mnt_fs_set_vfs_options(cxt->fs, mnt_fs_get_vfs_options(fs));
+	if (!rc)
+		rc = mnt_fs_set_fs_options(cxt->fs, mnt_fs_get_fs_options(fs));
+	if (!rc)
+		rc = mnt_fs_set_userspace_options(cxt->fs, mnt_fs_get_userspace_options(fs));
+
 	if (!rc && mnt_fs_get_bindsrc(fs))
 		rc = mnt_fs_set_bindsrc(cxt->fs, mnt_fs_get_bindsrc(fs));
 
@@ -112,7 +118,7 @@ static int mnt_loopdev_associated_fs(const char *devname, mnt_fs *fs)
 		return 0;
 
 	/* check for offset option in @fs */
-	optstr = (char *) mnt_fs_get_optstr(fs);
+	optstr = (char *) mnt_fs_get_userspace_options(fs);
 	if (optstr && !mnt_optstr_get_option(optstr, "offset=", &val, &valsz)) {
 		int rc;
 
@@ -166,7 +172,7 @@ static int evaluate_permissions(mnt_context *cxt)
 	     (cxt->user_mountflags & MNT_MS_UHELPER)) {
 
 		char *suffix = NULL;
-		char *o = (char *) mnt_fs_get_optstr(cxt->fs);
+		char *o = (char *) mnt_fs_get_userspace_options(cxt->fs);
 		size_t valsz;
 
 		rc = mnt_optstr_get_option(o, "uhelper", &suffix, &valsz);
@@ -236,11 +242,12 @@ static int evaluate_permissions(mnt_context *cxt)
 	 * The options `user', `owner' and `group' only allow unmounting by the
 	 * user that mounted (visible in mtab).
 	 */
-	optstr = mnt_fs_get_optstr(fs);		/* FSTAB mount options! */
+	optstr = mnt_fs_get_userspace_options(fs);	/* FSTAB mount options! */
 	if (!optstr)
 		goto eperm;
 
-	if (mnt_optstr_get_userspace_mountflags(optstr, &u_flags))
+	if (mnt_optstr_get_flags(optstr, &u_flags,
+				mnt_get_builtin_optmap(MNT_USERSPACE_MAP)))
 		goto eperm;
 
 	if (u_flags & MNT_MS_USERS) {
@@ -271,7 +278,7 @@ static int evaluate_permissions(mnt_context *cxt)
 		}
 
 		/* get options from mtab */
-		optstr = mnt_fs_get_optstr(cxt->fs);
+		optstr = mnt_fs_get_userspace_options(cxt->fs);
 		if (optstr && !mnt_optstr_get_option((char *) optstr,
 					"user", &mtab_user, &sz) && sz)
 			ok = !strncmp(curr_user, mtab_user, sz);
@@ -491,7 +498,7 @@ int mnt_context_do_umount(mnt_context *cxt)
 		/*
 		 * update options to handle remount to read-only
 		 */
-		const char *o = mnt_fs_get_optstr(cxt->fs);
+		const char *o = mnt_fs_get_vfs_options(cxt->fs);
 		char *n = o ? strdup(o) : NULL;
 
 		DBG(CXT, mnt_debug_h(cxt, "fix remount-on-umount update"));
@@ -500,7 +507,7 @@ int mnt_context_do_umount(mnt_context *cxt)
 			mnt_optstr_remove_option(&n, "rw");
 		rc = mnt_optstr_prepend_option(&n, "ro", NULL);
 		if (!rc)
-			rc = __mnt_fs_set_optstr_ptr(cxt->fs, n, FALSE);
+			rc = mnt_fs_set_vfs_options(cxt->fs, n);
 
 		/* refresh options in /etc/mtab as well */
 		if (!rc && cxt->update && cxt->mtab_writable)

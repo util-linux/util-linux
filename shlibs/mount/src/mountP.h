@@ -172,9 +172,10 @@ struct _mnt_fs {
 	char		*target;	/* mountinfo[5], fstab[2]: mountpoint */
 	char		*fstype;	/* mountinfo[9], fstab[3]: filesystem type */
 
-	char		*optstr;	/* mountinfo[6,11], fstab[4]: option string */
 	char		*vfs_optstr;	/* mountinfo[6]: fs-independent (VFS) options */
 	char		*fs_optstr;	/* mountinfo[11]: fs-depend options */
+	char		*user_optstr;	/* userspace mount options */
+	char		*attrs;		/* mount attributes */
 
 	int		freq;		/* fstab[5]:  dump frequency in days */
 	int		passno;		/* fstab[6]: pass number on parallel fsck */
@@ -299,6 +300,10 @@ extern int mnt_optmap_require_value(const struct mnt_optmap *mapent);
 
 /* optstr.c */
 extern int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end);
+extern int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next);
+extern int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next);
+extern int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, char **next);
+extern int mnt_optstr_fix_user(char **optstr);
 
 /* fs.c */
 extern int __mnt_fs_set_source_ptr(mnt_fs *fs, char *source);

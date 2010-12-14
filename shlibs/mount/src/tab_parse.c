@@ -81,7 +81,8 @@ static int mnt_parse_tab_line(mnt_fs *fs, char *s)
 		if (!rc)
 			rc = __mnt_fs_set_fstype_ptr(fs, fstype);
 		if (!rc)
-			rc = __mnt_fs_set_optstr_ptr(fs, optstr, TRUE);
+			rc = mnt_fs_set_options(fs, optstr);
+		free(optstr);
 	} else {
 		DBG(TAB, mnt_debug("tab parse error: [sscanf rc=%d]: '%s'", rc, s));
 		rc = -EINVAL;
@@ -210,10 +211,16 @@ static int mnt_parse_utab_line(mnt_fs *fs, const char *s)
 			if (!fs->bindsrc)
 				goto enomem;
 
-		} else if (!fs->optstr && !strncmp(p, "OPTS=", 5)) {
-			fs->optstr = unmangle(p + 5, &end);
-			if (!fs->optstr)
+		} else if (!fs->user_optstr && !strncmp(p, "OPTS=", 5)) {
+			fs->user_optstr = unmangle(p + 5, &end);
+			if (!fs->user_optstr)
 				goto enomem;
+
+		} else if (!fs->attrs && !strncmp(p, "ATTRS=", 6)) {
+			fs->attrs = unmangle(p + 6, &end);
+			if (!fs->attrs)
+				goto enomem;
+
 		} else {
 			/* unknown variable */
 			while (*p && *p != ' ') p++;
@@ -244,63 +251,6 @@ static int guess_tab_format(char *line)
 	if (sscanf(line, "%u %u", &a, &b) == 2)
 		return MNT_FMT_MOUNTINFO;
 	return MNT_FMT_FSTAB;
-}
-
-
-/*
- * Merges @vfs and @fs options strings into a new string.
- * This function cares about 'ro/rw' options. The 'ro' is
- * always used if @vfs or @fs is read-only.
- * For example:
- *
- *    mnt_merge_optstr("rw,noexec", "ro,journal=update")
- *
- *           returns: "ro,noexec,journal=update"
- *
- *    mnt_merge_optstr("rw,noexec", "rw,journal=update")
- *
- *           returns: "rw,noexec,journal=update"
-
- * We need this function for /proc/self/mountinfo parsing.
- */
-static char *merge_optstr(const char *vfs, const char *fs)
-{
-	char *res, *p;
-	size_t sz;
-	int ro = 0, rw = 0;
-
-	if (!vfs && !fs)
-		return NULL;
-	if (!vfs || !fs)
-		return strdup(fs ? fs : vfs);
-	if (!strcmp(vfs, fs))
-		return strdup(vfs);		/* e.g. "aaa" and "aaa" */
-
-	/* leave space for leading "r[ow],", "," and trailing zero */
-	sz = strlen(vfs) + strlen(fs) + 5;
-	res = malloc(sz);
-	if (!res)
-		return NULL;
-	p = res + 3;			/* make a room for rw/ro flag */
-
-	snprintf(p, sz - 3, "%s,%s", vfs, fs);
-
-	/* remove 'rw' flags */
-	rw += !mnt_optstr_remove_option(&p, "rw");	/* from vfs */
-	rw += !mnt_optstr_remove_option(&p, "rw");	/* from fs */
-
-	/* remove 'ro' flags if necessary */
-	if (rw != 2) {
-		ro += !mnt_optstr_remove_option(&p, "ro");
-		if (ro + rw < 2)
-			ro += !mnt_optstr_remove_option(&p, "ro");
-	}
-
-	if (!strlen(p))
-		memcpy(res, ro ? "ro" : "rw", 3);
-	else
-		memcpy(res, ro ? "ro," : "rw,", 3);
-	return res;
 }
 
 /*
@@ -358,15 +308,6 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
 			goto err;
 	}
 
-
-	/* merge fs_optstr and vfs_optstr into optstr (necessary for "mountinfo") */
-	if (!fs->optstr && (fs->vfs_optstr || fs->fs_optstr)) {
-		fs->optstr = merge_optstr(fs->vfs_optstr, fs->fs_optstr);
-		if (!fs->optstr) {
-			DBG(TAB, mnt_debug_h(tb, "failed to merge optstr"));
-			return -ENOMEM;
-		}
-	}
 
 	/*DBG(TAB, mnt_fs_print_debug(fs, stderr));*/
 
@@ -665,7 +606,7 @@ static mnt_fs *mnt_tab_merge_userspace_fs(mnt_tab *tb, mnt_fs *uf)
 {
 	mnt_fs *fs;
 	mnt_iter itr;
-	const char *optstr, *src, *target, *root;
+	const char *optstr, *src, *target, *root, *attrs;
 
 	assert(tb);
 	assert(uf);
@@ -676,10 +617,11 @@ static mnt_fs *mnt_tab_merge_userspace_fs(mnt_tab *tb, mnt_fs *uf)
 
 	src = mnt_fs_get_srcpath(uf);
 	target = mnt_fs_get_target(uf);
-	optstr = mnt_fs_get_optstr(uf);
+	optstr = mnt_fs_get_userspace_options(uf);
+	attrs = mnt_fs_get_attributes(uf);
 	root = mnt_fs_get_root(uf);
 
-	if (!src || !target || !optstr || !root)
+	if (!src || !target || !root || (!attrs && !optstr))
 		return NULL;
 
 	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
@@ -696,7 +638,8 @@ static mnt_fs *mnt_tab_merge_userspace_fs(mnt_tab *tb, mnt_fs *uf)
 
 	if (fs) {
 		DBG(TAB, mnt_debug_h(tb, "found fs -- appending userspace optstr"));
-		mnt_fs_append_userspace_optstr(fs, optstr);
+		mnt_fs_append_userspace_options(fs, optstr);
+		mnt_fs_append_attributes(fs, attrs);
 		mnt_fs_set_bindsrc(fs, mnt_fs_get_bindsrc(uf));
 
 		DBG(TAB, mnt_debug_h(tb, "found fs:"));

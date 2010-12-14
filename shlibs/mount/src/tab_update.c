@@ -204,8 +204,7 @@ mnt_fs *mnt_update_get_fs(mnt_update *upd)
 static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent)
 {
 	int rc = 0;
-	const char *o = NULL;
-	char *u = NULL;
+	const char *o = NULL, *a = NULL;
 
 	assert(fs);
 	assert(ent);
@@ -217,20 +216,10 @@ static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent)
 
 	DBG(UPDATE, mnt_debug("prepare utab entry"));
 
-	o = mnt_fs_get_optstr(fs);
-	if (o) {
-		rc = mnt_split_optstr(o, &u, NULL, NULL, MNT_NOMTAB, 0);
-		if (rc)
-			return rc;	/* parse error or so... */
-	}
-	/* TODO
-	if (extra_opts) {
-		rc = mnt_optstr_append_option(&u, extra_opts, NULL);
-		if (rc)
-			goto err;
-	}
-	*/
-	if (!u)
+	o = mnt_fs_get_userspace_options(fs);
+	a = mnt_fs_get_attributes(fs);
+
+	if (!o && !a)
 		return 1;	/* don't have mount options */
 
 	/* allocate the entry */
@@ -240,10 +229,12 @@ static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent)
 		goto err;
 	}
 
-	rc = __mnt_fs_set_optstr_ptr(*ent, u, FALSE);
+	rc = mnt_fs_set_userspace_options(*ent, o);
 	if (rc)
 		goto err;
-	u = NULL;
+	rc = mnt_fs_set_attributes(*ent, a);
+	if (rc)
+		goto err;
 
 	if (!(mountflags & MS_REMOUNT)) {
 		rc = set_fs_root(*ent, fs, mountflags);
@@ -254,15 +245,15 @@ static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent)
 	DBG(UPDATE, mnt_debug("utab entry OK"));
 	return 0;
 err:
-	free(u);
 	mnt_free_fs(*ent);
+	*ent = NULL;
 	return rc;
 }
 
 static int set_fs_root(mnt_fs *result, mnt_fs *fs, unsigned long mountflags)
 {
 	char *root = NULL, *mnt = NULL;
-	const char *fstype, *optstr;
+	const char *fstype;
 	mnt_tab *tb = NULL;
 	int rc = -ENOMEM;
 
@@ -271,7 +262,6 @@ static int set_fs_root(mnt_fs *result, mnt_fs *fs, unsigned long mountflags)
 
 	DBG(UPDATE, mnt_debug("setting FS root"));
 
-	optstr = mnt_fs_get_optstr(fs);
 	fstype = mnt_fs_get_fstype(fs);
 
 	/*
@@ -334,7 +324,7 @@ static int set_fs_root(mnt_fs *result, mnt_fs *fs, unsigned long mountflags)
 		char *vol = NULL, *p;
 		size_t sz, volsz = 0;
 
-		if (mnt_optstr_get_option((char *) optstr, "subvol", &vol, &volsz))
+		if (mnt_fs_get_option(fs, "subvol", &vol, &volsz))
 			goto dflt;
 
 		sz = volsz;
@@ -371,16 +361,21 @@ err:
 /* mtab and fstab update */
 static int fprintf_mtab_fs(FILE *f, mnt_fs *fs)
 {
+	char *o;
 	char *m1, *m2, *m3, *m4;
 	int rc;
 
 	assert(fs);
 	assert(f);
 
+	o = mnt_fs_strdup_options(fs);
+	if (!o)
+		return -ENOMEM;
+
 	m1 = mangle(mnt_fs_get_source(fs));
 	m2 = mangle(mnt_fs_get_target(fs));
 	m3 = mangle(mnt_fs_get_fstype(fs));
-	m4 = mangle(mnt_fs_get_optstr(fs));
+	m4 = mangle(o);
 
 	if (m1 && m2 && m3 && m4)
 		rc = !fprintf(f, "%s %s %s %s %d %d\n",
@@ -390,6 +385,7 @@ static int fprintf_mtab_fs(FILE *f, mnt_fs *fs)
 	else
 		rc = -ENOMEM;
 
+	free(o);
 	free(m1);
 	free(m2);
 	free(m3);
@@ -428,12 +424,16 @@ static int fprintf_utab_fs(FILE *f, mnt_fs *fs)
 		fprintf(f, "BINDSRC=%s ", p);
 		free(p);
 	}
-	p = mangle(mnt_fs_get_optstr(fs));
+	p = mangle(mnt_fs_get_attributes(fs));
+	if (p) {
+		fprintf(f, "ATTRS=%s ", p);
+		free(p);
+	}
+	p = mangle(mnt_fs_get_userspace_options(fs));
 	if (p) {
 		fprintf(f, "OPTS=%s", p);
 		free(p);
 	}
-
 	fputc('\n', f);
 
 	return 0;
@@ -620,11 +620,14 @@ static int update_modify_options(mnt_update *upd, mnt_lock *lc)
 {
 	mnt_tab *tb = NULL;
 	int rc = 0, u_lc = -1;
+	mnt_fs *fs;
 
 	assert(upd);
 	assert(upd->fs);
 
 	DBG(UPDATE, mnt_debug_h(upd, "%s: modify options", upd->filename));
+
+	fs = upd->fs;
 
 	if (lc)
 		mnt_lock_file(lc);
@@ -635,20 +638,28 @@ static int update_modify_options(mnt_update *upd, mnt_lock *lc)
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
 	if (tb) {
 		mnt_fs *cur = mnt_tab_find_target(tb,
-					mnt_fs_get_target(upd->fs),
+					mnt_fs_get_target(fs),
 					MNT_ITER_BACKWARD);
 		if (cur) {
-			rc = mnt_fs_set_optstr(cur, mnt_fs_get_optstr(upd->fs));
+			if (upd->userspace_only)
+				rc = mnt_fs_set_attributes(cur,	mnt_fs_get_attributes(fs));
+			if (!rc && !upd->userspace_only)
+				rc = mnt_fs_set_vfs_options(cur, mnt_fs_get_vfs_options(fs));
+			if (!rc && !upd->userspace_only)
+				rc = mnt_fs_set_fs_options(cur, mnt_fs_get_fs_options(fs));
+			if (!rc)
+				rc = mnt_fs_set_userspace_options(cur,
+						mnt_fs_get_userspace_options(fs));
 			if (!rc)
 				rc = update_tab(upd, tb);
 		}
 		mnt_free_tab(tb);
 	}
+
 	if (lc)
 		mnt_unlock_file(lc);
 	else if (u_lc != -1)
 		utab_unlock(u_lc);
-
 	return rc;
 }
 
@@ -747,7 +758,7 @@ static int test_add(struct mtest *ts, int argc, char *argv[])
 	mnt_fs_set_source(fs, argv[1]);
 	mnt_fs_set_target(fs, argv[2]);
 	mnt_fs_set_fstype(fs, argv[3]);
-	mnt_fs_set_optstr(fs, argv[4]);
+	mnt_fs_set_options(fs, argv[4]);
 
 	rc = update(NULL, fs, 0);
 	mnt_free_fs(fs);
@@ -783,7 +794,7 @@ static int test_remount(struct mtest *ts, int argc, char *argv[])
 	if (argc < 3)
 		return -1;
 	mnt_fs_set_target(fs, argv[1]);
-	mnt_fs_set_optstr(fs, argv[2]);
+	mnt_fs_set_options(fs, argv[2]);
 
 	rc = update(NULL, fs, MS_REMOUNT);
 	mnt_free_fs(fs);

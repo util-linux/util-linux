@@ -93,7 +93,8 @@ void mnt_free_context(mnt_context *cxt)
  *	mnt_context_set_fstab(cxt, NULL);
  *	mnt_context_set_cache(cxt, NULL);
  *	mnt_context_set_fstype_pattern(cxt, NULL);
- *	mnt_context_set_optstr_pattern(cxt, NULL);
+ *	mnt_context_set_options_pattern(cxt, NULL);
+ *
  *
  * to reset these stuff.
  *
@@ -358,8 +359,8 @@ int mnt_context_enable_loopdel(mnt_context *cxt, int enable)
  * overwrite the private @fs with an external instance. Note that the external
  * @fs instance is not deallocated by mnt_free_context() or mnt_reset_context().
  *
- * The @fs will be modified by mnt_context_set_{source,target,optstr,fstype}
- * functions, Ft the @fs is NULL then all current FS specific setting (source,
+ * The @fs will be modified by mnt_context_set_{source,target,options,fstype}
+ * functions, If the @fs is NULL then all current FS specific setting (source,
  * target, etc., exclude spec) is reseted.
  *
  * Returns: 0 on success, negative number in case of error.
@@ -376,6 +377,16 @@ int mnt_context_set_fs(mnt_context *cxt, mnt_fs *fs)
 	return 0;
 }
 
+/**
+ * mnt_context_get_fs:
+ * @cxt: mount context
+ *
+ * The FS contains the basic description of mountpoint, fs type and so on.
+ * Note that the FS is modified by mnt_context_set_{source,target,options,fstype}
+ * functions.
+ *
+ * Returns: pointer to FS description or NULL in case of calloc() errrr.
+ */
 mnt_fs *mnt_context_get_fs(mnt_context *cxt)
 {
 	if (!cxt)
@@ -429,27 +440,27 @@ int mnt_context_set_fstype(mnt_context *cxt, const char *fstype)
 }
 
 /**
- * mnt_context_set_optstr:
+ * mnt_context_set_options:
  * @cxt: mount context
- * @optstr: comma delimited mount options
+ * @options: comma delimited mount options
  *
  * Returns: 0 on success, negative number in case of error.
  */
-int mnt_context_set_optstr(mnt_context *cxt, const char *optstr)
+int mnt_context_set_options(mnt_context *cxt, const char *optstr)
 {
-	return mnt_fs_set_optstr(mnt_context_get_fs(cxt), optstr);
+	return mnt_fs_set_options(mnt_context_get_fs(cxt), optstr);
 }
 
 /**
- * mnt_context_append_optstr:
+ * mnt_context_append_options:
  * @cxt: mount context
  * @optstr: comma delimited mount options
  *
  * Returns: 0 on success, negative number in case of error.
  */
-int mnt_context_append_optstr(mnt_context *cxt, const char *optstr)
+int mnt_context_append_options(mnt_context *cxt, const char *optstr)
 {
-	return mnt_fs_append_optstr(mnt_context_get_fs(cxt), optstr);
+	return mnt_fs_append_options(mnt_context_get_fs(cxt), optstr);
 }
 
 /**
@@ -478,7 +489,7 @@ int mnt_context_set_fstype_pattern(mnt_context *cxt, const char *pattern)
 }
 
 /**
- * mnt_context_set_optstr_pattern:
+ * mnt_context_set_options_pattern:
  * @cxt: mount context
  * @pattern: options pattern (or NULL to reset the current setting)
  *
@@ -486,7 +497,7 @@ int mnt_context_set_fstype_pattern(mnt_context *cxt, const char *pattern)
  *
  * Returns: 0 on success, negative number in case of error.
  */
-int mnt_context_set_optstr_pattern(mnt_context *cxt, const char *pattern)
+int mnt_context_set_options_pattern(mnt_context *cxt, const char *pattern)
 {
 	char *p = NULL;
 
@@ -693,7 +704,7 @@ mnt_lock *mnt_context_get_lock(mnt_context *cxt)
  *
  * rather than
  *
- *	mnt_context_set_optstr(cxt, "noexec,nosuid");
+ *	mnt_context_set_options(cxt, "noexec,nosuid");
  *
  * these both calls have the same effect.
  *
@@ -725,9 +736,10 @@ int mnt_context_get_mountflags(mnt_context *cxt, unsigned long *flags)
 
 	*flags = 0;
 	if (!(cxt->flags & MNT_FL_MOUNTFLAGS_MERGED) && cxt->fs) {
-		const char *o = mnt_fs_get_optstr(cxt->fs);
+		const char *o = mnt_fs_get_vfs_options(cxt->fs);
 		if (o)
-			rc = mnt_optstr_get_mountflags(o, flags);
+			rc = mnt_optstr_get_flags(o, flags,
+				    mnt_get_builtin_optmap(MNT_LINUX_MAP));
 	}
 	if (!rc)
 		*flags |= cxt->mountflags;
@@ -769,9 +781,10 @@ int mnt_context_get_userspace_mountflags(mnt_context *cxt, unsigned long *flags)
 
 	*flags = 0;
 	if (!(cxt->flags & MNT_FL_MOUNTFLAGS_MERGED) && cxt->fs) {
-		const char *o = mnt_fs_get_optstr(cxt->fs);
+		const char *o = mnt_fs_get_userspace_options(cxt->fs);
 		if (o)
-			rc = mnt_optstr_get_userspace_mountflags(o, flags);
+			rc = mnt_optstr_get_flags(o, flags,
+				mnt_get_builtin_optmap(MNT_USERSPACE_MAP));
 	}
 	if (!rc)
 		*flags |= cxt->user_mountflags;
@@ -1025,6 +1038,11 @@ int mnt_context_merge_mountflags(mnt_context *cxt)
 		return rc;
 	cxt->mountflags = fl;
 
+	/* TODO: if cxt->fs->fs_optstr contains 'ro' then set the MS_RDONLY to
+	 * mount flags, it's possible that superblock is read-only, but VFS is
+	 * read-write.
+	 */
+
 	fl = 0;
 	rc = mnt_context_get_userspace_mountflags(cxt, &fl);
 	if (rc)
@@ -1172,9 +1190,16 @@ static int apply_tab(mnt_context *cxt, mnt_tab *tb, int direction)
 	if (!rc && !mnt_fs_get_fstype(cxt->fs))
 		rc = mnt_fs_set_fstype(cxt->fs, mnt_fs_get_fstype(fs));
 
-	if (!rc && cxt->optsmode != MNT_OPTSMODE_IGNORE)
-		rc = mnt_fs_prepend_optstr(cxt->fs, mnt_fs_get_optstr(fs));
-
+	if (!rc && cxt->optsmode != MNT_OPTSMODE_IGNORE) {
+		rc = mnt_fs_prepend_vfs_options(cxt->fs,
+					mnt_fs_get_vfs_options(fs));
+		if (!rc)
+			rc = mnt_fs_prepend_fs_options(cxt->fs,
+					mnt_fs_get_fs_options(fs));
+		if (!rc)
+			rc = mnt_fs_prepend_userspace_options(cxt->fs,
+					mnt_fs_get_userspace_options(fs));
+	}
 	if (!rc)
 		cxt->flags |= MNT_FL_TAB_APPLIED;
 
@@ -1293,7 +1318,7 @@ int test_mount(struct mtest *ts, int argc, char *argv[])
 		return -ENOMEM;
 
 	if (!strcmp(argv[idx], "-o")) {
-		mnt_context_set_optstr(cxt, argv[idx + 1]);
+		mnt_context_set_options(cxt, argv[idx + 1]);
 		idx += 2;
 	}
 	if (!strcmp(argv[idx], "-t")) {

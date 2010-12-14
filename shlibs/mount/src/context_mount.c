@@ -30,9 +30,10 @@
 static int fix_optstr(mnt_context *cxt)
 {
 	int rc = 0, rem_se = 0;
-	char *next, **optstr;
+	char *next;
 	char *name, *val;
 	size_t namesz, valsz;
+	mnt_fs *fs;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -45,18 +46,16 @@ static int fix_optstr(mnt_context *cxt)
 
 	DBG(CXT, mnt_debug_h(cxt, "mount: fixing optstr"));
 
-	/*
-	 * we directly work with optstr pointer here
-	 */
-	optstr = &cxt->fs->optstr;
-	if (!optstr)
+	fs = cxt->fs;
+
+	if (!mnt_fs_get_vfs_options(fs) && !mnt_fs_get_userspace_options(fs))
 		return 0;
 
 	/* The propagation flags should not be used together with any other flags */
 	if (cxt->mountflags & MS_PROPAGATION)
 		cxt->mountflags &= MS_PROPAGATION;
 
-	if (*optstr && !mnt_optstr_get_option(*optstr, "user", &val, &valsz)) {
+	if (!mnt_optstr_get_option(fs->user_optstr, "user", &val, &valsz)) {
 		if (val) {
 			cxt->orig_user = strndup(val, valsz);
 			if (!cxt->orig_user) {
@@ -70,29 +69,27 @@ static int fix_optstr(mnt_context *cxt)
 	/*
 	 * Sync mount options with mount flags
 	 */
-	rc = mnt_optstr_apply_flags(optstr, cxt->mountflags,
+	rc = mnt_optstr_apply_flags(&fs->vfs_optstr, cxt->mountflags,
 				mnt_get_builtin_optmap(MNT_LINUX_MAP));
 	if (rc)
 		goto done;
 
-	rc = mnt_optstr_apply_flags(optstr, cxt->user_mountflags,
+	rc = mnt_optstr_apply_flags(&fs->user_optstr, cxt->user_mountflags,
 				mnt_get_builtin_optmap(MNT_USERSPACE_MAP));
 	if (rc)
 		goto done;
 
-	next = *optstr;
+	next = fs->fs_optstr;
 
 #ifdef HAVE_LIBSELINUX
 	rem_se = (cxt->mountflags & MS_REMOUNT) || !is_selinux_enabled();
 #endif
-	DBG(CXT, mnt_debug_h(cxt, "fixing mount options: '%s'", *optstr));
-
 	while (!mnt_optstr_next_option(&next, &name, &namesz, &val, &valsz)) {
 
 		if (namesz == 3 && !strncmp(name, "uid", 3))
-			rc = mnt_optstr_fix_uid(optstr, val, valsz, &next);
+			rc = mnt_optstr_fix_uid(&fs->fs_optstr, val, valsz, &next);
 		else if (namesz == 3 && !strncmp(name, "gid", 3))
-			rc = mnt_optstr_fix_gid(optstr, val, valsz, &next);
+			rc = mnt_optstr_fix_gid(&fs->fs_optstr, val, valsz, &next);
 #ifdef HAVE_LIBSELINUX
 		else if (namesz >= 7 && (!strncmp(name, "context", 7) ||
 					 !strncmp(name, "fscontext", 9) ||
@@ -101,51 +98,44 @@ static int fix_optstr(mnt_context *cxt)
 			if (rem_se) {
 				/* remove context= option */
 				next = name;
-				rc = mnt_optstr_remove_option_at(optstr,
+				rc = mnt_optstr_remove_option_at(&fs->fs_optstr,
 							name, val + valsz);
 			} else
-				rc = mnt_optstr_fix_secontext(optstr,
+				rc = mnt_optstr_fix_secontext(&fs->fs_optstr,
 							val, valsz, &next);
 		}
 #endif
-		else if (namesz == 4 && (cxt->user_mountflags && MNT_MS_USER) &&
-			 !strncmp(name, "user", 4)) {
-
-			rc = mnt_optstr_fix_user(optstr,
-						 val ? val : name + namesz,
-						 valsz, &next);
-		}
 		if (rc)
 			goto done;
 	}
 
+	if (!rc && cxt->user_mountflags && MNT_MS_USER)
+		rc = mnt_optstr_fix_user(&fs->fs_optstr);
+
 done:
-	__mnt_fs_set_optstr_ptr(cxt->fs, *optstr, TRUE);
-	DBG(CXT, mnt_debug_h(cxt, "fixed options [rc=%d]: '%s'", rc, *optstr));
+	DBG(CXT, mnt_debug_h(cxt, "fixed options [rc=%d]: "
+		"vfs='%s' fs='%s' user='%s'", rc,
+		fs->vfs_optstr, fs->fs_optstr, fs->user_optstr));
 	return rc;
 }
 
 /*
  * Converts already evalulated and fixed options to the form that is compatible
  * with /sbin/mount.<type> helpers.
- *
- * Retursn newly allocated string.
  */
 static int generate_helper_optstr(mnt_context *cxt, char **optstr)
 {
-	const char *o;
 	int rc = 0;
 
 	assert(cxt);
 	assert(cxt->fs);
 	assert(optstr);
 
-	*optstr = NULL;
-	o = mnt_fs_get_optstr(cxt->fs);
+	*optstr = mnt_fs_strdup_options(cxt->fs);
+	if (!*optstr)
+		return -ENOMEM;
 
-	if (o)
-		rc = mnt_optstr_append_option(optstr, o, NULL);
-	if (!rc && (cxt->flags & MNT_FL_SAVED_USER))
+	if (cxt->flags & MNT_FL_SAVED_USER)
 		rc = mnt_optstr_set_option(optstr, "user", cxt->orig_user);
 	if (rc) {
 		free(*optstr);
@@ -323,7 +313,6 @@ static int do_mount(mnt_context *cxt, const char *try_type)
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
-
 	if (try_type && !cxt->helper) {
 		rc = mnt_context_prepare_helper(cxt, "mount", try_type);
 		if (!rc)
@@ -477,7 +466,7 @@ int mnt_context_do_mount(mnt_context *cxt)
 	DBG(CXT, mnt_debug_h(cxt, "mount: do mount"));
 
 	if (!(cxt->flags & MNT_FL_MOUNTDATA))
-		cxt->mountdata = (char *) mnt_fs_get_fs_optstr(cxt->fs);
+		cxt->mountdata = (char *) mnt_fs_get_fs_options(cxt->fs);
 
 	type = mnt_fs_get_fstype(cxt->fs);
 	if (type)
