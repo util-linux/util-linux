@@ -23,6 +23,7 @@
 #include "pathnames.h"
 #include "swapheader.h"
 #include "mangle.h"
+#include "canonicalize.h"
 
 #define PATH_MKSWAP	"/sbin/mkswap"
 
@@ -177,11 +178,16 @@ read_proc_swaps(void) {
 			break;
 		swapFiles = q;
 
-		swapFiles[numSwaps++] = unmangle(line);
+		if ((p = unmangle(line)) == NULL)
+			break;
+
+		swapFiles[numSwaps++] = canonicalize_path(p);
+		free(p);
 	}
 	fclose(swaps);
 }
 
+/* note that swapFiles are always canonicalized */
 static int
 is_in_proc_swaps(const char *fname) {
 	int i;
