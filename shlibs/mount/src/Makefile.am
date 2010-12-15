@@ -55,7 +55,7 @@ uninstall-hook:
 
 
 tests = test_version test_cache test_optstr test_lock \
-		  test_tab test_utils test_tab_update
+		  test_tab test_utils test_tab_update test_context
 
 tests: all $(tests)
 test_%: %.c all

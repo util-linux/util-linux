@@ -60,7 +60,6 @@ grep -q $DEVICE $LIBMOUNT_MTAB || \
 	echo "(by device) cannot found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
-
 ts_init_subtest "umount-by-devname"
 $TESTPROG --umount $DEVICE >> $TS_OUTPUT 2>&1
 grep -q $DEVICE $LIBMOUNT_MTAB &&

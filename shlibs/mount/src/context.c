@@ -1049,6 +1049,9 @@ int mnt_context_merge_mountflags(mnt_context *cxt)
 		return rc;
 	cxt->user_mountflags = fl;
 
+	DBG(CXT, mnt_debug_h(cxt, "final flags: VFS=%08lx userspace=%08lx",
+			cxt->mountflags, cxt->user_mountflags));
+
 	cxt->flags |= MNT_FL_MOUNTFLAGS_MERGED;
 	return 0;
 }

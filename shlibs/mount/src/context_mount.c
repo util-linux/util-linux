@@ -48,9 +48,6 @@ static int fix_optstr(mnt_context *cxt)
 
 	fs = cxt->fs;
 
-	if (!mnt_fs_get_vfs_options(fs) && !mnt_fs_get_userspace_options(fs))
-		return 0;
-
 	/* The propagation flags should not be used together with any other flags */
 	if (cxt->mountflags & MS_PROPAGATION)
 		cxt->mountflags &= MS_PROPAGATION;

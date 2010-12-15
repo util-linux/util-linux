@@ -478,7 +478,7 @@ char *mnt_fs_strdup_options(mnt_fs *fs)
 
 	errno = 0;
 	res = merge_optstr(fs->vfs_optstr, fs->fs_optstr);
-	if (errno)
+	if (!res && errno)
 		return NULL;
 	if (fs->user_optstr) {
 		if (mnt_optstr_append_option(&res, fs->user_optstr, NULL)) {

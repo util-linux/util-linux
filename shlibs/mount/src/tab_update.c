@@ -151,6 +151,10 @@ int mnt_update_set_fs(mnt_update *upd, int mountflags,
 	DBG(UPDATE, mnt_debug_h(upd,
 			"reseting FS [fs=0x%p, target=%s, flags=0x%08x]",
 			fs, target, mountflags));
+	if (fs) {
+		DBG(UPDATE, mnt_debug_h(upd, "FS template:"));
+		DBG(UPDATE, mnt_fs_print_debug(fs, stderr));
+	}
 
 	mnt_free_fs(upd->fs);
 	free(upd->target);
@@ -683,6 +687,7 @@ int mnt_update_tab(mnt_update *upd, mnt_lock *lc)
 		return 0;
 
 	DBG(UPDATE, mnt_debug_h(upd, "%s: update tab", upd->filename));
+	DBG(UPDATE, mnt_fs_print_debug(upd->fs, stderr));
 
 	if (!upd->fs && upd->target)
 		rc = update_remove_entry(upd, lc);	/* umount */
