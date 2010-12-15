@@ -244,13 +244,13 @@ static const char *get_data(mnt_fs *fs, int num)
 		str = mnt_fs_get_fstype(fs);
 		break;
 	case COL_OPTIONS:
-		str = mnt_fs_get_optstr(fs);
+		str = mnt_fs_strdup_options(fs);
 		break;
 	case COL_VFS_OPTIONS:
-		str = mnt_fs_get_vfs_optstr(fs);
+		str = mnt_fs_get_vfs_options(fs);
 		break;
 	case COL_FS_OPTIONS:
-		str = mnt_fs_get_fs_optstr(fs);
+		str = mnt_fs_get_fs_options(fs);
 		break;
 	case COL_UUID:
 		str = get_tag(fs, "UUID");
