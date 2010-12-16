@@ -317,7 +317,7 @@ static char *line_get_ascii_art(struct tt_line *ln, char *buf, size_t *bufsz)
 		return NULL;
 
 	if (list_last_entry(&ln->ln_children, &ln->parent->ln_branch))
-		art = " ";
+		art = "  ";
 	else
 		art = ln->table->symbols->vert;
 
