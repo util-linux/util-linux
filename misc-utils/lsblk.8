@@ -26,6 +26,9 @@ to get list of all available columns.
 List all block devices.
 .IP "\fB\-b, \-\-bytes\fP"
 Print the SIZE column in bytes rather than in human readable format.
+.IP "\fB\-d, \-\-nodeps\fP"
+Don't print device holders or slaves. For example "lsblk --nodeps /dev/sda" prints
+information about the sda device only.
 .IP "\fB\-e, \-\-exclude \fIlist\fP
 Exclude devices by comma delimited list of major device numbers. Note that RAM
 disks (major=1) are excluded by default.

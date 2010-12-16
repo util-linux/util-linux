@@ -118,6 +118,7 @@ struct lsblk {
 	struct tt *tt;		/* output table */
 	int all_devices:1;	/* print all devices */
 	int bytes:1;		/* print SIZE in bytes */
+	int nodeps:1;		/* don't print slaves/holders */
 };
 
 struct lsblk *lsblk;	/* global handler */
@@ -693,6 +694,9 @@ static int list_holders(struct blkdev_cxt *cxt)
 	assert(cxt);
 	assert(cxt->sysfs_fd >= 0);
 
+	if (lsblk->nodeps)
+		return 0;
+
 	if (!cxt->nholders)
 		return 0;
 
@@ -853,6 +857,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 		"\nOptions:\n"
 		" -a, --all            print all devices\n"
 		" -b, --bytes          print SIZE in bytes rather than in human readable format\n"
+		" -d, --nodeps         don't print slaves or holders\n"
 		" -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
 		" -f, --fs             output info about filesystems\n"
 		" -h, --help           usage information (this)\n"
@@ -888,6 +893,8 @@ int main(int argc, char *argv[])
 
 	struct option longopts[] = {
 		{ "all",	0, 0, 'a' },
+		{ "bytes",      0, 0, 'b' },
+		{ "nodeps",     0, 0, 'd' },
 		{ "help",	0, 0, 'h' },
 		{ "output",     1, 0, 'o' },
 		{ "perms",      0, 0, 'm' },
@@ -908,13 +915,16 @@ int main(int argc, char *argv[])
 	lsblk = &_ls;
 	memset(lsblk, 0, sizeof(*lsblk));
 
-	while((c = getopt_long(argc, argv, "abe:fhlnmo:irt", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "abde:fhlnmo:irt", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			lsblk->all_devices = 1;
 			break;
 		case 'b':
 			lsblk->bytes = 1;
+			break;
+		case 'd':
+			lsblk->nodeps = 1;
 			break;
 		case 'e':
 			parse_excludes(optarg);
