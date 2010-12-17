@@ -496,7 +496,7 @@ int mnt_context_do_umount(mnt_context *cxt)
 	if ((cxt->flags & MNT_FL_RDONLY_UMOUNT) &&
 	    (cxt->mountflags & (MS_RDONLY | MS_REMOUNT))) {
 		/*
-		 * update options to handle remount to read-only
+		 * remount --> read-only mount
 		 */
 		const char *o = mnt_fs_get_vfs_options(cxt->fs);
 		char *n = o ? strdup(o) : NULL;
@@ -509,7 +509,7 @@ int mnt_context_do_umount(mnt_context *cxt)
 		if (!rc)
 			rc = mnt_fs_set_vfs_options(cxt->fs, n);
 
-		/* refresh options in /etc/mtab as well */
+		/* use "remount" instead of "umount" in /etc/mtab */
 		if (!rc && cxt->update && cxt->mtab_writable)
 			rc = mnt_update_set_fs(cxt->update,
 					       cxt->mountflags, NULL, cxt->fs);

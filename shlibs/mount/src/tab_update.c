@@ -117,6 +117,20 @@ int mnt_update_set_filename(mnt_update *upd, const char *filename, int userspace
 }
 
 /**
+ * mnt_update_get_filename:
+ * @upd: update
+ *
+ * This function returns file name (e.g. /etc/mtab) if the update
+ * should be covered by mnt_lock, otherwise returne NULL.
+ *
+ * Returns: pointer to filename that will be updated or NULL in case of error.
+ */
+const char *mnt_update_get_filename(mnt_update *upd)
+{
+	return upd && !upd->userspace_only ? upd->filename : NULL;
+}
+
+/**
  * mnt_update_is_ready:
  * @upd: update handler
  *
@@ -137,7 +151,7 @@ int mnt_update_is_ready(mnt_update *upd)
  *
  * Returns: -1 in case on error, 0 on success, 1 if update is unnecessary.
  */
-int mnt_update_set_fs(mnt_update *upd, int mountflags,
+int mnt_update_set_fs(mnt_update *upd, unsigned long mountflags,
 		      const char *target, mnt_fs *fs)
 {
 	int rc;
@@ -149,7 +163,7 @@ int mnt_update_set_fs(mnt_update *upd, int mountflags,
 		return -EINVAL;
 
 	DBG(UPDATE, mnt_debug_h(upd,
-			"reseting FS [fs=0x%p, target=%s, flags=0x%08x]",
+			"reseting FS [fs=0x%p, target=%s, flags=0x%08lx]",
 			fs, target, mountflags));
 	if (fs) {
 		DBG(UPDATE, mnt_debug_h(upd, "FS template:"));
@@ -161,6 +175,11 @@ int mnt_update_set_fs(mnt_update *upd, int mountflags,
 	upd->ready = FALSE;
 	upd->fs = NULL;
 	upd->target = NULL;
+	upd->mountflags = 0;
+
+	if (mountflags & MS_PROPAGATION)
+		return 1;
+
 	upd->mountflags = mountflags;
 
 	rc = mnt_update_set_filename(upd, NULL, 0);
@@ -190,12 +209,63 @@ int mnt_update_set_fs(mnt_update *upd, int mountflags,
 	return 0;
 }
 
-/*
+/**
  * Returns update filesystem or NULL
  */
 mnt_fs *mnt_update_get_fs(mnt_update *upd)
 {
 	return upd ? upd->fs : NULL;
+}
+
+/**
+ * mnt_update_get_mountflags:
+ * @upd: update
+ *
+ * Returns: mount flags as was set by mnt_update_set_fs()
+ */
+unsigned long mnt_update_get_mountflags(mnt_update *upd)
+{
+	return upd ? upd->mountflags : 0;
+}
+
+/**
+ * mnt_update_force_rdonly:
+ * @upd: update
+ * @rdonly: is read-only?
+ *
+ * Returns: 0 on success and negative number in case of error.
+ */
+int mnt_update_force_rdonly(mnt_update *upd, int rdonly)
+{
+	int rc = 0;
+
+	if (!upd || !upd->fs)
+		return -EINVAL;
+
+	if (rdonly && (upd->mountflags & MS_RDONLY))
+		return 0;
+	if (!rdonly && !(upd->mountflags & MS_RDONLY))
+		return 0;
+
+	if (!upd->userspace_only) {
+		/* /etc/mtab -- we care about VFS options there */
+		const char *o = mnt_fs_get_vfs_options(upd->fs);
+		char *n = o ? strdup(o) : NULL;
+
+		if (n)
+			mnt_optstr_remove_option(&n, rdonly ? "rw" : "ro");
+		if (!mnt_optstr_prepend_option(&n, rdonly ? "ro" : "rw", NULL))
+			rc = mnt_fs_set_vfs_options(upd->fs, n);
+
+		free(n);
+	}
+
+	if (rdonly)
+		upd->mountflags &= ~MS_RDONLY;
+	else
+		upd->mountflags |= MS_RDONLY;
+
+	return rc;
 }
 
 /*
@@ -718,19 +788,12 @@ static void lock_fallback(void)
 
 static int update(const char *target, mnt_fs *fs, unsigned long mountflags)
 {
-	int rc, writable = 0;
-	const char *filename = NULL;
+	int rc;
 	mnt_update *upd;
+	const char *filename;
 
 	DBG(UPDATE, mnt_debug("update test"));
 
-	rc = mnt_has_regular_mtab(&filename, &writable);
-	if (rc && writable) {
-		/* normal mtab, lock required */
-		lock = mnt_new_lock(filename, 0);
-		if (lock)
-			atexit(lock_fallback);
-	}
 	upd = mnt_new_update();
 	if (!upd)
 		return -ENOMEM;
@@ -748,6 +811,12 @@ static int update(const char *target, mnt_fs *fs, unsigned long mountflags)
 
 	/* [... here should be mount(2) call ...]  */
 
+	filename = mnt_update_get_filename(upd);
+	if (filename) {
+		lock = mnt_new_lock(filename, 0);
+		if (lock)
+			atexit(lock_fallback);
+	}
 	rc = mnt_update_tab(upd, lock);
 done:
 	return rc;

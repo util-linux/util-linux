@@ -307,10 +307,12 @@ extern int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 extern mnt_update *mnt_new_update(void);
 extern void mnt_free_update(mnt_update *upd);
 extern int mnt_update_is_ready(mnt_update *upd);
-extern int mnt_update_set_fs(mnt_update *upd, int mountflags,
+extern int mnt_update_set_fs(mnt_update *upd, unsigned long mountflags,
 	                      const char *target, mnt_fs *fs);
 extern int mnt_update_tab(mnt_update *upd, mnt_lock *lc);
-
+extern unsigned long mnt_update_get_mountflags(mnt_update *upd);
+extern int mnt_update_force_rdonly(mnt_update *upd, int rdonly);
+extern const char *mnt_update_get_filename(mnt_update *upd);
 
 /* context.c */
 

@@ -128,18 +128,15 @@ global:
 	mnt_tab_update_file;
 	mnt_unlock_file;
 	mnt_unmangle;
-	mnt_update_disable_lock;
-	mnt_update_file;
-	mnt_update_get_filename;
-	mnt_update_get_format;
-	mnt_update_get_lock;
-	mnt_update_prepare_update;
-	mnt_update_set_action;
-	mnt_update_set_filename;
-	mnt_update_set_format;
+	mnt_new_update;
+	mnt_free_update;
+	mnt_update_is_ready;
 	mnt_update_set_fs;
-	mnt_update_set_mountflags;
-	mnt_update_set_old_target;
+	mnt_update_tab;
+	mnt_update_get_mountflags;
+	mnt_update_force_rdonly;
+	mnt_update_get_filename;
+
 local:
 	*;
 };

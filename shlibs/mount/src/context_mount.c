@@ -353,6 +353,11 @@ static int do_mount(mnt_context *cxt, const char *try_type)
 		if (fs)
 			rc = mnt_fs_set_fstype(fs, try_type);
 	}
+
+	/* TODO: check if the result is really read-only/read-write
+	 *       and if necessary update cxt->mountflags
+	 */
+
 	return rc;
 }
 

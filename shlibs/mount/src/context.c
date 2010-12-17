@@ -1069,6 +1069,11 @@ int mnt_context_prepare_update(mnt_context *cxt)
 	assert(cxt->action);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
+	if (cxt->mountflags & MS_PROPAGATION) {
+		DBG(CXT, mnt_debug_h(cxt, "skip update: MS_PROPAGATION"));
+		return 0;
+	}
+
 	target = mnt_fs_get_target(cxt->fs);
 
 	if (cxt->action == MNT_ACT_UMOUNT && target && !strcmp(target, "/"))
@@ -1106,6 +1111,8 @@ int mnt_context_prepare_update(mnt_context *cxt)
 
 int mnt_context_update_tabs(mnt_context *cxt)
 {
+	unsigned long fl;
+
 	assert(cxt);
 
 	if (cxt->flags & MNT_FL_NOMTAB) {
@@ -1124,6 +1131,14 @@ int mnt_context_update_tabs(mnt_context *cxt)
 		DBG(CXT, mnt_debug_h(cxt, "don't update: syscall failed"));
 		return 0;
 	}
+
+	fl = mnt_update_get_mountflags(cxt->update);
+	if ((cxt->mountflags & MS_RDONLY) != (fl & MS_RDONLY))
+		/*
+		 * fix MS_RDONLY in options
+		 */
+		mnt_update_force_rdonly(cxt->update,
+				cxt->mountflags & MS_RDONLY);
 
 	return mnt_update_tab(cxt->update, mnt_context_get_lock(cxt));
 }
