@@ -384,6 +384,9 @@ main(int argc, char **argv)
 
 	fname = argv[optind++];
 
+	if (optind != argc)
+		errx(EXIT_FAILURE, _("only one device as argument is currently supported."));
+
 	wp = read_offsets(wp, fname, all);
 
 	if (wp) {
