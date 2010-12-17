@@ -14,6 +14,7 @@
 #include <fcntl.h>
 #include <stdint.h>
 #include <err.h>
+#include <ctype.h>
 
 #include "bitops.h"
 #include "blkdev.h"
@@ -201,19 +202,36 @@ is_in_proc_swaps(const char *fname) {
 static int
 display_summary(void)
 {
-       FILE *swaps;
-       char line[1024] ;
+	FILE *swaps;
+	char line[1024] ;
 
-       if ((swaps = fopen(_PATH_PROC_SWAPS, "r")) == NULL) {
-               warn(_("%s: open failed"), _PATH_PROC_SWAPS);
-               return -1;
-       }
+	if ((swaps = fopen(_PATH_PROC_SWAPS, "r")) == NULL) {
+		warn(_("%s: open failed"), _PATH_PROC_SWAPS);
+		return -1;
+	}
 
-       while (fgets(line, sizeof(line), swaps))
-               printf("%s", line);
+	while (fgets(line, sizeof(line), swaps)) {
+		char *p, *dev, *cn;
+		if (!strncmp(line, "Filename\t", 9)) {
+			printf("%s", line);
+			continue;
+		}
+		for (p = line; *p && *p != ' '; p++);
+		*p = '\0';
+		for (++p; *p && isblank((unsigned int) *p); p++);
 
-       fclose(swaps);
-       return 0 ;
+		dev = unmangle(line);
+		if (!dev)
+			continue;
+		cn = canonicalize_path(dev);
+		if (cn)
+			printf("%-40s%s", cn, p);
+		free(dev);
+		free(cn);
+	}
+
+	fclose(swaps);
+	return 0 ;
 }
 
 /* calls mkswap */
