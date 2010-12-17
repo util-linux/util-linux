@@ -28,6 +28,8 @@
 #include "mbsalign.h"
 #include "fdisk.h"
 #include "wholedisk.h"
+#include "pathnames.h"
+#include "canonicalize.h"
 
 #include "fdisksunlabel.h"
 #include "fdisksgilabel.h"
@@ -2896,9 +2898,9 @@ tryprocpt(void) {
 	int ma, mi;
 	unsigned long long sz;
 
-	procpt = fopen(PROC_PARTITIONS, "r");
+	procpt = fopen(_PATH_PROC_PARTITIONS, "r");
 	if (procpt == NULL) {
-		fprintf(stderr, _("cannot open %s\n"), PROC_PARTITIONS);
+		fprintf(stderr, _("cannot open %s\n"), _PATH_PROC_PARTITIONS);
 		return;
 	}
 
@@ -2907,8 +2909,13 @@ tryprocpt(void) {
 			    &ma, &mi, &sz, ptname) != 4)
 			continue;
 		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
-		if (is_whole_disk(devname))
-			try(devname, 0);
+		if (is_whole_disk(devname)) {
+			char *cn = canonicalize_path(devname);
+			if (cn) {
+				try(cn, 0);
+				free(cn);
+			}
+		}
 	}
 	fclose(procpt);
 }

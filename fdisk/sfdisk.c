@@ -54,6 +54,8 @@
 #include "common.h"
 #include "wholedisk.h"
 #include "gpt.h"
+#include "pathnames.h"
+#include "canonicalize.h"
 
 /*
  * Table of contents:
@@ -2423,8 +2425,6 @@ is_ide_cdrom_or_tape(char *device) {
 	return is_ide;
 }
 
-#define PROC_PARTITIONS	"/proc/partitions"
-
 static char *
 nextproc(FILE *procf) {
 	static char devname[256];
@@ -2441,7 +2441,7 @@ nextproc(FILE *procf) {
 		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
 		if (!is_whole_disk(devname))
 			continue;
-		return devname;
+		return canonicalize_path(devname);
 	}
 
 	return NULL;
@@ -2608,22 +2608,23 @@ main(int argc, char **argv) {
 	/* try all known devices */
 	total_size = 0;
 
-	procf = fopen(PROC_PARTITIONS, "r");
+	procf = fopen(_PATH_PROC_PARTITIONS, "r");
 	if (!procf)
-	    fprintf(stderr, _("cannot open %s\n"), PROC_PARTITIONS);
+	    fprintf(stderr, _("cannot open %s\n"), _PATH_PROC_PARTITIONS);
 	else {
 	    while ((dev = nextproc(procf)) != NULL) {
-	        if (is_ide_cdrom_or_tape(dev))
-		   continue;
-	        gpt_warning(dev, 1);
-	        if (opt_out_geom)
-		   do_geom(dev, 1);
-	        if (opt_out_pt_geom)
-		   do_pt_geom(dev, 1);
-	        if (opt_size)
-		   do_size(dev, 1);
-	        if (opt_list || verify)
-		   do_list(dev, 1);
+	        if (!is_ide_cdrom_or_tape(dev)) {
+	            gpt_warning(dev, 1);
+	            if (opt_out_geom)
+		        do_geom(dev, 1);
+	            if (opt_out_pt_geom)
+		        do_pt_geom(dev, 1);
+	            if (opt_size)
+		        do_size(dev, 1);
+	            if (opt_list || verify)
+		        do_list(dev, 1);
+		}
+		free(dev);
 	    }
 	    fclose(procf);
 	}

@@ -109,4 +109,3 @@ extern void xbsd_print_disklabel(int);
 /* prototypes for fdisksgilabel.c */
 extern int valid_part_table_flag(unsigned char *b);
 
-#define PROC_PARTITIONS "/proc/partitions"
