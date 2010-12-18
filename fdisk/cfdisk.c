@@ -150,7 +150,6 @@
 
 #define COL_ID_WIDTH 25
 
-#define CR '\015'
 #define ESC '\033'
 #define DEL '\177'
 #define BELL '\007'
@@ -428,7 +427,7 @@ fdexit(int ret) {
 static int
 get_string(char *str, int len, char *def) {
     size_t cells = 0, i = 0;
-    int x, y, key;
+    int x, y;
     int use_def = FALSE;
     wint_t c;
 
@@ -445,13 +444,21 @@ get_string(char *str, int len, char *def) {
 
     refresh();
 
+    while (1) {
 #if !defined(HAVE_SLCURSES_H) && !defined(HAVE_SLANG_SLCURSES_H) && \
     defined(HAVE_LIBNCURSESW) && defined(HAVE_WIDECHAR)
-    while ((key = get_wch(&c)) != ERR &&
-	   c != '\r' && c != '\n' && c != KEY_ENTER) {
+	if (get_wch(&c) == ERR) {
 #else
-    while ((c = getch()) != '\n' && c != CR) {
+	if ((c = getch()) == ERR) {
 #endif
+		if (!isatty(STDIN_FILENO))
+			exit(2);
+		else
+			break;
+	}
+	if (c == '\r' || c == '\n' || c == KEY_ENTER)
+		break;
+
 	switch (c) {
 	case ESC:
 	    move(y, x);
@@ -1131,6 +1138,10 @@ menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
         refresh();
         key = getch();
 
+	if (key == ERR)
+		if (!isatty(STDIN_FILENO))
+			exit(2);
+
         /* Clear out all prompts and such */
         clear_warning();
         for (i = y; i < ylast; i++) {
@@ -1176,7 +1187,7 @@ menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
         }
 
         /* Enter equals the keyboard shortcut of current menu item */
-        if (key == CR)
+        if (key == '\r')
             key = menuItems[current].key;
 
 	/* Give alternatives for arrow keys in case the window manager
