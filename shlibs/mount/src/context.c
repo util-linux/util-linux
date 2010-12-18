@@ -850,8 +850,10 @@ int mnt_context_prepare_srcpath(mnt_context *cxt)
 
 	src = mnt_fs_get_source(cxt->fs);
 
-	/* ignore filesystems without a real source */
-	if (!src || (cxt->fs->flags & (MNT_FS_PSEUDO | MNT_FS_NET)))
+	/* ignore filesystems without a real source or MS_PROPAGATION stuff */
+	if (!src ||
+	    (cxt->fs->flags & (MNT_FS_PSEUDO | MNT_FS_NET)) ||
+	    (cxt->mountflags & (MS_BIND | MS_MOVE | MS_PROPAGATION)))
 		return 0;
 
 	DBG(CXT, mnt_debug_h(cxt, "srcpath '%s'", src));
@@ -893,9 +895,7 @@ int mnt_context_prepare_srcpath(mnt_context *cxt)
 	/*
 	 * Initialize loop device
 	 */
-	if (is_loop(cxt) &&
-	    !(cxt->mountflags & (MS_BIND | MS_MOVE |
-			         MS_PROPAGATION | MS_REMOUNT))) {
+	if (is_loop(cxt)) {
 		; /* TODO */
 	}
 
@@ -1102,9 +1102,12 @@ int mnt_context_prepare_update(mnt_context *cxt)
 				!cxt->mtab_writable);
 	}
 
-	rc = mnt_update_set_fs(cxt->update, cxt->mountflags,
-			  mnt_fs_get_target(cxt->fs),
-			  cxt->action == MNT_ACT_UMOUNT ? NULL : cxt->fs);
+	if (cxt->action == MNT_ACT_UMOUNT)
+		rc = mnt_update_set_fs(cxt->update, cxt->mountflags,
+					mnt_fs_get_target(cxt->fs), NULL);
+	else
+		rc = mnt_update_set_fs(cxt->update, cxt->mountflags,
+					NULL, cxt->fs);
 
 	return rc < 0 ? rc : 0;
 }

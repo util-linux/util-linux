@@ -146,8 +146,8 @@ int mnt_update_is_ready(mnt_update *upd)
  * mnt_update_set_fs:
  * @upd: update handler
  * @mountflags: MS_* flags
- * @target: umount target or MS_MOVE source
- * @fs: mount or MS_REMOUNT filesystem description, or MS_MOVE target
+ * @target: umount target, must be num for mount
+ * @fs: mount filesystem description, must be NULL for umount
  *
  * Returns: -1 in case on error, 0 on success, 1 if update is unnecessary.
  */
@@ -160,6 +160,10 @@ int mnt_update_set_fs(mnt_update *upd, unsigned long mountflags,
 	assert(target || fs);
 
 	if (!upd)
+		return -EINVAL;
+	if ((mountflags & MS_MOVE) && (!fs || !mnt_fs_get_srcpath(fs)))
+		return -EINVAL;
+	if (target && fs)
 		return -EINVAL;
 
 	DBG(UPDATE, mnt_debug_h(upd,
@@ -180,13 +184,19 @@ int mnt_update_set_fs(mnt_update *upd, unsigned long mountflags,
 	if (mountflags & MS_PROPAGATION)
 		return 1;
 
+
 	upd->mountflags = mountflags;
 
 	rc = mnt_update_set_filename(upd, NULL, 0);
 	if (rc)
 		return rc;	/* error or no file available (rc = 1) */
 
-	if (fs) {
+	if (target) {
+		upd->target = strdup(target);
+		if (!upd->target)
+			return -ENOMEM;
+
+	} else if (fs) {
 		if (upd->userspace_only && !(mountflags & MS_MOVE)) {
 			int rc = utab_new_entry(fs, mountflags, &upd->fs);
 			if (rc)
@@ -198,11 +208,6 @@ int mnt_update_set_fs(mnt_update *upd, unsigned long mountflags,
 		}
 	}
 
-	if (target) {
-		upd->target = strdup(target);
-		if (!upd->target)
-			return -ENOMEM;
-	}
 
 	DBG(UPDATE, mnt_debug_h(upd, "ready"));
 	upd->ready = TRUE;
@@ -675,7 +680,8 @@ static int update_modify_target(mnt_update *upd, mnt_lock *lc)
 	tb = __mnt_new_tab_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
 	if (tb) {
-		mnt_fs *cur = mnt_tab_find_target(tb, upd->target, MNT_ITER_BACKWARD);
+		mnt_fs *cur = mnt_tab_find_target(tb,
+				mnt_fs_get_srcpath(upd->fs), MNT_ITER_BACKWARD);
 		if (cur) {
 			rc = mnt_fs_set_target(cur, mnt_fs_get_target(upd->fs));
 			if (!rc)
