@@ -564,6 +564,21 @@ setlkw_timeout (int sig) {
      /* nothing, fcntl will fail anyway */
 }
 
+#ifdef HAVE_LIBMOUNT_MOUNT
+static mnt_lock *libmount_lock;
+
+mnt_lock *
+init_libmount_lock(const char *filename)
+{
+	if (filename)
+		return libmount_lock = mnt_new_lock(filename, 0);
+	if (libmount_lock)
+		mnt_free_lock(libmount_lock);
+	libmount_lock = NULL;
+	return NULL;
+}
+#endif
+
 /* Remove lock file.  */
 void
 unlock_mtab (void) {
@@ -573,6 +588,10 @@ unlock_mtab (void) {
 		unlink (_PATH_MOUNTED_LOCK);
 		we_created_lockfile = 0;
 	}
+#ifdef HAVE_LIBMOUNT_MOUNT
+	if (libmount_lock)
+		mnt_unlock_file(libmount_lock);
+#endif
 }
 
 /* Create the lock file.

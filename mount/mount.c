@@ -1302,6 +1302,50 @@ loop_check(const char **spec, const char **type, int *flags,
   return 0;
 }
 
+#ifdef HAVE_LIBMOUNT_MOUNT
+static mnt_update *
+prepare_mtab_entry(const char *spec, const char *node, const char *type,
+					  const char *opts, int flags)
+{
+	mnt_update *upd = mnt_new_update();
+	mnt_fs *fs = mnt_new_fs();
+
+	if (!upd || !fs)
+		goto nothing;
+
+	mnt_fs_set_source(fs, spec);
+	mnt_fs_set_target(fs, node);
+	mnt_fs_set_fstype(fs, type);
+	mnt_fs_set_options(fs, opts);
+
+	if (mnt_update_set_fs(upd, flags, NULL, fs))
+		goto nothing;
+
+	mnt_free_fs(fs);
+	return upd;
+nothing:
+	mnt_free_update(upd);
+	mnt_free_fs(fs);
+	return NULL;
+}
+
+static void update_mtab_entry(mnt_update *upd, int flags)
+{
+	unsigned long fl = mnt_update_get_mountflags(upd);
+	mnt_lock *lc;
+
+	if ((flags & MS_RDONLY) != (fl & MS_RDONLY))
+		mnt_update_force_rdonly(upd, flags & MS_RDONLY);
+
+	lc = init_libmount_lock( mnt_update_get_filename(upd) );
+
+	mnt_update_tab(upd, lc);
+
+	init_libmount_lock(NULL);
+	mnt_free_update(upd);
+}
+
+#else /*!HAVE_LIBMOUNT_MOUNT */
 static void
 update_mtab_entry(const char *spec, const char *node, const char *type,
 		  const char *opts, int flags, int freq, int pass) {
@@ -1354,6 +1398,7 @@ update_mtab_entry(const char *spec, const char *node, const char *type,
 	my_free(mnt.mnt_fsname);
 	my_free(mnt.mnt_dir);
 }
+#endif /* !HAVE_LIBMOUNT_MOUNT */
 
 static void
 set_pfd(char *s) {
@@ -1438,7 +1483,9 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   int loop = 0;
   const char *loopdev = 0, *loopfile = 0;
   struct stat statbuf;
-
+#ifdef HAVE_LIBMOUNT_MOUNT
+  mnt_update *upd = NULL;
+#endif
   /* copies for freeing on exit */
   const char *opts1, *spec1, *node1, *types1, *extra_opts1;
 
@@ -1506,6 +1553,9 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
       res = status;
       goto out;
   }
+#ifdef HAVE_LIBMOUNT_MOUNT
+  upd = prepare_mtab_entry(spec, node, types, opts, flags);
+#endif
 
   block_signals (SIG_BLOCK);
 
@@ -1545,7 +1595,10 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 
   if (fake || mnt5_res == 0) {
       /* Mount succeeded, report this (if verbose) and write mtab entry.  */
-
+#ifdef HAVE_LIBMOUNT_MOUNT
+      if (upd)
+	      update_mtab_entry(upd, flags);
+#else
       if (!(mounttype & MS_PROPAGATION)) {
 	      char *mtab_opts = fix_opts_string (flags & ~MS_NOMTAB, extra_opts, user);
 	      update_mtab_entry(loop ? loopfile : spec,
@@ -1557,7 +1610,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 			pass);
 	      free (mtab_opts);
       }
-
+#endif
       block_signals (SIG_UNBLOCK);
       res = 0;
       goto out;

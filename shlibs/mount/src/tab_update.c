@@ -184,7 +184,6 @@ int mnt_update_set_fs(mnt_update *upd, unsigned long mountflags,
 	if (mountflags & MS_PROPAGATION)
 		return 1;
 
-
 	upd->mountflags = mountflags;
 
 	rc = mnt_update_set_filename(upd, NULL, 0);

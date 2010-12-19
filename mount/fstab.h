@@ -2,6 +2,13 @@
 #define MOUNT_FSTAB_H
 
 #include "mount_mntent.h"
+
+#ifdef HAVE_LIBMOUNT_MOUNT
+#define USE_UNSTABLE_LIBMOUNT_API
+#include <mount.h>			/* libmount */
+extern mnt_lock *init_libmount_lock(const char *filename);
+#endif
+
 int mtab_is_writable(void);
 int mtab_is_a_symlink(void);
 int mtab_does_not_exist(void);
