@@ -1364,6 +1364,11 @@ int mnt_fs_to_mntent(mnt_fs *fs, struct mntent **mnt)
 	m->mnt_freq = mnt_fs_get_freq(fs);
 	m->mnt_passno = mnt_fs_get_passno(fs);
 
+	if (!m->mnt_fsname) {
+		m->mnt_fsname = strdup("none");
+		if (!m->mnt_fsname)
+			goto err;
+	}
 	*mnt = m;
 
 	return 0;
