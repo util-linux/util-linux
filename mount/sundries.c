@@ -14,7 +14,6 @@
 
 #include "canonicalize.h"
 
-#include "fstab.h"
 #include "sundries.h"
 #include "xmalloc.h"
 #include "nls.h"
