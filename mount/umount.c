@@ -738,6 +738,9 @@ main (int argc, char *argv[]) {
 
 	atexit(unlock_mtab);
 
+#ifdef HAVE_LIBMOUNT_MOUNT
+	mnt_init_debug(0);
+#endif
 	if (all) {
 		/* nodev stuff: sysfs, usbfs, oprofilefs, ... */
 		if (types == NULL)

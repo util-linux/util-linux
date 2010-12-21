@@ -2484,6 +2484,10 @@ main(int argc, char *argv[]) {
 		printf("mount: eUID:       %u\n", geteuid());
 	}
 
+#ifdef HAVE_LIBMOUNT_MOUNT
+	mnt_init_debug(0);
+#endif
+
 	argc -= optind;
 	argv += optind;
 
