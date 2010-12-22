@@ -23,7 +23,7 @@ ts_init "$*"
 ts_skip_nonroot
 
 if [ ! -x "$TS_CMD_MTABLOCK" ]; then
-	ts_slip "not compiled"
+	ts_skip "not compiled"
 fi
 
 #
