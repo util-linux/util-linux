@@ -722,7 +722,7 @@ char *mnt_get_mountpoint(const char *path)
 
 	memcpy(mnt, "/", 2);
 done:
-	DBG(UTILS, mnt_debug("fs-root for %s is %s", path, mnt));
+	DBG(UTILS, mnt_debug("%s mountpoint is %s", path, mnt));
 	return mnt;
 err:
 	free(mnt);
@@ -731,7 +731,7 @@ err:
 
 char *mnt_get_fs_root(const char *path, const char *mnt)
 {
-	char *m = (char *) mnt;
+	char *m = (char *) mnt, *res;
 	const char *p;
 	size_t sz;
 
@@ -746,7 +746,9 @@ char *mnt_get_fs_root(const char *path, const char *mnt)
 	if (m != mnt)
 		free(m);
 
-	return *p ? strdup(p) : strdup("/");
+	res = *p ? strdup(p) : strdup("/");
+	DBG(UTILS, mnt_debug("%s fs-root is %s", path, res));
+	return res;
 }
 
 #ifdef TEST_PROGRAM

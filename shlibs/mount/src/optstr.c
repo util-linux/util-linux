@@ -147,7 +147,6 @@ static int mnt_optstr_locate_option(char *optstr, const char *name,
 		}
 	} while(1);
 
-	DBG(OPTIONS, mnt_debug("can't found '%s' option", name));
 	return rc;
 }
 
@@ -512,6 +511,59 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs,
 
 	return 0;
 }
+
+/**
+ * mnt_optstr_get_options
+ * @optstr: string with comma separated list of options
+ * @subset: returns newly allocated string with options
+ * @map: options map
+ * @ignore: mask of the options that should be ignored
+ *
+ * Extracts options from @optstr that belongs to the @map, for example:
+ *
+ *	 mnt_split_optstr_by_map(optstr, &p,
+ *			mnt_get_builtin_optmap(MNT_LINUX_MAP),
+ *			MNT_NOMTAB);
+ *
+ * returns all VFS options, the options that does not belong to mtab
+ * are ignored.
+ *
+ * Returns: 0 on success, or negative number in case of error.
+ */
+int mnt_optstr_get_options(const char *optstr, char **subset,
+			    const struct mnt_optmap *map, int ignore)
+{
+	struct mnt_optmap const *maps[1];
+	char *name, *val, *str = (char *) optstr;
+	size_t namesz, valsz;
+
+	if (!optstr || !subset)
+		return -EINVAL;
+
+	maps[0] = map;
+	*subset = NULL;
+
+	while(!mnt_optstr_next_option(&str, &name, &namesz, &val, &valsz)) {
+		int rc = 0;
+		const struct mnt_optmap *ent;
+
+		mnt_optmap_get_entry(maps, 1, name, namesz, &ent);
+
+		if (!ent || !ent->id)
+			continue;	/* ignore undefined options (comments) */
+
+		if (ignore && (ent->mask & ignore))
+			continue;
+		rc = __mnt_optstr_append_option(subset, name, namesz, val, valsz);
+		if (rc) {
+			free(*subset);
+			return rc;
+		}
+	}
+
+	return 0;
+}
+
 
 /**
  * mnt_optstr_get_flags:

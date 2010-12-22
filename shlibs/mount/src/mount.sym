@@ -136,7 +136,7 @@ global:
 	mnt_update_get_mountflags;
 	mnt_update_force_rdonly;
 	mnt_update_get_filename;
-
+	mnt_update_get_fs;
 local:
 	*;
 };

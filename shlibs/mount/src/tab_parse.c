@@ -469,7 +469,7 @@ mnt_tab *__mnt_new_tab_from_file(const char *filename, int fmt)
 
 	if (!filename)
 		return NULL;
-	if (stat(filename, &st) || st.st_size == 0)
+	if (stat(filename, &st))
 		return NULL;
 	tb = mnt_new_tab();
 	if (tb) {

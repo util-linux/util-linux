@@ -99,7 +99,7 @@ static const struct mnt_optmap linux_flags_map[] =
    { "async",    MS_SYNCHRONOUS, MNT_INVERT },/* asynchronous I/O */
 
    { "dirsync",  MS_DIRSYNC },                /* synchronous directory modifications */
-   { "remount",  MS_REMOUNT },                /* Alter flags of mounted FS */
+   { "remount",  MS_REMOUNT, MNT_NOMTAB },    /* alter flags of mounted FS */
    { "bind",     MS_BIND },                   /* Remount part of tree elsewhere */
    { "rbind",    MS_BIND | MS_REC },          /* Idem, plus mounted subtrees */
 #ifdef MS_NOSUB

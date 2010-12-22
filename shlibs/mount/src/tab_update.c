@@ -201,9 +201,10 @@ int mnt_update_set_fs(mnt_update *upd, unsigned long mountflags,
 			if (rc)
 				return rc;
 		} else {
-			upd->fs = mnt_copy_fs(fs);
+			upd->fs = mnt_copy_mtab_fs(fs);
 			if (!upd->fs)
 				return -ENOMEM;
+
 		}
 	}
 
@@ -214,7 +215,10 @@ int mnt_update_set_fs(mnt_update *upd, unsigned long mountflags,
 }
 
 /**
- * Returns update filesystem or NULL
+ * mnt_update_get_fs:
+ * @upd: update
+ *
+ * Returns: update filesystem entry or NULL
  */
 mnt_fs *mnt_update_get_fs(mnt_update *upd)
 {
@@ -283,6 +287,7 @@ static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent)
 {
 	int rc = 0;
 	const char *o = NULL, *a = NULL;
+	char *u = NULL;
 
 	assert(fs);
 	assert(ent);
@@ -297,8 +302,19 @@ static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent)
 	o = mnt_fs_get_userspace_options(fs);
 	a = mnt_fs_get_attributes(fs);
 
-	if (!o && !a)
-		return 1;	/* don't have mount options */
+	if (o) {
+		/* remove non-mtab options */
+		rc = mnt_optstr_get_options(o, &u,
+				mnt_get_builtin_optmap(MNT_USERSPACE_MAP),
+				MNT_NOMTAB);
+		if (rc)
+			goto err;
+	}
+
+	if (!u && !a) {
+		DBG(UPDATE, mnt_debug("utab entry unnecessary (no options)"));
+		return 1;
+	}
 
 	/* allocate the entry */
 	*ent = mnt_copy_fs(fs);
@@ -307,7 +323,7 @@ static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent)
 		goto err;
 	}
 
-	rc = mnt_fs_set_userspace_options(*ent, o);
+	rc = mnt_fs_set_userspace_options(*ent, u);
 	if (rc)
 		goto err;
 	rc = mnt_fs_set_attributes(*ent, a);
@@ -320,10 +336,12 @@ static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent)
 			goto err;
 	}
 
+	free(u);
 	DBG(UPDATE, mnt_debug("utab entry OK"));
 	return 0;
 err:
 	mnt_free_fs(*ent);
+	free(u);
 	*ent = NULL;
 	return rc;
 }
@@ -349,6 +367,8 @@ static int set_fs_root(mnt_fs *result, mnt_fs *fs, unsigned long mountflags)
 		const char *src, *src_root;
 		mnt_fs *src_fs;
 
+		DBG(UPDATE, mnt_debug("setting FS root: bind"));
+
 		src = mnt_fs_get_srcpath(fs);
 		if (src) {
 			rc = mnt_fs_set_bindsrc(result, src);
@@ -363,11 +383,15 @@ static int set_fs_root(mnt_fs *result, mnt_fs *fs, unsigned long mountflags)
 		root = mnt_get_fs_root(src, mnt);
 
 		tb = __mnt_new_tab_from_file(_PATH_PROC_MOUNTINFO, MNT_FMT_MOUNTINFO);
-		if (!tb)
+		if (!tb) {
+			DBG(UPDATE, mnt_debug("failed to parse mountinfo -- using default"));
 			goto dflt;
+		}
 		src_fs = mnt_tab_find_target(tb, mnt, MNT_ITER_BACKWARD);
-		if (!src_fs)
+		if (!src_fs)  {
+			DBG(UPDATE, mnt_debug("not found '%s' in mountinfo -- using default", mnt));
 			goto dflt;
+		}
 
 		/* set device name and fs */
 		src = mnt_fs_get_srcpath(src_fs);
@@ -404,6 +428,8 @@ static int set_fs_root(mnt_fs *result, mnt_fs *fs, unsigned long mountflags)
 
 		if (mnt_fs_get_option(fs, "subvol", &vol, &volsz))
 			goto dflt;
+
+		DBG(UPDATE, mnt_debug("setting FS root: btrfs subvol"));
 
 		sz = volsz;
 		if (*vol != '/')
@@ -762,7 +788,9 @@ int mnt_update_tab(mnt_update *upd, mnt_lock *lc)
 		return 0;
 
 	DBG(UPDATE, mnt_debug_h(upd, "%s: update tab", upd->filename));
-	DBG(UPDATE, mnt_fs_print_debug(upd->fs, stderr));
+	if (upd->fs) {
+		DBG(UPDATE, mnt_fs_print_debug(upd->fs, stderr));
+	}
 
 	if (!upd->fs && upd->target)
 		rc = update_remove_entry(upd, lc);	/* umount */

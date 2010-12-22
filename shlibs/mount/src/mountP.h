@@ -84,8 +84,8 @@ mnt_debug_h(void *handler, const char *mesg, ...)
 }
 
 #else /* !CONFIG_LIBMOUNT_DEBUG */
-# define DBG(m,x)
-# define DBG_FLUSH
+# define DBG(m,x) do { ; } while(0)
+# define DBG_FLUSH do { ; } while(0)
 #endif
 
 /* extension for files in the /etc/fstab.d directory */

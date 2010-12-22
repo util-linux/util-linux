@@ -65,7 +65,7 @@ struct mnt_optmap
 {
 	const char	*name;	 /* option name[=%<type>] (e.g. "loop[=%s]") */
 	int		id;	 /* option ID or MS_* flags (e.g MS_RDONLY) */
-	int		mask;	 /* MNT_{MFLAG,MDATA,INVMASK,...} mask */
+	int		mask;	 /* MNT_{NOMTAB,INVERT,...} mask */
 };
 
 /*
@@ -167,6 +167,9 @@ extern int mnt_split_optstr(const char *optstr,
 			    char **user, char **vfs, char **fs,
 			    int ifnore_user, int ignore_vfs);
 
+extern int mnt_optstr_get_options(const char *optstr, char **subset,
+                            const struct mnt_optmap *map, int ignore);
+
 extern int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 				const struct mnt_optmap *map);
 extern int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
@@ -204,6 +207,7 @@ extern int mnt_lock_file(mnt_lock *ml);
 extern mnt_fs *mnt_new_fs(void);
 extern void mnt_free_fs(mnt_fs *ent);
 extern mnt_fs *mnt_copy_fs(const mnt_fs *fs);
+extern mnt_fs *mnt_copy_mtab_fs(const mnt_fs *fs);
 extern void *mnt_fs_get_userdata(mnt_fs *fs);
 extern int mnt_fs_set_userdata(mnt_fs *fs, void *data);
 extern const char *mnt_fs_get_source(mnt_fs *ent);
@@ -314,6 +318,7 @@ extern int mnt_update_tab(mnt_update *upd, mnt_lock *lc);
 extern unsigned long mnt_update_get_mountflags(mnt_update *upd);
 extern int mnt_update_force_rdonly(mnt_update *upd, int rdonly);
 extern const char *mnt_update_get_filename(mnt_update *upd);
+extern mnt_fs *mnt_update_get_fs(mnt_update *upd);
 
 /* context.c */
 

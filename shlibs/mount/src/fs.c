@@ -146,6 +146,60 @@ err:
 }
 
 /**
+ * mnt_copy_mtab_fs:
+ * @fs: filesystem
+ *
+ * This function copies all @fs description except information that does not
+ * belong to /etc/mtab (e.g. VFS and userspace mount options with MNT_NOMTAB
+ * mask).
+ *
+ * Returns: copy of @fs.
+ */
+mnt_fs *mnt_copy_mtab_fs(const mnt_fs *fs)
+{
+	mnt_fs *n = mnt_new_fs();
+
+	if (!n)
+		return NULL;
+
+	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, source)))
+		goto err;
+	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, target)))
+		goto err;
+	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, fstype)))
+		goto err;
+
+	if (fs->vfs_optstr) {
+		char *p = NULL;
+		mnt_optstr_get_options(fs->vfs_optstr, &p,
+				mnt_get_builtin_optmap(MNT_LINUX_MAP),
+				MNT_NOMTAB);
+		n->vfs_optstr = p;
+	}
+
+	if (fs->user_optstr) {
+		char *p = NULL;
+		mnt_optstr_get_options(fs->user_optstr, &p,
+				mnt_get_builtin_optmap(MNT_USERSPACE_MAP),
+				MNT_NOMTAB);
+		n->user_optstr = p;
+	}
+
+	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, fs_optstr)))
+		goto err;
+
+	n->freq       = fs->freq;
+	n->passno     = fs->passno;
+	n->flags      = fs->flags;
+
+	return n;
+err:
+	mnt_free_fs(n);
+	return NULL;
+
+}
+
+/**
  * mnt_fs_get_userdata:
  * @fs: mnt_file instance
  *
