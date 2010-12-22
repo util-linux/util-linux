@@ -335,7 +335,19 @@ umount_one (const char *spec, const char *node, const char *type,
  writemtab:
 	if (!nomtab &&
 	    (umnt_err == 0 || umnt_err == EINVAL || umnt_err == ENOENT)) {
+#ifdef HAVE_LIBMOUNT_MOUNT
+		mnt_update *upd = mnt_new_update();
+
+		if (upd && !mnt_update_set_fs(upd, 0, node, NULL)) {
+			mnt_lock *lc = init_libmount_lock(
+						mnt_update_get_filename(upd));
+			mnt_update_tab(upd, lc);
+			init_libmount_lock(NULL);
+		}
+		mnt_free_update(upd);
+#else
 		update_mtab (node, NULL);
+#endif
 	}
 
 	if (res >= 0)
