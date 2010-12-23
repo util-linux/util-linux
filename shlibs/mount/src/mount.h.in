@@ -191,7 +191,7 @@ enum {
 extern const struct mnt_optmap *mnt_get_builtin_optmap(int id);
 
 /* lock.c */
-extern mnt_lock *mnt_new_lock(const char *lockname, pid_t id);
+extern mnt_lock *mnt_new_lock(const char *datafile, pid_t id);
 extern void mnt_free_lock(mnt_lock *ml);
 
 extern const char *mnt_lock_get_lockfile(mnt_lock *ml);
