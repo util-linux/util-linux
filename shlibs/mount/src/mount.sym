@@ -6,8 +6,6 @@
 MOUNT_2.19 {
 global:
 	mnt_cache_device_has_tag;
-	mnt_cache_find_path;
-	mnt_cache_find_tag;
 	mnt_cache_find_tag_value;
 	mnt_cache_read_tags;
 	mnt_copy_fs;

@@ -135,9 +135,6 @@ extern int mnt_has_regular_mtab(const char **mtab, int *writable);
 /* cache.c */
 extern mnt_cache *mnt_new_cache(void);
 extern void mnt_free_cache(mnt_cache *cache);
-extern const char *mnt_cache_find_path(mnt_cache *cache, const char *path);
-extern const char *mnt_cache_find_tag(mnt_cache *cache,
-                        const char *token, const char *value);
 extern int mnt_cache_read_tags(mnt_cache *cache, const char *devname);
 extern int mnt_cache_device_has_tag(mnt_cache *cache, const char *devname,
                                 const char *token, const char *value);
@@ -145,10 +142,10 @@ extern int mnt_cache_device_has_tag(mnt_cache *cache, const char *devname,
 extern char *mnt_cache_find_tag_value(mnt_cache *cache,
 				const char *devname, const char *token);
 
+extern char *mnt_get_fstype(const char *devname, int *ambi, mnt_cache *cache);
 extern char *mnt_resolve_path(const char *path, mnt_cache *cache);
 extern char *mnt_resolve_tag(const char *token, const char *value, mnt_cache *cache);
 extern char *mnt_resolve_spec(const char *spec, mnt_cache *cache);
-extern char *mnt_get_fstype(const char *devname, int *ambi, mnt_cache *cache);
 
 /* optstr.c */
 extern int mnt_optstr_next_option(char **optstr, char **name, size_t *namesz,

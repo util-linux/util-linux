@@ -177,14 +177,10 @@ static int mnt_cache_add_tag(mnt_cache *cache, const char *token,
 }
 
 
-/**
- * mnt_cache_find_path:
- * @cache: pointer to mnt_cache instance
- * @path: "native" (non-canonicalized) path
- *
- * Returns: cached canonicalized path or NULL.
+/*
+ * Returns cached canonicalized path or NULL.
  */
-const char *mnt_cache_find_path(mnt_cache *cache, const char *path)
+static const char *mnt_cache_find_path(mnt_cache *cache, const char *path)
 {
 	int i;
 
@@ -204,15 +200,10 @@ const char *mnt_cache_find_path(mnt_cache *cache, const char *path)
 	return NULL;
 }
 
-/**
- * mnt_cache_find_tag:
- * @cache: pointer to mnt_cache instance
- * @token: tag name
- * @value: tag value
- *
- * Returns: cached path or NULL.
+/*
+ * Returns cached path or NULL.
  */
-const char *mnt_cache_find_tag(mnt_cache *cache,
+static const char *mnt_cache_find_tag(mnt_cache *cache,
 			const char *token, const char *value)
 {
 	int i;
