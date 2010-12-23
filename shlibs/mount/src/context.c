@@ -295,20 +295,6 @@ int mnt_context_disable_mtab(mnt_context *cxt, int disable)
 }
 
 /**
- * mnt_context_disable_lock:
- * @cxt: mount context
- * @disable: TRUE or FALSE
- *
- * Disable/enable mtab lock.
- *
- * Returns: 0 on success, negative number in case of error.
- */
-int mnt_context_disable_lock(mnt_context *cxt, int disable)
-{
-	return set_flag(cxt, MNT_FL_NOLOCK, disable);
-}
-
-/**
  * mnt_context_enable_force:
  * @cxt: mount context
  * @enable: TRUE or FALSE

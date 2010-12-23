@@ -331,19 +331,21 @@ extern mnt_context *mnt_new_context(void);
 extern void mnt_free_context(mnt_context *cxt);
 extern int mnt_reset_context(mnt_context *cxt);
 extern int mnt_context_is_restricted(mnt_context *cxt);
+
 extern int mnt_context_set_optsmode(mnt_context *cxt, int mode);
 extern int mnt_context_disable_canonicalize(mnt_context *cxt, int disable);
 extern int mnt_context_enable_lazy(mnt_context *cxt, int enable);
+extern int mnt_context_enable_rdonly_umount(mnt_context *cxt, int enable);
 extern int mnt_context_disable_helpers(mnt_context *cxt, int disable);
 extern int mnt_context_enable_sloppy(mnt_context *cxt, int enable);
 extern int mnt_context_enable_fake(mnt_context *cxt, int enable);
 extern int mnt_context_disable_mtab(mnt_context *cxt, int disable);
-extern int mnt_context_disable_lock(mnt_context *cxt, int disable);
 extern int mnt_context_enable_force(mnt_context *cxt, int enable);
 extern int mnt_context_enable_verbose(mnt_context *cxt, int enable);
 extern int mnt_context_enable_loopdel(mnt_context *cxt, int enable);
-extern int mnt_context_enable_rdonly_umount(mnt_context *cxt, int enable);
+
 extern int mnt_context_set_fs(mnt_context *cxt, mnt_fs *fs);
+extern mnt_fs *mnt_context_get_fs(mnt_context *cxt);
 extern int mnt_context_set_source(mnt_context *cxt, const char *source);
 extern int mnt_context_set_target(mnt_context *cxt, const char *target);
 extern int mnt_context_set_fstype(mnt_context *cxt, const char *fstype);
@@ -351,19 +353,23 @@ extern int mnt_context_set_options(mnt_context *cxt, const char *optstr);
 extern int mnt_context_append_options(mnt_context *cxt, const char *optstr);
 extern int mnt_context_set_fstype_pattern(mnt_context *cxt, const char *pattern);
 extern int mnt_context_set_options_pattern(mnt_context *cxt, const char *pattern);
+
 extern int mnt_context_set_fstab(mnt_context *cxt, mnt_tab *tb);
 extern int mnt_context_get_fstab(mnt_context *cxt, mnt_tab **tb);
 extern int mnt_context_get_mtab(mnt_context *cxt, mnt_tab **tb);
 extern int mnt_context_set_cache(mnt_context *cxt, mnt_cache *cache);
 extern mnt_cache *mnt_context_get_cache(mnt_context *cxt);
 extern mnt_lock *mnt_context_get_lock(mnt_context *cxt);
+
 extern int mnt_context_set_mountflags(mnt_context *cxt, unsigned long flags);
 extern int mnt_context_get_mountflags(mnt_context *cxt, unsigned long *flags);
 extern int mnt_context_set_userspace_mountflags(mnt_context *cxt, unsigned long flags);
 extern int mnt_context_get_userspace_mountflags(mnt_context *cxt, unsigned long *flags);
+
 extern int mnt_context_set_mountdata(mnt_context *cxt, void *data);
 extern int mnt_context_apply_fstab(mnt_context *cxt);
 extern int mnt_context_get_status(mnt_context *cxt);
+extern int mnt_context_strerror(mnt_context *cxt, char *buf, size_t bufsiz);
 
 extern int mnt_context_do_mount(mnt_context *cxt);
 extern int mnt_context_do_umount(mnt_context *cxt);
