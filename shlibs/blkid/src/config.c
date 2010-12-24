@@ -28,7 +28,7 @@
 
 #include "blkdev.h"
 #include "blkidP.h"
-
+#include "env.h"
 
 static int parse_evaluate(struct blkid_config *conf, char *s)
 {
@@ -120,7 +120,7 @@ struct blkid_config *blkid_read_config(const char *filename)
 	FILE *f;
 
 	if (!filename)
-		filename = blkid_safe_getenv("BLKID_CONF");
+		filename = safe_getenv("BLKID_CONF");
 	if (!filename)
 		filename = BLKID_CONFIG_FILE;
 

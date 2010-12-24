@@ -3,11 +3,22 @@
  * Added from shadow-utils package
  * by Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *
- */ 
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef HAVE_SYS_PRCTL_H
+#include <sys/prctl.h>
+#else
+#define PR_GET_DUMPABLE 3
+#endif
+#if (!defined(HAVE_PRCTL) && defined(linux))
+#include <sys/syscall.h>
+#endif
+#include <unistd.h>
+#include <sys/types.h>
+
 #include "env.h"
 
 extern char **environ;
@@ -71,3 +82,26 @@ sanitize_env(void)
         }
 }
 
+
+char *safe_getenv(const char *arg)
+{
+	uid_t ruid = getuid();
+
+	if (ruid != 0 || (ruid != geteuid()) || (getgid() != getegid()))
+		return NULL;
+#if HAVE_PRCTL
+	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		return NULL;
+#else
+#if (defined(linux) && defined(SYS_prctl))
+	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
+		return NULL;
+#endif
+#endif
+
+#ifdef HAVE___SECURE_GETENV
+	return __secure_getenv(arg);
+#else
+	return getenv(arg);
+#endif
+}

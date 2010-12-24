@@ -14,14 +14,6 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef HAVE_SYS_PRCTL_H
-#include <sys/prctl.h>
-#else
-#define PR_GET_DUMPABLE 3
-#endif
-#if (!defined(HAVE_PRCTL) && defined(linux))
-#include <sys/syscall.h>
-#endif
 #include <sys/stat.h>
 #include <ctype.h>
 #include <sys/types.h>
@@ -34,29 +26,7 @@
 #include "mountP.h"
 #include "mangle.h"
 #include "canonicalize.h"
-
-char *mnt_getenv_safe(const char *arg)
-{
-	return getenv(arg);
-
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
-		return NULL;
-#if HAVE_PRCTL
-	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#else
-#if (defined(linux) && defined(SYS_prctl))
-	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#endif
-#endif
-
-#ifdef HAVE___SECURE_GETENV
-	return __secure_getenv(arg);
-#else
-	return getenv(arg);
-#endif
-}
+#include "env.h"
 
 int endswith(const char *s, const char *sx)
 {
@@ -635,7 +605,7 @@ done:
  */
 const char *mnt_get_fstab_path(void)
 {
-	const char *p = mnt_getenv_safe("LIBMOUNT_FSTAB");
+	const char *p = safe_getenv("LIBMOUNT_FSTAB");
 	return p ? : _PATH_MNTTAB;
 }
 
@@ -649,7 +619,7 @@ const char *mnt_get_fstab_path(void)
  */
 const char *mnt_get_mtab_path(void)
 {
-	const char *p = mnt_getenv_safe("LIBMOUNT_MTAB");
+	const char *p = safe_getenv("LIBMOUNT_MTAB");
 	return p ? : _PATH_MOUNTED;
 }
 
@@ -660,7 +630,7 @@ const char *mnt_get_mtab_path(void)
  */
 const char *mnt_get_utab_path(void)
 {
-	const char *p = mnt_getenv_safe("LIBMOUNT_UTAB");
+	const char *p = safe_getenv("LIBMOUNT_UTAB");
 	return p ? : MNT_PATH_UTAB;
 }
 

@@ -33,7 +33,7 @@ void mnt_init_debug(int mask)
 	if (libmount_debug_mask & MNT_DEBUG_INIT)
 		return;
 	if (!mask) {
-		char *str = mnt_getenv_safe("LIBMOUNT_DEBUG");
+		char *str = getenv("LIBMOUNT_DEBUG");
 		if (str)
 			libmount_debug_mask = strtoul(str, 0, 0);
 	} else

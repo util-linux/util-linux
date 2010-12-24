@@ -18,7 +18,8 @@ libmount_la_SOURCES =	mountP.h version.c utils.c test.c init.c cache.c \
 			$(top_srcdir)/include/list.h \
 			$(top_srcdir)/lib/mangle.c \
 			$(top_srcdir)/lib/canonicalize.c \
-			$(top_srcdir)/lib/strutils.c
+			$(top_srcdir)/lib/strutils.c \
+			$(top_srcdir)/lib/env.c
 
 nodist_libmount_la_SOURCES = mountP.h
 

@@ -18,18 +18,11 @@
 #endif
 #include <stdlib.h>
 #include <string.h>
-#ifdef HAVE_SYS_PRCTL_H
-#include <sys/prctl.h>
-#else
-#define PR_GET_DUMPABLE 3
-#endif
-#if (!defined(HAVE_PRCTL) && defined(linux))
-#include <sys/syscall.h>
-#endif
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
 #include "blkidP.h"
+#include "env.h"
 
 int blkid_debug_mask = 0;
 
@@ -57,27 +50,6 @@ int blkid_debug_mask = 0;
  * locate these devices without enumerating only visible devices, so the use of
  * the cache file is required in this situation.
  */
-
-char *blkid_safe_getenv(const char *arg)
-{
-	if ((getuid() != geteuid()) || (getgid() != getegid()))
-		return NULL;
-#if HAVE_PRCTL
-	if (prctl(PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#else
-#if (defined(linux) && defined(SYS_prctl))
-	if (syscall(SYS_prctl, PR_GET_DUMPABLE, 0, 0, 0, 0) == 0)
-		return NULL;
-#endif
-#endif
-
-#ifdef HAVE___SECURE_GETENV
-	return __secure_getenv(arg);
-#else
-	return getenv(arg);
-#endif
-}
 
 #if 0 /* ifdef CONFIG_BLKID_DEBUG */
 static blkid_debug_dump_cache(int mask, blkid_cache cache)
@@ -126,7 +98,7 @@ char *blkid_get_cache_filename(struct blkid_config *conf)
 {
 	char *filename;
 
-	filename = blkid_safe_getenv("BLKID_FILE");
+	filename = safe_getenv("BLKID_FILE");
 	if (filename)
 		filename = blkid_strdup(filename);
 	else if (conf)

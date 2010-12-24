@@ -32,7 +32,8 @@ libblkid_la_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
 		     $(top_srcdir)/lib/canonicalize.c \
 		     $(top_srcdir)/lib/md5.c \
 		     $(top_srcdir)/lib/crc32.c \
-		     $(top_srcdir)/include/list.h
+		     $(top_srcdir)/include/list.h \
+		     $(top_srcdir)/lib/env.c
 
 nodist_libblkid_la_SOURCES = blkid.h
 
