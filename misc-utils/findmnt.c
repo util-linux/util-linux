@@ -59,6 +59,7 @@ enum {
 	COL_FS_OPTIONS,
 	COL_LABEL,
 	COL_UUID,
+	COL_MAJMIN,
 
 	__NCOLUMNS
 };
@@ -81,10 +82,12 @@ struct colinfo infos[__NCOLUMNS] = {
 	[COL_FS_OPTIONS] = { "FS-OPTIONS", 0.10, TRUE },
 	[COL_LABEL]   = { "LABEL",      0.10, FALSE },
 	[COL_UUID]    = { "UUID",         36, FALSE },
+	[COL_MAJMIN] = { "MAJ:MIN",        6, FALSE },
 };
 
 /* global flags */
 int flags;
+int tt_flags = 0;
 
 /* array with IDs of enabled columns */
 int columns[__NCOLUMNS];
@@ -209,7 +212,9 @@ static const char *get_tag(mnt_fs *fs, const char *tagname)
 	return res;
 }
 
-/* reads FS data from libmount */
+/* reads FS data from libmount
+ * TODO: add function that will deallocate data allocated by get_data()
+ */
 static const char *get_data(mnt_fs *fs, int num)
 {
 	const char *str = NULL;
@@ -258,6 +263,20 @@ static const char *get_data(mnt_fs *fs, int num)
 	case COL_LABEL:
 		str = get_tag(fs, "LABEL");
 		break;
+	case COL_MAJMIN:
+	{
+		dev_t devno = mnt_fs_get_devno(fs);
+		if (devno) {
+			char *tmp;
+			int rc = 0;
+			if (tt_flags & TT_FL_RAW)
+				rc = asprintf(&tmp, "%u:%u", major(devno), minor(devno));
+			else
+				rc = asprintf(&tmp, "%3u:%-3u", major(devno), minor(devno));
+			if (rc)
+				str = tmp;
+		}
+	}
 	default:
 		break;
 	}
@@ -452,7 +471,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
         " -f, --first-only       print the first found filesystem only\n"
 	" -h, --help             print this help\n"
 	" -i, --invert           invert sense of matching\n"
-	" -l, --list             use list format ouput\n"
+	" -l, --list             use list format output\n"
 	" -n, --noheadings       don't print headings\n"
 	" -u, --notruncate       don't truncate text in columns\n"
 	" -O, --options <list>   limit the set of filesystems by mount options\n"
@@ -497,7 +516,6 @@ int main(int argc, char *argv[])
 
 	/* table.h */
 	struct tt *tt = NULL;
-	int tt_flags = 0;
 
 	int i, c, nlines = 0, rc = EXIT_FAILURE;
 
