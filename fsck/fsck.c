@@ -778,7 +778,7 @@ static int wait_many(int flags)
  * If the type isn't specified by the user, then use either the type
  * specified in /etc/fstab, or DEFAULT_FSTYPE.
  */
-static void fsck_device(struct fs_info *fs, int interactive)
+static int fsck_device(struct fs_info *fs, int interactive)
 {
 	const char *type;
 	int retval;
@@ -800,7 +800,9 @@ static void fsck_device(struct fs_info *fs, int interactive)
 		fprintf(stderr, _("%s: Error %d while executing fsck.%s "
 			"for %s\n"), progname, retval, type, fs->device);
 		num_running--;
+		return EXIT_ERROR;
 	}
+	return 0;
 }
 
 
@@ -1128,7 +1130,7 @@ static int check_all(NOARGS)
 		if (fs) {
 			if (!skip_root && !ignore(fs) &&
 			    !(ignore_mounted && is_mounted(fs->device))) {
-				fsck_device(fs, 1);
+				status |= fsck_device(fs, 1);
 				status |= wait_many(FLAG_WAIT_ALL);
 				if (status > EXIT_NONDESTRUCT)
 					return status;
@@ -1179,7 +1181,7 @@ static int check_all(NOARGS)
 			/*
 			 * Spawn off the fsck process
 			 */
-			fsck_device(fs, serialize);
+			status |= fsck_device(fs, serialize);
 			fs->flags |= FLAG_DONE;
 
 			/*
@@ -1467,7 +1469,7 @@ int main(int argc, char *argv[])
 		}
 		if (ignore_mounted && is_mounted(fs->device))
 			continue;
-		fsck_device(fs, interactive);
+		status |= fsck_device(fs, interactive);
 		if (serialize ||
 		    (max_running && (num_running >= max_running))) {
 			struct fsck_instance *inst;
