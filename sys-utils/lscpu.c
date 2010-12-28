@@ -392,7 +392,8 @@ read_basicinfo(struct lscpu_desc *desc)
 	fclose(fp);
 
 	if (path_exist(_PATH_SYS_SYSTEM "/cpu/kernel_max"))
-		maxcpus = path_getnum(_PATH_SYS_SYSTEM "/cpu/kernel_max");
+		/* note that kernel_max is maximum index [NR_CPUS-1] */
+		maxcpus = path_getnum(_PATH_SYS_SYSTEM "/cpu/kernel_max") + 1;
 
 	else if (!sysrootlen)
 		/* the root is '/' so we are working with data from the current kernel */
