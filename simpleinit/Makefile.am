@@ -4,7 +4,7 @@ sbin_PROGRAMS = simpleinit shutdown initctl
 dist_man_MANS = fastboot.8 fasthalt.8 halt.8 reboot.8 simpleinit.8 shutdown.8 \
 	initctl.8
 
-simpleinit_SOURCES = simpleinit.c my_crypt.h simpleinit.h
+simpleinit_SOURCES = simpleinit.c simpleinit.h
 initctl_SOURCES = initctl.c simpleinit.h
 
 if NEED_LIBCRYPT
