@@ -80,6 +80,7 @@ echo "   automake:   $(automake --version | head -1)"
 #echo "   libtoolize: $(libtoolize --version | head -1)"
 
 set -e
+po/update-potfiles
 autopoint --force $AP_OPTS
 #libtoolize --force --copy $LT_OPTS
 aclocal -I m4 $AL_OPTS

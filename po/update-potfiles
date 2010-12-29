@@ -5,9 +5,13 @@
 
 # find all *.c files, 
 # sort the list
-# exclude ../tests/ from the list 
-#         and remove "../" prefix
+# exclude ./tests/ from the list 
+#         and remove "./" prefix
 
-find ../ -name "*.c" | \
-sort | \
-gawk '! /^\.\.\/tests\// { print gensub(/^\.\.\//, "", 1) }' > POTFILES.in
+[ ! -f "po/Makevars" ] && \
+	echo "You must run this script in the top-level directory"
+
+find -name "*.c" | \
+  sort | \
+  gawk '! /^\.\/tests\// { print gensub(/^\.\//, "", 1) }' \
+  > po/POTFILES.in

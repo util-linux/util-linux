@@ -9,6 +9,7 @@ en@boldquot.header
 boldquot.sed
 Rules-quot
 POTFILES
+POTFILES.in
 Makevars.template
 Makefile.in.in
 Makefile.in
