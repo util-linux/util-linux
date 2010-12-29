@@ -1180,12 +1180,24 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 	if (show || adjust || hctosys || (!noadjfile && !systz && !predict)) {
           /* data from HW-clock are required */
           rc = synchronize_to_clock_tick();
-          if (rc && rc != 2)		/* 2= synchronization timeout */
+
+          /* 2 = synchronization timeout.  We don't error out if the user is
+             attempting to set the RTC - the RTC could be functioning but
+             contain invalid time data so we still want to allow a user to set
+             the RTC time.
+             */
+
+          if (rc && rc != 2 && !set && !systohc)
             return EX_IOERR;
           gettimeofday(&read_time, NULL);
-          rc = read_hardware_clock(universal, &hclock_valid, &hclocktime);
-          if (rc)
-             return EX_IOERR;
+
+          /* If we can't synchronize to a clock tick, we likely can't read
+             from the RTC so don't bother reading it again. */
+          if (!rc) {
+            rc = read_hardware_clock(universal, &hclock_valid, &hclocktime);
+            if (rc && !set && !systohc)
+              return EX_IOERR;
+	  }
 	}
 
         if (show) {
