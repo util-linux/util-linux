@@ -84,7 +84,7 @@ static int probe_nilfs2(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!sb)
 		return -1;
 
-	bytes = le32_to_cpu(sb->s_bytes);
+	bytes = le16_to_cpu(sb->s_bytes);
 	crc = crc32(le32_to_cpu(sb->s_crc_seed), (unsigned char *)sb, sumoff);
 	crc = crc32(crc, sum, 4);
 	crc = crc32(crc, (unsigned char *)sb + sumoff + 4, bytes - sumoff - 4);
