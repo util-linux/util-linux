@@ -886,8 +886,10 @@ static int test_move(struct mtest *ts, int argc, char *argv[])
 
 	if (argc < 3)
 		return -1;
+	mnt_fs_set_source(fs, argv[1]);
 	mnt_fs_set_target(fs, argv[2]);
-	rc = update(argv[1], fs, MS_MOVE);
+
+	rc = update(NULL, fs, MS_MOVE);
 
 	mnt_free_fs(fs);
 	return rc;
