@@ -273,3 +273,27 @@ char *size_to_human_string(uint64_t bytes)
 
 	return strdup(buf);
 }
+
+
+#ifdef TEST_PROGRAM
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <err.h>
+
+int main(int argc, char *argv[])
+{
+	uintmax_t size = 0;
+
+	if (argc < 2) {
+		fprintf(stderr, "usage: %s <number>[suffix]\n",	argv[0]);
+		exit(EXIT_FAILURE);
+	}
+
+	if (strtosize(argv[1], &size))
+		errx(EXIT_FAILURE, "invalid size '%s' value", argv[1]);
+
+	printf("%25s : %20ju\n", argv[1], size);
+	return EXIT_FAILURE;
+}
+#endif /* TEST_PROGRAM */

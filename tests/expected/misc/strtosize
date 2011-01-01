@@ -1,4 +1,4 @@
-test_strtosize: invalid size '-1' value
+test_strutils: invalid size '-1' value
                         0 :                    0
                         1 :                    1
                       123 :                  123
@@ -21,10 +21,10 @@ test_strtosize: invalid size '-1' value
                       1TB :        1000000000000
                       1PB :     1000000000000000
                       1EB :  1000000000000000000
-test_strtosize: invalid size '' value
-test_strtosize: invalid size ' ' value
+test_strutils: invalid size '' value
+test_strutils: invalid size ' ' value
                         1 :                    1
-test_strtosize: invalid size '1 ' value
+test_strutils: invalid size '1 ' value
                      0x0a :                   10
                    0xff00 :                65280
                0x80000000 :           2147483648

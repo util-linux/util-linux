@@ -12,7 +12,7 @@ TS_HELPER_BYTESWAP="$top_builddir/tests/helpers/test_byteswap"
 TS_HELPER_MD5="$top_builddir/tests/helpers/test_md5"
 
 TS_HELPER_ISMOUNTED="$top_builddir/lib/test_ismounted"
-TS_HELPER_STRTOSIZE="$top_builddir/lib/test_strtosize"
+TS_HELPER_STRUTILS="$top_builddir/lib/test_strutils"
 TS_HELPER_CPUSET="$top_builddir/lib/test_cpuset"
 
 # libmount
