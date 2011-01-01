@@ -2,4 +2,3 @@
 source: LABEL=testLibmount
 target: /mnt/mountpoint
 fstype: auto
-optstr: defaults
