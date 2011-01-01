@@ -17,6 +17,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <stdarg.h>
 
 #include "partitions.h"
@@ -399,8 +400,7 @@ blkid_parttable blkid_partlist_new_parttable(blkid_partlist ls,
 
 	DBG(DEBUG_LOWPROBE,
 		printf("parts: create a new partition table "
-		       "(%p, type=%s, offset=%llu)\n", tab, type,
-		       (unsigned long long) offset));
+		       "(%p, type=%s, offset=%"PRId64")\n", tab, type, offset));
 	return tab;
 }
 
@@ -442,9 +442,9 @@ blkid_partition blkid_partlist_add_partition(blkid_partlist ls,
 	par->size = size;
 
 	DBG(DEBUG_LOWPROBE,
-		printf("parts: add partition (%p start=%llu, size=%llu, table=%p)\n",
-			par, (unsigned long long) par->start,
-			(unsigned long long) par->size,	tab));
+		printf("parts: add partition (%p start=%"
+		PRId64 ", size=%" PRId64 ", table=%p)\n",
+		par, par->start, par->size, tab));
 	return par;
 }
 
@@ -812,8 +812,8 @@ int blkid_probe_is_covered_by_pt(blkid_probe pr,
 
 		if (par->start + par->size > (pr->size >> 9)) {
 			DBG(DEBUG_LOWPROBE, printf("partition #%d overflows "
-					"device (off=%lu size=%lu)\n",
-					par->partno, par->start, par->size));
+				"device (off=%" PRId64 " size=%" PRId64 ")\n",
+				par->partno, par->start, par->size));
 			goto done;
 		}
 	}
