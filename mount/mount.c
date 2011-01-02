@@ -1315,6 +1315,23 @@ loop_check(const char **spec, const char **type, int *flags,
   return 0;
 }
 
+static void
+verbose_mount_info(const char *spec, const char *node, const char *type,
+		  const char *opts, int flags)
+{
+	struct my_mntent mnt;
+
+	mnt.mnt_fsname = is_pseudo_fs(type) ? xstrdup(spec) : canonicalize(spec);
+	mnt.mnt_dir = canonicalize (node);
+	mnt.mnt_type = type;
+	mnt.mnt_opts = opts;
+
+	print_one (&mnt);
+
+	my_free(mnt.mnt_fsname);
+	my_free(mnt.mnt_dir);
+}
+
 #ifdef HAVE_LIBMOUNT_MOUNT
 static void
 prepare_mtab_entry(const char *spec, const char *node, const char *type,
@@ -1369,21 +1386,6 @@ static void update_mtab_entry(int flags)
 		init_libmount_lock(NULL);
 	}
 
-	if (verbose) {
-		mnt_fs *fs = mnt_update_get_fs(mtab_update);
-		if (fs) {
-			char *x = mnt_fs_strdup_options(fs);
-
-			printf ("%s on %s", mnt_fs_get_source(fs),
-					mnt_fs_get_target(fs));
-			if (mnt_fs_get_fstype(fs))
-				printf(" type %s", mnt_fs_get_fstype(fs));
-			if (x)
-				printf(" (%s)", x);
-			printf("\n");
-			free(x);
-		}
-	}
 	mnt_free_update(mtab_update);
 	mtab_update = NULL;
 }
@@ -1411,6 +1413,7 @@ update_mtab_entry(const char *spec, const char *node, const char *type,
 			printf(_("mount: no %s found - creating it..\n"),
 			       _PATH_MOUNTED);
 		create_mtab ();
+
 	}
 
 	if (!nomtab && mtab_is_writable()) {
@@ -1598,11 +1601,8 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 #ifdef HAVE_LIBMOUNT_MOUNT
   mtab_opts = fix_opts_string(flags & ~MS_NOMTAB, extra_opts, user);
   mtab_flags = flags;
-
-  if (fake)
-	prepare_mtab_entry(spec, node, types ? : "unknown",
-				mtab_opts, mtab_flags);
 #endif
+
   block_signals (SIG_BLOCK);
 
   if (!fake) {
@@ -1640,23 +1640,27 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   }
 
   if (fake || mnt5_res == 0) {
+      char *mo = fix_opts_string (flags & ~MS_NOMTAB, extra_opts, user);
+      const char *tp = types ? types : "unknown";
+
       /* Mount succeeded, report this (if verbose) and write mtab entry.  */
 #ifdef HAVE_LIBMOUNT_MOUNT
       update_mtab_entry(flags);
+      if (verbose)
+	      verbose_mount_info(loop ? loopfile : spec, node, tp, mo, flags);
 #else
-      if (!(mounttype & MS_PROPAGATION)) {
-	      char *mtab_opts = fix_opts_string (flags & ~MS_NOMTAB, extra_opts, user);
+      if (!(mounttype & MS_PROPAGATION))
 	      update_mtab_entry(loop ? loopfile : spec,
 			node,
-			types ? types : "unknown",
-			mtab_opts,
+			tp,
+			mo,
 			flags,
 			freq,
 			pass);
-	      free (mtab_opts);
-      }
 #endif
       block_signals (SIG_UNBLOCK);
+      free(mo);
+
       res = 0;
       goto out;
   }
