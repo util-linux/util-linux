@@ -42,8 +42,8 @@ $TS_CMD_MOUNT -o remount,ro $TS_MOUNTPOINT \
  || ts_die "Cannot remount $TS_MOUNTPOINT" $DEVICE
 
 # check the remount
-egrep -q "^$DEVICE $TS_MOUNTPOINT ext2 ro 0 0" /etc/mtab \
- || ts_die "Cannot found remounted $TS_MOUNTPOINT in /etc/mtab" $DEVICE
+$TS_CMD_FINDMNT --kernel --target "$TS_MOUNTPOINT" --options "ro" &> /dev/null
+[ "$?" == "0" ] || ts_die "Cannot found read-only in $TS_MOUNTPOINT in /proc/self/mountinfo"
 
 ts_device_deinit $DEVICE
 
