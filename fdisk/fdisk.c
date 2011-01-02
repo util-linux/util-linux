@@ -23,6 +23,7 @@
 #include <limits.h>
 
 #include "nls.h"
+#include "rpmatch.h"
 #include "blkdev.h"
 #include "common.h"
 #include "mbsalign.h"

@@ -98,6 +98,7 @@
 #endif
 
 #include "nls.h"
+#include "rpmatch.h"
 #include "blkdev.h"
 #include "strutils.h"
 #include "common.h"
@@ -1448,17 +1449,12 @@ get_kernel_geometry(void) {
 
 static int
 said_yes(char answer) {
-#ifdef HAVE_RPMATCH
 	char reply[2];
-	int yn;
 
 	reply[0] = answer;
 	reply[1] = 0;
-	yn = rpmatch(reply);	/* 1: yes, 0: no, -1: ? */
-	if (yn >= 0)
-		return yn;
-#endif
-	return (answer == 'y' || answer == 'Y');
+
+	return (rpmatch(reply) == 1) ? 1 : 0;
 }
 
 static void
