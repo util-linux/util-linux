@@ -34,21 +34,18 @@ DIR_B="$TS_OUTDIR/mnt-move-B"
 $TS_CMD_MOUNT --bind $DIR_SRC $DIR_A
 
 # check the bind
-egrep -q "^$DIR_SRC $DIR_A" /etc/mtab
-[ "$?" == "0" ] || ts_die "Cannot found binded $DIR_SRC in /etc/mtab"
+$TS_CMD_FINDMNT --kernel --target "$DIR_A" &> /dev/null
+[ "$?" == "0" ] || ts_die "Cannot found binded $DIR_A in /proc/self/mountinfo"
 
 # move
 $TS_CMD_MOUNT --move $DIR_A $DIR_B
 
 # check the move
-egrep -q "^$DIR_SRC $DIR_B" /etc/mtab
-if [ "$?" != "0" ]; then
-	$TS_CMD_UMOUNT $DIR_SRC
-	ts_die "Cannot found moved $DIR_SRC in /etc/mtab"
-fi
+$TS_CMD_FINDMNT --kernel --target "$DIR_B" &> /dev/null
+[ "$?" == "0" ] || ts_die "Cannot found binded $DIR_B in /proc/self/mountinfo"
 
 # clean up
-$TS_CMD_UMOUNT $DIR_SRC
+$TS_CMD_UMOUNT $DIR_B
 rmdir $DIR_SRC $DIR_A $DIR_B
 
 ts_log "Success"
