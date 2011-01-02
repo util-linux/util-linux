@@ -1316,21 +1316,38 @@ got_dos_table:
 	return 0;
 }
 
+static int is_partition_table_changed(void)
+{
+	int i;
+
+	for (i = 0; i < partitions; i++)
+		if (ptes[i].changed)
+			return 1;
+	return 0;
+}
+
+static void maybe_exit(int rc)
+{
+	char line[LINE_LENGTH];
+
+	putchar('\n');
+
+	if (is_partition_table_changed() || MBRbuffer_changed) {
+		fprintf(stderr, _("Do you really want to quit? "));
+
+		if (!fgets(line, LINE_LENGTH, stdin) || rpmatch(line) == 1)
+			exit(rc);
+	} else
+		exit(rc);
+}
+
 /* read line; return 0 or first char */
 int
 read_line(void)
 {
-	static int got_eof = 0;
-
 	line_ptr = line_buffer;
 	if (!fgets(line_buffer, LINE_LENGTH, stdin)) {
-		if (feof(stdin))
-			got_eof++; 	/* user typed ^D ? */
-		if (got_eof >= 3) {
-			fflush(stdout);
-			fprintf(stderr, _("\ngot EOF thrice - exiting..\n"));
-			exit(1);
-		}
+		maybe_exit(1);
 		return 0;
 	}
 	while (*line_ptr && !isgraph(*line_ptr))
