@@ -151,7 +151,7 @@ xmalloc (size_t size) {
 	void *t = malloc(size);
 	if (t == NULL) {
 		perror(NULL);
-		exit(8);	/* out of memory */
+		exit(MKFS_ERROR);	/* out of memory */
 	}
 	return t;
 }
@@ -184,7 +184,7 @@ do_mmap(char *path, unsigned int size, unsigned int mode){
 	start = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
 	if (-1 == (int) (long) start) {
 		perror("mmap");
-		exit(8);
+		exit(MKFS_ERROR);
 	}
 	close(fd);
 
@@ -310,7 +310,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 
 	if (dircount < 0) {
 		perror(name);
-		exit(8);
+		exit(MKFS_ERROR);
 	}
 
 	/* process directory */
@@ -340,7 +340,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 				  " Please increase MAX_INPUT_NAMELEN in "
 				  "mkcramfs.c and recompile.  Exiting.\n"),
 				namelen, dirent->d_name);
-			exit(8);
+			exit(MKFS_ERROR);
 		}
 		memcpy(endpath, dirent->d_name, namelen + 1);
 
@@ -352,12 +352,12 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 		entry = calloc(1, sizeof(struct entry));
 		if (!entry) {
 			perror(NULL);
-			exit(8);
+			exit(MKFS_ERROR);
 		}
 		entry->name = (unsigned char *)strdup(dirent->d_name);
 		if (!entry->name) {
 			perror(NULL);
-			exit(8);
+			exit(MKFS_ERROR);
 		}
 		if (namelen > 255) {
 			/* Can't happen when reading from ext2fs. */
@@ -469,7 +469,7 @@ static void set_data_offset(struct entry *entry, char *base, unsigned long offse
 	inode_to_host(cramfs_is_big_endian, inode, inode);
 	if (offset >= (1 << (2 + CRAMFS_OFFSET_WIDTH))) {
 		fprintf(stderr, _("filesystem too big.  Exiting.\n"));
-		exit(8);
+		exit(MKFS_ERROR);
 	}
 	inode->offset = (offset >> 2);
 	inode_from_host(cramfs_is_big_endian, inode, inode);
@@ -525,7 +525,7 @@ static unsigned int write_directory_structure(struct entry *entry, char *base, u
 					entry_stack = realloc(entry_stack, stack_size * sizeof(struct entry *));
 					if (!entry_stack) {
 						perror(NULL);
-						exit(8);        /* out of memory */
+						exit(MKFS_ERROR);        /* out of memory */
 					}
 				}
 				entry_stack[stack_entries] = entry;
@@ -636,7 +636,7 @@ do_compress(char *base, unsigned int offset, unsigned char const *name,
 			printf(_("AIEEE: block \"compressed\" to > "
 				 "2*blocklength (%ld)\n"),
 			       len);
-			exit(8);
+			exit(MKFS_ERROR);
 		}
 
 		*(u32 *) (base + offset) = u32_toggle_endianness(cramfs_is_big_endian, curr);
@@ -693,7 +693,7 @@ static unsigned int write_file(char *file, char *base, unsigned int offset)
 	fd = open(file, O_RDONLY);
 	if (fd < 0) {
 		perror(file);
-		exit(8);
+		exit(MKFS_ERROR);
 	}
 	buf = mmap(NULL, image_length, PROT_READ, MAP_PRIVATE, fd, 0);
 	memcpy(base + offset, buf, image_length);
@@ -785,7 +785,7 @@ int main(int argc, char **argv)
 			else if (strcmp(optarg, "host") == 0);	/* default */
 			else 	{
 				perror("invalid endianness given. Must be 'big', 'little', or 'host'");
-				exit(16);
+				exit(MKFS_USAGE);
 			}
 
 			break;
@@ -793,7 +793,7 @@ int main(int argc, char **argv)
 			opt_image = optarg;
 			if (lstat(opt_image, &st) < 0) {
 				perror(opt_image);
-				exit(16);
+				exit(MKFS_USAGE);
 			}
 			image_length = st.st_size; /* may be padded later */
 			fslen_ub += (image_length + 3); /* 3 is for padding */
@@ -811,7 +811,7 @@ int main(int argc, char **argv)
 		case 'V':
 			printf(_("%s (%s)\n"),
 			       progname, PACKAGE_STRING);
-			exit(0);
+			exit(MKFS_OK);
 		case 'v':
 			verbose = 1;
 			break;
@@ -828,14 +828,14 @@ int main(int argc, char **argv)
 
 	if (stat(dirname, &st) < 0) {
 		perror(dirname);
-		exit(16);
+		exit(MKFS_USAGE);
 	}
 	fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 
 	root_entry = calloc(1, sizeof(struct entry));
 	if (!root_entry) {
 		perror(NULL);
-		exit(8);
+		exit(MKFS_ERROR);
 	}
 	root_entry->mode = st.st_mode;
 	root_entry->uid = st.st_uid;
@@ -878,7 +878,7 @@ int main(int argc, char **argv)
 
 	if (-1 == (int) (long) rom_image) {
 		perror(_("ROM image map"));
-		exit(8);
+		exit(MKFS_ERROR);
 	}
 
 	/* Skip the first opt_pad bytes for boot loader code */
@@ -925,18 +925,18 @@ int main(int argc, char **argv)
 			_("not enough space allocated for ROM image "
 			  "(%lld allocated, %zu used)\n"),
 			(long long) fslen_ub, offset);
-		exit(8);
+		exit(MKFS_ERROR);
 	}
 
 	written = write(fd, rom_image, offset);
 	if (written < 0) {
 		perror(_("ROM image"));
-		exit(8);
+		exit(MKFS_ERROR);
 	}
 	if (offset != written) {
 		fprintf(stderr, _("ROM image write failed (%zd %zd)\n"),
 			written, offset);
-		exit(8);
+		exit(MKFS_ERROR);
 	}
 
 	/* (These warnings used to come at the start, but they scroll off the
@@ -970,6 +970,6 @@ int main(int argc, char **argv)
 			CRAMFS_OFFSET_WIDTH);
 	if (opt_errors &&
 	    (warn_namelen|warn_skip|warn_size|warn_uid|warn_gid|warn_dev))
-		exit(8);
+		exit(MKFS_ERROR);
 	return 0;
 }
