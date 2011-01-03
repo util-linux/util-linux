@@ -1315,6 +1315,8 @@ loop_check(const char **spec, const char **type, int *flags,
   return 0;
 }
 
+
+#ifdef HAVE_LIBMOUNT_MOUNT
 static void
 verbose_mount_info(const char *spec, const char *node, const char *type,
 		  const char *opts, int flags)
@@ -1332,7 +1334,6 @@ verbose_mount_info(const char *spec, const char *node, const char *type,
 	my_free(mnt.mnt_dir);
 }
 
-#ifdef HAVE_LIBMOUNT_MOUNT
 static void
 prepare_mtab_entry(const char *spec, const char *node, const char *type,
 					  const char *opts, unsigned long flags)
