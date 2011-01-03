@@ -16,37 +16,21 @@
  *
  *	@mountdata: (usully a comma separated string of options)
  *
- * The libmount uses options-map(s) to describe mount options. The number of
- * maps is unlimited. The libmount options parser could be easily extended
- * (e.g. by mnt_optls_add_map()) to work with new options.
+ * The libmount uses options-map(s) to describe mount options.
  *
  * The option description (map entry) includes:
  *
- *	@name: and argument type (e.g. "loop[=%s]")
+ *	@name: and argument name
  *
  *	@id: (in the map unique identifier or a mountflags, e.g MS_RDONLY)
  *
  *	@mask: (MNT_INVERT, MNT_NOMTAB)
  *
- * The option argument type is defined by:
+ * The option argument value is defined by:
  *
- *	"=type"   -- required argument
+ *	"="   -- required argument, e.g "comment="
  *
- *	"[=type]" -- optional argument
- *
- * where the 'type' is sscanf() format string or
- *
- *     {item0,item1,...}  -- enum (mnt_option_get_number() converts the value
- *                           to 0..N number)
- *
- * The options argument format is used for parsing only. The library internally
- * stores the option argument as a string. The conversion to the data type is
- * on-demant by mnt_option_get_value_*() functions.
- *
- * The library checks options argument according to 'type' format for simple
- * formats only:
- *
- *	%s, %d, %ld, %lld, %u, %lu, %llu, %x, %o and {enum}
+ *	"[=]" -- optional argument, e.g. "loop[=]"
  *
  * Example:
  *
@@ -58,7 +42,7 @@
  *     mnt_optmap myoptions[] = {
  *       { "foo",   MY_MS_FOO },
  *       { "nofoo", MY_MS_FOO | MNT_INVERT },
- *       { "bar=%s",MY_MS_BAR },
+ *       { "bar=",  MY_MS_BAR },
  *       { NULL }
  *     };
  *   </programlisting>
@@ -149,7 +133,7 @@ static const struct mnt_optmap userspace_opts_map[] =
    { "auto",    MNT_MS_NOAUTO, MNT_INVERT | MNT_NOMTAB },  /* Can be mounted using -a */
    { "noauto",  MNT_MS_NOAUTO, MNT_NOMTAB },               /* Can  only be mounted explicitly */
 
-   { "user[=%s]", MNT_MS_USER },                           /* Allow ordinary user to mount (mtab) */
+   { "user[=]", MNT_MS_USER },                           /* Allow ordinary user to mount (mtab) */
    { "nouser",  MNT_MS_USER, MNT_INVERT | MNT_NOMTAB },    /* Forbid ordinary user to mount */
 
    { "users",   MNT_MS_USERS, MNT_NOMTAB },                /* Allow ordinary users to mount */
@@ -163,13 +147,13 @@ static const struct mnt_optmap userspace_opts_map[] =
 
    { "_netdev", MNT_MS_NETDEV },                           /* Device requires network */
 
-   { "comment=%s", MNT_MS_COMMENT, MNT_NOMTAB },           /* fstab comment only */
+   { "comment=", MNT_MS_COMMENT, MNT_NOMTAB },           /* fstab comment only */
 
-   { "loop[=%s]", MNT_MS_LOOP },                           /* use the loop device */
+   { "loop[=]", MNT_MS_LOOP },                           /* use the loop device */
 
    { "nofail",  MNT_MS_NOFAIL, MNT_NOMTAB },               /* Do not fail if ENOENT on dev */
 
-   { "uhelper=%s", MNT_MS_UHELPER },			   /* /sbin/umount.<helper> */
+   { "uhelper=", MNT_MS_UHELPER },			   /* /sbin/umount.<helper> */
 
    { NULL, 0, 0 }
 };
@@ -237,85 +221,3 @@ const struct mnt_optmap *mnt_optmap_get_entry(
 	return NULL;
 }
 
-
-/*
- * Converts @rawdata to number according to enum definition in the @mapent.
- */
-int mnt_optmap_enum_to_number(const struct mnt_optmap *mapent,
-			const char *rawdata, size_t len)
-{
-	const char *p, *end = NULL, *begin = NULL;
-	int n = -1;
-
-	if (!rawdata || !*rawdata || !mapent || !len)
-		return -EINVAL;
-
-	p = strrchr(mapent->name, '=');
-	if (!p || *(p + 1) == '{')
-		return -EINVAL;	/* value unexpected or not "enum" */
-	p += 2;
-	if (!*p || *(p + 1) == '}')
-		return -EINVAL;	/* hmm... option <type> is "={" or "={}" */
-
-	/* we cannot use strstr(), @rawdata is not terminated */
-	for (; p && *p; p++) {
-		if (!begin)
-			begin = p;		/* begin of the item */
-		if (*p == ',')
-			end = p;		/* terminate the item */
-		if (*(p + 1) == '}')
-			end = p + 1;		/* end of enum definition */
-		if (!begin || !end)
-			continue;
-		if (end <= begin)
-			return -EINVAL;
-		n++;
-		if (len == end - begin && strncasecmp(begin, rawdata, len) == 0)
-			return n;
-		p = end;
-	}
-
-	return -1;
-}
-
-/*
- * Returns data type defined in the @mapent.
- */
-const char *mnt_optmap_get_type(const struct mnt_optmap *mapent)
-{
-	char *type;
-
-	assert(mapent);
-	assert(mapent->name);
-
-	type = strrchr(mapent->name, '=');
-	if (!type)
-		return NULL;			/* value is unexpected */
-	if (type == mapent->name)
-		return NULL;			/* wrong format of type definition */
-	type++;
-	if (*type != '%' && *type != '{')
-		return NULL;			/* wrong format of type definition */
-	return type ? : NULL;
-}
-
-/*
- * Does the option (that is described by @mntent) require any value? (e.g.
- * uid=<foo>)
- */
-int mnt_optmap_require_value(const struct mnt_optmap *mapent)
-{
-	char *type;
-
-	assert(mapent);
-	assert(mapent->name);
-
-	type = strchr(mapent->name, '=');
-	if (!type)
-		return 0;			/* value is unexpected */
-	if (type == mapent->name)
-		return 0;			/* wrong format of type definition */
-	if (*(type - 1) == '[')
-		return 0;			/* optional */
-	return 1;
-}

@@ -522,7 +522,7 @@ mnt_tab *mnt_new_tab_from_dir(const char *dirname)
 
 /**
  * mnt_tab_set_parser_errcb:
- * @tab: pointer to table
+ * @tb: pointer to table
  * @cb: pointer to callback function
  *
  * The error callback function is called by table parser (mnt_tab_parse_file())

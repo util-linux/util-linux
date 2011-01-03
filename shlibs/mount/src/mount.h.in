@@ -126,10 +126,6 @@ extern int mnt_match_fstype(const char *type, const char *pattern);
 extern int mnt_match_options(const char *optstr, const char *pattern);
 extern const char *mnt_get_fstab_path(void);
 extern const char *mnt_get_mtab_path(void);
-
-extern int mnt_get_filesystems(char ***filesystems, const char *pattern);
-extern void mnt_free_filesystems(char **filesystems);
-
 extern int mnt_has_regular_mtab(const char **mtab, int *writable);
 
 /* cache.c */
@@ -162,7 +158,7 @@ extern int mnt_optstr_remove_option(char **optstr, const char *name);
 
 extern int mnt_split_optstr(const char *optstr,
 			    char **user, char **vfs, char **fs,
-			    int ifnore_user, int ignore_vfs);
+			    int ignore_user, int ignore_vfs);
 
 extern int mnt_optstr_get_options(const char *optstr, char **subset,
                             const struct mnt_optmap *map, int ignore);
@@ -179,8 +175,8 @@ enum {
 	MNT_ITER_BACKWARD
 };
 extern mnt_iter *mnt_new_iter(int direction);
-extern void mnt_free_iter(mnt_iter *mi);
-extern void mnt_reset_iter(mnt_iter *mi, int direction);
+extern void mnt_free_iter(mnt_iter *itr);
+extern void mnt_reset_iter(mnt_iter *itr, int direction);
 extern int mnt_iter_get_direction(mnt_iter *itr);
 
 /* optmap.c */
@@ -193,33 +189,28 @@ extern const struct mnt_optmap *mnt_get_builtin_optmap(int id);
 /* lock.c */
 extern mnt_lock *mnt_new_lock(const char *datafile, pid_t id);
 extern void mnt_free_lock(mnt_lock *ml);
-
-extern const char *mnt_lock_get_lockfile(mnt_lock *ml);
-extern const char *mnt_lock_get_linkfile(mnt_lock *ml);
-
 extern void mnt_unlock_file(mnt_lock *ml);
 extern int mnt_lock_file(mnt_lock *ml);
 
 /* fs.c */
 extern mnt_fs *mnt_new_fs(void);
-extern void mnt_free_fs(mnt_fs *ent);
+extern void mnt_free_fs(mnt_fs *fs);
 extern mnt_fs *mnt_copy_fs(const mnt_fs *fs);
-extern mnt_fs *mnt_copy_mtab_fs(const mnt_fs *fs);
 extern void *mnt_fs_get_userdata(mnt_fs *fs);
 extern int mnt_fs_set_userdata(mnt_fs *fs, void *data);
-extern const char *mnt_fs_get_source(mnt_fs *ent);
-extern int mnt_fs_set_source(mnt_fs *ent, const char *source);
-extern const char *mnt_fs_get_srcpath(mnt_fs *ent);
-extern int mnt_fs_get_tag(mnt_fs *ent, const char **name, const char **value);
-extern const char *mnt_fs_get_target(mnt_fs *ent);
-extern int mnt_fs_set_target(mnt_fs *ent, const char *target);
-extern const char *mnt_fs_get_fstype(mnt_fs *ent);
-extern int mnt_fs_set_fstype(mnt_fs *ent, const char *fstype);
+extern const char *mnt_fs_get_source(mnt_fs *fs);
+extern int mnt_fs_set_source(mnt_fs *fs, const char *source);
+extern const char *mnt_fs_get_srcpath(mnt_fs *fs);
+extern int mnt_fs_get_tag(mnt_fs *fs, const char **name, const char **value);
+extern const char *mnt_fs_get_target(mnt_fs *fs);
+extern int mnt_fs_set_target(mnt_fs *fs, const char *target);
+extern const char *mnt_fs_get_fstype(mnt_fs *fs);
+extern int mnt_fs_set_fstype(mnt_fs *fs, const char *fstype);
 
 extern char *mnt_fs_strdup_options(mnt_fs *fs);
 extern int mnt_fs_set_options(mnt_fs *fs, const char *optstr);
 
-extern int mnt_fs_get_option(mnt_fs *ent, const char *name,
+extern int mnt_fs_get_option(mnt_fs *fs, const char *name,
 				char **value, size_t *valsz);
 
 extern int mnt_fs_append_options(mnt_fs *fs, const char *optstr);
@@ -247,10 +238,10 @@ extern int mnt_fs_get_attribute(mnt_fs *fs, const char *name,
 extern int mnt_fs_append_attributes(mnt_fs *fs, const char *optstr);
 extern int mnt_fs_prepend_attributes(mnt_fs *fs, const char *optstr);
 
-extern int mnt_fs_get_freq(mnt_fs *ent);
-extern int mnt_fs_set_freq(mnt_fs *ent, int freq);
-extern int mnt_fs_get_passno(mnt_fs *ent);
-extern int mnt_fs_set_passno(mnt_fs *ent, int passno);
+extern int mnt_fs_get_freq(mnt_fs *fs);
+extern int mnt_fs_set_freq(mnt_fs *fs, int freq);
+extern int mnt_fs_get_passno(mnt_fs *fs);
+extern int mnt_fs_set_passno(mnt_fs *fs, int passno);
 extern const char *mnt_fs_get_root(mnt_fs *fs);
 extern int mnt_fs_set_root(mnt_fs *fs, const char *root);
 extern const char *mnt_fs_get_bindsrc(mnt_fs *fs);
@@ -263,7 +254,7 @@ extern int mnt_fs_match_target(mnt_fs *fs, const char *target, mnt_cache *cache)
 extern int mnt_fs_match_source(mnt_fs *fs, const char *source, mnt_cache *cache);
 extern int mnt_fs_match_fstype(mnt_fs *fs, const char *types);
 extern int mnt_fs_match_options(mnt_fs *fs, const char *options);
-extern int mnt_fs_print_debug(mnt_fs *ent, FILE *file);
+extern int mnt_fs_print_debug(mnt_fs *fs, FILE *file);
 
 extern void mnt_free_mntent(struct mntent *mnt);
 extern int mnt_fs_to_mntent(mnt_fs *fs, struct mntent **mnt);

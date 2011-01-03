@@ -5,6 +5,32 @@
  * GNU Lesser General Public License.
  */
 
+/**
+ * SECTION: context
+ * @title: Mount/umount context
+ * @short_description: high-level API to mount/umount devices.
+ *
+ * <informalexample>
+ *   <programlisting>
+ *	mnt_context *cxt = mnt_new_context();
+ *
+ *	mnt_context_set_options(cxt, "aaa,bbb,ccc=CCC");
+ *	mnt_context_set_mountflags(cxt, MS_NOATIME|MS_NOEXEC);
+ *	mnt_context_set_target(cxt, "/mnt/foo");
+ *
+ *	if (!mnt_context_do_mount(cxt))
+ *		printf("successfully mounted\n");
+ *	mnt_free_context(cxt);
+ *
+ *   </programlisting>
+ * </informalexample>
+ *
+ * This code is similar to:
+ *
+ *   mount -o aaa,bbb,ccc=CCC,noatime,noexec /mnt/foo
+ *
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -313,7 +339,7 @@ int mnt_context_enable_force(mnt_context *cxt, int enable)
  * @cxt: mount context
  * @enable: TRUE or FALSE
  *
- * Enable/disable verbose output (see also mnt_context_mount_strerror()).
+ * Enable/disable verbose output (TODO: not implemented yet)
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -414,7 +440,7 @@ int mnt_context_set_target(mnt_context *cxt, const char *target)
  * @fstype: filesystem type
  *
  * Note that the @fstype has to be the real FS type. For comma-separated list of
- * filesystems or for "no<fs>" notation use mnt_context_set_fstype_pattern().
+ * filesystems or for "nofs" notation use mnt_context_set_fstype_pattern().
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -428,7 +454,7 @@ int mnt_context_set_fstype(mnt_context *cxt, const char *fstype)
 /**
  * mnt_context_set_options:
  * @cxt: mount context
- * @options: comma delimited mount options
+ * @optstr: comma delimited mount options
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -658,9 +684,6 @@ mnt_cache *mnt_context_get_cache(mnt_context *cxt)
  * mtab locking, but with a small exceptions: the application has to be able to
  * remove the lock file when interrupted by signal. It means that properly written
  * mount(8)-like application has to call mnt_unlock_file() from a signal handler.
- *
- * See also mnt_unlock_file(), mnt_context_disable_lock() and
- * mnt_context_disable_mtab().
  *
  * This function returns NULL if mtab file is not writable or nolock or nomtab
  * flags is enabled.
@@ -1281,7 +1304,7 @@ err:
  * mnt_context_get_status:
  * @cxt: mount context
  *
- * Returns: 1 if mount.<type> or mount(2) syscall was successfull or 0.
+ * Returns: 1 if /sbin/mount.type or mount(2) syscall was successfull or 0.
  */
 int mnt_context_get_status(mnt_context *cxt)
 {

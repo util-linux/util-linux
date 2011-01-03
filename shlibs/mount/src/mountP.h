@@ -123,6 +123,9 @@ extern int mnt_open_uniq_filename(const char *filename, char **name, int flags);
 extern int mnt_has_regular_utab(const char **utab, int *writable);
 extern const char *mnt_get_utab_path(void);
 
+extern int mnt_get_filesystems(char ***filesystems, const char *pattern);
+extern void mnt_free_filesystems(char **filesystems);
+
 /*
  * Generic iterator
  */
@@ -292,10 +295,6 @@ struct _mnt_context
 extern const struct mnt_optmap *mnt_optmap_get_entry(struct mnt_optmap const **maps,
                              int nmaps, const char *name,
                              size_t namelen, const struct mnt_optmap **mapent);
-extern int mnt_optmap_enum_to_number(const struct mnt_optmap *mapent,
-                        const char *rawdata, size_t len);
-extern const char *mnt_optmap_get_type(const struct mnt_optmap *mapent);
-extern int mnt_optmap_require_value(const struct mnt_optmap *mapent);
 
 /* optstr.c */
 extern int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end);
@@ -305,10 +304,9 @@ extern int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, ch
 extern int mnt_optstr_fix_user(char **optstr);
 
 /* fs.c */
+extern mnt_fs *mnt_copy_mtab_fs(const mnt_fs *fs);
 extern int __mnt_fs_set_source_ptr(mnt_fs *fs, char *source);
 extern int __mnt_fs_set_fstype_ptr(mnt_fs *fs, char *fstype);
-extern int __mnt_fs_set_optstr_ptr(mnt_fs *fs, char *optstr, int split);
-extern int __mnt_fs_set_optstr(mnt_fs *fs, const char *optstr, int split);
 
 /* context.c */
 extern int mnt_context_prepare_srcpath(mnt_context *cxt);

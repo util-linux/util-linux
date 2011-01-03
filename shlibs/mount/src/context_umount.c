@@ -444,7 +444,7 @@ static int do_umount(mnt_context *cxt)
  * mnt_context_do_umount:
  * @cxt: mount context
  *
- * Umount filesystem by umount(2) or fork()+exec(/sbin/umount.<type>).
+ * Umount filesystem by umount(2) or fork()+exec(/sbin/umount.type).
  *
  * See also mnt_context_disable_helpers().
  *

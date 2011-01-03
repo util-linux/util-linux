@@ -613,7 +613,7 @@ const char *mnt_get_fstab_path(void)
  * mnt_get_mtab_path:
  *
  * This function returns *default* location of the mtab file. The result does
- * not have to be writable. See also mnt_get_writable_mtab_path().
+ * not have to be writable. See also mnt_has_regular_mtab().
  *
  * Returns: path to /etc/mtab or $LIBMOUNT_MTAB.
  */

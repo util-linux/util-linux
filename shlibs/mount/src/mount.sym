@@ -46,10 +46,8 @@ global:
 	mnt_context_set_userspace_mountflags;
 	mnt_context_strerror;
 	mnt_copy_fs;
-	mnt_copy_mtab_fs;
 	mnt_free_cache;
 	mnt_free_context;
-	mnt_free_filesystems;
 	mnt_free_fs;
 	mnt_free_iter;
 	mnt_free_lock;
@@ -107,7 +105,6 @@ global:
 	mnt_fs_to_mntent;
 	mnt_fstype_is_netfs;
 	mnt_fstype_is_pseudofs;
-	mnt_get_filesystems;
 	mnt_get_fstab_path;
 	mnt_get_fstype;
 	mnt_get_library_version;
@@ -116,8 +113,6 @@ global:
 	mnt_init_debug;
 	mnt_iter_get_direction;
 	mnt_lock_file;
-	mnt_lock_get_linkfile;
-	mnt_lock_get_lockfile;
 	mnt_mangle;
 	mnt_match_fstype;
 	mnt_match_options;

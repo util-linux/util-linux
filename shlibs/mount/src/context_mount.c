@@ -417,12 +417,12 @@ static int do_mount_by_pattern(mnt_context *cxt, const char *pattern)
  * mnt_context_do_mount:
  * @cxt: mount context
  *
- * Mount filesystem by mount(2) or fork()+exec(/sbin/mount.<type>).
+ * Mount filesystem by mount(2) or fork()+exec(/sbin/mount.type).
  *
  * See also mnt_context_disable_helpers().
  *
  * Returns: 0 on success, and negative number in case of error. WARNING: error
- *          does not mean that mount(2) syscall or mount.<type> helper wasn't
+ *          does not mean that mount(2) syscall or mount.type helper wasn't
  *          sucessfully called. Check mnt_context_get_status() after error!
  */
 int mnt_context_do_mount(mnt_context *cxt)

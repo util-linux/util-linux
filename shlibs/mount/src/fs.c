@@ -145,10 +145,7 @@ err:
 	return NULL;
 }
 
-/**
- * mnt_copy_mtab_fs:
- * @fs: filesystem
- *
+/*
  * This function copies all @fs description except information that does not
  * belong to /etc/mtab (e.g. VFS and userspace mount options with MNT_NOMTAB
  * mask).
@@ -213,6 +210,7 @@ void *mnt_fs_get_userdata(mnt_fs *fs)
 /**
  * mnt_fs_set_userdata:
  * @fs: mnt_file instance
+ * @data: user data
  *
  * The "userdata" are library independent data.
  *
@@ -546,6 +544,7 @@ char *mnt_fs_strdup_options(mnt_fs *fs)
 /**
  * mnt_fs_set_options:
  * @fs: fstab/mtab/mountinfo entry pointer
+ * @optstr: options string
  *
  * Splits @optstr to VFS, FS and userspace mount options and update relevat
  * parts of @fs.

@@ -454,8 +454,7 @@ int mnt_optstr_remove_option(char **optstr, const char *name)
  *
  * Returns: 0 on success, or negative number in case of error.
  */
-int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs,
-			int ignore_user, int ignore_vfs)
+int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs, int ignore_user, int ignore_vfs)
 {
 	char *name, *val, *str = (char *) optstr;
 	size_t namesz, valsz;
@@ -569,6 +568,7 @@ int mnt_optstr_get_options(const char *optstr, char **subset,
  * mnt_optstr_get_flags:
  * @optstr: string with comma separated list of options
  * @flags: returns mount flags
+ * @map: options map
  *
  * Returns in @flags IDs of options from @optstr as defined in the @map.
  *
@@ -583,7 +583,6 @@ int mnt_optstr_get_options(const char *optstr, char **subset,
  *
  * Returns: 0 on success or negative number in case of error
  */
-
 int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 		const struct mnt_optmap *map)
 {
@@ -615,7 +614,7 @@ int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 }
 
 /**
- * mnt_optstr_apply_mountflags:
+ * mnt_optstr_apply_flags:
  * @optstr: string with comma separated list of options
  * @flags: returns mount flags
  * @map: options map
@@ -717,9 +716,9 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 			p = strchr(ent->name, '=');
 			if (p) {
 				if (*(p - 1) == '[')
-					p--;			/* name[=%s] */
+					p--;			/* name[=] */
 				else
-					continue;		/* name=%s */
+					continue;		/* name= */
 
 				p = strndup(ent->name, p - ent->name);
 				if (!p) {

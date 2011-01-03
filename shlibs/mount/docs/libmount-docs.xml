@@ -29,6 +29,10 @@ available from ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
  </part>
 
   <part>
+    <title>High-level API</title>
+    <xi:include href="xml/context.xml"/>
+  </part>
+  <part>
     <title>Files parsing</title>
     <xi:include href="xml/tab.xml"/>
     <xi:include href="xml/fs.xml"/>
@@ -36,13 +40,12 @@ available from ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
   <part>
     <title>Mount options</title>
     <xi:include href="xml/optstr.xml"/>
-    <xi:include href="xml/optls.xml"/>
-    <xi:include href="xml/optent.xml"/>
     <xi:include href="xml/optmap.xml"/>
   </part>
   <part>
     <title>Mtab management</title>
     <xi:include href="xml/lock.xml"/>
+    <xi:include href="xml/update.xml"/>
   </part>
   <part>
     <title>Misc</title>

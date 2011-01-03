@@ -7,8 +7,15 @@
 
 /**
  * SECTION: update
- * @title: mtab (fstab) managment
- * @short_description: userspace mount information management
+ * @title: mtab managment
+ * @short_description: userspace mount information management.
+ *
+ * The mnt_update provides abstraction to manage mount options in userspace independently on
+ * system configuration. This low-level API works on system with and without /etc/mtab. On 
+ * systems without the regular /etc/mtab file are userspace mount options (e.g. user=)
+ * stored to the /dev/.mount/utab file.
+ *
+ * It's recommended to use high-level mnt_context API.
  */
 
 #include <stdio.h>
@@ -770,6 +777,7 @@ static int update_modify_options(mnt_update *upd, mnt_lock *lc)
 
 /**
  * mnt_update_tab:
+ * @upd: update
  * @lc: lock
  *
  * High-level API to update /etc/mtab (or private /dev/.mount/utab file).

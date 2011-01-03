@@ -7,7 +7,7 @@
 
 /**
  * SECTION: tab
- * @title: FS container
+ * @title: Table of filesystems
  * @short_description: container for entries from fstab/mtab/mountinfo
  *
  *
@@ -300,7 +300,7 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
  *
  * Returns: 0 on success, negative number in case of error or 1 at end of list.
  *
- * Example (list all mountpoints from fstab in backward order):
+ * Example:
  * <informalexample>
  *   <programlisting>
  *	mnt_fs *fs;
@@ -316,6 +316,8 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
  *	mnt_free_tab(fi);
  *   </programlisting>
  * </informalexample>
+ *
+ * lists all mountpoints from fstab in backward order.
  */
 int mnt_tab_next_fs(mnt_tab *tb, mnt_iter *itr, mnt_fs **fs)
 {
