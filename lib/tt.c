@@ -304,6 +304,14 @@ static int get_terminal_width(void)
 	return 0;
 }
 
+int tt_line_set_userdata(struct tt_line *ln, void *data)
+{
+	if (!ln)
+		return -1;
+	ln->userdata = data;
+	return 0;
+}
+
 static char *line_get_ascii_art(struct tt_line *ln, char *buf, size_t *bufsz)
 {
 	const char *art;

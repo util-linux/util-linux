@@ -47,6 +47,7 @@ struct tt_column {
 struct tt_line {
 	struct tt	*table;
 	char const	**data;
+	void		*userdata;
 
 	struct list_head	ln_lines;	/* table lines */
 
@@ -68,6 +69,7 @@ extern struct tt_column *tt_get_column(struct tt *tb, int colnum);
 extern struct tt_line *tt_add_line(struct tt *tb, struct tt_line *parent);
 
 extern int tt_line_set_data(struct tt_line *ln, int colnum, const char *data);
+extern int tt_line_set_userdata(struct tt_line *ln, void *data);
 
 extern int tt_parse_columns_list(const char *list, int cols[], int *ncols,
 				int (name2id)(const char *, size_t));

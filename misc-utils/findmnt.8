@@ -64,7 +64,9 @@ Print the first matching filesystem only.
 .IP "\fB\-i, \-\-invert\fP"
 Invert the sense of matching.
 .IP "\fB\-l, \-\-list\fP"
-Use the list output format.
+Use the list output format. This output format is automatically enabled if the
+output is restricted by \fB\-t\fP, \fB\-O\fP, \fB\-S\fP or \fB\-T\fP
+option and the option \fB\-\-submounts\fP is not used.
 .IP "\fB\-v, \-\-nofsroot\fP"
 Do not print a [/dir] in the SOURCE column for bind-mounts or btrfs subvolumes.
 .IP "\fB\-n, \-\-noheadings\fP"
@@ -120,6 +122,12 @@ prefixed with
 to specify the filesystem types on which no action should be taken.  For
 more details see
 .BR mount (8).
+.IP "\fB\-R, \-\-submounts\fP"
+Print recursively all submounts for the selected filesystems. The restictions
+defined by options \fB\-t\fP, \fB\-O\fP, \fB\-S\fP, \fB\-T\fP and
+\fB\--direction\fP are not applied to submounts. All submounts are always
+printed in tree-like order. The option enables the tree-like output format by
+default. This option has no effect for \fB\-\-mtab\fP or \fB\-\-fstab\fP.
 .IP "\fB\-S, \-\-source \fIspec\fP"
 Explicitly define the mount source.  Supported are device, LABEL= or UUID=.
 .IP "\fB\-T, \-\-target \fIdir\fP"

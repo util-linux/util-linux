@@ -47,6 +47,7 @@ enum {
 	FL_INVERT	= (1 << 4),
 	FL_NOSWAPMATCH	= (1 << 6),
 	FL_NOFSROOT	= (1 << 7),
+	FL_SUBMOUNTS	= (1 << 8),
 };
 
 /* column IDs */
@@ -297,10 +298,23 @@ static struct tt_line *add_line(struct tt *tt, mnt_fs *fs,
 	for (i = 0; i < ncolumns; i++)
 		tt_line_set_data(line, i, get_data(fs, i));
 
+	tt_line_set_userdata(line, fs);
 	return line;
 }
 
-/* reads filesystems from @tb (libmount) and fillin @tab (output table) */
+static int has_line(struct tt *tt, mnt_fs *fs)
+{
+	struct list_head *p;
+
+	list_for_each(p, &tt->tb_lines) {
+		struct tt_line *ln = list_entry(p, struct tt_line, ln_lines);
+		if ((mnt_fs *) ln->userdata == fs)
+			return 1;
+	}
+	return 0;
+}
+
+/* reads filesystems from @tb (libmount) and fillin @tt (output table) */
 static int create_treenode(struct tt *tt, mnt_tab *tb,
 				mnt_fs *fs, struct tt_line *parent_line)
 {
@@ -314,7 +328,9 @@ static int create_treenode(struct tt *tt, mnt_tab *tb,
 		if (mnt_tab_get_root_fs(tb, &fs))
 			goto leave;
 		parent_line = NULL;
-	}
+
+	} else if ((flags & FL_SUBMOUNTS) && has_line(tt, fs))
+		return 0;
 
 	itr = mnt_new_iter(MNT_ITER_FORWARD);
 	if (!itr)
@@ -446,6 +462,38 @@ again:
 	return fs;
 }
 
+static int add_matching_lines(mnt_tab *tb, struct tt *tt, int direction)
+{
+	mnt_iter *itr = NULL;
+	mnt_fs *fs;
+	int nlines = 0, rc = -1;
+
+	itr = mnt_new_iter(direction);
+	if (!itr) {
+		warn(_("failed to initialize libmount iterator"));
+		goto done;
+	}
+
+	while((fs = get_next_fs(tb, itr))) {
+		if ((tt_flags & TT_FL_TREE) || (flags & FL_SUBMOUNTS))
+			rc = create_treenode(tt, tb, fs, NULL);
+		else
+			rc = !add_line(tt, fs, NULL);
+		if (rc)
+			goto done;
+		nlines++;
+		if (flags & FL_FIRSTONLY)
+			break;
+		flags |= FL_NOSWAPMATCH;
+	}
+
+	if (nlines)
+		rc = 0;
+done:
+	mnt_free_iter(itr);
+	return rc;
+}
+
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	int i;
@@ -480,6 +528,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -a, --ascii            use ascii chars for tree formatting\n"
 	" -t, --types <list>     limit the set of filesystem by FS types\n"
 	" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
+	" -R, --submounts        print all submount for the matching filesystems\n"
 	" -S, --source <string>  device, LABEL= or UUID=device\n"
 	" -T, --target <string>  mountpoint\n\n"));
 
@@ -509,15 +558,12 @@ int main(int argc, char *argv[])
 {
 	/* libmount */
 	mnt_tab *tb = NULL;
-	mnt_iter *itr = NULL;
-	mnt_fs *fs = NULL;
 	char *tabfile = NULL;
 	int direction = MNT_ITER_FORWARD;
+	int i, c, rc = -1;
 
 	/* table.h */
 	struct tt *tt = NULL;
-
-	int i, c, nlines = 0, rc = EXIT_FAILURE;
 
 	struct option longopts[] = {
 	    { "ascii",        0, 0, 'a' },
@@ -538,6 +584,7 @@ int main(int argc, char *argv[])
 	    { "raw",          0, 0, 'r' },
 	    { "types",        1, 0, 't' },
 	    { "fsroot",       0, 0, 'v' },
+	    { "submounts",    0, 0, 'R' },
 	    { "source",       1, 0, 'S' },
 	    { "target",       1, 0, 'T' },
 
@@ -560,7 +607,7 @@ int main(int argc, char *argv[])
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"acd:ehifo:O:klmnrst:uvS:T:", longopts, NULL)) != -1) {
+				"acd:ehifo:O:klmnrst:uvRS:T:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			tt_flags |= TT_FL_ASCII;
@@ -636,6 +683,9 @@ int main(int argc, char *argv[])
 		case 'v':
 			flags |= FL_NOFSROOT;
 			break;
+		case 'R':
+			flags |= FL_SUBMOUNTS;
+			break;
 		case 'S':
 			set_match(COL_SOURCE, optarg);
 			flags |= FL_NOSWAPMATCH;
@@ -669,7 +719,12 @@ int main(int argc, char *argv[])
 	if (optind < argc)
 		set_match(COL_TARGET, argv[optind++]);	/* mountpoint */
 
-	if (!is_listall_mode() || (flags & FL_FIRSTONLY))
+	if ((flags & FL_SUBMOUNTS) && is_listall_mode())
+		/* don't care about submounts if list all mounts */
+		flags &= ~FL_SUBMOUNTS;
+
+	if (!(flags & FL_SUBMOUNTS) &&
+	    (!is_listall_mode() || (flags & FL_FIRSTONLY)))
 		tt_flags &= ~TT_FL_TREE;
 
 	if (!(flags & FL_NOSWAPMATCH) &&
@@ -692,12 +747,6 @@ int main(int argc, char *argv[])
 	tb = parse_tabfile(tabfile);
 	if (!tb)
 		goto leave;
-
-	itr = mnt_new_iter(direction);
-	if (!itr) {
-		warn(_("failed to initialize libmount iterator"));
-		goto leave;
-	}
 
 	cache = mnt_new_cache();
 	if (!cache) {
@@ -731,32 +780,23 @@ int main(int argc, char *argv[])
 	/*
 	 * Fill in data to the output table
 	 */
-	if (tt_flags & TT_FL_TREE) {
-		if (create_treenode(tt, tb, NULL, NULL))
-			goto leave;
-	} else {
-		while((fs = get_next_fs(tb, itr))) {
-			if (!add_line(tt, fs, NULL))
-				goto leave;
-			nlines++;
-			if (flags & FL_FIRSTONLY)
-				break;
-		}
-	}
+	if ((tt_flags & TT_FL_TREE) && is_listall_mode())
+		/* whole tree */
+		rc = create_treenode(tt, tb, NULL, NULL);
+	else
+		/* whole lits of sub-tree */
+		rc = add_matching_lines(tb, tt, direction);
 
 	/*
 	 * Print the output table
 	 */
-	tt_print_table(tt);
-
-	if (is_listall_mode() || nlines)
-		rc = EXIT_SUCCESS;
+	if (!rc)
+		tt_print_table(tt);
 leave:
 	tt_free_table(tt);
 
 	mnt_free_tab(tb);
 	mnt_free_cache(cache);
-	mnt_free_iter(itr);
 
-	return rc;
+	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
 }
