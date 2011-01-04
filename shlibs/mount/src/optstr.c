@@ -27,8 +27,6 @@
 #include <selinux/context.h>
 #endif
 
-#include <ctype.h>
-
 #include "nls.h"
 #include "mountP.h"
 

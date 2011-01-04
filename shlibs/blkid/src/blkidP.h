@@ -19,7 +19,6 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <sys/stat.h>
-#include <sys/types.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>

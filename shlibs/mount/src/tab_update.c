@@ -817,8 +817,6 @@ int mnt_update_tab(mnt_update *upd, mnt_lock *lc)
 
 #ifdef TEST_PROGRAM
 
-#include <errno.h>
-
 mnt_lock *lock;
 
 static void lock_fallback(void)

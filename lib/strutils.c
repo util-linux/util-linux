@@ -277,10 +277,6 @@ char *size_to_human_string(uint64_t bytes)
 
 #ifdef TEST_PROGRAM
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <err.h>
-
 int main(int argc, char *argv[])
 {
 	uintmax_t size = 0;

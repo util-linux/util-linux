@@ -955,8 +955,6 @@ find_unused_loop_device (void) {
 #include <getopt.h>
 #include <stdarg.h>
 
-#include "strutils.h"
-
 static void
 usage(FILE *f) {
 	fprintf(f, _("\nUsage:\n"
