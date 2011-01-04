@@ -35,6 +35,7 @@
 #include "strutils.h"
 #include "nls.h"
 #include "pathnames.h"
+#include "c.h"
 
 #ifdef __linux__
 #include <sys/param.h>
@@ -304,7 +305,7 @@ main(argc, argv)
     /* write the modem init string and DON'T flush the buffers */
     if (options.flags & F_INITSTRING) {
 	debug("writing init string\n");
-	write(1, options.initstring, strlen(options.initstring));
+	ignore_result( write(1, options.initstring, strlen(options.initstring)) );
     }
 
     if (!(options.flags & F_LOCAL)) {
@@ -354,7 +355,7 @@ main(argc, argv)
 
     /* Now the newline character should be properly written. */
 
-    (void) write(1, "\n", 1);
+    ignore_result( write(1, "\n", 1) );
 
     /* Let the login program take care of password validation. */
 
@@ -600,7 +601,7 @@ update_utmp(line)
 	if ((lf = open(_PATH_WTMPLOCK, O_CREAT|O_WRONLY, 0660)) >= 0) {
 	    flock(lf, LOCK_EX);
 	    if ((ut_fd = open(_PATH_WTMP, O_APPEND|O_WRONLY)) >= 0) {
-		write(ut_fd, &ut, sizeof(ut));
+		ignore_result( write(ut_fd, &ut, sizeof(ut)) );
 		close(ut_fd);
 	    }
 	    flock(lf, LOCK_UN);
@@ -681,14 +682,15 @@ open_tty(tty, tp, local)
      * 0622 is suitable for SYSV <4 because /bin/login does not change
      * protections. SunOS 4 login will change the protections to 0620 (write
      * access for group tty) after the login has succeeded.
+     *
+     * Linux login(1) will change tty permissions.
      */
 
     /*
      * Let us use 0600 for Linux for the period between getty and login
      */
-
-    (void) chown(tty, 0, 0);			/* root, sys */
-    (void) chmod(tty, 0600);			/* 0622: crw--w--w- */
+    ignore_result( chown(tty, 0, 0) );		/* root, sys */
+    ignore_result( chmod(tty, 0600) );		/* 0622: crw--w--w- */
     errno = 0;					/* ignore above errors */
 }
 
@@ -833,7 +835,7 @@ do_prompt(op, tp)
     (void) uname(&uts);
 #endif
 
-    (void) write(1, "\r\n", 2);			/* start a new line */
+    ignore_result( write(1, "\r\n", 2) );			/* start a new line */
 #ifdef	ISSUE					/* optional: show /etc/issue */
     if ((op->flags & F_ISSUE) && (fd = fopen(op->issue, "r"))) {
 	oflag = tp->c_oflag;			/* save current setting */
@@ -976,9 +978,9 @@ do_prompt(op, tp)
     {
 	char hn[MAXHOSTNAMELEN+1];
 	if (gethostname(hn, sizeof(hn)) == 0)
-	    write(1, hn, strlen(hn));
+	    ignore_result( write(1, hn, strlen(hn)) );
     }
-    (void) write(1, LOGIN, sizeof(LOGIN) - 1);	/* always show login prompt */
+    ignore_result( write(1, LOGIN, sizeof(LOGIN) - 1) );	/* always show login prompt */
 }
 
 /* next_speed - select next baud rate */
@@ -1079,7 +1081,7 @@ char   *get_logname(op, cp, tp)
 	    case '#':
 		cp->erase = ascval;		/* set erase character */
 		if (bp > logname) {
-		    (void) write(1, erase[cp->parity], 3);
+		    ignore_result( write(1, erase[cp->parity], 3) );
 		    bp--;
 		}
 		break;
@@ -1087,7 +1089,7 @@ char   *get_logname(op, cp, tp)
 	    case '@':
 		cp->kill = ascval;		/* set kill character */
 		while (bp > logname) {
-		    (void) write(1, erase[cp->parity], 3);
+		    ignore_result( write(1, erase[cp->parity], 3) );
 		    bp--;
 		}
 		break;
@@ -1099,7 +1101,7 @@ char   *get_logname(op, cp, tp)
 		} else if (bp - logname >= sizeof(logname) - 1) {
 		    error(_("%s: input overrun"), op->tty);
 		} else {
-		    (void) write(1, &c, 1);	/* echo the character */
+		    ignore_result( write(1, &c, 1) );	/* echo the character */
 		    *bp++ = ascval;		/* and store it */
 		}
 		break;
@@ -1295,7 +1297,7 @@ error(const char *fmt, ...) {
     /* Terminate with CR-LF since the console mode is unknown. */
     (void) strcat(bp, "\r\n");
     if ((fd = open("/dev/console", 1)) >= 0) {
-	(void) write(fd, buf, strlen(buf));
+	ignore_result( write(fd, buf, strlen(buf)) );
 	(void) close(fd);
     }
 #endif
