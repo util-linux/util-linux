@@ -971,7 +971,7 @@ This option implies the options
 .B remount
 Attempt to remount an already-mounted filesystem.  This is commonly
 used to change the mount flags for a filesystem, especially to make a
-readonly filesystem writeable. It does not change device or mount point.
+readonly filesystem writable. It does not change device or mount point.
 
 The remount functionality follows the standard way how the mount command works
 with options from fstab. It means the mount command doesn't read fstab (or
@@ -1670,7 +1670,7 @@ This option will fail with anything but a CDROM as underlying device.
 .TP
 .BI part= n
 Select partition number n from the device.
-Only makes sense for CDROMS.
+Only makes sense for CDROMs.
 Defaults to not parsing the partition table at all.
 .TP
 .B quiet
@@ -1722,7 +1722,7 @@ length), and in addition all characters are in upper case.  Also there is
 no field for file ownership, protection, number of links, provision for
 block/character devices, etc.
 
-Rock Ridge is an extension to iso9660 that provides all of these unix like
+Rock Ridge is an extension to iso9660 that provides all of these UNIX-like
 features.  Basically there are extensions to each directory record that
 supply all of the additional information, and when Rock Ridge is in use,
 the filesystem is indistinguishable from a normal UNIX filesystem (except
@@ -1857,7 +1857,7 @@ See mount options for fat.
 If the
 .I msdos
 filesystem detects an inconsistency, it reports an error and sets the file
-system read-only. The filesystem can be made writeable again by remounting
+system read-only. The filesystem can be made writable again by remounting
 it.
 
 .SH "Mount options for ncpfs"
@@ -1891,7 +1891,7 @@ and the current version of
 .BI iocharset= name
 Character set to use when returning file names.
 Unlike VFAT, NTFS suppresses names that contain
-unconvertible characters. Deprecated.
+nonconvertible characters. Deprecated.
 .\" since 2.5.11
 .TP
 .BI nls= name
