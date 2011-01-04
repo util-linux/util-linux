@@ -52,6 +52,9 @@ CONTRIBUTORS:
       Ævar Arnfjörð Bjarmason <avarab@gmail.com>
       Alain Guibert <alguibert+ulng@free.fr>
       Alan Curry <pacman@TheWorld.com>
+      Alexander Shishkin <virtuoso@slind.org>
+      Alexandre Peixoto Ferreira <alexandref75@gmail.com>
+      Alexey Gladkov <gladkov.alexey@gmail.com>
       Alexey Gladkov <legion@altlinux.ru>
       Alon Bar-Lev <alon.barlev@gmail.com>
       Américo Wang <xiyou.wangcong@gmail.com>
@@ -71,6 +74,7 @@ CONTRIBUTORS:
       Bryn M. Reeves <bmr@errorists.org>
       Cai Qian <qcai@redhat.com>
       Chow Loong Jin <hyperair@ubuntu.com>
+      Chris Frost <chris@frostnet.net>
       Christophe Blaess <Christophe@Blaess.fr>
       Christoph Hellwig <hch@infradead.org>
       Chris Webb <chris@arachsys.com>
@@ -85,21 +89,27 @@ CONTRIBUTORS:
       Daniel Mierswa <impulze@impulze.org>
       Daniel Nylander <po@danielnylander.se>
       David Brownell <david-b@pacbell.net>
+      Davidlohr Bueso <dave@gnu.org>
       David Miller <davem@davemloft.net>
       David Woodhouse <dwmw2@infradead.org>
-      Davidlohr Bueso <dave@gnu.org>
       Denis ChengRq <crquan@gmail.com>
       Dennis Gilmore <dennis@ausil.us>
+      Diego Elio 'Flameeyes' Pettenò <flameeyes@gmail.com>
+      Dima Kogan <dkogan@cds.caltech.edu>
       Dmitry V. Levin <ldv@altlinux.org>
       Eric Sandeen <sandeen@redhat.com>
       Flávio Leitner <fleitner@redhat.com>
       Florentin Duneau <fduneau@gmail.com>
       Florian Zumbiehl <florz@florz.de>
+      Forest Bond <forest@alittletooquiet.net>
       Francesco Cosoleto <cosoleto@gmail.com>
+      François Revol <revol@free.fr>
+      Fran Diéguez <frandieguez@ubuntu.com>
       Frédéric Bothamy <frederic.bothamy@free.fr>
       Gabor Kelemen <kelemeng@gnome.hu>
       Gabriel Barazer <gabriel@oxeva.fr>
       Gabriel Burt <gburt@novell.com>
+      Gerrit Renker <gerrit@erg.abdn.ac.uk>
       Guan Xin <guanx.bac@gmail.com>
       Guillem Jover <guillem@hadrons.org>
       Hajime Taira <htaira@redhat.com>
@@ -108,7 +118,8 @@ CONTRIBUTORS:
       Hendrik Lönngren <wikibugs@googlemail.com>
       Henne Vogelsang <hvogel@opensuse.org>
       H. Peter Anvin <hpa@zytor.com>
-      Hugh Dickins <hugh@veritas.com>
+      Hugh Dickins <hughd@google.com>
+      Igor Bazhitov <igor.bazhitov@gmail.com>
       Imre Kaloz <kaloz@openwrt.org>
       Jakob Unterwurzacher <jakobunt@gmail.com>
       Jakub Bogusz <qboosh@pld-linux.org>
@@ -121,6 +132,7 @@ CONTRIBUTORS:
       Jeroen Oortwijn <oortwijn@gmail.com>
       Jim Meyering <jim@meyering.net>
       Jim Meyering <meyering@redhat.com>
+      Jiro SEKIBA <jir@unicus.jp>
       John Keeping <john.keeping@lineone.net>
       Jon Ringle <jon@ringle.org>
       Josep Puigdemont <josep.puigdemont@gmail.com>
@@ -141,11 +153,14 @@ CONTRIBUTORS:
       Lubomir Kundrak <lkundrak@redhat.com>
       Luciano Chavez <lnx1138@us.ibm.com>
       Ludwig Nussel <ludwig.nussel@suse.de>
+      Lukas Czerner <lczerner@redhat.com>
       Makoto Kato <makoto.kt@gmail.com>
       Marco Colombo <m.colombo@ed.ac.uk>
       Marco d'Itri <md@Linux.IT>
       Marek Otahal <markotahal@gmail.com>
+      Marek Polacek <mmpolacek@gmail.com>
       Mark McLoughlin <markmc@redhat.com>
+      Markus Rinne <markus.ka.rinne@gmail.com>
       Martin Schlemmer <azarah@gentoo.org>
       Martin Schulze <joey@infodrom.org>
       Martin Steigerwald <ms@teamix.de>
@@ -166,6 +181,7 @@ CONTRIBUTORS:
       Mikhail Gusarov <dottedmag@dottedmag.net>
       Miklos Szeredi <miklos@szeredi.hu>
       Miklos Szeredi <mszeredi@suse.cz>
+      Milan Bouchet-Valat <nalimilan@club.fr>
       Milan Broz <mbroz@redhat.com>
       Moritz Muehlenhoff <jmm@inutil.org>
       M.S.Colclough <m.s.colclough@bham.ac.uk>
@@ -175,15 +191,17 @@ CONTRIBUTORS:
       Oliver Falk <oliver@linux-kernel.at>
       Olivier Blin <blino@mandriva.com>
       Pádraig Brady <P@draigBrady.com>
-      Pascal Terjan <pterjan@cmoi.fasmz.org>
       Pascal Terjan <pterjan@mandriva.com>
+      Patrice Dumas <pertusus@free.fr>
       Paul Fox <pgf@laptop.org>
       Paulius Zaleckas <paulius.zaleckas@teltonika.lt>
+      Paul Menzel <paulepanter@users.sourceforge.net>
       Pavel Maryanov <acid_jack@ukr.net>
       Pedro Ribeiro <p.m42.ribeiro@gmail.com>
       Peter Breitenlohner <peb@mppmu.mpg.de>
       Peter De Wachter <pdewacht@gmail.com>
       Peter Jones <pjones@redhat.com>
+      Peter Tyser <ptyser@xes-inc.com>
       Peter Volkov <pva@gentoo.org>
       Petr Pisar <petr.pisar@atlas.cz>
       Petr Uzel <petr.uzel@suse.cz>
@@ -198,6 +216,7 @@ CONTRIBUTORS:
       Robert Millan <rmh@aybabtu.com>
       Rodrigo Stulzer Lopes <rodrigo@conectiva.com.br>
       Roy Peled <the.roy.peled@gmail.com>
+      Sami Kerola <kerolasa@iki.fi>
       Samuel Thibault <samuel.thibault@ens-lyon.org>
       Sam Varshavchik <mrsam@courier-mta.com>
       Santiago Vila Doncel <sanvila@unex.es>
@@ -211,17 +230,20 @@ CONTRIBUTORS:
       Stephan Maka <stephan@spaceboyz.net>
       Steve Grubb <sgrubb@redhat.com>
       Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
+      Sven Eckelmann <sven.eckelmann@gmx.de>
       Sven Jost <sven.jost@googlemail.com>
       Theodore Ts'o <tytso@mit.edu>
       Thomas Fehr <fehr@suse.de>
       Thorsten Glaser <tg@mirbsd.org>
       Tilman Schmidt <tilman@imap.cc>
       Timo Juhani Lindfors <timo.lindfors@iki.fi>
+      Tobias Klauser <tklauser@distanz.ch>
       Tom Prince <tom.prince@ualberta.net>
       Valerie Aurora <vaurora@redhat.com>
       Vincent Deffontaines <vincent@gryzor.com>
       Vladimir Brednikov <vbrednikov@gmail.com>
       Volker Schatz <oss@volkerschatz.com>
+      Wei-Lun Chao <chaoweilun@gmail.com>
       Yann Droneaud <yann@droneaud.fr>
       Yoshihiro Takahashi <ytakahashi@miraclelinux.com>
       Yu Zhiguo <yuzg@cn.fujitsu.com>
