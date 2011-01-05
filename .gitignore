@@ -36,6 +36,7 @@ cscope.out
 tags
 .deps
 .libs
+config/ltmain.sh
 
 # libuuid depends on AX_TLS macro
 !m4/tls.m4
