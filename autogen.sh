@@ -3,7 +3,7 @@
 #
 # Helps generate autoconf/automake stuff, when code is checked out from SCM.
 #
-# Copyright (C) 2006-2009 - Karel Zak <kzak@redhat.com>
+# Copyright (C) 2006-2010 - Karel Zak <kzak@redhat.com>
 #
 
 srcdir=`dirname $0`
@@ -14,61 +14,55 @@ cd $srcdir
 DIE=0
 HAS_GTKDOC=1
 
+test -f mount/mount.c || {
+	echo
+	echo "You must run this script in the top-level util-linux directory"
+	echo
+	DIE=1
+}
+
 (autopoint --version) < /dev/null > /dev/null 2>&1 || {
         echo
-        echo "You must have autopoint installed to generate util-linux build system.."
-        echo "Download the appropriate package for your distribution,"
-        echo "or see http://www.gnu.org/software/gettext"
+        echo "You must have autopoint installed to generate util-linux build system."
+        echo "The autopoint command is part of the GNU gettext package."
+	echo
         DIE=1
 }
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have autoconf installed to generate util-linux build system."
 	echo
-	echo "Download the appropriate package for your distribution,"
-	echo "or see http://www.gnu.org/software/autoconf"
-	DIE=1
-}
-
-#(libtool --version) < /dev/null > /dev/null 2>&1 || {
-#	echo
-#	echo "You must have libtool-2 installed to generate util-linux build system."
-#	echo "Download the appropriate package for your distribution,"
-#	echo "or see http://www.gnu.org/software/libtool"
-#	DIE=1
-#}
-
-(automake --version) < /dev/null > /dev/null 2>&1 || {
-	echo
-	echo "You must have automake installed to generate util-linux build system."
-	echo 
-	echo "Download the appropriate package for your distribution,"
-	echo "or see http://www.gnu.org/software/automake"
 	DIE=1
 }
 (autoheader --version) < /dev/null > /dev/null 2>&1 || {
 	echo
 	echo "You must have autoheader installed to generate util-linux build system."
-	echo 
-	echo "Download the appropriate package for your distribution,"
-	echo "or see http://www.gnu.org/software/autoheader"
+	echo "The autoheader command is part of the GNU autoconf package."
+	echo
 	DIE=1
 }
-
-if test "$DIE" -eq 1; then
-	exit 1
-fi
-
-test -f mount/mount.c || {
-	echo "You must run this script in the top-level util-linux directory"
-	exit 1
+#(libtool --version) < /dev/null > /dev/null 2>&1 || {
+#	echo
+#	echo "You must have libtool-2 installed to generate util-linux build system."
+#	echo
+#	DIE=1
+#}
+(automake --version) < /dev/null > /dev/null 2>&1 || {
+	echo
+	echo "You must have automake installed to generate util-linux build system."
+	echo 
+	DIE=1
 }
 
 #ltver=$(libtoolize --version | awk '/^libtoolize/ { print $4 }')
 #test ${ltver##2.} == "$ltver" && {
 #	echo "You must have libtool version >= 2.x.x, but you have $ltver."
-#	exit 1
+#	DIE=1
 #}
+
+if test "$DIE" -eq 1; then
+	exit 1
+fi
 
 echo
 echo "Generate build-system by:"
