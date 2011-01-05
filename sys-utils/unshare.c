@@ -76,6 +76,7 @@ int main(int argc, char *argv[])
 		{ "uts", no_argument, 0, 'u' },
 		{ "ipc", no_argument, 0, 'i' },
 		{ "net", no_argument, 0, 'n' },
+		{ NULL, 0, 0, 0 }
 	};
 
 	int unshare_flags = 0;
