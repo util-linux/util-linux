@@ -37,15 +37,6 @@ tags
 .deps
 .libs
 
-# libtool-2 stuff -- temporary added to repository (because libtool-2.x.x is
-#                    still not in avaialable in many Linux distributions)
-!config/ltmain.sh
-!m4/libtool.m4
-!m4/ltoptions.m4
-!m4/ltsugar.m4
-!m4/ltversion.m4
-!m4/lt~obsolete.m4
-
 # libuuid depends on AX_TLS macro
 !m4/tls.m4
 
