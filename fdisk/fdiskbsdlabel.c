@@ -448,7 +448,7 @@ edit_int (int def, char *mesg)
   do {
     fputs (mesg, stdout);
     printf (" (%d): ", def);
-    if (!read_line ())
+    if (!read_line (NULL))
       return def;
   }
   while (!isdigit (*line_ptr));
@@ -527,7 +527,7 @@ xbsd_write_bootstrap (void)
 
   printf (_("Bootstrap: %sboot -> boot%s (%s): "),
 	  dkbasename, dkbasename, dkbasename);
-  if (read_line ()) {
+  if (read_line (NULL)) {
     line_ptr[strlen (line_ptr)-1] = '\0';
     dkbasename = line_ptr;
   }

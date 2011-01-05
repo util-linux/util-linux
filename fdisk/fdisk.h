@@ -67,7 +67,7 @@ extern void get_geometry(int fd, struct geom *);
 extern int get_boot(enum action what);
 extern int  get_partition(int warn, int max);
 extern void list_types(struct systypes *sys);
-extern int read_line (void);
+extern int read_line (int *asked);
 extern char read_char(char *mesg);
 extern int read_hex(struct systypes *sys);
 extern void reread_partition_table(int leave);

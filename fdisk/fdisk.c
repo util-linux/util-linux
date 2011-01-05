@@ -1327,30 +1327,36 @@ static int is_partition_table_changed(void)
 	return 0;
 }
 
-static void maybe_exit(int rc)
+static void maybe_exit(int rc, int *asked)
 {
 	char line[LINE_LENGTH];
 
 	putchar('\n');
+	if (asked)
+		*asked = 0;
 
 	if (is_partition_table_changed() || MBRbuffer_changed) {
 		fprintf(stderr, _("Do you really want to quit? "));
 
 		if (!fgets(line, LINE_LENGTH, stdin) || rpmatch(line) == 1)
 			exit(rc);
+		if (asked)
+			*asked = 1;
 	} else
 		exit(rc);
 }
 
 /* read line; return 0 or first char */
 int
-read_line(void)
+read_line(int *asked)
 {
 	line_ptr = line_buffer;
 	if (!fgets(line_buffer, LINE_LENGTH, stdin)) {
-		maybe_exit(1);
+		maybe_exit(1, asked);
 		return 0;
 	}
+	if (asked)
+		*asked = 0;
 	while (*line_ptr && !isgraph(*line_ptr))
 		line_ptr++;
 	return *line_ptr;
@@ -1362,16 +1368,22 @@ read_char(char *mesg)
 	do {
 		fputs(mesg, stdout);
 		fflush (stdout);	 /* requested by niles@scyld.com */
-	} while (!read_line());
+	} while (!read_line(NULL));
 	return *line_ptr;
 }
 
 char
 read_chars(char *mesg)
 {
-        fputs(mesg, stdout);
-	fflush (stdout);	/* niles@scyld.com */
-        if (!read_line()) {
+	int rc, asked = 0;
+
+	do {
+	        fputs(mesg, stdout);
+		fflush (stdout);	/* niles@scyld.com */
+		rc = read_line(&asked);
+	} while (asked);
+
+	if (!rc) {
 		*line_ptr = '\n';
 		line_ptr[1] = 0;
 	}
