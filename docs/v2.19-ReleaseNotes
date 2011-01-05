@@ -76,6 +76,7 @@ build-sys:
    - add --enable-libmount-mount  [Karel Zak]
    - add mesg to .gitignore  [Karel Zak]
    - add missing header  [Karel Zak]
+   - cleanup autogen.sh  [Karel Zak]
    - drop shlibs/Makefile.am that only adds SUBDIRS  [Diego Elio 'Flameeyes' Pettenò]
    - drop the getsize test out of Makefile.am  [Diego Elio 'Flameeyes' Pettenò]
    - explicitly check for slang.h  [Karel Zak]
@@ -84,6 +85,7 @@ build-sys:
    - remove generated po/POTFILES.in  [Karel Zak]
    - remove unnecessary header  [Karel Zak]
    - require automake 1.10 as gtk-doc requires it anyway  [Diego Elio 'Flameeyes' Pettenò]
+   - use generated libtool-2 stuff  [Karel Zak]
    - use the silent-rules prefix when generating man pages.  [Diego Elio 'Flameeyes' Pettenò]
 cal:
    - follow HAVE_LANGINFO  [Karel Zak]
@@ -428,6 +430,7 @@ po:
    - add zh_TW.po (from translationproject.org)  [Wei-Lun Chao]
    - fix note about license  [Karel Zak]
    - merge changes  [Karel Zak]
+   - refresh gl and zh_TW  [Karel Zak]
    - update after rename  [Karel Zak]
    - update fr.po (from translationproject.org)  [Milan Bouchet-Valat]
    - update hu.po (from translationproject.org)  [Gabor Kelemen]
