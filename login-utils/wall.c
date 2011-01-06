@@ -82,6 +82,12 @@ int nobanner;
 int mbufsize;
 char *mbuf;
 
+static void __attribute__((__noreturn__)) usage()
+{
+	errx(EXIT_FAILURE, _("usage: %s [-n] [file]\n"),
+	     program_invocation_short_name);
+}
+
 int
 main(int argc, char **argv) {
 	extern int optind;
@@ -104,16 +110,13 @@ main(int argc, char **argv) {
 			break;
 		case '?':
 		default:
-usage:
-			fprintf(stderr, _("usage: %s [file]\n"),
-					program_invocation_short_name);
-			exit(EXIT_FAILURE);
+			usage();
 		}
 	}
 	argc -= optind;
 	argv += optind;
 	if (argc > 1)
-		goto usage;
+		usage();
 
 	makemsg(*argv);
 
