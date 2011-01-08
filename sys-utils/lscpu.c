@@ -818,12 +818,10 @@ print_readable(struct lscpu_desc *desc, int hex)
 		*(p - 2) = '\0';
 		print_s(_("CPU op-mode(s):"), buf);
 	}
-#ifdef __BYTE_ORDER
-#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+#if !defined(WORDS_BIGENDIAN)
 	print_s(_("Byte Order:"), "Little Endian");
 #else
 	print_s(_("Byte Order:"), "Big Endian");
-#endif
 #endif
 	print_n(_("CPU(s):"), desc->ncpus);
 

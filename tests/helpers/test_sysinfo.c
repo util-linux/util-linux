@@ -18,12 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <endian.h>
 #include <limits.h>
-
-#if !defined __BYTE_ORDER || !(__BYTE_ORDER == __LITTLE_ENDIAN) && !(__BYTE_ORDER == __BIG_ENDIAN)
-#error missing __BYTE_ORDER
-#endif
 
 typedef struct {
 	const char	*name;
@@ -40,7 +35,7 @@ hlp_wordsize(void)
 int
 hlp_endianness(void)
 {
-#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+#if !defined(WORDS_BIGENDIAN)
 	printf("LE\n");
 #else
 	printf("BE\n");

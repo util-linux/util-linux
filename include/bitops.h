@@ -2,7 +2,6 @@
 #define BITOPS_H
 
 #include <stdint.h>
-#include <endian.h>
 
 /*
  * Bit map related macros. Usually provided by libc.
@@ -18,10 +17,6 @@
 # define clrbit(a,i)	((a)[(i)/NBBY] &= ~(1<<((i)%NBBY)))
 # define isset(a,i)	((a)[(i)/NBBY] & (1<<((i)%NBBY)))
 # define isclr(a,i)	(((a)[(i)/NBBY] & (1<<((i)%NBBY))) == 0)
-#endif
-
-#if !defined __BYTE_ORDER || !(__BYTE_ORDER == __LITTLE_ENDIAN) && !(__BYTE_ORDER == __BIG_ENDIAN)
-#error missing __BYTE_ORDER
 #endif
 
 /*
@@ -51,7 +46,7 @@
 		(uint64_t)(((uint64_t)(x) & (uint64_t)0xff00000000000000ULL) >> 56) ))
 
 
-#if (__BYTE_ORDER == __BIG_ENDIAN)
+#ifdef WORDS_BIGENDIAN
 
 #define cpu_to_le16(x) swab16(x)
 #define cpu_to_le32(x) swab32(x)
@@ -67,7 +62,7 @@
 #define be32_to_cpu(x) (x)
 #define be64_to_cpu(x) (x)
 
-#else /* __BYTE_ORDER != __BIG_ENDIAN */
+#else /* !WORDS_BIGENDIAN */
 
 #define cpu_to_le16(x) (x)
 #define cpu_to_le32(x) (x)
@@ -83,7 +78,7 @@
 #define be32_to_cpu(x) swab32(x)
 #define be64_to_cpu(x) swab64(x)
 
-#endif /* __BYTE_ORDER */
+#endif /* WORDS_BIGENDIAN */
 
 #endif /* BITOPS_H */
 
