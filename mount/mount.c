@@ -1346,8 +1346,8 @@ prepare_mtab_entry(const char *spec, const char *node, const char *type,
 		mtab_update = mnt_new_update();
 
 	if (mtab_update && fs) {
-		char *cn_spec = is_pseudo_fs(type) ? spec : canonicalize(spec);
-		char *cn_node = canonicalize(node);
+		const char *cn_spec = is_pseudo_fs(type) ? spec : canonicalize(spec);
+		const char *cn_node = canonicalize(node);
 
 		mnt_fs_set_source(fs, cn_spec);
 		mnt_fs_set_target(fs, cn_node);
@@ -1357,8 +1357,8 @@ prepare_mtab_entry(const char *spec, const char *node, const char *type,
 		rc = mnt_update_set_fs(mtab_update, flags, NULL, fs);
 
 		if (spec != cn_spec)
-			free(cn_spec);
-		free(cn_node);
+			my_free(cn_spec);
+		my_free(cn_node);
 	}
 
 	mnt_free_fs(fs);
