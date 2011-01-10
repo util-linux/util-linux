@@ -444,6 +444,7 @@ int mnt_context_do_mount(mnt_context *cxt)
 
 	DBG(CXT, mnt_debug_h(cxt, "mount: preparing"));
 
+	/* TODO: fstab is unnecessary for MS_{MOVE,BIND,STARED,...} */
 	rc = mnt_context_apply_fstab(cxt);
 	if (!rc)
 		rc = mnt_context_merge_mountflags(cxt);
