@@ -1323,14 +1323,15 @@ verbose_mount_info(const char *spec, const char *node, const char *type,
 {
 	struct my_mntent mnt;
 
-	mnt.mnt_fsname = is_pseudo_fs(type) ? xstrdup(spec) : canonicalize(spec);
+	mnt.mnt_fsname = is_pseudo_fs(type) ? spec : canonicalize(spec);
 	mnt.mnt_dir = canonicalize (node);
 	mnt.mnt_type = type;
 	mnt.mnt_opts = opts;
 
 	print_one (&mnt);
 
-	my_free(mnt.mnt_fsname);
+	if (spec != mnt.mnt_fsname)
+		my_free(mnt.mnt_fsname);
 	my_free(mnt.mnt_dir);
 }
 
@@ -1339,26 +1340,33 @@ prepare_mtab_entry(const char *spec, const char *node, const char *type,
 					  const char *opts, unsigned long flags)
 {
 	mnt_fs *fs = mnt_new_fs();
+	int rc = -1;
 
 	if (!mtab_update)
 		mtab_update = mnt_new_update();
-	if (!mtab_update || !fs)
-		goto nothing;
 
-	mnt_fs_set_source(fs, spec);
-	mnt_fs_set_target(fs, node);
-	mnt_fs_set_fstype(fs, type);
-	mnt_fs_set_options(fs, opts);
+	if (mtab_update && fs) {
+		char *cn_spec = is_pseudo_fs(type) ? spec : canonicalize(spec);
+		char *cn_node = canonicalize(node);
 
-	if (mnt_update_set_fs(mtab_update, flags, NULL, fs))
-		goto nothing;
+		mnt_fs_set_source(fs, cn_spec);
+		mnt_fs_set_target(fs, cn_node);
+		mnt_fs_set_fstype(fs, type);
+		mnt_fs_set_options(fs, opts);
+
+		rc = mnt_update_set_fs(mtab_update, flags, NULL, fs);
+
+		if (spec != cn_spec)
+			free(cn_spec);
+		free(cn_node);
+	}
 
 	mnt_free_fs(fs);
-	return;
-nothing:
-	mnt_free_update(mtab_update);
-	mnt_free_fs(fs);
-	mtab_update = NULL;
+
+	if (rc) {
+		mnt_free_update(mtab_update);
+		mtab_update = NULL;
+	}
 }
 
 static void update_mtab_entry(int flags)
