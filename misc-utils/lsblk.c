@@ -62,7 +62,7 @@ enum {
 	COL_LABEL,
 	COL_UUID,
 	COL_RO,
-	COL_RE,
+	COL_RM,
 	COL_MODEL,
 	COL_SIZE,
 	COL_OWNER,
@@ -97,7 +97,7 @@ static struct colinfo infos[__NCOLUMNS] = {
 	[COL_LABEL]  = { "LABEL",   0.1, 0, N_("filesystem LABEL") },
 	[COL_UUID]   = { "UUID",    36,  0, N_("filesystem UUID") },
 	[COL_RO]     = { "RO",      1, TT_FL_RIGHT, N_("read-only device") },
-	[COL_RE]     = { "RE",      1, TT_FL_RIGHT, N_("removable device") },
+	[COL_RM]     = { "RM",      1, TT_FL_RIGHT, N_("removable device") },
 	[COL_ROTA]   = { "ROTA",    1, TT_FL_RIGHT, N_("rotational device") },
 	[COL_MODEL]  = { "MODEL",   0.1, TT_FL_TRUNC, N_("device identifier") },
 	[COL_SIZE]   = { "SIZE",    6, TT_FL_RIGHT, N_("size of the device") },
@@ -569,7 +569,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		tt_line_set_data(ln, col, is_readonly_device(cxt) ?
 					xstrdup("1") : xstrdup("0"));
 		break;
-	case COL_RE:
+	case COL_RM:
 		p = sysfs_strdup(cxt, "removable");
 		if (!p && cxt->parent)
 			p = sysfs_strdup(cxt->parent, "removable");
@@ -983,7 +983,7 @@ int main(int argc, char *argv[])
 	if (!ncolumns) {
 		columns[ncolumns++] = COL_NAME;
 		columns[ncolumns++] = COL_MAJMIN;
-		columns[ncolumns++] = COL_RE;
+		columns[ncolumns++] = COL_RM;
 		columns[ncolumns++] = COL_SIZE;
 		columns[ncolumns++] = COL_RO;
 		columns[ncolumns++] = COL_TARGET;
