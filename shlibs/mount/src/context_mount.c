@@ -454,6 +454,8 @@ int mnt_context_do_mount(mnt_context *cxt)
 	if (!rc)
 		rc = mnt_context_prepare_srcpath(cxt);
 	if (!rc)
+	       rc = mnt_context_prepare_target(cxt);
+	if (!rc)
 		rc = mnt_context_guess_fstype(cxt);
 	if (!rc)
 		rc = mnt_context_prepare_helper(cxt, "mount", NULL);

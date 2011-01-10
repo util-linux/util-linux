@@ -843,7 +843,7 @@ int mnt_context_set_mountdata(mnt_context *cxt, void *data)
  */
 int mnt_context_prepare_srcpath(mnt_context *cxt)
 {
-	const char *path = NULL, *type;
+	const char *path = NULL;
 	mnt_cache *cache;
 	const char *t, *v, *src;
 	int rc = 0;
@@ -859,16 +859,15 @@ int mnt_context_prepare_srcpath(mnt_context *cxt)
 
 	src = mnt_fs_get_source(cxt->fs);
 
-	/* ignore filesystems without a real source or MS_PROPAGATION stuff */
-	if (!src ||
-	    (cxt->fs->flags & (MNT_FS_PSEUDO | MNT_FS_NET)) ||
-	    (cxt->mountflags & (MS_BIND | MS_MOVE | MS_PROPAGATION)))
+	/* ignore filesystems without source or filesystems
+	 * where the source is quasi-path (//foo/bar)
+	 */
+	if (!src || (cxt->fs->flags & MNT_FS_NET))
 		return 0;
 
 	DBG(CXT, mnt_debug_h(cxt, "srcpath '%s'", src));
 
 	cache = mnt_context_get_cache(cxt);
-	type = mnt_fs_get_fstype(cxt->fs);
 
 	if (!mnt_fs_get_tag(cxt->fs, &t, &v)) {
 		/*
@@ -879,27 +878,28 @@ int mnt_context_prepare_srcpath(mnt_context *cxt)
 
 		rc = path ? mnt_fs_set_source(cxt->fs, path) : -EINVAL;
 
-	} else if (!type || (strncmp(type, "9p", 2) &&
-			     strncmp(type, "nfs", 3) &&
-			     strncmp(type, "cifs", 4) &&
-			     strncmp(type, "smbfs", 5))) {
+	} else if (cache) {
 		/*
 		 * Source is PATH (canonicalize)
 		 */
-		if (cache) {
-			path = mnt_resolve_path(src, cache);
-			if (strcmp(path, src))
-				rc = mnt_fs_set_source(cxt->fs, path);
-		}
-	}
+		path = mnt_resolve_path(src, cache);
+		if (path && strcmp(path, src))
+			rc = mnt_fs_set_source(cxt->fs, path);
+	 }
 
 	if (rc) {
-		DBG(CXT, mnt_debug_h(cxt, "failed to prepare srcpath"));
+		DBG(CXT, mnt_debug_h(cxt, "failed to prepare srcpath [rc=%d]", rc));
 		return rc;
 	}
 
 	if (!path)
 		path = src;
+
+	if ((cxt->mountflags & (MS_BIND | MS_MOVE | MS_PROPAGATION)) ||
+	    (cxt->fs->flags & MNT_FS_PSEUDO)) {
+		DBG(CXT, mnt_debug_h(cxt, "PROPAGATION/pseudo FS source: %s", path));
+		return rc;
+	}
 
 	/*
 	 * Initialize loop device
@@ -909,6 +909,40 @@ int mnt_context_prepare_srcpath(mnt_context *cxt)
 	}
 
 	DBG(CXT, mnt_debug_h(cxt, "final srcpath '%s'", path));
+	return 0;
+}
+
+int mnt_context_prepare_target(mnt_context *cxt)
+{
+	const char *tgt;
+	mnt_cache *cache;
+	int rc = 0;
+
+	assert(cxt);
+	assert(cxt->fs);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+
+	if (!cxt || !cxt->fs)
+		return -EINVAL;
+
+	DBG(CXT, mnt_debug_h(cxt, "preparing target path"));
+
+	tgt = mnt_fs_get_target(cxt->fs);
+	if (!tgt)
+		return 0;
+
+	cache = mnt_context_get_cache(cxt);
+	if (cache) {
+		char *path = mnt_resolve_path(tgt, cache);
+		if (strcmp(path, tgt))
+			rc = mnt_fs_set_target(cxt->fs, path);
+	}
+
+	if (rc)
+		DBG(CXT, mnt_debug_h(cxt, "failed to prepare target"));
+	else
+		DBG(CXT, mnt_debug_h(cxt, "final target '%s'",
+					mnt_fs_get_target(cxt->fs)));
 	return 0;
 }
 

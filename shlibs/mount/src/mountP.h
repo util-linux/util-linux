@@ -310,6 +310,7 @@ extern int __mnt_fs_set_fstype_ptr(mnt_fs *fs, char *fstype);
 
 /* context.c */
 extern int mnt_context_prepare_srcpath(mnt_context *cxt);
+extern int mnt_context_prepare_target(mnt_context *cxt);
 extern int mnt_context_guess_fstype(mnt_context *cxt);
 extern int mnt_context_prepare_helper(mnt_context *cxt, const char *name, const char *type);
 extern int mnt_context_prepare_update(mnt_context *cxt);

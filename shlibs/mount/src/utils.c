@@ -137,11 +137,12 @@ int mnt_fstype_is_netfs(const char *type)
 {
 	if (!type)
 		return 0;
-	if (strcmp(type, "cifs")  == 0 ||
+	if (strcmp(type, "cifs")   == 0 ||
 	    strcmp(type, "smbfs")  == 0 ||
-	    strncmp(type, "nfs", 3) == 0 ||
-	    strcmp(type, "afs") == 0 ||
-	    strcmp(type, "ncpfs") == 0)
+	    strncmp(type,"nfs", 3) == 0 ||
+	    strcmp(type, "afs")    == 0 ||
+	    strcmp(type, "ncpfs")  == 0 ||
+	    strncmp(type,"9p", 2)  == 0)
 		return 1;
 	return 0;
 }

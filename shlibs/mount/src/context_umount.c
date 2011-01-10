@@ -469,6 +469,8 @@ int mnt_context_do_umount(mnt_context *cxt)
 		rc = mnt_context_merge_mountflags(cxt);
 	if (!rc)
 		rc = evaluate_permissions(cxt);
+	if (!rc)
+	       rc = mnt_context_prepare_target(cxt);
 	if (!rc && !cxt->helper)
 		rc = mnt_context_prepare_helper(cxt, "umount", NULL);
 /* TODO

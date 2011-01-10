@@ -406,6 +406,8 @@ char *mnt_get_fstype(const char *devname, int *ambi, mnt_cache *cache)
 	char *type = NULL;
 	int rc;
 
+	DBG(CACHE, mnt_debug_h(cache, "get %s FS type", devname));
+
 	if (cache)
 		return mnt_cache_find_tag_value(cache, devname, "TYPE");
 
@@ -443,6 +445,8 @@ char *mnt_resolve_path(const char *path, mnt_cache *cache)
 	char *real = NULL;
 
 	assert(path);
+
+	DBG(CACHE, mnt_debug_h(cache, "resolving path %s", path));
 
 	if (!path)
 		return NULL;
@@ -488,6 +492,9 @@ char *mnt_resolve_tag(const char *token, const char *value, mnt_cache *cache)
 
 	assert(token);
 	assert(value);
+
+	DBG(CACHE, mnt_debug_h(cache, "resolving tag token=%s value=%s",
+				token, value));
 
 	if (!token || !value)
 		return NULL;
