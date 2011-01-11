@@ -59,6 +59,9 @@ wipefs
 fdisk(s)
 --------
 
+ * sfdisk has to use rpmatch() for answers to y/n questions
+   (e.g. "Are you satisfied with this? [ynq]")
+
  * sfdisk rounds to cylinders is -uM (megabyte units) is specified, this is
    pretty stupid feature. It has to round to sectors if -uS or -uM is specified.
 
