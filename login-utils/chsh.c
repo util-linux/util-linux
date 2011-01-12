@@ -33,8 +33,11 @@
 #include <ctype.h>
 #include <getopt.h>
 
+#ifdef HAVE_CRYPT_H
+#include <crypt.h>
+#endif
+
 #include "c.h"
-#include "my_crypt.h"
 #include "islocal.h"
 #include "setpwnam.h"
 #include "nls.h"

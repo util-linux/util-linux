@@ -520,17 +520,28 @@ else
   AM_CONDITIONAL(HAVE_UTEMPTER, false)
 fi
 
-
+# on Solaris, you can't mix and match standards, since we use c99
+# aparently at this stage, XOPEN_SOURCE will conflict.  As workaround,
+# check for crypt.h and use that without XOPEN_SOURCE.
+AC_CHECK_HEADERS([crypt.h])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+#ifdef HAVE_CRYPT_H
+#include <crypt.h>
+#else
 #define _XOPEN_SOURCE
 #include <unistd.h>
+#endif
 ]], [[
 char *c = crypt("abc","pw");
 ]])],[],[
   LIBS="$LIBS -lcrypt"
   AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+  #ifdef HAVE_CRYPT_H
+  #include <crypt.h>
+  #else
   #define _XOPEN_SOURCE
   #include <unistd.h>
+  #endif
   ]], [[
   char *c = crypt("abc","pw");
   ]])],[

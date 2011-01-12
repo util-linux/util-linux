@@ -34,10 +34,9 @@ login_ldadd_common =
 
 chfn_SOURCES = chfn.c $(chfn_chsh_common)
 chsh_SOURCES = chsh.c $(chfn_chsh_common)
-chfn_chsh_common = islocal.c setpwnam.c islocal.h my_crypt.h setpwnam.h \
+chfn_chsh_common = islocal.c setpwnam.c islocal.h setpwnam.h \
 	$(top_srcdir)/lib/env.c
-login_SOURCES = login.c login.h my_crypt.h $(top_srcdir)/lib/setproctitle.c
-newgrp_SOURCES = newgrp.c my_crypt.h
+login_SOURCES = login.c login.h $(top_srcdir)/lib/setproctitle.c
 vipw_SOURCES = vipw.c setpwnam.h
 
 chfn_LDADD = $(login_ldadd_common)

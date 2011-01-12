@@ -111,8 +111,11 @@
 # include <libaudit.h>
 #endif
 
+#ifdef HAVE_CRYPT_H
+#include <crypt.h>
+#endif
+
 #include "pathnames.h"
-#include "my_crypt.h"
 #include "login.h"
 #include "strutils.h"
 #include "nls.h"

@@ -43,7 +43,7 @@
 #  include <shadow.h>
 #endif
 
-#if defined (__GNU_LIBRARY__) && __GNU_LIBRARY__ > 1
+#ifdef HAVE_CRYPT_H
 #include <crypt.h>
 #endif
 

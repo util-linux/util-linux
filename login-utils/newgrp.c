@@ -16,9 +16,12 @@
 #include <errno.h>
 #include <err.h>
 
+#ifdef HAVE_CRYPT_H
+#include <crypt.h>
+#endif
+
 #include "c.h"
 #include "pathnames.h"
-#include "my_crypt.h"
 #include "nls.h"
 
 /* try to read password from gshadow */
