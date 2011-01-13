@@ -312,10 +312,20 @@ extern mnt_fs *mnt_update_get_fs(mnt_update *upd);
 
 /* mode for mount options from fstab */
 enum {
-	MNT_OPTSMODE_AUTO = 0,		/* use options if source or target are not defined */
-	MNT_OPTSMODE_IGNORE,		/* never use mount options from fstab */
-	MNT_OPTSMODE_FORCE,		/* always use mount options from fstab */
-	MNT_OPTSMODE_MTABFORCE,		/* for MS_REMOUNT use always options from mountinfo/mtab */
+	MNT_OMODE_IGNORE  = (1 << 1),	/* ignore mtab/fstab options */
+	MNT_OMODE_APPEND  = (1 << 2),	/* append mtab/fstab options to existing options */
+	MNT_OMODE_PREPEND = (1 << 3),	/* prepend mtab/fstab options to existing options */
+	MNT_OMODE_REPLACE = (1 << 4),	/* replace existing options with options from mtab/fstab */
+
+	MNT_OMODE_FORCE   = (1 << 5),   /* always read mtab/fstab options */
+
+	MNT_OMODE_FSTAB   = (1 << 10),	/* read from fstab */
+	MNT_OMODE_MTAB    = (1 << 11),	/* read from mtab if fstab not enabled or failed */
+
+	/* default */
+	MNT_OMODE_AUTO   = (MNT_OMODE_PREPEND | MNT_OMODE_FSTAB | MNT_OMODE_MTAB),
+	/* non-root users */
+	MNT_OMODE_USER   = (MNT_OMODE_REPLACE | MNT_OMODE_FORCE | MNT_OMODE_FSTAB)
 };
 
 extern mnt_context *mnt_new_context(void);

@@ -189,21 +189,9 @@ int mnt_context_is_restricted(mnt_context *cxt)
 /**
  * mnt_context_set_optsmode
  * @cxt: mount context
- * @mode: MNT_OPTSMODE_{AUTO,FORCE,IGNORE,MTABFORCE}
+ * @mode: mask, see MNT_OMASK_* flags in libmount mount.h
  *
- * Defines a mode how libmount uses fstab mount options:
- *
- *  auto       - use options from fstab if source or target are not
- *               defined (this is mount(8) default).
- *
- *             - For remount operation it reads options from mtab if
- *               the target is not found in fstab.
- *
- *  ignore     - never use mount options from fstab
- *
- *  force      - always use mount options from fstab
- *
- *  mtab-force - for remount operation always use options from mtab (mountinfo)
+ * Controls how to use mount options from fstab/mtab.
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -1189,17 +1177,6 @@ int mnt_context_update_tabs(mnt_context *cxt)
 	return mnt_update_tab(cxt->update, mnt_context_get_lock(cxt));
 }
 
-static int is_remount(mnt_context *cxt)
-{
-	unsigned long fl = 0;
-
-	if (cxt->mountflags & MS_REMOUNT)
-		return 1;
-	if (!mnt_context_get_mountflags(cxt, &fl) && (fl & MS_REMOUNT))
-		return 1;
-	return 0;
-}
-
 static int apply_tab(mnt_context *cxt, mnt_tab *tb, int direction)
 {
 	mnt_fs *fs = NULL;
@@ -1216,7 +1193,7 @@ static int apply_tab(mnt_context *cxt, mnt_tab *tb, int direction)
 	tgt = mnt_fs_get_target(cxt->fs);
 
 	if (tgt && src)
-		;	/* TODO: search pair for MNT_OPTSMODE_FORCE */
+		fs = mnt_tab_find_pair(tb, src, tgt, direction);
 	else {
 		if (src)
 			fs = mnt_tab_find_source(tb, src, direction);
@@ -1245,7 +1222,7 @@ static int apply_tab(mnt_context *cxt, mnt_tab *tb, int direction)
 	DBG(CXT, mnt_debug_h(cxt, "apply entry:"));
 	DBG(CXT, mnt_fs_print_debug(fs, stderr));
 
-	/* copy from fstab to our FS description
+	/* copy from tab to our FS description
 	 */
 	rc = mnt_fs_set_source(cxt->fs, mnt_fs_get_source(fs));
 	if (!rc)
@@ -1254,7 +1231,32 @@ static int apply_tab(mnt_context *cxt, mnt_tab *tb, int direction)
 	if (!rc && !mnt_fs_get_fstype(cxt->fs))
 		rc = mnt_fs_set_fstype(cxt->fs, mnt_fs_get_fstype(fs));
 
-	if (!rc && cxt->optsmode != MNT_OPTSMODE_IGNORE) {
+	if (rc)
+		return rc;
+
+	if (cxt->optsmode & MNT_OMODE_IGNORE)
+		;
+	else if (cxt->optsmode & MNT_OMODE_REPLACE) {
+		rc = mnt_fs_set_vfs_options(cxt->fs,
+					mnt_fs_get_vfs_options(fs));
+		if (!rc)
+			rc = mnt_fs_set_fs_options(cxt->fs,
+					mnt_fs_get_fs_options(fs));
+		if (!rc)
+			rc = mnt_fs_set_userspace_options(cxt->fs,
+					mnt_fs_get_userspace_options(fs));
+
+	} else if (cxt->optsmode & MNT_OMODE_APPEND) {
+		rc = mnt_fs_append_vfs_options(cxt->fs,
+					mnt_fs_get_vfs_options(fs));
+		if (!rc)
+			rc = mnt_fs_append_fs_options(cxt->fs,
+					mnt_fs_get_fs_options(fs));
+		if (!rc)
+			rc = mnt_fs_append_userspace_options(cxt->fs,
+					mnt_fs_get_userspace_options(fs));
+
+	} else if (cxt->optsmode & MNT_OMODE_PREPEND) {
 		rc = mnt_fs_prepend_vfs_options(cxt->fs,
 					mnt_fs_get_vfs_options(fs));
 		if (!rc)
@@ -1264,9 +1266,9 @@ static int apply_tab(mnt_context *cxt, mnt_tab *tb, int direction)
 			rc = mnt_fs_prepend_userspace_options(cxt->fs,
 					mnt_fs_get_userspace_options(fs));
 	}
+
 	if (!rc)
 		cxt->flags |= MNT_FL_TAB_APPLIED;
-
 	return rc;
 }
 
@@ -1281,20 +1283,25 @@ static int apply_tab(mnt_context *cxt, mnt_tab *tb, int direction)
  */
 int mnt_context_apply_fstab(mnt_context *cxt)
 {
-	int rc;
-	mnt_tab *fstab, *mtab;
+	int rc = -1;
+	mnt_tab *tab = NULL;
 	const char *src = NULL, *tgt = NULL;
 
 	assert(cxt);
 	assert(cxt->fs);
 
-	if (!cxt || !cxt->fs)
+	if (!cxt)
 		return -EINVAL;
 
 	if (cxt->flags & MNT_FL_TAB_APPLIED)
 		return 0;
 
-	DBG(CXT, mnt_debug_h(cxt, "appling fstab"));
+	if (mnt_context_is_restricted(cxt)) {
+		DBG(CXT, mnt_debug_h(cxt, "force fstab usage for non-root users"));
+		cxt->optsmode = MNT_OMODE_USER;
+
+	} else if (cxt->optsmode == 0)
+		cxt->optsmode = MNT_OMODE_AUTO;
 
 	if (cxt->fs) {
 		src = mnt_fs_get_source(cxt->fs);
@@ -1302,35 +1309,30 @@ int mnt_context_apply_fstab(mnt_context *cxt)
 	}
 
 	/* fstab is not required if source and target are specified */
-	if (src && tgt && !(cxt->optsmode == MNT_OPTSMODE_FORCE ||
-			    cxt->optsmode == MNT_OPTSMODE_MTABFORCE))
+	if (src && tgt && !(cxt->optsmode == MNT_OMODE_FORCE))
 		return 0;
 
 	DBG(CXT, mnt_debug_h(cxt,
 		"trying to apply fstab (src=%s, target=%s)", src, tgt));
 
-	rc = mnt_context_get_fstab(cxt, &fstab);
-	if (rc)
-		goto err;
-
 	/* let's initialize cxt->fs */
 	mnt_context_get_fs(cxt);
 
 	/* try fstab */
-	rc = apply_tab(cxt, fstab, MNT_ITER_FORWARD);
+	if (cxt->optsmode & MNT_OMODE_FSTAB) {
+		rc = mnt_context_get_fstab(cxt, &tab);
+		if (!rc)
+			rc = apply_tab(cxt, tab, MNT_ITER_FORWARD);
+	}
 
 	/* try mtab */
-	if (rc || (cxt->optsmode == MNT_OPTSMODE_MTABFORCE && is_remount(cxt))) {
-
-		rc = mnt_context_get_mtab(cxt, &mtab);
+	if (rc == -1 && (cxt->optsmode & MNT_OMODE_MTAB)) {
+		rc = mnt_context_get_mtab(cxt, &tab);
 		if (!rc)
-			rc = apply_tab(cxt, mtab, MNT_ITER_BACKWARD);
-		if (rc)
-			goto err;
+			rc = apply_tab(cxt, tab, MNT_ITER_BACKWARD);
 	}
-	return 0;
-err:
-	DBG(CXT, mnt_debug_h(cxt, "failed to found entry in fstab/mtab"));
+	if (rc)
+		DBG(CXT, mnt_debug_h(cxt, "failed to found entry in fstab/mtab"));
 	return rc;
 }
 

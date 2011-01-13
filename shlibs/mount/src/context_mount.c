@@ -175,6 +175,12 @@ static int evaluate_permissions(mnt_context *cxt)
 		/*
 		 * user mount
 		 */
+		if (!(cxt->flags & MNT_FL_TAB_APPLIED))
+		{
+			DBG(CXT, mnt_debug_h(cxt, "fstab not applied, ignore user mount"));
+			return -EPERM;
+		}
+
 		if (u_flags & (MNT_MS_OWNER | MNT_MS_GROUP))
 			cxt->mountflags |= MS_OWNERSECURE;
 
