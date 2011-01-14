@@ -1,3 +1,10 @@
+fsprobe
+-------
+
+ - remove the lib/fsprobe.c wrapper for libblkid used in mount and fsck. Use
+   everywhere libblkid from util-linux only.
+ - update ./configure script
+
 login-utils:
 -----------
 
