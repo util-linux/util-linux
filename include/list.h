@@ -5,8 +5,8 @@
  * (based on list.h from e2fsprogs)
  */
 
-#if !defined(_LIBMOUNT_LIST_H) && !defined(LIST_HEAD)
-#define _LIBMOUNT_LIST_H
+#ifndef UTIL_LINUX_LIST_H
+#define UTIL_LINUX_LIST_H
 
 /* TODO: use AC_C_INLINE */
 #ifdef __GNUC__
@@ -194,4 +194,4 @@ _INLINE_ void list_splice(struct list_head *list, struct list_head *head)
 
 #undef _INLINE_
 
-#endif /* __LIBFSPROBE_LIST_H__ */
+#endif /* UTIL_LINUX_LIST_H */
