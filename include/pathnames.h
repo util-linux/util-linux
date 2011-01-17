@@ -6,7 +6,9 @@
 #ifndef PATHNAMES_H
 #define PATHNAMES_H
 
+#ifdef HAVE_PATHS_H
 #include <paths.h>
+#endif
 
 #ifndef __STDC__
 # error "we need an ANSI compiler"

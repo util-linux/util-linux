@@ -119,6 +119,7 @@ AC_CHECK_HEADERS(
 	locale.h \
 	stdint.h \
 	inttypes.h \
+	paths.h \
 	pty.h \
 	mntent.h \
         net/if.h \
