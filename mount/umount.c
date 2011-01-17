@@ -234,7 +234,7 @@ umount_one (const char *spec, const char *node, const char *type,
 	 * Ignore the option "-d" for non-loop devices and loop devices with
 	 * LO_FLAGS_AUTOCLEAR flag.
 	 */
-	if (delloop && is_loop_device(spec) && !is_loop_autoclear(spec))
+	if (delloop && is_loop_device(spec))
 		myloop = 1;
 
 	if (lazy) {
@@ -329,7 +329,7 @@ umount_one (const char *spec, const char *node, const char *type,
 			loopdev = spec;
 	}
  gotloop:
-	if (loopdev)
+	if (loopdev && !is_loop_autoclear(loopdev))
 		del_loop(loopdev);
 
  writemtab:
