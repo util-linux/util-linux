@@ -566,6 +566,7 @@ printf(__progname);
 AC_CHECK_TYPES([union semun], [], [], [[
 #include <sys/sem.h>
 ]])
+AC_CHECK_TYPES(loff_t)
 
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
