@@ -10,7 +10,7 @@ struct systypes i386_sys_types[] = {
 	{0x04, N_("FAT16 <32M")},
 	{0x05, N_("Extended")},		/* DOS 3.3+ extended partition */
 	{0x06, N_("FAT16")},		/* DOS 16-bit >=32M */
-	{0x07, N_("HPFS/NTFS")},	/* OS/2 IFS, eg, HPFS or NTFS or QNX */
+	{0x07, N_("HPFS/NTFS/exFAT")},	/* OS/2 IFS, eg, HPFS or NTFS or QNX or exFAT */
 	{0x08, N_("AIX")},		/* AIX boot (AIX -- PS/2 port) or SplitDrive */
 	{0x09, N_("AIX bootable")},	/* AIX data or Coherent */
 	{0x0a, N_("OS/2 Boot Manager")},/* OS/2 Boot Manager */
