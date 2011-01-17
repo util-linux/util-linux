@@ -129,6 +129,7 @@ AC_CHECK_HEADERS(
 	sys/disk.h \
 	sys/disklabel.h \
 	sys/ioctl.h \
+	sys/ioccom.h \
 	sys/io.h \
 	sys/time.h \
 	sys/mkdev.h \

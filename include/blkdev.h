@@ -3,6 +3,9 @@
 
 #include <sys/types.h>
 #include <sys/ioctl.h>
+#ifdef HAVE_SYS_IOCCOM_H
+# include <sys/ioccom.h> /* for _IO macro on e.g. Solaris */
+#endif
 #include <fcntl.h>
 #include <unistd.h>
 
