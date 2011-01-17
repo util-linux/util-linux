@@ -3,7 +3,7 @@ include $(top_srcdir)/config/include-Makefile.am
 AM_CPPFLAGS += -I$(ul_libuuid_srcdir)
 
 noinst_PROGRAMS = tst_uuid
-tst_uuid_LDADD = libuuid.la #$(ul_libuuid_la)
+tst_uuid_LDADD = libuuid.la $(SOCKET_LIBS) #$(ul_libuuid_la)
 
 # includes
 uuidincdir = $(includedir)/uuid
@@ -15,6 +15,8 @@ libuuid_la_SOURCES = clear.c compare.c copy.c gen_uuid.c \
            uuidd.h uuidP.h uuid_time.c $(uuidinc_HEADERS)
 
 libuuid_la_DEPENDENCIES = uuid.sym
+
+libuuid_la_LIBADD = $(SOCKET_LIBS)
 
 libuuid_la_LDFLAGS = -Wl,--version-script=$(ul_libuuid_srcdir)/uuid.sym \
                      -version-info $(LIBUUID_VERSION_INFO)
