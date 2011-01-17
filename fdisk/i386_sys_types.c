@@ -29,6 +29,7 @@ struct systypes i386_sys_types[] = {
 	{0x1c, N_("Hidden W95 FAT32 (LBA)")},
 	{0x1e, N_("Hidden W95 FAT16 (LBA)")},
 	{0x24, N_("NEC DOS")},
+	{0x27, N_("Hidden NTFS WinRE")},
 	{0x39, N_("Plan 9")},
 	{0x3c, N_("PartitionMagic recovery")},
 	{0x40, N_("Venix 80286")},
