@@ -104,7 +104,6 @@ main(int argc, char **argv) {
 	while ((ch = getopt(argc, argv, "n")) != -1) {
 		switch (ch) {
 		case 'n':
-			/* undoc option for shutdown: suppress banner */
 			if (geteuid() == 0)
 				nobanner = 1;
 			break;

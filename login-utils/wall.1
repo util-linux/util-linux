@@ -41,6 +41,7 @@
 .Nd write a message to users
 .Sh SYNOPSIS
 .Nm wall
+.Op Ar -n
 .Op Ar file
 .Sh DESCRIPTION
 .Nm Wall
@@ -56,6 +57,8 @@ automatically denies messages.
 .Pp
 Reading from a file is refused when the invoker is not superuser
 and the program is suid or sgid.
+.Sh OPTIONS
+ -n Supress banner
 .Sh SEE ALSO
 .Xr mesg 1 ,
 .Xr talk 1 ,
