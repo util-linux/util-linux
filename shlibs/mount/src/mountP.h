@@ -108,7 +108,6 @@ extern int mnt_run_test(struct mtest *tests, int argc, char *argv[]);
 #endif
 
 /* utils.c */
-extern char *mnt_getenv_safe(const char *arg);
 extern int endswith(const char *s, const char *sx);
 extern int startswith(const char *s, const char *sx);
 
