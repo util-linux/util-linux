@@ -15,6 +15,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <time.h>
 #include <sys/stat.h>
@@ -235,15 +236,15 @@ hnmatch_ip6(const char *pat)
 	/* compare */
 	while (mask_len > 0) {
 		if (mask_len < 32) {
-			u_int32_t mask = htonl(~(0xffffffff >> mask_len));
+			uint32_t mask = htonl(~(0xffffffff >> mask_len));
 
-			if ((*(u_int32_t *)&addr.s6_addr[i] & mask) !=
-			    (*(u_int32_t *)&net.sin6_addr.s6_addr[i] & mask))
+			if ((*(uint32_t *)&addr.s6_addr[i] & mask) !=
+			    (*(uint32_t *)&net.sin6_addr.s6_addr[i] & mask))
 				goto mismatch;
 			break;
 		}
-		if (*(u_int32_t *)&addr.s6_addr[i] !=
-		    *(u_int32_t *)&net.sin6_addr.s6_addr[i])
+		if (*(uint32_t *)&addr.s6_addr[i] !=
+		    *(uint32_t *)&net.sin6_addr.s6_addr[i])
 			goto mismatch;
 		i += 4;
 		mask_len -= 32;

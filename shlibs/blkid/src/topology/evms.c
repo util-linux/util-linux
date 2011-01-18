@@ -25,14 +25,14 @@
 #define EVMS_MAJOR		117
 
 #ifndef _IOT__IOTBASE_u_int32_t
-#define _IOT__IOTBASE_u_int32_t IOT_SIMPLE(u_int32_t)
+#define _IOT__IOTBASE_u_int32_t IOT_SIMPLE(uint32_t)
 #endif
-#define _IOT_evms_stripe_info _IOT (_IOTS(u_int32_t), 2, 0, 0, 0, 0)
+#define _IOT_evms_stripe_info _IOT (_IOTS(uint32_t), 2, 0, 0, 0, 0)
 #define EVMS_GET_STRIPE_INFO	_IOR(EVMS_MAJOR, 0xF0, struct evms_stripe_info)
 
 struct evms_stripe_info {
-	u_int32_t	size;		/* stripe unit 512-byte blocks */
-	u_int32_t	width;		/* the number of stripe members or RAID data disks */
+	uint32_t	size;		/* stripe unit 512-byte blocks */
+	uint32_t	width;		/* the number of stripe members or RAID data disks */
 } evms_stripe_info;
 
 static int is_evms_device(dev_t devno)
