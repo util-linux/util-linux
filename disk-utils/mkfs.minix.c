@@ -70,6 +70,7 @@
 #include <sys/stat.h>
 #include <mntent.h>
 #include <getopt.h>
+#include <err.h>
 
 #include "blkdev.h"
 #include "minix.h"
@@ -92,6 +93,8 @@
 #define INODE_BUFFER_SIZE (INODE_BLOCKS * BLOCK_SIZE)
 
 #define BITS_PER_BLOCK (BLOCK_SIZE<<3)
+
+#define MAX_INODES 65535
 
 static char * program_name = "mkfs";
 static char * device_name = NULL;
@@ -121,7 +124,6 @@ static char boot_block_buffer[512];
 #define FIRSTZONE ((unsigned long)Super.s_firstdatazone)
 #define ZONESIZE ((unsigned long)Super.s_log_zone_size)
 #define MAXSIZE ((unsigned long)Super.s_max_size)
-#define MAGIC (Super.s_magic)
 #define NORM_FIRSTZONE (2+IMAPS+ZMAPS+INODE_BLOCKS)
 
 static char *inode_map;
@@ -147,13 +149,10 @@ die(char *str) {
 	exit(8);
 }
 
-static void
+static void __attribute__((__noreturn__))
 usage(void) {
-	fprintf(stderr, _("%s (%s)\n"), program_name, PACKAGE_STRING);
-	fprintf(stderr,
-		_("Usage: %s [-c | -l filename] [-nXX] [-iXX] /dev/name [blocks]\n"),
-		  program_name);
-	exit(16);
+	errx(16, _("Usage: %s [-c | -l filename] [-nXX] [-iXX] /dev/name [blocks]"),
+	     program_name);
 }
 
 /*
@@ -552,138 +551,141 @@ get_list_blocks(char *filename) {
 
 int
 main(int argc, char ** argv) {
-  int i;
-  char * tmp;
-  struct stat statbuf;
-  char * listfile = NULL;
-  char * p;
+	int i;
+	char * tmp;
+	struct stat statbuf;
+	char * listfile = NULL;
+	char * p;
 
-  if (argc && *argv)
-    program_name = *argv;
-  if ((p = strrchr(program_name, '/')) != NULL)
-    program_name = p+1;
+	if (argc && *argv)
+		program_name = *argv;
+	if ((p = strrchr(program_name, '/')) != NULL)
+		program_name = p+1;
 
-  setlocale(LC_ALL, "");
-  bindtextdomain(PACKAGE, LOCALEDIR);
-  textdomain(PACKAGE);
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
-  if (argc == 2 &&
-      (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-	  printf(_("%s (%s)\n"), program_name, PACKAGE_STRING);
-	  exit(0);
-  }
+	if (argc == 2 &&
+	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
+		printf(_("%s (%s)\n"), program_name, PACKAGE_STRING);
+		exit(0);
+	}
 
-  if (INODE_SIZE * MINIX_INODES_PER_BLOCK != BLOCK_SIZE)
-    die(_("bad inode size"));
-  if (INODE_SIZE2 * MINIX2_INODES_PER_BLOCK != BLOCK_SIZE)
-    die(_("bad inode size"));
+	if (INODE_SIZE * MINIX_INODES_PER_BLOCK != BLOCK_SIZE)
+		die(_("bad inode size"));
+	if (INODE_SIZE2 * MINIX2_INODES_PER_BLOCK != BLOCK_SIZE)
+		die(_("bad inode size"));
 
-  opterr = 0;
-  while ((i = getopt(argc, argv, "ci:l:n:v")) != -1)
-    switch (i) {
-      case 'c':
-	check=1; break;
-      case 'i':
-	req_nr_inodes = (unsigned long) atol(optarg);
-	break;
-      case 'l':
-	listfile = optarg; break;
-      case 'n':
-	i = strtoul(optarg,&tmp,0);
-	if (*tmp)
-	  usage();
-	if (i == 14)
-	  magic = MINIX_SUPER_MAGIC;
-	else if (i == 30)
-	  magic = MINIX_SUPER_MAGIC2;
+	opterr = 0;
+	while ((i = getopt(argc, argv, "ci:l:n:v")) != -1)
+		switch (i) {
+		case 'c':
+			check=1; break;
+		case 'i':
+			req_nr_inodes = (unsigned long) atol(optarg);
+			break;
+		case 'l':
+			listfile = optarg; break;
+		case 'n':
+			i = strtoul(optarg,&tmp,0);
+			if (*tmp)
+				usage();
+			if (i == 14)
+				magic = MINIX_SUPER_MAGIC;
+			else if (i == 30)
+				magic = MINIX_SUPER_MAGIC2;
+			else
+				usage();
+			namelen = i;
+			dirsize = i+2;
+			break;
+		case 'v':
+			version2 = 1;
+			break;
+		default:
+			usage();
+		}
+	argc -= optind;
+	argv += optind;
+	if (argc > 0 && !device_name) {
+		device_name = argv[0];
+		argc--;
+		argv++;
+	}
+	if (argc > 0) {
+		BLOCKS = strtol(argv[0],&tmp,0);
+		if (*tmp) {
+			printf(_("strtol error: number of blocks not specified"));
+			usage();
+		}
+	}
+
+	if (!device_name) {
+		usage();
+	}
+	check_mount();		/* is it already mounted? */
+	tmp = root_block;
+	*(short *)tmp = 1;
+	strcpy(tmp+2,".");
+	tmp += dirsize;
+	*(short *)tmp = 1;
+	strcpy(tmp+2,"..");
+	tmp += dirsize;
+	*(short *)tmp = 2;
+	strcpy(tmp+2,".badblocks");
+	if (stat(device_name, &statbuf) < 0)
+		die(_("unable to stat %s"));
+	if (S_ISBLK(statbuf.st_mode))
+		DEV = open(device_name,O_RDWR | O_EXCL);
 	else
-	  usage();
-	namelen = i;
-	dirsize = i+2;
-	break;
-      case 'v':
-	version2 = 1;
-	break;
-      default:
-	usage();
-    }
-  argc -= optind;
-  argv += optind;
-  if (argc > 0 && !device_name) {
-    device_name = argv[0];
-    argc--;
-    argv++;
-  }
-  if (argc > 0) {
-     BLOCKS = strtol(argv[0],&tmp,0);
-     if (*tmp) {
-       printf(_("strtol error: number of blocks not specified"));
-       usage();
-     }
-  }
+		DEV = open(device_name,O_RDWR);
+	if (DEV<0)
+		die(_("unable to open %s"));
+	if (S_ISBLK(statbuf.st_mode)) {
+		int sectorsize;
 
-  if (!device_name) {
-    usage();
-  }
-  check_mount();		/* is it already mounted? */
-  tmp = root_block;
-  *(short *)tmp = 1;
-  strcpy(tmp+2,".");
-  tmp += dirsize;
-  *(short *)tmp = 1;
-  strcpy(tmp+2,"..");
-  tmp += dirsize;
-  *(short *)tmp = 2;
-  strcpy(tmp+2,".badblocks");
-  if (stat(device_name, &statbuf) < 0)
-    die(_("unable to stat %s"));
-  if (S_ISBLK(statbuf.st_mode))
-    DEV = open(device_name,O_RDWR | O_EXCL);
-  else
-    DEV = open(device_name,O_RDWR);
-  if (DEV<0)
-    die(_("unable to open %s"));
-  if (S_ISBLK(statbuf.st_mode)) {
-    int sectorsize;
+		if (blkdev_get_sector_size(DEV, &sectorsize) == -1)
+			die(_("cannot determine sector size for %s"));
+		if (BLOCK_SIZE < sectorsize)
+			die(_("block size smaller than physical sector size of %s"));
+		if (!BLOCKS) {
+			if (blkdev_get_size(DEV, &BLOCKS) == -1)
+				die(_("cannot determine size of %s"));
+			BLOCKS /= BLOCK_SIZE;
+		}
+	} else if (!S_ISBLK(statbuf.st_mode)) {
+		if (!BLOCKS)
+			BLOCKS = statbuf.st_size / BLOCK_SIZE;
+		check=0;
+	} else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340)
+		die(_("will not try to make filesystem on '%s'"));
+	if (BLOCKS < 10)
+		die(_("number of blocks too small"));
+	if (version2) {
+		if (namelen == 14)
+			magic = MINIX2_SUPER_MAGIC;
+		else
+			magic = MINIX2_SUPER_MAGIC2;
+	} else
+		if (BLOCKS > MAX_INODES)
+			BLOCKS = MAX_INODES;
+	setup_tables();
+	if (check)
+		check_blocks();
+	else if (listfile)
+		get_list_blocks(listfile);
+	if (version2) {
+		make_root_inode2 ();
+		make_bad_inode2 ();
+	} else {
+		make_root_inode();
+		make_bad_inode();
+	}
 
-    if (blkdev_get_sector_size(DEV, &sectorsize) == -1)
-	    die(_("cannot determine sector size for %s"));
-    if (BLOCK_SIZE < sectorsize)
-	    die(_("block size smaller than physical sector size of %s"));
-    if (!BLOCKS) {
-	    if (blkdev_get_size(DEV, &BLOCKS) == -1)
-		die(_("cannot determine size of %s"));
-	    BLOCKS /= BLOCK_SIZE;
-    }
-  } else if (!S_ISBLK(statbuf.st_mode)) {
-    if (!BLOCKS)
-	    BLOCKS = statbuf.st_size / BLOCK_SIZE;
-    check=0;
-  } else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340)
-    die(_("will not try to make filesystem on '%s'"));
-  if (BLOCKS < 10)
-	  die(_("number of blocks too small"));
-  if (version2) {
-    if (namelen == 14)
-      magic = MINIX2_SUPER_MAGIC;
-    else
-      magic = MINIX2_SUPER_MAGIC2;
-  } else
-    if (BLOCKS > 65535)
-      BLOCKS = 65535;
-  setup_tables();
-  if (check)
-    check_blocks();
-  else if (listfile)
-    get_list_blocks(listfile);
-  if (version2) {
-    make_root_inode2 ();
-    make_bad_inode2 ();
-  } else {
-      make_root_inode();
-      make_bad_inode();
-  }
-  mark_good_blocks();
-  write_tables();
-  return 0;
+	mark_good_blocks();
+	write_tables();
+	close(DEV);
+
+	return 0;
 }
