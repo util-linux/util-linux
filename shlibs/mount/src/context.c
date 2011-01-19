@@ -1500,7 +1500,7 @@ int test_mount(struct mtest *ts, int argc, char *argv[])
 	if (lock)
 		atexit(lock_fallback);
 
-	rc = mnt_context_do_mount(cxt);
+	rc = mnt_mount_context(cxt);
 	if (rc)
 		printf("failed to mount %s\n", strerror(errno));
 	else

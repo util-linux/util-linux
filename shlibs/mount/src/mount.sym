@@ -22,6 +22,7 @@ global:
 	mnt_context_enable_rdonly_umount;
 	mnt_context_enable_sloppy;
 	mnt_context_enable_verbose;
+	mnt_context_finalize_mount;
 	mnt_context_get_cache;
 	mnt_context_get_fs;
 	mnt_context_get_fstab;
@@ -39,6 +40,7 @@ global:
 	mnt_context_is_restricted;
 	mnt_context_is_sloppy;
 	mnt_context_is_verbose;
+	mnt_context_prepare_mount;
 	mnt_context_set_cache;
 	mnt_context_set_fs;
 	mnt_context_set_fstab;
@@ -125,6 +127,7 @@ global:
 	mnt_mangle;
 	mnt_match_fstype;
 	mnt_match_options;
+	mnt_mount_context;
 	mnt_new_cache;
 	mnt_new_context;
 	mnt_new_fs;

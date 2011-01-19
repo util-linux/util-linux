@@ -381,7 +381,12 @@ extern int mnt_context_apply_fstab(mnt_context *cxt);
 extern int mnt_context_get_status(mnt_context *cxt);
 extern int mnt_context_strerror(mnt_context *cxt, char *buf, size_t bufsiz);
 
+extern int mnt_mount_context(mnt_context *cxt);
+
+extern int mnt_context_prepare_mount(mnt_context *cxt);
 extern int mnt_context_do_mount(mnt_context *cxt);
+extern int mnt_context_finalize_mount(mnt_context *cxt);
+
 extern int mnt_context_do_umount(mnt_context *cxt);
 
 /*

@@ -286,6 +286,7 @@ struct _mnt_context
 #define MNT_FL_TAB_APPLIED	(1 << 21)	/* mtab/fstab merged to cxt->fs */
 #define MNT_FL_MOUNTFLAGS_MERGED (1 << 22)	/* MS_* flags was read from optstr */
 #define MNT_FL_SAVED_USER	(1 << 23)
+#define MNT_FL_PREPARED		(1 << 24)
 
 /* default flags */
 #define MNT_FL_DEFAULT		0
