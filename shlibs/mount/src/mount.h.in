@@ -345,6 +345,15 @@ extern int mnt_context_enable_force(mnt_context *cxt, int enable);
 extern int mnt_context_enable_verbose(mnt_context *cxt, int enable);
 extern int mnt_context_enable_loopdel(mnt_context *cxt, int enable);
 
+extern int mnt_context_get_optsmode(mnt_context *cxt);
+extern int mnt_context_is_lazy(mnt_context *cxt);
+extern int mnt_context_is_rdonly_umount(mnt_context *cxt);
+extern int mnt_context_is_sloppy(mnt_context *cxt);
+extern int mnt_context_is_fake(mnt_context *cxt);
+extern int mnt_context_is_nomtab(mnt_context *cxt);
+extern int mnt_context_is_force(mnt_context *cxt);
+extern int mnt_context_is_verbose(mnt_context *cxt);
+
 extern int mnt_context_set_fs(mnt_context *cxt, mnt_fs *fs);
 extern mnt_fs *mnt_context_get_fs(mnt_context *cxt);
 extern int mnt_context_set_source(mnt_context *cxt, const char *source);

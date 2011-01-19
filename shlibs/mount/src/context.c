@@ -204,6 +204,18 @@ int mnt_context_set_optsmode(mnt_context *cxt, int mode)
 }
 
 /**
+ * mnt_context_get_optsmode
+ * @cxt: mount context
+ *
+ * Returns: MNT_OMASK_* mask or zero.
+ */
+
+int mnt_context_get_optsmode(mnt_context *cxt)
+{
+	return cxt ? cxt->optsmode : 0;
+}
+
+/**
  * mnt_context_disable_canonicalize:
  * @cxt: mount context
  * @disable: TRUE or FALSE
@@ -238,6 +250,18 @@ int mnt_context_enable_lazy(mnt_context *cxt, int enable)
 }
 
 /**
+ * mnt_context_is_lazy:
+ * @cxt: mount context
+ *
+ * Returns: 1 if lazy umount is enabled or 0
+ */
+int mnt_context_is_lazy(mnt_context *cxt)
+{
+	return cxt && (cxt->flags & MNT_FL_LAZY) ? 1 : 0;
+}
+
+
+/**
  * mnt_context_enable_rdonly_umount:
  * @cxt: mount context
  * @enable: TRUE or FALSE
@@ -250,6 +274,20 @@ int mnt_context_enable_lazy(mnt_context *cxt, int enable)
 int mnt_context_enable_rdonly_umount(mnt_context *cxt, int enable)
 {
 	return set_flag(cxt, MNT_FL_RDONLY_UMOUNT, enable);
+}
+
+/**
+ * mnt_context_is_rdonly_umount
+ * @cxt: mount context
+ *
+ * See also mnt_context_enable_rdonly_umount() and see umount(8) man page,
+ * option -r.
+ *
+ * Returns: 1 if read-only remount failed umount(2) is enables or 0
+ */
+int mnt_context_is_rdonly_umount(mnt_context *cxt)
+{
+	return cxt && (cxt->flags & MNT_FL_RDONLY_UMOUNT) ? 1 : 0;
 }
 
 /**
@@ -281,6 +319,17 @@ int mnt_context_enable_sloppy(mnt_context *cxt, int enable)
 }
 
 /**
+ * mnt_context_is_sloppy:
+ * @cxt: mount context
+ *
+ * Returns: 1 if sloppy flag is enabled or 0
+ */
+int mnt_context_is_sloppy(mnt_context *cxt)
+{
+	return cxt && (cxt->flags & MNT_FL_SLOPPY) ? 1 : 0;
+}
+
+/**
  * mnt_context_enable_fake:
  * @cxt: mount context
  * @enable: TRUE or FALSE
@@ -292,6 +341,17 @@ int mnt_context_enable_sloppy(mnt_context *cxt, int enable)
 int mnt_context_enable_fake(mnt_context *cxt, int enable)
 {
 	return set_flag(cxt, MNT_FL_FAKE, enable);
+}
+
+/**
+ * mnt_context_is_fake:
+ * @cxt: mount context
+ *
+ * Returns: 1 if fake flag is enabled or 0
+ */
+int mnt_context_is_fake(mnt_context *cxt)
+{
+	return cxt && (cxt->flags & MNT_FL_FAKE) ? 1 : 0;
 }
 
 /**
@@ -309,6 +369,17 @@ int mnt_context_disable_mtab(mnt_context *cxt, int disable)
 }
 
 /**
+ * mnt_context_is_nomtab
+ * @cxt: mount context
+ *
+ * Returns: 1 if no-mtab is enabled or 0
+ */
+int mnt_context_is_nomtab(mnt_context *cxt)
+{
+	return cxt && (cxt->flags & MNT_FL_NOMTAB) ? 1 : 0;
+}
+
+/**
  * mnt_context_enable_force:
  * @cxt: mount context
  * @enable: TRUE or FALSE
@@ -323,6 +394,17 @@ int mnt_context_enable_force(mnt_context *cxt, int enable)
 }
 
 /**
+ * mnt_context_is_force
+ * @cxt: mount context
+ *
+ * Returns: 1 if force umounting flag is enabled or 0
+ */
+int mnt_context_is_force(mnt_context *cxt)
+{
+	return cxt && (cxt->flags & MNT_FL_FORCE) ? 1 : 0;
+}
+
+/**
  * mnt_context_enable_verbose:
  * @cxt: mount context
  * @enable: TRUE or FALSE
@@ -334,6 +416,17 @@ int mnt_context_enable_force(mnt_context *cxt, int enable)
 int mnt_context_enable_verbose(mnt_context *cxt, int enable)
 {
 	return set_flag(cxt, MNT_FL_VERBOSE, enable);
+}
+
+/**
+ * mnt_context_is_verbose
+ * @cxt: mount context
+ *
+ * Returns: 1 if verbose flag is enabled or 0
+ */
+int mnt_context_is_verbose(mnt_context *cxt)
+{
+	return cxt && (cxt->flags & MNT_FL_VERBOSE) ? 1 : 0;
 }
 
 /**
