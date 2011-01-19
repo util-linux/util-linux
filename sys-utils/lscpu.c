@@ -72,11 +72,10 @@ const char *hv_vendors[] = {
 	[HYPER_MSHV]	= "Microsoft"
 };
 
-/* CPU modes (bits) */
+/* CPU modes */
 enum {
-	MODE_REAL	= (1 << 1),
-	MODE_TRANSPARENT = (1 << 2),
-	MODE_LONG	= (1 << 3)
+	MODE_32BIT	= (1 << 1),
+	MODE_64BIT	= (1 << 2)
 };
 
 /* cache(s) description */
@@ -341,6 +340,26 @@ int lookup(char *line, char *pattern, char **value)
 	return 1;
 }
 
+/* Don't init the mode for platforms where we are not able to
+ * detect that CPU supports 64-bit mode.
+ */
+static int
+init_mode(void)
+{
+	int m = 0;
+
+#if defined(__alpha__) || defined(__ia64__)
+	m |= MODE_64BIT;	/* 64bit platforms only */
+#endif
+	/* platforms with 64bit flag in /proc/cpuinfo, define
+	 * 32bit default here */
+#if defined(__i386__) || defined(__x86_64__) || \
+    defined(__s390x__) || defined(__s390__)
+	m |= MODE_32BIT;
+#endif
+	return m;
+}
+
 static void
 read_basicinfo(struct lscpu_desc *desc)
 {
@@ -359,20 +378,21 @@ read_basicinfo(struct lscpu_desc *desc)
 
 	/* details */
 	while (fgets(buf, sizeof(buf), fp) != NULL) {
-		/* IA64 */
 		if (lookup(buf, "vendor", &desc->vendor)) ;
 		else if (lookup(buf, "vendor_id", &desc->vendor)) ;
-		/* IA64 */
 		else if (lookup(buf, "family", &desc->family)) ;
 		else if (lookup(buf, "cpu family", &desc->family)) ;
 		else if (lookup(buf, "model", &desc->model)) ;
 		else if (lookup(buf, "stepping", &desc->stepping)) ;
 		else if (lookup(buf, "cpu MHz", &desc->mhz)) ;
-		else if (lookup(buf, "flags", &desc->flags)) ;
+		else if (lookup(buf, "flags", &desc->flags)) ;		/* x86 */
+		else if (lookup(buf, "features", &desc->flags)) ;	/* s390 */
 		else if (lookup(buf, "bogomips", &desc->bogomips)) ;
 		else
 			continue;
 	}
+
+	desc->mode = init_mode();
 
 	if (desc->flags) {
 		snprintf(buf, sizeof(buf), " %s ", desc->flags);
@@ -380,13 +400,10 @@ read_basicinfo(struct lscpu_desc *desc)
 			desc->virtflag = strdup("svm");
 		else if (strstr(buf, " vmx "))
 			desc->virtflag = strdup("vmx");
-
-		if (strstr(buf, " rm "))
-			desc->mode |= MODE_REAL;
-		if (strstr(buf, " tm "))
-			desc->mode |= MODE_TRANSPARENT;
 		if (strstr(buf, " lm "))
-			desc->mode |= MODE_LONG;
+			desc->mode |= MODE_32BIT | MODE_64BIT;		/* x86_64 */
+		if (strstr(buf, " zarch "))
+			desc->mode |= MODE_32BIT | MODE_64BIT;		/* s390x */
 	}
 
 	fclose(fp);
@@ -800,18 +817,14 @@ print_readable(struct lscpu_desc *desc, int hex)
 
 	print_s(_("Architecture:"), desc->arch);
 
-	if (desc->mode & (MODE_REAL | MODE_TRANSPARENT | MODE_LONG)) {
+	if (desc->mode) {
 		char buf[64], *p = buf;
 
-		if (desc->mode & MODE_REAL) {
-			strcpy(p, "16-bit, ");
-			p += 8;
-		}
-		if (desc->mode & MODE_TRANSPARENT) {
+		if (desc->mode & MODE_32BIT) {
 			strcpy(p, "32-bit, ");
 			p += 8;
 		}
-		if (desc->mode & MODE_LONG) {
+		if (desc->mode & MODE_64BIT) {
 			strcpy(p, "64-bit, ");
 			p += 8;
 		}
