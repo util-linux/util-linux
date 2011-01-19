@@ -7,7 +7,7 @@
  * aeb, 2000-03-21 -- sah is 42 now
  *
  * Copyright (C) 2010 Davidlohr Bueso <dave@gnu.org>
- *      Rewritten to use libblkid for util-linux-ng
+ *      Rewritten to use libblkid for util-linux
  *      based on ideas from Karel Zak <kzak@redhat.com>
  */
 
