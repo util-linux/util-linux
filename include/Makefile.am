@@ -28,4 +28,5 @@ dist_noinst_HEADERS = \
 	wholedisk.h \
 	widechar.h \
 	writeall.h \
+	rpmatch.h \
 	xalloc.h
