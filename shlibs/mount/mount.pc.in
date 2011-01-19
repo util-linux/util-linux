@@ -7,5 +7,5 @@ Name: mount
 Description: mount library
 Version: @LIBMOUNT_VERSION@
 Requires.private: blkid
-Cflags: -I${includedir}/mount
+Cflags: -I${includedir}/libmount
 Libs: -L${libdir} -lmount

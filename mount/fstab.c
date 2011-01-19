@@ -151,7 +151,7 @@ read_mntentchn(mntFILE *mfp, const char *fnam, struct mntentchn *mc0) {
 #ifdef HAVE_LIBMOUNT_MOUNT
 
 #define USE_UNSTABLE_LIBMOUNT_API
-#include <mount.h>			/* libmount */
+#include <libmount.h>			/* libmount */
 
 static void read_mounttable()
 {

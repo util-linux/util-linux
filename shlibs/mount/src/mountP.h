@@ -16,7 +16,7 @@
 
 #define USE_UNSTABLE_LIBMOUNT_API
 
-#include "mount.h"
+#include "libmount.h"
 #include "list.h"
 
 /* features */

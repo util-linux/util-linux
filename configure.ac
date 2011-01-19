@@ -1207,7 +1207,7 @@ shlibs/blkid/samples/Makefile
 shlibs/mount/mount.pc
 shlibs/mount/Makefile
 shlibs/mount/src/Makefile
-shlibs/mount/src/mount.h
+shlibs/mount/src/libmount.h
 shlibs/mount/docs/Makefile
 shlibs/mount/docs/version.xml
 shlibs/mount/samples/Makefile

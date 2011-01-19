@@ -28,7 +28,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 
-#include "mount.h"
+#include <libmount.h>
+
 #include "nls.h"
 #include "c.h"
 

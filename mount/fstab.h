@@ -5,7 +5,7 @@
 
 #ifdef HAVE_LIBMOUNT_MOUNT
 #define USE_UNSTABLE_LIBMOUNT_API
-#include <mount.h>			/* libmount */
+#include <libmount.h>
 extern mnt_lock *init_libmount_lock(const char *filename);
 #endif
 

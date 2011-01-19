@@ -32,7 +32,7 @@
 #include <assert.h>
 
 #define USE_UNSTABLE_LIBMOUNT_API
-#include <mount.h>
+#include <libmount.h>
 
 #include "pathnames.h"
 #include "nls.h"

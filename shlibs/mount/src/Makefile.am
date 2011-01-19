@@ -5,8 +5,8 @@ AM_CPPFLAGS += -I$(ul_libmount_incdir) \
 	       -I$(ul_libblkid_incdir)
 
 # includes
-mountincdir = $(includedir)/mount
-nodist_mountinc_HEADERS = mount.h
+mountincdir = $(includedir)/libmount
+nodist_mountinc_HEADERS = libmount.h
 
 usrlib_exec_LTLIBRARIES = libmount.la
 libmount_la_SOURCES =	mountP.h version.c utils.c test.c init.c cache.c \
@@ -25,7 +25,7 @@ nodist_libmount_la_SOURCES = mountP.h
 
 libmount_la_LIBADD = $(ul_libblkid_la) $(SELINUX_LIBS)
 
-libmount_la_DEPENDENCIES = $(libmount_la_LIBADD) mount.sym mount.h.in
+libmount_la_DEPENDENCIES = $(libmount_la_LIBADD) mount.sym libmount.h.in
 
 libmount_la_LDFLAGS = -Wl,--version-script=$(ul_libmount_srcdir)/mount.sym \
                       -version-info $(LIBMOUNT_VERSION_INFO)
@@ -36,7 +36,7 @@ if HAVE_SELINUX
 TESTS_LIBS += $(SELINUX_LIBS)
 endif
 
-EXTRA_DIST = mount.sym mount.h.in
+EXTRA_DIST = mount.sym libmount.h.in
 CLEANFILES = $(tests)
 
 # move lib from $(usrlib_execdir) to $(libdir) if needed
