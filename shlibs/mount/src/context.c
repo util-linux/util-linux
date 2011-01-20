@@ -47,7 +47,7 @@
  *
  * Returns: newly allocated mount context
  */
-mnt_context *mnt_new_context()
+mnt_context *mnt_new_context(void)
 {
 	mnt_context *cxt;
 	uid_t ruid, euid;
@@ -1452,6 +1452,20 @@ int mnt_context_strerror(mnt_context *cxt, char *buf, size_t bufsiz)
 {
 	/* TODO: based on cxt->syscall_errno or cxt->helper_status */
 	return 0;
+}
+
+/**
+ * mnt_context_init_helper
+ * @cxt: mount context
+ * @flags: not used
+ *
+ * This function infors libmount that used from [u]mount.<type> helper.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_init_helper(mnt_context *cxt, int flags)
+{
+	return set_flag(cxt, MNT_FL_HELPER, 1);
 }
 
 #ifdef TEST_PROGRAM

@@ -287,6 +287,7 @@ struct _mnt_context
 #define MNT_FL_MOUNTFLAGS_MERGED (1 << 22)	/* MS_* flags was read from optstr */
 #define MNT_FL_SAVED_USER	(1 << 23)
 #define MNT_FL_PREPARED		(1 << 24)
+#define MNT_FL_HELPER		(1 << 25)	/* [u]mount.<type> */
 
 /* default flags */
 #define MNT_FL_DEFAULT		0

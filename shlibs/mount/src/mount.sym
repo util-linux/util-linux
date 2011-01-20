@@ -32,6 +32,7 @@ global:
 	mnt_context_get_optsmode;
 	mnt_context_get_status;
 	mnt_context_get_userspace_mountflags;
+	mnt_context_init_helper;
 	mnt_context_is_fake;
 	mnt_context_is_force;
 	mnt_context_is_lazy;
@@ -40,6 +41,7 @@ global:
 	mnt_context_is_restricted;
 	mnt_context_is_sloppy;
 	mnt_context_is_verbose;
+	mnt_context_mounthelper_setopt;
 	mnt_context_prepare_mount;
 	mnt_context_set_cache;
 	mnt_context_set_fs;

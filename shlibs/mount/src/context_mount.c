@@ -218,6 +218,60 @@ static int evaluate_permissions(mnt_context *cxt)
 	return 0;
 }
 
+/**
+ * mnt_context_mounthelper_setopt:
+ * @cxr: context
+ * @c: getopt() result
+ * @arg: getopt() optarg
+ *
+ * This function applies mount.<type> command line option (for example parsed
+ * by getopt() or getopt_long()) to @cxt. All unknown options are ignored and
+ * then 1 is returned.
+ *
+ * Returns: negative number on error, 1 if @c is unknown option, 0 on success.
+ */
+int mnt_context_mounthelper_setopt(mnt_context *cxt, int c, char *arg)
+{
+	int rc = -EINVAL;
+
+	if (!cxt || !c)
+		return -EINVAL;
+
+	switch(c) {
+	case 'f':
+		rc = mnt_context_enable_fake(cxt, TRUE);
+		break;
+	case 'n':
+		rc = mnt_context_disable_mtab(cxt, TRUE);
+		break;
+	case 'r':
+		rc = mnt_context_append_options(cxt, "ro");
+		break;
+	case 'v':
+		rc = mnt_context_enable_verbose(cxt, TRUE);
+		break;
+	case 'w':
+		rc = mnt_context_append_options(cxt, "rw");
+		break;
+	case 'o':
+		if (arg)
+			rc = mnt_context_append_options(cxt, arg);
+		break;
+	case 's':
+		rc = mnt_context_enable_sloppy(cxt, TRUE);
+		break;
+	case 't':
+		if (arg)
+			rc = mnt_context_set_fstype(cxt, arg);
+		break;
+	default:
+		return 1;
+		break;
+	}
+
+	return rc;
+}
+
 static int exec_helper(mnt_context *cxt)
 {
 	char *o = NULL;
@@ -254,13 +308,13 @@ static int exec_helper(mnt_context *cxt)
 		args[i++] = mnt_fs_get_srcpath(cxt->fs);/* 2 */
 		args[i++] = mnt_fs_get_target(cxt->fs);	/* 3 */
 
-		if (cxt->flags & MNT_FL_SLOPPY)
+		if (mnt_context_is_sloppy(cxt))
 			args[i++] = "-s";		/* 4 */
-		if (cxt->flags & MNT_FL_FAKE)
+		if (mnt_context_is_fake(cxt))
 			args[i++] = "-f";		/* 5 */
-		if (cxt->flags & MNT_FL_NOMTAB)
+		if (mnt_context_is_nomtab(cxt))
 			args[i++] = "-n";		/* 6 */
-		if (cxt->flags & MNT_FL_VERBOSE)
+		if (mnt_context_is_verbose(cxt))
 			args[i++] = "-v";		/* 7 */
 		if (o) {
 			args[i++] = "-o";		/* 8 */

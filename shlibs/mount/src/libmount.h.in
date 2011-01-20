@@ -333,6 +333,9 @@ extern void mnt_free_context(mnt_context *cxt);
 extern int mnt_reset_context(mnt_context *cxt);
 extern int mnt_context_is_restricted(mnt_context *cxt);
 
+extern int mnt_context_init_helper(mnt_context *cxt, int flags)
+extern int mnt_context_mounthelper_setopt(mnt_context *cxt, int c, char *arg);
+
 extern int mnt_context_set_optsmode(mnt_context *cxt, int mode);
 extern int mnt_context_disable_canonicalize(mnt_context *cxt, int disable);
 extern int mnt_context_enable_lazy(mnt_context *cxt, int enable);
