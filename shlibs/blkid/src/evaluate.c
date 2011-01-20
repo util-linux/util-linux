@@ -25,7 +25,6 @@
 #include "pathnames.h"
 #include "canonicalize.h"
 
-#include "blkdev.h"
 #include "blkidP.h"
 
 /**

@@ -14,7 +14,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include "blkdev.h"
 #include "blkidP.h"
 
 /**

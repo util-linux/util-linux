@@ -17,7 +17,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "blkdev.h"
 #include "blkidP.h"
 
 #define UDEV_ALLOWED_CHARS_INPUT               "/ $%?,"

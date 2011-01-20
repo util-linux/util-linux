@@ -23,7 +23,6 @@
 #include <stdint.h>
 #include <stdarg.h>
 
-#include "blkdev.h"
 #include "blkidP.h"
 #include "env.h"
 

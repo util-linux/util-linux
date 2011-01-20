@@ -112,7 +112,6 @@
 # endif
 #endif
 
-#include "blkdev.h"
 #include "blkidP.h"
 
 /* chains */

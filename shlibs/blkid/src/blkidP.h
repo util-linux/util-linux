@@ -25,6 +25,7 @@
 
 #include "c.h"
 #include "bitops.h"	/* $(top_srcdir)/include/ */
+#include "blkdev.h"
 
 #include "blkid.h"
 #include "list.h"

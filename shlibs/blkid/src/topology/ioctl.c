@@ -16,7 +16,6 @@
 #include <unistd.h>
 #include <errno.h>
 
-#include "blkdev.h"		/* top-level lib/ */
 #include "topology.h"
 
 /*
