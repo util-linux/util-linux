@@ -32,9 +32,6 @@
 #if HAVE_ERRNO_H
 #include <errno.h>
 #endif
-#if HAVE_SYS_MKDEV_H
-#include <sys/mkdev.h>
-#endif
 #include <time.h>
 
 #include "blkidP.h"

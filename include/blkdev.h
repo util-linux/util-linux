@@ -6,6 +6,10 @@
 #include <fcntl.h>
 #include <unistd.h>
 
+#if HAVE_SYS_MKDEV_H
+# include <sys/mkdev.h>		/* major and minor on Solaris */
+#endif
+
 #define DEFAULT_SECTOR_SIZE       512
 
 #ifdef __linux__

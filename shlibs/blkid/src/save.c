@@ -18,9 +18,6 @@
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
-#ifdef HAVE_SYS_MKDEV_H
-#include <sys/mkdev.h>
-#endif
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
