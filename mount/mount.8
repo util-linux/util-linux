@@ -1322,8 +1322,19 @@ journal file;  ext3 will create a new journal, overwriting the old contents
 of the file whose inode number is
 .IR inum .
 .TP
-.BR noload
-Do not load the ext3 filesystem's journal on mounting.
+.BR journal_dev=devnum	
+When the external journal device's major/minor numbers
+have changed, this option allows the user to specify
+the new journal location.  The journal device is
+identified through its new major/minor numbers encoded
+in devnum.
+.TP
+.BR norecovery / noload
+Don't load the journal on mounting.  Note that
+if the filesystem was not unmounted cleanly,
+skipping the journal replay will lead to the
+filesystem containing inconsistencies that can
+lead to any number of problems.
 .TP
 .BR data= { journal | ordered | writeback }
 Specifies the journalling mode for file data.  Metadata is always journaled.
@@ -1455,6 +1466,11 @@ used for I/O operations submitted by kjournald2 during a commit operation.
 This defaults to 3, which is a slightly higher priority than the default I/O
 priority.
 .TP
+.BR abort
+Simulate the effects of calling ext4_abort() for
+debugging purposes.  This is normally used while
+remounting a filesystem which is already mounted.
+.TP
 .BR auto_da_alloc | noauto_da_alloc
 Many broken applications don't use fsync() when noauto_da_alloc
 replacing existing files via patterns such as
@@ -1472,6 +1488,44 @@ mode, the data blocks of the new file are forced to disk before the rename()
 operation is committed.  This provides roughly the same level of guarantees as
 ext3, and avoids the "zero-length" problem that can happen when a system
 crashes before the delayed allocation blocks are forced to disk.
+.TP
+.BR discard / nodiscard
+Controls whether ext4 should issue discard/TRIM commands to the underlying
+block device when blocks are freed.  This is useful for SSD devices and
+sparse/thinly-provisioned LUNs, but it is off by default until sufficient
+testing has been done.
+.TP
+.BR nouid32
+Disables 32-bit UIDs and GIDs.  This is for
+interoperability  with  older kernels which only
+store and expect 16-bit values.
+.TP
+.BR resize
+Allows to resize filesystem to the end of the last
+existing block group, further resize has to be done
+with resize2fs either online, or offline. It can be
+used only with conjunction with remount.
+.TP
+.BR block_validity / noblock_validity
+This options allows to enables/disables the in-kernel facility for tracking
+filesystem metadata blocks within internal data structures. This allows multi-
+block allocator and other routines to quickly locate extents which might
+overlap with filesystem metadata blocks. This option is intended for debugging
+purposes and since it negatively affects the performance, it is off by default.
+.TP
+.BR dioread_lock / dioread_nolock
+Controls whether or not ext4 should use the DIO read locking. If the
+dioread_nolock option is specified ext4 will allocate uninitialized extent
+before buffer write and convert the extent to initialized after IO completes.
+This approach allows ext4 code to avoid using inode mutex, which improves
+scalability on high speed storages. However this does not work with nobh option
+and the mount will fail. Nor does it work with data journaling and
+dioread_nolock option will be ignored with kernel warning. Note that
+dioread_nolock code path is only used for extent-based files.  Because of the
+restrictions this options comprises it is off by default (e.g. dioread_lock).
+.TP
+.BR i_version
+Enable 64-bit inode version support. This option is off by default.
 
 .SH "Mount options for fat"
 (Note:
