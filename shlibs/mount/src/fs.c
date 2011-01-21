@@ -8,7 +8,7 @@
 /**
  * SECTION: fs
  * @title: Filesystem
- * @short_description: mnt_fs represents one entry in fstab/mtab/mountinfo
+ * @short_description: struct libmnt_fs represents one entry in fstab/mtab/mountinfo
  *
  */
 #include <stdio.h>
@@ -25,11 +25,11 @@
 /**
  * mnt_new_fs:
  *
- * Returns: newly allocated mnt_file fs.
+ * Returns: newly allocated struct libmnt_fs.
  */
-mnt_fs *mnt_new_fs(void)
+struct libmnt_fs *mnt_new_fs(void)
 {
-	mnt_fs *fs = calloc(1, sizeof(struct _mnt_fs));
+	struct libmnt_fs *fs = calloc(1, sizeof(*fs));
 	if (!fs)
 		return NULL;
 
@@ -43,7 +43,7 @@ mnt_fs *mnt_new_fs(void)
  *
  * Deallocates the fs.
  */
-void mnt_free_fs(mnt_fs *fs)
+void mnt_free_fs(struct libmnt_fs *fs)
 {
 	if (!fs)
 		return;
@@ -103,9 +103,9 @@ static inline int cpy_str_at_offset(void *new, const void *old, size_t offset)
  *
  * Returns: copy of @fs
  */
-mnt_fs *mnt_copy_fs(const mnt_fs *fs)
+struct libmnt_fs *mnt_copy_fs(const struct libmnt_fs *fs)
 {
-	mnt_fs *n = mnt_new_fs();
+	struct libmnt_fs *n = mnt_new_fs();
 
 	if (!n)
 		return NULL;
@@ -114,25 +114,25 @@ mnt_fs *mnt_copy_fs(const mnt_fs *fs)
 	n->parent     = fs->parent;
 	n->devno      = fs->devno;
 
-	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, source)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, source)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, tagname)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, tagname)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, tagval)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, tagval)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, root)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, root)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, target)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, target)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, fstype)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, fstype)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, vfs_optstr)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, vfs_optstr)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, fs_optstr)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, fs_optstr)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, user_optstr)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, user_optstr)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, attrs)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, attrs)))
 		goto err;
 
 	n->freq       = fs->freq;
@@ -152,18 +152,18 @@ err:
  *
  * Returns: copy of @fs.
  */
-mnt_fs *mnt_copy_mtab_fs(const mnt_fs *fs)
+struct libmnt_fs *mnt_copy_mtab_fs(const struct libmnt_fs *fs)
 {
-	mnt_fs *n = mnt_new_fs();
+	struct libmnt_fs *n = mnt_new_fs();
 
 	if (!n)
 		return NULL;
 
-	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, source)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, source)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, target)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, target)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, fstype)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, fstype)))
 		goto err;
 
 	if (fs->vfs_optstr) {
@@ -182,7 +182,7 @@ mnt_fs *mnt_copy_mtab_fs(const mnt_fs *fs)
 		n->user_optstr = p;
 	}
 
-	if (cpy_str_at_offset(n, fs, offsetof(struct _mnt_fs, fs_optstr)))
+	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, fs_optstr)))
 		goto err;
 
 	n->freq       = fs->freq;
@@ -198,25 +198,25 @@ err:
 
 /**
  * mnt_fs_get_userdata:
- * @fs: mnt_file instance
+ * @fs: struct libmnt_file instance
  *
  * Returns: private data set by mnt_fs_set_userdata() or NULL.
  */
-void *mnt_fs_get_userdata(mnt_fs *fs)
+void *mnt_fs_get_userdata(struct libmnt_fs *fs)
 {
 	return fs ? fs->userdata : NULL;
 }
 
 /**
  * mnt_fs_set_userdata:
- * @fs: mnt_file instance
+ * @fs: struct libmnt_file instance
  * @data: user data
  *
  * The "userdata" are library independent data.
  *
  * Returns: 0 or negative number in case of error (if @fs is NULL).
  */
-int mnt_fs_set_userdata(mnt_fs *fs, void *data)
+int mnt_fs_set_userdata(struct libmnt_fs *fs, void *data)
 {
 	if (!fs)
 		return -EINVAL;
@@ -226,7 +226,7 @@ int mnt_fs_set_userdata(mnt_fs *fs, void *data)
 
 /**
  * mnt_fs_get_srcpath:
- * @fs: mnt_file (fstab/mtab/mountinfo) fs
+ * @fs: struct libmnt_file (fstab/mtab/mountinfo) fs
  *
  * The mount "source path" is:
  * - a directory for 'bind' mounts (in fstab or mtab only)
@@ -237,7 +237,7 @@ int mnt_fs_set_userdata(mnt_fs *fs, void *data)
  * Returns: mount source path or NULL in case of error or when the path
  * is not defined.
  */
-const char *mnt_fs_get_srcpath(mnt_fs *fs)
+const char *mnt_fs_get_srcpath(struct libmnt_fs *fs)
 {
 	assert(fs);
 	if (!fs)
@@ -251,18 +251,18 @@ const char *mnt_fs_get_srcpath(mnt_fs *fs)
 
 /**
  * mnt_fs_get_source:
- * @fs: mnt_file (fstab/mtab/mountinfo) fs
+ * @fs: struct libmnt_file (fstab/mtab/mountinfo) fs
  *
  * Returns: mount source. Note that the source could be unparsed TAG
  * (LABEL/UUID). See also mnt_fs_get_srcpath() and mnt_fs_get_tag().
  */
-const char *mnt_fs_get_source(mnt_fs *fs)
+const char *mnt_fs_get_source(struct libmnt_fs *fs)
 {
 	return fs ? fs->source : NULL;
 }
 
-/* Used by parser mnt_file ONLY (@source has to be allocated) */
-int __mnt_fs_set_source_ptr(mnt_fs *fs, char *source)
+/* Used by parser struct libmnt_file ONLY (@source has to be allocated) */
+int __mnt_fs_set_source_ptr(struct libmnt_fs *fs, char *source)
 {
 	char *t = NULL, *v = NULL;
 
@@ -297,7 +297,7 @@ int __mnt_fs_set_source_ptr(mnt_fs *fs, char *source)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_set_source(mnt_fs *fs, const char *source)
+int mnt_fs_set_source(struct libmnt_fs *fs, const char *source)
 {
 	char *p;
 	int rc;
@@ -330,7 +330,7 @@ int mnt_fs_set_source(mnt_fs *fs, const char *source)
  * <informalexample>
  *   <programlisting>
  *	char *src;
- *	mnt_fs *fs = mnt_tab_find_target(tb, "/home", MNT_ITER_FORWARD);
+ *	struct libmnt_fs *fs = mnt_table_find_target(tb, "/home", MNT_ITER_FORWARD);
  *
  *	if (!fs)
  *		goto err;
@@ -347,7 +347,7 @@ int mnt_fs_set_source(mnt_fs *fs, const char *source)
  *
  * Returns: 0 on success or negative number in case that a TAG is not defined.
  */
-int mnt_fs_get_tag(mnt_fs *fs, const char **name, const char **value)
+int mnt_fs_get_tag(struct libmnt_fs *fs, const char **name, const char **value)
 {
 	if (fs == NULL || !fs->tagname)
 		return -EINVAL;
@@ -364,7 +364,7 @@ int mnt_fs_get_tag(mnt_fs *fs, const char **name, const char **value)
  *
  * Returns: pointer to mountpoint path or NULL
  */
-const char *mnt_fs_get_target(mnt_fs *fs)
+const char *mnt_fs_get_target(struct libmnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->target : NULL;
@@ -379,7 +379,7 @@ const char *mnt_fs_get_target(mnt_fs *fs)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_set_target(mnt_fs *fs, const char *target)
+int mnt_fs_set_target(struct libmnt_fs *fs, const char *target)
 {
 	char *p;
 
@@ -402,14 +402,14 @@ int mnt_fs_set_target(mnt_fs *fs, const char *target)
  *
  * Returns: pointer to filesystem type.
  */
-const char *mnt_fs_get_fstype(mnt_fs *fs)
+const char *mnt_fs_get_fstype(struct libmnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->fstype : NULL;
 }
 
-/* Used by mnt_file parser only */
-int __mnt_fs_set_fstype_ptr(mnt_fs *fs, char *fstype)
+/* Used by struct libmnt_file parser only */
+int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype)
 {
 	assert(fs);
 
@@ -441,7 +441,7 @@ int __mnt_fs_set_fstype_ptr(mnt_fs *fs, char *fstype)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_set_fstype(mnt_fs *fs, const char *fstype)
+int mnt_fs_set_fstype(struct libmnt_fs *fs, const char *fstype)
 {
 	char *p = NULL;
 	int rc;
@@ -522,7 +522,7 @@ static char *merge_optstr(const char *vfs, const char *fs)
  *
  * Returns: pointer to string (can be freed by free(3)) or NULL in case of error.
  */
-char *mnt_fs_strdup_options(mnt_fs *fs)
+char *mnt_fs_strdup_options(struct libmnt_fs *fs)
 {
 	char *res;
 
@@ -551,7 +551,7 @@ char *mnt_fs_strdup_options(mnt_fs *fs)
  *
  * Returns: 0 on success, or negative number icase of error.
  */
-int mnt_fs_set_options(mnt_fs *fs, const char *optstr)
+int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr)
 {
 	char *v = NULL, *f = NULL, *u = NULL;
 
@@ -587,7 +587,7 @@ int mnt_fs_set_options(mnt_fs *fs, const char *optstr)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_append_options(mnt_fs *fs, const char *optstr)
+int mnt_fs_append_options(struct libmnt_fs *fs, const char *optstr)
 {
 	char *v = NULL, *f = NULL, *u = NULL;
 	int rc;
@@ -622,7 +622,7 @@ int mnt_fs_append_options(mnt_fs *fs, const char *optstr)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_prepend_options(mnt_fs *fs, const char *optstr)
+int mnt_fs_prepend_options(struct libmnt_fs *fs, const char *optstr)
 {
 	char *v = NULL, *f = NULL, *u = NULL;
 	int rc;
@@ -651,7 +651,7 @@ int mnt_fs_prepend_options(mnt_fs *fs, const char *optstr)
  *
  * Returns: pointer to superblock (fs-depend) mount option string or NULL.
  */
-const char *mnt_fs_get_fs_options(mnt_fs *fs)
+const char *mnt_fs_get_fs_options(struct libmnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->fs_optstr : NULL;
@@ -666,7 +666,7 @@ const char *mnt_fs_get_fs_options(mnt_fs *fs)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_set_fs_options(mnt_fs *fs, const char *optstr)
+int mnt_fs_set_fs_options(struct libmnt_fs *fs, const char *optstr)
 {
 	char *p = NULL;
 
@@ -693,7 +693,7 @@ int mnt_fs_set_fs_options(mnt_fs *fs, const char *optstr)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_append_fs_options(mnt_fs *fs, const char *optstr)
+int mnt_fs_append_fs_options(struct libmnt_fs *fs, const char *optstr)
 {
 	if (!fs)
 		return -EINVAL;
@@ -712,7 +712,7 @@ int mnt_fs_append_fs_options(mnt_fs *fs, const char *optstr)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_prepend_fs_options(mnt_fs *fs, const char *optstr)
+int mnt_fs_prepend_fs_options(struct libmnt_fs *fs, const char *optstr)
 {
 	if (!fs)
 		return -EINVAL;
@@ -728,7 +728,7 @@ int mnt_fs_prepend_fs_options(mnt_fs *fs, const char *optstr)
  *
  * Returns: pointer to fs-independent (VFS) mount option string or NULL.
  */
-const char *mnt_fs_get_vfs_options(mnt_fs *fs)
+const char *mnt_fs_get_vfs_options(struct libmnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->vfs_optstr : NULL;
@@ -743,7 +743,7 @@ const char *mnt_fs_get_vfs_options(mnt_fs *fs)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_set_vfs_options(mnt_fs *fs, const char *optstr)
+int mnt_fs_set_vfs_options(struct libmnt_fs *fs, const char *optstr)
 {
 	char *p = NULL;
 
@@ -770,7 +770,7 @@ int mnt_fs_set_vfs_options(mnt_fs *fs, const char *optstr)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_append_vfs_options(mnt_fs *fs, const char *optstr)
+int mnt_fs_append_vfs_options(struct libmnt_fs *fs, const char *optstr)
 {
 	if (!fs)
 		return -EINVAL;
@@ -789,7 +789,7 @@ int mnt_fs_append_vfs_options(mnt_fs *fs, const char *optstr)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_prepend_vfs_options(mnt_fs *fs, const char *optstr)
+int mnt_fs_prepend_vfs_options(struct libmnt_fs *fs, const char *optstr)
 {
 	if (!fs)
 		return -EINVAL;
@@ -799,19 +799,19 @@ int mnt_fs_prepend_vfs_options(mnt_fs *fs, const char *optstr)
 }
 
 /**
- * mnt_fs_get_userspace_options:
+ * mnt_fs_get_user_options:
  * @fs: fstab/mtab entry pointer
  *
  * Returns: pointer to userspace mount option string or NULL.
  */
-const char *mnt_fs_get_userspace_options(mnt_fs *fs)
+const char *mnt_fs_get_user_options(struct libmnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->user_optstr : NULL;
 }
 
 /**
- * mnt_fs_set_userspace_options:
+ * mnt_fs_set_user_options:
  * @fs: fstab/mtab/mountinfo entry
  * @optstr: options string
  *
@@ -819,7 +819,7 @@ const char *mnt_fs_get_userspace_options(mnt_fs *fs)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_set_userspace_options(mnt_fs *fs, const char *optstr)
+int mnt_fs_set_user_options(struct libmnt_fs *fs, const char *optstr)
 {
 	char *p = NULL;
 
@@ -837,7 +837,7 @@ int mnt_fs_set_userspace_options(mnt_fs *fs, const char *optstr)
 }
 
 /**
- * mnt_fs_append_userspace_options:
+ * mnt_fs_append_user_options:
  * @fs: fstab/mtab/mountinfo entry
  * @optstr: options string
  *
@@ -846,7 +846,7 @@ int mnt_fs_set_userspace_options(mnt_fs *fs, const char *optstr)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_append_userspace_options(mnt_fs *fs, const char *optstr)
+int mnt_fs_append_user_options(struct libmnt_fs *fs, const char *optstr)
 {
 	if (!fs)
 		return -EINVAL;
@@ -856,7 +856,7 @@ int mnt_fs_append_userspace_options(mnt_fs *fs, const char *optstr)
 }
 
 /**
- * mnt_fs_prepend_userspace_options:
+ * mnt_fs_prepend_user_options:
  * @fs: fstab/mtab/mountinfo entry
  * @optstr: options string
  *
@@ -865,7 +865,7 @@ int mnt_fs_append_userspace_options(mnt_fs *fs, const char *optstr)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_prepend_userspace_options(mnt_fs *fs, const char *optstr)
+int mnt_fs_prepend_user_options(struct libmnt_fs *fs, const char *optstr)
 {
 	if (!fs)
 		return -EINVAL;
@@ -881,7 +881,7 @@ int mnt_fs_prepend_userspace_options(mnt_fs *fs, const char *optstr)
  *
  * Returns: pointer to attributes string or NULL.
  */
-const char *mnt_fs_get_attributes(mnt_fs *fs)
+const char *mnt_fs_get_attributes(struct libmnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->attrs : NULL;
@@ -902,7 +902,7 @@ const char *mnt_fs_get_attributes(mnt_fs *fs)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_set_attributes(mnt_fs *fs, const char *optstr)
+int mnt_fs_set_attributes(struct libmnt_fs *fs, const char *optstr)
 {
 	char *p = NULL;
 
@@ -928,7 +928,7 @@ int mnt_fs_set_attributes(mnt_fs *fs, const char *optstr)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_append_attributes(mnt_fs *fs, const char *optstr)
+int mnt_fs_append_attributes(struct libmnt_fs *fs, const char *optstr)
 {
 	if (!fs)
 		return -EINVAL;
@@ -946,7 +946,7 @@ int mnt_fs_append_attributes(mnt_fs *fs, const char *optstr)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_prepend_attributes(mnt_fs *fs, const char *optstr)
+int mnt_fs_prepend_attributes(struct libmnt_fs *fs, const char *optstr)
 {
 	if (!fs)
 		return -EINVAL;
@@ -962,7 +962,7 @@ int mnt_fs_prepend_attributes(mnt_fs *fs, const char *optstr)
  *
  * Returns: dump frequency in days.
  */
-int mnt_fs_get_freq(mnt_fs *fs)
+int mnt_fs_get_freq(struct libmnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->freq : 0;
@@ -975,7 +975,7 @@ int mnt_fs_get_freq(mnt_fs *fs)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_set_freq(mnt_fs *fs, int freq)
+int mnt_fs_set_freq(struct libmnt_fs *fs, int freq)
 {
 	assert(fs);
 	if (!fs)
@@ -990,7 +990,7 @@ int mnt_fs_set_freq(mnt_fs *fs, int freq)
  *
  * Returns: "pass number on parallel fsck".
  */
-int mnt_fs_get_passno(mnt_fs *fs)
+int mnt_fs_get_passno(struct libmnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->passno: 0;
@@ -1003,7 +1003,7 @@ int mnt_fs_get_passno(mnt_fs *fs)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_set_passno(mnt_fs *fs, int passno)
+int mnt_fs_set_passno(struct libmnt_fs *fs, int passno)
 {
 	assert(fs);
 	if (!fs)
@@ -1018,7 +1018,7 @@ int mnt_fs_set_passno(mnt_fs *fs, int passno)
  *
  * Returns: root of the mount within the filesystem or NULL
  */
-const char *mnt_fs_get_root(mnt_fs *fs)
+const char *mnt_fs_get_root(struct libmnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->root : NULL;
@@ -1031,7 +1031,7 @@ const char *mnt_fs_get_root(mnt_fs *fs)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_set_root(mnt_fs *fs, const char *root)
+int mnt_fs_set_root(struct libmnt_fs *fs, const char *root)
 {
 	char *p = NULL;
 
@@ -1054,7 +1054,7 @@ int mnt_fs_set_root(mnt_fs *fs, const char *root)
  *
  * Returns: full path that was used for mount(2) on MS_BIND
  */
-const char *mnt_fs_get_bindsrc(mnt_fs *fs)
+const char *mnt_fs_get_bindsrc(struct libmnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->bindsrc : NULL;
@@ -1067,7 +1067,7 @@ const char *mnt_fs_get_bindsrc(mnt_fs *fs)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_set_bindsrc(mnt_fs *fs, const char *src)
+int mnt_fs_set_bindsrc(struct libmnt_fs *fs, const char *src)
 {
 	char *p = NULL;
 
@@ -1090,7 +1090,7 @@ int mnt_fs_set_bindsrc(mnt_fs *fs, const char *src)
  *
  * Returns: mount ID (unique identifier of the mount) or negative number in case of error.
  */
-int mnt_fs_get_id(mnt_fs *fs)
+int mnt_fs_get_id(struct libmnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->id : -EINVAL;
@@ -1102,7 +1102,7 @@ int mnt_fs_get_id(mnt_fs *fs)
  *
  * Returns: parent mount ID or negative number in case of error.
  */
-int mnt_fs_get_parent_id(mnt_fs *fs)
+int mnt_fs_get_parent_id(struct libmnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->parent : -EINVAL;
@@ -1114,7 +1114,7 @@ int mnt_fs_get_parent_id(mnt_fs *fs)
  *
  * Returns: value of st_dev for files on filesystem or 0 in case of error.
  */
-dev_t mnt_fs_get_devno(mnt_fs *fs)
+dev_t mnt_fs_get_devno(struct libmnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->devno : 0;
@@ -1129,7 +1129,7 @@ dev_t mnt_fs_get_devno(mnt_fs *fs)
  *
  * Returns: 0 on success, 1 when not found the @name or negative number in case of error.
  */
-int mnt_fs_get_option(mnt_fs *fs, const char *name,
+int mnt_fs_get_option(struct libmnt_fs *fs, const char *name,
 		char **value, size_t *valsz)
 {
 	char rc = 1;
@@ -1152,7 +1152,7 @@ int mnt_fs_get_option(mnt_fs *fs, const char *name,
  *
  * Returns: 0 on success, 1 when not found the @name or negative number in case of error.
  */
-int mnt_fs_get_attribute(mnt_fs *fs, const char *name,
+int mnt_fs_get_attribute(struct libmnt_fs *fs, const char *name,
 		char **value, size_t *valsz)
 {
 	char rc = 1;
@@ -1177,7 +1177,7 @@ int mnt_fs_get_attribute(mnt_fs *fs, const char *name,
  *
  * Returns: 1 if @fs target is equal to @target else 0.
  */
-int mnt_fs_match_target(mnt_fs *fs, const char *target, mnt_cache *cache)
+int mnt_fs_match_target(struct libmnt_fs *fs, const char *target, struct libmnt_cache *cache)
 {
 	int rc = 0;
 
@@ -1219,7 +1219,7 @@ int mnt_fs_match_target(mnt_fs *fs, const char *target, mnt_cache *cache)
  *
  * Returns: 1 if @fs source is equal to @source else 0.
  */
-int mnt_fs_match_source(mnt_fs *fs, const char *source, mnt_cache *cache)
+int mnt_fs_match_source(struct libmnt_fs *fs, const char *source, struct libmnt_cache *cache)
 {
 	char *cn;
 	const char *src, *t, *v;
@@ -1288,7 +1288,7 @@ int mnt_fs_match_source(mnt_fs *fs, const char *source, mnt_cache *cache)
  * Returns: 1 if @fs type is matching to @types else 0. The function returns
  * 0 when types is NULL.
  */
-int mnt_fs_match_fstype(mnt_fs *fs, const char *types)
+int mnt_fs_match_fstype(struct libmnt_fs *fs, const char *types)
 {
 	return mnt_match_fstype(fs->fstype, types);
 }
@@ -1303,7 +1303,7 @@ int mnt_fs_match_fstype(mnt_fs *fs, const char *types)
  * Returns: 1 if @fs type is matching to @options else 0. The function returns
  * 0 when types is NULL.
  */
-int mnt_fs_match_options(mnt_fs *fs, const char *options)
+int mnt_fs_match_options(struct libmnt_fs *fs, const char *options)
 {
 	char *o = mnt_fs_strdup_options(fs);
 	int rc = 0;
@@ -1321,7 +1321,7 @@ int mnt_fs_match_options(mnt_fs *fs, const char *options)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_fs_print_debug(mnt_fs *fs, FILE *file)
+int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 {
 	if (!fs)
 		return -EINVAL;
@@ -1334,8 +1334,8 @@ int mnt_fs_print_debug(mnt_fs *fs, FILE *file)
 		fprintf(file, "VFS-optstr: %s\n", mnt_fs_get_vfs_options(fs));
 	if (mnt_fs_get_fs_options(fs))
 		fprintf(file, "FS-opstr: %s\n", mnt_fs_get_fs_options(fs));
-	if (mnt_fs_get_userspace_options(fs))
-		fprintf(file, "user-optstr: %s\n", mnt_fs_get_userspace_options(fs));
+	if (mnt_fs_get_user_options(fs))
+		fprintf(file, "user-optstr: %s\n", mnt_fs_get_user_options(fs));
 	if (mnt_fs_get_attributes(fs))
 		fprintf(file, "attributes: %s\n", mnt_fs_get_attributes(fs));
 
@@ -1385,7 +1385,7 @@ void mnt_free_mntent(struct mntent *mnt)
  *
  * Returns: 0 on success and negative number in case of error.
  */
-int mnt_fs_to_mntent(mnt_fs *fs, struct mntent **mnt)
+int mnt_fs_to_mntent(struct libmnt_fs *fs, struct mntent **mnt)
 {
 	int rc;
 	struct mntent *m;

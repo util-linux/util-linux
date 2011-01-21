@@ -39,7 +39,7 @@
  *     #define MY_MS_FOO   (1 << 1)
  *     #define MY_MS_BAR   (1 << 2)
  *
- *     mnt_optmap myoptions[] = {
+ *     libmnt_optmap myoptions[] = {
  *       { "foo",   MY_MS_FOO },
  *       { "nofoo", MY_MS_FOO | MNT_INVERT },
  *       { "bar=",  MY_MS_BAR },
@@ -68,7 +68,7 @@
 /*
  * fs-independent mount flags (built-in MNT_LINUX_MAP)
  */
-static const struct mnt_optmap linux_flags_map[] =
+static const struct libmnt_optmap linux_flags_map[] =
 {
    { "ro",       MS_RDONLY },                 /* read-only */
    { "rw",       MS_RDONLY, MNT_INVERT },     /* read-write */
@@ -126,7 +126,7 @@ static const struct mnt_optmap linux_flags_map[] =
  *
  * TODO: offset=, sizelimit=, encryption=, vfs=
  */
-static const struct mnt_optmap userspace_opts_map[] =
+static const struct libmnt_optmap userspace_opts_map[] =
 {
    { "defaults", 0, 0 },               /* default options */
 
@@ -170,7 +170,7 @@ static const struct mnt_optmap userspace_opts_map[] =
  *
  * Returns: static built-in libmount map.
  */
-const struct mnt_optmap *mnt_get_builtin_optmap(int id)
+const struct libmnt_optmap *mnt_get_builtin_optmap(int id)
 {
 	assert(id);
 
@@ -185,12 +185,12 @@ const struct mnt_optmap *mnt_get_builtin_optmap(int id)
  * Lookups for the @name in @maps and returns a map and in @mapent
  * returns the map entry
  */
-const struct mnt_optmap *mnt_optmap_get_entry(
-				struct mnt_optmap const **maps,
+const struct libmnt_optmap *mnt_optmap_get_entry(
+				struct libmnt_optmap const **maps,
 				int nmaps,
 				const char *name,
 				size_t namelen,
-				const struct mnt_optmap **mapent)
+				const struct libmnt_optmap **mapent)
 {
 	int i;
 
@@ -203,8 +203,8 @@ const struct mnt_optmap *mnt_optmap_get_entry(
 		*mapent = NULL;
 
 	for (i = 0; i < nmaps; i++) {
-		const struct mnt_optmap *map = maps[i];
-		const struct mnt_optmap *ent;
+		const struct libmnt_optmap *map = maps[i];
+		const struct libmnt_optmap *ent;
 		const char *p;
 
 		for (ent = map; ent && ent->name; ent++) {

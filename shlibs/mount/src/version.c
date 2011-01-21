@@ -58,7 +58,7 @@ int mnt_get_library_version(const char **ver_string)
 }
 
 #ifdef TEST_PROGRAM
-int test_version(struct mtest *ts, int argc, char *argv[])
+int test_version(struct libmnt_test *ts, int argc, char *argv[])
 {
 	const char *ver;
 
@@ -76,7 +76,7 @@ int test_version(struct mtest *ts, int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-	struct mtest ts[] = {
+	struct libmnt_test ts[] = {
 		{ "--print", test_version, "print versions" },
 		{ NULL }
 	};

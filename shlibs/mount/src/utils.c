@@ -723,7 +723,7 @@ char *mnt_get_fs_root(const char *path, const char *mnt)
 }
 
 #ifdef TEST_PROGRAM
-int test_match_fstype(struct mtest *ts, int argc, char *argv[])
+int test_match_fstype(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *type = argv[1];
 	char *pattern = argv[2];
@@ -732,7 +732,7 @@ int test_match_fstype(struct mtest *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_match_options(struct mtest *ts, int argc, char *argv[])
+int test_match_options(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *optstr = argv[1];
 	char *pattern = argv[2];
@@ -741,7 +741,7 @@ int test_match_options(struct mtest *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_startswith(struct mtest *ts, int argc, char *argv[])
+int test_startswith(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *optstr = argv[1];
 	char *pattern = argv[2];
@@ -750,7 +750,7 @@ int test_startswith(struct mtest *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_endswith(struct mtest *ts, int argc, char *argv[])
+int test_endswith(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *optstr = argv[1];
 	char *pattern = argv[2];
@@ -759,7 +759,7 @@ int test_endswith(struct mtest *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_mountpoint(struct mtest *ts, int argc, char *argv[])
+int test_mountpoint(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *path = canonicalize_path(argv[1]),
 	     *mnt = path ? mnt_get_mountpoint(path) :  NULL;
@@ -770,7 +770,7 @@ int test_mountpoint(struct mtest *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_fsroot(struct mtest *ts, int argc, char *argv[])
+int test_fsroot(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *path = canonicalize_path(argv[1]),
 	     *mnt = path ? mnt_get_fs_root(path, NULL) : NULL;
@@ -781,7 +781,7 @@ int test_fsroot(struct mtest *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_filesystems(struct mtest *ts, int argc, char *argv[])
+int test_filesystems(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char **filesystems = NULL;
 	int rc;
@@ -798,7 +798,7 @@ int test_filesystems(struct mtest *ts, int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-	struct mtest tss[] = {
+	struct libmnt_test tss[] = {
 	{ "--match-fstype",  test_match_fstype,    "<type> <pattern>     FS types matching" },
 	{ "--match-options", test_match_options,   "<options> <pattern>  options matching" },
 	{ "--filesystems",   test_filesystems,	   "[<pattern>] list /{etc,proc}/filesystems" },

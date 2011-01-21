@@ -11,7 +11,7 @@
  * @short_description: container for entries from fstab/mtab/mountinfo
  *
  *
- * Note that mnt_tab_find_* functions are mount(8) compatible. These functions
+ * Note that mnt_table_find_* functions are mount(8) compatible. These functions
  * try to found an entry in more iterations where the first attempt is always
  * based on comparison with unmodified (non-canonicalized or un-evaluated)
  * paths or tags. For example fstab with two entries:
@@ -25,19 +25,19 @@
  * where both lines are used for the *same* device, then
  * <informalexample>
  *  <programlisting>
- *	mnt_tab_find_source(tb, "/dev/foo", &fs);
+ *	mnt_table_find_source(tb, "/dev/foo", &fs);
  *  </programlisting>
  * </informalexample>
  * will returns the second line, and
  * <informalexample>
  *  <programlisting>
- *	mnt_tab_find_source(tb, "LABEL=foo", &fs);
+ *	mnt_table_find_source(tb, "LABEL=foo", &fs);
  *  </programlisting>
  * </informalexample>
  * will returns the first entry, and
  * <informalexample>
  *  <programlisting>
- *	mnt_tab_find_source(tb, "UUID=anyuuid", &fs);
+ *	mnt_table_find_source(tb, "UUID=anyuuid", &fs);
  *  </programlisting>
  * </informalexample>
  * will returns the first entry (if UUID matches with the device).
@@ -58,20 +58,20 @@
 #include "c.h"
 
 /**
- * mnt_new_tab:
+ * mnt_new_table:
  *
- * The tab is a container for mnt_fs entries that usually represents a fstab,
+ * The tab is a container for struct libmnt_fs entries that usually represents a fstab,
  * mtab or mountinfo file from your system.
  *
- * See also mnt_tab_parse_file().
+ * See also mnt_table_parse_file().
  *
  * Returns: newly allocated tab struct.
  */
-mnt_tab *mnt_new_tab(void)
+struct libmnt_table *mnt_new_table(void)
 {
-	mnt_tab *tb = NULL;
+	struct libmnt_table *tb = NULL;
 
-	tb = calloc(1, sizeof(struct _mnt_tab));
+	tb = calloc(1, sizeof(*tb));
 	if (!tb)
 		return NULL;
 
@@ -82,12 +82,12 @@ mnt_tab *mnt_new_tab(void)
 }
 
 /**
- * mnt_free_tab:
+ * mnt_free_table:
  * @tb: tab pointer
  *
  * Deallocates tab struct and all entries.
  */
-void mnt_free_tab(mnt_tab *tb)
+void mnt_free_table(struct libmnt_table *tb)
 {
 	if (!tb)
 		return;
@@ -95,7 +95,8 @@ void mnt_free_tab(mnt_tab *tb)
 	DBG(TAB, mnt_debug_h(tb, "free"));
 
 	while (!list_empty(&tb->ents)) {
-		mnt_fs *fs = list_entry(tb->ents.next, mnt_fs, ents);
+		struct libmnt_fs *fs = list_entry(tb->ents.next,
+				                  struct libmnt_fs, ents);
 		mnt_free_fs(fs);
 	}
 
@@ -103,24 +104,24 @@ void mnt_free_tab(mnt_tab *tb)
 }
 
 /**
- * mnt_tab_get_nents:
+ * mnt_table_get_nents:
  * @tb: pointer to tab
  *
  * Returns: number of valid entries in tab.
  */
-int mnt_tab_get_nents(mnt_tab *tb)
+int mnt_table_get_nents(struct libmnt_table *tb)
 {
 	assert(tb);
 	return tb ? tb->nents : 0;
 }
 
 /**
- * mnt_tab_set_cache:
+ * mnt_table_set_cache:
  * @tb: pointer to tab
- * @mpc: pointer to mnt_cache instance
+ * @mpc: pointer to struct libmnt_cache instance
  *
  * Setups a cache for canonicalized paths and evaluated tags (LABEL/UUID). The
- * cache is recommended for mnt_tab_find_*() functions.
+ * cache is recommended for mnt_table_find_*() functions.
  *
  * The cache could be shared between more tabs. Be careful when you share the
  * same cache between more threads -- currently the cache does not provide any
@@ -130,7 +131,7 @@ int mnt_tab_get_nents(mnt_tab *tb)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_tab_set_cache(mnt_tab *tb, mnt_cache *mpc)
+int mnt_table_set_cache(struct libmnt_table *tb, struct libmnt_cache *mpc)
 {
 	assert(tb);
 	if (!tb)
@@ -140,19 +141,19 @@ int mnt_tab_set_cache(mnt_tab *tb, mnt_cache *mpc)
 }
 
 /**
- * mnt_tab_get_cache:
+ * mnt_table_get_cache:
  * @tb: pointer to tab
  *
- * Returns: pointer to mnt_cache instance or NULL.
+ * Returns: pointer to struct libmnt_cache instance or NULL.
  */
-mnt_cache *mnt_tab_get_cache(mnt_tab *tb)
+struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb)
 {
 	assert(tb);
 	return tb ? tb->cache : NULL;
 }
 
 /**
- * mnt_tab_add_fs:
+ * mnt_table_add_fs:
  * @tb: tab pointer
  * @fs: new entry
  *
@@ -160,7 +161,7 @@ mnt_cache *mnt_tab_get_cache(mnt_tab *tb)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_tab_add_fs(mnt_tab *tb, mnt_fs *fs)
+int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 {
 	assert(tb);
 	assert(fs);
@@ -177,13 +178,13 @@ int mnt_tab_add_fs(mnt_tab *tb, mnt_fs *fs)
 }
 
 /**
- * mnt_tab_remove_fs:
+ * mnt_table_remove_fs:
  * @tb: tab pointer
  * @fs: new entry
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_tab_remove_fs(mnt_tab *tb, mnt_fs *fs)
+int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 {
 	assert(tb);
 	assert(fs);
@@ -196,16 +197,16 @@ int mnt_tab_remove_fs(mnt_tab *tb, mnt_fs *fs)
 }
 
 /**
- * mnt_tab_get_root_fs:
+ * mnt_table_get_root_fs:
  * @tb: mountinfo file (/proc/self/mountinfo)
  * @root: returns pointer to the root filesystem (/)
  *
  * Returns: 0 on success or -1 case of error.
  */
-int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root)
+int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
 {
-	mnt_iter itr;
-	mnt_fs *fs;
+	struct libmnt_iter itr;
+	struct libmnt_fs *fs;
 	int root_id = 0;
 
 	assert(tb);
@@ -217,7 +218,7 @@ int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root)
 	DBG(TAB, mnt_debug_h(tb, "lookup root fs"));
 
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
-	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 		int id = mnt_fs_get_parent_id(fs);
 		if (!id)
 			break;		/* @tab is not mountinfo file? */
@@ -232,7 +233,7 @@ int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root)
 }
 
 /**
- * mnt_tab_next_child_fs:
+ * mnt_table_next_child_fs:
  * @tb: mountinfo file (/proc/self/mountinfo)
  * @itr: iterator
  * @parent: parental FS
@@ -243,10 +244,10 @@ int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root)
  *
  * Returns: 0 on success, negative number in case of error or 1 at end of list.
  */
-int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
-			mnt_fs *parent, mnt_fs **chld)
+int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
+			struct libmnt_fs *parent, struct libmnt_fs **chld)
 {
-	mnt_fs *fs;
+	struct libmnt_fs *fs;
 	int parent_id, lastchld_id = 0, chld_id = 0;
 
 	if (!tb || !itr || !parent)
@@ -261,14 +262,14 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
 
 	/* get ID of the previously returned child */
 	if (itr->head && itr->p != itr->head) {
-		MNT_ITER_ITERATE(itr, fs, struct _mnt_fs, ents);
+		MNT_ITER_ITERATE(itr, fs, struct libmnt_fs, ents);
 		lastchld_id = mnt_fs_get_id(fs);
 	}
 
 	*chld = NULL;
 
 	mnt_reset_iter(itr, MNT_ITER_FORWARD);
-	while(mnt_tab_next_fs(tb, itr, &fs) == 0) {
+	while(mnt_table_next_fs(tb, itr, &fs) == 0) {
 		int id;
 
 		if (mnt_fs_get_parent_id(fs) != parent_id)
@@ -287,13 +288,13 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
 		return 1;	/* end of iterator */
 
 	/* set the iterator to the @chld for the next call */
-	mnt_tab_set_iter(tb, itr, *chld);
+	mnt_table_set_iter(tb, itr, *chld);
 
 	return 0;
 }
 
 /**
- * mnt_tab_next_fs:
+ * mnt_table_next_fs:
  * @tb: tab pointer
  * @itr: iterator
  * @fs: returns the next tab entry
@@ -303,23 +304,17 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
  * Example:
  * <informalexample>
  *   <programlisting>
- *	mnt_fs *fs;
- *	mnt_tab *tb = mnt_new_tab("/etc/fstab");
- *	mnt_iter *itr = mnt_new_iter(MNT_ITER_BACKWARD);
- *
- *	mnt_tab_parse_file(tb);
- *
- *	while(mnt_tab_next_fs(tb, itr, &fs) == 0) {
+ *	while(mnt_table_next_fs(tb, itr, &fs) == 0) {
  *		const char *dir = mnt_fs_get_target(fs);
  *		printf("mount point: %s\n", dir);
  *	}
- *	mnt_free_tab(fi);
+ *	mnt_free_table(fi);
  *   </programlisting>
  * </informalexample>
  *
  * lists all mountpoints from fstab in backward order.
  */
-int mnt_tab_next_fs(mnt_tab *tb, mnt_iter *itr, mnt_fs **fs)
+int mnt_table_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr, struct libmnt_fs **fs)
 {
 	int rc = 1;
 
@@ -334,7 +329,7 @@ int mnt_tab_next_fs(mnt_tab *tb, mnt_iter *itr, mnt_fs **fs)
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &tb->ents);
 	if (itr->p != itr->head) {
-		MNT_ITER_ITERATE(itr, *fs, struct _mnt_fs, ents);
+		MNT_ITER_ITERATE(itr, *fs, struct libmnt_fs, ents);
 		rc = 0;
 	}
 
@@ -342,7 +337,7 @@ int mnt_tab_next_fs(mnt_tab *tb, mnt_iter *itr, mnt_fs **fs)
 }
 
 /**
- * mnt_tab_find_next_fs:
+ * mnt_table_find_next_fs:
  * @tb: table
  * @itr: iterator
  * @match_func: function returns 1 or 0
@@ -353,9 +348,9 @@ int mnt_tab_next_fs(mnt_tab *tb, mnt_iter *itr, mnt_fs **fs)
  *
  * Returns: negative number in case of error, 1 at end of table or 0 o success.
  */
-int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
-		int (*match_func)(mnt_fs *, void *), void *userdata,
-		mnt_fs **fs)
+int mnt_table_find_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
+		int (*match_func)(struct libmnt_fs *, void *), void *userdata,
+		struct libmnt_fs **fs)
 {
 	if (!tb || !itr || !fs || !match_func)
 		return -EINVAL;
@@ -367,7 +362,7 @@ int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 
 	do {
 		if (itr->p != itr->head)
-			MNT_ITER_ITERATE(itr, *fs, struct _mnt_fs, ents);
+			MNT_ITER_ITERATE(itr, *fs, struct libmnt_fs, ents);
 		else
 			break;			/* end */
 
@@ -380,7 +375,7 @@ int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 }
 
 /**
- * mnt_tab_set_iter:
+ * mnt_table_set_iter:
  * @tb: tab pointer
  * @itr: iterator
  * @fs: tab entry
@@ -389,7 +384,7 @@ int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
  *
  * Returns: 0 on success, negative number in case of error.
  */
-int mnt_tab_set_iter(mnt_tab *tb, mnt_iter *itr, mnt_fs *fs)
+int mnt_table_set_iter(struct libmnt_table *tb, struct libmnt_iter *itr, struct libmnt_fs *fs)
 {
 	assert(tb);
 	assert(itr);
@@ -405,7 +400,7 @@ int mnt_tab_set_iter(mnt_tab *tb, mnt_iter *itr, mnt_fs *fs)
 }
 
 /**
- * mnt_tab_find_target:
+ * mnt_table_find_target:
  * @tb: tab pointer
  * @path: mountpoint directory
  * @direction: MNT_ITER_{FORWARD,BACKWARD}
@@ -413,14 +408,14 @@ int mnt_tab_set_iter(mnt_tab *tb, mnt_iter *itr, mnt_fs *fs)
  * Try to lookup an entry in given tab, possible are three iterations, first
  * with @path, second with realpath(@path) and third with realpath(@path)
  * against realpath(fs->target). The 2nd and 3rd iterations are not performed
- * when @tb cache is not set (see mnt_tab_set_cache()).
+ * when @tb cache is not set (see mnt_table_set_cache()).
  *
  * Returns: a tab entry or NULL.
  */
-mnt_fs *mnt_tab_find_target(mnt_tab *tb, const char *path, int direction)
+struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *path, int direction)
 {
-	mnt_iter itr;
-	mnt_fs *fs = NULL;
+	struct libmnt_iter itr;
+	struct libmnt_fs *fs = NULL;
 	char *cn;
 
 	assert(tb);
@@ -433,23 +428,23 @@ mnt_fs *mnt_tab_find_target(mnt_tab *tb, const char *path, int direction)
 
 	/* native @target */
 	mnt_reset_iter(&itr, direction);
-	while(mnt_tab_next_fs(tb, &itr, &fs) == 0)
+	while(mnt_table_next_fs(tb, &itr, &fs) == 0)
 		if (fs->target && strcmp(fs->target, path) == 0)
 			return fs;
 
 	if (!tb->cache || !(cn = mnt_resolve_path(path, tb->cache)))
 		return NULL;
 
-	/* canonicalized paths in mnt_tab */
+	/* canonicalized paths in struct libmnt_table */
 	mnt_reset_iter(&itr, direction);
-	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 		if (fs->target && strcmp(fs->target, cn) == 0)
 			return fs;
 	}
 
-	/* non-canonicaled path in mnt_tab */
+	/* non-canonicaled path in struct libmnt_table */
 	mnt_reset_iter(&itr, direction);
-	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 		char *p;
 
 		if (!fs->target || !(fs->flags & MNT_FS_SWAP) ||
@@ -464,7 +459,7 @@ mnt_fs *mnt_tab_find_target(mnt_tab *tb, const char *path, int direction)
 }
 
 /**
- * mnt_tab_find_srcpath:
+ * mnt_table_find_srcpath:
  * @tb: tab pointer
  * @path: source path (devname or dirname)
  * @direction: MNT_ITER_{FORWARD,BACKWARD}
@@ -474,14 +469,14 @@ mnt_fs *mnt_tab_find_target(mnt_tab *tb, const char *path, int direction)
  * from @path and fourth with realpath(@path) against realpath(entry->srcpath).
  *
  * The 2nd, 3rd and 4th iterations are not performed when @tb cache is not
- * set (see mnt_tab_set_cache()).
+ * set (see mnt_table_set_cache()).
  *
  * Returns: a tab entry or NULL.
  */
-mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
+struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *path, int direction)
 {
-	mnt_iter itr;
-	mnt_fs *fs = NULL;
+	struct libmnt_iter itr;
+	struct libmnt_fs *fs = NULL;
 	int ntags = 0;
 	char *cn;
 	const char *p;
@@ -493,7 +488,7 @@ mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
 
 	/* native paths */
 	mnt_reset_iter(&itr, direction);
-	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 		p = mnt_fs_get_srcpath(fs);
 		if (p && strcmp(p, path) == 0)
 			return fs;
@@ -505,10 +500,10 @@ mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
 	if (!tb->cache || !(cn = mnt_resolve_path(path, tb->cache)))
 		return NULL;
 
-	/* canonicalized paths in mnt_tab */
-	if (ntags < mnt_tab_get_nents(tb)) {
+	/* canonicalized paths in struct libmnt_table */
+	if (ntags < mnt_table_get_nents(tb)) {
 		mnt_reset_iter(&itr, direction);
-		while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 			p = mnt_fs_get_srcpath(fs);
 			if (p && strcmp(p, cn) == 0)
 				return fs;
@@ -523,7 +518,7 @@ mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
 
 		if (rc == 0) {
 			/* @path's TAGs are in the cache */
-			while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+			while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 				const char *t, *v;
 
 				if (mnt_fs_get_tag(fs, &t, &v))
@@ -536,7 +531,7 @@ mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
 			/* @path is unaccessible, try evaluate all TAGs in @tb
 			 * by udev symlinks -- this could be expensive on systems
 			 * with huge fstab/mtab */
-			 while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+			 while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 				 const char *t, *v, *x;
 				 if (mnt_fs_get_tag(fs, &t, &v))
 					 continue;
@@ -547,10 +542,10 @@ mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
 		}
 	}
 
-	/* non-canonicalized paths in mnt_tab */
-	if (ntags <= mnt_tab_get_nents(tb)) {
+	/* non-canonicalized paths in struct libmnt_table */
+	if (ntags <= mnt_table_get_nents(tb)) {
 		mnt_reset_iter(&itr, direction);
-		while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 			if (fs->flags & (MNT_FS_NET | MNT_FS_PSEUDO))
 				continue;
 			p = mnt_fs_get_srcpath(fs);
@@ -566,7 +561,7 @@ mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
 
 
 /**
- * mnt_tab_find_tag:
+ * mnt_table_find_tag:
  * @tb: tab pointer
  * @tag: tag name (e.g "LABEL", "UUID", ...)
  * @val: tag value
@@ -574,16 +569,16 @@ mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
  *
  * Try to lookup an entry in given tab, first attempt is lookup by @tag and
  * @val, for the second attempt the tag is evaluated (converted to the device
- * name) and mnt_tab_find_srcpath() is preformed. The second attempt is not
- * performed when @tb cache is not set (see mnt_tab_set_cache()).
+ * name) and mnt_table_find_srcpath() is preformed. The second attempt is not
+ * performed when @tb cache is not set (see mnt_table_set_cache()).
 
  * Returns: a tab entry or NULL.
  */
-mnt_fs *mnt_tab_find_tag(mnt_tab *tb, const char *tag,
+struct libmnt_fs *mnt_table_find_tag(struct libmnt_table *tb, const char *tag,
 			const char *val, int direction)
 {
-	mnt_iter itr;
-	mnt_fs *fs = NULL;
+	struct libmnt_iter itr;
+	struct libmnt_fs *fs = NULL;
 
 	assert(tb);
 	assert(tag);
@@ -596,7 +591,7 @@ mnt_fs *mnt_tab_find_tag(mnt_tab *tb, const char *tag,
 
 	/* look up by TAG */
 	mnt_reset_iter(&itr, direction);
-	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 		if (fs->tagname && fs->tagval &&
 		    strcmp(fs->tagname, tag) == 0 &&
 		    strcmp(fs->tagval, val) == 0)
@@ -607,26 +602,26 @@ mnt_fs *mnt_tab_find_tag(mnt_tab *tb, const char *tag,
 		/* look up by device name */
 		char *cn = mnt_resolve_tag(tag, val, tb->cache);
 		if (cn)
-			return mnt_tab_find_srcpath(tb, cn, direction);
+			return mnt_table_find_srcpath(tb, cn, direction);
 	}
 	return NULL;
 }
 
 /**
- * mnt_tab_find_source:
+ * mnt_table_find_source:
  * @tb: tab pointer
  * @source: TAG or path
  * @direction: MNT_ITER_{FORWARD,BACKWARD}
  *
- * This is high-level API for mnt_tab_find_{srcpath,tag}. You needn't to care
+ * This is high-level API for mnt_table_find_{srcpath,tag}. You needn't to care
  * about @source format (device, LABEL, UUID, ...). This function parses @source
- * and calls mnt_tab_find_tag() or mnt_tab_find_srcpath().
+ * and calls mnt_table_find_tag() or mnt_table_find_srcpath().
  *
  * Returns: a tab entry or NULL.
  */
-mnt_fs *mnt_tab_find_source(mnt_tab *tb, const char *source, int direction)
+struct libmnt_fs *mnt_table_find_source(struct libmnt_table *tb, const char *source, int direction)
 {
-	mnt_fs *fs = NULL;
+	struct libmnt_fs *fs = NULL;
 
 	assert(tb);
 	assert(source);
@@ -641,19 +636,19 @@ mnt_fs *mnt_tab_find_source(mnt_tab *tb, const char *source, int direction)
 
 		if (blkid_parse_tag_string(source, &tag, &val) == 0) {
 
-			fs = mnt_tab_find_tag(tb, tag, val, direction);
+			fs = mnt_table_find_tag(tb, tag, val, direction);
 
 			free(tag);
 			free(val);
 		}
 	} else
-		fs = mnt_tab_find_srcpath(tb, source, direction);
+		fs = mnt_table_find_srcpath(tb, source, direction);
 
 	return fs;
 }
 
 /**
- * mnt_tab_find_pair
+ * mnt_table_find_pair
  * @tb: tab pointer
  * @source: TAG or path
  * @target: mountpoint
@@ -661,15 +656,15 @@ mnt_fs *mnt_tab_find_source(mnt_tab *tb, const char *source, int direction)
  *
  * This function is implemented by mnt_fs_match_source() and
  * mnt_fs_match_target() functions. It means that this is more expensive that
- * others mnt_tab_find_* function, because every @tab entry is fully evaluated.
+ * others mnt_table_find_* function, because every @tab entry is fully evaluated.
  *
  * Returns: a tab entry or NULL.
  */
-mnt_fs *mnt_tab_find_pair(mnt_tab *tb, const char *source,
+struct libmnt_fs *mnt_table_find_pair(struct libmnt_table *tb, const char *source,
 			const char *target, int direction)
 {
-	mnt_fs *fs = NULL;
-	mnt_iter itr;
+	struct libmnt_fs *fs = NULL;
+	struct libmnt_iter itr;
 
 	assert(tb);
 	assert(source);
@@ -681,7 +676,7 @@ mnt_fs *mnt_tab_find_pair(mnt_tab *tb, const char *source,
 	DBG(TAB, mnt_debug_h(tb, "lookup SOURCE: %s TARGET: %s", source, target));
 
 	mnt_reset_iter(&itr, direction);
-	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 
 		if (mnt_fs_match_target(fs, target, tb->cache) &&
 		    mnt_fs_match_source(fs, source, tb->cache))
@@ -693,45 +688,45 @@ mnt_fs *mnt_tab_find_pair(mnt_tab *tb, const char *source,
 
 #ifdef TEST_PROGRAM
 
-static int parser_errcb(mnt_tab *tb, const char *filename, int line)
+static int parser_errcb(struct libmnt_table *tb, const char *filename, int line)
 {
 	fprintf(stderr, "%s:%d: parse error\n", filename, line);
 
 	return 1;	/* all errors are recoverable -- this is default */
 }
 
-mnt_tab *create_tab(const char *file)
+struct libmnt_table *create_table(const char *file)
 {
-	mnt_tab *tb;
+	struct libmnt_table *tb;
 
 	if (!file)
 		return NULL;
-	tb = mnt_new_tab();
+	tb = mnt_new_table();
 	if (!tb)
 		goto err;
 
-	mnt_tab_set_parser_errcb(tb, parser_errcb);
+	mnt_table_set_parser_errcb(tb, parser_errcb);
 
-	if (mnt_tab_parse_file(tb, file) != 0)
+	if (mnt_table_parse_file(tb, file) != 0)
 		goto err;
 	return tb;
 err:
 	fprintf(stderr, "%s: parsing failed\n", file);
-	mnt_free_tab(tb);
+	mnt_free_table(tb);
 	return NULL;
 }
 
-int test_copy_fs(struct mtest *ts, int argc, char *argv[])
+int test_copy_fs(struct libmnt_test *ts, int argc, char *argv[])
 {
-	mnt_tab *tb;
-	mnt_fs *fs;
+	struct libmnt_table *tb;
+	struct libmnt_fs *fs;
 	int rc = -1;
 
-	tb = create_tab(argv[1]);
+	tb = create_table(argv[1]);
 	if (!tb)
 		return -1;
 
-	fs = mnt_tab_find_target(tb, "/", MNT_ITER_FORWARD);
+	fs = mnt_table_find_target(tb, "/", MNT_ITER_FORWARD);
 	if (!fs)
 		goto done;
 
@@ -747,18 +742,18 @@ int test_copy_fs(struct mtest *ts, int argc, char *argv[])
 	mnt_free_fs(fs);
 	rc = 0;
 done:
-	mnt_free_tab(tb);
+	mnt_free_table(tb);
 	return rc;
 }
 
-int test_parse(struct mtest *ts, int argc, char *argv[])
+int test_parse(struct libmnt_test *ts, int argc, char *argv[])
 {
-	mnt_tab *tb = NULL;
-	mnt_iter *itr = NULL;
-	mnt_fs *fs;
+	struct libmnt_table *tb = NULL;
+	struct libmnt_iter *itr = NULL;
+	struct libmnt_fs *fs;
 	int rc = -1;
 
-	tb = create_tab(argv[1]);
+	tb = create_table(argv[1]);
 	if (!tb)
 		return -1;
 
@@ -766,20 +761,20 @@ int test_parse(struct mtest *ts, int argc, char *argv[])
 	if (!itr)
 		goto done;
 
-	while(mnt_tab_next_fs(tb, itr, &fs) == 0)
+	while(mnt_table_next_fs(tb, itr, &fs) == 0)
 		mnt_fs_print_debug(fs, stdout);
 	rc = 0;
 done:
 	mnt_free_iter(itr);
-	mnt_free_tab(tb);
+	mnt_free_table(tb);
 	return rc;
 }
 
-int test_find(struct mtest *ts, int argc, char *argv[], int dr)
+int test_find(struct libmnt_test *ts, int argc, char *argv[], int dr)
 {
-	mnt_tab *tb;
-	mnt_fs *fs = NULL;
-	mnt_cache *mpc = NULL;
+	struct libmnt_table *tb;
+	struct libmnt_fs *fs = NULL;
+	struct libmnt_cache *mpc = NULL;
 	const char *file, *find, *what;
 	int rc = -1;
 
@@ -790,7 +785,7 @@ int test_find(struct mtest *ts, int argc, char *argv[], int dr)
 
 	file = argv[1], find = argv[2], what = argv[3];
 
-	tb = create_tab(file);
+	tb = create_table(file);
 	if (!tb)
 		goto done;
 
@@ -798,12 +793,12 @@ int test_find(struct mtest *ts, int argc, char *argv[], int dr)
 	mpc = mnt_new_cache();
 	if (!mpc)
 		goto done;
-	mnt_tab_set_cache(tb, mpc);
+	mnt_table_set_cache(tb, mpc);
 
 	if (strcasecmp(find, "source") == 0)
-		fs = mnt_tab_find_source(tb, what, dr);
+		fs = mnt_table_find_source(tb, what, dr);
 	else if (strcasecmp(find, "target") == 0)
-		fs = mnt_tab_find_target(tb, what, dr);
+		fs = mnt_table_find_target(tb, what, dr);
 
 	if (!fs)
 		fprintf(stderr, "%s: not found %s '%s'\n", file, find, what);
@@ -812,45 +807,45 @@ int test_find(struct mtest *ts, int argc, char *argv[], int dr)
 		rc = 0;
 	}
 done:
-	mnt_free_tab(tb);
+	mnt_free_table(tb);
 	mnt_free_cache(mpc);
 	return rc;
 }
 
-int test_find_bw(struct mtest *ts, int argc, char *argv[])
+int test_find_bw(struct libmnt_test *ts, int argc, char *argv[])
 {
 	return test_find(ts, argc, argv, MNT_ITER_BACKWARD);
 }
 
-int test_find_fw(struct mtest *ts, int argc, char *argv[])
+int test_find_fw(struct libmnt_test *ts, int argc, char *argv[])
 {
 	return test_find(ts, argc, argv, MNT_ITER_FORWARD);
 }
 
-int test_find_pair(struct mtest *ts, int argc, char *argv[])
+int test_find_pair(struct libmnt_test *ts, int argc, char *argv[])
 {
-	mnt_tab *tb;
-	mnt_fs *fs;
+	struct libmnt_table *tb;
+	struct libmnt_fs *fs;
 	int rc = -1;
 
-	tb = create_tab(argv[1]);
+	tb = create_table(argv[1]);
 	if (!tb)
 		return -1;
 
-	fs = mnt_tab_find_pair(tb, argv[2], argv[3], MNT_ITER_FORWARD);
+	fs = mnt_table_find_pair(tb, argv[2], argv[3], MNT_ITER_FORWARD);
 	if (!fs)
 		goto done;
 
 	mnt_fs_print_debug(fs, stdout);
 	rc = 0;
 done:
-	mnt_free_tab(tb);
+	mnt_free_table(tb);
 	return rc;
 }
 
 int main(int argc, char *argv[])
 {
-	struct mtest tss[] = {
+	struct libmnt_test tss[] = {
 	{ "--parse",    test_parse,        "<file>  parse and print tab" },
 	{ "--find-forward",  test_find_fw, "<file> <source|target> <string>" },
 	{ "--find-backward", test_find_bw, "<file> <source|target> <string>" },

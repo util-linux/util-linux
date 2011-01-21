@@ -27,13 +27,13 @@
 /*
  * this has to be called after mnt_context_evaluate_permissions()
  */
-static int fix_optstr(mnt_context *cxt)
+static int fix_optstr(struct libmnt_context *cxt)
 {
 	int rc = 0, rem_se = 0;
 	char *next;
 	char *name, *val;
 	size_t namesz, valsz;
-	mnt_fs *fs;
+	struct libmnt_fs *fs;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -120,7 +120,7 @@ done:
  * Converts already evalulated and fixed options to the form that is compatible
  * with /sbin/mount.<type> helpers.
  */
-static int generate_helper_optstr(mnt_context *cxt, char **optstr)
+static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 {
 	int rc = 0;
 
@@ -145,7 +145,7 @@ static int generate_helper_optstr(mnt_context *cxt, char **optstr)
 /*
  * this has to be called before fix_optstr()
  */
-static int evaluate_permissions(mnt_context *cxt)
+static int evaluate_permissions(struct libmnt_context *cxt)
 {
 	unsigned long u_flags = 0;
 	const char *srcpath;
@@ -161,7 +161,7 @@ static int evaluate_permissions(mnt_context *cxt)
 
 	DBG(CXT, mnt_debug_h(cxt, "mount: evaluating permissions"));
 
-	mnt_context_get_userspace_mountflags(cxt, &u_flags);
+	mnt_context_get_user_mflags(cxt, &u_flags);
 
 	if (!mnt_context_is_restricted(cxt)) {
 		/*
@@ -230,7 +230,7 @@ static int evaluate_permissions(mnt_context *cxt)
  *
  * Returns: negative number on error, 1 if @c is unknown option, 0 on success.
  */
-int mnt_context_mounthelper_setopt(mnt_context *cxt, int c, char *arg)
+int mnt_context_mounthelper_setopt(struct libmnt_context *cxt, int c, char *arg)
 {
 	int rc = -EINVAL;
 
@@ -272,7 +272,7 @@ int mnt_context_mounthelper_setopt(mnt_context *cxt, int c, char *arg)
 	return rc;
 }
 
-static int exec_helper(mnt_context *cxt)
+static int exec_helper(struct libmnt_context *cxt)
 {
 	char *o = NULL;
 	int rc;
@@ -360,7 +360,7 @@ static int exec_helper(mnt_context *cxt)
  * The default is to use fstype from cxt->fs, this could be overwritten by
  * @try_type argument.
  */
-static int do_mount(mnt_context *cxt, const char *try_type)
+static int do_mount(struct libmnt_context *cxt, const char *try_type)
 {
 	int rc = 0;
 	const char *src, *target, *type;
@@ -411,7 +411,7 @@ static int do_mount(mnt_context *cxt, const char *try_type)
 	}
 
 	if (try_type && cxt->update) {
-		mnt_fs *fs = mnt_update_get_fs(cxt->update);
+		struct libmnt_fs *fs = mnt_update_get_fs(cxt->update);
 		if (fs)
 			rc = mnt_fs_set_fstype(fs, try_type);
 	}
@@ -423,7 +423,7 @@ static int do_mount(mnt_context *cxt, const char *try_type)
 	return rc;
 }
 
-static int do_mount_by_pattern(mnt_context *cxt, const char *pattern)
+static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 {
 	int neg = pattern && strncmp(pattern, "no", 2) == 0;
 	int rc = -EINVAL;
@@ -483,7 +483,7 @@ static int do_mount_by_pattern(mnt_context *cxt, const char *pattern)
  *
  * Returns: negative number on error, zero on success
  */
-int mnt_context_prepare_mount(mnt_context *cxt)
+int mnt_context_prepare_mount(struct libmnt_context *cxt)
 {
 	int rc = -EINVAL;
 
@@ -507,7 +507,7 @@ int mnt_context_prepare_mount(mnt_context *cxt)
 	/* TODO: fstab is unnecessary for MS_{MOVE,BIND,STARED,...} */
 	rc = mnt_context_apply_fstab(cxt);
 	if (!rc)
-		rc = mnt_context_merge_mountflags(cxt);
+		rc = mnt_context_merge_mflags(cxt);
 	if (!rc)
 		rc = evaluate_permissions(cxt);
 	if (!rc)
@@ -536,7 +536,7 @@ int mnt_context_prepare_mount(mnt_context *cxt)
  *
  * Returns: negative number on error, zero on success
  */
-int mnt_context_do_mount(mnt_context *cxt)
+int mnt_context_do_mount(struct libmnt_context *cxt)
 {
 	const char *type;
 
@@ -577,7 +577,7 @@ int mnt_context_do_mount(mnt_context *cxt)
  *          does not mean that mount(2) syscall or mount.type helper wasn't
  *          sucessfully called. Check mnt_context_get_status() after error!
  */
-int mnt_mount_context(mnt_context *cxt)
+int mnt_mount_context(struct libmnt_context *cxt)
 {
 	int rc;
 
@@ -609,7 +609,7 @@ int mnt_mount_context(mnt_context *cxt)
  *
  * Returns: negative number on error, 0 on success.
  */
-int mnt_context_finalize_mount(mnt_context *cxt)
+int mnt_context_finalize_mount(struct libmnt_context *cxt)
 {
 	int rc;
 

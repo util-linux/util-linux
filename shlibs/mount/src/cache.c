@@ -44,7 +44,7 @@ struct mnt_cache_entry {
 	int			flag;
 };
 
-struct _mnt_cache {
+struct libmnt_cache {
 	struct mnt_cache_entry	*ents;
 	size_t			nents;
 	size_t			nallocs;
@@ -67,11 +67,11 @@ struct _mnt_cache {
 /**
  * mnt_new_cache:
  *
- * Returns: new mnt_cache instance or NULL in case of ENOMEM error.
+ * Returns: new struct libmnt_cache instance or NULL in case of ENOMEM error.
  */
-mnt_cache *mnt_new_cache(void)
+struct libmnt_cache *mnt_new_cache(void)
 {
-	mnt_cache *cache = calloc(1, sizeof(struct _mnt_cache));
+	struct libmnt_cache *cache = calloc(1, sizeof(*cache));
 	if (!cache)
 		return NULL;
 	DBG(CACHE, mnt_debug_h(cache, "alloc"));
@@ -80,11 +80,11 @@ mnt_cache *mnt_new_cache(void)
 
 /**
  * mnt_free_cache:
- * @cache: pointer to mnt_cache instance
+ * @cache: pointer to struct libmnt_cache instance
  *
  * Deallocates the cache.
  */
-void mnt_free_cache(mnt_cache *cache)
+void mnt_free_cache(struct libmnt_cache *cache)
 {
 	int i;
 
@@ -108,7 +108,7 @@ void mnt_free_cache(mnt_cache *cache)
 }
 
 /* note that the @native could be tha same pointer as @real */
-static int mnt_cache_add_entry(mnt_cache *cache, char *native,
+static int mnt_cache_add_entry(struct libmnt_cache *cache, char *native,
 					char *real, int flag)
 {
 	struct mnt_cache_entry *e;
@@ -141,7 +141,7 @@ static int mnt_cache_add_entry(mnt_cache *cache, char *native,
 }
 
 /* add tag to the cache, @real has to be allocated string */
-static int mnt_cache_add_tag(mnt_cache *cache, const char *token,
+static int mnt_cache_add_tag(struct libmnt_cache *cache, const char *token,
 				const char *value, char *real, int flag)
 {
 	size_t tksz, vlsz;
@@ -179,7 +179,7 @@ static int mnt_cache_add_tag(mnt_cache *cache, const char *token,
 /*
  * Returns cached canonicalized path or NULL.
  */
-static const char *mnt_cache_find_path(mnt_cache *cache, const char *path)
+static const char *mnt_cache_find_path(struct libmnt_cache *cache, const char *path)
 {
 	int i;
 
@@ -202,7 +202,7 @@ static const char *mnt_cache_find_path(mnt_cache *cache, const char *path)
 /*
  * Returns cached path or NULL.
  */
-static const char *mnt_cache_find_tag(mnt_cache *cache,
+static const char *mnt_cache_find_tag(struct libmnt_cache *cache,
 			const char *token, const char *value)
 {
 	int i;
@@ -231,7 +231,7 @@ static const char *mnt_cache_find_tag(mnt_cache *cache,
 /*
  * returns (in @res) blkid prober, the @cache argument is optional
  */
-static int mnt_cache_get_probe(mnt_cache *cache, const char *devname,
+static int mnt_cache_get_probe(struct libmnt_cache *cache, const char *devname,
 			   blkid_probe *res)
 {
 	blkid_probe pr = cache ? cache->pr : NULL;
@@ -266,7 +266,7 @@ static int mnt_cache_get_probe(mnt_cache *cache, const char *devname,
 
 /**
  * mnt_cache_read_tags
- * @cache: pointer to mnt_cache instance
+ * @cache: pointer to struct libmnt_cache instance
  * @devname: path device
  *
  * Reads @devname LABEL and UUID to the @cache.
@@ -274,7 +274,7 @@ static int mnt_cache_get_probe(mnt_cache *cache, const char *devname,
  * Returns: 0 if at least one tag was added, 1 if no tag was added or
  *          negative number in case of error.
  */
-int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
+int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 {
 	int i, ntags = 0, rc;
 	blkid_probe pr;
@@ -349,7 +349,7 @@ error:
  *
  * Returns: 1 on success or 0.
  */
-int mnt_cache_device_has_tag(mnt_cache *cache, const char *devname,
+int mnt_cache_device_has_tag(struct libmnt_cache *cache, const char *devname,
 				const char *token, const char *value)
 {
 	const char *path = mnt_cache_find_tag(cache, token, value);
@@ -367,7 +367,7 @@ int mnt_cache_device_has_tag(mnt_cache *cache, const char *devname,
  *
  * Returns: LABEL or UUID for the @devname or NULL in case of error.
  */
-char *mnt_cache_find_tag_value(mnt_cache *cache,
+char *mnt_cache_find_tag_value(struct libmnt_cache *cache,
 		const char *devname, const char *token)
 {
 	int i;
@@ -399,7 +399,7 @@ char *mnt_cache_find_tag_value(mnt_cache *cache,
  * Returns: filesystem type or NULL in case of error. The result has to be
  * deallocated by free() if @cache is NULL.
  */
-char *mnt_get_fstype(const char *devname, int *ambi, mnt_cache *cache)
+char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 {
 	blkid_probe pr;
 	const char *data;
@@ -438,7 +438,7 @@ char *mnt_get_fstype(const char *devname, int *ambi, mnt_cache *cache)
  * Returns: absolute path or NULL in case of error. The result has to be
  * deallocated by free() if @cache is NULL.
  */
-char *mnt_resolve_path(const char *path, mnt_cache *cache)
+char *mnt_resolve_path(const char *path, struct libmnt_cache *cache)
 {
 	char *p = NULL;
 	char *native = NULL;
@@ -486,7 +486,8 @@ error:
  * Returns: device name or NULL in case of error. The result has to be
  * deallocated by free() if @cache is NULL.
  */
-char *mnt_resolve_tag(const char *token, const char *value, mnt_cache *cache)
+char *mnt_resolve_tag(const char *token, const char *value,
+		      struct libmnt_cache *cache)
 {
 	char *p = NULL;
 
@@ -527,7 +528,7 @@ error:
  * Returns: canonicalized path or NULL. The result has to be
  * deallocated by free() if @cache is NULL.
  */
-char *mnt_resolve_spec(const char *spec, mnt_cache *cache)
+char *mnt_resolve_spec(const char *spec, struct libmnt_cache *cache)
 {
 	char *cn = NULL;
 
@@ -552,10 +553,10 @@ char *mnt_resolve_spec(const char *spec, mnt_cache *cache)
 
 #ifdef TEST_PROGRAM
 
-int test_resolve_path(struct mtest *ts, int argc, char *argv[])
+int test_resolve_path(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char line[BUFSIZ];
-	mnt_cache *cache;
+	struct libmnt_cache *cache;
 
 	cache = mnt_new_cache();
 	if (!cache)
@@ -575,10 +576,10 @@ int test_resolve_path(struct mtest *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_resolve_spec(struct mtest *ts, int argc, char *argv[])
+int test_resolve_spec(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char line[BUFSIZ];
-	mnt_cache *cache;
+	struct libmnt_cache *cache;
 
 	cache = mnt_new_cache();
 	if (!cache)
@@ -598,10 +599,10 @@ int test_resolve_spec(struct mtest *ts, int argc, char *argv[])
 	return 0;
 }
 
-int test_read_tags(struct mtest *ts, int argc, char *argv[])
+int test_read_tags(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char line[BUFSIZ];
-	mnt_cache *cache;
+	struct libmnt_cache *cache;
 	int i;
 
 	cache = mnt_new_cache();
@@ -654,7 +655,7 @@ int test_read_tags(struct mtest *ts, int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-	struct mtest ts[] = {
+	struct libmnt_test ts[] = {
 		{ "--resolve-path", test_resolve_path, "  resolve paths from stdin" },
 		{ "--resolve-spec", test_resolve_spec, "  evaluate specs from stdin" },
 		{ "--read-tags", test_read_tags,       "  read devname or TAG from stdin (\"quit\" to exit)" },

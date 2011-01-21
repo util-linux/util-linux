@@ -1,7 +1,7 @@
 /*
  * findmnt(8)
  *
- * Copyright (C) 2010 Red Hat, Inc. All rights reserved.
+ * Copyright (C) 2010,2011 Red Hat, Inc. All rights reserved.
  * Written by Karel Zak <kzak@redhat.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -95,7 +95,7 @@ int columns[__NCOLUMNS];
 int ncolumns;
 
 /* libmount cache */
-mnt_cache *cache;
+struct libmnt_cache *cache;
 
 static int get_column_id(int num)
 {
@@ -196,7 +196,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 }
 
 /* Returns LABEL or UUID */
-static const char *get_tag(mnt_fs *fs, const char *tagname)
+static const char *get_tag(struct libmnt_fs *fs, const char *tagname)
 {
 	const char *t, *v, *res;
 
@@ -216,7 +216,7 @@ static const char *get_tag(mnt_fs *fs, const char *tagname)
 /* reads FS data from libmount
  * TODO: add function that will deallocate data allocated by get_data()
  */
-static const char *get_data(mnt_fs *fs, int num)
+static const char *get_data(struct libmnt_fs *fs, int num)
 {
 	const char *str = NULL;
 
@@ -271,9 +271,11 @@ static const char *get_data(mnt_fs *fs, int num)
 			char *tmp;
 			int rc = 0;
 			if (tt_flags & TT_FL_RAW)
-				rc = asprintf(&tmp, "%u:%u", major(devno), minor(devno));
+				rc = asprintf(&tmp, "%u:%u",
+					      major(devno), minor(devno));
 			else
-				rc = asprintf(&tmp, "%3u:%-3u", major(devno), minor(devno));
+				rc = asprintf(&tmp, "%3u:%-3u",
+					      major(devno), minor(devno));
 			if (rc)
 				str = tmp;
 		}
@@ -285,7 +287,7 @@ static const char *get_data(mnt_fs *fs, int num)
 }
 
 /* adds one line to the output @tab */
-static struct tt_line *add_line(struct tt *tt, mnt_fs *fs,
+static struct tt_line *add_line(struct tt *tt, struct libmnt_fs *fs,
 					struct tt_line *parent)
 {
 	int i;
@@ -302,30 +304,30 @@ static struct tt_line *add_line(struct tt *tt, mnt_fs *fs,
 	return line;
 }
 
-static int has_line(struct tt *tt, mnt_fs *fs)
+static int has_line(struct tt *tt, struct libmnt_fs *fs)
 {
 	struct list_head *p;
 
 	list_for_each(p, &tt->tb_lines) {
 		struct tt_line *ln = list_entry(p, struct tt_line, ln_lines);
-		if ((mnt_fs *) ln->userdata == fs)
+		if ((struct libmnt_fs *) ln->userdata == fs)
 			return 1;
 	}
 	return 0;
 }
 
 /* reads filesystems from @tb (libmount) and fillin @tt (output table) */
-static int create_treenode(struct tt *tt, mnt_tab *tb,
-				mnt_fs *fs, struct tt_line *parent_line)
+static int create_treenode(struct tt *tt, struct libmnt_table *tb,
+			   struct libmnt_fs *fs, struct tt_line *parent_line)
 {
-	mnt_fs *chld = NULL;
-	mnt_iter *itr = NULL;
+	struct libmnt_fs *chld = NULL;
+	struct libmnt_iter *itr = NULL;
 	struct tt_line *line;
 	int rc = -1;
 
 	if (!fs) {
 		/* first call, get root FS */
-		if (mnt_tab_get_root_fs(tb, &fs))
+		if (mnt_table_get_root_fs(tb, &fs))
 			goto leave;
 		parent_line = NULL;
 
@@ -343,7 +345,7 @@ static int create_treenode(struct tt *tt, mnt_tab *tb,
 	/*
 	 * add all children to the output table
 	 */
-	while(mnt_tab_next_child_fs(tb, itr, fs, &chld) == 0) {
+	while(mnt_table_next_child_fs(tb, itr, fs, &chld) == 0) {
 		if (create_treenode(tt, tb, chld, line))
 			goto leave;
 	}
@@ -354,42 +356,42 @@ leave:
 }
 
 /* error callback */
-static int parser_errcb(mnt_tab *tb, const char *filename, int line)
+static int parser_errcb(struct libmnt_table *tb, const char *filename, int line)
 {
 	warn(_("%s: parse error at line %d"), filename, line);
 	return 0;
 }
 
 /* calls libmount fstab/mtab/mountinfo parser */
-static mnt_tab *parse_tabfile(const char *path)
+static struct libmnt_table *parse_tabfile(const char *path)
 {
 	int rc;
-	mnt_tab *tb = mnt_new_tab();
+	struct libmnt_table *tb = mnt_new_table();
 
 	if (!tb) {
 		warn(_("failed to initialize libmount tab"));
 		return NULL;
 	}
 
-	mnt_tab_set_parser_errcb(tb, parser_errcb);
+	mnt_table_set_parser_errcb(tb, parser_errcb);
 
 	if (!strcmp(path, _PATH_MNTTAB))
-		rc = mnt_tab_parse_fstab(tb, NULL);
+		rc = mnt_table_parse_fstab(tb, NULL);
 	else if (!strcmp(path, _PATH_MOUNTED))
-		rc = mnt_tab_parse_mtab(tb, NULL);
+		rc = mnt_table_parse_mtab(tb, NULL);
 	else
-		rc = mnt_tab_parse_file(tb, path);
+		rc = mnt_table_parse_file(tb, path);
 
 	if (rc) {
-		mnt_free_tab(tb);
+		mnt_free_table(tb);
 		warn(_("can't read: %s"), path);
 		return NULL;
 	}
 	return tb;
 }
 
-/* filter function for libmount (mnt_tab_find_next_fs()) */
-static int match_func(mnt_fs *fs, void *data)
+/* filter function for libmount (mnt_table_find_next_fs()) */
+static int match_func(struct libmnt_fs *fs, void *data)
 {
 	int rc = flags & FL_INVERT ? 1 : 0;
 	const char *m;
@@ -414,15 +416,16 @@ static int match_func(mnt_fs *fs, void *data)
 }
 
 /* iterate over filesystems in @tb */
-static mnt_fs *get_next_fs(mnt_tab *tb, mnt_iter *itr)
+static struct libmnt_fs *get_next_fs(struct libmnt_table *tb,
+				     struct libmnt_iter *itr)
 {
-	mnt_fs *fs = NULL;
+	struct libmnt_fs *fs = NULL;
 
 	if (is_listall_mode()) {
 		/*
 		 * Print whole file
 		 */
-		mnt_tab_next_fs(tb, itr, &fs);
+		mnt_table_next_fs(tb, itr, &fs);
 
 	} else if (is_mount_compatible_mode()) {
 		/*
@@ -430,11 +433,11 @@ static mnt_fs *get_next_fs(mnt_tab *tb, mnt_iter *itr)
 		 *
 		 *   findmnt -f <spec>
 		 */
-		fs = mnt_tab_find_source(tb, get_match(COL_SOURCE),
+		fs = mnt_table_find_source(tb, get_match(COL_SOURCE),
 					mnt_iter_get_direction(itr));
 
 		if (!fs && !(flags & FL_NOSWAPMATCH))
-			fs = mnt_tab_find_target(tb, get_match(COL_SOURCE),
+			fs = mnt_table_find_target(tb, get_match(COL_SOURCE),
 					mnt_iter_get_direction(itr));
 	} else {
 		/*
@@ -444,7 +447,7 @@ static mnt_fs *get_next_fs(mnt_tab *tb, mnt_iter *itr)
 		 *    findmnt [-l] <spec> [-O <options>] [-t <types>]
 		 */
 again:
-		mnt_tab_find_next_fs(tb, itr, match_func,  NULL, &fs);
+		mnt_table_find_next_fs(tb, itr, match_func,  NULL, &fs);
 
 		if (!fs &&
 		    !(flags & FL_NOSWAPMATCH) &&
@@ -462,10 +465,11 @@ again:
 	return fs;
 }
 
-static int add_matching_lines(mnt_tab *tb, struct tt *tt, int direction)
+static int add_matching_lines(struct libmnt_table *tb,
+			      struct tt *tt, int direction)
 {
-	mnt_iter *itr = NULL;
-	mnt_fs *fs;
+	struct libmnt_iter *itr = NULL;
+	struct libmnt_fs *fs;
 	int nlines = 0, rc = -1;
 
 	itr = mnt_new_iter(direction);
@@ -557,7 +561,7 @@ errx_mutually_exclusive(const char *opts)
 int main(int argc, char *argv[])
 {
 	/* libmount */
-	mnt_tab *tb = NULL;
+	struct libmnt_table *tb = NULL;
 	char *tabfile = NULL;
 	int direction = MNT_ITER_FORWARD;
 	int i, c, rc = -1;
@@ -753,7 +757,7 @@ int main(int argc, char *argv[])
 		warn(_("failed to initialize libmount cache"));
 		goto leave;
 	}
-	mnt_tab_set_cache(tb, cache);
+	mnt_table_set_cache(tb, cache);
 
 	/*
 	 * initialize output formatting (tt.h)
@@ -795,7 +799,7 @@ int main(int argc, char *argv[])
 leave:
 	tt_free_table(tt);
 
-	mnt_free_tab(tb);
+	mnt_free_table(tb);
 	mnt_free_cache(cache);
 
 	return rc ? EXIT_FAILURE : EXIT_SUCCESS;

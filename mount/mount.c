@@ -88,7 +88,7 @@ static int restricted = 1;
 static int pfd = -1;
 
 #ifdef HAVE_LIBMOUNT_MOUNT
-static mnt_update *mtab_update;
+static struct libmnt_update *mtab_update;
 static char *mtab_opts;
 static unsigned long mtab_flags;
 
@@ -1339,7 +1339,7 @@ static void
 prepare_mtab_entry(const char *spec, const char *node, const char *type,
 					  const char *opts, unsigned long flags)
 {
-	mnt_fs *fs = mnt_new_fs();
+	struct libmnt_fs *fs = mnt_new_fs();
 	int rc = -1;
 
 	if (!mtab_update)
@@ -1372,12 +1372,12 @@ prepare_mtab_entry(const char *spec, const char *node, const char *type,
 static void update_mtab_entry(int flags)
 {
 	unsigned long fl;
-	mnt_lock *lc;
+	struct libmnt_lock *lc;
 
 	if (!mtab_update)
 		return;
 
-	fl = mnt_update_get_mountflags(mtab_update);
+	fl = mnt_update_get_mflags(mtab_update);
 
 	if ((flags & MS_RDONLY) != (fl & MS_RDONLY))
 		mnt_update_force_rdonly(mtab_update, flags & MS_RDONLY);
@@ -1391,7 +1391,7 @@ static void update_mtab_entry(int flags)
 		}
 
 		lc = init_libmount_lock( mnt_update_get_filename(mtab_update) );
-		mnt_update_tab(mtab_update, lc);
+		mnt_update_table(mtab_update, lc);
 		init_libmount_lock(NULL);
 	}
 

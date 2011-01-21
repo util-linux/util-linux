@@ -50,7 +50,7 @@
 #define EX_FAIL	       32	/* mount failure */
 #define EX_SOMEOK      64	/* some mount succeeded */
 
-static mnt_lock *lock;
+static struct libmnt_lock *lock;
 
 static void lock_atexit_cleanup(void)
 {
@@ -98,13 +98,13 @@ static const char *opt_to_longopt(int c, const struct option *opts)
 	return NULL;
 }
 
-static int print_all(mnt_context *cxt, char *pattern, int show_label)
+static int print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 {
 	int rc = 0;
-	mnt_tab *tb;
-	mnt_iter *itr;
-	mnt_fs *fs;
-	mnt_cache *cache = NULL;
+	struct libmnt_table *tb;
+	struct libmnt_iter *itr;
+	struct libmnt_fs *fs;
+	struct libmnt_cache *cache = NULL;
 
 	rc = mnt_context_get_mtab(cxt, &tb);
 	if (rc)
@@ -117,7 +117,7 @@ static int print_all(mnt_context *cxt, char *pattern, int show_label)
 	if (show_label)
 		cache = mnt_new_cache();
 
-	while(mnt_tab_next_fs(tb, itr, &fs) == 0) {
+	while(mnt_table_next_fs(tb, itr, &fs) == 0) {
 		const char *type = mnt_fs_get_fstype(fs);
 		const char *src = mnt_fs_get_source(fs);
 		char *optstr = mnt_fs_strdup_options(fs);
@@ -203,7 +203,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 int main(int argc, char **argv)
 {
 	int c, rc = EXIT_FAILURE, all = 0, show_labels = 0;
-	mnt_context *cxt;
+	struct libmnt_context *cxt;
 	char *source = NULL, *srcbuf = NULL;
 	char *types = NULL;
 	unsigned long oper = 0;
@@ -403,7 +403,7 @@ int main(int argc, char **argv)
 		usage(stderr);
 
 	if (oper)
-		mnt_context_set_mountflags(cxt, oper);
+		mnt_context_set_mflags(cxt, oper);
 
 	lock = mnt_context_get_lock(cxt);
 	if (lock)

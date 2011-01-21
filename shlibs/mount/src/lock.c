@@ -35,7 +35,7 @@
 /*
  * lock handler
  */
-struct _mnt_lock {
+struct libmnt_lock {
 	char	*lockfile;	/* path to lock file (e.g. /etc/mtab~) */
 	char	*linkfile;	/* path to link file (e.g. /etc/mtab~.<id>) */
 	int	lockfile_fd;	/* lock file descriptor */
@@ -50,9 +50,9 @@ struct _mnt_lock {
  *
  * Returns: newly allocated lock handler or NULL on case of error.
  */
-mnt_lock *mnt_new_lock(const char *datafile, pid_t id)
+struct libmnt_lock *mnt_new_lock(const char *datafile, pid_t id)
 {
-	mnt_lock *ml = NULL;
+	struct libmnt_lock *ml = NULL;
 	char *lo = NULL, *ln = NULL;
 
 	/* lockfile */
@@ -67,7 +67,7 @@ mnt_lock *mnt_new_lock(const char *datafile, pid_t id)
 		ln = NULL;
 		goto err;
 	}
-	ml = calloc(1, sizeof(struct _mnt_lock) );
+	ml = calloc(1, sizeof(*ml) );
 	if (!ml)
 		goto err;
 
@@ -87,11 +87,11 @@ err:
 
 /**
  * mnt_free_lock:
- * @ml: mnt_lock handler
+ * @ml: struct libmnt_lock handler
  *
  * Deallocates mnt_lock.
  */
-void mnt_free_lock(mnt_lock *ml)
+void mnt_free_lock(struct libmnt_lock *ml)
 {
 	if (!ml)
 		return;
@@ -104,7 +104,7 @@ void mnt_free_lock(mnt_lock *ml)
 /*
  * Returns path to lockfile.
  */
-static const char *mnt_lock_get_lockfile(mnt_lock *ml)
+static const char *mnt_lock_get_lockfile(struct libmnt_lock *ml)
 {
 	return ml ? ml->lockfile : NULL;
 }
@@ -115,7 +115,7 @@ static const char *mnt_lock_get_lockfile(mnt_lock *ml)
  *
  * Returns: unique (per process/thread) path to linkfile.
  */
-static const char *mnt_lock_get_linkfile(mnt_lock *ml)
+static const char *mnt_lock_get_linkfile(struct libmnt_lock *ml)
 {
 	return ml ? ml->linkfile : NULL;
 }
@@ -131,7 +131,7 @@ static void mnt_lockalrm_handler(int sig)
  *
  * Returns: 0 on success, 1 on timeout, -errno on error.
  */
-static int mnt_wait_lock(mnt_lock *ml, struct flock *fl, time_t maxtime)
+static int mnt_wait_lock(struct libmnt_lock *ml, struct flock *fl, time_t maxtime)
 {
 	struct timeval now;
 	struct sigaction sa, osa;
@@ -220,7 +220,7 @@ static int mnt_wait_lock(mnt_lock *ml, struct flock *fl, time_t maxtime)
  * Unlocks the file. The function could be called independently on the
  * lock status (for example from exit(3)).
  */
-void mnt_unlock_file(mnt_lock *ml)
+void mnt_unlock_file(struct libmnt_lock *ml)
 {
 	if (!ml)
 		return;
@@ -257,7 +257,7 @@ void mnt_unlock_file(mnt_lock *ml)
 
 /**
  * mnt_lock_file
- * @ml: pointer to mnt_lock instance
+ * @ml: pointer to struct libmnt_lock instance
  *
  * Creates lock file (e.g. /etc/mtab~). Note that this function uses
  * alarm().
@@ -276,7 +276,7 @@ void mnt_unlock_file(mnt_lock *ml)
  *
  * <informalexample>
  *   <programlisting>
- *	mnt_lock *ml;
+ *	struct libmnt_lock *ml;
  *
  *	void unlock_fallback(void)
  *	{
@@ -317,7 +317,7 @@ void mnt_unlock_file(mnt_lock *ml)
  * Returns: 0 on success or negative number in case of error (-ETIMEOUT is case
  * of stale lock file).
  */
-int mnt_lock_file(mnt_lock *ml)
+int mnt_lock_file(struct libmnt_lock *ml)
 {
 	int i, rc = -1;
 	struct timespec waittime;
@@ -431,7 +431,7 @@ failed:
 #ifdef TEST_PROGRAM
 #include <err.h>
 
-mnt_lock *lock;
+struct libmnt_lock *lock;
 
 /*
  * read number from @filename, increment the number and
@@ -476,7 +476,7 @@ void sig_handler(int sig)
 	errx(EXIT_FAILURE, "\n%d: catch signal: %s\n", getpid(), strsignal(sig));
 }
 
-int test_lock(struct mtest *ts, int argc, char *argv[])
+int test_lock(struct libmnt_test *ts, int argc, char *argv[])
 {
 	time_t synctime = 0;
 	unsigned int usecs;
@@ -567,7 +567,7 @@ int test_lock(struct mtest *ts, int argc, char *argv[])
  */
 int main(int argc, char *argv[])
 {
-	struct mtest tss[] = {
+	struct libmnt_test tss[] = {
 	{ "--lock", test_lock,  " [--synctime <time_t>] [--verbose] <datafile> <loops> "
 				"increment a number in datafile" },
 	{ NULL }

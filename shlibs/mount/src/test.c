@@ -17,10 +17,10 @@
 
 #include "mountP.h"
 
-int mnt_run_test(struct mtest *tests, int argc, char *argv[])
+int mnt_run_test(struct libmnt_test *tests, int argc, char *argv[])
 {
 	int rc = -1;
-	struct mtest *ts;
+	struct libmnt_test *ts;
 
 	assert(tests);
 	assert(argc);

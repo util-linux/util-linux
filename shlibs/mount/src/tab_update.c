@@ -10,12 +10,12 @@
  * @title: mtab managment
  * @short_description: userspace mount information management.
  *
- * The mnt_update provides abstraction to manage mount options in userspace independently on
+ * The struct libmnt_update provides abstraction to manage mount options in userspace independently on
  * system configuration. This low-level API works on system with and without /etc/mtab. On 
  * systems without the regular /etc/mtab file are userspace mount options (e.g. user=)
  * stored to the /dev/.mount/utab file.
  *
- * It's recommended to use high-level mnt_context API.
+ * It's recommended to use high-level struct libmnt_context API.
  */
 
 #include <stdio.h>
@@ -33,28 +33,28 @@
 #include "mangle.h"
 #include "pathnames.h"
 
-struct _mnt_update {
+struct libmnt_update {
 	char		*target;
-	mnt_fs		*fs;
+	struct libmnt_fs *fs;
 	char		*filename;
 	unsigned long	mountflags;
 	int		userspace_only;
 	int		ready;
 };
 
-static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent);
-static int set_fs_root(mnt_fs *result, mnt_fs *fs, unsigned long mountflags);
+static int utab_new_entry(struct libmnt_fs *fs, unsigned long mountflags, struct libmnt_fs **ent);
+static int set_fs_root(struct libmnt_fs *result, struct libmnt_fs *fs, unsigned long mountflags);
 
 /**
  * mnt_new_update:
  *
  * Returns: newly allocated update handler
  */
-mnt_update *mnt_new_update(void)
+struct libmnt_update *mnt_new_update(void)
 {
-	mnt_update *upd;
+	struct libmnt_update *upd;
 
-	upd = calloc(1, sizeof(struct _mnt_update));
+	upd = calloc(1, sizeof(*upd));
 	if (!upd)
 		return NULL;
 
@@ -67,9 +67,9 @@ mnt_update *mnt_new_update(void)
  * mnt_free_update:
  * @upd: update
  *
- * Deallocates mnt_update handler.
+ * Deallocates struct libmnt_update handler.
  */
-void mnt_free_update(mnt_update *upd)
+void mnt_free_update(struct libmnt_update *upd)
 {
 	if (!upd)
 		return;
@@ -85,7 +85,7 @@ void mnt_free_update(mnt_update *upd)
 /*
  * Returns 0 on success, 1 if not file available, -1 in case of error.
  */
-int mnt_update_set_filename(mnt_update *upd, const char *filename, int userspace_only)
+int mnt_update_set_filename(struct libmnt_update *upd, const char *filename, int userspace_only)
 {
 	const char *path = NULL;
 	int rw = 0;
@@ -132,7 +132,7 @@ int mnt_update_set_filename(mnt_update *upd, const char *filename, int userspace
  *
  * Returns: pointer to filename that will be updated or NULL in case of error.
  */
-const char *mnt_update_get_filename(mnt_update *upd)
+const char *mnt_update_get_filename(struct libmnt_update *upd)
 {
 	return upd && !upd->userspace_only ? upd->filename : NULL;
 }
@@ -144,7 +144,7 @@ const char *mnt_update_get_filename(mnt_update *upd)
  * Returns: 1 if entry described by @upd is successfully prepared and will be
  * written to mtab/utab file.
  */
-int mnt_update_is_ready(mnt_update *upd)
+int mnt_update_is_ready(struct libmnt_update *upd)
 {
 	return upd ? upd->ready : FALSE;
 }
@@ -158,8 +158,8 @@ int mnt_update_is_ready(mnt_update *upd)
  *
  * Returns: -1 in case on error, 0 on success, 1 if update is unnecessary.
  */
-int mnt_update_set_fs(mnt_update *upd, unsigned long mountflags,
-		      const char *target, mnt_fs *fs)
+int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
+		      const char *target, struct libmnt_fs *fs)
 {
 	int rc;
 
@@ -227,18 +227,18 @@ int mnt_update_set_fs(mnt_update *upd, unsigned long mountflags,
  *
  * Returns: update filesystem entry or NULL
  */
-mnt_fs *mnt_update_get_fs(mnt_update *upd)
+struct libmnt_fs *mnt_update_get_fs(struct libmnt_update *upd)
 {
 	return upd ? upd->fs : NULL;
 }
 
 /**
- * mnt_update_get_mountflags:
+ * mnt_update_get_mflags:
  * @upd: update
  *
  * Returns: mount flags as was set by mnt_update_set_fs()
  */
-unsigned long mnt_update_get_mountflags(mnt_update *upd)
+unsigned long mnt_update_get_mflags(struct libmnt_update *upd)
 {
 	return upd ? upd->mountflags : 0;
 }
@@ -250,7 +250,7 @@ unsigned long mnt_update_get_mountflags(mnt_update *upd)
  *
  * Returns: 0 on success and negative number in case of error.
  */
-int mnt_update_force_rdonly(mnt_update *upd, int rdonly)
+int mnt_update_force_rdonly(struct libmnt_update *upd, int rdonly)
 {
 	int rc = 0;
 
@@ -290,7 +290,7 @@ int mnt_update_force_rdonly(mnt_update *upd, int rdonly)
  * Returns: 0 on success, negative number on error, 1 if utabs update is
  *          unnecessary.
  */
-static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent)
+static int utab_new_entry(struct libmnt_fs *fs, unsigned long mountflags, struct libmnt_fs **ent)
 {
 	int rc = 0;
 	const char *o = NULL, *a = NULL;
@@ -306,7 +306,7 @@ static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent)
 
 	DBG(UPDATE, mnt_debug("prepare utab entry"));
 
-	o = mnt_fs_get_userspace_options(fs);
+	o = mnt_fs_get_user_options(fs);
 	a = mnt_fs_get_attributes(fs);
 
 	if (o) {
@@ -330,7 +330,7 @@ static int utab_new_entry(mnt_fs *fs, unsigned long mountflags, mnt_fs **ent)
 		goto err;
 	}
 
-	rc = mnt_fs_set_userspace_options(*ent, u);
+	rc = mnt_fs_set_user_options(*ent, u);
 	if (rc)
 		goto err;
 	rc = mnt_fs_set_attributes(*ent, a);
@@ -353,11 +353,11 @@ err:
 	return rc;
 }
 
-static int set_fs_root(mnt_fs *result, mnt_fs *fs, unsigned long mountflags)
+static int set_fs_root(struct libmnt_fs *result, struct libmnt_fs *fs, unsigned long mountflags)
 {
 	char *root = NULL, *mnt = NULL;
 	const char *fstype;
-	mnt_tab *tb = NULL;
+	struct libmnt_table *tb = NULL;
 	int rc = -ENOMEM;
 
 	assert(fs);
@@ -372,7 +372,7 @@ static int set_fs_root(mnt_fs *result, mnt_fs *fs, unsigned long mountflags)
 	 */
 	if (mountflags & MS_BIND) {
 		const char *src, *src_root;
-		mnt_fs *src_fs;
+		struct libmnt_fs *src_fs;
 
 		DBG(UPDATE, mnt_debug("setting FS root: bind"));
 
@@ -389,12 +389,12 @@ static int set_fs_root(mnt_fs *result, mnt_fs *fs, unsigned long mountflags)
 		}
 		root = mnt_get_fs_root(src, mnt);
 
-		tb = __mnt_new_tab_from_file(_PATH_PROC_MOUNTINFO, MNT_FMT_MOUNTINFO);
+		tb = __mnt_new_table_from_file(_PATH_PROC_MOUNTINFO, MNT_FMT_MOUNTINFO);
 		if (!tb) {
 			DBG(UPDATE, mnt_debug("failed to parse mountinfo -- using default"));
 			goto dflt;
 		}
-		src_fs = mnt_tab_find_target(tb, mnt, MNT_ITER_BACKWARD);
+		src_fs = mnt_table_find_target(tb, mnt, MNT_ITER_BACKWARD);
 		if (!src_fs)  {
 			DBG(UPDATE, mnt_debug("not found '%s' in mountinfo -- using default", mnt));
 			goto dflt;
@@ -451,7 +451,7 @@ static int set_fs_root(mnt_fs *result, mnt_fs *fs, unsigned long mountflags)
 		*(root + sz) = '\0';
 	}
 dflt:
-	mnt_free_tab(tb);
+	mnt_free_table(tb);
 	if (!root) {
 		root = strdup("/");
 		if (!root)
@@ -470,7 +470,7 @@ err:
 }
 
 /* mtab and fstab update */
-static int fprintf_mtab_fs(FILE *f, mnt_fs *fs)
+static int fprintf_mtab_fs(FILE *f, struct libmnt_fs *fs)
 {
 	char *o;
 	char *m1, *m2, *m3, *m4;
@@ -505,7 +505,7 @@ static int fprintf_mtab_fs(FILE *f, mnt_fs *fs)
 	return rc;
 }
 
-static int fprintf_utab_fs(FILE *f, mnt_fs *fs)
+static int fprintf_utab_fs(FILE *f, struct libmnt_fs *fs)
 {
 	char *p;
 
@@ -540,7 +540,7 @@ static int fprintf_utab_fs(FILE *f, mnt_fs *fs)
 		fprintf(f, "ATTRS=%s ", p);
 		free(p);
 	}
-	p = mangle(mnt_fs_get_userspace_options(fs));
+	p = mangle(mnt_fs_get_user_options(fs));
 	if (p) {
 		fprintf(f, "OPTS=%s", p);
 		free(p);
@@ -550,7 +550,7 @@ static int fprintf_utab_fs(FILE *f, mnt_fs *fs)
 	return 0;
 }
 
-static int update_tab(mnt_update *upd, mnt_tab *tb)
+static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 {
 	FILE *f;
 	int rc, fd;
@@ -568,12 +568,12 @@ static int update_tab(mnt_update *upd, mnt_tab *tb)
 	f = fdopen(fd, "w");
 	if (f) {
 		struct stat st;
-		mnt_iter itr;
-		mnt_fs *fs;
+		struct libmnt_iter itr;
+		struct libmnt_fs *fs;
 		int fd;
 
 		mnt_reset_iter(&itr, MNT_ITER_FORWARD);
-		while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 			if (upd->userspace_only)
 				fprintf_utab_fs(f, fs);
 			else
@@ -632,7 +632,7 @@ static void utab_unlock(int fd)
 	}
 }
 
-static int update_add_entry(mnt_update *upd, mnt_lock *lc)
+static int update_add_entry(struct libmnt_update *upd, struct libmnt_lock *lc)
 {
 	FILE *f;
 	int rc = 0, u_lc = -1;
@@ -664,9 +664,9 @@ static int update_add_entry(mnt_update *upd, mnt_lock *lc)
 	return rc;
 }
 
-static int update_remove_entry(mnt_update *upd, mnt_lock *lc)
+static int update_remove_entry(struct libmnt_update *upd, struct libmnt_lock *lc)
 {
-	mnt_tab *tb;
+	struct libmnt_table *tb;
 	int rc = 0, u_lc = -1;
 
 	assert(upd);
@@ -679,16 +679,16 @@ static int update_remove_entry(mnt_update *upd, mnt_lock *lc)
 	else if (upd->userspace_only)
 		u_lc = utab_lock(upd->filename);
 
-	tb = __mnt_new_tab_from_file(upd->filename,
+	tb = __mnt_new_table_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
 	if (tb) {
-		mnt_fs *rem = mnt_tab_find_target(tb, upd->target, MNT_ITER_BACKWARD);
+		struct libmnt_fs *rem = mnt_table_find_target(tb, upd->target, MNT_ITER_BACKWARD);
 		if (rem) {
-			mnt_tab_remove_fs(tb, rem);
-			rc = update_tab(upd, tb);
+			mnt_table_remove_fs(tb, rem);
+			rc = update_table(upd, tb);
 			mnt_free_fs(rem);
 		}
-		mnt_free_tab(tb);
+		mnt_free_table(tb);
 	}
 	if (lc)
 		mnt_unlock_file(lc);
@@ -697,9 +697,9 @@ static int update_remove_entry(mnt_update *upd, mnt_lock *lc)
 	return rc;
 }
 
-static int update_modify_target(mnt_update *upd, mnt_lock *lc)
+static int update_modify_target(struct libmnt_update *upd, struct libmnt_lock *lc)
 {
-	mnt_tab *tb = NULL;
+	struct libmnt_table *tb = NULL;
 	int rc = 0, u_lc = -1;
 
 	DBG(UPDATE, mnt_debug_h(upd, "%s: modify target", upd->filename));
@@ -709,17 +709,17 @@ static int update_modify_target(mnt_update *upd, mnt_lock *lc)
 	else if (upd->userspace_only)
 		u_lc = utab_lock(upd->filename);
 
-	tb = __mnt_new_tab_from_file(upd->filename,
+	tb = __mnt_new_table_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
 	if (tb) {
-		mnt_fs *cur = mnt_tab_find_target(tb,
+		struct libmnt_fs *cur = mnt_table_find_target(tb,
 				mnt_fs_get_srcpath(upd->fs), MNT_ITER_BACKWARD);
 		if (cur) {
 			rc = mnt_fs_set_target(cur, mnt_fs_get_target(upd->fs));
 			if (!rc)
-				rc = update_tab(upd, tb);
+				rc = update_table(upd, tb);
 		}
-		mnt_free_tab(tb);
+		mnt_free_table(tb);
 	}
 	if (lc)
 		mnt_unlock_file(lc);
@@ -728,11 +728,11 @@ static int update_modify_target(mnt_update *upd, mnt_lock *lc)
 	return rc;
 }
 
-static int update_modify_options(mnt_update *upd, mnt_lock *lc)
+static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *lc)
 {
-	mnt_tab *tb = NULL;
+	struct libmnt_table *tb = NULL;
 	int rc = 0, u_lc = -1;
-	mnt_fs *fs;
+	struct libmnt_fs *fs;
 
 	assert(upd);
 	assert(upd->fs);
@@ -746,10 +746,10 @@ static int update_modify_options(mnt_update *upd, mnt_lock *lc)
 	else if (upd->userspace_only)
 		u_lc = utab_lock(upd->filename);
 
-	tb = __mnt_new_tab_from_file(upd->filename,
+	tb = __mnt_new_table_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
 	if (tb) {
-		mnt_fs *cur = mnt_tab_find_target(tb,
+		struct libmnt_fs *cur = mnt_table_find_target(tb,
 					mnt_fs_get_target(fs),
 					MNT_ITER_BACKWARD);
 		if (cur) {
@@ -760,12 +760,12 @@ static int update_modify_options(mnt_update *upd, mnt_lock *lc)
 			if (!rc && !upd->userspace_only)
 				rc = mnt_fs_set_fs_options(cur, mnt_fs_get_fs_options(fs));
 			if (!rc)
-				rc = mnt_fs_set_userspace_options(cur,
-						mnt_fs_get_userspace_options(fs));
+				rc = mnt_fs_set_user_options(cur,
+						mnt_fs_get_user_options(fs));
 			if (!rc)
-				rc = update_tab(upd, tb);
+				rc = update_table(upd, tb);
 		}
-		mnt_free_tab(tb);
+		mnt_free_table(tb);
 	}
 
 	if (lc)
@@ -776,7 +776,7 @@ static int update_modify_options(mnt_update *upd, mnt_lock *lc)
 }
 
 /**
- * mnt_update_tab:
+ * mnt_update_table:
  * @upd: update
  * @lc: lock
  *
@@ -784,7 +784,7 @@ static int update_modify_options(mnt_update *upd, mnt_lock *lc)
  *
  * Returns: 0 on success, negative number on error.
  */
-int mnt_update_tab(mnt_update *upd, mnt_lock *lc)
+int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 {
 	int rc = -EINVAL;
 
@@ -817,7 +817,7 @@ int mnt_update_tab(mnt_update *upd, mnt_lock *lc)
 
 #ifdef TEST_PROGRAM
 
-mnt_lock *lock;
+struct libmnt_lock *lock;
 
 static void lock_fallback(void)
 {
@@ -825,10 +825,10 @@ static void lock_fallback(void)
 		mnt_unlock_file(lock);
 }
 
-static int update(const char *target, mnt_fs *fs, unsigned long mountflags)
+static int update(const char *target, struct libmnt_fs *fs, unsigned long mountflags)
 {
 	int rc;
-	mnt_update *upd;
+	struct libmnt_update *upd;
 	const char *filename;
 
 	DBG(UPDATE, mnt_debug("update test"));
@@ -856,14 +856,14 @@ static int update(const char *target, mnt_fs *fs, unsigned long mountflags)
 		if (lock)
 			atexit(lock_fallback);
 	}
-	rc = mnt_update_tab(upd, lock);
+	rc = mnt_update_table(upd, lock);
 done:
 	return rc;
 }
 
-static int test_add(struct mtest *ts, int argc, char *argv[])
+static int test_add(struct libmnt_test *ts, int argc, char *argv[])
 {
-	mnt_fs *fs = mnt_new_fs();
+	struct libmnt_fs *fs = mnt_new_fs();
 	int rc;
 
 	if (argc < 5 || !fs)
@@ -878,16 +878,16 @@ static int test_add(struct mtest *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_remove(struct mtest *ts, int argc, char *argv[])
+static int test_remove(struct libmnt_test *ts, int argc, char *argv[])
 {
 	if (argc < 2)
 		return -1;
 	return update(argv[1], NULL, 0);
 }
 
-static int test_move(struct mtest *ts, int argc, char *argv[])
+static int test_move(struct libmnt_test *ts, int argc, char *argv[])
 {
-	mnt_fs *fs = mnt_new_fs();
+	struct libmnt_fs *fs = mnt_new_fs();
 	int rc;
 
 	if (argc < 3)
@@ -901,9 +901,9 @@ static int test_move(struct mtest *ts, int argc, char *argv[])
 	return rc;
 }
 
-static int test_remount(struct mtest *ts, int argc, char *argv[])
+static int test_remount(struct libmnt_test *ts, int argc, char *argv[])
 {
-	mnt_fs *fs = mnt_new_fs();
+	struct libmnt_fs *fs = mnt_new_fs();
 	int rc;
 
 	if (argc < 3)
@@ -918,7 +918,7 @@ static int test_remount(struct mtest *ts, int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-	struct mtest tss[] = {
+	struct libmnt_test tss[] = {
 	{ "--add",    test_add,     "<src> <target> <type> <options>  add line to mtab" },
 	{ "--remove", test_remove,  "<target>                      MS_REMOUNT mtab change" },
 	{ "--move",   test_move,    "<old_target>  <target>        MS_MOVE mtab change" },

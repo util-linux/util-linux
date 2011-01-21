@@ -156,19 +156,19 @@ read_mntentchn(mntFILE *mfp, const char *fnam, struct mntentchn *mc0) {
 static void read_mounttable()
 {
 	struct mntentchn *mc0 = &mounttable, *mc = mc0;
-	mnt_tab *tb = mnt_new_tab();
-	mnt_iter *itr = mnt_new_iter(MNT_ITER_FORWARD);
-	mnt_fs *fs;
+	struct libmnt_table *tb = mnt_new_table();
+	struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_FORWARD);
+	struct libmnt_fs *fs;
 
 	got_mtab = 1;
 	mc->nxt = mc->prev = NULL;
 
 	if (!tb || !itr)
 		goto err;
-	if (mnt_tab_parse_mtab(tb, NULL))
+	if (mnt_table_parse_mtab(tb, NULL))
 		goto err;
 
-	while(mnt_tab_next_fs(tb, itr, &fs) == 0) {
+	while(mnt_table_next_fs(tb, itr, &fs) == 0) {
 		const char *type = mnt_fs_get_fstype(fs);
 		struct my_mntent *mnt = NULL;
 
@@ -187,7 +187,7 @@ static void read_mounttable()
 	return;
 err:
 	error(_("warning: failed to read mtab"));
-	mnt_free_tab(tb);
+	mnt_free_table(tb);
 	mnt_free_iter(itr);
 	mc->nxt = mc->prev = NULL;
 }
@@ -566,9 +566,9 @@ setlkw_timeout (int sig) {
 }
 
 #ifdef HAVE_LIBMOUNT_MOUNT
-static mnt_lock *libmount_lock;
+static struct libmnt_lock *libmount_lock;
 
-mnt_lock *
+struct libmnt_lock *
 init_libmount_lock(const char *filename)
 {
 	if (filename)

@@ -21,12 +21,12 @@
 #include "strutils.h"
 #include "mountP.h"
 
-static int lookup_umount_fs(mnt_context *cxt)
+static int lookup_umount_fs(struct libmnt_context *cxt)
 {
 	int rc;
 	const char *tgt;
-	mnt_tab *mtab;
-	mnt_fs *fs;
+	struct libmnt_table *mtab;
+	struct libmnt_fs *fs;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -43,13 +43,13 @@ static int lookup_umount_fs(mnt_context *cxt)
 		DBG(CXT, mnt_debug_h(cxt, "umount: failed to read mtab"));
 		return rc;
 	}
-	fs = mnt_tab_find_target(mtab, tgt, MNT_ITER_BACKWARD);
+	fs = mnt_table_find_target(mtab, tgt, MNT_ITER_BACKWARD);
 	if (!fs) {
 		/* maybe the option is source rather than target (mountpoint) */
-		fs = mnt_tab_find_source(mtab, tgt, MNT_ITER_BACKWARD);
+		fs = mnt_table_find_source(mtab, tgt, MNT_ITER_BACKWARD);
 
 		if (fs) {
-			mnt_fs *fs1 = mnt_tab_find_target(mtab,
+			struct libmnt_fs *fs1 = mnt_table_find_target(mtab,
 							mnt_fs_get_target(fs),
 							MNT_ITER_BACKWARD);
 			if (!fs1) {
@@ -87,7 +87,7 @@ static int lookup_umount_fs(mnt_context *cxt)
 	if (!rc)
 		rc = mnt_fs_set_fs_options(cxt->fs, mnt_fs_get_fs_options(fs));
 	if (!rc)
-		rc = mnt_fs_set_userspace_options(cxt->fs, mnt_fs_get_userspace_options(fs));
+		rc = mnt_fs_set_user_options(cxt->fs, mnt_fs_get_user_options(fs));
 
 	if (!rc && mnt_fs_get_bindsrc(fs))
 		rc = mnt_fs_set_bindsrc(cxt->fs, mnt_fs_get_bindsrc(fs));
@@ -102,7 +102,7 @@ static int lookup_umount_fs(mnt_context *cxt)
  *
  * TODO : move this to loopdev.c
  */
-static int mnt_loopdev_associated_fs(const char *devname, mnt_fs *fs)
+static int mnt_loopdev_associated_fs(const char *devname, struct libmnt_fs *fs)
 {
 	uintmax_t offset = 0;
 	const char *src;
@@ -118,7 +118,7 @@ static int mnt_loopdev_associated_fs(const char *devname, mnt_fs *fs)
 		return 0;
 
 	/* check for offset option in @fs */
-	optstr = (char *) mnt_fs_get_userspace_options(fs);
+	optstr = (char *) mnt_fs_get_user_options(fs);
 	if (optstr && !mnt_optstr_get_option(optstr, "offset=", &val, &valsz)) {
 		int rc;
 
@@ -141,13 +141,13 @@ static int mnt_loopdev_associated_fs(const char *devname, mnt_fs *fs)
 /*
  * Note that cxt->fs contains relevant mtab entry!
  */
-static int evaluate_permissions(mnt_context *cxt)
+static int evaluate_permissions(struct libmnt_context *cxt)
 {
-	mnt_tab *fstab;
+	struct libmnt_table *fstab;
 	unsigned long u_flags = 0;
 	const char *tgt, *src, *optstr;
 	int rc, ok = 0;
-	mnt_fs *fs;
+	struct libmnt_fs *fs;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -172,7 +172,7 @@ static int evaluate_permissions(mnt_context *cxt)
 	     (cxt->user_mountflags & MNT_MS_UHELPER)) {
 
 		char *suffix = NULL;
-		char *o = (char *) mnt_fs_get_userspace_options(cxt->fs);
+		char *o = (char *) mnt_fs_get_user_options(cxt->fs);
 		size_t valsz;
 
 		rc = mnt_optstr_get_option(o, "uhelper", &suffix, &valsz);
@@ -210,14 +210,14 @@ static int evaluate_permissions(mnt_context *cxt)
 	 * then "mount /dev/sda4" followed by "umount /mnt/zip" used to fail.
 	 * So, we must not look for file, but for the pair (dev,file) in fstab.
 	  */
-	fs = mnt_tab_find_pair(fstab, src, tgt, MNT_ITER_FORWARD);
+	fs = mnt_table_find_pair(fstab, src, tgt, MNT_ITER_FORWARD);
 	if (!fs) {
 		/*
 		 * It's possible that there is /path/file.img in fstab and
 		 * /dev/loop0 in mtab -- then we have to check releation
 		 * between loopdev and the file.
 		 */
-		fs = mnt_tab_find_target(fstab, tgt, MNT_ITER_FORWARD);
+		fs = mnt_table_find_target(fstab, tgt, MNT_ITER_FORWARD);
 		if (fs) {
 			const char *dev = mnt_fs_get_srcpath(cxt->fs);		/* devname from mtab */
 
@@ -242,7 +242,7 @@ static int evaluate_permissions(mnt_context *cxt)
 	 * The options `user', `owner' and `group' only allow unmounting by the
 	 * user that mounted (visible in mtab).
 	 */
-	optstr = mnt_fs_get_userspace_options(fs);	/* FSTAB mount options! */
+	optstr = mnt_fs_get_user_options(fs);	/* FSTAB mount options! */
 	if (!optstr)
 		goto eperm;
 
@@ -278,7 +278,7 @@ static int evaluate_permissions(mnt_context *cxt)
 		}
 
 		/* get options from mtab */
-		optstr = mnt_fs_get_userspace_options(cxt->fs);
+		optstr = mnt_fs_get_user_options(cxt->fs);
 		if (optstr && !mnt_optstr_get_option((char *) optstr,
 					"user", &mtab_user, &sz) && sz)
 			ok = !strncmp(curr_user, mtab_user, sz);
@@ -293,7 +293,7 @@ eperm:
 	return -EPERM;
 }
 
-static int exec_helper(mnt_context *cxt)
+static int exec_helper(struct libmnt_context *cxt)
 {
 	int rc;
 
@@ -369,7 +369,7 @@ static int exec_helper(mnt_context *cxt)
 	return rc;
 }
 
-static int do_umount(mnt_context *cxt)
+static int do_umount(struct libmnt_context *cxt)
 {
 	int rc = 0;
 	const char *src, *target;
@@ -450,7 +450,7 @@ static int do_umount(mnt_context *cxt)
  *
  * Returns: 0 on success, and negative number in case of error.
  */
-int mnt_context_do_umount(mnt_context *cxt)
+int mnt_context_do_umount(struct libmnt_context *cxt)
 {
 	int rc;
 
@@ -466,7 +466,7 @@ int mnt_context_do_umount(mnt_context *cxt)
 
 	rc = lookup_umount_fs(cxt);
 	if (!rc)
-		rc = mnt_context_merge_mountflags(cxt);
+		rc = mnt_context_merge_mflags(cxt);
 	if (!rc)
 		rc = evaluate_permissions(cxt);
 	if (!rc)

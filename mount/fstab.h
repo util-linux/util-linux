@@ -6,7 +6,7 @@
 #ifdef HAVE_LIBMOUNT_MOUNT
 #define USE_UNSTABLE_LIBMOUNT_API
 #include <libmount.h>
-extern mnt_lock *init_libmount_lock(const char *filename);
+extern struct libmnt_lock *init_libmount_lock(const char *filename);
 #endif
 
 int mtab_is_writable(void);

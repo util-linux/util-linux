@@ -25,9 +25,9 @@
  *
  * Returns: newly allocated generic libmount iterator.
  */
-mnt_iter *mnt_new_iter(int direction)
+struct libmnt_iter *mnt_new_iter(int direction)
 {
-	mnt_iter *itr = calloc(1, sizeof(struct _mnt_iter));
+	struct libmnt_iter *itr = calloc(1, sizeof(*itr));
 	if (!itr)
 		return NULL;
 	itr->direction = direction;
@@ -40,7 +40,7 @@ mnt_iter *mnt_new_iter(int direction)
  *
  * Deallocates iterator.
  */
-void mnt_free_iter(mnt_iter *itr)
+void mnt_free_iter(struct libmnt_iter *itr)
 {
 	free(itr);
 }
@@ -52,7 +52,7 @@ void mnt_free_iter(mnt_iter *itr)
  *
  * Resets iterator.
  */
-void mnt_reset_iter(mnt_iter *itr, int direction)
+void mnt_reset_iter(struct libmnt_iter *itr, int direction)
 {
 	assert(itr);
 
@@ -60,7 +60,7 @@ void mnt_reset_iter(mnt_iter *itr, int direction)
 		direction = itr->direction;
 
 	if (itr) {
-		memset(itr, 0, sizeof(struct _mnt_iter));
+		memset(itr, 0, sizeof(*itr));
 		itr->direction = direction;
 	}
 }
@@ -71,7 +71,7 @@ void mnt_reset_iter(mnt_iter *itr, int direction)
  *
  * Returns: MNT_INTER_{FOR,BACK}WARD or negative number in case of error.
  */
-int mnt_iter_get_direction(mnt_iter *itr)
+int mnt_iter_get_direction(struct libmnt_iter *itr)
 {
 	assert(itr);
 	return itr ? itr->direction : -EINVAL;

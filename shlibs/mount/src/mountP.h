@@ -97,14 +97,14 @@ mnt_debug_h(void *handler, const char *mesg, ...)
 #define MNT_UTAB_HEADER	"# libmount utab file\n"
 
 #ifdef TEST_PROGRAM
-struct mtest {
+struct libmnt_test {
 	const char	*name;
-	int		(*body)(struct mtest *ts, int argc, char *argv[]);
+	int		(*body)(struct libmnt_test *ts, int argc, char *argv[]);
 	const char	*usage;
 };
 
 /* test.c */
-extern int mnt_run_test(struct mtest *tests, int argc, char *argv[]);
+extern int mnt_run_test(struct libmnt_test *tests, int argc, char *argv[]);
 #endif
 
 /* utils.c */
@@ -128,7 +128,7 @@ extern void mnt_free_filesystems(char **filesystems);
 /*
  * Generic iterator
  */
-struct _mnt_iter {
+struct libmnt_iter {
         struct list_head        *p;		/* current position */
         struct list_head        *head;		/* start position */
 	int			direction;	/* MNT_ITER_{FOR,BACK}WARD */
@@ -156,7 +156,7 @@ struct _mnt_iter {
  * This struct represents one entry in mtab/fstab/mountinfo file.
  * (note that fstab[1] means the first column from fstab, and so on...)
  */
-struct _mnt_fs {
+struct libmnt_fs {
 	struct list_head ents;
 
 	int		id;		/* mountinfo[1]: ID */
@@ -197,18 +197,19 @@ struct _mnt_fs {
 /*
  * mtab/fstab/mountinfo file
  */
-struct _mnt_tab {
+struct libmnt_table {
 	int		fmt;		/* MNT_FMT_* file format */
 	int		nents;		/* number of valid entries */
 
-	mnt_cache	*cache;		/* canonicalized paths/tags cache */
+	struct libmnt_cache *cache;		/* canonicalized paths/tags cache */
 
-        int		(*errcb)(mnt_tab *tb, const char *filename, int line);
+        int		(*errcb)(struct libmnt_table *tb,
+				 const char *filename, int line);
 
-	struct list_head	ents;	/* list of entries (mentry) */
+	struct list_head	ents;	/* list of entries (libmnt_fs) */
 };
 
-extern mnt_tab *__mnt_new_tab_from_file(const char *filename, int fmt);
+extern struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt);
 
 /*
  * Tab file format
@@ -225,7 +226,7 @@ enum {
 /*
  * Mount context -- high-level API
  */
-struct _mnt_context
+struct libmnt_context
 {
 	int	action;		/* MNT_ACT_{MOUNT,UMOUNT} */
 	int	restricted;	/* root or not? */
@@ -233,10 +234,11 @@ struct _mnt_context
 	char	*fstype_pattern;	/* for mnt_match_fstype() */
 	char	*optstr_pattern;	/* for mnt_match_options() */
 
-	mnt_fs	*fs;		/* filesystem description (type, mountpopint, device, ...) */
+	struct libmnt_fs *fs;		/* filesystem description (type, mountpopint, device, ...) */
 
-	mnt_tab	*fstab;		/* fstab (or mtab for some remounts) entires */
-	mnt_tab *mtab;		/* mtab entries */
+	struct libmnt_table *fstab;	/* fstab (or mtab for some remounts) entires */
+	struct libmnt_table *mtab;	/* mtab entries */
+
 	int	optsmode;	/* fstab optstr mode MNT_OPTSMODE_{AUTO,FORCE,IGNORE} */
 
 	unsigned long	mountflags;	/* final mount(2) flags */
@@ -244,9 +246,9 @@ struct _mnt_context
 
 	unsigned long	user_mountflags;	/* MNT_MS_* (loop=, user=, ...) */
 
-	mnt_cache	*cache;	/* paths cache */
-	mnt_lock	*lock;	/* mtab lock */
-	mnt_update	*update;/* mtab/utab update */
+	struct libmnt_cache	*cache;	/* paths cache */
+	struct libmnt_lock	*lock;	/* mtab lock */
+	struct libmnt_update	*update;/* mtab/utab update */
 
 	const char	*mtab_path; /* writable mtab */
 	int		mtab_writable; /* ismtab writeable */
@@ -293,9 +295,11 @@ struct _mnt_context
 #define MNT_FL_DEFAULT		0
 
 /* optmap.c */
-extern const struct mnt_optmap *mnt_optmap_get_entry(struct mnt_optmap const **maps,
+extern const struct libmnt_optmap *mnt_optmap_get_entry(
+			     struct libmnt_optmap const **maps,
                              int nmaps, const char *name,
-                             size_t namelen, const struct mnt_optmap **mapent);
+                             size_t namelen,
+			     const struct libmnt_optmap **mapent);
 
 /* optstr.c */
 extern int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end);
@@ -305,22 +309,24 @@ extern int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, ch
 extern int mnt_optstr_fix_user(char **optstr);
 
 /* fs.c */
-extern mnt_fs *mnt_copy_mtab_fs(const mnt_fs *fs);
-extern int __mnt_fs_set_source_ptr(mnt_fs *fs, char *source);
-extern int __mnt_fs_set_fstype_ptr(mnt_fs *fs, char *fstype);
+extern struct libmnt_fs *mnt_copy_mtab_fs(const struct libmnt_fs *fs);
+extern int __mnt_fs_set_source_ptr(struct libmnt_fs *fs, char *source);
+extern int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype);
 
 /* context.c */
-extern int mnt_context_prepare_srcpath(mnt_context *cxt);
-extern int mnt_context_prepare_target(mnt_context *cxt);
-extern int mnt_context_guess_fstype(mnt_context *cxt);
-extern int mnt_context_prepare_helper(mnt_context *cxt, const char *name, const char *type);
-extern int mnt_context_prepare_update(mnt_context *cxt);
-extern mnt_fs *mnt_context_get_fs(mnt_context *cxt);
-extern int mnt_context_merge_mountflags(mnt_context *cxt);
-extern int mnt_context_update_tabs(mnt_context *cxt);
+extern int mnt_context_prepare_srcpath(struct libmnt_context *cxt);
+extern int mnt_context_prepare_target(struct libmnt_context *cxt);
+extern int mnt_context_guess_fstype(struct libmnt_context *cxt);
+extern int mnt_context_prepare_helper(struct libmnt_context *cxt,
+				      const char *name, const char *type);
+extern int mnt_context_prepare_update(struct libmnt_context *cxt);
+extern struct libmnt_fs *mnt_context_get_fs(struct libmnt_context *cxt);
+extern int mnt_context_merge_mflags(struct libmnt_context *cxt);
+extern int mnt_context_update_tabs(struct libmnt_context *cxt);
 
 /* tab_update.c */
-extern mnt_fs *mnt_update_get_fs(mnt_update *upd);
-extern int mnt_update_set_filename(mnt_update *upd, const char *filename, int userspace_only);
+extern struct libmnt_fs *mnt_update_get_fs(struct libmnt_update *upd);
+extern int mnt_update_set_filename(struct libmnt_update *upd,
+				   const char *filename, int userspace_only);
 
 #endif /* _LIBMOUNT_PRIVATE_H */

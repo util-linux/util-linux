@@ -33,7 +33,7 @@
 /*
  * Option location
  */
-struct mnt_optloc {
+struct libmnt_optloc {
 	char	*begin;
 	char	*end;
 	char	*value;
@@ -41,7 +41,7 @@ struct mnt_optloc {
 	size_t  namesz;
 };
 
-#define mnt_init_optloc(_ol)	(memset((_ol), 0, sizeof(struct mnt_optloc)))
+#define mnt_init_optloc(_ol)	(memset((_ol), 0, sizeof(struct libmnt_optloc)))
 
 /*
  * Parses the first option from @optstr. The @optstr pointer is set to begin of
@@ -117,7 +117,7 @@ error:
  * Returns negative number on parse error, 1 when not found and 0 on success.
  */
 static int mnt_optstr_locate_option(char *optstr, const char *name,
-					struct mnt_optloc *ol)
+					struct libmnt_optloc *ol)
 {
 	char *n;
 	size_t namesz, nsz;
@@ -276,7 +276,7 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
 int mnt_optstr_get_option(char *optstr, const char *name,
 				char **value, size_t *valsz)
 {
-	struct mnt_optloc ol;
+	struct libmnt_optloc ol;
 	int rc;
 
 	mnt_init_optloc(&ol);
@@ -371,7 +371,7 @@ static int insert_value(char **str, char *pos, const char *substr, char **next)
  */
 int mnt_optstr_set_option(char **optstr, const char *name, const char *value)
 {
-	struct mnt_optloc ol;
+	struct libmnt_optloc ol;
 	char *nameend;
 	int rc = 1;
 
@@ -418,7 +418,7 @@ int mnt_optstr_set_option(char **optstr, const char *name, const char *value)
  */
 int mnt_optstr_remove_option(char **optstr, const char *name)
 {
-	struct mnt_optloc ol;
+	struct libmnt_optloc ol;
 	int rc;
 
 	mnt_init_optloc(&ol);
@@ -452,11 +452,12 @@ int mnt_optstr_remove_option(char **optstr, const char *name)
  *
  * Returns: 0 on success, or negative number in case of error.
  */
-int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs, int ignore_user, int ignore_vfs)
+int mnt_split_optstr(const char *optstr, char **user, char **vfs,
+		     char **fs, int ignore_user, int ignore_vfs)
 {
 	char *name, *val, *str = (char *) optstr;
 	size_t namesz, valsz;
-	struct mnt_optmap const *maps[2];
+	struct libmnt_optmap const *maps[2];
 
 	assert(optstr);
 
@@ -475,8 +476,8 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs, int
 
 	while(!mnt_optstr_next_option(&str, &name, &namesz, &val, &valsz)) {
 		int rc = 0;
-		const struct mnt_optmap *ent;
-		const struct mnt_optmap *m =
+		const struct libmnt_optmap *ent;
+		const struct libmnt_optmap *m =
 			 mnt_optmap_get_entry(maps, 2, name, namesz, &ent);
 
 		if (ent && !ent->id)
@@ -528,9 +529,9 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs, int
  * Returns: 0 on success, or negative number in case of error.
  */
 int mnt_optstr_get_options(const char *optstr, char **subset,
-			    const struct mnt_optmap *map, int ignore)
+			    const struct libmnt_optmap *map, int ignore)
 {
-	struct mnt_optmap const *maps[1];
+	struct libmnt_optmap const *maps[1];
 	char *name, *val, *str = (char *) optstr;
 	size_t namesz, valsz;
 
@@ -542,7 +543,7 @@ int mnt_optstr_get_options(const char *optstr, char **subset,
 
 	while(!mnt_optstr_next_option(&str, &name, &namesz, &val, &valsz)) {
 		int rc = 0;
-		const struct mnt_optmap *ent;
+		const struct libmnt_optmap *ent;
 
 		mnt_optmap_get_entry(maps, 1, name, namesz, &ent);
 
@@ -582,9 +583,9 @@ int mnt_optstr_get_options(const char *optstr, char **subset,
  * Returns: 0 on success or negative number in case of error
  */
 int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
-		const struct mnt_optmap *map)
+		const struct libmnt_optmap *map)
 {
-	struct mnt_optmap const *maps[1];
+	struct libmnt_optmap const *maps[1];
 	char *name, *str = (char *) optstr;
 	size_t namesz = 0;
 
@@ -596,7 +597,7 @@ int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 	maps[0] = map;
 
 	while(!mnt_optstr_next_option(&str, &name, &namesz, NULL, NULL)) {
-		const struct mnt_optmap *ent;
+		const struct libmnt_optmap *ent;
 
 		if (mnt_optmap_get_entry(maps, 1, name, namesz, &ent)) {
 			if (!ent->id)
@@ -624,9 +625,9 @@ int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
  * Returns: 0 on success or negative number in case of error.
  */
 int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
-				const struct mnt_optmap *map)
+				const struct libmnt_optmap *map)
 {
-	struct mnt_optmap const *maps[1];
+	struct libmnt_optmap const *maps[1];
 	char *name, *next, *val;
 	size_t namesz = 0, valsz = 0;
 	unsigned long fl;
@@ -675,7 +676,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 		 */
 		while(!mnt_optstr_next_option(&next, &name, &namesz,
 							&val, &valsz)) {
-			const struct mnt_optmap *ent;
+			const struct libmnt_optmap *ent;
 
 			if (mnt_optmap_get_entry(maps, 1, name, namesz, &ent)) {
 				/*
@@ -703,7 +704,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 
 	/* add missing options */
 	if (fl) {
-		const struct mnt_optmap *ent;
+		const struct libmnt_optmap *ent;
 		char *p;
 
 		for (ent = map; ent && ent->name; ent++) {
@@ -929,7 +930,7 @@ int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next)
 int mnt_optstr_fix_user(char **optstr)
 {
 	char *username;
-	struct mnt_optloc ol;
+	struct libmnt_optloc ol;
 	int rc = 0;
 
 	DBG(CXT, mnt_debug("fixing user"));
@@ -958,7 +959,7 @@ int mnt_optstr_fix_user(char **optstr)
 
 #ifdef TEST_PROGRAM
 
-int test_append(struct mtest *ts, int argc, char *argv[])
+int test_append(struct libmnt_test *ts, int argc, char *argv[])
 {
 	const char *value = NULL, *name;
 	char *optstr;
@@ -978,7 +979,7 @@ int test_append(struct mtest *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_prepend(struct mtest *ts, int argc, char *argv[])
+int test_prepend(struct libmnt_test *ts, int argc, char *argv[])
 {
 	const char *value = NULL, *name;
 	char *optstr;
@@ -998,7 +999,7 @@ int test_prepend(struct mtest *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_split(struct mtest *ts, int argc, char *argv[])
+int test_split(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *optstr, *user = NULL, *fs = NULL, *vfs = NULL;
 	int rc;
@@ -1022,7 +1023,7 @@ int test_split(struct mtest *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_flags(struct mtest *ts, int argc, char *argv[])
+int test_flags(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *optstr;
 	int rc;
@@ -1048,7 +1049,7 @@ int test_flags(struct mtest *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_apply(struct mtest *ts, int argc, char *argv[])
+int test_apply(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *optstr;
 	int rc, map;
@@ -1078,7 +1079,7 @@ int test_apply(struct mtest *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_set(struct mtest *ts, int argc, char *argv[])
+int test_set(struct libmnt_test *ts, int argc, char *argv[])
 {
 	const char *value = NULL, *name;
 	char *optstr;
@@ -1099,7 +1100,7 @@ int test_set(struct mtest *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_get(struct mtest *ts, int argc, char *argv[])
+int test_get(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *optstr;
 	const char *name;
@@ -1128,7 +1129,7 @@ int test_get(struct mtest *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_remove(struct mtest *ts, int argc, char *argv[])
+int test_remove(struct libmnt_test *ts, int argc, char *argv[])
 {
 	const char *name;
 	char *optstr;
@@ -1145,7 +1146,7 @@ int test_remove(struct mtest *ts, int argc, char *argv[])
 	return rc;
 }
 
-int test_fix(struct mtest *ts, int argc, char *argv[])
+int test_fix(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *optstr;
 	int rc = 0;
@@ -1182,7 +1183,7 @@ int test_fix(struct mtest *ts, int argc, char *argv[])
 
 int main(int argc, char *argv[])
 {
-	struct mtest tss[] = {
+	struct libmnt_test tss[] = {
 		{ "--append", test_append, "<optstr> <name> [<value>]  append value to optstr" },
 		{ "--prepend",test_prepend,"<optstr> <name> [<value>]  prepend  value to optstr" },
 		{ "--set",    test_set,    "<optstr> <name> [<value>]  (un)set value" },
