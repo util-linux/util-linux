@@ -58,18 +58,18 @@ enum {
 #define SWAP_SIGNATURE		"SWAPSPACE2"
 #define SWAP_SIGNATURE_SZ	(sizeof(SWAP_SIGNATURE) - 1)
 
-int all;
-int priority = -1;	/* non-prioritized swap by default */
-int discard;
+static int all;
+static int priority = -1;	/* non-prioritized swap by default */
+static int discard;
 
 /* If true, don't complain if the device/file doesn't exist */
-int ifexists;
-int fixpgsz;
+static int ifexists;
+static int fixpgsz;
 
-int verbose;
-char *progname;
+static int verbose;
+static char *progname;
 
-static struct option longswaponopts[] = {
+static const struct option longswaponopts[] = {
 		/* swapon only */
 	{ "priority", required_argument, 0, 'p' },
 	{ "discard", 0, 0, 'd' },
@@ -84,7 +84,7 @@ static struct option longswaponopts[] = {
 	{ NULL, 0, 0, 0 }
 };
 
-static struct option *longswapoffopts = &longswaponopts[4];
+static const struct option *longswapoffopts = &longswaponopts[4];
 
 static int cannot_find(const char *special);
 
