@@ -125,7 +125,7 @@ newsyntax(int argc, char ***argvp)
 }
 
 void
-usage()
+usage(void)
 {
 	fprintf(stderr,
 _("hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"));

@@ -82,7 +82,7 @@ int nobanner;
 int mbufsize;
 char *mbuf;
 
-static void __attribute__((__noreturn__)) usage()
+static void __attribute__((__noreturn__)) usage(void)
 {
 	errx(EXIT_FAILURE, _("usage: %s [-n] [file]\n"),
 	     program_invocation_short_name);

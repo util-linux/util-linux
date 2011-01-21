@@ -112,7 +112,7 @@ int pass_unknown_seqs;		/* whether to pass unknown control sequences */
 	if (putwchar(ch) == WEOF) \
 		wrerr();
 
-static void __attribute__((__noreturn__)) usage()
+static void __attribute__((__noreturn__)) usage(void)
 {
 	errx(EXIT_FAILURE, _("usage: %s [-bfpx] [-l nline]"),
 			program_invocation_short_name);
