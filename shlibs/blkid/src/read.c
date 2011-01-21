@@ -10,7 +10,6 @@
  * %End-Header%
  */
 
-#define _XOPEN_SOURCE 600 /* for inclusion of strtoull */
 
 #include <stdio.h>
 #include <ctype.h>
@@ -26,15 +25,18 @@
 
 #include "blkidP.h"
 
+#if HAVE_STDLIB_H
+# ifndef _XOPEN_SOURCE
+#  define _XOPEN_SOURCE 600	/* for inclusion of strtoull */
+# endif
+# include <stdlib.h>
+#endif
+
 #ifdef HAVE_STRTOULL
 #define STRTOULL strtoull /* defined in stdlib.h if you try hard enough */
 #else
 /* FIXME: need to support real strtoull here */
 #define STRTOULL strtoul
-#endif
-
-#if HAVE_STDLIB_H
-#include <stdlib.h>
 #endif
 
 #ifdef TEST_PROGRAM

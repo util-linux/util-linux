@@ -224,6 +224,30 @@ AC_SEARCH_LIBS([socket], [socket],
 	fi])
 AC_SUBST([SOCKET_LIBS])
 
+
+have_dirfd=no
+AC_CHECK_FUNCS([dirfd], [have_dirfd=yes], [have_dirfd=no])
+if test x"$have_dirfd" = xno ; then
+	AC_CHECK_DECLS([dirfd],
+		[have_dirfd=yes], [have_dirfd=no],
+		[#include <sys/types.h>
+		 #include <dirent.h>])
+fi
+
+have_ddfd=no
+if test x"$have_dirfd" = xno ; then
+	AC_CHECK_MEMBERS([DIR.dd_fd],
+		[have_ddfd=yes], [have_ddfd=no],
+		[#include <sys/types.h>
+		 #include <dirent.h>])
+fi
+
+case "$have_dirfd:$have_ddfd" in
+no:no)
+  AC_MSG_ERROR([cannot find a method to get filedescriptor of directory]) ;;
+esac
+
+
 dnl Static compilation
 m4_define([UTIL_STATIC_PROGRAMS], [losetup, mount, umount, fdisk, sfdisk, blkid])
 
