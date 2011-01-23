@@ -244,6 +244,25 @@ int	possibly_osf_label = 0;
 
 jmp_buf listingbuf;
 
+static void __attribute__ ((__noreturn__)) usage(FILE *out)
+{
+	fprintf(out, _("Usage:\n"
+		       " %1$s [options] <disk>    change partition table\n"
+		       " %1$s [options] -l <disk> list partition table(s)\n"
+		       " %1$s -s <partition>      give partition size(s) in blocks\n"
+		       "\nOptions:\n"
+		       " -b <size>             sector size (512, 1024, 2048 or 4096)\n"
+		       " -c[=<mode>]           compatible mode: 'dos' or 'nondos' (default)\n"
+		       " -h                    print this help text\n"
+		       " -u[=<unit>]           display units: 'cylinders' or 'sectors' (default)\n"
+		       " -v                    print program version\n"
+		       " -C <number>           specify the number of cylinders\n"
+		       " -H <number>           specify the number of heads\n"
+		       " -S <number>           specify the number of sectors per track\n"
+		       "\n"), program_invocation_short_name);
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 void fatal(enum failure why) {
 	char	error[LINE_LENGTH],
 		*message = error;
@@ -255,24 +274,6 @@ void fatal(enum failure why) {
 	}
 
 	switch (why) {
-		case help:
-			rc = EXIT_SUCCESS;
-		case usage: message = _(
-"Usage:\n"
-" fdisk [options] <disk>    change partition table\n"
-" fdisk [options] -l <disk> list partition table(s)\n"
-" fdisk -s <partition>      give partition size(s) in blocks\n"
-"\nOptions:\n"
-" -b <size>             sector size (512, 1024, 2048 or 4096)\n"
-" -c[=<mode>]           compatible mode: 'dos' or 'nondos' (default)\n"
-" -h                    print this help text\n"
-" -u[=<unit>]           display units: 'cylinders' or 'sectors' (default)\n"
-" -v                    print program version\n"
-" -C <number>           specify the number of cylinders\n"
-" -H <number>           specify the number of heads\n"
-" -S <number>           specify the number of sectors per track\n"
-"\n");
-			break;
 		case unable_to_open:
 			snprintf(error, sizeof(error),
 				 _("Unable to open %s\n"), disk_device);
@@ -2979,7 +2980,7 @@ main(int argc, char **argv) {
 			sector_size = atoi(optarg);
 			if (sector_size != 512 && sector_size != 1024 &&
 			    sector_size != 2048 && sector_size != 4096)
-				fatal(usage);
+				usage(stderr);
 			sector_offset = 2;
 			user_set_sector_size = 1;
 			break;
@@ -2992,10 +2993,10 @@ main(int argc, char **argv) {
 			if (optarg && !strcmp(optarg, "=dos"))
 				dos_compatible_flag = ~0;
 			else if (optarg && strcmp(optarg, "=nondos"))
-				fatal(usage);
+				usage(stderr);
 			break;
 		case 'h':
-			fatal(help);
+			usage(stdout);
 			break;
 		case 'H':
 			user_heads = atoi(optarg);
@@ -3018,14 +3019,14 @@ main(int argc, char **argv) {
 			if (optarg && strcmp(optarg, "=cylinders") == 0)
 				display_in_cyl_units = !display_in_cyl_units;
 			else if (optarg && strcmp(optarg, "=sectors"))
-				fatal(usage);
+				usage(stderr);
 			break;
 		case 'V':
 		case 'v':
 			printf("fdisk (%s)\n", PACKAGE_STRING);
 			exit(0);
 		default:
-			fatal(usage);
+			usage(stderr);
 		}
 	}
 
@@ -3067,7 +3068,7 @@ main(int argc, char **argv) {
 
 		opts = argc - optind;
 		if (opts <= 0)
-			fatal(usage);
+			usage(stderr);
 
 		for (j = optind; j < argc; j++) {
 			disk_device = argv[j];
@@ -3087,7 +3088,7 @@ main(int argc, char **argv) {
 	if (argc-optind == 1)
 		disk_device = argv[optind];
 	else
-		fatal(usage);
+		usage(stderr);
 
 	gpt_warning(disk_device);
 	get_boot(fdisk);
