@@ -13,13 +13,17 @@
 #include <stdlib.h>
 #include <err.h>
 
+#ifndef XALLOC_EXIT_CODE
+# define XALLOC_EXIT_CODE EXIT_FAILURE
+#endif
+
 static inline __attribute__((alloc_size(1)))
 void *xmalloc(const size_t size)
 {
         void *ret = malloc(size);
 
         if (!ret && size)
-                err(EXIT_FAILURE, "cannot allocate %zu bytes", size);
+                err(XALLOC_EXIT_CODE, "cannot allocate %zu bytes", size);
         return ret;
 }
 
@@ -29,7 +33,7 @@ void *xrealloc(void *ptr, const size_t size)
         void *ret = realloc(ptr, size);
 
         if (!ret && size)
-                err(EXIT_FAILURE, "cannot allocate %zu bytes", size);
+                err(XALLOC_EXIT_CODE, "cannot allocate %zu bytes", size);
         return ret;
 }
 
@@ -39,7 +43,7 @@ void *xcalloc(const size_t nelems, const size_t size)
         void *ret = calloc(nelems, size);
 
         if (!ret && size && nelems)
-                err(EXIT_FAILURE, "cannot allocate %zu bytes", size);
+                err(XALLOC_EXIT_CODE, "cannot allocate %zu bytes", size);
         return ret;
 }
 
@@ -48,7 +52,7 @@ static inline char *xstrdup(const char *str)
 	char *ret = strdup(str);
 
 	if (!ret && str)
-		err(EXIT_FAILURE, "cannot duplicate string");
+		err(XALLOC_EXIT_CODE, "cannot duplicate string");
 	return ret;
 }
 
