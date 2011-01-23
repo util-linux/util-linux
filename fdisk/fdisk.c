@@ -22,6 +22,7 @@
 #include <time.h>
 #include <limits.h>
 
+#include "xalloc.h"
 #include "nls.h"
 #include "rpmatch.h"
 #include "blkdev.h"
@@ -295,9 +296,6 @@ void fatal(enum failure why) {
 				 _("BLKGETSIZE ioctl failed on %s\n"),
 				disk_device);
 			break;
-		case out_of_memory:
-			message = _("Unable to allocate any more memory\n");
-			break;
 		default:
 			message = _("Fatal error\n");
 	}
@@ -334,9 +332,7 @@ read_pte(int fd, int pno, unsigned long long offset) {
 	struct pte *pe = &ptes[pno];
 
 	pe->offset = offset;
-	pe->sectorbuffer = malloc(sector_size);
-	if (!pe->sectorbuffer)
-		fatal(out_of_memory);
+	pe->sectorbuffer = xmalloc(sector_size);
 	read_sector(fd, offset, pe->sectorbuffer);
 	pe->changed = 0;
 	pe->part_table = pe->ext_pointer = NULL;
@@ -1174,9 +1170,7 @@ static void init_mbr_buffer(void)
 	if (MBRbuffer)
 		return;
 
-	MBRbuffer = calloc(1, MAX_SECTOR_SIZE);
-	if (!MBRbuffer)
-		fatal(out_of_memory);
+	MBRbuffer = xcalloc(1, MAX_SECTOR_SIZE);
 }
 
 void zeroize_mbr_buffer(void)
@@ -1423,8 +1417,7 @@ read_int_sx(unsigned int low, unsigned int dflt, unsigned int high,
 
 	if (!ms || strlen(mesg)+100 > mslen) {
 		mslen = strlen(mesg)+200;
-		if (!(ms = realloc(ms,mslen)))
-			fatal(out_of_memory);
+		ms = xrealloc(ms,mslen);
 	}
 
 	if (dflt < low || dflt > high)
@@ -2475,8 +2468,7 @@ add_partition(int n, int sys) {
 		ext_index = n;
 		pen->ext_pointer = p;
 		pe4->offset = extended_offset = start;
-		if (!(pe4->sectorbuffer = calloc(1, sector_size)))
-			fatal(out_of_memory);
+		pe4->sectorbuffer = xcalloc(1, sector_size);
 		pe4->part_table = pt_offset(pe4->sectorbuffer, 0);
 		pe4->ext_pointer = pe4->part_table + 1;
 		pe4->changed = 1;
@@ -2489,8 +2481,7 @@ add_logical(void) {
 	if (partitions > 5 || ptes[4].part_table->sys_ind) {
 		struct pte *pe = &ptes[partitions];
 
-		if (!(pe->sectorbuffer = calloc(1, sector_size)))
-			fatal(out_of_memory);
+		pe->sectorbuffer = xcalloc(1, sector_size);
 		pe->part_table = pt_offset(pe->sectorbuffer, 0);
 		pe->ext_pointer = pe->part_table + 1;
 		pe->offset = 0;

@@ -22,6 +22,7 @@
 
 #include <endian.h>
 #include "nls.h"
+#include "xalloc.h"
 
 #include "blkdev.h"
 
@@ -825,7 +826,7 @@ sgi_set_ncyl(void)
 sgiinfo *
 fill_sgiinfo(void)
 {
-	sgiinfo*info=calloc(1, sizeof(sgiinfo));
+	sgiinfo *info=xcalloc(1, sizeof(sgiinfo));
 	info->magic=SSWAP32(SGI_INFO_MAGIC);
 	info->b1=SSWAP32(-1);
 	info->b2=SSWAP16(-1);
