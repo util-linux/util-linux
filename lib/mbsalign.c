@@ -106,12 +106,12 @@ rpl_wcswidth (const wchar_t *s, size_t n)
 size_t
 mbs_truncate(char *str, size_t *width)
 {
-	size_t bytes = strlen(str);
+	ssize_t bytes = strlen(str);
 #ifdef HAVE_WIDECHAR
-	size_t sz = mbstowcs(NULL, str, 0);
+	ssize_t sz = mbstowcs(NULL, str, 0);
 	wchar_t *wcs = NULL;
 
-	if (sz == (size_t) -1)
+	if (sz == (ssize_t) -1)
 		goto done;
 
 	wcs = malloc((sz + 1) * sizeof(wchar_t));

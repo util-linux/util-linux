@@ -427,7 +427,8 @@ fdexit(int ret) {
  */
 static int
 get_string(char *str, int len, char *def) {
-    size_t cells = 0, i = 0;
+    size_t cells = 0;
+    ssize_t i = 0;
     int x, y;
     int use_def = FALSE;
     wint_t c;
@@ -562,11 +563,11 @@ fatal(char *s, int ret) {
 	 char *str = xmalloc(strlen(s) + strlen(err1) + strlen(err2) + 10);
 
 	 sprintf(str, "%s: %s", err1, s);
-	 if (strlen(str) > COLS)
+	 if (strlen(str) > (size_t) COLS)
 	     str[COLS] = 0;
 	 mvaddstr(WARNING_START, (COLS-strlen(str))/2, str);
 	 sprintf(str, "%s", err2);
-	 if (strlen(str) > COLS)
+	 if (strlen(str) > (size_t) COLS)
 	     str[COLS] = 0;
 	 mvaddstr(WARNING_START+1, (COLS-strlen(str))/2, str);
 	 putchar(BELL); /* CTRL-G */
@@ -1067,7 +1068,7 @@ menuUpdate( int y, int x, struct MenuItem *menuItems, int itemLength,
         if(lenName > itemLength || lenName >= sizeof(buff))
             print_warning(_("Menu item too long. Menu may look odd."));
 #endif
-	if (lenName >= sizeof(buff)) {	/* truncate ridiculously long string */
+	if ((size_t) lenName >= sizeof(buff)) {	/* truncate ridiculously long string */
 	    xstrncpy(buff, mi, sizeof(buff));
 	} else if (lenName >= itemLength) {
             snprintf(buff, sizeof(buff),
@@ -1565,7 +1566,11 @@ fill_p_info(void) {
     unsigned long long llsectors;
     struct partition *p;
     partition_table buffer;
-    partition_info tmp_ext = { 0, 0, 0, 0, FREE_SPACE, PRIMARY };
+    partition_info tmp_ext;
+
+    memset(&tmp_ext, 0, sizeof tmp_ext);
+    tmp_ext.id = FREE_SPACE;
+    tmp_ext.num = PRIMARY;
 
     if ((fd = open(disk_device, O_RDWR)) < 0) {
 	 if ((fd = open(disk_device, O_RDONLY)) < 0)
