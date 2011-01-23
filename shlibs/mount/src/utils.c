@@ -372,7 +372,11 @@ char *mnt_get_username(const uid_t uid)
 {
         struct passwd pwd;
 	struct passwd *res;
+#ifdef _SC_GETPW_R_SIZE_MAX
 	size_t sz = sysconf(_SC_GETPW_R_SIZE_MAX);
+#else
+	size_t sz = 0;
+#endif
 	char *buf, *username = NULL;
 
 	if (sz <= 0)
