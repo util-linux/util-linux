@@ -265,9 +265,6 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 }
 
 void fatal(enum failure why) {
-	char	error[LINE_LENGTH],
-		*message = error;
-	int	rc = EXIT_FAILURE;
 
 	if (listing) {
 		close(fd);
@@ -276,33 +273,23 @@ void fatal(enum failure why) {
 
 	switch (why) {
 		case unable_to_open:
-			snprintf(error, sizeof(error),
-				 _("Unable to open %s\n"), disk_device);
-			break;
-		case unable_to_read:
-			snprintf(error, sizeof(error),
-				 _("Unable to read %s\n"), disk_device);
-			break;
-		case unable_to_seek:
-			snprintf(error, sizeof(error),
-				_("Unable to seek on %s\n"),disk_device);
-			break;
-		case unable_to_write:
-			snprintf(error, sizeof(error),
-				_("Unable to write %s\n"), disk_device);
-			break;
-		case ioctl_error:
-			snprintf(error, sizeof(error),
-				 _("BLKGETSIZE ioctl failed on %s\n"),
-				disk_device);
-			break;
-		default:
-			message = _("Fatal error\n");
-	}
+			err(EXIT_FAILURE, _("unable to open %s"), disk_device);
 
-	fputc('\n', stderr);
-	fputs(message, stderr);
-	exit(rc);
+		case unable_to_read:
+			err(EXIT_FAILURE, _("unable to read %s"), disk_device);
+
+		case unable_to_seek:
+			err(EXIT_FAILURE, _("unable to seek on %s"), disk_device);
+
+		case unable_to_write:
+			err(EXIT_FAILURE, _("unable to write %s"), disk_device);
+
+		case ioctl_error:
+			err(EXIT_FAILURE, _("BLKGETSIZE ioctl failed on %s"), disk_device);
+
+		default:
+			err(EXIT_FAILURE, _("fatal error"));
+	}
 }
 
 static void
