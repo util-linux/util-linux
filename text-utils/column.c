@@ -357,7 +357,7 @@ input(fp)
 #ifdef HAVE_WIDECHAR
 static wchar_t *mbs_to_wcs(const char *s)
 {
-	size_t n;
+	ssize_t n;
 	wchar_t *wcs;
 
 	n = mbstowcs((wchar_t *)0, s, 0);
@@ -366,7 +366,8 @@ static wchar_t *mbs_to_wcs(const char *s)
 	wcs = malloc((n + 1) * sizeof(wchar_t));
 	if (!wcs)
 		return NULL;
-	if (mbstowcs(wcs, s, n + 1) < 0)
+	n = mbstowcs(wcs, s, n + 1);
+	if (n < 0)
 		return NULL;
 	return wcs;
 }
