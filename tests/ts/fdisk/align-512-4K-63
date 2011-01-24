@@ -82,7 +82,8 @@ cat /sys/block/${DEVNAME}/${DEVNAME}{1,2,3,4,5,6,7}/alignment_offset >> $TS_OUTP
 sleep 3
 rmmod scsi_debug
 
-# remove disk ID 
+# remove device name used and disk ID
+sed -i -e "s/\/dev\/${DEVNAME}/\/dev\/.../g" $TS_OUTPUT
 sed -i -e 's/Disk identifier:.*//g' $TS_OUTPUT
 sed -i -e 's/Building a new.*//g' $TS_OUTPUT
 

@@ -22,7 +22,7 @@ Partition number (1-4, default 2): First sector (43008-102399, default 43008): U
 Last sector, +sectors or +size{K,M,G} (43008-102399, default 102399): Using default value 102399
 
 Command (m for help): 
-Disk /dev/sdb: 52 MB, 52428800 bytes
+Disk /dev/...: 52 MB, 52428800 bytes
 32 heads, 32 sectors/track, 100 cylinders, total 102400 sectors
 Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 4096 bytes
@@ -30,8 +30,8 @@ I/O size (minimum/optimal): 4096 bytes / 32768 bytes
 
 
    Device Boot      Start         End      Blocks   Id  System
-/dev/sdb1            2048       43007       20480   83  Linux
-/dev/sdb2           43008      102399       29696   83  Linux
+/dev/...1            2048       43007       20480   83  Linux
+/dev/...2           43008      102399       29696   83  Linux
 
 Command (m for help): The partition table has been altered!
 

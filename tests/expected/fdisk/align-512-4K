@@ -40,7 +40,7 @@ Command (m for help): First sector (90112-102399, default 90112): Using default 
 Last sector, +sectors or +size{K,M,G} (90112-102399, default 102399): Using default value 102399
 
 Command (m for help): 
-Disk /dev/sdb: 52 MB, 52428800 bytes
+Disk /dev/...: 52 MB, 52428800 bytes
 32 heads, 32 sectors/track, 100 cylinders, total 102400 sectors
 Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 4096 bytes
@@ -48,13 +48,13 @@ I/O size (minimum/optimal): 4096 bytes / 32768 bytes
 
 
    Device Boot      Start         End      Blocks   Id  System
-/dev/sdb1            2048       22527       10240   83  Linux
-/dev/sdb2           22528       43007       10240   83  Linux
-/dev/sdb3           43008       63487       10240   83  Linux
-/dev/sdb4           63488      102399       19456    5  Extended
-/dev/sdb5           65536       75775        5120   83  Linux
-/dev/sdb6           77824       88063        5120   83  Linux
-/dev/sdb7           90112      102399        6144   83  Linux
+/dev/...1            2048       22527       10240   83  Linux
+/dev/...2           22528       43007       10240   83  Linux
+/dev/...3           43008       63487       10240   83  Linux
+/dev/...4           63488      102399       19456    5  Extended
+/dev/...5           65536       75775        5120   83  Linux
+/dev/...6           77824       88063        5120   83  Linux
+/dev/...7           90112      102399        6144   83  Linux
 
 Command (m for help): The partition table has been altered!
 
