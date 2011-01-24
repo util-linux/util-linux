@@ -48,6 +48,7 @@ struct tt_line {
 	struct tt	*table;
 	char const	**data;
 	void		*userdata;
+	ssize_t		data_sz;		/* strlen of all data */
 
 	struct list_head	ln_lines;	/* table lines */
 

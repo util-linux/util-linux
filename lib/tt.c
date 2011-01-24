@@ -276,7 +276,13 @@ int tt_line_set_data(struct tt_line *ln, int colnum, const char *data)
 	cl = tt_get_column(ln->table, colnum);
 	if (!cl)
 		return -1;
+
+	if (ln->data[cl->seqnum])
+		ln->data_sz -= strlen(ln->data[cl->seqnum]);
+
 	ln->data[cl->seqnum] = data;
+	if (data)
+		ln->data_sz += strlen(data);
 	return 0;
 }
 
@@ -632,6 +638,8 @@ static void print_tree(struct tt *tb, char *buf, size_t bufsz)
 int tt_print_table(struct tt *tb)
 {
 	char *line;
+	size_t line_sz;
+	struct list_head *p;
 
 	if (!tb)
 		return -1;
@@ -640,15 +648,24 @@ int tt_print_table(struct tt *tb)
 		if (tb->termwidth <= 0)
 			tb->termwidth = 80;
 	}
-	line = malloc(tb->termwidth);
+
+	line_sz = tb->termwidth;
+
+	list_for_each(p, &tb->tb_lines) {
+		struct tt_line *ln = list_entry(p, struct tt_line, ln_lines);
+		if (ln->data_sz > line_sz)
+			line_sz = ln->data_sz;
+	}
+
+	line = malloc(line_sz);
 	if (!line)
 		return -1;
 	if (!(tb->flags & TT_FL_RAW))
-		recount_widths(tb, line, tb->termwidth);
+		recount_widths(tb, line, line_sz);
 	if (tb->flags & TT_FL_TREE)
-		print_tree(tb, line, tb->termwidth);
+		print_tree(tb, line, line_sz);
 	else
-		print_table(tb, line, tb->termwidth);
+		print_table(tb, line, line_sz);
 
 	free(line);
 	return 0;
