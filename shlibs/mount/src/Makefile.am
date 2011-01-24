@@ -25,9 +25,9 @@ nodist_libmount_la_SOURCES = mountP.h
 
 libmount_la_LIBADD = $(ul_libblkid_la) $(SELINUX_LIBS)
 
-libmount_la_DEPENDENCIES = $(libmount_la_LIBADD) mount.sym libmount.h.in
+libmount_la_DEPENDENCIES = $(libmount_la_LIBADD) libmount.sym libmount.h.in
 
-libmount_la_LDFLAGS = -Wl,--version-script=$(ul_libmount_srcdir)/mount.sym \
+libmount_la_LDFLAGS = -Wl,--version-script=$(ul_libmount_srcdir)/libmount.sym \
                       -version-info $(LIBMOUNT_VERSION_INFO)
 
 TESTS_LIBS = $(UUID_LIBS)
@@ -36,7 +36,7 @@ if HAVE_SELINUX
 TESTS_LIBS += $(SELINUX_LIBS)
 endif
 
-EXTRA_DIST = mount.sym libmount.h.in
+EXTRA_DIST = libmount.sym libmount.h.in
 CLEANFILES = $(tests)
 
 # move lib from $(usrlib_execdir) to $(libdir) if needed
