@@ -504,6 +504,17 @@ int mnt_context_set_source(struct libmnt_context *cxt, const char *source)
 }
 
 /**
+ * mnt_context_get_source:
+ * @cxt: mount context
+ *
+ * Returns: returns pointer or NULL in case of error pr if not set.
+ */
+const char *mnt_context_get_source(struct libmnt_context *cxt)
+{
+	return mnt_fs_get_source(mnt_context_get_fs(cxt));
+}
+
+/**
  * mnt_context_set_target:
  * @cxt: mount context
  * @target: mountpoint
@@ -513,6 +524,17 @@ int mnt_context_set_source(struct libmnt_context *cxt, const char *source)
 int mnt_context_set_target(struct libmnt_context *cxt, const char *target)
 {
 	return mnt_fs_set_target(mnt_context_get_fs(cxt), target);
+}
+
+/**
+ * mnt_context_get_target:
+ * @cxt: mount context
+ *
+ * Returns: returns pointer or NULL in case of error pr if not set.
+ */
+const char *mnt_context_get_target(struct libmnt_context *cxt)
+{
+	return mnt_fs_get_target(mnt_context_get_fs(cxt));
 }
 
 /**
@@ -530,6 +552,17 @@ int mnt_context_set_fstype(struct libmnt_context *cxt, const char *fstype)
 	if (fstype && strchr(fstype, ','))
 		return -EINVAL;
 	return mnt_fs_set_fstype(mnt_context_get_fs(cxt), fstype);
+}
+
+/**
+ * mnt_context_get_fstype:
+ * @cxt: mount context
+ *
+ * Returns: returns pointer or NULL in case of error pr if not set.
+ */
+const char *mnt_context_get_fstype(struct libmnt_context *cxt)
+{
+	return mnt_fs_get_fstype(mnt_context_get_fs(cxt));
 }
 
 /**
@@ -1466,11 +1499,22 @@ int mnt_context_strerror(struct libmnt_context *cxt, char *buf, size_t bufsiz)
  *
  * This function infors libmount that used from [u]mount.<type> helper.
  *
+ * The function also calls mnt_context_disable_helpers() to avoid recursive
+ * mount.<type> helpers calling. It you really want to call another
+ * mount.<type> helper from your helper than you have to explicitly enable this
+ * feature by:
+ *
+ *	 mnt_context_disable_helpers(cxt, FALSE);
+ *
  * Returns: 0 on success, negative number in case of error.
  */
 int mnt_context_init_helper(struct libmnt_context *cxt, int flags)
 {
-	return set_flag(cxt, MNT_FL_HELPER, 1);
+	int rc = mnt_context_disable_helpers(cxt, TRUE);
+
+	if (!rc)
+		return set_flag(cxt, MNT_FL_HELPER, 1);
+	return rc;
 }
 
 #ifdef TEST_PROGRAM

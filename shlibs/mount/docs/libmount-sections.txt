@@ -188,10 +188,13 @@ mnt_context_enable_verbose
 mnt_context_get_cache
 mnt_context_get_fs
 mnt_context_get_fstab
+mnt_context_get_fstype
 mnt_context_get_lock
 mnt_context_get_mflags
 mnt_context_get_mtab
+mnt_context_get_source
 mnt_context_get_status
+mnt_context_get_target
 mnt_context_get_user_mflags
 mnt_context_is_restricted
 mnt_context_set_cache
@@ -199,8 +202,8 @@ mnt_context_set_fs
 mnt_context_set_fstab
 mnt_context_set_fstype
 mnt_context_set_fstype_pattern
-mnt_context_set_mountdata
 mnt_context_set_mflags
+mnt_context_set_mountdata
 mnt_context_set_options
 mnt_context_set_options_pattern
 mnt_context_set_optsmode
