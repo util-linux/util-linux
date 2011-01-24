@@ -1292,7 +1292,7 @@ int mnt_context_update_tabs(struct libmnt_context *cxt)
 		return 0;
 	}
 	if (cxt->syscall_status) {
-		DBG(CXT, mnt_debug_h(cxt, "don't update: syscall failed"));
+		DBG(CXT, mnt_debug_h(cxt, "don't update: syscall failed/not called"));
 		return 0;
 	}
 
@@ -1471,11 +1471,30 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
  * mnt_context_get_status:
  * @cxt: mount context
  *
- * Returns: 1 if /sbin/mount.type or mount(2) syscall was successfull or 0.
+ * Returns: 0 if /sbin/mount.type or mount(2) syscall was successfull or -errno.
  */
 int mnt_context_get_status(struct libmnt_context *cxt)
 {
 	return cxt && (!cxt->syscall_status || !cxt->helper_exec_status);
+}
+
+/**
+ * mnt_context_set_syscall_status:
+ * @cxt: mount context
+ * @status: mount(2) return code
+ *
+ * This function should be used if [u]mount(2) syscall was NOT called by
+ * libmount (mnt_mount_context() or mnt_context_do_mount()) only.
+ *
+ * Returns: 0 or negative number in case of error.
+ */
+int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	cxt->syscall_status = status;
+	return 0;
 }
 
 /**
@@ -1514,6 +1533,8 @@ int mnt_context_init_helper(struct libmnt_context *cxt, int flags)
 
 	if (!rc)
 		return set_flag(cxt, MNT_FL_HELPER, 1);
+
+	DBG(CXT, mnt_debug_h(cxt, "initialized for [u]mount.<type> helper"));
 	return rc;
 }
 

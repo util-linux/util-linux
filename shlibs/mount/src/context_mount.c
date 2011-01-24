@@ -515,7 +515,7 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 	if (!rc)
 		rc = mnt_context_prepare_srcpath(cxt);
 	if (!rc)
-	       rc = mnt_context_prepare_target(cxt);
+		rc = mnt_context_prepare_target(cxt);
 	if (!rc)
 		rc = mnt_context_guess_fstype(cxt);
 	if (!rc)
@@ -605,7 +605,8 @@ int mnt_mount_context(struct libmnt_context *cxt)
  * mnt_context_finalize_mount:
  * @cxt: context
  *
- * Mtab update, etc. Unnecessary for mnt_context_mount().
+ * Mtab update, etc. Unnecessary for mnt_context_mount(), but should be called
+ * after mnt_context_do_mount(). See also mnt_context_set_syscall_status().
  *
  * Returns: negative number on error, 0 on success.
  */

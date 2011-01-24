@@ -112,7 +112,7 @@ int mnt_fstype_is_pseudofs(const char *type)
 	    strcmp(type, "tmpfs") == 0 ||
 	    strcmp(type, "sysfs") == 0 ||
 	    strcmp(type, "devpts") == 0||
-	    strcmp(type, "cgroups") == 0 ||
+	    strcmp(type, "cgroup") == 0 ||
 	    strcmp(type, "devfs") == 0 ||
 	    strcmp(type, "dlmfs") == 0 ||
 	    strcmp(type, "cpuset") == 0 ||

@@ -299,14 +299,16 @@ int __mnt_fs_set_source_ptr(struct libmnt_fs *fs, char *source)
  */
 int mnt_fs_set_source(struct libmnt_fs *fs, const char *source)
 {
-	char *p;
+	char *p = NULL;
 	int rc;
 
-	if (!fs && !source)
+	if (!fs)
 		return -EINVAL;
-	p = strdup(source);
-	if (!p)
-		return -ENOMEM;
+	if (source) {
+		p = strdup(source);
+		if (!p)
+			return -ENOMEM;
+	}
 
 	rc = __mnt_fs_set_source_ptr(fs, p);
 	if (rc)
@@ -381,15 +383,17 @@ const char *mnt_fs_get_target(struct libmnt_fs *fs)
  */
 int mnt_fs_set_target(struct libmnt_fs *fs, const char *target)
 {
-	char *p;
+	char *p = NULL;
 
 	assert(fs);
 
-	if (!fs || !target)
+	if (!fs)
 		return -EINVAL;
-	p = strdup(target);
-	if (!p)
-		return -ENOMEM;
+	if (target) {
+		p = strdup(target);
+		if (!p)
+			return -ENOMEM;
+	}
 	free(fs->target);
 	fs->target = p;
 
@@ -444,7 +448,6 @@ int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype)
 int mnt_fs_set_fstype(struct libmnt_fs *fs, const char *fstype)
 {
 	char *p = NULL;
-	int rc;
 
 	if (!fs)
 		return -EINVAL;
@@ -453,10 +456,7 @@ int mnt_fs_set_fstype(struct libmnt_fs *fs, const char *fstype)
 		if (!p)
 			return -ENOMEM;
 	}
-	rc =  __mnt_fs_set_fstype_ptr(fs, p);
-	if (rc)
-		free(p);
-	return rc;
+	return  __mnt_fs_set_fstype_ptr(fs, p);
 }
 
 /*

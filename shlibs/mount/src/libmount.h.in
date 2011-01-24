@@ -421,6 +421,7 @@ extern int mnt_mount_context(struct libmnt_context *cxt);
 extern int mnt_context_prepare_mount(struct libmnt_context *cxt);
 extern int mnt_context_do_mount(struct libmnt_context *cxt);
 extern int mnt_context_finalize_mount(struct libmnt_context *cxt);
+extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status);
 
 extern int mnt_context_do_umount(struct libmnt_context *cxt);
 
