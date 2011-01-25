@@ -191,6 +191,7 @@ AC_CHECK_FUNCS(
 	strtoull \
 	sysconf \
 	getdtablesize \
+	getexecname \
 	getrlimit \
 	srandom \
 	setresgid \
@@ -247,6 +248,21 @@ no:no)
   AC_MSG_ERROR([cannot find a method to get filedescriptor of directory]) ;;
 esac
 
+
+AC_MSG_CHECKING(whether program_invocation_short_name is defined)
+AC_TRY_COMPILE([#include <argp.h>],
+               [program_invocation_short_name = "test";],
+               AC_DEFINE(HAVE_PROGRAM_INVOCATION_SHORT_NAME, 1,
+                         [Define if program_invocation_short_name is defined])
+               AC_MSG_RESULT(yes),
+               AC_MSG_RESULT(no))
+
+AC_MSG_CHECKING([whether __progname is defined])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([extern char *__progname;],
+           [if (*__progname == 0) return;])],
+           AC_DEFINE(HAVE___PROGNAME, 1, [Define if __progname is defined])
+           AC_MSG_RESULT(yes),
+           AC_MSG_RESULT(no))
 
 dnl Static compilation
 m4_define([UTIL_STATIC_PROGRAMS], [losetup, mount, umount, fdisk, sfdisk, blkid])

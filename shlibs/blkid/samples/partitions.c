@@ -14,6 +14,7 @@
 #include <errno.h>
 
 #include <blkid.h>
+#include "c.h"
 
 int main(int argc, char *argv[])
 {
