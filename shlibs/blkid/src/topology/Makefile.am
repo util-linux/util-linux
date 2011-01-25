@@ -5,10 +5,13 @@ libblkid_topology_la_LIBADD =
 
 noinst_LTLIBRARIES = libblkid_topology.la
 libblkid_topology_la_SOURCES =	topology.c \
-				topology.h \
-				ioctl.c \
-				sysfs.c \
-				md.c \
+				topology.h
+
+if LINUX
+libblkid_topology_la_SOURCES += sysfs.c \
 				dm.c \
-				evms.c \
-				lvm.c
+				lvm.c \
+				ioctl.c \
+				md.c \
+				evms.c
+endif
