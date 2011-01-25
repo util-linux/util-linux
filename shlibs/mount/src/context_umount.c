@@ -289,7 +289,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		return 0;
 	}
 eperm:
-	DBG(CXT, mnt_debug_h(cxt, "umount %s is not allowed for you", tgt));
+	DBG(CXT, mnt_debug_h(cxt, "umount is not allowed for you"));
 	return -EPERM;
 }
 
