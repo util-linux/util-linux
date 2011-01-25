@@ -10,6 +10,8 @@ ts_init "$*"
 
 TESTPROG="$TS_HELPER_LIBMOUNT_TAB"
 
+[ -x $TESTPROG ] || ts_skip "test not compiled"
+
 ts_init_subtest "parse-fstab"
 $TESTPROG --parse "$TS_SELF/files/fstab" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT

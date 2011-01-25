@@ -9,6 +9,8 @@ ts_skip_nonroot
 
 TESTPROG="$TS_HELPER_LIBMOUNT_TAB"
 
+[ -x $TESTPROG ] || ts_skip "test not compiled"
+
 #
 # Init device
 #

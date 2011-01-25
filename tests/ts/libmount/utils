@@ -10,6 +10,8 @@ ts_init "$*"
 
 TESTPROG="$TS_HELPER_LIBMOUNT_UTILS"
 
+[ -x $TESTPROG ] || ts_skip "test not compiled"
+
 ts_init_subtest "match-fstype"
 $TESTPROG --match-fstype ext3 "ext2,ext3,cifs" &> $TS_OUTPUT
 ts_finalize_subtest

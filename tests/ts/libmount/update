@@ -10,6 +10,8 @@ ts_init "$*"
 
 TESTPROG="$TS_HELPER_LIBMOUNT_UPDATE"
 
+[ -x $TESTPROG ] || ts_skip "test not compiled"
+
 # IMPORTANT notes:
 #
 #  - the $TS_OUTPUT variable is between ts_init_subtest and ts_finalize_subtest

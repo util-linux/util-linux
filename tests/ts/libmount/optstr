@@ -10,6 +10,8 @@ ts_init "$*"
 
 TESTPROG="$TS_HELPER_LIBMOUNT_OPTSTR"
 
+[ -x $TESTPROG ] || ts_skip "test not compiled"
+
 ts_init_subtest "append"
 $TESTPROG --append "aaa,bbb=BBB,context=\"foo,bar,gogo\",ccc" "ddd" &> $TS_OUTPUT
 ts_finalize_subtest

@@ -14,6 +14,8 @@ LABEL=libmount-test
 UUID=$(uuidgen)
 MOUNTPOINT="$TS_MOUNTPOINT"
 
+[ -x $TESTPROG ] || ts_skip "test not compiled"
+
 modprobe --dry-run --quiet scsi_debug
 [ "$?" == 0 ] || ts_skip "missing scsi_debug module"
 

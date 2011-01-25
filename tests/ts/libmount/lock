@@ -10,6 +10,8 @@ ts_init "$*"
 
 TESTPROG="$TS_HELPER_LIBMOUNT_LOCK"
 
+[ -x $TESTPROG ] || ts_skip "test not compiled"
+
 #
 # Be careful with number of processes. Don't forget that there is time limit
 # when the mount waits on the mtab lock. If you define too much processes some
