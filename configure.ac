@@ -1,4 +1,4 @@
-AC_INIT(util-linux, 2.19-rc2, kzak@redhat.com)
+AC_INIT(util-linux, 2.19-rc3, kzak@redhat.com)
 
 AC_PREREQ(2.60)
 
