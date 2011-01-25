@@ -39,8 +39,6 @@ endif
 EXTRA_DIST = libmount.sym libmount.h.in
 CLEANFILES = $(tests)
 
-all: tests
-
 # move lib from $(usrlib_execdir) to $(libdir) if needed
 install-exec-hook:
 	if test "$(usrlib_execdir)" != "$(libdir)"; then \
@@ -60,8 +58,8 @@ uninstall-hook:
 tests = test_version test_cache test_optstr test_lock \
 		  test_tab test_utils test_tab_update test_context
 
-tests: $(tests)
-test_%: %.c libmount.la
+tests: all $(tests)
+test_%: %.c
 	$(AM_V_CC)$(COMPILE) -DTEST_PROGRAM $< .libs/libmount.a \
 		$(ul_libblkid_builddir)/.libs/libblkid.a -o $@ \
 		$(TESTS_LIBS)

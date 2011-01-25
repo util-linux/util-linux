@@ -55,7 +55,7 @@ CLEANFILES = $(tests)
 
 tests: all $(tests)
 test_%: %.c
-	$(COMPILE) -DTEST_PROGRAM $< .libs/libblkid.a -o $@ $(UUID_LIBS)
+	$(AM_V_CC)$(COMPILE) -DTEST_PROGRAM $< .libs/libblkid.a -o $@ $(UUID_LIBS)
 
 
 # move lib from $(usrlib_execdir) to $(libdir) if needed
