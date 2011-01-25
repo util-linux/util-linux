@@ -11,6 +11,7 @@
 #include <ctype.h>
 
 #include "mangle.h"
+#include "c.h"
 
 #define isoctal(a) (((a) & ~7) == '0')
 
@@ -103,7 +104,6 @@ char *unmangle(const char *s, char **end)
 }
 
 #ifdef TEST_PROGRAM
-#include <err.h>
 #include <errno.h>
 int main(int argc, char *argv[])
 {

@@ -175,6 +175,8 @@ AC_CHECK_DECL([lseek64],
 
 AC_CHECK_FUNCS(
 	[inet_aton \
+	err \
+	errx \
 	futimens \
 	fstat64 \
 	fsync \
@@ -204,6 +206,8 @@ AC_CHECK_FUNCS(
 	posix_fadvise \
 	getmntinfo \
 	__secure_getenv \
+	warn \
+	warnx \
 	rpmatch])
 AC_FUNC_FSEEKO
 

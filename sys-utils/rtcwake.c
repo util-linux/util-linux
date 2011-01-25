@@ -28,7 +28,6 @@
 #include <unistd.h>
 #include <errno.h>
 #include <time.h>
-#include <err.h>
 
 #include <sys/ioctl.h>
 #include <sys/time.h>
@@ -41,6 +40,7 @@
 #include "pathnames.h"
 #include "usleep.h"
 #include "strutils.h"
+#include "c.h"
 
 /* constants from legacy PC/AT hardware */
 #define	RTC_PF	0x40

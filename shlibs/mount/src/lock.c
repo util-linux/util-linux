@@ -29,6 +29,7 @@
 
 #include "pathnames.h"
 #include "nls.h"
+#include "c.h"
 
 #include "mountP.h"
 
@@ -429,7 +430,6 @@ failed:
 }
 
 #ifdef TEST_PROGRAM
-#include <err.h>
 
 struct libmnt_lock *lock;
 

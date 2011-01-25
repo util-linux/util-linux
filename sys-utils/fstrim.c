@@ -32,7 +32,6 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <getopt.h>
-#include <err.h>
 #include <error.h>
 #include <errno.h>
 
@@ -42,6 +41,7 @@
 
 #include "nls.h"
 #include "strutils.h"
+#include "c.h"
 
 #ifndef FITRIM
 struct fstrim_range {

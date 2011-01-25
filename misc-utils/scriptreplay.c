@@ -26,9 +26,9 @@
 #include <math.h>
 #include <sys/select.h>
 #include <unistd.h>
-#include <err.h>
 
 #include "nls.h"
+#include "c.h"
 
 #define SCRIPT_MIN_DELAY 0.0001		/* from original sripreplay.pl */
 

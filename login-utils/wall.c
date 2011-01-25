@@ -47,7 +47,6 @@
 #include <sys/time.h>
 #include <sys/uio.h>
 
-#include <err.h>
 #include <errno.h>
 #include <paths.h>
 #include <ctype.h>
@@ -65,6 +64,7 @@
 #include "ttymsg.h"
 #include "pathnames.h"
 #include "carefulputc.h"
+#include "c.h"
 
 void	makemsg __P((char *));
 

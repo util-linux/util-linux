@@ -30,7 +30,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <getopt.h>
-#include <err.h>
 #include <limits.h>
 
 #ifndef HAVE_FALLOCATE
@@ -45,6 +44,7 @@
 
 #include "nls.h"
 #include "strutils.h"
+#include "c.h"
 
 
 static void __attribute__((__noreturn__)) usage(FILE *out)

@@ -46,7 +46,6 @@
  * - cleanups
  */
 
-#include <err.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -55,6 +54,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include "nls.h"
+#include "c.h"
 
 /* exit codes */
 

@@ -22,6 +22,7 @@
 
 #include "blkdev.h"
 #include "linux_version.h"
+#include "c.h"
 
 static long
 blkdev_valid_offset (int fd, off_t offset) {
@@ -208,7 +209,6 @@ blkdev_get_sector_size(int fd, int *sector_size)
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
-#include <err.h>
 int
 main(int argc, char **argv)
 {

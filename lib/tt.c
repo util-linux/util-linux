@@ -709,7 +709,6 @@ int tt_parse_columns_list(const char *list, int cols[], int *ncols,
 }
 
 #ifdef TEST_PROGRAM
-#include <err.h>
 #include <errno.h>
 
 enum { MYCOL_NAME, MYCOL_FOO, MYCOL_BAR, MYCOL_PATH };

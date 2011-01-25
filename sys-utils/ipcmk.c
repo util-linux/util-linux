@@ -23,7 +23,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include <err.h>
 #include <time.h>
 
 #include <unistd.h>
@@ -34,6 +33,7 @@
 #include <sys/msg.h>
 
 #include "nls.h"
+#include "c.h"
 
 static const char *progname;
 

@@ -47,12 +47,12 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include <err.h>
 #include <errno.h>
 #include <getopt.h>
 #include "nls.h"
 
 #include "widechar.h"
+#include "c.h"
 
 #ifdef HAVE_WIDECHAR
 #define wcs_width(s) wcswidth(s,wcslen(s))

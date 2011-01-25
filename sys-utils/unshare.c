@@ -18,7 +18,6 @@
  * 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <err.h>
 #include <errno.h>
 #include <getopt.h>
 #include <sched.h>
@@ -27,6 +26,7 @@
 #include <unistd.h>
 
 #include "nls.h"
+#include "c.h"
 
 #ifndef CLONE_NEWSNS
 # define CLONE_NEWNS 0x00020000

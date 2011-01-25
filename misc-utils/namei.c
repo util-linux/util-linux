@@ -30,7 +30,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/param.h>
-#include <err.h>
 #include <pwd.h>
 #include <grp.h>
 

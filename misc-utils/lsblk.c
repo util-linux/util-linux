@@ -31,7 +31,6 @@
 #include <dirent.h>
 #include <fcntl.h>
 #include <string.h>
-#include <err.h>
 #include <sys/ioctl.h>
 #include <inttypes.h>
 #include <stdarg.h>
@@ -51,6 +50,7 @@
 #include "tt.h"
 #include "xalloc.h"
 #include "strutils.h"
+#include "c.h"
 
 /* column IDs */
 enum {

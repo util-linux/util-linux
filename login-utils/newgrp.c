@@ -14,7 +14,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-#include <err.h>
 
 #ifdef HAVE_CRYPT_H
 #include <crypt.h>

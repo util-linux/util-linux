@@ -32,7 +32,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <dirent.h>
-#include <err.h>
+#include "c.h"
 
 #ifndef MS_MOVE
 #define MS_MOVE 8192

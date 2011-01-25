@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 
 #include "at.h"
+#include "c.h"
 
 int fstat_at(int dir, const char *dirname, const char *filename,
 				struct stat *st, int nofollow)
@@ -56,7 +57,6 @@ FILE *fopen_at(int dir, const char *dirname, const char *filename, int flags,
 }
 
 #ifdef TEST_PROGRAM
-#include <err.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <dirent.h>

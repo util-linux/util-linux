@@ -21,7 +21,6 @@
 
 #include <ctype.h>
 #include <dirent.h>
-#include <err.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
@@ -37,6 +36,7 @@
 
 #include "cpuset.h"
 #include "nls.h"
+#include "c.h"
 
 #define CACHE_MAX 100
 

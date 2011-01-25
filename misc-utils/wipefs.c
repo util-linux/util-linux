@@ -27,7 +27,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <getopt.h>
-#include <err.h>
 #include <string.h>
 #include <limits.h>
 
@@ -37,6 +36,7 @@
 #include "xalloc.h"
 #include "strutils.h"
 #include "writeall.h"
+#include "c.h"
 
 struct wipe_desc {
 	loff_t		offset;		/* magic string offset */

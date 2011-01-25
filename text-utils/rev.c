@@ -55,12 +55,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <err.h>
 #include <signal.h>
 
 #include "nls.h"
 #include "xalloc.h"
 #include "widechar.h"
+#include "c.h"
 
 wchar_t *buf;
 

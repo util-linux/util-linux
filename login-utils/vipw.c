@@ -60,13 +60,13 @@ static char version_string[] = "vipw 1.4";
 #include <signal.h>
 #include <fcntl.h>
 #include <errno.h>
-#include <err.h>
 #include <paths.h>
 #include <unistd.h>
 
 #include "setpwnam.h"
 #include "strutils.h"
 #include "nls.h"
+#include "c.h"
 
 #ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>

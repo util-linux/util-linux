@@ -24,12 +24,11 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <errno.h>
-#include <err.h>
 
 #include "cpuset.h"
 #include "nls.h"
-
 #include "strutils.h"
+#include "c.h"
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {

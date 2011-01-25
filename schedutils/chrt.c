@@ -27,7 +27,6 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <errno.h>
-#include <err.h>
 
 #include "c.h"
 #include "nls.h"

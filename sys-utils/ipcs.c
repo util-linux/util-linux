@@ -26,7 +26,6 @@
 #include <pwd.h>
 #include <grp.h>
 #include <unistd.h>
-#include <err.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
@@ -34,6 +33,7 @@
 #include <sys/shm.h>
 
 #include "nls.h"
+#include "c.h"
 
 /*-------------------------------------------------------------------*/
 /* SHM_DEST and SHM_LOCKED are defined in kernel headers,

@@ -44,8 +44,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <err.h>
 #include "nls.h"
+#include "c.h"
 
 static int donice(int,int,int);
 

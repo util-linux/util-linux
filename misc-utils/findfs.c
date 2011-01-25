@@ -8,11 +8,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <err.h>
 
 #include <blkid.h>
 
 #include "nls.h"
+#include "c.h"
 
 static void __attribute__((__noreturn__)) usage(int rc)
 {

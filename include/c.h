@@ -6,6 +6,15 @@
 #define UTIL_LINUX_C_H
 
 #include <limits.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdarg.h>
+#include <string.h>
+#include <errno.h>
+
+#ifdef HAVE_ERR_H
+# include <err.h>
+#endif
 
 /*
  * Compiler specific stuff
@@ -93,6 +102,44 @@
 	(void) (&_max1 == &_max2);		\
 	_max1 > _max2 ? _max1 : _max2; })
 #endif
+
+
+#ifndef HAVE_ERR_H
+static inline void
+errmsg(char doexit, int excode, char adderr, const char *fmt, ...)
+{
+	fprintf(stderr, "%s: ", program_invocation_short_name);
+	if (fmt != NULL) {
+		va_list argp;
+		va_start(argp, fmt);
+		vfprintf(stderr, fmt, argp);
+		va_end(argp);
+		if (adderr)
+			fprintf(stderr, ": ");
+	}
+	if (adderr)
+		fprintf(stderr, "%s", strerror(errno));
+	fprintf(stderr, "\n");
+	if (doexit)
+		exit(excode);
+}
+
+#ifndef HAVE_ERR
+# define err(E, FMT...) errmsg(1, E, 1, FMT)
+#endif
+
+#ifndef HAVE_ERRX
+# define errx(E, FMT...) errmsg(1, E, 0, FMT)
+#endif
+
+#ifndef HAVE_WARN
+# define warn(FMT...) errmsg(0, 0, 1, FMT)
+#endif
+
+#ifndef HAVE_WARNX
+# define warnx(FMT...) errmsg(0, 0, 0, FMT)
+#endif
+#endif /* !HAVE_ERR_H */
 
 
 static inline __attribute__((const)) int is_power_of_2(unsigned long num)

@@ -12,11 +12,10 @@
 #include <getopt.h>
 #include <unistd.h>
 #include <sys/syscall.h>
-#include <err.h>
 
 #include "nls.h"
-
 #include "strutils.h"
+#include "c.h"
 
 static int tolerant;
 

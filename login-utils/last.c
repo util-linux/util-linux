@@ -29,7 +29,6 @@
 /*
  * last
  */
-#include <err.h>
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/file.h>
@@ -51,6 +50,7 @@
 #include "pathnames.h"
 #include "nls.h"
 #include "xalloc.h"
+#include "c.h"
 
 #define	SECDAY	(24*60*60)			/* seconds in a day */
 #define	NO	0				/* false/no */

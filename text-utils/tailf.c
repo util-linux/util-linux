@@ -35,7 +35,6 @@
 #include <fcntl.h>
 #include <ctype.h>
 #include <errno.h>
-#include <err.h>
 #ifdef HAVE_INOTIFY_INIT
 #include <sys/inotify.h>
 #endif
@@ -43,6 +42,7 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "usleep.h"
+#include "c.h"
 
 #define DEFAULT_LINES  10
 

@@ -20,7 +20,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <getopt.h>
-#include <err.h>
 
 #include "blkdev.h"
 #include "nls.h"

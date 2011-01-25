@@ -97,7 +97,6 @@
 #include <sys/wait.h>
 #include <signal.h>
 #include <errno.h>
-#include <err.h>
 #include <grp.h>
 #include <pwd.h>
 #include <utmp.h>
@@ -120,6 +119,7 @@
 #include "strutils.h"
 #include "nls.h"
 #include "xalloc.h"
+#include "c.h"
 
 #ifdef HAVE_SECURITY_PAM_MISC_H
 #  include <security/pam_appl.h>

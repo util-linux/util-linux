@@ -47,12 +47,12 @@
 #include <stdlib.h>		/* for getenv() */
 #include <limits.h>		/* for INT_MAX */
 #include <signal.h>		/* for signal() */
-#include <err.h>
 #include <errno.h>
 
 #include "nls.h"
 #include "xalloc.h"
 #include "widechar.h"
+#include "c.h"
 
 #ifdef HAVE_WIDECHAR
 static int put1wc(int c) /* Output an ASCII character as a wide character */

@@ -30,7 +30,6 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <errno.h>
-#include <err.h>
 #include <ctype.h>
 #include <getopt.h>
 
@@ -44,6 +43,7 @@
 #include "nls.h"
 #include "env.h"
 #include "xalloc.h"
+#include "c.h"
 
 #ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>

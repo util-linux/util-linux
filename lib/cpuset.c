@@ -20,6 +20,7 @@
 #include <sys/syscall.h>
 
 #include "cpuset.h"
+#include "c.h"
 
 static inline int val_to_char(int v)
 {
@@ -303,7 +304,6 @@ int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize)
 
 #ifdef TEST_PROGRAM
 
-#include <err.h>
 #include <getopt.h>
 
 int main(int argc, char *argv[])

@@ -8,10 +8,10 @@
 #include <inttypes.h>
 #include <ctype.h>
 #include <errno.h>
-#include <err.h>
 #include <sys/stat.h>
 #include <locale.h>
 #include <string.h>
+#include "c.h"
 
 static int do_scale_by_power (uintmax_t *x, int base, int power)
 {

@@ -13,7 +13,6 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <stdint.h>
-#include <err.h>
 #include <ctype.h>
 
 #include "bitops.h"
@@ -25,6 +24,7 @@
 #include "swapheader.h"
 #include "mangle.h"
 #include "canonicalize.h"
+#include "c.h"
 
 #define PATH_MKSWAP	"/sbin/mkswap"
 

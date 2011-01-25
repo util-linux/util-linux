@@ -13,7 +13,6 @@
 
 #include <stdio.h>
 #include <fcntl.h>
-#include <err.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
