@@ -1440,8 +1440,10 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	}
 
 	/* fstab is not required if source and target are specified */
-	if (src && tgt && !(cxt->optsmode == MNT_OMODE_FORCE))
+	if (src && tgt && !(cxt->optsmode & MNT_OMODE_FORCE)) {
+		DBG(CXT, mnt_debug_h(cxt, "fstab not required -- skip"));
 		return 0;
+	}
 
 	DBG(CXT, mnt_debug_h(cxt,
 		"trying to apply fstab (src=%s, target=%s)", src, tgt));
