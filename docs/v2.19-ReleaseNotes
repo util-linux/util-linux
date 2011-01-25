@@ -51,6 +51,9 @@ fstrim(8):
 swapon(8):
    - supports new options "discard" and "nofail"
 
+libmount:
+   - include file has been renamed from mount/mount.h to libmount/libmount.h
+
 
 Changes between v2.18 and v2.19
 -------------------------------
@@ -89,6 +92,7 @@ build-sys:
    - link with socketlibs when necessary  [Fabian Groffen]
    - man aliases don't depend on original man page  [Diego Elio 'Flameeyes' Pettenò]
    - release++ (v2.19-rc1)  [Karel Zak]
+   - release++ (v2.19-rc2)  [Karel Zak]
    - remove generated po/POTFILES.in  [Karel Zak]
    - remove unnecessary header  [Karel Zak]
    - require automake 1.10 as gtk-doc requires it anyway  [Diego Elio 'Flameeyes' Pettenò]
@@ -138,23 +142,23 @@ disk-utils:
 dmesg:
    - fix memory leak in dmesg(1).  [Davidlohr Bueso]
 docs:
-   - add blkid --list-all to TODO  [Karel Zak]
    - add COPYING.lib* files  [Karel Zak]
+   - add blkid --list-all to TODO  [Karel Zak]
    - add note about agetty to TODO  [Karel Zak]
    - add note about sfdisk to TODO  [Karel Zak]
    - add v2.19 ReleaseNotes  [Karel Zak]
    - correct spelling mistakes in DEPRECATED file  [Jon Grant]
-   - fix typo  [Davidlohr Bueso]
    - fix typos in man pages  [Karel Zak]
    - make it easier to find mail list address  [Alexander Shishkin]
    - mark line(1) as deprecated  [Karel Zak]
    - remove ipc.texi (info with IPC API docs)  [Karel Zak]
    - update AUTHORS file  [Karel Zak]
    - update DEPRECATED file  [Karel Zak]
+   - update TODO  [Karel Zak]
    - update TODO file  [Davidlohr Bueso]
    - update TODO file  [Karel Zak]
-   - update TODO  [Karel Zak]
    - update v2.19 ReleaseNotes  [Karel Zak]
+   - fix typo  [Davidlohr Bueso]
    - use rpmatch() for sfdisk  [Karel Zak]
 fallocate:
    - fix build failure with old linux headers  [Mike Frysinger]
@@ -334,6 +338,7 @@ libmount:
    - cleanup return codes (tab_parse.c)  [Karel Zak]
    - compile tests  [Karel Zak]
    - correctly use "none" values  [Karel Zak]
+   - don't compile tests by default  [Karel Zak]
    - don't export some cache.c files  [Karel Zak]
    - don't return old data from optls iterator  [Karel Zak]
    - don't store filename to mnt_tab  [Karel Zak]
@@ -343,6 +348,7 @@ libmount:
    - fix comment for mnt_unlock_file()  [Karel Zak]
    - fix context mount test  [Karel Zak]
    - fix datatype for mountflags  [Karel Zak]
+   - fix debug message  [Karel Zak]
    - fix merge_optstr (do not truncate 3 trailing characters)  [Petr Uzel]
    - fix mnt_optstr_apply_flags() to work with optional variables  [Karel Zak]
    - fix mnt_optstr_remove_option_at()  [Karel Zak]
@@ -560,6 +566,7 @@ tests:
    - improve libmount context mount and umount test  [Karel Zak]
    - improve subtests initialization  [Karel Zak]
    - refresh libmount fstab parser tests  [Karel Zak]
+   - skip non-compiled libmount tests  [Karel Zak]
    - truncate BeFS and tuxonice images  [Karel Zak]
    - update lscpu tests  [Karel Zak]
    - update lscpu tests on x86_64  [Karel Zak]
