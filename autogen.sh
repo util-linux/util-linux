@@ -55,7 +55,7 @@ test -f mount/mount.c || {
 }
 
 ltver=$(libtoolize --version | awk '/^libtoolize/ { print $4 }')
-test ${ltver##2.} == "$ltver" && {
+test ${ltver##2.} = "$ltver" && {
 	echo "You must have libtool version >= 2.x.x, but you have $ltver."
 	DIE=1
 }
