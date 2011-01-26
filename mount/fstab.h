@@ -39,4 +39,6 @@ void lock_mtab (void);
 void unlock_mtab (void);
 void update_mtab (const char *special, struct my_mntent *with);
 
+char *get_option_value(const char *list, const char *s);
+
 #endif /* MOUNT_FSTAB_H */

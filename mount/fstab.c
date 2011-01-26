@@ -760,6 +760,7 @@ lock_mtab (void) {
 	}
 }
 
+/* returns whole option with name @optname from @src list */
 static char *
 get_option(const char *optname, const char *src, size_t *len)
 {
@@ -783,6 +784,25 @@ get_option(const char *optname, const char *src, size_t *len)
 	    (*(opt + sz) == '\0' || *(opt + sz) == ','))
 		return opt;
 
+	return NULL;
+}
+
+ /* If @list contains "user=peter" and @s is "user=", return "peter" */
+char *
+get_option_value(const char *list, const char *s)
+{
+	const char *t;
+	size_t n = strlen(s);
+
+	while (list && *list) {
+		if (strncmp(list, s, n) == 0) {
+			s = t = list + n;
+			while (*s && *s != ',')
+				s++;
+			return xstrndup(t, s-t);
+		}
+		while (*list && *list++ != ',') ;
+	}
 	return NULL;
 }
 

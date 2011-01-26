@@ -455,26 +455,6 @@ contains(const char *list, const char *s) {
 	return 0;
 }
 
-/*
- * If list contains "user=peter" and we ask for "user=", return "peter"
- */
-static char *
-get_value(const char *list, const char *s) {
-	const char *t;
-	int n = strlen(s);
-
-	while (list && *list) {
-		if (strncmp(list, s, n) == 0) {
-			s = t = list+n;
-			while (*s && *s != ',')
-				s++;
-			return xstrndup(t, s-t);
-		}
-		while (*list && *list++ != ',') ;
-	}
-	return NULL;
-}
-
 /* check if @mc contains a loop device which is associated
  * with the @file in fs
  */
@@ -494,7 +474,7 @@ is_valid_loop(struct mntentchn *mc, struct mntentchn *fs)
 		return 0;
 
 	/* check for offset option in fstab */
-	p = get_value(fs->m.mnt_opts, "offset=");
+	p = get_option_value(fs->m.mnt_opts, "offset=");
 	if (p && strtosize(p, &offset)) {
 		if (verbose > 1)
 			printf(_("failed to parse 'offset=%s' options\n"), p);
@@ -572,7 +552,8 @@ umount_file (char *arg) {
 			char *uhelper = NULL;
 
 			if (mc->m.mnt_opts)
-				uhelper = get_value(mc->m.mnt_opts, "uhelper=");
+				uhelper = get_option_value(mc->m.mnt_opts,
+							   "uhelper=");
 			if (uhelper) {
 				int status = 0;
 				if (check_special_umountprog(arg, arg,
@@ -641,7 +622,7 @@ umount_file (char *arg) {
 			options = mc->m.mnt_opts;
 			if (!options)
 				options = "";
-			mtab_user = get_value(options, "user=");
+			mtab_user = get_option_value(options, "user=");
 
 			if (user && mtab_user && streq (user, mtab_user))
 				ok = 1;
