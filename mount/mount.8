@@ -785,9 +785,12 @@ All I/O to the filesystem should be done asynchronously. (See also the
 option.)
 .TP
 .B atime
-Update inode access time for each access. See also the
+Do not use noatime feature, then the inode access time is controlled by kernel
+defaults. See also the description for
 .B strictatime
-mount option.
+and
+.B reatime
+mount options.
 .TP
 .B noatime
 Do not update inode access times on this filesystem (e.g, for faster
