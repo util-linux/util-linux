@@ -46,6 +46,8 @@
 .Op Fl p Ar pri
 .Op Fl t Ar tag
 .Op Fl u Ar socket
+.Op Fl n Ar server
+.Op Fl P Ar udpport
 .Op Ar message ...
 .Sh DESCRIPTION
 .Nm Logger
@@ -83,6 +85,14 @@ Write to socket as specified with
 instead of builtin syslog routines.
 .It Fl d
 Use a datagram instead of a stream connection to this socket.
+.It Fl n Ar serv
+Write to remote syslog server using UDP as specified with
+.Ar server
+instead of builtin syslog routines.
+.It Fl P Ar port
+Change UDP port to the value as specified with
+.Ar udpport  .
+Default port number is 514.
 .It --
 End the argument list. This is to allow the
 .Ar message
@@ -114,6 +124,8 @@ For the priority order and intended purposes of these levels, see
 logger System rebooted
 
 logger \-p local0.notice \-t HOSTIDM \-f /dev/idmc
+
+logger \-n loghost.example.com System rebooted
 .Ed
 .Sh SEE ALSO
 .Xr syslog 3 ,

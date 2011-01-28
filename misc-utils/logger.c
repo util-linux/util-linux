@@ -47,6 +47,8 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 #include "nls.h"
 
 #define	SYSLOG_NAMES
@@ -57,6 +59,7 @@ int	pencode __P((char *));
 void	usage __P((void));
 
 static int optd = 0;
+static int udpport = 514;
 
 static int
 myopenlog(const char *sock) {
@@ -83,6 +86,32 @@ myopenlog(const char *sock) {
        return fd;
 }
 
+static int
+udpopenlog(const char *servername,int port) {
+	int fd;
+	struct sockaddr_in s_addr;
+	struct hostent *serverhost;
+
+	if ((serverhost = gethostbyname(servername)) == NULL ){
+		printf (_("unable to resolve '%s'\n"), servername);
+                exit(1);
+	}
+
+	if ((fd = socket(AF_INET, SOCK_DGRAM , 0)) == -1) {
+		printf (_("socket: %s.\n"), strerror(errno));
+		exit (1);
+	}
+
+	bcopy(serverhost->h_addr,&s_addr.sin_addr,serverhost->h_length);
+        s_addr.sin_family=AF_INET;
+        s_addr.sin_port=htons(port);
+
+        if (connect(fd, (struct sockaddr *) &s_addr, sizeof(s_addr)) == -1) {
+		printf (_("connect: %s.\n"), strerror(errno));
+                exit(1);
+        }
+	return fd;
+}
 static void
 mysyslog(int fd, int logflags, int pri, char *tag, char *msg) {
        char buf[1000], pid[30], *cp, *tp;
@@ -122,6 +151,7 @@ main(int argc, char **argv) {
 	int ch, logflags, pri;
 	char *tag, buf[1024];
 	char *usock = NULL;
+	char *udpserver = NULL;
 	int LogSock = -1;
 
 	setlocale(LC_ALL, "");
@@ -131,7 +161,7 @@ main(int argc, char **argv) {
 	tag = NULL;
 	pri = LOG_NOTICE;
 	logflags = 0;
-	while ((ch = getopt(argc, argv, "f:ip:st:u:d")) != -1)
+	while ((ch = getopt(argc, argv, "f:ip:st:u:dn:P:")) != -1)
 		switch((char)ch) {
 		case 'f':		/* file to log */
 			if (freopen(optarg, "r", stdin) == NULL) {
@@ -159,6 +189,13 @@ main(int argc, char **argv) {
 		case 'd':
 			optd = 1;	/* use datagrams */
 			break;
+		case 'n':		/* udp socket */
+			optd = 1;	/* use datagrams because udp */
+			udpserver = optarg;
+			break;
+		case 'P':		/* change udp port */
+			udpport = atoi(optarg);
+			break;
 		case '?':
 		default:
 			usage();
@@ -167,8 +204,10 @@ main(int argc, char **argv) {
 	argv += optind;
 
 	/* setup for logging */
-	if (!usock)
+	if (!usock && !udpserver)
 		openlog(tag ? tag : getlogin(), logflags, 0);
+	else if (udpserver)
+		LogSock = udpopenlog(udpserver,udpport);
 	else
 		LogSock = myopenlog(usock);
 
@@ -182,14 +221,14 @@ main(int argc, char **argv) {
 		for (p = buf, endp = buf + sizeof(buf) - 2; *argv;) {
 			len = strlen(*argv);
 			if (p + len > endp && p > buf) {
-			    if (!usock)
+			    if (!usock && !udpserver)
 				syslog(pri, "%s", buf);
 			    else
 				mysyslog(LogSock, logflags, pri, tag, buf);
 				p = buf;
 			}
 			if (len > sizeof(buf) - 1) {
-			    if (!usock)
+			    if (!usock && !udpserver)
 				syslog(pri, "%s", *argv++);
 			    else
 				mysyslog(LogSock, logflags, pri, tag, *argv++);
