@@ -383,7 +383,7 @@ static struct libmnt_table *parse_tabfile(const char *path)
 
 	if (rc) {
 		mnt_free_table(tb);
-		warn(_("can't read: %s"), path);
+		warn(_("can't read %s"), path);
 		return NULL;
 	}
 	return tb;

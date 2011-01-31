@@ -171,7 +171,8 @@ ttymsg(struct iovec *iov, int iovcnt, char *line, int tmout) {
 		if (forked)
 			_exit(1);
 		if (strlen(strerror(errno)) > 1000)
-			(void) sprintf(errbuf, _("%s: BAD ERROR"), device);
+			(void) sprintf(errbuf, _("%s: BAD ERROR, message is "
+						 "far too long"), device);
 		else {
 			errsv = errno;
 			(void) sprintf(errbuf, "%s: %s", device,

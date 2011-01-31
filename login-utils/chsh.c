@@ -87,9 +87,9 @@ static boolean get_shell_list (char *shell);
 static void __attribute__((__noreturn__)) usage (FILE *fp)
 {
     fprintf (fp,
-	     _("Usage: %s [ -s shell ] [ --list-shells ] "
-	       "[ --help ] [ --version ]\n"
-	       "       [ username ]\n"), whoami);
+	     _("Usage: %1$s [-s shell] [username]\n"
+	       "   or: %1$s (--list-shells | --help | --version)\n"),
+	     whoami);
 
     exit(fp == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }

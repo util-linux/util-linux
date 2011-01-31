@@ -915,14 +915,15 @@ print_readable(struct lscpu_desc *desc, int hex)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out, _("Usage: %s [option]\n"),
-			program_invocation_short_name);
+	fprintf(out, _(
+		"\nUsage:\n"
+		" %s [options]\n"), program_invocation_short_name);
 
-	fprintf(out,_("CPU architecture information helper\n\n"
-		"  -h, --help     usage information\n"
-		"  -p, --parse    print out in parsable instead of printable format.\n"
-		"  -s, --sysroot  use the directory as a new system root.\n"
-		"  -x, --hex      print haxadecimal masks rather than lists of CPU(s)\n"));
+	puts(_(	"\nOptions:\n"
+		"  -h, --help         print this help\n"
+		"  -p, --parse        print out a parsable instead of a readable format\n"
+		"  -s, --sysroot DIR  use directory DIR as system root\n"
+		"  -x, --hex          print hexadecimal masks rather than lists of CPUs\n"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }

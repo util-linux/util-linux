@@ -593,7 +593,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, _(
 		"\nUsage:\n"
-		" %s [-a|-d|-s] [--nr <N:M> | <device>] <wholedisk>\n"),
+		" %s [-a|-d|-s] [--nr <N:M> | <partition>] <disk>\n"),
 		program_invocation_short_name);
 
 	fprintf(out, _(
@@ -607,8 +607,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -g, --noheadings     don't print headings for --show\n"
 		" -r, --raw            use raw format output\n"
 		" -t, --type <TYPE>    specify the partition type (dos, bsd, solaris, etc.)\n"
-		" -n, --nr <M:N>       specify the range of partitions (--nr 2:4)\n"
-		" -o, --output <LIST>  output column\n"
+		" -n, --nr <M:N>       specify the range of partitions (e.g. --nr 2:4)\n"
+		" -o, --output <LIST>  define which output columns to use\n"
 		" -h, --help           print this help\n\n"));
 
 	fprintf(out, _("\nAvailable columns (for --show):\n"));

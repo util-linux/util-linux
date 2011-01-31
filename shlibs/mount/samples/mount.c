@@ -305,7 +305,7 @@ int main(int argc, char **argv)
 		case 'L':
 		case 'U':
 			if (source)
-				errx(EX_USAGE, _("only one <source> could be specified"));
+				errx(EX_USAGE, _("only one <source> may be specified"));
 			if (asprintf(&srcbuf, "%s=\"%s\"",
 				     c == 'L' ? "LABEL" : "UUID", optarg) <= 0)
 				err(EX_SYSERR, _("failed to allocate source buffer"));
