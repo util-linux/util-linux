@@ -110,7 +110,7 @@ int main(int argc, char **argv)
 		case 'm':
 			if (strtosize(optarg, &range.minlen))
 				errx(EXIT_FAILURE,
-				     _("failed to parse minimal extend length: %s"),
+				     _("failed to parse minimum extent length: %s"),
 				     optarg);
 			break;
 		case 'v':

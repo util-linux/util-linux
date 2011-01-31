@@ -90,7 +90,7 @@ struct colinfo {
 /* columns descriptions */
 static struct colinfo infos[__NCOLUMNS] = {
 	[COL_NAME]   = { "NAME",    0.25, TT_FL_TREE, N_("device name") },
-	[COL_KNAME]  = { "KNAME",   0.3, 0, N_("internel kernel device name") },
+	[COL_KNAME]  = { "KNAME",   0.3, 0, N_("internal kernel device name") },
 	[COL_MAJMIN] = { "MAJ:MIN", 6, 0, N_("major:minor device number") },
 	[COL_FSTYPE] = { "FSTYPE",  0.1, TT_FL_TRUNC, N_("filesystem type") },
 	[COL_TARGET] = { "MOUNTPOINT", 0.10, TT_FL_TRUNC, N_("where the device is mounted") },

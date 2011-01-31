@@ -774,7 +774,7 @@ int main(int argc, char **argv)
 		usage(stderr);
 
 	if (device && (upper || lower))
-		errx(EXIT_FAILURE, _("--nr and <partition> are mutually exclusive}"));
+		errx(EXIT_FAILURE, _("--nr and <partition> are mutually exclusive"));
 
 	assert(wholedisk);
 
