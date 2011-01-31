@@ -50,6 +50,7 @@ wipefs_SOURCES = wipefs.c $(top_srcdir)/lib/strutils.c
 wipefs_LDADD = $(ul_libblkid_la)
 wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 
+if LINUX
 bin_PROGRAMS += lsblk
 dist_man_MANS += lsblk.8
 lsblk_SOURCES = lsblk.c \
@@ -59,6 +60,8 @@ lsblk_SOURCES = lsblk.c \
 		$(top_srcdir)/lib/strutils.c
 lsblk_LDADD = $(ul_libblkid_la)
 lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+endif
+
 if HAVE_STATIC_BLKID
 sbin_PROGRAMS += blkid.static
 blkid_static_SOURCES = $(blkid_SOURCES)

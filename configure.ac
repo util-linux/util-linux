@@ -445,10 +445,19 @@ AC_ARG_VAR([BLKID_LIBS_STATIC], [-l options for linking statically with blkid])
 
 AC_ARG_ENABLE([libmount],
   AS_HELP_STRING([--disable-libmount], [do not build libmount]),
-  [], enable_libmount=yes
+  [], enable_libmount=check
 )
+build_libmount=yes
+if test "x$enable_libmount" = xcheck; then
+  if test "x$linux_os" = xno; then
+    AC_MSG_WARN([non-linux system; do not build libmount])
+    build_libmount=no
+  fi
+elif test "x$enable_libmount" = xno; then
+    build_libmount=no
+fi
 
-case "$enable_libblkid:$enable_libmount" in
+case "$enable_libblkid:$build_libmount" in
 no:yes)
   AC_MSG_ERROR([cannot enable libmount when libblkid is disabled]) ;;
 esac
@@ -456,7 +465,7 @@ esac
 AC_SUBST([LIBMOUNT_VERSION])
 AC_SUBST([LIBMOUNT_VERSION_INFO])
 AC_DEFINE_UNQUOTED(LIBMOUNT_VERSION, "$LIBMOUNT_VERSION", [libmount version string])
-AM_CONDITIONAL(BUILD_LIBMOUNT, test "x$enable_libmount" = xyes)
+AM_CONDITIONAL(BUILD_LIBMOUNT, test "x$build_libmount" = xyes)
 
 
 AC_ARG_ENABLE([libmount-mount],
@@ -464,7 +473,7 @@ AC_ARG_ENABLE([libmount-mount],
   [], enable_libmount_mount=no
 )
 
-case "$enable_libmount:$enable_libmount_mount" in
+case "$build_libmount:$enable_libmount_mount" in
 no:yes)
   AC_MSG_ERROR([cannot link mount(8) with libmount when libmount is disabled]) ;;
 yes:yes)
