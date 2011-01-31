@@ -99,7 +99,7 @@ do_warn(char *s, ...) {
 }
 
 static void
-warn(char *s, ...) {
+my_warn(char *s, ...) {
     va_list p;
 
     va_start(p, s);
@@ -488,7 +488,7 @@ get_cylindersize(char *dev, int fd, int silent) {
 	    B.cylinders = B.total_size / B.cylindersize;
 
     if (R.start && !force) {
-	warn(
+	my_warn(
 	    _("Warning: start=%lu - this looks like a partition rather than\n"
 	      "the entire disk. Using fdisk on it is probably meaningless.\n"
 	      "[Use the --force option if you really want this]\n"), R.start);
@@ -496,19 +496,19 @@ get_cylindersize(char *dev, int fd, int silent) {
     }
 #if 0
     if (R.heads && B.heads != R.heads)
-	warn(_("Warning: HDIO_GETGEO says that there are %lu heads\n"),
+	my_warn(_("Warning: HDIO_GETGEO says that there are %lu heads\n"),
 	     R.heads);
     if (R.sectors && B.sectors != R.sectors)
-	warn(_("Warning: HDIO_GETGEO says that there are %lu sectors\n"),
+	my_warn(_("Warning: HDIO_GETGEO says that there are %lu sectors\n"),
 	     R.sectors);
     if (R.cylinders && B.cylinders != R.cylinders
 	    && B.cylinders < 65536 && R.cylinders < 65536)
-	warn(_("Warning: BLKGETSIZE/HDIO_GETGEO says that there are %lu cylinders\n"),
+	my_warn(_("Warning: BLKGETSIZE/HDIO_GETGEO says that there are %lu cylinders\n"),
 	     R.cylinders);
 #endif
 
     if (B.sectors > 63)
-      warn(_("Warning: unlikely number of sectors (%lu) - usually at most 63\n"
+      my_warn(_("Warning: unlikely number of sectors (%lu) - usually at most 63\n"
 	   "This will give problems with all software that uses C/H/S addressing.\n"),
 	   B.sectors);
     if (!silent)
@@ -594,17 +594,17 @@ chs_ok (chs a, char *v, char *w) {
     if (is_equal_chs(a, zero_chs))
       return 1;
     if (B.heads && aa.h >= B.heads) {
-	warn(_("%s of partition %s has impossible value for head: "
+	my_warn(_("%s of partition %s has impossible value for head: "
 	     "%lu (should be in 0-%lu)\n"), w, v, aa.h, B.heads-1);
 	ret = 0;
     }
     if (B.sectors && (aa.s == 0 || aa.s > B.sectors)) {
-	warn(_("%s of partition %s has impossible value for sector: "
+	my_warn(_("%s of partition %s has impossible value for sector: "
 	     "%lu (should be in 1-%lu)\n"), w, v, aa.s, B.sectors);
 	ret = 0;
     }
     if (B.cylinders && aa.c >= B.cylinders) {
-	warn(_("%s of partition %s has impossible value for cylinders: "
+	my_warn(_("%s of partition %s has impossible value for cylinders: "
 	     "%lu (should be in 0-%lu)\n"), w, v, aa.c, B.cylinders-1);
 	ret = 0;
     }
@@ -1199,13 +1199,13 @@ partitions_ok(struct disk_desc *z) {
     for (p = partitions; p - partitions < partno; p++)
       if (p->size == 0) {
 	  if (p->p.sys_type != EMPTY_PARTITION)
-	    warn(_("Warning: partition %s has size 0 but is not marked Empty\n"),
+	    my_warn(_("Warning: partition %s has size 0 but is not marked Empty\n"),
 		 PNO(p));
 	  else if (p->p.bootable != 0)
-	    warn(_("Warning: partition %s has size 0 and is bootable\n"),
+	    my_warn(_("Warning: partition %s has size 0 and is bootable\n"),
 		 PNO(p));
 	  else if (p->p.start_sect != 0)
-	    warn(_("Warning: partition %s has size 0 and nonzero start\n"),
+	    my_warn(_("Warning: partition %s has size 0 and nonzero start\n"),
 		 PNO(p));
 	  /* all this is probably harmless, no error return */
       }
@@ -1216,8 +1216,8 @@ partitions_ok(struct disk_desc *z) {
       if (p->size && !is_extended(p->p.sys_type)) {
 	  q = p->ep;
 	  if (p->start < q->start || p->start + p->size > q->start + q->size) {
-	      warn(_("Warning: partition %s "), PNO(p));
-	      warn(_("is not contained in partition %s\n"), PNO(q));
+	      my_warn(_("Warning: partition %s "), PNO(p));
+	      my_warn(_("is not contained in partition %s\n"), PNO(q));
 	      return 0;
 	  }
       }
@@ -1228,8 +1228,8 @@ partitions_ok(struct disk_desc *z) {
 	for (q = p+1; q < partitions+partno; q++)
 	  if (q->size && !is_extended(q->p.sys_type))
 	    if (!((p->start > q-> start) ? disj(q,p) : disj(p,q))) {
-		warn(_("Warning: partitions %s "), PNO(p));
-		warn(_("and %s overlap\n"), PNO(q));
+		my_warn(_("Warning: partitions %s "), PNO(p));
+		my_warn(_("and %s overlap\n"), PNO(q));
 		return 0;
 	    }
 
@@ -1240,7 +1240,7 @@ partitions_ok(struct disk_desc *z) {
 	for (q = partitions; q < partitions+partno; q++)
 	  if (is_extended(q->p.sys_type))
 	    if (p->start <= q->start && p->start + p->size > q->start) {
-		warn(_("Warning: partition %s contains part of "
+		my_warn(_("Warning: partition %s contains part of "
 		       "the partition table (sector %lu),\n"
 		       "and will destroy it when filled\n"),
 		     PNO(p), q->start);
@@ -1252,11 +1252,11 @@ partitions_ok(struct disk_desc *z) {
     for (p = partitions; p < partitions+partno; p++)
       if (p->size) {
 	  if (p->start == 0) {
-	      warn(_("Warning: partition %s starts at sector 0\n"), PNO(p));
+	      my_warn(_("Warning: partition %s starts at sector 0\n"), PNO(p));
 	      return 0;
 	  }
 	  if (p->size && p->start + p->size > ds) {
-	      warn(_("Warning: partition %s extends past end of disk\n"),
+	      my_warn(_("Warning: partition %s extends past end of disk\n"),
 		   PNO(p));
 	      return 0;
 	  }
@@ -1271,7 +1271,7 @@ partitions_ok(struct disk_desc *z) {
 	if (p->p.sys_type == EXTENDED_PARTITION)
 	  ect++;
       if (ect > 1 && !Linux) {
-	  warn(_("Among the primary partitions, at most one can be extended\n"
+	  my_warn(_("Among the primary partitions, at most one can be extended\n"
 		 " (although this is not a problem under Linux)\n"));
 	  return 0;
       }
@@ -1289,13 +1289,13 @@ partitions_ok(struct disk_desc *z) {
 	      if (p->start % B.cylindersize != 0
 		 && (!p->ep || p->start / B.cylindersize != p->ep->start / B.cylindersize)
 		 && (p->p.start_sect >= B.cylindersize)) {
-		  warn(_("Warning: partition %s does not start "
+		  my_warn(_("Warning: partition %s does not start "
 		       "at a cylinder boundary\n"), PNO(p));
 		  if (!Linux)
 		    return 0;
 	      }
 	      if ((p->start + p->size) % B.cylindersize) {
-		  warn(_("Warning: partition %s does not end "
+		  my_warn(_("Warning: partition %s does not end "
 		       "at a cylinder boundary\n"), PNO(p));
 		  if (!Linux)
 		    return 0;
@@ -1313,20 +1313,20 @@ partitions_ok(struct disk_desc *z) {
 	  if (pno == -1)
 	    pno = p - partitions;
 	  else if (p - partitions < 4) {
-	      warn(_("Warning: more than one primary partition is marked "
+	      my_warn(_("Warning: more than one primary partition is marked "
 		   "bootable (active)\n"
 		   "This does not matter for LILO, but the DOS MBR will "
 		   "not boot this disk.\n"));
 	      break;
 	  }
 	  if (p - partitions >= 4) {
-	      warn(_("Warning: usually one can boot from primary partitions "
+	      my_warn(_("Warning: usually one can boot from primary partitions "
 		   "only\nLILO disregards the `bootable' flag.\n"));
 	      break;
 	  }
       }
       if (pno == -1 || pno >= 4)
-	warn(_("Warning: no primary partition is marked bootable (active)\n"
+	my_warn(_("Warning: no primary partition is marked bootable (active)\n"
 	     "This does not matter for LILO, but the DOS MBR will "
 	     "not boot this disk.\n"));
     }
@@ -1343,7 +1343,7 @@ partitions_ok(struct disk_desc *z) {
 	if (!chs_ok(b, PNO(p), _("start")))
 	  return 0;
 	if (a.s && !is_equal_chs(a, b))
-	  warn(_("partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
+	  my_warn(_("partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
 	       PNO(p), aa.c, aa.h, aa.s, bb.c, bb.h, bb.s);
 	a = p->size ? ulong_to_chs(p->start + p->size - 1, B) : zero_chs;
 	b = p->p.end_chs;
@@ -1352,10 +1352,10 @@ partitions_ok(struct disk_desc *z) {
 	if (!chs_ok(b, PNO(p), _("end")))
 	  return 0;
 	if (a.s && !is_equal_chs(a, b))
-	  warn(_("partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
+	  my_warn(_("partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
 	       PNO(p), aa.c, aa.h, aa.s, bb.c, bb.h, bb.s);
 	if (B.cylinders && B.cylinders < 1024 && bb.c > B.cylinders)
-	  warn(_("partition %s ends on cylinder %ld, beyond the end of the disk\n"),
+	  my_warn(_("partition %s ends on cylinder %ld, beyond the end of the disk\n"),
 	       PNO(p), bb.c);
     }
 
@@ -1940,7 +1940,7 @@ compute_start_sect(struct part_desc *p, struct part_desc *ep) {
 	if (is_extended(p->p.sys_type) && boxes == ONESECTOR)
 	  p->size = inc;
 	else if (old_size <= -delta) {
-	    warn(_("no room for partition descriptor\n"));
+	    my_warn(_("no room for partition descriptor\n"));
 	    return 0;
 	}
     }
@@ -1973,7 +1973,7 @@ build_surrounding_extended(struct part_desc *p, struct part_desc *ep,
 	ep->start = first_free(ep-p0, 1, eep, format, p->start, z);
 	ep->size = max_length(ep-p0, 1, eep, format, ep->start, z);
 	if (ep->start > p->start || ep->start + ep->size < p->start + p->size) {
-	    warn(_("cannot build surrounding extended partition\n"));
+	    my_warn(_("cannot build surrounding extended partition\n"));
 	    return 0;
 	}
     } else {
@@ -2013,8 +2013,8 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 
     if (interactive) {
 	if (pct == 0 && (show_extended || pno == 0))
-	  warn("\n");
-	warn("%s:", partname(dev, lpno, 10));
+	  my_warn("\n");
+	my_warn("%s:", partname(dev, lpno, 10));
     }
 
     /* read input line - skip blank lines when reading from a file */
@@ -2058,7 +2058,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 	}
 	if (ml == 0 && pno >= 4) {
 	    /* no free blocks left - don't read any further */
-	    warn(_("No room for more\n"));
+	    my_warn(_("No room for more\n"));
 	    return -1;
 	}
     }
@@ -2077,7 +2077,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
     else if (get_ul(fields[2], &ul, LINUX_NATIVE, 16))
       return 0;
     if (ul > 255) {
-	warn(_("Illegal type\n"));
+	my_warn(_("Illegal type\n"));
 	return 0;
     }
     p.p.sys_type = ul;
@@ -2111,13 +2111,13 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 	p.size -= (p.size % unitsize(format));
     }
     if (p.size > ml1) {
-	warn(_("Warning: given size (%lu) exceeds max allowable size (%lu)\n"),
+	my_warn(_("Warning: given size (%lu) exceeds max allowable size (%lu)\n"),
 	     (p.size + unitsize(0) - 1) / unitsize(0), ml1 / unitsize(0));
 	if (!force)
 	  return 0;
     }
     if (p.size == 0 && pno >= 4 && (fno < 2 || !*(fields[1]))) {
-	warn(_("Warning: empty partition\n"));
+	my_warn(_("Warning: empty partition\n"));
 	if (!force)
 	  return 0;
     }
@@ -2131,7 +2131,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
     }
 
     if (p.start < ff1 && p.size > 0) {
-	warn(_("Warning: bad partition start (earliest %lu)\n"),
+	my_warn(_("Warning: bad partition start (earliest %lu)\n"),
 	     (ff1 + unitsize(0) - 1) / unitsize(0));
 	if (!force)
 	  return 0;
@@ -2144,7 +2144,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
     else if (!strcmp(fields[3], "*") || !strcmp(fields[3], "+"))
       ul = 0x80;
     else {
-    	warn(_("unrecognized bootable flag - choose - or *\n"));
+	my_warn(_("unrecognized bootable flag - choose - or *\n"));
     	return 0;
     }
     p.p.bootable = ul;
@@ -2161,7 +2161,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
       if (fno < 5) {
 	  bb = aa;
       } else if (fno < 7) {
-	  warn(_("partial c,h,s specification?\n"));
+	  my_warn(_("partial c,h,s specification?\n"));
 	  return 0;
       } else if (get_ul(fields[4], &bb.c, aa.c, 0) ||
 		get_ul(fields[5], &bb.h, aa.h, 0) ||
@@ -2174,7 +2174,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
       if (fno < 8) {
 	  bb = aa;
       } else if (fno < 10) {
-	  warn(_("partial c,h,s specification?\n"));
+	  my_warn(_("partial c,h,s specification?\n"));
 	  return 0;
       } else if (get_ul(fields[7], &bb.c, aa.c, 0) ||
 		get_ul(fields[8], &bb.h, aa.h, 0) ||
@@ -2185,7 +2185,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 
     if (pno > 3 && p.size && show_extended && p.p.sys_type != EMPTY_PARTITION
 	        && (is_extended(p.p.sys_type) != (pct == 1))) {
-	warn(_("Extended partition not where expected\n"));
+	my_warn(_("Extended partition not where expected\n"));
 	if (!force)
 	  return 0;
     }
@@ -2272,7 +2272,7 @@ read_input(char *dev, int interactive, struct disk_desc *z) {
     z->partno = 0;
 
     if (interactive)
-      warn(_("Input in the following format; absent fields get a default value.\n"
+      my_warn(_("Input in the following format; absent fields get a default value.\n"
              "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
              "Usually you only need to specify <start> and <size> (and perhaps <type>).\n"));
     eof = 0;
@@ -2737,7 +2737,7 @@ do_list (char *dev, int silent) {
 
     if (verify) {
 	if (partitions_ok(z))
-	  warn(_("%s: OK\n"), dev);
+	  my_warn(_("%s: OK\n"), dev);
 	else
 	  exit_status = 1;
     }
@@ -2888,7 +2888,7 @@ do_activate (char **av, int ac, char *arg) {
 		else
 		  printf("%s#%d\n", dev, pno);
 		if (z->partitions[pno].p.bootable != 0x80)
-		  warn(_("bad active byte: 0x%x instead of 0x80\n"),
+		  my_warn(_("bad active byte: 0x%x instead of 0x80\n"),
 		       z->partitions[pno].p.bootable);
 	    }
 	}
@@ -2906,7 +2906,7 @@ do_activate (char **av, int ac, char *arg) {
 
 	/* then write to disk */
 	if (write_partitions(dev, fd, z))
-	  warn(_("Done\n\n"));
+	  my_warn(_("Done\n\n"));
 	else
 	  exit_status = 1;
     }
@@ -2915,7 +2915,7 @@ do_activate (char **av, int ac, char *arg) {
       if (z->partitions[pno].p.bootable)
 	i++;
     if (i != 1)
-      warn(_("You have %d active primary partitions. This does not matter for LILO,\n"
+      my_warn(_("You have %d active primary partitions. This does not matter for LILO,\n"
 	   "but the DOS MBR will only boot a disk with 1 active partition.\n"), i);
 
     close(fd);
@@ -2961,7 +2961,7 @@ do_unhide (char **av, int ac, char *arg) {
 
     /* then write to disk */
     if (write_partitions(dev, fd, z))
-      warn(_("Done\n\n"));
+      my_warn(_("Done\n\n"));
     else
       exit_status = 1;
 
@@ -2994,7 +2994,7 @@ do_change_id(char *dev, char *pnam, char *id) {
     z->partitions[pno].p.sys_type = i;
 
     if (write_partitions(dev, fd, z))
-      warn(_("Done\n\n"));
+      my_warn(_("Done\n\n"));
     else
       exit_status = 1;
 
@@ -3035,7 +3035,7 @@ do_fdisk(char *dev){
     fd = my_open(dev, !no_write, 0);
 
     if (!no_write && !no_reread) {
-	warn(_("Checking that no-one is using this disk right now ...\n"));
+	my_warn(_("Checking that no-one is using this disk right now ...\n"));
 	if (reread_ioctl(fd)) {
 	    do_warn(_("\nThis disk is currently in use - repartitioning is probably a bad idea.\n"
 		   "Umount all file systems, and swapoff all swap partitions on this disk.\n"
@@ -3045,7 +3045,7 @@ do_fdisk(char *dev){
 		exit(1);
 	    }
 	} else
-	  warn(_("OK\n"));
+	  my_warn(_("OK\n"));
     }
 
     z = &oldp;
@@ -3108,7 +3108,7 @@ do_fdisk(char *dev){
 
     reread_disk_partition(dev, fd);
 
-    warn(_("If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
+    my_warn(_("If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 	 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
 	 "(See fdisk(8).)\n"));
 
