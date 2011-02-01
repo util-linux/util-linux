@@ -147,7 +147,8 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 	int32_t reply_len = 0;
 	struct sockaddr_un srv_addr;
 
-	if (((op == 4) || (op == 5)) && !num) {
+	if (((op == UUIDD_OP_BULK_TIME_UUID) ||
+	     (op == UUIDD_OP_BULK_RANDOM_UUID)) && !num) {
 		if (err_context)
 			*err_context = _("bad arguments");
 		errno = EINVAL;
@@ -172,13 +173,14 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 		return -1;
 	}
 
-	if (op == 5) {
+	if (op == UUIDD_OP_BULK_RANDOM_UUID) {
 		if ((*num)*16 > buflen-4)
 			*num = (buflen-4) / 16;
 	}
 	op_buf[0] = op;
 	op_len = 1;
-	if ((op == 4) || (op == 5)) {
+	if ((op == UUIDD_OP_BULK_TIME_UUID) ||
+	    (op == UUIDD_OP_BULK_RANDOM_UUID)) {
 		memcpy(op_buf+1, num, sizeof(int));
 		op_len += sizeof(int);
 	}
@@ -206,13 +208,13 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 	}
 	ret = read_all(s, (char *) buf, reply_len);
 
-	if ((ret > 0) && (op == 4)) {
+	if ((ret > 0) && (op == UUIDD_OP_BULK_TIME_UUID)) {
 		if (reply_len >= (int) (16+sizeof(int)))
 			memcpy(buf+16, num, sizeof(int));
 		else
 			*num = -1;
 	}
-	if ((ret > 0) && (op == 5)) {
+	if ((ret > 0) && (op == UUIDD_OP_BULK_RANDOM_UUID)) {
 		if (reply_len >= (int) sizeof(int))
 			memcpy(buf, num, sizeof(int));
 		else
@@ -352,7 +354,8 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 					 "len = %d\n"), len);
 			goto shutdown_socket;
 		}
-		if ((op == 4) || (op == 5)) {
+		if ((op == UUIDD_OP_BULK_TIME_UUID) ||
+		    (op == UUIDD_OP_BULK_RANDOM_UUID)) {
 			if (read_all(ns, (char *) &num, sizeof(num)) != 4)
 				goto shutdown_socket;
 			if (debug)
