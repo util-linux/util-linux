@@ -140,7 +140,7 @@ static int get_partno_from_device(char *partition, dev_t devno)
 	assert(partition);
 
 	if (devno) {
-		/* the device exits, read the partition number from /sys
+		/* the device exists, read the partition number from /sys
 		 * TODO: move this to stuff to lib/sysfs.c */
 		char path[PATH_MAX];
 		FILE *f;
@@ -261,7 +261,7 @@ static int del_parts(int fd, const char *device, dev_t devno,
 			lower = n + lower + 1;
 	}
 	if (lower > upper) {
-		warnx(_("defined range <%d:%d> "
+		warnx(_("specified range <%d:%d> "
 			"does not make sense"), lower, upper);
 		return -1;
 	}
@@ -274,7 +274,7 @@ static int del_parts(int fd, const char *device, dev_t devno,
 		}
 		rc = -1;
 		if (verbose)
-			warn(_("%s: delete partition #%d failed"), device, i);
+			warn(_("%s: deleting partition #%d failed"), device, i);
 		if (!errfirst)
 			errlast = errfirst = i;
 		else if (errlast + 1 == i)
@@ -325,8 +325,8 @@ static int add_parts(int fd, const char *device,
 
 		if (blkid_partition_is_extended(par))
 			/*
-			 * Let's follow Linux kernel and reduce
-			 * DOS extended partition to 1 or 2 sectors
+			 * Let's follow the Linux kernel and reduce
+			 * DOS extended partition to 1 or 2 sectors.
 			 */
 			size = min(size, (uintmax_t) 2);
 
@@ -337,7 +337,7 @@ static int add_parts(int fd, const char *device,
 		}
 		rc = -1;
 		if (verbose)
-			warn(_("%s: add partition #%d failed"), device, n);
+			warn(_("%s: adding partition #%d failed"), device, n);
 		if (!errfirst)
 			errlast = errfirst = n;
 		else if (errlast + 1 == n)
@@ -374,7 +374,7 @@ static int list_parts(blkid_partlist ls, int lower, int upper)
 		start = blkid_partition_get_start(par);
 		size =  blkid_partition_get_size(par);
 
-		printf("#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n",
+		printf(_("#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"),
 		       n, start, start + size -1,
 		       size, (size << 9) / 1000000);
 	}
@@ -561,7 +561,7 @@ static blkid_partlist get_partlist(blkid_probe pr,
 		if (blkid_probe_filter_partitions_type(pr,
 				BLKID_FLTR_ONLYIN, name)) {
 			warnx(_("failed to initialize blkid "
-					"filter for '%s'"), type);
+				"filter for '%s'"), type);
 			return NULL;
 		}
 	}
@@ -574,9 +574,8 @@ static blkid_partlist get_partlist(blkid_probe pr,
 
 	tab = blkid_partlist_get_table(ls);
 	if (verbose && tab)
-		printf(_("%s: partition table '%s' detected\n"),
-				device,
-				blkid_parttable_get_type(tab));
+		printf(_("%s: partition table type '%s' detected\n"),
+		       device, blkid_parttable_get_type(tab));
 
 	if (!blkid_partlist_numof_partitions(ls)) {
 		warnx(_("%s: %s partition table does not contains "
@@ -624,7 +623,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 static void __attribute__((__noreturn__))
 errx_mutually_exclusive(const char *opts)
 {
-	errx(EXIT_FAILURE, "%s %s", opts, _("options are mutually exclusive"));
+	errx(EXIT_FAILURE, _("the options %s are mutually exclusive"), opts);
 }
 
 int main(int argc, char **argv)
@@ -793,7 +792,7 @@ int main(int argc, char **argv)
 	}
 
 	if (verbose)
-		printf("device: %s, whole-disk: %s, lower: %d, upper: %d\n",
+		printf(_("partition: %s, disk: %s, lower: %d, upper: %d\n"),
 				device, wholedisk, lower, upper);
 
 	if (what == ACT_ADD || what == ACT_DELETE) {
@@ -825,7 +824,7 @@ int main(int argc, char **argv)
 			if (upper < 0)
 				upper = n + upper + 1;
 			if (lower > upper) {
-				warnx(_("defined range <%d:%d> "
+				warnx(_("specified range <%d:%d> "
 					"does not make sense"), lower, upper);
 				rc = -1, what = 0;
 			}
