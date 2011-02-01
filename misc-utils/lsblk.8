@@ -11,50 +11,51 @@ lsblk \- list block devices
 .IR device...
 .SH DESCRIPTION
 .B lsblk
-will list information about all or selected block devices. The
+lists information about all or the specified block devices. The
 .B lsblk
-command reads
+command reads the
 .I sysfs
 filesystem to gather information.
 .PP
-The command prints all block devices (except RAM disks) in the tree-like format
-by default. See
+The command prints all block devices (except RAM disks) in a tree-like format
+by default.  Use
 .B "lsblk --help"
-to get list of all available columns.
+to get a list of all available columns.
 .SH OPTIONS
 .IP "\fB\-a, \-\-all\fP"
 List all block devices.
 .IP "\fB\-b, \-\-bytes\fP"
-Print the SIZE column in bytes rather than in human readable format.
+Print the SIZE column in bytes rather than in human-readable format.
 .IP "\fB\-d, \-\-nodeps\fP"
-Don't print device holders or slaves. For example "lsblk --nodeps /dev/sda" prints
+Don't print device holders or slaves.  For example "lsblk --nodeps /dev/sda" prints
 information about the sda device only.
 .IP "\fB\-e, \-\-exclude \fIlist\fP
-Exclude devices by comma delimited list of major device numbers. Note that RAM
-disks (major=1) are excluded by default.
+Exclude the devices specified by a comma-delimited list of major device numbers.
+Note that RAM disks (major=1) are excluded by default.
 .IP "\fB\-f, \-\-fs\fP
-Output info about filesystems. This option is equivalent to -o NAME,FSTYPE,LABEL,MOUNTPOINT.
-The authoritative information about filesystems and raids are provided by
+Output info about filesystems.  This option is equivalent to "-o NAME,FSTYPE,LABEL,MOUNTPOINT".
+The authoritative information about filesystems and raids is provided by the
 .BR blkid (8)
 command.
 .IP "\fB\-h, \-\-help\fP"
-Print help and exit.
+Print a help text and exit.
 .IP "\fB\-i, \-\-ascii\fP"
 Use ascii characters for tree formatting.
 .IP "\fB\-m, \-\-perms\fP
-Output info about device owner, group and mode. This option is equivalent to -o NAME,SIZE,OWNER,GROUP,MODE.
+Output info about device owner, group and mode.  This option is equivalent to "-o NAME,SIZE,OWNER,GROUP,MODE".
 .IP "\fB\-l, \-\-list\fP"
 Use the list output format.
 .IP "\fB\-n, \-\-noheadings\fP"
 Do not print a header line.
 .IP "\fB\-o, \-\-output \fIlist\fP"
-Define output columns.  Use
+Specify which output columns to print.  Use
 .B "--help"
-to get list of all supported columns.
+to get a list of all supported columns.
 .IP "\fB\-r, \-\-raw\fP"
-Use raw output format.
+Use the raw output format.
 .IP "\fB\-t, \-\-topology\fP"
-Output info about block device topology. This option is equivalent to -o NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED.
+Output info about block device topology.
+This option is equivalent to "-o NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED".
 .SH AUTHORS
 .nf
 Milan Broz <mbroz@redhat.com>
