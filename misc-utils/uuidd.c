@@ -213,7 +213,7 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 			*num = -1;
 	}
 	if ((ret > 0) && (op == 5)) {
-		if (*num >= (int) sizeof(int))
+		if (reply_len >= (int) sizeof(int))
 			memcpy(buf, num, sizeof(int));
 		else
 			*num = -1;
