@@ -73,7 +73,7 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 		return 0;
 	}
 
-	/* copy from mtab/fstab to our FS description
+	/* copy from mtab to our FS description
 	 */
 	rc = mnt_fs_set_source(cxt->fs, mnt_fs_get_source(fs));
 	if (!rc)
@@ -88,6 +88,8 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 		rc = mnt_fs_set_fs_options(cxt->fs, mnt_fs_get_fs_options(fs));
 	if (!rc)
 		rc = mnt_fs_set_user_options(cxt->fs, mnt_fs_get_user_options(fs));
+	if (!rc)
+		rc = mnt_fs_set_attributes(cxt->fs, mnt_fs_get_attributes(fs));
 
 	if (!rc && mnt_fs_get_bindsrc(fs))
 		rc = mnt_fs_set_bindsrc(cxt->fs, mnt_fs_get_bindsrc(fs));
@@ -473,6 +475,9 @@ int mnt_context_do_umount(struct libmnt_context *cxt)
 	       rc = mnt_context_prepare_target(cxt);
 	if (!rc && !cxt->helper)
 		rc = mnt_context_prepare_helper(cxt, "umount", NULL);
+
+	/* TODO : evaluate fstype pattern */
+
 /* TODO
 	if ((cxt->flags & MNT_FL_LOOPDEL) &&
 	    (!mnt_is_loopdev(src) || mnt_loopdev_is_autoclear(src)))
