@@ -41,6 +41,12 @@ extern int optind;
 #define CODE_ATTR(x)
 #endif
 
+/* length of textual representation of UUID, including trailing \0 */
+#define UUID_STR_LEN	37
+
+/* length of binary representation of UUID */
+#define UUID_LEN	(sizeof(uuid_t))
+
 static void usage(const char *progname)
 {
 	fprintf(stderr, _("Usage: %s [-d] [-p pidfile] [-s socketpath] "
@@ -174,8 +180,8 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 	}
 
 	if (op == UUIDD_OP_BULK_RANDOM_UUID) {
-		if ((*num)*16 > buflen-4)
-			*num = (buflen-4) / 16;
+		if ((*num)*UUID_LEN > buflen-4)
+			*num = (buflen-4) / UUID_LEN;
 	}
 	op_buf[0] = op;
 	op_len = 1;
@@ -209,8 +215,8 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 	ret = read_all(s, (char *) buf, reply_len);
 
 	if ((ret > 0) && (op == UUIDD_OP_BULK_TIME_UUID)) {
-		if (reply_len >= (int) (16+sizeof(int)))
-			memcpy(buf+16, num, sizeof(int));
+		if (reply_len >= (int) (UUID_LEN + sizeof(int)))
+			memcpy(buf + UUID_LEN, num, sizeof(int));
 		else
 			*num = -1;
 	}
@@ -236,7 +242,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	uuid_t			uu;
 	mode_t			save_umask;
 	char			reply_buf[1024], *cp;
-	char			op, str[37];
+	char			op, str[UUID_STR_LEN];
 	int			i, s, ns, len, num;
 	int			fd_pidfile, ret;
 
@@ -410,19 +416,19 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 				num = 1;
 			if (num > 1000)
 				num = 1000;
-			if (num*16 > (int) (sizeof(reply_buf)-sizeof(num)))
-				num = (sizeof(reply_buf)-sizeof(num)) / 16;
+			if (num * UUID_LEN > (int) (sizeof(reply_buf)-sizeof(num)))
+				num = (sizeof(reply_buf)-sizeof(num)) / UUID_LEN;
 			uuid__generate_random((unsigned char *) reply_buf +
 					      sizeof(num), &num);
 			if (debug) {
 				printf(_("Generated %d UUIDs:\n"), num);
 				for (i=0, cp=reply_buf+sizeof(num);
-				     i < num; i++, cp+=16) {
+				     i < num; i++, cp+=UUID_LEN) {
 					uuid_unparse((unsigned char *)cp, str);
 					printf("\t%s\n", str);
 				}
 			}
-			reply_len = (num*16) + sizeof(num);
+			reply_len = (num * UUID_LEN) + sizeof(num);
 			memcpy(reply_buf, &num, sizeof(num));
 			break;
 		default:
@@ -443,7 +449,7 @@ int main(int argc, char **argv)
 	const char	*pidfile_path = UUIDD_PIDFILE_PATH;
 	const char	*err_context;
 	char		buf[1024], *cp;
-	char		str[37], *tmp;
+	char		str[UUID_STR_LEN], *tmp;
 	uuid_t		uu;
 	uid_t		uid;
 	gid_t		gid;
@@ -540,7 +546,7 @@ int main(int argc, char **argv)
 			cp = buf + 4;
 			if (ret != (int) (sizeof(num) + num*sizeof(uu)))
 				goto unexpected_size;
-			for (i=0; i < num; i++, cp+=16) {
+			for (i=0; i < num; i++, cp+=UUID_LEN) {
 				uuid_unparse((unsigned char *) cp, str);
 				printf("\t%s\n", str);
 			}
