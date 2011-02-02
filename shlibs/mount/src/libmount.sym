@@ -46,7 +46,7 @@ global:
 	mnt_context_is_sloppy;
 	mnt_context_is_verbose;
 	mnt_context_mount;
-	mnt_context_mounthelper_setopt;
+	mnt_context_helper_setopt;
 	mnt_context_prepare_mount;
 	mnt_context_prepare_umount;
 	mnt_context_set_cache;

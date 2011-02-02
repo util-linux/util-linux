@@ -171,6 +171,8 @@ mnt_update_table
 
 <SECTION>
 <FILE>context</FILE>
+mnt_context_init_helper
+mnt_context_helper_setopt
 mnt_context_append_options
 mnt_context_apply_fstab
 mnt_context_disable_canonicalize

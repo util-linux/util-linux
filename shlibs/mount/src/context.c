@@ -1516,6 +1516,7 @@ int mnt_context_strerror(struct libmnt_context *cxt, char *buf, size_t bufsiz)
 /**
  * mnt_context_init_helper
  * @cxt: mount context
+ * @action: MNT_ACT_{UMOUNT,MOUNT}
  * @flags: not used
  *
  * This function infors libmount that used from [u]mount.<type> helper.
@@ -1529,15 +1530,42 @@ int mnt_context_strerror(struct libmnt_context *cxt, char *buf, size_t bufsiz)
  *
  * Returns: 0 on success, negative number in case of error.
  */
-int mnt_context_init_helper(struct libmnt_context *cxt, int flags)
+int mnt_context_init_helper(struct libmnt_context *cxt, int action, int flags)
 {
 	int rc = mnt_context_disable_helpers(cxt, TRUE);
 
 	if (!rc)
-		return set_flag(cxt, MNT_FL_HELPER, 1);
+		rc = set_flag(cxt, MNT_FL_HELPER, 1);
+	if (!rc)
+		cxt->action = action;
 
-	DBG(CXT, mnt_debug_h(cxt, "initialized for [u]mount.<type> helper"));
+	DBG(CXT, mnt_debug_h(cxt, "initialized for [u]mount.<type> helper [rc=%d]", rc));
 	return rc;
+}
+
+/**
+ * mnt_context_helper_setopt:
+ * @cxr: context
+ * @c: getopt() result
+ * @arg: getopt() optarg
+ *
+ * This function applies [u]mount.<type> command line option (for example parsed
+ * by getopt() or getopt_long()) to @cxt. All unknown options are ignored and
+ * then 1 is returned.
+ *
+ * Returns: negative number on error, 1 if @c is unknown option, 0 on success.
+ */
+int mnt_context_helper_setopt(struct libmnt_context *cxt, int c, char *arg)
+{
+	if (cxt) {
+		switch(cxt->action) {
+		case MNT_ACT_MOUNT:
+			return mnt_context_mount_setopt(cxt, c, arg);
+		case MNT_ACT_UMOUNT:
+			return mnt_context_umount_setopt(cxt, c, arg);
+		}
+	}
+	return -EINVAL;
 }
 
 #ifdef TEST_PROGRAM

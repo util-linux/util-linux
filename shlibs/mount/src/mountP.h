@@ -324,6 +324,9 @@ extern struct libmnt_fs *mnt_context_get_fs(struct libmnt_context *cxt);
 extern int mnt_context_merge_mflags(struct libmnt_context *cxt);
 extern int mnt_context_update_tabs(struct libmnt_context *cxt);
 
+extern int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg);
+extern int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg);
+
 /* tab_update.c */
 extern struct libmnt_fs *mnt_update_get_fs(struct libmnt_update *upd);
 extern int mnt_update_set_filename(struct libmnt_update *upd,

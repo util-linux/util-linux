@@ -348,9 +348,9 @@ extern void mnt_free_context(struct libmnt_context *cxt);
 extern int mnt_reset_context(struct libmnt_context *cxt);
 extern int mnt_context_is_restricted(struct libmnt_context *cxt);
 
-extern int mnt_context_init_helper(struct libmnt_context *cxt, int flags);
-extern int mnt_context_mounthelper_setopt(struct libmnt_context *cxt, int c,
-					  char *arg);
+extern int mnt_context_init_helper(struct libmnt_context *cxt,
+				   int action, int flags);
+extern int mnt_context_helper_setopt(struct libmnt_context *cxt, int c, char *arg);
 
 extern int mnt_context_set_optsmode(struct libmnt_context *cxt, int mode);
 extern int mnt_context_disable_canonicalize(struct libmnt_context *cxt, int disable);

@@ -371,6 +371,50 @@ static int exec_helper(struct libmnt_context *cxt)
 	return rc;
 }
 
+/*
+ * mnt_context_helper_setopt() backend.
+ *
+ * This function applies umount.<type> command line option (for example parsed
+ * by getopt() or getopt_long()) to @cxt. All unknown options are ignored and
+ * then 1 is returned.
+ *
+ * Returns: negative number on error, 1 if @c is unknown option, 0 on success.
+ */
+int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg)
+{
+	int rc = -EINVAL;
+
+	assert(cxt);
+	assert(cxt->action == MNT_ACT_UMOUNT);
+
+	switch(c) {
+	case 'n':
+		rc = mnt_context_disable_mtab(cxt, TRUE);
+		break;
+	case 'l':
+		rc = mnt_context_enable_lazy(cxt, TRUE);
+		break;
+	case 'f':
+		rc = mnt_context_enable_fake(cxt, TRUE);
+		break;
+	case 'v':
+		rc = mnt_context_enable_verbose(cxt, TRUE);
+		break;
+	case 'r':
+		rc = mnt_context_enable_rdonly_umount(cxt, TRUE);
+		break;
+	case 't':
+		if (arg)
+			rc = mnt_context_set_fstype(cxt, arg);
+		break;
+	default:
+		return 1;
+		break;
+	}
+
+	return rc;
+}
+
 static int do_umount(struct libmnt_context *cxt)
 {
 	int rc = 0;

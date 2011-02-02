@@ -218,11 +218,8 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	return 0;
 }
 
-/**
- * mnt_context_mounthelper_setopt:
- * @cxr: context
- * @c: getopt() result
- * @arg: getopt() optarg
+/*
+ * mnt_context_helper_setopt() backend
  *
  * This function applies mount.<type> command line option (for example parsed
  * by getopt() or getopt_long()) to @cxt. All unknown options are ignored and
@@ -230,12 +227,12 @@ static int evaluate_permissions(struct libmnt_context *cxt)
  *
  * Returns: negative number on error, 1 if @c is unknown option, 0 on success.
  */
-int mnt_context_mounthelper_setopt(struct libmnt_context *cxt, int c, char *arg)
+int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg)
 {
 	int rc = -EINVAL;
 
-	if (!cxt || !c)
-		return -EINVAL;
+	assert(cxt);
+	assert(cxt->action == MNT_ACT_MOUNT);
 
 	switch(c) {
 	case 'f':
