@@ -409,7 +409,7 @@ int main(int argc, char **argv)
 	if (lock)
 		atexit(lock_atexit_cleanup);
 
-	rc = mnt_mount_context(cxt);
+	rc = mnt_context_mount(cxt);
 	if (rc) {
 		/* TODO: call mnt_context_strerror() */
 		rc = EX_FAIL;

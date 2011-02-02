@@ -416,7 +416,7 @@ extern int mnt_context_get_status(struct libmnt_context *cxt);
 extern int mnt_context_strerror(struct libmnt_context *cxt, char *buf,
 				size_t bufsiz);
 
-extern int mnt_mount_context(struct libmnt_context *cxt);
+extern int mnt_context_mount(struct libmnt_context *cxt);
 
 extern int mnt_context_prepare_mount(struct libmnt_context *cxt);
 extern int mnt_context_do_mount(struct libmnt_context *cxt);

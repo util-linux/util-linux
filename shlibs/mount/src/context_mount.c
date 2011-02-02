@@ -496,7 +496,6 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 		return -EINVAL;
 	if (!mnt_fs_get_source(cxt->fs) && !mnt_fs_get_target(cxt->fs))
 		return -EINVAL;
-
 	if (cxt->flags & MNT_FL_PREPARED)
 		return 0;
 
@@ -546,6 +545,7 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 	assert(cxt->syscall_status == 1);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 	assert((cxt->flags & MNT_FL_PREPARED));
+	assert((cxt->action == MNT_ACT_MOUNT));
 
 	DBG(CXT, mnt_debug_h(cxt, "mount: do mount"));
 
@@ -557,48 +557,6 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 		return do_mount(cxt, NULL);
 
 	return do_mount_by_pattern(cxt, cxt->fstype_pattern);
-}
-
-/**
- * mnt_mount_context:
- * @cxt: mount context
- *
- * Mount filesystem by mount(2) or fork()+exec(/sbin/mount.type).
- *
- * This is top-level function for FS mounting, similar to:
- *
- *	mnt_context_prepare_mount(cxt);
- *	mnt_context_do_mount(cxt);
- *	mnt_context_finalize_mount(cxt);
- *
- * See also mnt_context_disable_helpers().
- *
- * Returns: 0 on success, and negative number in case of error. WARNING: error
- *          does not mean that mount(2) syscall or mount.type helper wasn't
- *          sucessfully called. Check mnt_context_get_status() after error!
- */
-int mnt_mount_context(struct libmnt_context *cxt)
-{
-	int rc;
-
-	assert(cxt);
-	assert(cxt->fs);
-	assert(cxt->helper_exec_status == 1);
-	assert(cxt->syscall_status == 1);
-
-	rc = mnt_context_prepare_mount(cxt);
-	if (!rc)
-		rc = mnt_context_prepare_update(cxt);
-	if (!rc)
-		rc = mnt_context_do_mount(cxt);
-
-	/* TODO: if mtab update is expected then check if the
-	 * target is really mounted read-write to avoid 'ro' in
-	 * mtab and 'rw' in /proc/mounts.
-	 */
-	if (!rc)
-		rc = mnt_context_update_tabs(cxt);
-	return rc;
 }
 
 /**
@@ -622,6 +580,48 @@ int mnt_context_finalize_mount(struct libmnt_context *cxt)
 	rc = mnt_context_prepare_update(cxt);
 	if (!rc)
 		rc = mnt_context_update_tabs(cxt);;
+	return rc;
+}
+
+/**
+ * mnt_context_mount:
+ * @cxt: mount context
+ *
+ * High-level, mounts filesystem by mount(2) or fork()+exec(/sbin/mount.type).
+ *
+ * This is similar to:
+ *
+ *	mnt_context_prepare_mount(cxt);
+ *	mnt_context_do_mount(cxt);
+ *	mnt_context_finalize_mount(cxt);
+ *
+ * See also mnt_context_disable_helpers().
+ *
+ * Returns: 0 on success, and negative number in case of error. WARNING: error
+ *          does not mean that mount(2) syscall or mount.type helper wasn't
+ *          sucessfully called. Check mnt_context_get_status() after error!
+ */
+int mnt_context_mount(struct libmnt_context *cxt)
+{
+	int rc;
+
+	assert(cxt);
+	assert(cxt->fs);
+	assert(cxt->helper_exec_status == 1);
+	assert(cxt->syscall_status == 1);
+
+	rc = mnt_context_prepare_mount(cxt);
+	if (!rc)
+		rc = mnt_context_prepare_update(cxt);
+	if (!rc)
+		rc = mnt_context_do_mount(cxt);
+
+	/* TODO: if mtab update is expected then check if the
+	 * target is really mounted read-write to avoid 'ro' in
+	 * mtab and 'rw' in /proc/mounts.
+	 */
+	if (!rc)
+		rc = mnt_context_update_tabs(cxt);
 	return rc;
 }
 

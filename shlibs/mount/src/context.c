@@ -1486,7 +1486,7 @@ int mnt_context_get_status(struct libmnt_context *cxt)
  * @status: mount(2) return code
  *
  * This function should be used if [u]mount(2) syscall was NOT called by
- * libmount (mnt_mount_context() or mnt_context_do_mount()) only.
+ * libmount (mnt_context_mount() or mnt_context_do_mount()) only.
  *
  * Returns: 0 or negative number in case of error.
  */
@@ -1586,7 +1586,7 @@ int test_mount(struct libmnt_test *ts, int argc, char *argv[])
 	if (lock)
 		atexit(lock_fallback);
 
-	rc = mnt_mount_context(cxt);
+	rc = mnt_context_mount(cxt);
 	if (rc)
 		printf("failed to mount %s\n", strerror(errno));
 	else

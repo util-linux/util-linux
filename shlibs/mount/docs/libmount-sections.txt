@@ -211,8 +211,12 @@ mnt_context_set_source
 mnt_context_set_target
 mnt_context_set_user_mflags
 mnt_context_strerror
+mnt_context_mount
 mnt_free_context
 mnt_new_context
 mnt_reset_context
+mnt_context_prepare_mount
+mnt_context_do_mount
+mnt_context_finalize_mount
 </SECTION>
 

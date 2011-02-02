@@ -133,7 +133,7 @@ global:
 	mnt_mangle;
 	mnt_match_fstype;
 	mnt_match_options;
-	mnt_mount_context;
+	mnt_context_mount;
 	mnt_new_cache;
 	mnt_new_context;
 	mnt_new_fs;
