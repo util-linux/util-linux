@@ -443,27 +443,31 @@ static int do_umount(struct libmnt_context *cxt)
 }
 
 /**
- * mnt_context_do_umount:
+ * mnt_context_prepare_umount:
  * @cxt: mount context
  *
- * Umount filesystem by umount(2) or fork()+exec(/sbin/umount.type).
- *
- * See also mnt_context_disable_helpers().
+ * Prepare context for umounting, unnecessary for mnt_context_umount().
  *
  * Returns: 0 on success, and negative number in case of error.
  */
-int mnt_context_do_umount(struct libmnt_context *cxt)
+int mnt_context_prepare_umount(struct libmnt_context *cxt)
 {
 	int rc;
+
+	assert(cxt);
+	assert(cxt->fs);
+	assert(cxt->helper_exec_status == 1);
+	assert(cxt->syscall_status == 1);
 
 	if (!cxt || !cxt->fs || (cxt->fs->flags & MNT_FS_SWAP))
 		return -EINVAL;
 	if (!mnt_fs_get_source(cxt->fs) && !mnt_fs_get_target(cxt->fs))
 		return -EINVAL;
+	if (cxt->flags & MNT_FL_PREPARED)
+		return 0;
 
 	free(cxt->helper);	/* be paranoid */
 	cxt->helper = NULL;
-
 	cxt->action = MNT_ACT_UMOUNT;
 
 	rc = lookup_umount_fs(cxt);
@@ -475,20 +479,41 @@ int mnt_context_do_umount(struct libmnt_context *cxt)
 	       rc = mnt_context_prepare_target(cxt);
 	if (!rc && !cxt->helper)
 		rc = mnt_context_prepare_helper(cxt, "umount", NULL);
-
-	/* TODO : evaluate fstype pattern */
-
 /* TODO
 	if ((cxt->flags & MNT_FL_LOOPDEL) &&
 	    (!mnt_is_loopdev(src) || mnt_loopdev_is_autoclear(src)))
 		cxt->flags &= ~MNT_FL_LOOPDEL;
 */
-	if (!rc)
-		rc = mnt_context_prepare_update(cxt);
 	if (rc) {
-		DBG(CXT, mnt_debug_h(cxt, "prepared umount failed"));
+		DBG(CXT, mnt_debug_h(cxt, "umount: preparing failed"));
 		return rc;
 	}
+	cxt->flags |= MNT_FL_PREPARED;
+	return rc;
+}
+
+/**
+ * mnt_context_do_umount:
+ * @cxt: mount context
+ *
+ * Umount filesystem by umount(2) or fork()+exec(/sbin/umount.type).
+ * Unnecessary for mnt_context_umount().
+ *
+ * See also mnt_context_disable_helpers().
+ *
+ * Returns: 0 on success, and negative number in case of error.
+ */
+int mnt_context_do_umount(struct libmnt_context *cxt)
+{
+	int rc;
+
+	assert(cxt);
+	assert(cxt->fs);
+	assert(cxt->helper_exec_status == 1);
+	assert(cxt->syscall_status == 1);
+	assert((cxt->flags & MNT_FL_PREPARED));
+	assert((cxt->action == MNT_ACT_UMOUNT));
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
 	rc = do_umount(cxt);
 	if (rc)
@@ -503,7 +528,7 @@ int mnt_context_do_umount(struct libmnt_context *cxt)
 	if ((cxt->flags & MNT_FL_RDONLY_UMOUNT) &&
 	    (cxt->mountflags & (MS_RDONLY | MS_REMOUNT))) {
 		/*
-		 * remount --> read-only mount
+		 * fix options, remount --> read-only mount
 		 */
 		const char *o = mnt_fs_get_vfs_options(cxt->fs);
 		char *n = o ? strdup(o) : NULL;
@@ -522,5 +547,67 @@ int mnt_context_do_umount(struct libmnt_context *cxt)
 					       cxt->mountflags, NULL, cxt->fs);
 	}
 
-	return rc ? : mnt_context_update_tabs(cxt);
+	return rc;
+}
+
+/**
+ * mnt_context_finalize_umount:
+ * @cxt: context
+ *
+ * Mtab update, etc. Unnecessary for mnt_context_umount(), but should be called
+ * after mnt_context_do_umount(). See also mnt_context_set_syscall_status().
+ *
+ * Returns: negative number on error, 0 on success.
+ */
+int mnt_context_finalize_umount(struct libmnt_context *cxt)
+{
+	int rc;
+
+	assert(cxt);
+	assert(cxt->fs);
+	assert((cxt->flags & MNT_FL_PREPARED));
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+
+	rc = mnt_context_prepare_update(cxt);
+	if (!rc)
+		rc = mnt_context_update_tabs(cxt);;
+	return rc;
+}
+
+
+/**
+ * mnt_context_umount:
+ * @cxt: umount context
+ *
+ * High-level, umounts filesystem by umount(2) or fork()+exec(/sbin/umount.type).
+ *
+ * This is similar to:
+ *
+ *	mnt_context_prepare_umount(cxt);
+ *	mnt_context_do_umount(cxt);
+ *	mnt_context_finalize_umount(cxt);
+ *
+ * See also mnt_context_disable_helpers().
+ *
+ * Returns: 0 on success, and negative number in case of error. WARNING: error
+ *          does not mean that umount(2) syscall or mount.type helper wasn't
+ *          sucessfully called. Check mnt_context_get_status() after error!
+ */
+int mnt_context_umount(struct libmnt_context *cxt)
+{
+	int rc;
+
+	assert(cxt);
+	assert(cxt->fs);
+	assert(cxt->helper_exec_status == 1);
+	assert(cxt->syscall_status == 1);
+
+	rc = mnt_context_prepare_umount(cxt);
+	if (!rc)
+		rc = mnt_context_prepare_update(cxt);
+	if (!rc)
+		rc = mnt_context_do_umount(cxt);
+	if (!rc)
+		rc = mnt_context_update_tabs(cxt);
+	return rc;
 }

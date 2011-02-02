@@ -23,6 +23,7 @@ global:
 	mnt_context_enable_sloppy;
 	mnt_context_enable_verbose;
 	mnt_context_finalize_mount;
+	mnt_context_finalize_umount;
 	mnt_context_get_cache;
 	mnt_context_get_fs;
 	mnt_context_get_fstab;
@@ -44,8 +45,10 @@ global:
 	mnt_context_is_restricted;
 	mnt_context_is_sloppy;
 	mnt_context_is_verbose;
+	mnt_context_mount;
 	mnt_context_mounthelper_setopt;
 	mnt_context_prepare_mount;
+	mnt_context_prepare_umount;
 	mnt_context_set_cache;
 	mnt_context_set_fs;
 	mnt_context_set_fstab;
@@ -61,6 +64,7 @@ global:
 	mnt_context_set_target;
 	mnt_context_set_user_mflags;
 	mnt_context_strerror;
+	mnt_context_umount;
 	mnt_copy_fs;
 	mnt_free_cache;
 	mnt_free_context;
@@ -133,7 +137,6 @@ global:
 	mnt_mangle;
 	mnt_match_fstype;
 	mnt_match_options;
-	mnt_context_mount;
 	mnt_new_cache;
 	mnt_new_context;
 	mnt_new_fs;

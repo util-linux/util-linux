@@ -185,6 +185,8 @@ mnt_context_enable_loopdel
 mnt_context_enable_rdonly_umount
 mnt_context_enable_sloppy
 mnt_context_enable_verbose
+mnt_context_finalize_mount
+mnt_context_finalize_umount
 mnt_context_get_cache
 mnt_context_get_fs
 mnt_context_get_fstab
@@ -197,6 +199,9 @@ mnt_context_get_status
 mnt_context_get_target
 mnt_context_get_user_mflags
 mnt_context_is_restricted
+mnt_context_mount
+mnt_context_prepare_mount
+mnt_context_prepare_umount
 mnt_context_set_cache
 mnt_context_set_fs
 mnt_context_set_fstab
@@ -211,12 +216,9 @@ mnt_context_set_source
 mnt_context_set_target
 mnt_context_set_user_mflags
 mnt_context_strerror
-mnt_context_mount
+mnt_context_umount
 mnt_free_context
 mnt_new_context
 mnt_reset_context
-mnt_context_prepare_mount
-mnt_context_do_mount
-mnt_context_finalize_mount
 </SECTION>
 
