@@ -32,6 +32,7 @@ extern int optind;
 
 #include "uuid.h"
 #include "uuidd.h"
+#include "writeall.h"
 
 #include "nls.h"
 
@@ -99,25 +100,6 @@ static ssize_t read_all(int fd, char *buf, size_t count)
 	return c;
 }
 
-static int write_all(int fd, char *buf, size_t count)
-{
-	ssize_t ret;
-	int c = 0;
-
-	while (count > 0) {
-		ret = write(fd, buf, count);
-		if (ret < 0) {
-			if ((errno == EAGAIN) || (errno == EINTR))
-				continue;
-			return -1;
-		}
-		count -= ret;
-		buf += ret;
-		c += ret;
-	}
-	return c;
-}
-
 static const char *cleanup_pidfile, *cleanup_socket;
 
 static void terminate_intr(int signo CODE_ATTR((unused)))
@@ -177,7 +159,7 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 	}
 
 	ret = write_all(s, op_buf, op_len);
-	if (ret < op_len) {
+	if (ret < 0) {
 		if (err_context)
 			*err_context = _("write");
 		close(s);
