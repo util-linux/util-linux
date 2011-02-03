@@ -438,7 +438,7 @@ int main(int argc, char **argv)
 			break;
 		case 'n':
 			num = strtol(optarg, &tmp, 0);
-			if ((num < 0) || *tmp) {
+			if ((num < 1) || *tmp) {
 				fprintf(stderr, _("Bad number: %s\n"), optarg);
 				exit(1);
 			}
