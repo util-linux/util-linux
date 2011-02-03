@@ -513,13 +513,14 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 	if (rc < 0)
 		goto done;
 
-	nvals = blkid_probe_numof_values(pr);
+	if (!rc)
+		nvals = blkid_probe_numof_values(pr);
 
 	if (nvals && !first && output & (OUTPUT_UDEV_LIST | OUTPUT_EXPORT_LIST))
 		/* add extra line between output from devices */
 		fputc('\n', stdout);
 
-	if (output & OUTPUT_DEVICE_ONLY) {
+	if (nvals && (output & OUTPUT_DEVICE_ONLY)) {
 		printf("%s\n", devname);
 		goto done;
 	}
