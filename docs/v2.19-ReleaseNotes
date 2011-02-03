@@ -51,6 +51,9 @@ fstrim(8):
 swapon(8):
    - supports new options "discard" and "nofail"
 
+blkid(8):
+   - low-level probing (-p) returns "8" exit code for ambivalent probing results
+      
 libmount:
    - include file has been renamed from mount/mount.h to libmount/libmount.h
 
