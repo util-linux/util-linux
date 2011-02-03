@@ -565,7 +565,13 @@ done:
 				devname);
 	}
 	close(fd);
-	return !nvals ? 2 : 0;
+
+	if (rc == -2)
+		return 8;	/* ambivalent probing result */
+	if (!nvals)
+		return 2;	/* nothing detected */
+
+	return 0;		/* sucess */
 }
 
 /* converts comma separated list to BLKID_USAGE_* mask */

@@ -253,9 +253,15 @@ appear in
 are shown, if they are recognized.
 .SH "RETURN CODE"
 If the specified token was found, or if any tags were shown from (specified)
-devices, 0 is returned.  If the specified token was not found, or no
-(specified) devices could be identified, an exit code of 2 is returned.
+devices, 0 is returned.
+
+If the specified token was not found, or no (specified) devices could be
+identified an exit code of 2 is returned.
+
 For usage or other errors, an exit code of 4 is returned.
+
+If the ambivalent low-level probing result was detected an exit code of 8 is
+returned.
 .SH AUTHOR
 .B blkid
 was written by Andreas Dilger for libblkid and improved by Theodore Ts'o
