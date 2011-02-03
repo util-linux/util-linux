@@ -711,7 +711,7 @@ main_swapon(int argc, char *argv[]) {
 			break;
 		case 'V':		/* version */
 			printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
-			exit(0);
+			exit(EXIT_SUCCESS);
 		case 0:
 			break;
 		case '?':
@@ -763,7 +763,7 @@ main_swapoff(int argc, char *argv[]) {
 			break;
 		case 'V':		/* version */
 			printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
-			exit(0);
+			exit(EXIT_SUCCESS);
 		case 'L':
 			addl(optarg);
 			break;
