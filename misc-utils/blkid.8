@@ -160,7 +160,12 @@ print the device name only, this output format is always enabled for \fB-L\fR
 and \fB-U\fR options
 .TP
 .B udev
-print key="value" pairs for easy import into the udev environment
+print key="value" pairs for easy import into the udev environment. The keys are
+prefixed by ID_FS_ or ID_PART_ prefixes.
+
+The udev output returns ID_FS_AMBIVALENT tag if more superblocks are detected,
+and ID_PART_ENTRY_* tags are always returned for all partitions including empty
+partitions.
 .TP
 .B export
 print key=value pairs for easy import into the environment.  This output format
@@ -173,6 +178,9 @@ used together with \fB-i\fR option.
 .TP
 .BI \-p
 Switch to low-level superblock probing mode (bypass cache).
+
+Note that low-level probing also returns information about partition table type
+(PTTYPE tag) and partitions (PART_ENTRY_* tags).
 .TP
 .BI \-s " tag"
 For each (specified) device, show only the tags that match
