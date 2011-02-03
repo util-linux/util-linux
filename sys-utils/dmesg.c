@@ -33,9 +33,10 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <stdlib.h>
-# include <sys/klog.h>
+#include <sys/klog.h>
 
 #include "nls.h"
+#include "strutils.h"
 
 static char *progname;
 
@@ -70,20 +71,20 @@ main(int argc, char *argv[]) {
 			break;
 		case 'n':
 			cmd = 8;	/* Set level of messages */
-			level = atoi(optarg);
+			level = strtol_or_err(optarg, _("failed to parse level"));
 			break;
 		case 'r':
 			raw = 1;
 			break;
 		case 's':
-			bufsize = atoi(optarg);
+			bufsize = strtol_or_err(optarg, _("failed to parse buffer size"));
 			if (bufsize < 4096)
 				bufsize = 4096;
 			break;
 		case '?':
 		default:
 			usage();
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 	}
 	argc -= optind;
@@ -91,16 +92,16 @@ main(int argc, char *argv[]) {
 
 	if (argc > 1) {
 		usage();
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	if (cmd == 8) {
 		n = klogctl(cmd, NULL, level);
 		if (n < 0) {
 			perror("klogctl");
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
 	if (!bufsize) {
@@ -130,7 +131,7 @@ main(int argc, char *argv[]) {
 
 	if (n < 0) {
 		perror("klogctl");
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	lastc = '\n';
