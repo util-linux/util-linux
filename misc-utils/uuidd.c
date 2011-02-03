@@ -65,26 +65,11 @@ static void die(const char *msg)
 
 static void create_daemon(void)
 {
-	pid_t pid;
 	uid_t euid;
 
-	pid = fork();
-	if (pid == -1) {
-		perror("fork");
-		exit(1);
-	} else if (pid != 0) {
-	    exit(0);
-	}
+	if (daemon(0,0))
+		die("daemon");
 
-	close(0);
-	close(1);
-	close(2);
-	open("/dev/null", O_RDWR);
-	open("/dev/null", O_RDWR);
-	open("/dev/null", O_RDWR);
-
-	if (chdir("/")) {}	/* Silence warn_unused_result warning */
-	(void) setsid();
 	euid = geteuid();
 	if (setreuid(euid, euid) < 0)
 		die("setreuid");
