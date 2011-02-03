@@ -277,10 +277,8 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	 */
 	while (!debug && s <= 2) {
 		s = dup(s);
-		if (s < 0) {
-			perror("dup");
-			exit(1);
-		}
+		if (s < 0)
+			die("dup");
 	}
 
 	/*
@@ -333,8 +331,8 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		if (ns < 0) {
 			if ((errno == EAGAIN) || (errno == EINTR))
 				continue;
-			perror("accept");
-			exit(1);
+			else
+				die("accept");
 		}
 		len = read(ns, &op, 1);
 		if (len != 1) {
