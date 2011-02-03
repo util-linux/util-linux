@@ -281,7 +281,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	}
 	(void) umask(save_umask);
 
-	if (listen(s, 5) < 0) {
+	if (listen(s, SOMAXCONN) < 0) {
 		if (!quiet)
 			fprintf(stderr, _("Couldn't listen on unix "
 					  "socket %s: %s\n"), socket_path,
