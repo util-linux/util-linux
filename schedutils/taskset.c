@@ -23,10 +23,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <getopt.h>
-#include <sched.h>
 #include <errno.h>
-#include <string.h>
-#include <ctype.h>
 #include <err.h>
 
 #include "cpuset.h"

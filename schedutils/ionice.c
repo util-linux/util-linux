@@ -11,9 +11,7 @@
 #include <errno.h>
 #include <getopt.h>
 #include <unistd.h>
-#include <sys/ptrace.h>
 #include <sys/syscall.h>
-#include <asm/unistd.h>
 #include <err.h>
 
 #include "nls.h"
