@@ -12,6 +12,7 @@
 
 #include <stdlib.h>
 #include <err.h>
+#include <string.h>
 
 #include "c.h"
 
