@@ -36,6 +36,7 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "strutils.h"
+#include "writeall.h"
 
 struct wipe_desc {
 	loff_t		offset;		/* magic string offset */
@@ -210,24 +211,6 @@ read_offsets(struct wipe_desc *wp, const char *fname, int zap)
 
 	blkid_free_probe(pr);
 	return wp;
-}
-
-static int
-write_all(int fd, const void *buf, size_t count)
-{
-	while(count) {
-		ssize_t tmp;
-
-		errno = 0;
-		tmp = write(fd, buf, count);
-		if (tmp > 0) {
-			count -= tmp;
-			if (count)
-				buf += tmp;
-		} else if (errno != EINTR && errno != EAGAIN)
-			return -1;
-	}
-	return 0;
 }
 
 static int
