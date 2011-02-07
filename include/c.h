@@ -16,9 +16,12 @@
 # define __must_be_array(a) \
 	BUILD_BUG_ON_ZERO(__builtin_types_compatible_p(typeof(a), typeof(&a[0])))
 
+# define ignore_result(x) ({ typeof(x) __dummy = (x); (void) __dummy; })
+
 #else /* !__GNUC__ */
 # define __must_be_array(a)	0
 # define __attribute__(_arg_)
+# define ignore_result(x) ((void) (x))
 #endif /* !__GNUC__ */
 
 
@@ -62,7 +65,6 @@
 	_max1 > _max2 ? _max1 : _max2; })
 #endif
 
-#define ignore_result(x) ({ typeof(x) __dummy = (x); (void) __dummy; })
 
 static inline __attribute__((const)) int is_power_of_2(unsigned long num)
 {
