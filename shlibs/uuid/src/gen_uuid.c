@@ -315,7 +315,6 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 	THREAD_LOCAL FILE		*state_f;
 	THREAD_LOCAL uint16_t		clock_seq;
 	struct timeval			tv;
-	struct flock			fl;
 	uint64_t			clock_reg;
 	mode_t				save_umask;
 	int				len;
@@ -331,14 +330,9 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 			state_fd = -1;
 		}
 	}
-	fl.l_type = F_WRLCK;
-	fl.l_whence = SEEK_SET;
-	fl.l_start = 0;
-	fl.l_len = 0;
-	fl.l_pid = 0;
 	if (state_fd >= 0) {
 		rewind(state_f);
-		while (fcntl(state_fd, F_SETLKW, &fl) < 0) {
+		while (flock(state_fd, LOCK_EX) < 0) {
 			if ((errno == EAGAIN) || (errno == EINTR))
 				continue;
 			fclose(state_f);
@@ -409,8 +403,7 @@ try_again:
 			fflush(state_f);
 		}
 		rewind(state_f);
-		fl.l_type = F_UNLCK;
-		fcntl(state_fd, F_SETLK, &fl);
+		flock(state_fd, LOCK_UN);
 	}
 
 	*clock_high = clock_reg >> 32;
