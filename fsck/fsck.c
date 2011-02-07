@@ -54,6 +54,7 @@
 #include "ismounted.h"
 
 #include "fsck.h"
+#include "c.h"
 
 static const char *ignored_types[] = {
 	"ignore",
