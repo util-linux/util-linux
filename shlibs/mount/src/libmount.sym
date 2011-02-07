@@ -36,6 +36,7 @@ global:
 	mnt_context_get_status;
 	mnt_context_get_target;
 	mnt_context_get_user_mflags;
+	mnt_context_helper_setopt;
 	mnt_context_init_helper;
 	mnt_context_is_fake;
 	mnt_context_is_force;
@@ -46,7 +47,6 @@ global:
 	mnt_context_is_sloppy;
 	mnt_context_is_verbose;
 	mnt_context_mount;
-	mnt_context_helper_setopt;
 	mnt_context_prepare_mount;
 	mnt_context_prepare_umount;
 	mnt_context_set_cache;
@@ -98,6 +98,7 @@ global:
 	mnt_fs_get_userdata;
 	mnt_fs_get_user_options;
 	mnt_fs_get_vfs_options;
+	mnt_fs_is_kernel;
 	mnt_fs_match_fstype;
 	mnt_fs_match_options;
 	mnt_fs_match_source;
@@ -157,6 +158,7 @@ global:
 	mnt_optstr_set_option;
 	mnt_parse_version_string;
 	mnt_reset_context;
+	mnt_reset_fs;
 	mnt_reset_iter;
 	mnt_resolve_path;
 	mnt_resolve_spec;

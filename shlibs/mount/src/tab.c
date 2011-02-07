@@ -424,7 +424,7 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 	if (!tb || !path)
 		return NULL;
 
-	DBG(TAB, mnt_debug_h(tb, "lookup target: %s", path));
+	DBG(TAB, mnt_debug_h(tb, "lookup TARGET: %s", path));
 
 	/* native @target */
 	mnt_reset_iter(&itr, direction);
@@ -733,7 +733,7 @@ int test_copy_fs(struct libmnt_test *ts, int argc, char *argv[])
 	printf("ORIGINAL:\n");
 	mnt_fs_print_debug(fs, stdout);
 
-	fs = mnt_copy_fs(fs);
+	fs = mnt_copy_fs(NULL, fs);
 	if (!fs)
 		goto done;
 

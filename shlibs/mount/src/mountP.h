@@ -193,6 +193,12 @@ struct libmnt_fs {
 #define MNT_FS_PSEUDO	(1 << 1) /* pseudo filesystem */
 #define MNT_FS_NET	(1 << 2) /* network filesystem */
 #define MNT_FS_SWAP	(1 << 3) /* swap device */
+#define MNT_FS_KERNEL	(1 << 4) /* data from /proc/{mounts,self/mountinfo} */
+#define MNT_FS_MERGED	(1 << 5) /* already merged data from /dev/.mount/utab */
+
+extern int __mnt_fs_get_flags(struct libmnt_fs *fs);
+extern int __mnt_fs_set_flags(struct libmnt_fs *fs, int flags);
+
 
 /*
  * mtab/fstab/mountinfo file

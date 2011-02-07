@@ -140,6 +140,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 			&fs->fs_optstr);
 
 	if (rc == 10) {
+		fs->flags |= MNT_FS_KERNEL;
 		fs->devno = makedev(maj, min);
 
 		unmangle_string(fs->root);
@@ -335,12 +336,19 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 {
 	int nlines = 0;
 	int rc = -1;
+	int flags = 0;
 
 	assert(tb);
 	assert(f);
 	assert(filename);
 
 	DBG(TAB, mnt_debug_h(tb, "%s: start parsing", filename));
+
+	/* necessary for /proc/mounts only, the /proc/self/mountinfo
+	 * parser sets propertly the flag
+	 */
+	if (filename && strcmp(filename, _PATH_PROC_MOUNTS) == 0)
+		flags = MNT_FS_KERNEL;
 
 	while (!feof(f)) {
 		struct libmnt_fs *fs = mnt_new_fs();
@@ -349,8 +357,10 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 			goto err;
 
 		rc = mnt_table_parse_next(tb, f, fs, filename, &nlines);
-		if (!rc)
+		if (!rc) {
 			rc = mnt_table_add_fs(tb, fs);
+			fs->flags |= flags;
+		}
 		if (rc) {
 			mnt_free_fs(fs);
 			if (rc == 1)
@@ -631,6 +641,9 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 			   *t = mnt_fs_get_target(fs),
 			   *r = mnt_fs_get_root(fs);
 
+		if (fs->flags & MNT_FS_MERGED)
+			continue;
+
 		if (s && t && r && !strcmp(t, target) &&
 		    !strcmp(s, src) && !strcmp(r, root))
 			break;
@@ -641,6 +654,7 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 		mnt_fs_append_user_options(fs, optstr);
 		mnt_fs_append_attributes(fs, attrs);
 		mnt_fs_set_bindsrc(fs, mnt_fs_get_bindsrc(uf));
+		fs->flags |= MNT_FS_MERGED;
 
 		DBG(TAB, mnt_debug_h(tb, "found fs:"));
 		DBG(TAB, mnt_fs_print_debug(fs, stderr));

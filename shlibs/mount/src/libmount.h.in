@@ -199,7 +199,9 @@ extern int mnt_lock_file(struct libmnt_lock *ml);
 /* fs.c */
 extern struct libmnt_fs *mnt_new_fs(void);
 extern void mnt_free_fs(struct libmnt_fs *fs);
-extern struct libmnt_fs *mnt_copy_fs(const struct libmnt_fs *fs);
+extern void mnt_reset_fs(struct libmnt_fs *fs);
+extern struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
+				     const struct libmnt_fs *src);
 extern void *mnt_fs_get_userdata(struct libmnt_fs *fs);
 extern int mnt_fs_set_userdata(struct libmnt_fs *fs, void *data);
 extern const char *mnt_fs_get_source(struct libmnt_fs *fs);
@@ -262,6 +264,8 @@ extern int mnt_fs_match_source(struct libmnt_fs *fs, const char *source,
 extern int mnt_fs_match_fstype(struct libmnt_fs *fs, const char *types);
 extern int mnt_fs_match_options(struct libmnt_fs *fs, const char *options);
 extern int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file);
+
+extern int mnt_fs_is_kernel(struct libmnt_fs *fs);
 
 extern void mnt_free_mntent(struct mntent *mnt);
 extern int mnt_fs_to_mntent(struct libmnt_fs *fs, struct mntent **mnt);

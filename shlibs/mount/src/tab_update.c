@@ -324,7 +324,7 @@ static int utab_new_entry(struct libmnt_fs *fs, unsigned long mountflags, struct
 	}
 
 	/* allocate the entry */
-	*ent = mnt_copy_fs(fs);
+	*ent = mnt_copy_fs(NULL, fs);
 	if (!*ent) {
 		rc = -ENOMEM;
 		goto err;

@@ -33,6 +33,7 @@ struct libmnt_fs *mnt_new_fs(void)
 	if (!fs)
 		return NULL;
 
+	/*DBG(FS, mnt_debug_h(fs, "alloc"));*/
 	INIT_LIST_HEAD(&fs->ents);
 	return fs;
 }
@@ -49,6 +50,8 @@ void mnt_free_fs(struct libmnt_fs *fs)
 		return;
 	list_del(&fs->ents);
 
+	/*DBG(FS, mnt_debug_h(fs, "free"));*/
+
 	free(fs->source);
 	free(fs->bindsrc);
 	free(fs->tagname);
@@ -64,7 +67,19 @@ void mnt_free_fs(struct libmnt_fs *fs)
 	free(fs);
 }
 
-static inline int cpy_str(char **dest, const char *src)
+/**
+ * mnt_reset_fs:
+ * @fs: fs pointer
+ *
+ * Resets (zeroize) @fs.
+ */
+void mnt_reset_fs(struct libmnt_fs *fs)
+{
+	if (fs)
+		memset(fs, 0, sizeof(*fs));
+}
+
+static inline int update_str(char **dest, const char *src)
 {
 	size_t sz;
 	char *x;
@@ -91,57 +106,71 @@ static inline int cpy_str_at_offset(void *new, const void *old, size_t offset)
 	char **o = (char **) (old + offset);
 	char **n = (char **) (new + offset);
 
-	return cpy_str(n, *o);
+	if (*n)
+		return 0;	/* already set, not overwrite */
+
+	return update_str(n, *o);
 }
 
 /**
  * mnt_copy_fs:
- * @fs: source FS
+ * @dest: destination FS
+ * @src: source FS
+ *
+ * If @dest is NULL, then a new FS is allocated, if any @dest field is already
+ * set then the field is NOT overwrited.
  *
  * This function does not copy userdata (se mnt_fs_set_userdata()). A new copy is
  * not linked with any existing mnt_tab.
  *
- * Returns: copy of @fs
+ * Returns: @dest or NULL in case of error
  */
-struct libmnt_fs *mnt_copy_fs(const struct libmnt_fs *fs)
+struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
+			      const struct libmnt_fs *src)
 {
-	struct libmnt_fs *n = mnt_new_fs();
+	const struct libmnt_fs *org = dest;
 
-	if (!n)
-		return NULL;
+	if (!dest) {
+		dest = mnt_new_fs();
+		if (!dest)
+			return NULL;
+	}
 
-	n->id         = fs->id;
-	n->parent     = fs->parent;
-	n->devno      = fs->devno;
+	/*DBG(FS, mnt_debug_h(dest, "copy from %p", src));*/
 
-	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, source)))
+	dest->id         = src->id;
+	dest->parent     = src->parent;
+	dest->devno      = src->devno;
+
+	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, source)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, tagname)))
+	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, tagname)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, tagval)))
+	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, tagval)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, root)))
+	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, root)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, target)))
+	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, target)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, fstype)))
+	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, fstype)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, vfs_optstr)))
+	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, vfs_optstr)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, fs_optstr)))
+	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, fs_optstr)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, user_optstr)))
+	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, user_optstr)))
 		goto err;
-	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, attrs)))
+	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, attrs)))
 		goto err;
 
-	n->freq       = fs->freq;
-	n->passno     = fs->passno;
-	n->flags      = fs->flags;
+	dest->freq       = src->freq;
+	dest->passno     = src->passno;
+	dest->flags      = src->flags;
 
-	return n;
+	return dest;
 err:
-	mnt_free_fs(n);
+	if (!org)
+		mnt_free_fs(dest);
 	return NULL;
 }
 
@@ -398,6 +427,31 @@ int mnt_fs_set_target(struct libmnt_fs *fs, const char *target)
 	fs->target = p;
 
 	return 0;
+}
+
+int __mnt_fs_get_flags(struct libmnt_fs *fs)
+{
+	return fs ? fs->flags : 0;
+}
+
+int __mnt_fs_set_flags(struct libmnt_fs *fs, int flags)
+{
+	if (fs) {
+		fs->flags = flags;
+		return 0;
+	}
+	return -EINVAL;
+}
+
+/**
+ * mnt_fs_is_kernel:
+ * @fs: filesystem
+ *
+ * Returns: 1 if the filesystem description is read from kernel e.g. /proc/mounts.
+ */
+int mnt_fs_is_kernel(struct libmnt_fs *fs)
+{
+	return __mnt_fs_get_flags(fs) & MNT_FS_KERNEL;
 }
 
 /**
@@ -1400,11 +1454,11 @@ int mnt_fs_to_mntent(struct libmnt_fs *fs, struct mntent **mnt)
 			return -ENOMEM;
 	}
 
-	if ((rc = cpy_str(&m->mnt_fsname, mnt_fs_get_source(fs))))
+	if ((rc = update_str(&m->mnt_fsname, mnt_fs_get_source(fs))))
 		goto err;
-	if ((rc = cpy_str(&m->mnt_dir, mnt_fs_get_target(fs))))
+	if ((rc = update_str(&m->mnt_dir, mnt_fs_get_target(fs))))
 		goto err;
-	if ((rc = cpy_str(&m->mnt_type, mnt_fs_get_fstype(fs))))
+	if ((rc = update_str(&m->mnt_type, mnt_fs_get_fstype(fs))))
 		goto err;
 
 	errno = 0;

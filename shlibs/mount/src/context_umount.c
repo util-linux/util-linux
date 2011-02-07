@@ -25,7 +25,7 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 {
 	int rc;
 	const char *tgt;
-	struct libmnt_table *mtab;
+	struct libmnt_table *mtab = NULL;
 	struct libmnt_fs *fs;
 
 	assert(cxt);
@@ -69,30 +69,19 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 	}
 
 	if (!fs) {
-		DBG(CXT, mnt_debug_h(cxt, "cannot found %s in mtab", tgt));
+		DBG(CXT, mnt_debug_h(cxt, "umount: cannot found %s in mtab", tgt));
 		return 0;
 	}
 
 	/* copy from mtab to our FS description
 	 */
-	rc = mnt_fs_set_source(cxt->fs, mnt_fs_get_source(fs));
-	if (!rc)
-		rc = mnt_fs_set_target(cxt->fs, mnt_fs_get_target(fs));
+	mnt_fs_set_source(cxt->fs, NULL);
+	mnt_fs_set_target(cxt->fs, NULL);
 
-	if (!rc && !mnt_fs_get_fstype(cxt->fs))
-		rc = mnt_fs_set_fstype(cxt->fs, mnt_fs_get_fstype(fs));
-
-	if (!rc)
-		rc = mnt_fs_set_vfs_options(cxt->fs, mnt_fs_get_vfs_options(fs));
-	if (!rc)
-		rc = mnt_fs_set_fs_options(cxt->fs, mnt_fs_get_fs_options(fs));
-	if (!rc)
-		rc = mnt_fs_set_user_options(cxt->fs, mnt_fs_get_user_options(fs));
-	if (!rc)
-		rc = mnt_fs_set_attributes(cxt->fs, mnt_fs_get_attributes(fs));
-
-	if (!rc && mnt_fs_get_bindsrc(fs))
-		rc = mnt_fs_set_bindsrc(cxt->fs, mnt_fs_get_bindsrc(fs));
+	if (!mnt_copy_fs(cxt->fs, fs)) {
+		DBG(CXT, mnt_debug_h(cxt, "umount: failed to copy FS"));
+		return -errno;
+	}
 
 	DBG(CXT, mnt_debug_h(cxt, "umount: mtab applied"));
 	cxt->flags |= MNT_FL_TAB_APPLIED;
