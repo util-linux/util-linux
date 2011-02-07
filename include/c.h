@@ -10,6 +10,15 @@
 /*
  * Compiler specific stuff
  */
+#ifndef __GNUC_PREREQ
+# if defined __GNUC__ && defined __GNUC_MINOR__
+#  define __GNUC_PREREQ(maj, min) \
+	((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
+# else
+#  define __GNUC_PREREQ(maj, min) 0
+# endif
+#endif
+
 #ifdef __GNUC__
 
 /* &a[0] degrades to a pointer: a different type from an array */
@@ -24,6 +33,24 @@
 # define ignore_result(x) ((void) (x))
 #endif /* !__GNUC__ */
 
+/*
+ * Function attributes
+ */
+#ifndef __ul_alloc_size
+# if __GNUC_PREREQ (3, 0)
+#  define __ul_alloc_size(s) __attribute__((alloc_size(s)))
+# else
+#  define __ul_alloc_size(s)
+# endif
+#endif
+
+#ifndef __ul_calloc_size
+# if __GNUC_PREREQ (3, 0)
+#  define __ul_calloc_size(n, s) __attribute__((alloc_size(n, s)))
+# else
+#  define __ul_calloc_size(n, s)
+# endif
+#endif
 
 /* Force a compilation error if condition is true, but also produce a
  * result (of value 0 and type size_t), so the expression can be used
