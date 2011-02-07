@@ -1230,6 +1230,8 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 	assert(cxt->action);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
 
+	DBG(CXT, mnt_debug_h(cxt, "prepare update"));
+
 	if (cxt->mountflags & MS_PROPAGATION) {
 		DBG(CXT, mnt_debug_h(cxt, "skip update: MS_PROPAGATION"));
 		return 0;
@@ -1251,6 +1253,13 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 	}
 	if (!cxt->mtab_writable && !cxt->utab_writable) {
 		DBG(CXT, mnt_debug_h(cxt, "skip update: no writable destination"));
+		return 0;
+	}
+	/* 0 = success, 1 = not called yet */
+	if (cxt->syscall_status != 1 && cxt->syscall_status != 0) {
+		DBG(CXT, mnt_debug_h(cxt,
+				"skip update: syscall failed [status=%d]",
+				cxt->syscall_status));
 		return 0;
 	}
 	if (!cxt->update) {
@@ -1495,6 +1504,7 @@ int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status)
 	if (!cxt)
 		return -EINVAL;
 
+	DBG(CXT, mnt_debug_h(cxt, "syscall status set to: %d", status));
 	cxt->syscall_status = status;
 	return 0;
 }
