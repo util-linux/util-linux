@@ -616,8 +616,12 @@ static int utab_lock(const char *filename)
 
 	if (fd < 0)
 		return -errno;
-	if (flock(fd, LOCK_EX)) {
-		int errsv = errno;
+
+	while (flock(fd, LOCK_EX) < 0) {
+		int errsv;
+		if ((errno == EAGAIN) || (errno == EINTR))
+			continue;
+		errsv = errno;
 		close(fd);
 		return -errsv;
 	}
