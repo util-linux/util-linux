@@ -37,7 +37,7 @@
  * Function attributes
  */
 #ifndef __ul_alloc_size
-# if __GNUC_PREREQ (3, 0)
+# if __GNUC_PREREQ (4, 3)
 #  define __ul_alloc_size(s) __attribute__((alloc_size(s)))
 # else
 #  define __ul_alloc_size(s)
@@ -45,7 +45,7 @@
 #endif
 
 #ifndef __ul_calloc_size
-# if __GNUC_PREREQ (3, 0)
+# if __GNUC_PREREQ (4, 3)
 #  define __ul_calloc_size(n, s) __attribute__((alloc_size(n, s)))
 # else
 #  define __ul_calloc_size(n, s)
