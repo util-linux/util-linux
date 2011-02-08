@@ -32,6 +32,8 @@
 #include <unistd.h>
 #include <stdarg.h>
 #include <bitops.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 
 #include "cpuset.h"
 #include "nls.h"
@@ -911,18 +913,18 @@ print_readable(struct lscpu_desc *desc, int hex)
 	}
 }
 
-void usage(int rc)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	printf(_("Usage: %s [option]\n"),
+	fprintf(out, _("Usage: %s [option]\n"),
 			program_invocation_short_name);
 
-	puts(_(	"CPU architecture information helper\n\n"
+	fprintf(out,_("CPU architecture information helper\n\n"
 		"  -h, --help     usage information\n"
 		"  -p, --parse    print out in parsable instead of printable format.\n"
 		"  -s, --sysroot  use the directory as a new system root.\n"
 		"  -x, --hex      print haxadecimal masks rather than lists of CPU(s)\n"));
 
-	exit(rc);
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -945,7 +947,7 @@ int main(int argc, char *argv[])
 	while((c = getopt_long(argc, argv, "hps:x", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
-			usage(EXIT_SUCCESS);
+			usage(stdout);
 		case 'p':
 			parsable = 1;
 			break;
@@ -958,7 +960,7 @@ int main(int argc, char *argv[])
 			hex = 1;
 			break;
 		default:
-			usage(EXIT_FAILURE);
+			usage(stderr);
 		}
 	}
 
