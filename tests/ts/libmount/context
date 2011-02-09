@@ -14,12 +14,15 @@ LABEL=libmount-test
 UUID=$(uuidgen)
 MOUNTPOINT="$TS_MOUNTPOINT"
 
+#set -x
+
 [ -x $TESTPROG ] || ts_skip "test not compiled"
 
 modprobe --dry-run --quiet scsi_debug
 [ "$?" == 0 ] || ts_skip "missing scsi_debug module"
 
 ts_log "Init device"
+umount $MOUNTPOINT &> /dev/null
 rmmod scsi_debug &> /dev/null
 modprobe scsi_debug dev_size_mb=100
 [ "$?" == 0 ] || ts_die "Cannot init device"
@@ -58,6 +61,7 @@ export LIBMOUNT_MTAB=$TS_OUTPUT.mtab
 ts_init_subtest "mount-by-devname"
 mkdir -p $MOUNTPOINT &>  /dev/null
 $TESTPROG --mount $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
+
 grep -q $DEVICE $LIBMOUNT_MTAB || \
 	echo "(by device) cannot found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
@@ -68,6 +72,7 @@ grep -q $DEVICE $LIBMOUNT_MTAB &&
 	echo "umount (device) failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
+#exit 1
 
 ts_init_subtest "mount-by-label"
 mkdir -p $MOUNTPOINT &>  /dev/null

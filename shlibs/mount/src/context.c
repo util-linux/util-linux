@@ -18,7 +18,7 @@
  *	mnt_context_set_mflags(cxt, MS_NOATIME|MS_NOEXEC);
  *	mnt_context_set_target(cxt, "/mnt/foo");
  *
- *	if (!mnt_context_do_mount(cxt))
+ *	if (!mnt_context_mount(cxt))
  *		printf("successfully mounted\n");
  *	mnt_free_context(cxt);
  *
@@ -1416,8 +1416,7 @@ static int apply_table(struct libmnt_context *cxt, struct libmnt_table *tb,
  * mnt_context_apply_fstab:
  * @cxt: mount context
  *
- * This function is optional if mnt_context_do_mount() is used. See also
- * mnt_context_set_optsmode().
+ * This function is optional.
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -1495,7 +1494,7 @@ int mnt_context_get_status(struct libmnt_context *cxt)
  * @status: mount(2) return code
  *
  * This function should be used if [u]mount(2) syscall was NOT called by
- * libmount (mnt_context_mount() or mnt_context_do_mount()) only.
+ * libmount (by mnt_context_mount() or mnt_context_do_mount()) only.
  *
  * Returns: 0 or negative number in case of error.
  */
@@ -1678,7 +1677,7 @@ int test_umount(struct libmnt_test *ts, int argc, char *argv[])
 	if (lock)
 		atexit(lock_fallback);
 
-	rc = mnt_context_do_umount(cxt);
+	rc = mnt_context_umount(cxt);
 	if (rc)
 		printf("failed to umount\n");
 	else
