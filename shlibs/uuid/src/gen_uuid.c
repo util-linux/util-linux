@@ -333,7 +333,7 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 	if (state_fd >= 0) {
 		rewind(state_f);
 		while (flock(state_fd, LOCK_EX) < 0) {
-			if ((errno == EAGAIN) || (errno == EINTR))
+			if (errno == EINTR)
 				continue;
 			fclose(state_f);
 			close(state_fd);
