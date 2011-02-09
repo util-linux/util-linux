@@ -25,7 +25,9 @@
 # define __must_be_array(a) \
 	BUILD_BUG_ON_ZERO(__builtin_types_compatible_p(typeof(a), typeof(&a[0])))
 
-# define ignore_result(x) ({ typeof(x) __dummy = (x); (void) __dummy; })
+# define ignore_result(x) ({ \
+	typeof(x) __dummy __attribute__((__unused__)) = (x); (void) __dummy; \
+})
 
 #else /* !__GNUC__ */
 # define __must_be_array(a)	0
