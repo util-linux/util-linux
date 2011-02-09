@@ -761,7 +761,7 @@ lock_mtab (void) {
 }
 
 /* returns whole option with name @optname from @src list */
-static char *
+char *
 get_option(const char *optname, const char *src, size_t *len)
 {
 	char *opt, *end;

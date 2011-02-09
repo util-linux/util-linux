@@ -451,6 +451,18 @@ static char *remove_context_options(char *opts)
 
 	return opts;
 }
+
+static int has_context_option(char *opts)
+{
+	if (get_option("context=", opts, NULL) ||
+	    get_option("fscontext=", opts, NULL) ||
+	    get_option("defcontext=", opts, NULL) ||
+	    get_option("rootcontext=", opts, NULL))
+		return 1;
+
+	return 0;
+}
+
 #endif
 
 /*
@@ -1593,8 +1605,25 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
       types = "none";
 
 #ifdef HAVE_LIBSELINUX
-  if ((flags & MS_REMOUNT) && mount_opts)
-      mount_opts = remove_context_options(mount_opts);
+  if (flags & MS_REMOUNT) {
+      /*
+       * Linux kernel does not accept any selinux context option on remount
+       */
+      if (mount_opts)
+          mount_opts = remove_context_options(mount_opts);
+
+  } else if (types && strcmp(types, "tmpfs") == 0 && is_selinux_enabled() > 0 &&
+	   !has_context_option(mount_opts)) {
+      /*
+       * Add rootcontext= mount option for tmpfs
+       * https://bugzilla.redhat.com/show_bug.cgi?id=476964
+       */
+      security_context_t sc = NULL;
+
+      if (getfilecon(node, &sc) > 0 && strcmp("unlabeled", sc))
+	      append_context("rootcontext=", (char *) sc, &mount_opts);
+      freecon(sc);
+  }
 #endif
 
   /*
