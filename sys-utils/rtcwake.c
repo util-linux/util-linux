@@ -247,6 +247,24 @@ static int setup_alarm(int fd, time_t *wakeup)
 	return 0;
 }
 
+static int is_suspend_available(const char *suspend)
+{
+	int rc;
+	char buf[32];
+	FILE *f = fopen(SYS_POWER_STATE_PATH, "r");
+
+	if (!f)
+		return -1;
+
+	if (fgets(buf, sizeof buf, f) == NULL)
+		rc = -1;
+	else
+		rc = strstr(buf, suspend) != NULL;
+
+	fclose(f);
+	return rc;
+}
+
 static void suspend_system(const char *suspend)
 {
 	FILE	*f = fopen(SYS_POWER_STATE_PATH, "w");
@@ -501,6 +519,11 @@ int main(int argc, char **argv)
 				alarm, sys_time, rtc_time, seconds);
 
 	if (strcmp(suspend, "show") && strcmp(suspend, "disable")) {
+		if (strcmp(suspend, "no") && strcmp(suspend, "on") &&
+		    strcmp(suspend, "off") && is_suspend_available(suspend) <= 0) {
+			errx(EXIT_FAILURE, _("suspend to \"%s\" unavailable"), suspend);
+		}
+
 		/* care about alarm setup only if the show|disable
 		 * modes are not set
 		 */
