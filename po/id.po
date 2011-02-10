@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.17.1-rc1\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2011-01-25 12:27+0100\n"
+"POT-Creation-Date: 2011-02-10 09:15+0100\n"
 "PO-Revision-Date: 2010-02-18 04:00+0700\n"
 "Last-Translator: Arif E. Nugroho <arif_endro@yahoo.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
@@ -346,7 +346,7 @@ msgid "unable to test CRC: old cramfs format"
 msgstr "tidak dapat memeriksa CRC: format cramfs lama"
 
 #: disk-utils/fsck.cramfs.c:272 disk-utils/fsck.cramfs.c:339
-#: disk-utils/fsck.cramfs.c:477 schedutils/taskset.c:129
+#: disk-utils/fsck.cramfs.c:477 schedutils/taskset.c:126
 msgid "malloc failed"
 msgstr "malloc gagal"
 
@@ -1654,7 +1654,7 @@ msgstr ""
 msgid "%s: failed to write label"
 msgstr "seek gagal dalam write_tables"
 
-#: disk-utils/swaplabel.c:161 misc-utils/wipefs.c:320
+#: disk-utils/swaplabel.c:161 misc-utils/wipefs.c:303
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [options] <device>\n"
@@ -5877,36 +5877,36 @@ msgstr ""
 "kemudian gunakan dd(1) untuk menolkan 512 bytes pertama: dd if=/dev/zero \n"
 "of=/dev/foo7 bs=512 count=1 (Lihat fdisk(8).)\n"
 
-#: fsck/fsck.c:270
+#: fsck/fsck.c:271
 #, fuzzy, c-format
 msgid "Locking disk %s ... "
 msgstr "Sinkronisasi disks.\n"
 
-#: fsck/fsck.c:280
+#: fsck/fsck.c:281
 #, c-format
 msgid "(waiting) "
 msgstr ""
 
-#: fsck/fsck.c:289
+#: fsck/fsck.c:290
 msgid "success"
 msgstr ""
 
-#: fsck/fsck.c:289
+#: fsck/fsck.c:290
 #, fuzzy
 msgid "failed"
 msgstr "%s gagal.\n"
 
-#: fsck/fsck.c:419
+#: fsck/fsck.c:420
 #, c-format
 msgid "WARNING: couldn't open %s: %s\n"
 msgstr "PERINGATAN: tidak dapat membuka %s: %s\n"
 
-#: fsck/fsck.c:429
+#: fsck/fsck.c:430
 #, c-format
 msgid "WARNING: bad format on line %d of %s\n"
 msgstr "PERINGATAN: format buruk di baris %d dari %s\n"
 
-#: fsck/fsck.c:445
+#: fsck/fsck.c:446
 msgid ""
 "WARNING: Your /etc/fstab does not contain the fsck passno\n"
 "\tfield.  I will kludge around things for you, but you\n"
@@ -5918,37 +5918,37 @@ msgstr ""
 "\tseharusnya membetulkan berkas /etc/fstab anda secepatnya.\n"
 "\n"
 
-#: fsck/fsck.c:552
+#: fsck/fsck.c:553
 #, c-format
 msgid "fsck: %s: not found\n"
 msgstr "fsck: %s: tidak ditemukan\n"
 
-#: fsck/fsck.c:673
+#: fsck/fsck.c:674
 #, c-format
 msgid "%s: wait: No more child process?!?\n"
 msgstr "%s: tunggu: Tida ada proses anak lagi?!?\n"
 
-#: fsck/fsck.c:695
+#: fsck/fsck.c:696
 #, c-format
 msgid "Warning... %s for device %s exited with signal %d.\n"
 msgstr "Peringatan... %s untuk perangkat %s keluar dengan sinyal %d.\n"
 
-#: fsck/fsck.c:701
+#: fsck/fsck.c:702
 #, c-format
 msgid "%s %s: status is %x, should never happen.\n"
 msgstr "%s %s: status adalah %x, seharusnya tidak pernah terjadi.\n"
 
-#: fsck/fsck.c:740
+#: fsck/fsck.c:741
 #, c-format
 msgid "Finished with %s (exit status %d)\n"
 msgstr "Selesai dengan %s (status keluar %d)\n"
 
-#: fsck/fsck.c:800
+#: fsck/fsck.c:801
 #, c-format
 msgid "%s: Error %d while executing fsck.%s for %s\n"
 msgstr "%s: Error %d ketika menjalankan fsck.%s untuk %s\n"
 
-#: fsck/fsck.c:823
+#: fsck/fsck.c:824
 msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
 "with 'no' or '!'.\n"
@@ -5956,11 +5956,11 @@ msgstr ""
 "Baik seluruh atau kosong dari tipe sistem berkas dilewatkan ke -t harus\n"
 "diawali dengan 'no' atau '!'.\n"
 
-#: fsck/fsck.c:842
+#: fsck/fsck.c:843
 msgid "Couldn't allocate memory for filesystem types\n"
 msgstr "Tidak dapat mengalokasikan memori untuk tipe sistem berkas\n"
 
-#: fsck/fsck.c:981
+#: fsck/fsck.c:982
 #, c-format
 msgid ""
 "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass "
@@ -5969,80 +5969,80 @@ msgstr ""
 "%s: melewatkan baris buruk dalam /etc/fstab: jalankan mount dengan tahap "
 "bukan nol di fsck\n"
 
-#: fsck/fsck.c:992
+#: fsck/fsck.c:993
 #, c-format
 msgid "%s: skipping nonexistent device\n"
 msgstr "%s: melewatkan perangkat yang tidak ada\n"
 
-#: fsck/fsck.c:997
+#: fsck/fsck.c:998
 #, c-format
 msgid ""
 "%s: nonexistent device (\"nofail\" fstab option may be used to skip this "
 "device)\n"
 msgstr ""
 
-#: fsck/fsck.c:1024
+#: fsck/fsck.c:1025
 #, c-format
 msgid "fsck: cannot check %s: fsck.%s not found\n"
 msgstr "fsck: tidak dapat memeriksa %s: fsck.%s tidak ditemukan\n"
 
-#: fsck/fsck.c:1110
+#: fsck/fsck.c:1111
 msgid "Checking all file systems.\n"
 msgstr "Memeriksa seluruh sistem berkas.\n"
 
-#: fsck/fsck.c:1201
+#: fsck/fsck.c:1202
 #, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr "--menunggu-- (tahap %d)\n"
 
-#: fsck/fsck.c:1221
+#: fsck/fsck.c:1222
 msgid ""
 "Usage: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-options] [filesys ...]\n"
 msgstr ""
 "Penggunaan: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-optoins] "
 "[filesys ...]\n"
 
-#: fsck/fsck.c:1259
+#: fsck/fsck.c:1260
 #, c-format
 msgid "%s: too many devices\n"
 msgstr "%s: terlalu banyak perangkat\n"
 
-#: fsck/fsck.c:1270
+#: fsck/fsck.c:1271
 #, c-format
 msgid "Couldn't open %s: %s\n"
 msgstr "Tidak dapat membuka %s: %s\n"
 
-#: fsck/fsck.c:1272
+#: fsck/fsck.c:1273
 #, c-format
 msgid "Is /proc mounted?\n"
 msgstr "Apakah /proc telah terpasang?\n"
 
-#: fsck/fsck.c:1281
+#: fsck/fsck.c:1282
 #, c-format
 msgid "Must be root to scan for matching filesystems: %s\n"
 msgstr "Harus root untuk dapat memindai untuk mencocokan sistem berkas: %s\n"
 
-#: fsck/fsck.c:1284
+#: fsck/fsck.c:1285
 #, c-format
 msgid "Couldn't find matching filesystem: %s\n"
 msgstr "Tidak dapat menemukan sistem berkas yang cocok: %s\n"
 
-#: fsck/fsck.c:1292 fsck/fsck.c:1381
+#: fsck/fsck.c:1293 fsck/fsck.c:1382
 #, c-format
 msgid "%s: too many arguments\n"
 msgstr "%s: terlalu banyak argumen\n"
 
-#: fsck/fsck.c:1415
+#: fsck/fsck.c:1416
 #, c-format
 msgid "fsck from %s\n"
 msgstr "fsck dari %s\n"
 
-#: fsck/fsck.c:1427
+#: fsck/fsck.c:1428
 #, c-format
 msgid "%s: Unable to allocate memory for fsck_path\n"
 msgstr "%s: Tidak dapat mengalokasikan memori untuk fsck_path\n"
 
-#: fsck/fsck.c:1441
+#: fsck/fsck.c:1442
 #, c-format
 msgid "%s: the -l option can be used with one device only -- ignore\n"
 msgstr ""
@@ -7279,7 +7279,7 @@ msgstr ""
 "penggunaan: last [-#] [-f file] [-t tty] [-h hostname] [pengguna ...]\n"
 
 #: login-utils/last.c:240 login-utils/vipw.c:154 misc-utils/lsblk.c:662
-#: misc-utils/wipefs.c:277 mount/swapon.c:209 mount/swapon.c:294
+#: misc-utils/wipefs.c:260 mount/swapon.c:209 mount/swapon.c:294
 #: mount/swapon.c:444 mount/swapon.c:608 mount/swapon.c:817 partx/partx.c:807
 #: sys-utils/fallocate.c:136 sys-utils/fsfreeze.c:102 sys-utils/fstrim.c:142
 #: text-utils/rev.c:113 text-utils/ul.c:178
@@ -8620,147 +8620,147 @@ msgstr "Tidak dapat membaca %s\n"
 msgid "%s: $TERM is not defined.\n"
 msgstr "%s: $TERM tidak didefinisikan.\n"
 
-#: misc-utils/uuidd.c:46
+#: misc-utils/uuidd.c:53
 #, c-format
 msgid "Usage: %s [-d] [-p pidfile] [-s socketpath] [-T timeout]\n"
 msgstr ""
 "Penggunaan: %s [-d] [-p berkas pid] [-s jalur soket] [-T waktu habis]\n"
 
-#: misc-utils/uuidd.c:48
+#: misc-utils/uuidd.c:55
 #, c-format
 msgid "       %s [-r|t] [-n num] [-s socketpath]\n"
 msgstr "       %s [-r|t] [-n jumlah] [-s jalur soket]\n"
 
-#: misc-utils/uuidd.c:50
+#: misc-utils/uuidd.c:57
 #, c-format
 msgid "       %s -k\n"
 msgstr "       %s -k\n"
 
-#: misc-utils/uuidd.c:152
+#: misc-utils/uuidd.c:126
 msgid "bad arguments"
 msgstr "argumen tidak baik"
 
-#: misc-utils/uuidd.c:159
+#: misc-utils/uuidd.c:133
 msgid "socket"
 msgstr "soket"
 
-#: misc-utils/uuidd.c:170
+#: misc-utils/uuidd.c:144
 msgid "connect"
 msgstr "terhubung"
 
-#: misc-utils/uuidd.c:189
+#: misc-utils/uuidd.c:164
 msgid "write"
 msgstr "tulis"
 
-#: misc-utils/uuidd.c:197
+#: misc-utils/uuidd.c:172
 msgid "read count"
 msgstr "jumlah yang terbaca"
 
-#: misc-utils/uuidd.c:203
+#: misc-utils/uuidd.c:178
 msgid "bad response length"
 msgstr "panjang balasan buruk"
 
-#: misc-utils/uuidd.c:244
+#: misc-utils/uuidd.c:219
 #, fuzzy, c-format
 msgid "Failed to open/create %s: %s\n"
 msgstr "gagal mendapatkan pid"
 
-#: misc-utils/uuidd.c:261
+#: misc-utils/uuidd.c:236
 #, fuzzy, c-format
 msgid "Failed to lock %s: %s\n"
 msgstr "gagal untuk mendapatkan statistik: %s"
 
-#: misc-utils/uuidd.c:268
+#: misc-utils/uuidd.c:243
 #, c-format
 msgid "uuidd daemon already running at pid %s\n"
 msgstr "daemon uuidd telah berjalan dengan pid %s\n"
 
-#: misc-utils/uuidd.c:276
+#: misc-utils/uuidd.c:251
 #, c-format
 msgid "Couldn't create unix stream socket: %s"
 msgstr "Tidak dapat membuat aliran soket unix: %s"
 
-#: misc-utils/uuidd.c:305
+#: misc-utils/uuidd.c:278
 #, c-format
 msgid "Couldn't bind unix socket %s: %s\n"
 msgstr "Tidak dapat mengikat soket unix %s: %s\n"
 
-#: misc-utils/uuidd.c:313
+#: misc-utils/uuidd.c:286
 #, c-format
 msgid "Couldn't listen on unix socket %s: %s\n"
 msgstr "Tidak dapat mendengarkan di soket unix %s: %s\n"
 
-#: misc-utils/uuidd.c:351
+#: misc-utils/uuidd.c:324
 #, c-format
 msgid "Error reading from client, len = %d\n"
 msgstr "Error membaca dari klien, panjang = %d\n"
 
-#: misc-utils/uuidd.c:359
+#: misc-utils/uuidd.c:333
 #, c-format
 msgid "operation %d, incoming num = %d\n"
 msgstr "operasi %d, masukan jumlah = %d\n"
 
-#: misc-utils/uuidd.c:362
+#: misc-utils/uuidd.c:336
 #, fuzzy, c-format
 msgid "operation %d\n"
 msgstr "Operasi %d tidak valid\n"
 
-#: misc-utils/uuidd.c:378
+#: misc-utils/uuidd.c:352
 #, c-format
 msgid "Generated time UUID: %s\n"
 msgstr "UUID waktu yang dihasilkan: %s\n"
 
-#: misc-utils/uuidd.c:388
+#: misc-utils/uuidd.c:362
 #, c-format
 msgid "Generated random UUID: %s\n"
 msgstr "UUID acak yang dihasilkan: %s\n"
 
-#: misc-utils/uuidd.c:397
+#: misc-utils/uuidd.c:371
 #, c-format
 msgid "Generated time UUID %s and %d following\n"
 msgstr "UUID waktu yang dihasilkan %s dan %d yang mengikutinya\n"
 
-#: misc-utils/uuidd.c:415
+#: misc-utils/uuidd.c:389
 #, fuzzy, c-format
 msgid "Generated %d UUIDs:\n"
 msgstr "Menghasilkan %d UUID:\n"
 
-#: misc-utils/uuidd.c:427
+#: misc-utils/uuidd.c:401
 #, c-format
 msgid "Invalid operation %d\n"
 msgstr "Operasi %d tidak valid\n"
 
-#: misc-utils/uuidd.c:468 misc-utils/uuidd.c:489
+#: misc-utils/uuidd.c:442 misc-utils/uuidd.c:463
 #, c-format
 msgid "Bad number: %s\n"
 msgstr "Angka buruk: %s\n"
 
-#: misc-utils/uuidd.c:524 misc-utils/uuidd.c:551
+#: misc-utils/uuidd.c:498 misc-utils/uuidd.c:525
 #, c-format
 msgid "Error calling uuidd daemon (%s): %s\n"
 msgstr "Error memanggil daemon uuidd (%s): %s\n"
 
-#: misc-utils/uuidd.c:534
+#: misc-utils/uuidd.c:508
 #, fuzzy, c-format
 msgid "%s and subsequent %d UUIDs\n"
 msgstr "%s dan UUID %d selanjutnya\n"
 
-#: misc-utils/uuidd.c:536
+#: misc-utils/uuidd.c:510
 #, fuzzy, c-format
 msgid "List of UUIDs:\n"
 msgstr "Daftar dari UUID:\n"
 
-#: misc-utils/uuidd.c:557
+#: misc-utils/uuidd.c:531
 #, c-format
 msgid "Unexpected reply length from server %d\n"
 msgstr "Panjang balasan dari server tidak terduga %d\n"
 
-#: misc-utils/uuidd.c:574
+#: misc-utils/uuidd.c:548
 #, c-format
 msgid "Couldn't kill uuidd running at pid %d: %s\n"
 msgstr "Tidak dapat mematikan uuidd yang berjalan dengan pid %d: %s\n"
 
-#: misc-utils/uuidd.c:580
+#: misc-utils/uuidd.c:554
 #, c-format
 msgid "Killed uuidd running at pid %d\n"
 msgstr "Dimatikan uuidd yang berjalan dengan pid %d\n"
@@ -8775,51 +8775,51 @@ msgstr "Penggunaan: %s [-r] [-t]\n"
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
 msgstr "whereis [ -sbmu ] [ -SBM dir ... -f ] nama...\n"
 
-#: misc-utils/wipefs.c:131 sys-utils/lscpu.c:635
+#: misc-utils/wipefs.c:132 sys-utils/lscpu.c:637
 msgid "calloc failed"
 msgstr "calloc gagal"
 
-#: misc-utils/wipefs.c:185
+#: misc-utils/wipefs.c:186
 #, c-format
 msgid "error: %s: probing initialization failed"
 msgstr "error: %s: gagal melakukan inisialisasi probing"
 
-#: misc-utils/wipefs.c:196
+#: misc-utils/wipefs.c:197
 #, fuzzy, c-format
 msgid "WARNING: %s: appears to contain '%s' partition table"
 msgstr "error: %s: sepertinya berisi '%s' tabel partisi"
 
-#: misc-utils/wipefs.c:242
+#: misc-utils/wipefs.c:225
 #, fuzzy, c-format
 msgid "no magic string found at offset 0x%jx -- ignored"
 msgstr "tidak dapat menemukan sebuah string magic di ofset 0x%jx - diabaikan."
 
-#: misc-utils/wipefs.c:249
+#: misc-utils/wipefs.c:232
 #, c-format
 msgid "%s: failed to seek to offset 0x%jx"
 msgstr "%s: gagal untuk berpindah ke ofset 0x%jx"
 
-#: misc-utils/wipefs.c:256
+#: misc-utils/wipefs.c:239
 #, c-format
 msgid "%s: write failed"
 msgstr "%s: gagal menulis"
 
-#: misc-utils/wipefs.c:258
+#: misc-utils/wipefs.c:241
 #, c-format
 msgid "%zd bytes ["
 msgstr "%zd bytes ["
 
-#: misc-utils/wipefs.c:266
+#: misc-utils/wipefs.c:249
 #, c-format
 msgid "] erased at offset 0x%jx (%s)\n"
 msgstr "] dihapus di ofset 0x%jx (%s)\n"
 
-#: misc-utils/wipefs.c:312
+#: misc-utils/wipefs.c:295
 #, fuzzy, c-format
 msgid "invalid offset value '%s' specified"
 msgstr "nilai ofset yang dispesifikasikan tidak valid"
 
-#: misc-utils/wipefs.c:324
+#: misc-utils/wipefs.c:307
 #, fuzzy, c-format
 msgid ""
 " -a, --all           wipe all magic strings (BE CAREFUL!)\n"
@@ -8836,7 +8836,7 @@ msgstr ""
 " -p, --parsable      tampilkan dalam format yang mudah diparse daripada "
 "format cetak\n"
 
-#: misc-utils/wipefs.c:330
+#: misc-utils/wipefs.c:313
 #, c-format
 msgid ""
 "\n"
@@ -8846,11 +8846,11 @@ msgstr ""
 "Untuk informasi lebih lanjut lihat wipefs(8).\n"
 "\n"
 
-#: misc-utils/wipefs.c:381
+#: misc-utils/wipefs.c:364
 msgid "--offset and --all are mutually exclusive"
 msgstr "--offset dan --all adalah 'mutually exclusive'"
 
-#: misc-utils/wipefs.c:388
+#: misc-utils/wipefs.c:371
 msgid "only one device as argument is currently supported."
 msgstr ""
 
@@ -8968,27 +8968,27 @@ msgstr ""
 "Tidak dapt membuat link %s\n"
 "Mungkin disana ada sebuah file kunci yang masih ada?\n"
 
-#: mount/fstab.c:876 mount/fstab.c:931
+#: mount/fstab.c:896 mount/fstab.c:951
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "tidak dapat membuka %s (%s) - mtab tidak diupdate"
 
-#: mount/fstab.c:940
+#: mount/fstab.c:960
 #, c-format
 msgid "error writing %s: %s"
 msgstr "error menulis %s: %s"
 
-#: mount/fstab.c:958
+#: mount/fstab.c:978
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "error mengubah mode dari %s: %s\n"
 
-#: mount/fstab.c:971
+#: mount/fstab.c:991
 #, c-format
 msgid "error changing owner of %s: %s\n"
 msgstr "error mengubah kepemilikan dari %s: %s\n"
 
-#: mount/fstab.c:982
+#: mount/fstab.c:1002
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "tidak dapat mengganti nama %s menjadi %s: %s\n"
@@ -9220,78 +9220,78 @@ msgstr "mount: ditranslasikan %s '%s' ke '%s'\n"
 msgid "mount: SELinux *context= options are ignore on remount.\n"
 msgstr ""
 
-#: mount/mount.c:611
+#: mount/mount.c:623
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
 msgstr "mount: menurut mtab, %s telah dimount di %s"
 
-#: mount/mount.c:616
+#: mount/mount.c:628
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
 msgstr "mount: menurut mtab, %s telah di mount di %s"
 
-#: mount/mount.c:640
+#: mount/mount.c:652
 #, c-format
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: tidak dapat membuka %s untuk menulis: %s"
 
-#: mount/mount.c:657 mount/mount.c:1445
+#: mount/mount.c:669 mount/mount.c:1457
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: error dalam menulis %s: %s"
 
-#: mount/mount.c:665
+#: mount/mount.c:677
 #, c-format
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: error mengubah mode dari %s: %s"
 
-#: mount/mount.c:771
+#: mount/mount.c:783
 #, c-format
 msgid "mount: cannot set group id: %s"
 msgstr "mount tidak dapat menset grup id: %s"
 
-#: mount/mount.c:774
+#: mount/mount.c:786
 #, c-format
 msgid "mount: cannot set user id: %s"
 msgstr "mount: tidak dapat menset id pengguna: %s"
 
-#: mount/mount.c:821 mount/mount.c:2161
+#: mount/mount.c:833 mount/mount.c:2191
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: tidak dapat melakukan fork: %s"
 
-#: mount/mount.c:957
+#: mount/mount.c:969
 #, c-format
 msgid "Trying %s\n"
 msgstr "Mencoba %s\n"
 
-#: mount/mount.c:985
+#: mount/mount.c:997
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr ""
 "mount: anda tidak menspesifikasikan sebuah tipe dari filesystem untuk %s\n"
 
-#: mount/mount.c:988
+#: mount/mount.c:1000
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       Saya akan mencoba semua tipe yang disebutkan dalam %s atau %s\n"
 
-#: mount/mount.c:991
+#: mount/mount.c:1003
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "       dan ini sepertinya merupakan sebuah swapspace\n"
 
-#: mount/mount.c:993
+#: mount/mount.c:1005
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       Saya akan mencoba tipe %s\n"
 
-#: mount/mount.c:1018
+#: mount/mount.c:1030
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s kelihatannya seperti swapspace - tidak di mount"
 
-#: mount/mount.c:1026
+#: mount/mount.c:1038
 #, c-format
 msgid ""
 "mount: %s: more filesystems detected. This should not happen,\n"
@@ -9299,170 +9299,170 @@ msgid ""
 "       use wipefs(8) to clean up the device.\n"
 msgstr ""
 
-#: mount/mount.c:1114
+#: mount/mount.c:1126
 msgid "mount failed"
 msgstr "mount gagal"
 
-#: mount/mount.c:1116
+#: mount/mount.c:1128
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: hanya root yang dapat melakukan mount %s di %s"
 
-#: mount/mount.c:1201
+#: mount/mount.c:1213
 msgid "mount: loop device specified twice"
 msgstr "mount: perangkat loop dispesifikasikan dua kali"
 
-#: mount/mount.c:1206
+#: mount/mount.c:1218
 msgid "mount: type specified twice"
 msgstr "mount: tipe dispesifikasikan dua kali"
 
-#: mount/mount.c:1234
+#: mount/mount.c:1246
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: melewatkan setup dari perangkat loop\n"
 
-#: mount/mount.c:1246
+#: mount/mount.c:1258
 #, fuzzy, c-format
 msgid "mount: enabling autoclear loopdev flag\n"
 msgstr "mount: akan menggunakan perangkat loop %s\n"
 
-#: mount/mount.c:1254
+#: mount/mount.c:1266
 #, fuzzy, c-format
 msgid "mount: invalid offset '%s' specified"
 msgstr "nilai ofset '%s' tidak valid"
 
-#: mount/mount.c:1258
+#: mount/mount.c:1270
 #, fuzzy, c-format
 msgid "mount: invalid sizelimit '%s' specified"
 msgstr "nilai ofset '%s' tidak valid"
 
-#: mount/mount.c:1263
+#: mount/mount.c:1275
 #, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount: menurut mtab, %s telah dimount di %s sebagai loop"
 
-#: mount/mount.c:1273
+#: mount/mount.c:1285
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: akan menggunakan perangkat loop %s\n"
 
-#: mount/mount.c:1282
+#: mount/mount.c:1294
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr "mount: tercuri loop=%s ...mencoba lagi\n"
 
-#: mount/mount.c:1287
+#: mount/mount.c:1299
 #, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: tercuri loop=%s"
 
-#: mount/mount.c:1292
+#: mount/mount.c:1304
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: gagal menset-up perangkat loop\n"
 
-#: mount/mount.c:1303
+#: mount/mount.c:1315
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: setup perangkat loop telah berhasil\n"
 
-#: mount/mount.c:1388 mount/mount.c:1422
+#: mount/mount.c:1400 mount/mount.c:1434
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s tidak ditemukan - membuatnya..\n"
 
-#: mount/mount.c:1440
+#: mount/mount.c:1452
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: tidak dapat membuka %s: %s"
 
-#: mount/mount.c:1462
+#: mount/mount.c:1474
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: argument untuk -p atau --pass-fd harus berupa sebuah nomor"
 
-#: mount/mount.c:1475
+#: mount/mount.c:1487
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: tidak dapat membuka %s untuk menset kecepatan"
 
-#: mount/mount.c:1478
+#: mount/mount.c:1490
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount tidak dapat menset kecepatan: %s"
 
-#: mount/mount.c:1571
+#: mount/mount.c:1583
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: menurut mtab, %s telah dimount di %s\n"
 
-#: mount/mount.c:1635
+#: mount/mount.c:1664
 #, c-format
 msgid "mount: warning: %s seems to be mounted read-write.\n"
 msgstr "mount: peringatan: %s kelihatannya telah dipasan baca-tulis.\n"
 
-#: mount/mount.c:1647
+#: mount/mount.c:1676
 #, fuzzy, c-format
 msgid "mount: warning: %s seems to be mounted read-only.\n"
 msgstr "mount: peringatan: %s kelihatannya telah dipasan baca-tulis.\n"
 
-#: mount/mount.c:1688
+#: mount/mount.c:1717
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 "mount: Saya tidak dapat menentukan tipe dari filesystem, dan tidak diberikan "
 "spesifikasi di argument perintah"
 
-#: mount/mount.c:1691
+#: mount/mount.c:1720
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: anda harus menspesifikasikan tipe filesystem"
 
-#: mount/mount.c:1694
+#: mount/mount.c:1723
 msgid "mount: mount failed"
 msgstr "mount: mount gagal"
 
-#: mount/mount.c:1700 mount/mount.c:1737
+#: mount/mount.c:1729 mount/mount.c:1766
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: titik mount %s bukan berupa sebuah direktori"
 
-#: mount/mount.c:1702
+#: mount/mount.c:1731
 msgid "mount: permission denied"
 msgstr "mount: ijin ditolak"
 
-#: mount/mount.c:1704
+#: mount/mount.c:1733
 msgid "mount: must be superuser to use mount"
 msgstr "mount: harus menjadi superuser untuk menggunakan mount"
 
-#: mount/mount.c:1708 mount/mount.c:1712
+#: mount/mount.c:1737 mount/mount.c:1741
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s sedang sibuk"
 
-#: mount/mount.c:1714
+#: mount/mount.c:1743
 msgid "mount: proc already mounted"
 msgstr "mount: proc telah dimount"
 
-#: mount/mount.c:1716
+#: mount/mount.c:1745
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s telah dimount atau %s sedang sibuk"
 
-#: mount/mount.c:1722
+#: mount/mount.c:1751
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: titik mount %s tidak ada"
 
-#: mount/mount.c:1724
+#: mount/mount.c:1753
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: titik mount %s berupa symbolic link ke suatu tempat"
 
-#: mount/mount.c:1729
+#: mount/mount.c:1758
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: perangkat spesial %s tidak ada"
 
-#: mount/mount.c:1741
+#: mount/mount.c:1770
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -9471,12 +9471,12 @@ msgstr ""
 "mount: perangkat spesial %s tidak ada\n"
 "       (sebuah path prefix bukan berupa sebuah direktori)\n"
 
-#: mount/mount.c:1753
+#: mount/mount.c:1782
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s sudah tidak dimount, atau pilihan buruk"
 
-#: mount/mount.c:1755
+#: mount/mount.c:1784
 #, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -9485,7 +9485,7 @@ msgstr ""
 "mount: tipe fs salah, pilihan buruk, superblock buruk di %s,\n"
 "       hilang codepage atau aplikasi pembantu, atau error lain"
 
-#: mount/mount.c:1762
+#: mount/mount.c:1791
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)"
@@ -9493,7 +9493,7 @@ msgstr ""
 "       (untuk beberapa filesystem (e.g. nfs, cifs) anda mungkin\n"
 "       membutuhkan aplikasi pembantu /sbin/mount.<tipe>)"
 
-#: mount/mount.c:1771
+#: mount/mount.c:1800
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -9502,7 +9502,7 @@ msgstr ""
 "       ide-scsi sehingga sr0 atau sda atau perangkat sepertinya yang "
 "diperlukan?)"
 
-#: mount/mount.c:1776
+#: mount/mount.c:1805
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -9510,7 +9510,7 @@ msgstr ""
 "       (apakah anda mencoba memount sebuah partisi extended,\n"
 "       daripada sebuah partisi logical didalamnya?)"
 
-#: mount/mount.c:1783
+#: mount/mount.c:1812
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -9519,51 +9519,51 @@ msgstr ""
 "coba\n"
 "       dmesg | tail atau yang serupa\n"
 
-#: mount/mount.c:1789
+#: mount/mount.c:1818
 msgid "mount table full"
 msgstr "tabel mount penuh"
 
-#: mount/mount.c:1791
+#: mount/mount.c:1820
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: tidak dapat membaca superblock"
 
-#: mount/mount.c:1797
+#: mount/mount.c:1826
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: perangkat tidak diketahui"
 
-#: mount/mount.c:1802
+#: mount/mount.c:1831
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: tipe filesystem tidak diketahui '%s'"
 
-#: mount/mount.c:1814
+#: mount/mount.c:1843
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: mungkin yang anda maksudkan %s"
 
-#: mount/mount.c:1817
+#: mount/mount.c:1846
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: mungkin yang anda maksud 'iso9660'?"
 
-#: mount/mount.c:1820
+#: mount/mount.c:1849
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: mungkin yang anda maksud 'vfat'?"
 
-#: mount/mount.c:1823
+#: mount/mount.c:1852
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s memiliki nomor perangkat yang salah atau tipe fs %s tidak disupport"
 
-#: mount/mount.c:1831
+#: mount/mount.c:1860
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr ""
 "mount: %s bukan sebuak perangkat block, dan gagal memperoleh statistik?"
 
-#: mount/mount.c:1833
+#: mount/mount.c:1862
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -9572,56 +9572,56 @@ msgstr ""
 "mount: kernel tidak mengenal %s sebagai sebuah perangkat block\n"
 "       (mungkin `modprobe driver'?)"
 
-#: mount/mount.c:1836
+#: mount/mount.c:1865
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr ""
 "mount: %s bukan sebuah perangkat block (mungkin dicoba dengan menggunakan "
 "pilihan `-o loop'?"
 
-#: mount/mount.c:1839
+#: mount/mount.c:1868
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s bukan sebuah perangkat block"
 
-#: mount/mount.c:1844
+#: mount/mount.c:1873
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s bukan sebuah perangkat block yang valid"
 
-#: mount/mount.c:1847
+#: mount/mount.c:1876
 msgid "block device "
 msgstr "perangkat block "
 
-#: mount/mount.c:1849
+#: mount/mount.c:1878
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: tidak dapat me-mount %s%s hanya-baca"
 
-#: mount/mount.c:1853
+#: mount/mount.c:1882
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr ""
 "mount: %s%s memiliki proteksi untuk ditulis tetapi secara eksplisit pilihan "
 "`-w' diberikan"
 
-#: mount/mount.c:1857
+#: mount/mount.c:1886
 #, c-format
 msgid "mount: cannot remount %s%s read-write, is write-protected"
 msgstr ""
 "mount: tidak dapat memasang kembali %s%s secara baca-tulis, terproteksi-tulis"
 
-#: mount/mount.c:1872
+#: mount/mount.c:1901
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s memiliki proteksi untuk ditulis, memount secara hanya-baca"
 
-#: mount/mount.c:1880
+#: mount/mount.c:1909
 #, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: tidak ada media ditemukan di %s"
 
-#: mount/mount.c:1898
+#: mount/mount.c:1927
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9638,31 +9638,31 @@ msgstr ""
 "       sistem berkas ini. Untuk lebih lengkapnya lihat restorecon(8) dan "
 "mount(8).\n"
 
-#: mount/mount.c:1979
+#: mount/mount.c:2008
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr ""
 "mount: tipe tidak diberikan - Saya akan mengasumsikan nfs karena adanya "
 "colon\n"
 
-#: mount/mount.c:1985
+#: mount/mount.c:2014
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: tipe tidak diberikan - Saya akan mengasumsikan cifs karena adanya "
 "awalan //\n"
 
-#: mount/mount.c:2050
+#: mount/mount.c:2079
 #, c-format
 msgid "mount: ignore %s (unparsable offset= option)\n"
 msgstr ""
 
-#: mount/mount.c:2062
+#: mount/mount.c:2092
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s telah dimount di %s\n"
 
-#: mount/mount.c:2243
+#: mount/mount.c:2273
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9734,24 +9734,24 @@ msgstr ""
 "uuid. Pilihan lain: [-nfFrsvw] [-o pilihan] [-p passwdfd].\n"
 "Untuk informasi lebih detail, lihat man 8 mount.\n"
 
-#: mount/mount.c:2575
+#: mount/mount.c:2605
 #, fuzzy, c-format
 msgid "mount: only root can do that (effective UID is %u)"
 msgstr "mount: hanya root yang dapat melakukan itu (UID efektif adalah %d)"
 
-#: mount/mount.c:2578
+#: mount/mount.c:2608
 msgid "mount: only root can do that"
 msgstr "mount: hanya root yang dapat melakukan itu"
 
-#: mount/mount.c:2589
+#: mount/mount.c:2619
 msgid "nothing was mounted"
 msgstr "tidak ada yang telah dimount"
 
-#: mount/mount.c:2607 mount/mount.c:2633
+#: mount/mount.c:2637 mount/mount.c:2663
 msgid "mount: no such partition found"
 msgstr "mount: partisi seperti itu tidak ditemukan"
 
-#: mount/mount.c:2610
+#: mount/mount.c:2640
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: tidak dapat menemukan %s dalam %s atau %s"
@@ -10071,71 +10071,71 @@ msgstr ""
 "            umount -a [-d] [-f] [-r] [-n] [-v] [-t vfstypes] [-O opts]\n"
 "            umount [-d] [-f] [-r] [-n] [-v] special | titik...\n"
 
-#: mount/umount.c:500
+#: mount/umount.c:480
 #, fuzzy, c-format
 msgid "failed to parse 'offset=%s' options\n"
 msgstr "gagal mendapatkan pid"
 
-#: mount/umount.c:508
+#: mount/umount.c:488
 #, c-format
 msgid "device %s is associated with %s\n"
 msgstr "perangkat %s sudah diasosiasikan dengan %s\n"
 
-#: mount/umount.c:514
+#: mount/umount.c:494
 #, c-format
 msgid "device %s is not associated with %s\n"
 msgstr "perangkat %s sudah diasosiasikan dengan %s\n"
 
-#: mount/umount.c:527
+#: mount/umount.c:507
 #, fuzzy
 msgid "Cannot unmount \"\"\n"
 msgstr "Tidak dapat umount \"\"\n"
 
-#: mount/umount.c:533
+#: mount/umount.c:513
 #, fuzzy, c-format
 msgid "Trying to unmount %s\n"
 msgstr "Mencoba untuk umount %s\n"
 
-#: mount/umount.c:546
+#: mount/umount.c:526
 msgid "umount: confused when analyzing mtab"
 msgstr "umount: bingung ketika menganalisa mtab"
 
-#: mount/umount.c:551
+#: mount/umount.c:531
 #, fuzzy, c-format
 msgid "umount: cannot unmount %s -- %s is mounted over it on the same point"
 msgstr "umount: tidak dapat umount %s -- %s telah dipasang di titik yang sama."
 
-#: mount/umount.c:558
+#: mount/umount.c:538
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "Tidak dapat mencari %s dalam mtab\n"
 
-#: mount/umount.c:565
+#: mount/umount.c:545
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: %s tidak di mount (menurut catatan di mtab)"
 
-#: mount/umount.c:589
+#: mount/umount.c:570
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: kelihatannya %s telah di mount beberapa kali"
 
-#: mount/umount.c:603
+#: mount/umount.c:584
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr "umount: %s tidak ada dalam fstab (dan anda bukan root)"
 
-#: mount/umount.c:609
+#: mount/umount.c:590
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: %s mount tidak cocok dengan catatan di fstab"
 
-#: mount/umount.c:650
+#: mount/umount.c:631
 #, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr "umount: hanya %s yang dapat unmount %s dari %s"
 
-#: mount/umount.c:745
+#: mount/umount.c:726
 msgid "umount: only root can do that"
 msgstr "umount: hanya root yang dapat melakukan itu"
 
@@ -10413,8 +10413,8 @@ msgstr "SCHED_%s min/max prioritas\t: %d/%d\n"
 msgid "SCHED_%s not supported?\n"
 msgstr "SCHED_%s tidak didukung?\n"
 
-#: schedutils/chrt.c:243 schedutils/ionice.c:116 schedutils/ionice.c:150
-#: schedutils/ionice.c:159 schedutils/taskset.c:92
+#: schedutils/chrt.c:243 schedutils/ionice.c:114 schedutils/ionice.c:148
+#: schedutils/ionice.c:157 schedutils/taskset.c:89
 msgid "failed to parse pid"
 msgstr "gagal mendapatkan pid"
 
@@ -10438,15 +10438,15 @@ msgstr "gagal menset kebijakan pid %d"
 msgid "failed to execute %s"
 msgstr "gagal menjalankan %s"
 
-#: schedutils/ionice.c:59
+#: schedutils/ionice.c:57
 msgid "ioprio_get failed"
 msgstr "ioprio_get gagal"
 
-#: schedutils/ionice.c:77
+#: schedutils/ionice.c:75
 msgid "ioprio_set failed"
 msgstr "ioprio_set gagal"
 
-#: schedutils/ionice.c:83
+#: schedutils/ionice.c:81
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -10480,42 +10480,42 @@ msgstr ""
 "  -h                  bantuan ini\n"
 "\n"
 
-#: schedutils/ionice.c:108
+#: schedutils/ionice.c:106
 #, fuzzy
 msgid "failed to parse class data"
 msgstr "gagal mendapatkan pid"
 
-#: schedutils/ionice.c:112
+#: schedutils/ionice.c:110
 #, fuzzy
 msgid "failed to parse class"
 msgstr "gagal mendapatkan pid"
 
-#: schedutils/ionice.c:131
+#: schedutils/ionice.c:129
 msgid "ignoring given class data for none class"
 msgstr "mengabaikan data kelas yang diberikan untuk kelas kosong"
 
-#: schedutils/ionice.c:139
+#: schedutils/ionice.c:137
 msgid "ignoring given class data for idle class"
 msgstr "mengabaikan data kelas yang diberikan untuk kelas kosong"
 
-#: schedutils/ionice.c:143
+#: schedutils/ionice.c:141
 #, c-format
 msgid "bad prio class %d"
 msgstr "prioritas kelas %d buruk"
 
-#: schedutils/ionice.c:167 schedutils/taskset.c:185
+#: schedutils/ionice.c:165 schedutils/taskset.c:182
 #, fuzzy, c-format
 msgid "executing %s failed"
 msgstr "gagal menjalankan %s"
 
-#: schedutils/taskset.c:40
+#: schedutils/taskset.c:37
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [options] [mask | cpu-list] [pid|cmd [args...]]\n"
 "\n"
 msgstr "penggunaan: %s [pilihan] <aplikasi> [arg ...]\n"
 
-#: schedutils/taskset.c:44
+#: schedutils/taskset.c:41
 #, c-format
 msgid ""
 "Options:\n"
@@ -10526,7 +10526,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: schedutils/taskset.c:51
+#: schedutils/taskset.c:48
 #, c-format
 msgid ""
 "The default behavior is to run a new command:\n"
@@ -10541,7 +10541,7 @@ msgid ""
 "    e.g. 0-31:2 is equivalent to mask 0x55555555\n"
 msgstr ""
 
-#: schedutils/taskset.c:63
+#: schedutils/taskset.c:60
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -10550,55 +10550,55 @@ msgstr ""
 "\n"
 "Untuk informasi lebih lanjut lihat namei(1).\n"
 
-#: schedutils/taskset.c:115
+#: schedutils/taskset.c:112
 #, fuzzy
 msgid "cannot determine NR_CPUS; aborting"
 msgstr "tidak dapat menentukan ukuran dari %s"
 
-#: schedutils/taskset.c:124 schedutils/taskset.c:138
+#: schedutils/taskset.c:121 schedutils/taskset.c:135
 #, fuzzy
 msgid "cpuset_alloc failed"
 msgstr "calloc gagal"
 
-#: schedutils/taskset.c:142 schedutils/taskset.c:167
+#: schedutils/taskset.c:139 schedutils/taskset.c:164
 #, fuzzy, c-format
 msgid "failed to get pid %d's affinity"
 msgstr "gagal mendapatkan kebijakan pid %d"
 
-#: schedutils/taskset.c:145
+#: schedutils/taskset.c:142
 #, c-format
 msgid "pid %d's current affinity list: %s\n"
 msgstr ""
 
-#: schedutils/taskset.c:148
+#: schedutils/taskset.c:145
 #, c-format
 msgid "pid %d's current affinity mask: %s\n"
 msgstr ""
 
-#: schedutils/taskset.c:159
+#: schedutils/taskset.c:156
 #, fuzzy, c-format
 msgid "failed to parse %s %s"
 msgstr "gagal mendapatkan pid"
 
-#: schedutils/taskset.c:160
+#: schedutils/taskset.c:157
 msgid "CPU list"
 msgstr ""
 
-#: schedutils/taskset.c:160
+#: schedutils/taskset.c:157
 msgid "CPU mask"
 msgstr ""
 
-#: schedutils/taskset.c:164
+#: schedutils/taskset.c:161
 #, fuzzy, c-format
 msgid "failed to set pid %d's affinity"
 msgstr "gagal menset kebijakan pid %d"
 
-#: schedutils/taskset.c:171
+#: schedutils/taskset.c:168
 #, c-format
 msgid "pid %d's new affinity list: %s\n"
 msgstr ""
 
-#: schedutils/taskset.c:174
+#: schedutils/taskset.c:171
 #, c-format
 msgid "pid %d's new affinity mask: %s\n"
 msgstr ""
@@ -11078,10 +11078,20 @@ msgstr ""
 msgid "   %f int/sec; %f rec (char/sec)\n"
 msgstr "   %f int/sec; %f rec (char/sec)\n"
 
-#: sys-utils/dmesg.c:45
+#: sys-utils/dmesg.c:46
 #, c-format
 msgid "Usage: %s [-c] [-n level] [-r] [-s bufsize]\n"
 msgstr "Penggunaan: %s [-c] [-n level] [-r] [-s bufsize]\n"
+
+#: sys-utils/dmesg.c:74
+#, fuzzy
+msgid "failed to parse level"
+msgstr "gagal mendapatkan pid"
+
+#: sys-utils/dmesg.c:80
+#, fuzzy
+msgid "failed to parse buffer size"
+msgstr "gagal mendapatkan pid"
 
 #: sys-utils/fallocate.c:52
 #, c-format
@@ -12061,63 +12071,63 @@ msgstr "Tidak dapat menset baris disiplin"
 msgid "cannot daemonize"
 msgstr "tidak dapat daemonize"
 
-#: sys-utils/lscpu.c:56
+#: sys-utils/lscpu.c:58
 msgid "none"
 msgstr "kosong"
 
-#: sys-utils/lscpu.c:57
+#: sys-utils/lscpu.c:59
 msgid "para"
 msgstr "para"
 
-#: sys-utils/lscpu.c:58
+#: sys-utils/lscpu.c:60
 msgid "full"
 msgstr "penuh"
 
-#: sys-utils/lscpu.c:165
+#: sys-utils/lscpu.c:167
 #, fuzzy, c-format
 msgid "error: cannot open %s"
 msgstr "%s: tidak dapat membuka %s\n"
 
-#: sys-utils/lscpu.c:193 sys-utils/lscpu.c:214 sys-utils/lscpu.c:255
+#: sys-utils/lscpu.c:195 sys-utils/lscpu.c:216 sys-utils/lscpu.c:257
 #, fuzzy, c-format
 msgid "failed to read: %s"
 msgstr "gagal untuk mendapatkan statistik: %s"
 
-#: sys-utils/lscpu.c:216
+#: sys-utils/lscpu.c:218
 #, fuzzy, c-format
 msgid "parse error: %s"
 msgstr "error mengambil\n"
 
-#: sys-utils/lscpu.c:240
+#: sys-utils/lscpu.c:242
 msgid "error: strdup failed"
 msgstr "error: strdup gagal"
 
-#: sys-utils/lscpu.c:264 sys-utils/lscpu.c:855
+#: sys-utils/lscpu.c:266 sys-utils/lscpu.c:857
 #, fuzzy
 msgid "failed to callocate cpu set"
 msgstr "gagal mengalokasikan outbuffer"
 
-#: sys-utils/lscpu.c:268
+#: sys-utils/lscpu.c:270
 #, fuzzy, c-format
 msgid "failed to parse CPU list %s"
 msgstr "gagal mendapatkan pid"
 
-#: sys-utils/lscpu.c:271
+#: sys-utils/lscpu.c:273
 #, fuzzy, c-format
 msgid "failed to parse CPU mask %s"
 msgstr "gagal mendapatkan pid"
 
-#: sys-utils/lscpu.c:372
+#: sys-utils/lscpu.c:374
 msgid "error: uname failed"
 msgstr "error: uname gagal"
 
-#: sys-utils/lscpu.c:600 sys-utils/lscpu.c:603 sys-utils/lscpu.c:679
-#: sys-utils/lscpu.c:700
+#: sys-utils/lscpu.c:602 sys-utils/lscpu.c:605 sys-utils/lscpu.c:681
+#: sys-utils/lscpu.c:702
 #, fuzzy
 msgid "error: calloc failed"
 msgstr "error: malloc gagal"
 
-#: sys-utils/lscpu.c:716
+#: sys-utils/lscpu.c:718
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -12130,108 +12140,108 @@ msgstr ""
 "# ID unik berawal dari nol.\n"
 "# CPU,Core,Soket,Node"
 
-#: sys-utils/lscpu.c:818
+#: sys-utils/lscpu.c:820
 msgid "Architecture:"
 msgstr ""
 
-#: sys-utils/lscpu.c:832
+#: sys-utils/lscpu.c:834
 msgid "CPU op-mode(s):"
 msgstr "CPU op-mode:"
 
-#: sys-utils/lscpu.c:835 sys-utils/lscpu.c:837
+#: sys-utils/lscpu.c:837 sys-utils/lscpu.c:839
 msgid "Byte Order:"
 msgstr ""
 
-#: sys-utils/lscpu.c:839
+#: sys-utils/lscpu.c:841
 #, fuzzy
 msgid "CPU(s):"
 msgstr "CPU soket:"
 
-#: sys-utils/lscpu.c:842
+#: sys-utils/lscpu.c:844
 msgid "On-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:843
+#: sys-utils/lscpu.c:845
 msgid "On-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:861
+#: sys-utils/lscpu.c:863
 msgid "Off-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:862
+#: sys-utils/lscpu.c:864
 msgid "Off-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:868
+#: sys-utils/lscpu.c:870
 msgid "Thread(s) per core:"
 msgstr "Thread(s) setiap inti:"
 
-#: sys-utils/lscpu.c:869
+#: sys-utils/lscpu.c:871
 msgid "Core(s) per socket:"
 msgstr "Inti setiap soket:"
 
-#: sys-utils/lscpu.c:870
+#: sys-utils/lscpu.c:872
 msgid "CPU socket(s):"
 msgstr "CPU soket:"
 
-#: sys-utils/lscpu.c:874
+#: sys-utils/lscpu.c:876
 msgid "NUMA node(s):"
 msgstr "Titik NUMA:"
 
-#: sys-utils/lscpu.c:876
+#: sys-utils/lscpu.c:878
 msgid "Vendor ID:"
 msgstr "ID Pembuat:"
 
-#: sys-utils/lscpu.c:878
+#: sys-utils/lscpu.c:880
 msgid "CPU family:"
 msgstr "Keluarga CPU:"
 
-#: sys-utils/lscpu.c:880
+#: sys-utils/lscpu.c:882
 msgid "Model:"
 msgstr "Model:"
 
-#: sys-utils/lscpu.c:882
+#: sys-utils/lscpu.c:884
 msgid "Stepping:"
 msgstr "Stepping:"
 
-#: sys-utils/lscpu.c:884
+#: sys-utils/lscpu.c:886
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:886
+#: sys-utils/lscpu.c:888
 msgid "BogoMIPS:"
 msgstr ""
 
-#: sys-utils/lscpu.c:889 sys-utils/lscpu.c:891
+#: sys-utils/lscpu.c:891 sys-utils/lscpu.c:893
 msgid "Virtualization:"
 msgstr "Virtualisasi:"
 
-#: sys-utils/lscpu.c:894
+#: sys-utils/lscpu.c:896
 msgid "Hypervisor vendor:"
 msgstr "Pembuat Hypervisor:"
 
-#: sys-utils/lscpu.c:895
+#: sys-utils/lscpu.c:897
 msgid "Virtualization type:"
 msgstr "Tipe virtualisasi:"
 
-#: sys-utils/lscpu.c:903
+#: sys-utils/lscpu.c:905
 #, c-format
 msgid "%s cache:"
 msgstr "%s persediaan:"
 
-#: sys-utils/lscpu.c:909
+#: sys-utils/lscpu.c:911
 #, fuzzy, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "Titik NUMA:"
 
-#: sys-utils/lscpu.c:916
+#: sys-utils/lscpu.c:918
 #, c-format
 msgid "Usage: %s [option]\n"
 msgstr "Penggunaan: %s [pilihan]\n"
 
-#: sys-utils/lscpu.c:919
-#, fuzzy
+#: sys-utils/lscpu.c:921
+#, fuzzy, c-format
 msgid ""
 "CPU architecture information helper\n"
 "\n"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.18-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2011-01-25 12:27+0100\n"
+"POT-Creation-Date: 2011-02-10 09:15+0100\n"
 "PO-Revision-Date: 2010-10-26 17:00+0900\n"
 "Last-Translator: Makoto Kato <makoto.kt@gmail.com>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -351,7 +351,7 @@ msgid "unable to test CRC: old cramfs format"
 msgstr "CRCをテストできません: 古いcramfs形式です"
 
 #: disk-utils/fsck.cramfs.c:272 disk-utils/fsck.cramfs.c:339
-#: disk-utils/fsck.cramfs.c:477 schedutils/taskset.c:129
+#: disk-utils/fsck.cramfs.c:477 schedutils/taskset.c:126
 msgid "malloc failed"
 msgstr "malloc に失敗"
 
@@ -1657,7 +1657,7 @@ msgstr ""
 msgid "%s: failed to write label"
 msgstr "write_tables でのシークに失敗しました"
 
-#: disk-utils/swaplabel.c:161 misc-utils/wipefs.c:320
+#: disk-utils/swaplabel.c:161 misc-utils/wipefs.c:303
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [options] <device>\n"
@@ -5809,36 +5809,36 @@ msgstr ""
 "dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
 "(詳細は fdisk(8)を見てください。)\n"
 
-#: fsck/fsck.c:270
+#: fsck/fsck.c:271
 #, fuzzy, c-format
 msgid "Locking disk %s ... "
 msgstr "ディスクを同期しています。\n"
 
-#: fsck/fsck.c:280
+#: fsck/fsck.c:281
 #, c-format
 msgid "(waiting) "
 msgstr ""
 
-#: fsck/fsck.c:289
+#: fsck/fsck.c:290
 msgid "success"
 msgstr ""
 
-#: fsck/fsck.c:289
+#: fsck/fsck.c:290
 #, fuzzy
 msgid "failed"
 msgstr "%s は失敗しました。\n"
 
-#: fsck/fsck.c:419
+#: fsck/fsck.c:420
 #, c-format
 msgid "WARNING: couldn't open %s: %s\n"
 msgstr "警告: %s を開けません: %s\n"
 
-#: fsck/fsck.c:429
+#: fsck/fsck.c:430
 #, c-format
 msgid "WARNING: bad format on line %d of %s\n"
 msgstr ""
 
-#: fsck/fsck.c:445
+#: fsck/fsck.c:446
 msgid ""
 "WARNING: Your /etc/fstab does not contain the fsck passno\n"
 "\tfield.  I will kludge around things for you, but you\n"
@@ -5846,127 +5846,127 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fsck/fsck.c:552
+#: fsck/fsck.c:553
 #, c-format
 msgid "fsck: %s: not found\n"
 msgstr "fsck: %s: 見つかりません\n"
 
-#: fsck/fsck.c:673
+#: fsck/fsck.c:674
 #, c-format
 msgid "%s: wait: No more child process?!?\n"
 msgstr "%s: wait: 子プロセスは存在しない?!?\n"
 
-#: fsck/fsck.c:695
+#: fsck/fsck.c:696
 #, c-format
 msgid "Warning... %s for device %s exited with signal %d.\n"
 msgstr ""
 
-#: fsck/fsck.c:701
+#: fsck/fsck.c:702
 #, c-format
 msgid "%s %s: status is %x, should never happen.\n"
 msgstr ""
 
-#: fsck/fsck.c:740
+#: fsck/fsck.c:741
 #, c-format
 msgid "Finished with %s (exit status %d)\n"
 msgstr ""
 
-#: fsck/fsck.c:800
+#: fsck/fsck.c:801
 #, c-format
 msgid "%s: Error %d while executing fsck.%s for %s\n"
 msgstr ""
 
-#: fsck/fsck.c:823
+#: fsck/fsck.c:824
 msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
 "with 'no' or '!'.\n"
 msgstr ""
 
-#: fsck/fsck.c:842
+#: fsck/fsck.c:843
 msgid "Couldn't allocate memory for filesystem types\n"
 msgstr "ファイルシステムタイプのためのメモリを確保できませんでした\n"
 
-#: fsck/fsck.c:981
+#: fsck/fsck.c:982
 #, c-format
 msgid ""
 "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass "
 "number\n"
 msgstr ""
 
-#: fsck/fsck.c:992
+#: fsck/fsck.c:993
 #, c-format
 msgid "%s: skipping nonexistent device\n"
 msgstr "%s: 存在しないデバイスをスキップしています\n"
 
-#: fsck/fsck.c:997
+#: fsck/fsck.c:998
 #, c-format
 msgid ""
 "%s: nonexistent device (\"nofail\" fstab option may be used to skip this "
 "device)\n"
 msgstr ""
 
-#: fsck/fsck.c:1024
+#: fsck/fsck.c:1025
 #, c-format
 msgid "fsck: cannot check %s: fsck.%s not found\n"
 msgstr "fsck: %sをチェックできません: fsck.%sは見つかりません\n"
 
-#: fsck/fsck.c:1110
+#: fsck/fsck.c:1111
 msgid "Checking all file systems.\n"
 msgstr "すべてのファイルシステム検査します。\n"
 
-#: fsck/fsck.c:1201
+#: fsck/fsck.c:1202
 #, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr "--待機中-- (パス %d)\n"
 
-#: fsck/fsck.c:1221
+#: fsck/fsck.c:1222
 msgid ""
 "Usage: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-options] [filesys ...]\n"
 msgstr ""
 "使い方: fsck [-AMNPRTV] [ -C [ fd ] ] [-t ファイルシステム型] [fs オプショ"
 "ン] [filesys ...]\n"
 
-#: fsck/fsck.c:1259
+#: fsck/fsck.c:1260
 #, c-format
 msgid "%s: too many devices\n"
 msgstr "%s: デバイスが多すぎます\n"
 
-#: fsck/fsck.c:1270
+#: fsck/fsck.c:1271
 #, c-format
 msgid "Couldn't open %s: %s\n"
 msgstr "%s を開けません: %s\n"
 
-#: fsck/fsck.c:1272
+#: fsck/fsck.c:1273
 #, c-format
 msgid "Is /proc mounted?\n"
 msgstr "/proc はマウントされていますか?\n"
 
-#: fsck/fsck.c:1281
+#: fsck/fsck.c:1282
 #, c-format
 msgid "Must be root to scan for matching filesystems: %s\n"
 msgstr ""
 
-#: fsck/fsck.c:1284
+#: fsck/fsck.c:1285
 #, c-format
 msgid "Couldn't find matching filesystem: %s\n"
 msgstr "一致するファイルシステムが見つかりません: %s\n"
 
-#: fsck/fsck.c:1292 fsck/fsck.c:1381
+#: fsck/fsck.c:1293 fsck/fsck.c:1382
 #, c-format
 msgid "%s: too many arguments\n"
 msgstr "%s: 引数が多すぎます\n"
 
-#: fsck/fsck.c:1415
+#: fsck/fsck.c:1416
 #, c-format
 msgid "fsck from %s\n"
 msgstr "fsck from %s\n"
 
-#: fsck/fsck.c:1427
+#: fsck/fsck.c:1428
 #, c-format
 msgid "%s: Unable to allocate memory for fsck_path\n"
 msgstr "%s: fsck_pathのためのメモリを確保ができません。\n"
 
-#: fsck/fsck.c:1441
+#: fsck/fsck.c:1442
 #, c-format
 msgid "%s: the -l option can be used with one device only -- ignore\n"
 msgstr ""
@@ -7183,7 +7183,7 @@ msgid "usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"
 msgstr "使い方: last [-#] [-f ファイル] [-t 端末] [-h ホスト名] [ユーザ ...]\n"
 
 #: login-utils/last.c:240 login-utils/vipw.c:154 misc-utils/lsblk.c:662
-#: misc-utils/wipefs.c:277 mount/swapon.c:209 mount/swapon.c:294
+#: misc-utils/wipefs.c:260 mount/swapon.c:209 mount/swapon.c:294
 #: mount/swapon.c:444 mount/swapon.c:608 mount/swapon.c:817 partx/partx.c:807
 #: sys-utils/fallocate.c:136 sys-utils/fsfreeze.c:102 sys-utils/fstrim.c:142
 #: text-utils/rev.c:113 text-utils/ul.c:178
@@ -8519,147 +8519,147 @@ msgstr "%s を読み込むことができません\n"
 msgid "%s: $TERM is not defined.\n"
 msgstr "%s: $TERM が定義されていません。\n"
 
-#: misc-utils/uuidd.c:46
+#: misc-utils/uuidd.c:53
 #, c-format
 msgid "Usage: %s [-d] [-p pidfile] [-s socketpath] [-T timeout]\n"
 msgstr "使い方: %s [-d] [-p pidファイル] [-s ソケットパス] [-T タイムアウト]\n"
 
-#: misc-utils/uuidd.c:48
+#: misc-utils/uuidd.c:55
 #, c-format
 msgid "       %s [-r|t] [-n num] [-s socketpath]\n"
 msgstr "       %s [-r|t] [-n 数字] [-s ソケットパス]\n"
 
-#: misc-utils/uuidd.c:50
+#: misc-utils/uuidd.c:57
 #, c-format
 msgid "       %s -k\n"
 msgstr "       %s -k\n"
 
-#: misc-utils/uuidd.c:152
+#: misc-utils/uuidd.c:126
 msgid "bad arguments"
 msgstr "不正な引数"
 
-#: misc-utils/uuidd.c:159
+#: misc-utils/uuidd.c:133
 msgid "socket"
 msgstr "ソケット"
 
-#: misc-utils/uuidd.c:170
+#: misc-utils/uuidd.c:144
 msgid "connect"
 msgstr "接続"
 
-#: misc-utils/uuidd.c:189
+#: misc-utils/uuidd.c:164
 msgid "write"
 msgstr "書き込み"
 
-#: misc-utils/uuidd.c:197
+#: misc-utils/uuidd.c:172
 #, fuzzy
 msgid "read count"
 msgstr "%c を読込み\n"
 
-#: misc-utils/uuidd.c:203
+#: misc-utils/uuidd.c:178
 msgid "bad response length"
 msgstr "正しくないレスポンス長"
 
-#: misc-utils/uuidd.c:244
+#: misc-utils/uuidd.c:219
 #, c-format
 msgid "Failed to open/create %s: %s\n"
 msgstr "%s を開くまたは作成できません: %s\n"
 
-#: misc-utils/uuidd.c:261
+#: misc-utils/uuidd.c:236
 #, c-format
 msgid "Failed to lock %s: %s\n"
 msgstr "lock %s が失敗しました: %s\n"
 
-#: misc-utils/uuidd.c:268
+#: misc-utils/uuidd.c:243
 #, c-format
 msgid "uuidd daemon already running at pid %s\n"
 msgstr "uuidd デーモンは既にに pid %s で実行中です\n"
 
-#: misc-utils/uuidd.c:276
+#: misc-utils/uuidd.c:251
 #, c-format
 msgid "Couldn't create unix stream socket: %s"
 msgstr "unixストリームソケットを作成できませんでした: %s"
 
-#: misc-utils/uuidd.c:305
+#: misc-utils/uuidd.c:278
 #, c-format
 msgid "Couldn't bind unix socket %s: %s\n"
 msgstr "unixソケット %sをバインドできません: %s\n"
 
-#: misc-utils/uuidd.c:313
+#: misc-utils/uuidd.c:286
 #, fuzzy, c-format
 msgid "Couldn't listen on unix socket %s: %s\n"
 msgstr "%s を開けません: %s\n"
 
-#: misc-utils/uuidd.c:351
+#: misc-utils/uuidd.c:324
 #, fuzzy, c-format
 msgid "Error reading from client, len = %d\n"
 msgstr "%s の読込みエラー\n"
 
-#: misc-utils/uuidd.c:359
+#: misc-utils/uuidd.c:333
 #, c-format
 msgid "operation %d, incoming num = %d\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:362
+#: misc-utils/uuidd.c:336
 #, fuzzy, c-format
 msgid "operation %d\n"
 msgstr "不正なオプション"
 
-#: misc-utils/uuidd.c:378
+#: misc-utils/uuidd.c:352
 #, c-format
 msgid "Generated time UUID: %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:388
+#: misc-utils/uuidd.c:362
 #, c-format
 msgid "Generated random UUID: %s\n"
 msgstr "生成されたランダムなUUID: %s\n"
 
-#: misc-utils/uuidd.c:397
+#: misc-utils/uuidd.c:371
 #, c-format
 msgid "Generated time UUID %s and %d following\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:415
+#: misc-utils/uuidd.c:389
 #, c-format
 msgid "Generated %d UUIDs:\n"
 msgstr "生成された %d UUID:\n"
 
-#: misc-utils/uuidd.c:427
+#: misc-utils/uuidd.c:401
 #, c-format
 msgid "Invalid operation %d\n"
 msgstr "不正なオプション %d\n"
 
-#: misc-utils/uuidd.c:468 misc-utils/uuidd.c:489
+#: misc-utils/uuidd.c:442 misc-utils/uuidd.c:463
 #, c-format
 msgid "Bad number: %s\n"
 msgstr "不正な数: %s\n"
 
-#: misc-utils/uuidd.c:524 misc-utils/uuidd.c:551
+#: misc-utils/uuidd.c:498 misc-utils/uuidd.c:525
 #, fuzzy, c-format
 msgid "Error calling uuidd daemon (%s): %s\n"
 msgstr "%s のモード変更エラー: %s\n"
 
-#: misc-utils/uuidd.c:534
+#: misc-utils/uuidd.c:508
 #, c-format
 msgid "%s and subsequent %d UUIDs\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:536
+#: misc-utils/uuidd.c:510
 #, c-format
 msgid "List of UUIDs:\n"
 msgstr "UUIDのリスト:\n"
 
-#: misc-utils/uuidd.c:557
+#: misc-utils/uuidd.c:531
 #, c-format
 msgid "Unexpected reply length from server %d\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:574
+#: misc-utils/uuidd.c:548
 #, c-format
 msgid "Couldn't kill uuidd running at pid %d: %s\n"
 msgstr "pid %d で実行中の uuidd を強制終了できません: %s\n"
 
-#: misc-utils/uuidd.c:580
+#: misc-utils/uuidd.c:554
 #, c-format
 msgid "Killed uuidd running at pid %d\n"
 msgstr "pid %d で実行中の uuidd を強制終了しました\n"
@@ -8674,51 +8674,51 @@ msgstr "使い方: %s [-r] [-t]\n"
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
 msgstr "whereis [ -sbmu ] [ -SBM ディレクトリ ... -f ] 名前 ...\n"
 
-#: misc-utils/wipefs.c:131 sys-utils/lscpu.c:635
+#: misc-utils/wipefs.c:132 sys-utils/lscpu.c:637
 msgid "calloc failed"
 msgstr "calloc が失敗しました"
 
-#: misc-utils/wipefs.c:185
+#: misc-utils/wipefs.c:186
 #, fuzzy, c-format
 msgid "error: %s: probing initialization failed"
 msgstr "エラー: UUID の解析に失敗"
 
-#: misc-utils/wipefs.c:196
+#: misc-utils/wipefs.c:197
 #, fuzzy, c-format
 msgid "WARNING: %s: appears to contain '%s' partition table"
 msgstr "ディスク %s は正常なパーティションテーブルを含んでいません\n"
 
-#: misc-utils/wipefs.c:242
+#: misc-utils/wipefs.c:225
 #, c-format
 msgid "no magic string found at offset 0x%jx -- ignored"
 msgstr ""
 
-#: misc-utils/wipefs.c:249
+#: misc-utils/wipefs.c:232
 #, fuzzy, c-format
 msgid "%s: failed to seek to offset 0x%jx"
 msgstr "%s: open に失敗: %s\n"
 
-#: misc-utils/wipefs.c:256
+#: misc-utils/wipefs.c:239
 #, c-format
 msgid "%s: write failed"
 msgstr "%s: write が失敗"
 
-#: misc-utils/wipefs.c:258
+#: misc-utils/wipefs.c:241
 #, c-format
 msgid "%zd bytes ["
 msgstr "%zd バイト ["
 
-#: misc-utils/wipefs.c:266
+#: misc-utils/wipefs.c:249
 #, c-format
 msgid "] erased at offset 0x%jx (%s)\n"
 msgstr ""
 
-#: misc-utils/wipefs.c:312
+#: misc-utils/wipefs.c:295
 #, fuzzy, c-format
 msgid "invalid offset value '%s' specified"
 msgstr "不正なオフセット値: %s\n"
 
-#: misc-utils/wipefs.c:324
+#: misc-utils/wipefs.c:307
 #, c-format
 msgid ""
 " -a, --all           wipe all magic strings (BE CAREFUL!)\n"
@@ -8728,7 +8728,7 @@ msgid ""
 " -p, --parsable      print out in parsable instead of printable format\n"
 msgstr ""
 
-#: misc-utils/wipefs.c:330
+#: misc-utils/wipefs.c:313
 #, c-format
 msgid ""
 "\n"
@@ -8737,11 +8737,11 @@ msgstr ""
 "\n"
 "詳細情報は、wipefs(8) を確認してください。\n"
 
-#: misc-utils/wipefs.c:381
+#: misc-utils/wipefs.c:364
 msgid "--offset and --all are mutually exclusive"
 msgstr ""
 
-#: misc-utils/wipefs.c:388
+#: misc-utils/wipefs.c:371
 msgid "only one device as argument is currently supported."
 msgstr ""
 
@@ -8853,27 +8853,27 @@ msgstr ""
 "リンク %s を作成できません\n"
 "多分、ゴミと化したロックファイルがあるのでは ?\n"
 
-#: mount/fstab.c:876 mount/fstab.c:931
+#: mount/fstab.c:896 mount/fstab.c:951
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "%s を開けません (%s) -- mtab は更新されません"
 
-#: mount/fstab.c:940
+#: mount/fstab.c:960
 #, c-format
 msgid "error writing %s: %s"
 msgstr "%s への書き込みエラー: %s"
 
-#: mount/fstab.c:958
+#: mount/fstab.c:978
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "%s のモード変更エラー: %s\n"
 
-#: mount/fstab.c:971
+#: mount/fstab.c:991
 #, c-format
 msgid "error changing owner of %s: %s\n"
 msgstr "%s のオーナー変更エラー: %s\n"
 
-#: mount/fstab.c:982
+#: mount/fstab.c:1002
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "%s の名前を %s に変更できません: %s\n"
@@ -9108,77 +9108,77 @@ msgstr "mount: %2$s や %3$s 内に %1$s を見つけられません"
 msgid "mount: SELinux *context= options are ignore on remount.\n"
 msgstr ""
 
-#: mount/mount.c:611
+#: mount/mount.c:623
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
 msgstr "mount: mtab によると、%s は %s にマウント済です"
 
-#: mount/mount.c:616
+#: mount/mount.c:628
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
 msgstr "mount: mtab によると、%s は %s にマウントされています"
 
-#: mount/mount.c:640
+#: mount/mount.c:652
 #, c-format
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: %s を書き込み用にオープンできません: %s"
 
-#: mount/mount.c:657 mount/mount.c:1445
+#: mount/mount.c:669 mount/mount.c:1457
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: %s の書き込みエラー: %s"
 
-#: mount/mount.c:665
+#: mount/mount.c:677
 #, c-format
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: %s のモード変更エラー: %s"
 
-#: mount/mount.c:771
+#: mount/mount.c:783
 #, c-format
 msgid "mount: cannot set group id: %s"
 msgstr "mount: グループid を設定できません: %s"
 
-#: mount/mount.c:774
+#: mount/mount.c:786
 #, c-format
 msgid "mount: cannot set user id: %s"
 msgstr "mount: ユーザーid を設定できません: %s"
 
-#: mount/mount.c:821 mount/mount.c:2161
+#: mount/mount.c:833 mount/mount.c:2191
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: 子プロセスの起動ができません: %s"
 
-#: mount/mount.c:957
+#: mount/mount.c:969
 #, c-format
 msgid "Trying %s\n"
 msgstr "%s を試します\n"
 
-#: mount/mount.c:985
+#: mount/mount.c:997
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: %s へのファイルシステムタイプの指定がありません\n"
 
-#: mount/mount.c:988
+#: mount/mount.c:1000
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       %s 又は %s のタイプを試してみます\n"
 
-#: mount/mount.c:991
+#: mount/mount.c:1003
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "       そして、それはスワップ空間の様です。\n"
 
-#: mount/mount.c:993
+#: mount/mount.c:1005
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       タイプ %s を試してみます\n"
 
-#: mount/mount.c:1018
+#: mount/mount.c:1030
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s はスワップ空間のようですね -- マウントしません"
 
-#: mount/mount.c:1026
+#: mount/mount.c:1038
 #, c-format
 msgid ""
 "mount: %s: more filesystems detected. This should not happen,\n"
@@ -9186,168 +9186,168 @@ msgid ""
 "       use wipefs(8) to clean up the device.\n"
 msgstr ""
 
-#: mount/mount.c:1114
+#: mount/mount.c:1126
 msgid "mount failed"
 msgstr "マウントに失敗しました"
 
-#: mount/mount.c:1116
+#: mount/mount.c:1128
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: root だけが %s を %s にマウントできます"
 
-#: mount/mount.c:1201
+#: mount/mount.c:1213
 msgid "mount: loop device specified twice"
 msgstr "mount: loop デバイスが 2 回指定されました"
 
-#: mount/mount.c:1206
+#: mount/mount.c:1218
 msgid "mount: type specified twice"
 msgstr "mount: タイプが 2 回指定されました"
 
-#: mount/mount.c:1234
+#: mount/mount.c:1246
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: loop デバイスの設定をスキップします\n"
 
-#: mount/mount.c:1246
+#: mount/mount.c:1258
 #, fuzzy, c-format
 msgid "mount: enabling autoclear loopdev flag\n"
 msgstr "mount: loop デバイス %s を使います\n"
 
-#: mount/mount.c:1254
+#: mount/mount.c:1266
 #, fuzzy, c-format
 msgid "mount: invalid offset '%s' specified"
 msgstr "不正な設定値: %s\n"
 
-#: mount/mount.c:1258
+#: mount/mount.c:1270
 #, fuzzy, c-format
 msgid "mount: invalid sizelimit '%s' specified"
 msgstr "不正な設定値: %s\n"
 
-#: mount/mount.c:1263
+#: mount/mount.c:1275
 #, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount: mtab によると、%s は loop として %s にマウント済です"
 
-#: mount/mount.c:1273
+#: mount/mount.c:1285
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: loop デバイス %s を使います\n"
 
-#: mount/mount.c:1282
+#: mount/mount.c:1294
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:1287
+#: mount/mount.c:1299
 #, c-format
 msgid "mount: stolen loop=%s"
 msgstr "mount: stolen loop=%s"
 
-#: mount/mount.c:1292
+#: mount/mount.c:1304
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: loop デバイスの設定に失敗しました\n"
 
-#: mount/mount.c:1303
+#: mount/mount.c:1315
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: loop デバイスの設定に成功しました\n"
 
-#: mount/mount.c:1388 mount/mount.c:1422
+#: mount/mount.c:1400 mount/mount.c:1434
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s が見つかりません -- 作成します..\n"
 
-#: mount/mount.c:1440
+#: mount/mount.c:1452
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: %s がオープンできません: %s"
 
-#: mount/mount.c:1462
+#: mount/mount.c:1474
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: -p または --pass-fd 引数は数字でなければなりません"
 
-#: mount/mount.c:1475
+#: mount/mount.c:1487
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: %s を速度設定用にオープンできません"
 
-#: mount/mount.c:1478
+#: mount/mount.c:1490
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: 速度の設定ができません: %s"
 
-#: mount/mount.c:1571
+#: mount/mount.c:1583
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: mtab によると、%s は %s にマウント済です\n"
 
-#: mount/mount.c:1635
+#: mount/mount.c:1664
 #, c-format
 msgid "mount: warning: %s seems to be mounted read-write.\n"
 msgstr "mount: 警告: %s は読み書き可能としてマウントされているようです。\n"
 
-#: mount/mount.c:1647
+#: mount/mount.c:1676
 #, c-format
 msgid "mount: warning: %s seems to be mounted read-only.\n"
 msgstr "mount: 警告: %s はリードオンリーとしてマウントされているようです。\n"
 
-#: mount/mount.c:1688
+#: mount/mount.c:1717
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr "mount: none が指定されましたが、ファイルシステムタイプを決定できません"
 
-#: mount/mount.c:1691
+#: mount/mount.c:1720
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: ファイルシステムタイプを指定する必要があります"
 
-#: mount/mount.c:1694
+#: mount/mount.c:1723
 msgid "mount: mount failed"
 msgstr "mount: マウントに失敗しました"
 
-#: mount/mount.c:1700 mount/mount.c:1737
+#: mount/mount.c:1729 mount/mount.c:1766
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: マウントポイント %s はディレクトリではありません"
 
-#: mount/mount.c:1702
+#: mount/mount.c:1731
 msgid "mount: permission denied"
 msgstr "mount: 許可がありません"
 
-#: mount/mount.c:1704
+#: mount/mount.c:1733
 msgid "mount: must be superuser to use mount"
 msgstr "mount: mount を使うにはスーパーユーザでなければなりません"
 
-#: mount/mount.c:1708 mount/mount.c:1712
+#: mount/mount.c:1737 mount/mount.c:1741
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s は使用中です"
 
-#: mount/mount.c:1714
+#: mount/mount.c:1743
 msgid "mount: proc already mounted"
 msgstr "mount: proc はマウント済です"
 
-#: mount/mount.c:1716
+#: mount/mount.c:1745
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s は マウント済か %s が使用中です"
 
-#: mount/mount.c:1722
+#: mount/mount.c:1751
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: マウントポイント %s が存在しません"
 
-#: mount/mount.c:1724
+#: mount/mount.c:1753
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: マウントポイント %s はどこもさしていないシンボリックリンクです"
 
-#: mount/mount.c:1729
+#: mount/mount.c:1758
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: スペシャルデバイス %s が存在しません"
 
-#: mount/mount.c:1741
+#: mount/mount.c:1770
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -9356,12 +9356,12 @@ msgstr ""
 "mount: スペシャルデバイス %s が存在しません\n"
 "       (パスのディレクトリがありません)\n"
 
-#: mount/mount.c:1753
+#: mount/mount.c:1782
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s はまだマウントされていないか、不正なオプションです"
 
-#: mount/mount.c:1755
+#: mount/mount.c:1784
 #, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -9371,75 +9371,75 @@ msgstr ""
 "       %s のスーパーブロックが不正、コードページまたは\n"
 "       ヘルパープログラムの未指定、或いは他のエラー"
 
-#: mount/mount.c:1762
+#: mount/mount.c:1791
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)"
 msgstr ""
 
-#: mount/mount.c:1771
+#: mount/mount.c:1800
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
 msgstr ""
 
-#: mount/mount.c:1776
+#: mount/mount.c:1805
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
 msgstr ""
 
-#: mount/mount.c:1783
+#: mount/mount.c:1812
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
 msgstr ""
 
-#: mount/mount.c:1789
+#: mount/mount.c:1818
 msgid "mount table full"
 msgstr "マウントテーブルがいっぱいです"
 
-#: mount/mount.c:1791
+#: mount/mount.c:1820
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: スーパーブロックを読めません"
 
-#: mount/mount.c:1797
+#: mount/mount.c:1826
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: 不明なデバイスです"
 
-#: mount/mount.c:1802
+#: mount/mount.c:1831
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: 未知のファイルシステムタイプ '%s'"
 
-#: mount/mount.c:1814
+#: mount/mount.c:1843
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: おそらくあなたは %s を指定したかったのでしょう"
 
-#: mount/mount.c:1817
+#: mount/mount.c:1846
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: 多分あなたは 'iso9660' を指定したかったのでは？"
 
-#: mount/mount.c:1820
+#: mount/mount.c:1849
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: 多分あなたは 'vfat' を指定したかったのでは？"
 
-#: mount/mount.c:1823
+#: mount/mount.c:1852
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s は間違ったデバイス番号になっているか、ファイルシステムタイプ\n"
 "       %s がサポートされていません"
 
-#: mount/mount.c:1831
+#: mount/mount.c:1860
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: %s はブロックデバイスではありません、だから stat が失敗？"
 
-#: mount/mount.c:1833
+#: mount/mount.c:1862
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -9448,54 +9448,54 @@ msgstr ""
 "mount: このカーネルは %s をブロックデバイスとして認識しません\n"
 "       (おそらく、`modprobe ドライバ' しないといけないのでは?)"
 
-#: mount/mount.c:1836
+#: mount/mount.c:1865
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr ""
 "mount: %s はブロックデバイスではありません (多分 `-o loop' とやってみたら?)"
 
-#: mount/mount.c:1839
+#: mount/mount.c:1868
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s はブロックデバイスではありません"
 
-#: mount/mount.c:1844
+#: mount/mount.c:1873
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s は正常なブロックデバイスではありません"
 
-#: mount/mount.c:1847
+#: mount/mount.c:1876
 msgid "block device "
 msgstr "ブロックデバイス "
 
-#: mount/mount.c:1849
+#: mount/mount.c:1878
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: %s%s を読込み専用でマウントできません"
 
-#: mount/mount.c:1853
+#: mount/mount.c:1882
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s は書き込み禁止ですが、`-w' フラグが明示的に与えられました"
 
-#: mount/mount.c:1857
+#: mount/mount.c:1886
 #, c-format
 msgid "mount: cannot remount %s%s read-write, is write-protected"
 msgstr ""
 "mount: %s%s を読み書き用として再マウントできません、ライトプロテクトされてい"
 "ます"
 
-#: mount/mount.c:1872
+#: mount/mount.c:1901
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s は書き込み禁止です、読込み専用でマウントします"
 
-#: mount/mount.c:1880
+#: mount/mount.c:1909
 #, fuzzy, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: %s は %s にマウント済です\n"
 
-#: mount/mount.c:1898
+#: mount/mount.c:1927
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9505,27 +9505,27 @@ msgid ""
 "       this file system.  For more details see restorecon(8) and mount(8).\n"
 msgstr ""
 
-#: mount/mount.c:1979
+#: mount/mount.c:2008
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: タイプが与えられていません -- コロンがあるので nfs の様ですが\n"
 
-#: mount/mount.c:1985
+#: mount/mount.c:2014
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr "mount: タイプが与えられていません -- // があるので cifs の様ですが\n"
 
-#: mount/mount.c:2050
+#: mount/mount.c:2079
 #, c-format
 msgid "mount: ignore %s (unparsable offset= option)\n"
 msgstr ""
 
-#: mount/mount.c:2062
+#: mount/mount.c:2092
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s は %s にマウント済です\n"
 
-#: mount/mount.c:2243
+#: mount/mount.c:2273
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9594,24 +9594,24 @@ msgstr ""
 "その他のオプション: [-nfFrsvw] [-o オプション] [-p passwdfd]\n"
 "もっと詳しいことを知りたければ、man 8 mount と唱えてみましょう。\n"
 
-#: mount/mount.c:2575
+#: mount/mount.c:2605
 #, fuzzy, c-format
 msgid "mount: only root can do that (effective UID is %u)"
 msgstr "mount: root だけがそれを行なえます"
 
-#: mount/mount.c:2578
+#: mount/mount.c:2608
 msgid "mount: only root can do that"
 msgstr "mount: root だけがそれを行なえます"
 
-#: mount/mount.c:2589
+#: mount/mount.c:2619
 msgid "nothing was mounted"
 msgstr "何もマウントされませんでした"
 
-#: mount/mount.c:2607 mount/mount.c:2633
+#: mount/mount.c:2637 mount/mount.c:2663
 msgid "mount: no such partition found"
 msgstr "mount: そのようなパーティションは見つかりません"
 
-#: mount/mount.c:2610
+#: mount/mount.c:2640
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %2$s や %3$s 内に %1$s を見つけられません"
@@ -9928,71 +9928,71 @@ msgstr ""
 "        umount -a [-d] [-f] [-r] [-n] [-v] [-t vfsタイプ] [-O オプション]\n"
 "        umount [-d] [-f] [-r] [-n] [-v] special | node...\n"
 
-#: mount/umount.c:500
+#: mount/umount.c:480
 #, fuzzy, c-format
 msgid "failed to parse 'offset=%s' options\n"
 msgstr "%s: open に失敗: %s\n"
 
-#: mount/umount.c:508
+#: mount/umount.c:488
 #, c-format
 msgid "device %s is associated with %s\n"
 msgstr "デバイス %s は %s に関連づけされています\n"
 
-#: mount/umount.c:514
+#: mount/umount.c:494
 #, c-format
 msgid "device %s is not associated with %s\n"
 msgstr "デバイス %s は %s に関連づけされていません\n"
 
-#: mount/umount.c:527
+#: mount/umount.c:507
 msgid "Cannot unmount \"\"\n"
 msgstr "\"\" をアンマウントできません\n"
 
-#: mount/umount.c:533
+#: mount/umount.c:513
 #, fuzzy, c-format
 msgid "Trying to unmount %s\n"
 msgstr "%s をアンマウントします\n"
 
-#: mount/umount.c:546
+#: mount/umount.c:526
 msgid "umount: confused when analyzing mtab"
 msgstr ""
 
-#: mount/umount.c:551
+#: mount/umount.c:531
 #, c-format
 msgid "umount: cannot unmount %s -- %s is mounted over it on the same point"
 msgstr ""
 
-#: mount/umount.c:558
+#: mount/umount.c:538
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "mtab に %s が見つかりません\n"
 
-#: mount/umount.c:565
+#: mount/umount.c:545
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: %s マウントされていません (mtab によると)"
 
-#: mount/umount.c:589
+#: mount/umount.c:570
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: %s は複数マウントされているようです"
 
-#: mount/umount.c:603
+#: mount/umount.c:584
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr ""
 "umount: %s は fstab にありません (さらに、あなたは root ではありません)"
 
-#: mount/umount.c:609
+#: mount/umount.c:590
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: %s は fstab と一致しないマウントです"
 
-#: mount/umount.c:650
+#: mount/umount.c:631
 #, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr "umount: %s だけが %s を %s からアンマウントできます"
 
-#: mount/umount.c:745
+#: mount/umount.c:726
 msgid "umount: only root can do that"
 msgstr "umount: root だけがそれを行なえます"
 
@@ -10269,8 +10269,8 @@ msgstr "SCHED_%s min/max priority\t: %d/%d\n"
 msgid "SCHED_%s not supported?\n"
 msgstr "SCHED_%s はサポートされていません?\n"
 
-#: schedutils/chrt.c:243 schedutils/ionice.c:116 schedutils/ionice.c:150
-#: schedutils/ionice.c:159 schedutils/taskset.c:92
+#: schedutils/chrt.c:243 schedutils/ionice.c:114 schedutils/ionice.c:148
+#: schedutils/ionice.c:157 schedutils/taskset.c:89
 msgid "failed to parse pid"
 msgstr "pid の解析に失敗しました"
 
@@ -10295,15 +10295,15 @@ msgstr "%s のパーティション書き込みに失敗\n"
 msgid "failed to execute %s"
 msgstr "typescript ファイル %s の読み込みが失敗しました"
 
-#: schedutils/ionice.c:59
+#: schedutils/ionice.c:57
 msgid "ioprio_get failed"
 msgstr "ioprio_get が失敗"
 
-#: schedutils/ionice.c:77
+#: schedutils/ionice.c:75
 msgid "ioprio_set failed"
 msgstr "ioprio_set が失敗"
 
-#: schedutils/ionice.c:83
+#: schedutils/ionice.c:81
 #, c-format
 msgid ""
 "\n"
@@ -10338,35 +10338,35 @@ msgstr ""
 "  -h                  このヘルプ\n"
 "\n"
 
-#: schedutils/ionice.c:108
+#: schedutils/ionice.c:106
 #, fuzzy
 msgid "failed to parse class data"
 msgstr "%s: open に失敗: %s\n"
 
-#: schedutils/ionice.c:112
+#: schedutils/ionice.c:110
 #, fuzzy
 msgid "failed to parse class"
 msgstr "%s: open に失敗: %s\n"
 
-#: schedutils/ionice.c:131
+#: schedutils/ionice.c:129
 msgid "ignoring given class data for none class"
 msgstr ""
 
-#: schedutils/ionice.c:139
+#: schedutils/ionice.c:137
 msgid "ignoring given class data for idle class"
 msgstr ""
 
-#: schedutils/ionice.c:143
+#: schedutils/ionice.c:141
 #, c-format
 msgid "bad prio class %d"
 msgstr ""
 
-#: schedutils/ionice.c:167 schedutils/taskset.c:185
+#: schedutils/ionice.c:165 schedutils/taskset.c:182
 #, fuzzy, c-format
 msgid "executing %s failed"
 msgstr "exec %s に失敗"
 
-#: schedutils/taskset.c:40
+#: schedutils/taskset.c:37
 #, c-format
 msgid ""
 "Usage: %s [options] [mask | cpu-list] [pid|cmd [args...]]\n"
@@ -10375,7 +10375,7 @@ msgstr ""
 "使い方: %s [オプション] [mask | cpu-list] [pid|cmd [引数...]]\n"
 "\n"
 
-#: schedutils/taskset.c:44
+#: schedutils/taskset.c:41
 #, c-format
 msgid ""
 "Options:\n"
@@ -10386,7 +10386,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: schedutils/taskset.c:51
+#: schedutils/taskset.c:48
 #, c-format
 msgid ""
 "The default behavior is to run a new command:\n"
@@ -10401,7 +10401,7 @@ msgid ""
 "    e.g. 0-31:2 is equivalent to mask 0x55555555\n"
 msgstr ""
 
-#: schedutils/taskset.c:63
+#: schedutils/taskset.c:60
 #, c-format
 msgid ""
 "\n"
@@ -10410,55 +10410,55 @@ msgstr ""
 "\n"
 "詳細情報は、taskset(1) を確認してください。\n"
 
-#: schedutils/taskset.c:115
+#: schedutils/taskset.c:112
 #, fuzzy
 msgid "cannot determine NR_CPUS; aborting"
 msgstr "%s のサイズを取得できません"
 
-#: schedutils/taskset.c:124 schedutils/taskset.c:138
+#: schedutils/taskset.c:121 schedutils/taskset.c:135
 #, fuzzy
 msgid "cpuset_alloc failed"
 msgstr "calloc が失敗しました"
 
-#: schedutils/taskset.c:142 schedutils/taskset.c:167
+#: schedutils/taskset.c:139 schedutils/taskset.c:164
 #, fuzzy, c-format
 msgid "failed to get pid %d's affinity"
 msgstr "%s のパーティション書き込みに失敗\n"
 
-#: schedutils/taskset.c:145
+#: schedutils/taskset.c:142
 #, c-format
 msgid "pid %d's current affinity list: %s\n"
 msgstr ""
 
-#: schedutils/taskset.c:148
+#: schedutils/taskset.c:145
 #, c-format
 msgid "pid %d's current affinity mask: %s\n"
 msgstr ""
 
-#: schedutils/taskset.c:159
+#: schedutils/taskset.c:156
 #, fuzzy, c-format
 msgid "failed to parse %s %s"
 msgstr "%s: open に失敗: %s\n"
 
-#: schedutils/taskset.c:160
+#: schedutils/taskset.c:157
 msgid "CPU list"
 msgstr "CPUリスト"
 
-#: schedutils/taskset.c:160
+#: schedutils/taskset.c:157
 msgid "CPU mask"
 msgstr "CPUマスク"
 
-#: schedutils/taskset.c:164
+#: schedutils/taskset.c:161
 #, fuzzy, c-format
 msgid "failed to set pid %d's affinity"
 msgstr "%s のパーティション書き込みに失敗\n"
 
-#: schedutils/taskset.c:171
+#: schedutils/taskset.c:168
 #, c-format
 msgid "pid %d's new affinity list: %s\n"
 msgstr ""
 
-#: schedutils/taskset.c:174
+#: schedutils/taskset.c:171
 #, c-format
 msgid "pid %d's new affinity mask: %s\n"
 msgstr ""
@@ -10944,10 +10944,20 @@ msgstr ""
 msgid "   %f int/sec; %f rec (char/sec)\n"
 msgstr "   %f 整数/秒 -- %f 記録 (キャラクタ/秒)\n"
 
-#: sys-utils/dmesg.c:45
+#: sys-utils/dmesg.c:46
 #, c-format
 msgid "Usage: %s [-c] [-n level] [-r] [-s bufsize]\n"
 msgstr "使い方: %s [-c] [-n レベル] [-r] [-s バッファサイズ]\n"
+
+#: sys-utils/dmesg.c:74
+#, fuzzy
+msgid "failed to parse level"
+msgstr "%s: open に失敗: %s\n"
+
+#: sys-utils/dmesg.c:80
+#, fuzzy
+msgid "failed to parse buffer size"
+msgstr "%s: open に失敗: %s\n"
 
 #: sys-utils/fallocate.c:52
 #, c-format
@@ -11927,63 +11937,63 @@ msgstr "ディスクドライブ上で seek できません"
 msgid "cannot daemonize"
 msgstr "%s を open できません"
 
-#: sys-utils/lscpu.c:56
+#: sys-utils/lscpu.c:58
 msgid "none"
 msgstr "なし"
 
-#: sys-utils/lscpu.c:57
+#: sys-utils/lscpu.c:59
 msgid "para"
 msgstr "準仮想化"
 
-#: sys-utils/lscpu.c:58
+#: sys-utils/lscpu.c:60
 msgid "full"
 msgstr "完全仮想化"
 
-#: sys-utils/lscpu.c:165
+#: sys-utils/lscpu.c:167
 #, c-format
 msgid "error: cannot open %s"
 msgstr "error: %s を開けません"
 
-#: sys-utils/lscpu.c:193 sys-utils/lscpu.c:214 sys-utils/lscpu.c:255
+#: sys-utils/lscpu.c:195 sys-utils/lscpu.c:216 sys-utils/lscpu.c:257
 #, fuzzy, c-format
 msgid "failed to read: %s"
 msgstr "stat が失敗しました: %s"
 
-#: sys-utils/lscpu.c:216
+#: sys-utils/lscpu.c:218
 #, c-format
 msgid "parse error: %s"
 msgstr "解析エラー: %s"
 
-#: sys-utils/lscpu.c:240
+#: sys-utils/lscpu.c:242
 #, fuzzy
 msgid "error: strdup failed"
 msgstr "標準出力への書き込みが失敗しました"
 
-#: sys-utils/lscpu.c:264 sys-utils/lscpu.c:855
+#: sys-utils/lscpu.c:266 sys-utils/lscpu.c:857
 #, fuzzy
 msgid "failed to callocate cpu set"
 msgstr "出力バッファの確保に失敗しました"
 
-#: sys-utils/lscpu.c:268
+#: sys-utils/lscpu.c:270
 #, fuzzy, c-format
 msgid "failed to parse CPU list %s"
 msgstr "%s: open に失敗: %s\n"
 
-#: sys-utils/lscpu.c:271
+#: sys-utils/lscpu.c:273
 #, fuzzy, c-format
 msgid "failed to parse CPU mask %s"
 msgstr "%s: open に失敗: %s\n"
 
-#: sys-utils/lscpu.c:372
+#: sys-utils/lscpu.c:374
 msgid "error: uname failed"
 msgstr "エラー: uname が失敗"
 
-#: sys-utils/lscpu.c:600 sys-utils/lscpu.c:603 sys-utils/lscpu.c:679
-#: sys-utils/lscpu.c:700
+#: sys-utils/lscpu.c:602 sys-utils/lscpu.c:605 sys-utils/lscpu.c:681
+#: sys-utils/lscpu.c:702
 msgid "error: calloc failed"
 msgstr "エラー: calloc が失敗"
 
-#: sys-utils/lscpu.c:716
+#: sys-utils/lscpu.c:718
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -11992,109 +12002,109 @@ msgid ""
 "# CPU,Core,Socket,Node"
 msgstr ""
 
-#: sys-utils/lscpu.c:818
+#: sys-utils/lscpu.c:820
 msgid "Architecture:"
 msgstr "アーキテクチャ:"
 
-#: sys-utils/lscpu.c:832
+#: sys-utils/lscpu.c:834
 #, fuzzy
 msgid "CPU op-mode(s):"
 msgstr "CPUソケット数:"
 
-#: sys-utils/lscpu.c:835 sys-utils/lscpu.c:837
+#: sys-utils/lscpu.c:837 sys-utils/lscpu.c:839
 msgid "Byte Order:"
 msgstr ""
 
-#: sys-utils/lscpu.c:839
+#: sys-utils/lscpu.c:841
 #, fuzzy
 msgid "CPU(s):"
 msgstr "CPUソケット数:"
 
-#: sys-utils/lscpu.c:842
+#: sys-utils/lscpu.c:844
 msgid "On-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:843
+#: sys-utils/lscpu.c:845
 msgid "On-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:861
+#: sys-utils/lscpu.c:863
 msgid "Off-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:862
+#: sys-utils/lscpu.c:864
 msgid "Off-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:868
+#: sys-utils/lscpu.c:870
 msgid "Thread(s) per core:"
 msgstr "コアあたりのスレッド数:"
 
-#: sys-utils/lscpu.c:869
+#: sys-utils/lscpu.c:871
 msgid "Core(s) per socket:"
 msgstr "ソケットあたりのコア数:"
 
-#: sys-utils/lscpu.c:870
+#: sys-utils/lscpu.c:872
 msgid "CPU socket(s):"
 msgstr "CPUソケット数:"
 
-#: sys-utils/lscpu.c:874
+#: sys-utils/lscpu.c:876
 msgid "NUMA node(s):"
 msgstr "NUMAノード:"
 
-#: sys-utils/lscpu.c:876
+#: sys-utils/lscpu.c:878
 msgid "Vendor ID:"
 msgstr "ベンダーID:"
 
-#: sys-utils/lscpu.c:878
+#: sys-utils/lscpu.c:880
 msgid "CPU family:"
 msgstr "CPUファミリー:"
 
-#: sys-utils/lscpu.c:880
+#: sys-utils/lscpu.c:882
 msgid "Model:"
 msgstr "モデル:"
 
-#: sys-utils/lscpu.c:882
+#: sys-utils/lscpu.c:884
 msgid "Stepping:"
 msgstr "ステッピング:"
 
-#: sys-utils/lscpu.c:884
+#: sys-utils/lscpu.c:886
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:886
+#: sys-utils/lscpu.c:888
 msgid "BogoMIPS:"
 msgstr ""
 
-#: sys-utils/lscpu.c:889 sys-utils/lscpu.c:891
+#: sys-utils/lscpu.c:891 sys-utils/lscpu.c:893
 msgid "Virtualization:"
 msgstr "仮想化:"
 
-#: sys-utils/lscpu.c:894
+#: sys-utils/lscpu.c:896
 msgid "Hypervisor vendor:"
 msgstr "ハイパーバイザーベンダー:"
 
-#: sys-utils/lscpu.c:895
+#: sys-utils/lscpu.c:897
 msgid "Virtualization type:"
 msgstr "仮想化タイプ:"
 
-#: sys-utils/lscpu.c:903
+#: sys-utils/lscpu.c:905
 #, c-format
 msgid "%s cache:"
 msgstr "%s キャッシュ:"
 
-#: sys-utils/lscpu.c:909
+#: sys-utils/lscpu.c:911
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "NUMAノード %d CPU:"
 
-#: sys-utils/lscpu.c:916
+#: sys-utils/lscpu.c:918
 #, c-format
 msgid "Usage: %s [option]\n"
 msgstr "使い方: %s [オプション]\n"
 
-#: sys-utils/lscpu.c:919
-#, fuzzy
+#: sys-utils/lscpu.c:921
+#, fuzzy, c-format
 msgid ""
 "CPU architecture information helper\n"
 "\n"

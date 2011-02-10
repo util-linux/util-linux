@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11b\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2011-01-25 12:27+0100\n"
+"POT-Creation-Date: 2011-02-10 09:15+0100\n"
 "PO-Revision-Date: 2001-05-24 16:03-03:00\n"
 "Last-Translator: Rodrigo Stulzer Lopes <rodrigo@conectiva.com.br>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
@@ -352,7 +352,7 @@ msgid "unable to test CRC: old cramfs format"
 msgstr ""
 
 #: disk-utils/fsck.cramfs.c:272 disk-utils/fsck.cramfs.c:339
-#: disk-utils/fsck.cramfs.c:477 schedutils/taskset.c:129
+#: disk-utils/fsck.cramfs.c:477 schedutils/taskset.c:126
 msgid "malloc failed"
 msgstr "malloc falhou"
 
@@ -1644,7 +1644,7 @@ msgstr ""
 msgid "%s: failed to write label"
 msgstr "busca falhou em write_tables"
 
-#: disk-utils/swaplabel.c:161 misc-utils/wipefs.c:320
+#: disk-utils/swaplabel.c:161 misc-utils/wipefs.c:303
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [options] <device>\n"
@@ -5836,36 +5836,36 @@ msgstr ""
 "count=1\n"
 "(consulte fdisk(8)).\n"
 
-#: fsck/fsck.c:270
+#: fsck/fsck.c:271
 #, fuzzy, c-format
 msgid "Locking disk %s ... "
 msgstr "Sincronizando discos.\n"
 
-#: fsck/fsck.c:280
+#: fsck/fsck.c:281
 #, c-format
 msgid "(waiting) "
 msgstr ""
 
-#: fsck/fsck.c:289
+#: fsck/fsck.c:290
 msgid "success"
 msgstr ""
 
-#: fsck/fsck.c:289
+#: fsck/fsck.c:290
 #, fuzzy
 msgid "failed"
 msgstr "busca falhou"
 
-#: fsck/fsck.c:419
+#: fsck/fsck.c:420
 #, fuzzy, c-format
 msgid "WARNING: couldn't open %s: %s\n"
 msgstr "%s: não foi possível abrir %s: %s\n"
 
-#: fsck/fsck.c:429
+#: fsck/fsck.c:430
 #, c-format
 msgid "WARNING: bad format on line %d of %s\n"
 msgstr ""
 
-#: fsck/fsck.c:445
+#: fsck/fsck.c:446
 msgid ""
 "WARNING: Your /etc/fstab does not contain the fsck passno\n"
 "\tfield.  I will kludge around things for you, but you\n"
@@ -5873,129 +5873,129 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fsck/fsck.c:552
+#: fsck/fsck.c:553
 #, fuzzy, c-format
 msgid "fsck: %s: not found\n"
 msgstr "umount: %s: não encontrado"
 
-#: fsck/fsck.c:673
+#: fsck/fsck.c:674
 #, c-format
 msgid "%s: wait: No more child process?!?\n"
 msgstr ""
 
-#: fsck/fsck.c:695
+#: fsck/fsck.c:696
 #, c-format
 msgid "Warning... %s for device %s exited with signal %d.\n"
 msgstr ""
 
-#: fsck/fsck.c:701
+#: fsck/fsck.c:702
 #, c-format
 msgid "%s %s: status is %x, should never happen.\n"
 msgstr ""
 
-#: fsck/fsck.c:740
+#: fsck/fsck.c:741
 #, c-format
 msgid "Finished with %s (exit status %d)\n"
 msgstr ""
 
-#: fsck/fsck.c:800
+#: fsck/fsck.c:801
 #, c-format
 msgid "%s: Error %d while executing fsck.%s for %s\n"
 msgstr ""
 
-#: fsck/fsck.c:823
+#: fsck/fsck.c:824
 msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
 "with 'no' or '!'.\n"
 msgstr ""
 
-#: fsck/fsck.c:842
+#: fsck/fsck.c:843
 #, fuzzy
 msgid "Couldn't allocate memory for filesystem types\n"
 msgstr "mount: você precisa especificar o tipo do sistema de arquivos"
 
-#: fsck/fsck.c:981
+#: fsck/fsck.c:982
 #, c-format
 msgid ""
 "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass "
 "number\n"
 msgstr ""
 
-#: fsck/fsck.c:992
+#: fsck/fsck.c:993
 #, fuzzy, c-format
 msgid "%s: skipping nonexistent device\n"
 msgstr "%s: %s não é um dispositivo lp.\n"
 
-#: fsck/fsck.c:997
+#: fsck/fsck.c:998
 #, c-format
 msgid ""
 "%s: nonexistent device (\"nofail\" fstab option may be used to skip this "
 "device)\n"
 msgstr ""
 
-#: fsck/fsck.c:1024
+#: fsck/fsck.c:1025
 #, c-format
 msgid "fsck: cannot check %s: fsck.%s not found\n"
 msgstr ""
 
-#: fsck/fsck.c:1110
+#: fsck/fsck.c:1111
 #, fuzzy
 msgid "Checking all file systems.\n"
 msgstr "Forçando verificação do sistema de arquivos em %s.\n"
 
-#: fsck/fsck.c:1201
+#: fsck/fsck.c:1202
 #, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr ""
 
-#: fsck/fsck.c:1221
+#: fsck/fsck.c:1222
 #, fuzzy
 msgid ""
 "Usage: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-options] [filesys ...]\n"
 msgstr ""
 "Uso: mkfs [-V] [-t tipoSistArq] [opções-sistArq] dispositivo [tamanho]\n"
 
-#: fsck/fsck.c:1259
+#: fsck/fsck.c:1260
 #, fuzzy, c-format
 msgid "%s: too many devices\n"
 msgstr "%s: %s não é um dispositivo lp.\n"
 
-#: fsck/fsck.c:1270
+#: fsck/fsck.c:1271
 #, fuzzy, c-format
 msgid "Couldn't open %s: %s\n"
 msgstr "Não foi possível abrir %s: %s\n"
 
-#: fsck/fsck.c:1272
+#: fsck/fsck.c:1273
 #, fuzzy, c-format
 msgid "Is /proc mounted?\n"
 msgstr "%s desmontado\n"
 
-#: fsck/fsck.c:1281
+#: fsck/fsck.c:1282
 #, c-format
 msgid "Must be root to scan for matching filesystems: %s\n"
 msgstr ""
 
-#: fsck/fsck.c:1284
+#: fsck/fsck.c:1285
 #, fuzzy, c-format
 msgid "Couldn't find matching filesystem: %s\n"
 msgstr "Desmontando quaisquer sistemas de arquivos remanescentes..."
 
-#: fsck/fsck.c:1292 fsck/fsck.c:1381
+#: fsck/fsck.c:1293 fsck/fsck.c:1382
 #, fuzzy, c-format
 msgid "%s: too many arguments\n"
 msgstr "%s: sinal desconhecido %s\n"
 
-#: fsck/fsck.c:1415
+#: fsck/fsck.c:1416
 #, fuzzy, c-format
 msgid "fsck from %s\n"
 msgstr "%s de %s\n"
 
-#: fsck/fsck.c:1427
+#: fsck/fsck.c:1428
 #, fuzzy, c-format
 msgid "%s: Unable to allocate memory for fsck_path\n"
 msgstr "Não foi possível alocar buffer para inodes"
 
-#: fsck/fsck.c:1441
+#: fsck/fsck.c:1442
 #, c-format
 msgid "%s: the -l option can be used with one device only -- ignore\n"
 msgstr ""
@@ -7232,7 +7232,7 @@ msgid "usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"
 msgstr "Uso: last [-#] [-f arquivo] [-t tty] [-h nome_host] [usuário ...]\n"
 
 #: login-utils/last.c:240 login-utils/vipw.c:154 misc-utils/lsblk.c:662
-#: misc-utils/wipefs.c:277 mount/swapon.c:209 mount/swapon.c:294
+#: misc-utils/wipefs.c:260 mount/swapon.c:209 mount/swapon.c:294
 #: mount/swapon.c:444 mount/swapon.c:608 mount/swapon.c:817 partx/partx.c:807
 #: sys-utils/fallocate.c:136 sys-utils/fsfreeze.c:102 sys-utils/fstrim.c:142
 #: text-utils/rev.c:113 text-utils/ul.c:178
@@ -8556,151 +8556,151 @@ msgstr "Não foi possível abrir %s\n"
 msgid "%s: $TERM is not defined.\n"
 msgstr "%s: $TERM indefinido.\n"
 
-#: misc-utils/uuidd.c:46
+#: misc-utils/uuidd.c:53
 #, fuzzy, c-format
 msgid "Usage: %s [-d] [-p pidfile] [-s socketpath] [-T timeout]\n"
 msgstr "Uso: last [-#] [-f arquivo] [-t tty] [-h nome_host] [usuário ...]\n"
 
-#: misc-utils/uuidd.c:48
+#: misc-utils/uuidd.c:55
 #, c-format
 msgid "       %s [-r|t] [-n num] [-s socketpath]\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:50
+#: misc-utils/uuidd.c:57
 #, fuzzy, c-format
 msgid "       %s -k\n"
 msgstr "       %s -l [ sinal ]\n"
 
-#: misc-utils/uuidd.c:152
+#: misc-utils/uuidd.c:126
 #, fuzzy
 msgid "bad arguments"
 msgstr "col: argumento inválido para -l %s.\n"
 
-#: misc-utils/uuidd.c:159
+#: misc-utils/uuidd.c:133
 #, fuzzy
 msgid "socket"
 msgstr "nfs socket"
 
-#: misc-utils/uuidd.c:170
+#: misc-utils/uuidd.c:144
 #, fuzzy
 msgid "connect"
 msgstr "nfs connect"
 
-#: misc-utils/uuidd.c:189
+#: misc-utils/uuidd.c:164
 #, fuzzy
 msgid "write"
 msgstr "Gravar"
 
-#: misc-utils/uuidd.c:197
+#: misc-utils/uuidd.c:172
 #, fuzzy
 msgid "read count"
 msgstr "read %c\n"
 
-#: misc-utils/uuidd.c:203
+#: misc-utils/uuidd.c:178
 msgid "bad response length"
 msgstr ""
 
-#: misc-utils/uuidd.c:244
+#: misc-utils/uuidd.c:219
 #, fuzzy, c-format
 msgid "Failed to open/create %s: %s\n"
 msgstr "%s: não foi possível abrir %s\n"
 
-#: misc-utils/uuidd.c:261
+#: misc-utils/uuidd.c:236
 #, fuzzy, c-format
 msgid "Failed to lock %s: %s\n"
 msgstr "não foi possível stat %s"
 
-#: misc-utils/uuidd.c:268
+#: misc-utils/uuidd.c:243
 #, c-format
 msgid "uuidd daemon already running at pid %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:276
+#: misc-utils/uuidd.c:251
 #, c-format
 msgid "Couldn't create unix stream socket: %s"
 msgstr ""
 
-#: misc-utils/uuidd.c:305
+#: misc-utils/uuidd.c:278
 #, fuzzy, c-format
 msgid "Couldn't bind unix socket %s: %s\n"
 msgstr "Não foi possível abrir %s: %s\n"
 
-#: misc-utils/uuidd.c:313
+#: misc-utils/uuidd.c:286
 #, fuzzy, c-format
 msgid "Couldn't listen on unix socket %s: %s\n"
 msgstr "Não foi possível abrir %s: %s\n"
 
-#: misc-utils/uuidd.c:351
+#: misc-utils/uuidd.c:324
 #, fuzzy, c-format
 msgid "Error reading from client, len = %d\n"
 msgstr "Erro ao ler %s\n"
 
-#: misc-utils/uuidd.c:359
+#: misc-utils/uuidd.c:333
 #, c-format
 msgid "operation %d, incoming num = %d\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:362
+#: misc-utils/uuidd.c:336
 #, fuzzy, c-format
 msgid "operation %d\n"
 msgstr "id inválido: %s\n"
 
-#: misc-utils/uuidd.c:378
+#: misc-utils/uuidd.c:352
 #, c-format
 msgid "Generated time UUID: %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:388
+#: misc-utils/uuidd.c:362
 #, c-format
 msgid "Generated random UUID: %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:397
+#: misc-utils/uuidd.c:371
 #, c-format
 msgid "Generated time UUID %s and %d following\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:415
+#: misc-utils/uuidd.c:389
 #, c-format
 msgid "Generated %d UUIDs:\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:427
+#: misc-utils/uuidd.c:401
 #, fuzzy, c-format
 msgid "Invalid operation %d\n"
 msgstr "id inválido: %s\n"
 
-#: misc-utils/uuidd.c:468 misc-utils/uuidd.c:489
+#: misc-utils/uuidd.c:442 misc-utils/uuidd.c:463
 #, fuzzy, c-format
 msgid "Bad number: %s\n"
 msgstr "Número inválido: %s\n"
 
-#: misc-utils/uuidd.c:524 misc-utils/uuidd.c:551
+#: misc-utils/uuidd.c:498 misc-utils/uuidd.c:525
 #, fuzzy, c-format
 msgid "Error calling uuidd daemon (%s): %s\n"
 msgstr "erro ao alterar o modo de %s: %s\n"
 
-#: misc-utils/uuidd.c:534
+#: misc-utils/uuidd.c:508
 #, c-format
 msgid "%s and subsequent %d UUIDs\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:536
+#: misc-utils/uuidd.c:510
 #, c-format
 msgid "List of UUIDs:\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:557
+#: misc-utils/uuidd.c:531
 #, c-format
 msgid "Unexpected reply length from server %d\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:574
+#: misc-utils/uuidd.c:548
 #, c-format
 msgid "Couldn't kill uuidd running at pid %d: %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:580
+#: misc-utils/uuidd.c:554
 #, c-format
 msgid "Killed uuidd running at pid %d\n"
 msgstr ""
@@ -8715,52 +8715,52 @@ msgstr "Uso: %s [opções] dispositivo ...\n"
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
 msgstr "whereis [ -sbmu ] [ -SBM dir ... -f ] nome...\n"
 
-#: misc-utils/wipefs.c:131 sys-utils/lscpu.c:635
+#: misc-utils/wipefs.c:132 sys-utils/lscpu.c:637
 #, fuzzy
 msgid "calloc failed"
 msgstr "malloc falhou"
 
-#: misc-utils/wipefs.c:185
+#: misc-utils/wipefs.c:186
 #, fuzzy, c-format
 msgid "error: %s: probing initialization failed"
 msgstr "Erro no fechamento de %s\n"
 
-#: misc-utils/wipefs.c:196
+#: misc-utils/wipefs.c:197
 #, fuzzy, c-format
 msgid "WARNING: %s: appears to contain '%s' partition table"
 msgstr "O disco %s não contém uma tabela de partições válida\n"
 
-#: misc-utils/wipefs.c:242
+#: misc-utils/wipefs.c:225
 #, c-format
 msgid "no magic string found at offset 0x%jx -- ignored"
 msgstr ""
 
-#: misc-utils/wipefs.c:249
+#: misc-utils/wipefs.c:232
 #, fuzzy, c-format
 msgid "%s: failed to seek to offset 0x%jx"
 msgstr "%s: não foi possível abrir %s\n"
 
-#: misc-utils/wipefs.c:256
+#: misc-utils/wipefs.c:239
 #, fuzzy, c-format
 msgid "%s: write failed"
 msgstr "openpty falhou\n"
 
-#: misc-utils/wipefs.c:258
+#: misc-utils/wipefs.c:241
 #, fuzzy, c-format
 msgid "%zd bytes ["
 msgstr "bytes"
 
-#: misc-utils/wipefs.c:266
+#: misc-utils/wipefs.c:249
 #, c-format
 msgid "] erased at offset 0x%jx (%s)\n"
 msgstr ""
 
-#: misc-utils/wipefs.c:312
+#: misc-utils/wipefs.c:295
 #, fuzzy, c-format
 msgid "invalid offset value '%s' specified"
 msgstr "Valor definido inválido: %s\n"
 
-#: misc-utils/wipefs.c:324
+#: misc-utils/wipefs.c:307
 #, c-format
 msgid ""
 " -a, --all           wipe all magic strings (BE CAREFUL!)\n"
@@ -8770,18 +8770,18 @@ msgid ""
 " -p, --parsable      print out in parsable instead of printable format\n"
 msgstr ""
 
-#: misc-utils/wipefs.c:330
+#: misc-utils/wipefs.c:313
 #, fuzzy, c-format
 msgid ""
 "\n"
 "For more information see wipefs(8).\n"
 msgstr "As informações de finger foram alteradas.\n"
 
-#: misc-utils/wipefs.c:381
+#: misc-utils/wipefs.c:364
 msgid "--offset and --all are mutually exclusive"
 msgstr ""
 
-#: misc-utils/wipefs.c:388
+#: misc-utils/wipefs.c:371
 msgid "only one device as argument is currently supported."
 msgstr ""
 
@@ -8899,27 +8899,27 @@ msgstr ""
 "Não foi possível criar o vínculo %s\n"
 "Talvez haja um arquivo de bloqueio vencido?\n"
 
-#: mount/fstab.c:876 mount/fstab.c:931
+#: mount/fstab.c:896 mount/fstab.c:951
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "Não foi possível abrir %s (%s) - mtab não atualizado"
 
-#: mount/fstab.c:940
+#: mount/fstab.c:960
 #, c-format
 msgid "error writing %s: %s"
 msgstr "erro ao gravar %s: %s"
 
-#: mount/fstab.c:958
+#: mount/fstab.c:978
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "erro ao alterar o modo de %s: %s\n"
 
-#: mount/fstab.c:971
+#: mount/fstab.c:991
 #, fuzzy, c-format
 msgid "error changing owner of %s: %s\n"
 msgstr "erro ao alterar o modo de %s: %s\n"
 
-#: mount/fstab.c:982
+#: mount/fstab.c:1002
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "não foi possível renomear %s para %s: %s\n"
@@ -9130,77 +9130,77 @@ msgstr "mount: não foi possível localizar %s em %s ou %s"
 msgid "mount: SELinux *context= options are ignore on remount.\n"
 msgstr ""
 
-#: mount/mount.c:611
+#: mount/mount.c:623
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
 msgstr "mount: de acordo com mtab, %s já está montado em %s"
 
-#: mount/mount.c:616
+#: mount/mount.c:628
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
 msgstr "mount: de acordo com mtab, %s está montado em %s"
 
-#: mount/mount.c:640
+#: mount/mount.c:652
 #, c-format
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: não foi possível abrir %s para gravação: %s"
 
-#: mount/mount.c:657 mount/mount.c:1445
+#: mount/mount.c:669 mount/mount.c:1457
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: erro ao gravar %s: %s"
 
-#: mount/mount.c:665
+#: mount/mount.c:677
 #, c-format
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: erro ao alterar modo de %s: %s"
 
-#: mount/mount.c:771
+#: mount/mount.c:783
 #, fuzzy, c-format
 msgid "mount: cannot set group id: %s"
 msgstr "mount: não foi possível configurar velocidade: %s"
 
-#: mount/mount.c:774
+#: mount/mount.c:786
 #, fuzzy, c-format
 msgid "mount: cannot set user id: %s"
 msgstr "mount: não foi possível configurar velocidade: %s"
 
-#: mount/mount.c:821 mount/mount.c:2161
+#: mount/mount.c:833 mount/mount.c:2191
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: não foi possível realizar fork: %s"
 
-#: mount/mount.c:957
+#: mount/mount.c:969
 #, c-format
 msgid "Trying %s\n"
 msgstr "Experimentando %s\n"
 
-#: mount/mount.c:985
+#: mount/mount.c:997
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: não foi especificado um tipo de sistema de arquivos para %s\n"
 
-#: mount/mount.c:988
+#: mount/mount.c:1000
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       experimentarei todos os tipos mencionados em %s ou %s\n"
 
-#: mount/mount.c:991
+#: mount/mount.c:1003
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "       e parece ser um espaço de permuta\n"
 
-#: mount/mount.c:993
+#: mount/mount.c:1005
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       experimentarei o tipo %s\n"
 
-#: mount/mount.c:1018
+#: mount/mount.c:1030
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s parece espaço de permuta - não montado"
 
-#: mount/mount.c:1026
+#: mount/mount.c:1038
 #, c-format
 msgid ""
 "mount: %s: more filesystems detected. This should not happen,\n"
@@ -9208,170 +9208,170 @@ msgid ""
 "       use wipefs(8) to clean up the device.\n"
 msgstr ""
 
-#: mount/mount.c:1114
+#: mount/mount.c:1126
 msgid "mount failed"
 msgstr "mount falhou"
 
-#: mount/mount.c:1116
+#: mount/mount.c:1128
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: somente o root pode montar %s em %s"
 
-#: mount/mount.c:1201
+#: mount/mount.c:1213
 msgid "mount: loop device specified twice"
 msgstr "mount: dispositivo de laço especificado duas vezes"
 
-#: mount/mount.c:1206
+#: mount/mount.c:1218
 msgid "mount: type specified twice"
 msgstr "mount: tipo especificado duas vezes"
 
-#: mount/mount.c:1234
+#: mount/mount.c:1246
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: ignorando a configuração de um dispositivo de laço\n"
 
-#: mount/mount.c:1246
+#: mount/mount.c:1258
 #, fuzzy, c-format
 msgid "mount: enabling autoclear loopdev flag\n"
 msgstr "mount: será usado o dispositivo de laço %s\n"
 
-#: mount/mount.c:1254
+#: mount/mount.c:1266
 #, fuzzy, c-format
 msgid "mount: invalid offset '%s' specified"
 msgstr "Valor definido inválido: %s\n"
 
-#: mount/mount.c:1258
+#: mount/mount.c:1270
 #, fuzzy, c-format
 msgid "mount: invalid sizelimit '%s' specified"
 msgstr "Valor definido inválido: %s\n"
 
-#: mount/mount.c:1263
+#: mount/mount.c:1275
 #, fuzzy, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount: de acordo com mtab, %s já está montado em %s"
 
-#: mount/mount.c:1273
+#: mount/mount.c:1285
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: será usado o dispositivo de laço %s\n"
 
-#: mount/mount.c:1282
+#: mount/mount.c:1294
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:1287
+#: mount/mount.c:1299
 #, fuzzy, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: %s: %s"
 
-#: mount/mount.c:1292
+#: mount/mount.c:1304
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: falha ao configurar dispositivo de laço\n"
 
-#: mount/mount.c:1303
+#: mount/mount.c:1315
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: configuração de dispositivo de laço realizada com sucesso\n"
 
-#: mount/mount.c:1388 mount/mount.c:1422
+#: mount/mount.c:1400 mount/mount.c:1434
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: nenhum %s encontrado - criando-o...\n"
 
-#: mount/mount.c:1440
+#: mount/mount.c:1452
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: não foi possível abrir %s: %s"
 
-#: mount/mount.c:1462
+#: mount/mount.c:1474
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr ""
 
-#: mount/mount.c:1475
+#: mount/mount.c:1487
 #, fuzzy, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: não foi possível abrir %s para configuração da velocidade"
 
-#: mount/mount.c:1478
+#: mount/mount.c:1490
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: não foi possível configurar velocidade: %s"
 
-#: mount/mount.c:1571
+#: mount/mount.c:1583
 #, fuzzy, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: de acordo com mtab, %s já está montado em %s"
 
-#: mount/mount.c:1635
+#: mount/mount.c:1664
 #, fuzzy, c-format
 msgid "mount: warning: %s seems to be mounted read-write.\n"
 msgstr "umount: %s está ocupado - remontado somente para leitura\n"
 
-#: mount/mount.c:1647
+#: mount/mount.c:1676
 #, fuzzy, c-format
 msgid "mount: warning: %s seems to be mounted read-only.\n"
 msgstr "umount: %s está ocupado - remontado somente para leitura\n"
 
-#: mount/mount.c:1688
+#: mount/mount.c:1717
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 "mount: não foi possível determinar o tipo do sistema de arquivos e nenhum "
 "foi especificado"
 
-#: mount/mount.c:1691
+#: mount/mount.c:1720
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: você precisa especificar o tipo do sistema de arquivos"
 
-#: mount/mount.c:1694
+#: mount/mount.c:1723
 msgid "mount: mount failed"
 msgstr "mount: a montagem falhou"
 
-#: mount/mount.c:1700 mount/mount.c:1737
+#: mount/mount.c:1729 mount/mount.c:1766
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: o ponto de montagem %s não é um diretório"
 
-#: mount/mount.c:1702
+#: mount/mount.c:1731
 msgid "mount: permission denied"
 msgstr "mount: permissão negada"
 
-#: mount/mount.c:1704
+#: mount/mount.c:1733
 msgid "mount: must be superuser to use mount"
 msgstr "mount: é necessário ser superusuário para montar"
 
-#: mount/mount.c:1708 mount/mount.c:1712
+#: mount/mount.c:1737 mount/mount.c:1741
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s está ocupado"
 
-#: mount/mount.c:1714
+#: mount/mount.c:1743
 msgid "mount: proc already mounted"
 msgstr "mount: proc já montado"
 
-#: mount/mount.c:1716
+#: mount/mount.c:1745
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s já montado ou %s ocupado"
 
-#: mount/mount.c:1722
+#: mount/mount.c:1751
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: o ponto de montagem %s não existe"
 
-#: mount/mount.c:1724
+#: mount/mount.c:1753
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: o ponto de montagem %s é um vínculo simbólico para lugar algum"
 
-#: mount/mount.c:1729
+#: mount/mount.c:1758
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: o dispositivo especial %s não existe"
 
-#: mount/mount.c:1741
+#: mount/mount.c:1770
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -9380,12 +9380,12 @@ msgstr ""
 "mount: o dispositivo especial %s não existe\n"
 "       (um prefixo de caminho não é um diretório)\n"
 
-#: mount/mount.c:1753
+#: mount/mount.c:1782
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s já não está montado ou opção inválida"
 
-#: mount/mount.c:1755
+#: mount/mount.c:1784
 #, fuzzy, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -9395,77 +9395,77 @@ msgstr ""
 "inválido em %s,\n"
 "       ou número excessivo de sistemas de arquivos montados"
 
-#: mount/mount.c:1762
+#: mount/mount.c:1791
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)"
 msgstr ""
 
-#: mount/mount.c:1771
+#: mount/mount.c:1800
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
 msgstr ""
 
-#: mount/mount.c:1776
+#: mount/mount.c:1805
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
 msgstr ""
 
-#: mount/mount.c:1783
+#: mount/mount.c:1812
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
 msgstr ""
 
-#: mount/mount.c:1789
+#: mount/mount.c:1818
 msgid "mount table full"
 msgstr "tabela de montagem cheia"
 
-#: mount/mount.c:1791
+#: mount/mount.c:1820
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: não foi possível ler o superbloco"
 
-#: mount/mount.c:1797
+#: mount/mount.c:1826
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: dispositivo de blocos desconhecido"
 
-#: mount/mount.c:1802
+#: mount/mount.c:1831
 #, fuzzy, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "   l   lista os tipos de sistemas de arquivos conhecidos"
 
-#: mount/mount.c:1814
+#: mount/mount.c:1843
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: provavelmente você queria dizer %s"
 
-#: mount/mount.c:1817
+#: mount/mount.c:1846
 #, fuzzy
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: talvez você quisesse dizer iso9660?"
 
-#: mount/mount.c:1820
+#: mount/mount.c:1849
 #, fuzzy
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: talvez você quisesse dizer iso9660?"
 
-#: mount/mount.c:1823
+#: mount/mount.c:1852
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s possui número de dispositivo incorreto ou o tipo de sistema de "
 "arquivos %s não é suportado"
 
-#: mount/mount.c:1831
+#: mount/mount.c:1860
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: %s não é um dispositivo de blocos e stat falha?"
 
-#: mount/mount.c:1833
+#: mount/mount.c:1862
 #, fuzzy, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -9474,51 +9474,51 @@ msgstr ""
 "mount: o kernel não reconhece %s como dispositivo de blocos\n"
 "       (talvez `insmod driver'?)"
 
-#: mount/mount.c:1836
+#: mount/mount.c:1865
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr "mount: %s não é um dispositivo de blocos (talvez tentar `-o loop'?)"
 
-#: mount/mount.c:1839
+#: mount/mount.c:1868
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s não é um dispositivo de blocos"
 
-#: mount/mount.c:1844
+#: mount/mount.c:1873
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s não é um dispositivo de blocos válido"
 
-#: mount/mount.c:1847
+#: mount/mount.c:1876
 msgid "block device "
 msgstr "dispositivo de blocos "
 
-#: mount/mount.c:1849
+#: mount/mount.c:1878
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: não foi possível montar %s%s somente para leitura"
 
-#: mount/mount.c:1853
+#: mount/mount.c:1882
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s é protegido contra gravação mas a opção -w foi passada"
 
-#: mount/mount.c:1857
+#: mount/mount.c:1886
 #, fuzzy, c-format
 msgid "mount: cannot remount %s%s read-write, is write-protected"
 msgstr "mount: não foi possível montar %s%s somente para leitura"
 
-#: mount/mount.c:1872
+#: mount/mount.c:1901
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s é protegido contra gravação; montando somente para leitura"
 
-#: mount/mount.c:1880
+#: mount/mount.c:1909
 #, fuzzy, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: %s já montado em %s\n"
 
-#: mount/mount.c:1898
+#: mount/mount.c:1927
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9528,29 +9528,29 @@ msgid ""
 "       this file system.  For more details see restorecon(8) and mount(8).\n"
 msgstr ""
 
-#: mount/mount.c:1979
+#: mount/mount.c:2008
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr ""
 "mount: nenhum tipo foi fornecido - supondo nfs por causa dos dois-pontos\n"
 
-#: mount/mount.c:1985
+#: mount/mount.c:2014
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: nenhum tipo foi fornecido - supondo nfs por causa dos dois-pontos\n"
 
-#: mount/mount.c:2050
+#: mount/mount.c:2079
 #, c-format
 msgid "mount: ignore %s (unparsable offset= option)\n"
 msgstr ""
 
-#: mount/mount.c:2062
+#: mount/mount.c:2092
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s já montado em %s\n"
 
-#: mount/mount.c:2243
+#: mount/mount.c:2273
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9608,24 +9608,24 @@ msgstr ""
 "Outras opções: [-nfFrsvw] [-o opções].\n"
 "Para mais detalhes, consulte `man 8 mount'.\n"
 
-#: mount/mount.c:2575
+#: mount/mount.c:2605
 #, fuzzy, c-format
 msgid "mount: only root can do that (effective UID is %u)"
 msgstr "mount: operação exclusiva de root"
 
-#: mount/mount.c:2578
+#: mount/mount.c:2608
 msgid "mount: only root can do that"
 msgstr "mount: operação exclusiva de root"
 
-#: mount/mount.c:2589
+#: mount/mount.c:2619
 msgid "nothing was mounted"
 msgstr ""
 
-#: mount/mount.c:2607 mount/mount.c:2633
+#: mount/mount.c:2637 mount/mount.c:2663
 msgid "mount: no such partition found"
 msgstr "mount: tal partição não foi encontrada"
 
-#: mount/mount.c:2610
+#: mount/mount.c:2640
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: não foi possível localizar %s em %s ou %s"
@@ -9920,71 +9920,71 @@ msgstr ""
 "       umount -a [-f] [-r] [-n] [-v] [-t tipos_sist_arq_virt]\n"
 "       umount [-f] [-r] [-n] [-v] especial | nó...\n"
 
-#: mount/umount.c:500
+#: mount/umount.c:480
 #, fuzzy, c-format
 msgid "failed to parse 'offset=%s' options\n"
 msgstr "%s: não foi possível abrir %s\n"
 
-#: mount/umount.c:508
+#: mount/umount.c:488
 #, fuzzy, c-format
 msgid "device %s is associated with %s\n"
 msgstr "O setor %d já está alocado\n"
 
-#: mount/umount.c:514
+#: mount/umount.c:494
 #, fuzzy, c-format
 msgid "device %s is not associated with %s\n"
 msgstr "O setor %d já está alocado\n"
 
-#: mount/umount.c:527
+#: mount/umount.c:507
 #, fuzzy
 msgid "Cannot unmount \"\"\n"
 msgstr "Não foi possível abrir %s\n"
 
-#: mount/umount.c:533
+#: mount/umount.c:513
 #, fuzzy, c-format
 msgid "Trying to unmount %s\n"
 msgstr "Tentando desmontar %s\n"
 
-#: mount/umount.c:546
+#: mount/umount.c:526
 msgid "umount: confused when analyzing mtab"
 msgstr ""
 
-#: mount/umount.c:551
+#: mount/umount.c:531
 #, c-format
 msgid "umount: cannot unmount %s -- %s is mounted over it on the same point"
 msgstr ""
 
-#: mount/umount.c:558
+#: mount/umount.c:538
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "Não foi possível localizar %s em mtab\n"
 
-#: mount/umount.c:565
+#: mount/umount.c:545
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: %s não está montado (de acordo com mtab)"
 
-#: mount/umount.c:589
+#: mount/umount.c:570
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: parece que %s está montado múltiplas vezes"
 
-#: mount/umount.c:603
+#: mount/umount.c:584
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr "umount: %s não está na fstab (e você não é root)"
 
-#: mount/umount.c:609
+#: mount/umount.c:590
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: a montagem de %s não está de acordo com a fstab"
 
-#: mount/umount.c:650
+#: mount/umount.c:631
 #, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr "umount: somente %s pode desmontar %s de %s"
 
-#: mount/umount.c:745
+#: mount/umount.c:726
 msgid "umount: only root can do that"
 msgstr "umount: operação exclusiva de root"
 
@@ -10259,8 +10259,8 @@ msgstr ""
 msgid "SCHED_%s not supported?\n"
 msgstr "NFS sobre TCP não é suportado.\n"
 
-#: schedutils/chrt.c:243 schedutils/ionice.c:116 schedutils/ionice.c:150
-#: schedutils/ionice.c:159 schedutils/taskset.c:92
+#: schedutils/chrt.c:243 schedutils/ionice.c:114 schedutils/ionice.c:148
+#: schedutils/ionice.c:157 schedutils/taskset.c:89
 #, fuzzy
 msgid "failed to parse pid"
 msgstr "%s: não foi possível abrir %s\n"
@@ -10286,17 +10286,17 @@ msgstr "Não foi possível gravar a partição em %s\n"
 msgid "failed to execute %s"
 msgstr "ioctl() não conseguiu ler a hora de /dev/tty1"
 
-#: schedutils/ionice.c:59
+#: schedutils/ionice.c:57
 #, fuzzy
 msgid "ioprio_get failed"
 msgstr "openpty falhou\n"
 
-#: schedutils/ionice.c:77
+#: schedutils/ionice.c:75
 #, fuzzy
 msgid "ioprio_set failed"
 msgstr "openpty falhou\n"
 
-#: schedutils/ionice.c:83
+#: schedutils/ionice.c:81
 #, c-format
 msgid ""
 "\n"
@@ -10315,42 +10315,42 @@ msgid ""
 "\n"
 msgstr ""
 
-#: schedutils/ionice.c:108
+#: schedutils/ionice.c:106
 #, fuzzy
 msgid "failed to parse class data"
 msgstr "%s: não foi possível abrir %s\n"
 
-#: schedutils/ionice.c:112
+#: schedutils/ionice.c:110
 #, fuzzy
 msgid "failed to parse class"
 msgstr "%s: não foi possível abrir %s\n"
 
-#: schedutils/ionice.c:131
+#: schedutils/ionice.c:129
 msgid "ignoring given class data for none class"
 msgstr ""
 
-#: schedutils/ionice.c:139
+#: schedutils/ionice.c:137
 msgid "ignoring given class data for idle class"
 msgstr ""
 
-#: schedutils/ionice.c:143
+#: schedutils/ionice.c:141
 #, c-format
 msgid "bad prio class %d"
 msgstr ""
 
-#: schedutils/ionice.c:167 schedutils/taskset.c:185
+#: schedutils/ionice.c:165 schedutils/taskset.c:182
 #, fuzzy, c-format
 msgid "executing %s failed"
 msgstr "exec falhou\n"
 
-#: schedutils/taskset.c:40
+#: schedutils/taskset.c:37
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [options] [mask | cpu-list] [pid|cmd [args...]]\n"
 "\n"
 msgstr "Uso: %s programa [arg ...]\n"
 
-#: schedutils/taskset.c:44
+#: schedutils/taskset.c:41
 #, c-format
 msgid ""
 "Options:\n"
@@ -10361,7 +10361,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: schedutils/taskset.c:51
+#: schedutils/taskset.c:48
 #, c-format
 msgid ""
 "The default behavior is to run a new command:\n"
@@ -10376,62 +10376,62 @@ msgid ""
 "    e.g. 0-31:2 is equivalent to mask 0x55555555\n"
 msgstr ""
 
-#: schedutils/taskset.c:63
+#: schedutils/taskset.c:60
 #, fuzzy, c-format
 msgid ""
 "\n"
 "For more information see taskset(1).\n"
 msgstr "As informações de finger foram alteradas.\n"
 
-#: schedutils/taskset.c:115
+#: schedutils/taskset.c:112
 #, fuzzy
 msgid "cannot determine NR_CPUS; aborting"
 msgstr "Não foi possível obter o tamanho de %s"
 
-#: schedutils/taskset.c:124 schedutils/taskset.c:138
+#: schedutils/taskset.c:121 schedutils/taskset.c:135
 #, fuzzy
 msgid "cpuset_alloc failed"
 msgstr "malloc falhou"
 
-#: schedutils/taskset.c:142 schedutils/taskset.c:167
+#: schedutils/taskset.c:139 schedutils/taskset.c:164
 #, fuzzy, c-format
 msgid "failed to get pid %d's affinity"
 msgstr "Não foi possível gravar a partição em %s\n"
 
-#: schedutils/taskset.c:145
+#: schedutils/taskset.c:142
 #, c-format
 msgid "pid %d's current affinity list: %s\n"
 msgstr ""
 
-#: schedutils/taskset.c:148
+#: schedutils/taskset.c:145
 #, c-format
 msgid "pid %d's current affinity mask: %s\n"
 msgstr ""
 
-#: schedutils/taskset.c:159
+#: schedutils/taskset.c:156
 #, fuzzy, c-format
 msgid "failed to parse %s %s"
 msgstr "%s: não foi possível abrir %s\n"
 
-#: schedutils/taskset.c:160
+#: schedutils/taskset.c:157
 msgid "CPU list"
 msgstr ""
 
-#: schedutils/taskset.c:160
+#: schedutils/taskset.c:157
 msgid "CPU mask"
 msgstr ""
 
-#: schedutils/taskset.c:164
+#: schedutils/taskset.c:161
 #, fuzzy, c-format
 msgid "failed to set pid %d's affinity"
 msgstr "Não foi possível gravar a partição em %s\n"
 
-#: schedutils/taskset.c:171
+#: schedutils/taskset.c:168
 #, c-format
 msgid "pid %d's new affinity list: %s\n"
 msgstr ""
 
-#: schedutils/taskset.c:174
+#: schedutils/taskset.c:171
 #, c-format
 msgid "pid %d's new affinity mask: %s\n"
 msgstr ""
@@ -10910,10 +10910,20 @@ msgstr ""
 msgid "   %f int/sec; %f rec (char/sec)\n"
 msgstr "   %f int/s; %f recebidos (char/s)\n"
 
-#: sys-utils/dmesg.c:45
+#: sys-utils/dmesg.c:46
 #, fuzzy, c-format
 msgid "Usage: %s [-c] [-n level] [-r] [-s bufsize]\n"
 msgstr "Uso: %s [-c] [-n nível] [-s tamanho_buffer]\n"
+
+#: sys-utils/dmesg.c:74
+#, fuzzy
+msgid "failed to parse level"
+msgstr "%s: não foi possível abrir %s\n"
+
+#: sys-utils/dmesg.c:80
+#, fuzzy
+msgid "failed to parse buffer size"
+msgstr "%s: não foi possível abrir %s\n"
 
 #: sys-utils/fallocate.c:52
 #, fuzzy, c-format
@@ -11865,66 +11875,66 @@ msgstr "Não foi possível realizar busca na unidade de disco"
 msgid "cannot daemonize"
 msgstr "Não foi possível obter o tamanho de %s"
 
-#: sys-utils/lscpu.c:56
+#: sys-utils/lscpu.c:58
 #, fuzzy
 msgid "none"
 msgstr "Concluído"
 
-#: sys-utils/lscpu.c:57
+#: sys-utils/lscpu.c:59
 msgid "para"
 msgstr ""
 
-#: sys-utils/lscpu.c:58
+#: sys-utils/lscpu.c:60
 msgid "full"
 msgstr ""
 
-#: sys-utils/lscpu.c:165
+#: sys-utils/lscpu.c:167
 #, fuzzy, c-format
 msgid "error: cannot open %s"
 msgstr "%s: não foi possível abrir %s: %s\n"
 
-#: sys-utils/lscpu.c:193 sys-utils/lscpu.c:214 sys-utils/lscpu.c:255
+#: sys-utils/lscpu.c:195 sys-utils/lscpu.c:216 sys-utils/lscpu.c:257
 #, fuzzy, c-format
 msgid "failed to read: %s"
 msgstr "não foi possível stat %s"
 
-#: sys-utils/lscpu.c:216
+#: sys-utils/lscpu.c:218
 #, fuzzy, c-format
 msgid "parse error: %s"
 msgstr "erro de busca"
 
-#: sys-utils/lscpu.c:240
+#: sys-utils/lscpu.c:242
 #, fuzzy
 msgid "error: strdup failed"
 msgstr "A abertura de %s falhou"
 
-#: sys-utils/lscpu.c:264 sys-utils/lscpu.c:855
+#: sys-utils/lscpu.c:266 sys-utils/lscpu.c:857
 #, fuzzy
 msgid "failed to callocate cpu set"
 msgstr "Não foi possível alocar buffer.\n"
 
-#: sys-utils/lscpu.c:268
+#: sys-utils/lscpu.c:270
 #, fuzzy, c-format
 msgid "failed to parse CPU list %s"
 msgstr "%s: não foi possível abrir %s\n"
 
-#: sys-utils/lscpu.c:271
+#: sys-utils/lscpu.c:273
 #, fuzzy, c-format
 msgid "failed to parse CPU mask %s"
 msgstr "%s: não foi possível abrir %s\n"
 
-#: sys-utils/lscpu.c:372
+#: sys-utils/lscpu.c:374
 #, fuzzy
 msgid "error: uname failed"
 msgstr "Erro no fechamento de %s\n"
 
-#: sys-utils/lscpu.c:600 sys-utils/lscpu.c:603 sys-utils/lscpu.c:679
-#: sys-utils/lscpu.c:700
+#: sys-utils/lscpu.c:602 sys-utils/lscpu.c:605 sys-utils/lscpu.c:681
+#: sys-utils/lscpu.c:702
 #, fuzzy
 msgid "error: calloc failed"
 msgstr "malloc falhou"
 
-#: sys-utils/lscpu.c:716
+#: sys-utils/lscpu.c:718
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -11933,107 +11943,108 @@ msgid ""
 "# CPU,Core,Socket,Node"
 msgstr ""
 
-#: sys-utils/lscpu.c:818
+#: sys-utils/lscpu.c:820
 msgid "Architecture:"
 msgstr ""
 
-#: sys-utils/lscpu.c:832
+#: sys-utils/lscpu.c:834
 msgid "CPU op-mode(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:835 sys-utils/lscpu.c:837
+#: sys-utils/lscpu.c:837 sys-utils/lscpu.c:839
 msgid "Byte Order:"
 msgstr ""
 
-#: sys-utils/lscpu.c:839
+#: sys-utils/lscpu.c:841
 msgid "CPU(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:842
+#: sys-utils/lscpu.c:844
 msgid "On-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:843
+#: sys-utils/lscpu.c:845
 msgid "On-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:861
+#: sys-utils/lscpu.c:863
 msgid "Off-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:862
+#: sys-utils/lscpu.c:864
 msgid "Off-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:868
+#: sys-utils/lscpu.c:870
 msgid "Thread(s) per core:"
 msgstr ""
 
-#: sys-utils/lscpu.c:869
+#: sys-utils/lscpu.c:871
 msgid "Core(s) per socket:"
 msgstr ""
 
-#: sys-utils/lscpu.c:870
+#: sys-utils/lscpu.c:872
 msgid "CPU socket(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:874
+#: sys-utils/lscpu.c:876
 msgid "NUMA node(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:876
+#: sys-utils/lscpu.c:878
 msgid "Vendor ID:"
 msgstr ""
 
-#: sys-utils/lscpu.c:878
+#: sys-utils/lscpu.c:880
 msgid "CPU family:"
 msgstr ""
 
-#: sys-utils/lscpu.c:880
+#: sys-utils/lscpu.c:882
 msgid "Model:"
 msgstr ""
 
-#: sys-utils/lscpu.c:882
+#: sys-utils/lscpu.c:884
 msgid "Stepping:"
 msgstr ""
 
-#: sys-utils/lscpu.c:884
+#: sys-utils/lscpu.c:886
 msgid "CPU MHz:"
 msgstr ""
 
-#: sys-utils/lscpu.c:886
+#: sys-utils/lscpu.c:888
 msgid "BogoMIPS:"
 msgstr ""
 
-#: sys-utils/lscpu.c:889 sys-utils/lscpu.c:891
+#: sys-utils/lscpu.c:891 sys-utils/lscpu.c:893
 #, fuzzy
 msgid "Virtualization:"
 msgstr "Situação antiga:\n"
 
-#: sys-utils/lscpu.c:894
+#: sys-utils/lscpu.c:896
 msgid "Hypervisor vendor:"
 msgstr ""
 
-#: sys-utils/lscpu.c:895
+#: sys-utils/lscpu.c:897
 msgid "Virtualization type:"
 msgstr ""
 
-#: sys-utils/lscpu.c:903
+#: sys-utils/lscpu.c:905
 #, c-format
 msgid "%s cache:"
 msgstr ""
 
-#: sys-utils/lscpu.c:909
+#: sys-utils/lscpu.c:911
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:916
+#: sys-utils/lscpu.c:918
 #, fuzzy, c-format
 msgid "Usage: %s [option]\n"
 msgstr "Uso: %s [opções] dispositivo ...\n"
 
-#: sys-utils/lscpu.c:919
+#: sys-utils/lscpu.c:921
+#, c-format
 msgid ""
 "CPU architecture information helper\n"
 "\n"
