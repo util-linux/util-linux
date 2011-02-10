@@ -1,5 +1,9 @@
-# Dutch translations for util-linux-ng.
-# This file is distributed under the same license as the util-linux-ng package.
+# Dutch translations for util-linux.
+# This file is distributed under the same license as the util-linux package.
+#
+# Permission is granted to freely copy and distribute this file
+# and modified versions, provided that this header is not removed
+# and modified versions are marked as such.
 #
 # block    -> blok
 # sector   -> sector
@@ -7,18 +11,17 @@
 # volume   -> volumen
 # (inode blijft onvertaald)
 #
-# Taco Witte <tcwitte@cs.uu.nl>, 2002, 2003.
+# Benno Schulenberg <benno@vertaalt.nl>, 2006, 2007, 2008, 2009, 2010, 2011.
 # Luk Claes <luk.claes@ugent.be>, 2005.
-# Benno Schulenberg <benno@vertaalt.nl>, 2006, 2007, 2008, 2009, 2010.
+# Taco Witte <tcwitte@cs.uu.nl>, 2002, 2003.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux-ng-2.18-rc2\n"
+"Project-Id-Version: util-linux-2.19-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
 "POT-Creation-Date: 2011-01-25 12:27+0100\n"
-"PO-Revision-Date: 2010-09-26 20:30+0200\n"
+"PO-Revision-Date: 2011-01-30 21:35+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
-"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -39,7 +42,7 @@ msgstr "schrijfstatus tonen"
 
 #: disk-utils/blockdev.c:82
 msgid "get discard zeroes support status"
-msgstr ""
+msgstr "ondersteuning voor weglaten van nullen tonen"
 
 #: disk-utils/blockdev.c:88
 msgid "get logical block (sector) size"
@@ -58,9 +61,8 @@ msgid "get optimal I/O size"
 msgstr "optimale in-/uitvoergrootte tonen"
 
 #: disk-utils/blockdev.c:112
-#, fuzzy
 msgid "get alignment offset in bytes"
-msgstr "uitlijningspositie tonen"
+msgstr "uitlijningspositie in bytes tonen"
 
 #: disk-utils/blockdev.c:118
 msgid "get max sectors per request"
@@ -75,9 +77,8 @@ msgid "set blocksize"
 msgstr "blokgrootte instellen"
 
 #: disk-utils/blockdev.c:137
-#, fuzzy
 msgid "get 32-bit sector count (deprecated, use --getsz)"
-msgstr "sectoraantal tonen (32-bits)"
+msgstr "32-bits-sectoraantal tonen (verouderd; gebruik '--getsz')"
 
 #: disk-utils/blockdev.c:143
 msgid "get size in bytes"
@@ -340,9 +341,7 @@ msgstr "nul bestanden geteld"
 #: disk-utils/fsck.cramfs.c:229
 #, c-format
 msgid "warning: file extends past end of filesystem\n"
-msgstr ""
-"Waarschuwing: bestand loopt door tot voorbij het einde van het "
-"bestandssysteem\n"
+msgstr "Waarschuwing: bestand loopt door tot voorbij het einde van het bestandssysteem\n"
 
 #: disk-utils/fsck.cramfs.c:233
 #, c-format
@@ -496,9 +495,7 @@ msgstr "'mknod' is mislukt: %s"
 #: disk-utils/fsck.cramfs.c:682
 #, c-format
 msgid "directory data start (%ld) < sizeof(struct cramfs_super) + start (%ld)"
-msgstr ""
-"begin van mapdata (%ld) is kleiner dan sizeof(struct cramfs_super) plus "
-"start (%ld)"
+msgstr "begin van mapdata (%ld) is kleiner dan sizeof(struct cramfs_super) plus start (%ld)"
 
 #: disk-utils/fsck.cramfs.c:685
 #, c-format
@@ -705,9 +702,7 @@ msgstr ""
 #: disk-utils/fsck.minix.c:673 disk-utils/fsck.minix.c:724
 #, c-format
 msgid "Inode %d marked unused, but used for file '%s'\n"
-msgstr ""
-"Inode %d is gemarkeerd als ongebruikt, maar wordt gebruikt door bestand "
-"'%s'.\n"
+msgstr "Inode %d is gemarkeerd als ongebruikt, maar wordt gebruikt door bestand '%s'.\n"
 
 #: disk-utils/fsck.minix.c:677 disk-utils/fsck.minix.c:728
 msgid "Mark in use"
@@ -1058,11 +1053,8 @@ msgid "error closing %s"
 msgstr "fout bij sluiten van %s"
 
 #: disk-utils/mkfs.c:72
-#, fuzzy
 msgid "Usage: mkfs [-V] [-t fstype] [fs-options] device [size]"
-msgstr ""
-"Gebruik:  mkfs [-V] [-t bestandssysteemsoort] [bestandssysteemopties] "
-"apparaat [grootte]\n"
+msgstr "Gebruik:  mkfs [-V] [-t bestandssysteemsoort] [bestandssysteemopties] apparaat [grootte]"
 
 #: disk-utils/mkfs.c:92
 #, c-format
@@ -1072,8 +1064,7 @@ msgstr "mkfs (%s)\n"
 #: disk-utils/mkfs.cramfs.c:126
 #, c-format
 msgid ""
-"usage: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n "
-"name] dirname outfile\n"
+"usage: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n name] dirname outfile\n"
 " -h         print this help\n"
 " -v         be verbose\n"
 " -E         make all warnings errors (non-zero exit status)\n"
@@ -1094,11 +1085,9 @@ msgstr ""
 " -h          deze hulptekst tonen\n"
 " -v          gedetailleerde uitvoer produceren\n"
 " -V          programmaversie tonen\n"
-" -E          van alle waarschuwingen fouten maken (met niet-nul "
-"afsluitstatus)\n"
+" -E          van alle waarschuwingen fouten maken (met niet-nul afsluitstatus)\n"
 "\n"
-" -b blokgrootte  deze blokgrootte gebruiken; moet gelijk zijn aan "
-"paginagrootte\n"
+" -b blokgrootte  deze blokgrootte gebruiken; moet gelijk zijn aan paginagrootte\n"
 " -e editie   editienummer instellen (deel van bestandssysteem-ID)\n"
 " -i bestand  een bestandsafbeelding invoegen in het bestandssysteem\n"
 " -n naam     te gebruiken naam van 'cramfs'-bestandssysteem\n"
@@ -1135,9 +1124,7 @@ msgstr "%6.2f%% (%+ld bytes)\t%s\n"
 
 #: disk-utils/mkfs.cramfs.c:853
 #, c-format
-msgid ""
-"warning: guestimate of required size (upper bound) is %lldMB, but maximum "
-"image size is %uMB.  We might die prematurely.\n"
+msgid "warning: guestimate of required size (upper bound) is %lldMB, but maximum image size is %uMB.  We might die prematurely.\n"
 msgstr ""
 "Waarschuwing: de geschatte benodigde grootte is %lld MB (bovengrens),\n"
 "maar de maximale afbeeldingsgrootte is %u MB.\n"
@@ -1175,9 +1162,7 @@ msgstr "CRC: %x\n"
 #: disk-utils/mkfs.cramfs.c:925
 #, c-format
 msgid "not enough space allocated for ROM image (%lld allocated, %zu used)\n"
-msgstr ""
-"niet genoeg ruimte gereserveerd voor ROM-afbeelding (%lld gereserveerd, %zu "
-"gebruikt)\n"
+msgstr "niet genoeg ruimte gereserveerd voor ROM-afbeelding (%lld gereserveerd, %zu gebruikt)\n"
 
 #: disk-utils/mkfs.cramfs.c:933
 msgid "ROM image"
@@ -1205,16 +1190,14 @@ msgstr "Waarschuwing: bestandsgroottes afgekapt tot %lu MB (minus 1 byte).\n"
 
 #: disk-utils/mkfs.cramfs.c:957
 #, c-format
-msgid ""
-"warning: uids truncated to %u bits.  (This may be a security concern.)\n"
+msgid "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
 "Waarschuwing: UID's afgekapt tot %u bits.\n"
 "(Dit kan een veiligheidsprobleem zijn.)\n"
 
 #: disk-utils/mkfs.cramfs.c:962
 #, c-format
-msgid ""
-"warning: gids truncated to %u bits.  (This may be a security concern.)\n"
+msgid "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
 "Waarschuwing: GID's afgekapt tot %u bits.\n"
 "(Dit kan een veiligheidsprobleem zijn.)\n"
@@ -1231,8 +1214,7 @@ msgstr ""
 #: disk-utils/mkfs.minix.c:154
 #, c-format
 msgid "Usage: %s [-c | -l filename] [-nXX] [-iXX] /dev/name [blocks]\n"
-msgstr ""
-"Gebruik:  %s [-c | -l bestandsnaam] [-nXX] [-iXX] /dev/naam [blokken]\n"
+msgstr "Gebruik:  %s [-c | -l bestandsnaam] [-nXX] [-iXX] /dev/naam [blokken]\n"
 
 #: disk-utils/mkfs.minix.c:178
 #, c-format
@@ -1300,8 +1282,7 @@ msgstr "'seek' is mislukt tijdens testen van blokken"
 #: disk-utils/mkfs.minix.c:477
 #, c-format
 msgid "Weird values in do_check: probably bugs\n"
-msgstr ""
-"Vreemde waarden in do_check(): waarschijnlijk een interne programmafout\n"
+msgstr "Vreemde waarden in do_check(): waarschijnlijk een interne programmafout\n"
 
 #: disk-utils/mkfs.minix.c:508 disk-utils/mkswap.c:315
 msgid "seek failed in check_blocks"
@@ -1381,9 +1362,7 @@ msgstr "Ongeldige door gebruiker aangegeven paginagrootte %d\n"
 #: disk-utils/mkswap.c:165
 #, c-format
 msgid "Using user-specified page size %d, instead of the system value %d\n"
-msgstr ""
-"De opgegeven paginagrootte %d wordt gebruikt, in plaats van systeemwaarde "
-"%d.\n"
+msgstr "De opgegeven paginagrootte %d wordt gebruikt, in plaats van systeemwaarde %d.\n"
 
 #: disk-utils/mkswap.c:171
 #, c-format
@@ -1393,8 +1372,7 @@ msgstr "%s: calloc() is mislukt: %s\n"
 #: disk-utils/mkswap.c:192
 #, c-format
 msgid "Bad swap header size, no label written.\n"
-msgstr ""
-"Onjuiste grootte van kop van wisselgeheugen; er is geen label geschreven.\n"
+msgstr "Onjuiste grootte van kop van wisselgeheugen; er is geen label geschreven.\n"
 
 #: disk-utils/mkswap.c:202
 #, c-format
@@ -1414,9 +1392,7 @@ msgstr "geen UUID\n"
 #: disk-utils/mkswap.c:281
 #, c-format
 msgid "Usage: %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"
-msgstr ""
-"Gebruik:  %s [-c] [-ppaginagrootte] [-L label] [-U UUID]  /dev/naam  "
-"[blokken]\n"
+msgstr "Gebruik:  %s [-c] [-ppaginagrootte] [-L label] [-U UUID]  /dev/naam  [blokken]\n"
 
 #: disk-utils/mkswap.c:297
 msgid "too many bad pages"
@@ -1569,8 +1545,7 @@ msgstr ""
 
 #: disk-utils/raw.c:125
 #, c-format
-msgid ""
-"Device '%s' is control raw dev (use raw<N> where <N> is greater than zero)\n"
+msgid "Device '%s' is control raw dev (use raw<N> where <N> is greater than zero)\n"
 msgstr ""
 "Apparaat '%s' is de 'raw'-besturing;\n"
 "(gebruik rawN, waar N groter is dan nul)\n"
@@ -1731,9 +1706,7 @@ msgstr "De schijf is veranderd.\n"
 #: fdisk/cfdisk.c:411
 #, c-format
 msgid "Reboot the system to ensure the partition table is correctly updated.\n"
-msgstr ""
-"Herstart het systeem om er zeker van te zijn dat de juiste partitietabel "
-"wordt gezien.\n"
+msgstr "Herstart het systeem om er zeker van te zijn dat de juiste partitietabel wordt gezien.\n"
 
 #: fdisk/cfdisk.c:415
 #, c-format
@@ -1800,17 +1773,12 @@ msgid "enlarged logical partitions overlap"
 msgstr "vergrote logische partities overlappen"
 
 #: fdisk/cfdisk.c:906
-msgid ""
-"!!!! Internal error creating logical drive with no extended partition !!!!"
-msgstr ""
-"**Interne programmafout** bij het maken van logische schijf zonder "
-"uitgebreide partitie"
+msgid "!!!! Internal error creating logical drive with no extended partition !!!!"
+msgstr "**Interne programmafout** bij het maken van logische schijf zonder uitgebreide partitie"
 
 #: fdisk/cfdisk.c:917 fdisk/cfdisk.c:929
-msgid ""
-"Cannot create logical drive here -- would create two extended partitions"
-msgstr ""
-"Kan hier geen logische schijf maken -- zou twee uitgebreide partities maken"
+msgid "Cannot create logical drive here -- would create two extended partitions"
+msgstr "Kan hier geen logische schijf maken -- zou twee uitgebreide partities maken"
 
 #: fdisk/cfdisk.c:1069
 msgid "Menu item too long. Menu may look odd."
@@ -1912,13 +1880,10 @@ msgstr "Kan schijf niet openen"
 
 #: fdisk/cfdisk.c:1579 fdisk/cfdisk.c:1768
 msgid "Opened disk read-only - you have no permission to write"
-msgstr ""
-"Schijf is als alleen-lezen geopend -- u hebt geen toegangsrechten om te "
-"schrijven"
+msgstr "Schijf is als alleen-lezen geopend -- u hebt geen toegangsrechten om te schrijven"
 
 #: fdisk/cfdisk.c:1590
-msgid ""
-"Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
+msgid "Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
 msgstr ""
 "Waarschuwing!!  Niet-ondersteunde GPT (GUID-partitietabel) gevonden!\n"
 "Gebruik GNU 'parted'."
@@ -1940,10 +1905,8 @@ msgid "Warning!!  This may destroy data on your disk!"
 msgstr "Waarschuwing!!  Dit kan gegevens op uw schijf wissen!"
 
 #: fdisk/cfdisk.c:1784
-msgid ""
-"Are you sure you want to write the partition table to disk? (yes or no): "
-msgstr ""
-"Weet u zeker dat u de partitietabel naar schijf wilt schrijven? (ja of nee): "
+msgid "Are you sure you want to write the partition table to disk? (yes or no): "
+msgstr "Weet u zeker dat u de partitietabel naar schijf wilt schrijven? (ja of nee): "
 
 #: fdisk/cfdisk.c:1790
 msgid "no"
@@ -1970,9 +1933,7 @@ msgid "Wrote partition table to disk"
 msgstr "De partitietabel is naar schijf geschreven."
 
 #: fdisk/cfdisk.c:1829
-msgid ""
-"Wrote partition table, but re-read table failed.  Run partprobe(8), kpartx"
-"(8) or reboot to update table."
+msgid "Wrote partition table, but re-read table failed.  Run partprobe(8), kpartx(8) or reboot to update table."
 msgstr ""
 "Partitietabel is geschreven, maar opnieuw inlezen is mislukt.\n"
 "Draai partprobe(8) of kpartx(8), of herstart uw systeem om de\n"
@@ -1980,21 +1941,15 @@ msgstr ""
 
 #: fdisk/cfdisk.c:1839
 msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
-msgstr ""
-"Er is geen primaire partitie als opstartbaar aangegeven.  DOS MBR kan dit "
-"niet opstarten."
+msgstr "Er is geen primaire partitie als opstartbaar aangegeven.  DOS MBR kan dit niet opstarten."
 
 #: fdisk/cfdisk.c:1841
-msgid ""
-"More than one primary partition is marked bootable. DOS MBR cannot boot this."
-msgstr ""
-"Meer dan één primaire partitie is als opstartbaar aangegeven.  DOS MBR kan "
-"dit niet opstarten."
+msgid "More than one primary partition is marked bootable. DOS MBR cannot boot this."
+msgstr "Meer dan één primaire partitie is als opstartbaar aangegeven.  DOS MBR kan dit niet opstarten."
 
 #: fdisk/cfdisk.c:1899 fdisk/cfdisk.c:2018 fdisk/cfdisk.c:2102
 msgid "Enter filename or press RETURN to display on screen: "
-msgstr ""
-"Geef een bestandsnaam op, of druk op Enter voor weergave op het scherm: "
+msgstr "Geef een bestandsnaam op, of druk op Enter voor weergave op het scherm: "
 
 #: fdisk/cfdisk.c:1908 fdisk/cfdisk.c:2026 fdisk/cfdisk.c:2110
 #, c-format
@@ -2059,35 +2014,24 @@ msgid "               First       Last\n"
 msgstr "                Eerste     Laatste\n"
 
 #: fdisk/cfdisk.c:2040
-msgid ""
-" # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) "
-"Flag\n"
-msgstr ""
-" # Type         sector      sector Plaats      Lengte Bestandssysteem (ID) "
-"Vlag\n"
+msgid " # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) Flag\n"
+msgstr " # Type         sector      sector Plaats      Lengte Bestandssysteem (ID) Vlag\n"
 
 #: fdisk/cfdisk.c:2041
-msgid ""
-"-- ------- ----------- ----------- ------ ----------- -------------------- "
-"----\n"
-msgstr ""
-"-- ------- ----------- ----------- ------ ----------- -------------------- "
-"----\n"
+msgid "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
+msgstr "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
 
 #: fdisk/cfdisk.c:2124
 msgid "         ---Starting----      ----Ending-----    Start     Number of\n"
-msgstr ""
-"          ----Begin-----       ----Einde-----                  Aantal\n"
+msgstr "          ----Begin-----       ----Einde-----                  Aantal\n"
 
 #: fdisk/cfdisk.c:2125
 msgid " # Flags Head Sect  Cyl   ID  Head Sect  Cyl     Sector    Sectors\n"
-msgstr ""
-" #  Vlag  Kop  Sec  Cil   ID   Kop  Sec   Cil Startsector    sectoren\n"
+msgstr " #  Vlag  Kop  Sec  Cil   ID   Kop  Sec   Cil Startsector    sectoren\n"
 
 #: fdisk/cfdisk.c:2126
 msgid "-- ----- ---- ---- ----- ---- ---- ---- ----- ----------- -----------\n"
-msgstr ""
-"--  ----  ---  --- ---- ----   ---  --- ----- ----------- -----------\n"
+msgstr "--  ----  ---  --- ---- ----   ---  --- ----- ----------- -----------\n"
 
 #: fdisk/cfdisk.c:2159
 msgid "Raw"
@@ -2160,8 +2104,7 @@ msgstr "    g      cilinders, koppen, sectoren-per-spoor wijzigen;"
 
 #: fdisk/cfdisk.c:2203
 msgid "             WARNING: This option should only be used by people who"
-msgstr ""
-"             *waarschuwing*: deze optie dient alleen te worden gebruikt"
+msgstr "             *waarschuwing*: deze optie dient alleen te worden gebruikt"
 
 #: fdisk/cfdisk.c:2204
 msgid "             know what they are doing."
@@ -2177,8 +2120,7 @@ msgstr "    m      schijfgebruik van de huidige partitie maximaliseren;"
 
 #: fdisk/cfdisk.c:2207
 msgid "             Note: This may make the partition incompatible with"
-msgstr ""
-"             dit kan een partitie incompatibel maken met DOS, OS/2, ..."
+msgstr "             dit kan een partitie incompatibel maken met DOS, OS/2, ..."
 
 #: fdisk/cfdisk.c:2208
 msgid "             DOS, OS/2, ..."
@@ -2202,8 +2144,7 @@ msgstr "           "
 
 #: fdisk/cfdisk.c:2213
 msgid "                r - Raw data (exactly what would be written to disk)"
-msgstr ""
-"             r - ruwe gegevens (exact wat naar schijf zou worden geschreven)"
+msgstr "             r - ruwe gegevens (exact wat naar schijf zou worden geschreven)"
 
 #: fdisk/cfdisk.c:2214
 msgid "                s - Table ordered by sectors"
@@ -2235,8 +2176,7 @@ msgstr "    W      partitietabel naar schijf schrijven (moet met hoofdletter);"
 
 #: fdisk/cfdisk.c:2221
 msgid "             Since this might destroy data on the disk, you must"
-msgstr ""
-"             omdat dit mogelijk gegevens op de schijf wist, dient u het"
+msgstr "             omdat dit mogelijk gegevens op de schijf wist, dient u het"
 
 #: fdisk/cfdisk.c:2222
 msgid "             either confirm or deny the write by entering `yes' or"
@@ -2264,8 +2204,7 @@ msgstr "    ?      dit hulpscherm tonen"
 
 #: fdisk/cfdisk.c:2229
 msgid "Note: All of the commands can be entered with either upper or lower"
-msgstr ""
-"Opmerking: alle opdrachten kunnen zowel met hoofdletter als kleine letter"
+msgstr "Opmerking: alle opdrachten kunnen zowel met hoofdletter als kleine letter"
 
 #: fdisk/cfdisk.c:2230
 msgid "case letters (except for Writes)."
@@ -2451,8 +2390,7 @@ msgstr "Maximeren"
 
 #: fdisk/cfdisk.c:2655
 msgid "Maximize disk usage of the current partition (experts only)"
-msgstr ""
-"M = schijfgebruik maximaliseren voor huidige partitie (alleen voor experts)"
+msgstr "M = schijfgebruik maximaliseren voor huidige partitie (alleen voor experts)"
 
 #: fdisk/cfdisk.c:2656
 msgid "New"
@@ -2564,8 +2502,7 @@ msgstr ""
 "          %s -v                             programmaversie tonen\n"
 "Opties:\n"
 "-a   een pijl gebruiken in plaats van een inverse balk;\n"
-"-z   met lege partitietabel starten, in plaats van deze van schijf te "
-"lezen;\n"
+"-z   met lege partitietabel starten, in plaats van deze van schijf te lezen;\n"
 "-c C -h K -s S   andere waarden afdwingen voor het aantal cilinders,\n"
 "                 koppen en sectoren/spoor dan de kernel aangeeft.\n"
 "\n"
@@ -2947,29 +2884,28 @@ msgid ""
 msgstr ""
 
 #: fdisk/fdisk.c:279
-#, fuzzy, c-format
+#, c-format
 msgid "unable to read %s"
-msgstr "Kan %s niet lezen\n"
+msgstr "kan %s niet lezen"
 
 #: fdisk/fdisk.c:282
-#, fuzzy, c-format
+#, c-format
 msgid "unable to seek on %s"
-msgstr "Kan geen 'seek' doen op %s\n"
+msgstr "kan geen 'seek' doen op %s"
 
 #: fdisk/fdisk.c:285
-#, fuzzy, c-format
+#, c-format
 msgid "unable to write %s"
-msgstr "Kan niet schrijven naar %s\n"
+msgstr "kan niet schrijven naar %s"
 
 #: fdisk/fdisk.c:288
-#, fuzzy, c-format
+#, c-format
 msgid "BLKGETSIZE ioctl failed on %s"
-msgstr "ioctl(BLKGETSIZE) is mislukt op %s\n"
+msgstr "ioctl(BLKGETSIZE) is mislukt op %s"
 
 #: fdisk/fdisk.c:291
-#, fuzzy
 msgid "fatal error"
-msgstr "Fatale fout\n"
+msgstr "fatale fout"
 
 #: fdisk/fdisk.c:384
 msgid "   a   toggle a read only flag"
@@ -3232,10 +3168,8 @@ msgid ""
 "\n"
 msgstr ""
 "Er wordt een nieuwe DOS-partitietabel aangemaakt met schijf-ID 0x%08x.\n"
-"Wijzigingen vinden enkel en alleen in het geheugen plaats, totdat u besluit "
-"ze\n"
-"weg te schrijven.  Daarna is de oude inhoud uiteraard niet meer "
-"herstelbaar.\n"
+"Wijzigingen vinden enkel en alleen in het geheugen plaats, totdat u besluit ze\n"
+"weg te schrijven.  Daarna is de oude inhoud uiteraard niet meer herstelbaar.\n"
 "\n"
 
 #: fdisk/fdisk.c:1011
@@ -3259,9 +3193,7 @@ msgstr ""
 
 #: fdisk/fdisk.c:1249
 #, c-format
-msgid ""
-"Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
-"disklabel\n"
+msgid "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel\n"
 msgstr "Apparaat bevat geen geldig DOS-, Sun-, SGI- of OSF-schijflabel.\n"
 
 #: fdisk/fdisk.c:1266
@@ -3276,17 +3208,15 @@ msgstr "Extra uitgebreide partitie %d wordt genegeerd.\n"
 
 #: fdisk/fdisk.c:1288
 #, c-format
-msgid ""
-"Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
-"(rite)\n"
+msgid "Warning: invalid flag 0x%04x of partition table %d will be corrected by w(rite)\n"
 msgstr ""
 "Waarschuwing: onjuiste optie 0x%04x van partitietabel %d zal\n"
 "worden gecorrigeerd bij het schrijven.\n"
 
 #: fdisk/fdisk.c:1321
-#, fuzzy, c-format
+#, c-format
 msgid "Do you really want to quit? "
-msgstr "Wilt u echt doorgaan"
+msgstr "Wilt u echt afsluiten? "
 
 #: fdisk/fdisk.c:1382
 msgid "Hex code (type L to list codes): "
@@ -3356,8 +3286,7 @@ msgstr "sector"
 #: fdisk/fdisk.c:1630
 #, c-format
 msgid "Changing display/entry units to cylinders (DEPRECATED!)\n"
-msgstr ""
-"Eenheid voor weergave/invoer is veranderd naar cilinders (VEROUDERD!)\n"
+msgstr "Eenheid voor weergave/invoer is veranderd naar cilinders (VEROUDERD!)\n"
 
 #: fdisk/fdisk.c:1632
 #, c-format
@@ -3441,8 +3370,7 @@ msgstr "Systeemtype van partitie %d is onveranderd: %x (%s)\n"
 #: fdisk/fdisk.c:1859
 #, c-format
 msgid "Partition %d has different physical/logical beginnings (non-Linux?):\n"
-msgstr ""
-"Partitie %d heeft verschillende fysieke/logische beginpunten (niet-Linux?):\n"
+msgstr "Partitie %d heeft verschillende fysieke/logische beginpunten (niet-Linux?):\n"
 
 #: fdisk/fdisk.c:1861 fdisk/fdisk.c:1869 fdisk/fdisk.c:1878 fdisk/fdisk.c:1888
 #, c-format
@@ -3494,13 +3422,13 @@ msgstr ""
 "Schijf %s: %ld MB, %lld bytes\n"
 
 #: fdisk/fdisk.c:1913
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Disk %s: %ld.%ld GB, %llu bytes\n"
 msgstr ""
 "\n"
-"Schijf %s: %ld.%ld GB, %lld bytes\n"
+"Schijf %s: %ld.%ld GB, %llu bytes\n"
 
 #: fdisk/fdisk.c:1916
 #, c-format
@@ -3616,9 +3544,7 @@ msgstr "Partities %d: cilindernummer %d is groter dan maximum %d\n"
 #: fdisk/fdisk.c:2220
 #, c-format
 msgid "Partition %d: previous sectors %d disagrees with total %d\n"
-msgstr ""
-"Partitie %d: einde van vorige partitie in sectoren %d verschilt van totaal "
-"%d\n"
+msgstr "Partitie %d: einde van vorige partitie in sectoren %d verschilt van totaal %d\n"
 
 #: fdisk/fdisk.c:2254
 #, c-format
@@ -3826,8 +3752,7 @@ msgstr "Waarschuwing: sectorplaats wordt ingesteld voor DOS-compatibiliteit\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't "
-"support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 "\n"
@@ -3858,14 +3783,11 @@ msgstr "%c: onbekende opdracht\n"
 #: fdisk/fdisk.c:3012
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
-msgstr ""
-"Deze kernel vindt zelf de sectorgrootte -- optie '-b' wordt genegeerd\n"
+msgstr "Deze kernel vindt zelf de sectorgrootte -- optie '-b' wordt genegeerd\n"
 
 #: fdisk/fdisk.c:3016
 #, c-format
-msgid ""
-"Warning: the -b (set sector size) option should be used with one specified "
-"device\n"
+msgid "Warning: the -b (set sector size) option should be used with one specified device\n"
 msgstr ""
 "Waarschuwing: optie '-b' (sectorgrootte instellen) dient met\n"
 "slechts één apparaat gebruikt te worden.\n"
@@ -4004,12 +3926,8 @@ msgstr "Linux RAID"
 
 #: fdisk/fdisksgilabel.c:152
 #, c-format
-msgid ""
-"According to MIPS Computer Systems, Inc the Label must not contain more than "
-"512 bytes\n"
-msgstr ""
-"Volgens 'MIPS Computer Systems' mag het label niet meer dan 512 bytes "
-"bevatten.\n"
+msgid "According to MIPS Computer Systems, Inc the Label must not contain more than 512 bytes\n"
+msgstr "Volgens 'MIPS Computer Systems' mag het label niet meer dan 512 bytes bevatten.\n"
 
 #: fdisk/fdisksgilabel.c:171
 #, c-format
@@ -4292,8 +4210,7 @@ msgstr ""
 #: fdisk/fdisksgilabel.c:722 fdisk/fdisksunlabel.c:222
 #, c-format
 msgid ""
-"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of "
-"%d.\n"
+"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %d.\n"
 "This value may be truncated for devices > 33.8 GB.\n"
 msgstr ""
 "Waarschuwing: ioctl(BLKGETSIZE) is mislukt op %s.\n"
@@ -4388,8 +4305,7 @@ msgstr "Sun-schijflabel gevonden met foutief partitie-aantal [%u].\n"
 
 #: fdisk/fdisksunlabel.c:163
 #, c-format
-msgid ""
-"Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
+msgid "Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
 msgstr ""
 "Waarschuwing: onjuiste waardes dienen verbeterd te worden en\n"
 "zullen gecorrigeerd worden bij het wegschrijven ('w').\n"
@@ -4471,8 +4387,7 @@ msgid ""
 "If you want to maintain SunOS/Solaris compatibility, consider leaving this\n"
 "partition as Whole disk (5), starting at 0, with %u sectors\n"
 msgstr ""
-"Als u SunOS/Solaris-compatibiliteit wilt behouden, kunt u deze partitie "
-"beter\n"
+"Als u SunOS/Solaris-compatibiliteit wilt behouden, kunt u deze partitie beter\n"
 "als gehele schijf (5) laten, beginnend bij 0, met %u sectoren.\n"
 
 #: fdisk/fdisksunlabel.c:544
@@ -4577,9 +4492,8 @@ msgid "FAT16"
 msgstr "FAT16"
 
 #: fdisk/i386_sys_types.c:13
-#, fuzzy
 msgid "HPFS/NTFS/exFAT"
-msgstr "HPFS/NTFS"
+msgstr "HPFS/NTFS/exFAT"
 
 #: fdisk/i386_sys_types.c:14
 msgid "AIX"
@@ -4654,9 +4568,8 @@ msgid "NEC DOS"
 msgstr "NEC DOS"
 
 #: fdisk/i386_sys_types.c:32
-#, fuzzy
 msgid "Hidden NTFS WinRE"
-msgstr "verborgen HPFS/NTFS"
+msgstr "verborgen NTFS WinRE"
 
 #: fdisk/i386_sys_types.c:33
 msgid "Plan 9"
@@ -4965,8 +4878,7 @@ msgstr "kan status van partitionerings-herstelbestand (%s) niet bepalen\n"
 
 #: fdisk/sfdisk.c:342
 msgid "partition restore file has wrong size - not restoring\n"
-msgstr ""
-"partitionerings-herstelbestand heeft onjuiste grootte -- niet hersteld\n"
+msgstr "partitionerings-herstelbestand heeft onjuiste grootte -- niet hersteld\n"
 
 #: fdisk/sfdisk.c:346
 msgid "out of memory?\n"
@@ -5027,8 +4939,7 @@ msgstr "Waarschuwing: ioctl(HDIO_GETGEO) zegt dat er %lu sectoren zijn\n"
 #: fdisk/sfdisk.c:506
 #, c-format
 msgid "Warning: BLKGETSIZE/HDIO_GETGEO says that there are %lu cylinders\n"
-msgstr ""
-"Waarschuwing: ioctl(BLKGETSIZE/HDIO_GETGEO) zegt dat er %lu cilinders zijn\n"
+msgstr "Waarschuwing: ioctl(BLKGETSIZE/HDIO_GETGEO) zegt dat er %lu cilinders zijn\n"
 
 #: fdisk/sfdisk.c:511
 #, c-format
@@ -5036,8 +4947,7 @@ msgid ""
 "Warning: unlikely number of sectors (%lu) - usually at most 63\n"
 "This will give problems with all software that uses C/H/S addressing.\n"
 msgstr ""
-"Waarschuwing: onwaarschijnlijk aantal sectoren (%lu) -- meestal hoogstens "
-"63.\n"
+"Waarschuwing: onwaarschijnlijk aantal sectoren (%lu) -- meestal hoogstens 63.\n"
 "Dit zal problemen geven met alle software die C/K/S-adressering gebruikt.\n"
 
 #: fdisk/sfdisk.c:515
@@ -5051,29 +4961,18 @@ msgstr ""
 
 #: fdisk/sfdisk.c:597
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
-msgstr ""
-"%s van partitie %s heeft een onmogelijke waarde voor koppen: %lu (moet "
-"liggen tussen 0 en %lu)\n"
+msgid "%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
+msgstr "%s van partitie %s heeft een onmogelijke waarde voor koppen: %lu (moet liggen tussen 0 en %lu)\n"
 
 #: fdisk/sfdisk.c:602
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for sector: %lu (should be in 1-"
-"%lu)\n"
-msgstr ""
-"%s van partitie %s heeft een onmogelijke waarde voor sectoren: %lu (moet "
-"liggen tussen 1 en %lu)\n"
+msgid "%s of partition %s has impossible value for sector: %lu (should be in 1-%lu)\n"
+msgstr "%s van partitie %s heeft een onmogelijke waarde voor sectoren: %lu (moet liggen tussen 1 en %lu)\n"
 
 #: fdisk/sfdisk.c:607
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for cylinders: %lu (should be in 0-"
-"%lu)\n"
-msgstr ""
-"%s van partitie %s heeft een onmogelijke waarde voor cilinders: %lu (moet "
-"liggen tussen 0 en %lu)\n"
+msgid "%s of partition %s has impossible value for cylinders: %lu (should be in 0-%lu)\n"
+msgstr "%s van partitie %s heeft een onmogelijke waarde voor cilinders: %lu (moet liggen tussen 0 en %lu)\n"
 
 #: fdisk/sfdisk.c:647
 #, c-format
@@ -5166,8 +5065,7 @@ msgid ""
 "Units = mebibytes of 1048576 bytes, blocks of 1024 bytes, counting from %d\n"
 "\n"
 msgstr ""
-"Eenheid = mebibytes van 1048576 bytes, blokken van 1024 bytes, tellend vanaf "
-"%d\n"
+"Eenheid = mebibytes van 1048576 bytes, blokken van 1024 bytes, tellend vanaf %d\n"
 "\n"
 
 #: fdisk/sfdisk.c:958
@@ -5217,8 +5115,7 @@ msgstr "Vreemd: slechts %d partities gedefinieerd.\n"
 #: fdisk/sfdisk.c:1202
 #, c-format
 msgid "Warning: partition %s has size 0 but is not marked Empty\n"
-msgstr ""
-"Waarschuwing: partitie %s heeft grootte 0, maar is niet aangegeven als Leeg\n"
+msgstr "Waarschuwing: partitie %s heeft grootte 0, maar is niet aangegeven als Leeg\n"
 
 #: fdisk/sfdisk.c:1205
 #, c-format
@@ -5228,8 +5125,7 @@ msgstr "Waarschuwing: partitie %s heeft grootte 0 en is opstartbaar\n"
 #: fdisk/sfdisk.c:1208
 #, c-format
 msgid "Warning: partition %s has size 0 and nonzero start\n"
-msgstr ""
-"Waarschuwing: partitie %s heeft grootte 0 maar een niet-nul beginsector\n"
+msgstr "Waarschuwing: partitie %s heeft grootte 0 maar een niet-nul beginsector\n"
 
 #: fdisk/sfdisk.c:1219
 #, c-format
@@ -5268,8 +5164,7 @@ msgstr "Waarschuwing: partitie %s begint op sector 0\n"
 #: fdisk/sfdisk.c:1259
 #, c-format
 msgid "Warning: partition %s extends past end of disk\n"
-msgstr ""
-"Waarschuwing: partitie %s loopt door tot voorbij het einde van de schijf\n"
+msgstr "Waarschuwing: partitie %s loopt door tot voorbij het einde van de schijf\n"
 
 #: fdisk/sfdisk.c:1274
 msgid ""
@@ -5295,8 +5190,7 @@ msgid ""
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
 msgstr ""
 "Waarschuwing: meerdere primaire partities zijn gemarkeerd als opstartbaar.\n"
-"Voor LILO maakt dit niets uit, maar DOS MBR zal niet van deze schijf "
-"opstarten.\n"
+"Voor LILO maakt dit niets uit, maar DOS MBR zal niet van deze schijf opstarten.\n"
 
 #: fdisk/sfdisk.c:1323
 msgid ""
@@ -5312,8 +5206,7 @@ msgid ""
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
 msgstr ""
 "Waarschuwing: er is geen primaire partitie gemarkeerd als opstartbaar.\n"
-"Voor LILO maakt dit niets uit, maar DOS MBR zal niet van deze schijf "
-"opstarten.\n"
+"Voor LILO maakt dit niets uit, maar DOS MBR zal niet van deze schijf opstarten.\n"
 
 #: fdisk/sfdisk.c:1343
 msgid "start"
@@ -5321,10 +5214,8 @@ msgstr "begin"
 
 #: fdisk/sfdisk.c:1346
 #, c-format
-msgid ""
-"partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"partitie %s: begin: (c,k,s) verwacht: (%ld,%ld,%ld) gevonden: (%ld,%ld,%ld)\n"
+msgid "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
+msgstr "partitie %s: begin: (c,k,s) verwacht: (%ld,%ld,%ld) gevonden: (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1352
 msgid "end"
@@ -5333,8 +5224,7 @@ msgstr "einde"
 #: fdisk/sfdisk.c:1355
 #, c-format
 msgid "partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"partitie %s: einde: (c,k,s) verwacht: (%ld,%ld,%ld) gevonden: (%ld,%ld,%ld)\n"
+msgstr "partitie %s: einde: (c,k,s) verwacht: (%ld,%ld,%ld) gevonden: (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1358
 #, c-format
@@ -5347,8 +5237,7 @@ msgid ""
 "Warning: shifted start of the extd partition from %ld to %ld\n"
 "(For listing purposes only. Do not change its contents.)\n"
 msgstr ""
-"Waarschuwing: begin van uitgebreide partitie is verschoven van %ld naar "
-"%ld.\n"
+"Waarschuwing: begin van uitgebreide partitie is verschoven van %ld naar %ld.\n"
 "(Alleen voor weergave.  De inhoud wordt niet gewijzigd.)\n"
 
 #: fdisk/sfdisk.c:1389
@@ -5452,9 +5341,7 @@ msgstr "Onjuiste soort\n"
 #: fdisk/sfdisk.c:2114
 #, c-format
 msgid "Warning: given size (%lu) exceeds max allowable size (%lu)\n"
-msgstr ""
-"Waarschuwing: gegeven groote (%lu) is groter dan maximaal toegelaten grootte "
-"(%lu)\n"
+msgstr "Waarschuwing: gegeven groote (%lu) is groter dan maximaal toegelaten grootte (%lu)\n"
 
 #: fdisk/sfdisk.c:2120
 msgid "Warning: empty partition\n"
@@ -5493,10 +5380,8 @@ msgid ""
 msgstr ""
 "  \n"
 "Invoer is in deze indeling (afwezige velden krijgen een standaardwaarde):\n"
-"  <begin> <grootte> <soort [E,S,L,X,hex]> <opstartbaar [-,*]> <c,k,s> <c,k,"
-"s>\n"
-"Meestal hoeft u alleen <begin> en <grootte> te gebruiken (en mogelijk "
-"<soort>).\n"
+"  <begin> <grootte> <soort [E,S,L,X,hex]> <opstartbaar [-,*]> <c,k,s> <c,k,s>\n"
+"Meestal hoeft u alleen <begin> en <grootte> te gebruiken (en mogelijk <soort>).\n"
 
 #: fdisk/sfdisk.c:2301
 #, c-format
@@ -5525,21 +5410,15 @@ msgstr "  -l, --list          partities weergeven"
 
 #: fdisk/sfdisk.c:2307
 msgid "    -d [or --dump]:      idem, but in a format suitable for later input"
-msgstr ""
-"  -d, --dump          idem, maar in een opmaak geschikt voor latere invoer"
+msgstr "  -d, --dump          idem, maar in een opmaak geschikt voor latere invoer"
 
 #: fdisk/sfdisk.c:2308
 msgid "    -i [or --increment]: number cylinders etc. from 1 instead of from 0"
-msgstr ""
-"  -i, --increment     cilinders/sectoren/... nummeren vanaf 1 in plaats "
-"vanaf 0"
+msgstr "  -i, --increment     cilinders/sectoren/... nummeren vanaf 1 in plaats vanaf 0"
 
 #: fdisk/sfdisk.c:2309
-msgid ""
-"    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/"
-"MB"
-msgstr ""
-"  -uS, -uB, -uC, -uM  invoeren/weergeven in sectoren/blokken/cilinders/MB"
+msgid "    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/MB"
+msgstr "  -uS, -uB, -uC, -uM  invoeren/weergeven in sectoren/blokken/cilinders/MB"
 
 #: fdisk/sfdisk.c:2310
 msgid "    -T [or --list-types]:list the known partition types"
@@ -5547,13 +5426,11 @@ msgstr "  -T, --list-types    bekende partitietypen opsommen"
 
 #: fdisk/sfdisk.c:2311
 msgid "    -D [or --DOS]:       for DOS-compatibility: waste a little space"
-msgstr ""
-"  -D, --DOS           een beetje ruimte verspillen (voor DOS-compatibiliteit)"
+msgstr "  -D, --DOS           een beetje ruimte verspillen (voor DOS-compatibiliteit)"
 
 #: fdisk/sfdisk.c:2312
 msgid "    -R [or --re-read]:   make kernel reread partition table"
-msgstr ""
-"  -R, --re-read       de partitietabel opnieuw in laten lezen door de kernel"
+msgstr "  -R, --re-read       de partitietabel opnieuw in laten lezen door de kernel"
 
 #: fdisk/sfdisk.c:2313
 msgid "    -N# :                change only the partition with number #"
@@ -5564,10 +5441,8 @@ msgid "    -n :                 do not actually write to disk"
 msgstr "  -n                  niet echt naar de schijf schrijven, doen alsof"
 
 #: fdisk/sfdisk.c:2315
-msgid ""
-"    -O file :            save the sectors that will be overwritten to file"
-msgstr ""
-"  -O bestand          de te overschrijven sectoren opslaan in dit bestand"
+msgid "    -O file :            save the sectors that will be overwritten to file"
+msgstr "  -O bestand          de te overschrijven sectoren opslaan in dit bestand"
 
 #: fdisk/sfdisk.c:2316
 msgid "    -I file :            restore these sectors again"
@@ -5590,12 +5465,8 @@ msgid "    -g [or --show-geometry]: print the kernel's idea of the geometry"
 msgstr "  -g, --show-geometry     de kernelvisie van de geometrie weergeven"
 
 #: fdisk/sfdisk.c:2321
-msgid ""
-"    -G [or --show-pt-geometry]: print geometry guessed from the partition "
-"table"
-msgstr ""
-"  -G, --show-pt-geometry  de uit de partitietabel afgeleide geometrie "
-"weergeven"
+msgid "    -G [or --show-pt-geometry]: print geometry guessed from the partition table"
+msgstr "  -G, --show-pt-geometry  de uit de partitietabel afgeleide geometrie weergeven"
 
 #: fdisk/sfdisk.c:2322
 msgid ""
@@ -5606,11 +5477,8 @@ msgstr ""
 "                          of beschrijvers ervan verwachten in de invoer"
 
 #: fdisk/sfdisk.c:2324
-msgid ""
-"    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
-msgstr ""
-"  -L, --Linux         niet klagen over dingen die niet relevant zijn voor "
-"Linux"
+msgid "    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
+msgstr "  -L, --Linux         niet klagen over dingen die niet relevant zijn voor Linux"
 
 #: fdisk/sfdisk.c:2325
 msgid "    -q  [or --quiet]:      suppress warning messages"
@@ -5652,21 +5520,18 @@ msgstr "%s apparaat            actieve partities op apparaat weergeven\n"
 #: fdisk/sfdisk.c:2339
 #, c-format
 msgid "%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"
-msgstr ""
-"%s apparaat n1 n2 ...  genoemde partities activeren, de rest de-activeren\n"
+msgstr "%s apparaat n1 n2 ...  genoemde partities activeren, de rest de-activeren\n"
 
 #: fdisk/sfdisk.c:2340
 #, c-format
 msgid "%s -An device\t activate partition n, inactivate the other ones\n"
-msgstr ""
-"%s -An apparaat        partitie n activeren, alle andere de-activeren\n"
+msgstr "%s -An apparaat        partitie n activeren, alle andere de-activeren\n"
 
 #: fdisk/sfdisk.c:2458
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk "
-"doesn't support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 "\n"
@@ -5861,7 +5726,7 @@ msgid ""
 "Successfully wrote the new partition table\n"
 "\n"
 msgstr ""
-"De nieuwe partitietabel is succesvol geschreven.\n"
+"De nieuwe partitietabel is met succes weggeschreven.\n"
 "\n"
 
 #: fdisk/sfdisk.c:3111
@@ -5875,23 +5740,22 @@ msgstr ""
 "  dd if=/dev/zero of=/dev/foo7 bs=512 count=1  (zie man fdisk(8))\n"
 
 #: fsck/fsck.c:270
-#, fuzzy, c-format
+#, c-format
 msgid "Locking disk %s ... "
-msgstr "Leegmaken van schijfbuffers...\n"
+msgstr "Vergrendelen van schijf %s... "
 
 #: fsck/fsck.c:280
 #, c-format
 msgid "(waiting) "
-msgstr ""
+msgstr "(wachten) "
 
 #: fsck/fsck.c:289
 msgid "success"
-msgstr ""
+msgstr "gelukt"
 
 #: fsck/fsck.c:289
-#, fuzzy
 msgid "failed"
-msgstr "'%s' is mislukt.\n"
+msgstr "mislukt"
 
 #: fsck/fsck.c:419
 #, c-format
@@ -5959,9 +5823,7 @@ msgstr "onvoldoende geheugen beschikbaar voor bestandssysteemsoorten\n"
 
 #: fsck/fsck.c:981
 #, c-format
-msgid ""
-"%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass "
-"number\n"
+msgid "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number\n"
 msgstr ""
 "%s: onjuiste regel in /etc/fstab wordt overgeslagen:\n"
 "een 'bind'-aankoppeling met een niet-nul fsck-volgnummer\n"
@@ -5973,10 +5835,10 @@ msgstr "%s: niet-bestaand apparaat wordt overgeslagen\n"
 
 #: fsck/fsck.c:997
 #, c-format
-msgid ""
-"%s: nonexistent device (\"nofail\" fstab option may be used to skip this "
-"device)\n"
+msgid "%s: nonexistent device (\"nofail\" fstab option may be used to skip this device)\n"
 msgstr ""
+"%s: niet-bestaand apparaat\n"
+"(optie \"nofail\" kan in fstab gebruikt worden om dit apparaat over te slaan)\n"
 
 #: fsck/fsck.c:1024
 #, c-format
@@ -5990,11 +5852,10 @@ msgstr "Alle bestandssystemen worden gecontroleerd.\n"
 #: fsck/fsck.c:1201
 #, c-format
 msgid "--waiting-- (pass %d)\n"
-msgstr "--wachtend-- (stap %d)\n"
+msgstr "--wachten-- (stap %d)\n"
 
 #: fsck/fsck.c:1221
-msgid ""
-"Usage: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-options] [filesys ...]\n"
+msgid "Usage: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-options] [filesys ...]\n"
 msgstr ""
 "Gebruik: fsck [-AMNPRTV] [-C [bestandsdescriptor]] [-t bestandssyteemsoort]\n"
 "              [bestandssysteemopties] [bestandssysteem...]\n"
@@ -6017,8 +5878,7 @@ msgstr "Is /proc wel aangekoppeld?\n"
 #: fsck/fsck.c:1281
 #, c-format
 msgid "Must be root to scan for matching filesystems: %s\n"
-msgstr ""
-"U dient root te zijn om naar overeenkomende bestandssystemen te zoeken: %s\n"
+msgstr "U dient root te zijn om naar overeenkomende bestandssystemen te zoeken: %s\n"
 
 #: fsck/fsck.c:1284
 #, c-format
@@ -6043,7 +5903,7 @@ msgstr "%s: Onvoldoende geheugen beschikbaar voor fsck_path()\n"
 #: fsck/fsck.c:1441
 #, c-format
 msgid "%s: the -l option can be used with one device only -- ignore\n"
-msgstr ""
+msgstr "%s: optie '-l' is alleen geldig bij één apparaat -- genegeerd\n"
 
 #: getopt/getopt.c:229
 msgid "Try `getopt --help' for more information.\n"
@@ -6067,16 +5927,14 @@ msgstr "          getopt [opties] [--] optiereeks parameters\n"
 
 #: getopt/getopt.c:322
 msgid "       getopt [options] -o|--options optstring [options] [--]\n"
-msgstr ""
-"          getopt [opties] -o|--options optiereeks [opties] [--] parameters\n"
+msgstr "          getopt [opties] -o|--options optiereeks [opties] [--] parameters\n"
 
 #: getopt/getopt.c:323
 msgid "              parameters\n"
 msgstr "              \n"
 
 #: getopt/getopt.c:324
-msgid ""
-"  -a, --alternative            Allow long options starting with single -\n"
+msgid "  -a, --alternative            Allow long options starting with single -\n"
 msgstr "  -a, --alternative             lange opties met één '-' toestaan\n"
 
 #: getopt/getopt.c:325
@@ -6088,8 +5946,7 @@ msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
 msgstr "  -l, --longoptions=optiereeks  te herkennen lange opties\n"
 
 #: getopt/getopt.c:327
-msgid ""
-"  -n, --name=progname          The name under which errors are reported\n"
+msgid "  -n, --name=progname          The name under which errors are reported\n"
 msgstr "  -n, --name=programmanaam      fouten rapporteren onder deze naam\n"
 
 #: getopt/getopt.c:328
@@ -6098,8 +5955,7 @@ msgstr "  -o, --options=optiereeks      te herkennen korte opties\n"
 
 #: getopt/getopt.c:329
 msgid "  -q, --quiet                  Disable error reporting by getopt(3)\n"
-msgstr ""
-"  -q, --quiet                   foutrapportage van getopt(3) uitzetten\n"
+msgstr "  -q, --quiet                   foutrapportage van getopt(3) uitzetten\n"
 
 #: getopt/getopt.c:330
 msgid "  -Q, --quiet-output           No normal output\n"
@@ -6107,14 +5963,11 @@ msgstr "  -Q, --quiet-output            gewone uitvoer onderdrukken\n"
 
 #: getopt/getopt.c:331
 msgid "  -s, --shell=shell            Set shell quoting conventions\n"
-msgstr ""
-"  -s, --shell=shell             aanhalingsconventies van deze shell "
-"gebruiken\n"
+msgstr "  -s, --shell=shell             aanhalingsconventies van deze shell gebruiken\n"
 
 #: getopt/getopt.c:332
 msgid "  -T, --test                   Test for getopt(1) version\n"
-msgstr ""
-"  -T, --test                    bepalen of dit een verbeterde getopt(1) is\n"
+msgstr "  -T, --test                    bepalen of dit een verbeterde getopt(1) is\n"
 
 #: getopt/getopt.c:333
 msgid "  -u, --unqote                 Do not quote the output\n"
@@ -6267,9 +6120,7 @@ msgstr "Ongeldige waarden in hardwareklok: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 #: hwclock/hwclock.c:420
 #, c-format
 msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr ""
-"Hardwarekloktijd is: %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconden sinds "
-"1969.\n"
+msgstr "Hardwarekloktijd is: %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconden sinds 1969.\n"
 
 #: hwclock/hwclock.c:450
 #, c-format
@@ -6279,8 +6130,7 @@ msgstr "Tijd gelezen van de hardwareklok: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 #: hwclock/hwclock.c:479
 #, c-format
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr ""
-"Instellen van hardwareklok op %.2d:%.2d:%.2d = %ld seconden sinds 1969.\n"
+msgstr "Instellen van hardwareklok op %.2d:%.2d:%.2d = %ld seconden sinds 1969.\n"
 
 #: hwclock/hwclock.c:485
 #, c-format
@@ -6298,13 +6148,8 @@ msgstr ""
 
 #: hwclock/hwclock.c:571
 #, c-format
-msgid ""
-"The Hardware Clock registers contain values that are either invalid (e.g. "
-"50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
-msgstr ""
-"De hardwareklok bevat waarden die ofwel onjuist zijn (bijvoorbeeld de 50e "
-"dag van de maand) of buiten het ondersteunde bereik vallen (bijvoorbeeld het "
-"jaar 2095).\n"
+msgid "The Hardware Clock registers contain values that are either invalid (e.g. 50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
+msgstr "De hardwareklok bevat waarden die ofwel onjuist zijn (bijvoorbeeld de 50e dag van de maand) of buiten het ondersteunde bereik vallen (bijvoorbeeld het jaar 2095).\n"
 
 #: hwclock/hwclock.c:581
 #, c-format
@@ -6362,15 +6207,13 @@ msgstr ""
 #: hwclock/hwclock.c:662
 #, c-format
 msgid ""
-"The date command issued by %s returned something other than an integer where "
-"the converted time value was expected.\n"
+"The date command issued by %s returned something other than an integer where the converted time value was expected.\n"
 "The command was:\n"
 "  %s\n"
 "The response was:\n"
 " %s\n"
 msgstr ""
-"De 'date'-opdracht uitgevoerd door %s gaf geen geheel getal waar de "
-"geconverteerde tijdswaarde werd verwacht.\n"
+"De 'date'-opdracht uitgevoerd door %s gaf geen geheel getal waar de geconverteerde tijdswaarde werd verwacht.\n"
 "De opdracht was:\n"
 "  %s\n"
 "Het antwoord was:\n"
@@ -6383,12 +6226,8 @@ msgstr "Datumtekst %s is gelijk aan %ld seconden sinds 1969.\n"
 
 #: hwclock/hwclock.c:705
 #, c-format
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot set the "
-"System Time from it.\n"
-msgstr ""
-"De hardwareklok bevat geen geldige tijd, zodat de systeemtijd er niet mee "
-"ingesteld kan worden.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot set the System Time from it.\n"
+msgstr "De hardwareklok bevat geen geldige tijd, zodat de systeemtijd er niet mee ingesteld kan worden.\n"
 
 #: hwclock/hwclock.c:727 hwclock/hwclock.c:804
 #, c-format
@@ -6431,9 +6270,7 @@ msgstr "\tUTC: %s\n"
 
 #: hwclock/hwclock.c:852
 #, c-format
-msgid ""
-"Not adjusting drift factor because the Hardware Clock previously contained "
-"garbage.\n"
+msgid "Not adjusting drift factor because the Hardware Clock previously contained garbage.\n"
 msgstr ""
 "De verschuivingsfactor wordt niet aangepast,\n"
 "omdat de hardwareklok eerder rommel bevatte.\n"
@@ -6451,9 +6288,7 @@ msgstr ""
 
 #: hwclock/hwclock.c:863
 #, c-format
-msgid ""
-"Not adjusting drift factor because it has been less than a day since the "
-"last calibration.\n"
+msgid "Not adjusting drift factor because it has been less than a day since the last calibration.\n"
 msgstr ""
 "De verschuivingsfactor wordt niet aangepast,\n"
 "omdat de vorige calibratie minder dan één dag geleden is.\n"
@@ -6461,8 +6296,7 @@ msgstr ""
 #: hwclock/hwclock.c:911
 #, c-format
 msgid ""
-"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
-"of %f seconds/day.\n"
+"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
 "De klok is %.1f seconden verschoven in de laatste %d seconden,\n"
@@ -6497,11 +6331,8 @@ msgstr ""
 
 #: hwclock/hwclock.c:1001
 #, c-format
-msgid ""
-"Could not open file with the clock adjustment parameters in it (%s) for "
-"writing"
-msgstr ""
-"Kan bestand met klokaanpassingsgegevens (%s) niet openen om te schrijven"
+msgid "Could not open file with the clock adjustment parameters in it (%s) for writing"
+msgstr "Kan bestand met klokaanpassingsgegevens (%s) niet openen om te schrijven"
 
 #: hwclock/hwclock.c:1006 hwclock/hwclock.c:1011
 #, c-format
@@ -6515,16 +6346,12 @@ msgstr "De parameters voor de verschuivingsaanpassing zijn niet bijgewerkt.\n"
 
 #: hwclock/hwclock.c:1058
 #, c-format
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
-msgstr ""
-"De hardwareklok bevat geen geldige tijd, zodat die niet aangepast kan "
-"worden.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
+msgstr "De hardwareklok bevat geen geldige tijd, zodat die niet aangepast kan worden.\n"
 
 #: hwclock/hwclock.c:1066
 #, c-format
-msgid ""
-"Not setting clock because last adjustment time is zero, so history is bad."
+msgid "Not setting clock because last adjustment time is zero, so history is bad."
 msgstr ""
 "De klok wordt niet ingesteld\n"
 "omdat de laatste aanpassingstijd nul is.\n"
@@ -6554,22 +6381,17 @@ msgstr "Instellen van de systeemklok is mislukt.\n"
 
 #: hwclock/hwclock.c:1252
 #, c-format
-msgid ""
-"At %ld seconds after 1969, RTC is predicted to read %ld seconds after 1969.\n"
-msgstr ""
-"Op %ld seconden na 1969 is de voorspelde waarde van RTC %ld seconden na "
-"1969.\n"
+msgid "At %ld seconds after 1969, RTC is predicted to read %ld seconds after 1969.\n"
+msgstr "Op %ld seconden na 1969 is de voorspelde waarde van RTC %ld seconden na 1969.\n"
 
 #: hwclock/hwclock.c:1283
 #, c-format
 msgid ""
-"The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
-"machine.\n"
+"The kernel keeps an epoch value for the Hardware Clock only on an Alpha machine.\n"
 "This copy of hwclock was built for a machine other than Alpha\n"
 "(and thus is presumably not running on an Alpha now).  No action taken.\n"
 msgstr ""
-"De kernel bewaart alleen bij Alpha's een tijdperkwaarde voor de "
-"hardwareklok.\n"
+"De kernel bewaart alleen bij Alpha's een tijdperkwaarde voor de hardwareklok.\n"
 "Deze versie van 'hwclock' is gemaakt voor een ander systeem dan de Alpha\n"
 "(en draait nu dus vermoedelijk niet op een Alpha).  Geen actie ondernomen.\n"
 
@@ -6585,11 +6407,8 @@ msgstr "Kernel neemt als tijdperkwaarde %lu aan.\n"
 
 #: hwclock/hwclock.c:1297
 #, c-format
-msgid ""
-"To set the epoch value, you must use the 'epoch' option to tell to what "
-"value to set it.\n"
-msgstr ""
-"Om de tijdperkwaarde in te stellen dient u de optie --epoch te gebruiken.\n"
+msgid "To set the epoch value, you must use the 'epoch' option to tell to what value to set it.\n"
+msgstr "Om de tijdperkwaarde in te stellen dient u de optie --epoch te gebruiken.\n"
 
 #: hwclock/hwclock.c:1300
 #, c-format
@@ -6653,34 +6472,27 @@ msgstr ""
 "Functies:\n"
 "  -h|--help        deze hulptekst tonen\n"
 "  -r|--show        de hardwareklok lezen en het resultaat weergeven\n"
-"     --set         de hardwareklok instellen op de tijd gegeven met '--"
-"date'\n"
+"     --set         de hardwareklok instellen op de tijd gegeven met '--date'\n"
 "  -s|--hctosys     aan de hand van de hardwareklok de systeemklok instellen\n"
 "  -w|--systohc     aan de hand van de systeemklok de hardwareklok instellen\n"
 "     --systz       de systeemklok instellen aan de hand van de tijdzone\n"
-"     --adjust      de hardwareklok aanpassen ter compensatie van "
-"systematische\n"
+"     --adjust      de hardwareklok aanpassen ter compensatie van systematische\n"
 "                   verschuiving sinds de laatste instelling/aanpassing\n"
 "     --getepoch    tijdperkwaarde van de kernel tonen\n"
 "     --setepoch    tijdperkwaarde van de kernel instellen op de waarde\n"
 "                   gegeven met de optie '--epoch'\n"
-"     --predict     hardwarekloktijd voorspellen op moment gegeven met '--"
-"date'\n"
+"     --predict     hardwarekloktijd voorspellen op moment gegeven met '--date'\n"
 "  -v|--version     programmaversie tonen\n"
 "\n"
 "Opties: \n"
 "  -u|--utc         de hardwareklok bevat de gecoördineerde universele tijd\n"
 "     --localtime   de hardwareklok bevat de lokale tijd\n"
-"  -f|--rtc=BESTAND te gebruiken RTC-bestand in /dev/ in plaats van "
-"standaard\n"
+"  -f|--rtc=BESTAND te gebruiken RTC-bestand in /dev/ in plaats van standaard\n"
 "     --directisa   de ISA-bus direct benaderen in plaats van via %s\n"
-"     --badyear     het jaartal van de hardwareklok negeren omdat de BIOS "
-"stuk is\n"
+"     --badyear     het jaartal van de hardwareklok negeren omdat de BIOS stuk is\n"
 "     --date=TIJD   de tijd waarop de hardwareklok moet worden ingesteld\n"
-"     --epoch=JAAR  het jaartal dat het tijdperkbegin voor de hardwareklok "
-"is\n"
-"     --noadjfile   /etc/adjtime niet gebruiken (met '--utc' of '--"
-"localtime')\n"
+"     --epoch=JAAR  het jaartal dat het tijdperkbegin voor de hardwareklok is\n"
+"     --noadjfile   /etc/adjtime niet gebruiken (met '--utc' of '--localtime')\n"
 "     --adjfile=BESTAND  te gebruiken verschuivingsregistratiebestand\n"
 "                        (standaard is /etc/adjtime)\n"
 "     --test        alles doen behalve daadwerkelijk iets veranderen\n"
@@ -6721,23 +6533,17 @@ msgstr ""
 
 #: hwclock/hwclock.c:1596
 #, c-format
-msgid ""
-"%s: The --utc and --localtime options are mutually exclusive.  You specified "
-"both.\n"
+msgid "%s: The --utc and --localtime options are mutually exclusive.  You specified both.\n"
 msgstr "%s: De opties --utc en --localtime sluiten elkaar uit.\n"
 
 #: hwclock/hwclock.c:1603
 #, c-format
-msgid ""
-"%s: The --adjust and --noadjfile options are mutually exclusive.  You "
-"specified both.\n"
+msgid "%s: The --adjust and --noadjfile options are mutually exclusive.  You specified both.\n"
 msgstr "%s: De opties --adjust en --noadjfile sluiten elkaar uit.\n"
 
 #: hwclock/hwclock.c:1610
 #, c-format
-msgid ""
-"%s: The --adjfile and --noadjfile options are mutually exclusive.  You "
-"specified both.\n"
+msgid "%s: The --adjfile and --noadjfile options are mutually exclusive.  You specified both.\n"
 msgstr "%s: De opties --adjfile en --noadjfile sluiten elkaar uit.\n"
 
 #: hwclock/hwclock.c:1619
@@ -6762,24 +6568,17 @@ msgstr "Sorry, alleen root kan de systeemklok instellen.\n"
 
 #: hwclock/hwclock.c:1660
 #, c-format
-msgid ""
-"Sorry, only the superuser can change the Hardware Clock epoch in the "
-"kernel.\n"
-msgstr ""
-"Sorry, alleen root kan in de kernel de tijdperkwaarde voor de klok "
-"instellen.\n"
+msgid "Sorry, only the superuser can change the Hardware Clock epoch in the kernel.\n"
+msgstr "Sorry, alleen root kan in de kernel de tijdperkwaarde voor de klok instellen.\n"
 
 #: hwclock/hwclock.c:1681
 #, c-format
 msgid "Cannot access the Hardware Clock via any known method.\n"
-msgstr ""
-"Kan op geen enkele bekende manier toegang krijgen tot de hardwareklok.\n"
+msgstr "Kan op geen enkele bekende manier toegang krijgen tot de hardwareklok.\n"
 
 #: hwclock/hwclock.c:1685
 #, c-format
-msgid ""
-"Use the --debug option to see the details of our search for an access "
-"method.\n"
+msgid "Use the --debug option to see the details of our search for an access method.\n"
 msgstr ""
 "Gebruik de optie --debug om alle details over de zoektocht\n"
 "naar een toegangsmethode te zien.\n"
@@ -6862,9 +6661,7 @@ msgstr "ioctl() op %s om bijwerkingsonderbrekingen uit te zetten is mislukt"
 #: hwclock/rtc.c:303
 #, c-format
 msgid "ioctl() to %s to turn on update interrupts failed unexpectedly"
-msgstr ""
-"ioctl() op %s om bijwerkingsonderbrekingen aan te zetten is onverwacht "
-"mislukt"
+msgstr "ioctl() op %s om bijwerkingsonderbrekingen aan te zetten is onverwacht mislukt"
 
 #: hwclock/rtc.c:360
 #, c-format
@@ -6883,10 +6680,7 @@ msgstr "Openen van %s is mislukt"
 
 #: hwclock/rtc.c:410 hwclock/rtc.c:454
 #, c-format
-msgid ""
-"To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
-"device driver via the device special file %s.  This file does not exist on "
-"this system.\n"
+msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file %s.  This file does not exist on this system.\n"
 msgstr ""
 "Om de tijdperkwaarde in de kernel aan te kunnen passen, is toegang\n"
 "tot het 'rtc'-stuurprogramma van Linux nodig via het speciale\n"
@@ -6915,13 +6709,11 @@ msgstr "De tijdperkwaarde mag niet minder zijn dan 1900.  U vroeg om %ld.\n"
 #: hwclock/rtc.c:464
 #, c-format
 msgid "setting epoch to %ld with RTC_EPOCH_SET ioctl to %s.\n"
-msgstr ""
-"Schrijven van tijdperkwaarde op %ld naar %s met ioctl(RTC_EPOCH_SET).\n"
+msgstr "Schrijven van tijdperkwaarde op %ld naar %s met ioctl(RTC_EPOCH_SET).\n"
 
 #: hwclock/rtc.c:469
 #, c-format
-msgid ""
-"The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
+msgid "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
 msgstr "Het kernelstuurprogramma voor %s heeft geen ioctl(RTC_EPOCH_SET).\n"
 
 #: hwclock/rtc.c:472
@@ -6998,14 +6790,12 @@ msgid "%s: input overrun"
 msgstr "%s: invoeroverloop"
 
 #: login-utils/agetty.c:1230
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"Usage: %s [-8hiLmsUw] [-l login_program] [-t timeout] [-I initstring] [-H "
-"login_host] baud_rate,... line [termtype]\n"
-"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] "
-"line baud_rate,... [termtype]\n"
+"Usage: %s [-8hiLmsUw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\n"
+"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"
 msgstr ""
-"Gebruik:  %s [-8hiLmUw] [-l inlogprogramma] [-t tijdslimiet] [-H inloghost]\n"
+"Gebruik:  %s [-8hiLmsUw] [-l inlogprogramma] [-t tijdslimiet] [-H inloghost]\n"
 "          [-I starttekenreeks]  baudrate,...  lijn  [terminalsoort]\n"
 "     of:  [-hiLmw] [-l inlogprogramma] [-t tijdslimiet] [-H inloghost]\n"
 "          [-I starttekenreeks]  lijn  baudrate,...  [terminalsoort]\n"
@@ -7053,33 +6843,31 @@ msgid "[ --help ] [ --version ]\n"
 msgstr "[--help] [--version]\n"
 
 #: login-utils/chfn.c:143 login-utils/chsh.c:124
-#, fuzzy, c-format
+#, c-format
 msgid "%s: you (user %d) don't exist."
-msgstr "%s: gebruiker %d (oftewel u) bestaat niet.\n"
+msgstr "%s: U (gebruiker %d) bestaat niet."
 
 #: login-utils/chfn.c:148 login-utils/chsh.c:129
-#, fuzzy, c-format
+#, c-format
 msgid "%s: user \"%s\" does not exist."
-msgstr "%s: gebruiker '%s' bestaat niet.\n"
+msgstr "%s: Gebruiker '%s' bestaat niet."
 
 #: login-utils/chfn.c:153
-#, fuzzy
 msgid "can only change local entries"
-msgstr "%s: kan alleen lokale zaken wijzigen; gebruik yp%s in plaats.\n"
+msgstr "kan alleen lokale items wijzigen"
 
 #: login-utils/chfn.c:163
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s is not authorized to change the finger info of %s"
-msgstr "%s: %s is niet gerechtigd om de finger-informatie van %s te wijzigen\n"
+msgstr "%s: %s is niet gerechtigd om de finger-informatie van %s te wijzigen"
 
 #: login-utils/chfn.c:165 login-utils/chsh.c:145
 msgid "Unknown user context"
 msgstr "Onbekende gebruikerscontext"
 
 #: login-utils/chfn.c:170
-#, fuzzy
 msgid "can't set default context for /etc/passwd"
-msgstr "%s: Kan standaardcontext voor /etc/passwd niet instellen"
+msgstr "kan de standaardcontext voor /etc/passwd niet instellen"
 
 #: login-utils/chfn.c:180
 #, c-format
@@ -7087,9 +6875,9 @@ msgid "Changing finger information for %s.\n"
 msgstr "Wijzigen van finger-informatie voor %s.\n"
 
 #: login-utils/chfn.c:191 login-utils/chsh.c:184
-#, fuzzy, c-format
+#, c-format
 msgid "%s: PAM failure, aborting: %s"
-msgstr "%s: PAM-fout -- gestopt: %s\n"
+msgstr "%s: PAM-fout -- gestopt: %s"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:205 login-utils/login.c:830
 #: login-utils/newgrp.c:83 mount/lomount.c:816 mount/lomount.c:819
@@ -7162,34 +6950,31 @@ msgstr ""
 "          chsh [ --list-shells ] [ --help ] [ --version ]\n"
 
 #: login-utils/chsh.c:134
-#, fuzzy, c-format
+#, c-format
 msgid "%s: can only change local entries."
-msgstr "%s: kan alleen lokale zaken wijzigen; gebruik yp%s in plaats.\n"
+msgstr "%s: kan alleen lokale items wijzigen"
 
 #: login-utils/chsh.c:144
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s is not authorized to change the shell of %s"
-msgstr "%s: %s is niet gerechtigd om de shell van %s te wijzigen\n"
+msgstr "%s: %s is niet gerechtigd om de shell van %s te wijzigen"
 
 #: login-utils/chsh.c:150
-#, fuzzy, c-format
+#, c-format
 msgid "%s: can't set default context for /etc/passwd"
-msgstr "%s: Kan standaardcontext voor /etc/passwd niet instellen"
+msgstr "%s: kan de standaardcontext voor /etc/passwd niet instellen"
 
 #: login-utils/chsh.c:162
-#, fuzzy, c-format
-msgid ""
-"%s: running UID doesn't match UID of user we're altering, shell change denied"
+#, c-format
+msgid "%s: running UID doesn't match UID of user we're altering, shell change denied"
 msgstr ""
-"%s: Het uitvoerende UID komt niet overeen met de UID van de gebruiker\n"
-"wiens gegevens worden gewijzigd -- shell-wijziging is geweigerd.\n"
+"%s: uitvoerende UID komt niet overeen met de UID van de gebruiker\n"
+"wiens gegevens worden gewijzigd -- shell-wijziging is geweigerd"
 
 #: login-utils/chsh.c:167
-#, fuzzy, c-format
+#, c-format
 msgid "%s: your shell is not in /etc/shells, shell change denied"
-msgstr ""
-"%s: Uw huidige shell staat niet in /etc/shells -- shell-wijziging is "
-"geweigerd.\n"
+msgstr "%s: uw huidige shell staat niet in /etc/shells -- shell-wijziging is geweigerd"
 
 #: login-utils/chsh.c:173
 #, c-format
@@ -7206,9 +6991,8 @@ msgid "Shell not changed.\n"
 msgstr "Shell is niet gewijzigd.\n"
 
 #: login-utils/chsh.c:230
-#, fuzzy
 msgid "setpwnam failed"
-msgstr "strdup() is mislukt"
+msgstr "setpwnam() is mislukt"
 
 #: login-utils/chsh.c:231
 #, c-format
@@ -7277,8 +7061,7 @@ msgstr "Kan %s niet openen om te lezen -- gestopt"
 
 #: login-utils/last.c:150
 msgid "usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"
-msgstr ""
-"Gebruik:  last [-#] [-f bestand] [-t tty] [-h hostnaam] [gebruiker ...]\n"
+msgstr "Gebruik:  last [-#] [-f bestand] [-t tty] [-h hostnaam] [gebruiker ...]\n"
 
 #: login-utils/last.c:240 login-utils/vipw.c:154 misc-utils/lsblk.c:662
 #: misc-utils/wipefs.c:277 mount/swapon.c:209 mount/swapon.c:294
@@ -7290,9 +7073,9 @@ msgid "%s: open failed"
 msgstr "%s: openen is mislukt"
 
 #: login-utils/last.c:247
-#, fuzzy, c-format
+#, c-format
 msgid "%s: mmap failed"
-msgstr "%s: swapon is mislukt"
+msgstr "%s: mmap is mislukt"
 
 #: login-utils/last.c:307
 msgid "  still logged in"
@@ -7308,9 +7091,8 @@ msgstr ""
 "wtmp begint %s"
 
 #: login-utils/last.c:424
-#, fuzzy
 msgid "gethostname failed"
-msgstr "fout: uname() is mislukt"
+msgstr "gethostname() is mislukt"
 
 #: login-utils/last.c:470
 #, c-format
@@ -7346,9 +7128,9 @@ msgid "usage: login [-fp] [username]\n"
 msgstr "Gebruik:  login [-fp] [gebruikersnaam]\n"
 
 #: login-utils/login.c:581
-#, fuzzy, c-format
+#, c-format
 msgid "PAM failure, aborting: %s"
-msgstr "%s: PAM-fout -- gestopt: %s\n"
+msgstr "PAM-fout -- gestopt: %s"
 
 #: login-utils/login.c:582
 #, c-format
@@ -7393,13 +7175,12 @@ msgstr ""
 "Inloggegevens onjuist\n"
 
 #: login-utils/login.c:694 login-utils/login.c:701 login-utils/login.c:735
-#, fuzzy
 msgid ""
 "\n"
 "Session setup problem, abort."
 msgstr ""
 "\n"
-"Sessie-instellingsprobleem -- gestopt\n"
+"Sessie-instellingsprobleem -- gestopt"
 
 #: login-utils/login.c:695
 #, c-format
@@ -7420,9 +7201,9 @@ msgid "Illegal username"
 msgstr "Ongeldige gebruikersnaam"
 
 #: login-utils/login.c:807
-#, fuzzy, c-format
+#, c-format
 msgid "%s login refused on this terminal."
-msgstr "Inloggen door %s op deze terminal is geweigerd.\n"
+msgstr "Inloggen door %s op deze terminal is geweigerd."
 
 #: login-utils/login.c:812
 #, c-format
@@ -7440,9 +7221,8 @@ msgid "Login incorrect\n"
 msgstr "Inloggegevens onjuist\n"
 
 #: login-utils/login.c:1021 login-utils/login.c:1031 login-utils/login.c:1033
-#, fuzzy
 msgid "change terminal owner failed"
-msgstr "aanmaken van semafoor is mislukt"
+msgstr "wijzigen van terminaleigenaar is mislukt"
 
 #: login-utils/login.c:1101
 #, c-format
@@ -7480,9 +7260,8 @@ msgid "You have mail.\n"
 msgstr "U hebt e-mail.\n"
 
 #: login-utils/login.c:1183
-#, fuzzy
 msgid "failure forking"
-msgstr "login: kan geen nieuw proces starten: %s"
+msgstr "kan geen nieuw proces starten"
 
 #: login-utils/login.c:1230
 #, c-format
@@ -7494,9 +7273,9 @@ msgid "setuid() failed"
 msgstr "setuid() is mislukt"
 
 #: login-utils/login.c:1242
-#, fuzzy, c-format
+#, c-format
 msgid "%s: change directory failed"
-msgstr "%s: bepalen van grootte is mislukt"
+msgstr "%s: wijzigen van map is mislukt"
 
 #: login-utils/login.c:1246
 #, c-format
@@ -7504,14 +7283,12 @@ msgid "Logging in with home = \"/\".\n"
 msgstr "Ingelogd met home = '/'.\n"
 
 #: login-utils/login.c:1276
-#, fuzzy
 msgid "couldn't exec shell script"
-msgstr "login: kan shell-script niet uitvoeren: %s\n"
+msgstr "kan shell-script niet uitvoeren"
 
 #: login-utils/login.c:1278
-#, fuzzy
 msgid "no shell"
-msgstr "Geen shell"
+msgstr "geen shell"
 
 #: login-utils/login.c:1293
 #, c-format
@@ -7527,28 +7304,25 @@ msgid "NAME too long"
 msgstr "NAAM is te lang"
 
 #: login-utils/login.c:1305
-#, fuzzy
 msgid "login name much too long."
-msgstr "inlognaam is veel te lang\n"
+msgstr "inlognaam is veel te lang"
 
 #: login-utils/login.c:1310
-#, fuzzy
 msgid "login names may not start with '-'."
-msgstr "inlognamen mogen niet beginnen met '-'\n"
+msgstr "inlognamen mogen niet beginnen met '-'"
 
 #: login-utils/login.c:1320
 msgid "EXCESSIVE linefeeds"
 msgstr "EXCESSIEF aantal witregels"
 
 #: login-utils/login.c:1321
-#, fuzzy
 msgid "too many bare linefeeds."
-msgstr "te veel witregels\n"
+msgstr "te veel witregels"
 
 #: login-utils/login.c:1352
-#, fuzzy, c-format
+#, c-format
 msgid "timed out after %d seconds"
-msgstr "Inloggen duurde te lang: afgebroken na %d seconden.\n"
+msgstr "afgebroken na %d seconden"
 
 #: login-utils/login.c:1446
 #, c-format
@@ -7566,9 +7340,8 @@ msgid "on %.*s\n"
 msgstr "op %.*s\n"
 
 #: login-utils/login.c:1471
-#, fuzzy
 msgid "write lastlog failed"
-msgstr "schrijven naar standaarduitvoer is mislukt"
+msgstr "schrijven van 'lastlog' is mislukt"
 
 #: login-utils/login.c:1480
 #, c-format
@@ -7591,57 +7364,49 @@ msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "%d INLOGMISLUKKINGEN OP %s --  %s"
 
 #: login-utils/mesg.c:86
-#, fuzzy
 msgid "ttyname failed"
-msgstr "unshare() is mislukt"
+msgstr "ttyname() is mislukt"
 
 #: login-utils/mesg.c:89
-#, fuzzy, c-format
+#, c-format
 msgid "stat %s failed"
-msgstr "status opvragen is mislukt: %s"
+msgstr "status opvragen van %s is mislukt"
 
 #: login-utils/mesg.c:93
-#, fuzzy
 msgid "is y"
-msgstr "is 'y' (ja)\n"
+msgstr "is 'y' (ja)"
 
 #: login-utils/mesg.c:96
-#, fuzzy
 msgid "is n"
-msgstr "is 'n' (nee)\n"
+msgstr "is 'n' (nee)"
 
 #: login-utils/mesg.c:107 login-utils/mesg.c:111
-#, fuzzy, c-format
+#, c-format
 msgid "change %s mode failed"
-msgstr "aanmaken van semafoor is mislukt"
+msgstr "verandering van modus van %s is mislukt"
 
 #: login-utils/mesg.c:116
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [y | n]"
-msgstr "Gebruik:  mesg [y|n]\n"
+msgstr "Gebruik:  %s [y|n]"
 
 #: login-utils/newgrp.c:103
-#, fuzzy
 msgid "who are you?"
-msgstr "newgrp: Wie bent u?"
+msgstr "wie bent u?"
 
 #: login-utils/newgrp.c:109 login-utils/newgrp.c:120
-#, fuzzy
 msgid "setgid failed"
-msgstr "setuid() is mislukt"
+msgstr "setgid() is mislukt"
 
 #: login-utils/newgrp.c:114 login-utils/newgrp.c:116
-#, fuzzy
 msgid "no such group"
-msgstr "newgrp: Die groep bestaat niet."
+msgstr "die groep bestaat niet"
 
 #: login-utils/newgrp.c:122
-#, fuzzy
 msgid "permission denied"
-msgstr "mount: toegang geweigerd"
+msgstr "toegang geweigerd"
 
 #: login-utils/newgrp.c:127
-#, fuzzy
 msgid "setuid failed"
 msgstr "setuid() is mislukt"
 
@@ -7652,8 +7417,7 @@ msgstr "uitvoeren van '%s' is mislukt"
 
 #: login-utils/ttymsg.c:75
 msgid "too many iov's (change code in wall/ttymsg.c)"
-msgstr ""
-"**Interne fout**: te veel IOV's  [de code in wall/ttymsg.c dient veranderd]"
+msgstr "**Interne fout**: te veel IOV's  [de code in wall/ttymsg.c dient veranderd]"
 
 #: login-utils/ttymsg.c:85
 #, c-format
@@ -7696,9 +7460,9 @@ msgid "%s: can't link %s: %s\n"
 msgstr "%s: kan %s niet koppelen: %s\n"
 
 #: login-utils/vipw.c:196
-#, fuzzy, c-format
+#, c-format
 msgid "%s: create a link to %s failed"
-msgstr "%s: hernoemen van %s tot %s is mislukt: %s\n"
+msgstr "%s: aanmaken van een link naar %s is mislukt"
 
 #: login-utils/vipw.c:203
 #, c-format
@@ -7745,14 +7509,13 @@ msgid "Would you like to edit %s now [y/n]? "
 msgstr "Wilt u %s nu bewerken [y/n]? "
 
 #: login-utils/wall.c:87
-#, fuzzy, c-format
+#, c-format
 msgid "usage: %s [-n] [file]\n"
-msgstr "Gebruik:  %s [bestand]\n"
+msgstr "Gebruik:  %s [-n] [bestand]\n"
 
 #: login-utils/wall.c:167
-#, fuzzy
 msgid "can't open temporary file"
-msgstr "%s: kan tijdelijk bestand niet openen\n"
+msgstr "kan tijdelijk bestand niet openen"
 
 #: login-utils/wall.c:193
 #, c-format
@@ -7760,24 +7523,22 @@ msgid "Broadcast Message from %s@%s"
 msgstr "Bericht van %s@%s"
 
 #: login-utils/wall.c:211
-#, fuzzy, c-format
+#, c-format
 msgid "will not read %s - use stdin."
-msgstr "%s: zal %s niet direct lezen:  gebruik standaardinvoer\n"
+msgstr "zal %s niet direct lezen;  gebruik standaardinvoer"
 
 #: login-utils/wall.c:215
-#, fuzzy, c-format
+#, c-format
 msgid "can't read %s."
 msgstr "kan %s niet lezen"
 
 #: login-utils/wall.c:235
-#, fuzzy
 msgid "fstat failed"
-msgstr "%s: fstat() is mislukt"
+msgstr "fstat() is mislukt"
 
 #: login-utils/wall.c:241
-#, fuzzy
 msgid "fread failed"
-msgstr "lezen is mislukt: %s"
+msgstr "fread() is mislukt"
 
 #: misc-utils/cal.c:355 misc-utils/cal.c:367
 #, c-format
@@ -7798,9 +7559,9 @@ msgid "%s %d"
 msgstr "%s %d"
 
 #: misc-utils/cal.c:764
-#, fuzzy, c-format
+#, c-format
 msgid "usage: %s [-13smjyV] [[[day] month] year]\n"
-msgstr "Gebruik:  cal [-13smjyV] [[[dag] maand] jaar]\n"
+msgstr "Gebruik:  %s [-13smjyV] [[[dag] maand] jaar]\n"
 
 #: misc-utils/ddate.c:203
 #, c-format
@@ -7831,9 +7592,9 @@ msgid "failed to add line to output"
 msgstr "toevoegen van regel aan uitvoer is mislukt"
 
 #: misc-utils/findmnt.c:361
-#, fuzzy, c-format
+#, c-format
 msgid "%s: parse error at line %d"
-msgstr "ontledingsfout op regel: "
+msgstr "%s: ontledingsfout op regel %d"
 
 #: misc-utils/findmnt.c:372
 msgid "failed to initialize libmount tab"
@@ -7897,11 +7658,13 @@ msgid ""
 msgstr ""
 
 #: misc-utils/findmnt.c:540 misc-utils/lsblk.c:871
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Available columns:\n"
-msgstr "Beschikbare opdrachten:\n"
+msgstr ""
+"\n"
+"Beschikbare kolommen:\n"
 
 #: misc-utils/findmnt.c:550
 #, c-format
@@ -7922,9 +7685,7 @@ msgid "unknown direction '%s'"
 msgstr "onbekende richting '%s'"
 
 #: misc-utils/findmnt.c:718
-msgid ""
-"options --target and --source can't be used together with command line "
-"element that is not an option"
+msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr "opties '--target' en '--source' gaan niet samen met andere argumenten"
 
 #: misc-utils/findmnt.c:757
@@ -7996,8 +7757,7 @@ msgstr "logger: onbekende prioriteitsnaam: %s\n"
 
 #: misc-utils/logger.c:285
 #, c-format
-msgid ""
-"usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
+msgid "usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
 msgstr ""
 "Gebruik:  logger [-isd] [-f bestand] [-p prioriteit] [-t tag]\n"
 "                 [-u socket] [bericht...]\n"
@@ -8009,133 +7769,126 @@ msgstr "Gebruik:  look [-dfa] [-t teken] tekst [bestand]\n"
 
 #: misc-utils/lsblk.c:92
 msgid "device name"
-msgstr ""
+msgstr "apparaatnaam"
 
 #: misc-utils/lsblk.c:93
 msgid "internel kernel device name"
-msgstr ""
+msgstr "interne kernelapparaatnaam"
 
 #: misc-utils/lsblk.c:94
 msgid "major:minor device number"
-msgstr ""
+msgstr "hoofd-:subapparaatnummer"
 
 #: misc-utils/lsblk.c:95
-#, fuzzy
 msgid "filesystem type"
-msgstr "Geef het soort bestandssysteem: "
+msgstr "bestandssysteemsoort"
 
 #: misc-utils/lsblk.c:96
 msgid "where the device is mounted"
-msgstr ""
+msgstr "waar het apparaat is aangekoppeld"
 
 #: misc-utils/lsblk.c:97
 msgid "filesystem LABEL"
-msgstr ""
+msgstr "bestandssysteemlabel"
 
 #: misc-utils/lsblk.c:98
 msgid "filesystem UUID"
-msgstr ""
+msgstr "bestandssysteem-UUID"
 
 #: misc-utils/lsblk.c:99
-#, fuzzy
 msgid "read-only device"
-msgstr "alleen-lezen instellen"
+msgstr "alleen-lezenapparaat"
 
 #: misc-utils/lsblk.c:100
-#, fuzzy
 msgid "removable device"
-msgstr " verwijderbaar"
+msgstr "verwijderbaar apparaat"
 
 #: misc-utils/lsblk.c:101
 msgid "rotational device"
-msgstr ""
+msgstr "roterend apparaat"
 
 #: misc-utils/lsblk.c:102
 msgid "device identifier"
-msgstr ""
+msgstr "apparaat-ID"
 
 #: misc-utils/lsblk.c:103
 msgid "size of the device"
-msgstr ""
+msgstr "apparaatgrootte"
 
 #: misc-utils/lsblk.c:104
-#, fuzzy
 msgid "user name"
-msgstr "Ongeldige gebruikersnaam"
+msgstr "gebruikersnaam"
 
 #: misc-utils/lsblk.c:105
 msgid "group name"
-msgstr ""
+msgstr "groepsnaam"
 
 #: misc-utils/lsblk.c:106
 msgid "device node permissions"
-msgstr ""
+msgstr "toegangsrechten van apparaat"
 
 #: misc-utils/lsblk.c:107
-#, fuzzy
 msgid "alignment offset"
-msgstr "uitlijningspositie tonen"
+msgstr "uitlijningspositie"
 
 #: misc-utils/lsblk.c:108
-#, fuzzy
 msgid "minimum I/O size"
-msgstr "minimale in-/uitvoergrootte tonen"
+msgstr "minimale in-/uitvoergrootte"
 
 #: misc-utils/lsblk.c:109
-#, fuzzy
 msgid "optimal I/O size"
-msgstr "optimale in-/uitvoergrootte tonen"
+msgstr "optimale in-/uitvoergrootte"
 
 #: misc-utils/lsblk.c:110
-#, fuzzy
 msgid "physical sector size"
-msgstr "fysieke sectorgrootte tonen"
+msgstr "fysieke sectorgrootte"
 
 #: misc-utils/lsblk.c:111
-#, fuzzy
 msgid "logical sector size"
-msgstr "logische sectorgrootte tonen"
+msgstr "logische sectorgrootte"
 
 #: misc-utils/lsblk.c:112
 msgid "I/O scheduler name"
-msgstr ""
+msgstr "naam van in-/uitvoerscheduler"
 
 #: misc-utils/lsblk.c:705
 msgid "failed to open device directory in sysfs"
-msgstr ""
+msgstr "openen van apparatenmap in 'sysfs' is mislukt"
 
 #: misc-utils/lsblk.c:775 partx/partx.c:804
-#, fuzzy, c-format
+#, c-format
 msgid "%s: not a block device"
-msgstr "%s: is geen blok-apparaat\n"
+msgstr "%s: is geen blok-apparaat"
 
 #: misc-utils/lsblk.c:779
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to get whole-list devno"
-msgstr "%s: 'seek' naar wisselgeheugenlabel is mislukt"
+msgstr "%s: achterhalen van apparaatnummer van gehele schijf is mislukt"
 
 #: misc-utils/lsblk.c:800
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to read link"
-msgstr "%s: openen is mislukt"
+msgstr "%s: lezen van koppeling is mislukt"
 
 #: misc-utils/lsblk.c:836
-#, fuzzy, c-format
+#, c-format
 msgid "failed to parse list '%s'"
-msgstr "ontleden van %s '%s' is mislukt"
+msgstr "ontleden van lijst '%s' is mislukt"
 
 #: misc-utils/lsblk.c:840
 #, c-format
 msgid "the list of excluded devices is too large (limit is %d devices)"
-msgstr ""
+msgstr "de lijst van uitgesloten apparaten is te lang (de limiet is %d apparaten)"
 
 #: misc-utils/lsblk.c:852
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
 " %s [options] [<device> ...]\n"
-msgstr "Gebruik:  %s [opties] apparaat ...\n"
+msgstr ""
+"\n"
+"Gebruik:  %s [opties] [apparaat ...]\n"
 
 #: misc-utils/lsblk.c:856
 #, c-format
@@ -8143,8 +7896,7 @@ msgid ""
 "\n"
 "Options:\n"
 " -a, --all            print all devices\n"
-" -b, --bytes          print SIZE in bytes rather than in human readable "
-"format\n"
+" -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 " -d, --nodeps         don't print slaves or holders\n"
 " -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
 " -f, --fs             output info about filesystems\n"
@@ -8159,13 +7911,13 @@ msgid ""
 msgstr ""
 
 #: misc-utils/lsblk.c:876
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "For more information see lsblk(8).\n"
 msgstr ""
 "\n"
-"Voor meer informatie zie swaplabel(8).\n"
+"Voor meer informatie zie lsblk(8).\n"
 
 #: misc-utils/mcookie.c:105 misc-utils/mcookie.c:132
 #, c-format
@@ -8194,9 +7946,9 @@ msgid "could not stat '%s'"
 msgstr "kan status van '%s' niet opvragen"
 
 #: misc-utils/namei.c:379
-#, fuzzy, c-format
+#, c-format
 msgid "%s - No such file or directory\n"
-msgstr "%s: vereist een bestandsdescriptor, een bestand of een map\n"
+msgstr "%s -- Bestand of map bestaat niet\n"
 
 #: misc-utils/namei.c:427
 #, c-format
@@ -8847,7 +8599,7 @@ msgstr "opties '--offset' en '--all' gaan niet samen"
 
 #: misc-utils/wipefs.c:388
 msgid "only one device as argument is currently supported."
-msgstr ""
+msgstr "momenteel wordt slechts één apparaatargument ondersteund"
 
 #: misc-utils/write.c:101
 #, c-format
@@ -8867,7 +8619,7 @@ msgstr "write: %s is niet ingelogd op %s\n"
 #: misc-utils/write.c:141
 #, c-format
 msgid "write: %s has messages disabled on %s\n"
-msgstr "write: %s hebt berichten uitgezet op %s\n"
+msgstr "write: %s heeft berichten uitgezet op %s\n"
 
 #: misc-utils/write.c:148
 #, c-format
@@ -8905,9 +8657,8 @@ msgid "warning: error reading %s: %s"
 msgstr "waarschuwing: fout bij lezen van %s: %s"
 
 #: mount/fstab.c:189
-#, fuzzy
 msgid "warning: failed to read mtab"
-msgstr "lezen van %s is mislukt"
+msgstr "waarschuwing: lezen van 'mtab' is mislukt"
 
 #: mount/fstab.c:217 mount/fstab.c:243
 #, c-format
@@ -8922,23 +8673,17 @@ msgstr "mount: kan %s niet openen -- %s wordt gebruikt\n"
 #: mount/fstab.c:674
 #, c-format
 msgid "can't create lock file %s: %s (use -n flag to override)"
-msgstr ""
-"kan vergrendelingsbestand %s niet aanmaken: %s  (gebruik optie '-n' om te "
-"forceren)"
+msgstr "kan vergrendelingsbestand %s niet aanmaken: %s  (gebruik optie '-n' om te forceren)"
 
 #: mount/fstab.c:700
 #, c-format
 msgid "can't link lock file %s: %s (use -n flag to override)"
-msgstr ""
-"kan vergrendelingsbestand %s niet koppelen: %s  (gebruik optie '-n' om te "
-"forceren)"
+msgstr "kan vergrendelingsbestand %s niet koppelen: %s  (gebruik optie '-n' om te forceren)"
 
 #: mount/fstab.c:716
 #, c-format
 msgid "can't open lock file %s: %s (use -n flag to override)"
-msgstr ""
-"kan vergrendelingsbestand %s niet openen: %s  (gebruik optie '-n' om te "
-"forceren)"
+msgstr "kan vergrendelingsbestand %s niet openen: %s  (gebruik optie '-n' om te forceren)"
 
 #: mount/fstab.c:731
 #, c-format
@@ -9066,9 +8811,7 @@ msgstr "waarschuwing: %s is al gerelateerd aan %s\n"
 #: mount/lomount.c:769
 #, c-format
 msgid "warning: %s: is write-protected, using read-only.\n"
-msgstr ""
-"waarschuwing: %s is schrijfbeveiligd en wordt als alleen-lezen "
-"aangekoppeld.\n"
+msgstr "waarschuwing: %s is schrijfbeveiligd en wordt als alleen-lezen aangekoppeld.\n"
 
 #: mount/lomount.c:805
 #, c-format
@@ -9112,8 +8855,7 @@ msgid ""
 " %1$s -d | --detach <loopdev> [<loopdev> ...] delete\n"
 " %1$s -f | --find                             find unused\n"
 " %1$s -c | --set-capacity <loopdev>           resize\n"
-" %1$s -j | --associated <file> [-o <num>]     list all associated with "
-"<file>\n"
+" %1$s -j | --associated <file> [-o <num>]     list all associated with <file>\n"
 " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"
 msgstr ""
 "\n"
@@ -9121,8 +8863,7 @@ msgstr ""
 "  %1$s <lus-apparaat>                                  info tonen\n"
 "  %1$s -a | --all                                      alle gebruikte tonen\n"
 "  %1$s -d | --detach <lus-apparaat>...                 verwijderen\n"
-"  %1$s -f | --find                                     een ongebruikte "
-"tonen\n"
+"  %1$s -f | --find                                     een ongebruikte tonen\n"
 "  %1$s -c | --set-capacity <loopdev>                   de grootte wijzigen\n"
 "  %1$s -j | --associated <bestand> [-o <nummer>]       gerelateerden tonen\n"
 "  %1$s [opties] {-f|--find|<lus-apparaat>} <bestand>   instellen\n"
@@ -9148,8 +8889,7 @@ msgstr ""
 "  -h | --help                deze hulptekst tonen\n"
 "  -o | --offset <getal>      op deze positie in het bestand beginnen\n"
 "       --sizelimit <getal>   slechts dit aantal bytes van bestand gebruiken\n"
-"  -p | --pass-fd <getal>     wachtwoordtekst uit deze bestandsdescriptor "
-"lezen\n"
+"  -p | --pass-fd <getal>     wachtwoordtekst uit deze bestandsdescriptor lezen\n"
 "  -r | --read-only           een alleen-lezen lus-apparaat instellen\n"
 "       --show                apparaatnaam tonen (bij '-f <bestand>')\n"
 "  -v | --verbose             gedetailleerde uitvoer produceren\n"
@@ -9182,9 +8922,7 @@ msgstr "%s: apparaat %s is bezig"
 #: mount/lomount.c:1168
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
-msgstr ""
-"Bij het compileren was geen lus-ondersteuning beschikbaar.  Hercompilatie is "
-"nodig.\n"
+msgstr "Bij het compileren was geen lus-ondersteuning beschikbaar.  Hercompilatie is nodig.\n"
 
 #: mount/mount.c:312
 #, c-format
@@ -9216,17 +8954,17 @@ msgstr "mount: argument van %s is vertaald van '%s' naar '%s'\n"
 #: mount/mount.c:450
 #, c-format
 msgid "mount: SELinux *context= options are ignore on remount.\n"
-msgstr ""
+msgstr "mount: SELinux-opties '*context=' worden genegeerd bij heraankoppelen.\n"
 
 #: mount/mount.c:611
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
-msgstr "mount: volgens mtab is %s al aangekoppeld op %s"
+msgstr "mount: volgens 'mtab' is %s al aangekoppeld op %s"
 
 #: mount/mount.c:616
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
-msgstr "mount: volgens mtab is %s aangekoppeld op %s"
+msgstr "mount: volgens 'mtab' is %s aangekoppeld op %s"
 
 #: mount/mount.c:640
 #, c-format
@@ -9323,9 +9061,9 @@ msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: instellen van lus-apparaat wordt overgeslagen\n"
 
 #: mount/mount.c:1246
-#, fuzzy, c-format
+#, c-format
 msgid "mount: enabling autoclear loopdev flag\n"
-msgstr "mount: lus-apparaat %s zal worden gebruikt\n"
+msgstr "mount: lus-apparaatvlag 'autoclear' wordt ingeschakeld\n"
 
 #: mount/mount.c:1254
 #, c-format
@@ -9340,7 +9078,7 @@ msgstr "mount: ongeldige groottegrens '%s' opgegeven"
 #: mount/mount.c:1263
 #, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
-msgstr "mount: volgens mtab is %s al als lus-apparaat aangekoppeld op %s"
+msgstr "mount: volgens 'mtab' is %s al als lus-apparaat aangekoppeld op %s"
 
 #: mount/mount.c:1273
 #, c-format
@@ -9350,8 +9088,7 @@ msgstr "mount: lus-apparaat %s zal worden gebruikt\n"
 #: mount/mount.c:1282
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
-msgstr ""
-"mount: lus-apparaat %s is door ander proces afgepakt; ... nieuwe poging\n"
+msgstr "mount: lus-apparaat %s is door ander proces afgepakt; ... nieuwe poging\n"
 
 #: mount/mount.c:1287
 #, c-format
@@ -9366,7 +9103,7 @@ msgstr "mount: instellen van lus-apparaat is mislukt\n"
 #: mount/mount.c:1303
 #, c-format
 msgid "mount: setup loop device successfully\n"
-msgstr "mount: lus-apparaat is succesvol ingesteld\n"
+msgstr "mount: lus-apparaat is met succes ingesteld\n"
 
 #: mount/mount.c:1388 mount/mount.c:1422
 #, c-format
@@ -9395,7 +9132,7 @@ msgstr "mount: kan snelheid niet instellen: %s"
 #: mount/mount.c:1571
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
-msgstr "mount: volgens mtab is %s al aangekoppeld op %s\n"
+msgstr "mount: volgens 'mtab' is %s al aangekoppeld op %s\n"
 
 #: mount/mount.c:1635
 #, c-format
@@ -9408,8 +9145,7 @@ msgid "mount: warning: %s seems to be mounted read-only.\n"
 msgstr "mount: Waarschuwing: %s schijnt aangekoppeld als alleen-lezen\n"
 
 #: mount/mount.c:1688
-msgid ""
-"mount: I could not determine the filesystem type, and none was specified"
+msgid "mount: I could not determine the filesystem type, and none was specified"
 msgstr "mount: kan bestandssysteemsoort niet bepalen, en er is geen aangegeven"
 
 #: mount/mount.c:1691
@@ -9455,9 +9191,7 @@ msgstr "mount: aankoppelingspunt %s bestaat niet"
 #: mount/mount.c:1724
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
-msgstr ""
-"mount: aankoppelingspunt %s is een symbolische koppeling die nergens naar "
-"wijst"
+msgstr "mount: aankoppelingspunt %s is een symbolische koppeling die nergens naar wijst"
 
 #: mount/mount.c:1729
 #, c-format
@@ -9469,8 +9203,7 @@ msgstr "mount: apparaat %s bestaat niet"
 msgid ""
 "mount: special device %s does not exist\n"
 "       (a path prefix is not a directory)\n"
-msgstr ""
-"mount: apparaat %s bestaat niet  (het pad bevat iets dat geen map is)\n"
+msgstr "mount: apparaat %s bestaat niet  (het pad bevat iets dat geen map is)\n"
 
 #: mount/mount.c:1753
 #, c-format
@@ -9483,8 +9216,7 @@ msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
 "       missing codepage or helper program, or other error"
 msgstr ""
-"mount: onjuiste bestandssysteemsoort, ongeldige optie, ontbrekende "
-"codepagina,\n"
+"mount: onjuiste bestandssysteemsoort, ongeldige optie, ontbrekende codepagina,\n"
 "       ontbrekend hulpprogramma, slecht superblok op %s, of een andere fout"
 
 #: mount/mount.c:1762
@@ -9500,8 +9232,7 @@ msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
 msgstr ""
-"       (is dit misschien een IDE-apparaat waar u in feite ide-scsi "
-"gebruikt,\n"
+"       (is dit misschien een IDE-apparaat waar u in feite ide-scsi gebruikt,\n"
 "       zodat sr0 of sda of iets dergelijks nodig is?)"
 
 #: mount/mount.c:1776
@@ -9555,9 +9286,7 @@ msgstr "mount: mogelijk bedoelde u 'vfat'?"
 #: mount/mount.c:1823
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
-msgstr ""
-"mount: %s heeft onjuist apparaatnummer, of bestandssysteemsoort %s wordt "
-"niet ondersteund"
+msgstr "mount: %s heeft onjuist apparaatnummer, of bestandssysteemsoort %s wordt niet ondersteund"
 
 #: mount/mount.c:1831
 #, c-format
@@ -9605,9 +9334,7 @@ msgstr "mount: %s%s is schrijfbeveiligd, maar expliciete optie '-w' is gegeven"
 #: mount/mount.c:1857
 #, c-format
 msgid "mount: cannot remount %s%s read-write, is write-protected"
-msgstr ""
-"mount: kan %s%s niet heraankoppelen als lezen-en-schrijven, want is "
-"schrijfbeveiligd"
+msgstr "mount: kan %s%s niet heraankoppelen als lezen-en-schrijven, want is schrijfbeveiligd"
 
 #: mount/mount.c:1872
 #, c-format
@@ -9629,12 +9356,9 @@ msgid ""
 "       this file system.  For more details see restorecon(8) and mount(8).\n"
 msgstr ""
 "mount: %s bevat geen SELinux-labels.\n"
-"    U hebt zojuist op een SELinux-computer een bestandssysteem aangekoppeld "
-"dat\n"
-"    labels ondersteunt maar er geen bevat.  Waarschijnlijk zullen "
-"ingeperkte\n"
-"    programma's AVC-berichten genereren en geen toegang tot dit "
-"bestandssysteem\n"
+"    U hebt zojuist op een SELinux-computer een bestandssysteem aangekoppeld dat\n"
+"    labels ondersteunt maar er geen bevat.  Waarschijnlijk zullen ingeperkte\n"
+"    programma's AVC-berichten genereren en geen toegang tot dit bestandssysteem\n"
 "    kunnen krijgen.  Voor meer details zie restorecon(8) en mount(8).\n"
 
 #: mount/mount.c:1979
@@ -9645,13 +9369,12 @@ msgstr "mount: geen soort gegeven -- NFS aangenomen, vanwege de dubbele punt\n"
 #: mount/mount.c:1985
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
-msgstr ""
-"mount: geen soort gegeven -- CIFS aangenomen, vanwege het //-voorvoegsel\n"
+msgstr "mount: geen soort gegeven -- CIFS aangenomen, vanwege het //-voorvoegsel\n"
 
 #: mount/mount.c:2050
 #, c-format
 msgid "mount: ignore %s (unparsable offset= option)\n"
-msgstr ""
+msgstr "mount: %s wordt genegeerd (onbegrepen optie 'offset=')\n"
 
 #: mount/mount.c:2062
 #, c-format
@@ -9727,8 +9450,7 @@ msgstr ""
 "\n"
 "Een apparaat kan worden opgegeven via de naam, zeg /dev/hda1 of /dev/cdrom,\n"
 "of via het label, met -L label, of via de UUID, met -U UUID.\n"
-"Andere opties zijn: [-nfFrsvw] [-o opties] [-p "
-"wachtwoordbestandsdescriptor].\n"
+"Andere opties zijn: [-nfFrsvw] [-o opties] [-p wachtwoordbestandsdescriptor].\n"
 "Voor meer informatie, zie man mount(8).\n"
 
 #: mount/mount.c:2575
@@ -9756,8 +9478,7 @@ msgstr "mount: kan %s niet vinden in %s noch in %s"
 #: mount/mount_mntent.c:107
 #, c-format
 msgid "[mntent]: warning: no final newline at the end of %s\n"
-msgstr ""
-"[mntent]: waarschuwing: geen afsluitend regeleindeteken aan het eind van %s\n"
+msgstr "[mntent]: waarschuwing: geen afsluitend regeleindeteken aan het eind van %s\n"
 
 #: mount/mount_mntent.c:154
 #, c-format
@@ -9795,7 +9516,7 @@ msgstr ""
 "\n"
 
 #: mount/swapon.c:101
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -9808,10 +9529,9 @@ msgid ""
 msgstr ""
 "\n"
 "Gebruik:\n"
-"  %1$s -a [-e] [-v] [-f]                 alle wisselgeheugens inschakelen "
-"die\n"
+"  %1$s -a [-e] [-v] [-f]                 alle wisselgeheugens inschakelen die\n"
 "                                           vermeld staan in /etc/fstab\n"
-"  %1$s [-p PRIORITEIT] [-v] [-f] NAAM    dit wisselgeheugen inschakelen\n"
+"  %1$s [-p PRIORITEIT] [-d] [-v] [-f] NAAM    dit wisselgeheugen inschakelen\n"
 "  %1$s -s                                gebruikssamenvatting tonen\n"
 "  %1$s -h                                deze hulptekst tonen\n"
 "  %1$s -V                                programmaversie tonen\n"
@@ -9867,9 +9587,7 @@ msgstr "%s: schrijven van vingerafdruk is mislukt"
 #: mount/swapon.c:393
 #, c-format
 msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
-msgstr ""
-"%s: wisselgeheugenvingerafdruk gevonden: versie %d, paginagrootte %d, %s "
-"byte-volgorde"
+msgstr "%s: wisselgeheugenvingerafdruk gevonden: versie %d, paginagrootte %d, %s byte-volgorde"
 
 # Eén van de volgende twee berichten wordt ingevuld voor bovenstaand woord "byte-volgorde".
 #: mount/swapon.c:398
@@ -9891,9 +9609,9 @@ msgid "%s: insecure permissions %04o, %04o suggested."
 msgstr "%s: onveilige toegangsrechten: %04o -- aangeraden wordt: %04o"
 
 #: mount/swapon.c:428
-#, fuzzy, c-format
+#, c-format
 msgid "%s: insecure file owner %d, 0 (root) suggested."
-msgstr "%s: onveilige toegangsrechten: %04o -- aangeraden wordt: %04o"
+msgstr "%s: onveilige bestandseigenaar %d -- 0 (root) wordt aangeraden"
 
 #: mount/swapon.c:435
 #, c-format
@@ -9918,9 +9636,7 @@ msgstr "%s: paginagrootte=%d, wisselgrootte=%llu, apparaatgrootte=%llu"
 #: mount/swapon.c:468
 #, c-format
 msgid "%s: last_page 0x%08llx is larger than actual size of swapspace"
-msgstr ""
-"%s: opgeslagen grootte (0x%08llx) van wisselgeheugen is groter dan de "
-"feitelijke ruimte"
+msgstr "%s: opgeslagen grootte (0x%08llx) van wisselgeheugen is groter dan de feitelijke ruimte"
 
 #: mount/swapon.c:473
 #, c-format
@@ -9929,8 +9645,7 @@ msgstr "%s: opgeslagen paginagrootte klopt niet"
 
 #: mount/swapon.c:478
 #, c-format
-msgid ""
-"%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
+msgid "%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
 msgstr ""
 "%s: opgeslagen paginagrootte klopt niet;\n"
 "gebruik '--fixpgsz' om dit te corrigeren"
@@ -9967,8 +9682,7 @@ msgstr "%s: swapoff is mislukt"
 #: mount/swapon.c:856
 #, c-format
 msgid "'%s' is unsupported program name (must be 'swapon' or 'swapoff')."
-msgstr ""
-"'%s' is niet-toegestane programmanaam (moet 'swapon' of 'swapoff' zijn)"
+msgstr "'%s' is niet-toegestane programmanaam (moet 'swapon' of 'swapoff' zijn)"
 
 #: mount/umount.c:42
 #, c-format
@@ -10072,9 +9786,9 @@ msgstr ""
 "          umount -h|-V\n"
 
 #: mount/umount.c:500
-#, fuzzy, c-format
+#, c-format
 msgid "failed to parse 'offset=%s' options\n"
-msgstr "ontleden van %s '%s' is mislukt"
+msgstr "ontleden van opties 'offset=%s' is mislukt\n"
 
 #: mount/umount.c:508
 #, c-format
@@ -10102,9 +9816,7 @@ msgstr "umount: verward tijdens analyse van 'mtab'-bestand"
 #: mount/umount.c:551
 #, c-format
 msgid "umount: cannot unmount %s -- %s is mounted over it on the same point"
-msgstr ""
-"umount: kan %s niet ontkoppelen -- %s is er op hetzelfde punt overheen "
-"aangekoppeld"
+msgstr "umount: kan %s niet ontkoppelen -- %s is er op hetzelfde punt overheen aangekoppeld"
 
 #: mount/umount.c:558
 #, c-format
@@ -10141,127 +9853,114 @@ msgid "umount: only root can do that"
 msgstr "umount: alleen root kan dat doen"
 
 #: partx/partx.c:80
-#, fuzzy
 msgid "partition number"
-msgstr "Partitienummer"
+msgstr "partitienummer"
 
 #: partx/partx.c:81
-#, fuzzy
 msgid "start of the partition in sectors"
-msgstr "T = gewoon de partitietabel weergeven"
+msgstr "begin van de partitie (in sectoren)"
 
 #: partx/partx.c:82
-#, fuzzy
 msgid "end of the partition in sectors"
-msgstr "Schrijven van partitie op %s is mislukt\n"
+msgstr "einde van de partitie (in sectoren)"
 
 #: partx/partx.c:83
-#, fuzzy
 msgid "number of sectors"
-msgstr "Aantal sectoren"
+msgstr "aantal sectoren"
 
 #: partx/partx.c:84
 msgid "human readable size"
-msgstr ""
+msgstr "leesbare grootte"
 
 #: partx/partx.c:85
-#, fuzzy
 msgid "partition name"
-msgstr "Partitienummer"
+msgstr "partitienaam"
 
 #: partx/partx.c:86
-#, fuzzy
 msgid "partition UUID"
-msgstr ""
-"\n"
-"%d partities:\n"
+msgstr "partitie-UUID"
 
 #: partx/partx.c:87
-#, fuzzy
 msgid "partition table type (dos, gpt, ...)"
-msgstr "Schrijven van partitietabel naar schijf..."
+msgstr "partitietabeltype (dos, gpt, ...)"
 
 #: partx/partx.c:88
-#, fuzzy
 msgid "partition flags"
-msgstr ""
-"\n"
-"%d partities:\n"
+msgstr "partitievlaggen"
 
 #: partx/partx.c:89
-#, fuzzy
 msgid "partition type hex or uuid"
-msgstr "# Partitietabel van %s\n"
+msgstr "partitietype (hex of UUID)"
 
 #: partx/partx.c:177
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to get partition number"
-msgstr "%s: schrijven van label is mislukt"
+msgstr "%s: kan partitienummer niet achterhalen"
 
 #: partx/partx.c:239
-#, fuzzy, c-format
+#, c-format
 msgid "%s: error deleting partition %d"
-msgstr "Geselecteerde partitie is %d\n"
+msgstr "%s: fout bij verwijderen van partitie %d"
 
 #: partx/partx.c:241
 #, c-format
 msgid "%s: error deleting partitions %d-%d"
-msgstr ""
+msgstr "%s: fout bij verwijderen van partities %d-%d"
 
 #: partx/partx.c:265 partx/partx.c:829
 #, c-format
 msgid "defined range <%d:%d> does not make sense"
-msgstr ""
+msgstr "gegeven bereik <%d:%d> is onzinnig"
 
 #: partx/partx.c:273
-#, fuzzy, c-format
+#, c-format
 msgid "%s: partition #%d removed\n"
-msgstr "Geen partities gedefinieerd\n"
+msgstr "%s: partitie #%d is verwijderd\n"
 
 #: partx/partx.c:278
-#, fuzzy, c-format
+#, c-format
 msgid "%s: delete partition #%d failed"
-msgstr "Geselecteerde partitie is %d\n"
+msgstr "%s: verwijderen van partitie #%d is mislukt"
 
 #: partx/partx.c:297
-#, fuzzy, c-format
+#, c-format
 msgid "%s: error adding partition %d"
-msgstr "valt niet binnen partitie %s\n"
+msgstr "%s: fout bij toevoegen van partitie %d"
 
 #: partx/partx.c:299
-#, fuzzy, c-format
+#, c-format
 msgid "%s: error adding partitions %d-%d"
-msgstr "Waarschuwing: partities %s "
+msgstr "%s: fout bij toevoegen van partities %d-%d"
 
 #: partx/partx.c:336
-#, fuzzy, c-format
+#, c-format
 msgid "%s: partition #%d added\n"
-msgstr "Geen partities gedefinieerd\n"
+msgstr "%s: partitie #%d is toegevoegd\n"
 
 #: partx/partx.c:341
-#, fuzzy, c-format
+#, c-format
 msgid "%s: add partition #%d failed"
-msgstr "%s: swapon is mislukt"
+msgstr "%s: toevoegen van partitie #%d is mislukt"
 
 #: partx/partx.c:564
-#, fuzzy, c-format
+#, c-format
 msgid "failed to initialize blkid filter for '%s'"
-msgstr "initialiseren van libmount-iterator is mislukt"
+msgstr "initialiseren van blkid-filter voor '%s' is mislukt"
 
 #: partx/partx.c:572
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to read partition table"
-msgstr "partitietabel opnieuw inlezen"
+msgstr "%s: lezen van partitietabel is mislukt"
 
 #: partx/partx.c:578
-#, fuzzy, c-format
+#, c-format
 msgid "%s: partition table '%s' detected\n"
-msgstr "        (%s-partitietabel gedetecteerd). "
+msgstr "%s: '%s'-partitietabel gedetecteerd\n"
 
 #: partx/partx.c:583
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s partition table does not contains usable partitions"
-msgstr "Schijf %s bevat geen geldige partitietabel\n"
+msgstr "%s: '%s'-partitietabel bevat geen bruikbare partities"
 
 #: partx/partx.c:596
 #, c-format
@@ -10270,6 +9969,8 @@ msgid ""
 "Usage:\n"
 " %s [-a|-d|-s] [--nr <N:M> | <device>] <wholedisk>\n"
 msgstr ""
+"\n"
+"Gebruik:  %s [-a|-d|-s] [--nr <N:M> | <partitie>] <apparaat>\n"
 
 #: partx/partx.c:601
 #, c-format
@@ -10281,8 +9982,7 @@ msgid ""
 " -l, --list           list partitions (DEPRECATED)\n"
 " -s, --show           list partitions\n"
 "\n"
-" -b, --bytes          print SIZE in bytes rather than in human readable "
-"format\n"
+" -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 " -g, --noheadings     don't print headings for --show\n"
 " -r, --raw            use raw format output\n"
 " -t, --type <TYPE>    specify the partition type (dos, bsd, solaris, etc.)\n"
@@ -10293,35 +9993,35 @@ msgid ""
 msgstr ""
 
 #: partx/partx.c:615
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Available columns (for --show):\n"
-msgstr "Beschikbare opdrachten:\n"
+msgstr ""
+"\n"
+"Beschikbare kolommen (voor '--show') zijn:\n"
 
 #: partx/partx.c:620
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "For more information see partx(8).\n"
 msgstr ""
 "\n"
-"Voor meer informatie zie setarch(8).\n"
+"Voor meer informatie zie partx(8).\n"
 
 #: partx/partx.c:680
-#, fuzzy
 msgid "failed to parse --nr <M-N> range"
-msgstr "ontleden van prioriteit is mislukt"
+msgstr "ontleden van bereik in '--nr <M-N>' is mislukt"
 
 #: partx/partx.c:778
-#, fuzzy
 msgid "--nr and <partition> are mutually exclusive}"
-msgstr "opties gaan niet samen"
+msgstr "<partitie> en optie '--nr' gaan niet samen"
 
 #: partx/partx.c:816
-#, fuzzy, c-format
+#, c-format
 msgid "%s: failed to initialize blkid prober"
-msgstr "initialiseren van regelbuffer is mislukt\n"
+msgstr "%s: initialiseren van blkid-sonde is mislukt"
 
 #: schedutils/chrt.c:62
 #, c-format
@@ -10450,12 +10150,8 @@ msgid "failed to parse priority"
 msgstr "ontleden van prioriteit is mislukt"
 
 #: schedutils/chrt.c:277
-msgid ""
-"SCHED_RESET_ON_FORK flag is suppoted for SCHED_FIFO and SCHED_RR policies "
-"only"
-msgstr ""
-"De vlag SCHED_RESET_ON_FORK wordt alleen voor SCHED_FIFO- en SCHED_RR-beleid "
-"ondersteund"
+msgid "SCHED_RESET_ON_FORK flag is suppoted for SCHED_FIFO and SCHED_RR policies only"
+msgstr "De vlag SCHED_RESET_ON_FORK wordt alleen voor SCHED_FIFO- en SCHED_RR-beleid ondersteund"
 
 #: schedutils/chrt.c:287
 #, c-format
@@ -10509,14 +10205,12 @@ msgstr ""
 "\n"
 
 #: schedutils/ionice.c:108
-#, fuzzy
 msgid "failed to parse class data"
-msgstr "ontleden van %s '%s' is mislukt"
+msgstr "ontleden van klassedata (bij '-n') is mislukt"
 
 #: schedutils/ionice.c:112
-#, fuzzy
 msgid "failed to parse class"
-msgstr "ontleden van %s '%s' is mislukt"
+msgstr "ontleden van klasse (bij '-c') is mislukt"
 
 #: schedutils/ionice.c:131
 msgid "ignoring given class data for none class"
@@ -10651,27 +10345,26 @@ msgid "pid %d's new affinity mask: %s\n"
 msgstr "Nieuw affiniteitsmasker van PID %d: %s\n"
 
 #: shlibs/mount/samples/mount.c:69
-#, fuzzy, c-format
+#, c-format
 msgid "only root can use \"--%s\" option (effective UID is %u)"
-msgstr "mount: alleen root kan dat doen (feitelijke UID is %u)"
+msgstr "alleen root kan optie '--%s' gebruiken (feitelijke UID is %u)"
 
 #: shlibs/mount/samples/mount.c:72
-#, fuzzy, c-format
+#, c-format
 msgid "only root can do that (effective UID is %u)"
-msgstr "mount: alleen root kan dat doen (feitelijke UID is %u)"
+msgstr "alleen root kan dat doen (feitelijke UID is %u)"
 
 #: shlibs/mount/samples/mount.c:76
-#, fuzzy, c-format
+#, c-format
 msgid "only root can use \"--%s\" option"
-msgstr "mount: alleen root kan %s aankoppelen op %s"
+msgstr "alleen root kan optie '--%s' gebruiken"
 
 #: shlibs/mount/samples/mount.c:77
-#, fuzzy
 msgid "only root can do that"
-msgstr "mount: alleen root kan dat doen"
+msgstr "alleen root kan dat doen"
 
 #: shlibs/mount/samples/mount.c:149
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage:\n"
 " %1$s [-lhV]\n"
@@ -10680,12 +10373,10 @@ msgid ""
 " %1$s [options] <source> <directory>\n"
 " %1$s <operation> <mountpoint> [<target>]\n"
 msgstr ""
-"\n"
-"Gebruik:\n"
-"  %1$s [opties]\n"
-"  %1$s [opties] <apparaat> | <aankoppelingspunt>\n"
-"  %1$s [opties] <apparaat> <aankoppelingspunt>\n"
-"  %1$s [opties] [--source <apparaat>] [--target <aankoppelingspunt>]\n"
+"Gebruik:  %1$s [-hlV] | -a [opties]\n"
+"          %1$s [opties] <bron> | <map>\n"
+"          %1$s [opties] <bron> <map>\n"
+"          %1$s [opties] <bewerking> <aankoppelingspunt> [<doel>]\n"
 
 #: shlibs/mount/samples/mount.c:158
 #, c-format
@@ -10732,38 +10423,34 @@ msgid ""
 msgstr ""
 
 #: shlibs/mount/samples/mount.c:198
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "For more information see mount(8).\n"
 msgstr ""
 "\n"
-"Voor meer informatie zie ipcmk(1).\n"
+"Voor meer informatie zie mount(8).\n"
 
 #: shlibs/mount/samples/mount.c:252
-#, fuzzy
 msgid "libmount context allocation failed"
-msgstr "mount: aankoppelen is mislukt"
+msgstr "geheugenreservering voor libmount-context is mislukt"
 
 #: shlibs/mount/samples/mount.c:286 shlibs/mount/samples/mount.c:296
 #: shlibs/mount/samples/mount.c:300
-#, fuzzy
 msgid "failed to append options"
-msgstr "ontleden van PID is mislukt"
+msgstr "het achtervoegen van opties is mislukt"
 
 #: shlibs/mount/samples/mount.c:304
-#, fuzzy
 msgid "failed to set options pattern"
-msgstr "opvragen van eigenschappen voor PID %d is mislukt"
+msgstr "het instellen van het opties-patroon is mislukt"
 
 #: shlibs/mount/samples/mount.c:309
 msgid "only one <source> could be specified"
-msgstr ""
+msgstr "er mag slechts één <bron> gegeven worden"
 
 #: shlibs/mount/samples/mount.c:312
-#, fuzzy
 msgid "failed to allocate source buffer"
-msgstr "reserveren van uitvoerbuffer is mislukt"
+msgstr "reserveren van bronbuffer is mislukt"
 
 #: simpleinit/shutdown.c:116
 #, c-format
@@ -10775,14 +10462,12 @@ msgid "Shutdown process aborted"
 msgstr "Afsluitingsproces is afgebroken."
 
 #: simpleinit/shutdown.c:165
-#, fuzzy
 msgid "only root can shut a system down."
-msgstr "%s: Alleen root kan een systeem afsluiten.\n"
+msgstr "Alleen root kan een systeem afsluiten."
 
 #: simpleinit/shutdown.c:255
-#, fuzzy
 msgid "that must be tomorrow, can't you wait till then?"
-msgstr "Dat moet morgen zijn; kunt u niet tot dan wachten?\n"
+msgstr "Dat moet morgen zijn; kunt u niet tot dan wachten?"
 
 #: simpleinit/shutdown.c:304
 msgid "for maintenance; bounce, bounce"
@@ -10992,15 +10677,13 @@ msgid "error at starting service \"%s\"\n"
 msgstr "fout bij starten van dienst \"%s\"\n"
 
 #: sys-utils/ctrlaltdel.c:24
-#, fuzzy
 msgid "You must be root to set the Ctrl-Alt-Del behaviour"
-msgstr ""
-"U moet root zijn om het gedrag van Ctrl-Alt-Del in te kunnen stellen.\n"
+msgstr "U moet root zijn om het gedrag van Ctrl-Alt-Del in te kunnen stellen."
 
 #: sys-utils/ctrlaltdel.c:33
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s hard|soft"
-msgstr "Gebruik:  ctrlaltdel hard|soft\n"
+msgstr "Gebruik:  %s hard|soft"
 
 # wat die "For" betekent: geen idee
 #: sys-utils/cytune.c:115
@@ -11016,8 +10699,7 @@ msgstr ""
 #: sys-utils/cytune.c:126
 #, c-format
 msgid ""
-"File %s, For threshold value %lu and timrout value %lu, Maximum characters "
-"in fifo were %d,\n"
+"File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\n"
 "and the maximum transfer rate in characters/second was %f\n"
 msgstr ""
 "Voor bestand %s, en met drempelwaarde %lu en tijdslimiet %lu,\n"
@@ -11051,12 +10733,10 @@ msgstr "Ongeldige standaardwaarde voor tijdslimiet: %s\n"
 
 #: sys-utils/cytune.c:239
 #, c-format
-msgid ""
-"Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) "
-"[-g|-G] file [file...]\n"
+msgid "Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) [-g|-G] file [file...]\n"
 msgstr ""
-"Gebruik:  %s [-q [-i interval]] ([-s waarde]|[-S waarde])\n"
-"          ([-t waarde]|[-T waarde]) [-g|-G] bestand [bestand ...]\n"
+"Gebruik:  %s [-q [-i interval]] ([-s waarde | -S waarde])\n"
+"          ([-t waarde | -T waarde]) [-g|-G] bestand...\n"
 
 #: sys-utils/cytune.c:251 sys-utils/cytune.c:270 sys-utils/cytune.c:290
 #: sys-utils/cytune.c:336
@@ -11109,8 +10789,7 @@ msgstr "Kan ioctl(CYGETMON) niet uitvoeren op %s: %s\n"
 
 #: sys-utils/cytune.c:415
 #, c-format
-msgid ""
-"%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgid "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 msgstr ""
 "%s: %lu onderbrekingen, %lu/%lu tekens;\n"
 "fifo: %lu drempelwaarde, %lu tijdslimiet, %lu maximum, %lu nu\n"
@@ -11122,8 +10801,7 @@ msgstr "   %f onderbrekingen/sec; %f ontvangen, %f verzonden (tekens/sec)\n"
 
 #: sys-utils/cytune.c:426
 #, c-format
-msgid ""
-"%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgid "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 msgstr ""
 "%s: %lu onderbrekingen, %lu tekens;\n"
 "fifo: %lu drempelwaarde, %lu tijdslimiet, %lu maximum, %lu nu\n"
@@ -11310,50 +10988,54 @@ msgid ""
 " -m, --minimum <num> minimum extent length to discard\n"
 " -v, --verbose       print number of discarded bytes\n"
 msgstr ""
+" -h, --help             deze hulptekst tonen\n"
+" -o, --offset <getal>   positie vanaf waar bytes verworpen moeten worden\n"
+" -l, --length <getal>   het aantal te verwerpen bytes (vanaf gegeven positie)\n"
+" -m, --minimum <getal>  minimum te verwerpen extent-lengte\n"
+" -v, --verbose          het aantal verworpen bytes tonen\n"
 
 #: sys-utils/fstrim.c:67
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "For more information see fstrim(1).\n"
 msgstr ""
 "\n"
-"Voor meer informatie zie findmnt(1).\n"
+"Voor meer informatie zie fstrim(1).\n"
 
 #: sys-utils/fstrim.c:103
-#, fuzzy, c-format
+#, c-format
 msgid "failed to parse length: %s"
-msgstr "ontleden van %s '%s' is mislukt"
+msgstr "ontleden van lengte '%s' is mislukt"
 
 #: sys-utils/fstrim.c:108
-#, fuzzy, c-format
+#, c-format
 msgid "failed to parse offset: %s"
-msgstr "ontleden van %s '%s' is mislukt"
+msgstr "ontleden van positie '%s' is mislukt"
 
 #: sys-utils/fstrim.c:113
-#, fuzzy, c-format
+#, c-format
 msgid "failed to parse minimal extend length: %s"
-msgstr "kan timingsbestand %s niet lezen"
+msgstr "ontleden van minimum-extent-lengte '%s' is mislukt"
 
 #: sys-utils/fstrim.c:126
-#, fuzzy
 msgid "no mountpoint specified."
-msgstr "geen actie gegeven"
+msgstr "geen aankoppelingspunt opgegeven"
 
 #: sys-utils/fstrim.c:138
-#, fuzzy, c-format
+#, c-format
 msgid "%s: not a directory"
 msgstr "%s: is geen map"
 
 #: sys-utils/fstrim.c:147
-#, fuzzy, c-format
+#, c-format
 msgid "%s: FITRIM ioctl failed"
-msgstr "%s: schrijven is mislukt"
+msgstr "%s: ioctl (FITRIM) is mislukt"
 
 #: sys-utils/fstrim.c:150
 #, c-format
 msgid "%s: %<PRIu64> bytes was trimmed\n"
-msgstr ""
+msgstr "%s: %<PRIu64> bytes zijn getrimd\n"
 
 #: sys-utils/ipcmk.c:84
 #, c-format
@@ -11627,6 +11309,11 @@ msgid ""
 "pages swapped   %ld\n"
 "Swap performance: %ld attempts\t %ld successes\n"
 msgstr ""
+"toegewezen segmenten: %d\n"
+"toegewezen pagina's:  %ld\n"
+"residente pagina's:   %ld\n"
+"geswapte pagina's:    %ld\n"
+"Swapprestaties:  %ld pogingen  %ld successen\n"
 
 #: sys-utils/ipcs.c:314
 #, c-format
@@ -11662,8 +11349,7 @@ msgstr "GID"
 #: sys-utils/ipcs.c:320
 #, c-format
 msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
-msgstr ""
-"------ Gedeeld geheugen: aanhecht-/onthecht-/wijzigingstijden --------\n"
+msgstr "------ Gedeeld geheugen: aanhecht-/onthecht-/wijzigingstijden --------\n"
 
 #: sys-utils/ipcs.c:322 sys-utils/ipcs.c:329 sys-utils/ipcs.c:335
 #: sys-utils/ipcs.c:442 sys-utils/ipcs.c:451 sys-utils/ipcs.c:540
@@ -11686,8 +11372,7 @@ msgstr "gewijzigd"
 #: sys-utils/ipcs.c:327
 #, c-format
 msgid "------ Shared Memory Creator/Last-op PIDs --------\n"
-msgstr ""
-"------ Gedeeld geheugen: PID's van aanmaker/laatste-operatie --------\n"
+msgstr "------ Gedeeld geheugen: PID's van aanmaker/laatste-operatie --------\n"
 
 #: sys-utils/ipcs.c:329
 msgid "cpid"
@@ -11873,8 +11558,7 @@ msgstr "msq-ID"
 #: sys-utils/ipcs.c:538
 #, c-format
 msgid "------ Message Queues Send/Recv/Change Times --------\n"
-msgstr ""
-"------ Berichtwachtrijen: verzend-/ontvang-/wijzigingstijden --------\n"
+msgstr "------ Berichtwachtrijen: verzend-/ontvang-/wijzigingstijden --------\n"
 
 #: sys-utils/ipcs.c:540
 msgid "send"
@@ -12164,9 +11848,9 @@ msgid "failed to callocate cpu set"
 msgstr "reserveren van geheugen voor processorenset is mislukt"
 
 #: sys-utils/lscpu.c:268
-#, fuzzy, c-format
+#, c-format
 msgid "failed to parse CPU list %s"
-msgstr "ontleden van processorenmasker %s is mislukt"
+msgstr "ontleden van processorenlijst %s is mislukt"
 
 #: sys-utils/lscpu.c:271
 #, c-format
@@ -12205,28 +11889,27 @@ msgstr "CPU-modus(sen):"
 
 #: sys-utils/lscpu.c:835 sys-utils/lscpu.c:837
 msgid "Byte Order:"
-msgstr ""
+msgstr "Bytevolgorde:"
 
 #: sys-utils/lscpu.c:839
-#, fuzzy
 msgid "CPU(s):"
-msgstr "CPU-voet(en):"
+msgstr "CPU('s):"
 
 #: sys-utils/lscpu.c:842
 msgid "On-line CPU(s) mask:"
-msgstr ""
+msgstr "Online CPU('s)-masker:"
 
 #: sys-utils/lscpu.c:843
 msgid "On-line CPU(s) list:"
-msgstr ""
+msgstr "Online CPU('s)-lijst:"
 
 #: sys-utils/lscpu.c:861
 msgid "Off-line CPU(s) mask:"
-msgstr ""
+msgstr "Offline CPU('s)-masker:"
 
 #: sys-utils/lscpu.c:862
 msgid "Off-line CPU(s) list:"
-msgstr ""
+msgstr "Offline CPU('s)-lijst:"
 
 #: sys-utils/lscpu.c:868
 msgid "Thread(s) per core:"
@@ -12266,7 +11949,7 @@ msgstr "CPU-frequentie (MHz):"
 
 #: sys-utils/lscpu.c:886
 msgid "BogoMIPS:"
-msgstr ""
+msgstr "BogoMIPS:"
 
 #: sys-utils/lscpu.c:889 sys-utils/lscpu.c:891
 msgid "Virtualization:"
@@ -12296,7 +11979,6 @@ msgid "Usage: %s [option]\n"
 msgstr "Gebruik:  %s [optie]\n"
 
 #: sys-utils/lscpu.c:919
-#, fuzzy
 msgid ""
 "CPU architecture information helper\n"
 "\n"
@@ -12310,6 +11992,7 @@ msgstr ""
 "  -h, --help          deze hulptekst tonen\n"
 "  -p, --parse         ontleedbare i.p.v. leesbare uitvoer produceren\n"
 "  -s, --sysroot MAP   deze MAP als hoofdmap gebruiken\n"
+"  -x, --hex           hexadecimaal masker tonen in plaats van lijst\n"
 
 #: sys-utils/readprofile.c:104
 #, c-format
@@ -12379,7 +12062,7 @@ msgid "total"
 msgstr "totaal"
 
 #: sys-utils/renice.c:55
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -12388,13 +12071,11 @@ msgid ""
 " %1$s [-n] <priority>  -u <user> [<user> ...]\n"
 msgstr ""
 "\n"
-"Gebruik:\n"
-"  renice [-n] prioriteit [-p|--pid] PID...\n"
-"  renice [-n] prioriteit  -g|--pgrp PGID...\n"
-"  renice [-n] prioriteit  -u|--user gebruiker...\n"
-"  renice -h | --help\n"
-"  renice -v | --version\n"
-"\n"
+"Gebruik:  %1$s [-n] prioriteit [-p|--pid] PID...\n"
+"          %1$s [-n] prioriteit  -g|--pgrp PGID...\n"
+"          %1$s [-n] prioriteit  -u|--user gebruiker...\n"
+"          %1$s -h | --help\n"
+"          %1$s -v | --version\n"
 
 #: sys-utils/renice.c:62
 #, c-format
@@ -12408,15 +12089,23 @@ msgid ""
 " -u, --user <name|id>   interpret as username or user ID\n"
 " -v, --version          print version\n"
 msgstr ""
+"\n"
+"Opties:\n"
+" -g, --pgrp <ID>         te beïnvloeden procesgroeps-ID\n"
+" -h, --help              deze hulptekst tonen\n"
+" -n, --priority <getal>  te gebruiken beleefdsheidstoename\n"
+" -p, --pid <ID>          te beïnvloeden proces-ID\n"
+" -u, --user <naam|ID>    te beïnvloeden gebruiker (naam of UID)\n"
+" -v, --version           programmaversie tonen\n"
 
 #: sys-utils/renice.c:70
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "For more information see renice(1).\n"
 msgstr ""
 "\n"
-"Voor meer informatie zie namei(1).\n"
+"Voor meer informatie zie renice(1).\n"
 
 #: sys-utils/renice.c:101
 #, c-format
@@ -12424,56 +12113,55 @@ msgid "renice from %s\n"
 msgstr "'renice' uit %s\n"
 
 #: sys-utils/renice.c:138
-#, fuzzy, c-format
+#, c-format
 msgid "unknown user %s"
-msgstr "onbekende kolom: %s"
+msgstr "onbekende gebruiker %s"
 
 #: sys-utils/renice.c:145
-#, fuzzy, c-format
+#, c-format
 msgid "bad value %s"
-msgstr "ongeldige tijdslimiet: %s"
+msgstr "ongeldige waarde %s"
 
 #: sys-utils/renice.c:157
 msgid "process ID"
-msgstr ""
+msgstr "proces-ID"
 
 #: sys-utils/renice.c:160
-#, fuzzy
 msgid "user ID"
-msgstr "gebruiker"
+msgstr "gebruikers-ID"
 
 #: sys-utils/renice.c:162
 msgid "process group ID"
-msgstr ""
+msgstr "procesgroeps-ID"
 
 #: sys-utils/renice.c:167 sys-utils/renice.c:177
-#, fuzzy, c-format
+#, c-format
 msgid "failed to get priority for %d (%s)"
-msgstr "Instellen van systeemeigenschappen voor %s is mislukt"
+msgstr "achterhalen van prioriteit voor %d is mislukt (%s)"
 
 #: sys-utils/renice.c:171
-#, fuzzy, c-format
+#, c-format
 msgid "failed to set priority for %d (%s)"
-msgstr "Instellen van systeemeigenschappen voor %s is mislukt"
+msgstr "instellen van prioriteit voor %d is mislukt (%s)"
 
 #: sys-utils/renice.c:181
-#, fuzzy, c-format
+#, c-format
 msgid "%d (%s) old priority %d, new priority %d\n"
-msgstr "%d: oude prioriteit is %d, nieuwe prioriteit is %d\n"
+msgstr "%d (%s): oude prioriteit is %d, nieuwe prioriteit is %d\n"
 
 #: sys-utils/rtcwake.c:86
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [options]\n"
 "\n"
 "Options:\n"
 msgstr ""
-"Gebruik:  %s [opties] <apparaat>\n"
+"Gebruik:  %s [opties]\n"
 "\n"
 "Opties:\n"
 
 #: sys-utils/rtcwake.c:90
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "    -d | --device <device>    select rtc device (rtc0|rtc1|...)\n"
 "    -n | --dry-run            does everything, but suspend\n"
@@ -12485,13 +12173,10 @@ msgid ""
 "    -v | --verbose            verbose messages\n"
 "    -V | --version            show version\n"
 msgstr ""
-"Gebruik:  %s [opties]\n"
-"\n"
 "    -d | --device <apparaat>   te gebruiken hardwarklok (rtc0|rtc1|...)\n"
 "    -l | --local               de hardwareklok bevat lokale tijd\n"
 "    -m | --mode <modus>        slaapmodus (waarden: standby|mem|disk|...\n"
-"                                 oftewel: wachtstand,pauzestand,"
-"slaapstand,...)\n"
+"                                 oftewel: wachtstand,pauzestand,slaapstand,...)\n"
 "    -n | --dry-run             alles doen behalve gaan slapen\n"
 "    -s | --seconds <seconden>  aantal te slapen seconden\n"
 "    -t | --time <tijdstip>     ontwakingstijdstip\n"
@@ -12500,78 +12185,68 @@ msgstr ""
 "    -V | --version             programmaversie tonen\n"
 
 #: sys-utils/rtcwake.c:100
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "For more information see rtcwake(8).\n"
 msgstr ""
 "\n"
-"Voor meer informatie zie taskset(1).\n"
+"Voor meer informatie zie rtcwake(8).\n"
 
 #: sys-utils/rtcwake.c:151
-#, fuzzy
 msgid "read rtc time failed"
-msgstr "lezen van hardwareklok"
+msgstr "lezen van hardwarekloktijd is mislukt"
 
 #: sys-utils/rtcwake.c:156
-#, fuzzy
 msgid "read system time failed"
-msgstr "lezen van systeemtijd"
+msgstr "lezen van systeemtijd is mislukt"
 
 #: sys-utils/rtcwake.c:174
-#, fuzzy
 msgid "convert rtc time failed"
-msgstr "omzetten van hardwarekloktijd"
+msgstr "omzetten van hardwarekloktijd is mislukt"
 
 #: sys-utils/rtcwake.c:234
-#, fuzzy
 msgid "set rtc alarm failed"
-msgstr "zetten van de wekker"
+msgstr "zetten van de wekker is mislukt"
 
 #: sys-utils/rtcwake.c:238
-#, fuzzy
 msgid "enable rtc alarm failed"
-msgstr "inschakelen van de wekker"
+msgstr "inschakelen van de wekker is mislukt"
 
 #: sys-utils/rtcwake.c:242
-#, fuzzy
 msgid "set rtc wake alarm failed"
-msgstr "zetten van de wekker"
+msgstr "zetten van de wekker is mislukt"
 
 #: sys-utils/rtcwake.c:326
-#, fuzzy
 msgid "read rtc alarm failed"
-msgstr "inschakelen van de wekker"
+msgstr "lezen van de wekker is mislukt"
 
 #: sys-utils/rtcwake.c:332
 #, c-format
 msgid "alarm: off\n"
-msgstr ""
+msgstr "wekker: uit\n"
 
 #: sys-utils/rtcwake.c:349
-#, fuzzy
 msgid "convert time failed"
-msgstr "omzetten van hardwarekloktijd"
+msgstr "omzetten van hardwarekloktijd is mislukt"
 
 #: sys-utils/rtcwake.c:356
 #, c-format
 msgid "alarm: on  %s"
-msgstr ""
+msgstr "wekker: aan  %s"
 
 #: sys-utils/rtcwake.c:412
-#, fuzzy, c-format
+#, c-format
 msgid "unrecognized suspend state '%s'"
-msgstr "%s: onbekende slaaptoestand '%s'\n"
+msgstr "onbekende slaaptoestand '%s'"
 
 #: sys-utils/rtcwake.c:423
-#, fuzzy
 msgid "failed to parse seconds value"
-msgstr "ontleden van %s '%s' is mislukt"
+msgstr "ontleden van secondenwaarde is mislukt"
 
 #: sys-utils/rtcwake.c:431
-#, fuzzy
 msgid "failed to parse time_t value"
-msgstr "ontleden van PID is mislukt"
+msgstr "ontleden van tijdstipwaarde is mislukt"
 
 #: sys-utils/rtcwake.c:455
 #, c-format
@@ -12589,14 +12264,13 @@ msgid "Using local time.\n"
 msgstr "Lokale tijd wordt gebruikt.\n"
 
 #: sys-utils/rtcwake.c:467
-#, fuzzy
 msgid "must provide wake time (see -t and -s options)"
-msgstr "%s: u dient een wektijd op te geven, via '-s' of '-t'\n"
+msgstr "u dient een wektijd op te geven, via '-s' of '-t'"
 
 #: sys-utils/rtcwake.c:485
-#, fuzzy, c-format
+#, c-format
 msgid "%s not enabled for wakeup events"
-msgstr "%s: wekgebeurtenissen voor %s zijn niet ingeschakeld\n"
+msgstr "wekgebeurtenissen voor %s zijn niet ingeschakeld"
 
 #: sys-utils/rtcwake.c:500
 #, c-format
@@ -12604,19 +12278,19 @@ msgid "alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"
 msgstr "wektijdstip %ld, systeemtijd %ld, hardwarekloktijd %ld, seconden %u\n"
 
 #: sys-utils/rtcwake.c:509
-#, fuzzy, c-format
+#, c-format
 msgid "time doesn't go backward to %s"
-msgstr "%s: tijd loopt niet achteruit naar %s\n"
+msgstr "tijd loopt niet achteruit naar %s"
 
 #: sys-utils/rtcwake.c:519
-#, fuzzy, c-format
+#, c-format
 msgid "%s: wakeup using %s at %s"
-msgstr "%s: ontwaking uit '%s' via %s op %s\n"
+msgstr "%s: ontwaking via %s op %s"
 
 #: sys-utils/rtcwake.c:523
-#, fuzzy, c-format
+#, c-format
 msgid "%s: wakeup from \"%s\" using %s at %s"
-msgstr "%s: ontwaking uit '%s' via %s op %s\n"
+msgstr "%s: ontwaking uit '%s' via %s op %s"
 
 #: sys-utils/rtcwake.c:532
 #, c-format
@@ -12629,9 +12303,9 @@ msgid "suspend mode: off; executing %s\n"
 msgstr "slaapmodus: uit -- uitvoeren van %s\n"
 
 #: sys-utils/rtcwake.c:550
-#, fuzzy, c-format
+#, c-format
 msgid "unable to execute %s"
-msgstr "uitvoeren van %s is mislukt"
+msgstr "kan %s niet uitvoeren"
 
 #: sys-utils/rtcwake.c:558
 #, c-format
@@ -12639,9 +12313,8 @@ msgid "suspend mode: on; reading rtc\n"
 msgstr "slaapmodus: aan -- lezen van hardwareklok\n"
 
 #: sys-utils/rtcwake.c:564
-#, fuzzy
 msgid "rtc read failed"
-msgstr "lezen is mislukt: %s"
+msgstr "lezen van hardwareklok is mislukt"
 
 #: sys-utils/rtcwake.c:575
 #, c-format
@@ -12649,9 +12322,9 @@ msgid "suspend mode: disable; disabling alarm\n"
 msgstr "slaapmodus: uitgeschakeld -- wekker wordt uitgeschakeld\n"
 
 #: sys-utils/rtcwake.c:579
-#, fuzzy, c-format
+#, c-format
 msgid "suspend mode: show; printing alarm info\n"
-msgstr "slaapmodus: uitgeschakeld -- wekker wordt uitgeschakeld\n"
+msgstr "slaapmodus: tonen -- wekkerinfo wordt getoond\n"
 
 #: sys-utils/rtcwake.c:586
 #, c-format
@@ -12659,9 +12332,8 @@ msgid "suspend mode: %s; suspending system\n"
 msgstr "slaapmodus: %s -- de computer gaat slapen\n"
 
 #: sys-utils/rtcwake.c:592
-#, fuzzy
 msgid "disable rtc alarm interrupt failed"
-msgstr "uitschakelen van hardwareklok-interrupt"
+msgstr "uitschakelen van hardwareklok-interrupt is mislukt"
 
 #: sys-utils/setarch.c:50
 #, c-format
@@ -12684,8 +12356,7 @@ msgstr ""
 msgid ""
 " -h, --help               displays this help text\n"
 " -v, --verbose            says what options are being switched on\n"
-" -R, --addr-no-randomize  disables randomization of the virtual address "
-"space\n"
+" -R, --addr-no-randomize  disables randomization of the virtual address space\n"
 " -F, --fdpic-funcptrs     makes function pointers point to descriptors\n"
 " -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
 " -L, --addr-compat-layout changes the way virtual memory is allocated\n"
@@ -12694,8 +12365,7 @@ msgid ""
 " -I, --short-inode        turns on SHORT_INODE\n"
 " -S, --whole-seconds      turns on WHOLE_SECONDS\n"
 " -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
-" -3, --3gb                limits the used address space to a maximum of 3 "
-"GB\n"
+" -3, --3gb                limits the used address space to a maximum of 3 GB\n"
 "     --4gb                ignored (for backward compatibility only)\n"
 msgstr ""
 " -h, --help                deze hulptekst tonen\n"
@@ -12710,8 +12380,7 @@ msgstr ""
 " -X, --read-implies-exec   READ_IMPLIES_EXEC inschakelen\n"
 " -Z, --mmap-page-zero      MMAP_PAGE_ZERO inschakelen\n"
 " -3, --3gb                 gebruikte adresruimte tot 3 GB beperken\n"
-"     --4gb                 (genegeerd, slechts herkend voor "
-"compatibiliteit)\n"
+"     --4gb                 (genegeerd, slechts herkend voor compatibiliteit)\n"
 
 #: sys-utils/setarch.c:131
 #, c-format
@@ -12838,8 +12507,7 @@ msgid ""
 "  -i, --ipc         unshare System V IPC namespace\n"
 "  -n, --net         unshare network namespace\n"
 msgstr ""
-"Voert een programma uit met sommige naamsruimten ontkoppeld van "
-"moederproces.\n"
+"Voert een programma uit met sommige naamsruimten ontkoppeld van moederproces.\n"
 "\n"
 "  -h, --help     deze hulptekst tonen\n"
 "  -i, --ipc      'System V IPC'-naamsruimte niet delen\n"
@@ -12869,24 +12537,24 @@ msgid "cannot set user id"
 msgstr "kan gebruikers-ID niet instellen"
 
 #: text-utils/col.c:117
-#, fuzzy, c-format
+#, c-format
 msgid "usage: %s [-bfpx] [-l nline]"
-msgstr "Gebruik:  col [-bfpx] [-l te_bufferen_aantal_regels]\n"
+msgstr "Gebruik:  %s [-bfpx] [-l te_bufferen_aantal_regels]"
 
 #: text-utils/col.c:123
-#, fuzzy
 msgid "write error."
-msgstr "col: schrijffout\n"
+msgstr "schrijffout"
 
 #: text-utils/col.c:161
-#, fuzzy, c-format
+#, c-format
 msgid "bad -l argument %s."
-msgstr "col: ongeldig argument '%s' van '-l'\n"
+msgstr "ongeldig argument '%s' van '-l'"
 
+# Voor %s wordt één van de twee nakomende berichtjes ingevuld.
 #: text-utils/col.c:284
-#, fuzzy, c-format
+#, c-format
 msgid "warning: can't back up %s."
-msgstr "col: Waarschuwing: kan niet terug %s.\n"
+msgstr "Waarschuwing: kan niet terug %s."
 
 #: text-utils/col.c:285
 msgid "past first line"
@@ -12894,7 +12562,7 @@ msgstr "tot vóór eerste regel"
 
 #: text-utils/col.c:285
 msgid "-- line already flushed"
-msgstr "-- regel is al doorgespoeld"
+msgstr "-- regel is al doorgesluisd"
 
 #: text-utils/colcrt.c:97
 #, c-format
@@ -12902,11 +12570,13 @@ msgid "usage: %s [ - ] [ -2 ] [ file ... ]\n"
 msgstr "Gebruik:  %s [-] [-2] [BESTAND...]\n"
 
 #: text-utils/column.c:107
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage: %s [options] [file ...]\n"
-msgstr "Gebruik:  %s [opties] apparaat ...\n"
+msgstr ""
+"\n"
+"Gebruik:  %s [opties] [bestand ...]\n"
 
 #: text-utils/column.c:112
 #, c-format
@@ -12917,26 +12587,32 @@ msgid ""
 " -s, --separator <string> table delimeter\n"
 " -x, --fillrows           fill rows before columns\n"
 msgstr ""
+" -c, --columns <breedte>    breedte van de uitvoer in aantal tekens\n"
+" -h, --help                 deze hulptekst tonen\n"
+" -t, --table                een tabel aanmaken\n"
+" -s, --separator <tekens>   scheidingstekenreeks voor tabellen\n"
+" -x, --fillrows             rijen eerder vullen dan kolommen\n"
 
 #: text-utils/column.c:118
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "For more information see column(1).\n"
 msgstr ""
 "\n"
-"Voor meer informatie zie ipcmk(1).\n"
+"Voor meer informatie zie column(1).\n"
 
 #: text-utils/column.c:334
 #, c-format
 msgid "line %d is too long, output will be truncated"
-msgstr ""
+msgstr "regel %d is te lang; uitvoer wordt afgekapt"
 
 #: text-utils/hexdump.c:62
 #, c-format
-msgid ""
-"Calling hexdump as od has been deprecated in favour to GNU coreutils od.\n"
+msgid "Calling hexdump as od has been deprecated in favour to GNU coreutils od.\n"
 msgstr ""
+"Het aanroepen van 'hexdump' als 'od' wordt ontraden;\n"
+"gebruik hiervoor in de plaats de 'od' van GNU coreutils.\n"
 
 #: text-utils/hexsyntax.c:82
 #, c-format
@@ -12950,12 +12626,10 @@ msgstr "hexdump: ongeldige waarde voor over_te_slaan_aantal\n"
 
 #: text-utils/hexsyntax.c:131
 #, c-format
-msgid ""
-"hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
+msgid "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
 msgstr ""
 "Gebruik:  hexdump [-bcCdovx] [-e opmaaktekenreeks] [-f opmaakbestand]\n"
-"          [-n te_interpreteren_aantal] [-s over_te_slaan_aantal] "
-"[bestand ...]\n"
+"          [-n te_interpreteren_aantal] [-s over_te_slaan_aantal] [bestand ...]\n"
 
 #: text-utils/more.c:266
 #, c-format
@@ -13045,8 +12719,7 @@ msgstr ""
 #: text-utils/more.c:1336
 msgid ""
 "\n"
-"Most commands optionally preceded by integer argument k.  Defaults in "
-"brackets.\n"
+"Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
 "\n"
@@ -13219,8 +12892,7 @@ msgid ""
 "  n                       go to next file\n"
 "\n"
 "Many commands accept preceding numbers, for example:\n"
-"+1<newline> (next page); -1<newline> (previous page); 1<newline> (first "
-"page).\n"
+"+1<newline> (next page); -1<newline> (previous page); 1<newline> (first page).\n"
 "\n"
 "See pg(1) for more information.\n"
 "-------------------------------------------------------\n"
@@ -13228,8 +12900,7 @@ msgstr ""
 
 #: text-utils/pg.c:222
 #, c-format
-msgid ""
-"%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
+msgid "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
 msgstr ""
 "%s: Gebruik:  %s [-aantal_regels_per_pagina] [-p te_gebruiken_prompt]\n"
 "              [-cefnrs] [+regelnummer] [+/patroon/] [bestand ...]\n"
@@ -13313,23 +12984,22 @@ msgid "(Next file: "
 msgstr "(Volgende bestand: "
 
 #: text-utils/rev.c:75
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [file ...]\n"
-msgstr "Gebruik:  %s [bestand]\n"
+msgstr "Gebruik:  %s [bestand ...]\n"
 
 #: text-utils/rev.c:78
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "For more information see rev(1).\n"
 msgstr ""
 "\n"
-"Voor meer informatie zie unshare(1).\n"
+"Voor meer informatie zie rev(1).\n"
 
 #: text-utils/rev.c:138
-#, fuzzy
 msgid "realloc failed"
-msgstr "malloc() is mislukt"
+msgstr "realloc() is mislukt"
 
 #: text-utils/tailf.c:59 text-utils/tailf.c:95
 #, c-format
@@ -13370,7 +13040,7 @@ msgid "usage: tailf [-n N | -N] logfile"
 msgstr "Gebruik:  tailf [-n <getal> | -<getal>]  logbestand"
 
 #: text-utils/ul.c:149
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [ -i ] [ -tTerm ] file...\n"
 msgstr "Gebruik:  %s [-i] [-t terminaltype] bestand...\n"
 
@@ -13379,14 +13049,16 @@ msgid "trouble reading terminfo"
 msgstr "problemen bij lezen van terminfo"
 
 #: text-utils/ul.c:249
-#, fuzzy, c-format
+#, c-format
 msgid "unknown escape sequence in input: %o, %o"
-msgstr "Onbekende stuurcode in invoer: %o, %o\n"
+msgstr "onbekende stuurcode in invoer: %o, %o"
 
 #: text-utils/ul.c:588
-#, fuzzy
 msgid "Input line too long."
-msgstr "Invoerregel is te lang\n"
+msgstr "Invoerregel is te lang."
+
+#~ msgid "Partition ends in the final partial cylinder"
+#~ msgstr "Partitie eindigt in de laatste gedeeltelijke cilinder"
 
 #~ msgid "Unable to open %s\n"
 #~ msgstr "Kan %s niet openen\n"
@@ -13400,9 +13072,6 @@ msgstr "Invoerregel is te lang\n"
 #~ msgstr ""
 #~ "\n"
 #~ "driemaal EOF ontvangen -- afsluiting...\n"
-
-#~ msgid "Partition ends in the final partial cylinder"
-#~ msgstr "Partitie eindigt in de laatste gedeeltelijke cilinder"
 
 #~ msgid "last: malloc failure.\n"
 #~ msgstr "last: malloc() is mislukt\n"
@@ -13644,24 +13313,20 @@ msgstr "Invoerregel is te lang\n"
 #~ msgid "usage: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
 #~ msgstr "Gebruik:  rdev [-rv] [-o PLAATS] [AFBEELDING [WAARDE [PLAATS]]]"
 
-#~ msgid ""
-#~ "  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
+#~ msgid "  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
 #~ msgstr "  rdev /dev/fd0  (of rdev /linux, enz.)  huidig ROOT-apparaat tonen"
 
 #~ msgid "  rdev /dev/fd0 /dev/hda2         sets ROOT to /dev/hda2"
 #~ msgstr "  rdev /dev/fd0 /dev/hda2         ROOT instellen op /dev/hda2"
 
-#~ msgid ""
-#~ "  rdev -R /dev/fd0 1              set the ROOTFLAGS (readonly status)"
-#~ msgstr ""
-#~ "  rdev -R /dev/fd0 1              ROOTFLAGS instellen (alleen-lezenstatus)"
+#~ msgid "  rdev -R /dev/fd0 1              set the ROOTFLAGS (readonly status)"
+#~ msgstr "  rdev -R /dev/fd0 1              ROOTFLAGS instellen (alleen-lezenstatus)"
 
 #~ msgid "  rdev -r /dev/fd0 627            set the RAMDISK size"
 #~ msgstr "  rdev -r /dev/fd0 627            RAMDISK-grootte instellen"
 
 #~ msgid "  rdev -v /dev/fd0 1              set the bootup VIDEOMODE"
-#~ msgstr ""
-#~ "  rdev -v /dev/fd0 1              VIDEOMODUS bij opstarten instellen"
+#~ msgstr "  rdev -v /dev/fd0 1              VIDEOMODUS bij opstarten instellen"
 
 #~ msgid "  rdev -o N ...                   use the byte offset N"
 #~ msgstr "  rdev -o N ...                   de byteplaats N gebruiken"
@@ -13675,9 +13340,7 @@ msgstr "Invoerregel is te lang\n"
 #~ msgid "  vidmode ...                     same as rdev -v"
 #~ msgstr "  vidmode ...                     is hetzelfde als rdev -v"
 
-#~ msgid ""
-#~ "Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, "
-#~ "2=key2,..."
+#~ msgid "Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
 #~ msgstr ""
 #~ "Opmerking: videomodi zijn: -3=vragen, -2=uitgebreid, -1=gewoon,\n"
 #~ "                           1=sleutel1, 2=sleutel2, ..."
@@ -13699,8 +13362,7 @@ msgstr "Invoerregel is te lang\n"
 #~ msgid ""
 #~ "%s: Device '%s' contains a valid Sun disklabel.\n"
 #~ "This probably means creating v0 swap would destroy your partition table.\n"
-#~ "No swap was created. If you really want to create v0 swap on that "
-#~ "device,\n"
+#~ "No swap was created. If you really want to create v0 swap on that device,\n"
 #~ "use the -f option to force it.\n"
 #~ msgstr ""
 #~ "%s: Apparaat '%s' bevat een geldig Sun-schijflabel.\n"
@@ -13719,18 +13381,15 @@ msgstr "Invoerregel is te lang\n"
 #~ "-u: give Start and End in sector (instead of cylinder) units\n"
 #~ "-b 2048: (for certain MO disks) use 2048-byte sectors\n"
 #~ msgstr ""
-#~ "Gebruik:  fdisk [-b SECTORGROOTTE] [-u] APPARAAT       partitietabel "
-#~ "wijzigen\n"
-#~ "          fdisk -l [-b SECTORGROOTTE] [-u] APPARAAT    partitietabel "
-#~ "weergeven\n"
+#~ "Gebruik:  fdisk [-b SECTORGROOTTE] [-u] APPARAAT       partitietabel wijzigen\n"
+#~ "          fdisk -l [-b SECTORGROOTTE] [-u] APPARAAT    partitietabel weergeven\n"
 #~ "          fdisk -s PARTITIE    partitiegrootte in blokken weergeven\n"
 #~ "          fdisk -v             programmaversie tonen\n"
 #~ "\n"
 #~ "Hier is APPARAAT zoiets als /dev/hda of /dev/sdb,\n"
 #~ "en PARTITIE zoiets als /dev/hda7 of /dev/sdb4.\n"
 #~ "\n"
-#~ "-u        Begin en Einde in sectoreenheden (in plaats van "
-#~ "cilindereenheden)\n"
+#~ "-u        Begin en Einde in sectoreenheden (in plaats van cilindereenheden)\n"
 #~ "-b 2048   (voor sommige MO-schijven) 2048-byte sectoren gebruiken\n"
 
 #~ msgid ""
@@ -13765,6 +13424,9 @@ msgstr "Invoerregel is te lang\n"
 #~ "1) opstartsoftware (bijvoorbeeld oude versies van LILO),\n"
 #~ "2) partitioneringssoftware van andere besturingssytemen\n"
 #~ "   (bijvoorbeeld DOS FDISK of OS/2 FDISK).\n"
+
+#~ msgid "# partition table of %s\n"
+#~ msgstr "# Partitietabel van %s\n"
 
 #~ msgid ""
 #~ "unit: sectors\n"
