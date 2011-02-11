@@ -615,7 +615,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _("\nAvailable columns (for --show):\n"));
 
 	for (i = 0; i < __NCOLUMNS; i++)
-		fprintf(out, " %10s  %s\n", infos[i].name, gettext(infos[i].help));
+		fprintf(out, " %10s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, _("\nFor more information see partx(8).\n"));
 
