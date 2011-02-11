@@ -21,6 +21,34 @@
 #include "strutils.h"
 #include "mountP.h"
 
+#if defined(MNT_FORCE)
+/* Interesting ... it seems libc knows about MNT_FORCE and presumably
+   about umount2 as well -- need not do anything */
+#else /* MNT_FORCE */
+/* Does the present kernel source know about umount2? */
+# include <linux/unistd.h>
+# ifdef __NR_umount2
+static int umount2(const char *path, int flags);
+_syscall2(int, umount2, const char *, path, int, flags);
+# else /* __NR_umount2 */
+static int
+umount2(const char *path, int flags) {
+	fprintf(stderr, _("umount: compiled without support for -f\n"));
+	errno = ENOSYS;
+	return -1;
+}
+#endif /* __NR_umount2 */
+# if !defined(MNT_FORCE)
+# define MNT_FORCE 1
+#endif
+
+#endif /* MNT_FORCE */
+
+#if !defined(MNT_DETACH)
+#define MNT_DETACH 2
+#endif
+
+
 static int lookup_umount_fs(struct libmnt_context *cxt)
 {
 	int rc;
