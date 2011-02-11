@@ -149,5 +149,9 @@ prog_inv_sh_nm_from_file(char *f, char stripext)
 # endif
 #endif
 
+/* very old glibc (2.3) */ 
+#ifndef O_CLOEXEC
+#define O_CLOEXEC 0
+#endif
 
 #endif /* UTIL_LINUX_C_H */
