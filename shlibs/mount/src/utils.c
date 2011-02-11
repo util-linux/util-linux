@@ -642,7 +642,7 @@ const char *mnt_get_utab_path(void)
 
 /* returns file descriptor or -errno, @name returns uniques filename
  */
-int mnt_open_uniq_filename(const char *filename, char **name, int flags)
+int mnt_open_uniq_filename(const char *filename, char **name)
 {
 	int rc, fd;
 	char *n;
@@ -656,7 +656,7 @@ int mnt_open_uniq_filename(const char *filename, char **name, int flags)
 	if (rc <= 0)
 		return -errno;
 
-	fd = mkostemp(n, flags | O_EXCL);
+	fd = mkstemp(n);
 	if (fd >= 0 && name)
 		*name = n;
 	else

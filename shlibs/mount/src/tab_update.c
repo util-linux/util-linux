@@ -561,7 +561,7 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 
 	DBG(UPDATE, mnt_debug_h(upd, "%s: updating", upd->filename));
 
-	fd = mnt_open_uniq_filename(upd->filename, &uq, O_WRONLY);
+	fd = mnt_open_uniq_filename(upd->filename, &uq);
 	if (fd < 0)
 		return fd;	/* error */
 
