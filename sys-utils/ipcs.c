@@ -196,14 +196,15 @@ main (int argc, char **argv) {
 		}
 	}
 
+
 	if  (print) {
-		if (shm)
+	        if (shm)
 			print_shm (id);
-		else if (sem)
+		if (sem)
 			print_sem (id);
-		else if (msg)
+		if (msg)
 			print_msg (id);
-		else
+		if (!msg && !sem && !msg )
 			usage (EXIT_FAILURE);
 	} else {
 		if ( !shm && !msg && !sem)
