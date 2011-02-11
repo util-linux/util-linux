@@ -65,6 +65,12 @@ lib/tt.c
 
  - allows to sort columns, for example sort lsblk(8) output by SIZE
 
+shlib (libblkd and libmount):
+----------------------------
+
+ - found use __attribute__((notnull)) and __attribute__((warn_unused_result))
+   Note that the code has to be usefull for non-gcc compilers too.
+
 libblkid
 --------
 
