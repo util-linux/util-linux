@@ -40,6 +40,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hexdump.h"
+#include "xalloc.h"
 
 static void doskip(const char *, int);
 static u_char *get(void);
@@ -227,13 +228,13 @@ get(void)
 {
 	static int ateof = 1;
 	static u_char *curp, *savp;
-	int n;
+	ssize_t n;
 	int need, nread;
 	u_char *tmpp;
 
 	if (!curp) {
-		curp = emalloc(blocksize);
-		savp = emalloc(blocksize);
+		curp = xmalloc(blocksize);
+		savp = xmalloc(blocksize);
 	} else {
 		tmpp = curp;
 		curp = savp;
@@ -264,8 +265,7 @@ get(void)
 		    length == -1 ? need : MIN(length, need), stdin);
 		if (!n) {
 			if (ferror(stdin))
-				(void)fprintf(stderr, "hexdump: %s: %s\n",
-				    _argv[-1], strerror(errno));
+				warn("%s", _argv[-1]);
 			ateof = 1;
 			continue;
 		}
@@ -303,9 +303,8 @@ int next(char **argv)
 	for (;;) {
 		if (*_argv) {
 			if (!(freopen(*_argv, "r", stdin))) {
-				(void)fprintf(stderr, "hexdump: %s: %s\n",
-				    *_argv, strerror(errno));
-				exitval = 1;
+				warn("%s", *_argv);
+				exitval = EXIT_FAILURE;
 				++_argv;
 				continue;
 			}
@@ -331,11 +330,8 @@ doskip(const char *fname, int statok)
 	struct stat sbuf;
 
 	if (statok) {
-		if (fstat(fileno(stdin), &sbuf)) {
-			(void)fprintf(stderr, "hexdump: %s: %s.\n",
-			    fname, strerror(errno));
-			exit(1);
-		}
+		if (fstat(fileno(stdin), &sbuf))
+		        err(EXIT_FAILURE, "%s", fname);
 		if (S_ISREG(sbuf.st_mode) && skip > sbuf.st_size) {
 		  /* If size valid and skip >= size */
 			skip -= sbuf.st_size;
@@ -344,26 +340,8 @@ doskip(const char *fname, int statok)
 		}
 	}
 	/* sbuf may be undefined here - do not test it */
-	if (fseek(stdin, skip, SEEK_SET)) {
-		(void)fprintf(stderr, "hexdump: %s: %s.\n",
-		    fname, strerror(errno));
-		exit(1);
-	}
+	if (fseek(stdin, skip, SEEK_SET))
+	        err(EXIT_FAILURE, "%s", fname);
 	address += skip;
 	skip = 0;
-}
-
-void *
-emalloc(int sz) {
-	void *p;
-
-	if (!(p = malloc((u_int)sz)))
-		nomem();
-	memset(p, 0, sz);
-	return(p);
-}
-
-void nomem() {
-	(void)fprintf(stderr, "hexdump: %s.\n", strerror(errno));
-	exit(1);
 }

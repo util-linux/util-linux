@@ -38,6 +38,8 @@
 #include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
+#include <err.h>
+#include <stdlib.h>
 #include "hexdump.h"
 #include "nls.h"
 
@@ -57,11 +59,9 @@ int main(int argc, char **argv)
 
 	if (!(p = strrchr(argv[0], 'o')) || strcmp(p, "od")) {
 		newsyntax(argc, &argv);
-	} else {
-		fprintf(stderr,
-			_("Calling hexdump as od has been deprecated in favour to GNU coreutils od.\n"));
-		return(1);
-	}
+	} else
+		errx(EXIT_FAILURE, _("calling hexdump as od has been deprecated "
+				     "in favour to GNU coreutils od."));
 
 	/* figure out the data block size */
 	for (blocksize = 0, tfs = fshead; tfs; tfs = tfs->nextfs) {

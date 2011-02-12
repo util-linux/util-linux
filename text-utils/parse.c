@@ -43,6 +43,7 @@
 #include <string.h>
 #include "hexdump.h"
 #include "nls.h"
+#include "xalloc.h"
 
 static void escape(char *p1);
 static void badcnt(const char *s);
@@ -59,13 +60,11 @@ void addfile(char *name)
 	int ch;
 	char buf[2048 + 1];
 
-	if ((fp = fopen(name, "r")) == NULL) {
-		(void)fprintf(stderr, _("hexdump: can't read %s.\n"), name);
-		exit(1);
-	}
+	if ((fp = fopen(name, "r")) == NULL)
+	        err(EXIT_FAILURE, _("can't read %s"), name);
 	while (fgets(buf, sizeof(buf), fp)) {
 		if ((p = strchr(buf, '\n')) == NULL) {
-			(void)fprintf(stderr, _("hexdump: line too long.\n"));
+			warnx(_("line too long"));
 			while ((ch = getchar()) != '\n' && ch != EOF);
 			continue;
 		}
@@ -87,7 +86,7 @@ void add(const char *fmt)
 	const char *savep;
 
 	/* Start new linked list of format units. */
-	tfs = emalloc(sizeof(FS));
+	tfs = xmalloc(sizeof(FS));
 	if (!fshead)
 		fshead = tfs;
 	else
@@ -103,7 +102,7 @@ void add(const char *fmt)
 			break;
 
 		/* Allocate a new format unit and link it in. */
-		tfu = emalloc(sizeof(FU));
+		tfu = xmalloc(sizeof(FU));
 		*nextfu = tfu;
 		nextfu = &tfu->nextfu;
 		tfu->reps = 1;
@@ -140,8 +139,7 @@ void add(const char *fmt)
 		for (savep = ++p; *p != '"';)
 			if (*p++ == 0)
 				badfmt(fmt);
-		if (!(tfu->fmt = malloc(p - savep + 1)))
-			nomem();
+		tfu->fmt = xmalloc(p - savep + 1);
 		(void) strncpy(tfu->fmt, savep, p - savep);
 		tfu->fmt[p - savep] = '\0';
 		escape(tfu->fmt);
@@ -221,7 +219,7 @@ void rewrite(FS *fs)
 		 * conversion character gets its own.
 		 */
 		for (nconv = 0, fmtp = fu->fmt; *fmtp; nextpr = &pr->nextpr) {
-			pr = emalloc(sizeof(PR));
+			pr = xmalloc(sizeof(PR));
 			if (!fu->nextpr)
 				fu->nextpr = pr;
 			else
@@ -388,7 +386,7 @@ isint2:					switch(fu->bcnt) {
 			 */
 			savech = *p2;
 			p1[0] = '\0';
-			pr->fmt = emalloc(strlen(fmtp) + strlen(cs) + 1);
+			pr->fmt = xmalloc(strlen(fmtp) + strlen(cs) + 1);
 			(void)strcpy(pr->fmt, fmtp);
 			(void)strcat(pr->fmt, cs);
 			*p2 = savech;
@@ -396,11 +394,9 @@ isint2:					switch(fu->bcnt) {
 			fmtp = p2;
 
 			/* Only one conversion character if byte count */
-			if (!(pr->flags&F_ADDRESS) && fu->bcnt && nconv++) {
-				(void)fprintf(stderr,
-				    _("hexdump: byte count with multiple conversion characters.\n"));
-				exit(1);
-			}
+			if (!(pr->flags&F_ADDRESS) && fu->bcnt && nconv++)
+				errx(EXIT_FAILURE,
+				    _("byte count with multiple conversion characters"));
 		}
 		/*
 		 * If format unit byte count not specified, figure it out
@@ -479,26 +475,20 @@ static void escape(char *p1)
 
 static void badcnt(const char *s)
 {
-	(void)fprintf(stderr,
-	    _("hexdump: bad byte count for conversion character %s.\n"), s);
-	exit(1);
+        errx(EXIT_FAILURE, _("bad byte count for conversion character %s"), s);
 }
 
 static void badsfmt(void)
 {
-	(void)fprintf(stderr,
-	    _("hexdump: %%s requires a precision or a byte count.\n"));
-	exit(1);
+        errx(EXIT_FAILURE, _("%%s requires a precision or a byte count"));
 }
 
 static void badfmt(const char *fmt)
 {
-	(void)fprintf(stderr, _("hexdump: bad format {%s}\n"), fmt);
-	exit(1);
+        errx(EXIT_FAILURE, _("bad format {%s}"), fmt);
 }
 
 static void badconv(const char *ch)
 {
-	(void)fprintf(stderr, _("hexdump: bad conversion character %%%s.\n"), ch);
-	exit(1);
+        errx(EXIT_FAILURE, _("bad conversion character %%%s"), ch);
 }

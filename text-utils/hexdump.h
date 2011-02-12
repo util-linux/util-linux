@@ -81,14 +81,12 @@ extern off_t skip;                      /* bytes to skip */
 enum _vflag { ALL, DUP, FIRST, WAIT };	/* -v values */
 extern enum _vflag vflag;
 
-void *emalloc(int);
 int size(FS *);
 void add(const char *);
 void rewrite(FS *);
 void addfile(char *);
 void display(void);
-void nomem(void);
-void usage(void);
+void __attribute__((__noreturn__)) usage(FILE *out);
 void conv_c(PR *, u_char *);
 void conv_u(PR *, u_char *);
 int  next(char **);

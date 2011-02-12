@@ -39,10 +39,15 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
+#include <err.h>
+#include <limits.h>
 #include "hexdump.h"
 #include "nls.h"
+#include "strutils.h"
 
 off_t skip;				/* bytes to skip */
+
 
 void
 newsyntax(int argc, char ***argvp)
@@ -51,7 +56,7 @@ newsyntax(int argc, char ***argvp)
 	char *p, **argv;
 
 	argv = *argvp;
-	while ((ch = getopt(argc, argv, "bcCde:f:n:os:vx")) != -1)
+	while ((ch = getopt(argc, argv, "bcCde:f:n:os:vxV")) != -1) {
 		switch (ch) {
 		case 'b':
 			add("\"%07.7_Ax\n\"");
@@ -77,22 +82,15 @@ newsyntax(int argc, char ***argvp)
 			addfile(optarg);
 			break;
 		case 'n':
-			if ((length = atoi(optarg)) < 0) {
-				fprintf(stderr,
-				    _("hexdump: bad length value.\n"));
-				exit(1);
-			}
+		        length = strtol_or_err(optarg, _("bad length value"));
 			break;
 		case 'o':
 			add("\"%07.7_Ax\n\"");
 			add("\"%07.7_ax \" 8/2 \" %06o \" \"\\n\"");
 			break;
 		case 's':
-			if ((skip = strtol(optarg, &p, 0)) < 0) {
-				fprintf(stderr,
-				    _("hexdump: bad skip value.\n"));
-				exit(1);
-			}
+			if ((skip = strtol(optarg, &p, 0)) < 0)
+				err(EXIT_FAILURE, _("bad skip value"));
 			switch(*p) {
 			case 'b':
 				skip *= 512;
@@ -112,9 +110,16 @@ newsyntax(int argc, char ***argvp)
 			add("\"%07.7_Ax\n\"");
 			add("\"%07.7_ax \" 8/2 \"   %04x \" \"\\n\"");
 			break;
-		case '?':
-			usage();
+		case 'V':
+			printf(_("%s from %s\n"),
+					program_invocation_short_name,
+					PACKAGE_STRING);
+			exit(EXIT_SUCCESS);
+			break;
+		default:
+			usage(stderr);
 		}
+	}
 
 	if (!fshead) {
 		add("\"%07.7_Ax\n\"");
@@ -124,10 +129,25 @@ newsyntax(int argc, char ***argvp)
 	*argvp += optind;
 }
 
-void
-usage(void)
+void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(stderr,
-_("hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"));
-	exit(1);
+	fprintf(out, _("\nUsage:\n"
+		       " %s [options] file...\n"),
+		       program_invocation_short_name);
+	fprintf(out, _(
+		       "\nOptions:\n"
+		       " -b              one-byte octal display\n"
+		       " -c              one-byte character display\n"
+		       " -C              canonical hex+ASCII display\n"
+		       " -d              two-byte decimal display\n"
+		       " -o              two-byte octal display\n"
+		       " -x              two-byte hexadecimal display\n"
+		       " -e format       format string to be used for displaying data\n"
+		       " -f format_file  file that contains format strings\n"
+		       " -n length       interpret only length bytes of input\n"
+		       " -s offset       skip offset bytes from the beginnin\n"
+		       " -v              display without squeezing similar lines\n"
+		       " -V              output version information and exit\n\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
