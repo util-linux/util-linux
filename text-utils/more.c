@@ -68,7 +68,7 @@
 
 #ifndef XTABS
 #define XTABS TAB3
-#endif
+#endif /* XTABS */
 
 #define VI		"vi"	/* found on the user's path */
 
@@ -94,7 +94,7 @@ void error (char *mess);
 void do_shell (char *filename);
 int  colon (char *filename, int cmd, int nlines);
 int  expand (char **outbuf, char *inbuf);
-void argscan(char *s,char *argv0);
+void argscan(char *s);
 void rdline (register FILE *f);
 void copy_file(register FILE *f);
 void search(char buf[], FILE *file, register int n);
@@ -113,7 +113,7 @@ int  get_line(register FILE *f, int *length);
 void prbuf (register char *s, register int n);
 void execute (char *filename, char *cmd, ...);
 FILE *checkf (char *, int *);
-int prepare_line_buffer(void);
+void prepare_line_buffer(void);
 
 #define TBUFSIZ	1024
 #define LINSIZ	256	/* minimal Line buffer size */
@@ -121,53 +121,61 @@ int prepare_line_buffer(void);
 #define RUBOUT	'\177'
 #define ESC	'\033'
 #define QUIT	'\034'
+#define SCROLL_LEN	11
+#define LINES_PER_PAGE	24
+#define NUM_COLUMNS	80
+#define TERMINAL_BUF	4096
+#define INIT_BUF	80
+#define SHELL_LINE	1000
+#define COMMAND_BUF	200
 
 struct termios	otty, savetty0;
 long		file_pos, file_size;
 int		fnum, no_intty, no_tty, slow_tty;
 int		dum_opt, dlines;
 void		onquit(int), onsusp(int), chgwinsz(int), end_it(int);
-int		nscroll = 11;	/* Number of lines scrolled by 'd' */
-int		fold_opt = 1;	/* Fold long lines */
-int		stop_opt = 1;	/* Stop after form feeds */
-int		ssp_opt = 0;	/* Suppress white space */
-int		ul_opt = 1;	/* Underline as best we can */
+int		nscroll = SCROLL_LEN;	/* Number of lines scrolled by 'd' */
+int		fold_opt = 1;		/* Fold long lines */
+int		stop_opt = 1;		/* Stop after form feeds */
+int		ssp_opt = 0;		/* Suppress white space */
+int		ul_opt = 1;		/* Underline as best we can */
 int		promptlen;
-int		Currline;	/* Line we are currently at */
+int		Currline;		/* Line we are currently at */
 int		startup = 1;
 int		firstf = 1;
 int		notell = 1;
 int		docrterase = 0;
 int		docrtkill = 0;
-int		bad_so;	/* True if overwriting does not turn off standout */
+int		bad_so;			/* True if overwriting does not turn
+					   off standout */
 int		inwait, Pause, errors;
-int		within;	/* true if we are within a file,
-			false if we are between files */
+int		within;			/* true if we are within a file,
+					   false if we are between files */
 int		hard, dumb, noscroll, hardtabs, clreol, eatnl;
-int		catch_susp;	/* We should catch the SIGTSTP signal */
-char		**fnames;	/* The list of file names */
-int		nfiles;		/* Number of files left to process */
-char		*shell;		/* The name of the shell to use */
-int		shellp;		/* A previous shell command exists */
+int		catch_susp;		/* We should catch the SIGTSTP signal */
+char		**fnames;		/* The list of file names */
+int		nfiles;			/* Number of files left to process */
+char		*shell;			/* The name of the shell to use */
+int		shellp;			/* A previous shell command exists */
 sigjmp_buf	restore;
-char		*Line;		/* Line buffer */
-size_t		LineLen;	/* size of Line buffer */
-int		Lpp = 24;	/* lines per page */
-char		*Clear;		/* clear screen */
-char		*eraseln;	/* erase line */
-char		*Senter, *Sexit;/* enter and exit standout mode */
+char		*Line;			/* Line buffer */
+size_t		LineLen;		/* size of Line buffer */
+int		Lpp = LINES_PER_PAGE;	/* lines per page */
+char		*Clear;			/* clear screen */
+char		*eraseln;		/* erase line */
+char		*Senter, *Sexit;	/* enter and exit standout mode */
 char		*ULenter, *ULexit;	/* enter and exit underline mode */
-char		*chUL;		/* underline character */
-char		*chBS;		/* backspace character */
-char		*Home;		/* go to home */
-char		*cursorm;	/* cursor movement */
-char		cursorhome[40];	/* contains cursor movement to home */
-char		*EodClr;	/* clear rest of screen */
-int		Mcol = 80;	/* number of columns */
-int		Wrap = 1;	/* set if automargins */
-int		soglitch;	/* terminal has standout mode glitch */
-int		ulglitch;	/* terminal has underline mode glitch */
-int		pstate = 0;	/* current UL state */
+char		*chUL;			/* underline character */
+char		*chBS;			/* backspace character */
+char		*Home;			/* go to home */
+char		*cursorm;		/* cursor movement */
+char		cursorhome[40];		/* contains cursor movement to home */
+char		*EodClr;		/* clear rest of screen */
+int		Mcol = NUM_COLUMNS;	/* number of columns */
+int		Wrap = 1;		/* set if automargins */
+int		soglitch;		/* terminal has standout mode glitch */
+int		ulglitch;		/* terminal has underline mode glitch */
+int		pstate = 0;		/* current UL state */
 static int	magic(FILE *, char *);
 struct {
     long chrctr, line;
@@ -178,38 +186,54 @@ extern char	PC;		/* pad character */
 # include <ncurses.h>
 #elif defined(HAVE_NCURSES_NCURSES_H)
 # include <ncurses/ncurses.h>
-#endif
+#endif /* HAVE_NCURSES_H */
 
 #if defined(HAVE_NCURSES_H) || defined(HAVE_NCURSES_NCURSES_H)
 # include <term.h>			/* include after <curses.h> */
 
-static void
-my_putstring(char *s) {
-	tputs (s, 1, putchar);		/* putp(s); */
+#define TERM_AUTO_RIGHT_MARGIN    "am"
+#define TERM_CEOL                 "xhp"
+#define TERM_CLEAR                "clear"
+#define TERM_CLEAR_TO_LINE_END    "el"
+#define TERM_CLEAR_TO_SCREEN_END  "ed"
+#define TERM_COLS                 "cols"
+#define TERM_CURSOR_ADDRESS       "cup"
+#define TERM_EAT_NEW_LINE         "xenl"
+#define TERM_ENTER_UNDERLINE      "smul"
+#define TERM_EXIT_STANDARD_MODE   "rmso"
+#define TERM_EXIT_UNDERLINE       "rmul"
+#define TERM_HARD_COPY            "hc"
+#define TERM_HOME                 "home"
+#define TERM_LINE_DOWN            "cud1"
+#define TERM_LINES                "lines"
+#define TERM_OVER_STRIKE          "os"
+#define TERM_PAD_CHAR             "pad"
+#define TERM_STANDARD_MODE        "smso"
+#define TERM_STD_MODE_GLITCH      "xmc"
+#define TERM_UNDERLINE_CHAR       "uc"
+#define TERM_UNDERLINE            "ul"
+
+static void my_putstring(char *s) {
+	tputs (s, fileno(stdout), putchar);		/* putp(s); */
 }
 
-static void
-my_setupterm(char *term, int fildes, int *errret) {
+static void my_setupterm(char *term, int fildes, int *errret) {
      setupterm(term, fildes, errret);
 }
 
-static int
-my_tgetnum(char *s, char *ss) {
-     return tigetnum(ss);
+static int my_tgetnum(char *s) {
+     return tigetnum(s);
 }
 
-static int
-my_tgetflag(char *s, char *ss) {
-     return tigetflag(ss);
+static int my_tgetflag(char *s) {
+     return tigetflag(s);
 }
 
-static char *
-my_tgetstr(char *s, char *ss) {
-     return tigetstr(ss);
+static char *my_tgetstr(char *s) {
+     return tigetstr(s);
 }
 
-static char *
-my_tgoto(char *cap, int col, int row) {
+static char *my_tgoto(char *cap, int col, int row) {
      return tparm(cap, col, row);
 }
 
@@ -217,54 +241,77 @@ my_tgoto(char *cap, int col, int row) {
 
 #include <termcap.h>
 
-char termbuffer[4096];
-char tcbuffer[4096];
+#define TERM_AUTO_RIGHT_MARGIN    "am"
+#define TERM_CEOL                 "xs"
+#define TERM_CLEAR                "cl"
+#define TERM_CLEAR_TO_LINE_END    "ce"
+#define TERM_CLEAR_TO_SCREEN_END  "cd"
+#define TERM_COLS                 "co"
+#define TERM_CURSOR_ADDRESS       "cm"
+#define TERM_EAT_NEW_LINE         "xn"
+#define TERM_ENTER_UNDERLINE      "us"
+#define TERM_EXIT_STANDARD_MODE   "se"
+#define TERM_EXIT_UNDERLINE       "ue"
+#define TERM_HARD_COPY            "hc"
+#define TERM_HOME                 "ho"
+#define TERM_LINE_DOWN            "le"
+#define TERM_LINES                "li"
+#define TERM_OVER_STRIKE          "os"
+#define TERM_PAD_CHAR             "pc"
+#define TERM_STANDARD_MODE        "so"
+#define TERM_STD_MODE_GLITCH      "sg"
+#define TERM_UNDERLINE_CHAR       "uc"
+#define TERM_UNDERLINE            "ul"
+
+char termbuffer[TERMINAL_BUF];
+char tcbuffer[TERMINAL_BUF];
 char *strbuf = termbuffer;
 
-static void
-my_putstring(char *s) {
-     tputs (s, 1, putchar);
+static void my_putstring(char *s) {
+     tputs (s, fileno(stdout), putchar);
 }
 
-static void
-my_setupterm(char *term, int fildes, int *errret) {
+static void my_setupterm(char *term, int fildes, int *errret) {
      *errret = tgetent(tcbuffer, term);
 }
 
-static int
-my_tgetnum(char *s, char *ss) {
+static int my_tgetnum(char *s) {
      return tgetnum(s);
 }
 
-static int
-my_tgetflag(char *s, char *ss) {
+static int my_tgetflag(char *s) {
      return tgetflag(s);
 }
 
-static char *
-my_tgetstr(char *s, char *ss) {
+static char *my_tgetstr(char *s) {
      return tgetstr(s, &strbuf);
 }
 
-static char *
-my_tgoto(char *cap, int col, int row) {
+static char *my_tgoto(char *cap, int col, int row) {
      return tgoto(cap, col, row);
 }
 
 #endif /* HAVE_LIBTERMCAP */
 
-static void
-idummy(int *kk) {}
-
-static void
-Fdummy(FILE **ff) {}
-
-static void
-usage(char *s) {
-	char *p = strrchr(s, '/');
-	fprintf(stderr,
-		_("usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"),
-		p ? p + 1 : s);
+static void __attribute__ ((__noreturn__)) usage(FILE *out)
+{
+     fprintf(out,
+            _("Usage: %s [options] file...\n\n"),
+	       program_invocation_short_name);
+     fprintf(out,
+	    _("Options:\n"
+	      "  -d        display help instead of ring bell\n"
+              "  -f        count logical, rather than screen lines\n"
+              "  -l        suppress pause after form feed\n"
+              "  -p        suppress scroll, clean screen and disblay text\n"
+              "  -c        suppress scroll, display text and clean line ends\n"
+              "  -u        suppress underlining\n"
+              "  -s        squeeze multiple blank lines into one\n"
+              "  -NUM      specify the number of lines per screenful\n"
+              "  +NUM      display file beginning from line number NUM\n"
+              "  +/STRING  display file beginning from search string match\n"
+              "  -V        output version information and exit\n"));
+       exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv) {
@@ -278,39 +325,39 @@ int main(int argc, char **argv) {
     int		srchopt = 0;
     int		clearit = 0;
     int		initline = 0;
-    char	initbuf[80];
+    char	initbuf[INIT_BUF];
 
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
-    
-    /* avoid gcc complaints about register variables that
-       may be clobbered by a longjmp, by forcing our variables here
-       to be non-register */
-    Fdummy(&f); idummy(&left); idummy(&prnames);
-    idummy(&initopt); idummy(&srchopt); idummy(&initline);
 
     nfiles = argc;
     fnames = argv;
     setlocale(LC_ALL, "");
     initterm ();
-    if (prepare_line_buffer()) {
-	fprintf(stderr, _("failed to initialize line buffer\n"));
-	exit(1);
-    }
+
+    /* Auto set no scroll on when binary is called page */
+    if (!(strcmp(program_invocation_short_name, "page")))
+       noscroll++;
+
+    prepare_line_buffer();
+
     nscroll = Lpp/2 - 1;
     if (nscroll <= 0)
 	nscroll = 1;
-    if((s = getenv("MORE")) != NULL) argscan(s,argv[0]);
+
+    if ((s = getenv("MORE")) != NULL)
+	    argscan(s);
+
     while (--nfiles > 0) {
 	if ((ch = (*++fnames)[0]) == '-') {
-	    argscan(*fnames+1,argv[0]);
+	    argscan(*fnames+1);
 	}
 	else if (ch == '+') {
 	    s = *fnames;
 	    if (*++s == '/') {
 		srchopt++;
-		for (++s, p = initbuf; p < initbuf + 79 && *s != '\0';)
+		for (++s, p = initbuf; p < initbuf + (INIT_BUF - 1) && *s != '\0';)
 		    *p++ = *s++;
 		*p = '\0';
 	    }
@@ -339,10 +386,8 @@ int main(int argc, char **argv) {
     left = dlines;
     if (nfiles > 1)
 	prnames++;
-    if (!no_intty && nfiles == 0) {
-	usage(argv[0]);
-	exit(1);
-    }
+    if (!no_intty && nfiles == 0)
+	usage(stderr);
     else
 	f = stdin;
     if (!no_tty) {
@@ -350,7 +395,7 @@ int main(int argc, char **argv) {
 	signal(SIGINT, end_it);
 #ifdef SIGWINCH
 	signal(SIGWINCH, chgwinsz);
-#endif
+#endif /* SIGWINCH */
 	if (signal (SIGTSTP, SIG_IGN) == SIG_DFL) {
 	    signal(SIGTSTP, onsusp);
 	    catch_susp++;
@@ -447,10 +492,10 @@ int main(int argc, char **argv) {
 	firstf = 0;
     }
     reset_tty ();
-    exit(0);
+    exit(EXIT_SUCCESS);
 }
 
-void argscan(char *s, char *argv0) {
+void argscan(char *s) {
 	int seen_num = 0;
 
 	while (*s != '\0') {
@@ -488,11 +533,13 @@ void argscan(char *s, char *argv0) {
 			break;
 		  case '-': case ' ': case '\t':
 			break;
+                  case 'V':
+                        printf(_("more (%s)\n"), PACKAGE_STRING);
+                        exit(EXIT_SUCCESS);
+                        break;
 		  default:
-			fprintf(stderr,
-				_("%s: unknown option \"-%c\"\n"), argv0, *s);
-			usage(argv0);
-			exit(1);
+		        warnx(_("unknown option -%s"), s);
+			usage(stderr);
 			break;
 		}
 		s++;
@@ -657,7 +704,8 @@ void screen (register FILE *f, register int num_lines)
 ** Come here if a quit signal is received
 */
 
-void onquit(int dummy) {
+void onquit(int dummy __attribute__ ((__unused__)))
+{
     signal(SIGQUIT, SIG_IGN);
     if (!inwait) {
 	putchar ('\n');
@@ -680,10 +728,11 @@ void onquit(int dummy) {
 */
 
 #ifdef SIGWINCH
-void chgwinsz(int dummy) {
+void chgwinsz(int dummy __attribute__ ((__unused__)))
+{
     struct winsize win;
 
-    (void) signal(SIGWINCH, SIG_IGN);
+    signal(SIGWINCH, SIG_IGN);
     if (ioctl(fileno(stdout), TIOCGWINSZ, &win) != -1) {
 	if (win.ws_row != 0) {
 	    Lpp = win.ws_row;
@@ -697,13 +746,14 @@ void chgwinsz(int dummy) {
     }
     (void) signal(SIGWINCH, chgwinsz);
 }
-#endif
+#endif /* SIGWINCH */
 
 /*
 ** Clean up terminal state and exit. Also come here if interrupt signal received
 */
 
-void end_it (int dummy) {
+void end_it (int dummy __attribute__ ((__unused__)))
+{
     reset_tty ();
     if (clreol) {
 	putchar ('\r');
@@ -716,7 +766,7 @@ void end_it (int dummy) {
     }
     else
 	putcerr('\n');
-    _exit(0);
+    _exit(EXIT_SUCCESS);
 }
 
 void copy_file(register FILE *f) {
@@ -727,25 +777,6 @@ void copy_file(register FILE *f) {
 }
 
 #define ringbell()	putcerr('\007')
-
-/* See whether the last component of the path name "path" is equal to the
-** string "string"
-*/
-
-static int tailequ (char *path, register char *string)
-{
-	register char *tail;
-
-	tail = path + strlen(path);
-	while (--tail >= path)
-		if (*tail == '/')
-			break;
-	++tail;
-	while (*tail++ == *string++)
-		if (*tail == '\0')
-			return(1);
-	return(0);
-}
 
 static void prompt (char *filename)
 {
@@ -781,30 +812,20 @@ static void prompt (char *filename)
     inwait++;
 }
 
-int prepare_line_buffer(void)
+void prepare_line_buffer(void)
 {
     char *nline;
     size_t nsz = Mcol * 4;
 
     if (LineLen >= nsz)
-        return 0;
+        return;
 
     if (nsz < LINSIZ)
         nsz = LINSIZ;
 
-    nline = realloc(Line, nsz);
-    if (nline) {
-        Line = nline;
-        LineLen = nsz;
-        return 0;
-    }
-
-    /* error() uses siglongjmp(), we want to return from this
-     * function when the Line buffer is initilized first time in main()
-     */
-    if (Line)
-        error(_("out of memory"));
-    return -1;
+    nline = xrealloc(Line, nsz);
+    Line = nline;
+    LineLen = nsz;
 }
 
 /*
@@ -819,7 +840,7 @@ int get_line(register FILE *f, int *length)
     static int colflg;
 
 #ifdef HAVE_WIDECHAR
-    int i;
+    size_t i;
     wchar_t wc;
     int wc_width;
     mbstate_t state, state_bak;		/* Current status of the stream. */
@@ -831,7 +852,7 @@ int get_line(register FILE *f, int *length)
     long file_pos_bak = Ftell (f);
 
     memset (&state, '\0', sizeof (mbstate_t));
-#endif
+#endif /* HAVE_WIDECHAR */
 
     prepare_line_buffer();
 
@@ -894,7 +915,7 @@ process_mbc:
 	    c = Getc (f);
 	    continue;
 	}
-#endif 
+#endif /* HAVE_WIDECHAR */
 	if (c == EOF) {
 	    if (p > Line) {
 		*p = '\0';
@@ -923,7 +944,7 @@ process_mbc:
 			continue;
 		}
 	}
-#endif
+#endif /* 0 */
 	if (c == '\t') {
 	    if (!hardtabs || (column < promptlen && !hard)) {
 		if (hardtabs && eraseln && !dumb) {
@@ -990,7 +1011,7 @@ process_mbc:
 		      column += wc_width;
 		}
 	    } else
-#endif
+#endif /* HAVE_WIDECHAR */
 	      {
 		if (isprint(c))
 		   column++;
@@ -1145,7 +1166,7 @@ home()
 
 static int lastcmd, lastarg, lastp;
 static int lastcolon;
-char shell_line[1000];
+char shell_line[SHELL_LINE];
 
 /*
 ** Read a command and do it. A command consists of an optional integer
@@ -1161,7 +1182,7 @@ int command (char *filename, register FILE *f)
     register int c;
     char colonch;
     int done;
-    char comchar, cmdbuf[80];
+    char comchar, cmdbuf[INIT_BUF];
 
 #define ret(val) retval=val;done++;break
 
@@ -1512,7 +1533,7 @@ int number(char *cmd)
 
 void do_shell (char *filename)
 {
-	char cmdbuf[200];
+	char cmdbuf[COMMAND_BUF];
 	int rc;
 	char *expanded;
 
@@ -1669,7 +1690,7 @@ void execute (char *filename, char *cmd, ...)
 	
 	    execvp (cmd, args);
 	    putserr(_("exec failed\n"));
-	    exit (1);
+	    exit (EXIT_FAILURE);
 	}
 	if (id > 0) {
 	    signal (SIGINT, SIG_IGN);
@@ -1746,7 +1767,7 @@ void initterm()
 
 #ifdef do_SIGTTOU
 retry:
-#endif
+#endif /* do_SIGTTOU */
     no_tty = tcgetattr(fileno(stdout), &otty);
     if (!no_tty) {	
 	docrterase = (otty.c_cc[VERASE] != 255);
@@ -1760,14 +1781,14 @@ retry:
 	     */
 	    if ((tgrp = tcgetpgrp(fileno(stdout))) < 0) {
 		perror("tcgetpgrp");
-		exit(1);
+		exit(EXIT_FAILURE);
 	    }
 	    if (tgrp != getpgrp(0)) {
 		kill(0, SIGTTOU);
 		goto retry;
 	    }
 	}
-#endif
+#endif /* do_SIGTTOU */
 	if ((term = getenv("TERM")) == 0) {
 	    dumb++; ul_opt = 0;
 	}
@@ -1778,36 +1799,34 @@ retry:
 	else {
 #ifdef TIOCGWINSZ
 	    if (ioctl(fileno(stdout), TIOCGWINSZ, &win) < 0) {
-#endif
-		Lpp = my_tgetnum("li","lines");
-		Mcol = my_tgetnum("co","cols");
+#endif /* TIOCGWINSZ */
+		Lpp = my_tgetnum(TERM_LINES);
+		Mcol = my_tgetnum(TERM_COLS);
 #ifdef TIOCGWINSZ
 	    } else {
 		if ((Lpp = win.ws_row) == 0)
-		    Lpp = my_tgetnum("li","lines");
+		    Lpp = my_tgetnum(TERM_LINES);
 		if ((Mcol = win.ws_col) == 0)
-		    Mcol = my_tgetnum("co","cols");
+		    Mcol = my_tgetnum(TERM_COLS);
 	    }
-#endif
-	    if ((Lpp <= 0) || my_tgetflag("hc","hc")) {
+#endif /* TIOCGWINSZ */
+	    if ((Lpp <= 0) || my_tgetflag(TERM_HARD_COPY)) {
 		hard++;	/* Hard copy terminal */
-		Lpp = 24;
+		Lpp = LINES_PER_PAGE;
 	    }
 
-	    if (my_tgetflag("xn","xenl"))
+	    if (my_tgetflag(TERM_EAT_NEW_LINE))
 		eatnl++; /* Eat newline at last column + 1; dec, concept */
 	    if (Mcol <= 0)
-		Mcol = 80;
+		Mcol = NUM_COLUMNS;
 
-	    if (tailequ (fnames[0], "page"))
-		noscroll++;
-	    Wrap = my_tgetflag("am","am");
-	    bad_so = my_tgetflag ("xs","xhp");
-	    eraseln = my_tgetstr("ce","el");
-	    Clear = my_tgetstr("cl","clear");
-	    Senter = my_tgetstr("so","smso");
-	    Sexit = my_tgetstr("se","rmso");
-	    if ((soglitch = my_tgetnum("sg","xmc")) < 0)
+	    Wrap = my_tgetflag(TERM_AUTO_RIGHT_MARGIN);
+	    bad_so = my_tgetflag (TERM_CEOL);
+	    eraseln = my_tgetstr(TERM_CLEAR_TO_LINE_END);
+	    Clear = my_tgetstr(TERM_CLEAR);
+	    Senter = my_tgetstr(TERM_STANDARD_MODE);
+	    Sexit = my_tgetstr(TERM_EXIT_STANDARD_MODE);
+	    if ((soglitch = my_tgetnum(TERM_STD_MODE_GLITCH)) < 0)
 		soglitch = 0;
 
 	    /*
@@ -1818,12 +1837,12 @@ retry:
 	     *  isn't available, settle for standout sequence.
 	     */
 
-	    if (my_tgetflag("ul","ul") || my_tgetflag("os","os"))
+	    if (my_tgetflag(TERM_UNDERLINE) || my_tgetflag(TERM_OVER_STRIKE))
 		ul_opt = 0;
-	    if ((chUL = my_tgetstr("uc","uc")) == NULL )
+	    if ((chUL = my_tgetstr(TERM_UNDERLINE_CHAR)) == NULL )
 		chUL = "";
-	    if (((ULenter = my_tgetstr("us","smul")) == NULL ||
-	         (ULexit = my_tgetstr("ue","rmul")) == NULL) && !*chUL) {
+	    if (((ULenter = my_tgetstr(TERM_ENTER_UNDERLINE)) == NULL ||
+	         (ULexit = my_tgetstr(TERM_EXIT_UNDERLINE)) == NULL) && !*chUL) {
 	        if ((ULenter = Senter) == NULL || (ULexit = Sexit) == NULL) {
 			ULenter = "";
 			ULexit = "";
@@ -1833,18 +1852,18 @@ retry:
 		ulglitch = 0;
 	    }
 
-	    if ((padstr = my_tgetstr("pc","pad")) != NULL)
+	    if ((padstr = my_tgetstr(TERM_PAD_CHAR)) != NULL)
 		PC = *padstr;
-	    Home = my_tgetstr("ho","home");
+	    Home = my_tgetstr(TERM_HOME);
 	    if (Home == 0 || *Home == '\0') {
-		if ((cursorm = my_tgetstr("cm","cup")) != NULL) {
+		if ((cursorm = my_tgetstr(TERM_CURSOR_ADDRESS)) != NULL) {
 		    const char *t = (const char *)my_tgoto(cursorm, 0, 0);
 		    xstrncpy(cursorhome, t, sizeof(cursorhome));
 		    Home = cursorhome;
 		}
 	    }
-	    EodClr = my_tgetstr("cd","ed");
-	    if ((chBS = my_tgetstr("le","cub1")) == NULL)
+	    EodClr = my_tgetstr(TERM_CLEAR_TO_SCREEN_END);
+	    if ((chBS = my_tgetstr(TERM_LINE_DOWN)) == NULL)
 		chBS = "\b";
 
 	}
@@ -1944,7 +1963,7 @@ void ttyin (char buf[], register int nmax, char pchar) {
 		    }
 		  }
 		else
-#endif
+#endif /* HAVE_WIDECHAR */
 		  {
 		    --promptlen;
 		    ERASEONECOLUMN
@@ -2106,7 +2125,7 @@ reset_tty () {
     if (no_tty)
 	return;
     if (pstate) {
-	tputs(ULexit, 1, ourputch);	/* putchar - if that isnt a macro */
+	tputs(ULexit, fileno(stdout), ourputch);	/* putchar - if that isnt a macro */
 	fflush(stdout);
 	pstate = 0;
     }
@@ -2124,7 +2143,7 @@ void rdline (register FILE *f)
     prepare_line_buffer();
 
     p = Line;
-    while ((c = Getc (f)) != '\n' && c != EOF && p - Line < LineLen - 1)
+    while ((c = Getc (f)) != '\n' && c != EOF && (size_t) (p - Line) < LineLen - 1)
 	*p++ = c;
     if (c == '\n')
 	Currline++;
@@ -2133,7 +2152,8 @@ void rdline (register FILE *f)
 
 /* Come here when we get a suspend signal from the terminal */
 
-void onsusp (int dummy) {
+void onsusp (int dummy __attribute__ ((__unused__)))
+{
     sigset_t signals, oldmask;
 
     /* ignore SIGTTOU so we don't get stopped if csh grabs the tty */
