@@ -392,7 +392,7 @@ try_again:
 		last.tv_usec = last.tv_usec % 1000000;
 	}
 
-	if (state_fd > 0) {
+	if (state_fd >= 0) {
 		rewind(state_f);
 		len = fprintf(state_f,
 			      "clock: %04x tv: %016lu %08lu adj: %08d\n",
