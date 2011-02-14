@@ -23,11 +23,11 @@ global:
 	uuid_type;
 	uuid_variant;
 
-	/* uuid__* this is not part of the official API, this is
+	/* __uuid_* this is not part of the official API, this is
 	 * uuidd (uuid daemon) specific stuff. Hell.
 	 */
-	uuid__generate_time;
-	uuid__generate_random;
+	__uuid_generate_time;
+	__uuid_generate_random;
 local:
 	*;
 };

@@ -346,7 +346,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			break;
 		case UUIDD_OP_TIME_UUID:
 			num = 1;
-			uuid__generate_time(uu, &num);
+			__uuid_generate_time(uu, &num);
 			if (debug) {
 				uuid_unparse(uu, str);
 				printf(_("Generated time UUID: %s\n"), str);
@@ -356,7 +356,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			break;
 		case UUIDD_OP_RANDOM_UUID:
 			num = 1;
-			uuid__generate_random(uu, &num);
+			__uuid_generate_random(uu, &num);
 			if (debug) {
 				uuid_unparse(uu, str);
 				printf(_("Generated random UUID: %s\n"), str);
@@ -365,7 +365,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			reply_len = sizeof(uu);
 			break;
 		case UUIDD_OP_BULK_TIME_UUID:
-			uuid__generate_time(uu, &num);
+			__uuid_generate_time(uu, &num);
 			if (debug) {
 				uuid_unparse(uu, str);
 				printf(_("Generated time UUID %s and %d "
@@ -383,7 +383,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 				num = 1000;
 			if (num * UUID_LEN > (int) (sizeof(reply_buf)-sizeof(num)))
 				num = (sizeof(reply_buf)-sizeof(num)) / UUID_LEN;
-			uuid__generate_random((unsigned char *) reply_buf +
+			__uuid_generate_random((unsigned char *) reply_buf +
 					      sizeof(num), &num);
 			if (debug) {
 				printf(_("Generated %d UUIDs:\n"), num);

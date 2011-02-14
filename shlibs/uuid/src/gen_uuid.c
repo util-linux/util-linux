@@ -566,7 +566,7 @@ static int get_uuid_via_daemon(int op, uuid_t out, int *num)
 }
 #endif
 
-void uuid__generate_time(uuid_t out, int *num)
+void __uuid_generate_time(uuid_t out, int *num)
 {
 	static unsigned char node_id[6];
 	static int has_init = 0;
@@ -633,11 +633,11 @@ void uuid_generate_time(uuid_t out)
 		return;
 #endif
 
-	uuid__generate_time(out, 0);
+	__uuid_generate_time(out, 0);
 }
 
 
-void uuid__generate_random(uuid_t out, int *num)
+void __uuid_generate_random(uuid_t out, int *num)
 {
 	uuid_t	buf;
 	struct uuid uu;
@@ -665,7 +665,7 @@ void uuid_generate_random(uuid_t out)
 	int	num = 1;
 	/* No real reason to use the daemon for random uuid's -- yet */
 
-	uuid__generate_random(out, &num);
+	__uuid_generate_random(out, &num);
 }
 
 
