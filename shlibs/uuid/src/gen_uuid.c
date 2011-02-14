@@ -306,6 +306,12 @@ static int get_node_id(unsigned char *node_id)
 /* Assume that the gettimeofday() has microsecond granularity */
 #define MAX_ADJUSTMENT 10
 
+/*
+ * Get clock from global sequence clock counter.
+ *
+ * Return -1 if the clock counter could not be opened/locked (in this case
+ * pseudorandom value is returned in @ret_clock_seq), otherwise return 0.
+ */
 static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 		     uint16_t *ret_clock_seq, int *num)
 {
@@ -318,6 +324,7 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 	uint64_t			clock_reg;
 	mode_t				save_umask;
 	int				len;
+	int				ret = 0;
 
 	if (state_fd == -2) {
 		save_umask = umask(0);
@@ -329,8 +336,11 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 			if (!state_f) {
 				close(state_fd);
 				state_fd = -1;
+				ret = -1;
 			}
 		}
+		else
+			ret = -1;
 	}
 	if (state_fd >= 0) {
 		rewind(state_f);
@@ -340,6 +350,7 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 			fclose(state_f);
 			close(state_fd);
 			state_fd = -1;
+			ret = -1;
 			break;
 		}
 	}
@@ -411,7 +422,7 @@ try_again:
 	*clock_high = clock_reg >> 32;
 	*clock_low = clock_reg;
 	*ret_clock_seq = clock_seq;
-	return 0;
+	return ret;
 }
 
 #if defined(HAVE_UUIDD) && defined(HAVE_SYS_UN_H)
