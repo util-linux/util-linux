@@ -566,12 +566,13 @@ static int get_uuid_via_daemon(int op, uuid_t out, int *num)
 }
 #endif
 
-void __uuid_generate_time(uuid_t out, int *num)
+int __uuid_generate_time(uuid_t out, int *num)
 {
 	static unsigned char node_id[6];
 	static int has_init = 0;
 	struct uuid uu;
 	uint32_t	clock_mid;
+	int ret;
 
 	if (!has_init) {
 		if (get_node_id(node_id) <= 0) {
@@ -585,12 +586,13 @@ void __uuid_generate_time(uuid_t out, int *num)
 		}
 		has_init = 1;
 	}
-	get_clock(&clock_mid, &uu.time_low, &uu.clock_seq, num);
+	ret = get_clock(&clock_mid, &uu.time_low, &uu.clock_seq, num);
 	uu.clock_seq |= 0x8000;
 	uu.time_mid = (uint16_t) clock_mid;
 	uu.time_hi_and_version = ((clock_mid >> 16) & 0x0FFF) | 0x1000;
 	memcpy(uu.node, node_id, 6);
 	uuid_pack(&uu, out);
+	return ret;
 }
 
 void uuid_generate_time(uuid_t out)
