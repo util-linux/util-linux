@@ -31,7 +31,8 @@
 .\" Created  Wed Mar 10 17:42:12 1999, Andreas Dilger
 .TH UUID_GENERATE 3 "May 2009" "util-linux" "Libuuid API"
 .SH NAME
-uuid_generate, uuid_generate_random, uuid_generate_time \- create a new unique UUID value
+uuid_generate, uuid_generate_random, uuid_generate_time,
+uuid_generate_time_safe \- create a new unique UUID value
 .SH SYNOPSIS
 .nf
 .B #include <uuid/uuid.h>
@@ -39,6 +40,7 @@ uuid_generate, uuid_generate_random, uuid_generate_time \- create a new unique U
 .BI "void uuid_generate(uuid_t " out );
 .BI "void uuid_generate_random(uuid_t " out );
 .BI "void uuid_generate_time(uuid_t " out );
+.BI "int uuid_generate_time_safe(uuid_t " out );
 .fi
 .SH DESCRIPTION
 The
@@ -72,7 +74,24 @@ information about when and where the UUID was generated.  This can cause
 privacy problems in some applications, so the
 .B uuid_generate
 function only uses this algorithm if a high-quality source of
-randomness is not available.
+randomness is not available.  To guarantee uniqueness of UUIDs generated
+by concurrently running processes, the uuid library uses global
+clock state counter (if the process has permissions to gain exclusive access
+to this file) and/or the
+.B uuidd
+daemon, if it is running already or can be be spawned by the process (if
+installed and the process has enough permissions to run it).  If neither of
+these two synchronization mechanisms can be used, it is theoretically possible
+that two concurrently running processes obtain the same UUID(s).  To tell
+whether the UUID has been generated in a safe manner, use
+.BR uuid_generate_time_safe .
+.sp
+The
+.B uuid_generate_time_safe
+is similar to
+.BR uuid_generate_time ,
+except that it returns a value which denotes whether any of the synchronization
+mechanisms (see above) has been used.
 .sp
 The UUID is 16 bytes (128 bits) long, which gives approximately 3.4x10^38
 unique values (there are approximately 10^80 elementary particles in
@@ -84,6 +103,8 @@ and in the future.
 .SH RETURN VALUE
 The newly created UUID is returned in the memory location pointed to by
 .IR out .
+.B uuid_generate_time_safe
+returns zero if the UUID has been generated in a safe manner, -1 otherwise.
 .SH "CONFORMING TO"
 OSF DCE 1.1
 .SH AUTHOR
@@ -95,6 +116,7 @@ ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
 .SH "SEE ALSO"
 .BR uuid (3),
 .BR uuidgen (1),
+.BR uuidd (8),
 .BR uuid_clear (3),
 .BR uuid_compare (3),
 .BR uuid_copy (3),
