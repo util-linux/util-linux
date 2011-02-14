@@ -1,6 +1,6 @@
 /*
  * The symbol versioning ensures that a new application requiring symbol foo()
- * can't run with old libblkid.so not providing foo() - the global SONAME
+ * can't run with old libuuid.so not providing foo() - the global SONAME
  * version info can't enforce this since we never change the SONAME.
  *
  * The original libuuid from e2fsprogs (<=1.41.5) does not to use
@@ -31,3 +31,11 @@ global:
 local:
 	*;
 };
+
+/*
+ * version(s) since util-linux 2.20
+ */
+UUID_2.20 {
+global:
+	uuid_generate_time_safe;
+} UUID_1.0;

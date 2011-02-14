@@ -79,6 +79,7 @@ void uuid_copy(uuid_t dst, const uuid_t src);
 void uuid_generate(uuid_t out);
 void uuid_generate_random(uuid_t out);
 void uuid_generate_time(uuid_t out);
+int uuid_generate_time_safe(uuid_t out);
 
 /* isnull.c */
 int uuid_is_null(const uuid_t uu);

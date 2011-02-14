@@ -595,8 +595,15 @@ int __uuid_generate_time(uuid_t out, int *num)
 	return ret;
 }
 
-void uuid_generate_time(uuid_t out)
-{
+/*
+ * Generate time-based UUID and store it to @out
+ *
+ * Tries to guarantee uniqueness of the generated UUIDs by obtaining them from the uuidd daemon,
+ * or, if uuidd is not usable, by using the global clock state counter (see get_clock()).
+ * If neither of these is possible (e.g. because of insufficient permissions), it generates
+ * the UUID anyway, but returns -1. Otherwise, returns 0.
+ */
+static int uuid_generate_time_generic(uuid_t out) {
 #ifdef HAVE_TLS
 	THREAD_LOCAL int		num = 0;
 	THREAD_LOCAL struct uuid	uu;
@@ -615,7 +622,7 @@ void uuid_generate_time(uuid_t out)
 			last_time = time(0);
 			uuid_unpack(out, &uu);
 			num--;
-			return;
+			return 0;
 		}
 		num = 0;
 	}
@@ -628,14 +635,30 @@ void uuid_generate_time(uuid_t out)
 		}
 		num--;
 		uuid_pack(&uu, out);
-		return;
+		return 0;
 	}
 #else
 	if (get_uuid_via_daemon(UUIDD_OP_TIME_UUID, out, 0) == 0)
-		return;
+		return 0;
 #endif
 
-	__uuid_generate_time(out, 0);
+	return __uuid_generate_time(out, 0);
+}
+
+/*
+ * Generate time-based UUID and store it to @out.
+ *
+ * Discards return value from uuid_generate_time_generic()
+ */
+void uuid_generate_time(uuid_t out)
+{
+	(void)uuid_generate_time_generic(out);
+}
+
+
+int uuid_generate_time_safe(uuid_t out)
+{
+	return uuid_generate_time_generic(out);
 }
 
 
