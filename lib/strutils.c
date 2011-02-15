@@ -245,14 +245,19 @@ static int get_exp(uint64_t n)
 char *size_to_human_string(uint64_t bytes)
 {
 	char buf[32];
-	int dec, frac, exp;
-	const char *letters = "BKMGTP";
+	int dec, exp;
+	uint64_t frac;
+	const char *letters = "BKMGTPE";
 	char c;
 
 	exp  = get_exp(bytes);
 	c    = *(letters + (exp ? exp / 10 : 0));
 	dec  = exp ? bytes / (1ULL << exp) : bytes;
 	frac = exp ? bytes % (1ULL << exp) : 0;
+
+	/* fprintf(stderr, "exp: %d, c: %c, dec: %d, frac: %jd\n",
+	 *                 exp, c, dec, frac);
+	 */
 
 	if (frac) {
 		/* round */
@@ -267,7 +272,7 @@ char *size_to_human_string(uint64_t bytes)
 
 		if (!dp || !*dp)
 			dp = ".";
-		snprintf(buf, sizeof(buf), "%d%s%d%c", dec, dp, frac, c);
+		snprintf(buf, sizeof(buf), "%d%s%jd%c", dec, dp, frac, c);
 	} else
 		snprintf(buf, sizeof(buf), "%d%c", dec, c);
 
@@ -280,6 +285,7 @@ char *size_to_human_string(uint64_t bytes)
 int main(int argc, char *argv[])
 {
 	uintmax_t size = 0;
+	char *hum;
 
 	if (argc < 2) {
 		fprintf(stderr, "usage: %s <number>[suffix]\n",	argv[0]);
@@ -289,7 +295,11 @@ int main(int argc, char *argv[])
 	if (strtosize(argv[1], &size))
 		errx(EXIT_FAILURE, "invalid size '%s' value", argv[1]);
 
-	printf("%25s : %20ju\n", argv[1], size);
+	hum = size_to_human_string(size);
+
+	printf("%25s : %20ju : %8s\n", argv[1], size, hum);
+	free(hum);
+
 	return EXIT_FAILURE;
 }
 #endif /* TEST_PROGRAM */
