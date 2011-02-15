@@ -29,6 +29,10 @@ PATCHES:
 
      * one patch per email, with the changelog in the body of the email.
 
+     * many small patches are favoured over one big. Break down is done on
+       basis of logical functionality; for example #endif mark ups, compiler
+       warning and exit codes fixes all should be individual small patches.
+
      * Subject: [PATCH] subsystem: description
 
      * if someone else wrote the patch, they should be credited (and blamed)
