@@ -22,14 +22,6 @@ global:
 	uuid_time;
 	uuid_type;
 	uuid_variant;
-
-	/* __uuid_* this is not part of the official API, this is
-	 * uuidd (uuid daemon) specific stuff. Hell.
-	 */
-	__uuid_generate_time;
-	__uuid_generate_random;
-local:
-	*;
 };
 
 /*
@@ -39,3 +31,16 @@ UUID_2.20 {
 global:
 	uuid_generate_time_safe;
 } UUID_1.0;
+
+
+/*
+ * __uuid_* this is not part of the official API, this is
+ * uuidd (uuid daemon) specific stuff. Hell.
+ */
+UUIDD_PRIVATE {
+global:
+	__uuid_generate_time;
+	__uuid_generate_random;
+local:
+	*;
+};
