@@ -42,7 +42,6 @@
 #include <paths.h>
 #include <unistd.h>
 #include <errno.h>
-#include <malloc.h>
 #include <signal.h>
 #include <dirent.h>
 #include <blkid.h>
@@ -52,9 +51,11 @@
 #include "nls.h"
 #include "pathnames.h"
 #include "ismounted.h"
-
-#include "fsck.h"
 #include "c.h"
+#include "fsck.h"
+
+#define XALLOC_EXIT_CODE	EXIT_ERROR
+#include "xalloc.h"
 
 static const char *ignored_types[] = {
 	"ignore",
@@ -106,7 +107,6 @@ int num_running = 0;
 int max_running = 0;
 volatile int cancel_requested = 0;
 int kill_sent = 0;
-char *progname;
 char *fstype = NULL;
 struct fs_info *filesys_info = NULL, *filesys_last = NULL;
 struct fsck_instance *instance_list;
@@ -119,9 +119,8 @@ static char *string_copy(const char *s)
 
 	if (!s)
 		return 0;
-	ret = malloc(strlen(s)+1);
-	if (ret)
-		strcpy(ret, s);
+	ret = xmalloc(strlen(s)+1);
+	strcpy(ret, s);
 	return ret;
 }
 
@@ -242,14 +241,20 @@ static int is_irrotational_disk(dev_t disk)
 			"/sys/dev/block/%d:%d/queue/rotational",
 			major(disk), minor(disk));
 
-	if (rc < 0 || rc + 1 > sizeof(path))
+	if (rc < 0 || (unsigned int) (rc + 1) > sizeof(path))
 		return 0;
 
 	f = fopen(path, "r");
 	if (!f)
 		return 0;
 
-	rc = fscanf(f, "%u", &x);
+	rc = fscanf(f, "%d", &x);
+	if (rc != 1) {
+		if (ferror(f))
+			warn(_("failed to read: %s"), path);
+		else
+			warnx(_("parse error: %s"), path);
+	}
 	fclose(f);
 
 	return rc == 1 ? !x : 0;
@@ -257,7 +262,7 @@ static int is_irrotational_disk(dev_t disk)
 
 static void lock_disk(struct fsck_instance *inst)
 {
-	dev_t disk = inst->fs->disk ? : get_disk(inst->fs->device);
+	dev_t disk = inst->fs->disk ? inst->fs->disk : get_disk(inst->fs->device);
 	char *diskname;
 
 	if (!disk || is_irrotational_disk(disk))
@@ -321,8 +326,7 @@ static struct fs_info *create_fs_device(const char *device, const char *mntpnt,
 {
 	struct fs_info *fs;
 
-	if (!(fs = malloc(sizeof(struct fs_info))))
-		return NULL;
+	fs = xmalloc(sizeof(struct fs_info));
 
 	fs->device = string_copy(device);
 	fs->mountpt = string_copy(mntpnt);
@@ -417,8 +421,7 @@ static void load_fs_info(const char *filename)
 	struct fs_info *fs;
 
 	if ((f = fopen(filename, "r")) == NULL) {
-		fprintf(stderr, _("WARNING: couldn't open %s: %s\n"),
-			filename, strerror(errno));
+		warn(_("WARNING: couldn't open %s"), filename);
 		return;
 	}
 	while (!feof(f)) {
@@ -427,8 +430,8 @@ static void load_fs_info(const char *filename)
 			break;
 		buf[sizeof(buf)-1] = 0;
 		if (parse_fstab_line(buf, &fs) < 0) {
-			fprintf(stderr, _("WARNING: bad format "
-				"on line %d of %s\n"), lineno, filename);
+			warnx(_("WARNING: bad format "
+				"on line %d of %s"), lineno, filename);
 			continue;
 		}
 		if (!fs)
@@ -442,10 +445,10 @@ static void load_fs_info(const char *filename)
 	fclose(f);
 
 	if (old_fstab && filesys_info) {
-		fputs(_(
+		warnx(_(
 		"WARNING: Your /etc/fstab does not contain the fsck passno\n"
 		"	field.  I will kludge around things for you, but you\n"
-		"	should fix your /etc/fstab file as soon as you can.\n\n"), stderr);
+		"	should fix your /etc/fstab file as soon as you can.\n"));
 
 		for (fs = filesys_info; fs; fs = fs->next) {
 			fs->passno = 1;
@@ -515,9 +518,7 @@ static int execute(const char *type, struct fs_info *fs, int interactive)
 	struct fsck_instance *inst, *p;
 	pid_t	pid;
 
-	inst = malloc(sizeof(struct fsck_instance));
-	if (!inst)
-		return ENOMEM;
+	inst = xmalloc(sizeof(struct fsck_instance));
 	memset(inst, 0, sizeof(struct fsck_instance));
 
 	sprintf(prog, "fsck.%s", type);
@@ -550,7 +551,7 @@ static int execute(const char *type, struct fs_info *fs, int interactive)
 
 	s = find_fsck(prog);
 	if (s == NULL) {
-		fprintf(stderr, _("fsck: %s: not found\n"), prog);
+		warnx(_("%s: not found"), prog);
 		free(inst);
 		return ENOENT;
 	}
@@ -670,9 +671,7 @@ static struct fsck_instance *wait_one(int flags)
 			if ((errno == EINTR) || (errno == EAGAIN))
 				continue;
 			if (errno == ECHILD) {
-				fprintf(stderr,
-					_("%s: wait: No more child process?!?\n"),
-					progname);
+				warnx(_("wait: no more child process?!?"));
 				return NULL;
 			}
 			perror("wait");
@@ -693,13 +692,13 @@ static struct fsck_instance *wait_one(int flags)
 		if (sig == SIGINT) {
 			status = EXIT_UNCORRECTED;
 		} else {
-			printf(_("Warning... %s for device %s exited "
-			       "with signal %d.\n"),
+			warnx(_("Warning... %s for device %s exited "
+			       "with signal %d."),
 			       inst->prog, inst->fs->device, sig);
 			status = EXIT_ERROR;
 		}
 	} else {
-		printf(_("%s %s: status is %x, should never happen.\n"),
+		warnx(_("%s %s: status is %x, should never happen."),
 		       inst->prog, inst->fs->device, status);
 		status = EXIT_ERROR;
 	}
@@ -724,7 +723,7 @@ static struct fsck_instance *wait_one(int flags)
 				if (fork() == 0) {
 					sleep(1);
 					kill(inst2->pid, SIGUSR1);
-					exit(0);
+					exit(EXIT_OK);
 				}
 			} else
 				kill(inst2->pid, SIGUSR1);
@@ -798,8 +797,8 @@ static int fsck_device(struct fs_info *fs, int interactive)
 	num_running++;
 	retval = execute(type, fs, interactive);
 	if (retval) {
-		fprintf(stderr, _("%s: Error %d while executing fsck.%s "
-			"for %s\n"), progname, retval, type, fs->device);
+		warnx(_("error %d while executing fsck.%s for %s"),
+			retval, type, fs->device);
 		num_running--;
 		return EXIT_ERROR;
 	}
@@ -837,13 +836,8 @@ static void compile_fs_type(char *fs_type, struct fs_type_compile *cmp)
 		}
 	}
 
-	cmp->list = malloc(num * sizeof(char *));
-	cmp->type = malloc(num * sizeof(int));
-	if (!cmp->list || !cmp->type) {
-		fputs(_("Couldn't allocate memory for filesystem types\n"),
-		      stderr);
-		exit(EXIT_ERROR);
-	}
+	cmp->list = xmalloc(num * sizeof(char *));
+	cmp->type = xmalloc(num * sizeof(int));
 	memset(cmp->list, 0, num * sizeof(char *));
 	memset(cmp->type, 0, num * sizeof(int));
 	cmp->negate = 0;
@@ -877,14 +871,13 @@ static void compile_fs_type(char *fs_type, struct fs_type_compile *cmp)
 			}
 			if ((negate && !cmp->negate) ||
 			    (!negate && cmp->negate)) {
-				fputs(_(fs_type_syntax_error), stderr);
-				exit(EXIT_USAGE);
+				errx(EXIT_USAGE, _(fs_type_syntax_error));
 			}
 		}
 #if 0
 		printf("Adding %s to list (type %d).\n", s, cmp->type[num]);
 #endif
-	        cmp->list[num++] = string_copy(s);
+		cmp->list[num++] = string_copy(s);
 		s = strtok(NULL, ",");
 	}
 	free(list);
@@ -910,7 +903,7 @@ static int opt_in_list(const char *opt, char *optlist)
 		}
 		s = strtok(NULL, ",");
 	}
-        free(list);
+	free(list);
 	return 0;
 }
 
@@ -978,8 +971,8 @@ static int ignore(struct fs_info *fs)
 	 * If this is a bind mount, ignore it.
 	 */
 	if (opt_in_list("bind", fs->opts)) {
-		fprintf(stderr,
-			_("%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number\n"),
+		warnx(_("%s: skipping bad line in /etc/fstab: "
+			"bind mount with nonzero fsck pass number"),
 			fs->mountpt);
 		return 1;
 	}
@@ -1022,7 +1015,7 @@ static int ignore(struct fs_info *fs)
 	/* See if the <fsck.fs> program is available. */
 	if (find_fsck(fs->type) == NULL) {
 		if (wanted)
-			fprintf(stderr, _("fsck: cannot check %s: fsck.%s not found\n"),
+			warnx(_("cannot check %s: fsck.%s not found"),
 				fs->device, fs->type);
 		return 1;
 	}
@@ -1217,9 +1210,28 @@ static int check_all(NOARGS)
 	return status;
 }
 
-static void usage(NOARGS)
+static void __attribute__((__noreturn__)) usage(void)
 {
-	fputs(_("Usage: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-options] [filesys ...]\n"), stderr);
+	printf(_("\nUsage:\n"
+		 " %s [fsck-options] [fs-options] [filesys ...]\n"),
+		program_invocation_short_name);
+
+	puts(_(	"\nOptions:\n"
+		"  -A         check all file systems\n"
+		"  -R         skip root, useful only with -A\n"
+		"  -M         do not check mounted filesystems\n"
+		"  -t [type]  specity file system types to be checked\n"
+		"             type is allowed to be comma-separated list\n"
+		"  -P         check file systems in parallel, including root\n"
+		"  -s         serialize fsck operations\n"
+		"  -l         use flock to lock device\n"
+		"  -N         do not execute, just show what would be done\n"
+		"  -T         do not show the title on startup\n"
+		"  -C [fd]    display progress bar, file descriptor is for GUIs\n"
+		"  -V         explain what is being done\n"
+		"  -?         display this help and exit\n\n"
+		"See fsck.* commands for fs-options."));
+
 	exit(EXIT_USAGE);
 }
 
@@ -1249,18 +1261,13 @@ static void PRS(int argc, char *argv[])
 	num_args = 0;
 	instance_list = 0;
 
-	progname = argv[0];
-
 	for (i=1; i < argc; i++) {
 		arg = argv[i];
 		if (!arg)
 			continue;
 		if ((arg[0] == '/' && !opts_for_fsck) || strchr(arg, '=')) {
-			if (num_devices >= MAX_DEVICES) {
-				fprintf(stderr, _("%s: too many devices\n"),
-					progname);
-				exit(EXIT_ERROR);
-			}
+			if (num_devices >= MAX_DEVICES)
+				errx(EXIT_ERROR, _("too many devices"));
 			dev = fsprobe_get_devname_by_spec(arg);
 			if (!dev && strchr(arg, '=')) {
 				/*
@@ -1268,32 +1275,29 @@ static void PRS(int argc, char *argv[])
 				 * /proc/partitions isn't found.
 				 */
 				if (access(_PATH_PROC_PARTITIONS, R_OK) < 0) {
-					fprintf(stderr, _("Couldn't open %s: %s\n"),
-						_PATH_PROC_PARTITIONS, strerror(errno));
-					fprintf(stderr, _("Is /proc mounted?\n"));
-					exit(EXIT_ERROR);
+					warn(_("couldn't open %s"),
+						_PATH_PROC_PARTITIONS);
+					errx(EXIT_ERROR, _("Is /proc mounted?"));
 				}
 				/*
 				 * Check to see if this is because
 				 * we're not running as root
 				 */
 				if (geteuid())
-					fprintf(stderr,
-		_("Must be root to scan for matching filesystems: %s\n"), arg);
+					errx(EXIT_ERROR,
+						_("must be root to scan for matching filesystems: %s"),
+						arg);
 				else
-					fprintf(stderr,
-		_("Couldn't find matching filesystem: %s\n"), arg);
-				exit(EXIT_ERROR);
+					errx(EXIT_ERROR,
+						_("couldn't find matching filesystem: %s"),
+						arg);
 			}
 			devices[num_devices++] = dev ? dev : string_copy(arg);
 			continue;
 		}
 		if (arg[0] != '-' || opts_for_fsck) {
-			if (num_args >= MAX_ARGS) {
-				fprintf(stderr, _("%s: too many arguments\n"),
-					progname);
-				exit(EXIT_ERROR);
-			}
+			if (num_args >= MAX_ARGS)
+				errx(EXIT_ERROR, _("too many arguments"));
 			args[num_args++] = string_copy(arg);
 			continue;
 		}
@@ -1304,10 +1308,10 @@ static void PRS(int argc, char *argv[])
 			}
 			switch (arg[j]) {
 			case 'A':
-				doall++;
+				doall = 1;
 				break;
 			case 'C':
-				progress++;
+				progress = 1;
 				if (arg[j+1]) {
 					progress_fd = string_to_int(arg+j+1);
 					if (progress_fd < 0)
@@ -1326,28 +1330,28 @@ static void PRS(int argc, char *argv[])
 				}
 				break;
 			case 'l':
-				lockdisk++;
+				lockdisk = 1;
 				break;
 			case 'V':
 				verbose++;
 				break;
 			case 'N':
-				noexecute++;
+				noexecute = 1;
 				break;
 			case 'R':
-				skip_root++;
+				skip_root = 1;
 				break;
 			case 'T':
-				notitle++;
+				notitle = 1;
 				break;
 			case 'M':
-				ignore_mounted++;
+				ignore_mounted = 1;
 				break;
 			case 'P':
-				parallel_root++;
+				parallel_root = 1;
 				break;
 			case 's':
-				serialize++;
+				serialize = 1;
 				break;
 			case 't':
 				tmp = 0;
@@ -1377,12 +1381,8 @@ static void PRS(int argc, char *argv[])
 		if (opt) {
 			options[0] = '-';
 			options[++opt] = '\0';
-			if (num_args >= MAX_ARGS) {
-				fprintf(stderr,
-					_("%s: too many arguments\n"),
-					progname);
-				exit(EXIT_ERROR);
-			}
+			if (num_args >= MAX_ARGS)
+				errx(EXIT_ERROR, _("too many arguments"));
 			args[num_args++] = string_copy(options);
 			opt = 0;
 		}
@@ -1413,7 +1413,7 @@ int main(int argc, char *argv[])
 	PRS(argc, argv);
 
 	if (!notitle)
-		printf(_("fsck from %s\n"), PACKAGE_STRING);
+		printf(_("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING);
 
 	fstab = getenv("FSTAB_FILE");
 	if (!fstab)
@@ -1422,12 +1422,8 @@ int main(int argc, char *argv[])
 
 	/* Update our search path to include uncommon directories. */
 	if (oldpath) {
-		fsck_path = malloc (strlen (fsck_prefix_path) + 1 +
+		fsck_path = xmalloc (strlen (fsck_prefix_path) + 1 +
 				    strlen (oldpath) + 1);
-		if (!fsck_path) {
-			fprintf(stderr, _("%s: Unable to allocate memory for fsck_path\n"), progname);
-			exit(EXIT_ERROR);
-		}
 		strcpy (fsck_path, fsck_prefix_path);
 		strcat (fsck_path, ":");
 		strcat (fsck_path, oldpath);
@@ -1439,8 +1435,8 @@ int main(int argc, char *argv[])
 		interactive = 1;
 
 	if (lockdisk && (doall || num_devices > 1)) {
-		fprintf(stderr, _("%s: the -l option can be used with one "
-				  "device only -- ignore\n"), progname);
+		warnx(_("the -l option can be used with one "
+				  "device only -- ignore"));
 		lockdisk = 0;
 	}
 
