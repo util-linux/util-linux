@@ -1037,7 +1037,11 @@ Michael Riepe <michael@stud.uni-hannover.de>
     }
 #endif
 
-    setgid(pwd->pw_gid);
+    if (setgid(pwd->pw_gid) < 0 && pwd->pw_gid) {
+	syslog(LOG_ALERT, _("setgid() failed"));
+	exit(EXIT_FAILURE);
+    }
+
 
     if (*pwd->pw_shell == '\0')
       pwd->pw_shell = _PATH_BSHELL;
