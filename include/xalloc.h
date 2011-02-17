@@ -4,7 +4,7 @@
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  *
- * General memory allocation wrappers for malloc, realloc and calloc
+ * General memory allocation wrappers for malloc, realloc, calloc and strdup
  */
 
 #ifndef UTIL_LINUX_XALLOC_H
