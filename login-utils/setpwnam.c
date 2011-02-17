@@ -63,6 +63,7 @@
 #include <paths.h>
 
 #include "setpwnam.h"
+#include "c.h"
 
 #define false 0
 #define true 1
@@ -177,7 +178,7 @@ setpwnam (struct passwd *pwd)
     /* we don't care if we can't remove the backup file */
     unlink(PASSWD_FILE".OLD");
     /* we don't care if we can't create the backup file */
-    link(PASSWD_FILE, PASSWD_FILE".OLD");
+    ignore_result( link(PASSWD_FILE, PASSWD_FILE".OLD") );
     /* we DO care if we can't rename to the passwd file */
     if(rename(PTMP_FILE, PASSWD_FILE) < 0)
 	goto fail;
