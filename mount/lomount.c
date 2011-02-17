@@ -403,6 +403,51 @@ done:
 	return -1;
 }
 
+/* Find loop device associated with given @filename. Used for unmounting loop
+ * device specified by associated backing file.
+ *
+ * returns: 1 no such device/error
+ *          2 more than one loop device associated with @filename
+ *          0 exactly one loop device associated with @filename
+ *            (@loopdev points to string containing full device name)
+ */
+int
+find_loopdev_by_backing_file(const char *filename, char **loopdev)
+{
+	struct looplist ll;
+	struct stat filestat;
+	int fd;
+	int devs_n = 0;		/* number of loop devices found */
+	char* devname = NULL;
+
+	if (stat(filename, &filestat) == -1) {
+		perror(filename);
+		return 1;
+	}
+
+	if (looplist_open(&ll, LLFLG_USEDONLY) == -1) {
+		error(_("%s: /dev directory does not exist."), progname);
+		return 1;
+	}
+
+	while((devs_n < 2) && (fd = looplist_next(&ll)) != -1) {
+		if (is_associated(fd, &filestat, 0, 0) == 1) {
+			if (!devname)
+				devname = xstrdup(ll.name);
+			devs_n++;
+		}
+		close(fd);
+	}
+	looplist_close(&ll);
+
+	if (devs_n == 1) {
+		*loopdev = devname;
+		return 0;		/* exactly one loopdev */
+	}
+	free(devname);
+	return devs_n ? 2 : 1;		/* more loopdevs or error */
+}
+
 #ifdef MAIN
 
 static int
@@ -564,6 +609,7 @@ show_associated_loop_devices(char *filename, unsigned long long offset, int isof
 
 	return 0;
 }
+
 
 #endif /* MAIN */
 
@@ -944,6 +990,13 @@ char *
 find_unused_loop_device (void) {
 	mutter();
 	return 0;
+}
+
+int
+find_loopdev_by_backing_file(const char *filename, char **loopdev)
+{
+	mutter();
+	return 1;
 }
 
 #endif /* !LOOP_SET_FD */
