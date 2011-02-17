@@ -1,3 +1,18 @@
+
+term-utils
+----------
+
+ - create a new top-level directory "term-utils"
+ - move agetty, setterm, reset, script (scriptreplay), mesg and wall to the
+   term-utils/
+
+fsprobe
+-------
+
+ - remove the lib/fsprobe.c wrapper for libblkid used in mount and fsck. Use
+   everywhere libblkid from util-linux only.
+ - update ./configure script
+
 build-sys
 --------
 
@@ -13,7 +28,7 @@ build-sys
 	AM_CONDITIONAL(BUILD_LIBMOUNT, test "x$build_foo" = xyes)
 
    for Linux-only utils in configure.ac. It would be nice to set all defaults
-   for all $enable_ variables at begin of the configure script according to
+   for all "$enable_" variables at the begin of the configure script according to
    $linux_os. Something like:
 
 	if test "x$linux_os" = xno
@@ -31,12 +46,46 @@ build-sys
    The configure.ac has to care about dependence between utils and librares and
    enable BUILD_<utilname>.
 
-fsprobe
+sysfs
+-----
+
+ - add lib/sysfs.c with functions that read block device attributes from /sys.
+   For more details see devno.c from libblkid, lsblk.c and lomount.c.
+
+procfs
+------
+
+ - add lib/proc.c with functions that read /proc/<pid>/tasks to get info about
+   all process threads.
+
+ - make chrt, taskset, ... threads aware. Currently these utils work with
+   group leader (master thread) and don't propagate requested changes to 
+   the whole group of threads.  It meas add a new option (e.g. -t):
+
+	chrt <prio> <pid>     # master thread only
+        chrt -t <prio> <pid>  # whole group of threads
+
+  Note that we need to scan /proc and call ched_set{scheduler,affinity}
+  syscalls for all individual threads.
+
+agetty:
+------
+
+  - review code and make it more simple for normal console (see mingetty)
+  - merge functionality from unmaintained mingetty package to agetty
+
+lib/tt.c
+--------
+
+ - allows to sort columns, for example sort lsblk(8) output by SIZE
+
+blkid(8)
 -------
 
- - remove the lib/fsprobe.c wrapper for libblkid used in mount and fsck. Use
-   everywhere libblkid from util-linux only.
- - update ./configure script
+  - add something like "blkid --list-known" to list all supported filesystems/raids
+ 
+  - add a new option (-r) that allows to print removable block devices that
+    are missing in /proc/partitions, see blkid_probe_all_removable().
 
 login-utils:
 -----------
@@ -54,21 +103,13 @@ losetup
 
     - add sysfs based version of show_loop() and use it for non-root users
 
-sysfs
------
+ - move all loopdev code to libmount
 
- - add lib/sysfs.c with functions that read block device attributes from /sys.
-   For more details see devno.c from libblkid, lsblk.c and lomount.c.
-
-lib/tt.c
---------
-
- - allows to sort columns, for example sort lsblk(8) output by SIZE
 
 shlib (libblkd and libmount):
 ----------------------------
 
- - found use __attribute__((notnull)) and __attribute__((warn_unused_result))
+ - use __attribute__((notnull)) and __attribute__((warn_unused_result))
    Note that the code has to be usefull for non-gcc compilers too.
 
 libblkid
@@ -83,21 +124,6 @@ libblkid
  - add FSSIZE value  -- filesystem size (klibc requirement)
 
  - add support for dasd PT (used for example on s390)
-
-
-blkid(8)
--------
-
-  - add something like "blkid --list-known" to list all supported filesystems/raids
- 
-  - add a new option (-r) that allows to print removable block devices that
-    are missing in /proc/partitions, see blkid_probe_all_removable().
-
-agetty:
-------
-
-  - review code and make it more simple for normal console (see mingetty)
-  - merge functionality from unmaintained mingetty package to agetty
 
 wipefs
 ------
@@ -162,19 +188,14 @@ misc
  
  * use rpmatch() for all Y/N questions
 
- * make chrt, taskset, ... threads aware. Currently these utils work with
-   group leader (master thread) and don't propagate requested changes to 
-   the whole group of threads.  It meas add a new option (e.g. -t):
-
-	chrt <prio> <pid>     # master thread only
-        chrt -t <prio> <pid>  # whole group of threads
-
-  Note that we need to scan /proc and call ched_set{scheduler,affinity}
-  syscalls for all individual threads.
-
  * umount by label:
 	# mount LABEL=mylabel
 	# umount LABEL=mylabel
+
+
+---------------
+exotic requests
+---------------
 
  * mount -a -- reorder fstab entries by paths before mount (just idea only)
 
