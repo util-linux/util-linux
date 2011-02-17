@@ -36,6 +36,7 @@
 
 #include "cpuset.h"
 #include "nls.h"
+#include "xalloc.h"
 #include "c.h"
 
 #define CACHE_MAX 100
@@ -232,15 +233,6 @@ path_exist(const char *path, ...)
 	va_end(ap);
 
 	return access(p, F_OK) == 0;
-}
-
-static char *
-xstrdup(const char *str)
-{
-	char *s = strdup(str);
-	if (!s)
-		err(EXIT_FAILURE, _("error: strdup failed"));
-	return s;
 }
 
 static cpu_set_t *
