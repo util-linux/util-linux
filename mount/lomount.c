@@ -64,7 +64,7 @@ loop_info64_to_old(const struct loop_info64 *info64, struct loop_info *info)
 struct looplist {
 	int		flag;		/* scanning options */
 	FILE		*proc;		/* /proc/partitions */
-	int		ncur;		/* current possition */
+	int		ncur;		/* current position */
 	int		*minors;	/* ary of minor numbers (when scan whole /dev) */
 	int		nminors;	/* number of items in *minors */
 	char		name[128];	/* device name */
@@ -289,7 +289,7 @@ cmpnum(const void *p1, const void *p2)
 
 /*
  * The classic scandir() is more expensive and less portable.
- * We needn't full loop device names -- minor numers (loop<N>)
+ * We needn't full loop device names -- minor numbers (loop<N>)
  * are enough.
  */
 static int
@@ -384,7 +384,7 @@ looplist_next(struct looplist *ll)
 		ll->flag &= ~LLFLG_DFLT;
 	}
 
-	/* C) the worst posibility, scan all /dev or /dev/loop
+	/* C) the worst possibility, scan all /dev or /dev/loop
 	 */
 	if (!ll->minors) {
 		ll->nminors = (ll->flag & LLFLG_SUBDIR) ?
@@ -879,7 +879,7 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 	}
 
 	/*
-	 * HACK: here we're leeking a file descriptor,
+	 * HACK: here we're leaking a file descriptor,
 	 * but mount is a short-lived process anyway.
 	 */
 	if (!(*options & SETLOOP_AUTOCLEAR))
