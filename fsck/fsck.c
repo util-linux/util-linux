@@ -1324,8 +1324,8 @@ static void PRS(int argc, char *argv[])
 					if (progress_fd < 0)
 						progress_fd = 0;
 					else {
+						++i;
 						goto next_arg;
-						i++;
 					}
 				}
 				break;
