@@ -9,13 +9,12 @@
 int is_whole_disk_fd(int fd, const char *name)
 {
 #ifdef HDIO_GETGEO
-	struct hd_geometry geometry;
-	int i = 0;
-
-	if (fd != -1)
-		i = ioctl(fd, HDIO_GETGEO, &geometry);
-	if (i == 0)
-		return geometry.start == 0;
+	if (fd != -1) {
+		struct hd_geometry geometry;
+		int i = ioctl(fd, HDIO_GETGEO, &geometry);
+		if (i == 0)
+			return geometry.start == 0;
+	}
 #endif
 	/*
 	 * The "silly heuristic" is still sexy for us, because
