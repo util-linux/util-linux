@@ -11,6 +11,7 @@ extern char * find_unused_loop_device(void);
 extern int loopfile_used_with(char *devname, const char *filename, unsigned long long offset);
 extern char *loopfile_used (const char *filename, unsigned long long offset);
 extern char *loopdev_get_loopfile(const char *device);
+extern int find_loopdev_by_backing_file(const char *filename, char **loopdev);
 
 
 #define SETLOOP_RDONLY     (1<<0)  /* Open loop read-only */
