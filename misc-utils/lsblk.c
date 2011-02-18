@@ -768,7 +768,7 @@ static int process_one_device(char *devname)
 {
 	struct blkdev_cxt parent = {}, cxt = {};
 	struct stat st;
-	char buf[PATH_MAX];
+	char buf[PATH_MAX + 1];
 	dev_t disk = 0;
 
 	if (stat(devname, &st) || !S_ISBLK(st.st_mode)) {
@@ -795,7 +795,7 @@ static int process_one_device(char *devname)
 				    major(st.st_rdev), minor(st.st_rdev));
 		diskname = xstrdup(buf);
 
-		len = readlink(path, buf, sizeof(buf));
+		len = readlink(path, buf, PATH_MAX);
 		if (len < 0) {
 			warn(_("%s: failed to read link"), path);
 			return EXIT_FAILURE;
