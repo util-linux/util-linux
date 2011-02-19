@@ -41,6 +41,7 @@
 #include <sys/utsname.h>
 #include <sys/stat.h>
 #include <errno.h>
+#include <err.h>
 #ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>
 #include <selinux/context.h>
@@ -67,7 +68,6 @@
 # include <blkid.h>
 #endif
 
-static char * program_name = "mkswap";
 static char * device_name = NULL;
 static int DEV = -1;
 static unsigned long long PAGES = 0;
@@ -153,25 +153,21 @@ init_signature_page(void) {
 
 	if (user_pagesize) {
 		if ((user_pagesize & (user_pagesize-1)) ||
-		    user_pagesize < sizeof(struct swap_header_v1_2) + 10) {
-			fprintf(stderr, _("Bad user-specified page size %d\n"),
+		    user_pagesize < sizeof(struct swap_header_v1_2) + 10)
+			errx(EXIT_FAILURE,
+				_("Bad user-specified page size %d"),
 				user_pagesize);
-			exit(1);
-		}
 		pagesize = user_pagesize;
 	}
 
 	if (user_pagesize && user_pagesize != kernel_pagesize)
-		fprintf(stderr, _("Using user-specified page size %d, "
-				  "instead of the system value %d\n"),
+		warnx(_("Using user-specified page size %d, "
+				"instead of the system value %d"),
 				pagesize, kernel_pagesize);
 
 	signature_page = (unsigned long *) calloc(1, pagesize);
-	if (!signature_page) {
-		fprintf(stderr, _("%s: calloc() failed: %s\n"),
-					program_name, strerror(errno));
-		exit(1);
-	}
+	if (!signature_page)
+		err(EXIT_FAILURE, _("calloc() failed"));
 }
 
 static void
@@ -188,8 +184,7 @@ write_uuid_and_label(unsigned char *uuid, char *volume_name) {
 	/* Sanity check */
 	if (sizeof(struct swap_header_v1) !=
 	    sizeof(struct swap_header_v1_2)) {
-		fprintf(stderr,
-			_("Bad swap header size, no label written.\n"));
+		warnx(_("Bad swap header size, no label written."));
 		return;
 	}
 
@@ -199,7 +194,7 @@ write_uuid_and_label(unsigned char *uuid, char *volume_name) {
 	if (volume_name) {
 		xstrncpy(h->volume_name, volume_name, sizeof(h->volume_name));
 		if (strlen(volume_name) > strlen(h->volume_name))
-			fprintf(stderr, _("Label was truncated.\n"));
+			warnx(_("Label was truncated."));
 	}
 	if (uuid || volume_name) {
 		if (volume_name)
@@ -279,13 +274,7 @@ static void
 usage(void) {
 	fprintf(stderr,
 		_("Usage: %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"),
-		program_name);
-	exit(1);
-}
-
-static void
-die(const char *str) {
-	fprintf(stderr, "%s: %s\n", program_name, str);
+		program_invocation_short_name);
 	exit(1);
 }
 
@@ -294,7 +283,7 @@ page_bad(int page) {
 	struct swap_header_v1_2 *p = (struct swap_header_v1_2 *) signature_page;
 
 	if (badpages == MAX_BADPAGES)
-		die(_("too many bad pages"));
+		errx(EXIT_FAILURE, _("too many bad pages"));
 	p->badpages[badpages] = page;
 	badpages++;
 }
@@ -307,12 +296,12 @@ check_blocks(void) {
 
 	buffer = malloc(pagesize);
 	if (!buffer)
-		die(_("Out of memory"));
+		errx(EXIT_FAILURE, _("Out of memory"));
 	current_page = 0;
 	while (current_page < PAGES) {
 		if (do_seek && lseek(DEV,current_page*pagesize,SEEK_SET) !=
 		    current_page*pagesize)
-			die(_("seek failed in check_blocks"));
+			errx(EXIT_FAILURE, _("seek failed in check_blocks"));
 		if ((do_seek = (pagesize != read(DEV, buffer, pagesize))))
 			page_bad(current_page);
 		current_page++;
@@ -379,7 +368,7 @@ zap_bootbits(int fd, const char *devname, int force, int is_blkdev)
 
 	if (!force) {
 		if (lseek(fd, 0, SEEK_SET) != 0)
-	                die(_("unable to rewind swap-device"));
+			errx(EXIT_FAILURE, _("unable to rewind swap-device"));
 
 		if (is_blkdev && is_whole_disk_fd(fd, devname)) {
 			/* don't zap bootbits on whole disk -- we know nothing
@@ -390,9 +379,9 @@ zap_bootbits(int fd, const char *devname, int force, int is_blkdev)
 #ifdef HAVE_LIBBLKID_INTERNAL
 			blkid_probe pr = blkid_new_probe();
 			if (!pr)
-				die(_("unable to alloc new libblkid probe"));
+				errx(EXIT_FAILURE, _("unable to alloc new libblkid probe"));
 			if (blkid_probe_set_device(pr, fd, 0, 0))
-				die(_("unable to assign device to libblkid probe"));
+				errx(EXIT_FAILURE, _("unable to assign device to libblkid probe"));
 
 			blkid_probe_enable_partitions(pr, 1);
 			blkid_probe_enable_superblocks(pr, 0);
@@ -416,16 +405,16 @@ zap_bootbits(int fd, const char *devname, int force, int is_blkdev)
 		char buf[1024];
 
 		if (lseek(fd, 0, SEEK_SET) != 0)
-	                die(_("unable to rewind swap-device"));
+			errx(EXIT_FAILURE, _("unable to rewind swap-device"));
 
 		memset(buf, 0, sizeof(buf));
 		if (write_all(fd, buf, sizeof(buf)))
-			die(_("unable to erase bootbits sectors"));
+			errx(EXIT_FAILURE, _("unable to erase bootbits sectors"));
 		return;
 	}
 
-	fprintf(stderr, _("%s: %s: warning: don't erase bootbits sectors\n"),
-		program_name, devname);
+	warnx(_("%s: warning: don't erase bootbits sectors"),
+		devname);
 	if (type)
 		fprintf(stderr, _("        (%s partition table detected). "), type);
 	else if (whole)
@@ -455,17 +444,13 @@ main(int argc, char ** argv) {
 	uuid_t uuid_dat;
 #endif
 
-	program_name = (argc && *argv) ? argv[0] : "mkswap";
-	if ((pp = strrchr(program_name, '/')) != NULL)
-		program_name = pp+1;
-
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
 	if (argc == 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-		printf(_("%s (%s)\n"), program_name, PACKAGE_STRING);
+		printf(_("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING);
 		exit(0);
 	}
 
@@ -502,8 +487,8 @@ main(int argc, char ** argv) {
 					if (!*opt_uuid && i+1 < argc)
 						opt_uuid = argv[++i];
 #else
-					fprintf(stderr, _("%1$s: warning: ignore -U (UUIDs are unsupported by %1$s)\n"),
-						program_name);
+					warnx(_("warning: ignore -U (UUIDs are unsupported by %s)"),
+						program_invocation_short_name);
 #endif
 					break;
 				default:
@@ -518,15 +503,15 @@ main(int argc, char ** argv) {
 	}
 
 	if (version != 1) {
-		fprintf(stderr, _("%s: does not support swapspace version %d.\n"),
-			program_name, version);
-		exit(EXIT_FAILURE);
+		errx(EXIT_FAILURE,
+			_("does not support swapspace version %d."),
+			version);
 	}
 
 #ifdef HAVE_LIBUUID
 	if(opt_uuid) {
 		if (uuid_parse(opt_uuid, uuid_dat) != 0)
-			die(_("error: UUID parsing failed"));
+			errx(EXIT_FAILURE, _("error: UUID parsing failed"));
 	} else
 		uuid_generate(uuid_dat);
 	uuid = uuid_dat;
@@ -535,9 +520,7 @@ main(int argc, char ** argv) {
 	init_signature_page();	/* get pagesize */
 
 	if (!device_name) {
-		fprintf(stderr,
-			_("%s: error: Nowhere to set up swap on?\n"),
-			program_name);
+		warnx(_("error: Nowhere to set up swap on?"));
 		usage();
 	}
 	if (block_count) {
@@ -559,18 +542,15 @@ main(int argc, char ** argv) {
 	if (!PAGES) {
 		PAGES = sz;
 	} else if (PAGES > sz && !force) {
-		fprintf(stderr,
-			_("%s: error: "
-			  "size %llu KiB is larger than device size %llu KiB\n"),
-			program_name,
+		errx(EXIT_FAILURE,
+			_("error: "
+			  "size %llu KiB is larger than device size %llu KiB"),
 			PAGES*(pagesize/1024), sz*(pagesize/1024));
-		exit(1);
 	}
 
 	if (PAGES < MIN_GOODPAGES) {
-		fprintf(stderr,
-			_("%s: error: swap area needs to be at least %ld KiB\n"),
-			program_name, (long)(MIN_GOODPAGES * pagesize/1024));
+		warnx(_("error: swap area needs to be at least %ld KiB"),
+			(long)(MIN_GOODPAGES * pagesize/1024));
 		usage();
 	}
 
@@ -585,14 +565,13 @@ main(int argc, char ** argv) {
 
 	if (PAGES > maxpages) {
 		PAGES = maxpages;
-		fprintf(stderr,
-			_("%s: warning: truncating swap area to %llu KiB\n"),
-			program_name, PAGES * pagesize / 1024);
+		warnx(_("warning: truncating swap area to %llu KiB"),
+			PAGES * pagesize / 1024);
 	}
 
 	if (stat(device_name, &statbuf) < 0) {
 		perror(device_name);
-		exit(EXIT_FAILURE);
+		exit(1);
 	}
 	if (S_ISBLK(statbuf.st_mode))
 		DEV = open(device_name, O_RDWR | O_EXCL);
@@ -607,19 +586,14 @@ main(int argc, char ** argv) {
 	/* Want a block device. Probably not /dev/hda or /dev/hdb. */
 	if (!S_ISBLK(statbuf.st_mode))
 		check=0;
-	else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340) {
-		fprintf(stderr,
-			_("%s: error: "
-			  "will not try to make swapdevice on '%s'\n"),
-			program_name, device_name);
-		exit(1);
-	} else if (check_mount()) {
-		fprintf(stderr,
-			_("%s: error: "
-			  "%s is mounted; will not make swapspace.\n"),
-			program_name, device_name);
-		exit(1);
-	}
+	else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340)
+		errx(EXIT_FAILURE, _("error: "
+			"will not try to make swapdevice on '%s'"),
+			device_name);
+	else if (check_mount())
+		errx(EXIT_FAILURE, _("error: "
+			"%s is mounted; will not make swapspace."),
+			device_name);
 
 	if (check)
 		check_blocks();
@@ -632,7 +606,7 @@ main(int argc, char ** argv) {
 	hdr->nr_badpages = badpages;
 
 	if (badpages > PAGES - MIN_GOODPAGES)
-		die(_("Unable to set up swap-space: unreadable"));
+		errx(EXIT_FAILURE, _("Unable to set up swap-space: unreadable"));
 
 	goodpages = PAGES - badpages - 1;
 	printf(_("Setting up swapspace version 1, size = %llu KiB\n"),
@@ -643,13 +617,12 @@ main(int argc, char ** argv) {
 
 	offset = 1024;
 	if (lseek(DEV, offset, SEEK_SET) != offset)
-		die(_("unable to rewind swap-device"));
+		errx(EXIT_FAILURE, _("unable to rewind swap-device"));
 	if (write_all(DEV, (char *) signature_page + offset,
-				    pagesize - offset) == -1) {
-		fprintf(stderr, _("%s: %s: unable to write signature page: %s"),
-			program_name, device_name, strerror(errno));
-		exit(1);
-	}
+				    pagesize - offset) == -1)
+		err(EXIT_FAILURE,
+			_("%s: unable to write signature page"),
+			device_name);
 
 	/*
 	 * A subsequent swapon() will fail if the signature
@@ -657,7 +630,7 @@ main(int argc, char ** argv) {
 	 */
 #ifdef HAVE_FSYNC
 	if (fsync(DEV))
-		 die(_("fsync failed"));
+		errx(EXIT_FAILURE, _("fsync failed"));
 #endif
 
 #ifdef HAVE_LIBSELINUX
@@ -667,30 +640,24 @@ main(int argc, char ** argv) {
 		context_t newcontext;
 
 		if (fgetfilecon(DEV, &oldcontext) < 0) {
-			if (errno != ENODATA) {
-				fprintf(stderr, _("%s: %s: unable to obtain selinux file label: %s\n"),
-						program_name, device_name,
-						strerror(errno));
-				exit(1);
-			}
+			if (errno != ENODATA)
+				err(EXIT_FAILURE,
+					_("%s: %s: unable to obtain selinux file label: %s"),
+					device_name);
 			if (matchpathcon(device_name, statbuf.st_mode, &oldcontext))
-				die(_("unable to matchpathcon()"));
+				errx(EXIT_FAILURE, _("unable to matchpathcon()"));
 		}
 		if (!(newcontext = context_new(oldcontext)))
-			die(_("unable to create new selinux context"));
+			errx(EXIT_FAILURE, _("unable to create new selinux context"));
 		if (context_type_set(newcontext, SELINUX_SWAPFILE_TYPE))
-			die(_("couldn't compute selinux context"));
+			errx(EXIT_FAILURE, _("couldn't compute selinux context"));
 
 		context_string = context_str(newcontext);
 
 		if (strcmp(context_string, oldcontext)!=0) {
-			if (fsetfilecon(DEV, context_string)) {
-				fprintf(stderr, _("%s: unable to relabel %s to %s: %s\n"),
-						program_name, device_name,
-						context_string,
-						strerror(errno));
-				exit(1);
-			}
+			if (fsetfilecon(DEV, context_string))
+				err(EXIT_FAILURE, _("unable to relabel %s to %s"),
+						device_name, context_string);
 		}
 		context_free(newcontext);
 		freecon(oldcontext);
