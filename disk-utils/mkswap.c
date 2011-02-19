@@ -70,7 +70,7 @@
 # include <blkid.h>
 #endif
 
-static char * device_name = NULL;
+static char *device_name = NULL;
 static int DEV = -1;
 static unsigned long long PAGES = 0;
 static unsigned long badpages = 0;
@@ -84,14 +84,17 @@ static int check = 0;
 #  define is_be64() 1
 # else /* sparc32 */
 static int
-is_sparc64(void) {
+is_sparc64(void)
+{
 	struct utsname un;
 	static int sparc64 = -1;
 
-	if (sparc64 != -1) return sparc64;
+	if (sparc64 != -1)
+		return sparc64;
 	sparc64 = 0;
 
-	if (uname(&un) < 0) return 0;
+	if (uname(&un) < 0)
+		return 0;
 	if (! strcmp(un.machine, "sparc64")) {
 		sparc64 = 1;
 		return 1;
@@ -149,12 +152,13 @@ static int pagesize;
 static unsigned long *signature_page = NULL;
 
 static void
-init_signature_page(void) {
+init_signature_page(void)
+{
 
 	int kernel_pagesize = pagesize = getpagesize();
 
 	if (user_pagesize) {
-		if ((user_pagesize & (user_pagesize-1)) ||
+		if ((user_pagesize & (user_pagesize - 1)) ||
 		    user_pagesize < (long) sizeof(struct swap_header_v1_2) + 10)
 			errx(EXIT_FAILURE,
 				_("Bad user-specified page size %lu"),
@@ -171,14 +175,16 @@ init_signature_page(void) {
 }
 
 static void
-write_signature(char *sig) {
+write_signature(char *sig)
+{
 	char *sp = (char *) signature_page;
 
-	strncpy(sp+pagesize-10, sig, 10);
+	strncpy(sp + pagesize - 10, sig, 10);
 }
 
 static void
-write_uuid_and_label(unsigned char *uuid, char *volume_name) {
+write_uuid_and_label(unsigned char *uuid, char *volume_name)
+{
 	struct swap_header_v1_2 *h;
 
 	/* Sanity check */
@@ -292,7 +298,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 }
 
 static void
-page_bad(int page) {
+page_bad(int page)
+{
 	struct swap_header_v1_2 *p = (struct swap_header_v1_2 *) signature_page;
 
 	if (badpages == MAX_BADPAGES)
@@ -302,7 +309,8 @@ page_bad(int page) {
 }
 
 static void
-check_blocks(void) {
+check_blocks(void)
+{
 	unsigned int current_page;
 	int do_seek = 1;
 	char *buffer;
@@ -326,8 +334,9 @@ check_blocks(void) {
 
 /* return size in pages */
 static unsigned long long
-get_size(const char  *file) {
-	int	fd;
+get_size(const char *file)
+{
+	int fd;
 	unsigned long long size;
 
 	fd = open(file, O_RDONLY);
@@ -349,9 +358,10 @@ get_size(const char  *file) {
  * (C) 2006 Karel Zak -- port to mkswap
  */
 static int
-check_mount(void) {
-	FILE * f;
-	struct mntent * mnt;
+check_mount(void)
+{
+	FILE *f;
+	struct mntent *mnt;
 
 	if ((f = setmntent (_PATH_MOUNTED, "r")) == NULL)
 		return 0;
@@ -430,7 +440,7 @@ zap_bootbits(int fd, const char *devname, int force, int is_blkdev)
 }
 
 int
-main(int argc, char ** argv) {
+main(int argc, char **argv) {
 	struct stat statbuf;
 	struct swap_header_v1_2 *hdr;
 	int c;
@@ -507,11 +517,10 @@ main(int argc, char ** argv) {
 		usage(stderr);
 	}
 
-	if (version != 1) {
+	if (version != 1)
 		errx(EXIT_FAILURE,
 			_("does not support swapspace version %lu."),
 			version);
-	}
 
 #ifdef HAVE_LIBUUID
 	if(opt_uuid) {
@@ -539,9 +548,9 @@ main(int argc, char ** argv) {
 		PAGES = blks / (pagesize / 1024);
 	}
 	sz = get_size(device_name);
-	if (!PAGES) {
+	if (!PAGES)
 		PAGES = sz;
-	} else if (PAGES > sz && !force) {
+	else if (PAGES > sz && !force) {
 		errx(EXIT_FAILURE,
 			_("error: "
 			  "size %llu KiB is larger than device size %llu KiB"),
