@@ -188,6 +188,30 @@ err:
                errx(EXIT_FAILURE, "%s: '%s'", errmesg, str);
        return 0;
 }
+/*
+ * same as strtoll(3) but exit on failure instead of returning crap
+ */
+long long strtoll_or_err(const char *str, const char *errmesg)
+{
+       long long num;
+       char *end = NULL;
+
+       if (str == NULL || *str == '\0')
+               goto err;
+       errno = 0;
+       num = strtoll(str, &end, 10);
+
+       if (errno || (end && *end))
+               goto err;
+
+       return num;
+err:
+       if (errno)
+               err(EXIT_FAILURE, "%s: '%s'", errmesg, str);
+       else
+               errx(EXIT_FAILURE, "%s: '%s'", errmesg, str);
+       return 0;
+}
 
 /*
  * Converts stat->st_mode to ls(1)-like mode string. The size of "str" must
