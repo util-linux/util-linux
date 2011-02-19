@@ -55,6 +55,7 @@
 #include "pathnames.h"
 #include "wholedisk.h"
 #include "writeall.h"
+#include "xalloc.h"
 
 #ifdef HAVE_LIBUUID
 # ifdef HAVE_UUID_UUID_H
@@ -165,9 +166,7 @@ init_signature_page(void) {
 				"instead of the system value %d"),
 				pagesize, kernel_pagesize);
 
-	signature_page = (unsigned long *) calloc(1, pagesize);
-	if (!signature_page)
-		err(EXIT_FAILURE, _("calloc() failed"));
+	signature_page = (unsigned long *) xcalloc(1, pagesize);
 }
 
 static void
@@ -294,9 +293,7 @@ check_blocks(void) {
 	int do_seek = 1;
 	char *buffer;
 
-	buffer = malloc(pagesize);
-	if (!buffer)
-		errx(EXIT_FAILURE, _("Out of memory"));
+	buffer = xmalloc(pagesize);
 	current_page = 0;
 	while (current_page < PAGES) {
 		if (do_seek && lseek(DEV,current_page*pagesize,SEEK_SET) !=
@@ -390,7 +387,7 @@ zap_bootbits(int fd, const char *devname, int force, int is_blkdev)
 				blkid_probe_lookup_value(pr, "PTTYPE",
 						(const char **) &type, NULL);
 			if (type) {
-				type = strdup(type);
+				type = xstrdup(type);
 				zap = 0;
 			}
 			blkid_free_probe(pr);
