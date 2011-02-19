@@ -333,7 +333,7 @@ get_size(const char  *file) {
 	fd = open(file, O_RDONLY);
 	if (fd < 0) {
 		perror(file);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	if (blkdev_get_size(fd, &size) == 0)
 		size /= pagesize;
@@ -571,7 +571,7 @@ main(int argc, char ** argv) {
 
 	if (stat(device_name, &statbuf) < 0) {
 		perror(device_name);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	if (S_ISBLK(statbuf.st_mode))
 		DEV = open(device_name, O_RDWR | O_EXCL);
@@ -580,7 +580,7 @@ main(int argc, char ** argv) {
 
 	if (DEV < 0) {
 		perror(device_name);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	/* Want a block device. Probably not /dev/hda or /dev/hdb. */
@@ -663,5 +663,5 @@ main(int argc, char ** argv) {
 		freecon(oldcontext);
 	}
 #endif
-	return 0;
+	return EXIT_SUCCESS;
 }
