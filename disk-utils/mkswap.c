@@ -144,7 +144,7 @@ is_sparc64(void) {
  * What to do? Let us allow the user to specify the pagesize explicitly.
  *
  */
-static int user_pagesize;
+static long user_pagesize;
 static int pagesize;
 static unsigned long *signature_page = NULL;
 
@@ -155,9 +155,9 @@ init_signature_page(void) {
 
 	if (user_pagesize) {
 		if ((user_pagesize & (user_pagesize-1)) ||
-		    user_pagesize < sizeof(struct swap_header_v1_2) + 10)
+		    user_pagesize < (long) sizeof(struct swap_header_v1_2) + 10)
 			errx(EXIT_FAILURE,
-				_("Bad user-specified page size %d"),
+				_("Bad user-specified page size %lu"),
 				user_pagesize);
 		pagesize = user_pagesize;
 	}
@@ -439,7 +439,7 @@ main(int argc, char ** argv) {
 	unsigned long long sz;
 	off_t offset;
 	int force = 0;
-	int version = 1;
+	long version = 1;
 	char *block_count = 0;
 	char *opt_label = NULL;
 	unsigned char *uuid = NULL;
@@ -509,7 +509,7 @@ main(int argc, char ** argv) {
 
 	if (version != 1) {
 		errx(EXIT_FAILURE,
-			_("does not support swapspace version %d."),
+			_("does not support swapspace version %lu."),
 			version);
 	}
 
