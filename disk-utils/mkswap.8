@@ -8,16 +8,9 @@
 mkswap \- set up a Linux swap area
 .SH SYNOPSIS
 .B mkswap
-.RB [ \-c ]
-.RB [ \-f ]
-.RB [ \-p
-.IR PSZ ]
-.RB [ \-L
-.IR label ]
-.RB [ \-U
-.IR uuid ]
-.I device
-.RI [ size ]
+.RB [ options ]
+.IR device
+.RB [ size ]
 .SH DESCRIPTION
 .B mkswap
 sets up a Linux swap area on a device or in a file.
@@ -41,18 +34,6 @@ parameter is superfluous but retained for backwards compatibility.
 will use the entire partition or file if it is omitted.
 Specifying it is unwise -- a typo may destroy your disk.)
 
-The
-.I PSZ
-parameter specifies the page size to use.  It is almost always
-unnecessary (even unwise) to specify it, but certain old libc
-versions lie about the page size, so it is possible that
-.B mkswap
-gets it wrong.  The symptom is that a subsequent
-.B swapon
-fails because no swap signature is found.  Typical values for
-.I PSZ
-are 4096 or 8192.
-
 After creating the swap area, you need the
 .B swapon
 command to start using it.  Usually swap areas are listed in
@@ -75,12 +56,12 @@ label (SUN, BSD, ...) or on a whole disk (e.g. /dev/sda).
 
 .SH OPTIONS
 .TP
-.B \-c
+.BR \-c , " \-\-check"
 Check the device (if it is a block device) for bad blocks
 before creating the swap area.
 If any are found, the count is printed.
 .TP
-.B \-f
+.BR \-f , " \-\-force"
 Force -- go ahead even if the command is stupid.
 This allows the creation of a swap area larger than the file
 or partition it resides on.
@@ -90,41 +71,46 @@ Without this option,
 will refuse to erase the first block on a device with a partition table or on
 a whole disk (e.g. /dev/sda).
 .TP
-.BI \-L \ label
+.BR \-L , " \-\-label" \ device-label
 Specify a label, to allow
 .B swapon
 by label.
 .TP
-.BI \-p \ PSZ
+.BR \-p , " \-\-pagesize" \ SIZE
 Specify the page size (in bytes) to use.  This option is usually unnecessary,
 .B mkswap
 reads the size from the kernel.
 .TP
-.BI \-U \ uuid
+.BR \-U , " \-\-uuid" \ UUID
 Specify the uuid to use.  The default is to generate a UUID.
 .TP
-.BR \-v1
-Specify the swap-space version.  The old \-v0 option has become obsolete
-and now only \-v1 is supported.
+.BR \-v , " \-\-swapversion" \ 1
+Specify the swap-space version.  The old \-v 0 option has become obsolete
+and now only \-v 1 is supported.
 
-The kernel has not supported v0 swap-space format since 2.5.22.
-The new version v1 is supported since 2.1.117.
+The kernel has not supported v0 swap-space format since 2.5.22 (Jun 2002).
+The new version v1 is supported since 2.1.117 (Aug 1998).
+.TP
+.BR \-V , " \-\-version"
+Output version information and exit.
+.BR \-h , " \-\-help"
+Output help screen and exit.
 
 .SH NOTES
 The maximum useful size of a swap area depends on the architecture and
 the kernel version.
 It is roughly 2GiB on i386, PPC, m68k and ARM, 1GiB on sparc, 512MiB on mips,
-128GiB on alpha, and 3TiB on sparc64.  For kernels after 2.3.3 there is no
+128GiB on alpha, and 3TiB on sparc64.  For kernels after 2.3.3 (May 1999) there is no
 such limitation.
 
 Note that before version 2.1.117 the kernel allocated one byte for each page,
 while it now allocates two bytes, so that taking into use a swap area of 2 GiB
 might require 2 MiB of kernel memory.
 
-Presently, Linux allows 32 swap areas (this was 8 before Linux 2.4.10).
+Presently, Linux allows 32 swap areas (this was 8 before Linux 2.4.10 (Sep 2001)).
 The areas in use can be seen in the file
 .I /proc/swaps
-(since 2.1.25).
+(since 2.1.25 (Sep 1997)).
 
 .B mkswap
 refuses areas smaller than 10 pages.
