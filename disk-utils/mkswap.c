@@ -42,6 +42,7 @@
 #include <sys/stat.h>
 #include <errno.h>
 #include <err.h>
+#include <getopt.h>
 #ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>
 #include <selinux/context.h>
@@ -269,12 +270,25 @@ It is roughly 2GB on i386, PPC, m68k, ARM, 1GB on sparc, 512MB on mips,
 #define MAX_BADPAGES	((pagesize-1024-128*sizeof(int)-10)/sizeof(int))
 #define MIN_GOODPAGES	10
 
-static void
-usage(void) {
-	fprintf(stderr,
-		_("Usage: %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"),
+static void __attribute__ ((__noreturn__)) usage(FILE *out)
+{
+	fprintf(out,
+		_("\nUsage:\n"
+		  " %s [options] device [size]\n"),
 		program_invocation_short_name);
-	exit(1);
+
+	fprintf(out, _(
+		"\nOptions:\n"
+		" -c, --check               check bad blocks before creating the swap area\n"
+		" -f, --force               allow swap size area be larger than device\n"
+		" -p, --pagesize SIZE       specify page size in bytes\n"
+		" -L, --label LABEL         specify label\n"
+		" -v, --swapversion NUM     specify swap-space version number\n"
+		" -U, --uuid UUID           specify the uuid to use\n"
+		" -V, --version             output version information and exit\n"
+		" -h, --help                display this help and exit\n\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 static void
@@ -327,12 +341,6 @@ get_size(const char  *file) {
 	close(fd);
 	return size;
 }
-
-static int
-isnzdigit(char c) {
-	return (c >= '1' && c <= '9');
-}
-
 
 /*
  * Check to make certain that our new filesystem won't be created on
@@ -425,7 +433,7 @@ int
 main(int argc, char ** argv) {
 	struct stat statbuf;
 	struct swap_header_v1_2 *hdr;
-	int i;
+	int c;
 	unsigned long long maxpages;
 	unsigned long long goodpages;
 	unsigned long long sz;
@@ -433,70 +441,70 @@ main(int argc, char ** argv) {
 	int force = 0;
 	int version = 1;
 	char *block_count = 0;
-	char *pp;
 	char *opt_label = NULL;
 	unsigned char *uuid = NULL;
 #ifdef HAVE_LIBUUID
 	const char *opt_uuid = NULL;
 	uuid_t uuid_dat;
 #endif
+	struct option longopts[] = {
+		{ "check",       no_argument,       0, 'c' },
+		{ "force",       no_argument,       0, 'f' },
+		{ "pagesize",    required_argument, 0, 'p' },
+		{ "label",       required_argument, 0, 'L' },
+		{ "swapversion", required_argument, 0, 'v' },
+		{ "uuid",        required_argument, 0, 'U' },
+		{ "version",     no_argument,       0, 'V' },
+		{ "help",        no_argument,       0, 'h' },
+		{ NULL,          0, 0, 0 }
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	if (argc == 2 &&
-	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-		printf(_("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING);
-		exit(0);
-	}
-
-	for (i=1; i<argc; i++) {
-		if (argv[i][0] == '-') {
-			switch (argv[i][1]) {
-				case 'c':
-					check=1;
-					break;
-				case 'f':
-					force=1;
-					break;
-				case 'p':
-					pp = argv[i]+2;
-					if (!*pp && i+1 < argc)
-						pp = argv[++i];
-					if (isnzdigit(*pp))
-						user_pagesize = atoi(pp);
-					else
-						usage();
-					break;
-			        case 'L':
-					pp = argv[i]+2;
-					if (!*pp && i+1 < argc)
-						pp = argv[++i];
-					opt_label = pp;
-				        break;
-				case 'v':
-					version = atoi(argv[i]+2);
-					break;
-				case 'U':
+	while((c = getopt_long(argc, argv, "cfp:L:v:U:Vh", longopts, NULL)) != -1) {
+		switch (c) {
+		case 'c':
+			check=1;
+			break;
+		case 'f':
+			force=1;
+			break;
+		case 'p':
+			user_pagesize = strtol_or_err(optarg, _("parse page size failed"));
+			break;
+		case 'L':
+			opt_label = optarg;
+			break;
+		case 'v':
+			version = strtol_or_err(optarg, _("parse version number failed"));
+			break;
+		case 'U':
 #ifdef HAVE_LIBUUID
-					opt_uuid = argv[i]+2;
-					if (!*opt_uuid && i+1 < argc)
-						opt_uuid = argv[++i];
+			opt_uuid = optarg;
 #else
-					warnx(_("warning: ignore -U (UUIDs are unsupported by %s)"),
-						program_invocation_short_name);
+			warnx(_("warning: ignore -U (UUIDs are unsupported by %s)"),
+				program_invocation_short_name);
 #endif
-					break;
-				default:
-					usage();
-			}
-		} else if (!device_name) {
-			device_name = argv[i];
-		} else if (!block_count) {
-			block_count = argv[i];
-		} else
-			usage();
+			break;
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+						  PACKAGE_STRING);
+			exit(EXIT_SUCCESS);
+		case 'h':
+			usage(stdout);
+		default:
+			usage(stderr);
+		}
+	}
+	if (optind < argc)
+		device_name = argv[optind++];
+	if (optind < argc)
+		block_count = argv[optind++];
+	if (optind != argc) {
+		warnx(("only one device as argument is currently supported."));
+		usage(stderr);
 	}
 
 	if (version != 1) {
@@ -518,20 +526,15 @@ main(int argc, char ** argv) {
 
 	if (!device_name) {
 		warnx(_("error: Nowhere to set up swap on?"));
-		usage();
+		usage(stderr);
 	}
 	if (block_count) {
 		/* this silly user specified the number of blocks explicitly */
-		char *tmp = NULL;
 		long long blks;
 
-		errno = 0;
-		blks = strtoll(block_count, &tmp, 0);
-		if ((tmp == block_count) ||
-		    (tmp && *tmp) ||
-		    (errno != 0 && (blks == LLONG_MAX || blks == LLONG_MIN)) ||
-		    blks < 0)
-			usage();
+		blks = strtoll_or_err(block_count, "parse block count failed");
+		if (blks < 0)
+			usage(stderr);
 
 		PAGES = blks / (pagesize / 1024);
 	}
@@ -548,7 +551,7 @@ main(int argc, char ** argv) {
 	if (PAGES < MIN_GOODPAGES) {
 		warnx(_("error: swap area needs to be at least %ld KiB"),
 			(long)(MIN_GOODPAGES * pagesize/1024));
-		usage();
+		usage(stderr);
 	}
 
 #ifdef __linux__

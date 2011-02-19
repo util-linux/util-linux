@@ -28,7 +28,7 @@ swaplabel_SOURCES = swaplabel.c $(utils_common)
 swaplabel_LDADD = $(uuid_ldadd)
 swaplabel_CFLAGS = $(AM_CFLAGS) $(uuid_cflags)
 
-mkswap_SOURCES = mkswap.c $(utils_common) $(top_srcdir)/lib/wholedisk.c
+mkswap_SOURCES = mkswap.c $(utils_common) $(top_srcdir)/lib/wholedisk.c $(top_srcdir)/lib/strutils.c
 mkswap_LDADD = $(uuid_ldadd)
 mkswap_CFLAGS = $(AM_CFLAGS) $(uuid_cflags)
 
