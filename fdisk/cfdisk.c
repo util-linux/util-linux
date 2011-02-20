@@ -1006,8 +1006,6 @@ find_logical(int i) {
  */
 
 /* Constants for menuType parameter of menuSelect function */
-#define MENU_HORIZ 1
-#define MENU_VERT 2
 #define MENU_ACCEPT_OTHERS 4
 #define MENU_BUTTON 8
 /* Miscellenous constants */
@@ -1085,18 +1083,6 @@ menuUpdate( int y, int x, struct MenuItem *menuItems, int itemLength,
         if( current == i ) /*attroff( A_REVERSE )*/ standend ();
 
         /* Calculate position for the next item */
-        if( menuType & MENU_VERT )
-        {
-            y += 1;
-            if( y >= WARNING_START )
-            {
-                y = ymargin;
-                x += itemLength + MENU_SPACING;
-                if( menuType & MENU_BUTTON ) x += 2;
-            }
-        }
-        else
-        {
             x += itemLength + MENU_SPACING;
             if( menuType & MENU_BUTTON ) x += 2;
             if( x > COLUMNS - lmargin - 12 )
@@ -1104,7 +1090,6 @@ menuUpdate( int y, int x, struct MenuItem *menuItems, int itemLength,
                 x = lmargin;
                 y ++ ;
             }
-        }
     }
 
     /* Print the description of selected item */
@@ -1120,11 +1105,6 @@ static int
 menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
 	    char *available, int menuType, int menuDefault ) {
     int i, ylast = y, key = 0, current = menuDefault;
-
-    if( !( menuType & ( MENU_HORIZ | MENU_VERT ) ) ) {
-        print_warning(_("Menu without direction. Defaulting to horizontal."));
-        menuType |= MENU_HORIZ;
-    }
 
     /* Make sure that the current is one of the available items */
     while( !strchr(available, menuItems[current].key) ) {
@@ -1201,41 +1181,16 @@ menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
 	if (key == DOWNKEY || key == DOWNKEYVI)	/* ^N or j */
 	    key = MENU_DOWN;
 
-	if (key == MENU_UP) {
-	    if( menuType & MENU_VERT ) {
-                do {
-                    current -- ;
-                    if( current < 0 )
-			while( menuItems[current+1].key )
-			    current ++ ;
-                } while( !strchr( available, menuItems[current].key ));
-                key = 0;
-            }
-	}
-
-	if (key == MENU_DOWN) {
-            if( menuType & MENU_VERT ) {
-                do {
-                    current ++ ;
-		    if( !menuItems[current].key ) current = 0 ;
-		} while( !strchr( available, menuItems[current].key ));
-		key = 0;
-	    }
-	}
-
 	if (key == MENU_RIGHT) {
-	    if( menuType & MENU_HORIZ ) {
 		do {
 		    current ++ ;
 		    if( !menuItems[current].key )
 			current = 0 ;
 		} while( !strchr( available, menuItems[current].key ));
 		key = 0;
-	    }
 	}
 
 	if (key == MENU_LEFT) {
-	     if( menuType & MENU_HORIZ ) {
 		 do {
 		     current -- ;
 		     if( current < 0 ) {
@@ -1244,7 +1199,6 @@ menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
 		     }
 		 } while( !strchr( available, menuItems[current].key ));
 		 key = 0;
-	     }
 	}
 
         /* Should all keys to be accepted? */
@@ -1286,7 +1240,7 @@ menuContinue(void) {
     };
 
     menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X,
-	menuContinueBtn, 0, "c", MENU_HORIZ | MENU_ACCEPT_OTHERS, 0 );
+	menuContinueBtn, 0, "c", MENU_ACCEPT_OTHERS, 0 );
 }
 
 /* Function menuSelect takes way too many parameters  *
@@ -1305,7 +1259,7 @@ menuSimple(struct MenuItem *menuItems, int menuDefault) {
     }
     available[i] = 0;
     return menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuItems, itemLength,
-        available, MENU_HORIZ | MENU_BUTTON, menuDefault);
+        available, MENU_BUTTON, menuDefault);
 }
 
 /* End of command menu support code */
@@ -2688,15 +2642,15 @@ do_curses_fdisk(void) {
 	if (p_info[cur_part].id == FREE_SPACE) {
 	    s = ((opentype == O_RDWR) ? "hnpquW" : "hnpqu");
 	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 10,
-	        s, MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, 5);
+	        s, MENU_BUTTON | MENU_ACCEPT_OTHERS, 5);
 	} else if (p_info[cur_part].id > 0) {
 	    s = ((opentype == O_RDWR) ? "bdhmpqtuW" : "bdhmpqtu");
 	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 10,
-	        s, MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, is_first_run ? 7 : 0);
+	        s, MENU_BUTTON | MENU_ACCEPT_OTHERS, is_first_run ? 7 : 0);
 	} else {
 	    s = ((opentype == O_RDWR) ? "hpquW" : "hpqu");
 	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 10,
-	        s, MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, 0);
+	        s, MENU_BUTTON | MENU_ACCEPT_OTHERS, 0);
 	}
 	is_first_run = FALSE;
 	switch ( command ) {
