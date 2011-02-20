@@ -31,7 +31,7 @@
 .\"
 .\"	@(#)script.1	6.5 (Berkeley) 7/27/91
 .\"
-.Dd July 30, 2000
+.Dd Feb 20, 2011
 .Dt SCRIPT 1
 .Os Linux
 .Sh NAME
@@ -45,6 +45,8 @@
 .Op Fl f
 .Op Fl q
 .Op Fl t
+.Op Fl V
+.Op Fl h
 .Op Ar file
 .Sh DESCRIPTION
 .Nm Script
@@ -65,31 +67,35 @@ If no file name is given, the typescript is saved in the file
 .Pp
 Options:
 .Bl -tag -width Ds
-.It Fl a
+.It Fl a, Fl Fl append
 Append the output to
 .Ar file
 or
 .Pa typescript ,
 retaining the prior contents.
-.It Fl c Ar COMMAND
+.It Fl c, Fl Fl command Ar COMMAND
 Run the COMMAND rather than an interactive shell.
 This makes it easy for a script to capture the output of a program that
 behaves differently when its stdout is not a tty.
-.It Fl e
+.It Fl e, Fl Fl return
 Return the exit code of the child process. Uses the same format as bash
 termination on signal termination exit code is 128+n.
-.It Fl f
+.It Fl f, Fl Fl flush
 Flush output after each write. This is nice for telecooperation:
 One person does `mkfifo foo; script -f foo' and another can
 supervise real-time what is being done using `cat foo'.
-.It Fl q
+.It Fl q, Fl Fl quiet
 Be quiet.
-.It Fl t
+.It Fl t, Fl Fl timing
 Output timing data to standard error. This data contains two fields,
 separated by a space. The first field indicates how much time elapsed since
 the previous output. The second field indicates how many characters were
 output this time. This information can be used to replay typescripts with
 realistic typing and output delays.
+.It Fl V, Fl Fl version
+Output version information and exit.
+.It Fl h, Fl Fl help
+Output help and exit.
 .El
 .Pp
 The script ends when the forked shell exits (a
