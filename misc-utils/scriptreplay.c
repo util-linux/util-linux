@@ -133,7 +133,7 @@ main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	if (argc < 2 && argc > 4)
+	if (argc < 2 || 4  < argc)
 		usage(EXIT_FAILURE);
 
 	tname = argv[1];
