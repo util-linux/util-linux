@@ -119,6 +119,27 @@ die_if_link(char *fn) {
 			fn, program_invocation_short_name, fn);
 }
 
+static void __attribute__((__noreturn__))
+usage(FILE *out)
+{
+	fprintf(out, _(
+		"\nUsage:\n"
+		" %s [options] [file]\n"), program_invocation_short_name);
+
+	fprintf(out, _(
+		"\nOptions:\n"
+		" -a, --append            append output\n"
+		" -c, --command COMMAND   run command rather than interactive shell\n"
+		" -r, --return            return exit code of the child process\n"
+		" -f, --flush             run flush after each write\n"
+		" -q, --quiet             be quiet\n"
+		" -t, --timing            output timing data to stderr\n"
+		" -V, --version           output version information and exit\n"
+		" -h, --help              display this help and exit\n\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 /*
  * script -t prints time delays as floating point numbers
  * The example program (scriptreplay) that we provide to handle this
@@ -135,20 +156,24 @@ main(int argc, char **argv) {
 	extern int optind;
 	int ch;
 
+	struct option longopts[] = {
+		{ "append",	no_argument,	   0, 'a' },
+		{ "command",	required_argument, 0, 'c' },
+		{ "return",	no_argument,	   0, 'e' },
+		{ "flush",	no_argument,	   0, 'f' },
+		{ "quiet",	no_argument,	   0, 'q' },
+		{ "timing",	no_argument,	   0, 't' },
+		{ "version",	no_argument,	   0, 'V' },
+		{ "help",	no_argument,	   0, 'h' },
+		{ NULL,		0, 0, 0 }
+	};
+
 	setlocale(LC_ALL, "");
 	setlocale(LC_NUMERIC, "C");	/* see comment above */
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	if (argc == 2) {
-		if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
-			printf(_("%s (%s)\n"),
-			       program_invocation_short_name, PACKAGE_STRING);
-			return 0;
-		}
-	}
-
-	while ((ch = getopt(argc, argv, "ac:efqt")) != -1)
+	while ((ch = getopt_long(argc, argv, "ac:efqtVh", longopts, NULL)) != -1)
 		switch((char)ch) {
 		case 'a':
 			aflg++;
@@ -168,11 +193,17 @@ main(int argc, char **argv) {
 		case 't':
 			tflg++;
 			break;
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+						  PACKAGE_STRING);
+			exit(EXIT_SUCCESS);
+			break;
+		case 'h':
+			usage(stdout);
+			break;
 		case '?':
 		default:
-			fprintf(stderr,
-				_("usage: script [-a] [-e] [-f] [-q] [-t] [file]\n"));
-			exit(1);
+			usage(stderr);
 		}
 	argc -= optind;
 	argv += optind;
