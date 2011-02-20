@@ -53,6 +53,7 @@
 #include <sys/file.h>
 #include <signal.h>
 #include <errno.h>
+#include <err.h>
 #include <string.h>
 #include <getopt.h>
 #include <unistd.h>
@@ -101,8 +102,6 @@ int	fflg = 0;
 int	qflg = 0;
 int	tflg = 0;
 
-static char *progname;
-
 int die;
 int resized;
 
@@ -110,15 +109,14 @@ static void
 die_if_link(char *fn) {
 	struct stat s;
 
-	if (lstat(fn, &s) == 0 && (S_ISLNK(s.st_mode) || s.st_nlink > 1)) {
-		fprintf(stderr,
+	if (lstat(fn, &s) == 0 && (S_ISLNK(s.st_mode) || s.st_nlink > 1))
+	        /* FIXME: there is no [options] to allow/force this to happen.  */
+		errx(EXIT_FAILURE,
 			_("Warning: `%s' is a link.\n"
 			  "Use `%s [options] %s' if you really "
 			  "want to use it.\n"
-			  "Script not started.\n"),
-			fn, progname, fn);
-		exit(1);
-	}
+			  "Program not started.\n"),
+			fn, program_invocation_short_name, fn);
 }
 
 /*
@@ -135,13 +133,7 @@ main(int argc, char **argv) {
 	sigset_t block_mask, unblock_mask;
 	struct sigaction sa;
 	extern int optind;
-	char *p;
 	int ch;
-
-	progname = argv[0];
-	if ((p = strrchr(progname, '/')) != NULL)
-		progname = p+1;
-
 
 	setlocale(LC_ALL, "");
 	setlocale(LC_NUMERIC, "C");	/* see comment above */
@@ -151,7 +143,7 @@ main(int argc, char **argv) {
 	if (argc == 2) {
 		if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
 			printf(_("%s (%s)\n"),
-			       progname, PACKAGE_STRING);
+			       program_invocation_short_name, PACKAGE_STRING);
 			return 0;
 		}
 	}
@@ -192,7 +184,7 @@ main(int argc, char **argv) {
 		die_if_link(fname);
 	}
 	if ((fscript = fopen(fname, aflg ? "a" : "w")) == NULL) {
-		perror(fname);
+		warn(_("open failed: %s"), fname);
 		fail();
 	}
 
@@ -223,7 +215,7 @@ main(int argc, char **argv) {
 	sigprocmask(SIG_SETMASK, &unblock_mask, NULL);
 
 	if (child < 0) {
-		perror("fork");
+		warn(_("fork failed"));
 		fail();
 	}
 	if (child == 0) {
@@ -233,7 +225,7 @@ main(int argc, char **argv) {
 		sigprocmask(SIG_SETMASK, &unblock_mask, NULL);
 
 		if (child < 0) {
-			perror("fork");
+			warn(_("fork failed"));
 			fail();
 		}
 		if (child)
@@ -246,7 +238,7 @@ main(int argc, char **argv) {
 	}
 	doinput();
 
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 void
@@ -260,9 +252,7 @@ doinput() {
 		if ((cc = read(0, ibuf, BUFSIZ)) > 0) {
 			ssize_t wrt = write(master, ibuf, cc);
 			if (wrt == -1) {
-				int err = errno;
-				fprintf (stderr, _("%s: write error %d: %s\n"),
-					progname, err, strerror(err));
+				warn (_("write failed"));
 				fail();
 			}
 		}
@@ -354,16 +344,12 @@ dooutput() {
 		}
 		wrt = write(1, obuf, cc);
 		if (wrt < 0) {
-			int err = errno;
-			fprintf (stderr, _("%s: write error: %s\n"),
-				progname, strerror(err));
+			warn (_("write failed"));
 			fail();
 		}
 		fwrt = fwrite(obuf, 1, cc, fscript);
 		if (fwrt < cc) {
-			int err = errno;
-			fprintf (stderr, _("%s: cannot write script file, error: %s\n"),
-				progname, strerror(err));
+			warn (_("cannot write script file"));
 			fail();
 		}
 		if (fflg)
@@ -410,7 +396,7 @@ doshell() {
 	else
 		execl(shell, shname, "-i", NULL);
 
-	perror(shell);
+	warn(_("failed to execute %s"), shell);
 	fail();
 }
 
@@ -462,7 +448,7 @@ done() {
 		else
 			exit(WEXITSTATUS(childstatus));
 	}
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 void
@@ -471,7 +457,7 @@ getmaster() {
 	(void) tcgetattr(0, &tt);
 	(void) ioctl(0, TIOCGWINSZ, (char *)&win);
 	if (openpty(&master, &slave, NULL, &tt, &win) < 0) {
-		fprintf(stderr, _("openpty failed\n"));
+		warn(_("openpty failed"));
 		fail();
 	}
 #else
@@ -507,7 +493,7 @@ getmaster() {
 		}
 	}
 	master = -1;
-	fprintf(stderr, _("Out of pty's\n"));
+	warn(_("out of pty's"));
 	fail();
 #endif /* not HAVE_LIBUTIL */
 }
@@ -518,7 +504,7 @@ getslave() {
 	line[strlen("/dev/")] = 't';
 	slave = open(line, O_RDWR);
 	if (slave < 0) {
-		perror(line);
+		warn(_("open failed: %s"), line);
 		fail();
 	}
 	(void) tcsetattr(slave, TCSANOW, &tt);
