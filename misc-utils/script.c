@@ -278,7 +278,7 @@ doinput() {
 #include <sys/wait.h>
 
 void
-finish(int dummy) {
+finish(int dummy __attribute__ ((__unused__))) {
 	int status;
 	register int pid;
 
@@ -290,7 +290,7 @@ finish(int dummy) {
 }
 
 void
-resize(int dummy) {
+resize(int dummy __attribute__ ((__unused__))) {
 	resized = 1;
 	/* transmit window change information to the child */
 	(void) ioctl(0, TIOCGWINSZ, (char *)&win);
@@ -315,7 +315,7 @@ dooutput() {
 	double oldtime=time(NULL), newtime;
 	int flgs = 0;
 	ssize_t wrt;
-	size_t fwrt;
+	ssize_t fwrt;
 
 	(void) close(0);
 #ifdef HAVE_LIBUTIL
