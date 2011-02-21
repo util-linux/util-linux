@@ -224,8 +224,8 @@ hw_clock_is_utc(const bool utc, const bool local_opt,
 	else if (local_opt)
 		ret = FALSE;	/* --localtime explicitly given */
 	else
-				/* get info from adjtime file - default is local */
-		ret = (adjtime.local_utc == UTC);
+				/* get info from adjtime file - default is UTC */
+		ret = (adjtime.local_utc != LOCAL);
 	if (debug)
 		printf(_("Assuming hardware clock is kept in %s time.\n"),
 		       ret ? _("UTC") : _("local"));
