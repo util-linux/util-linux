@@ -651,7 +651,7 @@ main(int argc, char **argv) {
 		if (fgetfilecon(DEV, &oldcontext) < 0) {
 			if (errno != ENODATA)
 				err(EXIT_FAILURE,
-					_("%s: %s: unable to obtain selinux file label: %s"),
+					_("%s: unable to obtain selinux file label"),
 					device_name);
 			if (matchpathcon(device_name, statbuf.st_mode, &oldcontext))
 				errx(EXIT_FAILURE, _("unable to matchpathcon()"));
