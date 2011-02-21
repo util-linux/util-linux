@@ -946,7 +946,7 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 			break;
 		case 'i':
-			tt_flags = TT_FL_ASCII;
+			tt_flags |= TT_FL_ASCII;
 			break;
 		case 'r':
 			tt_flags &= ~TT_FL_TREE;	/* disable the default */
