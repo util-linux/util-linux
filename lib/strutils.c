@@ -177,7 +177,7 @@ long strtol_or_err(const char *str, const char *errmesg)
        errno = 0;
        num = strtol(str, &end, 10);
 
-       if (errno || (end && *end))
+       if (errno || str == end || (end && *end))
                goto err;
 
        return num;
@@ -201,7 +201,7 @@ long long strtoll_or_err(const char *str, const char *errmesg)
        errno = 0;
        num = strtoll(str, &end, 10);
 
-       if (errno || (end && *end))
+       if (errno || str == end || (end && *end))
                goto err;
 
        return num;
