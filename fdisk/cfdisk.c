@@ -1031,7 +1031,7 @@ struct MenuItem
 static int
 menuUpdate( int y, int x, struct MenuItem *menuItems, int itemLength,
 	    char *available, int menuType, int current ) {
-    int i, lmargin = x, ymargin = y;
+    int i, lmargin = x;
     char *mcd;
 
     /* Print available buttons */
