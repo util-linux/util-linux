@@ -1,4 +1,14 @@
 
+kill
+----
+ - support real-time signals in format
+
+    kill -RT16 4711
+    kill -RTMIN+16 4711
+    kill -RTMAX-14 4711
+
+   see also https://bugzilla.redhat.com/show_bug.cgi?id=676297
+
 term-utils
 ----------
 
