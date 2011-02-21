@@ -204,7 +204,7 @@ main (int argc, char **argv) {
 			print_sem (id);
 		if (msg)
 			print_msg (id);
-		if (!msg && !sem && !msg )
+		if (!shm && !sem && !msg )
 			usage (EXIT_FAILURE);
 	} else {
 		if ( !shm && !msg && !sem)
