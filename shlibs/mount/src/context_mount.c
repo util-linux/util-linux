@@ -185,11 +185,10 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 			return -EPERM;
 		}
 
-		if (u_flags & (MNT_MS_OWNER | MNT_MS_GROUP))
-			cxt->mountflags |= MS_OWNERSECURE;
-
-		if (u_flags & (MNT_MS_USER | MNT_MS_USERS))
-			cxt->mountflags |= MS_SECURE;
+		/*
+		 * Note that MS_OWNERSECURE and MS_SECURE mount options
+		 * are applied by mnt_optstr_get_flags() from mnt_context_merge_mflags()
+		 */
 
 		srcpath = mnt_fs_get_srcpath(cxt->fs);
 		if (!srcpath)

@@ -861,7 +861,7 @@ int mnt_context_get_mflags(struct libmnt_context *cxt, unsigned long *flags)
 
 	*flags = 0;
 	if (!(cxt->flags & MNT_FL_MOUNTFLAGS_MERGED) && cxt->fs) {
-		const char *o = mnt_fs_get_vfs_options(cxt->fs);
+		const char *o = mnt_fs_get_options(cxt->fs);
 		if (o)
 			rc = mnt_optstr_get_flags(o, flags,
 				    mnt_get_builtin_optmap(MNT_LINUX_MAP));
@@ -1665,11 +1665,50 @@ err:
 	return rc;
 }
 
+int test_flags(struct libmnt_test *ts, int argc, char *argv[])
+{
+	int idx = 1, rc = 0;
+	struct libmnt_context *cxt;
+	const char *opt = NULL;
+	unsigned long flags = 0;
+
+	if (argc < 2)
+		return -EINVAL;
+
+	cxt = mnt_new_context();
+	if (!cxt)
+		return -ENOMEM;
+
+	if (!strcmp(argv[idx], "-o")) {
+		mnt_context_set_options(cxt, argv[idx + 1]);
+		idx += 2;
+	}
+
+	if (argc == idx + 1)
+		/* mount <mountpont>|<device> */
+		mnt_context_set_target(cxt, argv[idx++]);
+
+	rc = mnt_context_prepare_mount(cxt);
+	if (rc)
+		printf("failed to prepare mount %s\n", strerror(-rc));
+
+	opt = mnt_fs_get_options(cxt->fs);
+	if (opt)
+		fprintf(stdout, "options: %s\n", opt);
+
+	mnt_context_get_mflags(cxt, &flags);
+	fprintf(stdout, "flags: %08lx\n", flags);
+
+	mnt_free_context(cxt);
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
 	{ "--mount",  test_mount,  "[-o <opts>] [-t <type>] <spec>|<src> <target>" },
 	{ "--umount", test_umount, "[-t <type>] [-f][-l][-r] <src>|<target>" },
+	{ "--flags", test_flags,   "[-o <opts>] <spec>" },
 	{ NULL }};
 
 

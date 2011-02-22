@@ -585,27 +585,49 @@ int mnt_optstr_get_options(const char *optstr, char **subset,
 int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 		const struct libmnt_optmap *map)
 {
-	struct libmnt_optmap const *maps[1];
+	struct libmnt_optmap const *maps[2];
 	char *name, *str = (char *) optstr;
 	size_t namesz = 0;
+	int nmaps = 0;
 
 	assert(optstr);
 
 	if (!optstr || !flags || !map)
 		return -EINVAL;
 
-	maps[0] = map;
+	maps[nmaps++] = map;
+
+	if (map == mnt_get_builtin_optmap(MNT_LINUX_MAP))
+		/*
+		 * Add userspace map -- the "user" is interpreted as
+		 *                      MS_NO{EXEC,SUID,DEV}.
+		 */
+		maps[nmaps++] = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
 
 	while(!mnt_optstr_next_option(&str, &name, &namesz, NULL, NULL)) {
 		const struct libmnt_optmap *ent;
+		const struct libmnt_optmap *m;
 
-		if (mnt_optmap_get_entry(maps, 1, name, namesz, &ent)) {
-			if (!ent->id)
-				continue;
+		m = mnt_optmap_get_entry(maps, nmaps, name, namesz, &ent);
+		if (!m || !ent || !ent->id)
+			continue;
+
+		if (m == map) {				/* requested map */
 			if (ent->mask & MNT_INVERT)
 				*flags &= ~ent->id;
 			else
 				*flags |= ent->id;
+
+		} else if (nmaps == 2 && m == maps[1]) {
+			/*
+			 * Special case -- translate "user" to MS_ options
+			 */
+			if (ent->mask & MNT_INVERT)
+				continue;
+			if (ent->id & (MNT_MS_OWNER | MNT_MS_GROUP))
+				*flags |= MS_OWNERSECURE;
+			else if (ent->id & (MNT_MS_USER | MNT_MS_USERS))
+				*flags |= MS_SECURE;
 		}
 	}
 
