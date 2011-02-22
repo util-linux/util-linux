@@ -2,4 +2,5 @@
 source: /dev/mapper/foo
 target: /home/foo
 fstype: ext4
+optstr: noatime,defaults
 VFS-optstr: noatime

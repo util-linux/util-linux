@@ -73,7 +73,7 @@ $TESTPROG --split "aaa,bbb=BBB,ccc,user=kzak,noexec,nosuid,loop=/dev/loop0" &> $
 ts_finalize_subtest
 
 ts_init_subtest "flags"
-$TESTPROG --flags "aaa,bbb=BBB,ccc,user=kzak,noexec,nosuid,loop=/dev/loop0" &> $TS_OUTPUT
+$TESTPROG --flags "aaa,bbb=BBB,ccc,user=kzak,nodev,noexec,nosuid,loop=/dev/loop0" &> $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "apply-linux"	# add noatime and remove noexec and nosuid
