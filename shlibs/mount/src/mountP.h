@@ -174,6 +174,7 @@ struct libmnt_fs {
 	char		*target;	/* mountinfo[5], fstab[2]: mountpoint */
 	char		*fstype;	/* mountinfo[9], fstab[3]: filesystem type */
 
+	char		*optstr;	/* fstab[4], merged options */
 	char		*vfs_optstr;	/* mountinfo[6]: fs-independent (VFS) options */
 	char		*fs_optstr;	/* mountinfo[11]: fs-depend options */
 	char		*user_optstr;	/* userspace mount options */

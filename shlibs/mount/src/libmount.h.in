@@ -215,28 +215,18 @@ extern const char *mnt_fs_get_fstype(struct libmnt_fs *fs);
 extern int mnt_fs_set_fstype(struct libmnt_fs *fs, const char *fstype);
 
 extern char *mnt_fs_strdup_options(struct libmnt_fs *fs);
+extern const char *mnt_fs_get_options(struct libmnt_fs *fs);
 extern int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr);
+extern int mnt_fs_append_options(struct libmnt_fs *fs, const char *optstr);
+extern int mnt_fs_prepend_options(struct libmnt_fs *fs, const char *optstr);
 
 extern int mnt_fs_get_option(struct libmnt_fs *fs, const char *name,
 				char **value, size_t *valsz);
 
-extern int mnt_fs_append_options(struct libmnt_fs *fs, const char *optstr);
-extern int mnt_fs_prepend_options(struct libmnt_fs *fs, const char *optstr);
 
 extern const char *mnt_fs_get_fs_options(struct libmnt_fs *fs);
-extern int mnt_fs_set_fs_options(struct libmnt_fs *fs, const char *optstr);
-extern int mnt_fs_append_fs_options(struct libmnt_fs *fs, const char *optstr);
-extern int mnt_fs_prepend_fs_options(struct libmnt_fs *fs, const char *optstr);
-
 extern const char *mnt_fs_get_vfs_options(struct libmnt_fs *fs);
-extern int mnt_fs_set_vfs_options(struct libmnt_fs *fs, const char *optstr);
-extern int mnt_fs_append_vfs_options(struct libmnt_fs *fs, const char *optstr);
-extern int mnt_fs_prepend_vfs_options(struct libmnt_fs *fs, const char *optstr);
-
 extern const char *mnt_fs_get_user_options(struct libmnt_fs *fs);
-extern int mnt_fs_set_user_options(struct libmnt_fs *fs, const char *optstr);
-extern int mnt_fs_append_user_options(struct libmnt_fs *fs, const char *optstr);
-extern int mnt_fs_prepend_user_options(struct libmnt_fs *fs, const char *optstr);
 
 extern const char *mnt_fs_get_attributes(struct libmnt_fs *fs);
 extern int mnt_fs_set_attributes(struct libmnt_fs *fs, const char *optstr);

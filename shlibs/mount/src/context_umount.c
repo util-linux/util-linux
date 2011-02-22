@@ -591,7 +591,7 @@ int mnt_context_do_umount(struct libmnt_context *cxt)
 		/*
 		 * fix options, remount --> read-only mount
 		 */
-		const char *o = mnt_fs_get_vfs_options(cxt->fs);
+		const char *o = mnt_fs_get_options(cxt->fs);
 		char *n = o ? strdup(o) : NULL;
 
 		DBG(CXT, mnt_debug_h(cxt, "fix remount-on-umount update"));
@@ -600,7 +600,7 @@ int mnt_context_do_umount(struct libmnt_context *cxt)
 			mnt_optstr_remove_option(&n, "rw");
 		rc = mnt_optstr_prepend_option(&n, "ro", NULL);
 		if (!rc)
-			rc = mnt_fs_set_vfs_options(cxt->fs, n);
+			rc = mnt_fs_set_options(cxt->fs, n);
 
 		/* use "remount" instead of "umount" in /etc/mtab */
 		if (!rc && cxt->update && cxt->mtab_writable)

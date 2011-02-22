@@ -1376,36 +1376,14 @@ static int apply_table(struct libmnt_context *cxt, struct libmnt_table *tb,
 
 	if (cxt->optsmode & MNT_OMODE_IGNORE)
 		;
-	else if (cxt->optsmode & MNT_OMODE_REPLACE) {
-		rc = mnt_fs_set_vfs_options(cxt->fs,
-					mnt_fs_get_vfs_options(fs));
-		if (!rc)
-			rc = mnt_fs_set_fs_options(cxt->fs,
-					mnt_fs_get_fs_options(fs));
-		if (!rc)
-			rc = mnt_fs_set_user_options(cxt->fs,
-					mnt_fs_get_user_options(fs));
+	else if (cxt->optsmode & MNT_OMODE_REPLACE)
+		rc = mnt_fs_set_options(cxt->fs, mnt_fs_get_options(fs));
 
-	} else if (cxt->optsmode & MNT_OMODE_APPEND) {
-		rc = mnt_fs_append_vfs_options(cxt->fs,
-					mnt_fs_get_vfs_options(fs));
-		if (!rc)
-			rc = mnt_fs_append_fs_options(cxt->fs,
-					mnt_fs_get_fs_options(fs));
-		if (!rc)
-			rc = mnt_fs_append_user_options(cxt->fs,
-					mnt_fs_get_user_options(fs));
+	else if (cxt->optsmode & MNT_OMODE_APPEND)
+		rc = mnt_fs_append_options(cxt->fs, mnt_fs_get_options(fs));
 
-	} else if (cxt->optsmode & MNT_OMODE_PREPEND) {
-		rc = mnt_fs_prepend_vfs_options(cxt->fs,
-					mnt_fs_get_vfs_options(fs));
-		if (!rc)
-			rc = mnt_fs_prepend_fs_options(cxt->fs,
-					mnt_fs_get_fs_options(fs));
-		if (!rc)
-			rc = mnt_fs_prepend_user_options(cxt->fs,
-					mnt_fs_get_user_options(fs));
-	}
+	else if (cxt->optsmode & MNT_OMODE_PREPEND)
+		rc = mnt_fs_prepend_options(cxt->fs, mnt_fs_get_options(fs));
 
 	if (!rc)
 		cxt->flags |= MNT_FL_TAB_APPLIED;

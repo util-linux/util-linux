@@ -109,10 +109,14 @@ static int fix_optstr(struct libmnt_context *cxt)
 	if (!rc && cxt->user_mountflags && MNT_MS_USER)
 		rc = mnt_optstr_fix_user(&fs->user_optstr);
 
+	/* refresh merged optstr */
+	free(fs->optstr);
+	fs->optstr = NULL;
+	fs->optstr = mnt_fs_strdup_options(fs);
 done:
 	DBG(CXT, mnt_debug_h(cxt, "fixed options [rc=%d]: "
-		"vfs: '%s' fs: '%s' user: '%s'", rc,
-		fs->vfs_optstr, fs->fs_optstr, fs->user_optstr));
+		"vfs: '%s' fs: '%s' user: '%s', optstr: '%s'", rc,
+		fs->vfs_optstr, fs->fs_optstr, fs->user_optstr, fs->optstr));
 	return rc;
 }
 

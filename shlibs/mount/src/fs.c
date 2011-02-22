@@ -59,6 +59,7 @@ void mnt_free_fs(struct libmnt_fs *fs)
 	free(fs->root);
 	free(fs->target);
 	free(fs->fstype);
+	free(fs->optstr);
 	free(fs->vfs_optstr);
 	free(fs->fs_optstr);
 	free(fs->user_optstr);
@@ -154,6 +155,8 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 		goto err;
 	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, fstype)))
 		goto err;
+	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, optstr)))
+		goto err;
 	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, vfs_optstr)))
 		goto err;
 	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, fs_optstr)))
@@ -213,6 +216,10 @@ struct libmnt_fs *mnt_copy_mtab_fs(const struct libmnt_fs *fs)
 
 	if (cpy_str_at_offset(n, fs, offsetof(struct libmnt_fs, fs_optstr)))
 		goto err;
+
+	/* we cannot copy original optstr, the new optstr has to be without
+	 * non-mtab options -- so, let's generate a new string */
+	n->optstr = mnt_fs_strdup_options(n);
 
 	n->freq       = fs->freq;
 	n->passno     = fs->passno;
@@ -583,6 +590,10 @@ char *mnt_fs_strdup_options(struct libmnt_fs *fs)
 	assert(fs);
 
 	errno = 0;
+
+	if (fs->optstr)
+		return strdup(fs->optstr);
+
 	res = merge_optstr(fs->vfs_optstr, fs->fs_optstr);
 	if (!res && errno)
 		return NULL;
@@ -596,6 +607,19 @@ char *mnt_fs_strdup_options(struct libmnt_fs *fs)
 }
 
 /**
+ * mnt_fs_get_options:
+ * @fs: fstab/mtab/mountinfo entry pointer
+ *
+ * Returns: pointer to string or NULL in case of error.
+ */
+const char *mnt_fs_get_options(struct libmnt_fs *fs)
+{
+	assert(fs);
+	return fs ? fs->optstr : NULL;
+}
+
+
+/**
  * mnt_fs_set_options:
  * @fs: fstab/mtab/mountinfo entry pointer
  * @optstr: options string
@@ -607,7 +631,7 @@ char *mnt_fs_strdup_options(struct libmnt_fs *fs)
  */
 int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr)
 {
-	char *v = NULL, *f = NULL, *u = NULL;
+	char *v = NULL, *f = NULL, *u = NULL, *n = NULL;
 
 	assert(fs);
 
@@ -617,15 +641,21 @@ int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr)
 		int rc = mnt_split_optstr(optstr, &u, &v, &f, 0, 0);
 		if (rc)
 			return rc;
+		n = strdup(optstr);
+		if (!n)
+			return -ENOMEM;
 	}
 
 	free(fs->fs_optstr);
 	free(fs->vfs_optstr);
 	free(fs->user_optstr);
+	free(fs->optstr);
 
 	fs->fs_optstr = f;
 	fs->vfs_optstr = v;
 	fs->user_optstr = u;
+	fs->optstr = n;
+
 	return 0;
 }
 
@@ -657,9 +687,15 @@ int mnt_fs_append_options(struct libmnt_fs *fs, const char *optstr)
 	if (!rc && v)
 		rc = mnt_optstr_append_option(&fs->vfs_optstr, v, NULL);
 	if (!rc && f)
-	       rc = mnt_optstr_append_option(&fs->fs_optstr, f, NULL);
+		rc = mnt_optstr_append_option(&fs->fs_optstr, f, NULL);
 	if (!rc && u)
-	       rc = mnt_optstr_append_option(&fs->user_optstr, u, NULL);
+		rc = mnt_optstr_append_option(&fs->user_optstr, u, NULL);
+	if (!rc)
+		rc = mnt_optstr_append_option(&fs->optstr, optstr, NULL);
+
+	free(v);
+	free(f);
+	free(u);
 
 	return rc;
 }
@@ -695,6 +731,12 @@ int mnt_fs_prepend_options(struct libmnt_fs *fs, const char *optstr)
 		rc = mnt_optstr_prepend_option(&fs->fs_optstr, f, NULL);
 	if (!rc && u)
 		rc = mnt_optstr_prepend_option(&fs->user_optstr, u, NULL);
+	if (!rc)
+		rc = mnt_optstr_prepend_option(&fs->optstr, optstr, NULL);
+
+	free(v);
+	free(f);
+	free(u);
 
 	return rc;
 }
@@ -712,71 +754,6 @@ const char *mnt_fs_get_fs_options(struct libmnt_fs *fs)
 }
 
 /**
- * mnt_fs_set_fs_options:
- * @fs: fstab/mtab/mountinfo entry
- * @optstr: options string
- *
- * Sets FS specific mount options.
- *
- * Returns: 0 on success or negative number in case of error.
- */
-int mnt_fs_set_fs_options(struct libmnt_fs *fs, const char *optstr)
-{
-	char *p = NULL;
-
-	if (!fs)
-		return -EINVAL;
-	if (optstr) {
-		p = strdup(optstr);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(fs->fs_optstr);
-	fs->fs_optstr = p;
-
-	return 0;
-}
-
-/**
- * mnt_fs_append_fs_options:
- * @fs: fstab/mtab/mountinfo entry
- * @optstr: options string
- *
- * Appends FS specific mount options. If @optstr is NULL then @fs is not
- * modified and 0 is returned.
- *
- * Returns: 0 on success or negative number in case of error.
- */
-int mnt_fs_append_fs_options(struct libmnt_fs *fs, const char *optstr)
-{
-	if (!fs)
-		return -EINVAL;
-	if (!optstr)
-		return 0;
-	return mnt_optstr_append_option(&fs->fs_optstr, optstr, NULL);
-}
-
-/**
- * mnt_fs_prepend_fs_options:
- * @fs: fstab/mtab/mountinfo entry
- * @optstr: options string
- *
- * Prepends FS specific mount options. If @optstr is NULL then @fs is not
- * modified and 0 is returned.
- *
- * Returns: 0 on success or negative number in case of error.
- */
-int mnt_fs_prepend_fs_options(struct libmnt_fs *fs, const char *optstr)
-{
-	if (!fs)
-		return -EINVAL;
-	if (!optstr)
-		return 0;
-	return mnt_optstr_prepend_option(&fs->fs_optstr, optstr, NULL);
-}
-
-
-/**
  * mnt_fs_get_vfs_options:
  * @fs: fstab/mtab entry pointer
  *
@@ -789,70 +766,6 @@ const char *mnt_fs_get_vfs_options(struct libmnt_fs *fs)
 }
 
 /**
- * mnt_fs_set_vfs_options:
- * @fs: fstab/mtab/mountinfo entry
- * @optstr: options string
- *
- * Sets VFS mount options.
- *
- * Returns: 0 on success or negative number in case of error.
- */
-int mnt_fs_set_vfs_options(struct libmnt_fs *fs, const char *optstr)
-{
-	char *p = NULL;
-
-	if (!fs)
-		return -EINVAL;
-	if (optstr) {
-		p = strdup(optstr);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(fs->vfs_optstr);
-	fs->vfs_optstr = p;
-
-	return 0;
-}
-
-/**
- * mnt_fs_append_vfs_options:
- * @fs: fstab/mtab/mountinfo entry
- * @optstr: options string
- *
- * Appends VFS mount options. If @optstr is NULL then @fs is not
- * modified and 0 is returned.
- *
- * Returns: 0 on success or negative number in case of error.
- */
-int mnt_fs_append_vfs_options(struct libmnt_fs *fs, const char *optstr)
-{
-	if (!fs)
-		return -EINVAL;
-	if (!optstr)
-		return 0;
-	return mnt_optstr_append_option(&fs->vfs_optstr, optstr, NULL);
-}
-
-/**
- * mnt_fs_prepend_vfs_options:
- * @fs: fstab/mtab/mountinfo entry
- * @optstr: options string
- *
- * Prepends VFS mount options. If @optstr is NULL then @fs is not
- * modified and 0 is returned.
- *
- * Returns: 0 on success or negative number in case of error.
- */
-int mnt_fs_prepend_vfs_options(struct libmnt_fs *fs, const char *optstr)
-{
-	if (!fs)
-		return -EINVAL;
-	if (!optstr)
-		return 0;
-	return mnt_optstr_prepend_option(&fs->vfs_optstr, optstr, NULL);
-}
-
-/**
  * mnt_fs_get_user_options:
  * @fs: fstab/mtab entry pointer
  *
@@ -862,71 +775,6 @@ const char *mnt_fs_get_user_options(struct libmnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->user_optstr : NULL;
-}
-
-/**
- * mnt_fs_set_user_options:
- * @fs: fstab/mtab/mountinfo entry
- * @optstr: options string
- *
- * Sets userspace mount options.
- *
- * Returns: 0 on success or negative number in case of error.
- */
-int mnt_fs_set_user_options(struct libmnt_fs *fs, const char *optstr)
-{
-	char *p = NULL;
-
-	if (!fs)
-		return -EINVAL;
-	if (optstr) {
-		p = strdup(optstr);
-		if (!p)
-			return -ENOMEM;
-	}
-	free(fs->user_optstr);
-	fs->user_optstr = p;
-
-	return 0;
-}
-
-/**
- * mnt_fs_append_user_options:
- * @fs: fstab/mtab/mountinfo entry
- * @optstr: options string
- *
- * Appends userspace mount options. If @optstr is NULL then @fs is not
- * modified and 0 is returned.
- *
- * Returns: 0 on success or negative number in case of error.
- */
-int mnt_fs_append_user_options(struct libmnt_fs *fs, const char *optstr)
-{
-	if (!fs)
-		return -EINVAL;
-	if (!optstr)
-		return 0;
-	return mnt_optstr_append_option(&fs->user_optstr, optstr, NULL);
-}
-
-/**
- * mnt_fs_prepend_user_options:
- * @fs: fstab/mtab/mountinfo entry
- * @optstr: options string
- *
- * Prepends userspace mount options. If @optstr is NULL then @fs is not
- * modified and 0 is returned.
- *
- * Returns: 0 on success or negative number in case of error.
- */
-int mnt_fs_prepend_user_options(struct libmnt_fs *fs, const char *optstr)
-{
-	if (!fs)
-		return -EINVAL;
-	if (!optstr)
-		return 0;
-
-	return mnt_optstr_prepend_option(&fs->user_optstr, optstr, NULL);
 }
 
 /**
@@ -1384,6 +1232,8 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 	fprintf(file, "target: %s\n", mnt_fs_get_target(fs));
 	fprintf(file, "fstype: %s\n", mnt_fs_get_fstype(fs));
 
+	if (mnt_fs_get_options(fs))
+		fprintf(file, "optstr: %s\n", mnt_fs_get_options(fs));
 	if (mnt_fs_get_vfs_options(fs))
 		fprintf(file, "VFS-optstr: %s\n", mnt_fs_get_vfs_options(fs));
 	if (mnt_fs_get_fs_options(fs))

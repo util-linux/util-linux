@@ -163,6 +163,11 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 		rc = __mnt_fs_set_fstype_ptr(fs, fstype);
 		if (!rc)
 			rc = __mnt_fs_set_source_ptr(fs, src);
+
+		/* merge VFS and FS options to the one string */
+		fs->optstr = mnt_fs_strdup_options(fs);
+		if (!fs->optstr)
+			rc = -ENOMEM;
 	} else {
 		DBG(TAB, mnt_debug(
 			"mountinfo parse error [sscanf rc=%d]: '%s'", rc, s));
@@ -651,7 +656,7 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 
 	if (fs) {
 		DBG(TAB, mnt_debug_h(tb, "found fs -- appending user optstr"));
-		mnt_fs_append_user_options(fs, optstr);
+		mnt_fs_append_options(fs, optstr);
 		mnt_fs_append_attributes(fs, attrs);
 		mnt_fs_set_bindsrc(fs, mnt_fs_get_bindsrc(uf));
 		fs->flags |= MNT_FS_MERGED;

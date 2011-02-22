@@ -264,13 +264,13 @@ int mnt_update_force_rdonly(struct libmnt_update *upd, int rdonly)
 
 	if (!upd->userspace_only) {
 		/* /etc/mtab -- we care about VFS options there */
-		const char *o = mnt_fs_get_vfs_options(upd->fs);
+		const char *o = mnt_fs_get_options(upd->fs);
 		char *n = o ? strdup(o) : NULL;
 
 		if (n)
 			mnt_optstr_remove_option(&n, rdonly ? "rw" : "ro");
 		if (!mnt_optstr_prepend_option(&n, rdonly ? "ro" : "rw", NULL))
-			rc = mnt_fs_set_vfs_options(upd->fs, n);
+			rc = mnt_fs_set_options(upd->fs, n);
 
 		free(n);
 	}
@@ -330,7 +330,7 @@ static int utab_new_entry(struct libmnt_fs *fs, unsigned long mountflags, struct
 		goto err;
 	}
 
-	rc = mnt_fs_set_user_options(*ent, u);
+	rc = mnt_fs_set_options(*ent, u);
 	if (rc)
 		goto err;
 	rc = mnt_fs_set_attributes(*ent, a);
@@ -759,13 +759,8 @@ static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *
 		if (cur) {
 			if (upd->userspace_only)
 				rc = mnt_fs_set_attributes(cur,	mnt_fs_get_attributes(fs));
-			if (!rc && !upd->userspace_only)
-				rc = mnt_fs_set_vfs_options(cur, mnt_fs_get_vfs_options(fs));
-			if (!rc && !upd->userspace_only)
-				rc = mnt_fs_set_fs_options(cur, mnt_fs_get_fs_options(fs));
 			if (!rc)
-				rc = mnt_fs_set_user_options(cur,
-						mnt_fs_get_user_options(fs));
+				rc = mnt_fs_set_options(cur, mnt_fs_get_options(fs));
 			if (!rc)
 				rc = update_table(upd, tb);
 		}

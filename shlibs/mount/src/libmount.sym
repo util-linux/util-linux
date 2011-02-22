@@ -75,10 +75,7 @@ global:
 	mnt_free_table;
 	mnt_free_update;
 	mnt_fs_append_attributes;
-	mnt_fs_append_fs_options;
 	mnt_fs_append_options;
-	mnt_fs_append_user_options;
-	mnt_fs_append_vfs_options;
 	mnt_fs_get_attribute;
 	mnt_fs_get_attributes;
 	mnt_fs_get_bindsrc;
@@ -88,6 +85,7 @@ global:
 	mnt_fs_get_fstype;
 	mnt_fs_get_id;
 	mnt_fs_get_option;
+	mnt_fs_get_options;
 	mnt_fs_get_parent_id;
 	mnt_fs_get_passno;
 	mnt_fs_get_root;
@@ -104,15 +102,11 @@ global:
 	mnt_fs_match_source;
 	mnt_fs_match_target;
 	mnt_fs_prepend_attributes;
-	mnt_fs_prepend_fs_options;
 	mnt_fs_prepend_options;
-	mnt_fs_prepend_user_options;
-	mnt_fs_prepend_vfs_options;
 	mnt_fs_print_debug;
 	mnt_fs_set_attributes;
 	mnt_fs_set_bindsrc;
 	mnt_fs_set_freq;
-	mnt_fs_set_fs_options;
 	mnt_fs_set_fstype;
 	mnt_fs_set_options;
 	mnt_fs_set_passno;
@@ -120,8 +114,6 @@ global:
 	mnt_fs_set_source;
 	mnt_fs_set_target;
 	mnt_fs_set_userdata;
-	mnt_fs_set_user_options;
-	mnt_fs_set_vfs_options;
 	mnt_fs_strdup_options;
 	mnt_fs_to_mntent;
 	mnt_fstype_is_netfs;
