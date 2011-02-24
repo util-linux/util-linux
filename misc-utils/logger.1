@@ -59,14 +59,15 @@ system log module.
 Options:
 .Pp
 .Bl -tag -width "message"
-.It Fl i
+.It Fl i, Fl Fl id
 Log the process id of the logger process
 with each line.
-.It Fl s
+.It Fl s, Fl Fl stderr
 Log the message to standard error, as well as the system log.
-.It Fl f Ar file 
-Log the specified file.
-.It Fl p Ar pri 
+.It Fl f, Fl Fl file Ar file
+Log contents of the specified file. This option cannot be
+combined with command line message.
+.It Fl p, Fl Fl priority Ar pri
 Enter the message with the specified priority.
 The priority may be specified numerically or as a ``facility.level''
 pair.
@@ -76,20 +77,20 @@ level in the
 .Ar local3
 facility.
 The default is ``user.notice.''
-.It Fl t Ar tag 
+.It Fl t, Fl Fl tag Ar tag
 Mark every line in the log with the specified
 .Ar tag  .
-.It Fl u Ar sock
+.It Fl u, Fl Fl socket Ar sock
 Write to socket as specified with
 .Ar socket
 instead of builtin syslog routines.
-.It Fl d
+.It Fl d, Fl Fl udp
 Use a datagram instead of a stream connection to this socket.
-.It Fl n Ar serv
+.It Fl n, Fl Fl server Ar serv
 Write to remote syslog server using UDP as specified with
 .Ar server
 instead of builtin syslog routines.
-.It Fl P Ar port
+.It Fl P, Fl Fl port Ar port
 Change UDP port to the value as specified with
 .Ar udpport  .
 Default port number is 514.
