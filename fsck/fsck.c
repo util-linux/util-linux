@@ -819,10 +819,6 @@ struct fs_type_compile {
 #define FS_TYPE_OPT	1
 #define FS_TYPE_NEGOPT	2
 
-static const char *fs_type_syntax_error =
-N_("Either all or none of the filesystem types passed to -t must be prefixed\n"
-   "with 'no' or '!'.\n");
-
 static void compile_fs_type(char *fs_type, struct fs_type_compile *cmp)
 {
 	char 	*cp, *list, *s;
@@ -871,7 +867,9 @@ static void compile_fs_type(char *fs_type, struct fs_type_compile *cmp)
 			}
 			if ((negate && !cmp->negate) ||
 			    (!negate && cmp->negate)) {
-				errx(EXIT_USAGE, _(fs_type_syntax_error));
+				errx(EXIT_USAGE,
+					_("Either all or none of the filesystem types passed to -t must be prefixed\n"
+					  "with 'no' or '!'."));
 			}
 		}
 #if 0
