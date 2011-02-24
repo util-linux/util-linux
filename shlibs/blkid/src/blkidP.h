@@ -198,6 +198,10 @@ struct blkid_struct_probe
 	int			flags;		/* private libray flags */
 	int			prob_flags;	/* always zeroized by blkid_do_*() */
 
+	blkid_loff_t		wipe_off;	/* begin of the wiped area */
+	blkid_loff_t		wipe_size;	/* size of the wiped area */
+	struct blkid_chain	*wipe_chain;	/* superblock, partition, ... */
+
 	struct list_head	buffers;	/* list of buffers */
 
 	struct blkid_chain	chains[BLKID_NCHAINS];	/* array of chains */
@@ -427,6 +431,12 @@ extern int blkid_probe_sprintf_value(blkid_probe pr, const char *name,
 
 extern void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len);
 extern size_t blkid_rtrim_whitespace(unsigned char *str);
+
+extern void blkid_probe_set_wiper(blkid_probe pr, blkid_loff_t off,
+				  blkid_loff_t size);
+extern int blkid_probe_is_wiped(blkid_probe pr, struct blkid_chain **chn,
+		                blkid_loff_t off, blkid_loff_t size);
+extern void blkid_probe_use_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size);
 
 /* filter bitmap macros */
 #define blkid_bmp_wordsize		(8 * sizeof(unsigned long))

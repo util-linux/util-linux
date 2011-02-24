@@ -112,6 +112,12 @@ static int probe_lvm2(blkid_probe pr, const struct blkid_idmag *mag)
 	/* the mag->magic is the same string as label->type,
 	 * but zero terminated */
 	blkid_probe_set_version(pr, mag->magic);
+
+	/* LVM (pvcreate) wipes begin of the device -- let's remember this
+	 * to resolve conflicts bettween LVM and partition tables, ...
+	 */
+	blkid_probe_set_wiper(pr, 0, 8 * 1024);
+
 	return 0;
 }
 
