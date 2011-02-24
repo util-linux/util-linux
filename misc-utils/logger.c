@@ -49,14 +49,17 @@
 #include <sys/un.h>
 #include <arpa/inet.h>
 #include <netdb.h>
+#include <getopt.h>
+
+#include "c.h"
 #include "nls.h"
+#include "strutils.h"
 
 #define	SYSLOG_NAMES
 #include <syslog.h>
 
 int	decode __P((char *, CODE *));
 int	pencode __P((char *));
-void	usage __P((void));
 
 static int optd = 0;
 static int udpport = 514;
@@ -140,6 +143,30 @@ mysyslog(int fd, int logflags, int pri, char *tag, char *msg) {
        }
 }
 
+static void __attribute__ ((__noreturn__)) usage(FILE *out)
+{
+	fprintf(out,
+		_("\nUsage:\n"
+		  " %s [options] message\n"),
+		  program_invocation_short_name);
+
+	fprintf(out, _(
+		"\nOptions:\n"
+		" -i, --id            log process id\n"
+		" -s, --stderr        log message to standard error as well\n"
+		" -f, --file FILE     log contents of the specified file\n"
+		" -p, --priority PRI  enter message priority\n"
+		" -t, --tag TAG       mark every line with tag\n"
+		" -u, --socket SOCK   write to socket\n"
+		" -d, --udp           use udp (tcp is default)\n"
+		" -n, --server ADDR   write to remote syslog server\n"
+		" -P, --port          define port number\n"
+		" -V, --version       output version information and exit\n"
+		" -h, --help          display this help and exit\n\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 /*
  * logger -- read and log utility
  *
@@ -153,6 +180,22 @@ main(int argc, char **argv) {
 	char *usock = NULL;
 	char *udpserver = NULL;
 	int LogSock = -1;
+	long tmpport;
+
+	static const struct option longopts[] = {
+		{ "id",		no_argument,	    0, 'i' },
+		{ "stderr",	no_argument,	    0, 's' },
+		{ "file",	required_argument,  0, 'f' },
+		{ "priority",	required_argument,  0, 'p' },
+		{ "tag",	required_argument,  0, 't' },
+		{ "socket",	required_argument,  0, 'u' },
+		{ "udp",	no_argument,	    0, 'd' },
+		{ "server",	required_argument,  0, 'n' },
+		{ "port",	required_argument,  0, 'P' },
+		{ "version",	no_argument,	    0, 'V' },
+		{ "help",	no_argument,	    0, 'h' },
+		{ NULL,		0, 0, 0 }
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -161,7 +204,8 @@ main(int argc, char **argv) {
 	tag = NULL;
 	pri = LOG_NOTICE;
 	logflags = 0;
-	while ((ch = getopt(argc, argv, "f:ip:st:u:dn:P:")) != -1)
+	while ((ch = getopt_long(argc, argv, "f:ip:st:u:dn:P:Vh",
+					    longopts, NULL)) != -1)
 		switch((char)ch) {
 		case 'f':		/* file to log */
 			if (freopen(optarg, "r", stdin) == NULL) {
@@ -194,11 +238,22 @@ main(int argc, char **argv) {
 			udpserver = optarg;
 			break;
 		case 'P':		/* change udp port */
-			udpport = atoi(optarg);
+			tmpport = strtol_or_err(optarg,
+						_("failed to parse port number"));
+			if (tmpport < 0 || 65535 < tmpport)
+				errx(EXIT_FAILURE, _("port `%ld' out of range"),
+						tmpport);
+			udpport = (int) tmpport;
 			break;
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+						  PACKAGE_STRING);
+			exit(EXIT_SUCCESS);
+		case 'h':
+			usage(stdout);
 		case '?':
 		default:
-			usage();
+			usage(stderr);
 		}
 	argc -= optind;
 	argv += optind;
@@ -315,12 +370,4 @@ decode(name, codetab)
 			return (c->c_val);
 
 	return (-1);
-}
-
-void
-usage()
-{
-	(void)fprintf(stderr,
-	    _("usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"));
-	exit(1);
 }
