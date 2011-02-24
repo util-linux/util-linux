@@ -752,6 +752,7 @@ static inline void blkid_probe_start(blkid_probe pr)
 	if (pr) {
 		pr->cur_chain = NULL;
 		pr->prob_flags = 0;
+		blkid_probe_set_wiper(pr, 0, 0);
 	}
 }
 
@@ -760,6 +761,7 @@ static inline void blkid_probe_end(blkid_probe pr)
 	if (pr) {
 		pr->cur_chain = NULL;
 		pr->prob_flags = 0;
+		blkid_probe_set_wiper(pr, 0, 0);
 	}
 }
 
@@ -1336,5 +1338,81 @@ size_t blkid_rtrim_whitespace(unsigned char *str)
 	}
 	str[++i] = '\0';
 	return i;
+}
+
+/*
+ * Some mkfs-like utils wipe some parts (usually begin) of the device.
+ * For example LVM (pvcreate) or mkswap(8). This information could be used
+ * for later resolution to conflicts between superblocks.
+ *
+ * For example we found valid LVM superblock, LVM wipes 8KiB at the begin of
+ * the device. If we found another signature (for example MBR) this wiped area
+ * then the signature has been added later and LVM superblock should be ignore.
+ *
+ * Note that this heuristic is not 100% reliable, for example "pvcreate --zero
+ * n" allows to keep the begin of the device unmodified. It's probably better
+ * to use this heuristic for conflicts between superblocks and partition tables
+ * than for conflicts between filesystem superblocks -- existence of unwanted
+ * partition table is very unusual, because PT is pretty visible (parsed and
+ * interpreted by kernel).
+ */
+void blkid_probe_set_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
+{
+	struct blkid_chain *chn;
+
+	if (!pr)
+		return;
+
+	if (!size) {
+		DBG(DEBUG_LOWPROBE, printf("zeroize wiper\n"));
+		pr->wipe_size = pr->wipe_off = 0;
+		pr->wipe_chain = NULL;
+		return;
+	}
+
+	chn = pr->cur_chain;
+
+	if (!chn || !chn->driver ||
+	    chn->idx < 0 || chn->idx >= chn->driver->nidinfos)
+		return;
+
+	pr->wipe_size = size;
+	pr->wipe_off = off;
+	pr->wipe_chain = chn;
+
+	DBG(DEBUG_LOWPROBE,
+		printf("wiper set to %s::%s off=%jd size=%jd\n",
+			chn->driver->name,
+			chn->driver->idinfos[chn->idx]->name,
+			pr->wipe_off, pr->wipe_size));
+	return;
+}
+
+/*
+ * Returns 1 if the <@off,@size> area was wiped
+ */
+int blkid_probe_is_wiped(blkid_probe pr, struct blkid_chain **chn,
+		     blkid_loff_t off, blkid_loff_t size)
+{
+	if (!pr || !size)
+		return 0;
+
+	if (pr->wipe_off <= off && off + size <= pr->wipe_off + pr->wipe_size) {
+		if (chn)
+			*chn = pr->wipe_chain;
+		return 1;
+	}
+	return 0;
+}
+
+void blkid_probe_use_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
+{
+	struct blkid_chain *chn = NULL;
+
+	if (blkid_probe_is_wiped(pr, &chn, off, size) && chn) {
+		DBG(DEBUG_LOWPROBE, printf("wiped area detected -- ignore previous results\n"));
+		blkid_probe_set_wiper(pr, 0, 0);
+		blkid_probe_chain_reset_vals(pr, chn);
+	}
 }
 

@@ -303,6 +303,8 @@ static int probe_gpt_pt(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!h)
 		goto nothing;
 
+	blkid_probe_use_wiper(pr, lba * blkid_probe_get_size(pr), 8);
+
 	if (blkid_partitions_need_typeonly(pr))
 		/* caller does not ask for details about partitions */
 		return 0;

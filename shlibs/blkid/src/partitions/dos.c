@@ -177,6 +177,9 @@ static int probe_dos_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		}
 	}
 
+	blkid_probe_use_wiper(pr, BLKID_MSDOS_PT_OFFSET,
+				  512 - BLKID_MSDOS_PT_OFFSET);
+
 	/*
 	 * Well, all checks pass, it's MS-DOS partiton table
 	 */
