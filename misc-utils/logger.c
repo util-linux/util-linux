@@ -69,23 +69,18 @@ myopenlog(const char *sock) {
        int fd;
        static struct sockaddr_un s_addr; /* AF_UNIX address of local logger */
 
-       if (strlen(sock) >= sizeof(s_addr.sun_path)) {
-	       printf (_("logger: openlog: pathname too long\n"));
-	       exit(1);
-       }
+       if (strlen(sock) >= sizeof(s_addr.sun_path))
+	       errx(EXIT_FAILURE, _("openlog %s: pathname too long"), sock);
 
        s_addr.sun_family = AF_UNIX;
        (void)strcpy(s_addr.sun_path, sock);
 
-       if ((fd = socket(AF_UNIX, optd ? SOCK_DGRAM : SOCK_STREAM, 0)) == -1) {
-               printf (_("socket: %s.\n"), strerror(errno));
-               exit (1);
-       }
+       if ((fd = socket(AF_UNIX, optd ? SOCK_DGRAM : SOCK_STREAM, 0)) == -1)
+	       err(EXIT_FAILURE, _("socket %s"), sock);
 
-       if (connect(fd, (struct sockaddr *) &s_addr, sizeof(s_addr)) == -1) {
-               printf (_("connect: %s.\n"), strerror(errno));
-               exit (1);
-       }
+       if (connect(fd, (struct sockaddr *) &s_addr, sizeof(s_addr)) == -1)
+	       err(EXIT_FAILURE, _("connect %s"), sock);
+
        return fd;
 }
 
@@ -95,24 +90,19 @@ udpopenlog(const char *servername,int port) {
 	struct sockaddr_in s_addr;
 	struct hostent *serverhost;
 
-	if ((serverhost = gethostbyname(servername)) == NULL ){
-		printf (_("unable to resolve '%s'\n"), servername);
-                exit(1);
-	}
+	if ((serverhost = gethostbyname(servername)) == NULL )
+		errx(EXIT_FAILURE, _("unable to resolve '%s'"), servername);
 
-	if ((fd = socket(AF_INET, SOCK_DGRAM , 0)) == -1) {
-		printf (_("socket: %s.\n"), strerror(errno));
-		exit (1);
-	}
+	if ((fd = socket(AF_INET, SOCK_DGRAM , 0)) == -1)
+		err(EXIT_FAILURE, _("socket"));
 
 	bcopy(serverhost->h_addr,&s_addr.sin_addr,serverhost->h_length);
         s_addr.sin_family=AF_INET;
         s_addr.sin_port=htons(port);
 
-        if (connect(fd, (struct sockaddr *) &s_addr, sizeof(s_addr)) == -1) {
-		printf (_("connect: %s.\n"), strerror(errno));
-                exit(1);
-        }
+        if (connect(fd, (struct sockaddr *) &s_addr, sizeof(s_addr)) == -1)
+		err(EXIT_FAILURE, _("connect"));
+
 	return fd;
 }
 static void
@@ -205,15 +195,12 @@ main(int argc, char **argv) {
 	pri = LOG_NOTICE;
 	logflags = 0;
 	while ((ch = getopt_long(argc, argv, "f:ip:st:u:dn:P:Vh",
-					    longopts, NULL)) != -1)
+					    longopts, NULL)) != -1) {
 		switch((char)ch) {
 		case 'f':		/* file to log */
-			if (freopen(optarg, "r", stdin) == NULL) {
-				int errsv = errno;
-				(void)fprintf(stderr, _("logger: %s: %s.\n"),
-				    optarg, strerror(errsv));
-				exit(1);
-			}
+			if (freopen(optarg, "r", stdin) == NULL)
+				err(EXIT_FAILURE, _("file %s"),
+				    optarg);
 			break;
 		case 'i':		/* log process id also */
 			logflags |= LOG_PID;
@@ -255,6 +242,7 @@ main(int argc, char **argv) {
 		default:
 			usage(stderr);
 		}
+	}
 	argc -= optind;
 	argv += optind;
 
@@ -300,7 +288,7 @@ main(int argc, char **argv) {
 		    else
 			mysyslog(LogSock, logflags, pri, tag, buf);
 		}
-	} else
+	} else {
 		while (fgets(buf, sizeof(buf), stdin) != NULL) {
 		    /* glibc is buggy and adds an additional newline,
 		       so we have to remove it here until glibc is fixed */
@@ -314,11 +302,13 @@ main(int argc, char **argv) {
 		    else
 			mysyslog(LogSock, logflags, pri, tag, buf);
 		}
+	}
 	if (!usock)
 		closelog();
 	else
 		close(LogSock);
-	exit(0);
+
+	return EXIT_SUCCESS;
 }
 
 /*
@@ -335,11 +325,9 @@ pencode(s)
 	if (*s) {
 		*s = '\0';
 		fac = decode(save, facilitynames);
-		if (fac < 0) {
-			(void)fprintf(stderr,
-			    _("logger: unknown facility name: %s.\n"), save);
-			exit(1);
-		}
+		if (fac < 0)
+			errx(EXIT_FAILURE,
+			    _("unknown facility name: %s."), save);
 		*s++ = '.';
 	}
 	else {
@@ -347,11 +335,9 @@ pencode(s)
 		s = save;
 	}
 	lev = decode(s, prioritynames);
-	if (lev < 0) {
-		(void)fprintf(stderr,
-		    _("logger: unknown priority name: %s.\n"), save);
-		exit(1);
-	}
+	if (lev < 0)
+		errx(EXIT_FAILURE,
+		    _("unknown priority name: %s."), save);
 	return ((lev & LOG_PRIMASK) | (fac & LOG_FACMASK));
 }
 
