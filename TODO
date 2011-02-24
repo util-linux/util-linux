@@ -1,9 +1,3 @@
-
-tailf
------
- - use getopt(), now it does not support "--lines=1", supported is 
-   only "--lines 1" (so without '=').
-
 kill
 ----
  - support real-time signals in format
