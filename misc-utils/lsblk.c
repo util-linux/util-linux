@@ -37,6 +37,7 @@
 #include <locale.h>
 #include <pwd.h>
 #include <grp.h>
+#include <ctype.h>
 
 #include <blkid.h>
 
@@ -75,6 +76,7 @@ enum {
 	COL_LOGSEC,
 	COL_ROTA,
 	COL_SCHED,
+	COL_TYPE,
 
 	__NCOLUMNS
 };
@@ -109,7 +111,8 @@ static struct colinfo infos[__NCOLUMNS] = {
 	[COL_OPTIO]  = { "OPT-IO",  6, TT_FL_RIGHT, N_("optimal I/O size") },
 	[COL_PHYSEC] = { "PHY-SEC", 7, TT_FL_RIGHT, N_("physical sector size") },
 	[COL_LOGSEC] = { "LOG-SEC", 7, TT_FL_RIGHT, N_("logical sector size") },
-	[COL_SCHED]  = { "SCHED",   0.1, 0, N_("I/O scheduler name") }
+	[COL_SCHED]  = { "SCHED",   0.1, 0, N_("I/O scheduler name") },
+	[COL_TYPE]   = { "TYPE",    4, 0, N_("device type") }
 
 };
 
@@ -360,6 +363,12 @@ static uint64_t sysfs_read_u64(struct blkdev_cxt *cxt, const char *attr)
 	return sysfs_scanf(cxt, attr, "%"SCNu64, &x) == 1 ? x : 0;
 }
 
+static int sysfs_read_int(struct blkdev_cxt *cxt, const char *attr)
+{
+	int x;
+	return sysfs_scanf(cxt, attr, "%d", &x) == 1 ? x : 0;
+}
+
 static char *sysfs_strdup(struct blkdev_cxt *cxt, const char *attr)
 {
 	char buf[1024];
@@ -495,6 +504,65 @@ static char *get_scheduler(struct blkdev_cxt *cxt)
 	return res;
 }
 
+static char *get_type(struct blkdev_cxt *cxt)
+{
+	char *res = NULL, *p;
+
+	if (is_dm(cxt->name)) {
+		char *dm_uuid = sysfs_strdup(cxt, "dm/uuid");
+
+		/* The DM_UUID prefix should be set to subsystem owning
+		 * the device - LVM, CRYPT, DMRAID, MPATH, PART */
+		if (dm_uuid) {
+			char *tmp = dm_uuid;
+			char *dm_uuid_prefix = strsep(&tmp, "-");
+
+			if (dm_uuid_prefix) {
+				/* kpartx hack to remove partition number */
+				if (strncasecmp(dm_uuid_prefix, "part", 4) == 0)
+					dm_uuid_prefix[4] = '\0';
+
+				res = xstrdup(dm_uuid_prefix);
+			}
+		}
+
+		free(dm_uuid);
+		if (!res)
+			/* No UUID or no prefix - just mark it as DM device */
+			res = xstrdup("dm");
+
+	} else if (!strncmp(cxt->name, "loop", 4)) {
+		res = xstrdup("loop");
+
+	} else if (!strncmp(cxt->name, "md", 2)) {
+		char *md_level = sysfs_strdup(cxt, "md/level");
+		res = md_level ? md_level : xstrdup("md");
+
+	} else {
+		const char *type = cxt->partition ? "part" : "disk";
+
+		switch (sysfs_read_int(cxt, "device/type")) {
+			case 0x0c: /* TYPE_RAID */
+				type = "raid"; break;
+			case 0x01: /* TYPE_TAPE */
+				type = "raid"; break;
+			case 0x04: /* TYPE_WORM */
+			case 0x05: /* TYPE_ROM */
+				type = "rom"; break;
+			case 0x07: /* TYPE_MOD */
+				type = "mo-disk"; break;
+			case 0x0e: /* TYPE_RBC */
+				type = "rbc"; break;
+		}
+
+		 res = xstrdup(type);
+	}
+
+	for (p = res; p && *p; p++)
+		*p = tolower((unsigned char) *p);
+	return res;
+}
+
 static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line *ln)
 {
 	char buf[1024];
@@ -626,6 +694,11 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		break;
 	case COL_SCHED:
 		p = get_scheduler(cxt);
+		if (p)
+			tt_line_set_data(ln, col, p);
+		break;
+	case COL_TYPE:
+		p = get_type(cxt);
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
@@ -986,6 +1059,7 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_RM;
 		columns[ncolumns++] = COL_SIZE;
 		columns[ncolumns++] = COL_RO;
+		columns[ncolumns++] = COL_TYPE;
 		columns[ncolumns++] = COL_TARGET;
 	}
 
