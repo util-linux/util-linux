@@ -177,7 +177,7 @@ main(int argc, char **argv) {
 	/* log input line if appropriate */
 	if (argc > 0) {
 		register char *p, *endp;
-		int len;
+		size_t len;
 
 		for (p = buf, endp = buf + sizeof(buf) - 2; *argv;) {
 			len = strlen(*argv);
