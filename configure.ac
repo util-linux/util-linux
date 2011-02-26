@@ -73,7 +73,7 @@ AC_SUBST([usrsbin_execdir])
 usrlib_execdir='${exec_prefix}/'$libdirname
 AC_SUBST([usrlib_execdir])
 
-
+AM_PROG_CC_C_O
 AC_PROG_CC_STDC
 AC_GNU_SOURCE
 AC_CANONICAL_HOST
