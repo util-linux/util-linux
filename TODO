@@ -150,6 +150,10 @@ wipefs
 fdisk(s)
 --------
 
+ * add "move end" command to move end of the last primary/extended partition.
+   This feature seems very attractive to users who resizing their disks 
+   (for example in virtual machines).
+
  * sfdisk has to use rpmatch() for answers to y/n questions
    (e.g. "Are you satisfied with this? [ynq]")
 
