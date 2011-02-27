@@ -23,10 +23,10 @@
 
 /* &a[0] degrades to a pointer: a different type from an array */
 # define __must_be_array(a) \
-	BUILD_BUG_ON_ZERO(__builtin_types_compatible_p(typeof(a), typeof(&a[0])))
+	BUILD_BUG_ON_ZERO(__builtin_types_compatible_p(__typeof__(a), __typeof__(&a[0])))
 
 # define ignore_result(x) ({ \
-	typeof(x) __dummy __attribute__((__unused__)) = (x); (void) __dummy; \
+	__typeof__(x) __dummy __attribute__((__unused__)) = (x); (void) __dummy; \
 })
 
 #else /* !__GNUC__ */
@@ -80,16 +80,16 @@
 
 #ifndef min
 # define min(x, y) ({				\
-	typeof(x) _min1 = (x);			\
-	typeof(y) _min2 = (y);			\
+	__typeof__(x) _min1 = (x);		\
+	__typeof__(y) _min2 = (y);		\
 	(void) (&_min1 == &_min2);		\
 	_min1 < _min2 ? _min1 : _min2; })
 #endif
 
 #ifndef max
 # define max(x, y) ({				\
-	typeof(x) _max1 = (x);			\
-	typeof(y) _max2 = (y);			\
+	__typeof__(x) _max1 = (x);		\
+	__typeof__(y) _max2 = (y);		\
 	(void) (&_max1 == &_max2);		\
 	_max1 > _max2 ? _max1 : _max2; })
 #endif
