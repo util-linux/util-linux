@@ -72,13 +72,13 @@ Options:
 .Bl -tag -width Ds
 .It Fl d
 Dictionary character set and order, i.e. only alphanumeric characters
-are compared. (On by default if no file specified).
+are compared.  (On by default if no file is specified).
 .It Fl f
-Ignore the case of alphabetic characters. (On by default if no file specified).
+Ignore the case of alphabetic characters.  (On by default if no file is specified).
 .It Fl a
 Use the alternate dictionary
-.Pa /usr/share/dict/web2
-.It Fl t
+.Pa /usr/share/dict/web2 .
+.It Fl t Ar termchar
 Specify a string termination character, i.e. only the characters
 in
 .Ar string
@@ -109,8 +109,9 @@ option was specified.
 This was incorrect and the current man page matches the historic
 implementation.
 .Sh HISTORY
-.Nm Look
-appeared in Version 7 AT&T Unix.
+The
+.Nm look
+utility appeared in Version 7 AT&T Unix.
 .Sh AVAILABILITY
 The look command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.

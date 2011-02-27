@@ -13,13 +13,13 @@ wipefs \- wipe a filesystem signature from a device
 .I device
 .SH DESCRIPTION
 .B wipefs
-allows to erase filesystem or raid signatures (magic strings) from the
+can erase filesystem or raid signatures (magic strings) from the specified
 .I device
 to make the filesystem invisible for libblkid.
 .B wipefs
-does not erase the whole filesystem or any other data from the device.
-When used without options -a or -o, it lists all visible filesystems and offsets
-of their signatures.
+does not erase the filesystem itself nor any other data from the device.
+When used without options \fB-a\fR or \fB-o\fR, it lists all visible filesystems
+and the offsets of their signatures.
 .SH OPTIONS
 .IP "\fB\-a, \-\-all\fP"
 Erase all available signatures.
@@ -28,9 +28,9 @@ Print help and exit.
 .IP "\fB\-n, \-\-no\-act\fP"
 Causes everything to be done except for the write() call.
 .IP "\fB\-o, \-\-offset\fP \fIoffset\fP
-Specifies location (in bytes) of the signature which should be erased from the
-device. The offset number may include a "0x" prefix, and then the number will be
-read as a hex value. It is possible to specify multiple -o options.
+Specify the location (in bytes) of the signature which should be erased from the
+device.  The \fIoffset\fR number may include a "0x" prefix; then the number will be
+interpreted as a hex value.  It is possible to specify multiple \fB-o\fR options.
 
 The \fIoffset\fR argument may be followed by binary (2^N) suffixes KiB, MiB,
 GiB, TiB, PiB and EiB (the "iB" is optional, e.g. "K" has the same meaning as

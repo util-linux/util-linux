@@ -11,7 +11,7 @@ lsblk \- list block devices
 .IR device...
 .SH DESCRIPTION
 .B lsblk
-lists information about all or the specified block devices. The
+lists information about all or the specified block devices.  The
 .B lsblk
 command reads the
 .I sysfs
@@ -30,7 +30,7 @@ Print the SIZE column in bytes rather than in human-readable format.
 Don't print device holders or slaves.  For example "lsblk --nodeps /dev/sda" prints
 information about the sda device only.
 .IP "\fB\-e, \-\-exclude \fIlist\fP
-Exclude the devices specified by a comma-delimited list of major device numbers.
+Exclude the devices specified by a comma-separated \fIlist\fR of major device numbers.
 Note that RAM disks (major=1) are excluded by default.
 .IP "\fB\-f, \-\-fs\fP
 Output info about filesystems.  This option is equivalent to "-o NAME,FSTYPE,LABEL,MOUNTPOINT".
