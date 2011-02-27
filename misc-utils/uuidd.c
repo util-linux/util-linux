@@ -50,11 +50,11 @@ extern int optind;
 
 static void usage(const char *progname)
 {
-	fprintf(stderr, _("Usage: %s [-d] [-p pidfile] [-s socketpath] "
+	fprintf(stderr, _("Usage: %s [-d] [-p pidfile] [-q] [-s socketpath] "
 			  "[-T timeout]\n"), progname);
-	fprintf(stderr, _("       %s [-r|t] [-n num] [-s socketpath]\n"),
+	fprintf(stderr, _("       %s [-r|t] [-n num] [-q] [-s socketpath]\n"),
 		progname);
-	fprintf(stderr, _("       %s -k\n"), progname);
+	fprintf(stderr, _("       %s -k [-q]\n"), progname);
 	exit(1);
 }
 
@@ -426,7 +426,7 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt (argc, argv, "dkn:qp:s:tT:r")) != EOF) {
+	while ((c = getopt (argc, argv, "dkn:p:qrs:tT:")) != EOF) {
 		switch (c) {
 		case 'd':
 			debug++;
@@ -449,6 +449,10 @@ int main(int argc, char **argv)
 		case 'q':
 			quiet++;
 			break;
+		case 'r':
+			do_type = UUIDD_OP_RANDOM_UUID;
+			drop_privs = 1;
+			break;
 		case 's':
 			socket_path = optarg;
 			drop_privs = 1;
@@ -463,10 +467,6 @@ int main(int argc, char **argv)
 				fprintf(stderr, _("Bad number: %s\n"), optarg);
 				exit(1);
 			}
-			break;
-		case 'r':
-			do_type = UUIDD_OP_RANDOM_UUID;
-			drop_privs = 1;
 			break;
 		default:
 			usage(argv[0]);
