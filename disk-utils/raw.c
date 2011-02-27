@@ -48,11 +48,11 @@ static void usage(int err)
 {
 	fprintf(stderr,
 		_("Usage:\n"
-		"  %s " RAWDEVDIR "rawN <major> <minor>\n"
-		"  %s " RAWDEVDIR "rawN /dev/<blockdev>\n"
-		"  %s -q " RAWDEVDIR "rawN\n"
-		"  %s -qa\n"),
-		progname, progname, progname, progname);
+		  "  %1$s %2$srawN <major> <minor>\n"
+		  "  %1$s %2$srawN /dev/<blockdevice>\n"
+		  "  %1$s -q %2$srawN\n"
+		  "  %1$s -qa\n"),
+		progname, RAWDEVDIR);
 	exit(err);
 }
 
@@ -122,7 +122,7 @@ int main(int argc, char *argv[])
 
 	if (raw_minor == 0) {
 		fprintf (stderr,
-			_("Device '%s' is control raw dev "
+			_("Device '%s' is the control raw device "
 			"(use raw<N> where <N> is greater than zero)\n"),
 			raw_name);
 		exit(2);
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
 		}
 
 		if (!S_ISBLK(statbuf.st_mode)) {
-			fprintf (stderr, _("Device '%s' is not a block dev\n"),
+			fprintf (stderr, _("Device '%s' is not a block device\n"),
 				 block_name);
 			exit(2);
 		}
@@ -183,9 +183,8 @@ void open_raw_ctl(void)
 		master_fd = open(RAWDEVCTL_OLD, O_RDWR, 0);
 		if (master_fd < 0) {
 			fprintf (stderr,
-				 _("Cannot open master raw device '"
-				 RAWDEVCTL
-				 "' (%s)\n"), strerror(errsv));
+				 _("Cannot open master raw device '%s' (%s)\n"),
+				 RAWDEVCTL, strerror(errsv));
 			exit(2);
 		}
 	}
@@ -238,8 +237,8 @@ int query(int minor, const char *raw_name, int quiet)
 	has_worked = 1;
 	if (quiet && !rq.block_major && !rq.block_minor)
 		return 0;
-	printf (_(RAWDEVDIR "raw%d:	bound to major %d, minor %d\n"),
-		minor, (int) rq.block_major, (int) rq.block_minor);
+	printf (_("%sraw%d:  bound to major %d, minor %d\n"),
+		RAWDEVDIR, minor, (int) rq.block_major, (int) rq.block_minor);
 	return 0;
 }
 
@@ -258,8 +257,8 @@ int bind(int minor, int block_major, int block_minor)
 			 strerror(errno));
 		exit(3);
 	}
-	printf (_(RAWDEVDIR "raw%d:	bound to major %d, minor %d\n"),
-		raw_minor, (int) rq.block_major, (int) rq.block_minor);
+	printf (_("%sraw%d:  bound to major %d, minor %d\n"),
+		RAWDEVDIR, raw_minor, (int) rq.block_major, (int) rq.block_minor);
 	return 0;
 }
 
