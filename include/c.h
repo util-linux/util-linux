@@ -165,7 +165,6 @@ static inline int dirfd(DIR *d)
 extern char *__progname;
 #  define program_invocation_short_name __progname
 # else
-#  include <string.h>
 #  ifdef HAVE_GETEXECNAME
 #   include <stdlib.h>
 #   define program_invocation_short_name \
