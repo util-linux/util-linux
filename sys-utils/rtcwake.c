@@ -398,7 +398,7 @@ int main(int argc, char **argv)
 			break;
 
 		case 'd':
-			devname = strdup(optarg);
+			devname = optarg;
 			break;
 
 		case 'l':
@@ -423,7 +423,7 @@ int main(int argc, char **argv)
 					|| strcmp(optarg, "disable") == 0
 					|| strcmp(optarg, "show") == 0
 			   ) {
-				suspend = strdup(optarg);
+				suspend = optarg;
 				break;
 			}
 
