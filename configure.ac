@@ -195,6 +195,7 @@ AC_CHECK_FUNCS(
 	getdtablesize \
 	getexecname \
 	getrlimit \
+	sigqueue \
 	srandom \
 	setresgid \
 	setresuid \

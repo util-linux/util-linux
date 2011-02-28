@@ -120,7 +120,7 @@ endif
 
 if BUILD_KILL
 bin_PROGRAMS += kill
-kill_SOURCES = kill.c procs.c kill.h
+kill_SOURCES = kill.c procs.c kill.h $(top_srcdir)/lib/strutils.c
 dist_man_MANS += kill.1
 endif
 

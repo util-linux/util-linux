@@ -53,6 +53,7 @@
 #include "c.h"
 #include "kill.h"
 #include "nls.h"
+#include "strutils.h"
 
 struct signv {
 	char *name;
@@ -152,6 +153,11 @@ extern int *get_pids (char *, int);
 
 static char *progname;
 
+#ifdef HAVE_SIGQUEUE
+static int use_sigval;
+static union sigval sigdata;
+#endif
+
 int main (int argc, char *argv[])
 {
     int errors, numsig, pid;
@@ -229,6 +235,17 @@ int main (int argc, char *argv[])
 		nosig (arg);
 		return 1;
 	    }
+	    continue;
+	}
+	if (! strcmp (arg, "-q")) {
+	    if (argc < 2)
+		return usage (1);
+	    argc--, argv++;
+	    arg = *argv;
+#ifdef HAVE_SIGQUEUE
+	    sigdata.sival_int = strtol_or_err(arg, _("failed to parse sigval"));
+	    use_sigval = 1;
+#endif
 	    continue;
 	}
 	/*  `arg' begins with a dash but is not a known option.
@@ -403,11 +420,20 @@ int usage (int status)
 
 int kill_verbose (char *procname, int pid, int sig)
 {
+    int rc;
+
     if (sig < 0) {
 	printf ("%d\n", pid);
 	return 0;
     }
-    if (kill (pid, sig) < 0) {
+#ifdef HAVE_SIGQUEUE
+    if (use_sigval)
+	rc = sigqueue(pid, sig, sigdata);
+    else
+#endif
+	rc = kill (pid, sig);
+
+    if (rc < 0) {
 	fprintf (stderr, "%s ", progname);
 	perror (procname);
 	return 1;

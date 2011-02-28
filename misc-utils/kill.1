@@ -8,6 +8,8 @@ kill \- terminate a process
 .B kill
 .RB [ \-s
 .IR signal  | \fB\-p\fP ]
+.RB [ \-q
+.IR sigval ]
 .RN [ \-a ]
 .RB [ \-\- ]
 .IR pid ...
@@ -84,6 +86,17 @@ Specify that
 .B kill
 should only print the process id (pid)
 of the named processes, and not send any signals.
+.TP
+.BI \-q " sigval"
+Use
+.BR sigqueue (2)
+rather than
+.BR kill (2)
+and the sigval argument is used to specify an integer to be sent with the
+signal.  If the receiving process has installed a handler for this signal using
+the SA_SIGINFO flag to
+.BR sigaction (2),
+then it can obtain this data via the si_value field of the siginfo_t structure.
 .SH "SEE ALSO"
 .BR bash (1),
 .BR tcsh (1),
