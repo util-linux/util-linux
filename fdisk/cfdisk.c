@@ -154,12 +154,7 @@
 #define ESC '\033'
 #define DEL '\177'
 #define BELL '\007'
-#define TAB '\011'
 #define REDRAWKEY '\014'	/* ^L */
-#define UPKEY '\020'		/* ^P */
-#define UPKEYVI '\153'		/* k */
-#define DOWNKEY '\016'		/* ^N */
-#define DOWNKEYVI '\152'	/* j */
 
 /* Display units */
 #define GIGABYTES 1
@@ -1013,8 +1008,6 @@ find_logical(int i) {
 #define MENU_MAX_ITEMS 256 /* for simpleMenu function */
 #define MENU_UP 1
 #define MENU_DOWN 2
-#define MENU_RIGHT 3
-#define MENU_LEFT 4
 
 struct MenuItem
 {
@@ -1112,6 +1105,8 @@ menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
         if( !menuItems[current].key ) current = 0;
     }
 
+    keypad(stdscr, TRUE);
+
     /* Repeat until allowable choice has been made */
     while( !key ) {
         /* Display the menu and read a command */
@@ -1133,72 +1128,45 @@ menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
         move( WARNING_START + 1, 0 );
         clrtoeol();
 
-        /* Cursor keys - possibly split by slow connection */
-        if( key == ESC ) {
-            /* Check whether this is a real ESC or one of extended keys */
-            /*nodelay(stdscr, TRUE);*/
-            key = getch();
-            /*nodelay(stdscr, FALSE);*/
-
-            if( key == /*ERR*/ ESC ) {
-                /* This is a real ESC */
-                key = ESC;
-            }
-            if(key == '[' || key == 'O') {
-                /* This is one extended keys */
-		key = getch();
-
-                switch(key) {
-                    case 'A': /* Up arrow */
-			key = MENU_UP;
-                        break;
-                    case 'B': /* Down arrow */
-                        key = MENU_DOWN;
-                        break;
-                    case 'C': /* Right arrow */
-                        key = MENU_RIGHT;
-                        break;
-                    case 'D': /* Left arrow */
-                    case 'Z': /* Shift Tab */
-                        key = MENU_LEFT;
-                        break;
-		    default:
-			key = 0;
-                }
-            }
-        }
-
-        /* Enter equals the keyboard shortcut of current menu item */
-        if (key == '\r')
-            key = menuItems[current].key;
-
-	/* Give alternatives for arrow keys in case the window manager
-	   swallows these */
-	if (key == TAB)
-	    key = MENU_RIGHT;
-        if (key == UPKEY || key == UPKEYVI)	/* ^P or k */
-	    key = MENU_UP;
-	if (key == DOWNKEY || key == DOWNKEYVI)	/* ^N or j */
-	    key = MENU_DOWN;
-
-	if (key == MENU_RIGHT) {
+	switch (key) {
+	case KEY_UP:
+	case '\020':	/* ^P */
+	case 'k':	/* Vi-like alternative */
+		key = MENU_UP;
+		break;
+	case KEY_DOWN:
+	case '\016':	/* ^N */
+	case 'j':	/* Vi-like alternative */
+		key = MENU_DOWN;
+		break;
+	case KEY_RIGHT:
+	case '\t':
+		/* Select next menu item */
 		do {
-		    current ++ ;
-		    if( !menuItems[current].key )
-			current = 0 ;
-		} while( !strchr( available, menuItems[current].key ));
+			current++;
+			if (!menuItems[current].key)
+				current = 0;
+		} while (!strchr(available, menuItems[current].key));
 		key = 0;
-	}
-
-	if (key == MENU_LEFT) {
-		 do {
-		     current -- ;
-		     if( current < 0 ) {
-			 while( menuItems[current + 1].key )
-			      current ++ ;
-		     }
-		 } while( !strchr( available, menuItems[current].key ));
-		 key = 0;
+		break;
+	case KEY_LEFT:
+	case KEY_BTAB:	/* Back tab */
+		/* Select previous menu item */
+		do {
+			current--;
+			if (current < 0) {
+				while (menuItems[current + 1].key)
+					current++;
+			}
+		} while (!strchr(available, menuItems[current].key));
+		key = 0;
+		break;
+	case KEY_ENTER:
+	case '\n':
+	case '\r':
+		/* Enter equals the keyboard shortcut of current menu item */
+		key = menuItems[current].key;
+		break;
 	}
 
         /* Should all keys to be accepted? */
@@ -1215,6 +1183,8 @@ menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
             print_warning(_("Illegal key"));
         }
     }
+
+    keypad(stdscr, FALSE);
 
     /* Clear out prompts and such */
     clear_warning();
