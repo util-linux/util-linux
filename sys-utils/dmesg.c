@@ -34,21 +34,25 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <sys/klog.h>
+#include <ctype.h>
 
+#include "c.h"
 #include "nls.h"
 #include "strutils.h"
+#include "xalloc.h"
 
-static char *progname;
-
-static void
-usage(void) {
+static void __attribute__ ((noreturn)) usage(void)
+{
 	fprintf(stderr,
-		_("Usage: %s [-c] [-n level] [-r] [-s bufsize]\n"), progname);
+		_("Usage: %s [-c] [-n level] [-r] [-s bufsize]\n"),
+		program_invocation_short_name);
+	exit(EXIT_FAILURE);
+
 }
 
-int
-main(int argc, char *argv[]) {
-	char *buf;
+int main(int argc, char *argv[])
+{
+	char *buf = NULL;
 	int  sz;
 	int  bufsize = 0;
 	int  i;
@@ -63,7 +67,6 @@ main(int argc, char *argv[]) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	progname = argv[0];
 	while ((c = getopt(argc, argv, "crn:s:")) != -1) {
 		switch (c) {
 		case 'c':
@@ -84,24 +87,20 @@ main(int argc, char *argv[]) {
 		case '?':
 		default:
 			usage();
-			exit(EXIT_FAILURE);
 		}
 	}
 	argc -= optind;
 	argv += optind;
 
-	if (argc > 1) {
+	if (argc > 1)
 		usage();
-		exit(EXIT_FAILURE);
-	}
 
 	if (cmd == 8) {
 		n = klogctl(cmd, NULL, level);
-		if (n < 0) {
-			perror("klogctl");
-			exit(EXIT_FAILURE);
-		}
-		exit(EXIT_SUCCESS);
+		if (n < 0)
+			err(EXIT_FAILURE, _("klogctl failed"));
+
+		return EXIT_SUCCESS;
 	}
 
 	if (!bufsize) {
@@ -112,14 +111,14 @@ main(int argc, char *argv[]) {
 
 	if (bufsize) {
 		sz = bufsize + 8;
-		buf = (char *) malloc(sz * sizeof(char));
+		buf = xmalloc(sz * sizeof(char));
 		n = klogctl(cmd, buf, sz);
 	} else {
 		sz = 16392;
 		while (1) {
-			buf = (char *) malloc(sz * sizeof(char));
+			buf = xmalloc(sz * sizeof(char));
 			n = klogctl(3, buf, sz);	/* read only */
-			if (n != sz || sz > (1<<28))
+			if (n != sz || sz > (1 << 28))
 				break;
 			free(buf);
 			sz *= 4;
@@ -129,16 +128,14 @@ main(int argc, char *argv[]) {
 			n = klogctl(cmd, buf, sz);	/* read and clear */
 	}
 
-	if (n < 0) {
-		perror("klogctl");
-		exit(EXIT_FAILURE);
-	}
+	if (n < 0)
+		err(EXIT_FAILURE, _("klogctl failed"));
 
 	lastc = '\n';
 	for (i = 0; i < n; i++) {
 		if (!raw && (i == 0 || buf[i - 1] == '\n') && buf[i] == '<') {
 			i++;
-			while (buf[i] >= '0' && buf[i] <= '9')
+			while (isdigit(buf[i]))
 				i++;
 			if (buf[i] == '>')
 				i++;
@@ -149,5 +146,6 @@ main(int argc, char *argv[]) {
 	if (lastc != '\n')
 		putchar('\n');
 	free(buf);
-	return 0;
+
+	return EXIT_SUCCESS;
 }
