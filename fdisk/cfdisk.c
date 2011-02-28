@@ -2713,6 +2713,12 @@ do_curses_fdisk(void) {
 	    clear();
 	    draw_screen();
 	    break;
+	case KEY_HOME:
+		draw_cursor(-cur_part);
+		break;
+	case KEY_END:
+		draw_cursor(num_parts - cur_part - 1);
+		break;
 	default:
 	    print_warning(_("Illegal command"));
 	    putchar(BELL); /* CTRL-G */
