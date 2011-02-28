@@ -2536,10 +2536,12 @@ draw_screen(void) {
     free(line);
 }
 
-static int
+static void
 draw_cursor(int move) {
-    if (move != 0 && (cur_part + move < 0 || cur_part + move >= num_parts))
-	return -1;
+    if (move != 0 && (cur_part + move < 0 || cur_part + move >= num_parts)) {
+	print_warning(_("No more partitions"));
+	return;
+    }
 
     if (arrow_cursor)
 	mvaddstr(DISK_TABLE_START + cur_part + 2
@@ -2561,8 +2563,6 @@ draw_cursor(int move) {
 	draw_partition(cur_part);
 	standend();
     }
-
-    return 0;
 }
 
 static void
@@ -2607,7 +2607,7 @@ do_curses_fdisk(void) {
     while (!done) {
 	char *s;
 
-	(void)draw_cursor(0);
+	draw_cursor(0);
 
 	if (p_info[cur_part].id == FREE_SPACE) {
 	    s = ((opentype == O_RDWR) ? "hnpquW" : "hnpqu");
@@ -2712,16 +2712,10 @@ do_curses_fdisk(void) {
 	    draw_screen();
 	    break;
 	case MENU_UP : /* Up arrow */
-	    if (!draw_cursor(-1))
-		command = 0;
-	    else
-		print_warning(_("No more partitions"));
+	    draw_cursor(-1);
 	    break;
 	case MENU_DOWN : /* Down arrow */
-	    if (!draw_cursor(1))
-		command = 0;
-	    else
-		print_warning(_("No more partitions"));
+	    draw_cursor(1);
 	    break;
 	case REDRAWKEY:
 	    clear();
