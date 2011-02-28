@@ -279,6 +279,35 @@ int main (int argc, char *argv[])
     return (errors);
 }
 
+#ifdef SIGRTMIN
+int rtsig_to_signum(char *sig)
+{
+	int num, maxi = 0;
+	char *ep = NULL;
+
+	if (strncasecmp(sig, "min+", 4) == 0)
+		sig += 4;
+	else if (strncasecmp(sig, "max-", 4) == 0) {
+		sig += 4;
+		maxi = 1;
+	}
+
+	if (!isdigit(*sig))
+		return -1;
+
+	errno = 0;
+	num = strtol(sig, &ep, 10);
+	if (!ep || sig == ep || errno || num < 0)
+		return -1;
+
+	num = maxi ? SIGRTMAX - num : SIGRTMIN + num;
+
+	if (num < SIGRTMIN || num > SIGRTMAX)
+		return -1;
+
+	return num;
+}
+#endif
 
 int signame_to_signum (char *sig)
 {
@@ -286,6 +315,13 @@ int signame_to_signum (char *sig)
 
     if (! strncasecmp (sig, "sig", 3))
 	sig += 3;
+
+#ifdef SIGRTMIN
+    /* RT signals */
+    if (!strncasecmp(sig, "rt", 2))
+	return rtsig_to_signum(sig + 2);
+#endif
+    /* Normal sugnals */
     for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
 	if (! strcasecmp (sys_signame[n].name, sig))
 	    return sys_signame[n].val;
@@ -343,6 +379,9 @@ void printsignals (FILE *fp)
 	lpos += lth;
 	fputs (sys_signame[n].name, fp);
     }
+#ifdef SIGRTMIN
+    fputs (" RT<N> RTMIN+<N> RTMAX-<N>", fp);
+#endif
     fputc ('\n', fp);
 }
 
