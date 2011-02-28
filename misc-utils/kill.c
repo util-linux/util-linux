@@ -361,6 +361,12 @@ void printsig (int sig)
 	    return;
 	}
     }
+#ifdef SIGRTMIN
+    if (sig >= SIGRTMIN && sig <= SIGRTMAX) {
+	printf ("RT%d\n", sig - SIGRTMIN);
+	return;
+    }
+#endif
     printf("%d\n", sig);
 }
 
