@@ -1006,8 +1006,6 @@ find_logical(int i) {
 /* Miscellenous constants */
 #define MENU_SPACING 2
 #define MENU_MAX_ITEMS 256 /* for simpleMenu function */
-#define MENU_UP 1
-#define MENU_DOWN 2
 
 struct MenuItem
 {
@@ -1129,16 +1127,6 @@ menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
         clrtoeol();
 
 	switch (key) {
-	case KEY_UP:
-	case '\020':	/* ^P */
-	case 'k':	/* Vi-like alternative */
-		key = MENU_UP;
-		break;
-	case KEY_DOWN:
-	case '\016':	/* ^N */
-	case 'j':	/* Vi-like alternative */
-		key = MENU_DOWN;
-		break;
 	case KEY_RIGHT:
 	case '\t':
 		/* Select next menu item */
@@ -2568,7 +2556,7 @@ draw_cursor(int move) {
 static void
 do_curses_fdisk(void) {
     int done = FALSE;
-    char command;
+    int command;
     int is_first_run = TRUE;
 
     static struct MenuItem menuMain[] = {
@@ -2711,10 +2699,14 @@ do_curses_fdisk(void) {
 	    display_help();
 	    draw_screen();
 	    break;
-	case MENU_UP : /* Up arrow */
+	case KEY_UP:	/* Up arrow key */
+	case '\020':	/* ^P */
+	case 'k':	/* Vi-like alternative */
 	    draw_cursor(-1);
 	    break;
-	case MENU_DOWN : /* Down arrow */
+	case KEY_DOWN:	/* Down arrow key */
+	case '\016':	/* ^N */
+	case 'j':	/* Vi-like alternative */
 	    draw_cursor(1);
 	    break;
 	case REDRAWKEY:
