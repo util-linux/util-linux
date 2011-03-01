@@ -289,7 +289,7 @@ static struct gpt_header *get_gpt_header(
 
 static int probe_gpt_pt(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	uint64_t lastlba, lba;
+	uint64_t lastlba = 0, lba;
 	struct gpt_header hdr, *h;
 	struct gpt_entry *e;
 	blkid_parttable tab = NULL;

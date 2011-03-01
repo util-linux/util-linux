@@ -305,8 +305,8 @@ static int parse_xml(char **name, char **value, char **cp)
  */
 static int parse_tag(blkid_cache cache, blkid_dev dev, char **cp)
 {
-	char *name;
-	char *value;
+	char *name = NULL;
+	char *value = NULL;
 	int ret;
 
 	if (!cache || !dev)
