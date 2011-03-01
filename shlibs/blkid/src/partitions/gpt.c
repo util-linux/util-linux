@@ -32,20 +32,18 @@ typedef uint16_t efi_char16_t;
 
 /* UUID */
 typedef struct {
-	uint8_t  b[16];
+	uint32_t time_low;
+	uint16_t time_mid;
+	uint16_t time_hi_and_version;
+	uint8_t clock_seq_hi;
+	uint8_t clock_seq_low;
+	uint8_t node[6];
 } efi_guid_t;
 
-#define EFI_GUID(a,b,c,d0,d1,d2,d3,d4,d5,d6,d7)  ((efi_guid_t) \
-		{{ \
-	(a) & 0xff, ((a) >> 8) & 0xff, ((a) >> 16) & 0xff, ((a) >> 24) & 0xff, \
-	(b) & 0xff, ((b) >> 8) & 0xff, \
-	(c) & 0xff, ((c) >> 8) & 0xff, \
-	(d0), (d1), (d2), (d3), (d4), (d5), (d6), (d7) \
-}})
 
-#define GPT_UNUSED_ENTRY_GUID	EFI_GUID(0x00000000, 0x0000, 0x0000, 0x00, 0x00, \
-					0x00, 0x00, 0x00, 0x00, 0x00, 0x00)
-
+#define GPT_UNUSED_ENTRY_GUID \
+	    ((efi_guid_t) { 0x00000000, 0x0000, 0x0000, 0x00, 0x00, \
+	                    { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }})
 struct gpt_header {
 	uint64_t	signature;		/* "EFI PART" */
 	uint32_t	revision;
@@ -118,6 +116,17 @@ static inline unsigned char *get_lba_buffer(blkid_probe pr,
 static inline int guidcmp(efi_guid_t left, efi_guid_t right)
 {
 	return memcmp(&left, &right, sizeof (efi_guid_t));
+}
+
+/*
+ * UUID is traditionaly 16 byte big-endian array, except Intel EFI
+ * specification where the UUID is a structure of little-endian fields.
+ */
+static void swap_efi_guid(efi_guid_t *uid)
+{
+	uid->time_low = swab32(uid->time_low);
+	uid->time_mid = swab16(uid->time_mid);
+	uid->time_hi_and_version = swab16(uid->time_hi_and_version);
 }
 
 static int last_lba(blkid_probe pr, uint64_t *lba)
@@ -351,6 +360,9 @@ static int probe_gpt_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_partition_set_utf8name(par,
 			(unsigned char *) e->partition_name,
 			sizeof(e->partition_name), BLKID_ENC_UTF16LE);
+
+		swap_efi_guid(&e->unique_partition_guid);
+		swap_efi_guid(&e->partition_type_guid);
 
 		blkid_partition_set_uuid(par,
 			(const unsigned char *) &e->unique_partition_guid);
