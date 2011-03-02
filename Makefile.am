@@ -29,6 +29,7 @@ SUBDIRS = \
 	po \
 	schedutils \
 	sys-utils \
+	term-utils \
 	text-utils \
 	tests
 
