@@ -108,12 +108,6 @@ usrbin_exec_PROGRAMS += rename
 dist_man_MANS += rename.1
 endif
 
-if BUILD_RESET
-dist_usrbin_exec_SCRIPTS = reset
-dist_man_MANS += reset.1
-endif
-EXTRA_DIST += README.reset reset.033c
-
 if BUILD_WRITE
 usrbin_exec_PROGRAMS += write
 dist_man_MANS += write.1

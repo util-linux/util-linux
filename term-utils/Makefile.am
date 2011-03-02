@@ -40,3 +40,8 @@ setterm_LDADD = @NCURSES_LIBS@
 endif
 endif
 
+if BUILD_RESET
+dist_usrbin_exec_SCRIPTS = reset
+dist_man_MANS += reset.1
+endif
+EXTRA_DIST += README.reset reset.033c
