@@ -1,12 +1,23 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS =
-usrbin_exec_PROGRAMS =
+usrbin_exec_PROGRAMS = script scriptreplay
 sbin_PROGRAMS =
 usrsbin_exec_PROGRAMS =
-dist_man_MANS =
+
+dist_man_MANS = script.1 scriptreplay.1
 
 EXTRA_DIST = README.modems-with-agetty
+
+script_LDADD =
+
+if HAVE_UTIL
+script_LDADD += -lutil
+endif
+
+if HAVE_UTEMPTER
+script_LDADD += -lutempter
+endif
 
 if BUILD_AGETTY
 sbin_PROGRAMS += agetty

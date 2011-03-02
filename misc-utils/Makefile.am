@@ -6,19 +6,18 @@ bin_PROGRAMS =
 sbin_PROGRAMS =
 usrsbin_exec_PROGRAMS =
 
-usrbin_exec_PROGRAMS = cal ddate logger look mcookie \
-	namei script whereis scriptreplay
+usrbin_exec_PROGRAMS = cal ddate logger look mcookie namei whereis 
+
 EXTRA_DIST += README.cal README.ddate README.namei README.namei2
 
 mcookie_SOURCES = mcookie.c $(top_srcdir)/lib/md5.c
-script_LDADD =
 
 usrbin_exec_SCRIPTS = chkdupexe
 
 CLEANFILES = chkdupexe
 
 dist_man_MANS = cal.1 chkdupexe.1 ddate.1 logger.1 look.1 mcookie.1 \
-		namei.1 script.1 whereis.1 scriptreplay.1
+		namei.1 whereis.1
 
 namei_SOURCES = namei.c $(top_srcdir)/lib/strutils.c
 
@@ -96,14 +95,6 @@ if HAVE_TERMCAP
 cal_LDADD = -ltermcap
 endif
 endif
-endif
-
-if HAVE_UTIL
-script_LDADD += -lutil
-endif
-
-if HAVE_UTEMPTER
-script_LDADD += -lutempter
 endif
 
 if BUILD_KILL
