@@ -106,18 +106,6 @@ if HAVE_UTEMPTER
 script_LDADD += -lutempter
 endif
 
-if HAVE_NCURSES
-if LINUX
-usrbin_exec_PROGRAMS += setterm
-dist_man_MANS += setterm.1
-endif
-if HAVE_TINFO
-setterm_LDADD = -ltinfo
-else
-setterm_LDADD = @NCURSES_LIBS@
-endif
-endif
-
 if BUILD_KILL
 bin_PROGRAMS += kill
 kill_SOURCES = kill.c procs.c kill.h $(top_srcdir)/lib/strutils.c

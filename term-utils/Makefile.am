@@ -16,3 +16,16 @@ if !HAVE_LANGINFO
 agetty_SOURCES += $(top_srcdir)/lib/langinfo.c
 endif
 endif
+
+if HAVE_NCURSES
+if LINUX
+usrbin_exec_PROGRAMS += setterm
+dist_man_MANS += setterm.1
+endif
+if HAVE_TINFO
+setterm_LDADD = -ltinfo
+else
+setterm_LDADD = @NCURSES_LIBS@
+endif
+endif
+
