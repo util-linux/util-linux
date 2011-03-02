@@ -74,20 +74,6 @@ install-exec-hook::
 
 endif
 
-if BUILD_WALL
-usrbin_exec_PROGRAMS += wall
-wall_SOURCES = wall.c ttymsg.c ttymsg.h
-dist_man_MANS += wall.1
-
-if USE_TTY_GROUP
-if MAKEINSTALL_DO_CHOWN
-install-exec-hook::
-	chgrp tty $(DESTDIR)$(usrbin_execdir)/wall
-	chmod g+s $(DESTDIR)$(usrbin_execdir)/wall
-endif
-endif
-endif
-
 noinst_PROGRAMS = checktty_test islocal_test
 checktty_test_SOURCES = checktty.c login.h
 checktty_test_CPPFLAGS = -DMAIN_TEST_CHECKTTY $(AM_CPPFLAGS)

@@ -50,3 +50,17 @@ if BUILD_MESG
 usrbin_exec_PROGRAMS += mesg
 dist_man_MANS += mesg.1
 endif
+
+if BUILD_WALL
+usrbin_exec_PROGRAMS += wall
+wall_SOURCES = wall.c ttymsg.c ttymsg.h
+dist_man_MANS += wall.1
+
+if USE_TTY_GROUP
+if MAKEINSTALL_DO_CHOWN
+install-exec-hook::
+	chgrp tty $(DESTDIR)$(usrbin_execdir)/wall
+	chmod g+s $(DESTDIR)$(usrbin_execdir)/wall
+endif
+endif
+endif
