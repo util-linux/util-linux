@@ -1,11 +1,8 @@
 checktty_test
 islocal_test
-agetty
-wall
 chfn
 chsh
 login
 newgrp
 vipw
 last
-mesg
