@@ -45,3 +45,8 @@ dist_usrbin_exec_SCRIPTS = reset
 dist_man_MANS += reset.1
 endif
 EXTRA_DIST += README.reset reset.033c
+
+if BUILD_MESG
+usrbin_exec_PROGRAMS += mesg
+dist_man_MANS += mesg.1
+endif

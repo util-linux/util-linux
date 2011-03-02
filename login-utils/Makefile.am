@@ -74,11 +74,6 @@ install-exec-hook::
 
 endif
 
-if BUILD_MESG
-usrbin_exec_PROGRAMS += mesg
-dist_man_MANS += mesg.1
-endif
-
 if BUILD_WALL
 usrbin_exec_PROGRAMS += wall
 wall_SOURCES = wall.c ttymsg.c ttymsg.h
