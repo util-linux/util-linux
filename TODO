@@ -14,6 +14,17 @@ kill
 
    see also https://bugzilla.redhat.com/show_bug.cgi?id=676297
 
+mount
+-----
+
+ - add support for "x-" namespace for mount options. All options with "x-"
+   prefix should be ignored. 
+
+   For example x-systemd=, x-upstart-foo, x-libmount-debug=0xffff, ...  
+
+   It's definitely better to have a generic way how ignore some options than
+   use comment= for all things.
+
 fsprobe
 -------
 
