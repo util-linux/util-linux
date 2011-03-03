@@ -155,11 +155,13 @@ set_cmos_epoch(int ARCconsole, int SRM) {
     return;
 
 
+#ifdef __linux__
   /* If we can ask the kernel, we don't need guessing from /proc/cpuinfo */
   if (get_epoch_rtc(&epoch, 1) == 0) {
      cmos_epoch = epoch;
      return;
   }
+#endif
 
   /* The kernel source today says: read the year.
      If it is in 0-19 then the epoch is 2000.
@@ -557,8 +559,13 @@ set_hardware_clock_cmos(const struct tm *new_broken_time) {
 static int
 i386_iopl(const int level) {
 #if defined(__i386__) || defined(__alpha__)
+#if defined(HAVE_IOPL)
   extern int iopl(const int lvl);
   return iopl(level);
+#else
+  extern int ioperm(unsigned long from, unsigned long num, int turn_on);
+  return ioperm(clock_ctl_addr, 2, 1);
+#endif
 #else
   return -2;
 #endif

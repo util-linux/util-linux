@@ -1101,8 +1101,10 @@ determine_clock_access_method(const bool user_requests_ISA) {
   if (user_requests_ISA)
 	  ur = probe_for_cmos_clock();
 
+#ifdef __linux__
   if (!ur)
 	  ur = probe_for_rtc_clock();
+#endif
 
   if (!ur)
 	  ur = probe_for_kd_clock();
@@ -1262,6 +1264,7 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 }
 
 
+#ifdef __linux__
 static void
 manipulate_epoch(const bool getepoch, const bool setepoch,
                  const int epoch_opt, const bool testing) {
@@ -1304,6 +1307,7 @@ manipulate_epoch(const bool getepoch, const bool setepoch,
     }
 #endif
 }
+#endif
 
 #ifdef __ia64__
 #define RTC_DEV "/dev/efirtc"
@@ -1345,15 +1349,19 @@ usage( const char *fmt, ... ) {
 	"       --systz        set the system time based on the current timezone\n"
 	"       --adjust       adjust the rtc to account for systematic drift since\n"
 	"                      the clock was last set or adjusted\n"
+#ifdef __linux__
 	"       --getepoch     print out the kernel's hardware clock epoch value\n"
 	"       --setepoch     set the kernel's hardware clock epoch value to the \n"
 	"                      value given with --epoch\n"
+#endif
 	"       --predict      predict rtc reading at time given with --date\n"
 	"  -v | --version      print out the version of hwclock to stdout\n"
 	"\nOptions: \n"
 	"  -u | --utc          the hardware clock is kept in UTC\n"
 	"       --localtime    the hardware clock is kept in local time\n"
+#ifdef __linux__
 	"  -f | --rtc=path     special /dev/... file to use instead of default\n"
+#endif
 	"       --directisa    access the ISA bus directly instead of %s\n"
 	"       --badyear      ignore rtc's year because the bios is broken\n"
 	"       --date         specifies the time to which to set the hardware clock\n"
@@ -1406,8 +1414,10 @@ static const struct option longopts[] = {
 	{ "funky-toy", 0, 0, 'F'},
 #endif
 	{ "set", 0, 0, 128 },
+#ifdef __linux__
 	{ "getepoch", 0, 0, 129 },
 	{ "setepoch", 0, 0, 130 },
+#endif
 	{ "noadjfile", 0, 0, 131 },
 	{ "localtime", 0, 0, 132 },
 	{ "badyear", 0, 0, 133 },
@@ -1415,7 +1425,9 @@ static const struct option longopts[] = {
 	{ "test", 0, 0, 135 },
 	{ "date", 1, 0, 136 },
 	{ "epoch", 1, 0, 137 },
+#ifdef __linux__
 	{ "rtc", 1, 0, 'f' },
+#endif
 	{ "adjfile", 1, 0, 138 },
 	{ "systz", 0, 0, 139 },
 	{ "predict-hc", 0, 0, 140 },
@@ -1517,12 +1529,14 @@ main(int argc, char **argv) {
 		case 128:
 			set = TRUE;
 			break;
+#ifdef __linux__
 		case 129:
 			getepoch = TRUE;
 			break;
 		case 130:
 			setepoch = TRUE;
 			break;
+#endif
 		case 131:
 			noadjfile = TRUE;
 			break;
@@ -1553,9 +1567,11 @@ main(int argc, char **argv) {
 		case 140:
 			predict = TRUE;			/* --predict-hc */
 			break;
+#ifdef __linux__
 		case 'f':
 			rtc_dev_name = optarg;		/* --rtc */
 			break;
+#endif
 		case 'v':				/* --version */
 		case 'V':
 			out_version();
@@ -1667,10 +1683,12 @@ main(int argc, char **argv) {
 	if (!permitted)
 		hwclock_exit(EX_NOPERM);
 
+#ifdef __linux__
 	if (getepoch || setepoch) {
 		manipulate_epoch(getepoch, setepoch, epoch_option, testing);
 		hwclock_exit(0);
 	}
+#endif
 
 	if (debug)
 		out_version();

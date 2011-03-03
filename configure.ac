@@ -220,6 +220,9 @@ AC_FUNC_FSEEKO
 
 AC_CHECK_FUNCS([openat fstatat unlinkat], [have_openat=yes], [have_openat=no])
 
+AC_CHECK_FUNCS([ioperm iopl], [have_io=yes])
+AM_CONDITIONAL([BUILD_HWCLOCK], test "x$have_io" = xyes -o "x$linux_os" = xyes)
+
 AC_CHECK_MEMBER(struct sockaddr.sa_len,
 		AC_DEFINE_UNQUOTED(HAVE_SA_LEN,1,[Define if struct sockaddr contains sa_len]),,
 	[#include <sys/types.h>
