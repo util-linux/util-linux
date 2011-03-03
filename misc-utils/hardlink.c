@@ -18,7 +18,7 @@
    Boston, MA 02111-1307, USA.  */
   
 /*  Changes by Rémy Card to use constants and add option -n.  */
-/*  Changes by Jindrich Novy to add option -h.  */
+/*  Changes by Jindrich Novy to add option -h, replace mmap(2) */
 
 #define _GNU_SOURCE
 #include <sys/types.h>
@@ -31,7 +31,8 @@
 #include <dirent.h>
 #include <fcntl.h>
 
-#define NHASH	131072	/* Must be a power of 2! */
+#define NHASH	(1<<17)	/* Must be a power of 2! */
+#define NIOBUF	(1<<12)
 #define NAMELEN	4096
 #define NBUF	64
 
@@ -78,7 +79,7 @@ inline int stcmp(struct stat *st1, struct stat *st2, int content_only)
          st1->st_mtime != st2->st_mtime;
 }
 
-long long ndirs, nobjects, nregfiles, nmmap, ncomp, nlinks, nsaved;
+long long ndirs, nobjects, nregfiles, ncomp, nlinks, nsaved;
 
 void doexit(int i)
 {
@@ -87,7 +88,6 @@ void doexit(int i)
     fprintf(stderr, "Directories %lld\n", ndirs);
     fprintf(stderr, "Objects %lld\n", nobjects);
     fprintf(stderr, "IFREG %lld\n", nregfiles);
-    fprintf(stderr, "Mmaps %lld\n", nmmap);
     fprintf(stderr, "Comparisons %lld\n", ncomp);
     fprintf(stderr, "%s %lld\n", (no_link ? "Would link" : "Linked"), nlinks);
     fprintf(stderr, "%s %lld\n", (no_link ? "Would save" : "saved"), nsaved);
@@ -107,6 +107,7 @@ void usage(char *prog)
 }
 
 unsigned int buf[NBUF];
+char iobuf1[NIOBUF], iobuf2[NIOBUF];
 char nambuf1[NAMELEN], nambuf2[NAMELEN];
 
 void rf (char *name)
@@ -128,12 +129,12 @@ void rf (char *name)
     int fd, i;
     f * fp, * fp2;
     h * hp;
-    char *p = NULL, *q;
     char *n1, *n2;
     int cksumsize = sizeof(buf);
     unsigned int cksum;
     time_t mtime = content_only ? 0 : st.st_mtime;
     unsigned int hsh = hash (st.st_size, mtime);
+    off_t fsize;
     nregfiles++;
     if (verbose > 1)
       fprintf(stderr, "  %s", name);
@@ -181,15 +182,6 @@ void rf (char *name)
           fprintf(stderr, "\r%*s\r", (int)strlen(name)+2, "");
         return;
       }
-    if (fp && st.st_size > 0) {
-      p = mmap (NULL, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
-      nmmap++;
-      if (p == (void *)-1) {
-        close(fd);
-        fprintf(stderr, "\nFailed to mmap %s\n", name);
-        return;
-      }
-    }
     for (fp2 = fp; fp2 && fp2->cksum == cksum; fp2 = fp2->next)
       if (!lstat (fp2->name, &st2) && S_ISREG (st2.st_mode) &&
           !stcmp (&st, &st2, content_only) &&
@@ -202,29 +194,27 @@ void rf (char *name)
           continue;
         }
         ncomp++;
-        q = mmap (NULL, st.st_size, PROT_READ, MAP_SHARED, fd2, 0);
-        if (q == (void *)-1) {
-          close(fd2);
-          fprintf(stderr, "\nFailed to mmap %s\n", fp2->name);
-          continue;
-        }
-        if (memcmp (p, q, st.st_size)) {
-          munmap (q, st.st_size);
-          close(fd2);
-          continue;
-        }
-        munmap (q, st.st_size);
-        close(fd2);
+	lseek(fd, 0, SEEK_SET);
+	for (fsize = st.st_size; fsize > 0; fsize -= NIOBUF) {
+	  off_t rsize = fsize >= NIOBUF ? NIOBUF : fsize;
+	  if (read (fd, iobuf1, rsize) != rsize || read (fd2, iobuf2, rsize) != rsize) {
+	    close(fd);
+	    close(fd2);
+	    fprintf(stderr, "\nReading error\n");
+	    return;
+	  }
+	  if (memcmp (iobuf1, iobuf2, rsize)) break;
+	}
+	close(fd2);
+	if (fsize > 0) continue;
         if (lstat (name, &st3)) {
           fprintf(stderr, "\nCould not stat %s again\n", name);
-          munmap (p, st.st_size);
           close(fd);
           return;
         }
         st3.st_atime = st.st_atime;
         if (stcmp (&st, &st3, 0)) {
           fprintf(stderr, "\nFile %s changed underneath us\n", name);
-          munmap (p, st.st_size);
           close(fd);
           return;
         }
@@ -241,7 +231,6 @@ void rf (char *name)
             if (rename (nambuf2, n2)) {
               fprintf(stderr, "\nBad bad - failed to rename back %s to %s\n", nambuf2, n2);
             }
-            munmap (p, st.st_size);
             close(fd);
             return;
           }
@@ -258,12 +247,9 @@ void rf (char *name)
           if (verbose > 1)
             fprintf(stderr, "\r%*s\r%s %s to %s, %s %ld\n", (int)strlen(name)+2, "", (no_link ? "Would link" : "Linked"), n1, n2, (no_link ? "would save" : "saved"), st.st_size);
 	}
-        munmap (p, st.st_size);
         close(fd);
         return;
       }
-    if (fp)
-      munmap (p, st.st_size);
     fp2 = malloc(sizeof(f) + 1 + strlen (name));
     if (!fp2) {
       fprintf(stderr, "\nOut of memory 2\n");
