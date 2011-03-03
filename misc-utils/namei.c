@@ -439,7 +439,7 @@ usage(int rc)
 	exit(rc);
 }
 
-struct option longopts[] =
+static const struct option longopts[] =
 {
 	{ "help",	0, 0, 'h' },
 	{ "mountpoints",0, 0, 'x' },

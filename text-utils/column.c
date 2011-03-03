@@ -90,7 +90,7 @@ wchar_t **list;			/* array of pointers to records */
 wchar_t default_separator[] = { '\t', ' ', 0 };
 wchar_t *separator = default_separator;	/* field separator for table option */
 
-struct option longopts[] =
+static const struct option longopts[] =
 {
 	{ "help",	0, 0, 'h' },
 	{ "columns",	0, 0, 'c' },

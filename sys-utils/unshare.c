@@ -70,7 +70,7 @@ static void usage(int status)
 
 int main(int argc, char *argv[])
 {
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 		{ "help", no_argument, 0, 'h' },
 		{ "mount", no_argument, 0, 'm' },
 		{ "uts", no_argument, 0, 'u' },

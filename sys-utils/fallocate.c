@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 	loff_t	length = -2LL;
 	loff_t	offset = 0;
 
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 	    { "help",      0, 0, 'h' },
 	    { "keep-size", 0, 0, 'n' },
 	    { "offset",    1, 0, 'o' },

@@ -1042,7 +1042,8 @@ main(int argc, char **argv) {
 	int ro = 0;
 	int pfd = -1;
 	uintmax_t off = 0, slimit = 0;
-	struct option longopts[] = {
+
+	static const struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
 		{ "set-capacity", 0, 0, 'c' },
 		{ "detach", 0, 0, 'd' },

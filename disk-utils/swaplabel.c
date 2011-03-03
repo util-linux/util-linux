@@ -176,7 +176,7 @@ int main(int argc, char *argv[])
 	char *uuid = NULL, *label = NULL, *devname;
 	int c, rc = -1;
 
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 	    { "help",      0, 0, 'h' },
 	    { "label",     1, 0, 'L' },
 	    { "uuid",      1, 0, 'U' },

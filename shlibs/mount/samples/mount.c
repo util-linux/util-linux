@@ -207,7 +207,7 @@ int main(int argc, char **argv)
 	char *types = NULL;
 	unsigned long oper = 0;
 
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
 		{ "fake", 0, 0, 'f' },
 		{ "fork", 0, 0, 'F' },

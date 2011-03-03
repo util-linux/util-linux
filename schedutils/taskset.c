@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
         unsigned int ncpus;
 	size_t new_setsize, cur_setsize, cur_nbits, buflen;
 
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 		{ "pid",	0, NULL, 'p' },
 		{ "cpu-list",	0, NULL, 'c' },
 		{ "help",	0, NULL, 'h' },

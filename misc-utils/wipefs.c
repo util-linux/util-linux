@@ -323,7 +323,7 @@ main(int argc, char **argv)
 	int c, all = 0, has_offset = 0, noact = 0, mode = 0;
 	const char *fname;
 
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 	    { "all",       0, 0, 'a' },
 	    { "help",      0, 0, 'h' },
 	    { "no-act",    0, 0, 'n' },

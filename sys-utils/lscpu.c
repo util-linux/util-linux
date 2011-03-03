@@ -925,7 +925,7 @@ int main(int argc, char *argv[])
 	struct lscpu_desc _desc, *desc = &_desc;
 	int parsable = 0, c, i, hex = 0;
 
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 		{ "help",	no_argument,       0, 'h' },
 		{ "parse",	no_argument,       0, 'p' },
 		{ "sysroot",	required_argument, 0, 's' },

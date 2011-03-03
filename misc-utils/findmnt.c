@@ -568,7 +568,7 @@ int main(int argc, char *argv[])
 	/* table.h */
 	struct tt *tt = NULL;
 
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 	    { "ascii",        0, 0, 'a' },
 	    { "canonicalize", 0, 0, 'c' },
 	    { "direction",    1, 0, 'd' },

@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 	struct fstrim_range range;
 	struct stat sb;
 
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 	    { "help",      0, 0, 'h' },
 	    { "offset",    1, 0, 'o' },
 	    { "length",    1, 0, 'l' },

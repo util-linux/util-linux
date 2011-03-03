@@ -313,7 +313,7 @@ int main(int argc, char *argv[])
 	char *buf, *mask = NULL, *range = NULL;
 	int ncpus = 2048, rc, c;
 
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 	    { "ncpus", 1, 0, 'n' },
 	    { "mask",  1, 0, 'm' },
 	    { "range", 1, 0, 'r' },

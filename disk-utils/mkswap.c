@@ -457,7 +457,7 @@ main(int argc, char **argv) {
 	const char *opt_uuid = NULL;
 	uuid_t uuid_dat;
 #endif
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 		{ "check",       no_argument,       0, 'c' },
 		{ "force",       no_argument,       0, 'f' },
 		{ "pagesize",    required_argument, 0, 'p' },

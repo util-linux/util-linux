@@ -57,7 +57,7 @@ int main(int argc, char **argv)
 	char *path;
 	struct stat sb;
 
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 	    { "help",      0, 0, 'h' },
 	    { "freeze",    0, 0, 'f' },
 	    { "unfreeze",  0, 0, 'u' },

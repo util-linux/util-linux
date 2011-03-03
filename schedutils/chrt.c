@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
 	struct sched_param sp;
 	pid_t pid = -1;
 
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 		{ "batch",	0, NULL, 'b' },
 		{ "fifo",	0, NULL, 'f' },
 		{ "idle",	0, NULL, 'i' },

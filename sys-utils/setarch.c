@@ -84,7 +84,7 @@
 
 /* Options --3gb and --4gb are for compatibitity with an old Debian setarch
    implementation. */
-struct option longopts[] =
+static const struct option longopts[] =
 {
     { "help",               0, 0, 'h' },
     { "verbose",            0, 0, 'v' },

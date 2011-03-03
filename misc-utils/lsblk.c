@@ -890,7 +890,7 @@ int main(int argc, char *argv[])
 	int tt_flags = TT_FL_TREE;
 	int i, c, status = EXIT_FAILURE;
 
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 		{ "all",	0, 0, 'a' },
 		{ "bytes",      0, 0, 'b' },
 		{ "nodeps",     0, 0, 'd' },

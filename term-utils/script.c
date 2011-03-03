@@ -156,7 +156,7 @@ main(int argc, char **argv) {
 	extern int optind;
 	int ch;
 
-	struct option longopts[] = {
+	static const struct option longopts[] = {
 		{ "append",	no_argument,	   0, 'a' },
 		{ "command",	required_argument, 0, 'c' },
 		{ "return",	no_argument,	   0, 'e' },
