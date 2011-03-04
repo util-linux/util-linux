@@ -128,6 +128,9 @@ my_getmntent (mntFILE *mfp) {
 	me.mnt_opts = unmangle(s, &s);
 	s = skip_spaces(s);
 
+	if (!me.mnt_fsname || !me.mnt_dir || !me.mnt_type)
+		goto err;
+
 	if (isdigit(*s)) {
 		me.mnt_freq = atoi(s);
 		while(isdigit(*s)) s++;

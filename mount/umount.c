@@ -608,7 +608,7 @@ umount_file (char *arg) {
 				     file);
 
 			/* spec could be a file which is loop mounted */
-			if (fs && !is_valid_loop(mc, fs))
+			if (!fs || !is_valid_loop(mc, fs))
 				die (2, _("umount: %s mount disagrees with "
 					  "the fstab"), file);
 		}
