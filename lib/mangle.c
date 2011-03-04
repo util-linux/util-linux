@@ -94,6 +94,8 @@ char *unmangle(const char *s, char **end)
 
 	if (end)
 		*end = e;
+	if (e == s)
+		return NULL;	/* empty string */
 
 	buf = malloc(sz);
 	if (!buf)
