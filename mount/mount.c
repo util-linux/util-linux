@@ -1639,6 +1639,9 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 #ifdef HAVE_LIBMOUNT_MOUNT
   mtab_opts = fix_opts_string(flags & ~MS_NOMTAB, extra_opts, user);
   mtab_flags = flags;
+
+  if (fake)
+    prepare_mtab_entry(spec, node, types, mtab_opts, mtab_flags);
 #endif
 
   block_signals (SIG_BLOCK);
