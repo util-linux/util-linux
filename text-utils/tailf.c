@@ -218,7 +218,9 @@ long old_style_option(int *argc, char **argv)
 			lines = strtol_or_err(argv[i] + 1,
 					_("failed to parse number of lines"));
 			nargs--;
-			memmove(argv + i, argv + i + 1, sizeof(char *) * nargs);
+			if (nargs - i)
+				memmove(argv + i, argv + i + 1,
+						sizeof(char *) * (nargs - i));
 		} else
 			i++;
 	}
