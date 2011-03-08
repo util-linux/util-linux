@@ -517,6 +517,7 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 		nvals = blkid_probe_numof_values(pr);
 
 	if (nvals &&
+	    !(chain & LOWPROBE_TOPOLOGY) &&
 	    !(output & OUTPUT_UDEV_LIST) &&
 	    !blkid_probe_has_value(pr, "TYPE") &&
 	    !blkid_probe_has_value(pr, "PTTYPE"))
