@@ -106,6 +106,7 @@
 #include "nls.h"
 #include "pathnames.h"
 #include "bitops.h"
+#include "ismounted.h"
 
 #define ROOT_INO 1
 
@@ -294,32 +295,13 @@ ask(const char * string, int def) {
  * 1994 Theodore Ts'o.  Also licensed under GPL.
  */
 static void
-check_mount(void) {
-	FILE * f;
-	struct mntent * mnt;
+check_mount(void)
+{
 	int cont;
-	int fd;
 
-	if ((f = setmntent (_PATH_MOUNTED, "r")) == NULL)
-		return;
-	while ((mnt = getmntent (f)) != NULL)
-		if (strcmp (device_name, mnt->mnt_fsname) == 0)
-			break;
-	endmntent (f);
-	if (!mnt)
+	if (!is_mounted(device_name))
 		return;
 
-	/*
-	 * If the root is mounted read-only, then /etc/mtab is
-	 * probably not correct; so we won't issue a warning based on
-	 * it.
-	 */
-	fd = open(_PATH_MOUNTED, O_RDWR);
-	if (fd < 0 && errno == EROFS)
-		return;
-	else
-		close(fd);
-	
 	printf (_("%s is mounted.	 "), device_name);
 	if (isatty(0) && isatty(1))
 		cont = ask(_("Do you really want to continue"), 0);
