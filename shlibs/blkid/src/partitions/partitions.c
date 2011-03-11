@@ -36,6 +36,8 @@
  *
  * @PTTYPE: partition table type (dos, gpt, etc.).
  *
+ * @PART_ENTRY_SCHEME: partition table type
+ *
  * @PART_ENTRY_NAME: partition name (gpt and mac only)
  *
  * @PART_ENTRY_UUID: partition UUID (gpt only)
@@ -43,6 +45,8 @@
  * @PART_ENTRY_TYPE: partition type, 0xNN (e.g 0x82) or type UUID (gpt only) or type string (mac)
  *
  * @PART_ENTRY_FLAGS: partition flags (e.g. boot_ind) or  attributes (e.g. gpt attributes)
+ *
+ * @PART_ENTRY_NUMBER: partition number
  *
  * Example:
  *
