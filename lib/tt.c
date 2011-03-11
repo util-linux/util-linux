@@ -23,6 +23,7 @@
 #include "widechar.h"
 #include "c.h"
 #include "tt.h"
+#include "mbsalign.h"
 
 struct tt_symbols {
 	const char *branch;
@@ -56,67 +57,6 @@ static const struct tt_symbols utf8_tt_symbols = {
 
 #define is_last_column(_tb, _cl) \
 		list_last_entry(&(_cl)->cl_columns, &(_tb)->tb_columns)
-
-/* TODO: move to lib/mbalign.c */
-#ifdef HAVE_WIDECHAR
-static size_t wc_truncate (wchar_t *wc, size_t width)
-{
-  size_t cells = 0;
-  int next_cells = 0;
-
-  while (*wc)
-    {
-      next_cells = wcwidth (*wc);
-      if (next_cells == -1) /* non printable */
-        {
-          *wc = 0xFFFD; /* L'\uFFFD' (replacement char) */
-          next_cells = 1;
-        }
-      if (cells + next_cells > width)
-        break;
-      cells += next_cells;
-      wc++;
-    }
-  *wc = L'\0';
-  return cells;
-}
-#endif
-
-
-/* TODO: move to lib/mbalign.c */
-static size_t mbs_truncate(char *str, size_t width)
-{
-	size_t bytes = strlen(str) + 1;
-#ifdef HAVE_WIDECHAR
-	size_t sz = mbs_width(str);
-	wchar_t *wcs = NULL;
-	int rc = -1;
-
-	if (sz <= width)
-		return sz;		/* truncate is unnecessary */
-
-	if (sz == (size_t) -1)
-		goto done;
-
-	wcs = malloc(sz * sizeof(wchar_t));
-	if (!wcs)
-		goto done;
-
-	if (!mbstowcs(wcs, str, sz))
-		goto done;
-	rc = wc_truncate(wcs, width);
-	wcstombs(str, wcs, bytes);
-done:
-	free(wcs);
-	return rc;
-#else
-	if (width < bytes) {
-		str[width] = '\0';
-		return width;
-	}
-	return bytes;			/* truncate is unnecessary */
-#endif
-}
 
 /*
  * @flags: TT_FL_* flags (usually TT_FL_{ASCII,RAW})
@@ -490,8 +430,7 @@ leave:
  */
 static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 {
-	size_t len, i;
-	int width;
+	size_t len, i, width;
 
 	if (!data)
 		data = "";
@@ -519,7 +458,7 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 	/* truncate data */
 	if (len > width && (cl->flags & TT_FL_TRUNC)) {
 		if (data)
-			len = mbs_truncate(data, width);
+			len = mbs_truncate(data, &width);
 		if (!data || len == (size_t) -1) {
 			len = 0;
 			data = NULL;

@@ -19,7 +19,7 @@ test_strutils_SOURCES = strutils.c
 if LINUX
 test_cpuset_SOURCES = cpuset.c
 endif
-test_tt_SOURCES = tt.c
+test_tt_SOURCES = tt.c $(top_srcdir)/lib/mbsalign.c
 test_canonicalize_SOURCES = canonicalize.c
 
 if LINUX
