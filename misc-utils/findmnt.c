@@ -424,7 +424,8 @@ static struct libmnt_fs *get_next_fs(struct libmnt_table *tb,
 		/*
 		 * Print whole file
 		 */
-		mnt_table_next_fs(tb, itr, &fs);
+		if (mnt_table_next_fs(tb, itr, &fs) != 0)
+			return NULL;
 
 	} else if (is_mount_compatible_mode()) {
 		/*
