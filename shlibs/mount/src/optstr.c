@@ -476,19 +476,19 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs,
 
 	while(!mnt_optstr_next_option(&str, &name, &namesz, &val, &valsz)) {
 		int rc = 0;
-		const struct libmnt_optmap *ent;
+		const struct libmnt_optmap *ent = NULL;
 		const struct libmnt_optmap *m =
 			 mnt_optmap_get_entry(maps, 2, name, namesz, &ent);
 
 		if (ent && !ent->id)
 			continue;	/* ignore undefined options (comments) */
 
-		if (m && m == maps[0] && vfs) {
+		if (ent && m && m == maps[0] && vfs) {
 			if (ignore_vfs && (ent->mask & ignore_vfs))
 				continue;
 			rc = __mnt_optstr_append_option(vfs, name, namesz,
 								val, valsz);
-		} else if (m && m == maps[1] && user) {
+		} else if (ent && m && m == maps[1] && user) {
 			if (ignore_user && (ent->mask & ignore_user))
 				continue;
 			rc = __mnt_optstr_append_option(user, name, namesz,
