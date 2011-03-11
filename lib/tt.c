@@ -518,7 +518,8 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 
 	/* truncate data */
 	if (len > width && (cl->flags & TT_FL_TRUNC)) {
-		len = mbs_truncate(data, width);
+		if (data)
+			len = mbs_truncate(data, width);
 		if (!data || len == (size_t) -1) {
 			len = 0;
 			data = NULL;
