@@ -827,7 +827,7 @@ static void parse_excludes(const char *str)
 
 	while (str && *str) {
 		char *end = NULL;
-		unsigned int n;
+		unsigned long n;
 
 		errno = 0;
 		n = strtoul(str, &end, 10);
