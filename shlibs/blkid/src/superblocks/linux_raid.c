@@ -122,7 +122,7 @@ static int probe_raid0(blkid_probe pr, blkid_loff_t off)
 
 	if (le32_to_cpu(mdp0->md_magic) == MD_SB_MAGIC) {
 		uuid.ints[0] = swab32(mdp0->set_uuid0);
-		if (le32_to_cpu(mdp0->minor_version >= 90)) {
+		if (le32_to_cpu(mdp0->minor_version) >= 90) {
 			uuid.ints[1] = swab32(mdp0->set_uuid1);
 			uuid.ints[2] = swab32(mdp0->set_uuid2);
 			uuid.ints[3] = swab32(mdp0->set_uuid3);
@@ -134,7 +134,7 @@ static int probe_raid0(blkid_probe pr, blkid_loff_t off)
 
 	} else if (be32_to_cpu(mdp0->md_magic) == MD_SB_MAGIC) {
 		uuid.ints[0] = mdp0->set_uuid0;
-		if (be32_to_cpu(mdp0->minor_version >= 90)) {
+		if (be32_to_cpu(mdp0->minor_version) >= 90) {
 			uuid.ints[1] = mdp0->set_uuid1;
 			uuid.ints[2] = mdp0->set_uuid2;
 			uuid.ints[3] = mdp0->set_uuid3;
