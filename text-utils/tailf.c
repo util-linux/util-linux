@@ -93,7 +93,8 @@ roll_file(const char *filename, off_t *size)
 	struct stat st;
 	off_t pos;
 
-	if (!(fd = open(filename, O_RDONLY)))
+	fd = open(filename, O_RDONLY);
+	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open \"%s\" for read"), filename);
 
 	if (fstat(fd, &st) == -1)
