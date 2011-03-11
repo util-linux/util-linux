@@ -861,7 +861,7 @@ static int process_one_device(char *devname)
 		/*
 		 * Parititioned, read sysfs name of the device
 		 */
-		size_t len;
+		ssize_t len;
 		char path[PATH_MAX], *diskname, *name;
 
 		snprintf(path, sizeof(path), "/sys/dev/block/%d:%d",

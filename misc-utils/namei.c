@@ -184,7 +184,7 @@ static void
 readlink_to_namei(struct namei *nm, const char *path)
 {
 	char sym[PATH_MAX];
-	size_t sz;
+	ssize_t sz;
 
 	sz = readlink(path, sym, sizeof(sym));
 	if (sz < 1)
