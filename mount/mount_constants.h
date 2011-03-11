@@ -37,8 +37,8 @@
 #ifndef MS_REC
 #define MS_REC		0x4000	/* 16384: Recursive loopback */
 #endif
-#ifndef MS_VERBOSE
-#define MS_VERBOSE	0x8000	/* 32768 */
+#ifndef MS_SILENT
+#define MS_SILENT	0x8000	/* 32768 (was MS_VERBOSE) */
 #endif
 #ifndef MS_RELATIME
 #define MS_RELATIME	0x200000 /* 200000: Update access times relative

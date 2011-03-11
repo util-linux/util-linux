@@ -172,7 +172,7 @@ static const struct opt_map opt_map[] = {
   { "nosub",	0, 0, MS_NOSUB	},	/* don't allow submounts */
 #endif
 #ifdef MS_SILENT
-  { "quiet",	0, 0, MS_SILENT    },	/* be quiet  */
+  { "silent",	0, 0, MS_SILENT    },	/* be quiet  */
   { "loud",	0, 1, MS_SILENT    },	/* print out messages. */
 #endif
 #ifdef MS_MANDLOCK
