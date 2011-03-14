@@ -404,7 +404,7 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 			cxt->syscall_status = -errno;
 			DBG(CXT, mnt_debug_h(cxt, "mount(2) failed [errno=%d %m]",
 							-cxt->syscall_status));
-			return cxt->syscall_status;
+			return -cxt->syscall_status;
 		}
 		DBG(CXT, mnt_debug_h(cxt, "mount(2) success"));
 		cxt->syscall_status = 0;
@@ -533,7 +533,14 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
  *
  * Call mount(2) or mount.<type> helper. Unnecessary for mnt_context_mount().
  *
- * Returns: negative number on error, zero on success
+ * WARNING: non-zero return code does not mean that mount(2) syscall or
+ *          umount.type helper wasn't sucessfully called.
+ *
+ *          Check mnt_context_get_status() after error!
+*
+ * Returns: 0 on success;
+ *         >0 in case of mount(2) error (returns syscall errno),
+ *         <0 in case of other errors.
  */
 int mnt_context_do_mount(struct libmnt_context *cxt)
 {
@@ -597,9 +604,14 @@ int mnt_context_finalize_mount(struct libmnt_context *cxt)
  *
  * See also mnt_context_disable_helpers().
  *
- * Returns: 0 on success, and negative number in case of error. WARNING: error
- *          does not mean that mount(2) syscall or mount.type helper wasn't
- *          sucessfully called. Check mnt_context_get_status() after error!
+ * WARNING: non-zero return code does not mean that mount(2) syscall or
+ *          mount.type helper wasn't sucessfully called.
+ *
+ *          Check mnt_context_get_status() after error!
+*
+ * Returns: 0 on success;
+ *         >0 in case of mount(2) error (returns syscall errno),
+ *         <0 in case of other errors.
  */
 int mnt_context_mount(struct libmnt_context *cxt)
 {
