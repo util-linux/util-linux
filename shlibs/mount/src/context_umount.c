@@ -486,7 +486,7 @@ static int do_umount(struct libmnt_context *cxt)
 			DBG(CXT, mnt_debug_h(cxt, "read-only re-mount(2) failed "
 					"[errno=%d]",
 					-cxt->syscall_status));
-			return cxt->syscall_status;
+			return -cxt->syscall_status;
 		}
 		cxt->syscall_status = 0;
 		DBG(CXT, mnt_debug_h(cxt, "read-only re-mount(2) success"));
@@ -562,7 +562,14 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
  *
  * See also mnt_context_disable_helpers().
  *
- * Returns: 0 on success, and negative number in case of error.
+ * WARNING: non-zero return code does not mean that umount(2) syscall or
+ *          umount.type helper wasn't sucessfully called.
+ *
+ *          Check mnt_context_get_status() after error!
+*
+ * Returns: 0 on success;
+ *         >0 in case of umount(2) error (returns syscall errno),
+ *         <0 in case of other errors.
  */
 int mnt_context_do_umount(struct libmnt_context *cxt)
 {
@@ -650,9 +657,14 @@ int mnt_context_finalize_umount(struct libmnt_context *cxt)
  *
  * See also mnt_context_disable_helpers().
  *
- * Returns: 0 on success, and negative number in case of error. WARNING: error
- *          does not mean that umount(2) syscall or mount.type helper wasn't
- *          sucessfully called. Check mnt_context_get_status() after error!
+ * WARNING: non-zero return code does not mean that umount(2) syscall or
+ *          umount.type helper wasn't sucessfully called.
+ *
+ *          Check mnt_context_get_status() after error!
+ *
+ * Returns: 0 on success;
+ *         >0 in case of umount(2) error (returns syscall errno),
+ *         <0 in case of other errors.
  */
 int mnt_context_umount(struct libmnt_context *cxt)
 {

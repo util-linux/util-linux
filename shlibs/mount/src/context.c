@@ -1481,7 +1481,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
  * mnt_context_get_status:
  * @cxt: mount context
  *
- * Returns: 0 if /sbin/mount.type or mount(2) syscall was successfull or -errno.
+ * Returns: 0 if /sbin/mount.type or mount(2) syscall was successfull.
  */
 int mnt_context_get_status(struct libmnt_context *cxt)
 {
@@ -1492,6 +1492,9 @@ int mnt_context_get_status(struct libmnt_context *cxt)
  * mnt_context_set_syscall_status:
  * @cxt: mount context
  * @status: mount(2) return code
+ *
+ * The @status should be 0 on succcess, or negative number on error (-1 or
+ * -errno).
  *
  * This function should be used if [u]mount(2) syscall was NOT called by
  * libmount (by mnt_context_mount() or mnt_context_do_mount()) only.
