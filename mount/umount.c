@@ -559,6 +559,22 @@ umount_file (char *arg) {
 	if (!mc && verbose)
 		printf(_("Could not find %s in mtab\n"), file);
 
+	/*
+	 * uhelper - umount helper
+	 * -- external umount (for example HAL mounts)
+	 */
+	if (external_allowed && mc) {
+		char *uhelper = NULL;
+
+		if (mc->m.mnt_opts)
+			uhelper = get_option_value(mc->m.mnt_opts, "uhelper=");
+		if (uhelper) {
+			int status = 0;
+			if (check_special_umountprog(arg, arg, uhelper, &status))
+				return status;
+		}
+	}
+
 	if (restricted) {
 		char *mtab_user = NULL;
 
@@ -566,23 +582,6 @@ umount_file (char *arg) {
 			die(2,
 			    _("umount: %s is not mounted (according to mtab)"),
 			    file);
-		/*
-		 * uhelper - unprivileged umount helper
-		 * -- external umount (for example HAL mounts)
-		 */
-		if (external_allowed) {
-			char *uhelper = NULL;
-
-			if (mc->m.mnt_opts)
-				uhelper = get_option_value(mc->m.mnt_opts,
-							   "uhelper=");
-			if (uhelper) {
-				int status = 0;
-				if (check_special_umountprog(arg, arg,
-							uhelper, &status))
-					return status;
-			}
-		}
 
 		/* The 2.4 kernel will generally refuse to mount the same
 		   filesystem on the same mount point, but will accept NFS.
