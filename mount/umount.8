@@ -155,6 +155,10 @@ where the <suffix> is filesystem type or a value from "uhelper=" mtab option.
 The \-t option is used  for filesystems with subtypes support (for example
 /sbin/mount.fuse -t fuse.sshfs).
 
+The uhelper (unprivileged umount helper) is possible to used when non-root user
+wants to umount a mountpoint which is not defined in the /etc/fstab file (e.g
+devices mounted by HAL).
+
 .SH FILES
 .I /etc/mtab
 table of mounted file systems
