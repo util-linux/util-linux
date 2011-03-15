@@ -76,6 +76,11 @@ echo "   libtoolize: $(libtoolize --version | head -1)"
 set -e
 po/update-potfiles
 autopoint --force $AP_OPTS
+if ! grep -q datarootdir po/Makefile.in.in; then
+	echo autopoint does not honor dataroot variable, patching.
+	sed -i -e 's/^datadir *=\(.*\)/datarootdir = @datarootdir@\
+datadir = @datadir@/g' po/Makefile.in.in
+fi
 libtoolize --force $LT_OPTS
 aclocal -I m4 $AL_OPTS
 autoconf $AC_OPTS
