@@ -367,6 +367,22 @@ AC_ARG_ENABLE([fsck],
 AM_CONDITIONAL(BUILD_FSCK, test "x$enable_fsck" = xyes)
 
 
+AC_ARG_ENABLE([partx],
+  AS_HELP_STRING([--enable-partx], [build addpart, delpart, partx]),
+  [], enable_partx=check
+)
+build_partx=yes
+if test "x$enable_partx" = xcheck; then
+  if test "x$linux_os" = xno; then
+    AC_MSG_WARN([non-linux system; do not build partx utilities])
+    build_partx=no
+  fi
+elif test "x$enable_partx" = xno; then
+    build_partx=no
+fi
+AM_CONDITIONAL(BUILD_PARTX, test "x$build_partx" = xyes)
+
+
 AC_ARG_ENABLE([libuuid],
   AS_HELP_STRING([--disable-libuuid], [do not build libuuid and uuid utilities]),
   [], enable_libuuid=yes
@@ -418,6 +434,9 @@ else
   fi
   if test "x$enable_fsck" = xyes; then
     AC_MSG_ERROR([libblkid is needed to build util-linux fsck])
+  fi
+  if test "x$build_partx" = xyes; then
+    AC_MSG_ERROR([libblkid is needed to build util-linux partx])
   fi
 fi
 
@@ -974,13 +993,6 @@ AC_ARG_ENABLE([mesg],
   [], enable_mesg=no
 )
 AM_CONDITIONAL(BUILD_MESG, test "x$enable_mesg" = xyes)
-
-
-AC_ARG_ENABLE([partx],
-  AS_HELP_STRING([--enable-partx], [build addpart, delpart, partx]),
-  [], enable_partx=no
-)
-AM_CONDITIONAL(BUILD_PARTX, test "x$enable_partx" = xyes)
 
 
 AC_ARG_ENABLE([raw],

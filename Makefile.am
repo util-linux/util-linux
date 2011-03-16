@@ -41,7 +41,7 @@ if BUILD_HWCLOCK
 SUBDIRS += hwclock
 endif
 
-if LINUX
+if BUILD_PARTX
 SUBDIRS += partx
 endif
 
