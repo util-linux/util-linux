@@ -42,6 +42,8 @@ sbin_PROGRAMS += swaplabel
 dist_man_MANS += swaplabel.8
 swaplabel_LDADD += $(ul_libblkid_la)
 swaplabel_CFLAGS += -I$(ul_libblkid_incdir)
+mkswap_LDADD += $(ul_libblkid_la)
+mkswap_CFLAGS += -I$(ul_libblkid_incdir)
 endif
 
 if BUILD_ELVTUNE
@@ -64,12 +66,6 @@ fsck_cramfs_SOURCES = fsck.cramfs.c $(cramfs_common)
 mkfs_cramfs_SOURCES = mkfs.cramfs.c $(cramfs_common) $(top_srcdir)/lib/md5.c
 fsck_cramfs_LDADD = -lz
 mkfs_cramfs_LDADD = -lz
-endif
-
-if BUILD_LIBBLKID
-# only in-tree libblkid has partitions parsing support
-mkswap_LDADD += $(ul_libblkid_la)
-mkswap_CFLAGS += -I$(ul_libblkid_incdir)
 endif
 
 if HAVE_SELINUX

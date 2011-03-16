@@ -54,9 +54,7 @@ SUBDIRS += mount
 endif
 
 if BUILD_FSCK
-if BUILD_LIBBLKID
 SUBDIRS += fsck
-endif
 endif
 
 ACLOCAL_AMFLAGS = -I m4

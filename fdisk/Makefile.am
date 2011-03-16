@@ -24,7 +24,6 @@ cflags_blkid = $(AM_CFLAGS)
 ldadd_blkid =
 
 if BUILD_LIBBLKID
-# only in-tree libblkid has topology support
 ldadd_blkid += $(ul_libblkid_la)
 cflags_blkid += -I$(ul_libblkid_incdir)
 endif

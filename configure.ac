@@ -409,33 +409,8 @@ AC_SUBST([LIBBLKID_VERSION_INFO])
 AM_CONDITIONAL(BUILD_LIBBLKID, test "x$enable_libblkid" = xyes)
 AC_DEFINE_UNQUOTED(LIBBLKID_VERSION, "$LIBBLKID_VERSION", [libblkid version string])
 AC_DEFINE_UNQUOTED(LIBBLKID_DATE, "$LIBBLKID_DATE", [libblkid date string])
-have_blkid=yes
 
-if test "x$enable_libblkid" = xno; then
-  if test "x$build_mount" = xyes || test "x$enable_fsck" = xyes; then
-    # Check for external (e2fsprogs) libblkid
-    PKG_CHECK_MODULES(BLKID, blkid, [have_blkid=yes], [have_blkid=no])
-    if test "x$have_blkid" = xno; then
-      # system without pkg-config or so, try classic check
-      AC_CHECK_LIB(blkid, blkid_get_cache, [have_blkid=yes], [have_blkid=no])
-    fi
-    if test "x$have_blkid" = xyes; then
-      UTIL_SET_FLAGS($BLKID_CFLAGS, $BLKID_CFLAGS, $BLKID_LIBS)
-      AC_CHECK_HEADERS([blkid.h blkid/blkid.h], [break], [])
-      UTIL_RESTORE_FLAGS
-    fi
-    if test -n "$enable_static_programs"; then
-      # TODO check only when mount of fsck are requested
-      UTIL_PKG_STATIC([BLKID_LIBS_STATIC], [blkid])
-    fi
-  fi
-else
-  # internal library
-  AC_DEFINE(HAVE_BLKID_H, 1, [Define to 1 if you have the <blkid.h> header file.])
-  AC_DEFINE(HAVE_LIBBLKID_INTERNAL, 1, [Define to 1 if you have the in-tree libblkid.])
-fi
-
-if test "x$have_blkid" = xyes; then
+if test "x$enable_libblkid" = xyes; then
   AC_DEFINE(HAVE_LIBBLKID, 1, [Define to 1 if you have the -lblkid.])
 else
   if test "x$build_mount" = xyes; then
@@ -445,11 +420,6 @@ else
     AC_MSG_ERROR([libblkid is needed to build util-linux fsck])
   fi
 fi
-AM_CONDITIONAL(HAVE_BLKID, test "x$have_blkid" = xyes)
-# default
-: ${BLKID_LIBS='-lblkid -luuid'}
-
-AC_ARG_VAR([BLKID_LIBS_STATIC], [-l options for linking statically with blkid])
 
 
 AC_ARG_ENABLE([libmount],

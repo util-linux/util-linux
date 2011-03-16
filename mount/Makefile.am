@@ -77,10 +77,6 @@ if BUILD_LIBBLKID
 ldadd_common += $(ul_libblkid_la)
 ldadd_static += $(ul_libblkid_la)
 cflags_common += -I$(ul_libblkid_incdir)
-else
-ldadd_common += $(BLKID_LIBS)
-ldadd_static += $(BLKID_LIBS_STATIC)
-cflags_common += $(BLKID_CFLAGS)
 endif
 
 if HAVE_SELINUX
