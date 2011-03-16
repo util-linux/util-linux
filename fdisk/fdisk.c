@@ -44,7 +44,7 @@
 #ifdef HAVE_LINUX_BLKPG_H
 #include <linux/blkpg.h>
 #endif
-#ifdef HAVE_LIBBLKID_INTERNAL
+#ifdef HAVE_LIBBLKID
 #include <blkid.h>
 #endif
 
@@ -957,7 +957,7 @@ create_doslabel(void) {
 static void
 get_topology(int fd) {
 	int arg;
-#ifdef HAVE_LIBBLKID_INTERNAL
+#ifdef HAVE_LIBBLKID
 	blkid_probe pr;
 
 	pr = blkid_new_probe();

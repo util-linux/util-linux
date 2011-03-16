@@ -89,7 +89,7 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 
-#ifdef HAVE_LIBBLKID_INTERNAL
+#ifdef HAVE_LIBBLKID
 #include <blkid.h>
 #endif
 
@@ -612,7 +612,7 @@ write_sector(unsigned char *buffer, long long sect_num) {
 	fatal(_("Cannot write disk drive"), 2);
 }
 
-#ifdef HAVE_LIBBLKID_INTERNAL
+#ifdef HAVE_LIBBLKID
 static void
 get_fsinfo(int i)
 {
@@ -949,7 +949,7 @@ add_part(int num, int id, int flags, long long first, long long last,
     p_info[i].fstype[0] = 0;
     p_info[i].ostype[0] = 0;
 
-#ifdef HAVE_LIBBLKID_INTERNAL
+#ifdef HAVE_LIBBLKID
     if (want_label)
 	 get_fsinfo(i);
 #endif

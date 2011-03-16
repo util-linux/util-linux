@@ -62,7 +62,7 @@
 # include <uuid.h>
 #endif
 
-#ifdef HAVE_LIBBLKID_INTERNAL
+#ifdef HAVE_LIBBLKID
 # include <blkid.h>
 #endif
 
@@ -387,7 +387,7 @@ zap_bootbits(int fd, const char *devname, int force, int is_blkdev)
 			whole = 1;
 			zap = 0;
 		} else {
-#ifdef HAVE_LIBBLKID_INTERNAL
+#ifdef HAVE_LIBBLKID
 			blkid_probe pr = blkid_new_probe();
 			if (!pr)
 				errx(EXIT_FAILURE, _("unable to alloc new libblkid probe"));
