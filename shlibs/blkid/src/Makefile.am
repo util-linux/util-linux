@@ -5,14 +5,9 @@ SUBDIRS = superblocks topology partitions .
 common_ldadd =
 common_cflags =
 
-if HAVE_UUID
 if BUILD_LIBUUID
 common_ldadd += $(ul_libuuid_la)
 common_cflags += -I$(ul_libuuid_srcdir)
-else
-common_ldadd += $(UUID_LIBS)
-common_cflags += $(UUID_CFLAGS)
-endif
 endif
 
 AM_CPPFLAGS += -I$(ul_libblkid_incdir) -I$(ul_libblkid_srcdir) $(common_cflags)
@@ -56,7 +51,7 @@ CLEANFILES = $(tests)
 
 tests: all $(tests)
 test_%: %.c
-	$(AM_V_CC)$(COMPILE) -DTEST_PROGRAM $< .libs/libblkid.a -o $@ $(UUID_LIBS)
+	$(AM_V_CC)$(COMPILE) -DTEST_PROGRAM $< .libs/libblkid.a -o $@ -luuid
 
 
 # move lib from $(usrlib_execdir) to $(libdir) if needed

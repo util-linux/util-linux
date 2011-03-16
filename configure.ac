@@ -374,33 +374,12 @@ AC_ARG_ENABLE([libuuid],
 AC_SUBST([LIBUUID_VERSION])
 AC_SUBST([LIBUUID_VERSION_INFO])
 AM_CONDITIONAL(BUILD_LIBUUID, test "x$enable_libuuid" = xyes)
-have_uuid=yes
 
-if test "x$enable_libuuid" = xno; then
-  # Check for external (e2fsprogs) libuuid
-  PKG_CHECK_MODULES(UUID, uuid, [have_uuid=yes], [have_uuid=no])
-  if test "x$have_uuid" = xno; then
-    # system without pkg-config or so, try classic check
-    AC_CHECK_LIB(uuid, uuid_is_null, [have_uuid=yes], [have_uuid=no])
-  fi
-  if test "x$have_uuid" = xyes; then
-    UTIL_SET_FLAGS($UUID_CFLAGS, $UUID_CFLAGS, $UUID_LIBS)
-    AC_CHECK_HEADERS([uuid.h uuid/uuid.h], [break], [])
-    UTIL_RESTORE_FLAGS
-  fi
-else
-  # internal library
-  AC_DEFINE(HAVE_UUID_H, 1, [Define to 1 if you have the <uuid.h> header file.])
-fi
-
-if test "x$have_uuid" = xyes; then
+if test "x$enable_libuuid" = xyes; then
   AC_DEFINE(HAVE_LIBUUID, 1, [Define to 1 if you have the -luuid.])
 else
   AC_MSG_WARN([uuid library is not found; mkswap(8) will not generate UUIDs])
 fi
-AM_CONDITIONAL(HAVE_UUID, test "x$have_uuid" = xyes)
-# default
-: ${UUID_LIBS='-luuid'}
 
 
 AC_ARG_ENABLE([uuidd],

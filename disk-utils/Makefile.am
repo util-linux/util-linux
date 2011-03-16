@@ -5,14 +5,9 @@ if LINUX
 utils_common += $(top_srcdir)/lib/linux_version.c
 endif
 
-if HAVE_UUID
 if BUILD_LIBUUID
 uuid_cflags = -I$(ul_libuuid_srcdir)
 uuid_ldadd = $(ul_libuuid_la)
-else
-uuid_cflags = $(UUID_CFLAGS)
-uuid_ldadd = $(UUID_LIBS)
-endif
 endif
 
 dist_man_MANS = isosize.8 mkfs.8 mkswap.8 \
