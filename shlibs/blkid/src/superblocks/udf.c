@@ -55,7 +55,7 @@ struct volume_structure_descriptor {
 	uint8_t		version;
 } __attribute__((packed));
 
-#define UDF_VSD_OFFSET			0x8000
+#define UDF_VSD_OFFSET			0x8000LL
 
 static int probe_udf(blkid_probe pr, const struct blkid_idmag *mag)
 {
@@ -86,7 +86,7 @@ nsr:
 	for (b = 0; b < 64; b++) {
 		vsd = (struct volume_structure_descriptor *)
 			blkid_probe_get_buffer(pr,
-					UDF_VSD_OFFSET + (b * bs),
+					UDF_VSD_OFFSET + ((blkid_loff_t) b * bs),
 					sizeof(*vsd));
 		if (!vsd)
 			return -1;
@@ -117,7 +117,9 @@ anchor:
 	/* pick the primary descriptor from the list */
 	for (b = 0; b < count; b++) {
 		vd = (struct volume_descriptor *)
-			blkid_probe_get_buffer(pr, (loc + b) * bs, sizeof(*vd));
+			blkid_probe_get_buffer(pr,
+					(blkid_loff_t) (loc + b) * bs,
+					sizeof(*vd));
 		if (!vd)
 			return -1;
 

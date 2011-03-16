@@ -229,7 +229,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	cat_block = be32_to_cpu(extents[0].start_block);
 
 	buf = blkid_probe_get_buffer(pr,
-			off + (cat_block * blocksize), 0x2000);
+			off + ((blkid_loff_t) cat_block * blocksize), 0x2000);
 	if (!buf)
 		return 0;
 
@@ -262,7 +262,9 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 
 	leaf_off = (ext_block_start + leaf_block) * blocksize;
 
-	buf = blkid_probe_get_buffer(pr, off + leaf_off, leaf_node_size);
+	buf = blkid_probe_get_buffer(pr,
+				(blkid_loff_t) off + leaf_off,
+				leaf_node_size);
 	if (!buf)
 		return 0;
 
