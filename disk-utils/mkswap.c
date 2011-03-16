@@ -59,11 +59,7 @@
 #include "xalloc.h"
 
 #ifdef HAVE_LIBUUID
-# ifdef HAVE_UUID_UUID_H
-#  include <uuid/uuid.h>
-# else
-#  include <uuid.h>
-# endif
+# include <uuid.h>
 #endif
 
 #ifdef HAVE_LIBBLKID_INTERNAL
