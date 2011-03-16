@@ -19,6 +19,23 @@
 #include "fsprobe.h"
 
 static blkid_cache blcache;
+static blkid_probe blprobe;
+
+void
+fsprobe_init(void)
+{
+	blcache = NULL;
+	blprobe = NULL;
+}
+
+void
+fsprobe_exit(void)
+{
+	if (blprobe)
+		blkid_free_probe(blprobe);
+	if (blcache)
+		blkid_put_cache(blcache);
+}
 
 /*
  * Parses NAME=value, returns -1 on parse error, 0 success. The success is also
@@ -62,33 +79,12 @@ fsprobe_get_devname_by_spec(const char *spec)
 	return canonicalize_path(spec);
 }
 
-void
-fsprobe_init(void)
-{
-	blcache = NULL;
-}
-
 int
 fsprobe_known_fstype(const char *fstype)
 {
 	return blkid_known_fstype(fstype);
 }
 
-#ifdef HAVE_LIBBLKID_INTERNAL
-/*
- * libblkid from util-linux
- * -- recommended
- */
-static blkid_probe blprobe;
-
-void
-fsprobe_exit(void)
-{
-	if (blprobe)
-		blkid_free_probe(blprobe);
-	if (blcache)
-		blkid_put_cache(blcache);
-}
 
 /* returns device LABEL, UUID, FSTYPE, ... by low-level
  * probing interface
@@ -162,83 +158,3 @@ fsprobe_get_devname_by_label(const char *label)
 	return blkid_evaluate_tag("LABEL", label, &blcache);
 }
 
-#else /* !HAVE_LIBBLKID_INTERNAL */
-
-/*
- * Classic libblkid (from e2fsprogs) without blkid_evaluate_tag()
- * -- deprecated
- */
-#define BLKID_EMPTY_CACHE	"/dev/null"
-
-void
-fsprobe_exit(void)
-{
-	if (blcache)
-		blkid_put_cache(blcache);
-}
-
-char *
-fsprobe_get_devname_by_uuid(const char *uuid)
-{
-	if (!blcache)
-		blkid_get_cache(&blcache, NULL);
-
-	return blkid_get_devname(blcache, "UUID", uuid);
-}
-
-char *
-fsprobe_get_devname_by_label(const char *label)
-{
-	if (!blcache)
-		blkid_get_cache(&blcache, NULL);
-
-	return blkid_get_devname(blcache, "LABEL", label);
-}
-
-char *
-fsprobe_get_fstype_by_devname(const char *devname)
-{
-	blkid_cache c;
-	char *tp;
-
-	if (blcache)
-		return blkid_get_tag_value(blcache, "TYPE", devname);
-
-	/* The cache is not initialized yet. Use empty cache rather than waste
-	 * time with /etc/blkid.tab. It seems that probe FS is faster than
-	 * parse the cache file.  -- kzak (17-May-2007)
-	 */
-	blkid_get_cache(&c, BLKID_EMPTY_CACHE);
-	tp = blkid_get_tag_value(c, "TYPE", devname);
-	blkid_put_cache(c);
-
-	return tp;
-}
-
-char *
-fsprobe_get_fstype_by_devname_ambi(const char *devname, int *ambi)
-{
-	if (ambi)
-		*ambi = 0;
-	return fsprobe_get_fstype_by_devname(devname);
-}
-
-char *
-fsprobe_get_label_by_devname(const char *devname)
-{
-	if (!blcache)
-		blkid_get_cache(&blcache, NULL);
-
-	return blkid_get_tag_value(blcache, "LABEL", devname);
-}
-
-char *
-fsprobe_get_uuid_by_devname(const char *devname)
-{
-	if (!blcache)
-		blkid_get_cache(&blcache, NULL);
-
-	return blkid_get_tag_value(blcache, "UUID", devname);
-}
-
-#endif /* !HAVE_LIBBLKID_INTERNAL */
