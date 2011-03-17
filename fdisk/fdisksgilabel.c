@@ -43,8 +43,10 @@ static freeblocks freelist[17]; /* 16 partitions can produce 17 vacant slots */
 
 static void
 setfreelist(int i, unsigned int f, unsigned int l) {
-	freelist[i].first = f;
-	freelist[i].last = l;
+	if (i < 17) {
+		freelist[i].first = f;
+		freelist[i].last = l;
+	}
 }
 
 static void
