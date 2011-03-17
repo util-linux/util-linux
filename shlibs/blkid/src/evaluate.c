@@ -202,8 +202,8 @@ static char *evaluate_by_scan(const char *token, const char *value,
 
 /**
  * blkid_evaluate_tag:
- * @token: token name (e.g "LABEL" or "UUID")
- * @value: token data
+ * @token: token name (e.g "LABEL" or "UUID") or unparsed tag (e.g. "LABEL=foo")
+ * @value: token data (e.g. "foo")
  * @cache: pointer to cache (or NULL when you don't want to re-use the cache)
  *
  * Returns: allocated string with a device name.
@@ -259,20 +259,52 @@ out:
 	return ret;
 }
 
+/**
+ * blkid_evaluate_spec:
+ * @spec: unparsed tag (e.g. "LABEL=foo") or path (e.g. /dev/dm-0)
+ * @cache: pointer to cache (or NULL when you don't want to re-use the cache)
+ *
+ * All returned paths are canonicalized, device-mapper paths are converted
+ * to the /dev/mapper/<name> format.
+ *
+ * Returns: allocated string with a device name.
+ */
+char *blkid_evaluate_spec(const char *spec, blkid_cache *cache)
+{
+	char *t = NULL, *v = NULL, *res;
+
+	if (!spec)
+		return NULL;
+
+	if (strchr(spec, '=') &&
+	    blkid_parse_tag_string(spec, &t, &v) != 0)	/* parse error */
+		return NULL;
+
+	if (v)
+		res = blkid_evaluate_tag(t, v, cache);
+	else
+		res = canonicalize_path(spec);
+
+	free(t);
+	free(v);
+	return res;
+}
+
+
 #ifdef TEST_PROGRAM
 int main(int argc, char *argv[])
 {
 	blkid_cache cache = NULL;
 	char *res;
 
-	if (argc < 3) {
-		fprintf(stderr, "usage: %s <token> <value>\n", argv[0]);
+	if (argc < 2) {
+		fprintf(stderr, "usage: %s <tag> | <spec>\n", argv[0]);
 		return EXIT_FAILURE;
 	}
 
 	blkid_init_debug(0);
 
-	res = blkid_evaluate_tag(argv[1], argv[2], &cache);
+	res = blkid_evaluate_spec(argv[1], &cache);
 	if (res)
 		printf("%s\n", res);
 	if (cache)

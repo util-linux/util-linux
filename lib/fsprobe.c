@@ -53,26 +53,7 @@ fsprobe_parse_spec(const char *spec, char **name, char **value)
 char *
 fsprobe_get_devname_by_spec(const char *spec)
 {
-	char *name, *value;
-
-	if (!spec)
-		return NULL;
-	if (fsprobe_parse_spec(spec, &name, &value) != 0)
-		return NULL;				/* parse error */
-	if (name) {
-		char *nspec = NULL;
-
-		if (!strcmp(name,"LABEL"))
-			nspec = fsprobe_get_devname_by_label(value);
-		else if (!strcmp(name,"UUID"))
-			nspec = fsprobe_get_devname_by_uuid(value);
-
-		free(name);
-		free(value);
-		return nspec;
-	}
-
-	return canonicalize_path(spec);
+	return blkid_evaluate_spec(spec, blcache);
 }
 
 int
