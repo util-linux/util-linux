@@ -61,7 +61,9 @@
 #include <string.h>
 #include <time.h>
 #include <stdio.h>
+
 #include "nls.h"
+#include "c.h"
 
 #ifndef __GNUC__
 #define inline /* foo */
@@ -265,9 +267,9 @@ void format(char *buf, const char* fmt, struct disc_time dt)
 		case 'N': if(dt.day!=4&&dt.day!=49) goto eschaton; break;
 		case 'n': *(bufptr++)='\n'; break;
 		case 't': *(bufptr++)='\t'; break;
-		    
+
 		case 'Y': sprintf(snarf, "%d", dt.year); wibble=snarf; break;
-		case '.': wibble=sel(excl, sizeof(excl)/sizeof(excl[0]));
+		case '.': wibble=sel(excl, ARRAY_SIZE(excl));
 		    break;
 #ifdef KILL_BOB
 		case 'X': sprintf(snarf, "%d", 
