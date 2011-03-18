@@ -91,7 +91,7 @@ static const struct libmnt_optmap linux_flags_map[] =
    { "nosub",    MS_NOSUB },                  /* don't allow submounts */
 #endif
 #ifdef MS_SILENT
-   { "quiet",	 MS_SILENT },                 /* be quiet  */
+   { "silent",	 MS_SILENT },                 /* be quiet  */
    { "loud",     MS_SILENT, MNT_INVERT },     /* print out messages. */
 #endif
 #ifdef MS_MANDLOCK
