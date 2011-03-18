@@ -26,7 +26,7 @@
    59 Bcy, 3161:       PRAISE_BOB and KILL_BOB options split, other minor
                        changes.
 
-   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
+   1999-02-22 Arkadiusz Miskiewicz <misiek@pld.ORG.PL>
    - added Native Language Support
 
    2000-03-17 Burt Holzman <bnh@iname.com>
@@ -103,14 +103,14 @@ struct disc_time {
 
 char *excl[] = {
     "Hail Eris!", "All Hail Discordia!", "Kallisti!", "Fnord.", "Or not.",
-    "Wibble.", "Pzat!", "P'tang!", "Frink!", 
+    "Wibble.", "Pzat!", "P'tang!", "Frink!",
 #ifdef PRAISE_BOB
     "Slack!", "Praise \"Bob\"!", "Or kill me.",
 #endif /* PRAISE_BOB */
     /* randomness, from the Net and other places. Feel free to add (after
        checking with the relevant authorities, of course). */
-    "Grudnuk demand sustenance!", "Keep the Lasagna flying!", 
-    "Umlaut Zebra über alles!", "You are what you see.",
+    "Grudnuk demand sustenance!", "Keep the Lasagna flying!",
+    "You are what you see.",
     "Or is it?", "This statement is false.",
 #if defined(linux) || defined (__linux__) || defined (__linux)
     "Hail Eris, Hack Linux!",
