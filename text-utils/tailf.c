@@ -58,7 +58,7 @@ tailf(const char *filename, int lines)
 	if (!(str = fopen(filename, "r")))
 		err(EXIT_FAILURE, _("cannot open \"%s\" for read"), filename);
 
-	buf = xmalloc(lines * BUFSIZ);
+	buf = xmalloc((lines ? lines : 1) * BUFSIZ);
 	p = buf;
 	while (fgets(p, BUFSIZ, str)) {
 		if (++tail >= lines) {
