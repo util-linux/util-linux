@@ -149,5 +149,19 @@ prog_inv_sh_nm_from_file(char *f, char stripext)
 # endif
 #endif
 
+/*
+ * Fallback defines for old versions of glibc
+ */
+#ifndef O_CLOEXEC
+#define O_CLOEXEC 0
+#endif
+
+#ifndef AI_ADDRCONFIG
+#define AI_ADDRCONFIG 0x0020
+#endif
+
+#ifndef IUTF8
+#define IUTF8 0040000
+#endif
 
 #endif /* UTIL_LINUX_C_H */
