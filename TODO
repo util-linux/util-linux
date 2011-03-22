@@ -1,13 +1,3 @@
-kill
-----
- - support real-time signals in format
-
-    kill -RT16 4711
-    kill -RTMIN+16 4711
-    kill -RTMAX-14 4711
-
-   see also https://bugzilla.redhat.com/show_bug.cgi?id=676297
-
 mount
 -----
 
@@ -18,13 +8,6 @@ mount
 
    It's definitely better to have a generic way how ignore some options than
    use comment= for all things.
-
-fsprobe
--------
-
- - remove the lib/fsprobe.c wrapper for libblkid used in mount and fsck. Use
-   everywhere libblkid from util-linux only.
- - update ./configure script
 
 build-sys
 --------
