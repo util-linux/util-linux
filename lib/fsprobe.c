@@ -53,7 +53,7 @@ fsprobe_parse_spec(const char *spec, char **name, char **value)
 char *
 fsprobe_get_devname_by_spec(const char *spec)
 {
-	return blkid_evaluate_spec(spec, blcache);
+	return blkid_evaluate_spec(spec, &blcache);
 }
 
 int
