@@ -108,7 +108,7 @@ static void safe_print(const char *cp, int len)
 	while (len--) {
 		ch = *cp++;
 		if (!raw_chars) {
-			if (ch > 128) {
+			if (ch >= 128) {
 				fputs("M-", stdout);
 				ch -= 128;
 			}
