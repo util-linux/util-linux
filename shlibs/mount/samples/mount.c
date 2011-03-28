@@ -119,7 +119,7 @@ static int print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 	while(mnt_table_next_fs(tb, itr, &fs) == 0) {
 		const char *type = mnt_fs_get_fstype(fs);
 		const char *src = mnt_fs_get_source(fs);
-		char *optstr = mnt_fs_strdup_options(fs);
+		const char *optstr = mnt_fs_get_options(fs);
 
 		if (type && pattern && !mnt_match_fstype(type, pattern))
 			continue;
