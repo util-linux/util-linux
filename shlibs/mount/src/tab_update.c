@@ -85,7 +85,8 @@ void mnt_free_update(struct libmnt_update *upd)
 /*
  * Returns 0 on success, 1 if not file available, -1 in case of error.
  */
-int mnt_update_set_filename(struct libmnt_update *upd, const char *filename, int userspace_only)
+int mnt_update_set_filename(struct libmnt_update *upd, const char *filename,
+			    int userspace_only)
 {
 	const char *path = NULL;
 	int rw = 0;
@@ -790,6 +791,7 @@ static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *
  */
 int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 {
+	struct libmnt_lock *lc0 = lc;
 	int rc = -EINVAL;
 
 	assert(upd);
@@ -804,6 +806,9 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 		DBG(UPDATE, mnt_fs_print_debug(upd->fs, stderr));
 	}
 
+	if (!lc && !upd->userspace_only)
+		lc = mnt_new_lock(upd->filename, 0);
+
 	if (!upd->fs && upd->target)
 		rc = update_remove_entry(upd, lc);	/* umount */
 	else if (upd->mountflags & MS_MOVE)
@@ -816,6 +821,10 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 	upd->ready = FALSE;
 	DBG(UPDATE, mnt_debug_h(upd, "%s: update tab: done [rc=%d]",
 				upd->filename, rc));
+
+	if (lc != lc0)
+		 mnt_free_lock(lc);
+
 	return rc;
 }
 
