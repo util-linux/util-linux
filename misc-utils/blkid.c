@@ -45,6 +45,8 @@ extern int optind;
 
 const char *progname = "blkid";
 
+int raw_chars;
+
 static void print_version(FILE *out)
 {
 	fprintf(out, "%s from %s (libblkid %s, %s)\n",
@@ -66,6 +68,7 @@ static void usage(int error)
 		"  %1$s -i [-s <tag>] [-o <format>] <dev> ...\n\n"
 		"Options:\n"
 		"  -c <file>   cache file (default: /etc/blkid.tab, /dev/null = none)\n"
+		"  -d          don't encode non-printing characters\n"
 		"  -h          print this usage message and exit\n"
 		"  -g          garbage collect the blkid cache\n"
 		"  -o <format> output format; can be one of:\n"
@@ -104,13 +107,15 @@ static void safe_print(const char *cp, int len)
 
 	while (len--) {
 		ch = *cp++;
-		if (ch > 128) {
-			fputs("M-", stdout);
-			ch -= 128;
-		}
-		if ((ch < 32) || (ch == 0x7f)) {
-			fputc('^', stdout);
-			ch ^= 0x40; /* ^@, ^A, ^B; ^? for DEL */
+		if (!raw_chars) {
+			if (ch > 128) {
+				fputs("M-", stdout);
+				ch -= 128;
+			}
+			if ((ch < 32) || (ch == 0x7f)) {
+				fputc('^', stdout);
+				ch ^= 0x40; /* ^@, ^A, ^B; ^? for DEL */
+			}
 		}
 		fputc(ch, stdout);
 	}
@@ -685,7 +690,7 @@ int main(int argc, char **argv)
 
 	show[0] = NULL;
 
-	while ((c = getopt (argc, argv, "c:f:ghilL:n:o:O:ps:S:t:u:U:w:v")) != EOF)
+	while ((c = getopt (argc, argv, "c:df:ghilL:n:o:O:ps:S:t:u:U:w:v")) != EOF)
 		switch (c) {
 		case 'c':
 			if (optarg && !*optarg)
@@ -694,6 +699,9 @@ int main(int argc, char **argv)
 				read = optarg;
 			if (!write)
 				write = read;
+			break;
+		case 'd':
+			raw_chars = 1;
 			break;
 		case 'L':
 			eval++;

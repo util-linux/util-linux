@@ -16,7 +16,7 @@ blkid \- locate/print block device attributes
 .IR uuid
 
 .B blkid
-.RB [ \-ghlv ]
+.RB [ \-dghlv ]
 .RB [ \-c
 .IR file ]
 .RB [ \-w
@@ -83,6 +83,11 @@ instead of reading from the default cache file
 If you want to start with a clean cache (i.e. don't report devices previously
 scanned but not necessarily available at this time), specify
 .IR /dev/null .
+.TP
+.B \-d
+Don't encode non-printing characters. The non-printing characters are encoded
+by ^ and M- notation by default. Note that \fB-o udev\fR output format uses
+a diffrent encoding and this encoding cannot be disabled.
 .TP
 .B \-g
 Perform a garbage collection pass on the blkid cache to remove
