@@ -1,3 +1,13 @@
+
+dmesg
+-----
+
+  - add new command line option --facility= or --loglevel= to print select
+    loglevel only. For example
+
+		$ dmesg --logleve=6
+		$ dmesg --loglevel=INFO
+
 mount
 -----
 
