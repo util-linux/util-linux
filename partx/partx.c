@@ -36,6 +36,7 @@
 #include "strutils.h"
 #include "xalloc.h"
 #include "partx.h"
+#include "at.h"
 
 /* this is the default upper limit, could be modified by --nr */
 #define SLICES_MAX	256
@@ -178,7 +179,7 @@ err:
 
 static int get_max_partno(const char *disk, dev_t devno)
 {
-	char path[PATH_MAX], *parent;
+	char path[PATH_MAX], *parent, *dirname = NULL;
 	struct stat st;
 	DIR *dir;
 	struct dirent *d;
@@ -200,7 +201,9 @@ static int get_max_partno(const char *disk, dev_t devno)
 	if (!dir)
 		goto dflt;
 
-	 while ((d = readdir(dir))) {
+	dirname = xstrdup(path);
+
+	while ((d = readdir(dir))) {
 		int fd;
 
 		if (!strcmp(d->d_name, ".") ||
@@ -214,7 +217,7 @@ static int get_max_partno(const char *disk, dev_t devno)
 			continue;
 		snprintf(path, sizeof(path), "%s/partition", d->d_name);
 
-		fd = openat(dirfd(dir), path, O_RDONLY);
+		fd = open_at(dirfd(dir), dirname, path, O_RDONLY);
 		if (fd) {
 			int x = 0;
 			FILE *f = fdopen(fd, "r");
@@ -226,6 +229,7 @@ static int get_max_partno(const char *disk, dev_t devno)
 		}
 	}
 
+	free(dirname);
 	closedir(dir);
 	return partno;
 dflt:

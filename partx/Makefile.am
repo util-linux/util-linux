@@ -7,6 +7,7 @@ usrsbin_exec_PROGRAMS += partx
 partx_SOURCES = partx.c partx.h \
 		$(top_srcdir)/lib/blkdev.c \
 		$(top_srcdir)/lib/tt.c \
+		$(top_srcdir)/lib/at.c \
 		$(top_srcdir)/lib/mbsalign.c \
 		$(top_srcdir)/lib/strutils.c \
 		$(top_srcdir)/lib/linux_version.c
