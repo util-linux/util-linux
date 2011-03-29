@@ -45,15 +45,22 @@ umount2(const char *path, int flags) {
 }
 #endif /* __NR_umount2 */
 
-#if !defined(MNT_FORCE)
-/* dare not try to include <linux/mount.h> -- lots of errors */
-#define MNT_FORCE 1
+#ifndef MNT_FORCE
+# define MNT_FORCE        0x00000001	/* Attempt to forcibily umount */
 #endif
 
 #endif /* MNT_FORCE */
 
-#if !defined(MNT_DETACH)
-#define MNT_DETACH 2
+#ifndef MNT_DETACH
+# define MNT_DETACH       0x00000002	/* Just detach from the tree */
+#endif
+
+#ifndef UMOUNT_NOFOLLOW
+# define UMOUNT_NOFOLLOW  0x00000008	/* Don't follow symlink on umount */
+#endif
+
+#ifndef UMOUNT_UNUSED
+# define UMOUNT_UNUSED    0x80000000	/* Flag guaranteed to be unused */
 #endif
 
 
@@ -197,6 +204,61 @@ static void complain(int err, const char *dev) {
   }
 }
 
+/* Check whether the kernel supports UMOUNT_NOFOLLOW flag */
+static int umount_nofollow_support(void)
+{
+	int res = umount2("", UMOUNT_UNUSED);
+	if (res != -1 || errno != EINVAL)
+		return 0;
+
+	res = umount2("", UMOUNT_NOFOLLOW);
+	if (res != -1 || errno != ENOENT)
+		return 0;
+
+	return 1;
+}
+
+static const char *chdir_to_parent(const char *node, char **resbuf)
+{
+	char *tmp, *res;
+	const char *parent;
+	char buf[65536];
+
+	*resbuf = xstrdup(node);
+
+	tmp = strrchr(*resbuf, '/');
+	if (!tmp)
+		die (2, _("umount: internal error: invalid abs path: %s"), node);
+
+	if (tmp != *resbuf) {
+		*tmp = '\0';
+		res = tmp + 1;
+		parent = *resbuf;
+	} else if (tmp[1] != '\0') {
+		res = tmp + 1;
+		parent = "/";
+	} else {
+		res = ".";
+		parent = "/";
+	}
+
+	if (chdir(parent) == -1)
+		die (2, _("umount: failed to chdir to %s: %s"),
+					parent, strerror(errno));
+
+	if (!getcwd(buf, sizeof(buf)))
+		die (2, _("umount: failed to obtain current directory: %s"),
+			strerror(errno));
+
+	if (strcmp(buf, parent) != 0)
+		die (2, _("umount: mountpoint moved (%s -> %s)"), parent, buf);
+
+	if (verbose)
+		printf(_("current directory moved to %s\n"), res);
+
+	return res;
+}
+
 /* Umount a single device.  Return a status code, so don't exit
    on a non-fatal error.  We lock/unlock around each umount.  */
 static int
@@ -206,7 +268,9 @@ umount_one (const char *spec, const char *node, const char *type,
 	int isroot;
 	int res = 0;
 	int status;
-	const char *loopdev;
+	int extra_flags = 0;
+	const char *loopdev, *target = node;
+	char *targetbuf = NULL;
 	int myloop = 0;
 
 	/* Special case for root.  As of 0.99pl10 we can (almost) unmount root;
@@ -237,15 +301,23 @@ umount_one (const char *spec, const char *node, const char *type,
 	if (delloop && is_loop_device(spec))
 		myloop = 1;
 
+	if (restricted) {
+		if (umount_nofollow_support())
+			extra_flags |= UMOUNT_NOFOLLOW;
+
+		/* call umount(2) with relative path to avoid races */
+		target = chdir_to_parent(node, &targetbuf);
+	}
+
 	if (lazy) {
-		res = umount2 (node, MNT_DETACH);
+		res = umount2 (target, MNT_DETACH | extra_flags);
 		if (res < 0)
 			umnt_err = errno;
 		goto writemtab;
 	}
 
 	if (force) {		/* only supported for NFS */
-		res = umount2 (node, MNT_FORCE);
+		res = umount2 (target, MNT_FORCE | extra_flags);
 		if (res == -1) {
 			int errsv = errno;
 			perror("umount2");
@@ -253,11 +325,15 @@ umount_one (const char *spec, const char *node, const char *type,
 			if (errno == ENOSYS) {
 				if (verbose)
 					printf(_("no umount2, trying umount...\n"));
-				res = umount (node);
+				res = umount (target);
 			}
 		}
-	} else
-		res = umount (node);
+	} else if (extra_flags)
+		res = umount2 (target, extra_flags);
+	else
+		res = umount (target);
+
+	free(targetbuf);
 
 	if (res < 0)
 		umnt_err = errno;
