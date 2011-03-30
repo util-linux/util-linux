@@ -457,8 +457,8 @@ char *mnt_resolve_path(const char *path, struct libmnt_cache *cache)
 		p = canonicalize_path(path);
 
 		if (p && cache) {
-			native = strdup(path);
-			real = strcmp(path, p) == 0 ? native : p;
+			real = p;
+			native = strcmp(path, p) == 0 ? real : strdup(path);
 
 			if (!native || !real)
 				goto error;
