@@ -195,6 +195,7 @@ extern struct libmnt_lock *mnt_new_lock(const char *datafile, pid_t id);
 extern void mnt_free_lock(struct libmnt_lock *ml);
 extern void mnt_unlock_file(struct libmnt_lock *ml);
 extern int mnt_lock_file(struct libmnt_lock *ml);
+extern int mnt_lock_block_signals(struct libmnt_lock *ml, int enable);
 
 /* fs.c */
 extern struct libmnt_fs *mnt_new_fs(void);

@@ -794,13 +794,21 @@ struct libmnt_cache *mnt_context_get_cache(struct libmnt_context *cxt)
  * mnt_context_get_lock:
  * @cxt: mount context
  *
- * The application that uses libmount context does not have to care about
- * mtab locking, but with a small exceptions: the application has to be able to
- * remove the lock file when interrupted by signal. It means that properly written
- * mount(8)-like application has to call mnt_unlock_file() from a signal handler.
+ * The libmount applications don't have to care about mtab locking, but with a
+ * small exception: the application has to be able to remove the lock file when
+ * interrupted by signal or signals have to be ignored when the lock is locked.
  *
- * This function returns NULL if mtab file is not writable or nolock or nomtab
- * flags is enabled.
+ * The default behavior is to ignore all signals (except SIGALRM and SIGTRAP)
+ * when the lock is locked. If this behavior is unacceptable then use:
+ *
+ *	lc = mnt_context_get_lock(cxt);
+ *	if (lc)
+ *		mnt_lock_block_signals(lc, FALSE);
+ *
+ * and don't forget to call mnt_unlock_file(lc) before exit.
+ *
+ * This function returns NULL if the lock is unnecessary (mtab file is not writable
+ * or /etc/mtab is symlink to /proc/mounts).
  *
  * Returns: pointer to lock struct or NULL.
  */
@@ -809,9 +817,11 @@ struct libmnt_lock *mnt_context_get_lock(struct libmnt_context *cxt)
 	if (!cxt || (cxt->flags & MNT_FL_NOMTAB) || !cxt->mtab_writable)
 		return NULL;
 
-	if (!cxt->lock && cxt->mtab_path)
+	if (!cxt->lock && cxt->mtab_path) {
 		cxt->lock = mnt_new_lock(cxt->mtab_path, 0);
-
+		if (cxt->lock)
+			mnt_lock_block_signals(cxt->lock, TRUE);
+	}
 	return cxt->lock;
 }
 
