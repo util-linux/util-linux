@@ -21,31 +21,23 @@
 #include "strutils.h"
 #include "mountP.h"
 
-#if defined(MNT_FORCE)
-/* Interesting ... it seems libc knows about MNT_FORCE and presumably
-   about umount2 as well -- need not do anything */
-#else /* MNT_FORCE */
-/* Does the present kernel source know about umount2? */
-# include <linux/unistd.h>
-# ifdef __NR_umount2
-static int umount2(const char *path, int flags);
-_syscall2(int, umount2, const char *, path, int, flags);
-# else /* __NR_umount2 */
-static int
-umount2(const char *path, int flags) {
-	fprintf(stderr, _("umount: compiled without support for -f\n"));
-	errno = ENOSYS;
-	return -1;
-}
-#endif /* __NR_umount2 */
-# if !defined(MNT_FORCE)
-# define MNT_FORCE 1
+/*
+ * umount2 flags
+ */
+#ifndef MNT_FORCE
+# define MNT_FORCE        0x00000001	/* Attempt to forcibily umount */
 #endif
 
-#endif /* MNT_FORCE */
+#ifndef MNT_DETACH
+# define MNT_DETACH       0x00000002	/* Just detach from the tree */
+#endif
 
-#if !defined(MNT_DETACH)
-#define MNT_DETACH 2
+#ifndef UMOUNT_NOFOLLOW
+# define UMOUNT_NOFOLLOW  0x00000008	/* Don't follow symlink on umount */
+#endif
+
+#ifndef UMOUNT_UNUSED
+# define UMOUNT_UNUSED    0x80000000	/* Flag guaranteed to be unused */
 #endif
 
 
@@ -434,7 +426,7 @@ int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg)
 
 static int do_umount(struct libmnt_context *cxt)
 {
-	int rc = 0;
+	int rc = 0, flags = 0;
 	const char *src, *target;
 
 	assert(cxt);
@@ -455,18 +447,15 @@ static int do_umount(struct libmnt_context *cxt)
 		return 0;
 
 	if (cxt->flags & MNT_FL_LAZY)
-		rc = umount2(target, MNT_DETACH);
+		flags |= MNT_DETACH;
 
-	else if (cxt->flags & MNT_FL_FORCE) {
-		rc = umount2(target, MNT_FORCE);
+	else if (cxt->flags & MNT_FL_FORCE)
+		flags |= MNT_FORCE;
 
-		if (rc < 0 && errno == ENOSYS)
-			rc = umount(target);
-	} else
-		rc = umount(target);
-
+	rc = flasg ? umount2(target, flags) : umount(target);
 	if (rc < 0)
 		cxt->syscall_status = -errno;
+
 	/*
 	 * try remount read-only
 	 */
@@ -475,17 +464,18 @@ static int do_umount(struct libmnt_context *cxt)
 
 		cxt->mountflags |= MS_REMOUNT | MS_RDONLY;
 		cxt->flags &= ~MNT_FL_LOOPDEL;
-		DBG(CXT, mnt_debug_h(cxt, "umount(2) failed [errno=%d] -- "
-					"tring remount read-only",
-					-cxt->syscall_status));
+		DBG(CXT, mnt_debug_h(cxt,
+			"umount(2) failed [errno=%d] -- tring remount read-only",
+			-cxt->syscall_status));
 
 		rc = mount(src, target, NULL,
 			    MS_MGC_VAL | MS_REMOUNT | MS_RDONLY, NULL);
 		if (rc < 0) {
 			cxt->syscall_status = -errno;
-			DBG(CXT, mnt_debug_h(cxt, "read-only re-mount(2) failed "
-					"[errno=%d]",
-					-cxt->syscall_status));
+			DBG(CXT, mnt_debug_h(cxt,
+				"read-only re-mount(2) failed [errno=%d]",
+				-cxt->syscall_status));
+
 			return -cxt->syscall_status;
 		}
 		cxt->syscall_status = 0;
@@ -495,9 +485,10 @@ static int do_umount(struct libmnt_context *cxt)
 
 	if (rc < 0) {
 		DBG(CXT, mnt_debug_h(cxt, "umount(2) failed [errno=%d]",
-					-cxt->syscall_status));
+			-cxt->syscall_status));
 		return -cxt->syscall_status;
 	}
+
 	cxt->syscall_status = 0;
 	DBG(CXT, mnt_debug_h(cxt, "umount(2) success"));
 	return 0;
