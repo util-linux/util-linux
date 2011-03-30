@@ -83,7 +83,7 @@ void mnt_free_update(struct libmnt_update *upd)
 }
 
 /*
- * Returns 0 on success, 1 if not file available, -1 in case of error.
+ * Returns 0 on success, <0 in case of error.
  */
 int mnt_update_set_filename(struct libmnt_update *upd, const char *filename,
 			    int userspace_only)
@@ -114,7 +114,7 @@ int mnt_update_set_filename(struct libmnt_update *upd, const char *filename,
 		path = NULL;
 		mnt_has_regular_utab(&path, &rw);
 		if (!rw)
-			return 1;
+			return -EACCES;
 		upd->userspace_only = TRUE;
 	}
 	upd->filename = strdup(path);
@@ -157,7 +157,7 @@ int mnt_update_is_ready(struct libmnt_update *upd)
  * @target: umount target, must be num for mount
  * @fs: mount filesystem description, must be NULL for umount
  *
- * Returns: -1 in case on error, 0 on success, 1 if update is unnecessary.
+ * Returns: <0 in case on error, 0 on success, 1 if update is unnecessary.
  */
 int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 		      const char *target, struct libmnt_fs *fs)
@@ -195,9 +195,10 @@ int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 	upd->mountflags = mountflags;
 
 	rc = mnt_update_set_filename(upd, NULL, 0);
-	if (rc)
+	if (rc) {
+		DBG(UPDATE, mnt_debug_h(upd, "no writable file available [rc=%d]", rc));
 		return rc;	/* error or no file available (rc = 1) */
-
+	}
 	if (target) {
 		upd->target = strdup(target);
 		if (!upd->target)
@@ -693,12 +694,13 @@ static int update_remove_entry(struct libmnt_update *upd, struct libmnt_lock *lc
 			rc = update_table(upd, tb);
 			mnt_free_fs(rem);
 		}
-		mnt_free_table(tb);
 	}
 	if (lc)
 		mnt_unlock_file(lc);
 	else if (u_lc != -1)
 		utab_unlock(u_lc);
+
+	mnt_free_table(tb);
 	return rc;
 }
 
@@ -724,12 +726,13 @@ static int update_modify_target(struct libmnt_update *upd, struct libmnt_lock *l
 			if (!rc)
 				rc = update_table(upd, tb);
 		}
-		mnt_free_table(tb);
 	}
 	if (lc)
 		mnt_unlock_file(lc);
 	else if (u_lc != -1)
 		utab_unlock(u_lc);
+
+	mnt_free_table(tb);
 	return rc;
 }
 
@@ -770,13 +773,14 @@ static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *
 			if (!rc)
 				rc = update_table(upd, tb);
 		}
-		mnt_free_table(tb);
 	}
 
 	if (lc)
 		mnt_unlock_file(lc);
 	else if (u_lc != -1)
 		utab_unlock(u_lc);
+
+	mnt_free_table(tb);
 	return rc;
 }
 
@@ -810,7 +814,6 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 	if (upd->fs) {
 		DBG(UPDATE, mnt_fs_print_debug(upd->fs, stderr));
 	}
-
 	if (!lc && !upd->userspace_only) {
 		lc = mnt_new_lock(upd->filename, 0);
 		if (lc)
