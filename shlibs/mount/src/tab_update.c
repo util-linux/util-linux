@@ -778,9 +778,14 @@ static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *
 /**
  * mnt_update_table:
  * @upd: update
- * @lc: lock
+ * @lc: lock or NULL
  *
  * High-level API to update /etc/mtab (or private /dev/.mount/utab file).
+ *
+ * The @lc lock is optional and will be created if necessary. Note that
+ * the automatically created lock blocks all signals.
+ *
+ * See also mnt_lock_block_signals() and mnt_context_get_lock().
  *
  * Returns: 0 on success, negative number on error.
  */
@@ -801,8 +806,11 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 		DBG(UPDATE, mnt_fs_print_debug(upd->fs, stderr));
 	}
 
-	if (!lc && !upd->userspace_only)
+	if (!lc && !upd->userspace_only) {
 		lc = mnt_new_lock(upd->filename, 0);
+		if (lc)
+			mnt_lock_block_signals(lc, TRUE);
+	}
 
 	if (!upd->fs && upd->target)
 		rc = update_remove_entry(upd, lc);	/* umount */
@@ -824,14 +832,6 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 }
 
 #ifdef TEST_PROGRAM
-
-struct libmnt_lock *lock;
-
-static void lock_fallback(void)
-{
-	if (lock)
-		mnt_unlock_file(lock);
-}
 
 static int update(const char *target, struct libmnt_fs *fs, unsigned long mountflags)
 {
@@ -858,13 +858,7 @@ static int update(const char *target, struct libmnt_fs *fs, unsigned long mountf
 
 	/* [... here should be mount(2) call ...]  */
 
-	filename = mnt_update_get_filename(upd);
-	if (filename) {
-		lock = mnt_new_lock(filename, 0);
-		if (lock)
-			atexit(lock_fallback);
-	}
-	rc = mnt_update_table(upd, lock);
+	rc = mnt_update_table(upd, NULL);
 done:
 	return rc;
 }

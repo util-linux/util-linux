@@ -40,7 +40,11 @@ struct libmnt_lock {
 	char	*lockfile;	/* path to lock file (e.g. /etc/mtab~) */
 	char	*linkfile;	/* path to link file (e.g. /etc/mtab~.<id>) */
 	int	lockfile_fd;	/* lock file descriptor */
-	int	locked;		/* do we own the lock? */
+
+	int	locked :1;	/* do we own the lock? */
+	int	sigblock: 1;	/* block signals when locked */
+
+	sigset_t oldsigmask;
 };
 
 
@@ -100,6 +104,24 @@ void mnt_free_lock(struct libmnt_lock *ml)
 	free(ml->lockfile);
 	free(ml->linkfile);
 	free(ml);
+}
+
+/**
+ * mnt_lock_block_signals:
+ * @ml: struct libmnt_lock handler
+ * @enable: TRUE/FALSE
+ *
+ * Block/unblock signals when the lock is locked, the signals are not blocked
+ * by default.
+ *
+ * Returns: <0 on error, 0 on success.
+ */
+int mnt_lock_block_signals(struct libmnt_lock *ml, int enable)
+{
+	if (!ml)
+		return -EINVAL;
+	ml->sigblock = enable;
+	return 0;
 }
 
 /*
@@ -254,6 +276,11 @@ void mnt_unlock_file(struct libmnt_lock *ml)
 
 	ml->locked = 0;
 	ml->lockfile_fd = -1;
+
+	if (ml->sigblock)
+		sigprocmask(SIG_SETMASK, &ml->oldsigmask, NULL);
+
+	ml->sigblock = 0;
 }
 
 /**
@@ -336,6 +363,20 @@ int mnt_lock_file(struct libmnt_lock *ml)
 	linkfile = mnt_lock_get_linkfile(ml);
 	if (!linkfile)
 		return -EINVAL;
+
+	if (ml->sigblock) {
+		/*
+		 * Block all signals when locked, mnt_unlock_file() will
+		 * restore the old mask.
+		 */
+		sigset_t sigs;
+
+		sigemptyset(&ml->oldsigmask);
+		sigfillset(&sigs);
+		sigdelset(&sigs, SIGTRAP);
+		sigdelset(&sigs, SIGALRM);
+		sigprocmask(SIG_BLOCK, &sigs, &ml->oldsigmask);
+	}
 
 	i = open(linkfile, O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR);
 	if (i < 0) {

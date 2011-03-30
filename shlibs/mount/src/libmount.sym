@@ -126,6 +126,7 @@ global:
 	mnt_has_regular_mtab;
 	mnt_init_debug;
 	mnt_iter_get_direction;
+	mnt_lock_block_signals;
 	mnt_lock_file;
 	mnt_mangle;
 	mnt_match_fstype;
