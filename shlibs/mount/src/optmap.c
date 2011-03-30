@@ -155,6 +155,8 @@ static const struct libmnt_optmap userspace_opts_map[] =
 
    { "uhelper=", MNT_MS_UHELPER },			   /* /sbin/umount.<helper> */
 
+   { "phelper=", MNT_MS_PHELPER },			   /* /sbin/umount.<helper> */
+
    { NULL, 0, 0 }
 };
 

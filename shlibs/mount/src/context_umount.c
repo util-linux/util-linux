@@ -149,6 +149,32 @@ static int mnt_loopdev_associated_fs(const char *devname, struct libmnt_fs *fs)
 	return 0;
 }
 
+static int prepare_helper_from_options(struct libmnt_context *cxt,
+				       const char *name)
+{
+	char *suffix = NULL;
+	const char *opts;
+	size_t valsz;
+
+	if (cxt->flags & MNT_FL_NOHELPERS)
+		return 0;
+
+	opts = mnt_fs_get_user_options(cxt->fs);
+	if (!opts)
+		return 0;
+
+	if (mnt_optstr_get_option((char *) opts, name, &suffix, &valsz))
+		return 0;
+
+	suffix = strndup(suffix, valsz);
+	if (!suffix)
+		return -ENOMEM;
+
+	DBG(CXT, mnt_debug_h(cxt, "umount: umount.%s %s requested", suffix, name));
+
+	return mnt_context_prepare_helper(cxt, "umount", suffix);
+}
+
 /*
  * Note that cxt->fs contains relevant mtab entry!
  */
@@ -179,21 +205,10 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		goto eperm;
 	}
 
-	if (!(cxt->flags & MNT_FL_NOHELPERS) &&
-	     (cxt->user_mountflags & MNT_MS_UHELPER)) {
-
-		char *suffix = NULL;
-		char *o = (char *) mnt_fs_get_user_options(cxt->fs);
-		size_t valsz;
-
-		rc = mnt_optstr_get_option(o, "uhelper", &suffix, &valsz);
-		if (!rc) {
-			suffix = strndup(suffix, valsz);
-			if (!suffix)
-				return -ENOMEM;
-			rc = mnt_context_prepare_helper(cxt, "umount", suffix);
-		}
-		if (rc < 0)
+	if (cxt->user_mountflags & MNT_MS_UHELPER) {
+		/* on uhelper= mount option based helper */
+		rc = prepare_helper_from_options(cxt, "uhelper");
+		if (rc)
 			return rc;
 		if (cxt->helper)
 			return 0;	/* we'll call /sbin/umount.<uhelper> */
@@ -566,8 +581,18 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 		rc = evaluate_permissions(cxt);
 	if (!rc)
 	       rc = mnt_context_prepare_target(cxt);
-	if (!rc && !cxt->helper)
-		rc = mnt_context_prepare_helper(cxt, "umount", NULL);
+
+	if (!rc && !cxt->helper) {
+
+		if (!cxt->restricted && (cxt->user_mountflags & MNT_MS_PHELPER))
+			/* on phelper= mount option based helper */
+			rc = prepare_helper_from_options(cxt, "phelper");
+
+		if (!rc && !cxt->helper)
+			/* on fstype based helper */
+			rc = mnt_context_prepare_helper(cxt, "umount", NULL);
+	}
+
 /* TODO
 	if ((cxt->flags & MNT_FL_LOOPDEL) &&
 	    (!mnt_is_loopdev(src) || mnt_loopdev_is_autoclear(src)))
