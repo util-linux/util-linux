@@ -140,6 +140,7 @@ static int print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 	}
 done:
 	mnt_free_cache(cache);
+	mnt_free_iter(itr);
 	return rc;
 }
 
