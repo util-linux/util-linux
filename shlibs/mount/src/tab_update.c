@@ -837,7 +837,6 @@ static int update(const char *target, struct libmnt_fs *fs, unsigned long mountf
 {
 	int rc;
 	struct libmnt_update *upd;
-	const char *filename;
 
 	DBG(UPDATE, mnt_debug("update test"));
 

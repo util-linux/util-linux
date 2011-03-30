@@ -30,7 +30,7 @@ libmount_la_DEPENDENCIES = $(libmount_la_LIBADD) libmount.sym libmount.h.in
 libmount_la_LDFLAGS = -Wl,--version-script=$(ul_libmount_srcdir)/libmount.sym \
                       -version-info $(LIBMOUNT_VERSION_INFO)
 
-TESTS_LIBS = $(UUID_LIBS)
+TESTS_LIBS = -luuid
 
 if HAVE_SELINUX
 TESTS_LIBS += $(SELINUX_LIBS)
