@@ -392,7 +392,7 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 
 	DBG(CXT, mnt_debug_h(cxt, "%smount(2) "
 			"[source=%s, target=%s, type=%s, "
-			" mountflags=%08lx, mountdata=%s]",
+			" mountflags=0x%08lx, mountdata=%s]",
 			(cxt->flags & MNT_FL_FAKE) ? "(FAKE) " : "",
 			src, target, type,
 			flags, cxt->mountdata ? "yes" : "<none>"));

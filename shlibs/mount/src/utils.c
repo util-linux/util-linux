@@ -71,6 +71,58 @@ static char *stripoff_last_component(char *path)
 	return ++p;
 }
 
+/* Note that the @target has to be absolute path (so at least "/")
+ */
+int mnt_chdir_to_parent(const char *target, char **filename)
+{
+	char *path, *last = NULL;
+	char cwd[PATH_MAX];
+	int rc = -EINVAL;
+
+	if (!target || *target != '/')
+		return -EINVAL;
+
+	path = strdup(target);
+	if (!path)
+		return -ENOMEM;
+
+	if (*(path + 1) != '\0') {
+		last = stripoff_last_component(path);
+		if (!last)
+			goto err;
+	}
+	if (!*path)
+		*path = '/';	/* root */
+
+	if (chdir(path) == -1) {
+		DBG(UTILS, mnt_debug("failed to chdir to %s: %m", path));
+		rc = -errno;
+		goto err;
+	}
+	if (!getcwd(cwd, sizeof(cwd))) {
+		DBG(UTILS, mnt_debug("failed to obtain current directory: %m"));
+		rc = -errno;
+		goto err;
+	}
+	if (strcmp(cwd, path) != 0) {
+		DBG(UTILS, mnt_debug("path moved (%s -> %s)", path, cwd));
+		goto err;
+	}
+
+	DBG(CXT, mnt_debug("current directory moved to %s", path));
+
+	*filename = path;
+
+	if (!last || !*last)
+		memcpy(*filename, ".", 2);
+	else
+		memcpy(*filename, last, strlen(last) + 1);
+	return 0;
+err:
+	free(path);
+	return rc;
+}
+
 /**
  * mnt_mangle:
  * @str: string
@@ -800,6 +852,26 @@ int test_filesystems(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
+int test_chdir(struct libmnt_test *ts, int argc, char *argv[])
+{
+	int rc;
+	char *path = canonicalize_path(argv[1]),
+	     *last = NULL;
+
+	if (!path)
+		return -errno;
+
+	rc = mnt_chdir_to_parent(path, &last);
+	if (!rc) {
+		printf("path='%s', abs='%s', last='%s'\n",
+				argv[1], path, last);
+	}
+	free(path);
+	free(last);
+	return rc;
+}
+
+
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
@@ -810,6 +882,7 @@ int main(int argc, char *argv[])
 	{ "--ends-with",     test_endswith,        "<string> <prefix>" },
 	{ "--mountpoint",    test_mountpoint,      "<path>" },
 	{ "--fs-root",       test_fsroot,          "<path>" },
+	{ "--cd-parent",     test_chdir,           "<path>" },
 	{ NULL }
 	};
 

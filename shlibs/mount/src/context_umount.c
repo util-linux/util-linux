@@ -424,10 +424,25 @@ int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg)
 	return rc;
 }
 
+/* Check whether the kernel supports UMOUNT_NOFOLLOW flag */
+static int umount_nofollow_support(void)
+{
+	int res = umount2("", UMOUNT_UNUSED);
+	if (res != -1 || errno != EINVAL)
+		return 0;
+
+	res = umount2("", UMOUNT_NOFOLLOW);
+	if (res != -1 || errno != ENOENT)
+		return 0;
+
+	return 1;
+}
+
 static int do_umount(struct libmnt_context *cxt)
 {
 	int rc = 0, flags = 0;
 	const char *src, *target;
+	char *tgtbuf = NULL;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -446,15 +461,37 @@ static int do_umount(struct libmnt_context *cxt)
 	if (cxt->flags & MNT_FL_FAKE)
 		return 0;
 
+	DBG(CXT, mnt_debug_h(cxt, "do umount"));
+
+	if (cxt->restricted) {
+		/*
+		 * extra paranoa for non-root users
+		 * -- chdir to the parent of the mountpoint and use NOFOLLOW
+		 *    flag to avoid races and symlink attacks.
+		 */
+		if (umount_nofollow_support())
+			flags |= UMOUNT_NOFOLLOW;
+
+		rc = mnt_chdir_to_parent(target, &tgtbuf);
+		if (rc)
+			return rc;
+		target = tgtbuf;
+	}
+
 	if (cxt->flags & MNT_FL_LAZY)
 		flags |= MNT_DETACH;
 
 	else if (cxt->flags & MNT_FL_FORCE)
 		flags |= MNT_FORCE;
 
-	rc = flasg ? umount2(target, flags) : umount(target);
+	DBG(CXT, mnt_debug_h(cxt, "umount(2) [target='%s', flags=0x%08x]",
+				target, flags));
+
+	rc = flags ? umount2(target, flags) : umount(target);
 	if (rc < 0)
 		cxt->syscall_status = -errno;
+
+	free(tgtbuf);
 
 	/*
 	 * try remount read-only
@@ -468,7 +505,7 @@ static int do_umount(struct libmnt_context *cxt)
 			"umount(2) failed [errno=%d] -- tring remount read-only",
 			-cxt->syscall_status));
 
-		rc = mount(src, target, NULL,
+		rc = mount(src, mnt_fs_get_target(cxt->fs), NULL,
 			    MS_MGC_VAL | MS_REMOUNT | MS_RDONLY, NULL);
 		if (rc < 0) {
 			cxt->syscall_status = -errno;
