@@ -602,8 +602,8 @@ done:
  * If the file does not exist and @writable argument is not NULL then it will
  * try to create the directory (e.g. /dev/.mount) and the file.
  *
- * Returns: 1 if /etc/utab is a reqular file, and 0 in case of error (check
- *          errno for more details).
+ * Returns: 1 if /dev/.mount/utab is a reqular file, and 0 in case of
+ *          error (check errno for more details).
  */
 
 int mnt_has_regular_utab(const char **utab, int *writable)

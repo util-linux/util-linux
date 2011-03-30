@@ -41,8 +41,8 @@ struct libmnt_lock {
 	char	*linkfile;	/* path to link file (e.g. /etc/mtab~.<id>) */
 	int	lockfile_fd;	/* lock file descriptor */
 
-	int	locked :1;	/* do we own the lock? */
-	int	sigblock: 1;	/* block signals when locked */
+	int	locked : 1;	/* do we own the lock? */
+	int	sigblock : 1;	/* block signals when locked */
 
 	sigset_t oldsigmask;
 };
@@ -100,7 +100,7 @@ void mnt_free_lock(struct libmnt_lock *ml)
 {
 	if (!ml)
 		return;
-	DBG(LOCKS, mnt_debug_h(ml, "free"));
+	DBG(LOCKS, mnt_debug_h(ml, "free%s", ml->locked ? " !!! LOCKED !!!" : ""));
 	free(ml->lockfile);
 	free(ml->linkfile);
 	free(ml);
@@ -120,7 +120,8 @@ int mnt_lock_block_signals(struct libmnt_lock *ml, int enable)
 {
 	if (!ml)
 		return -EINVAL;
-	ml->sigblock = enable;
+	DBG(LOCKS, mnt_debug_h(ml, "signals: %s", enable ? "BLOCKED" : "UNBLOCKED"));
+	ml->sigblock = enable ? 1 : 0;
 	return 0;
 }
 
@@ -248,8 +249,7 @@ void mnt_unlock_file(struct libmnt_lock *ml)
 	if (!ml)
 		return;
 
-
-	if (ml->locked == 0 && ml->lockfile && ml->linkfile)
+	if (!ml->locked && ml->lockfile && ml->linkfile)
 	{
 		/* We have (probably) all files, but we don't own the lock,
 		 * Really? Check it! Maybe ml->locked wasn't set properly
@@ -271,15 +271,17 @@ void mnt_unlock_file(struct libmnt_lock *ml)
 		unlink(ml->linkfile);
 	if (ml->lockfile_fd >= 0)
 		close(ml->lockfile_fd);
-	if (ml->locked == 1 && ml->lockfile)
+	if (ml->locked && ml->lockfile) {
 		unlink(ml->lockfile);
-
+		DBG(LOCKS, mnt_debug_h(ml, "unlink %s", ml->lockfile));
+	}
 	ml->locked = 0;
 	ml->lockfile_fd = -1;
 
-	if (ml->sigblock)
+	if (ml->sigblock) {
+		DBG(LOCKS, mnt_debug_h(ml, "restoring sigmask"));
 		sigprocmask(SIG_SETMASK, &ml->oldsigmask, NULL);
-
+	}
 	ml->sigblock = 0;
 }
 
@@ -396,7 +398,7 @@ int mnt_lock_file(struct libmnt_lock *ml)
 	waittime.tv_nsec = (1000 * MOUNTLOCK_WAITTIME);
 
 	/* Repeat until it was us who made the link */
-	while (ml->locked == 0) {
+	while (!ml->locked) {
 		struct timeval now;
 		struct flock flock;
 		int j;
@@ -459,9 +461,8 @@ int mnt_lock_file(struct libmnt_lock *ml)
 			ml->lockfile_fd = -1;
 		}
 	}
-	DBG(LOCKS, mnt_debug_h(ml,
-			"%s: (%d) successfully locked\n",
-			lockfile, getpid()));
+	DBG(LOCKS, mnt_debug_h(ml, "%s: (%d) successfully locked",
+					lockfile, getpid()));
 	unlink(linkfile);
 	return 0;
 
