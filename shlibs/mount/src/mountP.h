@@ -161,8 +161,8 @@ struct libmnt_fs {
 	struct list_head ents;
 
 	int		id;		/* mountinfo[1]: ID */
-	int		parent;		/* moutninfo[2]: parent */
-	dev_t		devno;		/* moutninfo[3]: st_dev */
+	int		parent;		/* mountinfo[2]: parent */
+	dev_t		devno;		/* mountinfo[3]: st_dev */
 
 	char		*bindsrc;	/* utab, full path from fstab[1] for bind mounts */
 
@@ -177,11 +177,11 @@ struct libmnt_fs {
 
 	char		*optstr;	/* fstab[4], merged options */
 	char		*vfs_optstr;	/* mountinfo[6]: fs-independent (VFS) options */
-	char		*fs_optstr;	/* mountinfo[11]: fs-depend options */
+	char		*fs_optstr;	/* mountinfo[11]: fs-dependent options */
 	char		*user_optstr;	/* userspace mount options */
 	char		*attrs;		/* mount attributes */
 
-	int		freq;		/* fstab[5]:  dump frequency in days */
+	int		freq;		/* fstab[5]: dump frequency in days */
 	int		passno;		/* fstab[6]: pass number on parallel fsck */
 
 	int		flags;		/* MNT_FS_* flags */
@@ -242,9 +242,9 @@ struct libmnt_context
 	char	*fstype_pattern;	/* for mnt_match_fstype() */
 	char	*optstr_pattern;	/* for mnt_match_options() */
 
-	struct libmnt_fs *fs;		/* filesystem description (type, mountpopint, device, ...) */
+	struct libmnt_fs *fs;		/* filesystem description (type, mountpoint, device, ...) */
 
-	struct libmnt_table *fstab;	/* fstab (or mtab for some remounts) entires */
+	struct libmnt_table *fstab;	/* fstab (or mtab for some remounts) entries */
 	struct libmnt_table *mtab;	/* mtab entries */
 
 	int	optsmode;	/* fstab optstr mode MNT_OPTSMODE_{AUTO,FORCE,IGNORE} */
@@ -258,11 +258,11 @@ struct libmnt_context
 	struct libmnt_lock	*lock;	/* mtab lock */
 	struct libmnt_update	*update;/* mtab/utab update */
 
-	const char	*mtab_path; /* writable mtab */
-	int		mtab_writable; /* ismtab writeable */
+	const char	*mtab_path; /* path to mtab */
+	int		mtab_writable; /* is mtab writable */
 
-	const char	*utab_path; /* writable mtab */
-	int		utab_writable; /* ismtab writeable */
+	const char	*utab_path; /* path to utab */
+	int		utab_writable; /* is utab writable */
 
 	int	flags;		/* private context flags */
 	int	ambi;		/* libblkid returns ambivalent result */

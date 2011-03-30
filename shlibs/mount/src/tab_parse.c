@@ -244,7 +244,7 @@ enomem:
 /*
  * Returns {m,fs}tab or mountinfo file format (MNT_FMT_*)
  *
- * Note that we aren't tring to guess utab file format, because this file has
+ * Note that we aren't trying to guess utab file format, because this file has
  * to be always parsed by private libmount routines with explicitly defined
  * format.
  *
@@ -350,7 +350,7 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 	DBG(TAB, mnt_debug_h(tb, "%s: start parsing", filename));
 
 	/* necessary for /proc/mounts only, the /proc/self/mountinfo
-	 * parser sets propertly the flag
+	 * parser sets the flag properly
 	 */
 	if (filename && strcmp(filename, _PATH_PROC_MOUNTS) == 0)
 		flags = MNT_FS_KERNEL;
@@ -422,7 +422,7 @@ static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 	DIR *dir = NULL;
 	struct dirent **namelist = NULL;
 
-	/* TODO: it would be nice to have a scandir() implementaion that
+	/* TODO: it would be nice to have a scandir() implementation that
 	 *       is able to use already opened directory */
 	n = scandir(dirname, &namelist, NULL, versionsort);
 	if (n <= 0)

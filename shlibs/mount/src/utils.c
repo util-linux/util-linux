@@ -202,11 +202,11 @@ int mnt_fstype_is_netfs(const char *type)
 /**
  * mnt_match_fstype:
  * @type: filesystem type
- * @pattern: filesystem name or comma delimitted list of names
+ * @pattern: filesystem name or comma delimited list of names
  *
  * The @pattern list of filesystem can be prefixed with a global
  * "no" prefix to invert matching of the whole list. The "no" could
- * also used for individual items in the @pattern list. So,
+ * also be used for individual items in the @pattern list. So,
  * "nofoo,bar" has the same meaning as "nofoo,nobar".
  *
  * "bar"  : "nofoo,bar"		-> False   (global "no" prefix)
@@ -284,10 +284,10 @@ static int check_option(const char *haystack, size_t len,
 /**
  * mnt_match_options:
  * @optstr: options string
- * @pattern: comma delimitted list of options
+ * @pattern: comma delimited list of options
  *
  * The "no" could used for individual items in the @options list. The "no"
- * prefix does not have a global meanning.
+ * prefix does not have a global meaning.
  *
  * Unlike fs type matching, nonetdev,user and nonetdev,nouser have
  * DIFFERENT meanings; each option is matched explicitly as specified.
@@ -556,7 +556,7 @@ static int try_write(const char *filename)
  * If the file does not exist and @writable argument is not NULL then it will
  * try to create the file
  *
- * Returns: 1 if /etc/mtab is a reqular file, and 0 in case of error (check
+ * Returns: 1 if /etc/mtab is a regular file, and 0 in case of error (check
  *          errno for more details).
  */
 int mnt_has_regular_mtab(const char **mtab, int *writable)
@@ -602,10 +602,9 @@ done:
  * If the file does not exist and @writable argument is not NULL then it will
  * try to create the directory (e.g. /dev/.mount) and the file.
  *
- * Returns: 1 if /dev/.mount/utab is a reqular file, and 0 in case of
+ * Returns: 1 if /dev/.mount/utab is a regular file, and 0 in case of
  *          error (check errno for more details).
  */
-
 int mnt_has_regular_utab(const char **utab, int *writable)
 {
 	struct stat st;
