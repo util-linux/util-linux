@@ -572,12 +572,31 @@ is_valid_loop(struct mntentchn *mc, struct mntentchn *fs)
 	return 0;
 }
 
+/*
+ * umount helper call based on {u,p}helper= mount option
+ */
+static int check_helper_umountprog(const char *spec, const char *node,
+				   const char *opts, const char *name,
+				   int *status)
+{
+	char *helper;
+
+	if (!external_allowed || !opts)
+		return 0;
+
+	helper = get_option_value(opts, name);
+	if (helper)
+		return check_special_umountprog(spec, node, helper, status);
+
+	return 0;
+}
+
 static int
 umount_file (char *arg) {
 	struct mntentchn *mc, *fs;
 	const char *file, *options;
 	int fstab_has_user, fstab_has_users, fstab_has_owner, fstab_has_group;
-	int ok;
+	int ok, status = 0;
 	struct stat statbuf;
 
 	if (!*arg) {		/* "" would be expanded to `pwd` */
@@ -643,22 +662,11 @@ umount_file (char *arg) {
 			    _("umount: %s is not mounted (according to mtab)"),
 			    file);
 		/*
-		 * uhelper - unprivileged umount helper
-		 * -- external umount (for example HAL mounts)
+		 * uhelper - unprivileged umount helper (e.g. HAL/udisks mounts)
 		 */
-		if (external_allowed) {
-			char *uhelper = NULL;
-
-			if (mc->m.mnt_opts)
-				uhelper = get_option_value(mc->m.mnt_opts,
-							   "uhelper=");
-			if (uhelper) {
-				int status = 0;
-				if (check_special_umountprog(arg, arg,
-							uhelper, &status))
-					return status;
-			}
-		}
+		if (check_helper_umountprog(arg, arg, mc->m.mnt_opts,
+					    "uhelper=", &status))
+			return status;
 
 		/* The 2.4 kernel will generally refuse to mount the same
 		   filesystem on the same mount point, but will accept NFS.
@@ -729,6 +737,14 @@ umount_file (char *arg) {
 			die (2, _("umount: only %s can unmount %s from %s"),
 			     mtab_user ? mtab_user : "root",
 			     fs->m.mnt_fsname, fs->m.mnt_dir);
+
+	} else if (mc) {
+		/*
+		 * phelper - privileged umount helper (e.g. pam_mount)
+		 */
+		 if (check_helper_umountprog(arg, arg, mc->m.mnt_opts,
+					    "phelper=", &status))
+			return status;
 	}
 
 	if (mc)
