@@ -71,7 +71,7 @@ struct libmnt_context *mnt_new_context(void)
 	mnt_has_regular_mtab(&cxt->mtab_path, &cxt->mtab_writable);
 
 	if (!cxt->mtab_writable)
-		/* use /dev/.mount/utab if /etc/mtab is useless */
+		/* use /run/mount/utab if /etc/mtab is useless */
 		mnt_has_regular_utab(&cxt->utab_path, &cxt->utab_writable);
 
 	return cxt;
@@ -1228,7 +1228,7 @@ int mnt_context_merge_mflags(struct libmnt_context *cxt)
 }
 
 /*
- * Prepare /etc/mtab or /dev/.mount/utab
+ * Prepare /etc/mtab or /run/mount/utab
  */
 int mnt_context_prepare_update(struct libmnt_context *cxt)
 {

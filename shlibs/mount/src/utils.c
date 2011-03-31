@@ -600,9 +600,9 @@ done:
  * Don't export this to libmount API -- utab is private library stuff.
  *
  * If the file does not exist and @writable argument is not NULL then it will
- * try to create the directory (e.g. /dev/.mount) and the file.
+ * try to create the directory (e.g. /run/mount) and the file.
  *
- * Returns: 1 if /dev/.mount/utab is a regular file, and 0 in case of
+ * Returns: 1 if utab is a regular file, and 0 in case of
  *          error (check errno for more details).
  */
 int mnt_has_regular_utab(const char **utab, int *writable)
@@ -682,12 +682,20 @@ const char *mnt_get_mtab_path(void)
 /*
  * Don't export this to libmount API -- utab is private library stuff.
  *
- * Returns: path to /dev/.mount/utab or $LIBMOUNT_UTAB.
+ * Returns: path to /run/mount/utab (or /dev/.mount/utab) or $LIBMOUNT_UTAB.
  */
 const char *mnt_get_utab_path(void)
 {
+	struct stat st;
 	const char *p = safe_getenv("LIBMOUNT_UTAB");
-	return p ? : MNT_PATH_UTAB;
+
+	if (p)
+		return p;
+
+	if (stat(MNT_RUNTIME_TOPDIR, &st) == 0)
+		return MNT_PATH_UTAB;
+
+	return MNT_PATH_UTAB_OLD;
 }
 
 
