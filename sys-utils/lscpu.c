@@ -350,6 +350,11 @@ init_mode(void)
 {
 	int m = 0;
 
+	if (sysrootlen)
+		/* reading info from any /{sys,proc} dump, don't mix it with
+		 * information about our real CPU */
+		return 0;
+
 #if defined(__alpha__) || defined(__ia64__)
 	m |= MODE_64BIT;	/* 64bit platforms only */
 #endif
