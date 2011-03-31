@@ -635,7 +635,7 @@ int main(int argc, char **argv)
 	int fd, c, what = 0, lower = 0, upper = 0, rc = 0;
 	int tt_flags = 0;
 	char *type = NULL;
-	char *device = NULL; /* pointer to atgv[], ie: /dev/sda1 */
+	char *device = NULL; /* pointer to argv[], ie: /dev/sda1 */
 	char *wholedisk = NULL; /* allocated, ie: /dev/sda */
 	dev_t disk_devno = 0, part_devno = 0;
 
