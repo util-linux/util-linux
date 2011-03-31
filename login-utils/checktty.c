@@ -33,6 +33,7 @@
 #include "pathnames.h"
 #include "login.h"
 #include "strutils.h"
+#include "c.h"
 
 #ifndef TTY_MAJOR
 #define TTY_MAJOR 4
