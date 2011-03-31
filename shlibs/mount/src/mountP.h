@@ -92,7 +92,11 @@ mnt_debug_h(void *handler, const char *mesg, ...)
 #define MNT_MNTTABDIR_EXT	".fstab"
 
 /* library private paths */
-#define MNT_PATH_UTAB	"/dev/.mount/utab"
+#define MNT_RUNTIME_TOPDIR	"/run"
+#define MNT_RUNTIME_TOPDIR_OLD	"/dev"
+
+#define MNT_PATH_UTAB		MNT_RUNTIME_TOPDIR "/mount/utab"
+#define MNT_PATH_UTAB_OLD	MNT_RUNTIME_TOPDIR_OLD "/.mount/utab"
 
 #define MNT_UTAB_HEADER	"# libmount utab file\n"
 
@@ -194,7 +198,7 @@ struct libmnt_fs {
 #define MNT_FS_NET	(1 << 2) /* network filesystem */
 #define MNT_FS_SWAP	(1 << 3) /* swap device */
 #define MNT_FS_KERNEL	(1 << 4) /* data from /proc/{mounts,self/mountinfo} */
-#define MNT_FS_MERGED	(1 << 5) /* already merged data from /dev/.mount/utab */
+#define MNT_FS_MERGED	(1 << 5) /* already merged data from /run/mount/utab */
 
 extern int __mnt_fs_get_flags(struct libmnt_fs *fs);
 extern int __mnt_fs_set_flags(struct libmnt_fs *fs, int flags);

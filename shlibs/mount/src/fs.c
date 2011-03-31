@@ -948,7 +948,7 @@ const char *mnt_fs_get_attributes(struct libmnt_fs *fs)
  *
  * Sets mount attributes. The attributes are mount(2) and mount(8) independent
  * options, these options are not send to kernel and are not interpreted by
- * libmount. The attributes are stored in /dev/.mount/utab only.
+ * libmount. The attributes are stored in /run/mount/utab only.
  *
  * The atrtributes are managed by libmount in userspace only. It's possible
  * that information stored in userspace will not be available for libmount
@@ -1104,7 +1104,7 @@ int mnt_fs_set_root(struct libmnt_fs *fs, const char *root)
 
 /**
  * mnt_fs_get_bindsrc:
- * @fs: /dev/.mount/utab entry
+ * @fs: /run/mount/utab entry
  *
  * Returns: full path that was used for mount(2) on MS_BIND
  */

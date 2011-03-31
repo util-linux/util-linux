@@ -91,7 +91,7 @@ struct libmnt_table;
 /**
  * libmnt_update
  *
- * /etc/mtab or /dev/.mount/utab update description
+ * /etc/mtab or utab update description
  */
 struct libmnt_update;
 

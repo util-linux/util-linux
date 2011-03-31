@@ -13,7 +13,7 @@
  * The struct libmnt_update provides abstraction to manage mount options in userspace independently on
  * system configuration. This low-level API works on system with and without /etc/mtab. On 
  * systems without the regular /etc/mtab file are userspace mount options (e.g. user=)
- * stored to the /dev/.mount/utab file.
+ * stored to the /run/mount/utab file.
  *
  * It's recommended to use high-level struct libmnt_context API.
  */
@@ -107,7 +107,7 @@ int mnt_update_set_filename(struct libmnt_update *upd, const char *filename,
 	if (upd->filename)
 		return 0;
 
-	/* detect tab filename -- /etc/mtab or /dev/.mount/utab
+	/* detect tab filename -- /etc/mtab or /run/mount/utab
 	 */
 	mnt_has_regular_mtab(&path, &rw);
 	if (!rw) {
@@ -789,7 +789,7 @@ static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *
  * @upd: update
  * @lc: lock or NULL
  *
- * High-level API to update /etc/mtab (or private /dev/.mount/utab file).
+ * High-level API to update /etc/mtab (or private /run/mount/utab file).
  *
  * The @lc lock is optional and will be created if necessary. Note that
  * the automatically created lock blocks all signals.

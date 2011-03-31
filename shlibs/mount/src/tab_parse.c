@@ -668,7 +668,7 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
  * @filename: overwrites default (/etc/mtab or $LIBMOUNT_MTAB) or NULL
  *
  * This function parses /etc/mtab or /proc/self/mountinfo +
- * /dev/.mount/utabs or /proc/mounts.
+ * /run/mount/utabs or /proc/mounts.
  *
  * See also mnt_table_set_parser_errcb().
  *
@@ -702,7 +702,7 @@ int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename)
 	}
 
 	/*
-	 * try to read user specific information from /dev/.mount/utabs
+	 * try to read user specific information from /run/mount/utabs
 	 */
 	utab = mnt_get_utab_path();
 	if (utab) {
