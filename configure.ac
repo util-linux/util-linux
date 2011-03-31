@@ -1,4 +1,6 @@
-AC_INIT(util-linux, 2.19, kzak@redhat.com)
+AC_INIT(util-linux,
+	m4_esyscmd([tools/git-version-gen .tarball-version]),
+	kzak@redhat.com)
 
 AC_PREREQ(2.60)
 

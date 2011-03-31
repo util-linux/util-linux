@@ -36,6 +36,8 @@ cscope.out
 tags
 .deps
 .libs
+.tarball-version
+.version
 config/ltmain.sh
 
 # libuuid depends on AX_TLS macro

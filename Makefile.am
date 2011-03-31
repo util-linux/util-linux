@@ -60,6 +60,7 @@ endif
 ACLOCAL_AMFLAGS = -I m4
 
 EXTRA_DIST = \
+		.version \
 		autogen.sh \
 		README.devel \
 		README.licensing \
@@ -70,6 +71,10 @@ EXTRA_DIST = \
 		tools \
 		docs
 
+# Arrange so that .tarball-version appears only in the distribution
+# tarball, and never in a checked-out repository.
+dist-hook:
+	echo $(VERSION) > $(distdir)/.tarball-version
 
 distclean-local:
 	-find . -name \*~ -o -name \*.orig -o -name \*.rej | xargs rm -f
@@ -93,3 +98,9 @@ ENABLE_ALL = --enable-static-programs \
  --enable-login-utils --enable-write --enable-arch --enable-mount
 
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --disable-use-tty-group $(ENABLE_ALL)
+
+
+BUILT_SOURCES = .version
+.version:
+	echo $(VERSION) > $@-t && mv $@-t $@
+

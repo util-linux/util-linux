@@ -73,6 +73,8 @@ echo "   autoheader: $(autoheader --version | head -1)"
 echo "   automake:   $(automake --version | head -1)"
 echo "   libtoolize: $(libtoolize --version | head -1)"
 
+rm -rf autom4te.cache
+
 set -e
 po/update-potfiles
 autopoint --force $AP_OPTS
