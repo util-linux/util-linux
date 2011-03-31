@@ -361,7 +361,7 @@ init_mode(void)
 	/* platforms with 64bit flag in /proc/cpuinfo, define
 	 * 32bit default here */
 #if defined(__i386__) || defined(__x86_64__) || \
-    defined(__s390x__) || defined(__s390__)
+    defined(__s390x__) || defined(__s390__) || defined(__sparc_v9__)
 	m |= MODE_32BIT;
 #endif
 	return m;
@@ -394,6 +394,7 @@ read_basicinfo(struct lscpu_desc *desc)
 		else if (lookup(buf, "cpu MHz", &desc->mhz)) ;
 		else if (lookup(buf, "flags", &desc->flags)) ;		/* x86 */
 		else if (lookup(buf, "features", &desc->flags)) ;	/* s390 */
+		else if (lookup(buf, "type", &desc->flags)) ;		/* sparc64 */
 		else if (lookup(buf, "bogomips", &desc->bogomips)) ;
 		else
 			continue;
@@ -411,6 +412,8 @@ read_basicinfo(struct lscpu_desc *desc)
 			desc->mode |= MODE_32BIT | MODE_64BIT;		/* x86_64 */
 		if (strstr(buf, " zarch "))
 			desc->mode |= MODE_32BIT | MODE_64BIT;		/* s390x */
+		if (strstr(buf, " sun4v ") || strstr(buf, " sun4u "))
+			desc->mode |= MODE_32BIT | MODE_64BIT;		/* sparc64 */
 	}
 
 	fclose(fp);
