@@ -112,15 +112,15 @@ struct lscpu_desc {
 
 	/* sockets -- based on core_siblings (internal kernel map of cpuX's
 	 * hardware threads within the same physical_package_id (socket)) */
-	int		nsockets;	/* number of all sockets */
+	int		nsockets;	/* number of all online sockets */
 	cpu_set_t	**socketmaps;	/* unique core_siblings */
 
 	/* cores -- based on thread_siblings (internel kernel map of cpuX's
 	 * hardware threads within the same core as cpuX) */
-	int		ncores;		/* number of all cores */
+	int		ncores;		/* number of all online cores */
 	cpu_set_t	**coremaps;	/* unique thread_siblings */
 
-	int		nthreads;	/* number of threads */
+	int		nthreads;	/* number of online threads */
 
 	int		ncaches;
 	struct cpu_cache *caches;
@@ -423,8 +423,11 @@ read_basicinfo(struct lscpu_desc *desc)
 		maxcpus = desc->ncpus > 2048 ? desc->ncpus : 2048;
 
 	/* get mask for online CPUs */
-	if (path_exist(_PATH_SYS_SYSTEM "/cpu/online"))
+	if (path_exist(_PATH_SYS_SYSTEM "/cpu/online")) {
+		size_t setsize = CPU_ALLOC_SIZE(maxcpus);
 		desc->online = path_cpulist(_PATH_SYS_SYSTEM "/cpu/online");
+		desc->nthreads = CPU_COUNT_S(setsize, desc->online);
+	}
 }
 
 static int
@@ -594,8 +597,13 @@ read_topology(struct lscpu_desc *desc, int num)
 		ncores = CPU_COUNT_S(setsize, core_siblings) / nthreads;
 		/* number of sockets */
 		nsockets = desc->ncpus / nthreads / ncores;
-		/* all threads */
-		desc->nthreads = nsockets * ncores * nthreads;
+
+		/* all threads, see also read_basicinfo()
+		 * -- this is fallback for kernels where is not
+		 *    /sys/devices/system/cpu/online.
+		 */
+		if (!desc->nthreads)
+			desc->nthreads = nsockets * ncores * nthreads;
 
 		desc->socketmaps = calloc(nsockets, sizeof(cpu_set_t *));
 		if (!desc->socketmaps)
