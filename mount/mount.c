@@ -209,7 +209,7 @@ static const struct opt_map opt_map[] = {
 static int opt_nofail = 0;
 
 static const char *opt_loopdev, *opt_vfstype, *opt_offset, *opt_sizelimit,
-        *opt_encryption, *opt_speed, *opt_comment, *opt_uhelper, *opt_phelper;
+        *opt_encryption, *opt_speed, *opt_comment, *opt_uhelper, *opt_helper;
 
 static int is_readonly(const char *node);
 static int mounted (const char *spec0, const char *node0);
@@ -229,7 +229,7 @@ static struct string_opt_map {
   { "speed=", 0, &opt_speed },
   { "comment=", 1, &opt_comment },
   { "uhelper=", 0, &opt_uhelper },
-  { "phelper=", 0, &opt_phelper },
+  { "helper=", 0, &opt_helper },
   { NULL, 0, NULL }
 };
 

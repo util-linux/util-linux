@@ -654,6 +654,15 @@ umount_file (char *arg) {
 	if (!mc && verbose)
 		printf(_("Could not find %s in mtab\n"), file);
 
+	if (mc) {
+		/*
+		 * helper - umount helper (e.g. pam_mount)
+		 */
+		 if (check_helper_umountprog(arg, arg, mc->m.mnt_opts,
+					    "helper=", &status))
+			return status;
+	}
+
 	if (restricted) {
 		char *mtab_user = NULL;
 
@@ -738,13 +747,6 @@ umount_file (char *arg) {
 			     mtab_user ? mtab_user : "root",
 			     fs->m.mnt_fsname, fs->m.mnt_dir);
 
-	} else if (mc) {
-		/*
-		 * phelper - privileged umount helper (e.g. pam_mount)
-		 */
-		 if (check_helper_umountprog(arg, arg, mc->m.mnt_opts,
-					    "phelper=", &status))
-			return status;
 	}
 
 	if (mc)

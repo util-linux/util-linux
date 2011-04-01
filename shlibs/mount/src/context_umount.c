@@ -584,9 +584,9 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 
 	if (!rc && !cxt->helper) {
 
-		if (!cxt->restricted && (cxt->user_mountflags & MNT_MS_PHELPER))
-			/* on phelper= mount option based helper */
-			rc = prepare_helper_from_options(cxt, "phelper");
+		if (cxt->user_mountflags & MNT_MS_HELPER)
+			/* on helper= mount option based helper */
+			rc = prepare_helper_from_options(cxt, "helper");
 
 		if (!rc && !cxt->helper)
 			/* on fstype based helper */
