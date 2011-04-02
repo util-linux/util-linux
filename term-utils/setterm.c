@@ -61,6 +61,8 @@
  *   [ -powerdown [0-60] ]
  *   [ -blength [0-2000] ]
  *   [ -bfreq freq ]
+ *   [ -version ]
+ *   [ -help ]
  *
  *
  * Semantics:
@@ -660,6 +662,61 @@ show_tabs(void) {
 	}
 }
 
+static void __attribute__ ((__noreturn__))
+usage(FILE *out) {
+/* Print error message about arguments, and the command's syntax. */
+
+	if (out == stderr)
+		warnx(_("Argument error."));
+
+	fprintf(out, _(
+		"\nUsage:\n"
+		" %s [options]\n"), program_invocation_short_name);
+
+	fprintf(out, _(
+	"\nOptions:\n"
+	"  [ -term terminal_name ]\n"
+	"  [ -reset ]\n"
+	"  [ -initialize ]\n"
+	"  [ -cursor [on|off] ]\n"
+	"  [ -repeat [on|off] ]\n"
+	"  [ -appcursorkeys [on|off] ]\n"
+	"  [ -linewrap [on|off] ]\n"
+	"  [ -default ]\n"
+	"  [ -foreground black|blue|green|cyan|red|magenta|yellow|white|default ]\n"
+	"  [ -background black|blue|green|cyan|red|magenta|yellow|white|default ]\n"
+	"  [ -ulcolor black|grey|blue|green|cyan|red|magenta|yellow|white ]\n"
+	"  [ -ulcolor bright blue|green|cyan|red|magenta|yellow|white ]\n"
+	"  [ -hbcolor black|grey|blue|green|cyan|red|magenta|yellow|white ]\n"
+	"  [ -hbcolor bright blue|green|cyan|red|magenta|yellow|white ]\n"
+	"  [ -inversescreen [on|off] ]\n"
+	"  [ -bold [on|off] ]\n"
+	"  [ -half-bright [on|off] ]\n"
+	"  [ -blink [on|off] ]\n"
+	"  [ -reverse [on|off] ]\n"
+	"  [ -underline [on|off] ]\n"
+	"  [ -store ]\n"
+	"  [ -clear [all|rest] ]\n"
+	"  [ -tabs [ tab1 tab2 tab3 ... ] ]      (tabn = 1-160)\n"
+	"  [ -clrtabs [ tab1 tab2 tab3 ... ] ]   (tabn = 1-160)\n"
+	"  [ -regtabs [1-160] ]\n"
+	"  [ -blank [0-60|force|poke] ]\n"
+	"  [ -dump   [1-NR_CONSOLES] ]\n"
+	"  [ -append [1-NR_CONSOLES] ]\n"
+	"  [ -file dumpfilename ]\n"
+	"  [ -msg [on|off] ]\n"
+	"  [ -msglevel [0-8] ]\n"
+	"  [ -powersave [on|vsync|hsync|powerdown|off] ]\n"
+	"  [ -powerdown [0-60] ]\n"
+	"  [ -blength [0-2000] ]\n"
+	"  [ -bfreq freqnumber ]\n"
+	"  [ -version ]\n"
+	"  [ -help ]\n"));
+
+	fprintf(out, _("\nFor more information see lsblk(1).\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
 
 #define STRCMP(str1,str2) strncmp(str1,str2,strlen(str1))
 
@@ -748,68 +805,17 @@ parse_option(char *option, int argc, char **argv, int *bad_arg) {
 	else if (STRCMP(option, "standout") == 0)
 		parse_standout(argc, argv, &opt_standout, &opt_st_attr, bad_arg);
 #endif
+	else if (STRCMP(option, "version") == 0) {
+		printf(_("%s from %s\n"), program_invocation_short_name,
+					  PACKAGE_STRING);
+		exit(EXIT_SUCCESS);
+	} else if (STRCMP(option, "help") == 0)
+		usage(stdout);
 	else
 		*bad_arg = TRUE;
 }
 
 /* End of command line parsing routines. */
-
-static void
-usage(char *prog_name) {
-/* Print error message about arguments, and the command's syntax. */
-
-	fprintf(stderr, _("%s: Argument error, usage\n"), prog_name);
-	fprintf(stderr, "\n");
-	fprintf(stderr, "%s\n", prog_name);
-	fprintf(stderr, _("  [ -term terminal_name ]\n"));
-	fprintf(stderr, _("  [ -reset ]\n"));
-	fprintf(stderr, _("  [ -initialize ]\n"));
-	fprintf(stderr, _("  [ -cursor [on|off] ]\n"));
-#if 0
-	fprintf(stderr, _("  [ -snow [on|off] ]\n"));
-	fprintf(stderr, _("  [ -softscroll [on|off] ]\n"));
-#endif
-	fprintf(stderr, _("  [ -repeat [on|off] ]\n"));
-	fprintf(stderr, _("  [ -appcursorkeys [on|off] ]\n"));
-	fprintf(stderr, _("  [ -linewrap [on|off] ]\n"));
-	fprintf(stderr, _("  [ -default ]\n"));
-	fprintf(stderr, _("  [ -foreground black|blue|green|cyan"));
-	fprintf(stderr, _("|red|magenta|yellow|white|default ]\n"));
-	fprintf(stderr, _("  [ -background black|blue|green|cyan"));
-	fprintf(stderr, _("|red|magenta|yellow|white|default ]\n"));
-	fprintf(stderr, _("  [ -ulcolor black|grey|blue|green|cyan"));
-	fprintf(stderr, _("|red|magenta|yellow|white ]\n"));
-	fprintf(stderr, _("  [ -ulcolor bright blue|green|cyan"));
-	fprintf(stderr, _("|red|magenta|yellow|white ]\n"));
-	fprintf(stderr, _("  [ -hbcolor black|grey|blue|green|cyan"));
-	fprintf(stderr, _("|red|magenta|yellow|white ]\n"));
-	fprintf(stderr, _("  [ -hbcolor bright blue|green|cyan"));
-	fprintf(stderr, _("|red|magenta|yellow|white ]\n"));
-#if 0
-	fprintf(stderr, _("  [ -standout [ attr ] ]\n"));
-#endif
-	fprintf(stderr, _("  [ -inversescreen [on|off] ]\n"));
-	fprintf(stderr, _("  [ -bold [on|off] ]\n"));
-	fprintf(stderr, _("  [ -half-bright [on|off] ]\n"));
-	fprintf(stderr, _("  [ -blink [on|off] ]\n"));
-	fprintf(stderr, _("  [ -reverse [on|off] ]\n"));
-	fprintf(stderr, _("  [ -underline [on|off] ]\n"));
-	fprintf(stderr, _("  [ -store ]\n"));
-	fprintf(stderr, _("  [ -clear [all|rest] ]\n"));
-	fprintf(stderr, _("  [ -tabs [ tab1 tab2 tab3 ... ] ]      (tabn = 1-160)\n"));
-	fprintf(stderr, _("  [ -clrtabs [ tab1 tab2 tab3 ... ] ]   (tabn = 1-160)\n"));
-	fprintf(stderr, _("  [ -regtabs [1-160] ]\n"));
-	fprintf(stderr, _("  [ -blank [0-60|force|poke] ]\n"));
-	fprintf(stderr, _("  [ -dump   [1-NR_CONSOLES] ]\n"));
-	fprintf(stderr, _("  [ -append [1-NR_CONSOLES] ]\n"));
-	fprintf(stderr, _("  [ -file dumpfilename ]\n"));
-	fprintf(stderr, _("  [ -msg [on|off] ]\n"));
-	fprintf(stderr, _("  [ -msglevel [0-8] ]\n"));
-	fprintf(stderr, _("  [ -powersave [on|vsync|hsync|powerdown|off] ]\n"));
-	fprintf(stderr, _("  [ -powerdown [0-60] ]\n"));
-	fprintf(stderr, _("  [ -blength [0-2000] ]\n"));
-	fprintf(stderr, _("  [ -bfreq freqnumber ]\n"));
-}
 
 static char *ti_entry(const char *name) {
 	/* name: Terminfo capability string to lookup. */
@@ -1244,10 +1250,8 @@ main(int argc, char **argv) {
 
 	/* Display syntax message if error in arguments. */
 
-	if (bad_arg) {
-		usage(argv[0]);
-		exit(1);
-	}
+	if (bad_arg)
+		usage(stderr);
 
 	/* Find out terminal name. */
 
