@@ -202,7 +202,7 @@ int opt_tb_array[161];		/* Array for tab list */
 int opt_msglevel_num;
 int opt_ps_mode, opt_pd_min;	/* powersave mode/powerdown time */
 
-char opt_sn_name[200] = "screen.dump";
+char opt_sn_name[PATH_MAX + 1] = "screen.dump";
 
 static void screendump(int vcnum, FILE *F);
 
@@ -525,8 +525,9 @@ parse_snapfile(int argc, char **argv, int *option, int *opt_all, int *bad_arg) {
 	if (argc != 1 || *option)
 		*bad_arg = TRUE;
 	*option = TRUE;
+	memset(opt_all, 0, PATH_MAX + 1);
 	if (argc == 1)
-		strcpy((char *)opt_all, argv[0]);
+		strncpy((char *)opt_all, argv[0], PATH_MAX);
 }
 
 static void
