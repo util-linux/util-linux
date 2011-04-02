@@ -125,19 +125,11 @@ int main(int argc, char *argv[])
 
 			/* This is my hack from setpwnam.c -janl */
 			while (buf[len-1] != '\n' && !feof(fp)) {
-				wchar_t *x;
-
 				/* Extend input buffer if it failed getting the whole line */
-
 				/* So now we double the buffer size */
 				bufsiz *= 2;
 
-				x = realloc(buf, bufsiz * sizeof(wchar_t));
-				if (!x) {
-					free(buf);
-					err(EXIT_FAILURE, _("realloc failed"));
-				}
-				buf = x;
+				buf = xrealloc(buf, bufsiz * sizeof(wchar_t));
 
 				/* And fill the rest of the buffer */
 				if (!fgetws(&buf[len], bufsiz/2, fp))
