@@ -107,6 +107,8 @@ int main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 
+	buf = xmalloc(bufsiz * sizeof(wchar_t));
+
 	do {
 		if (*argv) {
 			if ((fp = fopen(*argv, "r")) == NULL) {
@@ -117,8 +119,6 @@ int main(int argc, char *argv[])
 			}
 			filename = *argv++;
 		}
-
-		buf = xmalloc(bufsiz * sizeof(wchar_t));
 
 		while (fgetws(buf, bufsiz, fp)) {
 			len = wcslen(buf);
