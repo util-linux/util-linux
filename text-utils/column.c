@@ -53,13 +53,14 @@
 
 #include "widechar.h"
 #include "c.h"
+#include "xalloc.h"
 
 #ifdef HAVE_WIDECHAR
 #define wcs_width(s) wcswidth(s,wcslen(s))
 static wchar_t *mbs_to_wcs(const char *);
 #else
 #define wcs_width(s) strlen(s)
-#define mbs_to_wcs(s) strdup(s)
+#define mbs_to_wcs(s) xstrdup(s)
 static char *mtsafe_strtok(char *, const char *, char **);
 #define wcstok mtsafe_strtok
 #endif
@@ -282,12 +283,10 @@ maketbl()
 		    (cols[coloff] = wcstok(p, separator, &wcstok_state)) != NULL;
 		    p = NULL) {
 			if (++coloff == maxcols) {
-				cols = realloc(cols, ((u_int)maxcols + DEFCOLS)
+				cols = xrealloc(cols, ((u_int)maxcols + DEFCOLS)
 					 * sizeof(wchar_t *));
-				lens = realloc(lens, ((u_int)maxcols + DEFCOLS)
+				lens = xrealloc(lens, ((u_int)maxcols + DEFCOLS)
 					* sizeof(int));
-				if (!cols || !lens)
-					err(EXIT_FAILURE, _("out of memory?"));
 				memset((char *)lens + maxcols * sizeof(int),
 					0, DEFCOLS * sizeof(int));
 				maxcols += DEFCOLS;
@@ -346,9 +345,7 @@ input(fp)
 			maxlength = len;
 		if (entries == maxentry) {
 			maxentry += DEFNUM;
-			list = realloc(list, (u_int)maxentry * sizeof(wchar_t *));
-			if (!list)
-				err(EXIT_FAILURE, _("out of memory?"));
+			list = xrealloc(list, (u_int)maxentry * sizeof(wchar_t *));
 		}
 		list[entries++] = wcsdup(buf);
 	}
@@ -403,8 +400,7 @@ emalloc(size)
 {
 	char *p;
 
-	if (!(p = malloc(size)))
-		err(EXIT_FAILURE, _("out of memory?"));
+	p = xmalloc(size);
 	memset(p, 0, size);
 	return (p);
 }
