@@ -135,6 +135,9 @@ extern int klogctl(int type, char *buf, int len);
 
 /* Constants. */
 
+/* Non-standard return values. */
+#define EXIT_DUMPFILE	-1
+
 /* Keyboard types. */
 #define PC	 0
 #define OLIVETTI 1
@@ -1066,17 +1069,17 @@ perform_sequence(int vcterm) {
 		else if (opt_bl_min == BLANKSCREEN) {
 			char ioctlarg = TIOCL_BLANKSCREEN;
 			if (ioctl(0,TIOCLINUX,&ioctlarg))
-				fprintf(stderr,_("cannot force blank\n"));
+				warn(_("cannot force blank"));
 		} else if (opt_bl_min == UNBLANKSCREEN) {
 			char ioctlarg = TIOCL_UNBLANKSCREEN;
 			if (ioctl(0,TIOCLINUX,&ioctlarg))
-				fprintf(stderr,_("cannot force unblank\n"));
+				warn(_("cannot force unblank"));
 		} else if (opt_bl_min == BLANKEDSCREEN) {
 			char ioctlarg = TIOCL_BLANKEDSCREEN;
 			int ret;
 			ret = ioctl(0,TIOCLINUX,&ioctlarg);
 			if (ret < 0)
-				fprintf(stderr,_("cannot get blank status\n"));
+				warn(_("cannot get blank status"));
 			else
 				printf("%d\n",ret);
 		}
@@ -1088,7 +1091,7 @@ perform_sequence(int vcterm) {
 		ioctlarg[0] = TIOCL_SETVESABLANK;
 		ioctlarg[1] = opt_ps_mode;
 		if (ioctl(0,TIOCLINUX,ioctlarg))
-			fprintf(stderr,_("cannot (un)set powersave mode\n"));
+			warn(_("cannot (un)set powersave mode"));
 	}
 
 	/* -powerdown [0-60]. */
@@ -1107,12 +1110,9 @@ perform_sequence(int vcterm) {
 		FILE *F;
 
 		F = fopen(opt_sn_name, opt_snap ? "w" : "a");
-		if (!F) {
-			perror(opt_sn_name);
-			fprintf(stderr,("setterm: can not open dump file %s for output\n"),
+		if (!F)
+			err(EXIT_DUMPFILE, _("can not open dump file %s for output"),
 				opt_sn_name); 
-			exit(-1);
-		}
 		screendump(opt_sn_num, F);
 		fclose(F);
 	}
@@ -1127,7 +1127,7 @@ perform_sequence(int vcterm) {
 			result = klogctl(6, NULL, 0);
 
 		if (result != 0)
-			printf(_("klogctl error: %s\n"), strerror(errno));
+			warn(_("klogctl error"));
 	}
 
 	/* -msglevel [0-8] */
@@ -1135,7 +1135,7 @@ perform_sequence(int vcterm) {
 		/* 8 -- Set level of messages printed to console */
 		result = klogctl(8, NULL, opt_msglevel_num);
 		if (result != 0)
-			printf(_("klogctl error: %s\n"), strerror(errno));
+			warn(_("klogctl error"));
 	}
 
 	/* -blength [0-2000] */
@@ -1201,18 +1201,18 @@ screendump(int vcnum, FILE *F) {
 	*q++ = '\n';
     }
     if (fwrite(outbuf, 1, q-outbuf, F) != q-outbuf) {
-	fprintf(stderr, _("Error writing screendump\n"));
+	warnx(_("Error writing screendump"));
 	goto error;
     }
     close(fd);
     return;
 
 read_error:
-    fprintf(stderr, _("Couldn't read %s\n"), infile);
+    warnx(_("Couldn't read %s"), infile);
 error:
     if (fd >= 0)
 	    close(fd);
-    exit(1);
+    exit(EXIT_FAILURE);
 }
 
 int
@@ -1221,6 +1221,7 @@ main(int argc, char **argv) {
 	int arg, modifier;
 	char *term;			/* Terminal type. */
 	int vcterm;			/* Set if terminal is a virtual console. */
+	int errret;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -1259,16 +1260,21 @@ main(int argc, char **argv) {
 		term = opt_te_terminal_name;
 	} else {
 		term = getenv("TERM");
-		if (term == NULL) {
-			fprintf(stderr, _("%s: $TERM is not defined.\n"),
-				argv[0]);
-			exit(1);
-		}
+		if (term == NULL)
+			errx(EXIT_FAILURE, _("$TERM is not defined."));
 	}
 
 	/* Find terminfo entry. */
 
-	setupterm(term, 1, (int *)0);
+	if (setupterm(term, 1, &errret))
+		switch(errret) {
+		case -1:
+			errx(EXIT_FAILURE, _("terminfo database cannot be found"));
+		case 0:
+			errx(EXIT_FAILURE, _("%s: unknown terminal type"), term);
+		case 1:
+			errx(EXIT_FAILURE, _("terminal is hardcopy"));
+		}
 
 	/* See if the terminal is a virtual console terminal. */
 
@@ -1278,5 +1284,5 @@ main(int argc, char **argv) {
 
 	perform_sequence(vcterm);
 
-	return 0;
+	return EXIT_SUCCESS;
 }
