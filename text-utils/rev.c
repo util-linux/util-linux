@@ -56,6 +56,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <signal.h>
+#include <getopt.h>
 
 #include "nls.h"
 #include "xalloc.h"
@@ -70,10 +71,14 @@ static void sig_handler(int signo)
 	_exit(EXIT_SUCCESS);
 }
 
-static void __attribute__((__noreturn__)) usage(FILE *out)
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out, _("Usage: %s [file ...]\n"),
-			program_invocation_short_name);
+	fprintf(out, _("Usage: %s [options] [file ...]\n"),
+		program_invocation_short_name);
+
+	fprintf(out, _("\nOptions:\n"
+		       " -V, --version   output version information and exit\n"
+		       " -h, --help      display this help and exit\n"));
 
 	fprintf(out, _("\nFor more information see rev(1).\n"));
 
@@ -95,9 +100,18 @@ int main(int argc, char *argv[])
 	signal(SIGINT, sig_handler);
 	signal(SIGTERM, sig_handler);
 
-	while ((ch = getopt(argc, argv, "")) != -1)
+	static const struct option longopts[] = {
+		{ "version",    no_argument,       0, 'V' },
+		{ "help",       no_argument,       0, 'h' },
+		{ NULL,         0, 0, 0 }
+	};
+
+	while ((ch = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
 		switch(ch) {
-		case '?':
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+						  PACKAGE_STRING);
+			exit(EXIT_SUCCESS);
 		case 'h':
 			usage(stdout);
 		default:
