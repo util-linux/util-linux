@@ -234,7 +234,7 @@ parse_term(int argc, char **argv, int *option, char **opt_term, int *bad_arg) {
 }
 
 static void
-parse_none(int argc, char **argv, int *option, int *bad_arg) {
+parse_none(int argc, char **argv __attribute__ ((__unused__)), int *option, int *bad_arg) {
 	/* argc: Number of arguments for this option. */
 	/* argv: Arguments for this option. */
 	/* option: Term flag to set. */
@@ -1156,7 +1156,8 @@ screendump(int vcnum, FILE * F)
 	char infile[MAXPATHLEN];
 	unsigned char header[4];
 	unsigned int rows, cols;
-	int fd, i, j;
+	int fd;
+	size_t i, j;
 	char *inbuf, *outbuf, *p, *q;
 
 	sprintf(infile, "/dev/vcsa%d", vcnum);
@@ -1201,7 +1202,7 @@ screendump(int vcnum, FILE * F)
 			q--;
 		*q++ = '\n';
 	}
-	if (fwrite(outbuf, 1, q - outbuf, F) != q - outbuf) {
+	if (fwrite(outbuf, 1, q - outbuf, F) != (size_t) (q - outbuf)) {
 		warnx(_("Error writing screendump"));
 		goto error;
 	}
