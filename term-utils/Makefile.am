@@ -44,7 +44,7 @@ if BUILD_RESET
 dist_usrbin_exec_SCRIPTS = reset
 dist_man_MANS += reset.1
 endif
-EXTRA_DIST += README.reset reset.033c
+EXTRA_DIST += reset.033c
 
 if BUILD_MESG
 usrbin_exec_PROGRAMS += mesg
