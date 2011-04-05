@@ -113,9 +113,9 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
  */
 static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 {
-	int rc;
+	int rc, end = 0;
 	unsigned int maj, min;
-	char *fstype, *src;
+	char *fstype, *src, *p;
 
 	rc = sscanf(s,	"%u "		/* (1) id */
 			"%u "		/* (2) parent */
@@ -123,11 +123,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 			"%ms "		/* (4) mountroot */
 			"%ms "		/* (5) target */
 			"%ms"		/* (6) vfs options (fs-independent) */
-			"%*[^-]"	/* (7) optional fields */
-			"- "		/* (8) separator */
-			"%ms "		/* (9) FS type */
-			"%ms "		/* (10) source */
-			"%ms",		/* (11) fs options (fs specific) */
+			"%n",		/* number of read bytes */
 
 			&fs->id,
 			&fs->parent,
@@ -135,11 +131,28 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 			&fs->root,
 			&fs->target,
 			&fs->vfs_optstr,
+			&end);
+
+	if (rc >= 7 && end > 0)
+		s += end;
+
+	/* (7) optional fields, terminated by " - " */
+	p = strstr(s, " - ");
+	if (!p) {
+		DBG(TAB, mnt_debug("mountinfo parse error: not found separator"));
+		return -EINVAL;
+	}
+	s = p + 3;
+
+	rc += sscanf(s,	"%ms "		/* (8) FS type */
+			"%ms "		/* (9) source */
+			"%ms",		/* (10) fs options (fs specific) */
+
 			&fstype,
 			&src,
 			&fs->fs_optstr);
 
-	if (rc == 10) {
+	if (rc >= 10) {
 		fs->flags |= MNT_FS_KERNEL;
 		fs->devno = makedev(maj, min);
 
