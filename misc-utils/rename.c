@@ -14,6 +14,7 @@ for i in $@; do N=`echo "$i" | sed "s/$FROM/$TO/g"`; mv "$i" "$N"; done
  * in cases involving special characters. Here a C version.
  */
 #include <stdio.h>
+#include <stdio_ext.h>
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -71,8 +72,15 @@ static int ask(char *name)
 	}
 	else {
 		buf[0] = c;
-		if (c != '\n' && tty_cbreak) /* no purge necessary */
+		if (c != '\n' && tty_cbreak) {
+			/* Possibly purge a multi-byte character; or do a
+			   required purge of the rest of the line (including
+			   the newline) if the tty has been put back in
+			   canonical mode (for example by a shell after a
+			   SIGTSTP signal). */
+			__fpurge(stdin);
 			printf("\n");
+		}
 		else if (c != '\n')
 			while ((c = fgetc(stdin)) != '\n' && c != EOF);
 	}
