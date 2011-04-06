@@ -68,6 +68,7 @@
 #include "c.h"
 
 #define	IGNOREUSER	"sleeper"
+#define WRITE_TIME_OUT	300		/* in seconds */
 
 #ifndef MAXHOSTNAMELEN
 # ifdef HOST_NAME_MAX
@@ -88,6 +89,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(
 		"\nOptions:\n"
 		" -n, --nobanner          do not print banner, works only for root\n"
+		" -t, --timeout TIMEOUT   write timeout in seconds\n"
 		" -V, --version           output version information and exit\n"
 		" -h, --help              display this help and exit\n\n"));
 
@@ -105,6 +107,7 @@ main(int argc, char **argv) {
 	int print_banner = TRUE;
 	char *mbuf;
 	size_t mbufsize;
+	long timeout = WRITE_TIME_OUT;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -112,18 +115,24 @@ main(int argc, char **argv) {
 
 	static const struct option longopts[] = {
 		{ "nobanner",	no_argument,		0, 'n' },
+		{ "timeout",	required_argument,	0, 't' },
 		{ "version",	no_argument,		0, 'V' },
 		{ "help",	no_argument,		0, 'h' },
 		{ NULL,	0, 0, 0 }
 	};
 
-	while ((ch = getopt_long(argc, argv, "nVh", longopts, NULL)) != -1) {
+	while ((ch = getopt_long(argc, argv, "nt:Vh", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'n':
 			if (geteuid() == 0)
 				print_banner = FALSE;
 			else
 				warnx(_("--nobanner is available only for root"));
+			break;
+		case 't':
+			timeout = strtoll_or_err(optarg, _("invalid timeout argument"));
+			if (timeout < 1)
+				errx(EXIT_FAILURE, _("invalid timeout argument: %s"), optarg);
 			break;
 		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,
@@ -161,7 +170,7 @@ main(int argc, char **argv) {
 			continue;
 
 		xstrncpy(line, utmpptr->ut_line, sizeof(utmpptr->ut_line));
-		if ((p = ttymsg(&iov, 1, line, 60*5)) != NULL)
+		if ((p = ttymsg(&iov, 1, line, timeout)) != NULL)
 			warnx("%s", p);
 	}
 	endutent();
