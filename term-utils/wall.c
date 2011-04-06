@@ -66,8 +66,6 @@
 #include "carefulputc.h"
 #include "c.h"
 
-void	makemsg __P((char *));
-
 #define	IGNOREUSER	"sleeper"
 
 #ifndef MAXHOSTNAMELEN
@@ -78,9 +76,8 @@ void	makemsg __P((char *));
 # endif
 #endif
 
-int nobanner;
-int mbufsize;
-char *mbuf;
+/* Function prototypes */
+char *makemsg(char *fname, size_t *mbufsize, int print_banner);
 
 static void __attribute__((__noreturn__)) usage(void)
 {
@@ -96,16 +93,19 @@ main(int argc, char **argv) {
 	struct utmp *utmpptr;
 	char *p;
 	char line[sizeof(utmpptr->ut_line) + 1];
+	int print_banner = TRUE;
+	char *mbuf;
+	size_t mbufsize;
 
 	setlocale(LC_ALL, "");
-        bindtextdomain(PACKAGE, LOCALEDIR);
-        textdomain(PACKAGE);
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	while ((ch = getopt(argc, argv, "n")) != -1) {
 		switch (ch) {
 		case 'n':
 			if (geteuid() == 0)
-				nobanner = 1;
+				print_banner = FALSE;
 			break;
 		case '?':
 		default:
@@ -117,9 +117,7 @@ main(int argc, char **argv) {
 	if (argc > 1)
 		usage();
 
-	makemsg(*argv);
-
-	setutent();
+	mbuf = makemsg(*argv, &mbufsize, print_banner);
 
 	iov.iov_base = mbuf;
 	iov.iov_len = mbufsize;
@@ -144,12 +142,12 @@ main(int argc, char **argv) {
 			warnx("%s", p);
 	}
 	endutent();
+	free(mbuf);
 	exit(EXIT_SUCCESS);
 }
 
-void
-makemsg(fname)
-	char *fname;
+char *
+makemsg(char *fname, size_t *mainmbufsize, int print_banner)
 {
 	register int ch, cnt;
 	struct tm *lt;
@@ -158,24 +156,39 @@ makemsg(fname)
 	time_t now;
 	FILE *fp;
 	int fd;
-	char *p, *whom, *where, hostname[MAXHOSTNAMELEN],
-		lbuf[MAXHOSTNAMELEN + 320],
-		tmpname[sizeof(_PATH_TMP) + 20];
+	char *p, *whom, *where, *hostname, *lbuf, *tmpname, *tmpenv, *mbuf;
+	size_t mbufsize;
+	long line_max;
 
-	sprintf(tmpname, "%s/wall.XXXXXX", _PATH_TMP);
+	hostname = xmalloc(sysconf(_SC_HOST_NAME_MAX) + 1);
+	line_max = sysconf(_SC_LINE_MAX);
+	lbuf = xmalloc(line_max);
+
+	tmpname = xmalloc(PATH_MAX);
+	tmpenv = getenv("TMPDIR");
+	if ((tmpenv))
+		snprintf(tmpname, PATH_MAX, "%s/%s.XXXXXX", tmpenv,
+			program_invocation_short_name);
+	else
+		snprintf(tmpname, PATH_MAX, "%s/%s.XXXXXX", _PATH_TMP,
+			program_invocation_short_name);
 	if (!(fd = mkstemp(tmpname)) || !(fp = fdopen(fd, "r+")))
-		errx(EXIT_FAILURE, _("can't open temporary file"));
-
+		err(EXIT_FAILURE, _("can't open temporary file %s"), tmpname);
 	unlink(tmpname);
+	free(tmpname);
 
-	if (!nobanner) {
+	if (print_banner == TRUE) {
 		if (!(whom = getlogin()) || !*whom)
 			whom = (pw = getpwuid(getuid())) ? pw->pw_name : "???";
-		if (!whom || strlen(whom) > 100)
+		if (!whom) {
 			whom = "someone";
-		where = ttyname(2);
-		if (!where || strlen(where) > 100)
+			warn(_("cannot get passwd uid"));
+		}
+		where = ttyname(STDOUT_FILENO);
+		if (!where) {
 			where = "somewhere";
+			warn(_("cannot get tty name"));
+		}
 		gethostname(hostname, sizeof(hostname));
 		time(&now);
 		lt = localtime(&now);
@@ -199,6 +212,8 @@ makemsg(fname)
 	}
 	fprintf(fp, "%79s\r\n", " ");
 
+	free(hostname);
+
 	if (fname) {
 		/*
 		 * When we are not root, but suid or sgid, refuse to read files
@@ -206,16 +221,16 @@ makemsg(fname)
 		 * After all, our invoker can easily do "wall < file"
 		 * instead of "wall file".
 		 */
-		int uid = getuid();
+		uid_t uid = getuid();
 		if (uid && (uid != geteuid() || getgid() != getegid()))
 			errx(EXIT_FAILURE, _("will not read %s - use stdin."),
 			     fname);
 
 		if (!freopen(fname, "r", stdin))
-			errx(EXIT_FAILURE, _("can't read %s."), fname);
+			err(EXIT_FAILURE, _("cannot open file %s"), fname);
 	}
 
-	while (fgets(lbuf, sizeof(lbuf), stdin)) {
+	while (fgets(lbuf, line_max, stdin)) {
 		for (cnt = 0, p = lbuf; (ch = *p) != '\0'; ++p, ++cnt) {
 			if (cnt == 79 || ch == '\n') {
 				for (; cnt < 79; ++cnt)
@@ -229,16 +244,21 @@ makemsg(fname)
 		}
 	}
 	fprintf(fp, "%79s\r\n", " ");
+
+	free(lbuf);
 	rewind(fp);
 
 	if (fstat(fd, &sbuf))
 		err(EXIT_FAILURE, _("fstat failed"));
 
 	mbufsize = sbuf.st_size;
+	memcpy(mainmbufsize, &mbufsize, sizeof(size_t));
 	mbuf = xmalloc(mbufsize);
 
 	if (fread(mbuf, sizeof(*mbuf), mbufsize, fp) != mbufsize)
 		err(EXIT_FAILURE, _("fread failed"));
 
 	close(fd);
+	fclose(fp);
+	return(mbuf);
 }
