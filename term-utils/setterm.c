@@ -1183,12 +1183,10 @@ screendump(int vcnum, FILE * F)
 	cols = header[1];
 	if (rows * cols == 0)
 		goto read_error;
-	inbuf = malloc(rows * cols * 2);
-	outbuf = malloc(rows * (cols + 1));
-	if (!inbuf || !outbuf) {
-		fputs(_("Out of memory"), stderr);
-		goto error;
-	}
+
+	inbuf = xmalloc(rows * cols * 2);
+	outbuf = xmalloc(rows * (cols + 1));
+
 	if (read(fd, inbuf, rows * cols * 2) != rows * cols * 2)
 		goto read_error;
 	p = inbuf;
