@@ -57,6 +57,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <utmp.h>
+#include <getopt.h>
 
 #include "nls.h"
 #include "xalloc.h"
@@ -78,11 +79,19 @@
 
 /* Function prototypes */
 char *makemsg(char *fname, size_t *mbufsize, int print_banner);
+static void usage(FILE *out);
 
-static void __attribute__((__noreturn__)) usage(void)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	errx(EXIT_FAILURE, _("usage: %s [-n] [file]\n"),
-	     program_invocation_short_name);
+	fprintf(out, _("Usage: %s [options] [file]\n"),
+		program_invocation_short_name);
+	fprintf(out, _(
+		"\nOptions:\n"
+		" -n, --nobanner          do not print banner, works only for root\n"
+		" -V, --version           output version information and exit\n"
+		" -h, --help              display this help and exit\n\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int
@@ -101,21 +110,35 @@ main(int argc, char **argv) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((ch = getopt(argc, argv, "n")) != -1) {
+	static const struct option longopts[] = {
+		{ "nobanner",	no_argument,		0, 'n' },
+		{ "version",	no_argument,		0, 'V' },
+		{ "help",	no_argument,		0, 'h' },
+		{ NULL,	0, 0, 0 }
+	};
+
+	while ((ch = getopt_long(argc, argv, "nVh", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'n':
 			if (geteuid() == 0)
 				print_banner = FALSE;
+			else
+				warnx(_("--nobanner is available only for root"));
 			break;
-		case '?':
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+						  PACKAGE_STRING);
+			exit(EXIT_SUCCESS);
+		case 'h':
+			usage(stdout);
 		default:
-			usage();
+			usage(stderr);
 		}
 	}
 	argc -= optind;
 	argv += optind;
 	if (argc > 1)
-		usage();
+		usage(stderr);
 
 	mbuf = makemsg(*argv, &mbufsize, print_banner);
 
