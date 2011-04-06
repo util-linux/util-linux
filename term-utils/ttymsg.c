@@ -64,12 +64,13 @@
  * ignored (exclusive-use, lack of permission, etc.).
  */
 char *
-ttymsg(struct iovec *iov, int iovcnt, char *line, int tmout) {
+ttymsg(struct iovec *iov, size_t iovcnt, char *line, int tmout) {
 	static char device[MAXNAMLEN];
 	static char errbuf[MAXNAMLEN+1024];
-	register int cnt, fd, left, wret;
+	size_t cnt, left;
+	ssize_t wret;
 	struct iovec localiov[6];
-	int forked = 0, errsv;
+	int fd, forked = 0, errsv;
 
 	if (iovcnt > sizeof(localiov) / sizeof(localiov[0]))
 		return (_("too many iov's (change code in wall/ttymsg.c)"));
@@ -106,7 +107,7 @@ ttymsg(struct iovec *iov, int iovcnt, char *line, int tmout) {
 
 	for (;;) {
 		wret = writev(fd, iov, iovcnt);
-		if (wret >= left)
+		if (wret >= (ssize_t) left)
 			break;
 		if (wret >= 0) {
 			left -= wret;
@@ -115,13 +116,13 @@ ttymsg(struct iovec *iov, int iovcnt, char *line, int tmout) {
 				    iovcnt * sizeof(struct iovec));
 				iov = localiov;
 			}
-			for (cnt = 0; wret >= iov->iov_len; ++cnt) {
+			for (cnt = 0; wret >= (ssize_t) iov->iov_len; ++cnt) {
 				wret -= iov->iov_len;
 				++iov;
 				--iovcnt;
 			}
 			if (wret) {
-				iov->iov_base += wret;
+				iov->iov_base = (char *) iov->iov_base + wret;
 				iov->iov_len -= wret;
 			}
 			continue;
@@ -132,7 +133,7 @@ ttymsg(struct iovec *iov, int iovcnt, char *line, int tmout) {
 
 			if (forked) {
 				(void) close(fd);
-				_exit(1);
+				_exit(EXIT_FAILURE);
 			}
 			cpid = fork();
 			if (cpid < 0) {
@@ -169,7 +170,7 @@ ttymsg(struct iovec *iov, int iovcnt, char *line, int tmout) {
 			break;
 		(void) close(fd);
 		if (forked)
-			_exit(1);
+			_exit(EXIT_FAILURE);
 		if (strlen(strerror(errno)) > 1000)
 			(void) sprintf(errbuf, _("%s: BAD ERROR, message is "
 						 "far too long"), device);
@@ -184,6 +185,6 @@ ttymsg(struct iovec *iov, int iovcnt, char *line, int tmout) {
 
 	(void) close(fd);
 	if (forked)
-		_exit(0);
+		_exit(EXIT_SUCCESS);
 	return (NULL);
 }

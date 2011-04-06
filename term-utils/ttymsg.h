@@ -1,2 +1,2 @@
-char *ttymsg(struct iovec *iov, int iovcnt, char *line, int tmout);
+char *ttymsg(struct iovec *iov, size_t iovcnt, char *line, int tmout);
 
