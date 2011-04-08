@@ -196,8 +196,6 @@ main(int argc, char * argv[]) {
 			xflag = 1;
 			break;
 		default:
-			fprintf(stderr,
-				_("%s: option parse error\n"), progname);
 			exit(1);
 		}
 	}
