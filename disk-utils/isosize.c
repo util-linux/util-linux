@@ -24,6 +24,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 
 #include "nls.h"
 #include "c.h"
@@ -117,7 +118,6 @@ struct iso_primary_descriptor {
     unsigned char unused5                   [ISODCL (1396, 2048)];
 };
 
-const char *progname;
 int divisor = 0;
 
 static void
@@ -159,17 +159,13 @@ main(int argc, char * argv[]) {
 	int j, ct;
 	char *p;
 
-	progname = argv[0];
-	if ((p = strrchr(progname, '/')) != NULL)
-		progname = p+1;
-
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
 	if (argc >= 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-		printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
+		printf(_("%s (%s)\n"), program_invocation_short_name, PACKAGE_STRING);
 		exit(0);
 	}
 
@@ -195,7 +191,7 @@ main(int argc, char * argv[]) {
 
 	if (ct <= 0) {
 		fprintf(stderr, _("Usage: %s [-x] [-d <num>] iso9660-image\n"),
-			progname);
+			program_invocation_short_name);
 		exit(1);
 	}
 
