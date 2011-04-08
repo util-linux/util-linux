@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "nls.h"
+#include "c.h"
 
 #define ISODCL(from, to) (to - from + 1)
 
@@ -124,24 +125,14 @@ isosize(char *filenamep) {
 	int fd, nsecs, ssize;
 	struct iso_primary_descriptor ipd;
 
-	if ((fd = open(filenamep, O_RDONLY)) < 0) {
-		perror(filenamep);
-		fprintf(stderr, _("%s: failed to open: %s\n"),
-			progname, filenamep);
-		exit(1);
-	}
-	if (lseek(fd, 16 << 11, 0) == (off_t)-1) {
-		perror("lseek");
-		fprintf(stderr, _("%s: seek error on %s\n"),
-			progname, filenamep);
-		exit(1);
-	}
-	if (read(fd, &ipd, sizeof(ipd)) < 0) {
-		perror("read");
-		fprintf(stderr, _("%s: read error on %s\n"),
-			progname, filenamep);
-		exit(1);
-	}
+	if ((fd = open(filenamep, O_RDONLY)) < 0)
+		err(EXIT_FAILURE, _("failed to open %s"), filenamep);
+
+	if (lseek(fd, 16 << 11, 0) == (off_t)-1)
+		err(EXIT_FAILURE, _("seek error on %s"), filenamep);
+
+	if (read(fd, &ipd, sizeof(ipd)) < 0)
+		err(EXIT_FAILURE, _("read error on %s"), filenamep);
 
 	nsecs = isonum_733(ipd.volume_space_size);
 	ssize = isonum_723(ipd.logical_block_size); /* nowadays always 2048 */
