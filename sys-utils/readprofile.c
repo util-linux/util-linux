@@ -323,8 +323,10 @@ main(int argc, char **argv) {
 			done = 1;
 		else {
 			/* ignore any LEADING (before a '[tT]' symbol is found)
-			   Absolute symbols */
-			if ((*mode == 'A' || *mode == '?') && total == 0)
+			   Absolute symbols and __init_end because some
+			   architectures place it before .text section */
+			if ((*mode == 'A' || *mode == '?')
+			    && (total == 0 || !strcmp(next_name, "__init_end")))
 				continue;
 			if (*mode != 'T' && *mode != 't' &&
 			    *mode != 'W' && *mode != 'w')
