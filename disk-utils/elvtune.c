@@ -99,7 +99,7 @@ main(int argc, char * argv[]) {
 			version(), exit(0);
 
 		default:
-			exit(1);
+			usage(), exit(1);
 		}
 	}
 

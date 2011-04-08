@@ -154,6 +154,14 @@ isosize(char *filenamep) {
 	close(fd);
 }
 
+static void __attribute__((__noreturn__)) usage(FILE *out)
+{
+	fprintf(out, _("Usage: %s [-x] [-d <num>] iso9660-image\n"),
+		program_invocation_short_name);
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 int
 main(int argc, char * argv[]) {
 	int j, ct;
@@ -166,7 +174,7 @@ main(int argc, char * argv[]) {
 	if (argc >= 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
 		printf(_("%s (%s)\n"), program_invocation_short_name, PACKAGE_STRING);
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	for (;;) {
@@ -183,16 +191,14 @@ main(int argc, char * argv[]) {
 			xflag = 1;
 			break;
 		default:
-			exit(1);
+			usage(stderr);
 		}
 	}
 
 	ct = argc - optind;
 
 	if (ct <= 0) {
-		fprintf(stderr, _("Usage: %s [-x] [-d <num>] iso9660-image\n"),
-			program_invocation_short_name);
-		exit(1);
+		usage(stderr);
 	}
 
 	for (j = optind; j < argc; j++) {
