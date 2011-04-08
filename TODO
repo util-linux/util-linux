@@ -33,6 +33,21 @@ mount
    It's definitely better to have a generic way how ignore some options than
    use comment= for all things.
 
+ - add --source and --target options to specify device and mountpoint
+
+     fstab:
+        /dev/sda1 /foo	auto	defaults 0 0
+        /foo      /mnt  auto    bind     0 0
+     command line:
+	mount -o remount,ro /foo
+
+    ... this command is ambiguous. It would be better to have a way how specify
+    target or source:
+
+        mount --target /foo -o remount,ro
+
+    Note that findmnt(8) already supports --target and --source.
+
 build-sys
 --------
 
