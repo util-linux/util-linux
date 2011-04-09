@@ -44,7 +44,7 @@
 .Op Fl e
 .Op Fl f
 .Op Fl q
-.Op Fl t
+.Op Fl t[=FILE]
 .Op Fl V
 .Op Fl h
 .Op Ar file
@@ -86,12 +86,16 @@ One person does `mkfifo foo; script -f foo' and another can
 supervise real-time what is being done using `cat foo'.
 .It Fl q, Fl Fl quiet
 Be quiet.
-.It Fl t, Fl Fl timing
+.It Fl t, Fl Fl timing[=FILE]
 Output timing data to standard error. This data contains two fields,
 separated by a space. The first field indicates how much time elapsed since
 the previous output. The second field indicates how many characters were
 output this time. This information can be used to replay typescripts with
 realistic typing and output delays.
+
+The timing option is able to take file path as an argument. The
+file is used as output detination instead of standard error when
+it is supplied.
 .It Fl V, Fl Fl version
 Output version information and exit.
 .It Fl h, Fl Fl help

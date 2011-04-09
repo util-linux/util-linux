@@ -76,7 +76,7 @@ void fixtty(void);
 void getmaster(void);
 void getslave(void);
 void doinput(void);
-void dooutput(void);
+void dooutput(FILE *timingfd);
 void doshell(void);
 
 char	*shell;
@@ -133,7 +133,7 @@ usage(FILE *out)
 		" -r, --return            return exit code of the child process\n"
 		" -f, --flush             run flush after each write\n"
 		" -q, --quiet             be quiet\n"
-		" -t, --timing            output timing data to stderr\n"
+		" -t, --timing=FILE       output timing data to stderr, or to file\n"
 		" -V, --version           output version information and exit\n"
 		" -h, --help              display this help and exit\n\n"));
 
@@ -155,6 +155,7 @@ main(int argc, char **argv) {
 	struct sigaction sa;
 	extern int optind;
 	int ch;
+	FILE *timingfd = stderr;
 
 	static const struct option longopts[] = {
 		{ "append",	no_argument,	   0, 'a' },
@@ -162,7 +163,7 @@ main(int argc, char **argv) {
 		{ "return",	no_argument,	   0, 'e' },
 		{ "flush",	no_argument,	   0, 'f' },
 		{ "quiet",	no_argument,	   0, 'q' },
-		{ "timing",	no_argument,	   0, 't' },
+		{ "timing",	optional_argument, 0, 't' },
 		{ "version",	no_argument,	   0, 'V' },
 		{ "help",	no_argument,	   0, 'h' },
 		{ NULL,		0, 0, 0 }
@@ -173,7 +174,7 @@ main(int argc, char **argv) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((ch = getopt_long(argc, argv, "ac:efqtVh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "ac:efqt::Vh", longopts, NULL)) != -1)
 		switch((char)ch) {
 		case 'a':
 			aflg++;
@@ -191,6 +192,9 @@ main(int argc, char **argv) {
 			qflg++;
 			break;
 		case 't':
+			if (optarg)
+				if ((timingfd = fopen(optarg, "w")) == NULL)
+					err(EXIT_FAILURE, _("cannot open timing file %s"), optarg);
 			tflg++;
 			break;
 		case 'V':
@@ -260,7 +264,7 @@ main(int argc, char **argv) {
 			fail();
 		}
 		if (child)
-			dooutput();
+			dooutput(timingfd);
 		else
 			doshell();
 	} else {
@@ -269,6 +273,7 @@ main(int argc, char **argv) {
 	}
 	doinput();
 
+	fclose(timingfd);
 	return EXIT_SUCCESS;
 }
 
@@ -328,7 +333,7 @@ my_strftime(char *buf, size_t len, const char *fmt, const struct tm *tm) {
 }
 
 void
-dooutput() {
+dooutput(FILE *timingfd) {
 	register ssize_t cc;
 	time_t tvec;
 	char obuf[BUFSIZ];
@@ -370,7 +375,7 @@ dooutput() {
 			break;
 		if (tflg) {
 			newtime = tv.tv_sec + (double) tv.tv_usec / 1000000;
-			fprintf(stderr, "%f %zd\n", newtime - oldtime, cc);
+			fprintf(timingfd, "%f %zd\n", newtime - oldtime, cc);
 			oldtime = newtime;
 		}
 		wrt = write(1, obuf, cc);
