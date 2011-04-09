@@ -599,6 +599,8 @@ main(int argc, char **argv) {
 		errx(EXIT_FAILURE, _("error: "
 			"%s is mounted; will not make swapspace."),
 			device_name);
+	else if (blkdev_is_misaligned(DEV))
+		warnx(_("warning: %s is misaligned"), device_name);
 
 	if (check)
 		check_blocks();
