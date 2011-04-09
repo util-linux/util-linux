@@ -26,6 +26,7 @@
 #include <math.h>
 #include <sys/select.h>
 #include <unistd.h>
+#include <getopt.h>
 
 #include "nls.h"
 #include "c.h"
@@ -33,11 +34,16 @@
 #define SCRIPT_MIN_DELAY 0.0001		/* from original sripreplay.pl */
 
 void __attribute__((__noreturn__))
-usage(int rc)
+usage(FILE *out)
 {
-	printf(_("%s <timingfile> [<typescript> [<divisor>]]\n"),
+	fprintf(out, _("Usage: %s timingfile [typescript] [divisor]\n"),
 			program_invocation_short_name);
-	exit(rc);
+	fprintf(out, _(
+		"\nOptions:\n"
+		" -V, --version           output version information and exit\n"
+		" -h, --help              display this help and exit\n\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 static double
@@ -117,11 +123,18 @@ int
 main(int argc, char *argv[])
 {
 	FILE *tfile, *sfile;
-	const char *sname, *tname;
+	const char *sname, *tname = NULL;
 	double divi;
 	int c;
 	unsigned long line;
 	size_t oldblk = 0;
+	char ch;
+
+	static const struct option longopts[] = {
+		{ "version",	no_argument,		0, 'V' },
+		{ "help",	no_argument,		0, 'h' },
+		{ NULL,		0, 0, 0 }
+	};
 
 	/* Because we use space as a separator, we can't afford to use any
 	 * locale which tolerates a space in a number.  In any case, script.c
@@ -133,12 +146,28 @@ main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	if (argc < 2 || 4  < argc)
-		usage(EXIT_FAILURE);
+	while ((ch = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
+		switch(ch) {
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+						  PACKAGE_STRING);
+			exit(EXIT_SUCCESS);
+		case 'h':
+			usage(stdout);
+		default:
+			usage(stderr);
+			}
+	argc -= optind;
+	argv += optind;
 
-	tname = argv[1];
-	sname = argc > 2 ? argv[2] : "typescript";
-	divi = argc == 4 ? getnum(argv[3]) : 1;
+	if (argc < 1 || argc > 3) {
+		warnx(_("wrong number of arguments"));
+		usage(stderr);
+	}
+
+	tname = argv[0];
+	sname = argc > 1 ? argv[1] : "typescript";
+	divi = argc == 3 ? getnum(argv[2]) : 1;
 
 	tfile = fopen(tname, "r");
 	if (!tfile)
