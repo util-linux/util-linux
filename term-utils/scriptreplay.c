@@ -40,6 +40,9 @@ usage(FILE *out)
 			program_invocation_short_name);
 	fprintf(out, _(
 		"\nOptions:\n"
+		" -t, --timing FILE       script timing output file\n"
+		" -s, --typescript FILE   script terminal session output file\n"
+		" -d, --divisor NUM       speed up or slow down execution with time divisor\n"
 		" -V, --version           output version information and exit\n"
 		" -h, --help              display this help and exit\n\n"));
 
@@ -123,14 +126,17 @@ int
 main(int argc, char *argv[])
 {
 	FILE *tfile, *sfile;
-	const char *sname, *tname = NULL;
-	double divi;
-	int c;
+	const char *sname = NULL, *tname = NULL;
+	double divi = 1;
+	int c, diviopt = FALSE, idx;
 	unsigned long line;
 	size_t oldblk = 0;
 	char ch;
 
 	static const struct option longopts[] = {
+		{ "timing",	required_argument,	0, 't' },
+		{ "typescript",	required_argument,	0, 's' },
+		{ "divisor",	required_argument,	0, 'd' },
 		{ "version",	no_argument,		0, 'V' },
 		{ "help",	no_argument,		0, 'h' },
 		{ NULL,		0, 0, 0 }
@@ -146,8 +152,18 @@ main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((ch = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "t:s:d:Vh", longopts, NULL)) != -1)
 		switch(ch) {
+		case 't':
+			tname = optarg;
+			break;
+		case 's':
+			sname = optarg;
+			break;
+		case 'd':
+			diviopt = TRUE;
+			divi = getnum(optarg);
+			break;
 		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,
 						  PACKAGE_STRING);
@@ -159,15 +175,18 @@ main(int argc, char *argv[])
 			}
 	argc -= optind;
 	argv += optind;
+	idx = 0;
 
-	if (argc < 1 || argc > 3) {
+	if ((argc < 1 && !tname) || argc > 3) {
 		warnx(_("wrong number of arguments"));
 		usage(stderr);
 	}
-
-	tname = argv[0];
-	sname = argc > 1 ? argv[1] : "typescript";
-	divi = argc == 3 ? getnum(argv[2]) : 1;
+	if (!tname)
+		tname = argv[idx++];
+	if (!sname)
+		sname = idx < argc ? argv[idx++] : "typescript";
+	if (!diviopt)
+		divi = idx < argc ? getnum(argv[idx]) : 1;
 
 	tfile = fopen(tname, "r");
 	if (!tfile)
