@@ -178,5 +178,6 @@ main(int argc, char *argv[])
 
 	fclose(sfile);
 	fclose(tfile);
+	printf("\n");
 	exit(EXIT_SUCCESS);
 }
