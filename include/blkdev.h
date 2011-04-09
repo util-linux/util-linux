@@ -92,4 +92,7 @@ int blkdev_get_sectors(int fd, unsigned long long *sectors);
 /* get hardware sector size */
 int blkdev_get_sector_size(int fd, int *sector_size);
 
+/* specifies whether or not the device is misaligned */
+int blkdev_is_misaligned(int fd);
+
 #endif /* BLKDEV_H */

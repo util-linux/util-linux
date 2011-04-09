@@ -205,6 +205,18 @@ blkdev_get_sector_size(int fd, int *sector_size)
 }
 
 
+/*
+ * Return the alignment status of a device
+ */
+int blkdev_is_misaligned(int fd)
+{
+	int aligned;
+
+	if (ioctl(fd, BLKALIGNOFF, &aligned) < 0)
+		return 0;			/* probably kernel < 2.6.32 */
+	return aligned;
+}
+
 #ifdef TEST_PROGRAM
 #include <stdio.h>
 #include <stdlib.h>
