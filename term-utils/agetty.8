@@ -3,12 +3,12 @@
 agetty \- alternative Linux getty
 
 .SH SYNOPSIS
-.BR "agetty " [\-c8ihLmnsUw]
+.BR "agetty " [\-8chiLmnsUw]
 .RI "[-f " issue_file ]
-.RI "[-l " login_program ]
-.RI "[-I " init ]
-.RI "[-t " timeout ]
 .RI "[-H " login_host ]
+.RI "[-I " init ]
+.RI "[-l " login_program ]
+.RI "[-t " timeout ]
 .I port
 .I baud_rate,...
 .RI [ term ]
@@ -82,30 +82,36 @@ whatever init(8) may have set, and is inherited by login and the shell.
 .fi
 .ad
 .TP
-\-c
+\-8, \-\-8bits
+Assume that the tty is 8-bit clean, hence disable parity detection.
+.TP
+\-c, \-\-noreset
 Don't reset terminal cflags (control modes). See \fItermios(3)\fP for more
 details.
 .TP
-\-8
-Assume that the tty is 8-bit clean, hence disable parity detection.
+\-f, \-\-issue-file \fIissue_file\fP
+Display the contents of \fIissue_file\fP instead of \fI/etc/issue\fP.
+This allows custom messages to be displayed on different terminals.
+The \-i option will override this option.
 .TP
-\-h
+\-h, \-\-flow-control
 Enable hardware (RTS/CTS) flow control. It is left up to the
 application to disable software (XON/XOFF) flow protocol where
 appropriate.
 .TP
-\-i
+\-H, \-\-host \fIlogin_host\fP
+Write the specified \fIlogin_host\fP into the utmp file. (Normally,
+no login host is given, since \fBagetty\fP is used for local hardwired
+connections and consoles. However, this option can be useful for
+identifying terminal concentrators and the like.
+.TP
+\-i, \-\-noissue
 Do not display the contents of \fI/etc/issue\fP (or other) before writing the
 login prompt. Terminals or communications hardware may become confused
 when receiving lots of text at the wrong baud rate; dial-up scripts
 may fail if the login prompt is preceded by too much text.
 .TP
-\-f \fIissue_file\fP
-Display the contents of \fIissue_file\fP instead of \fI/etc/issue\fP.
-This allows custom messages to be displayed on different terminals.
-The \-i option will override this option.
-.TP
-\-I \fIinitstring\fP
+\-I, \-\-init-string \fIinitstring\fP
 Set an initial string to be sent to the tty or modem before sending
 anything else. This may be used to initialize a modem.  Non printable
 characters may be sent by writing their octal code preceded by a
@@ -113,19 +119,18 @@ backslash (\\). For example to send a linefeed character (ASCII 10,
 octal 012) write \\012.
 .PP
 .TP
-\-l \fIlogin_program\fP
+\-l, \-\-login-program \fIlogin_program\fP
 Invoke the specified \fIlogin_program\fP instead of /bin/login.
 This allows the use of a non-standard login program (for example,
 one that asks for a dial-up password or that uses a different
 password file).
 .TP
-\-H \fIlogin_host\fP
-Write the specified \fIlogin_host\fP into the utmp file. (Normally,
-no login host is given, since \fBagetty\fP is used for local hardwired
-connections and consoles. However, this option can be useful for 
-identifying terminal concentrators and the like.
+\-L, \-\-local-line
+Force the line to be a local line with no need for carrier detect. This can
+be useful when you have a locally attached terminal where the serial line
+does not set the carrier detect signal.
 .TP
-\-m
+\-m, \-\-extract-baud
 Try to extract the baud rate the CONNECT status message
 produced by Hayes(tm)\-compatible modems. These status
 messages are of the form: "<junk><speed><junk>".
@@ -137,7 +142,7 @@ Since the \fI\-m\fP feature may fail on heavily-loaded systems,
 you still should enable BREAK processing by enumerating all
 expected baud rates on the command line.
 .TP 
-\-n 
+\-n, \-\-skip-login
 Do not prompt the user for a login name. This can be used in
 connection with \-l option to invoke a non-standard login process such
 as a BBS system. Note that with the \-n option, \fBagetty\fR gets no input from
@@ -147,30 +152,31 @@ space parity, 7 bit characters, and ASCII CR (13) end-of-line character.
 Beware that the program that \fBagetty\fR starts (usually /bin/login)
 is run as root.
 .TP
-\-t \fItimeout\fP
+\-s, \-\-keep-baud
+Try to keep the existing baud rate. The baud rates from
+the command line are used when agetty receives a BREAK character.
+.TP
+\-t, \-\-timeout \fItimeout\fP
 Terminate if no user name could be read within \fItimeout\fP
 seconds. This option should probably not be used with hard-wired
 lines.
 .TP
-\-L
-Force the line to be a local line with no need for carrier detect. This can
-be useful when you have a locally attached terminal where the serial line
-does not set the carrier detect signal.
-.TP
-\-s
-Try to keep the existing baud rate. The baud rates from
-the command line are used when agetty receives a BREAK character.
-.TP
-\-U
+\-U, \-\-detect-case
 Turn on support for detecting an uppercase only terminal.  This setting will
 detect a login name containing only capitals as indicating an uppercase
 only terminal and turn on some upper to lower case conversions.  Note that
 this has no support for any unicode characters.
 .TP
-\-w 
+\-w, \-\-wait-cr
 Wait for the user or the modem to send a carriage-return or a
 linefeed character before sending the \fI/etc/issue\fP (or other) file
 and the login prompt. Very useful in connection with the \-I option.
+.TP
+\-\-version
+Output version information and exit.
+.TP
+\-\-help
+Output help screen and exit.
 .PP
 .SH EXAMPLES
 This section shows examples for the process field of an entry in the
