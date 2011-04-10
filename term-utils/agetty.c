@@ -477,9 +477,12 @@ parse_args(argc, argv, op)
 	    usage(stderr);
 	}
     }
-	debug("after getopt loop\n");
-    if (argc < optind + 2)			/* check parameter count */
+    debug("after getopt loop\n");
+
+    if (argc < optind + 2) {			/* check parameter count */
+	warnx(_("not enough arguments"));
 	usage(stderr);
+    }
 
     /* we loosen up a bit and accept both "baudrate tty" and "tty baudrate" */
     if('0' <= argv[optind][0] && argv[optind][0] <= '9') {
@@ -1339,5 +1342,5 @@ error(const char *fmt, ...) {
     }
 #endif
     (void) sleep((unsigned) 10);		/* be kind to init(8) */
-    exit(1);
+    exit(EXIT_FAILURE);
 }
