@@ -100,8 +100,8 @@
 #  define MAXHOSTNAMELEN HOST_NAME_MAX
 # else
 #  define MAXHOSTNAMELEN 64
-# endif
-#endif
+# endif /* HOST_NAME_MAX */
+#endif /* MAXHOSTNAMELEN */
 
  /*
   * When multiple baud rates are specified on the command line, the first one
@@ -228,7 +228,7 @@ char *fakehost = NULL;
 FILE *dbf;
 #else
 #define debug(s) /* nothing */
-#endif
+#endif /* DEBUGGING */
 
 int
 main(argc, argv)
@@ -261,7 +261,7 @@ main(argc, argv)
 			debug(argv[i]);
 		}
 	}
-#endif
+#endif /* DEBUGGING */
 
     /* Parse command-line arguments. */
 
@@ -528,7 +528,7 @@ parse_args(argc, argv, op)
 		    }
 	    }
     }
-#endif
+#endif /* DO_DEVFS_FIDDLING */
 
     debug("exiting parseargs\n");
 }
@@ -622,11 +622,11 @@ update_utmp(line)
 	    flock(lf, LOCK_UN);
 	    close(lf);
 	}
-#endif
+#endif /* HAVE_UPDWTMP */
     }
 }
 
-#endif
+#endif /* SYSV_STYLE */
 
 /* open_tty - set up tty as standard { input, output, error } */
 void
@@ -848,7 +848,7 @@ do_prompt(op, tp)
     struct utsname uts;
 
     (void) uname(&uts);
-#endif
+#endif /* ISSUE */
 
     ignore_result( write(1, "\r\n", 2) );			/* start a new line */
 #ifdef	ISSUE					/* optional: show /etc/issue */
@@ -891,7 +891,7 @@ do_prompt(op, tp)
 		     char domainname[MAXHOSTNAMELEN+1];
 #ifdef HAVE_GETDOMAINNAME
 		     if (getdomainname(domainname, sizeof(domainname)))
-#endif
+#endif /* HAVE_GETDOMAINNAME */
 			 strcpy(domainname, "unknown_domain");
 		     domainname[sizeof(domainname)-1] = '\0';
 		     printf ("%s", domainname);
@@ -989,7 +989,7 @@ do_prompt(op, tp)
 	(void) tcsetattr(0, TCSADRAIN, tp);	/* wait till output is gone */
 	(void) fclose(fd);
     }
-#endif
+#endif /* ISSUE */
     {
 	char hn[MAXHOSTNAMELEN+1];
 	if (gethostname(hn, sizeof(hn)) == 0)
@@ -1154,7 +1154,7 @@ termio_final(op, tp, cp)
     tp->c_cc[VSWTC] = DEF_SWITCH;		/* default switch character */
 #elif defined(VSWTCH)
     tp->c_cc[VSWTCH] = DEF_SWITCH;		/* default switch character */
-#endif
+#endif /* __linux__ */
 
     /* Account for special characters seen in input. */
 
@@ -1296,7 +1296,7 @@ error(const char *fmt, ...) {
 #else
     (void) str2cpy(buf, program_invocation_short_name, ": ");
     bp = buf + strlen(buf);
-#endif
+#endif /* USE_SYSLOG */
 
     /*
      * %s expansion is done by hand. On a System V Release 2 system without
@@ -1340,7 +1340,7 @@ error(const char *fmt, ...) {
 	ignore_result( write(fd, buf, strlen(buf)) );
 	(void) close(fd);
     }
-#endif
+#endif /* USE_SYSLOG */
     (void) sleep((unsigned) 10);		/* be kind to init(8) */
     exit(EXIT_FAILURE);
 }
