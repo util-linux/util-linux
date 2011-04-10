@@ -41,6 +41,7 @@
 mesg \- display (do not display) messages from other users
 .SH SYNOPSIS
 .B mesg
+.RB [options]
 .RB [ n | y ]
 .SH DESCRIPTION
 The
@@ -60,13 +61,21 @@ sure your ttys are set the way you want them to be set,
 .B mesg
 should be executed in your login scripts.
 .PP
-Options available:
+Available arguments:
 .TP
 .B n
 Disallows messages.
 .TP
 .B y
 Permits messages to be displayed.
+.TP
+Available options:
+.TP
+.B \-V, \-\-verbose
+Output version information and exit.
+.TP
+.B \-h, \-\-help
+Output help screen and exit.
 .PP
 If no arguments are given,
 .B mesg
