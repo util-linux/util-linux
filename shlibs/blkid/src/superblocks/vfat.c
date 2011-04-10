@@ -186,8 +186,6 @@ static int fat_valid_superblock(const struct blkid_idmag *mag,
 		if (ms->ms_pmagic[0] != 0x55 || ms->ms_pmagic[1] != 0xAA)
 			return 0;
 
-		if (ms->ms_heads == 0)
-			return 0;
 		/*
 		 * OS/2 and apparently DFSee will place a FAT12/16-like
 		 * pseudo-superblock in the first 512 bytes of non-FAT
