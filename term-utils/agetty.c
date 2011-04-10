@@ -386,11 +386,24 @@ parse_args(argc, argv, op)
 
     while ((c = getopt_long(argc, argv, "8cf:hH:iI:l:Lmnst:Uw", longopts, NULL)) != -1) {
 	switch (c) {
+	case '8':
+	    op->eightbits = 1;
+	    break;
 	case 'c':
 	    op->flags |= F_KEEPCFLAGS;
 	    break;
-	case '8':
-	    op->eightbits = 1;
+	case 'f':				/* custom issue file */
+	    op->flags |= F_CUSTISSUE;
+	    op->issue = optarg;
+	    break;
+	case 'h':				/* enable h/w flow control */
+	    op->flags |= F_RTSCTS;
+	    break;
+	case 'H':				/* fake login host */
+	    fakehost = optarg;
+	    break;
+	case 'i':				/* do not show /etc/issue */
+	    op->flags &= ~F_ISSUE;
 	    break;
 	case 'I':
 	    op->initstring = xmalloc(strlen(optarg) + 1);
@@ -428,25 +441,11 @@ parse_args(argc, argv, op)
 	    }
 	    op->flags |= F_INITSTRING;
 	    break;
-
-	case 'L':				/* force local */
- 	    op->flags |= F_LOCAL;
- 	    break;
-	case 'H':                               /* fake login host */
-	    fakehost = optarg;
-	    break;
-	case 'f':				/* custom issue file */
-	    op->flags |= F_CUSTISSUE;
-	    op->issue = optarg;
-	    break;
-	case 'h':				/* enable h/w flow control */
-	    op->flags |= F_RTSCTS;
-	    break;
-	case 'i':				/* do not show /etc/issue */
-	    op->flags &= ~F_ISSUE;
-	    break;
 	case 'l':
 	    op->login = optarg;			/* non-default login program */
+	    break;
+	case 'L':				/* force local */
+	    op->flags |= F_LOCAL;
 	    break;
 	case 'm':				/* parse modem status message */
 	    op->flags |= F_PARSE;
@@ -461,18 +460,18 @@ parse_args(argc, argv, op)
 	    if ((op->timeout = atoi(optarg)) <= 0)
 		error(_("bad timeout value: %s"), optarg);
 	    break;
-	case 'w':
-	    op->flags |= F_WAITCRLF;
-	    break;
 	case 'U':
 	    op->flags |= F_LCUC;
 	    break;
-        case VERSION_OPTION:
-            printf(_("%s from %s\n"), program_invocation_short_name,
-                                      PACKAGE_STRING);
-            exit(EXIT_SUCCESS);
-        case HELP_OPTION:
-            usage(stdout);
+	case 'w':
+	    op->flags |= F_WAITCRLF;
+	    break;
+	case VERSION_OPTION:
+	    printf(_("%s from %s\n"), program_invocation_short_name,
+				      PACKAGE_STRING);
+	    exit(EXIT_SUCCESS);
+	case HELP_OPTION:
+	    usage(stdout);
 	default:
 	    usage(stderr);
 	}
