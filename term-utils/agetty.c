@@ -281,7 +281,7 @@ main(argc, argv)
     /* Open the tty as standard { input, output, error }. */
     open_tty(options.tty, &termios, options.flags & F_LOCAL);
 
-    tcsetpgrp(0, getpid());
+    tcsetpgrp(STDIN_FILENO, getpid());
     /* Initialize the termios settings (raw mode, eight-bit, blocking i/o). */
     debug("calling termio_init\n");
     termio_init(&termios, &options);
@@ -294,7 +294,7 @@ main(argc, argv)
 
     if (!(options.flags & F_LOCAL)) {
 	/* go to blocking write mode unless -L is specified */
-	fcntl(1, F_SETFL, fcntl(1, F_GETFL, 0) & ~O_NONBLOCK);
+	fcntl(STDOUT_FILENO, F_SETFL, fcntl(STDOUT_FILENO, F_GETFL, 0) & ~O_NONBLOCK);
     }
 
     /* Optionally detect the baud rate from the modem status message. */
@@ -311,7 +311,7 @@ main(argc, argv)
 	char ch;
 
 	debug("waiting for cr-lf\n");
-	while(read(0, &ch, 1) == 1) {
+	while(read(STDIN_FILENO, &ch, 1) == 1) {
 	    ch &= 0x7f;   /* strip "parity bit" */
 #ifdef DEBUGGING
 	    fprintf(dbf, "read %c\n", ch);
@@ -339,7 +339,7 @@ main(argc, argv)
 
     /* Now the newline character should be properly written. */
 
-    ignore_result( write(1, "\n", 1) );
+    ignore_result( write(STDOUT_FILENO, "\n", 1) );
 
     /* Let the login program take care of password validation. */
 
@@ -637,8 +637,8 @@ open_tty(tty, tp, local)
 {
     /* Get rid of the present standard { output, error} if any. */
 
-    (void) close(1);
-    (void) close(2);
+    (void) close(STDOUT_FILENO);
+    (void) close(STDERR_FILENO);
     errno = 0;					/* ignore above errors */
 
     /* Set up new standard input, unless we are given an already opened port. */
@@ -657,7 +657,7 @@ open_tty(tty, tp, local)
 
 	/* Open the tty as standard input. */
 
-	(void) close(0);
+	(void) close(STDIN_FILENO);
 	errno = 0;				/* ignore close(2) errors */
 
 	debug("open(2)\n");
@@ -671,13 +671,14 @@ open_tty(tty, tp, local)
 	 * sure it is open for read/write.
 	 */
 
-	if ((fcntl(0, F_GETFL, 0) & O_RDWR) != O_RDWR)
+	if ((fcntl(STDIN_FILENO, F_GETFL, 0) & O_RDWR) != O_RDWR)
 	    error(_("%s: not open for read/write"), tty);
     }
 
     /* Set up standard output and standard error file descriptors. */
     debug("duping\n");
-    if (dup(0) != 1 || dup(0) != 2)		/* set up stdout and stderr */
+    /* set up stdout and stderr */
+    if (dup(STDIN_FILENO) != 1 || dup(STDIN_FILENO) != 2)
 	error(_("%s: dup problem: %m"), tty);	/* we have a problem */
 
     /*
@@ -689,7 +690,7 @@ open_tty(tty, tp, local)
      * 5 seconds seems to be a good value.
      */
 
-    if (tcgetattr(0, tp) < 0)
+    if (tcgetattr(STDIN_FILENO, tp) < 0)
 	error("%s: tcgetattr: %m", tty);
 
     /*
@@ -734,7 +735,7 @@ termio_init(tp, op)
      * lateron.
      */
     /* flush input and output queues, important for modems! */
-    (void) tcflush(0, TCIOFLUSH);
+    (void) tcflush(STDIN_FILENO, TCIOFLUSH);
 
     tp->c_iflag = tp->c_lflag = tp->c_oflag = 0;
 
@@ -764,10 +765,10 @@ termio_init(tp, op)
 	tp->c_cflag |= CRTSCTS;
 #endif
 
-    (void) tcsetattr(0, TCSANOW, tp);
+    (void) tcsetattr(STDIN_FILENO, TCSANOW, tp);
 
     /* go to blocking input even in local mode */
-    fcntl(0, F_SETFL, fcntl(0, F_GETFL, 0) & ~O_NONBLOCK);
+    fcntl(STDIN_FILENO, F_SETFL, fcntl(STDIN_FILENO, F_GETFL, 0) & ~O_NONBLOCK);
 
     debug("term_io 2\n");
 }
@@ -808,7 +809,7 @@ auto_baud(tp)
     tp->c_iflag |= ISTRIP;			/* enable 8th-bit stripping */
     vmin = tp->c_cc[VMIN];
     tp->c_cc[VMIN] = 0;				/* don't block if queue empty */
-    tcsetattr(0, TCSANOW, tp);
+    tcsetattr(STDIN_FILENO, TCSANOW, tp);
 
     /*
      * Wait for a while, then read everything the modem has said so far and
@@ -816,7 +817,7 @@ auto_baud(tp)
      */
 
     (void) sleep(1);
-    if ((nread = read(0, buf, sizeof(buf) - 1)) > 0) {
+    if ((nread = read(STDIN_FILENO, buf, sizeof(buf) - 1)) > 0) {
 	buf[nread] = '\0';
 	for (bp = buf; bp < buf + nread; bp++) {
 	    if (isascii(*bp) && isdigit(*bp)) {
@@ -832,7 +833,7 @@ auto_baud(tp)
 
     tp->c_iflag = iflag;
     tp->c_cc[VMIN] = vmin;
-    (void) tcsetattr(0, TCSANOW, tp);
+    (void) tcsetattr(STDIN_FILENO, TCSANOW, tp);
 }
 
 /* do_prompt - show login prompt, optionally preceded by /etc/issue contents */
@@ -850,12 +851,12 @@ do_prompt(op, tp)
     (void) uname(&uts);
 #endif /* ISSUE */
 
-    ignore_result( write(1, "\r\n", 2) );			/* start a new line */
+    ignore_result( write(STDOUT_FILENO, "\r\n", 2) );	/* start a new line */
 #ifdef	ISSUE					/* optional: show /etc/issue */
     if ((op->flags & F_ISSUE) && (fd = fopen(op->issue, "r"))) {
 	oflag = tp->c_oflag;			/* save current setting */
 	tp->c_oflag |= (ONLCR | OPOST);		/* map NL in output to CR-NL */
-	(void) tcsetattr(0, TCSADRAIN, tp);
+	(void) tcsetattr(STDIN_FILENO, TCSADRAIN, tp);
 
 
 	while ((c = getc(fd)) != EOF)
@@ -986,7 +987,7 @@ do_prompt(op, tp)
 	fflush(stdout);
 
 	tp->c_oflag = oflag;			/* restore settings */
-	(void) tcsetattr(0, TCSADRAIN, tp);	/* wait till output is gone */
+	(void) tcsetattr(STDIN_FILENO, TCSADRAIN, tp);	/* wait till output is gone */
 	(void) fclose(fd);
     }
 #endif /* ISSUE */
@@ -995,7 +996,7 @@ do_prompt(op, tp)
 	if (gethostname(hn, sizeof(hn)) == 0)
 	    ignore_result( write(1, hn, strlen(hn)) );
     }
-    ignore_result( write(1, LOGIN, sizeof(LOGIN) - 1) );	/* always show login prompt */
+    ignore_result( write(STDOUT_FILENO, LOGIN, sizeof(LOGIN) - 1) );	/* always show login prompt */
 }
 
 /* next_speed - select next baud rate */
@@ -1018,7 +1019,7 @@ next_speed(tp, op)
 
     cfsetispeed(tp, op->speeds[baud_index]);
     cfsetospeed(tp, op->speeds[baud_index]);
-    (void) tcsetattr(0, TCSANOW, tp);
+    (void) tcsetattr(STDIN_FILENO, TCSANOW, tp);
 }
 
 /* get_logname - get user name, establish parity, speed, erase, kill, eol */
@@ -1048,7 +1049,7 @@ char   *get_logname(op, cp, tp)
     /* Flush pending input (esp. after parsing or switching the baud rate). */
 
     (void) sleep(1);
-    (void) tcflush(0, TCIFLUSH);
+    (void) tcflush(STDIN_FILENO, TCIFLUSH);
 
     /* Prompt for and read a login name. */
 
@@ -1064,7 +1065,7 @@ char   *get_logname(op, cp, tp)
 
 	    /* Do not report trivial EINTR/EIO errors. */
 
-	    if (read(0, &c, 1) < 1) {
+	    if (read(STDIN_FILENO, &c, 1) < 1) {
 		if (errno == EINTR || errno == EIO)
 		    exit(EXIT_SUCCESS);
 		error(_("%s: read: %m"), op->tty);
@@ -1204,7 +1205,7 @@ termio_final(op, tp, cp)
 
     /* Finally, make the new settings effective */
 
-    if (tcsetattr(0, TCSANOW, tp) < 0)
+    if (tcsetattr(STDIN_FILENO, TCSANOW, tp) < 0)
 	error("%s: tcsetattr: TCSANOW: %m", op->tty);
 }
 
