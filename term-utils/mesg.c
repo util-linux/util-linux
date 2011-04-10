@@ -69,6 +69,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		       " %s [options] [y | n]\n"), program_invocation_short_name);
 	fprintf(out,
 		_("\nOptions:\n"
+		  "  -v, --verbose      explain what is being done\n"
 		  "  -V, --version      output version information and exit\n"
 		  "  -h, --help         output help screen and exit\n"));
 
@@ -79,20 +80,24 @@ int main(int argc, char *argv[])
 {
 	struct stat sb;
 	char *tty;
-	int ch;
+	int ch, verbose = FALSE;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
 	static const struct option longopts[] = {
+		{ "verbose",    no_argument,       0, 'v' },
 		{ "version",    no_argument,       0, 'V' },
 		{ "help",       no_argument,       0, 'h' },
 		{ NULL,         0, 0, 0 }
 	};
 
-	while ((ch = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "vVh", longopts, NULL)) != -1)
 		switch (ch) {
+		case 'v':
+			verbose = TRUE;
+			break;
 		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,
 			PACKAGE_STRING);
@@ -129,10 +134,14 @@ int main(int argc, char *argv[])
 		if (chmod(tty, sb.st_mode | S_IWGRP | S_IWOTH) < 0)
 #endif
 			err(MESG_EXIT_FAILURE, _("change %s mode failed"), tty);
+		if (verbose)
+			puts(_("write access to your terminal is allowed"));
 		return IS_ALLOWED;
 	case 'n':
 		if (chmod(tty, sb.st_mode & ~(S_IWGRP|S_IWOTH)) < 0)
 			 err(MESG_EXIT_FAILURE, _("change %s mode failed"), tty);
+		if (verbose)
+			puts(_("write access to your terminal is denied"));
 		return IS_NOT_ALLOWED;
 	default:
 		warnx(_("invalid argument: %c"), *argv[0]);
