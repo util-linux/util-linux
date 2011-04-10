@@ -53,6 +53,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <getopt.h>
 #include "nls.h"
 #include "c.h"
 
@@ -61,6 +62,18 @@
 #define IS_ALLOWED        0  /* Receiving messages is allowed.  */
 #define IS_NOT_ALLOWED    1  /* Receiving messages is not allowed.  */
 #define MESG_EXIT_FAILURE 2  /* An error occurred.  */
+
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
+{
+	fprintf(out, _("\nUsage:\n"
+		       " %s [options] [y | n]\n"), program_invocation_short_name);
+	fprintf(out,
+		_("\nOptions:\n"
+		  "  -V, --version      output version information and exit\n"
+		  "  -h, --help         output help screen and exit\n"));
+
+	exit(out == stderr ? MESG_EXIT_FAILURE : EXIT_SUCCESS);
+}
 
 int main(int argc, char *argv[])
 {
@@ -72,11 +85,22 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((ch = getopt(argc, argv, "")) != -1)
+	static const struct option longopts[] = {
+		{ "version",    no_argument,       0, 'V' },
+		{ "help",       no_argument,       0, 'h' },
+		{ NULL,         0, 0, 0 }
+	};
+
+	while ((ch = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
 		switch (ch) {
-		case '?':
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+			PACKAGE_STRING);
+			exit(EXIT_SUCCESS);
+		case 'h':
+			usage(stdout);
 		default:
-			goto usage;
+			usage(stderr);
 		}
 
 	argc -= optind;
@@ -110,9 +134,8 @@ int main(int argc, char *argv[])
 		if (chmod(tty, sb.st_mode & ~(S_IWGRP|S_IWOTH)) < 0)
 			 err(MESG_EXIT_FAILURE, _("change %s mode failed"), tty);
 		return IS_NOT_ALLOWED;
+	default:
+		warnx(_("invalid argument: %c"), *argv[0]);
+		usage(stderr);
 	}
-
-usage:
-	fprintf(stderr, _("Usage: %s [y | n]"), program_invocation_short_name);
-	return MESG_EXIT_FAILURE;
 }
