@@ -215,7 +215,7 @@ char *get_logname P_((struct options *op, struct chardata *cp, struct termios *t
 void termio_final P_((struct options *op, struct termios *tp, struct chardata *cp));
 int caps_lock P_((char *s));
 int bcode P_((char *s));
-void usage P_((void));
+void usage P_((FILE *out));
 void error P_((const char *, ...));
 #undef P_
 
@@ -359,7 +359,32 @@ parse_args(argc, argv, op)
     extern int optind;			/* getopt */
     int     c;
 
-    while (isascii(c = getopt(argc, argv, "8cI:LH:f:hil:mst:wUn"))) {
+    enum {
+	VERSION_OPTION = CHAR_MAX + 1,
+	HELP_OPTION
+    };
+    static const struct option longopts[] = {
+	{  "8bits",	     no_argument,	 0,  '8'  },
+	{  "noreset",	     no_argument,	 0,  'c'  },
+	{  "issue-file",     required_argument,  0,  'f'  },
+	{  "flow-control",   no_argument,	 0,  'h'  },
+	{  "host",	     required_argument,  0,  'H'  },
+	{  "noissue",	     no_argument,	 0,  'i'  },
+	{  "init-string",    required_argument,  0,  'I'  },
+	{  "login-program",  required_argument,  0,  'l'  },
+	{  "local-line",     no_argument,	 0,  'L'  },
+	{  "extract-baud",   no_argument,	 0,  'm'  },
+	{  "skip-login",     no_argument,	 0,  'n'  },
+	{  "keep-baud",      no_argument,	 0,  's'  },
+	{  "timeout",	     required_argument,  0,  't'  },
+	{  "detect-case",    no_argument,	 0,  'U'  },
+	{  "wait-cr",	     no_argument,	 0,  'w'  },
+	{  "version",	     no_argument,	 0,  VERSION_OPTION  },
+	{  "help",	     no_argument,	 0,  HELP_OPTION     },
+	{ NULL, 0, 0, 0 }
+    };
+
+    while ((c = getopt_long(argc, argv, "8cf:hH:iI:l:Lmnst:Uw", longopts, NULL)) != -1) {
 	switch (c) {
 	case 'c':
 	    op->flags |= F_KEEPCFLAGS;
@@ -442,13 +467,19 @@ parse_args(argc, argv, op)
 	case 'U':
 	    op->flags |= F_LCUC;
 	    break;
+        case VERSION_OPTION:
+            printf(_("%s from %s\n"), program_invocation_short_name,
+                                      PACKAGE_STRING);
+            exit(EXIT_SUCCESS);
+        case HELP_OPTION:
+            usage(stdout);
 	default:
-	    usage();
+	    usage(stderr);
 	}
     }
 	debug("after getopt loop\n");
     if (argc < optind + 2)			/* check parameter count */
-	usage();
+	usage(stderr);
 
     /* we loosen up a bit and accept both "baudrate tty" and "tty baudrate" */
     if('0' <= argv[optind][0] && argv[optind][0] <= '9') {
@@ -1206,10 +1237,35 @@ bcode(s)
 
 /* usage - explain */
 
-void __attribute__((__noreturn__)) usage(void)
+void __attribute__((__noreturn__)) usage(FILE *out)
 {
-    fprintf(stderr, _("Usage: %s [-8hiLmsUw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\nor\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"), progname);
-    exit(EXIT_FAILURE);
+    fprintf(out, _(
+	"\nUsage:\n"
+	"    %1$s [options] line baud_rate,... [termtype]\n"
+	"    %1$s [options] baud_rate,... line [termtype]\n"),
+	program_invocation_short_name);
+
+    fprintf(out, _(
+	"\nOptions:\n"
+	" -8, --8bits                assume 8-bit tty\n"
+	" -c, --noreset              do not reset control mode\n"
+	" -f, --issue-file FILE      display issue file\n"
+	" -h, --flow-control         enable hardware flow control\n"
+	" -H, --host HOSTNAME        specify login host\n"
+	" -i, --noissue              do not display issue file\n"
+	" -I, --init-string STRING   set init string\n"
+	" -l, --login-program FILE   specify login program\n"
+	" -L, --local-line           force local line\n"
+	" -m, --extract-baud         extract baud rate during connect\n"
+	" -n, --skip-login           do not prompt for login\n"
+	" -s, --keep-baud            try to keep baud rate after break\n"
+	" -t, --timeout NUMBER       login process timeout\n"
+	" -U, --detect-case          detect uppercase terminal\n"
+	" -w, --wait-cr              wait carriage-return\n"
+	"     --version              output version information and exit\n"
+	"     --help                 display this help and exit\n\n"));
+
+    exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 /* error - report errors to console or syslog; only understands %s and %m */
