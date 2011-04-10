@@ -219,10 +219,6 @@ void usage P_((void));
 void error P_((const char *, ...));
 #undef P_
 
-/* The following is used for understandable diagnostics. */
-
-char *progname;
-
 /* Fake hostname for ut_host specified on command line. */
 char *fakehost = NULL;
 
@@ -256,19 +252,6 @@ main(argc, argv)
        bindtextdomain(PACKAGE, LOCALEDIR);
        textdomain(PACKAGE);
     
-    /* The BSD-style init command passes us a useless process name. */
-
-#ifdef	SYSV_STYLE
-       {
-	       char *ptr;
-	       progname = argv[0];
-	       if ((ptr = strrchr(argv[0], '/')))
-		       progname = ++ptr;
-       }
-#else
-       progname = "agetty";
-#endif
-
 #ifdef DEBUGGING
 	dbf = fopen("/dev/ttyp0", "w");
 
@@ -1252,7 +1235,7 @@ error(const char *fmt, ...) {
     buf[0] = '\0';
     bp = buf;
 #else
-    (void) str2cpy(buf, progname, ": ");
+    (void) str2cpy(buf, program_invocation_short_name, ": ");
     bp = buf + strlen(buf);
 #endif
 
@@ -1288,7 +1271,7 @@ error(const char *fmt, ...) {
      */
 
 #ifdef	USE_SYSLOG
-    (void) openlog(progname, LOG_PID, LOG_AUTHPRIV);
+    (void) openlog(program_invocation_short_name, LOG_PID, LOG_AUTHPRIV);
     (void) syslog(LOG_ERR, "%s", buf);
     closelog();
 #else
