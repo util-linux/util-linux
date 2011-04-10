@@ -36,6 +36,7 @@
 #include "nls.h"
 #include "pathnames.h"
 #include "c.h"
+#include "xalloc.h"
 
 #ifdef __linux__
 #include <sys/param.h>
@@ -384,10 +385,7 @@ parse_args(argc, argv, op)
 	    op->eightbits = 1;
 	    break;
 	case 'I':
-	    if (!(op->initstring = malloc(strlen(optarg)+1))) {
-		error(_("can't malloc initstring"));
-		break;
-	    }
+	    op->initstring = xmalloc(strlen(optarg) + 1);
 	    {
 		char ch, *p, *q;
 		int i;
@@ -500,7 +498,7 @@ parse_args(argc, argv, op)
 			    strcpy(dev_name, "/dev/tts/");
 			    strcat(dev_name, op->tty + 4);
 			    if (stat(dev_name, &st) == 0)
-				    op->tty = strdup(dev_name + 5);
+				    op->tty = xstrdup(dev_name + 5);
 		    }
 	    } else if (strncmp(op->tty, "tty", 3) == 0) {
 		    strcpy(dev_name, "/dev/");
@@ -509,7 +507,7 @@ parse_args(argc, argv, op)
 			    strcpy(dev_name, "/dev/vc/");
 			    strcat(dev_name, op->tty + 3);
 			    if (stat(dev_name, &st) == 0)
-				    op->tty = strdup(dev_name + 5);
+				    op->tty = xstrdup(dev_name + 5);
 		    }
 	    }
     }
