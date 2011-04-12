@@ -38,10 +38,11 @@
 #include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
-#include <err.h>
 #include <stdlib.h>
 #include "hexdump.h"
+
 #include "nls.h"
+#include "c.h"
 
 FS *fshead;				/* head of format strings */
 int blocksize;				/* data block size */
