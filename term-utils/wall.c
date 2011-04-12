@@ -179,7 +179,7 @@ main(int argc, char **argv) {
 }
 
 char *
-makemsg(char *fname, size_t *mainmbufsize, int print_banner)
+makemsg(char *fname, size_t *mbufsize, int print_banner)
 {
 	register int ch, cnt;
 	struct tm *lt;
@@ -189,7 +189,6 @@ makemsg(char *fname, size_t *mainmbufsize, int print_banner)
 	FILE *fp;
 	int fd;
 	char *p, *whom, *where, *hostname, *lbuf, *tmpname, *tmpenv, *mbuf;
-	size_t mbufsize;
 	long line_max;
 
 	hostname = xmalloc(sysconf(_SC_HOST_NAME_MAX) + 1);
@@ -283,14 +282,13 @@ makemsg(char *fname, size_t *mainmbufsize, int print_banner)
 	if (fstat(fd, &sbuf))
 		err(EXIT_FAILURE, _("fstat failed"));
 
-	mbufsize = sbuf.st_size;
-	memcpy(mainmbufsize, &mbufsize, sizeof(size_t));
-	mbuf = xmalloc(mbufsize);
+	*mbufsize = (size_t) sbuf.st_size;
+	mbuf = xmalloc(*mbufsize);
 
-	if (fread(mbuf, sizeof(*mbuf), mbufsize, fp) != mbufsize)
+	if (fread(mbuf, 1, *mbufsize, fp) != *mbufsize)
 		err(EXIT_FAILURE, _("fread failed"));
 
 	close(fd);
 	fclose(fp);
-	return(mbuf);
+	return mbuf;
 }
