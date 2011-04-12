@@ -52,8 +52,9 @@ contains descriptive information about the various file systems.
 .B fstab
 is only read by programs, and not written; it is the duty of the system
 administrator to properly create and maintain this file.  Each filesystem
-is described on a separate line; fields on each line are separated by tabs
-or spaces.  Lines starting with '#' are comments.  The order of records in
+is described on a separate line; fields on each line are separated by tabs or
+spaces.  Lines starting with '#' are comments, blank lines are ignored. The
+order of records in
 .B fstab
 is important because
 .BR fsck (8),
@@ -234,7 +235,9 @@ will assume that the filesystem does not need to be checked.
 The proper way to read records from
 .B fstab
 is to use the routines
-.BR getmntent (3).
+.BR getmntent (3)
+or
+.BR libmount .
 .SH FILES
 .IR /etc/fstab ,
 .I <fstab.h>
