@@ -165,7 +165,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 int
 main(int argc, char * argv[]) {
 	int j, ct;
-	char *p;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
