@@ -53,12 +53,12 @@
 #include <sys/file.h>
 #include <signal.h>
 #include <errno.h>
-#include <err.h>
 #include <string.h>
 #include <getopt.h>
 #include <unistd.h>
 
 #include "nls.h"
+#include "c.h"
 
 #if HAVE_LIBUTIL && HAVE_PTY_H
 #include <pty.h>
