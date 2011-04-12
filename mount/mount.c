@@ -1443,25 +1443,8 @@ update_mtab_entry(const char *spec, const char *node, const char *type,
 			update_mtab (mnt.mnt_dir, &mnt);
 		else if (flags & MS_MOVE)
 			update_mtab(mnt.mnt_fsname, &mnt);
-		else {
-			mntFILE *mfp;
-
-			lock_mtab();
-			mfp = my_setmntent(_PATH_MOUNTED, "a+");
-			if (mfp == NULL || mfp->mntent_fp == NULL) {
-				int errsv = errno;
-				error(_("mount: can't open %s: %s"), _PATH_MOUNTED,
-				      strerror (errsv));
-			} else {
-				if ((my_addmntent (mfp, &mnt)) == 1) {
-					int errsv = errno;
-					error(_("mount: error writing %s: %s"),
-					      _PATH_MOUNTED, strerror (errsv));
-				}
-			}
-			my_endmntent(mfp);
-			unlock_mtab();
-		}
+		else
+			update_mtab(NULL, &mnt);
 	}
 	my_free(mnt.mnt_fsname);
 	my_free(mnt.mnt_dir);

@@ -890,7 +890,7 @@ update_mtab (const char *dir, struct my_mntent *instead) {
 	mntFILE *mfp, *mftmp;
 	const char *fnam = _PATH_MOUNTED;
 	struct mntentchn mtabhead;	/* dummy */
-	struct mntentchn *mc, *mc0, *absent = NULL;
+	struct mntentchn *mc, *mc0 = NULL, *absent = NULL;
 	struct stat sbuf;
 	int fd;
 
@@ -914,10 +914,12 @@ update_mtab (const char *dir, struct my_mntent *instead) {
 	read_mntentchn(mfp, fnam, mc);
 
 	/* find last occurrence of dir */
-	for (mc = mc0->prev; mc && mc != mc0; mc = mc->prev)
-		if (streq(mc->m.mnt_dir, dir))
-			break;
-	if (mc && mc != mc0) {
+	if (dir) {
+		for (mc = mc0->prev; mc && mc != mc0; mc = mc->prev)
+			if (streq(mc->m.mnt_dir, dir))
+				break;
+	}
+	if (dir && mc && mc != mc0) {
 		if (instead == NULL) {
 			/* An umount - remove entry */
 			if (mc && mc != mc0) {
@@ -963,24 +965,37 @@ update_mtab (const char *dir, struct my_mntent *instead) {
 		int errsv = errno;
 		error (_("cannot open %s (%s) - mtab not updated"),
 		       _PATH_MOUNTED_TMP, strerror (errsv));
-		discard_mntentchn(mc0);
 		goto leave;
 	}
 
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt) {
 		if (my_addmntent(mftmp, &(mc->m)) == 1) {
 			int errsv = errno;
-			die (EX_FILEIO, _("error writing %s: %s"),
+			error(_("error writing %s: %s"),
 			     _PATH_MOUNTED_TMP, strerror (errsv));
+			goto leave;
 		}
 	}
 
 	discard_mntentchn(mc0);
+	mc0 = NULL;
+
+	/*
+	 * We have to be paranoid with write() to avoid incomplete
+	 * /etc/mtab. Users are able to control writing by RLIMIT_FSIZE.
+	 */
+	if (fflush(mftmp->mntent_fp) != 0) {
+		int errsv = errno;
+		error (_("%s: cannot fflush changes: %s"),
+				_PATH_MOUNTED_TMP, strerror (errsv));
+		goto leave;
+	}
+
 	fd = fileno(mftmp->mntent_fp);
 
 	/*
-	 * It seems that better is incomplete and broken /mnt/mtab that
-	 * /mnt/mtab that is writeable for non-root users.
+	 * It seems that better is incomplete and broken /etc/mtab that
+	 * /etc/mtab that is writeable for non-root users.
 	 *
 	 * We always skip rename() when chown() and chmod() failed.
 	 * -- kzak, 11-Oct-2007
@@ -1017,6 +1032,9 @@ update_mtab (const char *dir, struct my_mntent *instead) {
 	}
 
  leave:
+	if (mc0)
+		discard_mntentchn(mc0);
+	unlink(_PATH_MOUNTED_TMP);
 	unlock_mtab();
 }
 
