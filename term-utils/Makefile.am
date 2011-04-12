@@ -53,7 +53,7 @@ endif
 
 if BUILD_WALL
 usrbin_exec_PROGRAMS += wall
-wall_SOURCES = wall.c ttymsg.c ttymsg.h
+wall_SOURCES = wall.c ttymsg.c ttymsg.h $(top_srcdir)/lib/strutils.c
 dist_man_MANS += wall.1
 
 if USE_TTY_GROUP

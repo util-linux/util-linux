@@ -42,6 +42,7 @@
 .Sh SYNOPSIS
 .Nm wall
 .Op Ar -n
+.Op Ar -t TIMEOUT
 .Op Ar file
 .Sh DESCRIPTION
 .Nm Wall
@@ -64,6 +65,10 @@ and the program is suid or sgid.
 .Bl -tag -width Fl
 .It Fl n, Fl Fl nobanner
 Supress banner
+.It Fl t, Fl Fl timeout Ar TIMEOUT
+Write timeout to terminals in seconds. Argument must be positive
+integer. Default value is 300 seconds, which is a legacy from
+time when people ran terminals over modem lines.
 .It Fl V, Fl Fl version
 Output version and exit.
 .It Fl h, Fl Fl help
