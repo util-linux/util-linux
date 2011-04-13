@@ -27,6 +27,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
+#include <signal.h>
 
 #include "c.h"
 #include "mountP.h"
@@ -40,6 +41,9 @@ struct libmnt_update {
 	unsigned long	mountflags;
 	int		userspace_only;
 	int		ready;
+
+	sigset_t	oldsigmask;
+	int		utab_lock;
 };
 
 static int utab_new_entry(struct libmnt_fs *fs, unsigned long mountflags, struct libmnt_fs **ent);
@@ -58,8 +62,8 @@ struct libmnt_update *mnt_new_update(void)
 	if (!upd)
 		return NULL;
 
+	upd->utab_lock = -1;
 	DBG(UPDATE, mnt_debug_h(upd, "allocate"));
-
 	return upd;
 }
 
@@ -630,58 +634,79 @@ leave:
 	return rc;
 }
 
-static int utab_lock(const char *filename)
+static int utab_lock(struct libmnt_update *upd)
 {
 	char *lfile;
-	int fd;
+	int rc;
+	sigset_t sigs;
 
-	assert(filename);
+	assert(upd);
+	assert(upd->filename);
+	assert(upd->userspace_only);
 
-	if (asprintf(&lfile, "%s.lock", filename) == -1)
+	if (asprintf(&lfile, "%s.lock", upd->filename) == -1)
 		return -1;
 
 	DBG(UPDATE, mnt_debug("%s: locking", lfile));
 
-	fd = open(lfile, O_RDONLY|O_CREAT|O_CLOEXEC, S_IWUSR|
-			                             S_IRUSR|S_IRGRP|S_IROTH);
+	sigemptyset(&upd->oldsigmask);
+	sigfillset(&sigs);
+	sigprocmask(SIG_BLOCK, &sigs, &upd->oldsigmask);
+
+	upd->utab_lock = open(lfile, O_RDONLY|O_CREAT|O_CLOEXEC, S_IWUSR|
+			             S_IRUSR|S_IRGRP|S_IROTH);
 	free(lfile);
 
-	if (fd < 0)
-		return -errno;
+	if (upd->utab_lock < 0) {
+		rc = -errno;
+		goto err;
+	}
 
-	while (flock(fd, LOCK_EX) < 0) {
+	while (flock(upd->utab_lock, LOCK_EX) < 0) {
 		int errsv;
 		if (errno == EINTR)
 			continue;
 		errsv = errno;
-		close(fd);
-		return -errsv;
+		close(upd->utab_lock);
+		upd->utab_lock = -1;
+		rc = -errsv;
+		goto err;
 	}
-	return fd;
+	return 0;
+err:
+	sigprocmask(SIG_SETMASK, &upd->oldsigmask, NULL);
+	return rc;
 }
 
-static void utab_unlock(int fd)
+static void utab_unlock(struct libmnt_update *upd)
 {
-	if (fd >= 0) {
+	assert(upd);
+	assert(upd->userspace_only);
+
+	if (upd->utab_lock >= 0) {
 		DBG(UPDATE, mnt_debug("unlocking utab"));
-		close(fd);
+		close(upd->utab_lock);
+		upd->utab_lock = -1;
+		sigprocmask(SIG_SETMASK, &upd->oldsigmask, NULL);
 	}
 }
 
 static int update_add_entry(struct libmnt_update *upd, struct libmnt_lock *lc)
 {
 	struct libmnt_table *tb;
-	int rc = 0, u_lc = -1;
+	int rc = 0;
 
 	assert(upd);
 	assert(upd->fs);
 
 	DBG(UPDATE, mnt_debug_h(upd, "%s: add entry", upd->filename));
 
-	if (lc)
-		mnt_lock_file(lc);
-	else if (upd->userspace_only)
-		u_lc = utab_lock(upd->filename);
+	if (upd->userspace_only)
+		rc = utab_lock(upd);
+	else if (lc)
+		rc = mnt_lock_file(lc);
+	if (rc)
+		return rc;
 
 	tb = __mnt_new_table_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
@@ -695,10 +720,10 @@ static int update_add_entry(struct libmnt_update *upd, struct libmnt_lock *lc)
 		}
 	}
 
-	if (lc)
+	if (upd->userspace_only)
+		utab_unlock(upd);
+	else if (lc)
 		mnt_unlock_file(lc);
-	else if (u_lc != -1)
-		utab_unlock(u_lc);
 
 	mnt_free_table(tb);
 	return rc;
@@ -707,17 +732,19 @@ static int update_add_entry(struct libmnt_update *upd, struct libmnt_lock *lc)
 static int update_remove_entry(struct libmnt_update *upd, struct libmnt_lock *lc)
 {
 	struct libmnt_table *tb;
-	int rc = 0, u_lc = -1;
+	int rc = 0;
 
 	assert(upd);
 	assert(upd->target);
 
 	DBG(UPDATE, mnt_debug_h(upd, "%s: remove entry", upd->filename));
 
-	if (lc)
-		mnt_lock_file(lc);
-	else if (upd->userspace_only)
-		u_lc = utab_lock(upd->filename);
+	if (upd->userspace_only)
+		rc = utab_lock(upd);
+	else if (lc)
+		rc = mnt_lock_file(lc);
+	if (rc)
+		return rc;
 
 	tb = __mnt_new_table_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
@@ -729,10 +756,11 @@ static int update_remove_entry(struct libmnt_update *upd, struct libmnt_lock *lc
 			mnt_free_fs(rem);
 		}
 	}
-	if (lc)
+
+	if (upd->userspace_only)
+		utab_unlock(upd);
+	else if (lc)
 		mnt_unlock_file(lc);
-	else if (u_lc != -1)
-		utab_unlock(u_lc);
 
 	mnt_free_table(tb);
 	return rc;
@@ -741,14 +769,16 @@ static int update_remove_entry(struct libmnt_update *upd, struct libmnt_lock *lc
 static int update_modify_target(struct libmnt_update *upd, struct libmnt_lock *lc)
 {
 	struct libmnt_table *tb = NULL;
-	int rc = 0, u_lc = -1;
+	int rc = 0;
 
 	DBG(UPDATE, mnt_debug_h(upd, "%s: modify target", upd->filename));
 
-	if (lc)
-		mnt_lock_file(lc);
-	else if (upd->userspace_only)
-		u_lc = utab_lock(upd->filename);
+	if (upd->userspace_only)
+		rc = utab_lock(upd);
+	else if (lc)
+		rc = mnt_lock_file(lc);
+	if (rc)
+		return rc;
 
 	tb = __mnt_new_table_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
@@ -761,10 +791,11 @@ static int update_modify_target(struct libmnt_update *upd, struct libmnt_lock *l
 				rc = update_table(upd, tb);
 		}
 	}
-	if (lc)
+
+	if (upd->userspace_only)
+		utab_unlock(upd);
+	else if (lc)
 		mnt_unlock_file(lc);
-	else if (u_lc != -1)
-		utab_unlock(u_lc);
 
 	mnt_free_table(tb);
 	return rc;
@@ -773,7 +804,7 @@ static int update_modify_target(struct libmnt_update *upd, struct libmnt_lock *l
 static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *lc)
 {
 	struct libmnt_table *tb = NULL;
-	int rc = 0, u_lc = -1;
+	int rc = 0;
 	struct libmnt_fs *fs;
 
 	assert(upd);
@@ -783,10 +814,12 @@ static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *
 
 	fs = upd->fs;
 
-	if (lc)
-		mnt_lock_file(lc);
-	else if (upd->userspace_only)
-		u_lc = utab_lock(upd->filename);
+	if (upd->userspace_only)
+		rc = utab_lock(upd);
+	else if (lc)
+		rc = mnt_lock_file(lc);
+	if (rc)
+		return rc;
 
 	tb = __mnt_new_table_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
@@ -809,10 +842,10 @@ static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *
 		}
 	}
 
-	if (lc)
+	if (upd->userspace_only)
+		utab_unlock(upd);
+	else if (lc)
 		mnt_unlock_file(lc);
-	else if (u_lc != -1)
-		utab_unlock(u_lc);
 
 	mnt_free_table(tb);
 	return rc;
