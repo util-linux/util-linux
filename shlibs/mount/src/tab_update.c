@@ -471,7 +471,8 @@ err:
 	return rc;
 }
 
-/* mtab and fstab update */
+/* mtab and fstab update -- returns zero on success
+ */
 static int fprintf_mtab_fs(FILE *f, struct libmnt_fs *fs)
 {
 	char *o;
@@ -490,12 +491,14 @@ static int fprintf_mtab_fs(FILE *f, struct libmnt_fs *fs)
 	m3 = mangle(mnt_fs_get_fstype(fs));
 	m4 = mangle(o);
 
-	if (m1 && m2 && m3 && m4)
-		rc = !fprintf(f, "%s %s %s %s %d %d\n",
+	if (m1 && m2 && m3 && m4) {
+		rc = fprintf(f, "%s %s %s %s %d %d\n",
 				m1, m2, m3, m4,
 				mnt_fs_get_freq(fs),
 				mnt_fs_get_passno(fs));
-	else
+		if (rc > 0)
+			rc = 0;
+	} else
 		rc = -ENOMEM;
 
 	free(o);
@@ -510,6 +513,7 @@ static int fprintf_mtab_fs(FILE *f, struct libmnt_fs *fs)
 static int fprintf_utab_fs(FILE *f, struct libmnt_fs *fs)
 {
 	char *p;
+	int rc = 0;
 
 	assert(fs);
 	assert(f);
@@ -519,37 +523,50 @@ static int fprintf_utab_fs(FILE *f, struct libmnt_fs *fs)
 
 	p = mangle(mnt_fs_get_source(fs));
 	if (p) {
-		fprintf(f, "SRC=%s ", p);
+		rc = fprintf(f, "SRC=%s ", p);
 		free(p);
 	}
-	p = mangle(mnt_fs_get_target(fs));
-	if (p) {
-		fprintf(f, "TARGET=%s ", p);
-		free(p);
+	if (rc >= 0) {
+		p = mangle(mnt_fs_get_target(fs));
+		if (p) {
+			rc = fprintf(f, "TARGET=%s ", p);
+			free(p);
+		}
 	}
-	p = mangle(mnt_fs_get_root(fs));
-	if (p) {
-		fprintf(f, "ROOT=%s ", p);
-		free(p);
+	if (rc >= 0) {
+		p = mangle(mnt_fs_get_root(fs));
+		if (p) {
+			rc = fprintf(f, "ROOT=%s ", p);
+			free(p);
+		}
 	}
-	p = mangle(mnt_fs_get_bindsrc(fs));
-	if (p) {
-		fprintf(f, "BINDSRC=%s ", p);
-		free(p);
+	if (rc >= 0) {
+		p = mangle(mnt_fs_get_bindsrc(fs));
+		if (p) {
+			rc = fprintf(f, "BINDSRC=%s ", p);
+			free(p);
+		}
 	}
-	p = mangle(mnt_fs_get_attributes(fs));
-	if (p) {
-		fprintf(f, "ATTRS=%s ", p);
-		free(p);
+	if (rc >= 0) {
+		p = mangle(mnt_fs_get_attributes(fs));
+		if (p) {
+			rc = fprintf(f, "ATTRS=%s ", p);
+			free(p);
+		}
 	}
-	p = mangle(mnt_fs_get_user_options(fs));
-	if (p) {
-		fprintf(f, "OPTS=%s", p);
-		free(p);
+	if (rc >= 0) {
+		p = mangle(mnt_fs_get_user_options(fs));
+		if (p) {
+			rc = fprintf(f, "OPTS=%s", p);
+			free(p);
+		}
 	}
-	fputc('\n', f);
+	if (rc >= 0)
+		rc = fprintf(f, "\n");
 
-	return 0;
+	if (rc > 0)
+		rc = 0;	/* success */
+	return rc;
 }
 
 static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
@@ -577,10 +594,22 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 		mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 			if (upd->userspace_only)
-				fprintf_utab_fs(f, fs);
+				rc = fprintf_utab_fs(f, fs);
 			else
-				fprintf_mtab_fs(f, fs);
+				rc = fprintf_mtab_fs(f, fs);
+			if (rc) {
+				DBG(UPDATE, mnt_debug_h(upd,
+					"%s: write entry failed: %m", uq));
+				goto leave;
+			}
 		}
+
+		if (fflush(f) != 0) {
+			rc = -errno;
+			DBG(UPDATE, mnt_debug_h(upd, "%s: fflush failed: %m", uq));
+			goto leave;
+		}
+
 		fd = fileno(f);
 		rc = fchmod(fd, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) ? -errno : 0;
 
@@ -595,6 +624,7 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 		close(fd);
 	}
 
+leave:
 	unlink(uq);	/* be paranoid */
 	free(uq);
 	return rc;
@@ -640,7 +670,7 @@ static void utab_unlock(int fd)
 
 static int update_add_entry(struct libmnt_update *upd, struct libmnt_lock *lc)
 {
-	FILE *f;
+	struct libmnt_table *tb;
 	int rc = 0, u_lc = -1;
 
 	assert(upd);
@@ -653,20 +683,24 @@ static int update_add_entry(struct libmnt_update *upd, struct libmnt_lock *lc)
 	else if (upd->userspace_only)
 		u_lc = utab_lock(upd->filename);
 
-	f = fopen(upd->filename, "a+");
-	if (f) {
-		rc = upd->userspace_only ? fprintf_utab_fs(f, upd->fs) :
-					   fprintf_mtab_fs(f, upd->fs);
-		DBG(UPDATE, mnt_debug_h(upd, "%s: add [rc=%d]", upd->filename, rc));
-		fclose(f);
-	} else {
-		DBG(UPDATE, mnt_debug_h(upd, "%s: failed: %m", upd->filename));
-		rc = -errno;
+	tb = __mnt_new_table_from_file(upd->filename,
+			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
+	if (tb) {
+		struct libmnt_fs *fs = mnt_copy_fs(NULL, upd->fs);
+		if (!fs)
+			rc = -ENOMEM;
+		else {
+			mnt_table_add_fs(tb, fs);
+			rc = update_table(upd, tb);
+		}
 	}
+
 	if (lc)
 		mnt_unlock_file(lc);
 	else if (u_lc != -1)
 		utab_unlock(u_lc);
+
+	mnt_free_table(tb);
 	return rc;
 }
 
