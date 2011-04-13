@@ -417,12 +417,9 @@ umount_one (const char *spec, const char *node, const char *type,
 #ifdef HAVE_LIBMOUNT_MOUNT
 		struct libmnt_update *upd = mnt_new_update();
 
-		if (upd && !mnt_update_set_fs(upd, 0, node, NULL)) {
-			struct libmnt_lock *lc = init_libmount_lock(
-						mnt_update_get_filename(upd));
-			mnt_update_table(upd, lc);
-			init_libmount_lock(NULL);
-		}
+		if (upd && !mnt_update_set_fs(upd, 0, node, NULL))
+			mnt_update_table(upd, NULL);
+
 		mnt_free_update(upd);
 #else
 		update_mtab (node, NULL);
