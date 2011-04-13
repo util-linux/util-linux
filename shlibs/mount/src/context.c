@@ -798,8 +798,9 @@ struct libmnt_cache *mnt_context_get_cache(struct libmnt_context *cxt)
  * small exception: the application has to be able to remove the lock file when
  * interrupted by signal or signals have to be ignored when the lock is locked.
  *
- * The default behavior is to ignore all signals (except SIGALRM and SIGTRAP)
- * when the lock is locked. If this behavior is unacceptable then use:
+ * The default behavior is to ignore all signals (except SIGALRM and
+ * SIGTRAP for mtab udate) when the lock is locked. If this behavior
+ * is unacceptable then use:
  *
  *	lc = mnt_context_get_lock(cxt);
  *	if (lc)
@@ -807,18 +808,21 @@ struct libmnt_cache *mnt_context_get_cache(struct libmnt_context *cxt)
  *
  * and don't forget to call mnt_unlock_file(lc) before exit.
  *
- * This function returns NULL if the lock is unnecessary (mtab file is not writable
- * or /etc/mtab is symlink to /proc/mounts).
- *
  * Returns: pointer to lock struct or NULL.
  */
 struct libmnt_lock *mnt_context_get_lock(struct libmnt_context *cxt)
 {
-	if (!cxt || (cxt->flags & MNT_FL_NOMTAB) || !cxt->mtab_writable)
+	/*
+	 * DON'T call this function within libmount, it will always allocate
+	 * the lock. The mnt_update_* functions are able to allocate the lock
+	 * only when mtab/utab update is really necessary.
+	 */
+	if (!cxt || (cxt->flags & MNT_FL_NOMTAB))
 		return NULL;
 
-	if (!cxt->lock && cxt->mtab_path) {
-		cxt->lock = mnt_new_lock(cxt->mtab_path, 0);
+	if (!cxt->lock) {
+		cxt->lock = mnt_new_lock(cxt->mtab_writable ?
+				cxt->mtab_path : cxt->utab_path, 0);
 		if (cxt->lock)
 			mnt_lock_block_signals(cxt->lock, TRUE);
 	}
@@ -1323,7 +1327,7 @@ int mnt_context_update_tabs(struct libmnt_context *cxt)
 		mnt_update_force_rdonly(cxt->update,
 				cxt->mountflags & MS_RDONLY);
 
-	return mnt_update_table(cxt->update, mnt_context_get_lock(cxt));
+	return mnt_update_table(cxt->update, cxt->lock);
 }
 
 static int apply_table(struct libmnt_context *cxt, struct libmnt_table *tb,
@@ -1610,6 +1614,9 @@ int test_mount(struct libmnt_test *ts, int argc, char *argv[])
 		mnt_context_set_target(cxt, argv[idx++]);
 	}
 
+	/* this is unnecessary -- libmount is able to internaly
+	 * create and manage the lock
+	 */
 	lock = mnt_context_get_lock(cxt);
 	if (lock)
 		atexit(lock_fallback);

@@ -88,7 +88,7 @@ struct libmnt_lock *mnt_new_lock(const char *datafile, pid_t id)
 	ml->linkfile = ln;
 	ml->lockfile = lo;
 
-	DBG(LOCKS, mnt_debug_h(ml, "alloc: linkfile=%s, lockfile=%s", ln, lo));
+	DBG(LOCKS, mnt_debug_h(ml, "alloc: default linkfile=%s, lockfile=%s", ln, lo));
 	return ml;
 err:
 	free(lo);
@@ -160,7 +160,7 @@ int mnt_lock_use_simplelock(struct libmnt_lock *ml, int enable)
 	else if (!ml->simplelock && endswith(ml->lockfile, ".lock"))
 		 memcpy(ml->lockfile + sz - 5, "~", 2);
 
-	DBG(LOCKS, mnt_debug_h(ml, "lock filename: '%s'", ml->lockfile));
+	DBG(LOCKS, mnt_debug_h(ml, "new lock filename: '%s'", ml->lockfile));
 	return 0;
 }
 
@@ -234,6 +234,7 @@ static int lock_simplelock(struct libmnt_lock *ml)
 		rc = -errsv;
 		goto err;
 	}
+	ml->locked = 1;
 	return 0;
 err:
 	if (ml->sigblock)
