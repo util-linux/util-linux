@@ -7,12 +7,12 @@
 
 /**
  * SECTION: lock
- * @title: Mtab locking
- * @short_description: locking methods for work with /etc/mtab
+ * @title: locking
+ * @short_description: locking methods for /etc/mtab or another libmount files
  *
- * The lock is backwardly compatible with the standard linux /etc/mtab locking.
- * Note, it's necessary to use the same locking schema in all application that
- * access the file.
+ * The mtab lock is backwardly compatible with the standard linux /etc/mtab
+ * locking.  Note, it's necessary to use the same locking schema in all
+ * application that access the file.
  */
 #include <string.h>
 #include <stdlib.h>
@@ -26,6 +26,7 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <sys/file.h>
 
 #include "pathnames.h"
 #include "nls.h"
@@ -43,6 +44,7 @@ struct libmnt_lock {
 
 	int	locked : 1;	/* do we own the lock? */
 	int	sigblock : 1;	/* block signals when locked */
+	int	simplelock : 1;	/* use flock rather than normal mtab lock */
 
 	sigset_t oldsigmask;
 };
@@ -59,15 +61,21 @@ struct libmnt_lock *mnt_new_lock(const char *datafile, pid_t id)
 {
 	struct libmnt_lock *ml = NULL;
 	char *lo = NULL, *ln = NULL;
+	size_t losz;
 
-	/* lockfile */
 	if (!datafile)
 		return NULL;
 
-	if (asprintf(&lo, "%s~", datafile) == -1) {
-		lo = NULL;
+	/* for flock we use "foo.lock, for mtab "foo~"
+	 */
+	losz = strlen(datafile) + sizeof(".lock");
+	lo = malloc(losz);
+	if (!lo)
 		goto err;
-	}
+
+	/* default is mtab~ lock */
+	snprintf(lo, losz, "%s~", datafile);
+
 	if (asprintf(&ln, "%s~.%d", datafile, id ? : getpid()) == -1) {
 		ln = NULL;
 		goto err;
@@ -125,6 +133,37 @@ int mnt_lock_block_signals(struct libmnt_lock *ml, int enable)
 	return 0;
 }
 
+/* don't export this to API
+ */
+int mnt_lock_use_simplelock(struct libmnt_lock *ml, int enable)
+{
+	size_t sz;
+
+	if (!ml)
+		return -EINVAL;
+
+	assert(ml->lockfile);
+
+	DBG(LOCKS, mnt_debug_h(ml, "flock: %s", enable ? "ENABLED" : "DISABLED"));
+	ml->simplelock = enable ? 1 : 0;
+
+	sz = strlen(ml->lockfile);
+
+	/* Change lock name:
+	 *
+	 *	flock:     "<name>.lock"
+	 *	mtab lock: "<name>~"
+	 */
+	if (ml->simplelock && endswith(ml->lockfile, "~"))
+		memcpy(ml->lockfile + sz - 1, ".lock", 6);
+
+	else if (!ml->simplelock && endswith(ml->lockfile, ".lock"))
+		 memcpy(ml->lockfile + sz - 5, "~", 2);
+
+	DBG(LOCKS, mnt_debug_h(ml, "lock filename: '%s'", ml->lockfile));
+	return 0;
+}
+
 /*
  * Returns path to lockfile.
  */
@@ -144,6 +183,68 @@ static const char *mnt_lock_get_linkfile(struct libmnt_lock *ml)
 	return ml ? ml->linkfile : NULL;
 }
 
+/*
+ * Simple flocking
+ */
+static void unlock_simplelock(struct libmnt_lock *ml)
+{
+	assert(ml);
+	assert(ml->simplelock);
+
+	if (ml->lockfile_fd >= 0) {
+		DBG(LOCKS, mnt_debug_h(ml, "%s: unflocking",
+					mnt_lock_get_lockfile(ml)));
+		close(ml->lockfile_fd);
+	}
+}
+
+static int lock_simplelock(struct libmnt_lock *ml)
+{
+	const char *lfile;
+	int rc;
+
+	assert(ml);
+	assert(ml->simplelock);
+
+	lfile = mnt_lock_get_lockfile(ml);
+
+	DBG(LOCKS, mnt_debug_h(ml, "%s: locking", lfile));
+
+	if (ml->sigblock) {
+		sigset_t sigs;
+		sigemptyset(&ml->oldsigmask);
+		sigfillset(&sigs);
+		sigprocmask(SIG_BLOCK, &sigs, &ml->oldsigmask);
+	}
+
+	ml->lockfile_fd = open(lfile, O_RDONLY|O_CREAT|O_CLOEXEC,
+				      S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);
+	if (ml->lockfile_fd < 0) {
+		rc = -errno;
+		goto err;
+	}
+
+	while (flock(ml->lockfile_fd, LOCK_EX) < 0) {
+		int errsv;
+		if ((errno == EAGAIN) || (errno == EINTR))
+			continue;
+		errsv = errno;
+		close(ml->lockfile_fd);
+		ml->lockfile_fd = -1;
+		rc = -errsv;
+		goto err;
+	}
+	return 0;
+err:
+	if (ml->sigblock)
+		sigprocmask(SIG_SETMASK, &ml->oldsigmask, NULL);
+	return rc;
+}
+
+/*
+ * traditional mtab locking
+ */
+
 static void mnt_lockalrm_handler(int sig)
 {
 	/* do nothing, say nothing, be nothing */
@@ -155,7 +256,7 @@ static void mnt_lockalrm_handler(int sig)
  *
  * Returns: 0 on success, 1 on timeout, -errno on error.
  */
-static int mnt_wait_lock(struct libmnt_lock *ml, struct flock *fl, time_t maxtime)
+static int mnt_wait_mtab_lock(struct libmnt_lock *ml, struct flock *fl, time_t maxtime)
 {
 	struct timeval now;
 	struct sigaction sa, osa;
@@ -189,7 +290,7 @@ static int mnt_wait_lock(struct libmnt_lock *ml, struct flock *fl, time_t maxtim
 }
 
 /*
- * Create the lock file.
+ * Create the mtab lock file.
  *
  * The old code here used flock on a lock file /etc/mtab~ and deleted
  * this lock file afterwards. However, as rgooch remarks, that has a
@@ -237,14 +338,7 @@ static int mnt_wait_lock(struct libmnt_lock *ml, struct flock *fl, time_t maxtim
 /* sleep time (in microseconds, max=999999) between attempts */
 #define MOUNTLOCK_WAITTIME		5000
 
-/**
- * mnt_unlock_file:
- * @ml: lock struct
- *
- * Unlocks the file. The function could be called independently on the
- * lock status (for example from exit(3)).
- */
-void mnt_unlock_file(struct libmnt_lock *ml)
+static void unlock_mtab(struct libmnt_lock *ml)
 {
 	if (!ml)
 		return;
@@ -264,9 +358,6 @@ void mnt_unlock_file(struct libmnt_lock *ml)
 			ml->locked = 1;
 	}
 
-	DBG(LOCKS, mnt_debug_h(ml, "(%d) %s", getpid(),
-			ml->locked ? "unlocking" : "cleaning"));
-
 	if (ml->linkfile)
 		unlink(ml->linkfile);
 	if (ml->lockfile_fd >= 0)
@@ -275,79 +366,9 @@ void mnt_unlock_file(struct libmnt_lock *ml)
 		unlink(ml->lockfile);
 		DBG(LOCKS, mnt_debug_h(ml, "unlink %s", ml->lockfile));
 	}
-	ml->locked = 0;
-	ml->lockfile_fd = -1;
-
-	if (ml->sigblock) {
-		DBG(LOCKS, mnt_debug_h(ml, "restoring sigmask"));
-		sigprocmask(SIG_SETMASK, &ml->oldsigmask, NULL);
-	}
-	ml->sigblock = 0;
 }
 
-/**
- * mnt_lock_file
- * @ml: pointer to struct libmnt_lock instance
- *
- * Creates lock file (e.g. /etc/mtab~). Note that this function uses
- * alarm().
- *
- * Your application has to always call mnt_unlock_file() before exit.
- *
- * Locking scheme:
- *
- *   1. create linkfile (e.g. /etc/mtab~.$PID)
- *   2. link linkfile --> lockfile (e.g. /etc/mtab~.$PID --> /etc/mtab~)
- *
- *   3. a) link() success: setups F_SETLK lock (see fcnlt(2))
- *      b) link() failed:  wait (max 30s) on F_SETLKW lock, goto 2.
- *
- * Example:
- *
- * <informalexample>
- *   <programlisting>
- *	struct libmnt_lock *ml;
- *
- *	void unlock_fallback(void)
- *	{
- *		if (!ml)
- *			return;
- *		mnt_unlock_file(ml);
- *		mnt_free_lock(ml);
- *	}
- *
- *	int update_mtab()
- *	{
- *		int sig = 0;
- *		const char *mtab;
- *
- *		if (!(mtab = mnt_get_mtab_path()))
- *			return 0;			// system without mtab
- *		if (!(ml = mnt_new_lock(mtab, 0)))
- *			return -1;			// error
- *
- *		atexit(unlock_fallback);
- *
- *		if (mnt_lock_file(ml) != 0) {
- *			printf(stderr, "cannot create %s lockfile\n",
- *					mnt_lock_get_lockfile(ml));
- *			return -1;
- *		}
- *
- *		... modify mtab ...
- *
- *		mnt_unlock_file(ml);
- *		mnt_free_lock(ml);
- *		ml = NULL;
- *		return 0;
- *	}
- *   </programlisting>
- * </informalexample>
- *
- * Returns: 0 on success or negative number in case of error (-ETIMEOUT is case
- * of stale lock file).
- */
-int mnt_lock_file(struct libmnt_lock *ml)
+static int lock_mtab(struct libmnt_lock *ml)
 {
 	int i, rc = -1;
 	struct timespec waittime;
@@ -443,7 +464,7 @@ int mnt_lock_file(struct libmnt_lock *ml)
 			break;
 		} else {
 			/* Someone else made the link. Wait. */
-			int err = mnt_wait_lock(ml, &flock, maxtime.tv_sec);
+			int err = mnt_wait_mtab_lock(ml, &flock, maxtime.tv_sec);
 
 			if (err == 1) {
 				DBG(LOCKS, mnt_debug_h(ml,
@@ -469,6 +490,66 @@ int mnt_lock_file(struct libmnt_lock *ml)
 failed:
 	mnt_unlock_file(ml);
 	return rc;
+}
+
+
+/**
+ * mnt_lock_file
+ * @ml: pointer to struct libmnt_lock instance
+ *
+ * Creates lock file (e.g. /etc/mtab~). Note that this function may
+ * use alarm().
+ *
+ * Your application has to always call mnt_unlock_file() before exit.
+ *
+ * Traditional mtab locking scheme:
+ *
+ *   1. create linkfile (e.g. /etc/mtab~.$PID)
+ *   2. link linkfile --> lockfile (e.g. /etc/mtab~.$PID --> /etc/mtab~)
+ *   3. a) link() success: setups F_SETLK lock (see fcnlt(2))
+ *      b) link() failed:  wait (max 30s) on F_SETLKW lock, goto 2.
+ *
+ * Returns: 0 on success or negative number in case of error (-ETIMEOUT is case
+ * of stale lock file).
+ */
+int mnt_lock_file(struct libmnt_lock *ml)
+{
+	if (!ml)
+		return -EINVAL;
+
+	if (ml->simplelock)
+		return lock_simplelock(ml);
+
+	return lock_mtab(ml);
+}
+
+/**
+ * mnt_unlock_file:
+ * @ml: lock struct
+ *
+ * Unlocks the file. The function could be called independently on the
+ * lock status (for example from exit(3)).
+ */
+void mnt_unlock_file(struct libmnt_lock *ml)
+{
+	if (!ml)
+		return;
+
+	DBG(LOCKS, mnt_debug_h(ml, "(%d) %s", getpid(),
+			ml->locked ? "unlocking" : "cleaning"));
+
+	if (ml->simplelock)
+		unlock_simplelock(ml);
+	else
+		unlock_mtab(ml);
+
+	ml->locked = 0;
+	ml->lockfile_fd = -1;
+
+	if (ml->sigblock) {
+		DBG(LOCKS, mnt_debug_h(ml, "restoring sigmask"));
+		sigprocmask(SIG_SETMASK, &ml->oldsigmask, NULL);
+	}
 }
 
 #ifdef TEST_PROGRAM

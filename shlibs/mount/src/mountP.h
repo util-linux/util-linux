@@ -306,6 +306,9 @@ struct libmnt_context
 /* default flags */
 #define MNT_FL_DEFAULT		0
 
+/* lock.c */
+extern int mnt_lock_use_simplelock(struct libmnt_lock *ml, int enable);
+
 /* optmap.c */
 extern const struct libmnt_optmap *mnt_optmap_get_entry(
 			     struct libmnt_optmap const **maps,
