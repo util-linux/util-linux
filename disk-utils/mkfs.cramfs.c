@@ -41,11 +41,7 @@
 #include "cramfs_common.h"
 #include "md5.h"
 #include "nls.h"
-
-/* Exit codes used by mkfs-type programs */
-#define MKFS_OK          0     /* No errors */
-#define MKFS_ERROR       8     /* Operational error */
-#define MKFS_USAGE       16    /* Usage or syntax error */
+#include "mkfs.h"
 
 /* The kernel only supports PAD_SIZE of 0 and 512. */
 #define PAD_SIZE 512
