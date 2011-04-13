@@ -291,6 +291,8 @@ umount_one (const char *spec, const char *node, const char *type,
 	if (check_special_umountprog(spec, node, type, &status))
 		return status;
 
+	block_signals(SIG_BLOCK);
+
 	/* Skip the actual umounting for --fake */
 	if (fake)
 		goto writemtab;
@@ -357,6 +359,7 @@ umount_one (const char *spec, const char *node, const char *type,
 				remnt.mnt_passno = 0;
 				update_mtab(node, &remnt);
 			}
+			block_signals(SIG_UNBLOCK);
 			return 0;
 		} else if (errno != EBUSY) { 	/* hmm ... */
 			perror("remount");
@@ -425,6 +428,8 @@ umount_one (const char *spec, const char *node, const char *type,
 		update_mtab (node, NULL);
 #endif
 	}
+
+	block_signals(SIG_UNBLOCK);
 
 	if (res >= 0)
 		return 0;
