@@ -1403,9 +1403,7 @@ static void update_mtab_entry(int flags)
 			create_mtab ();
 		}
 
-		lc = init_libmount_lock( mnt_update_get_filename(mtab_update) );
-		mnt_update_table(mtab_update, lc);
-		init_libmount_lock(NULL);
+		mnt_update_table(mtab_update, NULL);
 	}
 
 	mnt_free_update(mtab_update);
