@@ -60,16 +60,14 @@ write access by default, at least for the primary login shell.  To make
 sure your ttys are set the way you want them to be set,
 .B mesg
 should be executed in your login scripts.
-.PP
-Available arguments:
+.SH ARGUMENTS
 .TP
 .B n
 Disallows messages.
 .TP
 .B y
 Permits messages to be displayed.
-.TP
-Available options:
+.SH OPTIONS
 .TP
 .B \-v, \-\-verbose
 Explain what is being done.
@@ -99,7 +97,6 @@ An error has occurred.
 .SH FILES
 .I /dev/[pt]ty[pq]?
 .SH "SEE ALSO"
-.BR biff (1),
 .BR talk (1),
 .BR write (1),
 .BR wall (1),
