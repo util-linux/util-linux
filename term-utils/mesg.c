@@ -71,7 +71,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		_("\nOptions:\n"
 		  "  -v, --verbose      explain what is being done\n"
 		  "  -V, --version      output version information and exit\n"
-		  "  -h, --help         output help screen and exit\n"));
+		  "  -h, --help         output help screen and exit\n\n"));
 
 	exit(out == stderr ? MESG_EXIT_FAILURE : EXIT_SUCCESS);
 }
