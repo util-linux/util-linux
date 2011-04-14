@@ -1,18 +1,11 @@
-/* agetty.c - another getty program for Linux. By W. Z. Venema 1989
-   Ported to Linux by Peter Orbaek <poe@daimi.aau.dk>
-   This program is freely distributable. The entire man-page used to
-   be here. Now read the real man-page agetty.8 instead.
-
-   -f option added by Eric Rasmussen <ear@usfirst.org> - 12/28/95
-   
-   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
-   - added Native Language Support
-
-   1999-05-05 Thorsten Kranzkowski <dl8bcu@gmx.net>
-   - enable hardware flow control before displaying /etc/issue
-   
-*/
-
+/*
+ * agetty.c - another getty program for Linux. By W. Z. Venema 1989
+ *
+ * Ported to Linux by Peter Orbaek <poe@daimi.aau.dk>
+ * This program is freely distributable. The entire man-page used to
+ * be here. Now read the real man-page agetty.8 instead.
+ *
+ */
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -43,32 +36,31 @@
 #define USE_SYSLOG
 #endif
 
- /* If USE_SYSLOG is undefined all diagnostics go directly to /dev/console. */
+/* If USE_SYSLOG is undefined all diagnostics go directly to /dev/console. */
 
 #ifdef	USE_SYSLOG
 #include <syslog.h>
 #endif
 
- /*
-  * Some heuristics to find out what environment we are in: if it is not
-  * System V, assume it is SunOS 4.
-  */
-
+/*
+ * Some heuristics to find out what environment we are in: if it is not
+ * System V, assume it is SunOS 4.
+ */
 #ifdef LOGIN_PROCESS			/* defined in System V utmp.h */
 #define	SYSV_STYLE			/* select System V style getty */
 #endif
 
- /*
-  * Things you may want to modify.
-  * 
-  * If ISSUE is not defined, agetty will never display the contents of the
-  * /etc/issue file. You will not want to spit out large "issue" files at the
-  * wrong baud rate. Relevant for System V only.
-  * 
-  * You may disagree with the default line-editing etc. characters defined
-  * below. Note, however, that DEL cannot be used for interrupt generation
-  * and for line editing at the same time.
-  */
+/*
+ * Things you may want to modify.
+ *
+ * If ISSUE is not defined, agetty will never display the contents of the
+ * /etc/issue file. You will not want to spit out large "issue" files at the
+ * wrong baud rate. Relevant for System V only.
+ *
+ * You may disagree with the default line-editing etc. characters defined
+ * below. Note, however, that DEL cannot be used for interrupt generation
+ * and for line editing at the same time.
+ */
 
 #ifdef	SYSV_STYLE
 #define	ISSUE "/etc/issue"		/* displayed before the login prompt */
@@ -103,11 +95,10 @@
 # endif /* HOST_NAME_MAX */
 #endif /* MAXHOSTNAMELEN */
 
- /*
-  * When multiple baud rates are specified on the command line, the first one
-  * we will try is the first one specified.
-  */
-
+/*
+ * When multiple baud rates are specified on the command line, the first one
+ * we will try is the first one specified.
+ */
 #define	FIRST_SPEED	0
 
 /* Storage for command-line options. */
@@ -251,12 +242,12 @@ main(argc, argv)
        setlocale(LC_ALL, "");
        bindtextdomain(PACKAGE, LOCALEDIR);
        textdomain(PACKAGE);
-    
+
 #ifdef DEBUGGING
 	dbf = fopen("/dev/ttyp0", "w");
 
 	{	int i;
-	
+
 		for(i = 1; i < argc; i++) {
 			debug(argv[i]);
 		}
@@ -270,7 +261,7 @@ main(argc, argv)
 #ifdef __linux__
 	setsid();
 #endif
-	
+
     /* Update the utmp file. */
 
 #ifdef	SYSV_STYLE
@@ -428,8 +419,8 @@ parse_args(argc, argv, op)
 				    ch <<= 3;
 				    ch += *p - '0';
 				    p++;
-				} else 
-				  break;
+				} else
+				    break;
 			    }
 			}
 			*q++ = ch;
@@ -592,7 +583,7 @@ update_utmp(line)
 	memset(&ut, 0, sizeof(ut));
 	strncpy(ut.ut_id, line + 3, sizeof(ut.ut_id));
     }
-	
+
     strncpy(ut.ut_user, "LOGIN", sizeof(ut.ut_user));
     strncpy(ut.ut_line, line, sizeof(ut.ut_line));
     if (fakehost)
@@ -789,9 +780,9 @@ auto_baud(tp)
      * the DCD line, and if the computer is fast enough to set the proper
      * baud rate before the message has gone by. We expect a message of the
      * following format:
-     * 
+     *
      * <junk><number><junk>
-     * 
+     *
      * The number is interpreted as the baud rate of the incoming call. If the
      * modem does not tell us the baud rate within one second, we will keep
      * using the current baud rate. It is advisable to enable BREAK
@@ -863,25 +854,25 @@ do_prompt(op, tp)
 	    if (c == '\\')
 	      {
 		c = getc(fd);
-		
+
 		switch (c)
 		  {
 		  case 's':
 		    (void) printf ("%s", uts.sysname);
 		    break;
-		    
+
 		  case 'n':
 		    (void) printf ("%s", uts.nodename);
 		    break;
-		    
+
 		  case 'r':
 		    (void) printf ("%s", uts.release);
 		    break;
-		    
+
 		  case 'v':
 		    (void) printf ("%s", uts.version);
 		    break;
-		    
+
 		  case 'm':
 		    (void) printf ("%s", uts.machine);
 		    break;
@@ -1188,7 +1179,7 @@ termio_final(op, tp, cp)
 #ifdef IUCLC
 	tp->c_iflag |= IUCLC;
 #endif
-#ifdef XCASE	
+#ifdef XCASE
 	tp->c_lflag |= XCASE;
 #endif
 #ifdef OLCUC
