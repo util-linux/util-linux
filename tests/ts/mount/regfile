@@ -19,9 +19,16 @@ mkfs.ext3 -F $IMAGE &> /dev/null || ts_die "Cannot make ext3 on $IMAGE"
 
 $TS_CMD_MOUNT $IMAGE $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
 
+DEVICE=$(awk '/regfile/ { print $1 }' /proc/mounts)
+
 grep -q "$TS_MOUNTPOINT" /proc/mounts || ts_die "Cannot found $TS_MOUNTPOINT in /proc/mounts"
 
-$TS_CMD_UMOUNT $IMAGE || ts_die "Cannot umount $IMAGE"
+if [ -f "/sys/block/$(basename $DEVICE)/loop" ]; then
+	$TS_CMD_UMOUNT $IMAGE || ts_die "Cannot umount $IMAGE"
+else
+	$TS_CMD_UMOUNT $TS_MOUNTPOINT &> /dev/null
+	ts_skip "too old kernel"
+fi
 
 grep -q "$TS_MOUNTPOINT" /proc/mounts && ts_die "$TS_MOUNTPOINT still in /proc/mounts"
 
