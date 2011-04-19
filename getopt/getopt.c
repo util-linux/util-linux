@@ -77,7 +77,6 @@ static void add_long_options(char *options);
 static void add_longopt(const char *name,int has_arg);
 static void print_help(void);
 static void set_shell(const char *new_shell);
-static void set_initial_shell(void);
 
 static void *our_malloc(size_t size)
 {

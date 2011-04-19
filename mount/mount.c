@@ -1385,7 +1385,6 @@ prepare_mtab_entry(const char *spec, const char *node, const char *type,
 static void update_mtab_entry(int flags)
 {
 	unsigned long fl;
-	struct libmnt_lock *lc;
 
 	if (!mtab_update)
 		return;
