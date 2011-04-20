@@ -875,7 +875,7 @@ build_lsblk=yes
 if test "x$have_openat" = xno; then
   AC_MSG_WARN([openat() function not found; do not build lsblk])
   build_lsblk=no
-elif test "x$have_linux" = xno; then
+elif test "x$linux_os" = xno; then
   AC_MSG_WARN([non-linux system; do not build lsblk])
   build_lsblk=no
 fi
