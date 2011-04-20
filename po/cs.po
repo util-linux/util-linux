@@ -22,7 +22,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.19-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2011-02-10 09:15+0100\n"
+"POT-Creation-Date: 2011-04-19 15:22+0200\n"
 "PO-Revision-Date: 2011-02-07 19:48+0100\n"
 "Last-Translator: Petr Písař <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -1408,7 +1408,7 @@ msgstr ""
 msgid "too many bad pages"
 msgstr "příliš mnoho chybných stránek"
 
-#: disk-utils/mkswap.c:310 misc-utils/setterm.c:1180
+#: disk-utils/mkswap.c:310 misc-utils/setterm.c:1181
 msgid "Out of memory"
 msgstr "Nedostatek paměti"
 
@@ -2017,7 +2017,7 @@ msgid "   Logical"
 msgstr "  Logický"
 
 #: fdisk/cfdisk.c:1992 fdisk/fdisk.c:1799 fdisk/fdisk.c:2137
-#: fdisk/fdisksgilabel.c:228 fdisk/fdisksunlabel.c:616 fdisk/sfdisk.c:640
+#: fdisk/fdisksgilabel.c:230 fdisk/fdisksunlabel.c:616 fdisk/sfdisk.c:640
 msgid "Unknown"
 msgstr "Neznámý"
 
@@ -2674,7 +2674,7 @@ msgstr "Na %s se nenachází žádný *BSD diskový oddíl.\n"
 msgid "BSD disklabel command (m for help): "
 msgstr "Příkaz pro BSD popis disku (m pro nápovědu): "
 
-#: fdisk/fdiskbsdlabel.c:283 fdisk/fdisk.c:2359 fdisk/fdisksgilabel.c:642
+#: fdisk/fdiskbsdlabel.c:283 fdisk/fdisk.c:2359 fdisk/fdisksgilabel.c:644
 #: fdisk/fdisksunlabel.c:426
 #, c-format
 msgid "First %s"
@@ -3561,7 +3561,7 @@ msgstr ""
 msgid "%*s Boot      Start         End      Blocks   Id  System\n"
 msgstr "%*s Zavádět   Začátek       Konec    Bloky    Id  Systém\n"
 
-#: fdisk/fdisk.c:2109 fdisk/fdisksgilabel.c:211 fdisk/fdisksunlabel.c:598
+#: fdisk/fdisk.c:2109 fdisk/fdisksgilabel.c:213 fdisk/fdisksunlabel.c:598
 msgid "Device"
 msgstr "Zařízení"
 
@@ -3645,7 +3645,7 @@ msgstr "Celkový počet alokovaných sektorů %'llu je větší než maximum %'l
 msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "Zbývá %'lld nealokovaných %dbajtových sektorů\n"
 
-#: fdisk/fdisk.c:2332 fdisk/fdisksgilabel.c:624 fdisk/fdisksunlabel.c:411
+#: fdisk/fdisk.c:2332 fdisk/fdisksgilabel.c:626 fdisk/fdisksunlabel.c:411
 #, c-format
 msgid "Partition %d is already defined.  Delete it before re-adding it.\n"
 msgstr ""
@@ -3924,79 +3924,80 @@ msgstr ""
 "\t   skupiny svazků. (Jinak můžete smazat, pokud nejsou\n"
 "\t   zrcadleny, i ostatní disky.)\n"
 
-#: fdisk/fdisksgilabel.c:82
+#: fdisk/fdisksgilabel.c:84
 msgid "SGI volhdr"
 msgstr "Hlavička SGI svazku"
 
-#: fdisk/fdisksgilabel.c:83
+#: fdisk/fdisksgilabel.c:85
 msgid "SGI trkrepl"
 msgstr "SGI trkrepl"
 
-#: fdisk/fdisksgilabel.c:84
+#: fdisk/fdisksgilabel.c:86
 msgid "SGI secrepl"
 msgstr "SGI secrepl"
 
-#: fdisk/fdisksgilabel.c:85
+#: fdisk/fdisksgilabel.c:87
 msgid "SGI raw"
 msgstr "SGI raw"
 
-#: fdisk/fdisksgilabel.c:86
+#: fdisk/fdisksgilabel.c:88
 msgid "SGI bsd"
 msgstr "SGI bsd"
 
-#: fdisk/fdisksgilabel.c:87
+#: fdisk/fdisksgilabel.c:89
 msgid "SGI sysv"
 msgstr "SGI sysv"
 
-#: fdisk/fdisksgilabel.c:88
+#: fdisk/fdisksgilabel.c:90
 msgid "SGI volume"
 msgstr "SGI svazek"
 
-#: fdisk/fdisksgilabel.c:89
+#: fdisk/fdisksgilabel.c:91
 msgid "SGI efs"
 msgstr "SGI efs"
 
-#: fdisk/fdisksgilabel.c:90
+#: fdisk/fdisksgilabel.c:92
 msgid "SGI lvol"
 msgstr "SGI lvol"
 
-#: fdisk/fdisksgilabel.c:91
+#: fdisk/fdisksgilabel.c:93
 msgid "SGI rlvol"
 msgstr "SGI rlvol"
 
-#: fdisk/fdisksgilabel.c:92
+#: fdisk/fdisksgilabel.c:94
 msgid "SGI xfs"
 msgstr "SGI XFS"
 
-#: fdisk/fdisksgilabel.c:93
+#: fdisk/fdisksgilabel.c:95
 msgid "SGI xfslog"
 msgstr "SGI xfslog"
 
-#: fdisk/fdisksgilabel.c:94
+#: fdisk/fdisksgilabel.c:96
 msgid "SGI xlv"
 msgstr "SGI xlv"
 
-#: fdisk/fdisksgilabel.c:95
+#: fdisk/fdisksgilabel.c:97
 msgid "SGI xvm"
 msgstr "SGI xvm"
 
-#: fdisk/fdisksgilabel.c:96 fdisk/fdisksunlabel.c:50
+#: fdisk/fdisksgilabel.c:98 fdisk/fdisksunlabel.c:50
 msgid "Linux swap"
 msgstr "Linux swap"
 
-#: fdisk/fdisksgilabel.c:97 fdisk/fdisksunlabel.c:51
+#: fdisk/fdisksgilabel.c:99 fdisk/fdisksunlabel.c:51
 msgid "Linux native"
 msgstr "Linux nativní"
 
-#: fdisk/fdisksgilabel.c:98 fdisk/fdisksunlabel.c:52 fdisk/i386_sys_types.c:64
+#: fdisk/fdisksgilabel.c:100 fdisk/fdisksunlabel.c:52
+#: fdisk/i386_sys_types.c:64
 msgid "Linux LVM"
 msgstr "Linux LVM"
 
-#: fdisk/fdisksgilabel.c:99
+#: fdisk/fdisksgilabel.c:101
 msgid "Linux RAID"
 msgstr "Linux RAID"
 
-#: fdisk/fdisksgilabel.c:152
+#: fdisk/fdisksgilabel.c:154
 #, c-format
 msgid ""
 "According to MIPS Computer Systems, Inc the Label must not contain more than "
@@ -4004,12 +4005,12 @@ msgid ""
 msgstr ""
 "Popis nesmí podle MIPS Computer Systems, Inc obsahovat více než 512 bajtů\n"
 
-#: fdisk/fdisksgilabel.c:171
+#: fdisk/fdisksgilabel.c:173
 #, c-format
 msgid "Detected sgi disklabel with wrong checksum.\n"
 msgstr "Nalezl jsem SGI popis disku s chybným kontrolním součtem.\n"
 
-#: fdisk/fdisksgilabel.c:189
+#: fdisk/fdisksgilabel.c:191
 #, c-format
 msgid ""
 "\n"
@@ -4028,7 +4029,7 @@ msgstr ""
 "Jednotky = %s po %d * %d bajtech\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:202
+#: fdisk/fdisksgilabel.c:204
 #, c-format
 msgid ""
 "\n"
@@ -4042,7 +4043,7 @@ msgstr ""
 "Jednotky = %s po %d * %d bajtech\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:209
+#: fdisk/fdisksgilabel.c:211
 #, c-format
 msgid ""
 "----- partitions -----\n"
@@ -4051,7 +4052,7 @@ msgstr ""
 "----- diskové oddíly -----\n"
 "Od# %*s  Info      Začátek     Konec Sektory  Id  Systém\n"
 
-#: fdisk/fdisksgilabel.c:231
+#: fdisk/fdisksgilabel.c:233
 #, c-format
 msgid ""
 "----- Bootinfo -----\n"
@@ -4062,12 +4063,12 @@ msgstr ""
 "Startovací soubor: %s\n"
 "----- adresářové položky -----\n"
 
-#: fdisk/fdisksgilabel.c:239
+#: fdisk/fdisksgilabel.c:241
 #, c-format
 msgid "%2d: %-10s sector%5u size%8u\n"
 msgstr "%2d: %-10s sektor%5u velikost%8u\n"
 
-#: fdisk/fdisksgilabel.c:293
+#: fdisk/fdisksgilabel.c:295
 #, c-format
 msgid ""
 "\n"
@@ -4080,7 +4081,7 @@ msgstr ""
 "\tStartovací soubor musí být zadán plným názvem, např.\n"
 "\t\"/unix\" či \"/unix.save\".\n"
 
-#: fdisk/fdisksgilabel.c:299
+#: fdisk/fdisksgilabel.c:301
 #, c-format
 msgid ""
 "\n"
@@ -4089,7 +4090,7 @@ msgstr ""
 "\n"
 "\tNázev startovacího souboru je příliš dlouhý: 16 bajtů je maximum.\n"
 
-#: fdisk/fdisksgilabel.c:304
+#: fdisk/fdisksgilabel.c:306
 #, c-format
 msgid ""
 "\n"
@@ -4098,7 +4099,7 @@ msgstr ""
 "\n"
 "\tStartovací soubor musí být zadán plným názvem.\n"
 
-#: fdisk/fdisksgilabel.c:311
+#: fdisk/fdisksgilabel.c:313
 #, c-format
 msgid ""
 "\n"
@@ -4109,7 +4110,7 @@ msgstr ""
 "Uvědomte si, že existence startovacího souboru není ověřována.\n"
 "\tImplicitně se použije \"/unix\" a jako záloha \"/unix.save\".\n"
 
-#: fdisk/fdisksgilabel.c:337
+#: fdisk/fdisksgilabel.c:339
 #, c-format
 msgid ""
 "\n"
@@ -4118,22 +4119,22 @@ msgstr ""
 "\n"
 "\tStartovací soubor byl změněn na \"%s\".\n"
 
-#: fdisk/fdisksgilabel.c:427
+#: fdisk/fdisksgilabel.c:429
 #, c-format
 msgid "More than one entire disk entry present.\n"
 msgstr "Existuje více než jedna položka celého disku.\n"
 
-#: fdisk/fdisksgilabel.c:434 fdisk/fdisksunlabel.c:383
+#: fdisk/fdisksgilabel.c:436 fdisk/fdisksunlabel.c:383
 #, c-format
 msgid "No partitions defined\n"
 msgstr "Nejsou definovány žádné diskové oddíly\n"
 
-#: fdisk/fdisksgilabel.c:440
+#: fdisk/fdisksgilabel.c:442
 #, c-format
 msgid "IRIX likes when Partition 11 covers the entire disk.\n"
 msgstr "IRIX preferuje, když Diskový oddíl 11 zaujímá celý disk.\n"
 
-#: fdisk/fdisksgilabel.c:442
+#: fdisk/fdisksgilabel.c:444
 #, c-format
 msgid ""
 "The entire disk partition should start at block 0,\n"
@@ -4142,7 +4143,7 @@ msgstr ""
 "Diskový oddíl zaujímající celý disk by měl začínat blokem 0,\n"
 "nikoliv blokem %d.\n"
 
-#: fdisk/fdisksgilabel.c:448
+#: fdisk/fdisksgilabel.c:450
 #, c-format
 msgid ""
 "The entire disk partition is only %d diskblock large,\n"
@@ -4151,32 +4152,32 @@ msgstr ""
 "Diskový oddíl zaujímající celý disk má velikost  v blocích pouze %d,\n"
 "ale velikost disku v blocích je %d.\n"
 
-#: fdisk/fdisksgilabel.c:454
+#: fdisk/fdisksgilabel.c:456
 #, c-format
 msgid "One Partition (#11) should cover the entire disk.\n"
 msgstr "Jeden Diskový Oddíl (#11) by měl zaujímat celý disk.\n"
 
-#: fdisk/fdisksgilabel.c:464
+#: fdisk/fdisksgilabel.c:466
 #, c-format
 msgid "Partition %d does not start on cylinder boundary.\n"
 msgstr "Diskový oddíl %d nezačíná na hranici cylindru.\n"
 
-#: fdisk/fdisksgilabel.c:470
+#: fdisk/fdisksgilabel.c:472
 #, c-format
 msgid "Partition %d does not end on cylinder boundary.\n"
 msgstr "Diskový oddíl %d nekončí na hranici cylindru.\n"
 
-#: fdisk/fdisksgilabel.c:477
+#: fdisk/fdisksgilabel.c:479
 #, c-format
 msgid "The Partition %d and %d overlap by %d sectors.\n"
 msgstr "Diskové oddíly %d a %d se navzájem překrývají %d sektory.\n"
 
-#: fdisk/fdisksgilabel.c:485 fdisk/fdisksgilabel.c:506
+#: fdisk/fdisksgilabel.c:487 fdisk/fdisksgilabel.c:508
 #, c-format
 msgid "Unused gap of %8u sectors - sectors %8u-%u\n"
 msgstr "Nevyužívaný prostor o velikosti %'8u sektorů – sektory %8u-%u\n"
 
-#: fdisk/fdisksgilabel.c:517
+#: fdisk/fdisksgilabel.c:519
 #, c-format
 msgid ""
 "\n"
@@ -4185,7 +4186,7 @@ msgstr ""
 "\n"
 "Startovací diskový oddíl neexistuje.\n"
 
-#: fdisk/fdisksgilabel.c:520
+#: fdisk/fdisksgilabel.c:522
 #, c-format
 msgid ""
 "\n"
@@ -4194,7 +4195,7 @@ msgstr ""
 "\n"
 "Diskový oddíl pro odkládací prostor neexistuje.\n"
 
-#: fdisk/fdisksgilabel.c:524
+#: fdisk/fdisksgilabel.c:526
 #, c-format
 msgid ""
 "\n"
@@ -4203,17 +4204,17 @@ msgstr ""
 "\n"
 "Diskový oddíl pro odkládací prostor nemá zadán typ.\n"
 
-#: fdisk/fdisksgilabel.c:527
+#: fdisk/fdisksgilabel.c:529
 #, c-format
 msgid "\tYou have chosen an unusual boot file name.\n"
 msgstr "\tVybral jste si neobvyklý název pro startovací soubor.\n"
 
-#: fdisk/fdisksgilabel.c:536
+#: fdisk/fdisksgilabel.c:538
 #, c-format
 msgid "Sorry You may change the Tag of non-empty partitions.\n"
 msgstr "Lituji, můžete měnit značku neprázdných diskových oddílů.\n"
 
-#: fdisk/fdisksgilabel.c:542
+#: fdisk/fdisksgilabel.c:544
 msgid ""
 "It is highly recommended that the partition at offset 0\n"
 "is of type \"SGI volhdr\", the IRIX system will rely on it to\n"
@@ -4227,31 +4228,31 @@ msgstr ""
 "Zadejte ANO, pokud jste si jist, že chcete označit tento diskový oddíl "
 "jinak.\n"
 
-#: fdisk/fdisksgilabel.c:547 fdisk/fdisksunlabel.c:549
+#: fdisk/fdisksgilabel.c:549 fdisk/fdisksunlabel.c:549
 msgid "YES\n"
 msgstr "ANO\n"
 
-#: fdisk/fdisksgilabel.c:572
+#: fdisk/fdisksgilabel.c:574
 #, c-format
 msgid "Do You know, You got a partition overlap on the disk?\n"
 msgstr "Víte, že na Vašem disku se diskové oddíly překrývají?\n"
 
-#: fdisk/fdisksgilabel.c:630
+#: fdisk/fdisksgilabel.c:632
 #, c-format
 msgid "Attempting to generate entire disk entry automatically.\n"
 msgstr "Pokouším se automaticky vytvořit položku pro celý disk.\n"
 
-#: fdisk/fdisksgilabel.c:635
+#: fdisk/fdisksgilabel.c:637
 #, c-format
 msgid "The entire disk is already covered with partitions.\n"
 msgstr "Diskové oddíly již zabírají celý prostor disky.\n"
 
-#: fdisk/fdisksgilabel.c:639
+#: fdisk/fdisksgilabel.c:641
 #, c-format
 msgid "You got a partition overlap on the disk. Fix it first!\n"
 msgstr "Diskové oddíly se překrývají. Nejprve to opravte!\n"
 
-#: fdisk/fdisksgilabel.c:648 fdisk/fdisksgilabel.c:677
+#: fdisk/fdisksgilabel.c:650 fdisk/fdisksgilabel.c:679
 #, c-format
 msgid ""
 "It is highly recommended that eleventh partition\n"
@@ -4260,18 +4261,18 @@ msgstr ""
 "Doporučuje se, aby jedenáctý diskový oddíl zaujímal celý\n"
 "prostor disku a byl typu „SGI svazek“\n"
 
-#: fdisk/fdisksgilabel.c:664
+#: fdisk/fdisksgilabel.c:666
 #, c-format
 msgid "You will get a partition overlap on the disk. Fix it first!\n"
 msgstr ""
 "Takto se diskové oddíly budou navzájem překrývat. Nejprve to opravte!\n"
 
-#: fdisk/fdisksgilabel.c:669
+#: fdisk/fdisksgilabel.c:671
 #, c-format
 msgid " Last %s"
 msgstr " Poslední %s"
 
-#: fdisk/fdisksgilabel.c:699
+#: fdisk/fdisksgilabel.c:701
 #, c-format
 msgid ""
 "Building a new SGI disklabel. Changes will remain in memory only,\n"
@@ -4284,7 +4285,7 @@ msgstr ""
 "pochopitelně dostupná.\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:722 fdisk/fdisksunlabel.c:222
+#: fdisk/fdisksgilabel.c:724 fdisk/fdisksunlabel.c:222
 #, c-format
 msgid ""
 "Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of "
@@ -4295,12 +4296,12 @@ msgstr ""
 "cylindrů %d.\n"
 "Tato hodnota může být zkrácena pro zařízení > 33,8 GB.\n"
 
-#: fdisk/fdisksgilabel.c:736
+#: fdisk/fdisksgilabel.c:738
 #, c-format
 msgid "Trying to keep parameters of partition %d.\n"
 msgstr "Pokouším se zachovat parametry diskového oddílu %d.\n"
 
-#: fdisk/fdisksgilabel.c:738
+#: fdisk/fdisksgilabel.c:740
 #, c-format
 msgid "ID=%02x\tSTART=%d\tLENGTH=%d\n"
 msgstr "ID=%02x\tZAČÁTEK=%d\tDÉLKA=%d\n"
@@ -6973,25 +6974,25 @@ msgstr ""
 "či\t[-hiLmw] [-l LOGIN_PROGRAM] [-t ČASOVÝ_LIMIT] [-I INICIALIZAČNÍ_ŘETĚZEC] "
 "[-H POČÍTAČ] LINKA BAUD_RATE,… [TYP_TERMINÁLU]\n"
 
-#: login-utils/checktty.c:92 login-utils/checktty.c:113
+#: login-utils/checktty.c:93 login-utils/checktty.c:114
 #, c-format
 msgid "login: memory low, login may fail\n"
 msgstr "login: nedostatek paměti, přihlášení se nemusí zdařit\n"
 
-#: login-utils/checktty.c:93
+#: login-utils/checktty.c:94
 msgid "can't malloc for ttyclass"
 msgstr "paměť pro ttyclass nelze alokovat"
 
-#: login-utils/checktty.c:114
+#: login-utils/checktty.c:115
 msgid "can't malloc for grplist"
 msgstr "paměť pro grplist nelze alokovat"
 
-#: login-utils/checktty.c:555
+#: login-utils/checktty.c:556
 #, c-format
 msgid "Login on %s from %s denied by default.\n"
 msgstr "Přihlášení z %2$s na tty %1$s implicitně odmítnuto.\n"
 
-#: login-utils/checktty.c:566
+#: login-utils/checktty.c:567
 #, c-format
 msgid "Login on %s from %s denied.\n"
 msgstr "Přihlášení z $2%s na $1%s odmítnuto.\n"
@@ -7053,7 +7054,7 @@ msgid "%s: PAM failure, aborting: %s"
 msgstr "%s: chyba PAM, končí se: %s"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:205 login-utils/login.c:830
-#: login-utils/newgrp.c:83 mount/lomount.c:816 mount/lomount.c:819
+#: login-utils/newgrp.c:83 mount/lomount.c:862 mount/lomount.c:865
 #: simpleinit/simpleinit.c:345
 msgid "Password: "
 msgstr "Heslo: "
@@ -7243,7 +7244,7 @@ msgstr ""
 #: misc-utils/wipefs.c:260 mount/swapon.c:209 mount/swapon.c:294
 #: mount/swapon.c:444 mount/swapon.c:608 mount/swapon.c:817 partx/partx.c:807
 #: sys-utils/fallocate.c:136 sys-utils/fsfreeze.c:102 sys-utils/fstrim.c:142
-#: text-utils/rev.c:113 text-utils/ul.c:178
+#: text-utils/rev.c:115 text-utils/ul.c:178
 #, c-format
 msgid "%s: open failed"
 msgstr "%s: otevření se nezdařilo"
@@ -7400,73 +7401,78 @@ msgstr "Chybné přihlášení\n"
 msgid "change terminal owner failed"
 msgstr "nepodařilo se změnit vlastníka terminálu"
 
-#: login-utils/login.c:1101
+#: login-utils/login.c:1041
+#, fuzzy
+msgid "setgid() failed"
+msgstr "volání setuid() selhalo"
+
+#: login-utils/login.c:1105
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "PŘÍSTUP UŽIVATELE %2$s VYTÁČENOU LINKOU NA TTY %1$s"
 
-#: login-utils/login.c:1108
+#: login-utils/login.c:1112
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "PŘIHLÁŠENÍ UŽIVATELE ROOT Z %2$s NA TTY %1$s"
 
-#: login-utils/login.c:1111
+#: login-utils/login.c:1115
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "PŘIHLÁŠENÍ UŽIVATELE ROOT NA TTY %s"
 
-#: login-utils/login.c:1114
+#: login-utils/login.c:1118
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "PŘIHLÁŠENÍ UŽIVATELE %2$s Z %3$s NA TTY %1$s"
 
-#: login-utils/login.c:1117
+#: login-utils/login.c:1121
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "PŘIHLÁŠENÍ UŽIVATELE %2$s NA TTY %1$s"
 
-#: login-utils/login.c:1138
+#: login-utils/login.c:1142
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Máte novou poštu.\n"
 
-#: login-utils/login.c:1140
+#: login-utils/login.c:1144
 #, c-format
 msgid "You have mail.\n"
 msgstr "Máte starou poštu.\n"
 
-#: login-utils/login.c:1183
+#: login-utils/login.c:1187
 msgid "failure forking"
 msgstr "volání fork selhalo"
 
-#: login-utils/login.c:1230
+#: login-utils/login.c:1234
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "Selhalo TIOCSCTTY: %m"
 
-#: login-utils/login.c:1236
+#: login-utils/login.c:1240
 msgid "setuid() failed"
 msgstr "volání setuid() selhalo"
 
-#: login-utils/login.c:1242
+#: login-utils/login.c:1246
 #, c-format
 msgid "%s: change directory failed"
 msgstr "%s: nepodařilo se změnit adresář"
 
-#: login-utils/login.c:1246
+#: login-utils/login.c:1250
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Přihlašuji s domácím adresářem nastaveným na \"/\".\n"
 
-#: login-utils/login.c:1276
+#: login-utils/login.c:1280
 msgid "couldn't exec shell script"
 msgstr "shellový skript nelze spustit"
 
-#: login-utils/login.c:1278
+#: login-utils/login.c:1282
 msgid "no shell"
 msgstr "Žádný shell"
 
-#: login-utils/login.c:1293
+#: login-utils/login.c:1297
 #, c-format
 msgid ""
 "\n"
@@ -7475,68 +7481,68 @@ msgstr ""
 "\n"
 "Přihlašovací jméno na %s: "
 
-#: login-utils/login.c:1304
+#: login-utils/login.c:1308
 msgid "NAME too long"
 msgstr "JMÉNO je příliš dlouhé"
 
 # FIXME: too much
-#: login-utils/login.c:1305
+#: login-utils/login.c:1309
 msgid "login name much too long."
 msgstr "přihlašovací jméno je příliš dlouhé."
 
-#: login-utils/login.c:1310
+#: login-utils/login.c:1314
 msgid "login names may not start with '-'."
 msgstr "přihlašovací jména nesmí začínat na „-“."
 
-#: login-utils/login.c:1320
+#: login-utils/login.c:1324
 msgid "EXCESSIVE linefeeds"
 msgstr "PŘÍLIŠ mnoho znaků odřádkování"
 
-#: login-utils/login.c:1321
+#: login-utils/login.c:1325
 msgid "too many bare linefeeds."
 msgstr "příliš mnoho znaků odřádkování."
 
 # FIXME: plurals
-#: login-utils/login.c:1352
+#: login-utils/login.c:1356
 #, c-format
 msgid "timed out after %d seconds"
 msgstr "Vypršel časový limit %d sekund"
 
-#: login-utils/login.c:1446
+#: login-utils/login.c:1450
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Poslední přihlášení: %.*s "
 
-#: login-utils/login.c:1450
+#: login-utils/login.c:1454
 #, c-format
 msgid "from %.*s\n"
 msgstr "z %.*s\n"
 
-#: login-utils/login.c:1453
+#: login-utils/login.c:1457
 #, c-format
 msgid "on %.*s\n"
 msgstr "%.*s\n"
 
-#: login-utils/login.c:1471
+#: login-utils/login.c:1475
 msgid "write lastlog failed"
 msgstr "zápis do protokolu přihlášení (lastlog) se nezdařil"
 
-#: login-utils/login.c:1480
+#: login-utils/login.c:1484
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
 msgstr "CHYBNÉ PŘIHLÁŠENÍ UŽIVATELE %2$s Z %1$s"
 
-#: login-utils/login.c:1483
+#: login-utils/login.c:1487
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
 msgstr "CHYBNÉ PŘIHLÁŠENÍ UŽIVATELE %2$s NA TTY %1$s"
 
-#: login-utils/login.c:1487
+#: login-utils/login.c:1491
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
 msgstr "POČET CHYBNÝCH PŘIHLÁŠENÍ UŽIVATELE %3$s Z %2$s: %1$d"
 
-#: login-utils/login.c:1490
+#: login-utils/login.c:1494
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "POČET CHYBNÝCH PŘIHLÁŠENÍ UŽIVATELE %3$s NA TTY %2$s: %1$d"
@@ -7783,11 +7789,11 @@ msgstr "tabulku libmountu se nepodařilo inicializovat"
 msgid "can't read: %s"
 msgstr "nelze přečíst: %s"
 
-#: misc-utils/findmnt.c:477
+#: misc-utils/findmnt.c:478
 msgid "failed to initialize libmount iterator"
 msgstr "iterátor libmountu se nepodařilo inicializovat"
 
-#: misc-utils/findmnt.c:506
+#: misc-utils/findmnt.c:507
 #, c-format
 msgid ""
 "\n"
@@ -7804,7 +7810,7 @@ msgstr ""
 " %1$s [VOLBY] <ZAŘÍZENÍ> <BOD_PŘIPOJENÍ>\n"
 " %1$s [VOLBY] [--source <ZAŘÍZENÍ>] [--target <BOD_PŘIPOJENÍ>]\n"
 
-#: misc-utils/findmnt.c:514
+#: misc-utils/findmnt.c:515
 #, c-format
 msgid ""
 "\n"
@@ -7868,7 +7874,7 @@ msgstr ""
 " -T, --target <ŘETĚZEC> bod připojení\n"
 "\n"
 
-#: misc-utils/findmnt.c:540 misc-utils/lsblk.c:871
+#: misc-utils/findmnt.c:541 misc-utils/lsblk.c:871
 #, c-format
 msgid ""
 "\n"
@@ -7877,7 +7883,7 @@ msgstr ""
 "\n"
 "Dostupné sloupce:\n"
 
-#: misc-utils/findmnt.c:550
+#: misc-utils/findmnt.c:551
 #, c-format
 msgid ""
 "\n"
@@ -7886,16 +7892,16 @@ msgstr ""
 "\n"
 "Více informací naleznete ve findmnt(1).\n"
 
-#: misc-utils/findmnt.c:558 misc-utils/lsblk.c:884 partx/partx.c:628
+#: misc-utils/findmnt.c:559 misc-utils/lsblk.c:884 partx/partx.c:628
 msgid "options are mutually exclusive"
 msgstr "volby se vzájemně vylučují"
 
-#: misc-utils/findmnt.c:629
+#: misc-utils/findmnt.c:630
 #, c-format
 msgid "unknown direction '%s'"
 msgstr "neznámý směr „%s"
 
-#: misc-utils/findmnt.c:718
+#: misc-utils/findmnt.c:719
 msgid ""
 "options --target and --source can't be used together with command line "
 "element that is not an option"
@@ -7903,15 +7909,15 @@ msgstr ""
 "volby --target a --source nemohou být použity společně s prvkem příkazového "
 "řádku, který není volbou"
 
-#: misc-utils/findmnt.c:757
+#: misc-utils/findmnt.c:758
 msgid "failed to initialize libmount cache"
 msgstr "pomocnou paměť libmountu se nepodařilo inicializovat"
 
-#: misc-utils/findmnt.c:767 misc-utils/lsblk.c:1000 partx/partx.c:483
+#: misc-utils/findmnt.c:768 misc-utils/lsblk.c:1000 partx/partx.c:483
 msgid "failed to initialize output table"
 msgstr "výstupní tabulku se nepodařilo inicializovat"
 
-#: misc-utils/findmnt.c:779 misc-utils/lsblk.c:1010 partx/partx.c:491
+#: misc-utils/findmnt.c:780 misc-utils/lsblk.c:1010 partx/partx.c:491
 msgid "failed to initialize output column"
 msgstr "výstupní sloupec se nepodařilo inicializovat"
 
@@ -8366,248 +8372,248 @@ msgstr "čtení z časového souboru %s selhalo"
 msgid "timings file %s: %lu: unexpected format"
 msgstr "časový soubor %s: %lu: neočekávaný formát"
 
-#: misc-utils/setterm.c:760
+#: misc-utils/setterm.c:761
 #, c-format
 msgid "%s: Argument error, usage\n"
 msgstr "%s: Chybný přepínač, použití\n"
 
-#: misc-utils/setterm.c:763
+#: misc-utils/setterm.c:764
 #, c-format
 msgid "  [ -term terminal_name ]\n"
 msgstr "  [ -term název terminálu]\n"
 
-#: misc-utils/setterm.c:764
+#: misc-utils/setterm.c:765
 #, c-format
 msgid "  [ -reset ]\n"
 msgstr "  [ -reset ]\n"
 
-#: misc-utils/setterm.c:765
+#: misc-utils/setterm.c:766
 #, c-format
 msgid "  [ -initialize ]\n"
 msgstr "  [ -initialize ]\n"
 
-#: misc-utils/setterm.c:766
+#: misc-utils/setterm.c:767
 #, c-format
 msgid "  [ -cursor [on|off] ]\n"
 msgstr "  [ -cursor [on|off] ]\n"
 
-#: misc-utils/setterm.c:768
+#: misc-utils/setterm.c:769
 #, c-format
 msgid "  [ -snow [on|off] ]\n"
 msgstr "  [ -snow [on|off] ]\n"
 
-#: misc-utils/setterm.c:769
+#: misc-utils/setterm.c:770
 #, c-format
 msgid "  [ -softscroll [on|off] ]\n"
 msgstr "  [ -softscroll [on|off] ]\n"
 
-#: misc-utils/setterm.c:771
+#: misc-utils/setterm.c:772
 #, c-format
 msgid "  [ -repeat [on|off] ]\n"
 msgstr "  [ -repeat [on|off] ]\n"
 
-#: misc-utils/setterm.c:772
+#: misc-utils/setterm.c:773
 #, c-format
 msgid "  [ -appcursorkeys [on|off] ]\n"
 msgstr "  [ -appcursorkeys [on|off] ]\n"
 
-#: misc-utils/setterm.c:773
+#: misc-utils/setterm.c:774
 #, c-format
 msgid "  [ -linewrap [on|off] ]\n"
 msgstr "  [ -linewrap [on|off] ]\n"
 
-#: misc-utils/setterm.c:774
+#: misc-utils/setterm.c:775
 #, c-format
 msgid "  [ -default ]\n"
 msgstr "  [ -default ]\n"
 
-#: misc-utils/setterm.c:775
+#: misc-utils/setterm.c:776
 #, c-format
 msgid "  [ -foreground black|blue|green|cyan"
 msgstr "  [ -foreground black|blue|green|cyan"
 
-#: misc-utils/setterm.c:776 misc-utils/setterm.c:778
+#: misc-utils/setterm.c:777 misc-utils/setterm.c:779
 #, c-format
 msgid "|red|magenta|yellow|white|default ]\n"
 msgstr "|red|magenta|yellow|white|default ]\n"
 
-#: misc-utils/setterm.c:777
+#: misc-utils/setterm.c:778
 #, c-format
 msgid "  [ -background black|blue|green|cyan"
 msgstr "  [ -background black|blue|green|cyan"
 
-#: misc-utils/setterm.c:779
+#: misc-utils/setterm.c:780
 #, c-format
 msgid "  [ -ulcolor black|grey|blue|green|cyan"
 msgstr "  [ -ulcolor black|grey|blue|green|cyan"
 
-#: misc-utils/setterm.c:780 misc-utils/setterm.c:782 misc-utils/setterm.c:784
-#: misc-utils/setterm.c:786
+#: misc-utils/setterm.c:781 misc-utils/setterm.c:783 misc-utils/setterm.c:785
+#: misc-utils/setterm.c:787
 #, c-format
 msgid "|red|magenta|yellow|white ]\n"
 msgstr "|red|magenta|yellow|white ]\n"
 
-#: misc-utils/setterm.c:781
+#: misc-utils/setterm.c:782
 #, c-format
 msgid "  [ -ulcolor bright blue|green|cyan"
 msgstr "  [ -ulcolor bright blue|green|cyan"
 
-#: misc-utils/setterm.c:783
+#: misc-utils/setterm.c:784
 #, c-format
 msgid "  [ -hbcolor black|grey|blue|green|cyan"
 msgstr "  [ -hbcolor black|grey|blue|green|cyan"
 
-#: misc-utils/setterm.c:785
+#: misc-utils/setterm.c:786
 #, c-format
 msgid "  [ -hbcolor bright blue|green|cyan"
 msgstr "  [ -hbcolor bright blue|green|cyan"
 
-#: misc-utils/setterm.c:788
+#: misc-utils/setterm.c:789
 #, c-format
 msgid "  [ -standout [ attr ] ]\n"
 msgstr "  [ -standout [ atribut ] ]\n"
 
-#: misc-utils/setterm.c:790
+#: misc-utils/setterm.c:791
 #, c-format
 msgid "  [ -inversescreen [on|off] ]\n"
 msgstr "  [ -inversescreen [on|off] ]\n"
 
-#: misc-utils/setterm.c:791
+#: misc-utils/setterm.c:792
 #, c-format
 msgid "  [ -bold [on|off] ]\n"
 msgstr "  [ -bold [on|off] ]\n"
 
-#: misc-utils/setterm.c:792
+#: misc-utils/setterm.c:793
 #, c-format
 msgid "  [ -half-bright [on|off] ]\n"
 msgstr "  [ -half-bright [on|off] ]\n"
 
-#: misc-utils/setterm.c:793
+#: misc-utils/setterm.c:794
 #, c-format
 msgid "  [ -blink [on|off] ]\n"
 msgstr "  [ -blink [on|off] ]\n"
 
-#: misc-utils/setterm.c:794
+#: misc-utils/setterm.c:795
 #, c-format
 msgid "  [ -reverse [on|off] ]\n"
 msgstr "  [ -reverse [on|off] ]\n"
 
-#: misc-utils/setterm.c:795
+#: misc-utils/setterm.c:796
 #, c-format
 msgid "  [ -underline [on|off] ]\n"
 msgstr "  [ -underline [on|off] ]\n"
 
-#: misc-utils/setterm.c:796
+#: misc-utils/setterm.c:797
 #, c-format
 msgid "  [ -store ]\n"
 msgstr "  [ -store ]\n"
 
-#: misc-utils/setterm.c:797
+#: misc-utils/setterm.c:798
 #, c-format
 msgid "  [ -clear [all|rest] ]\n"
 msgstr "  [ -clear [all|rest] ]\n"
 
-#: misc-utils/setterm.c:798
+#: misc-utils/setterm.c:799
 #, c-format
 msgid "  [ -tabs [ tab1 tab2 tab3 ... ] ]      (tabn = 1-160)\n"
 msgstr "  [ -tabs [ tab1 tab2 tab3 ... ] ]      (tabn = 1-160)\n"
 
-#: misc-utils/setterm.c:799
+#: misc-utils/setterm.c:800
 #, c-format
 msgid "  [ -clrtabs [ tab1 tab2 tab3 ... ] ]   (tabn = 1-160)\n"
 msgstr "  [ -clrtabs [ tab1 tab2 tab3 ... ] ]   (tabn = 1-160)\n"
 
-#: misc-utils/setterm.c:800
+#: misc-utils/setterm.c:801
 #, c-format
 msgid "  [ -regtabs [1-160] ]\n"
 msgstr "  [ -regtabs [1-160] ]\n"
 
-#: misc-utils/setterm.c:801
+#: misc-utils/setterm.c:802
 #, c-format
 msgid "  [ -blank [0-60|force|poke] ]\n"
 msgstr "  [ -blank [0-60|force|poke] ]\n"
 
-#: misc-utils/setterm.c:802
+#: misc-utils/setterm.c:803
 #, c-format
 msgid "  [ -dump   [1-NR_CONSOLES] ]\n"
 msgstr "  [ -dump   [1-POČET_KONZOLÍ] ]\n"
 
-#: misc-utils/setterm.c:803
+#: misc-utils/setterm.c:804
 #, c-format
 msgid "  [ -append [1-NR_CONSOLES] ]\n"
 msgstr "  [ -append [1-POČET_KONZOLÍ] ]\n"
 
-#: misc-utils/setterm.c:804
+#: misc-utils/setterm.c:805
 #, c-format
 msgid "  [ -file dumpfilename ]\n"
 msgstr "  [ -file soubor pro uložení ]\n"
 
-#: misc-utils/setterm.c:805
+#: misc-utils/setterm.c:806
 #, c-format
 msgid "  [ -msg [on|off] ]\n"
 msgstr "  [ -msg [on|off] ]\n"
 
-#: misc-utils/setterm.c:806
+#: misc-utils/setterm.c:807
 #, c-format
 msgid "  [ -msglevel [0-8] ]\n"
 msgstr "  [ -msglevel [0-8] ]\n"
 
-#: misc-utils/setterm.c:807
+#: misc-utils/setterm.c:808
 #, c-format
 msgid "  [ -powersave [on|vsync|hsync|powerdown|off] ]\n"
 msgstr "  [ -powersave [on|vsync|hsync|powerdown|off] ]\n"
 
-#: misc-utils/setterm.c:808
+#: misc-utils/setterm.c:809
 #, c-format
 msgid "  [ -powerdown [0-60] ]\n"
 msgstr "  [ -powerdown [0-60] ]\n"
 
-#: misc-utils/setterm.c:809
+#: misc-utils/setterm.c:810
 #, c-format
 msgid "  [ -blength [0-2000] ]\n"
 msgstr "  [ -blength [0-2000] ]\n"
 
-#: misc-utils/setterm.c:810
+#: misc-utils/setterm.c:811
 #, c-format
 msgid "  [ -bfreq freqnumber ]\n"
 msgstr "  [ -bfreq frekvence ]\n"
 
-#: misc-utils/setterm.c:1062
+#: misc-utils/setterm.c:1063
 #, c-format
 msgid "cannot force blank\n"
 msgstr "režim blank nelze vynutit\n"
 
-#: misc-utils/setterm.c:1066
+#: misc-utils/setterm.c:1067
 #, c-format
 msgid "cannot force unblank\n"
 msgstr "režim unblank nelze vynutit\n"
 
-#: misc-utils/setterm.c:1072
+#: misc-utils/setterm.c:1073
 #, c-format
 msgid "cannot get blank status\n"
 msgstr "stav režimu blank nelze zjistit\n"
 
-#: misc-utils/setterm.c:1084
+#: misc-utils/setterm.c:1085
 #, c-format
 msgid "cannot (un)set powersave mode\n"
 msgstr "šetřící režim nelze vypnout/zapnout\n"
 
-#: misc-utils/setterm.c:1123 misc-utils/setterm.c:1131
+#: misc-utils/setterm.c:1124 misc-utils/setterm.c:1132
 #, c-format
 msgid "klogctl error: %s\n"
 msgstr "chyba klogctl: %s\n"
 
-#: misc-utils/setterm.c:1197
+#: misc-utils/setterm.c:1198
 #, c-format
 msgid "Error writing screendump\n"
 msgstr "Chyba při ukládání obrazu obrazovky\n"
 
-#: misc-utils/setterm.c:1204
+#: misc-utils/setterm.c:1205
 #, c-format
 msgid "Couldn't read %s\n"
 msgstr "%s nelze načíst\n"
 
-#: misc-utils/setterm.c:1258
+#: misc-utils/setterm.c:1259
 #, c-format
 msgid "%s: $TERM is not defined.\n"
 msgstr "%s: proměnná TERM není nastavena.\n"
@@ -8769,7 +8775,7 @@ msgstr "Použití: %s [-r] [-t]\n"
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
 msgstr "whereis [ -sbmu ] [ -SBM adresář ... -f ] název...\n"
 
-#: misc-utils/wipefs.c:132 sys-utils/lscpu.c:637
+#: misc-utils/wipefs.c:132 sys-utils/lscpu.c:653
 msgid "calloc failed"
 msgstr "funkce calloc selhala"
 
@@ -8916,42 +8922,42 @@ msgstr "pozor: %s nelze otevřít: %s"
 msgid "mount: could not open %s - using %s instead\n"
 msgstr "mount: %s nelze otevřít – použije se %s\n"
 
-#: mount/fstab.c:674
+#: mount/fstab.c:668
 #, c-format
 msgid "can't create lock file %s: %s (use -n flag to override)"
 msgstr ""
 "zamykací soubor %s nelze vytvořit: %s\n"
 "(použijte přepínač -n pro vynechání zápisu do mtab)"
 
-#: mount/fstab.c:700
+#: mount/fstab.c:694
 #, c-format
 msgid "can't link lock file %s: %s (use -n flag to override)"
 msgstr ""
 "volání link pro zamykací soubor %s selhalo: %s\n"
 "(použijte přepínač -n pro vynechání zápisu do mtab)"
 
-#: mount/fstab.c:716
+#: mount/fstab.c:710
 #, c-format
 msgid "can't open lock file %s: %s (use -n flag to override)"
 msgstr ""
 "zamykací soubor %s nelze otevřít: %s\n"
 "(použijte přepínač -n pro vynechání zápisu do mtab)"
 
-#: mount/fstab.c:731
+#: mount/fstab.c:725
 #, c-format
 msgid "Can't lock lock file %s: %s\n"
 msgstr "Zamykací soubor %s nelze zamknout: %s\n"
 
-#: mount/fstab.c:745
+#: mount/fstab.c:739
 #, c-format
 msgid "can't lock lock file %s: %s"
 msgstr "Zamykací soubor %s nelze zamknout: %s"
 
-#: mount/fstab.c:747
+#: mount/fstab.c:741
 msgid "timed out"
 msgstr "vypršel čas"
 
-#: mount/fstab.c:754
+#: mount/fstab.c:748
 #, c-format
 msgid ""
 "Cannot create link %s\n"
@@ -8960,88 +8966,93 @@ msgstr ""
 "Odkaz %s nelze vytvořit.\n"
 "Není někde zastaralý zamykací soubor?\n"
 
-#: mount/fstab.c:896 mount/fstab.c:951
+#: mount/fstab.c:890 mount/fstab.c:947
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "nelze otevřít %s (%s) - mtab nebyl aktualizován"
 
-#: mount/fstab.c:960
+#: mount/fstab.c:955
 #, c-format
 msgid "error writing %s: %s"
 msgstr "chyba při zápisu %s: %s"
 
-#: mount/fstab.c:978
+#: mount/fstab.c:970
+#, fuzzy, c-format
+msgid "%s: cannot fflush changes: %s"
+msgstr "%s: nelze získat informace o %s: %s\n"
+
+#: mount/fstab.c:987
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "chyba při změně módu %s: %s\n"
 
-#: mount/fstab.c:991
+#: mount/fstab.c:1000
 #, c-format
 msgid "error changing owner of %s: %s\n"
 msgstr "chyba při změně vlastníka %s: %s\n"
 
-#: mount/fstab.c:1002
+#: mount/fstab.c:1011
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "%s nelze přejmenovat na %s: %s\n"
 
-#: mount/lomount.c:423
-#, c-format
-msgid "loop: can't set capacity on device %s: %s\n"
-msgstr "loop: zařízení %s nelze nastavit kapacitu: %s\n"
-
-#: mount/lomount.c:460
-#, c-format
-msgid ", offset %<PRIu64>"
-msgstr ", odsazení %<PRIu64>"
-
-#: mount/lomount.c:463
-#, c-format
-msgid ", sizelimit %<PRIu64>"
-msgstr ", velikostní limit %<PRIu64>"
-
-#: mount/lomount.c:471
-#, c-format
-msgid ", encryption %s (type %<PRIu32>)"
-msgstr ", šifrování %s (typ %<PRIu32>)"
-
-#: mount/lomount.c:484
-#, c-format
-msgid ", offset %d"
-msgstr ", odsazení %d"
-
-#: mount/lomount.c:487
-#, c-format
-msgid ", encryption type %d\n"
-msgstr ", šifrovací typ %d\n"
-
-#: mount/lomount.c:495
-#, c-format
-msgid "loop: can't get info on device %s: %s\n"
-msgstr "loop: informace o zařízení %s nelze získat: %s\n"
-
-#: mount/lomount.c:506
-#, c-format
-msgid "loop: can't open device %s: %s\n"
-msgstr "loop: zařízení %s nelze otevřít: %s\n"
-
-#: mount/lomount.c:522 mount/lomount.c:554 mount/lomount.c:616
-#: mount/lomount.c:661
+#: mount/lomount.c:429 mount/lomount.c:567 mount/lomount.c:599
+#: mount/lomount.c:662 mount/lomount.c:707
 #, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: adresář /dev neexistuje."
 
-#: mount/lomount.c:533 mount/lomount.c:674
+#: mount/lomount.c:468
+#, c-format
+msgid "loop: can't set capacity on device %s: %s\n"
+msgstr "loop: zařízení %s nelze nastavit kapacitu: %s\n"
+
+#: mount/lomount.c:505
+#, c-format
+msgid ", offset %<PRIu64>"
+msgstr ", odsazení %<PRIu64>"
+
+#: mount/lomount.c:508
+#, c-format
+msgid ", sizelimit %<PRIu64>"
+msgstr ", velikostní limit %<PRIu64>"
+
+#: mount/lomount.c:516
+#, c-format
+msgid ", encryption %s (type %<PRIu32>)"
+msgstr ", šifrování %s (typ %<PRIu32>)"
+
+#: mount/lomount.c:529
+#, c-format
+msgid ", offset %d"
+msgstr ", odsazení %d"
+
+#: mount/lomount.c:532
+#, c-format
+msgid ", encryption type %d\n"
+msgstr ", šifrovací typ %d\n"
+
+#: mount/lomount.c:540
+#, c-format
+msgid "loop: can't get info on device %s: %s\n"
+msgstr "loop: informace o zařízení %s nelze získat: %s\n"
+
+#: mount/lomount.c:551
+#, c-format
+msgid "loop: can't open device %s: %s\n"
+msgstr "loop: zařízení %s nelze otevřít: %s\n"
+
+#: mount/lomount.c:578 mount/lomount.c:720
 #, c-format
 msgid "%s: no permission to look at /dev/loop%s<N>"
 msgstr "%s: chybí oprávnění na prohlédnutí /dev/loop%s<N>"
 
-#: mount/lomount.c:677
+#: mount/lomount.c:723
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr "%s: žádné volné loop zařízení nelze najít"
 
-#: mount/lomount.c:680
+#: mount/lomount.c:726
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -9051,51 +9062,51 @@ msgstr ""
 "       nezná loop zařízení? (Pokud je tomu tak, pak jej znovu přeložte,\n"
 "       či zkuste „modprobe loop“.)"
 
-#: mount/lomount.c:710
+#: mount/lomount.c:756
 msgid "Out of memory while reading passphrase"
 msgstr "Během čtení hesla došla paměť"
 
-#: mount/lomount.c:753
+#: mount/lomount.c:799
 #, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "varování: %s je již spojeno s %s\n"
 
-#: mount/lomount.c:769
+#: mount/lomount.c:815
 #, c-format
 msgid "warning: %s: is write-protected, using read-only.\n"
 msgstr "varování: %s: je chráněno proti zápisu, připojuji pouze pro čtení.\n"
 
-#: mount/lomount.c:805
+#: mount/lomount.c:851
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "Nelze zamknout v paměti. Končím.\n"
 
-#: mount/lomount.c:832
+#: mount/lomount.c:878
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr "selhalo ioctl LOOP_SET_FD: %s\n"
 
-#: mount/lomount.c:889
+#: mount/lomount.c:935
 #, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu,%llu): úspěch\n"
 
-#: mount/lomount.c:910
+#: mount/lomount.c:956
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): úspěch\n"
 
-#: mount/lomount.c:914
+#: mount/lomount.c:960
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: zařízení %s nelze smazat: %s\n"
 
-#: mount/lomount.c:925
+#: mount/lomount.c:971
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr "Tento program byl přeložen bez podpory pro loop. Přeložte jej znovu.\n"
 
-#: mount/lomount.c:960
+#: mount/lomount.c:1013
 #, c-format
 msgid ""
 "\n"
@@ -9120,7 +9131,7 @@ msgstr ""
 "SOUBOREM\n"
 " %1$s [PŘEPÍNAČE] {-f|--find|LOOP_ZAŘÍZENÍ} SOUBOR  sestrojí zařízení\n"
 
-#: mount/lomount.c:970
+#: mount/lomount.c:1023
 #, c-format
 msgid ""
 "\n"
@@ -9147,32 +9158,32 @@ msgstr ""
 " -v | --verbose           upovídaný režim\n"
 "\n"
 
-#: mount/lomount.c:1095
+#: mount/lomount.c:1148
 #, c-format
 msgid "%s: invalid offset '%s' specified"
 msgstr "%s: zadána neplatná pozice „%s“"
 
-#: mount/lomount.c:1099
+#: mount/lomount.c:1152
 #, c-format
 msgid "%s: invalid sizelimit '%s' specified"
 msgstr "%s: zadáno neplatné omezení délky „%s“"
 
-#: mount/lomount.c:1114 mount/lomount.c:1154
+#: mount/lomount.c:1167 mount/lomount.c:1207
 #, c-format
 msgid "Loop device is %s\n"
 msgstr "Loop zařízení je %s\n"
 
-#: mount/lomount.c:1141
+#: mount/lomount.c:1194
 #, c-format
 msgid "stolen loop=%s...trying again\n"
 msgstr "ukradený loop=%s… zkouším znovu\n"
 
-#: mount/lomount.c:1151
+#: mount/lomount.c:1204
 #, c-format
 msgid "%s: %s: device is busy"
 msgstr "%s: %s: zařízení se právě používá"
 
-#: mount/lomount.c:1168
+#: mount/lomount.c:1221
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Podpora pro loop nebyla při překladu zadána. Přeložte program znovu.\n"
@@ -9223,7 +9234,7 @@ msgstr "mount: podle mtab je %s připojeno na %s"
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: %s nelze otevřít pro zápis: %s"
 
-#: mount/mount.c:669 mount/mount.c:1457
+#: mount/mount.c:669
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: chyba při zápisu %s: %s"
@@ -9243,7 +9254,7 @@ msgstr "mount: číslo skupiny (GID) nelze nastavit: %s"
 msgid "mount: cannot set user id: %s"
 msgstr "mount: číslo uživatele (UID) nelze nastavit: %s"
 
-#: mount/mount.c:833 mount/mount.c:2191
+#: mount/mount.c:833 mount/mount.c:2174
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: volání fork selhalo: %s"
@@ -9356,101 +9367,96 @@ msgstr "mount: nepodařilo se nastavit zařízení loop\n"
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: zařízení loop bylo korektně nastaveno\n"
 
-#: mount/mount.c:1400 mount/mount.c:1434
+#: mount/mount.c:1399 mount/mount.c:1431
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s nebylo nalezeno - vytvářím jej..\n"
 
-#: mount/mount.c:1452
-#, c-format
-msgid "mount: can't open %s: %s"
-msgstr "mount: %s nelze otevřít: %s"
-
-#: mount/mount.c:1474
+#: mount/mount.c:1454
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: argument přepínačů -p a --pass-fd musí být číslo"
 
-#: mount/mount.c:1487
+#: mount/mount.c:1467
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: %s nelze otevřít za účelem nastavení rychlosti"
 
-#: mount/mount.c:1490
+#: mount/mount.c:1470
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: rychlost nelze nastavit: %s"
 
-#: mount/mount.c:1583
+#: mount/mount.c:1563
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: podle mtab je %s již připojeno do %s\n"
 
-#: mount/mount.c:1664
+#: mount/mount.c:1647
 #, c-format
 msgid "mount: warning: %s seems to be mounted read-write.\n"
 msgstr "mount: pozor: %s se zdá být připojen pro čtení i zápis.\n"
 
-#: mount/mount.c:1676
+#: mount/mount.c:1659
 #, c-format
 msgid "mount: warning: %s seems to be mounted read-only.\n"
 msgstr "mount: pozor: %s se zdá být připojen jen pro čtení.\n"
 
-#: mount/mount.c:1717
+#: mount/mount.c:1700
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr "mount: typ systému souborů nebyl zadán a ani jej nelze zjistit"
 
-#: mount/mount.c:1720
+#: mount/mount.c:1703
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: musíte zadat typ systému souborů"
 
-#: mount/mount.c:1723
+#: mount/mount.c:1706
 msgid "mount: mount failed"
 msgstr "mount: připojení se nezdařilo"
 
-#: mount/mount.c:1729 mount/mount.c:1766
+#: mount/mount.c:1712 mount/mount.c:1749
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: přípojný bod %s není adresářem"
 
-#: mount/mount.c:1731
+#: mount/mount.c:1714
 msgid "mount: permission denied"
 msgstr "mount: přístup odmítnut"
 
-#: mount/mount.c:1733
+#: mount/mount.c:1716
 msgid "mount: must be superuser to use mount"
 msgstr "mount: mount může používat pouze superuživatel"
 
-#: mount/mount.c:1737 mount/mount.c:1741
+#: mount/mount.c:1720 mount/mount.c:1724
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s se používá"
 
-#: mount/mount.c:1743
+#: mount/mount.c:1726
 msgid "mount: proc already mounted"
 msgstr "mount: proc je již připojeno"
 
-#: mount/mount.c:1745
+#: mount/mount.c:1728
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s je již připojeno, či je %s již používáno"
 
-#: mount/mount.c:1751
+#: mount/mount.c:1734
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: přípojný bod %s neexistuje"
 
-#: mount/mount.c:1753
+#: mount/mount.c:1736
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: přípojný bod %s je symbolickým odkazem, jenž nikam neukazuje"
 
-#: mount/mount.c:1758
+#: mount/mount.c:1741
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: speciální zařízení %s neexistuje"
 
-#: mount/mount.c:1770
+#: mount/mount.c:1753
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -9459,12 +9465,12 @@ msgstr ""
 "mount: speciální zařízení %s neexistuje\n"
 "              (název cesty nezačíná adresářem)\n"
 
-#: mount/mount.c:1782
+#: mount/mount.c:1765
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s ještě není připojeno či chybný přepínač"
 
-#: mount/mount.c:1784
+#: mount/mount.c:1767
 #, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -9473,7 +9479,7 @@ msgstr ""
 "mount: chybný typ SS, chybný přepínač, chybný superblok na %s,\n"
 "       chybí kódová stránka nebo pomocný program nebo jiná chyba"
 
-#: mount/mount.c:1791
+#: mount/mount.c:1774
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)"
@@ -9481,7 +9487,7 @@ msgstr ""
 "       (pro většinou souborových systému (např. nfs, cifs) budete\n"
 "       potřebovat pomocný program /sbin/mount.<TYP>)"
 
-#: mount/mount.c:1800
+#: mount/mount.c:1783
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -9489,13 +9495,13 @@ msgstr ""
 "       (mohlo by se jednat o IDE zařízení, kde ve skutečnosti používáte\n"
 "       ide-scsi, takže je potřeba sr0 nebo sda nebo něco na ten způsob?)"
 
-#: mount/mount.c:1805
+#: mount/mount.c:1788
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
 msgstr "       (nepokoušíte se připojit rozšířený oddíl namísto logického?)"
 
-#: mount/mount.c:1812
+#: mount/mount.c:1795
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -9503,49 +9509,49 @@ msgstr ""
 "       V jistých případech lze najít potřebné informace v systémovém\n"
 "       protokolu – zkuste například „dmesg | tail“ \n"
 
-#: mount/mount.c:1818
+#: mount/mount.c:1801
 msgid "mount table full"
 msgstr "tabulka připojení je plná"
 
-#: mount/mount.c:1820
+#: mount/mount.c:1803
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: superblok nelze přečíst"
 
-#: mount/mount.c:1826
+#: mount/mount.c:1809
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "umount: blokové zařízení %s je neznámé"
 
-#: mount/mount.c:1831
+#: mount/mount.c:1814
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: neznámý systém souborů „%s“"
 
-#: mount/mount.c:1843
+#: mount/mount.c:1826
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: pravděpodobně jste myslel %s"
 
-#: mount/mount.c:1846
+#: mount/mount.c:1829
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: možná jste myslel „iso9660“?"
 
-#: mount/mount.c:1849
+#: mount/mount.c:1832
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: možná jste myslel „vfat“?"
 
-#: mount/mount.c:1852
+#: mount/mount.c:1835
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr "mount: %s má chybné číslo zařízení, či ss typ %s není podporován"
 
-#: mount/mount.c:1860
+#: mount/mount.c:1843
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: %s není blokovým zařízením a volání stat selhalo?"
 
-#: mount/mount.c:1862
+#: mount/mount.c:1845
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -9554,53 +9560,53 @@ msgstr ""
 "mount: jádro nerozpoznalo %s jako blokové zařízení\n"
 "       (možná „modprobe ovladač“?)"
 
-#: mount/mount.c:1865
+#: mount/mount.c:1848
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr "mount: %s není blokovým zařízením (možná pomůže „-o loop“?)"
 
-#: mount/mount.c:1868
+#: mount/mount.c:1851
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s není blokovým zařízením"
 
-#: mount/mount.c:1873
+#: mount/mount.c:1856
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s není platným blokovým zařízením"
 
-#: mount/mount.c:1876
+#: mount/mount.c:1859
 msgid "block device "
 msgstr "blokové zařízení"
 
-#: mount/mount.c:1878
+#: mount/mount.c:1861
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "umount: %s%s nelze připojit v režimu pouze pro čtení"
 
-#: mount/mount.c:1882
+#: mount/mount.c:1865
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s je chráněno proti zápisu, připojuji pouze pro čtení"
 
-#: mount/mount.c:1886
+#: mount/mount.c:1869
 #, c-format
 msgid "mount: cannot remount %s%s read-write, is write-protected"
 msgstr ""
 "umount: %s%s nelze znovu připojit pro čtení i zápis, protože je chráněn "
 "proti zápisu"
 
-#: mount/mount.c:1901
+#: mount/mount.c:1884
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s je chráněno proti zápisu, připojuji pouze pro čtení"
 
-#: mount/mount.c:1909
+#: mount/mount.c:1892
 #, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: v %s nenalezeno žádné médium"
 
-#: mount/mount.c:1927
+#: mount/mount.c:1910
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9617,27 +9623,27 @@ msgstr ""
 "       přistoupit na tento systém souborů. Další rady lze nalézt\n"
 "       v restorecon(8) a mount(8).\n"
 
-#: mount/mount.c:2008
+#: mount/mount.c:1991
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: nebyl zadán typ - budu používat nfs kvůli dvojtečce\n"
 
-#: mount/mount.c:2014
+#: mount/mount.c:1997
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr "mount: nebyl zadán typ - budu předpokládat cifs kvůli předponě //\n"
 
-#: mount/mount.c:2079
+#: mount/mount.c:2062
 #, c-format
 msgid "mount: ignore %s (unparsable offset= option)\n"
 msgstr "mount: %s se ignoruje (nerozebratelná volba offset=)\n"
 
-#: mount/mount.c:2092
+#: mount/mount.c:2075
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s je již připojeno na %s\n"
 
-#: mount/mount.c:2273
+#: mount/mount.c:2256
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9710,24 +9716,24 @@ msgstr ""
 "Další přepínače: [-nfFrsvw] [-o VOLBY] [-p DESKRIPTOR_S_HESLEM].\n"
 "Mnoho dalších informací získáte příkazem „man 8 mount“.\n"
 
-#: mount/mount.c:2605
+#: mount/mount.c:2588
 #, c-format
 msgid "mount: only root can do that (effective UID is %u)"
 msgstr "mount: toto může provést pouze superuživatel (efektivní UID je %u)"
 
-#: mount/mount.c:2608
+#: mount/mount.c:2591
 msgid "mount: only root can do that"
 msgstr "mount: toto může provést pouze superuživatel"
 
-#: mount/mount.c:2619
+#: mount/mount.c:2602
 msgid "nothing was mounted"
 msgstr "nebyl připojen žádný diskový oddíl"
 
-#: mount/mount.c:2637 mount/mount.c:2663
+#: mount/mount.c:2620 mount/mount.c:2646
 msgid "mount: no such partition found"
 msgstr "mount: žádný odpovídající diskový oddíl nebyl nalezen"
 
-#: mount/mount.c:2640
+#: mount/mount.c:2623
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %s nelze nalézt v %s ani %s"
@@ -9737,12 +9743,12 @@ msgstr "mount: %s nelze nalézt v %s ani %s"
 msgid "[mntent]: warning: no final newline at the end of %s\n"
 msgstr "[mntent]: varování: %s není ukončeno novou řádkou\n"
 
-#: mount/mount_mntent.c:154
+#: mount/mount_mntent.c:157
 #, c-format
 msgid "[mntent]: line %d in %s is bad%s\n"
 msgstr "[mntent]: řádek %d v %s je chybný%s\n"
 
-#: mount/mount_mntent.c:157
+#: mount/mount_mntent.c:160
 msgid "; rest of file ignored"
 msgstr "; ignoruji zbytek souboru"
 
@@ -9951,42 +9957,42 @@ msgid "'%s' is unsupported program name (must be 'swapon' or 'swapoff')."
 msgstr ""
 "„%s“ není název podporovaného programu (musí být „swapon“ nebo „swapoff“)."
 
-#: mount/umount.c:42
+#: mount/umount.c:42 shlibs/mount/src/context_umount.c:36
 #, c-format
 msgid "umount: compiled without support for -f\n"
 msgstr "umount byl přeložen bez podpory pro -f\n"
 
-#: mount/umount.c:124
+#: mount/umount.c:131
 #, c-format
 msgid "umount: cannot set group id: %s"
 msgstr "umount: číslo skupiny (GID) nelze nastavit: %s"
 
-#: mount/umount.c:127
+#: mount/umount.c:134
 #, c-format
 msgid "umount: cannot set user id: %s"
 msgstr "umount: číslo uživatele (UID) nelze nastavit: %s"
 
-#: mount/umount.c:156
+#: mount/umount.c:163
 #, c-format
 msgid "umount: cannot fork: %s"
 msgstr "umount: volání fork selhalo: %s"
 
-#: mount/umount.c:177
+#: mount/umount.c:184
 #, c-format
 msgid "umount: %s: invalid block device"
 msgstr "umount: blokové zařízení %s je chybné"
 
-#: mount/umount.c:179
+#: mount/umount.c:186
 #, c-format
 msgid "umount: %s: not mounted"
 msgstr "umount: %s není připojeno"
 
-#: mount/umount.c:181
+#: mount/umount.c:188
 #, c-format
 msgid "umount: %s: can't write superblock"
 msgstr "umount: superblok nelze na %s zapsat"
 
-#: mount/umount.c:185
+#: mount/umount.c:192
 #, c-format
 msgid ""
 "umount: %s: device is busy.\n"
@@ -9997,52 +10003,77 @@ msgstr ""
 "        (V některých případech lze získat užitečné informace o procesech,\n"
 "        které se zařízením pracují, pomocí nástrojů lsof(8) a fuser(1).)"
 
-#: mount/umount.c:190
+#: mount/umount.c:197
 #, c-format
 msgid "umount: %s: not found"
 msgstr "umount: %s nelze najít"
 
-#: mount/umount.c:192
+#: mount/umount.c:199
 #, c-format
 msgid "umount: %s: must be superuser to umount"
 msgstr "umount: musíte být superuživatelem, abyste mohl odpojit %s"
 
-#: mount/umount.c:194
+#: mount/umount.c:201
 #, c-format
 msgid "umount: %s: block devices not permitted on fs"
 msgstr "umount: %s: bloková zařízení nejsou na systému souborů povolena"
 
-#: mount/umount.c:196
+#: mount/umount.c:203
 #, c-format
 msgid "umount: %s: %s"
 msgstr "umount: %s: %s"
 
-#: mount/umount.c:255
+#: mount/umount.c:231
+#, c-format
+msgid "umount: internal error: invalid abs path: %s"
+msgstr ""
+
+#: mount/umount.c:246
+#, fuzzy, c-format
+msgid "umount: failed to chdir to %s: %s"
+msgstr "namei: do adresáře %s nelze přejít - %s (%d)\n"
+
+#: mount/umount.c:250
+#, fuzzy, c-format
+msgid "umount: failed to obtain current directory: %s"
+msgstr "namei: aktuální adresář nelze zjistit - %s\n"
+
+#: mount/umount.c:254
+#, fuzzy, c-format
+msgid "umount: mountpoint moved (%s -> %s)"
+msgstr "mount: přípojný bod %s neexistuje"
+
+#: mount/umount.c:257
+#, c-format
+msgid "current directory moved to %s\n"
+msgstr ""
+
+#: mount/umount.c:329
 #, c-format
 msgid "no umount2, trying umount...\n"
 msgstr "nenalezl jsem umount2, zkouším umount…\n"
 
-#: mount/umount.c:271
+#: mount/umount.c:349
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
 msgstr ""
 "umount: %s je právě používáno - znovu připojeno v režimu pro pouze čtení\n"
 
-#: mount/umount.c:288
+#: mount/umount.c:367
 #, c-format
 msgid "umount: could not remount %s read-only\n"
 msgstr "umount: %s nelze znovu připojit v režimu pouze pro čtení\n"
 
-#: mount/umount.c:297
+#: mount/umount.c:376
 #, c-format
 msgid "%s has been unmounted\n"
 msgstr "%s bylo odpojeno\n"
 
-#: mount/umount.c:404
+#: mount/umount.c:482
 msgid "umount: cannot find list of filesystems to unmount"
 msgstr "umount: seznam systémů souborů na odpojení nelze nalézt"
 
-#: mount/umount.c:436
+#: mount/umount.c:514
 #, c-format
 msgid ""
 "Usage: umount -h | -V\n"
@@ -10053,70 +10084,80 @@ msgstr ""
 "         umount -a [-d] [-f] [-r] [-n] [-v] [-t TYPY_VFS] [-O VOLBY]\n"
 "         umount [-d] [-f] [-r] [-n] [-v] SPECIÁLNÍ_SOUBOR | UZEL…\n"
 
-#: mount/umount.c:480
+#: mount/umount.c:558
 #, c-format
 msgid "failed to parse 'offset=%s' options\n"
 msgstr "nezdařilo rozebrat volby „offset=%s“\n"
 
-#: mount/umount.c:488
+#: mount/umount.c:566
 #, c-format
 msgid "device %s is associated with %s\n"
 msgstr "zařízení %s je spojeno s %s\n"
 
-#: mount/umount.c:494
+#: mount/umount.c:572
 #, c-format
 msgid "device %s is not associated with %s\n"
 msgstr "zařízení %s není spojeno s %s\n"
 
-#: mount/umount.c:507
+#: mount/umount.c:586
 msgid "Cannot unmount \"\"\n"
 msgstr "„“ nelze odpojit\n"
 
-#: mount/umount.c:513
+#: mount/umount.c:600
+#, fuzzy, c-format
+msgid "%s is associated with %s, trying to unmount it\n"
+msgstr "zařízení %s je spojeno s %s\n"
+
+#: mount/umount.c:606
+#, c-format
+msgid "%s is associated with more than one loop device: not unmounting\n"
+msgstr ""
+
+#: mount/umount.c:613
 #, c-format
 msgid "Trying to unmount %s\n"
 msgstr "Zkouší se odpojit %s\n"
 
-#: mount/umount.c:526
+#: mount/umount.c:627
 msgid "umount: confused when analyzing mtab"
 msgstr "umount: analýza mtab dává matoucí výsledky"
 
-#: mount/umount.c:531
+#: mount/umount.c:633
 #, c-format
 msgid "umount: cannot unmount %s -- %s is mounted over it on the same point"
 msgstr "umount: %s nelze odpojit – na stejné místo je přes něj připojeno %s"
 
-#: mount/umount.c:538
+#: mount/umount.c:641
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "%s nelze v mtab najít\n"
 
-#: mount/umount.c:545
+#: mount/umount.c:648
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: podle mtab není %s připojeno"
 
-#: mount/umount.c:570
+#: mount/umount.c:673
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: zdá se, že %s je připojeno více než jednou"
 
-#: mount/umount.c:584
+#: mount/umount.c:687
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr "umount: %s není ve fstab (a vy nejste root)"
 
-#: mount/umount.c:590
+#: mount/umount.c:693
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: připojení %s neodpovídá fstab"
 
-#: mount/umount.c:631
+#: mount/umount.c:734
 #, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr "unmount: pouze uživatel %s může odpojit %s ze %s"
 
-#: mount/umount.c:726
+#: mount/umount.c:829
 msgid "umount: only root can do that"
 msgstr "umount: toto může provést pouze uživatel root"
 
@@ -12137,7 +12178,7 @@ msgstr "chybná rychlost: %s"
 msgid "ldattach from %s\n"
 msgstr "ldattach z %s\n"
 
-#: sys-utils/ldattach.c:251 text-utils/tailf.c:216
+#: sys-utils/ldattach.c:251 text-utils/tailf.c:217
 msgid "invalid option"
 msgstr "neplatný přepínač"
 
@@ -12208,7 +12249,7 @@ msgstr "chyba rozebírání: %s"
 msgid "error: strdup failed"
 msgstr "chyba: funkce strdup selhala"
 
-#: sys-utils/lscpu.c:266 sys-utils/lscpu.c:857
+#: sys-utils/lscpu.c:266 sys-utils/lscpu.c:873
 msgid "failed to callocate cpu set"
 msgstr "množinu CPU nelze alokovat"
 
@@ -12222,16 +12263,16 @@ msgstr "seznam CPU %s se nezdařilo rozebrat"
 msgid "failed to parse CPU mask %s"
 msgstr "masku CPU %s se nezdařilo rozebrat"
 
-#: sys-utils/lscpu.c:374
+#: sys-utils/lscpu.c:379
 msgid "error: uname failed"
 msgstr "chyba: volání uname selhalo"
 
-#: sys-utils/lscpu.c:602 sys-utils/lscpu.c:605 sys-utils/lscpu.c:681
-#: sys-utils/lscpu.c:702
+#: sys-utils/lscpu.c:618 sys-utils/lscpu.c:621 sys-utils/lscpu.c:697
+#: sys-utils/lscpu.c:718
 msgid "error: calloc failed"
 msgstr "chyba: funkce calloc selhala"
 
-#: sys-utils/lscpu.c:718
+#: sys-utils/lscpu.c:734
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -12244,110 +12285,110 @@ msgstr ""
 "# které se počítá od nuly.\n"
 "# CPU,Jádro,Patice,Uzel"
 
-#: sys-utils/lscpu.c:820
+#: sys-utils/lscpu.c:836
 msgid "Architecture:"
 msgstr "Architektura:"
 
 # FIXME: value alignment counts bytes instead of columns
-#: sys-utils/lscpu.c:834
+#: sys-utils/lscpu.c:850
 msgid "CPU op-mode(s):"
 msgstr "Operační režim(y) CPU:"
 
-#: sys-utils/lscpu.c:837 sys-utils/lscpu.c:839
+#: sys-utils/lscpu.c:853 sys-utils/lscpu.c:855
 msgid "Byte Order:"
 msgstr "Pořadí bajtů:"
 
-#: sys-utils/lscpu.c:841
+#: sys-utils/lscpu.c:857
 msgid "CPU(s):"
 msgstr "Počet CPU:"
 
-#: sys-utils/lscpu.c:844
+#: sys-utils/lscpu.c:860
 msgid "On-line CPU(s) mask:"
 msgstr "Maska zapnutých CPU:"
 
-#: sys-utils/lscpu.c:845
+#: sys-utils/lscpu.c:861
 msgid "On-line CPU(s) list:"
 msgstr "Seznam zapnutých CPU:"
 
-#: sys-utils/lscpu.c:863
+#: sys-utils/lscpu.c:879
 msgid "Off-line CPU(s) mask:"
 msgstr "Maska vypnutých CPU:"
 
-#: sys-utils/lscpu.c:864
+#: sys-utils/lscpu.c:880
 msgid "Off-line CPU(s) list:"
 msgstr "Seznam vypnutých CPU:"
 
-#: sys-utils/lscpu.c:870
+#: sys-utils/lscpu.c:886
 msgid "Thread(s) per core:"
 msgstr "Vláken na jádro:"
 
-#: sys-utils/lscpu.c:871
+#: sys-utils/lscpu.c:887
 msgid "Core(s) per socket:"
 msgstr "Jader na patici:"
 
-#: sys-utils/lscpu.c:872
+#: sys-utils/lscpu.c:888
 msgid "CPU socket(s):"
 msgstr "Patic CPU:"
 
-#: sys-utils/lscpu.c:876
+#: sys-utils/lscpu.c:892
 msgid "NUMA node(s):"
 msgstr "Uzly NUMA:"
 
-#: sys-utils/lscpu.c:878
+#: sys-utils/lscpu.c:894
 msgid "Vendor ID:"
 msgstr "ID výrobce:"
 
-#: sys-utils/lscpu.c:880
+#: sys-utils/lscpu.c:896
 msgid "CPU family:"
 msgstr "Rodina CPU:"
 
-#: sys-utils/lscpu.c:882
+#: sys-utils/lscpu.c:898
 msgid "Model:"
 msgstr "Model:"
 
 # ???: Existuje český překlad?
-#: sys-utils/lscpu.c:884
+#: sys-utils/lscpu.c:900
 msgid "Stepping:"
 msgstr "Stepping:"
 
-#: sys-utils/lscpu.c:886
+#: sys-utils/lscpu.c:902
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:888
+#: sys-utils/lscpu.c:904
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:891 sys-utils/lscpu.c:893
+#: sys-utils/lscpu.c:907 sys-utils/lscpu.c:909
 msgid "Virtualization:"
 msgstr "Virtualizace:"
 
-#: sys-utils/lscpu.c:896
+#: sys-utils/lscpu.c:912
 msgid "Hypervisor vendor:"
 msgstr "Výrobce hypervizoru:"
 
-#: sys-utils/lscpu.c:897
+#: sys-utils/lscpu.c:913
 msgid "Virtualization type:"
 msgstr "Druh virtualizace:"
 
 # ???: keš
-#: sys-utils/lscpu.c:905
+#: sys-utils/lscpu.c:921
 #, c-format
 msgid "%s cache:"
 msgstr "%s cache:"
 
-#: sys-utils/lscpu.c:911
+#: sys-utils/lscpu.c:927
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "CPU NUMA uzlu %d:"
 
-#: sys-utils/lscpu.c:918
+#: sys-utils/lscpu.c:934
 #, c-format
 msgid "Usage: %s [option]\n"
 msgstr "Použití: %s [PŘEPÍNAČ]\n"
 
 # FIXME: full stops at the end of some lines
-#: sys-utils/lscpu.c:921
+#: sys-utils/lscpu.c:937
 #, c-format
 msgid ""
 "CPU architecture information helper\n"
@@ -12422,12 +12463,12 @@ msgstr "%s: %s(%i): chybný map řádek\n"
 msgid "%s: can't find \"_stext\" in %s\n"
 msgstr "%s: \"_stext\" nelze v %s nalézt\n"
 
-#: sys-utils/readprofile.c:335
+#: sys-utils/readprofile.c:337
 #, c-format
 msgid "%s: profile address out of range. Wrong map file?\n"
 msgstr "%s: adresa profilu je mimo rozsah. Chybný mapovací soubor?\n"
 
-#: sys-utils/readprofile.c:395
+#: sys-utils/readprofile.c:397
 msgid "total"
 msgstr "celkem"
 
@@ -13410,42 +13451,42 @@ msgstr ""
 msgid "realloc failed"
 msgstr "volání realloc selhalo"
 
-#: text-utils/tailf.c:59 text-utils/tailf.c:95
+#: text-utils/tailf.c:59 text-utils/tailf.c:96
 #, c-format
 msgid "cannot open \"%s\" for read"
 msgstr "„%s“  nelze otevřít pro čtení"
 
-#: text-utils/tailf.c:98 text-utils/tailf.c:225
+#: text-utils/tailf.c:99 text-utils/tailf.c:226
 #, c-format
 msgid "cannot stat \"%s\""
 msgstr "o „%s“ nelze získat podrobnosti"
 
-#: text-utils/tailf.c:111
+#: text-utils/tailf.c:112
 #, c-format
 msgid "incomplete write to \"%s\" (written %zd, expected %zd)\n"
 msgstr "neúplný zápis do „%s“ (zapsáno %zd, očekáváno %zd)\n"
 
-#: text-utils/tailf.c:157
+#: text-utils/tailf.c:158
 #, c-format
 msgid "%s: cannot add inotify watch (limit of inotify watches was reached)."
 msgstr ""
 "%s: nelze přidat sledování pomocí inotify (počet sledování inotify vyčerpán)."
 
-#: text-utils/tailf.c:161
+#: text-utils/tailf.c:162
 #, c-format
 msgid "%s: cannot add inotify watch."
 msgstr "%s: nelze přidat sledování pomocí inotify."
 
-#: text-utils/tailf.c:170
+#: text-utils/tailf.c:171
 #, c-format
 msgid "%s: cannot read inotify events"
 msgstr "%s: události inotify nelze přečíst"
 
-#: text-utils/tailf.c:209 text-utils/tailf.c:213
+#: text-utils/tailf.c:210 text-utils/tailf.c:214
 msgid "invalid number of lines"
 msgstr "neplatný počet řádku"
 
-#: text-utils/tailf.c:220
+#: text-utils/tailf.c:221
 msgid "usage: tailf [-n N | -N] logfile"
 msgstr "Použití: tailf [-n N | -N] SOUBOR_S_PROTOKOLEM"
 
@@ -13466,6 +13507,9 @@ msgstr "neznámá posloupnost řídicích znaků na vstupu: %o, %o"
 #: text-utils/ul.c:588
 msgid "Input line too long."
 msgstr "Vstupní řádek je příliš dlouhý."
+
+#~ msgid "mount: can't open %s: %s"
+#~ msgstr "mount: %s nelze otevřít: %s"
 
 #~ msgid "Partition ends in the final partial cylinder"
 #~ msgstr "Diskový oddíl končí v posledním částečném cylindru"
@@ -13950,12 +13994,6 @@ msgstr "Vstupní řádek je příliš dlouhý."
 #~ "chcete na tomto zařízení vytvořit odkládací prostor v0, vynuťte si to\n"
 #~ "přepínačem -f.\n"
 
-#~ msgid "namei: unable to get current directory - %s\n"
-#~ msgstr "namei: aktuální adresář nelze zjistit - %s\n"
-
-#~ msgid "namei: unable to chdir to %s - %s (%d)\n"
-#~ msgstr "namei: do adresáře %s nelze přejít - %s (%d)\n"
-
 #~ msgid "namei: could not chdir to root!\n"
 #~ msgstr "namei: do adresáře root nelze přejít!\n"
 
@@ -13989,9 +14027,6 @@ msgstr "Vstupní řádek je příliš dlouhý."
 
 #~ msgid "%s: waitpid: %s\n"
 #~ msgstr "%s: waitpid: %s\n"
-
-#~ msgid "%s: cannot stat %s: %s\n"
-#~ msgstr "%s: nelze získat informace o %s: %s\n"
 
 #~ msgid "could not umount %s - trying %s instead\n"
 #~ msgstr "%s nelze odpojit - zkouším %s\n"
