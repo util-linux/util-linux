@@ -133,7 +133,7 @@ static const struct libmnt_optmap userspace_opts_map[] =
    { "auto",    MNT_MS_NOAUTO, MNT_INVERT | MNT_NOMTAB },  /* Can be mounted using -a */
    { "noauto",  MNT_MS_NOAUTO, MNT_NOMTAB },               /* Can  only be mounted explicitly */
 
-   { "user[=]", MNT_MS_USER },                           /* Allow ordinary user to mount (mtab) */
+   { "user[=]", MNT_MS_USER },                             /* Allow ordinary user to mount (mtab) */
    { "nouser",  MNT_MS_USER, MNT_INVERT | MNT_NOMTAB },    /* Forbid ordinary user to mount */
 
    { "users",   MNT_MS_USERS, MNT_NOMTAB },                /* Allow ordinary users to mount */
@@ -147,9 +147,10 @@ static const struct libmnt_optmap userspace_opts_map[] =
 
    { "_netdev", MNT_MS_NETDEV },                           /* Device requires network */
 
-   { "comment=", MNT_MS_COMMENT, MNT_NOMTAB },           /* fstab comment only */
+   { "comment=", MNT_MS_COMMENT, MNT_NOMTAB },             /* fstab comment only */
+   { "x-",      MNT_MS_XCOMMENT, MNT_NOMTAB | MNT_PREFIX }, /* x- options */
 
-   { "loop[=]", MNT_MS_LOOP },                           /* use the loop device */
+   { "loop[=]", MNT_MS_LOOP },                             /* use the loop device */
 
    { "nofail",  MNT_MS_NOFAIL, MNT_NOMTAB },               /* Do not fail if ENOENT on dev */
 
@@ -210,6 +211,14 @@ const struct libmnt_optmap *mnt_optmap_get_entry(
 		const char *p;
 
 		for (ent = map; ent && ent->name; ent++) {
+			if (ent->mask & MNT_PREFIX) {
+				if (startswith(name, ent->name)) {
+					if (mapent)
+						*mapent = ent;
+					return map;
+				}
+				continue;
+			}
 			if (strncmp(ent->name, name, namelen))
 				continue;
 			p = ent->name + namelen;

@@ -73,6 +73,7 @@ struct libmnt_optmap
  */
 #define MNT_INVERT	(1 << 1) /* invert the mountflag */
 #define MNT_NOMTAB	(1 << 2) /* skip in the mtab option string */
+#define MNT_PREFIX	(1 << 3) /* prefix used for some options (e.g. "x-foo") */
 
 /**
  * libmnt_fs:
@@ -438,6 +439,7 @@ extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status
 #define MNT_MS_NOFAIL   (1 << 10)
 #define MNT_MS_UHELPER  (1 << 11)
 #define MNT_MS_HELPER   (1 << 12)
+#define MNT_MS_XCOMMENT (1 << 13)
 
 /*
  * mount(2) MS_* masks (MNT_MAP_LINUX map)
