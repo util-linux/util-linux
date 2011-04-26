@@ -153,6 +153,7 @@ global:
 	mnt_reset_context;
 	mnt_reset_fs;
 	mnt_reset_iter;
+	mnt_reset_table;
 	mnt_resolve_path;
 	mnt_resolve_spec;
 	mnt_resolve_tag;

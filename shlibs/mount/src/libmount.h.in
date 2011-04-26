@@ -276,6 +276,7 @@ extern int mnt_table_set_parser_errcb(struct libmnt_table *tb,
 /* tab.c */
 extern struct libmnt_table *mnt_new_table(void);
 extern void mnt_free_table(struct libmnt_table *tb);
+extern int mnt_reset_table(struct libmnt_table *tb);
 extern int mnt_table_get_nents(struct libmnt_table *tb);
 extern int mnt_table_set_cache(struct libmnt_table *tb, struct libmnt_cache *mpc);
 extern struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb);

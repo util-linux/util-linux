@@ -82,6 +82,30 @@ struct libmnt_table *mnt_new_table(void)
 }
 
 /**
+ * mnt_reset_table:
+ * @tb: tab pointer
+ *
+ * Dealocates all entries (filesystems) from the table
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_reset_table(struct libmnt_table *tb)
+{
+	if (!tb)
+		return -EINVAL;
+
+	DBG(TAB, mnt_debug_h(tb, "reset"));
+
+	while (!list_empty(&tb->ents)) {
+		struct libmnt_fs *fs = list_entry(tb->ents.next,
+				                  struct libmnt_fs, ents);
+		mnt_free_fs(fs);
+	}
+
+	return 0;
+}
+
+/**
  * mnt_free_table:
  * @tb: tab pointer
  *
@@ -92,14 +116,9 @@ void mnt_free_table(struct libmnt_table *tb)
 	if (!tb)
 		return;
 
+	mnt_reset_table(tb);
+
 	DBG(TAB, mnt_debug_h(tb, "free"));
-
-	while (!list_empty(&tb->ents)) {
-		struct libmnt_fs *fs = list_entry(tb->ents.next,
-				                  struct libmnt_fs, ents);
-		mnt_free_fs(fs);
-	}
-
 	free(tb);
 }
 
