@@ -153,7 +153,7 @@ int mnt_update_is_ready(struct libmnt_update *upd)
  * mnt_update_set_fs:
  * @upd: update handler
  * @mountflags: MS_* flags
- * @target: umount target, must be num for mount
+ * @target: umount target, must be NULL for mount
  * @fs: mount filesystem description, must be NULL for umount
  *
  * Returns: <0 in case on error, 0 on success, 1 if update is unnecessary.

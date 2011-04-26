@@ -461,7 +461,7 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 /**
  * mnt_table_find_srcpath:
  * @tb: tab pointer
- * @path: source path (devname or dirname)
+ * @path: source path (devname or dirname) or NULL
  * @direction: MNT_ITER_{FORWARD,BACKWARD}
  *
  * Try to lookup an entry in given tab, possible are four iterations, first
@@ -470,6 +470,10 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
  *
  * The 2nd, 3rd and 4th iterations are not performed when @tb cache is not
  * set (see mnt_table_set_cache()).
+ *
+ * Note that valid source path is NULL; the libmount uses NULL instead of
+ * "none".  The "none" is used in /proc/{mounts,self/mountninfo} for pseudo
+ * filesystems.
  *
  * Returns: a tab entry or NULL.
  */
@@ -482,22 +486,25 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 	const char *p;
 
 	assert(tb);
-	assert(path);
 
 	DBG(TAB, mnt_debug_h(tb, "lookup srcpath: %s", path));
 
 	/* native paths */
 	mnt_reset_iter(&itr, direction);
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
+		const char *src = mnt_fs_get_source(fs);
+
 		p = mnt_fs_get_srcpath(fs);
+
+		if (path == NULL && src == NULL)
+			return fs;			/* source is "none" */
 		if (p && strcmp(p, path) == 0)
 			return fs;
-		if (!p)
-			/* mnt_fs_get_srcpath() returs nothing, it's TAG */
-			ntags++;
+		if (!p && src)
+			ntags++;			/* mnt_fs_get_srcpath() returs nothing, it's TAG */
 	}
 
-	if (!tb->cache || !(cn = mnt_resolve_path(path, tb->cache)))
+	if (!path || !tb->cache || !(cn = mnt_resolve_path(path, tb->cache)))
 		return NULL;
 
 	/* canonicalized paths in struct libmnt_table */
@@ -619,19 +626,19 @@ struct libmnt_fs *mnt_table_find_tag(struct libmnt_table *tb, const char *tag,
  *
  * Returns: a tab entry or NULL.
  */
-struct libmnt_fs *mnt_table_find_source(struct libmnt_table *tb, const char *source, int direction)
+struct libmnt_fs *mnt_table_find_source(struct libmnt_table *tb,
+					const char *source, int direction)
 {
 	struct libmnt_fs *fs = NULL;
 
 	assert(tb);
-	assert(source);
 
-	if (!tb || !source)
+	if (!tb)
 		return NULL;
 
 	DBG(TAB, mnt_debug_h(tb, "lookup SOURCE: %s", source));
 
-	if (strchr(source, '=')) {
+	if (source && strchr(source, '=')) {
 		char *tag, *val;
 
 		if (blkid_parse_tag_string(source, &tag, &val) == 0) {
@@ -661,16 +668,15 @@ struct libmnt_fs *mnt_table_find_source(struct libmnt_table *tb, const char *sou
  * Returns: a tab entry or NULL.
  */
 struct libmnt_fs *mnt_table_find_pair(struct libmnt_table *tb, const char *source,
-			const char *target, int direction)
+				      const char *target, int direction)
 {
 	struct libmnt_fs *fs = NULL;
 	struct libmnt_iter itr;
 
 	assert(tb);
-	assert(source);
 	assert(target);
 
-	if (!tb || !source || !target)
+	if (!tb || !target)
 		return NULL;
 
 	DBG(TAB, mnt_debug_h(tb, "lookup SOURCE: %s TARGET: %s", source, target));

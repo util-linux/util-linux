@@ -1107,7 +1107,7 @@ int mnt_fs_match_target(struct libmnt_fs *fs, const char *target, struct libmnt_
 /**
  * mnt_fs_match_source:
  * @fs: filesystem
- * @source: tag or path (device or so)
+ * @source: tag or path (device or so) or NULL
  * @cache: tags/paths cache or NULL
  *
  * Possible are four attempts:
@@ -1119,6 +1119,10 @@ int mnt_fs_match_target(struct libmnt_fs *fs, const char *target, struct libmnt_
  * The 2nd, 3rd and 4th attempts are not performed when @cache is NULL. The
  * 2nd and 3rd attempts are not performed if @fs->source is tag.
  *
+ * Note that valid source path is NULL; the libmount uses NULL instead of
+ * "none".  The "none" is used in /proc/{mounts,self/mountninfo} for pseudo
+ * filesystems.
+ *
  * Returns: 1 if @fs source is equal to @source else 0.
  */
 int mnt_fs_match_source(struct libmnt_fs *fs, const char *source, struct libmnt_cache *cache)
@@ -1126,7 +1130,14 @@ int mnt_fs_match_source(struct libmnt_fs *fs, const char *source, struct libmnt_
 	char *cn;
 	const char *src, *t, *v;
 
-	if (!fs || !source || !fs->source)
+	if (!fs)
+		return 0;
+
+	/* undefined source -- "none" in /proc */
+	if (source == NULL && fs->source == NULL)
+		return 1;
+
+	if (source == NULL || fs->source == NULL)
 		return 0;
 
 	/* 1) native paths/tags */
