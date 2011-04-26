@@ -44,6 +44,7 @@
 #define MNT_DEBUG_UPDATE	(1 << 8)
 #define MNT_DEBUG_UTILS		(1 << 9)
 #define MNT_DEBUG_CXT		(1 << 10)
+#define MNT_DEBUG_DIFF		(1 << 11)
 #define MNT_DEBUG_ALL		0xFFFF
 
 #ifdef CONFIG_LIBMOUNT_DEBUG

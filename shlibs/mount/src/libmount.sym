@@ -188,6 +188,10 @@ global:
 	mnt_update_is_ready;
 	mnt_update_set_fs;
 	mnt_update_table;
+	mnt_new_tabdiff;
+	mnt_free_tabdiff;
+	mnt_diff_tables;
+	mnt_tabdiff_next_change;
 local:
 	*;
 };

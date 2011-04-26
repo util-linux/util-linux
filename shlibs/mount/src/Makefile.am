@@ -11,7 +11,7 @@ nodist_mountinc_HEADERS = libmount.h
 usrlib_exec_LTLIBRARIES = libmount.la
 libmount_la_SOURCES =	mountP.h version.c utils.c test.c init.c cache.c \
 			optstr.c optmap.c iter.c lock.c \
-			fs.c tab.c tab_parse.c tab_update.c \
+			fs.c tab.c tab_parse.c tab_update.c tab_diff.c \
 			context.c context_mount.c context_umount.c \
 			$(mountinc_HEADERS) \
 			$(top_srcdir)/lib/at.c \
@@ -56,7 +56,8 @@ uninstall-hook:
 
 
 tests = test_version test_cache test_optstr test_lock \
-		  test_tab test_utils test_tab_update test_context
+	test_tab test_utils test_tab_update test_context \
+	test_tab_diff
 
 tests: all $(tests)
 test_%: %.c
