@@ -67,7 +67,7 @@
 
 /* Displayed before the login prompt. */
 #ifdef	SYSV_STYLE
-#  define ISSUE "/etc/issue"
+#  define ISSUE _PATH_ISSUE
 #  include <sys/utsname.h>
 #endif
 
