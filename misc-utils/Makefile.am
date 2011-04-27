@@ -77,7 +77,11 @@ bin_PROGRAMS += findmnt
 dist_man_MANS += findmnt.8
 findmnt_LDADD = $(ul_libmount_la)
 findmnt_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
-findmnt_SOURCES = findmnt.c $(top_srcdir)/lib/tt.c $(top_srcdir)/lib/mbsalign.c
+findmnt_SOURCES =	findmnt.c \
+			$(top_srcdir)/lib/tt.c \
+			$(top_srcdir)/lib/mbsalign.c \
+			$(top_srcdir)/lib/strutils.c
+
 if !HAVE_LANGINFO
 findmnt_SOURCES += $(top_srcdir)/lib/langinfo.c
 endif

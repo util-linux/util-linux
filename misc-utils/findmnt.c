@@ -38,6 +38,7 @@
 #include "nls.h"
 #include "c.h"
 #include "tt.h"
+#include "strutils.h"
 
 /* flags */
 enum {
@@ -633,7 +634,7 @@ static int poll_table(struct libmnt_table *tb, const char *tabfile,
 
 		x = poll(fds, 1, timeout);
 		if (x == 0)
-			goto done;	/* timeout ? */
+			break;	/* timeout */
 		if (x < 0) {
 			warn(_("poll() failed"));
 			goto done;
@@ -697,7 +698,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -k, --kernel           search in kernel table of mounted \n"
         "                        filesystems (default)\n\n"
 
-	" -p, --poll             monitor changes in table of mounted filesystems\n\n"
+	" -p, --poll             monitor changes in table of mounted filesystems\n"
+	" -w, --timeout <num>    upper limit in millisecods which --poll will block\n\n"
 
 	" -c, --canonicalize     canonicalize printed paths\n"
 	" -d, --direction <word> search direction - 'forward' or 'backward'\n"
@@ -746,7 +748,7 @@ int main(int argc, char *argv[])
 	struct libmnt_table *tb = NULL;
 	char *tabfile = NULL;
 	int direction = MNT_ITER_FORWARD;
-	int i, c, rc = -1;
+	int i, c, rc = -1, timeout = -1;
 
 	/* table.h */
 	struct tt *tt = NULL;
@@ -774,6 +776,7 @@ int main(int argc, char *argv[])
 	    { "submounts",    0, 0, 'R' },
 	    { "source",       1, 0, 'S' },
 	    { "target",       1, 0, 'T' },
+	    { "timeout",      1, 0, 'w' },
 
 	    { NULL,           0, 0, 0 }
 	};
@@ -788,7 +791,7 @@ int main(int argc, char *argv[])
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"acd:ehifo:O:pklmnrst:uvRS:T:", longopts, NULL)) != -1) {
+				"acd:ehifo:O:pklmnrst:uvRS:T:w:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			tt_flags |= TT_FL_ASCII;
@@ -878,6 +881,10 @@ int main(int argc, char *argv[])
 		case 'T':
 			set_match(COL_TARGET, optarg);
 			flags |= FL_NOSWAPMATCH;
+			break;
+		case 'w':
+			timeout = strtol_or_err(optarg,
+					_("failed to parse timeout"));
 			break;
 		default:
 			usage(stderr);
@@ -985,7 +992,7 @@ int main(int argc, char *argv[])
 	 */
 	if (flags & FL_POLL)
 		/* poll mode */
-		poll_table(tb, tabfile, -1, tt, direction);
+		rc = poll_table(tb, tabfile, timeout, tt, direction);
 
 	else if ((tt_flags & TT_FL_TREE) && is_listall_mode())
 		/* whole tree */
