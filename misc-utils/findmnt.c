@@ -102,6 +102,11 @@ int tt_flags = 0;
 int columns[__NCOLUMNS];
 int ncolumns;
 
+/* poll actions (parsed --poll=<list> */
+#define __NACTIONS	4		/* mount, umount, move, remount */
+int actions[__NACTIONS];
+int nactions;
+
 /* libmount cache */
 struct libmnt_cache *cache;
 
@@ -174,6 +179,39 @@ static int is_listall_mode(void)
 		!get_match(COL_TARGET) &&
 		!get_match(COL_FSTYPE) &&
 		!get_match(COL_OPTIONS));
+}
+
+/*
+ * Returns 1 if the @act is in the --poll=<list>
+ */
+static int has_poll_action(int act)
+{
+	int i;
+
+	if (!nactions)
+		return 1;	/* all actions enabled */
+	for (i = 0; i < nactions; i++)
+		if (actions[i] == act)
+			return 1;
+	return 0;
+}
+
+static int poll_action_name_to_id(const char *name, size_t namesz)
+{
+	int id = -1;
+
+	if (strncasecmp(name, "move", namesz) == 0 && namesz == 4)
+		id = MNT_TABDIFF_MOVE;
+	else if (strncasecmp(name, "mount", namesz) == 0 && namesz == 5)
+		id = MNT_TABDIFF_MOUNT;
+	else if (strncasecmp(name, "umount", namesz) == 0 && namesz == 6)
+		id = MNT_TABDIFF_UMOUNT;
+	else if (strncasecmp(name, "remount", namesz) == 0 && namesz == 7)
+		id = MNT_TABDIFF_REMOUNT;
+	else
+		warnx(_("unknown action: %s"), name);
+
+	return id;
 }
 
 /*
@@ -586,6 +624,30 @@ done:
 	return rc;
 }
 
+static int poll_match(struct libmnt_fs *fs)
+{
+	int rc = match_func(fs, NULL);
+
+	if (rc == 0 && !(flags & FL_NOSWAPMATCH) &&
+	    get_match(COL_SOURCE) && !get_match(COL_TARGET)) {
+		/*
+		 * findmnt --poll /foo
+		 * The '/foo' source as well as target.
+		 */
+		const char *str = get_match(COL_SOURCE);
+
+		set_match(COL_TARGET, str);	/* swap */
+		set_match(COL_SOURCE, NULL);
+
+		rc = match_func(fs, NULL);
+
+		set_match(COL_TARGET, NULL);	/* restore */
+		set_match(COL_SOURCE, str);
+
+	}
+	return rc;
+}
+
 static int poll_table(struct libmnt_table *tb, const char *tabfile,
 		  int timeout, struct tt *tt, int direction)
 {
@@ -632,12 +694,12 @@ static int poll_table(struct libmnt_table *tb, const char *tabfile,
 	while (1) {
 		struct libmnt_table *tmp;
 		struct libmnt_fs *old, *new;
-		int change, x;
+		int change, count;
 
-		x = poll(fds, 1, timeout);
-		if (x == 0)
+		count = poll(fds, 1, timeout);
+		if (count == 0)
 			break;	/* timeout */
-		if (x < 0) {
+		if (count < 0) {
 			warn(_("poll() failed"));
 			goto done;
 		}
@@ -649,10 +711,16 @@ static int poll_table(struct libmnt_table *tb, const char *tabfile,
 		if (rc < 0)
 			goto done;
 
+		count = 0;
 		mnt_reset_iter(itr, direction);
 		while(mnt_tabdiff_next_change(
 				diff, itr, &old, &new, &change) == 0) {
 
+			if (!has_poll_action(change))
+				continue;
+			if (!poll_match(new ? new : old))
+				continue;
+			count++;
 			rc = !add_tabdiff_line(tt, new, old, change);
 			if (rc)
 				goto done;
@@ -660,9 +728,11 @@ static int poll_table(struct libmnt_table *tb, const char *tabfile,
 				break;
 		}
 
-		rc = tt_print_table(tt);
-		if (rc)
-			goto done;
+		if (count) {
+			rc = tt_print_table(tt);
+			if (rc)
+				goto done;
+		}
 
 		/* swap tables */
 		tmp = tb;
@@ -671,6 +741,9 @@ static int poll_table(struct libmnt_table *tb, const char *tabfile,
 
 		tt_remove_lines(tt);
 		mnt_reset_table(tb_new);
+
+		if (count && (flags & FL_FIRSTONLY))
+			break;
 	}
 
 	rc = 0;
@@ -700,7 +773,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -k, --kernel           search in kernel table of mounted \n"
         "                        filesystems (default)\n\n"
 
-	" -p, --poll             monitor changes in table of mounted filesystems\n"
+	" -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
 	" -w, --timeout <num>    upper limit in millisecods which --poll will block\n\n"
 
 	" -c, --canonicalize     canonicalize printed paths\n"
@@ -771,7 +844,7 @@ int main(int argc, char *argv[])
 	    { "notruncate",   0, 0, 'u' },
 	    { "options",      1, 0, 'O' },
 	    { "output",       1, 0, 'o' },
-	    { "poll",         0, 0, 'p' },
+	    { "poll",         2, 0, 'p' },
 	    { "raw",          0, 0, 'r' },
 	    { "types",        1, 0, 't' },
 	    { "fsroot",       0, 0, 'v' },
@@ -793,7 +866,7 @@ int main(int argc, char *argv[])
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"acd:ehifo:O:pklmnrst:uvRS:T:w:", longopts, NULL)) != -1) {
+				"acd:ehifo:O:p::klmnrst:uvRS:T:w:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			tt_flags |= TT_FL_ASCII;
@@ -834,6 +907,11 @@ int main(int argc, char *argv[])
 			set_match(COL_OPTIONS, optarg);
 			break;
 		case 'p':
+			if (optarg &&
+			    tt_parse_columns_list(optarg, actions, &nactions,
+						poll_action_name_to_id))
+				exit(EXIT_FAILURE);
+
 			flags |= FL_POLL;
 			tt_flags &= ~TT_FL_TREE;
 			break;

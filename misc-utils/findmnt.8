@@ -113,10 +113,17 @@ column contains tree formatting if the
 or
 .B \-\-raw
 options are not specified.
-.IP "\fB\-p, \-\-poll\fP"
-Monitor changes in the /proc/self/mountinfo file. The standard columns always
-use the new version of the information from the mountinfo file, except the
-umount action which is based on the original information cached by
+.IP "\fB\-p, \-\-poll[=list]\fP"
+Monitor changes in the /proc/self/mountinfo file. Supported actions are: mount,
+umount, remount and move. More than one action may be specified in a
+comma-separated list. All actions are monitored by default.
+
+The time for which --poll will block could be restricted by \fB\-\-timeout\fP
+or \fB\-\-first-only\fP options.
+
+The standard columns always use the new version of the information from the
+mountinfo file, except the umount action which is based on the original
+information cached by
 .BR findmnt (8) .
 The poll mode allows to use extra columns:
 .RS
@@ -171,8 +178,14 @@ filesystems where the mountpoint directory is /mnt/foo.
 Prints all
 .IR /etc/fstab
 filesystems and converts LABEL= and UUID= tags to the real device names.
-.IP "\fBfindmnt -n --raw --evaluate --output=target LABEL=/boot
+.IP "\fBfindmnt -n --raw --evaluate --output=target LABEL=/boot\fP"
 Prints only the mountpoint where the filesystem with label "/boot" is mounted.
+.IP "\fBfindmnt --poll --target /mnt/foo\fP"
+Monitors mount, umount, remount and move on /mnt/foo.
+.IP "\fBfindmnt --poll=umount --first-only --target /mnt/foo\fP"
+Waits for /mnt/foo umount.
+.IP "\fBfindmnt --poll=remount -t ext3 -O ro\fP"
+Monitors remounts to read-only mode on all ext3 filesystems.
 .SH AUTHORS
 .nf
 Karel Zak <kzak@redhat.com>
