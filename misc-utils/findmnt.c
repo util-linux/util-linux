@@ -337,11 +337,13 @@ static const char *get_tabdiff_data(struct libmnt_fs *old_fs,
 		}
 		break;
 	case COL_OLD_OPTIONS:
-		if (old_fs)
+		if (old_fs && (change == MNT_TABDIFF_REMOUNT ||
+			       change == MNT_TABDIFF_UMOUNT))
 			str = mnt_fs_get_options(old_fs);
 		break;
 	case COL_OLD_TARGET:
-		if (old_fs)
+		if (old_fs && (change == MNT_TABDIFF_MOVE ||
+			       change == MNT_TABDIFF_UMOUNT))
 			str = mnt_fs_get_target(old_fs);
 		break;
 	default:
@@ -975,7 +977,7 @@ int main(int argc, char *argv[])
 			fl &= ~TT_FL_TREE;
 
 		if (!(flags & FL_POLL) && is_tabdiff_column(id)) {
-			warn(_("%s column is requested, but --poll "
+			warnx(_("%s column is requested, but --poll "
 			       "is not enabled"), get_column_name(i));
 			goto leave;
 		}
