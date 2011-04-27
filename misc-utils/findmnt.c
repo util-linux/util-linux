@@ -67,7 +67,7 @@ enum {
 	COL_OLD_TARGET,
 	COL_OLD_OPTIONS,
 
-	__NCOLUMNS
+	FINDMNT_NCOLUMNS
 };
 
 /* column names */
@@ -78,8 +78,8 @@ struct colinfo {
 	const char	*match;		/* pattern for match_func() */
 };
 
-/* columns descriptions */
-struct colinfo infos[__NCOLUMNS] = {
+/* columns descriptions (don't use const, this is writable) */
+static struct colinfo infos[FINDMNT_NCOLUMNS] = {
 	[COL_SOURCE]       = { "SOURCE",       0.25 },
 	[COL_TARGET]       = { "TARGET",       0.30, TT_FL_TREE },
 	[COL_FSTYPE]       = { "FSTYPE",       0.10, TT_FL_TRUNC },
@@ -95,25 +95,25 @@ struct colinfo infos[__NCOLUMNS] = {
 };
 
 /* global flags */
-int flags;
-int tt_flags = 0;
+static int flags;
+static int tt_flags;
 
 /* array with IDs of enabled columns */
-int columns[__NCOLUMNS];
-int ncolumns;
+static int columns[FINDMNT_NCOLUMNS];
+static int ncolumns;
 
 /* poll actions (parsed --poll=<list> */
-#define __NACTIONS	4		/* mount, umount, move, remount */
-int actions[__NACTIONS];
-int nactions;
+#define FINDMNT_NACTIONS	4		/* mount, umount, move, remount */
+static int actions[FINDMNT_NACTIONS];
+static int nactions;
 
 /* libmount cache */
-struct libmnt_cache *cache;
+static struct libmnt_cache *cache;
 
 static int get_column_id(int num)
 {
 	assert(num < ncolumns);
-	assert(columns[num] < __NCOLUMNS);
+	assert(columns[num] < FINDMNT_NCOLUMNS);
 	return columns[num];
 }
 
@@ -124,7 +124,7 @@ static struct colinfo *get_column_info(int num)
 
 static const char *column_id_to_name(int id)
 {
-	assert(id < __NCOLUMNS);
+	assert(id < FINDMNT_NCOLUMNS);
 	return infos[id].name;
 }
 
@@ -145,19 +145,19 @@ static int get_column_flags(int num)
 
 static const char *get_match(int id)
 {
-	assert(id < __NCOLUMNS);
+	assert(id < FINDMNT_NCOLUMNS);
 	return infos[id].match;
 }
 
 static void set_match(int id, const char *match)
 {
-	assert(id < __NCOLUMNS);
+	assert(id < FINDMNT_NCOLUMNS);
 	infos[id].match = match;
 }
 
 static int is_tabdiff_column(int id)
 {
-	assert(id < __NCOLUMNS);
+	assert(id < FINDMNT_NCOLUMNS);
 
 	switch(id) {
 	case COL_ACTION:
@@ -235,7 +235,7 @@ static void disable_columns_truncate(void)
 {
 	int i;
 
-	for (i = 0; i < __NCOLUMNS; i++)
+	for (i = 0; i < FINDMNT_NCOLUMNS; i++)
 		infos[i].flags &= ~TT_FL_TRUNC;
 }
 
@@ -246,7 +246,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 {
 	int i;
 
-	for (i = 0; i < __NCOLUMNS; i++) {
+	for (i = 0; i < FINDMNT_NCOLUMNS; i++) {
 		const char *cn = column_id_to_name(i);
 
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
@@ -798,7 +798,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, _("\nAvailable columns:\n"));
 
-	for (i = 0; i < __NCOLUMNS; i++) {
+	for (i = 0; i < FINDMNT_NCOLUMNS; i++) {
 
 		fprintf(out, "  %-12s", infos[i].name);
 		if (i && !((i+1) % 3))
@@ -856,7 +856,7 @@ int main(int argc, char *argv[])
 	    { NULL,           0, 0, 0 }
 	};
 
-	assert(ARRAY_SIZE(columns) == __NCOLUMNS);
+	assert(ARRAY_SIZE(columns) == FINDMNT_NCOLUMNS);
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -1059,7 +1059,6 @@ int main(int argc, char *argv[])
 			       "is not enabled"), get_column_name(i));
 			goto leave;
 		}
-
 		if (!tt_define_column(tt, get_column_name(i),
 					get_column_whint(i), fl)) {
 			warn(_("failed to initialize output column"));
