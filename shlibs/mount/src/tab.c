@@ -102,6 +102,7 @@ int mnt_reset_table(struct libmnt_table *tb)
 		mnt_free_fs(fs);
 	}
 
+	tb->nents = 0;
 	return 0;
 }
 

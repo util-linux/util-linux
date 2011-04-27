@@ -446,7 +446,7 @@ char *mnt_resolve_path(const char *path, struct libmnt_cache *cache)
 
 	assert(path);
 
-	DBG(CACHE, mnt_debug_h(cache, "resolving path %s", path));
+	/*DBG(CACHE, mnt_debug_h(cache, "resolving path %s", path));*/
 
 	if (!path)
 		return NULL;
@@ -494,8 +494,8 @@ char *mnt_resolve_tag(const char *token, const char *value,
 	assert(token);
 	assert(value);
 
-	DBG(CACHE, mnt_debug_h(cache, "resolving tag token=%s value=%s",
-				token, value));
+	/*DBG(CACHE, mnt_debug_h(cache, "resolving tag token=%s value=%s",
+				token, value));*/
 
 	if (!token || !value)
 		return NULL;

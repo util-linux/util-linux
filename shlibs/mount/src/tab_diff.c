@@ -190,7 +190,6 @@ static struct tabdiff_entry *tabdiff_get_mount(struct libmnt_tabdiff *df,
 	struct list_head *p;
 
 	assert(df);
-	assert(src);
 
 	list_for_each(p, &df->changes) {
 		struct tabdiff_entry *de;
@@ -202,7 +201,9 @@ static struct tabdiff_entry *tabdiff_get_mount(struct libmnt_tabdiff *df,
 
 			const char *s = mnt_fs_get_source(de->new_fs);
 
-			if (s && strcmp(s, src) == 0)
+			if (s == NULL && src == NULL)
+				return de;
+			if (s && src && strcmp(s, src) == 0)
 				return de;
 		}
 	}

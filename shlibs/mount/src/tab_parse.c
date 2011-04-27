@@ -360,7 +360,8 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 	assert(f);
 	assert(filename);
 
-	DBG(TAB, mnt_debug_h(tb, "%s: start parsing", filename));
+	DBG(TAB, mnt_debug_h(tb, "%s: start parsing (%d entries)",
+				filename, mnt_table_get_nents(tb)));
 
 	/* necessary for /proc/mounts only, the /proc/self/mountinfo
 	 * parser sets the flag properly
@@ -389,7 +390,8 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 		}
 	}
 
-	DBG(TAB, mnt_debug_h(tb, "%s: stop parsing", filename));
+	DBG(TAB, mnt_debug_h(tb, "%s: stop parsing (%d entries)",
+				filename, mnt_table_get_nents(tb)));
 	return 0;
 err:
 	DBG(TAB, mnt_debug_h(tb, "%s: parse error (rc=%d)", filename, rc));
