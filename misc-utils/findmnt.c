@@ -29,6 +29,7 @@
 #include <sys/ioctl.h>
 #endif
 #include <assert.h>
+#include <poll.h>
 
 #define USE_UNSTABLE_LIBMOUNT_API
 #include <libmount.h>
@@ -47,6 +48,7 @@ enum {
 	FL_NOSWAPMATCH	= (1 << 6),
 	FL_NOFSROOT	= (1 << 7),
 	FL_SUBMOUNTS	= (1 << 8),
+	FL_POLL		= (1 << 9)
 };
 
 /* column IDs */
@@ -60,6 +62,9 @@ enum {
 	COL_LABEL,
 	COL_UUID,
 	COL_MAJMIN,
+	COL_ACTION,
+	COL_OLD_TARGET,
+	COL_OLD_OPTIONS,
 
 	__NCOLUMNS
 };
@@ -68,21 +73,24 @@ enum {
 struct colinfo {
 	const char	*name;		/* header */
 	double		whint;		/* width hint (N < 1 is in percent of termwidth) */
-	int		truncate;	/* boolean */
+	int		flags;		/* tt flags */
 	const char	*match;		/* pattern for match_func() */
 };
 
 /* columns descriptions */
 struct colinfo infos[__NCOLUMNS] = {
-	[COL_SOURCE]  = { "SOURCE",     0.25, FALSE },
-	[COL_TARGET]  = { "TARGET",     0.30, FALSE },
-	[COL_FSTYPE]  = { "FSTYPE",     0.10, TRUE },
-	[COL_OPTIONS] = { "OPTIONS",    0.10, TRUE },
-	[COL_VFS_OPTIONS] = { "VFS-OPTIONS", 0.20, TRUE },
-	[COL_FS_OPTIONS] = { "FS-OPTIONS", 0.10, TRUE },
-	[COL_LABEL]   = { "LABEL",      0.10, FALSE },
-	[COL_UUID]    = { "UUID",         36, FALSE },
-	[COL_MAJMIN] = { "MAJ:MIN",        6, FALSE },
+	[COL_SOURCE]       = { "SOURCE",       0.25 },
+	[COL_TARGET]       = { "TARGET",       0.30, TT_FL_TREE },
+	[COL_FSTYPE]       = { "FSTYPE",       0.10, TT_FL_TRUNC },
+	[COL_OPTIONS]      = { "OPTIONS",      0.10, TT_FL_TRUNC },
+	[COL_VFS_OPTIONS]  = { "VFS-OPTIONS",  0.20, TT_FL_TRUNC },
+	[COL_FS_OPTIONS]   = { "FS-OPTIONS",   0.10, TT_FL_TRUNC },
+	[COL_LABEL]        = { "LABEL",        0.10 },
+	[COL_UUID]         = { "UUID",           36 },
+	[COL_MAJMIN]       = { "MAJ:MIN",         6 },
+	[COL_ACTION]       = { "ACTION",         10, TT_FL_STRICTWIDTH },
+	[COL_OLD_OPTIONS]  = { "OLD-OPTIONS",  0.10, TT_FL_TRUNC },
+	[COL_OLD_TARGET]   = { "OLD-TARGET",   0.30 },
 };
 
 /* global flags */
@@ -124,9 +132,9 @@ static float get_column_whint(int num)
 	return get_column_info(num)->whint;
 }
 
-static int get_column_truncate(int num)
+static int get_column_flags(int num)
 {
-	return get_column_info(num)->truncate;
+	return get_column_info(num)->flags;
 }
 
 static const char *get_match(int id)
@@ -139,6 +147,21 @@ static void set_match(int id, const char *match)
 {
 	assert(id < __NCOLUMNS);
 	infos[id].match = match;
+}
+
+static int is_tabdiff_column(int id)
+{
+	assert(id < __NCOLUMNS);
+
+	switch(id) {
+	case COL_ACTION:
+	case COL_OLD_TARGET:
+	case COL_OLD_OPTIONS:
+		return 1;
+	default:
+		break;
+	}
+	return 0;
 }
 
 /*
@@ -169,12 +192,12 @@ static int is_mount_compatible_mode(void)
 	return 1;			/* ok */
 }
 
-static void set_all_columns_truncate(int set)
+static void disable_columns_truncate(void)
 {
 	int i;
 
 	for (i = 0; i < __NCOLUMNS; i++)
-		infos[i].truncate = set;
+		infos[i].flags &= ~TT_FL_TRUNC;
 }
 
 /*
@@ -285,6 +308,51 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 	return str;
 }
 
+static const char *get_tabdiff_data(struct libmnt_fs *old_fs,
+				    struct libmnt_fs *new_fs,
+				    int change,
+				    int num)
+{
+	const char *str = NULL;
+
+	switch (get_column_id(num)) {
+	case COL_ACTION:
+		switch (change) {
+		case MNT_TABDIFF_MOUNT:
+			str = _("mount");
+			break;
+		case MNT_TABDIFF_UMOUNT:
+			str = _("umount");
+			break;
+		case MNT_TABDIFF_REMOUNT:
+			str = _("remount");
+			break;
+		case MNT_TABDIFF_MOVE:
+			str = _("move");
+			break;
+		default:
+			str = _("unknown");
+			break;
+		}
+		break;
+	case COL_OLD_OPTIONS:
+		if (old_fs)
+			str = mnt_fs_get_options(old_fs);
+		break;
+	case COL_OLD_TARGET:
+		if (old_fs)
+			str = mnt_fs_get_target(old_fs);
+		break;
+	default:
+		if (new_fs)
+			str = get_data(new_fs, num);
+		else
+			str = get_data(old_fs, num);
+		break;
+	}
+	return str;
+}
+
 /* adds one line to the output @tab */
 static struct tt_line *add_line(struct tt *tt, struct libmnt_fs *fs,
 					struct tt_line *parent)
@@ -300,6 +368,23 @@ static struct tt_line *add_line(struct tt *tt, struct libmnt_fs *fs,
 		tt_line_set_data(line, i, get_data(fs, i));
 
 	tt_line_set_userdata(line, fs);
+	return line;
+}
+
+static struct tt_line *add_tabdiff_line(struct tt *tt, struct libmnt_fs *new_fs,
+			struct libmnt_fs *old_fs, int change)
+{
+	int i;
+	struct tt_line *line = tt_add_line(tt, NULL);
+
+	if (!line) {
+		warn(_("failed to add line to output"));
+		return NULL;
+	}
+	for (i = 0; i < ncolumns; i++)
+		tt_line_set_data(line, i,
+				get_tabdiff_data(old_fs, new_fs, change, i));
+
 	return line;
 }
 
@@ -368,7 +453,7 @@ static struct libmnt_table *parse_tabfile(const char *path)
 	struct libmnt_table *tb = mnt_new_table();
 
 	if (!tb) {
-		warn(_("failed to initialize libmount tab"));
+		warn(_("failed to initialize libmount table"));
 		return NULL;
 	}
 
@@ -498,6 +583,101 @@ done:
 	return rc;
 }
 
+static int poll_table(struct libmnt_table *tb, const char *tabfile,
+		  int timeout, struct tt *tt, int direction)
+{
+	FILE *f;
+	int rc = -1;
+	struct libmnt_iter *itr = NULL;
+	struct libmnt_table *tb_new = NULL;
+	struct libmnt_tabdiff *diff = NULL;
+	struct pollfd fds[1];
+
+	tb_new = mnt_new_table();
+	if (!tb_new) {
+		warn(_("failed to initialize libmount table"));
+		goto done;
+	}
+
+	itr = mnt_new_iter(direction);
+	if (!itr) {
+		warn(_("failed to initialize libmount iterator"));
+		goto done;
+	}
+
+	diff = mnt_new_tabdiff();
+	if (!diff) {
+		warn(_("failed to initialize libmount tabdiff"));
+		goto done;
+	}
+
+	/* cache is unnecessary to detect changes */
+	mnt_table_set_cache(tb, NULL);
+	mnt_table_set_cache(tb_new, NULL);
+
+	f = fopen(tabfile, "r");
+	if (!f) {
+		warn(_("%s: open failed"), tabfile);
+		goto done;
+	}
+
+	mnt_table_set_parser_errcb(tb_new, parser_errcb);
+
+	fds[0].fd = fileno(f);
+	fds[0].events = POLLPRI;
+
+	while (1) {
+		struct libmnt_table *tmp;
+		struct libmnt_fs *old, *new;
+		int change, x;
+
+		x = poll(fds, 1, timeout);
+		if (x == 0)
+			goto done;	/* timeout ? */
+		if (x < 0) {
+			warn(_("poll() failed"));
+			goto done;
+		}
+
+		rewind(f);
+		rc = mnt_table_parse_stream(tb_new, f, tabfile);
+		if (!rc)
+			rc = mnt_diff_tables(diff, tb, tb_new);
+		if (rc < 0)
+			goto done;
+
+		mnt_reset_iter(itr, direction);
+		while(mnt_tabdiff_next_change(
+				diff, itr, &old, &new, &change) == 0) {
+
+			rc = !add_tabdiff_line(tt, new, old, change);
+			if (rc)
+				goto done;
+			if (flags & FL_FIRSTONLY)
+				break;
+		}
+
+		rc = tt_print_table(tt);
+		if (rc)
+			goto done;
+
+		/* swap tables */
+		tmp = tb;
+		tb = tb_new;
+		tb_new = tmp;
+
+		tt_remove_lines(tt);
+		mnt_reset_table(tb_new);
+	}
+
+	rc = 0;
+done:
+	mnt_free_table(tb_new);
+	mnt_free_tabdiff(diff);
+	mnt_free_iter(itr);
+	return rc;
+}
+
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	int i;
@@ -516,6 +696,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -m, --mtab             search in table of mounted filesystems\n"
 	" -k, --kernel           search in kernel table of mounted \n"
         "                        filesystems (default)\n\n"
+
+	" -p, --poll             monitor changes in table of mounted filesystems\n\n"
 
 	" -c, --canonicalize     canonicalize printed paths\n"
 	" -d, --direction <word> search direction - 'forward' or 'backward'\n"
@@ -585,6 +767,7 @@ int main(int argc, char *argv[])
 	    { "notruncate",   0, 0, 'u' },
 	    { "options",      1, 0, 'O' },
 	    { "output",       1, 0, 'o' },
+	    { "poll",         0, 0, 'p' },
 	    { "raw",          0, 0, 'r' },
 	    { "types",        1, 0, 't' },
 	    { "fsroot",       0, 0, 'v' },
@@ -601,17 +784,11 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	/* default enabled columns */
-	columns[ncolumns++] = COL_TARGET;
-	columns[ncolumns++] = COL_SOURCE;
-	columns[ncolumns++] = COL_FSTYPE;
-	columns[ncolumns++] = COL_OPTIONS;
-
 	/* default output format */
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"acd:ehifo:O:klmnrst:uvRS:T:", longopts, NULL)) != -1) {
+				"acd:ehifo:O:pklmnrst:uvRS:T:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			tt_flags |= TT_FL_ASCII;
@@ -641,7 +818,7 @@ int main(int argc, char *argv[])
 			flags |= FL_FIRSTONLY;
 			break;
 		case 'u':
-			set_all_columns_truncate(FALSE);
+			disable_columns_truncate();
 			break;
 		case 'o':
 			if (tt_parse_columns_list(optarg, columns, &ncolumns,
@@ -650,6 +827,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'O':
 			set_match(COL_OPTIONS, optarg);
+			break;
+		case 'p':
+			flags |= FL_POLL;
+			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 'm':		/* mtab */
 			if (tabfile)
@@ -702,6 +883,17 @@ int main(int argc, char *argv[])
 			usage(stderr);
 			break;
 		}
+	}
+
+	/* default columns */
+	if (!ncolumns) {
+		if (flags & FL_POLL)
+			columns[ncolumns++] = COL_ACTION;
+
+		columns[ncolumns++] = COL_TARGET;
+		columns[ncolumns++] = COL_SOURCE;
+		columns[ncolumns++] = COL_FSTYPE;
+		columns[ncolumns++] = COL_OPTIONS;
 	}
 
 	if (!tabfile) {
@@ -769,10 +961,17 @@ int main(int argc, char *argv[])
 	}
 
 	for (i = 0; i < ncolumns; i++) {
-		int fl = get_column_truncate(i) ? TT_FL_TRUNC : 0;
+		int fl = get_column_flags(i);
+		int id = get_column_id(i);
 
-		if (get_column_id(i) == COL_TARGET && (tt_flags & TT_FL_TREE))
-			fl |= TT_FL_TREE;
+		if (!(tt_flags & TT_FL_TREE))
+			fl &= ~TT_FL_TREE;
+
+		if (!(flags & FL_POLL) && is_tabdiff_column(id)) {
+			warn(_("%s column is requested, but --poll "
+			       "is not enabled"), get_column_name(i));
+			goto leave;
+		}
 
 		if (!tt_define_column(tt, get_column_name(i),
 					get_column_whint(i), fl)) {
@@ -784,7 +983,11 @@ int main(int argc, char *argv[])
 	/*
 	 * Fill in data to the output table
 	 */
-	if ((tt_flags & TT_FL_TREE) && is_listall_mode())
+	if (flags & FL_POLL)
+		/* poll mode */
+		poll_table(tb, tabfile, -1, tt, direction);
+
+	else if ((tt_flags & TT_FL_TREE) && is_listall_mode())
 		/* whole tree */
 		rc = create_treenode(tt, tb, NULL, NULL);
 	else
@@ -792,9 +995,9 @@ int main(int argc, char *argv[])
 		rc = add_matching_lines(tb, tt, direction);
 
 	/*
-	 * Print the output table
+	 * Print the output table for non-poll modes
 	 */
-	if (!rc)
+	if (!rc && !(flags & FL_POLL))
 		tt_print_table(tt);
 leave:
 	tt_free_table(tt);
