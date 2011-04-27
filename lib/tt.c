@@ -81,13 +81,16 @@ struct tt *tt_new_table(int flags)
 	else
 #endif
 		tb->symbols = &ascii_tt_symbols;
+
+	tb->first_run = TRUE;
 	return tb;
 }
 
-void tt_free_table(struct tt *tb)
+void tt_remove_lines(struct tt *tb)
 {
 	if (!tb)
 		return;
+
 	while (!list_empty(&tb->tb_lines)) {
 		struct tt_line *ln = list_entry(tb->tb_lines.next,
 						struct tt_line, ln_lines);
@@ -95,6 +98,15 @@ void tt_free_table(struct tt *tb)
 		free(ln->data);
 		free(ln);
 	}
+}
+
+void tt_free_table(struct tt *tb)
+{
+	if (!tb)
+		return;
+
+	tt_remove_lines(tb);
+
 	while (!list_empty(&tb->tb_columns)) {
 		struct tt_column *cl = list_entry(tb->tb_columns.next,
 						struct tt_column, cl_columns);
@@ -104,11 +116,23 @@ void tt_free_table(struct tt *tb)
 	free(tb);
 }
 
+
 /*
  * @tb: table
  * @name: column header
  * @whint: column width hint (absolute width: N > 1; relative width: N < 1)
  * @flags: usually TT_FL_{TREE,TRUNCATE}
+ *
+ * The column width is possible to define by three ways:
+ *
+ *  @whint = 0..1    : relative width, percent of terminal width
+ *
+ *  @whint = 1..N    : absolute width, empty colum will be truncated to
+ *                     the column header width
+ *
+ *  @whint = 1..N
+ *  @flags = TT_FL_STRICTWIDTH
+ *                   : absolute width, empty colum won't be truncated
  *
  * The column is necessary to address (for example for tt_line_set_data()) by
  * sequential number. The first defined column has the colnum = 0. For example:
@@ -351,7 +375,8 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 		if (cl->name)
 			cl->width_min = mbs_width(cl->name);
 
-		if (cl->width < cl->width_min)
+		if (cl->width < cl->width_min &&
+		    !(cl->flags & TT_FL_STRICTWIDTH))
 			cl->width = cl->width_min;
 
 		else if (cl->width_hint >= 1 &&
@@ -508,7 +533,9 @@ static void print_header(struct tt *tb, char *buf, size_t bufsz)
 {
 	struct list_head *p;
 
-	if ((tb->flags & TT_FL_NOHEADINGS) || list_empty(&tb->tb_lines))
+	if (!tb->first_run ||
+	    (tb->flags & TT_FL_NOHEADINGS) ||
+	    list_empty(&tb->tb_lines))
 		return;
 
 	/* set width according to the size of data
@@ -583,7 +610,8 @@ int tt_print_table(struct tt *tb)
 
 	if (!tb)
 		return -1;
-	if (!tb->termwidth) {
+
+	if (tb->first_run && !tb->termwidth) {
 		tb->termwidth = get_terminal_width();
 		if (tb->termwidth <= 0)
 			tb->termwidth = 80;
@@ -600,14 +628,18 @@ int tt_print_table(struct tt *tb)
 	line = malloc(line_sz);
 	if (!line)
 		return -1;
-	if (!(tb->flags & TT_FL_RAW))
+
+	if (tb->first_run && !(tb->flags & TT_FL_RAW))
 		recount_widths(tb, line, line_sz);
+
 	if (tb->flags & TT_FL_TREE)
 		print_tree(tb, line, line_sz);
 	else
 		print_table(tb, line, line_sz);
 
 	free(line);
+
+	tb->first_run = FALSE;
 	return 0;
 }
 

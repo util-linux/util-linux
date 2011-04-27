@@ -18,12 +18,14 @@ enum {
 	TT_FL_ASCII      = (1 << 4),
 	TT_FL_NOHEADINGS = (1 << 5),
 	TT_FL_RIGHT	 = (1 << 6),
+	TT_FL_STRICTWIDTH = (1 << 7)
 };
 
 struct tt {
 	int	ncols;		/* number of columns */
 	int	termwidth;	/* terminal width */
 	int	flags;
+	int	first_run;
 
 	struct list_head	tb_columns;
 	struct list_head	tb_lines;
@@ -60,6 +62,7 @@ struct tt_line {
 
 extern struct tt *tt_new_table(int flags);
 extern void tt_free_table(struct tt *tb);
+extern void tt_remove_lines(struct tt *tb);
 extern int tt_print_table(struct tt *tb);
 
 extern struct tt_column *tt_define_column(struct tt *tb, const char *name,
