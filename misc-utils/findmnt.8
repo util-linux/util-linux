@@ -94,10 +94,13 @@ of one option does not negate the rest.  For more details see
 .BR mount (8).
 .IP "\fB\-o, \-\-output \fIlist\fP"
 Define output columns.  Currently supported are
+.BR ACTION,
 .BR SOURCE ,
 .BR TARGET ,
+.RB OLD-TARGET,
 .BR FSTYPE ,
 .BR OPTIONS ,
+.RB OLD-OPTIONS,
 .BR VFS-OPTIONS ,
 .BR FS-OPTIONS ,
 .BR LABEL
@@ -110,6 +113,23 @@ column contains tree formatting if the
 or
 .B \-\-raw
 options are not specified.
+.IP "\fB\-p, \-\-poll\fP"
+Monitor changes in the /proc/self/mountinfo file. The standard columns always
+use the new version of the information from the mountinfo file, except the
+umount action which is based on the original information cached by
+.BR findmnt (8) .
+The poll mode allows to use extra columns:
+.RS
+.TP
+.B ACTION
+mount, umount, move or remount action name. This column is enabled by default.
+.TP
+.B OLD-TARGET
+available for umount and move actions
+.TP
+.B OLD-OPTIONS
+available for umount and remount actions
+.RE
 .IP "\fB\-r, \-\-raw\fP"
 Use raw output format.
 .IP "\fB\-a, \-\-ascii\fP"
@@ -130,6 +150,8 @@ printed in tree-like order. The option enables the tree-like output format by
 default. This option has no effect for \fB\-\-mtab\fP or \fB\-\-fstab\fP.
 .IP "\fB\-S, \-\-source \fIspec\fP"
 Explicitly define the mount source.  Supported are device, LABEL= or UUID=.
+.IP "\fB\-t, \-\-timeout \fImilliseconds\fP"
+Specifies an upper limit on the time for which --poll will block, in milliseconds.
 .IP "\fB\-T, \-\-target \fIdir\fP"
 Explicitly define the mount target (mountpoint directory).
 .SH EXAMPLES
