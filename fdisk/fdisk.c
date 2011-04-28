@@ -2555,8 +2555,7 @@ new_partition(void) {
 				return;
 			}
 			else
-				printf(_("Invalid partition number "
-					 "for type `%c'\n"), c);
+				printf(_("Invalid partition type `%c'\n"), c);
 		}
 	}
 }
