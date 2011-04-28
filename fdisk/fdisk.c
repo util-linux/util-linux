@@ -2525,8 +2525,8 @@ new_partition(void) {
 		if (extended_offset)
 			add_logical();
 		else
-			printf(_("You must delete some partition and add "
-				 "an extended partition first\n"));
+			printf(_("If you want to create more than four partitions, you must replace a\n"
+				 "primary partition with an extended partition first.\n"));
 	} else if (partitions >= MAXIMUM_PARTS) {
 		printf(_("All logical partitions are in use\n"));
 		printf(_("Adding a primary partition\n"));
