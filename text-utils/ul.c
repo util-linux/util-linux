@@ -325,7 +325,7 @@ void filter(FILE *f)
 			obuf[col].c_width = w;
 			for (i = 1; i < w; i++)
 				obuf[col+i].c_width = -1;
-		} else if (obuf[col].c_char == c) {
+		} else if ((wint_t) obuf[col].c_char == c) {
 			for (i = 0; i < w; i++)
 				obuf[col+i].c_mode |= BOLD|mode;
 		} else {
@@ -625,7 +625,7 @@ needcol(int col) {
 	}
 }
 
-static void sig_handler(int signo)
+static void sig_handler(int signo __attribute__ ((__unused__)))
 {
 	_exit(EXIT_SUCCESS);
 }
