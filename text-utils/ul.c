@@ -56,12 +56,13 @@
 #include "c.h"
 
 #ifdef HAVE_WIDECHAR
-static int put1wc(int c) /* Output an ASCII character as a wide character */
+/* Output an ASCII character as a wide character */
+static int put1wc(int c)
 {
-  if (putwchar(c) == WEOF)
-    return EOF;
-  else
-    return c;
+	if (putwchar(c) == WEOF)
+		return EOF;
+	else
+		return c;
 }
 #define putwp(s) tputs(s, STDOUT_FILENO, put1wc)
 #else
@@ -69,16 +70,16 @@ static int put1wc(int c) /* Output an ASCII character as a wide character */
 #endif
 
 static void usage(FILE *out);
-void filter(FILE *f);
-void flushln(void);
-void overstrike(void);
-void iattr(void);
-void initbuf(void);
-void fwd(void);
-void reverse(void);
-void initinfo(void);
-void outc(wint_t c, int width);
-void setmode(int newmode);
+static void filter(FILE *f);
+static void flushln(void);
+static void overstrike(void);
+static void iattr(void);
+static void initbuf(void);
+static void fwd(void);
+static void reverse(void);
+static void initinfo(void);
+static void outc(wint_t c, int width);
+static void setmode(int newmode);
 static void setcol(int newcol);
 static void needcol(int col);
 static void sig_handler(int signo);
@@ -99,18 +100,27 @@ static void print_out(char *line);
 #define	BOLD	020	/* Bold */
 
 int	must_use_uc, must_overstrike;
-char	*CURS_UP, *CURS_RIGHT, *CURS_LEFT,
-	*ENTER_STANDOUT, *EXIT_STANDOUT, *ENTER_UNDERLINE, *EXIT_UNDERLINE,
-	*ENTER_DIM, *ENTER_BOLD, *ENTER_REVERSE, *UNDER_CHAR, *EXIT_ATTRIBUTES;
+char	*CURS_UP,
+	*CURS_RIGHT,
+	*CURS_LEFT,
+	*ENTER_STANDOUT,
+	*EXIT_STANDOUT,
+	*ENTER_UNDERLINE,
+	*EXIT_UNDERLINE,
+	*ENTER_DIM,
+	*ENTER_BOLD,
+	*ENTER_REVERSE,
+	*UNDER_CHAR,
+	*EXIT_ATTRIBUTES;
 
 struct	CHAR	{
 	char	c_mode;
 	wchar_t	c_char;
 	int	c_width;
-} ;
+};
 
 struct	CHAR	*obuf;
-int	obuflen;		/* Tracks number of elements in obuf. */
+int	obuflen;
 int	col, maxcol;
 int	mode;
 int	halfpos;
@@ -156,14 +166,23 @@ int main(int argc, char **argv)
 	signal(SIGTERM, sig_handler);
 
 	termtype = getenv("TERM");
+
+	/*
+	 * FIXME: why terminal type is lpr when command begins with c and has
+	 * no terminal? If this behavior can be explained please insert
+	 * refrence or remove the code. In case this truly is desired command
+	 * behavior this should be mentioned in manual page.
+	 */
 	if (termtype == NULL || (argv[0][0] == 'c' && !isatty(STDOUT_FILENO)))
 		termtype = "lpr";
+
 	while ((c = getopt_long(argc, argv, "it:T:Vh", longopts, NULL)) != -1)
-		switch(c) {
+		switch (c) {
 
 		case 't':
-		case 'T': /* for nroff compatibility */
-				termtype = optarg;
+		case 'T':
+			/* for nroff compatibility */
+			termtype = optarg;
 			break;
 		case 'i':
 			iflag = 1;
@@ -179,7 +198,7 @@ int main(int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 	setupterm(termtype, STDOUT_FILENO, &ret);
-	switch(ret) {
+	switch (ret) {
 
 	case 1:
 		break;
@@ -190,34 +209,37 @@ int main(int argc, char **argv)
 
 	case 0:
 		/* No such terminal type - assume dumb */
-	        setupterm("dumb", STDOUT_FILENO, (int *)0);
+		setupterm("dumb", STDOUT_FILENO, (int *)0);
 		break;
 	}
 	initinfo();
-	if (    (tigetflag("os") && ENTER_BOLD==NULL ) ||
-		(tigetflag("ul") && ENTER_UNDERLINE==NULL && UNDER_CHAR==NULL))
-			must_overstrike = 1;
+	if ((tigetflag("os") && ENTER_BOLD==NULL ) ||
+	    (tigetflag("ul") && ENTER_UNDERLINE==NULL && UNDER_CHAR==NULL))
+		must_overstrike = 1;
 	initbuf();
 	if (optind == argc)
 		filter(stdin);
-	else for (; optind<argc; optind++) {
-		f = fopen(argv[optind],"r");
-		if (!f)
-			err(EXIT_FAILURE, _("%s: open failed"), argv[optind]);
-		filter(f);
-	}
+	else
+		for (; optind < argc; optind++) {
+			f = fopen(argv[optind],"r");
+			if (!f)
+				err(EXIT_FAILURE, _("%s: open failed"),
+				    argv[optind]);
+			filter(f);
+		}
 	if (ferror(stdout) || fclose(stdout))
 		return EXIT_FAILURE;
 
 	return EXIT_SUCCESS;
 }
 
-void filter(FILE *f)
+static void filter(FILE *f)
 {
 	wint_t c;
 	int i, w;
 
-	while ((c = getwc(f)) != WEOF) switch(c) {
+	while ((c = getwc(f)) != WEOF)
+	switch (c) {
 
 	case '\b':
 		setcol(col - 1);
@@ -307,7 +329,8 @@ void filter(FILE *f)
 		continue;
 
 	default:
-		if (!iswprint(c))	/* non printing */
+		if (!iswprint(c))
+			/* non printable */
 			continue;
 		w = wcwidth(c);
 		needcol(col + w);
@@ -340,14 +363,14 @@ void filter(FILE *f)
 		flushln();
 }
 
-void flushln(void)
+static void flushln(void)
 {
 	int lastmode;
 	int i;
 	int hadmodes = 0;
 
 	lastmode = NORMAL;
-	for (i=0; i<maxcol; i++) {
+	for (i = 0; i < maxcol; i++) {
 		if (obuf[i].c_mode != lastmode) {
 			hadmodes++;
 			setmode(obuf[i].c_mode);
@@ -361,7 +384,7 @@ void flushln(void)
 		} else
 			outc(obuf[i].c_char, obuf[i].c_width);
 		if (obuf[i].c_width > 1)
-			i += obuf[i].c_width -1;
+			i += obuf[i].c_width - 1;
 	}
 	if (lastmode != NORMAL) {
 		setmode(0);
@@ -371,7 +394,7 @@ void flushln(void)
 	putwchar('\n');
 	if (iflag && hadmodes)
 		iattr();
-	(void)fflush(stdout);
+	fflush(stdout);
 	if (upln)
 		upln--;
 	initbuf();
@@ -381,11 +404,11 @@ void flushln(void)
  * For terminals that can overstrike, overstrike underlines and bolds.
  * We don't do anything with halfline ups and downs, or Greek.
  */
-void overstrike(void)
+static void overstrike(void)
 {
 	register int i;
 #ifdef __GNUC__
-	register wchar_t *lbuf = __builtin_alloca((maxcol+1)*sizeof(wchar_t));
+	register wchar_t *lbuf = __builtin_alloca((maxcol + 1) * sizeof(wchar_t));
 #else
 	wchar_t lbuf[BUFSIZ];
 #endif
@@ -393,7 +416,7 @@ void overstrike(void)
 	int hadbold=0;
 
 	/* Set up overstrike buffer */
-	for (i=0; i<maxcol; i++)
+	for (i = 0; i < maxcol; i++)
 		switch (obuf[i].c_mode) {
 		case NORMAL:
 		default:
@@ -410,21 +433,21 @@ void overstrike(void)
 			break;
 		}
 	putwchar('\r');
-	for (*cp=' '; *cp==' '; cp--)
+	for (*cp = ' '; *cp == ' '; cp--)
 		*cp = 0;
-	for (cp=lbuf; *cp; cp++)
+	for (cp = lbuf; *cp; cp++)
 		putwchar(*cp);
 	if (hadbold) {
 		putwchar('\r');
-		for (cp=lbuf; *cp; cp++)
-			putwchar(*cp=='_' ? ' ' : *cp);
+		for (cp = lbuf; *cp; cp++)
+			putwchar(*cp == '_' ? ' ' : *cp);
 		putwchar('\r');
-		for (cp=lbuf; *cp; cp++)
-			putwchar(*cp=='_' ? ' ' : *cp);
+		for (cp = lbuf; *cp; cp++)
+			putwchar(*cp == '_' ? ' ' : *cp);
 	}
 }
 
-void iattr(void)
+static void iattr(void)
 {
 	register int i;
 #ifdef __GNUC__
@@ -434,7 +457,7 @@ void iattr(void)
 #endif
 	register char *cp = lbuf;
 
-	for (i=0; i<maxcol; i++)
+	for (i = 0; i < maxcol; i++)
 		switch (obuf[i].c_mode) {
 		case NORMAL:	*cp++ = ' '; break;
 		case ALTSET:	*cp++ = 'g'; break;
@@ -444,16 +467,17 @@ void iattr(void)
 		case BOLD:	*cp++ = '!'; break;
 		default:	*cp++ = 'X'; break;
 		}
-	for (*cp=' '; *cp==' '; cp--)
+	for (*cp = ' '; *cp == ' '; cp--)
 		*cp = 0;
-	for (cp=lbuf; *cp; cp++)
+	for (cp = lbuf; *cp; cp++)
 		putwchar(*cp);
 	putwchar('\n');
 }
 
-void initbuf(void)
+static void initbuf(void)
 {
-	if (obuf == NULL) {	/* First time. */
+	if (obuf == NULL) {
+		/* First time. */
 		obuflen = BUFSIZ;
 		obuf = xmalloc(sizeof(struct CHAR) * obuflen);
 	}
@@ -465,7 +489,7 @@ void initbuf(void)
 	mode &= ALTSET;
 }
 
-void fwd(void)
+static void fwd(void)
 {
 	int oldcol, oldmax;
 
@@ -476,7 +500,7 @@ void fwd(void)
 	maxcol = oldmax;
 }
 
-void reverse(void)
+static void reverse(void)
 {
 	upln++;
 	fwd();
@@ -485,7 +509,7 @@ void reverse(void)
 	upln++;
 }
 
-void initinfo(void)
+static void initinfo(void)
 {
 	CURS_UP =		tigetstr("cuu1");
 	CURS_RIGHT =		tigetstr("cuf1");
@@ -531,27 +555,26 @@ void initinfo(void)
 
 static int curmode = 0;
 
-void
-outc(wint_t c, int width) {
+static void outc(wint_t c, int width) {
 	int i;
 
 	putwchar(c);
 	if (must_use_uc && (curmode&UNDERL)) {
-		for (i=0; i<width; i++)
+		for (i = 0; i < width; i++)
 			print_out(CURS_LEFT);
-		for (i=0; i<width; i++)
+		for (i = 0; i < width; i++)
 			print_out(UNDER_CHAR);
 	}
 }
 
-void setmode(int newmode)
+static void setmode(int newmode)
 {
 	if (!iflag) {
 		if (curmode != NORMAL && newmode != NORMAL)
 			setmode(NORMAL);
 		switch (newmode) {
 		case NORMAL:
-			switch(curmode) {
+			switch (curmode) {
 			case NORMAL:
 				break;
 			case UNDERL:
@@ -595,8 +618,7 @@ void setmode(int newmode)
 	curmode = newmode;
 }
 
-static void
-setcol(int newcol) {
+static void setcol(int newcol) {
 	col = newcol;
 
 	if (col < 0)
@@ -605,8 +627,7 @@ setcol(int newcol) {
 		needcol(col);
 }
 
-static void
-needcol(int col) {
+static void needcol(int col) {
 	maxcol = col;
 
 	/* If col >= obuflen, expand obuf until obuflen > col. */
@@ -616,9 +637,10 @@ needcol(int col) {
 			errx(EXIT_FAILURE, _("Input line too long."));
 
 		/* Similar paranoia: double only up to INT_MAX. */
-		obuflen = ((INT_MAX / 2) < obuflen)
-			? INT_MAX
-			: obuflen * 2;
+		if (obuflen < (INT_MAX / 2))
+			obuflen *= 2;
+		else
+			obuflen = INT_MAX;
 
 		/* Now we can try to expand obuf. */
 		obuf = xrealloc(obuf, sizeof(struct CHAR) * obuflen);
