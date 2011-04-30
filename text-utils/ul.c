@@ -63,7 +63,7 @@ static int put1wc(int c) /* Output an ASCII character as a wide character */
   else
     return c;
 }
-#define putwp(s) tputs(s,1,put1wc)
+#define putwp(s) tputs(s, STDOUT_FILENO, put1wc)
 #else
 #define putwp(s) putp(s)
 #endif
@@ -97,7 +97,6 @@ static void print_out(char *line);
 #define	SUBSC	004	/* Dim | Ul */
 #define	UNDERL	010	/* Ul */
 #define	BOLD	020	/* Bold */
-#define	INITBUF	512
 
 int	must_use_uc, must_overstrike;
 char	*CURS_UP, *CURS_RIGHT, *CURS_LEFT,
@@ -157,7 +156,7 @@ int main(int argc, char **argv)
 	signal(SIGTERM, sig_handler);
 
 	termtype = getenv("TERM");
-	if (termtype == NULL || (argv[0][0] == 'c' && !isatty(1)))
+	if (termtype == NULL || (argv[0][0] == 'c' && !isatty(STDOUT_FILENO)))
 		termtype = "lpr";
 	while ((c = getopt_long(argc, argv, "it:T:Vh", longopts, NULL)) != -1)
 		switch(c) {
@@ -179,7 +178,7 @@ int main(int argc, char **argv)
 			usage(stderr);
 			return EXIT_FAILURE;
 		}
-	setupterm(termtype, 1, &ret);
+	setupterm(termtype, STDOUT_FILENO, &ret);
 	switch(ret) {
 
 	case 1:
@@ -191,7 +190,7 @@ int main(int argc, char **argv)
 
 	case 0:
 		/* No such terminal type - assume dumb */
-	        setupterm("dumb", 1, (int *)0);
+	        setupterm("dumb", STDOUT_FILENO, (int *)0);
 		break;
 	}
 	initinfo();
@@ -388,7 +387,7 @@ void overstrike(void)
 #ifdef __GNUC__
 	register wchar_t *lbuf = __builtin_alloca((maxcol+1)*sizeof(wchar_t));
 #else
-	wchar_t lbuf[256];
+	wchar_t lbuf[BUFSIZ];
 #endif
 	register wchar_t *cp = lbuf;
 	int hadbold=0;
@@ -431,7 +430,7 @@ void iattr(void)
 #ifdef __GNUC__
 	register char *lbuf = __builtin_alloca((maxcol+1)*sizeof(char));
 #else
-	char lbuf[256];
+	char lbuf[BUFSIZ];
 #endif
 	register char *cp = lbuf;
 
@@ -455,7 +454,7 @@ void iattr(void)
 void initbuf(void)
 {
 	if (obuf == NULL) {	/* First time. */
-		obuflen = INITBUF;
+		obuflen = BUFSIZ;
 		obuf = xmalloc(sizeof(struct CHAR) * obuflen);
 	}
 
