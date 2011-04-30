@@ -48,6 +48,7 @@
 #include <limits.h>		/* for INT_MAX */
 #include <signal.h>		/* for signal() */
 #include <errno.h>
+#include <getopt.h>
 
 #include "nls.h"
 #include "xalloc.h"
@@ -67,6 +68,7 @@ static int put1wc(int c) /* Output an ASCII character as a wide character */
 #define putwp(s) putp(s)
 #endif
 
+static void usage(FILE *out);
 void filter(FILE *f);
 void flushln(void);
 void overstrike(void);
@@ -116,11 +118,36 @@ int	halfpos;
 int	upln;
 int	iflag;
 
+static void __attribute__((__noreturn__))
+usage(FILE *out)
+{
+	fprintf(out, _(
+		"\nUsage:\n"
+		" %s [options] [file]\n"), program_invocation_short_name);
+
+	fprintf(out, _(
+		"\nOptions:\n"
+		" -t, --terminal TERMINAL    overwrite TERM environment variable\n"
+		" -i, --indicated            Underlining is indicated by a separate line\n"
+		" -V, --version              output version information and exit\n"
+		" -h, --help                 display this help and exit\n\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 int main(int argc, char **argv)
 {
 	int c, ret;
 	char *termtype;
 	FILE *f;
+
+	static const struct option longopts[] = {
+		{ "terminal",	required_argument,	0, 't' },
+		{ "indicated",	no_argument,		0, 'i' },
+		{ "version",	no_argument,		0, 'V' },
+		{ "help",	no_argument,		0, 'h' },
+		{ NULL, 0, 0, 0 }
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -132,7 +159,7 @@ int main(int argc, char **argv)
 	termtype = getenv("TERM");
 	if (termtype == NULL || (argv[0][0] == 'c' && !isatty(1)))
 		termtype = "lpr";
-	while ((c = getopt(argc, argv, "it:T:")) != -1)
+	while ((c = getopt_long(argc, argv, "it:T:Vh", longopts, NULL)) != -1)
 		switch(c) {
 
 		case 't':
@@ -142,11 +169,14 @@ int main(int argc, char **argv)
 		case 'i':
 			iflag = 1;
 			break;
-
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+						  PACKAGE_STRING);
+			return(EXIT_SUCCESS);
+		case 'h':
+			usage(stdout);
 		default:
-			fprintf(stderr,
-				_("Usage: %s [ -i ] [ -tTerm ] file...\n"),
-				program_invocation_short_name);
+			usage(stderr);
 			return EXIT_FAILURE;
 		}
 	setupterm(termtype, 1, &ret);
