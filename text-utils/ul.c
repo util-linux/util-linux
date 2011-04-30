@@ -226,10 +226,12 @@ int main(int argc, char **argv)
 				err(EXIT_FAILURE, _("%s: open failed"),
 				    argv[optind]);
 			filter(f);
+			fclose(f);
 		}
 	if (ferror(stdout) || fclose(stdout))
 		return EXIT_FAILURE;
 
+	free(obuf);
 	return EXIT_SUCCESS;
 }
 
