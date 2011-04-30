@@ -70,6 +70,7 @@ static int put1wc(int c)
 #endif
 
 static void usage(FILE *out);
+static int handle_escape(FILE * f);
 static void filter(FILE *f);
 static void flushln(void);
 static void overstrike(void);
@@ -235,6 +236,45 @@ int main(int argc, char **argv)
 	return EXIT_SUCCESS;
 }
 
+static int handle_escape(FILE * f)
+{
+	wint_t c;
+
+	switch (c = getwc(f)) {
+	case HREV:
+		if (halfpos == 0) {
+			mode |= SUPERSC;
+			halfpos--;
+		} else if (halfpos > 0) {
+			mode &= ~SUBSC;
+			halfpos--;
+		} else {
+			halfpos = 0;
+			reverse();
+		}
+		return 0;
+	case HFWD:
+		if (halfpos == 0) {
+			mode |= SUBSC;
+			halfpos++;
+		} else if (halfpos < 0) {
+			mode &= ~SUPERSC;
+			halfpos++;
+		} else {
+			halfpos = 0;
+			fwd();
+		}
+		return 0;
+	case FREV:
+		reverse();
+		return 0;
+	default:
+		/* unknown escape */
+		ungetwc(c, f);
+		return 1;
+	}
+}
+
 static void filter(FILE *f)
 {
 	wint_t c;
@@ -264,43 +304,11 @@ static void filter(FILE *f)
 		continue;
 
 	case IESC:
-		switch (c = getwc(f)) {
-
-		case HREV:
-			if (halfpos == 0) {
-				mode |= SUPERSC;
-				halfpos--;
-			} else if (halfpos > 0) {
-				mode &= ~SUBSC;
-				halfpos--;
-			} else {
-				halfpos = 0;
-				reverse();
-			}
-			continue;
-
-		case HFWD:
-			if (halfpos == 0) {
-				mode |= SUBSC;
-				halfpos++;
-			} else if (halfpos < 0) {
-				mode &= ~SUPERSC;
-				halfpos++;
-			} else {
-				halfpos = 0;
-				fwd();
-			}
-			continue;
-
-		case FREV:
-			reverse();
-			continue;
-
-		default:
+		if(handle_escape(f)) {
+			c = getwc(f);
 			errx(EXIT_FAILURE,
 				_("unknown escape sequence in input: %o, %o"),
 				IESC, c);
-			break;
 		}
 		continue;
 
