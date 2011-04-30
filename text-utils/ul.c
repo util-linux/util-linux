@@ -80,6 +80,7 @@ void setmode(int newmode);
 static void setcol(int newcol);
 static void needcol(int col);
 static void sig_handler(int signo);
+static void print_out(char *line);
 
 #define	IESC	'\033'
 #define	SO	'\016'
@@ -114,8 +115,6 @@ int	mode;
 int	halfpos;
 int	upln;
 int	iflag;
-
-#define	PRINT(s)	if (s == NULL) /* void */; else putwp(s)
 
 int main(int argc, char **argv)
 {
@@ -327,7 +326,7 @@ void flushln(void)
 		}
 		if (obuf[i].c_char == '\0') {
 			if (upln) {
-				PRINT(CURS_RIGHT);
+				print_out(CURS_RIGHT);
 			} else
 				outc(' ', 1);
 		} else
@@ -452,8 +451,8 @@ void reverse(void)
 {
 	upln++;
 	fwd();
-	PRINT(CURS_UP);
-	PRINT(CURS_UP);
+	print_out(CURS_UP);
+	print_out(CURS_UP);
 	upln++;
 }
 
@@ -510,9 +509,9 @@ outc(wint_t c, int width) {
 	putwchar(c);
 	if (must_use_uc && (curmode&UNDERL)) {
 		for (i=0; i<width; i++)
-			PRINT(CURS_LEFT);
+			print_out(CURS_LEFT);
 		for (i=0; i<width; i++)
-			PRINT(UNDER_CHAR);
+			print_out(UNDER_CHAR);
 	}
 }
 
@@ -527,40 +526,40 @@ void setmode(int newmode)
 			case NORMAL:
 				break;
 			case UNDERL:
-				PRINT(EXIT_UNDERLINE);
+				print_out(EXIT_UNDERLINE);
 				break;
 			default:
 				/* This includes standout */
-				PRINT(EXIT_ATTRIBUTES);
+				print_out(EXIT_ATTRIBUTES);
 				break;
 			}
 			break;
 		case ALTSET:
-			PRINT(ENTER_REVERSE);
+			print_out(ENTER_REVERSE);
 			break;
 		case SUPERSC:
 			/*
 			 * This only works on a few terminals.
 			 * It should be fixed.
 			 */
-			PRINT(ENTER_UNDERLINE);
-			PRINT(ENTER_DIM);
+			print_out(ENTER_UNDERLINE);
+			print_out(ENTER_DIM);
 			break;
 		case SUBSC:
-			PRINT(ENTER_DIM);
+			print_out(ENTER_DIM);
 			break;
 		case UNDERL:
-			PRINT(ENTER_UNDERLINE);
+			print_out(ENTER_UNDERLINE);
 			break;
 		case BOLD:
-			PRINT(ENTER_BOLD);
+			print_out(ENTER_BOLD);
 			break;
 		default:
 			/*
 			 * We should have some provision here for multiple modes
 			 * on at once.  This will have to come later.
 			 */
-			PRINT(ENTER_STANDOUT);
+			print_out(ENTER_STANDOUT);
 			break;
 		}
 	}
@@ -602,3 +601,10 @@ static void sig_handler(int signo)
 	_exit(EXIT_SUCCESS);
 }
 
+static void print_out(char *line)
+{
+	if (line == NULL)
+		return;
+
+	putwp(line);
+}
