@@ -147,7 +147,7 @@ usage(FILE *out)
 
 int main(int argc, char **argv)
 {
-	int c, ret;
+	int c, ret, tflag = 0;
 	char *termtype;
 	FILE *f;
 
@@ -184,6 +184,7 @@ int main(int argc, char **argv)
 		case 'T':
 			/* for nroff compatibility */
 			termtype = optarg;
+			tflag = 1;
 			break;
 		case 'i':
 			iflag = 1;
@@ -209,7 +210,9 @@ int main(int argc, char **argv)
 		/* fall through to ... */
 
 	case 0:
-		/* No such terminal type - assume dumb */
+		if (tflag)
+			warnx(_("terminal `%s' is not known, defaulting to `dumb'"),
+				termtype);
 		setupterm("dumb", STDOUT_FILENO, (int *)0);
 		break;
 	}
