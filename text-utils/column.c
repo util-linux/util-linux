@@ -93,6 +93,7 @@ wchar_t *separator = default_separator;	/* field separator for table option */
 static const struct option longopts[] =
 {
 	{ "help",	0, 0, 'h' },
+	{ "version",    0, 0, 'V' },
 	{ "columns",	0, 0, 'c' },
 	{ "table",	0, 0, 't' },
 	{ "separator",	0, 0, 's' },
@@ -110,6 +111,7 @@ static void __attribute__((__noreturn__)) usage(int rc)
 
 	fprintf(out, _(
 	" -h, --help               displays this help text\n"
+	" -V, --version            output version information and exit\n"
 	" -c, --columns <width>    width of output in number of characters\n"
 	" -t, --table              create a table\n"
 	" -s, --separator <string> table delimeter\n"
@@ -137,12 +139,15 @@ main(int argc, char **argv)
 		termwidth = win.ws_col;
 
 	tflag = xflag = 0;
-	while ((ch = getopt_long(argc, argv, "h?c:s:tx", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "hVc:s:tx", longopts, NULL)) != -1)
 		switch(ch) {
 		case 'h':
-		case '?':
 			usage(EXIT_SUCCESS);
 			break;
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+				 PACKAGE_STRING);
+				 return(EXIT_SUCCESS);
 		case 'c':
 			termwidth = atoi(optarg);
 			break;
