@@ -71,36 +71,16 @@ static char *mtsafe_strtok(char *, const char *, char **);
 #define DEFNUM      1000
 #define MAXLINELEN  (LINE_MAX + 1)
 
-static void c_columnate(void);
-static void input(FILE *);
-static void maketbl(void);
-static void print(void);
-static void r_columnate(void);
+static int input(FILE *fp, int *maxlength, wchar_t ***list, int *entries);
+static void c_columnate(int maxlength, long termwidth, wchar_t **list, int entries);
+static void r_columnate(int maxlength, long termwidth, wchar_t **list, int entries);
+static void maketbl(wchar_t **list, int entries, wchar_t *separator);
+static void print(wchar_t **list, int entries);
 
 typedef struct _tbl {
 	wchar_t **list;
 	int cols, *len;
 } TBL;
-
-long termwidth;
-
-int entries;			/* number of records */
-int eval;			/* exit value */
-int maxlength;			/* longest record */
-wchar_t **list;			/* array of pointers to records */
-wchar_t default_separator[] = { '\t', ' ', 0 };
-wchar_t *separator = default_separator;	/* field separator for table option */
-
-static const struct option longopts[] =
-{
-	{ "help",	0, 0, 'h' },
-	{ "version",    0, 0, 'V' },
-	{ "columns",	0, 0, 'c' },
-	{ "table",	0, 0, 't' },
-	{ "separator",	0, 0, 's' },
-	{ "fillrows",	0, 0, 'x' },
-	{ NULL,		0, 0, 0 },
-};
 
 static void __attribute__((__noreturn__)) usage(int rc)
 {
@@ -129,6 +109,26 @@ int main(int argc, char **argv)
 	int ch, tflag, xflag;
 	char *p;
 
+	long termwidth;
+	int entries = 0;		/* number of records */
+	unsigned int eval = 0;		/* exit value */
+	int maxlength;			/* longest record */
+	wchar_t **list = NULL;		/* array of pointers to records */
+	/* field separator for table option */
+	wchar_t default_separator[] = { '\t', ' ', 0 };
+	wchar_t *separator = default_separator;
+
+	static const struct option longopts[] =
+	{
+		{ "help",	0, 0, 'h' },
+		{ "version",    0, 0, 'V' },
+		{ "columns",	0, 0, 'c' },
+		{ "table",	0, 0, 't' },
+		{ "separator",	0, 0, 's' },
+		{ "fillrows",	0, 0, 'x' },
+		{ NULL,		0, 0, 0 },
+	};
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,
 				 PACKAGE_STRING);
-				 return(EXIT_SUCCESS);
+				 return EXIT_SUCCESS;
 		case 'c':
 			termwidth = strtol_or_err(optarg,
 						  _("bad columns width value"));
@@ -173,15 +173,15 @@ int main(int argc, char **argv)
 	argv += optind;
 
 	if (!*argv)
-		input(stdin);
+		eval += input(stdin, &maxlength, &list, &entries);
 	else
 		for (; *argv; ++argv) {
 			if ((fp = fopen(*argv, "r")) != NULL) {
-				input(fp);
-				(void)fclose(fp);
+				eval += input(fp, &maxlength, &list, &entries);
+				fclose(fp);
 			} else {
 				warn("%s", *argv);
-				eval = EXIT_FAILURE;
+				eval += EXIT_FAILURE;
 			}
 		}
 
@@ -189,24 +189,28 @@ int main(int argc, char **argv)
 		exit(eval);
 
 	if (tflag)
-		maketbl();
+		maketbl(list, entries, separator);
 	else if (maxlength >= termwidth)
-		print();
+		print(list, entries);
 	else if (xflag)
-		c_columnate();
+		c_columnate(maxlength, termwidth, list, entries);
 	else
-		r_columnate();
+		r_columnate(maxlength, termwidth, list, entries);
 
 	for (int i = 0; i < entries; i++)
 		free(list[i]);
 	free(list);
 
 	if (ferror(stdout) || fclose(stdout))
-		eval = EXIT_FAILURE;
-	exit(eval);
+		eval += EXIT_FAILURE;
+
+	if (eval == 0)
+		return EXIT_SUCCESS;
+	else
+		return EXIT_FAILURE;
 }
 
-static void c_columnate()
+static void c_columnate(int maxlength, long termwidth, wchar_t **list, int entries)
 {
 	int chcnt, col, cnt, endcol, numcols;
 	wchar_t **lp;
@@ -235,7 +239,7 @@ static void c_columnate()
 		putwchar('\n');
 }
 
-static void r_columnate()
+static void r_columnate(int maxlength, long termwidth, wchar_t **list, int entries)
 {
 	int base, chcnt, cnt, col, endcol, numcols, numrows, row;
 
@@ -264,7 +268,7 @@ static void r_columnate()
 	}
 }
 
-static void print()
+static void print(wchar_t **list, int entries)
 {
 	int cnt;
 	wchar_t **lp;
@@ -275,7 +279,7 @@ static void print()
 	}
 }
 
-static void maketbl()
+static void maketbl(wchar_t **list, int entries, wchar_t *separator)
 {
 	TBL *t;
 	int cnt, i;
@@ -335,14 +339,17 @@ static void maketbl()
 	free(tbl);
 }
 
-static void input(FILE *fp)
+static int input(FILE *fp, int *maxlength, wchar_t ***list, int *entries)
 {
 	static int maxentry = DEFNUM;
-	int len, lineno = 1, reportedline = 0;
+	int len, lineno = 1, reportedline = 0, eval = 0;
 	wchar_t *p, buf[MAXLINELEN];
+	wchar_t **local_list;
+	int local_entries = *entries;
 
-	if (!list)
-		list = xcalloc(maxentry, sizeof(wchar_t *));
+	if (!local_list)
+		local_list = xcalloc(maxentry, sizeof(wchar_t *));
+
 	while (fgetws(buf, MAXLINELEN, fp)) {
 		for (p = buf; *p && iswspace(*p); ++p)
 			;
@@ -354,21 +361,27 @@ static void input(FILE *fp)
 					lineno);
 				reportedline = lineno;
 			}
-			eval = EXIT_FAILURE;
+			eval = 1;
 			continue;
 		}
 		lineno++;
 		if (!feof(fp))
 			*p = '\0';
 		len = wcs_width(buf);	/* len = p - buf; */
-		if (maxlength < len)
-			maxlength = len;
-		if (entries == maxentry) {
+		if (*maxlength < len)
+			*maxlength = len;
+		if (local_entries == maxentry) {
 			maxentry += DEFNUM;
-			list = xrealloc(list, (u_int)maxentry * sizeof(wchar_t *));
+			local_list = xrealloc(local_list,
+				(u_int)maxentry * sizeof(wchar_t *));
 		}
-		list[entries++] = wcsdup(buf);
+		local_list[local_entries++] = wcsdup(buf);
 	}
+
+	*list = local_list;
+	*entries = local_entries;
+
+	return eval;
 }
 
 #ifdef HAVE_WIDECHAR
