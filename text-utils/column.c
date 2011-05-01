@@ -190,6 +190,11 @@ int main(int argc, char **argv)
 		c_columnate();
 	else
 		r_columnate();
+
+	for (int i = 0; i < entries; i++)
+		free(list[i]);
+	free(list);
+
 	if (ferror(stdout) || fclose(stdout))
 		eval = EXIT_FAILURE;
 	exit(eval);
@@ -314,6 +319,14 @@ static void maketbl()
 			putwchar('\n');
 		}
 	}
+
+	for (cnt = 0; cnt < entries; ++cnt) {
+		free((tbl+cnt)->list);
+		free((tbl+cnt)->len);
+	}
+	free(cols);
+	free(lens);
+	free(tbl);
 }
 
 static void input(FILE *fp)
