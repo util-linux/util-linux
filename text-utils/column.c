@@ -71,7 +71,6 @@ static char *mtsafe_strtok(char *, const char *, char **);
 #define MAXLINELEN  (LINE_MAX + 1)
 
 static void  c_columnate __P((void));
-static void *emalloc __P((int));
 static void  input __P((FILE *));
 static void  maketbl __P((void));
 static void  print __P((void));
@@ -270,14 +269,14 @@ maketbl()
 	TBL *t;
 	int coloff, cnt, i;
 	wchar_t *p, **lp;
-	int *lens, maxcols;
+	int *lens, maxcols = DEFCOLS;
 	TBL *tbl;
 	wchar_t **cols;
 	wchar_t *wcstok_state;
 
-	t = tbl = emalloc(entries * sizeof(TBL));
-	cols = emalloc((maxcols = DEFCOLS) * sizeof(wchar_t *));
-	lens = emalloc(maxcols * sizeof(int));
+	t = tbl = xcalloc(entries, sizeof(TBL));
+	cols = xcalloc(maxcols, sizeof(wchar_t *));
+	lens = xcalloc(maxcols, sizeof(int));
 	for (cnt = 0, lp = list; cnt < entries; ++cnt, ++lp, ++t) {
 		for (coloff = 0, p = *lp;
 		    (cols[coloff] = wcstok(p, separator, &wcstok_state)) != NULL;
@@ -292,8 +291,8 @@ maketbl()
 				maxcols += DEFCOLS;
 			}
 		}
-		t->list = emalloc(coloff * sizeof(wchar_t *));
-		t->len = emalloc(coloff * sizeof(int));
+		t->list = xcalloc(coloff, sizeof(wchar_t *));
+		t->len = xcalloc(coloff, sizeof(int));
 		for (t->cols = coloff; --coloff >= 0;) {
 			t->list[coloff] = cols[coloff];
 			t->len[coloff] = wcs_width(cols[coloff]);
@@ -318,12 +317,12 @@ static void
 input(fp)
 	FILE *fp;
 {
-	static int maxentry;
+	static int maxentry = DEFNUM;
 	int len, lineno = 1, reportedline = 0;
 	wchar_t *p, buf[MAXLINELEN];
 
 	if (!list)
-		list = emalloc((maxentry = DEFNUM) * sizeof(wchar_t *));
+		list = xcalloc(maxentry, sizeof(wchar_t *));
 	while (fgetws(buf, MAXLINELEN, fp)) {
 		for (p = buf; *p && iswspace(*p); ++p);
 		if (!*p)
@@ -393,14 +392,3 @@ static char *mtsafe_strtok(char *str, const char *delim, char **ptr)
 	}
 }
 #endif
-
-static void *
-emalloc(size)
-        int size;
-{
-	char *p;
-
-	p = xmalloc(size);
-	memset(p, 0, size);
-	return (p);
-}
