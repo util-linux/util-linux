@@ -70,11 +70,11 @@ static char *mtsafe_strtok(char *, const char *, char **);
 #define DEFNUM      1000
 #define MAXLINELEN  (LINE_MAX + 1)
 
-static void  c_columnate __P((void));
-static void  input __P((FILE *));
-static void  maketbl __P((void));
-static void  print __P((void));
-static void  r_columnate __P((void));
+static void c_columnate(void);
+static void input(FILE *);
+static void maketbl(void);
+static void print(void);
+static void r_columnate(void);
 
 typedef struct _tbl {
 	wchar_t **list;
@@ -120,8 +120,8 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	fprintf(out, _("\nFor more information see column(1).\n"));
 	exit(rc);
 }
-int
-main(int argc, char **argv)
+
+int main(int argc, char **argv)
 {
 	struct winsize win;
 	FILE *fp;
@@ -132,7 +132,7 @@ main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	if (ioctl(1, TIOCGWINSZ, &win) == -1 || !win.ws_col) {
+	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &win) == -1 || !win.ws_col) {
 		if ((p = getenv("COLUMNS")) != NULL)
 			termwidth = atoi(p);
 	} else
@@ -162,13 +162,13 @@ main(int argc, char **argv)
 			break;
 		default:
 			usage(EXIT_FAILURE);
-        }
+	}
 	argc -= optind;
 	argv += optind;
 
 	if (!*argv)
 		input(stdin);
-	else {
+	else
 		for (; *argv; ++argv) {
 			if ((fp = fopen(*argv, "r")) != NULL) {
 				input(fp);
@@ -178,7 +178,6 @@ main(int argc, char **argv)
 				eval = EXIT_FAILURE;
 			}
 		}
-	}
 
 	if (!entries)
 		exit(eval);
@@ -196,8 +195,7 @@ main(int argc, char **argv)
 	exit(eval);
 }
 
-static void
-c_columnate()
+static void c_columnate()
 {
 	int chcnt, col, cnt, endcol, numcols;
 	wchar_t **lp;
@@ -226,8 +224,7 @@ c_columnate()
 		putwchar('\n');
 }
 
-static void
-r_columnate()
+static void r_columnate()
 {
 	int base, chcnt, cnt, col, endcol, numcols, numrows, row;
 
@@ -256,8 +253,7 @@ r_columnate()
 	}
 }
 
-static void
-print()
+static void print()
 {
 	int cnt;
 	wchar_t **lp;
@@ -268,8 +264,7 @@ print()
 	}
 }
 
-static void
-maketbl()
+static void maketbl()
 {
 	TBL *t;
 	int coloff, cnt, i;
@@ -318,9 +313,7 @@ maketbl()
 	}
 }
 
-static void
-input(fp)
-	FILE *fp;
+static void input(FILE *fp)
 {
 	static int maxentry = DEFNUM;
 	int len, lineno = 1, reportedline = 0;
@@ -329,7 +322,8 @@ input(fp)
 	if (!list)
 		list = xcalloc(maxentry, sizeof(wchar_t *));
 	while (fgetws(buf, MAXLINELEN, fp)) {
-		for (p = buf; *p && iswspace(*p); ++p);
+		for (p = buf; *p && iswspace(*p); ++p)
+			;
 		if (!*p)
 			continue;
 		if (!(p = wcschr(p, '\n')) && !feof(fp)) {
