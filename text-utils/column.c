@@ -54,6 +54,7 @@
 #include "widechar.h"
 #include "c.h"
 #include "xalloc.h"
+#include "strutils.h"
 
 #ifdef HAVE_WIDECHAR
 #define wcs_width(s) wcswidth(s,wcslen(s))
@@ -81,7 +82,7 @@ typedef struct _tbl {
 	int cols, *len;
 } TBL;
 
-int termwidth = 80;		/* default terminal width */
+long termwidth;
 
 int entries;			/* number of records */
 int eval;			/* exit value */
@@ -134,7 +135,8 @@ int main(int argc, char **argv)
 
 	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &win) == -1 || !win.ws_col) {
 		if ((p = getenv("COLUMNS")) != NULL)
-			termwidth = atoi(p);
+			termwidth = strtol_or_err(p,
+					_("terminal environment COLUMNS failed"));
 	} else
 		termwidth = win.ws_col;
 
@@ -149,7 +151,11 @@ int main(int argc, char **argv)
 				 PACKAGE_STRING);
 				 return(EXIT_SUCCESS);
 		case 'c':
-			termwidth = atoi(optarg);
+			termwidth = strtol_or_err(optarg,
+						  _("bad columns width value"));
+			if (termwidth < 1)
+				errx(EXIT_FAILURE,
+				     _("-%c positive integer expected as an argument"), ch);
 			break;
 		case 's':
 			separator = mbs_to_wcs(optarg);

@@ -4,6 +4,8 @@ EXTRA_DIST = README.clear README.col
 
 usrbin_exec_PROGRAMS = col colcrt colrm column hexdump rev line tailf
 
+column_SOURCES = column.c $(top_srcdir)/lib/strutils.c
+
 hexdump_SOURCES = hexdump.c conv.c display.c hexsyntax.c parse.c \
 		  hexdump.h $(top_srcdir)/lib/strutils.c
 
