@@ -267,29 +267,31 @@ static void print()
 static void maketbl()
 {
 	TBL *t;
-	int coloff, cnt, i;
+	int cnt, i;
 	wchar_t *p, **lp;
-	int *lens, maxcols = DEFCOLS;
+	ssize_t *lens;
+	ssize_t maxcols = DEFCOLS, coloff;
 	TBL *tbl;
 	wchar_t **cols;
 	wchar_t *wcstok_state;
 
 	t = tbl = xcalloc(entries, sizeof(TBL));
 	cols = xcalloc(maxcols, sizeof(wchar_t *));
-	lens = xcalloc(maxcols, sizeof(int));
-	for (cnt = 0, lp = list; cnt < entries; ++cnt, ++lp, ++t) {
-		for (coloff = 0, p = *lp;
-		    (cols[coloff] = wcstok(p, separator, &wcstok_state)) != NULL;
-		    p = NULL) {
+	lens = xcalloc(maxcols, sizeof(ssize_t));
+
+	for (lp = list, cnt = 0; cnt < entries; ++cnt, ++lp, ++t) {
+		coloff = 0;
+		p = *lp;
+		while ((cols[coloff] = wcstok(p, separator, &wcstok_state)) != NULL) {
 			if (++coloff == maxcols) {
-				cols = xrealloc(cols, ((u_int)maxcols + DEFCOLS)
-					 * sizeof(wchar_t *));
-				lens = xrealloc(lens, ((u_int)maxcols + DEFCOLS)
-					* sizeof(int));
-				memset((char *)lens + maxcols * sizeof(int),
-					0, DEFCOLS * sizeof(int));
 				maxcols += DEFCOLS;
+				cols = xrealloc(cols, maxcols * sizeof(wchar_t *));
+				lens = xrealloc(lens, maxcols * sizeof(ssize_t));
+				/* zero fill only new memory */
+				memset(lens + ((maxcols - DEFCOLS) * sizeof(ssize_t)), 0,
+				       DEFCOLS * sizeof(int));
 			}
+			p = NULL;
 		}
 		t->list = xcalloc(coloff, sizeof(wchar_t *));
 		t->len = xcalloc(coloff, sizeof(int));
@@ -300,7 +302,8 @@ static void maketbl()
 				lens[coloff] = t->len[coloff];
 		}
 	}
-	for (cnt = 0, t = tbl; cnt < entries; ++cnt, ++t) {
+
+	for (t = tbl, cnt = 0; cnt < entries; ++cnt, ++t) {
 		for (coloff = 0; coloff < t->cols - 1; ++coloff) {
 			fputws(t->list[coloff], stdout);
 			for (i = lens[coloff] - t->len[coloff] + 2; i > 0; i--)
