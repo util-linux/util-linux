@@ -1,3 +1,7 @@
+util-linux 2.19.1: May 2 2011
+* see docs/v2.19-ReleaseNotes or complete changelog at
+  ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.19/v2.19.1-ChangeLog
+
 util-linux 2.19.1-rc1: Apr 20 2011
 * see docs/v2.19-ReleaseNotes or complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.19/v2.19.1-rc1-ChangeLog
