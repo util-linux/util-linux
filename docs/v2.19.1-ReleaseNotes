@@ -1,5 +1,5 @@
-util-linux 2.19.1 Release Notes
-===============================
+util-linux 2.19.1 Release Notes (2-May-2011)
+============================================
 
 Changes since v2.19
 -------------------
@@ -13,6 +13,7 @@ blkid:
    - small fix for safe_print()  [Sergey Gusarov]
 build-sys:
    - don't build lsblk on Linux without openat()  [Karel Zak]
+   - non-linux fixup  [Samuel Thibault]
 chsh:
    - fix gcc link() warn_unused_result warning  [Karel Zak]
    - fix small memory leak  [Karel Zak]
