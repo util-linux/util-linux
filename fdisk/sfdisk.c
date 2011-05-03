@@ -322,7 +322,7 @@ err:
     return 0;
 }
 
-static void reread_disk_partition(char *dev, int fd);
+static int reread_disk_partition(char *dev, int fd);
 
 static int
 restore_sectors(char *dev) {
@@ -381,7 +381,8 @@ restore_sectors(char *dev) {
     }
     free(ss0);
 
-    reread_disk_partition(dev, fdout);
+    if (!reread_disk_partition(dev, fdout))
+        goto err;
     close(fdin);
 
     return 1;
@@ -806,22 +807,27 @@ is_blockdev(int fd) {
 }
 
 /* reread after writing */
-static void
+static int
 reread_disk_partition(char *dev, int fd) {
     printf(_("Re-reading the partition table ...\n"));
     fflush(stdout);
     sync();
 
-    if (reread_ioctl(fd) && is_blockdev(fd))
+    if (reread_ioctl(fd) && is_blockdev(fd)) {
       do_warn(_("The command to re-read the partition table failed.\n"
 	        "Run partprobe(8), kpartx(8) or reboot your system now,\n"
 	        "before using mkfs\n"));
+      return 0;
+    }
 
     if (fsync(fd) || close(fd)) {
-	perror(dev);
-	do_warn(_("Error closing %s\n"), dev);
+	  perror(dev);
+	  do_warn(_("Error closing %s\n"), dev);
+      return 0;
     }
     printf("\n");
+
+    return 1;
 }
 
 /* find Linux name of this partition, assuming that it will have a name */
@@ -3006,8 +3012,10 @@ do_reread(char *dev) {
     int fd;
 
     fd = my_open(dev, 0, 0);
-    if (reread_ioctl(fd))
+    if (reread_ioctl(fd)) {
       do_warn(_("This disk is currently in use.\n"));
+      exit(1);
+    }
 
     close(fd);
 }
@@ -3106,7 +3114,8 @@ do_fdisk(char *dev){
     else
       exit_status = 1;
 
-    reread_disk_partition(dev, fd);
+    if (!reread_disk_partition(dev, fd))
+      exit_status = 1;
 
     my_warn(_("If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 	 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
