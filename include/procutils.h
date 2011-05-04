@@ -1,6 +1,8 @@
 #ifndef UTIL_LINUX_PROCUTILS
 #define UTIL_LINUX_PROCUTILS
 
+#include <dirent.h>
+
 struct proc_tasks {
 	DIR *dir;
 };
