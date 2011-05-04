@@ -77,6 +77,10 @@ enum {
 	COL_ROTA,
 	COL_SCHED,
 	COL_TYPE,
+	COL_DALIGN,
+	COL_DGRAN,
+	COL_DMAX,
+	COL_DZERO,
 
 	__NCOLUMNS
 };
@@ -112,8 +116,11 @@ static struct colinfo infos[__NCOLUMNS] = {
 	[COL_PHYSEC] = { "PHY-SEC", 7, TT_FL_RIGHT, N_("physical sector size") },
 	[COL_LOGSEC] = { "LOG-SEC", 7, TT_FL_RIGHT, N_("logical sector size") },
 	[COL_SCHED]  = { "SCHED",   0.1, 0, N_("I/O scheduler name") },
-	[COL_TYPE]   = { "TYPE",    4, 0, N_("device type") }
-
+	[COL_TYPE]   = { "TYPE",    4, 0, N_("device type") },
+	[COL_DALIGN] = { "DISC-ALN", 6, TT_FL_RIGHT, N_("discard alignment offset") },
+	[COL_DGRAN]  = { "DISC-GRAN", 6, TT_FL_RIGHT, N_("discard granularity") },
+	[COL_DMAX]   = { "DISC-MAX", 6, TT_FL_RIGHT, N_("discard max bytes") },
+	[COL_DZERO]  = { "DISC-ZERO", 1, TT_FL_RIGHT, N_("discard zeroes data") },
 };
 
 struct lsblk {
@@ -702,6 +709,31 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
+	case COL_DALIGN:
+		p = sysfs_strdup(cxt, "discard_alignment");
+		if (p)
+			tt_line_set_data(ln, col, p);
+		break;
+	case COL_DGRAN:
+		p = sysfs_strdup(cxt, "queue/discard_granularity");
+		if (!lsblk->bytes)
+			p = size_to_human_string(atoi(p));
+		if (p)
+			tt_line_set_data(ln, col, p);
+		break;
+	case COL_DMAX:
+		p = sysfs_strdup(cxt, "queue/discard_max_bytes");
+
+		if (!lsblk->bytes)
+			p = size_to_human_string(atoi(p));
+		if (p)
+			tt_line_set_data(ln, col, p);
+		break;
+	case COL_DZERO:
+		p = sysfs_strdup(cxt, "queue/discard_zeroes_data");
+		if (p)
+			tt_line_set_data(ln, col, p);
+		break;
 	};
 }
 
@@ -930,6 +962,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 		" -a, --all            print all devices\n"
 		" -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 		" -d, --nodeps         don't print slaves or holders\n"
+		" -D, --discard        print discard capabilities\n"
 		" -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
 		" -f, --fs             output info about filesystems\n"
 		" -h, --help           usage information (this)\n"
@@ -967,6 +1000,7 @@ int main(int argc, char *argv[])
 		{ "all",	0, 0, 'a' },
 		{ "bytes",      0, 0, 'b' },
 		{ "nodeps",     0, 0, 'd' },
+		{ "discard",    0, 0, 'D' },
 		{ "help",	0, 0, 'h' },
 		{ "output",     1, 0, 'o' },
 		{ "perms",      0, 0, 'm' },
@@ -987,7 +1021,7 @@ int main(int argc, char *argv[])
 	lsblk = &_ls;
 	memset(lsblk, 0, sizeof(*lsblk));
 
-	while((c = getopt_long(argc, argv, "abde:fhlnmo:irt", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "abdDe:fhlnmo:irt", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			lsblk->all_devices = 1;
@@ -997,6 +1031,13 @@ int main(int argc, char *argv[])
 			break;
 		case 'd':
 			lsblk->nodeps = 1;
+			break;
+		case 'D':
+			columns[ncolumns++] = COL_NAME;
+			columns[ncolumns++] = COL_DALIGN;
+			columns[ncolumns++] = COL_DGRAN;
+			columns[ncolumns++] = COL_DMAX;
+			columns[ncolumns++] = COL_DZERO;
 			break;
 		case 'e':
 			parse_excludes(optarg);
