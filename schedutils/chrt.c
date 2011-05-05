@@ -188,7 +188,8 @@ static void show_min_max(void)
 
 int main(int argc, char *argv[])
 {
-	int i, policy = SCHED_RR, priority = 0, verbose = 0, policy_flag = 0, all_tasks = 0;
+	int i, policy = SCHED_RR, priority = 0, verbose = 0, policy_flag = 0,
+	    all_tasks = 0;
 	struct sched_param sp;
 	pid_t pid = -1;
 
@@ -268,7 +269,18 @@ int main(int argc, char *argv[])
 		show_usage(EXIT_FAILURE);
 
 	if ((pid > -1) && (verbose || argc - optind == 1)) {
-		show_rt_info(pid, FALSE);
+		if (all_tasks) {
+			pid_t tid;
+			struct proc_tasks *ts = proc_open_tasks(pid);
+
+			if (!ts)
+				err(EXIT_FAILURE, "cannot obtain the list of tasks");
+			while (!proc_next_tid(ts, &tid))
+				show_rt_info(tid, FALSE);
+			proc_close_tasks(ts);
+		} else
+			show_rt_info(pid, FALSE);
+
 		if (argc - optind == 1)
 			return EXIT_SUCCESS;
 	}
@@ -296,11 +308,9 @@ int main(int argc, char *argv[])
 
 		if (!ts)
 			err(EXIT_FAILURE, "cannot obtain the list of tasks");
-
 		while (!proc_next_tid(ts, &tid))
 			if (sched_setscheduler(tid, policy, &sp) == -1)
 				err(EXIT_FAILURE, _("failed to set tid %d's policy"), tid);
-
 		proc_close_tasks(ts);
 	}
 	else
