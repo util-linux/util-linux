@@ -4,6 +4,7 @@
  *
  * Robert Love <rml@tech9.net>
  * 27-Apr-2002: initial version
+ * 04-May-2011: make thread aware - Davidlohr Bueso <dave@gnu.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, v2, as
@@ -32,6 +33,7 @@
 #include "nls.h"
 
 #include "strutils.h"
+#include "procutils.h"
 
 /* the SCHED_BATCH is supported since Linux 2.6.16
  *  -- temporary workaround for people with old glibc headers
@@ -79,6 +81,7 @@ static void __attribute__((__noreturn__)) show_usage(int rc)
 #endif
 	fprintf(out, _(
 	"\nOptions:\n"
+	"  -a | --all-tasks     propagate changes to all the tasks for a given pid\n"
 	"  -h | --help          display this help\n"
 	"  -m | --max           show min and max valid priorities\n"
 	"  -p | --pid           operate on existing given pid\n"
@@ -185,11 +188,12 @@ static void show_min_max(void)
 
 int main(int argc, char *argv[])
 {
-	int i, policy = SCHED_RR, priority = 0, verbose = 0, policy_flag = 0;
+	int i, policy = SCHED_RR, priority = 0, verbose = 0, policy_flag = 0, all_tasks = 0;
 	struct sched_param sp;
 	pid_t pid = -1;
 
 	static const struct option longopts[] = {
+		{ "all-tasks",  0, NULL, 'a' },
 		{ "batch",	0, NULL, 'b' },
 		{ "fifo",	0, NULL, 'f' },
 		{ "idle",	0, NULL, 'i' },
@@ -208,11 +212,14 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while((i = getopt_long(argc, argv, "+bfiphmoRrvV", longopts, NULL)) != -1)
+	while((i = getopt_long(argc, argv, "+abfiphmoRrvV", longopts, NULL)) != -1)
 	{
 		int ret = EXIT_FAILURE;
 
 		switch (i) {
+		case 'a':
+			all_tasks = 1;
+			break;
 		case 'b':
 #ifdef SCHED_BATCH
 			policy = SCHED_BATCH;
@@ -282,8 +289,23 @@ int main(int argc, char *argv[])
 	if (pid == -1)
 		pid = 0;
 	sp.sched_priority = priority;
-	if (sched_setscheduler(pid, policy, &sp) == -1)
-		err(EXIT_FAILURE, _("failed to set pid %d's policy"), pid);
+
+	if (all_tasks) {
+		pid_t tid;
+		struct proc_tasks *ts = proc_open_tasks(pid);
+
+		if (!ts)
+			err(EXIT_FAILURE, "cannot obtain the list of tasks");
+
+		while (!proc_next_tid(ts, &tid))
+			if (sched_setscheduler(tid, policy, &sp) == -1)
+				err(EXIT_FAILURE, _("failed to set tid %d's policy"), tid);
+
+		proc_close_tasks(ts);
+	}
+	else
+		if (sched_setscheduler(pid, policy, &sp) == -1)
+			err(EXIT_FAILURE, _("failed to set pid %d's policy"), pid);
 
 	if (verbose)
 		show_rt_info(pid, TRUE);
