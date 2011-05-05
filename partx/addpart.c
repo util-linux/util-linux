@@ -21,8 +21,8 @@ main(int argc, char **argv)
 	}
 
 	if (partx_add_partition(fd, atoi(argv[2]),
-				512 * atoll(argv[3]),
-				512 * atoll(argv[4]))) {
+				atoll(argv[3]),
+				atoll(argv[4]))) {
 		perror("BLKPG");
 		exit(1);
 	}
