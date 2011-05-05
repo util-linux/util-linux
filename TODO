@@ -48,6 +48,11 @@ mount
 
     Note that findmnt(8) already supports --target and --source.
 
+partx
+-----
+
+ - add regression tests for partx, addpart and delpart
+
 build-sys
 --------
 
