@@ -2534,8 +2534,7 @@ new_partition(void) {
 	} else {
 		char c, dflt, line[LINE_LENGTH];
 
-		while (1) {
-			dflt = (free_primary == 1 && !extended_offset) ? 'e' : 'p';
+		dflt = (free_primary == 1 && !extended_offset) ? 'e' : 'p';
 		snprintf(line, sizeof(line),
 			 _("Partition type:\n"
 			   "   p   primary (%d primary, %d extended, %d free)\n"
@@ -2545,30 +2544,26 @@ new_partition(void) {
 			 extended_offset ? _("   l   logical (numbered from 5)") : _("   e   extended"),
 			 dflt);
 
-			c = tolower(read_chars(line));
-			if (c == '\n') {
-				c = dflt;
-				printf(_("Using default response %c\n"), c);
-			}
-			if (c == 'p') {
-				int i = get_nonexisting_partition(0, 4);
-				if (i >= 0)
-					add_partition(i, LINUX_NATIVE);
-				return;
-			}
-			else if (c == 'l' && extended_offset) {
-				add_logical();
-				return;
-			}
-			else if (c == 'e' && !extended_offset) {
-				int i = get_nonexisting_partition(0, 4);
-				if (i >= 0)
-					add_partition(i, EXTENDED);
-				return;
-			}
-			else
-				printf(_("Invalid partition type `%c'\n"), c);
+		c = tolower(read_chars(line));
+		if (c == '\n') {
+			c = dflt;
+			printf(_("Using default response %c\n"), c);
 		}
+		if (c == 'p') {
+			int i = get_nonexisting_partition(0, 4);
+			if (i >= 0)
+				add_partition(i, LINUX_NATIVE);
+			return;
+		} else if (c == 'l' && extended_offset) {
+			add_logical();
+			return;
+		} else if (c == 'e' && !extended_offset) {
+			int i = get_nonexisting_partition(0, 4);
+			if (i >= 0)
+				add_partition(i, EXTENDED);
+			return;
+		} else
+			printf(_("Invalid partition type `%c'\n"), c);
 	}
 }
 
