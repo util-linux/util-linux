@@ -126,6 +126,8 @@ struct hfsplus_vol_header {
 	struct hfsplus_fork start_file;
 }  __attribute__((packed));
 
+#define HFSPLUS_SECTOR_SIZE        512
+
 static int hfs_set_uuid(blkid_probe pr, unsigned char const *hfs_info, size_t len)
 {
 	static unsigned char const hash_init[16] = {
@@ -225,8 +227,8 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	hfs_set_uuid(pr, hfsplus->finder_info.id, sizeof(hfsplus->finder_info.id));
 
 	blocksize = be32_to_cpu(hfsplus->blocksize);
-	if (blocksize == 0)
-		return 0;
+	if (blocksize < HFSPLUS_SECTOR_SIZE)
+		return -1;
 
 	memcpy(extents, hfsplus->cat_file.extents, sizeof(extents));
 	cat_block = be32_to_cpu(extents[0].start_block);
