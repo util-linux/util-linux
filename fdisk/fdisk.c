@@ -2532,17 +2532,25 @@ new_partition(void) {
 		printf(_("Adding a primary partition\n"));
 		add_partition(get_partition(0, 4), LINUX_NATIVE);
 	} else {
-		char c, line[LINE_LENGTH];
+		char c, dflt, line[LINE_LENGTH];
+
+		while (1) {
+			dflt = (free_primary == 1 && !extended_offset) ? 'e' : 'p';
 		snprintf(line, sizeof(line),
 			 _("Partition type:\n"
 			   "   p   primary (%d primary, %d extended, %d free)\n"
 			   "%s\n"
-			   "Select: "),
+			   "Select (default %c): "),
 			 4 - (extended_offset ? 1 : 0) - free_primary, extended_offset ? 1 : 0, free_primary,
-			 extended_offset ? _("   l   logical (numbered from 5)") : _("   e   extended"));
+			 extended_offset ? _("   l   logical (numbered from 5)") : _("   e   extended"),
+			 dflt);
 
-		while (1) {
-			if ((c = tolower(read_char(line))) == 'p') {
+			c = tolower(read_chars(line));
+			if (c == '\n') {
+				c = dflt;
+				printf(_("Using default response %c\n"), c);
+			}
+			if (c == 'p') {
 				int i = get_nonexisting_partition(0, 4);
 				if (i >= 0)
 					add_partition(i, LINUX_NATIVE);
