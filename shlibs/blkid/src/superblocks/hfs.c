@@ -225,6 +225,9 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	hfs_set_uuid(pr, hfsplus->finder_info.id, sizeof(hfsplus->finder_info.id));
 
 	blocksize = be32_to_cpu(hfsplus->blocksize);
+	if (blocksize == 0)
+		return 0;
+
 	memcpy(extents, hfsplus->cat_file.extents, sizeof(extents));
 	cat_block = be32_to_cpu(extents[0].start_block);
 
