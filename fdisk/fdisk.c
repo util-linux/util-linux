@@ -2534,9 +2534,13 @@ new_partition(void) {
 	} else {
 		char c, line[LINE_LENGTH];
 		snprintf(line, sizeof(line),
-			 _("Command action\n   %s\n   p   primary "
-			   "partition (1-4)\n"), extended_offset ?
-			 _("l   logical (5 or over)") : _("e   extended"));
+			 _("Partition type:\n"
+			   "   p   primary (%d primary, %d extended, %d free)\n"
+			   "%s\n"
+			   "Select: "),
+			 4 - (extended_offset ? 1 : 0) - free_primary, extended_offset ? 1 : 0, free_primary,
+			 extended_offset ? _("   l   logical (numbered from 5)") : _("   e   extended"));
+
 		while (1) {
 			if ((c = tolower(read_char(line))) == 'p') {
 				int i = get_nonexisting_partition(0, 4);
