@@ -93,7 +93,8 @@
 #endif
 
 /* Login prompt. */
-#define LOGIN " login: "
+#define LOGIN		" login: "
+#define ARRAY_SIZE_MAX	16		/* Numbers of args for login beside "-- \\u" */
 
 /* Some shorthands for control characters. */
 #define CTL(x)		(x ^ 0100)	/* Assumes ASCII dialect */
@@ -131,7 +132,9 @@
 struct options {
 	int flags;			/* toggle switches, see below */
 	int timeout;			/* time-out period */
+	char *autolog;			/* login the user automatically */
 	char *login;			/* login program */
+	char *logopt;			/* options for login program */
 	char *tty;			/* name of tty */
 	char *vcline;			/* line of virtual console */
 	char *term;			/* terminal type */
@@ -156,6 +159,7 @@ struct options {
 #define F_VCONSOLE	(1<<12)	/* This is a virtual console */
 #define F_HANGUP	(1<<13)	/* Do call vhangup(2) */
 #define F_UTF8		(1<<14)	/* We can do UTF8 */
+#define F_LOGINPAUSE	(1<<15)	/* Wait for any key before dropping login prompt */
 
 #define serial_tty_option(opt, flag)	\
 	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
@@ -241,6 +245,9 @@ static speed_t bcode(char *s);
 static void usage(FILE * out) __attribute__((__noreturn__));
 static void log_err(const char *, ...) __attribute__((__noreturn__)) __attribute__((__format__(printf, 1, 2)));
 static void log_warn (const char *, ...) __attribute__((__format__(printf, 1, 2)));
+static void checkname (const char* nm);
+static void replacename (char** arr, const char* nm);
+static void mkarray (char** arr, char* str);
 
 /* Fake hostname for ut_host specified on command line. */
 static char *fakehost;
@@ -254,20 +261,18 @@ FILE *dbf;
 
 int main(int argc, char **argv)
 {
-	char *logname = NULL;		/* login name, given to /bin/login */
-	struct chardata chardata;	/* will be set by get_logname() */
-	struct termios termios;		/* terminal mode bits */
+	char *logname = NULL;			/* login name, given to /bin/login */
+	char  logcmd[NAME_MAX+1];
+	char *logarr[ARRAY_SIZE_MAX + 2];	/* arguments plus "-- \\u" */
+	struct chardata chardata;		/* will be set by get_logname() */
+	struct termios termios;			/* terminal mode bits */
 	static struct options options = {
-		F_ISSUE,	/* show /etc/issue (SYSV_STYLE) */
-		0,		/* no timeout */
-		_PATH_LOGIN,	/* default login program */
-		"tty1",		/* default tty line */
-		0,		/* line of virtual console */
-		DEFAULT_VCTERM,	/* terminal type */
-		"",		/* modem init string */
-		ISSUE,		/* default issue file */
-		0, 		/* no baud rates known yet */
-		{ 0 }
+		.flags  =  F_ISSUE,		/* show /etc/issue (SYSV_STYLE) */
+		.login  =  _PATH_LOGIN,		/* default login program */
+		.logopt = "-- \\u",		/* escape for user name */
+		.tty    = "tty1",		/* default tty line */
+		.term   =  DEFAULT_VCTERM,	/* terminal type */
+		.issue  =  ISSUE		/* default issue file */
 	};
 	struct sigaction sa, sa_hup, sa_quit, sa_int;
 	sigset_t set;
@@ -315,7 +320,8 @@ int main(int argc, char **argv)
 	termio_init(&options, &termios);
 
 	/* Write the modem init string and DO NOT flush the buffers. */
-	if (serial_tty_option(&options, F_INITSTRING)) {
+	if (serial_tty_option(&options, F_INITSTRING) &&
+	    options.initstring && *options.initstring != '\0') {
 		debug("writing init string\n");
 		write_all(STDOUT_FILENO, options.initstring,
 			   strlen(options.initstring));
@@ -353,12 +359,21 @@ int main(int argc, char **argv)
 
 	chardata = init_chardata;
 	if ((options.flags & F_NOPROMPT) == 0) {
-		/* Read the login name. */
-		debug("reading login name\n");
-		while ((logname =
-			get_logname(&options, &termios, &chardata)) == 0)
-			if ((options.flags & F_VCONSOLE) == 0)
-				next_speed(&options, &termios);
+		if (options.autolog) {
+			/* Do the auto login */
+			debug("doing auto login\n");
+			do_prompt(&options, &termios);
+			printf ("%s%s (automatic login)\n", LOGIN, options.autolog);
+			logname = options.autolog;
+			options.logopt = "-f \\u";
+		} else {
+			/* Read the login name. */
+			debug("reading login name\n");
+			while ((logname =
+				get_logname(&options, &termios, &chardata)) == 0)
+				if ((options.flags & F_VCONSOLE) == 0)
+					next_speed(&options, &termios);
+		}
 	}
 
 	/* Disable timer. */
@@ -376,8 +391,16 @@ int main(int argc, char **argv)
 	sigaction (SIGQUIT, &sa_quit, NULL);
 	sigaction (SIGINT, &sa_int, NULL);
 
+	strncpy(logcmd, options.login, NAME_MAX);
+	strncat(logcmd, " ", NAME_MAX - strlen(logcmd));
+	strncat(logcmd, options.logopt, NAME_MAX - strlen(logcmd));
+
+	checkname(logname);
+	mkarray(logarr, logcmd);
+	replacename(logarr, logname);
+
 	/* Let the login program take care of password validation. */
-	execl(options.login, options.login, "--", logname, NULL);
+	execv(options.login, logarr);
 	log_err(_("%s: can't exec %s: %m"), options.tty, options.login);
 }
 
@@ -394,6 +417,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 	};
 	const struct option longopts[] = {
 		{  "8bits",	     no_argument,	 0,  '8'  },
+		{  "autologin",	     required_argument,	 0,  'a'  },
 		{  "noreset",	     no_argument,	 0,  'c'  },
 		{  "issue-file",     required_argument,  0,  'f'  },
 		{  "flow-control",   no_argument,	 0,  'h'  },
@@ -404,6 +428,10 @@ static void parse_args(int argc, char **argv, struct options *op)
 		{  "local-line",     no_argument,	 0,  'L'  },
 		{  "extract-baud",   no_argument,	 0,  'm'  },
 		{  "skip-login",     no_argument,	 0,  'n'  },
+		{  "login-options",  required_argument,  0,  'o'  },
+		{  "loginopts",	     required_argument,  0,  'o'  },  /* compat option */
+		{  "logopts",	     required_argument,  0,  'o'  },  /* compat option */
+		{  "loginpause",     no_argument,        0,  'p'  },
 		{  "hangup",	     no_argument,	 0,  'R'  },
 		{  "keep-baud",      no_argument,	 0,  's'  },
 		{  "timeout",	     required_argument,  0,  't'  },
@@ -414,11 +442,14 @@ static void parse_args(int argc, char **argv, struct options *op)
 		{ NULL, 0, 0, 0 }
 	};
 
-	while ((c = getopt_long(argc, argv, "8cf:hH:iI:l:LmnsRt:Uw", longopts,
+	while ((c = getopt_long(argc, argv, "8a:cf:hH:iI:l:Lmno:pRst:Uw", longopts,
 			    NULL)) != -1) {
 		switch (c) {
 		case '8':
 			op->flags |= F_EIGHTBITS;
+			break;
+		case 'a':
+			op->autolog = optarg;
 			break;
 		case 'c':
 			op->flags |= F_KEEPCFLAGS;
@@ -451,6 +482,12 @@ static void parse_args(int argc, char **argv, struct options *op)
 			break;
 		case 'n':
 			op->flags |= F_NOPROMPT;
+			break;
+		case 'o':
+			op->logopt = optarg;
+			break;
+		case 'p':
+			op->flags |= F_LOGINPAUSE;
 			break;
 		case 'R':
 			op->flags |= F_HANGUP;
@@ -1066,14 +1103,73 @@ static void do_prompt(struct options *op, struct termios *tp)
 		}
 		fclose(fd);
 	}
-#endif				/* ISSUE */
+#endif	/* ISSUE */
+	if (op->flags & F_LOGINPAUSE) {
+		puts("[press ENTER to login]");
+		getc(stdin);
+	}
+#ifdef KDGKBLED
+	if (op->autolog == (char*)0 && (op->flags & F_VCONSOLE)) {
+		int kb = 0, nl = 0;
+		struct stat st;
+		if (stat("/var/run/numlock-on", &st) == 0)
+			nl = 1;
+		if (ioctl(STDIN_FILENO, KDGKBLED, &kb) == 0) {
+			const char *hint = _("Hint: ");
+			char warn[256];
+			off_t space = sizeof(warn) - 1, off = 0;
+
+			if (nl && (kb & 0x02) == 0) {
+				const char *msg = _("Num Lock off");
+				const size_t len = strlen(msg);
+				strncpy(&warn[0], msg, space);
+				space -= len;
+				off += len;
+			} else if (nl == 0 && (kb & 2) && (kb & 0x20) == 0) {
+				const char *msg = _("Num Lock on");
+				const size_t len = strlen(msg);
+				strncpy(&warn[0], msg, space);
+				space -= len;
+				off += len;
+			}
+			if ((kb & 0x04) && (kb & 0x40) == 0) {
+				const char *msg = _("Caps Lock on");
+				const size_t len = strlen(msg);
+				if (off) {
+					strncpy(&warn[off], ", ", space);
+					space -= 2;
+					off += 2;
+				}
+				strncpy(&warn[off], msg, space);
+				space -= len;
+				off += len;
+			}
+			if ((kb & 0x01) && (kb & 0x10) == 0) {
+				const char *msg = _("Scroll Lock on");
+				const size_t len = strlen(msg);
+				if (off) {
+					strncpy(&warn[off], ", ", space);
+					space -= 2;
+					off += 2;
+				}
+				strncpy(&warn[off], msg, space);
+				space -= len;
+				off += len;
+			}
+			if (off)
+				printf ("%s%s\n\n", hint, warn);
+		}
+	}
+#endif /* KDGKBLED */
 	{
 		char hn[MAXHOSTNAMELEN + 1];
 		if (gethostname(hn, sizeof(hn)) == 0)
 			write_all(STDOUT_FILENO, hn, strlen(hn));
 	}
-	/* Always show login prompt. */
-	write_all(STDOUT_FILENO, LOGIN, sizeof(LOGIN) - 1);
+	if (op->autolog == (char*)0) {
+		/* Always show login prompt. */
+		write_all(STDOUT_FILENO, LOGIN, sizeof(LOGIN) - 1);
+	}
 }
 
 /* Select next baud rate. */
@@ -1360,6 +1456,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 	fprintf(out, _("\nOptions:\n"
 		       " -8, --8bits                assume 8-bit tty\n"
+		       " -a, --autologin USER       login the specified user automatically\n"
 		       " -c, --noreset              do not reset control mode\n"
 		       " -f, --issue-file FILE      display issue file\n"
 		       " -h, --flow-control         enable hardware flow control\n"
@@ -1370,6 +1467,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		       " -L, --local-line           force local line\n"
 		       " -m, --extract-baud         extract baud rate during connect\n"
 		       " -n, --skip-login           do not prompt for login\n"
+		       " -o, --login-options OPTS   options that are passed to login\n"
+		       " -p, --loginpause           wait for any key before the login\n"
 		       " -R, --hangup               do virtually hangup on the tty\n"
 		       " -s, --keep-baud            try to keep baud rate after break\n"
 		       " -t, --timeout NUMBER       login process timeout\n"
@@ -1602,4 +1701,72 @@ static void init_special_char(char* arg, struct options *op)
 			*q++ = *p++;
 	}
 	*q = '\0';
+}
+
+/*
+ * Do not allow the user to pass an option as a user name
+ * To be more safe: Use `--' to make sure the rest is
+ * interpreted as non-options by the program, if it supports it.
+ */
+static void checkname(const char* nm)
+{
+	const char *p = nm;
+	if (!nm)
+		goto err;
+	if (strlen (nm) > 42)
+		goto err;
+	while (isspace (*p))
+		p++;
+	if (*p == '-')
+		goto err;
+	return;
+err:
+	errno = EPERM;
+	log_err ("checkname: %m");
+}
+
+static void replacename(char** arr, const char* nm)
+{
+	const char *p;
+	char *tmp;
+	while ((p = *arr)) {
+	const char *p1 = p;
+	while (*p1) {
+		if (memcmp (p1, "\\u", 2) == 0) {
+			tmp = malloc (strlen (p) + strlen (nm));
+			if (!tmp)
+				log_err ("replacename: %m");
+			if (p1 != p)
+				memcpy (tmp, p, (p1-p));
+			*(tmp + (p1-p)) = 0;
+			strcat (tmp, nm);
+			strcat (tmp, p1+2);
+			*arr = tmp;
+		}
+		p1++;
+	}
+	arr++;
+}
+}
+
+static void mkarray(char** arr, char* str)
+{
+	char* p = str;
+	char* start = p;
+	int i = 0;
+
+	while (*p && i < (ARRAY_SIZE_MAX)) {
+	if (isspace (*p)) {
+		*p = 0;
+		while (isspace (*++p))
+			;
+		if (*p) {
+			arr[i++] = start;
+			start = p;
+		}
+	} else
+		p++;
+	}
+	arr[i++] = start;
+	arr[i++] = (char*)0;
 }

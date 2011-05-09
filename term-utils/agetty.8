@@ -4,6 +4,7 @@ agetty \- alternative Linux getty
 
 .SH SYNOPSIS
 .BR "agetty " [\-8chiLmnsUw]
+.RI "[-a " user ]
 .RI "[-f " issue_file ]
 .RI "[-H " login_host ]
 .RI "[-I " init ]
@@ -85,6 +86,11 @@ whatever init(8) may have set, and is inherited by login and the shell.
 \-8, \-\-8bits
 Assume that the tty is 8-bit clean, hence disable parity detection.
 .TP
+\-a, \-\-autologin \fIusername\fP
+Log the specified user automatically in without asking for a login
+name and password. Check the -f option from
+\fB/bin/login\fP for this.
+.TP
 \-c, \-\-noreset
 Don't reset terminal cflags (control modes). See \fItermios(3)\fP for more
 details.
@@ -152,6 +158,16 @@ space parity, 7 bit characters, and ASCII CR (13) end-of-line character.
 Beware that the program that \fBagetty\fR starts (usually /bin/login)
 is run as root.
 .TP
+\-o, \-\-logopts \fI"login_options"\fP
+Options  that  are passed to the login program.  \\u is replaced
+by the login name. Defaults to "-- \\u", which is suitable for
+\fB/bin/login\fP.  Please read the SECURITY NOTICE below if
+you want to use this.
+.TP
+\-p, \-\-loginpause
+Wait for any key before dropping to the login prompt.  Can be combined
+with \fB\-\-autologin\fP to save memory by lazily spawning shells.
+.TP
 \-R, \-\-hangup
 Do call vhangup() for a virtually hangup of the specified terminal.
 .TP
@@ -206,6 +222,19 @@ modem/computer DCD track modem/modem DCD, makes a DTR drop cause a
 dis-connection and turn on auto-answer after 1 ring.)
 .ti +5
 /sbin/agetty \-w \-I 'ATE0Q1&D2&C1S0=1\\015' 115200 ttyS1
+
+.SH SECURITY NOTICE
+If you use the \fB\-\-login\fP and \fB\-\-logopts\fP options, be aware
+that a malicious user may try to enter lognames with embedded options,
+which then get passed to the used login  program.  Agetty does check
+for a leading - and makes sure the logname gets passed as one parameter
+(so embedded spaces will not create yet another parameter), but depending
+on how the login binary parses the command line that might not be sufficient.
+Check that the used login program  can  not  be  abused this way.
+.PP
+Some  programs use -- to indicate that the rest of the commandline should
+not be interpreted as options. Use this feature if available by passing -- before
+the username gets passed by \\u.
 
 .SH ISSUE ESCAPES
 The issue-file (\fI/etc/issue\fP or the file set with the \-f option)
