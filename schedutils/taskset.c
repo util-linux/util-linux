@@ -28,6 +28,7 @@
 #include "cpuset.h"
 #include "nls.h"
 #include "strutils.h"
+#include "xalloc.h"
 #include "c.h"
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
@@ -120,9 +121,7 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, _("cpuset_alloc failed"));
 
 	buflen = 7 * cur_nbits;
-	buf = malloc(buflen);
-	if (!buf)
-		err(EXIT_FAILURE, _("malloc failed"));
+	buf = xmalloc(buflen);
 
 	/*
 	 * new_set is always used for the sched_setaffinity call
