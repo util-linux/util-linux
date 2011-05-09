@@ -1435,6 +1435,9 @@ read_int_sx(unsigned int low, unsigned int dflt, unsigned int high,
 			while (isdigit(*++line_ptr))
 				use_default = 0;
 
+			while (isspace(*line_ptr))
+				line_ptr++;
+
 			suflen = strlen(line_ptr) - 1;
 
 			while(isspace(*(line_ptr + suflen)))
