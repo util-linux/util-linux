@@ -39,6 +39,7 @@
 #include "xalloc.h"
 
 #ifdef __linux__
+#  include <sys/kd.h>
 #  include <sys/param.h>
 #  define USE_SYSLOG
 #  ifndef DEFAULT_VCTERM
@@ -151,6 +152,10 @@ struct options {
 #define F_EIGHTBITS	(1<<11)	/* Assume 8bit-clean tty */
 #define F_VCONSOLE	(1<<12)	/* This is a virtual console */
 #define F_HANGUP	(1<<13)	/* Do call vhangup(2) */
+#define F_UTF8		(1<<14)	/* We can do UTF8 */
+
+#define serial_tty_option(opt, flag)	\
+	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
 
 /* Storage for things detected while the login name was read. */
 struct chardata {
@@ -219,6 +224,7 @@ static void parse_speeds(struct options *op, char *arg);
 static void update_utmp(struct options *op);
 static void open_tty(char *tty, struct termios *tp, struct options *op);
 static void termio_init(struct options *op, struct termios *tp);
+static void reset_vc (const struct options *op, struct termios *tp);
 static void auto_baud(struct termios *tp);
 static void output_special_char (unsigned char c, struct options *op, struct termios *tp);
 static void do_prompt(struct options *op, struct termios *tp);
@@ -306,20 +312,20 @@ int main(int argc, char **argv)
 	termio_init(&options, &termios);
 
 	/* Write the modem init string and DO NOT flush the buffers. */
-	if (options.flags & F_INITSTRING) {
+	if (serial_tty_option(&options, F_INITSTRING)) {
 		debug("writing init string\n");
 		write_all(STDOUT_FILENO, options.initstring,
 			   strlen(options.initstring));
 	}
 
-	if (!(options.flags & F_LOCAL))
+	if (!serial_tty_option(&options, F_LOCAL))
 		/* Go to blocking write mode unless -L is specified. */
 		fcntl(STDOUT_FILENO, F_SETFL,
 		      fcntl(STDOUT_FILENO, F_GETFL, 0) & ~O_NONBLOCK);
 
 	/* Optionally detect the baud rate from the modem status message. */
 	debug("before autobaud\n");
-	if (options.flags & F_PARSE)
+	if (serial_tty_option(&options, F_PARSE))
 		auto_baud(&termios);
 
 	/* Set the optional timer. */
@@ -327,7 +333,7 @@ int main(int argc, char **argv)
 		alarm((unsigned)options.timeout);
 
 	/* Optionally wait for CR or LF before writing /etc/issue */
-	if (options.flags & F_WAITCRLF) {
+	if (serial_tty_option(&options, F_WAITCRLF)) {
 		char ch;
 
 		debug("waiting for cr-lf\n");
@@ -348,18 +354,21 @@ int main(int argc, char **argv)
 		debug("reading login name\n");
 		while ((logname =
 			get_logname(&options, &termios, &chardata)) == 0)
-			next_speed(&options, &termios);
+			if ((options.flags & F_VCONSOLE) == 0)
+				next_speed(&options, &termios);
 	}
 
 	/* Disable timer. */
 	if (options.timeout)
 		alarm(0);
 
-	/* Finalize the termios settings. */
-	termio_final(&options, &termios, &chardata);
+	if ((options.flags & F_VCONSOLE) == 0) {
+		/* Finalize the termios settings. */
+		termio_final(&options, &termios, &chardata);
 
-	/* Now the newline character should be properly written. */
-	write_all(STDOUT_FILENO, "\n", 1);
+		/* Now the newline character should be properly written. */
+		write_all(STDOUT_FILENO, "\r\n", 2);
+	}
 
 	sigaction (SIGQUIT, &sa_quit, NULL);
 	sigaction (SIGINT, &sa_int, NULL);
@@ -789,6 +798,38 @@ static void termio_init(struct options *op, struct termios *tp)
 {
 	speed_t ispeed, ospeed;
 
+	if (op->flags & F_VCONSOLE) {
+#if defined(IUTF8) && defined(KDGKBMODE)
+		int mode;
+
+		/* Detect mode of current keyboard setup, e.g. for UTF-8 */
+		if (ioctl(STDIN_FILENO, KDGKBMODE, &mode) < 0)
+			mode = K_RAW;
+		switch(mode) {
+		case K_UNICODE:
+			setlocale(LC_CTYPE, "en_US.UTF-8");
+			op->flags |= F_UTF8;
+			break;
+		case K_RAW:
+		case K_MEDIUMRAW:
+		case K_XLATE:
+		default:
+			setlocale(LC_CTYPE, "POSIX");
+			op->flags &= ~F_UTF8;
+			break;
+		}
+#else
+		setlocale(LC_CTYPE, "POSIX");
+		op->flags &= ~F_UTF8;
+#endif
+		reset_vc(op, tp);
+
+		if ((tp->c_cflag & (CS8|PARODD|PARENB)) == CS8)
+			op->flags |= F_EIGHTBITS;
+
+		return;
+	}
+
 	if (op->flags & F_KEEPSPEED) {
 		/* Save the original setting. */
 		ispeed = cfgetispeed(tp);
@@ -840,6 +881,71 @@ static void termio_init(struct options *op, struct termios *tp)
 	      fcntl(STDIN_FILENO, F_GETFL, 0) & ~O_NONBLOCK);
 
 	debug("term_io 2\n");
+}
+
+/* Reset virtual console on stdin to its defaults */
+static void reset_vc(const struct options *op, struct termios *tp)
+{
+	/* Use defaults of <sys/ttydefaults.h> for base settings */
+	tp->c_iflag |= TTYDEF_IFLAG;
+	tp->c_oflag |= TTYDEF_OFLAG;
+	tp->c_lflag |= TTYDEF_LFLAG;
+
+	if ((op->flags & F_KEEPCFLAGS) == 0) {
+#ifdef CBAUD
+		tp->c_lflag &= ~CBAUD;
+#endif
+		tp->c_cflag |= (B38400 | TTYDEF_CFLAG);
+	}
+
+	/* Sane setting, allow eight bit characters, no carriage return delay
+	 * the same result as `stty sane cr0 pass8'
+	 */
+	tp->c_iflag |=  (BRKINT | ICRNL | IMAXBEL);
+	tp->c_iflag &= ~(IGNBRK | INLCR | IGNCR | IXOFF | IUCLC | IXANY | ISTRIP);
+	tp->c_oflag |=  (OPOST | ONLCR | NL0 | CR0 | TAB0 | BS0 | VT0 | FF0);
+	tp->c_oflag &= ~(OLCUC | OCRNL | ONOCR | ONLRET | OFILL | OFDEL |\
+			    NLDLY|CRDLY|TABDLY|BSDLY|VTDLY|FFDLY);
+	tp->c_lflag |=  (ISIG | ICANON | IEXTEN | ECHO|ECHOE|ECHOK|ECHOKE);
+	tp->c_lflag &= ~(ECHONL|ECHOCTL|ECHOPRT | NOFLSH | XCASE | TOSTOP);
+
+	if ((op->flags & F_KEEPCFLAGS) == 0) {
+		tp->c_cflag |=  (CREAD | CS8 | HUPCL);
+		tp->c_cflag &= ~(PARODD | PARENB);
+	}
+#ifdef IUTF8
+	if (op->flags & F_UTF8)
+		tp->c_iflag |= IUTF8;	    /* Set UTF-8 input flag */
+	else
+		tp->c_iflag &= ~IUTF8;
+#endif
+	/* VTIME and VMIN can overlap with VEOF and VEOL since they are
+	 * only used for non-canonical mode. We just set the at the
+	 * beginning, so nothing bad should happen.
+	 */
+	tp->c_cc[VTIME]    = 0;
+	tp->c_cc[VMIN]     = 1;
+	tp->c_cc[VINTR]    = CINTR;
+	tp->c_cc[VQUIT]    = CQUIT;
+	tp->c_cc[VERASE]   = CERASE; /* ASCII DEL (0177) */
+	tp->c_cc[VKILL]    = CKILL;
+	tp->c_cc[VEOF]     = CEOF;
+#ifdef VSWTC
+	tp->c_cc[VSWTC]    = _POSIX_VDISABLE;
+#else
+	tp->c_cc[VSWTCH]   = _POSIX_VDISABLE;
+#endif
+	tp->c_cc[VSTART]   = CSTART;
+	tp->c_cc[VSTOP]    = CSTOP;
+	tp->c_cc[VSUSP]    = CSUSP;
+	tp->c_cc[VEOL]     = _POSIX_VDISABLE;
+	tp->c_cc[VREPRINT] = CREPRINT;
+	tp->c_cc[VDISCARD] = CDISCARD;
+	tp->c_cc[VWERASE]  = CWERASE;
+	tp->c_cc[VLNEXT]   = CLNEXT;
+	tp->c_cc[VEOL2]    = _POSIX_VDISABLE;
+	if (tcsetattr(STDIN_FILENO, TCSADRAIN, tp))
+		log_warn("tcsetattr problem: %m");
 }
 
 /* Extract baud rate from modem status message. */
