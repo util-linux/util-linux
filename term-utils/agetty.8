@@ -152,6 +152,9 @@ space parity, 7 bit characters, and ASCII CR (13) end-of-line character.
 Beware that the program that \fBagetty\fR starts (usually /bin/login)
 is run as root.
 .TP
+\-R, \-\-hangup
+Do call vhangup() for a virtually hangup of the specified terminal.
+.TP
 \-s, \-\-keep-baud
 Try to keep the existing baud rate. The baud rates from
 the command line are used when agetty receives a BREAK character.

@@ -16,6 +16,7 @@
 #include <termios.h>
 #include <signal.h>
 #include <errno.h>
+#include <sys/ioctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -28,6 +29,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <langinfo.h>
+#include <grp.h>
 
 #include "strutils.h"
 #include "writeall.h"
@@ -147,6 +149,8 @@ struct options {
 #define F_KEEPSPEED	(1<<9)	/* follow baud rate from kernel */
 #define F_KEEPCFLAGS	(1<<10)	/* reuse c_cflags setup from kernel */
 #define F_EIGHTBITS	(1<<11)	/* Assume 8bit-clean tty */
+#define F_VCONSOLE	(1<<12)	/* This is a virtual console */
+#define F_HANGUP	(1<<13)	/* Do call vhangup(2) */
 
 /* Storage for things detected while the login name was read. */
 struct chardata {
@@ -256,10 +260,20 @@ int main(int argc, char **argv)
 		0, 		/* no baud rates known yet */
 		{ 0 }
 	};
+	struct sigaction sa, sa_hup, sa_quit, sa_int;
+	sigset_t set;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+
+	/* In case vhangup(2) has to called */
+	sa.sa_handler = SIG_IGN;
+	sa.sa_flags = SA_RESTART;
+	sigemptyset (&sa.sa_mask);
+	sigaction(SIGHUP, &sa, &sa_hup);
+	sigaction(SIGQUIT, &sa, &sa_quit);
+	sigaction(SIGINT, &sa, &sa_int);
 
 #ifdef DEBUGGING
 	dbf = fopen("/dev/ttyp0", "w");
@@ -269,10 +283,6 @@ int main(int argc, char **argv)
 
 	/* Parse command-line arguments. */
 	parse_args(argc, argv, &options);
-
-#ifdef __linux__
-	setsid();
-#endif
 
 	/* Update the utmp file. */
 #ifdef	SYSV_STYLE
@@ -284,6 +294,12 @@ int main(int argc, char **argv)
 	/* Open the tty as standard { input, output, error }. */
 	open_tty(options.tty, &termios, &options);
 
+	/* Unmask SIGHUP if inherited */
+	sigemptyset(&set);
+	sigaddset(&set, SIGHUP);
+	sigprocmask(SIG_UNBLOCK, &set, NULL);
+	sigaction(SIGHUP, &sa_hup, NULL);
+
 	tcsetpgrp(STDIN_FILENO, getpid());
 	/* Initialize the termios settings (raw mode, eight-bit, blocking i/o). */
 	debug("calling termio_init\n");
@@ -293,7 +309,7 @@ int main(int argc, char **argv)
 	if (options.flags & F_INITSTRING) {
 		debug("writing init string\n");
 		write_all(STDOUT_FILENO, options.initstring,
-			       strlen(options.initstring));
+			   strlen(options.initstring));
 	}
 
 	if (!(options.flags & F_LOCAL))
@@ -345,6 +361,9 @@ int main(int argc, char **argv)
 	/* Now the newline character should be properly written. */
 	write_all(STDOUT_FILENO, "\n", 1);
 
+	sigaction (SIGQUIT, &sa_quit, NULL);
+	sigaction (SIGINT, &sa_int, NULL);
+
 	/* Let the login program take care of password validation. */
 	execl(options.login, options.login, "--", logname, NULL);
 	log_err(_("%s: can't exec %s: %m"), options.tty, options.login);
@@ -361,7 +380,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		VERSION_OPTION = CHAR_MAX + 1,
 		HELP_OPTION
 	};
-	static const struct option longopts[] = {
+	const struct option longopts[] = {
 		{  "8bits",	     no_argument,	 0,  '8'  },
 		{  "noreset",	     no_argument,	 0,  'c'  },
 		{  "issue-file",     required_argument,  0,  'f'  },
@@ -373,6 +392,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		{  "local-line",     no_argument,	 0,  'L'  },
 		{  "extract-baud",   no_argument,	 0,  'm'  },
 		{  "skip-login",     no_argument,	 0,  'n'  },
+		{  "hangup",	     no_argument,	 0,  'R'  },
 		{  "keep-baud",      no_argument,	 0,  's'  },
 		{  "timeout",	     required_argument,  0,  't'  },
 		{  "detect-case",    no_argument,	 0,  'U'  },
@@ -382,7 +402,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		{ NULL, 0, 0, 0 }
 	};
 
-	while ((c = getopt_long(argc, argv, "8cf:hH:iI:l:Lmnst:Uw", longopts,
+	while ((c = getopt_long(argc, argv, "8cf:hH:iI:l:LmnsRt:Uw", longopts,
 			    NULL)) != -1) {
 		switch (c) {
 		case '8':
@@ -419,6 +439,9 @@ static void parse_args(int argc, char **argv, struct options *op)
 			break;
 		case 'n':
 			op->flags |= F_NOPROMPT;
+			break;
+		case 'R':
+			op->flags |= F_HANGUP;
 			break;
 		case 's':
 			op->flags |= F_KEEPSPEED;
@@ -627,42 +650,100 @@ static void update_utmp(struct options *op)
 /* Set up tty as stdin, stdout & stderr. */
 static void open_tty(char *tty, struct termios *tp, struct options *op)
 {
-	/* Get rid of the present outputs. */
-	close(STDOUT_FILENO);
-	close(STDERR_FILENO);
-	errno = 0;
+	const pid_t pid = getpid();
+	int serial;
 
-	/*
-	 * Set up new standard input, unless we are given an already opened
-	 * port.
-	 */
-	if (strcmp(tty, "-")) {
+	/* Set up new standard input, unless we are given an already opened port. */
+
+	if (strcmp(tty, "-") != 0) {
+		char buf[PATH_MAX+1];
+		struct group *gr = NULL;
 		struct stat st;
+		int fd, len;
+		pid_t tid;
+		gid_t gid = 0;
 
-		/* Sanity checks. */
-		if (chdir("/dev"))
-			log_err(_("/dev: chdir() failed: %m"));
-		if (stat(tty, &st) < 0)
-			log_err("/dev/%s: %m", tty);
+		/* Use tty group if available */
+		if ((gr = getgrnam("tty")))
+			gid = gr->gr_gid;
+
+		if (((len = snprintf(buf, sizeof(buf), "/dev/%s", tty)) >= (int)sizeof(buf)) || (len < 0))
+			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
+
+		/*
+		 * There is always a race between this reset and the call to
+		 * vhangup() that s.o. can use to get access to your tty.
+		 * Linux login(1) will change tty permissions. Use root owner and group
+		 * with permission -rw------- for the period between getty and login.
+		 */
+		if (chown (buf, 0, gid) || chmod (buf, (gid ? 0660 : 0600))) {
+			if (errno == EROFS)
+				log_warn("%s: %m", buf);
+			else
+				log_err("%s: %m", buf);
+		}
+
+		/* Open the tty as standard input. */
+		if ((fd = open(buf, O_RDWR|O_NOCTTY|O_NONBLOCK, 0)) < 0)
+			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
+
+		/* Sanity checks... */
+		if (!isatty (fd))
+			log_err(_("/dev/%s: not a character device"), tty);
+		if (fstat(fd, &st) < 0)
+			log_err ("%s: %m", buf);
 		if ((st.st_mode & S_IFMT) != S_IFCHR)
 			log_err(_("/dev/%s: not a character device"), tty);
 
-		/* Open the tty as standard input. */
+		if (((tid = tcgetsid(fd)) < 0) || (pid != tid)) {
+			if (ioctl (fd, TIOCSCTTY, 1) == -1)
+				log_err("/dev/%s: cannot get controlling tty: %m", tty);
+		}
+
+		if (op->flags & F_HANGUP) {
+			/*
+			 * vhangup() will replace all open file descriptors in the kernel
+			 * that point to our controlling tty by a dummy that will deny
+			 * further reading/writing to our device. It will also reset the
+			 * tty to sane defaults, so we don't have to modify the tty device
+			 * for sane settings. We also get a SIGHUP/SIGCONT.
+			 */
+			if (vhangup())
+				log_err("/dev/%s: vhangup() failed: %m", tty);
+			(void)ioctl(fd, TIOCNOTTY);
+		}
+
+		(void) close(fd);
 		close(STDIN_FILENO);
 		errno = 0;
 
 		debug("open(2)\n");
-		if (open(tty, O_RDWR | O_NONBLOCK, 0) != 0)
-			log_err(_("/dev/%s: cannot open as standard input: %m"),
-			      tty);
+		if (open(buf, O_RDWR|O_NOCTTY|O_NONBLOCK, 0) != 0)
+			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
+		if (((tid = tcgetsid(STDIN_FILENO)) < 0) || (pid != tid)) {
+			if (ioctl (STDIN_FILENO, TIOCSCTTY, 1) == -1)
+				log_err("/dev/%s: cannot get controlling tty: %m", tty);
+		}
+
 	} else {
+
 		/*
 		 * Standard input should already be connected to an open port. Make
 		 * sure it is open for read/write.
 		 */
+
 		if ((fcntl(STDIN_FILENO, F_GETFL, 0) & O_RDWR) != O_RDWR)
 			log_err(_("%s: not open for read/write"), tty);
+
 	}
+
+	if (tcsetpgrp(STDIN_FILENO, pid))
+		log_err("/dev/%s: cannot set process group: %m", tty);
+
+	/* Get rid of the present outputs. */
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
+	errno = 0;
 
 	/* Set up standard output and standard error file descriptors. */
 	debug("duping\n");
@@ -670,6 +751,9 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 	/* set up stdout and stderr */
 	if (dup(STDIN_FILENO) != 1 || dup(STDIN_FILENO) != 2)
 		log_err(_("%s: dup problem: %m"), tty);
+
+	/* make stdio unbuffered for slow modem lines */
+	setvbuf(stdout, NULL, _IONBF, 0);
 
 	/*
 	 * The following ioctl will fail if stdin is not a tty, but also when
@@ -686,12 +770,16 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 		log_err("%s: tcgetattr: %m", tty);
 
 	/*
-	 * Linux login(1) will change tty permissions. Use root owner and group
-	 * with permission -rw------- for the period between getty and login.
+	 * Detect if this is a virtual console or serial/modem line.
+	 * In case of a virtual console the ioctl TIOCMGET fails and
+	 * the error number will be set to EINVAL.
 	 */
-	ignore_result(chown(tty, 0, 0));
-	ignore_result(chmod(tty, 0600));
-	errno = 0;
+	if (ioctl(STDIN_FILENO, TIOCMGET, &serial) < 0 && (errno = EINVAL)) {
+		op->flags |= F_VCONSOLE;
+		if (!op->term)
+			op->term = DEFAULT_VCTERM;
+	} else if (!op->term)
+		op->term = DEFAULT_STERM;
 
 	setenv("TERM", op->term, 1);
 }
@@ -819,17 +907,15 @@ static void do_prompt(struct options *op, struct termios *tp)
 {
 #ifdef	ISSUE
 	FILE *fd;
-	int oflag;
-	int c;
-	struct utsname uts;
-
-	uname(&uts);
 #endif				/* ISSUE */
 
 	/* Issue not in use, start with a new line. */
 	write_all(STDOUT_FILENO, "\r\n", 2);
+
 #ifdef	ISSUE
 	if ((op->flags & F_ISSUE) && (fd = fopen(op->issue, "r"))) {
+		int c, oflag;
+
 		/* Save current setting. */
 		oflag = tp->c_oflag;
 		/* Map new line in output to carriage return & new line. */
@@ -1113,6 +1199,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		       " -L, --local-line           force local line\n"
 		       " -m, --extract-baud         extract baud rate during connect\n"
 		       " -n, --skip-login           do not prompt for login\n"
+		       " -R, --hangup               do virtually hangup on the tty\n"
 		       " -s, --keep-baud            try to keep baud rate after break\n"
 		       " -t, --timeout NUMBER       login process timeout\n"
 		       " -U, --detect-case          detect uppercase terminal\n"
@@ -1197,6 +1284,7 @@ static void output_special_char(unsigned char c, struct options *op,
 {
 	struct utsname uts;
 	(void) uname(&uts);
+
 	switch (c) {
 	case 's':
 		(void) printf ("%s", uts.sysname);
