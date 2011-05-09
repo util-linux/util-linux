@@ -108,15 +108,14 @@
 #define	MAX_SPEED	10	/* max. nr. of baud rates */
 
 struct options {
-	int flags;		/* toggle switches, see below */
-	int timeout;		/* time-out period */
-	char *login;		/* login program */
-	char *tty;		/* name of tty */
-	char *initstring;	/* modem init string */
-	char *issue;		/* alternative issue file */
-	int numspeed;		/* number of baud rates to try */
-	int speeds[MAX_SPEED];	/* baud rates to be tried */
-	int eightbits;		/* assume 8bit-clean tty */
+	int flags;			/* toggle switches, see below */
+	int timeout;			/* time-out period */
+	char *login;			/* login program */
+	char *tty;			/* name of tty */
+	char *initstring;		/* modem init string */
+	char *issue;			/* alternative issue file */
+	int numspeed;			/* number of baud rates to try */
+	speed_t speeds[MAX_SPEED];	/* baud rates to be tried */
 };
 
 #define	F_PARSE		(1<<0)	/* process modem status messages */
@@ -130,6 +129,7 @@ struct options {
 #define F_LCUC		(1<<8)	/* support for *LCUC stty modes */
 #define F_KEEPSPEED	(1<<9)	/* follow baud rate from kernel */
 #define F_KEEPCFLAGS	(1<<10)	/* reuse c_cflags setup from kernel */
+#define F_EIGHTBITS	(1<<11)	/* Assume 8bit-clean tty */
 
 /* Storage for things detected while the login name was read. */
 struct chardata {
@@ -151,7 +151,7 @@ struct chardata init_chardata = {
 
 struct Speedtab {
 	long speed;
-	int code;
+	speed_t code;
 };
 
 static struct Speedtab speedtab[] = {
@@ -205,12 +205,13 @@ static char *get_logname(struct options *op,
 static void termio_final(struct options *op,
 			 struct termios *tp, struct chardata *cp);
 static int caps_lock(char *s);
-static int bcode(char *s);
-static void usage(FILE * out);
-static void error(const char *, ...);
+static speed_t bcode(char *s);
+static void usage(FILE * out) __attribute__((__noreturn__));
+static void log_err(const char *, ...) __attribute__((__noreturn__)) __attribute__((__format__(printf, 1, 2)));
+static void log_warn (const char *, ...) __attribute__((__format__(printf, 1, 2)));
 
 /* Fake hostname for ut_host specified on command line. */
-char *fakehost = NULL;
+static char *fakehost;
 
 #ifdef DEBUGGING
 #define debug(s) fprintf(dbf,s); fflush(dbf)
@@ -231,7 +232,8 @@ int main(int argc, char **argv)
 		"tty1",		/* default tty line */
 		"",		/* modem init string */
 		ISSUE,		/* default issue file */
-		0,		/* no baud rates known yet */
+		0, 		/* no baud rates known yet */
+		{ 0 }
 	};
 
 	setlocale(LC_ALL, "");
@@ -325,11 +327,11 @@ int main(int argc, char **argv)
 
 	/* Let the login program take care of password validation. */
 	execl(options.login, options.login, "--", logname, NULL);
-	error(_("%s: can't exec %s: %m"), options.tty, options.login);
+	log_err(_("%s: can't exec %s: %m"), options.tty, options.login);
 }
 
 /* Parse command-line arguments. */
-void parse_args(int argc, char **argv, struct options *op)
+static void parse_args(int argc, char **argv, struct options *op)
 {
 	extern char *optarg;
 	extern int optind;
@@ -360,12 +362,11 @@ void parse_args(int argc, char **argv, struct options *op)
 		{ NULL, 0, 0, 0 }
 	};
 
-	while ((c =
-		getopt_long(argc, argv, "8cf:hH:iI:l:Lmnst:Uw", longopts,
+	while ((c = getopt_long(argc, argv, "8cf:hH:iI:l:Lmnst:Uw", longopts,
 			    NULL)) != -1) {
 		switch (c) {
 		case '8':
-			op->eightbits = 1;
+			op->flags |= F_EIGHTBITS;
 			break;
 		case 'c':
 			op->flags |= F_KEEPCFLAGS;
@@ -445,7 +446,7 @@ void parse_args(int argc, char **argv, struct options *op)
 			break;
 		case 't':
 			if ((op->timeout = atoi(optarg)) <= 0)
-				error(_("bad timeout value: %s"), optarg);
+				log_err(_("bad timeout value: %s"), optarg);
 			break;
 		case 'U':
 			op->flags |= F_LCUC;
@@ -467,7 +468,7 @@ void parse_args(int argc, char **argv, struct options *op)
 	debug("after getopt loop\n");
 
 	if (argc < optind + 2) {
-		warnx(_("not enough arguments"));
+		log_warn(_("not enough arguments"));
 		usage(stderr);
 	}
 
@@ -522,16 +523,16 @@ void parse_args(int argc, char **argv, struct options *op)
 }
 
 /* Parse alternate baud rates. */
-void parse_speeds(struct options *op, char *arg)
+static void parse_speeds(struct options *op, char *arg)
 {
 	char *cp;
 
 	debug("entered parse_speeds\n");
 	for (cp = strtok(arg, ","); cp != 0; cp = strtok((char *)0, ",")) {
 		if ((op->speeds[op->numspeed++] = bcode(cp)) <= 0)
-			error(_("bad speed: %s"), cp);
+			log_err(_("bad speed: %s"), cp);
 		if (op->numspeed >= MAX_SPEED)
-			error(_("too many alternate speeds"));
+			log_err(_("too many alternate speeds"));
 	}
 	debug("exiting parsespeeds\n");
 }
@@ -539,7 +540,7 @@ void parse_speeds(struct options *op, char *arg)
 #ifdef	SYSV_STYLE
 
 /* Update our utmp entry. */
-void update_utmp(char *line)
+static void update_utmp(char *line)
 {
 	struct utmp ut;
 	time_t t;
@@ -616,7 +617,7 @@ void update_utmp(char *line)
 #endif				/* SYSV_STYLE */
 
 /* Set up tty as stdin, stdout & stderr. */
-void open_tty(char *tty, struct termios *tp, int local)
+static void open_tty(char *tty, struct termios *tp, int __attribute__((__unused__)) local)
 {
 	/* Get rid of the present outputs. */
 	close(STDOUT_FILENO);
@@ -632,11 +633,11 @@ void open_tty(char *tty, struct termios *tp, int local)
 
 		/* Sanity checks. */
 		if (chdir("/dev"))
-			error(_("/dev: chdir() failed: %m"));
+			log_err(_("/dev: chdir() failed: %m"));
 		if (stat(tty, &st) < 0)
-			error("/dev/%s: %m", tty);
+			log_err("/dev/%s: %m", tty);
 		if ((st.st_mode & S_IFMT) != S_IFCHR)
-			error(_("/dev/%s: not a character device"), tty);
+			log_err(_("/dev/%s: not a character device"), tty);
 
 		/* Open the tty as standard input. */
 		close(STDIN_FILENO);
@@ -644,7 +645,7 @@ void open_tty(char *tty, struct termios *tp, int local)
 
 		debug("open(2)\n");
 		if (open(tty, O_RDWR | O_NONBLOCK, 0) != 0)
-			error(_("/dev/%s: cannot open as standard input: %m"),
+			log_err(_("/dev/%s: cannot open as standard input: %m"),
 			      tty);
 	} else {
 		/*
@@ -652,7 +653,7 @@ void open_tty(char *tty, struct termios *tp, int local)
 		 * sure it is open for read/write.
 		 */
 		if ((fcntl(STDIN_FILENO, F_GETFL, 0) & O_RDWR) != O_RDWR)
-			error(_("%s: not open for read/write"), tty);
+			log_err(_("%s: not open for read/write"), tty);
 	}
 
 	/* Set up standard output and standard error file descriptors. */
@@ -660,7 +661,7 @@ void open_tty(char *tty, struct termios *tp, int local)
 
 	/* set up stdout and stderr */
 	if (dup(STDIN_FILENO) != 1 || dup(STDIN_FILENO) != 2)
-		error(_("%s: dup problem: %m"), tty);
+		log_err(_("%s: dup problem: %m"), tty);
 
 	/*
 	 * The following ioctl will fail if stdin is not a tty, but also when
@@ -672,8 +673,9 @@ void open_tty(char *tty, struct termios *tp, int local)
 	 * "zsadtrlow" to a larger value; 5 seconds seems to be a good value.
 	 * http://www.sunmanagers.org/archives/1993/0574.html
 	 */
+	memset(tp, 0, sizeof(struct termios));
 	if (tcgetattr(STDIN_FILENO, tp) < 0)
-		error("%s: tcgetattr: %m", tty);
+		log_err("%s: tcgetattr: %m", tty);
 
 	/*
 	 * Linux login(1) will change tty permissions. Use root owner and group
@@ -685,10 +687,7 @@ void open_tty(char *tty, struct termios *tp, int local)
 }
 
 /* Initialize termios settings. */
-char gbuf[1024];
-char area[1024];
-
-void termio_init(struct options *op, struct termios *tp)
+static void termio_init(struct options *op, struct termios *tp)
 {
 	speed_t ispeed, ospeed;
 
@@ -746,9 +745,9 @@ void termio_init(struct options *op, struct termios *tp)
 }
 
 /* Extract baud rate from modem status message. */
-void auto_baud(struct termios *tp)
+static void auto_baud(struct termios *tp)
 {
-	int speed;
+	speed_t speed;
 	int vmin;
 	unsigned iflag;
 	char buf[BUFSIZ];
@@ -806,12 +805,12 @@ void auto_baud(struct termios *tp)
 }
 
 /* Show login prompt, optionally preceded by /etc/issue contents. */
-void do_prompt(struct options *op, struct termios *tp)
+static void do_prompt(struct options *op, struct termios *tp)
 {
 #ifdef	ISSUE
 	FILE *fd;
 	int oflag;
-	int c;
+	int c, i;
 	struct utsname uts;
 
 	uname(&uts);
@@ -924,7 +923,7 @@ void do_prompt(struct options *op, struct termios *tp)
 					printf("%s", op->tty);
 					break;
 				case 'b':
-					for (int i = 0; speedtab[i].speed; i++)
+					for (i = 0; speedtab[i].speed; i++)
 						if (speedtab[i].code == cfgetispeed(tp))
 							printf("%ld", speedtab[i].speed);
 					break;
@@ -974,7 +973,7 @@ void do_prompt(struct options *op, struct termios *tp)
 }
 
 /* Select next baud rate. */
-void next_speed(struct options *op, struct termios *tp)
+static void next_speed(struct options *op, struct termios *tp)
 {
 	static int baud_index = -1;
 
@@ -994,7 +993,7 @@ void next_speed(struct options *op, struct termios *tp)
 }
 
 /* Get user name, establish parity, speed, erase, kill & eol. */
-char *get_logname(struct options *op, struct termios *tp, struct chardata *cp)
+static char *get_logname(struct options *op, struct termios *tp, struct chardata *cp)
 {
 	static char logname[BUFSIZ];
 	char *bp;
@@ -1033,13 +1032,13 @@ char *get_logname(struct options *op, struct termios *tp, struct chardata *cp)
 			if (read(STDIN_FILENO, &c, 1) < 1) {
 				if (errno == EINTR || errno == EIO)
 					exit(EXIT_SUCCESS);
-				error(_("%s: read: %m"), op->tty);
+				log_err(_("%s: read: %m"), op->tty);
 			}
 			/* Do BREAK handling elsewhere. */
 			if ((c == 0) && op->numspeed > 1)
 				return EXIT_SUCCESS;
 			/* Do parity bit handling. */
-			if (op->eightbits) {
+			if (op->flags & F_EIGHTBITS) {
 				ascval = c;
 			} else if (c != (ascval = (c & 0177))) {
 				/* Set "parity" bit on. */
@@ -1087,8 +1086,8 @@ char *get_logname(struct options *op, struct termios *tp, struct chardata *cp)
 			default:
 				if (!isascii(ascval) || !isprint(ascval)) {
 					/* Ignore garbage characters. */ ;
-				} else if (bp - logname >= sizeof(logname) - 1) {
-					error(_("%s: input overrun"), op->tty);
+				} else if ((size_t)(bp - logname) >= sizeof(logname) - 1) {
+					log_err(_("%s: input overrun"), op->tty);
 				} else {
 					/* Echo the character... */
 					ignore_result(write
@@ -1109,7 +1108,7 @@ char *get_logname(struct options *op, struct termios *tp, struct chardata *cp)
 }
 
 /* Set the final tty mode bits. */
-void termio_final(struct options *op, struct termios *tp, struct chardata *cp)
+static void termio_final(struct options *op, struct termios *tp, struct chardata *cp)
 {
 	/* General terminal-independent stuff. */
 
@@ -1177,7 +1176,7 @@ void termio_final(struct options *op, struct termios *tp, struct chardata *cp)
 
 	/* Finally, make the new settings effective. */
 	if (tcsetattr(STDIN_FILENO, TCSANOW, tp) < 0)
-		error("%s: tcsetattr: TCSANOW: %m", op->tty);
+		log_err("%s: tcsetattr: TCSANOW: %m", op->tty);
 }
 
 /*
@@ -1185,7 +1184,7 @@ void termio_final(struct options *op, struct termios *tp, struct chardata *cp)
  * http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=52940
  * http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=156242
  */
-int caps_lock(char *s)
+static int caps_lock(char *s)
 {
 	int capslock;
 
@@ -1199,8 +1198,7 @@ int caps_lock(char *s)
 }
 
 /* Convert speed string to speed code; return 0 on failure. */
-int bcode(s)
-char *s;
+static speed_t bcode(char *s)
 {
 	struct Speedtab *sp;
 	long speed = atol(s);
@@ -1211,7 +1209,7 @@ char *s;
 	return 0;
 }
 
-void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fprintf(out, _("\nUsage:\n"
 		       "    %1$s [options] line baud_rate,... [termtype]\n"
@@ -1240,12 +1238,15 @@ void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-/* Report errors to console or syslog; only understands %s and %m. */
+/*
+ * Helper function reports errors to console or syslog.
+ * Will be used by log_err() and log_warn() therefore
+ * it takes a format as well as va_list.
+ */
 #define	str2cpy(b,s1,s2)	strcat(strcpy(b,s1),s2)
 
-void error(const char *fmt, ...)
+static void dolog(int priority, const char *fmt, va_list ap)
 {
-	va_list ap;
 #ifndef	USE_SYSLOG
 	int fd;
 #endif
@@ -1264,31 +1265,7 @@ void error(const char *fmt, ...)
 	str2cpy(buf, program_invocation_short_name, ": ");
 	bp = buf + strlen(buf);
 #endif				/* USE_SYSLOG */
-
-	/*
-	 * %s expansion is done by hand. On a System V Release 2 system without
-	 * shared libraries and without syslog(3), linking with the the stdio
-	 * library used to make the program three times as big...
-	 *
-	 * %m expansion is done here as well. Too bad syslog(3) does not have a
-	 * vsprintf() like interface.
-	 */
-	va_start(ap, fmt);
-	while (*fmt && bp < &buf[BUFSIZ - 1]) {
-		if (strncmp(fmt, "%s", 2) == 0) {
-			xstrncpy(bp, va_arg(ap, char *), &buf[BUFSIZ - 1] - bp);
-			bp += strlen(bp);
-			fmt += 2;
-		} else if (strncmp(fmt, "%m", 2) == 0) {
-			xstrncpy(bp, strerror(errno), &buf[BUFSIZ - 1] - bp);
-			bp += strlen(bp);
-			fmt += 2;
-		} else {
-			*bp++ = *fmt++;
-		}
-	}
-	*bp = 0;
-	va_end(ap);
+	vsnprintf (bp, sizeof(buf)-strlen(buf), fmt, ap);
 
 	/*
 	 * Write the diagnostic directly to /dev/console if we do not use the
@@ -1296,7 +1273,7 @@ void error(const char *fmt, ...)
 	 */
 #ifdef	USE_SYSLOG
 	openlog(program_invocation_short_name, LOG_PID, LOG_AUTHPRIV);
-	syslog(LOG_ERR, "%s", buf);
+	syslog(priority, "%s", buf);
 	closelog();
 #else
 	/* Terminate with CR-LF since the console mode is unknown. */
@@ -1306,7 +1283,26 @@ void error(const char *fmt, ...)
 		close(fd);
 	}
 #endif				/* USE_SYSLOG */
+}
+
+static void log_err(const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	dolog(LOG_ERR, fmt, ap);
+	va_end(ap);
+
 	/* Be kind to init(8). */
 	sleep(10);
 	exit(EXIT_FAILURE);
+}
+
+static void log_warn(const char *fmt, ...)
+{
+	va_list ap;
+
+	va_start(ap, fmt);
+	dolog(LOG_WARNING, fmt, ap);
+	va_end(ap);
 }
