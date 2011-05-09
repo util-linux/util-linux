@@ -27,8 +27,10 @@
 #include <sys/file.h>
 #include <sys/socket.h>
 #include <netdb.h>
+#include <langinfo.h>
 
 #include "strutils.h"
+#include "writeall.h"
 #include "nls.h"
 #include "pathnames.h"
 #include "c.h"
@@ -37,6 +39,19 @@
 #ifdef __linux__
 #  include <sys/param.h>
 #  define USE_SYSLOG
+#  ifndef DEFAULT_VCTERM
+#    define DEFAULT_VCTERM "linux"
+#  endif
+#  ifndef DEFAULT_STERM
+#    define DEFAULT_STERM  "vt102"
+#  endif
+#else
+#  ifndef DEFAULT_VCTERM
+#    define DEFAULT_VCTERM "vt100"
+#  endif
+#  ifndef DEFAULT_STERM
+#    define DEFAULT_STERM  "vt100"
+#  endif
 #endif
 
 /* If USE_SYSLOG is undefined all diagnostics go to /dev/console. */
@@ -112,6 +127,8 @@ struct options {
 	int timeout;			/* time-out period */
 	char *login;			/* login program */
 	char *tty;			/* name of tty */
+	char *vcline;			/* line of virtual console */
+	char *term;			/* terminal type */
 	char *initstring;		/* modem init string */
 	char *issue;			/* alternative issue file */
 	int numspeed;			/* number of baud rates to try */
@@ -192,12 +209,14 @@ static struct Speedtab speedtab[] = {
 	{0, 0},
 };
 
+static void init_special_char(char* arg, struct options *op);
 static void parse_args(int argc, char **argv, struct options *op);
 static void parse_speeds(struct options *op, char *arg);
-static void update_utmp(char *line);
-static void open_tty(char *tty, struct termios *tp, int local);
+static void update_utmp(struct options *op);
+static void open_tty(char *tty, struct termios *tp, struct options *op);
 static void termio_init(struct options *op, struct termios *tp);
 static void auto_baud(struct termios *tp);
+static void output_special_char (unsigned char c, struct options *op, struct termios *tp);
 static void do_prompt(struct options *op, struct termios *tp);
 static void next_speed(struct options *op, struct termios *tp);
 static char *get_logname(struct options *op,
@@ -230,6 +249,8 @@ int main(int argc, char **argv)
 		0,		/* no timeout */
 		_PATH_LOGIN,	/* default login program */
 		"tty1",		/* default tty line */
+		0,		/* line of virtual console */
+		DEFAULT_VCTERM,	/* terminal type */
 		"",		/* modem init string */
 		ISSUE,		/* default issue file */
 		0, 		/* no baud rates known yet */
@@ -255,13 +276,13 @@ int main(int argc, char **argv)
 
 	/* Update the utmp file. */
 #ifdef	SYSV_STYLE
-	update_utmp(options.tty);
+	update_utmp(&options);
 #endif
 
 	debug("calling open_tty\n");
 
 	/* Open the tty as standard { input, output, error }. */
-	open_tty(options.tty, &termios, options.flags & F_LOCAL);
+	open_tty(options.tty, &termios, &options);
 
 	tcsetpgrp(STDIN_FILENO, getpid());
 	/* Initialize the termios settings (raw mode, eight-bit, blocking i/o). */
@@ -271,9 +292,8 @@ int main(int argc, char **argv)
 	/* Write the modem init string and DO NOT flush the buffers. */
 	if (options.flags & F_INITSTRING) {
 		debug("writing init string\n");
-		ignore_result(write
-			      (STDIN_FILENO, options.initstring,
-			       strlen(options.initstring)));
+		write_all(STDOUT_FILENO, options.initstring,
+			       strlen(options.initstring));
 	}
 
 	if (!(options.flags & F_LOCAL))
@@ -323,7 +343,7 @@ int main(int argc, char **argv)
 	termio_final(&options, &termios, &chardata);
 
 	/* Now the newline character should be properly written. */
-	ignore_result(write(STDOUT_FILENO, "\n", 1));
+	write_all(STDOUT_FILENO, "\n", 1);
 
 	/* Let the login program take care of password validation. */
 	execl(options.login, options.login, "--", logname, NULL);
@@ -385,50 +405,9 @@ static void parse_args(int argc, char **argv, struct options *op)
 			op->flags &= ~F_ISSUE;
 			break;
 		case 'I':
-			/*
-			 * FIXME: It would be better to use a separate
-			 * function for this task.
-			 */
-			{
-				char ch, *p, *q;
-				int i;
-
-				op->initstring = xmalloc(strlen(optarg) + 1);
-
-				/*
-				 * Copy optarg into op->initstring decoding \ddd octal
-				 * codes into chars.
-				 */
-				q = op->initstring;
-				p = optarg;
-				while (*p) {
-					/* The \\ is converted to \ */
-					if (*p == '\\') {
-						p++;
-						if (*p == '\\') {
-							ch = '\\';
-							p++;
-						} else {
-							/* Handle \000 - \177. */
-							ch = 0;
-							for (i = 1; i <= 3; i++) {
-								if (*p >= '0' && *p <= '7') {
-									ch <<= 3;
-									ch += *p - '0';
-									p++;
-								} else {
-									break;
-								}
-							}
-						}
-						*q++ = ch;
-					} else
-						*q++ = *p++;
-				}
-				*q = '\0';
-				op->flags |= F_INITSTRING;
-				break;
-			}
+			init_special_char(optarg, op);
+			op->flags |= F_INITSTRING;
+			break;
 		case 'l':
 			op->login = optarg;
 			break;
@@ -467,24 +446,38 @@ static void parse_args(int argc, char **argv, struct options *op)
 
 	debug("after getopt loop\n");
 
-	if (argc < optind + 2) {
+	if (argc < optind + 1) {
 		log_warn(_("not enough arguments"));
 		usage(stderr);
 	}
 
-	/* Accept both "baudrate tty" and "tty baudrate". */
+	/* Accept "tty", "baudrate tty", and "tty baudrate". */
 	if ('0' <= argv[optind][0] && argv[optind][0] <= '9') {
 		/* Assume BSD style speed. */
 		parse_speeds(op, argv[optind++]);
-		op->tty = argv[optind];
+		if (argc < optind + 1) {
+			warn(_("not enough arguments"));
+			usage(stderr);
+		}
+		op->tty = argv[optind++];
 	} else {
 		op->tty = argv[optind++];
-		parse_speeds(op, argv[optind]);
+		if (argc > optind) {
+			char *v = argv[optind++];
+			if ('0' <= *v && *v <= '9')
+				parse_speeds(op, v);
+			else
+				op->speeds[op->numspeed++] = bcode("9600");
+		}
 	}
 
-	optind++;
+	/* On virtual console remember the line which is used for */
+	if (strncmp(op->tty, "tty", 3) == 0 &&
+	    strspn(op->tty + 3, "0123456789") == strlen(op->tty+3))
+		op->vcline = op->tty+3;
+
 	if (argc > optind && argv[optind])
-		setenv("TERM", argv[optind], 1);
+		op->term = argv[optind];
 
 #ifdef DO_DEVFS_FIDDLING
 	/*
@@ -540,11 +533,14 @@ static void parse_speeds(struct options *op, char *arg)
 #ifdef	SYSV_STYLE
 
 /* Update our utmp entry. */
-static void update_utmp(char *line)
+static void update_utmp(struct options *op)
 {
 	struct utmp ut;
 	time_t t;
-	int mypid = getpid();
+	pid_t pid = getpid();
+	pid_t sid = getsid(0);
+	char *vcline = op->vcline;
+	char *line   = op->tty;
 	struct utmp *utp;
 
 	/*
@@ -559,7 +555,7 @@ static void update_utmp(char *line)
 	setutent();
 
 	/*
-	 * Find mypid in utmp.
+	 * Find my pid in utmp.
 	 *
 	 * FIXME: Earlier (when was that?) code here tested only utp->ut_type !=
 	 * INIT_PROCESS, so maybe the >= here should be >.
@@ -568,7 +564,7 @@ static void update_utmp(char *line)
 	 * maybe login has to be changed as well (is this true?).
 	 */
 	while ((utp = getutent()))
-		if (utp->ut_pid == mypid
+		if (utp->ut_pid == pid
 				&& utp->ut_type >= INIT_PROCESS
 				&& utp->ut_type <= DEAD_PROCESS)
 			break;
@@ -578,7 +574,18 @@ static void update_utmp(char *line)
 	} else {
 		/* Some inits do not initialize utmp. */
 		memset(&ut, 0, sizeof(ut));
-		strncpy(ut.ut_id, line + 3, sizeof(ut.ut_id));
+		if (vcline && *vcline)
+			/* Standard virtual console devices */
+			strncpy (ut.ut_id, vcline, sizeof (ut.ut_id));
+		else {
+			size_t len = strlen(line);
+			char * ptr;
+			if (len >= sizeof (ut.ut_id))
+				ptr = line + len - sizeof (ut.ut_id);
+			else
+				ptr = line;
+			strncpy (ut.ut_id, ptr, sizeof(ut.ut_id));
+		}
 	}
 
 	strncpy(ut.ut_user, "LOGIN", sizeof(ut.ut_user));
@@ -588,7 +595,8 @@ static void update_utmp(char *line)
 	time(&t);
 	ut.ut_time = t;
 	ut.ut_type = LOGIN_PROCESS;
-	ut.ut_pid = mypid;
+	ut.ut_pid = pid;
+	ut.ut_session = sid;
 
 	pututline(&ut);
 	endutent();
@@ -604,7 +612,7 @@ static void update_utmp(char *line)
 			flock(lf, LOCK_EX);
 			if ((ut_fd =
 			     open(_PATH_WTMP, O_APPEND | O_WRONLY)) >= 0) {
-				ignore_result(write(ut_fd, &ut, sizeof(ut)));
+				write_all(ut_fd, &ut, sizeof(ut));
 				close(ut_fd);
 			}
 			flock(lf, LOCK_UN);
@@ -617,7 +625,7 @@ static void update_utmp(char *line)
 #endif				/* SYSV_STYLE */
 
 /* Set up tty as stdin, stdout & stderr. */
-static void open_tty(char *tty, struct termios *tp, int __attribute__((__unused__)) local)
+static void open_tty(char *tty, struct termios *tp, struct options *op)
 {
 	/* Get rid of the present outputs. */
 	close(STDOUT_FILENO);
@@ -684,6 +692,8 @@ static void open_tty(char *tty, struct termios *tp, int __attribute__((__unused_
 	ignore_result(chown(tty, 0, 0));
 	ignore_result(chmod(tty, 0600));
 	errno = 0;
+
+	setenv("TERM", op->term, 1);
 }
 
 /* Initialize termios settings. */
@@ -810,14 +820,14 @@ static void do_prompt(struct options *op, struct termios *tp)
 #ifdef	ISSUE
 	FILE *fd;
 	int oflag;
-	int c, i;
+	int c;
 	struct utsname uts;
 
 	uname(&uts);
 #endif				/* ISSUE */
 
 	/* Issue not in use, start with a new line. */
-	ignore_result(write(STDOUT_FILENO, "\r\n", 2));
+	write_all(STDOUT_FILENO, "\r\n", 2);
 #ifdef	ISSUE
 	if ((op->flags & F_ISSUE) && (fd = fopen(op->issue, "r"))) {
 		/* Save current setting. */
@@ -827,132 +837,10 @@ static void do_prompt(struct options *op, struct termios *tp)
 		tcsetattr(STDIN_FILENO, TCSADRAIN, tp);
 
 		while ((c = getc(fd)) != EOF) {
-			if (c == '\\') {
-				c = getc(fd);
-
-				switch (c) {
-				case 's':
-					printf("%s", uts.sysname);
-					break;
-				case 'n':
-					printf("%s", uts.nodename);
-					break;
-				case 'r':
-					printf("%s", uts.release);
-					break;
-				case 'v':
-					printf("%s", uts.version);
-					break;
-				case 'm':
-					printf("%s", uts.machine);
-					break;
-				case 'o':
-					/*
-					 * FIXME: It would be better to use a
-					 * separate function for this task.
-					 */
-					{
-						char domainname[MAXHOSTNAMELEN + 1];
-#ifdef HAVE_GETDOMAINNAME
-						if (getdomainname(domainname, sizeof(domainname)))
-#endif				/* HAVE_GETDOMAINNAME */
-							strcpy(domainname, "unknown_domain");
-						domainname[sizeof(domainname) - 1] = '\0';
-						printf("%s", domainname);
-						break;
-					}
-				case 'O':
-					/*
-					 * FIXME: It would be better to use a
-					 * separate function for this task.
-					 */
-					{
-						char *dom = "unknown_domain";
-						char host[MAXHOSTNAMELEN + 1];
-						struct addrinfo hints, *info = NULL;
-
-						memset(&hints, 0, sizeof(hints));
-						hints.ai_flags = AI_CANONNAME;
-
-						if (gethostname(host, sizeof(host))
-						    || getaddrinfo(host, NULL, &hints, &info)
-						    || info == NULL) {
-							fputs(dom, stdout);
-						} else {
-							char *canon;
-
-							if (info->ai_canonname
-							    && (canon =
-								strchr(info->ai_canonname, '.'))) {
-								dom = canon + 1;
-							}
-							fputs(dom, stdout);
-							freeaddrinfo(info);
-						}
-						break;
-					}
-				case 'd':
-				case 't':
-					/*
-					 * FIXME: It would be better to use a
-					 * separate function for this task.
-					 */
-					{
-						time_t now;
-						struct tm *tm;
-
-						time(&now);
-						tm = localtime(&now);
-
-						if (c == 'd')
-							printf
-							    ("%s %s %d  %d",
-							     nl_langinfo(ABDAY_1 + tm->tm_wday),
-							     nl_langinfo(ABMON_1 + tm->tm_mon),
-							     tm->tm_mday,
-							     /* FIXME: y2070 bug */
-							     tm->tm_year < 70 ?
-								 tm->tm_year + 2000 :
-								 tm->tm_year + 1900);
-						else
-							printf("%02d:%02d:%02d",
-							       tm->tm_hour, tm->tm_min, tm->tm_sec);
-						break;
-					}
-				case 'l':
-					printf("%s", op->tty);
-					break;
-				case 'b':
-					for (i = 0; speedtab[i].speed; i++)
-						if (speedtab[i].code == cfgetispeed(tp))
-							printf("%ld", speedtab[i].speed);
-					break;
-					break;
-				case 'u':
-				case 'U':
-					/*
-					 * FIXME: It would be better to use a
-					 * separate function for this task.
-					 */
-					{
-						int users = 0;
-						struct utmp *ut;
-						setutent();
-						while ((ut = getutent()))
-							if (ut->ut_type == USER_PROCESS)
-								users++;
-						endutent();
-						printf("%d ", users);
-						if (c == 'U')
-							printf((users == 1) ?
-								_("user") : _("users"));
-						break;
-					}
-				default:
-					putchar(c);
-				}
-			} else
-				putchar(c);
+			if (c == '\\')
+				output_special_char(getc(fd), op, tp);
+			else
+				(void) putchar(c);
 		}
 		fflush(stdout);
 
@@ -966,10 +854,10 @@ static void do_prompt(struct options *op, struct termios *tp)
 	{
 		char hn[MAXHOSTNAMELEN + 1];
 		if (gethostname(hn, sizeof(hn)) == 0)
-			ignore_result(write(STDIN_FILENO, hn, strlen(hn)));
+			write_all(STDOUT_FILENO, hn, strlen(hn));
 	}
 	/* Always show login prompt. */
-	ignore_result(write(STDOUT_FILENO, LOGIN, sizeof(LOGIN) - 1));
+	write_all(STDOUT_FILENO, LOGIN, sizeof(LOGIN) - 1);
 }
 
 /* Select next baud rate. */
@@ -1064,9 +952,8 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 				/* Set erase character. */
 				cp->erase = ascval;
 				if (bp > logname) {
-					ignore_result(write
-						      (STDIN_FILENO,
-						       erase[cp->parity], 3));
+					write_all(STDOUT_FILENO,
+						   erase[cp->parity], 3);
 					bp--;
 				}
 				break;
@@ -1075,9 +962,8 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 				/* Set kill character. */
 				cp->kill = ascval;
 				while (bp > logname) {
-					ignore_result(write
-						      (STDIN_FILENO,
-						       erase[cp->parity], 3));
+					write_all(STDOUT_FILENO,
+						   erase[cp->parity], 3);
 					bp--;
 				}
 				break;
@@ -1090,8 +976,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 					log_err(_("%s: input overrun"), op->tty);
 				} else {
 					/* Echo the character... */
-					ignore_result(write
-						      (STDIN_FILENO, &c, 1));
+					write_all(STDOUT_FILENO, &c, 1);
 					/* ...and store it. */
 					*bp++ = ascval;
 				}
@@ -1279,7 +1164,7 @@ static void dolog(int priority, const char *fmt, va_list ap)
 	/* Terminate with CR-LF since the console mode is unknown. */
 	strcat(bp, "\r\n");
 	if ((fd = open("/dev/console", 1)) >= 0) {
-		ignore_result(write(fd, buf, strlen(buf)));
+		write_all(fd, buf, strlen(buf));
 		close(fd);
 	}
 #endif				/* USE_SYSLOG */
@@ -1305,4 +1190,157 @@ static void log_warn(const char *fmt, ...)
 	va_start(ap, fmt);
 	dolog(LOG_WARNING, fmt, ap);
 	va_end(ap);
+}
+
+static void output_special_char(unsigned char c, struct options *op,
+				struct termios *tp)
+{
+	struct utsname uts;
+	(void) uname(&uts);
+	switch (c) {
+	case 's':
+		(void) printf ("%s", uts.sysname);
+		break;
+	case 'n':
+		(void) printf ("%s", uts.nodename);
+		break;
+	case 'r':
+		(void) printf ("%s", uts.release);
+		break;
+	case 'v':
+		(void) printf ("%s", uts.version);
+		break;
+	case 'm':
+		(void) printf ("%s", uts.machine);
+		break;
+	case 'o':
+	{
+		char domainname[MAXHOSTNAMELEN+1];
+#ifdef HAVE_GETDOMAINNAME
+		if (getdomainname(domainname, sizeof(domainname)))
+#endif
+		strcpy(domainname, "unknown_domain");
+		domainname[sizeof(domainname)-1] = '\0';
+		printf ("%s", domainname);
+		break;
+	}
+	case 'O':
+	{
+		char *dom = "unknown_domain";
+		char host[MAXHOSTNAMELEN+1];
+		struct addrinfo hints, *info = NULL;
+
+		memset(&hints, 0, sizeof(hints));
+		hints.ai_flags = AI_CANONNAME;
+
+		if (gethostname(host, sizeof(host)) ||
+		    getaddrinfo(host, NULL, &hints, &info) ||
+		    info == NULL)
+			fputs(dom, stdout);
+		else {
+			char *canon;
+			if (info->ai_canonname &&
+			    (canon = strchr(info->ai_canonname, '.')))
+				dom = canon + 1;
+			fputs(dom, stdout);
+			freeaddrinfo(info);
+		}
+		break;
+	}
+	case 'd':
+	case 't':
+	{
+		time_t now;
+		struct tm *tm;
+
+		(void) time (&now);
+		tm = localtime(&now);
+
+		if (c == 'd') /* ISO 8601 */
+			(void) printf("%s %s %d  %d",
+				      nl_langinfo(ABDAY_1 + tm->tm_wday),
+				      nl_langinfo(ABMON_1 + tm->tm_mon),
+				      tm->tm_mday,
+				      tm->tm_year < 70 ? tm->tm_year + 2000 :
+				      tm->tm_year + 1900);
+		else
+			(void) printf("%02d:%02d:%02d",
+				      tm->tm_hour, tm->tm_min, tm->tm_sec);
+		break;
+	}
+	case 'l':
+		(void) printf ("%s", op->tty);
+		break;
+	case 'b':
+	{
+		const speed_t speed = cfgetispeed(tp);
+		int i;
+
+		for (i = 0; speedtab[i].speed; i++) {
+			if (speedtab[i].code == speed) {
+				printf("%ld", speedtab[i].speed);
+				break;
+			}
+		}
+		break;
+	}
+	case 'u':
+	case 'U':
+	{
+		int users = 0;
+		struct utmp *ut;
+		setutent();
+		while ((ut = getutent()))
+			if (ut->ut_type == USER_PROCESS)
+				users++;
+		endutent();
+		printf ("%d ", users);
+		if (c == 'U')
+			printf ((users == 1) ? _("user") : _("users"));
+		break;
+	}
+	default:
+		(void) putchar(c);
+		break;
+	}
+}
+
+static void init_special_char(char* arg, struct options *op)
+{
+	char ch, *p, *q;
+	int i;
+
+	op->initstring = xmalloc(strlen(arg) + 1);
+
+	/*
+	 * Copy optarg into op->initstring decoding \ddd octal
+	 * codes into chars.
+	 */
+	q = op->initstring;
+	p = arg;
+	while (*p) {
+		/* The \\ is converted to \ */
+		if (*p == '\\') {
+			p++;
+			if (*p == '\\') {
+				ch = '\\';
+				p++;
+			} else {
+				/* Handle \000 - \177. */
+				ch = 0;
+				for (i = 1; i <= 3; i++) {
+					if (*p >= '0' && *p <= '7') {
+						ch <<= 3;
+						ch += *p - '0';
+						p++;
+					} else {
+						break;
+					}
+				}
+			}
+			*q++ = ch;
+		} else
+			*q++ = *p++;
+	}
+	*q = '\0';
 }

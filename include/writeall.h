@@ -18,6 +18,8 @@ static inline int write_all(int fd, const void *buf, size_t count)
 				buf += tmp;
 		} else if (errno != EINTR && errno != EAGAIN)
 			return -1;
+		if (errno == EAGAIN)	/* Try later, *sigh* */
+			usleep(10000);
 	}
 	return 0;
 }
