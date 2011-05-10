@@ -5,6 +5,8 @@
  * Venema, enhanced by John DiMarco, and further enhanced by Dennis Cronin.
  *
  * Ported to Linux by Peter Orbaek <poe@daimi.aau.dk>
+ * Adopt the mingetty features for a better support
+ * of virtual consoles by Werner Fink <werner@suse.de>
  *
  * This program is freely distributable.
  */
@@ -37,6 +39,7 @@
 #include "pathnames.h"
 #include "c.h"
 #include "xalloc.h"
+#include "widechar.h"
 
 #ifdef __linux__
 #  include <sys/kd.h>
@@ -349,7 +352,7 @@ int main(int argc, char **argv)
 	}
 
 	chardata = init_chardata;
-	if (!(options.flags & F_NOPROMPT)) {
+	if ((options.flags & F_NOPROMPT) == 0) {
 		/* Read the login name. */
 		debug("reading login name\n");
 		while ((logname =
@@ -797,6 +800,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 static void termio_init(struct options *op, struct termios *tp)
 {
 	speed_t ispeed, ospeed;
+	struct winsize ws;
 
 	if (op->flags & F_VCONSOLE) {
 #if defined(IUTF8) && defined(KDGKBMODE)
@@ -834,6 +838,10 @@ static void termio_init(struct options *op, struct termios *tp)
 		/* Save the original setting. */
 		ispeed = cfgetispeed(tp);
 		ospeed = cfgetospeed(tp);
+
+		if (!ispeed) ispeed = TTYDEF_SPEED;
+		if (!ospeed) ospeed = TTYDEF_SPEED;
+
 	} else {
 		ospeed = ispeed = op->speeds[FIRST_SPEED];
 	}
@@ -850,7 +858,7 @@ static void termio_init(struct options *op, struct termios *tp)
 
 	tp->c_iflag = tp->c_lflag = tp->c_oflag = 0;
 
-	if (!(op->flags & F_KEEPCFLAGS))
+	if ((op->flags & F_KEEPCFLAGS) == 0)
 		tp->c_cflag = CS8 | HUPCL | CREAD | (tp->c_cflag & CLOCAL);
 
 	/*
@@ -867,6 +875,20 @@ static void termio_init(struct options *op, struct termios *tp)
 #endif
 	tp->c_cc[VMIN] = 1;
 	tp->c_cc[VTIME] = 0;
+
+	/* Check for terminal size and if not found set default */
+	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &ws) == 0) {
+		int set = 0;
+		if (ws.ws_row == 0) {
+			ws.ws_row = 24;
+			set++;
+		}
+		if (ws.ws_col == 0) {
+			ws.ws_col = 80;
+			set++;
+		}
+		(void)ioctl(STDIN_FILENO, TIOCSWINSZ, &ws);
+	}
 
 	/* Optionally enable hardware flow control. */
 #ifdef	CRTSCTS
@@ -1020,13 +1042,13 @@ static void do_prompt(struct options *op, struct termios *tp)
 
 #ifdef	ISSUE
 	if ((op->flags & F_ISSUE) && (fd = fopen(op->issue, "r"))) {
-		int c, oflag;
+		int c, oflag = tp->c_oflag;	    /* Save current setting. */
 
-		/* Save current setting. */
-		oflag = tp->c_oflag;
-		/* Map new line in output to carriage return & new line. */
-		tp->c_oflag |= (ONLCR | OPOST);
-		tcsetattr(STDIN_FILENO, TCSADRAIN, tp);
+		if ((op->flags & F_VCONSOLE) == 0) {
+			/* Map new line in output to carriage return & new line. */
+			tp->c_oflag |= (ONLCR | OPOST);
+			tcsetattr(STDIN_FILENO, TCSADRAIN, tp);
+		}
 
 		while ((c = getc(fd)) != EOF) {
 			if (c == '\\')
@@ -1036,10 +1058,12 @@ static void do_prompt(struct options *op, struct termios *tp)
 		}
 		fflush(stdout);
 
-		/* Restore settings. */
-		tp->c_oflag = oflag;
-		/* Wait till output is gone. */
-		tcsetattr(STDIN_FILENO, TCSADRAIN, tp);
+		if ((op->flags & F_VCONSOLE) == 0) {
+			/* Restore settings. */
+			tp->c_oflag = oflag;
+			/* Wait till output is gone. */
+			tcsetattr(STDIN_FILENO, TCSADRAIN, tp);
+		}
 		fclose(fd);
 	}
 #endif				/* ISSUE */
@@ -1079,8 +1103,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 	char *bp;
 	char c;			/* input character, full eight bits */
 	char ascval;		/* low 7 bits of input character */
-	int bits;		/* # of "1" bits per character */
-	int mask;		/* mask with 1 bit up */
+	int eightbit;
 	static char *erase[] = {	/* backspace-space-backspace */
 		"\010\040\010",		/* space parity */
 		"\010\040\010",		/* odd parity */
@@ -1095,92 +1118,134 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 	 * Flush pending input (especially important after parsing or switching
 	 * the baud rate).
 	 */
-	sleep(1);
+	if ((op->flags & F_VCONSOLE) == 0)
+		sleep(1);
 	tcflush(STDIN_FILENO, TCIFLUSH);
 
-	/* Prompt for and read a login name. */
-	for (*logname = 0; *logname == 0; /* void */ ) {
-		/* Write issue file and prompt, with "parity" bit == 0. */
+	eightbit = (op->flags & F_EIGHTBITS);
+	bp = logname;
+	*bp = '\0';
+
+	while (*logname == '\0') {
+
+		/* Write issue file and prompt */
 		do_prompt(op, tp);
 
-		/*
-		 * Read name, watch for break, parity, erase, kill,
-		 * end-of-line.
-		 */
-		for (bp = logname, cp->eol = 0; cp->eol == 0; /* void */ ) {
-			/* Do not report trivial EINTR/EIO errors. */
-			if (read(STDIN_FILENO, &c, 1) < 1) {
-				if (errno == EINTR || errno == EIO)
-					exit(EXIT_SUCCESS);
-				log_err(_("%s: read: %m"), op->tty);
+		cp->eol = '\0';
+
+		/* Read name, watch for break and end-of-line. */
+		while (cp->eol == '\0') {
+
+			if (read (STDIN_FILENO, &c, 1) < 1) {
+
+				/* Do not report trivial like EINTR/EIO errors. */
+				if (errno == EINTR || errno == EAGAIN) {
+					usleep(1000);
+					continue;
+				}
+				switch (errno) {
+				case 0:
+				case EIO:
+				case ESRCH:
+				case EINVAL:
+				case ENOENT:
+					break;
+				default:
+					log_err(_("%s: read: %m"), op->tty);
+				}
 			}
-			/* Do BREAK handling elsewhere. */
-			if ((c == 0) && op->numspeed > 1)
-				return EXIT_SUCCESS;
+
 			/* Do parity bit handling. */
-			if (op->flags & F_EIGHTBITS) {
+			if (eightbit)
 				ascval = c;
-			} else if (c != (ascval = (c & 0177))) {
-				/* Set "parity" bit on. */
-				for (bits = 1, mask = 1; mask & 0177;
-				     mask <<= 1)
+			else if (c != (ascval = (c & 0177))) {
+				uint32_t bits;			/* # of "1" bits per character */
+				uint32_t mask;			/* mask with 1 bit up */
+				for (bits = 1, mask = 1; mask & 0177; mask <<= 1) {
 					if (mask & ascval)
-						/* Count "1" bits. */
 						bits++;
+				}
 				cp->parity |= ((bits & 1) ? 1 : 2);
 			}
+
 			/* Do erase, kill and end-of-line processing. */
 			switch (ascval) {
+			case 0:
+				*bp = 0;
+				if (op->numspeed > 1)
+					return logname;
+				break;
 			case CR:
 			case NL:
-				/* Terminate logname. */
-				*bp = 0;
-				/* Set end-of-line char. */
-				cp->eol = ascval;
+				*bp = 0;			/* terminate logname */
+				cp->eol = ascval;		/* set end-of-line char */
 				break;
 			case BS:
 			case DEL:
 			case '#':
-				/* Set erase character. */
-				cp->erase = ascval;
+				cp->erase = ascval; /* set erase character */
 				if (bp > logname) {
-					write_all(STDOUT_FILENO,
-						   erase[cp->parity], 3);
+					if ((tp->c_cflag & (ECHO)) == 0)
+						write_all(1, erase[cp->parity], 3);
 					bp--;
 				}
 				break;
 			case CTL('U'):
 			case '@':
-				/* Set kill character. */
-				cp->kill = ascval;
+				cp->kill = ascval;		/* set kill character */
 				while (bp > logname) {
-					write_all(STDOUT_FILENO,
-						   erase[cp->parity], 3);
+					if ((tp->c_cflag & (ECHO)) == 0)
+						write_all(1, erase[cp->parity], 3);
 					bp--;
 				}
 				break;
 			case CTL('D'):
 				exit(EXIT_SUCCESS);
 			default:
-				if (!isascii(ascval) || !isprint(ascval)) {
-					/* Ignore garbage characters. */ ;
-				} else if ((size_t)(bp - logname) >= sizeof(logname) - 1) {
+				if (!isascii(ascval) || !isprint(ascval))
+					break;
+				if ((size_t)(bp - logname) >= sizeof(logname) - 1)
 					log_err(_("%s: input overrun"), op->tty);
-				} else {
-					/* Echo the character... */
-					write_all(STDOUT_FILENO, &c, 1);
-					/* ...and store it. */
-					*bp++ = ascval;
-				}
+				if ((tp->c_cflag & (ECHO)) == 0)
+					write_all(1, &c, 1);	/* echo the character */
+				*bp++ = ascval;			/* and store it */
 				break;
 			}
 		}
 	}
-	/* Handle names with upper case and no lower case. */
-	if ((op->flags & F_LCUC) && (cp->capslock = caps_lock(logname)))
+#ifdef HAVE_WIDECHAR
+	if ((op->flags & (F_EIGHTBITS|F_UTF8)) == (F_EIGHTBITS|F_UTF8)) {
+		/* Check out UTF-8 multibyte characters */
+		ssize_t len;
+		wchar_t *wcs, *wcp;
+
+		len = mbstowcs((wchar_t *)0, logname, 0);
+		if (len < 0)
+			log_err("%s: invalid character conversion for login name", op->tty);
+
+		wcs = (wchar_t *)xmalloc((len + 1) * sizeof(wchar_t));
+
+		len = mbstowcs(wcs, logname, len + 1);
+		if (len < 0)
+			log_err("%s: invalid character conversion for login name", op->tty);
+
+		wcp = wcs;
+		while (*wcp) {
+			const wint_t wc = *wcp++;
+			if (!iswprint(wc))
+				log_err("%s: invalid character 0x%x in login name", op->tty, wc);
+		}
+		free(wcs);
+	} else
+#endif
+	if ((op->flags & F_LCUC) && (cp->capslock = caps_lock(logname))) {
+
+		/* Handle names with upper case and no lower case. */
 		for (bp = logname; *bp; bp++)
 			if (isupper(*bp))
-				*bp = tolower(*bp);
+				*bp = tolower(*bp);		/* map name to lower case */
+	}
+
 	return logname;
 }
 
