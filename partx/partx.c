@@ -608,13 +608,14 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 		" -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 		" -g, --noheadings     don't print headings for --show\n"
-		" -r, --raw            use raw format output\n"
+		" -P, --pairs          use key=\"value\" output format\n"
+		" -r, --raw            use raw output format\n"
 		" -t, --type <TYPE>    specify the partition type (dos, bsd, solaris, etc.)\n"
 		" -n, --nr <M:N>       specify the range of partitions (e.g. --nr 2:4)\n"
 		" -o, --output <LIST>  define which output columns to use\n"
 		" -h, --help           print this help\n\n"));
 
-	fprintf(out, _("\nAvailable columns (for --show):\n"));
+	fprintf(out, _("\nAvailable columns (for --show, --raw or --pairs):\n"));
 
 	for (i = 0; i < __NCOLUMNS; i++)
 		fprintf(out, " %10s  %s\n", infos[i].name, _(infos[i].help));
@@ -650,53 +651,60 @@ int main(int argc, char **argv)
 		{ "type",	required_argument, NULL, 't' },
 		{ "nr",		required_argument, NULL, 'n' },
 		{ "output",	required_argument, NULL, 'o' },
+		{ "pairs",      no_argument,       NULL, 'P' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ NULL, 0, NULL, 0 }
 	};
 
-	while ((c = getopt_long(argc, argv, "abdglrsvn:t:o:h", long_opts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv,
+				"abdglrsvn:t:o:Ph", long_opts, NULL)) != -1) {
+
 		switch(c) {
 		case 'a':
+		case 'd':
+		case 'l':
+		case 'r':
+		case 'P':
+		case 's':
 			if (what)
-				errx_mutually_exclusive("--{add,delete,show,list,raw}");
+				 errx_mutually_exclusive("--{add,delete,show,list,raw,pairs}");
+			break;
+		}
+
+		switch(c) {
+		case 'a':
 			what = ACT_ADD;
 			break;
 		case 'b':
 			partx_flags |= FL_BYTES;
 			break;
 		case 'd':
-			if (what)
-				errx_mutually_exclusive("--{add,delete,show,list,raw}");
 			what = ACT_DELETE;
 			break;
 		case 'g':
 			tt_flags |= TT_FL_NOHEADINGS;
 			break;
 		case 'l':
-			if (what)
-				errx_mutually_exclusive("--{add,delete,show,list,raw}");
 			what = ACT_LIST;
 			break;
 		case 'n':
 			if (parse_range(optarg, &lower, &upper))
 				errx(EXIT_FAILURE, _("failed to parse --nr <M-N> range"));
 			break;
-
 		case 'o':
 			if (tt_parse_columns_list(optarg, columns, &ncolumns,
 						column_name_to_id))
 				return EXIT_FAILURE;
 			break;
-		case 'r':
-			tt_flags |= TT_FL_RAW;
-			if (what)
-				errx_mutually_exclusive("--{add,delete,show,list,raw}");
+		case 'P':
+			tt_flags |= TT_FL_EXPORT;
 			what = ACT_SHOW;
 			break;
-
+		case 'r':
+			tt_flags |= TT_FL_RAW;
+			what = ACT_SHOW;
+			break;
 		case 's':
-			if (what)
-				errx_mutually_exclusive("--{add,delete,show,list,raw}");
 			what = ACT_SHOW;
 			break;
 		case 't':
