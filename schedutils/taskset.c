@@ -29,7 +29,21 @@
 #include "nls.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "procutils.h"
 #include "c.h"
+
+struct taskset {
+	pid_t		pid;		/* task PID */
+
+	cpu_set_t	*set;		/* task CPU mask */
+	size_t		setsize;
+
+	char		*buf;		/* buffer for conversion from mask to string */
+	size_t		buflen;
+
+	int		use_list:1,	/* use list rather than masks */
+			get_only:1;	/* print the mask, but not modify */
+};
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -39,6 +53,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, _(
 		"Options:\n"
+		" -a, --all-tasks         operate on all the tasks (threads) for a given pid\n"
 		" -p, --pid               operate on existing given pid\n"
 		" -c, --cpu-list          display and specify cpus in list format\n"
 		" -h, --help              display this help\n"
@@ -62,16 +77,64 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+static void print_affinity(struct taskset *ts, int isnew)
+{
+	char *str, *msg;
+
+	if (ts->use_list) {
+		str = cpulist_create(ts->buf, ts->buflen, ts->set, ts->setsize);
+		msg = isnew ? _("pid %d's new affinity list: %s\n") :
+			      _("pid %d's current affinity list: %s\n");
+	} else {
+		str = cpumask_create(ts->buf, ts->buflen, ts->set, ts->setsize);
+		msg = isnew ? _("pid %d's new affinity mask: %s\n") :
+			      _("pid %d's current affinity mask: %s\n");
+	}
+
+	if (!str)
+		/* this is internal error... */
+		errx(EXIT_FAILURE, _("conversion from cpuset to string failed"));
+
+	printf(msg, ts->pid, str);
+}
+
+static void do_taskset(struct taskset *ts, size_t setsize, cpu_set_t *set)
+{
+	/* read the current mask */
+	if (ts->pid) {
+		if (sched_getaffinity(ts->pid, ts->setsize, ts->set) < 0)
+			err(EXIT_FAILURE, _("failed to get pid %d's affinity"),
+					ts->pid);
+		print_affinity(ts, FALSE);
+	}
+
+	if (ts->get_only)
+		return;
+
+	/* set new mask */
+	if (sched_setaffinity(ts->pid, setsize, set) < 0)
+		err(EXIT_FAILURE, _("failed to set pid %d's affinity"), ts->pid);
+
+	/* re-read the current mask */
+	if (ts->pid) {
+		if (sched_getaffinity(ts->pid, ts->setsize, ts->set) < 0)
+			err(EXIT_FAILURE, _("failed to get pid %d's affinity"),
+					ts->pid);
+		print_affinity(ts, TRUE);
+	}
+}
+
 int main(int argc, char *argv[])
 {
-	cpu_set_t *new_set, *cur_set;
+	cpu_set_t *new_set;
 	pid_t pid = 0;
-	int opt, c_opt = 0, rc;
-	char *buf;
+	int c, all_tasks = 0;
         unsigned int ncpus;
-	size_t new_setsize, cur_setsize, cur_nbits, buflen;
+	size_t new_setsize, nbits;
+	struct taskset ts;
 
 	static const struct option longopts[] = {
+		{ "all-tasks",   0, NULL, 'a' },
 		{ "pid",	0, NULL, 'p' },
 		{ "cpu-list",	0, NULL, 'c' },
 		{ "help",	0, NULL, 'h' },
@@ -83,13 +146,18 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((opt = getopt_long(argc, argv, "+pchV", longopts, NULL)) != -1) {
-		switch (opt) {
+	memset(&ts, 0, sizeof(ts));
+
+	while ((c = getopt_long(argc, argv, "+apchV", longopts, NULL)) != -1) {
+		switch (c) {
+		case 'a':
+			all_tasks = 1;
+			break;
 		case 'p':
 			pid = strtol_or_err(argv[argc - 1], _("failed to parse pid"));
 			break;
 		case 'c':
-			c_opt = 1;
+			ts.use_list = 1;
 			break;
 		case 'V':
 			printf("taskset (%s)\n", PACKAGE_STRING);
@@ -112,16 +180,17 @@ int main(int argc, char *argv[])
 		errx(EXIT_FAILURE, _("cannot determine NR_CPUS; aborting"));
 
 	/*
-	 * cur_set is always used for the sched_getaffinity call
+	 * the ts->set is always used for the sched_getaffinity call
 	 * On the sched_getaffinity the kernel demands a user mask of
 	 * at least the size of its own cpumask_t.
 	 */
-	cur_set = cpuset_alloc(ncpus, &cur_setsize, &cur_nbits);
-	if (!cur_set)
+	ts.set = cpuset_alloc(ncpus, &ts.setsize, &nbits);
+	if (!ts.set)
 		err(EXIT_FAILURE, _("cpuset_alloc failed"));
 
-	buflen = 7 * cur_nbits;
-	buf = xmalloc(buflen);
+	/* buffer for conversion from mask to string */
+	ts.buflen = 7 * nbits;
+	ts.buf = xmalloc(ts.buflen);
 
 	/*
 	 * new_set is always used for the sched_setaffinity call
@@ -132,46 +201,30 @@ int main(int argc, char *argv[])
 	if (!new_set)
 		err(EXIT_FAILURE, _("cpuset_alloc failed"));
 
-	if (pid) {
-		if (sched_getaffinity(pid, cur_setsize, cur_set) < 0)
-			err(EXIT_FAILURE, _("failed to get pid %d's affinity"), pid);
+	if (argc - optind == 1)
+		ts.get_only = 1;
 
-		if (c_opt)
-			printf(_("pid %d's current affinity list: %s\n"), pid,
-				cpulist_create(buf, buflen, cur_set, cur_setsize));
-		else
-			printf(_("pid %d's current affinity mask: %s\n"), pid,
-				cpumask_create(buf, buflen, cur_set, cur_setsize));
-
-		if (argc - optind == 1)
-			return EXIT_SUCCESS;
-	}
-
-	rc = c_opt ? cpulist_parse(argv[optind], new_set, new_setsize) :
-		     cpumask_parse(argv[optind], new_set, new_setsize);
-
-	if (rc)
-		errx(EXIT_FAILURE, _("failed to parse %s %s"),
-				c_opt ? _("CPU list") : _("CPU mask"),
+	else if (ts.use_list) {
+		if (cpulist_parse(argv[optind], new_set, new_setsize))
+			errx(EXIT_FAILURE, _("failed to parse CPU list: %s"),
+					argv[optind]);
+	} else if (cpumask_parse(argv[optind], new_set, new_setsize)) {
+		errx(EXIT_FAILURE, _("failed to parse CPU mask: %s"),
 				argv[optind]);
-
-	if (sched_setaffinity(pid, new_setsize, new_set) < 0)
-		err(EXIT_FAILURE, _("failed to set pid %d's affinity"), pid);
-
-	if (sched_getaffinity(pid, cur_setsize, cur_set) < 0)
-		err(EXIT_FAILURE, _("failed to get pid %d's affinity"), pid);
-
-	if (pid) {
-		if (c_opt)
-			printf(_("pid %d's new affinity list: %s\n"), pid,
-				cpulist_create(buf, buflen, cur_set, cur_setsize));
-		else
-			printf(_("pid %d's new affinity mask: %s\n"), pid,
-				cpumask_create(buf, buflen, cur_set, cur_setsize));
 	}
 
-	free(buf);
-	cpuset_free(cur_set);
+	if (all_tasks) {
+		struct proc_tasks *tasks = proc_open_tasks(pid);
+                while (!proc_next_tid(tasks, &ts.pid))
+			do_taskset(&ts, new_setsize, new_set);
+		proc_close_tasks(tasks);
+        } else {
+		ts.pid = pid;
+		do_taskset(&ts, new_setsize, new_set);
+	}
+
+	free(ts.buf);
+	cpuset_free(ts.set);
 	cpuset_free(new_set);
 
 	if (!pid) {
