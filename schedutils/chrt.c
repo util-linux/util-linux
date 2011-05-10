@@ -81,7 +81,7 @@ static void __attribute__((__noreturn__)) show_usage(int rc)
 #endif
 	fprintf(out, _(
 	"\nOptions:\n"
-	"  -a | --all-tasks     propagate changes to all the tasks for a given pid\n"
+	"  -a | --all-tasks     operate on all the tasks (threads) for a given pid\n"
 	"  -h | --help          display this help\n"
 	"  -m | --max           show min and max valid priorities\n"
 	"  -p | --pid           operate on existing given pid\n"
