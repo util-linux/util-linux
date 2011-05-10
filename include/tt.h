@@ -12,13 +12,21 @@
 #include "list.h"
 
 enum {
-	TT_FL_TRUNC      = (1 << 1),
-	TT_FL_TREE       = (1 << 2),
-	TT_FL_RAW        = (1 << 3),
-	TT_FL_ASCII      = (1 << 4),
-	TT_FL_NOHEADINGS = (1 << 5),
-	TT_FL_RIGHT	 = (1 << 6),
-	TT_FL_STRICTWIDTH = (1 << 7)
+	/*
+	 * Global flags
+	 */
+	TT_FL_RAW         = (1 << 1),
+	TT_FL_ASCII       = (1 << 2),
+	TT_FL_NOHEADINGS  = (1 << 3),
+	TT_FL_EXPORT      = (1 << 4),
+
+	/*
+	 * Column flags
+	 */
+	TT_FL_TRUNC       = (1 << 5),
+	TT_FL_TREE        = (1 << 6),
+	TT_FL_RIGHT	  = (1 << 7),
+	TT_FL_STRICTWIDTH = (1 << 8)
 };
 
 struct tt {

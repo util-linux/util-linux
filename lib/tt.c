@@ -468,6 +468,14 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 		return;
 	}
 
+	/* NAME=value mode */
+	if (tb->flags & TT_FL_EXPORT) {
+		fprintf(stdout, "%s=\"%s\"", cl->name, data);
+		if (!is_last_column(tb, cl))
+			fputc(' ', stdout);
+		return;
+	}
+
 	/* note that 'len' and 'width' are number of cells, not bytes */
 	len = mbs_width(data);
 
@@ -535,6 +543,7 @@ static void print_header(struct tt *tb, char *buf, size_t bufsz)
 
 	if (!tb->first_run ||
 	    (tb->flags & TT_FL_NOHEADINGS) ||
+	    (tb->flags & TT_FL_EXPORT) ||
 	    list_empty(&tb->tb_lines))
 		return;
 
@@ -629,7 +638,8 @@ int tt_print_table(struct tt *tb)
 	if (!line)
 		return -1;
 
-	if (tb->first_run && !(tb->flags & TT_FL_RAW))
+	if (tb->first_run &&
+	    !((tb->flags & TT_FL_RAW) || (tb->flags & TT_FL_EXPORT)))
 		recount_widths(tb, line, line_sz);
 
 	if (tb->flags & TT_FL_TREE)
@@ -695,10 +705,13 @@ int main(int argc, char *argv[])
 		printf("%s [--ascii | --raw | --list]\n",
 				program_invocation_short_name);
 		return EXIT_SUCCESS;
-	} else if (argc == 2 && !strcmp(argv[1], "--ascii"))
+	} else if (argc == 2 && !strcmp(argv[1], "--ascii")) {
 		flags |= TT_FL_ASCII;
-	else if (argc == 2 && !strcmp(argv[1], "--raw")) {
+	} else if (argc == 2 && !strcmp(argv[1], "--raw")) {
 		flags |= TT_FL_RAW;
+		notree = 1;
+	} else if (argc == 2 && !strcmp(argv[1], "--export")) {
+		flags |= TT_FL_EXPORT;
 		notree = 1;
 	} else if (argc == 2 && !strcmp(argv[1], "--list"))
 		notree = 1;
