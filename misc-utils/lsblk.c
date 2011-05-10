@@ -612,7 +612,8 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		break;
 	}
 	case COL_MAJMIN:
-		if (lsblk->tt->flags & TT_FL_RAW)
+		if ((lsblk->tt->flags & TT_FL_RAW) ||
+		    (lsblk->tt->flags & TT_FL_EXPORT))
 			snprintf(buf, sizeof(buf), "%u:%u", cxt->maj, cxt->min);
 		else
 			snprintf(buf, sizeof(buf), "%3u:%-3u", cxt->maj, cxt->min);
@@ -971,7 +972,8 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 		" -l, --list           use list format ouput\n"
 		" -n, --noheadings     don't print headings\n"
 		" -o, --output <list>  output columns\n"
-		" -r, --raw            use raw format output\n"
+		" -P, --pairs          use key=\"value\" output format\n"
+		" -r, --raw            use raw output format\n"
 		" -t, --topology       output info about topology\n"));
 
 	fprintf(out, _("\nAvailable columns:\n"));
@@ -1011,6 +1013,7 @@ int main(int argc, char *argv[])
 		{ "fs",         0, 0, 'f' },
 		{ "exclude",    1, 0, 'e' },
 		{ "topology",   0, 0, 't' },
+		{ "pairs",      0, 0, 'P' },
 		{ NULL, 0, 0, 0 },
 	};
 
@@ -1021,7 +1024,7 @@ int main(int argc, char *argv[])
 	lsblk = &_ls;
 	memset(lsblk, 0, sizeof(*lsblk));
 
-	while((c = getopt_long(argc, argv, "abdDe:fhlnmo:irt", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "abdDe:fhlnmo:Pirt", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			lsblk->all_devices = 1;
@@ -1046,8 +1049,8 @@ int main(int argc, char *argv[])
 			help(stdout);
 			break;
 		case 'l':
-			if (tt_flags & TT_FL_RAW)
-				errx_mutually_exclusive("--{raw,list}");
+			if ((tt_flags & TT_FL_RAW)|| (tt_flags & TT_FL_EXPORT))
+				errx_mutually_exclusive("--{raw,list,export}");
 
 			tt_flags &= ~TT_FL_TREE; /* disable the default */
 			break;
@@ -1058,6 +1061,10 @@ int main(int argc, char *argv[])
 			if (tt_parse_columns_list(optarg, columns, &ncolumns,
 						column_name_to_id))
 				return EXIT_FAILURE;
+			break;
+		case 'P':
+			tt_flags |= TT_FL_EXPORT;
+			tt_flags &= ~TT_FL_TREE;	/* disable the default */
 			break;
 		case 'i':
 			tt_flags |= TT_FL_ASCII;
