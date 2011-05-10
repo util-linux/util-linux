@@ -331,7 +331,7 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 		if (devno) {
 			char *tmp;
 			int rc = 0;
-			if (tt_flags & TT_FL_RAW)
+			if ((tt_flags & TT_FL_RAW) || (tt_flags & TT_FL_EXPORT))
 				rc = asprintf(&tmp, "%u:%u",
 					      major(devno), minor(devno));
 			else
@@ -787,7 +787,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -u, --notruncate       don't truncate text in columns\n"
 	" -O, --options <list>   limit the set of filesystems by mount options\n"
 	" -o, --output <list>    output columns\n"
-	" -r, --raw              use raw format output\n"
+	" -P, --pairs            use key=\"value\" output format\n"
+	" -r, --raw              use raw output format\n"
 	" -a, --ascii            use ascii chars for tree formatting\n"
 	" -t, --types <list>     limit the set of filesystem by FS types\n"
 	" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
@@ -845,6 +846,7 @@ int main(int argc, char *argv[])
 	    { "options",      1, 0, 'O' },
 	    { "output",       1, 0, 'o' },
 	    { "poll",         2, 0, 'p' },
+	    { "pairs",        0, 0, 'P' },
 	    { "raw",          0, 0, 'r' },
 	    { "types",        1, 0, 't' },
 	    { "fsroot",       0, 0, 'v' },
@@ -866,7 +868,7 @@ int main(int argc, char *argv[])
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"acd:ehifo:O:p::klmnrst:uvRS:T:w:", longopts, NULL)) != -1) {
+				"acd:ehifo:O:p::Pklmnrst:uvRS:T:w:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			tt_flags |= TT_FL_ASCII;
@@ -915,6 +917,10 @@ int main(int argc, char *argv[])
 			flags |= FL_POLL;
 			tt_flags &= ~TT_FL_TREE;
 			break;
+		case 'P':
+			tt_flags |= TT_FL_EXPORT;
+			tt_flags &= ~TT_FL_TREE;
+			break;
 		case 'm':		/* mtab */
 			if (tabfile)
 				errx_mutually_exclusive("--{fstab,mtab,kernel}");
@@ -940,8 +946,8 @@ int main(int argc, char *argv[])
 			tt_flags |= TT_FL_RAW;		/* enable raw */
 			break;
 		case 'l':
-			if (tt_flags & TT_FL_RAW)
-				errx_mutually_exclusive("--{raw,list}");
+			if ((tt_flags & TT_FL_RAW) && (tt_flags & TT_FL_EXPORT))
+				errx_mutually_exclusive("--{raw,list,pairs}");
 
 			tt_flags &= ~TT_FL_TREE; /* disable the default */
 			break;
