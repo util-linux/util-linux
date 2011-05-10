@@ -75,23 +75,24 @@ struct colinfo {
 	const char	*name;		/* header */
 	double		whint;		/* width hint (N < 1 is in percent of termwidth) */
 	int		flags;		/* tt flags */
+	const char      *help;		/* column description */
 	const char	*match;		/* pattern for match_func() */
 };
 
 /* columns descriptions (don't use const, this is writable) */
 static struct colinfo infos[FINDMNT_NCOLUMNS] = {
-	[COL_SOURCE]       = { "SOURCE",       0.25 },
-	[COL_TARGET]       = { "TARGET",       0.30, TT_FL_TREE },
-	[COL_FSTYPE]       = { "FSTYPE",       0.10, TT_FL_TRUNC },
-	[COL_OPTIONS]      = { "OPTIONS",      0.10, TT_FL_TRUNC },
-	[COL_VFS_OPTIONS]  = { "VFS-OPTIONS",  0.20, TT_FL_TRUNC },
-	[COL_FS_OPTIONS]   = { "FS-OPTIONS",   0.10, TT_FL_TRUNC },
-	[COL_LABEL]        = { "LABEL",        0.10 },
-	[COL_UUID]         = { "UUID",           36 },
-	[COL_MAJMIN]       = { "MAJ:MIN",         6 },
-	[COL_ACTION]       = { "ACTION",         10, TT_FL_STRICTWIDTH },
-	[COL_OLD_OPTIONS]  = { "OLD-OPTIONS",  0.10, TT_FL_TRUNC },
-	[COL_OLD_TARGET]   = { "OLD-TARGET",   0.30 },
+	[COL_SOURCE]       = { "SOURCE",       0.25, 0, N_("source device") },
+	[COL_TARGET]       = { "TARGET",       0.30, TT_FL_TREE, N_("mountpoint") },
+	[COL_FSTYPE]       = { "FSTYPE",       0.10, TT_FL_TRUNC, N_("filesystem type") },
+	[COL_OPTIONS]      = { "OPTIONS",      0.10, TT_FL_TRUNC, N_("all mount options") },
+	[COL_VFS_OPTIONS]  = { "VFS-OPTIONS",  0.20, TT_FL_TRUNC, N_("VFS specific mount options") },
+	[COL_FS_OPTIONS]   = { "FS-OPTIONS",   0.10, TT_FL_TRUNC, N_("FS specific mount options") },
+	[COL_LABEL]        = { "LABEL",        0.10, 0, N_("filesystem label") },
+	[COL_UUID]         = { "UUID",           36, 0, N_("filesystem UUID") },
+	[COL_MAJMIN]       = { "MAJ:MIN",         6, 0, N_("major:minor device number") },
+	[COL_ACTION]       = { "ACTION",         10, TT_FL_STRICTWIDTH, N_("action detected by --poll") },
+	[COL_OLD_OPTIONS]  = { "OLD-OPTIONS",  0.10, TT_FL_TRUNC, N_("old mount options saved by --poll") },
+	[COL_OLD_TARGET]   = { "OLD-TARGET",   0.30, 0, N_("old mountpoint saved by --poll") },
 };
 
 /* global flags */
@@ -799,13 +800,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, _("\nAvailable columns:\n"));
 
-	for (i = 0; i < FINDMNT_NCOLUMNS; i++) {
+	for (i = 0; i < FINDMNT_NCOLUMNS; i++)
+		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
-		fprintf(out, "  %-12s", infos[i].name);
-		if (i && !((i+1) % 3))
-			fputc('\n', out);
-	}
-	fputc('\n', out);
 
 	fprintf(out, _("\nFor more information see findmnt(1).\n"));
 
