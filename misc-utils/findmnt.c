@@ -311,7 +311,7 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 		str = mnt_fs_get_fstype(fs);
 		break;
 	case COL_OPTIONS:
-		str = mnt_fs_strdup_options(fs);
+		str = mnt_fs_get_options(fs);
 		break;
 	case COL_VFS_OPTIONS:
 		str = mnt_fs_get_vfs_options(fs);
