@@ -93,7 +93,7 @@
 #endif
 
 /* Login prompt. */
-#define LOGIN		" login: "
+#define LOGIN		"login: "
 #define ARRAY_SIZE_MAX	16		/* Numbers of args for login beside "-- \\u" */
 
 /* Some shorthands for control characters. */
@@ -133,6 +133,8 @@ struct options {
 	int flags;			/* toggle switches, see below */
 	int timeout;			/* time-out period */
 	char *autolog;			/* login the user automatically */
+	char *chdir;			/* Chdir before the login */
+	char *chroot;			/* Chroot before the login */
 	char *login;			/* login program */
 	char *logopt;			/* options for login program */
 	char *tty;			/* name of tty */
@@ -140,6 +142,8 @@ struct options {
 	char *term;			/* terminal type */
 	char *initstring;		/* modem init string */
 	char *issue;			/* alternative issue file */
+	int delay;			/* Sleep seconds before prompt */
+	int nice;			/* Run login with this priority */
 	int numspeed;			/* number of baud rates to try */
 	speed_t speeds[MAX_SPEED];	/* baud rates to be tried */
 };
@@ -160,6 +164,10 @@ struct options {
 #define F_HANGUP	(1<<13)	/* Do call vhangup(2) */
 #define F_UTF8		(1<<14)	/* We can do UTF8 */
 #define F_LOGINPAUSE	(1<<15)	/* Wait for any key before dropping login prompt */
+#define F_NOCLEAR	(1<<16) /* Do not clear the screen before prompting */
+#define F_NONL		(1<<17) /* No newline before issue */
+#define F_NOHOSTNAME	(1<<18) /* Do not show the hostname */
+#define F_LONGHNAME	(1<<19) /* Show Full qualified hostname */
 
 #define serial_tty_option(opt, flag)	\
 	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
@@ -303,6 +311,9 @@ int main(int argc, char **argv)
 	update_utmp(&options);
 #endif
 
+	if (options.delay)
+	    sleep(options.delay);
+
 	debug("calling open_tty\n");
 
 	/* Open the tty as standard { input, output, error }. */
@@ -399,6 +410,22 @@ int main(int argc, char **argv)
 	mkarray(logarr, logcmd);
 	replacename(logarr, logname);
 
+	if (options.chroot) {
+		if (chroot(options.chroot) < 0)
+			log_err(_("%s: can't change root directory %s: %m"),
+				options.tty, options.chroot);
+	}
+	if (options.chdir) {
+		if (chdir(options.chdir) < 0)
+			log_err(_("%s: can't change working directory %s: %m"),
+				options.tty, options.chdir);
+	}
+	if (options.nice) {
+		if (nice(options.nice) < 0)
+			log_warn(_("%s: can't change process priority: %m"),
+				options.tty);
+	}
+
 	/* Let the login program take care of password validation. */
 	execv(options.login, logarr);
 	log_err(_("%s: can't exec %s: %m"), options.tty, options.login);
@@ -413,36 +440,49 @@ static void parse_args(int argc, char **argv, struct options *op)
 
 	enum {
 		VERSION_OPTION = CHAR_MAX + 1,
+		NOHOSTNAME_OPTION,
+		LONGHOSTNAME_OPTION,
 		HELP_OPTION
 	};
 	const struct option longopts[] = {
 		{  "8bits",	     no_argument,	 0,  '8'  },
 		{  "autologin",	     required_argument,	 0,  'a'  },
 		{  "noreset",	     no_argument,	 0,  'c'  },
+		{  "chdir",	     required_argument,	 0,  'C'  },
+		{  "delay",	     required_argument,	 0,  'd'  },
 		{  "issue-file",     required_argument,  0,  'f'  },
 		{  "flow-control",   no_argument,	 0,  'h'  },
 		{  "host",	     required_argument,  0,  'H'  },
 		{  "noissue",	     no_argument,	 0,  'i'  },
 		{  "init-string",    required_argument,  0,  'I'  },
+		{  "noclear",	     no_argument,	 0,  'J'  },
 		{  "login-program",  required_argument,  0,  'l'  },
+		{  "login",	     required_argument,  0,  'l'  },  /* compat option */
+		{  "loginprog",	     required_argument,  0,  'l'  },  /* compat option */
 		{  "local-line",     no_argument,	 0,  'L'  },
 		{  "extract-baud",   no_argument,	 0,  'm'  },
 		{  "skip-login",     no_argument,	 0,  'n'  },
+		{  "nonewline",	     no_argument,	 0,  'N'  },
 		{  "login-options",  required_argument,  0,  'o'  },
 		{  "loginopts",	     required_argument,  0,  'o'  },  /* compat option */
 		{  "logopts",	     required_argument,  0,  'o'  },  /* compat option */
 		{  "loginpause",     no_argument,        0,  'p'  },
+		{  "nice",	     required_argument,  0,  'P'  },
+		{  "chroot",	     required_argument,	 0,  'r'  },
 		{  "hangup",	     no_argument,	 0,  'R'  },
 		{  "keep-baud",      no_argument,	 0,  's'  },
 		{  "timeout",	     required_argument,  0,  't'  },
 		{  "detect-case",    no_argument,	 0,  'U'  },
 		{  "wait-cr",	     no_argument,	 0,  'w'  },
+		{  "no-hostname",    no_argument,	 0,  NOHOSTNAME_OPTION },
+		{  "nohostname",     no_argument,	 0,  NOHOSTNAME_OPTION },  /* compat option */
+		{  "long-hostname",  no_argument,	 0,  LONGHOSTNAME_OPTION },
 		{  "version",	     no_argument,	 0,  VERSION_OPTION  },
 		{  "help",	     no_argument,	 0,  HELP_OPTION     },
 		{ NULL, 0, 0, 0 }
 	};
 
-	while ((c = getopt_long(argc, argv, "8a:cf:hH:iI:l:Lmno:pRst:Uw", longopts,
+	while ((c = getopt_long(argc, argv, "8a:cC:d:f:hH:iI:Jl:LmnNo:pP:r:Rst:Uw", longopts,
 			    NULL)) != -1) {
 		switch (c) {
 		case '8':
@@ -453,6 +493,12 @@ static void parse_args(int argc, char **argv, struct options *op)
 			break;
 		case 'c':
 			op->flags |= F_KEEPCFLAGS;
+			break;
+		case 'C':
+			op->chdir = optarg;
+			break;
+		case 'd':
+			op->delay = atoi(optarg);
 			break;
 		case 'f':
 			op->flags |= F_CUSTISSUE;
@@ -470,6 +516,9 @@ static void parse_args(int argc, char **argv, struct options *op)
 		case 'I':
 			init_special_char(optarg, op);
 			op->flags |= F_INITSTRING;
+			break;
+		case 'J':
+			op->flags |= F_NOCLEAR;
 			break;
 		case 'l':
 			op->login = optarg;
@@ -489,6 +538,12 @@ static void parse_args(int argc, char **argv, struct options *op)
 		case 'p':
 			op->flags |= F_LOGINPAUSE;
 			break;
+		case 'P':
+			op->nice = atoi(optarg);
+			break;
+		case 'r':
+			op->chroot = optarg;
+			break;
 		case 'R':
 			op->flags |= F_HANGUP;
 			break;
@@ -504,6 +559,12 @@ static void parse_args(int argc, char **argv, struct options *op)
 			break;
 		case 'w':
 			op->flags |= F_WAITCRLF;
+			break;
+		case NOHOSTNAME_OPTION:
+			op->flags |= F_NOHOSTNAME;
+			break;
+		case LONGHOSTNAME_OPTION:
+			op->flags |= F_LONGHNAME;
 			break;
 		case VERSION_OPTION:
 			printf(_("%s from %s\n"), program_invocation_short_name,
@@ -868,6 +929,18 @@ static void termio_init(struct options *op, struct termios *tp)
 		if ((tp->c_cflag & (CS8|PARODD|PARENB)) == CS8)
 			op->flags |= F_EIGHTBITS;
 
+		if ((op->flags & F_NOCLEAR) == 0) {
+			/*
+			 * Do not write a full reset (ESC c) because this destroys
+			 * the unicode mode again if the terminal was in unicode
+			 * mode.  Also it clears the CONSOLE_MAGIC features which
+			 * are required for some languages/console-fonts.
+			 * Just put the cursor to the home position (ESC [ H),
+			 * erase everything below the cursor (ESC [ J), and set the
+			 * scrolling region to the full window (ESC [ r)
+			 */
+			write_all(STDOUT_FILENO, "\033[r\033[H\033[J", 9);
+		}
 		return;
 	}
 
@@ -1074,8 +1147,10 @@ static void do_prompt(struct options *op, struct termios *tp)
 	FILE *fd;
 #endif				/* ISSUE */
 
-	/* Issue not in use, start with a new line. */
-	write_all(STDOUT_FILENO, "\r\n", 2);
+	if ((op->flags & F_NONL) == 0) {
+		/* Issue not in use, start with a new line. */
+		write_all(STDOUT_FILENO, "\r\n", 2);
+	}
 
 #ifdef	ISSUE
 	if ((op->flags & F_ISSUE) && (fd = fopen(op->issue, "r"))) {
@@ -1161,10 +1236,23 @@ static void do_prompt(struct options *op, struct termios *tp)
 		}
 	}
 #endif /* KDGKBLED */
-	{
+	if ((op->flags & F_NOHOSTNAME) == 0) {
 		char hn[MAXHOSTNAMELEN + 1];
-		if (gethostname(hn, sizeof(hn)) == 0)
-			write_all(STDOUT_FILENO, hn, strlen(hn));
+		if (gethostname(hn, sizeof(hn)) == 0) {
+			struct hostent *ht;
+			char *dot = strchr(hn, '.');
+
+			hn[MAXHOSTNAMELEN] = '\0';
+			if ((op->flags & F_LONGHNAME) == 0) {
+				if (dot)
+					*dot = '\0';
+				write_all(STDOUT_FILENO, hn, strlen(hn));
+			} else if (dot == NULL && (ht = gethostbyname(hn)))
+				write_all(STDOUT_FILENO, ht->h_name, strlen(ht->h_name));
+			else
+				write_all(STDOUT_FILENO, hn, strlen(hn));
+			write_all(STDOUT_FILENO, " ", 1);
+		}
 	}
 	if (op->autolog == (char*)0) {
 		/* Always show login prompt. */
@@ -1474,6 +1562,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		       " -t, --timeout NUMBER       login process timeout\n"
 		       " -U, --detect-case          detect uppercase terminal\n"
 		       " -w, --wait-cr              wait carriage-return\n"
+		       "     --noclear              do not clear the screen before prompt\n"
+		       "     --nonewline            do not print a newline before issue\n"
+		       "     --no-hostname          no hostname at all will be shown\n"
+		       "     --long-hostname        show full qualified hostname\n"
 		       "     --version              output version information and exit\n"
 		       "     --help                 display this help and exit\n\n"));
 
