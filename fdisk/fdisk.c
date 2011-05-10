@@ -2475,6 +2475,7 @@ add_logical(void) {
 		pe->changed = 1;
 		partitions++;
 	}
+	printf(_("Adding logical partition %d\n"), partitions);
 	add_partition(partitions - 1, LINUX_NATIVE);
 }
 
@@ -2522,9 +2523,10 @@ new_partition(void) {
 	}
 
 	if (!free_primary) {
-		if (extended_offset)
+		if (extended_offset) {
+			printf(_("All primary partitions are in use\n"));
 			add_logical();
-		else
+		} else
 			printf(_("If you want to create more than four partitions, you must replace a\n"
 				 "primary partition with an extended partition first.\n"));
 	} else if (partitions >= MAXIMUM_PARTS) {
