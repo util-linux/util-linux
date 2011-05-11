@@ -38,7 +38,6 @@
 #include <zlib.h>
 
 #include "cramfs.h"
-#include "cramfs_common.h"
 #include "md5.h"
 #include "nls.h"
 #include "mkfs.h"

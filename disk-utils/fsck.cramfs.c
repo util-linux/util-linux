@@ -54,7 +54,6 @@
 #include <sys/sysmacros.h>	/* for major, minor */
 
 #include "cramfs.h"
-#include "cramfs_common.h"
 #include "nls.h"
 #include "blkdev.h"
 

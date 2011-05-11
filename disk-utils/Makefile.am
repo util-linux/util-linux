@@ -60,7 +60,7 @@ endif
 endif
 
 if BUILD_CRAMFS
-cramfs_common = $(utils_common) cramfs.h cramfs_common.c cramfs_common.h
+cramfs_common = $(utils_common) cramfs.h cramfs_common.c
 sbin_PROGRAMS += fsck.cramfs mkfs.cramfs
 fsck_cramfs_SOURCES = fsck.cramfs.c $(cramfs_common)
 mkfs_cramfs_SOURCES = mkfs.cramfs.c $(cramfs_common) $(top_srcdir)/lib/md5.c
