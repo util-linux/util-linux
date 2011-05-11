@@ -217,6 +217,8 @@ matching_opts (const char *options, const char *test_opts) {
 
      if (test_opts == NULL)
 	  return 1;
+     if (options == NULL)
+	  options = "";
 
      len = strlen(test_opts);
      q = alloca(len+1);

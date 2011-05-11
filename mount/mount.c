@@ -1163,7 +1163,9 @@ is_mounted_same_loopfile(const char *node0, const char *loopfile, unsigned long 
 			res = loopfile_used_with((char *) mnt->m.mnt_fsname,
 					loopfile, offset);
 
-		else if ((p = strstr(mnt->m.mnt_opts, "loop="))) {
+		else if (mnt->m.mnt_opts &&
+			 (p = strstr(mnt->m.mnt_opts, "loop=")))
+		{
 			char *dev = xstrdup(p+5);
 			if ((p = strchr(dev, ',')))
 				*p = '\0';
@@ -2052,8 +2054,8 @@ is_fstab_entry_mounted(struct mntentchn *mc, int verbose)
 		goto yes;
 
 	/* extra care for loop devices */
-	if ((strstr(mc->m.mnt_opts, "loop=") ||
-	     (stat(mc->m.mnt_fsname, &st) == 0 && S_ISREG(st.st_mode)))) {
+	if ((mc->m.mnt_opts && strstr(mc->m.mnt_opts, "loop=")) ||
+	    (stat(mc->m.mnt_fsname, &st) == 0 && S_ISREG(st.st_mode))) {
 
 		char *p = get_option_value(mc->m.mnt_opts, "offset=");
 		uintmax_t offset = 0;
