@@ -348,7 +348,6 @@ void blkid_reset_probe(blkid_probe pr)
 	if (!pr)
 		return;
 
-	blkid_probe_reset_buffer(pr);
 	blkid_probe_reset_vals(pr);
 
 	pr->cur_chain = NULL;
@@ -595,6 +594,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		return -1;
 
 	blkid_reset_probe(pr);
+	blkid_probe_reset_buffer(pr);
 
 	if ((pr->flags & BLKID_FL_PRIVATE_FD) && pr->fd >= 0)
 		close(pr->fd);
@@ -602,12 +602,17 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	pr->flags &= ~BLKID_FL_PRIVATE_FD;
 	pr->flags &= ~BLKID_FL_TINY_DEV;
 	pr->flags &= ~BLKID_FL_CDROM_DEV;
+	pr->prob_flags = 0;
 	pr->fd = fd;
 	pr->off = off;
 	pr->size = 0;
 	pr->devno = 0;
+	pr->disk_devno = 0;
 	pr->mode = 0;
 	pr->blkssz = 0;
+	pr->wipe_off = 0;
+	pr->wipe_size = 0;
+	pr->wipe_chain = NULL;
 
 #if defined(POSIX_FADV_RANDOM) && defined(HAVE_POSIX_FADVISE)
 	/* Disable read-ahead */

@@ -620,7 +620,7 @@ details_only:
 int blkid_partitions_do_subprobe(blkid_probe pr, blkid_partition parent,
 		const struct blkid_idinfo *id)
 {
-	int rc = 1;
+	int rc = 1, flags;
 	blkid_partlist ls;
 	blkid_loff_t saved_sz, saved_off, sz, off;
 
@@ -647,6 +647,9 @@ int blkid_partitions_do_subprobe(blkid_probe pr, blkid_partition parent,
 		return -1;
 	}
 
+	/* flags depends on size of the partition */
+	flags = pr->flags;
+
 	/* define sub-range with in device */
 	blkid_probe_set_dimension(pr, off, sz);
 
@@ -658,6 +661,8 @@ int blkid_partitions_do_subprobe(blkid_probe pr, blkid_partition parent,
 
 	/* restore the original setting */
 	blkid_probe_set_dimension(pr, saved_off, saved_sz);
+
+	pr->flags = flags;
 
 	DBG(DEBUG_LOWPROBE, printf(
 		"parts: <---- %s subprobe done (parent=%p, rc=%d)\n",
