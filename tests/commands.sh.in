@@ -51,7 +51,7 @@ TS_CMD_COL=${TS_CMD_COL:-"$top_builddir/text-utils/col"}
 TS_CMD_NAMEI=${TS_CMD_NAMEI-"$top_builddir/misc-utils/namei"}
 TS_CMD_LOOK=${TS_CMD_LOOK-"$top_builddir/misc-utils/look"}
 TS_CMD_CAL=${TS_CMD_CAL-"$top_builddir/misc-utils/cal"}
-TS_CMD_SCRIPT=${TS_CMD_SCRIPT-"$top_builddir/misc-utils/script"}
+TS_CMD_SCRIPT=${TS_CMD_SCRIPT-"$top_builddir/term-utils/script"}
 
 TS_CMD_CHECKTTY=${TS_CMD_CHECKTTY-"$top_builddir/login-utils/checktty_test"}
 TS_CMD_ISLOCAL=${TS_CMD_ISLOCAL-"$top_builddir/login-utils/islocal_test"}
