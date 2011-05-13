@@ -677,30 +677,13 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 	blkid_probe disk_pr = NULL;
 	blkid_partlist ls;
 	blkid_partition par;
-	dev_t devno, disk_devno;
-	char *disk_path = NULL;
+	dev_t devno;
 
 	devno = blkid_probe_get_devno(pr);
 	if (!devno)
 		goto nothing;
 
-	disk_devno = blkid_probe_get_wholedisk_devno(pr);
-	if (!disk_devno)
-		goto nothing;
-
-	if (devno == disk_devno)
-		goto nothing;		/* this is not a partition */
-
-	disk_path = blkid_devno_to_devname(disk_devno);
-	if (!disk_path)
-		goto nothing;
-
-	DBG(DEBUG_LOWPROBE, printf(
-		"parts: %d:%d: starting whole-disk probing: %s\n",
-		major(devno), minor(devno), disk_path));
-
-	/* create a new prober for the disk */
-	disk_pr = blkid_new_probe_from_filename(disk_path);
+	disk_pr = blkid_probe_get_wholedisk_probe(pr);
 	if (!disk_pr)
 		goto nothing;
 
@@ -749,44 +732,7 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 	}
 	rc = 0;
 nothing:
-	blkid_free_probe(disk_pr);
-	free(disk_path);
 	return rc;
-}
-
-/*
- * This function is compatible with blkid_probe_get_partitions(), but the
- * result is not stored in @pr and all probing is independent on the
- * status of @pr. It's possible to call this function from arbitrary
- * place without a care about @pr.
- */
-static blkid_partlist blkid_probe_get_independent_partlist(blkid_probe pr)
-{
-
-	blkid_partlist ls = NULL, org_ls = NULL;
-	struct blkid_chain *chn = &pr->chains[BLKID_CHAIN_PARTS];
-	struct blkid_prval vals[BLKID_NVALS_PARTS];
-	int nvals = BLKID_NVALS_PARTS;
-	int idx;
-
-	/* save old results */
-	nvals = blkid_probe_chain_copy_vals(pr, chn, vals, nvals);
-	idx = chn->idx;
-	if (chn->data) {
-		org_ls = chn->data;
-		chn->data = NULL;
-	}
-
-	ls = blkid_probe_get_partitions(pr);
-
-	/* restore original results */
-	chn->data = org_ls;
-	chn->idx = idx;
-
-	blkid_probe_chain_reset_vals(pr, chn);
-	blkid_probe_append_vals(pr, vals, nvals);
-
-	return ls;
 }
 
 /*
@@ -796,6 +742,7 @@ static blkid_partlist blkid_probe_get_independent_partlist(blkid_probe pr)
 int blkid_probe_is_covered_by_pt(blkid_probe pr,
 				 blkid_loff_t offset, blkid_loff_t size)
 {
+	blkid_probe prc;
 	blkid_partlist ls = NULL;
 	blkid_loff_t start, end;
 	int nparts, i, rc = 0;
@@ -804,7 +751,11 @@ int blkid_probe_is_covered_by_pt(blkid_probe pr,
 		"=> checking if off=%jd size=%jd covered by PT\n",
 		offset, size));
 
-	ls = blkid_probe_get_independent_partlist(pr);
+	prc = blkid_clone_probe(pr);
+	if (!prc)
+		goto done;
+
+	ls = blkid_probe_get_partitions(prc);
 	if (!ls)
 		goto done;
 
@@ -837,7 +788,7 @@ int blkid_probe_is_covered_by_pt(blkid_probe pr,
 		}
 	}
 done:
-	partitions_free_data(pr, (void *)ls);
+	blkid_free_probe(prc);
 
 	DBG(DEBUG_LOWPROBE, printf("<= %s covered by PT\n", rc ? "IS" : "NOT"));
 	return rc;

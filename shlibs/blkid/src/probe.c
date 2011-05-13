@@ -142,6 +142,8 @@ blkid_probe blkid_new_probe(void)
 	if (!pr)
 		return NULL;
 
+	DBG(DEBUG_LOWPROBE, printf("allocate a new probe %p\n", pr));
+
 	/* initialize chains */
 	for (i = 0; i < BLKID_NCHAINS; i++) {
 		pr->chains[i].driver = chains_drvs[i];
@@ -151,6 +153,39 @@ blkid_probe blkid_new_probe(void)
 	INIT_LIST_HEAD(&pr->buffers);
 	return pr;
 }
+
+/*
+ * Clone @parent, the new clone shares all, but except:
+ *
+ *	- probing result
+ *	- bufferes if another device (or offset) is set to the prober
+ */
+blkid_probe blkid_clone_probe(blkid_probe parent)
+{
+	blkid_probe pr;
+
+	if (!parent)
+		return NULL;
+
+	DBG(DEBUG_LOWPROBE, printf("allocate a probe clone\n"));
+
+	pr = blkid_new_probe();
+	if (!pr)
+		return NULL;
+
+	pr->fd = parent->fd;
+	pr->off = parent->off;
+	pr->size = parent->size;
+	pr->devno = parent->devno;
+	pr->disk_devno = parent->disk_devno;
+	pr->blkssz = parent->blkssz;
+	pr->flags = parent->flags;
+	pr->parent = parent;
+
+	return pr;
+}
+
+
 
 /**
  * blkid_new_probe_from_filename:
@@ -218,6 +253,9 @@ void blkid_free_probe(blkid_probe pr)
 	if ((pr->flags & BLKID_FL_PRIVATE_FD) && pr->fd >= 0)
 		close(pr->fd);
 	blkid_probe_reset_buffer(pr);
+	blkid_free_probe(pr->disk_probe);
+
+	DBG(DEBUG_LOWPROBE, printf("free probe %p\n", pr));
 	free(pr);
 }
 
@@ -487,14 +525,23 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 	if (pr->size <= 0)
 		return NULL;
 
+	if (pr->parent &&
+	    pr->parent->devno == pr->devno &&
+	    pr->parent->off == pr->off)
+		/*
+		 * This is a cloned prober and points to the same area as
+		 * parent. Let's use parent's bufferes.
+		 */
+		return blkid_probe_get_buffer(pr->parent, off, len);
+
 	list_for_each(p, &pr->buffers) {
 		struct blkid_bufinfo *x =
 				list_entry(p, struct blkid_bufinfo, bufs);
 
 		if (x->off <= off && off + len <= x->off + x->len) {
 			DBG(DEBUG_LOWPROBE,
-				printf("\treuse buffer: off=%jd len=%jd\n",
-							x->off, x->len));
+				printf("\treuse buffer: off=%jd len=%jd pr=%p\n",
+							x->off, x->len, pr));
 			bf = x;
 			break;
 		}
@@ -516,7 +563,8 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 		INIT_LIST_HEAD(&bf->bufs);
 
 		DBG(DEBUG_LOWPROBE,
-			printf("\tbuffer read: off=%jd len=%jd\n", off, len));
+			printf("\tbuffer read: off=%jd len=%jd pr=%p\n",
+				off, len, pr));
 
 		ret = read(pr->fd, bf->data, len);
 		if (ret != (ssize_t) len) {
@@ -537,12 +585,11 @@ static void blkid_probe_reset_buffer(blkid_probe pr)
 	if (!pr || list_empty(&pr->buffers))
 		return;
 
-	DBG(DEBUG_LOWPROBE, printf("reseting probing buffers\n"));
+	DBG(DEBUG_LOWPROBE, printf("reseting probing buffers pr=%p\n", pr));
 
 	while (!list_empty(&pr->buffers)) {
 		struct blkid_bufinfo *bf = list_entry(pr->buffers.next,
 						struct blkid_bufinfo, bufs);
-
 		read_ct++;
 		len_ct += bf->len;
 		list_del(&bf->bufs);
@@ -1121,6 +1168,42 @@ int blkid_probe_is_wholedisk(blkid_probe pr)
 		return 0;
 
 	return devno == disk_devno;
+}
+
+blkid_probe blkid_probe_get_wholedisk_probe(blkid_probe pr)
+{
+	dev_t disk;
+
+	if (blkid_probe_is_wholedisk(pr))
+		return NULL;			/* this is not partition */
+
+	if (pr->parent)
+		/* this is cloned blkid_probe, use parent's stuff */
+		return blkid_probe_get_wholedisk_probe(pr->parent);
+
+	disk = blkid_probe_get_wholedisk_devno(pr);
+
+	if (pr->disk_probe && pr->disk_probe->devno != disk) {
+		/* we have disk prober, but for another disk... close it */
+		blkid_free_probe(pr->disk_probe);
+		pr->disk_probe = NULL;
+	}
+
+	if (!pr->disk_probe) {
+		/* Open a new disk prober */
+		char *disk_path = blkid_devno_to_devname(disk);
+
+		if (!disk_path)
+			return NULL;
+
+		DBG(DEBUG_LOWPROBE, printf("allocate a wholedisk probe\n"));
+
+		pr->disk_probe = blkid_new_probe_from_filename(disk_path);
+		if (!pr->disk_probe)
+			return NULL;	/* ENOMEM? */
+	}
+
+	return pr->disk_probe;
 }
 
 /**

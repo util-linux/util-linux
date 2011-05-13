@@ -209,6 +209,9 @@ struct blkid_struct_probe
 
 	struct blkid_prval	vals[BLKID_NVALS];	/* results */
 	int			nvals;		/* number of assigned vals */
+
+	struct blkid_struct_probe *parent;	/* for clones */
+	struct blkid_struct_probe *disk_probe;	/* whole-disk probing */
 };
 
 /* private flags library flags */
@@ -218,6 +221,9 @@ struct blkid_struct_probe
 
 /* private per-probing flags */
 #define BLKID_PROBE_FL_IGNORE_PT (1 << 1)	/* ignore partition table */
+
+extern blkid_probe blkid_clone_probe(blkid_probe parent);
+extern blkid_probe blkid_probe_get_wholedisk_probe(blkid_probe pr);
 
 /*
  * Evaluation methods (for blkid_eval_* API)
