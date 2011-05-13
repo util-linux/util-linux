@@ -560,7 +560,7 @@ static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 	if (chn->binary)
 		partitions_init_data(pr, chn);
 
-	if (!pr->wipe_size && (pr->prob_flags & BLKID_PARTS_IGNORE_PT))
+	if (!pr->wipe_size && (pr->prob_flags & BLKID_PROBE_FL_IGNORE_PT))
 		goto details_only;
 
 	DBG(DEBUG_LOWPROBE,

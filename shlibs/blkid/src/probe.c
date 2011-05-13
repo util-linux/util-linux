@@ -184,7 +184,7 @@ blkid_probe blkid_new_probe_from_filename(const char *filename)
 	if (blkid_probe_set_device(pr, fd, 0, 0))
 		goto err;
 
-	pr->flags |= BLKID_PRIVATE_FD;
+	pr->flags |= BLKID_FL_PRIVATE_FD;
 	return pr;
 err:
 	if (fd >= 0)
@@ -215,7 +215,7 @@ void blkid_free_probe(blkid_probe pr)
 		free(ch->fltr);
 	}
 
-	if ((pr->flags & BLKID_PRIVATE_FD) && pr->fd >= 0)
+	if ((pr->flags & BLKID_FL_PRIVATE_FD) && pr->fd >= 0)
 		close(pr->fd);
 	blkid_probe_reset_buffer(pr);
 	free(pr);
@@ -563,7 +563,7 @@ static void blkid_probe_reset_buffer(blkid_probe pr)
  */
 int blkid_probe_is_tiny(blkid_probe pr)
 {
-	return pr && (pr->flags & BLKID_TINY_DEV);
+	return pr && (pr->flags & BLKID_FL_TINY_DEV);
 }
 
 /*
@@ -571,7 +571,7 @@ int blkid_probe_is_tiny(blkid_probe pr)
  */
 int blkid_probe_is_cdrom(blkid_probe pr)
 {
-	return pr && (pr->flags & BLKID_CDROM_DEV);
+	return pr && (pr->flags & BLKID_FL_CDROM_DEV);
 }
 
 /**
@@ -596,12 +596,12 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 
 	blkid_reset_probe(pr);
 
-	if ((pr->flags & BLKID_PRIVATE_FD) && pr->fd >= 0)
+	if ((pr->flags & BLKID_FL_PRIVATE_FD) && pr->fd >= 0)
 		close(pr->fd);
 
-	pr->flags &= ~BLKID_PRIVATE_FD;
-	pr->flags &= ~BLKID_TINY_DEV;
-	pr->flags &= ~BLKID_CDROM_DEV;
+	pr->flags &= ~BLKID_FL_PRIVATE_FD;
+	pr->flags &= ~BLKID_FL_TINY_DEV;
+	pr->flags &= ~BLKID_FL_CDROM_DEV;
 	pr->fd = fd;
 	pr->off = off;
 	pr->size = 0;
@@ -646,11 +646,11 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	}
 
 	if (pr->size <= 1440 * 1024 && !S_ISCHR(sb.st_mode))
-		pr->flags |= BLKID_TINY_DEV;
+		pr->flags |= BLKID_FL_TINY_DEV;
 
 #ifdef CDROM_GET_CAPABILITY
 	if (S_ISBLK(sb.st_mode) && ioctl(fd, CDROM_GET_CAPABILITY, NULL) >= 0)
-		pr->flags |= BLKID_CDROM_DEV;
+		pr->flags |= BLKID_FL_CDROM_DEV;
 #endif
 
 	DBG(DEBUG_LOWPROBE, printf("ready for low-probing, offset=%jd, size=%jd\n",
@@ -694,10 +694,10 @@ int blkid_probe_set_dimension(blkid_probe pr,
 
 	pr->off = off;
 	pr->size = size;
-	pr->flags &= ~BLKID_TINY_DEV;
+	pr->flags &= ~BLKID_FL_TINY_DEV;
 
 	if (pr->size <= 1440 * 1024 && !S_ISCHR(pr->mode))
-		pr->flags |= BLKID_TINY_DEV;
+		pr->flags |= BLKID_FL_TINY_DEV;
 
 	blkid_probe_reset_buffer(pr);
 

@@ -211,12 +211,13 @@ struct blkid_struct_probe
 	int			nvals;		/* number of assigned vals */
 };
 
-/* private flags */
-#define BLKID_PRIVATE_FD	(1 << 1)	/* see blkid_new_probe_from_filename() */
-#define BLKID_TINY_DEV		(1 << 2)	/* <= 1.47MiB (floppy or so) */
-#define BLKID_CDROM_DEV		(1 << 3)	/* is a CD/DVD drive */
-/* private probing flags */
-#define BLKID_PARTS_IGNORE_PT	(1 << 1)	/* ignore partition table */
+/* private flags library flags */
+#define BLKID_FL_PRIVATE_FD	(1 << 1)	/* see blkid_new_probe_from_filename() */
+#define BLKID_FL_TINY_DEV	(1 << 2)	/* <= 1.47MiB (floppy or so) */
+#define BLKID_FL_CDROM_DEV	(1 << 3)	/* is a CD/DVD drive */
+
+/* private per-probing flags */
+#define BLKID_PROBE_FL_IGNORE_PT (1 << 1)	/* ignore partition table */
 
 /*
  * Evaluation methods (for blkid_eval_* API)

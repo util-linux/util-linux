@@ -450,7 +450,7 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 	 * have to ignore such partition tables.
 	 */
 	if (chn->idx >= 0 && idinfos[chn->idx]->usage & BLKID_USAGE_RAID)
-		pr->prob_flags |= BLKID_PARTS_IGNORE_PT;
+		pr->prob_flags |= BLKID_PROBE_FL_IGNORE_PT;
 
 	return 0;
 }
