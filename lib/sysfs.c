@@ -152,6 +152,13 @@ int sysfs_stat(struct sysfs_cxt *cxt, const char *attr, struct stat *st)
 	return rc;
 }
 
+int sysfs_has_attribute(struct sysfs_cxt *cxt, const char *attr)
+{
+	struct stat st;
+
+	return sysfs_stat(cxt, attr, &st) == 0;
+}
+
 static int sysfs_open(struct sysfs_cxt *cxt, const char *attr)
 {
 	int fd = open_at(cxt->dir_fd, cxt->dir_path, attr, O_RDONLY);

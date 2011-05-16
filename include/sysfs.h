@@ -39,6 +39,7 @@ extern void sysfs_deinit(struct sysfs_cxt *cxt);
 extern DIR *sysfs_opendir(struct sysfs_cxt *cxt, const char *attr);
 
 extern int sysfs_stat(struct sysfs_cxt *cxt, const char *attr, struct stat *st);
+extern int sysfs_has_attribute(struct sysfs_cxt *cxt, const char *attr);
 
 extern int sysfs_scanf(struct sysfs_cxt *cxt,  const char *attr,
 		       const char *fmt, ...)

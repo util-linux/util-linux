@@ -34,6 +34,7 @@
 
 #include "blkidP.h"
 #include "pathnames.h"
+#include "at.h"
 
 char *blkid_strndup(const char *s, int length)
 {
@@ -87,40 +88,6 @@ char *blkid_strconcat(const char *a, const char *b, const char *c)
 	}
 	*p = '\0';
 	return res;
-}
-
-int blkid_fstatat(DIR *dir, const char *dirname, const char *filename,
-			struct stat *st, int nofollow)
-{
-#ifdef HAVE_FSTATAT
-	return fstatat(dirfd(dir), filename, st,
-			nofollow ? AT_SYMLINK_NOFOLLOW : 0);
-#else
-	char path[PATH_MAX];
-	int len;
-
-	len = snprintf(path, sizeof(path), "%s/%s", dirname, filename);
-	if (len < 0 || len + 1 > sizeof(path))
-		return -1;
-
-	return nofollow ? lstat(path, st) : stat(path, st);
-#endif
-}
-
-int blkid_openat(DIR *dir, const char *dirname, const char *filename, int flags)
-{
-#ifdef HAVE_FSTATAT
-	return openat(dirfd(dir), filename, flags);
-#else
-	char path[PATH_MAX];
-	int len;
-
-	len = snprintf(path, sizeof(path), "%s/%s", dirname, filename);
-	if (len < 0 || len + 1 > sizeof(path))
-		return -1;
-
-	return open(path, flags);
-#endif
 }
 
 /*
@@ -180,7 +147,7 @@ void blkid__scan_dir(char *dirname, dev_t devno, struct dir_list **list,
 		     ((dp->d_name[1] == '.') && (dp->d_name[2] == 0))))
 			continue;
 
-		if (blkid_fstatat(dir, dirname, dp->d_name, &st, 0))
+		if (fstat_at(dirfd(dir), dirname, dp->d_name, &st, 0))
 			continue;
 
 		if (S_ISBLK(st.st_mode) && st.st_rdev == devno) {
@@ -201,7 +168,7 @@ void blkid__scan_dir(char *dirname, dev_t devno, struct dir_list **list,
 		if (dp->d_type == DT_UNKNOWN)
 #endif
 		{
-			if (blkid_fstatat(dir, dirname, dp->d_name, &st, 1) ||
+			if (fstat_at(dirfd(dir), dirname, dp->d_name, &st, 1) ||
 			    !S_ISDIR(st.st_mode))
 				continue;	/* symlink or lstat() failed */
 		}
@@ -335,7 +302,6 @@ char *blkid_devno_to_devname(dev_t devno)
 
 	return devname;
 }
-
 
 /**
  * blkid_devno_to_wholedisk:
@@ -494,67 +460,6 @@ int blkid_driver_has_major(const char *drvname, int major)
 	return match;
 }
 
-static char *mk_devno_attribute_path(char *buf, size_t buflen,
-				dev_t devno, const char *attr)
-{
-	int len = snprintf(buf, buflen, "/sys/dev/block/%d:%d/%s",
-			major(devno), minor(devno), attr);
-
-	if (len < 0 || len + 1 > buflen)
-		return NULL;
-
-	return buf;
-}
-
-int blkid_devno_has_attribute(dev_t devno, const char *attribute)
-{
-	char path[PATH_MAX];
-	struct stat info;
-
-	if (!mk_devno_attribute_path(path, sizeof(path), devno, attribute))
-		return 0;
-
-	if (stat(path, &info) == 0)
-		return 1;
-
-	return 0;
-}
-
-int blkid_devno_get_u64_attribute(dev_t devno, const char *attribute, uint64_t *result)
-{
-	FILE *f;
-	char path[PATH_MAX];
-	int rc = 0;
-
-	if (!mk_devno_attribute_path(path, sizeof(path), devno, attribute))
-		return -1;
-
-	f = fopen(path, "r");
-	if (f) {
-		rc = fscanf(f, "%" SCNu64, result);
-		fclose(f);
-	}
-
-	return rc == 1 ? 0 : -1;
-}
-
-int blkid_devno_get_s64_attribute(dev_t devno, const char *attribute, int64_t *result)
-{
-	FILE *f;
-	char path[PATH_MAX];
-	int rc = 0;
-
-	if (!mk_devno_attribute_path(path, sizeof(path), devno, attribute))
-		return -1;
-
-	f = fopen(path, "r");
-	if (f) {
-		rc = fscanf(f, "%" SCNd64, result);
-		fclose(f);
-	}
-
-	return rc == 1 ? 0 : -1;
-}
 
 #ifdef TEST_PROGRAM
 int main(int argc, char** argv)

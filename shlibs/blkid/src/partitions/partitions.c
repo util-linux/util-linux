@@ -21,6 +21,7 @@
 #include <stdarg.h>
 
 #include "partitions.h"
+#include "sysfs.h"
 
 /**
  * SECTION:partitions
@@ -889,13 +890,17 @@ blkid_partition blkid_partlist_get_partition(blkid_partlist ls, int n)
  */
 blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno)
 {
+	struct sysfs_cxt sysfs;
 	uint64_t start, size;
 	int i;
 
-	if (blkid_devno_get_u64_attribute(devno, "start", &start))
+	if (sysfs_init(&sysfs, devno, NULL))
 		return NULL;
-	if (blkid_devno_get_u64_attribute(devno, "size", &size))
-		return NULL;
+
+	start = sysfs_read_u64(&sysfs, "start");
+	size = sysfs_read_u64(&sysfs, "size");
+
+	sysfs_deinit(&sysfs);
 
 	for (i = 0; i < ls->nparts; i++) {
 		blkid_partition par = &ls->parts[i];

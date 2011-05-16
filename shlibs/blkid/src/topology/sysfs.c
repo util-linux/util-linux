@@ -17,6 +17,7 @@
 #include <unistd.h>
 #include <errno.h>
 
+#include "sysfs.h"
 #include "topology.h"
 
 /*
@@ -40,54 +41,64 @@ static struct topology_val {
 
 static int probe_sysfs_tp(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	dev_t dev, pri_dev = 0;
+	dev_t dev, disk = 0;
 	int i, count = 0;
+	struct sysfs_cxt sysfs, parent;
+
+	int rc = 1;		/* nothing (default) */
 
 	dev = blkid_probe_get_devno(pr);
 	if (!dev)
-		goto nothing;		/* probably not a block device */
+		goto done;			/* probably not a block device */
+	if (sysfs_init(&sysfs, dev, NULL))
+		goto done;			/* no entry in /sys ? */
 
 	for (i = 0; i < ARRAY_SIZE(topology_vals); i++) {
 		struct topology_val *val = &topology_vals[i];
-		dev_t attr_dev = dev;
-		int rc = 1;
+		int ok = sysfs_has_attribute(&sysfs, val->attr);
 
-		if (!blkid_devno_has_attribute(dev, val->attr)) {
-			/* get attribute from partition's primary device */
-			if (!pri_dev &&
-			    blkid_devno_to_wholedisk(dev, NULL, 0, &pri_dev))
-				continue;
-			attr_dev = pri_dev;
+		rc = 1;	/* nothing */
+
+		if (!ok) {
+			if (!disk) {
+				/*
+				 * Read atrributes from "disk" if the current
+				 * device is a partition.
+				 */
+				disk = blkid_probe_get_wholedisk_devno(pr);
+				if (disk && disk != dev) {
+					sysfs_init(&parent, disk, NULL);
+					sysfs.parent = &parent;
+
+					ok = sysfs_has_attribute(&sysfs, val->attr);
+				}
+			}
+			if (!ok)
+				continue;	/* attrinute does not exist */
 		}
 
 		if (val->set_ulong) {
-			uint64_t data = 0;
-
-			if (blkid_devno_get_u64_attribute(attr_dev,
-							val->attr, &data))
-				continue;
+			uint64_t data = sysfs_read_u64(&sysfs, val->attr);
 			rc = val->set_ulong(pr, (unsigned long) data);
 
 		} else if (val->set_int) {
-			int64_t data = 0;
-
-			if (blkid_devno_get_s64_attribute(attr_dev,
-							val->attr, &data))
-				continue;
+			int64_t data = sysfs_read_s64(&sysfs, val->attr);
 			rc = val->set_int(pr, (int) data);
 		}
 
-		if (rc)
-			goto err;
-		count++;
+		if (rc < 0)
+			goto done;	/* error */
+		if (rc == 0)
+			count++;
 	}
 
+done:
+	sysfs_deinit(&sysfs);
+	if (disk)
+		sysfs_deinit(&parent);
 	if (count)
-		return 0;
-nothing:
-	return 1;
-err:
-	return -1;
+		return 0;		/* success */
+	return rc;			/* error or nothing */
 }
 
 const struct blkid_idinfo sysfs_tp_idinfo =

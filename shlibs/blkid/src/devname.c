@@ -38,6 +38,8 @@
 
 #include "canonicalize.h"		/* $(top_srcdir)/include */
 #include "pathnames.h"
+#include "sysfs.h"
+#include "at.h"
 
 /*
  * Find a dev struct in the cache by device name, if available.
@@ -400,7 +402,7 @@ ubi_probe_all(blkid_cache cache, int only_if_new)
 				continue;
 			if (!strcmp(name, "ubi_ctrl"))
 				continue;
-			if (blkid_fstatat(dir, *dirname, name, &st, 0))
+			if (fstat_at(dirfd(dir), *dirname, name, &st, 0))
 				continue;
 
 			dev = st.st_rdev;
@@ -543,7 +545,6 @@ static int probe_all_removable(blkid_cache cache)
 {
 	DIR *dir;
 	struct dirent *d;
-	char buf[PATH_MAX];
 
 	if (!cache)
 		return -BLKID_ERR_PARAM;
@@ -553,7 +554,9 @@ static int probe_all_removable(blkid_cache cache)
 		return -BLKID_ERR_PROC;
 
 	while((d = readdir(dir))) {
-		int fd, rc, ma, mi;
+		struct sysfs_cxt sysfs;
+		int removable;
+		dev_t devno;
 
 #ifdef _DIRENT_HAVE_D_TYPE
 		if (d->d_type != DT_UNKNOWN && d->d_type != DT_LNK)
@@ -564,33 +567,16 @@ static int probe_all_removable(blkid_cache cache)
 		     ((d->d_name[1] == '.') && (d->d_name[2] == 0))))
 			continue;
 
-		snprintf(buf, sizeof(buf), "%s/removable", d->d_name);
-		fd = blkid_openat(dir, _PATH_SYS_BLOCK, buf, O_RDONLY);
-		if (fd < 0)
+		devno = sysfs_devname_to_devno(d->d_name, NULL);
+		if (!devno)
 			continue;
 
-		rc = read(fd, buf, 1);
-		close(fd);
+		sysfs_init(&sysfs, devno, NULL);
+		removable = sysfs_read_int(&sysfs, "removable");
+		sysfs_deinit(&sysfs);
 
-		if (rc != 1 || *buf != '1')
-			continue;		/* not removable device */
-
-		/* get devno */
-		snprintf(buf, sizeof(buf), "%s/dev", d->d_name);
-		fd = blkid_openat(dir, _PATH_SYS_BLOCK, buf, O_RDONLY);
-		if (fd < 0)
-			continue;
-
-		rc = read(fd, buf, sizeof(buf));
-		close(fd);
-
-		if (rc < 3)
-			continue;		/* M:N */
-		buf[rc] = '\0';
-		if (sscanf(buf, "%d:%d", &ma, &mi) != 2)
-			continue;
-
-		probe_one(cache, d->d_name, makedev(ma, mi), 0, 0, 1);
+		if (removable)
+			probe_one(cache, d->d_name, devno, 0, 0, 1);
 	}
 
 	closedir(dir);
