@@ -58,7 +58,9 @@ lsblk_SOURCES = lsblk.c \
 		$(top_srcdir)/lib/ismounted.c \
 		$(top_srcdir)/lib/tt.c \
 		$(top_srcdir)/lib/mbsalign.c \
-		$(top_srcdir)/lib/strutils.c
+		$(top_srcdir)/lib/strutils.c \
+		$(top_srcdir)/lib/sysfs.c \
+		$(top_srcdir)/lib/at.c
 lsblk_LDADD = $(ul_libblkid_la)
 lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 endif

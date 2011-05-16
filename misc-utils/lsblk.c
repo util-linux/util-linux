@@ -52,6 +52,7 @@
 #include "xalloc.h"
 #include "strutils.h"
 #include "c.h"
+#include "sysfs.h"
 
 /* column IDs */
 enum {
@@ -147,7 +148,8 @@ struct blkdev_cxt {
 	char *dm_name;		/* DM name (dm/block) */
 
 	char *filename;		/* path to device node */
-	int sysfs_fd;		/* O_RDONLY file desciptor to /sys/block/<dev> */
+
+	struct sysfs_cxt  sysfs;
 
 	int partition;		/* is partition? TRUE/FALSE */
 
@@ -176,7 +178,6 @@ static int is_maj_excluded(int maj)
 	return 0;
 }
 
-
 /* array with IDs of enabled columns */
 static int get_column_id(int num)
 {
@@ -190,7 +191,6 @@ static struct colinfo *get_column_info(int num)
 {
 	return &infos[ get_column_id(num) ];
 }
-
 
 static int column_name_to_id(const char *name, size_t namesz)
 {
@@ -217,8 +217,7 @@ static void reset_blkdev_cxt(struct blkdev_cxt *cxt)
 	free(cxt->uuid);
 	free(cxt->label);
 
-	if (cxt->sysfs_fd >= 0)
-		close(cxt->sysfs_fd);
+	sysfs_deinit(&cxt->sysfs);
 
 	memset(cxt, 0, sizeof(*cxt));
 }
@@ -245,27 +244,6 @@ static struct dirent *xreaddir(DIR *dp)
 	return d;
 }
 
-
-static int is_partition_dirent(DIR *dir, struct dirent *d, const char *parent_name)
-{
-	char path[256];
-
-	assert(dir);
-	assert(d);
-
-#ifdef _DIRENT_HAVE_D_TYPE
-	if (d->d_type != DT_DIR)
-		return 0;
-#endif
-	if (strncmp(parent_name, d->d_name, strlen(parent_name)))
-		return 0;
-
-	/* Cannot use /partition file, not supported on old sysfs */
-	snprintf(path, sizeof(path), "%s/start", d->d_name);
-
-	return faccessat(dirfd(dir), path, R_OK, 0) == 0;
-}
-
 static char *get_device_path(struct blkdev_cxt *cxt)
 {
 	char path[PATH_MAX];
@@ -278,141 +256,6 @@ static char *get_device_path(struct blkdev_cxt *cxt)
 
 	snprintf(path, sizeof(path), "/dev/%s", cxt->name);
 	return xstrdup(path);
-}
-
-static char *get_sysfs_path(struct blkdev_cxt *cxt)
-{
-	char path[PATH_MAX];
-
-	assert(cxt);
-	assert(cxt->name);
-
-	if (cxt->partition && cxt->parent)
-		snprintf(path, sizeof(path), _PATH_SYS_BLOCK "/%s/%s",
-			 cxt->parent->name, cxt->name);
-	else
-		snprintf(path, sizeof(path), _PATH_SYS_BLOCK "/%s", cxt->name);
-
-	return xstrdup(path);
-}
-
-static int sysfs_open(struct blkdev_cxt *cxt, const char *attr)
-{
-	int fd;
-
-	assert(cxt);
-	assert(cxt->sysfs_fd >= 0);
-
-	fd = openat(cxt->sysfs_fd, attr, O_RDONLY);
-	if (fd == -1 && errno == ENOENT && !strncmp(attr, "queue/", 6) && cxt->parent) {
-		fd = openat(cxt->parent->sysfs_fd, attr, O_RDONLY);
-	}
-	return fd;
-}
-
-static FILE *sysfs_fopen(struct blkdev_cxt *cxt, const char *attr)
-{
-	int fd = sysfs_open(cxt, attr);
-
-	return fd < 0 ? NULL : fdopen(fd, "r");
-}
-
-static DIR *sysfs_opendir(struct blkdev_cxt *cxt, const char *attr)
-{
-	DIR *dir;
-	int fd;
-
-	if (attr)
-		fd = sysfs_open(cxt, attr);
-	else {
-		/* request to open root of device in sysfs (/sys/block/<dev>)
-		 * -- we cannot use cxt->sysfs_fd directly, because closedir()
-		 * will close this our persistent file descriptor.
-		 */
-		assert(cxt);
-		assert(cxt->sysfs_fd >= 0);
-
-		fd = dup(cxt->sysfs_fd);
-	}
-
-	if (fd < 0)
-		return NULL;
-	dir = fdopendir(fd);
-	if (!dir) {
-		close(fd);
-		return NULL;
-	}
-	if (!attr)
-		 rewinddir(dir);
-	return dir;
-}
-
-static __attribute__ ((format (scanf, 3, 4)))
-int sysfs_scanf(struct blkdev_cxt *cxt,  const char *attr, const char *fmt, ...)
-{
-	FILE *f = sysfs_fopen(cxt, attr);
-	va_list ap;
-	int rc;
-
-	if (!f)
-		return -EINVAL;
-	va_start(ap, fmt);
-	rc = vfscanf(f, fmt, ap);
-	va_end(ap);
-
-	fclose(f);
-	return rc;
-}
-
-static uint64_t sysfs_read_u64(struct blkdev_cxt *cxt, const char *attr)
-{
-	uint64_t x;
-	return sysfs_scanf(cxt, attr, "%"SCNu64, &x) == 1 ? x : 0;
-}
-
-static int sysfs_read_int(struct blkdev_cxt *cxt, const char *attr)
-{
-	int x;
-	return sysfs_scanf(cxt, attr, "%d", &x) == 1 ? x : 0;
-}
-
-static char *sysfs_strdup(struct blkdev_cxt *cxt, const char *attr)
-{
-	char buf[1024];
-	return sysfs_scanf(cxt, attr, "%1024[^\n]", buf) == 1 ?
-						xstrdup(buf) : NULL;
-}
-
-static int sysfs_count_dirents(struct blkdev_cxt *cxt, const char *attr)
-{
-	DIR *dir;
-	int r = 0;
-
-	if (!(dir = sysfs_opendir(cxt, attr)))
-		return 0;
-
-	while (xreaddir(dir)) r++;
-
-	closedir(dir);
-	return r;
-}
-
-static int sysfs_count_partitions(struct blkdev_cxt *cxt)
-{
-	DIR *dir;
-	struct dirent *d;
-	int r = 0;
-
-	if (!(dir = sysfs_opendir(cxt, NULL)))
-		return 0;
-
-	while ((d = xreaddir(dir))) {
-		if (is_partition_dirent(dir, d, cxt->name))
-			r++;
-	}
-
-	closedir(dir);
-	return r;
 }
 
 static char *get_device_mountpoint(struct blkdev_cxt *cxt)
@@ -478,7 +321,7 @@ static int is_readonly_device(struct blkdev_cxt *cxt)
 {
 	int fd, ro = 0;
 
-	if (sysfs_scanf(cxt, "ro", "%d", &ro) == 0)
+	if (sysfs_scanf(&cxt->sysfs, "ro", "%d", &ro) == 0)
 		return ro;
 
 	/* fallback if "ro" attribute does not exist */
@@ -492,7 +335,7 @@ static int is_readonly_device(struct blkdev_cxt *cxt)
 
 static char *get_scheduler(struct blkdev_cxt *cxt)
 {
-	char *str = sysfs_strdup(cxt, "queue/scheduler");
+	char *str = sysfs_strdup(&cxt->sysfs, "queue/scheduler");
 	char *p, *res = NULL;
 
 	if (!str)
@@ -516,7 +359,7 @@ static char *get_type(struct blkdev_cxt *cxt)
 	char *res = NULL, *p;
 
 	if (is_dm(cxt->name)) {
-		char *dm_uuid = sysfs_strdup(cxt, "dm/uuid");
+		char *dm_uuid = sysfs_strdup(&cxt->sysfs, "dm/uuid");
 
 		/* The DM_UUID prefix should be set to subsystem owning
 		 * the device - LVM, CRYPT, DMRAID, MPATH, PART */
@@ -542,13 +385,13 @@ static char *get_type(struct blkdev_cxt *cxt)
 		res = xstrdup("loop");
 
 	} else if (!strncmp(cxt->name, "md", 2)) {
-		char *md_level = sysfs_strdup(cxt, "md/level");
+		char *md_level = sysfs_strdup(&cxt->sysfs, "md/level");
 		res = md_level ? md_level : xstrdup("md");
 
 	} else {
 		const char *type = cxt->partition ? "part" : "disk";
 
-		switch (sysfs_read_int(cxt, "device/type")) {
+		switch (sysfs_read_int(&cxt->sysfs, "device/type")) {
 			case 0x0c: /* TYPE_RAID */
 				type = "raid"; break;
 			case 0x01: /* TYPE_TAPE */
@@ -646,20 +489,20 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 					xstrdup("1") : xstrdup("0"));
 		break;
 	case COL_RM:
-		p = sysfs_strdup(cxt, "removable");
+		p = sysfs_strdup(&cxt->sysfs, "removable");
 		if (!p && cxt->parent)
-			p = sysfs_strdup(cxt->parent, "removable");
+			p = sysfs_strdup(&cxt->parent->sysfs, "removable");
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
 	case COL_ROTA:
-		p = sysfs_strdup(cxt, "queue/rotational");
+		p = sysfs_strdup(&cxt->sysfs, "queue/rotational");
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
 	case COL_MODEL:
 		if (!cxt->partition && cxt->nslaves == 0) {
-			p = sysfs_strdup(cxt, "device/model");
+			p = sysfs_strdup(&cxt->sysfs, "device/model");
 			if (p)
 				tt_line_set_data(ln, col, p);
 		}
@@ -676,27 +519,27 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		}
 		break;
 	case COL_ALIOFF:
-		p = sysfs_strdup(cxt, "alignment_offset");
+		p = sysfs_strdup(&cxt->sysfs, "alignment_offset");
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
 	case COL_MINIO:
-		p = sysfs_strdup(cxt, "queue/minimum_io_size");
+		p = sysfs_strdup(&cxt->sysfs, "queue/minimum_io_size");
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
 	case COL_OPTIO:
-		p = sysfs_strdup(cxt, "queue/optimal_io_size");
+		p = sysfs_strdup(&cxt->sysfs, "queue/optimal_io_size");
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
 	case COL_PHYSEC:
-		p = sysfs_strdup(cxt, "queue/physical_block_size");
+		p = sysfs_strdup(&cxt->sysfs, "queue/physical_block_size");
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
 	case COL_LOGSEC:
-		p = sysfs_strdup(cxt, "queue/logical_block_size");
+		p = sysfs_strdup(&cxt->sysfs, "queue/logical_block_size");
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
@@ -711,19 +554,19 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 			tt_line_set_data(ln, col, p);
 		break;
 	case COL_DALIGN:
-		p = sysfs_strdup(cxt, "discard_alignment");
+		p = sysfs_strdup(&cxt->sysfs, "discard_alignment");
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
 	case COL_DGRAN:
-		p = sysfs_strdup(cxt, "queue/discard_granularity");
+		p = sysfs_strdup(&cxt->sysfs, "queue/discard_granularity");
 		if (!lsblk->bytes)
 			p = size_to_human_string(atoi(p));
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
 	case COL_DMAX:
-		p = sysfs_strdup(cxt, "queue/discard_max_bytes");
+		p = sysfs_strdup(&cxt->sysfs, "queue/discard_max_bytes");
 
 		if (!lsblk->bytes)
 			p = size_to_human_string(atoi(p));
@@ -731,7 +574,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 			tt_line_set_data(ln, col, p);
 		break;
 	case COL_DZERO:
-		p = sysfs_strdup(cxt, "queue/discard_zeroes_data");
+		p = sysfs_strdup(&cxt->sysfs, "queue/discard_zeroes_data");
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
@@ -753,7 +596,7 @@ static int set_cxt(struct blkdev_cxt *cxt,
 		    const char *name,
 		    int partition)
 {
-	char *p;
+	dev_t devno;
 
 	cxt->parent = parent;
 	cxt->name = xstrdup(name);
@@ -761,28 +604,32 @@ static int set_cxt(struct blkdev_cxt *cxt,
 
 	cxt->filename = get_device_path(cxt);
 
-	/* open /sys/block/<name> */
-	p = get_sysfs_path(cxt);
-	cxt->sysfs_fd = open(p, O_RDONLY);
-	if (cxt->sysfs_fd < 0)
-		err(EXIT_FAILURE, _("%s: open failed"), p);
-	free(p);
+	devno = sysfs_devname_to_devno(name,
+			partition && parent ? parent->name : NULL);
+	if (!devno)
+		err(EXIT_FAILURE, _("%s: unknown device name"), name);
 
-	if (sysfs_scanf(cxt, "dev", "%u:%u", &cxt->maj, &cxt->min) != 2)
-		return -1;
+	if (sysfs_init(&cxt->sysfs, devno, &parent->sysfs))
+		err(EXIT_FAILURE, _("%s: failed to initialize sysfs handler"), name);
 
-	cxt->size = sysfs_read_u64(cxt, "size") << 9;
+	cxt->maj = major(devno);
+	cxt->min = minor(devno);
+
+	cxt->size = sysfs_read_u64(&cxt->sysfs, "size") << 9;
 
 	/* Ignore devices of zero size */
 	if (!lsblk->all_devices && cxt->size == 0)
 		return -1;
 
-	if (is_dm(name))
-		cxt->dm_name = sysfs_strdup(cxt, "dm/name");
+	if (is_dm(name)) {
+		cxt->dm_name = sysfs_strdup(&cxt->sysfs, "dm/name");
+		if (!cxt->dm_name)
+			err(XALLOC_EXIT_CODE, _("cannot duplicate string"));
+	}
+	cxt->nholders = sysfs_count_dirents(&cxt->sysfs, "holders") +
+			sysfs_count_partitions(&cxt->sysfs, name);
 
-	cxt->nholders = sysfs_count_dirents(cxt, "holders") +
-			sysfs_count_partitions(cxt);
-	cxt->nslaves = sysfs_count_dirents(cxt, "slaves");
+	cxt->nslaves = sysfs_count_dirents(&cxt->sysfs, "slaves");
 
 	return 0;
 }
@@ -797,7 +644,6 @@ static int list_holders(struct blkdev_cxt *cxt)
 	struct blkdev_cxt holder = {};
 
 	assert(cxt);
-	assert(cxt->sysfs_fd >= 0);
 
 	if (lsblk->nodeps)
 		return 0;
@@ -806,12 +652,12 @@ static int list_holders(struct blkdev_cxt *cxt)
 		return 0;
 
 	/* Partitions */
-	dir = sysfs_opendir(cxt, NULL);
+	dir = sysfs_opendir(&cxt->sysfs, NULL);
 	if (!dir)
 		err(EXIT_FAILURE, _("failed to open device directory in sysfs"));
 
 	while ((d = xreaddir(dir))) {
-		if (!is_partition_dirent(dir, d, cxt->name))
+		if (!sysfs_is_partition_dirent(dir, d, cxt->name))
 			continue;
 
 		set_cxt(&holder, cxt, d->d_name, 1);
@@ -822,7 +668,7 @@ static int list_holders(struct blkdev_cxt *cxt)
 	closedir(dir);
 
 	/* Holders */
-	dir = sysfs_opendir(cxt, "holders");
+	dir = sysfs_opendir(&cxt->sysfs, "holders");
 	if (!dir)
 		return 0;
 
@@ -897,10 +743,10 @@ static int process_one_device(char *devname)
 		ssize_t len;
 		char path[PATH_MAX], *diskname, *name;
 
-		snprintf(path, sizeof(path), "/sys/dev/block/%d:%d",
-				    major(st.st_rdev), minor(st.st_rdev));
-		diskname = xstrdup(buf);
+		if (!sysfs_devno_path(st.st_rdev, path, sizeof(path)))
+			err(EXIT_FAILURE, _("failed to compose sysfs path for %s"), devname);
 
+		diskname = xstrdup(buf);
 		len = readlink(path, buf, PATH_MAX);
 		if (len < 0) {
 			warn(_("%s: failed to read link"), path);
