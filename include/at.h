@@ -10,6 +10,10 @@
 #define UTIL_LINUX_AT_H
 
 #include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include "c.h"
 
 extern int fstat_at(int dir, const char *dirname,

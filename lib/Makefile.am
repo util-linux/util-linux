@@ -6,7 +6,7 @@ noinst_PROGRAMS = test_blkdev test_ismounted test_wholedisk test_mangle \
 		  test_tt test_canonicalize test_at test_strutils test_procutils
 if LINUX
 if HAVE_CPU_SET_T
-noinst_PROGRAMS += test_cpuset
+noinst_PROGRAMS += test_cpuset test_sysfs
 endif
 endif
 
@@ -19,6 +19,7 @@ test_strutils_SOURCES = strutils.c
 test_procutils_SOURCES = procutils.c
 if LINUX
 test_cpuset_SOURCES = cpuset.c
+test_sysfs_SOURCES = sysfs.c at.c
 endif
 test_tt_SOURCES = tt.c $(top_srcdir)/lib/mbsalign.c
 test_canonicalize_SOURCES = canonicalize.c
