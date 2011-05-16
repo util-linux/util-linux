@@ -527,12 +527,18 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 
 	if (pr->parent &&
 	    pr->parent->devno == pr->devno &&
-	    pr->parent->off == pr->off)
+	    pr->parent->off <= pr->off &&
+	    pr->parent->off + pr->parent->size >= pr->off + pr->size) {
 		/*
 		 * This is a cloned prober and points to the same area as
-		 * parent. Let's use parent's bufferes.
+		 * parent. Let's use parent's buffers.
+		 *
+		 * Note that pr->off (and pr->parent->off) is always from the
+		 * beginig of the device.
 		 */
-		return blkid_probe_get_buffer(pr->parent, off, len);
+		return blkid_probe_get_buffer(pr->parent,
+				pr->off + off - pr->parent->off, len);
+	}
 
 	list_for_each(p, &pr->buffers) {
 		struct blkid_bufinfo *x =
@@ -737,8 +743,9 @@ int blkid_probe_set_dimension(blkid_probe pr,
 		return -1;
 
 	DBG(DEBUG_LOWPROBE, printf(
-		"changing probing area: size=%llu, off=%llu "
+		"changing probing area pr=%p: size=%llu, off=%llu "
 		"-to-> size=%llu, off=%llu\n",
+		pr,
 		(unsigned long long) pr->size,
 		(unsigned long long) pr->off,
 		(unsigned long long) size,

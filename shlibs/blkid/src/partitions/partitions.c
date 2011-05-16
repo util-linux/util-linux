@@ -297,6 +297,11 @@ blkid_partlist blkid_probe_get_partlist(blkid_probe pr)
 	return (blkid_partlist) pr->chains[BLKID_CHAIN_PARTS].data;
 }
 
+static void blkid_probe_set_partlist(blkid_probe pr, blkid_partlist ls)
+{
+	pr->chains[BLKID_CHAIN_PARTS].data = ls;
+}
+
 static void ref_parttable(blkid_parttable tab)
 {
 	tab->nparts++;
@@ -620,9 +625,10 @@ details_only:
 int blkid_partitions_do_subprobe(blkid_probe pr, blkid_partition parent,
 		const struct blkid_idinfo *id)
 {
-	int rc = 1, flags;
+	blkid_probe prc;
+	int rc = 1;
 	blkid_partlist ls;
-	blkid_loff_t saved_sz, saved_off, sz, off;
+	blkid_loff_t sz, off;
 
 	DBG(DEBUG_LOWPROBE, printf(
 		"parts: ----> %s subprobe requested (parent=%p)\n",
@@ -631,38 +637,43 @@ int blkid_partitions_do_subprobe(blkid_probe pr, blkid_partition parent,
 	if (!pr || !parent || !parent->size)
 		return -1;
 
-	ls = blkid_probe_get_partlist(pr);
-
+	/* range defined by parent */
 	sz = ((blkid_loff_t) parent->size) << 9;
 	off = ((blkid_loff_t) parent->start) << 9;
 
-	/* get the current setting in bytes */
-	blkid_probe_get_dimension(pr, &saved_off, &saved_sz);
-
-	/* check the requested range */
-	if (off < saved_off || saved_off + saved_sz < off + sz) {
+	if (off < pr->off || pr->off + pr->size < off + sz) {
 		DBG(DEBUG_LOWPROBE, printf(
-			"ERROR: parts: <---- '%s' sub-probe: overflow detected.\n",
+			"ERROR: parts: <---- '%s' subprobe: overflow detected.\n",
 			id->name));
 		return -1;
 	}
 
-	/* flags depends on size of the partition */
-	flags = pr->flags;
+	/* create private prober */
+	prc = blkid_clone_probe(pr);
+	if (!prc)
+		return -1;
 
-	/* define sub-range with in device */
-	blkid_probe_set_dimension(pr, off, sz);
+	blkid_probe_set_dimension(prc, off, sz);
 
+	/* clone is always with reseted chain, fix it */
+	prc->cur_chain = blkid_probe_get_chain(pr);
+
+	/*
+	 * Set 'parent' to the current list of the partitions and use the list
+	 * in cloned prober (so the cloned prober will extend the current list
+	 * of partitions rather than create a new).
+	 */
+	ls = blkid_probe_get_partlist(pr);
 	blkid_partlist_set_parent(ls, parent);
 
-	rc = idinfo_probe(pr, id);
+	blkid_probe_set_partlist(prc, ls);
 
+	rc = idinfo_probe(prc, id);
+
+	blkid_probe_set_partlist(prc, NULL);
 	blkid_partlist_set_parent(ls, NULL);
 
-	/* restore the original setting */
-	blkid_probe_set_dimension(pr, saved_off, saved_sz);
-
-	pr->flags = flags;
+	blkid_free_probe(prc);	/* free cloned prober */
 
 	DBG(DEBUG_LOWPROBE, printf(
 		"parts: <---- %s subprobe done (parent=%p, rc=%d)\n",
