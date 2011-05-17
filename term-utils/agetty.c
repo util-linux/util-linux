@@ -254,6 +254,7 @@ static void log_err(const char *, ...) __attribute__((__noreturn__))
 			       __attribute__((__format__(printf, 1, 2)));
 static void log_warn (const char *, ...)
 				__attribute__((__format__(printf, 1, 2)));
+static ssize_t append(char *dest, size_t len, const char  *sep, const char *src);
 static void checkname (const char* nm);
 static void replacename (char** arr, const char* nm);
 static void mkarray (char** arr, char* str);
@@ -402,9 +403,9 @@ int main(int argc, char **argv)
 	sigaction(SIGQUIT, &sa_quit, NULL);
 	sigaction(SIGINT, &sa_int, NULL);
 
-	strncpy(logcmd, options.login, NAME_MAX);
-	strncat(logcmd, " ", NAME_MAX - strlen(logcmd));
-	strncat(logcmd, options.logopt, NAME_MAX - strlen(logcmd));
+	*logcmd = '\0';
+	append(logcmd, sizeof(logcmd), NULL, options.login);
+	append(logcmd, sizeof(logcmd), " ", options.logopt);
 
 	checkname(logname);
 	mkarray(logarr, logcmd);
@@ -1187,54 +1188,30 @@ static void do_prompt(struct options *op, struct termios *tp)
 	}
 #ifdef KDGKBLED
 	if (op->autolog == (char*)0 && (op->flags & F_VCONSOLE)) {
-		int kb = 0, nl = 0;
-		struct stat st;
-		if (stat("/var/run/numlock-on", &st) == 0)
-			nl = 1;
-		if (ioctl(STDIN_FILENO, KDGKBLED, &kb) == 0) {
-			const char *hint = _("Hint: ");
-			char warn[256];
-			off_t space = sizeof(warn) - 1, off = 0;
+		int kb = 0;
 
-			if (nl && (kb & 0x02) == 0) {
-				const char *msg = _("Num Lock off");
-				const size_t len = strlen(msg);
-				strncpy(&warn[0], msg, space);
-				space -= len;
-				off += len;
-			} else if (nl == 0 && (kb & 2) && (kb & 0x20) == 0) {
-				const char *msg = _("Num Lock on");
-				const size_t len = strlen(msg);
-				strncpy(&warn[0], msg, space);
-				space -= len;
-				off += len;
-			}
-			if ((kb & 0x04) && (kb & 0x40) == 0) {
-				const char *msg = _("Caps Lock on");
-				const size_t len = strlen(msg);
-				if (off) {
-					strncpy(&warn[off], ", ", space);
-					space -= 2;
-					off += 2;
-				}
-				strncpy(&warn[off], msg, space);
-				space -= len;
-				off += len;
-			}
-			if ((kb & 0x01) && (kb & 0x10) == 0) {
-				const char *msg = _("Scroll Lock on");
-				const size_t len = strlen(msg);
-				if (off) {
-					strncpy(&warn[off], ", ", space);
-					space -= 2;
-					off += 2;
-				}
-				strncpy(&warn[off], msg, space);
-				space -= len;
-				off += len;
-			}
-			if (off)
-				printf ("%s%s\n\n", hint, warn);
+		if (ioctl(STDIN_FILENO, KDGKBLED, &kb) == 0) {
+			char hint[256] = { '\0' };
+			int nl = 0;
+			struct stat st;
+
+			if (stat("/var/run/numlock-on", &st) == 0)
+				nl = 1;
+
+			if (nl && (kb & 0x02) == 0)
+				append(hint, sizeof(hint), NULL, _("Num Lock off"));
+
+			else if (nl == 0 && (kb & 2) && (kb & 0x20) == 0)
+				append(hint, sizeof(hint), NULL, _("Num Lock on"));
+
+			if ((kb & 0x04) && (kb & 0x40) == 0)
+				append(hint, sizeof(hint), ", ", _("Caps Lock on"));
+
+			if ((kb & 0x01) && (kb & 0x10) == 0)
+				append(hint, sizeof(hint), ", ",  _("Scroll Lock on"));
+
+			if (*hint)
+				printf(_("Hint: %s\n\n"), hint);
 		}
 	}
 #endif /* KDGKBLED */
@@ -1798,6 +1775,39 @@ static void init_special_char(char* arg, struct options *op)
 	*q = '\0';
 }
 
+/*
+ * Appends @str to @dest and if @dest is not empty then use use @sep as a
+ * separator. The maximal final length of the @dest is @len.
+ *
+ * Returns the final @dest length or -1 in case of error.
+ */
+static ssize_t append(char *dest, size_t len, const char  *sep, const char *src)
+{
+	size_t dsz = 0, ssz = 0, sz;
+	char *p;
+
+	if (!dest || !len || !src)
+		return -1;
+
+	if (*dest)
+		dsz = strlen(dest);
+	if (dsz && sep)
+		ssz = strlen(sep);
+	sz = strlen(src);
+
+	if (dsz + ssz + sz + 1 > len)
+		return -1;
+
+	p = dest + dsz;
+	if (ssz) {
+		memcpy(p, sep, ssz);
+		p += ssz;
+	}
+	memcpy(p, src, sz);
+	*(p + sz) = '\0';
+
+	return dsz + ssz + sz;
+}
 /*
  * Do not allow the user to pass an option as a user name
  * To be more safe: Use `--' to make sure the rest is
