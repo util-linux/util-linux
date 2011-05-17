@@ -37,7 +37,6 @@
 #include "nls.h"
 #include "pathnames.h"
 #include "c.h"
-#include "xalloc.h"
 #include "widechar.h"
 
 #ifdef __linux__
@@ -626,8 +625,11 @@ static void parse_args(int argc, char **argv, struct options *op)
 			if (stat(dev_name, &st) < 0) {
 				strcpy(dev_name, "/dev/tts/");
 				strcat(dev_name, op->tty + 4);
-				if (stat(dev_name, &st) == 0)
-					op->tty = xstrdup(dev_name + 5);
+				if (stat(dev_name, &st) == 0) {
+					op->tty = strdup(dev_name + 5);
+					if (!op->tty)
+						log_err(_("failed to allocate memory: %m"));
+				}
 			}
 		} else if (strncmp(op->tty, "tty", 3) == 0) {
 			strcpy(dev_name, "/dev/");
@@ -635,8 +637,11 @@ static void parse_args(int argc, char **argv, struct options *op)
 			if (stat(dev_name, &st) < 0) {
 				strcpy(dev_name, "/dev/vc/");
 				strcat(dev_name, op->tty + 3);
-				if (stat(dev_name, &st) == 0)
-					op->tty = xstrdup(dev_name + 5);
+				if (stat(dev_name, &st) == 0) {
+					op->tty = strdup(dev_name + 5);
+					if (!op->tty)
+						log_err(_("failed to allocate memory: %m"));
+				}
 			}
 		}
 	}
@@ -1381,7 +1386,9 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 		if (len < 0)
 			log_err("%s: invalid character conversion for login name", op->tty);
 
-		wcs = (wchar_t *)xmalloc((len + 1) * sizeof(wchar_t));
+		wcs = (wchar_t *) malloc((len + 1) * sizeof(wchar_t));
+		if (!wcs)
+			log_err(_("failed to allocate memory: %m"));
 
 		len = mbstowcs(wcs, logname, len + 1);
 		if (len < 0)
@@ -1735,7 +1742,9 @@ static void init_special_char(char* arg, struct options *op)
 	char ch, *p, *q;
 	int i;
 
-	op->initstring = xmalloc(strlen(arg) + 1);
+	op->initstring = malloc(strlen(arg) + 1);
+	if (!op->initstring)
+		log_err(_("failed to allocate memory: %m"));
 
 	/*
 	 * Copy optarg into op->initstring decoding \ddd octal
@@ -1835,7 +1844,7 @@ static void replacename(char** arr, const char* nm)
 			if (memcmp(p1, "\\u", 2) == 0) {
 				tmp = malloc(strlen(p) + strlen(nm));
 				if (!tmp)
-					log_err("replacename: %m");
+					log_err(_("failed to allocate memory: %m"));
 				if (p1 != p)
 					memcpy(tmp, p, (p1 - p));
 				*(tmp + (p1 - p)) = 0;
