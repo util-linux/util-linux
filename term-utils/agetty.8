@@ -125,18 +125,18 @@ backslash (\\). For example to send a linefeed character (ASCII 10,
 octal 012) write \\012.
 .PP
 .TP
-\-l, \-\-login-program \fIlogin_program\fP
+\-l, \-\-login\-program \fIlogin_program\fP
 Invoke the specified \fIlogin_program\fP instead of /bin/login.
 This allows the use of a non-standard login program (for example,
 one that asks for a dial-up password or that uses a different
 password file).
 .TP
-\-L, \-\-local-line
+\-L, \-\-local\-line
 Force the line to be a local line with no need for carrier detect. This can
 be useful when you have a locally attached terminal where the serial line
 does not set the carrier detect signal.
 .TP
-\-m, \-\-extract-baud
+\-m, \-\-extract\-baud
 Try to extract the baud rate the CONNECT status message
 produced by Hayes(tm)\-compatible modems. These status
 messages are of the form: "<junk><speed><junk>".
@@ -164,7 +164,7 @@ by the login name. Defaults to "-- \\u", which is suitable for
 \fB/bin/login\fP.  Please read the SECURITY NOTICE below if
 you want to use this.
 .TP
-\-p, \-\-loginpause
+\-p, \-\-login\-pause
 Wait for any key before dropping to the login prompt.  Can be combined
 with \fB\-\-autologin\fP to save memory by lazily spawning shells.
 .TP
@@ -198,7 +198,7 @@ Do not clear the screen before prompting for the login name
 \-\-nonewline
 Do not print a newline before writing out /etc/issue.
 .TP
-\-\-no\-hostname
+\-\-nohostname
 By default the hostname will be printed.  With this option enabled,
 no hostname at all will be shown.
 .TP
@@ -240,13 +240,13 @@ dis-connection and turn on auto-answer after 1 ring.)
 /sbin/agetty \-w \-I 'ATE0Q1&D2&C1S0=1\\015' 115200 ttyS1
 
 .SH SECURITY NOTICE
-If you use the \fB\-\-login\fP and \fB\-\-logopts\fP options, be aware
-that a malicious user may try to enter lognames with embedded options,
-which then get passed to the used login  program.  Agetty does check
+If you use the \fB\-\-login\-program\fP and \fB\-\-login\-options\fP options,
+be aware that a malicious user may try to enter lognames with embedded options,
+which then get passed to the used login program. Agetty does check
 for a leading "\-" and makes sure the logname gets passed as one parameter
 (so embedded spaces will not create yet another parameter), but depending
 on how the login binary parses the command line that might not be sufficient.
-Check that the used login program  can  not  be  abused this way.
+Check that the used login program can not be abused this way.
 .PP
 Some  programs use "\-\-" to indicate that the rest of the commandline should
 not be interpreted as options. Use this feature if available by passing "\-\-"

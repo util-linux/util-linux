@@ -458,16 +458,12 @@ static void parse_args(int argc, char **argv, struct options *op)
 		{  "init-string",    required_argument,  0,  'I'  },
 		{  "noclear",	     no_argument,	 0,  'J'  },
 		{  "login-program",  required_argument,  0,  'l'  },
-		{  "login",	     required_argument,  0,  'l'  },  /* compat option */
-		{  "loginprog",	     required_argument,  0,  'l'  },  /* compat option */
 		{  "local-line",     no_argument,	 0,  'L'  },
 		{  "extract-baud",   no_argument,	 0,  'm'  },
 		{  "skip-login",     no_argument,	 0,  'n'  },
 		{  "nonewline",	     no_argument,	 0,  'N'  },
 		{  "login-options",  required_argument,  0,  'o'  },
-		{  "loginopts",	     required_argument,  0,  'o'  },  /* compat option */
-		{  "logopts",	     required_argument,  0,  'o'  },  /* compat option */
-		{  "loginpause",     no_argument,        0,  'p'  },
+		{  "login-pause",    no_argument,        0,  'p'  },
 		{  "nice",	     required_argument,  0,  'P'  },
 		{  "chroot",	     required_argument,	 0,  'r'  },
 		{  "hangup",	     no_argument,	 0,  'R'  },
@@ -475,8 +471,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		{  "timeout",	     required_argument,  0,  't'  },
 		{  "detect-case",    no_argument,	 0,  'U'  },
 		{  "wait-cr",	     no_argument,	 0,  'w'  },
-		{  "no-hostname",    no_argument,	 0,  NOHOSTNAME_OPTION },
-		{  "nohostname",     no_argument,	 0,  NOHOSTNAME_OPTION },  /* compat option */
+		{  "nohostname",     no_argument,	 0,  NOHOSTNAME_OPTION },
 		{  "long-hostname",  no_argument,	 0,  LONGHOSTNAME_OPTION },
 		{  "version",	     no_argument,	 0,  VERSION_OPTION  },
 		{  "help",	     no_argument,	 0,  HELP_OPTION     },
