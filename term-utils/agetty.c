@@ -10,7 +10,6 @@
  *
  * This program is freely distributable.
  */
-
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -251,8 +250,10 @@ static void termio_final(struct options *op,
 static int caps_lock(char *s);
 static speed_t bcode(char *s);
 static void usage(FILE * out) __attribute__((__noreturn__));
-static void log_err(const char *, ...) __attribute__((__noreturn__)) __attribute__((__format__(printf, 1, 2)));
-static void log_warn (const char *, ...) __attribute__((__format__(printf, 1, 2)));
+static void log_err(const char *, ...) __attribute__((__noreturn__))
+			       __attribute__((__format__(printf, 1, 2)));
+static void log_warn (const char *, ...)
+				__attribute__((__format__(printf, 1, 2)));
 static void checkname (const char* nm);
 static void replacename (char** arr, const char* nm);
 static void mkarray (char** arr, char* str);
@@ -310,7 +311,6 @@ int main(int argc, char **argv)
 #ifdef	SYSV_STYLE
 	update_utmp(&options);
 #endif
-
 	if (options.delay)
 	    sleep(options.delay);
 
@@ -350,7 +350,7 @@ int main(int argc, char **argv)
 
 	/* Set the optional timer. */
 	if (options.timeout)
-		alarm((unsigned)options.timeout);
+		alarm((unsigned) options.timeout);
 
 	/* Optionally wait for CR or LF before writing /etc/issue */
 	if (serial_tty_option(&options, F_WAITCRLF)) {
@@ -374,7 +374,7 @@ int main(int argc, char **argv)
 			/* Do the auto login */
 			debug("doing auto login\n");
 			do_prompt(&options, &termios);
-			printf ("%s%s (automatic login)\n", LOGIN, options.autolog);
+			printf("%s%s (automatic login)\n", LOGIN, options.autolog);
 			logname = options.autolog;
 			options.logopt = "-f \\u";
 		} else {
@@ -399,8 +399,8 @@ int main(int argc, char **argv)
 		write_all(STDOUT_FILENO, "\r\n", 2);
 	}
 
-	sigaction (SIGQUIT, &sa_quit, NULL);
-	sigaction (SIGINT, &sa_int, NULL);
+	sigaction(SIGQUIT, &sa_quit, NULL);
+	sigaction(SIGINT, &sa_int, NULL);
 
 	strncpy(logcmd, options.login, NAME_MAX);
 	strncat(logcmd, " ", NAME_MAX - strlen(logcmd));
@@ -482,7 +482,8 @@ static void parse_args(int argc, char **argv, struct options *op)
 		{ NULL, 0, 0, 0 }
 	};
 
-	while ((c = getopt_long(argc, argv, "8a:cC:d:f:hH:iI:Jl:LmnNo:pP:r:Rst:Uw", longopts,
+	while ((c = getopt_long(argc, argv,
+			   "8a:cC:d:f:hH:iI:Jl:LmnNo:pP:r:Rst:Uw", longopts,
 			    NULL)) != -1) {
 		switch (c) {
 		case '8':
@@ -709,15 +710,15 @@ static void update_utmp(struct options *op)
 		memset(&ut, 0, sizeof(ut));
 		if (vcline && *vcline)
 			/* Standard virtual console devices */
-			strncpy (ut.ut_id, vcline, sizeof (ut.ut_id));
+			strncpy(ut.ut_id, vcline, sizeof(ut.ut_id));
 		else {
 			size_t len = strlen(line);
 			char * ptr;
-			if (len >= sizeof (ut.ut_id))
-				ptr = line + len - sizeof (ut.ut_id);
+			if (len >= sizeof(ut.ut_id))
+				ptr = line + len - sizeof(ut.ut_id);
 			else
 				ptr = line;
-			strncpy (ut.ut_id, ptr, sizeof(ut.ut_id));
+			strncpy(ut.ut_id, ptr, sizeof(ut.ut_id));
 		}
 	}
 
@@ -777,7 +778,8 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 		if ((gr = getgrnam("tty")))
 			gid = gr->gr_gid;
 
-		if (((len = snprintf(buf, sizeof(buf), "/dev/%s", tty)) >= (int)sizeof(buf)) || (len < 0))
+		if (((len = snprintf(buf, sizeof(buf), "/dev/%s", tty)) >=
+		     (int)sizeof(buf)) || (len < 0))
 			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
 
 		/*
@@ -786,7 +788,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 		 * Linux login(1) will change tty permissions. Use root owner and group
 		 * with permission -rw------- for the period between getty and login.
 		 */
-		if (chown (buf, 0, gid) || chmod (buf, (gid ? 0660 : 0600))) {
+		if (chown(buf, 0, gid) || chmod(buf, (gid ? 0660 : 0600))) {
 			if (errno == EROFS)
 				log_warn("%s: %m", buf);
 			else
@@ -798,15 +800,15 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
 
 		/* Sanity checks... */
-		if (!isatty (fd))
+		if (!isatty(fd))
 			log_err(_("/dev/%s: not a character device"), tty);
 		if (fstat(fd, &st) < 0)
-			log_err ("%s: %m", buf);
+			log_err("%s: %m", buf);
 		if ((st.st_mode & S_IFMT) != S_IFCHR)
 			log_err(_("/dev/%s: not a character device"), tty);
 
 		if (((tid = tcgetsid(fd)) < 0) || (pid != tid)) {
-			if (ioctl (fd, TIOCSCTTY, 1) == -1)
+			if (ioctl(fd, TIOCSCTTY, 1) == -1)
 				log_err("/dev/%s: cannot get controlling tty: %m", tty);
 		}
 
@@ -820,10 +822,10 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 			 */
 			if (vhangup())
 				log_err("/dev/%s: vhangup() failed: %m", tty);
-			(void)ioctl(fd, TIOCNOTTY);
+			ioctl(fd, TIOCNOTTY);
 		}
 
-		(void) close(fd);
+		close(fd);
 		close(STDIN_FILENO);
 		errno = 0;
 
@@ -831,7 +833,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 		if (open(buf, O_RDWR|O_NOCTTY|O_NONBLOCK, 0) != 0)
 			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
 		if (((tid = tcgetsid(STDIN_FILENO)) < 0) || (pid != tid)) {
-			if (ioctl (STDIN_FILENO, TIOCSCTTY, 1) == -1)
+			if (ioctl(STDIN_FILENO, TIOCSCTTY, 1) == -1)
 				log_err("/dev/%s: cannot get controlling tty: %m", tty);
 		}
 
@@ -997,7 +999,7 @@ static void termio_init(struct options *op, struct termios *tp)
 			ws.ws_col = 80;
 			set++;
 		}
-		(void)ioctl(STDIN_FILENO, TIOCSWINSZ, &ws);
+		ioctl(STDIN_FILENO, TIOCSWINSZ, &ws);
 	}
 
 	/* Optionally enable hardware flow control. */
@@ -1166,7 +1168,7 @@ static void do_prompt(struct options *op, struct termios *tp)
 			if (c == '\\')
 				output_special_char(getc(fd), op, tp);
 			else
-				(void) putchar(c);
+				putchar(c);
 		}
 		fflush(stdout);
 
@@ -1320,7 +1322,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 		/* Read name, watch for break and end-of-line. */
 		while (cp->eol == '\0') {
 
-			if (read (STDIN_FILENO, &c, 1) < 1) {
+			if (read(STDIN_FILENO, &c, 1) < 1) {
 
 				/* Do not report trivial like EINTR/EIO errors. */
 				if (errno == EINTR || errno == EAGAIN) {
@@ -1599,7 +1601,7 @@ static void dolog(int priority, const char *fmt, va_list ap)
 	str2cpy(buf, program_invocation_short_name, ": ");
 	bp = buf + strlen(buf);
 #endif				/* USE_SYSLOG */
-	vsnprintf (bp, sizeof(buf)-strlen(buf), fmt, ap);
+	vsnprintf(bp, sizeof(buf)-strlen(buf), fmt, ap);
 
 	/*
 	 * Write the diagnostic directly to /dev/console if we do not use the
@@ -1645,23 +1647,24 @@ static void output_special_char(unsigned char c, struct options *op,
 				struct termios *tp)
 {
 	struct utsname uts;
-	(void) uname(&uts);
+
+	uname(&uts);
 
 	switch (c) {
 	case 's':
-		(void) printf ("%s", uts.sysname);
+		printf("%s", uts.sysname);
 		break;
 	case 'n':
-		(void) printf ("%s", uts.nodename);
+		printf("%s", uts.nodename);
 		break;
 	case 'r':
-		(void) printf ("%s", uts.release);
+		printf("%s", uts.release);
 		break;
 	case 'v':
-		(void) printf ("%s", uts.version);
+		printf("%s", uts.version);
 		break;
 	case 'm':
-		(void) printf ("%s", uts.machine);
+		printf("%s", uts.machine);
 		break;
 	case 'o':
 	{
@@ -1671,7 +1674,7 @@ static void output_special_char(unsigned char c, struct options *op,
 #endif
 		strcpy(domainname, "unknown_domain");
 		domainname[sizeof(domainname)-1] = '\0';
-		printf ("%s", domainname);
+		printf("%s", domainname);
 		break;
 	}
 	case 'O':
@@ -1703,23 +1706,23 @@ static void output_special_char(unsigned char c, struct options *op,
 		time_t now;
 		struct tm *tm;
 
-		(void) time (&now);
+		time(&now);
 		tm = localtime(&now);
 
 		if (c == 'd') /* ISO 8601 */
-			(void) printf("%s %s %d  %d",
+			printf("%s %s %d  %d",
 				      nl_langinfo(ABDAY_1 + tm->tm_wday),
 				      nl_langinfo(ABMON_1 + tm->tm_mon),
 				      tm->tm_mday,
 				      tm->tm_year < 70 ? tm->tm_year + 2000 :
 				      tm->tm_year + 1900);
 		else
-			(void) printf("%02d:%02d:%02d",
+			printf("%02d:%02d:%02d",
 				      tm->tm_hour, tm->tm_min, tm->tm_sec);
 		break;
 	}
 	case 'l':
-		(void) printf ("%s", op->tty);
+		printf ("%s", op->tty);
 		break;
 	case 'b':
 	{
@@ -1746,11 +1749,11 @@ static void output_special_char(unsigned char c, struct options *op,
 		endutent();
 		printf ("%d ", users);
 		if (c == 'U')
-			printf ((users == 1) ? _("user") : _("users"));
+			printf((users == 1) ? _("user") : _("users"));
 		break;
 	}
 	default:
-		(void) putchar(c);
+		putchar(c);
 		break;
 	}
 }
@@ -1805,16 +1808,16 @@ static void checkname(const char* nm)
 	const char *p = nm;
 	if (!nm)
 		goto err;
-	if (strlen (nm) > 42)
+	if (strlen(nm) > 42)
 		goto err;
-	while (isspace (*p))
+	while (isspace(*p))
 		p++;
 	if (*p == '-')
 		goto err;
 	return;
 err:
 	errno = EPERM;
-	log_err ("checkname: %m");
+	log_err("checkname: %m");
 }
 
 static void replacename(char** arr, const char* nm)
@@ -1822,23 +1825,23 @@ static void replacename(char** arr, const char* nm)
 	const char *p;
 	char *tmp;
 	while ((p = *arr)) {
-	const char *p1 = p;
-	while (*p1) {
-		if (memcmp (p1, "\\u", 2) == 0) {
-			tmp = malloc (strlen (p) + strlen (nm));
-			if (!tmp)
-				log_err ("replacename: %m");
-			if (p1 != p)
-				memcpy (tmp, p, (p1-p));
-			*(tmp + (p1-p)) = 0;
-			strcat (tmp, nm);
-			strcat (tmp, p1+2);
-			*arr = tmp;
+		const char *p1 = p;
+		while (*p1) {
+			if (memcmp(p1, "\\u", 2) == 0) {
+				tmp = malloc(strlen(p) + strlen(nm));
+				if (!tmp)
+					log_err("replacename: %m");
+				if (p1 != p)
+					memcpy(tmp, p, (p1 - p));
+				*(tmp + (p1 - p)) = 0;
+				strcat(tmp, nm);
+				strcat(tmp, p1+2);
+				*arr = tmp;
+			}
+			p1++;
 		}
-		p1++;
+		arr++;
 	}
-	arr++;
-}
 }
 
 static void mkarray(char** arr, char* str)
@@ -1847,18 +1850,18 @@ static void mkarray(char** arr, char* str)
 	char* start = p;
 	int i = 0;
 
-	while (*p && i < (ARRAY_SIZE_MAX)) {
-	if (isspace (*p)) {
-		*p = 0;
-		while (isspace (*++p))
-			;
-		if (*p) {
-			arr[i++] = start;
-			start = p;
-		}
-	} else
-		p++;
+	while (*p && i < ARRAY_SIZE_MAX) {
+		if (isspace(*p)) {
+			*p = 0;
+			while (isspace(*++p))
+				;
+			if (*p) {
+				arr[i++] = start;
+				start = p;
+			}
+		} else
+			p++;
 	}
 	arr[i++] = start;
-	arr[i++] = (char*)0;
+	arr[i++] = (char*) 0;
 }
