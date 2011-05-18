@@ -8,18 +8,18 @@
 #include "sysfs.h"
 
 char *sysfs_devno_attribute_path(dev_t devno, char *buf,
-				 size_t buflen, const char *attr)
+				 size_t bufsiz, const char *attr)
 {
 	int len;
 
 	if (attr)
-		len = snprintf(buf, buflen, _PATH_SYS_DEVBLOCK "/%d:%d/%s",
+		len = snprintf(buf, bufsiz, _PATH_SYS_DEVBLOCK "/%d:%d/%s",
 			major(devno), minor(devno), attr);
 	else
-		len = snprintf(buf, buflen, _PATH_SYS_DEVBLOCK "/%d:%d",
+		len = snprintf(buf, bufsiz, _PATH_SYS_DEVBLOCK "/%d:%d",
 			major(devno), minor(devno));
 
-	return (len < 0 || len + 1 > buflen) ? NULL : buf;
+	return (len < 0 || len + 1 > bufsiz) ? NULL : buf;
 }
 
 int sysfs_devno_has_attribute(dev_t devno, const char *attr)
@@ -34,9 +34,9 @@ int sysfs_devno_has_attribute(dev_t devno, const char *attr)
 	return 0;
 }
 
-char *sysfs_devno_path(dev_t devno, char *buf, size_t buflen)
+char *sysfs_devno_path(dev_t devno, char *buf, size_t bufsiz)
 {
-	return sysfs_devno_attribute_path(devno, buf, buflen, NULL);
+	return sysfs_devno_attribute_path(devno, buf, bufsiz, NULL);
 }
 
 dev_t sysfs_devname_to_devno(const char *name, const char *parent)
@@ -95,10 +95,51 @@ dev_t sysfs_devname_to_devno(const char *name, const char *parent)
 	return dev;
 }
 
+/*
+ * Returns devname (e.g. "/dev/sda1") for the given devno.
+ *
+ * Note that the @buf has to be large enough to store /sys/dev/block/<maj:min>
+ * symlinks.
+ *
+ * Please, use more robust blkid_devno_to_devname() in your applications.
+ */
+char *sysfs_devno_to_devpath(dev_t devno, char *buf, size_t bufsiz)
+{
+	struct sysfs_cxt cxt;
+	char *name;
+	size_t sz;
+	struct stat st;
+
+	if (sysfs_init(&cxt, devno, NULL))
+		return NULL;
+
+	name = sysfs_get_devname(&cxt, buf, bufsiz);
+	sysfs_deinit(&cxt);
+
+	if (!name)
+		return NULL;
+
+	sz = strlen(name);
+
+	if (sz + sizeof("/dev/") > bufsiz)
+		return NULL;
+
+	/* create the final "/dev/<name>" string */
+	memmove(buf + 5, name, sz + 1);
+	memcpy(buf, "/dev/", 5);
+
+	if (!stat(buf, &st) && S_ISBLK(st.st_mode) && st.st_rdev == devno)
+		return buf;
+
+	return NULL;
+}
+
 int sysfs_init(struct sysfs_cxt *cxt, dev_t devno, struct sysfs_cxt *parent)
 {
 	char path[PATH_MAX];
 	int fd, rc = 0;
+
+	memset(cxt, 0, sizeof(*cxt));
 
 	if (!sysfs_devno_path(devno, path, sizeof(path)))
 		goto err;
@@ -106,11 +147,9 @@ int sysfs_init(struct sysfs_cxt *cxt, dev_t devno, struct sysfs_cxt *parent)
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 		goto err;
-#ifndef HAVE_FSTATAT
 	cxt->dir_path = strdup(path);
 	if (!cxt->dir_path)
 		goto err;
-#endif
 	cxt->devno = devno;
 	cxt->dir_fd = fd;
 	cxt->parent = parent;
@@ -131,9 +170,7 @@ void sysfs_deinit(struct sysfs_cxt *cxt)
 	cxt->devno = 0;
 	cxt->dir_fd = -1;
 	cxt->parent = NULL;
-#ifndef HAVE_FSTATAT
 	free(cxt->dir_path);
-#endif
 }
 
 int sysfs_stat(struct sysfs_cxt *cxt, const char *attr, struct stat *st)
@@ -174,6 +211,16 @@ static int sysfs_open(struct sysfs_cxt *cxt, const char *attr)
 	return fd;
 }
 
+ssize_t sysfs_readlink(struct sysfs_cxt *cxt, const char *attr,
+		   char *buf, size_t bufsiz)
+{
+	if (attr)
+		return readlink_at(cxt->dir_fd, cxt->dir_path, attr, buf, bufsiz);
+
+	/* read /sys/dev/block/<maj:min> link */
+	return readlink(cxt->dir_path, buf, bufsiz);
+}
+
 DIR *sysfs_opendir(struct sysfs_cxt *cxt, const char *attr)
 {
 	DIR *dir;
@@ -181,13 +228,12 @@ DIR *sysfs_opendir(struct sysfs_cxt *cxt, const char *attr)
 
 	if (attr)
 		fd = sysfs_open(cxt, attr);
-	else {
+	else
 		/* request to open root of device in sysfs (/sys/block/<dev>)
 		 * -- we cannot use cxt->sysfs_fd directly, because closedir()
 		 * will close this our persistent file descriptor.
 		 */
 		fd = dup(cxt->dir_fd);
-	}
 
 	if (fd < 0)
 		return NULL;
@@ -258,6 +304,7 @@ int sysfs_scanf(struct sysfs_cxt *cxt,  const char *attr, const char *fmt, ...)
 	fclose(f);
 	return rc;
 }
+
 
 int sysfs_read_s64(struct sysfs_cxt *cxt, const char *attr, int64_t *res)
 {
@@ -334,6 +381,57 @@ int sysfs_count_partitions(struct sysfs_cxt *cxt, const char *devname)
 	return r;
 }
 
+/*
+ * Returns slave name if there is only one slave, otherwise returns NULL.
+ * The result should be deallocated by free().
+ */
+char *sysfs_get_slave(struct sysfs_cxt *cxt)
+{
+	DIR *dir;
+	struct dirent *d;
+	char *name = NULL;
+
+	if (!(dir = sysfs_opendir(cxt, "slaves")))
+		return NULL;
+
+	while ((d = xreaddir(dir))) {
+		if (name)
+			goto err;	/* more slaves */
+
+		name = strdup(d->d_name);
+	}
+
+	closedir(dir);
+	return name;
+err:
+	free(name);
+	return NULL;
+}
+
+/*
+ * Note that the @buf has to be large enough to store /sys/dev/block/<maj:min>
+ * symlinks.
+ */
+char *sysfs_get_devname(struct sysfs_cxt *cxt, char *buf, size_t bufsiz)
+{
+	char *name = NULL;
+	ssize_t sz;
+
+	sz = sysfs_readlink(cxt, NULL, buf, bufsiz - 1);
+	if (sz < 0)
+		return NULL;
+
+	buf[sz] = '\0';
+	name = strrchr(buf, '/');
+	if (!name)
+		return NULL;
+
+	name++;
+	sz = strlen(name);
+
+	memmove(buf, name, sz + 1);
+	return buf;
+}
 
 #ifdef TEST_PROGRAM
 #include <errno.h>
@@ -348,6 +446,7 @@ int main(int argc, char *argv[])
 	char path[PATH_MAX];
 	int i;
 	uint64_t u64;
+	ssize_t len;
 
 	if (argc != 2)
 		errx(EXIT_FAILURE, "usage: %s <devname>", argv[0]);
@@ -361,22 +460,31 @@ int main(int argc, char *argv[])
 	printf("NAME: %s\n", devname);
 	printf("DEVNO: %u\n", (unsigned int) devno);
 	printf("DEVNOPATH: %s\n", sysfs_devno_path(devno, path, sizeof(path)));
+	printf("DEVPATH: %s\n", sysfs_devno_to_devpath(devno, path, sizeof(path)));
 	printf("PARTITION: %s\n",
 		sysfs_devno_has_attribute(devno, "partition") ? "YES" : "NOT");
 
 	sysfs_init(&cxt, devno, NULL);
 
+	len = sysfs_readlink(&cxt, NULL, path, sizeof(path) - 1);
+	if (len > 0) {
+		path[len] = '\0';
+		printf("DEVNOLINK: %s\n", path);
+	}
+
 	printf("SLAVES: %d\n", sysfs_count_dirents(&cxt, "slaves"));
 
 	if (sysfs_read_u64(&cxt, "size", &u64))
-		printf("read SIZE failed");
+		printf("read SIZE failed\n");
 	else
 		printf("SIZE: %jd\n", u64);
 
 	if (sysfs_read_int(&cxt, "queue/hw_sector_size", &i))
-		printf("read SECTOR failed");
+		printf("read SECTOR failed\n");
 	else
 		printf("SECTOR: %d\n", i);
+
+	printf("DEVNAME: %s\n", sysfs_get_devname(&cxt, path, sizeof(path)));
 
 	return EXIT_SUCCESS;
 }
