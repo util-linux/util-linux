@@ -259,22 +259,40 @@ int sysfs_scanf(struct sysfs_cxt *cxt,  const char *attr, const char *fmt, ...)
 	return rc;
 }
 
-int64_t sysfs_read_s64(struct sysfs_cxt *cxt, const char *attr)
+int sysfs_read_s64(struct sysfs_cxt *cxt, const char *attr, int64_t *res)
 {
-	uint64_t x;
-	return sysfs_scanf(cxt, attr, "%"SCNd64, &x) == 1 ? x : 0;
+	int64_t x = 0;
+
+	if (sysfs_scanf(cxt, attr, "%"SCNd64, &x) == 1) {
+		if (res)
+			*res = x;
+		return 0;
+	}
+	return -1;
 }
 
-uint64_t sysfs_read_u64(struct sysfs_cxt *cxt, const char *attr)
+int sysfs_read_u64(struct sysfs_cxt *cxt, const char *attr, uint64_t *res)
 {
-	uint64_t x;
-	return sysfs_scanf(cxt, attr, "%"SCNu64, &x) == 1 ? x : 0;
+	uint64_t x = 0;
+
+	if (sysfs_scanf(cxt, attr, "%"SCNu64, &x) == 1) {
+		if (res)
+			*res = x;
+		return 0;
+	}
+	return -1;
 }
 
-int sysfs_read_int(struct sysfs_cxt *cxt, const char *attr)
+int sysfs_read_int(struct sysfs_cxt *cxt, const char *attr, int *res)
 {
-	int x;
-	return sysfs_scanf(cxt, attr, "%d", &x) == 1 ? x : 0;
+	int x = 0;
+
+	if (sysfs_scanf(cxt, attr, "%d", &x) == 1) {
+		if (res)
+			*res = x;
+		return 0;
+	}
+	return -1;
 }
 
 char *sysfs_strdup(struct sysfs_cxt *cxt, const char *attr)
@@ -328,6 +346,8 @@ int main(int argc, char *argv[])
 	char *devname;
 	dev_t devno;
 	char path[PATH_MAX];
+	int i;
+	uint64_t u64;
 
 	if (argc != 2)
 		errx(EXIT_FAILURE, "usage: %s <devname>", argv[0]);
@@ -347,8 +367,16 @@ int main(int argc, char *argv[])
 	sysfs_init(&cxt, devno, NULL);
 
 	printf("SLAVES: %d\n", sysfs_count_dirents(&cxt, "slaves"));
-	printf("SIZE: %jd\n", sysfs_read_u64(&cxt, "size"));
-	printf("SECTOR: %d\n", sysfs_read_int(&cxt, "queue/hw_sector_size"));
+
+	if (sysfs_read_u64(&cxt, "size", &u64))
+		printf("read SIZE failed");
+	else
+		printf("SIZE: %jd\n", u64);
+
+	if (sysfs_read_int(&cxt, "queue/hw_sector_size", &i))
+		printf("read SECTOR failed");
+	else
+		printf("SECTOR: %d\n", i);
 
 	return EXIT_SUCCESS;
 }

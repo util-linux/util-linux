@@ -44,9 +44,11 @@ extern int sysfs_has_attribute(struct sysfs_cxt *cxt, const char *attr);
 extern int sysfs_scanf(struct sysfs_cxt *cxt,  const char *attr,
 		       const char *fmt, ...)
 		        __attribute__ ((format (scanf, 3, 4)));
-extern int64_t sysfs_read_s64(struct sysfs_cxt *cxt, const char *attr);
-extern uint64_t sysfs_read_u64(struct sysfs_cxt *cxt, const char *attr);
-extern int sysfs_read_int(struct sysfs_cxt *cxt, const char *attr);
+
+extern int sysfs_read_s64(struct sysfs_cxt *cxt, const char *attr, int64_t *res);
+extern int sysfs_read_u64(struct sysfs_cxt *cxt, const char *attr, uint64_t *res);
+extern int sysfs_read_int(struct sysfs_cxt *cxt, const char *attr, int *res);
+
 extern char *sysfs_strdup(struct sysfs_cxt *cxt, const char *attr);
 
 extern int sysfs_count_dirents(struct sysfs_cxt *cxt, const char *attr);

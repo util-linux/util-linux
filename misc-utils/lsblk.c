@@ -391,8 +391,11 @@ static char *get_type(struct blkdev_cxt *cxt)
 
 	} else {
 		const char *type = cxt->partition ? "part" : "disk";
+		int x = 0;
 
-		switch (sysfs_read_int(&cxt->sysfs, "device/type")) {
+		sysfs_read_int(&cxt->sysfs, "device/type", &x);
+
+		switch (x) {
 			case 0x0c: /* TYPE_RAID */
 				type = "raid"; break;
 			case 0x01: /* TYPE_TAPE */
@@ -406,7 +409,7 @@ static char *get_type(struct blkdev_cxt *cxt)
 				type = "rbc"; break;
 		}
 
-		 res = xstrdup(type);
+		res = xstrdup(type);
 	}
 
 	for (p = res; p && *p; p++)
@@ -619,8 +622,10 @@ static int set_cxt(struct blkdev_cxt *cxt,
 	cxt->maj = major(devno);
 	cxt->min = minor(devno);
 
-	cxt->size = sysfs_read_u64(&cxt->sysfs, "size") << 9;
-	cxt->discard = sysfs_read_int(&cxt->sysfs, "queue/discard_granularity");
+	sysfs_read_u64(&cxt->sysfs, "size", &cxt->size);	/* in sectors */
+	cxt->size <<= 9;					/* in bytes */
+
+	sysfs_read_int(&cxt->sysfs, "queue/discard_granularity", &cxt->discard);
 
 	/* Ignore devices of zero size */
 	if (!lsblk->all_devices && cxt->size == 0)

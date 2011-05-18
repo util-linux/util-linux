@@ -78,11 +78,17 @@ static int probe_sysfs_tp(blkid_probe pr, const struct blkid_idmag *mag)
 		}
 
 		if (val->set_ulong) {
-			uint64_t data = sysfs_read_u64(&sysfs, val->attr);
+			uint64_t data;
+
+			if (sysfs_read_u64(&sysfs, val->attr, &data) != 0)
+				continue;
 			rc = val->set_ulong(pr, (unsigned long) data);
 
 		} else if (val->set_int) {
-			int64_t data = sysfs_read_s64(&sysfs, val->attr);
+			int64_t data;
+
+			if (sysfs_read_s64(&sysfs, val->attr, &data) != 0)
+				continue;
 			rc = val->set_int(pr, (int) data);
 		}
 

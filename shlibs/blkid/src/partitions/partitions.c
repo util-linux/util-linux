@@ -892,15 +892,19 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 {
 	struct sysfs_cxt sysfs;
 	uint64_t start, size;
-	int i;
+	int i, rc;
 
 	if (sysfs_init(&sysfs, devno, NULL))
 		return NULL;
 
-	start = sysfs_read_u64(&sysfs, "start");
-	size = sysfs_read_u64(&sysfs, "size");
+	rc = sysfs_read_u64(&sysfs, "start", &start);
+	if (!rc)
+		rc = sysfs_read_u64(&sysfs, "size", &size);
 
 	sysfs_deinit(&sysfs);
+
+	if (rc)
+		return NULL;
 
 	for (i = 0; i < ls->nparts; i++) {
 		blkid_partition par = &ls->parts[i];

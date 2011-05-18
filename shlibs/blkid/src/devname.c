@@ -555,7 +555,7 @@ static int probe_all_removable(blkid_cache cache)
 
 	while((d = readdir(dir))) {
 		struct sysfs_cxt sysfs;
-		int removable;
+		int removable = 0;
 		dev_t devno;
 
 #ifdef _DIRENT_HAVE_D_TYPE
@@ -572,7 +572,7 @@ static int probe_all_removable(blkid_cache cache)
 			continue;
 
 		sysfs_init(&sysfs, devno, NULL);
-		removable = sysfs_read_int(&sysfs, "removable");
+		sysfs_read_int(&sysfs, "removable", &removable);
 		sysfs_deinit(&sysfs);
 
 		if (removable)
