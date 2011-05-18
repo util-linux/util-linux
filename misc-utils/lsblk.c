@@ -420,7 +420,7 @@ static char *get_type(struct blkdev_cxt *cxt)
 static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line *ln)
 {
 	char buf[1024];
-	char *p;
+	char *p = NULL;
 
 	if (!cxt->st.st_rdev && (id == COL_OWNER || id == COL_GROUP ||
 				 id == COL_MODE))
@@ -565,16 +565,28 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 			tt_line_set_data(ln, col, "0");
 		break;
 	case COL_DGRAN:
-		p = sysfs_strdup(&cxt->sysfs, "queue/discard_granularity");
-		if (!lsblk->bytes)
-			p = size_to_human_string(atoi(p));
+		if (lsblk->bytes)
+			p = sysfs_strdup(&cxt->sysfs, "queue/discard_granularity");
+		else {
+			uint64_t x;
+
+			if (sysfs_read_u64(&cxt->sysfs,
+					   "queue/discard_granularity", &x) == 0)
+				p = size_to_human_string(x);
+		}
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
 	case COL_DMAX:
-		p = sysfs_strdup(&cxt->sysfs, "queue/discard_max_bytes");
-		if (!lsblk->bytes)
-			p = size_to_human_string(atol(p));
+		if (lsblk->bytes)
+			p = sysfs_strdup(&cxt->sysfs, "queue/discard_max_bytes");
+		else {
+			uint64_t x;
+
+			if (sysfs_read_u64(&cxt->sysfs,
+					   "queue/discard_max_bytes", &x) == 0)
+				p = size_to_human_string(x);
+		}
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
