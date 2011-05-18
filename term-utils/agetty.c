@@ -1336,7 +1336,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 			case 0:
 				*bp = 0;
 				if (op->numspeed > 1)
-					return logname;
+					return NULL;
 				break;
 			case CR:
 			case NL:
