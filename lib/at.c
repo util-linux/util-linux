@@ -11,6 +11,8 @@
 #include "at.h"
 #include "c.h"
 
+#undef HAVE_FSTATAT
+
 int fstat_at(int dir, const char *dirname, const char *filename,
 				struct stat *st, int nofollow)
 {
@@ -18,14 +20,18 @@ int fstat_at(int dir, const char *dirname, const char *filename,
 	return fstatat(dir, filename, st,
 			nofollow ? AT_SYMLINK_NOFOLLOW : 0);
 #else
-	char path[PATH_MAX];
-	int len;
+	if (*filename != '/') {
+		char path[PATH_MAX];
+		int len;
 
-	len = snprintf(path, sizeof(path), "%s/%s", dirname, filename);
-	if (len < 0 || len + 1 > sizeof(path))
-		return -1;
+		len = snprintf(path, sizeof(path), "%s/%s", dirname, filename);
+		if (len < 0 || len + 1 > sizeof(path))
+			return -1;
 
-	return nofollow ? lstat(path, st) : stat(path, st);
+		return nofollow ? lstat(path, st) : stat(path, st);
+	}
+
+	return nofollow ? lstat(filename, st) : stat(filename, st);
 #endif
 }
 
@@ -34,14 +40,17 @@ int open_at(int dir, const char *dirname, const char *filename, int flags)
 #ifdef HAVE_FSTATAT
 	return openat(dir, filename, flags);
 #else
-	char path[PATH_MAX];
-	int len;
+	if (*filename != '/') {
+		char path[PATH_MAX];
+		int len;
 
-	len = snprintf(path, sizeof(path), "%s/%s", dirname, filename);
-	if (len < 0 || len + 1 > sizeof(path))
-		return -1;
+		len = snprintf(path, sizeof(path), "%s/%s", dirname, filename);
+		if (len < 0 || len + 1 > sizeof(path))
+			return -1;
 
-	return open(path, flags);
+		return open(path, flags);
+	}
+	return open(filename, flags);
 #endif
 }
 
@@ -54,6 +63,26 @@ FILE *fopen_at(int dir, const char *dirname, const char *filename, int flags,
 		return NULL;
 
 	return fdopen(fd, mode);
+}
+
+ssize_t readlink_at(int dir, const char *dirname, const char *pathname,
+		    char *buf, size_t bufsiz)
+{
+#ifdef HAVE_FSTATAT
+	return readlinkat(dir, pathname, buf, bufsiz);
+#else
+	if (*pathname != '/') {
+		char path[PATH_MAX];
+		int len;
+
+		len = snprintf(path, sizeof(path), "%s/%s", dirname, pathname);
+		if (len < 0 || len + 1 > sizeof(path))
+			return -1;
+
+		return readlink(path, buf, bufsiz);
+	}
+	return readlink(pathname, buf, bufsiz);
+#endif
 }
 
 #ifdef TEST_PROGRAM__DISABLED_FOR_NOW
