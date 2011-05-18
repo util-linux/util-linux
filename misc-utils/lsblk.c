@@ -162,6 +162,7 @@ struct blkdev_cxt {
 				 * /sys/block/.../holders + number of partition */
 	int nslaves;		/* # of devices this device maps to */
 	int maj, min;		/* devno */
+	int discard;		/* supports discard */
 
 	uint64_t size;		/* device size */
 };
@@ -555,8 +556,10 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		break;
 	case COL_DALIGN:
 		p = sysfs_strdup(&cxt->sysfs, "discard_alignment");
-		if (p)
+		if (cxt->discard && p)
 			tt_line_set_data(ln, col, p);
+		else
+			tt_line_set_data(ln, col, "0");
 		break;
 	case COL_DGRAN:
 		p = sysfs_strdup(&cxt->sysfs, "queue/discard_granularity");
@@ -567,16 +570,17 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		break;
 	case COL_DMAX:
 		p = sysfs_strdup(&cxt->sysfs, "queue/discard_max_bytes");
-
 		if (!lsblk->bytes)
-			p = size_to_human_string(atoi(p));
+			p = size_to_human_string(atol(p));
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
 	case COL_DZERO:
 		p = sysfs_strdup(&cxt->sysfs, "queue/discard_zeroes_data");
-		if (p)
+		if (cxt->discard && p)
 			tt_line_set_data(ln, col, p);
+		else
+			tt_line_set_data(ln, col, "0");
 		break;
 	};
 }
@@ -616,6 +620,7 @@ static int set_cxt(struct blkdev_cxt *cxt,
 	cxt->min = minor(devno);
 
 	cxt->size = sysfs_read_u64(&cxt->sysfs, "size") << 9;
+	cxt->discard = sysfs_read_int(&cxt->sysfs, "queue/discard_granularity");
 
 	/* Ignore devices of zero size */
 	if (!lsblk->all_devices && cxt->size == 0)
