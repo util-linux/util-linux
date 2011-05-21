@@ -30,6 +30,7 @@ mkinstalldirs
 compile
 depcomp
 install-sh
+INSTALL
 missing
 libtool
 cscope.out

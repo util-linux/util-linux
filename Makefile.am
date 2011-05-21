@@ -57,6 +57,7 @@ if BUILD_FSCK
 SUBDIRS += fsck
 endif
 
+AUTOMAKE_OPTIONS = gnu
 ACLOCAL_AMFLAGS = -I m4
 
 EXTRA_DIST = \
@@ -75,6 +76,8 @@ EXTRA_DIST = \
 # tarball, and never in a checked-out repository.
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
+# Set ChangeLog tag reference.
+	sed -i "s/log/log;h=$(VERSION)/" $(distdir)/ChangeLog
 
 distclean-local:
 	-find . -name \*~ -o -name \*.orig -o -name \*.rej | xargs rm -f
