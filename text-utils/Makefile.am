@@ -2,7 +2,7 @@ include $(top_srcdir)/config/include-Makefile.am
 
 EXTRA_DIST = README.clear README.col
 
-usrbin_exec_PROGRAMS = col colcrt colrm column hexdump rev line tailf
+usrbin_exec_PROGRAMS = col colcrt colrm column hexdump rev tailf
 
 column_SOURCES = column.c $(top_srcdir)/lib/strutils.c
 
@@ -11,7 +11,12 @@ hexdump_SOURCES = hexdump.c conv.c display.c hexsyntax.c parse.c \
 
 tailf_SOURCES = tailf.c $(top_srcdir)/lib/strutils.c
 
-dist_man_MANS = col.1 colcrt.1 colrm.1 column.1 hexdump.1 rev.1 line.1 tailf.1
+dist_man_MANS = col.1 colcrt.1 colrm.1 column.1 hexdump.1 rev.1 tailf.1
+
+if BUILD_LINE
+usrbin_exec_PROGRAMS += line
+dist_man_MANS += line.1
+endif
 
 if HAVE_NCURSES
 bin_PROGRAMS = more

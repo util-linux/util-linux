@@ -989,6 +989,11 @@ AC_ARG_ENABLE([last],
 )
 AM_CONDITIONAL(BUILD_LAST, test "x$enable_last" = xyes)
 
+AC_ARG_ENABLE([line],
+  AS_HELP_STRING([--enable-line], [build line]),
+  [], enable_line=no
+)
+AM_CONDITIONAL(BUILD_LINE, test "x$enable_line" = xyes)
 
 AC_ARG_ENABLE([mesg],
   AS_HELP_STRING([--enable-mesg], [build mesg]),
