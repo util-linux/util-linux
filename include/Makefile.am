@@ -20,9 +20,11 @@ dist_noinst_HEADERS = \
 	md5.h \
 	nls.h \
 	pathnames.h \
+	procutils.h \
 	setproctitle.h \
 	strutils.h \
 	swapheader.h \
+	sysfs.h \
 	tt.h \
 	usleep.h \
 	wholedisk.h \
