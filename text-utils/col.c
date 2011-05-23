@@ -55,6 +55,7 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "widechar.h"
+#include "strutils.h"
 
 #define	BS	'\b'		/* backspace */
 #define	TAB	'\t'		/* tab */
@@ -155,6 +156,7 @@ int main(int argc, char **argv)
 	int this_line;			/* line l points to */
 	int nflushd_lines;		/* number of lines that were flushed */
 	int adjust, opt, warned;
+	unsigned long tmplong;
 	int ret = EXIT_SUCCESS;
 
 	static const struct option longopts[] = {
@@ -173,7 +175,7 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	max_bufd_lines = 128;
+	max_bufd_lines = 128 * 2;
 	compress_spaces = 1;		/* compress spaces into tabs */
 	pass_unknown_seqs = 0;          /* remove unknown escape sequences */
 
@@ -188,9 +190,15 @@ int main(int argc, char **argv)
 		case 'h':		/* compress spaces into tabs */
 			compress_spaces = 1;
 			break;
-		case 'l':		/* buffered line count */
-			if ((max_bufd_lines = atoi(optarg)) <= 0)
-				errx(EXIT_FAILURE, _("bad -l argument %s."), optarg);
+		case 'l':
+			/*
+			 * Buffered line count, which is a value in half
+			 * lines e.g. twice the amount specified.
+			 */
+			tmplong = strtoul_or_err(optarg, _("bad -l argument")) * 2;
+			if ((INT_MAX) < tmplong)
+				errx(EXIT_FAILURE, _("argument %lu is too large"), tmplong);
+			max_bufd_lines = (int) tmplong;
 			break;
 		case 'p':
 			pass_unknown_seqs = 1;
@@ -210,9 +218,6 @@ int main(int argc, char **argv)
 
 	if (optind != argc)
 		usage(stderr);
-
-	/* this value is in half lines */
-	max_bufd_lines *= 2;
 
 	adjust = cur_col = extra_lines = warned = 0;
 	cur_line = max_line = nflushd_lines = this_line = 0;
