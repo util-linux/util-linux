@@ -708,6 +708,7 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 	if (par) {
 		const char *v;
 		blkid_parttable tab = blkid_partition_get_table(par);
+		dev_t disk = blkid_probe_get_devno(disk_pr);
 
 		if (tab) {
 			v = blkid_parttable_get_type(tab);
@@ -741,6 +742,14 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 
 		blkid_probe_sprintf_value(pr, "PART_ENTRY_NUMBER",
 				"%d", blkid_partition_get_partno(par));
+
+		blkid_probe_sprintf_value(pr, "PART_ENTRY_OFFSET", "%jd",
+				blkid_partition_get_start(par));
+		blkid_probe_sprintf_value(pr, "PART_ENTRY_SIZE", "%jd",
+				blkid_partition_get_size(par));
+
+		blkid_probe_sprintf_value(pr, "PART_ENTRY_DISK", "%u:%u",
+				major(disk), minor(disk));
 	}
 	rc = 0;
 nothing:
