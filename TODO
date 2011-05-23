@@ -25,6 +25,8 @@ dmesg
 mount
 -----
 
+ (features for new libmount based implemenation)
+
  - add support for "x-" namespace for mount options. All options with "x-"
    prefix should be ignored. 
 
@@ -47,6 +49,16 @@ mount
         mount --target /foo -o remount,ro
 
     Note that findmnt(8) already supports --target and --source.
+
+ - add ---target-prefix option to specify prefix for mountpoints
+
+ - add --fstab-file option to specify alternative fstab
+
+   so then you can
+
+	mount -a --fstab-file=/etc/fstab.foo ---target-prefix=$FOO_ROOT
+
+   to create a new hierarchy of filesystems at $FOO_ROOT.
 
 partx
 -----
