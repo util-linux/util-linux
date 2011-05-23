@@ -35,6 +35,7 @@
 #include "blkidP.h"
 #include "pathnames.h"
 #include "at.h"
+#include "sysfs.h"
 
 char *blkid_strndup(const char *s, int length)
 {
@@ -203,7 +204,7 @@ static char *stripoff_last_component(char *path)
 	return ++p;
 }
 
-static char *scandev_devno_to_devname(dev_t devno)
+static char *scandev_devno_to_devpath(dev_t devno)
 {
 	struct dir_list *list = NULL, *new_list = NULL;
 	char *devname = NULL;
@@ -241,38 +242,6 @@ static char *scandev_devno_to_devname(dev_t devno)
 	return devname;
 }
 
-static char *sysfs_devno_to_devname(dev_t dev)
-{
-	char path[PATH_MAX];
-	char linkpath[PATH_MAX];
-	struct stat st;
-	char *name;
-	int rc;
-
-	rc = snprintf(path, sizeof(path), "/sys/dev/block/%d:%d",
-			major(dev), minor(dev));
-	if (rc < 0 || rc + 1 > sizeof(path))
-		return NULL;
-
-	rc = readlink(path, linkpath, sizeof(linkpath) - 1);
-	if (rc < 0)
-		return NULL;
-	linkpath[rc] = '\0';
-
-	name = stripoff_last_component(linkpath);	/* basename */
-	if (!name)
-		return NULL;
-
-	rc = snprintf(path, sizeof(path), "/dev/%s", name);
-	if (rc < 0 || rc + 1 > sizeof(path))
-		return NULL;
-
-	if (!stat(path, &st) && S_ISBLK(st.st_mode) && st.st_rdev == dev)
-		return strdup(path);
-
-	return NULL;
-}
-
 /**
  * blkid_devno_to_devname:
  * @devno: device number
@@ -285,22 +254,53 @@ static char *sysfs_devno_to_devname(dev_t dev)
  */
 char *blkid_devno_to_devname(dev_t devno)
 {
-	char *devname = NULL;
+	char *path = NULL;
+	char buf[PATH_MAX];
 
-	devname = sysfs_devno_to_devname(devno);
-	if (!devname)
-		devname = scandev_devno_to_devname(devno);
+	path = sysfs_devno_to_devpath(devno, buf, sizeof(buf));
+	if (path)
+		path = strdup(path);
+	if (!path)
+		path = scandev_devno_to_devpath(devno);
 
-	if (!devname) {
+	if (!path) {
 		DBG(DEBUG_DEVNO,
 		    printf("blkid: couldn't find devno 0x%04lx\n",
 			   (unsigned long) devno));
 	} else {
 		DBG(DEBUG_DEVNO,
-		    printf("found devno 0x%04llx as %s\n", (long long)devno, devname));
+		    printf("found devno 0x%04llx as %s\n", (long long)devno, path));
 	}
 
-	return devname;
+	return path;
+}
+
+static int get_dm_wholedisk(struct sysfs_cxt *cxt, char *diskname,
+			    size_t len, dev_t *diskdevno)
+{
+	int rc = 0;
+	char *name;
+
+	/* Note, sysfs_get_slave() returns the first slave only,
+	 * if there is more slaves, then return NULL
+	 */
+	name = sysfs_get_slave(cxt);
+	if (!name)
+		return -1;
+
+	if (diskname && len) {
+		strncpy(diskname, name, len);
+		diskname[len - 1] = '\0';
+	}
+
+	if (diskdevno) {
+		*diskdevno = sysfs_devname_to_devno(name, NULL);
+		if (!*diskdevno)
+			rc = -1;
+	}
+
+	free(name);
+	return rc;
 }
 
 /**
@@ -342,80 +342,97 @@ char *blkid_devno_to_devname(dev_t devno)
 int blkid_devno_to_wholedisk(dev_t dev, char *diskname,
 			size_t len, dev_t *diskdevno)
 {
-	char path[PATH_MAX];
-	char linkpath[PATH_MAX];
-	struct stat info;
-	char *name;
-	int rc, linklen;
+	struct sysfs_cxt cxt;
+	int is_part = 0;
 
 	if (!dev)
 		goto err;
-
-	/* check if dev is a partition */
-	rc = snprintf(path, sizeof(path), "/sys/dev/block/%d:%d/partition",
-			major(dev), minor(dev));
-	if (rc < 0 || rc + 1 > sizeof(path))
+	if (sysfs_init(&cxt, dev, NULL))
 		goto err;
 
-	rc = stat(path, &info);		/* 'rc == 0' means partitioned dev */
+	is_part = sysfs_has_attribute(&cxt, "partition");
+	if (!is_part) {
+		/*
+		 * Extra case for partitions mapped by device-mapper.
+		 *
+		 * All regualar partitions (added by BLKPG ioctl or kernel PT
+		 * parser) have the /sys/.../partition file. The partitions
+		 * mapped by DM don't have such file, but they have "part"
+		 * prefix in DM UUID.
+		 */
+		char *uuid = sysfs_strdup(&cxt, "dm/uuid");
+		char *tmp = uuid;
+		char *prefix = uuid ? strsep(&tmp, "-") : NULL;
 
-	 /* aka dirname (remove "/partition" from the path*/
-	stripoff_last_component(path);
+		if (prefix && strncasecmp(prefix, "part", 4) == 0)
+			is_part = 1;
+		free(uuid);
 
-	/*
-	 * Unpartitioned device:
-	 *	- readlink /sys/dev/block/8:0 = ../../block/sda
-	 *	- basename ../../block/sda    = sda
-	 *
-	 * Partitioned device:
-	 *	- readlink /sys/dev/block/8:1   = ../../block/sda/sda1
-	 *	- dirname  ../../block/sda/sda1 = ../../block/sda
-	 *	- basename ../../block/sda      = sda
-	 */
-	linklen = readlink(path, linkpath, sizeof(linkpath) - 1);
-	if (linklen < 0)
-		goto err;
-	linkpath[linklen] = '\0';
+		if (is_part &&
+		    get_dm_wholedisk(&cxt, diskname, len, diskdevno) == 0)
+			/*
+			 * partitioned device, mapped by DM
+			 */
+			goto done;
 
-	if (rc == 0)
-		/* partitioned device */
-		stripoff_last_component(linkpath);	/* dirname */
-
-	name = stripoff_last_component(linkpath);	/* basename */
-	if (!name)
-		goto err;
-
-	if (diskname && len) {
-		strncpy(diskname, name, len);
-		diskname[len - 1] = '\0';
+		is_part = 0;
 	}
 
-	if (diskdevno) {
-		int maj, min;
-		FILE *f;
+	if (!is_part) {
+		/*
+		 * unpartitioned device
+		 */
+		if (diskname && len) {
+			if (!sysfs_get_devname(&cxt, diskname, len))
+				goto err;
+		}
+		if (diskdevno)
+			*diskdevno = dev;
 
-		/* read wholedisk devno */
-		rc = snprintf(path, sizeof(path), "/sys/block/%s/dev", name);
-		if (rc < 0 || rc + 1 > sizeof(path))
+	} else {
+		/*
+		 * partitioned device
+		 *	- readlink /sys/dev/block/8:1   = ../../block/sda/sda1
+		 *	- dirname  ../../block/sda/sda1 = ../../block/sda
+		 *	- basename ../../block/sda      = sda
+		 */
+		char linkpath[PATH_MAX];
+		char *name;
+		int linklen;
+
+		linklen = sysfs_readlink(&cxt, NULL,
+				linkpath, sizeof(linkpath) - 1);
+		if (linklen < 0)
+			goto err;
+		linkpath[linklen] = '\0';
+
+		stripoff_last_component(linkpath);		/* dirname */
+		name = stripoff_last_component(linkpath);	/* basename */
+		if (!name)
 			goto err;
 
-		f = fopen(path, "r");
-		if (!f)
-			goto err;
+		if (diskname && len) {
+			strncpy(diskname, name, len);
+			diskname[len - 1] = '\0';
+		}
 
-		rc = fscanf(f, "%d:%d", &maj, &min);
-		fclose(f);
-		if (rc != 2)
-			goto err;
-
-		*diskdevno = makedev(maj, min);
+		if (diskdevno) {
+			*diskdevno = sysfs_devname_to_devno(name, NULL);
+			if (!*diskdevno)
+				goto err;
+		}
 	}
+
+done:
+	sysfs_deinit(&cxt);
 
 	DBG(DEBUG_DEVNO,
-	    printf("found entire diskname for devno 0x%04llx as %s\n",
-	    (long long) dev, name));
+	    printf("found entire diskname for devno 0x%04llx %s\n",
+	    (long long) dev, diskname ? diskname : ""));
 	return 0;
 err:
+	sysfs_deinit(&cxt);
+
 	DBG(DEBUG_DEVNO,
 	    printf("failed to convert 0x%04llx to wholedisk name, errno=%d\n",
 	    (long long) dev, errno));
@@ -465,8 +482,9 @@ int blkid_driver_has_major(const char *drvname, int major)
 int main(int argc, char** argv)
 {
 	char	*devname, *tmp;
+	char	diskname[PATH_MAX];
 	int	major, minor;
-	dev_t	devno;
+	dev_t	devno, disk_devno;
 	const char *errmsg = "Couldn't parse %s: %s\n";
 
 	blkid_init_debug(DEBUG_ALL);
@@ -498,6 +516,10 @@ int main(int argc, char** argv)
 	printf("Looking for device 0x%04llx\n", (long long)devno);
 	devname = blkid_devno_to_devname(devno);
 	free(devname);
+
+	printf("Looking for whole-device for 0x%04llx\n", (long long)devno);
+	blkid_devno_to_wholedisk(devno, diskname, sizeof(diskname), &disk_devno);
+
 	return 0;
 }
 #endif
