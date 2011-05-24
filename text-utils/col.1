@@ -42,7 +42,7 @@
 .Nd filter reverse line feeds from input
 .Sh SYNOPSIS
 .Nm col
-.Op Fl bfpx
+.Op Fl bfphx
 .Op Fl l Ar num
 .Sh DESCRIPTION
 .Nm Col
@@ -59,26 +59,32 @@ reads from standard input and writes to standard output.
 .Pp
 The options are as follows:
 .Bl -tag -width "-lnum"
-.It Fl b
+.It Fl b, Fl Fl no-backspaces
 Do not output any backspaces, printing only the last character
 written to each column position.
-.It Fl f
+.It Fl f, Fl Fl fine
 Forward half line feeds are permitted (``fine'' mode).
 Normally characters printed on a half line boundary are printed
 on the following line.
-.It Fl p
+.It Fl p, Fl Fl pass
 Force unknown control sequences to be passed through unchanged.
 Normally,
 .Nm col
 will filter out any control sequences from the input other than those
 recognized and interpreted by itself, which are listed below.
-.It Fl x
+.It Fl h, Fl Fl tabs
+Output tabs instead of multiple spaces.
+.It Fl x, Fl Fl spaces
 Output multiple spaces instead of tabs.
-.It Fl l Ns Ar num
+.It Fl l, Fl Fl lines Ar num
 Buffer at least
 .Ar num
 lines in memory.
 By default, 128 lines are buffered.
+.It Fl V, Fl Fl version
+Output version information and exit.
+.It Fl H, Fl Fl help
+Output help and exit.
 .El
 .Pp
 The control sequences for carriage motion that
