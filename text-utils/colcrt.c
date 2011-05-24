@@ -42,13 +42,16 @@
 #include <stdlib.h>
 #include <unistd.h>		/* for close() */
 #include <string.h>
+#include <getopt.h>
 #include "nls.h"
 
 #include "widechar.h"
+#include "c.h"
 
 int plus(wchar_t c, wchar_t d);
 void move(int l, int m);
 void pflush(int ol);
+static void __attribute__ ((__noreturn__)) usage(FILE * out);
 
 /*
  * colcrt - replaces col for crts with new nroff esp. when using tbl.
@@ -72,45 +75,66 @@ int	outcol;
 char	suppresul;
 char	printall;
 
-char	*progname;
 void colcrt(FILE *f);
 
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv) {
 	FILE *f;
+	int i, opt;
+	enum { NO_UL_OPTION = CHAR_MAX + 1 };
+
+	static const struct option longopts[] = {
+		{ "no-underlining",	no_argument, 0, NO_UL_OPTION },
+		{ "half-lines",		no_argument, 0, '2' },
+		{ "version",		no_argument, 0, 'V' },
+		{ "help",		no_argument, 0, 'h' },
+		{ NULL, 0, 0, 0}
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	argc--;
-	progname = *argv++;
-	while (argc > 0 && argv[0][0] == '-') {
-		switch (argv[0][1]) {
-			case 0:
+	/* Take care of lonely hyphen option. */
+	for (i = 0; i < argc; i++)
+		if (argv[i][0] == '-' && argv[i][1] == '\0') {
+			suppresul = 1;
+			argc--;
+			memmove(argv + i, argv + i + 1,
+				sizeof(char *) * (argc - i));
+			i--;
+		}
+
+	while ((opt = getopt_long(argc, argv, "2Vh", longopts, NULL)) != -1)
+		switch (opt) {
+			case NO_UL_OPTION:
 				suppresul = 1;
 				break;
 			case '2':
 				printall = 1;
 				break;
+			case 'V':
+				printf(_("%s from %s\n"),
+					program_invocation_short_name,
+					PACKAGE_STRING);
+				return EXIT_SUCCESS;
+			case 'h':
+				usage(stdout);
 			default:
-				printf(_("usage: %s [ - ] [ -2 ] [ file ... ]\n"), progname);
-				fflush(stdout);
-				exit(1);
+				usage(stderr);
 		}
-		argc--;
-		argv++;
-	}
-	f = stdin;
+	argc -= optind;
+	argv += optind;
+
 	do {
 		if (argc > 0) {
 			if (!(f = fopen(argv[0], "r"))) {
 				fflush(stdout);
-				perror(argv[0]);
-				exit (1);
+				err(EXIT_FAILURE, "%s", argv[0]);
 			}
 			argc--;
 			argv++;
+		} else {
+			f = stdin;
 		}
 		colcrt(f);
 		if (f != stdin)
@@ -118,12 +142,11 @@ main(int argc, char **argv) {
 	} while (argc > 0);
 	fflush(stdout);
 	if (ferror(stdout) || fclose(stdout))
-		return 1;
-	return 0;
+		return EXIT_FAILURE;
+	return EXIT_SUCCESS;
 }
 
-void
-colcrt(FILE *f) {
+void colcrt(FILE *f) {
 	wint_t c;
 	wchar_t *cp, *dp;
 	int i, w;
@@ -190,19 +213,19 @@ colcrt(FILE *f) {
 			}
 			if (*cp == 0) {
 				/* trick! */
-				for (i=0; i<w; i++)
+				for (i = 0; i < w; i++)
 					cp[i] = c;
-				dp = cp - (outcol-w);
+				dp = cp - (outcol - w);
 				for (cp--; cp >= dp && *cp == 0; cp--)
 					*cp = ' ';
 			} else {
 				if (plus(c, *cp) || plus(*cp, c))
 					*cp = '+';
 				else if (*cp == ' ' || *cp == 0) {
-					for (i=1; i<w; i++)
+					for (i = 1; i < w; i++)
 						if (cp[i] != ' ' && cp[i] != 0)
 							continue;
-					for (i=0; i<w; i++)
+					for (i = 0; i < w; i++)
 						cp[i] = c;
 				}
 			}
@@ -253,7 +276,7 @@ void pflush(int ol)
 		putwchar('\n');
 	}
 	memmove(page, page[ol], (267 - ol) * 132 * sizeof(wchar_t));
-	memset(page[267- ol], '\0', ol * 132 * sizeof(wchar_t));
+	memset(page[267 - ol], '\0', ol * 132 * sizeof(wchar_t));
 	outline -= ol;
 	outcol = 0;
 	first = 1;
@@ -283,4 +306,19 @@ void move(int l, int m)
 				*dp = ' ';
 		page[l][0] = 0;
 	}
+}
+
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
+{
+	fprintf(out,
+		_("\nUsage:\n"
+		  " %s [options] [file ...]\n"), program_invocation_short_name);
+
+	fprintf(out,
+		_(" -,  --no-underlining  suppress all underlining\n"
+		  " -2, --half-lines      print all half-lines\n"
+		  " -V, --version         output version information and exit\n"
+		  " -h, --help            display this help and exit\n\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
