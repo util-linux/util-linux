@@ -219,10 +219,10 @@ int main(int argc, char **argv)
 	cur_set = last_set = CS_NORMAL;
 	lines = l = alloc_line();
 
-	while (feof(stdin)==0) {
+	while (feof(stdin) == 0) {
 		errno = 0;
 		if ((ch = getwchar()) == WEOF) {
-			if (errno==EILSEQ) {
+			if (errno == EILSEQ) {
 				warn(NULL);
 				ret = EXIT_FAILURE;
 			}
@@ -401,7 +401,7 @@ void flush_lines(int nflush)
 		}
 		nblank_lines++;
 		if (l->l_line)
-			(void)free((void *)l->l_line);
+			free((void *)l->l_line);
 		free_line(l);
 	}
 	if (lines)
@@ -508,11 +508,11 @@ void flush_line(LINE *l)
 				int ntabs;
 
 				ntabs = this_col / 8 - last_col / 8;
-                                if (ntabs > 0) {
-                                        nspace = this_col & 7;
-                                        while (--ntabs >= 0)
-                                                PUTC('\t');
-                                }
+				if (ntabs > 0) {
+					nspace = this_col & 7;
+					while (--ntabs >= 0)
+						PUTC('\t');
+				}
 			}
 			while (--nspace >= 0)
 				PUTC(' ');
@@ -531,7 +531,7 @@ void flush_line(LINE *l)
 				last_set = c->c_set;
 			}
 			PUTC(c->c_char);
-			if ((c+1) < endc) {
+			if ((c + 1) < endc) {
 				int i;
 				for (i=0; i < c->c_width; i++)
 					PUTC('\b');
@@ -539,7 +539,7 @@ void flush_line(LINE *l)
 			if (++c >= endc)
 				break;
 		}
-		last_col += (c-1)->c_width;
+		last_col += (c - 1)->c_width;
 	}
 }
 
@@ -564,7 +564,7 @@ alloc_line()
 	line_freelist = l->l_next;
 
 	memset(l, 0, sizeof(LINE));
-	return(l);
+	return l;
 }
 
 void free_line(LINE *l)
@@ -572,5 +572,3 @@ void free_line(LINE *l)
 	l->l_next = line_freelist;
 	line_freelist = l;
 }
-
-
