@@ -50,6 +50,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <getopt.h>
 
 #include "nls.h"
 #include "xalloc.h"
@@ -112,10 +113,28 @@ int pass_unknown_seqs;		/* whether to pass unknown control sequences */
 	if (putwchar(ch) == WEOF) \
 		wrerr();
 
-static void __attribute__((__noreturn__)) usage(void)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	errx(EXIT_FAILURE, _("usage: %s [-bfpx] [-l nline]"),
-			program_invocation_short_name);
+	fprintf(out, _(
+		"\nUsage:\n"
+		" %s [options]\n"), program_invocation_short_name);
+
+	fprintf(out, _(
+		"\nOptions:\n"
+		" -b, --no-backspaces    do not output backspaces\n"
+		" -f, --fine             permit forward half line feeds\n"
+		" -p, --pass             pass unknown control sequences\n"
+		" -h, --tabs             convert spaces to tabs\n"
+		" -x, --spaces           convert tabs to spaces\n"
+		" -l, --lines NUM        buffer at least NUM lines\n"
+		" -V, --version          output version information and exit\n"
+		" -H, --help             display this help and exit\n\n"));
+
+	fprintf(out, _(
+		"%s reads from standard input and writes to standard output\n\n"),
+		program_invocation_short_name);
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 static void __attribute__((__noreturn__)) wrerr()
@@ -138,6 +157,18 @@ int main(int argc, char **argv)
 	int adjust, opt, warned;
 	int ret = EXIT_SUCCESS;
 
+	static const struct option longopts[] = {
+		{ "no-backspaces", no_argument,		0, 'b' },
+		{ "fine",	   no_argument,		0, 'f' },
+		{ "pass",	   no_argument,		0, 'p' },
+		{ "tabs",	   no_argument,		0, 'h' },
+		{ "spaces",	   no_argument,		0, 'x' },
+		{ "lines",	   required_argument,	0, 'l' },
+		{ "version",	   no_argument,		0, 'V' },
+		{ "help",	   no_argument,		0, 'H' },
+		{ NULL, 0, 0, 0 }
+	};
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -145,7 +176,8 @@ int main(int argc, char **argv)
 	max_bufd_lines = 128;
 	compress_spaces = 1;		/* compress spaces into tabs */
 	pass_unknown_seqs = 0;          /* remove unknown escape sequences */
-	while ((opt = getopt(argc, argv, "bfhl:px")) != -1)
+
+	while ((opt = getopt_long(argc, argv, "bfhl:pxVH", longopts, NULL)) != -1)
 		switch (opt) {
 		case 'b':		/* do not output backspaces */
 			no_backspaces = 1;
@@ -166,13 +198,18 @@ int main(int argc, char **argv)
 		case 'x':		/* do not compress spaces into tabs */
 			compress_spaces = 0;
 			break;
-		case '?':
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+						  PACKAGE_STRING);
+			return EXIT_SUCCESS;
+		case 'H':
+			usage(stdout);
 		default:
-			usage();
+			usage(stderr);
 		}
 
 	if (optind != argc)
-		usage();
+		usage(stderr);
 
 	/* this value is in half lines */
 	max_bufd_lines *= 2;
