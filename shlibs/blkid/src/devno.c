@@ -174,8 +174,12 @@ void blkid__scan_dir(char *dirname, dev_t devno, struct dir_list **list,
 				continue;	/* symlink or lstat() failed */
 		}
 
-		if (strcmp(".udev", dp->d_name) == 0)
-			/* udev private direcory is huge and uninteresting */
+		if (*dp->d_name == '.' || (
+#ifdef _DIRENT_HAVE_D_TYPE
+		    dp->d_type == DT_DIR &&
+#endif
+		    strcmp(dp->d_name, "shm") == 0))
+			/* ignore /dev/.{udev,mount,mdadm} and /dev/shm */
 			continue;
 
 		add_to_dirlist(dirname, dp->d_name, list);
