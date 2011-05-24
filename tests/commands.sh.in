@@ -48,6 +48,7 @@ TS_CMD_IPCS=${TS_CMD_IPCS:-"$top_builddir/sys-utils/ipcs"}
 
 TS_CMD_COL=${TS_CMD_COL:-"$top_builddir/text-utils/col"}
 TS_CMD_COLUMN=${TS_CMD_COLUMN:-"$top_builddir/text-utils/column"}
+TS_CMD_COLRM=${TS_CMD_COLRM:-"$top_builddir/text-utils/colrm"}
 
 TS_CMD_NAMEI=${TS_CMD_NAMEI-"$top_builddir/misc-utils/namei"}
 TS_CMD_LOOK=${TS_CMD_LOOK-"$top_builddir/misc-utils/look"}
