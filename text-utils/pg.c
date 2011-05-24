@@ -856,8 +856,10 @@ static void
 makeprint(char *s, size_t l)
 {
 #ifdef HAVE_WIDECHAR
-	if (MB_CUR_MAX > 1)
-		return makeprint_for_mb(s, l);
+	if (MB_CUR_MAX > 1) {
+		makeprint_for_mb(s, l);
+		return;
+	}
 #endif
 
 	while (l--) {
