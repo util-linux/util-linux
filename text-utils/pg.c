@@ -395,7 +395,7 @@ checkf(void)
 static char *
 endline_for_mb(unsigned col, char *s)
 {
-	unsigned pos = 0;
+	size_t pos = 0;
 	wchar_t *p = wbuf;
 	wchar_t *end;
 	size_t wl;
@@ -462,7 +462,7 @@ endline_for_mb(unsigned col, char *s)
  ended:
 	*end = L'\0';
 	p = wbuf;
-	if ((pos = wcstombs(NULL, p, READBUF)) == -1)
+	if ((pos = wcstombs(NULL, p, READBUF)) == (size_t) -1)
 		return s + 1;
 	return s + pos;
 }
