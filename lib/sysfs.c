@@ -433,7 +433,7 @@ char *sysfs_get_devname(struct sysfs_cxt *cxt, char *buf, size_t bufsiz)
 	return buf;
 }
 
-#ifdef TEST_PROGRAM
+#ifdef TEST_PROGRAM_SYSFS
 #include <errno.h>
 #include <err.h>
 #include <stdlib.h>

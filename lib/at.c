@@ -11,8 +11,6 @@
 #include "at.h"
 #include "c.h"
 
-#undef HAVE_FSTATAT
-
 int fstat_at(int dir, const char *dirname, const char *filename,
 				struct stat *st, int nofollow)
 {
@@ -85,7 +83,7 @@ ssize_t readlink_at(int dir, const char *dirname, const char *pathname,
 #endif
 }
 
-#ifdef TEST_PROGRAM__DISABLED_FOR_NOW
+#ifdef TEST_PROGRAM_AT
 #include <errno.h>
 #include <sys/types.h>
 #include <dirent.h>
