@@ -12,6 +12,7 @@
 #include <locale.h>
 #include <string.h>
 #include "c.h"
+#include "strutils.h"
 
 static int do_scale_by_power (uintmax_t *x, int base, int power)
 {
@@ -266,21 +267,34 @@ static int get_exp(uint64_t n)
 	return shft - 10;
 }
 
-char *size_to_human_string(uint64_t bytes)
+char *size_to_human_string(int options, uint64_t bytes)
 {
 	char buf[32];
 	int dec, exp;
 	uint64_t frac;
 	const char *letters = "BKMGTPE";
+	char suffix[sizeof(" KiB")], *psuf = suffix;
 	char c;
+
+	if (options & SIZE_SUFFIX_SPACE)
+		*psuf++ = ' ';
 
 	exp  = get_exp(bytes);
 	c    = *(letters + (exp ? exp / 10 : 0));
 	dec  = exp ? bytes / (1ULL << exp) : bytes;
 	frac = exp ? bytes % (1ULL << exp) : 0;
 
-	/* fprintf(stderr, "exp: %d, c: %c, dec: %d, frac: %jd\n",
-	 *                 exp, c, dec, frac);
+	*psuf++ = c;
+
+	if ((options & SIZE_SUFFIX_3LETTER) && (c != 'B')) {
+		*psuf++ = 'i';
+		*psuf++ = 'B';
+	}
+
+	*psuf = '\0';
+
+	/* fprintf(stderr, "exp: %d, unit: %c, dec: %d, frac: %jd\n",
+	 *                 exp, suffix[0], dec, frac);
 	 */
 
 	if (frac) {
@@ -296,9 +310,9 @@ char *size_to_human_string(uint64_t bytes)
 
 		if (!dp || !*dp)
 			dp = ".";
-		snprintf(buf, sizeof(buf), "%d%s%jd%c", dec, dp, frac, c);
+		snprintf(buf, sizeof(buf), "%d%s%jd%s", dec, dp, frac, suffix);
 	} else
-		snprintf(buf, sizeof(buf), "%d%c", dec, c);
+		snprintf(buf, sizeof(buf), "%d%s", dec, suffix);
 
 	return strdup(buf);
 }
@@ -309,7 +323,7 @@ char *size_to_human_string(uint64_t bytes)
 int main(int argc, char *argv[])
 {
 	uintmax_t size = 0;
-	char *hum;
+	char *hum, *hum2;
 
 	if (argc < 2) {
 		fprintf(stderr, "usage: %s <number>[suffix]\n",	argv[0]);
@@ -319,10 +333,13 @@ int main(int argc, char *argv[])
 	if (strtosize(argv[1], &size))
 		errx(EXIT_FAILURE, "invalid size '%s' value", argv[1]);
 
-	hum = size_to_human_string(size);
+	hum = size_to_human_string(SIZE_SUFFIX_1LETTER, size);
+	hum2 = size_to_human_string(SIZE_SUFFIX_3LETTER |
+				    SIZE_SUFFIX_SPACE, size);
 
-	printf("%25s : %20ju : %8s\n", argv[1], size, hum);
+	printf("%25s : %20ju : %8s : %12s\n", argv[1], size, hum, hum2);
 	free(hum);
+	free(hum2);
 
 	return EXIT_FAILURE;
 }

@@ -517,7 +517,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 				if (asprintf(&p, "%jd", cxt->size) < 0)
 					p = NULL;
 			} else
-				p = size_to_human_string(cxt->size);
+				p = size_to_human_string(SIZE_SUFFIX_1LETTER, cxt->size);
 			if (p)
 				tt_line_set_data(ln, col, p);
 		}
@@ -572,7 +572,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 
 			if (sysfs_read_u64(&cxt->sysfs,
 					   "queue/discard_granularity", &x) == 0)
-				p = size_to_human_string(x);
+				p = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
 		}
 		if (p)
 			tt_line_set_data(ln, col, p);
@@ -585,7 +585,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 
 			if (sysfs_read_u64(&cxt->sysfs,
 					   "queue/discard_max_bytes", &x) == 0)
-				p = size_to_human_string(x);
+				p = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
 		}
 		if (p)
 			tt_line_set_data(ln, col, p);

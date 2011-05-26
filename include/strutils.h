@@ -27,6 +27,15 @@ static inline void xstrncpy(char *dest, const char *src, size_t n)
 }
 
 extern void strmode(mode_t mode, char *str);
-extern char *size_to_human_string(uint64_t bytes);
+
+/* Options for size_to_human_string() */
+enum
+{
+        SIZE_SUFFIX_1LETTER = 0,
+        SIZE_SUFFIX_3LETTER = 1,
+        SIZE_SUFFIX_SPACE   = 2
+};
+
+extern char *size_to_human_string(int options, uint64_t bytes);
 
 #endif

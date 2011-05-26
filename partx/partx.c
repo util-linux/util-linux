@@ -426,7 +426,7 @@ static void add_tt_line(struct tt *tt, blkid_partition par)
 				rc = asprintf(&str, "%ju", (uintmax_t)
 					blkid_partition_get_size(par) << 9);
 			else
-				str = size_to_human_string(
+				str = size_to_human_string(SIZE_SUFFIX_1LETTER,
 					blkid_partition_get_size(par) << 9);
 			break;
 		case COL_NAME:
