@@ -105,15 +105,13 @@ static void __attribute__((__noreturn__)) usage(int rc)
 int main(int argc, char **argv)
 {
 	struct winsize win;
-	FILE *fp;
-	int ch, tflag, xflag;
-	char *p;
-
-	long termwidth;
+	int ch, tflag = 0, xflag = 0;
+	long termwidth = 80;
 	int entries = 0;		/* number of records */
 	unsigned int eval = 0;		/* exit value */
-	int maxlength;			/* longest record */
+	int maxlength = 0;		/* longest record */
 	wchar_t **list = NULL;		/* array of pointers to records */
+
 	/* field separator for table option */
 	wchar_t default_separator[] = { '\t', ' ', 0 };
 	wchar_t *separator = default_separator;
@@ -134,13 +132,14 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 
 	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &win) == -1 || !win.ws_col) {
+		char *p;
+
 		if ((p = getenv("COLUMNS")) != NULL)
 			termwidth = strtol_or_err(p,
 					_("terminal environment COLUMNS failed"));
 	} else
 		termwidth = win.ws_col;
 
-	tflag = xflag = 0;
 	while ((ch = getopt_long(argc, argv, "hVc:s:tx", longopts, NULL)) != -1)
 		switch(ch) {
 		case 'h':
@@ -176,6 +175,8 @@ int main(int argc, char **argv)
 		eval += input(stdin, &maxlength, &list, &entries);
 	else
 		for (; *argv; ++argv) {
+			FILE *fp;
+
 			if ((fp = fopen(*argv, "r")) != NULL) {
 				eval += input(fp, &maxlength, &list, &entries);
 				fclose(fp);
@@ -344,7 +345,7 @@ static int input(FILE *fp, int *maxlength, wchar_t ***list, int *entries)
 	static int maxentry = DEFNUM;
 	int len, lineno = 1, reportedline = 0, eval = 0;
 	wchar_t *p, buf[MAXLINELEN];
-	wchar_t **local_list;
+	wchar_t **local_list = *list;
 	int local_entries = *entries;
 
 	if (!local_list)
