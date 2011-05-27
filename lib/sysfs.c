@@ -167,10 +167,12 @@ void sysfs_deinit(struct sysfs_cxt *cxt)
 
 	if (cxt->dir_fd >= 0)
 	       close(cxt->dir_fd);
+	free(cxt->dir_path);
+
 	cxt->devno = 0;
 	cxt->dir_fd = -1;
 	cxt->parent = NULL;
-	free(cxt->dir_path);
+	cxt->dir_path = NULL;
 }
 
 int sysfs_stat(struct sysfs_cxt *cxt, const char *attr, struct stat *st)
