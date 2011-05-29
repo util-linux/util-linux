@@ -1590,17 +1590,29 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
 }
 
 static int
-osf_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
+osf_partition(char *dev __attribute__ ((__unused__)),
+	      int fd __attribute__ ((__unused__)),
+	      unsigned long start __attribute__ ((__unused__)),
+	      struct disk_desc *z __attribute__ ((__unused__)))
+{
 	return 0;
 }
 
 static int
-sun_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
+sun_partition(char *dev __attribute__ ((__unused__)),
+	      int fd __attribute__ ((__unused__)),
+	      unsigned long start __attribute__ ((__unused__)),
+	      struct disk_desc *z __attribute__ ((__unused__)))
+{
 	return 0;
 }
 
 static int
-amiga_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
+amiga_partition(char *dev __attribute__ ((__unused__)),
+		int fd __attribute__ ((__unused__)),
+		unsigned long start __attribute__ ((__unused__)),
+		struct disk_desc *z __attribute__ ((__unused__)))
+{
 	return 0;
 }
 
@@ -2348,7 +2360,7 @@ activate_usage(char *progn) {
 }
 
 static void
-unhide_usage(char *progn) {
+unhide_usage(char *progn __attribute__ ((__unused__))) {
     exit(1);
 }
 
