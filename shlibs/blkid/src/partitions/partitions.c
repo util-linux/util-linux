@@ -903,9 +903,14 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 	uint64_t start, size;
 	int i, rc, partno = 0;
 
-	if (sysfs_init(&sysfs, devno, NULL))
-		return NULL;
+	DBG(DEBUG_LOWPROBE,
+		printf("triyng to convert devno 0x%llx to partition\n",
+			(long long) devno));
 
+	if (sysfs_init(&sysfs, devno, NULL)) {
+		DBG(DEBUG_LOWPROBE, printf("failed t init sysfs context\n"));
+		return NULL;
+	}
 	rc = sysfs_read_u64(&sysfs, "size", &size);
 	if (!rc) {
 		rc = sysfs_read_u64(&sysfs, "start", &start);
@@ -935,6 +940,8 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 		return NULL;
 
 	if (partno) {
+		DBG(DEBUG_LOWPROBE, printf("mapped by DM, using partno %d\n", partno));
+
 		/*
 		 * Partition mapped by kpartx does not provide "start" offset
 		 * in /sys, but if we know partno and size of the partition
@@ -955,6 +962,8 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 		 return NULL;
 	}
 
+	DBG(DEBUG_LOWPROBE, printf("searching by offset/size\n"));
+
 	for (i = 0; i < ls->nparts; i++) {
 		blkid_partition par = &ls->parts[i];
 
@@ -968,6 +977,8 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 			return par;
 
 	}
+
+	DBG(DEBUG_LOWPROBE, printf("not found partition for device\n"));
 	return NULL;
 }
 
