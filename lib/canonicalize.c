@@ -189,7 +189,7 @@ canonicalize_path(const char *path)
 }
 
 
-#ifdef TEST_PROGRAM
+#ifdef TEST_PROGRAM_CANONICALIZE
 int main(int argc, char **argv)
 {
 	if (argc < 2) {

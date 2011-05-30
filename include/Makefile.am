@@ -15,6 +15,7 @@ dist_noinst_HEADERS = \
 	linux_reboot.h \
 	linux_version.h \
 	list.h \
+	loopdev.h \
 	mangle.h \
 	mbsalign.h \
 	md5.h \
