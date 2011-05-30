@@ -349,10 +349,8 @@ int blkid_devno_to_wholedisk(dev_t dev, char *diskname,
 	struct sysfs_cxt cxt;
 	int is_part = 0;
 
-	if (!dev)
-		goto err;
-	if (sysfs_init(&cxt, dev, NULL))
-		goto err;
+	if (!dev || sysfs_init(&cxt, dev, NULL) != 0)
+		return -1;
 
 	is_part = sysfs_has_attribute(&cxt, "partition");
 	if (!is_part) {

@@ -571,9 +571,10 @@ static int probe_all_removable(blkid_cache cache)
 		if (!devno)
 			continue;
 
-		sysfs_init(&sysfs, devno, NULL);
-		sysfs_read_int(&sysfs, "removable", &removable);
-		sysfs_deinit(&sysfs);
+		if (sysfs_init(&sysfs, devno, NULL) == 0) {
+			sysfs_read_int(&sysfs, "removable", &removable);
+			sysfs_deinit(&sysfs);
+		}
 
 		if (removable)
 			probe_one(cache, d->d_name, devno, 0, 0, 1);

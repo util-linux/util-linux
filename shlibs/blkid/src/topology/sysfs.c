@@ -42,16 +42,14 @@ static struct topology_val {
 static int probe_sysfs_tp(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	dev_t dev, disk = 0;
-	int i, count = 0;
+	int i, count = 0, rc;
 	struct sysfs_cxt sysfs, parent;
 
-	int rc = 1;		/* nothing (default) */
-
 	dev = blkid_probe_get_devno(pr);
-	if (!dev)
-		goto done;			/* probably not a block device */
-	if (sysfs_init(&sysfs, dev, NULL))
-		goto done;			/* no entry in /sys ? */
+	if (!dev || sysfs_init(&sysfs, dev, NULL) != 0)
+		return 1;
+
+	rc = 1;		/* nothing (default) */
 
 	for (i = 0; i < ARRAY_SIZE(topology_vals); i++) {
 		struct topology_val *val = &topology_vals[i];
@@ -67,10 +65,12 @@ static int probe_sysfs_tp(blkid_probe pr, const struct blkid_idmag *mag)
 				 */
 				disk = blkid_probe_get_wholedisk_devno(pr);
 				if (disk && disk != dev) {
-					sysfs_init(&parent, disk, NULL);
-					sysfs.parent = &parent;
+					if (sysfs_init(&parent, disk, NULL) != 0)
+						goto done;
 
-					ok = sysfs_has_attribute(&sysfs, val->attr);
+					sysfs.parent = &parent;
+					ok = sysfs_has_attribute(&sysfs,
+								 val->attr);
 				}
 			}
 			if (!ok)
