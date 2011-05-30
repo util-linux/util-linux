@@ -1647,7 +1647,7 @@ write_partitions(char *dev, int fd, struct disk_desc *z) {
 	if (p->ptype == DOS_TYPE) {
 	    copy_from_part(&(p->p), s->data + p->offset);
 	    s->data[510] = 0x55;
-	    s->data[511] = 0xaa;
+	    s->data[511] = (unsigned char) 0xaa;
 	}
     }
     if (save_sector_file) {
