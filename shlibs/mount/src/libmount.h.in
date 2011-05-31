@@ -308,6 +308,9 @@ extern int mnt_table_find_next_fs(struct libmnt_table *tb,
 			int (*match_func)(struct libmnt_fs *, void *), void *userdata,
 		        struct libmnt_fs **fs);
 
+extern int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs);
+
+
 /* tab_update.c */
 extern struct libmnt_update *mnt_new_update(void);
 extern void mnt_free_update(struct libmnt_update *upd);

@@ -712,6 +712,175 @@ struct libmnt_fs *mnt_table_find_pair(struct libmnt_table *tb, const char *sourc
 	return NULL;
 }
 
+/*
+ * @tb: /proc/self/mountinfo
+ * @fs: filesystem
+ * @mountflags: MS_BIND or 0
+ * @fsroot: fs-root that will be probably used in the mountinfo file
+ *          for @fs after mount(2)
+ *
+ * For btrfs subvolumes this function returns NULL, but @fsroot properly set.
+ *
+ * Returns: entry from @tb that will be used as a source for @fs if the @fs is
+ *          bindmount.
+ */
+struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
+					struct libmnt_fs *fs,
+					unsigned long mountflags,
+					char **fsroot)
+{
+	char *root = NULL, *mnt = NULL;
+	const char *fstype;
+	struct libmnt_fs *src_fs = NULL;
+
+	assert(tb);
+	assert(fs);
+	assert(fsroot);
+
+	DBG(TAB, mnt_debug("lookup fs-root for %s", mnt_fs_get_source(fs)));
+
+	fstype = mnt_fs_get_fstype(fs);
+
+	if (mountflags & MS_BIND) {
+		const char *src, *src_root;
+
+		DBG(TAB, mnt_debug("fs-root for bind"));
+
+		src = mnt_resolve_spec(mnt_fs_get_source(fs), tb->cache);
+		if (!src)
+			goto err;
+
+		mnt = mnt_get_mountpoint(src);
+		if (!mnt)
+			goto err;
+
+		root = mnt_get_fs_root(src, mnt);
+
+		src_fs = mnt_table_find_target(tb, mnt, MNT_ITER_BACKWARD);
+		if (!src_fs)  {
+			DBG(TAB, mnt_debug("not found '%s' in mountinfo -- using default", mnt));
+			goto dflt;
+		}
+
+		/* on btrfs the subvolume is used as fs-root in
+		 * /proc/self/mountinfo, so we have to get the original subvolume
+		 * name from src_fs and prepend the subvolume name to the
+		 * fs-root path
+		 */
+		src_root = mnt_fs_get_root(src_fs);
+		if (src_root && !startswith(root, src_root)) {
+			size_t sz = strlen(root) + strlen(src_root) + 1;
+			char *tmp = malloc(sz);
+
+			if (!tmp)
+				goto err;
+			snprintf(tmp, sz, "%s%s", src_root, root);
+			free(root);
+			root = tmp;
+		}
+	}
+
+	/*
+	 * btrfs-subvolume mount -- get subvolume name and use it as a root-fs path
+	 */
+	else if (fstype && !strcmp(fstype, "btrfs")) {
+		char *vol = NULL, *p;
+		size_t sz, volsz = 0;
+
+		if (mnt_fs_get_option(fs, "subvol", &vol, &volsz))
+			goto dflt;
+
+		DBG(TAB, mnt_debug("setting FS root: btrfs subvol"));
+
+		sz = volsz;
+		if (*vol != '/')
+			sz++;
+		root = malloc(sz + 1);
+		if (!root)
+			goto err;
+		p = root;
+		if (*vol != '/')
+			*p++ = '/';
+		memcpy(p, vol, volsz);
+		*(root + sz) = '\0';
+	}
+dflt:
+	if (!root) {
+		root = strdup("/");
+		if (!root)
+			goto err;
+	}
+	*fsroot = root;
+
+	DBG(TAB, mnt_debug("FS root result: %s", root));
+
+	free(mnt);
+	return src_fs;
+err:
+	free(root);
+	free(mnt);
+	return NULL;
+}
+
+/**
+ * mnt_table_is_mounted:
+ * @tb: /proc/self/mountinfo file
+ * @fstab_fs: /etc/fstab entry
+ *
+ * Checks if the @fstab_fs entry is already in the @tb table. The "swap"
+ *  is ignored.
+ *
+ * TODO: check for loopdev (see mount/mount.c is_fstab_entry_mounted().
+ *
+ * Returns: 0 or 1
+ */
+int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
+{
+	char *root = NULL;
+	struct libmnt_fs *src_fs;
+	const char *src, *tgt;
+	int flags = 0, rc = 0;
+
+	assert(tb);
+	assert(fstab_fs);
+
+	if (fstab_fs->flags & MNT_FS_SWAP)
+		return 0;
+
+	if (mnt_fs_get_option(fstab_fs, "bind", NULL, NULL) == 0)
+		flags = MS_BIND;
+
+	src_fs = mnt_table_get_fs_root(tb, fstab_fs, flags, &root);
+	if (src_fs)
+		src = mnt_fs_get_srcpath(src_fs);
+	else
+		src = mnt_resolve_spec(mnt_fs_get_source(fstab_fs), tb->cache);
+
+	tgt = mnt_fs_get_target(fstab_fs);
+
+	if (tgt || src || root) {
+		struct libmnt_iter itr;
+		struct libmnt_fs *fs;
+
+		mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+
+		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
+			const char *s = mnt_fs_get_srcpath(fs),
+				   *t = mnt_fs_get_target(fs),
+				   *r = mnt_fs_get_root(fs);
+
+			if (s && t && r && !strcmp(t, tgt) &&
+			    !strcmp(s, src) && !strcmp(r, root))
+				break;
+		}
+		if (fs)
+			rc = 1;		/* success */
+	}
+
+	free(root);
+	return rc;
+}
+
 #ifdef TEST_PROGRAM
 
 static int parser_errcb(struct libmnt_table *tb, const char *filename, int line)
@@ -869,6 +1038,46 @@ done:
 	return rc;
 }
 
+static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_table *tb = NULL, *fstab = NULL;
+	struct libmnt_fs *fs;
+	struct libmnt_iter *itr = NULL;
+	int rc;
+
+	tb = mnt_new_table_from_file("/proc/self/mountinfo");
+	if (!tb) {
+		fprintf(stderr, "failed to parse mountinfo\n");
+		return -1;
+	}
+
+	fstab = create_table(argv[1]);
+	if (!fstab)
+		goto done;
+
+	itr = mnt_new_iter(MNT_ITER_FORWARD);
+	if (!itr)
+		goto done;
+
+	while(mnt_table_next_fs(fstab, itr, &fs) == 0) {
+		if (mnt_table_is_fs_mounted(tb, fs))
+			printf("%s already mounted on %s\n",
+					mnt_fs_get_source(fs),
+					mnt_fs_get_target(fs));
+		else
+			printf("%s not mounted on %s\n",
+					mnt_fs_get_source(fs),
+					mnt_fs_get_target(fs));
+	}
+
+	rc = 0;
+done:
+	mnt_free_table(tb);
+	mnt_free_table(fstab);
+	mnt_free_iter(itr);
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
@@ -877,6 +1086,7 @@ int main(int argc, char *argv[])
 	{ "--find-backward", test_find_bw, "<file> <source|target> <string>" },
 	{ "--find-pair",     test_find_pair, "<file> <source> <target>" },
 	{ "--copy-fs",       test_copy_fs, "<file>  copy root FS from the file" },
+	{ "--is-mounted",    test_is_mounted, "<fstab> check what from <file> are already mounted" },
 	{ NULL }
 	};
 

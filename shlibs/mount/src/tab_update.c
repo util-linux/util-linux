@@ -410,7 +410,7 @@ static int set_fs_root(struct libmnt_fs *result, struct libmnt_fs *fs, unsigned 
 		mnt_fs_set_fstype(result, mnt_fs_get_fstype(src_fs));
 
 		/* on btrfs the subvolume is used as fs-root in
-		 * /proc/self/mountinfo, so we have get the original subvolume
+		 * /proc/self/mountinfo, so we have to get the original subvolume
 		 * name from src_fs and prepend the subvolume name to the
 		 * fs-root path
 		 */

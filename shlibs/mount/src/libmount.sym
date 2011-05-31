@@ -192,6 +192,7 @@ global:
 	mnt_free_tabdiff;
 	mnt_diff_tables;
 	mnt_tabdiff_next_change;
+	mnt_table_is_fs_mounted;
 local:
 	*;
 };
