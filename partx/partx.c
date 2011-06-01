@@ -12,18 +12,12 @@
  */
 
 #include <stdio.h>
-#include <fcntl.h>
 #include <errno.h>
 #include <stdlib.h>
-#include <string.h>
 #include <ctype.h>
 #include <getopt.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <unistd.h>
 #include <assert.h>
-#include <sys/ioctl.h>
-#include <linux/blkpg.h>
 #include <dirent.h>
 
 #include <blkid.h>
