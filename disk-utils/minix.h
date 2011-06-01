@@ -1,3 +1,6 @@
+#ifndef __MINIX_H__
+#define __MINIX_H__
+
 #ifdef KERNEL_INCLUDES_ARE_CLEAN
 
 #include <linux/fs.h>
@@ -61,3 +64,81 @@ struct minix_super_block {
 #define MINIX2_SUPER_MAGIC2  0x2478	     /* minix V2 fs, 30 char names */
 
 #endif /* KERNEL_INCLUDES_ARE_CLEAN */
+
+#define Inode (((struct minix_inode *) inode_buffer)-1)
+#define Inode2 (((struct minix2_inode *) inode_buffer)-1)
+
+#define INODE_SIZE (sizeof(struct minix_inode))
+#define INODE2_SIZE (sizeof(struct minix2_inode))
+
+int fs_version = 1;
+char *super_block_buffer, *inode_buffer = NULL;
+
+static char *inode_map;
+static char *zone_map;
+
+#define BITS_PER_BLOCK (BLOCK_SIZE<<3)
+
+#define UPPER(size,n) ((size+((n)-1))/(n))
+
+/*
+ * wrappers to different superblock attributes
+ */
+#define Super (*(struct minix_super_block *)super_block_buffer)
+
+static inline unsigned long get_ninodes(void)
+{
+	return (unsigned long) Super.s_ninodes;
+}
+
+static inline unsigned long get_nzones(void)
+{
+	return (unsigned long) fs_version == 2 ? Super.s_zones : Super.s_nzones;
+}
+
+static inline unsigned long get_nimaps(void)
+{
+	return (unsigned long)Super.s_imap_blocks;
+}
+
+static inline unsigned long get_nzmaps(void)
+{
+	return (unsigned long)Super.s_zmap_blocks;
+}
+
+static inline unsigned long get_first_zone(void)
+{
+	return (unsigned long)Super.s_firstdatazone;
+}
+
+static inline unsigned long get_zone_size(void)
+{
+	return (unsigned long)Super.s_log_zone_size;
+}
+
+static inline unsigned long get_max_size(void)
+{
+	return (unsigned long)Super.s_max_size;
+}
+
+static unsigned long inode_blocks(void)
+{
+	unsigned long ret;
+
+	if (fs_version == 2)
+		return UPPER(get_ninodes(), MINIX2_INODES_PER_BLOCK);
+	else
+		return UPPER(get_ninodes(), MINIX_INODES_PER_BLOCK);
+}
+
+static inline unsigned long first_zone_data(void)
+{
+	return 2 + get_nimaps() + get_nzmaps() + inode_blocks();
+}
+
+static inline unsigned long get_inode_buffer_size(void)
+{
+	return inode_blocks() * BLOCK_SIZE;
+}
+
+#endif /* __MINIX_H__ */
