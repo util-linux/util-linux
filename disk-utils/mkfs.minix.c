@@ -217,7 +217,7 @@ static inline int next(int zone) {
 	return 0;
 }
 
-static void make_bad_inode(void) {
+static void make_bad_inode_v1(void) {
 	struct minix_inode * inode = &Inode[MINIX_BAD_INO];
 	int i,j,zone;
 	int ind=0,dind=0;
@@ -266,7 +266,7 @@ end_bad:
 		write_block(dind, (char *) dind_block);
 }
 
-static void make_bad_inode2 (void) {
+static void make_bad_inode_v2 (void) {
 	struct minix2_inode *inode = &Inode2[MINIX_BAD_INO];
 	int i, j, zone;
 	int ind = 0, dind = 0;
@@ -314,7 +314,14 @@ static void make_bad_inode2 (void) {
 		write_block (dind, (char *) dind_block);
 }
 
-static void make_root_inode(void) {
+static void make_bad_inode(void)
+{
+	if (fs_version < 2)
+		return make_bad_inode_v1();
+	return make_bad_inode_v2();
+}
+
+static void make_root_inode_v1(void) {
 	struct minix_inode * inode = &Inode[MINIX_ROOT_INO];
 
 	mark_inode(MINIX_ROOT_INO);
@@ -335,7 +342,7 @@ static void make_root_inode(void) {
 	write_block(inode->i_zone[0],root_block);
 }
 
-static void make_root_inode2 (void) {
+static void make_root_inode_v2 (void) {
 	struct minix2_inode *inode = &Inode2[MINIX_ROOT_INO];
 
 	mark_inode (MINIX_ROOT_INO);
@@ -354,6 +361,13 @@ static void make_root_inode2 (void) {
 	if (inode->i_uid)
 		inode->i_gid = getgid();
 	write_block (inode->i_zone[0], root_block);
+}
+
+static void make_root_inode(void)
+{
+	if (fs_version < 2)
+		return make_root_inode_v1();
+	return make_root_inode_v2();
 }
 
 static void setup_tables(void) {
@@ -651,13 +665,9 @@ int main(int argc, char ** argv) {
 		check_blocks();
 	else if (listfile)
 		get_list_blocks(listfile);
-	if (fs_version == 2) {
-		make_root_inode2 ();
-		make_bad_inode2 ();
-	} else {
-		make_root_inode();
-		make_bad_inode();
-	}
+
+	make_root_inode();
+	make_bad_inode();
 
 	mark_good_blocks();
 	write_tables();
