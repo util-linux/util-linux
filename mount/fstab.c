@@ -455,7 +455,13 @@ getfs_by_dir (const char *dir) {
 
 	cdir = canonicalize(dir);
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt) {
-		if (streq(mc->m.mnt_dir, cdir)) {
+		int ok = streq(mc->m.mnt_dir, cdir);
+		if (!ok) {
+			char *dr = canonicalize(mc->m.mnt_dir);
+			ok = dr ? streq(dr, cdir) : 0;
+			free(dr);
+		}
+		if (ok) {
 			free(cdir);
 			return mc;
 		}
