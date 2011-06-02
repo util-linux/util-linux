@@ -32,8 +32,6 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <getopt.h>
-#include <error.h>
-#include <errno.h>
 
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -141,11 +139,9 @@ int main(int argc, char **argv)
 	if (fd < 0)
 		err(EXIT_FAILURE, _("%s: open failed"), path);
 
-	if (ioctl(fd, FITRIM, &range)) {
-		int errsv = errno;
-		close(fd);
-		error(EXIT_FAILURE, errsv, _("%s: FITRIM ioctl failed"), path);
-	}
+	if (ioctl(fd, FITRIM, &range))
+		err(EXIT_FAILURE, _("%s: FITRIM ioctl failed"), path);
+
 	if (verbose)
 		printf(_("%s: %" PRIu64 " bytes was trimmed\n"),
 						path, (uint64_t) range.len);
