@@ -131,6 +131,12 @@ extern const char *mnt_get_utab_path(void);
 extern int mnt_get_filesystems(char ***filesystems, const char *pattern);
 extern void mnt_free_filesystems(char **filesystems);
 
+/* tab.c */
+extern struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
+                                        struct libmnt_fs *fs,
+                                        unsigned long mountflags,
+                                        char **fsroot);
+
 /*
  * Generic iterator
  */

@@ -165,6 +165,8 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 		goto err;
 	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, attrs)))
 		goto err;
+	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, bindsrc)))
+		goto err;
 
 	dest->freq       = src->freq;
 	dest->passno     = src->passno;

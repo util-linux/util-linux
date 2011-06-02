@@ -733,7 +733,6 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 	const char *fstype;
 	struct libmnt_fs *src_fs = NULL;
 
-	assert(tb);
 	assert(fs);
 	assert(fsroot);
 
@@ -741,7 +740,7 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 
 	fstype = mnt_fs_get_fstype(fs);
 
-	if (mountflags & MS_BIND) {
+	if (tb && (mountflags & MS_BIND)) {
 		const char *src, *src_root;
 
 		DBG(TAB, mnt_debug("fs-root for bind"));
@@ -828,7 +827,7 @@ err:
  * @fstab_fs: /etc/fstab entry
  *
  * Checks if the @fstab_fs entry is already in the @tb table. The "swap"
- *  is ignored.
+ * is ignored.
  *
  * TODO: check for loopdev (see mount/mount.c is_fstab_entry_mounted().
  *

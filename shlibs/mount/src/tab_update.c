@@ -41,10 +41,12 @@ struct libmnt_update {
 	unsigned long	mountflags;
 	int		userspace_only;
 	int		ready;
+
+	struct libmnt_table *mountinfo;
 };
 
-static int utab_new_entry(struct libmnt_fs *fs, unsigned long mountflags, struct libmnt_fs **ent);
-static int set_fs_root(struct libmnt_fs *result, struct libmnt_fs *fs, unsigned long mountflags);
+static int set_fs_root(struct libmnt_update *upd, struct libmnt_fs *fs, unsigned long mountflags);
+static int utab_new_entry(struct libmnt_update *upd, struct libmnt_fs *fs, unsigned long mountflags);
 
 /**
  * mnt_new_update:
@@ -77,6 +79,7 @@ void mnt_free_update(struct libmnt_update *upd)
 	DBG(UPDATE, mnt_debug_h(upd, "free"));
 
 	mnt_free_fs(upd->fs);
+	mnt_free_table(upd->mountinfo);
 	free(upd->target);
 	free(upd->filename);
 	free(upd);
@@ -205,7 +208,7 @@ int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 
 	} else if (fs) {
 		if (upd->userspace_only && !(mountflags & MS_MOVE)) {
-			int rc = utab_new_entry(fs, mountflags, &upd->fs);
+			int rc = utab_new_entry(upd, fs, mountflags);
 			if (rc)
 				return rc;
 		} else {
@@ -285,30 +288,29 @@ int mnt_update_force_rdonly(struct libmnt_update *upd, int rdonly)
 }
 
 /*
- * Allocates (but does not write) utab entry for mount/remount. This function
- * should be called *before* mount(2) syscall.
+ * Allocates utab entry (upd->fs) for mount/remount. This function should be
+ * called *before* mount(2) syscall. The @fs is used as a read-only template.
  *
  * Returns: 0 on success, negative number on error, 1 if utabs update is
  *          unnecessary.
  */
-static int utab_new_entry(struct libmnt_fs *fs, unsigned long mountflags, struct libmnt_fs **ent)
+static int utab_new_entry(struct libmnt_update *upd, struct libmnt_fs *fs,
+			  unsigned long mountflags)
 {
 	int rc = 0;
 	const char *o = NULL, *a = NULL;
 	char *u = NULL;
 
 	assert(fs);
-	assert(ent);
+	assert(upd);
+	assert(upd->fs == NULL);
 	assert(!(mountflags & MS_MOVE));
-
-	if (!fs || !ent)
-		return -EINVAL;
-	*ent = NULL;
 
 	DBG(UPDATE, mnt_debug("prepare utab entry"));
 
 	o = mnt_fs_get_user_options(fs);
 	a = mnt_fs_get_attributes(fs);
+	upd->fs = NULL;
 
 	if (o) {
 		/* remove non-mtab options */
@@ -325,21 +327,21 @@ static int utab_new_entry(struct libmnt_fs *fs, unsigned long mountflags, struct
 	}
 
 	/* allocate the entry */
-	*ent = mnt_copy_fs(NULL, fs);
-	if (!*ent) {
+	upd->fs = mnt_copy_fs(NULL, fs);
+	if (!upd->fs) {
 		rc = -ENOMEM;
 		goto err;
 	}
 
-	rc = mnt_fs_set_options(*ent, u);
+	rc = mnt_fs_set_options(upd->fs, u);
 	if (rc)
 		goto err;
-	rc = mnt_fs_set_attributes(*ent, a);
+	rc = mnt_fs_set_attributes(upd->fs, a);
 	if (rc)
 		goto err;
 
 	if (!(mountflags & MS_REMOUNT)) {
-		rc = set_fs_root(*ent, fs, mountflags);
+		rc = set_fs_root(upd, fs, mountflags);
 		if (rc)
 			goto err;
 	}
@@ -348,125 +350,58 @@ static int utab_new_entry(struct libmnt_fs *fs, unsigned long mountflags, struct
 	DBG(UPDATE, mnt_debug("utab entry OK"));
 	return 0;
 err:
-	mnt_free_fs(*ent);
 	free(u);
-	*ent = NULL;
+	mnt_free_fs(upd->fs);
+	upd->fs = NULL;
 	return rc;
 }
 
-static int set_fs_root(struct libmnt_fs *result, struct libmnt_fs *fs, unsigned long mountflags)
+/*
+ * Sets fs-root and fs-type to @upd->fs according to the @fs template and
+ * @mountfalgs. For MS_BIND mountflag it reads information about source
+ * filesystem from /proc/self/mountinfo.
+ */
+static int set_fs_root(struct libmnt_update *upd, struct libmnt_fs *fs,
+		       unsigned long mountflags)
 {
-	char *root = NULL, *mnt = NULL;
-	const char *fstype;
-	struct libmnt_table *tb = NULL;
-	int rc = -ENOMEM;
-
-	assert(fs);
-	assert(result);
+	struct libmnt_fs *src_fs;
+	char *fsroot = NULL;
+	const char *src;
+	int rc = 0;
 
 	DBG(UPDATE, mnt_debug("setting FS root"));
 
-	fstype = mnt_fs_get_fstype(fs);
+	assert(upd);
+	assert(upd->fs);
+	assert(fs);
 
-	/*
-	 * bind-mount -- get fs-root and source device for the source filesystem
-	 */
 	if (mountflags & MS_BIND) {
-		const char *src, *src_root;
-		struct libmnt_fs *src_fs;
-
-		DBG(UPDATE, mnt_debug("setting FS root: bind"));
+		if (!upd->mountinfo)
+			upd->mountinfo = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
 
 		src = mnt_fs_get_srcpath(fs);
 		if (src) {
-			rc = mnt_fs_set_bindsrc(result, src);
-			if (rc)
-				goto err;
-			mnt = mnt_get_mountpoint(src);
+			 rc = mnt_fs_set_bindsrc(upd->fs, src);
+			 if (rc)
+				 goto err;
 		}
-		if (!mnt) {
-			rc = -EINVAL;
-			goto err;
-		}
-		root = mnt_get_fs_root(src, mnt);
+	}
 
-		tb = __mnt_new_table_from_file(_PATH_PROC_MOUNTINFO, MNT_FMT_MOUNTINFO);
-		if (!tb) {
-			DBG(UPDATE, mnt_debug("failed to parse mountinfo -- using default"));
-			goto dflt;
-		}
-		src_fs = mnt_table_find_target(tb, mnt, MNT_ITER_BACKWARD);
-		if (!src_fs)  {
-			DBG(UPDATE, mnt_debug("not found '%s' in mountinfo -- using default", mnt));
-			goto dflt;
-		}
-
-		/* set device name and fs */
+	src_fs = mnt_table_get_fs_root(upd->mountinfo, fs,
+					mountflags, &fsroot);
+	if (src_fs) {
 		src = mnt_fs_get_srcpath(src_fs);
-		rc = mnt_fs_set_source(result, src);
+		rc = mnt_fs_set_source(upd->fs, src);
 		if (rc)
 			goto err;
 
-		mnt_fs_set_fstype(result, mnt_fs_get_fstype(src_fs));
-
-		/* on btrfs the subvolume is used as fs-root in
-		 * /proc/self/mountinfo, so we have to get the original subvolume
-		 * name from src_fs and prepend the subvolume name to the
-		 * fs-root path
-		 */
-		src_root = mnt_fs_get_root(src_fs);
-		if (src_root && !startswith(root, src_root)) {
-			size_t sz = strlen(root) + strlen(src_root) + 1;
-			char *tmp = malloc(sz);
-
-			if (!tmp)
-				goto err;
-			snprintf(tmp, sz, "%s%s", src_root, root);
-			free(root);
-			root = tmp;
-		}
+		mnt_fs_set_fstype(upd->fs, mnt_fs_get_fstype(src_fs));
 	}
 
-	/*
-	 * btrfs-subvolume mount -- get subvolume name and use it as a root-fs path
-	 */
-	else if (fstype && !strcmp(fstype, "btrfs")) {
-		char *vol = NULL, *p;
-		size_t sz, volsz = 0;
-
-		if (mnt_fs_get_option(fs, "subvol", &vol, &volsz))
-			goto dflt;
-
-		DBG(UPDATE, mnt_debug("setting FS root: btrfs subvol"));
-
-		sz = volsz;
-		if (*vol != '/')
-			sz++;
-		root = malloc(sz + 1);
-		if (!root)
-			goto err;
-		p = root;
-		if (*vol != '/')
-			*p++ = '/';
-		memcpy(p, vol, volsz);
-		*(root + sz) = '\0';
-	}
-dflt:
-	mnt_free_table(tb);
-	if (!root) {
-		root = strdup("/");
-		if (!root)
-			goto err;
-	}
-	result->root = root;
-
-	DBG(UPDATE, mnt_debug("FS root result: %s", root));
-
-	free(mnt);
+	upd->fs->root = fsroot;
 	return 0;
 err:
-	free(root);
-	free(mnt);
+	free(fsroot);
 	return rc;
 }
 
