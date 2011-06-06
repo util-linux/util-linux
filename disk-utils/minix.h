@@ -123,8 +123,6 @@ static inline unsigned long get_max_size(void)
 
 static unsigned long inode_blocks(void)
 {
-	unsigned long ret;
-
 	if (fs_version == 2)
 		return UPPER(get_ninodes(), MINIX2_INODES_PER_BLOCK);
 	else
