@@ -1378,7 +1378,7 @@ extended_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z)
     int i, moretodo = 1;
     struct partition p;
     struct part_desc *partitions = &(z->partitions[0]);
-    int pno = z->partno;
+    size_t pno = z->partno;
 
     here = start = ep->start;
 
@@ -1476,7 +1476,7 @@ bsd_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z) {
 	unsigned long start = ep->start;
 	struct sector *s;
 	struct part_desc *partitions = &(z->partitions[0]);
-	int pno = z->partno;
+	size_t pno = z->partno;
 
 	if (!(s = get_sector(dev,fd,start+1)))
 		return;
@@ -1762,7 +1762,7 @@ read_stdin(char **fields, char *line, int fieldssize, int linesize) {
 	      ip++;
 	    if (*ip == 0)
 	      return fno;
-	    for(d = dumpflds; d-dumpflds < ARRAY_SIZE(dumpflds); d++) {
+	    for(d = dumpflds; (size_t) (d - dumpflds) < ARRAY_SIZE(dumpflds); d++) {
 		if (!strncmp(ip, d->fldname, strlen(d->fldname))) {
 		    ip += strlen(d->fldname);
 		    while(isspace(*ip))
@@ -1957,7 +1957,7 @@ compute_start_sect(struct part_desc *p, struct part_desc *ep) {
 	p->size += delta;
 	if (is_extended(p->p.sys_type) && boxes == ONESECTOR)
 	  p->size = inc;
-	else if (old_size <= -delta) {
+	else if ((ssize_t) old_size <= (ssize_t) -delta) {
 	    my_warn(_("no room for partition descriptor\n"));
 	    return 0;
 	}
@@ -2251,7 +2251,8 @@ read_partition(char *dev, int interactive, int pno, struct part_desc *ep,
 static void
 read_partition_chain(char *dev, int interactive, struct part_desc *ep,
 		     struct disk_desc *z) {
-    int i, base;
+    int i;
+    size_t base;
 
     eob = 0;
     while (1) {
@@ -2282,7 +2283,7 @@ read_partition_chain(char *dev, int interactive, struct part_desc *ep,
 
 static void
 read_input(char *dev, int interactive, struct disk_desc *z) {
-    int i;
+    size_t i;
     struct part_desc *partitions = &(z->partitions[0]), *ep;
 
     for (i=0; i < ARRAY_SIZE(z->partitions); i++)
