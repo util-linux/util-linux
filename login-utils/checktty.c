@@ -42,7 +42,7 @@
 #define TTY_MAJOR 4
 #endif
 
-static gid_t mygroups[NGROUPS];
+static gid_t mygroups[NGROUPS_MAX];
 static int   num_groups;
 
 #define NAMELEN 128
@@ -83,7 +83,7 @@ am_in_group(char *group)
 static void
 find_groups(gid_t defgrp, const char *user)
 {
-	num_groups = getgroups(NGROUPS, mygroups);
+	num_groups = getgroups(NGROUPS_MAX, mygroups);
 }
 
 static struct ttyclass *
