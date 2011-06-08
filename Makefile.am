@@ -45,10 +45,6 @@ if BUILD_PARTX
 SUBDIRS += partx
 endif
 
-if BUILD_INIT
-SUBDIRS += simpleinit
-endif
-
 if BUILD_MOUNT
 SUBDIRS += mount
 endif
@@ -96,7 +92,7 @@ checkconfig:
 
 
 ENABLE_ALL = --enable-static-programs \
- --enable-elvtune --enable-init --enable-kill --enable-last \
+ --enable-elvtune --enable-kill --enable-last \
  --enable-mesg --enable-partx --enable-raw --enable-rdev --enable-reset \
  --enable-login-utils --enable-write --enable-arch --enable-mount
 

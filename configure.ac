@@ -968,14 +968,6 @@ AC_ARG_ENABLE([elvtune],
 )
 AM_CONDITIONAL(BUILD_ELVTUNE, test "x$enable_elvtune" = xyes)
 
-
-AC_ARG_ENABLE([init],
-  AS_HELP_STRING([--enable-init], [build simpleinit, shutdown, initctl]),
-  [], enable_init=no
-)
-AM_CONDITIONAL(BUILD_INIT, test "x$enable_init" = xyes)
-
-
 AC_ARG_ENABLE([kill],
   AS_HELP_STRING([--enable-kill], [build kill]),
   [], enable_kill=no
@@ -1223,7 +1215,6 @@ fsck/Makefile
 getopt/Makefile
 hwclock/Makefile
 include/Makefile
-simpleinit/Makefile
 lib/Makefile
 login-utils/Makefile
 Makefile
