@@ -49,8 +49,3 @@ Why:	deprecated in favor of vipw/vigr(8) from shadow-utils
 What:	last(1)
 Why:	nobody uses this implementation
 
-----------------------------
-
-What:	shutdown(1), simpleinit(1), initctl(1)
-Why:	nobody uses this implementation
-
