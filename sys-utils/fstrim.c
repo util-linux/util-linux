@@ -98,17 +98,17 @@ int main(int argc, char **argv)
 			usage(stdout);
 			break;
 		case 'l':
-			if (strtosize(optarg, &range.len))
+			if (strtosize(optarg, (uint64_t *) &range.len))
 				errx(EXIT_FAILURE,
 				     _("failed to parse length: %s"), optarg);
 			break;
 		case 'o':
-			if (strtosize(optarg, &range.start))
+			if (strtosize(optarg, (uint64_t *) &range.start))
 				errx(EXIT_FAILURE,
 				     _("failed to parse offset: %s"), optarg);
 			break;
 		case 'm':
-			if (strtosize(optarg, &range.minlen))
+			if (strtosize(optarg, (uint64_t *) &range.minlen))
 				errx(EXIT_FAILURE,
 				     _("failed to parse minimum extent length: %s"),
 				     optarg);
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
 	}
 	if (verbose)
 		printf(_("%s: %" PRIu64 " bytes was trimmed\n"),
-						path, range.len);
+						path, (uint64_t) range.len);
 	close(fd);
 	return EXIT_SUCCESS;
 }
