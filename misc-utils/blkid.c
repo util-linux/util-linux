@@ -620,7 +620,7 @@ static char **list_to_types(const char *list, int *flag)
 {
 	int i;
 	const char *p = list;
-	char **res;
+	char **res = NULL;
 
 	if (p && strncmp(p, "no", 2) == 0) {
 		*flag = BLKID_FLTR_NOTIN;
