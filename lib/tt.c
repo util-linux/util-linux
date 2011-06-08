@@ -52,7 +52,7 @@ static const struct tt_symbols utf8_tt_symbols = {
 };
 
 #else /* !HAVE_WIDECHAR */
-# define mbs_width       strlen(_s)
+# define mbs_width(_s)       strlen(_s)
 #endif /* !HAVE_WIDECHAR */
 
 #define is_last_column(_tb, _cl) \
