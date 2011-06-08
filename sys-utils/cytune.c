@@ -98,11 +98,9 @@ static char ***global_argv;
 static void
 summary(int sig) {
   struct cyclades_control *cc;
-
   int argc, local_optind;
   char **argv;
-
-  int i,j;
+  int i;
 
   argc = global_argc;
   argv = *global_argv;
@@ -110,7 +108,6 @@ summary(int sig) {
 
   if (sig > 0) {
     for(i = local_optind; i < argc; i ++) {
-      j = i - local_optind;
       cc = &cmon[cmon_index];
       fprintf(stderr, _("File %s, For threshold value %lu, Maximum characters in fifo were %d,\nand the maximum transfer rate in characters/second was %f\n"), 
 	      argv[i],
