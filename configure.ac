@@ -135,6 +135,7 @@ AC_CHECK_HEADERS(
         netinet/in.h \
 	rpcsvc/nfs_prot.h \
 	stdlib.h \
+	asm/io.h \
 	sys/disk.h \
 	sys/disklabel.h \
 	sys/ioctl.h \
