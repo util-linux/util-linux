@@ -187,6 +187,14 @@ libblkid
 
  - add support for dasd PT (used for example on s390)
 
+ - support PARTUUID= tag
+
+   * the partitions probing is already supported by low-level part of the
+     library, but it's necessary add support for this tag also to high-level
+     (blkid_cache) API.
+
+   * add blkid -P <PARTUUID>
+
 wipefs
 ------
 
