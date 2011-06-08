@@ -22,7 +22,10 @@
 #include <malloc.h>
 #include <netdb.h>
 #include <sys/syslog.h>
+#include <sys/socket.h>
 #include <ctype.h>
+#include <limits.h>
+#include <netinet/in.h>
 #include "nls.h"
 
 #include <sys/sysmacros.h>
