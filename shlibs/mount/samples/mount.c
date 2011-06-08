@@ -101,7 +101,7 @@ static int print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 {
 	int rc = 0;
 	struct libmnt_table *tb;
-	struct libmnt_iter *itr;
+	struct libmnt_iter *itr = NULL;
 	struct libmnt_fs *fs;
 	struct libmnt_cache *cache = NULL;
 

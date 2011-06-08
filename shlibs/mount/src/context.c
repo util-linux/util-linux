@@ -712,7 +712,8 @@ int mnt_context_get_fstab(struct libmnt_context *cxt, struct libmnt_table **tb)
  * @cxt: mount context
  * @tb: returns mtab
  *
- * See also mnt_table_parse_mtab() for more details about mtab/mountinfo.
+ * See also mnt_table_parse_mtab() for more details about mtab/mountinfo. The
+ * result will deallocated by mnt_free_context(@cxt).
  *
  * Returns: 0 on success, negative number in case of error.
  */
