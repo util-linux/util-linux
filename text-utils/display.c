@@ -55,11 +55,11 @@ static off_t address;			/* address/offset in stream */
 static off_t eaddress;			/* end address */
 
 static inline void
-print(PR *pr, u_char *bp) {
+print(PR *pr, unsigned char *bp) {
 
 	switch(pr->flags) {
 	case F_ADDRESS:
-		(void)printf(pr->fmt, (quad_t)address);
+		(void)printf(pr->fmt, (int64_t)address);
 		break;
 	case F_BPAD:
 		(void)printf(pr->fmt, "");
@@ -90,23 +90,23 @@ print(PR *pr, u_char *bp) {
 	    {
 		short sval;	/* int16_t */
 		int ival;	/* int32_t */
-		long long Lval;	/* int64_t, quad_t */
+		long long Lval;	/* int64_t, int64_t */
 
 		switch(pr->bcnt) {
 		case 1:
-			(void)printf(pr->fmt, (quad_t)*bp);
+			(void)printf(pr->fmt, (int64_t)*bp);
 			break;
 		case 2:
 			memmove(&sval, bp, sizeof(sval));
-			(void)printf(pr->fmt, (quad_t)sval);
+			(void)printf(pr->fmt, (int64_t)sval);
 			break;
 		case 4:
 			memmove(&ival, bp, sizeof(ival));
-			(void)printf(pr->fmt, (quad_t)ival);
+			(void)printf(pr->fmt, (int64_t)ival);
 			break;
 		case 8:
 			memmove(&Lval, bp, sizeof(Lval));
-			(void)printf(pr->fmt, (quad_t)Lval);
+			(void)printf(pr->fmt, (int64_t)Lval);
 			break;
 		}
 		break;
@@ -127,23 +127,23 @@ print(PR *pr, u_char *bp) {
 	    {
 		unsigned short sval;	/* u_int16_t */
 		unsigned int ival;	/* u_int32_t */
-		unsigned long long Lval;/* u_int64_t, u_quad_t */
+		unsigned long long Lval;/* u_int64_t, u_int64_t */
 
 		switch(pr->bcnt) {
 		case 1:
-			(void)printf(pr->fmt, (u_quad_t)*bp);
+			(void)printf(pr->fmt, (uint64_t)*bp);
 			break;
 		case 2:
 			memmove(&sval, bp, sizeof(sval));
-			(void)printf(pr->fmt, (u_quad_t)sval);
+			(void)printf(pr->fmt, (uint64_t)sval);
 			break;
 		case 4:
 			memmove(&ival, bp, sizeof(ival));
-			(void)printf(pr->fmt, (u_quad_t)ival);
+			(void)printf(pr->fmt, (uint64_t)ival);
 			break;
 		case 8:
 			memmove(&Lval, bp, sizeof(Lval));
-			(void)printf(pr->fmt, (u_quad_t)Lval);
+			(void)printf(pr->fmt, (uint64_t)Lval);
 			break;
 		}
 		break;
@@ -174,9 +174,9 @@ void display(void)
 	register FU *fu;
 	register PR *pr;
 	register int cnt;
-	register u_char *bp;
+	register unsigned char *bp;
 	off_t saveaddress;
-	u_char savech = 0, *savebp;
+	unsigned char savech = 0, *savebp;
 
 	while ((bp = get()) != NULL)
 	    for (fs = fshead, savebp = bp, saveaddress = address; fs;
@@ -212,7 +212,7 @@ void display(void)
 		for (pr = endfu->nextpr; pr; pr = pr->nextpr)
 			switch(pr->flags) {
 			case F_ADDRESS:
-				(void)printf(pr->fmt, (quad_t)eaddress);
+				(void)printf(pr->fmt, (int64_t)eaddress);
 				break;
 			case F_TEXT:
 				(void)printf("%s", pr->fmt);
@@ -261,7 +261,7 @@ get(void)
 			eaddress = address + nread;
 			return(curp);
 		}
-		n = fread((char *)curp + nread, sizeof(u_char),
+		n = fread((char *)curp + nread, sizeof(unsigned char),
 		    length == -1 ? need : MIN(length, need), stdin);
 		if (!n) {
 			if (ferror(stdin))
