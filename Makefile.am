@@ -7,7 +7,7 @@ SHLIBS_DIRS += libuuid
 endif
 
 if BUILD_LIBBLKID
-SHLIBS_DIRS += shlibs/blkid
+SHLIBS_DIRS += libblkid
 endif
 
 if BUILD_LIBMOUNT
