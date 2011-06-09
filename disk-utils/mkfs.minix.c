@@ -586,7 +586,7 @@ int main(int argc, char ** argv) {
 		errx(MKFS_ERROR, _("%s: bad inode size"), device_name);
 
 	opterr = 0;
-	while ((i = getopt(argc, argv, "ci:l:n:v")) != -1)
+	while ((i = getopt(argc, argv, "ci:l:n:v12")) != -1)
 		switch (i) {
 		case 'c':
 			check=1; break;
@@ -608,7 +608,11 @@ int main(int argc, char ** argv) {
 			namelen = i;
 			dirsize = i+2;
 			break;
-		case 'v':
+		case '1':
+			fs_version = 1;
+			break;
+		case '2':
+		case 'v': /* kept for backwards compatiblitly */
 			fs_version = 2;
 			version2 = 1;
 			break;
