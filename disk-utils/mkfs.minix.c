@@ -370,6 +370,29 @@ static void make_root_inode(void)
 	return make_root_inode_v2();
 }
 
+static void super_set_nzones(void)
+{
+	switch (fs_version) {
+	case 2:
+		Super.s_zones = BLOCKS;
+		break;
+	default: /* v1 */
+		Super.s_nzones = BLOCKS;
+		break;
+	}
+}
+
+static void super_init_maxsize(void)
+{
+	switch (fs_version) {
+	case 2:
+		Super.s_max_size =  0x7fffffff;
+	default: /* v1 */
+		Super.s_max_size = (7+512+512*512)*1024;
+		break;
+	}
+}
+
 static void setup_tables(void) {
 	int i;
 	unsigned long inodes, zmaps, imaps, zones;
@@ -382,11 +405,10 @@ static void setup_tables(void) {
 	memset(boot_block_buffer,0,512);
 	Super.s_magic = magic;
 	Super.s_log_zone_size = 0;
-	Super.s_max_size = version2 ? 0x7fffffff : (7+512+512*512)*1024;
-	if (fs_version == 2)
-		zones = Super.s_zones = BLOCKS;
-	else
-		zones = Super.s_nzones = BLOCKS;
+
+	super_init_maxsize();
+	super_set_nzones();
+	zones = get_nzones();
 
 /* some magic nrs: 1 inode / 3 blocks */
 	if ( req_nr_inodes == 0 ) 
