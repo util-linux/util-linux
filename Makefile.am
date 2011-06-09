@@ -3,7 +3,7 @@ include $(top_srcdir)/config/include-Makefile.am
 SHLIBS_DIRS =
 
 if BUILD_LIBUUID
-SHLIBS_DIRS += shlibs/uuid
+SHLIBS_DIRS += libuuid
 endif
 
 if BUILD_LIBBLKID

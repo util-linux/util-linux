@@ -24,9 +24,9 @@ $(ul_libblkid_la):
 
 
 # uuid
-ul_libuuid_srcdir = $(top_srcdir)/shlibs/uuid/src
-ul_libuuid_builddir = $(top_builddir)/shlibs/uuid/src
-ul_libuuid_la = $(top_builddir)/shlibs/uuid/src/libuuid.la
+ul_libuuid_srcdir = $(top_srcdir)/libuuid/src
+ul_libuuid_builddir = $(top_builddir)/libuuid/src
+ul_libuuid_la = $(top_builddir)/libuuid/src/libuuid.la
 
 $(ul_libuuid_la):
 	$(MAKE) -C $(ul_libuuid_builddir)

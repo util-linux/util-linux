@@ -1242,10 +1242,10 @@ shlibs/mount/src/libmount.h
 shlibs/mount/docs/Makefile
 shlibs/mount/docs/version.xml
 shlibs/mount/samples/Makefile
-shlibs/uuid/uuid.pc
-shlibs/uuid/Makefile
-shlibs/uuid/man/Makefile
-shlibs/uuid/src/Makefile
+libuuid/uuid.pc
+libuuid/Makefile
+libuuid/man/Makefile
+libuuid/src/Makefile
 sys-utils/Makefile
 term-utils/Makefile
 tests/commands.sh

@@ -27,7 +27,7 @@ TS_HELPER_LIBMOUNT_TABDIFF="$top_builddir/shlibs/mount/src/test_tab_diff"
 # TODO: use partx
 TS_HELPER_PARTITIONS="$top_builddir/shlibs/blkid/samples/partitions"
 
-U_L_LIBRARY_PATH="$top_builddir/shlibs/blkid/src/.libs:$top_builddir/shlibs/uuid/src/.libs"
+U_L_LIBRARY_PATH="$top_builddir/shlibs/blkid/src/.libs:$top_builddir/libuuid/src/.libs"
 
 # paths to commands
 TS_CMD_MOUNT=${TS_CMD_MOUNT:-"$top_builddir/mount/mount"}
