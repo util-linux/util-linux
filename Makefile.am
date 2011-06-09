@@ -11,7 +11,7 @@ SHLIBS_DIRS += shlibs/blkid
 endif
 
 if BUILD_LIBMOUNT
-SHLIBS_DIRS += shlibs/mount
+SHLIBS_DIRS += libmount
 endif
 
 MAN_DIRS = man/ru
