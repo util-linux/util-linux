@@ -259,6 +259,7 @@ struct libmnt_context
 	struct libmnt_table *mtab;	/* mtab entries */
 
 	int	optsmode;	/* fstab optstr mode MNT_OPTSMODE_{AUTO,FORCE,IGNORE} */
+	int	loopdev_fd;	/* open loopdev */
 
 	unsigned long	mountflags;	/* final mount(2) flags */
 	const void	*mountdata;	/* final mount(2) data, string or binary data */
@@ -309,6 +310,7 @@ struct libmnt_context
 #define MNT_FL_SAVED_USER	(1 << 23)
 #define MNT_FL_PREPARED		(1 << 24)
 #define MNT_FL_HELPER		(1 << 25)	/* [u]mount.<type> */
+#define MNT_FL_LOOPDEV_READY	(1 << 26)	/* /dev/loop<N> initialized by library */
 
 /* default flags */
 #define MNT_FL_DEFAULT		0
@@ -348,6 +350,11 @@ extern int mnt_context_update_tabs(struct libmnt_context *cxt);
 
 extern int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg);
 extern int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg);
+
+extern int mnt_context_is_loopdev(struct libmnt_context *cxt);
+extern int mnt_context_setup_loopdev(struct libmnt_context *cxt);
+extern int mnt_context_delete_loopdev(struct libmnt_context *cxt);
+extern int mnt_context_clear_loopdev(struct libmnt_context *cxt);
 
 /* tab_update.c */
 extern struct libmnt_fs *mnt_update_get_fs(struct libmnt_update *upd);

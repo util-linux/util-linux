@@ -13,13 +13,17 @@ libmount_la_SOURCES =	mountP.h version.c utils.c test.c init.c cache.c \
 			optstr.c optmap.c iter.c lock.c \
 			fs.c tab.c tab_parse.c tab_update.c tab_diff.c \
 			context.c context_mount.c context_umount.c \
+			context_loopdev.c \
 			$(mountinc_HEADERS) \
 			$(top_srcdir)/lib/at.c \
 			$(top_srcdir)/include/list.h \
 			$(top_srcdir)/lib/mangle.c \
 			$(top_srcdir)/lib/canonicalize.c \
 			$(top_srcdir)/lib/strutils.c \
-			$(top_srcdir)/lib/env.c
+			$(top_srcdir)/lib/env.c \
+			$(top_srcdir)/lib/loopdev.c \
+			$(top_srcdir)/lib/sysfs.c \
+			$(top_srcdir)/lib/linux_version.c
 
 nodist_libmount_la_SOURCES = mountP.h
 

@@ -61,6 +61,7 @@ struct libmnt_context *mnt_new_context(void)
 
 	cxt->syscall_status = 1;	/* not called yet */
 	cxt->helper_exec_status = 1;
+	cxt->loopdev_fd = -1;
 
 	/* if we're really root and aren't running setuid */
 	cxt->restricted = (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
@@ -90,8 +91,6 @@ void mnt_free_context(struct libmnt_context *cxt)
 
 	mnt_reset_context(cxt);
 
-	DBG(CXT, mnt_debug_h(cxt, "free"));
-
 	free(cxt->fstype_pattern);
 	free(cxt->optstr_pattern);
 
@@ -100,9 +99,11 @@ void mnt_free_context(struct libmnt_context *cxt)
 	if (!(cxt->flags & MNT_FL_EXTERN_CACHE))
 		mnt_free_cache(cxt->cache);
 
+	mnt_context_clear_loopdev(cxt);
 	mnt_free_lock(cxt->lock);
 	mnt_free_update(cxt->update);
 
+	DBG(CXT, mnt_debug_h(cxt, "free"));
 	free(cxt);
 }
 
@@ -132,6 +133,11 @@ int mnt_reset_context(struct libmnt_context *cxt)
 
 	if (!cxt)
 		return -EINVAL;
+
+	DBG(CXT, mnt_debug_h(cxt,
+		"reset [status=%d %s]",
+		mnt_context_get_status(cxt),
+		mnt_context_get_status(cxt) == 0 ? "FAILED" : "SUCCESS"));
 
 	fl = cxt->flags;
 
@@ -933,21 +939,6 @@ int mnt_context_get_user_mflags(struct libmnt_context *cxt, unsigned long *flags
 	return rc;
 }
 
-static int is_loop(struct libmnt_context *cxt)
-{
-	unsigned long fl = 0;
-
-	if (cxt->user_mountflags & MNT_MS_LOOP)
-		return 1;
-	if (!mnt_context_get_mflags(cxt, &fl) && (fl & MNT_MS_LOOP))
-		return 1;
-
-	/* TODO:
-	 *	- support MNT_MS_{OFFSET,SIZELIMIT,ENCRYPTION}
-	 */
-	return 0;
-}
-
 /**
  * mnt_context_set_mountdata:
  * @cxt: mount context
@@ -1037,11 +1028,14 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 	/*
 	 * Initialize loop device
 	 */
-	if (is_loop(cxt)) {
-		; /* TODO */
+	if (mnt_context_is_loopdev(cxt)) {
+		rc = mnt_context_setup_loopdev(cxt);
+		if (rc)
+			return rc;
 	}
 
-	DBG(CXT, mnt_debug_h(cxt, "final srcpath '%s'", path));
+	DBG(CXT, mnt_debug_h(cxt, "final srcpath '%s'",
+				mnt_fs_get_source(cxt->fs)));
 	return 0;
 }
 
@@ -1474,7 +1468,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
  * mnt_context_get_status:
  * @cxt: mount context
  *
- * Returns: 0 if /sbin/mount.type or mount(2) syscall was successfull.
+ * Returns: 1 if /sbin/mount.type or mount(2) syscall was successfull.
  */
 int mnt_context_get_status(struct libmnt_context *cxt)
 {

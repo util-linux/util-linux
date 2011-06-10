@@ -237,7 +237,6 @@ static int mnt_cache_get_probe(struct libmnt_cache *cache, const char *devname,
 	blkid_probe pr = cache ? cache->pr : NULL;
 
 	assert(devname);
-	assert(res);
 
 	if (cache && cache->pr && (!cache->filename ||
 				   strcmp(devname, cache->filename))) {
@@ -260,7 +259,8 @@ static int mnt_cache_get_probe(struct libmnt_cache *cache, const char *devname,
 
 	}
 
-	*res = pr;
+	if (res)
+		*res = pr;
 	return 0;
 }
 
@@ -277,7 +277,6 @@ static int mnt_cache_get_probe(struct libmnt_cache *cache, const char *devname,
 int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 {
 	int i, ntags = 0, rc;
-	blkid_probe pr;
 	const char *tags[] = { "LABEL", "UUID", "TYPE" };
 
 	assert(cache);
@@ -298,7 +297,7 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 			return 0;
 	}
 
-	rc = mnt_cache_get_probe(cache, devname, &pr);
+	rc = mnt_cache_get_probe(cache, devname, NULL);
 	if (rc)
 		return rc;
 
