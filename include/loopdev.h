@@ -1,6 +1,8 @@
 #ifndef UTIL_LINUX_LOOPDEV_H
 #define UTIL_LINUX_LOOPDEV_H
 
+#include "sysfs.h"
+
 /*
  * loop_info.lo_encrypt_type
  */
@@ -81,6 +83,7 @@ struct loopdev_cxt {
 	char		device[128];	/* device path (e.g. /dev/loop<N>) */
 	char		*filename;	/* backing file for loopcxt_set_... */
 	int		fd;		/* open(/dev/looo<N>) */
+	int		mode;		/* fd mode O_{RDONLY,RDWR} */
 
 	int		flags;		/* LOOPDEV_FL_* flags */
 	int		has_info:1;	/* .info contains data */
@@ -95,7 +98,7 @@ struct loopdev_cxt {
  * loopdev_cxt.flags
  */
 enum {
-	LOOPDEV_FL_RDONLY	= (1 << 0),	/* default */
+	LOOPDEV_FL_RDONLY	= (1 << 0),	/* open(/dev/loop) mode; default */
 	LOOPDEV_FL_RDWR		= (1 << 1),	/* necessary for loop setup only */
 	LOOPDEV_FL_OFFSET	= (1 << 4),
 	LOOPDEV_FL_NOSYSFS	= (1 << 5),
@@ -126,7 +129,9 @@ extern int loopcxt_set_device(struct loopdev_cxt *lc, const char *device);
 extern char *loopcxt_strdup_device(struct loopdev_cxt *lc);
 extern const char *loopcxt_get_device(struct loopdev_cxt *lc);
 extern struct sysfs_cxt *loopcxt_get_sysfs(struct loopdev_cxt *lc);
+
 extern int loopcxt_get_fd(struct loopdev_cxt *lc);
+extern int loopcxt_set_fd(struct loopdev_cxt *lc, int fd, int mode);
 
 extern int loopcxt_init_iterator(struct loopdev_cxt *lc, int flags);
 extern int loopcxt_deinit_iterator(struct loopdev_cxt *lc);
@@ -147,6 +152,7 @@ extern char *loopcxt_get_backing_file(struct loopdev_cxt *lc);
 extern int loopcxt_get_offset(struct loopdev_cxt *lc, uint64_t *offset);
 extern int loopcxt_get_sizelimit(struct loopdev_cxt *lc, uint64_t *size);
 extern int loopcxt_is_autoclear(struct loopdev_cxt *lc);
+extern int loopcxt_is_readonly(struct loopdev_cxt *lc);
 extern int loopcxt_find_by_backing_file(struct loopdev_cxt *lc,
 				const char *filename,
                                 uint64_t offset, int flags);

@@ -59,8 +59,10 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 	if (lc->fd >= 0)
 		close(lc->fd);
 	lc->fd = -1;
+	lc->mode = 0;
 	lc->has_info = 0;
 	*lc->device = '\0';
+	memset(&lc->info, 0, sizeof(lc->info));
 
 	/* set new */
 	if (device) {
@@ -91,6 +93,18 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
  * @flags: LOOPDEV_FL_* flags
  *
  * Initilize loop handler.
+ *
+ * We have two sets of the flags:
+ *
+ *	* LOOPDEV_FL_* flags control loopcxt_* API behavior
+ *
+ *	* LO_FLAGS_* are kernel flags used for LOOP_{SET,GET}_STAT64 ioctls
+ *
+ * Note about LOOPDEV_FL_{RDONLY,RDWR} flags. These flags are used for open(2)
+ * syscall to open loop device. By default is the device open read-only.
+ *
+ * The expection is loopcxt_setup_device(), where the device is open read-write
+ * if LO_FLAGS_READ_ONLY flags is not set (see loopcxt_set_flags()).
  *
  * Returns: <0 on error, 0 on success.
  */
@@ -183,12 +197,23 @@ struct sysfs_cxt *loopcxt_get_sysfs(struct loopdev_cxt *lc)
 int loopcxt_get_fd(struct loopdev_cxt *lc)
 {
 	if (!lc || !*lc->device)
-		return -1;
+		return -EINVAL;
 
-	if (lc->fd < 0)
-		lc->fd = open(lc->device, lc->flags & LOOPDEV_FL_RDWR ?
-				O_RDWR : O_RDONLY);
+	if (lc->fd < 0) {
+		lc->mode = lc->flags & LOOPDEV_FL_RDWR ? O_RDWR : O_RDONLY;
+		lc->fd = open(lc->device, lc->mode);
+	}
 	return lc->fd;
+}
+
+int loopcxt_set_fd(struct loopdev_cxt *lc, int fd, int mode)
+{
+	if (!lc)
+		return -EINVAL;
+
+	lc->fd = fd;
+	lc->mode = mode;
+	return 0;
 }
 
 /*
@@ -481,6 +506,10 @@ char *loopcxt_get_backing_file(struct loopdev_cxt *lc)
 	char *res = NULL;
 
 	if (sysfs)
+		/*
+		 * This is always preffered, the loop_info64
+		 * has too small buffer for the filename.
+		 */
 		res = sysfs_strdup(sysfs, "loop/backing_file");
 
 	if (!res && loopcxt_ioctl_enabled(lc)) {
@@ -570,6 +599,32 @@ int loopcxt_is_autoclear(struct loopdev_cxt *lc)
 	return 0;
 }
 
+/*
+ * @lc: context
+ *
+ * Returns: 1 of the readonly flags is set.
+ */
+int loopcxt_is_readonly(struct loopdev_cxt *lc)
+{
+	struct sysfs_cxt *sysfs = loopcxt_get_sysfs(lc);
+
+	if (sysfs) {
+		int fl;
+		if (sysfs_read_int(sysfs, "ro", &fl) == 0)
+			return fl;
+	}
+
+	if (loopcxt_ioctl_enabled(lc)) {
+		struct loop_info64 *lo = loopcxt_get_info(lc);
+		if (lo)
+			return lo->lo_flags & LO_FLAGS_READ_ONLY;
+	}
+	return 0;
+}
+
+/*
+ * The setting is removed by loopcxt_set_device() loopcxt_next()!
+ */
 int loopcxt_set_offset(struct loopdev_cxt *lc, uint64_t offset)
 {
 	if (!lc)
@@ -578,6 +633,9 @@ int loopcxt_set_offset(struct loopdev_cxt *lc, uint64_t offset)
 	return 0;
 }
 
+/*
+ * The setting is removed by loopcxt_set_device() loopcxt_next()!
+ */
 int loopcxt_set_sizelimit(struct loopdev_cxt *lc, uint64_t sizelimit)
 {
 	if (!lc)
@@ -589,6 +647,8 @@ int loopcxt_set_sizelimit(struct loopdev_cxt *lc, uint64_t sizelimit)
 /*
  * @lc: context
  * @flags: kernel LO_FLAGS_{READ_ONLY,USE_AOPS,AUTOCLEAR} flags
+ *
+ * The setting is removed by loopcxt_set_device() loopcxt_next()!
  *
  * Returns: 0 on success, <0 on error.
  */
@@ -603,6 +663,8 @@ int loopcxt_set_flags(struct loopdev_cxt *lc, uint32_t flags)
 /*
  * @lc: context
  * @filename: backing file path (the path will be canonicalized)
+ *
+ * The setting is removed by loopcxt_set_device() loopcxt_next()!
  *
  * Returns: 0 on success, <0 on error.
  */
@@ -634,8 +696,10 @@ static int digits_only(const char *s)
  * @encryption: encryption name / type (see lopsetup man page)
  * @password
  *
- * Note that the encyption functionality is deprecated an unmaintained. Use
+ * Note that the encryption functionality is deprecated an unmaintained. Use
  * cryptsetup (it also supports AES-loops).
+ *
+ * The setting is removed by loopcxt_set_device() loopcxt_next()!
  *
  * Returns: 0 on success, <0 on error.
  */
@@ -676,15 +740,21 @@ int loopcxt_set_encryption(struct loopdev_cxt *lc,
  * Associate the current device (see loopcxt_{set,get}_device()) with
  * a file (see loopcxt_set_backing_file()).
  *
- * Default is open backing file and device in read-write mode, see
- * LOOPDEV_FL_{RDONLY,RDWR} and loopcxt_init(). The LO_FLAGS_READ_ONLY lo_flag
- * will be set automatically according to LOOPDEV_FL_ flags.
+ * The device is initialized read-write by default. If you want read-only
+ * device then set LO_FLAGS_READ_ONLY by loopcxt_set_flags(). The LOOPDEV_FL_*
+ * flags are ignored and modified according to LO_FLAGS_*.
+ *
+ * If the device is already open by loopcxt_get_fd() then this setup device
+ * function will re-open the device to fix read/write mode.
+ *
+ * The device is also initialized read-only if the backing file is not
+ * possible to open read-write (e.g. read-only FS).
  *
  * Returns: <0 on error, 0 on success.
  */
 int loopcxt_setup_device(struct loopdev_cxt *lc)
 {
-	int file_fd, dev_fd, mode, rc = -1;
+	int file_fd, dev_fd, mode = O_RDWR, rc = -1;
 
 	if (!lc || !*lc->device || !lc->filename)
 		return -EINVAL;
@@ -692,7 +762,8 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	/*
 	 * Open backing file and device
 	 */
-	mode = (lc->flags & LOOPDEV_FL_RDONLY) ? O_RDONLY : O_RDWR;
+	if (lc->info.lo_flags & LO_FLAGS_READ_ONLY)
+		mode = O_RDONLY;
 
 	if ((file_fd = open(lc->filename, mode)) < 0) {
 		if (mode != O_RDONLY && (errno == EROFS || errno == EACCES))
@@ -702,11 +773,20 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 			return -errno;
 	}
 
+	if (lc->fd != -1 && lc->mode != mode) {
+		close(lc->fd);
+		lc->fd = -1;
+		lc->mode = 0;
+	}
+
 	if (mode == O_RDONLY) {
-		lc->flags |= LOOPDEV_FL_RDONLY;
-		lc->info.lo_flags |= LO_FLAGS_READ_ONLY;
-	} else
-		lc->flags |= LOOPDEV_FL_RDWR;
+		lc->flags |= LOOPDEV_FL_RDONLY;			/* open() mode */
+		lc->info.lo_flags |= LO_FLAGS_READ_ONLY;	/* kernel loopdev mode */
+	} else {
+		lc->flags |= LOOPDEV_FL_RDWR;			/* open() mode */
+		lc->info.lo_flags &= ~LO_FLAGS_READ_ONLY;
+		lc->flags &= ~LOOPDEV_FL_RDONLY;
+	}
 
 	dev_fd = loopcxt_get_fd(lc);
 	if (dev_fd < 0) {
@@ -975,9 +1055,6 @@ static int test_loop_setup(const char *filename, const char *device)
 
 	loopcxt_init(&lc, 0);
 
-	if (loopcxt_set_backing_file(&lc, filename))
-		err(EXIT_FAILURE, "failed to set backing file");
-
 	if (device) {
 		rc = loopcxt_set_device(&lc, device);
 		if (rc)
@@ -991,6 +1068,9 @@ static int test_loop_setup(const char *filename, const char *device)
 				err(EXIT_FAILURE, "failed to found unused device");
 			printf("Trying to use '%s'\n", loopcxt_get_device(&lc));
 		}
+
+		if (loopcxt_set_backing_file(&lc, filename))
+			err(EXIT_FAILURE, "failed to set backing file");
 
 		rc = loopcxt_setup_device(&lc);
 		if (rc == 0)
