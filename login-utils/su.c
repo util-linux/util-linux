@@ -157,6 +157,9 @@ static bool simulate_login;
 /* If true, change some environment vars to indicate the user su'd to.  */
 static bool change_environment;
 
+/* If true, then don't call setsid() with a command. */
+int same_session = 0;
+
 #ifdef USE_PAM
 static bool _pam_session_opened;
 static bool _pam_cred_established;
@@ -165,6 +168,7 @@ static bool _pam_cred_established;
 static struct option const longopts[] =
 {
   {"command", required_argument, NULL, 'c'},
+  {"session-command", required_argument, NULL, 'C'},
   {"fast", no_argument, NULL, 'f'},
   {"login", no_argument, NULL, 'l'},
   {"preserve-environment", no_argument, NULL, 'p'},
@@ -339,14 +343,27 @@ create_watching_parent (void)
       sigemptyset (&action.sa_mask);
       action.sa_flags = 0;
       sigemptyset (&ourset);
-      if (sigaddset (&ourset, SIGTERM)
-	  || sigaddset (&ourset, SIGALRM)
-	  || sigaction (SIGTERM, &action, NULL)
-	  || sigprocmask (SIG_UNBLOCK, &ourset, NULL))
-	{
+    if (!same_session)
+      {
+        if (sigaddset(&ourset, SIGINT) || sigaddset(&ourset, SIGQUIT))
+          {
+            error (0, errno, _("cannot set signal handler"));
+            caught_signal = true;
+          }
+      }
+    if (!caught_signal && (sigaddset(&ourset, SIGTERM)
+                    || sigaddset(&ourset, SIGALRM)
+                    || sigaction(SIGTERM, &action, NULL)
+                    || sigprocmask(SIG_UNBLOCK, &ourset, NULL))) {
 	  error (0, errno, _("cannot set signal handler"));
 	  caught_signal = true;
 	}
+    if (!caught_signal && !same_session && (sigaction(SIGINT, &action, NULL)
+                                     || sigaction(SIGQUIT, &action, NULL)))
+      {
+        error (0, errno, _("cannot set signal handler"));
+        caught_signal = true;
+      }
     }
   if (!caught_signal)
     {
@@ -764,6 +781,8 @@ Change the effective user id and group id to that of USER.\n\
 \n\
   -, -l, --login               make the shell a login shell\n\
   -c, --command=COMMAND        pass a single COMMAND to the shell with -c\n\
+  --session-command=COMMAND    pass a single COMMAND to the shell with -c\n\
+                               and do not create a new session\n\
   -f, --fast                   pass -f to the shell (for csh or tcsh)\n\
   -m, --preserve-environment   do not reset environment variables\n\
   -p                           same as -m\n\
@@ -786,6 +805,7 @@ main (int argc, char **argv)
   int optc;
   const char *new_user = DEFAULT_USER;
   char *command = NULL;
+  int request_same_session = 0;
   char *shell = NULL;
   struct passwd *pw;
   struct passwd pw_copy;
@@ -810,6 +830,11 @@ main (int argc, char **argv)
 	case 'c':
 	  command = optarg;
 	  break;
+
+        case 'C':
+          command = optarg;
+          request_same_session = 1;
+          break;
 
 	case 'f':
 	  fast_startup = true;
@@ -881,6 +906,9 @@ main (int argc, char **argv)
     }
 #endif
 
+  if (request_same_session || !command || !pw->pw_uid)
+    same_session = 1;
+
   if (!shell && !change_environment)
     shell = getenv ("SHELL");
   if (shell && getuid () != 0 && restricted_shell (pw->pw_shell))
@@ -902,6 +930,8 @@ main (int argc, char **argv)
 #endif
 
   change_identity (pw);
+  if (!same_session)
+    setsid ();
 
   /* Set environment after pam_open_session, which may put KRB5CCNAME
      into the pam_env, etc.  */
