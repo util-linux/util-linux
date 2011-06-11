@@ -427,6 +427,7 @@ usage(int rc)
 
 	printf(_(
 	" -h, --help          displays this help text\n"
+	" -V, --version       output version information and exit\n"
 	" -x, --mountpoints   show mount point directories with a 'D'\n"
 	" -m, --modes         show the mode bits of each file\n"
 	" -o, --owners        show owner and group name of each file\n"
@@ -441,6 +442,7 @@ usage(int rc)
 static const struct option longopts[] =
 {
 	{ "help",	0, 0, 'h' },
+	{ "version",    0, 0, 'V' },
 	{ "mountpoints",0, 0, 'x' },
 	{ "modes",	0, 0, 'm' },
 	{ "owners",	0, 0, 'o' },
@@ -464,12 +466,16 @@ main(int argc, char **argv)
 	if (argc < 2)
 		usage(EXIT_FAILURE);
 
-	while ((c = getopt_long(argc, argv, "+h?lmnovx", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+h?Vlmnovx", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 		case '?':
 			usage(EXIT_SUCCESS);
 			break;
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+						  PACKAGE_STRING);
+			return EXIT_SUCCESS;
 		case 'l':
 			flags |= (NAMEI_OWNERS | NAMEI_MODES | NAMEI_VERTICAL);
 			break;
