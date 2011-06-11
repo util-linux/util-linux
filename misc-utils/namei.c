@@ -441,7 +441,6 @@ static const struct option longopts[] =
 int
 main(int argc, char **argv)
 {
-	extern int optind;
 	int c;
 	int rc = EXIT_SUCCESS;
 
@@ -449,13 +448,9 @@ main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	if (argc < 2)
-		usage(EXIT_FAILURE);
-
-	while ((c = getopt_long(argc, argv, "+h?Vlmnovx", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hVlmnovx", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
-		case '?':
 			usage(EXIT_SUCCESS);
 			break;
 		case 'V':
@@ -479,7 +474,15 @@ main(int argc, char **argv)
 			break;
 		case 'v':
 			flags |= NAMEI_VERTICAL;
+			break;
+		default:
+			usage(EXIT_FAILURE);
 		}
+	}
+
+	if (optind == argc) {
+		warnx(_("pathname argument is missing"));
+		usage(EXIT_FAILURE);
 	}
 
 	for(; optind < argc; optind++) {
