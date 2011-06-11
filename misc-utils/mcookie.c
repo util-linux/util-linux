@@ -25,6 +25,8 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include "nls.h"
+#include <getopt.h>
+#include "c.h"
 
 #define BUFFERSIZE 4096
 
@@ -60,9 +62,22 @@ hash_file(struct MD5Context *ctx, int fd)
    return count;
 }
 
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
+{
+   fprintf(out, _("Usage: %s [options]\n"),
+	   program_invocation_short_name);
+
+   fprintf(out, _("\nOptions:\n"
+                  " -f, --file=FILE  use file as a cookie seed\n"
+                  " -v, --verbose    explain what is being done\n"
+		  " -V, --version    output version information and exit\n"
+		  " -h, --help       display this help and exit\n"));
+
+   exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
 int main( int argc, char **argv )
 {
-   int               i;
+   size_t            i;
    struct MD5Context ctx;
    unsigned char     digest[16];
    unsigned char     buf[BUFFERSIZE];
@@ -74,14 +89,34 @@ int main( int argc, char **argv )
    struct timeval    tv;
    struct timezone   tz;
 
+   static const struct option longopts[] = {
+      {"file", required_argument, NULL, 'f'},
+      {"verbose", no_argument, NULL, 'v'},
+      {"version", no_argument, NULL, 'V'},
+      {"help", no_argument, NULL, 'h'},
+      {NULL, 0, NULL, 0}
+   };
+
    setlocale(LC_ALL, "");
    bindtextdomain(PACKAGE, LOCALEDIR);
    textdomain(PACKAGE);
 
-   while ((c = getopt( argc, argv, "vf:" )) != -1)
+   while ((c = getopt_long(argc, argv, "f:vVh", longopts, NULL)) != -1)
       switch (c) {
-      case 'v': ++Verbose;     break;
-      case 'f': file = optarg; break;
+      case 'v':
+         Verbose = 1;
+         break;
+      case 'f':
+         file = optarg;
+         break;
+      case 'V':
+         printf(_("%s from %s\n"), program_invocation_short_name,
+                                   PACKAGE_STRING);
+         return EXIT_SUCCESS;
+      case 'h':
+         usage(stdout);
+      default:
+         usage(stderr);
       }
 
    MD5Init( &ctx );
@@ -97,18 +132,20 @@ int main( int argc, char **argv )
       int count = 0;
       
       if (file[0] == '-' && !file[1])
-	 fd = fileno(stdin);
+	 fd = STDIN_FILENO;
       else
 	 fd = open( file, O_RDONLY );
 
       if (fd < 0) {
-	 fprintf( stderr, _("Could not open %s\n"), file );
+	 warn( _("Could not open %s"), file );
       } else {
          count = hash_file( &ctx, fd );
 	 if (Verbose)
 	    fprintf( stderr, _("Got %d bytes from %s\n"), count, file );
 
-	 if (file[0] != '-' || file[1]) close( fd );
+	 if (fd != STDIN_FILENO)
+	    if(close( fd ))
+	       err(EXIT_FAILURE, _("closing %s failed"), file);
       }
    }
 
@@ -129,7 +166,7 @@ int main( int argc, char **argv )
 	 if (rngs[i].minlength && r >= rngs[i].minlength)
 	    break;
       } else if (Verbose)
-	 fprintf( stderr, _("Could not open %s\n"), rngs[i].path );
+	 warn( _("Could not open %s"), rngs[i].path );
    }
 
    MD5Final( digest, &ctx );
@@ -141,7 +178,7 @@ int main( int argc, char **argv )
     * can bomb out properly rather than think they succeeded.
     */
    if (fflush(stdout) < 0 || fclose(stdout) < 0)
-      return 1;
+      return EXIT_FAILURE;
 
-   return 0;
+   return EXIT_SUCCESS;
 }
