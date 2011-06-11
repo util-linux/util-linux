@@ -55,12 +55,20 @@ if BUILD_WALL
 usrbin_exec_PROGRAMS += wall
 wall_SOURCES = wall.c ttymsg.c ttymsg.h $(top_srcdir)/lib/strutils.c
 dist_man_MANS += wall.1
+endif
+
+if BUILD_WRITE
+usrbin_exec_PROGRAMS += write
+dist_man_MANS += write.1
+write_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
+write_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
+endif
 
 if USE_TTY_GROUP
 if MAKEINSTALL_DO_CHOWN
 install-exec-hook::
-	chgrp tty $(DESTDIR)$(usrbin_execdir)/wall
-	chmod g+s $(DESTDIR)$(usrbin_execdir)/wall
-endif
+	chgrp tty $(DESTDIR)$(usrbin_execdir)/wall $(DESTDIR)$(usrbin_execdir)/write
+	chmod g+s $(DESTDIR)$(usrbin_execdir)/wall $(DESTDIR)$(usrbin_execdir)/write
+
 endif
 endif

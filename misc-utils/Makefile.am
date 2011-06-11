@@ -115,18 +115,3 @@ if BUILD_RENAME
 usrbin_exec_PROGRAMS += rename
 dist_man_MANS += rename.1
 endif
-
-if BUILD_WRITE
-usrbin_exec_PROGRAMS += write
-dist_man_MANS += write.1
-write_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
-write_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-
-if USE_TTY_GROUP
-if MAKEINSTALL_DO_CHOWN
-install-exec-hook::
-	chgrp tty $(DESTDIR)$(usrbin_execdir)/write
-	chmod g+s $(DESTDIR)$(usrbin_execdir)/write
-endif
-endif
-endif
