@@ -105,9 +105,7 @@ add_id(struct idcache **ic, char *name, unsigned long int id, int *width)
 	struct idcache *nc, *x;
 	int w = 0;
 
-	nc = calloc(1, sizeof(*nc));
-	if (!nc)
-		goto alloc_err;
+	nc = xcalloc(1, sizeof(*nc));
 	nc->id = id;
 
 	if (name) {
@@ -124,11 +122,9 @@ add_id(struct idcache **ic, char *name, unsigned long int id, int *width)
 	}
 	/* note, we ignore names with non-printable widechars */
 	if (w > 0)
-		nc->name = strdup(name);
+		nc->name = xstrdup(name);
 	else if (asprintf(&nc->name, "%lu", id) == -1)
 		nc->name = NULL;
-	if (!nc->name)
-		goto alloc_err;
 
 	for (x = *ic; x && x->next; x = x->next);
 
@@ -142,8 +138,6 @@ add_id(struct idcache **ic, char *name, unsigned long int id, int *width)
 	*width = *width < w ? w : *width;
 
 	return;
-alloc_err:
-	err(EXIT_FAILURE, _("out of memory?"));
 }
 
 static void
@@ -221,9 +215,7 @@ dotdot_stat(const char *dirname, struct stat *st)
 		return NULL;
 
 	len = strlen(dirname);
-	path = malloc(len + sizeof(DOTDOTDIR));
-	if (!path)
-		err(EXIT_FAILURE, _("out of memory?"));
+	path = xmalloc(len + sizeof(DOTDOTDIR));
 
 	memcpy(path, dirname, len);
 	memcpy(path + len, DOTDOTDIR, sizeof(DOTDOTDIR));
@@ -241,16 +233,12 @@ new_namei(struct namei *parent, const char *path, const char *fname, int lev)
 
 	if (!fname)
 		return NULL;
-	nm = calloc(1, sizeof(*nm));
-	if (!nm)
-		err(EXIT_FAILURE, _("out of memory?"));
+	nm = xcalloc(1, sizeof(*nm));
 	if (parent)
 		parent->next = nm;
 
 	nm->level = lev;
-	nm->name = strdup(fname);
-	if (!nm->name)
-		err(EXIT_FAILURE, _("out of memory?"));
+	nm->name = xstrdup(fname);
 
 	nm->noent = (lstat(path, &nm->st) == -1);
 	if (nm->noent)
@@ -292,9 +280,7 @@ add_namei(struct namei *parent, const char *orgpath, int start, struct namei **l
 		nm = parent;
 		level = parent->level + 1;
 	}
-	path = strdup(orgpath);
-	if (!path)
-		err(EXIT_FAILURE, _("out of memory?"));
+	path = xstrdup(orgpath);
 	fname = path + start;
 
 	/* root directory */
