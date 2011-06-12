@@ -31,87 +31,82 @@
 .\"
 .\"     @(#)look.1	8.1 (Berkeley) 6/14/93
 .\"
-.Dd June 14, 1993
-.Dt LOOK 1
-.Os
-.Sh NAME
-.Nm look
-.Nd display lines beginning with a given string
-.Sh SYNOPSIS
-.Nm look
-.Op Fl dfa
-.Op Fl t Ar termchar
-.Ar string
-.Op Ar file
-.Sh DESCRIPTION
+.TH LOOK "1" "June 2011" "util-linux" "User Commands"
+.SH NAME
+look \- display lines beginning with a given string
+.SH SYNOPSIS
+.B look
+[\fIoptions\fR] \fIstring \fR[\fIfile\fR]
+.SH DESCRIPTION
 The 
-.Nm look
+.B look
 utility displays any lines in
-.Ar file
+.I file
 which contain
-.Ar string
-as a prefix.
+.I string
 As
-.Nm look
+.B look
 performs a binary search, the lines in
-.Ar file
-must be sorted (where
-.Xr sort 1
-got the same options \-d and/or \-f that
-.Nm look
+.I file
+must be sorted (where sort(1) got the same options \-d and/or \-f
+that
+.B look
 is invoked with).
-.Pp
+.PP
 If
 .Ar file
 is not specified, the file
 .Pa /usr/share/dict/words
 is used, only alphanumeric characters are compared and the case of
 alphabetic characters is ignored.
-.Pp
-Options:
-.Bl -tag -width Ds
-.It Fl d
-Dictionary character set and order, i.e. only alphanumeric characters
-are compared.  (On by default if no file is specified).
-.It Fl f
-Ignore the case of alphabetic characters.  (On by default if no file is specified).
-.It Fl a
-Use the alternate dictionary
-.Pa /usr/share/dict/web2 .
-.It Fl t Ar termchar
+.SH OPTIONS
+.TP
+\fB\-a\fR, \fB\-\-alternative\fR
+Use alternative dictionary file.
+.TP
+\fB\-d\fR, \fB\-\-alphanum\fR
+Dictionary character set and order, i.e. only alphanumeric characters are
+compared. (On by default if no file is specified).
+.TP
+\fB\-f\fR, \fB\-\-ignore\-case\fR
+Ignore the case of alphabetic characters. (On by default if no file is
+specified).
+.TP
+\fB\-t\fR, \fB\-\-terminate\fR=\fIC\fR
 Specify a string termination character, i.e. only the characters
-in
-.Ar string
-up to and including the first occurrence of
-.Ar termchar
+in string up to and including the first occurrence of termchar
 are compared.
-.El
-.Pp
-The
-.Nm look
-utility exits 0 if one or more lines were found and displayed,
-1 if no lines were found, and >1 if an error occurred.
-.Sh FILES
-.Bl -tag -width /usr/share/dict/words -compact
-.It Pa /usr/share/dict/words
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Output version information and exit.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display help screen and exit.
+.PP
+The look utility exits 0 if one or more lines were found and displayed, 1 if
+no lines were found, and >1 if an error occurred.
+.SH EXAMPLE
+.nf
+sort -d /etc/passwd -o /tmp/look.dict
+look -t: root:foobar /tmp/look.dict
+.nf
+.SH FILES
+.IX Header "FILES"
+.IP "\fB/usr/share/dict/words\fR" 4
 the dictionary
-.It Pa /usr/share/dict/web2
+.IP "\fB/usr/share/dict/web2\fR" 4
 the alternate dictionary
-.El
-.Sh SEE ALSO
-.Xr grep 1 ,
-.Xr sort 1
-.Sh COMPATIBILITY
+.SH "SEE ALSO"
+.BR grep (1),
+.BR sort (1)
+.SH COMPATIBILITY
 The original manual page stated that tabs and blank characters participated
-in comparisons when the
-.Fl d
-option was specified.
-This was incorrect and the current man page matches the historic
-implementation.
-.Sh HISTORY
+in comparisons when the alphanum option was specified. This was incorrect
+and the current man page matches the historic implementation.
+.SH HISTORY
 The
-.Nm look
+look
 utility appeared in Version 7 AT&T Unix.
-.Sh AVAILABILITY
+.SH AVAILABILITY
 The look command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
