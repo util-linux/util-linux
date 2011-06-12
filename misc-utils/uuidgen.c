@@ -23,14 +23,23 @@ extern int optind;
 
 #include "uuid.h"
 #include "nls.h"
+#include "c.h"
 
 #define DO_TYPE_TIME	1
 #define DO_TYPE_RANDOM	2
 
-static void usage(const char *progname)
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(stderr, _("Usage: %s [-r] [-t]\n"), progname);
-	exit(1);
+	fprintf(out, _("Usage: %s [options]\n"),
+		program_invocation_short_name);
+
+	fprintf(out, _("\nOptions:\n"
+		       " -r, --random     generate random-based uuid\n"
+		       " -t, --time       generate time-based uuid\n"
+		       " -V, --version    output version information and exit\n"
+		       " -h, --help       display this help and exit\n\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int
@@ -41,11 +50,19 @@ main (int argc, char *argv[])
 	char   str[37];
 	uuid_t uu;
 
+	static const struct option longopts[] = {
+		{"random", required_argument, NULL, 'r'},
+		{"time", no_argument, NULL, 't'},
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt (argc, argv, "tr")) != EOF)
+	while ((c = getopt_long(argc, argv, "rtVh", longopts, NULL)) != -1)
 		switch (c) {
 		case 't':
 			do_type = DO_TYPE_TIME;
@@ -53,8 +70,15 @@ main (int argc, char *argv[])
 		case 'r':
 			do_type = DO_TYPE_RANDOM;
 			break;
+		case 'V':
+			printf(_("%s from %s\n"),
+				program_invocation_short_name,
+				PACKAGE_STRING);
+			return EXIT_SUCCESS;
+		case 'h':
+			usage(stdout);
 		default:
-			usage(argv[0]);
+			usage(stderr);
 		}
 
 	switch (do_type) {
@@ -73,5 +97,5 @@ main (int argc, char *argv[])
 
 	printf("%s\n", str);
 
-	return 0;
+	return EXIT_SUCCESS;
 }
