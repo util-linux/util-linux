@@ -104,8 +104,6 @@ static const char *normalize(const char *arg)
 	const char *argptr=arg;
 	char *bufptr;
 
-	free(BUFFER);
-
 	if (!quote) { /* Just copy arg */
 		BUFFER=xmalloc(strlen(arg)+1);
 			
