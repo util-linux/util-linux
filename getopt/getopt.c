@@ -304,42 +304,27 @@ static void set_shell(const char *new_shell)
 		parse_error(_("unknown shell after -s or --shell argument"));
 }
 
-static void print_help(void)
+static void __attribute__ ((__noreturn__)) print_help(void)
 {
-	fputs(_("Usage: getopt optstring parameters\n"),stderr);
-	fputs(_("       getopt [options] [--] optstring parameters\n"),stderr);
-	fputs(_("       getopt [options] -o|--options optstring [options] [--]\n"),stderr);
-	fputs(_("              parameters\n"),stderr);
-	fputs(_("  -a, --alternative            Allow long options starting with single -\n"),stderr);
-	fputs(_("  -h, --help                   This small usage guide\n"),stderr);
-	fputs(_("  -l, --longoptions=longopts   Long options to be recognized\n"),stderr);
-	fputs(_("  -n, --name=progname          The name under which errors are reported\n"),stderr);
-	fputs(_("  -o, --options=optstring      Short options to be recognized\n"),stderr);
-	fputs(_("  -q, --quiet                  Disable error reporting by getopt(3)\n"),stderr);
-	fputs(_("  -Q, --quiet-output           No normal output\n"),stderr);
-	fputs(_("  -s, --shell=shell            Set shell quoting conventions\n"),stderr);	
-	fputs(_("  -T, --test                   Test for getopt(1) version\n"),stderr);
-	fputs(_("  -u, --unquote                Do not quote the output\n"),stderr);
-	fputs(_("  -V, --version                Output version information\n"),stderr);
+	fprintf(stderr, _("Usage: %1$s optstring parameters\n"
+			  "       %1$s [options] [--] optstring parameters\n"
+			  "       %1$s [options] -o|--options optstring [options] [--] parameters\n"
+			  "\nOptions:\n"
+			  "  -a, --alternative            Allow long options starting with single -\n"
+			  "  -h, --help                   This small usage guide\n"
+			  "  -l, --longoptions=longopts   Long options to be recognized\n"
+			  "  -n, --name=progname          The name under which errors are reported\n"
+			  "  -o, --options=optstring      Short options to be recognized\n"
+			  "  -q, --quiet                  Disable error reporting by getopt(3)\n"
+			  "  -Q, --quiet-output           No normal output\n"
+			  "  -s, --shell=shell            Set shell quoting conventions\n"
+			  "  -T, --test                   Test for getopt(1) version\n"
+			  "  -u, --unquote                Do not quote the output\n"
+			  "  -V, --version                Output version information\n\n"),
+		program_invocation_short_name);
+
 	exit(PARAMETER_EXIT_CODE);
 }
-	
-static struct option longopts[]={ {"options",required_argument,NULL,'o'},
-                                  {"longoptions",required_argument,NULL,'l'},
-                                  {"quiet",no_argument,NULL,'q'},
-                                  {"quiet-output",no_argument,NULL,'Q'},
-                                  {"shell",required_argument,NULL,'s'},
-                                  {"test",no_argument,NULL,'T'},
-                                  {"unquoted",no_argument,NULL,'u'},
-                                  {"help",no_argument,NULL,'h'},
-                                  {"alternative",no_argument,NULL,'a'},
-                                  {"name",required_argument,NULL,'n'},
-                                  {"version",no_argument,NULL,'V'},
-                                  {NULL,0,NULL,0}
-                                };
-
-/* Stop scanning as soon as a non-option argument is found! */
-static const char *shortopts="+ao:l:n:qQs:TuhV";
 
 int main(int argc, char *argv[])
 {
@@ -347,6 +332,23 @@ int main(int argc, char *argv[])
 	char *name=NULL;
 	int opt;
 	int compatible=0;
+
+	/* Stop scanning as soon as a non-option argument is found! */
+	static const char *shortopts = "+ao:l:n:qQs:TuhV";
+	static const struct option longopts[] = {
+		{"options", required_argument, NULL, 'o'},
+		{"longoptions", required_argument, NULL, 'l'},
+		{"quiet", no_argument, NULL, 'q'},
+		{"quiet-output", no_argument, NULL, 'Q'},
+		{"shell", required_argument, NULL, 's'},
+		{"test", no_argument, NULL, 'T'},
+		{"unquoted", no_argument, NULL, 'u'},
+		{"help", no_argument, NULL, 'h'},
+		{"alternative", no_argument, NULL, 'a'},
+		{"name", required_argument, NULL, 'n'},
+		{"version", no_argument, NULL, 'V'},
+		{NULL, 0, NULL, 0}
+	};
 
 	setlocale(LC_ALL,"");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -413,8 +415,10 @@ int main(int argc, char *argv[])
 			quote=0;
 			break;
 		case 'V':
-		        printf(_("getopt (enhanced) 1.1.4\n"));
-			exit(0);
+			printf(_("%s from %s\n"),
+			       program_invocation_short_name,
+			       PACKAGE_STRING);
+			return EXIT_SUCCESS;
 		case '?':
 		case ':':
 			parse_error(NULL);
