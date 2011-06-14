@@ -370,6 +370,29 @@ static void make_root_inode(void)
 	return make_root_inode_v2();
 }
 
+static void super_set_nzones(void)
+{
+	switch (fs_version) {
+	case 2:
+		Super.s_zones = BLOCKS;
+		break;
+	default: /* v1 */
+		Super.s_nzones = BLOCKS;
+		break;
+	}
+}
+
+static void super_init_maxsize(void)
+{
+	switch (fs_version) {
+	case 2:
+		Super.s_max_size =  0x7fffffff;
+	default: /* v1 */
+		Super.s_max_size = (7+512+512*512)*1024;
+		break;
+	}
+}
+
 static void setup_tables(void) {
 	int i;
 	unsigned long inodes, zmaps, imaps, zones;
@@ -382,11 +405,10 @@ static void setup_tables(void) {
 	memset(boot_block_buffer,0,512);
 	Super.s_magic = magic;
 	Super.s_log_zone_size = 0;
-	Super.s_max_size = version2 ? 0x7fffffff : (7+512+512*512)*1024;
-	if (fs_version == 2)
-		zones = Super.s_zones = BLOCKS;
-	else
-		zones = Super.s_nzones = BLOCKS;
+
+	super_init_maxsize();
+	super_set_nzones();
+	zones = get_nzones();
 
 /* some magic nrs: 1 inode / 3 blocks */
 	if ( req_nr_inodes == 0 ) 
@@ -564,7 +586,7 @@ int main(int argc, char ** argv) {
 		errx(MKFS_ERROR, _("%s: bad inode size"), device_name);
 
 	opterr = 0;
-	while ((i = getopt(argc, argv, "ci:l:n:v")) != -1)
+	while ((i = getopt(argc, argv, "ci:l:n:v12")) != -1)
 		switch (i) {
 		case 'c':
 			check=1; break;
@@ -586,7 +608,11 @@ int main(int argc, char ** argv) {
 			namelen = i;
 			dirsize = i+2;
 			break;
-		case 'v':
+		case '1':
+			fs_version = 1;
+			break;
+		case '2':
+		case 'v': /* kept for backwards compatiblitly */
 			fs_version = 2;
 			version2 = 1;
 			break;

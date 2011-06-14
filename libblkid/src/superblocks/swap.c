@@ -56,7 +56,7 @@ static int swap_set_info(blkid_probe pr, const char *version)
 		if (hdr->volume[0] && blkid_probe_set_label(pr, hdr->volume,
 				sizeof(hdr->volume)) < 0)
 			return -1;
-		if (hdr->uuid[0] && blkid_probe_set_uuid(pr, hdr->uuid) < 0)
+		if (blkid_probe_set_uuid(pr, hdr->uuid) < 0)
 			return -1;
 	}
 

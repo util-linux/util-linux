@@ -144,6 +144,12 @@ done:
 	return rc;
 }
 
+static int mount_all(struct libmnt_context *cxt)
+{
+	warnx(_("mount -a is not implemented yet"));
+	return EXIT_FAILURE;
+}
+
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fprintf(out, _("Usage:\n"
@@ -261,7 +267,6 @@ int main(int argc, char **argv)
 		switch(c) {
 		case 'a':
 			all = 1;
-			err(EX_FAIL, "-a not implemented yet");	/* TODO */
 			break;
 		case 'c':
 			mnt_context_disable_canonicalize(cxt, TRUE);
@@ -379,13 +384,25 @@ int main(int argc, char **argv)
 	else if (types)
 		mnt_context_set_fstype(cxt, types);
 
-	if (argc == 0 && source) {
-		/* mount -L|-U */
+	if (all) {
+		/*
+		 * A) Mount all
+		 */
+		rc = mount_all(cxt);
+		mnt_free_context(cxt);
+		return rc;
+
+	} else if (argc == 0 && source) {
+		/*
+		 * B) mount -L|-U
+		 */
 		mnt_context_set_source(cxt, source);
 
 	} else if (argc == 1) {
-		/* mount [-L|-U] <target>
-		 * mount <source|target> */
+		/*
+		 * C) mount [-L|-U] <target>
+		 *    mount <source|target>
+		 */
 		if (source) {
 			if (mnt_context_is_restricted(cxt))
 				exit_non_root(NULL);
@@ -394,7 +411,9 @@ int main(int argc, char **argv)
 		mnt_context_set_target(cxt, argv[0]);
 
 	} else if (argc == 2 && !source) {
-		/* mount <source> <target> */
+		/*
+		 * D) mount <source> <target>
+		 */
 		if (mnt_context_is_restricted(cxt))
 			exit_non_root(NULL);
 		mnt_context_set_source(cxt, argv[0]);

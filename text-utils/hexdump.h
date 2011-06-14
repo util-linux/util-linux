@@ -46,7 +46,7 @@ typedef struct _pr {
 #define	F_U		0x100		/* %_u */
 #define	F_UINT		0x200		/* %[ouXx] */
 #define	F_TEXT		0x400		/* no conversions */
-	u_int flags;			/* flag values */
+	unsigned int flags;		/* flag values */
 	int bcnt;			/* byte count */
 	char *cchar;			/* conversion character */
 	char *fmt;			/* printf format */
@@ -58,7 +58,7 @@ typedef struct _fu {
 	struct _pr *nextpr;		/* next print unit */
 #define	F_IGNORE	0x01		/* %_A */
 #define	F_SETREP	0x02		/* rep count set, not default */
-	u_int flags;			/* flag values */
+	unsigned int flags;		/* flag values */
 	int reps;			/* repetition count */
 	int bcnt;			/* byte count */
 	char *fmt;			/* format string */

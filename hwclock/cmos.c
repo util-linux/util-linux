@@ -50,11 +50,19 @@
 #include "nls.h"
 
 #if defined(__i386__)
-#ifdef HAVE_SYS_IO_H
-#include <sys/io.h>
-#else
-#include <asm/io.h>		/* for inb, outb */
-#endif
+
+# ifdef HAVE_SYS_IO_H
+#   include <sys/io.h>
+# elif defined(HAVE_ASM_IO_H)
+#  include <asm/io.h>	/* for inb, outb */
+# else
+/* Disable cmos access; we can no longer use asm/io.h, since
+ * the kernel does not export that header. */
+#  undef __i386__
+void outb(int a, int b){}
+int inb(int c){ return 0; }
+# endif
+
 #elif defined(__alpha__)
 /* <asm/io.h> fails to compile, probably because of u8 etc */
 extern unsigned int     inb(unsigned long port);
