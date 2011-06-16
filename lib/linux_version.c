@@ -16,10 +16,10 @@ get_linux_version (void)
 		return kver;
 	if (uname (&uts))
 		kver = 0;
-	else if (sscanf (uts.release, "%d.%d.%d", &major, &minor, &teeny) != 3)
-		kver = 0;
-	else
+	else if (sscanf (uts.release, "%d.%d.%d", &major, &minor, &teeny) == 3)
 		kver = KERNEL_VERSION (major, minor, teeny);
+	else if (sscanf (uts.release, "%d.%d", &major, &minor) == 2)
+		kver = KERNEL_VERSION (major, minor, 0);
 
 	return kver;
 }

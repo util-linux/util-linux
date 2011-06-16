@@ -365,13 +365,12 @@ follow_symlinks(struct namei *nm)
 static int
 print_namei(struct namei *nm, char *path)
 {
-	struct namei *prev = NULL;
 	int i;
 
 	if (path)
 		printf("f: %s\n", path);
 
-	for (; nm; prev = nm, nm = nm->next) {
+	for (; nm; nm = nm->next) {
 		char md[11];
 
 		if (nm->noent) {

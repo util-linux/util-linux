@@ -63,7 +63,17 @@ mount
 partx
 -----
 
+ - add support loop devices:
+
+	partx -a /path/file.img
+
+	* associate the file with loop device (use lib/loopdev.c)
+	* map partitions by BLKPG_ADD_PARTITION
+
+ - support mapping by device-mapper if argv[0] is "kpartx" or --dm option is used.
+     
  - add regression tests for partx, addpart and delpart
+
 
 build-sys
 --------
@@ -176,6 +186,14 @@ libblkid
  - add FSSIZE value  -- filesystem size (klibc requirement)
 
  - add support for dasd PT (used for example on s390)
+
+ - support PARTUUID= tag
+
+   * the partitions probing is already supported by low-level part of the
+     library, but it's necessary add support for this tag also to high-level
+     (blkid_cache) API.
+
+   * add blkid -P <PARTUUID>
 
 wipefs
 ------

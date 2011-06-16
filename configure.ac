@@ -135,6 +135,7 @@ AC_CHECK_HEADERS(
         netinet/in.h \
 	rpcsvc/nfs_prot.h \
 	stdlib.h \
+	asm/io.h \
 	sys/disk.h \
 	sys/disklabel.h \
 	sys/ioctl.h \
@@ -968,14 +969,6 @@ AC_ARG_ENABLE([elvtune],
 )
 AM_CONDITIONAL(BUILD_ELVTUNE, test "x$enable_elvtune" = xyes)
 
-
-AC_ARG_ENABLE([init],
-  AS_HELP_STRING([--enable-init], [build simpleinit, shutdown, initctl]),
-  [], enable_init=no
-)
-AM_CONDITIONAL(BUILD_INIT, test "x$enable_init" = xyes)
-
-
 AC_ARG_ENABLE([kill],
   AS_HELP_STRING([--enable-kill], [build kill]),
   [], enable_kill=no
@@ -1223,7 +1216,6 @@ fsck/Makefile
 getopt/Makefile
 hwclock/Makefile
 include/Makefile
-simpleinit/Makefile
 lib/Makefile
 login-utils/Makefile
 Makefile
@@ -1234,27 +1226,27 @@ mount/Makefile
 partx/Makefile
 po/Makefile.in
 schedutils/Makefile
-shlibs/blkid/blkid.pc
-shlibs/blkid/Makefile
-shlibs/blkid/docs/Makefile
-shlibs/blkid/docs/version.xml
-shlibs/blkid/src/Makefile
-shlibs/blkid/src/blkid.h
-shlibs/blkid/src/superblocks/Makefile
-shlibs/blkid/src/topology/Makefile
-shlibs/blkid/src/partitions/Makefile
-shlibs/blkid/samples/Makefile
-shlibs/mount/mount.pc
-shlibs/mount/Makefile
-shlibs/mount/src/Makefile
-shlibs/mount/src/libmount.h
-shlibs/mount/docs/Makefile
-shlibs/mount/docs/version.xml
-shlibs/mount/samples/Makefile
-shlibs/uuid/uuid.pc
-shlibs/uuid/Makefile
-shlibs/uuid/man/Makefile
-shlibs/uuid/src/Makefile
+libblkid/blkid.pc
+libblkid/Makefile
+libblkid/docs/Makefile
+libblkid/docs/version.xml
+libblkid/src/Makefile
+libblkid/src/blkid.h
+libblkid/src/superblocks/Makefile
+libblkid/src/topology/Makefile
+libblkid/src/partitions/Makefile
+libblkid/samples/Makefile
+libmount/mount.pc
+libmount/Makefile
+libmount/src/Makefile
+libmount/src/libmount.h
+libmount/docs/Makefile
+libmount/docs/version.xml
+libmount/samples/Makefile
+libuuid/uuid.pc
+libuuid/Makefile
+libuuid/man/Makefile
+libuuid/src/Makefile
 sys-utils/Makefile
 term-utils/Makefile
 tests/commands.sh

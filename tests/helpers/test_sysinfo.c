@@ -28,7 +28,7 @@ typedef struct {
 int
 hlp_wordsize(void)
 {
-	printf("%d\n", __WORDSIZE);
+	printf("%lu\n", CHAR_BIT * sizeof(void*));
 	return 0;
 }
 

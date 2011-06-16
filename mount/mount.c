@@ -212,7 +212,7 @@ static const char *opt_loopdev, *opt_vfstype, *opt_offset, *opt_sizelimit,
         *opt_encryption, *opt_speed, *opt_comment, *opt_uhelper, *opt_helper;
 
 static int is_readonly(const char *node);
-static int mounted (const char *spec0, const char *node0);
+static int mounted (const char *spec0, const char *node0, struct mntentchn *fstab_mc);
 static int check_special_mountprog(const char *spec, const char *node,
 		const char *type, int flags, char *extra_opts, int *status);
 
@@ -1562,7 +1562,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   /* The "mount -f" checks for for existing record in /etc/mtab (with
    * regular non-fake mount this is usually done by kernel)
    */
-  if (!(flags & MS_REMOUNT) && fake && mounted (spec, node))
+  if (!(flags & MS_REMOUNT) && fake && mounted (spec, node, NULL))
       die(EX_USAGE, _("mount: according to mtab, "
                       "%s is already mounted on %s\n"),
 		      spec, node);
@@ -2016,19 +2016,53 @@ mount_one (const char *spec, const char *node, const char *types,
 	return try_mount_one (spec, node, types, opts, freq, pass, 0);
 }
 
+#ifdef HAVE_LIBMOUNT_MOUNT
+static struct libmnt_table *minfo;	/* parsed mountinfo file */
+#endif
+
 /* Check if an fsname/dir pair was already in the old mtab.  */
 static int
-mounted (const char *spec0, const char *node0) {
+mounted (const char *spec0, const char *node0, struct mntentchn *fstab_mc) {
 	struct mntentchn *mc, *mc0;
 	const char *spec, *node;
 	int ret = 0;
 
+#ifdef HAVE_LIBMOUNT_MOUNT
+	/*
+	 * Use libmount to check for already mounted bind mounts on systems
+	 * without mtab.
+	 */
+	if (fstab_mc && fstab_mc->m.mnt_opts &&
+	    mtab_is_a_symlink() && strstr(fstab_mc->m.mnt_opts, "bind")) {
+
+		struct libmnt_fs *fs = mnt_new_fs();
+		int rc = fs ? 0 : -1;
+
+		if (!rc)
+			rc = mnt_fs_set_fstype(fs, fstab_mc->m.mnt_type);
+		if (!rc)
+			rc = mnt_fs_set_source(fs, fstab_mc->m.mnt_fsname);
+		if (!rc)
+			rc = mnt_fs_set_target(fs, fstab_mc->m.mnt_dir);
+		if (!rc)
+			rc =  mnt_fs_set_options(fs, fstab_mc->m.mnt_opts);
+		if (!rc && !minfo)
+			 minfo = mnt_new_table_from_file("/proc/self/mountinfo");
+		if (!rc && minfo)
+			rc = mnt_table_is_fs_mounted(minfo, fs);
+
+		mnt_free_fs(fs);
+		if (rc == 1)
+			return 1;
+	}
+#endif
 	/* Handle possible UUID= and LABEL= in spec */
 	spec = spec_to_devname(spec0);
 	if (!spec)
 		return ret;
 
 	node = canonicalize(node0);
+
 
 	mc0 = mtab_head();
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
@@ -2050,7 +2084,7 @@ is_fstab_entry_mounted(struct mntentchn *mc, int verbose)
 {
 	struct stat st;
 
-	if (mounted(mc->m.mnt_fsname, mc->m.mnt_dir))
+	if (mounted(mc->m.mnt_fsname, mc->m.mnt_dir, mc))
 		goto yes;
 
 	/* extra care for loop devices */

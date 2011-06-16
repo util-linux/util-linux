@@ -1757,7 +1757,7 @@ static void
 fp_printf(FILE *fp, char *format, ...) {
     va_list args;
     char buf[1024];
-    int y, x;
+    int y, x __attribute__((unused));
 
     va_start(args, format);
     vsnprintf(buf, sizeof(buf), format, args);

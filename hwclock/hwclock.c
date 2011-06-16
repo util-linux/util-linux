@@ -464,7 +464,6 @@ set_hardware_clock(const time_t newtime,
   Set the Hardware Clock to the time <newtime>, in local time zone or UTC,
   according to <universal>.
 ----------------------------------------------------------------------------*/
-  int err;
   struct tm new_broken_time;
     /* Time to which we will set Hardware Clock, in broken down format, in
        the time zone of caller's choice
@@ -493,7 +492,7 @@ set_hardware_clock(const time_t newtime,
       write_date_to_file (&new_broken_time);
       new_broken_time.tm_year = 95 + ((new_broken_time.tm_year+1) & 3);
     }
-    err = ur->set_hardware_clock(&new_broken_time);
+    ur->set_hardware_clock(&new_broken_time);
   }
 }
 
@@ -1458,9 +1457,10 @@ main(int argc, char **argv) {
 	/* The options debug, badyear and epoch_option are global */
 	bool show, set, systohc, hctosys, systz, adjust, getepoch, setepoch, predict;
 	bool utc, testing, local_opt, noadjfile, directisa;
-	bool ARCconsole, Jensen, SRM, funky_toy;
 	char *date_opt;
-
+#ifdef __alpha__
+	bool ARCconsole, Jensen, SRM, funky_toy;
+#endif
 	/* Remember what time we were invoked */
 	gettimeofday(&startup_time, NULL);
 
@@ -1488,7 +1488,9 @@ main(int argc, char **argv) {
 	/* Set option defaults */
 	show = set = systohc = hctosys = systz = adjust = noadjfile = predict = FALSE;
 	getepoch = setepoch = utc = local_opt = testing = debug = FALSE;
+#ifdef __alpha__
 	ARCconsole = Jensen = SRM = funky_toy = directisa = badyear = FALSE;
+#endif
 	date_opt = NULL;
 
 	while ((c = getopt_long (argc, argv, "?hvVDarsuwAJSFf:", longopts, NULL))

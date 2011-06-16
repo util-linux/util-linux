@@ -30,12 +30,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <errno.h>
-#include <error.h>
 #include <getopt.h>
 #include <limits.h>
 #include <sys/utsname.h>
 #include "nls.h"
+#include "c.h"
 
 #define set_pers(pers) ((long)syscall(SYS_personality, pers))
 
@@ -212,7 +211,7 @@ int set_arch(const char *pers, unsigned long options)
 	break;
 
   if(transitions[i].perval < 0)
-    error(EXIT_FAILURE, 0, _("%s: Unrecognized architecture"), pers);
+    errx(EXIT_FAILURE, _("%s: Unrecognized architecture"), pers);
 
   pers_value = transitions[i].perval | options;
   res = set_pers(pers_value);
@@ -228,7 +227,7 @@ int set_arch(const char *pers, unsigned long options)
 	   && strcmp(un.machine, "i586")
 	   && strcmp(un.machine, "i686")
 	   && strcmp(un.machine, "athlon")))
-      error(EXIT_FAILURE, 0, _("%s: Unrecognized architecture"), pers);
+      errx(EXIT_FAILURE, _("%s: Unrecognized architecture"), pers);
   }
 
   return 0;
@@ -262,9 +261,9 @@ int main(int argc, char *argv[])
   #if defined(__sparc64__) || defined(__sparc__)
    if (!strcmp(p, "sparc32bash")) {
        if (set_arch(p, 0L))
-           error(EXIT_FAILURE, errno, _("Failed to set personality to %s"), p);
+           err(EXIT_FAILURE, _("Failed to set personality to %s"), p);
        execl("/bin/bash", NULL);
-       error(EXIT_FAILURE, errno, "/bin/bash");
+       err(EXIT_FAILURE, "/bin/bash");
    }
   #endif
 
@@ -315,14 +314,14 @@ int main(int argc, char *argv[])
   argv += optind;
 
   if (set_arch(p, options))
-    error(EXIT_FAILURE, errno, _("Failed to set personality to %s"), p);
+    err(EXIT_FAILURE, _("Failed to set personality to %s"), p);
 
   if (!argc) {
     execl("/bin/sh", "-sh", NULL);
-    error(EXIT_FAILURE, errno, "/bin/sh");
+    err(EXIT_FAILURE, "/bin/sh");
   }
 
   execvp(argv[0], argv);
-  error(EXIT_FAILURE, errno, "%s", argv[0]);
+  err(EXIT_FAILURE, "%s", argv[0]);
   return EXIT_FAILURE;
 }

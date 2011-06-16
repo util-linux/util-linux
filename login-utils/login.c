@@ -386,7 +386,7 @@ main(int argc, char **argv)
     struct group *gr;
     register int ch;
     register char *p;
-    int ask, fflag, hflag, pflag, cnt, errsv;
+    int fflag, hflag, pflag, cnt;
     int quietlog, passwd_req;
     char *domain, *ttyn;
     char tbuf[MAXPATHLEN + 2];
@@ -400,6 +400,7 @@ main(int argc, char **argv)
     struct pam_conv conv = { misc_conv, NULL };
     struct sigaction sa, oldsa_hup, oldsa_term;
 #else
+    int ask;
     char *salt, *pp;
 #endif
 #ifdef LOGIN_CHOWN_VCS
@@ -492,16 +493,20 @@ main(int argc, char **argv)
       }
     argc -= optind;
     argv += optind;
+
+#ifndef HAVE_SECURITY_PAM_MISC_H
+    ask = *argv ? 0 : 1;		/* Do we need ask for login name? */
+#endif
+
     if (*argv) {
 	char *p = *argv;
 	username = strdup(p);
-	ask = 0;
+
 	/* wipe name - some people mistype their password here */
 	/* (of course we are too late, but perhaps this helps a little ..) */
 	while(*p)
 	    *p++ = ' ';
-    } else
-        ask = 1;
+    }
 
     for (cnt = getdtablesize(); cnt > 2; cnt--)
       close(cnt);
@@ -1273,8 +1278,6 @@ Michael Riepe <michael@stud.uni-hannover.de>
     childArgv[childArgc++] = NULL;
 
     execvp(childArgv[0], childArgv + 1);
-
-    errsv = errno;
 
     if (!strcmp(childArgv[0], "/bin/sh"))
 	warn(_("couldn't exec shell script"));

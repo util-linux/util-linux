@@ -3,15 +3,15 @@ include $(top_srcdir)/config/include-Makefile.am
 SHLIBS_DIRS =
 
 if BUILD_LIBUUID
-SHLIBS_DIRS += shlibs/uuid
+SHLIBS_DIRS += libuuid
 endif
 
 if BUILD_LIBBLKID
-SHLIBS_DIRS += shlibs/blkid
+SHLIBS_DIRS += libblkid
 endif
 
 if BUILD_LIBMOUNT
-SHLIBS_DIRS += shlibs/mount
+SHLIBS_DIRS += libmount
 endif
 
 MAN_DIRS = man/ru
@@ -43,10 +43,6 @@ endif
 
 if BUILD_PARTX
 SUBDIRS += partx
-endif
-
-if BUILD_INIT
-SUBDIRS += simpleinit
 endif
 
 if BUILD_MOUNT
@@ -96,7 +92,7 @@ checkconfig:
 
 
 ENABLE_ALL = --enable-static-programs \
- --enable-elvtune --enable-init --enable-kill --enable-last \
+ --enable-elvtune --enable-kill --enable-last \
  --enable-mesg --enable-partx --enable-raw --enable-rdev --enable-reset \
  --enable-login-utils --enable-write --enable-arch --enable-mount
 

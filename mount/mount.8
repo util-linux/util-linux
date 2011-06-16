@@ -1273,9 +1273,6 @@ if it is a directory itself.
 .BR grpquota | noquota | quota | usrquota
 These options are accepted but ignored.
 .TP
-.BR nobh
-Do not attach buffer_heads to file pagecache. (Since 2.5.49.)
-.TP
 .BR nouid32
 Disables 32-bit UIDs and GIDs.  This is for interoperability with older
 kernels which only store and expect 16-bit values.
@@ -1400,9 +1397,7 @@ filesystem.
 The options
 .B journal_dev, noload, data, commit, orlov, oldalloc, [no]user_xattr
 .B [no]acl, bsddf, minixdf, debug, errors, data_err, grpid, bsdgroups, nogrpid
-.B sysvgroups, resgid, resuid, sb, quota, noquota, grpquota, usrquota
-and
-.B [no]bh
+.B sysvgroups, resgid, resuid, sb, quota, noquota, grpquota and usrquota
 are backwardly compatible with ext3 or ext2.
 .TP
 .BR journal_checksum
@@ -1527,11 +1522,11 @@ Controls whether or not ext4 should use the DIO read locking. If the
 dioread_nolock option is specified ext4 will allocate uninitialized extent
 before buffer write and convert the extent to initialized after IO completes.
 This approach allows ext4 code to avoid using inode mutex, which improves
-scalability on high speed storages. However this does not work with nobh option
-and the mount will fail. Nor does it work with data journaling and
-dioread_nolock option will be ignored with kernel warning. Note that
-dioread_nolock code path is only used for extent-based files.  Because of the
-restrictions this options comprises it is off by default (e.g. dioread_lock).
+scalability on high speed storages. However this does not work with data
+journaling and dioread_nolock option will be ignored with kernel warning.
+Note that dioread_nolock code path is only used for extent-based files.
+Because of the restrictions this options comprises it is off by default
+(e.g. dioread_lock).
 .TP
 .BR i_version
 Enable 64-bit inode version support. This option is off by default.
@@ -2325,6 +2320,12 @@ Old format of ufs, this is the default, read only.
 .TP
 .B 44bsd
 For filesystems created by a BSD-like system (NetBSD,FreeBSD,OpenBSD).
+.TP
+.B ufs2
+Used in FreeBSD 5.x supported as read-write.
+.TP
+.B 5xbsd
+Synonym for ufs2.
 .TP
 .B sun
 For filesystems created by SunOS or Solaris on Sparc.

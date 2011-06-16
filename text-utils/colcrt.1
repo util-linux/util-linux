@@ -52,13 +52,13 @@ are placed on new lines in between the normal output lines.
 .Pp
 Available options:
 .Bl -tag -width Ds
-.It Fl
+.It Fl , Fl Fl no-underlining
 Suppress all underlining.
 This option is especially useful for previewing
 .Em allboxed
 tables from
 .Xr tbl 1 .
-.It Fl 2
+.It Fl 2, Fl Fl half-lines
 Causes all half-lines to be printed, effectively double spacing the output.
 Normally, a minimal space output format is used which will suppress empty
 lines.
@@ -67,6 +67,10 @@ The
 .Fl 2
 option is useful for sending output to the line printer when the output
 contains superscripts and subscripts which would otherwise be invisible.
+.It Fl V, Fl Fl version
+Output version information and exit.
+.It Fl h, Fl Fl help
+Output help and exit.
 .El
 .Sh EXAMPLES
 A typical use of
