@@ -294,6 +294,26 @@ int blkid_known_fstype(const char *fstype)
 	return 0;
 }
 
+/**
+ * blkid_superblocks_get_name:
+ * @idx: number >= 0
+ * @name: returns name of supported filesystem/raid (optional)
+ * @usage: returns BLKID_USAGE_* flags, (optional)
+ *
+ * Returns: -1 if @idx is out of range, or 0 on success.
+ */
+int blkid_superblocks_get_name(size_t idx, const char **name, int *usage)
+{
+	if (idx >= 0 && idx < ARRAY_SIZE(idinfos)) {
+		if (name)
+			*name = idinfos[idx]->name;
+		if (usage)
+			*usage = idinfos[idx]->usage;
+		return 0;
+	}
+	return -1;
+}
+
 /*
  * The blkid_do_probe() backend.
  */
