@@ -66,13 +66,15 @@ enum {
 	HYPER_NONE	= 0,
 	HYPER_XEN,
 	HYPER_KVM,
-	HYPER_MSHV
+	HYPER_MSHV,
+	HYPER_VMWARE
 };
 const char *hv_vendors[] = {
 	[HYPER_NONE]	= NULL,
 	[HYPER_XEN]	= "Xen",
 	[HYPER_KVM]	= "KVM",
-	[HYPER_MSHV]	= "Microsoft"
+	[HYPER_MSHV]	= "Microsoft",
+	[HYPER_VMWARE]  = "VMware"
 };
 
 /* CPU modes */
@@ -511,6 +513,8 @@ read_hypervisor_cpuid(struct lscpu_desc *desc)
 		desc->hyper = HYPER_KVM;
 	else if (!strncmp("Microsoft Hv", hyper_vendor_id, 12))
 		desc->hyper = HYPER_MSHV;
+	else if (!strncmp("VMwareVMware", hyper_vendor_id, 12))
+		desc->hyper = HYPER_VMWARE;
 }
 
 #else	/* ! __x86_64__ */

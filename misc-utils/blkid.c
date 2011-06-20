@@ -73,6 +73,7 @@ static void usage(int error)
 		"  -g          garbage collect the blkid cache\n"
 		"  -o <format> output format; can be one of:\n"
 		"              value, device, list, udev, export or full; (default: full)\n"
+		"  -k          list all known filesystems/RAIDs and exit\n"
 		"  -s <tag>    show specified tag(s) (default show all tags)\n"
 		"  -t <token>  find device with a specific token (NAME=value pair)\n"
 		"  -l          look up only first device with token specified by -t\n"
@@ -690,7 +691,7 @@ int main(int argc, char **argv)
 
 	show[0] = NULL;
 
-	while ((c = getopt (argc, argv, "c:df:ghilL:n:o:O:ps:S:t:u:U:w:v")) != EOF)
+	while ((c = getopt (argc, argv, "c:df:ghilL:n:ko:O:ps:S:t:u:U:w:v")) != EOF)
 		switch (c) {
 		case 'c':
 			if (optarg && !*optarg)
@@ -736,6 +737,15 @@ int main(int argc, char **argv)
 		case 'g':
 			gc = 1;
 			break;
+		case 'k':
+		{
+			size_t idx = 0;
+			const char *name = NULL;
+
+			while (blkid_superblocks_get_name(idx++, &name, NULL) == 0)
+				printf("%s\n", name);
+			exit(0);
+		}
 		case 'o':
 			if (!strcmp(optarg, "value"))
 				output_format = OUTPUT_VALUE_ONLY;

@@ -49,6 +49,14 @@
 #  ifndef DEFAULT_STERM
 #    define DEFAULT_STERM  "vt102"
 #  endif
+#elif defined(__GNU__)
+#  define USE_SYSLOG
+#  ifndef DEFAULT_VCTERM
+#    define DEFAULT_VCTERM "hurd"
+#  endif
+#  ifndef DEFAULT_STERM
+#    define DEFAULT_STERM  "vt102"
+#  endif
 #else
 #  ifndef DEFAULT_VCTERM
 #    define DEFAULT_VCTERM "vt100"
@@ -1039,15 +1047,21 @@ static void reset_vc(const struct options *op, struct termios *tp)
 	tp->c_iflag |=  (BRKINT | ICRNL | IMAXBEL);
 	tp->c_iflag &= ~(IGNBRK | INLCR | IGNCR | IXOFF | IUCLC | IXANY | ISTRIP);
 	tp->c_oflag |=  (OPOST | ONLCR | NL0 | CR0 | TAB0 | BS0 | VT0 | FF0);
-	tp->c_oflag &= ~(OLCUC | OCRNL | ONOCR | ONLRET | OFILL | OFDEL |\
+	tp->c_oflag &= ~(OLCUC | OCRNL | ONOCR | ONLRET | OFILL | \
 			    NLDLY|CRDLY|TABDLY|BSDLY|VTDLY|FFDLY);
 	tp->c_lflag |=  (ISIG | ICANON | IEXTEN | ECHO|ECHOE|ECHOK|ECHOKE);
-	tp->c_lflag &= ~(ECHONL|ECHOCTL|ECHOPRT | NOFLSH | XCASE | TOSTOP);
+	tp->c_lflag &= ~(ECHONL|ECHOCTL|ECHOPRT | NOFLSH | TOSTOP);
 
 	if ((op->flags & F_KEEPCFLAGS) == 0) {
 		tp->c_cflag |=  (CREAD | CS8 | HUPCL);
 		tp->c_cflag &= ~(PARODD | PARENB);
 	}
+#ifdef OFDEL
+	tp->c_oflag &= ~OFDEL;
+#endif
+#ifdef XCASE
+	tp->c_lflag &= ~XCASE;
+#endif
 #ifdef IUTF8
 	if (op->flags & F_UTF8)
 		tp->c_iflag |= IUTF8;	    /* Set UTF-8 input flag */
@@ -1067,7 +1081,7 @@ static void reset_vc(const struct options *op, struct termios *tp)
 	tp->c_cc[VEOF]     = CEOF;
 #ifdef VSWTC
 	tp->c_cc[VSWTC]    = _POSIX_VDISABLE;
-#else
+#elif defined(VSWTCH)
 	tp->c_cc[VSWTCH]   = _POSIX_VDISABLE;
 #endif
 	tp->c_cc[VSTART]   = CSTART;
