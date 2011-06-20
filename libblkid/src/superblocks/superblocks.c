@@ -323,11 +323,12 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		blkid_loff_t off = 0;
 
 		chn->idx = i;
-
-		if (chn->fltr && blkid_bmp_get_item(chn->fltr, i))
-			continue;
-
 		id = idinfos[i];
+
+		if (chn->fltr && blkid_bmp_get_item(chn->fltr, i)) {
+			DBG(DEBUG_LOWPROBE, printf("filter out: %s\n", id->name));
+			continue;
+		}
 
 		if (id->minsz && id->minsz > pr->size)
 			continue;	/* the device is too small */
