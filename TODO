@@ -108,12 +108,6 @@ build-sys
    The configure.ac has to care about dependence between utils and librares and
    enable BUILD_<utilname>.
 
-sysfs
------
-
- - add lib/sysfs.c with functions that read block device attributes from /sys.
-   For more details see devno.c from libblkid, lsblk.c and lomount.c.
-
 procfs
 ------
 
