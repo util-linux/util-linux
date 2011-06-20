@@ -72,6 +72,9 @@ int proc_next_tid(struct proc_tasks *tasks, pid_t *tid)
 	struct dirent *d;
 	char *end;
 
+	if (!tasks || !tid)
+		return -1;
+
 	*tid = 0;
 	errno = 0;
 
