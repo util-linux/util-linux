@@ -23,6 +23,7 @@
 #include <ctype.h>
 
 #include "procutils.h"
+#include "c.h"
 
 /*
  * @pid: process ID for which we want to obtain the threads group

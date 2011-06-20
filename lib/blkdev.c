@@ -210,11 +210,15 @@ blkdev_get_sector_size(int fd, int *sector_size)
  */
 int blkdev_is_misaligned(int fd)
 {
+#ifdef BLKALIGNOFF
 	int aligned;
 
 	if (ioctl(fd, BLKALIGNOFF, &aligned) < 0)
 		return 0;			/* probably kernel < 2.6.32 */
 	return aligned;
+#else
+	return 0;
+#endif
 }
 
 #ifdef TEST_PROGRAM
