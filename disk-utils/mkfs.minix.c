@@ -653,6 +653,7 @@ int main(int argc, char ** argv) {
 		DEV = open(device_name,O_RDWR | O_EXCL);
 	else
 		DEV = open(device_name,O_RDWR);
+
 	if (DEV<0)
 		err(MKFS_ERROR, _("%s: open failed"), device_name);
 	if (S_ISBLK(statbuf.st_mode)) {
@@ -660,6 +661,10 @@ int main(int argc, char ** argv) {
 
 		if (blkdev_get_sector_size(DEV, &sectorsize) == -1)
 			sectorsize = DEFAULT_SECTOR_SIZE;		/* kernel < 2.3.3 */
+
+		if (blkdev_is_misaligned(DEV))
+			warnx(_("%s: device is misaligned"), device_name);
+
 		if (BLOCK_SIZE < sectorsize)
 			errx(MKFS_ERROR, _("block size smaller than physical "
 					"sector size of %s"), device_name);
