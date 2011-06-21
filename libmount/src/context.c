@@ -696,6 +696,8 @@ int mnt_context_get_fstab(struct libmnt_context *cxt, struct libmnt_table **tb)
 		cxt->fstab = mnt_new_table();
 		if (!cxt->fstab)
 			return -ENOMEM;
+		if (cxt->table_errcb)
+			mnt_table_set_parser_errcb(cxt->fstab, cxt->table_errcb);
 		cxt->flags &= ~MNT_FL_EXTERN_FSTAB;
 		rc = mnt_table_parse_fstab(cxt->fstab, NULL);
 		if (rc)
@@ -736,6 +738,8 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 		cxt->mtab = mnt_new_table();
 		if (!cxt->mtab)
 			return -ENOMEM;
+		if (cxt->table_errcb)
+			mnt_table_set_parser_errcb(cxt->fstab, cxt->table_errcb);
 		rc = mnt_table_parse_mtab(cxt->mtab, cxt->mtab_path);
 		if (rc)
 			return rc;
@@ -746,6 +750,30 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 
 	if (tb)
 		*tb = cxt->mtab;
+	return 0;
+}
+
+/**
+ * mnt_context_set_tables_errcb
+ * @cxt: mount context
+ * @cb: pointer to callback function
+ *
+ * The error callback is used for all tab files (e.g. mtab, fstab)
+ * parsed within the context.
+ *
+ * See also mnt_context_get_mtab(),
+ *          mnt_context_get_fstab(),
+ *          mnt_table_set_parser_errcb().
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_set_tables_errcb(struct libmnt_context *cxt,
+	int (*cb)(struct libmnt_table *tb, const char *filename, int line))
+{
+	if (!cxt)
+		return -EINVAL;
+
+	cxt->table_errcb = cb;
 	return 0;
 }
 

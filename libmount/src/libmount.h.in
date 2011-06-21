@@ -412,6 +412,8 @@ extern int mnt_context_set_fstype_pattern(struct libmnt_context *cxt,
 extern int mnt_context_set_options_pattern(struct libmnt_context *cxt,
 				      const char *pattern);
 
+extern int mnt_context_set_tables_errcb(struct libmnt_context *cxt,
+        int (*cb)(struct libmnt_table *tb, const char *filename, int line));
 extern int mnt_context_set_fstab(struct libmnt_context *cxt,
 				 struct libmnt_table *tb);
 extern int mnt_context_get_fstab(struct libmnt_context *cxt,

@@ -61,6 +61,7 @@ global:
 	mnt_context_set_optsmode;
 	mnt_context_set_source;
 	mnt_context_set_syscall_status;
+	mnt_context_set_tables_errcb;
 	mnt_context_set_target;
 	mnt_context_set_user_mflags;
 	mnt_context_strerror;
