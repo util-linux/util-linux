@@ -204,6 +204,31 @@ blkdev_get_sector_size(int fd, int *sector_size)
 #endif
 }
 
+/*
+ * Get physical block device size. The BLKPBSZGET is supported since Linux
+ * 2.6.32. For old kernels is probably the best to assume that physical sector
+ * size is the same as logical sector size.
+ *
+ * Example:
+ *
+ * rc = blkdev_get_physector_size(fd, &physec);
+ * if (rc || physec == 0) {
+ *	rc = blkdev_get_sector_size(fd, &physec);
+ *	if (rc)
+ *		physec = DEFAULT_SECTOR_SIZE;
+ * }
+ */
+int blkdev_get_physector_size(int fd, int *sector_size)
+{
+#ifdef BLKPBSZGET
+	if (ioctl(fd, BLKPBSZGET, &sector_size) >= 0)
+		return 0;
+	return -1;
+#else
+	*sector_size = DEFAULT_SECTOR_SIZE;
+	return 0;
+#endif
+}
 
 /*
  * Return the alignment status of a device
@@ -221,6 +246,7 @@ int blkdev_is_misaligned(int fd)
 #endif
 }
 
+
 #ifdef TEST_PROGRAM
 #include <stdio.h>
 #include <stdlib.h>
@@ -230,7 +256,7 @@ main(int argc, char **argv)
 {
 	unsigned long long bytes;
 	unsigned long long sectors;
-	int sector_size;
+	int sector_size, phy_sector_size;
 	int fd;
 
 	if (argc != 2) {
@@ -247,10 +273,13 @@ main(int argc, char **argv)
 		err(EXIT_FAILURE, "blkdev_get_sectors() failed");
 	if (blkdev_get_sector_size(fd, &sector_size) < 0)
 		err(EXIT_FAILURE, "blkdev_get_sector_size() failed");
+	if (blkdev_get_physector_size(fd, &phy_sector_size) < 0)
+		err(EXIT_FAILURE, "blkdev_get_physector_size() failed");
 
-	printf("bytes %llu\n", bytes);
-	printf("sectors %llu\n", sectors);
-	printf("sectorsize %d\n", sector_size);
+	printf("          bytes: %llu\n", bytes);
+	printf("        sectors: %llu\n", sectors);
+	printf("    sector size: %d\n", sector_size);
+	printf("phy-sector size: %d\n", phy_sector_size);
 
 	return EXIT_SUCCESS;
 }
