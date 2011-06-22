@@ -420,6 +420,9 @@ extern int mnt_context_get_fstab(struct libmnt_context *cxt,
 				 struct libmnt_table **tb);
 extern int mnt_context_get_mtab(struct libmnt_context *cxt,
 				struct libmnt_table **tb);
+extern int mnt_context_get_table(struct libmnt_context *cxt,
+				const char *filename,
+				struct libmnt_table **tb);
 extern int mnt_context_set_cache(struct libmnt_context *cxt,
 				 struct libmnt_cache *cache);
 extern struct libmnt_cache *mnt_context_get_cache(struct libmnt_context *cxt);

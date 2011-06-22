@@ -738,8 +738,10 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 		cxt->mtab = mnt_new_table();
 		if (!cxt->mtab)
 			return -ENOMEM;
+
 		if (cxt->table_errcb)
-			mnt_table_set_parser_errcb(cxt->fstab, cxt->table_errcb);
+			mnt_table_set_parser_errcb(cxt->mtab, cxt->table_errcb);
+
 		rc = mnt_table_parse_mtab(cxt->mtab, cxt->mtab_path);
 		if (rc)
 			return rc;
@@ -750,6 +752,54 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 
 	if (tb)
 		*tb = cxt->mtab;
+	return 0;
+}
+
+/**
+ * mnt_context_get_table:
+ * @cxt: mount context
+ * @file: filename (e.g. /proc/self/mountinfo, ...)
+ * @tb: returns the table
+ *
+ * This function allocates a new table and parses the @file. The parser error
+ * callback and cache for tags and paths is set according to the @cxt setting.
+ * See also mnt_table_parse_file().
+ *
+ * It's strongly recommended use mnt_context_get_mtab() and
+ * mnt_context_get_fstab() functions for mtab and fstab files. This function
+ * does not care about LIBMOUNT_* env.variables and does not merge userspace
+ * options.
+ *
+ * The result will NOT be deallocated by mnt_free_context(@cxt).
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_get_table(struct libmnt_context *cxt,
+			  const char *filename, struct libmnt_table **tb)
+{
+	struct libmnt_cache *cache;
+	int rc;
+
+	if (!cxt || !tb)
+		return -EINVAL;
+
+	*tb = mnt_new_table();
+	if (!*tb)
+		return -ENOMEM;
+
+	if (cxt->table_errcb)
+		mnt_table_set_parser_errcb(*tb, cxt->table_errcb);
+
+	rc = mnt_table_parse_file(*tb, filename);
+	if (rc) {
+		mnt_free_table(*tb);
+		return rc;
+	}
+
+	cache = mnt_context_get_cache(cxt);
+	if (cache)
+		mnt_table_set_cache(*tb, cache);
+
 	return 0;
 }
 
