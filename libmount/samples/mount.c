@@ -98,23 +98,19 @@ static const char *opt_to_longopt(int c, const struct option *opts)
 	return NULL;
 }
 
-static int print_all(struct libmnt_context *cxt, char *pattern, int show_label)
+static void print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 {
-	int rc = 0;
 	struct libmnt_table *tb;
 	struct libmnt_iter *itr = NULL;
 	struct libmnt_fs *fs;
 	struct libmnt_cache *cache = NULL;
 
-	rc = mnt_context_get_mtab(cxt, &tb);
-	if (rc)
-		goto done;
+	if (mnt_context_get_mtab(cxt, &tb))
+		err(EX_SYSERR, _("failed to read mtab"));
 
 	itr = mnt_new_iter(MNT_ITER_FORWARD);
-	if (!itr) {
-		warn(_("failed to initialize libmount iterator"));
-		goto done;
-	}
+	if (!itr)
+		err(EX_SYSERR, _("failed to initialize libmount iterator"));
 	if (show_label)
 		cache = mnt_new_cache();
 
@@ -140,10 +136,9 @@ static int print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 		}
 		fputc('\n', stdout);
 	}
-done:
+
 	mnt_free_cache(cache);
 	mnt_free_iter(itr);
-	return rc;
 }
 
 /*
@@ -251,7 +246,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char **argv)
 {
-	int c, rc = EXIT_FAILURE, all = 0, forkme = 0, show_labels = 0;
+	int c, rc = EX_SUCCESS, all = 0, forkme = 0, show_labels = 0;
 	struct libmnt_context *cxt;
 	char *source = NULL, *srcbuf = NULL;
 	char *types = NULL;
@@ -416,8 +411,7 @@ int main(int argc, char **argv)
 	if (!source && !argc && !all) {
 		if (oper)
 			usage(stderr);
-		if (!print_all(cxt, types, show_labels))
-			rc = EX_SUCCESS;
+		print_all(cxt, types, show_labels);
 		goto done;
 	}
 
@@ -435,8 +429,7 @@ int main(int argc, char **argv)
 		 * A) Mount all
 		 */
 		rc = mount_all(cxt, forkme);
-		mnt_free_context(cxt);
-		return rc;
+		goto done;
 
 	} else if (argc == 0 && source) {
 		/*
@@ -471,8 +464,6 @@ int main(int argc, char **argv)
 		mnt_context_set_mflags(cxt, oper);
 
 	rc = mnt_context_mount(cxt);
-	rc = rc ? EX_FAIL : EX_SUCCESS;
-
 	if (rc) {
 		/* TODO: call mnt_context_strerror() */
 		rc = EX_FAIL;
