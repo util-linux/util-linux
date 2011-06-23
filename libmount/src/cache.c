@@ -228,6 +228,27 @@ static const char *cache_find_tag(struct libmnt_cache *cache,
 	return NULL;
 }
 
+static char *cache_find_tag_value(struct libmnt_cache *cache,
+			const char *devname, const char *token)
+{
+	int i;
+
+	assert(cache);
+	assert(devname);
+	assert(token);
+
+	for (i = 0; i < cache->nents; i++) {
+		struct mnt_cache_entry *e = &cache->ents[i];
+		if (!(e->flag & MNT_CACHE_ISTAG))
+			continue;
+		if (strcmp(e->value, devname) == 0 &&	/* dev name */
+		    strcmp(token, e->key) == 0)	/* tag name */
+			return e->key + strlen(token) + 1;	/* tag value */
+	}
+
+	return NULL;
+}
+
 /*
  * returns (in @res) blkid prober, the @cache argument is optional
  */
@@ -316,11 +337,13 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 		const char *data;
 		char *dev;
 
+		if (cache_find_tag_value(cache, devname, tags[i])) {
+			DBG(CACHE, mnt_debug_h(cache,
+					"\ntag %s already cached", tags[i]));
+			continue;
+		}
 		if (blkid_probe_lookup_value(cache->pr, tags[i], &data, NULL))
 			continue;
-		if (cache_find_tag(cache, tags[i], data))
-			continue; /* already cached */
-
 		dev = strdup(devname);
 		if (!dev)
 			goto error;
@@ -370,24 +393,13 @@ int mnt_cache_device_has_tag(struct libmnt_cache *cache, const char *devname,
 char *mnt_cache_find_tag_value(struct libmnt_cache *cache,
 		const char *devname, const char *token)
 {
-	int i;
-
 	if (!cache || !devname || !token)
 		return NULL;
 
 	if (mnt_cache_read_tags(cache, devname) != 0)
 		return NULL;
 
-	for (i = 0; i < cache->nents; i++) {
-		struct mnt_cache_entry *e = &cache->ents[i];
-		if (!(e->flag & MNT_CACHE_ISTAG))
-			continue;
-		if (strcmp(e->value, devname) == 0 &&	/* dev name */
-		    strcmp(token, e->key) == 0)	/* tag name */
-			return e->key + strlen(token) + 1;	/* tag value */
-	}
-
-	return NULL;
+	return cache_find_tag_value(cache, devname, token);
 }
 
 /**
