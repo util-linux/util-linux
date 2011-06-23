@@ -27,6 +27,7 @@
 
 #include "canonicalize.h"
 #include "mountP.h"
+#include "loopdev.h"
 
 /*
  * Canonicalized (resolved) paths & tags cache
@@ -447,6 +448,10 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
  * @path: "native" path
  * @cache: cache for results or NULL
  *
+ * Converts path:
+ *	- to the absolute path
+ *	- /dev/dm-N to /dev/mapper/<name>
+ *
  * Returns: absolute path or NULL in case of error. The result has to be
  * deallocated by free() if @cache is NULL.
  */
@@ -487,6 +492,52 @@ error:
 		free(value);
 	free(key);
 	return NULL;
+}
+
+/**
+ * mnt_pretty_path:
+ * @path: any path
+ * @cache: NULL or pointer to the cache
+ *
+ * Converts path:
+ *	- to the absolute path
+ *	- /dev/dm-N to /dev/mapper/<name>
+ *	- /dev/loopN to the loop backing filename
+ *	- empty path (NULL) to 'none'
+ *
+ * Returns: new allocated string with path, result has to be always deallocated
+ *          by free().
+ */
+char *mnt_pretty_path(const char *path, struct libmnt_cache *cache)
+{
+	char *pretty = mnt_resolve_path(path, cache);
+
+	if (!pretty)
+		return strdup("none");
+
+	/* users assume backing file name rather than /dev/loopN in
+	 * output if the device has been initialized by mount(8).
+	 */
+	if (strncmp(pretty, "/dev/loop", 9) == 0) {
+		struct loopdev_cxt lc;
+
+		loopcxt_init(&lc, 0);
+		loopcxt_set_device(&lc, pretty);
+
+		if (loopcxt_is_autoclear(&lc)) {
+			char *tmp = loopcxt_get_backing_file(&lc);
+			if (tmp) {
+				if (!cache)
+					free(pretty);	/* not cached, deallocate */
+				return tmp;		/* return backing file */
+			}
+		}
+		loopcxt_deinit(&lc);
+
+	}
+
+	/* don't return pointer to the cache, allocate a new string */
+	return cache ? strdup(pretty) : pretty;
 }
 
 /**

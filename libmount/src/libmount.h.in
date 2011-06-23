@@ -148,6 +148,8 @@ extern char *mnt_resolve_tag(const char *token, const char *value,
 			     struct libmnt_cache *cache);
 extern char *mnt_resolve_spec(const char *spec, struct libmnt_cache *cache);
 
+extern char *mnt_pretty_path(const char *path, struct libmnt_cache *cache);
+
 /* optstr.c */
 extern int mnt_optstr_next_option(char **optstr, char **name, size_t *namesz,
 				char **value, size_t *valuesz);

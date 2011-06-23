@@ -118,13 +118,13 @@ static void print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 		const char *type = mnt_fs_get_fstype(fs);
 		const char *src = mnt_fs_get_source(fs);
 		const char *optstr = mnt_fs_get_options(fs);
+		char *xsrc;
 
 		if (type && pattern && !mnt_match_fstype(type, pattern))
 			continue;
 
-		/* TODO: print loop backing file instead of device name */
-
-		printf ("%s on %s", src ? : "none", mnt_fs_get_target(fs));
+		xsrc = mnt_pretty_path(src, cache);
+		printf ("%s on %s", xsrc, mnt_fs_get_target(fs));
 		if (type)
 			printf (" type %s", type);
 		if (optstr)
@@ -135,6 +135,7 @@ static void print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 				printf (" [%s]", lb);
 		}
 		fputc('\n', stdout);
+		free(xsrc);
 	}
 
 	mnt_free_cache(cache);
