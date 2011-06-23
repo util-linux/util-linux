@@ -155,7 +155,7 @@ extern int mnt_optstr_append_option(char **optstr, const char *name,
 				const char *value);
 extern int mnt_optstr_prepend_option(char **optstr, const char *name,
 				const char *value);
-extern int mnt_optstr_get_option(char *optstr, const char *name,
+extern int mnt_optstr_get_option(const char *optstr, const char *name,
 				char **value, size_t *valsz);
 extern int mnt_optstr_set_option(char **optstr, const char *name,
 				const char *value);
@@ -395,6 +395,9 @@ extern int mnt_context_is_nomtab(struct libmnt_context *cxt);
 extern int mnt_context_is_force(struct libmnt_context *cxt);
 extern int mnt_context_is_verbose(struct libmnt_context *cxt);
 
+extern int mnt_context_is_fs_mounted(struct libmnt_context *cxt,
+                              struct libmnt_fs *fs, int *mounted);
+
 extern int mnt_context_set_fs(struct libmnt_context *cxt, struct libmnt_fs *fs);
 extern struct libmnt_fs *mnt_context_get_fs(struct libmnt_context *cxt);
 extern int mnt_context_set_source(struct libmnt_context *cxt, const char *source);
@@ -445,6 +448,9 @@ extern int mnt_context_strerror(struct libmnt_context *cxt, char *buf,
 
 extern int mnt_context_mount(struct libmnt_context *cxt);
 extern int mnt_context_umount(struct libmnt_context *cxt);
+extern int mnt_context_next_mount(struct libmnt_context *cxt,
+			   struct libmnt_iter *itr, struct libmnt_fs **fs,
+			   int *mntrc, int *ignored);
 
 extern int mnt_context_prepare_mount(struct libmnt_context *cxt);
 extern int mnt_context_do_mount(struct libmnt_context *cxt);

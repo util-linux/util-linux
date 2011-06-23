@@ -34,12 +34,14 @@ global:
 	mnt_context_get_optsmode;
 	mnt_context_get_source;
 	mnt_context_get_status;
+	mnt_context_get_table;
 	mnt_context_get_target;
 	mnt_context_get_user_mflags;
 	mnt_context_helper_setopt;
 	mnt_context_init_helper;
 	mnt_context_is_fake;
 	mnt_context_is_force;
+	mnt_context_is_fs_mounted;
 	mnt_context_is_lazy;
 	mnt_context_is_nomtab;
 	mnt_context_is_rdonly_umount;
@@ -47,6 +49,7 @@ global:
 	mnt_context_is_sloppy;
 	mnt_context_is_verbose;
 	mnt_context_mount;
+	mnt_context_next_mount;
 	mnt_context_prepare_mount;
 	mnt_context_prepare_umount;
 	mnt_context_set_cache;
@@ -61,19 +64,20 @@ global:
 	mnt_context_set_optsmode;
 	mnt_context_set_source;
 	mnt_context_set_syscall_status;
-	mnt_context_get_table;
 	mnt_context_set_tables_errcb;
 	mnt_context_set_target;
 	mnt_context_set_user_mflags;
 	mnt_context_strerror;
 	mnt_context_umount;
 	mnt_copy_fs;
+	mnt_diff_tables;
 	mnt_free_cache;
 	mnt_free_context;
 	mnt_free_fs;
 	mnt_free_iter;
 	mnt_free_lock;
 	mnt_free_mntent;
+	mnt_free_tabdiff;
 	mnt_free_table;
 	mnt_free_update;
 	mnt_fs_append_attributes;
@@ -138,6 +142,7 @@ global:
 	mnt_new_fs;
 	mnt_new_iter;
 	mnt_new_lock;
+	mnt_new_tabdiff;
 	mnt_new_table;
 	mnt_new_table_from_dir;
 	mnt_new_table_from_file;
@@ -160,6 +165,7 @@ global:
 	mnt_resolve_spec;
 	mnt_resolve_tag;
 	mnt_split_optstr;
+	mnt_tabdiff_next_change;
 	mnt_table_add_fs;
 	mnt_table_find_next_fs;
 	mnt_table_find_pair;
@@ -171,6 +177,7 @@ global:
 	mnt_table_get_name;
 	mnt_table_get_nents;
 	mnt_table_get_root_fs;
+	mnt_table_is_fs_mounted;
 	mnt_table_next_child_fs;
 	mnt_table_next_fs;
 	mnt_table_parse_file;
@@ -190,11 +197,6 @@ global:
 	mnt_update_is_ready;
 	mnt_update_set_fs;
 	mnt_update_table;
-	mnt_new_tabdiff;
-	mnt_free_tabdiff;
-	mnt_diff_tables;
-	mnt_tabdiff_next_change;
-	mnt_table_is_fs_mounted;
 local:
 	*;
 };

@@ -66,7 +66,7 @@ struct libmnt_context *mnt_new_context(void)
 	/* if we're really root and aren't running setuid */
 	cxt->restricted = (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
 
-	DBG(CXT, mnt_debug_h(cxt, "allocate %s",
+	DBG(CXT, mnt_debug_h(cxt, "----> allocate %s",
 				cxt->restricted ? "[RESTRICTED]" : ""));
 
 	mnt_has_regular_mtab(&cxt->mtab_path, &cxt->mtab_writable);
@@ -103,7 +103,7 @@ void mnt_free_context(struct libmnt_context *cxt)
 	mnt_free_lock(cxt->lock);
 	mnt_free_update(cxt->update);
 
-	DBG(CXT, mnt_debug_h(cxt, "free"));
+	DBG(CXT, mnt_debug_h(cxt, "<---- free"));
 	free(cxt);
 }
 
@@ -134,10 +134,8 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	if (!cxt)
 		return -EINVAL;
 
-	DBG(CXT, mnt_debug_h(cxt,
-		"reset [status=%d %s]",
-		mnt_context_get_status(cxt),
-		mnt_context_get_status(cxt) == 0 ? "FAILED" : "SUCCESS"));
+	DBG(CXT, mnt_debug_h(cxt, "<---- reset [status=%d] ---->",
+				mnt_context_get_status(cxt)));
 
 	fl = cxt->flags;
 
@@ -165,7 +163,16 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	/* restore non-resetable flags */
 	cxt->flags |= (fl & MNT_FL_EXTERN_FSTAB);
 	cxt->flags |= (fl & MNT_FL_EXTERN_CACHE);
-
+	cxt->flags |= (fl & MNT_FL_NOMTAB);
+	cxt->flags |= (fl & MNT_FL_FAKE);
+	cxt->flags |= (fl & MNT_FL_SLOPPY);
+	cxt->flags |= (fl & MNT_FL_VERBOSE);
+	cxt->flags |= (fl & MNT_FL_NOHELPERS);
+	cxt->flags |= (fl & MNT_FL_LOOPDEL);
+	cxt->flags |= (fl & MNT_FL_LAZY);
+	cxt->flags |= (fl & MNT_FL_FORCE);
+	cxt->flags |= (fl & MNT_FL_NOCANONICALIZE);
+	cxt->flags |= (fl & MNT_FL_RDONLY_UMOUNT);
 	return 0;
 }
 
@@ -1556,7 +1563,7 @@ int mnt_context_get_status(struct libmnt_context *cxt)
 /**
  * mnt_context_set_syscall_status:
  * @cxt: mount context
- * @status: mount(2) return code
+ * @status: mount(2) status
  *
  * The @status should be 0 on succcess, or negative number on error (-1 or
  * -errno).
@@ -1643,6 +1650,30 @@ int mnt_context_helper_setopt(struct libmnt_context *cxt, int c, char *arg)
 		}
 	}
 	return -EINVAL;
+}
+
+/**
+ * @cxt: context
+ * @fs; filesystem
+ * @mounted: returns 1 for mounted and 0 for non-mounted filesystems
+ *
+ * Returns: 0 on success and negative number in case of error.
+ */
+int mnt_context_is_fs_mounted(struct libmnt_context *cxt,
+			      struct libmnt_fs *fs, int *mounted)
+{
+	struct libmnt_table *mtab;
+	int rc;
+
+	if (!cxt || !fs || !mounted)
+		return -EINVAL;
+
+	rc = mnt_context_get_mtab(cxt, &mtab);
+	if (rc)
+		return rc;
+
+	*mounted = mnt_table_is_fs_mounted(mtab, fs);
+	return 0;
 }
 
 #ifdef TEST_PROGRAM
@@ -1796,14 +1827,61 @@ int test_flags(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
+int test_mountall(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_context *cxt;
+	struct libmnt_iter *itr;
+	struct libmnt_fs *fs;
+	int mntrc, ignored, idx = 1;
+
+	cxt = mnt_new_context();
+	itr = mnt_new_iter(MNT_ITER_FORWARD);
+
+	if (!cxt || !itr)
+		return -ENOMEM;
+
+	if (argc > 2) {
+		if (!strcmp(argv[idx], "-O")) {
+			mnt_context_set_options_pattern(cxt, argv[idx + 1]);
+			idx += 2;
+		}
+		if (!strcmp(argv[idx], "-t")) {
+			mnt_context_set_fstype_pattern(cxt, argv[idx + 1]);
+			idx += 2;
+		}
+	}
+
+	while (mnt_context_next_mount(cxt, itr, &fs, &mntrc, &ignored) == 0) {
+
+		const char *tgt = mnt_fs_get_target(fs);
+
+		if (ignored == 1)
+			printf("%s: ignored: not match\n", tgt);
+		else if (ignored == 2)
+			printf("%s: ignored: already mounted\n", tgt);
+
+		else if (!mnt_context_get_status(cxt)) {
+			if (mntrc > 0) {
+				errno = mntrc;
+				warn("%s: mount failed", tgt);
+			} else
+				warnx("%s: mount failed", tgt);
+		} else
+			printf("%s: successfully mounted\n", tgt);
+	}
+
+	mnt_free_context(cxt);
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
 	{ "--mount",  test_mount,  "[-o <opts>] [-t <type>] <spec>|<src> <target>" },
 	{ "--umount", test_umount, "[-t <type>] [-f][-l][-r] <src>|<target>" },
+	{ "--mount-all", test_mountall,  "[-O <pattern>] [-t <pattern] mount all filesystems from fstab" },
 	{ "--flags", test_flags,   "[-o <opts>] <spec>" },
 	{ NULL }};
-
 
 	umask(S_IWGRP|S_IWOTH);	/* to be compatible with mount(8) */
 

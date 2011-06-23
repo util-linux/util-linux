@@ -273,15 +273,15 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
  * Returns: 0 on success, 1 when not found the @name or negative number in case
  * of error.
  */
-int mnt_optstr_get_option(char *optstr, const char *name,
-				char **value, size_t *valsz)
+int mnt_optstr_get_option(const char *optstr, const char *name,
+			  char **value, size_t *valsz)
 {
 	struct libmnt_optloc ol;
 	int rc;
 
 	mnt_init_optloc(&ol);
 
-	rc = mnt_optstr_locate_option(optstr, name, &ol);
+	rc = mnt_optstr_locate_option((char *) optstr, name, &ol);
 	if (!rc) {
 		if (value)
 			*value = ol.value;

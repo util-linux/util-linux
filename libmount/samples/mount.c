@@ -49,14 +49,6 @@
 #define EX_FAIL	       32	/* mount failure */
 #define EX_SOMEOK      64	/* some mount succeeded */
 
-static struct libmnt_lock *lock;
-
-static void lock_atexit_cleanup(void)
-{
-	if (lock)
-		mnt_unlock_file(lock);
-}
-
 static void __attribute__((__noreturn__)) exit_non_root(const char *option)
 {
 	const uid_t ruid = getuid();
@@ -87,6 +79,15 @@ static void __attribute__((__noreturn__)) print_version(void)
 	exit(EX_SUCCESS);
 }
 
+static int table_parser_errcb(struct libmnt_table *tb,
+			const char *filename, int line)
+{
+	if (filename)
+		warnx(_("%s: parse error: ignore entry at line %d."),
+							filename, line);
+	return 0;
+}
+
 static const char *opt_to_longopt(int c, const struct option *opts)
 {
 	const struct option *o;
@@ -110,13 +111,14 @@ static int print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 		goto done;
 
 	itr = mnt_new_iter(MNT_ITER_FORWARD);
-	if (!itr)
+	if (!itr) {
+		warn(_("failed to initialize libmount iterator"));
 		goto done;
-
+	}
 	if (show_label)
 		cache = mnt_new_cache();
 
-	while(mnt_table_next_fs(tb, itr, &fs) == 0) {
+	while (mnt_table_next_fs(tb, itr, &fs) == 0) {
 		const char *type = mnt_fs_get_fstype(fs);
 		const char *src = mnt_fs_get_source(fs);
 		const char *optstr = mnt_fs_get_options(fs);
@@ -144,10 +146,51 @@ done:
 	return rc;
 }
 
-static int mount_all(struct libmnt_context *cxt)
+/*
+ * mount -a [-F]
+ * ... -F is not supported yet (TODO)
+ */
+static int mount_all(struct libmnt_context *cxt,
+		     int forkme __attribute__((unused)))
 {
-	warnx(_("mount -a is not implemented yet"));
-	return EXIT_FAILURE;
+	struct libmnt_iter *itr;
+	struct libmnt_fs *fs;
+	int mntrc, ignored, rc = EX_SUCCESS;
+
+	itr = mnt_new_iter(MNT_ITER_FORWARD);
+	if (!itr) {
+		warn(_("failed to initialize libmount iterator"));
+		return EX_SYSERR;
+	}
+
+	while (mnt_context_next_mount(cxt, itr, &fs, &mntrc, &ignored) == 0) {
+
+		const char *tgt = mnt_fs_get_target(fs);
+
+		if (ignored) {
+			if (mnt_context_is_verbose(cxt))
+				printf(ignored == 1 ? _("%-20s: ignored\n") :
+						      _("%-20s: already mounted\n"),
+						tgt);
+		} else if (!mnt_context_get_status(cxt)) {
+			if (mntrc > 0) {
+				errno = mntrc;
+				printf(_("%-20s: failed: %s\n"), tgt,
+						strerror(mntrc));
+				rc |= EX_FAIL;
+			} else {
+				printf(_("%-20s: failed\n"), tgt);
+				rc |= EX_SYSERR;
+			}
+		} else {
+			if (mnt_context_is_verbose(cxt))
+				printf("%-20s: successfully mounted\n", tgt);
+
+			rc |= EX_SOMEOK;
+		}
+	}
+
+	return rc;
 }
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
@@ -208,7 +251,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char **argv)
 {
-	int c, rc = EXIT_FAILURE, all = 0, show_labels = 0;
+	int c, rc = EXIT_FAILURE, all = 0, forkme = 0, show_labels = 0;
 	struct libmnt_context *cxt;
 	char *source = NULL, *srcbuf = NULL;
 	char *types = NULL;
@@ -257,6 +300,8 @@ int main(int argc, char **argv)
 	if (!cxt)
 		err(EX_SYSERR, _("libmount context allocation failed"));
 
+	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
+
 	while ((c = getopt_long(argc, argv, "aBcfFhilL:Mno:O:rRsU:vVwt:",
 					longopts, NULL)) != -1) {
 
@@ -275,7 +320,7 @@ int main(int argc, char **argv)
 			mnt_context_enable_fake(cxt, TRUE);
 			break;
 		case 'F':
-			err(EX_FAIL, "-F not implemented yet");	/* TODO */
+			forkme = 1;
 			break;
 		case 'h':
 			usage(stdout);
@@ -379,7 +424,8 @@ int main(int argc, char **argv)
 	if (oper && (types || all || source))
 		usage(stderr);
 
-	if (types && (strchr(types, ',') || strncmp(types, "no", 2) == 0))
+	if (types && (all || strchr(types, ',') ||
+			     strncmp(types, "no", 2) == 0))
 		mnt_context_set_fstype_pattern(cxt, types);
 	else if (types)
 		mnt_context_set_fstype(cxt, types);
@@ -388,7 +434,7 @@ int main(int argc, char **argv)
 		/*
 		 * A) Mount all
 		 */
-		rc = mount_all(cxt);
+		rc = mount_all(cxt, forkme);
 		mnt_free_context(cxt);
 		return rc;
 
@@ -424,11 +470,9 @@ int main(int argc, char **argv)
 	if (oper)
 		mnt_context_set_mflags(cxt, oper);
 
-	lock = mnt_context_get_lock(cxt);
-	if (lock)
-		atexit(lock_atexit_cleanup);
-
 	rc = mnt_context_mount(cxt);
+	rc = rc ? EX_FAIL : EX_SUCCESS;
+
 	if (rc) {
 		/* TODO: call mnt_context_strerror() */
 		rc = EX_FAIL;
