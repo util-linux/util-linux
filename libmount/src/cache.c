@@ -108,7 +108,7 @@ void mnt_free_cache(struct libmnt_cache *cache)
 }
 
 /* note that the @key could be tha same pointer as @value */
-static int mnt_cache_add_entry(struct libmnt_cache *cache, char *key,
+static int cache_add_entry(struct libmnt_cache *cache, char *key,
 					char *value, int flag)
 {
 	struct mnt_cache_entry *e;
@@ -141,7 +141,7 @@ static int mnt_cache_add_entry(struct libmnt_cache *cache, char *key,
 }
 
 /* add tag to the cache, @devname has to be allocated string */
-static int mnt_cache_add_tag(struct libmnt_cache *cache, const char *tagname,
+static int cache_add_tag(struct libmnt_cache *cache, const char *tagname,
 				const char *tagval, char *devname, int flag)
 {
 	size_t tksz, vlsz;
@@ -167,7 +167,7 @@ static int mnt_cache_add_tag(struct libmnt_cache *cache, const char *tagname,
 	memcpy(key, tagname, tksz + 1);	   /* include '\0' */
 	memcpy(key + tksz + 1, tagval, vlsz + 1);
 
-	rc = mnt_cache_add_entry(cache, key, devname, flag | MNT_CACHE_ISTAG);
+	rc = cache_add_entry(cache, key, devname, flag | MNT_CACHE_ISTAG);
 	if (!rc)
 		return 0;
 
@@ -179,7 +179,7 @@ static int mnt_cache_add_tag(struct libmnt_cache *cache, const char *tagname,
 /*
  * Returns cached canonicalized path or NULL.
  */
-static const char *mnt_cache_find_path(struct libmnt_cache *cache, const char *path)
+static const char *cache_find_path(struct libmnt_cache *cache, const char *path)
 {
 	int i;
 
@@ -202,7 +202,7 @@ static const char *mnt_cache_find_path(struct libmnt_cache *cache, const char *p
 /*
  * Returns cached path or NULL.
  */
-static const char *mnt_cache_find_tag(struct libmnt_cache *cache,
+static const char *cache_find_tag(struct libmnt_cache *cache,
 			const char *token, const char *value)
 {
 	int i;
@@ -231,7 +231,7 @@ static const char *mnt_cache_find_tag(struct libmnt_cache *cache,
 /*
  * returns (in @res) blkid prober, the @cache argument is optional
  */
-static int mnt_cache_get_probe(struct libmnt_cache *cache, const char *devname,
+static int cache_get_probe(struct libmnt_cache *cache, const char *devname,
 			   blkid_probe *res)
 {
 	blkid_probe pr = cache ? cache->pr : NULL;
@@ -297,7 +297,7 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 			return 0;
 	}
 
-	rc = mnt_cache_get_probe(cache, devname, NULL);
+	rc = cache_get_probe(cache, devname, NULL);
 	if (rc)
 		return rc;
 
@@ -318,13 +318,13 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 
 		if (blkid_probe_lookup_value(cache->pr, tags[i], &data, NULL))
 			continue;
-		if (mnt_cache_find_tag(cache, tags[i], data))
+		if (cache_find_tag(cache, tags[i], data))
 			continue; /* already cached */
 
 		dev = strdup(devname);
 		if (!dev)
 			goto error;
-		if (mnt_cache_add_tag(cache, tags[i], data, dev,
+		if (cache_add_tag(cache, tags[i], data, dev,
 					MNT_CACHE_TAGREAD)) {
 			free(dev);
 			goto error;
@@ -352,7 +352,7 @@ error:
 int mnt_cache_device_has_tag(struct libmnt_cache *cache, const char *devname,
 				const char *token, const char *value)
 {
-	const char *path = mnt_cache_find_tag(cache, token, value);
+	const char *path = cache_find_tag(cache, token, value);
 
 	if (path && strcmp(path, devname) == 0)
 		return 1;
@@ -411,7 +411,7 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 	if (cache)
 		return mnt_cache_find_tag_value(cache, devname, "TYPE");
 
-	if (mnt_cache_get_probe(NULL, devname, &pr))
+	if (cache_get_probe(NULL, devname, &pr))
 		return NULL;
 
 	blkid_probe_enable_superblocks(pr, 1);
@@ -451,7 +451,7 @@ char *mnt_resolve_path(const char *path, struct libmnt_cache *cache)
 	if (!path)
 		return NULL;
 	if (cache)
-		p = (char *) mnt_cache_find_path(cache, path);
+		p = (char *) cache_find_path(cache, path);
 
 	if (!p) {
 		p = canonicalize_path(path);
@@ -463,7 +463,7 @@ char *mnt_resolve_path(const char *path, struct libmnt_cache *cache)
 			if (!key || !value)
 				goto error;
 
-			if (mnt_cache_add_entry(cache, key, value,
+			if (cache_add_entry(cache, key, value,
 							MNT_CACHE_ISPATH))
 				goto error;
 		}
@@ -501,14 +501,14 @@ char *mnt_resolve_tag(const char *token, const char *value,
 		return NULL;
 
 	if (cache)
-		p = (char *) mnt_cache_find_tag(cache, token, value);
+		p = (char *) cache_find_tag(cache, token, value);
 
 	if (!p) {
 		/* returns newly allocated string */
 		p = blkid_evaluate_tag(token, value, cache ? &cache->bc : NULL);
 
 		if (p && cache &&
-		    mnt_cache_add_tag(cache, token, value, p, 0))
+		    cache_add_tag(cache, token, value, p, 0))
 				goto error;
 	}
 
@@ -627,7 +627,7 @@ int test_read_tags(struct libmnt_test *ts, int argc, char *argv[])
 			const char *cn = NULL;
 
 			if (!blkid_parse_tag_string(line, &tag, &val)) {
-				cn = mnt_cache_find_tag(cache, tag, val);
+				cn = cache_find_tag(cache, tag, val);
 
 				free(tag);
 				free(val);
