@@ -39,8 +39,8 @@
 
 /* path cache entry */
 struct mnt_cache_entry {
-	char			*native;	/* the original path */
-	char			*real;		/* canonicalized path */
+	char			*key;	/* search key (e.g. uncanonicalized path) */
+	char			*value;	/* value (e.g. canonicalized path) */
 	int			flag;
 };
 
@@ -95,9 +95,9 @@ void mnt_free_cache(struct libmnt_cache *cache)
 
 	for (i = 0; i < cache->nents; i++) {
 		struct mnt_cache_entry *e = &cache->ents[i];
-		if (e->real != e->native)
-			free(e->real);
-		free(e->native);
+		if (e->value != e->key)
+			free(e->value);
+		free(e->key);
 	}
 	free(cache->ents);
 	free(cache->filename);
@@ -107,15 +107,15 @@ void mnt_free_cache(struct libmnt_cache *cache)
 	free(cache);
 }
 
-/* note that the @native could be tha same pointer as @real */
-static int mnt_cache_add_entry(struct libmnt_cache *cache, char *native,
-					char *real, int flag)
+/* note that the @key could be tha same pointer as @value */
+static int mnt_cache_add_entry(struct libmnt_cache *cache, char *key,
+					char *value, int flag)
 {
 	struct mnt_cache_entry *e;
 
 	assert(cache);
-	assert(real);
-	assert(native);
+	assert(value);
+	assert(key);
 
 	if (cache->nents == cache->nallocs) {
 		size_t sz = cache->nallocs + MNT_CACHE_CHUNKSZ;
@@ -128,50 +128,50 @@ static int mnt_cache_add_entry(struct libmnt_cache *cache, char *native,
 	}
 
 	e = &cache->ents[cache->nents];
-	e->native = native;
-	e->real = real;
+	e->key = key;
+	e->value = value;
 	e->flag = flag;
 	cache->nents++;
 
 	DBG(CACHE, mnt_debug_h(cache, "add entry [%2zd] (%s): %s: %s",
 			cache->nents,
 			(flag & MNT_CACHE_ISPATH) ? "path" : "tag",
-			real, native));
+			value, key));
 	return 0;
 }
 
-/* add tag to the cache, @real has to be allocated string */
-static int mnt_cache_add_tag(struct libmnt_cache *cache, const char *token,
-				const char *value, char *real, int flag)
+/* add tag to the cache, @devname has to be allocated string */
+static int mnt_cache_add_tag(struct libmnt_cache *cache, const char *tagname,
+				const char *tagval, char *devname, int flag)
 {
 	size_t tksz, vlsz;
-	char *native;
+	char *key;
 	int rc;
 
 	assert(cache);
-	assert(real);
-	assert(token);
-	assert(value);
+	assert(devname);
+	assert(tagname);
+	assert(tagval);
 
 	/* add into cache -- cache format for TAGs is
-	 *	native = "NAME\0VALUE\0"
-	 *	real   = "/dev/foo"
+	 *	key    = "TAG_NAME\0TAG_VALUE\0"
+	 *	value  = "/dev/foo"
 	 */
-	tksz = strlen(token);
-	vlsz = strlen(value);
+	tksz = strlen(tagname);
+	vlsz = strlen(tagval);
 
-	native = malloc(tksz + vlsz + 2);
-	if (!native)
+	key = malloc(tksz + vlsz + 2);
+	if (!key)
 		return -ENOMEM;
 
-	memcpy(native, token, tksz + 1);	   /* include '\0' */
-	memcpy(native + tksz + 1, value, vlsz + 1);
+	memcpy(key, tagname, tksz + 1);	   /* include '\0' */
+	memcpy(key + tksz + 1, tagval, vlsz + 1);
 
-	rc = mnt_cache_add_entry(cache, native, real, flag | MNT_CACHE_ISTAG);
+	rc = mnt_cache_add_entry(cache, key, devname, flag | MNT_CACHE_ISTAG);
 	if (!rc)
 		return 0;
 
-	free(native);
+	free(key);
 	return rc;
 }
 
@@ -193,8 +193,8 @@ static const char *mnt_cache_find_path(struct libmnt_cache *cache, const char *p
 		struct mnt_cache_entry *e = &cache->ents[i];
 		if (!(e->flag & MNT_CACHE_ISPATH))
 			continue;
-		if (strcmp(path, e->native) == 0)
-			return e->real;
+		if (strcmp(path, e->key) == 0)
+			return e->value;
 	}
 	return NULL;
 }
@@ -221,9 +221,9 @@ static const char *mnt_cache_find_tag(struct libmnt_cache *cache,
 		struct mnt_cache_entry *e = &cache->ents[i];
 		if (!(e->flag & MNT_CACHE_ISTAG))
 			continue;
-		if (strcmp(token, e->native) == 0 &&
-		    strcmp(value, e->native + tksz + 1) == 0)
-			return e->real;
+		if (strcmp(token, e->key) == 0 &&
+		    strcmp(value, e->key + tksz + 1) == 0)
+			return e->value;
 	}
 	return NULL;
 }
@@ -292,7 +292,7 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 		struct mnt_cache_entry *e = &cache->ents[i];
 		if (!(e->flag & MNT_CACHE_TAGREAD))
 			continue;
-		if (strcmp(e->real, devname) == 0)
+		if (strcmp(e->value, devname) == 0)
 			/* tags has been already read */
 			return 0;
 	}
@@ -332,6 +332,7 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 		ntags++;
 	}
 
+	DBG(CACHE, mnt_debug_h(cache, "\tread %d tags", ntags));
 	return ntags ? 0 : 1;
 error:
 	return -1;
@@ -381,9 +382,9 @@ char *mnt_cache_find_tag_value(struct libmnt_cache *cache,
 		struct mnt_cache_entry *e = &cache->ents[i];
 		if (!(e->flag & MNT_CACHE_ISTAG))
 			continue;
-		if (strcmp(e->real, devname) == 0 &&	/* dev name */
-		    strcmp(token, e->native) == 0)	/* tag name */
-			return e->native + strlen(token) + 1;	/* tag value */
+		if (strcmp(e->value, devname) == 0 &&	/* dev name */
+		    strcmp(token, e->key) == 0)	/* tag name */
+			return e->key + strlen(token) + 1;	/* tag value */
 	}
 
 	return NULL;
@@ -440,8 +441,8 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 char *mnt_resolve_path(const char *path, struct libmnt_cache *cache)
 {
 	char *p = NULL;
-	char *native = NULL;
-	char *real = NULL;
+	char *key = NULL;
+	char *value = NULL;
 
 	assert(path);
 
@@ -456,13 +457,13 @@ char *mnt_resolve_path(const char *path, struct libmnt_cache *cache)
 		p = canonicalize_path(path);
 
 		if (p && cache) {
-			real = p;
-			native = strcmp(path, p) == 0 ? real : strdup(path);
+			value = p;
+			key = strcmp(path, p) == 0 ? value : strdup(path);
 
-			if (!native || !real)
+			if (!key || !value)
 				goto error;
 
-			if (mnt_cache_add_entry(cache, native, real,
+			if (mnt_cache_add_entry(cache, key, value,
 							MNT_CACHE_ISPATH))
 				goto error;
 		}
@@ -470,9 +471,9 @@ char *mnt_resolve_path(const char *path, struct libmnt_cache *cache)
 
 	return p;
 error:
-	if (real != native)
-		free(real);
-	free(native);
+	if (value != key)
+		free(value);
+	free(key);
 	return NULL;
 }
 
@@ -643,8 +644,8 @@ int test_read_tags(struct libmnt_test *ts, int argc, char *argv[])
 		if (!(e->flag & MNT_CACHE_ISTAG))
 			continue;
 
-		printf("%15s : %5s : %s\n", e->real, e->native,
-				e->native + strlen(e->native) + 1);
+		printf("%15s : %5s : %s\n", e->value, e->key,
+				e->key + strlen(e->key) + 1);
 	}
 
 	mnt_free_cache(cache);
