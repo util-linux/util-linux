@@ -258,6 +258,9 @@ struct libmnt_context
 	struct libmnt_table *fstab;	/* fstab (or mtab for some remounts) entries */
 	struct libmnt_table *mtab;	/* mtab entries */
 
+	int	(*table_errcb)(struct libmnt_table *tb,	/* callback for libmnt_table structs */
+			 const char *filename, int line);
+
 	int	optsmode;	/* fstab optstr mode MNT_OPTSMODE_{AUTO,FORCE,IGNORE} */
 	int	loopdev_fd;	/* open loopdev */
 

@@ -18,6 +18,7 @@ lscpu
 mips32.8
 mips64.8
 mips.8
+mountpoint
 parisc32.8
 parisc64.8
 parisc.8

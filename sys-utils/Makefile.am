@@ -31,6 +31,13 @@ fstrim_SOURCES = fstrim.c $(top_srcdir)/lib/strutils.c
 rtcwake_SOURCES = rtcwake.c $(top_srcdir)/lib/strutils.c
 dmesg_SOURCES = dmesg.c $(top_srcdir)/lib/strutils.c
 
+if BUILD_MOUNTPOINT
+bin_PROGRAMS += mountpoint
+mountpoint_LDADD = $(ul_libmount_la)
+mountpoint_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+dist_man_MANS += mountpoint.1
+endif
+
 if BUILD_FALLOCATE
 usrbin_exec_PROGRAMS += fallocate
 fallocate_SOURCES = fallocate.c $(top_srcdir)/lib/strutils.c

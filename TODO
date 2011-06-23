@@ -135,14 +135,6 @@ lib/tt.c
 
  - allows to sort columns, for example sort lsblk(8) output by SIZE
 
-blkid(8)
--------
-
-  - add something like "blkid --list-known" to list all supported filesystems/raids
- 
-  - add a new option (-r) that allows to print removable block devices that
-    are missing in /proc/partitions, see blkid_probe_all_removable().
-
 login-utils:
 -----------
 
