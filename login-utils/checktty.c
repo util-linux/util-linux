@@ -7,7 +7,6 @@
 
 */
 
-#include <sys/types.h>
 #include <sys/param.h>
 
 #include <pwd.h>
@@ -19,10 +18,12 @@
 #include <unistd.h>
 #include <time.h>
 #include <sys/stat.h>
-#include <malloc.h>
 #include <netdb.h>
-#include <sys/syslog.h>
 #include <sys/socket.h>
+#include <syslog.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/un.h>
 #include <ctype.h>
 #include <limits.h>
 #include <netinet/in.h>
@@ -36,7 +37,6 @@
 #include "pathnames.h"
 #include "login.h"
 #include "strutils.h"
-#include "c.h"
 
 #ifndef TTY_MAJOR
 #define TTY_MAJOR 4
