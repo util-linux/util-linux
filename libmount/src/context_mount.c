@@ -359,6 +359,10 @@ static int exec_helper(struct libmnt_context *cxt)
 /*
  * The default is to use fstype from cxt->fs, this could be overwritten by
  * @try_type argument.
+ *
+ * Returns: 0 on success,
+ *         >0 in case of mount(2) error (returns syscall errno),
+ *         <0 in case of other errors.
  */
 static int do_mount(struct libmnt_context *cxt, const char *try_type)
 {
@@ -608,7 +612,7 @@ int mnt_context_finalize_mount(struct libmnt_context *cxt)
  *          mount.type helper wasn't sucessfully called.
  *
  *          Check mnt_context_get_status() after error!
-*
+ *
  * Returns: 0 on success;
  *         >0 in case of mount(2) error (returns syscall errno),
  *         <0 in case of other errors.
@@ -635,5 +639,116 @@ int mnt_context_mount(struct libmnt_context *cxt)
 	if (!rc)
 		rc = mnt_context_update_tabs(cxt);
 	return rc;
+}
+
+/**
+ * mnt_context_next_mount:
+ * @cxt: context
+ * @itr: iterator
+ * @fs: returns the current filesystem
+ * @mntrc: returns the return code from mnt_mount_context()
+ * @ignored: returns 1 for not matching and 2 for already mounted filesystems
+ *
+ * This function tries to mount the next filesystem from fstab (as returned by
+ * mnt_context_get_fstab()). See also mnt_context_set_fstab().
+ *
+ * You can filter out filesystems by:
+ *	mnt_context_set_options_pattern() to simulate mount -a -O <pattern>
+ *	mnt_context_set_fstype_pattern()  to simulate mount -a -t <pattern>
+ *
+ * If the filesystem is already mounted or does not match defined criteria,
+ * then the mnt_context_next_mount() function returns zero, but the @ignored is
+ * non-zero. Note that the root filesystem and filesystems with "noauto" option
+ * are always ignored.
+ *
+ * If mount(2) syscall or mount.<type> helper failed, then the
+ * mnt_context_next_mount() function returns zero, but the @mntrc is non-zero.
+ * Use also mnt_context_get_status() to check if the filesystem was
+ * successfully mounted.
+ *
+ * Returns: 0 on success,
+ *         <0 in case of error (!= mount(2) errors)
+ *          1 at the end of the list.
+ */
+int mnt_context_next_mount(struct libmnt_context *cxt,
+			   struct libmnt_iter *itr,
+			   struct libmnt_fs **fs,
+			   int *mntrc,
+			   int *ignored)
+{
+	struct libmnt_table *fstab, *mtab;
+	const char *o, *tgt;
+	int rc, mounted = 0;
+
+	if (ignored)
+		*ignored = 0;
+	if (mntrc)
+		*mntrc = 0;
+
+	if (!cxt || !fs || !itr)
+		return -EINVAL;
+
+	mtab = cxt->mtab;
+	cxt->mtab = NULL;		/* do not reset mtab */
+	mnt_reset_context(cxt);
+	cxt->mtab = mtab;
+
+	rc = mnt_context_get_fstab(cxt, &fstab);
+	if (rc)
+		return rc;
+
+	rc = mnt_table_next_fs(fstab, itr, fs);
+	if (rc != 0)
+		return rc;	/* more filesystems (or error) */
+
+	o = mnt_fs_get_user_options(*fs);
+	tgt = mnt_fs_get_target(*fs);
+
+	DBG(CXT, mnt_debug_h(cxt, "next-mount: trying %s", tgt));
+
+	/*  ignore swap */
+	if (((*fs)->flags & MNT_FS_SWAP) ||
+
+	/* ignore root filesystem */
+	  (tgt && (strcmp(tgt, "/") == 0 || strcmp(tgt, "root") == 0)) ||
+
+	/* ignore noauto filesystems */
+	   (o && mnt_optstr_get_option(o, "noauto", NULL, NULL) == 0) ||
+
+	/* ignore filesystems not match with options patterns */
+	   (cxt->fstype_pattern && !mnt_fs_match_fstype(*fs,
+					cxt->fstype_pattern)) ||
+
+	/* ignore filesystems not match with type patterns */
+	   (cxt->optstr_pattern && !mnt_fs_match_options(*fs,
+					cxt->optstr_pattern))) {
+		if (ignored)
+			*ignored = 1;
+		DBG(CXT, mnt_debug_h(cxt, "next-mount: not-match "
+				"[fstype: %s, t-pattern: %s, options: %s, O-pattern: %s]",
+				mnt_fs_get_fstype(*fs),
+				cxt->fstype_pattern,
+				mnt_fs_get_options(*fs),
+				cxt->optstr_pattern));
+		return 0;
+	}
+
+	/* ignore already mounted filesystems */
+	rc = mnt_context_is_fs_mounted(cxt, *fs, &mounted);
+	if (rc)
+		return rc;
+	if (mounted) {
+		if (ignored)
+			*ignored = 2;
+		return 0;
+	}
+
+	rc = mnt_context_set_fs(cxt, *fs);
+	if (rc)
+		return rc;
+	rc = mnt_context_mount(cxt);
+	if (mntrc)
+		*mntrc = rc;
+	return 0;
 }
 

@@ -212,6 +212,8 @@ extern int blkid_probe_get_fd(blkid_probe pr);
  * superblocks probing
  */
 extern int blkid_known_fstype(const char *fstype);
+extern int blkid_superblocks_get_name(size_t idx, const char **name, int *usage);
+
 extern int blkid_probe_enable_superblocks(blkid_probe pr, int enable);
 
 #define BLKID_SUBLKS_LABEL	(1 << 1) /* read LABEL from superblock */

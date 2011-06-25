@@ -108,12 +108,6 @@ build-sys
    The configure.ac has to care about dependence between utils and librares and
    enable BUILD_<utilname>.
 
-sysfs
------
-
- - add lib/sysfs.c with functions that read block device attributes from /sys.
-   For more details see devno.c from libblkid, lsblk.c and lomount.c.
-
 procfs
 ------
 
@@ -140,14 +134,6 @@ lib/tt.c
 --------
 
  - allows to sort columns, for example sort lsblk(8) output by SIZE
-
-blkid(8)
--------
-
-  - add something like "blkid --list-known" to list all supported filesystems/raids
- 
-  - add a new option (-r) that allows to print removable block devices that
-    are missing in /proc/partitions, see blkid_probe_all_removable().
 
 login-utils:
 -----------

@@ -27,7 +27,6 @@ SUBDIRS = \
 	login-utils \
 	misc-utils \
 	po \
-	schedutils \
 	sys-utils \
 	term-utils \
 	text-utils \
@@ -51,6 +50,10 @@ endif
 
 if BUILD_FSCK
 SUBDIRS += fsck
+endif
+
+if BUILD_SCHEDUTILS
+SUBDIRS += schedutils
 endif
 
 AUTOMAKE_OPTIONS = gnu

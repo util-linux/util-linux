@@ -1220,13 +1220,7 @@ int mnt_fs_match_fstype(struct libmnt_fs *fs, const char *types)
  */
 int mnt_fs_match_options(struct libmnt_fs *fs, const char *options)
 {
-	char *o = mnt_fs_strdup_options(fs);
-	int rc = 0;
-
-	if (o)
-		rc = mnt_match_options(o, options);
-	free(o);
-	return rc;
+	return mnt_match_options(mnt_fs_get_options(fs), options);
 }
 
 /**

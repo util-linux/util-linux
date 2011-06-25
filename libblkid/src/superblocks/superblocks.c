@@ -294,6 +294,26 @@ int blkid_known_fstype(const char *fstype)
 	return 0;
 }
 
+/**
+ * blkid_superblocks_get_name:
+ * @idx: number >= 0
+ * @name: returns name of supported filesystem/raid (optional)
+ * @usage: returns BLKID_USAGE_* flags, (optional)
+ *
+ * Returns: -1 if @idx is out of range, or 0 on success.
+ */
+int blkid_superblocks_get_name(size_t idx, const char **name, int *usage)
+{
+	if (idx >= 0 && idx < ARRAY_SIZE(idinfos)) {
+		if (name)
+			*name = idinfos[idx]->name;
+		if (usage)
+			*usage = idinfos[idx]->usage;
+		return 0;
+	}
+	return -1;
+}
+
 /*
  * The blkid_do_probe() backend.
  */
@@ -323,11 +343,12 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		blkid_loff_t off = 0;
 
 		chn->idx = i;
-
-		if (chn->fltr && blkid_bmp_get_item(chn->fltr, i))
-			continue;
-
 		id = idinfos[i];
+
+		if (chn->fltr && blkid_bmp_get_item(chn->fltr, i)) {
+			DBG(DEBUG_LOWPROBE, printf("filter out: %s\n", id->name));
+			continue;
+		}
 
 		if (id->minsz && id->minsz > pr->size)
 			continue;	/* the device is too small */

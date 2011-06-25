@@ -1,7 +1,5 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-if BUILD_SCHEDUTILS
-
 srcs_common = $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/procutils.c
 
 usrbin_exec_PROGRAMS = chrt
@@ -21,6 +19,4 @@ if HAVE_SCHED_GETAFFINITY
 usrbin_exec_PROGRAMS += taskset
 taskset_SOURCES = taskset.c $(top_srcdir)/lib/cpuset.c $(srcs_common)
 dist_man_MANS += taskset.1
-endif
-
 endif
