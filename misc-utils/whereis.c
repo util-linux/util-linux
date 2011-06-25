@@ -46,6 +46,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "nls.h"
+#include "c.h"
 
 void zerof(void);
 void getlist(int *, char ***, char ***, int *);
@@ -143,6 +144,27 @@ int	Bcnt;
 char	**Mflag;
 int	Mcnt;
 char	uflag;
+
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
+{
+	fprintf(out, _("Usage: %s [options] file\n"),
+		program_invocation_short_name);
+
+	fprintf(out, _("\nOptions:\n"
+		       " -f file    define search scope\n"
+		       " -b         search only binaries\n"
+		       " -B dirs    define binaries lookup path\n"
+		       " -m         search only manual paths\n"
+		       " -M dirs    define man lookup path\n"
+		       " -s         search only sources path\n"
+		       " -S dirs    define sources lookup path\n"
+		       " -u         search from unusual enties\n"
+		       " -V         output version information and exit\n"
+		       " -h         display this help and exit\n\n"
+		       "See how to use file and dirs arguments from whereis(1) manual.\n\n"));
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 /*
  * whereis name
  * look for source, documentation and binaries
@@ -155,9 +177,7 @@ main(int argc, char **argv) {
 
 	argc--, argv++;
 	if (argc == 0) {
-usage:
-		fprintf(stderr, _("whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"));
-		exit(1);
+		usage(stderr);
 	}
 	do
 		if (argv[0][0] == '-') {
@@ -197,9 +217,15 @@ usage:
 				zerof();
 				mflag++;
 				continue;
-
+			case 'V':
+				printf(_("%s from %s\n"),
+					program_invocation_short_name,
+					PACKAGE_STRING);
+				return EXIT_SUCCESS;
+			case 'h':
+				usage(stdout);
 			default:
-				goto usage;
+				usage(stderr);
 			}
 			argv++;
 		} else
