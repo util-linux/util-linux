@@ -74,7 +74,7 @@ static void create_daemon(void)
 {
 	uid_t euid;
 
-	if (daemon(0,0))
+	if (daemon(0, 0))
 		err(EXIT_FAILURE, "daemon");
 
 	euid = geteuid();
@@ -110,9 +110,9 @@ static const char *cleanup_pidfile, *cleanup_socket;
 
 static void terminate_intr(int signo CODE_ATTR((unused)))
 {
-	(void) unlink(cleanup_pidfile);
+	unlink(cleanup_pidfile);
 	if (cleanup_socket)
-		(void) unlink(cleanup_socket);
+		unlink(cleanup_socket);
 	exit(EXIT_SUCCESS);
 }
 
@@ -142,7 +142,7 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 
 	srv_addr.sun_family = AF_UNIX;
 	strncpy(srv_addr.sun_path, socket_path, sizeof(srv_addr.sun_path));
-	srv_addr.sun_path[sizeof(srv_addr.sun_path)-1] = '\0';
+	srv_addr.sun_path[sizeof(srv_addr.sun_path) - 1] = '\0';
 
 	if (connect(s, (const struct sockaddr *) &srv_addr,
 		    sizeof(struct sockaddr_un)) < 0) {
@@ -153,14 +153,14 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 	}
 
 	if (op == UUIDD_OP_BULK_RANDOM_UUID) {
-		if ((*num)*UUID_LEN > buflen-4)
-			*num = (buflen-4) / UUID_LEN;
+		if ((*num) * UUID_LEN > buflen - 4)
+			*num = (buflen - 4) / UUID_LEN;
 	}
 	op_buf[0] = op;
 	op_len = 1;
 	if ((op == UUIDD_OP_BULK_TIME_UUID) ||
 	    (op == UUIDD_OP_BULK_RANDOM_UUID)) {
-		memcpy(op_buf+1, num, sizeof(int));
+		memcpy(op_buf + 1, num, sizeof(int));
 		op_len += sizeof(int);
 	}
 
@@ -274,8 +274,8 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	 */
 	my_addr.sun_family = AF_UNIX;
 	strncpy(my_addr.sun_path, socket_path, sizeof(my_addr.sun_path));
-	my_addr.sun_path[sizeof(my_addr.sun_path)-1] = '\0';
-	(void) unlink(socket_path);
+	my_addr.sun_path[sizeof(my_addr.sun_path) - 1] = '\0';
+	unlink(socket_path);
 	save_umask = umask(0);
 	if (bind(s, (const struct sockaddr *) &my_addr,
 		 sizeof(struct sockaddr_un)) < 0) {
@@ -285,7 +285,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 				socket_path, strerror(errno));
 		exit(EXIT_FAILURE);
 	}
-	(void) umask(save_umask);
+	umask(save_umask);
 
 	if (listen(s, SOMAXCONN) < 0) {
 		if (!quiet)
@@ -305,7 +305,9 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	signal(SIGPIPE, SIG_IGN);
 
 	sprintf(reply_buf, "%8d\n", getpid());
-	if (ftruncate(fd_pidfile, 0)) {} /* Silence warn_unused_result */
+	if (ftruncate(fd_pidfile, 0)) {
+		/* Silence warn_unused_result */
+	}
 	write_all(fd_pidfile, reply_buf, strlen(reply_buf));
 	if (fd_pidfile > 1)
 		close(fd_pidfile); /* Unlock the pid file */
@@ -341,14 +343,14 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		} else if (debug)
 			printf(_("operation %d\n"), op);
 
-		switch(op) {
+		switch (op) {
 		case UUIDD_OP_GETPID:
 			sprintf(reply_buf, "%d", getpid());
-			reply_len = strlen(reply_buf)+1;
+			reply_len = strlen(reply_buf) + 1;
 			break;
 		case UUIDD_OP_GET_MAXOP:
 			sprintf(reply_buf, "%d", UUIDD_MAX_OP);
-			reply_len = strlen(reply_buf)+1;
+			reply_len = strlen(reply_buf) + 1;
 			break;
 		case UUIDD_OP_TIME_UUID:
 			num = 1;
@@ -379,7 +381,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			}
 			memcpy(reply_buf, uu, sizeof(uu));
 			reply_len = sizeof(uu);
-			memcpy(reply_buf+reply_len, &num, sizeof(num));
+			memcpy(reply_buf + reply_len, &num, sizeof(num));
 			reply_len += sizeof(num);
 			break;
 		case UUIDD_OP_BULK_RANDOM_UUID:
@@ -387,14 +389,15 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 				num = 1;
 			if (num > 1000)
 				num = 1000;
-			if (num * UUID_LEN > (int) (sizeof(reply_buf)-sizeof(num)))
-				num = (sizeof(reply_buf)-sizeof(num)) / UUID_LEN;
+			if (num * UUID_LEN > (int) (sizeof(reply_buf) - sizeof(num)))
+				num = (sizeof(reply_buf) - sizeof(num)) / UUID_LEN;
 			__uuid_generate_random((unsigned char *) reply_buf +
 					      sizeof(num), &num);
 			if (debug) {
 				printf(_("Generated %d UUIDs:\n"), num);
-				for (i=0, cp=reply_buf+sizeof(num);
-				     i < num; i++, cp+=UUID_LEN) {
+				for (i = 0, cp = reply_buf + sizeof(num);
+				     i < num;
+				     i++, cp += UUID_LEN) {
 					uuid_unparse((unsigned char *)cp, str);
 					printf("\t%s\n", str);
 				}
@@ -527,7 +530,7 @@ int main(int argc, char **argv)
 #endif
 	}
 	if (num && do_type) {
-		ret = call_daemon(socket_path, do_type+2, buf,
+		ret = call_daemon(socket_path, do_type + 2, buf,
 				  sizeof(buf), &num, &err_context);
 		if (ret < 0) {
 			printf(_("Error calling uuidd daemon (%s): %s\n"),
@@ -544,9 +547,9 @@ int main(int argc, char **argv)
 		} else {
 			printf(_("List of UUIDs:\n"));
 			cp = buf + 4;
-			if (ret != (int) (sizeof(num) + num*sizeof(uu)))
+			if (ret != (int) (sizeof(num) + num * sizeof(uu)))
 				unexpected_size(ret);
-			for (i=0; i < num; i++, cp+=UUID_LEN) {
+			for (i = 0; i < num; i++, cp += UUID_LEN) {
 				uuid_unparse((unsigned char *) cp, str);
 				printf("\t%s\n", str);
 			}
