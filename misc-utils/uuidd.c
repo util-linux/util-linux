@@ -48,14 +48,25 @@ extern int optind;
 /* length of binary representation of UUID */
 #define UUID_LEN	(sizeof(uuid_t))
 
-static void usage(const char *progname)
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(stderr, _("Usage: %s [-d] [-p pidfile] [-q] [-s socketpath] "
-			  "[-T timeout]\n"), progname);
-	fprintf(stderr, _("       %s [-r|t] [-n num] [-q] [-s socketpath]\n"),
-		progname);
-	fprintf(stderr, _("       %s -k [-q]\n"), progname);
-	exit(1);
+	fprintf(out, _("Usage: %s [options]\n"),
+		program_invocation_short_name);
+
+	fprintf(out, _("\nOptions:\n"
+		       " -p, --pid=PATH      path to pid file\n"
+		       " -s, --socket=PATH   path to socket\n"
+		       " -T, --timeout=SEC   specify inactivity timeout\n"
+		       " -k, --kill          kill running daemon\n"
+		       " -r, --random        test random-based generation\n"
+		       " -t, --time          test time-based generation\n"
+		       " -n, --uuids=NUM     request number of uuids\n"
+		       " -d, --debug         run in debugging mode\n"
+		       " -q, --quiet         turn on quiet mode\n"
+		       " -V, --version       output version information and exit\n"
+		       " -h, --help          display this help and exit\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 static void die(const char *msg)
@@ -422,11 +433,28 @@ int main(int argc, char **argv)
 	int		debug = 0, do_type = 0, do_kill = 0, num = 0;
 	int		timeout = 0, quiet = 0, drop_privs = 0;
 
+	static const struct option longopts[] = {
+		{"pid", required_argument, NULL, 'p'},
+		{"socket", required_argument, NULL, 's'},
+		{"timeout", required_argument, NULL, 'T'},
+		{"kill", no_argument, NULL, 'k'},
+		{"random", no_argument, NULL, 'r'},
+		{"time", no_argument, NULL, 't'},
+		{"uuids", required_argument, NULL, 'n'},
+		{"debug", no_argument, NULL, 'd'},
+		{"quiet", no_argument, NULL, 'q'},
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt (argc, argv, "dkn:p:qrs:tT:")) != EOF) {
+	while ((c =
+		getopt_long(argc, argv, "p:s:T:krtn:dqVh", longopts,
+			    NULL)) != -1) {
 		switch (c) {
 		case 'd':
 			debug++;
@@ -465,11 +493,18 @@ int main(int argc, char **argv)
 			timeout = strtol(optarg, &tmp, 0);
 			if ((timeout < 0) || *tmp) {
 				fprintf(stderr, _("Bad number: %s\n"), optarg);
-				exit(1);
+				exit(EXIT_FAILURE);
 			}
 			break;
+		case 'V':
+			printf(_("%s from %s\n"),
+			       program_invocation_short_name,
+			       PACKAGE_STRING);
+			return EXIT_SUCCESS;
+		case 'h':
+			usage(stdout);
 		default:
-			usage(argv[0]);
+			usage(stderr);
 		}
 	}
 	uid = getuid();
