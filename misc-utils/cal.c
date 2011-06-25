@@ -92,7 +92,7 @@ my_putstring(char *s) {
 }
 
 static const char *
-my_tgetstr(char *s, char *ss) {
+my_tgetstr(char *s __attribute__ ((__unused__)), char *ss) {
     const char* ret = tigetstr(ss);
     if (!ret || ret==(char*)-1)
         return "";
@@ -119,7 +119,7 @@ my_putstring(char *s) {
 }
 
 static const char *
-my_tgetstr(char *s, char *ss) {
+my_tgetstr(char *s, char *ss __attribute__ ((__unused__))) {
     const char* ret = tgetstr(s, &strbuf);
     if (!ret)
         return "";
