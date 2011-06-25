@@ -60,6 +60,7 @@
 #include <sys/file.h>
 #include <sys/time.h>
 #include <paths.h>
+#include <getopt.h>
 #include "pathnames.h"
 #include "carefulputc.h"
 #include "nls.h"
@@ -73,16 +74,47 @@ int utmp_chk(char *, char *);
 
 static gid_t myegid;
 
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
+{
+	fprintf(out, _("Usage: %s [options] user [ttyname]\n"),
+		program_invocation_short_name);
+
+	fprintf(out, _("\nOptions:\n"
+		       " -V, --version    output version information and exit\n"
+		       " -h, --help       display this help and exit\n\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 int
 main(int argc, char **argv) {
 	time_t atime;
 	uid_t myuid;
-	int msgsok, myttyfd;
+	int msgsok, myttyfd, c;
 	char tty[MAXPATHLEN], *mytty;
+
+	static const struct option longopts[] = {
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+
+	while ((c = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
+		switch (c) {
+		case 'V':
+			printf(_("%s from %s\n"),
+			       program_invocation_short_name,
+			       PACKAGE_STRING);
+			return EXIT_SUCCESS;
+		case 'h':
+			usage(stdout);
+		default:
+			usage(stderr);
+		}
 
 	myegid = getegid();
 
@@ -145,8 +177,7 @@ main(int argc, char **argv) {
 		do_write(argv[2], mytty, myuid);
 		break;
 	default:
-		(void)fprintf(stderr, _("usage: write user [tty]\n"));
-		exit(1);
+		usage(stderr);
 	}
 	done(0);
 	/* NOTREACHED */
