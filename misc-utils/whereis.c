@@ -60,56 +60,56 @@ void findin(char *, char *);
 int itsit(char *, char *);
 
 static char *bindirs[] = {
-   "/bin",
-   "/usr/bin",
-   "/sbin",
-   "/usr/sbin",
-   "/etc",
-   "/usr/etc",
-   "/lib",
-   "/usr/lib",
-   "/lib64",
-   "/usr/lib64",
-   "/usr/games",
-   "/usr/games/bin",
-   "/usr/games/lib",
-   "/usr/emacs/etc",
-   "/usr/lib/emacs/*/etc",
-   "/usr/TeX/bin",
-   "/usr/tex/bin",
-   "/usr/interviews/bin/LINUX",
+	"/bin",
+	"/usr/bin",
+	"/sbin",
+	"/usr/sbin",
+	"/etc",
+	"/usr/etc",
+	"/lib",
+	"/usr/lib",
+	"/lib64",
+	"/usr/lib64",
+	"/usr/games",
+	"/usr/games/bin",
+	"/usr/games/lib",
+	"/usr/emacs/etc",
+	"/usr/lib/emacs/*/etc",
+	"/usr/TeX/bin",
+	"/usr/tex/bin",
+	"/usr/interviews/bin/LINUX",
 
-   "/usr/X11R6/bin",
-   "/usr/X386/bin",
-   "/usr/bin/X11",
-   "/usr/X11/bin",
-   "/usr/X11R5/bin",
+	"/usr/X11R6/bin",
+	"/usr/X386/bin",
+	"/usr/bin/X11",
+	"/usr/X11/bin",
+	"/usr/X11R5/bin",
 
-   "/usr/local/bin",
-   "/usr/local/sbin",
-   "/usr/local/etc",
-   "/usr/local/lib",
-   "/usr/local/games",
-   "/usr/local/games/bin",
-   "/usr/local/emacs/etc",
-   "/usr/local/TeX/bin",
-   "/usr/local/tex/bin",
-   "/usr/local/bin/X11",
+	"/usr/local/bin",
+	"/usr/local/sbin",
+	"/usr/local/etc",
+	"/usr/local/lib",
+	"/usr/local/games",
+	"/usr/local/games/bin",
+	"/usr/local/emacs/etc",
+	"/usr/local/TeX/bin",
+	"/usr/local/tex/bin",
+	"/usr/local/bin/X11",
 
-   "/usr/contrib",
-   "/usr/hosts",
-   "/usr/include",
+	"/usr/contrib",
+	"/usr/hosts",
+	"/usr/include",
 
-   "/usr/g++-include",
+	"/usr/g++-include",
 
-   "/usr/ucb",
-   "/usr/old",
-   "/usr/new",
-   "/usr/local",
-   "/usr/libexec",
-   "/usr/share",
+	"/usr/ucb",
+	"/usr/old",
+	"/usr/new",
+	"/usr/local",
+	"/usr/libexec",
+	"/usr/share",
 
-   "/opt/*/bin",
+	"/opt/*/bin",
 
 	0
 };
@@ -124,7 +124,7 @@ static char *mandirs[] = {
 	0
 };
 
-static char *srcdirs[]  = {
+static char *srcdirs[] = {
 	"/usr/src/*",
 	"/usr/src/lib/libc/*",
 	"/usr/src/lib/libc/net/*",
@@ -170,7 +170,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
  * look for source, documentation and binaries
  */
 int
-main(int argc, char **argv) {
+main(int argc, char **argv)
+{
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -235,7 +236,8 @@ main(int argc, char **argv) {
 }
 
 void
-getlist(int *argcp, char ***argvp, char ***flagp, int *cntp) {
+getlist(int *argcp, char ***argvp, char ***flagp, int *cntp)
+{
 	(*argvp)++;
 	*flagp = *argvp;
 	*cntp = 0;
@@ -244,7 +246,6 @@ getlist(int *argcp, char ***argvp, char ***flagp, int *cntp) {
 	(*argcp)++;
 	(*argvp)--;
 }
-
 
 void
 zerof()
@@ -288,7 +289,8 @@ print_again(char *cp)
 }
 
 void
-lookup(char *cp) {
+lookup(char *cp)
+{
 	register char *dp;
 
 	for (dp = cp; *dp; dp++)
@@ -316,7 +318,8 @@ lookup(char *cp) {
 }
 
 void
-looksrc(char *cp) {
+looksrc(char *cp)
+{
 	if (Sflag == 0)
 		find(srcdirs, cp);
 	else
@@ -324,7 +327,8 @@ looksrc(char *cp) {
 }
 
 void
-lookbin(char *cp) {
+lookbin(char *cp)
+{
 	if (Bflag == 0)
 		find(bindirs, cp);
 	else
@@ -332,7 +336,8 @@ lookbin(char *cp) {
 }
 
 void
-lookman(char *cp) {
+lookman(char *cp)
+{
 	if (Mflag == 0)
 		find(mandirs, cp);
 	else
@@ -340,19 +345,22 @@ lookman(char *cp) {
 }
 
 void
-findv(char **dirv, int dirc, char *cp) {
+findv(char **dirv, int dirc, char *cp)
+{
 	while (dirc > 0)
 		findin(*dirv++, cp), dirc--;
 }
 
 void
-find(char **dirs, char *cp) {
+find(char **dirs, char *cp)
+{
 	while (*dirs)
 		findin(*dirs++, cp);
 }
 
 void
-findin(char *dir, char *cp) {
+findin(char *dir, char *cp)
+{
 	DIR *dirp;
 	struct dirent *dp;
 	char *d, *dd;
@@ -377,8 +385,9 @@ findin(char *dir, char *cp) {
 	}
 
 	l = strlen(dir);
-	if (l < sizeof(dirbuf)) {	/* refuse excessively long names */
-		strcpy (dirbuf, dir);
+	if (l < sizeof(dirbuf)) {
+		/* refuse excessively long names */
+		strcpy(dirbuf, dir);
 		d = strchr(dirbuf, '*');
 		*d = 0;
 		dirp = opendir(dirbuf);
@@ -395,7 +404,7 @@ findin(char *dir, char *cp) {
 				continue;
 			if (!S_ISDIR(statbuf.st_mode))
 				continue;
-			strcat(d, dd+1);
+			strcat(d, dd + 1);
 			findin(dirbuf, cp);
 		}
 		closedir(dirp);
@@ -405,16 +414,17 @@ findin(char *dir, char *cp) {
 }
 
 int
-itsit(char *cp, char *dp) {
+itsit(char *cp, char *dp)
+{
 	int i = strlen(dp);
 
-	if (dp[0] == 's' && dp[1] == '.' && itsit(cp, dp+2))
+	if (dp[0] == 's' && dp[1] == '.' && itsit(cp, dp + 2))
 		return 1;
-	if (!strcmp(dp+i-2, ".Z"))
+	if (!strcmp(dp + i - 2, ".Z"))
 		i -= 2;
-	else if (!strcmp(dp+i-3, ".gz"))
+	else if (!strcmp(dp + i - 3, ".gz"))
 		i -= 3;
-	else if (!strcmp(dp+i-4, ".bz2"))
+	else if (!strcmp(dp + i - 4, ".bz2"))
 		i -= 4;
 	while (*cp && *dp && *cp == *dp)
 		cp++, dp++, i--;
