@@ -5,12 +5,12 @@
 .\" This file may be copied under the terms of the GNU Public License.
 .\"
 .\" Created  Wed Mar 10 17:42:12 1999, Andreas Dilger
-.TH UUIDGEN 1 "May 2009" "Linux"
+.TH UUIDGEN "1" "June 2011" "util-linux" "User Commands"
 .SH NAME
 uuidgen \- command\-line utility to create a new UUID value
 .SH SYNOPSIS
 .B uuidgen
-.RB [ \-r | \-t ]
+[\fIoptions\fR]
 .SH DESCRIPTION
 The
 .B uuidgen
@@ -37,15 +37,21 @@ or
 options.
 .SH OPTIONS
 .TP
-.B \-r
+\fB\-r\fR, \fB\-\-random\fR
 Generate a random-based UUID.  This method creates a UUID consisting mostly
 of random bits.  It requires that the operating system have a high
 quality random number generator, such as
 .IR /dev/random .
 .TP
-.B \-t
+\fB\-t\fR, \fB\-\-time\fR
 Generate a time-based UUID.  This method creates a UUID based on the system
 clock plus the system's ethernet hardware address, if present.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Output version information and exit.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Output help screen and exit.
 .SH "CONFORMING TO"
 OSF DCE 1.1
 .SH AUTHOR

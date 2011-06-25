@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <inttypes.h>
 #include <errno.h>
+#include <err.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
@@ -48,32 +49,37 @@ extern int optind;
 /* length of binary representation of UUID */
 #define UUID_LEN	(sizeof(uuid_t))
 
-static void usage(const char *progname)
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(stderr, _("Usage: %s [-d] [-p pidfile] [-q] [-s socketpath] "
-			  "[-T timeout]\n"), progname);
-	fprintf(stderr, _("       %s [-r|t] [-n num] [-q] [-s socketpath]\n"),
-		progname);
-	fprintf(stderr, _("       %s -k [-q]\n"), progname);
-	exit(1);
-}
+	fprintf(out, _("Usage: %s [options]\n"),
+		program_invocation_short_name);
 
-static void die(const char *msg)
-{
-	perror(msg);
-	exit(1);
+	fprintf(out, _("\nOptions:\n"
+		       " -p, --pid=PATH      path to pid file\n"
+		       " -s, --socket=PATH   path to socket\n"
+		       " -T, --timeout=SEC   specify inactivity timeout\n"
+		       " -k, --kill          kill running daemon\n"
+		       " -r, --random        test random-based generation\n"
+		       " -t, --time          test time-based generation\n"
+		       " -n, --uuids=NUM     request number of uuids\n"
+		       " -d, --debug         run in debugging mode\n"
+		       " -q, --quiet         turn on quiet mode\n"
+		       " -V, --version       output version information and exit\n"
+		       " -h, --help          display this help and exit\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 static void create_daemon(void)
 {
 	uid_t euid;
 
-	if (daemon(0,0))
-		die("daemon");
+	if (daemon(0, 0))
+		err(EXIT_FAILURE, "daemon");
 
 	euid = geteuid();
 	if (setreuid(euid, euid) < 0)
-		die("setreuid");
+		err(EXIT_FAILURE, "setreuid");
 }
 
 static ssize_t read_all(int fd, char *buf, size_t count)
@@ -104,10 +110,10 @@ static const char *cleanup_pidfile, *cleanup_socket;
 
 static void terminate_intr(int signo CODE_ATTR((unused)))
 {
-	(void) unlink(cleanup_pidfile);
+	unlink(cleanup_pidfile);
 	if (cleanup_socket)
-		(void) unlink(cleanup_socket);
-	exit(0);
+		unlink(cleanup_socket);
+	exit(EXIT_SUCCESS);
 }
 
 static int call_daemon(const char *socket_path, int op, char *buf,
@@ -136,7 +142,7 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 
 	srv_addr.sun_family = AF_UNIX;
 	strncpy(srv_addr.sun_path, socket_path, sizeof(srv_addr.sun_path));
-	srv_addr.sun_path[sizeof(srv_addr.sun_path)-1] = '\0';
+	srv_addr.sun_path[sizeof(srv_addr.sun_path) - 1] = '\0';
 
 	if (connect(s, (const struct sockaddr *) &srv_addr,
 		    sizeof(struct sockaddr_un)) < 0) {
@@ -147,14 +153,14 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 	}
 
 	if (op == UUIDD_OP_BULK_RANDOM_UUID) {
-		if ((*num)*UUID_LEN > buflen-4)
-			*num = (buflen-4) / UUID_LEN;
+		if ((*num) * UUID_LEN > buflen - 4)
+			*num = (buflen - 4) / UUID_LEN;
 	}
 	op_buf[0] = op;
 	op_len = 1;
 	if ((op == UUIDD_OP_BULK_TIME_UUID) ||
 	    (op == UUIDD_OP_BULK_RANDOM_UUID)) {
-		memcpy(op_buf+1, num, sizeof(int));
+		memcpy(op_buf + 1, num, sizeof(int));
 		op_len += sizeof(int);
 	}
 
@@ -218,7 +224,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		if (!quiet)
 			fprintf(stderr, _("Failed to open/create %s: %s\n"),
 				pidfile_path, strerror(errno));
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	cleanup_pidfile = pidfile_path;
 	cleanup_socket = 0;
@@ -235,14 +241,14 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		if (!quiet)
 			fprintf(stderr, _("Failed to lock %s: %s\n"),
 				pidfile_path, strerror(errno));
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	ret = call_daemon(socket_path, 0, reply_buf, sizeof(reply_buf), 0, 0);
 	if (ret > 0) {
 		if (!quiet)
 			printf(_("uuidd daemon already running at pid %s\n"),
 			       reply_buf);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	alarm(0);
 
@@ -250,7 +256,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		if (!quiet)
 			fprintf(stderr, _("Couldn't create unix stream "
 					  "socket: %s"), strerror(errno));
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	/*
@@ -260,7 +266,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	while (!debug && s <= 2) {
 		s = dup(s);
 		if (s < 0)
-			die("dup");
+			err(EXIT_FAILURE, "dup");
 	}
 
 	/*
@@ -268,8 +274,8 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	 */
 	my_addr.sun_family = AF_UNIX;
 	strncpy(my_addr.sun_path, socket_path, sizeof(my_addr.sun_path));
-	my_addr.sun_path[sizeof(my_addr.sun_path)-1] = '\0';
-	(void) unlink(socket_path);
+	my_addr.sun_path[sizeof(my_addr.sun_path) - 1] = '\0';
+	unlink(socket_path);
 	save_umask = umask(0);
 	if (bind(s, (const struct sockaddr *) &my_addr,
 		 sizeof(struct sockaddr_un)) < 0) {
@@ -277,16 +283,16 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			fprintf(stderr,
 				_("Couldn't bind unix socket %s: %s\n"),
 				socket_path, strerror(errno));
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
-	(void) umask(save_umask);
+	umask(save_umask);
 
 	if (listen(s, SOMAXCONN) < 0) {
 		if (!quiet)
 			fprintf(stderr, _("Couldn't listen on unix "
 					  "socket %s: %s\n"), socket_path,
 				strerror(errno));
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	cleanup_socket = socket_path;
@@ -299,7 +305,9 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	signal(SIGPIPE, SIG_IGN);
 
 	sprintf(reply_buf, "%8d\n", getpid());
-	if (ftruncate(fd_pidfile, 0)) {} /* Silence warn_unused_result */
+	if (ftruncate(fd_pidfile, 0)) {
+		/* Silence warn_unused_result */
+	}
 	write_all(fd_pidfile, reply_buf, strlen(reply_buf));
 	if (fd_pidfile > 1)
 		close(fd_pidfile); /* Unlock the pid file */
@@ -314,7 +322,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			if ((errno == EAGAIN) || (errno == EINTR))
 				continue;
 			else
-				die("accept");
+				err(EXIT_FAILURE, "accept");
 		}
 		len = read(ns, &op, 1);
 		if (len != 1) {
@@ -335,14 +343,14 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		} else if (debug)
 			printf(_("operation %d\n"), op);
 
-		switch(op) {
+		switch (op) {
 		case UUIDD_OP_GETPID:
 			sprintf(reply_buf, "%d", getpid());
-			reply_len = strlen(reply_buf)+1;
+			reply_len = strlen(reply_buf) + 1;
 			break;
 		case UUIDD_OP_GET_MAXOP:
 			sprintf(reply_buf, "%d", UUIDD_MAX_OP);
-			reply_len = strlen(reply_buf)+1;
+			reply_len = strlen(reply_buf) + 1;
 			break;
 		case UUIDD_OP_TIME_UUID:
 			num = 1;
@@ -373,7 +381,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			}
 			memcpy(reply_buf, uu, sizeof(uu));
 			reply_len = sizeof(uu);
-			memcpy(reply_buf+reply_len, &num, sizeof(num));
+			memcpy(reply_buf + reply_len, &num, sizeof(num));
 			reply_len += sizeof(num);
 			break;
 		case UUIDD_OP_BULK_RANDOM_UUID:
@@ -381,14 +389,15 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 				num = 1;
 			if (num > 1000)
 				num = 1000;
-			if (num * UUID_LEN > (int) (sizeof(reply_buf)-sizeof(num)))
-				num = (sizeof(reply_buf)-sizeof(num)) / UUID_LEN;
+			if (num * UUID_LEN > (int) (sizeof(reply_buf) - sizeof(num)))
+				num = (sizeof(reply_buf) - sizeof(num)) / UUID_LEN;
 			__uuid_generate_random((unsigned char *) reply_buf +
 					      sizeof(num), &num);
 			if (debug) {
 				printf(_("Generated %d UUIDs:\n"), num);
-				for (i=0, cp=reply_buf+sizeof(num);
-				     i < num; i++, cp+=UUID_LEN) {
+				for (i = 0, cp = reply_buf + sizeof(num);
+				     i < num;
+				     i++, cp += UUID_LEN) {
 					uuid_unparse((unsigned char *)cp, str);
 					printf("\t%s\n", str);
 				}
@@ -408,6 +417,11 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	}
 }
 
+static void __attribute__ ((__noreturn__)) unexpected_size(int size)
+{
+	errx(EXIT_FAILURE, _("Unexpected reply length from server %d"), size);
+}
+
 int main(int argc, char **argv)
 {
 	const char	*socket_path = UUIDD_SOCKET_PATH;
@@ -422,11 +436,28 @@ int main(int argc, char **argv)
 	int		debug = 0, do_type = 0, do_kill = 0, num = 0;
 	int		timeout = 0, quiet = 0, drop_privs = 0;
 
+	static const struct option longopts[] = {
+		{"pid", required_argument, NULL, 'p'},
+		{"socket", required_argument, NULL, 's'},
+		{"timeout", required_argument, NULL, 'T'},
+		{"kill", no_argument, NULL, 'k'},
+		{"random", no_argument, NULL, 'r'},
+		{"time", no_argument, NULL, 't'},
+		{"uuids", required_argument, NULL, 'n'},
+		{"debug", no_argument, NULL, 'd'},
+		{"quiet", no_argument, NULL, 'q'},
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt (argc, argv, "dkn:p:qrs:tT:")) != EOF) {
+	while ((c =
+		getopt_long(argc, argv, "p:s:T:krtn:dqVh", longopts,
+			    NULL)) != -1) {
 		switch (c) {
 		case 'd':
 			debug++;
@@ -440,7 +471,7 @@ int main(int argc, char **argv)
 			num = strtol(optarg, &tmp, 0);
 			if ((num < 1) || *tmp) {
 				fprintf(stderr, _("Bad number: %s\n"), optarg);
-				exit(1);
+				return EXIT_FAILURE;
 			}
 		case 'p':
 			pidfile_path = optarg;
@@ -465,11 +496,18 @@ int main(int argc, char **argv)
 			timeout = strtol(optarg, &tmp, 0);
 			if ((timeout < 0) || *tmp) {
 				fprintf(stderr, _("Bad number: %s\n"), optarg);
-				exit(1);
+				return EXIT_FAILURE;
 			}
 			break;
+		case 'V':
+			printf(_("%s from %s\n"),
+			       program_invocation_short_name,
+			       PACKAGE_STRING);
+			return EXIT_SUCCESS;
+		case 'h':
+			usage(stdout);
 		default:
-			usage(argv[0]);
+			usage(stderr);
 		}
 	}
 	uid = getuid();
@@ -477,31 +515,31 @@ int main(int argc, char **argv)
 		gid = getgid();
 #ifdef HAVE_SETRESGID
 		if (setresgid(gid, gid, gid) < 0)
-			die("setresgid");
+			err(EXIT_FAILURE, "setresgid");
 #else
 		if (setregid(gid, gid) < 0)
-			die("setregid");
+			err(EXIT_FAILURE, "setregid");
 #endif
 
 #ifdef HAVE_SETRESUID
 		if (setresuid(uid, uid, uid) < 0)
-			die("setresuid");
+			err(EXIT_FAILURE, "setresuid");
 #else
 		if (setreuid(uid, uid) < 0)
-			die("setreuid");
+			err(EXIT_FAILURE, "setreuid");
 #endif
 	}
 	if (num && do_type) {
-		ret = call_daemon(socket_path, do_type+2, buf,
+		ret = call_daemon(socket_path, do_type + 2, buf,
 				  sizeof(buf), &num, &err_context);
 		if (ret < 0) {
 			printf(_("Error calling uuidd daemon (%s): %s\n"),
 			       err_context, strerror(errno));
-			exit(1);
+			return EXIT_FAILURE;
 		}
 		if (do_type == UUIDD_OP_TIME_UUID) {
 			if (ret != sizeof(uu) + sizeof(num))
-				goto unexpected_size;
+				unexpected_size(ret);
 
 			uuid_unparse((unsigned char *) buf, str);
 
@@ -509,14 +547,14 @@ int main(int argc, char **argv)
 		} else {
 			printf(_("List of UUIDs:\n"));
 			cp = buf + 4;
-			if (ret != (int) (sizeof(num) + num*sizeof(uu)))
-				goto unexpected_size;
-			for (i=0; i < num; i++, cp+=UUID_LEN) {
+			if (ret != (int) (sizeof(num) + num * sizeof(uu)))
+				unexpected_size(ret);
+			for (i = 0; i < num; i++, cp += UUID_LEN) {
 				uuid_unparse((unsigned char *) cp, str);
 				printf("\t%s\n", str);
 			}
 		}
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 	if (do_type) {
 		ret = call_daemon(socket_path, do_type, (char *) &uu,
@@ -524,18 +562,15 @@ int main(int argc, char **argv)
 		if (ret < 0) {
 			printf(_("Error calling uuidd daemon (%s): %s\n"),
 			       err_context, strerror(errno));
-			exit(1);
+			return EXIT_FAILURE;
 		}
-		if (ret != sizeof(uu)) {
-		unexpected_size:
-			printf(_("Unexpected reply length from server %d\n"),
-			       ret);
-			exit(1);
-		}
+		if (ret != sizeof(uu))
+		        unexpected_size(ret);
+
 		uuid_unparse(uu, str);
 
 		printf("%s\n", str);
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	if (do_kill) {
@@ -548,15 +583,15 @@ int main(int argc, char **argv)
 						_("Couldn't kill uuidd running "
 						  "at pid %d: %s\n"), do_kill,
 						strerror(errno));
-				exit(1);
+				return EXIT_FAILURE;
 			}
 			if (!quiet)
 				printf(_("Killed uuidd running at pid %d\n"),
 				       do_kill);
 		}
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	server_loop(socket_path, pidfile_path, debug, timeout, quiet);
-	return 0;
+	return EXIT_SUCCESS;
 }

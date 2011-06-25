@@ -10,7 +10,6 @@ rename
 script
 whereis
 kill
-write
 uuidgen
 uuidd
 findfs
