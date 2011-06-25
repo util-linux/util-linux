@@ -89,7 +89,7 @@ findmnt_SOURCES += $(top_srcdir)/lib/langinfo.c
 endif
 endif
 
-cal_SOURCES = cal.c $(top_srcdir)/lib/mbsalign.c
+cal_SOURCES = cal.c $(top_srcdir)/lib/mbsalign.c $(top_srcdir)/lib/strutils.c
 if !HAVE_LANGINFO
 cal_SOURCES += $(top_srcdir)/lib/langinfo.c
 endif

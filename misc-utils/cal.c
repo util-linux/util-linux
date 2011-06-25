@@ -58,6 +58,7 @@
 #include <sys/types.h>
 
 #include <ctype.h>
+#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -68,6 +69,7 @@
 #include "c.h"
 #include "nls.h"
 #include "mbsalign.h"
+#include "strutils.h"
 
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
 
@@ -251,7 +253,7 @@ void do_monthly(int, int, int, struct fmt_st*);
 void monthly(int, int, int);
 void monthly3(int, int, int);
 void trim_trailing_spaces(char *);
-void usage(void);
+static void __attribute__ ((__noreturn__)) usage(FILE * out);
 void headers_init(void);
 
 int
@@ -260,6 +262,18 @@ main(int argc, char **argv) {
 	time_t now;
 	int ch, day, month, year, yflag;
 	int num_months = NUM_MONTHS;
+
+	static const struct option longopts[] = {
+		{"one", no_argument, NULL, '1'},
+		{"three", no_argument, NULL, '3'},
+		{"sunday", no_argument, NULL, 's'},
+		{"monday", no_argument, NULL, 'm'},
+		{"julian", no_argument, NULL, 'j'},
+		{"year", no_argument, NULL, 'y'},
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -313,7 +327,7 @@ main(int argc, char **argv) {
 #endif
 
 	yflag = 0;
-	while ((ch = getopt(argc, argv, "13mjsyV")) != -1)
+	while ((ch = getopt_long(argc, argv, "13mjsyVh", longopts, NULL)) != -1)
 		switch(ch) {
 		case '1':
 			num_months = 1;		/* default */
@@ -337,9 +351,11 @@ main(int argc, char **argv) {
 			printf(_("%s from %s\n"), program_invocation_short_name,
 			       PACKAGE_STRING);
 			return EXIT_SUCCESS;
+		case 'h':
+			usage(stdout);
 		case '?':
 		default:
-			usage();
+			usage(stderr);
 		}
 	argc -= optind;
 	argv += optind;
@@ -350,20 +366,23 @@ main(int argc, char **argv) {
 	day = month = year = 0;
 	switch(argc) {
 	case 3:
-		if ((day = atoi(*argv++)) < 1 || day > 31)
-			errx(1, _("illegal day value: use 1-%d"), 31);
+		day = strtol_or_err(*argv++, _("illegal day value"));
+                if (day < 1 || 31 < day)
+			errx(EXIT_FAILURE, _("illegal day value: use 1-%d"), 31);
 		/* FALLTHROUGH */
 	case 2:
-		if ((month = atoi(*argv++)) < 1 || month > 12)
-			errx(1, _("illegal month value: use 1-12"));
+		month = strtol_or_err(*argv++, _("illegal month value: use 1-12"));
+		if (month < 1 || 12 < month)
+			errx(EXIT_FAILURE, _("illegal month value: use 1-12"));
 		/* FALLTHROUGH */
 	case 1:
-		if ((year = atoi(*argv)) < 1 || year > 9999)
-			errx(1, _("illegal year value: use 1-9999"));
+		year = strtol_or_err(*argv++, _("illegal year value: use 1-9999"));
+		if (year < 1 || 9999 < year)
+			errx(EXIT_FAILURE, _("illegal year value: use 1-9999"));
 		if (day) {
 			int dm = days_in_month[leap_year(year)][month];
 			if (day > dm)
-				errx(1, _("illegal day value: use 1-%d"), dm);
+				errx(EXIT_FAILURE, _("illegal day value: use 1-%d"), dm);
 			day = day_in_year(day, month, year);
 		} else if ((local_time->tm_year + 1900) == year) {
 			day = local_time->tm_yday + 1;
@@ -377,7 +396,7 @@ main(int argc, char **argv) {
 		month = local_time->tm_mon + 1;
 		break;
 	default:
-		usage();
+		usage(stderr);
 	}
 	headers_init();
 
@@ -756,11 +775,20 @@ center(str, len, separate)
 		printf("%*s", separate, "");
 }
 
-void
-usage()
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
+	fprintf(out, _("Usage: %s [options] [[[day] month] year]\n"),
+		program_invocation_short_name);
 
-	fprintf(stderr, _("usage: %s [-13smjyV] [[[day] month] year]\n"),
-			program_invocation_short_name);
-	exit(EXIT_FAILURE);
+	fprintf(out, _("\nOptions:\n"
+		       " -1, --one        single month\n"
+		       " -3, --three      previous, current and next month\n"
+		       " -s, --sunday     sunday as first day\n"
+		       " -m, --monday     monday as fistt day\n"
+		       " -j, --julian     julian dates\n"
+		       " -y, --year       current year\n"
+		       " -V, --version    output version information and exit\n"
+		       " -h, --help       display this help and exit\n\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
