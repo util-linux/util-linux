@@ -256,6 +256,37 @@ zerof()
 int	count;
 int	print;
 
+int
+print_again(char *cp)
+{
+	if (print)
+		printf("%s:", cp);
+	if (sflag) {
+		looksrc(cp);
+		if (uflag && print == 0 && count != 1) {
+			print = 1;
+			return 1;
+		}
+	}
+	count = 0;
+	if (bflag) {
+		lookbin(cp);
+		if (uflag && print == 0 && count != 1) {
+			print = 1;
+			return 1;
+		}
+	}
+	count = 0;
+	if (mflag) {
+		lookman(cp);
+		if (uflag && print == 0 && count != 1) {
+			print = 1;
+			return 1;
+		}
+	}
+	return 0;
+}
+
 void
 lookup(char *cp) {
 	register char *dp;
@@ -276,32 +307,10 @@ lookup(char *cp) {
 		count = 0;
 	} else
 		print = 1;
-again:
-	if (print)
-		printf("%s:", cp);
-	if (sflag) {
-		looksrc(cp);
-		if (uflag && print == 0 && count != 1) {
-			print = 1;
-			goto again;
-		}
-	}
-	count = 0;
-	if (bflag) {
-		lookbin(cp);
-		if (uflag && print == 0 && count != 1) {
-			print = 1;
-			goto again;
-		}
-	}
-	count = 0;
-	if (mflag) {
-		lookman(cp);
-		if (uflag && print == 0 && count != 1) {
-			print = 1;
-			goto again;
-		}
-	}
+
+	while (print_again(cp))
+		/* all in print_again() */ ;
+
 	if (print)
 		printf("\n");
 }
@@ -352,8 +361,20 @@ findin(char *dir, char *cp) {
 	struct stat statbuf;
 
 	dd = strchr(dir, '*');
-	if (!dd)
-		goto noglob;
+	if (!dd) {
+		dirp = opendir(dir);
+		if (dirp == NULL)
+			return;
+		while ((dp = readdir(dirp)) != NULL) {
+			if (itsit(cp, dp->d_name)) {
+				count++;
+				if (print)
+					printf(" %s/%s", dir, dp->d_name);
+			}
+		}
+		closedir(dirp);
+		return;
+	}
 
 	l = strlen(dir);
 	if (l < sizeof(dirbuf)) {	/* refuse excessively long names */
@@ -381,18 +402,6 @@ findin(char *dir, char *cp) {
 	}
 	return;
 
-    noglob:
-	dirp = opendir(dir);
-	if (dirp == NULL)
-		return;
-	while ((dp = readdir(dirp)) != NULL) {
-		if (itsit(cp, dp->d_name)) {
-			count++;
-			if (print)
-				printf(" %s/%s", dir, dp->d_name);
-		}
-	}
-	closedir(dirp);
 }
 
 int
