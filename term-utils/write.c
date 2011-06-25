@@ -49,7 +49,6 @@
 #include <unistd.h>
 #include <utmp.h>
 #include <errno.h>
-#include <ctype.h>
 #include <time.h>
 #include <pwd.h>
 #include <string.h>
@@ -57,18 +56,18 @@
 #include <signal.h>
 #include <sys/param.h>
 #include <sys/stat.h>
-#include <sys/file.h>
-#include <sys/time.h>
 #include <paths.h>
+#include <asm/param.h>
 #include <getopt.h>
-#include "pathnames.h"
+#include "c.h"
 #include "carefulputc.h"
 #include "nls.h"
- 
+
+static void __attribute__ ((__noreturn__)) usage(FILE * out);
 void search_utmp(char *, char *, char *, uid_t);
 void do_write(char *, char *, uid_t);
 void wr_fputs(char *);
-static void done(int);
+static void __attribute__ ((__noreturn__)) done(int);
 int term_chk(char *, int *, time_t *, int);
 int utmp_chk(char *, char *);
 
@@ -86,8 +85,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	time_t atime;
 	uid_t myuid;
 	int msgsok, myttyfd, c;
@@ -125,29 +124,29 @@ main(int argc, char **argv) {
 		myttyfd = fileno(stdout);
 	else if (isatty(fileno(stderr)))
 		myttyfd = fileno(stderr);
-	else {
-	  	myttyfd = -1;
-	}
+	else
+		myttyfd = -1;
+
 	if (myttyfd != -1) {
-	  if (!(mytty = ttyname(myttyfd))) {
-		(void)fprintf(stderr, _("write: can't find your tty's name\n"));
-		exit(1);
-	  }
-	  /* We may have /dev/ttyN but also /dev/pts/xx.
-	     Below, term_chk() will put "/dev/" in front, so remove that part. */
-	  if (!strncmp(mytty, "/dev/", 5))
-		mytty += 5;
-	  if (term_chk(mytty, &msgsok, &atime, 1))
-		exit(1);
-	  if (!msgsok) {
-		(void)fprintf(stderr,
-		    _("write: you have write permission turned off.\n"));
-		exit(1);
-	  }
-	
-	} else {
-	    mytty = "<no tty>";
-	}
+		if (!(mytty = ttyname(myttyfd)))
+			errx(EXIT_FAILURE,
+			     _("can't find your tty's name"));
+
+		/*
+		 * We may have /dev/ttyN but also /dev/pts/xx. Below,
+		 * term_chk() will put "/dev/" in front, so remove that
+		 * part.
+		 */
+		if (!strncmp(mytty, "/dev/", 5))
+			mytty += 5;
+		if (term_chk(mytty, &msgsok, &atime, 1))
+			exit(EXIT_FAILURE);
+		if (!msgsok)
+			errx(EXIT_FAILURE,
+			     _("you have write permission turned off."));
+
+	} else
+		mytty = "<no tty>";
 
 	myuid = getuid();
 
@@ -160,28 +159,25 @@ main(int argc, char **argv) {
 	case 3:
 		if (!strncmp(argv[2], "/dev/", 5))
 			argv[2] += 5;
-		if (utmp_chk(argv[1], argv[2])) {
-			(void)fprintf(stderr,
-			    _("write: %s is not logged in on %s.\n"),
-			    argv[1], argv[2]);
-			exit(1);
-		}
+		if (utmp_chk(argv[1], argv[2]))
+			errx(EXIT_FAILURE,
+			     _("%s is not logged in on %s."),
+			     argv[1], argv[2]);
 		if (term_chk(argv[2], &msgsok, &atime, 1))
-			exit(1);
-		if (myuid && !msgsok) {
-			(void)fprintf(stderr,
-			    _("write: %s has messages disabled on %s\n"),
-			    argv[1], argv[2]);
-			exit(1);
-		}
+			exit(EXIT_FAILURE);
+		if (myuid && !msgsok)
+			errx(EXIT_FAILURE,
+			     _("%s has messages disabled on %s"),
+			     argv[1], argv[2]);
 		do_write(argv[2], mytty, myuid);
 		break;
 	default:
 		usage(stderr);
 	}
+
 	done(0);
 	/* NOTREACHED */
-	return 0;
+	return EXIT_FAILURE;
 }
 
 
@@ -190,7 +186,6 @@ main(int argc, char **argv) {
  *     the given tty
  */
 int utmp_chk(char *user, char *tty)
-
 {
 	struct utmp u;
 	struct utmp *uptr;
@@ -209,7 +204,7 @@ int utmp_chk(char *user, char *tty)
 	}
 
 	endutent();
-	return(res);
+	return res;
 }
 
 /*
@@ -224,7 +219,6 @@ int utmp_chk(char *user, char *tty)
  * writing from, unless that's the only terminal with messages enabled.
  */
 void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
-
 {
 	struct utmp u;
 	struct utmp *uptr;
@@ -242,43 +236,43 @@ void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
 		memcpy(&u, uptr, sizeof(u));
 		if (strncmp(user, u.ut_name, sizeof(u.ut_name)) == 0) {
 			++nloggedttys;
-			(void)strncpy(atty, u.ut_line, sizeof(u.ut_line));
+			strncpy(atty, u.ut_line, sizeof(u.ut_line));
 			atty[sizeof(u.ut_line)] = '\0';
 			if (term_chk(atty, &msgsok, &atime, 0))
-				continue;	/* bad term? skip */
+				/* bad term? skip */
+				continue;
 			if (myuid && !msgsok)
-				continue;	/* skip ttys with msgs off */
+				/* skip ttys with msgs off */
+				continue;
 			if (strcmp(atty, mytty) == 0) {
 				user_is_me = 1;
-				continue;	/* don't write to yourself */
+				/* don't write to yourself */
+				continue;
 			}
-                        if (u.ut_type != USER_PROCESS)
-			        continue;       /* it's not a valid entry */
+			if (u.ut_type != USER_PROCESS)
+				/* it's not a valid entry */
+				continue;
 			++nttys;
 			if (atime > bestatime) {
 				bestatime = atime;
-				(void)strcpy(tty, atty);
+				strcpy(tty, atty);
 			}
 		}
 	}
 
 	endutent();
-	if (nloggedttys == 0) {
-		(void)fprintf(stderr, _("write: %s is not logged in\n"), user);
-		exit(1);
-	}
+	if (nloggedttys == 0)
+		errx(EXIT_FAILURE, _("%s is not logged in"), user);
 	if (nttys == 0) {
-		if (user_is_me) {		/* ok, so write to yourself! */
-			(void)strcpy(tty, mytty);
+		if (user_is_me) {
+			/* ok, so write to yourself! */
+			strcpy(tty, mytty);
 			return;
 		}
-		(void)fprintf(stderr,
-		    _("write: %s has messages disabled\n"), user);
-		exit(1);
+		errx(EXIT_FAILURE, _("%s has messages disabled"), user);
 	} else if (nttys > 1) {
-		(void)fprintf(stderr,
-		    _("write: %s is logged in more than once; writing to %s\n"),
-		    user, tty);
+		warnx(_("%s is logged in more than once; writing to %s"),
+		      user, tty);
 	}
 }
 
@@ -286,32 +280,31 @@ void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
  * term_chk - check that a terminal exists, and get the message bit
  *     and the access time
  */
-int term_chk(char *tty, int *msgsokP, time_t *atimeP, int showerror)
-
+int term_chk(char *tty, int *msgsokP, time_t * atimeP, int showerror)
 {
 	struct stat s;
 	char path[MAXPATHLEN];
 
 	if (strlen(tty) + 6 > sizeof(path))
-		return(1);
-	(void)sprintf(path, "/dev/%s", tty);
+		return 1;
+	sprintf(path, "/dev/%s", tty);
 	if (stat(path, &s) < 0) {
 		if (showerror)
-			(void)fprintf(stderr,
-			    "write: %s: %s\n", path, strerror(errno));
-		return(1);
+			warn("%s", path);
+		return 1;
 	}
 
 	/* group write bit and group ownership */
 	*msgsokP = (s.st_mode & (S_IWRITE >> 3)) && myegid == s.st_gid;
 	*atimeP = s.st_atime;
-	return(0);
+	return 0;
 }
 
 /*
  * do_write - actually make the connection
  */
-void do_write(char *tty, char *mytty, uid_t myuid) {
+void do_write(char *tty, char *mytty, uid_t myuid)
+{
 	char *login, *pwuid, *nows;
 	struct passwd *pwd;
 	time_t now;
@@ -326,30 +319,27 @@ void do_write(char *tty, char *mytty, uid_t myuid) {
 		login = pwuid;
 
 	if (strlen(tty) + 6 > sizeof(path))
-		exit(1);
-	(void)sprintf(path, "/dev/%s", tty);
-	if ((freopen(path, "w", stdout)) == NULL) {
-		(void)fprintf(stderr, "write: %s: %s\n",
-			      path, strerror(errno));
-		exit(1);
-	}
+		errx(EXIT_FAILURE, _("tty path %s too long"), tty);
+	printf(path, "/dev/%s", tty);
+	if ((freopen(path, "w", stdout)) == NULL)
+		err(EXIT_FAILURE, "%s", path);
 
-	(void)signal(SIGINT, done);
-	(void)signal(SIGHUP, done);
+	signal(SIGINT, done);
+	signal(SIGHUP, done);
 
 	/* print greeting */
 	if (gethostname(host, sizeof(host)) < 0)
-		(void)strcpy(host, "???");
-	now = time((time_t *)NULL);
+		strcpy(host, "???");
+	now = time((time_t *) NULL);
 	nows = ctime(&now);
 	nows[16] = '\0';
 	printf("\r\n\007\007\007");
 	if (strcmp(login, pwuid))
-		(void)printf(_("Message from %s@%s (as %s) on %s at %s ..."),
-			     login, host, pwuid, mytty, nows + 11);
+		printf(_("Message from %s@%s (as %s) on %s at %s ..."),
+		       login, host, pwuid, mytty, nows + 11);
 	else
-		(void)printf(_("Message from %s@%s on %s at %s ..."),
-			     login, host, mytty, nows + 11);
+		printf(_("Message from %s@%s on %s at %s ..."),
+		       login, host, mytty, nows + 11);
 	printf("\r\n");
 
 	while (fgets(line, sizeof(line), stdin) != NULL)
@@ -359,32 +349,29 @@ void do_write(char *tty, char *mytty, uid_t myuid) {
 /*
  * done - cleanup and exit
  */
-static void
-done(int dummy) {
-	(void)printf("EOF\r\n");
-	_exit(0);
+static void __attribute__ ((__noreturn__))
+    done(int dummy __attribute__ ((__unused__)))
+{
+	printf("EOF\r\n");
+	_exit(EXIT_SUCCESS);
 }
 
 /*
  * wr_fputs - like fputs(), but makes control characters visible and
  *     turns \n into \r\n.
  */
-void
-wr_fputs(char *s) {
+void wr_fputs(char *s)
+{
 	char c;
 
-#define	PUTC(c)	if (carefulputc(c,stdout) == EOF) goto err;
-
-	while(*s) {
+#define	PUTC(c)	if (carefulputc(c, stdout) == EOF) \
+    err(EXIT_FAILURE, _("carefulputc failed"));
+	while (*s) {
 		c = *s++;
 		if (c == '\n')
 			PUTC('\r');
 		PUTC(c);
 	}
 	return;
-
-err:
-	fprintf(stderr, "write: %s\n", strerror(errno));
-	exit(1);
 #undef PUTC
 }
