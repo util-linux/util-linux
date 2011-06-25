@@ -113,7 +113,7 @@ static void terminate_intr(int signo CODE_ATTR((unused)))
 	(void) unlink(cleanup_pidfile);
 	if (cleanup_socket)
 		(void) unlink(cleanup_socket);
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
 
 static int call_daemon(const char *socket_path, int op, char *buf,
@@ -224,7 +224,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		if (!quiet)
 			fprintf(stderr, _("Failed to open/create %s: %s\n"),
 				pidfile_path, strerror(errno));
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	cleanup_pidfile = pidfile_path;
 	cleanup_socket = 0;
@@ -241,14 +241,14 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		if (!quiet)
 			fprintf(stderr, _("Failed to lock %s: %s\n"),
 				pidfile_path, strerror(errno));
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	ret = call_daemon(socket_path, 0, reply_buf, sizeof(reply_buf), 0, 0);
 	if (ret > 0) {
 		if (!quiet)
 			printf(_("uuidd daemon already running at pid %s\n"),
 			       reply_buf);
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	alarm(0);
 
@@ -256,7 +256,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		if (!quiet)
 			fprintf(stderr, _("Couldn't create unix stream "
 					  "socket: %s"), strerror(errno));
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	/*
@@ -283,7 +283,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			fprintf(stderr,
 				_("Couldn't bind unix socket %s: %s\n"),
 				socket_path, strerror(errno));
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 	(void) umask(save_umask);
 
@@ -292,7 +292,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			fprintf(stderr, _("Couldn't listen on unix "
 					  "socket %s: %s\n"), socket_path,
 				strerror(errno));
-		exit(1);
+		exit(EXIT_FAILURE);
 	}
 
 	cleanup_socket = socket_path;
@@ -463,7 +463,7 @@ int main(int argc, char **argv)
 			num = strtol(optarg, &tmp, 0);
 			if ((num < 1) || *tmp) {
 				fprintf(stderr, _("Bad number: %s\n"), optarg);
-				exit(1);
+				return EXIT_FAILURE;
 			}
 		case 'p':
 			pidfile_path = optarg;
@@ -488,7 +488,7 @@ int main(int argc, char **argv)
 			timeout = strtol(optarg, &tmp, 0);
 			if ((timeout < 0) || *tmp) {
 				fprintf(stderr, _("Bad number: %s\n"), optarg);
-				exit(EXIT_FAILURE);
+				return EXIT_FAILURE;
 			}
 			break;
 		case 'V':
@@ -527,7 +527,7 @@ int main(int argc, char **argv)
 		if (ret < 0) {
 			printf(_("Error calling uuidd daemon (%s): %s\n"),
 			       err_context, strerror(errno));
-			exit(1);
+			return EXIT_FAILURE;
 		}
 		if (do_type == UUIDD_OP_TIME_UUID) {
 			if (ret != sizeof(uu) + sizeof(num))
@@ -546,7 +546,7 @@ int main(int argc, char **argv)
 				printf("\t%s\n", str);
 			}
 		}
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 	if (do_type) {
 		ret = call_daemon(socket_path, do_type, (char *) &uu,
@@ -554,18 +554,18 @@ int main(int argc, char **argv)
 		if (ret < 0) {
 			printf(_("Error calling uuidd daemon (%s): %s\n"),
 			       err_context, strerror(errno));
-			exit(1);
+			return EXIT_FAILURE;
 		}
 		if (ret != sizeof(uu)) {
 		unexpected_size:
 			printf(_("Unexpected reply length from server %d\n"),
 			       ret);
-			exit(1);
+			return EXIT_FAILURE;
 		}
 		uuid_unparse(uu, str);
 
 		printf("%s\n", str);
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	if (do_kill) {
@@ -578,15 +578,15 @@ int main(int argc, char **argv)
 						_("Couldn't kill uuidd running "
 						  "at pid %d: %s\n"), do_kill,
 						strerror(errno));
-				exit(1);
+				return EXIT_FAILURE;
 			}
 			if (!quiet)
 				printf(_("Killed uuidd running at pid %d\n"),
 				       do_kill);
 		}
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	server_loop(socket_path, pidfile_path, debug, timeout, quiet);
-	return 0;
+	return EXIT_SUCCESS;
 }
