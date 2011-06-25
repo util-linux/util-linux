@@ -414,6 +414,11 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	}
 }
 
+static void __attribute__ ((__noreturn__)) unexpected_size(int size)
+{
+	errx(EXIT_FAILURE, _("Unexpected reply length from server %d"), size);
+}
+
 int main(int argc, char **argv)
 {
 	const char	*socket_path = UUIDD_SOCKET_PATH;
@@ -531,7 +536,7 @@ int main(int argc, char **argv)
 		}
 		if (do_type == UUIDD_OP_TIME_UUID) {
 			if (ret != sizeof(uu) + sizeof(num))
-				goto unexpected_size;
+				unexpected_size(ret);
 
 			uuid_unparse((unsigned char *) buf, str);
 
@@ -540,7 +545,7 @@ int main(int argc, char **argv)
 			printf(_("List of UUIDs:\n"));
 			cp = buf + 4;
 			if (ret != (int) (sizeof(num) + num*sizeof(uu)))
-				goto unexpected_size;
+				unexpected_size(ret);
 			for (i=0; i < num; i++, cp+=UUID_LEN) {
 				uuid_unparse((unsigned char *) cp, str);
 				printf("\t%s\n", str);
@@ -556,12 +561,9 @@ int main(int argc, char **argv)
 			       err_context, strerror(errno));
 			return EXIT_FAILURE;
 		}
-		if (ret != sizeof(uu)) {
-		unexpected_size:
-			printf(_("Unexpected reply length from server %d\n"),
-			       ret);
-			return EXIT_FAILURE;
-		}
+		if (ret != sizeof(uu))
+		        unexpected_size(ret);
+
 		uuid_unparse(uu, str);
 
 		printf("%s\n", str);
