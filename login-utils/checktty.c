@@ -81,7 +81,7 @@ am_in_group(char *group)
 }
 
 static void
-find_groups(gid_t defgrp, const char *user)
+find_groups()
 {
 	num_groups = getgroups(NGROUPS_MAX, mygroups);
 }
@@ -292,11 +292,20 @@ hnmatch(const char *hn, const char *pat)
 char	hostaddress[16];
 sa_family_t hostfamily;
 char	*hostname;
-void	sleepexit(int eval) {}		/* dummy for this test */
-void	badlogin(const char *s) {}	/* dummy for this test */
+
+void sleepexit(int eval __attribute__ ((__unused__)))
+{
+	/* dummy for this test */
+}
+
+void badlogin(const char *s __attribute__ ((__unused__)))
+{
+	/* dummy for this test */
+}
 
 int
-main(int argc, char **argv)
+main(int argc __attribute__ ((__unused__)),
+     char **argv __attribute__ ((__unused__)))
 {
 	struct addrinfo hints, *info = NULL;
 	struct addrexp {
@@ -497,7 +506,7 @@ checktty(const char *user, const char *tty, struct passwd *pwd)
 	return;  /* misspelled username handled elsewhere */
     }
 
-    find_groups(pwd->pw_gid, user);
+    find_groups();
 
     defaultbuf[0] = 0;
     while(fgets(buf, 255, f)) {
