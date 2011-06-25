@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <inttypes.h>
 #include <errno.h>
+#include <err.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/socket.h>
@@ -69,22 +70,16 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static void die(const char *msg)
-{
-	perror(msg);
-	exit(1);
-}
-
 static void create_daemon(void)
 {
 	uid_t euid;
 
 	if (daemon(0,0))
-		die("daemon");
+		err(EXIT_FAILURE, "daemon");
 
 	euid = geteuid();
 	if (setreuid(euid, euid) < 0)
-		die("setreuid");
+		err(EXIT_FAILURE, "setreuid");
 }
 
 static ssize_t read_all(int fd, char *buf, size_t count)
@@ -271,7 +266,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	while (!debug && s <= 2) {
 		s = dup(s);
 		if (s < 0)
-			die("dup");
+			err(EXIT_FAILURE, "dup");
 	}
 
 	/*
@@ -325,7 +320,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			if ((errno == EAGAIN) || (errno == EINTR))
 				continue;
 			else
-				die("accept");
+				err(EXIT_FAILURE, "accept");
 		}
 		len = read(ns, &op, 1);
 		if (len != 1) {
@@ -512,18 +507,18 @@ int main(int argc, char **argv)
 		gid = getgid();
 #ifdef HAVE_SETRESGID
 		if (setresgid(gid, gid, gid) < 0)
-			die("setresgid");
+			err(EXIT_FAILURE, "setresgid");
 #else
 		if (setregid(gid, gid) < 0)
-			die("setregid");
+			err(EXIT_FAILURE, "setregid");
 #endif
 
 #ifdef HAVE_SETRESUID
 		if (setresuid(uid, uid, uid) < 0)
-			die("setresuid");
+			err(EXIT_FAILURE, "setresuid");
 #else
 		if (setreuid(uid, uid) < 0)
-			die("setreuid");
+			err(EXIT_FAILURE, "setreuid");
 #endif
 	}
 	if (num && do_type) {
