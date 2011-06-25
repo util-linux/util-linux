@@ -176,9 +176,9 @@ main(int argc, char **argv) {
 	textdomain(PACKAGE);
 
 	argc--, argv++;
-	if (argc == 0) {
+	if (argc == 0)
 		usage(stderr);
-	}
+
 	do
 		if (argv[0][0] == '-') {
 			register char *cp = argv[0] + 1;
@@ -231,7 +231,7 @@ main(int argc, char **argv) {
 		} else
 			lookup(*argv++);
 	while (--argc > 0);
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 void
@@ -317,9 +317,9 @@ lookup(char *cp) {
 
 void
 looksrc(char *cp) {
-	if (Sflag == 0) {
+	if (Sflag == 0)
 		find(srcdirs, cp);
-	} else
+	else
 		findv(Sflag, Scnt, cp);
 }
 
@@ -333,9 +333,9 @@ lookbin(char *cp) {
 
 void
 lookman(char *cp) {
-	if (Mflag == 0) {
+	if (Mflag == 0)
 		find(mandirs, cp);
-	} else
+	else
 		findv(Mflag, Mcnt, cp);
 }
 
@@ -356,7 +356,7 @@ findin(char *dir, char *cp) {
 	DIR *dirp;
 	struct dirent *dp;
 	char *d, *dd;
-	int l;
+	size_t l;
 	char dirbuf[1024];
 	struct stat statbuf;
 
@@ -409,7 +409,7 @@ itsit(char *cp, char *dp) {
 	int i = strlen(dp);
 
 	if (dp[0] == 's' && dp[1] == '.' && itsit(cp, dp+2))
-		return (1);
+		return 1;
 	if (!strcmp(dp+i-2, ".Z"))
 		i -= 2;
 	else if (!strcmp(dp+i-3, ".gz"))
@@ -419,7 +419,7 @@ itsit(char *cp, char *dp) {
 	while (*cp && *dp && *cp == *dp)
 		cp++, dp++, i--;
 	if (*cp == 0 && *dp == 0)
-		return (1);
+		return 1;
 	while (isdigit(*dp))
 		dp++;
 	if (*cp == 0 && *dp++ == '.') {
@@ -427,7 +427,7 @@ itsit(char *cp, char *dp) {
 		while (i > 0 && *dp)
 			if (--i, *dp++ == '.')
 				return (*dp++ == 'C' && *dp++ == 0);
-		return (1);
+		return 1;
 	}
-	return (0);
+	return 0;
 }
