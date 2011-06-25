@@ -95,9 +95,9 @@ static const char *
 my_tgetstr(char *s __attribute__ ((__unused__)), char *ss) {
     const char* ret = tigetstr(ss);
     if (!ret || ret==(char*)-1)
-        return "";
+	return "";
     else
-        return ret;
+	return ret;
 }
 
 #elif defined(HAVE_LIBTERMCAP)
@@ -122,9 +122,9 @@ static const char *
 my_tgetstr(char *s, char *ss __attribute__ ((__unused__))) {
     const char* ret = tgetstr(s, &strbuf);
     if (!ret)
-        return "";
+	return "";
     else
-        return ret;
+	return ret;
 }
 
 #else /* ! (HAVE_LIBTERMCAP || HAVE_LIBNCURSES || HAVE_LIBNCURSESW) */
@@ -303,17 +303,17 @@ main(int argc, char **argv) {
 	 * This is needed to support first_weekday=2 and first_workday=1 for
 	 * the rare case where working days span across 2 weeks.
 	 * This shell script shows the combinations and calculations involved:
-
-	 for LANG in en_US ru_RU fr_FR csb_PL POSIX; do
-	   printf "%s:\t%s + %s -1 = " $LANG $(locale week-1stday first_weekday)
-	   date -d"$(locale week-1stday) +$(($(locale first_weekday)-1))day" +%w
-	 done
-
-	 en_US:  19971130 + 1 -1 = 0  #0 = sunday
-	 ru_RU:  19971130 + 2 -1 = 1
-	 fr_FR:  19971201 + 1 -1 = 1
-	 csb_PL: 19971201 + 2 -1 = 2
-	 POSIX:  19971201 + 7 -1 = 0
+	 *
+	 * for LANG in en_US ru_RU fr_FR csb_PL POSIX; do
+	 *   printf "%s:\t%s + %s -1 = " $LANG $(locale week-1stday first_weekday)
+	 *   date -d"$(locale week-1stday) +$(($(locale first_weekday)-1))day" +%w
+	 * done
+	 *
+	 * en_US:  19971130 + 1 -1 = 0  #0 = sunday
+	 * ru_RU:  19971130 + 2 -1 = 1
+	 * fr_FR:  19971201 + 1 -1 = 1
+	 * csb_PL: 19971201 + 2 -1 = 2
+	 * POSIX:  19971201 + 7 -1 = 0
 	 */
 	{
 		int wfd;
@@ -417,33 +417,39 @@ main(int argc, char **argv) {
 
 void headers_init(void)
 {
-  int i, wd;
-  char *cur_dh = day_headings, *cur_j_dh = j_day_headings;
+	int i, wd;
+	char *cur_dh = day_headings, *cur_j_dh = j_day_headings;
 
-  strcpy(day_headings,"");
-  strcpy(j_day_headings,"");
+	strcpy(day_headings, "");
+	strcpy(j_day_headings, "");
 
-  for(i = 0 ; i < 7 ; i++ ) {
-     ssize_t space_left;
-     wd = (i + weekstart) % 7;
+	for (i = 0; i < 7; i++) {
+		ssize_t space_left;
+		wd = (i + weekstart) % 7;
 
-     if (i)
-        strcat(cur_dh++, " ");
-     space_left = sizeof(day_headings) - (cur_dh - day_headings);
-     if(space_left <= 2)
-        break;
-     cur_dh += center_str(nl_langinfo(ABDAY_1+wd), cur_dh, space_left, 2);
+		if (i)
+			strcat(cur_dh++, " ");
+		space_left =
+		    sizeof(day_headings) - (cur_dh - day_headings);
+		if (space_left <= 2)
+			break;
+		cur_dh +=
+		    center_str(nl_langinfo(ABDAY_1 + wd), cur_dh,
+			       space_left, 2);
 
-     if (i)
-        strcat(cur_j_dh++, " ");
-     space_left = sizeof(j_day_headings) - (cur_j_dh - j_day_headings);
-     if(space_left <= 3)
-        break;
-     cur_j_dh += center_str(nl_langinfo(ABDAY_1+wd), cur_j_dh, space_left, 3);
-  }
+		if (i)
+			strcat(cur_j_dh++, " ");
+		space_left =
+		    sizeof(j_day_headings) - (cur_j_dh - j_day_headings);
+		if (space_left <= 3)
+			break;
+		cur_j_dh +=
+		    center_str(nl_langinfo(ABDAY_1 + wd), cur_j_dh,
+			       space_left, 3);
+	}
 
-  for (i = 0; i < 12; i++)
-     full_month[i] = nl_langinfo(MON_1+i);
+	for (i = 0; i < 12; i++)
+		full_month[i] = nl_langinfo(MON_1 + i);
 }
 
 void
@@ -524,7 +530,7 @@ monthly3(int day, int month, int year) {
 	do_monthly(day, month,      year,      &out_curm);
 	do_monthly(day, next_month, next_year, &out_next);
 
-        width = (julian ? J_WEEK_LEN : WEEK_LEN) -1;
+	width = (julian ? J_WEEK_LEN : WEEK_LEN) -1;
 	for (i = 0; i < 2; i++)
 		printf("%s  %s  %s\n", out_prev.s[i], out_curm.s[i], out_next.s[i]);
 	for (i = 2; i < FMT_ST_LINES; i++) {
@@ -532,10 +538,10 @@ monthly3(int day, int month, int year) {
 		w1 = w2 = w3 = width;
 
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW) || defined(HAVE_LIBTERMCAP)
-                /* adjust width to allow for non printable characters */
-                w1 += (out_prev.s[i] == Hrow ? Slen : 0);
-                w2 += (out_curm.s[i] == Hrow ? Slen : 0);
-                w3 += (out_next.s[i] == Hrow ? Slen : 0);
+		/* adjust width to allow for non printable characters */
+		w1 += (out_prev.s[i] == Hrow ? Slen : 0);
+		w2 += (out_curm.s[i] == Hrow ? Slen : 0);
+		w3 += (out_next.s[i] == Hrow ? Slen : 0);
 #endif
 		snprintf(lineout, sizeof(lineout), "%-*s  %-*s  %-*s\n",
 		       w1, out_prev.s[i],
