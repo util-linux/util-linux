@@ -240,7 +240,11 @@ int blkdev_is_misaligned(int fd)
 
 	if (ioctl(fd, BLKALIGNOFF, &aligned) < 0)
 		return 0;			/* probably kernel < 2.6.32 */
-	return aligned;
+	/*
+	 * Note that kernel returns -1 as alignement offset if no compatible
+	 * sizes and alignments exist for stacked devices
+	 */
+	return aligned != 0 ? 1 : 0;
 #else
 	return 0;
 #endif
