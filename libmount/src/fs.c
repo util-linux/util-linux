@@ -486,6 +486,7 @@ int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype)
 	fs->fstype = fstype;
 	fs->flags &= ~MNT_FS_PSEUDO;
 	fs->flags &= ~MNT_FS_NET;
+	fs->flags &= ~MNT_FS_SWAP;
 
 	/* save info about pseudo filesystems */
 	if (fs->fstype) {

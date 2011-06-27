@@ -163,7 +163,7 @@ static int prepare_helper_from_options(struct libmnt_context *cxt,
 	if (!opts)
 		return 0;
 
-	if (mnt_optstr_get_option((char *) opts, name, &suffix, &valsz))
+	if (mnt_optstr_get_option(opts, name, &suffix, &valsz))
 		return 0;
 
 	suffix = strndup(suffix, valsz);
@@ -305,7 +305,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 
 		/* get options from mtab */
 		optstr = mnt_fs_get_user_options(cxt->fs);
-		if (optstr && !mnt_optstr_get_option((char *) optstr,
+		if (optstr && !mnt_optstr_get_option(optstr,
 					"user", &mtab_user, &sz) && sz)
 			ok = !strncmp(curr_user, mtab_user, sz);
 	}
