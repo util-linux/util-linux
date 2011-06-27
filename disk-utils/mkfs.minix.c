@@ -659,8 +659,7 @@ int main(int argc, char ** argv) {
 		int sectorsize;
 
 		if (blkdev_get_sector_size(DEV, &sectorsize) == -1)
-			errx(MKFS_ERROR, _("cannot determine sector size for %s"),
-					device_name);
+			sectorsize = DEFAULT_SECTOR_SIZE;		/* kernel < 2.3.3 */
 		if (BLOCK_SIZE < sectorsize)
 			errx(MKFS_ERROR, _("block size smaller than physical "
 					"sector size of %s"), device_name);

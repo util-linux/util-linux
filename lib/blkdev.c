@@ -179,24 +179,17 @@ blkdev_get_sectors(int fd, unsigned long long *sectors)
 	return -1;
 }
 
-/* get logical sector size (default is 512)
+/*
+ * Get logical sector size.
  *
  * This is the smallest unit the storage device can
  * address. It is typically 512 bytes.
  */
-int
-blkdev_get_sector_size(int fd, int *sector_size)
+int blkdev_get_sector_size(int fd, int *sector_size)
 {
 #ifdef BLKSSZGET
-#ifdef __linux__
-	if (get_linux_version() < KERNEL_VERSION(2,3,3)) {
-		*sector_size = DEFAULT_SECTOR_SIZE;
-		return 0;
-	}
-#endif
 	if (ioctl(fd, BLKSSZGET, sector_size) >= 0)
 		return 0;
-
 	return -1;
 #else
 	*sector_size = DEFAULT_SECTOR_SIZE;
