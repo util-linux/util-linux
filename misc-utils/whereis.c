@@ -46,6 +46,7 @@
 #include <string.h>
 #include <ctype.h>
 #include "nls.h"
+#include "c.h"
 
 void zerof(void);
 void getlist(int *, char ***, char ***, int *);
@@ -59,56 +60,56 @@ void findin(char *, char *);
 int itsit(char *, char *);
 
 static char *bindirs[] = {
-   "/bin",
-   "/usr/bin",
-   "/sbin",
-   "/usr/sbin",
-   "/etc",
-   "/usr/etc",
-   "/lib",
-   "/usr/lib",
-   "/lib64",
-   "/usr/lib64",
-   "/usr/games",
-   "/usr/games/bin",
-   "/usr/games/lib",
-   "/usr/emacs/etc",
-   "/usr/lib/emacs/*/etc",
-   "/usr/TeX/bin",
-   "/usr/tex/bin",
-   "/usr/interviews/bin/LINUX",
+	"/bin",
+	"/usr/bin",
+	"/sbin",
+	"/usr/sbin",
+	"/etc",
+	"/usr/etc",
+	"/lib",
+	"/usr/lib",
+	"/lib64",
+	"/usr/lib64",
+	"/usr/games",
+	"/usr/games/bin",
+	"/usr/games/lib",
+	"/usr/emacs/etc",
+	"/usr/lib/emacs/*/etc",
+	"/usr/TeX/bin",
+	"/usr/tex/bin",
+	"/usr/interviews/bin/LINUX",
 
-   "/usr/X11R6/bin",
-   "/usr/X386/bin",
-   "/usr/bin/X11",
-   "/usr/X11/bin",
-   "/usr/X11R5/bin",
+	"/usr/X11R6/bin",
+	"/usr/X386/bin",
+	"/usr/bin/X11",
+	"/usr/X11/bin",
+	"/usr/X11R5/bin",
 
-   "/usr/local/bin",
-   "/usr/local/sbin",
-   "/usr/local/etc",
-   "/usr/local/lib",
-   "/usr/local/games",
-   "/usr/local/games/bin",
-   "/usr/local/emacs/etc",
-   "/usr/local/TeX/bin",
-   "/usr/local/tex/bin",
-   "/usr/local/bin/X11",
+	"/usr/local/bin",
+	"/usr/local/sbin",
+	"/usr/local/etc",
+	"/usr/local/lib",
+	"/usr/local/games",
+	"/usr/local/games/bin",
+	"/usr/local/emacs/etc",
+	"/usr/local/TeX/bin",
+	"/usr/local/tex/bin",
+	"/usr/local/bin/X11",
 
-   "/usr/contrib",
-   "/usr/hosts",
-   "/usr/include",
+	"/usr/contrib",
+	"/usr/hosts",
+	"/usr/include",
 
-   "/usr/g++-include",
+	"/usr/g++-include",
 
-   "/usr/ucb",
-   "/usr/old",
-   "/usr/new",
-   "/usr/local",
-   "/usr/libexec",
-   "/usr/share",
+	"/usr/ucb",
+	"/usr/old",
+	"/usr/new",
+	"/usr/local",
+	"/usr/libexec",
+	"/usr/share",
 
-   "/opt/*/bin",
+	"/opt/*/bin",
 
 	0
 };
@@ -123,7 +124,7 @@ static char *mandirs[] = {
 	0
 };
 
-static char *srcdirs[]  = {
+static char *srcdirs[] = {
 	"/usr/src/*",
 	"/usr/src/lib/libc/*",
 	"/usr/src/lib/libc/net/*",
@@ -143,22 +144,42 @@ int	Bcnt;
 char	**Mflag;
 int	Mcnt;
 char	uflag;
+
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
+{
+	fprintf(out, _("Usage: %s [options] file\n"),
+		program_invocation_short_name);
+
+	fprintf(out, _("\nOptions:\n"
+		       " -f file    define search scope\n"
+		       " -b         search only binaries\n"
+		       " -B dirs    define binaries lookup path\n"
+		       " -m         search only manual paths\n"
+		       " -M dirs    define man lookup path\n"
+		       " -s         search only sources path\n"
+		       " -S dirs    define sources lookup path\n"
+		       " -u         search from unusual enties\n"
+		       " -V         output version information and exit\n"
+		       " -h         display this help and exit\n\n"
+		       "See how to use file and dirs arguments from whereis(1) manual.\n\n"));
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 /*
  * whereis name
  * look for source, documentation and binaries
  */
 int
-main(int argc, char **argv) {
+main(int argc, char **argv)
+{
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
 	argc--, argv++;
-	if (argc == 0) {
-usage:
-		fprintf(stderr, _("whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"));
-		exit(1);
-	}
+	if (argc == 0)
+		usage(stderr);
+
 	do
 		if (argv[0][0] == '-') {
 			register char *cp = argv[0] + 1;
@@ -197,19 +218,26 @@ usage:
 				zerof();
 				mflag++;
 				continue;
-
+			case 'V':
+				printf(_("%s from %s\n"),
+					program_invocation_short_name,
+					PACKAGE_STRING);
+				return EXIT_SUCCESS;
+			case 'h':
+				usage(stdout);
 			default:
-				goto usage;
+				usage(stderr);
 			}
 			argv++;
 		} else
 			lookup(*argv++);
 	while (--argc > 0);
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 void
-getlist(int *argcp, char ***argvp, char ***flagp, int *cntp) {
+getlist(int *argcp, char ***argvp, char ***flagp, int *cntp)
+{
 	(*argvp)++;
 	*flagp = *argvp;
 	*cntp = 0;
@@ -218,7 +246,6 @@ getlist(int *argcp, char ***argvp, char ***flagp, int *cntp) {
 	(*argcp)++;
 	(*argvp)--;
 }
-
 
 void
 zerof()
@@ -230,8 +257,40 @@ zerof()
 int	count;
 int	print;
 
+int
+print_again(char *cp)
+{
+	if (print)
+		printf("%s:", cp);
+	if (sflag) {
+		looksrc(cp);
+		if (uflag && print == 0 && count != 1) {
+			print = 1;
+			return 1;
+		}
+	}
+	count = 0;
+	if (bflag) {
+		lookbin(cp);
+		if (uflag && print == 0 && count != 1) {
+			print = 1;
+			return 1;
+		}
+	}
+	count = 0;
+	if (mflag) {
+		lookman(cp);
+		if (uflag && print == 0 && count != 1) {
+			print = 1;
+			return 1;
+		}
+	}
+	return 0;
+}
+
 void
-lookup(char *cp) {
+lookup(char *cp)
+{
 	register char *dp;
 
 	for (dp = cp; *dp; dp++)
@@ -250,46 +309,26 @@ lookup(char *cp) {
 		count = 0;
 	} else
 		print = 1;
-again:
-	if (print)
-		printf("%s:", cp);
-	if (sflag) {
-		looksrc(cp);
-		if (uflag && print == 0 && count != 1) {
-			print = 1;
-			goto again;
-		}
-	}
-	count = 0;
-	if (bflag) {
-		lookbin(cp);
-		if (uflag && print == 0 && count != 1) {
-			print = 1;
-			goto again;
-		}
-	}
-	count = 0;
-	if (mflag) {
-		lookman(cp);
-		if (uflag && print == 0 && count != 1) {
-			print = 1;
-			goto again;
-		}
-	}
+
+	while (print_again(cp))
+		/* all in print_again() */ ;
+
 	if (print)
 		printf("\n");
 }
 
 void
-looksrc(char *cp) {
-	if (Sflag == 0) {
+looksrc(char *cp)
+{
+	if (Sflag == 0)
 		find(srcdirs, cp);
-	} else
+	else
 		findv(Sflag, Scnt, cp);
 }
 
 void
-lookbin(char *cp) {
+lookbin(char *cp)
+{
 	if (Bflag == 0)
 		find(bindirs, cp);
 	else
@@ -297,41 +336,58 @@ lookbin(char *cp) {
 }
 
 void
-lookman(char *cp) {
-	if (Mflag == 0) {
+lookman(char *cp)
+{
+	if (Mflag == 0)
 		find(mandirs, cp);
-	} else
+	else
 		findv(Mflag, Mcnt, cp);
 }
 
 void
-findv(char **dirv, int dirc, char *cp) {
+findv(char **dirv, int dirc, char *cp)
+{
 	while (dirc > 0)
 		findin(*dirv++, cp), dirc--;
 }
 
 void
-find(char **dirs, char *cp) {
+find(char **dirs, char *cp)
+{
 	while (*dirs)
 		findin(*dirs++, cp);
 }
 
 void
-findin(char *dir, char *cp) {
+findin(char *dir, char *cp)
+{
 	DIR *dirp;
 	struct dirent *dp;
 	char *d, *dd;
-	int l;
+	size_t l;
 	char dirbuf[1024];
 	struct stat statbuf;
 
 	dd = strchr(dir, '*');
-	if (!dd)
-		goto noglob;
+	if (!dd) {
+		dirp = opendir(dir);
+		if (dirp == NULL)
+			return;
+		while ((dp = readdir(dirp)) != NULL) {
+			if (itsit(cp, dp->d_name)) {
+				count++;
+				if (print)
+					printf(" %s/%s", dir, dp->d_name);
+			}
+		}
+		closedir(dirp);
+		return;
+	}
 
 	l = strlen(dir);
-	if (l < sizeof(dirbuf)) {	/* refuse excessively long names */
-		strcpy (dirbuf, dir);
+	if (l < sizeof(dirbuf)) {
+		/* refuse excessively long names */
+		strcpy(dirbuf, dir);
 		d = strchr(dirbuf, '*');
 		*d = 0;
 		dirp = opendir(dirbuf);
@@ -348,43 +404,32 @@ findin(char *dir, char *cp) {
 				continue;
 			if (!S_ISDIR(statbuf.st_mode))
 				continue;
-			strcat(d, dd+1);
+			strcat(d, dd + 1);
 			findin(dirbuf, cp);
 		}
 		closedir(dirp);
 	}
 	return;
 
-    noglob:
-	dirp = opendir(dir);
-	if (dirp == NULL)
-		return;
-	while ((dp = readdir(dirp)) != NULL) {
-		if (itsit(cp, dp->d_name)) {
-			count++;
-			if (print)
-				printf(" %s/%s", dir, dp->d_name);
-		}
-	}
-	closedir(dirp);
 }
 
 int
-itsit(char *cp, char *dp) {
+itsit(char *cp, char *dp)
+{
 	int i = strlen(dp);
 
-	if (dp[0] == 's' && dp[1] == '.' && itsit(cp, dp+2))
-		return (1);
-	if (!strcmp(dp+i-2, ".Z"))
+	if (dp[0] == 's' && dp[1] == '.' && itsit(cp, dp + 2))
+		return 1;
+	if (!strcmp(dp + i - 2, ".Z"))
 		i -= 2;
-	else if (!strcmp(dp+i-3, ".gz"))
+	else if (!strcmp(dp + i - 3, ".gz"))
 		i -= 3;
-	else if (!strcmp(dp+i-4, ".bz2"))
+	else if (!strcmp(dp + i - 4, ".bz2"))
 		i -= 4;
 	while (*cp && *dp && *cp == *dp)
 		cp++, dp++, i--;
 	if (*cp == 0 && *dp == 0)
-		return (1);
+		return 1;
 	while (isdigit(*dp))
 		dp++;
 	if (*cp == 0 && *dp++ == '.') {
@@ -392,7 +437,7 @@ itsit(char *cp, char *dp) {
 		while (i > 0 && *dp)
 			if (--i, *dp++ == '.')
 				return (*dp++ == 'C' && *dp++ == 0);
-		return (1);
+		return 1;
 	}
-	return (0);
+	return 0;
 }

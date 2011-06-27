@@ -217,9 +217,8 @@ static int
 do_wipe_offset(int fd, struct wipe_desc *wp, const char *fname, int noact)
 {
 	char buf[BUFSIZ];
-	int i;
 	off_t l;
-	size_t len;
+	size_t i, len;
 
 	if (!wp->type) {
 		warnx(_("no magic string found at offset "
@@ -308,7 +307,8 @@ usage(FILE *out)
 	" -h, --help          show this help text\n"
 	" -n, --no-act        do everything except the actual write() call\n"
 	" -o, --offset <num>  offset to erase, in bytes\n"
-	" -p, --parsable      print out in parsable instead of printable format\n"));
+	" -p, --parsable      print out in parsable instead of printable format\n"
+	" -v, --version       output version information and exit\n"));
 
 	fprintf(out, _("\nFor more information see wipefs(8).\n"));
 
@@ -329,6 +329,7 @@ main(int argc, char **argv)
 	    { "no-act",    0, 0, 'n' },
 	    { "offset",    1, 0, 'o' },
 	    { "parsable",  0, 0, 'p' },
+	    { "version",   0, 0, 'v' },
 	    { NULL,        0, 0, 0 }
 	};
 
@@ -336,7 +337,7 @@ main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "ahno:p", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "ahno:pv", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			all++;
@@ -354,6 +355,10 @@ main(int argc, char **argv)
 		case 'p':
 			mode = WP_MODE_PARSABLE;
 			break;
+		case 'v':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+				PACKAGE_STRING);
+			return EXIT_SUCCESS;
 		default:
 			usage(stderr);
 			break;

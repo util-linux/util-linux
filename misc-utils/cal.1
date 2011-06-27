@@ -34,64 +34,64 @@
 .\"
 .\"     @(#)cal.1	8.1 (Berkeley) 6/6/93
 .\"
-.Dd June 6, 1993
-.Dt CAL 1
-.Os
+.TH CAL "1" "June 2011" "util-linux" "User Commands"
 .Sh NAME
 .Nm cal
 .Nd displays a calendar
-.Sh SYNOPSIS
-.Nm cal
-.Op Fl smjy13
-.Op [ [ Ar day ] Ar month ] Ar year
-.Sh DESCRIPTION
-.Nm Cal
-displays a simple calendar.
-If arguments are not specified,
-the current month is displayed.
-The options are as follows:
-.Bl -tag -width Ds
-.It Fl 1
+.SH SYNOPSIS
+.B cal
+[\fIoptions\fR] [[[\fIday\fR] \fImonth\fR] \fIyear\fR]
+.SH DESCRIPTION
+Cal displays a simple calendar. If arguments are not specified, the current
+month is displayed.
+.SH OPTIONS
+.TP
+\fB\-1\fR, \fB\-\-one\fR
 Display single month output.
 (This is the default.)
-.It Fl 3
+.TP
+\fB\-3\fR, \fB\-\-three\fR
 Display prev/current/next month output.
-.It Fl s
+.TP
+\fB\-s\fR, \fB\-\-sunday\fR
 Display Sunday as the first day of the week.
-.It Fl m
+.TP
+\fB\-m\fR, \fB\-\-monday\fR
 Display Monday as the first day of the week.
-.It Fl j
+.TP
+\fB\-j\fR, \fB\-\-julian\fR
 Display Julian dates (days one-based, numbered from January 1).
-.It Fl y
+.TP
+\fB\-y\fR, \fB\-\-year\fR
 Display a calendar for the current year.
-.It Fl V
+.TP
+\fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
-.El
-.Pp
-A single parameter specifies the year (1 - 9999) to be displayed;
-note the year must be fully specified:
-.Dq Li cal 89
-will
-.Em not
-display a calendar for 1989.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display help screen and exit.
+.SH PARAMETERS
+A single parameter specifies the year (1 - 9999) to be displayed; note the
+year must be fully specified:
+.B "cal 89"
+will not display a calendar for 1989.
+.PP
 Two parameters denote the month (1 - 12) and year.
-Three parameters denote the day (1-31), month and year,
-and the day will be highlighted if the calendar is displayed on a terminal.
-If no parameters are specified, the current month's calendar is
-displayed.
-.Pp
-A year starts on Jan 1. The first day of the week is determined by the locale.
-.Pp
-The Gregorian Reformation is assumed to have occurred in 1752 on the 3rd
-of September.
-By this time, most countries had recognized the reformation (although a
-few did not recognize it until the early 1900's.)
-Ten days following that date were eliminated by the reformation, so the
-calendar for that month is a bit unusual.
-.Sh HISTORY
-A
-.Nm
-command appeared in Version 6 AT&T UNIX.
-.Sh AVAILABILITY
+.PP
+Three parameters denote the day (1-31), month and year, and the day will be
+highlighted if the calendar is displayed on a terminal. If no parameters are
+specified, the current month's calendar is displayed.
+.PP
+A year starts on Jan 1. The first day of the week is determined by the
+locale.
+.PP
+The Gregorian Reformation is assumed to have occurred in 1752 on the 3rd of
+September. By this time, most countries had recognized the reformation
+(although a few did not recognize it until the early 1900's). Ten days
+following that date were eliminated by the reformation, so the calendar for
+that month is a bit unusual.
+.SH HISTORY
+A cal command appeared in Version 6 AT&T UNIX.
+.SH AVAILABILITY
 The cal command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.

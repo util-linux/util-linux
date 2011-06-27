@@ -1,49 +1,57 @@
 .\" Written by Andries E. Brouwer (aeb@cwi.nl)
 .\" Placed in the public domain
 .\"
-.TH RENAME 1 "1 January 2000" "" "Linux Programmer's Manual"
+.TH RENAME "1" "June 2011" "util-linux" "User Commands"
 .SH NAME
 rename \- rename files
 .SH SYNOPSIS
 .B rename
-.IR  "from to file" ...
-.br
-.B rename -V
+[\fIoptions\fR] \fIexpression replacement file\fR...
 .SH DESCRIPTION
 .B rename
 will rename the specified files by replacing the first occurrence of
-.I from
+.I expression
 in their name by
-.IR to .
-
+.IR replacement .
+.SH OPTIONS
 .TP
-.BR \-V , " \-\-version"
+\fB\-v\fR, \fB\-\-verbose\fR
+Give visual feedback which files where renamed, if any.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
-
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display help screen and exit.
 .SH EXAMPLES
 Given the files
 .IR foo1 ", ..., " foo9 ", " foo10 ", ..., " foo278 ,
 the commands
-
 .RS
+.PP
 .nf
 rename foo foo0 foo?
 rename foo foo0 foo??
 .fi
+.PP
 .RE
-
 will turn them into
 .IR foo001 ", ..., " foo009 ", " foo010 ", ..., " foo278 .
-
 And
 .RS
+.PP
 .nf
 rename .htm .html *.htm
 .fi
+.PP
 .RE
-
 will fix the extension of your html files.
-
+.SH WARNING
+The rename has no safeguards. If user has permission to rewrite file names
+the command will perform the action without any questions. For example
+result can be quite drastic when the command is ran as root in /lib
+directory. Make always a backup before running the command, unless you truly
+know what you are doing.
 .SH "SEE ALSO"
 .BR mmv (1),
 .BR mv (1)

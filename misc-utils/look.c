@@ -46,17 +46,14 @@
  * the manual page.
  */
 
-#include <sys/types.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
-
-#include <limits.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
 #include <string.h>
-#include <strings.h>
 #include <ctype.h>
 #include <getopt.h>
 
@@ -80,7 +77,7 @@ static int compare (char *, char *);
 static char *linear_search (char *, char *);
 static int look (char *, char *);
 static void print_from (char *, char *);
-static void usage (void);
+static void __attribute__ ((__noreturn__)) usage(FILE * out);
 
 int
 main(int argc, char *argv[])
@@ -88,6 +85,16 @@ main(int argc, char *argv[])
 	struct stat sb;
 	int ch, fd, termchar;
 	char *back, *file, *front, *p;
+
+	static const struct option longopts[] = {
+		{"alternative", no_argument, NULL, 'a'},
+		{"alphanum", no_argument, NULL, 'd'},
+		{"ignore-case", no_argument, NULL, 'f'},
+		{"terminate", required_argument, NULL, 't'},
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -99,11 +106,11 @@ main(int argc, char *argv[])
 	termchar = '\0';
 	string = NULL;		/* just for gcc */
 
-	while ((ch = getopt(argc, argv, "adft:")) != -1)
+	while ((ch = getopt_long(argc, argv, "adft:Vh", longopts, NULL)) != -1)
 		switch(ch) {
 		case 'a':
-		        file = _PATH_WORDS_ALT;
-		        break;
+			file = _PATH_WORDS_ALT;
+			break;
 		case 'd':
 			dflag = 1;
 			break;
@@ -113,9 +120,16 @@ main(int argc, char *argv[])
 		case 't':
 			termchar = *optarg;
 			break;
+		case 'V':
+			printf(_("%s from %s\n"),
+				program_invocation_short_name,
+				PACKAGE_STRING);
+			return EXIT_SUCCESS;
+		case 'h':
+			usage(stdout);
 		case '?':
 		default:
-			usage();
+			usage(stderr);
 		}
 	argc -= optind;
 	argv += optind;
@@ -130,7 +144,7 @@ main(int argc, char *argv[])
 		string = *argv;
 		break;
 	default:
-		usage();
+		usage(stderr);
 	}
 
 	if (termchar != '\0' && (p = strchr(string, termchar)) != NULL)
@@ -347,9 +361,18 @@ compare(char *s2, char *s2end) {
 	return ((i > 0) ? LESS : (i < 0) ? GREATER : EQUAL);
 }
 
-static void
-usage()
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	(void)fprintf(stderr, _("usage: look [-dfa] [-t char] string [file]\n"));
-	exit(2);
+	fprintf(out, _("Usage: %s [options] string [file]\n"),
+		program_invocation_short_name);
+
+	fprintf(out, _("\nOptions:\n"
+		       " -a, --alternative  use alternate dictionary\n"
+		       " -d, --alphanum     compare only alpha numeric characters\n"
+		       " -f, --ignore-case  ignore when comparing\n"
+		       " -t, --terminate=C  define string termination character\n"
+		       " -V, --version      output version information and exit\n"
+		       " -h, --help         display this help and exit\n\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
