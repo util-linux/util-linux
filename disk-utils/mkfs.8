@@ -1,15 +1,12 @@
 .\" -*- nroff -*-
 .TH MKFS 8 "Jun 1995" "Version 1.9"
+.TH MKFS "8" "June 2011" "util-linux" "System Administration Utilities"
 .SH NAME
 mkfs \- build a Linux file system
 .SH SYNOPSIS
+.SH SYNOPSIS
 .B mkfs
-.RB [ \-V ]
-.RB [ \-t
-.IR fstype ]
-.RI [ fs-options ]
-.I filesys
-.RI [ blocks ]
+[\fIoptions\fR] [\fI-t type fs-options\fR] \fIdevice \fR[\fIsize\fR]
 .SH DESCRIPTION
 .B mkfs
 is used to build a Linux file system on a device, usually
@@ -19,8 +16,9 @@ is either the device name (e.g.
 .IR /dev/hda1 ,
 .IR /dev/sdb2 ),
 or a regular file that shall contain the file system.
-.I blocks
-is the number of blocks to be used for the file system.
+The
+.I size
+argument is the number of blocks to be used for the file system.
 .PP
 The exit code returned by
 .B mkfs
@@ -49,14 +47,7 @@ Please see the file system-specific builder manual pages for
 further details.
 .SH OPTIONS
 .TP
-.B -V
-Produce verbose output, including all file system-specific commands
-that are executed.
-Specifying this option more than once inhibits execution of any
-file system-specific commands.
-This is really only useful for testing.
-.TP
-.BI -t \ fstype
+\fB\-t\fR, \fB\-\-type\fR=\fITYPE\fR
 Specifies the type of file system to be built.
 If not specified, the default file system type
 (currently ext2) is used.
@@ -67,20 +58,25 @@ system builder.
 Although not guaranteed, the following options are supported
 by most file system builders.
 .TP
-.B -c
-Check the device for bad blocks before building the file system.
+\fB\-V\fR, \fB\-\-verbose\fR
+Produce verbose output, including all file system-specific commands
+that are executed.
+Specifying this option more than once inhibits execution of any
+file system-specific commands.
+This is really only useful for testing.
 .TP
-.BI -l \ filename
-Read the bad blocks list from
-.I filename
+\fB\-V\fR, \fB\-\-version\fR
+output version information and exit
+\fB\-V\fR will output version information only when it is the
+only parameter.
 .TP
-.B -v
-Produce verbose output.
+\fB\-h\fR, \fB\-\-help\fR
+Display help and exit.
 .SH BUGS
 All generic options must precede and not be combined with
 file system-specific options.
 Some file system-specific programs do not support the
-.I -v
+.I -V
 (verbose) option, nor return meaningful exit codes.
 Also, some file system-specific programs do not automatically
 detect the device size and require the
