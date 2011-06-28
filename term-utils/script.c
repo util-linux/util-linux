@@ -45,17 +45,20 @@
 #include <stdlib.h>
 #include <paths.h>
 #include <time.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <termios.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
-#include <sys/file.h>
 #include <signal.h>
 #include <errno.h>
 #include <string.h>
 #include <getopt.h>
 #include <unistd.h>
+#include <fcntl.h>
+#include <libintl.h>
+#include <limits.h>
+#include <locale.h>
+#include <stddef.h>
 
 #include "nls.h"
 #include "c.h"
