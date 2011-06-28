@@ -2,8 +2,6 @@
  * mkfs		A simple generic frontend for the for the mkfs program
  *		under Linux.  See the manual page for details.
  *
- * Usage:	mkfs [-V] [-t fstype] [fs-options] device [size]
- *
  * Authors:	David Engel, <david@ods.com>
  *		Fred N. van Kempen, <waltje@uWalt.NL.Mugnet.ORG>
  *		Ron Sommeling, <sommel@sci.kun.nl>
@@ -15,7 +13,7 @@
  *	
  */
 
-
+#include <getopt.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
@@ -31,31 +29,61 @@
 #define PROGNAME	"mkfs.%s"
 
 
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
+{
+	fprintf(out,
+		_("Usage: %s [options] [-t type fs-options] device [size]\n"),
+		program_invocation_short_name);
+
+	fprintf(out, _("\nOptions:\n"
+		       " -t, --type=TYPE  file system type, when undefined ext2 is used\n"
+		       "     fs-options   parameters to real file system builder\n"
+		       "     device       path to a device\n"
+		       "     size         number of blocks on the device\n"
+		       " -V, --verbose    explain what is done\n"
+		       "                  defining -V more than once will cause a dry-run\n"
+		       " -V, --version    output version information and exit\n"
+		       "                  -V as version must be only option\n"
+		       " -h, --help       display this help and exit\n"));
+
+	fprintf(out, _("\nFor more information see mkfs(8).\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
+static void __attribute__ ((__noreturn__)) print_version(void)
+{
+	printf(_("%s (%s)\n"),
+	       program_invocation_short_name, PACKAGE_STRING);
+	exit(EXIT_SUCCESS);
+}
+
 int main(int argc, char *argv[])
 {
   char *progname;	/* name of executable to be called */
   char *fstype = NULL;
   int i, more = 0, verbose = 0;
   char *oldpath, *newpath;
-  char *program_name, *p;
 
-  program_name = argv[0];
-  if ((p = strrchr(program_name, '/')) != NULL)
-	  program_name = p+1;
+  enum { VERSION_OPTION = CHAR_MAX + 1 };
+
+  static const struct option longopts[] = {
+    {"type", required_argument, NULL, 't'},
+    {"version", no_argument, NULL, VERSION_OPTION},
+    {"help", no_argument, NULL, 'h'},
+    {NULL, 0, NULL, 0}
+  };
 
   setlocale(LC_ALL, "");
   bindtextdomain(PACKAGE, LOCALEDIR);
   textdomain(PACKAGE);
 
-  if (argc == 2 &&
-      (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-	  printf(_("%s (%s)\n"), program_name, PACKAGE_STRING);
-	  exit(EXIT_SUCCESS);
-  }
+  if (argc == 2 && !strcmp(argv[1], "-V"))
+    print_version();
 
   /* Check commandline options. */
   opterr = 0;
-  while ((more == 0) && ((i = getopt(argc, argv, "Vt:")) != -1))
+  while ((more == 0) && ((i = getopt_long(argc, argv, "Vt:h", longopts, NULL)) != -1))
     switch (i) {
     case 'V':
       verbose++;
@@ -63,13 +91,17 @@ int main(int argc, char *argv[])
     case 't':
       fstype = optarg;
       break;
+    case 'h':
+      usage(stdout);
+    case VERSION_OPTION:
+      print_version();
     default:
       optind--;
       more = 1;
       break;		/* start of specific arguments */
     }
   if (optind == argc)
-	  errx(EXIT_FAILURE, _("Usage: mkfs [-V] [-t fstype] [fs-options] device [size]"));
+      usage(stderr);
   
   /* If -t wasn't specified, use the default */
   if (fstype == NULL)
