@@ -71,6 +71,8 @@
 #include <utempter.h>
 #endif
 
+#define DEFAULT_OUTPUT "typescript"
+
 void finish(int);
 void done(void);
 void fail(void);
@@ -86,8 +88,8 @@ char	*shell;
 FILE	*fscript;
 int	master = -1;
 int	slave;
-int	child;
-int	subchild;
+pid_t	child;
+pid_t	subchild;
 int	childstatus;
 char	*fname;
 
@@ -164,16 +166,16 @@ main(int argc, char **argv) {
 	enum { FORCE_OPTION = CHAR_MAX + 1 };
 
 	static const struct option longopts[] = {
-		{ "append",	no_argument,	   0, 'a' },
-		{ "command",	required_argument, 0, 'c' },
-		{ "return",	no_argument,	   0, 'e' },
-		{ "flush",	no_argument,	   0, 'f' },
-		{ "force",	no_argument,	   0, FORCE_OPTION, },
-		{ "quiet",	no_argument,	   0, 'q' },
-		{ "timing",	optional_argument, 0, 't' },
-		{ "version",	no_argument,	   0, 'V' },
-		{ "help",	no_argument,	   0, 'h' },
-		{ NULL,		0, 0, 0 }
+		{ "append",	no_argument,	   NULL, 'a' },
+		{ "command",	required_argument, NULL, 'c' },
+		{ "return",	no_argument,	   NULL, 'e' },
+		{ "flush",	no_argument,	   NULL, 'f' },
+		{ "force",	no_argument,	   NULL, FORCE_OPTION, },
+		{ "quiet",	no_argument,	   NULL, 'q' },
+		{ "timing",	optional_argument, NULL, 't' },
+		{ "version",	no_argument,	   NULL, 'V' },
+		{ "help",	no_argument,	   NULL, 'h' },
+		{ NULL,		0, NULL, 0 }
 	};
 
 	setlocale(LC_ALL, "");
@@ -184,28 +186,28 @@ main(int argc, char **argv) {
 	while ((ch = getopt_long(argc, argv, "ac:efqt::Vh", longopts, NULL)) != -1)
 		switch(ch) {
 		case 'a':
-			aflg++;
+			aflg = 1;
 			break;
 		case 'c':
 			cflg = optarg;
 			break;
 		case 'e':
-			eflg++;
+			eflg = 1;
 			break;
 		case 'f':
-			fflg++;
+			fflg = 1;
 			break;
 		case FORCE_OPTION:
 			forceflg = 1;
 			break;
 		case 'q':
-			qflg++;
+			qflg = 1;
 			break;
 		case 't':
 			if (optarg)
 				if ((timingfd = fopen(optarg, "w")) == NULL)
 					err(EXIT_FAILURE, _("cannot open timing file %s"), optarg);
-			tflg++;
+			tflg = 1;
 			break;
 		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,
@@ -225,7 +227,7 @@ main(int argc, char **argv) {
 	if (argc > 0)
 		fname = argv[0];
 	else {
-		fname = "typescript";
+		fname = DEFAULT_OUTPUT;
 		die_if_link(fname);
 	}
 	if ((fscript = fopen(fname, aflg ? "a" : "w")) == NULL) {
@@ -289,20 +291,20 @@ main(int argc, char **argv) {
 
 void
 doinput() {
-	register int cc;
+	ssize_t cc;
 	char ibuf[BUFSIZ];
 
 	fclose(fscript);
 
 	while (die == 0) {
-		if ((cc = read(0, ibuf, BUFSIZ)) > 0) {
+		if ((cc = read(STDIN_FILENO, ibuf, BUFSIZ)) > 0) {
 			ssize_t wrt = write(master, ibuf, cc);
-			if (wrt == -1) {
+			if (wrt < 0) {
 				warn (_("write failed"));
 				fail();
 			}
 		}
-		else if (cc == -1 && errno == EINTR && resized)
+		else if (cc < 0 && errno == EINTR && resized)
 			resized = 0;
 		else
 			break;
@@ -316,7 +318,7 @@ doinput() {
 void
 finish(int dummy __attribute__ ((__unused__))) {
 	int status;
-	register int pid;
+	pid_t pid;
 
 	while ((pid = wait3(&status, WNOHANG, 0)) > 0)
 		if (pid == child) {
@@ -329,7 +331,7 @@ void
 resize(int dummy __attribute__ ((__unused__))) {
 	resized = 1;
 	/* transmit window change information to the child */
-	ioctl(0, TIOCGWINSZ, (char *)&win);
+	ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&win);
 	ioctl(slave, TIOCSWINSZ, (char *)&win);
 }
 
@@ -344,7 +346,7 @@ my_strftime(char *buf, size_t len, const char *fmt, const struct tm *tm) {
 
 void
 dooutput(FILE *timingfd) {
-	register ssize_t cc;
+	ssize_t cc;
 	time_t tvec;
 	char obuf[BUFSIZ];
 	struct timeval tv;
@@ -353,7 +355,7 @@ dooutput(FILE *timingfd) {
 	ssize_t wrt;
 	ssize_t fwrt;
 
-	close(0);
+	close(STDIN_FILENO);
 #ifdef HAVE_LIBUTIL
 	close(slave);
 #endif
@@ -388,7 +390,7 @@ dooutput(FILE *timingfd) {
 			fprintf(timingfd, "%f %zd\n", newtime - oldtime, cc);
 			oldtime = newtime;
 		}
-		wrt = write(1, obuf, cc);
+		wrt = write(STDOUT_FILENO, obuf, cc);
 		if (wrt < 0) {
 			warn (_("write failed"));
 			fail();
@@ -424,9 +426,9 @@ doshell() {
 	getslave();
 	close(master);
 	fclose(fscript);
-	dup2(slave, 0);
-	dup2(slave, 1);
-	dup2(slave, 2);
+	dup2(slave, STDIN_FILENO);
+	dup2(slave, STDOUT_FILENO);
+	dup2(slave, STDERR_FILENO);
 	close(slave);
 
 	master = -1;
@@ -453,7 +455,7 @@ fixtty() {
 	rtt = tt;
 	cfmakeraw(&rtt);
 	rtt.c_lflag &= ~ECHO;
-	tcsetattr(0, TCSANOW, &rtt);
+	tcsetattr(STDIN_FILENO, TCSANOW, &rtt);
 }
 
 void
@@ -479,7 +481,7 @@ done() {
 
 		master = -1;
 	} else {
-		tcsetattr(0, TCSADRAIN, &tt);
+		tcsetattr(STDIN_FILENO, TCSADRAIN, &tt);
 		if (!qflg)
 			printf(_("Script done, file is %s\n"), fname);
 #ifdef HAVE_LIBUTEMPTER
@@ -500,8 +502,8 @@ done() {
 void
 getmaster() {
 #if HAVE_LIBUTIL && HAVE_PTY_H
-	tcgetattr(0, &tt);
-	ioctl(0, TIOCGWINSZ, (char *)&win);
+	tcgetattr(STDIN_FILENO, &tt);
+	ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&win);
 	if (openpty(&master, &slave, NULL, &tt, &win) < 0) {
 		warn(_("openpty failed"));
 		fail();
@@ -528,8 +530,8 @@ getmaster() {
 				ok = access(line, R_OK|W_OK) == 0;
 				*tp = 'p';
 				if (ok) {
-					tcgetattr(0, &tt);
-					ioctl(0, TIOCGWINSZ,
+					tcgetattr(STDIN_FILENO, &tt);
+					ioctl(STDIN_FILENO, TIOCGWINSZ,
 						(char *)&win);
 					return;
 				}
