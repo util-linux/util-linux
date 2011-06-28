@@ -14,11 +14,14 @@
  */
 
 #include <getopt.h>
+#include <limits.h>
 #include <stdio.h>
-#include <unistd.h>
+#include <stdlib.h>
 #include <string.h>
-#include <nls.h>
+#include <unistd.h>
 
+#include "c.h"
+#include "nls.h"
 #include "xalloc.h"
 
 #ifndef DEFAULT_FSTYPE
