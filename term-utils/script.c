@@ -289,7 +289,7 @@ doinput() {
 	register int cc;
 	char ibuf[BUFSIZ];
 
-	(void) fclose(fscript);
+	fclose(fscript);
 
 	while (die == 0) {
 		if ((cc = read(0, ibuf, BUFSIZ)) > 0) {
@@ -326,8 +326,8 @@ void
 resize(int dummy __attribute__ ((__unused__))) {
 	resized = 1;
 	/* transmit window change information to the child */
-	(void) ioctl(0, TIOCGWINSZ, (char *)&win);
-	(void) ioctl(slave, TIOCSWINSZ, (char *)&win);
+	ioctl(0, TIOCGWINSZ, (char *)&win);
+	ioctl(slave, TIOCSWINSZ, (char *)&win);
 }
 
 /*
@@ -350,9 +350,9 @@ dooutput(FILE *timingfd) {
 	ssize_t wrt;
 	ssize_t fwrt;
 
-	(void) close(0);
+	close(0);
 #ifdef HAVE_LIBUTIL
-	(void) close(slave);
+	close(slave);
 #endif
 	tvec = time((time_t *)NULL);
 	my_strftime(obuf, sizeof obuf, "%c\n", localtime(&tvec));
@@ -396,7 +396,7 @@ dooutput(FILE *timingfd) {
 			fail();
 		}
 		if (fflg)
-			(void) fflush(fscript);
+			fflush(fscript);
 	} while(1);
 
 	if (flgs)
@@ -413,18 +413,18 @@ doshell() {
 
 	t = open(_PATH_DEV_TTY, O_RDWR);
 	if (t >= 0) {
-		(void) ioctl(t, TIOCNOTTY, (char *)0);
-		(void) close(t);
+		ioctl(t, TIOCNOTTY, (char *)0);
+		close(t);
 	}
 #endif
 
 	getslave();
-	(void) close(master);
-	(void) fclose(fscript);
-	(void) dup2(slave, 0);
-	(void) dup2(slave, 1);
-	(void) dup2(slave, 2);
-	(void) close(slave);
+	close(master);
+	fclose(fscript);
+	dup2(slave, 0);
+	dup2(slave, 1);
+	dup2(slave, 2);
+	close(slave);
 
 	master = -1;
 
@@ -450,13 +450,13 @@ fixtty() {
 	rtt = tt;
 	cfmakeraw(&rtt);
 	rtt.c_lflag &= ~ECHO;
-	(void) tcsetattr(0, TCSANOW, &rtt);
+	tcsetattr(0, TCSANOW, &rtt);
 }
 
 void
 fail() {
 
-	(void) kill(0, SIGTERM);
+	kill(0, SIGTERM);
 	done();
 }
 
@@ -471,12 +471,12 @@ done() {
 			my_strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
 			fprintf(fscript, _("\nScript done on %s"), buf);
 		}
-		(void) fclose(fscript);
-		(void) close(master);
+		fclose(fscript);
+		close(master);
 
 		master = -1;
 	} else {
-		(void) tcsetattr(0, TCSADRAIN, &tt);
+		tcsetattr(0, TCSADRAIN, &tt);
 		if (!qflg)
 			printf(_("Script done, file is %s\n"), fname);
 #ifdef HAVE_LIBUTEMPTER
@@ -497,8 +497,8 @@ done() {
 void
 getmaster() {
 #if HAVE_LIBUTIL && HAVE_PTY_H
-	(void) tcgetattr(0, &tt);
-	(void) ioctl(0, TIOCGWINSZ, (char *)&win);
+	tcgetattr(0, &tt);
+	ioctl(0, TIOCGWINSZ, (char *)&win);
 	if (openpty(&master, &slave, NULL, &tt, &win) < 0) {
 		warn(_("openpty failed"));
 		fail();
@@ -525,12 +525,12 @@ getmaster() {
 				ok = access(line, R_OK|W_OK) == 0;
 				*tp = 'p';
 				if (ok) {
-					(void) tcgetattr(0, &tt);
-				    	(void) ioctl(0, TIOCGWINSZ, 
+					tcgetattr(0, &tt);
+					ioctl(0, TIOCGWINSZ,
 						(char *)&win);
 					return;
 				}
-				(void) close(master);
+				close(master);
 				master = -1;
 			}
 		}
@@ -550,9 +550,9 @@ getslave() {
 		warn(_("open failed: %s"), line);
 		fail();
 	}
-	(void) tcsetattr(slave, TCSANOW, &tt);
-	(void) ioctl(slave, TIOCSWINSZ, (char *)&win);
+	tcsetattr(slave, TCSANOW, &tt);
+	ioctl(slave, TIOCSWINSZ, (char *)&win);
 #endif
-	(void) setsid();
-	(void) ioctl(slave, TIOCSCTTY, 0);
+	setsid();
+	ioctl(slave, TIOCSCTTY, 0);
 }
