@@ -25,7 +25,7 @@
 #include "xalloc.h"
 
 #ifndef DEFAULT_FSTYPE
-# define DEFAULT_FSTYPE		"ext2"
+#define DEFAULT_FSTYPE	"ext2"
 #endif
 
 #define SEARCH_PATH	"PATH=" FS_SEARCH_PATH
@@ -61,80 +61,82 @@ static void __attribute__ ((__noreturn__)) print_version(void)
 	exit(EXIT_SUCCESS);
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
-  char *progname;	/* name of executable to be called */
-  char *fstype = NULL;
-  int i, more = 0, verbose = 0;
-  char *oldpath, *newpath;
+	char *progname;		/* name of executable to be called */
+	char *fstype = NULL;
+	int i, more = 0, verbose = 0;
+	char *oldpath, *newpath;
 
-  enum { VERSION_OPTION = CHAR_MAX + 1 };
+	enum { VERSION_OPTION = CHAR_MAX + 1 };
 
-  static const struct option longopts[] = {
-    {"type", required_argument, NULL, 't'},
-    {"version", no_argument, NULL, VERSION_OPTION},
-    {"help", no_argument, NULL, 'h'},
-    {NULL, 0, NULL, 0}
-  };
+	static const struct option longopts[] = {
+		{"type", required_argument, NULL, 't'},
+		{"version", no_argument, NULL, VERSION_OPTION},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
 
-  setlocale(LC_ALL, "");
-  bindtextdomain(PACKAGE, LOCALEDIR);
-  textdomain(PACKAGE);
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
-  if (argc == 2 && !strcmp(argv[1], "-V"))
-    print_version();
+	if (argc == 2 && !strcmp(argv[1], "-V"))
+		print_version();
 
-  /* Check commandline options. */
-  opterr = 0;
-  while ((more == 0) && ((i = getopt_long(argc, argv, "Vt:h", longopts, NULL)) != -1))
-    switch (i) {
-    case 'V':
-      verbose++;
-      break;
-    case 't':
-      fstype = optarg;
-      break;
-    case 'h':
-      usage(stdout);
-    case VERSION_OPTION:
-      print_version();
-    default:
-      optind--;
-      more = 1;
-      break;		/* start of specific arguments */
-    }
-  if (optind == argc)
-      usage(stderr);
-  
-  /* If -t wasn't specified, use the default */
-  if (fstype == NULL)
-    fstype = DEFAULT_FSTYPE;
+	/* Check commandline options. */
+	opterr = 0;
+	while ((more == 0)
+	       && ((i = getopt_long(argc, argv, "Vt:h", longopts, NULL))
+		   != -1))
+		switch (i) {
+		case 'V':
+			verbose++;
+			break;
+		case 't':
+			fstype = optarg;
+			break;
+		case 'h':
+			usage(stdout);
+		case VERSION_OPTION:
+			print_version();
+		default:
+			optind--;
+			more = 1;
+			break;	/* start of specific arguments */
+		}
+	if (optind == argc)
+		usage(stderr);
 
-  /* Set PATH and program name */
-  oldpath = getenv("PATH");
-  if (!oldpath)
-	  oldpath = "/bin";
+	/* If -t wasn't specified, use the default */
+	if (fstype == NULL)
+		fstype = DEFAULT_FSTYPE;
 
-  newpath = xmalloc(strlen(oldpath) + sizeof(SEARCH_PATH) + 3);
-  sprintf(newpath, "%s:%s\n", SEARCH_PATH, oldpath);
-  putenv(newpath);
+	/* Set PATH and program name */
+	oldpath = getenv("PATH");
+	if (!oldpath)
+		oldpath = "/bin";
 
-  progname = xmalloc(sizeof(PROGNAME) + strlen(fstype) + 1);
-  sprintf(progname, PROGNAME, fstype);
-  argv[--optind] = progname;
+	newpath = xmalloc(strlen(oldpath) + sizeof(SEARCH_PATH) + 3);
+	sprintf(newpath, "%s:%s\n", SEARCH_PATH, oldpath);
+	putenv(newpath);
 
-  if (verbose) {
-    printf(_("mkfs (%s)\n"), PACKAGE_STRING);
-    i = optind;
-    while (argv[i])
-      printf("%s ", argv[i++]);
-    printf("\n");
-    if (verbose > 1)
-      return 0;
-  }
+	progname = xmalloc(sizeof(PROGNAME) + strlen(fstype) + 1);
+	sprintf(progname, PROGNAME, fstype);
+	argv[--optind] = progname;
 
-  /* Execute the program */
-  execvp(progname, argv+optind);
-  perror(progname);
-  return 1;
+	if (verbose) {
+		printf(_("mkfs (%s)\n"), PACKAGE_STRING);
+		i = optind;
+		while (argv[i])
+			printf("%s ", argv[i++]);
+		printf("\n");
+		if (verbose > 1)
+			return EXIT_SUCCESS;
+	}
+
+	/* Execute the program */
+	execvp(progname, argv + optind);
+	perror(progname);
+	return EXIT_FAILURE;
 }
