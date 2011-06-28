@@ -84,6 +84,9 @@ termination on signal termination exit code is 128+n.
 Flush output after each write. This is nice for telecooperation:
 One person does `mkfifo foo; script -f foo' and another can
 supervise real-time what is being done using `cat foo'.
+.It Fl Fl force
+Allow default output destination, e.g. typescript file, to be
+hard or symbolic link. The command will follow symbolic link.
 .It Fl q, Fl Fl quiet
 Be quiet.
 .It Fl t, Fl Fl timing[=FILE]

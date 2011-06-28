@@ -101,6 +101,7 @@ int	eflg = 0;
 int	fflg = 0;
 int	qflg = 0;
 int	tflg = 0;
+int	forceflg = 0;
 
 int die;
 int resized;
@@ -109,14 +110,13 @@ static void
 die_if_link(char *fn) {
 	struct stat s;
 
+	if (forceflg)
+		return;
 	if (lstat(fn, &s) == 0 && (S_ISLNK(s.st_mode) || s.st_nlink > 1))
-	        /* FIXME: there is no [options] to allow/force this to happen.  */
 		errx(EXIT_FAILURE,
-			_("Warning: `%s' is a link.\n"
-			  "Use `%s [options] %s' if you really "
-			  "want to use it.\n"
-			  "Program not started.\n"),
-			fn, program_invocation_short_name, fn);
+		     _("output file `%s' is a link\n"
+		       "Use --force if you really want to use it.\n"
+		       "Program not started."), fn);
 }
 
 static void __attribute__((__noreturn__))
@@ -132,6 +132,7 @@ usage(FILE *out)
 		" -c, --command COMMAND   run command rather than interactive shell\n"
 		" -r, --return            return exit code of the child process\n"
 		" -f, --flush             run flush after each write\n"
+		"     --force             use output file even it would be a link\n"
 		" -q, --quiet             be quiet\n"
 		" -t, --timing=FILE       output timing data to stderr, or to file\n"
 		" -V, --version           output version information and exit\n"
@@ -157,11 +158,14 @@ main(int argc, char **argv) {
 	int ch;
 	FILE *timingfd = stderr;
 
+	enum { FORCE_OPTION = CHAR_MAX + 1 };
+
 	static const struct option longopts[] = {
 		{ "append",	no_argument,	   0, 'a' },
 		{ "command",	required_argument, 0, 'c' },
 		{ "return",	no_argument,	   0, 'e' },
 		{ "flush",	no_argument,	   0, 'f' },
+		{ "force",	no_argument,	   0, FORCE_OPTION, },
 		{ "quiet",	no_argument,	   0, 'q' },
 		{ "timing",	optional_argument, 0, 't' },
 		{ "version",	no_argument,	   0, 'V' },
@@ -175,7 +179,7 @@ main(int argc, char **argv) {
 	textdomain(PACKAGE);
 
 	while ((ch = getopt_long(argc, argv, "ac:efqt::Vh", longopts, NULL)) != -1)
-		switch((char)ch) {
+		switch(ch) {
 		case 'a':
 			aflg++;
 			break;
@@ -187,6 +191,9 @@ main(int argc, char **argv) {
 			break;
 		case 'f':
 			fflg++;
+			break;
+		case FORCE_OPTION:
+			forceflg = 1;
 			break;
 		case 'q':
 			qflg++;
