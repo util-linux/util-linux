@@ -52,7 +52,7 @@ enum {
 
 #define IOCTL_ENTRY( io )	.ioc = io, .iocname = # io
 
-struct bdc bdcms[] =
+static const struct bdc bdcms[] =
 {
 	{
 		IOCTL_ENTRY(BLKROSET),
