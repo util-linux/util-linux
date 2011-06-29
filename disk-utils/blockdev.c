@@ -15,9 +15,6 @@
 #include "nls.h"
 #include "blkdev.h"
 
-const char *progname;
-
-
 struct bdc {
 	long		ioc;		/* ioctl code */
 	const char	*iocname;	/* ioctl name (e.g. BLKROSET) */
@@ -183,9 +180,9 @@ usage(void) {
 	int i;
 	fputc('\n', stderr);
 	fprintf(stderr, _("Usage:\n"));
-	fprintf(stderr, _("  %s -V\n"), progname);
-	fprintf(stderr, _("  %s --report [devices]\n"), progname);
-	fprintf(stderr, _("  %s [-v|-q] commands devices\n"), progname);
+	fprintf(stderr, _("  %s -V\n"), program_invocation_short_name);
+	fprintf(stderr, _("  %s --report [devices]\n"), program_invocation_short_name);
+	fprintf(stderr, _("  %s [-v|-q] commands devices\n"), program_invocation_short_name);
 	fputc('\n', stderr);
 
 	fprintf(stderr, _("Available commands:\n"));
@@ -222,15 +219,10 @@ void report_all_devices(void);
 int
 main(int argc, char **argv) {
 	int fd, d, j, k;
-	char *p;
 
 	/* egcs-2.91.66 is buggy and says:
 	   blockdev.c:93: warning: `d' might be used uninitialized */
 	d = 0;
-
-	progname = argv[0];
-	if ((p = strrchr(progname, '/')) != NULL)
-		progname = p+1;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -241,7 +233,7 @@ main(int argc, char **argv) {
 
 	/* -V not together with commands */
 	if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
-		printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
+		printf(_("%s (%s)\n"), program_invocation_short_name, PACKAGE_STRING);
 		exit(0);
 	}
 
@@ -324,8 +316,7 @@ do_commands(int fd, char **argv, int d) {
 
 		j = find_cmd(argv[i]);
 		if (j == -1) {
-			fprintf(stderr, _("%s: Unknown command: %s\n"),
-				progname, argv[i]);
+			warnx(_("Unknown command: %s"), argv[i]);
 			usage();
 		}
 
@@ -341,7 +332,7 @@ do_commands(int fd, char **argv, int d) {
 		case ARG_INT:
 			if (bdcms[j].argname) {
 				if (i == d-1) {
-					fprintf(stderr, _("%s requires an argument\n"),
+					warnx(_("%s requires an argument"),
 						bdcms[j].name);
 					usage();
 				}
@@ -429,11 +420,8 @@ report_all_devices(void) {
 	int ma, mi, sz;
 
 	procpt = fopen(PROC_PARTITIONS, "r");
-	if (!procpt) {
-		fprintf(stderr, _("%s: cannot open %s\n"),
-			progname, PROC_PARTITIONS);
-		exit(1);
-	}
+	if (!procpt)
+		errx(EXIT_FAILURE, _("cannot open %s"), PROC_PARTITIONS);
 
 	while (fgets(line, sizeof(line), procpt)) {
 		if (sscanf (line, " %d %d %d %200[^\n ]",
@@ -458,8 +446,7 @@ report_device(char *device, int quiet) {
 	fd = open(device, O_RDONLY | O_NONBLOCK);
 	if (fd < 0) {
 		if (!quiet)
-			fprintf(stderr, _("%s: cannot open %s\n"),
-				progname, device);
+			warnx(_("cannot open %s\n"), device);
 		return;
 	}
 
@@ -475,8 +462,7 @@ report_device(char *device, int quiet) {
 		       ro ? "ro" : "rw", ra, ssz, bsz, g.start, bytes, device);
 	} else {
 		if (!quiet)
-			fprintf(stderr, _("%s: ioctl error on %s\n"),
-				progname, device);
+			warnx(_("ioctl error on %s"), device);
 	}
 
 	close(fd);
