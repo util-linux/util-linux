@@ -600,6 +600,7 @@ umount_file (char *arg) {
 	int fstab_has_user, fstab_has_users, fstab_has_owner, fstab_has_group;
 	int ok, status = 0;
 	struct stat statbuf;
+	char *loopdev = NULL;
 
 	if (!*arg) {		/* "" would be expanded to `pwd` */
 		die(2, _("Cannot unmount \"\"\n"));
@@ -608,26 +609,7 @@ umount_file (char *arg) {
 
 	file = canonicalize(arg); /* mtab paths are canonicalized */
 
-	/* if file is a regular file, check if it is associated
-	 * with some loop device
-	 */
-	if (!stat(file, &statbuf) && S_ISREG(statbuf.st_mode)) {
-		char *loopdev = NULL;
-		switch (find_loopdev_by_backing_file(file, &loopdev)) {
-		case 0:
-			if (verbose)
-				printf(_("%s is associated with %s, trying to unmount it\n"),
-				       arg, loopdev);
-			file = loopdev;
-			break;
-		case 2:
-			if (verbose)
-				printf(_("%s is associated with more than one loop device: not unmounting\n"),
-				       arg);
-			break;
-		}
-	}
-
+try_loopdev:
 	if (verbose > 1)
 		printf(_("Trying to unmount %s\n"), file);
 
@@ -658,6 +640,26 @@ umount_file (char *arg) {
 	}
 	if (!mc && verbose)
 		printf(_("Could not find %s in mtab\n"), file);
+
+	/* not found in mtab - check if it is associated with some loop device
+	 * (only if it is a regular file)
+	 */
+	if (!mc && !loopdev && !stat(file, &statbuf) && S_ISREG(statbuf.st_mode)) {
+		switch (find_loopdev_by_backing_file(file, &loopdev)) {
+		case 0:
+			if (verbose)
+				printf(_("%s is associated with %s\n"),
+				       arg, loopdev);
+			file = loopdev;
+			goto try_loopdev;
+			break;
+		case 2:
+			if (verbose)
+				printf(_("%s is associated with more than one loop device: not unmounting\n"),
+				       arg);
+			break;
+		}
+	}
 
 	if (mc) {
 		/*
