@@ -101,6 +101,17 @@ the pathname
 refers to the root of the filesystem on
 .IR device .
 
+If only directory or device is given, for example:
+.RS
+
+.br
+.BI "mount /dir"
+.br
+
+.RE
+then mount looks for a mountpoint and if not found then for a device in the
+/etc/fstab file.
+
 .B The listing and help.
 .RS
 Three forms of invocation do not actually mount anything:

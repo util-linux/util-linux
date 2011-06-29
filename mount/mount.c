@@ -2347,10 +2347,10 @@ getfs(const char *spec, const char *uuid, const char *label)
 	else if (label)
 		mc = getfs_by_label(label);
 	else {
-		mc = getfs_by_spec(spec);
+		mc = getfs_by_dir(spec);
 
 		if (!mc)
-			mc = getfs_by_dir(spec);
+			mc = getfs_by_spec(spec);
 	}
 	if (mc)
 		return mc;
