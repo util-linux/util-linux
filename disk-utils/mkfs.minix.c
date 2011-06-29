@@ -46,13 +46,18 @@
  * 02.07.96  -  Added small patch from Russell King to make the program a
  *		good deal more portable (janl@math.uio.no)
  *
- * Usage:  mkfs [-c | -l filename ] [-v] [-nXX] [-iXX] device [size-in-blocks]
+ * 06.29.11  -  Overall cleanups for util-linux and v3 support
+ *              Davidlohr Bueso <dave@gnu.org>
+ *
+ * Usage:  mkfs [-c | -l filename ] [-12v3] [-nXX] [-iXX] device [size-in-blocks]
  *
  *	-c for readablility checking (SLOW!)
  *      -l for getting a list of bad blocks from a file.
  *	-n for namelength (currently the kernel only uses 14 or 30)
  *	-i for number of inodes
- *	-v for v2 filesystem
+ *      -1 for v1 filesystem
+ *	-2,-v for v2 filesystem
+ *      -3 for v3 filesystem
  *
  * The device may be a block device or a image of one, but this isn't
  * enforced (but it's not much fun on a character device :-). 
@@ -78,6 +83,7 @@
 #include "pathnames.h"
 #include "bitops.h"
 #include "mkfs.h"
+#include "strutils.h"
 
 #define MINIX_ROOT_INO 1
 #define MINIX_BAD_INO 2
@@ -93,8 +99,14 @@ static int DEV = -1;
 static unsigned long long BLOCKS = 0;
 static int check = 0;
 static int badblocks = 0;
-static int namelen = 30;	/* default (changed to 30, per Linus's
-				   suggestion, Sun Nov 21 08:05:07 1993) */
+
+/*
+ * default (changed to 30, per Linus's
+ * suggestion, Sun Nov 21 08:05:07 1993)
+ * This should be changed in the future to 60,
+ * since v3 needs to be the default nowadays (2011)
+ */
+static int namelen = 30;
 static int dirsize = 32;
 static int magic = MINIX_SUPER_MAGIC2;
 static int version2 = 0;
@@ -145,14 +157,27 @@ static void check_mount(void) {
 			device_name);
 }
 
+static void super_set_state(void)
+{
+	switch (fs_version) {
+	case 3:
+		Super3.s_state |= MINIX_VALID_FS;
+		Super3.s_state &= ~MINIX_ERROR_FS;
+		break;
+	default:
+		Super.s_state |= MINIX_VALID_FS;
+		Super.s_state &= ~MINIX_ERROR_FS;
+		break;
+	}
+}
+
 static void write_tables(void) {
 	unsigned long imaps = get_nimaps();
 	unsigned long zmaps = get_nzmaps();
 	unsigned long buffsz = get_inode_buffer_size();
 
 	/* Mark the super block valid. */
-	Super.s_state |= MINIX_VALID_FS;
-	Super.s_state &= ~MINIX_ERROR_FS;
+	super_set_state();
 
 	if (lseek(DEV, 0, SEEK_SET))
 		err(MKFS_ERROR, _("%s: seek to boot block failed "
@@ -217,7 +242,8 @@ static inline int next(int zone) {
 	return 0;
 }
 
-static void make_bad_inode_v1(void) {
+static void make_bad_inode_v1(void)
+{
 	struct minix_inode * inode = &Inode[MINIX_BAD_INO];
 	int i,j,zone;
 	int ind=0,dind=0;
@@ -266,7 +292,8 @@ end_bad:
 		write_block(dind, (char *) dind_block);
 }
 
-static void make_bad_inode_v2 (void) {
+static void make_bad_inode_v2_v3 (void)
+{
 	struct minix2_inode *inode = &Inode2[MINIX_BAD_INO];
 	int i, j, zone;
 	int ind = 0, dind = 0;
@@ -318,7 +345,7 @@ static void make_bad_inode(void)
 {
 	if (fs_version < 2)
 		return make_bad_inode_v1();
-	return make_bad_inode_v2();
+	return make_bad_inode_v2_v3();
 }
 
 static void make_root_inode_v1(void) {
@@ -342,20 +369,22 @@ static void make_root_inode_v1(void) {
 	write_block(inode->i_zone[0],root_block);
 }
 
-static void make_root_inode_v2 (void) {
+static void make_root_inode_v2_v3 (void) {
 	struct minix2_inode *inode = &Inode2[MINIX_ROOT_INO];
 
 	mark_inode (MINIX_ROOT_INO);
 	inode->i_zone[0] = get_free_block ();
 	inode->i_nlinks = 2;
 	inode->i_atime = inode->i_mtime = inode->i_ctime = time (NULL);
+
 	if (badblocks)
 		inode->i_size = 3 * dirsize;
 	else {
 		root_block[2 * dirsize] = '\0';
-		root_block[2 * dirsize + 1] = '\0';
-		inode->i_size = 2 * dirsize;
+		if (fs_version == 2)
+			inode->i_size = 2 * dirsize;
 	}
+
 	inode->i_mode = S_IFDIR + 0755;
 	inode->i_uid = getuid();
 	if (inode->i_uid)
@@ -367,12 +396,13 @@ static void make_root_inode(void)
 {
 	if (fs_version < 2)
 		return make_root_inode_v1();
-	return make_root_inode_v2();
+	return make_root_inode_v2_v3();
 }
 
 static void super_set_nzones(void)
 {
 	switch (fs_version) {
+	case 3:
 	case 2:
 		Super.s_zones = BLOCKS;
 		break;
@@ -385,10 +415,44 @@ static void super_set_nzones(void)
 static void super_init_maxsize(void)
 {
 	switch (fs_version) {
+	case 3:
+		Super3.s_max_size = 2147483647L;
+		break;
 	case 2:
 		Super.s_max_size =  0x7fffffff;
+		break;
 	default: /* v1 */
 		Super.s_max_size = (7+512+512*512)*1024;
+		break;
+	}
+}
+
+static void super_set_map_blocks(unsigned long inodes)
+{
+	switch (fs_version) {
+	case 3:
+		Super3.s_imap_blocks = UPPER(inodes + 1, BITS_PER_BLOCK);
+		Super3.s_zmap_blocks = UPPER(BLOCKS - (1+get_nimaps()+inode_blocks()),
+					     BITS_PER_BLOCK+1);
+		Super3.s_firstdatazone = first_zone_data();
+		break;
+	default:
+		Super.s_imap_blocks = UPPER(inodes + 1, BITS_PER_BLOCK);
+		Super.s_zmap_blocks = UPPER(BLOCKS - (1+get_nimaps()+inode_blocks()),
+					     BITS_PER_BLOCK+1);
+		Super.s_firstdatazone = first_zone_data();
+		break;
+	}
+}
+
+static void super_set_magic(void)
+{
+	switch (fs_version) {
+	case 3:
+		Super3.s_magic = magic;
+		break;
+	default:
+		Super.s_magic = magic;
 		break;
 	}
 }
@@ -403,39 +467,42 @@ static void setup_tables(void) {
 				device_name);
 
 	memset(boot_block_buffer,0,512);
-	Super.s_magic = magic;
-	Super.s_log_zone_size = 0;
+	super_set_magic();
+
+	if (fs_version == 3) {
+		Super3.s_log_zone_size = 0;
+		Super3.s_blocksize = BLOCKS;
+	}
+	else {
+		Super.s_log_zone_size = 0;
+	}
 
 	super_init_maxsize();
 	super_set_nzones();
 	zones = get_nzones();
 
-/* some magic nrs: 1 inode / 3 blocks */
+	/* some magic nrs: 1 inode / 3 blocks */
 	if ( req_nr_inodes == 0 ) 
 		inodes = BLOCKS/3;
 	else
 		inodes = req_nr_inodes;
 	/* Round up inode count to fill block size */
-	if (fs_version == 2)
+	if (fs_version == 2 || fs_version == 3)
 		inodes = ((inodes + MINIX2_INODES_PER_BLOCK - 1) &
 			  ~(MINIX2_INODES_PER_BLOCK - 1));
 	else
 		inodes = ((inodes + MINIX_INODES_PER_BLOCK - 1) &
 			  ~(MINIX_INODES_PER_BLOCK - 1));
-	if (inodes > 65535)
-		inodes = 65535;
-	Super.s_ninodes = inodes;
+	if (inodes > MAX_INODES)
+		inodes = MAX_INODES;
+	if (fs_version == 3)
+		Super3.s_ninodes = inodes;
+	else
+		Super.s_ninodes = inodes;
 
-	/* The old code here
-	 * ZMAPS = 0;
-	 * while (ZMAPS != UPPER(BLOCKS - NORM_FIRSTZONE + 1,BITS_PER_BLOCK))
-	 *	  ZMAPS = UPPER(BLOCKS - NORM_FIRSTZONE + 1,BITS_PER_BLOCK);
-	 * was no good, since it may loop. - aeb
-	 */
-	imaps = Super.s_imap_blocks = UPPER(inodes + 1, BITS_PER_BLOCK);
-	zmaps = Super.s_zmap_blocks = UPPER(BLOCKS - (1+get_nimaps()+inode_blocks()),
-				    BITS_PER_BLOCK+1);
-	Super.s_firstdatazone = first_zone_data();
+	super_set_map_blocks(inodes);
+	imaps = get_nimaps();
+	zmaps = get_nzmaps();
 
 	inode_map = malloc(imaps * BLOCK_SIZE);
 	zone_map = malloc(zmaps * BLOCK_SIZE);
@@ -586,7 +653,7 @@ int main(int argc, char ** argv) {
 		errx(MKFS_ERROR, _("%s: bad inode size"), device_name);
 
 	opterr = 0;
-	while ((i = getopt(argc, argv, "ci:l:n:v12")) != -1)
+	while ((i = getopt(argc, argv, "ci:l:n:v123")) != -1)
 		switch (i) {
 		case 'c':
 			check=1; break;
@@ -615,6 +682,9 @@ int main(int argc, char ** argv) {
 		case 'v': /* kept for backwards compatiblitly */
 			fs_version = 2;
 			version2 = 1;
+			break;
+		case '3':
+			fs_version = 3;
 			break;
 		default:
 			usage();
@@ -656,6 +726,7 @@ int main(int argc, char ** argv) {
 
 	if (DEV<0)
 		err(MKFS_ERROR, _("%s: open failed"), device_name);
+
 	if (S_ISBLK(statbuf.st_mode)) {
 		int sectorsize;
 
@@ -682,6 +753,10 @@ int main(int argc, char ** argv) {
 		errx(MKFS_ERROR, _("will not try to make filesystem on '%s'"), device_name);
 	if (BLOCKS < 10)
 		errx(MKFS_ERROR, _("%s: number of blocks too small"), device_name);
+
+	if (fs_version == 3)
+		magic = MINIX3_SUPER_MAGIC;
+
 	if (fs_version == 2) {
 		if (namelen == 14)
 			magic = MINIX2_SUPER_MAGIC;
