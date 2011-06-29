@@ -231,7 +231,7 @@ main(int argc, char **argv) {
 	/* -V not together with commands */
 	if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
 		printf(_("%s (%s)\n"), program_invocation_short_name, PACKAGE_STRING);
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 	if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))
 		usage(stdout);
@@ -245,7 +245,7 @@ main(int argc, char **argv) {
 		} else {
 			report_all_devices();
 		}
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	/* do each of the commands on each of the devices */
@@ -272,14 +272,12 @@ main(int argc, char **argv) {
 
 	for (k = d; k < argc; k++) {
 		fd = open(argv[k], O_RDONLY, 0);
-		if (fd < 0) {
-			perror(argv[k]);
-			exit(1);
-		}
+		if (fd < 0)
+			err(EXIT_FAILURE, _("cannot open %s"), argv[k]);
 		do_commands(fd, argv, d);
 		close(fd);
 	}
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 void
@@ -309,7 +307,7 @@ do_commands(int fd, char **argv, int d) {
 			if (res == 0)
 				printf("%lld\n", llu);
 			else
-				exit(1);
+				errx(EXIT_FAILURE, _("could not get device size"));
 			continue;
 		}
 
@@ -369,7 +367,7 @@ do_commands(int fd, char **argv, int d) {
 			perror(bdcms[j].iocname);
 			if (verbose)
 				printf(_("%s failed.\n"), _(bdcms[j].help));
-			exit(1);
+			exit(EXIT_FAILURE);
 		}
 
 		if (bdcms[j].argtype == ARG_NONE ||
@@ -420,7 +418,7 @@ report_all_devices(void) {
 
 	procpt = fopen(PROC_PARTITIONS, "r");
 	if (!procpt)
-		errx(EXIT_FAILURE, _("cannot open %s"), PROC_PARTITIONS);
+		err(EXIT_FAILURE, _("cannot open %s"), PROC_PARTITIONS);
 
 	while (fgets(line, sizeof(line), procpt)) {
 		if (sscanf (line, " %d %d %d %200[^\n ]",
@@ -445,7 +443,7 @@ report_device(char *device, int quiet) {
 	fd = open(device, O_RDONLY | O_NONBLOCK);
 	if (fd < 0) {
 		if (!quiet)
-			warnx(_("cannot open %s\n"), device);
+			warn(_("cannot open %s"), device);
 		return;
 	}
 
