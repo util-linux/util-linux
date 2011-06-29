@@ -218,10 +218,6 @@ int
 main(int argc, char **argv) {
 	int fd, d, j, k;
 
-	/* egcs-2.91.66 is buggy and says:
-	   blockdev.c:93: warning: `d' might be used uninitialized */
-	d = 0;
-
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
