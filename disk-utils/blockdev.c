@@ -14,6 +14,7 @@
 #include "c.h"
 #include "nls.h"
 #include "blkdev.h"
+#include "pathnames.h"
 
 struct bdc {
 	long		ioc;		/* ioctl code */
@@ -406,8 +407,6 @@ do_commands(int fd, char **argv, int d) {
 	}
 }
 
-#define PROC_PARTITIONS "/proc/partitions"
-
 void
 report_all_devices(void) {
 	FILE *procpt;
@@ -416,9 +415,9 @@ report_all_devices(void) {
 	char device[210];
 	int ma, mi, sz;
 
-	procpt = fopen(PROC_PARTITIONS, "r");
+	procpt = fopen(_PATH_PROC_PARTITIONS, "r");
 	if (!procpt)
-		err(EXIT_FAILURE, _("cannot open %s"), PROC_PARTITIONS);
+		err(EXIT_FAILURE, _("cannot open %s"), _PATH_PROC_PARTITIONS);
 
 	while (fgets(line, sizeof(line), procpt)) {
 		if (sscanf (line, " %d %d %d %200[^\n ]",
