@@ -178,7 +178,7 @@ static const struct bdc bdcms[] =
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	int i;
+	size_t i;
 	fprintf(out, _("\nUsage:\n"
 		       "  %1$s -V\n"
 		       "  %1$s --report [devices]\n"
@@ -201,7 +201,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 static int
 find_cmd(char *s) {
-	int j;
+	size_t j;
 
 	for (j = 0; j < ARRAY_SIZE(bdcms); j++)
 		if (!strcmp(s, bdcms[j].name))
