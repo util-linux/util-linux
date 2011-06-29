@@ -199,8 +199,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static int
-find_cmd(char *s) {
+static int find_cmd(char *s)
+{
 	size_t j;
 
 	for (j = 0; j < ARRAY_SIZE(bdcms); j++)
@@ -214,8 +214,8 @@ void report_header(void);
 void report_device(char *device, int quiet);
 void report_all_devices(void);
 
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	int fd, d, j, k;
 
 	setlocale(LC_ALL, "");
@@ -227,7 +227,8 @@ main(int argc, char **argv) {
 
 	/* -V not together with commands */
 	if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
-		printf(_("%s (%s)\n"), program_invocation_short_name, PACKAGE_STRING);
+		printf(_("%s (%s)\n"), program_invocation_short_name,
+		       PACKAGE_STRING);
 		return EXIT_SUCCESS;
 	}
 	if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))
@@ -277,8 +278,8 @@ main(int argc, char **argv) {
 	return EXIT_SUCCESS;
 }
 
-void
-do_commands(int fd, char **argv, int d) {
+void do_commands(int fd, char **argv, int d)
+{
 	int res, i, j;
 	int iarg;
 	unsigned int uarg;
@@ -293,7 +294,7 @@ do_commands(int fd, char **argv, int d) {
 		if (!strcmp(argv[i], "-v")) {
 			verbose = 1;
 			continue;
-                }
+		}
 		if (!strcmp(argv[i], "-q")) {
 			verbose = 0;
 			continue;
@@ -304,7 +305,8 @@ do_commands(int fd, char **argv, int d) {
 			if (res == 0)
 				printf("%lld\n", llu);
 			else
-				errx(EXIT_FAILURE, _("could not get device size"));
+				errx(EXIT_FAILURE,
+				     _("could not get device size"));
 			continue;
 		}
 
@@ -314,7 +316,7 @@ do_commands(int fd, char **argv, int d) {
 			usage(stderr);
 		}
 
-		switch(bdcms[j].argtype) {
+		switch (bdcms[j].argtype) {
 		default:
 		case ARG_NONE:
 			res = ioctl(fd, bdcms[j].ioc, 0);
@@ -325,9 +327,9 @@ do_commands(int fd, char **argv, int d) {
 			break;
 		case ARG_INT:
 			if (bdcms[j].argname) {
-				if (i == d-1) {
+				if (i == d - 1) {
 					warnx(_("%s requires an argument"),
-						bdcms[j].name);
+					      bdcms[j].name);
 					usage(stderr);
 				}
 				iarg = atoi(argv[++i]);
@@ -335,8 +337,8 @@ do_commands(int fd, char **argv, int d) {
 				iarg = bdcms[j].argval;
 
 			res = bdcms[j].flags & FL_NOPTR ?
-					ioctl(fd, bdcms[j].ioc, iarg) :
-					ioctl(fd, bdcms[j].ioc, &iarg);
+			    ioctl(fd, bdcms[j].ioc, iarg) :
+			    ioctl(fd, bdcms[j].ioc, &iarg);
 			break;
 		case ARG_UINT:
 			uarg = bdcms[j].argval;
@@ -377,7 +379,7 @@ do_commands(int fd, char **argv, int d) {
 		if (verbose)
 			printf("%s: ", _(bdcms[j].help));
 
-		switch(bdcms[j].argtype) {
+		switch (bdcms[j].argtype) {
 		case ARG_USHRT:
 			printf("%hu\n", huarg);
 			break;
@@ -403,8 +405,8 @@ do_commands(int fd, char **argv, int d) {
 	}
 }
 
-void
-report_all_devices(void) {
+void report_all_devices(void)
+{
 	FILE *procpt;
 	char line[200];
 	char ptname[200];
@@ -416,8 +418,8 @@ report_all_devices(void) {
 		err(EXIT_FAILURE, _("cannot open %s"), _PATH_PROC_PARTITIONS);
 
 	while (fgets(line, sizeof(line), procpt)) {
-		if (sscanf (line, " %d %d %d %200[^\n ]",
-			    &ma, &mi, &sz, ptname) != 4)
+		if (sscanf(line, " %d %d %d %200[^\n ]",
+			   &ma, &mi, &sz, ptname) != 4)
 			continue;
 
 		sprintf(device, "/dev/%s", ptname);
@@ -427,8 +429,8 @@ report_all_devices(void) {
 	fclose(procpt);
 }
 
-void
-report_device(char *device, int quiet) {
+void report_device(char *device, int quiet)
+{
 	int fd;
 	int ro, ssz, bsz;
 	long ra;
@@ -444,12 +446,12 @@ report_device(char *device, int quiet) {
 
 	ro = ssz = bsz = 0;
 	g.start = ra = 0;
-	if (ioctl (fd, BLKROGET, &ro) == 0 &&
-	    ioctl (fd, BLKRAGET, &ra) == 0 &&
-	    ioctl (fd, BLKSSZGET, &ssz) == 0 &&
-	    ioctl (fd, BLKBSZGET, &bsz) == 0 &&
-	    ioctl (fd, HDIO_GETGEO, &g) == 0 &&
-	    blkdev_get_size (fd, &bytes) == 0) {
+	if (ioctl(fd, BLKROGET, &ro) == 0 &&
+	    ioctl(fd, BLKRAGET, &ra) == 0 &&
+	    ioctl(fd, BLKSSZGET, &ssz) == 0 &&
+	    ioctl(fd, BLKBSZGET, &bsz) == 0 &&
+	    ioctl(fd, HDIO_GETGEO, &g) == 0 &&
+	    blkdev_get_size(fd, &bytes) == 0) {
 		printf("%s %5ld %5d %5d %10ld %15lld   %s\n",
 		       ro ? "ro" : "rw", ra, ssz, bsz, g.start, bytes, device);
 	} else {
@@ -460,7 +462,7 @@ report_device(char *device, int quiet) {
 	close(fd);
 }
 
-void
-report_header() {
+void report_header()
+{
 	printf(_("RO    RA   SSZ   BSZ   StartSec            Size   Device\n"));
 }
