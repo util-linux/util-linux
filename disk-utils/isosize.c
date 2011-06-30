@@ -152,33 +152,37 @@ isosize(char *filenamep, int xflag, int divisor) {
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out, _("Usage: %s [-x] [-d <num>] iso9660-image\n"),
+	fprintf(out, _("\nUsage:\n"
+		       " %s [options] iso9660_image_file\n"),
 		program_invocation_short_name);
+
+	fprintf(out, _("\nOptions:\n"
+		       " -d, --divisor=NUM      devide bytes NUM\n"
+		       " -x, --sectors          show sector count and size\n"
+		       " -V, --version          output version information and exit\n"
+		       " -H, --help             display this help and exit\n\n"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int
 main(int argc, char * argv[]) {
-	int j, ct, xflag = 0;
+	int j, ct, opt, xflag = 0;
 	int divisor = 0;
+
+	static const struct option longopts[] = {
+		{"divisor", no_argument, 0, 'd'},
+		{"sectors", no_argument, 0, 'x'},
+		{"version", no_argument, 0, 'V'},
+		{"help", no_argument, 0, 'h'},
+		{NULL, 0, 0, 0}
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	if (argc >= 2 &&
-	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-		printf(_("%s (%s)\n"), program_invocation_short_name, PACKAGE_STRING);
-		return EXIT_SUCCESS;
-	}
-
-	for (;;) {
-		int opt;
-
-		opt = getopt(argc, argv, "xd:");
-		if (opt == -1)
-			break;
+	while ((opt = getopt_long(argc, argv, "d:xVh", longopts, NULL)) != -1)
 		switch (opt) {
 		case 'd':
 			divisor = atoi(optarg);
@@ -186,10 +190,15 @@ main(int argc, char * argv[]) {
 		case 'x':
 			xflag = 1;
 			break;
+		case 'V':
+			printf(_("%s (%s)\n"), program_invocation_short_name,
+			       PACKAGE_STRING);
+			return EXIT_SUCCESS;
+		case 'h':
+			usage(stdout);
 		default:
 			usage(stderr);
 		}
-	}
 
 	ct = argc - optind;
 
