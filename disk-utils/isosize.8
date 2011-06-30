@@ -1,12 +1,9 @@
-.TH ISOSIZE "8" "December 2000" "sg3_utils-0.91" SG_UTILS
+.TH ISOSIZE "8" "June 2011" "util-linux" "System Administration Utilities"
 .SH NAME
 isosize \- outputs the length of an iso9660 file system
 .SH SYNOPSIS
 .B isosize
-.RB [ \-x ]
-.RB [ \-d
-.IR <num> ]
-.IR <iso9660_image_file> ...
+[\fIoptions\fR] \fIiso9660_image_file\fR
 .SH DESCRIPTION
 .\" Add any additional description here
 .PP
@@ -15,19 +12,20 @@ is contained in given file. That file may be a normal file or
 a block device (e.g. /dev/hdd or /dev/sr0). In the absence of
 any switches (or errors) it will output the size of the iso9660
 file system in bytes. This can now be a large number (>> 4 GB).
+.SH OPTIONS
 .TP
-.B \-x
+\fB\-x\fR, \fB\-\-sectors\fR
 output in humanly readable form the block count and the block
 size. Output uses the term "sectors" for "blocks".
 .TP
-.BI \-d\  <num>
+\fB\-d\fR, \fB\-\-divisor\fR=\fINUM\fR
 only has affect when
 .B \-x
 is not given. The number output (if no errors)
 is the iso9660 file size in bytes divided by
-.IR <num> .
+.IR NUM .
 So if
-.I <num>
+.I NUM
 is the block size then the output number will be the block count.
 .PP
 The size of the file (or block device) holding a iso9660 file
