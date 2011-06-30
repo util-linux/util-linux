@@ -31,8 +31,6 @@
 
 #define ISODCL(from, to) (to - from + 1)
 
-int xflag;
-
 static int
 isonum_721 (unsigned char * p) {
         return ((p[0] & 0xff)
@@ -46,7 +44,7 @@ isonum_722 (unsigned char * p) {
 }
 
 static int
-isonum_723 (unsigned char * p) {
+isonum_723 (unsigned char * p, int xflag) {
         int le = isonum_721 (p);
         int be = isonum_722 (p+2);
         if (xflag && le != be)
@@ -73,7 +71,7 @@ isonum_732 (unsigned char * p) {
 
 
 static int
-isonum_733 (unsigned char * p) {
+isonum_733 (unsigned char * p, int xflag) {
     int le = isonum_731 (p);
     int be = isonum_732 (p+4);
     if (xflag && le != be)
@@ -118,10 +116,8 @@ struct iso_primary_descriptor {
     unsigned char unused5                   [ISODCL (1396, 2048)];
 };
 
-int divisor = 0;
-
 static void
-isosize(char *filenamep) {
+isosize(char *filenamep, int xflag, int divisor) {
 	int fd, nsecs, ssize;
 	struct iso_primary_descriptor ipd;
 
@@ -134,8 +130,8 @@ isosize(char *filenamep) {
 	if (read(fd, &ipd, sizeof(ipd)) < 0)
 		err(EXIT_FAILURE, _("read error on %s"), filenamep);
 
-	nsecs = isonum_733(ipd.volume_space_size);
-	ssize = isonum_723(ipd.logical_block_size); /* nowadays always 2048 */
+	nsecs = isonum_733(ipd.volume_space_size, xflag);
+	ssize = isonum_723(ipd.logical_block_size, xflag); /* nowadays always 2048 */
 
 	if (xflag) {
 		printf (_("sector count: %d, sector size: %d\n"),
@@ -164,7 +160,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 int
 main(int argc, char * argv[]) {
-	int j, ct;
+	int j, ct, xflag = 0;
+	int divisor = 0;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -203,7 +200,7 @@ main(int argc, char * argv[]) {
 	for (j = optind; j < argc; j++) {
 		if (ct > 1)
 			printf("%s: ", argv[j]);
-		isosize(argv[j]);
+		isosize(argv[j], xflag, divisor);
 	}
 
 	return 0;
