@@ -67,8 +67,13 @@ endif
 if USE_TTY_GROUP
 if MAKEINSTALL_DO_CHOWN
 install-exec-hook::
-	chgrp tty $(DESTDIR)$(usrbin_execdir)/wall $(DESTDIR)$(usrbin_execdir)/write
-	chmod g+s $(DESTDIR)$(usrbin_execdir)/wall $(DESTDIR)$(usrbin_execdir)/write
-
+if BUILD_WALL
+       chgrp tty $(DESTDIR)$(usrbin_execdir)/wall
+       chmod g+s $(DESTDIR)$(usrbin_execdir)/wall
+endif
+if BUILD_WRITE
+       chgrp tty $(DESTDIR)$(usrbin_execdir)/write
+       chmod g+s $(DESTDIR)$(usrbin_execdir)/write
+endif
 endif
 endif
