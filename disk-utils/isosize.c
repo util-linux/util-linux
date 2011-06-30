@@ -28,6 +28,7 @@
 
 #include "nls.h"
 #include "c.h"
+#include "strutils.h"
 
 #define ISODCL(from, to) (to - from + 1)
 
@@ -117,7 +118,7 @@ struct iso_primary_descriptor {
 };
 
 static void
-isosize(char *filenamep, int xflag, int divisor) {
+isosize(char *filenamep, int xflag, long divisor) {
 	int fd, nsecs, ssize;
 	struct iso_primary_descriptor ipd;
 
@@ -168,7 +169,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 int
 main(int argc, char * argv[]) {
 	int j, ct, opt, xflag = 0;
-	int divisor = 0;
+	long divisor = 0;
 
 	static const struct option longopts[] = {
 		{"divisor", no_argument, 0, 'd'},
@@ -185,7 +186,9 @@ main(int argc, char * argv[]) {
 	while ((opt = getopt_long(argc, argv, "d:xVh", longopts, NULL)) != -1)
 		switch (opt) {
 		case 'd':
-			divisor = atoi(optarg);
+			divisor =
+			    strtol_or_err(optarg,
+					  _("invalid divisor argument"));
 			break;
 		case 'x':
 			xflag = 1;
