@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
 	int  bufsize = 0;
 	int  n;
 	int  c;
-	int  level = 0;
+	int  console_level = 0;
 	int  cmd = SYSLOG_ACTION_READ_ALL;
 	int  flags = 0;
 
@@ -156,7 +156,8 @@ int main(int argc, char *argv[])
 			break;
 		case 'n':
 			cmd = SYSLOG_ACTION_CONSOLE_LEVEL;
-			level = strtol_or_err(optarg, _("failed to parse level"));
+			console_level = strtol_or_err(optarg,
+						_("failed to parse level"));
 			break;
 		case 'r':
 			flags |= DMESG_FL_RAW;
@@ -184,24 +185,26 @@ int main(int argc, char *argv[])
 	if (argc > 1)
 		usage(stderr);
 
-	if (cmd == SYSLOG_ACTION_CONSOLE_LEVEL) {
-		n = klogctl(cmd, NULL, level);
-		if (n < 0)
-			err(EXIT_FAILURE, _("klogctl failed"));
-
-		return EXIT_SUCCESS;
+	switch (cmd) {
+	case SYSLOG_ACTION_READ_ALL:
+	case SYSLOG_ACTION_READ_CLEAR:
+		if (!bufsize)
+			bufsize = get_buffer_size();
+		n = read_buffer(&buf, bufsize, cmd == SYSLOG_ACTION_READ_CLEAR);
+		if (n > 0)
+			print_buffer(buf, n, flags);
+		free(buf);
+		break;
+	case SYSLOG_ACTION_CONSOLE_LEVEL:
+		n = klogctl(cmd, NULL, console_level);
+		break;
+	default:
+		errx(EXIT_FAILURE, _("unsupported command"));
+		break;
 	}
 
-	if (!bufsize)
-		bufsize = get_buffer_size();
-
-	n = read_buffer(&buf, bufsize, cmd == SYSLOG_ACTION_READ_CLEAR);
 	if (n < 0)
 		err(EXIT_FAILURE, _("klogctl failed"));
-
-	print_buffer(buf, n, flags);
-
-	free(buf);
 
 	return EXIT_SUCCESS;
 }
