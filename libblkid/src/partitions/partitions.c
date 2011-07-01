@@ -49,6 +49,12 @@
  *
  * @PART_ENTRY_NUMBER: partition number
  *
+ * @PART_ENTRY_OFFSET: the begin of the partition
+ *
+ * @PART_ENTRY_SIZE: size of the partition
+ *
+ * @PART_ENTRY_DISK: whole-disk <maj:min>
+ *
  * Example:
  *
  * <informalexample>
