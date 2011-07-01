@@ -1487,7 +1487,7 @@ debugging purposes.  This is normally used while
 remounting a filesystem which is already mounted.
 .TP
 .BR auto_da_alloc | noauto_da_alloc
-Many broken applications don't use fsync() when noauto_da_alloc
+Many broken applications don't use fsync() when
 replacing existing files via patterns such as
 
 fd = open("foo.new")/write(fd,..)/close(fd)/ rename("foo.new", "foo")
