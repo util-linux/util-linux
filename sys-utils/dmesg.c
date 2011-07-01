@@ -74,6 +74,36 @@ static int get_buffer_size()
 	return n > 0 ? n : 0;
 }
 
+static int read_buffer(char **buf, size_t bufsize, int clear)
+{
+	size_t sz;
+	int rc = -1;
+	int cmd = clear ? SYSLOG_ACTION_READ_CLEAR :
+			  SYSLOG_ACTION_READ_ALL;
+
+	if (bufsize) {
+		sz = bufsize + 8;
+		*buf = xmalloc(sz * sizeof(char));
+		rc = klogctl(cmd, *buf, sz);
+	} else {
+		sz = 16392;
+		while (1) {
+			*buf = xmalloc(sz * sizeof(char));
+			rc = klogctl(SYSLOG_ACTION_READ_ALL, *buf, sz);
+			if (rc != sz || sz > (1 << 28))
+				break;
+			free(*buf);
+			*buf = NULL;
+			sz *= 4;
+		}
+
+		if (rc > 0 && clear)
+			rc = klogctl(SYSLOG_ACTION_READ_CLEAR, *buf, sz);
+	}
+
+	return rc;
+}
+
 static void print_buffer(const char *buf, size_t size, int flags)
 {
 	int lastc = '\n';
@@ -98,7 +128,6 @@ static void print_buffer(const char *buf, size_t size, int flags)
 int main(int argc, char *argv[])
 {
 	char *buf = NULL;
-	int  sz;
 	int  bufsize = 0;
 	int  n;
 	int  c;
@@ -166,25 +195,7 @@ int main(int argc, char *argv[])
 	if (!bufsize)
 		bufsize = get_buffer_size();
 
-	if (bufsize) {
-		sz = bufsize + 8;
-		buf = xmalloc(sz * sizeof(char));
-		n = klogctl(cmd, buf, sz);
-	} else {
-		sz = 16392;
-		while (1) {
-			buf = xmalloc(sz * sizeof(char));
-			n = klogctl(SYSLOG_ACTION_READ_ALL, buf, sz);	/* read only */
-			if (n != sz || sz > (1 << 28))
-				break;
-			free(buf);
-			sz *= 4;
-		}
-
-		if (n > 0 && cmd == SYSLOG_ACTION_READ_CLEAR)
-			n = klogctl(cmd, buf, sz);	/* read and clear */
-	}
-
+	n = read_buffer(&buf, bufsize, cmd == SYSLOG_ACTION_READ_CLEAR);
 	if (n < 0)
 		err(EXIT_FAILURE, _("klogctl failed"));
 
