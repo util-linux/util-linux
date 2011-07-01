@@ -41,9 +41,17 @@ Print a help text and exit.
 .IP "\fB\-n, \-\-console-level \fIlevel\fP
 Set the
 .I level
-at which logging of messages is done to the console.  For example,
+at which logging of messages is done to the console. The 
+.I level
+is a level number or abbreviation of the level name. For all supported levels see
+.B dmesg \-\-help
+output.
+.sp
+For example,
 .B \-n 1
-prevents all messages, except panic messages, from appearing on the
+or
+.B \-n alert
+prevents all messages, except emergency (panic) messages, from appearing on the
 console.  All levels of messages are still written to
 .IR /proc/kmsg ,
 so

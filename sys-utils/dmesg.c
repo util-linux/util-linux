@@ -16,6 +16,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <sys/klog.h>
+#include <sys/syslog.h>
 #include <ctype.h>
 
 #include "c.h"
@@ -46,11 +47,33 @@
 /* Return size of the log buffer */
 #define SYSLOG_ACTION_SIZE_BUFFER   10
 
+/*
+ * Priority names, based on sys/syslog.h
+ */
+struct dmesg_name {
+	const char *name;
+	const char *help;
+};
+
+static const struct dmesg_name level_names[] =
+{
+	[LOG_EMERG]   = { "emerg", N_("system is unusable") },
+	[LOG_ALERT]   = { "alert", N_("action must be taken immediately") },
+	[LOG_CRIT]    = { "crit",  N_("critical conditions") },
+	[LOG_ERR]     = { "err",   N_("error conditions") },
+	[LOG_WARNING] = { "warn",  N_("warning conditions") },
+	[LOG_NOTICE]  = { "notice",N_("normal but significant condition") },
+	[LOG_INFO]    = { "info",  N_("informational") },
+	[LOG_DEBUG]   = { "debug", N_("debug-level messages") }
+};
+
 /* dmesg flags */
 #define DMESG_FL_RAW	(1 << 1)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
+	int i;
+
 	fprintf(out, _(
 		"\nUsage:\n"
 		" %s [options]\n"), program_invocation_short_name);
@@ -67,7 +90,29 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -s, --buffer-size=SIZE    buffer size to query the kernel ring buffer\n"
 		" -V, --version             output version information and exit\n\n"));
 
+	fprintf(out, _("Supported log levels (priorities):\n"));
+	for (i = 0; i < ARRAY_SIZE(level_names); i++) {
+		fprintf(stderr, " <%d> %7s - %s\n", i,
+				level_names[i].name,
+				_(level_names[i].help));
+	}
+
+	fputc('\n', out);
+
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
+static int string_to_level(const char *name)
+{
+	int i;
+
+	if (!name)
+		return -1;
+
+	for (i = 0; i < ARRAY_SIZE(level_names); i++)
+		if (strcasecmp(name, level_names[i].name) == 0)
+			return i;
+	return -1;
 }
 
 static int get_buffer_size()
@@ -177,8 +222,16 @@ int main(int argc, char *argv[])
 			break;
 		case 'n':
 			cmd = SYSLOG_ACTION_CONSOLE_LEVEL;
-			console_level = strtol_or_err(optarg,
+			if (isdigit(*optarg)) {
+				console_level = strtol_or_err(optarg,
 						_("failed to parse level"));
+			} else {
+				console_level = string_to_level(optarg);
+				if (console_level < 0)
+					errx(EXIT_FAILURE,
+						_("%s: unknown log level"),
+						optarg);
+			}
 			break;
 		case 'r':
 			flags |= DMESG_FL_RAW;
