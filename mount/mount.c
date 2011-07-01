@@ -1765,7 +1765,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
       unsigned long long size = 0;
 
       if (flags & MS_REMOUNT) {
-	error (_("mount: %s not mounted already, or bad option"), node);
+	error (_("mount: %s not mounted or bad option"), node);
       } else {
 	error (_("mount: wrong fs type, bad option, bad superblock on %s,\n"
 	       "       missing codepage or helper program, or other error"),
