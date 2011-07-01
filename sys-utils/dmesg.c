@@ -41,13 +41,22 @@
 #include "strutils.h"
 #include "xalloc.h"
 
-static void __attribute__ ((noreturn)) usage(void)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(stderr,
-		_("Usage: %s [-c] [-n level] [-r] [-s bufsize]\n"),
-		program_invocation_short_name);
-	exit(EXIT_FAILURE);
+	fprintf(out, _(
+		"\nUsage:\n"
+		" %s [options]\n"), program_invocation_short_name);
 
+	fprintf(out, _(
+		"\nOptions:\n"
+		" -c, --read-clear          read and clear all messages\n"
+		" -r, --raw                 print the raw message buffer\n"
+		" -s, --buffer-size=SIZE    buffer size to query the kernel ring buffer\n"
+		" -n, --console-level=LEVEL set level of messages printed to console\n"
+		" -V, --version             output version information and exit\n"
+		" -h, --help                display this help and exit\n\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -63,11 +72,21 @@ int main(int argc, char *argv[])
 	int  cmd = 3;		/* Read all messages in the ring buffer */
 	int  raw = 0;
 
+	static const struct option longopts[] = {
+		{ "read-clear",    no_argument,	      NULL, 'c' },
+		{ "raw",           no_argument,       NULL, 'r' },
+		{ "buffer-size",   required_argument, NULL, 's' },
+		{ "console-level", required_argument, NULL, 'n' },
+		{ "version",       no_argument,	      NULL, 'V' },
+		{ "help",          no_argument,	      NULL, 'h' },
+		{ NULL,	           0, NULL, 0 }
+	};
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt(argc, argv, "crn:s:")) != -1) {
+	while ((c = getopt_long(argc, argv, "chrn:s:V", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'c':
 			cmd = 4;	/* Read and clear all messages */
@@ -84,16 +103,23 @@ int main(int argc, char *argv[])
 			if (bufsize < 4096)
 				bufsize = 4096;
 			break;
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+						  PACKAGE_STRING);
+			return EXIT_SUCCESS;
+		case 'h':
+			usage(stdout);
+			break;
 		case '?':
 		default:
-			usage();
+			usage(stderr);
 		}
 	}
 	argc -= optind;
 	argv += optind;
 
 	if (argc > 1)
-		usage();
+		usage(stderr);
 
 	if (cmd == 8) {
 		n = klogctl(cmd, NULL, level);
