@@ -57,6 +57,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, _(
 		"\nOptions:\n"
+		" -C, --clear               clear the kernel ring buffer\n"
 		" -c, --read-clear          read and clear all messages\n"
 		" -r, --raw                 print the raw message buffer\n"
 		" -s, --buffer-size=SIZE    buffer size to query the kernel ring buffer\n"
@@ -136,6 +137,7 @@ int main(int argc, char *argv[])
 	int  flags = 0;
 
 	static const struct option longopts[] = {
+		{ "clear",         no_argument,	      NULL, 'C' },
 		{ "read-clear",    no_argument,	      NULL, 'c' },
 		{ "raw",           no_argument,       NULL, 'r' },
 		{ "buffer-size",   required_argument, NULL, 's' },
@@ -149,8 +151,11 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "chrn:s:V", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "Cchrn:s:V", longopts, NULL)) != -1) {
 		switch (c) {
+		case 'C':
+			cmd = SYSLOG_ACTION_CLEAR;
+			break;
 		case 'c':
 			cmd = SYSLOG_ACTION_READ_CLEAR;
 			break;
@@ -194,6 +199,9 @@ int main(int argc, char *argv[])
 		if (n > 0)
 			print_buffer(buf, n, flags);
 		free(buf);
+		break;
+	case SYSLOG_ACTION_CLEAR:
+		n = klogctl(cmd, NULL, 0);
 		break;
 	case SYSLOG_ACTION_CONSOLE_LEVEL:
 		n = klogctl(cmd, NULL, console_level);
