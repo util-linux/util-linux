@@ -51,12 +51,9 @@ mount
     Note that findmnt(8) already supports --target and --source.
 
  - add ---target-prefix option to specify prefix for mountpoints
-
- - add --fstab-file option to specify alternative fstab
-
    so then you can
 
-	mount -a --fstab-file=/etc/fstab.foo ---target-prefix=$FOO_ROOT
+	LIBMOUNT_FSTAB=/etc/fstab.foo mount -a --target-prefix=$FOO_ROOT
 
    to create a new hierarchy of filesystems at $FOO_ROOT.
 
@@ -107,28 +104,6 @@ build-sys
 
    The configure.ac has to care about dependence between utils and librares and
    enable BUILD_<utilname>.
-
-procfs
-------
-
- - add lib/proc.c with functions that read /proc/<pid>/tasks to get info about
-   all process threads.
-
- - make chrt, taskset, ... threads aware. Currently these utils work with
-   group leader (master thread) and don't propagate requested changes to 
-   the whole group of threads.  It meas add a new option (e.g. -t):
-
-	chrt <prio> <pid>     # master thread only
-        chrt -t <prio> <pid>  # whole group of threads
-
-  Note that we need to scan /proc and call ched_set{scheduler,affinity}
-  syscalls for all individual threads.
-
-agetty:
-------
-
-  - review code and make it more simple for normal console (see mingetty)
-  - merge functionality from unmaintained mingetty package to agetty
 
 lib/tt.c
 --------
