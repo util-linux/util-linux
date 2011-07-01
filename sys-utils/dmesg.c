@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
 	int  n;
 	int  c;
 	int  console_level = 0;
-	int  cmd = SYSLOG_ACTION_READ_ALL;
+	int  cmd = -1;
 	int  flags = 0;
 
 	static const struct option longopts[] = {
@@ -152,6 +152,12 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 
 	while ((c = getopt_long(argc, argv, "Cchrn:s:V", longopts, NULL)) != -1) {
+
+		if (cmd != -1 && strchr("Ccn", c))
+			errx(EXIT_FAILURE, "%s %s",
+				"--{clear,read-clear,console-level}",
+				_("options are mutually exclusive"));
+
 		switch (c) {
 		case 'C':
 			cmd = SYSLOG_ACTION_CLEAR;
@@ -168,7 +174,8 @@ int main(int argc, char *argv[])
 			flags |= DMESG_FL_RAW;
 			break;
 		case 's':
-			bufsize = strtol_or_err(optarg, _("failed to parse buffer size"));
+			bufsize = strtol_or_err(optarg,
+					_("failed to parse buffer size"));
 			if (bufsize < 4096)
 				bufsize = 4096;
 			break;
@@ -189,6 +196,9 @@ int main(int argc, char *argv[])
 
 	if (argc > 1)
 		usage(stderr);
+
+	if (cmd == -1)
+		cmd = SYSLOG_ACTION_READ_ALL;	/* default */
 
 	switch (cmd) {
 	case SYSLOG_ACTION_READ_ALL:

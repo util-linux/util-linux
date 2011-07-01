@@ -1,24 +1,28 @@
 .\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be distributed under the GNU General Public License
-.TH DMESG 1
+.TH DMESG 1 "Jun 2011"
 .SH NAME
 dmesg \- print or control the kernel ring buffer
 .SH SYNOPSIS
 .B dmesg
 .RB [ options ]
+.sp
+.B dmesg \-\-clear
+.sp
+.B dmesg \-\-read-clear
+.RB [ options ]
+.sp
+.B dmesg \-\-console-level
+.I level
 .SH DESCRIPTION
 .B dmesg
 is used to examine or control the kernel ring buffer.
 
-The program helps users to print out their bootup messages.  Instead of
-copying the messages by hand, the user need only:
-.RS
-dmesg > boot.messages
-.RE
-and mail the
-.I boot.messages
-file to whoever can debug their problem.
+The default action is to read all messages from kernel ring buffer.
+
 .SH OPTIONS
+The --clear, --read-clear and --console-level options are mutually exclusive.
+
 .IP "\fB\-C, \-\-clear\fP"
 Clear the ring buffer.
 .IP "\fB\-c, \-\-read-clear\fP"
