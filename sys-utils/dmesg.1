@@ -14,6 +14,10 @@ dmesg \- print or control the kernel ring buffer
 .sp
 .B dmesg \-\-console-level
 .I level
+.sp
+.B dmesg \-\-console-on
+.sp
+.B dmesg \-\-console-off
 .SH DESCRIPTION
 .B dmesg
 is used to examine or control the kernel ring buffer.
@@ -21,12 +25,17 @@ is used to examine or control the kernel ring buffer.
 The default action is to read all messages from kernel ring buffer.
 
 .SH OPTIONS
-The --clear, --read-clear and --console-level options are mutually exclusive.
+The --clear, --read-clear, --console-on, --console-off and --console-level
+options are mutually exclusive.
 
 .IP "\fB\-C, \-\-clear\fP"
 Clear the ring buffer.
 .IP "\fB\-c, \-\-read-clear\fP"
 Clear the ring buffer contents after printing.
+.IP "\fB\-d, \-\-console-off\fP"
+Disable printing messages to the console.
+.IP "\fB\-e, \-\-console-on\fP"
+Enable printing messages to the console.
 .IP "\fB\-h, \-\-help\fP"
 Print a help text and exit.
 .IP "\fB\-n, \-\-console-level \fIlevel\fP

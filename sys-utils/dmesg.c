@@ -59,11 +59,13 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		"\nOptions:\n"
 		" -C, --clear               clear the kernel ring buffer\n"
 		" -c, --read-clear          read and clear all messages\n"
+		" -d, --console-off         disable printing messages to console\n"
+		" -e, --console-on          enable printing messages to console\n"
+		" -h, --help                display this help and exit\n"
+		" -n, --console-level=LEVEL set level of messages printed to console\n"
 		" -r, --raw                 print the raw message buffer\n"
 		" -s, --buffer-size=SIZE    buffer size to query the kernel ring buffer\n"
-		" -n, --console-level=LEVEL set level of messages printed to console\n"
-		" -V, --version             output version information and exit\n"
-		" -h, --help                display this help and exit\n\n"));
+		" -V, --version             output version information and exit\n\n"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -142,6 +144,8 @@ int main(int argc, char *argv[])
 		{ "raw",           no_argument,       NULL, 'r' },
 		{ "buffer-size",   required_argument, NULL, 's' },
 		{ "console-level", required_argument, NULL, 'n' },
+		{ "console-off",   no_argument,       NULL, 'd' },
+		{ "console-on",    no_argument,       NULL, 'e' },
 		{ "version",       no_argument,	      NULL, 'V' },
 		{ "help",          no_argument,	      NULL, 'h' },
 		{ NULL,	           0, NULL, 0 }
@@ -151,11 +155,11 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "Cchrn:s:V", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "Ccdehrn:s:V", longopts, NULL)) != -1) {
 
-		if (cmd != -1 && strchr("Ccn", c))
+		if (cmd != -1 && strchr("Ccnde", c))
 			errx(EXIT_FAILURE, "%s %s",
-				"--{clear,read-clear,console-level}",
+				"--{clear,read-clear,console-level,console-on,console-off}",
 				_("options are mutually exclusive"));
 
 		switch (c) {
@@ -164,6 +168,12 @@ int main(int argc, char *argv[])
 			break;
 		case 'c':
 			cmd = SYSLOG_ACTION_READ_CLEAR;
+			break;
+		case 'd':
+			cmd = SYSLOG_ACTION_CONSOLE_OFF;
+			break;
+		case 'e':
+			cmd = SYSLOG_ACTION_CONSOLE_ON;
 			break;
 		case 'n':
 			cmd = SYSLOG_ACTION_CONSOLE_LEVEL;
@@ -211,6 +221,8 @@ int main(int argc, char *argv[])
 		free(buf);
 		break;
 	case SYSLOG_ACTION_CLEAR:
+	case SYSLOG_ACTION_CONSOLE_OFF:
+	case SYSLOG_ACTION_CONSOLE_ON:
 		n = klogctl(cmd, NULL, 0);
 		break;
 	case SYSLOG_ACTION_CONSOLE_LEVEL:
