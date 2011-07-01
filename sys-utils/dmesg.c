@@ -46,6 +46,9 @@
 /* Return size of the log buffer */
 #define SYSLOG_ACTION_SIZE_BUFFER   10
 
+/* dmesg flags */
+#define DMESG_FL_RAW	(1 << 1)
+
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fprintf(out, _(
@@ -71,18 +74,37 @@ static int get_buffer_size()
 	return n > 0 ? n : 0;
 }
 
+static void print_buffer(const char *buf, size_t size, int flags)
+{
+	int lastc = '\n';
+	int i;
+
+	for (i = 0; i < size; i++) {
+		if (!(flags & DMESG_FL_RAW) &&
+		    (i == 0 || buf[i - 1] == '\n') && buf[i] == '<') {
+			i++;
+			while (isdigit(buf[i]))
+				i++;
+			if (buf[i] == '>')
+				i++;
+		}
+		lastc = buf[i];
+		putchar(lastc);
+	}
+	if (lastc != '\n')
+		putchar('\n');
+}
+
 int main(int argc, char *argv[])
 {
 	char *buf = NULL;
 	int  sz;
 	int  bufsize = 0;
-	int  i;
 	int  n;
 	int  c;
 	int  level = 0;
-	int  lastc;
 	int  cmd = SYSLOG_ACTION_READ_ALL;
-	int  raw = 0;
+	int  flags = 0;
 
 	static const struct option longopts[] = {
 		{ "read-clear",    no_argument,	      NULL, 'c' },
@@ -108,7 +130,7 @@ int main(int argc, char *argv[])
 			level = strtol_or_err(optarg, _("failed to parse level"));
 			break;
 		case 'r':
-			raw = 1;
+			flags |= DMESG_FL_RAW;
 			break;
 		case 's':
 			bufsize = strtol_or_err(optarg, _("failed to parse buffer size"));
@@ -166,20 +188,8 @@ int main(int argc, char *argv[])
 	if (n < 0)
 		err(EXIT_FAILURE, _("klogctl failed"));
 
-	lastc = '\n';
-	for (i = 0; i < n; i++) {
-		if (!raw && (i == 0 || buf[i - 1] == '\n') && buf[i] == '<') {
-			i++;
-			while (isdigit(buf[i]))
-				i++;
-			if (buf[i] == '>')
-				i++;
-		}
-		lastc = buf[i];
-		putchar(lastc);
-	}
-	if (lastc != '\n')
-		putchar('\n');
+	print_buffer(buf, n, flags);
+
 	free(buf);
 
 	return EXIT_SUCCESS;
