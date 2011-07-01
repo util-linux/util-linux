@@ -64,6 +64,13 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+static int get_buffer_size()
+{
+	int n = klogctl(SYSLOG_ACTION_SIZE_BUFFER, NULL, 0);
+
+	return n > 0 ? n : 0;
+}
+
 int main(int argc, char *argv[])
 {
 	char *buf = NULL;
@@ -134,11 +141,8 @@ int main(int argc, char *argv[])
 		return EXIT_SUCCESS;
 	}
 
-	if (!bufsize) {
-		n = klogctl(SYSLOG_ACTION_SIZE_BUFFER, NULL, 0);
-		if (n > 0)
-			bufsize = n;
-	}
+	if (!bufsize)
+		bufsize = get_buffer_size();
 
 	if (bufsize) {
 		sz = bufsize + 8;
