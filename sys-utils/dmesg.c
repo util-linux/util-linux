@@ -11,24 +11,6 @@
  *
  */
 
-/*
- * Commands to sys_syslog:
- *
- *      0 -- Close the log.  Currently a NOP.
- *      1 -- Open the log. Currently a NOP.
- *      2 -- Read from the log.
- *      3 -- Read all messages remaining in the ring buffer.
- *      4 -- Read and clear all messages remaining in the ring buffer
- *      5 -- Clear ring buffer.
- *      6 -- Disable printk's to console
- *      7 -- Enable printk's to console
- *      8 -- Set level of messages printed to console
- *      9 -- Return number of unread characters in the log buffer
- *           [supported since 2.4.10]
- *
- * Only function 3 is allowed to non-root processes.
- */
-
 #include <linux/unistd.h>
 #include <stdio.h>
 #include <getopt.h>
@@ -40,6 +22,29 @@
 #include "nls.h"
 #include "strutils.h"
 #include "xalloc.h"
+
+/* Close the log.  Currently a NOP. */
+#define SYSLOG_ACTION_CLOSE          0
+/* Open the log. Currently a NOP. */
+#define SYSLOG_ACTION_OPEN           1
+/* Read from the log. */
+#define SYSLOG_ACTION_READ           2
+/* Read all messages remaining in the ring buffer. (allowed for non-root) */
+#define SYSLOG_ACTION_READ_ALL       3
+/* Read and clear all messages remaining in the ring buffer */
+#define SYSLOG_ACTION_READ_CLEAR     4
+/* Clear ring buffer. */
+#define SYSLOG_ACTION_CLEAR          5
+/* Disable printk's to console */
+#define SYSLOG_ACTION_CONSOLE_OFF    6
+/* Enable printk's to console */
+#define SYSLOG_ACTION_CONSOLE_ON     7
+/* Set level of messages printed to console */
+#define SYSLOG_ACTION_CONSOLE_LEVEL  8
+/* Return number of unread characters in the log buffer */
+#define SYSLOG_ACTION_SIZE_UNREAD    9
+/* Return size of the log buffer */
+#define SYSLOG_ACTION_SIZE_BUFFER   10
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -69,7 +74,7 @@ int main(int argc, char *argv[])
 	int  c;
 	int  level = 0;
 	int  lastc;
-	int  cmd = 3;		/* Read all messages in the ring buffer */
+	int  cmd = SYSLOG_ACTION_READ_ALL;
 	int  raw = 0;
 
 	static const struct option longopts[] = {
@@ -89,10 +94,10 @@ int main(int argc, char *argv[])
 	while ((c = getopt_long(argc, argv, "chrn:s:V", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'c':
-			cmd = 4;	/* Read and clear all messages */
+			cmd = SYSLOG_ACTION_READ_CLEAR;
 			break;
 		case 'n':
-			cmd = 8;	/* Set level of messages */
+			cmd = SYSLOG_ACTION_CONSOLE_LEVEL;
 			level = strtol_or_err(optarg, _("failed to parse level"));
 			break;
 		case 'r':
@@ -121,7 +126,7 @@ int main(int argc, char *argv[])
 	if (argc > 1)
 		usage(stderr);
 
-	if (cmd == 8) {
+	if (cmd == SYSLOG_ACTION_CONSOLE_LEVEL) {
 		n = klogctl(cmd, NULL, level);
 		if (n < 0)
 			err(EXIT_FAILURE, _("klogctl failed"));
@@ -130,7 +135,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (!bufsize) {
-		n = klogctl(10, NULL, 0);	/* read ringbuffer size */
+		n = klogctl(SYSLOG_ACTION_SIZE_BUFFER, NULL, 0);
 		if (n > 0)
 			bufsize = n;
 	}
@@ -143,14 +148,14 @@ int main(int argc, char *argv[])
 		sz = 16392;
 		while (1) {
 			buf = xmalloc(sz * sizeof(char));
-			n = klogctl(3, buf, sz);	/* read only */
+			n = klogctl(SYSLOG_ACTION_READ_ALL, buf, sz);	/* read only */
 			if (n != sz || sz > (1 << 28))
 				break;
 			free(buf);
 			sz *= 4;
 		}
 
-		if (n > 0 && cmd == 4)
+		if (n > 0 && cmd == SYSLOG_ACTION_READ_CLEAR)
 			n = klogctl(cmd, buf, sz);	/* read and clear */
 	}
 
