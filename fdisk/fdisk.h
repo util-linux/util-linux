@@ -94,11 +94,16 @@ extern const char * str_units(int);
 extern unsigned long long get_start_sect(struct partition *p);
 extern unsigned long long get_nr_sects(struct partition *p);
 
-extern int osf_label;
-extern int sun_label;
-extern int sgi_label;
-extern int aix_label;
-extern int mac_label;
+enum labeltype {
+	DOS_LABEL,
+	SUN_LABEL,
+	SGI_LABEL,
+	AIX_LABEL,
+	OSF_LABEL,
+	MAC_LABEL
+};
+
+extern enum labeltype disklabel;
 
 /* prototypes for fdiskbsdlabel.c */
 extern void bselect(void);

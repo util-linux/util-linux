@@ -110,7 +110,6 @@ static void set_sun_partition(int i, uint32_t start, uint32_t stop, uint16_t sys
 
 void sun_nolabel(void)
 {
-	sun_label = 0;
 	sunlabel->magic = 0;
 	partitions = 4;
 }
@@ -122,7 +121,6 @@ int check_sun_label(void)
 
 	if (sunlabel->magic != SUN_LABEL_MAGIC &&
 	    sunlabel->magic != SUN_LABEL_MAGIC_SWAPPED) {
-		sun_label = 0;
 		other_endian = 0;
 		return 0;
 	}
@@ -177,7 +175,7 @@ int check_sun_label(void)
 		}
 	}
 	update_units();
-	sun_label = 1;
+	disklabel = SUN_LABEL;
 	partitions = SUN_NUM_PARTITIONS;
 	return 1;
 }

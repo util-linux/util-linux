@@ -132,7 +132,6 @@ sgi_get_pcylcount(void) {
 void
 sgi_nolabel() {
 	sgilabel->magic = 0;
-	sgi_label = 0;
 	partitions = 4;
 }
 
@@ -158,7 +157,6 @@ check_sgi_label() {
 
 	if (sgilabel->magic != SGI_LABEL_MAGIC &&
 	    sgilabel->magic != SGI_LABEL_MAGIC_SWAPPED) {
-		sgi_label = 0;
 		other_endian = 0;
 		return 0;
 	}
@@ -173,7 +171,7 @@ check_sgi_label() {
 			_("Detected sgi disklabel with wrong checksum.\n"));
 	}
 	update_units();
-	sgi_label = 1;
+	disklabel = SGI_LABEL;
 	partitions= 16;
 	volumes = 15;
 	return 1;
@@ -780,7 +778,7 @@ create_sgilabel(void)
 	sgilabel->devparam.xylogics_writecont	= SSWAP16(0);
 	memset(&(sgilabel->directory), 0, sizeof(struct volume_directory)*15);
 	memset(&(sgilabel->partitions), 0, sizeof(struct sgi_partition)*16);
-	sgi_label  =  1;
+	disklabel  = SGI_LABEL;
 	partitions = 16;
 	volumes    = 15;
 	sgi_set_entire();

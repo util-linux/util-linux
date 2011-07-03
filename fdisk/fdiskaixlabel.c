@@ -42,7 +42,6 @@ void
 aix_nolabel( void )
 {
     aixlabel->magic = 0;
-    aix_label = 0;
     partitions = 4;
     zeroize_mbr_buffer();
     return;
@@ -53,17 +52,15 @@ check_aix_label( void )
 {
     if (aixlabel->magic != AIX_LABEL_MAGIC &&
 	aixlabel->magic != AIX_LABEL_MAGIC_SWAPPED) {
-	aix_label = 0;
 	other_endian = 0;
 	return 0;
     }
     other_endian = (aixlabel->magic == AIX_LABEL_MAGIC_SWAPPED);
     update_units();
-    aix_label = 1;
+    disklabel = AIX_LABEL;
     partitions= 1016;
     volumes = 15;
     aix_info();
     aix_nolabel();		/* %% */
-    aix_label = 1;		/* %% */
     return 1;
 }
