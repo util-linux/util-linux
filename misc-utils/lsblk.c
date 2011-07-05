@@ -67,6 +67,7 @@ enum {
 	COL_RM,
 	COL_MODEL,
 	COL_SIZE,
+	COL_STATE,
 	COL_OWNER,
 	COL_GROUP,
 	COL_MODE,
@@ -108,6 +109,7 @@ static struct colinfo infos[__NCOLUMNS] = {
 	[COL_ROTA]   = { "ROTA",    1, TT_FL_RIGHT, N_("rotational device") },
 	[COL_MODEL]  = { "MODEL",   0.1, TT_FL_TRUNC, N_("device identifier") },
 	[COL_SIZE]   = { "SIZE",    6, TT_FL_RIGHT, N_("size of the device") },
+	[COL_STATE]  = { "STATE",   7, TT_FL_TRUNC, N_("state of the device") },
 	[COL_OWNER]  = { "OWNER",   0.1, TT_FL_TRUNC, N_("user name"), },
 	[COL_GROUP]  = { "GROUP",   0.1, TT_FL_TRUNC, N_("group name") },
 	[COL_MODE]   = { "MODE",    10,   0, N_("device node permissions") },
@@ -521,6 +523,17 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 			if (p)
 				tt_line_set_data(ln, col, p);
 		}
+		break;
+	case COL_STATE:
+		if (!cxt->partition && !cxt->dm_name) {
+			p = sysfs_strdup(&cxt->sysfs, "device/state");
+		} else if (cxt->dm_name) {
+			int x = 0;
+			if (sysfs_read_int(&cxt->sysfs, "dm/suspended", &x) == 0)
+				p = x ? xstrdup("suspended") : xstrdup("running");
+		}
+		if (p)
+			tt_line_set_data(ln, col, p);
 		break;
 	case COL_ALIOFF:
 		p = sysfs_strdup(&cxt->sysfs, "alignment_offset");
