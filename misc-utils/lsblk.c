@@ -78,6 +78,7 @@ enum {
 	COL_LOGSEC,
 	COL_ROTA,
 	COL_SCHED,
+	COL_RQ_SIZE,
 	COL_TYPE,
 	COL_DALIGN,
 	COL_DGRAN,
@@ -119,6 +120,7 @@ static struct colinfo infos[__NCOLUMNS] = {
 	[COL_PHYSEC] = { "PHY-SEC", 7, TT_FL_RIGHT, N_("physical sector size") },
 	[COL_LOGSEC] = { "LOG-SEC", 7, TT_FL_RIGHT, N_("logical sector size") },
 	[COL_SCHED]  = { "SCHED",   0.1, 0, N_("I/O scheduler name") },
+	[COL_RQ_SIZE]= { "RQ-SIZE", 5, TT_FL_RIGHT, N_("request queue size") },
 	[COL_TYPE]   = { "TYPE",    4, 0, N_("device type") },
 	[COL_DALIGN] = { "DISC-ALN", 6, TT_FL_RIGHT, N_("discard alignment offset") },
 	[COL_DGRAN]  = { "DISC-GRAN", 6, TT_FL_RIGHT, N_("discard granularity") },
@@ -565,6 +567,11 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
+	case COL_RQ_SIZE:
+		p = sysfs_strdup(&cxt->sysfs, "queue/nr_requests");
+		if (p)
+			tt_line_set_data(ln, col, p);
+		break;
 	case COL_TYPE:
 		p = get_type(cxt);
 		if (p)
@@ -976,6 +983,7 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_LOGSEC;
 			columns[ncolumns++] = COL_ROTA;
 			columns[ncolumns++] = COL_SCHED;
+			columns[ncolumns++] = COL_RQ_SIZE;
 			break;
 		default:
 			help(stderr);
