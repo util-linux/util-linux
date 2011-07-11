@@ -19,6 +19,7 @@
 #include "c.h"
 #include "nls.h"
 #include "blkdev.h"
+#include "strutils.h"
 #include "xalloc.h"
 
 #define BFS_ROOT_INO		2
@@ -93,7 +94,7 @@ static void __attribute__ ((__noreturn__)) print_version(void)
 int
 main(int argc, char *argv[]) {
 	char *device, *volume, *fsname;
-	int inodes;
+	long inodes;
 	unsigned long long total_blocks, ino_bytes, ino_blocks, data_blocks;
 	unsigned long long user_specified_total_blocks = 0;
 	int verbose = 0;
@@ -128,7 +129,7 @@ main(int argc, char *argv[]) {
 	while ((c = getopt_long(argc, argv, "N:V:F:vhcl", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'N':
-			inodes = atol(optarg);
+			inodes = strtol_or_err(optarg, _("invalid number of inodes"));
 			break;
 
 		case 'V':
@@ -179,7 +180,7 @@ main(int argc, char *argv[]) {
 		err(EXIT_FAILURE, _("cannot open %s"), device);
 
 	if (optind == argc-1)
-		user_specified_total_blocks = atoll(argv[optind]);
+		user_specified_total_blocks = strtoll_or_err(argv[optind], _("invalid block-count"));
 	else if (optind != argc)
 		usage(stderr);
 
@@ -230,10 +231,10 @@ main(int argc, char *argv[]) {
 		fprintf(stderr, _("FSname: <%-6s>\n"), fsname);
 		fprintf(stderr, _("BlockSize: %d\n"), BFS_BLOCKSIZE);
 		if (ino_blocks==1)
-			fprintf(stderr, _("Inodes: %d (in 1 block)\n"),
+			fprintf(stderr, _("Inodes: %lu (in 1 block)\n"),
 				inodes);
 		else
-			fprintf(stderr, _("Inodes: %d (in %lld blocks)\n"),
+			fprintf(stderr, _("Inodes: %lu (in %llu blocks)\n"),
 				inodes, ino_blocks);
 		fprintf(stderr, _("Blocks: %lld\n"), total_blocks);
 		fprintf(stderr, _("Inode end: %d, Data end: %d\n"),
