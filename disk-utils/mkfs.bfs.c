@@ -14,6 +14,7 @@
 #include <errno.h>
 #include <string.h>
 #include <time.h>
+#include <getopt.h>
 
 #include "c.h"
 #include "nls.h"
@@ -59,20 +60,33 @@ struct bfsi {
 
 /* directory entry - 16 bytes */
 struct bfsde {
-        unsigned short d_ino;
-        char d_name[BFS_NAMELEN];
+	unsigned short d_ino;
+	char d_name[BFS_NAMELEN];
 };
 
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
+{
+	fprintf(out,
+		_("Usage: %s [options] device [block-count]\n"),
+		program_invocation_short_name);
+	fprintf(out, _("\nOptions:\n"
+		       " -N, --inodes=NUM    specify desired number of inodes\n"
+		       " -V, --vname=NAME    specify volume name\n"
+		       " -F, --fname=NAME    specify file system name\n"
+		       " -v, --verbose       explain what is being done\n"
+		       " -c                  this option is silently ignored\n"
+		       " -l                  this option is silently ignored\n"
+		       " -V, --version       output version information and exit\n"
+		       "                     -V as version must be only option\n"
+		       " -h, --help          display this help and exit\n\n"));
 
-static char *progname;
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
 
-static void
-usage(void) {
-	fprintf(stderr, _(
-		"Usage: %s [-v] [-N nr-of-inodes] [-V volume-name]\n"
-		"       [-F fsname] device [block-count]\n"),
-		progname);
-	exit(1);
+static void __attribute__ ((__noreturn__)) print_version(void)
+{
+	printf(_("%s (%s)\n"), program_invocation_short_name, PACKAGE_STRING);
+	exit(EXIT_SUCCESS);
 }
 
 int
@@ -89,25 +103,28 @@ main(int argc, char *argv[]) {
 	struct stat statbuf;
 	time_t now;
 	int c, i, len;
-	char *p;
 
-	progname = argv[0];
-	if ((p = strrchr(progname, '/')) != NULL)
-		progname = p+1;
+	enum { VERSION_OPTION = CHAR_MAX + 1 };
+	static const struct option longopts[] = {
+		{"inodes", required_argument, NULL, 'N'},
+		{"vname", required_argument, NULL, 'V'},
+		{"fname", required_argument, NULL, 'F'},
+		{"verbose", no_argument, NULL, 'v'},
+		{"version", no_argument, NULL, VERSION_OPTION},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
 
 	if (argc < 2)
-		usage();
+		usage(stderr);
 
-	if (argc == 2 &&
-	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-		printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
-		exit(0);
-	}
+	if (argc == 2 && !strcmp(argv[1], "-V"))
+		print_version();
 
 	volume = fsname = "      ";	/* is there a default? */
 	inodes = 0;
 
-	while ((c = getopt(argc, argv, "vF:N:V:cl:")) != -1) {
+	while ((c = getopt_long(argc, argv, "N:V:F:vhcl", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'N':
 			inodes = atol(optarg);
@@ -136,13 +153,17 @@ main(int argc, char *argv[]) {
 		case 'l':
 			break;
 
+		case VERSION_OPTION:
+			print_version();
+		case 'h':
+			usage(stdout);
 		default:
-			usage();
+			usage(stderr);
 		}
 	}
 
 	if (optind == argc)
-		usage();
+		usage(stderr);
 
 	device = argv[optind++];
 
@@ -159,7 +180,7 @@ main(int argc, char *argv[]) {
 	if (optind == argc-1)
 		user_specified_total_blocks = atoll(argv[optind]);
 	else if (optind != argc)
-		usage();
+		usage(stderr);
 
 	if (blkdev_get_sectors(fd, &total_blocks) == -1) {
 		if (!user_specified_total_blocks)
