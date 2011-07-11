@@ -16,12 +16,12 @@
 #include <sys/ioctl.h>
 #include <linux/fd.h>
 
+#include "c.h"
 #include "nls.h"
 
 struct floppy_struct param;
 
 #define SECTOR_SIZE 512
-#define PERROR(msg) { perror(msg); exit(1); }
 
 static void format_disk(int ctrl, char *name)
 {
@@ -30,22 +30,24 @@ static void format_disk(int ctrl, char *name)
 
     printf(_("Formatting ... "));
     fflush(stdout);
-    if (ioctl(ctrl,FDFMTBEG,NULL) < 0) PERROR("\nioctl(FDFMTBEG)");
+    if (ioctl(ctrl,FDFMTBEG,NULL) < 0)
+        err(EXIT_FAILURE, "\nioctl(FDFMTBEG)");
     for (track = 0; track < param.track; track++) {
 	descr.track = track;
 	descr.head = 0;
 	if (ioctl(ctrl,FDFMTTRK,(long) &descr) < 0)
-	  PERROR("\nioctl(FDFMTTRK)");
+	    err(EXIT_FAILURE, "\nioctl(FDFMTTRK)");
 
 	printf("%3d\b\b\b",track);
 	fflush(stdout);
 	if (param.head == 2) {
 	    descr.head = 1;
 	    if (ioctl(ctrl,FDFMTTRK,(long) &descr) < 0)
-	      PERROR("\nioctl(FDFMTTRK)");
+	        err(EXIT_FAILURE, "\nioctl(FDFMTTRK)");
 	}
     }
-    if (ioctl(ctrl,FDFMTEND,NULL) < 0) PERROR("\nioctl(FDFMTEND)");
+    if (ioctl(ctrl,FDFMTEND,NULL) < 0)
+        err(EXIT_FAILURE, "\nioctl(FDFMTEND)");
     printf(_("done\n"));
 }
 
@@ -56,10 +58,12 @@ static void verify_disk(char *name)
     int fd,cyl_size,cyl,count;
 
     cyl_size = param.sect*param.head*512;
-    if ((data = (unsigned char *) malloc(cyl_size)) == NULL) PERROR("malloc");
+    if ((data = (unsigned char *) malloc(cyl_size)) == NULL)
+        err(EXIT_FAILURE, "malloc");
     printf(_("Verifying ... "));
     fflush(stdout);
-    if ((fd = open(name,O_RDONLY)) < 0) PERROR(name);
+    if ((fd = open(name,O_RDONLY)) < 0)
+        err(EXIT_FAILURE, _("cannot open file %s"), name);
     for (cyl = 0; cyl < param.track; cyl++) {
 	int read_bytes;
 
@@ -73,7 +77,7 @@ static void verify_disk(char *name)
 		    _("Problem reading cylinder %d, expected %d, read %d\n"),
 		    cyl, cyl_size, read_bytes);
 	    free(data);
-	    exit(1);
+	    exit(EXIT_FAILURE);
 	}
 	for (count = 0; count < cyl_size; count++)
 	    if (data[count] != FD_FILL_BYTE) {
@@ -84,7 +88,8 @@ static void verify_disk(char *name)
     }
     free(data);
     printf(_("done\n"));
-    if (close(fd) < 0) PERROR("close");
+    if (close(fd) < 0)
+        err(EXIT_FAILURE, "close");
 }
 
 
@@ -127,19 +132,19 @@ int main(int argc,char **argv)
 	argv++;
     }
     if (argc != 2) usage(progname);
-    if (stat(argv[1],&st) < 0) PERROR(argv[1]);
-    if (!S_ISBLK(st.st_mode)) {
-	fprintf(stderr,_("%s: not a block device\n"),argv[1]);
-	exit(1);
+    if (stat(argv[1],&st) < 0)
+        err(EXIT_FAILURE, _("cannot stat file %s"), argv[1]);
+    if (!S_ISBLK(st.st_mode))
 	/* do not test major - perhaps this was an USB floppy */
-    }
-    if (access(argv[1],W_OK) < 0) PERROR(argv[1]);
+	errx(EXIT_FAILURE, _("%s: not a block device"), argv[1]);
+    if (access(argv[1],W_OK) < 0)
+        err(EXIT_FAILURE, _("cannot access file %s"), argv[1]);
 
     ctrl = open(argv[1],O_WRONLY);
     if (ctrl < 0)
-	    PERROR(argv[1]);
+	    err(EXIT_FAILURE, _("cannot open file %s"), argv[1]);
     if (ioctl(ctrl,FDGETPRM,(long) &param) < 0) 
-	    PERROR(_("Could not determine current format type"));
+	    err(EXIT_FAILURE, _("Could not determine current format type"));
     printf(_("%s-sided, %d tracks, %d sec/track. Total capacity %d kB.\n"),
 	   (param.head == 2) ? _("Double") : _("Single"),
 	   param.track, param.sect,param.size >> 1);
@@ -148,5 +153,5 @@ int main(int argc,char **argv)
 
     if (verify)
 	    verify_disk(argv[1]);
-    return 0;
+    return EXIT_SUCCESS;
 }
