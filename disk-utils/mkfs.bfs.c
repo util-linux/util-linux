@@ -14,6 +14,8 @@
 #include <errno.h>
 #include <string.h>
 #include <time.h>
+
+#include "c.h"
 #include "nls.h"
 #include "blkdev.h"
 
@@ -65,19 +67,6 @@ struct bfsde {
 static char *progname;
 
 static void
-fatal(char *s, ...) {
-    va_list p;
-
-    va_start(p, s);
-    fflush(stdout);
-    fprintf(stderr, "\n%s: ", progname);
-    vfprintf(stderr, s, p);
-    va_end(p);
-    fprintf(stderr, "\n");
-    exit(1);
-}
-
-static void
 usage(void) {
 	fprintf(stderr, _(
 		"Usage: %s [-v] [-N nr-of-inodes] [-V volume-name]\n"
@@ -127,14 +116,14 @@ main(int argc, char *argv[]) {
 		case 'V':
 			len = strlen(optarg);
 			if (len <= 0 || len > 6)
-				fatal(_("volume name too long"));
+				errx(EXIT_FAILURE, _("volume name too long"));
 			volume = strdup(optarg);
 			break;
 
 		case 'F':
 			len = strlen(optarg);
 			if (len <= 0 || len > 6)
-				fatal(_("fsname name too long"));
+				errx(EXIT_FAILURE, _("fsname name too long"));
 			fsname = strdup(optarg);
 			break;
 
@@ -157,19 +146,15 @@ main(int argc, char *argv[]) {
 
 	device = argv[optind++];
 
-	if (stat(device, &statbuf) == -1) {
-		perror(device);
-		fatal(_("cannot stat device %s"), device);
-	}
+	if (stat(device, &statbuf) == -1)
+		err(EXIT_FAILURE, _("cannot stat device %s"), device);
 
 	if (!S_ISBLK(statbuf.st_mode))
-		fatal(_("%s is not a block special device"), device);
+		errx(EXIT_FAILURE, _("%s is not a block special device"), device);
 
 	fd = open(device, O_RDWR | O_EXCL);
-	if (fd == -1) {
-		perror(device);
-		fatal(_("cannot open %s"), device);
-	}
+	if (fd == -1)
+		err(EXIT_FAILURE, _("cannot open %s"), device);
 
 	if (optind == argc-1)
 		user_specified_total_blocks = atoll(argv[optind]);
@@ -177,14 +162,12 @@ main(int argc, char *argv[]) {
 		usage();
 
 	if (blkdev_get_sectors(fd, &total_blocks) == -1) {
-		if (!user_specified_total_blocks) {
-			perror("blkdev_get_sectors");
-			fatal(_("cannot get size of %s"), device);
-		}
+		if (!user_specified_total_blocks)
+			err(EXIT_FAILURE, _("cannot get size of %s"), device);
 		total_blocks = user_specified_total_blocks;
 	} else if (user_specified_total_blocks) {
 		if (user_specified_total_blocks > total_blocks)
-			fatal(_("blocks argument too large, max is %llu"),
+			errx(EXIT_FAILURE, _("blocks argument too large, max is %llu"),
 			      total_blocks);
 		total_blocks = user_specified_total_blocks;
 	}
@@ -199,7 +182,7 @@ main(int argc, char *argv[]) {
 	} else {
 		/* believe the user */
 		if (inodes > 512)
-			fatal(_("too many inodes - max is 512"));
+			errx(EXIT_FAILURE, _("too many inodes - max is 512"));
 	}
 
 	ino_bytes = inodes * sizeof(struct bfsi);
@@ -208,7 +191,7 @@ main(int argc, char *argv[]) {
 
 	/* mimic the behaviour of SCO's mkfs - maybe this limit is needed */
 	if (data_blocks < 32)
-		fatal(_("not enough space, need at least %llu blocks"),
+		errx(EXIT_FAILURE, _("not enough space, need at least %llu blocks"),
 		      ino_blocks + 33);
 
 	memset(&sb, 0, sizeof(sb));
@@ -236,7 +219,7 @@ main(int argc, char *argv[]) {
 	}
 
 	if (write(fd, &sb, sizeof(sb)) != sizeof(sb))
-		fatal(_("error writing superblock"));
+		errx(EXIT_FAILURE, _("error writing superblock"));
 
 	memset(&ri, 0, sizeof(ri));
 	ri.i_ino = BFS_ROOT_INO;
@@ -256,30 +239,28 @@ main(int argc, char *argv[]) {
 	ri.i_ctime = now;
 
 	if (write(fd, &ri, sizeof(ri)) != sizeof(ri))
-		fatal(_("error writing root inode"));
+		errx(EXIT_FAILURE, _("error writing root inode"));
 
 	memset(&ri, 0, sizeof(ri));
 	for (i=1; i<inodes; i++)
 		if (write(fd, &ri, sizeof(ri)) != sizeof(ri))
-			fatal(_("error writing inode"));
+			errx(EXIT_FAILURE, _("error writing inode"));
 
 	if (lseek(fd, (1 + ino_blocks)*BFS_BLOCKSIZE, SEEK_SET) == -1)
-		fatal(_("seek error"));
+		errx(EXIT_FAILURE, _("seek error"));
 
 	memset(&de, 0, sizeof(de));
 	de.d_ino = BFS_ROOT_INO;
 	memcpy(de.d_name, ".", 1);
 	if (write(fd, &de, sizeof(de)) != sizeof(de))
-		fatal(_("error writing . entry"));
+		errx(EXIT_FAILURE, _("error writing . entry"));
 
 	memcpy(de.d_name, "..", 2);
 	if (write(fd, &de, sizeof(de)) != sizeof(de))
-		fatal(_("error writing .. entry"));
+		errx(EXIT_FAILURE, _("error writing .. entry"));
 
-	if (close(fd) == -1) {
-		perror(device);
-		fatal(_("error closing %s"), device);
-	}
+	if (close(fd) == -1)
+		err(EXIT_FAILURE, _("error closing %s"), device);
 
-	return 0;
+	return EXIT_SUCCESS;
 }
