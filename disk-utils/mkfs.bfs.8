@@ -1,42 +1,48 @@
 .\" Copyright 1999 Andries E. Brouwer (aeb@cwi.nl)
 .\" May be freely distributed.
-.TH MKFS.BFS 8 "12 Sept 1999" "Util-linux 2.9x" "Linux System Administrator's Manual"
+.TH MKFS.BFS "8" "July 2011" "util-linux" "System Administration Utilities"
 .SH NAME
 mkfs.bfs \- make an SCO bfs filesystem
 .SH SYNOPSIS
 .B mkfs.bfs
-.RB [ \-N
-.IR nr-of-inodes ]
-.RB [ \-V
-.IR volume-name ]
-.RB [ \-F
-.IR fsname ]
-.I device
-.RI [ size-in-blocks ]
+[\fIoptions\fR] \fIdevice \fR[\fIblock-count\fR]
 .SH DESCRIPTION
 .B mkfs.bfs
 creates an SCO bfs file-system on a block device
 (usually a disk partition or a file accessed via the loop device).
-
+.PP
 The
-.I size-in-blocks
+.I block-count
 parameter is the desired size of the file system, in blocks.
 If nothing is specified, the entire partition will be used.
 .SH OPTIONS
 .TP
-.B \-N
+\fB\-N\fR, \fB\-\-inodes\fR=\fINUM\fR
 Specify the desired number of inodes (at most 512).
 If nothing is specified some default number in the range 48-512 is picked
 depending on the size of the partition.
 .TP
-.BI \-V " volume-label"
+\fB\-V\fR, \fB\-\-vname\fR=\fINAME\fR
 Specify the volume label. I have no idea if/where this is used.
 .TP
-.BI \-F " fsname"
+\fB\-F\fR, \fB\-\-fname\fR=\fINAME\fR
 Specify the fsname. I have no idea if/where this is used.
 .TP
-.B \-v
-Be verbose.
+\fB\-v\fR, \fB\-\-verbose\fR
+Explain what is being done.
+.TP
+\fB\-c\fR
+This option is silently ignored.
+.TP
+\fB\-l\fR
+This option is silently ignored.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Output version information and exit.
+\fB\-V\fR works only when specified as an only option.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display help and exit.
 .SH "EXIT CODES"
 The exit code returned by
 .B mkfs.bfs
