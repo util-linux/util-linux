@@ -19,6 +19,7 @@
 #include "c.h"
 #include "nls.h"
 #include "blkdev.h"
+#include "xalloc.h"
 
 #define BFS_ROOT_INO		2
 #define BFS_NAMELEN		14
@@ -134,14 +135,14 @@ main(int argc, char *argv[]) {
 			len = strlen(optarg);
 			if (len <= 0 || len > 6)
 				errx(EXIT_FAILURE, _("volume name too long"));
-			volume = strdup(optarg);
+			volume = xstrdup(optarg);
 			break;
 
 		case 'F':
 			len = strlen(optarg);
 			if (len <= 0 || len > 6)
 				errx(EXIT_FAILURE, _("fsname name too long"));
-			fsname = strdup(optarg);
+			fsname = xstrdup(optarg);
 			break;
 
 		case 'v':
