@@ -15,6 +15,7 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <linux/fd.h>
+#include <getopt.h>
 
 #include "c.h"
 #include "nls.h"
@@ -92,66 +93,77 @@ static void verify_disk(char *name)
         err(EXIT_FAILURE, "close");
 }
 
-
-static void usage(char *name)
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-    char *this;
+	fprintf(out, _("Usage: %s [options] device\n"),
+		program_invocation_short_name);
 
-    if ((this = strrchr(name,'/')) != NULL) name = this+1;
-    fprintf(stderr,_("usage: %s [ -n ] device\n"),name);
-    exit(1);
+	fprintf(out, _("\nOptions:\n"
+		       " -n, --no-verify  disable the verification after the format\n"
+		       " -V, --version    output version information and exit\n"
+		       " -h, --help       display this help and exit\n\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
-
 
 int main(int argc,char **argv)
 {
+    int ch;
     int ctrl;
     int verify;
     struct stat st;
-    char *progname, *p;
 
-    progname = argv[0];
-    if ((p = strrchr(progname, '/')) != NULL)
-	    progname = p+1;
+    static const struct option longopts[] = {
+	{"no-verify", no_argument, NULL, 'n'},
+	{"version", no_argument, NULL, 'V'},
+        {"help", no_argument, NULL, 'h'},
+        {NULL, 0, NULL, 0}
+    };
 
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
 
-    if (argc == 2 &&
-	(!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-	    printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
-	    exit(0);
-    }
+    while ((ch = getopt_long(argc, argv, "nVh", longopts, NULL)) != -1)
+	switch (ch) {
+	case 'n':
+	    verify = 0;
+	    break;
+	case 'V':
+            printf(_("%s from %s\n"), program_invocation_short_name,
+	                              PACKAGE_STRING);
+            exit(EXIT_SUCCESS);
+        case 'h':
+            usage(stdout);
+        default:
+            usage(stderr);
+        }
 
-    verify = 1;
-    if (argc > 1 && argv[1][0] == '-') {
-	if (argv[1][1] != 'n') usage(progname);
-	verify = 0;
-	argc--;
-	argv++;
-    }
-    if (argc != 2) usage(progname);
-    if (stat(argv[1],&st) < 0)
-        err(EXIT_FAILURE, _("cannot stat file %s"), argv[1]);
+    argc -= optind;
+    argv += optind;
+
+    if (argc < 1)
+        usage(stderr);
+    if (stat(argv[0],&st) < 0)
+        err(EXIT_FAILURE, _("cannot stat file %s"), argv[0]);
     if (!S_ISBLK(st.st_mode))
 	/* do not test major - perhaps this was an USB floppy */
-	errx(EXIT_FAILURE, _("%s: not a block device"), argv[1]);
-    if (access(argv[1],W_OK) < 0)
-        err(EXIT_FAILURE, _("cannot access file %s"), argv[1]);
+	errx(EXIT_FAILURE, _("%s: not a block device"), argv[0]);
+    if (access(argv[0],W_OK) < 0)
+        err(EXIT_FAILURE, _("cannot access file %s"), argv[0]);
 
-    ctrl = open(argv[1],O_WRONLY);
+    ctrl = open(argv[0],O_WRONLY);
     if (ctrl < 0)
-	    err(EXIT_FAILURE, _("cannot open file %s"), argv[1]);
+	    err(EXIT_FAILURE, _("cannot open file %s"), argv[0]);
     if (ioctl(ctrl,FDGETPRM,(long) &param) < 0) 
 	    err(EXIT_FAILURE, _("Could not determine current format type"));
     printf(_("%s-sided, %d tracks, %d sec/track. Total capacity %d kB.\n"),
 	   (param.head == 2) ? _("Double") : _("Single"),
 	   param.track, param.sect,param.size >> 1);
-    format_disk(ctrl, argv[1]);
+    format_disk(ctrl, argv[0]);
     close(ctrl);
 
     if (verify)
-	    verify_disk(argv[1]);
+	    verify_disk(argv[0]);
     return EXIT_SUCCESS;
 }
