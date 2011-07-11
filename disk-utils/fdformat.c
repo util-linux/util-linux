@@ -19,6 +19,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "xalloc.h"
 
 struct floppy_struct param;
 
@@ -60,8 +61,7 @@ static void verify_disk(char *name)
     int fd,cyl_size,count;
 
     cyl_size = param.sect*param.head*512;
-    if ((data = (unsigned char *) malloc(cyl_size)) == NULL)
-        err(EXIT_FAILURE, "malloc");
+    data = xmalloc(cyl_size);
     printf(_("Verifying ... "));
     fflush(stdout);
     if ((fd = open(name,O_RDONLY)) < 0)
