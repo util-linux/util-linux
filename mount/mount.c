@@ -1535,7 +1535,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   struct stat statbuf;
 
   /* copies for freeing on exit */
-  const char *opts1, *spec1, *node1, *types1, *extra_opts1;
+  const char *opts1, *spec1, *node1, *types1;
 
   if (verbose > 2) {
 	  printf("mount: spec:  \"%s\"\n", spec0);
@@ -1550,8 +1550,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   opts = opts1 = xstrdup(opts0);
 
   parse_opts (opts, &flags, &extra_opts);
-  extra_opts1 = extra_opts;
-  mount_opts = extra_opts;
+  mount_opts = xstrdup(extra_opts);
 
   /* quietly succeed for fstab entries that don't get mounted automatically */
   if (mount_all && (flags & MS_NOAUTO))
@@ -1592,8 +1591,11 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
       /*
        * Linux kernel does not accept any selinux context option on remount
        */
-      if (mount_opts)
+      if (mount_opts) {
+          char *tmp = mount_opts;
           mount_opts = remove_context_options(mount_opts);
+          my_free(tmp);
+      }
 
   } else if (types && strcmp(types, "tmpfs") == 0 && is_selinux_enabled() > 0 &&
 	   !has_context_option(mount_opts)) {
@@ -1922,9 +1924,8 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   }
 #endif
 
-  if (extra_opts1 != mount_opts)
-	  my_free(mount_opts);
-  my_free(extra_opts1);
+  my_free(mount_opts);
+  my_free(extra_opts);
   my_free(spec1);
   my_free(node1);
   my_free(opts1);
