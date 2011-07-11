@@ -24,10 +24,10 @@ struct floppy_struct param;
 
 #define SECTOR_SIZE 512
 
-static void format_disk(int ctrl, char *name)
+static void format_disk(int ctrl)
 {
     struct format_descr descr;
-    int track;
+    unsigned int track;
 
     printf(_("Formatting ... "));
     fflush(stdout);
@@ -56,7 +56,8 @@ static void format_disk(int ctrl, char *name)
 static void verify_disk(char *name)
 {
     unsigned char *data;
-    int fd,cyl_size,cyl,count;
+    unsigned int cyl;
+    int fd,cyl_size,count;
 
     cyl_size = param.sect*param.head*512;
     if ((data = (unsigned char *) malloc(cyl_size)) == NULL)
@@ -160,7 +161,7 @@ int main(int argc,char **argv)
     printf(_("%s-sided, %d tracks, %d sec/track. Total capacity %d kB.\n"),
 	   (param.head == 2) ? _("Double") : _("Single"),
 	   param.track, param.sect,param.size >> 1);
-    format_disk(ctrl, argv[0]);
+    format_disk(ctrl);
     close(ctrl);
 
     if (verify)
