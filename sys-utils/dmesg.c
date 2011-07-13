@@ -106,16 +106,36 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static int string_to_level(const char *name)
+static int parse_level(const char *str, size_t len)
 {
 	int i;
 
-	if (!name)
+	if (!str)
 		return -1;
+	if (!len)
+		len = strlen(str);
+	errno = 0;
 
-	for (i = 0; i < ARRAY_SIZE(level_names); i++)
-		if (strcasecmp(name, level_names[i].name) == 0)
+	if (isdigit(*str)) {
+		char *end = NULL;
+
+		i = strtol(str, &end, 10);
+		if (!errno && end && end > str && end - str == len &&
+		    i >= 0 && i < ARRAY_SIZE(level_names))
 			return i;
+	} else {
+		for (i = 0; i < ARRAY_SIZE(level_names); i++) {
+			const char *n = level_names[i].name;
+
+			if (strncasecmp(str, n, len) == 0 && *(n + len) == '\0')
+				return i;
+		}
+	}
+
+	if (errno)
+		err(EXIT_FAILURE, _("failed to parse level '%s'"), str);
+
+	errx(EXIT_FAILURE, _("unknown level '%s'"), str);
 	return -1;
 }
 
@@ -309,16 +329,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'n':
 			cmd = SYSLOG_ACTION_CONSOLE_LEVEL;
-			if (isdigit(*optarg)) {
-				console_level = strtol_or_err(optarg,
-						_("failed to parse level"));
-			} else {
-				console_level = string_to_level(optarg);
-				if (console_level < 0)
-					errx(EXIT_FAILURE,
-						_("%s: unknown log level"),
-						optarg);
-			}
+			console_level = parse_level(optarg, 0);
 			break;
 		case 'r':
 			flags |= DMESG_FL_RAW;
