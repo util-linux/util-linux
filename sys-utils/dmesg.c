@@ -25,6 +25,7 @@
 #include "xalloc.h"
 #include "widechar.h"
 #include "writeall.h"
+#include "bitops.h"
 
 /* Close the log.  Currently a NOP. */
 #define SYSLOG_ACTION_CLOSE          0
@@ -48,6 +49,18 @@
 #define SYSLOG_ACTION_SIZE_UNREAD    9
 /* Return size of the log buffer */
 #define SYSLOG_ACTION_SIZE_BUFFER   10
+
+#ifndef LOG_PRIMASK
+#define	LOG_PRIMASK	0x07	/* mask to extract priority part (internal) */
+				/* extract priority */
+#define	LOG_PRI(p)	((p) & LOG_PRIMASK)
+#endif
+
+#ifndef LOG_FACMASK
+#define	LOG_FACMASK	0x03f8	/* mask to extract facility part */
+				/* facility of pri */
+#define	LOG_FAC(p)	(((p) & LOG_FACMASK) >> 3)
+#endif
 
 /*
  * Priority names, based on sys/syslog.h
@@ -89,6 +102,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -d, --console-off         disable printing messages to console\n"
 		" -e, --console-on          enable printing messages to console\n"
 		" -h, --help                display this help and exit\n"
+		" -l, --level=LIST          restrict output to defined levels\n"
 		" -n, --console-level=LEVEL set level of messages printed to console\n"
 		" -r, --raw                 print the raw message buffer\n"
 		" -s, --buffer-size=SIZE    buffer size to query the kernel ring buffer\n"
@@ -137,6 +151,58 @@ static int parse_level(const char *str, size_t len)
 
 	errx(EXIT_FAILURE, _("unknown level '%s'"), str);
 	return -1;
+}
+
+static const char *parse_faclev(const char *str, int *fac, int *lev)
+{
+	long num;
+	char *end = NULL;
+
+	if (!str)
+		return str;
+
+	errno = 0;
+	num = strtol(str, &end, 10);
+
+	if (!errno && end && end > str) {
+		*fac = LOG_FAC(num);
+		*lev = LOG_PRI(num);
+		return end + 1;		/* skip '<' */
+	}
+
+	return str;
+}
+
+static int list_to_bitarray(const char *list,
+			    int (*name2id)(const char *name, size_t namesz),
+			    char *ary)
+{
+	const char *begin = NULL, *p;
+
+	for (p = list; p && *p; p++) {
+		const char *end = NULL;
+		int id;
+
+		if (!begin)
+			begin = p;		/* begin of the level name */
+		if (*p == ',')
+			end = p;		/* terminate the name */
+		if (*(p + 1) == '\0')
+			end = p + 1;		/* end of string */
+		if (!begin || !end)
+			continue;
+		if (end <= begin)
+			return -1;
+
+		id = name2id(begin, end - begin);
+		if (id < 0)
+			return id;
+		setbit(ary, id);
+		begin = NULL;
+		if (end && !*end)
+			break;
+	}
+	return 0;
 }
 
 static int get_buffer_size()
@@ -228,7 +294,7 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 	}
 }
 
-static void print_buffer(const char *buf, size_t size, int flags)
+static void print_buffer(const char *buf, size_t size, int flags, char *levels)
 {
 	int i;
 	const char *begin = NULL;
@@ -243,6 +309,7 @@ static void print_buffer(const char *buf, size_t size, int flags)
 
 	for (i = 0; i < size; i++) {
 		const char *p = buf + i, *end = NULL;
+		int fac = 0, lev = 0;
 
 		if (!begin)
 			begin = p;
@@ -257,19 +324,22 @@ static void print_buffer(const char *buf, size_t size, int flags)
 		if (end <= begin)
 			continue;	/* error or empty line? */
 
-		if ((flags & DMESG_FL_LEVEL) || (flags & DMESG_FL_FACILITY)) {
-			/* parse facility and level */
-			;
-		} else if (*begin == '<') {
-			/* ignore facility and level */
-			while (begin < end) {
-				begin++;
-				if (*(begin - 1) == '>')
-					break;
+		if (*begin == '<') {
+			if ((flags & DMESG_FL_LEVEL) || (flags & DMESG_FL_FACILITY)) {
+				/* parse facility and level */
+				begin = parse_faclev(begin + 1, &fac, &lev);
+			} else {
+				/* ignore facility and level */
+				while (begin < end) {
+					begin++;
+					if (*(begin - 1) == '>')
+						break;
+				}
 			}
 		}
 
-		if (begin < end) {
+		if (begin < end &&
+		    (!lev || !levels || isset(levels, lev))) {
 			size_t sz =  end - begin;
 
 			safe_fwrite(begin, sz, stdout);
@@ -289,6 +359,7 @@ int main(int argc, char *argv[])
 	int  console_level = 0;
 	int  cmd = -1;
 	int  flags = 0;
+	char levels[ARRAY_SIZE(level_names) / NBBY + 1] = { 0 };
 
 	static const struct option longopts[] = {
 		{ "clear",         no_argument,	      NULL, 'C' },
@@ -296,6 +367,7 @@ int main(int argc, char *argv[])
 		{ "raw",           no_argument,       NULL, 'r' },
 		{ "buffer-size",   required_argument, NULL, 's' },
 		{ "console-level", required_argument, NULL, 'n' },
+		{ "level",         required_argument, NULL, 'l' },
 		{ "console-off",   no_argument,       NULL, 'd' },
 		{ "console-on",    no_argument,       NULL, 'e' },
 		{ "version",       no_argument,	      NULL, 'V' },
@@ -307,7 +379,7 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "Ccdehrn:s:V", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "Ccdehl:rn:s:V", longopts, NULL)) != -1) {
 
 		if (cmd != -1 && strchr("Ccnde", c))
 			errx(EXIT_FAILURE, "%s %s",
@@ -330,6 +402,10 @@ int main(int argc, char *argv[])
 		case 'n':
 			cmd = SYSLOG_ACTION_CONSOLE_LEVEL;
 			console_level = parse_level(optarg, 0);
+			break;
+		case 'l':
+			flags |= DMESG_FL_LEVEL;
+			list_to_bitarray(optarg, parse_level, levels);
 			break;
 		case 'r':
 			flags |= DMESG_FL_RAW;
@@ -368,7 +444,7 @@ int main(int argc, char *argv[])
 			bufsize = get_buffer_size();
 		n = read_buffer(&buf, bufsize, cmd == SYSLOG_ACTION_READ_CLEAR);
 		if (n > 0)
-			print_buffer(buf, n, flags);
+			print_buffer(buf, n, flags, levels);
 		free(buf);
 		break;
 	case SYSLOG_ACTION_CLEAR:
