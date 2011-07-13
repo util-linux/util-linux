@@ -23,6 +23,8 @@
 #include "nls.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "widechar.h"
+#include "writeall.h"
 
 /* Close the log.  Currently a NOP. */
 #define SYSLOG_ACTION_CLOSE          0
@@ -68,7 +70,9 @@ static const struct dmesg_name level_names[] =
 };
 
 /* dmesg flags */
-#define DMESG_FL_RAW	(1 << 1)
+#define DMESG_FL_RAW		(1 << 1)
+#define DMESG_FL_LEVEL		(1 << 2)
+#define DMESG_FL_FACILITY	(1 << 3)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -152,25 +156,108 @@ static int read_buffer(char **buf, size_t bufsize, int clear)
 	return rc;
 }
 
-static void print_buffer(const char *buf, size_t size, int flags)
+static int fwrite_hex(const char *buf, size_t size, FILE *out)
 {
-	int lastc = '\n';
 	int i;
 
 	for (i = 0; i < size; i++) {
-		if (!(flags & DMESG_FL_RAW) &&
-		    (i == 0 || buf[i - 1] == '\n') && buf[i] == '<') {
-			i++;
-			while (isdigit(buf[i]))
-				i++;
-			if (buf[i] == '>')
-				i++;
-		}
-		lastc = buf[i];
-		putchar(lastc);
+		int rc = fprintf(out, "\\x%02x", buf[i]);
+		if (rc < 0)
+			return rc;
 	}
-	if (lastc != '\n')
-		putchar('\n');
+	return 0;
+}
+
+static void safe_fwrite(const char *buf, size_t size, FILE *out)
+{
+	int i;
+#ifdef HAVE_WIDECHAR
+	mbstate_t s;
+	memset(&s, 0, sizeof (s));
+#endif
+	for (i = 0; i < size; i++) {
+		const char *p = buf + i;
+		int rc, hex = 0;
+
+#ifdef HAVE_WIDECHAR
+		wchar_t wc;
+		size_t len = mbrtowc(&wc, p, size - i, &s);
+
+		if (len == 0)				/* L'\0' */
+			return;
+
+		if (len < 0) {				/* invalid sequence */
+			memset(&s, 0, sizeof (s));
+			len = hex = 1;
+
+		} else if (len > 1 && !iswprint(wc)) {	/* non-printable multibyte */
+			hex = 1;
+		} else
+#endif
+		{
+			if (!isprint((unsigned int) *p) &&
+			    !isspace((unsigned int) *p))		/* non-printable */
+				hex = 1;
+		}
+		if (hex)
+			rc = fwrite_hex(p, len, out);
+		else
+			rc = write_all(fileno(out), p, len);
+		if (rc != 0)
+			err(EXIT_FAILURE, _("write failed"));
+	}
+}
+
+static void print_buffer(const char *buf, size_t size, int flags)
+{
+	int i;
+	const char *begin = NULL;
+
+	if (flags & DMESG_FL_RAW) {
+		/* print whole buffer */
+		safe_fwrite(buf, size, stdout);
+		if (buf[size - 1] != '\n')
+			putchar('\n');
+		return;
+	}
+
+	for (i = 0; i < size; i++) {
+		const char *p = buf + i, *end = NULL;
+
+		if (!begin)
+			begin = p;
+		if (*p == '\n')
+			end = p;
+		if (i + 1 == size) {
+			end = p + 1;
+			i++;
+		}
+		if (!begin || !end)
+			continue;
+		if (end <= begin)
+			continue;	/* error or empty line? */
+
+		if ((flags & DMESG_FL_LEVEL) || (flags & DMESG_FL_FACILITY)) {
+			/* parse facility and level */
+			;
+		} else if (*begin == '<') {
+			/* ignore facility and level */
+			while (begin < end) {
+				begin++;
+				if (*(begin - 1) == '>')
+					break;
+			}
+		}
+
+		if (begin < end) {
+			size_t sz =  end - begin;
+
+			safe_fwrite(begin, sz, stdout);
+			if (*(begin + sz - 1) != '\n')
+				putchar('\n');
+		}
+		begin = NULL;
+	}
 }
 
 int main(int argc, char *argv[])
