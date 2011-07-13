@@ -62,7 +62,6 @@ struct minix3_super_block {
 	u16 s_pad2;
 	u16 s_blocksize;
 	u8  s_disk_version;
-        u16 s_state;
 };
 
 #define BLOCK_SIZE_BITS 10

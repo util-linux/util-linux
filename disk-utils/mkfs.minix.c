@@ -160,11 +160,8 @@ static void check_mount(void) {
 static void super_set_state(void)
 {
 	switch (fs_version) {
-	case 3:
-		Super3.s_state |= MINIX_VALID_FS;
-		Super3.s_state &= ~MINIX_ERROR_FS;
-		break;
-	default:
+	case 1:
+	case 2:
 		Super.s_state |= MINIX_VALID_FS;
 		Super.s_state &= ~MINIX_ERROR_FS;
 		break;
