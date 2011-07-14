@@ -1,27 +1,3 @@
-
-dmesg
------
-
-  - add new command line option --facility= and --level= to print select
-    messages only. For example
-
-		$ dmesg --level=ERR --facility=DAEMON
-
-   IRC log:
-
-	<mezcalero> kzak: the point of --facility= is so that we can distuingish between kernel msgs and userspace msgs written to /dev/kmsg
-	<mezcalero> the latter would set facility=1 (i.e. LOG_USER) or facility=3 (i.e. LOG_DAEMON)
-	<mezcalero> kzak: right now, everything written to kmsg just uses on-char PRIO fields
-	<mezcalero> kzak: i.e. <0> to <7>
-	<mezcalero> kzak: that means facility for all of these is 0
-	<mezcalero> since facility according to the syslog spec is stored in the the bits of the value between "<" and ">" shifted right be 3
-	<mezcalero> and since that is zero for all msgs in kmsg this is identical to LOG_KERN, i.e. 0 << 3
-	<mezcalero> now, the idea is that we fix systemd, dracut and udev to use LOG_DAEMON or LOG_USER instead
-	<mezcalero> instead of using <4> as prefix they'd use <12> or so
-	<mezcalero> where 12 is 4 + 8
-	<mezcalero> where 8 is 1 << 3
-	<mezcalero> and 1 is LOG_USER
-
 mount
 -----
 
