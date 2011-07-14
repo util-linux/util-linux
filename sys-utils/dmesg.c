@@ -127,6 +127,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -c, --read-clear          read and clear all messages\n"
 		" -d, --console-off         disable printing messages to console\n"
 		" -e, --console-on          enable printing messages to console\n"
+		" -f, --facility=LIST       restrict output to defined facilities\n"
 		" -x, --decode              decode facility and level to readable string\n"
 		" -h, --help                display this help and exit\n"
 		" -l, --level=LIST          restrict output to defined levels\n"
@@ -184,6 +185,39 @@ static int parse_level(const char *str, size_t len)
 		err(EXIT_FAILURE, _("failed to parse level '%s'"), str);
 
 	errx(EXIT_FAILURE, _("unknown level '%s'"), str);
+	return -1;
+}
+
+static int parse_facility(const char *str, size_t len)
+{
+	int i;
+
+	if (!str)
+		return -1;
+	if (!len)
+		len = strlen(str);
+	errno = 0;
+
+	if (isdigit(*str)) {
+		char *end = NULL;
+
+		i = strtol(str, &end, 10);
+		if (!errno && end && end > str && end - str == len &&
+		    i >= 0 && i < ARRAY_SIZE(facility_names))
+			return i;
+	} else {
+		for (i = 0; i < ARRAY_SIZE(facility_names); i++) {
+			const char *n = facility_names[i].name;
+
+			if (strncasecmp(str, n, len) == 0 && *(n + len) == '\0')
+				return i;
+		}
+	}
+
+	if (errno)
+		err(EXIT_FAILURE, _("failed to parse facility '%s'"), str);
+
+	errx(EXIT_FAILURE, _("unknown facility '%s'"), str);
 	return -1;
 }
 
@@ -333,7 +367,8 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 	}
 }
 
-static void print_buffer(const char *buf, size_t size, int flags, char *levels)
+static void print_buffer(const char *buf, size_t size, int flags,
+			 char *levels, char *facilities)
 {
 	int i;
 	const char *begin = NULL;
@@ -380,7 +415,10 @@ static void print_buffer(const char *buf, size_t size, int flags, char *levels)
 		}
 
 		if (begin < end &&
-		    (lev < 0 || !(flags & DMESG_FL_LEVEL) || isset(levels, lev))) {
+		    (lev < 0 || !(flags & DMESG_FL_LEVEL) ||
+		                           isset(levels, lev)) &&
+		    (fac < 0 || !(flags & DMESG_FL_FACILITY) ||
+		                          isset(facilities, fac))) {
 			size_t sz =  end - begin;
 
 			if ((flags & DMESG_FL_DECODE) && lev >= 0 && fac >= 0) {
@@ -404,7 +442,10 @@ int main(int argc, char *argv[])
 	int  console_level = 0;
 	int  cmd = -1;
 	int  flags = 0;
+
+	/* bit arrays -- see include/bitops.h */
 	char levels[ARRAY_SIZE(level_names) / NBBY + 1] = { 0 };
+	char facilities[ARRAY_SIZE(facility_names) / NBBY + 1] = { 0 };
 
 	static const struct option longopts[] = {
 		{ "clear",         no_argument,	      NULL, 'C' },
@@ -416,6 +457,7 @@ int main(int argc, char *argv[])
 		{ "level",         required_argument, NULL, 'l' },
 		{ "console-off",   no_argument,       NULL, 'd' },
 		{ "console-on",    no_argument,       NULL, 'e' },
+		{ "facility",      required_argument, NULL, 'f' },
 		{ "version",       no_argument,	      NULL, 'V' },
 		{ "help",          no_argument,	      NULL, 'h' },
 		{ NULL,	           0, NULL, 0 }
@@ -425,7 +467,7 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "Ccdehl:rn:s:Vx", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "Ccdehl:rn:s:Vxf:", longopts, NULL)) != -1) {
 
 		if (cmd != -1 && strchr("Ccnde", c))
 			errx(EXIT_FAILURE, "%s %s",
@@ -444,6 +486,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'e':
 			cmd = SYSLOG_ACTION_CONSOLE_ON;
+			break;
+		case 'f':
+			flags |= DMESG_FL_FACILITY;
+			list_to_bitarray(optarg, parse_facility, facilities);
 			break;
 		case 'n':
 			cmd = SYSLOG_ACTION_CONSOLE_LEVEL;
@@ -496,7 +542,7 @@ int main(int argc, char *argv[])
 			bufsize = get_buffer_size();
 		n = read_buffer(&buf, bufsize, cmd == SYSLOG_ACTION_READ_CLEAR);
 		if (n > 0)
-			print_buffer(buf, n, flags, levels);
+			print_buffer(buf, n, flags, levels, facilities);
 		free(buf);
 		break;
 	case SYSLOG_ACTION_CLEAR:

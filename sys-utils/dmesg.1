@@ -36,6 +36,14 @@ Clear the ring buffer contents after printing.
 Disable printing messages to the console.
 .IP "\fB\-e, \-\-console-on\fP"
 Enable printing messages to the console.
+.IP "\fB\-f, \-\-facility \fIlist\fP"
+Restrict output to defined (comma separated) list of facilities. For exmaple
+.sp
+  dmesg --facility=daemon
+.sp
+will print messages from system daemons only.
+.IP "\fB\-x, \-\-decode\fP"
+Decode facility and level (priority) number to human readable prefixes.
 .IP "\fB\-h, \-\-help\fP"
 Print a help text and exit.
 .IP "\fB\-l, \-\-level \fIlist\fP"
