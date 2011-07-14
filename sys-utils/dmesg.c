@@ -82,10 +82,36 @@ static const struct dmesg_name level_names[] =
 	[LOG_DEBUG]   = { "debug", N_("debug-level messages") }
 };
 
+/*
+ * sys/syslog.h uses (f << 3) for all facility codes.
+ * We want to use the codes as array idexes, so shift back...
+ *
+ * Note that libc LOG_FAC() macro returns the base codes, not the
+ * shifted code :-)
+ */
+#define FAC_BASE(f)	((f) >> 3)
+
+static const struct dmesg_name facility_names[] =
+{
+	[FAC_BASE(LOG_KERN)]     = { "kern",     N_("kernel messages") },
+	[FAC_BASE(LOG_USER)]     = { "user",     N_("random user-level messages") },
+	[FAC_BASE(LOG_MAIL)]     = { "mail",     N_("mail system") },
+	[FAC_BASE(LOG_DAEMON)]   = { "daemon",   N_("system daemons") },
+	[FAC_BASE(LOG_AUTH)]     = { "auth",     N_("security/authorization messages") },
+	[FAC_BASE(LOG_SYSLOG)]   = { "syslog",   N_("messages generated internally by syslogd") },
+	[FAC_BASE(LOG_LPR)]      = { "lpr",      N_("line printer subsystem") },
+	[FAC_BASE(LOG_NEWS)]     = { "news",     N_("network news subsystem") },
+	[FAC_BASE(LOG_UUCP)]     = { "uucp",     N_("UUCP subsystem") },
+	[FAC_BASE(LOG_CRON)]     = { "cron",     N_("clock daemon") },
+	[FAC_BASE(LOG_AUTHPRIV)] = { "authpriv", N_("security/authorization messages (private)") },
+	[FAC_BASE(LOG_FTP)]      = { "ftp",      N_("ftp daemon") },
+};
+
 /* dmesg flags */
 #define DMESG_FL_RAW		(1 << 1)
 #define DMESG_FL_LEVEL		(1 << 2)
 #define DMESG_FL_FACILITY	(1 << 3)
+#define DMESG_FL_DECODE		(1 << 4)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -101,6 +127,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -c, --read-clear          read and clear all messages\n"
 		" -d, --console-off         disable printing messages to console\n"
 		" -e, --console-on          enable printing messages to console\n"
+		" -x, --decode              decode facility and level to readable string\n"
 		" -h, --help                display this help and exit\n"
 		" -l, --level=LIST          restrict output to defined levels\n"
 		" -n, --console-level=LEVEL set level of messages printed to console\n"
@@ -108,9 +135,16 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -s, --buffer-size=SIZE    buffer size to query the kernel ring buffer\n"
 		" -V, --version             output version information and exit\n\n"));
 
-	fprintf(out, _("Supported log levels (priorities):\n"));
+	fprintf(out, _("Supported log facilities:\n"));
 	for (i = 0; i < ARRAY_SIZE(level_names); i++) {
-		fprintf(stderr, " <%d> %7s - %s\n", i,
+		fprintf(stderr, " %7s - %s\n",
+				facility_names[i].name,
+				_(facility_names[i].help));
+	}
+
+	fprintf(out, _("\nSupported log levels (priorities):\n"));
+	for (i = 0; i < ARRAY_SIZE(level_names); i++) {
+		fprintf(stderr, " %7s - %s\n",
 				level_names[i].name,
 				_(level_names[i].help));
 	}
@@ -167,6 +201,11 @@ static const char *parse_faclev(const char *str, int *fac, int *lev)
 	if (!errno && end && end > str) {
 		*fac = LOG_FAC(num);
 		*lev = LOG_PRI(num);
+
+		if (*lev > ARRAY_SIZE(level_names))
+			*lev = -1;
+		if (*fac > ARRAY_SIZE(facility_names))
+			*fac = -1;
 		return end + 1;		/* skip '<' */
 	}
 
@@ -288,7 +327,7 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 		if (hex)
 			rc = fwrite_hex(p, len, out);
 		else
-			rc = write_all(fileno(out), p, len);
+			rc = fwrite(p, 1, len, out) != len;
 		if (rc != 0)
 			err(EXIT_FAILURE, _("write failed"));
 	}
@@ -309,7 +348,7 @@ static void print_buffer(const char *buf, size_t size, int flags, char *levels)
 
 	for (i = 0; i < size; i++) {
 		const char *p = buf + i, *end = NULL;
-		int fac = 0, lev = 0;
+		int fac = -1, lev = -1;
 
 		if (!begin)
 			begin = p;
@@ -325,7 +364,9 @@ static void print_buffer(const char *buf, size_t size, int flags, char *levels)
 			continue;	/* error or empty line? */
 
 		if (*begin == '<') {
-			if ((flags & DMESG_FL_LEVEL) || (flags & DMESG_FL_FACILITY)) {
+			if ((flags & DMESG_FL_LEVEL) ||
+			    (flags & DMESG_FL_FACILITY) ||
+			    (flags & DMESG_FL_DECODE)) {
 				/* parse facility and level */
 				begin = parse_faclev(begin + 1, &fac, &lev);
 			} else {
@@ -339,9 +380,13 @@ static void print_buffer(const char *buf, size_t size, int flags, char *levels)
 		}
 
 		if (begin < end &&
-		    (!lev || !levels || isset(levels, lev))) {
+		    (lev < 0 || !(flags & DMESG_FL_LEVEL) || isset(levels, lev))) {
 			size_t sz =  end - begin;
 
+			if ((flags & DMESG_FL_DECODE) && lev >= 0 && fac >= 0) {
+				printf("%-6s:%-6s: ", facility_names[fac].name,
+						level_names[lev].name);
+			}
 			safe_fwrite(begin, sz, stdout);
 			if (*(begin + sz - 1) != '\n')
 				putchar('\n');
@@ -366,6 +411,7 @@ int main(int argc, char *argv[])
 		{ "read-clear",    no_argument,	      NULL, 'c' },
 		{ "raw",           no_argument,       NULL, 'r' },
 		{ "buffer-size",   required_argument, NULL, 's' },
+		{ "decode",        no_argument,	      NULL, 'x' },
 		{ "console-level", required_argument, NULL, 'n' },
 		{ "level",         required_argument, NULL, 'l' },
 		{ "console-off",   no_argument,       NULL, 'd' },
@@ -379,7 +425,7 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "Ccdehl:rn:s:V", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "Ccdehl:rn:s:Vx", longopts, NULL)) != -1) {
 
 		if (cmd != -1 && strchr("Ccnde", c))
 			errx(EXIT_FAILURE, "%s %s",
@@ -410,6 +456,9 @@ int main(int argc, char *argv[])
 		case 'r':
 			flags |= DMESG_FL_RAW;
 			break;
+		case 'x':
+			flags |= DMESG_FL_DECODE;
+			break;
 		case 's':
 			bufsize = strtol_or_err(optarg,
 					_("failed to parse buffer size"));
@@ -436,6 +485,9 @@ int main(int argc, char *argv[])
 
 	if (cmd == -1)
 		cmd = SYSLOG_ACTION_READ_ALL;	/* default */
+
+	if ((flags & DMESG_FL_RAW) && ((flags != DMESG_FL_RAW)))
+		errx(EXIT_FAILURE, _("options --level and --facility cannot be used for raw output"));
 
 	switch (cmd) {
 	case SYSLOG_ACTION_READ_ALL:
