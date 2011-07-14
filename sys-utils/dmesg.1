@@ -1,6 +1,6 @@
 .\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be distributed under the GNU General Public License
-.TH DMESG 1 "Jun 2011"
+.TH DMESG 1 "Jul 2011"
 .SH NAME
 dmesg \- print or control the kernel ring buffer
 .SH SYNOPSIS
@@ -37,23 +37,23 @@ Disable printing messages to the console.
 .IP "\fB\-e, \-\-console-on\fP"
 Enable printing messages to the console.
 .IP "\fB\-f, \-\-facility \fIlist\fP"
-Restrict output to defined (comma separated) list of facilities. For exmaple
+Restrict output to defined (comma separated) list of facilities. For example
 .sp
   dmesg --facility=daemon
 .sp
-will print messages from system daemons only.
-.IP "\fB\-x, \-\-decode\fP"
-Decode facility and level (priority) number to human readable prefixes.
+will print messages from system daemons only. For all supported facilities see
+.B dmesg \-\-help
+output.
 .IP "\fB\-h, \-\-help\fP"
 Print a help text and exit.
 .IP "\fB\-l, \-\-level \fIlist\fP"
-Restrict output to defined (comma separated) list of levels. For exmaple
+Restrict output to defined (comma separated) list of levels. For example
 .sp
   dmesg --level=err,warn
 .sp
-will print error and warning messages only.
-.IP "\fB\-x, \-\-decode\fP"
-Decode facility and level (priority) number to human readable prefixes.
+will print error and warning messages only. For all supported levels see
+.B dmesg \-\-help
+output.
 .IP "\fB\-n, \-\-console-level \fIlevel\fP
 Set the
 .I level
@@ -92,10 +92,15 @@ If you have set the kernel buffer to be larger than the default
 then this option can be used to view the entire buffer.
 .IP "\fB\-V, \-\-version\fP"
 Output version information and exit.
+.IP "\fB\-x, \-\-decode\fP"
+Decode facility and level (priority) number to human readable prefixes.
 .SH SEE ALSO
 .BR syslogd (8)
-.\" .SH AUTHOR
-.\" Theodore Ts'o (tytso@athena.mit.edu)
+.SH AUTHORS
+.nf
+Karel Zak <kzak@redhat.com>
+Theodore Ts'o <tytso@athena.mit.edu>
+.fi
 .SH AVAILABILITY
 The dmesg command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.

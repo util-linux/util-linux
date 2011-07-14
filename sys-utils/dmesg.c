@@ -1,16 +1,11 @@
-/* dmesg.c -- Print out the contents of the kernel ring buffer
- * Created: Sat Oct  9 16:19:47 1993
- * Revised: Thu Oct 28 21:52:17 1993 by faith@cs.unc.edu
- * Copyright 1993 Theodore Ts'o (tytso@athena.mit.edu)
- * This program comes with ABSOLUTELY NO WARRANTY.
- * Modifications by Rick Sladkey (jrs@world.std.com)
- * Larger buffersize 3 June 1998 by Nicolai Langfeldt, based on a patch
- * by Peeter Joot.  This was also suggested by John Hudson.
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
- * - added Native Language Support
+/*
+ * dmesg.c -- Print out the contents of the kernel ring buffer
  *
+ * Copyright (C) 1993 Theodore Ts'o <tytso@athena.mit.edu>
+ * Copyright (C) 2011 Karel Zak <kzak@redhat.com>
+ *
+ * This program comes with ABSOLUTELY NO WARRANTY.
  */
-
 #include <linux/unistd.h>
 #include <stdio.h>
 #include <getopt.h>
@@ -50,26 +45,17 @@
 /* Return size of the log buffer */
 #define SYSLOG_ACTION_SIZE_BUFFER   10
 
-#ifndef LOG_PRIMASK
-#define	LOG_PRIMASK	0x07	/* mask to extract priority part (internal) */
-				/* extract priority */
-#define	LOG_PRI(p)	((p) & LOG_PRIMASK)
-#endif
-
-#ifndef LOG_FACMASK
-#define	LOG_FACMASK	0x03f8	/* mask to extract facility part */
-				/* facility of pri */
-#define	LOG_FAC(p)	(((p) & LOG_FACMASK) >> 3)
-#endif
-
 /*
- * Priority names, based on sys/syslog.h
+ * Priority and facility names
  */
 struct dmesg_name {
 	const char *name;
 	const char *help;
 };
 
+/*
+ * Priority names -- based on sys/syslog.h
+ */
 static const struct dmesg_name level_names[] =
 {
 	[LOG_EMERG]   = { "emerg", N_("system is unusable") },
@@ -128,13 +114,13 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -d, --console-off         disable printing messages to console\n"
 		" -e, --console-on          enable printing messages to console\n"
 		" -f, --facility=LIST       restrict output to defined facilities\n"
-		" -x, --decode              decode facility and level to readable string\n"
 		" -h, --help                display this help and exit\n"
 		" -l, --level=LIST          restrict output to defined levels\n"
 		" -n, --console-level=LEVEL set level of messages printed to console\n"
 		" -r, --raw                 print the raw message buffer\n"
 		" -s, --buffer-size=SIZE    buffer size to query the kernel ring buffer\n"
-		" -V, --version             output version information and exit\n\n"));
+		" -V, --version             output version information and exit\n\n"
+		" -x, --decode              decode facility and level to readable string\n"));
 
 	fprintf(out, _("Supported log facilities:\n"));
 	for (i = 0; i < ARRAY_SIZE(level_names); i++) {
@@ -155,6 +141,11 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+/*
+ * LEVEL     ::= <number> | <name>
+ *  <number> ::= number in range <0..N>, where N < ARRAY_SIZE(level_names)
+ *  <name>   ::= case-insensitive text
+ */
 static int parse_level(const char *str, size_t len)
 {
 	int i;
@@ -188,6 +179,11 @@ static int parse_level(const char *str, size_t len)
 	return -1;
 }
 
+/*
+ * FACILITY  ::= <number> | <name>
+ *  <number> ::= number in range <0..N>, where N < ARRAY_SIZE(facility_names)
+ *  <name>   ::= case-insensitive text
+ */
 static int parse_facility(const char *str, size_t len)
 {
 	int i;
@@ -221,6 +217,15 @@ static int parse_facility(const char *str, size_t len)
 	return -1;
 }
 
+/*
+ * Parses numerical prefix used for all messages in kernel ring buffer.
+ *
+ * Priorities/facilities are encoded into a single 32-bit quantity, where the
+ * bottom 3 bits are the priority (0-7) and the top 28 bits are the facility
+ * (0-big number).
+ *
+ * Note that the number has to end with '>' char.
+ */
 static const char *parse_faclev(const char *str, int *fac, int *lev)
 {
 	long num;
@@ -246,6 +251,13 @@ static const char *parse_faclev(const char *str, int *fac, int *lev)
 	return str;
 }
 
+/*
+ * LIST ::= <item> [, <item>]
+ *
+ * The <item> is translated to 'id' by name2id() function and the 'id' is used
+ * as a possition in the 'ary' bit array. It means that the 'id' has to be in
+ * range <0..N> where N < sizeof(ary) * NBBY.
+ */
 static int list_to_bitarray(const char *list,
 			    int (*name2id)(const char *name, size_t namesz),
 			    char *ary)
@@ -285,6 +297,9 @@ static int get_buffer_size()
 	return n > 0 ? n : 0;
 }
 
+/*
+ * Reads messages from kernel ring buffer
+ */
 static int read_buffer(char **buf, size_t bufsize, int clear)
 {
 	size_t sz;
@@ -327,6 +342,9 @@ static int fwrite_hex(const char *buf, size_t size, FILE *out)
 	return 0;
 }
 
+/*
+ * Prints to 'out' and non-printable chars are replaced with \x<hex> sequences.
+ */
 static void safe_fwrite(const char *buf, size_t size, FILE *out)
 {
 	int i;
@@ -367,6 +385,10 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 	}
 }
 
+/*
+ * Prints the 'buf' kernel ring buffer; the messages are filtered out according
+ * to 'levels' and 'facilities' bitarrays.
+ */
 static void print_buffer(const char *buf, size_t size, int flags,
 			 char *levels, char *facilities)
 {
@@ -448,18 +470,18 @@ int main(int argc, char *argv[])
 	char facilities[ARRAY_SIZE(facility_names) / NBBY + 1] = { 0 };
 
 	static const struct option longopts[] = {
-		{ "clear",         no_argument,	      NULL, 'C' },
-		{ "read-clear",    no_argument,	      NULL, 'c' },
-		{ "raw",           no_argument,       NULL, 'r' },
 		{ "buffer-size",   required_argument, NULL, 's' },
-		{ "decode",        no_argument,	      NULL, 'x' },
+		{ "clear",         no_argument,	      NULL, 'C' },
 		{ "console-level", required_argument, NULL, 'n' },
-		{ "level",         required_argument, NULL, 'l' },
 		{ "console-off",   no_argument,       NULL, 'd' },
 		{ "console-on",    no_argument,       NULL, 'e' },
+		{ "decode",        no_argument,	      NULL, 'x' },
 		{ "facility",      required_argument, NULL, 'f' },
-		{ "version",       no_argument,	      NULL, 'V' },
 		{ "help",          no_argument,	      NULL, 'h' },
+		{ "level",         required_argument, NULL, 'l' },
+		{ "raw",           no_argument,       NULL, 'r' },
+		{ "read-clear",    no_argument,	      NULL, 'c' },
+		{ "version",       no_argument,	      NULL, 'V' },
 		{ NULL,	           0, NULL, 0 }
 	};
 
@@ -467,7 +489,7 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "Ccdehl:rn:s:Vxf:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "Ccdef:hl:n:rs:Vx", longopts, NULL)) != -1) {
 
 		if (cmd != -1 && strchr("Ccnde", c))
 			errx(EXIT_FAILURE, "%s %s",
@@ -491,19 +513,19 @@ int main(int argc, char *argv[])
 			flags |= DMESG_FL_FACILITY;
 			list_to_bitarray(optarg, parse_facility, facilities);
 			break;
-		case 'n':
-			cmd = SYSLOG_ACTION_CONSOLE_LEVEL;
-			console_level = parse_level(optarg, 0);
+		case 'h':
+			usage(stdout);
 			break;
 		case 'l':
 			flags |= DMESG_FL_LEVEL;
 			list_to_bitarray(optarg, parse_level, levels);
 			break;
+		case 'n':
+			cmd = SYSLOG_ACTION_CONSOLE_LEVEL;
+			console_level = parse_level(optarg, 0);
+			break;
 		case 'r':
 			flags |= DMESG_FL_RAW;
-			break;
-		case 'x':
-			flags |= DMESG_FL_DECODE;
 			break;
 		case 's':
 			bufsize = strtol_or_err(optarg,
@@ -515,8 +537,8 @@ int main(int argc, char *argv[])
 			printf(_("%s from %s\n"), program_invocation_short_name,
 						  PACKAGE_STRING);
 			return EXIT_SUCCESS;
-		case 'h':
-			usage(stdout);
+		case 'x':
+			flags |= DMESG_FL_DECODE;
 			break;
 		case '?':
 		default:
