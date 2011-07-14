@@ -1,5 +1,5 @@
-#ifndef __MINIX_H__
-#define __MINIX_H__
+#ifndef UTIL_LINUX_MINIX_H
+#define UTIL_LINUX_MINIX_H
 
 #ifdef KERNEL_INCLUDES_ARE_CLEAN
 
@@ -7,61 +7,58 @@
 #include <linux/minix_fs.h>
 
 #else
-
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include <stdint.h>
 
 struct minix_inode {
-        u16 i_mode;
-        u16 i_uid;
-        u32 i_size;
-        u32 i_time;
-        u8  i_gid;
-        u8  i_nlinks;
-        u16 i_zone[9];
+	uint16_t i_mode;
+	uint16_t i_uid;
+	uint32_t i_size;
+	uint32_t i_time;
+	uint8_t  i_gid;
+	uint8_t  i_nlinks;
+	uint16_t i_zone[9];
 };
 
 struct minix2_inode {
-        u16 i_mode;
-        u16 i_nlinks;
-        u16 i_uid;
-        u16 i_gid;
-        u32 i_size;
-        u32 i_atime;
-        u32 i_mtime;
-        u32 i_ctime;
-        u32 i_zone[10];
+	uint16_t i_mode;
+	uint16_t i_nlinks;
+	uint16_t i_uid;
+	uint16_t i_gid;
+	uint32_t i_size;
+	uint32_t i_atime;
+	uint32_t i_mtime;
+	uint32_t i_ctime;
+	uint32_t i_zone[10];
 };
 
 struct minix_super_block {
-        u16 s_ninodes;
-        u16 s_nzones;
-        u16 s_imap_blocks;
-        u16 s_zmap_blocks;
-        u16 s_firstdatazone;
-        u16 s_log_zone_size;
-        u32 s_max_size;
-        u16 s_magic;
-        u16 s_state;
-        u32 s_zones;
+	uint16_t s_ninodes;
+	uint16_t s_nzones;
+	uint16_t s_imap_blocks;
+	uint16_t s_zmap_blocks;
+	uint16_t s_firstdatazone;
+	uint16_t s_log_zone_size;
+	uint32_t s_max_size;
+	uint16_t s_magic;
+	uint16_t s_state;
+	uint32_t s_zones;
 };
 
 /* V3 minix super-block data on disk */
 struct minix3_super_block {
-	u32 s_ninodes;
-	u16 s_pad0;
-	u16 s_imap_blocks;
-	u16 s_zmap_blocks;
-	u16 s_firstdatazone;
-	u16 s_log_zone_size;
-	u16 s_pad1;
-	u32 s_max_size;
-	u32 s_zones;
-	u16 s_magic;
-	u16 s_pad2;
-	u16 s_blocksize;
-	u8  s_disk_version;
+	uint32_t s_ninodes;
+	uint16_t s_pad0;
+	uint16_t s_imap_blocks;
+	uint16_t s_zmap_blocks;
+	uint16_t s_firstdatazone;
+	uint16_t s_log_zone_size;
+	uint16_t s_pad1;
+	uint32_t s_max_size;
+	uint32_t s_zones;
+	uint16_t s_magic;
+	uint16_t s_pad2;
+	uint16_t s_blocksize;
+	uint8_t  s_disk_version;
 };
 
 #define BLOCK_SIZE_BITS 10
@@ -199,4 +196,4 @@ static inline unsigned long get_inode_buffer_size(void)
 	return inode_blocks() * BLOCK_SIZE;
 }
 
-#endif /* __MINIX_H__ */
+#endif /* UTIL_LINUX_MINIX_H */
