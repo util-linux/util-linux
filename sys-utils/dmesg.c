@@ -119,8 +119,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -n, --console-level=LEVEL set level of messages printed to console\n"
 		" -r, --raw                 print the raw message buffer\n"
 		" -s, --buffer-size=SIZE    buffer size to query the kernel ring buffer\n"
-		" -V, --version             output version information and exit\n\n"
-		" -x, --decode              decode facility and level to readable string\n"));
+		" -V, --version             output version information and exit\n"
+		" -x, --decode              decode facility and level to readable string\n\n"));
 
 	fprintf(out, _("Supported log facilities:\n"));
 	for (i = 0; i < ARRAY_SIZE(level_names); i++) {
