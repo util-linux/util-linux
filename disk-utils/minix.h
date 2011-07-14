@@ -1,12 +1,6 @@
 #ifndef UTIL_LINUX_MINIX_H
 #define UTIL_LINUX_MINIX_H
 
-#ifdef KERNEL_INCLUDES_ARE_CLEAN
-
-#include <linux/fs.h>
-#include <linux/minix_fs.h>
-
-#else
 #include <stdint.h>
 
 struct minix_inode {
@@ -78,8 +72,6 @@ struct minix3_super_block {
 #define MINIX2_SUPER_MAGIC   0x2468	     /* minix V2 fs */
 #define MINIX2_SUPER_MAGIC2  0x2478	     /* minix V2 fs, 30 char names */
 #define MINIX3_SUPER_MAGIC   0x4d5a          /* minix V3 fs (60 char names) */
-
-#endif /* KERNEL_INCLUDES_ARE_CLEAN */
 
 #define Inode (((struct minix_inode *) inode_buffer)-1)
 #define Inode2 (((struct minix2_inode *) inode_buffer)-1)
