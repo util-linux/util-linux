@@ -414,7 +414,7 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 
 			if (width <= tb->termwidth)
 				break;
-			if (cl->width_hint > 1)
+			if (cl->width_hint > 1 && !(cl->flags & TT_FL_TRUNC))
 				continue;	/* never truncate columns with absolute sizes */
 			if (cl->flags & TT_FL_TREE)
 				continue;	/* never truncate the tree */
@@ -422,7 +422,15 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 				continue;
 			if (cl->width == cl->width_min)
 				continue;
-			if (cl->width > cl->width_hint * tb->termwidth) {
+
+			/* truncate column with relative sizes */
+			if (cl->width_hint < 1 &&
+			    cl->width > cl->width_hint * tb->termwidth) {
+				cl->width--;
+				width--;
+			}
+			/* truncate column with absolute size */
+			if (cl->width_hint > 1 && !trunc_only) {
 				cl->width--;
 				width--;
 			}
