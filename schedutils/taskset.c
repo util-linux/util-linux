@@ -37,13 +37,10 @@
 
 struct taskset {
 	pid_t		pid;		/* task PID */
-
 	cpu_set_t	*set;		/* task CPU mask */
 	size_t		setsize;
-
 	char		*buf;		/* buffer for conversion from mask to string */
 	size_t		buflen;
-
 	int		use_list:1,	/* use list rather than masks */
 			get_only:1;	/* print the mask, but not modify */
 };
@@ -107,7 +104,7 @@ static void do_taskset(struct taskset *ts, size_t setsize, cpu_set_t *set)
 	if (ts->pid) {
 		if (sched_getaffinity(ts->pid, ts->setsize, ts->set) < 0)
 			err(EXIT_FAILURE, _("failed to get pid %d's affinity"),
-					ts->pid);
+			    ts->pid);
 		print_affinity(ts, FALSE);
 	}
 
@@ -116,33 +113,34 @@ static void do_taskset(struct taskset *ts, size_t setsize, cpu_set_t *set)
 
 	/* set new mask */
 	if (sched_setaffinity(ts->pid, setsize, set) < 0)
-		err(EXIT_FAILURE, _("failed to set pid %d's affinity"), ts->pid);
+		err(EXIT_FAILURE, _("failed to set pid %d's affinity"),
+		    ts->pid);
 
 	/* re-read the current mask */
 	if (ts->pid) {
 		if (sched_getaffinity(ts->pid, ts->setsize, ts->set) < 0)
 			err(EXIT_FAILURE, _("failed to get pid %d's affinity"),
-					ts->pid);
+			    ts->pid);
 		print_affinity(ts, TRUE);
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
 	cpu_set_t *new_set;
 	pid_t pid = 0;
 	int c, all_tasks = 0;
-        unsigned int ncpus;
+	unsigned int ncpus;
 	size_t new_setsize, nbits;
 	struct taskset ts;
 
 	static const struct option longopts[] = {
-		{ "all-tasks",   0, NULL, 'a' },
+		{ "all-tasks",	0, NULL, 'a' },
 		{ "pid",	0, NULL, 'p' },
 		{ "cpu-list",	0, NULL, 'c' },
 		{ "help",	0, NULL, 'h' },
 		{ "version",	0, NULL, 'V' },
-		{ NULL,		0, NULL, 0 }
+		{ NULL,		0, NULL,  0  }
 	};
 
 	setlocale(LC_ALL, "");
@@ -157,13 +155,15 @@ int main(int argc, char *argv[])
 			all_tasks = 1;
 			break;
 		case 'p':
-			pid = strtol_or_err(argv[argc - 1], _("failed to parse pid"));
+			pid = strtol_or_err(argv[argc - 1],
+					    _("failed to parse pid"));
 			break;
 		case 'c':
 			ts.use_list = 1;
 			break;
 		case 'V':
-			printf("taskset (%s)\n", PACKAGE_STRING);
+			printf("%s from %s\n", program_invocation_short_name,
+			       PACKAGE_STRING);
 			return EXIT_SUCCESS;
 		case 'h':
 			usage(stdout);
@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
 	}
 
 	if ((!pid && argc - optind < 2)
-			|| (pid && (argc - optind < 1 || argc - optind > 2)))
+	    || (pid && (argc - optind < 1 || argc - optind > 2)))
 		usage(stderr);
 
 	ncpus = get_max_number_of_cpus();
@@ -210,18 +210,18 @@ int main(int argc, char *argv[])
 	else if (ts.use_list) {
 		if (cpulist_parse(argv[optind], new_set, new_setsize))
 			errx(EXIT_FAILURE, _("failed to parse CPU list: %s"),
-					argv[optind]);
+			     argv[optind]);
 	} else if (cpumask_parse(argv[optind], new_set, new_setsize)) {
 		errx(EXIT_FAILURE, _("failed to parse CPU mask: %s"),
-				argv[optind]);
+		     argv[optind]);
 	}
 
 	if (all_tasks) {
 		struct proc_tasks *tasks = proc_open_tasks(pid);
-                while (!proc_next_tid(tasks, &ts.pid))
+		while (!proc_next_tid(tasks, &ts.pid))
 			do_taskset(&ts, new_setsize, new_set);
 		proc_close_tasks(tasks);
-        } else {
+	} else {
 		ts.pid = pid;
 		do_taskset(&ts, new_setsize, new_set);
 	}
