@@ -140,7 +140,7 @@ static void show_rt_info(pid_t pid, int isnew)
 		break;
 #endif
 	default:
-		printf(_("unknown\n"));
+		warnx(_("unknown scheduling policy"));
 	}
 
 	if (sched_getparam(pid, &sp))
@@ -282,7 +282,7 @@ int main(int argc, char **argv)
 			struct proc_tasks *ts = proc_open_tasks(pid);
 
 			if (!ts)
-				err(EXIT_FAILURE, "cannot obtain the list of tasks");
+				err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
 			while (!proc_next_tid(ts, &tid))
 				show_rt_info(tid, FALSE);
 			proc_close_tasks(ts);
@@ -315,7 +315,7 @@ int main(int argc, char **argv)
 		struct proc_tasks *ts = proc_open_tasks(pid);
 
 		if (!ts)
-			err(EXIT_FAILURE, "cannot obtain the list of tasks");
+			err(EXIT_FAILURE, _("cannot obtain the list of tasks"));
 		while (!proc_next_tid(ts, &tid))
 			if (sched_setscheduler(tid, policy, &sp) == -1)
 				err(EXIT_FAILURE, _("failed to set tid %d's policy"), tid);
