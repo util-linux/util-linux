@@ -142,7 +142,7 @@ int main(int argc, char *argv[])
 			tolerant = 1;
 			break;
 		case 'V':
-			printf(_("%s (%s)\n"),
+			printf(_("%s from %s\n"),
 				program_invocation_short_name, PACKAGE_STRING);
 			exit(EXIT_SUCCESS);
 		case 'h':
