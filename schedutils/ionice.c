@@ -74,20 +74,28 @@ static void ioprio_setpid(pid_t pid, int ioprio, int ioclass)
 		err(EXIT_FAILURE, _("ioprio_set failed"));
 }
 
-static void usage(int rc)
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(stdout, _(
-	"\nionice - sets or gets process io scheduling class and priority.\n"
-	"\nUsage:\n"
-	"  ionice [ options ] -p <pid> [<pid> ...]\n"
-	"  ionice [ options ] <command> [<arg> ...]\n"
-	"\nOptions:\n"
-	"  -n <classdata>      class data (0-7, lower being higher prio)\n"
-	"  -c <class>          scheduling class\n"
-	"                      0: none, 1: realtime, 2: best-effort, 3: idle\n"
-	"  -t                  ignore failures\n"
-	"  -h                  this help\n\n"));
-	exit(rc);
+	fprintf(out,
+	       _("\n"
+		 "%1$s - sets or gets process io scheduling class and priority.\n"
+		 "\n"
+		 "Usage:\n"
+		 "  %1$s [OPTION] -p PID [PID...]\n"
+		 "  %1$s [OPTION] COMMAND\n"
+		 "\n"
+		 "Options:\n"
+		 "  -c, --class=NUM     scheduling class\n"
+		 "                         0: none, 1: realtime, 2: best-effort, 3: idle\n"
+		 "  -n, --classdata=NUM scheduling class data\n"
+		 "                         0-7 for realtime and best-effort classes\n"
+		 "  -p, --pid=PID       view or modify already running process\n"
+		 "  -t, --ignore        ignore failures\n"
+		 "  -V, --version       output version information and exit\n"
+		 "  -h, --help          display this help and exit\n\n"),
+		program_invocation_short_name);
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -95,11 +103,21 @@ int main(int argc, char *argv[])
 	int ioprio = 4, set = 0, ioclass = IOPRIO_CLASS_BE, c;
 	pid_t pid = 0;
 
+	static const struct option longopts[] = {
+		{ "classdata", required_argument, NULL, 'n' },
+		{ "class",     required_argument, NULL, 'c' },
+		{ "help",      no_argument,       NULL, 'h' },
+		{ "ignore",    no_argument,       NULL, 't' },
+		{ "pid",       required_argument, NULL, 'p' },
+		{ "version",   no_argument,       NULL, 'V' },
+		{ NULL, 0, NULL, 0 }
+	};
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt(argc, argv, "+n:c:p:th")) != EOF) {
+	while ((c = getopt_long(argc, argv, "+n:c:p:tVh", longopts, NULL)) != EOF) {
 		switch (c) {
 		case 'n':
 			ioprio = strtol_or_err(optarg, _("failed to parse class data"));
@@ -115,10 +133,14 @@ int main(int argc, char *argv[])
 		case 't':
 			tolerant = 1;
 			break;
+		case 'V':
+			printf(_("%s (%s)\n"),
+				program_invocation_short_name, PACKAGE_STRING);
+			exit(EXIT_SUCCESS);
 		case 'h':
-			usage(EXIT_SUCCESS);
+			usage(stdout);
 		default:
-			usage(EXIT_FAILURE);
+			usage(stderr);
 		}
 	}
 
