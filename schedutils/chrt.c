@@ -117,7 +117,7 @@ static void show_rt_info(pid_t pid, int isnew)
 		printf("SCHED_FIFO\n");
 		break;
 #ifdef SCHED_RESET_ON_FORK
-	case SCHED_FIFO|SCHED_RESET_ON_FORK:
+	case SCHED_FIFO | SCHED_RESET_ON_FORK:
 		printf("SCHED_FIFO|SCHED_RESET_ON_FORK\n");
 		break;
 #endif
@@ -130,7 +130,7 @@ static void show_rt_info(pid_t pid, int isnew)
 		printf("SCHED_RR\n");
 		break;
 #ifdef SCHED_RESET_ON_FORK
-	case SCHED_RR|SCHED_RESET_ON_FORK:
+	case SCHED_RR | SCHED_RESET_ON_FORK:
 		printf("SCHED_RR|SCHED_RESET_ON_FORK\n");
 		break;
 #endif
@@ -157,22 +157,28 @@ static void show_rt_info(pid_t pid, int isnew)
 static void show_min_max(void)
 {
 	unsigned long i;
-	int policies[] = { SCHED_OTHER, SCHED_FIFO, SCHED_RR,
+	int policies[] = {
+		SCHED_OTHER,
+		SCHED_FIFO,
+		SCHED_RR,
 #ifdef SCHED_BATCH
-			   SCHED_BATCH,
+		SCHED_BATCH,
 #endif
 #ifdef SCHED_IDLE
-			   SCHED_IDLE,
+		SCHED_IDLE,
 #endif
-			 };
-	const char *names[] = { "OTHER", "FIFO", "RR",
+	};
+	const char *names[] = {
+		"OTHER",
+		"FIFO",
+		"RR",
 #ifdef SCHED_BATCH
-				"BATCH",
+		"BATCH",
 #endif
 #ifdef SCHED_IDLE
-				"IDLE",
+		"IDLE",
 #endif
-			      };
+	};
 
 	for (i = 0; i < ARRAY_SIZE(policies); i++) {
 		int max = sched_get_priority_max(policies[i]);
@@ -186,7 +192,7 @@ static void show_min_max(void)
 	}
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
 	int i, policy = SCHED_RR, priority = 0, verbose = 0, policy_flag = 0,
 	    all_tasks = 0;
@@ -241,7 +247,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'm':
 			show_min_max();
-			return 0;
+			return EXIT_SUCCESS;
 		case 'o':
 			policy = SCHED_OTHER;
 			break;
@@ -256,8 +262,9 @@ int main(int argc, char *argv[])
 			verbose = 1;
 			break;
 		case 'V':
-			printf("chrt (%s)\n", PACKAGE_STRING);
-			return 0;
+			printf("%s from %s\n", program_invocation_short_name,
+					       PACKAGE_STRING);
+			return EXIT_SUCCESS;
 		case 'h':
 			ret = EXIT_SUCCESS;
 		default:
@@ -265,7 +272,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (((pid > -1) && argc - optind < 1) || ((pid == -1) && argc - optind < 2))
+	if (((pid > -1) && argc - optind < 1) ||
+	    ((pid == -1) && argc - optind < 2))
 		show_usage(EXIT_FAILURE);
 
 	if ((pid > -1) && (verbose || argc - optind == 1)) {
@@ -293,7 +301,7 @@ int main(int argc, char *argv[])
 	if ((policy_flag & SCHED_RESET_ON_FORK) &&
 	    !(policy == SCHED_FIFO || policy == SCHED_RR))
 		errx(EXIT_FAILURE, _("SCHED_RESET_ON_FORK flag is suppoted for "
-				"SCHED_FIFO and SCHED_RR policies only"));
+				     "SCHED_FIFO and SCHED_RR policies only"));
 #endif
 
 	policy |= policy_flag;
@@ -312,10 +320,8 @@ int main(int argc, char *argv[])
 			if (sched_setscheduler(tid, policy, &sp) == -1)
 				err(EXIT_FAILURE, _("failed to set tid %d's policy"), tid);
 		proc_close_tasks(ts);
-	}
-	else
-		if (sched_setscheduler(pid, policy, &sp) == -1)
-			err(EXIT_FAILURE, _("failed to set pid %d's policy"), pid);
+	} else if (sched_setscheduler(pid, policy, &sp) == -1)
+		err(EXIT_FAILURE, _("failed to set pid %d's policy"), pid);
 
 	if (verbose)
 		show_rt_info(pid, TRUE);
