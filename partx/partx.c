@@ -30,6 +30,7 @@
 #include "strutils.h"
 #include "xalloc.h"
 #include "partx.h"
+#include "sysfs.h"
 #include "at.h"
 
 /* this is the default upper limit, could be modified by --nr */
@@ -123,8 +124,6 @@ static int column_name_to_id(const char *name, size_t namesz)
  *
  * Note that this function tries to use sysfs, otherwise it assumes that the
  * last characters are always numeric (sda1, sdc20, etc).
- *
- * Returns -1 on error.
  */
 static int get_partno_from_device(char *partition, dev_t devno)
 {
@@ -135,21 +134,10 @@ static int get_partno_from_device(char *partition, dev_t devno)
 	assert(partition);
 
 	if (devno) {
-		/* the device exists, read the partition number from /sys
-		 * TODO: move this to stuff to lib/sysfs.c */
-		char path[PATH_MAX];
-		FILE *f;
+		struct sysfs_cxt cxt;
 
-		snprintf(path, sizeof(path),
-				_PATH_SYS_DEVBLOCK "/%d:%d/partition",
-				major(devno), minor(devno));
-		f = fopen(path, "r");
-		if (f) {
-			if (fscanf(f, "%d", &partno) != 1)
-				partno = 0;
-			fclose(f);
-		}
-		if (partno)
+		sysfs_init(&cxt, devno, NULL);
+		if (sysfs_read_int(&cxt, "partition", &partno) >= 0)
 			return partno;
 	}
 

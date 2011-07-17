@@ -6,6 +6,7 @@ dist_man_MANS = addpart.8 delpart.8
 usrsbin_exec_PROGRAMS += partx
 partx_SOURCES = partx.c partx.h \
 		$(top_srcdir)/lib/blkdev.c \
+		$(top_srcdir)/lib/sysfs.c \
 		$(top_srcdir)/lib/tt.c \
 		$(top_srcdir)/lib/at.c \
 		$(top_srcdir)/lib/mbsalign.c \
