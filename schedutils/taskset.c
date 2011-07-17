@@ -24,6 +24,9 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <errno.h>
+#include <sched.h>
+#include <stddef.h>
+#include <string.h>
 
 #include "cpuset.h"
 #include "nls.h"
