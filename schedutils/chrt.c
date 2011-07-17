@@ -156,7 +156,7 @@ static void show_rt_info(pid_t pid, int isnew)
 
 static void show_min_max(void)
 {
-	int i;
+	unsigned long i;
 	int policies[] = { SCHED_OTHER, SCHED_FIFO, SCHED_RR,
 #ifdef SCHED_BATCH
 			   SCHED_BATCH,
