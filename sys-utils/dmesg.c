@@ -115,10 +115,12 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -e, --console-on          enable printing messages to console\n"
 		" -f, --facility=LIST       restrict output to defined facilities\n"
 		" -h, --help                display this help and exit\n"
+		" -k, --kernel              display kernel messages\n"
 		" -l, --level=LIST          restrict output to defined levels\n"
 		" -n, --console-level=LEVEL set level of messages printed to console\n"
 		" -r, --raw                 print the raw message buffer\n"
 		" -s, --buffer-size=SIZE    buffer size to query the kernel ring buffer\n"
+		" -u, --userspace           display userspace messages\n"
 		" -V, --version             output version information and exit\n"
 		" -x, --decode              decode facility and level to readable string\n\n"));
 
@@ -478,9 +480,11 @@ int main(int argc, char *argv[])
 		{ "decode",        no_argument,	      NULL, 'x' },
 		{ "facility",      required_argument, NULL, 'f' },
 		{ "help",          no_argument,	      NULL, 'h' },
+		{ "kernel",        no_argument,       NULL, 'k' },
 		{ "level",         required_argument, NULL, 'l' },
 		{ "raw",           no_argument,       NULL, 'r' },
 		{ "read-clear",    no_argument,	      NULL, 'c' },
+		{ "userspace",     no_argument,       NULL, 'u' },
 		{ "version",       no_argument,	      NULL, 'V' },
 		{ NULL,	           0, NULL, 0 }
 	};
@@ -489,7 +493,7 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "Ccdef:hl:n:rs:Vx", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "Ccdef:hkl:n:rs:uVx", longopts, NULL)) != -1) {
 
 		if (cmd != -1 && strchr("Ccnde", c))
 			errx(EXIT_FAILURE, "%s %s",
@@ -516,6 +520,10 @@ int main(int argc, char *argv[])
 		case 'h':
 			usage(stdout);
 			break;
+		case 'k':
+			flags |= DMESG_FL_FACILITY;
+			setbit(facilities, FAC_BASE(LOG_KERN));
+			break;
 		case 'l':
 			flags |= DMESG_FL_LEVEL;
 			list_to_bitarray(optarg, parse_level, levels);
@@ -533,6 +541,11 @@ int main(int argc, char *argv[])
 			if (bufsize < 4096)
 				bufsize = 4096;
 			break;
+		case 'u':
+			flags |= DMESG_FL_FACILITY;
+			for (n = 1; n < ARRAY_SIZE(facility_names); n++)
+				setbit(facilities, n);
+			break;
 		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,
 						  PACKAGE_STRING);
@@ -547,6 +560,7 @@ int main(int argc, char *argv[])
 	}
 	argc -= optind;
 	argv += optind;
+	n = 0;
 
 	if (argc > 1)
 		usage(stderr);
