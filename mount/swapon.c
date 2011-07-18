@@ -24,6 +24,7 @@
 #include "swapheader.h"
 #include "mangle.h"
 #include "canonicalize.h"
+#include "xalloc.h"
 #include "c.h"
 
 #define PATH_MKSWAP	"/sbin/mkswap"
@@ -341,9 +342,7 @@ swap_get_header(int fd, int *sig, unsigned int *pagesize)
 	*pagesize = 0;
 	*sig = 0;
 
-	buf = malloc(MAX_PAGESIZE);
-	if (!buf)
-		return NULL;
+	buf = xmalloc(MAX_PAGESIZE);
 
 	datasz = read(fd, buf, MAX_PAGESIZE);
 	if (datasz == (ssize_t) -1)
@@ -658,16 +657,12 @@ static const char **ulist = NULL;
 static int ulct = 0;
 
 static void addl(const char *label) {
-	llist = (const char **) realloc(llist, (++llct) * sizeof(char *));
-	if (!llist)
-		exit(EXIT_FAILURE);
+	llist = (const char **) xrealloc(llist, (++llct) * sizeof(char *));
 	llist[llct-1] = label;
 }
 
 static void addu(const char *uuid) {
-	ulist = (const char **) realloc(ulist, (++ulct) * sizeof(char *));
-	if (!ulist)
-		exit(EXIT_FAILURE);
+	ulist = (const char **) xrealloc(ulist, (++ulct) * sizeof(char *));
 	ulist[ulct-1] = uuid;
 }
 
