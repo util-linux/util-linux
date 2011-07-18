@@ -98,6 +98,7 @@ static const struct dmesg_name facility_names[] =
 #define DMESG_FL_LEVEL		(1 << 2)
 #define DMESG_FL_FACILITY	(1 << 3)
 #define DMESG_FL_DECODE		(1 << 4)
+#define DMESG_FL_NOTIME		(1 << 5)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -120,6 +121,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -n, --console-level=LEVEL set level of messages printed to console\n"
 		" -r, --raw                 print the raw message buffer\n"
 		" -s, --buffer-size=SIZE    buffer size to query the kernel ring buffer\n"
+		" -t, --notime              don't print messages timestamp\n"
 		" -u, --userspace           display userspace messages\n"
 		" -V, --version             output version information and exit\n"
 		" -x, --decode              decode facility and level to readable string\n\n"));
@@ -443,7 +445,22 @@ static void print_buffer(const char *buf, size_t size, int flags,
 		                           isset(levels, lev)) &&
 		    (fac < 0 || !(flags & DMESG_FL_FACILITY) ||
 		                          isset(facilities, fac))) {
-			size_t sz =  end - begin;
+			size_t sz;
+
+			if ((flags & DMESG_FL_NOTIME) && *begin == '[' &&
+			    (*(begin + 1) == ' ' || isdigit(*(begin + 1)))) {
+				/* ignore timestamp */
+				while (begin < end) {
+					begin++;
+					if (*(begin - 1) == ']')
+						break;
+				}
+			}
+
+			if (*begin == ' ')
+				begin++;
+
+			sz =  end - begin;
 
 			if ((flags & DMESG_FL_DECODE) && lev >= 0 && fac >= 0) {
 				printf("%-6s:%-6s: ", facility_names[fac].name,
@@ -484,6 +501,7 @@ int main(int argc, char *argv[])
 		{ "level",         required_argument, NULL, 'l' },
 		{ "raw",           no_argument,       NULL, 'r' },
 		{ "read-clear",    no_argument,	      NULL, 'c' },
+		{ "notime",        no_argument,       NULL, 't' },
 		{ "userspace",     no_argument,       NULL, 'u' },
 		{ "version",       no_argument,	      NULL, 'V' },
 		{ NULL,	           0, NULL, 0 }
@@ -493,7 +511,7 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "Ccdef:hkl:n:rs:uVx", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "Ccdef:hkl:n:rs:tuVx", longopts, NULL)) != -1) {
 
 		if (cmd != -1 && strchr("Ccnde", c))
 			errx(EXIT_FAILURE, "%s %s",
@@ -540,6 +558,9 @@ int main(int argc, char *argv[])
 					_("failed to parse buffer size"));
 			if (bufsize < 4096)
 				bufsize = 4096;
+			break;
+		case 't':
+			flags |= DMESG_FL_NOTIME;
 			break;
 		case 'u':
 			flags |= DMESG_FL_FACILITY;
