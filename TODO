@@ -1,3 +1,9 @@
+dmesg
+-----
+
+ - add -f (follow) option
+   http://www.spinics.net/lists/util-linux-ng/msg04453.html
+
 mount
 -----
 
