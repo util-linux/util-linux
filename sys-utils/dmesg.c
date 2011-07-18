@@ -367,7 +367,7 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 		if (len == 0)				/* L'\0' */
 			return;
 
-		if (len < 0) {				/* invalid sequence */
+		if (len == (size_t)-1 || len == (size_t)-2) {		/* invalid sequence */
 			memset(&s, 0, sizeof (s));
 			len = hex = 1;
 
