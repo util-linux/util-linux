@@ -243,7 +243,7 @@ int main(int argc, char **argv)
 	}
 
 	if (write(fd, &sb, sizeof(sb)) != sizeof(sb))
-		errx(EXIT_FAILURE, _("error writing superblock"));
+		err(EXIT_FAILURE, _("error writing superblock"));
 
 	memset(&ri, 0, sizeof(ri));
 	ri.i_ino = BFS_ROOT_INO;
@@ -263,25 +263,25 @@ int main(int argc, char **argv)
 	ri.i_ctime = now;
 
 	if (write(fd, &ri, sizeof(ri)) != sizeof(ri))
-		errx(EXIT_FAILURE, _("error writing root inode"));
+		err(EXIT_FAILURE, _("error writing root inode"));
 
 	memset(&ri, 0, sizeof(ri));
 	for (i = 1; i < inodes; i++)
 		if (write(fd, &ri, sizeof(ri)) != sizeof(ri))
-			errx(EXIT_FAILURE, _("error writing inode"));
+			err(EXIT_FAILURE, _("error writing inode"));
 
 	if (lseek(fd, (1 + ino_blocks) * BFS_BLOCKSIZE, SEEK_SET) == -1)
-		errx(EXIT_FAILURE, _("seek error"));
+		err(EXIT_FAILURE, _("seek error"));
 
 	memset(&de, 0, sizeof(de));
 	de.d_ino = BFS_ROOT_INO;
 	memcpy(de.d_name, ".", 1);
 	if (write(fd, &de, sizeof(de)) != sizeof(de))
-		errx(EXIT_FAILURE, _("error writing . entry"));
+		err(EXIT_FAILURE, _("error writing . entry"));
 
 	memcpy(de.d_name, "..", 2);
 	if (write(fd, &de, sizeof(de)) != sizeof(de))
-		errx(EXIT_FAILURE, _("error writing .. entry"));
+		err(EXIT_FAILURE, _("error writing .. entry"));
 
 	if (close(fd) < 0)
 		err(EXIT_FAILURE, _("error closing %s"), device);
