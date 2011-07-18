@@ -27,6 +27,7 @@ mkswap_SOURCES = mkswap.c $(utils_common) $(top_srcdir)/lib/wholedisk.c $(top_sr
 mkswap_LDADD = $(uuid_ldadd)
 mkswap_CFLAGS = $(AM_CFLAGS) $(uuid_cflags)
 
+isosize_SOURCES = isosize.c $(top_srcdir)/lib/strutils.c
 usrbin_exec_PROGRAMS = isosize
 usrsbin_exec_PROGRAMS =
 
