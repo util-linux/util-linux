@@ -1,11 +1,6 @@
-/* fdformat.c  -  Low-level formats a floppy disk - Werner Almesberger */
-
-/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
- * - added Native Language Support
- * 1999-03-20 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
- & - more i18n/nls translatable strings marked
+/*
+ * fdformat.c  -  Low-level formats a floppy disk - Werner Almesberger
  */
-
 #include <errno.h>
 #include <fcntl.h>
 #include <getopt.h>
@@ -32,23 +27,23 @@ static void format_disk(int ctrl)
 	printf(_("Formatting ... "));
 	fflush(stdout);
 	if (ioctl(ctrl, FDFMTBEG, NULL) < 0)
-		err(EXIT_FAILURE, "\nioctl(FDFMTBEG)");
+		err(EXIT_FAILURE, "ioctl: FDFMTBEG");
 	for (track = 0; track < param.track; track++) {
 		descr.track = track;
 		descr.head = 0;
-		if (ioctl(ctrl, FDFMTTRK, (long)&descr) < 0)
-			err(EXIT_FAILURE, "\nioctl(FDFMTTRK)");
+		if (ioctl(ctrl, FDFMTTRK, (long) &descr) < 0)
+			err(EXIT_FAILURE, "ioctl: FDFMTTRK");
 
 		printf("%3d\b\b\b", track);
 		fflush(stdout);
 		if (param.head == 2) {
 			descr.head = 1;
 			if (ioctl(ctrl, FDFMTTRK, (long)&descr) < 0)
-				err(EXIT_FAILURE, "\nioctl(FDFMTTRK)");
+				err(EXIT_FAILURE, "ioctl: FDFMTTRK");
 		}
 	}
 	if (ioctl(ctrl, FDFMTEND, NULL) < 0)
-		err(EXIT_FAILURE, "\nioctl(FDFMTEND)");
+		err(EXIT_FAILURE, "ioctl: FDFMTEND");
 	printf(_("done\n"));
 }
 
