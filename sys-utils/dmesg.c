@@ -93,12 +93,17 @@ static const struct dmesg_name facility_names[] =
 	[FAC_BASE(LOG_FTP)]      = { "ftp",      N_("ftp daemon") },
 };
 
-/* dmesg flags */
-#define DMESG_FL_RAW		(1 << 1)
-#define DMESG_FL_LEVEL		(1 << 2)
-#define DMESG_FL_FACILITY	(1 << 3)
-#define DMESG_FL_DECODE		(1 << 4)
-#define DMESG_FL_NOTIME		(1 << 5)
+struct dmesg_control {
+	/* bit arrays -- see include/bitops.h */
+	char levels[ARRAY_SIZE(level_names) / NBBY + 1];
+	char facilities[ARRAY_SIZE(facility_names) / NBBY + 1];
+
+	int	raw:1;			/* raw mode */
+	int	fltr_lev:1;		/* filter out by levels[] */
+	int	fltr_fac:1;		/* filter out by facilities[] */
+	int	decode:1;		/* use "facility: level: " prefix */
+	int	notime:1;		/* don't print timestamp */
+};
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -393,13 +398,13 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
  * Prints the 'buf' kernel ring buffer; the messages are filtered out according
  * to 'levels' and 'facilities' bitarrays.
  */
-static void print_buffer(const char *buf, size_t size, int flags,
-			 char *levels, char *facilities)
+static void print_buffer(const char *buf, size_t size,
+			 struct dmesg_control *ctl)
 {
 	int i;
 	const char *begin = NULL;
 
-	if (flags & DMESG_FL_RAW) {
+	if (ctl->raw) {
 		/* print whole buffer */
 		safe_fwrite(buf, size, stdout);
 		if (buf[size - 1] != '\n')
@@ -425,9 +430,7 @@ static void print_buffer(const char *buf, size_t size, int flags,
 			continue;	/* error or empty line? */
 
 		if (*begin == '<') {
-			if ((flags & DMESG_FL_LEVEL) ||
-			    (flags & DMESG_FL_FACILITY) ||
-			    (flags & DMESG_FL_DECODE)) {
+			if (ctl->fltr_lev || ctl->fltr_fac || ctl->decode) {
 				/* parse facility and level */
 				begin = parse_faclev(begin + 1, &fac, &lev);
 			} else {
@@ -441,13 +444,11 @@ static void print_buffer(const char *buf, size_t size, int flags,
 		}
 
 		if (begin < end &&
-		    (lev < 0 || !(flags & DMESG_FL_LEVEL) ||
-		                           isset(levels, lev)) &&
-		    (fac < 0 || !(flags & DMESG_FL_FACILITY) ||
-		                          isset(facilities, fac))) {
+		    (lev < 0 || !ctl->fltr_lev || isset(ctl->levels, lev)) &&
+		    (fac < 0 || !ctl->fltr_fac || isset(ctl->facilities, fac))) {
 			size_t sz;
 
-			if ((flags & DMESG_FL_NOTIME) && *begin == '[' &&
+			if (ctl->notime && *begin == '[' &&
 			    (*(begin + 1) == ' ' || isdigit(*(begin + 1)))) {
 				/* ignore timestamp */
 				while (begin < end) {
@@ -462,7 +463,7 @@ static void print_buffer(const char *buf, size_t size, int flags,
 
 			sz =  end - begin;
 
-			if ((flags & DMESG_FL_DECODE) && lev >= 0 && fac >= 0) {
+			if (ctl->decode && lev >= 0 && fac >= 0) {
 				printf("%-6s:%-6s: ", facility_names[fac].name,
 						level_names[lev].name);
 			}
@@ -482,11 +483,7 @@ int main(int argc, char *argv[])
 	int  c;
 	int  console_level = 0;
 	int  cmd = -1;
-	int  flags = 0;
-
-	/* bit arrays -- see include/bitops.h */
-	char levels[ARRAY_SIZE(level_names) / NBBY + 1] = { 0 };
-	char facilities[ARRAY_SIZE(facility_names) / NBBY + 1] = { 0 };
+	static struct dmesg_control ctl;
 
 	static const struct option longopts[] = {
 		{ "buffer-size",   required_argument, NULL, 's' },
@@ -511,7 +508,8 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "Ccdef:hkl:n:rs:tuVx", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "Ccdef:hkl:n:rs:tuVx",
+				longopts, NULL)) != -1) {
 
 		if (cmd != -1 && strchr("Ccnde", c))
 			errx(EXIT_FAILURE, "%s %s",
@@ -532,26 +530,26 @@ int main(int argc, char *argv[])
 			cmd = SYSLOG_ACTION_CONSOLE_ON;
 			break;
 		case 'f':
-			flags |= DMESG_FL_FACILITY;
-			list_to_bitarray(optarg, parse_facility, facilities);
+			ctl.fltr_fac = 1;
+			list_to_bitarray(optarg, parse_facility, ctl.facilities);
 			break;
 		case 'h':
 			usage(stdout);
 			break;
 		case 'k':
-			flags |= DMESG_FL_FACILITY;
-			setbit(facilities, FAC_BASE(LOG_KERN));
+			ctl.fltr_fac = 1;
+			setbit(ctl.facilities, FAC_BASE(LOG_KERN));
 			break;
 		case 'l':
-			flags |= DMESG_FL_LEVEL;
-			list_to_bitarray(optarg, parse_level, levels);
+			ctl.fltr_lev= 1;
+			list_to_bitarray(optarg, parse_level, ctl.levels);
 			break;
 		case 'n':
 			cmd = SYSLOG_ACTION_CONSOLE_LEVEL;
 			console_level = parse_level(optarg, 0);
 			break;
 		case 'r':
-			flags |= DMESG_FL_RAW;
+			ctl.raw = 1;
 			break;
 		case 's':
 			bufsize = strtol_or_err(optarg,
@@ -560,19 +558,19 @@ int main(int argc, char *argv[])
 				bufsize = 4096;
 			break;
 		case 't':
-			flags |= DMESG_FL_NOTIME;
+			ctl.notime = 1;
 			break;
 		case 'u':
-			flags |= DMESG_FL_FACILITY;
+			ctl.fltr_fac = 1;
 			for (n = 1; n < ARRAY_SIZE(facility_names); n++)
-				setbit(facilities, n);
+				setbit(ctl.facilities, n);
 			break;
 		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,
 						  PACKAGE_STRING);
 			return EXIT_SUCCESS;
 		case 'x':
-			flags |= DMESG_FL_DECODE;
+			ctl.decode = 1;
 			break;
 		case '?':
 		default:
@@ -589,7 +587,7 @@ int main(int argc, char *argv[])
 	if (cmd == -1)
 		cmd = SYSLOG_ACTION_READ_ALL;	/* default */
 
-	if ((flags & DMESG_FL_RAW) && ((flags != DMESG_FL_RAW)))
+	if (ctl.raw && (ctl.fltr_lev || ctl.fltr_fac))
 		errx(EXIT_FAILURE, _("options --level and --facility cannot be used for raw output"));
 
 	switch (cmd) {
@@ -599,7 +597,7 @@ int main(int argc, char *argv[])
 			bufsize = get_buffer_size();
 		n = read_buffer(&buf, bufsize, cmd == SYSLOG_ACTION_READ_CLEAR);
 		if (n > 0)
-			print_buffer(buf, n, flags, levels, facilities);
+			print_buffer(buf, n, &ctl);
 		free(buf);
 		break;
 	case SYSLOG_ACTION_CLEAR:
