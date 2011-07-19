@@ -105,6 +105,17 @@ struct dmesg_control {
 	int	notime:1;		/* don't print timestamp */
 };
 
+struct dmesg_record {
+	const char	*mesg;
+	size_t		mesg_size;
+
+	int		level;
+	int		facility;
+
+	const char	*next;		/* buffer with next unparsed record */
+	size_t		next_size;	/* size of the next buffer */
+};
+
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	int i;
@@ -394,36 +405,33 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 	}
 }
 
-/*
- * Prints the 'buf' kernel ring buffer; the messages are filtered out according
- * to 'levels' and 'facilities' bitarrays.
- */
-static void print_buffer(const char *buf, size_t size,
-			 struct dmesg_control *ctl)
+static int get_next_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 {
 	int i;
 	const char *begin = NULL;
 
-	if (ctl->raw) {
-		/* print whole buffer */
-		safe_fwrite(buf, size, stdout);
-		if (buf[size - 1] != '\n')
-			putchar('\n');
-		return;
-	}
+	if (!rec->next || !rec->next_size)
+		return 1;
 
-	for (i = 0; i < size; i++) {
-		const char *p = buf + i, *end = NULL;
-		int fac = -1, lev = -1;
+	rec->mesg = NULL;
+	rec->mesg_size = 0;
+	rec->facility = -1;
+	rec->level = -1;
+
+	for (i = 0; i < rec->next_size; i++) {
+		const char *p = rec->next + i;
+		const char *end = NULL;
 
 		if (!begin)
 			begin = p;
 		if (*p == '\n')
 			end = p;
-		if (i + 1 == size) {
+		if (i + 1 == rec->next_size) {
 			end = p + 1;
 			i++;
 		}
+		if (begin && !*begin)
+			begin = NULL;	/* zero(s) at the end of the buffer? */
 		if (!begin || !end)
 			continue;
 		if (end <= begin)
@@ -432,7 +440,8 @@ static void print_buffer(const char *buf, size_t size,
 		if (*begin == '<') {
 			if (ctl->fltr_lev || ctl->fltr_fac || ctl->decode) {
 				/* parse facility and level */
-				begin = parse_faclev(begin + 1, &fac, &lev);
+				begin = parse_faclev(begin + 1, &rec->facility,
+						     &rec->level);
 			} else {
 				/* ignore facility and level */
 				while (begin < end) {
@@ -443,35 +452,77 @@ static void print_buffer(const char *buf, size_t size,
 			}
 		}
 
-		if (begin < end &&
-		    (lev < 0 || !ctl->fltr_lev || isset(ctl->levels, lev)) &&
-		    (fac < 0 || !ctl->fltr_fac || isset(ctl->facilities, fac))) {
-			size_t sz;
+		if (end <= begin)
+			return -1;	/* error */
 
-			if (ctl->notime && *begin == '[' &&
-			    (*(begin + 1) == ' ' || isdigit(*(begin + 1)))) {
-				/* ignore timestamp */
-				while (begin < end) {
-					begin++;
-					if (*(begin - 1) == ']')
-						break;
-				}
-			}
-
-			if (*begin == ' ')
+		if (ctl->notime && *begin == '[' &&
+		    (*(begin + 1) == ' ' || isdigit(*(begin + 1)))) {
+			/* ignore timestamp */
+			while (begin < end) {
 				begin++;
-
-			sz =  end - begin;
-
-			if (ctl->decode && lev >= 0 && fac >= 0) {
-				printf("%-6s:%-6s: ", facility_names[fac].name,
-						level_names[lev].name);
+				if (*(begin - 1) == ']')
+					break;
 			}
-			safe_fwrite(begin, sz, stdout);
-			if (*(begin + sz - 1) != '\n')
-				putchar('\n');
 		}
-		begin = NULL;
+
+		if (begin < end && *begin == ' ')
+			begin++;
+
+		rec->mesg = begin;
+		rec->mesg_size = end - begin;
+
+		rec->next_size -= end - rec->next;
+		rec->next = rec->next_size > 0 ? end + 1 : NULL;
+
+		return 0;
+	}
+
+	return 1;
+}
+
+static int accept_record(struct dmesg_control *ctl, struct dmesg_record *rec)
+{
+	if (ctl->fltr_lev && (rec->facility < 0 ||
+			      !isset(ctl->levels, rec->level)))
+		return 0;
+
+	if (ctl->fltr_fac && (rec->facility < 0 ||
+			      !isset(ctl->facilities, rec->facility)))
+		return 0;
+
+	return 1;
+}
+
+/*
+ * Prints the 'buf' kernel ring buffer; the messages are filtered out according
+ * to 'levels' and 'facilities' bitarrays.
+ */
+static void print_buffer(const char *buf, size_t size,
+			 struct dmesg_control *ctl)
+{
+	struct dmesg_record rec = { .next = buf, .next_size = size };
+
+	if (ctl->raw) {
+		/* print whole buffer */
+		safe_fwrite(buf, size, stdout);
+		if (buf[size - 1] != '\n')
+			putchar('\n');
+		return;
+	}
+
+	while (get_next_record(ctl, &rec) == 0 && rec.mesg_size) {
+
+		if (!accept_record(ctl, &rec))
+			continue;
+
+		if (ctl->decode && rec.level >= 0 && rec.facility >= 0)
+			printf("%-6s:%-6s: ", facility_names[rec.facility].name,
+					      level_names[rec.level].name);
+
+		safe_fwrite(rec.mesg, rec.mesg_size, stdout);
+
+		if (*(rec.mesg + rec.mesg_size - 1) != '\n')
+			putchar('\n');
 	}
 }
 
