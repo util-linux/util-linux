@@ -50,22 +50,25 @@ struct cramfs_inode {
 	uint32_t mode:16, uid:16;
 	/* SIZE for device files is i_rdev */
 	uint32_t size:24, gid:8;
-	/* NAMELEN is the length of the file name, divided by 4 and
-           rounded up.  (cramfs doesn't support hard links.) */
-	/* OFFSET: For symlinks and non-empty regular files, this
-	   contains the offset (divided by 4) of the file data in
-	   compressed form (starting with an array of block pointers;
-	   see README).  For non-empty directories it is the offset
-	   (divided by 4) of the inode of the first file in that
-	   directory.  For anything else, offset is zero. */
+	/*
+	 * NAMELEN is the length of the file name, divided by 4 and
+	 * rounded up.  (cramfs doesn't support hard links.)
+	 *
+	 * OFFSET: For symlinks and non-empty regular files, this
+	 * contains the offset (divided by 4) of the file data in
+	 * compressed form (starting with an array of block pointers;
+	 * see README).  For non-empty directories it is the offset
+	 * (divided by 4) of the inode of the first file in that
+	 * directory.  For anything else, offset is zero.
+	 */
 	uint32_t namelen:6, offset:26;
 };
 
 struct cramfs_info {
-        uint32_t crc;
-        uint32_t edition;
-        uint32_t blocks;
-        uint32_t files;
+	uint32_t crc;
+	uint32_t edition;
+	uint32_t blocks;
+	uint32_t files;
 };
 
 /*
@@ -74,7 +77,7 @@ struct cramfs_info {
 struct cramfs_super {
 	uint32_t magic;		/* 0x28cd3d45 - random number */
 	uint32_t size;		/* Not used.  mkcramfs currently
-                                   writes a constant 1<<16 here. */
+				   writes a constant 1<<16 here. */
 	uint32_t flags;		/* 0 */
 	uint32_t future;		/* 0 */
 	uint8_t signature[16];	/* "Compressed ROMFS" */
@@ -83,11 +86,11 @@ struct cramfs_super {
 	struct cramfs_inode root;	/* Root inode data */
 };
 
-#define CRAMFS_FLAG_FSID_VERSION_2      0x00000001      /* fsid version #2 */
-#define CRAMFS_FLAG_SORTED_DIRS         0x00000002      /* sorted dirs */
-#define CRAMFS_FLAG_HOLES               0x00000100      /* support for holes */
-#define CRAMFS_FLAG_WRONG_SIGNATURE     0x00000200      /* reserved */
-#define CRAMFS_FLAG_SHIFTED_ROOT_OFFSET 0x00000400      /* shifted root fs */
+#define CRAMFS_FLAG_FSID_VERSION_2	0x00000001	/* fsid version #2 */
+#define CRAMFS_FLAG_SORTED_DIRS		0x00000002	/* sorted dirs */
+#define CRAMFS_FLAG_HOLES		0x00000100	/* support for holes */
+#define CRAMFS_FLAG_WRONG_SIGNATURE	0x00000200	/* reserved */
+#define CRAMFS_FLAG_SHIFTED_ROOT_OFFSET 0x00000400	/* shifted root fs */
 
 /*
  * Valid values in super.flags.  Currently we refuse to mount
@@ -103,7 +106,9 @@ int cramfs_uncompress_exit(void);
 
 uint32_t u32_toggle_endianness(int big_endian, uint32_t what);
 void super_toggle_endianness(int from_big_endian, struct cramfs_super *super);
-void inode_to_host(int from_big_endian, struct cramfs_inode *inode_in, struct cramfs_inode *inode_out);
-void inode_from_host(int to_big_endian, struct cramfs_inode *inode_in, struct cramfs_inode *inode_out);
+void inode_to_host(int from_big_endian, struct cramfs_inode *inode_in,
+		   struct cramfs_inode *inode_out);
+void inode_from_host(int to_big_endian, struct cramfs_inode *inode_in,
+		     struct cramfs_inode *inode_out);
 
 #endif
