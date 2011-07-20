@@ -650,9 +650,9 @@ int main(int argc, char *argv[])
 				longopts, NULL)) != -1) {
 
 		if (cmd != -1 && strchr("CcnDE", c))
-			errx(EXIT_FAILURE, "%s %s",
-				"--{clear,read-clear,console-level,console-on,console-off}",
-				_("options are mutually exclusive"));
+			errx(EXIT_FAILURE, _("clear, read-clear, console-level, "
+			     "console-on, and console-off options are mutually "
+			     "exclusive"));
 
 		switch (c) {
 		case 'C':
@@ -733,8 +733,14 @@ int main(int argc, char *argv[])
 	if (cmd == -1)
 		cmd = SYSLOG_ACTION_READ_ALL;	/* default */
 
-	if (ctl.raw && (ctl.fltr_lev || ctl.fltr_fac))
-		errx(EXIT_FAILURE, _("options --level and --facility cannot be used for raw output"));
+	if (ctl.raw && (ctl.fltr_lev || ctl.fltr_fac || ctl.delta ||
+			ctl.notime || ctl.ctime || ctl.decode))
+		errx(EXIT_FAILURE, _("--raw can't be used together with level, "
+		     "facility, decode, delta, ctime or notime options"));
+
+	if (ctl.notime && (ctl.ctime || ctl.delta))
+		errx(EXIT_FAILURE, _("--notime can't be used together with ctime "
+		     "or delta options"));
 
 	switch (cmd) {
 	case SYSLOG_ACTION_READ_ALL:
