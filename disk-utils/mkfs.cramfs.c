@@ -41,6 +41,8 @@
 #include "md5.h"
 #include "nls.h"
 #include "mkfs.h"
+#define XALLOC_EXIT_CODE MKFS_ERROR
+#include "xalloc.h"
 
 /* The kernel only supports PAD_SIZE of 0 and 512. */
 #define PAD_SIZE 512
@@ -138,17 +140,6 @@ usage(int status) {
 		progname, PAD_SIZE);
 
 	exit(status);
-}
-
-/* malloc or die */
-static void *
-xmalloc (size_t size) {
-	void *t = malloc(size);
-	if (t == NULL) {
-		perror(NULL);
-		exit(MKFS_ERROR);	/* out of memory */
-	}
-	return t;
 }
 
 static char *
@@ -344,16 +335,8 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 			warn_skip = 1;
 			continue;
 		}
-		entry = calloc(1, sizeof(struct entry));
-		if (!entry) {
-			perror(NULL);
-			exit(MKFS_ERROR);
-		}
-		entry->name = (unsigned char *)strdup(dirent->d_name);
-		if (!entry->name) {
-			perror(NULL);
-			exit(MKFS_ERROR);
-		}
+		entry = xcalloc(1, sizeof(struct entry));
+		entry->name = (unsigned char *)xstrdup(dirent->d_name);
 		if (namelen > 255) {
 			/* Can't happen when reading from ext2fs. */
 
@@ -380,7 +363,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 		if (S_ISDIR(st.st_mode)) {
 			entry->size = parse_directory(root_entry, path, &entry->child, fslen_ub);
 		} else if (S_ISREG(st.st_mode)) {
-			entry->path = strdup(path);
+			entry->path = xstrdup(path);
 			if (entry->size) {
 				if (entry->size >= (1 << CRAMFS_SIZE_WIDTH)) {
 					warn_size = 1;
@@ -388,7 +371,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 				}
 			}
 		} else if (S_ISLNK(st.st_mode)) {
-			entry->path = strdup(path);
+			entry->path = xstrdup(path);
 		} else if (S_ISFIFO(st.st_mode) || S_ISSOCK(st.st_mode)) {
 			/* maybe we should skip sockets */
 			entry->size = 0;
@@ -517,11 +500,7 @@ static unsigned int write_directory_structure(struct entry *entry, char *base, u
 			if (entry->child) {
 				if (stack_entries >= stack_size) {
 					stack_size *= 2;
-					entry_stack = realloc(entry_stack, stack_size * sizeof(struct entry *));
-					if (!entry_stack) {
-						perror(NULL);
-						exit(MKFS_ERROR);        /* out of memory */
-					}
+					entry_stack = xrealloc(entry_stack, stack_size * sizeof(struct entry *));
 				}
 				entry_stack[stack_entries] = entry;
 				stack_entries++;
@@ -827,11 +806,7 @@ int main(int argc, char **argv)
 	}
 	fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 
-	root_entry = calloc(1, sizeof(struct entry));
-	if (!root_entry) {
-		perror(NULL);
-		exit(MKFS_ERROR);
-	}
+	root_entry = xcalloc(1, sizeof(struct entry));
 	root_entry->mode = st.st_mode;
 	root_entry->uid = st.st_uid;
 	root_entry->gid = st.st_gid;
