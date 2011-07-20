@@ -36,6 +36,15 @@
 /* compile-time options */
 //#define INCLUDE_FS_TESTS	/* include cramfs checking and extraction */
 
+/* Exit codes used by fsck-type programs */
+#define FSCK_OK			0	/* No errors */
+#define FSCK_NONDESTRUCT	1	/* File system errors corrected */
+#define FSCK_REBOOT		2	/* System should be rebooted */
+#define FSCK_UNCORRECTED	4	/* File system errors left uncorrected */
+#define FSCK_ERROR		8	/* Operational error */
+#define FSCK_USAGE		16	/* Usage or syntax error */
+#define FSCK_LIBRARY		128	/* Shared library error */
+
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -59,6 +68,9 @@
 #include "blkdev.h"
 #include "c.h"
 
+#define XALLOC_EXIT_CODE FSCK_ERROR
+#include "xalloc.h"
+
 static const char *progname = "cramfsck";
 
 static int fd;			/* ROM image file descriptor */
@@ -68,15 +80,6 @@ static int cramfs_is_big_endian = 0;	/* source is big endian */
 static int opt_verbose = 0;	/* 1 = verbose (-v), 2+ = very verbose (-vv) */
 
 char *extract_dir = "";	/* extraction directory (-x) */
-
-/* Exit codes used by fsck-type programs */
-#define FSCK_OK          0	/* No errors */
-#define FSCK_NONDESTRUCT 1	/* File system errors corrected */
-#define FSCK_REBOOT      2	/* System should be rebooted */
-#define FSCK_UNCORRECTED 4	/* File system errors left uncorrected */
-#define FSCK_ERROR       8	/* Operational error */
-#define FSCK_USAGE       16	/* Usage or syntax error */
-#define FSCK_LIBRARY     128	/* Shared library error */
 
 #define PAD_SIZE 512
 
@@ -251,10 +254,7 @@ static void test_crc(int start)
 		int retval;
 		size_t length = 0;
 
-		buf = malloc(4096);
-		if (!buf) {
-			err(FSCK_ERROR, _("malloc failed"));
-		}
+		buf = xmalloc(4096);
 		lseek(fd, start, SEEK_SET);
 		for (;;) {
 			retval = read(fd, buf, 4096);
@@ -317,11 +317,8 @@ static void *romfs_read(unsigned long offset)
 
 static struct cramfs_inode *cramfs_iget(struct cramfs_inode * i)
 {
-	struct cramfs_inode *inode = malloc(sizeof(struct cramfs_inode));
+	struct cramfs_inode *inode = xmalloc(sizeof(struct cramfs_inode));
 
-	if (!inode) {
-		err(FSCK_ERROR, _("malloc failed"));
-	}
 	inode_to_host(cramfs_is_big_endian, i, inode);
 	return inode;
 }
@@ -455,11 +452,8 @@ static void do_directory(char *path, struct cramfs_inode *i)
 	int pathlen = strlen(path);
 	int count = i->size;
 	unsigned long offset = i->offset << 2;
-	char *newpath = malloc(pathlen + 256);
+	char *newpath = xmalloc(pathlen + 256);
 
-	if (!newpath) {
-		err(FSCK_ERROR, _("malloc failed"));
-	}
 	if (offset == 0 && count != 0) {
 		errx(FSCK_UNCORRECTED, _("directory inode has zero offset and non-zero size: %s"), path);
 	}
@@ -693,9 +687,7 @@ int main(int argc, char **argv)
 	if (argc)
 		progname = argv[0];
 
-	outbuffer = malloc(page_size * 2);
-	if (!outbuffer)
-		err(FSCK_ERROR, _("failed to allocate outbuffer"));
+	outbuffer = xmalloc(page_size * 2);
 
 	/* command line options */
 	while ((c = getopt(argc, argv, "hx:v")) != EOF) {
