@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 {
 	size_t i;
 	struct MD5Context ctx;
-	unsigned char digest[16];
+	unsigned char digest[MD5LENGTH];
 	unsigned char buf[BUFFERSIZE];
 	int fd;
 	int c;
@@ -178,7 +178,7 @@ int main(int argc, char **argv)
 	}
 
 	MD5Final(digest, &ctx);
-	for (i = 0; i < 16; i++)
+	for (i = 0; i < MD5LENGTH; i++)
 		printf("%02x", digest[i]);
 	putchar('\n');
 

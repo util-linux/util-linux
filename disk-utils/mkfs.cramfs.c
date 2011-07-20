@@ -90,7 +90,7 @@ struct entry {
 	/* stats */
 	unsigned char *name;
 	unsigned int mode, size, uid, gid;
-	unsigned char md5sum[16];
+	unsigned char md5sum[MD5LENGTH];
 	unsigned char flags;	   /* CRAMFS_EFLAG_* */
 
 	/* FS data */
@@ -247,7 +247,7 @@ static int find_identical_file(struct entry *orig, struct entry *new, loff_t *fs
 
 		if ((orig->flags & CRAMFS_EFLAG_MD5) &&
 		    (new->flags & CRAMFS_EFLAG_MD5) &&
-		    !memcmp(orig->md5sum, new->md5sum, 16) &&
+		    !memcmp(orig->md5sum, new->md5sum, MD5LENGTH) &&
 		    identical_file(orig, new)) {
 			new->same = orig;
 			*fslen_ub -= new->size;
