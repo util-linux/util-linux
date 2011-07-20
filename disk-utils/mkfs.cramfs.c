@@ -169,10 +169,8 @@ do_mmap(char *path, unsigned int size, unsigned int mode){
 	}
 
 	start = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
-	if (-1 == (int) (long) start) {
-		perror("mmap");
-		exit(MKFS_ERROR);
-	}
+	if (-1 == (int) (long) start)
+		err(MKFS_ERROR, "mmap");
 	close(fd);
 
 	return start;
@@ -295,10 +293,8 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 	/* read in the directory and sort */
 	dircount = scandir(name, &dirlist, 0, cramsort);
 
-	if (dircount < 0) {
-		perror(name);
-		exit(MKFS_ERROR);
-	}
+	if (dircount < 0)
+		err(MKFS_ERROR, _("could not read directory %s"), name);
 
 	/* process directory */
 	for (dirindex = 0; dirindex < dircount; dirindex++) {
@@ -321,14 +317,12 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 			}
 		}
 		namelen = strlen(dirent->d_name);
-		if (namelen > MAX_INPUT_NAMELEN) {
-			fprintf(stderr,
+		if (namelen > MAX_INPUT_NAMELEN)
+			errx(MKFS_ERROR,
 				_("Very long (%zu bytes) filename `%s' found.\n"
 				  " Please increase MAX_INPUT_NAMELEN in "
-				  "mkcramfs.c and recompile.  Exiting.\n"),
+				  "mkcramfs.c and recompile.  Exiting."),
 				namelen, dirent->d_name);
-			exit(MKFS_ERROR);
-		}
 		memcpy(endpath, dirent->d_name, namelen + 1);
 
 		if (lstat(path, &st) < 0) {
@@ -446,10 +440,8 @@ static void set_data_offset(struct entry *entry, char *base, unsigned long offse
 {
 	struct cramfs_inode *inode = (struct cramfs_inode *) (base + entry->dir_offset);
 	inode_to_host(cramfs_is_big_endian, inode, inode);
-	if (offset >= (1 << (2 + CRAMFS_OFFSET_WIDTH))) {
-		fprintf(stderr, _("filesystem too big.  Exiting.\n"));
-		exit(MKFS_ERROR);
-	}
+	if (offset >= (1 << (2 + CRAMFS_OFFSET_WIDTH)))
+		errx(MKFS_ERROR, _("filesystem too big.  Exiting."));
 	inode->offset = (offset >> 2);
 	inode_from_host(cramfs_is_big_endian, inode, inode);
 }
@@ -666,14 +658,13 @@ static unsigned int write_file(char *file, char *base, unsigned int offset)
 	char *buf;
 
 	fd = open(file, O_RDONLY);
-	if (fd < 0) {
-		perror(file);
-		exit(MKFS_ERROR);
-	}
+	if (fd < 0)
+		err(MKFS_ERROR, _("cannot open file %s"), file);
 	buf = mmap(NULL, image_length, PROT_READ, MAP_PRIVATE, fd, 0);
 	memcpy(base + offset, buf, image_length);
 	munmap(buf, image_length);
-	close (fd);
+	if (close (fd) < 0)
+		err(MKFS_ERROR, _("closing file %s"), file);
 	/* Pad up the image_length to a 4-byte boundary */
 	while (image_length & 3) {
 		*(base + offset + image_length) = '\0';
@@ -751,18 +742,15 @@ int main(int argc, char **argv)
 				cramfs_is_big_endian = 0;
 			}
 			else if (strcmp(optarg, "host") == 0);	/* default */
-			else 	{
-				perror("invalid endianness given. Must be 'big', 'little', or 'host'");
-				exit(MKFS_USAGE);
-			}
+			else
+				errx(MKFS_USAGE, _("invalid endianness given."
+						   " Must be 'big', 'little', or 'host'"));
 
 			break;
 		case 'i':
 			opt_image = optarg;
-			if (lstat(opt_image, &st) < 0) {
-				perror(opt_image);
-				exit(MKFS_USAGE);
-			}
+			if (lstat(opt_image, &st) < 0)
+				err(MKFS_USAGE, _("cannot stat %s"), opt_image);
 			image_length = st.st_size; /* may be padded later */
 			fslen_ub += (image_length + 3); /* 3 is for padding */
 			break;
@@ -794,11 +782,11 @@ int main(int argc, char **argv)
 	dirname = argv[optind];
 	outfile = argv[optind + 1];
 
-	if (stat(dirname, &st) < 0) {
-		perror(dirname);
-		exit(MKFS_USAGE);
-	}
+	if (stat(dirname, &st) < 0)
+		err(MKFS_USAGE, _("cannot stat %s"), dirname);
 	fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+	if (fd < 0)
+		err(MKFS_USAGE, _("cannot open %s"), outfile);
 
 	root_entry = xcalloc(1, sizeof(struct entry));
 	root_entry->mode = st.st_mode;
@@ -813,10 +801,9 @@ int main(int argc, char **argv)
 	fslen_max = maxfslen();
 
 	if (fslen_ub > fslen_max) {
-		fprintf(stderr,
-			_("warning: guestimate of required size (upper bound) "
+		warnx(	_("warning: guestimate of required size (upper bound) "
 			  "is %lldMB, but maximum image size is %uMB.  "
-			  "We might die prematurely.\n"),
+			  "We might die prematurely."),
 			(long long)fslen_ub >> 20,
 			fslen_max >> 20);
 		fslen_ub = fslen_max;
@@ -840,10 +827,8 @@ int main(int argc, char **argv)
 			 MAP_PRIVATE | MAP_ANONYMOUS,
 			 -1, 0);
 
-	if (-1 == (int) (long) rom_image) {
-		perror(_("ROM image map"));
-		exit(MKFS_ERROR);
-	}
+	if (-1 == (int) (long) rom_image)
+		err(MKFS_ERROR, _("ROM image map"));
 
 	/* Skip the first opt_pad bytes for boot loader code */
 	offset = opt_pad;
@@ -884,56 +869,45 @@ int main(int argc, char **argv)
 		printf(_("CRC: %x\n"), crc);
 
 	/* Check to make sure we allocated enough space. */
-	if (fslen_ub < offset) {
-		fprintf(stderr,
+	if (fslen_ub < offset)
+		errx(MKFS_ERROR,
 			_("not enough space allocated for ROM image "
-			  "(%lld allocated, %zu used)\n"),
+			  "(%lld allocated, %zu used)"),
 			(long long) fslen_ub, offset);
-		exit(MKFS_ERROR);
-	}
 
 	written = write(fd, rom_image, offset);
-	if (written < 0) {
-		perror(_("ROM image"));
-		exit(MKFS_ERROR);
-	}
-	if (offset != written) {
-		fprintf(stderr, _("ROM image write failed (%zd %zd)\n"),
+	if (written < 0)
+		err(MKFS_ERROR, _("ROM image"));
+	if (offset != written)
+		errx(MKFS_ERROR, _("ROM image write failed (%zd %zd)"),
 			written, offset);
-		exit(MKFS_ERROR);
-	}
 
 	/* (These warnings used to come at the start, but they scroll off the
 	   screen too quickly.) */
 	if (warn_namelen) /* (can't happen when reading from ext2fs) */
-		fprintf(stderr, /* bytes, not chars: think UTF8. */
-			_("warning: filenames truncated to 255 bytes.\n"));
+		warnx(/* bytes, not chars: think UTF8. */
+			_("warning: filenames truncated to 255 bytes."));
 	if (warn_skip)
-		fprintf(stderr,
-			_("warning: files were skipped due to errors.\n"));
+		warnx(	_("warning: files were skipped due to errors."));
 	if (warn_size)
-		fprintf(stderr,
-			_("warning: file sizes truncated to %luMB "
-			  "(minus 1 byte).\n"),
+		warnx(	_("warning: file sizes truncated to %luMB "
+			  "(minus 1 byte)."),
 			1L << (CRAMFS_SIZE_WIDTH - 20));
 	if (warn_uid) /* (not possible with current Linux versions) */
-		fprintf(stderr,
-			_("warning: uids truncated to %u bits.  "
-			  "(This may be a security concern.)\n"),
+		warnx(	_("warning: uids truncated to %u bits.  "
+			  "(This may be a security concern.)"),
 			CRAMFS_UID_WIDTH);
 	if (warn_gid)
-		fprintf(stderr,
-			_("warning: gids truncated to %u bits.  "
-			  "(This may be a security concern.)\n"),
+		warnx(	_("warning: gids truncated to %u bits.  "
+			  "(This may be a security concern.)"),
 			CRAMFS_GID_WIDTH);
 	if (warn_dev)
-		fprintf(stderr,
-			_("WARNING: device numbers truncated to %u bits.  "
+		warnx(	_("WARNING: device numbers truncated to %u bits.  "
 			  "This almost certainly means\n"
-			  "that some device files will be wrong.\n"),
+			  "that some device files will be wrong."),
 			CRAMFS_OFFSET_WIDTH);
 	if (opt_errors &&
 	    (warn_namelen|warn_skip|warn_size|warn_uid|warn_gid|warn_dev))
 		exit(MKFS_ERROR);
-	return 0;
+	return EXIT_SUCCESS;
 }
