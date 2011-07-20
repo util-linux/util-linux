@@ -97,8 +97,8 @@ struct entry {
 	/* FS data */
 	char *path;
 	int fd;			    /* temporarily open files while mmapped */
-        struct entry *same;	    /* points to other identical file */
-        unsigned int offset;        /* pointer to compressed data in archive */
+	struct entry *same;	    /* points to other identical file */
+	unsigned int offset;        /* pointer to compressed data in archive */
 	unsigned int dir_offset;    /* offset of directory entry in archive */
 
 	/* organization */
@@ -236,11 +236,11 @@ identical_file(struct entry *e1, struct entry *e2){
 
 static int find_identical_file(struct entry *orig, struct entry *new, loff_t *fslen_ub)
 {
-        if (orig == new)
+	if (orig == new)
 		return 1;
-        if (!orig)
+	if (!orig)
 		return 0;
-        if (orig->size == new->size && orig->path) {
+	if (orig->size == new->size && orig->path) {
 		if (!orig->flags)
 			mdfile(orig);
 		if (!new->flags)
@@ -254,18 +254,18 @@ static int find_identical_file(struct entry *orig, struct entry *new, loff_t *fs
 			*fslen_ub -= new->size;
 			return 1;
 		}
-        }
-        return find_identical_file(orig->child, new, fslen_ub) ||
-                   find_identical_file(orig->next, new, fslen_ub);
+	}
+	return find_identical_file(orig->child, new, fslen_ub) ||
+		   find_identical_file(orig->next, new, fslen_ub);
 }
 
 static void eliminate_doubles(struct entry *root, struct entry *orig, loff_t *fslen_ub) {
-        if (orig) {
-                if (orig->size && orig->path)
+	if (orig) {
+		if (orig->size && orig->path)
 			find_identical_file(root,orig, fslen_ub);
-                eliminate_doubles(root,orig->child, fslen_ub);
-                eliminate_doubles(root,orig->next, fslen_ub);
-        }
+		eliminate_doubles(root,orig->child, fslen_ub);
+		eliminate_doubles(root,orig->next, fslen_ub);
+	}
 }
 
 /*
@@ -292,8 +292,8 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 	*endpath = '/';
 	endpath++;
 
-        /* read in the directory and sort */
-        dircount = scandir(name, &dirlist, 0, cramsort);
+	/* read in the directory and sort */
+	dircount = scandir(name, &dirlist, 0, cramsort);
 
 	if (dircount < 0) {
 		perror(name);
@@ -354,10 +354,10 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 		entry->gid = st.st_gid;
 		if (entry->gid >= 1 << CRAMFS_GID_WIDTH)
 			/* TODO: We ought to replace with a default
-                           gid instead of truncating; otherwise there
-                           are security problems.  Maybe mode should
-                           be &= ~070.  Same goes for uid once Linux
-                           supports >16-bit uids. */
+			   gid instead of truncating; otherwise there
+			   are security problems.  Maybe mode should
+			   be &= ~070.  Same goes for uid once Linux
+			   supports >16-bit uids. */
 			warn_gid = 1;
 		size = sizeof(struct cramfs_inode) + ((namelen + 3) & ~3);
 		*fslen_ub += size;
@@ -388,7 +388,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 			/* block pointers & data expansion allowance + data */
 			if (entry->size)
 				*fslen_ub += (4+26)*blocks + entry->size + 3;
-                }
+		}
 
 		/* Link it into the list */
 		*prev = entry;
@@ -512,9 +512,9 @@ static unsigned int write_directory_structure(struct entry *entry, char *base, u
 
 		/*
 		 * Reverse the order the stack entries pushed during
-                 * this directory, for a small optimization of disk
-                 * access in the created fs.  This change makes things
-                 * `ls -UR' order.
+		 * this directory, for a small optimization of disk
+		 * access in the created fs.  This change makes things
+		 * `ls -UR' order.
 		 */
 		{
 			struct entry **lo = entry_stack + dir_start;
@@ -645,15 +645,15 @@ write_data(struct entry *entry, char *base, unsigned int offset) {
 
 	for (e = entry; e; e = e->next) {
 		if (e->path) {
-                        if (e->same) {
-                                set_data_offset(e, base, e->same->offset);
-                                e->offset = e->same->offset;
-                        } else if (e->size) {
-                                set_data_offset(e, base, offset);
-                                e->offset = offset;
-                                offset = do_compress(base, offset, e->name,
+			if (e->same) {
+				set_data_offset(e, base, e->same->offset);
+				e->offset = e->same->offset;
+			} else if (e->size) {
+				set_data_offset(e, base, offset);
+				e->offset = offset;
+				offset = do_compress(base, offset, e->name,
 						     e->path, e->size,e->mode);
-                        }
+			}
 		} else if (e->child)
 			offset = write_data(e->child, base, offset);
 	}
@@ -808,7 +808,7 @@ int main(int argc, char **argv)
 	root_entry->size = parse_directory(root_entry, dirname, &root_entry->child, &fslen_ub);
 
 	/* always allocate a multiple of blksize bytes because that's
-           what we're going to write later on */
+	   what we're going to write later on */
 	fslen_ub = ((fslen_ub - 1) | (blksize - 1)) + 1;
 	fslen_max = maxfslen();
 
@@ -822,18 +822,18 @@ int main(int argc, char **argv)
 		fslen_ub = fslen_max;
 	}
 
-        /* find duplicate files */
-        eliminate_doubles(root_entry,root_entry, &fslen_ub);
+	/* find duplicate files */
+	eliminate_doubles(root_entry,root_entry, &fslen_ub);
 
 	/* TODO: Why do we use a private/anonymous mapping here
-           followed by a write below, instead of just a shared mapping
-           and a couple of ftruncate calls?  Is it just to save us
-           having to deal with removing the file afterwards?  If we
-           really need this huge anonymous mapping, we ought to mmap
-           in smaller chunks, so that the user doesn't need nn MB of
-           RAM free.  If the reason is to be able to write to
-           un-mmappable block devices, then we could try shared mmap
-           and revert to anonymous mmap if the shared mmap fails. */
+	   followed by a write below, instead of just a shared mapping
+	   and a couple of ftruncate calls?  Is it just to save us
+	   having to deal with removing the file afterwards?  If we
+	   really need this huge anonymous mapping, we ought to mmap
+	   in smaller chunks, so that the user doesn't need nn MB of
+	   RAM free.  If the reason is to be able to write to
+	   un-mmappable block devices, then we could try shared mmap
+	   and revert to anonymous mmap if the shared mmap fails. */
 	rom_image = mmap(NULL,
 			 fslen_ub?fslen_ub:1,
 			 PROT_READ | PROT_WRITE,
@@ -866,7 +866,7 @@ int main(int argc, char **argv)
 	offset = write_data(root_entry, rom_image, offset);
 
 	/* We always write a multiple of blksize bytes, so that
-           losetup works. */
+	   losetup works. */
 	offset = ((offset - 1) | (blksize - 1)) + 1;
 	if (verbose)
 		printf(_("Everything: %zd kilobytes\n"), offset >> 10);
@@ -904,7 +904,7 @@ int main(int argc, char **argv)
 	}
 
 	/* (These warnings used to come at the start, but they scroll off the
-           screen too quickly.) */
+	   screen too quickly.) */
 	if (warn_namelen) /* (can't happen when reading from ext2fs) */
 		fprintf(stderr, /* bytes, not chars: think UTF8. */
 			_("warning: filenames truncated to 255 bytes.\n"));
