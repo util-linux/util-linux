@@ -30,11 +30,12 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <dirent.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 #include <getopt.h>
-#include <stdarg.h>
+#include <zconf.h>
 #include <zlib.h>
 
 #include "c.h"
