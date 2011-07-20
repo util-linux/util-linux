@@ -37,6 +37,7 @@
 #include <stdarg.h>
 #include <zlib.h>
 
+#include "c.h"
 #include "cramfs.h"
 #include "md5.h"
 #include "nls.h"
@@ -47,7 +48,6 @@
 /* The kernel only supports PAD_SIZE of 0 and 512. */
 #define PAD_SIZE 512
 
-static const char *progname = "mkcramfs";
 static int verbose = 0;
 
 static unsigned int blksize; /* settable via -b option */
@@ -137,7 +137,7 @@ usage(int status) {
 		  " -z         make explicit holes (requires >= 2.3.39)\n"
 		  " dirname    root of the filesystem to be compressed\n"
 		  " outfile    output file\n"),
-		progname, PAD_SIZE);
+		program_invocation_short_name, PAD_SIZE);
 
 	exit(status);
 }
@@ -722,13 +722,6 @@ int main(int argc, char **argv)
 	blksize = getpagesize();
 	total_blocks = 0;
 
-	if (argc) {
-		char *p;
-		progname = argv[0];
-		if ((p = strrchr(progname, '/')) != NULL)
-			progname = p+1;
-	}
-
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -784,7 +777,7 @@ int main(int argc, char **argv)
 			break;
 		case 'V':
 			printf(_("%s (%s)\n"),
-			       progname, PACKAGE_STRING);
+			       program_invocation_short_name, PACKAGE_STRING);
 			exit(MKFS_OK);
 		case 'v':
 			verbose = 1;
