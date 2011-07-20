@@ -103,6 +103,7 @@
 #include <signal.h>
 
 #include "minix.h"
+#include "minix_programs.h"
 #include "nls.h"
 #include "pathnames.h"
 #include "bitops.h"

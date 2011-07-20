@@ -15,8 +15,8 @@ dist_man_MANS = isosize.8 mkfs.8 mkswap.8 \
 
 sbin_PROGRAMS = mkfs mkswap fsck.minix mkfs.minix mkfs.bfs
 
-fsck_minix_SOURCES = fsck.minix.c $(top_srcdir)/lib/ismounted.c
-mkfs_minix_SOURCES = mkfs.minix.c mkfs.h $(utils_common) $(top_srcdir)/lib/strutils.c
+fsck_minix_SOURCES = fsck.minix.c minix_programs.h $(top_srcdir)/lib/ismounted.c
+mkfs_minix_SOURCES = mkfs.minix.c minix_programs.h mkfs.h $(utils_common) $(top_srcdir)/lib/strutils.c
 mkfs_bfs_SOURCES = mkfs.bfs.c $(utils_common)
 
 swaplabel_SOURCES = swaplabel.c $(utils_common)
