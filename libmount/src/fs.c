@@ -299,17 +299,20 @@ const char *mnt_fs_get_source(struct libmnt_fs *fs)
 	return fs ? fs->source : NULL;
 }
 
-/* Used by parser struct libmnt_file ONLY (@source has to be allocated) */
+/*
+ * Used by parser ONLY (@source has to be allocated on error)
+ */
 int __mnt_fs_set_source_ptr(struct libmnt_fs *fs, char *source)
 {
 	char *t = NULL, *v = NULL;
 
 	assert(fs);
 
-	if (source && !strcmp(source, "none"))
+	if (source && !strcmp(source, "none")) {
+		free(source);
 		source = NULL;
 
-	if (source && strchr(source, '=')) {
+	} else if (source && strchr(source, '=')) {
 		if (blkid_parse_tag_string(source, &t, &v) != 0)
 			return -1;
 	}

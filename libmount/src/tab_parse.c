@@ -160,12 +160,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 		unmangle_string(fs->target);
 		unmangle_string(fs->vfs_optstr);
 		unmangle_string(fstype);
-
-		if (!strcmp(src, "none")) {
-			free(src);
-			src = NULL;
-		} else
-			unmangle_string(src);
+		unmangle_string(src);
 
 		if (!strcmp(fs->fs_optstr, "none")) {
 			free(fs->fs_optstr);
@@ -212,8 +207,7 @@ static int mnt_parse_utab_line(struct libmnt_fs *fs, const char *s)
 			char *v = unmangle(p + 4, &end);
 			if (!v)
 				goto enomem;
-			if (strcmp(v, "none"))
-				__mnt_fs_set_source_ptr(fs, v);
+			__mnt_fs_set_source_ptr(fs, v);
 
 		} else if (!fs->target && !strncmp(p, "TARGET=", 7)) {
 			fs->target = unmangle(p + 7, &end);
