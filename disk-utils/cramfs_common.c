@@ -20,7 +20,7 @@
 #include "cramfs.h"
 #include "../include/bitops.h"
 
-u32 u32_toggle_endianness(int big_endian, u32 what)
+uint32_t u32_toggle_endianness(int big_endian, uint32_t what)
 {
 	return big_endian == HOST_IS_BIG_ENDIAN ? what : swab32(what);
 }

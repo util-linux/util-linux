@@ -38,6 +38,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <dirent.h>
 #include <stdlib.h>
@@ -139,7 +140,7 @@ static void die(int status, int syserr, const char *fmt, ...)
 	exit(status);
 }
 
-int get_superblock_endianness(u32 magic)
+int get_superblock_endianness(uint32_t magic)
 {
 	if (magic == CRAMFS_MAGIC) {
 		cramfs_is_big_endian = HOST_IS_BIG_ENDIAN;
@@ -236,7 +237,7 @@ static void test_super(int *start, size_t *length) {
 static void test_crc(int start)
 {
 	void *buf;
-	u32 crc;
+	uint32_t crc;
 
 	if (!(super.flags & CRAMFS_FLAG_FSID_VERSION_2)) {
 #ifdef INCLUDE_FS_TESTS
@@ -402,7 +403,7 @@ static void do_uncompress(char *path, int fd, unsigned long offset, unsigned lon
 
 	do {
 		unsigned long out = page_size;
-		unsigned long next = u32_toggle_endianness(cramfs_is_big_endian, *(u32 *) romfs_read(offset));
+		unsigned long next = u32_toggle_endianness(cramfs_is_big_endian, *(uint32_t *) romfs_read(offset));
 
 		if (next > end_data) {
 			end_data = next;
@@ -563,7 +564,7 @@ static void do_symlink(char *path, struct cramfs_inode *i)
 {
 	unsigned long offset = i->offset << 2;
 	unsigned long curr = offset + 4;
-	unsigned long next = u32_toggle_endianness(cramfs_is_big_endian, *(u32 *) romfs_read(offset));
+	unsigned long next = u32_toggle_endianness(cramfs_is_big_endian, *(uint32_t *) romfs_read(offset));
 	unsigned long size;
 
 	if (offset == 0) {

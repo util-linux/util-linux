@@ -19,9 +19,7 @@
 #ifndef __CRAMFS_H
 #define __CRAMFS_H
 
-typedef unsigned char u8;
-typedef unsigned short u16;
-typedef unsigned int u32;
+#include <stdint.h>
 
 #define CRAMFS_MAGIC		0x28cd3d45	/* some random number */
 #define CRAMFS_SIGNATURE	"Compressed ROMFS"
@@ -49,9 +47,9 @@ typedef unsigned int u32;
  * Reasonably terse representation of the inode data.
  */
 struct cramfs_inode {
-	u32 mode:16, uid:16;
+	uint32_t mode:16, uid:16;
 	/* SIZE for device files is i_rdev */
-	u32 size:24, gid:8;
+	uint32_t size:24, gid:8;
 	/* NAMELEN is the length of the file name, divided by 4 and
            rounded up.  (cramfs doesn't support hard links.) */
 	/* OFFSET: For symlinks and non-empty regular files, this
@@ -60,28 +58,28 @@ struct cramfs_inode {
 	   see README).  For non-empty directories it is the offset
 	   (divided by 4) of the inode of the first file in that
 	   directory.  For anything else, offset is zero. */
-	u32 namelen:6, offset:26;
+	uint32_t namelen:6, offset:26;
 };
 
 struct cramfs_info {
-        u32 crc;
-        u32 edition;
-        u32 blocks;
-        u32 files;
+        uint32_t crc;
+        uint32_t edition;
+        uint32_t blocks;
+        uint32_t files;
 };
 
 /*
  * Superblock information at the beginning of the FS.
  */
 struct cramfs_super {
-	u32 magic;		/* 0x28cd3d45 - random number */
-	u32 size;		/* Not used.  mkcramfs currently
+	uint32_t magic;		/* 0x28cd3d45 - random number */
+	uint32_t size;		/* Not used.  mkcramfs currently
                                    writes a constant 1<<16 here. */
-	u32 flags;		/* 0 */
-	u32 future;		/* 0 */
-	u8 signature[16];	/* "Compressed ROMFS" */
+	uint32_t flags;		/* 0 */
+	uint32_t future;		/* 0 */
+	uint8_t signature[16];	/* "Compressed ROMFS" */
 	struct cramfs_info fsid;/* unique filesystem info */
-	u8 name[16];		/* user-defined name */
+	uint8_t name[16];		/* user-defined name */
 	struct cramfs_inode root;	/* Root inode data */
 };
 
@@ -103,7 +101,7 @@ int cramfs_uncompress_block(void *dst, int dstlen, void *src, int srclen);
 int cramfs_uncompress_init(void);
 int cramfs_uncompress_exit(void);
 
-u32 u32_toggle_endianness(int big_endian, u32 what);
+uint32_t u32_toggle_endianness(int big_endian, uint32_t what);
 void super_toggle_endianness(int from_big_endian, struct cramfs_super *super);
 void inode_to_host(int from_big_endian, struct cramfs_inode *inode_in, struct cramfs_inode *inode_out);
 void inode_from_host(int to_big_endian, struct cramfs_inode *inode_in, struct cramfs_inode *inode_out);

@@ -634,7 +634,7 @@ do_compress(char *base, unsigned int offset, unsigned char const *name,
 			exit(MKFS_ERROR);
 		}
 
-		*(u32 *) (base + offset) = u32_toggle_endianness(cramfs_is_big_endian, curr);
+		*(uint32_t *) (base + offset) = u32_toggle_endianness(cramfs_is_big_endian, curr);
 		offset += 4;
 	} while (size);
 
@@ -736,7 +736,7 @@ int main(int argc, char **argv)
 	loff_t fslen_ub = sizeof(struct cramfs_super);
 	unsigned int fslen_max;
 	char const *dirname, *outfile;
-	u32 crc = crc32(0L, Z_NULL, 0);
+	uint32_t crc = crc32(0L, Z_NULL, 0);
 	int c;
 	cramfs_is_big_endian = HOST_IS_BIG_ENDIAN; /* default is to use host order */
 
