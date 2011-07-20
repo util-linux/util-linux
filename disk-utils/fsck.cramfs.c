@@ -179,13 +179,13 @@ static void test_super(int *start, size_t * length)
 		if (get_superblock_endianness(super.magic) != -1)
 			*start = PAD_SIZE;
 		else
-			errx(FSCK_UNCORRECTED, "superblock magic not found");
+			errx(FSCK_UNCORRECTED, _("superblock magic not found"));
 	} else
 		errx(FSCK_UNCORRECTED, _("superblock magic not found"));
 
 	if (opt_verbose)
-		printf("cramfs endianness is %s\n",
-		       cramfs_is_big_endian ? "big" : "little");
+		printf(_("cramfs endianness is %s\n"),
+		       cramfs_is_big_endian ? _("big") : _("little"));
 
 	super_toggle_endianness(cramfs_is_big_endian, &super);
 	if (super.flags & ~CRAMFS_SUPPORTED_FLAGS)
@@ -681,7 +681,7 @@ int main(int argc, char **argv)
 #endif
 
 	if (opt_verbose)
-		printf("%s: OK\n", filename);
+		printf(_("%s: OK\n"), filename);
 
 	exit(FSCK_OK);
 }
