@@ -55,14 +55,14 @@ struct minix3_super_block {
 	uint8_t  s_disk_version;
 };
 
-#define BLOCK_SIZE_BITS 10
-#define BLOCK_SIZE (1<<BLOCK_SIZE_BITS)
+#define MINIX_BLOCK_SIZE_BITS 10
+#define MINIX_BLOCK_SIZE (1<<MINIX_BLOCK_SIZE_BITS)
 
 #define NAME_MAX   255   /* # chars in a file name */
 #define MAX_INODES 65535
 
-#define MINIX_INODES_PER_BLOCK ((BLOCK_SIZE)/(sizeof (struct minix_inode)))
-#define MINIX2_INODES_PER_BLOCK ((BLOCK_SIZE)/(sizeof (struct minix2_inode)))
+#define MINIX_INODES_PER_BLOCK ((MINIX_BLOCK_SIZE)/(sizeof (struct minix_inode)))
+#define MINIX2_INODES_PER_BLOCK ((MINIX_BLOCK_SIZE)/(sizeof (struct minix2_inode)))
 
 #define MINIX_VALID_FS               0x0001          /* Clean fs. */
 #define MINIX_ERROR_FS               0x0002          /* fs has errors. */
@@ -85,7 +85,7 @@ char *super_block_buffer, *inode_buffer = NULL;
 static char *inode_map;
 static char *zone_map;
 
-#define BITS_PER_BLOCK (BLOCK_SIZE<<3)
+#define BITS_PER_BLOCK (MINIX_BLOCK_SIZE<<3)
 
 #define UPPER(size,n) ((size+((n)-1))/(n))
 
@@ -185,7 +185,7 @@ static inline unsigned long first_zone_data(void)
 
 static inline unsigned long get_inode_buffer_size(void)
 {
-	return inode_blocks() * BLOCK_SIZE;
+	return inode_blocks() * MINIX_BLOCK_SIZE;
 }
 
 #endif /* UTIL_LINUX_MINIX_H */

@@ -13,9 +13,6 @@
 #include "superblocks.h"
 #include "minix.h"
 
-#define MINIX_BLOCK_SIZE_BITS 10
-#define MINIX_BLOCK_SIZE (1 << MINIX_BLOCK_SIZE_BITS)
-
 static int probe_minix(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	unsigned char *ext;
