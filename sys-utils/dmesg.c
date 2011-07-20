@@ -512,14 +512,14 @@ static int get_next_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 
 		if (*begin == '[' && (*(begin + 1) == ' ' ||
 				      isdigit(*(begin + 1)))) {
-			if (ctl->notime) {		/* ignore timestamp */
+			if (ctl->delta || ctl->ctime) {
+				begin = parse_timestamp(begin + 1, &rec->tv);
+			} else if (ctl->notime) {
 				while (begin < end) {
 					begin++;
 					if (*(begin - 1) == ']')
 						break;
 				}
-			} else if (ctl->delta || ctl->ctime) {
-				begin = parse_timestamp(begin + 1, &rec->tv);
 			}
 		}
 
@@ -596,6 +596,8 @@ static void print_buffer(const char *buf, size_t size,
 
 			if (ctl->ctime && *tbuf)
 				printf("[%s ", tbuf);
+			else if (ctl->notime)
+				putchar('[');
 			else
 				printf("[%5d.%06d ", (int) rec.tv.tv_sec,
 						     (int) rec.tv.tv_usec);
@@ -738,9 +740,8 @@ int main(int argc, char *argv[])
 		errx(EXIT_FAILURE, _("--raw can't be used together with level, "
 		     "facility, decode, delta, ctime or notime options"));
 
-	if (ctl.notime && (ctl.ctime || ctl.delta))
-		errx(EXIT_FAILURE, _("--notime can't be used together with ctime "
-		     "or delta options"));
+	if (ctl.notime && ctl.ctime)
+		errx(EXIT_FAILURE, _("--notime can't be used together with ctime "));
 
 	switch (cmd) {
 	case SYSLOG_ACTION_READ_ALL:
