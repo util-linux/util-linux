@@ -55,6 +55,11 @@ struct minix3_super_block {
 	uint8_t  s_disk_version;
 };
 
+/*
+ * Minix subpartitions are always within primary dos partition.
+ */
+#define MINIX_MAXPARTITIONS 4
+
 #define MINIX_BLOCK_SIZE_BITS 10
 #define MINIX_BLOCK_SIZE (1<<MINIX_BLOCK_SIZE_BITS)
 

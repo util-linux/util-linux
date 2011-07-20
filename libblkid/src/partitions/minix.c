@@ -13,11 +13,7 @@
 
 #include "partitions.h"
 #include "dos.h"
-
-/*
- * Minix subpartitions are always within primary dos partition.
- */
-#define MINIX_MAXPARTITIONS 4
+#include "minix.h"
 
 static int probe_minix_pt(blkid_probe pr, const struct blkid_idmag *mag)
 {
