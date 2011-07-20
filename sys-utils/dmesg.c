@@ -12,7 +12,9 @@
 #include <stdlib.h>
 #include <sys/klog.h>
 #include <sys/syslog.h>
+#include <sys/time.h>
 #include <ctype.h>
+#include <time.h>
 
 #include "c.h"
 #include "nls.h"
@@ -98,11 +100,14 @@ struct dmesg_control {
 	char levels[ARRAY_SIZE(level_names) / NBBY + 1];
 	char facilities[ARRAY_SIZE(facility_names) / NBBY + 1];
 
+	struct timeval	lasttime;	/* last printed timestamp */
+
 	int	raw:1;			/* raw mode */
 	int	fltr_lev:1;		/* filter out by levels[] */
 	int	fltr_fac:1;		/* filter out by facilities[] */
 	int	decode:1;		/* use "facility: level: " prefix */
 	int	notime:1;		/* don't print timestamp */
+	int	delta:1;		/* show time deltas */
 };
 
 struct dmesg_record {
@@ -111,6 +116,7 @@ struct dmesg_record {
 
 	int		level;
 	int		facility;
+	struct timeval  tv;
 
 	const char	*next;		/* buffer with next unparsed record */
 	size_t		next_size;	/* size of the next buffer */
@@ -128,8 +134,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		"\nOptions:\n"
 		" -C, --clear               clear the kernel ring buffer\n"
 		" -c, --read-clear          read and clear all messages\n"
-		" -d, --console-off         disable printing messages to console\n"
-		" -e, --console-on          enable printing messages to console\n"
+		" -D, --console-off         disable printing messages to console\n"
+		" -d, --show-delta          show time delta between printed messages\n"
+		" -E, --console-on          enable printing messages to console\n"
 		" -f, --facility=LIST       restrict output to defined facilities\n"
 		" -h, --help                display this help and exit\n"
 		" -k, --kernel              display kernel messages\n"
@@ -269,6 +276,34 @@ static const char *parse_faclev(const char *str, int *fac, int *lev)
 	}
 
 	return str;
+}
+
+static const char *parse_timestamp(const char *str0, struct timeval *tv)
+{
+	const char *str = str0;
+	char *end = NULL;
+
+	if (!str0)
+		return str0;
+
+	errno = 0;
+	tv->tv_sec = strtol(str, &end, 10);
+
+	if (!errno && end && *end == '.' && *(end + 1)) {
+		str = end + 1;
+		end = NULL;
+		tv->tv_usec = strtol(str, &end, 10);
+	}
+	if (errno || !end || end == str || *end != ']')
+		return str0;
+
+	return end + 1;	/* skip ']' */
+}
+
+
+static double time_diff(struct timeval *a, struct timeval *b)
+{
+	return (a->tv_sec - b->tv_sec) + (a->tv_usec - b->tv_usec) / 1E6;
 }
 
 /*
@@ -417,6 +452,8 @@ static int get_next_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 	rec->mesg_size = 0;
 	rec->facility = -1;
 	rec->level = -1;
+	rec->tv.tv_sec = 0;
+	rec->tv.tv_usec = 0;
 
 	for (i = 0; i < rec->next_size; i++) {
 		const char *p = rec->next + i;
@@ -439,7 +476,6 @@ static int get_next_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 
 		if (*begin == '<') {
 			if (ctl->fltr_lev || ctl->fltr_fac || ctl->decode) {
-				/* parse facility and level */
 				begin = parse_faclev(begin + 1, &rec->facility,
 						     &rec->level);
 			} else {
@@ -455,13 +491,16 @@ static int get_next_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 		if (end <= begin)
 			return -1;	/* error */
 
-		if (ctl->notime && *begin == '[' &&
-		    (*(begin + 1) == ' ' || isdigit(*(begin + 1)))) {
-			/* ignore timestamp */
-			while (begin < end) {
-				begin++;
-				if (*(begin - 1) == ']')
-					break;
+		if (*begin == '[' && (*(begin + 1) == ' ' ||
+				      isdigit(*(begin + 1)))) {
+			if (ctl->notime) {		/* ignore timestamp */
+				while (begin < end) {
+					begin++;
+					if (*(begin - 1) == ']')
+						break;
+				}
+			} else if (ctl->delta) {
+				begin = parse_timestamp(begin + 1, &rec->tv);
 			}
 		}
 
@@ -510,7 +549,10 @@ static void print_buffer(const char *buf, size_t size,
 		return;
 	}
 
-	while (get_next_record(ctl, &rec) == 0 && rec.mesg_size) {
+	while (get_next_record(ctl, &rec) == 0) {
+
+		if (!rec.mesg_size)
+			continue;
 
 		if (!accept_record(ctl, &rec))
 			continue;
@@ -518,6 +560,18 @@ static void print_buffer(const char *buf, size_t size,
 		if (ctl->decode && rec.level >= 0 && rec.facility >= 0)
 			printf("%-6s:%-6s: ", facility_names[rec.facility].name,
 					      level_names[rec.level].name);
+
+		if (ctl->delta) {
+			double delta = 0;
+
+			if (ctl->lasttime.tv_sec && ctl->lasttime.tv_usec)
+				delta = time_diff(&rec.tv, &ctl->lasttime);
+			ctl->lasttime = rec.tv;
+
+			printf("[%5d.%06d <%12.06f>] ",
+					(int) rec.tv.tv_sec,
+					(int) rec.tv.tv_usec, delta);
+		}
 
 		safe_fwrite(rec.mesg, rec.mesg_size, stdout);
 
@@ -540,8 +594,8 @@ int main(int argc, char *argv[])
 		{ "buffer-size",   required_argument, NULL, 's' },
 		{ "clear",         no_argument,	      NULL, 'C' },
 		{ "console-level", required_argument, NULL, 'n' },
-		{ "console-off",   no_argument,       NULL, 'd' },
-		{ "console-on",    no_argument,       NULL, 'e' },
+		{ "console-off",   no_argument,       NULL, 'D' },
+		{ "console-on",    no_argument,       NULL, 'E' },
 		{ "decode",        no_argument,	      NULL, 'x' },
 		{ "facility",      required_argument, NULL, 'f' },
 		{ "help",          no_argument,	      NULL, 'h' },
@@ -549,6 +603,7 @@ int main(int argc, char *argv[])
 		{ "level",         required_argument, NULL, 'l' },
 		{ "raw",           no_argument,       NULL, 'r' },
 		{ "read-clear",    no_argument,	      NULL, 'c' },
+		{ "show-delta",    no_argument,	      NULL, 'd' },
 		{ "notime",        no_argument,       NULL, 't' },
 		{ "userspace",     no_argument,       NULL, 'u' },
 		{ "version",       no_argument,	      NULL, 'V' },
@@ -559,10 +614,10 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "Ccdef:hkl:n:rs:tuVx",
+	while ((c = getopt_long(argc, argv, "CcDdEf:hkl:n:rs:tuVx",
 				longopts, NULL)) != -1) {
 
-		if (cmd != -1 && strchr("Ccnde", c))
+		if (cmd != -1 && strchr("CcnDE", c))
 			errx(EXIT_FAILURE, "%s %s",
 				"--{clear,read-clear,console-level,console-on,console-off}",
 				_("options are mutually exclusive"));
@@ -574,10 +629,13 @@ int main(int argc, char *argv[])
 		case 'c':
 			cmd = SYSLOG_ACTION_READ_CLEAR;
 			break;
-		case 'd':
+		case 'D':
 			cmd = SYSLOG_ACTION_CONSOLE_OFF;
 			break;
-		case 'e':
+		case 'd':
+			ctl.delta = 1;
+			break;
+		case 'E':
 			cmd = SYSLOG_ACTION_CONSOLE_ON;
 			break;
 		case 'f':
