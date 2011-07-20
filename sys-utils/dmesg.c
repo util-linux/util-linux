@@ -13,6 +13,7 @@
 #include <sys/klog.h>
 #include <sys/syslog.h>
 #include <sys/time.h>
+#include <sys/sysinfo.h>
 #include <ctype.h>
 #include <time.h>
 
@@ -101,6 +102,7 @@ struct dmesg_control {
 	char facilities[ARRAY_SIZE(facility_names) / NBBY + 1];
 
 	struct timeval	lasttime;	/* last printed timestamp */
+	time_t		boot_time;	/* system boot time */
 
 	int	raw:1;			/* raw mode */
 	int	fltr_lev:1;		/* filter out by levels[] */
@@ -108,6 +110,7 @@ struct dmesg_control {
 	int	decode:1;		/* use "facility: level: " prefix */
 	int	notime:1;		/* don't print timestamp */
 	int	delta:1;		/* show time deltas */
+	int	ctime:1;		/* show human readable time */
 };
 
 struct dmesg_record {
@@ -144,6 +147,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -n, --console-level=LEVEL set level of messages printed to console\n"
 		" -r, --raw                 print the raw message buffer\n"
 		" -s, --buffer-size=SIZE    buffer size to query the kernel ring buffer\n"
+		" -T, --ctime               show human readable timestamp (could be \n"
+		"                           inaccurate if you have used SUSPEND/RESUME)\n"
 		" -t, --notime              don't print messages timestamp\n"
 		" -u, --userspace           display userspace messages\n"
 		" -V, --version             output version information and exit\n"
@@ -352,6 +357,20 @@ static int get_buffer_size()
 	return n > 0 ? n : 0;
 }
 
+static time_t get_boot_time(void)
+{
+	struct sysinfo info;
+	struct timeval tv;
+
+	if (sysinfo(&info) != 0)
+		warn(_("sysinfo failed"));
+	else if (gettimeofday(&tv, NULL) != 0)
+		warn(_("gettimeofday failed"));
+	else
+		return tv.tv_sec -= info.uptime;
+	return 0;
+}
+
 /*
  * Reads messages from kernel ring buffer
  */
@@ -499,7 +518,7 @@ static int get_next_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 					if (*(begin - 1) == ']')
 						break;
 				}
-			} else if (ctl->delta) {
+			} else if (ctl->delta || ctl->ctime) {
 				begin = parse_timestamp(begin + 1, &rec->tv);
 			}
 		}
@@ -540,6 +559,7 @@ static void print_buffer(const char *buf, size_t size,
 			 struct dmesg_control *ctl)
 {
 	struct dmesg_record rec = { .next = buf, .next_size = size };
+	char tbuf[256];
 
 	if (ctl->raw) {
 		/* print whole buffer */
@@ -550,7 +570,6 @@ static void print_buffer(const char *buf, size_t size,
 	}
 
 	while (get_next_record(ctl, &rec) == 0) {
-
 		if (!rec.mesg_size)
 			continue;
 
@@ -561,16 +580,28 @@ static void print_buffer(const char *buf, size_t size,
 			printf("%-6s:%-6s: ", facility_names[rec.facility].name,
 					      level_names[rec.level].name);
 
+		*tbuf = '\0';
+		if (ctl->ctime) {
+			time_t t = ctl->boot_time + rec.tv.tv_sec;
+			if (strftime(tbuf, sizeof(tbuf), "%a %b %e %H:%M:%S %Y",
+				     localtime(&t)) == 0)
+				*tbuf = '\0';
+		}
 		if (ctl->delta) {
 			double delta = 0;
 
-			if (ctl->lasttime.tv_sec && ctl->lasttime.tv_usec)
+			if (timerisset(&ctl->lasttime))
 				delta = time_diff(&rec.tv, &ctl->lasttime);
 			ctl->lasttime = rec.tv;
 
-			printf("[%5d.%06d <%12.06f>] ",
-					(int) rec.tv.tv_sec,
-					(int) rec.tv.tv_usec, delta);
+			if (ctl->ctime && *tbuf)
+				printf("[%s ", tbuf);
+			else
+				printf("[%5d.%06d ", (int) rec.tv.tv_sec,
+						     (int) rec.tv.tv_usec);
+			printf("<%12.06f>] ", delta);
+		} else if (ctl->ctime && *tbuf) {
+			printf("[%s] ", tbuf);
 		}
 
 		safe_fwrite(rec.mesg, rec.mesg_size, stdout);
@@ -604,6 +635,7 @@ int main(int argc, char *argv[])
 		{ "raw",           no_argument,       NULL, 'r' },
 		{ "read-clear",    no_argument,	      NULL, 'c' },
 		{ "show-delta",    no_argument,	      NULL, 'd' },
+		{ "ctime",         no_argument,       NULL, 'T' },
 		{ "notime",        no_argument,       NULL, 't' },
 		{ "userspace",     no_argument,       NULL, 'u' },
 		{ "version",       no_argument,	      NULL, 'V' },
@@ -614,7 +646,7 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "CcDdEf:hkl:n:rs:tuVx",
+	while ((c = getopt_long(argc, argv, "CcDdEf:hkl:n:rs:TtuVx",
 				longopts, NULL)) != -1) {
 
 		if (cmd != -1 && strchr("CcnDE", c))
@@ -665,6 +697,11 @@ int main(int argc, char *argv[])
 					_("failed to parse buffer size"));
 			if (bufsize < 4096)
 				bufsize = 4096;
+			break;
+		case 'T':
+			ctl.boot_time = get_boot_time();
+			if (ctl.boot_time)
+				ctl.ctime = 1;
 			break;
 		case 't':
 			ctl.notime = 1;
