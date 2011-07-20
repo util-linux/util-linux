@@ -42,6 +42,7 @@
 #include "md5.h"
 #include "nls.h"
 #include "mkfs.h"
+#include "strutils.h"
 #define XALLOC_EXIT_CODE MKFS_ERROR
 #include "xalloc.h"
 
@@ -732,7 +733,7 @@ int main(int argc, char **argv)
 		case 'h':
 			usage(MKFS_OK);
 		case 'b':
-			blksize = atoi(optarg);
+			blksize = strtoll_or_err(optarg, _("failed to parse blocksize argument"));
 			if (blksize <= 0)
 				usage(MKFS_USAGE);
 			break;
@@ -740,7 +741,7 @@ int main(int argc, char **argv)
 			opt_errors = 1;
 			break;
 		case 'e':
-			opt_edition = atoi(optarg);
+			opt_edition = strtoll_or_err(optarg, _("edition number argument failed"));
 			break;
 		case 'N':
 			if (strcmp(optarg, "big") == 0)  {
