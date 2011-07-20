@@ -730,11 +730,11 @@ int main(int argc, char **argv)
 	while ((c = getopt(argc, argv, "hb:Ee:i:n:N:psVvz")) != EOF) {
 		switch (c) {
 		case 'h':
-			usage(0);
+			usage(MKFS_OK);
 		case 'b':
 			blksize = atoi(optarg);
 			if (blksize <= 0)
-				usage(1);
+				usage(MKFS_USAGE);
 			break;
 		case 'E':
 			opt_errors = 1;
@@ -789,7 +789,7 @@ int main(int argc, char **argv)
 	}
 
 	if ((argc - optind) != 2)
-		usage(16);
+		usage(MKFS_USAGE);
 	dirname = argv[optind];
 	outfile = argv[optind + 1];
 
