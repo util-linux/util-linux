@@ -82,7 +82,7 @@
 #include "nls.h"
 #include "pathnames.h"
 #include "bitops.h"
-#include "mkfs.h"
+#include "exitcodes.h"
 #include "strutils.h"
 
 #define MINIX_ROOT_INO 1

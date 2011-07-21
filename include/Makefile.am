@@ -10,6 +10,7 @@ dist_noinst_HEADERS = \
 	cpuset.h \
 	crc32.h \
 	env.h \
+	exitcodes.h \
 	fsprobe.h \
 	ismounted.h \
 	linux_reboot.h \

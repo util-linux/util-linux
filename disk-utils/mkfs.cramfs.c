@@ -42,7 +42,7 @@
 #include "cramfs.h"
 #include "md5.h"
 #include "nls.h"
-#include "mkfs.h"
+#include "exitcodes.h"
 #include "strutils.h"
 #define XALLOC_EXIT_CODE MKFS_ERROR
 #include "xalloc.h"
