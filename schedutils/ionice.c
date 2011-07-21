@@ -152,6 +152,11 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	if (!set && !pid && optind == argc)
+		errx(EXIT_FAILURE, _("PID or COMMAND not specified"));
+	if (!set && !pid)
+		errx(EXIT_FAILURE, _("scheduling for the COMMAND not specified"));
+
 	switch (ioclass) {
 		case IOPRIO_CLASS_NONE:
 			if (set & 1)
@@ -185,8 +190,7 @@ int main(int argc, char *argv[])
 				pid = strtol_or_err(argv[optind], _("failed to parse pid"));
 				ioprio_setpid(pid, ioclass, data);
 			}
-		}
-		else if (argv[optind]) {
+		} else if (argv[optind]) {
 			ioprio_setpid(0, ioclass, data);
 			execvp(argv[optind], &argv[optind]);
 			/* execvp should never return */
