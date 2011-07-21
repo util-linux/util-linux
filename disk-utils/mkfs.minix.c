@@ -92,7 +92,7 @@
 #define TEST_BUFFER_BLOCKS 16
 #define MAX_GOOD_BLOCKS 512
 
-#define MAX_INODES 65535
+#define MINIX_MAX_INODES 65535
 
 /*
  * Global variables used in minix_programs.h inline fuctions
@@ -504,8 +504,8 @@ static void setup_tables(void) {
 	else
 		inodes = ((inodes + MINIX_INODES_PER_BLOCK - 1) &
 			  ~(MINIX_INODES_PER_BLOCK - 1));
-	if (inodes > MAX_INODES)
-		inodes = MAX_INODES;
+	if (inodes > MINIX_MAX_INODES)
+		inodes = MINIX_MAX_INODES;
 	if (fs_version == 3)
 		Super3.s_ninodes = inodes;
 	else
@@ -774,8 +774,8 @@ int main(int argc, char ** argv) {
 		else
 			magic = MINIX2_SUPER_MAGIC2;
 	} else
-		if (BLOCKS > MAX_INODES)
-			BLOCKS = MAX_INODES;
+		if (BLOCKS > MINIX_MAX_INODES)
+			BLOCKS = MINIX_MAX_INODES;
 	setup_tables();
 	if (check)
 		check_blocks();

@@ -58,19 +58,20 @@ struct minix3_super_block {
 /*
  * Minix subpartitions are always within primary dos partition.
  */
-#define MINIX_MAXPARTITIONS 4
+#define MINIX_MAXPARTITIONS  4
 
 #define MINIX_BLOCK_SIZE_BITS 10
-#define MINIX_BLOCK_SIZE (1<<MINIX_BLOCK_SIZE_BITS)
+#define MINIX_BLOCK_SIZE     (1 << MINIX_BLOCK_SIZE_BITS)
 
-#define NAME_MAX   255   /* # chars in a file name */
-#define MAX_INODES 65535
+#define MINIX_NAME_MAX       255             /* # chars in a file name */
+#define MINIX_MAX_INODES     65535
 
 #define MINIX_INODES_PER_BLOCK ((MINIX_BLOCK_SIZE)/(sizeof (struct minix_inode)))
 #define MINIX2_INODES_PER_BLOCK ((MINIX_BLOCK_SIZE)/(sizeof (struct minix2_inode)))
 
-#define MINIX_VALID_FS               0x0001          /* Clean fs. */
-#define MINIX_ERROR_FS               0x0002          /* fs has errors. */
+/* minix_super_block.s_state */
+#define MINIX_VALID_FS       0x0001          /* Clean fs. */
+#define MINIX_ERROR_FS       0x0002          /* fs has errors. */
 
 #define MINIX_SUPER_MAGIC    0x137F          /* original minix fs */
 #define MINIX_SUPER_MAGIC2   0x138F          /* minix fs, 30 char names */

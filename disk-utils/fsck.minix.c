@@ -48,7 +48,7 @@
  * 01.07.96  - Fixed the v2 fs stuff to use the right #defines and such
  *	       for modern libcs (janl@math.uio.no, Nicolai Langfeldt)
  *
- * 02.07.96  - Added C bit fiddling routines from rmk@ecs.soton.ac.uk 
+ * 02.07.96  - Added C bit fiddling routines from rmk@ecs.soton.ac.uk
  *             (Russell King).  He made them for ARM.  It would seem
  *	       that the ARM is powerful enough to do this in C whereas
  *             i386 and m64k must use assembly to get it fast >:-)
@@ -56,7 +56,7 @@
  *	       (janl@math.uio.no, Nicolai Langfeldt)
  *
  * 04.11.96  - Added minor fixes from Andreas Schwab to avoid compiler
- *             warnings.  Added mc68k bitops from 
+ *             warnings.  Added mc68k bitops from
  *	       Joerg Dorchain <dorchain@mpi-sb.mpg.de>.
  *
  * 06.11.96  - Added v2 code submitted by Joerg Dorchain, but written by
@@ -86,7 +86,7 @@
  *	-f force filesystem check even if filesystem marked as valid
  *
  * The device may be a block device or a image of one, but this isn't
- * enforced (but it's not much fun on a character device :-). 
+ * enforced (but it's not much fun on a character device :-).
  */
 
 #include <stdio.h>
@@ -144,10 +144,10 @@ static volatile sig_atomic_t termios_set = 0;
 /* File-name data */
 #define MAX_DEPTH 50
 static int name_depth = 0;
-static char name_list[MAX_DEPTH][NAME_MAX+1];
+static char name_list[MAX_DEPTH][MINIX_NAME_MAX+1];
 /* Copy of the previous, just for error reporting - see get_current_name */
 /* This is a waste of 12kB or so. */
-static char current_name[MAX_DEPTH*(NAME_MAX+1)+1];
+static char current_name[MAX_DEPTH*(MINIX_NAME_MAX+1)+1];
 
 #define MAGIC (Super.s_magic)
 
@@ -510,7 +510,7 @@ write_super_block(void) {
 		Super.s_state |= MINIX_ERROR_FS;
 	else
 		Super.s_state &= ~MINIX_ERROR_FS;
-	
+
 	if (MINIX_BLOCK_SIZE != lseek(IN, MINIX_BLOCK_SIZE, SEEK_SET))
 		die(_("seek failed in write_super_block"));
 	if (MINIX_BLOCK_SIZE != write(IN, super_block_buffer, MINIX_BLOCK_SIZE))
