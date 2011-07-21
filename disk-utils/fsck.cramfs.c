@@ -36,15 +36,6 @@
 /* compile-time options */
 //#define INCLUDE_FS_TESTS	/* include cramfs checking and extraction */
 
-/* Exit codes used by fsck-type programs */
-#define FSCK_OK			0	/* No errors */
-#define FSCK_NONDESTRUCT	1	/* File system errors corrected */
-#define FSCK_REBOOT		2	/* System should be rebooted */
-#define FSCK_UNCORRECTED	4	/* File system errors left uncorrected */
-#define FSCK_ERROR		8	/* Operational error */
-#define FSCK_USAGE		16	/* Usage or syntax error */
-#define FSCK_LIBRARY		128	/* Shared library error */
-
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -67,6 +58,7 @@
 #include "nls.h"
 #include "blkdev.h"
 #include "c.h"
+#include "exitcodes.h"
 
 #define XALLOC_EXIT_CODE FSCK_ERROR
 #include "xalloc.h"
