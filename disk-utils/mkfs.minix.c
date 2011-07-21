@@ -78,7 +78,6 @@
 #include <err.h>
 
 #include "blkdev.h"
-#include "minix.h"
 #include "minix_programs.h"
 #include "nls.h"
 #include "pathnames.h"
@@ -105,15 +104,12 @@ static char *inode_buffer = NULL;
 #define Inode (((struct minix_inode *) inode_buffer) - 1)
 #define Inode2 (((struct minix2_inode *) inode_buffer) - 1)
 
-static char *inode_map;
-static char *zone_map;
-
-static char * program_name = "mkfs";
-static char * device_name = NULL;
+static char *program_name = "mkfs";
+static char *device_name;
 static int DEV = -1;
-static unsigned long long BLOCKS = 0;
-static int check = 0;
-static int badblocks = 0;
+static unsigned long long BLOCKS;
+static int check;
+static int badblocks;
 
 /*
  * default (changed to 30, per Linus's
@@ -124,15 +120,19 @@ static int badblocks = 0;
 static int namelen = 30;
 static int dirsize = 32;
 static int magic = MINIX_SUPER_MAGIC2;
-static int version2 = 0;
+static int version2;
 
-static char root_block[MINIX_BLOCK_SIZE] = "\0";
+static char root_block[MINIX_BLOCK_SIZE];
 
 static char boot_block_buffer[512];
 
 static unsigned short good_blocks_table[MAX_GOOD_BLOCKS];
-static int used_good_blocks = 0;
-static unsigned long req_nr_inodes = 0;
+static int used_good_blocks;
+static unsigned long req_nr_inodes;
+
+
+static char *inode_map;
+static char *zone_map;
 
 #define zone_in_use(x) (isset(zone_map,(x)-get_first_zone()+1) != 0)
 

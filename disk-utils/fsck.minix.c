@@ -102,7 +102,6 @@
 #include <sys/stat.h>
 #include <signal.h>
 
-#include "minix.h"
 #include "minix_programs.h"
 #include "nls.h"
 #include "pathnames.h"
@@ -118,44 +117,43 @@ int fs_version = 1;
 char *super_block_buffer;
 
 
-static char *inode_buffer = NULL;
+static char *inode_buffer;
 
 #define Inode (((struct minix_inode *) inode_buffer) - 1)
 #define Inode2 (((struct minix2_inode *) inode_buffer) - 1)
 
-static char *inode_map;
-static char *zone_map;
-
-static char * program_name = "fsck.minix";
-static char * device_name = NULL;
+static char *program_name = "fsck.minix";
+static char *device_name;
 static int IN;
-static int repair=0, automatic=0, verbose=0, list=0, show=0, warn_mode=0, 
-	force=0;
-static int directory=0, regular=0, blockdev=0, chardev=0, links=0,
-		symlinks=0, total=0;
+static int repair, automatic, verbose, list, show, warn_mode, force;
+static int directory, regular, blockdev, chardev, links, symlinks, total;
 
-static int changed = 0; /* flags if the filesystem has been changed */
-static int errors_uncorrected = 0; /* flag if some error was not corrected */
+static int changed; /* flags if the filesystem has been changed */
+static int errors_uncorrected; /* flag if some error was not corrected */
 static int dirsize = 16;
 static int namelen = 14;
 static struct termios termios;
-static volatile sig_atomic_t termios_set = 0;
+static volatile sig_atomic_t termios_set;
 
 /* File-name data */
 #define MAX_DEPTH 50
-static int name_depth = 0;
-static char name_list[MAX_DEPTH][MINIX_NAME_MAX+1];
+static int name_depth;
+static char name_list[MAX_DEPTH][MINIX_NAME_MAX + 1];
+
 /* Copy of the previous, just for error reporting - see get_current_name */
 /* This is a waste of 12kB or so. */
-static char current_name[MAX_DEPTH*(MINIX_NAME_MAX+1)+1];
+static char current_name[MAX_DEPTH * (MINIX_NAME_MAX + 1) + 1];
 
 #define MAGIC (Super.s_magic)
 
-static unsigned char * inode_count = NULL;
-static unsigned char * zone_count = NULL;
+static unsigned char *inode_count = NULL;
+static unsigned char *zone_count = NULL;
 
 static void recursive_check(unsigned int ino);
 static void recursive_check2(unsigned int ino);
+
+static char *inode_map;
+static char *zone_map;
 
 #define inode_in_use(x) (isset(inode_map,(x)) != 0)
 #define zone_in_use(x) (isset(zone_map,(x)-get_first_zone()+1) != 0)
