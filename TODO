@@ -1,3 +1,10 @@
+
+lscpu
+-----
+
+  - add -o <list> to speficy output columns for -p options.
+    (the same thing we use for findmnt, lsblk, ...)
+
 dmesg
 -----
 
