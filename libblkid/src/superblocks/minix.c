@@ -11,38 +11,7 @@
 
 #include <string.h>
 #include "superblocks.h"
-
-struct minix_super_block {
-        uint16_t s_ninodes;
-        uint16_t s_nzones;
-        uint16_t s_imap_blocks;
-        uint16_t s_zmap_blocks;
-        uint16_t s_firstdatazone;
-        uint16_t s_log_zone_size;
-        uint32_t s_max_size;
-        uint16_t s_magic;
-        uint16_t s_state;
-        uint32_t s_zones;
-};
-
-struct minix3_super_block {
-	uint32_t s_ninodes;
-	uint16_t s_pad0;
-	uint16_t s_imap_blocks;
-	uint16_t s_zmap_blocks;
-	uint16_t s_firstdatazone;
-	uint16_t s_log_zone_size;
-	uint16_t s_pad1;
-	uint32_t s_max_size;
-	uint32_t s_zones;
-	uint16_t s_magic;
-	uint16_t s_pad2;
-	uint16_t s_blocksize;
-	uint8_t  s_disk_version;
-};
-
-#define MINIX_BLOCK_SIZE_BITS 10
-#define MINIX_BLOCK_SIZE (1 << MINIX_BLOCK_SIZE_BITS)
+#include "minix.h"
 
 static int probe_minix(blkid_probe pr, const struct blkid_idmag *mag)
 {

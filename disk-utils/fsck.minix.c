@@ -103,6 +103,7 @@
 #include <signal.h>
 
 #include "minix.h"
+#include "minix_programs.h"
 #include "nls.h"
 #include "pathnames.h"
 #include "bitops.h"
@@ -345,20 +346,20 @@ check_zone_nr2 (unsigned int *nr, int *corrected) {
 static void
 read_block(unsigned int nr, char * addr) {
 	if (!nr) {
-		memset(addr,0,BLOCK_SIZE);
+		memset(addr,0,MINIX_BLOCK_SIZE);
 		return;
 	}
-	if (BLOCK_SIZE*nr != lseek(IN, BLOCK_SIZE*nr, SEEK_SET)) {
+	if (MINIX_BLOCK_SIZE*nr != lseek(IN, MINIX_BLOCK_SIZE*nr, SEEK_SET)) {
 		get_current_name();
 		printf(_("Read error: unable to seek to block in file '%s'\n"),
 		       current_name);
-		memset(addr,0,BLOCK_SIZE);
+		memset(addr,0,MINIX_BLOCK_SIZE);
 		errors_uncorrected = 1;
-	} else if (BLOCK_SIZE != read(IN, addr, BLOCK_SIZE)) {
+	} else if (MINIX_BLOCK_SIZE != read(IN, addr, MINIX_BLOCK_SIZE)) {
 		get_current_name();
 		printf(_("Read error: bad block in file '%s'\n"),
 		       current_name);
-		memset(addr,0,BLOCK_SIZE);
+		memset(addr,0,MINIX_BLOCK_SIZE);
 		errors_uncorrected = 1;
 	}
 }
@@ -376,9 +377,9 @@ write_block(unsigned int nr, char * addr) {
 		errors_uncorrected = 1;
 		return;
 	}
-	if (BLOCK_SIZE*nr != lseek(IN, BLOCK_SIZE*nr, SEEK_SET))
+	if (MINIX_BLOCK_SIZE*nr != lseek(IN, MINIX_BLOCK_SIZE*nr, SEEK_SET))
 		die(_("seek failed in write_block"));
-	if (BLOCK_SIZE != write(IN, addr, BLOCK_SIZE)) {
+	if (MINIX_BLOCK_SIZE != write(IN, addr, MINIX_BLOCK_SIZE)) {
 		get_current_name();
 		printf(_("Write error: bad block in file '%s'\n"),
 		       current_name);
@@ -393,8 +394,8 @@ write_block(unsigned int nr, char * addr) {
  */
 static int
 map_block(struct minix_inode * inode, unsigned int blknr) {
-	unsigned short ind[BLOCK_SIZE>>1];
-	unsigned short dind[BLOCK_SIZE>>1];
+	unsigned short ind[MINIX_BLOCK_SIZE>>1];
+	unsigned short dind[MINIX_BLOCK_SIZE>>1];
 	int blk_chg, block, result;
 
 	if (blknr<7)
@@ -427,9 +428,9 @@ map_block(struct minix_inode * inode, unsigned int blknr) {
 
 static int
 map_block2 (struct minix2_inode *inode, unsigned int blknr) {
-  	unsigned int ind[BLOCK_SIZE >> 2];
-	unsigned int dind[BLOCK_SIZE >> 2];
-	unsigned int tind[BLOCK_SIZE >> 2];
+	unsigned int ind[MINIX_BLOCK_SIZE >> 2];
+	unsigned int dind[MINIX_BLOCK_SIZE >> 2];
+	unsigned int tind[MINIX_BLOCK_SIZE >> 2];
 	int blk_chg, block, result;
 
 	if (blknr < 7)
@@ -495,9 +496,9 @@ write_super_block(void) {
 	else
 		Super.s_state &= ~MINIX_ERROR_FS;
 	
-	if (BLOCK_SIZE != lseek(IN, BLOCK_SIZE, SEEK_SET))
+	if (MINIX_BLOCK_SIZE != lseek(IN, MINIX_BLOCK_SIZE, SEEK_SET))
 		die(_("seek failed in write_super_block"));
-	if (BLOCK_SIZE != write(IN, super_block_buffer, BLOCK_SIZE))
+	if (MINIX_BLOCK_SIZE != write(IN, super_block_buffer, MINIX_BLOCK_SIZE))
 		die(_("unable to write super-block"));
 
 	return;
@@ -510,9 +511,9 @@ write_tables(void) {
 	unsigned long imaps = get_nimaps();
 	unsigned long zmaps = get_nzmaps();
 
-	if (imaps*BLOCK_SIZE != write(IN,inode_map, imaps*BLOCK_SIZE))
+	if (imaps*MINIX_BLOCK_SIZE != write(IN,inode_map, imaps*MINIX_BLOCK_SIZE))
 		die(_("Unable to write inode map"));
-	if (zmaps*BLOCK_SIZE != write(IN,zone_map, zmaps*BLOCK_SIZE))
+	if (zmaps*MINIX_BLOCK_SIZE != write(IN,zone_map, zmaps*MINIX_BLOCK_SIZE))
 		die(_("Unable to write zone map"));
 	if (buffsz != write(IN,inode_buffer, buffsz))
 		die(_("Unable to write inodes"));
@@ -521,7 +522,7 @@ write_tables(void) {
 static void
 get_dirsize (void) {
 	int block;
-	char blk[BLOCK_SIZE];
+	char blk[MINIX_BLOCK_SIZE];
 	int size;
 
 	if (fs_version == 2)
@@ -529,7 +530,7 @@ get_dirsize (void) {
 	else
 		block = Inode[ROOT_INO].i_zone[0];
 	read_block (block, blk);
-	for (size = 16; size < BLOCK_SIZE; size <<= 1) {
+	for (size = 16; size < MINIX_BLOCK_SIZE; size <<= 1) {
 		if (strcmp (blk + size + 2, "..") == 0) {
 			dirsize = size;
 			namelen = size - 2;
@@ -541,14 +542,14 @@ get_dirsize (void) {
 
 static void
 read_superblock(void) {
-	if (BLOCK_SIZE != lseek(IN, BLOCK_SIZE, SEEK_SET))
+	if (MINIX_BLOCK_SIZE != lseek(IN, MINIX_BLOCK_SIZE, SEEK_SET))
 		die(_("seek failed"));
 
-	super_block_buffer = calloc(1, BLOCK_SIZE);
+	super_block_buffer = calloc(1, MINIX_BLOCK_SIZE);
 	if (!super_block_buffer)
 		die(_("unable to alloc buffer for superblock"));
 
-	if (BLOCK_SIZE != read(IN, super_block_buffer, BLOCK_SIZE))
+	if (MINIX_BLOCK_SIZE != read(IN, super_block_buffer, MINIX_BLOCK_SIZE))
 		die(_("unable to read super block"));
 	if (MAGIC == MINIX_SUPER_MAGIC) {
 		namelen = 14;
@@ -568,11 +569,11 @@ read_superblock(void) {
 		fs_version = 2;
 	} else
 		die(_("bad magic number in super-block"));
-	if (get_zone_size() != 0 || BLOCK_SIZE != 1024)
+	if (get_zone_size() != 0 || MINIX_BLOCK_SIZE != 1024)
 		die(_("Only 1k blocks/zones supported"));
-	if (get_nimaps() * BLOCK_SIZE * 8 < get_ninodes() + 1)
+	if (get_nimaps() * MINIX_BLOCK_SIZE * 8 < get_ninodes() + 1)
 		die(_("bad s_imap_blocks field in super-block"));
-	if (get_nzmaps() * BLOCK_SIZE * 8 < get_nzones() - get_first_zone() + 1)
+	if (get_nzmaps() * MINIX_BLOCK_SIZE * 8 < get_nzones() - get_first_zone() + 1)
 		die(_("bad s_zmap_blocks field in super-block"));
 }
 
@@ -586,10 +587,10 @@ read_tables(void) {
 	unsigned long imaps = get_nimaps();
 	unsigned long zmaps = get_nzmaps();
 
-	inode_map = malloc(imaps * BLOCK_SIZE);
+	inode_map = malloc(imaps * MINIX_BLOCK_SIZE);
 	if (!inode_map)
 		die(_("Unable to allocate buffer for inode map"));
-	zone_map = malloc(zmaps * BLOCK_SIZE);
+	zone_map = malloc(zmaps * MINIX_BLOCK_SIZE);
 	if (!inode_map)
 		die(_("Unable to allocate buffer for zone map"));
 	memset(inode_map,0,sizeof(inode_map));
@@ -603,9 +604,9 @@ read_tables(void) {
 	zone_count = malloc(zones);
 	if (!zone_count)
 		die(_("Unable to allocate buffer for zone count"));
-	if (imaps*BLOCK_SIZE != read(IN,inode_map,imaps*BLOCK_SIZE))
+	if (imaps*MINIX_BLOCK_SIZE != read(IN,inode_map,imaps*MINIX_BLOCK_SIZE))
 		die(_("Unable to read inode map"));
-	if (zmaps*BLOCK_SIZE != read(IN,zone_map, zmaps*BLOCK_SIZE))
+	if (zmaps*MINIX_BLOCK_SIZE != read(IN,zone_map, zmaps*MINIX_BLOCK_SIZE))
 		die(_("Unable to read zone map"));
 	if (buffsz != read(IN,inode_buffer, buffsz))
 		die(_("Unable to read inodes"));
@@ -618,7 +619,7 @@ read_tables(void) {
 		printf(_("%ld inodes\n"), inodes);
 		printf(_("%ld blocks\n"), zones);
 		printf(_("Firstdatazone=%ld (%ld)\n"), first_zone, norm_first_zone);
-		printf(_("Zonesize=%d\n"),BLOCK_SIZE<<get_zone_size());
+		printf(_("Zonesize=%d\n"),MINIX_BLOCK_SIZE<<get_zone_size());
 		printf(_("Maxsize=%ld\n"), get_max_size());
 		printf(_("Filesystem state=%d\n"), Super.s_state);
 		printf(_("namelen=%d\n\n"),namelen);
@@ -804,7 +805,7 @@ add_zone2 (unsigned int *znr, int *corrected) {
 
 static void
 add_zone_ind(unsigned short * znr, int * corrected) {
-	static char blk[BLOCK_SIZE];
+	static char blk[MINIX_BLOCK_SIZE];
 	int i, chg_blk=0;
 	int block;
 
@@ -812,7 +813,7 @@ add_zone_ind(unsigned short * znr, int * corrected) {
 	if (!block)
 		return;
 	read_block(block, blk);
-	for (i=0 ; i < (BLOCK_SIZE>>1) ; i++)
+	for (i=0 ; i < (MINIX_BLOCK_SIZE>>1) ; i++)
 		add_zone(i + (unsigned short *) blk, &chg_blk);
 	if (chg_blk)
 		write_block(block, blk);
@@ -820,7 +821,7 @@ add_zone_ind(unsigned short * znr, int * corrected) {
 
 static void
 add_zone_ind2 (unsigned int *znr, int *corrected) {
-	static char blk[BLOCK_SIZE];
+	static char blk[MINIX_BLOCK_SIZE];
 	int i, chg_blk = 0;
 	int block;
 
@@ -828,7 +829,7 @@ add_zone_ind2 (unsigned int *znr, int *corrected) {
 	if (!block)
 		return;
 	read_block (block, blk);
-	for (i = 0; i < BLOCK_SIZE >> 2; i++)
+	for (i = 0; i < MINIX_BLOCK_SIZE >> 2; i++)
 		add_zone2 (i + (unsigned int *) blk, &chg_blk);
 	if (chg_blk)
 		write_block (block, blk);
@@ -836,7 +837,7 @@ add_zone_ind2 (unsigned int *znr, int *corrected) {
 
 static void
 add_zone_dind(unsigned short * znr, int * corrected) {
-	static char blk[BLOCK_SIZE];
+	static char blk[MINIX_BLOCK_SIZE];
 	int i, blk_chg=0;
 	int block;
 
@@ -844,7 +845,7 @@ add_zone_dind(unsigned short * znr, int * corrected) {
 	if (!block)
 		return;
 	read_block(block, blk);
-	for (i=0 ; i < (BLOCK_SIZE>>1) ; i++)
+	for (i=0 ; i < (MINIX_BLOCK_SIZE>>1) ; i++)
 		add_zone_ind(i + (unsigned short *) blk, &blk_chg);
 	if (blk_chg)
 		write_block(block, blk);
@@ -852,7 +853,7 @@ add_zone_dind(unsigned short * znr, int * corrected) {
 
 static void
 add_zone_dind2 (unsigned int *znr, int *corrected) {
-	static char blk[BLOCK_SIZE];
+	static char blk[MINIX_BLOCK_SIZE];
 	int i, blk_chg = 0;
 	int block;
 
@@ -860,7 +861,7 @@ add_zone_dind2 (unsigned int *znr, int *corrected) {
 	if (!block)
 		return;
 	read_block (block, blk);
-	for (i = 0; i < BLOCK_SIZE >> 2; i++)
+	for (i = 0; i < MINIX_BLOCK_SIZE >> 2; i++)
 		add_zone_ind2 (i + (unsigned int *) blk, &blk_chg);
 	if (blk_chg)
 		write_block (block, blk);
@@ -868,7 +869,7 @@ add_zone_dind2 (unsigned int *znr, int *corrected) {
 
 static void
 add_zone_tind2 (unsigned int *znr, int *corrected) {
-	static char blk[BLOCK_SIZE];
+	static char blk[MINIX_BLOCK_SIZE];
 	int i, blk_chg = 0;
 	int block;
 
@@ -876,7 +877,7 @@ add_zone_tind2 (unsigned int *znr, int *corrected) {
 	if (!block)
 		return;
 	read_block (block, blk);
-	for (i = 0; i < BLOCK_SIZE >> 2; i++)
+	for (i = 0; i < MINIX_BLOCK_SIZE >> 2; i++)
 		add_zone_dind2 (i + (unsigned int *) blk, &blk_chg);
 	if (blk_chg)
 		write_block (block, blk);
@@ -921,15 +922,15 @@ check_zones2 (unsigned int i) {
 
 static void
 check_file(struct minix_inode * dir, unsigned int offset) {
-	static char blk[BLOCK_SIZE];
+	static char blk[MINIX_BLOCK_SIZE];
 	struct minix_inode * inode;
 	int ino;
 	char * name;
 	int block;
 
-	block = map_block(dir,offset/BLOCK_SIZE);
+	block = map_block(dir,offset/MINIX_BLOCK_SIZE);
 	read_block(block, blk);
-	name = blk + (offset % BLOCK_SIZE) + 2;
+	name = blk + (offset % MINIX_BLOCK_SIZE) + 2;
 	ino = * (unsigned short *) (name-2);
 	if (ino > get_ninodes()) {
 		get_current_name();
@@ -988,15 +989,15 @@ check_file(struct minix_inode * dir, unsigned int offset) {
 
 static void
 check_file2 (struct minix2_inode *dir, unsigned int offset) {
-	static char blk[BLOCK_SIZE];
+	static char blk[MINIX_BLOCK_SIZE];
 	struct minix2_inode *inode;
 	int ino;
 	char *name;
 	int block;
 
-	block = map_block2 (dir, offset / BLOCK_SIZE);
+	block = map_block2 (dir, offset / MINIX_BLOCK_SIZE);
 	read_block (block, blk);
-	name = blk + (offset % BLOCK_SIZE) + 2;
+	name = blk + (offset % MINIX_BLOCK_SIZE) + 2;
 	ino = *(unsigned short *) (name - 2);
 	if (ino > get_ninodes()) {
 		get_current_name();
@@ -1093,9 +1094,9 @@ static int
 bad_zone(int i) {
 	char buffer[1024];
 
-	if (BLOCK_SIZE*i != lseek(IN, BLOCK_SIZE*i, SEEK_SET))
+	if (MINIX_BLOCK_SIZE*i != lseek(IN, MINIX_BLOCK_SIZE*i, SEEK_SET))
 		die(_("seek failed in bad_zone"));
-	return (BLOCK_SIZE != read(IN, buffer, BLOCK_SIZE));
+	return (MINIX_BLOCK_SIZE != read(IN, buffer, MINIX_BLOCK_SIZE));
 }
 
 static void
@@ -1247,9 +1248,9 @@ main(int argc, char ** argv) {
 		exit(0);
 	}
 
-	if (INODE_SIZE * MINIX_INODES_PER_BLOCK != BLOCK_SIZE)
+	if (INODE_SIZE * MINIX_INODES_PER_BLOCK != MINIX_BLOCK_SIZE)
 		die(_("bad inode size"));
-	if (INODE2_SIZE * MINIX2_INODES_PER_BLOCK != BLOCK_SIZE)
+	if (INODE2_SIZE * MINIX2_INODES_PER_BLOCK != MINIX_BLOCK_SIZE)
 		die(_("bad v2 inode size"));
 
 	while (argc-- > 1) {

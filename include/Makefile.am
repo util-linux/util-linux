@@ -19,6 +19,7 @@ dist_noinst_HEADERS = \
 	mangle.h \
 	mbsalign.h \
 	md5.h \
+	minix.h \
 	nls.h \
 	pathnames.h \
 	procutils.h \
