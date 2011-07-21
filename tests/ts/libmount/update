@@ -34,6 +34,7 @@ $TESTPROG --add /dev/sda1 /mnt/foo ext3 "rw,bbb,ccc,fff=FFF,ddd,noexec"
 $TESTPROG --add /dev/sdb1 /mnt/bar ext3 "gg=G,ffff=f,ro,noatime"
 $TESTPROG --add /dev/sda2 /mnt/bar ext3 "rw,noatime"
 $TESTPROG --add /dev/sda1 /mnt/gogo ext3 "rw,noatime,nosuid"
+$TESTPROG --add none /proc proc defaults
 cp $LIBMOUNT_MTAB $TS_OUTPUT	# save the mtab aside
 ts_finalize_subtest		# checks the mtab
 
@@ -52,6 +53,7 @@ ts_finalize_subtest		# checks the mtab
 ts_init_subtest "mtab-umount"
 $TESTPROG --remove /mnt/bar
 $TESTPROG --remove /mnt/gogo
+$TESTPROG --remove /proc
 cp $LIBMOUNT_MTAB $TS_OUTPUT	# save the mtab aside
 ts_finalize_subtest		# checks the mtab
 
@@ -69,6 +71,7 @@ ts_init_subtest "utab-mount"
 $TESTPROG --add /dev/sda1 /mnt/foo ext3 "rw,bbb,ccc,fff=FFF,ddd,noexec"
 $TESTPROG --add /dev/sdb1 /mnt/bar ext3 "ro,user"
 $TESTPROG --add /dev/sda2 /mnt/xyz ext3 "rw,loop=/dev/loop0,uhelper=hal"
+$TESTPROG --add none /proc proc "rw,user"
 cp $LIBMOUNT_UTAB $TS_OUTPUT	# save the mtab aside
 ts_finalize_subtest		# checks the mtab
 
@@ -86,6 +89,7 @@ ts_finalize_subtest		# checks the mtab
 
 ts_init_subtest "utab-umount"
 $TESTPROG --remove /mnt/newbar
+$TESTPROG --remove /proc
 cp $LIBMOUNT_UTAB $TS_OUTPUT	# save the mtab aside
 ts_finalize_subtest		# checks the mtab
 
