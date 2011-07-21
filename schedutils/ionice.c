@@ -42,33 +42,41 @@ enum {
 	IOPRIO_WHO_USER,
 };
 
-#define IOPRIO_CLASS_SHIFT	13
+#define IOPRIO_CLASS_SHIFT	(13)
+#define IOPRIO_PRIO_MASK	((1UL << IOPRIO_CLASS_SHIFT) - 1)
 
-const char *to_prio[] = { "none", "realtime", "best-effort", "idle", };
+#define IOPRIO_PRIO_CLASS(mask)	((mask) >> IOPRIO_CLASS_SHIFT)
+#define IOPRIO_PRIO_DATA(mask)	((mask) & IOPRIO_PRIO_MASK)
+#define IOPRIO_PRIO_VALUE(class, data)	(((class) << IOPRIO_CLASS_SHIFT) | data)
+
+const char *to_prio[] = {
+	[IOPRIO_CLASS_NONE] = "none",
+	[IOPRIO_CLASS_RT]   = "realtime",
+	[IOPRIO_CLASS_BE]   = "best-effort",
+	[IOPRIO_CLASS_IDLE] = "idle"
+};
 
 static void ioprio_print(int pid)
 {
-	int ioprio, ioclass;
-
-	ioprio = ioprio_get(IOPRIO_WHO_PROCESS, pid);
+	int ioprio = ioprio_get(IOPRIO_WHO_PROCESS, pid);
 
 	if (ioprio == -1)
 		err(EXIT_FAILURE, _("ioprio_get failed"));
 	else {
-		ioclass = ioprio >> IOPRIO_CLASS_SHIFT;
-		if (ioclass != IOPRIO_CLASS_IDLE) {
-			ioprio = ioprio & 0xff;
-			printf("%s: prio %d\n", to_prio[ioclass], ioprio);
-		} else
+		int ioclass = IOPRIO_PRIO_CLASS(ioprio);
+
+		if (ioclass != IOPRIO_CLASS_IDLE)
+			printf("%s: prio %lu\n", to_prio[ioclass],
+					IOPRIO_PRIO_DATA(ioprio));
+		else
 			printf("%s\n", to_prio[ioclass]);
 	}
 }
 
-
-static void ioprio_setpid(pid_t pid, int ioprio, int ioclass)
+static void ioprio_setpid(pid_t pid, int ioclass, int data)
 {
 	int rc = ioprio_set(IOPRIO_WHO_PROCESS, pid,
-			ioprio | ioclass << IOPRIO_CLASS_SHIFT);
+			    IOPRIO_PRIO_VALUE(ioclass, data));
 
 	if (rc == -1 && !tolerant)
 		err(EXIT_FAILURE, _("ioprio_set failed"));
@@ -100,7 +108,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 int main(int argc, char *argv[])
 {
-	int ioprio = 4, set = 0, ioclass = IOPRIO_CLASS_BE, c;
+	int data = 4, set = 0, ioclass = IOPRIO_CLASS_BE, c;
 	pid_t pid = 0;
 
 	static const struct option longopts[] = {
@@ -120,7 +128,7 @@ int main(int argc, char *argv[])
 	while ((c = getopt_long(argc, argv, "+n:c:p:tVh", longopts, NULL)) != EOF) {
 		switch (c) {
 		case 'n':
-			ioprio = strtol_or_err(optarg, _("failed to parse class data"));
+			data = strtol_or_err(optarg, _("failed to parse class data"));
 			set |= 1;
 			break;
 		case 'c':
@@ -148,7 +156,7 @@ int main(int argc, char *argv[])
 		case IOPRIO_CLASS_NONE:
 			if (set & 1)
 				warnx(_("ignoring given class data for none class"));
-			ioprio = 0;
+			data = 0;
 			break;
 		case IOPRIO_CLASS_RT:
 		case IOPRIO_CLASS_BE:
@@ -156,7 +164,7 @@ int main(int argc, char *argv[])
 		case IOPRIO_CLASS_IDLE:
 			if (set & 1)
 				warnx(_("ignoring given class data for idle class"));
-			ioprio = 7;
+			data = 7;
 			break;
 		default:
 			errx(EXIT_FAILURE, _("bad prio class %d"), ioclass);
@@ -171,16 +179,15 @@ int main(int argc, char *argv[])
 		}
 	} else {
 		if (pid) {
-			ioprio_setpid(pid, ioprio, ioclass);
+			ioprio_setpid(pid, ioclass, data);
 
-			for(; argv[optind]; ++optind)
-			{
+			for(; argv[optind]; ++optind) {
 				pid = strtol_or_err(argv[optind], _("failed to parse pid"));
-				ioprio_setpid(pid, ioprio, ioclass);
+				ioprio_setpid(pid, ioclass, data);
 			}
 		}
 		else if (argv[optind]) {
-			ioprio_setpid(0, ioprio, ioclass);
+			ioprio_setpid(0, ioclass, data);
 			execvp(argv[optind], &argv[optind]);
 			/* execvp should never return */
 			err(EXIT_FAILURE, _("executing %s failed"), argv[optind]);
