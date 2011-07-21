@@ -106,7 +106,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
 	int data = 4, set = 0, ioclass = IOPRIO_CLASS_BE, c;
 	pid_t pid = 0;
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "+n:c:p:tVh", longopts, NULL)) != EOF) {
+	while ((c = getopt_long(argc, argv, "+n:c:p:tVh", longopts, NULL)) != EOF)
 		switch (c) {
 		case 'n':
 			data = strtol_or_err(optarg, _("failed to parse class data"));
@@ -144,13 +144,12 @@ int main(int argc, char *argv[])
 		case 'V':
 			printf(_("%s from %s\n"),
 				program_invocation_short_name, PACKAGE_STRING);
-			exit(EXIT_SUCCESS);
+			return EXIT_SUCCESS;
 		case 'h':
 			usage(stdout);
 		default:
 			usage(stderr);
 		}
-	}
 
 	if (!set && !pid && optind == argc)
 		errx(EXIT_FAILURE, _("PID or COMMAND not specified"));
@@ -198,5 +197,5 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	exit(EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }
