@@ -736,17 +736,15 @@ int main(int argc, char **argv)
 			opt_edition = strtoll_or_err(optarg, _("edition number argument failed"));
 			break;
 		case 'N':
-			if (strcmp(optarg, "big") == 0)  {
+			if (strcmp(optarg, "big") == 0)
 				cramfs_is_big_endian = 1;
-			}
-			else if (strcmp(optarg, "little") == 0) {
+			else if (strcmp(optarg, "little") == 0)
 				cramfs_is_big_endian = 0;
-			}
-			else if (strcmp(optarg, "host") == 0);	/* default */
+			else if (strcmp(optarg, "host") == 0)
+				/* default */ ;
 			else
 				errx(MKFS_USAGE, _("invalid endianness given."
 						   " Must be 'big', 'little', or 'host'"));
-
 			break;
 		case 'i':
 			opt_image = optarg;
@@ -766,7 +764,7 @@ int main(int argc, char **argv)
 			/* old option, ignored */
 			break;
 		case 'V':
-			printf(_("%s (%s)\n"),
+			printf(_("%s from %s\n"),
 			       program_invocation_short_name, PACKAGE_STRING);
 			exit(MKFS_OK);
 		case 'v':
@@ -883,32 +881,34 @@ int main(int argc, char **argv)
 		errx(MKFS_ERROR, _("ROM image write failed (%zd %zd)"),
 			written, offset);
 
-	/* (These warnings used to come at the start, but they scroll off the
-	   screen too quickly.) */
-	if (warn_namelen) /* (can't happen when reading from ext2fs) */
-		warnx(/* bytes, not chars: think UTF8. */
-			_("warning: filenames truncated to 255 bytes."));
+	/*
+	 * (These warnings used to come at the start, but they scroll off
+	 * the screen too quickly.)
+	 */
+	if (warn_namelen)
+		/* Can't happen when reading from ext2fs. */
+		/* Bytes, not chars: think UTF8. */
+		warnx(_("warning: filenames truncated to 255 bytes."));
 	if (warn_skip)
-		warnx(	_("warning: files were skipped due to errors."));
+		warnx(_("warning: files were skipped due to errors."));
 	if (warn_size)
-		warnx(	_("warning: file sizes truncated to %luMB "
-			  "(minus 1 byte)."),
-			1L << (CRAMFS_SIZE_WIDTH - 20));
-	if (warn_uid) /* (not possible with current Linux versions) */
-		warnx(	_("warning: uids truncated to %u bits.  "
-			  "(This may be a security concern.)"),
-			CRAMFS_UID_WIDTH);
+		warnx(_("warning: file sizes truncated to %luMB "
+			"(minus 1 byte)."), 1L << (CRAMFS_SIZE_WIDTH - 20));
+	if (warn_uid)
+		/* (not possible with current Linux versions) */
+		warnx(_("warning: uids truncated to %u bits.  "
+			"(This may be a security concern.)"), CRAMFS_UID_WIDTH);
 	if (warn_gid)
-		warnx(	_("warning: gids truncated to %u bits.  "
-			  "(This may be a security concern.)"),
-			CRAMFS_GID_WIDTH);
+		warnx(_("warning: gids truncated to %u bits.  "
+			"(This may be a security concern.)"), CRAMFS_GID_WIDTH);
 	if (warn_dev)
-		warnx(	_("WARNING: device numbers truncated to %u bits.  "
-			  "This almost certainly means\n"
-			  "that some device files will be wrong."),
-			CRAMFS_OFFSET_WIDTH);
+		warnx(_("WARNING: device numbers truncated to %u bits.  "
+			"This almost certainly means\n"
+			"that some device files will be wrong."),
+		      CRAMFS_OFFSET_WIDTH);
 	if (opt_errors &&
 	    (warn_namelen|warn_skip|warn_size|warn_uid|warn_gid|warn_dev))
 		exit(MKFS_ERROR);
+
 	return EXIT_SUCCESS;
 }
