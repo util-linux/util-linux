@@ -459,7 +459,7 @@ map_block2 (struct minix2_inode *inode, unsigned int blknr) {
 		return result;
 	}
 	blknr -= 256;
-	if (blknr >= 256 * 256) {
+	if (blknr < 256 * 256) {
 		block = check_zone_nr2 (inode->i_zone + 8, &changed);
 		read_block (block, (char *) dind);
 		blk_chg = 0;
