@@ -1,7 +1,7 @@
 /*
  * lsblk(8) - list block devices
  *
- * Copyright (C) 2010 Red Hat, Inc. All rights reserved.
+ * Copyright (C) 2010,2011 Red Hat, Inc. All rights reserved.
  * Written by Milan Broz <mbroz@redhat.com>
  *            Karel Zak <kzak@redhat.com>
  *
@@ -267,6 +267,9 @@ static char *get_device_mountpoint(struct blkdev_cxt *cxt)
 {
 	int fl = 0;
 	char mnt[PATH_MAX];
+
+	assert(cxt);
+	assert(cxt->filename);
 
 	*mnt = '\0';
 
@@ -642,14 +645,22 @@ static int set_cxt(struct blkdev_cxt *cxt,
 	cxt->partition = partition;
 
 	cxt->filename = get_device_path(cxt);
+	if (!cxt->filename) {
+		warnx(_("%s: failed to get device path"), name);
+		return -1;
+	}
 
 	devno = sysfs_devname_to_devno(name,
 			partition && parent ? parent->name : NULL);
-	if (!devno)
-		err(EXIT_FAILURE, _("%s: unknown device name"), name);
+	if (!devno) {
+		warnx(_("%s: unknown device name"), name);
+		return -1;
+	}
 
-	if (sysfs_init(&cxt->sysfs, devno, &parent->sysfs))
-		err(EXIT_FAILURE, _("%s: failed to initialize sysfs handler"), name);
+	if (sysfs_init(&cxt->sysfs, devno, parent ? &parent->sysfs : NULL)) {
+		warnx(_("%s: failed to initialize sysfs handler"), name);
+		return -1;
+	}
 
 	cxt->maj = major(devno);
 	cxt->min = minor(devno);
@@ -665,8 +676,10 @@ static int set_cxt(struct blkdev_cxt *cxt,
 
 	if (is_dm(name)) {
 		cxt->dm_name = sysfs_strdup(&cxt->sysfs, "dm/name");
-		if (!cxt->dm_name)
-			err(XALLOC_EXIT_CODE, _("cannot duplicate string"));
+		if (!cxt->dm_name) {
+			warnx(_("%s: failed to get dm name"), name);
+			return -1;
+		}
 	}
 	cxt->nholders = sysfs_count_dirents(&cxt->sysfs, "holders") +
 			sysfs_count_partitions(&cxt->sysfs, name);
@@ -702,7 +715,10 @@ static int list_holders(struct blkdev_cxt *cxt)
 		if (!sysfs_is_partition_dirent(dir, d, cxt->name))
 			continue;
 
-		set_cxt(&holder, cxt, d->d_name, 1);
+		if (set_cxt(&holder, cxt, d->d_name, 1)) {
+			reset_blkdev_cxt(&holder);
+			continue;
+		}
 		print_device(&holder, cxt->tt_line);
 		list_holders(&holder);
 		reset_blkdev_cxt(&holder);
@@ -715,7 +731,10 @@ static int list_holders(struct blkdev_cxt *cxt)
 		return 0;
 
 	while ((d = xreaddir(dir))) {
-		set_cxt(&holder, cxt, d->d_name, 0);
+		if (set_cxt(&holder, cxt, d->d_name, 0)) {
+			reset_blkdev_cxt(&holder);
+			continue;
+		}
 		print_device(&holder, cxt->tt_line);
 		list_holders(&holder);
 		reset_blkdev_cxt(&holder);
@@ -736,7 +755,6 @@ static int iterate_block_devices(void)
 		return EXIT_FAILURE;
 
 	while ((d = xreaddir(dir))) {
-
 		if (set_cxt(&cxt, NULL, d->d_name, 0))
 			goto next;
 
@@ -762,8 +780,9 @@ static int process_one_device(char *devname)
 {
 	struct blkdev_cxt parent = {}, cxt = {};
 	struct stat st;
-	char buf[PATH_MAX + 1];
+	char buf[PATH_MAX + 1], *diskname = NULL;
 	dev_t disk = 0;
+	int status = EXIT_FAILURE;
 
 	if (stat(devname, &st) || !S_ISBLK(st.st_mode)) {
 		warnx(_("%s: not a block device"), devname);
@@ -773,46 +792,52 @@ static int process_one_device(char *devname)
 		warn(_("%s: failed to get whole-list devno"), devname);
 		return EXIT_FAILURE;
 	}
-	if (st.st_rdev == disk)
+	if (st.st_rdev == disk) {
 		/*
 		 * unpartitioned device
 		 */
-		set_cxt(&cxt, NULL, buf, 0);
-	else {
+		if (set_cxt(&cxt, NULL, buf, 0))
+			goto leave;
+	} else {
 		/*
 		 * Parititioned, read sysfs name of the device
 		 */
 		ssize_t len;
-		char path[PATH_MAX], *diskname, *name;
+		char path[PATH_MAX], *name;
 
-		if (!sysfs_devno_path(st.st_rdev, path, sizeof(path)))
-			err(EXIT_FAILURE, _("failed to compose sysfs path for %s"), devname);
+		if (!sysfs_devno_path(st.st_rdev, path, sizeof(path))) {
+			warn(_("failed to compose sysfs path for %s"), devname);
+			goto leave;
+		}
 
 		diskname = xstrdup(buf);
 		len = readlink(path, buf, PATH_MAX);
 		if (len < 0) {
 			warn(_("%s: failed to read link"), path);
-			return EXIT_FAILURE;
+			goto leave;
 		}
 		buf[len] = '\0';
 
 		/* sysfs device name */
 		name = strrchr(buf, '/') + 1;
 
-		set_cxt(&parent, NULL, diskname, 0);
-		set_cxt(&cxt, &parent, name, 1);
-
-		free(diskname);
+		if (set_cxt(&parent, NULL, diskname, 0))
+			goto leave;
+		if (set_cxt(&cxt, &parent, name, 1))
+			goto leave;
 	}
 
 	print_device(&cxt, NULL);
 	list_holders(&cxt);
+	status = EXIT_SUCCESS;
+leave:
+	free(diskname);
 	reset_blkdev_cxt(&cxt);
 
 	if (st.st_rdev != disk)
 		reset_blkdev_cxt(&parent);
 
-	return EXIT_SUCCESS;
+	return status;
 }
 
 static void parse_excludes(const char *str)
