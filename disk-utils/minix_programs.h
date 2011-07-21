@@ -6,13 +6,18 @@
 /*
  * Global variables.
  */
-static int fs_version = 1;	/* this default value needs to change in a near future */
+extern int fs_version;
+extern char *super_block_buffer;
 
-static char *super_block_buffer;
-static char *inode_buffer = NULL;
+#define Super (*(struct minix_super_block *) super_block_buffer)
+#define Super3 (*(struct minix3_super_block *) super_block_buffer)
 
-static char *inode_map;
-static char *zone_map;
+#define INODE_SIZE (sizeof(struct minix_inode))
+#define INODE2_SIZE (sizeof(struct minix2_inode))
+
+#define BITS_PER_BLOCK (MINIX_BLOCK_SIZE << 3)
+
+#define UPPER(size,n) ((size+((n)-1))/(n))
 
 /*
  * Inline functions.

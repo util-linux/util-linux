@@ -78,20 +78,4 @@ struct minix3_super_block {
 #define MINIX2_SUPER_MAGIC2  0x2478	     /* minix V2 fs, 30 char names */
 #define MINIX3_SUPER_MAGIC   0x4d5a          /* minix V3 fs (60 char names) */
 
-#define Inode (((struct minix_inode *) inode_buffer)-1)
-#define Inode2 (((struct minix2_inode *) inode_buffer)-1)
-
-#define INODE_SIZE (sizeof(struct minix_inode))
-#define INODE2_SIZE (sizeof(struct minix2_inode))
-
-#define BITS_PER_BLOCK (MINIX_BLOCK_SIZE<<3)
-
-#define UPPER(size,n) ((size+((n)-1))/(n))
-
-/*
- * wrappers to different superblock attributes
- */
-#define Super (*(struct minix_super_block *)super_block_buffer)
-#define Super3 (*(struct minix3_super_block *)super_block_buffer)
-
 #endif /* UTIL_LINUX_MINIX_H */

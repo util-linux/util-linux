@@ -111,6 +111,21 @@
 
 #define ROOT_INO 1
 
+/*
+ * Global variables used in minix_programs.h inline fuctions
+ */
+int fs_version = 1;
+char *super_block_buffer;
+
+
+static char *inode_buffer = NULL;
+
+#define Inode (((struct minix_inode *) inode_buffer) - 1)
+#define Inode2 (((struct minix2_inode *) inode_buffer) - 1)
+
+static char *inode_map;
+static char *zone_map;
+
 static char * program_name = "fsck.minix";
 static char * device_name = NULL;
 static int IN;
