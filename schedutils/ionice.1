@@ -25,6 +25,11 @@ This program sets or gets the io scheduling class and priority for a program.
 If no arguments or just \fB\-p\fR is given, \fBionice\fR will query the current
 io scheduling class and priority for that process.
 
+If no class is given than
+.I COMMAND
+will be executed with "best effort" scheduling class. The default
+priority argument is 4.
+
 As of this writing, a process can be in one of three scheduling classes:
 .IP "\fBIdle\fP"
 A program running with idle io priority will only get disk time when no other

@@ -151,11 +151,6 @@ int main(int argc, char **argv)
 			usage(stderr);
 		}
 
-	if (!set && !pid && optind == argc)
-		errx(EXIT_FAILURE, _("PID or COMMAND not specified"));
-	if (!set && !pid)
-		errx(EXIT_FAILURE, _("scheduling for the COMMAND not specified"));
-
 	switch (ioclass) {
 		case IOPRIO_CLASS_NONE:
 			if (set & 1)
@@ -174,28 +169,42 @@ int main(int argc, char **argv)
 			errx(EXIT_FAILURE, _("bad prio class %d"), ioclass);
 	}
 
-	if (!set) {
+	if (!set && !pid && optind == argc)
+		/*
+		 * ionice without options, print the current ioprio
+		 */
+		ioprio_print(0);
+
+	else if (!set && pid) {
+		/*
+		 * ionice -p PID [PID ...]
+		 */
 		ioprio_print(pid);
 
 		for(; argv[optind]; ++optind) {
 			pid = strtol_or_err(argv[optind], _("failed to parse pid"));
 			ioprio_print(pid);
 		}
-	} else {
-		if (pid) {
-			ioprio_setpid(pid, ioclass, data);
+	} else if (set && pid) {
+		/*
+		 * ionice -c CLASS -p PID [PID ...]
+		 */
+		ioprio_setpid(pid, ioclass, data);
 
-			for(; argv[optind]; ++optind) {
-				pid = strtol_or_err(argv[optind], _("failed to parse pid"));
-				ioprio_setpid(pid, ioclass, data);
-			}
-		} else if (argv[optind]) {
-			ioprio_setpid(0, ioclass, data);
-			execvp(argv[optind], &argv[optind]);
-			/* execvp should never return */
-			err(EXIT_FAILURE, _("executing %s failed"), argv[optind]);
+		for(; argv[optind]; ++optind) {
+			pid = strtol_or_err(argv[optind], _("failed to parse pid"));
+			ioprio_setpid(pid, ioclass, data);
 		}
-	}
+	} else if (argv[optind]) {
+		/*
+		 * ionice [-c CLASS] COMMAND
+		 */
+		ioprio_setpid(0, ioclass, data);
+		execvp(argv[optind], &argv[optind]);
+		err(EXIT_FAILURE, _("executing %s failed"), argv[optind]);
+	} else
+		usage(stderr);
+
 
 	return EXIT_SUCCESS;
 }
