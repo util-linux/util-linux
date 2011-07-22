@@ -5,6 +5,12 @@
  * GNU Lesser General Public License.
  */
 
+/**
+ * SECTION: context-mount
+ * @title: Mount context
+ * @short_description: high-level API to mount operation.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -122,7 +128,7 @@ done:
 
 /*
  * Converts already evalulated and fixed options to the form that is compatible
- * with /sbin/mount.<type> helpers.
+ * with /sbin/mount.type helpers.
  */
 static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 {
@@ -224,7 +230,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 /*
  * mnt_context_helper_setopt() backend
  *
- * This function applies mount.<type> command line option (for example parsed
+ * This function applies mount.type command line option (for example parsed
  * by getopt() or getopt_long()) to @cxt. All unknown options are ignored and
  * then 1 is returned.
  *
@@ -535,7 +541,7 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
  * mnt_context_do_mount
  * @cxt: context
  *
- * Call mount(2) or mount.<type> helper. Unnecessary for mnt_context_mount().
+ * Call mount(2) or mount.type helper. Unnecessary for mnt_context_mount().
  *
  * WARNING: non-zero return code does not mean that mount(2) syscall or
  *          umount.type helper wasn't sucessfully called.
@@ -653,15 +659,15 @@ int mnt_context_mount(struct libmnt_context *cxt)
  * mnt_context_get_fstab()). See also mnt_context_set_fstab().
  *
  * You can filter out filesystems by:
- *	mnt_context_set_options_pattern() to simulate mount -a -O <pattern>
- *	mnt_context_set_fstype_pattern()  to simulate mount -a -t <pattern>
+ *	mnt_context_set_options_pattern() to simulate mount -a -O pattern
+ *	mnt_context_set_fstype_pattern()  to simulate mount -a -t pattern
  *
  * If the filesystem is already mounted or does not match defined criteria,
  * then the mnt_context_next_mount() function returns zero, but the @ignored is
  * non-zero. Note that the root filesystem and filesystems with "noauto" option
  * are always ignored.
  *
- * If mount(2) syscall or mount.<type> helper failed, then the
+ * If mount(2) syscall or mount.type helper failed, then the
  * mnt_context_next_mount() function returns zero, but the @mntrc is non-zero.
  * Use also mnt_context_get_status() to check if the filesystem was
  * successfully mounted.

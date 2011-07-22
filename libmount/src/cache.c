@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2009-2011 Karel Zak <kzak@redhat.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
@@ -11,7 +11,7 @@
  * @short_description: paths and tags (UUID/LABEL) caching
  *
  * The cache is a very simple API for work with tags (LABEL, UUID, ...) and
- * paths. The cache uses libblkid as a backend from TAGs resolution.
+ * paths. The cache uses libblkid as a backend for TAGs resolution.
  *
  * All returned paths are always canonicalized.
  */
@@ -450,7 +450,7 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
  *
  * Converts path:
  *	- to the absolute path
- *	- /dev/dm-N to /dev/mapper/<name>
+ *	- /dev/dm-N to /dev/mapper/name
  *
  * Returns: absolute path or NULL in case of error. The result has to be
  * deallocated by free() if @cache is NULL.
@@ -501,7 +501,7 @@ error:
  *
  * Converts path:
  *	- to the absolute path
- *	- /dev/dm-N to /dev/mapper/<name>
+ *	- /dev/dm-N to /dev/mapper/name
  *	- /dev/loopN to the loop backing filename
  *	- empty path (NULL) to 'none'
  *

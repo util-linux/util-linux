@@ -7,7 +7,7 @@
 
 /**
  * SECTION: context
- * @title: Mount/umount context
+ * @title: Library high-level context
  * @short_description: high-level API to mount/umount devices.
  *
  * <informalexample>
@@ -1603,11 +1603,11 @@ int mnt_context_strerror(struct libmnt_context *cxt, char *buf, size_t bufsiz)
  * @action: MNT_ACT_{UMOUNT,MOUNT}
  * @flags: not used
  *
- * This function infors libmount that used from [u]mount.<type> helper.
+ * This function infors libmount that used from [u]mount.type helper.
  *
  * The function also calls mnt_context_disable_helpers() to avoid recursive
- * mount.<type> helpers calling. It you really want to call another
- * mount.<type> helper from your helper than you have to explicitly enable this
+ * mount.type helpers calling. It you really want to call another
+ * mount.type helper from your helper than you have to explicitly enable this
  * feature by:
  *
  *	 mnt_context_disable_helpers(cxt, FALSE);
@@ -1633,7 +1633,7 @@ int mnt_context_init_helper(struct libmnt_context *cxt, int action, int flags)
  * @c: getopt() result
  * @arg: getopt() optarg
  *
- * This function applies [u]mount.<type> command line option (for example parsed
+ * This function applies [u]mount.type command line option (for example parsed
  * by getopt() or getopt_long()) to @cxt. All unknown options are ignored and
  * then 1 is returned.
  *

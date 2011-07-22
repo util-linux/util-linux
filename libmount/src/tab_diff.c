@@ -7,7 +7,7 @@
 
 /**
  * SECTION: tabdiff
- * @title: monitor mountinfo file
+ * @title: Monitor mountinfo changes
  * @short_description: monitor changes in the list of the mounted filesystems
  */
 

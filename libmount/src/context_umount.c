@@ -5,6 +5,12 @@
  * GNU Lesser General Public License.
  */
 
+/**
+ * SECTION: context-umount
+ * @title: Umount context
+ * @short_description: high-level API to umount operation.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>

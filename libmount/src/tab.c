@@ -6,10 +6,9 @@
  */
 
 /**
- * SECTION: tab
+ * SECTION: table
  * @title: Table of filesystems
- * @short_description: container for entries from fstab/mtab/mountinfo
- *
+ * @short_description: container for entries from fstab, mtab or mountinfo
  *
  * Note that mnt_table_find_* functions are mount(8) compatible. These functions
  * try to found an entry in more iterations where the first attempt is always

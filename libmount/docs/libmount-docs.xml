@@ -9,7 +9,7 @@
     <title>libmount Reference Manual</title>
     <releaseinfo>for libmount version &version;</releaseinfo>
     <copyright>
-      <year>2010</year>
+      <year>2010-2011</year>
       <holder>Karel Zak &lt;kzak@redhat.com&gt;</holder>
     </copyright>
   </bookinfo>
@@ -31,21 +31,24 @@ available from ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
   <part>
     <title>High-level API</title>
     <xi:include href="xml/context.xml"/>
+    <xi:include href="xml/context-mount.xml"/>
+    <xi:include href="xml/context-umount.xml"/>
   </part>
   <part>
     <title>Files parsing</title>
-    <xi:include href="xml/tab.xml"/>
+    <xi:include href="xml/table.xml"/>
     <xi:include href="xml/fs.xml"/>
+  </part>
+  <part>
+    <title>Tables management</title>
+    <xi:include href="xml/lock.xml"/>
+    <xi:include href="xml/update.xml"/>
+    <xi:include href="xml/tabdiff.xml"/>
   </part>
   <part>
     <title>Mount options</title>
     <xi:include href="xml/optstr.xml"/>
     <xi:include href="xml/optmap.xml"/>
-  </part>
-  <part>
-    <title>Mtab management</title>
-    <xi:include href="xml/lock.xml"/>
-    <xi:include href="xml/update.xml"/>
   </part>
   <part>
     <title>Misc</title>
@@ -55,7 +58,6 @@ available from ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
     <xi:include href="xml/utils.xml"/>
     <xi:include href="xml/version.xml"/>
   </part>
-
   <index id="api-index-full">
     <title>API Index</title>
     <xi:include href="xml/api-index-full.xml"><xi:fallback /></xi:include>

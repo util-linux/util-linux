@@ -7,13 +7,14 @@
 
 /**
  * SECTION: update
- * @title: mtab managment
- * @short_description: userspace mount information management.
+ * @title: Tables update
+ * @short_description: userspace mount information management
  *
- * The struct libmnt_update provides abstraction to manage mount options in userspace independently on
- * system configuration. This low-level API works on system with and without /etc/mtab. On 
- * systems without the regular /etc/mtab file are userspace mount options (e.g. user=)
- * stored to the /run/mount/utab file.
+ * The struct libmnt_update provides abstraction to manage mount options in
+ * userspace independently on system configuration. This low-level API works on
+ * system with and without /etc/mtab. On systems without the regular /etc/mtab
+ * file are userspace mount options (e.g. user=) stored to the /run/mount/utab
+ * file.
  *
  * It's recommended to use high-level struct libmnt_context API.
  */

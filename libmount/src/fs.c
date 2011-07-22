@@ -8,7 +8,7 @@
 /**
  * SECTION: fs
  * @title: Filesystem
- * @short_description: struct libmnt_fs represents one entry in fstab/mtab/mountinfo
+ * @short_description: represents one entry from fstab, mtab, or mountinfo file
  *
  */
 #include <stdio.h>

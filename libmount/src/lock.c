@@ -7,7 +7,7 @@
 
 /**
  * SECTION: lock
- * @title: locking
+ * @title: Locking
  * @short_description: locking methods for /etc/mtab or another libmount files
  *
  * The mtab lock is backwardly compatible with the standard linux /etc/mtab
