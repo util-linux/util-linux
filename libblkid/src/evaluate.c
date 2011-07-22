@@ -29,16 +29,17 @@
 
 /**
  * SECTION:evaluate
- * @title: Tags evaluation
+ * @title: Tags and Spec evaluation
  * @short_description: top-level API for LABEL and UUID evaluation.
  *
  * This API provides very simple and portable way how evaluate LABEL and UUID
- * tags.  The blkid_evaluate_tag() works on 2.4 and 2.6 systems and on systems
- * with or without udev. Currently, the libblkid library supports "udev" and
- * "scan" methods. The "udev" method uses udev /dev/disk/by-* symlinks and the
- * "scan" method scans all block devices from the /proc/partitions file. The
- * evaluation could be controlled by the /etc/blkid.conf config file. The
- * default is to try "udev" and then "scan" method.
+ * tags.  The blkid_evaluate_tag() and blkid_evaluate_spec() work on 2.4 and
+ * 2.6 systems and on systems with or without udev. Currently, the libblkid
+ * library supports "udev" and "scan" methods. The "udev" method uses udev
+ * /dev/disk/by-* symlinks and the "scan" method scans all block devices from
+ * the /proc/partitions file. The evaluation could be controlled by the
+ * /etc/blkid.conf config file. The default is to try "udev" and then "scan"
+ * method.
  *
  * The blkid_evaluate_tag() also automatically informs udevd when an obsolete
  * /dev/disk/by-* symlink is detected.
@@ -91,6 +92,7 @@ done:
 /**
  * blkid_send_uevent:
  * @devname: absolute path to the device
+ * @action: event string
  *
  * Returns: -1 in case of failure, or 0 on success.
  */
@@ -265,7 +267,7 @@ out:
  * @cache: pointer to cache (or NULL when you don't want to re-use the cache)
  *
  * All returned paths are canonicalized, device-mapper paths are converted
- * to the /dev/mapper/<name> format.
+ * to the /dev/mapper/name format.
  *
  * Returns: allocated string with a device name.
  */

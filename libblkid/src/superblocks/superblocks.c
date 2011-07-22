@@ -224,8 +224,9 @@ int blkid_probe_invert_superblocks_filter(blkid_probe pr)
  * @flag: filter BLKID_FLTR_{NOTIN,ONLYIN} flag
  * @names: NULL terminated array of probing function names (e.g. "vfat").
  *
- *  BLKID_FLTR_NOTIN  - probe for all items which are NOT IN @names
- *  BLKID_FLTR_ONLYIN - probe for items which are IN @names
+ *  %BLKID_FLTR_NOTIN  - probe for all items which are NOT IN @names;
+ *
+ *  %BLKID_FLTR_ONLYIN - probe for items which are IN @names
  *
  * Returns: 0 on success, or -1 in case of error.
  */
@@ -240,8 +241,9 @@ int blkid_probe_filter_superblocks_type(blkid_probe pr, int flag, char *names[])
  * @flag: filter BLKID_FLTR_{NOTIN,ONLYIN} flag
  * @usage: BLKID_USAGE_* flags
  *
- *  BLKID_FLTR_NOTIN  - probe for all items which are NOT IN @usage
- *  BLKID_FLTR_ONLYIN - probe for items which are IN @usage
+ *  %BLKID_FLTR_NOTIN  - probe for all items which are NOT IN @usage;
+ *
+ *  %BLKID_FLTR_ONLYIN - probe for items which are IN @usage
  *
  * Returns: 0 on success, or -1 in case of error.
  */
@@ -699,10 +701,6 @@ int blkid_probe_set_uuid(blkid_probe pr, unsigned char *uuid)
 	return blkid_probe_set_uuid_as(pr, uuid, NULL);
 }
 
-/*
- * DEPRECATED FUNCTIONS
- */
-
 /**
  * blkid_probe_set_request:
  * @pr: probe
@@ -772,4 +770,5 @@ int blkid_probe_filter_usage(blkid_probe pr, int flag, int usage)
 {
 	return blkid_probe_filter_superblocks_usage(pr, flag, usage);
 }
+
 

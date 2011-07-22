@@ -978,7 +978,7 @@ done:
  * @pr: prober
  *
  * This function gathers probing results from all enabled chains. Same as
- * blkid_so_safeprobe() but does not check for collision between probing
+ * blkid_do_safeprobe() but does not check for collision between probing
  * result.
  *
  * This is string-based NAME=value interface only.

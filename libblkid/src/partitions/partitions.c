@@ -24,7 +24,7 @@
 #include "sysfs.h"
 
 /**
- * SECTION:partitions
+ * SECTION: partitions
  * @title: Partitions probing
  * @short_description: partitions tables detection and parsing
  *
@@ -53,7 +53,7 @@
  *
  * @PART_ENTRY_SIZE: size of the partition
  *
- * @PART_ENTRY_DISK: whole-disk <maj:min>
+ * @PART_ENTRY_DISK: whole-disk maj:min
  *
  * Example:
  *
@@ -265,8 +265,9 @@ int blkid_probe_invert_partitions_filter(blkid_probe pr)
  * @flag: filter BLKID_FLTR_{NOTIN,ONLYIN} flag
  * @names: NULL terminated array of probing function names (e.g. "vfat").
  *
- *  BLKID_FLTR_NOTIN  - probe for all items which are NOT IN @names
- *  BLKID_FLTR_ONLYIN - probe for items which are IN @names
+ *  %BLKID_FLTR_NOTIN  - probe for all items which are NOT IN @names
+ *
+ *  %BLKID_FLTR_ONLYIN - probe for items which are IN @names
  *
  * Returns: 0 on success, or -1 in case of error.
  */
@@ -855,8 +856,9 @@ int blkid_partlist_numof_partitions(blkid_partlist ls)
 
 /**
  * blkid_partlist_get_table:
+ * @ls: partitions list
  *
- * Returns top-level partition table or NULL of there is not a partition table
+ * Returns: top-level partition table or NULL of there is not a partition table
  * on the device.
  */
 blkid_parttable blkid_partlist_get_table(blkid_partlist ls)
@@ -1022,8 +1024,6 @@ blkid_partition blkid_parttable_get_parent(blkid_parttable tab)
  * blkid_parttable_get_offset:
  * @tab: partition table
  *
- * Returns: position (in bytes) of the partition table or -1 in case of error.
- *
  * Note the position is relative to begin of the device as defined by
  * blkid_probe_set_device() for primary partition table, and relative
  * to parental partition for nested patition tables.
@@ -1040,6 +1040,9 @@ blkid_partition blkid_parttable_get_parent(blkid_parttable tab)
  *	offset += blkid_partition_get_start(parent);
  *   </programlisting>
  * </informalexample>
+
+ * Returns: position (in bytes) of the partition table or -1 in case of error.
+ *
  */
 blkid_loff_t blkid_parttable_get_offset(blkid_parttable tab)
 {

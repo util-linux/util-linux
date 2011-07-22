@@ -131,9 +131,6 @@ int blkid_probe_enable_topology(blkid_probe pr, int enable)
  *          use more blkid_topopogy objects in the same time you have to create
  *          more blkid_probe handlers (see blkid_new_probe()).
  *
- * TODO:    add blkid_ref() and blkid_unref() to allows to use blkid_topology
- *          independently on libblkid probing stuff.
- *
  * Returns: blkid_topopogy, or NULL in case of error.
  */
 blkid_topology blkid_probe_get_topology(blkid_probe pr)

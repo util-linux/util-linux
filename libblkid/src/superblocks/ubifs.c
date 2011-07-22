@@ -12,7 +12,7 @@
 
 #include "superblocks.h"
 
-/**
+/*
  * struct ubifs_ch - common header node.
  * @magic: UBIFS node magic number (%UBIFS_NODE_MAGIC)
  * @crc: CRC-32 checksum of the node header
@@ -35,7 +35,7 @@ struct ubifs_ch {
 	uint8_t padding[2];
 } __attribute__ ((packed));
 
-/**
+/*
  * struct ubifs_sb_node - superblock node.
  * @ch: common header
  * @padding: reserved for future, zeroes
@@ -92,7 +92,6 @@ struct ubifs_sb_node {
 	uint32_t ro_compat_version;
 	uint8_t padding2[3968];
 } __attribute__ ((packed));
-
 
 static int probe_ubifs(blkid_probe pr, const struct blkid_idmag *mag)
 {

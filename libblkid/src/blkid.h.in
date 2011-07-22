@@ -234,7 +234,13 @@ extern int blkid_probe_set_superblocks_flags(blkid_probe pr, int flags);
 extern int blkid_probe_reset_superblocks_filter(blkid_probe pr);
 extern int blkid_probe_invert_superblocks_filter(blkid_probe pr);
 
+/**
+ * BLKID_FLTR_NOTIN
+ */
 #define BLKID_FLTR_NOTIN		1
+/**
+ * BLKID_FLTR_ONLYIN
+ */
 #define BLKID_FLTR_ONLYIN		2
 extern int blkid_probe_filter_superblocks_type(blkid_probe pr, int flag, char *names[]);
 
@@ -313,9 +319,11 @@ extern int blkid_probe_lookup_value(blkid_probe pr, const char *name,
                         const char **data, size_t *len);
 extern int blkid_probe_has_value(blkid_probe pr, const char *name);
 
-/***
+/*
  * Deprecated functions/macros
  */
+#ifndef BLKID_DISABLE_DEPRECATED
+
 #define BLKID_PROBREQ_LABEL     BLKID_SUBLKS_LABEL
 #define BLKID_PROBREQ_LABELRAW  BLKID_SUBLKS_LABELRAW
 #define BLKID_PROBREQ_UUID      BLKID_SUBLKS_UUID
@@ -330,6 +338,8 @@ extern int blkid_probe_filter_usage(blkid_probe pr, int flag, int usage);
 extern int blkid_probe_filter_types(blkid_probe pr, int flag, char *names[]);
 extern int blkid_probe_invert_filter(blkid_probe pr);
 extern int blkid_probe_reset_filter(blkid_probe pr);
+
+#endif /* BLKID_DISABLE_DEPRECATED */
 
 #ifdef __cplusplus
 }
