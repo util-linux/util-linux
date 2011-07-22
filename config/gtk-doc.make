@@ -16,13 +16,13 @@
 ####################################
 
 if GTK_DOC_USE_LIBTOOL
-GTKDOC_CC = $(LIBTOOL) --mode=compile $(CC) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-GTKDOC_LD = $(LIBTOOL) --mode=link $(CC) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS)
+GTKDOC_CC = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
+GTKDOC_LD = $(LIBTOOL) --tag=CC --mode=link $(CC) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS)
 GTKDOC_RUN = $(LIBTOOL) --mode=execute
 else
 GTKDOC_CC = $(CC) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
 GTKDOC_LD = $(CC) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS)
-GTKDOC_RUN = sh -c
+GTKDOC_RUN =
 endif
 
 # We set GPATH here; this gives us semantics for GNU make
@@ -41,8 +41,9 @@ EXTRA_DIST = 				\
 	$(DOC_MODULE)-sections.txt
 #	$(DOC_MODULE)-overrides.txt
 
-DOC_STAMPS=scan-build.stamp tmpl-build.stamp sgml-build.stamp html-build.stamp \
-	   $(srcdir)/tmpl.stamp $(srcdir)/sgml.stamp $(srcdir)/html.stamp
+DOC_STAMPS=scan-build.stamp sgml-build.stamp html-build.stamp \
+	   $(srcdir)/setup.stamp $(srcdir)/sgml.stamp \
+	   $(srcdir)/html.stamp
 
 SCANOBJ_FILES = 		 \
 	$(DOC_MODULE).args 	 \
@@ -68,6 +69,27 @@ docs: html-build.stamp
 
 $(REPORT_FILES): sgml-build.stamp
 
+
+#### setup ####
+
+setup-build.stamp:
+	-@if test "$(abs_srcdir)" != "$(abs_builddir)" ; then \
+	   echo 'gtk-doc: Preparing build'; \
+	   files=`echo $(EXTRA_DIST) $(expand_content_files) $(srcdir)/$(DOC_MODULE).types`; \
+	   if test "x$$files" != "x" ; then \
+	       for file in $$files ; do \
+	           test -f $(abs_srcdir)/$$file && \
+	               cp -p $(abs_srcdir)/$$file $(abs_builddir)/; \
+	       done \
+	   fi \
+	fi
+	@touch setup-build.stamp
+
+
+setup.stamp: setup-build.stamp
+	@true
+
+
 #### scan ####
 
 scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB) $(srcdir)/$(DOC_MODULE)-*.txt $(content_files)
@@ -83,7 +105,7 @@ scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB) $(srcdir)/$(DOC_MODULE)-*.txt $(co
 	            --output-dir=$(builddir) \
 	            $(SCAN_OPTIONS) $(EXTRA_HFILES)
 
-	if grep -l '^..*$$' $(srcdir)/$(DOC_MODULE).types > /dev/null 2>&1 ; then \
+	@ if grep -l '^..*$$' $(srcdir)/$(DOC_MODULE).types > /dev/null 2>&1 ; then \
 	    CC="$(GTKDOC_CC)" LD="$(GTKDOC_LD)" RUN="$(GTKDOC_RUN)" \
 	    CFLAGS="$(GTKDOC_CFLAGS) $(CFLAGS)" LDFLAGS="$(GTKDOC_LIBS) \
             $(LDFLAGS)" gtkdoc-scangobj $(SCANGOBJ_OPTIONS) \
@@ -93,30 +115,30 @@ scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB) $(srcdir)/$(DOC_MODULE)-*.txt $(co
                test -f $$i || touch $$i ; \
 	    done \
 	fi
-	touch scan-build.stamp
+	@ touch scan-build.stamp
 
 $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(srcdir)/$(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt: scan-build.stamp
 	@true
 
 #### templates ####
-
-tmpl-build.stamp: $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(srcdir)/$(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt
-	@echo 'gtk-doc: Rebuilding template files'
-	test -z $(builddir)/tmpl || $(MKDIR_P) $(builddir)/tmpl
-	gtkdoc-mktmpl --module=$(DOC_MODULE) \
-	              $(MKTMPL_OPTIONS)
-	touch tmpl-build.stamp
-
-tmpl.stamp: tmpl-build.stamp
-	@true
-
-tmpl/*.sgml:
-	@true
-
+#
+#tmpl-build.stamp: $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(srcdir)/$(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt
+#	@echo 'gtk-doc: Rebuilding template files'
+#	test -z $(builddir)/tmpl || $(MKDIR_P) $(builddir)/tmpl
+#	gtkdoc-mktmpl --module=$(DOC_MODULE) \
+#	              $(MKTMPL_OPTIONS)
+#	touch tmpl-build.stamp
+#
+#tmpl.stamp: tmpl-build.stamp
+#	@true
+#
+#tmpl/*.sgml:
+#	@true
+#
 
 #### xml ####
 
-sgml-build.stamp: tmpl.stamp $(HFILE_GLOB) $(CFILE_GLOB) $(srcdir)/$(DOC_MODULE)-sections.txt $(builddir)/tmpl/*.sgml $(expand_content_files)
+sgml-build.stamp: setup.stamp $(HFILE_GLOB) $(CFILE_GLOB) $(srcdir)/$(DOC_MODULE)-sections.txt $(expand_content_files)
 	@echo 'gtk-doc: Building XML'
 	gtkdoc-mkdb --module=$(DOC_MODULE) \
 	            --source-dir=$(srcdir)/$(DOC_SOURCE_DIR) \
@@ -159,7 +181,7 @@ clean-local:
 	rm -rf .libs
 
 distclean-local:
-	rm -rf xml html tmpl $(REPORT_FILES) *.stamp \
+	rm -rf xml html $(REPORT_FILES) *.stamp \
 	       $(DOC_MODULE)-overrides.txt \
 	       $(DOC_MODULE)-decl-list.txt $(DOC_MODULE)-decl.txt
 	test $(abs_builddir) ==  $(abs_srcdir) || \
