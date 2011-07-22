@@ -27,7 +27,7 @@ io scheduling class and priority for that process.
 
 If no class is given than
 .I COMMAND
-will be executed with "best effort" scheduling class. The default
+will be executed with "best-effort" scheduling class. The default
 priority argument is 4.
 
 As of this writing, a process can be in one of three scheduling classes:
@@ -37,7 +37,7 @@ program has asked for disk io for a defined grace period. The impact of idle
 io processes on normal system activity should be zero. This scheduling
 class does not take a priority argument. Presently, this scheduling class
 is permitted for an ordinary user (since kernel 2.6.25).
-.IP "\fBBest effort\fP"
+.IP "\fBBest-effort\fP"
 This is the effective scheduling class for any process that has not asked for
 a specific io priority.
 This class takes a priority argument from \fI0-7\fR, with lower
@@ -54,7 +54,7 @@ For kernels after 2.6.26 with CFQ io scheduler a process that has not asked for
 an io priority inherits CPU scheduling class.  The io priority is derived from
 the cpu nice level of the process (same as before kernel 2.6.26).
 
-.IP "\fBReal time\fP"
+.IP "\fBRealtime\fP"
 The RT scheduling class is given first access to the disk, regardless of
 what else is going on in the system. Thus the RT class needs to be used with
 some care, as it can starve other processes. As with the best effort class,
@@ -63,8 +63,8 @@ will receive on each scheduling window. This scheduling class is not
 permitted for an ordinary (i.e., non-root) user.
 .SH OPTIONS
 .TP
-\fB\-c\fR, \fB\-\-class\fR \fINUM\fR
-The scheduling class. \fI0\fR for none, \fI1\fR for real time, \fI2\fR for
+\fB\-c\fR, \fB\-\-class\fR \fICLASS\fR
+The scheduling class name or number. \fI0\fR for none, \fI1\fR for realtime, \fI2\fR for
 best-effort, \fI3\fR for idle.
 .TP
 \fB\-n\fR, \fB\-\-classdata\fR \fINUM\fR
@@ -105,7 +105,10 @@ Prints the class and priority of the processes with PID 89 and 91.
 Linux supports io scheduling priorities and classes since 2.6.13 with the CFQ
 io scheduler.
 .SH AUTHORS
+.nf
 Jens Axboe <jens@axboe.dk>
+Karel Zak <kzak@redhat.com>
+.fi
 .SH AVAILABILITY
 The ionice command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.

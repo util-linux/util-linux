@@ -12,6 +12,7 @@
 #include <getopt.h>
 #include <unistd.h>
 #include <sys/syscall.h>
+#include <ctype.h>
 
 #include "nls.h"
 #include "strutils.h"
@@ -56,6 +57,16 @@ const char *to_prio[] = {
 	[IOPRIO_CLASS_IDLE] = "idle"
 };
 
+static int parse_ioclass(const char *str)
+{
+	int i;
+
+	for (i = 0; i < ARRAY_SIZE(to_prio); i++)
+		if (!strcasecmp(str, to_prio[i]))
+			return i;
+	return -1;
+}
+
 static void ioprio_print(int pid)
 {
 	int ioprio = ioprio_get(IOPRIO_WHO_PROCESS, pid);
@@ -93,14 +104,14 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		 "  %1$s [OPTION] COMMAND\n"
 		 "\n"
 		 "Options:\n"
-		 "  -c, --class=NUM     scheduling class\n"
-		 "                         0: none, 1: realtime, 2: best-effort, 3: idle\n"
-		 "  -n, --classdata=NUM scheduling class data\n"
-		 "                         0-7 for realtime and best-effort classes\n"
-		 "  -p, --pid=PID       view or modify already running process\n"
-		 "  -t, --ignore        ignore failures\n"
-		 "  -V, --version       output version information and exit\n"
-		 "  -h, --help          display this help and exit\n\n"),
+		 "  -c, --class <class>   scheduling class name or number\n"
+		 "                           0: none, 1: realtime, 2: best-effort, 3: idle\n"
+		 "  -n, --classdata <num> scheduling class data\n"
+		 "                           0-7 for realtime and best-effort classes\n"
+		 "  -p, --pid=PID         view or modify already running process\n"
+		 "  -t, --ignore          ignore failures\n"
+		 "  -V, --version         output version information and exit\n"
+		 "  -h, --help            display this help and exit\n\n"),
 		program_invocation_short_name);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
@@ -132,7 +143,16 @@ int main(int argc, char **argv)
 			set |= 1;
 			break;
 		case 'c':
-			ioclass = strtol_or_err(optarg, _("failed to parse class"));
+			if (isdigit(*optarg))
+				ioclass = strtol_or_err(optarg,
+						_("failed to parse class"));
+			else {
+				ioclass = parse_ioclass(optarg);
+				if (ioclass < 0)
+					errx(EXIT_FAILURE,
+						_("unknown scheduling class: '%s'"),
+						optarg);
+			}
 			set |= 2;
 			break;
 		case 'p':
