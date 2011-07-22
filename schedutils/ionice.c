@@ -75,12 +75,16 @@ static void ioprio_print(int pid)
 		err(EXIT_FAILURE, _("ioprio_get failed"));
 	else {
 		int ioclass = IOPRIO_PRIO_CLASS(ioprio);
+		const char *name = _("unknown");
+
+		if (ioclass < ARRAY_SIZE(to_prio))
+			name = to_prio[ioclass];
 
 		if (ioclass != IOPRIO_CLASS_IDLE)
-			printf("%s: prio %lu\n", to_prio[ioclass],
+			printf("%s: prio %lu\n", name,
 					IOPRIO_PRIO_DATA(ioprio));
 		else
-			printf("%s\n", to_prio[ioclass]);
+			printf("%s\n", name);
 	}
 }
 
@@ -173,7 +177,7 @@ int main(int argc, char **argv)
 
 	switch (ioclass) {
 		case IOPRIO_CLASS_NONE:
-			if (set & 1)
+			if ((set & 1) && !tolerant)
 				warnx(_("ignoring given class data for none class"));
 			data = 0;
 			break;
@@ -181,12 +185,14 @@ int main(int argc, char **argv)
 		case IOPRIO_CLASS_BE:
 			break;
 		case IOPRIO_CLASS_IDLE:
-			if (set & 1)
+			if ((set & 1) && !tolerant)
 				warnx(_("ignoring given class data for idle class"));
 			data = 7;
 			break;
 		default:
-			errx(EXIT_FAILURE, _("bad prio class %d"), ioclass);
+			if (!tolerant)
+				warnx(_("unknown prio class %d"), ioclass);
+			break;
 	}
 
 	if (!set && !pid && optind == argc)
