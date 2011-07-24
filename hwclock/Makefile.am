@@ -15,4 +15,4 @@ if HAVE_AUDIT
 hwclock_LDADD += -laudit
 endif
 
-EXTRA_DIST = README.hwclock clock-ppc.c
+EXTRA_DIST = README.hwclock
