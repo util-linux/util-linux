@@ -1,12 +1,17 @@
 /*
  * rtc.c - Use /dev/rtc for clock access
  */
-#include <unistd.h>		/* for close() */
-#include <fcntl.h>		/* for O_RDONLY */
+#include <asm/ioctl.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sysexits.h>
 #include <sys/ioctl.h>
-#include <sys/time.h>		/* for struct timeval */
+#include <sys/select.h>
+#include <sys/time.h>
+#include <time.h>
+#include <unistd.h>
 
 #include "clock.h"
 #include "nls.h"

@@ -45,9 +45,14 @@
  *   tm_isdst	>0: yes, 0: no, <0: unknown
  */
 
-#include <unistd.h>		/* for geteuid() */
-#include <fcntl.h>		/* for O_RDWR */
 #include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <string.h>
+#include <time.h>
+#include <unistd.h>
+
+#include "c.h"
 #include "nls.h"
 
 #if defined(__i386__)

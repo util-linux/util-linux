@@ -2,15 +2,15 @@
  * kd.c - KDGHWCLK stuff, possibly m68k only, likely to be deprecated
  */
 
-#include "clock.h"
 
 #ifdef __m68k__
 
-# include <unistd.h>		/* for close() */
-# include <fcntl.h>		/* for O_RDONLY */
+# include <fcntl.h>
 # include <sysexits.h>
 # include <sys/ioctl.h>
+# include <unistd.h>
 
+# include "clock.h"
 # include "nls.h"
 # include "usleep.h"
 
@@ -23,6 +23,7 @@
 
 #if !defined(__m68k__) || !defined(KDGHWCLK)
 
+#include <stddef.h>
 struct clock_ops *probe_for_kd_clock()
 {
 	return NULL;
