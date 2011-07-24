@@ -356,7 +356,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 				break;
 
 			/* set next cluster */
-			next = le32_to_cpu(*((uint32_t *) buf) & 0x0fffffff);
+			next = le32_to_cpu(*((uint32_t *) buf)) & 0x0fffffff;
 		}
 
 		version = "FAT32";
