@@ -118,14 +118,14 @@ static const char *no_name = "NO NAME    ";
  * Look for LABEL (name) in the FAT root directory.
  */
 static unsigned char *search_fat_label(blkid_probe pr,
-				uint32_t offset, uint32_t entries)
+				uint64_t offset, uint32_t entries)
 {
 	struct vfat_dir_entry *ent, *dir = NULL;
 	int i;
 
 	DBG(DEBUG_LOWPROBE,
 		printf("\tlook for label in root-dir "
-			"(entries: %d, offset: %d)\n", entries, offset));
+			"(entries: %d, offset: %jd)\n", entries, offset));
 
 	if (!blkid_probe_is_tiny(pr)) {
 		/* large disk, read whole root directory */
@@ -336,7 +336,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 			int count;
 
 			next_sect_off = (next - 2) * vs->vs_cluster_size;
-			next_off = (start_data_sect + next_sect_off) *
+			next_off = (uint64_t)(start_data_sect + next_sect_off) *
 				sector_size;
 
 			count = buf_size / sizeof(struct vfat_dir_entry);
