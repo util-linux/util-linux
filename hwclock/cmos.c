@@ -287,9 +287,8 @@ atomic(const char *name, unsigned long (*op) (unsigned long), unsigned long arg)
 			return v;
 		}
 	}
-	fprintf(stderr, _("%s: atomic %s failed for 1000 iterations!"),
-		progname, name);
-	exit(1);
+	errx(EXIT_FAILURE, _("atomic %s failed for 1000 iterations!"),
+		name);
 }
 #else
 
@@ -626,26 +625,20 @@ static int get_permissions_cmos(void)
 	if (use_dev_port) {
 		if ((dev_port_fd = open("/dev/port", O_RDWR)) < 0) {
 			int errsv = errno;
-			fprintf(stderr, _("Cannot open /dev/port: %s"),
-				strerror(errsv));
+			warn(_("Cannot open /dev/port"));
 			rc = 1;
 		} else
 			rc = 0;
 	} else {
 		rc = i386_iopl(3);
 		if (rc == -2) {
-			fprintf(stderr,
-				_
-				("I failed to get permission because I didn't try.\n"));
+			warnx(_("I failed to get permission because I didn't try."));
 		} else if (rc != 0) {
 			rc = errno;
-			fprintf(stderr,
-				_("%s is unable to get I/O port access:  "
-				  "the iopl(3) call failed.\n"), progname);
+			warn(_("unable to get I/O port access:  "
+                               "the iopl(3) call failed."));
 			if (rc == EPERM && geteuid())
-				fprintf(stderr,
-					_
-					("Probably you need root privileges.\n"));
+				warnx(_("Probably you need root privileges.\n"));
 		}
 	}
 	return rc ? 1 : 0;

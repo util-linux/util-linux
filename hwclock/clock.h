@@ -27,12 +27,6 @@ typedef int bool;
 extern char *progname;
 extern int debug;
 extern int epoch_option;
-extern void outsyserr(char *msg, ...)
-#ifdef __GNUC__
-    __attribute__ ((format(printf, 1, 2)));
-#else
-    ;
-#endif
 extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
 /* cmos.c */
 extern void set_cmos_epoch(int ARCconsole, int SRM);

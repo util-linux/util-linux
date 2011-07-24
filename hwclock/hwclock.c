@@ -79,10 +79,6 @@ static int hwaudit_fd = -1;
 static int hwaudit_on;
 #endif
 
-#define MYNAME "hwclock"
-
-char *progname = MYNAME;
-
 /* The struct that holds our hardware access routines */
 struct clock_ops *ur;
 
@@ -157,7 +153,7 @@ static void write_date_to_file(struct tm *tm)
 			tm->tm_year + 1900);
 		fclose(fp);
 	} else
-		perror(LASTDATE);
+		warn(_("cannot write %s"), LASTDATE);
 }
 
 static void read_date_from_file(struct tm *tm)
@@ -265,7 +261,7 @@ static int read_adjtime(struct adjtime *adjtime_p)
 
 	adjfile = fopen(adj_file_name, "r");	/* open file for reading */
 	if (adjfile == NULL) {
-		outsyserr("cannot open file %s", adj_file_name);
+		warn("cannot open file %s", adj_file_name);
 		return EX_OSFILE;
 	}
 
@@ -301,11 +297,8 @@ static int read_adjtime(struct adjtime *adjtime_p)
 	} else {
 		adjtime_p->local_utc = UNKNOWN;
 		if (line3[0]) {
-			fprintf(stderr,
-				_("%s: Warning: unrecognized third line in adjtime file\n"),
-				MYNAME);
-			fprintf(stderr,
-				_("(Expected: `UTC' or `LOCAL' or nothing.)\n"));
+			warnx(_("Warning: unrecognized third line in adjtime file\n"
+				"(Expected: `UTC' or `LOCAL' or nothing.)"));
 		}
 	}
 
@@ -570,11 +563,10 @@ display_time(const bool hclock_valid, const time_t systime,
 	     const double sync_duration)
 {
 	if (!hclock_valid)
-		fprintf(stderr,
-			_
-			("The Hardware Clock registers contain values that are "
-			 "either invalid (e.g. 50th day of month) or beyond the range "
-			 "we can handle (e.g. Year 2095).\n"));
+		warnx(_
+		      ("The Hardware Clock registers contain values that are "
+		       "either invalid (e.g. 50th day of month) or beyond the range "
+		       "we can handle (e.g. Year 2095)."));
 	else {
 		struct tm *lt;
 		char *format = "%c";
@@ -613,22 +605,21 @@ static int interpret_date_string(const char *date_opt, time_t * const time_p)
 	int rc;			/* local return code */
 
 	if (date_opt == NULL) {
-		fprintf(stderr, _("No --date option specified.\n"));
+		warnx(_("No --date option specified."));
 		return 14;
 	}
 
 	/* prevent overflow - a security risk */
 	if (strlen(date_opt) > sizeof(date_command) - 50) {
-		fprintf(stderr, _("--date argument too long\n"));
+		warnx(_("--date argument too long"));
 		return 13;
 	}
 
 	/* Quotes in date_opt would ruin the date command we construct. */
 	if (strchr(date_opt, '"') != NULL) {
-		fprintf(stderr,
-			_
-			("The value of the --date option is not a valid date.\n"
-			 "In particular, it contains quotation marks.\n"));
+		warnx(_
+		      ("The value of the --date option is not a valid date.\n"
+		       "In particular, it contains quotation marks."));
 		return 12;
 	}
 
@@ -639,7 +630,7 @@ static int interpret_date_string(const char *date_opt, time_t * const time_p)
 
 	date_child_fp = popen(date_command, "r");
 	if (date_child_fp == NULL) {
-		outsyserr(_("Unable to run 'date' program in /bin/sh shell. "
+		warn(_("Unable to run 'date' program in /bin/sh shell. "
 			    "popen() failed"));
 		return 10;
 	}
@@ -649,24 +640,24 @@ static int interpret_date_string(const char *date_opt, time_t * const time_p)
 	if (debug)
 		printf(_("response from date command = %s\n"), date_resp);
 	if (strncmp(date_resp, magic, sizeof(magic) - 1) != 0) {
-		fprintf(stderr, _("The date command issued by %s returned "
+		warnx(_("The date command issued by %s returned "
 				  "unexpected results.\n"
 				  "The command was:\n  %s\n"
-				  "The response was:\n  %s\n"),
-			MYNAME, date_command, date_resp);
+				  "The response was:\n  %s"),
+			program_invocation_short_name, date_command, date_resp);
 		retcode = 8;
 	} else {
 		long seconds_since_epoch;
 		rc = sscanf(date_resp + sizeof(magic) - 1, "%ld",
 			    &seconds_since_epoch);
 		if (rc < 1) {
-			fprintf(stderr,
-				_("The date command issued by %s returned "
-				  "something other than an integer where the "
-				  "converted time value was expected.\n"
-				  "The command was:\n  %s\n"
-				  "The response was:\n %s\n"),
-				MYNAME, date_command, date_resp);
+			warnx(_("The date command issued by %s returned "
+				"something other than an integer where the "
+				"converted time value was expected.\n"
+				"The command was:\n  %s\n"
+				"The response was:\n %s\n"),
+			      program_invocation_short_name, date_command,
+			      date_resp);
 			retcode = 6;
 		} else {
 			retcode = 0;
@@ -703,10 +694,9 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
 	int retcode;
 
 	if (!hclock_valid) {
-		fprintf(stderr,
-			_
-			("The Hardware Clock does not contain a valid time, so "
-			 "we cannot set the System Time from it.\n"));
+		warnx(_
+		      ("The Hardware Clock does not contain a valid time, so "
+		       "we cannot set the System Time from it."));
 		retcode = 1;
 	} else {
 		struct timeval tv;
@@ -742,12 +732,11 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
 			rc = settimeofday(&tv, &tz);
 			if (rc) {
 				if (errno == EPERM) {
-					fprintf(stderr,
-						_
-						("Must be superuser to set system clock.\n"));
+					warnx(_
+					      ("Must be superuser to set system clock."));
 					retcode = EX_NOPERM;
 				} else {
-					outsyserr(_("settimeofday() failed"));
+					warn(_("settimeofday() failed"));
 					retcode = 1;
 				}
 			} else
@@ -825,12 +814,11 @@ static int set_system_clock_timezone(const bool universal, const bool testing)
 		rc = settimeofday(&tv, &tz);
 		if (rc) {
 			if (errno == EPERM) {
-				fprintf(stderr,
-					_
-					("Must be superuser to set system clock.\n"));
+				warnx(_
+				      ("Must be superuser to set system clock."));
 				retcode = EX_NOPERM;
 			} else {
-				outsyserr(_("settimeofday() failed"));
+				warn(_("settimeofday() failed"));
 				retcode = 1;
 			}
 		} else
@@ -1005,31 +993,29 @@ static void save_adjtime(const struct adjtime adjtime, const bool testing)
 
 			adjfile = fopen(adj_file_name, "w");
 			if (adjfile == NULL) {
-				outsyserr(_
-					  ("Could not open file with the clock adjustment parameters "
-					   "in it (%s) for writing"),
-					  adj_file_name);
+				warn(_
+				     ("Could not open file with the clock adjustment parameters "
+				      "in it (%s) for writing"), adj_file_name);
 				err = 1;
 			} else {
 				if (fputs(newfile, adjfile) < 0) {
-					outsyserr(_
-						  ("Could not update file with the clock adjustment "
-						   "parameters (%s) in it"),
-						  adj_file_name);
+					warn(_
+					     ("Could not update file with the clock adjustment "
+					      "parameters (%s) in it"),
+					     adj_file_name);
 					err = 1;
 				}
 				if (fclose(adjfile) < 0) {
-					outsyserr(_
-						  ("Could not update file with the clock adjustment "
-						   "parameters (%s) in it"),
-						  adj_file_name);
+					warn(_
+					     ("Could not update file with the clock adjustment "
+					      "parameters (%s) in it"),
+					     adj_file_name);
 					err = 1;
 				}
 			}
 			if (err)
-				fprintf(stderr,
-					_
-					("Drift adjustment parameters not updated.\n"));
+				warnx(_
+				      ("Drift adjustment parameters not updated."));
 		}
 	}
 }
@@ -1068,9 +1054,8 @@ do_adjustment(struct adjtime *adjtime_p,
 	      const bool universal, const bool testing)
 {
 	if (!hclock_valid) {
-		fprintf(stderr,
-			_("The Hardware Clock does not contain a valid time, "
-			  "so we cannot adjust it.\n"));
+		warnx(_("The Hardware Clock does not contain a valid time, "
+			"so we cannot adjust it."));
 		adjtime_p->last_calib_time = 0;	/* calibration startover is required */
 		adjtime_p->last_adj_time = 0;
 		adjtime_p->not_adjusted = 0;
@@ -1304,28 +1289,25 @@ manipulate_epoch(const bool getepoch, const bool setepoch,
 	 * should be changed.
 	 */
 #ifndef __alpha__
-	fprintf(stderr,
-		_("The kernel keeps an epoch value for the Hardware Clock "
-		  "only on an Alpha machine.\nThis copy of hwclock was built for "
-		  "a machine other than Alpha\n(and thus is presumably not running "
-		  "on an Alpha now).  No action taken.\n"));
+	warnx(_("The kernel keeps an epoch value for the Hardware Clock "
+		"only on an Alpha machine.\nThis copy of hwclock was built for "
+		"a machine other than Alpha\n(and thus is presumably not running "
+		"on an Alpha now).  No action taken."));
 #else
 	if (getepoch) {
 		unsigned long epoch;
 
 		if (get_epoch_rtc(&epoch, 0))
-			fprintf(stderr,
-				_
-				("Unable to get the epoch value from the kernel.\n"));
+			warnx(_
+			      ("Unable to get the epoch value from the kernel."));
 		else
 			printf(_("Kernel is assuming an epoch value of %lu\n"),
 			       epoch);
 	} else if (setepoch) {
 		if (epoch_opt == -1)
-			fprintf(stderr,
-				_
-				("To set the epoch value, you must use the 'epoch' "
-				 "option to tell to what value to set it.\n"));
+			warnx(_
+			      ("To set the epoch value, you must use the 'epoch' "
+			       "option to tell to what value to set it."));
 		else if (testing)
 			printf(_
 			       ("Not setting the epoch to %d - testing only.\n"),
@@ -1346,7 +1328,7 @@ manipulate_epoch(const bool getepoch, const bool setepoch,
 
 static void out_version(void)
 {
-	printf(_("%s from %s\n"), MYNAME, PACKAGE_STRING);
+	printf(_("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING);
 }
 
 /*
@@ -1408,7 +1390,7 @@ static void usage(const char *fmt, ...)
 			   "\n"));
 #endif
 
-	fflush(stdout);
+	fflush(usageto);
 	if (fmt) {
 		usageto = stderr;
 		va_start(ap, fmt);
@@ -1416,7 +1398,7 @@ static void usage(const char *fmt, ...)
 		va_end(ap);
 	}
 
-	hwclock_exit(fmt ? EX_USAGE : 0);
+	hwclock_exit(fmt ? EX_USAGE : EX_OK);
 }
 
 static const struct option longopts[] = {
@@ -1499,8 +1481,7 @@ int main(int argc, char **argv)
 		 * You get these error codes only when the kernel doesn't
 		 * have audit compiled in.
 		 */
-		fprintf(stderr, _("%s: Unable to connect to audit system\n"),
-			MYNAME);
+		warnx(_("Unable to connect to audit system"));
 		return EX_NOPERM;
 	}
 #endif
@@ -1630,43 +1611,40 @@ int main(int argc, char **argv)
 #endif
 	if (argc > 0) {
 		usage(_("%s takes no non-option arguments.  "
-			"You supplied %d.\n"), MYNAME, argc);
+			"You supplied %d.\n"), program_invocation_short_name,
+		      argc);
 	}
 
 	if (show + set + systohc + hctosys + systz + adjust + getepoch
 	    + setepoch + predict > 1) {
-		fprintf(stderr, _("You have specified multiple functions.\n"
-				  "You can only perform one function "
-				  "at a time.\n"));
+		warnx(_("You have specified multiple functions.\n"
+			"You can only perform one function at a time."));
 		hwclock_exit(EX_USAGE);
 	}
 
 	if (utc && local_opt) {
-		fprintf(stderr, _("%s: The --utc and --localtime options "
-				  "are mutually exclusive.  You specified "
-				  "both.\n"), MYNAME);
+		warnx(_("The --utc and --localtime options "
+			"are mutually exclusive.  You specified both."));
 		hwclock_exit(EX_USAGE);
 	}
 
 	if (adjust && noadjfile) {
-		fprintf(stderr, _("%s: The --adjust and --noadjfile options "
-				  "are mutually exclusive.  You specified "
-				  "both.\n"), MYNAME);
+		warnx(_("The --adjust and --noadjfile options "
+			"are mutually exclusive.  You specified both."));
 		hwclock_exit(EX_USAGE);
 	}
 
 	if (adj_file_name && noadjfile) {
-		fprintf(stderr, _("%s: The --adjfile and --noadjfile options "
-				  "are mutually exclusive.  You specified "
-				  "both.\n"), MYNAME);
+		warnx(_("The --adjfile and --noadjfile options "
+			"are mutually exclusive.  You specified both."));
 		hwclock_exit(EX_USAGE);
 	}
 	if (!adj_file_name)
 		adj_file_name = ADJPATH;
 
 	if (noadjfile && !(utc || local_opt)) {
-		fprintf(stderr, _("%s: With --noadjfile, you must specify "
-				  "either --utc or --localtime\n"), MYNAME);
+		warnx(_("With --noadjfile, you must specify "
+			"either --utc or --localtime"));
 		hwclock_exit(EX_USAGE);
 	}
 #ifdef __alpha__
@@ -1678,8 +1656,8 @@ int main(int argc, char **argv)
 		rc = interpret_date_string(date_opt, &set_time);
 		/* (time-consuming) */
 		if (rc != 0) {
-			fprintf(stderr, _("No usable set-to time.  "
-					  "Cannot set clock.\n"));
+			warnx(_("No usable set-to time.  "
+				"Cannot set clock."));
 			hwclock_exit(EX_USAGE);
 		}
 	}
@@ -1693,19 +1671,16 @@ int main(int argc, char **argv)
 	else {
 		/* program is designed to run setuid (in some situations) */
 		if (set || systohc || adjust) {
-			fprintf(stderr,
-				_("Sorry, only the superuser can change "
-				  "the Hardware Clock.\n"));
+			warnx(_("Sorry, only the superuser can change "
+				"the Hardware Clock."));
 			permitted = FALSE;
 		} else if (systz || hctosys) {
-			fprintf(stderr,
-				_("Sorry, only the superuser can change "
-				  "the System Clock.\n"));
+			warnx(_("Sorry, only the superuser can change "
+				"the System Clock."));
 			permitted = FALSE;
 		} else if (setepoch) {
-			fprintf(stderr,
-				_("Sorry, only the superuser can change the "
-				  "Hardware Clock epoch in the kernel.\n"));
+			warnx(_("Sorry, only the superuser can change the "
+				"Hardware Clock epoch in the kernel."));
 			permitted = FALSE;
 		} else
 			permitted = TRUE;
@@ -1717,24 +1692,23 @@ int main(int argc, char **argv)
 #ifdef __linux__
 	if (getepoch || setepoch) {
 		manipulate_epoch(getepoch, setepoch, epoch_option, testing);
-		hwclock_exit(0);
+		hwclock_exit(EX_OK);
 	}
 #endif
 
 	if (debug)
 		out_version();
+
 	if (!systz && !predict) {
 		determine_clock_access_method(directisa);
 		if (!ur) {
-			fprintf(stderr,
-				_("Cannot access the Hardware Clock via "
-				  "any known method.\n"));
+			warnx(_("Cannot access the Hardware Clock via "
+				"any known method."));
 			if (!debug)
-				fprintf(stderr,
-					_("Use the --debug option to see the "
-					  "details of our search for an access "
-					  "method.\n"));
-			hwclock_exit(1);
+				warnx(_("Use the --debug option to see the "
+					"details of our search for an access "
+					"method."));
+			hwclock_exit(EX_SOFTWARE);
 		}
 	}
 
@@ -1745,21 +1719,12 @@ int main(int argc, char **argv)
 	return rc;		/* Not reached */
 }
 
-/* A single routine for greater uniformity */
-void outsyserr(char *msg, ...)
-{
-	va_list args;
-	int errsv = errno;
-
-	fprintf(stderr, "%s: ", progname);
-	va_start(args, msg);
-	vfprintf(stderr, msg, args);
-	va_end(args);
-	fprintf(stderr, ", errno=%d: %s.\n", errsv, strerror(errsv));
-}
-
 #ifdef HAVE_LIBAUDIT
-void hwaudit_exit(int status)
+/*
+ * hwclock_exit calls either this function or plain exit depending
+ * HAVE_LIBAUDIT, see also clock.h
+ */
+void __attribute__((__noreturn__)) hwaudit_exit(int status)
 {
 	if (hwaudit_on) {
 		audit_log_user_message(hwaudit_fd, AUDIT_USYS_CONFIG,

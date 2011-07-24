@@ -49,7 +49,7 @@ static int synchronize_to_clock_tick_kd(void)
 		printf(_("Waiting in loop for time from KDGHWCLK to change\n"));
 
 	if (ioctl(con_fd, KDGHWCLK, &start_time) == -1) {
-		outsyserr(_("KDGHWCLK ioctl to read time failed"));
+		warn(_("KDGHWCLK ioctl to read time failed"));
 		return 3;
 	}
 
@@ -71,16 +71,14 @@ static int synchronize_to_clock_tick_kd(void)
 		usleep(1);
 
 		if (ioctl(con_fd, KDGHWCLK, &nowtime) == -1) {
-			outsyserr(_
-				  ("KDGHWCLK ioctl to read time failed in loop"));
+			warn(_("KDGHWCLK ioctl to read time failed in loop"));
 			return 3;
 		}
 		if (start_time.tm_sec != nowtime.tm_sec)
 			break;
 		gettimeofday(&now, NULL);
 		if (time_diff(now, begin) > 1.5) {
-			fprintf(stderr,
-				_("Timed out waiting for time change.\n"));
+			warnx(_("Timed out waiting for time change."));
 			return 2;
 		}
 	} while (1);
@@ -99,7 +97,7 @@ static int read_hardware_clock_kd(struct tm *tm)
 	struct hwclk_time t;
 
 	if (ioctl(con_fd, KDGHWCLK, &t) == -1) {
-		outsyserr(_("ioctl() failed to read time from %s"),
+		warn(_("ioctl() failed to read time from %s"),
 			  con_fd_filename);
 		hwclock_exit(EX_IOERR);
 	}
@@ -135,8 +133,8 @@ static int set_hardware_clock_kd(const struct tm *new_broken_time)
 	t.wday = new_broken_time->tm_wday;
 
 	if (ioctl(con_fd, KDSHWCLK, &t) == -1) {
-		outsyserr(_("ioctl KDSHWCLK failed"));
-		hwclock_exit(1);
+		warn(_("ioctl KDSHWCLK failed"));
+		hwclock_exit(EX_IOERR);
 	}
 	return 0;
 }
@@ -171,11 +169,11 @@ struct clock_ops *probe_for_kd_clock()
 	}
 	if (con_fd < 0) {
 		/* probably KDGHWCLK exists on m68k only */
-		outsyserr(_("Can't open /dev/tty1 or /dev/vc/1"));
+		warn(_("Can't open /dev/tty1 or /dev/vc/1"));
 	} else {
 		if (ioctl(con_fd, KDGHWCLK, &t) == -1) {
 			if (errno != EINVAL)
-				outsyserr(_("KDGHWCLK ioctl failed"));
+				warn(_("KDGHWCLK ioctl failed"));
 		} else
 			ret = &kd;
 	}

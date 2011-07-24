@@ -158,7 +158,7 @@ static int open_rtc_or_exit(void)
 	int rtc_fd = open_rtc();
 
 	if (rtc_fd < 0) {
-		outsyserr(_("open() of %s failed"), rtc_dev_name);
+		warn(_("open() of %s failed"), rtc_dev_name);
 		hwclock_exit(EX_OSFILE);
 	}
 	return rtc_fd;
@@ -191,9 +191,8 @@ static int do_rtc_read_ioctl(int rtc_fd, struct tm *tm)
 		rc = ioctl(rtc_fd, RTC_RD_TIME, tm);
 	}
 	if (rc == -1) {
-		perror(ioctlname);
-		fprintf(stderr, _("ioctl() to %s to read the time failed.\n"),
-			rtc_dev_name);
+		warn(_("ioctl(%s) to %s to read the time failed"),
+			ioctlname, rtc_dev_name);
 		return -1;
 	}
 
@@ -233,8 +232,7 @@ static int busywait_for_rtc_clock_tick(const int rtc_fd)
 			break;
 		gettimeofday(&now, NULL);
 		if (time_diff(now, begin) > 1.5) {
-			fprintf(stderr,
-				_("Timed out waiting for time change.\n"));
+			warnx(_("Timed out waiting for time change."));
 			return 2;
 		}
 	} while (1);
@@ -254,7 +252,7 @@ static int synchronize_to_clock_tick_rtc(void)
 
 	rtc_fd = open_rtc();
 	if (rtc_fd == -1) {
-		outsyserr(_("open() of %s failed"), rtc_dev_name);
+		warn(_("open() of %s failed"), rtc_dev_name);
 		ret = 1;
 	} else {
 		int rc;		/* Return code from ioctl */
@@ -289,9 +287,9 @@ static int synchronize_to_clock_tick_rtc(void)
 			rc = read(rtc_fd, &dummy, sizeof(dummy));
 			ret = 1;
 			if (rc == -1)
-				outsyserr(_
-					  ("read() to %s to wait for clock tick failed"),
-					  rtc_dev_name);
+				warn(_
+				     ("read() to %s to wait for clock tick failed"),
+				     rtc_dev_name);
 			else
 				ret = 0;
 #else
@@ -314,14 +312,13 @@ static int synchronize_to_clock_tick_rtc(void)
 			rc = select(rtc_fd + 1, &rfds, NULL, NULL, &tv);
 			ret = 1;
 			if (rc == -1)
-				outsyserr(_
-					  ("select() to %s to wait for clock tick failed"),
-					  rtc_dev_name);
+				warn(_
+				     ("select() to %s to wait for clock tick failed"),
+				     rtc_dev_name);
 			else if (rc == 0)
-				fprintf(stderr,
-					_
-					("select() to %s to wait for clock tick timed out\n"),
-					rtc_dev_name);
+				warn(_
+				     ("select() to %s to wait for clock tick timed out"),
+				     rtc_dev_name);
 			else
 				ret = 0;
 #endif
@@ -329,13 +326,13 @@ static int synchronize_to_clock_tick_rtc(void)
 			/* Turn off update interrupts */
 			rc = ioctl(rtc_fd, RTC_UIE_OFF, 0);
 			if (rc == -1)
-				outsyserr(_
-					  ("ioctl() to %s to turn off update interrupts failed"),
-					  rtc_dev_name);
+				warn(_
+				     ("ioctl() to %s to turn off update interrupts failed"),
+				     rtc_dev_name);
 		} else {
-			outsyserr(_
-				  ("ioctl() to %s to turn on update interrupts "
-				   "failed unexpectedly"), rtc_dev_name);
+			warn(_
+			     ("ioctl() to %s to turn on update interrupts "
+			      "failed unexpectedly"), rtc_dev_name);
 			ret = 1;
 		}
 	}
@@ -388,9 +385,8 @@ static int set_hardware_clock_rtc(const struct tm *new_broken_time)
 	}
 
 	if (rc == -1) {
-		perror(ioctlname);
-		fprintf(stderr, _("ioctl() to %s to set the time failed.\n"),
-			rtc_dev_name);
+		warn(_("ioctl(%s) to %s to set the time failed."),
+			ioctlname, rtc_dev_name);
 		hwclock_exit(EX_IOERR);
 	}
 
@@ -420,7 +416,7 @@ struct clock_ops *probe_for_rtc_clock()
 	if (rtc_fd >= 0)
 		return &rtc;
 	if (debug)
-		outsyserr(_("Open of %s failed"), rtc_dev_name);
+		warn(_("Open of %s failed"), rtc_dev_name);
 	return NULL;
 }
 
@@ -435,21 +431,20 @@ int get_epoch_rtc(unsigned long *epoch_p, int silent)
 	if (rtc_fd < 0) {
 		if (!silent) {
 			if (errno == ENOENT)
-				fprintf(stderr,
-					_
-					("To manipulate the epoch value in the kernel, we must "
-					 "access the Linux 'rtc' device driver via the device special "
-					 "file %s.  This file does not exist on this system.\n"),
-					rtc_dev_name);
+				warnx(_
+				      ("To manipulate the epoch value in the kernel, we must "
+				       "access the Linux 'rtc' device driver via the device special "
+				       "file %s.  This file does not exist on this system."),
+				      rtc_dev_name);
 			else
-				outsyserr(_("Unable to open %s"), rtc_dev_name);
+				warn(_("Unable to open %s"), rtc_dev_name);
 		}
 		return 1;
 	}
 
 	if (ioctl(rtc_fd, RTC_EPOCH_READ, epoch_p) == -1) {
 		if (!silent)
-			outsyserr(_("ioctl(RTC_EPOCH_READ) to %s failed"),
+			warn(_("ioctl(RTC_EPOCH_READ) to %s failed"),
 				  rtc_dev_name);
 		return 1;
 	}
@@ -475,22 +470,21 @@ int set_epoch_rtc(unsigned long epoch)
 		 * Bad habit, deciding not to do what the user asks just
 		 * because one believes that the kernel might not like it.
 		 */
-		fprintf(stderr, _("The epoch value may not be less than 1900.  "
-				  "You requested %ld\n"), epoch);
+		warnx(_("The epoch value may not be less than 1900.  "
+			"You requested %ld"), epoch);
 		return 1;
 	}
 
 	rtc_fd = open_rtc();
 	if (rtc_fd < 0) {
 		if (errno == ENOENT)
-			fprintf(stderr,
-				_
-				("To manipulate the epoch value in the kernel, we must "
-				 "access the Linux 'rtc' device driver via the device special "
-				 "file %s.  This file does not exist on this system.\n"),
-				rtc_dev_name);
+			warnx(_
+			      ("To manipulate the epoch value in the kernel, we must "
+			       "access the Linux 'rtc' device driver via the device special "
+			       "file %s.  This file does not exist on this system."),
+			      rtc_dev_name);
 		else
-			outsyserr(_("Unable to open %s"), rtc_dev_name);
+			warn(_("Unable to open %s"), rtc_dev_name);
 		return 1;
 	}
 
@@ -501,11 +495,11 @@ int set_epoch_rtc(unsigned long epoch)
 
 	if (ioctl(rtc_fd, RTC_EPOCH_SET, epoch) == -1) {
 		if (errno == EINVAL)
-			fprintf(stderr, _("The kernel device driver for %s "
-					  "does not have the RTC_EPOCH_SET ioctl.\n"),
-				rtc_dev_name);
+			warnx(_("The kernel device driver for %s "
+				"does not have the RTC_EPOCH_SET ioctl."),
+			      rtc_dev_name);
 		else
-			outsyserr(_("ioctl(RTC_EPOCH_SET) to %s failed"),
+			warn(_("ioctl(RTC_EPOCH_SET) to %s failed"),
 				  rtc_dev_name);
 		return 1;
 	}
