@@ -137,8 +137,10 @@ static int get_partno_from_device(char *partition, dev_t devno)
 		struct sysfs_cxt cxt;
 
 		sysfs_init(&cxt, devno, NULL);
-		if (sysfs_read_int(&cxt, "partition", &partno) >= 0)
+		if (sysfs_read_int(&cxt, "partition", &partno) >= 0) {
+			sysfs_deinit(&cxt);
 			return partno;
+		}
 	}
 
 	sz = strlen(partition);
