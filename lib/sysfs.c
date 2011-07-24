@@ -488,6 +488,7 @@ int main(int argc, char *argv[])
 
 	printf("DEVNAME: %s\n", sysfs_get_devname(&cxt, path, sizeof(path)));
 
+	sysfs_deinit(&cxt);
 	return EXIT_SUCCESS;
 }
 #endif
