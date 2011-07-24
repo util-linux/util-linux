@@ -55,7 +55,6 @@ void looksrc(char *);
 void lookbin(char *);
 void lookman(char *);
 void findv(char **, int, char *);
-void find(char **, char *);
 void findin(char *, char *);
 int itsit(char *, char *);
 
@@ -321,7 +320,7 @@ void
 looksrc(char *cp)
 {
 	if (Sflag == 0)
-		find(srcdirs, cp);
+		findv(srcdirs, ARRAY_SIZE(srcdirs)-1, cp);
 	else
 		findv(Sflag, Scnt, cp);
 }
@@ -330,7 +329,7 @@ void
 lookbin(char *cp)
 {
 	if (Bflag == 0)
-		find(bindirs, cp);
+		findv(bindirs, ARRAY_SIZE(bindirs)-1, cp);
 	else
 		findv(Bflag, Bcnt, cp);
 }
@@ -339,7 +338,7 @@ void
 lookman(char *cp)
 {
 	if (Mflag == 0)
-		find(mandirs, cp);
+		findv(mandirs, ARRAY_SIZE(mandirs)-1, cp);
 	else
 		findv(Mflag, Mcnt, cp);
 }
@@ -349,13 +348,6 @@ findv(char **dirv, int dirc, char *cp)
 {
 	while (dirc > 0)
 		findin(*dirv++, cp), dirc--;
-}
-
-void
-find(char **dirs, char *cp)
-{
-	while (*dirs)
-		findin(*dirs++, cp);
 }
 
 void
