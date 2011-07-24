@@ -126,5 +126,14 @@
 #define _PATH_DEV_BYID		"/dev/disk/by-id"
 #define _PATH_DEV_BYPATH	"/dev/disk/by-path"
 
+/* hwclock paths */
+#define _PATH_ADJPATH		"/etc/adjtime"
+#define _PATH_LASTDATE		"/var/lib/lastdate"
+#ifdef __ia64__
+# define _PATH_RTC_DEV		"/dev/efirtc"
+#else
+# define _PATH_RTC_DEV		"/dev/rtc"
+#endif
+
 #endif /* PATHNAMES_H */
 

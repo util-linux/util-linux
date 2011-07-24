@@ -72,6 +72,7 @@
 #include "c.h"
 #include "clock.h"
 #include "nls.h"
+#include "pathnames.h"
 
 #ifdef HAVE_LIBAUDIT
 #include <libaudit.h>
@@ -84,13 +85,7 @@ struct clock_ops *ur;
 
 #define FLOOR(arg) ((arg >= 0 ? (int) arg : ((int) arg) - 1));
 
-/* Here the information for time adjustments is kept. */
-#define ADJPATH "/etc/adjtime"
-
 const char *adj_file_name = NULL;
-
-/* Store the date here when "badyear" flag is set. */
-#define LASTDATE "/var/lib/lastdate"
 
 struct adjtime {
 	/*
@@ -148,12 +143,12 @@ static void write_date_to_file(struct tm *tm)
 {
 	FILE *fp;
 
-	if ((fp = fopen(LASTDATE, "w"))) {
+	if ((fp = fopen(_PATH_LASTDATE, "w"))) {
 		fprintf(fp, "%02d.%02d.%04d\n", tm->tm_mday, tm->tm_mon + 1,
 			tm->tm_year + 1900);
 		fclose(fp);
 	} else
-		warn(_("cannot write %s"), LASTDATE);
+		warn(_("cannot write %s"), _PATH_LASTDATE);
 }
 
 static void read_date_from_file(struct tm *tm)
@@ -161,7 +156,7 @@ static void read_date_from_file(struct tm *tm)
 	int last_mday, last_mon, last_year;
 	FILE *fp;
 
-	if ((fp = fopen(LASTDATE, "r"))) {
+	if ((fp = fopen(_PATH_LASTDATE, "r"))) {
 		if (fscanf(fp, "%d.%d.%d\n", &last_mday, &last_mon, &last_year)
 		    == 3) {
 			tm->tm_year = last_year - 1900;
@@ -1320,12 +1315,6 @@ manipulate_epoch(const bool getepoch, const bool setepoch,
 }
 #endif
 
-#ifdef __ia64__
-#define RTC_DEV "/dev/efirtc"
-#else
-#define RTC_DEV "/dev/rtc"
-#endif
-
 static void out_version(void)
 {
 	printf(_("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING);
@@ -1377,13 +1366,14 @@ static void usage(const char *fmt, ...)
 		  "       --date         specifies the time to which to set the hardware clock\n"
 		  "       --epoch=year   specifies the year which is the beginning of the \n"
 		  "                      hardware clock's epoch value\n"
-		  "       --noadjfile    do not access /etc/adjtime. Requires the use of\n"
+		  "       --noadjfile    do not access %s. Requires the use of\n"
 		  "                      either --utc or --localtime\n"
 		  "       --adjfile=path specifies the path to the adjust file (default is\n"
-		  "                      /etc/adjtime)\n"
+		  "                      %s)\n"
 		  "       --test         do everything except actually updating the hardware\n"
 		  "                      clock or anything else\n"
-		  "  -D | --debug        debug mode\n" "\n"), RTC_DEV);
+		  "  -D | --debug        debug mode\n" "\n"),
+	_PATH_RTC_DEV, _PATH_ADJPATH, _PATH_ADJPATH);
 #ifdef __alpha__
 	fprintf(usageto, _("  -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
 			   "       tell hwclock the type of alpha you have (see hwclock(8))\n"
@@ -1640,7 +1630,7 @@ int main(int argc, char **argv)
 		hwclock_exit(EX_USAGE);
 	}
 	if (!adj_file_name)
-		adj_file_name = ADJPATH;
+		adj_file_name = _PATH_ADJPATH;
 
 	if (noadjfile && !(utc || local_opt)) {
 		warnx(_("With --noadjfile, you must specify "
