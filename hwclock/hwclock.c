@@ -59,6 +59,7 @@
 
 #include <errno.h>
 #include <getopt.h>
+#include <limits.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -115,6 +116,22 @@ struct adjtime {
 	 */
 };
 
+/* Long only options. */
+enum {
+	OPT_SET = CHAR_MAX + 1,
+	OPT_GETEPOCH,
+	OPT_SETEPOCH,
+	OPT_NOADJFILE,
+	OPT_LOCALTIME,
+	OPT_BADYEAR,
+	OPT_DIRECTISA,
+	OPT_TEST,
+	OPT_DATE,
+	OPT_EPOCH,
+	OPT_ADJFILE,
+	OPT_SYSTZ,
+	OPT_PREDICT_HC
+};
 
 /*
  * We are running in debug mode, wherein we put a lot of information about
@@ -1412,45 +1429,6 @@ static void usage(const char *fmt, ...)
 	hwclock_exit(fmt ? EX_USAGE : EX_OK);
 }
 
-static const struct option longopts[] = {
-	{"adjust",	0, 0, 'a'},
-	{"help",	0, 0, 'h'},
-	{"show",	0, 0, 'r'},
-	{"hctosys",	0, 0, 's'},
-	{"utc",		0, 0, 'u'},
-	{"version",	0, 0, 'v'},
-	{"systohc",	0, 0, 'w'},
-	{"debug",	0, 0, 'D'},
-#ifdef __alpha__
-	{"ARC",		0, 0, 'A'},
-	{"arc",		0, 0, 'A'},
-	{"Jensen",	0, 0, 'J'},
-	{"jensen",	0, 0, 'J'},
-	{"SRM",		0, 0, 'S'},
-	{"srm",		0, 0, 'S'},
-	{"funky-toy",	0, 0, 'F'},
-#endif
-	{"set",		0, 0, 128},
-#ifdef __linux__
-	{"getepoch",	0, 0, 129},
-	{"setepoch",	0, 0, 130},
-#endif
-	{"noadjfile",	0, 0, 131},
-	{"localtime",	0, 0, 132},
-	{"badyear",	0, 0, 133},
-	{"directisa",	0, 0, 134},
-	{"test",	0, 0, 135},
-	{"date",	1, 0, 136},
-	{"epoch",	1, 0, 137},
-#ifdef __linux__
-	{"rtc",		1, 0, 'f'},
-#endif
-	{"adjfile",	1, 0, 138},
-	{"systz",	0, 0, 139},
-	{"predict-hc",	0, 0, 140},
-	{NULL, 0, 0, 0}
-};
-
 /*
  * Returns:
  *  EX_USAGE: bad invocation
@@ -1481,6 +1459,46 @@ int main(int argc, char **argv)
 #ifdef __alpha__
 	bool ARCconsole, Jensen, SRM, funky_toy;
 #endif
+
+	static const struct option longopts[] = {
+		{"adjust",	0, 0, 'a'},
+		{"help",	0, 0, 'h'},
+		{"show",	0, 0, 'r'},
+		{"hctosys",	0, 0, 's'},
+		{"utc",		0, 0, 'u'},
+		{"version",	0, 0, 'v'},
+		{"systohc",	0, 0, 'w'},
+		{"debug",	0, 0, 'D'},
+#ifdef __alpha__
+		{"ARC",		0, 0, 'A'},
+		{"arc",		0, 0, 'A'},
+		{"Jensen",	0, 0, 'J'},
+		{"jensen",	0, 0, 'J'},
+		{"SRM",		0, 0, 'S'},
+		{"srm",		0, 0, 'S'},
+		{"funky-toy",	0, 0, 'F'},
+#endif
+		{"set",		0, 0, OPT_SET},
+#ifdef __linux__
+		{"getepoch",	0, 0, OPT_GETEPOCH},
+		{"setepoch",	0, 0, OPT_SETEPOCH},
+#endif
+		{"noadjfile",	0, 0, OPT_NOADJFILE},
+		{"localtime",	0, 0, OPT_LOCALTIME},
+		{"badyear",	0, 0, OPT_BADYEAR},
+		{"directisa",	0, 0, OPT_DIRECTISA},
+		{"test",	0, 0, OPT_TEST},
+		{"date",	1, 0, OPT_DATE},
+		{"epoch",	1, 0, OPT_EPOCH},
+#ifdef __linux__
+		{"rtc",		1, 0, 'f'},
+#endif
+		{"adjfile",	1, 0, OPT_ADJFILE},
+		{"systz",	0, 0, OPT_SYSTZ},
+		{"predict-hc",	0, 0, OPT_PREDICT_HC},
+		{NULL,		0, NULL, 0}
+	};
+
 	/* Remember what time we were invoked */
 	gettimeofday(&startup_time, NULL);
 
@@ -1552,45 +1570,45 @@ int main(int argc, char **argv)
 			funky_toy = TRUE;
 			break;
 #endif
-		case 128:
+		case OPT_SET:
 			set = TRUE;
 			break;
 #ifdef __linux__
-		case 129:
+		case OPT_GETEPOCH:
 			getepoch = TRUE;
 			break;
-		case 130:
+		case OPT_SETEPOCH:
 			setepoch = TRUE;
 			break;
 #endif
-		case 131:
+		case OPT_NOADJFILE:
 			noadjfile = TRUE;
 			break;
-		case 132:
+		case OPT_LOCALTIME:
 			local_opt = TRUE;	/* --localtime */
 			break;
-		case 133:
+		case OPT_BADYEAR:
 			badyear = TRUE;
 			break;
-		case 134:
+		case OPT_DIRECTISA:
 			directisa = TRUE;
 			break;
-		case 135:
+		case OPT_TEST:
 			testing = TRUE;		/* --test */
 			break;
-		case 136:
+		case OPT_DATE:
 			date_opt = optarg;	/* --date */
 			break;
-		case 137:
+		case OPT_EPOCH:
 			epoch_option = atoi(optarg);	/* --epoch */
 			break;
-		case 138:
+		case OPT_ADJFILE:
 			adj_file_name = optarg;	/* --adjfile */
 			break;
-		case 139:
+		case OPT_SYSTZ:
 			systz = TRUE;		/* --systz */
 			break;
-		case 140:
+		case OPT_PREDICT_HC:
 			predict = TRUE;		/* --predict-hc */
 			break;
 #ifdef __linux__
