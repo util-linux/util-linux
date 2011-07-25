@@ -1511,9 +1511,9 @@ int main(int argc, char **argv)
 	/* Set option defaults */
 	show = set = systohc = hctosys = systz = adjust = noadjfile = predict =
 	    FALSE;
-	getepoch = setepoch = utc = local_opt = testing = debug = FALSE;
+	getepoch = setepoch = utc = local_opt = directisa = testing = debug = FALSE;
 #ifdef __alpha__
-	ARCconsole = Jensen = SRM = funky_toy = directisa = badyear = FALSE;
+	ARCconsole = Jensen = SRM = funky_toy = badyear = FALSE;
 #endif
 	date_opt = NULL;
 
