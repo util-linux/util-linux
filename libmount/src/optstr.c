@@ -518,11 +518,11 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs,
  *
  * Extracts options from @optstr that belongs to the @map, for example:
  *
- *	 mnt_split_optstr_by_map(optstr, &p,
+ *	 mnt_optstr_get_options(optstr, &p,
  *			mnt_get_builtin_optmap(MNT_LINUX_MAP),
  *			MNT_NOMTAB);
  *
- * returns all VFS options, the options that does not belong to mtab
+ * the 'p' returns all VFS options, the options that does not belong to mtab
  * are ignored.
  *
  * Returns: 0 on success, or negative number in case of error.

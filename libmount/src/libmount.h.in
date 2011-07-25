@@ -103,6 +103,13 @@ struct libmnt_update;
  */
 struct libmnt_context;
 
+/**
+ * libmnt_tabdiff:
+ *
+ * Stores mountinfo state
+ */
+struct libmnt_tabdiff;
+
 /*
  * Actions
  */
@@ -317,7 +324,7 @@ extern int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fs
 extern struct libmnt_update *mnt_new_update(void);
 extern void mnt_free_update(struct libmnt_update *upd);
 extern int mnt_update_is_ready(struct libmnt_update *upd);
-extern int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mflags,
+extern int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 	                      const char *target, struct libmnt_fs *fs);
 extern int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc);
 extern unsigned long mnt_update_get_mflags(struct libmnt_update *upd);

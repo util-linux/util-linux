@@ -652,7 +652,7 @@ int mnt_context_mount(struct libmnt_context *cxt)
  * @cxt: context
  * @itr: iterator
  * @fs: returns the current filesystem
- * @mntrc: returns the return code from mnt_mount_context()
+ * @mntrc: returns the return code from mnt_context_mount()
  * @ignored: returns 1 for not matching and 2 for already mounted filesystems
  *
  * This function tries to mount the next filesystem from fstab (as returned by

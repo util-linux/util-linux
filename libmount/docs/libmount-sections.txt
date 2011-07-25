@@ -1,5 +1,6 @@
 <SECTION>
 <FILE>cache</FILE>
+libmnt_cache
 mnt_new_cache
 mnt_free_cache
 mnt_cache_device_has_tag
@@ -14,6 +15,7 @@ mnt_resolve_tag
 
 <SECTION>
 <FILE>context</FILE>
+libmnt_context
 mnt_free_context
 mnt_new_context
 mnt_reset_context
@@ -78,6 +80,48 @@ mnt_context_finalize_mount
 mnt_context_mount
 mnt_context_next_mount
 mnt_context_prepare_mount
+<SUBSECTION>
+MNT_MS_COMMENT
+MNT_MS_GROUP
+MNT_MS_HELPER
+MNT_MS_LOOP
+MNT_MS_NETDEV
+MNT_MS_NOAUTO
+MNT_MS_NOFAIL
+MNT_MS_OFFSET
+MNT_MS_OWNER
+MNT_MS_SIZELIMIT
+MNT_MS_UHELPER
+MNT_MS_USER
+MNT_MS_USERS
+MNT_MS_XCOMMENT
+<SUBSECTION>
+MS_BIND
+MS_DIRSYNC
+MS_I_VERSION
+MS_MANDLOCK
+MS_MGC_MSK
+MS_MGC_VAL
+MS_MOVE
+MS_NOATIME
+MS_NODEV
+MS_NODIRATIME
+MS_NOEXEC
+MS_NOSUID
+MS_OWNERSECURE
+MS_PRIVATE
+MS_PROPAGATION
+MS_RDONLY
+MS_REC
+MS_RELATIME
+MS_REMOUNT
+MS_SECURE
+MS_SHARED
+MS_SILENT
+MS_SLAVE
+MS_STRICTATIME
+MS_SYNCHRONOUS
+MS_UNBINDABLE
 </SECTION>
 
 <SECTION>
@@ -90,6 +134,7 @@ mnt_context_umount
 
 <SECTION>
 <FILE>fs</FILE>
+libmnt_fs
 mnt_copy_fs
 mnt_free_fs
 mnt_free_mntent
@@ -146,6 +191,7 @@ mnt_init_debug
 
 <SECTION>
 <FILE>iter</FILE>
+libmnt_iter
 mnt_free_iter
 mnt_iter_get_direction
 mnt_new_iter
@@ -154,6 +200,7 @@ mnt_reset_iter
 
 <SECTION>
 <FILE>lock</FILE>
+libmnt_lock
 mnt_free_lock
 mnt_lock_file
 mnt_new_lock
@@ -164,6 +211,9 @@ mnt_lock_block_signals
 <SECTION>
 <FILE>optmap</FILE>
 mnt_get_builtin_optmap
+MNT_INVERT
+MNT_NOMTAB
+MNT_PREFIX
 </SECTION>
 
 <SECTION>
@@ -182,6 +232,7 @@ mnt_split_optstr
 
 <SECTION>
 <FILE>table</FILE>
+libmnt_table
 mnt_free_table
 mnt_new_table
 mnt_reset_table
@@ -213,6 +264,7 @@ mnt_table_set_parser_errcb
 
 <SECTION>
 <FILE>tabdiff</FILE>
+libmnt_tabdiff
 mnt_new_tabdiff
 mnt_free_tabdiff
 mnt_tabdiff_next_change
@@ -221,6 +273,7 @@ mnt_diff_tables
 
 <SECTION>
 <FILE>update</FILE>
+libmnt_update
 mnt_free_update
 mnt_new_update
 mnt_update_force_rdonly
@@ -251,16 +304,5 @@ mnt_unmangle
 <FILE>version</FILE>
 mnt_parse_version_string
 mnt_get_library_version
+LIBMOUNT_VERSION
 </SECTION>
-
-
-
-
-
-
-
-
-
-
-
-

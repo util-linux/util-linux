@@ -765,7 +765,7 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 /**
  * mnt_context_get_table:
  * @cxt: mount context
- * @file: filename (e.g. /proc/self/mountinfo, ...)
+ * @filename: e.g. /proc/self/mountinfo
  * @tb: returns the table
  *
  * This function allocates a new table and parses the @file. The parser error
@@ -1629,12 +1629,12 @@ int mnt_context_init_helper(struct libmnt_context *cxt, int action, int flags)
 
 /**
  * mnt_context_helper_setopt:
- * @cxr: context
+ * @cxt: context
  * @c: getopt() result
  * @arg: getopt() optarg
  *
  * This function applies [u]mount.type command line option (for example parsed
- * by getopt() or getopt_long()) to @cxt. All unknown options are ignored and
+ * by getopt or getopt_long) to @cxt. All unknown options are ignored and
  * then 1 is returned.
  *
  * Returns: negative number on error, 1 if @c is unknown option, 0 on success.
@@ -1653,8 +1653,9 @@ int mnt_context_helper_setopt(struct libmnt_context *cxt, int c, char *arg)
 }
 
 /**
+ * mnt_context_is_fs_mounted:
  * @cxt: context
- * @fs; filesystem
+ * @fs: filesystem
  * @mounted: returns 1 for mounted and 0 for non-mounted filesystems
  *
  * Returns: 0 on success and negative number in case of error.
