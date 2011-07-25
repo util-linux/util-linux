@@ -106,6 +106,10 @@ $TESTPROG --mount -o ro,noexec,nosuid,strictatime $DEVICE $MOUNTPOINT >> $TS_OUT
 $TS_CMD_FINDMNT --kernel $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>&1
 grep -q $DEVICE $LIBMOUNT_MTAB || \
 	echo "cannot found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+
+$TESTPROG --mount -o remount,rw $MOUNTPOINT >> $TS_OUTPUT 2>&1
+$TS_CMD_FINDMNT --kernel $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>&1
+
 $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
 grep -q $DEVICE $LIBMOUNT_MTAB &&
 	echo "umount failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
