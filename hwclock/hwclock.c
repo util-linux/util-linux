@@ -516,15 +516,7 @@ set_hardware_clock_exact(const time_t sethwtime,
 	time_t newhwtime;
 	struct timeval beginsystime, nowsystime;
 	double tdiff;
-
- time_resync:
-	gettimeofday(&beginsystime, NULL);
-	tdiff = time_diff(beginsystime, refsystime);
-	newhwtime = sethwtime + (int)(tdiff + 0.5);
-	if (debug)
-		printf(_
-		       ("Time elapsed since reference time has been %.6f seconds.\n"
-			"Delaying further to reach the new time.\n"), tdiff);
+	int time_resync = 1;
 
 	/*
 	 * Now delay some more until Hardware Clock time newhwtime arrives.
@@ -533,12 +525,28 @@ set_hardware_clock_exact(const time_t sethwtime,
 	 * second precisely 500 ms after you finish the setting).
 	 */
 	do {
+		if (time_resync) {
+			gettimeofday(&beginsystime, NULL);
+			tdiff = time_diff(beginsystime, refsystime);
+			newhwtime = sethwtime + (int)(tdiff + 0.5);
+			if (debug)
+				printf(_
+				       ("Time elapsed since reference time has been %.6f seconds.\n"
+					"Delaying further to reach the new time.\n"),
+				       tdiff);
+			time_resync = 0;
+		}
+
 		gettimeofday(&nowsystime, NULL);
 		tdiff = time_diff(nowsystime, beginsystime);
-		if (tdiff < 0)
-			goto time_resync;	/* probably backward time reset */
-		if (tdiff > 0.1)
-			goto time_resync;	/* probably forward time reset */
+		if (tdiff < 0) {
+			time_resync = 1;	/* probably backward time reset */
+			continue;
+		}
+		if (tdiff > 0.1) {
+			time_resync = 1;	/* probably forward time reset */
+			continue;
+		}
 		beginsystime = nowsystime;
 		tdiff = time_diff(nowsystime, refsystime);
 	} while (newhwtime == sethwtime + (int)(tdiff + 0.5));
