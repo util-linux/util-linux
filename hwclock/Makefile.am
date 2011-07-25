@@ -4,7 +4,7 @@ dist_man_MANS = hwclock.8
 
 sbin_PROGRAMS = hwclock
 
-hwclock_SOURCES = hwclock.c cmos.c kd.c clock.h
+hwclock_SOURCES = hwclock.c cmos.c kd.c clock.h $(top_srcdir)/lib/strutils.c
 hwclock_LDADD =
 
 if LINUX

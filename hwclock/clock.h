@@ -26,7 +26,7 @@ typedef int bool;
 /* hwclock.c */
 extern char *progname;
 extern int debug;
-extern int epoch_option;
+extern unsigned long epoch_option;
 extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
 /* cmos.c */
 extern void set_cmos_epoch(int ARCconsole, int SRM);

@@ -74,6 +74,7 @@
 #include "clock.h"
 #include "nls.h"
 #include "pathnames.h"
+#include "strutils.h"
 
 #ifdef HAVE_LIBAUDIT
 #include <libaudit.h>
@@ -143,7 +144,7 @@ bool debug;
 bool badyear;
 
 /* User-specified epoch, used when rtc fails to return epoch. */
-int epoch_option = -1;
+unsigned long epoch_option = -1;
 
 /*
  * Almost all Award BIOS's made between 04/26/94 and 05/31/95 have a nasty
@@ -1307,7 +1308,7 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 static void
 manipulate_epoch(const bool getepoch __attribute__ ((__unused__)),
 		 const bool setepoch __attribute__ ((__unused__)),
-		 const int epoch_opt __attribute__ ((__unused__)),
+		 const unsigned long epoch_opt __attribute__ ((__unused__)),
 		 const bool testing __attribute__ ((__unused__)))
 {
 	warnx(_("The kernel keeps an epoch value for the Hardware Clock "
@@ -1319,7 +1320,7 @@ manipulate_epoch(const bool getepoch __attribute__ ((__unused__)),
 static void
 manipulate_epoch(const bool getepoch,
 		 const bool setepoch,
-		 const int epoch_opt,
+		 const unsigned long epoch_opt,
 		 const bool testing)
 {
 	if (getepoch) {
@@ -1600,7 +1601,8 @@ int main(int argc, char **argv)
 			date_opt = optarg;	/* --date */
 			break;
 		case OPT_EPOCH:
-			epoch_option = atoi(optarg);	/* --epoch */
+			epoch_option =		/* --epoch */
+			    strtoul_or_err(optarg, _("failed to parse epoch"));
 			break;
 		case OPT_ADJFILE:
 			adj_file_name = optarg;	/* --adjfile */
