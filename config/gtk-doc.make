@@ -94,11 +94,10 @@ setup.stamp: setup-build.stamp
 
 scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB) $(srcdir)/$(DOC_MODULE)-*.txt $(content_files)
 
-	test -f $(DOC_MODULE)-sections.txt || \
+	@test -f $(DOC_MODULE)-sections.txt || \
 		cp $(srcdir)/$(DOC_MODULE)-sections.txt $(builddir)
 
-	@echo 'gtk-doc: Scanning header files'
-	gtkdoc-scan --module=$(DOC_MODULE) \
+	$(AM_V_GEN)gtkdoc-scan --module=$(DOC_MODULE) \
 	            --source-dir=$(srcdir)/$(DOC_SOURCE_DIR) \
 	            --source-dir=$(builddir)/$(DOC_SOURCE_DIR) \
 	            --ignore-headers="$(IGNORE_HFILES)" \
@@ -117,7 +116,7 @@ scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB) $(srcdir)/$(DOC_MODULE)-*.txt $(co
 	fi
 	@ touch scan-build.stamp
 
-$(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(srcdir)/$(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt: scan-build.stamp
+$(SCANOBJ_FILES): scan-build.stamp
 	@true
 
 #### templates ####
@@ -139,8 +138,7 @@ $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(srcdir)/$(DOC_MODULE)-sections.txt $(D
 #### xml ####
 
 sgml-build.stamp: setup.stamp $(HFILE_GLOB) $(CFILE_GLOB) $(srcdir)/$(DOC_MODULE)-sections.txt $(expand_content_files)
-	@echo 'gtk-doc: Building XML'
-	gtkdoc-mkdb --module=$(DOC_MODULE) \
+	$(AM_V_GEN)gtkdoc-mkdb --module=$(DOC_MODULE) \
 	            --source-dir=$(srcdir)/$(DOC_SOURCE_DIR) \
 	            --source-dir=$(builddir)/$(DOC_SOURCE_DIR) \
 	            --output-format=xml \
@@ -148,7 +146,7 @@ sgml-build.stamp: setup.stamp $(HFILE_GLOB) $(CFILE_GLOB) $(srcdir)/$(DOC_MODULE
 	            --expand-content-files="$(expand_content_files)" \
 	            --main-sgml-file=$(srcdir)/$(DOC_MAIN_SGML_FILE) \
 	            $(MKDB_OPTIONS)
-	touch sgml-build.stamp
+	@touch sgml-build.stamp
 
 sgml.stamp: sgml-build.stamp
 	@true
@@ -156,23 +154,21 @@ sgml.stamp: sgml-build.stamp
 #### html ####
 
 html-build.stamp: sgml.stamp $(srcdir)/$(DOC_MAIN_SGML_FILE) $(content_files)
-	@echo 'gtk-doc: Building HTML'
-	rm -rf $(builddir)/html
-	$(MKDIR_P) $(builddir)/html
-	cd $(builddir)/html && \
+	@rm -rf $(builddir)/html
+	@$(MKDIR_P) $(builddir)/html
+	$(AM_V_GEN)cd $(builddir)/html && \
 	  gtkdoc-mkhtml --path="$(abs_builddir):$(abs_builddir)/xml:$(abs_srcdir)" \
 	                $(MKHTML_OPTIONS) \
 	                $(DOC_MODULE) \
 	                $(abs_srcdir)/$(DOC_MAIN_SGML_FILE)
 
-	test "x$(HTML_IMAGES)" = "x" || \
+	@test "x$(HTML_IMAGES)" = "x" || \
 		( cd $(srcdir) && cp $(HTML_IMAGES) $(abs_builddir)/html )
 
-	@echo 'gtk-doc: Fixing cross-references'
-	gtkdoc-fixxref --module-dir=html \
+	$(AM_V_GEN)gtkdoc-fixxref --module-dir=html \
 	               --html-dir=$(HTML_DIR) \
 	               $(FIXXREF_OPTIONS)
-	touch html-build.stamp
+	@touch html-build.stamp
 
 ##############
 
