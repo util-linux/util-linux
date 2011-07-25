@@ -431,7 +431,8 @@ static char *remove_context_options(char *opts)
 		if (strncmp(begin, "context=", 8) == 0 ||
 		    strncmp(begin, "fscontext=", 10) == 0 ||
 		    strncmp(begin, "defcontext=", 11) == 0 ||
-	            strncmp(begin, "rootcontext=", 12) == 0) {
+	            strncmp(begin, "rootcontext=", 12) == 0 ||
+		    strncmp(begin, "seclabel", 8) == 0) {
 			size_t sz;
 
 			if ((begin == opts || *(begin - 1) == ',') && *end == ',')
