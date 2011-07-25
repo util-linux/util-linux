@@ -1499,16 +1499,28 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		return 0;
 
 	if (mnt_context_is_restricted(cxt)) {
-		DBG(CXT, mnt_debug_h(cxt, "force fstab usage for non-root users"));
+		DBG(CXT, mnt_debug_h(cxt, "force fstab usage for non-root users!"));
 		cxt->optsmode = MNT_OMODE_USER;
-
-	} else if (cxt->optsmode == 0)
+	} else if (cxt->optsmode == 0) {
+		DBG(CXT, mnt_debug_h(cxt, "use default optmode"));
 		cxt->optsmode = MNT_OMODE_AUTO;
+
+	}
 
 	if (cxt->fs) {
 		src = mnt_fs_get_source(cxt->fs);
 		tgt = mnt_fs_get_target(cxt->fs);
 	}
+
+	DBG(CXT, mnt_debug_h(cxt, "OPTSMODE: ignore=%d, append=%d, prepend=%d, "
+				  "replace=%d, force=%d, fstab=%d, mtab=%d",
+				  cxt->optsmode & MNT_OMODE_IGNORE ? 1 : 0,
+				  cxt->optsmode & MNT_OMODE_APPEND ? 1 : 0,
+				  cxt->optsmode & MNT_OMODE_PREPEND ? 1 : 0,
+				  cxt->optsmode & MNT_OMODE_REPLACE ? 1 : 0,
+				  cxt->optsmode & MNT_OMODE_FORCE ? 1 : 0,
+				  cxt->optsmode & MNT_OMODE_FSTAB ? 1 : 0,
+				  cxt->optsmode & MNT_OMODE_MTAB ? 1 : 0));
 
 	/* fstab is not required if source and target are specified */
 	if (src && tgt && !(cxt->optsmode & MNT_OMODE_FORCE)) {
@@ -1530,7 +1542,8 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	}
 
 	/* try mtab */
-	if (rc == -1 && (cxt->optsmode & MNT_OMODE_MTAB)) {
+	if (rc < 0 && (cxt->optsmode & MNT_OMODE_MTAB)) {
+		DBG(CXT, mnt_debug_h(cxt, "tring to apply from mtab"));
 		rc = mnt_context_get_mtab(cxt, &tab);
 		if (!rc)
 			rc = apply_table(cxt, tab, MNT_ITER_BACKWARD);
