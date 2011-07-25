@@ -436,10 +436,10 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 
 	/* native @target */
 	mnt_reset_iter(&itr, direction);
-	while(mnt_table_next_fs(tb, &itr, &fs) == 0)
+	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 		if (fs->target && strcmp(fs->target, path) == 0)
 			return fs;
-
+	}
 	if (!tb->cache || !(cn = mnt_resolve_path(path, tb->cache)))
 		return NULL;
 

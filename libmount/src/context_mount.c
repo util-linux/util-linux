@@ -19,6 +19,7 @@
 #include <sys/wait.h>
 #include <sys/mount.h>
 
+#include "linux_version.h"
 #include "mountP.h"
 
 /*
@@ -26,7 +27,7 @@
  */
 static int fix_optstr(struct libmnt_context *cxt)
 {
-	int rc = 0, rem_se = 0;
+	int rc = 0, se_rem = 0, se_fix = 0;
 	char *next;
 	char *name, *val;
 	size_t namesz, valsz;
@@ -76,7 +77,23 @@ static int fix_optstr(struct libmnt_context *cxt)
 	next = fs->fs_optstr;
 
 #ifdef HAVE_LIBSELINUX
-	rem_se = (cxt->mountflags & MS_REMOUNT) || !is_selinux_enabled();
+	if (!is_selinux_enabled())
+		/* Always remove SELinux garbage if SELinux disabled */
+		se_rem = 1;
+	else if (cxt->mountflags & MS_REMOUNT)
+		/*
+		 * Linux kernel < 2.6.39 does not allow to remount with any
+		 * selinux specific mount options.
+		 *
+		 * Kernel 2.6.39 commits:  ff36fe2c845cab2102e4826c1ffa0a6ebf487c65
+		 *                         026eb167ae77244458fa4b4b9fc171209c079ba7
+		 * fix this odd behavior, so we don't have to care about it in
+		 * userspace.
+		 */
+		se_rem = get_linux_version() < KERNEL_VERSION(2, 6, 39);
+	else
+		/* For normal mount we have translate the contexts */
+		se_fix = 1;
 #endif
 	while (!mnt_optstr_next_option(&next, &name, &namesz, &val, &valsz)) {
 
@@ -85,16 +102,21 @@ static int fix_optstr(struct libmnt_context *cxt)
 		else if (namesz == 3 && !strncmp(name, "gid", 3))
 			rc = mnt_optstr_fix_gid(&fs->fs_optstr, val, valsz, &next);
 #ifdef HAVE_LIBSELINUX
-		else if (namesz >= 7 && (!strncmp(name, "context", 7) ||
+		else if ((se_rem || se_fix) &&
+			 namesz >= 7 && (!strncmp(name, "context", 7) ||
 					 !strncmp(name, "fscontext", 9) ||
 					 !strncmp(name, "defcontext", 10) ||
-					 !strncmp(name, "rootcontext", 11))) {
-			if (rem_se) {
+					 !strncmp(name, "rootcontext", 11) ||
+					 !strncmp(name, "seclabel", 8))) {
+			if (se_rem) {
 				/* remove context= option */
 				next = name;
 				rc = mnt_optstr_remove_option_at(&fs->fs_optstr,
-							name, val + valsz);
-			} else
+						name,
+						val ? val + valsz :
+						      name + namesz);
+			} else if (se_fix && val && valsz)
+				/* translate selinux contexts */
 				rc = mnt_optstr_fix_secontext(&fs->fs_optstr,
 							val, valsz, &next);
 		}
