@@ -25,10 +25,6 @@
 extern "C" {
 #endif
 
-#ifndef USE_UNSTABLE_LIBMOUNT_API
-# warning libmount API is not stable yet!
-#endif
-
 #include <stdio.h>
 #include <mntent.h>
 #include <sys/types.h>

@@ -13,20 +13,13 @@
  * This is simple and low-level API to work with mount options that are stored
  * in string.
  */
-
-#include <string.h>
-#include <stdlib.h>
 #include <ctype.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <unistd.h>
 
 #ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>
 #include <selinux/context.h>
 #endif
 
-#include "nls.h"
 #include "mountP.h"
 
 /*

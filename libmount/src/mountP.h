@@ -10,14 +10,16 @@
 #ifndef _LIBMOUNT_PRIVATE_H
 #define _LIBMOUNT_PRIVATE_H
 
-#include <sys/types.h>
 #include <errno.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 #include "c.h"
-
-#define USE_UNSTABLE_LIBMOUNT_API
-
-#include "libmount.h"
 #include "list.h"
+#include "libmount.h"
 
 /* features */
 #define CONFIG_LIBMOUNT_ASSERT

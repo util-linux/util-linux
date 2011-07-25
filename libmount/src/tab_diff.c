@@ -10,16 +10,6 @@
  * @title: Monitor mountinfo changes
  * @short_description: monitor changes in the list of the mounted filesystems
  */
-
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-
 #include "mountP.h"
 
 struct tabdiff_entry {

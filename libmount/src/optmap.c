@@ -57,12 +57,6 @@
  * For more details about option map struct see "struct mnt_optmap" in
  * mount/mount.h.
  */
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <errno.h>
-
-#include "nls.h"
 #include "mountP.h"
 
 /*

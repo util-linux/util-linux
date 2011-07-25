@@ -5,17 +5,11 @@
  * GNU Lesser General Public License.
  */
 
-#include <string.h>
-#include <stdlib.h>
 #include <ctype.h>
 #include <limits.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <dirent.h>
 #include <fcntl.h>
-#include <unistd.h>
 
-#include "nls.h"
 #include "at.h"
 #include "mangle.h"
 #include "mountP.h"

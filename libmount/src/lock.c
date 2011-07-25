@@ -14,13 +14,6 @@
  * locking.  Note, it's necessary to use the same locking schema in all
  * application that access the file.
  */
-#include <string.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <errno.h>
-#include <stdio.h>
 #include <sys/time.h>
 #include <time.h>
 #include <signal.h>
@@ -29,9 +22,6 @@
 #include <sys/file.h>
 
 #include "pathnames.h"
-#include "nls.h"
-#include "c.h"
-
 #include "mountP.h"
 
 /*

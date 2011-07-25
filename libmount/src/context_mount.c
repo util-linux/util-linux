@@ -11,14 +11,6 @@
  * @short_description: high-level API to mount operation.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
-
 #ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>
 #include <selinux/context.h>
@@ -27,7 +19,6 @@
 #include <sys/wait.h>
 #include <sys/mount.h>
 
-#include "c.h"
 #include "mountP.h"
 
 /*

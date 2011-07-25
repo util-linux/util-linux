@@ -11,7 +11,6 @@
  * @short_description: initialize debuging
  */
 
-#include <stdlib.h>
 #include <stdarg.h>
 
 #include "mountP.h"

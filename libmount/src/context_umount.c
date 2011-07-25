@@ -11,18 +11,9 @@
  * @short_description: high-level API to umount operation.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <string.h>
-#include <errno.h>
-
 #include <sys/wait.h>
 #include <sys/mount.h>
 
-#include "c.h"
 #include "pathnames.h"
 #include "strutils.h"
 #include "mountP.h"

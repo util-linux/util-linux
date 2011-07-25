@@ -13,9 +13,6 @@
  * @short_description: functions to get library version.
  */
 
-#include <unistd.h>
-#include <string.h>
-#include <stdio.h>
 #include <ctype.h>
 
 #include "mountP.h"

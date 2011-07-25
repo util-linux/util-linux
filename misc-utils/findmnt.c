@@ -31,7 +31,6 @@
 #include <assert.h>
 #include <poll.h>
 
-#define USE_UNSTABLE_LIBMOUNT_API
 #include <libmount.h>
 
 #include "pathnames.h"

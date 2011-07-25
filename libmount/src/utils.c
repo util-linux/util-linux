@@ -10,13 +10,7 @@
  * @title: Utils
  * @short_description: misc utils.
  */
-#include <unistd.h>
-#include <errno.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/stat.h>
 #include <ctype.h>
-#include <sys/types.h>
 #include <fcntl.h>
 #include <pwd.h>
 #include <grp.h>

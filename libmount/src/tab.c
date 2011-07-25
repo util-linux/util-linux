@@ -41,20 +41,9 @@
  * </informalexample>
  * will returns the first entry (if UUID matches with the device).
  */
-
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <errno.h>
-#include <limits.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 #include <blkid.h>
 
-#include "nls.h"
 #include "mountP.h"
-#include "c.h"
 
 /**
  * mnt_new_table:

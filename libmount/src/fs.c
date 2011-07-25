@@ -11,15 +11,10 @@
  * @short_description: represents one entry from fstab, mtab, or mountinfo file
  *
  */
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
 #include <ctype.h>
-#include <errno.h>
 #include <blkid.h>
 #include <stddef.h>
 
-#include "nls.h"
 #include "mountP.h"
 
 /**
@@ -1230,7 +1225,7 @@ int mnt_fs_match_options(struct libmnt_fs *fs, const char *options)
 /**
  * mnt_fs_print_debug
  * @fs: fstab/mtab/mountinfo entry
- * @file: output
+ * @file: file stream
  *
  * Returns: 0 on success or negative number in case of error.
  */
