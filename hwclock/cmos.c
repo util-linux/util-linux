@@ -66,11 +66,12 @@
  * not export that header.
  */
 #undef __i386__
-void outb(int a, int b)
+void outb(int a __attribute__ ((__unused__)),
+	  int b __attribute__ ((__unused__)))
 {
 }
 
-int inb(int c)
+int inb(int c __attribute__ ((__unused__)))
 {
 	return 0;
 }
@@ -81,11 +82,12 @@ int inb(int c)
 extern unsigned int inb(unsigned long port);
 extern void outb(unsigned char b, unsigned long port);
 #else
-void outb(int a, int b)
+void outb(int a __attribute__ ((__unused__)),
+	  int b __attribute__ ((__unused__)))
 {
 }
 
-int inb(int c)
+int inb(int c __attribute__ ((__unused__)))
 {
 	return 0;
 }
@@ -298,7 +300,9 @@ atomic(const char *name, unsigned long (*op) (unsigned long), unsigned long arg)
  * TODO: optimize the access to CMOS by mlockall(MCL_CURRENT) and SCHED_FIFO
  */
 static unsigned long
-atomic(const char *name, unsigned long (*op) (unsigned long), unsigned long arg)
+atomic(const char *name __attribute__ ((__unused__)),
+       unsigned long (*op) (unsigned long),
+       unsigned long arg)
 {
 	return (*op) (arg);
 }
@@ -603,20 +607,26 @@ static int set_hardware_clock_cmos(const struct tm *new_broken_time)
 	return 0;
 }
 
+#if defined(__i386__) || defined(__alpha__)
+# if defined(HAVE_IOPL)
 static int i386_iopl(const int level)
 {
-#if defined(__i386__) || defined(__alpha__)
-#if defined(HAVE_IOPL)
 	extern int iopl(const int lvl);
 	return iopl(level);
-#else
+}
+# else
+static int i386_iopl(const int level __attribute__ ((__unused__)))
+{
 	extern int ioperm(unsigned long from, unsigned long num, int turn_on);
 	return ioperm(clock_ctl_addr, 2, 1);
-#endif
-#else
-	return -2;
-#endif
 }
+# endif
+#else
+static int i386_iopl(const int level __attribute__ ((__unused__)))
+{
+	return -2;
+}
+#endif
 
 static int get_permissions_cmos(void)
 {
@@ -624,7 +634,6 @@ static int get_permissions_cmos(void)
 
 	if (use_dev_port) {
 		if ((dev_port_fd = open("/dev/port", O_RDWR)) < 0) {
-			int errsv = errno;
 			warn(_("Cannot open /dev/port"));
 			rc = 1;
 		} else

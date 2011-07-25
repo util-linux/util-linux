@@ -1273,22 +1273,30 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
  * <epoch> == -1 if the user did not specify an "epoch" option.
  */
 #ifdef __linux__
+/*
+ * Maintenance note: This should work on non-Alpha machines, but the
+ * evidence today (98.03.04) indicates that the kernel only keeps the epoch
+ * value on Alphas. If that is ever fixed, this function should be changed.
+ */
+# ifndef __alpha__
 static void
-manipulate_epoch(const bool getepoch, const bool setepoch,
-		 const int epoch_opt, const bool testing)
+manipulate_epoch(const bool getepoch __attribute__ ((__unused__)),
+		 const bool setepoch __attribute__ ((__unused__)),
+		 const int epoch_opt __attribute__ ((__unused__)),
+		 const bool testing __attribute__ ((__unused__)))
 {
-	/*
-	 * Maintenance note: This should work on non-Alpha machines, but the
-	 * evidence today (98.03.04) indicates that the kernel only keeps
-	 * the epoch value on Alphas. If that is ever fixed, this function
-	 * should be changed.
-	 */
-#ifndef __alpha__
 	warnx(_("The kernel keeps an epoch value for the Hardware Clock "
 		"only on an Alpha machine.\nThis copy of hwclock was built for "
 		"a machine other than Alpha\n(and thus is presumably not running "
 		"on an Alpha now).  No action taken."));
-#else
+}
+# else
+static void
+manipulate_epoch(const bool getepoch,
+		 const bool setepoch,
+		 const int epoch_opt,
+		 const bool testing)
+{
 	if (getepoch) {
 		unsigned long epoch;
 
@@ -1311,9 +1319,9 @@ manipulate_epoch(const bool getepoch, const bool setepoch,
 			printf(_
 			       ("Unable to set the epoch value in the kernel.\n"));
 	}
-#endif
 }
-#endif
+# endif		/* __alpha__ */
+#endif		/* __linux__ */
 
 static void out_version(void)
 {
@@ -1347,21 +1355,25 @@ static void usage(const char *fmt, ...)
 		  "  -w | --systohc      set the hardware clock to the current system time\n"
 		  "       --systz        set the system time based on the current timezone\n"
 		  "       --adjust       adjust the rtc to account for systematic drift since\n"
-		  "                      the clock was last set or adjusted\n"
+		  "                      the clock was last set or adjusted\n"));
 #ifdef __linux__
-		  "       --getepoch     print out the kernel's hardware clock epoch value\n"
+	fprintf(usageto,
+		_("       --getepoch     print out the kernel's hardware clock epoch value\n"
 		  "       --setepoch     set the kernel's hardware clock epoch value to the \n"
-		  "                      value given with --epoch\n"
+		  "                      value given with --epoch\n"));
 #endif
-		  "       --predict      predict rtc reading at time given with --date\n"
+	fprintf(usageto,
+		_("       --predict      predict rtc reading at time given with --date\n"
 		  "  -v | --version      print out the version of hwclock to stdout\n"
 		  "\nOptions: \n"
 		  "  -u | --utc          the hardware clock is kept in UTC\n"
-		  "       --localtime    the hardware clock is kept in local time\n"
+		  "       --localtime    the hardware clock is kept in local time\n"));
 #ifdef __linux__
-		  "  -f | --rtc=path     special /dev/... file to use instead of default\n"
+	fprintf(usageto,
+		_("  -f | --rtc=path     special /dev/... file to use instead of default\n"));
 #endif
-		  "       --directisa    access the ISA bus directly instead of %s\n"
+	fprintf(usageto,
+		_("       --directisa    access the ISA bus directly instead of %s\n"
 		  "       --badyear      ignore rtc's year because the bios is broken\n"
 		  "       --date         specifies the time to which to set the hardware clock\n"
 		  "       --epoch=year   specifies the year which is the beginning of the \n"
@@ -1372,12 +1384,13 @@ static void usage(const char *fmt, ...)
 		  "                      %s)\n"
 		  "       --test         do everything except actually updating the hardware\n"
 		  "                      clock or anything else\n"
-		  "  -D | --debug        debug mode\n" "\n"),
-	_PATH_RTC_DEV, _PATH_ADJPATH, _PATH_ADJPATH);
+		  "  -D | --debug        debug mode\n" "\n"), _PATH_RTC_DEV,
+		 _PATH_ADJPATH, _PATH_ADJPATH);
 #ifdef __alpha__
-	fprintf(usageto, _("  -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
-			   "       tell hwclock the type of alpha you have (see hwclock(8))\n"
-			   "\n"));
+	fprintf(usageto,
+		_("  -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
+		  "       tell hwclock the type of alpha you have (see hwclock(8))\n"
+		  "\n"));
 #endif
 
 	fflush(usageto);
