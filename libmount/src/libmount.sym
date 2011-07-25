@@ -34,14 +34,12 @@ global:
 	mnt_context_get_optsmode;
 	mnt_context_get_source;
 	mnt_context_get_status;
-	mnt_context_get_table;
 	mnt_context_get_target;
 	mnt_context_get_user_mflags;
 	mnt_context_helper_setopt;
 	mnt_context_init_helper;
 	mnt_context_is_fake;
 	mnt_context_is_force;
-	mnt_context_is_fs_mounted;
 	mnt_context_is_lazy;
 	mnt_context_is_nomtab;
 	mnt_context_is_rdonly_umount;
@@ -49,7 +47,6 @@ global:
 	mnt_context_is_sloppy;
 	mnt_context_is_verbose;
 	mnt_context_mount;
-	mnt_context_next_mount;
 	mnt_context_prepare_mount;
 	mnt_context_prepare_umount;
 	mnt_context_set_cache;
@@ -64,20 +61,17 @@ global:
 	mnt_context_set_optsmode;
 	mnt_context_set_source;
 	mnt_context_set_syscall_status;
-	mnt_context_set_tables_errcb;
 	mnt_context_set_target;
 	mnt_context_set_user_mflags;
 	mnt_context_strerror;
 	mnt_context_umount;
 	mnt_copy_fs;
-	mnt_diff_tables;
 	mnt_free_cache;
 	mnt_free_context;
 	mnt_free_fs;
 	mnt_free_iter;
 	mnt_free_lock;
 	mnt_free_mntent;
-	mnt_free_tabdiff;
 	mnt_free_table;
 	mnt_free_update;
 	mnt_fs_append_attributes;
@@ -91,7 +85,6 @@ global:
 	mnt_fs_get_fstype;
 	mnt_fs_get_id;
 	mnt_fs_get_option;
-	mnt_fs_get_options;
 	mnt_fs_get_parent_id;
 	mnt_fs_get_passno;
 	mnt_fs_get_root;
@@ -132,7 +125,6 @@ global:
 	mnt_has_regular_mtab;
 	mnt_init_debug;
 	mnt_iter_get_direction;
-	mnt_lock_block_signals;
 	mnt_lock_file;
 	mnt_mangle;
 	mnt_match_fstype;
@@ -142,7 +134,6 @@ global:
 	mnt_new_fs;
 	mnt_new_iter;
 	mnt_new_lock;
-	mnt_new_tabdiff;
 	mnt_new_table;
 	mnt_new_table_from_dir;
 	mnt_new_table_from_file;
@@ -157,16 +148,13 @@ global:
 	mnt_optstr_remove_option;
 	mnt_optstr_set_option;
 	mnt_parse_version_string;
-	mnt_pretty_path;
 	mnt_reset_context;
 	mnt_reset_fs;
 	mnt_reset_iter;
-	mnt_reset_table;
 	mnt_resolve_path;
 	mnt_resolve_spec;
 	mnt_resolve_tag;
 	mnt_split_optstr;
-	mnt_tabdiff_next_change;
 	mnt_table_add_fs;
 	mnt_table_find_next_fs;
 	mnt_table_find_pair;
@@ -178,7 +166,6 @@ global:
 	mnt_table_get_name;
 	mnt_table_get_nents;
 	mnt_table_get_root_fs;
-	mnt_table_is_fs_mounted;
 	mnt_table_next_child_fs;
 	mnt_table_next_fs;
 	mnt_table_parse_file;
@@ -202,3 +189,19 @@ local:
 	*;
 };
 
+MOUNT_2.20 {
+global:
+	mnt_context_get_table;
+	mnt_context_is_fs_mounted;
+	mnt_context_next_mount;
+	mnt_context_set_tables_errcb;
+	mnt_diff_tables;
+	mnt_free_tabdiff;
+	mnt_fs_get_options;
+	mnt_lock_block_signals;
+	mnt_new_tabdiff;
+	mnt_pretty_path;
+	mnt_reset_table;
+	mnt_tabdiff_next_change;
+	mnt_table_is_fs_mounted;
+} MOUNT_2.19;
