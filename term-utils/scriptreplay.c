@@ -203,8 +203,8 @@ main(int argc, char *argv[])
 		size_t blk;
 		char nl;
 
-		if ((fscanf(tfile, "%lf %zd%[\n]\n", &delay, &blk, &nl) != 3) ||
-							(nl != '\n')) {
+		if (fscanf(tfile, "%lf %zd%c\n", &delay, &blk, &nl) != 3 ||
+				                                 nl != '\n') {
 			if (feof(tfile))
 				break;
 			if (ferror(tfile))
