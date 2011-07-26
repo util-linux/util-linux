@@ -30,22 +30,26 @@
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <dirent.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
 #include <getopt.h>
-#include <stdarg.h>
+#include <zconf.h>
 #include <zlib.h>
 
+#include "c.h"
 #include "cramfs.h"
 #include "md5.h"
 #include "nls.h"
-#include "mkfs.h"
+#include "exitcodes.h"
+#include "strutils.h"
+#define XALLOC_EXIT_CODE MKFS_ERROR
+#include "xalloc.h"
 
 /* The kernel only supports PAD_SIZE of 0 and 512. */
 #define PAD_SIZE 512
 
-static const char *progname = "mkcramfs";
 static int verbose = 0;
 
 static unsigned int blksize; /* settable via -b option */
@@ -88,14 +92,14 @@ struct entry {
 	/* stats */
 	unsigned char *name;
 	unsigned int mode, size, uid, gid;
-	unsigned char md5sum[16];
+	unsigned char md5sum[MD5LENGTH];
 	unsigned char flags;	   /* CRAMFS_EFLAG_* */
 
 	/* FS data */
 	char *path;
 	int fd;			    /* temporarily open files while mmapped */
-        struct entry *same;	    /* points to other identical file */
-        unsigned int offset;        /* pointer to compressed data in archive */
+	struct entry *same;	    /* points to other identical file */
+	unsigned int offset;        /* pointer to compressed data in archive */
 	unsigned int dir_offset;    /* offset of directory entry in archive */
 
 	/* organization */
@@ -135,20 +139,9 @@ usage(int status) {
 		  " -z         make explicit holes (requires >= 2.3.39)\n"
 		  " dirname    root of the filesystem to be compressed\n"
 		  " outfile    output file\n"),
-		progname, PAD_SIZE);
+		program_invocation_short_name, PAD_SIZE);
 
 	exit(status);
-}
-
-/* malloc or die */
-static void *
-xmalloc (size_t size) {
-	void *t = malloc(size);
-	if (t == NULL) {
-		perror(NULL);
-		exit(MKFS_ERROR);	/* out of memory */
-	}
-	return t;
 }
 
 static char *
@@ -177,10 +170,8 @@ do_mmap(char *path, unsigned int size, unsigned int mode){
 	}
 
 	start = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
-	if (-1 == (int) (long) start) {
-		perror("mmap");
-		exit(MKFS_ERROR);
-	}
+	if (-1 == (int) (long) start)
+		err(MKFS_ERROR, "mmap");
 	close(fd);
 
 	return start;
@@ -244,11 +235,11 @@ identical_file(struct entry *e1, struct entry *e2){
 
 static int find_identical_file(struct entry *orig, struct entry *new, loff_t *fslen_ub)
 {
-        if (orig == new)
+	if (orig == new)
 		return 1;
-        if (!orig)
+	if (!orig)
 		return 0;
-        if (orig->size == new->size && orig->path) {
+	if (orig->size == new->size && orig->path) {
 		if (!orig->flags)
 			mdfile(orig);
 		if (!new->flags)
@@ -256,24 +247,24 @@ static int find_identical_file(struct entry *orig, struct entry *new, loff_t *fs
 
 		if ((orig->flags & CRAMFS_EFLAG_MD5) &&
 		    (new->flags & CRAMFS_EFLAG_MD5) &&
-		    !memcmp(orig->md5sum, new->md5sum, 16) &&
+		    !memcmp(orig->md5sum, new->md5sum, MD5LENGTH) &&
 		    identical_file(orig, new)) {
 			new->same = orig;
 			*fslen_ub -= new->size;
 			return 1;
 		}
-        }
-        return find_identical_file(orig->child, new, fslen_ub) ||
-                   find_identical_file(orig->next, new, fslen_ub);
+	}
+	return find_identical_file(orig->child, new, fslen_ub) ||
+		   find_identical_file(orig->next, new, fslen_ub);
 }
 
 static void eliminate_doubles(struct entry *root, struct entry *orig, loff_t *fslen_ub) {
-        if (orig) {
-                if (orig->size && orig->path)
+	if (orig) {
+		if (orig->size && orig->path)
 			find_identical_file(root,orig, fslen_ub);
-                eliminate_doubles(root,orig->child, fslen_ub);
-                eliminate_doubles(root,orig->next, fslen_ub);
-        }
+		eliminate_doubles(root,orig->child, fslen_ub);
+		eliminate_doubles(root,orig->next, fslen_ub);
+	}
 }
 
 /*
@@ -300,13 +291,11 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 	*endpath = '/';
 	endpath++;
 
-        /* read in the directory and sort */
-        dircount = scandir(name, &dirlist, 0, cramsort);
+	/* read in the directory and sort */
+	dircount = scandir(name, &dirlist, 0, cramsort);
 
-	if (dircount < 0) {
-		perror(name);
-		exit(MKFS_ERROR);
-	}
+	if (dircount < 0)
+		err(MKFS_ERROR, _("could not read directory %s"), name);
 
 	/* process directory */
 	for (dirindex = 0; dirindex < dircount; dirindex++) {
@@ -329,14 +318,12 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 			}
 		}
 		namelen = strlen(dirent->d_name);
-		if (namelen > MAX_INPUT_NAMELEN) {
-			fprintf(stderr,
+		if (namelen > MAX_INPUT_NAMELEN)
+			errx(MKFS_ERROR,
 				_("Very long (%zu bytes) filename `%s' found.\n"
 				  " Please increase MAX_INPUT_NAMELEN in "
-				  "mkcramfs.c and recompile.  Exiting.\n"),
+				  "mkcramfs.c and recompile.  Exiting."),
 				namelen, dirent->d_name);
-			exit(MKFS_ERROR);
-		}
 		memcpy(endpath, dirent->d_name, namelen + 1);
 
 		if (lstat(path, &st) < 0) {
@@ -344,16 +331,8 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 			warn_skip = 1;
 			continue;
 		}
-		entry = calloc(1, sizeof(struct entry));
-		if (!entry) {
-			perror(NULL);
-			exit(MKFS_ERROR);
-		}
-		entry->name = (unsigned char *)strdup(dirent->d_name);
-		if (!entry->name) {
-			perror(NULL);
-			exit(MKFS_ERROR);
-		}
+		entry = xcalloc(1, sizeof(struct entry));
+		entry->name = (unsigned char *)xstrdup(dirent->d_name);
 		if (namelen > 255) {
 			/* Can't happen when reading from ext2fs. */
 
@@ -370,17 +349,17 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 		entry->gid = st.st_gid;
 		if (entry->gid >= 1 << CRAMFS_GID_WIDTH)
 			/* TODO: We ought to replace with a default
-                           gid instead of truncating; otherwise there
-                           are security problems.  Maybe mode should
-                           be &= ~070.  Same goes for uid once Linux
-                           supports >16-bit uids. */
+			   gid instead of truncating; otherwise there
+			   are security problems.  Maybe mode should
+			   be &= ~070.  Same goes for uid once Linux
+			   supports >16-bit uids. */
 			warn_gid = 1;
 		size = sizeof(struct cramfs_inode) + ((namelen + 3) & ~3);
 		*fslen_ub += size;
 		if (S_ISDIR(st.st_mode)) {
 			entry->size = parse_directory(root_entry, path, &entry->child, fslen_ub);
 		} else if (S_ISREG(st.st_mode)) {
-			entry->path = strdup(path);
+			entry->path = xstrdup(path);
 			if (entry->size) {
 				if (entry->size >= (1 << CRAMFS_SIZE_WIDTH)) {
 					warn_size = 1;
@@ -388,7 +367,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 				}
 			}
 		} else if (S_ISLNK(st.st_mode)) {
-			entry->path = strdup(path);
+			entry->path = xstrdup(path);
 		} else if (S_ISFIFO(st.st_mode) || S_ISSOCK(st.st_mode)) {
 			/* maybe we should skip sockets */
 			entry->size = 0;
@@ -404,7 +383,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 			/* block pointers & data expansion allowance + data */
 			if (entry->size)
 				*fslen_ub += (4+26)*blocks + entry->size + 3;
-                }
+		}
 
 		/* Link it into the list */
 		*prev = entry;
@@ -462,10 +441,8 @@ static void set_data_offset(struct entry *entry, char *base, unsigned long offse
 {
 	struct cramfs_inode *inode = (struct cramfs_inode *) (base + entry->dir_offset);
 	inode_to_host(cramfs_is_big_endian, inode, inode);
-	if (offset >= (1 << (2 + CRAMFS_OFFSET_WIDTH))) {
-		fprintf(stderr, _("filesystem too big.  Exiting.\n"));
-		exit(MKFS_ERROR);
-	}
+	if (offset >= (1 << (2 + CRAMFS_OFFSET_WIDTH)))
+		errx(MKFS_ERROR, _("filesystem too big.  Exiting."));
 	inode->offset = (offset >> 2);
 	inode_from_host(cramfs_is_big_endian, inode, inode);
 }
@@ -517,11 +494,7 @@ static unsigned int write_directory_structure(struct entry *entry, char *base, u
 			if (entry->child) {
 				if (stack_entries >= stack_size) {
 					stack_size *= 2;
-					entry_stack = realloc(entry_stack, stack_size * sizeof(struct entry *));
-					if (!entry_stack) {
-						perror(NULL);
-						exit(MKFS_ERROR);        /* out of memory */
-					}
+					entry_stack = xrealloc(entry_stack, stack_size * sizeof(struct entry *));
 				}
 				entry_stack[stack_entries] = entry;
 				stack_entries++;
@@ -532,9 +505,9 @@ static unsigned int write_directory_structure(struct entry *entry, char *base, u
 
 		/*
 		 * Reverse the order the stack entries pushed during
-                 * this directory, for a small optimization of disk
-                 * access in the created fs.  This change makes things
-                 * `ls -UR' order.
+		 * this directory, for a small optimization of disk
+		 * access in the created fs.  This change makes things
+		 * `ls -UR' order.
 		 */
 		{
 			struct entry **lo = entry_stack + dir_start;
@@ -634,7 +607,7 @@ do_compress(char *base, unsigned int offset, unsigned char const *name,
 			exit(MKFS_ERROR);
 		}
 
-		*(u32 *) (base + offset) = u32_toggle_endianness(cramfs_is_big_endian, curr);
+		*(uint32_t *) (base + offset) = u32_toggle_endianness(cramfs_is_big_endian, curr);
 		offset += 4;
 	} while (size);
 
@@ -665,15 +638,15 @@ write_data(struct entry *entry, char *base, unsigned int offset) {
 
 	for (e = entry; e; e = e->next) {
 		if (e->path) {
-                        if (e->same) {
-                                set_data_offset(e, base, e->same->offset);
-                                e->offset = e->same->offset;
-                        } else if (e->size) {
-                                set_data_offset(e, base, offset);
-                                e->offset = offset;
-                                offset = do_compress(base, offset, e->name,
+			if (e->same) {
+				set_data_offset(e, base, e->same->offset);
+				e->offset = e->same->offset;
+			} else if (e->size) {
+				set_data_offset(e, base, offset);
+				e->offset = offset;
+				offset = do_compress(base, offset, e->name,
 						     e->path, e->size,e->mode);
-                        }
+			}
 		} else if (e->child)
 			offset = write_data(e->child, base, offset);
 	}
@@ -686,14 +659,13 @@ static unsigned int write_file(char *file, char *base, unsigned int offset)
 	char *buf;
 
 	fd = open(file, O_RDONLY);
-	if (fd < 0) {
-		perror(file);
-		exit(MKFS_ERROR);
-	}
+	if (fd < 0)
+		err(MKFS_ERROR, _("cannot open file %s"), file);
 	buf = mmap(NULL, image_length, PROT_READ, MAP_PRIVATE, fd, 0);
 	memcpy(base + offset, buf, image_length);
 	munmap(buf, image_length);
-	close (fd);
+	if (close (fd) < 0)
+		err(MKFS_ERROR, _("closing file %s"), file);
 	/* Pad up the image_length to a 4-byte boundary */
 	while (image_length & 3) {
 		*(base + offset + image_length) = '\0';
@@ -736,19 +708,12 @@ int main(int argc, char **argv)
 	loff_t fslen_ub = sizeof(struct cramfs_super);
 	unsigned int fslen_max;
 	char const *dirname, *outfile;
-	u32 crc = crc32(0L, Z_NULL, 0);
+	uint32_t crc = crc32(0L, Z_NULL, 0);
 	int c;
 	cramfs_is_big_endian = HOST_IS_BIG_ENDIAN; /* default is to use host order */
 
 	blksize = getpagesize();
 	total_blocks = 0;
-
-	if (argc) {
-		char *p;
-		progname = argv[0];
-		if ((p = strrchr(progname, '/')) != NULL)
-			progname = p+1;
-	}
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -758,38 +723,33 @@ int main(int argc, char **argv)
 	while ((c = getopt(argc, argv, "hb:Ee:i:n:N:psVvz")) != EOF) {
 		switch (c) {
 		case 'h':
-			usage(0);
+			usage(MKFS_OK);
 		case 'b':
-			blksize = atoi(optarg);
+			blksize = strtoll_or_err(optarg, _("failed to parse blocksize argument"));
 			if (blksize <= 0)
-				usage(1);
+				usage(MKFS_USAGE);
 			break;
 		case 'E':
 			opt_errors = 1;
 			break;
 		case 'e':
-			opt_edition = atoi(optarg);
+			opt_edition = strtoll_or_err(optarg, _("edition number argument failed"));
 			break;
 		case 'N':
-			if (strcmp(optarg, "big") == 0)  {
+			if (strcmp(optarg, "big") == 0)
 				cramfs_is_big_endian = 1;
-			}
-			else if (strcmp(optarg, "little") == 0) {
+			else if (strcmp(optarg, "little") == 0)
 				cramfs_is_big_endian = 0;
-			}
-			else if (strcmp(optarg, "host") == 0);	/* default */
-			else 	{
-				perror("invalid endianness given. Must be 'big', 'little', or 'host'");
-				exit(MKFS_USAGE);
-			}
-
+			else if (strcmp(optarg, "host") == 0)
+				/* default */ ;
+			else
+				errx(MKFS_USAGE, _("invalid endianness given."
+						   " Must be 'big', 'little', or 'host'"));
 			break;
 		case 'i':
 			opt_image = optarg;
-			if (lstat(opt_image, &st) < 0) {
-				perror(opt_image);
-				exit(MKFS_USAGE);
-			}
+			if (lstat(opt_image, &st) < 0)
+				err(MKFS_USAGE, _("cannot stat %s"), opt_image);
 			image_length = st.st_size; /* may be padded later */
 			fslen_ub += (image_length + 3); /* 3 is for padding */
 			break;
@@ -804,8 +764,8 @@ int main(int argc, char **argv)
 			/* old option, ignored */
 			break;
 		case 'V':
-			printf(_("%s (%s)\n"),
-			       progname, PACKAGE_STRING);
+			printf(_("%s from %s\n"),
+			       program_invocation_short_name, PACKAGE_STRING);
 			exit(MKFS_OK);
 		case 'v':
 			verbose = 1;
@@ -817,21 +777,17 @@ int main(int argc, char **argv)
 	}
 
 	if ((argc - optind) != 2)
-		usage(16);
+		usage(MKFS_USAGE);
 	dirname = argv[optind];
 	outfile = argv[optind + 1];
 
-	if (stat(dirname, &st) < 0) {
-		perror(dirname);
-		exit(MKFS_USAGE);
-	}
+	if (stat(dirname, &st) < 0)
+		err(MKFS_USAGE, _("cannot stat %s"), dirname);
 	fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666);
+	if (fd < 0)
+		err(MKFS_USAGE, _("cannot open %s"), outfile);
 
-	root_entry = calloc(1, sizeof(struct entry));
-	if (!root_entry) {
-		perror(NULL);
-		exit(MKFS_ERROR);
-	}
+	root_entry = xcalloc(1, sizeof(struct entry));
 	root_entry->mode = st.st_mode;
 	root_entry->uid = st.st_uid;
 	root_entry->gid = st.st_gid;
@@ -839,42 +795,39 @@ int main(int argc, char **argv)
 	root_entry->size = parse_directory(root_entry, dirname, &root_entry->child, &fslen_ub);
 
 	/* always allocate a multiple of blksize bytes because that's
-           what we're going to write later on */
+	   what we're going to write later on */
 	fslen_ub = ((fslen_ub - 1) | (blksize - 1)) + 1;
 	fslen_max = maxfslen();
 
 	if (fslen_ub > fslen_max) {
-		fprintf(stderr,
-			_("warning: guestimate of required size (upper bound) "
+		warnx(	_("warning: guestimate of required size (upper bound) "
 			  "is %lldMB, but maximum image size is %uMB.  "
-			  "We might die prematurely.\n"),
+			  "We might die prematurely."),
 			(long long)fslen_ub >> 20,
 			fslen_max >> 20);
 		fslen_ub = fslen_max;
 	}
 
-        /* find duplicate files */
-        eliminate_doubles(root_entry,root_entry, &fslen_ub);
+	/* find duplicate files */
+	eliminate_doubles(root_entry,root_entry, &fslen_ub);
 
 	/* TODO: Why do we use a private/anonymous mapping here
-           followed by a write below, instead of just a shared mapping
-           and a couple of ftruncate calls?  Is it just to save us
-           having to deal with removing the file afterwards?  If we
-           really need this huge anonymous mapping, we ought to mmap
-           in smaller chunks, so that the user doesn't need nn MB of
-           RAM free.  If the reason is to be able to write to
-           un-mmappable block devices, then we could try shared mmap
-           and revert to anonymous mmap if the shared mmap fails. */
+	   followed by a write below, instead of just a shared mapping
+	   and a couple of ftruncate calls?  Is it just to save us
+	   having to deal with removing the file afterwards?  If we
+	   really need this huge anonymous mapping, we ought to mmap
+	   in smaller chunks, so that the user doesn't need nn MB of
+	   RAM free.  If the reason is to be able to write to
+	   un-mmappable block devices, then we could try shared mmap
+	   and revert to anonymous mmap if the shared mmap fails. */
 	rom_image = mmap(NULL,
 			 fslen_ub?fslen_ub:1,
 			 PROT_READ | PROT_WRITE,
 			 MAP_PRIVATE | MAP_ANONYMOUS,
 			 -1, 0);
 
-	if (-1 == (int) (long) rom_image) {
-		perror(_("ROM image map"));
-		exit(MKFS_ERROR);
-	}
+	if (-1 == (int) (long) rom_image)
+		err(MKFS_ERROR, _("ROM image map"));
 
 	/* Skip the first opt_pad bytes for boot loader code */
 	offset = opt_pad;
@@ -897,7 +850,7 @@ int main(int argc, char **argv)
 	offset = write_data(root_entry, rom_image, offset);
 
 	/* We always write a multiple of blksize bytes, so that
-           losetup works. */
+	   losetup works. */
 	offset = ((offset - 1) | (blksize - 1)) + 1;
 	if (verbose)
 		printf(_("Everything: %zd kilobytes\n"), offset >> 10);
@@ -915,56 +868,47 @@ int main(int argc, char **argv)
 		printf(_("CRC: %x\n"), crc);
 
 	/* Check to make sure we allocated enough space. */
-	if (fslen_ub < offset) {
-		fprintf(stderr,
+	if (fslen_ub < offset)
+		errx(MKFS_ERROR,
 			_("not enough space allocated for ROM image "
-			  "(%lld allocated, %zu used)\n"),
+			  "(%lld allocated, %zu used)"),
 			(long long) fslen_ub, offset);
-		exit(MKFS_ERROR);
-	}
 
 	written = write(fd, rom_image, offset);
-	if (written < 0) {
-		perror(_("ROM image"));
-		exit(MKFS_ERROR);
-	}
-	if (offset != written) {
-		fprintf(stderr, _("ROM image write failed (%zd %zd)\n"),
+	if (written < 0)
+		err(MKFS_ERROR, _("ROM image"));
+	if (offset != written)
+		errx(MKFS_ERROR, _("ROM image write failed (%zd %zd)"),
 			written, offset);
-		exit(MKFS_ERROR);
-	}
 
-	/* (These warnings used to come at the start, but they scroll off the
-           screen too quickly.) */
-	if (warn_namelen) /* (can't happen when reading from ext2fs) */
-		fprintf(stderr, /* bytes, not chars: think UTF8. */
-			_("warning: filenames truncated to 255 bytes.\n"));
+	/*
+	 * (These warnings used to come at the start, but they scroll off
+	 * the screen too quickly.)
+	 */
+	if (warn_namelen)
+		/* Can't happen when reading from ext2fs. */
+		/* Bytes, not chars: think UTF8. */
+		warnx(_("warning: filenames truncated to 255 bytes."));
 	if (warn_skip)
-		fprintf(stderr,
-			_("warning: files were skipped due to errors.\n"));
+		warnx(_("warning: files were skipped due to errors."));
 	if (warn_size)
-		fprintf(stderr,
-			_("warning: file sizes truncated to %luMB "
-			  "(minus 1 byte).\n"),
-			1L << (CRAMFS_SIZE_WIDTH - 20));
-	if (warn_uid) /* (not possible with current Linux versions) */
-		fprintf(stderr,
-			_("warning: uids truncated to %u bits.  "
-			  "(This may be a security concern.)\n"),
-			CRAMFS_UID_WIDTH);
+		warnx(_("warning: file sizes truncated to %luMB "
+			"(minus 1 byte)."), 1L << (CRAMFS_SIZE_WIDTH - 20));
+	if (warn_uid)
+		/* (not possible with current Linux versions) */
+		warnx(_("warning: uids truncated to %u bits.  "
+			"(This may be a security concern.)"), CRAMFS_UID_WIDTH);
 	if (warn_gid)
-		fprintf(stderr,
-			_("warning: gids truncated to %u bits.  "
-			  "(This may be a security concern.)\n"),
-			CRAMFS_GID_WIDTH);
+		warnx(_("warning: gids truncated to %u bits.  "
+			"(This may be a security concern.)"), CRAMFS_GID_WIDTH);
 	if (warn_dev)
-		fprintf(stderr,
-			_("WARNING: device numbers truncated to %u bits.  "
-			  "This almost certainly means\n"
-			  "that some device files will be wrong.\n"),
-			CRAMFS_OFFSET_WIDTH);
+		warnx(_("WARNING: device numbers truncated to %u bits.  "
+			"This almost certainly means\n"
+			"that some device files will be wrong."),
+		      CRAMFS_OFFSET_WIDTH);
 	if (opt_errors &&
 	    (warn_namelen|warn_skip|warn_size|warn_uid|warn_gid|warn_dev))
 		exit(MKFS_ERROR);
-	return 0;
+
+	return EXIT_SUCCESS;
 }

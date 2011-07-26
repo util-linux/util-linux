@@ -16,8 +16,8 @@ dist_man_MANS = isosize.8 mkfs.8 mkswap.8 \
 sbin_PROGRAMS = mkfs mkswap fsck.minix mkfs.minix mkfs.bfs
 
 fsck_minix_SOURCES = fsck.minix.c minix_programs.h $(top_srcdir)/lib/ismounted.c
-mkfs_minix_SOURCES = mkfs.minix.c minix_programs.h mkfs.h $(utils_common) \
-		    $(top_srcdir)/lib/strutils.c
+mkfs_minix_SOURCES = mkfs.minix.c minix_programs.h $(utils_common) \
+		    $(top_srcdir)/lib/strutils.c 
 mkfs_bfs_SOURCES = mkfs.bfs.c $(utils_common) $(top_srcdir)/lib/strutils.c
 
 swaplabel_SOURCES = swaplabel.c $(utils_common)
@@ -65,7 +65,7 @@ if BUILD_CRAMFS
 cramfs_common = $(utils_common) cramfs.h cramfs_common.c
 sbin_PROGRAMS += fsck.cramfs mkfs.cramfs
 fsck_cramfs_SOURCES = fsck.cramfs.c $(cramfs_common)
-mkfs_cramfs_SOURCES = mkfs.cramfs.c mkfs.h $(cramfs_common) $(top_srcdir)/lib/md5.c
+mkfs_cramfs_SOURCES = mkfs.cramfs.c $(cramfs_common) $(top_srcdir)/lib/md5.c $(top_srcdir)/lib/strutils.c
 fsck_cramfs_LDADD = -lz
 mkfs_cramfs_LDADD = -lz
 endif

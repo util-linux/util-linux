@@ -7,6 +7,8 @@
 typedef unsigned int uint32_t;
 #endif
 
+#define MD5LENGTH 16
+
 struct MD5Context {
 	uint32_t buf[4];
 	uint32_t bits[2];
@@ -16,7 +18,7 @@ struct MD5Context {
 void MD5Init(struct MD5Context *context);
 void MD5Update(struct MD5Context *context, unsigned char const *buf,
 	       unsigned len);
-void MD5Final(unsigned char digest[16], struct MD5Context *context);
+void MD5Final(unsigned char digest[MD5LENGTH], struct MD5Context *context);
 void MD5Transform(uint32_t buf[4], uint32_t const in[16]);
 
 /*
