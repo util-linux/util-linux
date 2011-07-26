@@ -19,11 +19,15 @@ The
 .B libblkid
 library is used to identify block devices (disks) as to their content (e.g.
 filesystem type) as well as extracting additional information such as
-filesystem labels/volume names, unique identifiers/serial numbers, etc.
+filesystem labels/volume names, unique identifiers/serial numbers.
 A common use is to allow use of LABEL= and UUID= tags instead of hard-coding
 specific block device names into configuration files.
 .P
-Block device information is normally kept in a cache file
+The low-level part of the library also allows to extract infomation about
+partitions and block device topology.
+.P
+The high-level part of the library keeps information about block devices
+in a cache file
 .I /etc/blkid.tab
 and is verified to still be valid before being returned to the user
 (if the user has read permission on the raw block device, otherwise not).
@@ -32,12 +36,18 @@ than root, or those not in the "disk" group) to locate devices by label/id.
 The standard location of the cache file can be overridden by the
 environment variable BLKID_FILE.
 .P
-In situations where one is getting information about a single known device,
-it does not impact performance whether the cache is used or not (unless you
-are not able to read the block device directly).  If you are dealing with
+In situations where one is getting information about a single known device, it
+does not impact performance whether the cache is used or not (unless you are
+not able to read the block device directly). 
+.P
+The high-level part of the library supports two methods to evaluate LABEL/UUID.
+It reads information directly from a block device or read information from
+/dev/disk/by-* udev symlinks. The udev is preferred method by default.
+.P
+If you are dealing with
 multiple devices, use of the cache is highly recommended (even if empty) as
 devices will be scanned at most one time and the on-disk cache will be
-updated if possible.  There is rarely a reason not to use the cache.
+updated if possible.
 .P
 In some cases (modular kernels), block devices are not even visible until
 after they are accessed the first time, so it is critical that there is
@@ -89,22 +99,7 @@ ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
 .SH COPYING
 .B libblkid
 is available under the terms of the GNU Library General Public License (LGPL),
-version 2 (or at your discretion any later version).  A copy of the LGPL
-should be included with this library in the file COPYING.  If not, write to
-.RS
-Free Software Foundation, Inc.
-.br
-51 Franklin St
-.br
-Fifth Floor
-.br
-Boston, MA  02110-1301  USA
-.RE
-.PP
-or visit
-.UR http://www.gnu.org/licenses/licenses.html#LGPL
-http://www.gnu.org/licenses/licenses.html#LGPL
-.UE
+version 2 (or at your discretion any later version).
 .SH "SEE ALSO"
 .BR blkid (8)
 .BR findfs (8)
