@@ -531,7 +531,7 @@ set_hardware_clock_exact(const time_t sethwtime,
 			 const struct timeval refsystime,
 			 const bool universal, const bool testing)
 {
-	time_t newhwtime;
+	time_t newhwtime = sethwtime;
 	struct timeval beginsystime, nowsystime;
 	double tdiff;
 	int time_resync = 1;
