@@ -4,7 +4,7 @@ On-line CPU(s) list:   0-23
 Off-line CPU(s) list:  24-31
 Thread(s) per core:    4
 Core(s) per socket:    1
-CPU socket(s):         6
+Socket(s):             6
 NUMA node(s):          1
 NUMA node0 CPU(s):     0-35
 

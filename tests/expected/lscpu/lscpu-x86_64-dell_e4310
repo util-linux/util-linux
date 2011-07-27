@@ -3,7 +3,7 @@ CPU(s):                4
 On-line CPU(s) list:   0-3
 Thread(s) per core:    2
 Core(s) per socket:    2
-CPU socket(s):         1
+Socket(s):             1
 NUMA node(s):          1
 Vendor ID:             GenuineIntel
 CPU family:            6

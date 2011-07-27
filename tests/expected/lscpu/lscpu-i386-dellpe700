@@ -1,7 +1,7 @@
 CPU(s):                2
 Thread(s) per core:    2
 Core(s) per socket:    1
-CPU socket(s):         1
+Socket(s):             1
 Vendor ID:             GenuineIntel
 CPU family:            15
 Model:                 2

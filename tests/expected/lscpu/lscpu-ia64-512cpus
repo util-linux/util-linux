@@ -1,7 +1,7 @@
 CPU(s):                512
 Thread(s) per core:    1
 Core(s) per socket:    2
-CPU socket(s):         256
+Socket(s):             256
 NUMA node(s):          128
 Vendor ID:             GenuineIntel
 CPU family:            32

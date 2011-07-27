@@ -1,7 +1,7 @@
 CPU(s):                8
 Thread(s) per core:    1
 Core(s) per socket:    1
-CPU socket(s):         8
+Socket(s):             8
 NUMA node(s):          3
 Vendor ID:             GenuineIntel
 CPU family:            Itanium 2
