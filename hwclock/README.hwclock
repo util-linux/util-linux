@@ -15,13 +15,3 @@ To install setuid root, do something like this:
 In any case, hwclock will not allow you to set anything unless you have
 the superuser _real_ uid.  (This is restriction is not necessary if you
 haven't installed setuid root, but it's there for now).
-
-You may want to preformat and/or compress the man page before installing.
-
-If you want to build hwclock, just cd to the source directory and invoke
-make with no parameters.
-
-hwclock calls option processing routines in the libsshopt library,
-which is part of Sverre H. Huseby's "shhopt" package. You
-can find a more authoritative copy of this package on metalab
-(ftp://metalab.unc.edu/pub/Linux/libs/shhopt-X.Y).
