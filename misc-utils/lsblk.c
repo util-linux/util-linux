@@ -971,8 +971,7 @@ int main(int argc, char *argv[])
 			tt_flags |= TT_FL_NOHEADINGS;
 			break;
 		case 'o':
-			ncolumns = tt_parse_columns_list(
-						optarg,
+			ncolumns = string_to_idarray(optarg,
 						columns, ARRAY_SIZE(columns),
 						column_name_to_id);
 			if (ncolumns < 0)

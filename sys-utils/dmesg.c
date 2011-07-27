@@ -311,45 +311,6 @@ static double time_diff(struct timeval *a, struct timeval *b)
 	return (a->tv_sec - b->tv_sec) + (a->tv_usec - b->tv_usec) / 1E6;
 }
 
-/*
- * LIST ::= <item> [, <item>]
- *
- * The <item> is translated to 'id' by name2id() function and the 'id' is used
- * as a possition in the 'ary' bit array. It means that the 'id' has to be in
- * range <0..N> where N < sizeof(ary) * NBBY.
- */
-static int list_to_bitarray(const char *list,
-			    int (*name2id)(const char *name, size_t namesz),
-			    char *ary)
-{
-	const char *begin = NULL, *p;
-
-	for (p = list; p && *p; p++) {
-		const char *end = NULL;
-		int id;
-
-		if (!begin)
-			begin = p;		/* begin of the level name */
-		if (*p == ',')
-			end = p;		/* terminate the name */
-		if (*(p + 1) == '\0')
-			end = p + 1;		/* end of string */
-		if (!begin || !end)
-			continue;
-		if (end <= begin)
-			return -1;
-
-		id = name2id(begin, end - begin);
-		if (id < 0)
-			return id;
-		setbit(ary, id);
-		begin = NULL;
-		if (end && !*end)
-			break;
-	}
-	return 0;
-}
-
 static int get_buffer_size()
 {
 	int n = klogctl(SYSLOG_ACTION_SIZE_BUFFER, NULL, 0);
@@ -674,7 +635,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'f':
 			ctl.fltr_fac = 1;
-			list_to_bitarray(optarg, parse_facility, ctl.facilities);
+			if (string_to_bitarray(optarg,
+					     ctl.facilities, parse_facility) < 0)
+				return EXIT_FAILURE;
 			break;
 		case 'h':
 			usage(stdout);
@@ -685,7 +648,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'l':
 			ctl.fltr_lev= 1;
-			list_to_bitarray(optarg, parse_level, ctl.levels);
+			if (string_to_bitarray(optarg,
+					     ctl.levels, parse_level) < 0)
+				return EXIT_FAILURE;
 			break;
 		case 'n':
 			cmd = SYSLOG_ACTION_CONSOLE_LEVEL;

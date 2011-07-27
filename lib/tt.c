@@ -661,47 +661,6 @@ int tt_print_table(struct tt *tb)
 	return 0;
 }
 
-/* Returns: >= 0  : number of items added to ary[]
- *            -1  : parse error or unknown item
- *            -2  : arysz reached
- */
-int tt_parse_columns_list(const char *list, int ary[], size_t arysz,
-			int (name2id)(const char *, size_t))
-{
-	const char *begin = NULL, *p;
-	int n = 0;
-
-	if (!list || !*list || !ary || !arysz || !name2id)
-		return -1;
-
-	for (p = list; p && *p; p++) {
-		const char *end = NULL;
-		int id;
-
-		if (!begin)
-			begin = p;		/* begin of the column name */
-		if (*p == ',')
-			end = p;		/* terminate the name */
-		if (*(p + 1) == '\0')
-			end = p + 1;		/* end of string */
-		if (!begin || !end)
-			continue;
-		if (end <= begin)
-			return -1;
-
-		id = name2id(begin, end - begin);
-		if (id == -1)
-			return -1;
-		ary[ n++ ] = id;
-		if (n >= arysz)
-			return -2;
-		begin = NULL;
-		if (end && !*end)
-			break;
-	}
-	return n;
-}
-
 #ifdef TEST_PROGRAM
 #include <errno.h>
 

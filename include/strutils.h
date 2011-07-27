@@ -39,4 +39,9 @@ enum
 
 extern char *size_to_human_string(int options, uint64_t bytes);
 
+extern int string_to_idarray(const char *list, int ary[], size_t arysz,
+			   int (name2id)(const char *, size_t));
+extern int string_to_bitarray(const char *list, char *ary,
+			    int (*name2bit)(const char *, size_t));
+
 #endif

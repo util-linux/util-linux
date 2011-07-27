@@ -11,8 +11,10 @@
 #include <sys/stat.h>
 #include <locale.h>
 #include <string.h>
+
 #include "c.h"
 #include "strutils.h"
+#include "bitops.h"
 
 static int do_scale_by_power (uintmax_t *x, int base, int power)
 {
@@ -341,6 +343,99 @@ char *size_to_human_string(int options, uint64_t bytes)
 	return strdup(buf);
 }
 
+/*
+ * Parses comma delimited list to array with IDs, for example:
+ *
+ * "aaa,bbb,ccc" --> ary[0] = FOO_AAA;
+ *                   ary[1] = FOO_BBB;
+ *                   ary[3] = FOO_CCC;
+ *
+ * The function name2id() provides conversion from string to ID.
+ *
+ * Returns: >= 0  : number of items added to ary[]
+ *            -1  : parse error or unknown item
+ *            -2  : arysz reached
+ */
+int string_to_idarray(const char *list, int ary[], size_t arysz,
+			int (name2id)(const char *, size_t))
+{
+	const char *begin = NULL, *p;
+	int n = 0;
+
+	if (!list || !*list || !ary || !arysz || !name2id)
+		return -1;
+
+	for (p = list; p && *p; p++) {
+		const char *end = NULL;
+		int id;
+
+		if (!begin)
+			begin = p;		/* begin of the column name */
+		if (*p == ',')
+			end = p;		/* terminate the name */
+		if (*(p + 1) == '\0')
+			end = p + 1;		/* end of string */
+		if (!begin || !end)
+			continue;
+		if (end <= begin)
+			return -1;
+
+		id = name2id(begin, end - begin);
+		if (id == -1)
+			return -1;
+		ary[ n++ ] = id;
+		if (n >= arysz)
+			return -2;
+		begin = NULL;
+		if (end && !*end)
+			break;
+	}
+	return n;
+}
+
+/*
+ * LIST ::= <item> [, <item>]
+ *
+ * The <item> is translated to 'id' by name2id() function and the 'id' is used
+ * as a possition in the 'ary' bit array. It means that the 'id' has to be in
+ * range <0..N> where N < sizeof(ary) * NBBY.
+ *
+ * Returns: 0 on sucess, <0 on error.
+ */
+int string_to_bitarray(const char *list,
+		     char *ary,
+		     int (*name2bit)(const char *, size_t))
+{
+	const char *begin = NULL, *p;
+
+	if (!list || !name2bit || !ary)
+		return -EINVAL;
+
+	for (p = list; p && *p; p++) {
+		const char *end = NULL;
+		int bit;
+
+		if (!begin)
+			begin = p;		/* begin of the level name */
+		if (*p == ',')
+			end = p;		/* terminate the name */
+		if (*(p + 1) == '\0')
+			end = p + 1;		/* end of string */
+		if (!begin || !end)
+			continue;
+		if (end <= begin)
+			return -1;
+
+		bit = name2bit(begin, end - begin);
+		if (bit < 0)
+			return bit;
+		setbit(ary, bit);
+		begin = NULL;
+		if (end && !*end)
+			break;
+	}
+	return 0;
+}
 
 #ifdef TEST_PROGRAM
 

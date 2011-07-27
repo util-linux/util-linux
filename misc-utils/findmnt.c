@@ -897,8 +897,7 @@ int main(int argc, char *argv[])
 			disable_columns_truncate();
 			break;
 		case 'o':
-			ncolumns = tt_parse_columns_list(
-						optarg,
+			ncolumns = string_to_idarray(optarg,
 						columns, ARRAY_SIZE(columns),
 						column_name_to_id);
 			if (ncolumns < 0)
@@ -909,8 +908,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'p':
 			if (optarg) {
-				nactions = tt_parse_columns_list(
-						optarg,
+				nactions = string_to_idarray(optarg,
 						actions, ARRAY_SIZE(actions),
 						poll_action_name_to_id);
 				if (nactions < 0)
