@@ -484,14 +484,25 @@ AM_CONDITIONAL(BUILD_LIBMOUNT_MOUNT, test "x$enable_libmount_mount" = xyes)
 
 
 AC_ARG_ENABLE([mountpoint],
-  AS_HELP_STRING([--enable-mountpoint], [build mountpoint]),
-  [], enable_mountpoint=no
+  AS_HELP_STRING([--disable-mountpoint], [build mountpoint]),
+  [], enable_mountpoint=check
 )
-case "$enable_libmount:$enable_mountpoint" in
+
+build_mountpoint=yes
+if test "x$enable_mountpoint" = xcheck; then
+  if test "x$build_libmount" = xno; then
+    AC_MSG_WARN([libmount disabled; do not build mountpoint])
+    build_mountpoint=no
+  fi
+elif test "x$enable_mountpoint" = xno; then
+    build_mountpoint=no
+fi
+
+case "$build_libmount:$build_mountpoint" in
 no:yes)
   AC_MSG_ERROR([cannot enable mountpoint when libmount is disabled]) ;;
 esac
-AM_CONDITIONAL(BUILD_MOUNTPOINT, test "x$enable_mountpoint" = xyes)
+AM_CONDITIONAL(BUILD_MOUNTPOINT, test "x$build_mountpoint" = xyes)
 
 
 UTIL_CHECK_LIB(util, openpty)
