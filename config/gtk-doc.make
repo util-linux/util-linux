@@ -34,6 +34,8 @@ GPATH = $(srcdir)
 
 TARGET_DIR=$(docdir)/$(DOC_MODULE)
 
+DISTCLEANFILES =
+
 EXTRA_DIST = 				\
 	$(content_files)		\
 	$(HTML_IMAGES)			\
@@ -50,7 +52,8 @@ SCANOBJ_FILES = 		 \
 	$(DOC_MODULE).hierarchy  \
 	$(DOC_MODULE).interfaces \
 	$(DOC_MODULE).prerequisites \
-	$(DOC_MODULE).signals
+	$(DOC_MODULE).signals    \
+        $(DOC_MODULE).types            # util-linux: we don't use types
 
 REPORT_FILES = \
 	$(DOC_MODULE)-undocumented.txt \
@@ -181,7 +184,7 @@ distclean-local:
 	       $(DOC_MODULE)-overrides.txt \
 	       $(DOC_MODULE)-decl-list.txt $(DOC_MODULE)-decl.txt
 	test $(abs_builddir) ==  $(abs_srcdir) || \
-	       rm -f $(DOC_MODULE)-sections.txt
+	       rm -f $(DOC_MODULE)-*.txt $(DOC_MODULE)-*.xml *.xml.in
 
 install-data-local:
 	installfiles=`echo $(builddir)/html/*`; \

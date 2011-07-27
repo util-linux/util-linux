@@ -87,12 +87,12 @@ include $(top_srcdir)/config/gtk-doc.make
 
 # Other files to distribute
 # e.g. EXTRA_DIST += version.xml.in
-EXTRA_DIST += version.xml.in
+EXTRA_DIST += version.xml.in $(srcdir)/libblkid-config.xml
 
 # Files not to distribute
 # for --rebuild-types in $(SCAN_OPTIONS), e.g. $(DOC_MODULE).types
 # for --rebuild-sections in $(SCAN_OPTIONS) e.g. $(DOC_MODULE)-sections.txt
-#DISTCLEANFILES +=
+DISTCLEANFILES += version.xml
 
 # Comment this out if you want your docs-status tested during 'make check'
 if ENABLE_GTK_DOC
