@@ -19,7 +19,7 @@ dist_man_MANS += dmesg.1 ctrlaltdel.8 cytune.8 setarch.8 \
 
 if HAVE_CPU_SET_T
 usrbin_exec_PROGRAMS += lscpu
-lscpu_SOURCES = lscpu.c $(top_srcdir)/lib/cpuset.c
+lscpu_SOURCES = lscpu.c $(top_srcdir)/lib/cpuset.c $(top_srcdir)/lib/strutils.c
 dist_man_MANS += lscpu.1
 endif
 

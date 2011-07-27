@@ -23,8 +23,21 @@ which can be fed to other programs.
 .BR \-h , " \-\-help"
 Print a help message.
 .TP
-.BR \-p , " \-\-parse"
+.BR \-p , " \-\-parse " \fI[=list]\fP
 Print out in parsable instead of human-readable format.
+
+If the \fIlist\fP argument is not given then the default backwardly compatible
+output is printed.  The backwardly compatible format uses two commas to
+separate CPU cache columns. If no CPU caches are identified, then the cache
+columns are not printed at all.
+
+The \fIlist\fP argument is comma delimited list of the columns. Currently
+supported are CPU, Core, Node, Socket, Book and Cache columns. If the
+\fIlist\fP argument is given then always all requested columns are printed in
+the defined order. The Cache columns are separated by ':'.
+
+Note that the optional \fIlist\fP argument cannot be separated from the
+option by a space, the correct form is for example '\fB-p=cpu,node\fP' or '\fB--parse=cpu,node\fP'.
 .TP
 .BR \-s , " \-\-sysroot " \fIdirectory\fP
 Use the specified \fIdirectory\fP as system root.  This allows you to inspect

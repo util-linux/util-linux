@@ -30,7 +30,6 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 #include <stdarg.h>
-#include <bitops.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -38,6 +37,9 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "c.h"
+#include "strutils.h"
+#include "bitops.h"
+
 
 #define CACHE_MAX 100
 
@@ -152,6 +154,43 @@ static int path_exist(const char *path, ...)
 		__attribute__ ((__format__ (__printf__, 1, 2)));
 static cpu_set_t *path_cpuset(const char *path, ...)
 		__attribute__ ((__format__ (__printf__, 1, 2)));
+
+/*
+ * Parsable output
+ */
+enum {
+	COL_CPU,
+	COL_CORE,
+	COL_SOCKET,
+	COL_NODE,
+	COL_BOOK,
+	COL_CACHE
+};
+
+static const char *colnames[] =
+{
+	[COL_CPU] = "CPU",
+	[COL_CORE] = "Core",
+	[COL_SOCKET] = "Socket",
+	[COL_NODE] = "Node",
+	[COL_BOOK] = "Book",
+	[COL_CACHE] = "Cache"
+};
+
+
+static int column_name_to_id(const char *name, size_t namesz)
+{
+	int i;
+
+	for (i = 0; i < ARRAY_SIZE(colnames); i++) {
+		const char *cn = colnames[i];
+
+		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+			return i;
+	}
+	warnx(_("unknown column: %s"), name);
+	return -1;
+}
 
 static const char *
 path_vcreate(const char *path, va_list ap)
@@ -727,90 +766,137 @@ read_nodes(struct lscpu_desc *desc)
 }
 
 static void
-print_parsable(struct lscpu_desc *desc)
+print_parsable_cell(struct lscpu_desc *desc, int i, int col, int compatible)
 {
-	int i, j;
+	int j;
 	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
 
-	printf(_(
-	"# The following is the parsable format, which can be fed to other\n"
-	"# programs. Each different item in every column has an unique ID\n"
-	"# starting from zero.\n"
-	"# CPU,Core,Socket,Node,Book"));
-
-	if (desc->ncaches) {
-		/* separator between CPU topology and cache information */
-		putchar(',');
-
-		for (i = desc->ncaches - 1; i >= 0; i--)
-			printf(",%s", desc->caches[i].name);
-	}
-	putchar('\n');
-
-	for (i = 0; i < desc->ncpus; i++) {
-
-		if (desc->online && !is_cpu_online(desc, i))
-			continue;
-
-		/* #CPU */
+	switch (col) {
+	case COL_CPU:
 		printf("%d", i);
-
-		/* Core */
+		break;
+	case COL_CORE:
 		for (j = 0; j < desc->ncores; j++) {
 			if (CPU_ISSET_S(i, setsize, desc->coremaps[j])) {
-				printf(",%d", j);
+				printf("%d", j);
 				break;
 			}
 		}
-		if (j == desc->ncores)
-			putchar(',');
-
-		/* Socket */
+		break;
+	case COL_SOCKET:
 		for (j = 0; j < desc->nsockets; j++) {
 			if (CPU_ISSET_S(i, setsize, desc->socketmaps[j])) {
-				printf(",%d", j);
+				printf("%d", j);
 				break;
 			}
 		}
-		if (j == desc->nsockets)
-			putchar(',');
-
-		/* Nodes */
+		break;
+	case COL_NODE:
 		for (j = 0; j < desc->nnodes; j++) {
 			if (CPU_ISSET_S(i, setsize, desc->nodemaps[j])) {
-				printf(",%d", j);
+				printf("%d", j);
 				break;
 			}
 		}
-		if (j == desc->nnodes)
-			putchar(',');
-
-		/* Book */
+		break;
+	case COL_BOOK:
 		for (j = 0; j < desc->nbooks; j++) {
 			if (CPU_ISSET_S(i, setsize, desc->bookmaps[j])) {
-				printf(",%d", j);
+				printf("%d", j);
 				break;
 			}
 		}
-		if (j == desc->nbooks)
-			putchar(',');
-
-		if (desc->ncaches)
-			putchar(',');
-
-		/* Caches */
+		break;
+	case COL_CACHE:
 		for (j = desc->ncaches - 1; j >= 0; j--) {
 			struct cpu_cache *ca = &desc->caches[j];
 			int x;
 
 			for (x = 0; x < ca->nsharedmaps; x++) {
 				if (CPU_ISSET_S(i, setsize, ca->sharedmaps[x])) {
-					printf(",%d", x);
+					if (j != desc->ncaches - 1)
+						putchar(compatible ? ',' : ':');
+					printf("%d", x);
 					break;
 				}
 			}
 			if (x == ca->nsharedmaps)
 				putchar(',');
+		}
+		break;
+	}
+}
+
+/*
+ * We support two formats:
+ *
+ * 1) "compatible" -- this format is compatible with the original lscpu(1)
+ * output and it contains fixed set of the columns. The CACHE columns are at
+ * the end of the line and the CACHE is not printed if the number of the caches
+ * is zero. The CACHE columns are separated by two commas, for example:
+ *
+ *    $ lscpu --parse
+ *    # CPU,Core,Socket,Node,,L1d,L1i,L2
+ *    0,0,0,0,,0,0,0
+ *    1,1,0,0,,1,1,0
+ *
+ * 2) "user defined output" -- this format prints always all columns without
+ * special prefix for CACHE column. If there are not CACHEs then the column is
+ * empty and the header "Cache" is printed rather than a real name of the cache.
+ * The CACHE columns are separated by ':'.
+ *
+ *	$ lscpu --parse=CPU,CORE,SOCKET,NODE,CACHE
+ *	# CPU,Core,Socket,Node,L1d:L1i:L2
+ *	0,0,0,0,0:0:0
+ *	1,1,0,0,1:1:0
+ */
+static void
+print_parsable(struct lscpu_desc *desc, int cols[], int ncols, int compatible)
+{
+	int i, c;
+
+	printf(_(
+	"# The following is the parsable format, which can be fed to other\n"
+	"# programs. Each different item in every column has an unique ID\n"
+	"# starting from zero.\n"));
+
+	fputs("# ", stdout);
+	for (i = 0; i < ncols; i++) {
+		if (cols[i] == COL_CACHE) {
+			if (compatible && !desc->ncaches)
+				continue;
+			if (i > 0)
+				putchar(',');
+			if (compatible && i != 0)
+				putchar(',');
+			for (c = desc->ncaches - 1; c >= 0; c--) {
+				printf("%s", desc->caches[c].name);
+				if (c > 0)
+					putchar(compatible ? ',' : ':');
+			}
+			if (!desc->ncaches)
+				fputs(colnames[cols[i]], stdout);
+		} else {
+			if (i > 0)
+				putchar(',');
+			fputs(colnames[cols[i]], stdout);
+		}
+	}
+	putchar('\n');
+
+	for (i = 0; i < desc->ncpus; i++) {
+		if (desc->online && !is_cpu_online(desc, i))
+			continue;
+		for (c = 0; c < ncols; c++) {
+			if (compatible && cols[c] == COL_CACHE) {
+				if (!desc->ncaches)
+					continue;
+				if (c > 0)
+					putchar(',');
+			}
+			if (c > 0)
+				putchar(',');
+			print_parsable_cell(desc, i, cols[c], compatible);
 		}
 		putchar('\n');
 	}
@@ -953,7 +1039,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	puts(_(	"\nOptions:\n"
 		"  -h, --help         print this help\n"
-		"  -p, --parse        print out a parsable instead of a readable format\n"
+		"  -p, --parse[=LIST] print out a parsable instead of a readable format\n"
 		"  -s, --sysroot DIR  use directory DIR as system root\n"
 		"  -x, --hex          print hexadecimal masks rather than lists of CPUs\n"));
 
@@ -964,10 +1050,12 @@ int main(int argc, char *argv[])
 {
 	struct lscpu_desc _desc, *desc = &_desc;
 	int parsable = 0, c, i, hex = 0;
+	int columns[ARRAY_SIZE(colnames)], ncolumns = 0;
+	int compatible = 0;
 
 	static const struct option longopts[] = {
 		{ "help",	no_argument,       0, 'h' },
-		{ "parse",	no_argument,       0, 'p' },
+		{ "parse",	optional_argument, 0, 'p' },
 		{ "sysroot",	required_argument, 0, 's' },
 		{ "hex",	no_argument,	   0, 'x' },
 		{ NULL,		0, 0, 0 }
@@ -977,12 +1065,28 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while((c = getopt_long(argc, argv, "hps:x", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hp::s:x", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage(stdout);
 		case 'p':
 			parsable = 1;
+			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
+				ncolumns = string_to_idarray(optarg,
+						columns, ARRAY_SIZE(columns),
+						column_name_to_id);
+				if (ncolumns < 0)
+					return EXIT_FAILURE;
+			} else {
+				columns[ncolumns++] = COL_CPU;
+				columns[ncolumns++] = COL_CORE;
+				columns[ncolumns++] = COL_SOCKET,
+				columns[ncolumns++] = COL_NODE,
+				columns[ncolumns++] = COL_CACHE;
+				compatible = 1;
+			}
 			break;
 		case 's':
 			sysrootlen = strlen(optarg);
@@ -1016,7 +1120,7 @@ int main(int argc, char *argv[])
 
 	/* Show time! */
 	if (parsable)
-		print_parsable(desc);
+		print_parsable(desc, columns, ncolumns, compatible);
 	else
 		print_readable(desc, hex);
 
