@@ -971,8 +971,11 @@ int main(int argc, char *argv[])
 			tt_flags |= TT_FL_NOHEADINGS;
 			break;
 		case 'o':
-			if (tt_parse_columns_list(optarg, columns, &ncolumns,
-						column_name_to_id))
+			ncolumns = tt_parse_columns_list(
+						optarg,
+						columns, ARRAY_SIZE(columns),
+						column_name_to_id);
+			if (ncolumns < 0)
 				return EXIT_FAILURE;
 			break;
 		case 'P':

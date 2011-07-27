@@ -897,19 +897,25 @@ int main(int argc, char *argv[])
 			disable_columns_truncate();
 			break;
 		case 'o':
-			if (tt_parse_columns_list(optarg, columns, &ncolumns,
-						column_name_to_id))
+			ncolumns = tt_parse_columns_list(
+						optarg,
+						columns, ARRAY_SIZE(columns),
+						column_name_to_id);
+			if (ncolumns < 0)
 				exit(EXIT_FAILURE);
 			break;
 		case 'O':
 			set_match(COL_OPTIONS, optarg);
 			break;
 		case 'p':
-			if (optarg &&
-			    tt_parse_columns_list(optarg, actions, &nactions,
-						poll_action_name_to_id))
-				exit(EXIT_FAILURE);
-
+			if (optarg) {
+				nactions = tt_parse_columns_list(
+						optarg,
+						actions, ARRAY_SIZE(actions),
+						poll_action_name_to_id);
+				if (nactions < 0)
+					exit(EXIT_FAILURE);
+			}
 			flags |= FL_POLL;
 			tt_flags &= ~TT_FL_TREE;
 			break;

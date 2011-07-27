@@ -676,8 +676,11 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE, _("failed to parse --nr <M-N> range"));
 			break;
 		case 'o':
-			if (tt_parse_columns_list(optarg, columns, &ncolumns,
-						column_name_to_id))
+			ncolumns = tt_parse_columns_list(
+						optarg,
+						columns, ARRAY_SIZE(columns),
+						column_name_to_id);
+			if (ncolumns < 0)
 				return EXIT_FAILURE;
 			break;
 		case 'P':
