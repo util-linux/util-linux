@@ -97,8 +97,6 @@ int proc_next_tid(struct proc_tasks *tasks, pid_t *tid)
 
 #ifdef TEST_PROGRAM
 
-#include "c.h"
-
 int main(int argc, char *argv[])
 {
 	pid_t tid, pid;

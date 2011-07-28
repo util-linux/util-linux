@@ -19,9 +19,7 @@
 #include <time.h>
 #include <sys/stat.h>
 #include <netdb.h>
-#include <sys/socket.h>
 #include <syslog.h>
-#include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <ctype.h>

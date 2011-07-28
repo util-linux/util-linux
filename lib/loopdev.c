@@ -21,7 +21,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <fcntl.h>
-#include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
@@ -994,7 +993,6 @@ char *loopdev_find_by_backing_file(const char *filename, uint64_t offset, int fl
 #ifdef TEST_PROGRAM_LOOPDEV
 #include <errno.h>
 #include <err.h>
-#include <stdlib.h>
 
 static void test_loop_info(const char *device, int flags)
 {
