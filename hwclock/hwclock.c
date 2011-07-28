@@ -1753,7 +1753,7 @@ int main(int argc, char **argv)
 #ifdef HAVE_LIBAUDIT
 /*
  * hwclock_exit calls either this function or plain exit depending
- * HAVE_LIBAUDIT, see also clock.h
+ * HAVE_LIBAUDIT see also clock.h
  */
 void __attribute__((__noreturn__)) hwaudit_exit(int status)
 {
