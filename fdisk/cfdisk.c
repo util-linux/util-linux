@@ -1138,7 +1138,9 @@ menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
 		key = 0;
 		break;
 	case KEY_LEFT:
+#ifdef KEY_BTAB
 	case KEY_BTAB:	/* Back tab */
+#endif
 		/* Select previous menu item */
 		do {
 			current--;
