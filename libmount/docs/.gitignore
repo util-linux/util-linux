@@ -1,5 +1,6 @@
 *.args
 *.bak
+*.types
 *-decl-list.txt
 *-decl.txt
 *.hierarchy
