@@ -406,11 +406,11 @@ AC_ARG_ENABLE([uuidd],
   [], enable_uuidd=auto
 )
 
-case "$enable_uuidd:$have_uuid" in
+case "$enable_uuidd:$enable_libuuid" in
 yes:no)
   AC_MSG_ERROR([cannot enable uuidd when libuuid is disabled]) ;;
 auto:*)
-  enable_uuidd=$have_uuid ;;
+  enable_uuidd=$enable_libuuid ;;
 esac
 if test "x$enable_uuidd" = xyes; then
   AC_DEFINE(HAVE_UUIDD, 1, [Define to 1 if you want to use uuid daemon.])
