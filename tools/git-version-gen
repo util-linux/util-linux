@@ -116,6 +116,7 @@ then
     #   Newer: v6.10-77-g0f8faeb
     #   Older: v6.10-g0f8faeb
     case $v in
+        *-rc[0-9]) ;; # release candidate
         *-*-*) : git describe is okay three part flavor ;;
         *-*)
             : git describe is older two part flavor
@@ -132,9 +133,17 @@ then
             ;;
     esac
 
-    # Change the first '-' to a '.', so version-comparing tools work properly.
-    # Remove the "g" in git describe's output string, to save a byte.
-    v=`echo "$v" | sed 's/-/./;s/\(.*\)-g/\1-/'`;
+    case $v in
+        *-rc[0-9])
+	    # Remove the "g" in git describe's output string, to save a byte.
+            v=`echo "$v" | sed 's/\(.*\)-g/\1-/'`;     
+	    ;;
+        *)
+	    # Change the first '-' to a '.', so version-comparing tools work properly.
+	    # Remove the "g" in git describe's output string, to save a byte.
+	    v=`echo "$v" | sed 's/-/./;s/\(.*\)-g/\1-/'`;
+	    ;;
+    esac
     v_from_git=1
 else
     v=UNKNOWN
