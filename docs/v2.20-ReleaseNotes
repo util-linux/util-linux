@@ -151,6 +151,7 @@ build-sys:
    - fix gtk-doc distclean  [Karel Zak]
    - fix spaces versus tabs conflict  [Marc-Antoine Perennou]
    - fix unportable Makefile.am assignment  [Sami Kerola]
+   - fix configure.ac for uuidd  [Karel Zak]
    - include <uuid.h> rather than <uuid/uuid.h>  [Karel Zak]
    - introduce AM_PROG_CC_C_O macro  [Sami Kerola]
    - move BUILD_SCHEDUTILS to top-level Makefile  [Karel Zak]
