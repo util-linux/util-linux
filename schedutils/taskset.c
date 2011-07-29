@@ -41,7 +41,7 @@ struct taskset {
 	size_t		setsize;
 	char		*buf;		/* buffer for conversion from mask to string */
 	size_t		buflen;
-	int		use_list:1,	/* use list rather than masks */
+	unsigned int	use_list:1,	/* use list rather than masks */
 			get_only:1;	/* print the mask, but not modify */
 };
 

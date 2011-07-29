@@ -129,10 +129,10 @@ static struct colinfo infos[__NCOLUMNS] = {
 };
 
 struct lsblk {
-	struct tt *tt;		/* output table */
-	int all_devices:1;	/* print all devices */
-	int bytes:1;		/* print SIZE in bytes */
-	int nodeps:1;		/* don't print slaves/holders */
+	struct tt *tt;			/* output table */
+	unsigned int all_devices:1;	/* print all devices */
+	unsigned int bytes:1;		/* print SIZE in bytes */
+	unsigned int nodeps:1;		/* don't print slaves/holders */
 };
 
 struct lsblk *lsblk;	/* global handler */

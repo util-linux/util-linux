@@ -104,13 +104,13 @@ struct dmesg_control {
 	struct timeval	lasttime;	/* last printed timestamp */
 	time_t		boot_time;	/* system boot time */
 
-	int	raw:1;			/* raw mode */
-	int	fltr_lev:1;		/* filter out by levels[] */
-	int	fltr_fac:1;		/* filter out by facilities[] */
-	int	decode:1;		/* use "facility: level: " prefix */
-	int	notime:1;		/* don't print timestamp */
-	int	delta:1;		/* show time deltas */
-	int	ctime:1;		/* show human readable time */
+	unsigned int	raw:1,		/* raw mode */
+			fltr_lev:1,	/* filter out by levels[] */
+			fltr_fac:1,	/* filter out by facilities[] */
+			decode:1,	/* use "facility: level: " prefix */
+			notime:1,	/* don't print timestamp */
+			delta:1,	/* show time deltas */
+			ctime:1;	/* show human readable time */
 };
 
 struct dmesg_record {

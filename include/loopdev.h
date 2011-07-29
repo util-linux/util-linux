@@ -66,8 +66,8 @@ struct loopdev_iter {
 	int		ct_perm;	/* count permission problems */
 	int		ct_succ;	/* count number of detected devices */
 
-	int		done:1;		/* scanning done */
-	int		default_check:1;/* check first LOOPDEV_NLOOPS */
+	unsigned int	done:1;		/* scanning done */
+	unsigned int	default_check:1;/* check first LOOPDEV_NLOOPS */
 	int		flags;		/* LOOPITER_FL_* flags */
 };
 
@@ -86,8 +86,8 @@ struct loopdev_cxt {
 	int		mode;		/* fd mode O_{RDONLY,RDWR} */
 
 	int		flags;		/* LOOPDEV_FL_* flags */
-	int		has_info:1;	/* .info contains data */
-	int		extra_check:1;	/* unusual stuff for iterator */
+	unsigned int	has_info:1;	/* .info contains data */
+	unsigned int	extra_check:1;	/* unusual stuff for iterator */
 
 	struct sysfs_cxt	sysfs;	/* pointer to /sys/dev/block/<maj:min>/ */
 	struct loop_info64	info;	/* for GET/SET ioctl */
