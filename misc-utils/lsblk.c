@@ -856,6 +856,7 @@ static void parse_excludes(const char *str)
 		excludes[nexcludes++] = n;
 
 		if (nexcludes == ARRAY_SIZE(excludes))
+			/* TRANSLATORS: The standard value for %d is 256. */
 			errx(EXIT_FAILURE, _("the list of excluded devices is "
 					"too large (limit is %d devices)"),
 					(int)ARRAY_SIZE(excludes));

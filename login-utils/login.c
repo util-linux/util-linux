@@ -1356,6 +1356,7 @@ static void
 timedout(int sig __attribute__((__unused__))) {
 	signal(SIGALRM, timedout2);
 	alarm(10);
+	/* TRANSLATORS: The standard value for %d is 60. */
 	warnx(_("timed out after %d seconds"), timeout);
 	signal(SIGALRM, SIG_IGN);
 	alarm(0);

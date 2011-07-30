@@ -143,6 +143,7 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("%s: FITRIM ioctl failed"), path);
 
 	if (verbose)
+		/* TRANSLATORS: The standard value here is a very large number. */
 		printf(_("%s: %" PRIu64 " bytes were trimmed\n"),
 						path, (uint64_t) range.len);
 	close(fd);
