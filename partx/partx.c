@@ -640,6 +640,10 @@ int main(int argc, char **argv)
 		{ NULL, 0, NULL, 0 }
 	};
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 	while ((c = getopt_long(argc, argv,
 				"abdglrsvn:t:o:Ph", long_opts, NULL)) != -1) {
 
