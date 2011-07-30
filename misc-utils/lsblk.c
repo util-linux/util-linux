@@ -789,7 +789,7 @@ static int process_one_device(char *devname)
 		return EXIT_FAILURE;
 	}
 	if (blkid_devno_to_wholedisk(st.st_rdev, buf, sizeof(buf), &disk)) {
-		warn(_("%s: failed to get whole-list devno"), devname);
+		warn(_("%s: failed to get whole-disk device number"), devname);
 		return EXIT_FAILURE;
 	}
 	if (st.st_rdev == disk) {
