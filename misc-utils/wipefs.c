@@ -237,7 +237,8 @@ do_wipe_offset(int fd, struct wipe_desc *wp, const char *fname, int noact)
 	if (noact == 0 && write_all(fd, buf, len))
 		err(EXIT_FAILURE, _("%s: write failed"), fname);
 
-	printf(_("%zd bytes ["), wp->len);
+	printf(_("%zd bytes were erased at offset 0x%jx (%s)\nthey were: "),
+	       wp->len, wp->offset, wp->type);
 
 	for (i = 0; i < len; i++) {
 		printf("%02x", wp->magic[i]);
@@ -245,7 +246,7 @@ do_wipe_offset(int fd, struct wipe_desc *wp, const char *fname, int noact)
 			fputc(' ', stdout);
 	}
 
-	printf(_("] erased at offset 0x%jx (%s)\n"), wp->offset, wp->type);
+	printf("\n");
 	return 0;
 }
 
