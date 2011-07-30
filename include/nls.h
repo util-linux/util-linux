@@ -22,6 +22,7 @@ int main(int argc, char *argv[]);
 # else
 #  define N_(String) (String)
 # endif
+# define P_(Singular, Plural, n) ngettext (Singular, Plural, n)
 #else
 # undef bindtextdomain
 # define bindtextdomain(Domain, Directory) /* empty */
@@ -29,6 +30,7 @@ int main(int argc, char *argv[]);
 # define textdomain(Domain) /* empty */
 # define _(Text) (Text)
 # define N_(Text) (Text)
+# define P_(Singular, Plural, n) ((n) == 1 ? (Singular) : (Plural))
 #endif
 
 #ifdef HAVE_LANGINFO_H
