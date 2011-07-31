@@ -291,7 +291,8 @@ static void lock_disk(struct fsck_instance *inst)
 	}
 
 	if (verbose)
-		printf("%s.\n", inst->lock >= 0 ? _("success") : _("failed"));
+		/* TRANSLATORS: These are followups to "Locking disk...". */
+		printf("%s.\n", inst->lock >= 0 ? _("succeeded") : _("failed"));
 
 	free(diskname);
 	return;
