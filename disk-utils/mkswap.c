@@ -41,7 +41,6 @@
 #include <sys/utsname.h>
 #include <sys/stat.h>
 #include <errno.h>
-#include <err.h>
 #include <getopt.h>
 #ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>
@@ -57,6 +56,7 @@
 #include "wholedisk.h"
 #include "writeall.h"
 #include "xalloc.h"
+#include "c.h"
 
 #ifdef HAVE_LIBUUID
 # include <uuid.h>
