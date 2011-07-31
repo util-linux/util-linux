@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>
 
@@ -109,7 +110,6 @@ extern char *__progname;
 #  define program_invocation_short_name __progname
 # else
 #  ifdef HAVE_GETEXECNAME
-#   include <stdlib.h>
 #   define program_invocation_short_name \
 		prog_inv_sh_nm_from_file(getexecname(), 0)
 #  else
