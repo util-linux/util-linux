@@ -407,7 +407,7 @@ static int check_gecos_string (msg, gecos)
     char *msg;
     char *gecos;
 {
-    int i, c;
+    unsigned int i, c;
 
     if (strlen(gecos) > MAX_FIELD_SIZE) {
 	if (msg != NULL)
