@@ -30,8 +30,8 @@ enum {
 };
 
 struct tt {
-	int	ncols;		/* number of columns */
-	int	termwidth;	/* terminal width */
+	size_t	ncols;		/* number of columns */
+	size_t	termwidth;	/* terminal width */
 	int	flags;
 	int	first_run;
 
@@ -43,10 +43,10 @@ struct tt {
 
 struct tt_column {
 	const char *name;	/* header */
-	int	seqnum;
+	size_t	seqnum;
 
-	int	width;		/* real column width */
-	int	width_min;	/* minimal width (width of header) */
+	size_t	width;		/* real column width */
+	size_t	width_min;	/* minimal width (width of header) */
 	double	width_hint;	/* hint (N < 1 is in percent of termwidth) */
 
 	int	flags;
@@ -58,7 +58,7 @@ struct tt_line {
 	struct tt	*table;
 	char const	**data;
 	void		*userdata;
-	ssize_t		data_sz;		/* strlen of all data */
+	size_t		data_sz;		/* strlen of all data */
 
 	struct list_head	ln_lines;	/* table lines */
 
@@ -76,7 +76,7 @@ extern int tt_print_table(struct tt *tb);
 extern struct tt_column *tt_define_column(struct tt *tb, const char *name,
 						double whint, int flags);
 
-extern struct tt_column *tt_get_column(struct tt *tb, int colnum);
+extern struct tt_column *tt_get_column(struct tt *tb, size_t colnum);
 
 extern struct tt_line *tt_add_line(struct tt *tb, struct tt_line *parent);
 

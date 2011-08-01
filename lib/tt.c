@@ -211,7 +211,7 @@ err:
  *
  * Returns: pointer to column or NULL
  */
-struct tt_column *tt_get_column(struct tt *tb, int colnum)
+struct tt_column *tt_get_column(struct tt *tb, size_t colnum)
 {
 	struct list_head *p;
 
@@ -241,8 +241,10 @@ int tt_line_set_data(struct tt_line *ln, int colnum, const char *data)
 	if (!cl)
 		return -1;
 
-	if (ln->data[cl->seqnum])
-		ln->data_sz -= strlen(ln->data[cl->seqnum]);
+	if (ln->data[cl->seqnum]) {
+		size_t sz = strlen(ln->data[cl->seqnum]);;
+		ln->data_sz = ln->data_sz > sz ? ln->data_sz - sz : 0;
+	}
 
 	ln->data[cl->seqnum] = data;
 	if (data)
@@ -345,7 +347,8 @@ static char *line_get_data(struct tt_line *ln, struct tt_column *cl,
 static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 {
 	struct list_head *p;
-	int width = 0, trunc_only;
+	size_t width = 0;
+	int trunc_only;
 
 	/* set width according to the size of data
 	 */
@@ -380,10 +383,10 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 			cl->width = cl->width_min;
 
 		else if (cl->width_hint >= 1 &&
-			 cl->width < (int) cl->width_hint &&
-			 cl->width_min < (int) cl->width_hint)
+			 cl->width < (size_t) cl->width_hint &&
+			 cl->width_min < (size_t) cl->width_hint)
 
-			cl->width = (int) cl->width_hint;
+			cl->width = (size_t) cl->width_hint;
 
 		width += cl->width + (is_last_column(tb, cl) ? 0 : 1);
 	}
@@ -395,7 +398,7 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 		struct tt_column *cl = list_entry(
 			tb->tb_columns.prev, struct tt_column, cl_columns);
 
-		if (!(cl->flags & TT_FL_RIGHT))
+		if (!(cl->flags & TT_FL_RIGHT) && tb->termwidth - width > 0)
 			cl->width += tb->termwidth - width;
 		goto leave;
 	}
@@ -406,7 +409,7 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 	 */
 	trunc_only = 1;
 	while(width > tb->termwidth) {
-		int org = width;
+		size_t org = width;
 
 		list_for_each(p, &tb->tb_columns) {
 			struct tt_column *cl =
@@ -424,13 +427,14 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 				continue;
 
 			/* truncate column with relative sizes */
-			if (cl->width_hint < 1 &&
+			if (cl->width_hint < 1 && cl->width > 0 && width > 0 &&
 			    cl->width > cl->width_hint * tb->termwidth) {
 				cl->width--;
 				width--;
 			}
 			/* truncate column with absolute size */
-			if (cl->width_hint > 1 && !trunc_only) {
+			if (cl->width_hint > 1 && cl->width > 0 && width > 0 &&
+			    !trunc_only) {
 				cl->width--;
 				width--;
 			}
@@ -450,7 +454,7 @@ leave:
 		struct tt_column *cl =
 			list_entry(p, struct tt_column, cl_columns);
 
-		fprintf(stderr, "width: %s=%d [hint=%d]\n",
+		fprintf(stderr, "width: %s=%zd [hint=%d]\n",
 			cl->name, cl->width,
 			cl->width_hint > 1 ? (int) cl->width_hint :
 					     (int) (cl->width_hint * tb->termwidth));
@@ -507,8 +511,8 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 	}
 	if (data) {
 		if (!(tb->flags & TT_FL_RAW) && (cl->flags & TT_FL_RIGHT)) {
-			int xw = cl->width;
-			fprintf(stdout, "%*s", xw, data);
+			size_t xw = cl->width;
+			fprintf(stdout, "%*s", (int) xw, data);
 			if (len < xw)
 				len = xw;
 		}
@@ -521,9 +525,9 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 	if (!is_last_column(tb, cl)) {
 		if (len > width && !(cl->flags & TT_FL_TRUNC)) {
 			fputc('\n', stdout);
-			for (i = 0; i <= cl->seqnum; i++) {
+			for (i = 0; i <= (size_t) cl->seqnum; i++) {
 				struct tt_column *x = tt_get_column(tb, i);
-				printf("%*s ", -x->width, " ");
+				printf("%*s ", -((int)x->width), " ");
 			}
 		} else
 			fputc(' ', stdout);	/* columns separator */
