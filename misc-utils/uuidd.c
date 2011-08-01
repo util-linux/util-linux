@@ -117,7 +117,7 @@ static void terminate_intr(int signo CODE_ATTR((unused)))
 }
 
 static int call_daemon(const char *socket_path, int op, char *buf,
-		       int buflen, int *num, const char **err_context)
+		       size_t buflen, int *num, const char **err_context)
 {
 	char op_buf[8];
 	int op_len;
@@ -179,7 +179,7 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 		close(s);
 		return -1;
 	}
-	if (reply_len < 0 || reply_len > buflen) {
+	if (reply_len < 0 || (size_t) reply_len > buflen) {
 		if (err_context)
 			*err_context = _("bad response length");
 		close(s);
