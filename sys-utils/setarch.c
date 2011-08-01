@@ -148,7 +148,7 @@ int set_arch(const char *pers, unsigned long options)
 {
   struct utsname un;
   int i;
-  unsigned long pers_value, res;
+  unsigned long pers_value;
 
   struct {
     int perval;
@@ -214,8 +214,7 @@ int set_arch(const char *pers, unsigned long options)
     errx(EXIT_FAILURE, _("%s: Unrecognized architecture"), pers);
 
   pers_value = transitions[i].perval | options;
-  res = set_pers(pers_value);
-  if(res == -EINVAL)
+  if (set_pers(pers_value) == -EINVAL)
     return 1;
 
   uname(&un);
