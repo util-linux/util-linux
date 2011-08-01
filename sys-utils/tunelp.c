@@ -250,7 +250,7 @@ main (int argc, char ** argv) {
       if (retval < 0)
 	perror(_("LPGETSTATUS error"));
       else {
-        if (status == 0xdeadbeef)	/* a few 1.1.7x kernels will do this */
+        if (status == (int) 0xdeadbeef)	/* a few 1.1.7x kernels will do this */
           status = retval;
 	printf(_("%s status is %d"), filename, status);
 	if (!(status & LP_PBUSY)) printf(_(", busy"));
@@ -277,7 +277,7 @@ main (int argc, char ** argv) {
       perror(_("LPGETIRQ error"));
       exit(4);
     }
-    if (irq == 0xdeadbeef)		/* up to 1.1.77 will do this */
+    if (irq == (int) 0xdeadbeef)		/* up to 1.1.77 will do this */
       irq = retval;
     if (irq)
       printf(_("%s using IRQ %d\n"), filename, irq);
