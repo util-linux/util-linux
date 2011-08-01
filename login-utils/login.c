@@ -342,7 +342,7 @@ logaudit(const char *tty, const char *username, const char *hostname,
 
 	audit_log_acct_message(audit_fd, AUDIT_USER_LOGIN,
 		NULL, "login", username ? username : "(unknown)",
-		pwd ? pwd->pw_uid : -1, hostname, NULL, tty, status);
+		pwd ? pwd->pw_uid : (unsigned int) -1, hostname, NULL, tty, status);
 
 	close(audit_fd);
 }
@@ -1342,7 +1342,7 @@ getloginname(void) {
  */
 
 static void
-timedout2(int sig) {
+timedout2(int sig __attribute__((__unused__))) {
 	struct termios ti;
 
 	/* reset echo */
@@ -1353,7 +1353,7 @@ timedout2(int sig) {
 }
 
 static void
-timedout(int sig) {
+timedout(int sig __attribute__((__unused__))) {
 	signal(SIGALRM, timedout2);
 	alarm(10);
 	warnx(_("timed out after %d seconds"), timeout);
@@ -1416,7 +1416,7 @@ motd(void) {
 }
 
 void
-sigint(int sig) {
+sigint(int sig  __attribute__((__unused__))) {
     longjmp(motdinterrupt, 1);
 }
 
