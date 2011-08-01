@@ -180,7 +180,7 @@ static const char *colnames[] =
 
 static int column_name_to_id(const char *name, size_t namesz)
 {
-	int i;
+	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(colnames); i++) {
 		const char *cn = colnames[i];
