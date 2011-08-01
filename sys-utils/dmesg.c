@@ -127,7 +127,7 @@ struct dmesg_record {
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	int i;
+	size_t i;
 
 	fprintf(out, _(
 		"\nUsage:\n"
@@ -180,8 +180,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
  */
 static int parse_level(const char *str, size_t len)
 {
-	int i;
-
 	if (!str)
 		return -1;
 	if (!len)
@@ -190,12 +188,14 @@ static int parse_level(const char *str, size_t len)
 
 	if (isdigit(*str)) {
 		char *end = NULL;
+		long x = strtol(str, &end, 10);
 
-		i = strtol(str, &end, 10);
-		if (!errno && end && end > str && end - str == len &&
-		    i >= 0 && i < ARRAY_SIZE(level_names))
-			return i;
+		if (!errno && end && end > str && (size_t) (end - str) == len &&
+		    x >= 0 && (size_t) x < ARRAY_SIZE(level_names))
+			return x;
 	} else {
+		size_t i;
+
 		for (i = 0; i < ARRAY_SIZE(level_names); i++) {
 			const char *n = level_names[i].name;
 
@@ -218,8 +218,6 @@ static int parse_level(const char *str, size_t len)
  */
 static int parse_facility(const char *str, size_t len)
 {
-	int i;
-
 	if (!str)
 		return -1;
 	if (!len)
@@ -228,12 +226,14 @@ static int parse_facility(const char *str, size_t len)
 
 	if (isdigit(*str)) {
 		char *end = NULL;
+		long x = strtol(str, &end, 10);
 
-		i = strtol(str, &end, 10);
-		if (!errno && end && end > str && end - str == len &&
-		    i >= 0 && i < ARRAY_SIZE(facility_names))
-			return i;
+		if (!errno && end && end > str && (size_t) (end - str) == len &&
+		    x >= 0 && (size_t) x < ARRAY_SIZE(facility_names))
+			return x;
 	} else {
+		size_t i;
+
 		for (i = 0; i < ARRAY_SIZE(facility_names); i++) {
 			const char *n = facility_names[i].name;
 
@@ -273,9 +273,9 @@ static const char *parse_faclev(const char *str, int *fac, int *lev)
 		*fac = LOG_FAC(num);
 		*lev = LOG_PRI(num);
 
-		if (*lev > ARRAY_SIZE(level_names))
+		if (*lev < 0 || (size_t) *lev > ARRAY_SIZE(level_names))
 			*lev = -1;
-		if (*fac > ARRAY_SIZE(facility_names))
+		if (*fac < 0 || (size_t) *fac > ARRAY_SIZE(facility_names))
 			*fac = -1;
 		return end + 1;		/* skip '<' */
 	}
@@ -351,7 +351,9 @@ static int read_buffer(char **buf, size_t bufsize, int clear)
 		while (1) {
 			*buf = xmalloc(sz * sizeof(char));
 			rc = klogctl(SYSLOG_ACTION_READ_ALL, *buf, sz);
-			if (rc != sz || sz > (1 << 28))
+			if (rc < 0)
+				break;
+			if ((size_t) rc != sz || sz > (1 << 28))
 				break;
 			free(*buf);
 			*buf = NULL;
@@ -367,7 +369,7 @@ static int read_buffer(char **buf, size_t bufsize, int clear)
 
 static int fwrite_hex(const char *buf, size_t size, FILE *out)
 {
-	int i;
+	size_t i;
 
 	for (i = 0; i < size; i++) {
 		int rc = fprintf(out, "\\x%02x", buf[i]);
@@ -382,7 +384,7 @@ static int fwrite_hex(const char *buf, size_t size, FILE *out)
  */
 static void safe_fwrite(const char *buf, size_t size, FILE *out)
 {
-	int i;
+	size_t i;
 #ifdef HAVE_WIDECHAR
 	mbstate_t s;
 	memset(&s, 0, sizeof (s));
@@ -422,7 +424,7 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 
 static int get_next_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 {
-	int i;
+	size_t i;
 	const char *begin = NULL;
 
 	if (!rec->next || !rec->next_size)
@@ -675,7 +677,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'u':
 			ctl.fltr_fac = 1;
-			for (n = 1; n < ARRAY_SIZE(facility_names); n++)
+			for (n = 1; (size_t) n < ARRAY_SIZE(facility_names); n++)
 				setbit(ctl.facilities, n);
 			break;
 		case 'V':
