@@ -576,7 +576,7 @@ fatal(char *s, int ret) {
 }
 
 static void
-die(int dummy) {
+die(int dummy __attribute__((__unused__))) {
     die_x(0);
 }
 
