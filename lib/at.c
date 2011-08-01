@@ -11,13 +11,18 @@
 #include "at.h"
 #include "c.h"
 
+#ifdef HAVE_FSTATAT
+int fstat_at(int dir, const char *dirname __attribute__ ((__unused__)),
+	     const char *filename, struct stat *st, int nofollow)
+{
+	return fstatat(dir, filename, st,
+			nofollow ? AT_SYMLINK_NOFOLLOW : 0);
+}
+#else
 int fstat_at(int dir, const char *dirname, const char *filename,
 				struct stat *st, int nofollow)
 {
-#ifdef HAVE_FSTATAT
-	return fstatat(dir, filename, st,
-			nofollow ? AT_SYMLINK_NOFOLLOW : 0);
-#else
+
 	if (*filename != '/') {
 		char path[PATH_MAX];
 		int len;
@@ -30,14 +35,18 @@ int fstat_at(int dir, const char *dirname, const char *filename,
 	}
 
 	return nofollow ? lstat(filename, st) : stat(filename, st);
-#endif
 }
+#endif
 
+#ifdef HAVE_FSTATAT
+int open_at(int dir, const char *dirname __attribute__ ((__unused__)),
+	    const char *filename, int flags)
+{
+	return openat(dir, filename, flags);
+}
+#else
 int open_at(int dir, const char *dirname, const char *filename, int flags)
 {
-#ifdef HAVE_FSTATAT
-	return openat(dir, filename, flags);
-#else
 	if (*filename != '/') {
 		char path[PATH_MAX];
 		int len;
@@ -49,8 +58,8 @@ int open_at(int dir, const char *dirname, const char *filename, int flags)
 		return open(path, flags);
 	}
 	return open(filename, flags);
-#endif
 }
+#endif
 
 FILE *fopen_at(int dir, const char *dirname, const char *filename, int flags,
 			const char *mode)
@@ -63,12 +72,16 @@ FILE *fopen_at(int dir, const char *dirname, const char *filename, int flags,
 	return fdopen(fd, mode);
 }
 
+#ifdef HAVE_FSTATAT
+ssize_t readlink_at(int dir, const char *dirname __attribute__ ((__unused__)),
+		    const char *pathname, char *buf, size_t bufsiz)
+{
+	return readlinkat(dir, pathname, buf, bufsiz);
+}
+#else
 ssize_t readlink_at(int dir, const char *dirname, const char *pathname,
 		    char *buf, size_t bufsiz)
 {
-#ifdef HAVE_FSTATAT
-	return readlinkat(dir, pathname, buf, bufsiz);
-#else
 	if (*pathname != '/') {
 		char path[PATH_MAX];
 		int len;
@@ -80,8 +93,8 @@ ssize_t readlink_at(int dir, const char *dirname, const char *pathname,
 		return readlink(path, buf, bufsiz);
 	}
 	return readlink(pathname, buf, bufsiz);
-#endif
 }
+#endif
 
 #ifdef TEST_PROGRAM_AT
 #include <errno.h>
