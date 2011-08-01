@@ -19,7 +19,7 @@ char *sysfs_devno_attribute_path(dev_t devno, char *buf,
 		len = snprintf(buf, bufsiz, _PATH_SYS_DEVBLOCK "/%d:%d",
 			major(devno), minor(devno));
 
-	return (len < 0 || len + 1 > bufsiz) ? NULL : buf;
+	return (len < 0 || (size_t) len + 1 > bufsiz) ? NULL : buf;
 }
 
 int sysfs_devno_has_attribute(dev_t devno, const char *attr)
@@ -62,7 +62,7 @@ dev_t sysfs_devname_to_devno(const char *name, const char *parent)
 		 */
 		int len = snprintf(buf, sizeof(buf),
 				_PATH_SYS_BLOCK "/%s/%s/dev", parent, name);
-		if (len < 0 || len + 1 > sizeof(buf))
+		if (len < 0 || (size_t) len + 1 > sizeof(buf))
 			return 0;
 		path = buf;
 
@@ -72,7 +72,7 @@ dev_t sysfs_devname_to_devno(const char *name, const char *parent)
 		 */
 		int len = snprintf(buf, sizeof(buf),
 				_PATH_SYS_BLOCK "/%s/dev", name);
-		if (len < 0 || len + 1 > sizeof(buf))
+		if (len < 0 || (size_t) len + 1 > sizeof(buf))
 			return 0;
 		path = buf;
 	}
