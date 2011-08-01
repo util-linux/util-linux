@@ -80,7 +80,7 @@ and
 .BR LABEL
 columns.  This option disables text truncation also in all other columns.
 .IP "\fB\-O, \-\-options \fIlist\fP"
-Used to limit the set of printed filesystems.  More than one option
+Limit the set of printed filesystems.  More than one option
 may be specified in a comma-separated list.  The
 .B \-t
 and
@@ -97,10 +97,10 @@ Define output columns.  Currently supported are
 .BR ACTION,
 .BR SOURCE ,
 .BR TARGET ,
-.RB OLD-TARGET,
+.BR OLD-TARGET,
 .BR FSTYPE ,
 .BR OPTIONS ,
-.RB OLD-OPTIONS,
+.BR OLD-OPTIONS,
 .BR VFS-OPTIONS ,
 .BR FS-OPTIONS ,
 .BR LABEL
@@ -113,12 +113,12 @@ column contains tree formatting if the
 or
 .B \-\-raw
 options are not specified.
-.IP "\fB\-p, \-\-poll[=list]\fP"
+.IP "\fB\-p, \-\-poll\fR[\fI=list\fR]\fP"
 Monitor changes in the /proc/self/mountinfo file. Supported actions are: mount,
 umount, remount and move. More than one action may be specified in a
 comma-separated list. All actions are monitored by default.
 
-The time for which --poll will block could be restricted by \fB\-\-timeout\fP
+The time for which \fB--poll\fR will block can be restricted with the \fB\-\-timeout\fP
 or \fB\-\-first-only\fP options.
 
 The standard columns always use the new version of the information from the
@@ -129,7 +129,7 @@ The poll mode allows to use extra columns:
 .RS
 .TP
 .B ACTION
-mount, umount, move or remount action name. This column is enabled by default.
+mount, umount, move or remount action name; this column is enabled by default
 .TP
 .B OLD-TARGET
 available for umount and move actions
@@ -142,7 +142,7 @@ Use raw output format.
 .IP "\fB\-a, \-\-ascii\fP"
 Use ascii characters for tree formatting.
 .IP "\fB\-t, \-\-types \fIlist\fP"
-Used to limit the set of printed filesystems.  More than one type may be
+Limit the set of printed filesystems.  More than one type may be
 specified in a comma-separated list.  The list of filesystem types can be
 prefixed with
 .I no
@@ -150,17 +150,17 @@ to specify the filesystem types on which no action should be taken.  For
 more details see
 .BR mount (8).
 .IP "\fB\-R, \-\-submounts\fP"
-Print recursively all submounts for the selected filesystems. The restrictions
+Print recursively all submounts for the selected filesystems.  The restrictions
 defined by options \fB\-t\fP, \fB\-O\fP, \fB\-S\fP, \fB\-T\fP and
-\fB\--direction\fP are not applied to submounts. All submounts are always
-printed in tree-like order. The option enables the tree-like output format by
-default. This option has no effect for \fB\-\-mtab\fP or \fB\-\-fstab\fP.
+\fB\--direction\fP are not applied to submounts.  All submounts are always
+printed in tree-like order.  The option enables the tree-like output format by
+default.  This option has no effect for \fB\-\-mtab\fP or \fB\-\-fstab\fP.
 .IP "\fB\-S, \-\-source \fIspec\fP"
-Explicitly define the mount source.  Supported are device, LABEL= or UUID=.
-.IP "\fB\-t, \-\-timeout \fImilliseconds\fP"
-Specifies an upper limit on the time for which --poll will block, in milliseconds.
+Explicitly define the mount source.  Supported are \fIdevice\fR, \fILABEL=\fR and \fIUUID=\fR.
 .IP "\fB\-T, \-\-target \fIdir\fP"
 Explicitly define the mount target (mountpoint directory).
+.IP "\fB\-w, \-\-timeout \fImilliseconds\fP"
+Specify an upper limit on the time for which \fB--poll\fR will block, in milliseconds.
 .SH EXAMPLES
 .IP "\fBfindmnt \-\-fstab \-t nfs\fP"
 Prints all nfs filesystems defined in
