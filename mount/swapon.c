@@ -355,7 +355,7 @@ swap_get_header(int fd, int *sig, unsigned int *pagesize)
 			continue;
 		/* the smallest swap area is PAGE_SIZE*10, it means
 		 * 40k, that's less than MAX_PAGESIZE */
-		if (datasz < (page - SWAP_SIGNATURE_SZ))
+		if (datasz < 0 || (size_t) datasz < (page - SWAP_SIGNATURE_SZ))
 			break;
 		if (swap_detect_signature(buf + page - SWAP_SIGNATURE_SZ, sig)) {
 			*pagesize = page;
@@ -458,6 +458,8 @@ swapon_checks(const char *special)
 	if (sig == SIG_SWAPSPACE && pagesize) {
 		unsigned long long swapsize =
 				swap_get_size(hdr, special, pagesize);
+		int syspg = getpagesize();
+
 		if (verbose)
 			warnx(_("%s: pagesize=%d, swapsize=%llu, devsize=%llu"),
 				special, pagesize, swapsize, devsize);
@@ -467,7 +469,7 @@ swapon_checks(const char *special)
 				warnx(_("%s: last_page 0x%08llx is larger"
 					" than actual size of swapspace"),
 					special, swapsize);
-		} else if (getpagesize() != pagesize) {
+		} else if (syspg < 0 || (unsigned) syspg != pagesize) {
 			if (fixpgsz) {
 				warnx(_("%s: swap format pagesize does not match."),
 					special);
