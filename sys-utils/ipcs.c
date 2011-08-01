@@ -670,7 +670,7 @@ void print_sem (int semid)
 	struct semid_ds semds;
 	struct ipc_perm *ipcp = &semds.sem_perm;
 	union semun arg;
-	int i;
+	size_t i;
 
 	arg.buf = &semds;
 	if (semctl (semid, 0, IPC_STAT, arg) < 0)
@@ -698,7 +698,7 @@ void print_sem (int semid)
 		if (val < 0 || ncnt < 0 || zcnt < 0 || pid < 0)
 			err(EXIT_FAILURE, _("semctl failed"));
 
-		printf ("%-10d %-10d %-10d %-10d %-10d\n",
+		printf ("%-10zd %-10d %-10d %-10d %-10d\n",
 			i, val, ncnt, zcnt, pid);
 	}
 	printf ("\n");
