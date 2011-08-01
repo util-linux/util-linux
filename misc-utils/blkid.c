@@ -247,7 +247,7 @@ static void pretty_print_dev(blkid_dev dev)
 	pretty_print_line(devname, fs_type, label, mtpt, uuid);
 }
 
-static void print_udev_format(const char *name, const char *value, size_t sz)
+static void print_udev_format(const char *name, const char *value)
 {
 	char enc[265], safe[256];
 	size_t namelen = strlen(name);
@@ -307,7 +307,7 @@ static void print_value(int output, int num, const char *devname,
 		fputc('\n', stdout);
 
 	} else if (output & OUTPUT_UDEV_LIST) {
-		print_udev_format(name, value, valsz);
+		print_udev_format(name, value);
 
 	} else if (output & OUTPUT_EXPORT_LIST) {
 		fputs(name, stdout);
