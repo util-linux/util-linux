@@ -59,7 +59,7 @@ const char *to_prio[] = {
 
 static int parse_ioclass(const char *str)
 {
-	int i;
+	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(to_prio); i++)
 		if (!strcasecmp(str, to_prio[i]))
@@ -77,7 +77,7 @@ static void ioprio_print(int pid)
 		int ioclass = IOPRIO_PRIO_CLASS(ioprio);
 		const char *name = _("unknown");
 
-		if (ioclass < ARRAY_SIZE(to_prio))
+		if (ioclass > 0 && (size_t) ioclass < ARRAY_SIZE(to_prio))
 			name = to_prio[ioclass];
 
 		if (ioclass != IOPRIO_CLASS_IDLE)
