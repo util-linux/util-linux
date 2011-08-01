@@ -98,7 +98,7 @@ static int fake = 0;
  * returns: 0: no exec was done, 1: exec was done, status has result
  */
 static int
-check_special_umountprog(const char *spec, const char *node,
+check_special_umountprog(const char *node,
 			 const char *type, int *status) {
 	char umountprog[120];
 	struct stat statbuf;
@@ -263,7 +263,7 @@ static const char *chdir_to_parent(const char *node, char **resbuf)
    on a non-fatal error.  We lock/unlock around each umount.  */
 static int
 umount_one (const char *spec, const char *node, const char *type,
-	    const char *opts, struct mntentchn *mc) {
+	    struct mntentchn *mc) {
 	int umnt_err = 0;
 	int isroot;
 	int res = 0;
@@ -288,7 +288,7 @@ umount_one (const char *spec, const char *node, const char *type,
 	 * Call umount.TYPE for types that require a separate umount program.
 	 * All such special things must occur isolated in the types string.
 	 */
-	if (check_special_umountprog(spec, node, type, &status))
+	if (check_special_umountprog(node, type, &status))
 		return status;
 
 	block_signals(SIG_BLOCK);
@@ -455,13 +455,13 @@ umount_one_bw (const char *file, struct mntentchn *mc0) {
 	mc = mc0;
 	while (res && mc) {
 		res = umount_one(mc->m.mnt_fsname, mc->m.mnt_dir,
-				 mc->m.mnt_type, mc->m.mnt_opts, mc);
+				 mc->m.mnt_type, mc);
 		mc = getmntdirbackward(file, mc);
 	}
 	mc = mc0;
 	while (res && mc) {
 		res = umount_one(mc->m.mnt_fsname, mc->m.mnt_dir,
-				 mc->m.mnt_type, mc->m.mnt_opts, mc);
+				 mc->m.mnt_type, mc);
 		mc = getmntdevbackward(file, mc);
 	}
 	return res;
@@ -484,7 +484,7 @@ umount_all (char *types, char *test_opts) {
 	  if (matching_type (mc->m.mnt_type, types)
 	      && matching_opts (mc->m.mnt_opts, test_opts)) {
 	       errors |= umount_one (mc->m.mnt_fsname, mc->m.mnt_dir,
-				     mc->m.mnt_type, mc->m.mnt_opts, mc);
+				     mc->m.mnt_type, mc);
 	  }
      }
 
@@ -577,7 +577,7 @@ is_valid_loop(struct mntentchn *mc, struct mntentchn *fs)
 /*
  * umount helper call based on {u,p}helper= mount option
  */
-static int check_helper_umountprog(const char *spec, const char *node,
+static int check_helper_umountprog(const char *node,
 				   const char *opts, const char *name,
 				   int *status)
 {
@@ -588,7 +588,7 @@ static int check_helper_umountprog(const char *spec, const char *node,
 
 	helper = get_option_value(opts, name);
 	if (helper)
-		return check_special_umountprog(spec, node, helper, status);
+		return check_special_umountprog(node, helper, status);
 
 	return 0;
 }
@@ -665,7 +665,7 @@ try_loopdev:
 		/*
 		 * helper - umount helper (e.g. pam_mount)
 		 */
-		 if (check_helper_umountprog(arg, arg, mc->m.mnt_opts,
+		 if (check_helper_umountprog(arg, mc->m.mnt_opts,
 					    "helper=", &status))
 			return status;
 	}
@@ -680,7 +680,7 @@ try_loopdev:
 		/*
 		 * uhelper - unprivileged umount helper (e.g. HAL/udisks mounts)
 		 */
-		if (check_helper_umountprog(arg, arg, mc->m.mnt_opts,
+		if (check_helper_umountprog(arg, mc->m.mnt_opts,
 					    "uhelper=", &status))
 			return status;
 
@@ -759,7 +759,7 @@ try_loopdev:
 	if (mc)
 		return umount_one_bw (file, mc);
 	else
-		return umount_one (arg, arg, arg, arg, NULL);
+		return umount_one (arg, arg, arg, NULL);
 }
 
 int

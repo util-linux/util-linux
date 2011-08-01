@@ -760,7 +760,7 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
 		res = snprintf(mountprog, sizeof(mountprog), "%s/mount.%s",
 			       path, type);
 		path = strtok(NULL, ":");
-		if (res >= sizeof(mountprog) || res < 0)
+		if (res < 0 || (size_t) res >= sizeof(mountprog))
 			continue;
 
 		res = stat(mountprog, &statbuf);
@@ -1335,7 +1335,7 @@ loop_check(const char **spec, const char **type, int *flags,
 #ifdef HAVE_LIBMOUNT_MOUNT
 static void
 verbose_mount_info(const char *spec, const char *node, const char *type,
-		  const char *opts, int flags)
+		  const char *opts)
 {
 	struct my_mntent mnt;
 
@@ -1674,7 +1674,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 #ifdef HAVE_LIBMOUNT_MOUNT
       update_mtab_entry(flags);
       if (verbose)
-	      verbose_mount_info(loop ? loopfile : spec, node, tp, mo, flags);
+	      verbose_mount_info(loop ? loopfile : spec, node, tp, mo);
 #else
       if (!(mounttype & MS_PROPAGATION))
 	      update_mtab_entry(loop ? loopfile : spec,

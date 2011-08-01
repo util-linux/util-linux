@@ -580,7 +580,7 @@ handler (int sig) {
 }
 
 static void
-setlkw_timeout (int sig) {
+setlkw_timeout (int sig __attribute__ ((__unused__))) {
      /* nothing, fcntl will fail anyway */
 }
 
@@ -775,7 +775,7 @@ get_option(const char *optname, const char *src, size_t *len)
 		return NULL;
 
 	end = strchr(opt, ',');
-	sz = end ? end - opt : strlen(opt);
+	sz = end && end > opt ? (size_t) (end - opt) : strlen(opt);
 
 	if (len)
 		*len = sz;

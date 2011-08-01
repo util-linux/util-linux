@@ -52,7 +52,8 @@ loop_info64_to_old(const struct loop_info64 *info64, struct loop_info *info)
         if (info->lo_device != info64->lo_device ||
             info->lo_rdevice != info64->lo_rdevice ||
             info->lo_inode != info64->lo_inode ||
-            info->lo_offset != info64->lo_offset)
+            info->lo_offset < 0 ||
+	    (uint64_t) info->lo_offset != info64->lo_offset)
                 return -EOVERFLOW;
 
         return 0;
