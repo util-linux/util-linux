@@ -360,7 +360,7 @@ int string_to_idarray(const char *list, int ary[], size_t arysz,
 			int (name2id)(const char *, size_t))
 {
 	const char *begin = NULL, *p;
-	int n = 0;
+	size_t n = 0;
 
 	if (!list || !*list || !ary || !arysz || !name2id)
 		return -1;
