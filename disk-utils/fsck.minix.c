@@ -107,6 +107,7 @@
 #include "pathnames.h"
 #include "bitops.h"
 #include "ismounted.h"
+#include "writeall.h"
 
 #define ROOT_INO 1
 
@@ -130,8 +131,8 @@ static int directory, regular, blockdev, chardev, links, symlinks, total;
 
 static int changed; /* flags if the filesystem has been changed */
 static int errors_uncorrected; /* flag if some error was not corrected */
-static int dirsize = 16;
-static int namelen = 14;
+static size_t dirsize = 16;
+static size_t namelen = 14;
 static struct termios termios;
 static volatile sig_atomic_t termios_set;
 
@@ -523,12 +524,18 @@ write_tables(void) {
 	unsigned long buffsz = get_inode_buffer_size();
 	unsigned long imaps = get_nimaps();
 	unsigned long zmaps = get_nzmaps();
+	ssize_t rc;
 
-	if (imaps*MINIX_BLOCK_SIZE != write(IN,inode_map, imaps*MINIX_BLOCK_SIZE))
+	rc = write_all(IN, inode_map, imaps * MINIX_BLOCK_SIZE);
+	if (rc < 0 || imaps * MINIX_BLOCK_SIZE != (size_t) rc)
 		die(_("Unable to write inode map"));
-	if (zmaps*MINIX_BLOCK_SIZE != write(IN,zone_map, zmaps*MINIX_BLOCK_SIZE))
+
+	rc = write_all(IN, zone_map, zmaps * MINIX_BLOCK_SIZE);
+	if (rc < 0 || zmaps * MINIX_BLOCK_SIZE != (size_t) rc)
 		die(_("Unable to write zone map"));
-	if (buffsz != write(IN,inode_buffer, buffsz))
+
+	rc = write(IN,inode_buffer, buffsz);
+	if (rc < 0 || buffsz != (size_t) rc)
 		die(_("Unable to write inodes"));
 }
 
@@ -536,15 +543,16 @@ static void
 get_dirsize (void) {
 	int block;
 	char blk[MINIX_BLOCK_SIZE];
-	int size;
+	size_t size;
 
 	if (fs_version == 2)
 		block = Inode2[ROOT_INO].i_zone[0];
 	else
 		block = Inode[ROOT_INO].i_zone[0];
 	read_block (block, blk);
+
 	for (size = 16; size < MINIX_BLOCK_SIZE; size <<= 1) {
-		if (strcmp (blk + size + 2, "..") == 0) {
+		if (strcmp(blk + size + 2, "..") == 0) {
 			dirsize = size;
 			namelen = size - 2;
 			return;
@@ -599,6 +607,7 @@ read_tables(void) {
 	unsigned long zones = get_nzones();
 	unsigned long imaps = get_nimaps();
 	unsigned long zmaps = get_nzmaps();
+	ssize_t rc;
 
 	inode_map = malloc(imaps * MINIX_BLOCK_SIZE);
 	if (!inode_map)
@@ -617,11 +626,17 @@ read_tables(void) {
 	zone_count = malloc(zones);
 	if (!zone_count)
 		die(_("Unable to allocate buffer for zone count"));
-	if (imaps*MINIX_BLOCK_SIZE != read(IN,inode_map,imaps*MINIX_BLOCK_SIZE))
+
+	rc = read(IN, inode_map, imaps * MINIX_BLOCK_SIZE);
+	if (rc < 0 || imaps * MINIX_BLOCK_SIZE != (size_t) rc)
 		die(_("Unable to read inode map"));
-	if (zmaps*MINIX_BLOCK_SIZE != read(IN,zone_map, zmaps*MINIX_BLOCK_SIZE))
+
+	rc = read(IN, zone_map, zmaps * MINIX_BLOCK_SIZE);
+	if (rc < 0 || zmaps * MINIX_BLOCK_SIZE != (size_t) rc)
 		die(_("Unable to read zone map"));
-	if (buffsz != read(IN,inode_buffer, buffsz))
+
+	rc = read(IN,inode_buffer, buffsz);
+	if (rc < 0 || buffsz != (size_t) rc)
 		die(_("Unable to read inodes"));
 	if (norm_first_zone != first_zone) {
 		printf(_("Warning: Firstzone != Norm_firstzone\n"));
@@ -635,7 +650,7 @@ read_tables(void) {
 		printf(_("Zonesize=%d\n"),MINIX_BLOCK_SIZE<<get_zone_size());
 		printf(_("Maxsize=%ld\n"), get_max_size());
 		printf(_("Filesystem state=%d\n"), Super.s_state);
-		printf(_("namelen=%d\n\n"),namelen);
+		printf(_("namelen=%zd\n\n"),namelen);
 	}
 }
 
@@ -937,7 +952,7 @@ static void
 check_file(struct minix_inode * dir, unsigned int offset) {
 	static char blk[MINIX_BLOCK_SIZE];
 	struct minix_inode * inode;
-	int ino;
+	unsigned int ino;
 	char * name;
 	int block;
 
@@ -949,7 +964,7 @@ check_file(struct minix_inode * dir, unsigned int offset) {
 		get_current_name();
 		printf(_("The directory '%s' contains a bad inode number "
 			 "for file '%.*s'."),
-		       current_name, namelen, name);
+		       current_name, (int) namelen, name);
 		if (ask(_(" Remove"),1)) {
 			*(unsigned short *)(name-2) = 0;
 			write_block(block, blk);
@@ -1004,7 +1019,7 @@ static void
 check_file2 (struct minix2_inode *dir, unsigned int offset) {
 	static char blk[MINIX_BLOCK_SIZE];
 	struct minix2_inode *inode;
-	int ino;
+	unsigned long ino;
 	char *name;
 	int block;
 
@@ -1016,7 +1031,7 @@ check_file2 (struct minix2_inode *dir, unsigned int offset) {
 		get_current_name();
 		printf(_("The directory '%s' contains a bad inode number "
 			 "for file '%.*s'."),
-			  current_name, namelen, name);
+			  current_name, (int) namelen, name);
 		if (ask (_(" Remove"), 1)) {
 			*(unsigned short *) (name - 2) = 0;
 			write_block (block, blk);
@@ -1051,7 +1066,7 @@ check_file2 (struct minix2_inode *dir, unsigned int offset) {
 	name_depth++;
 	if (list) {
 		if (verbose)
-			printf ("%6d %07o %3d ", ino, inode->i_mode,
+			printf ("%6zd %07o %3d ", ino, inode->i_mode,
 				inode->i_nlinks);
 		get_current_name ();
 		printf("%s", current_name);
@@ -1114,11 +1129,11 @@ bad_zone(int i) {
 
 static void
 check_counts(void) {
-	int i;
+	unsigned long i;
 
 	for (i=1 ; i <= get_ninodes(); i++) {
 		if (!inode_in_use(i) && Inode[i].i_mode && warn_mode) {
-			printf(_("Inode %d mode not cleared."),i);
+			printf(_("Inode %lu mode not cleared."), i);
 			if (ask(_("Clear"),1)) {
 				Inode[i].i_mode = 0;
 				changed = 1;
@@ -1127,19 +1142,20 @@ check_counts(void) {
 		if (!inode_count[i]) {
 			if (!inode_in_use(i))
 				continue;
-			printf(_("Inode %d not used, marked used in the bitmap."),i);
+			printf(_("Inode %lu not used, marked used in the bitmap."),
+				i);
 			if (ask(_("Clear"),1))
 				unmark_inode(i);
 			continue;
 		}
 		if (!inode_in_use(i)) {
-			printf(_("Inode %d used, marked unused in the bitmap."),
+			printf(_("Inode %lu used, marked unused in the bitmap."),
 				i);
 			if (ask(_("Set"),1))
 				mark_inode(i);
 		}
 		if (Inode[i].i_nlinks != inode_count[i]) {
-			printf(_("Inode %d (mode = %07o), i_nlinks=%d, counted=%d."),
+			printf(_("Inode %lu (mode = %07o), i_nlinks=%d, counted=%d."),
 				i,Inode[i].i_mode,Inode[i].i_nlinks,inode_count[i]);
 			if (ask(_("Set i_nlinks to count"),1)) {
 				Inode[i].i_nlinks=inode_count[i];
@@ -1153,27 +1169,27 @@ check_counts(void) {
 		if (!zone_count[i]) {
 			if (bad_zone(i))
 				continue;
-			printf(_("Zone %d: marked in use, no file uses it."),i);
+			printf(_("Zone %lu: marked in use, no file uses it."),i);
 			if (ask(_("Unmark"),1))
 				unmark_zone(i);
 			continue;
 		}
 		if (zone_in_use(i))
-			printf(_("Zone %d: in use, counted=%d\n"),
+			printf(_("Zone %lu: in use, counted=%d\n"),
 			       i, zone_count[i]);
 		else
-			printf(_("Zone %d: not in use, counted=%d\n"),
+			printf(_("Zone %lu: not in use, counted=%d\n"),
 			       i, zone_count[i]);
 	}
 }
 
 static void
 check_counts2 (void) {
-	int i;
+	unsigned long i;
 
 	for (i = 1; i <= get_ninodes(); i++) {
 		if (!inode_in_use (i) && Inode2[i].i_mode && warn_mode) {
-			printf (_("Inode %d mode not cleared."), i);
+			printf (_("Inode %lu mode not cleared."), i);
 			if (ask (_("Clear"), 1)) {
 				Inode2[i].i_mode = 0;
 				changed = 1;
@@ -1182,18 +1198,18 @@ check_counts2 (void) {
 		if (!inode_count[i]) {
 			if (!inode_in_use (i))
 				continue;
-			printf (_("Inode %d not used, marked used in the bitmap."), i);
+			printf (_("Inode %lu not used, marked used in the bitmap."), i);
 			if (ask (_("Clear"), 1))
 				unmark_inode (i);
 			continue;
 		}
 		if (!inode_in_use (i)) {
-			printf (_("Inode %d used, marked unused in the bitmap."), i);
+			printf (_("Inode %lu used, marked unused in the bitmap."), i);
 			if (ask (_("Set"), 1))
 				mark_inode (i);
 		}
 		if (Inode2[i].i_nlinks != inode_count[i]) {
-			printf (_("Inode %d (mode = %07o), i_nlinks=%d, counted=%d."),
+			printf (_("Inode %lu (mode = %07o), i_nlinks=%d, counted=%d."),
 				i, Inode2[i].i_mode, Inode2[i].i_nlinks, inode_count[i]);
 			if (ask (_("Set i_nlinks to count"), 1)) {
 				Inode2[i].i_nlinks = inode_count[i];
@@ -1207,17 +1223,17 @@ check_counts2 (void) {
 		if (!zone_count[i]) {
 			if (bad_zone (i))
 				continue;
-			printf (_("Zone %d: marked in use, no file uses it."),
+			printf (_("Zone %lu: marked in use, no file uses it."),
 				i);
 			if (ask (_("Unmark"), 1))
 				unmark_zone (i);
 			continue;
 		}
 		if (zone_in_use (i))
-			printf (_("Zone %d: in use, counted=%d\n"),
+			printf (_("Zone %lu: in use, counted=%d\n"),
 				i, zone_count[i]);
 		else
-			printf (_("Zone %d: not in use, counted=%d\n"),
+			printf (_("Zone %lu: not in use, counted=%d\n"),
 				i, zone_count[i]);
 	}
 }
@@ -1343,7 +1359,7 @@ main(int argc, char ** argv) {
 		check();
 	}
 	if (verbose) {
-		int i, free;
+		unsigned long i, free;
 
 		for (i=1,free=0 ; i <= get_ninodes() ; i++)
 			if (!inode_in_use(i))
