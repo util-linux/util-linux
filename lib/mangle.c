@@ -20,7 +20,7 @@ static unsigned char need_escaping[] = { ' ', '\t', '\n', '\\' };
 char *mangle(const char *s)
 {
 	char *ss, *sp;
-	int n;
+	size_t n;
 
 	if (!s)
 		return NULL;
