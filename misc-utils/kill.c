@@ -328,7 +328,7 @@ int rtsig_to_signum(char *sig)
 
 int signame_to_signum (char *sig)
 {
-    int n;
+    size_t n;
 
     if (! strncasecmp (sig, "sig", 3))
 	sig += 3;
@@ -370,7 +370,7 @@ void nosig (char *name)
 
 void printsig (int sig)
 {
-    int n;
+    size_t n;
 
     for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
 	if (sys_signame[n].val == sig) {
@@ -389,8 +389,7 @@ void printsig (int sig)
 
 void printsignals (FILE *fp)
 {
-    int n, lth;
-    int lpos = 0;
+    size_t n, lth, lpos = 0;
 
     for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
 	lth = 1+strlen(sys_signame[n].name);
