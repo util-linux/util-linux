@@ -787,14 +787,14 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		program_invocation_short_name);
 
 	fprintf(out, _("\nOptions:\n"
-		       " -1, --one        single month\n"
-		       " -3, --three      previous, current and next month\n"
-		       " -s, --sunday     sunday as first day\n"
-		       " -m, --monday     monday as fistt day\n"
-		       " -j, --julian     julian dates\n"
-		       " -y, --year       current year\n"
-		       " -V, --version    output version information and exit\n"
-		       " -h, --help       display this help and exit\n\n"));
+		       " -1, --one        show only current month (default)\n"
+		       " -3, --three      show previous, current and next month\n"
+		       " -s, --sunday     Sunday as first day of week\n"
+		       " -m, --monday     Monday as first day of week\n"
+		       " -j, --julian     output Julian dates\n"
+		       " -y, --year       show whole current year\n"
+		       " -V, --version    display version information and exit\n"
+		       " -h, --help       display this help text and exit\n\n"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
