@@ -122,7 +122,7 @@ main(int argc, char **argv) {
 	FILE *map;
 	int proFd;
 	char *mapFile, *proFile, *mult=0;
-	unsigned long len=0, indx=1;
+	size_t len=0, indx=1;
 	unsigned long long add0=0;
 	unsigned int step;
 	unsigned int *buf, total, fn_len;
@@ -130,6 +130,7 @@ main(int argc, char **argv) {
 	char fn_name[S_LEN], next_name[S_LEN];   /* current and next name */
 	char mode[8];
 	int c;
+	ssize_t rc;
 	int optAll=0, optInfo=0, optReset=0, optVerbose=0, optNative=0;
 	int optBins=0, optSub=0;
 	char mapline[S_LEN];
@@ -230,7 +231,8 @@ main(int argc, char **argv) {
 
 	buf = xmalloc(len);
 
-	if (read(proFd,buf,len) != len) {
+	rc = read(proFd,buf,len);
+	if (rc < 0 || (size_t) rc != len) {
 		fprintf(stderr,"%s: %s: %s\n",prgname,proFile,strerror(errno));
 		exit(1);
 	}
@@ -238,8 +240,9 @@ main(int argc, char **argv) {
 
 	if (!optNative) {
 		int entries = len/sizeof(*buf);
-		int big = 0,small = 0,i;
+		int big = 0,small = 0;
 		unsigned *p;
+		size_t i;
 
 		for (p = buf+1; p < buf+entries; p++) {
 			if (*p & ~0U << (sizeof(*buf)*4))
