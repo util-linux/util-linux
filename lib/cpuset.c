@@ -147,15 +147,15 @@ int __cpuset_count_s(size_t setsize, const cpu_set_t *set)
 char *cpulist_create(char *str, size_t len,
 			cpu_set_t *set, size_t setsize)
 {
-	int i;
+	size_t i;
 	char *ptr = str;
 	int entry_made = 0;
 	size_t max = cpuset_nbits(setsize);
 
 	for (i = 0; i < max; i++) {
 		if (CPU_ISSET_S(i, setsize, set)) {
-			int j, rlen;
-			int run = 0;
+			int rlen;
+			size_t j, run = 0;
 			entry_made = 1;
 			for (j = i + 1; j < max; j++) {
 				if (CPU_ISSET_S(j, setsize, set))
@@ -164,18 +164,21 @@ char *cpulist_create(char *str, size_t len,
 					break;
 			}
 			if (!run)
-				rlen = snprintf(ptr, len, "%d,", i);
+				rlen = snprintf(ptr, len, "%zd,", i);
 			else if (run == 1) {
-				rlen = snprintf(ptr, len, "%d,%d,", i, i + 1);
+				rlen = snprintf(ptr, len, "%zd,%zd,", i, i + 1);
 				i++;
 			} else {
-				rlen = snprintf(ptr, len, "%d-%d,", i, i + run);
+				rlen = snprintf(ptr, len, "%zd-%zd,", i, i + run);
 				i += run;
 			}
-			if (rlen < 0 || rlen + 1 > len)
+			if (rlen < 0 || (size_t) rlen + 1 > len)
 				return NULL;
 			ptr += rlen;
-			len -= rlen;
+			if (rlen > 0 && len > (size_t) rlen)
+				len -= rlen;
+			else
+				len = 0;
 		}
 	}
 	ptr -= entry_made;
@@ -197,7 +200,7 @@ char *cpumask_create(char *str, size_t len,
 	for (cpu = cpuset_nbits(setsize) - 4; cpu >= 0; cpu -= 4) {
 		char val = 0;
 
-		if (len == (ptr - str))
+		if (len == (size_t) (ptr - str))
 			break;
 
 		if (CPU_ISSET_S(cpu, setsize, set))
