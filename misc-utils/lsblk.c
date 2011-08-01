@@ -139,8 +139,8 @@ struct lsblk *lsblk;	/* global handler */
 int columns[__NCOLUMNS];/* enabled columns */
 int ncolumns;		/* number of enabled columns */
 
-unsigned int excludes[256];
-int nexcludes;
+int excludes[256];
+size_t nexcludes;
 
 struct blkdev_cxt {
 	struct blkdev_cxt *parent;
@@ -173,7 +173,7 @@ struct blkdev_cxt {
 
 static int is_maj_excluded(int maj)
 {
-	int i;
+	size_t i;
 
 	assert(ARRAY_SIZE(excludes) > nexcludes);
 
