@@ -319,7 +319,7 @@ prompt (char *question, char *def_val) {
  */
 static int
 check_shell (char *shell) {
-    int i, c;
+    unsigned int i, c;
 
     if (!shell)
 	return -1;
