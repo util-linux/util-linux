@@ -366,7 +366,7 @@ want(struct utmp *bp, int check) {
 				return YES;
 			break;
 		case INET_TYPE:
-			if (bp->ut_addr == inet_addr(step->name))
+			if ((in_addr_t) bp->ut_addr == inet_addr(step->name))
 			  return YES;
 			break;
 	}
