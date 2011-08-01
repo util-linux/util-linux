@@ -25,7 +25,7 @@ int checkAccess(char *chuser, int access) {
 				       &avd);
 	  
       if ((retval == 0) && 
-	  ((access & avd.allowed) == access)) {
+	  ((access & avd.allowed) == (unsigned) access)) {
 	status=0;
       }
     }
