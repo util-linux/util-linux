@@ -404,7 +404,8 @@ int main(int argc, char *argv[]) {
 	if(xmit_rate > cmon[cmon_index].maxxmit)
           cmon[cmon_index].maxxmit = xmit_rate;
 #endif
-	if(cywork.char_max > cmon[cmon_index].maxmax) 
+	if(cmon[cmon_index].maxmax < 0 ||
+	   cywork.char_max > (unsigned long) cmon[cmon_index].maxmax)
 	  cmon[cmon_index].maxmax = cywork.char_max;
       }
 
