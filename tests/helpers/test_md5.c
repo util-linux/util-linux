@@ -4,8 +4,7 @@
 
 #include "md5.h"
 
-int
-main(int argc, char *argv[])
+int main()
 {
 	int i, ret;
 	struct MD5Context ctx;
