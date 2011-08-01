@@ -481,7 +481,8 @@ leave:
 }
 
 /* error callback */
-static int parser_errcb(struct libmnt_table *tb, const char *filename, int line)
+static int parser_errcb(struct libmnt_table *tb __attribute__ ((__unused__)),
+			const char *filename, int line)
 {
 	warn(_("%s: parse error at line %d"), filename, line);
 	return 0;
@@ -516,7 +517,8 @@ static struct libmnt_table *parse_tabfile(const char *path)
 }
 
 /* filter function for libmount (mnt_table_find_next_fs()) */
-static int match_func(struct libmnt_fs *fs, void *data)
+static int match_func(struct libmnt_fs *fs,
+		      void *data __attribute__ ((__unused__)))
 {
 	int rc = flags & FL_INVERT ? 1 : 0;
 	const char *m;
