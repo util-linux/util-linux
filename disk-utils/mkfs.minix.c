@@ -84,6 +84,7 @@
 #include "bitops.h"
 #include "exitcodes.h"
 #include "strutils.h"
+#include "writeall.h"
 
 #define MINIX_ROOT_INO 1
 #define MINIX_BAD_INO 2
@@ -117,8 +118,8 @@ static int badblocks;
  * This should be changed in the future to 60,
  * since v3 needs to be the default nowadays (2011)
  */
-static int namelen = 30;
-static int dirsize = 32;
+static size_t namelen = 30;
+static size_t dirsize = 32;
 static int magic = MINIX_SUPER_MAGIC2;
 static int version2;
 
@@ -186,6 +187,7 @@ static void write_tables(void) {
 	unsigned long imaps = get_nimaps();
 	unsigned long zmaps = get_nzmaps();
 	unsigned long buffsz = get_inode_buffer_size();
+	ssize_t rc;
 
 	/* Mark the super block valid. */
 	super_set_state();
@@ -193,29 +195,42 @@ static void write_tables(void) {
 	if (lseek(DEV, 0, SEEK_SET))
 		err(MKFS_ERROR, _("%s: seek to boot block failed "
 				   " in write_tables"), device_name);
-	if (512 != write(DEV, boot_block_buffer, 512))
+	rc = write_all(DEV, boot_block_buffer, 512);
+	if (512 != rc)
 		err(MKFS_ERROR, _("%s: unable to clear boot sector"), device_name);
 	if (MINIX_BLOCK_SIZE != lseek(DEV, MINIX_BLOCK_SIZE, SEEK_SET))
 		err(MKFS_ERROR, _("%s: seek failed in write_tables"), device_name);
-	if (MINIX_BLOCK_SIZE != write(DEV, super_block_buffer, MINIX_BLOCK_SIZE))
+
+	rc = write_all(DEV, super_block_buffer, MINIX_BLOCK_SIZE);
+	if (rc < 0 || MINIX_BLOCK_SIZE != (size_t) rc)
 		err(MKFS_ERROR, _("%s: unable to write super-block"), device_name);
-	if (imaps*MINIX_BLOCK_SIZE != write(DEV,inode_map, imaps*MINIX_BLOCK_SIZE))
+
+	rc = write_all(DEV, inode_map, imaps * MINIX_BLOCK_SIZE);
+	if (rc < 0 || imaps * MINIX_BLOCK_SIZE != (size_t) rc)
 		err(MKFS_ERROR, _("%s: unable to write inode map"), device_name);
-	if (zmaps*MINIX_BLOCK_SIZE != write(DEV,zone_map, zmaps*MINIX_BLOCK_SIZE))
+
+	rc = write_all(DEV, zone_map, zmaps * MINIX_BLOCK_SIZE);
+	if (rc < 0 || zmaps * MINIX_BLOCK_SIZE != (size_t) rc)
 		err(MKFS_ERROR, _("%s: unable to write zone map"), device_name);
-	if (buffsz != write(DEV,inode_buffer, buffsz))
+
+	rc = write_all(DEV, inode_buffer, buffsz);
+	if (rc < 0 || buffsz != (size_t) rc)
 		err(MKFS_ERROR, _("%s: unable to write inodes"), device_name);
 }
 
 static void write_block(int blk, char * buffer) {
+	ssize_t rc;
+
 	if (blk*MINIX_BLOCK_SIZE != lseek(DEV, blk*MINIX_BLOCK_SIZE, SEEK_SET))
 		errx(MKFS_ERROR, _("%s: seek failed in write_block"), device_name);
-	if (MINIX_BLOCK_SIZE != write(DEV, buffer, MINIX_BLOCK_SIZE))
+
+	rc = write_all(DEV, buffer, MINIX_BLOCK_SIZE);
+	if (rc < 0 && MINIX_BLOCK_SIZE != (size_t) rc)
 		errx(MKFS_ERROR, _("%s: write failed in write_block"), device_name);
 }
 
 static int get_free_block(void) {
-	int blk;
+	unsigned int blk;
 	unsigned int zones = get_nzones();
 	unsigned int first_zone = get_first_zone();
 
@@ -241,9 +256,9 @@ static void mark_good_blocks(void) {
 		mark_zone(good_blocks_table[blk]);
 }
 
-static inline int next(int zone) {
-	unsigned int zones = get_nzones();
-	unsigned int first_zone = get_first_zone();
+static inline int next(unsigned long zone) {
+	unsigned long zones = get_nzones();
+	unsigned long first_zone = get_first_zone();
 
 	if (!zone)
 		zone = first_zone-1;
@@ -469,8 +484,7 @@ static void super_set_magic(void)
 }
 
 static void setup_tables(void) {
-	int i;
-	unsigned long inodes, zmaps, imaps, zones;
+	unsigned long inodes, zmaps, imaps, zones, i;
 
 	super_block_buffer = calloc(1, MINIX_BLOCK_SIZE);
 	if (!super_block_buffer)
@@ -531,8 +545,8 @@ static void setup_tables(void) {
 		err(MKFS_ERROR, _("%s: unable to allocate buffer for inodes"),
 				device_name);
 	memset(inode_buffer,0, get_inode_buffer_size());
-	printf(_("%ld inodes\n"), inodes);
-	printf(_("%ld blocks\n"), zones);
+	printf(_("%lu inodes\n"), inodes);
+	printf(_("%lu blocks\n"), zones);
 	printf(_("Firstdatazone=%ld (%ld)\n"), get_first_zone(), first_zone_data());
 	printf(_("Zonesize=%d\n"),MINIX_BLOCK_SIZE<<get_zone_size());
 	printf(_("Maxsize=%ld\n\n"),get_max_size());
@@ -563,7 +577,7 @@ static long do_check(char * buffer, int try, unsigned int current_block) {
 
 static unsigned int currently_testing = 0;
 
-static void alarm_intr(int alnum) {
+static void alarm_intr(int alnum __attribute__ ((__unused__))) {
 	unsigned long zones = get_nzones();
 
 	if (currently_testing >= zones)
