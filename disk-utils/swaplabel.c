@@ -80,7 +80,7 @@ static blkid_probe get_swap_prober(const char *devname)
 }
 
 /* Print the swap partition information */
-static int print_info(blkid_probe pr, const char *devname)
+static int print_info(blkid_probe pr)
 {
 	const char *data;
 
@@ -213,7 +213,7 @@ int main(int argc, char *argv[])
 		if (uuid || label)
 			rc = change_info(devname, label, uuid);
 		else
-			rc  = print_info(pr, devname);
+			rc  = print_info(pr);
 		blkid_free_probe(pr);
 	}
 	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
