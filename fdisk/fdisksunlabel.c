@@ -331,7 +331,7 @@ static int verify_sun_cmp(int *a, int *b)
 void verify_sun(void)
 {
     uint32_t starts[SUN_NUM_PARTITIONS], lens[SUN_NUM_PARTITIONS], start, stop;
-    int i,j,k,starto,endo;
+    uint32_t i,j,k,starto,endo;
     int array[SUN_NUM_PARTITIONS];
 
     verify_sun_starts = starts;
@@ -403,7 +403,8 @@ void add_sun_partition(int n, int sys)
 	int whole_disk = 0;
 		
 	char mesg[256];
-	int i, first, last;
+	int i;
+	unsigned int first, last;
 
 	if (part->num_sectors && tag->tag != SSWAP16(SUN_TAG_UNASSIGNED)) {
 		printf(_("Partition %d is already defined.  Delete "

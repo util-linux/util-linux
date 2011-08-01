@@ -323,9 +323,9 @@ sgi_get_bootfile(void) {
 
 void
 sgi_set_bootfile(const char* aFile) {
-	int i = 0;
 
 	if (sgi_check_bootfile(aFile)) {
+		size_t i = 0;
 		while (i < 16) {
 			if ((aFile[i] != '\n')	/* in principle caught again by next line */
 			    &&  (strlen(aFile) > i))

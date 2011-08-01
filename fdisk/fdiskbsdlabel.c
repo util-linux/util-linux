@@ -651,7 +651,8 @@ xbsd_dkcksum (struct xbsd_disklabel *lp) {
 }
 
 static int
-xbsd_initlabel (struct partition *p, struct xbsd_disklabel *d, int pindex) {
+xbsd_initlabel (struct partition *p, struct xbsd_disklabel *d,
+		int pindex __attribute__((__unused__))) {
 	struct xbsd_partition *pp;
 	struct geom g;
 

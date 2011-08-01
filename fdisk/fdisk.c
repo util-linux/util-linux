@@ -1397,7 +1397,7 @@ read_int_sx(unsigned int low, unsigned int dflt, unsigned int high,
 	unsigned int i;
 	int default_ok = 1;
 	static char *ms = NULL;
-	static int mslen = 0;
+	static size_t mslen = 0;
 
 	if (!ms || strlen(mesg)+100 > mslen) {
 		mslen = strlen(mesg)+200;
@@ -2325,7 +2325,6 @@ add_partition(int n, int sys) {
 	int i, read = 0;
 	struct partition *p = ptes[n].part_table;
 	struct partition *q = ptes[ext_index].part_table;
-	long long llimit;
 	unsigned long long start, stop = 0, limit, temp,
 		first[partitions], last[partitions];
 
@@ -2338,12 +2337,13 @@ add_partition(int n, int sys) {
 	if (n < 4) {
 		start = sector_offset;
 		if (display_in_cyl_units || !total_number_of_sectors)
-			llimit = heads * sectors * cylinders - 1;
+			limit = heads * sectors * cylinders - 1;
 		else
-			llimit = total_number_of_sectors - 1;
-		limit = llimit;
-		if (limit != llimit)
-			limit = 0x7fffffff;
+			limit = total_number_of_sectors - 1;
+
+		if (limit > UINT_MAX)
+			limit = UINT_MAX;
+
 		if (extended_offset) {
 			first[ext_index] = extended_offset;
 			last[ext_index] = get_start_sect(q) +
@@ -2657,8 +2657,7 @@ reread_partition_table(int leave) {
 #define MAX_PER_LINE	16
 static void
 print_buffer(unsigned char pbuffer[]) {
-	int	i,
-		l;
+	unsigned int i, l;
 
 	for (i = 0, l = 0; i < sector_size; i++, l++) {
 		if (l == 0)
@@ -2938,8 +2937,7 @@ tryprocpt(void) {
 	fclose(procpt);
 }
 
-static void
-dummy(int *kk) {}
+static void dummy(int *kk __attribute__ ((__unused__))) {}
 
 static void
 unknown_command(int c) {
