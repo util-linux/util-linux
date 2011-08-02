@@ -128,7 +128,8 @@ err:
 	return -1;
 }
 
-static int probe_dos_pt(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_dos_pt(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	int i;
 	int ssf;
@@ -240,7 +241,7 @@ static int probe_dos_pt(blkid_probe pr, const struct blkid_idmag *mag)
 	/* Parse subtypes (nested partitions) on large disks */
 	if (!blkid_probe_is_tiny(pr)) {
 		for (p = p0, i = 0; i < 4; i++, p++) {
-			int n;
+			size_t n;
 
 			if (!dos_partition_size(p) || is_extended(p))
 				continue;

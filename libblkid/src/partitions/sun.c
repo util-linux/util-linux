@@ -80,7 +80,8 @@ uint16_t count_checksum(struct sun_disklabel *label)
 	return sum;
 }
 
-static int probe_sun_pt(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_sun_pt(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct sun_disklabel *l;
 	struct sun_partition *p;

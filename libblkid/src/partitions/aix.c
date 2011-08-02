@@ -14,7 +14,8 @@
 #include "partitions.h"
 #include "aix.h"
 
-static int probe_aix_pt(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_aix_pt(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	blkid_partlist ls;
 	blkid_parttable tab;

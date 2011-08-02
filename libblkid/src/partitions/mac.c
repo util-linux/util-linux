@@ -71,15 +71,15 @@ static inline int has_part_signature(struct mac_partition *p)
 		be16_to_cpu(p->signature) == MAC_PARTITION_MAGIC_OLD;
 }
 
-static int probe_mac_pt(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_mac_pt(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct mac_driver_desc *md;
 	struct mac_partition *p;
 	blkid_parttable tab = NULL;
 	blkid_partlist ls;
-	int i;
 	uint16_t ssf;	/* sector size fragment */
-	uint32_t nblks;
+	uint32_t nblks, i;
 
 
 	/* The driver descriptor record is always located at physical block 0,

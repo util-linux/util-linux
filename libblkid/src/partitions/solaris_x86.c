@@ -57,7 +57,8 @@ struct solaris_vtoc {
 	char         v_asciilabel[128];	/* for compatibility */
 } __attribute__((packed));
 
-static int probe_solaris_pt(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_solaris_pt(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct solaris_vtoc *l;	/* disk label */
 	struct solaris_slice *p;	/* partitsion */

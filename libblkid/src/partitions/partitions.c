@@ -339,7 +339,7 @@ static void free_parttables(blkid_partlist ls)
 	}
 }
 
-static void reset_partlist(blkid_probe pr, blkid_partlist ls)
+static void reset_partlist(blkid_partlist ls)
 {
 	if (!ls)
 		return;
@@ -364,7 +364,7 @@ static void reset_partlist(blkid_probe pr, blkid_partlist ls)
 	DBG(DEBUG_LOWPROBE, printf("partlist reseted\n"));
 }
 
-static blkid_partlist partitions_init_data(blkid_probe pr, struct blkid_chain *chn)
+static blkid_partlist partitions_init_data(struct blkid_chain *chn)
 {
 	blkid_partlist ls;
 
@@ -378,7 +378,7 @@ static blkid_partlist partitions_init_data(blkid_probe pr, struct blkid_chain *c
 		chn->data = (void *) ls;
 	}
 
-	reset_partlist(pr, ls);
+	reset_partlist(ls);
 
 	DBG(DEBUG_LOWPROBE,
 		printf("parts: initialized partitions list (%p, size=%d)\n",
@@ -386,7 +386,8 @@ static blkid_partlist partitions_init_data(blkid_probe pr, struct blkid_chain *c
 	return ls;
 }
 
-static void partitions_free_data(blkid_probe pr, void *data)
+static void partitions_free_data(blkid_probe pr __attribute__((__unused__)),
+				 void *data)
 {
 	blkid_partlist ls = (blkid_partlist) data;
 
@@ -547,7 +548,7 @@ static int idinfo_probe(blkid_probe pr, const struct blkid_idinfo *id)
 		rc = id->probefunc(pr, mag);
 	        if (rc == -1) {
 			/* reset after error */
-			reset_partlist(pr, blkid_probe_get_partlist(pr));
+			reset_partlist(blkid_probe_get_partlist(pr));
 			DBG(DEBUG_LOWPROBE, printf(
 				"%s probefunc failed\n", id->name));
 		}
@@ -564,14 +565,15 @@ nothing:
  */
 static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 {
-	int i = 0, rc = 1;
+	int rc = 1;
+	size_t i;
 
 	if (!pr || chn->idx < -1)
 		return -1;
 	blkid_probe_chain_reset_vals(pr, chn);
 
 	if (chn->binary)
-		partitions_init_data(pr, chn);
+		partitions_init_data(chn);
 
 	if (!pr->wipe_size && (pr->prob_flags & BLKID_PROBE_FL_IGNORE_PT))
 		goto details_only;
@@ -580,7 +582,7 @@ static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 		printf("--> starting probing loop [PARTS idx=%d]\n",
 		chn->idx));
 
-	i = chn->idx + 1;
+	i = chn->idx < 0 ? 0 : chn->idx + 1U;
 
 	for ( ; i < ARRAY_SIZE(idinfos); i++) {
 		const char *name;
@@ -830,7 +832,7 @@ done:
  */
 int blkid_known_pttype(const char *pttype)
 {
-	int i;
+	size_t i;
 
 	if (!pttype)
 		return 0;
@@ -962,7 +964,7 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 			 if (partno != blkid_partition_get_partno(par))
 				 continue;
 
-			 if (size == blkid_partition_get_size(par) ||
+			 if ((blkid_loff_t) size == blkid_partition_get_size(par) ||
 			     (blkid_partition_is_extended(par) && size <= 1024))
 				 return par;
 
@@ -975,12 +977,12 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 	for (i = 0; i < ls->nparts; i++) {
 		blkid_partition par = &ls->parts[i];
 
-		if (blkid_partition_get_start(par) == start &&
-		    blkid_partition_get_size(par) == size)
+		if (blkid_partition_get_start(par) == (blkid_loff_t) start &&
+		    blkid_partition_get_size(par) == (blkid_loff_t) size)
 			return par;
 
 		/* exception for extended dos partitions */
-		if (blkid_partition_get_start(par) == start &&
+		if (blkid_partition_get_start(par) == (blkid_loff_t) start &&
 		    blkid_partition_is_extended(par) && size <= 1024)
 			return par;
 

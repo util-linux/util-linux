@@ -32,7 +32,8 @@ struct ultrix_disklabel {
 } __attribute__((packed));
 
 
-static int probe_ultrix_pt(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_ultrix_pt(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	unsigned char *data;
 	struct ultrix_disklabel *l;

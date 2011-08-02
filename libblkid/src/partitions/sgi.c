@@ -89,7 +89,8 @@ static uint32_t count_checksum(struct sgi_disklabel *label)
 }
 
 
-static int probe_sgi_pt(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_sgi_pt(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct sgi_disklabel *l;
 	struct sgi_partition *p;

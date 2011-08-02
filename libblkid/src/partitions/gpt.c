@@ -287,16 +287,16 @@ static struct gpt_header *get_gpt_header(
 	return h;
 }
 
-static int probe_gpt_pt(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_gpt_pt(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	uint64_t lastlba = 0, lba;
 	struct gpt_header hdr, *h;
 	struct gpt_entry *e;
 	blkid_parttable tab = NULL;
 	blkid_partlist ls;
-	int i;
 	uint64_t fu, lu;
-	uint32_t ssf;
+	uint32_t ssf, i;
 
 
 	if (last_lba(pr, &lastlba))

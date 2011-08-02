@@ -15,7 +15,8 @@
 #include "dos.h"
 #include "minix.h"
 
-static int probe_minix_pt(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_minix_pt(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct dos_partition *p;
 	blkid_parttable tab = NULL;

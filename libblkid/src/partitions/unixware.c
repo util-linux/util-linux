@@ -94,7 +94,8 @@ struct unixware_disklabel {
 	} __attribute__((packed)) vtoc;
 };
 
-static int probe_unixware_pt(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_unixware_pt(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct unixware_disklabel *l;
 	struct unixware_partition *p;
