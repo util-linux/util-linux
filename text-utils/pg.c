@@ -62,6 +62,7 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "widechar.h"
+#include "writeall.h"
 
 #define	READBUF		LINE_MAX	/* size of input buffer */
 #define CMDBUF		255		/* size of command buffer */
@@ -250,7 +251,7 @@ xmbstowcs(wchar_t *pwcs, const char *s, size_t nwcs)
 	size_t n = nwcs;
 	int c;
 
-	mbtowc(pwcs, NULL, MB_CUR_MAX);
+	ignore_result( mbtowc(pwcs, NULL, MB_CUR_MAX) );	/* reset shift state */
 	while (*s && n) {
 		if ((c = mbtowc(pwcs, s, MB_CUR_MAX)) < 0) {
 			s++;
@@ -262,7 +263,7 @@ xmbstowcs(wchar_t *pwcs, const char *s, size_t nwcs)
 	}
 	if (n)
 		*pwcs = L'\0';
-	mbtowc(pwcs, NULL, MB_CUR_MAX);
+	ignore_result( mbtowc(pwcs, NULL, MB_CUR_MAX) );
 	return nwcs - n;
 }
 #endif
@@ -274,7 +275,7 @@ static int
 outcap(int i)
 {
 	char c = i;
-	return write(1, &c, 1);
+	return write_all(1, &c, 1);
 }
 
 /*
@@ -287,7 +288,7 @@ mesg(char *message)
 		return;
 	if (*message != '\n' && sflag)
 		vidputs(A_STANDOUT, outcap);
-	write(1, message, strlen(message));
+	write_all(1, message, strlen(message));
 	if (*message != '\n' && sflag)
 		vidputs(A_NORMAL, outcap);
 }
@@ -539,7 +540,7 @@ cline(void)
 	memset(buf, ' ', ttycols + 2);
 	buf[0] = '\r';
 	buf[ttycols + 1] = '\r';
-	write(1, buf, ttycols + 2);
+	write_all(1, buf, ttycols + 2);
 	free(buf);
 }
 
@@ -649,7 +650,7 @@ prompt(long long pageno)
 		}
 		if (key == tio.c_cc[VERASE]) {
 			if (cmd.cmdlen) {
-				write(1, "\b \b", 3);
+				write_all(1, "\b \b", 3);
 				cmd.cmdline[--cmd.cmdlen] = '\0';
 				switch (state) {
 				case ADDON_FIN:
@@ -752,7 +753,7 @@ prompt(long long pageno)
 				cmd.key = key;
 			}
 		}
-		write(1, &key, 1);
+		write_all(1, &key, 1);
 		cmd.cmdline[cmd.cmdlen++] = key;
 		cmd.cmdline[cmd.cmdlen] = '\0';
 		if (nflag && state == CMD_FIN)
@@ -1005,7 +1006,7 @@ pgfile(FILE *f, char *name)
 		 * Just copy stdin to stdout.
 		 */
 		while ((sz = fread(b, sizeof *b, READBUF, f)) != 0)
-			write(1, b, sz);
+			write_all(1, b, sz);
 		if (ferror(f)) {
 			pgerror(errno, name);
 			exitstatus++;
@@ -1084,7 +1085,7 @@ pgfile(FILE *f, char *name)
 				} else {
 					if (!nobuf)
 						fputs(b, fbuf);
-					fwrite(&pos, sizeof pos, 1, find);
+					fwrite_all(&pos, sizeof pos, 1, find);
 					if (!fflag) {
 						oldpos = pos;
 						p = b;
@@ -1092,7 +1093,7 @@ pgfile(FILE *f, char *name)
 									p))
 								!= '\0') {
 							pos = oldpos + (p - b);
-							fwrite(&pos,
+							fwrite_all(&pos,
 								sizeof pos,
 								1, find);
 							fline++;
@@ -1165,7 +1166,7 @@ pgfile(FILE *f, char *name)
 				sz = p - b;
 				makeprint(b, sz);
 				canjump = 1;
-				write(1, b, sz);
+				write_all(1, b, sz);
 				canjump = 0;
 			}
 		}
@@ -1315,7 +1316,7 @@ found_bw:
 					}
 					if (!nobuf)
 						fputs(b, fbuf);
-					fwrite(&pos, sizeof pos, 1, find);
+					fwrite_all(&pos, sizeof pos, 1, find);
 					if (!fflag) {
 						oldpos = pos;
 						p = b;
@@ -1323,7 +1324,7 @@ found_bw:
 									p))
 								!= '\0') {
 							pos = oldpos + (p - b);
-							fwrite(&pos,
+							fwrite_all(&pos,
 								sizeof pos,
 								1, find);
 							fline++;
@@ -1339,7 +1340,7 @@ found_bw:
 					/*
 					 * No error check for compat.
 					 */
-					fwrite(b, sizeof *b, sz, save);
+					fwrite_all(b, sizeof *b, sz, save);
 				}
 				fclose(save);
 				fseeko(fbuf, (off_t)0, SEEK_END);
@@ -1455,9 +1456,9 @@ found_bw:
 				} else {
 					pid_t cpid;
 
-					write(1, cmd.cmdline,
+					write_all(1, cmd.cmdline,
 					      strlen(cmd.cmdline));
-					write(1, "\n", 1);
+					write_all(1, "\n", 1);
 					my_sigset(SIGINT, SIG_IGN);
 					my_sigset(SIGQUIT, SIG_IGN);
 					switch (cpid = fork()) {
@@ -1499,8 +1500,8 @@ found_bw:
 				 * Help!
 				 */
 				const char *help = _(helpscreen);
-				write(1, copyright + 4, strlen(copyright + 4));
-				write(1, help, strlen(help));
+				write_all(1, copyright + 4, strlen(copyright + 4));
+				write_all(1, help, strlen(help));
 				goto newcmd;
 			}
 			case 'n':
@@ -1744,9 +1745,9 @@ newfile:
 				/*
 				 * Use the prefix as specified by SUSv2.
 				 */
-				write(1, "::::::::::::::\n", 15);
-				write(1, argv[arg], strlen(argv[arg]));
-				write(1, "\n::::::::::::::\n", 16);
+				write_all(1, "::::::::::::::\n", 15);
+				write_all(1, argv[arg], strlen(argv[arg]));
+				write_all(1, "\n::::::::::::::\n", 16);
 			}
 			pgfile(input, argv[arg]);
 			if (input != stdin)
