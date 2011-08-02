@@ -90,7 +90,7 @@ struct blkid_chain {
 	int		enabled;	/* boolean */
 	int		flags;		/* BLKID_<chain>_* */
 	int		binary;		/* boolean */
-	int		idx;		/* index of the current prober */
+	int		idx;		/* index of the current prober (or -1) */
 	unsigned long	*fltr;		/* filter or NULL */
 	void		*data;		/* private chain data or NULL */
 };
@@ -99,7 +99,7 @@ struct blkid_chain {
  * Chain driver
  */
 struct blkid_chaindrv {
-	const int	id;		/* BLKID_CHAIN_* */
+	const size_t	id;		/* BLKID_CHAIN_* */
 	const char	*name;		/* name of chain (for debug purpose) */
 	const int	dflt_flags;	/* default chain flags */
 	const int	dflt_enabled;	/* default enabled boolean */

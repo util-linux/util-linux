@@ -143,6 +143,9 @@ libblkid
  - remove strerrr() from debug messages (use %m) to make BLKID_DEBUG= output
    thread-safe
 
+ - (!) don't use internally blkid_loff_t, rather use off_t, size_t, ssize_t,
+       stdint.h types and so on...
+
  - add -<BE|LE> suffix to test images for native-endian filesystems (e.g. swap)
    and add support for such functionality to tests/ts/blkid/low-probe
 

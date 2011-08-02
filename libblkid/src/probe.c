@@ -456,7 +456,7 @@ unsigned long *blkid_probe_get_filter(blkid_probe pr, int chain, int create)
  */
 int __blkid_probe_invert_filter(blkid_probe pr, int chain)
 {
-	int i;
+	size_t i;
 	struct blkid_chain *chn;
 
 	chn = &pr->chains[chain];
@@ -481,7 +481,7 @@ int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[
 {
 	unsigned long *fltr;
 	struct blkid_chain *chn;
-	int i;
+	size_t i;
 
 	fltr = blkid_probe_get_filter(pr, chain, TRUE);
 	if (!fltr)
@@ -882,10 +882,10 @@ int blkid_do_probe(blkid_probe pr)
 		 * the start (chain->idx == -1)
 		 */
 		else if (rc == 1 && (chn->enabled == FALSE ||
-				     chn->idx + 1 == chn->driver->nidinfos ||
+				     chn->idx + 1 == (int) chn->driver->nidinfos ||
 				     chn->idx == -1)) {
 
-			int idx = chn->driver->id + 1;
+			size_t idx = chn->driver->id + 1;
 
 			if (idx < BLKID_NCHAINS)
 				chn = pr->cur_chain = &pr->chains[idx];
@@ -1398,11 +1398,15 @@ struct blkid_prval *__blkid_probe_lookup_value(blkid_probe pr, const char *name)
 
 /* converts DCE UUID (uuid[16]) to human readable string
  * - the @len should be always 37 */
+#ifdef HAVE_LIBUUID
+void blkid_unparse_uuid(const unsigned char *uuid, char *str,
+			size_t len __attribute__((__unused__)))
+{
+	uuid_unparse(uuid, str);
+}
+#else
 void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len)
 {
-#ifdef HAVE_LIBUUID
-	uuid_unparse(uuid, str);
-#else
 	snprintf(str, len,
 		"%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
 		uuid[0], uuid[1], uuid[2], uuid[3],
@@ -1410,8 +1414,8 @@ void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len)
 		uuid[6], uuid[7],
 		uuid[8], uuid[9],
 		uuid[10], uuid[11], uuid[12], uuid[13], uuid[14],uuid[15]);
-#endif
 }
+#endif
 
 
 /* Removes whitespace from the right-hand side of a string (trailing
@@ -1464,7 +1468,7 @@ void blkid_probe_set_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
 	chn = pr->cur_chain;
 
 	if (!chn || !chn->driver ||
-	    chn->idx < 0 || chn->idx >= chn->driver->nidinfos)
+	    chn->idx < 0 || (size_t) chn->idx >= chn->driver->nidinfos)
 		return;
 
 	pr->wipe_size = size;

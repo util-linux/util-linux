@@ -460,10 +460,10 @@ int blkid_driver_has_major(const char *drvname, int major)
 	}
 
 	while (fgets(buf, sizeof(buf), f)) {
-		unsigned int maj;
+		int maj;
 		char name[64];
 
-		if (sscanf(buf, "%u %64[^\n ]", &maj, name) != 2)
+		if (sscanf(buf, "%d %64[^\n ]", &maj, name) != 2)
 			continue;
 
 		if (maj == major && strcmp(name, drvname) == 0) {
