@@ -79,7 +79,7 @@ static void __attribute__((__noreturn__)) print_version(void)
 	exit(EX_SUCCESS);
 }
 
-static int table_parser_errcb(struct libmnt_table *tb,
+static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)),
 			const char *filename, int line)
 {
 	if (filename)

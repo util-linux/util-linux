@@ -86,7 +86,7 @@ struct libmnt_cache *mnt_new_cache(void)
  */
 void mnt_free_cache(struct libmnt_cache *cache)
 {
-	int i;
+	size_t i;
 
 	if (!cache)
 		return;
@@ -181,7 +181,7 @@ static int cache_add_tag(struct libmnt_cache *cache, const char *tagname,
  */
 static const char *cache_find_path(struct libmnt_cache *cache, const char *path)
 {
-	int i;
+	size_t i;
 
 	assert(cache);
 	assert(path);
@@ -205,7 +205,7 @@ static const char *cache_find_path(struct libmnt_cache *cache, const char *path)
 static const char *cache_find_tag(struct libmnt_cache *cache,
 			const char *token, const char *value)
 {
-	int i;
+	size_t i;
 	size_t tksz;
 
 	assert(cache);
@@ -231,7 +231,7 @@ static const char *cache_find_tag(struct libmnt_cache *cache,
 static char *cache_find_tag_value(struct libmnt_cache *cache,
 			const char *devname, const char *token)
 {
-	int i;
+	size_t i;
 
 	assert(cache);
 	assert(devname);
@@ -297,7 +297,8 @@ static int cache_get_probe(struct libmnt_cache *cache, const char *devname,
  */
 int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 {
-	int i, ntags = 0, rc;
+	size_t i, ntags = 0;
+	int rc;
 	const char *tags[] = { "LABEL", "UUID", "TYPE" };
 
 	assert(cache);
@@ -355,7 +356,7 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 		ntags++;
 	}
 
-	DBG(CACHE, mnt_debug_h(cache, "\tread %d tags", ntags));
+	DBG(CACHE, mnt_debug_h(cache, "\tread %zd tags", ntags));
 	return ntags ? 0 : 1;
 error:
 	return -1;

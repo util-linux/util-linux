@@ -263,7 +263,8 @@ static int check_option(const char *haystack, size_t len,
 
 	for (p = haystack; p && p < haystack + len; p++) {
 		char *sep = strchr(p, ',');
-		size_t plen = sep ? sep - p : len - (p - haystack);
+		size_t plen = sep ? (size_t) (sep - p) :
+				    len - (p - haystack);
 
 		if (plen == needle_len) {
 			if (!strncmp(p, needle, plen))
@@ -309,7 +310,8 @@ int mnt_match_options(const char *optstr, const char *pattern)
 
 	for (p = pattern; p < pattern + len; p++) {
 		char *sep = strchr(p, ',');
-		size_t plen = sep ? sep - p : len - (p - pattern);
+		size_t plen = sep ? (size_t) (sep - p) :
+				    len - (p - pattern);
 
 		if (!plen)
 			continue; /* if two ',' appear in a row */

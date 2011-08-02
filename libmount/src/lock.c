@@ -236,7 +236,7 @@ err:
  * traditional mtab locking
  */
 
-static void mnt_lockalrm_handler(int sig)
+static void mnt_lockalrm_handler(int sig __attribute__((__unused__)))
 {
 	/* do nothing, say nothing, be nothing */
 }

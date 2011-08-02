@@ -1244,7 +1244,7 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 						path, name, type);
 		path = strtok_r(NULL, ":", &p);
 
-		if (rc >= sizeof(helper) || rc < 0)
+		if (rc < 0 || (size_t) rc >= sizeof(helper))
 			continue;
 
 		rc = stat(helper, &st);
@@ -1595,7 +1595,9 @@ int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status)
  *
  * Returns: 0 or negative number in case of error.
  */
-int mnt_context_strerror(struct libmnt_context *cxt, char *buf, size_t bufsiz)
+int mnt_context_strerror(struct libmnt_context *cxt __attribute__((__unused__)),
+			 char *buf __attribute__((__unused__)),
+			 size_t bufsiz __attribute__((__unused__)))
 {
 	/* TODO: based on cxt->syscall_errno or cxt->helper_status */
 	return 0;
@@ -1605,7 +1607,7 @@ int mnt_context_strerror(struct libmnt_context *cxt, char *buf, size_t bufsiz)
  * mnt_context_init_helper
  * @cxt: mount context
  * @action: MNT_ACT_{UMOUNT,MOUNT}
- * @flags: not used
+ * @flags: not used now
  *
  * This function infors libmount that used from [u]mount.type helper.
  *
@@ -1618,7 +1620,8 @@ int mnt_context_strerror(struct libmnt_context *cxt, char *buf, size_t bufsiz)
  *
  * Returns: 0 on success, negative number in case of error.
  */
-int mnt_context_init_helper(struct libmnt_context *cxt, int action, int flags)
+int mnt_context_init_helper(struct libmnt_context *cxt, int action,
+			    int flags __attribute__((__unused__)))
 {
 	int rc = mnt_context_disable_helpers(cxt, TRUE);
 
