@@ -977,7 +977,13 @@ static void termio_init(struct options *op, struct termios *tp)
 	 /* Flush input and output queues, important for modems! */
 	tcflush(STDIN_FILENO, TCIOFLUSH);
 
-	tp->c_iflag = tp->c_lflag = tp->c_oflag = 0;
+#ifdef IUTF8
+	tp->c_iflag = tp->c_iflag & IUTF8;
+	op->flags |= F_UTF8;
+#else
+	tp->c_iflag = 0;
+#endif
+	tp->c_lflag = tp->c_oflag = 0;
 
 	if ((op->flags & F_KEEPCFLAGS) == 0)
 		tp->c_cflag = CS8 | HUPCL | CREAD | (tp->c_cflag & CLOCAL);
