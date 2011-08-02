@@ -55,6 +55,8 @@ if BUILD_WALL
 usrbin_exec_PROGRAMS += wall
 wall_SOURCES = wall.c ttymsg.c ttymsg.h $(top_srcdir)/lib/strutils.c
 dist_man_MANS += wall.1
+wall_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
+wall_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 endif
 
 if BUILD_WRITE
