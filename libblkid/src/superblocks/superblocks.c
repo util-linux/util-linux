@@ -251,7 +251,7 @@ int blkid_probe_filter_superblocks_usage(blkid_probe pr, int flag, int usage)
 {
 	unsigned long *fltr;
 	struct blkid_chain *chn;
-	int i;
+	size_t i;
 
 	if (!pr)
 		return -1;
@@ -283,7 +283,7 @@ int blkid_probe_filter_superblocks_usage(blkid_probe pr, int flag, int usage)
  */
 int blkid_known_fstype(const char *fstype)
 {
-	int i;
+	size_t i;
 
 	if (!fstype)
 		return 0;
@@ -306,7 +306,7 @@ int blkid_known_fstype(const char *fstype)
  */
 int blkid_superblocks_get_name(size_t idx, const char **name, int *usage)
 {
-	if (idx >= 0 && idx < ARRAY_SIZE(idinfos)) {
+	if (idx < ARRAY_SIZE(idinfos)) {
 		if (name)
 			*name = idinfos[idx]->name;
 		if (usage)
@@ -321,7 +321,7 @@ int blkid_superblocks_get_name(size_t idx, const char **name, int *usage)
  */
 static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 {
-	int i = 0;
+	size_t i;
 
 	if (!pr || chn->idx < -1)
 		return -1;
@@ -337,7 +337,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		 * is 1 byte */
 		goto nothing;
 
-	i = chn->idx + 1;
+	i = chn->idx < 0 ? 0 : chn->idx + 1U;
 
 	for ( ; i < ARRAY_SIZE(idinfos); i++) {
 		const struct blkid_idinfo *id;
@@ -366,7 +366,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		if ((id->usage & BLKID_USAGE_RAID) && blkid_probe_is_tiny(pr))
 			continue;
 
-		DBG(DEBUG_LOWPROBE, printf("[%d] %s:\n", i, id->name));
+		DBG(DEBUG_LOWPROBE, printf("[%zd] %s:\n", i, id->name));
 
 		if (blkid_probe_get_idmag(pr, id, &off, &mag))
 			continue;
@@ -593,7 +593,7 @@ int blkid_probe_set_utf8label(blkid_probe pr, unsigned char *label,
 /* like uuid_is_null() from libuuid, but works with arbitrary size of UUID */
 static int uuid_is_empty(const unsigned char *buf, size_t len)
 {
-	int i;
+	size_t i;
 
 	for (i = 0; i < len; i++)
 		if (buf[i])
@@ -626,7 +626,7 @@ int blkid_probe_sprintf_uuid(blkid_probe pr, unsigned char *uuid,
 
 	/* convert to lower case (..be paranoid) */
 	if (!rc) {
-		int i;
+		size_t i;
 		struct blkid_prval *v = __blkid_probe_get_value(pr,
 						blkid_probe_numof_values(pr));
 		if (v) {

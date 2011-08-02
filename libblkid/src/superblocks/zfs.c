@@ -70,7 +70,7 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 {
 	struct nvlist *nvl;
 	struct nvpair *nvp;
-	int left = 4096;
+	size_t left = 4096;
 	int found = 0;
 
 	offset = (offset & ~(VDEV_LABEL_SIZE - 1)) + VDEV_LABEL_NVPAIR;
@@ -94,7 +94,7 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 		nvp->nvp_namelen = be32_to_cpu(nvp->nvp_namelen);
 		avail = nvp->nvp_size - nvp->nvp_namelen - sizeof(*nvp);
 
-		nvdebug("left %u, nvp_size %u\n", left, nvp->nvp_size);
+		nvdebug("left %zd nvp_size %u\n", left, nvp->nvp_size);
 		if (left < nvp->nvp_size || avail < 0)
 			break;
 
@@ -148,7 +148,10 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 							 "%"PRIu64, nvu_value);
 			found++;
 		}
-		left -= nvp->nvp_size;
+		if (left > nvp->nvp_size)
+			left -= nvp->nvp_size;
+		else
+			left = 0;
 		nvp = (struct nvpair *)((char *)nvp + nvp->nvp_size);
 	}
 }
@@ -159,7 +162,8 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 /* ZFS has 128x1kB host-endian root blocks, stored in 2 areas at the start
  * of the disk, and 2 areas at the end of the disk.  Check only some of them...
  * #4 (@ 132kB) is the first one written on a new filesystem. */
-static int probe_zfs(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_zfs(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	uint64_t swab_magic = swab64(UBERBLOCK_MAGIC);
 	struct zfs_uberblock *ub;

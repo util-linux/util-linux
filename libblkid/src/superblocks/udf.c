@@ -57,7 +57,8 @@ struct volume_structure_descriptor {
 
 #define UDF_VSD_OFFSET			0x8000LL
 
-static int probe_udf(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_udf(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct volume_descriptor *vd;
 	struct volume_structure_descriptor *vsd;

@@ -25,7 +25,8 @@ struct nv_metadata {
 
 #define NVIDIA_SIGNATURE		"NVIDIA"
 
-static int probe_nvraid(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_nvraid(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	uint64_t off;
 	struct nv_metadata *nv;

@@ -148,11 +148,11 @@ static int probe_raid0(blkid_probe pr, blkid_loff_t off)
 
 	size <<= 10;	/* convert KiB to bytes */
 
-	if (pr->size < size + MD_RESERVED_BYTES)
+	if (pr->size < 0 || (uint64_t) pr->size < size + MD_RESERVED_BYTES)
 		/* device is too small */
 		return 1;
 
-	if (off < size)
+	if (off < 0 || (uint64_t) off < size)
 		/* no space before superblock */
 		return 1;
 
@@ -194,9 +194,9 @@ static int probe_raid1(blkid_probe pr, off_t off)
 		return -1;
 	if (le32_to_cpu(mdp1->magic) != MD_SB_MAGIC)
 		return -1;
-	if (le32_to_cpu(mdp1->major_version) != 1)
+	if (le32_to_cpu(mdp1->major_version) != 1U)
 		return -1;
-	if (le64_to_cpu(mdp1->super_offset) != off >> 9)
+	if (le64_to_cpu(mdp1->super_offset) != (uint64_t) off >> 9)
 		return -1;
 	if (blkid_probe_set_uuid(pr, (unsigned char *) mdp1->set_uuid) != 0)
 		return -1;
@@ -212,7 +212,8 @@ static int probe_raid1(blkid_probe pr, off_t off)
 	return 0;
 }
 
-int probe_raid(blkid_probe pr, const struct blkid_idmag *mag)
+int probe_raid(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	const char *ver = NULL;
 

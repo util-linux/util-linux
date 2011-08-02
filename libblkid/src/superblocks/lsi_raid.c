@@ -23,7 +23,8 @@ struct lsi_metadata {
 
 #define LSI_SIGNATURE		"$XIDE$"
 
-static int probe_lsiraid(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_lsiraid(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	uint64_t off;
 	struct lsi_metadata *lsi;

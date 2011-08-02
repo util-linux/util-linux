@@ -311,7 +311,8 @@ static void ext_get_info(blkid_probe pr, int ver, struct ext2_super_block *es)
 }
 
 
-static int probe_jbd(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_jbd(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct ext2_super_block *es;
 	uint32_t fi;
@@ -326,7 +327,8 @@ static int probe_jbd(blkid_probe pr, const struct blkid_idmag *mag)
 	return 0;
 }
 
-static int probe_ext2(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_ext2(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct ext2_super_block *es;
 	uint32_t fc, frc, fi;
@@ -357,7 +359,8 @@ static int probe_ext2(blkid_probe pr, const struct blkid_idmag *mag)
 	return 0;
 }
 
-static int probe_ext3(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_ext3(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct ext2_super_block *es;
 	uint32_t fc, frc, fi;
@@ -380,7 +383,8 @@ static int probe_ext3(blkid_probe pr, const struct blkid_idmag *mag)
 }
 
 
-static int probe_ext4dev(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_ext4dev(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct ext2_super_block *es;
 	uint32_t fc, frc, fi;
@@ -425,7 +429,8 @@ force_ext4dev:
 	return 0;
 }
 
-static int probe_ext4(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_ext4(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct ext2_super_block *es;
 	uint32_t fc, frc, fi;

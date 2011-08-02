@@ -64,7 +64,8 @@ struct md_on_disk_08 {
 };
 
 
-static int probe_drbd(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_drbd(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct md_on_disk_08 *md;
 	off_t off;

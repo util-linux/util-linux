@@ -73,7 +73,8 @@ struct adaptec_metadata {
 #define AD_SIGNATURE	0x4450544D	/* "DPTM" */
 #define AD_MAGIC	0x37FC4D1E
 
-static int probe_adraid(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_adraid(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	uint64_t off;
 	struct adaptec_metadata *ad;

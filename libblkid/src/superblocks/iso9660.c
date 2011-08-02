@@ -54,7 +54,7 @@ struct high_sierra_volume_descriptor {
 static int ascii_eq_utf16be(unsigned char *ascii,
 			unsigned char *utf16, size_t len)
 {
-	int a, u;
+	size_t a, u;
 
 	for (a = 0, u = 0; u < len; a++, u += 2) {
 		if (utf16[u] != 0x0 || ascii[a] != utf16[u + 1])

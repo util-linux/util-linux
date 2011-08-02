@@ -71,10 +71,11 @@ struct ddf_header {
 	uint8_t		pad4[256];	/* 0xff */
 } __attribute__((packed));
 
-static int probe_ddf(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_ddf(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	int hdrs[] = { 1, 257 };
-	int i;
+	size_t i;
 	struct ddf_header *ddf = NULL;
 	char version[DDF_REV_LENGTH + 1];
 	uint64_t off, lba;

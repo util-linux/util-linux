@@ -121,7 +121,7 @@ static unsigned char *search_fat_label(blkid_probe pr,
 				uint64_t offset, uint32_t entries)
 {
 	struct vfat_dir_entry *ent, *dir = NULL;
-	int i;
+	uint32_t i;
 
 	DBG(DEBUG_LOWPROBE,
 		printf("\tlook for label in root-dir "

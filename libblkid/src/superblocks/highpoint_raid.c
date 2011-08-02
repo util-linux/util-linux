@@ -22,7 +22,8 @@ struct hpt45x_metadata {
 #define HPT45X_MAGIC_OK			0x5a7816f3
 #define HPT45X_MAGIC_BAD		0x5a7816fd
 
-static int probe_highpoint45x(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_highpoint45x(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct hpt45x_metadata *hpt;
 	uint64_t off;
@@ -49,7 +50,8 @@ static int probe_highpoint45x(blkid_probe pr, const struct blkid_idmag *mag)
 	return 0;
 }
 
-static int probe_highpoint37x(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_highpoint37x(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	if (!S_ISREG(pr->mode) && !blkid_probe_is_wholedisk(pr))
 		return -1;

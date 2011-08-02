@@ -90,11 +90,12 @@ static int probe_xenix(blkid_probe pr, const struct blkid_idmag *mag)
 /* Note that we don't probe for Coherent FS, this FS does not have
  * magic string. (It requires to probe fname/fpack field..)
  */
-static int probe_sysv(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_sysv(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct sysv_super_block *sb;
 	int blocks[] = {0, 9, 15, 18};
-	int i;
+	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(blocks); i++) {
 		int off = blocks[i] * SYSV_BLOCK_SIZE + SYSV_BLOCK_SIZE/2;

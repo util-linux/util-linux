@@ -24,7 +24,8 @@ struct promise_metadata {
 #define PDC_CONFIG_OFF		0x1200
 #define PDC_SIGNATURE		"Promise Technology, Inc."
 
-static int probe_pdcraid(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_pdcraid(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	unsigned int i;
 	static unsigned int sectors[] = {

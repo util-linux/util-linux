@@ -163,20 +163,21 @@ struct ufs_super_block {
 #define UFS_MAGIC_SEC			0x00612195
 #define UFS_MAGIC_4GB			0x05231994
 
-static int probe_ufs(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_ufs(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	int offsets[] = { 0, 8, 64, 256 };
-	int mags[] = {
+	uint32_t mags[] = {
 		UFS2_MAGIC, UFS_MAGIC, UFS_MAGIC_FEA, UFS_MAGIC_LFN,
 		UFS_MAGIC_SEC, UFS_MAGIC_4GB
 	};
-	int i;
+	size_t i;
 	uint32_t magic;
 	struct ufs_super_block *ufs;
 
 	for (i = 0; i < ARRAY_SIZE(offsets); i++) {
 		uint32_t magLE, magBE;
-		int y;
+		size_t y;
 
 		ufs = (struct ufs_super_block *)
 				blkid_probe_get_buffer(pr,

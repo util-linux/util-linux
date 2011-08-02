@@ -25,7 +25,8 @@ struct jm_metadata {
 
 #define JM_SIGNATURE		"JM"
 
-static int probe_jmraid(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_jmraid(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	uint64_t off;
 	struct jm_metadata *jm;

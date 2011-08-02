@@ -26,7 +26,8 @@ struct isw_metadata {
 #define ISW_SIGNATURE		"Intel Raid ISM Cfg Sig. "
 
 
-static int probe_iswraid(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_iswraid(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	uint64_t off;
 	struct isw_metadata *isw;

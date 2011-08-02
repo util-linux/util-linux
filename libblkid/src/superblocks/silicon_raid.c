@@ -41,7 +41,8 @@ struct silicon_metadata {
 #define SILICON_MAGIC		0x2F000000
 
 
-static int probe_silraid(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_silraid(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	uint64_t off;
 	struct silicon_metadata *sil;

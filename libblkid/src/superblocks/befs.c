@@ -158,9 +158,9 @@ unsigned char *get_tree_node(blkid_probe pr, const struct befs_super_block *bs,
 				const struct data_stream *ds,
 				int64_t start, uint32_t length, int fs_le)
 {
-	if (start < FS64_TO_CPU(ds->max_direct_range, fs_le)) {
+	if (start < (int64_t) FS64_TO_CPU(ds->max_direct_range, fs_le)) {
 		int64_t br_len;
-		int i;
+		size_t i;
 
 		for (i = 0; i < NUM_DIRECT_BLOCKS; i++) {
 			br_len = (int64_t) FS16_TO_CPU(ds->direct[i].len, fs_le)
@@ -172,7 +172,7 @@ unsigned char *get_tree_node(blkid_probe pr, const struct befs_super_block *bs,
 			else
 				start -= br_len;
 		}
-	} else if (start < FS64_TO_CPU(ds->max_indirect_range, fs_le)) {
+	} else if (start < (int64_t) FS64_TO_CPU(ds->max_indirect_range, fs_le)) {
 		struct block_run *br;
 		int64_t max_br, br_len, i;
 
@@ -195,11 +195,11 @@ unsigned char *get_tree_node(blkid_probe pr, const struct befs_super_block *bs,
 			else
 				start -= br_len;
 		}
-	} else if (start < FS64_TO_CPU(ds->max_double_indirect_range, fs_le)) {
+	} else if (start < (int64_t) FS64_TO_CPU(ds->max_double_indirect_range, fs_le)) {
 		struct block_run *br;
 		int64_t di_br_size, br_per_di_br, di_index, i_index;
 
-		start -= FS64_TO_CPU(ds->max_indirect_range, fs_le);
+		start -= (int64_t) FS64_TO_CPU(ds->max_indirect_range, fs_le);
 		di_br_size = (int64_t) FS16_TO_CPU(ds->double_indirect.len,
 				fs_le) << FS32_TO_CPU(bs->block_shift, fs_le);
 		br_per_di_br = di_br_size / sizeof(struct block_run);
@@ -259,7 +259,7 @@ int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 	if (!bh)
 		return -1;
 
-	if (FS32_TO_CPU(bh->magic, fs_le) != BPLUSTREE_MAGIC)
+	if ((int32_t) FS32_TO_CPU(bh->magic, fs_le) != BPLUSTREE_MAGIC)
 		return -1;
 
 	node_pointer = FS64_TO_CPU(bh->root_node_pointer, fs_le);
@@ -285,7 +285,7 @@ int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 		cmp = compare_keys(bn->name, keylengths, last, key, strlen(key),
 									fs_le);
 		if (cmp == 0) {
-			if (FS64_TO_CPU(bn->overflow_link, fs_le)
+			if ((int64_t) FS64_TO_CPU(bn->overflow_link, fs_le)
 							== BPLUSTREE_NULL)
 				return FS64_TO_CPU(values[last], fs_le);
 			else
@@ -299,7 +299,7 @@ int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 				cmp = compare_keys(bn->name, keylengths, mid,
 						key, strlen(key), fs_le);
 				if (cmp == 0) {
-					if (FS64_TO_CPU(bn->overflow_link,
+					if ((int64_t) FS64_TO_CPU(bn->overflow_link,
 						fs_le) == BPLUSTREE_NULL)
 						return FS64_TO_CPU(values[mid],
 									fs_le);
@@ -316,7 +316,8 @@ int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 			else
 				node_pointer = FS64_TO_CPU(values[mid], fs_le);
 		}
-	} while (FS64_TO_CPU(bn->overflow_link, fs_le) != BPLUSTREE_NULL);
+	} while ((int64_t) FS64_TO_CPU(bn->overflow_link, fs_le)
+						!= BPLUSTREE_NULL);
 	return 0;
 }
 
@@ -355,8 +356,8 @@ int get_uuid(blkid_probe pr, const struct befs_super_block *bs,
 				+ FS16_TO_CPU(sd->data_size, fs_le) + 1);
 
 	} while ((intptr_t) sd < (intptr_t) bi
-					+ FS32_TO_CPU(bi->inode_size, fs_le)
-					- sizeof(struct small_data));
+				+ (int32_t) FS32_TO_CPU(bi->inode_size, fs_le)
+				- (int32_t) sizeof(struct small_data));
 	if (*uuid == 0
 		&& (FS32_TO_CPU(bi->attributes.allocation_group, fs_le) != 0
 			|| FS16_TO_CPU(bi->attributes.start, fs_le) != 0

@@ -45,7 +45,8 @@ static uint8_t via_checksum(struct via_metadata *v)
 	return cs == v->checksum;
 }
 
-static int probe_viaraid(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_viaraid(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	uint64_t off;
 	struct via_metadata *v;
