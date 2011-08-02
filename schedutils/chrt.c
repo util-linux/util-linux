@@ -235,11 +235,11 @@ int main(int argc, char **argv)
 		case 'f':
 			policy = SCHED_FIFO;
 			break;
-#ifdef SCHED_RESET_ON_FORK
 		case 'R':
+#ifdef SCHED_RESET_ON_FORK
 			policy_flag |= SCHED_RESET_ON_FORK;
-			break;
 #endif
+			break;
 		case 'i':
 #ifdef SCHED_IDLE
 			policy = SCHED_IDLE;
