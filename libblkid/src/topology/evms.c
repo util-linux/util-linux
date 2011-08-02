@@ -42,7 +42,8 @@ static int is_evms_device(dev_t devno)
 	return blkid_driver_has_major("evms", major(devno));
 }
 
-static int probe_evms_tp(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_evms_tp(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	struct evms_stripe_info evms;
 	dev_t devno = blkid_probe_get_devno(pr);

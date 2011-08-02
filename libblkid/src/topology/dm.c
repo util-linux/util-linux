@@ -26,17 +26,19 @@ static int is_dm_device(dev_t devno)
 	return blkid_driver_has_major("device-mapper", major(devno));
 }
 
-static int probe_dm_tp(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_dm_tp(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	const char *paths[] = {
 		"/usr/local/sbin/dmsetup",
 		"/usr/sbin/dmsetup",
 		"/sbin/dmsetup"
 	};
-	int i, dmpipe[] = { -1, -1 }, stripes, stripesize;
+	int dmpipe[] = { -1, -1 }, stripes, stripesize;
 	char *cmd = NULL;
 	FILE *stream = NULL;
 	long long  offset, size;
+	size_t i;
 	dev_t devno = blkid_probe_get_devno(pr);
 
 	if (!devno)
@@ -106,9 +108,8 @@ static int probe_dm_tp(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!stream)
 		goto nothing;
 
-	i = fscanf(stream, "%lld %lld striped %d %d ",
-			&offset, &size, &stripes, &stripesize);
-	if (i != 4)
+	if (fscanf(stream, "%lld %lld striped %d %d ",
+			&offset, &size, &stripes, &stripesize) != 0)
 		goto nothing;
 
 	blkid_topology_set_minimum_io_size(pr, stripesize << 9);

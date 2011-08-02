@@ -39,11 +39,13 @@ static struct topology_val {
 	{ "queue/physical_block_size", blkid_topology_set_physical_sector_size },
 };
 
-static int probe_sysfs_tp(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_sysfs_tp(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	dev_t dev, disk = 0;
-	int i, count = 0, rc;
+	int rc;
 	struct sysfs_cxt sysfs, parent;
+	size_t i, count = 0;
 
 	dev = blkid_probe_get_devno(pr);
 	if (!dev || sysfs_init(&sysfs, dev, NULL) != 0)

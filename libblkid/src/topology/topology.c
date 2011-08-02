@@ -144,7 +144,7 @@ blkid_topology blkid_probe_get_topology(blkid_probe pr)
  */
 static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 {
-	int i = 0;
+	size_t i;
 
 	if (!pr || chn->idx < -1)
 		return -1;
@@ -173,7 +173,7 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 		printf("--> starting probing loop [TOPOLOGY idx=%d]\n",
 		chn->idx));
 
-	i = chn->idx + 1;
+	i = chn->idx < 0 ? 0 : chn->idx + 1U;
 
 	for ( ; i < ARRAY_SIZE(idinfos); i++) {
 		const struct blkid_idinfo *id = idinfos[i];
@@ -205,7 +205,8 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 	return 1;
 }
 
-static void topology_free(blkid_probe pr, void *data)
+static void topology_free(blkid_probe pr __attribute__((__unused__)),
+			  void *data)
 {
 	free(data);
 }

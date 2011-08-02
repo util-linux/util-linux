@@ -72,7 +72,8 @@ static int is_md_device(dev_t devno)
 	return blkid_driver_has_major("md", major(devno));
 }
 
-static int probe_md_tp(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_md_tp(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	int fd = -1;
 	dev_t disk = 0;

@@ -37,9 +37,10 @@ static struct topology_val {
 	/* we read BLKSSZGET in topology.c */
 };
 
-static int probe_ioctl_tp(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_ioctl_tp(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
-	int i;
+	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(topology_vals); i++) {
 		struct topology_val *val = &topology_vals[i];

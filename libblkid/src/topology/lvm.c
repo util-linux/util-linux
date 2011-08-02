@@ -32,16 +32,18 @@ static int is_lvm_device(dev_t devno)
 	return blkid_driver_has_major("lvm", major(devno));
 }
 
-static int probe_lvm_tp(blkid_probe pr, const struct blkid_idmag *mag)
+static int probe_lvm_tp(blkid_probe pr,
+		const struct blkid_idmag *mag __attribute__((__unused__)))
 {
 	const char *paths[] = {
 		"/usr/local/sbin/lvdisplay",
 		"/usr/sbin/lvdisplay",
 		"/sbin/lvdisplay"
 	};
-	int i, lvpipe[] = { -1, -1 }, stripes = 0, stripesize = 0;
+	int lvpipe[] = { -1, -1 }, stripes = 0, stripesize = 0;
 	FILE *stream = NULL;
 	char *cmd = NULL, *devname = NULL, buf[1024];
+	size_t i;
 	dev_t devno = blkid_probe_get_devno(pr);
 
 	if (!devno)
