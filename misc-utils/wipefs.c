@@ -309,7 +309,7 @@ usage(FILE *out)
 	" -n, --no-act        do everything except the actual write() call\n"
 	" -o, --offset <num>  offset to erase, in bytes\n"
 	" -p, --parsable      print out in parsable instead of printable format\n"
-	" -v, --version       output version information and exit\n"));
+	" -V, --version       output version information and exit\n"));
 
 	fprintf(out, _("\nFor more information see wipefs(8).\n"));
 
@@ -330,7 +330,7 @@ main(int argc, char **argv)
 	    { "no-act",    0, 0, 'n' },
 	    { "offset",    1, 0, 'o' },
 	    { "parsable",  0, 0, 'p' },
-	    { "version",   0, 0, 'v' },
+	    { "version",   0, 0, 'V' },
 	    { NULL,        0, 0, 0 }
 	};
 
@@ -338,7 +338,7 @@ main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "ahno:pv", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "ahno:pV", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			all++;
@@ -356,7 +356,7 @@ main(int argc, char **argv)
 		case 'p':
 			mode = WP_MODE_PARSABLE;
 			break;
-		case 'v':
+		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,
 				PACKAGE_STRING);
 			return EXIT_SUCCESS;

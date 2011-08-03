@@ -7,7 +7,7 @@
 wipefs \- wipe a filesystem signature from a device
 .SH SYNOPSIS
 .B wipefs
-.RB [ \-ahnp ]
+.RB [ \-ahnpV ]
 .RB [ \-o
 .IR offset ]
 .I device
@@ -36,8 +36,10 @@ The \fIoffset\fR argument may be followed by binary (2^N) suffixes KiB, MiB,
 GiB, TiB, PiB and EiB (the "iB" is optional, e.g. "K" has the same meaning as
 "KiB") or decimal (10^N) suffixes KB, MB, GB, PB and EB.
 .IP "\fB\-p, \-\-parsable\fP"
-Print out in parsable instead of printable format. Encode all potentially unsafe
+Print out in parsable instead of printable format.  Encode all potentially unsafe
 characters of a string to the corresponding hex value prefixed by '\\x'.
+.IP "\fB\-V, \-\-version\fP"
+Output version information and exit.
 .SH AUTHOR
 Karel Zak <kzak@redhat.com>.
 .SH AVAILABILITY
