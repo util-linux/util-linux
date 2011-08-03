@@ -979,7 +979,8 @@ static void termio_init(struct options *op, struct termios *tp)
 
 #ifdef IUTF8
 	tp->c_iflag = tp->c_iflag & IUTF8;
-	op->flags |= F_UTF8;
+	if (tp->c_iflag & IUTF8)
+		op->flags |= F_UTF8;
 #else
 	tp->c_iflag = 0;
 #endif
