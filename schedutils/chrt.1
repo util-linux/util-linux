@@ -39,9 +39,9 @@ chrt \- manipulate real-time attributes of a process
 .RI [ prio ]\  pid
 .SH DESCRIPTION
 .PP
-.BR chrt (1)
-sets or retrieves the real-time scheduling attributes of an existing PID, or
-runs COMMAND with the given attributes.  Both policy (one of
+.BR chrt
+sets or retrieves the real-time scheduling attributes of an existing \fIpid\fR,
+or runs \fIcommand\fR with the given attributes.  Both policy (one of
 .BR SCHED_OTHER ,
 .BR SCHED_FIFO ,
 .BR SCHED_RR ,
@@ -52,7 +52,7 @@ and priority can be set and retrieved.
 .PP
 The
 .BR SCHED_BATCH
-policy is supported since Linux 2.6.16. The
+policy is supported since Linux 2.6.16.  The
 .BR SCHED_IDLE
 policy is supported since Linux 2.6.23.
 .PP
@@ -62,66 +62,70 @@ flag for policies SCHED_RR and SCHED_FIFO is supported
 since Linux 2.6.31.
 .SH OPTIONS
 .TP
-.B -p, --pid
-operate on an existing PID and do not launch a new task
-.TP
 .B -a, --all-tasks
-set or retrieve the scheduling attributes of all the tasks (threads) for a
+Set or retrieve the scheduling attributes of all the tasks (threads) for a
 given PID.
 .TP
 .B -b, --batch
-set scheduling policy to
+Set scheduling policy to
 .BR SCHED_BATCH
-(Linux specific)
+(Linux specific).
 .TP
 .B -f, --fifo
-set scheduling policy to
-.BR SCHED_FIFO
+Set scheduling policy to
+.BR SCHED_FIFO .
 .TP
 .B -i, --idle
-set scheduling policy to
+Set scheduling policy to
 .BR SCHED_IDLE
-(Linux specific)
+(Linux specific).
 .TP
 .B -m, --max
-show minimum and maximum valid priorities, then exit
+Show minimum and maximum valid priorities, then exit.
 .TP
 .B -o, --other
-set policy scheduling policy to
-.BR SCHED_OTHER
+Set policy scheduling policy to
+.BR SCHED_OTHER .
+.TP
+.B -p, --pid
+Operate on an existing PID and do not launch a new task.
 .TP
 .B -r, --rr
-set scheduling policy to
+Set scheduling policy to
 .BR SCHED_RR
-(the default)
+(the default).
 .TP
 .B -R, --reset-on-fork
-add
+Add
 .B SCHED_RESET_ON_FORK
 flag to the
 .B SCHED_FIFO
 or
 .B SCHED_RR
-scheduling policy (Linux specific)
+scheduling policy (Linux specific).
 .TP
 .B -v, --verbose
-show status information
+Show status information.
 .TP
 .B -h, --help
-display usage information and exit
+Display usage information and exit.
 .TP
 .B -V, --version
-display version information and exit
+Display version information and exit.
 .SH USAGE
 .TP
-The default behavior is to run a new command::
-chrt prio command [arguments]
+The default behavior is to run a new command:
+.B chrt
+.I prio
+.IR command\  [ arguments ]
 .TP
 You can also retrieve the real-time attributes of an existing task:
-chrt -p pid
+.B chrt \-p
+.I pid
 .TP
 Or set them:
-chrt -p prio pid
+.B chrt \-p
+.I prio pid
 .SH PERMISSIONS
 A user must possess
 .BR CAP_SYS_NICE
