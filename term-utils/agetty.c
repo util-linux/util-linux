@@ -920,7 +920,7 @@ static void termio_init(struct options *op, struct termios *tp)
 			mode = K_RAW;
 		switch(mode) {
 		case K_UNICODE:
-			setlocale(LC_CTYPE, "en_US.UTF-8");
+			setlocale(LC_CTYPE, "C.UTF-8");
 			op->flags |= F_UTF8;
 			break;
 		case K_RAW:
