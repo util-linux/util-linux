@@ -64,7 +64,7 @@ is processor #0
 is processors #0 and #1
 .TP
 .BR 0xFFFFFFFF
-is all processors (#0 through #31)
+is all processors (#0 through #31).
 .PP
 When
 .BR taskset
@@ -73,21 +73,21 @@ CPU.
 .SH OPTIONS
 .TP
 .BR \-a ,\  \-\-all-tasks
-set or retrieve the CPU affinity of all the tasks (threads) for a given PID.
+Set or retrieve the CPU affinity of all the tasks (threads) for a given PID.
 .TP
 .BR \-p ,\  \-\-pid
-operate on an existing PID and not launch a new task
+Operate on an existing PID and do not launch a new task.
 .TP
 .BR \-c ,\  \-\-cpu-list
-specify a numerical list of processors instead of a bitmask.  The list may
-contain multiple items, separated by comma, and ranges.  For example,
+Specify a numerical list of processors instead of a bitmask.  The numbers
+are separated by commas and may include ranges.  For example:
 .BR 0,5,7,9-11 .
 .TP
 .BR \-h ,\  \-\-help
-display usage information and exit
+Display usage information and exit.
 .TP
 .BR \-V ,\  \-\-version
-output version information and exit
+Display version information and exit.
 .SH USAGE
 .TP
 The default behavior is to run a new command with a given affinity mask:
