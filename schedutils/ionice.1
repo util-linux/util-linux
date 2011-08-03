@@ -21,78 +21,76 @@ PID
 .IR COMMAND
 [ ARG ]...
 .SH DESCRIPTION
-This program sets or gets the io scheduling class and priority for a program.
+This program sets or gets the I/O scheduling class and priority for a program.
 If no arguments or just \fB\-p\fR is given, \fBionice\fR will query the current
-io scheduling class and priority for that process.
+I/O scheduling class and priority for that process.
 
-If no class is given than
+If no class is given, then
 .I COMMAND
-will be executed with "best-effort" scheduling class. The default
+will be executed with the "best-effort" scheduling class.  The default
 priority argument is 4.
 
 As of this writing, a process can be in one of three scheduling classes:
 .IP "\fBIdle\fP"
-A program running with idle io priority will only get disk time when no other
-program has asked for disk io for a defined grace period. The impact of idle
-io processes on normal system activity should be zero. This scheduling
-class does not take a priority argument. Presently, this scheduling class
+A program running with idle I/O priority will only get disk time when no other
+program has asked for disk I/O for a defined grace period.  The impact of an
+idle I/O process on normal system activity should be zero.  This scheduling
+class does not take a priority argument.  Presently, this scheduling class
 is permitted for an ordinary user (since kernel 2.6.25).
 .IP "\fBBest-effort\fP"
 This is the effective scheduling class for any process that has not asked for
-a specific io priority.
-This class takes a priority argument from \fI0-7\fR, with lower
-number being higher priority. Programs running at the same best effort
+a specific I/O priority.
+This class takes a priority argument from \fI0-7\fR, with a lower
+number being higher priority.  Programs running at the same best-effort
 priority are served in a round-robin fashion.
 
-Note that before kernel 2.6.26 a process that has not asked for an io priority
-formally uses "\fBnone\fP" as scheduling class, but the io scheduler will treat
-such processes as if it were in the best effort class. The priority within the
-best effort class will be dynamically derived from the cpu nice level of the
+Note that before kernel 2.6.26 a process that has not asked for an I/O priority
+formally uses "\fBnone\fP" as scheduling class, but the I/O scheduler will treat
+such processes as if it were in the best-effort class.  The priority within the
+best-effort class will be dynamically derived from the CPU nice level of the
 process: io_priority = (cpu_nice + 20) / 5.
 
-For kernels after 2.6.26 with CFQ io scheduler a process that has not asked for
-an io priority inherits CPU scheduling class.  The io priority is derived from
-the cpu nice level of the process (same as before kernel 2.6.26).
+For kernels after 2.6.26 with the CFQ I/O scheduler, a process that has not asked
+for an I/O priority inherits its CPU scheduling class.  The I/O priority is derived
+from the CPU nice level of the process (same as before kernel 2.6.26).
 
 .IP "\fBRealtime\fP"
 The RT scheduling class is given first access to the disk, regardless of
-what else is going on in the system. Thus the RT class needs to be used with
-some care, as it can starve other processes. As with the best effort class,
+what else is going on in the system.  Thus the RT class needs to be used with
+some care, as it can starve other processes.  As with the best-effort class,
 8 priority levels are defined denoting how big a time slice a given process
-will receive on each scheduling window. This scheduling class is not
+will receive on each scheduling window.  This scheduling class is not
 permitted for an ordinary (i.e., non-root) user.
 .SH OPTIONS
 .TP
 \fB\-c\fR, \fB\-\-class\fR \fICLASS\fR
-The scheduling class name or number. \fI0\fR for none, \fI1\fR for realtime, \fI2\fR for
+The scheduling class name or number; \fI0\fR for none, \fI1\fR for realtime, \fI2\fR for
 best-effort, \fI3\fR for idle.
 .TP
 \fB\-n\fR, \fB\-\-classdata\fR \fINUM\fR
-The scheduling class data. This defines the class data, if the class
-accepts an argument. For real time and best-effort, \fI0-7\fR is valid
-data.
+The scheduling class data.  This defines the class data, if the class
+accepts an argument.  For realtime and best-effort, \fI0-7\fR is valid data.
 .TP
 \fB\-p\fR, \fB\-\-pid\fR \fIPID\fR
-Pass in process PID(s) to view or change already running processes. If this argument
-is not given, \fBionice\fP will run the listed program with the given
-parameters.
+Pass in process PID(s) to view or change already running processes.  If this argument
+is not given, \fBionice\fP will run the listed program with the given parameters.
 .TP
 \fB\-t\fR, \fB\-\-ignore\fR
-Ignore failure to set requested priority. If COMMAND or PID(s) is specified, run it
-even in case it was not possible to set desired scheduling priority, what
-can happen due to insufficient privileges or old kernel version.
-.TP
-\fB\-V\fR, \fB\-\-version\fR
-Output version information and exit.
+Ignore failure to set the requested priority.  If COMMAND or PID(s) is specified,
+run it even in case it was not possible to set the desired scheduling priority,
+which can happen due to insufficient privileges or an old kernel version.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help and exit.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Display version information and exit.
 .SH EXAMPLES
 .LP
 .TP 7
 # \fBionice\fP -c 3 -p 89
 .TP 7
-Sets process with PID 89 as an idle io process.
+Sets process with PID 89 as an idle I/O process.
 .TP 7
 # \fBionice\fP -c 2 -n 0 bash
 .TP 7
@@ -102,8 +100,8 @@ Runs 'bash' as a best-effort program with highest priority.
 .TP 7
 Prints the class and priority of the processes with PID 89 and 91.
 .SH NOTES
-Linux supports io scheduling priorities and classes since 2.6.13 with the CFQ
-io scheduler.
+Linux supports I/O scheduling priorities and classes since 2.6.13 with the CFQ
+I/O scheduler.
 .SH AUTHORS
 .nf
 Jens Axboe <jens@axboe.dk>
