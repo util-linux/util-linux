@@ -87,9 +87,11 @@ whatever init(8) may have set, and is inherited by login and the shell.
 Assume that the tty is 8-bit clean, hence disable parity detection.
 .TP
 \-a, \-\-autologin \fIusername\fP
-Log the specified user automatically in without asking for a login
-name and password. Check the \-f option from
-\fB/bin/login\fP for this.
+Log the specified user automatically in without asking for a login name and
+password. The \-f \fIusername\fP option is added to the \fB/bin/login\fP
+command line by default. The \-\-login-options option changes this default
+behaviour and then only \\u is replaced by the \fIusername\fP and no other
+option is added to the login command line.
 .TP
 \-c, \-\-noreset
 Don't reset terminal cflags (control modes). See \fItermios(3)\fP for more
@@ -160,9 +162,10 @@ is run as root.
 .TP
 \-o, \-\-login\-options \fI"login_options"\fP
 Options  that  are passed to the login program.  \\u is replaced
-by the login name. Defaults to "-- \\u", which is suitable for
-\fB/bin/login\fP.  Please read the SECURITY NOTICE below if
-you want to use this.
+by the login name. The default \fB/bin/login\fP command line
+is "/bin/login -- <username>".
+
+Please read the SECURITY NOTICE below if you want to use this.
 .TP
 \-p, \-\-login\-pause
 Wait for any key before dropping to the login prompt.  Can be combined

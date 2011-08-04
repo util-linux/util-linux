@@ -100,7 +100,7 @@
 
 /* Login prompt. */
 #define LOGIN		"login: "
-#define ARRAY_SIZE_MAX	16		/* Numbers of args for login beside "-- \\u" */
+#define LOGIN_ARGV_MAX	16		/* Numbers of args for login */
 
 /* Some shorthands for control characters. */
 #define CTL(x)		(x ^ 0100)	/* Assumes ASCII dialect */
@@ -262,9 +262,8 @@ static void log_err(const char *, ...) __attribute__((__noreturn__))
 static void log_warn (const char *, ...)
 				__attribute__((__format__(printf, 1, 2)));
 static ssize_t append(char *dest, size_t len, const char  *sep, const char *src);
-static void checkname (const char* nm);
-static void replacename (char** arr, const char* nm);
-static void mkarray (char** arr, char* str);
+static void check_username (const char* nm);
+static void login_options_to_argv(char *argv[], int *argc, char *str, char *username);
 
 /* Fake hostname for ut_host specified on command line. */
 static char *fakehost;
@@ -278,19 +277,18 @@ FILE *dbf;
 
 int main(int argc, char **argv)
 {
-	char *logname = NULL;			/* login name, given to /bin/login */
-	char  logcmd[NAME_MAX+1];
-	char *logarr[ARRAY_SIZE_MAX + 2];	/* arguments plus "-- \\u" */
+	char *username = NULL;			/* login name, given to /bin/login */
 	struct chardata chardata;		/* will be set by get_logname() */
 	struct termios termios;			/* terminal mode bits */
 	static struct options options = {
 		.flags  =  F_ISSUE,		/* show /etc/issue (SYSV_STYLE) */
 		.login  =  _PATH_LOGIN,		/* default login program */
-		.logopt = "-- \\u",		/* escape for user name */
 		.tty    = "tty1",		/* default tty line */
 		.term   =  DEFAULT_VCTERM,	/* terminal type */
 		.issue  =  ISSUE		/* default issue file */
 	};
+	char *login_argv[LOGIN_ARGV_MAX + 1];
+	int login_argc = 0;
 	struct sigaction sa, sa_hup, sa_quit, sa_int;
 	sigset_t set;
 
@@ -314,6 +312,8 @@ int main(int argc, char **argv)
 
 	/* Parse command-line arguments. */
 	parse_args(argc, argv, &options);
+
+	login_argv[login_argc++] = options.login;	/* set login program name */
 
 	/* Update the utmp file. */
 #ifdef	SYSV_STYLE
@@ -379,16 +379,15 @@ int main(int argc, char **argv)
 	chardata = init_chardata;
 	if ((options.flags & F_NOPROMPT) == 0) {
 		if (options.autolog) {
-			/* Do the auto login */
+			/* Do the auto login. */
 			debug("doing auto login\n");
 			do_prompt(&options, &termios);
 			printf("%s%s (automatic login)\n", LOGIN, options.autolog);
-			logname = options.autolog;
-			options.logopt = "-f \\u";
+			username = options.autolog;
 		} else {
 			/* Read the login name. */
 			debug("reading login name\n");
-			while ((logname =
+			while ((username =
 				get_logname(&options, &termios, &chardata)) == 0)
 				if ((options.flags & F_VCONSOLE) == 0)
 					next_speed(&options, &termios);
@@ -410,13 +409,25 @@ int main(int argc, char **argv)
 	sigaction(SIGQUIT, &sa_quit, NULL);
 	sigaction(SIGINT, &sa_int, NULL);
 
-	*logcmd = '\0';
-	append(logcmd, sizeof(logcmd), NULL, options.login);
-	append(logcmd, sizeof(logcmd), " ", options.logopt);
+	if (username)
+		check_username(username);
 
-	checkname(logname);
-	mkarray(logarr, logcmd);
-	replacename(logarr, logname);
+	if (options.logopt) {
+		/*
+		 * The --login-options completely overwrites the default
+		 * way how agetty composes login(1) command line.
+		 */
+		login_options_to_argv(login_argv, &login_argc,
+				      options.logopt, username);
+	} else if (username) {
+		if (options.autolog)
+			login_argv[login_argc++] = "-f";
+		else
+			login_argv[login_argc++] = "--";
+		login_argv[login_argc++] = username;
+	}
+
+	login_argv[login_argc] = NULL;	/* last login argv */
 
 	if (options.chroot) {
 		if (chroot(options.chroot) < 0)
@@ -435,8 +446,87 @@ int main(int argc, char **argv)
 	}
 
 	/* Let the login program take care of password validation. */
-	execv(options.login, logarr);
-	log_err(_("%s: can't exec %s: %m"), options.tty, options.login);
+	execv(options.login, login_argv);
+	log_err(_("%s: can't exec %s: %m"), options.tty, login_argv[0]);
+}
+
+/*
+ * Returns : @str if \u not found
+ *         : @username if @str equal to "\u"
+ *         : newly allocated string if \u mixed with something other
+ */
+static char *replace_u(char *str, char *username)
+{
+	char *entry = NULL, *p = str;
+	size_t usz = username ? strlen(username) : 0;
+
+	while (*p) {
+		size_t sz;
+		char *tp, *old = entry;
+
+		if (memcmp(p, "\\u", 2)) {
+			p++;
+			continue;	/* no \u */
+		}
+		sz = strlen(str);
+
+		if (p == str && sz == 2)
+			/* 'str' contains only '\u' */
+			return username;
+
+		tp = entry = malloc(sz + usz);
+		if (!tp)
+			log_err(_("failed to allocate memory: %m"));
+
+		if (p != str) {
+			/* copy chars befor \u */
+			memcpy(tp, str, p - str);
+			tp += p - str;
+		}
+		if (usz) {
+			/* copy username */
+			memcpy(tp, username, usz);
+			tp += usz;
+		}
+		if (*(p + 2))
+			/* copy chars after \u + \0 */
+			memcpy(tp, p + 2, sz - (p - str) - 1);
+		else
+			*tp = '\0';
+
+		p = tp;
+		str = entry;
+		free(old);
+	}
+
+	return entry ? entry : str;
+}
+
+static void login_options_to_argv(char *argv[], int *argc,
+				  char *str, char *username)
+{
+	char *p;
+	int i = *argc;
+
+	while (str && isspace(*str))
+		str++;
+	p = str;
+
+	while (p && *p && i < LOGIN_ARGV_MAX) {
+		if (isspace(*p)) {
+			*p = '\0';
+			while (isspace(*++p))
+				;
+			if (*p) {
+				argv[i++] = replace_u(str, username);
+				str = p;
+			}
+		} else
+			p++;
+	}
+	if (str && *str && i < LOGIN_ARGV_MAX)
+		argv[i++] = replace_u(str, username);
+	*argc = i;
 }
 
 /* Parse command-line arguments. */
@@ -1833,12 +1923,13 @@ static ssize_t append(char *dest, size_t len, const char  *sep, const char *src)
 
 	return dsz + ssz + sz;
 }
+
 /*
  * Do not allow the user to pass an option as a user name
  * To be more safe: Use `--' to make sure the rest is
  * interpreted as non-options by the program, if it supports it.
  */
-static void checkname(const char* nm)
+static void check_username(const char* nm)
 {
 	const char *p = nm;
 	if (!nm)
@@ -1855,48 +1946,3 @@ err:
 	log_err("checkname: %m");
 }
 
-static void replacename(char** arr, const char* nm)
-{
-	const char *p;
-	char *tmp;
-	while ((p = *arr)) {
-		const char *p1 = p;
-		while (*p1) {
-			if (memcmp(p1, "\\u", 2) == 0) {
-				tmp = malloc(strlen(p) + strlen(nm));
-				if (!tmp)
-					log_err(_("failed to allocate memory: %m"));
-				if (p1 != p)
-					memcpy(tmp, p, (p1 - p));
-				*(tmp + (p1 - p)) = 0;
-				strcat(tmp, nm);
-				strcat(tmp, p1+2);
-				*arr = tmp;
-			}
-			p1++;
-		}
-		arr++;
-	}
-}
-
-static void mkarray(char** arr, char* str)
-{
-	char* p = str;
-	char* start = p;
-	int i = 0;
-
-	while (*p && i < ARRAY_SIZE_MAX) {
-		if (isspace(*p)) {
-			*p = 0;
-			while (isspace(*++p))
-				;
-			if (*p) {
-				arr[i++] = start;
-				start = p;
-			}
-		} else
-			p++;
-	}
-	arr[i++] = start;
-	arr[i++] = (char*) 0;
-}
