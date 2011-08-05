@@ -175,6 +175,7 @@ struct options {
 #define F_NOHOSTNAME	(1<<18) /* Do not show the hostname */
 #define F_LONGHNAME	(1<<19) /* Show Full qualified hostname */
 #define F_NOHINTS	(1<<20) /* Don't print hints */
+#define F_REMOTE	(1<<21) /* Add '-h fakehost' to login(1) command line */
 
 #define serial_tty_option(opt, flag)	\
 	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
@@ -420,12 +421,18 @@ int main(int argc, char **argv)
 		 */
 		login_options_to_argv(login_argv, &login_argc,
 				      options.logopt, username);
-	} else if (username) {
-		if (options.autolog)
-			login_argv[login_argc++] = "-f";
-		else
-			login_argv[login_argc++] = "--";
-		login_argv[login_argc++] = username;
+	} else {
+		if (fakehost && (options.flags & F_REMOTE)) {
+			login_argv[login_argc++] = "-h";
+			login_argv[login_argc++] = fakehost;
+		}
+		if (username) {
+			if (options.autolog)
+				login_argv[login_argc++] = "-f";
+			else
+				login_argv[login_argc++] = "--";
+			login_argv[login_argc++] = username;
+		}
 	}
 
 	login_argv[login_argc] = NULL;	/* last login argv */
@@ -550,6 +557,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		{  "noreset",	     no_argument,	 0,  'c'  },
 		{  "chdir",	     required_argument,	 0,  'C'  },
 		{  "delay",	     required_argument,	 0,  'd'  },
+		{  "remote",         no_argument,        0,  'E'  },
 		{  "issue-file",     required_argument,  0,  'f'  },
 		{  "flow-control",   no_argument,	 0,  'h'  },
 		{  "host",	     required_argument,  0,  'H'  },
@@ -579,7 +587,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 	};
 
 	while ((c = getopt_long(argc, argv,
-			   "8a:cC:d:f:hH:iI:Jl:LmnNo:pP:r:Rst:Uw", longopts,
+			   "8a:cC:d:Ef:hH:iI:Jl:LmnNo:pP:r:Rst:Uw", longopts,
 			    NULL)) != -1) {
 		switch (c) {
 		case '8':
@@ -596,6 +604,9 @@ static void parse_args(int argc, char **argv, struct options *op)
 			break;
 		case 'd':
 			op->delay = atoi(optarg);
+			break;
+		case 'E':
+			op->flags |= F_REMOTE;
 			break;
 		case 'f':
 			op->flags |= F_CUSTISSUE;
