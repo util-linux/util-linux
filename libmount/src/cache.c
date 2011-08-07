@@ -461,8 +461,6 @@ char *mnt_resolve_path(const char *path, struct libmnt_cache *cache)
 	char *key = NULL;
 	char *value = NULL;
 
-	assert(path);
-
 	/*DBG(CACHE, mnt_debug_h(cache, "resolving path %s", path));*/
 
 	if (!path)
