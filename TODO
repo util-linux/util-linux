@@ -161,6 +161,8 @@ libblkid
 
    * add blkid -P <PARTUUID>
 
+   * add PARTUUID to wipefs output
+
 wipefs
 ------
 
