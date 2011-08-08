@@ -31,11 +31,6 @@ Why:	deprecated in favor of uname(1) or arch(1) from coreutils
 
 ----------------------------
 
-What:	kill(1) command
-Why:	deprecated in favor of kill from procps or bash build-in kill command
-
-----------------------------
-
 What:	newgrp(1)
 Why:	deprecated in favor of newgrp from shadow-utils
 
