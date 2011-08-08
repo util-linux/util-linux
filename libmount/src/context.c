@@ -1549,7 +1549,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 			rc = apply_table(cxt, tab, MNT_ITER_BACKWARD);
 	}
 	if (rc)
-		DBG(CXT, mnt_debug_h(cxt, "failed to found entry in fstab/mtab"));
+		DBG(CXT, mnt_debug_h(cxt, "failed to find entry in fstab/mtab"));
 	return rc;
 }
 

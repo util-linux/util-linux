@@ -1063,7 +1063,7 @@ static int test_loop_setup(const char *filename, const char *device)
 		if (!device) {
 			rc = loopcxt_find_unused(&lc);
 			if (rc)
-				err(EXIT_FAILURE, "failed to found unused device");
+				err(EXIT_FAILURE, "failed to find unused device");
 			printf("Trying to use '%s'\n", loopcxt_get_device(&lc));
 		}
 
