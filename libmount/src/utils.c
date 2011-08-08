@@ -157,14 +157,18 @@ int mnt_fstype_is_pseudofs(const char *type)
 	    strcmp(type, "proc")  == 0 ||
 	    strcmp(type, "tmpfs") == 0 ||
 	    strcmp(type, "sysfs") == 0 ||
+	    strcmp(type, "autofs") == 0 ||
 	    strcmp(type, "devpts") == 0||
 	    strcmp(type, "cgroup") == 0 ||
+	    strcmp(type, "devtmpfs") == 0 ||
 	    strcmp(type, "devfs") == 0 ||
 	    strcmp(type, "dlmfs") == 0 ||
 	    strcmp(type, "cpuset") == 0 ||
 	    strcmp(type, "securityfs") == 0 ||
+	    strcmp(type, "hugetlbfs") == 0 ||
 	    strcmp(type, "rpc_pipefs") == 0 ||
 	    strcmp(type, "fusectl") == 0 ||
+	    strcmp(type, "mqueue") == 0 ||
 	    strcmp(type, "binfmt_misc") == 0 ||
 	    strcmp(type, "fuse.gvfs-fuse-daemon") == 0 ||
 	    strcmp(type, "debugfs") == 0 ||
