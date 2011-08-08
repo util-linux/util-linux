@@ -6,16 +6,10 @@
 #
 # For more information see fstab(5) man page.
 #
-
-# device	directory	type	options		freq pass
-/dev/sda2	/		ext2	defaults        1    1
-none		/proc		proc	defaults        0    0
-/dev/sdb1	none		swap	defaults        0    0
-/dev/sdb2	/var		ext2	defaults        1    1
-/dev/sdc1	/usr		ext2	defaults        1    1
-/dev/sdc3	/usr/src	ext2	defaults        1    1
-/dev/sdc2	/home		ext2	defaults        1    1
-/dev/sdc4	/playpen	ext2	defaults        1    1
-
-/dev/sda1       /dos            msdos   noexec,conv=binary,gid=20,umask=007 0 0
-/dev/sdb3       /dos/usr        msdos   noexec,conv=binary,gid=20,umask=007 0 0
+# device                                  directory  type   options         freq pass
+UUID=2cda1e08-1f22-490b-9101-c93d511bc9c9 /          ext4   defaults        1    1
+UUID=805e7418-fc20-4dcf-830c-729781e58d1a /boot      ext4   defaults        1    2
+proc                                      /proc      proc   defaults        0    0
+sysfs                                     /sys       sysfs  defaults        0    0
+tmpfs                                     /dev/shm   tmpfs  defaults        0    0
+devpts                                    /dev/pts   devpts gid=5,mode=620  0    0

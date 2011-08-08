@@ -1,7 +1,3 @@
-# This file and interface are deprecated.
-# Applications needing raw device access should open regular
-# block devices with O_DIRECT.
-#
 # Enter raw device bindings here.
 #
 # An example would be:
