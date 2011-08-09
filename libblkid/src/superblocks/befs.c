@@ -200,9 +200,16 @@ unsigned char *get_tree_node(blkid_probe pr, const struct befs_super_block *bs,
 		int64_t di_br_size, br_per_di_br, di_index, i_index;
 
 		start -= (int64_t) FS64_TO_CPU(ds->max_indirect_range, fs_le);
+
 		di_br_size = (int64_t) FS16_TO_CPU(ds->double_indirect.len,
 				fs_le) << FS32_TO_CPU(bs->block_shift, fs_le);
+		if (di_br_size == 0)
+			return NULL;
+
 		br_per_di_br = di_br_size / sizeof(struct block_run);
+		if (br_per_di_br == 0)
+			return NULL;
+
 		di_index = start / (br_per_di_br * di_br_size);
 		i_index = (start % (br_per_di_br * di_br_size)) / di_br_size;
 		start = (start % (br_per_di_br * di_br_size)) % di_br_size;
