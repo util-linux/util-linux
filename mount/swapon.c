@@ -226,7 +226,7 @@ display_summary(void)
 			continue;
 		cn = canonicalize_path(dev);
 		if (cn)
-			printf("%-40s%s", cn, p);
+			printf("%-39s %s", cn, p);
 		free(dev);
 		free(cn);
 	}
