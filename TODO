@@ -21,6 +21,14 @@ libmount (mount/umount)
  features should be implemented to libmount or to the new mount/umount
  implementation in the libmount/samples/ directory.
 
+ - (!) on systems with regular mtab file it is impossible to umount by "umount
+   /dev/loop0" if the loop device has been created by "mount -o loop", because
+   there is backing file in the mtab (instead of the device name). 
+
+   Now we have all necessary information in /sysfs so it should be possible to
+   translate the device name to backing file and then search in mtab for the 
+   filename. See loopdev_get_loopfile().
+
  - (!!!) add libmount based umount(8) (see libmount/samples/ where is new mount(8) 
    implementation.
 
