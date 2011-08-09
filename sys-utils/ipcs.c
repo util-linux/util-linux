@@ -238,20 +238,20 @@ print_perms (int id, struct ipc_perm *ipcp) {
 	if ((pw = getpwuid(ipcp->cuid)))
 		printf(" %-10s", pw->pw_name);
 	else
-		printf(" %-10d", ipcp->cuid);
+		printf(" %-10u", ipcp->cuid);
 	if ((gr = getgrgid(ipcp->cgid)))
 		printf(" %-10s", gr->gr_name);
 	else
-		printf(" %-10d", ipcp->cgid);
+		printf(" %-10u", ipcp->cgid);
 
 	if ((pw = getpwuid(ipcp->uid)))
 		printf(" %-10s", pw->pw_name);
 	else
-		printf(" %-10d", ipcp->uid);
+		printf(" %-10u", ipcp->uid);
 	if ((gr = getgrgid(ipcp->gid)))
 		printf(" %-10s\n", gr->gr_name);
 	else
-		printf(" %-10d\n", ipcp->gid);
+		printf(" %-10u\n", ipcp->gid);
 }
 
 
@@ -352,7 +352,7 @@ void do_shm (char format)
 			if (pw)
 				printf ("%-10d %-10.10s", shmid, pw->pw_name);
 			else
-				printf ("%-10d %-10d", shmid, ipcp->uid);
+				printf ("%-10d %-10u", shmid, ipcp->uid);
 			/* ctime uses static buffer: use separate calls */
 			printf(" %-20.16s", shmseg.shm_atime
 			       ? ctime(&shmseg.shm_atime) + 4 : _("Not set"));
@@ -365,7 +365,7 @@ void do_shm (char format)
 			if (pw)
 				printf ("%-10d %-10.10s", shmid, pw->pw_name);
 			else
-				printf ("%-10d %-10d", shmid, ipcp->uid);
+				printf ("%-10d %-10u", shmid, ipcp->uid);
 			printf (" %-10d %-10d\n",
 				shmseg.shm_cpid, shmseg.shm_lpid);
 			break;
@@ -375,7 +375,7 @@ void do_shm (char format)
 			if (pw)
 				printf ("%-10d %-10.10s", shmid, pw->pw_name);
 			else
-				printf ("%-10d %-10d", shmid, ipcp->uid);
+				printf ("%-10d %-10u", shmid, ipcp->uid);
 			printf (" %-10o %-10lu %-10ld %-6s %-6s\n",
 				ipcp->mode & 0777,
 				/*
@@ -468,7 +468,7 @@ void do_sem (char format)
 			if (pw)
 				printf ("%-8d %-10.10s", semid, pw->pw_name);
 			else
-				printf ("%-8d %-10d", semid, ipcp->uid);
+				printf ("%-8d %-10u", semid, ipcp->uid);
 			printf ("  %-26.24s", semary.sem_otime
 				? ctime(&semary.sem_otime) : _("Not set"));
 			printf (" %-26.24s\n", semary.sem_ctime
@@ -482,7 +482,7 @@ void do_sem (char format)
 			if (pw)
 				printf ("%-10d %-10.10s", semid, pw->pw_name);
 			else
-				printf ("%-10d %-10d", semid, ipcp->uid);
+				printf ("%-10d %-10u", semid, ipcp->uid);
 			printf (" %-10o %-10ld\n",
 				ipcp->mode & 0777,
 				/*
@@ -569,7 +569,7 @@ void do_msg (char format)
 			if (pw)
 				printf ("%-8d %-10.10s", msqid, pw->pw_name);
 			else
-				printf ("%-8d %-10d", msqid, ipcp->uid);
+				printf ("%-8d %-10u", msqid, ipcp->uid);
 			printf (" %-20.16s", msgque.msg_stime
 				? ctime(&msgque.msg_stime) + 4 : _("Not set"));
 			printf (" %-20.16s", msgque.msg_rtime
@@ -581,7 +581,7 @@ void do_msg (char format)
 			if (pw)
 				printf ("%-8d %-10.10s", msqid, pw->pw_name);
 			else
-				printf ("%-8d %-10d", msqid, ipcp->uid);
+				printf ("%-8d %-10u", msqid, ipcp->uid);
 			printf ("  %5d     %5d\n",
 				msgque.msg_lspid, msgque.msg_lrpid);
 			break;
@@ -591,7 +591,7 @@ void do_msg (char format)
 			if (pw)
 				printf ("%-10d %-10.10s", msqid, pw->pw_name);
 			else
-				printf ("%-10d %-10d", msqid, ipcp->uid);
+				printf ("%-10d %-10u", msqid, ipcp->uid);
 			printf (" %-10o %-12ld %-12ld\n",
 				ipcp->mode & 0777,
 				/*
@@ -618,12 +618,12 @@ void print_shm (int shmid)
 		err(EXIT_FAILURE, _("shmctl failed"));
 
 	printf (_("\nShared memory Segment shmid=%d\n"), shmid);
-	printf (_("uid=%d\tgid=%d\tcuid=%d\tcgid=%d\n"),
+	printf (_("uid=%u\tgid=%u\tcuid=%u\tcgid=%u\n"),
 		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid);
 	printf (_("mode=%#o\taccess_perms=%#o\n"),
 		ipcp->mode, ipcp->mode & 0777);
-	printf (_("bytes=%ld\tlpid=%d\tcpid=%d\tnattch=%ld\n"),
-		(long) shmds.shm_segsz, shmds.shm_lpid, shmds.shm_cpid,
+	printf (_("bytes=%lu\tlpid=%d\tcpid=%d\tnattch=%ld\n"),
+		(unsigned long) shmds.shm_segsz, shmds.shm_lpid, shmds.shm_cpid,
 		(long) shmds.shm_nattch);
 	printf (_("att_time=%-26.24s\n"),
 		shmds.shm_atime ? ctime (&shmds.shm_atime) : _("Not set"));
@@ -644,7 +644,7 @@ void print_msg (int msqid)
 		err(EXIT_FAILURE, _("msgctl failed"));
 
 	printf (_("\nMessage Queue msqid=%d\n"), msqid);
-	printf (_("uid=%d\tgid=%d\tcuid=%d\tcgid=%d\tmode=%#o\n"),
+	printf (_("uid=%u\tgid=%u\tcuid=%u\tcgid=%u\tmode=%#o\n"),
 		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid, ipcp->mode);
 	printf (_("cbytes=%ld\tqbytes=%ld\tqnum=%ld\tlspid=%d\tlrpid=%d\n"),
 		/*
@@ -677,7 +677,7 @@ void print_sem (int semid)
 		err(EXIT_FAILURE, _("semctl failed"));
 
 	printf (_("\nSemaphore Array semid=%d\n"), semid);
-	printf (_("uid=%d\t gid=%d\t cuid=%d\t cgid=%d\n"),
+	printf (_("uid=%u\t gid=%u\t cuid=%u\t cgid=%u\n"),
 		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid);
 	printf (_("mode=%#o, access_perms=%#o\n"),
 		ipcp->mode, ipcp->mode & 0777);
