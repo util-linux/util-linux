@@ -489,10 +489,9 @@ get_cylindersize(char *dev, int fd, int silent) {
 	B.cylinders = B.total_size / B.cylindersize;
 
     if (R.start && !force) {
-	my_warn(_
-		("Warning: start=%lu - this looks like a partition rather than\n"
-		 "the entire disk. Using fdisk on it is probably meaningless.\n"
-		 "[Use the --force option if you really want this]\n"),
+	my_warn(_("Warning: start=%lu - this looks like a partition rather than\n"
+		  "the entire disk. Using fdisk on it is probably meaningless.\n"
+		  "[Use the --force option if you really want this]\n"),
 		R.start);
 	exit(1);
     }
@@ -505,15 +504,13 @@ get_cylindersize(char *dev, int fd, int silent) {
 		R.sectors);
     if (R.cylinders && B.cylinders != R.cylinders
 	&& B.cylinders < 65536 && R.cylinders < 65536)
-	my_warn(_
-		("Warning: BLKGETSIZE/HDIO_GETGEO says that there are %lu cylinders\n"),
+	my_warn(_("Warning: BLKGETSIZE/HDIO_GETGEO says that there are %lu cylinders\n"),
 		R.cylinders);
 #endif
 
     if (B.sectors > 63)
-	my_warn(_
-		("Warning: unlikely number of sectors (%lu) - usually at most 63\n"
-		 "This will give problems with all software that uses C/H/S addressing.\n"),
+	my_warn(_("Warning: unlikely number of sectors (%lu) - usually at most 63\n"
+		  "This will give problems with all software that uses C/H/S addressing.\n"),
 		B.sectors);
     if (!silent)
 	printf(_("\nDisk %s: %lu cylinders, %lu heads, %lu sectors/track\n"),
@@ -960,8 +957,7 @@ out_partition_header(char *dev, int format, struct geometry G) {
 	if (G.cylindersize) {
 	    printf(_("Units = cylinders of %lu bytes, blocks of 1024 bytes"
 		     ", counting from %d\n\n"), G.cylindersize << 9, increment);
-	    printf(_
-		   ("   Device Boot Start     End   #cyls    #blocks   Id  System\n"));
+	    printf(_("   Device Boot Start     End   #cyls    #blocks   Id  System\n"));
 	    break;
 	}
 	/* fall through */
@@ -978,8 +974,7 @@ out_partition_header(char *dev, int format, struct geometry G) {
     case F_MEGABYTE:
 	printf(_("Units = mebibytes of 1048576 bytes, blocks of 1024 bytes"
 		 ", counting from %d\n\n"), increment);
-	printf(_
-	       ("   Device Boot Start   End    MiB    #blocks   Id  System\n"));
+	printf(_("   Device Boot Start   End    MiB    #blocks   Id  System\n"));
 	break;
     }
 }
@@ -1138,20 +1133,17 @@ out_partition(char *dev, int format, struct part_desc *p,
 	aa = chs_to_longchs(a);
 	bb = chs_to_longchs(b);
 	if (a.s && !is_equal_chs(a, b))
-	    do_warn(_
-		    ("\t\tstart: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
+	    do_warn(_("\t\tstart: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
 		    aa.c, aa.h, aa.s, bb.c, bb.h, bb.s);
 	a = (size ? ulong_to_chs(end, G) : zero_chs);
 	b = p->p.end_chs;
 	aa = chs_to_longchs(a);
 	bb = chs_to_longchs(b);
 	if (a.s && !is_equal_chs(a, b))
-	    do_warn(_
-		    ("\t\tend: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
+	    do_warn(_("\t\tend: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
 		    aa.c, aa.h, aa.s, bb.c, bb.h, bb.s);
 	if (G.cylinders && G.cylinders < 1024 && bb.c > G.cylinders)
-	    do_warn(_
-		    ("partition ends on cylinder %ld, beyond the end of the disk\n"),
+	    do_warn(_("partition ends on cylinder %ld, beyond the end of the disk\n"),
 		    bb.c);
     }
 }
@@ -1223,15 +1215,13 @@ partitions_ok(struct disk_desc *z) {
     for (p = partitions; p - partitions < partno; p++)
 	if (p->size == 0) {
 	    if (p->p.sys_type != EMPTY_PARTITION)
-		my_warn(_
-			("Warning: partition %s has size 0 but is not marked Empty\n"),
+		my_warn(_("Warning: partition %s has size 0 but is not marked Empty\n"),
 			PNO(p));
 	    else if (p->p.bootable != 0)
 		my_warn(_("Warning: partition %s has size 0 and is bootable\n"),
 			PNO(p));
 	    else if (p->p.start_sect != 0)
-		my_warn(_
-			("Warning: partition %s has size 0 and nonzero start\n"),
+		my_warn(_("Warning: partition %s has size 0 and nonzero start\n"),
 			PNO(p));
 	    /* all this is probably harmless, no error return */
 	}
@@ -1285,8 +1275,7 @@ partitions_ok(struct disk_desc *z) {
 		    return 0;
 		}
 		if (p->size && p->start + p->size > ds) {
-		    my_warn(_
-			    ("Warning: partition %s extends past end of disk\n"),
+		    my_warn(_("Warning: partition %s extends past end of disk\n"),
 			    PNO(p));
 		    return 0;
 		}
@@ -1302,9 +1291,8 @@ partitions_ok(struct disk_desc *z) {
 	    if (p->p.sys_type == EXTENDED_PARTITION)
 		ect++;
 	if (ect > 1 && !Linux) {
-	    my_warn(_
-		    ("Among the primary partitions, at most one can be extended\n"
-		     " (although this is not a problem under Linux)\n"));
+	    my_warn(_("Among the primary partitions, at most one can be extended\n"
+		      " (although this is not a problem under Linux)\n"));
 	    return 0;
 	}
     }
@@ -1348,25 +1336,22 @@ partitions_ok(struct disk_desc *z) {
 		if (pno == -1)
 		    pno = p - partitions;
 		else if (p - partitions < 4) {
-		    my_warn(_
-			    ("Warning: more than one primary partition is marked "
-			     "bootable (active)\n"
-			     "This does not matter for LILO, but the DOS MBR will "
-			     "not boot this disk.\n"));
+		    my_warn(_("Warning: more than one primary partition is marked "
+			      "bootable (active)\n"
+			      "This does not matter for LILO, but the DOS MBR will "
+			      "not boot this disk.\n"));
 		    break;
 		}
 		if (p - partitions >= 4) {
-		    my_warn(_
-			    ("Warning: usually one can boot from primary partitions "
-			     "only\nLILO disregards the `bootable' flag.\n"));
+		    my_warn(_("Warning: usually one can boot from primary partitions "
+			      "only\nLILO disregards the `bootable' flag.\n"));
 		    break;
 		}
 	    }
 	if (pno == -1 || pno >= 4)
-	    my_warn(_
-		    ("Warning: no primary partition is marked bootable (active)\n"
-		     "This does not matter for LILO, but the DOS MBR will "
-		     "not boot this disk.\n"));
+	    my_warn(_("Warning: no primary partition is marked bootable (active)\n"
+		      "This does not matter for LILO, but the DOS MBR will "
+		      "not boot this disk.\n"));
     }
 
     /* Is chs as we expect? */
@@ -1381,8 +1366,7 @@ partitions_ok(struct disk_desc *z) {
 	    if (!chs_ok(b, PNO(p), _("start")))
 		return 0;
 	    if (a.s && !is_equal_chs(a, b))
-		my_warn(_
-			("partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
+		my_warn(_("partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
 			PNO(p), aa.c, aa.h, aa.s, bb.c, bb.h, bb.s);
 	    a = p->size ? ulong_to_chs(p->start + p->size - 1, B) : zero_chs;
 	    b = p->p.end_chs;
@@ -1391,12 +1375,10 @@ partitions_ok(struct disk_desc *z) {
 	    if (!chs_ok(b, PNO(p), _("end")))
 		return 0;
 	    if (a.s && !is_equal_chs(a, b))
-		my_warn(_
-			("partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
+		my_warn(_("partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
 			PNO(p), aa.c, aa.h, aa.s, bb.c, bb.h, bb.s);
 	    if (B.cylinders && B.cylinders < 1024 && bb.c > B.cylinders)
-		my_warn(_
-			("partition %s ends on cylinder %ld, beyond the end of the disk\n"),
+		my_warn(_("partition %s ends on cylinder %ld, beyond the end of the disk\n"),
 			PNO(p), bb.c);
 	}
 
@@ -1816,8 +1798,7 @@ read_stdin(char **fields, char *line, int fieldssize, int linesize) {
 		if (*ip == 0)
 		    return fno;
 		if (*ip != ',' && *ip != ';')
-		    fatal(_
-			  ("input error: unexpected character %c after %s field\n"),
+		    fatal(_("input error: unexpected character %c after %s field\n"),
 			  *ip, d->fldname);
 		*ip = 0;
 		goto nxtfld;
@@ -2163,8 +2144,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 	p.size -= (p.size % unitsize(format));
     }
     if (p.size > ml1) {
-	my_warn(_
-		("Warning: given size (%lu) exceeds max allowable size (%lu)\n"),
+	my_warn(_("Warning: given size (%lu) exceeds max allowable size (%lu)\n"),
 		(p.size + unitsize(0) - 1) / unitsize(0), ml1 / unitsize(0));
 	if (!force)
 	    return 0;
@@ -2327,10 +2307,9 @@ read_input(char *dev, int interactive, struct disk_desc *z) {
     z->partno = 0;
 
     if (interactive)
-	my_warn(_
-		("Input in the following format; absent fields get a default value.\n"
-		 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
-		 "Usually you only need to specify <start> and <size> (and perhaps <type>).\n"));
+	my_warn(_("Input in the following format; absent fields get a default value.\n"
+		  "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
+		  "Usually you only need to specify <start> and <size> (and perhaps <type>).\n"));
     eof = 0;
 
     for (i = 0; i < 4; i++)
@@ -2408,11 +2387,9 @@ static void
 activate_usage(char *progn) {
     puts(_("Usage:"));
     printf(_("%s device		 list active partitions on device\n"), progn);
-    printf(_
-	   ("%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"),
+    printf(_("%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"),
 	   progn);
-    printf(_
-	   ("%s -An device	 activate partition n, inactivate the other ones\n"),
+    printf(_("%s -An device	 activate partition n, inactivate the other ones\n"),
 	   PROGNAME);
     exit(1);
 }
@@ -3040,8 +3017,7 @@ do_activate(char **av, int ac, char *arg) {
 	if (z->partitions[pno].p.bootable)
 	    i++;
     if (i != 1)
-	my_warn(_
-		("You have %d active primary partitions. This does not matter for LILO,\n"
+	my_warn(_("You have %d active primary partitions. This does not matter for LILO,\n"
 		 "but the DOS MBR will only boot a disk with 1 active partition.\n"),
 		i);
 
@@ -3167,10 +3143,9 @@ do_fdisk(char *dev) {
     if (!no_write && !no_reread) {
 	my_warn(_("Checking that no-one is using this disk right now ...\n"));
 	if (reread_ioctl(fd)) {
-	    do_warn(_
-		    ("\nThis disk is currently in use - repartitioning is probably a bad idea.\n"
-		     "Umount all file systems, and swapoff all swap partitions on this disk.\n"
-		     "Use the --no-reread flag to suppress this check.\n"));
+	    do_warn(_("\nThis disk is currently in use - repartitioning is probably a bad idea.\n"
+		      "Umount all file systems, and swapoff all swap partitions on this disk.\n"
+		      "Use the --no-reread flag to suppress this check.\n"));
 	    if (!force) {
 		do_warn(_("Use the --force flag to overrule all checks.\n"));
 		exit(1);
@@ -3205,8 +3180,7 @@ do_fdisk(char *dev) {
 		fatal(_("I don't like these partitions - nothing changed.\n"
 			"(If you really want this, use the --force option.)\n"));
 	    else
-		do_warn(_
-			("I don't like this - probably you should answer No\n"));
+		do_warn(_("I don't like this - probably you should answer No\n"));
 	}
  ask:
 	if (interactive) {
@@ -3241,10 +3215,9 @@ do_fdisk(char *dev) {
     if (!reread_disk_partition(dev, fd))
 	exit_status = 1;
 
-    my_warn(_
-	    ("If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
-	     "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
-	     "(See fdisk(8).)\n"));
+    my_warn(_("If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
+	      "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
+	      "(See fdisk(8).)\n"));
 
     sync();			/* superstition */
     exit(exit_status);
