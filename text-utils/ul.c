@@ -137,8 +137,8 @@ usage(FILE *out)
 
 	fprintf(out, _(
 		"\nOptions:\n"
-		" -t, --terminal TERMINAL    overwrite TERM environment variable\n"
-		" -i, --indicated            Underlining is indicated by a separate line\n"
+		" -t, --terminal TERMINAL    override the TERM environment variable\n"
+		" -i, --indicated            underlining is indicated via a separate line\n"
 		" -V, --version              output version information and exit\n"
 		" -h, --help                 display this help and exit\n\n"));
 
