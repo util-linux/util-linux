@@ -133,13 +133,13 @@ usage(FILE *out)
 
 	fprintf(out, _(
 		"\nOptions:\n"
-		" -a, --append            append output\n"
-		" -c, --command COMMAND   run command rather than interactive shell\n"
+		" -a, --append            append the output\n"
+		" -c, --command COMMAND   run COMMAND rather than interactive shell\n"
 		" -r, --return            return exit code of the child process\n"
 		" -f, --flush             run flush after each write\n"
-		"     --force             use output file even it would be a link\n"
+		"     --force             use output file even when it is a link\n"
 		" -q, --quiet             be quiet\n"
-		" -t, --timing=FILE       output timing data to stderr, or to file\n"
+		" -t, --timing[=FILE]     output timing data to stderr (or to FILE)\n"
 		" -V, --version           output version information and exit\n"
 		" -h, --help              display this help and exit\n\n"));
 
