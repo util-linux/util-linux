@@ -133,7 +133,7 @@ usage(FILE *out)
 {
 	fprintf(out, _(
 		"\nUsage:\n"
-		" %s [options] [file]\n"), program_invocation_short_name);
+		" %s [options] [file...]\n"), program_invocation_short_name);
 
 	fprintf(out, _(
 		"\nOptions:\n"
