@@ -108,6 +108,23 @@ const char *disp_modes[] = {
 	[DISP_VERTICAL]		= N_("vertical")
 };
 
+/* cpu polarization */
+enum {
+	POLAR_UNKNOWN	= 0,
+	POLAR_VLOW,
+	POLAR_VMEDIUM,
+	POLAR_VHIGH,
+	POLAR_HORIZONTAL
+};
+
+const char *polar_modes[] = {
+	[POLAR_UNKNOWN]		= "U",
+	[POLAR_VLOW]		= "VL",
+	[POLAR_VMEDIUM]		= "VM",
+	[POLAR_VHIGH]		= "VH",
+	[POLAR_HORIZONTAL]	= "H"
+};
+
 /* global description */
 struct lscpu_desc {
 	char	*arch;
@@ -149,6 +166,8 @@ struct lscpu_desc {
 
 	int		ncaches;
 	struct cpu_cache *caches;
+
+	int		*polarization;	/* cpu polarization */
 };
 
 static size_t sysrootlen;
@@ -179,7 +198,8 @@ enum {
 	COL_SOCKET,
 	COL_NODE,
 	COL_BOOK,
-	COL_CACHE
+	COL_CACHE,
+	COL_POLARIZATION
 };
 
 static const char *colnames[] =
@@ -189,7 +209,8 @@ static const char *colnames[] =
 	[COL_SOCKET] = "Socket",
 	[COL_NODE] = "Node",
 	[COL_BOOK] = "Book",
-	[COL_CACHE] = "Cache"
+	[COL_CACHE] = "Cache",
+	[COL_POLARIZATION] = "Polarization"
 };
 
 
@@ -717,6 +738,29 @@ read_topology(struct lscpu_desc *desc, int num)
 	if (book_siblings)
 		add_cpuset_to_array(desc->bookmaps, &desc->nbooks, book_siblings);
 }
+static void
+read_polarization(struct lscpu_desc *desc, int num)
+{
+	char mode[64];
+
+	if (desc->dispatching < 0)
+		return;
+	if (!path_exist(_PATH_SYS_CPU "/cpu%d/polarization", num))
+		return;
+	if (!desc->polarization)
+		desc->polarization = xcalloc(desc->ncpus, sizeof(int));
+	path_getstr(mode, sizeof(mode), _PATH_SYS_CPU "/cpu%d/polarization", num);
+	if (strncmp(mode, "vertical:low", sizeof(mode)) == 0)
+		desc->polarization[num] = POLAR_VLOW;
+	else if (strncmp(mode, "vertical:medium", sizeof(mode)) == 0)
+		desc->polarization[num] = POLAR_VMEDIUM;
+	else if (strncmp(mode, "vertical:high", sizeof(mode)) == 0)
+		desc->polarization[num] = POLAR_VHIGH;
+	else if (strncmp(mode, "horizontal", sizeof(mode)) == 0)
+		desc->polarization[num] = POLAR_HORIZONTAL;
+	else
+		desc->polarization[num] = POLAR_UNKNOWN;
+}
 
 static int
 cachecmp(const void *a, const void *b)
@@ -867,6 +911,10 @@ print_parsable_cell(struct lscpu_desc *desc, int i, int col, int compatible)
 			if (x == ca->nsharedmaps)
 				putchar(',');
 		}
+		break;
+	case COL_POLARIZATION:
+		if (desc->polarization)
+			printf("%s", polar_modes[desc->polarization[i]]);
 		break;
 	}
 }
@@ -1181,6 +1229,7 @@ int main(int argc, char *argv[])
 			continue;
 		read_topology(desc, i);
 		read_cache(desc, i);
+		read_polarization(desc, i);
 	}
 
 	qsort(desc->caches, desc->ncaches, sizeof(struct cpu_cache), cachecmp);
