@@ -39,11 +39,11 @@
 .Nd do underlining
 .Sh SYNOPSIS
 .Nm ul
-.Op Fl i
+.Op Fl hiV
 .Op Fl t Ar terminal
-.Op Ar name Ar ...
+.Op Ar file Ar ...
 .Sh DESCRIPTION
-.Nm Ul
+.Nm ul
 reads the named files (or standard input if none are given)
 and translates occurrences of underscores to the sequence
 which indicates underlining for the terminal in use, as specified
@@ -63,6 +63,8 @@ If the terminal cannot underline, underlining is ignored.
 .Pp
 The following options are available:
 .Bl -tag -width Ds
+.It Fl h
+Display a help text and exit.
 .It Fl i
 Underlining is indicated by a separate line containing appropriate
 dashes `\-'; this is useful when you want to look at the underlining
@@ -72,6 +74,8 @@ output stream on a crt-terminal.
 .It Fl t Ar terminal
 Overrides the terminal type specified in the environment with
 .Ar terminal .
+.It Fl V
+Display version information and exit.
 .El
 .Sh ENVIRONMENT
 The following environment variable is used:
