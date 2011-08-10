@@ -1243,8 +1243,8 @@ partitions_ok(struct disk_desc *z) {
 		q = p->ep;
 		if (p->start < q->start
 		    || p->start + p->size > q->start + q->size) {
-		    my_warn(_("Warning: partition %s "), PNO(p));
-		    my_warn(_("is not contained in partition %s\n"), PNO(q));
+		    my_warn(_("Warning: partition %s is not contained in "
+			      "partition %s\n"), PNO(p), PNO(q));
 		    return 0;
 		}
 	    }
@@ -1255,8 +1255,8 @@ partitions_ok(struct disk_desc *z) {
 	    for (q = p + 1; q < partitions + partno; q++)
 		if (q->size && !is_extended(q->p.sys_type))
 		    if (!((p->start > q->start) ? disj(q, p) : disj(p, q))) {
-			my_warn(_("Warning: partitions %s "), PNO(p));
-			my_warn(_("and %s overlap\n"), PNO(q));
+			my_warn(_("Warning: partitions %s and %s overlap\n"),
+				PNO(p), PNO(q));
 			return 0;
 		    }
 
