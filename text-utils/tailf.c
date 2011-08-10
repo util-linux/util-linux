@@ -200,8 +200,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, _(
 		"\nOptions:\n"
-		" -n, --lines NUMBER  output the last N lines\n"
-		" -NUMBER             same as -n NUMBER\n"
+		" -n, --lines NUMBER  output the last NUMBER lines\n"
+		" -NUMBER             same as `-n NUMBER'\n"
 		" -V, --version       output version information and exit\n"
 		" -h, --help          display this help and exit\n\n"));
 
