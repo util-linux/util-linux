@@ -168,6 +168,7 @@ struct lscpu_desc {
 	struct cpu_cache *caches;
 
 	int		*polarization;	/* cpu polarization */
+	int		*addresses;	/* physical cpu addresses */
 };
 
 static size_t sysrootlen;
@@ -199,7 +200,8 @@ enum {
 	COL_NODE,
 	COL_BOOK,
 	COL_CACHE,
-	COL_POLARIZATION
+	COL_POLARIZATION,
+	COL_ADDRESS
 };
 
 static const char *colnames[] =
@@ -210,7 +212,8 @@ static const char *colnames[] =
 	[COL_NODE] = "Node",
 	[COL_BOOK] = "Book",
 	[COL_CACHE] = "Cache",
-	[COL_POLARIZATION] = "Polarization"
+	[COL_POLARIZATION] = "Polarization",
+	[COL_ADDRESS] = "Address"
 };
 
 
@@ -762,6 +765,16 @@ read_polarization(struct lscpu_desc *desc, int num)
 		desc->polarization[num] = POLAR_UNKNOWN;
 }
 
+static void
+read_address(struct lscpu_desc *desc, int num)
+{
+	if (!path_exist(_PATH_SYS_CPU "/cpu%d/address", num))
+		return;
+	if (!desc->addresses)
+		desc->addresses = xcalloc(desc->ncpus, sizeof(int));
+	desc->addresses[num] = path_getnum(_PATH_SYS_CPU "/cpu%d/address", num);
+}
+
 static int
 cachecmp(const void *a, const void *b)
 {
@@ -915,6 +928,10 @@ print_parsable_cell(struct lscpu_desc *desc, int i, int col, int compatible)
 	case COL_POLARIZATION:
 		if (desc->polarization)
 			printf("%s", polar_modes[desc->polarization[i]]);
+		break;
+	case COL_ADDRESS:
+		if (desc->addresses)
+			printf("%d", desc->addresses[i]);
 		break;
 	}
 }
@@ -1230,6 +1247,7 @@ int main(int argc, char *argv[])
 		read_topology(desc, i);
 		read_cache(desc, i);
 		read_polarization(desc, i);
+		read_address(desc, i);
 	}
 
 	qsort(desc->caches, desc->ncaches, sizeof(struct cpu_cache), cachecmp);
