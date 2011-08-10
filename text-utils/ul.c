@@ -192,12 +192,11 @@ int main(int argc, char **argv)
 		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,
 						  PACKAGE_STRING);
-			return(EXIT_SUCCESS);
+			return EXIT_SUCCESS;
 		case 'h':
 			usage(stdout);
 		default:
 			usage(stderr);
-			return EXIT_FAILURE;
 		}
 	setupterm(termtype, STDOUT_FILENO, &ret);
 	switch (ret) {
