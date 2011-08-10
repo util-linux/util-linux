@@ -434,8 +434,7 @@ read_basicinfo(struct lscpu_desc *desc)
 		else if (lookup(buf, "features", &desc->flags)) ;	/* s390 */
 		else if (lookup(buf, "type", &desc->flags)) ;		/* sparc64 */
 		else if (lookup(buf, "bogomips", &desc->bogomips)) ;
-		/* S390 */
-		else if (lookup(buf, "bogomips per cpu", &desc->bogomips)) ;
+		else if (lookup(buf, "bogomips per cpu", &desc->bogomips)) ; /* s390 */
 		else
 			continue;
 	}
