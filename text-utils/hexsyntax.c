@@ -145,7 +145,7 @@ void __attribute__((__noreturn__)) usage(FILE *out)
 		       " -e format       format string to be used for displaying data\n"
 		       " -f format_file  file that contains format strings\n"
 		       " -n length       interpret only length bytes of input\n"
-		       " -s offset       skip offset bytes from the beginnin\n"
+		       " -s offset       skip offset bytes from the beginning\n"
 		       " -v              display without squeezing similar lines\n"
 		       " -V              output version information and exit\n\n"));
 
