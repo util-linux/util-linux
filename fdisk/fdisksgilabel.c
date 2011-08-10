@@ -533,7 +533,7 @@ int
 sgi_change_sysid(int i, int sys)
 {
 	if (sgi_get_num_sectors(i) == 0) /* caught already before, ... */ {
-		printf(_("Sorry You may change the Tag of non-empty partitions.\n"));
+		printf(_("Sorry, only for non-empty partitions you can change the tag.\n"));
 		return 0;
 	}
 	if (((sys != ENTIRE_DISK) && (sys != SGI_VOLHDR))
