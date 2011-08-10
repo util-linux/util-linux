@@ -50,6 +50,7 @@
 #define _PATH_PROC_XENCAP	_PATH_PROC_XEN "/capabilities"
 #define _PATH_PROC_CPUINFO	"/proc/cpuinfo"
 #define _PATH_PROC_PCIDEVS	"/proc/bus/pci/devices"
+#define _PATH_PROC_SYSINFO	"/proc/sysinfo"
 
 /* virtualization types */
 enum {
@@ -989,13 +990,38 @@ print_readable(struct lscpu_desc *desc, int hex)
 	}
 
 	if (desc->nsockets) {
+		int cores_per_socket, sockets_per_book, books;
+
+		cores_per_socket = sockets_per_book = books = 0;
+		/* s390 detects its cpu topology via /proc/sysinfo, if present.
+		 * Using simply the cpu topology masks in sysfs will not give
+		 * usable results since everything is virtualized. E.g.
+		 * virtual core 0 may have only 1 cpu, but virtual core 2 may
+		 * five cpus.
+		 * If the cpu topology is not exported (e.g. 2nd level guest)
+		 * fall back to old calculation scheme.
+		 */
+		if (path_exist(_PATH_PROC_SYSINFO)) {
+			FILE *fd = path_fopen("r", 0, _PATH_PROC_SYSINFO);
+			char buf[BUFSIZ];
+			int t0, t1, t2;
+
+			while (fgets(buf, sizeof(buf), fd) != NULL) {
+				if (sscanf(buf, "CPU Topology SW:%d%d%d%d%d%d",
+					   &t0, &t1, &t2, &books, &sockets_per_book,
+					   &cores_per_socket) == 6)
+					break;
+			}
+		}
 		print_n(_("Thread(s) per core:"), desc->nthreads / desc->ncores);
-		print_n(_("Core(s) per socket:"), desc->ncores / desc->nsockets);
+		print_n(_("Core(s) per socket:"),
+			cores_per_socket ?: desc->ncores / desc->nsockets);
 		if (desc->nbooks) {
-			print_n(_("Socket(s) per book:"), desc->nsockets / desc->nbooks);
-			print_n(_("Book(s):"), desc->nbooks);
+			print_n(_("Socket(s) per book:"),
+				sockets_per_book ?: desc->nsockets / desc->nbooks);
+			print_n(_("Book(s):"), books ?: desc->nbooks);
 		} else {
-			print_n(_("Socket(s):"), desc->nsockets);
+			print_n(_("Socket(s):"), sockets_per_book ?: desc->nsockets);
 		}
 	}
 	if (desc->nnodes)
