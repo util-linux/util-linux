@@ -143,7 +143,7 @@ int main(int argc, char **argv)
 			exit(EXIT_FAILURE);
 		if (!msgsok)
 			errx(EXIT_FAILURE,
-			     _("you have write permission turned off."));
+			     _("you have write permission turned off"));
 
 	} else
 		mytty = "<no tty>";
@@ -161,7 +161,7 @@ int main(int argc, char **argv)
 			argv[2] += 5;
 		if (utmp_chk(argv[1], argv[2]))
 			errx(EXIT_FAILURE,
-			     _("%s is not logged in on %s."),
+			     _("%s is not logged in on %s"),
 			     argv[1], argv[2]);
 		if (term_chk(argv[2], &msgsok, &atime, 1))
 			exit(EXIT_FAILURE);
