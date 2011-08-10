@@ -665,7 +665,7 @@ static unsigned int write_file(char *file, char *base, unsigned int offset)
 	memcpy(base + offset, buf, image_length);
 	munmap(buf, image_length);
 	if (close (fd) < 0)
-		err(MKFS_ERROR, _("closing file %s"), file);
+		err(MKFS_ERROR, _("cannot close file %s"), file);
 	/* Pad up the image_length to a 4-byte boundary */
 	while (image_length & 3) {
 		*(base + offset + image_length) = '\0';
