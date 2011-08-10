@@ -660,11 +660,16 @@ read_topology(struct lscpu_desc *desc, int num)
 		 */
 		if (!desc->nthreads)
 			desc->nthreads = nsockets * ncores * nthreads;
+		/* For each map we make sure that it can have up to ncpus
+		 * entries. This is because we cannot reliably calculate the
+		 * number of cores, sockets and books on all architectures.
+		 * E.g. completely virtualized architectures like s390 may
+		 * have multiple sockets of different sizes.
+		 */
+		desc->coremaps = xcalloc(desc->ncpus, sizeof(cpu_set_t *));
+		desc->socketmaps = xcalloc(desc->ncpus, sizeof(cpu_set_t *));
 		if (book_siblings)
-			desc->bookmaps = xcalloc(nbooks, sizeof(cpu_set_t *));
-
-		desc->socketmaps = xcalloc(nsockets, sizeof(cpu_set_t *));
-		desc->coremaps = xcalloc(ncores * nsockets, sizeof(cpu_set_t *));
+			desc->bookmaps = xcalloc(desc->ncpus, sizeof(cpu_set_t *));
 	}
 
 	add_cpuset_to_array(desc->socketmaps, &desc->nsockets, core_siblings);
