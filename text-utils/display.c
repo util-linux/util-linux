@@ -233,8 +233,8 @@ get(void)
 	u_char *tmpp;
 
 	if (!curp) {
-		curp = xmalloc(blocksize);
-		savp = xmalloc(blocksize);
+		curp = xcalloc(1, blocksize);
+		savp = xcalloc(1, blocksize);
 	} else {
 		tmpp = curp;
 		curp = savp;

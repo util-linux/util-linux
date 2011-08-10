@@ -86,7 +86,7 @@ void add(const char *fmt)
 	const char *savep;
 
 	/* Start new linked list of format units. */
-	tfs = xmalloc(sizeof(FS));
+	tfs = xcalloc(1, sizeof(FS));
 	if (!fshead)
 		fshead = tfs;
 	else
@@ -102,7 +102,7 @@ void add(const char *fmt)
 			break;
 
 		/* Allocate a new format unit and link it in. */
-		tfu = xmalloc(sizeof(FU));
+		tfu = xcalloc(1, sizeof(FU));
 		*nextfu = tfu;
 		nextfu = &tfu->nextfu;
 		tfu->reps = 1;
@@ -219,7 +219,7 @@ void rewrite(FS *fs)
 		 * conversion character gets its own.
 		 */
 		for (nconv = 0, fmtp = fu->fmt; *fmtp; nextpr = &pr->nextpr) {
-			pr = xmalloc(sizeof(PR));
+			pr = xcalloc(1, sizeof(PR));
 			if (!fu->nextpr)
 				fu->nextpr = pr;
 			else
