@@ -494,6 +494,8 @@ static int get_next_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 
 		rec->next_size -= end - rec->next;
 		rec->next = rec->next_size > 0 ? end + 1 : NULL;
+		if (rec->next_size > 0)
+			rec->next_size--;
 
 		return 0;
 	}
