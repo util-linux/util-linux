@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-EXTRA_DIST = README.clear README.col
+EXTRA_DIST = README.col
 
 usrbin_exec_PROGRAMS = col colcrt colrm column hexdump rev tailf
 
