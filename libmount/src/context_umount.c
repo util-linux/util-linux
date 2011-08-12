@@ -86,7 +86,7 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 	}
 
 	if (!fs) {
-		DBG(CXT, mnt_debug_h(cxt, "umount: cannot found %s in mtab", tgt));
+		DBG(CXT, mnt_debug_h(cxt, "umount: cannot find %s in mtab", tgt));
 		return 0;
 	}
 
@@ -197,7 +197,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 
 	if (!(cxt->flags & MNT_FL_TAB_APPLIED)) {
 		DBG(CXT, mnt_debug_h(cxt,
-				"cannot found %s in mtab and you are not root",
+				"cannot find %s in mtab and you are not root",
 				mnt_fs_get_target(cxt->fs)));
 		goto eperm;
 	}

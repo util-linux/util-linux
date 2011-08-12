@@ -24,7 +24,7 @@ NTP_SERVER="0.fedora.pool.ntp.org"
 ts_init "$*"
 ts_skip_nonroot
 
-[ -x "/usr/sbin/ntpdate" ] || ts_skip "cannot found ntpdate command"
+[ -x "/usr/sbin/ntpdate" ] || ts_skip "cannot find ntpdate command"
 
 set -o pipefail
 
