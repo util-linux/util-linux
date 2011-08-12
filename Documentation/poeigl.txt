@@ -7,16 +7,6 @@ domainname, hostid, cage and mesg.
 Most of this software has been contributed by others, I basically just
 ported the things to Linux.
 
-About installation: See the bottom of this file. Check the Makefile!
-Be sure you know what you are doing! You may well be able to lock
-yourself out from your machine. Especially: The init provided here
-(simpleinit) is NOT a SYSV compatible init and the inittab format
-is different.
-
-If you are uncertain whether you got the latest version, check out
-
-	ftp://ftp.daimi.aau.dk/pub/linux/poe/
-
 Version 1.49 (20-Jun-97)
 	Small patches for new util-linux distribution and glibc compat.
 	PAM support in login.c by Erik Troan.
@@ -484,31 +474,8 @@ login.c		The login program. This is a portation of BSD login, first
 		to HP-UX 8.0 by Michael Glad (glad@daimi.aau.dk), and
 		to Linux (initially to 0.12) by me.
 
-who.c		A simple who(1) util. to list utmp. Done by me.
-		You may prefer the GNU who util. with more options
-		and features.
-
-hostname.c	A hostname(1) command to get and set the hostname. I did
-		this too.
-
-domainname.c	Like hostname, only reads out or sets the domainname.
-
 agetty.c	The getty program. From comp.sources.misc, by W.Z. Venema.
 		Hacked a bit by me.
-
-simpleinit.c	A simple init program, written by me. Uses /etc/inittab
-
-		A "kill -HUP" to init makes it re-read /etc/inittab.
-		A "kill -TSTP" to init makes it stop spawning gettys on the
-		ttys. A second "kill -TSTP" starts it again.
-		A kill -INT to init makes it attempt a reboot of the machine.
-		this works in connection with kernel support for softboot
-		when Ctrl-Alt-Del is pressed.
-
-		Init will start up in singleuser mode if /etc/singleboot
-		exists at boottime, or if it is given an argument of "single"
-		via eg. LILO. If /etc/securesingle exists it will ask for the
-		root password before starting single user.
 
 write.c		A write(1) command, used to pass messages between users
 		at different terminals. This code doubles as code for 
@@ -518,55 +485,8 @@ write.c		A write(1) command, used to pass messages between users
 mesg		A tiny shellscript, so you can avoid that other people write
 		to your shell.
 
-users		Another script that uses awk(1) and tr(1) to process the
-		output from who(1) into a one-liner.
-		If you don't have awk, but have Perl, this does the same:
-
-		who | perl -ane 'print "$F[0] "'; echo ""
-
 pathnames.h:
 		Header.
-
-param.h
-		Header, extended with getdtablesize() macro, should go
-		in /usr/include/sys
-
-Building.
----------
-A "make all" should do. At least it does for me.
-
-Installation:
--------------
-
-login		should go in /bin, if you don't like this change
-		pathnames.h and recompile at least agetty.
-
-getty, init	Put them in SBINDIR
-
-who, hostname, write, wall, mesg, users:
-		/usr/bin
-
-securetty	login needs this in /etc, defines which ttys that root
-		can login on. This should *never* include ttys{1,2}
-
-inittab		the simpleinit code needs this in /etc. Note that the syntax
-		of /etc/inittab has little to do with the syntax of a real
-		SysV inittab. Edit this one for your local setup.
-
-shells		The chsh program will use this if it's placed in /etc. It
-		defines the valid shell-programs. Have one abs. path on
-		each line.
-
-You can also do a "make install" as root, but don't just do it because I
-say so, check the Makefile first.
-
-"Make install" will install only the new binaries, and not motd, inittab,
-securetty and issue. To install these configuration files, do a 
-"make Install".
-
-Getty requires a /dev/console to write errors to. I just made it a symlink
-to /dev/tty1. Because of a bug in the tty driver this errorlogging may
-cause the shell on tty1 to logout.
 
 Getty will print the contents of /etc/issue if it's present before asking
 for username. Login will print the contents of /etc/motd after successful

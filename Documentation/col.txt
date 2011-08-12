@@ -2,13 +2,6 @@
 
 col - filter out reverse line feeds.
 
-Options are:
-	-b	do not print any backspaces (last character written is printed)
-	-f	allow half line feeds in output, by default characters between
-		lines are pushed to the line below
-	-x	do not compress spaces into tabs.
-	-l num	keep (at least) num lines in memory, 128 are kept by default
-
 In the 32V source code to col(1) the default behavior was to NOT compress
 spaces into tabs.  There was a -h option which caused it to compress spaces
 into tabs.  There was no -x flag.

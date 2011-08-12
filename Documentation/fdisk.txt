@@ -143,13 +143,13 @@ You can have up to 64 partitions on a single IDE disk, or up to 16
 partitions on a single SCSI disk, at least as far as Linux is
 concerned; in practice you will rarely want so many.  The maximum size
 of a Linux file system on a single partition depends on the type of
-file system you use.  Minix file systems are limited to 64 megabytes.
-You may have all of your Linux files in a single partition, or you may
-have two, three, or more Linux file systems.  Similarly you may have
-one or more DOS partitions.  If you have several small partitions, you
-run much less risk of losing all your files if your disk gets
-corrupted.  On the other hand, you may run out of space on a small
-partition more easily.
+file system you use.  Minix file systems (version 1) are limited to 64
+megabytes.  You may have all of your Linux files in a single partition,
+or you may have two, three, or more Linux file systems.  Similarly you
+may have one or more DOS partitions.  If you have several small
+partitions, you run much less risk of losing all your files if your
+disk gets corrupted.  On the other hand, you may run out of space on a
+small partition more easily.
 
 Under DOS, you must refer to each partition by a separate drive
 letter, but all partitions are automatically accessible.  Under Linux
@@ -170,8 +170,6 @@ of RAM and wish to compile anything substantial.  You can reserve swap
 space in a file, but you need a partition big enough to hold it, and
 this will probably be less efficient than having a partition devoted to
 swap.
-
-The disk space you need for Linux is discussed in README.prepare.
 
 Are you going to boot Linux from the hard disk, or will you boot
 from a floppy?  Some boot programs place severe restrictions on where

@@ -12,16 +12,6 @@ installation process easier.
 If you write a bad partition table to disk, it may destroy data and
 partitions.
 
-
-You can FTP cfdisk from ftp.cs.unc.edu in the /pub/martin/linux
-directory.
-
-I would also like comments (good and bad) on the user interface, logic
-and ease of use.  If you have any suggestions for improvements, I
-would be happy to hear them.
-
-My e-mail address is martin@cs.unc.edu.
-
 -------------------------------------------------------------------
 
     Copyright (C) 1994 Kevin E. Martin (martin@cs.unc.edu)
