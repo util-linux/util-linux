@@ -795,7 +795,7 @@ int main(int argc, char **argv)
 
 	if (verbose)
 		printf(_("partition: %s, disk: %s, lower: %d, upper: %d\n"),
-				device, wholedisk, lower, upper);
+		       device ? device : "none", wholedisk, lower, upper);
 
 	if (what == ACT_ADD || what == ACT_DELETE) {
 		struct stat x;
