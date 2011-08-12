@@ -842,30 +842,6 @@ main(int argc, char **argv)
 	p = crypt(pp, salt);
 	setpriority(PRIO_PROCESS, 0, 0);
 
-#  ifdef KERBEROS
-	/*
-	 * If not present in pw file, act as we normally would.
-	 * If we aren't Kerberos-authenticated, try the normal
-	 * pw file for a password.  If that's ok, log the user
-	 * in without issueing any tickets.
-	 */
-
-	if (pwd && !krb_get_lrealm(realm,1)) {
-	    /*
-	     * get TGT for local realm; be careful about uid's
-	     * here for ticket file ownership
-	     */
-	    setreuid(geteuid(),pwd->pw_uid);
-	    kerror = krb_get_pw_in_tkt(pwd->pw_name, "", realm,
-				       "krbtgt", realm, DEFAULT_TKT_LIFE, pp);
-	    setuid(0);
-	    if (kerror == INTK_OK) {
-		memset(pp, 0, strlen(pp));
-		notickets = 0;	/* user got ticket */
-		break;
-	    }
-	}
-#  endif /* KERBEROS */
 	memset(pp, 0, strlen(pp));
 
 	if (pwd && !strcmp(p, pwd->pw_passwd))
