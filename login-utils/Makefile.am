@@ -6,8 +6,6 @@ sbin_PROGRAMS =
 usrsbin_exec_PROGRAMS =
 dist_man_MANS =
 
-EXTRA_DIST = README.poeigl
-
 if BUILD_LAST
 usrbin_exec_PROGRAMS += last
 dist_man_MANS += last.1

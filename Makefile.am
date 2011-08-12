@@ -62,14 +62,9 @@ ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = \
 		.version \
 		autogen.sh \
-		README.devel \
 		README.licensing \
-		DEPRECATED \
-		licenses \
-		example.files \
 		po/update-potfiles \
-		tools \
-		docs
+		Documentation
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.

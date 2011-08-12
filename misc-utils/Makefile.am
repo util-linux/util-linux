@@ -8,8 +8,6 @@ usrsbin_exec_PROGRAMS =
 
 usrbin_exec_PROGRAMS = cal ddate logger look mcookie namei whereis 
 
-EXTRA_DIST += README.cal README.ddate
-
 logger_SOURCES = logger.c $(top_srcdir)/lib/strutils.c
 mcookie_SOURCES = mcookie.c $(top_srcdir)/lib/md5.c
 
