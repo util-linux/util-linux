@@ -42,14 +42,7 @@ chfn_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 chsh_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
-if HAVE_PAM
 login_ldadd_common += -lpam -lpam_misc
-else
-if NEED_LIBCRYPT
-login_ldadd_common += -lcrypt
-endif
-login_SOURCES += checktty.c
-endif #! HAVE_PAM
 
 if NEED_LIBCRYPT
 newgrp_LDADD += -lcrypt
@@ -72,9 +65,7 @@ install-exec-hook::
 
 endif
 
-noinst_PROGRAMS = checktty_test islocal_test
-checktty_test_SOURCES = checktty.c login.h
-checktty_test_CPPFLAGS = -DMAIN_TEST_CHECKTTY $(AM_CPPFLAGS)
+noinst_PROGRAMS = islocal_test
 islocal_test_SOURCES = islocal.c
 islocal_test_CPPFLAGS = -DMAIN_TEST_ISLOCAL $(AM_CPPFLAGS)
 

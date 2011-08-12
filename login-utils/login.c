@@ -64,21 +64,19 @@
 #include "xalloc.h"
 #include "c.h"
 
-#ifdef HAVE_SECURITY_PAM_MISC_H
-#  include <security/pam_appl.h>
-#  include <security/pam_misc.h>
-#  define PAM_MAX_LOGIN_TRIES	3
-#  define PAM_FAIL_CHECK if (retcode != PAM_SUCCESS) { \
+#include <security/pam_appl.h>
+#include <security/pam_misc.h>
+#define PAM_MAX_LOGIN_TRIES	3
+#define PAM_FAIL_CHECK if (retcode != PAM_SUCCESS) { \
        fprintf(stderr,"\n%s\n",pam_strerror(pamh, retcode)); \
        syslog(LOG_ERR,"%s",pam_strerror(pamh, retcode)); \
        pam_end(pamh, retcode); exit(EXIT_FAILURE); \
    }
-#  define PAM_END { \
+#define PAM_END { \
 	pam_setcred(pamh, PAM_DELETE_CRED); \
 	retcode = pam_close_session(pamh,0); \
 	pam_end(pamh,retcode); \
 }
-#endif
 
 #include <lastlog.h>
 
@@ -116,9 +114,7 @@ int     timeout = 60;
 
 struct passwd *pwd;
 
-#ifdef HAVE_SECURITY_PAM_MISC_H
 static struct passwd pwdcopy;
-#endif
 char    hostaddress[16];	/* used in checktty.c */
 sa_family_t hostfamily;		/* used in checktty.c */
 char	*hostname;		/* idem */
@@ -200,7 +196,6 @@ consoletty(int fd) {
 }
 #endif
 
-#ifdef HAVE_SECURITY_PAM_MISC_H
 /*
  * Log failed login attempts in _PATH_BTMP if that exists.
  * Must be called only with username the name of an actual user.
@@ -266,8 +261,6 @@ sig_handler(int signal)
 		kill(-child_pid, SIGHUP); /* because the shell often ignores SIGTERM */
 }
 
-#endif	/* HAVE_SECURITY_PAM_MISC_H */
-
 #ifdef HAVE_LIBAUDIT
 static void
 logaudit(const char *tty, const char *username, const char *hostname,
@@ -291,7 +284,6 @@ logaudit(const char *tty, const char *username, const char *hostname,
 # define logaudit(tty, username, hostname, pwd, status)
 #endif /* HAVE_LIBAUDIT */
 
-#ifdef HAVE_SECURITY_PAM_MISC_H
 /* encapsulate stupid "void **" pam_get_item() API */
 int
 get_pam_username(pam_handle_t *pamh, char **name)
@@ -302,7 +294,6 @@ get_pam_username(pam_handle_t *pamh, char **name)
 	*name = (char *) item;
 	return rc;
 }
-#endif
 
 /*
  * We need to check effective UID/GID. For example $HOME could be on root
@@ -335,15 +326,10 @@ main(int argc, char **argv)
     char *childArgv[10];
     char *buff;
     int childArgc = 0;
-#ifdef HAVE_SECURITY_PAM_MISC_H
     int retcode;
     pam_handle_t *pamh = NULL;
     struct pam_conv conv = { misc_conv, NULL };
     struct sigaction sa, oldsa_hup, oldsa_term;
-#else
-    int ask;
-    char *salt, *pp;
-#endif
 #ifdef LOGIN_CHOWN_VCS
     char vcsn[20], vcsan[20];
 #endif
@@ -435,10 +421,6 @@ main(int argc, char **argv)
     argc -= optind;
     argv += optind;
 
-#ifndef HAVE_SECURITY_PAM_MISC_H
-    ask = *argv ? 0 : 1;		/* Do we need ask for login name? */
-#endif
-
     if (*argv) {
 	char *p = *argv;
 	username = strdup(p);
@@ -509,7 +491,6 @@ main(int argc, char **argv)
 
     openlog("login", LOG_ODELAY, LOG_AUTHPRIV);
 
-#ifdef HAVE_SECURITY_PAM_MISC_H
     /*
      * username is initialized to NULL
      * and if specified on the command line it is set.
@@ -675,118 +656,6 @@ main(int argc, char **argv)
     if (retcode != PAM_SUCCESS)
 	    pam_close_session(pamh, 0);
     PAM_FAIL_CHECK;
-
-#else /* ! HAVE_SECURITY_PAM_MISC_H */
-
-    for (cnt = 0;; ask = 1) {
-
-	if (ask) {
-	    fflag = 0;
-	    getloginname();
-	}
-
-	/* Dirty patch to fix a gigantic security hole when using
-	   yellow pages. This problem should be solved by the
-	   libraries, and not by programs, but this must be fixed
-	   urgently! If the first char of the username is '+', we
-	   avoid login success.
-	   Feb 95 <alvaro@etsit.upm.es> */
-
-	if (username[0] == '+') {
-	    puts(_("Illegal username"));
-	    badlogin(username);
-	    sleepexit(EXIT_FAILURE);
-	}
-
-	/* (void)strcpy(tbuf, username); why was this here? */
-	if ((pwd = getpwnam(username))) {
-#  ifdef SHADOW_PWD
-	    struct spwd *sp;
-
-	    if ((sp = getspnam(username)))
-	      pwd->pw_passwd = sp->sp_pwdp;
-#  endif
-	    salt = pwd->pw_passwd;
-	} else
-	  salt = "xx";
-
-	if (pwd) {
-	    initgroups(username, pwd->pw_gid);
-	    checktty(username, tty_name, pwd); /* in checktty.c */
-	}
-
-	/* if user not super-user, check for disabled logins */
-	if (pwd == NULL || pwd->pw_uid)
-	  checknologin();
-
-	/*
-	 * Disallow automatic login to root; if not invoked by
-	 * root, disallow if the uid's differ.
-	 */
-	if (fflag && pwd) {
-	    int uid = getuid();
-
-	    passwd_req = pwd->pw_uid == 0 ||
-	      (uid && uid != pwd->pw_uid);
-	}
-
-	/*
-	 * If trying to log in as root, but with insecure terminal,
-	 * refuse the login attempt.
-	 */
-	if (pwd && pwd->pw_uid == 0 && !rootterm(tty_name)) {
-	    warnx(_("%s login refused on this terminal."),
-		    pwd->pw_name);
-
-	    if (hostname)
-	      syslog(LOG_NOTICE,
-		     _("LOGIN %s REFUSED FROM %s ON TTY %s"),
-		     pwd->pw_name, hostname, tty_name);
-	    else
-	      syslog(LOG_NOTICE,
-		     _("LOGIN %s REFUSED ON TTY %s"),
-		     pwd->pw_name, tty_name);
-	    logaudit(tty_name, pwd->pw_name, hostname, pwd, 0);
-	    continue;
-	}
-
-	/*
-	 * If no pre-authentication and a password exists
-	 * for this user, prompt for one and verify it.
-	 */
-	if (!passwd_req || (pwd && !*pwd->pw_passwd))
-	  break;
-
-	setpriority(PRIO_PROCESS, 0, -4);
-	pp = getpass(_("Password: "));
-
-#  ifdef CRYPTOCARD
-	if (strncmp(pp, "CRYPTO", 6) == 0) {
-	    if (pwd && cryptocard()) break;
-	}
-#  endif /* CRYPTOCARD */
-
-	p = crypt(pp, salt);
-	setpriority(PRIO_PROCESS, 0, 0);
-
-	memset(pp, 0, strlen(pp));
-
-	if (pwd && !strcmp(p, pwd->pw_passwd))
-	  break;
-
-	printf(_("Login incorrect\n"));
-	badlogin(username); /* log ALL bad logins */
-	failures++;
-
-	/* we allow 10 tries, but after 3 we start backing off */
-	if (++cnt > 3) {
-	    if (cnt >= 10) {
-		sleepexit(EXIT_FAILURE);
-	    }
-	    sleep((unsigned int)((cnt - 3) * 5));
-	}
-    }
-#endif /* !HAVE_SECURITY_PAM_MISC_H */
 
     /* committed to login -- turn off timeout */
     alarm((unsigned int)0);
@@ -979,7 +848,6 @@ Michael Riepe <michael@stud.uni-hannover.de>
        */
     setenv("LOGNAME", pwd->pw_name, 1);
 
-#ifdef HAVE_SECURITY_PAM_MISC_H
     {
 	int i;
 	char ** env = pam_getenvlist(pamh);
@@ -991,7 +859,6 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	    }
 	}
     }
-#endif
 
     setproctitle("login", username);
 
@@ -1044,8 +911,6 @@ Michael Riepe <michael@stud.uni-hannover.de>
     signal(SIGALRM, SIG_DFL);
     signal(SIGQUIT, SIG_DFL);
     signal(SIGTSTP, SIG_IGN);
-
-#ifdef HAVE_SECURITY_PAM_MISC_H
 
     memset(&sa, 0, sizeof(sa));
     sa.sa_handler = SIG_IGN;
@@ -1126,7 +991,6 @@ Michael Riepe <michael@stud.uni-hannover.de>
      */
     if (ioctl(0, TIOCSCTTY, 1))
 	    syslog(LOG_ERR, _("TIOCSCTTY failed: %m"));
-#endif
     signal(SIGINT, SIG_DFL);
 
     /* discard permissions last so can't get killed and drop core */
@@ -1176,50 +1040,6 @@ Michael Riepe <michael@stud.uni-hannover.de>
     exit(EXIT_SUCCESS);
 }
 
-#ifndef HAVE_SECURITY_PAM_MISC_H
-static void
-getloginname(void) {
-    int ch, cnt, cnt2;
-    char *p;
-    static char nbuf[UT_NAMESIZE + 1];
-
-    cnt2 = 0;
-    for (;;) {
-	cnt = 0;
-	printf(_("\n%s login: "), thishost); fflush(stdout);
-	for (p = nbuf; (ch = getchar()) != '\n'; ) {
-	    if (ch == EOF) {
-		badlogin("EOF");
-		exit(EXIT_FAILURE);
-	    }
-	    if (p < nbuf + UT_NAMESIZE)
-	      *p++ = ch;
-
-	    cnt++;
-	    if (cnt > UT_NAMESIZE + 20) {
-		badlogin(_("NAME too long"));
-		errx(EXIT_FAILURE, _("login name much too long."));
-	    }
-	}
-	if (p > nbuf) {
-	  if (nbuf[0] == '-')
-	     warnx(_("login names may not start with '-'."));
-	  else {
-	      *p = '\0';
-	      username = nbuf;
-	      break;
-	  }
-	}
-
-	cnt2++;
-	if (cnt2 > 50) {
-	    badlogin(_("EXCESSIVE linefeeds"));
-	    errx(EXIT_FAILURE, _("too many bare linefeeds."));
-	}
-    }
-}
-#endif
-
 /*
  * Robert Ambrose writes:
  * A couple of my users have a problem with login processes hanging around
@@ -1252,38 +1072,6 @@ timedout(int sig __attribute__((__unused__))) {
 	timedout2(0);
 }
 
-#ifndef HAVE_SECURITY_PAM_MISC_H
-int
-rootterm(char * ttyn)
-{
-    int fd;
-    char buf[100],*p;
-    int cnt, more = 0;
-
-    fd = open(_PATH_SECURETTY, O_RDONLY);
-    if(fd < 0) return 1;
-
-    /* read each line in /etc/securetty, if a line matches our ttyline
-       then root is allowed to login on this tty, and we should return
-       true. */
-    for(;;) {
-	p = buf; cnt = 100;
-	while(--cnt >= 0 && (more = read(fd, p, 1)) == 1 && *p != '\n') p++;
-	if(more && *p == '\n') {
-	    *p = '\0';
-	    if(!strcmp(buf, ttyn)) {
-		close(fd);
-		return 1;
-	    } else
-	      continue;
-	} else {
-	    close(fd);
-	    return 0;
-	}
-    }
-}
-#endif /* !HAVE_SECURITY_PAM_MISC_H */
-
 jmp_buf motdinterrupt;
 
 void
@@ -1309,24 +1097,6 @@ void
 sigint(int sig  __attribute__((__unused__))) {
     longjmp(motdinterrupt, 1);
 }
-
-#ifndef HAVE_SECURITY_PAM_MISC_H			/* PAM takes care of this */
-void
-checknologin(void) {
-    int fd, nchars;
-    char tbuf[8192];
-
-    if ((fd = open(_PATH_NOLOGIN, O_RDONLY, 0)) >= 0) {
-	while ((nchars = read(fd, tbuf, sizeof(tbuf))) > 0) {
-	  if (write(fileno(stdout), tbuf, nchars)) {
-		;	/* glibc warn_unused_result */
-	  }
-	}
-	close(fd);
-	sleepexit(EXIT_SUCCESS);
-    }
-}
-#endif
 
 void
 dolastlog(int quiet) {
