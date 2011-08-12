@@ -28,15 +28,11 @@ SOURCE CODE:
       Checkout:
           git clone git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git util-linux
 
+
 NLS (PO TRANSLATIONS):
 
       PO files are maintained by:
           http://translationproject.org/domain/util-linux-ng.html
-
-NEUTRALITY:
-
-      The stuff in util-linux should be rather distribution-neutral.
-      No RPMs/DEBs/... are provided - get yours from your distributor.
 
 
 VERSION SCHEMA:
