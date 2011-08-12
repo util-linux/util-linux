@@ -206,7 +206,6 @@ consoletty(int fd) {
  * Must be called only with username the name of an actual user.
  * The most common login failure is to give password instead of username.
  */
-#define	_PATH_BTMP	"/var/log/btmp"
 static void
 logbtmp(const char *line, const char *username, const char *hostname) {
 	struct utmp ut;

@@ -135,5 +135,9 @@
 # define _PATH_RTC_DEV		"/dev/rtc"
 #endif
 
+#ifndef _PATH_BTMP
+#define _PATH_BTMP		"/var/log/btmp"
+#endif
+
 #endif /* PATHNAMES_H */
 
