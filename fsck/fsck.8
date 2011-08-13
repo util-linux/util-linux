@@ -4,7 +4,7 @@
 .\"
 .TH FSCK 8 "February 2009" "Linux" "MAINTENANCE COMMANDS"
 .SH NAME
-fsck \- check and repair a Linux file system
+fsck \- check and repair a Linux filesystem
 .SH SYNOPSIS
 .B fsck
 .RB [ \-lsAVRTMNP ]
@@ -17,7 +17,7 @@ fsck \- check and repair a Linux file system
 .RI [ fs-specific-options ]
 .SH DESCRIPTION
 .B fsck
-is used to check and optionally repair one or more Linux file systems.
+is used to check and optionally repair one or more Linux filesystems.
 .I filesys
 can be a device name (e.g.
 .IR /dev/hdc1 ", " /dev/sdb2 ),
@@ -28,8 +28,7 @@ UUID=8868abf6-88c5-4a83-98b8-bfc24057f7bd or LABEL=root).
 Normally, the
 .B fsck
 program will try to handle filesystems on different physical disk drives
-in parallel to reduce the total amount of time needed to check all of the
-filesystems.
+in parallel to reduce the total amount of time needed to check all of them.
 .PP
 If no filesystems are specified on the command line, and the
 .B \-A
@@ -47,11 +46,11 @@ is the sum of the following conditions:
 .br
 \	0\	\-\ No errors
 .br
-\	1\	\-\ File system errors corrected
+\	1\	\-\ Filesystem errors corrected
 .br
 \	2\	\-\ System should be rebooted
 .br
-\	4\	\-\ File system errors left uncorrected
+\	4\	\-\ Filesystem errors left uncorrected
 .br
 \	8\	\-\ Operational error
 .br
@@ -59,36 +58,36 @@ is the sum of the following conditions:
 .br
 \	32\	\-\ Fsck canceled by user request
 .br
-\	128\	\-\ Shared library error
+\	128\	\-\ Shared-library error
 .br
-The exit code returned when multiple file systems are checked
+The exit code returned when multiple filesystems are checked
 is the bit-wise OR of the exit codes for each
-file system that is checked.
+filesystem that is checked.
 .PP
 In actuality,
 .B fsck
-is simply a front-end for the various file system checkers
-(\fBfsck\fR.\fIfstype\fR) available under Linux.  The file
-system-specific checker is searched for in
+is simply a front-end for the various filesystem checkers
+(\fBfsck\fR.\fIfstype\fR) available under Linux.  The
+filesystem-specific checker is searched for in
 .I /sbin
 first, then in
 .I /etc/fs
 and
 .IR /etc ,
 and finally in the directories listed in the PATH environment
-variable.  Please see the file system-specific checker manual pages for
+variable.  Please see the filesystem-specific checker manual pages for
 further details.
 .SH OPTIONS
 .TP
 .B \-l
-Lock whole-disk device by exclusive
+Lock the whole-disk device by an exclusive
 .BR flock (2).
-This option can be used with one device only (e.g. -A and -l are mutually
-exclusive). This option is recommended when more
+This option can be used with one device only (this means that \fB-A\fR and
+\fB-l\fR are mutually exclusive).  This option is recommended when more
 .B fsck (8)
-instances are executed in the same time. The option is ignored when used for
-multiple devices or for non-rotating disk. The fsck does not lock underlying
-devices if executed to check stacked devices (e.g. MD or DM) -- this feature is
+instances are executed in the same time.  The option is ignored when used for
+multiple devices or for non-rotating disks.  \fBfsck\fR does not lock underlying
+devices when executed to check stacked devices (e.g. MD or DM) -- this feature is
 not implemented yet.
 .TP
 .B \-s
@@ -108,7 +107,7 @@ option, if you wish for errors to be corrected automatically, or the
 option if you do not.)
 .TP
 .BI \-t " fslist"
-Specifies the type(s) of file system to be checked.  When the
+Specifies the type(s) of filesystem to be checked.  When the
 .B \-A
 flag is specified, only filesystems that match
 .I fslist
@@ -122,12 +121,9 @@ or
 .RB ' ! ',
 which requests that only those filesystems not listed in
 .I fslist
-will be checked.  If all of the filesystems in
+will be checked.  If none of the filesystems in
 .I fslist
-are not prefixed by a negation operator, then only those filesystems
-listed
-in
-.I fslist
+is prefixed by a negation operator, then only those listed filesystems
 will be checked.
 .sp
 Options specifiers may be included in the comma-separated
@@ -180,16 +176,16 @@ given as an argument to the
 option,
 .B fsck
 will use the specified filesystem type.  If this type is not
-available, then the default file system type (currently ext2) is used.
+available, then the default filesystem type (currently ext2) is used.
 .TP
 .B \-A
 Walk through the
 .I /etc/fstab
-file and try to check all file systems in one run.  This option is
+file and try to check all filesystems in one run.  This option is
 typically used from the
 .I /etc/rc
 system initialization file, instead of multiple commands for checking
-a single file system.
+a single filesystem.
 .sp
 The root filesystem will be checked first unless the
 .B \-P
@@ -213,7 +209,7 @@ multiple filesystem checks on the same physical disk.
 .sp
 .B fsck
 does not check stacked devices (RAIDs, dm-crypt, ...) in parallel with any other
-device. See below for FSCK_FORCE_ALL_PARALLEL setting. The /sys filesystem is
+device.  See below for FSCK_FORCE_ALL_PARALLEL setting.  The /sys filesystem is
 used to detemine dependencies between devices.
 .sp
 Hence, a very common configuration in
@@ -234,9 +230,9 @@ excessive paging is a concern.
 .sp
 .B fsck
 normally does not check whether the device actually exists before
-calling a file system specific checker. Therefore non-existing
-devices may cause the system to enter file system repair mode during
-boot if the filesystem specific checker returns a fatal error. The
+calling a filesystem specific checker.  Therefore non-existing
+devices may cause the system to enter filesystem repair mode during
+boot if the filesystem specific checker returns a fatal error.  The
 .B /etc/fstab
 mount option
 .B nofail
@@ -244,7 +240,7 @@ may be used to have
 .B fsck
 skip non-existing devices.
 .B fsck
-also skips non-existing devices that have the special file system type
+also skips non-existing devices that have the special filesystem type
 .B auto
 .
 .TP
@@ -275,15 +271,16 @@ for those sysadmins who don't want to repartition the root
 filesystem to be small and compact (which is really the right solution).
 .TP
 .B \-R
-When checking all file systems with the
+When checking all filesystems with the
 .B \-A
-flag, skip the root file system (in case it's already mounted read-write).
+flag, skip the root filesystem.  (This is useful in case the root
+filesystem has already been mounted read-write.)
 .TP
 .B \-T
 Don't show the title on startup.
 .TP
 .B \-V
-Produce verbose output, including all file system-specific commands
+Produce verbose output, including all filesystem-specific commands
 that are executed.
 .TP
 .B fs-specific-options
@@ -294,20 +291,20 @@ are passed to the filesystem-specific checker.  These arguments
 not take arguments, as there is no
 way for
 .B fsck
-to be able to properly guess which arguments take options and which
+to be able to properly guess which options take arguments and which
 don't.
 .IP
 Options and arguments which follow the
 .B \-\-
-are treated as file system-specific options to be passed to the
-file system-specific checker.
+are treated as filesystem-specific options to be passed to the
+filesystem-specific checker.
 .IP
 Please note that fsck is not
 designed to pass arbitrarily complicated options to filesystem-specific
 checkers.  If you're doing something complicated, please just
 execute the filesystem-specific checker directly.  If you pass
 .B fsck
-some horribly complicated option and arguments, and it doesn't do
+some horribly complicated options and arguments, and it doesn't do
 what you expect,
 .B don't bother reporting it as a bug.
 You're almost certainly doing something that you shouldn't be doing
@@ -317,20 +314,20 @@ with
 Options to different filesystem-specific fsck's are not standardized.
 If in doubt, please consult the man pages of the filesystem-specific
 checker.  Although not guaranteed, the following options are supported
-by most file system checkers:
+by most filesystem checkers:
 .TP
 .B \-a
-Automatically repair the file system without any questions (use
+Automatically repair the filesystem without any questions (use
 this option with caution).  Note that
 .BR e2fsck (8)
 supports
 .B \-a
-for backwards compatibility only.  This option is mapped to
+for backward compatibility only.  This option is mapped to
 .BR e2fsck 's
 .B \-p
 option which is safe to use, unlike the
 .B \-a
-option that some file system checkers support.
+option that some filesystem checkers support.
 .TP
 .B \-n
 For some filesystem-specific checkers, the
@@ -350,7 +347,7 @@ Interactively repair the filesystem (ask for confirmations).  Note: It
 is generally a bad idea to use this option if multiple fsck's are being
 run in parallel.  Also note that this is
 .BR e2fsck 's
-default behavior; it supports this option for backwards compatibility
+default behavior; it supports this option for backward compatibility
 reasons only.
 .TP
 .B \-y
@@ -364,7 +361,7 @@ all filesystem-specific checkers implement this option.  In particular
 .BR fsck.minix (8)
 and
 .BR fsck.cramfs (8)
-does not support the
+do not support the
 .B -y
 option as of this writing.
 .SH AUTHOR
@@ -382,32 +379,32 @@ program's behavior is affected by the following environment variables:
 .B FSCK_FORCE_ALL_PARALLEL
 If this environment variable is set,
 .B fsck
-will attempt to run all of the specified filesystems in parallel, regardless of
+will attempt to check all of the specified filesystems in parallel, regardless of
 whether the filesystems appear to be on the same device.  (This is useful for
 RAID systems or high-end storage systems such as those sold by companies such
-as IBM or EMC.) Note that the fs_passno value is still used.
+as IBM or EMC.)  Note that the fs_passno value is still used.
 .TP
 .B FSCK_MAX_INST
-This environment variable will limit the maximum number of file system
+This environment variable will limit the maximum number of filesystem
 checkers that can be running at one time.  This allows configurations
 which have a large number of disks to avoid
 .B fsck
-starting too many file system checkers at once, which might overload
+starting too many filesystem checkers at once, which might overload
 CPU and memory resources available on the system.  If this value is
 zero, then an unlimited number of processes can be spawned.  This is
 currently the default, but future versions of
 .B fsck
-may attempt to automatically determine how many file system checks can
+may attempt to automatically determine how many filesystem checks can
 be run based on gathering accounting data from the operating system.
 .TP
 .B PATH
 The
 .B PATH
-environment variable is used to find file system checkers.  A set of
+environment variable is used to find filesystem checkers.  A set of
 system directories are searched first:
 .BR /sbin ,
 .BR /sbin/fs.d ,
-.BR  /sbin/fs ,
+.BR /sbin/fs ,
 .BR /etc/fs ,
 and
 .BR /etc .
