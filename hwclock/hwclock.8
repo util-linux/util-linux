@@ -1,23 +1,23 @@
-.TH HWCLOCK 8 "06 August 2008"
+.TH HWCLOCK 8 "August 2011"
 .SH NAME
-hwclock \- query and set the hardware clock (RTC)
+hwclock \- query or set the hardware clock (RTC)
 .SH SYNOPSIS
 .B hwclock
-.RI [ functions ]
-.RI [ options ]
+.RI [ function ]
+.RI [ option ...]
 
 .SH DESCRIPTION
 .B hwclock
 is a tool for accessing the Hardware Clock.  You can display the
 current time, set the Hardware Clock to a specified time, set the
-Hardware Clock to the System Time, and set the System Time from the
+Hardware Clock from the System Time, or set the System Time from the
 Hardware Clock.
 .PP
 You can also run
 .B hwclock
-periodically to insert or remove time from the Hardware Clock to
-compensate for systematic drift (where the clock consistently gains or
-loses time at a certain rate if left to run).
+periodically to add or subtract time from the Hardware Clock to
+compensate for systematic drift (where the clock consistently loses or
+gains time at a certain rate when left to run).
 
 .SH FUNCTIONS
 You need exactly one of the following options to tell
@@ -26,11 +26,12 @@ what function to perform:
 .PP
 .TP
 .BR \-r , \ \-\-show
-Read the Hardware Clock and print the time on Standard Output.
+Read the Hardware Clock and print the time on standard output.
 The time shown is always in local time, even if you keep your Hardware Clock
 in Coordinated Universal Time.  See the
 .B \-\-utc
 option.
+Showing the Hardware Clock time is the default when no function is specified.
 
 .TP
 .B \-\-set
@@ -48,7 +49,7 @@ as
 .BR tzset (3)
 would interpret them.
 The obsolete tz_dsttime field of the kernel's timezone value is set
-to DST_NONE. (For details on what this field used to mean, see
+to DST_NONE.  (For details on what this field used to mean, see
 .BR settimeofday (2).)
 
 This is a good option to use in one of the system startup scripts.
@@ -66,7 +67,7 @@ as
 .BR tzset (3)
 would interpret them.
 The obsolete tz_dsttime field of the kernel's timezone value is set
-to DST_NONE. (For details on what this field used to mean, see
+to DST_NONE.  (For details on what this field used to mean, see
 .BR settimeofday (2).)
 
 This is an alternate option to
@@ -85,10 +86,12 @@ Print the kernel's Hardware Clock epoch value to standard output.
 This is the number of years into AD to which a zero year value in the
 Hardware Clock refers.  For example, if you are using the convention
 that the year counter in your Hardware Clock contains the number of
-full years since 1952, then the kernel's Hardware Counter epoch value
+full years since 1952, then the kernel's Hardware Clock epoch value
 must be 1952.
 
-This epoch value is used whenever hwclock reads or sets the Hardware Clock.
+This epoch value is used whenever
+.B hwclock
+reads or sets the Hardware Clock.
 .TP
 .B \-\-setepoch
 Set the kernel's Hardware Clock epoch value to the value specified by the
@@ -96,41 +99,6 @@ Set the kernel's Hardware Clock epoch value to the value specified by the
 option.  See the
 .B \-\-getepoch
 option for details.
-.TP
-.BR \-v , \ \-\-version
-Print the version of
-.B hwclock
-on Standard Output.
-.TP
-.BI \-\-date= date_string
-You need this option if you specify the
-.B \-\-set
-option.  Otherwise, it is ignored.
-This specifies the time to which to set the Hardware Clock.
-The value of this option is an argument to the
-.BR date (1)
-program.
-For example,
-.sp
-.I hwclock --set --date="9/22/96 16:45:05"
-.sp
-The argument is in local time, even if you keep your Hardware Clock in
-Coordinated Universal time.  See the
-.B \-\-utc
-option.
-
-.TP
-.BI \-\-epoch= year
-Specifies the year which is the beginning of the Hardware Clock's
-epoch.  I.e. the number of years into AD to which a zero value in the
-Hardware Clock's year counter refers. It is used together with
-the \-\-setepoch option to set the kernel's idea of the epoch of the
-Hardware Clock, or otherwise to specify the epoch for use with
-direct ISA access.
-
-For example, on a Digital Unix machine:
-.sp
-.I hwclock --setepoch --epoch=1952
 
 .TP
 .BI \-\-predict
@@ -139,10 +107,53 @@ Predict what the RTC will read at time given by the
 option based on the adjtime file. This is useful for example if you
 need to set an RTC wakeup time to distant future and want to account
 for the RTC drift.
+.TP
+.BR \-h , \ \-\-help
+Display a help text and exit.
+.TP
+.BR \-V , \ \-\-version
+Display the version of
+.B hwclock
+and exit.
 
 .SH OPTIONS
 .PP
-The following options apply to most functions.
+The first two options apply to just a few specific functions,
+the others apply to most functions.
+.TP
+.BI \-\-date= date_string
+You need this option if you specify the
+.B \-\-set
+or
+.B \-\-predict
+functions, otherwise it is ignored.
+It specifies the time to which to set the Hardware Clock, or the
+time for which to predict the Hardware Clock reading.
+The value of this option is an argument to the
+.BR date (1)
+program.
+For example:
+.sp
+.B "    hwclock" --set --date="2011-08-14 16:45:05"
+.sp
+The argument must be in local time, even if you keep your Hardware Clock in
+Coordinated Universal time.  See the
+.B \-\-utc
+option.
+
+.TP
+.BI \-\-epoch= year
+Specifies the year which is the beginning of the Hardware Clock's
+epoch, that is the number of years into AD to which a zero value in the
+Hardware Clock's year counter refers.  It is used together with
+the \fB\-\-setepoch\fR option to set the kernel's idea of the epoch of the
+Hardware Clock, or otherwise to specify the epoch for use with
+direct ISA access.
+
+For example, on a Digital Unix machine:
+.sp
+.B "    hwclock" --setepoch --epoch=1952
+
 .TP
 .BR \-u , \ \-\-utc
 .TP
@@ -160,10 +171,12 @@ will be messed up.
 If you specify neither
 .B \-\-utc
 nor
-.B \-\-localtime
-, the default is whichever was specified the last time
+.BR \-\-localtime ,
+the default is whichever was specified the last time
 .B hwclock
-was used to set the clock (i.e. hwclock was successfully run with the
+was used to set the clock (i.e.
+.B hwclock
+was successfully run with the
 .BR \-\-set ,
 .BR \-\-systohc ,
 or
@@ -173,10 +186,10 @@ exist, the default is UTC time.
 
 .TP
 .B \-\-noadjfile
-disables the facilities provided by
+Disables the facilities provided by
 .IR /etc/adjtime .
 .B hwclock
-will not read nor write to that file with this option. Either
+will not read nor write to that file with this option.  Either
 .B \-\-utc
 or
 .B \-\-localtime
@@ -184,11 +197,11 @@ must be specified when using this option.
 
 .TP
 .BI \-\-adjfile= filename
-overrides the default /etc/adjtime.
+Overrides the default /etc/adjtime.
 
 .TP
 .BR \-f , \ \-\-rtc=\fIfilename\fB
-overrides the default /dev file name, which is
+Overrides the default /dev file name, which is
 .IR /dev/rtc
 on many platforms but may be
 .IR /dev/rtc0 ,
@@ -197,8 +210,8 @@ and so on.
 
 .TP
 .B \-\-directisa
-is meaningful only on an ISA machine or an Alpha (which implements enough
-of ISA to be, roughly speaking, an ISA machine for
+This option is meaningful only on an ISA machine or an Alpha (which implements
+enough of ISA to be, roughly speaking, an ISA machine for
 .BR hwclock 's
 purposes).  For other machines, it has no effect.  This option tells
 .B hwclock
@@ -206,10 +219,9 @@ to use explicit I/O instructions to access the Hardware Clock.
 Without this option,
 .B hwclock
 will try to use the /dev/rtc device (which it assumes to be driven by the
-rtc device driver).  If it is unable to open the device (for read), it will
+RTC device driver).  If it is unable to open the device (for reading), it will
 use the explicit I/O instructions anyway.
 
-The rtc device driver was new in Linux Release 2.
 .TP
 .B \-\-badyear
 Indicates that the Hardware Clock is incapable of storing years outside
@@ -231,9 +243,9 @@ knows it's working with a brain-damaged clock, it ignores the year part of
 the Hardware Clock value and instead tries to guess the year based on the
 last calibrated date in the adjtime file, by assuming that that date is
 within the past year.  For this to work, you had better do a
-.I hwclock \-\-set
+.B hwclock \-\-set
 or
-.I hwclock \-\-systohc
+.B hwclock \-\-systohc
 at least once a year!
 
 Though
@@ -278,14 +290,14 @@ is mounted.
 (If you find you need one of these options to make
 .B hwclock
 work, contact the maintainer to see if the program can be improved
-to detect your system automatically. Output of `hwclock --debug'
+to detect your system automatically.  Output of `hwclock --debug'
 and `cat /proc/cpuinfo' may be of interest.)
 
+Option
 .B \-\-jensen
-means you are running on a Jensen model.
-
+means you are running on a Jensen model.  And
 .B \-\-funky\-toy
-means that on your machine, one has to use the UF bit instead
+means that on your machine one has to use the UF bit instead
 of the UIP bit in the Hardware Clock to detect a time transition.  "Toy"
 in the option name refers to the Time Of Year facility of the machine.
 
