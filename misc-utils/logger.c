@@ -137,22 +137,24 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
 	fprintf(out,
 		_("\nUsage:\n"
-		  " %s [options] message\n"),
+		  "  %s [options] [message]\n"),
 		  program_invocation_short_name);
 
 	fprintf(out, _(
 		"\nOptions:\n"
-		" -i, --id            log process id\n"
-		" -s, --stderr        log message to standard error as well\n"
-		" -f, --file FILE     log contents of the specified file\n"
-		" -p, --priority PRI  enter message priority\n"
-		" -t, --tag TAG       mark every line with tag\n"
-		" -u, --socket SOCK   write to socket\n"
-		" -d, --udp           use udp (tcp is default)\n"
-		" -n, --server ADDR   write to remote syslog server\n"
-		" -P, --port          define port number\n"
-		" -V, --version       output version information and exit\n"
-		" -h, --help          display this help and exit\n\n"));
+		"  -d, --udp            use UDP (TCP is default)\n"
+		"  -i, --id             log the process ID too\n"
+		"  -f, --file FILE      log the contents of this file\n"
+		"  -h, --help           display this help text and exit\n"));
+	fprintf(out, _(
+		"  -n, --server NAME    write to this remote syslog server\n"
+		"  -P, --port NUMBER    use this UDP port\n"
+		"  -p, --priority PRIO  mark given message with this priority\n"
+		"  -s, --stderr         output message to standard error as well\n"));
+	fprintf(out, _(
+		"  -t, --tag TAG        mark every line with this tag\n"
+		"  -u, --socket SOCKET  write to this Unix socket\n"
+		"  -V, --version        output version information and exit\n\n"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
