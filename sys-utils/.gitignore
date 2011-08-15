@@ -41,3 +41,4 @@ switch_root
 tunelp
 unshare
 x86_64.8
+chcpu
