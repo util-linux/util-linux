@@ -304,7 +304,7 @@ path_cpuparse(int islist, const char *path, va_list ap)
 		err(EXIT_FAILURE, _("failed to callocate cpu set"));
 
 	if (islist) {
-		if (cpulist_parse(buf, set, setsize))
+		if (cpulist_parse(buf, set, setsize, 0))
 			errx(EXIT_FAILURE, _("failed to parse CPU list %s"), buf);
 	} else {
 		if (cpumask_parse(buf, set, setsize))
