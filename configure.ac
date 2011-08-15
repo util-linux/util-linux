@@ -1099,18 +1099,11 @@ AC_ARG_ENABLE([login-utils],
 )
 AM_CONDITIONAL(BUILD_LOGIN_UTILS, test "x$enable_login_utils" = xyes)
 
-AC_ARG_WITH([pam],
-  [AS_HELP_STRING([--without-pam], [compile login-utils without PAM support])])
-
-AM_CONDITIONAL(HAVE_PAM, false)
-if test "x$enable_login_utils" = xyes && test "x$with_pam" != xno; then
-  AC_CHECK_HEADERS([security/pam_misc.h],
-    [AM_CONDITIONAL(HAVE_PAM, true)],
-    [if test "x$with_pam" = xyes; then
-	AC_MSG_ERROR([PAM selected but security/pam_misc.h not found])
-     fi
-    ])
+if test "x$enable_login_utils" = xyes; then
+  AC_CHECK_HEADERS([security/pam_misc.h], [],
+    [AC_MSG_ERROR([login-utils enabled, but security/pam_misc.h not found])])
 fi
+
 
 AC_ARG_WITH([selinux],
   AS_HELP_STRING([--with-selinux], [compile with SELinux support]),
