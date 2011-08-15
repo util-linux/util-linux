@@ -202,43 +202,50 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(
 	"\nOptions:\n"
 	" -a, --all               mount all filesystems mentioned in fstab\n"
-	" -f, --fake              dry run, skip mount(2) syscall\n"
-	" -F, --fork              fork off for each device (use with -a)\n"
-	" -h, --help              this help\n"
-	" -n, --no-mtab           don't write to /etc/mtab\n"
-	" -r, --read-only         mount the filesystem read-only (same as -o ro)\n"
-	" -v, --verbose           verbose mode\n"
-	" -V, --version           print version string\n"
-	" -w, --read-write        mount the filesystem read-write (default)\n"
-	" -o, --options <list>    comma separated string of mount options\n"
-	" -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"
-	" -t, --types <list>      indicate the filesystem type\n"
 	" -c, --no-canonicalize   don't canonicalize paths\n"
+	" -f, --fake              dry run; skip the mount(2) syscall\n"
+	" -F, --fork              fork off for each device (use with -a)\n"));
+	fprintf(out, _(
+	" -h, --help              display this help text and exit\n"
 	" -i, --internal-only     don't call the mount.<type> helpers\n"
 	" -l, --show-labels       lists all mounts with LABELs\n"
+	" -n, --no-mtab           don't write to /etc/mtab\n"));
+	fprintf(out, _(
+	" -o, --options <list>    comma-separated list of mount options\n"
+	" -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"
+	" -r, --read-only         mount the filesystem read-only (same as -o ro)\n"
+	" -t, --types <list>      limit the set of filesystem types\n"));
+	fprintf(out, _(
+	" -v, --verbose           say what is being done\n"
+	" -V, --version           display version information and exit\n"
+	" -w, --read-write        mount the filesystem read-write (default)\n"));
 
+	fprintf(out, _(
 	"\nSource:\n"
 	" -L, --label <label>     synonym for LABEL=<label>\n"
 	" -U, --uuid <uuid>       synonym for UUID=<uuid>\n"
 	" LABEL=<label>           specifies device by filesystem label\n"
-	" UUID=<uuid>             specifies device by filesystem UUID\n"
+	" UUID=<uuid>             specifies device by filesystem UUID\n"));
+	fprintf(out, _(
 	" <device>                specifies device by path\n"
 	" <directory>             mountpoint for bind mounts (see --bind/rbind)\n"
-	" <file>                  regular file for loopdev setup\n"
+	" <file>                  regular file for loopdev setup\n"));
 
+	fprintf(out, _(
 	"\nOperations:\n"
 	" -B, --bind              mount a subtree somewhere else (same as -o bind)\n"
 	" -M, --move              move a subtree to some other place\n"
-	" -R, --rbind             mount a subtree and all submounts somewhere else\n"
+	" -R, --rbind             mount a subtree and all submounts somewhere else\n"));
+	fprintf(out, _(
 	" --make-shared           mark a subtree as shared\n"
 	" --make-slave            mark a subtree as slave\n"
 	" --make-private          mark a subtree as private\n"
-	" --make-unbindable       mark a subtree as unbindable\n"
+	" --make-unbindable       mark a subtree as unbindable\n"));
+	fprintf(out, _(
 	" --make-rshared          recursively mark a whole subtree as shared\n"
 	" --make-rslave           recursively mark a whole subtree as slave\n"
 	" --make-rprivate         recursively mark a whole subtree as private\n"
-	" --make-runbindable      recursively mark a whole subtree as unbindable\n"
-	));
+	" --make-runbindable      recursively mark a whole subtree as unbindable\n"));
 
 	fprintf(out, _("\nFor more information see mount(8).\n"));
 
