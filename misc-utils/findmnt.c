@@ -773,26 +773,32 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -s, --fstab            search in static table of filesystems\n"
 	" -m, --mtab             search in table of mounted filesystems\n"
 	" -k, --kernel           search in kernel table of mounted\n"
-        "                          filesystems (default)\n\n"
+        "                          filesystems (default)\n\n"));
 
+	fprintf(out, _(
 	" -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
-	" -w, --timeout <num>    upper limit in milliseconds that --poll will block\n\n"
+	" -w, --timeout <num>    upper limit in milliseconds that --poll will block\n\n"));
 
+	fprintf(out, _(
 	" -a, --ascii            use ASCII chars for tree formatting\n"
 	" -c, --canonicalize     canonicalize printed paths\n"
 	" -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 	" -e, --evaluate         convert tags (LABEL/UUID) to device names\n"
-        " -f, --first-only       print the first found filesystem only\n"
+	" -f, --first-only       print the first found filesystem only\n"));
+
+	fprintf(out, _(
 	" -h, --help             display this help text and exit\n"
 	" -i, --invert           invert the sense of matching\n"
 	" -l, --list             use list format output\n"
 	" -n, --noheadings       don't print column headings\n"
-	" -u, --notruncate       don't truncate text in columns\n"
+	" -u, --notruncate       don't truncate text in columns\n"));
+	fprintf(out, _(
 	" -O, --options <list>   limit the set of filesystems by mount options\n"
 	" -o, --output <list>    the output columns to be shown\n"
 	" -P, --pairs            use key=\"value\" output format\n"
 	" -r, --raw              use raw output format\n"
-	" -t, --types <list>     limit the set of filesystems by FS types\n"
+	" -t, --types <list>     limit the set of filesystems by FS types\n"));
+	fprintf(out, _(
 	" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 	" -R, --submounts        print all submounts for the matching filesystems\n"
 	" -S, --source <string>  the device to mount (by name, LABEL= or UUID=)\n"
