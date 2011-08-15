@@ -5,6 +5,7 @@
 
 # find all *.c files, 
 # sort the list
+# exclude /samples/ subdirectories
 # exclude ./tests/ from the list 
 #         and remove "./" prefix
 
@@ -13,5 +14,6 @@
 
 find -name "*.c" | \
   sort | \
+  sed ':/samples/:d' | \
   gawk '! /^\.\/tests\// { print gensub(/^\.\//, "", 1) }' \
   > po/POTFILES.in
