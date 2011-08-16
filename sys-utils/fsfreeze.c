@@ -37,15 +37,16 @@ static int unfreeze_f(int fd)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out, _("Usage: %s [options] <mount point>\n\nOptions:\n"),
-			program_invocation_short_name);
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [options] <mount point>\n"), program_invocation_short_name);
 
-	fprintf(out, _(
-		" -h, --help          this help\n"
-		" -f, --freeze        freeze the filesystem\n"
-		" -u, --unfreeze      unfreeze the filesystem\n"));
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -h, --help        this help\n"
+		" -f, --freeze      freeze the filesystem\n"
+		" -u, --unfreeze    unfreeze the filesystem\n"), out);
 
-	fprintf(out, _("\nFor more information see fsfreeze(8).\n"));
+	fputs(_("\nFor more information see fsfreeze(8).\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
