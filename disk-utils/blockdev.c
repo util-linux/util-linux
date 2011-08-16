@@ -180,19 +180,19 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	size_t i;
 	fprintf(out, _("\nUsage:\n"
-		       "  %1$s -V\n"
-		       "  %1$s --report [devices]\n"
-		       "  %1$s [-v|-q] commands devices\n\n"
+		       " %1$s -V\n"
+		       " %1$s --report [devices]\n"
+		       " %1$s [-v|-q] commands devices\n\n"
 		       "Available commands:\n"), program_invocation_short_name);
 
-	fprintf(out, _("  %-25s get size in 512-byte sectors\n"), "--getsz");
+	fprintf(out, _(" %-25s get size in 512-byte sectors\n"), "--getsz");
 	for (i = 0; i < ARRAY_SIZE(bdcms); i++) {
 		if (bdcms[i].argname)
-			fprintf(out, "  %s %-*s %s\n", bdcms[i].name,
+			fprintf(out, " %s %-*s %s\n", bdcms[i].name,
 				(int)(24 - strlen(bdcms[i].name)),
 				bdcms[i].argname, _(bdcms[i].help));
 		else
-			fprintf(out, "  %-25s %s\n", bdcms[i].name,
+			fprintf(out, " %-25s %s\n", bdcms[i].name,
 				_(bdcms[i].help));
 	}
 	fputc('\n', out);
