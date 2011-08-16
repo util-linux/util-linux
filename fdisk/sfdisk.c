@@ -2325,61 +2325,62 @@ read_input(char *dev, int interactive, struct disk_desc *z) {
 /*
  *  G. The command line
  */
-static void
-usage(FILE * out) {
+static void usage(FILE * out)
+{
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+		_(" %s [options] <device> [...]\n"),  program_invocation_short_name);
 
-    fprintf(out, _("\nUsage:\n"
-		   "  %s [options] device [...]\n"),
-	    program_invocation_short_name);
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -s, --show-size           list size of a partition\n"
+		" -c, --id                  change or print partition Id\n"
+		"     --change-id           change Id\n"
+		"     --print-id            print Id\n"), out);
+	fputs(_(" -l, --list                list partitions of each device\n"
+		" -d, --dump                idem, but in a format suitable for later input\n"
+		" -i, --increment           number cylinders etc. from 1 instead of from 0\n"
+		" -u, --unit <letter>       units to be used; <letter> can be one of\n"
+		"                             S (sectors), C (cylinders), B (blocks), or M (MB)\n"), out);
+	fputs(_(" -1, --one-only            reserved option that does nothing currently\n"
+		" -T, --list-types          list the known partition types\n"
+		" -D, --DOS                 for DOS-compatibility: waste a little space\n"
+		" -E, --DOS-extended        DOS extended partition compatibility\n"
+		" -R, --re-read             make the kernel reread the partition table\n"), out);
+	fputs(_(" -N <number>               change only the partition with this <number>\n"
+		" -n                        do not actually write to disk\n"
+		" -O <file>                 save the sectors that will be overwritten to <file>\n"
+		" -I <file>                 restore sectors from <file>\n"), out);
+	fputs(_(" -V, --verify              check that the listed partitions are reasonable\n"
+		" -v, --version             display version information and exit\n"
+		" -h, --help                display this help text and exit\n"), out);
 
-    fprintf(out, _("\nOptions:\n"
-		   " -s, --show-size         list size of a partition\n"
-		   " -c, --id                change or print partition Id\n"
-		   "     --change-id         change Id\n"
-		   "     --print-id          print Id\n"
-		   " -l, --list              list partitions of each device\n"
-		   " -d, --dump              idem, but in a format suitable for later input\n"
-		   " -i, --increment         number cylinders etc. from 1 instead of from 0\n"
-		   " -u, --unit=[SBCM]       units in sectors, blocks, cylinders or MB\n"
-		   " -1, --one-only          reserved option that does nothing currently\n"
-		   " -T, --list-types        list the known partition types\n"
-		   " -D, --DOS               for DOS-compatibility: waste a little space\n"
-		   " -E, --DOS-extended      DOS extended partition compatibility\n"
-		   " -R, --re-read           make kernel reread partition table\n"
-		   " -N=NUM                  change only the partition with number NUM\n"
-		   " -n                      do not actually write to disk\n"
-		   " -O FILE                 save the sectors that will be overwritten to file\n"
-		   " -I FILE                 restore sectors from file\n"
-		   " -V, --verify            check that listed partition is reasonable\n"
-		   " -v, --version           print version\n"
-		   " -h, --help              print this message\n"));
+	fputs(_("\nDangerous options:\n"), out);
+	fputs(_(" -f, --force               disable all consistency checking\n"
+		"     --no-reread           do not check whether the partition is in use\n"
+		" -q, --quiet               suppress warning messages\n"
+		" -L, --Linux               do not complain about things irrelevant for Linux\n"), out);
+	fputs(_(" -g, --show-geometry       print the kernel's idea of the geometry\n"
+		" -G, --show-pt-geometry    print geometry guessed from the partition table\n"), out);
+	fputs(_(" -A, --activate[=<device>] activate bootable flag\n"
+		" -U, --unhide[=<dev>]      set partition unhidden\n"
+		" -x, --show-extended       also list extended partitions in the output,\n"
+		"                             or expect descriptors for them in the input\n"), out);
+	fputs(_("     --leave-last          do not allocate the last cylinder\n"
+		"     --IBM                 same as --leave-last\n"), out);
+	fputs(_("     --in-order            partitions are in order\n"
+		"     --not-in-order        partitions are not in order\n"
+		"     --inside-outer        all logicals inside outermost extended\n"
+		"     --not-inside-outer    not all logicals inside outermost extended\n"), out);
+	fputs(_("     --nested              every partition is disjoint from all others\n"
+		"     --chained             like nested, but extended partitions may lie outside\n"
+		"     --onesector           partitions are mutually disjoint\n"), out);
 
-    fprintf(out, _("\nDangerous options:\n"
-		   " -f, --force             disable all consistency checking\n"
-		   "     --no-reread         do not check whether the partition is in use\n"
-		   " -g, --show-geometry     print the kernel's idea of the geometry\n"
-		   " -G, --show-pt-geometry  print geometry guessed from the partition table\n"
-		   " -A, --activate[=device] activate bootable flag\n"
-		   " -U, --unhide[=device]   set partition unhidden\n"
-		   " -x, --show-extended     also list extended partitions in the output,\n"
-		   "                            or expect descriptors for them in the input\n"
-		   "     --leave-last        do not allocate the last cylinder\n"
-		   "     --IBM               same as --leave-last\n"
-		   "     --in-order          partitions are in order\n"
-		   "     --not-in-order      partitions are not in order\n"
-		   "     --inside-outer      all logicals inside outermost extended\n"
-		   "     --not-inside-outer  not all logicals inside outermost extended\n"
-		   "     --nested            every partition is disjoint from all others\n"
-		   "     --chained           like nested, but extended partitions may lie outside\n"
-		   "     --onesector         partitions are mutually disjoint\n"
-		   " -L, --Linux             do not complain about things irrelevant for Linux\n"
-		   " -q, --quiet             suppress warning messages\n"
-		   "\n  Override the detected geometry using:\n"
-		   " -C, --cylinders=NUM     set the number of cylinders to use\n"
-		   " -H, --heads=NUM         set the number of heads to use\n"
-		   " -S, --sectors=NUM       set the number of sectors to use\n\n"));
+	fputs(_("\nOverride the detected geometry using:\n"
+		" -C, --cylinders <number>  set the number of cylinders to use\n"
+		" -H, --heads <number>      set the number of heads to use\n"
+		" -S, --sectors <number>    set the number of sectors to use\n\n"), out);
 
-    exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 static void
