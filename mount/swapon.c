@@ -90,36 +90,47 @@ static const struct option *longswapoffopts = &longswaponopts[4];
 static int cannot_find(const char *special);
 
 #define PRINT_USAGE_SPECIAL(_fp) \
-		fprintf(_fp, _( \
-	"The <special> parameter:\n" \
-	" {-L label | LABEL=label}             LABEL of device to be used\n" \
-	" {-U uuid  | UUID=uuid}               UUID of device to be used\n" \
-	" <device>                             name of device to be used\n" \
-	" <file>                               name of file to be used\n\n"))
+	fputs(_("\nThe <spec> parameter:\n" \
+		" -L <label>             LABEL of device to be used\n" \
+		" -U <uuid>              UUID of device to be used\n" \
+		" LABEL=<label>          LABEL of device to be used\n" \
+		" UUID=<uuid>            UUID of device to be used\n" \
+		" <device>               name of device to be used\n" \
+		" <file>                 name of file to be used\n\n"), _fp)
 
 static void
-swapon_usage(FILE *fp, int n) {
-	fprintf(fp, _("\nUsage:\n"
-	" %1$s -a [-e] [-v] [-f]             enable all swaps from /etc/fstab\n"
-	" %1$s [-p priority] [-d] [-v] [-f] <special>  enable given swap\n"
-	" %1$s -s                            display swap usage summary\n"
-	" %1$s -h                            display help\n"
-	" %1$s -V                            display version\n\n"), progname);
+swapon_usage(FILE *out, int n) {
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out, _(" %s [options] [<spec>]\n"), progname);
 
-	PRINT_USAGE_SPECIAL(fp);
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -a, --all              enable all swaps from /etc/fstab\n"
+		" -d, --discard          discard freed pages before they are reused\n"
+		" -e, --ifexists         silently skip devices that do not exis\n"
+		" -f, --fixpgsz          reinitialize the swap space if necessary\n"
+		" -h, --help             display help and exit\n"
+		" -p, --priority <prio>  specify the priority of the swap device.\n"
+		" -s, --summary          display summary about used swap devices and exit\n"
+		" -v, --verbose          verbose mode\n"
+		" -V, --version          display version and exit\n"), out);
+
+	PRINT_USAGE_SPECIAL(out);
 
 	exit(n);
 }
 
 static void
-swapoff_usage(FILE *fp, int n) {
-	fprintf(fp, _("\nUsage:\n"
-	" %1$s -a [-v]                      disable all swaps\n"
-	" %1$s [-v] <special>               disable given swap\n"
-	" %1$s -h                           display help\n"
-	" %1$s -V                           display version\n\n"), progname);
+swapoff_usage(FILE *out, int n) {
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out, _(" %s [options] [<spec>]\n"), progname);
 
-	PRINT_USAGE_SPECIAL(fp);
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -a, --all              disable all swaps from /proc/swaps\n"
+		" -h, --help             display help and exit\n"
+		" -v, --verbose          verbose mode\n"
+		" -V, --version          display version and exit\n"), out);
+
+	PRINT_USAGE_SPECIAL(out);
 
 	exit(n);
 }
