@@ -62,21 +62,22 @@ const char *program;
 
 static void usage(int ex)
 {
-  fputs("flock (" PACKAGE_STRING ")\n", stderr);
+  fputs(_("\nUsage:\n"), stderr);
   fprintf(stderr,
-	_("Usage: %1$s [-sxun][-w #] fd#\n"
-	  "       %1$s [-sxon][-w #] file [-c] command...\n"
-	  "       %1$s [-sxon][-w #] directory [-c] command...\n"
-	  "  -s  --shared     Get a shared lock\n"
-	  "  -x  --exclusive  Get an exclusive lock\n"
-	  "  -u  --unlock     Remove a lock\n"
-	  "  -n  --nonblock   Fail rather than wait\n"
-	  "  -w  --timeout    Wait for a limited amount of time\n"
-	  "  -o  --close      Close file descriptor before running command\n"
-	  "  -c  --command    Run a single command string through the shell\n"
-	  "  -h  --help       Display this text\n"
-	  "  -V  --version    Display version\n"),
-	  program);
+	_(" %1$s [-sxun][-w #] fd#\n"
+	  " %1$s [-sxon][-w #] file [-c] command...\n"
+	  " %1$s [-sxon][-w #] directory [-c] command...\n"), program);
+
+  fputs(_("\nOptions:\n"), stderr);
+  fputs(_(" -s  --shared     Get a shared lock\n"
+	  " -x  --exclusive  Get an exclusive lock\n"
+	  " -u  --unlock     Remove a lock\n"
+	  " -n  --nonblock   Fail rather than wait\n"
+	  " -w  --timeout    Wait for a limited amount of time\n"
+	  " -o  --close      Close file descriptor before running command\n"
+	  " -c  --command    Run a single command string through the shell\n"
+	  " -h  --help       Display this text\n"
+	  " -V  --version    Display version\n\n"), stderr);
   exit(ex);
 }
 
