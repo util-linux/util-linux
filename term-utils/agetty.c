@@ -1630,28 +1630,28 @@ static speed_t bcode(char *s)
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fprintf(out, _("\nUsage:\n"
-		       "    %1$s [options] line baud_rate,... [termtype]\n"
-		       "    %1$s [options] baud_rate,... line [termtype]\n"),
+		       " %1$s [options] line baud_rate,... [termtype]\n"
+		       " %1$s [options] baud_rate,... line [termtype]\n"),
 		program_invocation_short_name);
 
 	fprintf(out, _("\nOptions:\n"
 		       " -8, --8bits                assume 8-bit tty\n"
-		       " -a, --autologin USER       login the specified user automatically\n"
+		       " -a, --autologin <user>     login the specified user automatically\n"
 		       " -c, --noreset              do not reset control mode\n"
-		       " -f, --issue-file FILE      display issue file\n"
+		       " -f, --issue-file <file>    display issue file\n"
 		       " -h, --flow-control         enable hardware flow control\n"
-		       " -H, --host HOSTNAME        specify login host\n"
+		       " -H, --host <hostname>      specify login host\n"
 		       " -i, --noissue              do not display issue file\n"
-		       " -I, --init-string STRING   set init string\n"
-		       " -l, --login-program FILE   specify login program\n"
+		       " -I, --init-string <string> set init string\n"
+		       " -l, --login-program <file> specify login program\n"
 		       " -L, --local-line           force local line\n"
 		       " -m, --extract-baud         extract baud rate during connect\n"
 		       " -n, --skip-login           do not prompt for login\n"
-		       " -o, --login-options OPTS   options that are passed to login\n"
+		       " -o, --login-options <opts> options that are passed to login\n"
 		       " -p, --loginpause           wait for any key before the login\n"
 		       " -R, --hangup               do virtually hangup on the tty\n"
 		       " -s, --keep-baud            try to keep baud rate after break\n"
-		       " -t, --timeout NUMBER       login process timeout\n"
+		       " -t, --timeout <number>     login process timeout\n"
 		       " -U, --detect-case          detect uppercase terminal\n"
 		       " -w, --wait-cr              wait carriage-return\n"
 		       "     --noclear              do not clear the screen before prompt\n"
