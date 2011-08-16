@@ -580,7 +580,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fputs(_("\nUsage:\n"), out);
 	fprintf(out,
-	      _(" %s [-a|-d|-s] [--nr <N:M> | <partition>] <disk>\n"),
+	      _(" %s [-a|-d|-s] [--nr <n:m> | <partition>] <disk>\n"),
 		program_invocation_short_name);
 
 	fputs(_("\nOptions:\n"), out);
@@ -593,9 +593,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -g, --noheadings     don't print headings for --show\n"
 		" -P, --pairs          use key=\"value\" output format\n"
 		" -r, --raw            use raw output format\n"
-		" -t, --type <TYPE>    specify the partition type (dos, bsd, solaris, etc.)\n"
-		" -n, --nr <M:N>       specify the range of partitions (e.g. --nr 2:4)\n"
-		" -o, --output <LIST>  define which output columns to use\n"
+		" -t, --type <type>    specify the partition type (dos, bsd, solaris, etc.)\n"
+		" -n, --nr <n:m>       specify the range of partitions (e.g. --nr 2:4)\n"
+		" -o, --output <type>  define which output columns to use\n"
 		" -h, --help           print this help\n"), out);
 
 	fputs(_("\nAvailable columns (for --show, --raw or --pairs):\n"), out);
