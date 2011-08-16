@@ -49,14 +49,16 @@
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out, _("Usage: %s [options] <filename>\n\nOptions:\n"),
-			program_invocation_short_name);
 
-	fprintf(out, _(
-		" -h, --help          this help\n"
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [options] <filename>\n"), program_invocation_short_name);
+
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -h, --help          this help\n"
 		" -n, --keep-size     don't modify the length of the file\n"
 		" -o, --offset <num>  offset of the allocation, in bytes\n"
-		" -l, --length <num>  length of the allocation, in bytes\n"));
+		" -l, --length <num>  length of the allocation, in bytes\n"), out);
 
 	fprintf(out, _("\nFor more information see fallocate(1).\n"));
 
