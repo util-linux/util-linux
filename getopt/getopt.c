@@ -322,12 +322,12 @@ static void __attribute__ ((__noreturn__)) print_help(void)
 	fputs(_("\nOptions:\n"), stderr);
 	fputs(_(" -a, --alternative            Allow long options starting with single -\n"), stderr);
 	fputs(_(" -h, --help                   This small usage guide\n"), stderr);
-	fputs(_(" -l, --longoptions=longopts   Long options to be recognized\n"), stderr);
-	fputs(_(" -n, --name=progname          The name under which errors are reported\n"), stderr);
-	fputs(_(" -o, --options=optstring      Short options to be recognized\n"), stderr);
+	fputs(_(" -l, --longoptions <longopts> Long options to be recognized\n"), stderr);
+	fputs(_(" -n, --name <progname>        The name under which errors are reported\n"), stderr);
+	fputs(_(" -o, --options <optstring>    Short options to be recognized\n"), stderr);
 	fputs(_(" -q, --quiet                  Disable error reporting by getopt(3)\n"), stderr);
 	fputs(_(" -Q, --quiet-output           No normal output\n"), stderr);
-	fputs(_(" -s, --shell=shell            Set shell quoting conventions\n"), stderr);
+	fputs(_(" -s, --shell <shell>          Set shell quoting conventions\n"), stderr);
 	fputs(_(" -T, --test                   Test for getopt(1) version\n"), stderr);
 	fputs(_(" -u, --unquote                Do not quote the output\n"), stderr);
 	fputs(_(" -V, --version                Output version information\n"), stderr);
