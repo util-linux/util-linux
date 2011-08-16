@@ -65,7 +65,7 @@ static void usage(int error)
 		"       [-t <token>] [-w <file>] [<dev> ...]\n\n"
 		" %1$s -p [-s <tag>] [-O <offset>] [-S <size>] \n"
 		"       [-o <format>] <dev> ...\n\n"
-		" %1$s -i [-s <tag>] [-o <format>] <dev> ...\n\n");
+		" %1$s -i [-s <tag>] [-o <format>] <dev> ...\n\n"
 		"Options:\n"
 		" -c <file>   cache file (default: /etc/blkid.tab, /dev/null = none)\n"
 		" -d          don't encode non-printing characters\n"
@@ -89,8 +89,7 @@ static void usage(int error)
 		" -O <offset> probe at the given offset\n"
 		" -u <list>   filter by \"usage\" (e.g. -u filesystem,raid)\n"
 		" -n <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"
-		"\n",
-				progname);
+		"\n", progname);
 
 	exit(error);
 }
