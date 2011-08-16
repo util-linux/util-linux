@@ -1033,15 +1033,15 @@ print_readable(struct lscpu_desc *desc, int hex)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out, _(
-		"\nUsage:\n"
-		" %s [options]\n"), program_invocation_short_name);
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [options]\n"), program_invocation_short_name);
 
-	puts(_(	"\nOptions:\n"
-		"  -h, --help         print this help\n"
-		"  -p, --parse[=LIST] print out a parsable instead of a readable format\n"
-		"  -s, --sysroot DIR  use directory DIR as system root\n"
-		"  -x, --hex          print hexadecimal masks rather than lists of CPUs\n"));
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -h, --help          print this help\n"
+		" -p, --parse <list>  print out a parsable instead of a readable format\n"
+		" -s, --sysroot <dir> use directory DIR as system root\n"
+		" -x, --hex           print hexadecimal masks rather than lists of CPUs\n\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
