@@ -36,15 +36,17 @@
 void __attribute__((__noreturn__))
 usage(FILE *out)
 {
-	fprintf(out, _("Usage: %s timingfile [typescript] [divisor]\n"),
-			program_invocation_short_name);
-	fprintf(out, _(
-		"\nOptions:\n"
-		" -t, --timing FILE       script timing output file\n"
-		" -s, --typescript FILE   script terminal session output file\n"
-		" -d, --divisor NUM       speed up or slow down execution with time divisor\n"
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [-t] timingfile [typescript] [divisor]\n"),
+	      program_invocation_short_name);
+
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -t, --timing <file>     script timing output file\n"
+		" -s, --typescript <file> script terminal session output file\n"
+		" -d, --divisor <num>     speed up or slow down execution with time divisor\n"
 		" -V, --version           output version information and exit\n"
-		" -h, --help              display this help and exit\n\n"));
+		" -h, --help              display this help and exit\n\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
