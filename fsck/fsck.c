@@ -1215,19 +1215,19 @@ static void __attribute__((__noreturn__)) usage(void)
 		program_invocation_short_name);
 
 	puts(_(	"\nOptions:\n"
-		"  -A         check all filesystems\n"
-		"  -R         skip root filesystem; useful only with `-A'\n"
-		"  -M         do not check mounted filesystems\n"
-		"  -t type    specify filesystem types to be checked;\n"
+		" -A         check all filesystems\n"
+		" -R         skip root filesystem; useful only with `-A'\n"
+		" -M         do not check mounted filesystems\n"
+		" -t type    specify filesystem types to be checked;\n"
 		"               type is allowed to be comma-separated list\n"
-		"  -P         check filesystems in parallel, including root\n"
-		"  -s         serialize fsck operations\n"
-		"  -l         lock the device using flock()\n"
-		"  -N         do not execute, just show what would be done\n"
-		"  -T         do not show the title on startup\n"
-		"  -C [fd]    display progress bar; file descriptor is for GUIs\n"
-		"  -V         explain what is being done\n"
-		"  -?         display this help and exit\n\n"
+		" -P         check filesystems in parallel, including root\n"
+		" -s         serialize fsck operations\n"
+		" -l         lock the device using flock()\n"
+		" -N         do not execute, just show what would be done\n"
+		" -T         do not show the title on startup\n"
+		" -C [fd]    display progress bar; file descriptor is for GUIs\n"
+		" -V         explain what is being done\n"
+		" -?         display this help and exit\n\n"
 		"See fsck.* commands for fs-options."));
 
 	exit(EXIT_USAGE);
