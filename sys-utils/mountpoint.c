@@ -76,18 +76,16 @@ static int print_devno(const char *devname, struct stat *st)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out, _("Usage:\n"
-		" %1$s [-qd] /path/to/directory\n"
-		" %1$s -x /dev/device\n"),
-		program_invocation_short_name);
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %1$s [-qd] /path/to/directory\n"
+		" %1$s -x /dev/device\n"), program_invocation_short_name);
 
-	fprintf(out, _(
-	"\nOptions:\n"
-	" -q, --quiet        quiet mode - don't print anything\n"
-	" -d, --fs-devno     print maj:min device number of the filesystem\n"
-	" -x, --devno        print maj:min device number of the block device\n"
-	" -h, --help         this help\n"
-	));
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -q, --quiet        quiet mode - don't print anything\n"
+		" -d, --fs-devno     print maj:min device number of the filesystem\n"
+		" -x, --devno        print maj:min device number of the block device\n"
+		" -h, --help         this help\n"), out);
 
 	fprintf(out, _("\nFor more information see mountpoint(1).\n"));
 
