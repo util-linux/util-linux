@@ -363,16 +363,17 @@ compare(char *s2, char *s2end) {
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out, _("Usage: %s [options] string [file]\n"),
-		program_invocation_short_name);
+	fputs(_("\nUsage:\n"), out),
+	fprintf(out,
+	      _(" %s [options] string [file]\n"), program_invocation_short_name);
 
-	fprintf(out, _("\nOptions:\n"
-		       " -a, --alternative  use alternate dictionary\n"
-		       " -d, --alphanum     compare only alpha numeric characters\n"
-		       " -f, --ignore-case  ignore when comparing\n"
-		       " -t, --terminate=C  define string termination character\n"
-		       " -V, --version      output version information and exit\n"
-		       " -h, --help         display this help and exit\n\n"));
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -a, --alternative      use alternate dictionary\n"
+		" -d, --alphanum         compare only alpha numeric characters\n"
+		" -f, --ignore-case      ignore when comparing\n"
+		" -t, --terminate <char> define string termination character\n"
+		" -V, --version          output version information and exit\n"
+		" -h, --help             display this help and exit\n\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
