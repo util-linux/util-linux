@@ -393,3 +393,10 @@ s/# <!-- util-linux.*-->//;
 /^$/d" /etc/fstab
 }
 
+function ts_fdisk_clean {
+	# remove non comparable parts of fdisk output
+	[ x"${DEVNAME}" != x"" ] && sed -i -e "s/\/dev\/${DEVNAME}/\/dev\/.../g" $TS_OUTPUT
+	sed -i -e 's/Disk identifier:.*//g' \
+	       -e 's/Building a new.*//g' \
+	       $TS_OUTPUT
+}
