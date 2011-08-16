@@ -51,21 +51,22 @@ extern int optind;
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out, _("Usage: %s [options]\n"),
-		program_invocation_short_name);
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [options]\n"), program_invocation_short_name);
 
-	fprintf(out, _("\nOptions:\n"
-		       " -p, --pid=PATH      path to pid file\n"
-		       " -s, --socket=PATH   path to socket\n"
-		       " -T, --timeout=SEC   specify inactivity timeout\n"
-		       " -k, --kill          kill running daemon\n"
-		       " -r, --random        test random-based generation\n"
-		       " -t, --time          test time-based generation\n"
-		       " -n, --uuids=NUM     request number of uuids\n"
-		       " -d, --debug         run in debugging mode\n"
-		       " -q, --quiet         turn on quiet mode\n"
-		       " -V, --version       output version information and exit\n"
-		       " -h, --help          display this help and exit\n"));
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -p, --pid <path>    path to pid file\n"
+		" -s, --socket <path> path to socket\n"
+		" -T, --timeout <sec> specify inactivity timeout\n"
+		" -k, --kill          kill running daemon\n"
+		" -r, --random        test random-based generation\n"
+		" -t, --time          test time-based generation\n"
+		" -n, --uuids <num>   request number of uuids\n"
+		" -d, --debug         run in debugging mode\n"
+		" -q, --quiet         turn on quiet mode\n"
+		" -V, --version       output version information and exit\n"
+		" -h, --help          display this help and exit\n\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
