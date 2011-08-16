@@ -81,13 +81,19 @@ int createSem(int nsems, int permission)
 
 void usage(int rc)
 {
-	printf(_("\nUsage: %s [options]\n\n"), progname);
-	printf(_(
-	"  -M <size>     create shared memory segment of size <size>\n"
-	"  -S <nsems>    create semaphore array with <nsems> elements\n"
-	"  -Q            create message queue\n"
-	"  -p <mode>     permission for the resource (default is 0644)\n"));
-	printf(_("\nFor more information see ipcmk(1).\n\n"));
+	FILE *out = rc == EXIT_FAILURE ? stderr : stdout;
+
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	     _(" %s [options]\n"), progname);
+
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -M <size>     create shared memory segment of size <size>\n"
+		" -S <nsems>    create semaphore array with <nsems> elements\n"
+		" -Q            create message queue\n"
+		" -p <mode>     permission for the resource (default is 0644)\n"), out);
+
+	fputs(_("\nFor more information see ipcmk(1).\n"), out);
 
 	exit(rc);
 }
