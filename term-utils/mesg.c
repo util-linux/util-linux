@@ -65,13 +65,14 @@
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out, _("\nUsage:\n"
-		       " %s [options] [y | n]\n"), program_invocation_short_name);
+	fputs(_("\nUsage:\n"), out);
 	fprintf(out,
-		_("\nOptions:\n"
-		  "  -v, --verbose      explain what is being done\n"
-		  "  -V, --version      output version information and exit\n"
-		  "  -h, --help         output help screen and exit\n\n"));
+	      _(" %s [options] [y | n]\n"), program_invocation_short_name);
+
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -v, --verbose      explain what is being done\n"
+		" -V, --version      output version information and exit\n"
+		" -h, --help         output help screen and exit\n\n"), out);
 
 	exit(out == stderr ? MESG_EXIT_FAILURE : EXIT_SUCCESS);
 }
