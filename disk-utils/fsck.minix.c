@@ -524,18 +524,14 @@ write_tables(void) {
 	unsigned long buffsz = get_inode_buffer_size();
 	unsigned long imaps = get_nimaps();
 	unsigned long zmaps = get_nzmaps();
-	ssize_t rc;
 
-	rc = write_all(IN, inode_map, imaps * MINIX_BLOCK_SIZE);
-	if (rc < 0 || imaps * MINIX_BLOCK_SIZE != (size_t) rc)
+	if (write_all(IN, inode_map, imaps * MINIX_BLOCK_SIZE))
 		die(_("Unable to write inode map"));
 
-	rc = write_all(IN, zone_map, zmaps * MINIX_BLOCK_SIZE);
-	if (rc < 0 || zmaps * MINIX_BLOCK_SIZE != (size_t) rc)
+	if (write_all(IN, zone_map, zmaps * MINIX_BLOCK_SIZE))
 		die(_("Unable to write zone map"));
 
-	rc = write(IN,inode_buffer, buffsz);
-	if (rc < 0 || buffsz != (size_t) rc)
+	if (write_all(IN, inode_buffer, buffsz))
 		die(_("Unable to write inodes"));
 }
 

@@ -187,7 +187,6 @@ static void write_tables(void) {
 	unsigned long imaps = get_nimaps();
 	unsigned long zmaps = get_nzmaps();
 	unsigned long buffsz = get_inode_buffer_size();
-	ssize_t rc;
 
 	/* Mark the super block valid. */
 	super_set_state();
@@ -195,37 +194,29 @@ static void write_tables(void) {
 	if (lseek(DEV, 0, SEEK_SET))
 		err(MKFS_ERROR, _("%s: seek to boot block failed "
 				   " in write_tables"), device_name);
-	rc = write_all(DEV, boot_block_buffer, 512);
-	if (512 != rc)
+	if (write_all(DEV, boot_block_buffer, 512))
 		err(MKFS_ERROR, _("%s: unable to clear boot sector"), device_name);
 	if (MINIX_BLOCK_SIZE != lseek(DEV, MINIX_BLOCK_SIZE, SEEK_SET))
 		err(MKFS_ERROR, _("%s: seek failed in write_tables"), device_name);
 
-	rc = write_all(DEV, super_block_buffer, MINIX_BLOCK_SIZE);
-	if (rc < 0 || MINIX_BLOCK_SIZE != (size_t) rc)
+	if (write_all(DEV, super_block_buffer, MINIX_BLOCK_SIZE))
 		err(MKFS_ERROR, _("%s: unable to write super-block"), device_name);
 
-	rc = write_all(DEV, inode_map, imaps * MINIX_BLOCK_SIZE);
-	if (rc < 0 || imaps * MINIX_BLOCK_SIZE != (size_t) rc)
+	if (write_all(DEV, inode_map, imaps * MINIX_BLOCK_SIZE))
 		err(MKFS_ERROR, _("%s: unable to write inode map"), device_name);
 
-	rc = write_all(DEV, zone_map, zmaps * MINIX_BLOCK_SIZE);
-	if (rc < 0 || zmaps * MINIX_BLOCK_SIZE != (size_t) rc)
+	if (write_all(DEV, zone_map, zmaps * MINIX_BLOCK_SIZE))
 		err(MKFS_ERROR, _("%s: unable to write zone map"), device_name);
 
-	rc = write_all(DEV, inode_buffer, buffsz);
-	if (rc < 0 || buffsz != (size_t) rc)
+	if (write_all(DEV, inode_buffer, buffsz))
 		err(MKFS_ERROR, _("%s: unable to write inodes"), device_name);
 }
 
 static void write_block(int blk, char * buffer) {
-	ssize_t rc;
-
 	if (blk*MINIX_BLOCK_SIZE != lseek(DEV, blk*MINIX_BLOCK_SIZE, SEEK_SET))
 		errx(MKFS_ERROR, _("%s: seek failed in write_block"), device_name);
 
-	rc = write_all(DEV, buffer, MINIX_BLOCK_SIZE);
-	if (rc < 0 && MINIX_BLOCK_SIZE != (size_t) rc)
+	if (write_all(DEV, buffer, MINIX_BLOCK_SIZE))
 		errx(MKFS_ERROR, _("%s: write failed in write_block"), device_name);
 }
 
