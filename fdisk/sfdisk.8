@@ -5,9 +5,9 @@
 .\" -- May be distributed under the GNU General Public License
 .\" The `DRDOS Warning' was taken from a net post by Stephen Tweedie.
 .\"
-.TH SFDISK 8 "1 September 1995" "Linux" "Linux Programmer's Manual"
+.TH SFDISK 8 "August 2011" "util-linux" "System Administration"
 .SH NAME
-sfdisk \- Partition table manipulator for Linux
+sfdisk \- partition table manipulator for Linux
 .SH SYNOPSIS
 .B sfdisk
 .RI [ options ]
@@ -18,21 +18,21 @@ sfdisk \- Partition table manipulator for Linux
 .SH DESCRIPTION
 .B sfdisk
 has four (main) uses: list the size of a partition, list the partitions
-on a device, check the partitions on a device, and - very dangerous -
+on a device, check the partitions on a device, and \- very dangerous \-
 repartition a device.
 
 .B sfdisk
-doesn't understand GUID Partition Table (GPT) and
-it is not designed for large partitions. In particular case use more advanced GNU
+doesn't understand the GUID Partition Table (GPT) format and it is not
+designed for large partitions.  In these cases use the more advanced GNU
 .BR parted (8).
 
-.SS "List Sizes"
+.SS "List sizes"
 .BI "sfdisk \-s " partition
 gives the size of
 .I partition
-in blocks. This may be useful in connection with programs like
-.BR mkswap (8)
-or so. Here
+in blocks.  This may be useful in connection with programs like
+.BR mkswap (8).
+Here
 .I partition
 is usually something like
 .I /dev/hda1
@@ -40,20 +40,20 @@ or
 .IR /dev/sdb12 ,
 but may also be an entire disk, like
 .IR /dev/xda .
-.br
+
 .RS
 .nf
 .if t .ft CW
 % sfdisk \-s /dev/hda9
 81599
-%
 .if t .ft R
 .fi
 .RE
+
 If the partition argument is omitted,
 .B sfdisk
 will list the sizes of all disks, and the total:
-.br
+
 .RS
 .nf
 .if t .ft CW
@@ -64,20 +64,18 @@ will list the sizes of all disks, and the total:
 /dev/sda: 8877895
 /dev/sdb: 1758927
 total: 12901917 blocks
-%
 .if t .ft R
 .fi
 .RE
 
-.SS "List Partitions"
+.SS "List partitions"
 The second type of invocation:
-.B sfdisk \-l
-.RB [ options ]
+.BI "sfdisk \-l " device
+will list the partitions on the specified device.  If the
 .I device
-will list the partitions on this device.
-If the device argument is omitted, the partitions on all hard disks
-are listed.
-.br
+argument is omitted, the partitions on all hard disks are listed.
+
+.RS
 .nf
 .if t .ft CW
 % sfdisk \-l /dev/hdc
@@ -90,20 +88,21 @@ Units = cylinders of 516096 bytes, blocks of 1024 bytes, counting from 0
 /dev/hdc2        407     813     407    205128   83  Linux native
 /dev/hdc3        814    2044    1231    620424   83  Linux native
 /dev/hdc4          0       \-       0         0    0  Empty
-%
 .if t .ft R
 .fi
+.RE
+
 The trailing \- and + signs indicate that rounding has taken place,
-and that the actual value is slightly less (more).
-To see the exact values, ask for a listing with sectors as unit.
+and that the actual value is slightly less or more.  To see the
+exact values, ask for a listing with sectors as unit (\fB\-u S\fR).
 
 .SS "Check partitions"
 The third type of invocation:
 .BI "sfdisk \-V " device
 will apply various consistency checks to the partition tables on
 .IR device .
-It prints `OK' or complains. The \-V option can be used together
-with \-l. In a shell script one might use
+It prints `OK' or complains.  The \fB\-V\fR option can be used
+together with \fB\-l\fR.  In a shell script one might use
 .BI "sfdisk \-V \-q " device
 which only returns a status.
 
@@ -114,10 +113,10 @@ will cause
 .B sfdisk
 to read the specification for the desired partitioning of
 .I device
-from its standard input, and then to change the partition tables
-on that disk. Thus, it is possible to use
+from standard input, and then to change the partition tables
+on that disk.  Thus it is possible to use
 .B sfdisk
-from a shell script. When
+from a shell script.  When
 .B sfdisk
 determines that its standard input is a terminal, it will be
 conversational; otherwise it will abort on any error.
@@ -126,67 +125,69 @@ BE EXTREMELY CAREFUL - ONE TYPING MISTAKE AND ALL YOUR DATA IS LOST
 .LP
 As a precaution, one can save the sectors changed by
 .BR sfdisk :
+
 .RS
 .nf
 .if t .ft CW
 % sfdisk /dev/hdd \-O hdd-partition-sectors.save
 \&...
-%
 .if t .ft R
 .fi
 .RE
+
 .LP
-Then, if you discover that you did something stupid before anything
+Then, if you discover that you did something stupid b efore anything
 else has been written to disk, it may be possible to recover
-the old situation with
+the old situation with:
+
 .RS
 .nf
 .if t .ft CW
 % sfdisk /dev/hdd \-I hdd-partition-sectors.save
-%
 .if t .ft R
 .fi
 .RE
+
 .LP
 (This is not the same as saving the old partition table:
 a readable version of the old partition table can be saved
-using the \-d option. However, if you create logical partitions,
+using the \fB\-d\fR option.  However, if you create logical partitions,
 the sectors describing them are located somewhere on disk,
 possibly on sectors that were not part of the partition table
-before. Thus, the information the \-O option saves is not a binary
-version of the output of \-d.)
+before.  Thus, the information the \fB\-O\fR option saves
+is not a binary version of the output of \fB\-d\fR.)
 
 There are many options.
 
 .SH OPTIONS
 .TP
-.BR \-v " or " \-\-version
+.BR \-v ", " \-\-version
 Print version number of
 .B sfdisk
 and exit immediately.
 .TP
-.BR \-h " or " \-\-help
+.BR \-h ", " \-\-help
 Print a usage message and exit immediately.
 .TP
-.BR \-T " or " \-\-list\-types
+.BR \-T ", " \-\-list\-types
 Print the recognized types (system Id's).
 .TP
-.BR \-s " or " \-\-show\-size
+.BR \-s ", " \-\-show\-size
 List the size of a partition.
 .TP
-.BR \-g " or " \-\-show\-geometry
+.BR \-g ", " \-\-show\-geometry
 List the kernel's idea of the geometry of the indicated disk(s).
 .TP
-.BR \-G " or " \-\-show\-pt\-geometry
+.BR \-G ", " \-\-show\-pt\-geometry
 List the geometry of the indicated disks guessed by looking at
 the partition table.
 .TP
-.BR \-l " or " \-\-list
+.BR \-l ", " \-\-list
 List the partitions of a device.
 .TP
-.BR \-d " or " \-\-dump
-Dump the partitions of a device in a format useful as input
-to sfdisk. For example,
+.BR \-d ", " \-\-dump
+Dump the partitions of a device in a format that is usable as input
+to /fBsfdisk/fR.  For example,
 .br
 .nf
 .if t .ft CW
@@ -197,20 +198,18 @@ to sfdisk. For example,
 will correct the bad last extended partition that the OS/2
 fdisk creates.
 .TP
-.BR \-V " or " \-\-verify
-Test whether partitions seem correct. (See above.)
+.BR \-V ", " \-\-verify
+Test whether partitions seem correct.  (See the third invocation type above.)
 .TP
-.BR \-i " or " \-\-increment
+.BR \-i ", " \-\-increment
 Number cylinders etc. starting from 1 instead of 0.
 .TP
 .BI \-N " number"
-Change only the single partition indicated. For example:
-.br
+Change only the single partition indicated.  For example:
 .nf
 .if t .ft CW
     % sfdisk /dev/hdb \-N5
     ,,,*
-    %
 .if t .ft R
 .fi
 will make the fifth partition on /dev/hdb bootable (`active')
@@ -218,14 +217,14 @@ and change nothing else. (Probably this fifth partition
 is called /dev/hdb5, but you are free to call it something else,
 like `/my_equipment/disks/2/5' or so).
 .TP
-.BI \-A " or " \-\-activate " number"
+.BR \-A ", " \-\-activate " \fInumber\fR"
 Make the indicated partition(s) active, and all others inactive.
 .TP
-.BI \-c "\fR or " \-\-id " number [Id]"
-If no Id argument given: print the partition Id of the indicated
-partition. If an Id argument is present: change the type (Id) of
+.BR \-c ", " \-\-id " \fInumber\fR [\fIId\fR]"
+If no \fIId\fR argument given: print the partition Id of the indicated
+partition.  If an \fIId\fR argument is present: change the type (Id) of
 the indicated partition to the given value.
-This option has the two very long forms \-\-print\-id and \-\-change\-id.
+This option has two longer forms, \fB\-\-print\-id\fR and \fB\-\-change\-id\fR.
 For example:
 .br
 .nf
@@ -238,40 +237,42 @@ For example:
 .fi
 first reports that /dev/hdb5 has Id 6, and then changes that into 83.
 .TP
-.BR \-u " or " \-\-unit " SBCM"
-Accept as input, or when reporting show, in units of Sectors
-(Blocks, Cylinders, Megabytes, respectively). The default is
+.BR \-u ", " \-\-unit " \fI\letter\fR"
+Interpret the input and show the output in the units specified by
+.IR letter .
+This \fIletter\fR can be one of S, C, B or M, meaning Sectors, Cylinders,
+Blocks and Megabytes, respectively.  The default is
 cylinders, at least when the geometry is known.
 .TP
-.BR \-x " or " \-\-show\-extended
+.BR \-x ", " \-\-show\-extended
 Also list non-primary extended partitions on output,
 and expect descriptors for them on input.
 .TP
-.BI \-C " or " \-\-cylinders " cylinders"
+.BR \-C ", " \-\-cylinders " \fIcylinders\fR"
 Specify the number of cylinders, possibly overriding what the kernel thinks.
 .TP
-.BI \-H " or " \-\-heads " heads"
+.BR \-H ", " \-\-heads " \fIheads\fR"
 Specify the number of heads, possibly overriding what the kernel thinks.
 .TP
-.BI \-S " or " \-\-sectors " sectors"
+.BR \-S ", " \-\-sectors " \fIsectors\fR"
 Specify the number of sectors, possibly overriding what the kernel thinks.
 .TP
-.BR \-f " or " \-\-force
+.BR \-f ", " \-\-force
 Do what I say, even if it is stupid.
 .TP
-.BR \-q " or " \-\-quiet
+.BR \-q ", " \-\-quiet
 Suppress warning messages.
 .TP
-.BR \-L " or " \-\-Linux
+.BR \-L ", " \-\-Linux
 Do not complain about things irrelevant for Linux.
 .TP
-.BR \-D " or " \-\-DOS
+.BR \-D ", " \-\-DOS
 For DOS-compatibility: waste a little space.
 (More precisely: if a partition cannot contain sector 0,
 e.g. because that is the MBR of the device, or contains
 the partition table of an extended partition, then
 .B sfdisk
-would make it start the next sector. However, when this
+would make it start the next sector.  However, when this
 option is given it skips to the start of the next track,
 wasting for example 33 sectors (in case of 34 sectors/track),
 just like certain versions of DOS do.)
@@ -279,20 +280,20 @@ Certain Disk Managers and boot loaders (such as OSBS, but not
 LILO or the OS/2 Boot Manager) also live in this empty space,
 so maybe you want this option if you use one.
 .TP
-.BR \-E " or " \-\-DOS\-extended
+.BR \-E ", " \-\-DOS\-extended
 Take the starting sector numbers of "inner" extended partitions
-to be relative to the starting cylinder boundary of the outer one,
-(like some versions of DOS do) rather than to the starting sector
-(like Linux does).
+to be relative to the starting cylinder boundary of the outer one
+(like some versions of DOS do), rather than relative to the actual
+starting sector (like Linux does).
 (The fact that there is a difference here means that one should
 always let extended partitions start at cylinder boundaries if
 DOS and Linux should interpret the partition table in the same way.
 Of course one can only know where cylinder boundaries are when
 one knows what geometry DOS will use for this disk.)
 .TP
-.BR \-\-IBM " or " \-\-leave\-last
+.BR \-\-IBM ", " \-\-leave\-last
 Certain IBM diagnostic programs assume that they can use the
-last cylinder on a disk for disk-testing purposes. If you think
+last cylinder on a disk for disk-testing purposes.  If you think
 you might ever run such programs, use this option to tell
 .B sfdisk
 that it should not allocate the last cylinder.
@@ -301,9 +302,9 @@ Sometimes the last cylinder contains a bad sector table.
 .B \-n
 Go through all the motions, but do not actually write to disk.
 .TP
-.B \-R " or " \-\-re-read
+.BR \-R ", " \-\-re-read
 Only execute the BLKRRPART ioctl (to make the kernel re-read
-the partition table). This can be useful for checking in advance
+the partition table).  This can be useful for checking in advance
 that the final BLKRRPART will be successful, and also when you
 changed the partition table `by hand' (e.g., using dd from a backup).
 If the kernel complains (`device busy for revalidation (usage = 2)')
@@ -311,35 +312,35 @@ then something still uses the device, and you still have to unmount
 some file system, or say swapoff to some swap partition.
 .TP
 .B \-\-no\-reread
-When starting a repartitioning of a disk, sfdisk checks that this disk
+When starting a repartitioning of a disk, \fBsfdisk\fR checks that this disk
 is not mounted, or in use as a swap device, and refuses to continue
-if it is. This option suppresses the test. (On the other hand, the \-f
-option would force sfdisk to continue even when this test fails.)
+if it is.  This option suppresses the test.  (On the other hand, the \fB\-f\fR
+option would force \fBsfdisk\fR to continue even when this test fails.)
 .TP
 .B \-\-in\-order
-Caution, see warning section. To be documented.
+Caution, see warning section.  To be documented.
 .TP
 .B \-\-not\-in\-order
-Caution, see warning section. To be documented.
+Caution, see warning section.  To be documented.
 .TP
 .B \-\-inside\-outer
-Caution, see warning section. Chaining order.
+Caution, see warning section.  Chaining order.
 .TP
 .B \-\-not\-inside\-outer
-Caution, see warning section. Chaining order.
+Caution, see warning section.  Chaining order.
 .TP
 .B \-\-nested
-Caution, see warning section. Every partition is contained in the
+Caution, see warning section.  Every partition is contained in the
 surrounding partitions and is disjoint from all others.
 .TP
 .B \-\-chained
-Caution, see warning section. Every data partition is contained in
+Caution, see warning section.  Every data partition is contained in
 the surrounding partitions and disjoint from all others, but
 extended partitions may lie outside (insofar as allowed by
 all_logicals_inside_outermost_extended).
 .TP
 .B \-\-onesector
-Caution, see warning section. All data partitions are mutually
+Caution, see warning section.  All data partitions are mutually
 disjoint; extended partitions each use one sector only (except
 perhaps for the outermost one).
 .TP
@@ -355,7 +356,7 @@ resides on another disk, or on a floppy).
 After destroying your filesystems with an unfortunate
 .B sfdisk
 command, you would have been able to restore the old situation
-if only you had preserved it using the \-O flag.
+if only you had preserved it using the \fB\-O\fR flag.
 
 .SH THEORY
 Block 0 of a disk (the Master Boot Record) contains among
@@ -506,10 +507,10 @@ and terminate with end-of-file (^D).
 .B sfdisk
 will assume that your input line represents the first of four,
 that the second one is extended, and the 3rd and 4th are empty.)
-.SH "CAUTION WARNIGNS"
+.SH "CAUTION WARNINGS"
 
 The options marked with caution in the manual page are dangerous.
-For example all functionality is not completely implemented,
+For example not all functionality is completely implemented,
 which can be a reason for unexpected results.
 .SH "DOS 6.x WARNING"
 
