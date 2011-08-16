@@ -83,21 +83,22 @@ static struct option long_options[] = {
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out, _("Usage: %s [options]\n\nOptions:\n"),
-	                        program_invocation_short_name);
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [options]\n"), program_invocation_short_name);
 
-	fprintf(out, _(
-		"    -d | --device <device>    select rtc device (rtc0|rtc1|...)\n"
-		"    -n | --dry-run            does everything, but suspend\n"
-		"    -l | --local              RTC uses local timezone\n"
-		"    -m | --mode <mode>        standby|mem|... sleep mode\n"
-		"    -s | --seconds <seconds>  seconds to sleep\n"
-		"    -t | --time <time_t>      time to wake\n"
-		"    -u | --utc                RTC uses UTC\n"
-		"    -v | --verbose            verbose messages\n"
-		"    -V | --version            show version\n"));
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -d, --device <device>    select rtc device (rtc0|rtc1|...)\n"
+		" -n, --dry-run            does everything, but suspend\n"
+		" -l, --local              RTC uses local timezone\n"
+		" -m, --mode <mode>        standby|mem|... sleep mode\n"
+		" -s, --seconds <seconds>  seconds to sleep\n"
+		" -t, --time <time_t>      time to wake\n"
+		" -u, --utc                RTC uses UTC\n"
+		" -v, --verbose            verbose messages\n"
+		" -V, --version            show version\n"), out);
 
-	fprintf(out, _("\nFor more information see rtcwake(8).\n"));
+	fputs(_("\nFor more information see rtcwake(8).\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
