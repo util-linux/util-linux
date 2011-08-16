@@ -1676,27 +1676,18 @@ delete_partition(int i) {
 		return;		/* C/H/S not set */
 	pe->changed = 1;
 
-	if (disklabel == SUN_LABEL) {
+	if (disklabel == SUN_LABEL)
 		sun_delete_partition(i);
-		return;
-	}
-
-	if (disklabel == SGI_LABEL) {
+	else if (disklabel == SGI_LABEL)
 		sgi_delete_partition(i);
-		return;
-	}
-
-	if (i < 4) {
+	else if (i < 4) {
 		if (IS_EXTENDED (p->sys_ind) && i == ext_index) {
 			partitions = 4;
 			ptes[ext_index].ext_pointer = NULL;
 			extended_offset = 0;
 		}
 		clear_partition(p);
-		return;
-	}
-
-	if (!q->sys_ind && i > 4) {
+	} else if (!q->sys_ind && i > 4) {
 		/* the last one in the chain - just delete */
 		--partitions;
 		--i;
@@ -1733,6 +1724,7 @@ delete_partition(int i) {
 			/* the only logical: clear only */
 			clear_partition(ptes[i].part_table);
 	}
+	printf(_("Partition %d is deleted\n"), i + 1);
 }
 
 static void
