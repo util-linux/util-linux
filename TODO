@@ -9,6 +9,11 @@ dmesg
 
  - add --color to colorize err and panic messages
 
+ldattach
+--------
+
+  - write usage()
+
 minix (fsck, mkfs)
 ------------------
 

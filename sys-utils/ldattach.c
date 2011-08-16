@@ -146,13 +146,17 @@ static void __attribute__((__noreturn__)) usage(int exitcode)
 {
     FILE *out = exitcode == EXIT_SUCCESS ? stdout : stderr;
 
+    fputs(_("\nUsage:\n"), out);
     fprintf(out,
-	    _("\nUsage: %s [ -dhV78neo12 ] [ -s <speed> ] [ -i [-]<iflag> ] <ldisc> <device>\n"),
+	    _(" %s [ -dhV78neo12 ] [ -s <speed> ] [ -i [-]<iflag> ] <ldisc> <device>\n"),
 	    progname);
+
     fputs(_("\nKnown <ldisc> names:\n"), out);
     print_table(out, ld_discs);
+
     fputs(_("\nKnown <iflag> names:\n"), out);
     print_table(out, ld_iflags);
+    fputc('\n', out);
     exit(exitcode);
 }
 
