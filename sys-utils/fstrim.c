@@ -52,17 +52,18 @@ struct fstrim_range {
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out, _("Usage: %s [options] <mount point>\n\nOptions:\n"),
-			program_invocation_short_name);
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [options] <mount point>\n"), program_invocation_short_name);
 
-	fprintf(out, _(
-		" -h, --help          this help\n"
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -h, --help          this help\n"
 		" -o, --offset <num>  offset in bytes to discard from\n"
 		" -l, --length <num>  length of bytes to discard from the offset\n"
 		" -m, --minimum <num> minimum extent length to discard\n"
-		" -v, --verbose       print number of discarded bytes\n"));
+		" -v, --verbose       print number of discarded bytes\n"), out);
 
-	fprintf(out, _("\nFor more information see fstrim(1).\n"));
+	fputs(_("\nFor more information see fstrim(1).\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
