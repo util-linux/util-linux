@@ -31,6 +31,7 @@
 #include "xalloc.h"
 #include "partx.h"
 #include "sysfs.h"
+#include "loopdev.h"
 #include "at.h"
 
 /* this is the default upper limit, could be modified by --nr */
@@ -88,7 +89,51 @@ static int columns[__NCOLUMNS], ncolumns;
 
 static int verbose;
 static int partx_flags;
+static struct loopdev_cxt lc;
+static int loopdev;
 
+/*
+ * Check if the kernel supports partitioned loop devices.
+ * In a near future (around linux 3.2, hopefully) this will come
+ * always out of the box, until then we need to check.
+ */
+static int loopmod_supports_parts(void)
+{
+	int rc, ret = 0;
+	FILE *f = fopen("/sys/module/loop/parameters/max_part", "r");
+
+	if (!f)
+		return 0;
+	rc = fscanf(f, "%d", &ret);
+	fclose(f);
+	return rc = 1 ? ret : 0;
+}
+
+static void assoc_loopdev(const char *fname)
+{
+	int rc;
+
+	loopcxt_init(&lc, 0);
+
+	rc = loopcxt_find_unused(&lc);
+	if (rc)
+		err(EXIT_FAILURE, _("%s: failed to find unused loop device"),
+		    fname);
+
+	if (verbose)
+		printf(_("Trying to use '%s' for the loop device\n"),
+		       loopcxt_get_device(&lc));
+
+	if (loopcxt_set_backing_file(&lc, fname))
+		err(EXIT_FAILURE, _("%s: failed to set backing file"), fname);
+
+	rc = loopcxt_setup_device(&lc);
+
+	if (rc == -EBUSY)
+		err(EXIT_FAILURE, _("%s: failed to setup loop device"), fname);
+
+	loopdev = 1;
+}
 
 static inline int get_column_id(int num)
 {
@@ -278,6 +323,7 @@ static int del_parts(int fd, const char *device, dev_t devno,
 	return rc;
 }
 
+
 static void add_parts_warnx(const char *device, int first, int last)
 {
 	if (first == last)
@@ -288,7 +334,7 @@ static void add_parts_warnx(const char *device, int first, int last)
 }
 
 static int add_parts(int fd, const char *device,
-			blkid_partlist ls, int lower, int upper)
+		     blkid_partlist ls, int lower, int upper)
 {
 	int i, nparts, rc = 0, errfirst = 0, errlast = 0;
 
@@ -338,6 +384,19 @@ static int add_parts(int fd, const char *device,
 
 	if (errfirst)
 		add_parts_warnx(device, errfirst, errlast);
+
+	/* the kernel adds *all* loopdev partitions, so we should delete
+	   any extra, unwanted ones, when the -n option is passed */
+	if (loopdev && (lower || upper)) {
+		for (i = 0; i < nparts; i++) {
+			blkid_partition par = blkid_partlist_get_partition(ls, i);
+			int n = blkid_partition_get_partno(par);
+
+			if (n < lower || n > upper)
+				partx_del_partition(fd, n);
+		}
+	}
+
 	return rc;
 }
 
@@ -799,7 +858,20 @@ int main(int argc, char **argv)
 	if (what == ACT_ADD || what == ACT_DELETE) {
 		struct stat x;
 
-		if (stat(wholedisk, &x) || !S_ISBLK(x.st_mode))
+		if (stat(wholedisk, &x))
+			errx(EXIT_FAILURE, "%s", wholedisk);
+
+		if  (S_ISREG(x.st_mode)) {
+			/* not a blkdev, try to associate it to a loop device */
+			if (what == ACT_DELETE)
+				errx(EXIT_FAILURE, _("%s: cannot delete partitions"),
+				     wholedisk);
+			if (!loopmod_supports_parts())
+				errx(EXIT_FAILURE, _("%s: partitioned loop devices unsupported"),
+				     wholedisk);
+			assoc_loopdev(wholedisk);
+			wholedisk = xstrdup(lc.device);
+		} else if (!S_ISBLK(x.st_mode))
 			errx(EXIT_FAILURE, _("%s: not a block device"), wholedisk);
 	}
 	if ((fd = open(wholedisk, O_RDONLY)) == -1)
@@ -844,6 +916,9 @@ int main(int argc, char **argv)
 		}
 		blkid_free_probe(pr);
 	}
+
+	if (loopdev)
+		loopcxt_deinit(&lc);
 
 	close(fd);
 	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
