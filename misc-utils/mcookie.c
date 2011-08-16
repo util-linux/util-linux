@@ -63,14 +63,15 @@ static off_t hash_file(struct MD5Context *ctx, int fd)
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out, _("Usage: %s [options]\n"),
-		program_invocation_short_name);
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [options]\n"), program_invocation_short_name);
 
-	fprintf(out, _("\nOptions:\n"
-		       " -f, --file=FILE  use file as a cookie seed\n"
-		       " -v, --verbose    explain what is being done\n"
-		       " -V, --version    output version information and exit\n"
-		       " -h, --help       display this help and exit\n"));
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -f, --file <file> use file as a cookie seed\n"
+		" -v, --verbose     explain what is being done\n"
+		" -V, --version     output version information and exit\n"
+		" -h, --help        display this help and exit\n\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
