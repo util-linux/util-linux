@@ -61,14 +61,15 @@ static int do_rename(char *from, char *to, char *s, int verbose)
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
+	fputs(_("\nUsage:\n"), out);
 	fprintf(out,
-		_("Usage: %s [options] expression replacement file...\n"),
+	      _(" %s [options] expression replacement file...\n"),
 		program_invocation_short_name);
 
-	fprintf(out, _("\nOptions:\n"
-                       " -v, --verbose    explain what is being done\n"
-		       " -V, --version    output version information and exit\n"
-		       " -h, --help       display this help and exit\n\n"));
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -v, --verbose    explain what is being done\n"
+		" -V, --version    output version information and exit\n"
+		" -h, --help       display this help and exit\n\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
