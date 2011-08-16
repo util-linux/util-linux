@@ -300,16 +300,17 @@ strtoll_offset(const char *str)
 static void __attribute__((__noreturn__))
 usage(FILE *out)
 {
-	fprintf(out, _("Usage: %s [options] <device>\n\nOptions:\n"),
-			program_invocation_short_name);
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [options] <device>\n"), program_invocation_short_name);
 
-	fprintf(out, _(
-	" -a, --all           wipe all magic strings (BE CAREFUL!)\n"
-	" -h, --help          show this help text\n"
-	" -n, --no-act        do everything except the actual write() call\n"
-	" -o, --offset <num>  offset to erase, in bytes\n"
-	" -p, --parsable      print out in parsable instead of printable format\n"
-	" -V, --version       output version information and exit\n"));
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -a, --all           wipe all magic strings (BE CAREFUL!)\n"
+		" -h, --help          show this help text\n"
+		" -n, --no-act        do everything except the actual write() call\n"
+		" -o, --offset <num>  offset to erase, in bytes\n"
+		" -p, --parsable      print out in parsable instead of printable format\n"
+		" -V, --version       output version information and exit\n"), out);
 
 	fprintf(out, _("\nFor more information see wipefs(8).\n"));
 

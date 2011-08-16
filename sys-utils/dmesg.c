@@ -129,39 +129,38 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	size_t i;
 
-	fprintf(out, _(
-		"\nUsage:\n"
-		" %s [options]\n"), program_invocation_short_name);
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [options]\n"), program_invocation_short_name);
 
-	fprintf(out, _(
-		"\nOptions:\n"
-		" -C, --clear               clear the kernel ring buffer\n"
-		" -c, --read-clear          read and clear all messages\n"
-		" -D, --console-off         disable printing messages to console\n"
-		" -d, --show-delta          show time delta between printed messages\n"
-		" -E, --console-on          enable printing messages to console\n"
-		" -f, --facility=LIST       restrict output to defined facilities\n"
-		" -h, --help                display this help and exit\n"
-		" -k, --kernel              display kernel messages\n"
-		" -l, --level=LIST          restrict output to defined levels\n"
-		" -n, --console-level=LEVEL set level of messages printed to console\n"
-		" -r, --raw                 print the raw message buffer\n"
-		" -s, --buffer-size=SIZE    buffer size to query the kernel ring buffer\n"
-		" -T, --ctime               show human readable timestamp (could be \n"
-		"                           inaccurate if you have used SUSPEND/RESUME)\n"
-		" -t, --notime              don't print messages timestamp\n"
-		" -u, --userspace           display userspace messages\n"
-		" -V, --version             output version information and exit\n"
-		" -x, --decode              decode facility and level to readable string\n\n"));
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -C, --clear                 clear the kernel ring buffer\n"
+		" -c, --read-clear            read and clear all messages\n"
+		" -D, --console-off           disable printing messages to console\n"
+		" -d, --show-delta            show time delta between printed messages\n"
+		" -E, --console-on            enable printing messages to console\n"
+		" -f, --facility <list>       restrict output to defined facilities\n"
+		" -h, --help                  display this help and exit\n"
+		" -k, --kernel                display kernel messages\n"
+		" -l, --level <list>          restrict output to defined levels\n"
+		" -n, --console-level <level> set level of messages printed to console\n"
+		" -r, --raw                   print the raw message buffer\n"
+		" -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"
+		" -T, --ctime                 show human readable timestamp (could be \n"
+		"                             inaccurate if you have used SUSPEND/RESUME)\n"
+		" -t, --notime                don't print messages timestamp\n"
+		" -u, --userspace             display userspace messages\n"
+		" -V, --version               output version information and exit\n"
+		" -x, --decode                decode facility and level to readable string\n"), out);
 
-	fprintf(out, _("Supported log facilities:\n"));
+	fputs(_("\nSupported log facilities:\n"), out);
 	for (i = 0; i < ARRAY_SIZE(level_names); i++) {
 		fprintf(stderr, " %7s - %s\n",
 				facility_names[i].name,
 				_(facility_names[i].help));
 	}
 
-	fprintf(out, _("\nSupported log levels (priorities):\n"));
+	fputs(_("\nSupported log levels (priorities):\n"), out);
 	for (i = 0; i < ARRAY_SIZE(level_names); i++) {
 		fprintf(stderr, " %7s - %s\n",
 				level_names[i].name,
