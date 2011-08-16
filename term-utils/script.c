@@ -127,21 +127,20 @@ die_if_link(char *fn) {
 static void __attribute__((__noreturn__))
 usage(FILE *out)
 {
-	fprintf(out, _(
-		"\nUsage:\n"
-		" %s [options] [file]\n"), program_invocation_short_name);
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [options] [file]\n"), program_invocation_short_name);
 
-	fprintf(out, _(
-		"\nOptions:\n"
-		" -a, --append            append the output\n"
-		" -c, --command COMMAND   run COMMAND rather than interactive shell\n"
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -a, --append            append the output\n"
+		" -c, --command <command> run command rather than interactive shell\n"
 		" -r, --return            return exit code of the child process\n"
 		" -f, --flush             run flush after each write\n"
 		"     --force             use output file even when it is a link\n"
 		" -q, --quiet             be quiet\n"
-		" -t, --timing[=FILE]     output timing data to stderr (or to FILE)\n"
+		" -t, --timing[=<file>]   output timing data to stderr (or to FILE)\n"
 		" -V, --version           output version information and exit\n"
-		" -h, --help              display this help and exit\n\n"));
+		" -h, --help              display this help and exit\n\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
