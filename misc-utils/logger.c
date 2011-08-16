@@ -135,26 +135,22 @@ mysyslog(int fd, int logflags, int pri, char *tag, char *msg) {
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
+	fputs(_("\nUsage:\n"), out);
 	fprintf(out,
-		_("\nUsage:\n"
-		  "  %s [options] [message]\n"),
-		  program_invocation_short_name);
+	      _(" %s [options] [message]\n"), program_invocation_short_name);
 
-	fprintf(out, _(
-		"\nOptions:\n"
-		"  -d, --udp            use UDP (TCP is default)\n"
-		"  -i, --id             log the process ID too\n"
-		"  -f, --file FILE      log the contents of this file\n"
-		"  -h, --help           display this help text and exit\n"));
-	fprintf(out, _(
-		"  -n, --server NAME    write to this remote syslog server\n"
-		"  -P, --port NUMBER    use this UDP port\n"
-		"  -p, --priority PRIO  mark given message with this priority\n"
-		"  -s, --stderr         output message to standard error as well\n"));
-	fprintf(out, _(
-		"  -t, --tag TAG        mark every line with this tag\n"
-		"  -u, --socket SOCKET  write to this Unix socket\n"
-		"  -V, --version        output version information and exit\n\n"));
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -d, --udp             use UDP (TCP is default)\n"
+		" -i, --id              log the process ID too\n"
+		" -f, --file <file>     log the contents of this file\n"
+		" -h, --help            display this help text and exit\n"), out);
+	fputs(_(" -n, --server <name>   write to this remote syslog server\n"
+		" -P, --port <number>   use this UDP port\n"
+		" -p, --priority <prio> mark given message with this priority\n"
+		" -s, --stderr          output message to standard error as well\n"), out);
+	fputs(_(" -t, --tag <tag>       mark every line with this tag\n"
+		" -u, --socket <socket> write to this Unix socket\n"
+		" -V, --version         output version information and exit\n\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
