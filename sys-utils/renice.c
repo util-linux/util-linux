@@ -51,23 +51,22 @@ static int donice(int,int,int);
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out, _(
-		"\nUsage:\n"
-		" %1$s [-n] <priority> [-p] <pid> [<pid>  ...]\n"
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %1$s [-n] <priority> [-p] <pid> [<pid>  ...]\n"
 		" %1$s [-n] <priority>  -g <pgrp> [<pgrp> ...]\n"
 		" %1$s [-n] <priority>  -u <user> [<user> ...]\n"),
 		program_invocation_short_name);
 
-	fprintf(out, _(
-		"\nOptions:\n"
-		" -g, --pgrp <id>        interpret as process group ID\n"
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -g, --pgrp <id>        interpret as process group ID\n"
 		" -h, --help             print help\n"
 		" -n, --priority <num>   set the nice increment value\n"
 		" -p, --pid <id>         force to be interpreted as process ID\n"
 		" -u, --user <name|id>   interpret as username or user ID\n"
-		" -v, --version          print version\n"));
+		" -v, --version          print version\n"), out);
 
-	fprintf(out, _("\nFor more information see renice(1).\n"));
+	fputs(_("\nFor more information see renice(1).\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
