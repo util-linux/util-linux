@@ -1010,28 +1010,30 @@ find_loopdev_by_backing_file(const char *filename, char **loopdev)
 #include <stdarg.h>
 
 static void
-usage(FILE *f) {
-	fprintf(f, _("\nUsage:\n"
-  " %1$s loop_device                             give info\n"
-  " %1$s -a | --all                              list all used\n"
-  " %1$s -d | --detach <loopdev> [<loopdev> ...] delete\n"
-  " %1$s -f | --find                             find unused\n"
-  " %1$s -c | --set-capacity <loopdev>           resize\n"
-  " %1$s -j | --associated <file> [-o <num>]     list all associated with <file>\n"
-  " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"),
-		progname);
+usage(FILE *out) {
 
-	fprintf(f, _("\nOptions:\n"
-  " -e | --encryption <type> enable data encryption with specified <name/num>\n"
-  " -h | --help              this help\n"
-  " -o | --offset <num>      start at offset <num> into file\n"
-  "      --sizelimit <num>   loop limited to only <num> bytes of the file\n"
-  " -p | --pass-fd <num>     read passphrase from file descriptor <num>\n"
-  " -r | --read-only         setup read-only loop device\n"
-  "      --show              print device name (with -f <file>)\n"
-  " -v | --verbose           verbose mode\n\n"));
+  fputs(_("\nUsage:\n"), out);
+  fprintf(out,
+	_(" %1$s loop_device                             give info\n"
+	  " %1$s -a | --all                              list all used\n"
+	  " %1$s -d | --detach <loopdev> [<loopdev> ...] delete\n"
+	  " %1$s -f | --find                             find unused\n"
+	  " %1$s -c | --set-capacity <loopdev>           resize\n"
+	  " %1$s -j | --associated <file> [-o <num>]     list all associated with <file>\n"
+	  " %1$s [options] {-f|--find|loopdev} <file>    setup\n"),
+	progname);
 
-	exit(f == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+  fputs(_("\nOptions:\n"), out);
+  fputs(_(" -e, --encryption <type> enable data encryption with specified <name/num>\n"
+	  " -h, --help              this help\n"
+	  " -o, --offset <num>      start at offset <num> into file\n"
+	  "     --sizelimit <num>   loop limited to only <num> bytes of the file\n"
+	  " -p, --pass-fd <num>     read passphrase from file descriptor <num>\n"
+	  " -r, --read-only         setup read-only loop device\n"
+	  "     --show              print device name (with -f <file>)\n"
+	  " -v, --verbose           verbose mode\n\n"), out);
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
  }
 
 int
