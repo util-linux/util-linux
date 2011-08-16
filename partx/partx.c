@@ -578,14 +578,13 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	int i;
 
-	fprintf(out, _(
-		"\nUsage:\n"
-		" %s [-a|-d|-s] [--nr <N:M> | <partition>] <disk>\n"),
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [-a|-d|-s] [--nr <N:M> | <partition>] <disk>\n"),
 		program_invocation_short_name);
 
-	fprintf(out, _(
-		"\nOptions:\n"
-		" -a, --add            add specified partitions or all of them\n"
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -a, --add            add specified partitions or all of them\n"
 		" -d, --delete         delete specified partitions or all of them\n"
 		" -l, --list           list partitions (DEPRECATED)\n"
 		" -s, --show           list partitions\n\n"
@@ -597,9 +596,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -t, --type <TYPE>    specify the partition type (dos, bsd, solaris, etc.)\n"
 		" -n, --nr <M:N>       specify the range of partitions (e.g. --nr 2:4)\n"
 		" -o, --output <LIST>  define which output columns to use\n"
-		" -h, --help           print this help\n\n"));
+		" -h, --help           print this help\n"), out);
 
-	fprintf(out, _("\nAvailable columns (for --show, --raw or --pairs):\n"));
+	fputs(_("\nAvailable columns (for --show, --raw or --pairs):\n"), out);
 
 	for (i = 0; i < __NCOLUMNS; i++)
 		fprintf(out, " %10s  %s\n", infos[i].name, _(infos[i].help));
