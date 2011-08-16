@@ -398,5 +398,6 @@ function ts_fdisk_clean {
 	[ x"${DEVNAME}" != x"" ] && sed -i -e "s/\/dev\/${DEVNAME}/\/dev\/.../g" $TS_OUTPUT
 	sed -i -e 's/Disk identifier:.*//g' \
 	       -e 's/Building a new.*//g' \
+	       -e 's/Welcome to fdisk.*//g' \
 	       $TS_OUTPUT
 }
