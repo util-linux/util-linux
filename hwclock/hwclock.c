@@ -1371,56 +1371,49 @@ static void usage(const char *fmt, ...)
 
 	usageto = fmt ? stderr : stdout;
 
-	fprintf(usageto,
-		_("Usage: hwclock [function] [option...]\n\n"
-		  "Query or set the hardware clock (the RTC).\n\n"));
-	fprintf(usageto,
-		_( "Functions:\n"
-		  "  -h | --help         show this help text and exit\n"
-		  "  -r | --show         read hardware clock and print result\n"
-		  "       --set          set the RTC to the time given with --date\n"));
-	fprintf(usageto,
-		_("  -s | --hctosys      set the system time from the hardware clock\n"
-		  "  -w | --systohc      set the hardware clock from the current system time\n"
-		  "       --systz        set the system time based on the current timezone\n"
-		  "       --adjust       adjust the RTC to account for systematic drift since\n"
-		  "                        the clock was last set or adjusted\n"));
+	fputs(_("\nUsage:\n"), usageto);
+	fputs(_(" hwclock [function] [option...]\n"), usageto);
+
+	fputs(_("\nFunctions:\n"), usageto);
+	fputs(_(" -h, --help         show this help text and exit\n"
+		" -r, --show         read hardware clock and print result\n"
+		"     --set          set the RTC to the time given with --date\n"), usageto);
+	fputs(_(" -s, --hctosys      set the system time from the hardware clock\n"
+		" -w, --systohc      set the hardware clock from the current system time\n"
+		"     --systz        set the system time based on the current timezone\n"
+		"     --adjust       adjust the RTC to account for systematic drift since\n"
+		"                      the clock was last set or adjusted\n"), usageto);
 #ifdef __linux__
-	fprintf(usageto,
-		_("       --getepoch     print out the kernel's hardware clock epoch value\n"
-		  "       --setepoch     set the kernel's hardware clock epoch value to the \n"
-		  "                        value given with --epoch\n"));
+	fputs(_("     --getepoch     print out the kernel's hardware clock epoch value\n"
+		"     --setepoch     set the kernel's hardware clock epoch value to the \n"
+		"                      value given with --epoch\n"), usageto);
 #endif
-	fprintf(usageto,
-		_("       --predict      predict RTC reading at time given with --date\n"
-		  "  -V | --version      display version information and exit\n"));
-	fprintf(usageto,
-		_("\nOptions:\n"
-		  "  -u | --utc          the hardware clock is kept in UTC\n"
-		  "       --localtime    the hardware clock is kept in local time\n"));
+	fputs(_("     --predict      predict RTC reading at time given with --date\n"
+		" -V, --version      display version information and exit\n"), usageto);
+
+	fputs(_("\nOptions:\n"), usageto);
+	fputs(_(" -u, --utc          the hardware clock is kept in UTC\n"
+		"     --localtime    the hardware clock is kept in local time\n"), usageto);
 #ifdef __linux__
-	fprintf(usageto,
-		_("  -f | --rtc=path     special /dev/... file to use instead of default\n"));
+	fputs(_(" -f, --rtc=path     special /dev/... file to use instead of default\n"), usageto);
 #endif
-	fprintf(usageto,
-		_("       --directisa    access the ISA bus directly instead of %s\n"
-		  "       --badyear      ignore RTC's year because the BIOS is broken\n"
-		  "       --date=time    specifies the time to which to set the hardware clock\n"
-		  "       --epoch=year   specifies the year which is the beginning of the\n"
-		  "                        hardware clock's epoch value\n"), _PATH_RTC_DEV);
-	fprintf(usageto,
-		_("       --noadjfile    do not access %s; this requires the use of\n"
-		  "                        either --utc or --localtime\n"
-		  "       --adjfile=path specifies the path to the adjust file;\n"
-		  "                        the default is %s\n"), _PATH_ADJPATH, _PATH_ADJPATH);
-	fprintf(usageto,
-		_("       --test         do not update anything, just show what would happen\n"
-		  "  -D | --debug        debugging mode\n" "\n"));
+	fprintf(usageto, _(
+		"     --directisa    access the ISA bus directly instead of %s\n"
+		"     --badyear      ignore RTC's year because the BIOS is broken\n"
+		"     --date=time    specifies the time to which to set the hardware clock\n"
+		"     --epoch=year   specifies the year which is the beginning of the\n"
+		"                      hardware clock's epoch value\n"), _PATH_RTC_DEV);
+	fprintf(usageto, _(
+		"     --noadjfile    do not access %s; this requires the use of\n"
+		"                      either --utc or --localtime\n"
+		"     --adjfile=path specifies the path to the adjust file;\n"
+		"                      the default is %s\n"), _PATH_ADJPATH, _PATH_ADJPATH);
+	fputs(_("     --test         do not update anything, just show what would happen\n"
+		" -D, --debug        debugging mode\n" "\n"), usageto);
 #ifdef __alpha__
-	fprintf(usageto,
-		_("  -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
-		  "       tell hwclock the type of Alpha you have (see hwclock(8))\n"
-		  "\n"));
+	fputs(_(" -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
+		"      tell hwclock the type of Alpha you have (see hwclock(8))\n"
+		 "\n"), usageto);
 #endif
 
 	fflush(usageto);
