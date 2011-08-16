@@ -783,18 +783,20 @@ center(str, len, separate)
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out, _("Usage: %s [options] [[[day] month] year]\n"),
-		program_invocation_short_name);
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [options] [[[day] month] year]\n"),
+			program_invocation_short_name);
 
-	fprintf(out, _("\nOptions:\n"
-		       " -1, --one        show only current month (default)\n"
-		       " -3, --three      show previous, current and next month\n"
-		       " -s, --sunday     Sunday as first day of week\n"
-		       " -m, --monday     Monday as first day of week\n"
-		       " -j, --julian     output Julian dates\n"
-		       " -y, --year       show whole current year\n"
-		       " -V, --version    display version information and exit\n"
-		       " -h, --help       display this help text and exit\n\n"));
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -1, --one        show only current month (default)\n"
+	        " -3, --three      show previous, current and next month\n"
+		" -s, --sunday     Sunday as first day of week\n"
+		" -m, --monday     Monday as first day of week\n"
+		" -j, --julian     output Julian dates\n"
+		" -y, --year       show whole current year\n"
+		" -V, --version    display version information and exit\n"
+		" -h, --help       display this help text and exit\n\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
