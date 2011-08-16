@@ -54,17 +54,18 @@ static void usage(int status)
 {
 	FILE *out = status == EXIT_SUCCESS ? stdout : stderr;
 
-	fprintf(out, _("Usage: %s [options] <program> [args...]\n"),
-		program_invocation_short_name);
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [options] <program> [args...]\n"),	program_invocation_short_name);
 
-	fputs(_("Run program with some namespaces unshared from parent\n\n"
-		"  -h, --help        usage information (this)\n"
-		"  -m, --mount       unshare mounts namespace\n"
-		"  -u, --uts         unshare UTS namespace (hostname etc)\n"
-		"  -i, --ipc         unshare System V IPC namespace\n"
-		"  -n, --net         unshare network namespace\n"), out);
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -h, --help        usage information (this)\n"
+		" -m, --mount       unshare mounts namespace\n"
+		" -u, --uts         unshare UTS namespace (hostname etc)\n"
+		" -i, --ipc         unshare System V IPC namespace\n"
+		" -n, --net         unshare network namespace\n"), out);
 
-	fprintf(out, _("\nFor more information see unshare(1).\n"));
+	fputs(_("\nFor more information see unshare(1).\n"), out);
 	exit(status);
 }
 
