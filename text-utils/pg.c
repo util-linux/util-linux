@@ -275,7 +275,7 @@ static int
 outcap(int i)
 {
 	char c = i;
-	return write_all(1, &c, 1);
+	return write_all(1, &c, 1) == 0 ? 1 : -1;
 }
 
 /*
