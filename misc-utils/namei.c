@@ -400,28 +400,29 @@ print_namei(struct namei *nm, char *path)
 	return 0;
 }
 
-static void
-usage(int rc)
+static void usage(int rc)
 {
 	const char *p = program_invocation_short_name;
+	FILE *out = rc == EXIT_FAILURE ? stderr : stdout;
 
 	if (!*p)
 		p = "namei";
 
-	printf(_("\nUsage: %s [options] pathname [pathname ...]\n"), p);
-	printf(_("\nOptions:\n"));
+	fputs(_("\nUsage:\n"), out);
+	fprintf(out,
+	      _(" %s [options] pathname [pathname ...]\n"), p);
 
-	printf(_(
-	" -h, --help          displays this help text\n"
-	" -V, --version       output version information and exit\n"
-	" -x, --mountpoints   show mount point directories with a 'D'\n"
-	" -m, --modes         show the mode bits of each file\n"
-	" -o, --owners        show owner and group name of each file\n"
-	" -l, --long          use a long listing format (-m -o -v) \n"
-	" -n, --nosymlinks    don't follow symlinks\n"
-	" -v, --vertical      vertical align of modes and owners\n"));
+	fputs(_("\nOptions:\n"), out);
+	fputs(_(" -h, --help          displays this help text\n"
+		" -V, --version       output version information and exit\n"
+		" -x, --mountpoints   show mount point directories with a 'D'\n"
+		" -m, --modes         show the mode bits of each file\n"
+		" -o, --owners        show owner and group name of each file\n"
+		" -l, --long          use a long listing format (-m -o -v) \n"
+		" -n, --nosymlinks    don't follow symlinks\n"
+		" -v, --vertical      vertical align of modes and owners\n"), out);
 
-	printf(_("\nFor more information see namei(1).\n"));
+	fputs(_("\nFor more information see namei(1).\n"), out);
 	exit(rc);
 }
 
