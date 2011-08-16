@@ -189,9 +189,7 @@ void create_sunlabel(void)
 	int res;
 
 	fprintf(stderr,
-	_("Building a new sun disklabel. Changes will remain in memory only,\n"
-       	"until you decide to write them. After that, of course, the previous\n"
-	"content won't be recoverable.\n\n"));
+	_("Building a new Sun disklabel.\n"));
 #if BYTE_ORDER == LITTLE_ENDIAN
 	other_endian = 1;
 #else

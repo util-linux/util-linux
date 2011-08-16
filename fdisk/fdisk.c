@@ -932,11 +932,7 @@ static void
 create_doslabel(void) {
 	unsigned int id = get_random_id();
 
-	fprintf(stderr,
-	_("Building a new DOS disklabel with disk identifier 0x%08x.\n"
-	  "Changes will remain in memory only, until you decide to write them.\n"
-	  "After that, of course, the previous content won't be recoverable.\n\n"),
-		id);
+	fprintf(stderr, _("Building a new DOS disklabel with disk identifier 0x%08x.\n"), id);
 	sun_nolabel();  /* otherwise always recognised as sun */
 	sgi_nolabel();  /* otherwise always recognised as sgi */
 	disklabel = DOS_LABEL;
@@ -3092,6 +3088,10 @@ main(int argc, char **argv) {
 		/* If we return we may want to make an empty DOS label? */
 		disklabel = DOS_LABEL;
 	}
+
+	fprintf(stderr, _("Welcome to fdisk (%s).\n\n"
+		"Changes will remain in memory only, until you decide to write them.\n"
+		"Be careful before using the write command.\n"), PACKAGE_STRING);
 
 	while (1) {
 		putchar('\n');

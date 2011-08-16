@@ -698,9 +698,7 @@ create_sgilabel(void)
 	sec_fac = sector_size / 512;	/* determine the sector factor */
 
 	fprintf(stderr,
-		_("Building a new SGI disklabel. Changes will remain in memory only,\n"
-		  "until you decide to write them. After that, of course, the previous\n"
-		  "content will be unrecoverably lost.\n\n"));
+		_("Building a new SGI disklabel.\n"));
 
 	other_endian = (BYTE_ORDER == LITTLE_ENDIAN);
 
