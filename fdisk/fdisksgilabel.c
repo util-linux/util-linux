@@ -570,6 +570,8 @@ sgi_set_partition(int i, unsigned int start, unsigned int length, int sys) {
 	set_changed(i);
 	if (sgi_gaps() < 0)	/* rebuild freelist */
 		printf(_("Do You know, You got a partition overlap on the disk?\n"));
+	if (length)
+		print_partition_size(i + 1, start, start + length, sys);
 }
 
 static void
@@ -733,13 +735,18 @@ create_sgilabel(void)
 				old[i].sysid = get_part_table(i)->sys_ind;
 				old[i].start = get_start_sect(get_part_table(i));
 				old[i].nsect = get_nr_sects(get_part_table(i));
-				printf(_("Trying to keep parameters of partition %d.\n"), i);
 				if (debug)
 					printf(_("ID=%02x\tSTART=%d\tLENGTH=%d\n"),
 					       old[i].sysid, old[i].start, old[i].nsect);
 			}
 		}
 	}
+
+	for (i = 0; i < 4; i++)
+		if (old[i].sysid) {
+			printf(_("Trying to keep parameters of partitions already set.\n"));
+			break;
+		}
 
 	zeroize_mbr_buffer();
 	sgilabel->magic = SSWAP32(SGI_LABEL_MAGIC);

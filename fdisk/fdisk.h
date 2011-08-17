@@ -75,6 +75,7 @@ extern struct partition *get_part_table(int);
 extern int valid_part_table_flag(unsigned char *b);
 extern unsigned int read_int(unsigned int low, unsigned int dflt,
 			     unsigned int high, unsigned int base, char *mesg);
+extern void print_partition_size(int num, unsigned long long start, unsigned long long stop, int sysid);
 
 extern unsigned char *MBRbuffer;
 extern void zeroize_mbr_buffer(void);

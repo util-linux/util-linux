@@ -106,6 +106,7 @@ static void set_sun_partition(int i, uint32_t start, uint32_t stop, uint16_t sys
 	sunlabel->partitions[i].num_sectors =
 		SSWAP32(stop - start);
 	set_changed(i);
+	print_partition_size(i + 1, start, stop, sysid);
 }
 
 void sun_nolabel(void)
@@ -249,6 +250,9 @@ void create_sunlabel(void)
 	        ndiv = cylinders - (50 * 2048 / (heads * sectors)); /* 50M swap */
 	} else
 	        ndiv = cylinders * 2 / 3;
+
+	/* Make sure print_partition_size() uses correct sysid names */
+	disklabel = SUN_LABEL;
 
 	set_sun_partition(0, 0, ndiv * heads * sectors,
 			  SUN_TAG_LINUX_NATIVE);

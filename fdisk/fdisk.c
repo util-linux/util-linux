@@ -32,6 +32,7 @@
 #include "wholedisk.h"
 #include "pathnames.h"
 #include "canonicalize.h"
+#include "strutils.h"
 
 #include "fdisksunlabel.h"
 #include "fdisksgilabel.h"
@@ -614,6 +615,10 @@ set_partition(int i, int doext, unsigned long long start,
 	p->sys_ind = sysid;
 	set_start_sect(p, start - offset);
 	set_nr_sects(p, stop - start + 1);
+
+	if (!doext)
+		print_partition_size(i + 1, start, stop, sysid);
+
 	if (dos_compatible_flag && (start/(sectors*heads) > 1023))
 		start = heads*sectors*1024 - 1;
 	set_hsc(p->head, p->sector, p->cyl, start);
@@ -2317,6 +2322,14 @@ get_unused_start(int part_n,
 	}
 
 	return start;
+}
+
+void print_partition_size(int num, unsigned long long start, unsigned long long stop, int sysid)
+{
+	char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
+				     (stop - start + 1) * sector_size);
+	printf(_("Partition %d of type %s and of size %s is set\n"), num, partition_type(sysid), str);
+	free(str);
 }
 
 static void
