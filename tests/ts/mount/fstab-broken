@@ -37,7 +37,7 @@ ts_init_subtest "mount"
 $TS_CMD_MOUNT $MNT &> /dev/null
 $TS_CMD_FINDMNT --kernel --target "$MNT" &> /dev/null
 if [ "$?" != "0" ]; then
-	ts_log "Cannot found $MNT in /proc/self/mountinfo"
+	ts_log "Cannot find $MNT in /proc/self/mountinfo"
 else
 	ts_log "OK"
 fi
@@ -49,7 +49,7 @@ ts_init_subtest "mount-all"
 $TS_CMD_MOUNT -a &> /dev/null
 $TS_CMD_FINDMNT --kernel --target "$MNT" &> /dev/null
 if [ "$?" != "0" ]; then
-	ts_log "Cannot found $MNT in /proc/self/mountinfo"
+	ts_log "Cannot find $MNT in /proc/self/mountinfo"
 else
 	ts_log "OK"
 fi

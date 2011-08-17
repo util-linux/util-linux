@@ -37,7 +37,7 @@ modprobe scsi_debug dev_size_mb=50 sector_size=512
 sleep 3
 
 DEVNAME=$(grep scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
-[ "x${DEVNAME}" == "x" ] && ts_die "Cannot found device"
+[ "x${DEVNAME}" == "x" ] && ts_die "Cannot find device"
 
 DEVICE="/dev/${DEVNAME}"
 
