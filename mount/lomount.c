@@ -1134,7 +1134,8 @@ main(int argc, char **argv) {
 		if (capacity || all || assoc || argc < optind || argc > optind+1)
 			usage(stderr);
 	} else if (all) {
-		if (argc > 2)
+		/* only -v is allowed */
+		if ((argc == 3 && verbose == 0) || argc > 3)
 			usage(stderr);
 	} else if (assoc) {
 		if (capacity || encryption || showdev || passfd || ro)
