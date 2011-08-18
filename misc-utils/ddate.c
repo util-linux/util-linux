@@ -249,7 +249,8 @@ void format(char *buf, const char* fmt, struct disc_time dt)
     for(i=0; i<fmtlen; i++) {
 	if((i==tib_start) && (dt.day==-1)) {
 	    /* handle St. Tib's Day */
-	    strcpy(bufptr, _("St. Tib's Day")); bufptr += 13;
+	    strcpy(bufptr, _("St. Tib's Day"));
+	    bufptr += strlen(bufptr);
 	    i=tib_end;
 	} else {
 	    if(fmt[i]=='%') {
