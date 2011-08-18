@@ -25,9 +25,9 @@
 .\" 2002-05-11 Robert Love <rml@tech9.net>
 .\" 	Initial version
 .\"
-.TH CHRT "1" "June 2010" "schedutils" "Linux User's Manual"
+.TH CHRT 1 "June 2010" "util-linux" "User Commands"
 .SH NAME
-chrt \- manipulate real-time attributes of a process
+chrt \- manipulate the real-time attributes of a process
 .SH SYNOPSIS
 .B chrt
 .RI [ options ]\  prio
@@ -39,7 +39,7 @@ chrt \- manipulate real-time attributes of a process
 .RI [ prio ]\  pid
 .SH DESCRIPTION
 .PP
-.BR chrt
+.B chrt
 sets or retrieves the real-time scheduling attributes of an existing \fIpid\fR,
 or runs \fIcommand\fR with the given attributes.  Both policy (one of
 .BR SCHED_OTHER ,
