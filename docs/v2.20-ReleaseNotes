@@ -1,6 +1,8 @@
 Util-linux 2.20 Release Notes
 =============================
 
+ The ddate(1) command is not build by default (see --enable-ddate).
+
 Release highlights
 ------------------
 
