@@ -6,7 +6,7 @@ bin_PROGRAMS =
 sbin_PROGRAMS =
 usrsbin_exec_PROGRAMS =
 
-usrbin_exec_PROGRAMS = cal ddate logger look mcookie namei whereis 
+usrbin_exec_PROGRAMS = cal logger look mcookie namei whereis
 
 EXTRA_DIST += README.cal README.ddate
 
@@ -17,10 +17,15 @@ usrbin_exec_SCRIPTS = chkdupexe
 
 CLEANFILES = chkdupexe
 
-dist_man_MANS = cal.1 chkdupexe.1 ddate.1 logger.1 look.1 mcookie.1 \
+dist_man_MANS = cal.1 chkdupexe.1 logger.1 look.1 mcookie.1 \
 		namei.1 whereis.1
 
 namei_SOURCES = namei.c $(top_srcdir)/lib/strutils.c
+
+if BUILD_DDATE
+usrbin_exec_PROGRAMS += ddate
+dist_man_MANS += ddate.1
+endif
 
 if BUILD_LIBUUID
 usrbin_exec_PROGRAMS += uuidgen
