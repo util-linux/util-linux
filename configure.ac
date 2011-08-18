@@ -371,7 +371,7 @@ AM_CONDITIONAL(BUILD_FSCK, test "x$enable_fsck" = xyes)
 
 
 AC_ARG_ENABLE([partx],
-  AS_HELP_STRING([--enable-partx], [build addpart, delpart, partx]),
+  AS_HELP_STRING([--disable-partx], [do not build addpart, delpart, partx]),
   [], enable_partx=check
 )
 build_partx=yes
@@ -484,7 +484,7 @@ AM_CONDITIONAL(BUILD_LIBMOUNT_MOUNT, test "x$enable_libmount_mount" = xyes)
 
 
 AC_ARG_ENABLE([mountpoint],
-  AS_HELP_STRING([--disable-mountpoint], [build mountpoint]),
+  AS_HELP_STRING([--disable-mountpoint], [do not build mountpoint]),
   [], enable_mountpoint=check
 )
 
