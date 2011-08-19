@@ -16,63 +16,59 @@ pg \- browse pagewise through text files
 displays a text file on a
 .SM CRT
 one screenful at once.
-After each page, a prompt is displayed. The user may then either press the
+After each page, a prompt is displayed.  The user may then either press the
 newline key to view the next page or one of the keys described below.
 .PP
 If no filename is given on the command line,
-.I pg
+.B pg
 reads from standard input.
-If the standard output is not a terminal,
-.I pg
+If standard output is not a terminal,
+.B pg
 acts like
 .IR cat (1)
 but precedes each file with its name if there is more than one.
 .PP
 If input comes from a pipe,
-.I pg
+.B pg
 stores the data in a buffer file while reading
 to make navigation possible.
 .SH OPTIONS
-.I Pg
+.B pg
 accepts the following options:
 .TP
 .BI \- number
-The number of lines per page. Usually, this is the number of
+The number of lines per page.  Usually, this is the number of
 .SM CRT
-lines
-minus one.
+lines minus one.
 .TP
 .B \-c
-Clear the screen before a page is displayed
+Clear the screen before a page is displayed,
 if the terminfo entry for the terminal provides this capability.
 .TP
 .B \-e
-.I pg
-will not pause and display
+Do not pause and display
 .SM (EOF)
 at the end of a file.
 .TP
 .B \-f
-.I pg
-does not split long lines.
+Do not split long lines.
 .TP
 .B \-n
-Without this option, commands must be terminated by a newline character. With
-this option,
-.I pg
+Without this option, commands must be terminated by a newline character.
+With this option,
+.B pg
 advances once a command letter is entered.
 .TP
 .BI \-p \ string
-Instead of the prompt
-.I " :"
-,
+Instead of the normal prompt
+.IR : ,
 .I string
 is displayed.
 If
 .I string
 contains
-.I %d
-, its first occurrence is replaced by the number of the current page.
+.IR %d ,
+its first occurrence is replaced by the number of the current page.
 .TP
 .B \-r
 Disallow the shell escape.
@@ -80,7 +76,7 @@ Disallow the shell escape.
 .B \-s
 Print messages in
 .I standout
-mode
+mode,
 if the terminfo entry for the terminal provides this capability.
 .TP
 .BI + number
@@ -91,7 +87,7 @@ Start at the line containing the Basic Regular Expression
 .I pattern
 given.
 .SH USAGE
-The following commands may be entered at the prompt. Commands preceded by
+The following commands may be entered at the prompt.  Commands preceded by
 .I i
 in this document accept a number as argument, positive or negative.
 If this argument starts with
@@ -105,7 +101,7 @@ otherwise relative to the beginning.
 Display the next or the indicated page.
 .TP
 \fIi\fR\fBd\fR or \fB^D\fR
-Display the next halfpage. If
+Display the next halfpage.  If
 .I i
 is given, it is always interpreted relative to the current position.
 .TP
@@ -135,9 +131,9 @@ Advance to the last line of the input file.
 Search forward until the first or the \fIi\fR-th
 occurrence of the Basic Regular Expression
 .I pattern
-is found. The search starts
-after the current page and stops at the end of the file. No wrap-around is
-performed.
+is found.  The search starts
+after the current page and stops at the end of the file.
+No wrap-around is performed.
 .I i
 must be a positive number.
 .TP
@@ -145,13 +141,13 @@ must be a positive number.
 Search backward until the first or the \fIi\fR-th
 occurrence of the Basic Regular Expression
 .I pattern
-is found. The search starts
+is found.  The search starts
 before the current page and stops at the beginning of the file.
 No wrap-around is performed.
 .I i
 must be a positive number.
 .PP
-The search commands accept an added letter. If
+The search commands accept an added letter.  If
 .B t
 is given, the line containing the pattern is displayed at the top of the
 screen, which is the default.
@@ -187,17 +183,17 @@ using the shell.
 Quit.
 .PP
 If the user presses the interrupt or quit key while
-.I pg
+.B pg
 reads from the
 input file or writes on the terminal,
-.I pg
+.B pg
 will immediately display the prompt.
 In all other situations these keys will terminate
-.I pg.
+.BR pg .
 .SH "ENVIRONMENT VARIABLES"
 The following environment variables
 affect the behaviour of
-.I pg:
+.BR pg :
 .TP
 .B COLUMNS
 Overrides the system-supplied number of columns if set.
@@ -211,8 +207,7 @@ Overrides the system-supplied number of lines if set.
 .TP
 .B SHELL
 Used by the
-.B !
-command.
+.BR ! " command."
 .TP
 .B TERM
 Determines the terminal type.
@@ -225,13 +220,13 @@ Determines the terminal type.
 .BR regex (7),
 .BR term (7)
 .SH NOTES
-.I pg
-expects the terminal tabulators to set on eight positions.
+.B pg
+expects the terminal tabulators to be set every eight positions.
 .PP
 Files that include
 .SM NUL
 characters cannot be displayed by
-.IR pg .
+.BR pg .
 .SH AVAILABILITY
 The pg command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
