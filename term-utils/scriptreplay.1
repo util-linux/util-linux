@@ -145,6 +145,8 @@ scriptreplay \- play back typescripts, using timing information
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
 .B scriptreplay
+.RI [ options ]
+.RB [ \-t ]
 .I timingfile
 .RI [ typescript
 .RI [ divisor ]]
@@ -165,7 +167,7 @@ which
 .B scriptreplay
 is sending its output.
 .PP
-The timings information is what
+The timing information is what
 .BR script (1)
 outputs to standard error if it is
 run with the
@@ -173,31 +175,33 @@ run with the
 parameter.
 .PP
 By default, the typescript to display is assumed to be named \*(L"typescript\*(R",
-but other filenames may be specified, as the second parameter.
+but other filenames may be specified, as the second parameter or with option
+.BR \-s .
 .PP
-If the third parameter is specified, it is used as a speed-up multiplier. For
-example, a speed-up of 2 makes
+If the third parameter is specified, it is used as a speed-up multiplier.
+For example, a speed-up of 2 makes
 .B scriptreplay
-go twice as fast and a speed-up of 0.1 makes it go ten times slower
+go twice as fast, and a speed-up of 0.1 makes it go ten times slower
 than the original session.
 .SH OPTIONS
-The options will overide old style arguments.
+The first three options will overide old-style arguments.
 .TP
-.BR \-t , " \-\-timing FILE"
+.BR \-t , " \-\-timing " \fIfile\fR
 File containing script timing output.
 .TP
-.BR \-s , " \-\-typescript FILE"
-Script terminal output file.
+.BR \-s , " \-\-typescript " \fIfile\fR
+File containing the script terminal output.
 .TP
-.BR \-d , " \-\-divisor NUM"
-Speed up or slow down replay displaying by divisor. The argument
-is floating point number.
+.BR \-d , " \-\-divisor " \fInumber\fR
+Speed up the replay displaying this \fInumber\fR of times.
+The argument is a floating point number.  It's called divisor
+because it divides the timings by this factor.
 .TP
 .BR \-V , " \-\-version"
-Print version information.
+Display version information and exit.
 .TP
 .BR \-h , " \-\-help"
-Print a help message.
+Display a help message and exit.
 .SH "EXAMPLE"
 .IX Header "EXAMPLE"
 .Vb 7
