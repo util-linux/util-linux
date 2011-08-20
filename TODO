@@ -225,15 +225,6 @@ misc
      - move all mountpoints to the newroot (there are hardcoded /proc /sys and /dev paths now)
      - add --dont-move[=<list of dirs>] options
 
- - use ngettext() for strings with plurals, for example
-
-    /* include/nls.h */
-    #define P_(id, id_plural, n)	ngettext(id, id_plural, n)
-
-    printf(P_("%d used sector",
-              "%d used sectors", sectors),
-              sectors);
-
  - use TZ=UTC and LANG=en_US.UTF-8 for tests
 
  - add mllockall() and SCHED_FIFO to hwclock,
