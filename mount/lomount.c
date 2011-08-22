@@ -285,7 +285,7 @@ name2minor(int hasprefix, const char *name)
 static int
 cmpnum(const void *p1, const void *p2)
 {
-	return (* (int *) p1) > (* (int *) p2);
+	return (*(int *) p1 > *(int *) p2) - (*(int *) p1 < *(int *) p2);
 }
 
 /*
