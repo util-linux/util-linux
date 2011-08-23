@@ -1303,7 +1303,7 @@ partitions_ok(struct disk_desc *z) {
      * The first partition starts after MBR.
      * Logical partitions start slightly after the containing extended partn.
      */
-    if (B.cylindersize) {
+    if (B.cylindersize && !Linux) {
 	for (p = partitions; p < partitions + partno; p++)
 	    if (p->size) {
 		if (p->start % B.cylindersize != 0
@@ -1313,14 +1313,12 @@ partitions_ok(struct disk_desc *z) {
 		    && (p->p.start_sect >= B.cylindersize)) {
 		    my_warn(_("Warning: partition %s does not start "
 			      "at a cylinder boundary\n"), PNO(p));
-		    if (!Linux)
-			return 0;
+		    return 0;
 		}
 		if ((p->start + p->size) % B.cylindersize) {
 		    my_warn(_("Warning: partition %s does not end "
 			      "at a cylinder boundary\n"), PNO(p));
-		    if (!Linux)
-			return 0;
+		    return 0;
 		}
 	    }
     }
@@ -1363,7 +1361,7 @@ partitions_ok(struct disk_desc *z) {
 	    b = p->p.begin_chs;
 	    aa = chs_to_longchs(a);
 	    bb = chs_to_longchs(b);
-	    if (!chs_ok(b, PNO(p), _("start")))
+	    if (!Linux && !chs_ok(b, PNO(p), _("start")))
 		return 0;
 	    if (a.s && !is_equal_chs(a, b))
 		my_warn(_("partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
@@ -1372,7 +1370,7 @@ partitions_ok(struct disk_desc *z) {
 	    b = p->p.end_chs;
 	    aa = chs_to_longchs(a);
 	    bb = chs_to_longchs(b);
-	    if (!chs_ok(b, PNO(p), _("end")))
+	    if (!Linux && !chs_ok(b, PNO(p), _("end")))
 		return 0;
 	    if (a.s && !is_equal_chs(a, b))
 		my_warn(_("partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
@@ -2068,7 +2066,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 
     /* use specified format, but round to cylinders if F_MEGABYTE specified */
     format = 0;
-    if (B.cylindersize && specified_format == F_MEGABYTE)
+    if (B.cylindersize && specified_format == F_MEGABYTE && !Linux)
 	format = F_CYLINDER;
 
     orig = (one_only ? &(oldp.partitions[pno]) : 0);
