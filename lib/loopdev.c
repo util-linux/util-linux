@@ -309,7 +309,8 @@ static int loopiter_set_device(struct loopdev_cxt *lc, const char *device)
 
 static int cmpnum(const void *p1, const void *p2)
 {
-	return (* (int *) p1) > (* (int *) p2);
+	return (((* (int *) p1) > (* (int *) p2)) -
+			((* (int *) p1) < (* (int *) p2)));
 }
 
 /*
