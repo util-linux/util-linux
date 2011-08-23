@@ -792,6 +792,7 @@ AC_CHECK_MEMBERS([struct stat.st_mtim.tv_nsec],,,
 	[#include <sys/stat.h>])
 
 AC_CHECK_DECLS([
+ UNAME26,
  ADDR_NO_RANDOMIZE,
  FDPIC_FUNCPTRS,
  MMAP_PAGE_ZERO,

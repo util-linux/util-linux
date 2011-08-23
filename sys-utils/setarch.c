@@ -38,9 +38,11 @@
 
 #define set_pers(pers) ((long)syscall(SYS_personality, pers))
 
-/* Option --4gb has no equivalent short option, use a non-character as a
-   pseudo short option. */
-#define OPT_4GB (CHAR_MAX+1)
+/* Options without equivalent short options */
+enum {
+	OPT_4GB		= CHAR_MAX + 1,
+	OPT_UNAME26
+};
 
 #define turn_on(_flag, _opts) \
 	do { \
@@ -50,6 +52,9 @@
 	} while(0)
 
 
+#if !HAVE_DECL_UNAME26
+# define UNAME26                 0x0020000
+#endif
 #if !HAVE_DECL_ADDR_NO_RANDOMIZE
 # define ADDR_NO_RANDOMIZE       0x0040000
 #endif
@@ -98,6 +103,7 @@ static const struct option longopts[] =
     { "sticky-timeouts",    0, 0, 'T' },
     { "3gb",                0, 0, '3' },
     { "4gb",                0, 0, OPT_4GB },
+    { "uname-2.6",          0, 0, OPT_UNAME26 },
     { NULL,                 0, 0, 0 }
 };
 
@@ -126,6 +132,9 @@ show_help(void)
    " -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
    " -3, --3gb                limits the used address space to a maximum of 3 GB\n"
    "     --4gb                ignored (for backward compatibility only)\n"));
+
+   printf(_(
+   "     --uname-2.6          turns on UNAME26\n"));
 
   printf(_("\nFor more information see setarch(8).\n"));
   exit(EXIT_SUCCESS);
@@ -306,6 +315,9 @@ int main(int argc, char *argv[])
 	break;
     case OPT_4GB:          /* just ignore this one */
       break;
+    case OPT_UNAME26:
+	turn_on(UNAME26, options);
+	break;
     }
   }
 
