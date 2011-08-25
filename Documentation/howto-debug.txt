@@ -36,3 +36,36 @@ Now external debugging tools can be run on the binary.
 
 Happy hacking!
 Davidlohr Bueso, August 2011
+
+
+The libmount & libblkid
+-----------------------
+
+Both of the libraries can be debugged by setting an environment variable
+consistig a number. The number will be used as a bit mask, so the more 1 the
+greater the debugging level. Seach for `DEBUG' from files
+
+	libblkid/src/blkidP.h
+	libmount/src/mountP.h
+
+to see what the different bit mean. At the time of writing this the following
+enabled full debug.
+
+	export LIBBLKID_DEBUG=0xffff
+	export LIBMOUNT_DEBUG=0xffff
+
+The libblkid reads by default /etc/blkid.conf which can be overriden by the
+environment variable BLKID_CONF. See manual libblkid/libblkid.3 for details
+about the configuration file.
+
+Block device information is normally kept in a cache file /etc/blkid.tab that
+can be overridden by the environment variable BLKID_FILE.
+
+To libmount uses three paths, which can be override by using environment
+variables. Notice that these environment variables are ignored for non-root
+users
+
+	env variable		if not set defaults to
+	LIBMOUNT_FSTAB		/etc/fstab
+	LIBMOUNT_MTAB		/etc/mtab
+	LIBMOUNT_UTAB		/run/mount/utab or /dev/.mount/utab
