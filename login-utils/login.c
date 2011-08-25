@@ -49,10 +49,11 @@
 #include <sys/sysmacros.h>
 #include <linux/major.h>
 #include <netdb.h>
+#include <security/pam_appl.h>
+#include <security/pam_misc.h>
 #ifdef HAVE_LIBAUDIT
 # include <libaudit.h>
 #endif
-
 #ifdef HAVE_CRYPT_H
 #include <crypt.h>
 #endif
@@ -64,19 +65,8 @@
 #include "xalloc.h"
 #include "c.h"
 
-#include <security/pam_appl.h>
-#include <security/pam_misc.h>
 #define PAM_MAX_LOGIN_TRIES	3
-#define PAM_FAIL_CHECK if (retcode != PAM_SUCCESS) { \
-       fprintf(stderr,"\n%s\n",pam_strerror(pamh, retcode)); \
-       syslog(LOG_ERR,"%s",pam_strerror(pamh, retcode)); \
-       pam_end(pamh, retcode); exit(EXIT_FAILURE); \
-   }
-#define PAM_END { \
-	pam_setcred(pamh, PAM_DELETE_CRED); \
-	retcode = pam_close_session(pamh,0); \
-	pam_end(pamh,retcode); \
-}
+#define is_pam_failure(_rc)	((_rc) != PAM_SUCCESS)
 
 #include <lastlog.h>
 
@@ -285,14 +275,26 @@ logaudit(const char *tty, const char *username, const char *hostname,
 #endif /* HAVE_LIBAUDIT */
 
 /* encapsulate stupid "void **" pam_get_item() API */
-int
-get_pam_username(pam_handle_t *pamh, char **name)
+static int loginpam_get_username(pam_handle_t *pamh, char **name)
 {
 	const void *item = (void *) *name;
 	int rc;
 	rc = pam_get_item(pamh, PAM_USER, &item);
 	*name = (char *) item;
 	return rc;
+}
+
+static int loginpam_err(pam_handle_t *pamh, int retcode)
+{
+	const char *msg = pam_strerror(pamh, retcode);
+
+	if (msg) {
+		fprintf(stderr, "\n%s\n", msg);
+		syslog(LOG_ERR, "%s", msg);
+	}
+	pam_end(pamh, retcode);
+	exit(EXIT_FAILURE);
+
 }
 
 /*
@@ -504,12 +506,17 @@ main(int argc, char **argv)
 	       pam_strerror(pamh, retcode));
 	exit(EXIT_FAILURE);
     }
+
     /* hostname & tty are either set to NULL or their correct values,
-       depending on how much we know */
+     * depending on how much we know
+     */
     retcode = pam_set_item(pamh, PAM_RHOST, hostname);
-    PAM_FAIL_CHECK;
+    if (is_pam_failure(retcode))
+	loginpam_err(pamh, retcode);
+
     retcode = pam_set_item(pamh, PAM_TTY, tty_name);
-    PAM_FAIL_CHECK;
+    if (is_pam_failure(retcode))
+	loginpam_err(pamh, retcode);
 
     /*
      * Andrew.Taylor@cal.montage.ca: Provide a user prompt to PAM
@@ -518,7 +525,8 @@ main(int argc, char **argv)
      * (yet).
      */
     retcode = pam_set_item(pamh, PAM_USER_PROMPT, _("login: "));
-    PAM_FAIL_CHECK;
+    if (is_pam_failure(retcode))
+	loginpam_err(pamh, retcode);
 
     if (username) {
 	/* we need't the original username. We have to follow PAM. */
@@ -536,7 +544,7 @@ main(int argc, char **argv)
 	int failcount=0;
 
 	/* if we didn't get a user on the command line, set it to NULL */
-	get_pam_username(pamh, &username);
+	loginpam_get_username(pamh, &username);
 
 	/* there may be better ways to deal with some of these
 	   conditions, but at least this way I don't think we'll
@@ -550,7 +558,7 @@ main(int argc, char **argv)
 	       (retcode == PAM_USER_UNKNOWN) ||
 	       (retcode == PAM_CRED_INSUFFICIENT) ||
 	       (retcode == PAM_AUTHINFO_UNAVAIL))) {
-	    get_pam_username(pamh, &username);
+	    loginpam_get_username(pamh, &username);
 
 	    syslog(LOG_NOTICE,_("FAILED LOGIN %d FROM %s FOR %s, %s"),
 		   failcount, hostname, username, pam_strerror(pamh, retcode));
@@ -562,8 +570,8 @@ main(int argc, char **argv)
 	    retcode = pam_authenticate(pamh, 0);
 	}
 
-	if (retcode != PAM_SUCCESS) {
-	    get_pam_username(pamh, &username);
+	if (is_pam_failure(retcode)) {
+	    loginpam_get_username(pamh, &username);
 
 	    if (retcode == PAM_MAXTRIES)
 		syslog(LOG_NOTICE,_("TOO MANY LOGIN TRIES (%d) FROM %s FOR "
@@ -589,18 +597,18 @@ main(int argc, char **argv)
      */
     retcode = pam_acct_mgmt(pamh, 0);
 
-    if(retcode == PAM_NEW_AUTHTOK_REQD) {
+    if (retcode == PAM_NEW_AUTHTOK_REQD)
         retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
-    }
-
-    PAM_FAIL_CHECK;
+    if (is_pam_failure(retcode))
+	loginpam_err(pamh, retcode);
 
     /*
      * Grab the user information out of the password file for future usage
      * First get the username that we are actually using, though.
      */
-    retcode = get_pam_username(pamh, &username);
-    PAM_FAIL_CHECK;
+    retcode = loginpam_get_username(pamh, &username);
+    if (is_pam_failure(retcode))
+	loginpam_err(pamh, retcode);
 
     if (!username || !*username) {
 	    warnx(_("\nSession setup problem, abort."));
@@ -650,12 +658,14 @@ main(int argc, char **argv)
     }
 
     retcode = pam_open_session(pamh, 0);
-    PAM_FAIL_CHECK;
+    if (is_pam_failure(retcode))
+	loginpam_err(pamh, retcode);
 
     retcode = pam_setcred(pamh, PAM_ESTABLISH_CRED);
-    if (retcode != PAM_SUCCESS)
+    if (is_pam_failure(retcode)) {
 	    pam_close_session(pamh, 0);
-    PAM_FAIL_CHECK;
+	    loginpam_err(pamh, retcode);
+    }
 
     /* committed to login -- turn off timeout */
     alarm((unsigned int)0);
@@ -944,7 +954,8 @@ Michael Riepe <michael@stud.uni-hannover.de>
     if (child_pid < 0) {
        /* error in fork() */
        warn(_("failure forking"));
-       PAM_END;
+       pam_setcred(pamh, PAM_DELETE_CRED);
+       pam_end(pamh, pam_close_session(pamh, 0));
        exit(EXIT_FAILURE);
     }
 
@@ -961,7 +972,8 @@ Michael Riepe <michael@stud.uni-hannover.de>
        while(wait(NULL) == -1 && errno == EINTR)
 	       ;
        openlog("login", LOG_ODELAY, LOG_AUTHPRIV);
-       PAM_END;
+       pam_setcred(pamh, PAM_DELETE_CRED);
+       pam_end(pamh, pam_close_session(pamh, 0));
        exit(EXIT_SUCCESS);
     }
 
