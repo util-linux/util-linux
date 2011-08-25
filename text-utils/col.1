@@ -45,16 +45,16 @@
 .Op Fl bfphx
 .Op Fl l Ar num
 .Sh DESCRIPTION
-.Nm Col
-filters out reverse (and half reverse) line feeds so the output is
-in the correct order with only forward and half forward line
+.Nm
+filters out reverse (and half-reverse) line feeds so the output is
+in the correct order with only forward and half-forward line
 feeds, and replaces white-space characters with tabs where possible.
 This can be useful in processing the output of
 .Xr nroff 1
 and
 .Xr tbl  1 .
 .Pp
-.Nm Col
+.Nm
 reads from standard input and writes to standard output.
 .Pp
 The options are as follows:
@@ -64,7 +64,7 @@ Do not output any backspaces, printing only the last character
 written to each column position.
 .It Fl f, Fl Fl fine
 Forward half line feeds are permitted (``fine'' mode).
-Normally characters printed on a half line boundary are printed
+Normally characters printed on a half-line boundary are printed
 on the following line.
 .It Fl p, Fl Fl pass
 Force unknown control sequences to be passed through unchanged.
@@ -120,7 +120,7 @@ reverse line feed (11)
 All unrecognized control characters and escape sequences are
 discarded.
 .Pp
-.Nm Col
+.Nm
 keeps track of the character set as characters are read and makes
 sure the character set is correct when they are output.
 .Pp

@@ -51,15 +51,15 @@
 .Op +\fIlinenum\fP
 .Op Ar
 .Sh DESCRIPTION
-.Nm More
+.Nm
 is a filter for paging through text one screenful at a time.  This version
 is especially primitive.  Users should realize that
 .Xr less 1
 provides
 .Xr more 1
-emulation and extensive enhancements.
+emulation plus extensive enhancements.
 .Sh OPTIONS
-Command line options are described below.
+Command-line options are described below.
 Options are also taken from the environment variable
 .Ev MORE
 (make sure to precede them with a dash (``-'')) but command
@@ -88,7 +88,8 @@ folded).
 .It Fl p
 Do not scroll.  Instead, clear the whole screen and then display the text.
 .Pp
-Notice that this option is switched automatically on if executable is named to `page'.
+Notice that this option is switched on automatically if the executable is named
+.Nm page .
 .It Fl c
 Do not scroll.  Instead, paint each screen from the top, clearing the
 remainder of each line as it is displayed.
