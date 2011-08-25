@@ -52,11 +52,12 @@
 #include <lastlog.h>
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
+
 #ifdef HAVE_LIBAUDIT
 # include <libaudit.h>
 #endif
 #ifdef HAVE_CRYPT_H
-#include <crypt.h>
+# include <crypt.h>
 #endif
 
 #include "c.h"
@@ -74,12 +75,12 @@
 #define LOGIN_TIMEOUT          60
 
 #ifdef USE_TTY_GROUP
-#  define TTY_MODE 0620
+# define TTY_MODE 0620
 #else
-#  define TTY_MODE 0600
+# define TTY_MODE 0600
 #endif
 
-#define	TTYGRPNAME	"tty"		/* name of group to own ttys */
+#define	TTYGRPNAME	"tty"	/* name of group to own ttys */
 
 /*
  * This bounds the time given to login.  Not a define so it can
@@ -90,15 +91,15 @@ int timeout = LOGIN_TIMEOUT;
 struct passwd *pwd;
 
 static struct passwd pwdcopy;
-char hostaddress[16];	/* used in checktty.c */
-char	*hostname;		/* idem */
-static char	*username, *tty_name, *tty_number;
-static pid_t	pid;
+char hostaddress[16];		/* used in checktty.c */
+char *hostname;			/* idem */
+static char *username, *tty_name, *tty_number;
+static pid_t pid;
 
-static void timedout (int);
-static void sigint (int);
-static void motd (void);
-static void dolastlog (int quiet);
+static void timedout(int);
+static void sigint(int);
+static void motd(void);
+static void dolastlog(int quiet);
 
 /* Nice and simple code provided by Linus Torvalds 16-Feb-93 */
 /* Nonblocking stuff by Maciej W. Rozycki, macro@ds2.pg.gda.pl, 1999.
@@ -108,8 +109,8 @@ static void dolastlog (int quiet);
    connection. I believe login should open the line in the non-blocking mode
    leaving the decision to make a connection to getty (where it actually
    belongs). */
-static void
-opentty(const char * tty) {
+static void opentty(const char *tty)
+{
 	int i, fd, flags;
 
 	fd = open(tty, O_RDWR | O_NONBLOCK);
@@ -142,8 +143,8 @@ opentty(const char * tty) {
 /* More precisely, the problem is  ttyn := ttyname(0); ...; chown(ttyn);
    here ttyname() might return "/tmp/x", a hardlink to a pseudotty. */
 /* All of this is a problem only when login is suid, which it isnt. */
-static void
-check_ttyname(char *ttyn) {
+static void check_ttyname(char *ttyn)
+{
 	struct stat statbuf;
 
 	if (ttyn == NULL
@@ -160,16 +161,16 @@ check_ttyname(char *ttyn) {
 
 #ifdef LOGIN_CHOWN_VCS
 /* true if the filedescriptor fd is a console tty, very Linux specific */
-static int
-consoletty(int fd) {
-    struct stat stb;
+static int consoletty(int fd)
+{
+	struct stat stb;
 
-    if ((fstat(fd, &stb) >= 0)
-	&& (major(stb.st_rdev) == TTY_MAJOR)
-	&& (minor(stb.st_rdev) < 64)) {
-	return 1;
-    }
-    return 0;
+	if ((fstat(fd, &stb) >= 0)
+	    && (major(stb.st_rdev) == TTY_MAJOR)
+	    && (minor(stb.st_rdev) < 64)) {
+		return 1;
+	}
+	return 0;
 }
 #endif
 
@@ -179,7 +180,8 @@ consoletty(int fd) {
  * The most common login failure is to give password instead of username.
  */
 static void
-logbtmp(const char *line, const char *username, const char *hostname) {
+logbtmp(const char *line, const char *username, const char *hostname)
+{
 	struct utmp ut;
 	struct timeval tv;
 
@@ -191,7 +193,7 @@ logbtmp(const char *line, const char *username, const char *hostname) {
 	strncpy(ut.ut_id, line + 3, sizeof(ut.ut_id));
 	xstrncpy(ut.ut_line, line, sizeof(ut.ut_line));
 
-#if defined(_HAVE_UT_TV)	    /* in <utmpbits.h> included by <utmp.h> */
+#if defined(_HAVE_UT_TV)	/* in <utmpbits.h> included by <utmp.h> */
 	gettimeofday(&tv, NULL);
 	ut.ut_tv.tv_sec = tv.tv_sec;
 	ut.ut_tv.tv_usec = tv.tv_usec;
@@ -199,22 +201,22 @@ logbtmp(const char *line, const char *username, const char *hostname) {
 	{
 		time_t t;
 		time(&t);
-		ut.ut_time = t;	    /* ut_time is not always a time_t */
+		ut.ut_time = t;	/* ut_time is not always a time_t */
 	}
 #endif
 
-	ut.ut_type = LOGIN_PROCESS; /* XXX doesn't matter */
+	ut.ut_type = LOGIN_PROCESS;	/* XXX doesn't matter */
 	ut.ut_pid = pid;
 	if (hostname) {
 		xstrncpy(ut.ut_host, hostname, sizeof(ut.ut_host));
 		if (hostaddress[0])
-			memcpy(&ut.ut_addr_v6, hostaddress, sizeof(ut.ut_addr_v6));
+			memcpy(&ut.ut_addr_v6, hostaddress,
+			       sizeof(ut.ut_addr_v6));
 	}
 #if HAVE_UPDWTMP		/* bad luck for ancient systems */
 	updwtmp(_PATH_BTMP, &ut);
 #endif
 }
-
 
 static int child_pid = 0;
 static volatile int got_sig = 0;
@@ -227,21 +229,20 @@ static volatile int got_sig = 0;
  * Also, parent who is session leader is able (before setsid() in child) to
  * inform child when controlling tty goes away (e.g. modem hangup, SIGHUP).
  */
-static void
-sig_handler(int signal)
+static void sig_handler(int signal)
 {
-	if(child_pid)
+	if (child_pid)
 		kill(-child_pid, signal);
 	else
 		got_sig = 1;
-	if(signal == SIGTERM)
-		kill(-child_pid, SIGHUP); /* because the shell often ignores SIGTERM */
+	if (signal == SIGTERM)
+		kill(-child_pid, SIGHUP);	/* because the shell often ignores SIGTERM */
 }
 
 #ifdef HAVE_LIBAUDIT
 static void
 logaudit(const char *tty, const char *username, const char *hostname,
-					struct passwd *pwd, int status)
+	 struct passwd *pwd, int status)
 {
 	int audit_fd;
 
@@ -252,26 +253,27 @@ logaudit(const char *tty, const char *username, const char *hostname,
 		pwd = getpwnam(username);
 
 	audit_log_acct_message(audit_fd, AUDIT_USER_LOGIN,
-		NULL, "login", username ? username : "(unknown)",
-		pwd ? pwd->pw_uid : (unsigned int) -1, hostname, NULL, tty, status);
+			       NULL, "login", username ? username : "(unknown)",
+			       pwd ? pwd->pw_uid : (unsigned int)-1, hostname,
+			       NULL, tty, status);
 
 	close(audit_fd);
 }
-#else /* ! HAVE_LIBAUDIT */
-# define logaudit(tty, username, hostname, pwd, status)
-#endif /* HAVE_LIBAUDIT */
+#else				/* ! HAVE_LIBAUDIT */
+#define logaudit(tty, username, hostname, pwd, status)
+#endif				/* HAVE_LIBAUDIT */
 
 /* encapsulate stupid "void **" pam_get_item() API */
-static int loginpam_get_username(pam_handle_t *pamh, char **name)
+static int loginpam_get_username(pam_handle_t * pamh, char **name)
 {
-	const void *item = (void *) *name;
+	const void *item = (void *)*name;
 	int rc;
 	rc = pam_get_item(pamh, PAM_USER, &item);
-	*name = (char *) item;
+	*name = (char *)item;
 	return rc;
 }
 
-static int loginpam_err(pam_handle_t *pamh, int retcode)
+static int loginpam_err(pam_handle_t * pamh, int retcode)
 {
 	const char *msg = pam_strerror(pamh, retcode);
 
@@ -290,8 +292,7 @@ static int loginpam_err(pam_handle_t *pamh, int retcode)
  * The open(2) seems as the surest solution.
  * -- kzak@redhat.com (10-Apr-2009)
  */
-int
-effective_access(const char *path, int mode)
+int effective_access(const char *path, int mode)
 {
 	int fd = open(path, mode);
 	if (fd != -1)
@@ -299,741 +300,759 @@ effective_access(const char *path, int mode)
 	return fd == -1 ? -1 : 0;
 }
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
-    extern int optind;
-    extern char *optarg, **environ;
-    struct group *gr;
-    register int ch;
-    register char *p;
-    int fflag, hflag, pflag, cnt;
-    int quietlog, passwd_req;
-    char *domain, *ttyn;
-    char tbuf[PATH_MAX + 2];
-    char *termenv;
-    char *childArgv[10];
-    char *buff;
-    int childArgc = 0;
-    int retcode;
-    pam_handle_t *pamh = NULL;
-    struct pam_conv conv = { misc_conv, NULL };
-    struct sigaction sa, oldsa_hup, oldsa_term;
+	extern int optind;
+	extern char *optarg, **environ;
+	struct group *gr;
+	register int ch;
+	register char *p;
+	int fflag, hflag, pflag, cnt;
+	int quietlog, passwd_req;
+	char *domain, *ttyn;
+	char tbuf[PATH_MAX + 2];
+	char *termenv;
+	char *childArgv[10];
+	char *buff;
+	int childArgc = 0;
+	int retcode;
+	pam_handle_t *pamh = NULL;
+	struct pam_conv conv = { misc_conv, NULL };
+	struct sigaction sa, oldsa_hup, oldsa_term;
 #ifdef LOGIN_CHOWN_VCS
-    char vcsn[20], vcsan[20];
+	char vcsn[20], vcsan[20];
 #endif
 
-    pid = getpid();
+	pid = getpid();
 
-    signal(SIGALRM, timedout);
-    siginterrupt(SIGALRM,1);           /* we have to interrupt syscalls like ioclt() */
-    alarm((unsigned int)timeout);
-    signal(SIGQUIT, SIG_IGN);
-    signal(SIGINT, SIG_IGN);
+	signal(SIGALRM, timedout);
+	siginterrupt(SIGALRM, 1);	/* we have to interrupt syscalls like ioclt() */
+	alarm((unsigned int)timeout);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, SIG_IGN);
 
-    setlocale(LC_ALL, "");
-    bindtextdomain(PACKAGE, LOCALEDIR);
-    textdomain(PACKAGE);
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
-    setpriority(PRIO_PROCESS, 0, 0);
-    initproctitle(argc, argv);
+	setpriority(PRIO_PROCESS, 0, 0);
+	initproctitle(argc, argv);
 
-    /*
-     * -p is used by getty to tell login not to destroy the environment
-     * -f is used to skip a second login authentication
-     * -h is used by other servers to pass the name of the remote
-     *    host to login so that it may be placed in utmp and wtmp
-     */
-    gethostname(tbuf, sizeof(tbuf));
-    domain = strchr(tbuf, '.');
+	/*
+	 * -p is used by getty to tell login not to destroy the environment
+	 * -f is used to skip a second login authentication
+	 * -h is used by other servers to pass the name of the remote
+	 *    host to login so that it may be placed in utmp and wtmp
+	 */
+	gethostname(tbuf, sizeof(tbuf));
+	domain = strchr(tbuf, '.');
 
-    username = tty_name = hostname = NULL;
-    fflag = hflag = pflag = 0;
-    passwd_req = 1;
+	username = tty_name = hostname = NULL;
+	fflag = hflag = pflag = 0;
+	passwd_req = 1;
 
-    while ((ch = getopt(argc, argv, "fh:p")) != -1)
-      switch (ch) {
-	case 'f':
-	  fflag = 1;
-	  break;
+	while ((ch = getopt(argc, argv, "fh:p")) != -1)
+		switch (ch) {
+		case 'f':
+			fflag = 1;
+			break;
 
-	case 'h':
-	  if (getuid()) {
-	      fprintf(stderr,
-		      _("login: -h for super-user only.\n"));
-	      exit(EXIT_FAILURE);
-	  }
-	  hflag = 1;
-	  if (domain && (p = strchr(optarg, '.')) &&
-	      strcasecmp(p, domain) == 0)
-	    *p = 0;
-
-	  hostname = strdup(optarg); 	/* strdup: Ambrose C. Li */
-	  {
-		struct addrinfo hints, *info = NULL;
-
-		memset(&hints, 0, sizeof(hints));
-		hints.ai_flags = AI_ADDRCONFIG;
-
-		hostaddress[0] = 0;
-
-		if (getaddrinfo(hostname, NULL, &hints, &info)==0 && info) {
-			if (info->ai_family == AF_INET) {
-			    struct sockaddr_in *sa =
-					(struct sockaddr_in *) info->ai_addr;
-			    memcpy(hostaddress, &(sa->sin_addr),
-					sizeof(sa->sin_addr));
+		case 'h':
+			if (getuid()) {
+				fprintf(stderr,
+					_("login: -h for super-user only.\n"));
+				exit(EXIT_FAILURE);
 			}
-			else if (info->ai_family == AF_INET6) {
-			    struct sockaddr_in6 *sa =
-					(struct sockaddr_in6 *) info->ai_addr;
-			    memcpy(hostaddress, &(sa->sin6_addr),
-					sizeof(sa->sin6_addr));
+			hflag = 1;
+			if (domain && (p = strchr(optarg, '.')) &&
+			    strcasecmp(p, domain) == 0)
+				*p = 0;
+
+			hostname = strdup(optarg);	/* strdup: Ambrose C. Li */
+			{
+				struct addrinfo hints, *info = NULL;
+
+				memset(&hints, 0, sizeof(hints));
+				hints.ai_flags = AI_ADDRCONFIG;
+
+				hostaddress[0] = 0;
+
+				if (getaddrinfo(hostname, NULL, &hints, &info)
+				    == 0 && info) {
+					if (info->ai_family == AF_INET) {
+						struct sockaddr_in *sa =
+						    (struct sockaddr_in *)info->
+						    ai_addr;
+						memcpy(hostaddress,
+						       &(sa->sin_addr),
+						       sizeof(sa->sin_addr));
+					} else if (info->ai_family == AF_INET6) {
+						struct sockaddr_in6 *sa =
+						    (struct sockaddr_in6 *)
+						    info->ai_addr;
+						memcpy(hostaddress,
+						       &(sa->sin6_addr),
+						       sizeof(sa->sin6_addr));
+					}
+					freeaddrinfo(info);
+				}
 			}
-			freeaddrinfo(info);
+			break;
+
+		case 'p':
+			pflag = 1;
+			break;
+
+		case '?':
+		default:
+			fprintf(stderr, _("usage: login [-fp] [username]\n"));
+			exit(EXIT_FAILURE);
 		}
-	  }
-	  break;
+	argc -= optind;
+	argv += optind;
 
-	case 'p':
-	  pflag = 1;
-	  break;
+	if (*argv) {
+		char *p = *argv;
+		username = strdup(p);
 
-	case '?':
-	default:
-	  fprintf(stderr,
-		  _("usage: login [-fp] [username]\n"));
-	  exit(EXIT_FAILURE);
-      }
-    argc -= optind;
-    argv += optind;
+		/* wipe name - some people mistype their password here */
+		/* (of course we are too late, but perhaps this helps a little ..) */
+		while (*p)
+			*p++ = ' ';
+	}
 
-    if (*argv) {
-	char *p = *argv;
-	username = strdup(p);
+	for (cnt = getdtablesize(); cnt > 2; cnt--)
+		close(cnt);
 
-	/* wipe name - some people mistype their password here */
-	/* (of course we are too late, but perhaps this helps a little ..) */
-	while(*p)
-	    *p++ = ' ';
-    }
+	/* note that libc checks that the file descriptor is a terminal, so we don't
+	 * have to call isatty() here */
+	ttyn = ttyname(0);
+	check_ttyname(ttyn);
 
-    for (cnt = getdtablesize(); cnt > 2; cnt--)
-      close(cnt);
+	if (strncmp(ttyn, "/dev/", 5) == 0)
+		tty_name = ttyn + 5;
+	else
+		tty_name = ttyn;
 
-    /* note that libc checks that the file descriptor is a terminal, so we don't
-     * have to call isatty() here */
-    ttyn = ttyname(0);
-    check_ttyname(ttyn);
-
-    if (strncmp(ttyn, "/dev/", 5) == 0)
-	tty_name = ttyn+5;
-    else
-	tty_name = ttyn;
-
-    if (strncmp(ttyn, "/dev/tty", 8) == 0)
-	tty_number = ttyn+8;
-    else {
-	char *p = ttyn;
-	while (*p && !isdigit(*p)) p++;
-	tty_number = p;
-    }
+	if (strncmp(ttyn, "/dev/tty", 8) == 0)
+		tty_number = ttyn + 8;
+	else {
+		char *p = ttyn;
+		while (*p && !isdigit(*p))
+			p++;
+		tty_number = p;
+	}
 
 #ifdef LOGIN_CHOWN_VCS
-    /* find names of Virtual Console devices, for later mode change */
-    snprintf(vcsn, sizeof(vcsn), "/dev/vcs%s", tty_number);
-    snprintf(vcsan, sizeof(vcsan), "/dev/vcsa%s", tty_number);
+	/* find names of Virtual Console devices, for later mode change */
+	snprintf(vcsn, sizeof(vcsn), "/dev/vcs%s", tty_number);
+	snprintf(vcsan, sizeof(vcsan), "/dev/vcsa%s", tty_number);
 #endif
 
-    /* set pgid to pid */
-    setpgrp();
-    /* this means that setsid() will fail */
+	/* set pgid to pid */
+	setpgrp();
+	/* this means that setsid() will fail */
 
-    {
-	struct termios tt, ttt;
+	{
+		struct termios tt, ttt;
 
-	tcgetattr(0, &tt);
-	ttt = tt;
-	ttt.c_cflag &= ~HUPCL;
+		tcgetattr(0, &tt);
+		ttt = tt;
+		ttt.c_cflag &= ~HUPCL;
 
-	/* These can fail, e.g. with ttyn on a read-only filesystem */
-	if (fchown(0, 0, 0)) {
-		; /* glibc warn_unused_result */
+		/* These can fail, e.g. with ttyn on a read-only filesystem */
+		if (fchown(0, 0, 0)) {
+			;	/* glibc warn_unused_result */
+		}
+
+		fchmod(0, TTY_MODE);
+
+		/* Kill processes left on this tty */
+		tcsetattr(0, TCSAFLUSH, &ttt);
+		signal(SIGHUP, SIG_IGN);	/* so vhangup() wont kill us */
+		vhangup();
+		signal(SIGHUP, SIG_DFL);
+
+		/* open stdin,stdout,stderr to the tty */
+		opentty(ttyn);
+
+		/* restore tty modes */
+		tcsetattr(0, TCSAFLUSH, &tt);
 	}
+
+	openlog("login", LOG_ODELAY, LOG_AUTHPRIV);
+
+	/*
+	 * username is initialized to NULL
+	 * and if specified on the command line it is set.
+	 * Therefore, we are safe not setting it to anything
+	 */
+
+	retcode = pam_start(hflag ? "remote" : "login", username, &conv, &pamh);
+	if (retcode != PAM_SUCCESS) {
+		warnx(_("PAM failure, aborting: %s"),
+		      pam_strerror(pamh, retcode));
+		syslog(LOG_ERR, _("Couldn't initialize PAM: %s"),
+		       pam_strerror(pamh, retcode));
+		exit(EXIT_FAILURE);
+	}
+
+	/* hostname & tty are either set to NULL or their correct values,
+	 * depending on how much we know
+	 */
+	retcode = pam_set_item(pamh, PAM_RHOST, hostname);
+	if (is_pam_failure(retcode))
+		loginpam_err(pamh, retcode);
+
+	retcode = pam_set_item(pamh, PAM_TTY, tty_name);
+	if (is_pam_failure(retcode))
+		loginpam_err(pamh, retcode);
+
+	/*
+	 * Andrew.Taylor@cal.montage.ca: Provide a user prompt to PAM
+	 * so that the "login: " prompt gets localized. Unfortunately,
+	 * PAM doesn't have an interface to specify the "Password: " string
+	 * (yet).
+	 */
+	retcode = pam_set_item(pamh, PAM_USER_PROMPT, _("login: "));
+	if (is_pam_failure(retcode))
+		loginpam_err(pamh, retcode);
+
+	if (username) {
+		/* we need't the original username. We have to follow PAM. */
+		free(username);
+		username = NULL;
+	}
+
+	/* if fflag == 1, then the user has already been authenticated */
+	if (fflag && (getuid() == 0))
+		passwd_req = 0;
+	else
+		passwd_req = 1;
+
+	if (passwd_req == 1) {
+		int failcount = 0;
+
+		/* if we didn't get a user on the command line, set it to NULL */
+		loginpam_get_username(pamh, &username);
+
+		/* there may be better ways to deal with some of these
+		   conditions, but at least this way I don't think we'll
+		   be giving away information... */
+		/* Perhaps someday we can trust that all PAM modules will
+		   pay attention to failure count and get rid of MAX_LOGIN_TRIES? */
+
+		retcode = pam_authenticate(pamh, 0);
+		while ((failcount++ < LOGIN_MAX_TRIES) &&
+		       ((retcode == PAM_AUTH_ERR) ||
+			(retcode == PAM_USER_UNKNOWN) ||
+			(retcode == PAM_CRED_INSUFFICIENT) ||
+			(retcode == PAM_AUTHINFO_UNAVAIL))) {
+			loginpam_get_username(pamh, &username);
+
+			syslog(LOG_NOTICE,
+			       _("FAILED LOGIN %d FROM %s FOR %s, %s"),
+			       failcount, hostname, username, pam_strerror(pamh,
+									   retcode));
+			logbtmp(tty_name, username, hostname);
+			logaudit(tty_name, username, hostname, NULL, 0);
+
+			fprintf(stderr, _("Login incorrect\n\n"));
+			pam_set_item(pamh, PAM_USER, NULL);
+			retcode = pam_authenticate(pamh, 0);
+		}
+
+		if (is_pam_failure(retcode)) {
+			loginpam_get_username(pamh, &username);
+
+			if (retcode == PAM_MAXTRIES)
+				syslog(LOG_NOTICE,
+				       _
+				       ("TOO MANY LOGIN TRIES (%d) FROM %s FOR "
+					"%s, %s"), failcount, hostname,
+				       username, pam_strerror(pamh, retcode));
+			else
+				syslog(LOG_NOTICE,
+				       _
+				       ("FAILED LOGIN SESSION FROM %s FOR %s, %s"),
+				       hostname, username, pam_strerror(pamh,
+									retcode));
+			logbtmp(tty_name, username, hostname);
+			logaudit(tty_name, username, hostname, NULL, 0);
+
+			fprintf(stderr, _("\nLogin incorrect\n"));
+			pam_end(pamh, retcode);
+			exit(EXIT_SUCCESS);
+		}
+	}
+
+	/*
+	 * Authentication may be skipped (for example, during krlogin, rlogin, etc...),
+	 * but it doesn't mean that we can skip other account checks. The account
+	 * could be disabled or password expired (althought kerberos ticket is valid).
+	 * -- kzak@redhat.com (22-Feb-2006)
+	 */
+	retcode = pam_acct_mgmt(pamh, 0);
+
+	if (retcode == PAM_NEW_AUTHTOK_REQD)
+		retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
+	if (is_pam_failure(retcode))
+		loginpam_err(pamh, retcode);
+
+	/*
+	 * Grab the user information out of the password file for future usage
+	 * First get the username that we are actually using, though.
+	 */
+	retcode = loginpam_get_username(pamh, &username);
+	if (is_pam_failure(retcode))
+		loginpam_err(pamh, retcode);
+
+	if (!username || !*username) {
+		warnx(_("\nSession setup problem, abort."));
+		syslog(LOG_ERR, _("NULL user name in %s:%d. Abort."),
+		       __FUNCTION__, __LINE__);
+		pam_end(pamh, PAM_SYSTEM_ERR);
+		exit(EXIT_FAILURE);
+	}
+	if (!(pwd = getpwnam(username))) {
+		warnx(_("\nSession setup problem, abort."));
+		syslog(LOG_ERR, _("Invalid user name \"%s\" in %s:%d. Abort."),
+		       username, __FUNCTION__, __LINE__);
+		pam_end(pamh, PAM_SYSTEM_ERR);
+		exit(EXIT_FAILURE);
+	}
+
+	/*
+	 * Create a copy of the pwd struct - otherwise it may get
+	 * clobbered by PAM
+	 */
+	memcpy(&pwdcopy, pwd, sizeof(*pwd));
+	pwd = &pwdcopy;
+	pwd->pw_name = strdup(pwd->pw_name);
+	pwd->pw_passwd = strdup(pwd->pw_passwd);
+	pwd->pw_gecos = strdup(pwd->pw_gecos);
+	pwd->pw_dir = strdup(pwd->pw_dir);
+	pwd->pw_shell = strdup(pwd->pw_shell);
+	if (!pwd->pw_name || !pwd->pw_passwd || !pwd->pw_gecos ||
+	    !pwd->pw_dir || !pwd->pw_shell) {
+		warnx(_("out of memory"));
+		syslog(LOG_ERR, "Out of memory");
+		pam_end(pamh, PAM_SYSTEM_ERR);
+		exit(EXIT_FAILURE);
+	}
+	username = pwd->pw_name;
+
+	/*
+	 * Initialize the supplementary group list.
+	 * This should be done before pam_setcred because
+	 * the PAM modules might add groups during pam_setcred.
+	 */
+	if (initgroups(username, pwd->pw_gid) < 0) {
+		syslog(LOG_ERR, "initgroups: %m");
+		warnx(_("\nSession setup problem, abort."));
+		pam_end(pamh, PAM_SYSTEM_ERR);
+		exit(EXIT_FAILURE);
+	}
+
+	retcode = pam_open_session(pamh, 0);
+	if (is_pam_failure(retcode))
+		loginpam_err(pamh, retcode);
+
+	retcode = pam_setcred(pamh, PAM_ESTABLISH_CRED);
+	if (is_pam_failure(retcode)) {
+		pam_close_session(pamh, 0);
+		loginpam_err(pamh, retcode);
+	}
+
+	/* committed to login -- turn off timeout */
+	alarm((unsigned int)0);
+
+	endpwent();
+
+	{
+		/*
+		 * Check per accout setting.
+		 *
+		 * This requires some explanation: As root we may not be able to
+		 * read the directory of the user if it is on an NFS mounted
+		 * filesystem. We temporarily set our effective uid to the user-uid
+		 * making sure that we keep root privs. in the real uid.
+		 *
+		 * A portable solution would require a fork(), but we rely on Linux
+		 * having the BSD setreuid()
+		 */
+		char tmpstr[PATH_MAX];
+		uid_t ruid = getuid();
+		gid_t egid = getegid();
+
+		/* avoid snprintf - old systems do not have it, or worse,
+		   have a libc in which snprintf is the same as sprintf */
+		if (strlen(pwd->pw_dir) + sizeof(_PATH_HUSHLOGIN) + 2 >
+		    PATH_MAX)
+			quietlog = 0;
+		else {
+			sprintf(tmpstr, "%s/%s", pwd->pw_dir, _PATH_HUSHLOGIN);
+			setregid(-1, pwd->pw_gid);
+			setreuid(0, pwd->pw_uid);
+			quietlog = (effective_access(tmpstr, O_RDONLY) == 0);
+			setuid(0);	/* setreuid doesn't do it alone! */
+			setreuid(ruid, 0);
+			setregid(-1, egid);
+		}
+	}
+
+	/* for linux, write entries in utmp and wtmp */
+	{
+		struct utmp ut;
+		struct utmp *utp;
+		struct timeval tv;
+
+		utmpname(_PATH_UTMP);
+		setutent();
+
+		/* Find pid in utmp.
+		   login sometimes overwrites the runlevel entry in /var/run/utmp,
+		   confusing sysvinit. I added a test for the entry type, and the problem
+		   was gone. (In a runlevel entry, st_pid is not really a pid but some number
+		   calculated from the previous and current runlevel).
+		   Michael Riepe <michael@stud.uni-hannover.de>
+		 */
+		while ((utp = getutent()))
+			if (utp->ut_pid == pid
+			    && utp->ut_type >= INIT_PROCESS
+			    && utp->ut_type <= DEAD_PROCESS)
+				break;
+
+		/* If we can't find a pre-existing entry by pid, try by line.
+		   BSD network daemons may rely on this. (anonymous) */
+		if (utp == NULL) {
+			setutent();
+			ut.ut_type = LOGIN_PROCESS;
+			strncpy(ut.ut_line, tty_name, sizeof(ut.ut_line));
+			utp = getutline(&ut);
+		}
+
+		if (utp) {
+			memcpy(&ut, utp, sizeof(ut));
+		} else {
+			/* some gettys/telnetds don't initialize utmp... */
+			memset(&ut, 0, sizeof(ut));
+		}
+
+		if (ut.ut_id[0] == 0)
+			strncpy(ut.ut_id, tty_number, sizeof(ut.ut_id));
+
+		strncpy(ut.ut_user, username, sizeof(ut.ut_user));
+		xstrncpy(ut.ut_line, tty_name, sizeof(ut.ut_line));
+#ifdef _HAVE_UT_TV		/* in <utmpbits.h> included by <utmp.h> */
+		gettimeofday(&tv, NULL);
+		ut.ut_tv.tv_sec = tv.tv_sec;
+		ut.ut_tv.tv_usec = tv.tv_usec;
+#else
+		{
+			time_t t;
+			time(&t);
+			ut.ut_time = t;	/* ut_time is not always a time_t */
+			/* glibc2 #defines it as ut_tv.tv_sec */
+		}
+#endif
+		ut.ut_type = USER_PROCESS;
+		ut.ut_pid = pid;
+		if (hostname) {
+			xstrncpy(ut.ut_host, hostname, sizeof(ut.ut_host));
+			if (hostaddress[0])
+				memcpy(&ut.ut_addr_v6, hostaddress,
+				       sizeof(ut.ut_addr_v6));
+		}
+
+		pututline(&ut);
+		endutent();
+
+#if HAVE_UPDWTMP
+		updwtmp(_PATH_WTMP, &ut);
+#else
+		/* Probably all this locking below is just nonsense,
+		   and the short version is OK as well. */
+		{
+			int lf, wtmp;
+			if ((lf =
+			     open(_PATH_WTMPLOCK, O_CREAT | O_WRONLY,
+				  0660)) >= 0) {
+				flock(lf, LOCK_EX);
+				if ((wtmp =
+				     open(_PATH_WTMP,
+					  O_APPEND | O_WRONLY)) >= 0) {
+					write(wtmp, (char *)&ut, sizeof(ut));
+					close(wtmp);
+				}
+				flock(lf, LOCK_UN);
+				close(lf);
+			}
+		}
+#endif
+	}
+
+	logaudit(tty_name, username, hostname, pwd, 1);
+	dolastlog(quietlog);
+
+	if (fchown(0, pwd->pw_uid,
+		   (gr = getgrnam(TTYGRPNAME)) ? gr->gr_gid : pwd->pw_gid))
+		warn(_("change terminal owner failed"));
 
 	fchmod(0, TTY_MODE);
 
-	/* Kill processes left on this tty */
-	tcsetattr(0,TCSAFLUSH,&ttt);
-	signal(SIGHUP, SIG_IGN); /* so vhangup() wont kill us */
-	vhangup();
-	signal(SIGHUP, SIG_DFL);
-
-	/* open stdin,stdout,stderr to the tty */
-	opentty(ttyn);
-
-	/* restore tty modes */
-	tcsetattr(0,TCSAFLUSH,&tt);
-    }
-
-    openlog("login", LOG_ODELAY, LOG_AUTHPRIV);
-
-    /*
-     * username is initialized to NULL
-     * and if specified on the command line it is set.
-     * Therefore, we are safe not setting it to anything
-     */
-
-    retcode = pam_start(hflag?"remote":"login",username, &conv, &pamh);
-    if(retcode != PAM_SUCCESS) {
-	warnx(_("PAM failure, aborting: %s"), pam_strerror(pamh, retcode));
-	syslog(LOG_ERR, _("Couldn't initialize PAM: %s"),
-	       pam_strerror(pamh, retcode));
-	exit(EXIT_FAILURE);
-    }
-
-    /* hostname & tty are either set to NULL or their correct values,
-     * depending on how much we know
-     */
-    retcode = pam_set_item(pamh, PAM_RHOST, hostname);
-    if (is_pam_failure(retcode))
-	loginpam_err(pamh, retcode);
-
-    retcode = pam_set_item(pamh, PAM_TTY, tty_name);
-    if (is_pam_failure(retcode))
-	loginpam_err(pamh, retcode);
-
-    /*
-     * Andrew.Taylor@cal.montage.ca: Provide a user prompt to PAM
-     * so that the "login: " prompt gets localized. Unfortunately,
-     * PAM doesn't have an interface to specify the "Password: " string
-     * (yet).
-     */
-    retcode = pam_set_item(pamh, PAM_USER_PROMPT, _("login: "));
-    if (is_pam_failure(retcode))
-	loginpam_err(pamh, retcode);
-
-    if (username) {
-	/* we need't the original username. We have to follow PAM. */
-	free(username);
-	username = NULL;
-    }
-
-    /* if fflag == 1, then the user has already been authenticated */
-    if (fflag && (getuid() == 0))
-	passwd_req = 0;
-    else
-	passwd_req = 1;
-
-    if(passwd_req == 1) {
-	int failcount=0;
-
-	/* if we didn't get a user on the command line, set it to NULL */
-	loginpam_get_username(pamh, &username);
-
-	/* there may be better ways to deal with some of these
-	   conditions, but at least this way I don't think we'll
-	   be giving away information... */
-	/* Perhaps someday we can trust that all PAM modules will
-	   pay attention to failure count and get rid of MAX_LOGIN_TRIES? */
-
-	retcode = pam_authenticate(pamh, 0);
-	while((failcount++ < LOGIN_MAX_TRIES) &&
-	      ((retcode == PAM_AUTH_ERR) ||
-	       (retcode == PAM_USER_UNKNOWN) ||
-	       (retcode == PAM_CRED_INSUFFICIENT) ||
-	       (retcode == PAM_AUTHINFO_UNAVAIL))) {
-	    loginpam_get_username(pamh, &username);
-
-	    syslog(LOG_NOTICE,_("FAILED LOGIN %d FROM %s FOR %s, %s"),
-		   failcount, hostname, username, pam_strerror(pamh, retcode));
-	    logbtmp(tty_name, username, hostname);
-	    logaudit(tty_name, username, hostname, NULL, 0);
-
-	    fprintf(stderr,_("Login incorrect\n\n"));
-	    pam_set_item(pamh,PAM_USER,NULL);
-	    retcode = pam_authenticate(pamh, 0);
-	}
-
-	if (is_pam_failure(retcode)) {
-	    loginpam_get_username(pamh, &username);
-
-	    if (retcode == PAM_MAXTRIES)
-		syslog(LOG_NOTICE,_("TOO MANY LOGIN TRIES (%d) FROM %s FOR "
-			"%s, %s"), failcount, hostname, username,
-			 pam_strerror(pamh, retcode));
-	    else
-		syslog(LOG_NOTICE,_("FAILED LOGIN SESSION FROM %s FOR %s, %s"),
-			hostname, username, pam_strerror(pamh, retcode));
-	    logbtmp(tty_name, username, hostname);
-	    logaudit(tty_name, username, hostname, NULL, 0);
-
-	    fprintf(stderr,_("\nLogin incorrect\n"));
-	    pam_end(pamh, retcode);
-	    exit(EXIT_SUCCESS);
-	}
-    }
-
-    /*
-     * Authentication may be skipped (for example, during krlogin, rlogin, etc...),
-     * but it doesn't mean that we can skip other account checks. The account
-     * could be disabled or password expired (althought kerberos ticket is valid).
-     * -- kzak@redhat.com (22-Feb-2006)
-     */
-    retcode = pam_acct_mgmt(pamh, 0);
-
-    if (retcode == PAM_NEW_AUTHTOK_REQD)
-        retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
-    if (is_pam_failure(retcode))
-	loginpam_err(pamh, retcode);
-
-    /*
-     * Grab the user information out of the password file for future usage
-     * First get the username that we are actually using, though.
-     */
-    retcode = loginpam_get_username(pamh, &username);
-    if (is_pam_failure(retcode))
-	loginpam_err(pamh, retcode);
-
-    if (!username || !*username) {
-	    warnx(_("\nSession setup problem, abort."));
-	    syslog(LOG_ERR, _("NULL user name in %s:%d. Abort."),
-		   __FUNCTION__, __LINE__);
-	    pam_end(pamh, PAM_SYSTEM_ERR);
-	    exit(EXIT_FAILURE);
-    }
-    if (!(pwd = getpwnam(username))) {
-	    warnx(_("\nSession setup problem, abort."));
-	    syslog(LOG_ERR, _("Invalid user name \"%s\" in %s:%d. Abort."),
-		   username, __FUNCTION__, __LINE__);
-	    pam_end(pamh, PAM_SYSTEM_ERR);
-	    exit(EXIT_FAILURE);
-    }
-
-    /*
-     * Create a copy of the pwd struct - otherwise it may get
-     * clobbered by PAM
-     */
-    memcpy(&pwdcopy, pwd, sizeof(*pwd));
-    pwd = &pwdcopy;
-    pwd->pw_name   = strdup(pwd->pw_name);
-    pwd->pw_passwd = strdup(pwd->pw_passwd);
-    pwd->pw_gecos  = strdup(pwd->pw_gecos);
-    pwd->pw_dir    = strdup(pwd->pw_dir);
-    pwd->pw_shell  = strdup(pwd->pw_shell);
-    if (!pwd->pw_name || !pwd->pw_passwd || !pwd->pw_gecos ||
-	!pwd->pw_dir || !pwd->pw_shell) {
-	    warnx(_("out of memory"));
-	    syslog(LOG_ERR, "Out of memory");
-	    pam_end(pamh, PAM_SYSTEM_ERR);
-	    exit(EXIT_FAILURE);
-    }
-    username = pwd->pw_name;
-
-    /*
-     * Initialize the supplementary group list.
-     * This should be done before pam_setcred because
-     * the PAM modules might add groups during pam_setcred.
-     */
-    if (initgroups(username, pwd->pw_gid) < 0) {
-	    syslog(LOG_ERR, "initgroups: %m");
-	    warnx(_("\nSession setup problem, abort."));
-	    pam_end(pamh, PAM_SYSTEM_ERR);
-	    exit(EXIT_FAILURE);
-    }
-
-    retcode = pam_open_session(pamh, 0);
-    if (is_pam_failure(retcode))
-	loginpam_err(pamh, retcode);
-
-    retcode = pam_setcred(pamh, PAM_ESTABLISH_CRED);
-    if (is_pam_failure(retcode)) {
-	    pam_close_session(pamh, 0);
-	    loginpam_err(pamh, retcode);
-    }
-
-    /* committed to login -- turn off timeout */
-    alarm((unsigned int)0);
-
-    endpwent();
-
-    /* This requires some explanation: As root we may not be able to
-       read the directory of the user if it is on an NFS mounted
-       filesystem. We temporarily set our effective uid to the user-uid
-       making sure that we keep root privs. in the real uid.
-
-       A portable solution would require a fork(), but we rely on Linux
-       having the BSD setreuid() */
-    {
-	char tmpstr[PATH_MAX];
-	uid_t ruid = getuid();
-	gid_t egid = getegid();
-
-	/* avoid snprintf - old systems do not have it, or worse,
-	   have a libc in which snprintf is the same as sprintf */
-	if (strlen(pwd->pw_dir) + sizeof(_PATH_HUSHLOGIN) + 2 > PATH_MAX)
-		quietlog = 0;
-	else {
-		sprintf(tmpstr, "%s/%s", pwd->pw_dir, _PATH_HUSHLOGIN);
-		setregid(-1, pwd->pw_gid);
-		setreuid(0, pwd->pw_uid);
-		quietlog = (effective_access(tmpstr, O_RDONLY) == 0);
-		setuid(0); /* setreuid doesn't do it alone! */
-		setreuid(ruid, 0);
-		setregid(-1, egid);
-	}
-    }
-
-    /* for linux, write entries in utmp and wtmp */
-    {
-	struct utmp ut;
-	struct utmp *utp;
-	struct timeval tv;
-
-	utmpname(_PATH_UTMP);
-	setutent();
-
-	/* Find pid in utmp.
-login sometimes overwrites the runlevel entry in /var/run/utmp,
-confusing sysvinit. I added a test for the entry type, and the problem
-was gone. (In a runlevel entry, st_pid is not really a pid but some number
-calculated from the previous and current runlevel).
-Michael Riepe <michael@stud.uni-hannover.de>
-	*/
-	while ((utp = getutent()))
-		if (utp->ut_pid == pid
-		    && utp->ut_type >= INIT_PROCESS
-		    && utp->ut_type <= DEAD_PROCESS)
-			break;
-
-	/* If we can't find a pre-existing entry by pid, try by line.
-	   BSD network daemons may rely on this. (anonymous) */
-	if (utp == NULL) {
-	     setutent();
-	     ut.ut_type = LOGIN_PROCESS;
-	     strncpy(ut.ut_line, tty_name, sizeof(ut.ut_line));
-	     utp = getutline(&ut);
-	}
-
-	if (utp) {
-	    memcpy(&ut, utp, sizeof(ut));
-	} else {
-	    /* some gettys/telnetds don't initialize utmp... */
-	    memset(&ut, 0, sizeof(ut));
-	}
-
-	if (ut.ut_id[0] == 0)
-	  strncpy(ut.ut_id, tty_number, sizeof(ut.ut_id));
-
-	strncpy(ut.ut_user, username, sizeof(ut.ut_user));
-	xstrncpy(ut.ut_line, tty_name, sizeof(ut.ut_line));
-#ifdef _HAVE_UT_TV		/* in <utmpbits.h> included by <utmp.h> */
-	gettimeofday(&tv, NULL);
-	ut.ut_tv.tv_sec = tv.tv_sec;
-	ut.ut_tv.tv_usec = tv.tv_usec;
-#else
-	{
-	    time_t t;
-	    time(&t);
-	    ut.ut_time = t;	/* ut_time is not always a time_t */
-				/* glibc2 #defines it as ut_tv.tv_sec */
-	}
-#endif
-	ut.ut_type = USER_PROCESS;
-	ut.ut_pid = pid;
-	if (hostname) {
-		xstrncpy(ut.ut_host, hostname, sizeof(ut.ut_host));
-		if (hostaddress[0])
-			memcpy(&ut.ut_addr_v6, hostaddress, sizeof(ut.ut_addr_v6));
-	}
-
-	pututline(&ut);
-	endutent();
-
-#if HAVE_UPDWTMP
-	updwtmp(_PATH_WTMP, &ut);
-#else
-	/* Probably all this locking below is just nonsense,
-	   and the short version is OK as well. */
-	{
-	    int lf, wtmp;
-	    if ((lf = open(_PATH_WTMPLOCK, O_CREAT|O_WRONLY, 0660)) >= 0) {
-		flock(lf, LOCK_EX);
-		if ((wtmp = open(_PATH_WTMP, O_APPEND|O_WRONLY)) >= 0) {
-		    write(wtmp, (char *)&ut, sizeof(ut));
-		    close(wtmp);
-		}
-		flock(lf, LOCK_UN);
-		close(lf);
-	    }
-	}
-#endif
-    }
-
-    logaudit(tty_name, username, hostname, pwd, 1);
-    dolastlog(quietlog);
-
-    if (fchown(0, pwd->pw_uid,
-	  (gr = getgrnam(TTYGRPNAME)) ? gr->gr_gid : pwd->pw_gid))
-        warn(_("change terminal owner failed"));
-
-    fchmod(0, TTY_MODE);
-
 #ifdef LOGIN_CHOWN_VCS
-    /* if tty is one of the VC's then change owner and mode of the
-       special /dev/vcs devices as well */
-    if (consoletty(0)) {
+	/* if tty is one of the VC's then change owner and mode of the
+	   special /dev/vcs devices as well */
+	if (consoletty(0)) {
 
-	if (chown(vcsn, pwd->pw_uid, (gr ? gr->gr_gid : pwd->pw_gid)))
-	    warn(_("change terminal owner failed"));
-	if (chown(vcsan, pwd->pw_uid, (gr ? gr->gr_gid : pwd->pw_gid)))
-	    warn(_("change terminal owner failed"));
+		if (chown(vcsn, pwd->pw_uid, (gr ? gr->gr_gid : pwd->pw_gid)))
+			warn(_("change terminal owner failed"));
+		if (chown(vcsan, pwd->pw_uid, (gr ? gr->gr_gid : pwd->pw_gid)))
+			warn(_("change terminal owner failed"));
 
-	chmod(vcsn, TTY_MODE);
-	chmod(vcsan, TTY_MODE);
-    }
+		chmod(vcsn, TTY_MODE);
+		chmod(vcsan, TTY_MODE);
+	}
 #endif
 
-    if (setgid(pwd->pw_gid) < 0 && pwd->pw_gid) {
-	syslog(LOG_ALERT, _("setgid() failed"));
-	exit(EXIT_FAILURE);
-    }
-
-
-    if (*pwd->pw_shell == '\0')
-      pwd->pw_shell = _PATH_BSHELL;
-
-    /* preserve TERM even without -p flag */
-    {
-	char *ep;
-
-	if(!((ep = getenv("TERM")) && (termenv = strdup(ep))))
-	  termenv = "dumb";
-    }
-
-    /* destroy environment unless user has requested preservation */
-    if (!pflag)
-      {
-          environ = (char**)malloc(sizeof(char*));
-	  memset(environ, 0, sizeof(char*));
-      }
-
-    setenv("HOME", pwd->pw_dir, 0);      /* legal to override */
-    if(pwd->pw_uid)
-      setenv("PATH", _PATH_DEFPATH, 1);
-    else
-      setenv("PATH", _PATH_DEFPATH_ROOT, 1);
-
-    setenv("SHELL", pwd->pw_shell, 1);
-    setenv("TERM", termenv, 1);
-
-    /* mailx will give a funny error msg if you forget this one */
-    {
-      char tmp[PATH_MAX];
-      /* avoid snprintf */
-      if (sizeof(_PATH_MAILDIR) + strlen(pwd->pw_name) + 1 < PATH_MAX) {
-	      sprintf(tmp, "%s/%s", _PATH_MAILDIR, pwd->pw_name);
-	      setenv("MAIL",tmp,0);
-      }
-    }
-
-    /* LOGNAME is not documented in login(1) but
-       HP-UX 6.5 does it. We'll not allow modifying it.
-       */
-    setenv("LOGNAME", pwd->pw_name, 1);
-
-    {
-	int i;
-	char ** env = pam_getenvlist(pamh);
-
-	if (env != NULL) {
-	    for (i=0; env[i]; i++) {
-		putenv(env[i]);
-		/* D(("env[%d] = %s", i,env[i])); */
-	    }
+	if (setgid(pwd->pw_gid) < 0 && pwd->pw_gid) {
+		syslog(LOG_ALERT, _("setgid() failed"));
+		exit(EXIT_FAILURE);
 	}
-    }
 
-    setproctitle("login", username);
+	if (*pwd->pw_shell == '\0')
+		pwd->pw_shell = _PATH_BSHELL;
 
-    if (!strncmp(tty_name, "ttyS", 4))
-      syslog(LOG_INFO, _("DIALUP AT %s BY %s"), tty_name, pwd->pw_name);
+	/* preserve TERM even without -p flag */
+	{
+		char *ep;
 
-    /* allow tracking of good logins.
-       -steve philp (sphilp@mail.alliance.net) */
+		if (!((ep = getenv("TERM")) && (termenv = strdup(ep))))
+			termenv = "dumb";
+	}
 
-    if (pwd->pw_uid == 0) {
-	if (hostname)
-	  syslog(LOG_NOTICE, _("ROOT LOGIN ON %s FROM %s"),
-		 tty_name, hostname);
+	/* destroy environment unless user has requested preservation */
+	if (!pflag) {
+		environ = (char **)malloc(sizeof(char *));
+		memset(environ, 0, sizeof(char *));
+	}
+
+	setenv("HOME", pwd->pw_dir, 0);	/* legal to override */
+	if (pwd->pw_uid)
+		setenv("PATH", _PATH_DEFPATH, 1);
 	else
-	  syslog(LOG_NOTICE, _("ROOT LOGIN ON %s"), tty_name);
-    } else {
-	if (hostname)
-	  syslog(LOG_INFO, _("LOGIN ON %s BY %s FROM %s"), tty_name,
-		 pwd->pw_name, hostname);
-	else
-	  syslog(LOG_INFO, _("LOGIN ON %s BY %s"), tty_name,
-		 pwd->pw_name);
-    }
+		setenv("PATH", _PATH_DEFPATH_ROOT, 1);
 
-    if (!quietlog) {
-	motd();
+	setenv("SHELL", pwd->pw_shell, 1);
+	setenv("TERM", termenv, 1);
+
+	/* mailx will give a funny error msg if you forget this one */
+	{
+		char tmp[PATH_MAX];
+		/* avoid snprintf */
+		if (sizeof(_PATH_MAILDIR) + strlen(pwd->pw_name) + 1 < PATH_MAX) {
+			sprintf(tmp, "%s/%s", _PATH_MAILDIR, pwd->pw_name);
+			setenv("MAIL", tmp, 0);
+		}
+	}
+
+	/* LOGNAME is not documented in login(1) but
+	   HP-UX 6.5 does it. We'll not allow modifying it.
+	 */
+	setenv("LOGNAME", pwd->pw_name, 1);
+
+	{
+		int i;
+		char **env = pam_getenvlist(pamh);
+
+		if (env != NULL) {
+			for (i = 0; env[i]; i++) {
+				putenv(env[i]);
+				/* D(("env[%d] = %s", i,env[i])); */
+			}
+		}
+	}
+
+	setproctitle("login", username);
+
+	if (!strncmp(tty_name, "ttyS", 4))
+		syslog(LOG_INFO, _("DIALUP AT %s BY %s"), tty_name,
+		       pwd->pw_name);
+
+	/* allow tracking of good logins.
+	   -steve philp (sphilp@mail.alliance.net) */
+
+	if (pwd->pw_uid == 0) {
+		if (hostname)
+			syslog(LOG_NOTICE, _("ROOT LOGIN ON %s FROM %s"),
+			       tty_name, hostname);
+		else
+			syslog(LOG_NOTICE, _("ROOT LOGIN ON %s"), tty_name);
+	} else {
+		if (hostname)
+			syslog(LOG_INFO, _("LOGIN ON %s BY %s FROM %s"),
+			       tty_name, pwd->pw_name, hostname);
+		else
+			syslog(LOG_INFO, _("LOGIN ON %s BY %s"), tty_name,
+			       pwd->pw_name);
+	}
+
+	if (!quietlog) {
+		motd();
 
 #ifdef LOGIN_STAT_MAIL
-	/*
-	 * This turns out to be a bad idea: when the mail spool
-	 * is NFS mounted, and the NFS connection hangs, the
-	 * login hangs, even root cannot login.
-	 * Checking for mail should be done from the shell.
-	 */
-	{
-	    struct stat st;
-	    char *mail;
+		/*
+		 * This turns out to be a bad idea: when the mail spool
+		 * is NFS mounted, and the NFS connection hangs, the
+		 * login hangs, even root cannot login.
+		 * Checking for mail should be done from the shell.
+		 */
+		{
+			struct stat st;
+			char *mail;
 
-	    mail = getenv("MAIL");
-	    if (mail && stat(mail, &st) == 0 && st.st_size != 0) {
-		if (st.st_mtime > st.st_atime)
-			printf(_("You have new mail.\n"));
-		else
-			printf(_("You have mail.\n"));
-	    }
-	}
+			mail = getenv("MAIL");
+			if (mail && stat(mail, &st) == 0 && st.st_size != 0) {
+				if (st.st_mtime > st.st_atime)
+					printf(_("You have new mail.\n"));
+				else
+					printf(_("You have mail.\n"));
+			}
+		}
 #endif
-    }
+	}
 
-    signal(SIGALRM, SIG_DFL);
-    signal(SIGQUIT, SIG_DFL);
-    signal(SIGTSTP, SIG_IGN);
+	signal(SIGALRM, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+	signal(SIGTSTP, SIG_IGN);
 
-    memset(&sa, 0, sizeof(sa));
-    sa.sa_handler = SIG_IGN;
-    sigaction(SIGINT, &sa, NULL);
+	memset(&sa, 0, sizeof(sa));
+	sa.sa_handler = SIG_IGN;
+	sigaction(SIGINT, &sa, NULL);
 
-    sigaction(SIGHUP, &sa, &oldsa_hup); /* ignore when TIOCNOTTY */
+	sigaction(SIGHUP, &sa, &oldsa_hup);	/* ignore when TIOCNOTTY */
 
-    /*
-     * detach the controlling tty
-     * -- we needn't the tty in parent who waits for child only.
-     *    The child calls setsid() that detach from the tty as well.
-     */
-    ioctl(0, TIOCNOTTY, NULL);
+	/*
+	 * detach the controlling tty
+	 * -- we needn't the tty in parent who waits for child only.
+	 *    The child calls setsid() that detach from the tty as well.
+	 */
+	ioctl(0, TIOCNOTTY, NULL);
 
-    /*
-     * We have care about SIGTERM, because leave PAM session without
-     * pam_close_session() is pretty bad thing.
-     */
-    sa.sa_handler = sig_handler;
-    sigaction(SIGHUP, &sa, NULL);
-    sigaction(SIGTERM, &sa, &oldsa_term);
+	/*
+	 * We have care about SIGTERM, because leave PAM session without
+	 * pam_close_session() is pretty bad thing.
+	 */
+	sa.sa_handler = sig_handler;
+	sigaction(SIGHUP, &sa, NULL);
+	sigaction(SIGTERM, &sa, &oldsa_term);
 
-    closelog();
+	closelog();
 
-    /*
-     * We must fork before setuid() because we need to call
-     * pam_close_session() as root.
-     */
+	/*
+	 * We must fork before setuid() because we need to call
+	 * pam_close_session() as root.
+	 */
 
-    child_pid = fork();
-    if (child_pid < 0) {
-       /* error in fork() */
-       warn(_("failure forking"));
-       pam_setcred(pamh, PAM_DELETE_CRED);
-       pam_end(pamh, pam_close_session(pamh, 0));
-       exit(EXIT_FAILURE);
-    }
+	child_pid = fork();
+	if (child_pid < 0) {
+		/* error in fork() */
+		warn(_("failure forking"));
+		pam_setcred(pamh, PAM_DELETE_CRED);
+		pam_end(pamh, pam_close_session(pamh, 0));
+		exit(EXIT_FAILURE);
+	}
 
-    if (child_pid) {
-       /* parent - wait for child to finish, then cleanup session */
-       close(0);
-       close(1);
-       close(2);
-       sa.sa_handler = SIG_IGN;
-       sigaction(SIGQUIT, &sa, NULL);
-       sigaction(SIGINT, &sa, NULL);
+	if (child_pid) {
+		/* parent - wait for child to finish, then cleanup session */
+		close(0);
+		close(1);
+		close(2);
+		sa.sa_handler = SIG_IGN;
+		sigaction(SIGQUIT, &sa, NULL);
+		sigaction(SIGINT, &sa, NULL);
 
-       /* wait as long as any child is there */
-       while(wait(NULL) == -1 && errno == EINTR)
-	       ;
-       openlog("login", LOG_ODELAY, LOG_AUTHPRIV);
-       pam_setcred(pamh, PAM_DELETE_CRED);
-       pam_end(pamh, pam_close_session(pamh, 0));
-       exit(EXIT_SUCCESS);
-    }
+		/* wait as long as any child is there */
+		while (wait(NULL) == -1 && errno == EINTR) ;
+		openlog("login", LOG_ODELAY, LOG_AUTHPRIV);
+		pam_setcred(pamh, PAM_DELETE_CRED);
+		pam_end(pamh, pam_close_session(pamh, 0));
+		exit(EXIT_SUCCESS);
+	}
 
-    /* child */
+	/* child */
 
-    /* restore to old state */
-    sigaction(SIGHUP, &oldsa_hup, NULL);
-    sigaction(SIGTERM, &oldsa_term, NULL);
-    if(got_sig)
-	    exit(EXIT_FAILURE);
+	/* restore to old state */
+	sigaction(SIGHUP, &oldsa_hup, NULL);
+	sigaction(SIGTERM, &oldsa_term, NULL);
+	if (got_sig)
+		exit(EXIT_FAILURE);
 
-    /*
-     * Problem: if the user's shell is a shell like ash that doesnt do
-     * setsid() or setpgrp(), then a ctrl-\, sending SIGQUIT to every
-     * process in the pgrp, will kill us.
-     */
+	/*
+	 * Problem: if the user's shell is a shell like ash that doesnt do
+	 * setsid() or setpgrp(), then a ctrl-\, sending SIGQUIT to every
+	 * process in the pgrp, will kill us.
+	 */
 
-    /* start new session */
-    setsid();
+	/* start new session */
+	setsid();
 
-    /* make sure we have a controlling tty */
-    opentty(ttyn);
-    openlog("login", LOG_ODELAY, LOG_AUTHPRIV);	/* reopen */
+	/* make sure we have a controlling tty */
+	opentty(ttyn);
+	openlog("login", LOG_ODELAY, LOG_AUTHPRIV);	/* reopen */
 
-    /*
-     * TIOCSCTTY: steal tty from other process group.
-     */
-    if (ioctl(0, TIOCSCTTY, 1))
-	    syslog(LOG_ERR, _("TIOCSCTTY failed: %m"));
-    signal(SIGINT, SIG_DFL);
+	/*
+	 * TIOCSCTTY: steal tty from other process group.
+	 */
+	if (ioctl(0, TIOCSCTTY, 1))
+		syslog(LOG_ERR, _("TIOCSCTTY failed: %m"));
+	signal(SIGINT, SIG_DFL);
 
-    /* discard permissions last so can't get killed and drop core */
-    if(setuid(pwd->pw_uid) < 0 && pwd->pw_uid) {
-	syslog(LOG_ALERT, _("setuid() failed"));
-	exit(EXIT_FAILURE);
-    }
+	/* discard permissions last so can't get killed and drop core */
+	if (setuid(pwd->pw_uid) < 0 && pwd->pw_uid) {
+		syslog(LOG_ALERT, _("setuid() failed"));
+		exit(EXIT_FAILURE);
+	}
 
-    /* wait until here to change directory! */
-    if (chdir(pwd->pw_dir) < 0) {
-	warn(_("%s: change directory failed"), pwd->pw_dir);
-	if (chdir("/"))
-	  exit(EXIT_FAILURE);
-	pwd->pw_dir = "/";
-	printf(_("Logging in with home = \"/\".\n"));
-    }
+	/* wait until here to change directory! */
+	if (chdir(pwd->pw_dir) < 0) {
+		warn(_("%s: change directory failed"), pwd->pw_dir);
+		if (chdir("/"))
+			exit(EXIT_FAILURE);
+		pwd->pw_dir = "/";
+		printf(_("Logging in with home = \"/\".\n"));
+	}
 
-    /* if the shell field has a space: treat it like a shell script */
-    if (strchr(pwd->pw_shell, ' ')) {
-	buff = xmalloc(strlen(pwd->pw_shell) + 6);
+	/* if the shell field has a space: treat it like a shell script */
+	if (strchr(pwd->pw_shell, ' ')) {
+		buff = xmalloc(strlen(pwd->pw_shell) + 6);
 
-	strcpy(buff, "exec ");
-	strcat(buff, pwd->pw_shell);
-	childArgv[childArgc++] = "/bin/sh";
-	childArgv[childArgc++] = "-sh";
-	childArgv[childArgc++] = "-c";
-	childArgv[childArgc++] = buff;
-    } else {
-	tbuf[0] = '-';
-	xstrncpy(tbuf + 1, ((p = strrchr(pwd->pw_shell, '/')) ?
-			   p + 1 : pwd->pw_shell),
-		sizeof(tbuf)-1);
+		strcpy(buff, "exec ");
+		strcat(buff, pwd->pw_shell);
+		childArgv[childArgc++] = "/bin/sh";
+		childArgv[childArgc++] = "-sh";
+		childArgv[childArgc++] = "-c";
+		childArgv[childArgc++] = buff;
+	} else {
+		tbuf[0] = '-';
+		xstrncpy(tbuf + 1, ((p = strrchr(pwd->pw_shell, '/')) ?
+				    p + 1 : pwd->pw_shell), sizeof(tbuf) - 1);
 
-	childArgv[childArgc++] = pwd->pw_shell;
-	childArgv[childArgc++] = tbuf;
-    }
+		childArgv[childArgc++] = pwd->pw_shell;
+		childArgv[childArgc++] = tbuf;
+	}
 
-    childArgv[childArgc++] = NULL;
+	childArgv[childArgc++] = NULL;
 
-    execvp(childArgv[0], childArgv + 1);
+	execvp(childArgv[0], childArgv + 1);
 
-    if (!strcmp(childArgv[0], "/bin/sh"))
-	warn(_("couldn't exec shell script"));
-    else
-	warn(_("no shell"));
+	if (!strcmp(childArgv[0], "/bin/sh"))
+		warn(_("couldn't exec shell script"));
+	else
+		warn(_("no shell"));
 
-    exit(EXIT_SUCCESS);
+	exit(EXIT_SUCCESS);
 }
 
 /*
@@ -1046,19 +1065,19 @@ Michael Riepe <michael@stud.uni-hannover.de>
  * the process just exits if the second timeout expires.
  */
 
-static void
-timedout2(int sig __attribute__((__unused__))) {
+static void timedout2(int sig __attribute__ ((__unused__)))
+{
 	struct termios ti;
 
 	/* reset echo */
 	tcgetattr(0, &ti);
 	ti.c_lflag |= ECHO;
 	tcsetattr(0, TCSANOW, &ti);
-	exit(EXIT_SUCCESS);			/* %% */
+	exit(EXIT_SUCCESS);	/* %% */
 }
 
-static void
-timedout(int sig __attribute__((__unused__))) {
+static void timedout(int sig __attribute__ ((__unused__)))
+{
 	signal(SIGALRM, timedout2);
 	alarm(10);
 	/* TRANSLATORS: The standard value for %d is 60. */
@@ -1070,75 +1089,77 @@ timedout(int sig __attribute__((__unused__))) {
 
 jmp_buf motdinterrupt;
 
-void
-motd(void) {
-    int fd, nchars;
-    void (*oldint)(int);
-    char tbuf[8192];
+void motd(void)
+{
+	int fd, nchars;
+	void (*oldint) (int);
+	char tbuf[8192];
 
-    if ((fd = open(_PATH_MOTDFILE, O_RDONLY, 0)) < 0)
-      return;
-    oldint = signal(SIGINT, sigint);
-    if (setjmp(motdinterrupt) == 0)
-      while ((nchars = read(fd, tbuf, sizeof(tbuf))) > 0) {
-	if (write(fileno(stdout), tbuf, nchars)) {
-		;	/* glibc warn_unused_result */
-	}
-      }
-    signal(SIGINT, oldint);
-    close(fd);
-}
-
-void
-sigint(int sig  __attribute__((__unused__))) {
-    longjmp(motdinterrupt, 1);
-}
-
-void
-dolastlog(int quiet) {
-    struct lastlog ll;
-    int fd;
-
-    if ((fd = open(_PATH_LASTLOG, O_RDWR, 0)) >= 0) {
-	lseek(fd, (off_t)pwd->pw_uid * sizeof(ll), SEEK_SET);
-	if (!quiet) {
-	    if (read(fd, (char *)&ll, sizeof(ll)) == sizeof(ll) &&
-		ll.ll_time != 0) {
-		    time_t ll_time = (time_t) ll.ll_time;
-
-		    printf(_("Last login: %.*s "),
-			   24-5, ctime(&ll_time));
-
-		    if (*ll.ll_host != '\0')
-			    printf(_("from %.*s\n"),
-				   (int)sizeof(ll.ll_host), ll.ll_host);
-		    else
-			    printf(_("on %.*s\n"),
-				   (int)sizeof(ll.ll_line), ll.ll_line);
-	    }
-	    lseek(fd, (off_t)pwd->pw_uid * sizeof(ll), SEEK_SET);
-	}
-	memset((char *)&ll, 0, sizeof(ll));
-
-	{
-		time_t t;
-		time(&t);
-		ll.ll_time = t; /* ll_time is always 32bit */
-	}
-
-	xstrncpy(ll.ll_line, tty_name, sizeof(ll.ll_line));
-	if (hostname)
-	    xstrncpy(ll.ll_host, hostname, sizeof(ll.ll_host));
-
-	if (write(fd, (char *)&ll, sizeof(ll)) < 0)
-	    warn(_("write lastlog failed"));
+	if ((fd = open(_PATH_MOTDFILE, O_RDONLY, 0)) < 0)
+		return;
+	oldint = signal(SIGINT, sigint);
+	if (setjmp(motdinterrupt) == 0)
+		while ((nchars = read(fd, tbuf, sizeof(tbuf))) > 0) {
+			if (write(fileno(stdout), tbuf, nchars)) {
+				;	/* glibc warn_unused_result */
+			}
+		}
+	signal(SIGINT, oldint);
 	close(fd);
-    }
+}
+
+void sigint(int sig __attribute__ ((__unused__)))
+{
+	longjmp(motdinterrupt, 1);
+}
+
+void dolastlog(int quiet)
+{
+	struct lastlog ll;
+	int fd;
+
+	if ((fd = open(_PATH_LASTLOG, O_RDWR, 0)) >= 0) {
+		lseek(fd, (off_t) pwd->pw_uid * sizeof(ll), SEEK_SET);
+		if (!quiet) {
+			if (read(fd, (char *)&ll, sizeof(ll)) == sizeof(ll) &&
+			    ll.ll_time != 0) {
+				time_t ll_time = (time_t) ll.ll_time;
+
+				printf(_("Last login: %.*s "),
+				       24 - 5, ctime(&ll_time));
+
+				if (*ll.ll_host != '\0')
+					printf(_("from %.*s\n"),
+					       (int)sizeof(ll.ll_host),
+					       ll.ll_host);
+				else
+					printf(_("on %.*s\n"),
+					       (int)sizeof(ll.ll_line),
+					       ll.ll_line);
+			}
+			lseek(fd, (off_t) pwd->pw_uid * sizeof(ll), SEEK_SET);
+		}
+		memset((char *)&ll, 0, sizeof(ll));
+
+		{
+			time_t t;
+			time(&t);
+			ll.ll_time = t;	/* ll_time is always 32bit */
+		}
+
+		xstrncpy(ll.ll_line, tty_name, sizeof(ll.ll_line));
+		if (hostname)
+			xstrncpy(ll.ll_host, hostname, sizeof(ll.ll_host));
+
+		if (write(fd, (char *)&ll, sizeof(ll)) < 0)
+			warn(_("write lastlog failed"));
+		close(fd);
+	}
 }
 
 /* Should not be called from PAM code... */
-void
-sleepexit(int eval) {
-    sleep(LOGIN_EXIT_TIMEOUT);
-    exit(eval);
+void sleepexit(int eval)
+{
+	sleep(LOGIN_EXIT_TIMEOUT);
+	exit(eval);
 }
