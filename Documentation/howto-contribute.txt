@@ -90,3 +90,8 @@ Coding style
 	* Use `FIXME:' and a good description if want to inform others
 	  something is not quite right, and you are unwilling to fix the
 	  issue.
+
+Various notes
+
+	* The util-linux does not use kernel headers for file system super
+	  blocks structures.
