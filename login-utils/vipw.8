@@ -31,12 +31,12 @@
 .\"
 .\"     from: @(#)vipw.8	6.7 (Berkeley) 3/16/91
 .\"
-.Dd 7 July 1996
-.Dt VIPW 8
-.Os Util-Linux 2.6
+.Dd July 1996 "  "
+.Dt VIPW(8) "" "System Administration"
+.Os util-linux
 .Sh NAME
 .Nm vipw, vigr
-.Nd edit the password or group files
+.Nd edit the password or group file
 .Sh SYNOPSIS
 .Nm vipw
 .Op Fl V
@@ -45,22 +45,27 @@
 .Op Fl V
 .Op Fl -version
 .Sh DESCRIPTION
-.Nm Vipw
+.Nm vipw
 edits the password file after setting the appropriate locks,
 and does any necessary processing after the password file is unlocked.
 If the password file is already locked for editing by another user,
 .Nm vipw
 will ask you
-to try again later. The default editor for
+to try again later.  The default editor for
 .Nm vipw
+and
+.Nm vigr
 is
 .Xr vi 1 .
-.br
-.Nm Vigr
-edits the group file in the same manner as vipw.
+.Nm vigr
+edits the group file in the same manner as
+.Nm vipw
+does the passwd file.
 .Sh ENVIRONMENT
 If the following environment variable exists it will be utilized by
-.Nm vipw :
+.Nm vipw
+and
+.Nm vigr :
 .Bl -tag -width EDITOR
 .It Ev EDITOR
 The editor specified by the string
