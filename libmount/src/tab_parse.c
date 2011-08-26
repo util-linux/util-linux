@@ -257,7 +257,8 @@ static int guess_table_format(char *line)
 
 	if (sscanf(line, "%u %u", &a, &b) == 2)
 		return MNT_FMT_MOUNTINFO;
-	return MNT_FMT_FSTAB;
+
+	return MNT_FMT_FSTAB;		/* fstab, mtab or /proc/mounts */
 }
 
 /*
@@ -322,7 +323,7 @@ static int mnt_table_parse_next(struct libmnt_table *tb, FILE *f, struct libmnt_
 err:
 	DBG(TAB, mnt_debug_h(tb, "%s:%d: %s parse error", filename, *nlines,
 				tb->fmt == MNT_FMT_MOUNTINFO ? "mountinfo" :
-				tb->fmt == MNT_FMT_FSTAB ? "fstab" : "utab"));
+				tb->fmt == MNT_FMT_FSTAB ? "tab" : "utab"));
 
 	/* by default all errors are recoverable, otherwise behavior depends on
 	 * errcb() function. See mnt_table_set_parser_errcb().
