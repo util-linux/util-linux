@@ -709,7 +709,6 @@ int main(int argc, char **argv)
 	 * and if specified on the command line it is set.
 	 * Therefore, we are safe not setting it to anything
 	 */
-
 	retcode = pam_start(hflag ? "remote" : "login", cxt.username, &conv, &pamh);
 	if (retcode != PAM_SUCCESS) {
 		warnx(_("PAM failure, aborting: %s"),
@@ -834,6 +833,7 @@ int main(int argc, char **argv)
 		pam_end(pamh, PAM_SYSTEM_ERR);
 		exit(EXIT_FAILURE);
 	}
+
 	if (!(cxt.pwd = get_passwd_entry(cxt.username, &pwdbuf, &_pwd))) {
 		warnx(_("\nSession setup problem, abort."));
 		syslog(LOG_ERR, _("Invalid user name \"%s\" in %s:%d. Abort."),
@@ -846,12 +846,19 @@ int main(int argc, char **argv)
 	cxt.username = pwd->pw_name;
 
 	/*
-	 * Initialize the supplementary group list.
-	 * This should be done before pam_setcred because
-	 * the PAM modules might add groups during pam_setcred.
+	 * Initialize the supplementary group list. This should be done before
+	 * pam_setcred because the PAM modules might add groups during
+	 * pam_setcred.
+	 *
+         * For root we don't call initgroups, instead we call setgroups with
+	 * group 0. This avoids the need to step through the whole group file,
+	 * which can cause problems if NIS, NIS+, LDAP or something similar
+	 * is used and the machine has network problems.
 	 */
-	if (initgroups(cxt.username, pwd->pw_gid) < 0) {
-		syslog(LOG_ERR, "initgroups: %m");
+	retcode = pwd->pw_uid ? initgroups(cxt.username, pwd->pw_gid) :	/* user */
+			        setgroups(0, NULL);			/* root */
+	if (retcode < 0) {
+		syslog(LOG_ERR, _("groups initialization failed: %m"));
 		warnx(_("\nSession setup problem, abort."));
 		pam_end(pamh, PAM_SYSTEM_ERR);
 		exit(EXIT_FAILURE);
