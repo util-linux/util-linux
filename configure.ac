@@ -194,7 +194,6 @@ AC_CHECK_FUNCS(
 	usleep \
 	nanosleep \
 	personality \
-	updwtmp \
 	jrand48 \
 	lchown \
 	llseek \
