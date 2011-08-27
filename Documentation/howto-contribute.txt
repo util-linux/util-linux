@@ -95,3 +95,6 @@ Various notes
 
 	* The util-linux does not use kernel headers for file system super
 	  blocks structures.
+
+	* Patches relying on features that are not in Linus' tree
+	  are not accepted.
