@@ -86,27 +86,6 @@ enum {
 # define ADDR_LIMIT_3GB          0x8000000
 #endif
 
-/* Options --3gb and --4gb are for compatibitity with an old Debian setarch
-   implementation. */
-static const struct option longopts[] =
-{
-    { "help",               0, 0, 'h' },
-    { "verbose",            0, 0, 'v' },
-    { "addr-no-randomize",  0, 0, 'R' },
-    { "fdpic-funcptrs",     0, 0, 'F' },
-    { "mmap-page-zero",     0, 0, 'Z' },
-    { "addr-compat-layout", 0, 0, 'L' },
-    { "read-implies-exec",  0, 0, 'X' },
-    { "32bit",              0, 0, 'B' },
-    { "short-inode",        0, 0, 'I' },
-    { "whole-seconds",      0, 0, 'S' },
-    { "sticky-timeouts",    0, 0, 'T' },
-    { "3gb",                0, 0, '3' },
-    { "4gb",                0, 0, OPT_4GB },
-    { "uname-2.6",          0, 0, OPT_UNAME26 },
-    { NULL,                 0, 0, 0 }
-};
-
 static void __attribute__((__noreturn__))
 show_help(void)
 {
@@ -247,6 +226,27 @@ int main(int argc, char *argv[])
   unsigned long options = 0;
   int verbose = 0;
   int c;
+
+  /* Options --3gb and --4gb are for compatibitity with an old Debian setarch
+     implementation. */
+  static const struct option longopts[] =
+  {
+      { "help",               0, 0, 'h' },
+      { "verbose",            0, 0, 'v' },
+      { "addr-no-randomize",  0, 0, 'R' },
+      { "fdpic-funcptrs",     0, 0, 'F' },
+      { "mmap-page-zero",     0, 0, 'Z' },
+      { "addr-compat-layout", 0, 0, 'L' },
+      { "read-implies-exec",  0, 0, 'X' },
+      { "32bit",              0, 0, 'B' },
+      { "short-inode",        0, 0, 'I' },
+      { "whole-seconds",      0, 0, 'S' },
+      { "sticky-timeouts",    0, 0, 'T' },
+      { "3gb",                0, 0, '3' },
+      { "4gb",                0, 0, OPT_4GB },
+      { "uname-2.6",          0, 0, OPT_UNAME26 },
+      { NULL,                 0, 0, 0 }
+  };
 
   setlocale(LC_ALL, "");
   bindtextdomain(PACKAGE, LOCALEDIR);
