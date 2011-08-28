@@ -35,6 +35,7 @@
 
 #include "nls.h"
 #include "c.h"
+#include "strutils.h"
 
 key_t createKey(void)
 {
@@ -102,14 +103,14 @@ int main(int argc, char **argv)
 	while((opt = getopt_long(argc, argv, "hM:QS:p:Vh", longopts, NULL)) != -1) {
 		switch(opt) {
 		case 'M':
-			size = atoi(optarg);
+			size = strtol_or_err(optarg, _("failed to parse size"));
 			doShm = 1;
 			break;
 		case 'Q':
 			doMsg = 1;
 			break;
 		case 'S':
-			nsems = atoi(optarg);
+			nsems = strtol_or_err(optarg, _("failed to parse elements"));
 			doSem = 1;
 			break;
 		case 'p':
