@@ -89,13 +89,8 @@ enum {
 static void __attribute__((__noreturn__))
 show_help(void)
 {
-  const char *p = program_invocation_short_name;
-
-  if (!*p)
-    p = "setarch";
-
   printf(_("Usage: %s%s [options] [program [program arguments]]\n\nOptions:\n"),
-         p, !strcmp(p, "setarch") ? " <arch>" : "");
+         program_invocation_short_name, !strcmp(program_invocation_short_name, "setarch") ? " <arch>" : "");
 
    printf(_(
    " -h, --help               displays this help text\n"
@@ -122,13 +117,7 @@ show_help(void)
 static void __attribute__((__noreturn__))
 show_usage(const char *s)
 {
-  const char *p = program_invocation_short_name;
-
-  if (!*p)
-    p = "setarch";
-
-  fprintf(stderr, _("%s: %s\nTry `%s --help' for more information.\n"), p, s, p);
-  exit(EXIT_FAILURE);
+  errx(EXIT_FAILURE, _("%s\nTry `%s --help' for more information."), s, program_invocation_short_name);
 }
 
 
