@@ -22,6 +22,7 @@
 #include <sys/sem.h>
 #include "c.h"
 #include "nls.h"
+#include "strutils.h"
 
 /* for getopt */
 #include <unistd.h>
@@ -64,81 +65,168 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static int
-remove_ids(type_id type, int argc, char **argv) {
-	int id;
-	int ret = 0;		/* for gcc */
-	char *end;
-	int nb_errors = 0;
+int remove_id(int type, int iskey, int id)
+{
+	char *errmsg;
+	/* needed to delete semaphores */
 	union semun arg;
-
 	arg.val = 0;
 
-	while(argc) {
+	/* do the removal */
+	switch (type) {
+	case SHM:
+		shmctl(id, IPC_RMID, NULL);
+		break;
+	case MSG:
+		msgctl(id, IPC_RMID, NULL);
+		break;
+	case SEM:
+		semctl(id, 0, IPC_RMID, arg);
+		break;
+	default:
+		errx(EXIT_FAILURE, "impossible occurred");
+	}
 
+	/* how did the removal go? */
+	switch (errno) {
+	case 0:
+		return 0;
+	case EACCES:
+	case EPERM:
+		errmsg = iskey ? _("permission denied for key") : _("permission denied for id");
+		break;
+	case EINVAL:
+		errmsg = iskey ? _("invalid key") : _("invalid id");
+		break;
+	case EIDRM:
+		errmsg = iskey ? _("already removed key") : _("already removed id");
+		break;
+	default:
+		if (iskey)
+			err(EXIT_FAILURE, _("key failed"));
+		err(EXIT_FAILURE, _("id failed"));
+	}
+	warnx("%s (%d)", errmsg, id);
+	return 1;
+}
+
+static int remove_arg_list(type_id type, int argc, char **argv)
+{
+	int id;
+	char *end;
+	int nb_errors = 0;
+
+	do {
 		id = strtoul(argv[0], &end, 10);
-
 		if (*end != 0) {
 			warnx(_("invalid id: %s"), argv[0]);
-			nb_errors ++;
+			nb_errors++;
 		} else {
-			switch(type) {
-			case SEM:
-				ret = semctl (id, 0, IPC_RMID, arg);
-				break;
-
-			case MSG:
-				ret = msgctl (id, IPC_RMID, NULL);
-				break;
-				
-			case SHM:
-				ret = shmctl (id, IPC_RMID, NULL);
-				break;
-			}
-
-			if (ret) {
-				warn(_("cannot remove id %s"), argv[0]);
-				nb_errors ++;
-			}
+			if (remove_id(type, 0, id))
+				nb_errors++;
 		}
 		argc--;
 		argv++;
-	}
-	
-	return(nb_errors);
+	} while (argc);
+	return (nb_errors);
 }
 
 static int deprecated_main(int argc, char **argv)
 {
-	if (argc < 3)
-		usage(stderr);
-	
-	if (!strcmp(argv[1], "shm")) {
-		if (remove_ids(SHM, argc-2, &argv[2]))
-			exit(1);
-	}
-	else if (!strcmp(argv[1], "msg")) {
-		if (remove_ids(MSG, argc-2, &argv[2]))
-			exit(1);
-	} 
-	else if (!strcmp(argv[1], "sem")) {
-		if (remove_ids(SEM, argc-2, &argv[2]))
-			exit(1);
-	}
-	else {
-		warnx(_("unknown resource type: %s"), argv[1]);
+	type_id type;
+
+	if (!strcmp(argv[1], "shm"))
+		type = SHM;
+	else if (!strcmp(argv[1], "msg"))
+		type = MSG;
+	else if (!strcmp(argv[1], "sem"))
+		type = SEM;
+	else
+		return 0;
+
+	if (argc < 3) {
+		warnx(_("not enough arguments"));
 		usage(stderr);
 	}
 
-	printf (_("resource(s) deleted\n"));
+	if (remove_arg_list(type, argc - 2, &argv[2]))
+		exit(EXIT_FAILURE);
+
+	printf(_("resource(s) deleted\n"));
+	return 1;
+}
+
+unsigned long strtokey(const char *str, const char *errmesg)
+{
+	unsigned long num;
+	char *end = NULL;
+
+	if (str == NULL || *str == '\0')
+		goto err;
+	errno = 0;
+	/* keys are in hex or decimal */
+	num = strtoul(str, &end, 0);
+
+	if (errno || str == end || (end && *end))
+		goto err;
+
+	return num;
+ err:
+	if (errno)
+		err(EXIT_FAILURE, "%s: '%s'", errmesg, str);
+	else
+		errx(EXIT_FAILURE, "%s: '%s'", errmesg, str);
 	return 0;
 }
 
+static int key_to_id(type_id type, char *optarg)
+{
+	int id;
+	/* keys are in hex or decimal */
+	key_t key = strtokey(optarg, "failed to parse argument");
+	if (key == IPC_PRIVATE) {
+		warnx(_("illegal key (%s)"), optarg);
+		return -1;
+	}
+	switch (type) {
+	case SHM:
+		id = shmget(key, 0, 0);
+		break;
+	case MSG:
+		id = msgget(key, 0);
+		break;
+	case SEM:
+		id = semget(key, 0, 0);
+		break;
+	default:
+		errx(EXIT_FAILURE, "impossible occurred");
+	}
+	if (id < 0) {
+		char *errmsg;
+		switch (errno) {
+		case EACCES:
+			errmsg = _("permission denied for key");
+			break;
+		case EIDRM:
+			errmsg = _("already removed key");
+			break;
+		case ENOENT:
+			errmsg = _("invalid key");
+			break;
+		default:
+			err(EXIT_FAILURE, _("key failed"));
+		}
+		warnx("%s (%s)", errmsg, optarg);
+	}
+	return id;
+}
 
 int main(int argc, char **argv)
 {
-	int   c;
-	int   error = 0;
+	int c;
+	int ret = 0;
+	int id = -1;
+	int iskey;
 
 	static const struct option longopts[] = {
 		{"shmem-id", required_argument, NULL, 'm'},
@@ -161,107 +249,67 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 
 	/* check to see if the command is being invoked in the old way if so
-	   then run the old code */
-	if (strcmp(argv[1], "shm") == 0 ||
-	    strcmp(argv[1], "msg") == 0 ||
-	    strcmp(argv[1], "sem") == 0)
-		return deprecated_main(argc, argv);
+	 * then remove argument list */
+	if (deprecated_main(argc, argv))
+		return EXIT_SUCCESS;
 
 	/* process new syntax to conform with SYSV ipcrm */
-	while ((c = getopt_long(argc, argv, "q:m:s:Q:M:S:hV", longopts, NULL)) != -1) {
-		int result;
-		int id = 0;
-		int iskey = isupper(c);
-
-		/* needed to delete semaphores */
-		union semun arg;
-		arg.val = 0;
-
-		/* --help & --version */
-		if (c == 'h')
+	for (id = -1;
+	    (c = getopt_long(argc, argv, "q:m:s:Q:M:S:hV", longopts, NULL)) != -1;
+	    id = -1) {
+		switch (c) {
+		case 'M':
+			iskey = 0;
+			id = key_to_id(SHM, optarg);
+			if (id < 0) {
+				ret++;
+				break;
+			}
+		case 'm':
+			if (id < 0) {
+				iskey = 1;
+				id = strtoll_or_err(optarg, _("failed to parse argument"));
+			}
+			if (remove_id(SHM, iskey, id))
+				ret++;
+			break;
+		case 'Q':
+			iskey = 0;
+			id = key_to_id(MSG, optarg);
+			if (id < 0) {
+				ret++;
+				break;
+			}
+		case 'q':
+			if (id < 0) {
+				iskey = 1;
+				id = strtoll_or_err(optarg, _("failed to parse argument"));
+			}
+			if (remove_id(MSG, iskey, id))
+				ret++;
+			break;
+		case 'S':
+			iskey = 0;
+			id = key_to_id(SEM, optarg);
+			if (id < 0) {
+				ret++;
+				break;
+			}
+		case 's':
+			if (id < 0) {
+				iskey = 1;
+				id = strtoll_or_err(optarg, _("failed to parse argument"));
+			}
+			if (remove_id(SEM, iskey, id))
+				ret++;
+			break;
+		case 'h':
 			usage(stdout);
-		if (c == 'V') {
+		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
-		}
-
-		/* we don't need case information any more */
-		c = tolower(c);
-
-		/* make sure the option is in range */
-		if (c != 'q' && c != 'm' && c != 's') {
+		default:
 			usage(stderr);
-		}
-
-		if (iskey) {
-			/* keys are in hex or decimal */
-			key_t key = strtoul(optarg, NULL, 0);
-			if (key == IPC_PRIVATE) {
-				error++;
-				warnx(_("illegal key (%s)"), optarg);
-				continue;
-			}
-
-			/* convert key to id */
-			id = ((c == 'q') ? msgget(key, 0) :
-			      (c == 'm') ? shmget(key, 0, 0) :
-			      semget(key, 0, 0));
-
-			if (id < 0) {
-				char *errmsg;
-				error++;
-				switch(errno) {
-				case EACCES:
-					errmsg = _("permission denied for key");
-					break;
-				case EIDRM:
-					errmsg = _("already removed key");
-					break;
-				case ENOENT:
-					errmsg = _("invalid key");
-					break;
-				default:
-					err(EXIT_FAILURE, _("key failed"));
-				}
-				warnx("%s (%s)", errmsg, optarg);
-				continue;
-			}
-		} else {
-			/* ids are in decimal */
-			id = strtoul(optarg, NULL, 10);
-		}
-
-		result = ((c == 'q') ? msgctl(id, IPC_RMID, NULL) :
-			  (c == 'm') ? shmctl(id, IPC_RMID, NULL) : 
-			  semctl(id, 0, IPC_RMID, arg));
-
-		if (result < 0) {
-			char *errmsg;
-			error++;
-			switch(errno) {
-			case EACCES:
-			case EPERM:
-				errmsg = iskey
-					? _("permission denied for key")
-					: _("permission denied for id");
-				break;
-			case EINVAL:
-				errmsg = iskey
-					? _("invalid key")
-					: _("invalid id");
-				break;
-			case EIDRM:
-				errmsg = iskey
-					? _("already removed key")
-					: _("already removed id");
-				break;
-			default:
-				if (iskey)
-				        err(EXIT_FAILURE, _("key failed"));
-                                err(EXIT_FAILURE, _("id failed"));
-			}
-			warnx("%s (%s)", errmsg, optarg);
-			continue;
 		}
 	}
 
@@ -271,5 +319,5 @@ int main(int argc, char **argv)
 		usage(stderr);
 	}
 
-	if (error == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
+	return ret == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
 }
