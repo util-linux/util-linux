@@ -37,27 +37,27 @@
 #include "c.h"
 #include "strutils.h"
 
-key_t createKey(void)
+key_t create_key(void)
 {
-	srandom( time( NULL ) );
+	srandom(time(NULL));
 	return random();
 }
 
-int createShm(size_t size, int permission)
+int create_shm(size_t size, int permission)
 {
-	key_t key = createKey();
+	key_t key = create_key();
 	return shmget(key, size, permission | IPC_CREAT);
 }
 
-int createMsg(int permission)
+int create_msg(int permission)
 {
-	key_t key = createKey();
+	key_t key = create_key();
 	return msgget(key, permission | IPC_CREAT);
 }
 
-int createSem(int nsems, int permission)
+int create_sem(int nsems, int permission)
 {
-	key_t key = createKey();
+	key_t key = create_key();
 	return semget(key, nsems, permission | IPC_CREAT);
 }
 
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 	int opt;
 	size_t size = 0;
 	int nsems = 0;
-	int doShm = 0, doMsg = 0, doSem = 0;
+	int ask_shm = 0, ask_msg = 0, ask_sem = 0;
 	static const struct option longopts[] = {
 		{"shmem", required_argument, NULL, 'M'},
 		{"semaphore", required_argument, NULL, 'S'},
@@ -104,14 +104,14 @@ int main(int argc, char **argv)
 		switch(opt) {
 		case 'M':
 			size = strtol_or_err(optarg, _("failed to parse size"));
-			doShm = 1;
+			ask_shm = 1;
 			break;
 		case 'Q':
-			doMsg = 1;
+			ask_msg = 1;
 			break;
 		case 'S':
 			nsems = strtol_or_err(optarg, _("failed to parse elements"));
-			doSem = 1;
+			ask_sem = 1;
 			break;
 		case 'p':
 			permission = strtoul(optarg, NULL, 8);
@@ -123,33 +123,33 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		default:
-			doShm = doMsg = doSem = 0;
+			ask_shm = ask_msg = ask_sem = 0;
 			break;
 		}
 	}
 
-	if(!doShm && !doMsg && !doSem)
+	if(!ask_shm && !ask_msg && !ask_sem)
 		usage(stderr);
 
-	if (doShm) {
+	if (ask_shm) {
 		int shmid;
-		if (-1 == (shmid = createShm(size, permission)))
+		if (-1 == (shmid = create_shm(size, permission)))
 			err(EXIT_FAILURE, _("create share memory failed"));
 		else
 			printf(_("Shared memory id: %d\n"), shmid);
 	}
 
-	if (doMsg) {
+	if (ask_msg) {
 		int msgid;
-		if (-1 == (msgid = createMsg(permission)))
+		if (-1 == (msgid = create_msg(permission)))
 			err(EXIT_FAILURE, _("create message queue failed"));
 		else
 			printf(_("Message queue id: %d\n"), msgid);
 	}
 
-	if (doSem) {
+	if (ask_sem) {
 		int semid;
-		if (-1 == (semid = createSem(nsems, permission)))
+		if (-1 == (semid = create_sem(nsems, permission)))
 			err(EXIT_FAILURE, _("create semaphore failed"));
 		else
 			printf(_("Semaphore id: %d\n"), semid);
