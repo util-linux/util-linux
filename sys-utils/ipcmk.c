@@ -19,22 +19,19 @@
  *  Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <errno.h>
-#include <time.h>
 #include <getopt.h>
-
-#include <unistd.h>
-#include <sys/types.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/sem.h>
 #include <sys/msg.h>
+#include <sys/sem.h>
+#include <sys/shm.h>
+#include <time.h>
 
-#include "nls.h"
 #include "c.h"
+#include "nls.h"
 #include "strutils.h"
 
 key_t create_key(void)
