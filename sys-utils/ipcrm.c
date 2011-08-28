@@ -221,8 +221,7 @@ int main(int argc, char **argv)
 					errmsg = _("invalid key");
 					break;
 				default:
-					errmsg = _("unknown error in key");
-					break;
+					err(EXIT_FAILURE, _("key failed"));
 				}
 				warnx("%s (%s)", errmsg, optarg);
 				continue;
@@ -257,10 +256,9 @@ int main(int argc, char **argv)
 					: _("already removed id");
 				break;
 			default:
-				errmsg = iskey
-					? _("unknown error in key")
-					: _("unknown error in id");
-				break;
+				if (iskey)
+				        err(EXIT_FAILURE, _("key failed"));
+                                err(EXIT_FAILURE, _("id failed"));
 			}
 			warnx("%s (%s)", errmsg, optarg);
 			continue;
