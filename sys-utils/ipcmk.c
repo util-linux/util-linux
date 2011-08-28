@@ -36,8 +36,6 @@
 #include "nls.h"
 #include "c.h"
 
-static const char *progname;
-
 key_t createKey(void)
 {
 	srandom( time( NULL ) );
@@ -46,44 +44,26 @@ key_t createKey(void)
 
 int createShm(size_t size, int permission)
 {
-	int result = -1;
-	int shmid;
 	key_t key = createKey();
-
-	if (-1 != (shmid = shmget(key, size, permission | IPC_CREAT)))
-		result = shmid;
-
-	return result;
+	return shmget(key, size, permission | IPC_CREAT);
 }
 
 int createMsg(int permission)
 {
-	int result = -1;
-	int msgid;
 	key_t key = createKey();
-
-	if (-1 != (msgid = msgget(key, permission | IPC_CREAT)))
-		result = msgid;
-
-	return result;
+	return msgget(key, permission | IPC_CREAT);
 }
 
 int createSem(int nsems, int permission)
 {
-	int result = -1;
-	int semid;
 	key_t key = createKey();
-
-	if (-1 != (semid = semget(key, nsems, permission | IPC_CREAT)))
-		result = semid;
-
-	return result;
+	return semget(key, nsems, permission | IPC_CREAT);
 }
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fprintf(out, USAGE_HEADER);
-	fprintf(out, _(" %s [options]\n"), progname);
+	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 	fprintf(out, USAGE_OPTIONS);
 
 	fputs(_(" -M, --shmem <size>       create shared memory segment of size <size>\n"), out);
@@ -114,10 +94,6 @@ int main(int argc, char **argv)
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
 	};
-
-	progname = program_invocation_short_name;
-	if (!progname)
-		progname = "ipcmk";
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
