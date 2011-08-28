@@ -9,6 +9,7 @@
  *
  */
 
+#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,6 +20,7 @@
 #include <sys/shm.h>
 #include <sys/msg.h>
 #include <sys/sem.h>
+#include "c.h"
 #include "nls.h"
 
 /* for getopt */
@@ -36,15 +38,31 @@ union semun {
 };
 #endif
 
-static void usage(char *);
-
-char *execname;
-
 typedef enum type_id {
 	SHM,
 	SEM,
 	MSG
 } type_id;
+
+/* print the new usage */
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
+{
+	fprintf(out, USAGE_HEADER);
+	fprintf(out, " %s [options]\n", program_invocation_short_name);
+	fprintf(out, " %s <shm|msg|sem> <id> [...]\n", program_invocation_short_name);
+	fprintf(out, USAGE_OPTIONS);
+	fputs(_(" -m, --shmem-id <id>        remove shared memory segment by shmid\n"), out);
+	fputs(_(" -M, --shmem-key <key>      remove shared memory segment by key\n"), out);
+	fputs(_(" -q, --queue-id <id>        remove message queue by id\n"), out);
+	fputs(_(" -Q, --queue-key <key>      remove message queue by key\n"), out);
+	fputs(_(" -s, --semaphore-id <id>    remove semaprhore by id\n"), out);
+	fputs(_(" -S, --semaphore-key <key>  remove semaprhore by key\n"), out);
+	fprintf(out, USAGE_HELP);
+	fprintf(out, USAGE_VERSION);
+	fprintf(out, USAGE_BEGIN_TAIL);
+	fprintf(out, USAGE_MAN_TAIL, "ipcrm(1)");
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
 
 static int
 remove_ids(type_id type, int argc, char **argv) {
@@ -61,7 +79,7 @@ remove_ids(type_id type, int argc, char **argv) {
 		id = strtoul(argv[0], &end, 10);
 
 		if (*end != 0) {
-			printf (_("invalid id: %s\n"), argv[0]);
+			warnx(_("invalid id: %s"), argv[0]);
 			nb_errors ++;
 		} else {
 			switch(type) {
@@ -79,8 +97,7 @@ remove_ids(type_id type, int argc, char **argv) {
 			}
 
 			if (ret) {
-				printf (_("cannot remove id %s (%s)\n"),
-					argv[0], strerror(errno));
+				warn(_("cannot remove id %s"), argv[0]);
 				nb_errors ++;
 			}
 		}
@@ -91,21 +108,10 @@ remove_ids(type_id type, int argc, char **argv) {
 	return(nb_errors);
 }
 
-static void deprecate_display_usage(void)
-{
-	usage(execname);
-	printf (_("deprecated usage: %s {shm | msg | sem} id ...\n"),
-		execname);
-}
-
 static int deprecated_main(int argc, char **argv)
 {
-	execname = argv[0];
-
-	if (argc < 3) {
-		deprecate_display_usage();
-		exit(1);
-	}
+	if (argc < 3)
+		usage(stderr);
 	
 	if (!strcmp(argv[1], "shm")) {
 		if (remove_ids(SHM, argc-2, &argv[2]))
@@ -120,9 +126,8 @@ static int deprecated_main(int argc, char **argv)
 			exit(1);
 	}
 	else {
-		deprecate_display_usage();
-		printf (_("unknown resource type: %s\n"), argv[1]);
-		exit(1);
+		warnx(_("unknown resource type: %s"), argv[1]);
+		usage(stderr);
 	}
 
 	printf (_("resource(s) deleted\n"));
@@ -130,21 +135,22 @@ static int deprecated_main(int argc, char **argv)
 }
 
 
-/* print the new usage */
-static void
-usage(char *progname)
-{
-	fprintf(stderr,
-		_("usage: %s [ [-q msqid] [-m shmid] [-s semid]\n"
-		  "          [-Q msgkey] [-M shmkey] [-S semkey] ... ]\n"),
-		progname);
-}
-
 int main(int argc, char **argv)
 {
 	int   c;
 	int   error = 0;
-	char *prog = argv[0];
+
+	static const struct option longopts[] = {
+		{"shmem-id", required_argument, NULL, 'm'},
+		{"shmem-key", required_argument, NULL, 'M'},
+		{"queue-id", required_argument, NULL, 'q'},
+		{"queue-key", required_argument, NULL, 'Q'},
+		{"semaphore-id", required_argument, NULL, 's'},
+		{"semaphore-key", required_argument, NULL, 'S'},
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
 
 	/* if the command is executed without parameters, do nothing */
 	if (argc == 1)
@@ -162,7 +168,7 @@ int main(int argc, char **argv)
 		return deprecated_main(argc, argv);
 
 	/* process new syntax to conform with SYSV ipcrm */
-	while ((c = getopt(argc, argv, "q:m:s:Q:M:S:")) != -1) {
+	while ((c = getopt_long(argc, argv, "q:m:s:Q:M:S:hV", longopts, NULL)) != -1) {
 		int result;
 		int id = 0;
 		int iskey = isupper(c);
@@ -171,14 +177,20 @@ int main(int argc, char **argv)
 		union semun arg;
 		arg.val = 0;
 
+		/* --help & --version */
+		if (c == 'h')
+			usage(stdout);
+		if (c == 'V') {
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
+		}
+
 		/* we don't need case information any more */
 		c = tolower(c);
 
 		/* make sure the option is in range */
 		if (c != 'q' && c != 'm' && c != 's') {
-			usage(prog);
-			error++;
-			return error;
+			usage(stderr);
 		}
 
 		if (iskey) {
@@ -186,8 +198,7 @@ int main(int argc, char **argv)
 			key_t key = strtoul(optarg, NULL, 0);
 			if (key == IPC_PRIVATE) {
 				error++;
-				fprintf(stderr, _("%s: illegal key (%s)\n"),
-					prog, optarg);
+				warnx(_("illegal key (%s)"), optarg);
 				continue;
 			}
 
@@ -213,8 +224,7 @@ int main(int argc, char **argv)
 					errmsg = _("unknown error in key");
 					break;
 				}
-				fprintf(stderr, "%s: %s (%s)\n",
-					prog, errmsg, optarg);
+				warnx("%s (%s)", errmsg, optarg);
 				continue;
 			}
 		} else {
@@ -252,19 +262,16 @@ int main(int argc, char **argv)
 					: _("unknown error in id");
 				break;
 			}
-			fprintf(stderr, _("%s: %s (%s)\n"),
-				prog, errmsg, optarg);
+			warnx("%s (%s)", errmsg, optarg);
 			continue;
 		}
 	}
 
 	/* print usage if we still have some arguments left over */
 	if (optind != argc) {
-		fprintf(stderr, _("%s: unknown argument: %s\n"),
-			prog, argv[optind]);
-		usage(prog);
+		warnx(_("unknown argument: %s"), argv[optind]);
+		usage(stderr);
 	}
 
-	/* exit value reflects the number of errors encountered */
-	return error;
+	if (error == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 }
