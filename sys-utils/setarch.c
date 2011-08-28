@@ -93,7 +93,6 @@ show_help(void)
          program_invocation_short_name, !strcmp(program_invocation_short_name, "setarch") ? " <arch>" : "");
 
    printf(_(
-   " -h, --help               displays this help text\n"
    " -v, --verbose            says what options are being switched on\n"
    " -R, --addr-no-randomize  disables randomization of the virtual address space\n"
    " -F, --fdpic-funcptrs     makes function pointers point to descriptors\n"
@@ -109,6 +108,8 @@ show_help(void)
 
    printf(_(
    "     --uname-2.6          turns on UNAME26\n"));
+  printf(USAGE_HELP);
+  printf(USAGE_VERSION);
 
   printf(_("\nFor more information see setarch(8).\n"));
   exit(EXIT_SUCCESS);
@@ -120,6 +121,12 @@ show_usage(const char *s)
   errx(EXIT_FAILURE, _("%s\nTry `%s --help' for more information."), s, program_invocation_short_name);
 }
 
+static void __attribute__((__noreturn__))
+show_version(void)
+{
+  printf(UTIL_LINUX_VERSION);
+  exit(EXIT_SUCCESS);
+}
 
 int set_arch(const char *pers, unsigned long options)
 {
@@ -221,6 +228,7 @@ int main(int argc, char *argv[])
   static const struct option longopts[] =
   {
       { "help",               0, 0, 'h' },
+      { "version",            0, 0, 'V' },
       { "verbose",            0, 0, 'v' },
       { "addr-no-randomize",  0, 0, 'R' },
       { "fdpic-funcptrs",     0, 0, 'F' },
@@ -254,6 +262,8 @@ int main(int argc, char *argv[])
     argv[0] = argv[-1];      /* for getopt_long() to get the program name */
     if (!strcmp(p, "-h") || !strcmp(p, "--help"))
       show_help();
+    else if (!strcmp(p, "-V") || !strcmp(p, "--version"))
+      show_version();
   }
   #if defined(__sparc64__) || defined(__sparc__)
    if (!strcmp(p, "sparc32bash")) {
@@ -264,10 +274,13 @@ int main(int argc, char *argv[])
    }
   #endif
 
-  while ((c = getopt_long(argc, argv, "+hv3BFILRSTXZ", longopts, NULL)) != -1) {
+  while ((c = getopt_long(argc, argv, "+hVv3BFILRSTXZ", longopts, NULL)) != -1) {
     switch (c) {
     case 'h':
       show_help();
+      break;
+    case 'V':
+      show_version();
       break;
     case 'v':
       verbose = 1;
