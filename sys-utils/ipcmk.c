@@ -24,6 +24,7 @@
 #include <string.h>
 #include <errno.h>
 #include <time.h>
+#include <getopt.h>
 
 #include <unistd.h>
 #include <sys/types.h>
@@ -79,23 +80,22 @@ int createSem(int nsems, int permission)
 	return result;
 }
 
-void usage(int rc)
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	FILE *out = rc == EXIT_FAILURE ? stderr : stdout;
+	fprintf(out, USAGE_HEADER);
+	fprintf(out, _(" %s [options]\n"), progname);
+	fprintf(out, USAGE_OPTIONS);
 
-	fputs(_("\nUsage:\n"), out);
-	fprintf(out,
-	     _(" %s [options]\n"), progname);
+	fputs(_(" -M, --shmem <size>       create shared memory segment of size <size>\n"), out);
+	fputs(_(" -S, --semaphore <nsems>  create semaphore array with <nsems> elements\n"), out);
+	fputs(_(" -Q, --queue              create message queue\n"), out);
+	fputs(_(" -p, --mode <mode>        permission for the resource (default is 0644)\n"), out);
 
-	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -M <size>     create shared memory segment of size <size>\n"
-		" -S <nsems>    create semaphore array with <nsems> elements\n"
-		" -Q            create message queue\n"
-		" -p <mode>     permission for the resource (default is 0644)\n"), out);
-
-	fputs(_("\nFor more information see ipcmk(1).\n"), out);
-
-	exit(rc);
+	fprintf(out, USAGE_HELP);
+	fprintf(out, USAGE_VERSION);
+	fprintf(out, USAGE_BEGIN_TAIL);
+	fprintf(out, USAGE_MAN_TAIL, "ipcmk(1)");
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -105,6 +105,15 @@ int main(int argc, char **argv)
 	size_t size = 0;
 	int nsems = 0;
 	int doShm = 0, doMsg = 0, doSem = 0;
+	static const struct option longopts[] = {
+		{"shmem", required_argument, NULL, 'M'},
+		{"semaphore", required_argument, NULL, 'S'},
+		{"queue", no_argument, NULL, 'Q'},
+		{"mode", required_argument, NULL, 'p'},
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
 
 	progname = program_invocation_short_name;
 	if (!progname)
@@ -114,7 +123,7 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while((opt = getopt(argc, argv, "hM:QS:p:")) != -1) {
+	while((opt = getopt_long(argc, argv, "hM:QS:p:Vh", longopts, NULL)) != -1) {
 		switch(opt) {
 		case 'M':
 			size = atoi(optarg);
@@ -131,8 +140,11 @@ int main(int argc, char **argv)
 			permission = strtoul(optarg, NULL, 8);
 			break;
 		case 'h':
-			usage(EXIT_SUCCESS);
+			usage(stdout);
 			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		default:
 			doShm = doMsg = doSem = 0;
 			break;
@@ -140,7 +152,7 @@ int main(int argc, char **argv)
 	}
 
 	if(!doShm && !doMsg && !doSem)
-		usage(EXIT_FAILURE);
+		usage(stderr);
 
 	if (doShm) {
 		int shmid;
