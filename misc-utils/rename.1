@@ -6,7 +6,7 @@
 rename \- rename files
 .SH SYNOPSIS
 .B rename
-[\fIoptions\fR] \fIexpression replacement file\fR...
+.RI [ options ] " expression replacement file" ...
 .SH DESCRIPTION
 .B rename
 will rename the specified files by replacing the first occurrence of
@@ -22,7 +22,7 @@ Give visual feedback which files where renamed, if any.
 Display version information and exit.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
-Display help screen and exit.
+Display help text and exit.
 .SH EXAMPLES
 Given the files
 .IR foo1 ", ..., " foo9 ", " foo10 ", ..., " foo278 ,
@@ -47,10 +47,10 @@ rename .htm .html *.htm
 .RE
 will fix the extension of your html files.
 .SH WARNING
-The rename has no safeguards. If user has permission to rewrite file names
-the command will perform the action without any questions. For example
-result can be quite drastic when the command is ran as root in /lib
-directory. Make always a backup before running the command, unless you truly
+The renaming has no safeguards.  If the user has permission to rewrite file names,
+the command will perform the action without any questions.  For example, the
+result can be quite drastic when the command is run as root in the /lib
+directory.  Always make a backup before running the command, unless you truly
 know what you are doing.
 .SH "SEE ALSO"
 .BR mmv (1),

@@ -24,12 +24,11 @@ and in the future.
 .PP
 There are two types of UUIDs which
 .B uuidgen
-can generate: time-based UUIDs and random-based UUIDs.  By
-default
+can generate: time-based UUIDs and random-based UUIDs.  By default
 .B uuidgen
 will generate a random-based UUID if a high-quality random number
-generator is present.  Otherwise, it will chose a time-based UUID.  It
-is possible to force the generation of one of these two
+generator is present.  Otherwise, it will choose a time-based UUID.
+It is possible to force the generation of one of these two
 UUID types by using the
 .B \-r
 or
@@ -37,21 +36,21 @@ or
 options.
 .SH OPTIONS
 .TP
-\fB\-r\fR, \fB\-\-random\fR
+.BR \-r , " \-\-random"
 Generate a random-based UUID.  This method creates a UUID consisting mostly
 of random bits.  It requires that the operating system have a high
 quality random number generator, such as
 .IR /dev/random .
 .TP
-\fB\-t\fR, \fB\-\-time\fR
+.BR \-t , " \-\-time"
 Generate a time-based UUID.  This method creates a UUID based on the system
 clock plus the system's ethernet hardware address, if present.
 .TP
-\fB\-V\fR, \fB\-\-version\fR
-Output version information and exit.
+.BR \-h , " \-\-help"
+Display help text and exit.
 .TP
-\fB\-h\fR, \fB\-\-help\fR
-Output help screen and exit.
+.BR \-V , " \-\-version"
+Display version information and exit.
 .SH "CONFORMING TO"
 OSF DCE 1.1
 .SH AUTHOR

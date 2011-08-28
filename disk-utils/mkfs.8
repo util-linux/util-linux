@@ -5,7 +5,9 @@ mkfs \- build a Linux filesystem
 .SH SYNOPSIS
 .SH SYNOPSIS
 .B mkfs
-[\fIoptions\fR] [\fB-t\fR \fItype fs-options\fR] \fIdevice\fR [\fIsize\fR]
+.RI [ options ]
+.RB [ \-t
+.IR "type fs-options" ] " device " [ size ]
 .SH DESCRIPTION
 .B mkfs
 is used to build a Linux filesystem on a device, usually
@@ -28,7 +30,7 @@ is simply a front-end for the various filesystem builders
 (\fBmkfs.\fIfstype\fR)
 available under Linux.
 The filesystem-specific builder is searched for in a number
-of directories like perhaps
+of directories, like perhaps
 .IR /sbin ,
 .IR /sbin/fs ,
 .IR /sbin/fs.d ,
@@ -45,8 +47,8 @@ Please see the filesystem-specific builder manual pages for
 further details.
 .SH OPTIONS
 .TP
-\fB\-t\fR, \fB\-\-type\fR=\fITYPE\fR
-Specifies the type of filesystem to be built.
+.BR \-t , " \-\-type " \fItype\fR
+Specify the \fItype\fR of filesystem to be built.
 If not specified, the default filesystem type
 (currently ext2) is used.
 .TP
@@ -55,19 +57,19 @@ Filesystem-specific options to be passed to the real filesystem builder.
 Although not guaranteed, the following options are supported
 by most filesystem builders.
 .TP
-\fB\-V\fR, \fB\-\-verbose\fR
+.BR \-V , " \-\-verbose"
 Produce verbose output, including all filesystem-specific commands
 that are executed.
 Specifying this option more than once inhibits execution of any
 filesystem-specific commands.
 This is really only useful for testing.
 .TP
-\fB\-V\fR, \fB\-\-version\fR
-Display version information and exit.  Option \fB\-V\fR will display
+.BR \-V , " \-\-version"
+Display version information and exit.  (Option \fB\-V\fR will display
 version information only when it is the only parameter, otherwise it
-will work as \fB\-\-verbose\fR.
+will work as \fB\-\-verbose\fR.)
 .TP
-\fB\-h\fR, \fB\-\-help\fR
+.BR \-h , " \-\-help"
 Display help and exit.
 .SH BUGS
 All generic options must precede and not be combined with
@@ -77,7 +79,7 @@ Some filesystem-specific programs do not support the
 (verbose) option, nor return meaningful exit codes.
 Also, some filesystem-specific programs do not automatically
 detect the device size and require the
-.I blocks
+.I size
 parameter to be specified.
 .SH AUTHORS
 David Engel (david@ods.com)

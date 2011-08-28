@@ -14,13 +14,13 @@ performs a consistency check for the Linux MINIX filesystem.  The current
 version supports the 14 character and 30 character filename options.
 
 The program
-assumes the file system is quiescent.
+assumes the filesystem is quiescent.
 .B fsck.minix
 should not be used on a mounted device unless you can be sure nobody is
 writing to it (and remember that the kernel can write to it when it
 searches for files).
 
-The device will usually have the following form:
+The \fIdevice\fR name will usually have the following form:
 .nf
 .RS
 /dev/hda[1-63] (IDE disk 1)
@@ -30,7 +30,7 @@ The device will usually have the following form:
 .RE
 .fi
 
-If the file system was changed (i.e., repaired), then
+If the filesystem was changed (i.e., repaired), then
 .B fsck.minix
 will print "FILE SYSTEM HAS CHANGED" and will
 .BR sync (2)
@@ -53,30 +53,30 @@ writing to the disk, and that no files are "zombies" waiting for deletion.
 .SH OPTIONS
 .TP
 .B \-l
-Lists all filenames
+List all filenames.
 .TP
 .B \-r
-Performs interactive repairs
+Perform interactive repairs.
 .TP
 .B \-a
-Performs automatic repairs (this option implies
-.BR \-r ),
-and serves to answer all of the questions asked with the default.  Note
-that this can be extremely dangerous in the case of extensive file system
+Perform automatic repairs.  (This option implies
+.B \-r
+and serves to answer all of the questions asked with the default.)  Note
+that this can be extremely dangerous in the case of extensive filesystem
 damage.
 .TP
 .B \-v
-Verbose
+Be verbose.
 .TP
 .B \-s
-Outputs super-block information
+Output super-block information.
 .TP
 .B \-m
-Activates MINIX-like "mode not cleared" warnings
+Activate MINIX-like "mode not cleared" warnings.
 .TP
 .B \-f
-Force file system check even if the file system was marked as valid (this
-marking is done by the kernel when the file system is unmounted).
+Force a filesystem check even if the filesystem was marked as valid (this
+marking is done by the kernel when the filesystem is unmounted).
 .SH "SEE ALSO"
 .BR fsck (8),
 .BR fsck.ext (8),
@@ -95,7 +95,7 @@ most commonly seen in normal usage.
 If the device does not exist,
 .B fsck.minix
 will print "unable to read super block".  If the device exists, but is not
-a MINIX file system,
+a MINIX filesystem,
 .B fsck.minix
 will print "bad magic number in super-block".
 .SH "EXIT CODES"
@@ -105,10 +105,10 @@ is the sum of the following:
 .IP 0
 No errors
 .IP 3
-File system errors corrected, system should be rebooted if file system was
+Filesystem errors corrected, system should be rebooted if filesystem was
 mounted
 .IP 4
-File system errors left uncorrected
+Filesystem errors left uncorrected
 .IP 8
 Operational error
 .IP 16
@@ -120,7 +120,7 @@ Linus Torvalds (torvalds@cs.helsinki.fi)
 .br
 Error code values by Rik Faith (faith@cs.unc.edu)
 .br
-Added support for file system valid flag: Dr. Wettstein
+Added support for filesystem valid flag: Dr. Wettstein
 (greg%wind.uucp@plains.nodak.edu)
 .br
 Check to prevent fsck of mounted filesystem added by Daniel Quinlan

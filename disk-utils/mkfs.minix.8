@@ -16,7 +16,7 @@ mkfs.minix \- make a Minix filesystem
 .RI [ size-in-blocks ]
 .SH DESCRIPTION
 .B mkfs.minix
-creates a Linux MINIX file-system on a device (usually a disk partition).
+creates a Linux MINIX filesystem on a device (usually a disk partition).
 
 The
 .I device
@@ -41,28 +41,28 @@ Only block counts strictly greater than 10 and strictly less than
 .SH OPTIONS
 .TP
 .B \-c
-Check the device for bad blocks before creating the file system.  If any
+Check the device for bad blocks before creating the filesystem.  If any
 are found, the count is printed.
 .TP
 .BI \-n " namelength"
 Specify the maximum length of filenames.
 Currently, the only allowable values are 14 and 30.
-The default is 30. Note that kernels older than 0.99p7
+The default is 30.  Note that kernels older than 0.99p7
 only accept namelength 14.
 .TP
 .BI \-i " inodecount"
 Specify the number of inodes for the filesystem.
 .TP
 .BI \-l " filename"
-Read the bad blocks list from
+Read the list of bad blocks from
 .IR filename .
-The file has one bad block number per line.  The count of bad blocks read
+The file has one bad-block number per line.  The count of bad blocks read
 is printed.
 .TP
 .B \-1
 Make a Minix version 1 filesystem.
 .TP
-.B  \-2,\-v
+.BR \-2 , " \-v"
 Make a Minix version 2 filesystem.
 .TP
 .B \-3

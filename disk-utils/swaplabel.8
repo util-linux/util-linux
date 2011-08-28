@@ -22,35 +22,36 @@ If the optional arguments
 .B \-L 
 and
 .B \-U 
-are not present,
+are not given,
 .B swaplabel
-will simply display the swap area label and UUID of
+will simply display the current swap-area label and UUID of
 .IR device .
 .PP
 If an optional argument is present, then
 .B swaplabel
-will change the appropriate value of
+will change the appropriate value on
 .IR device .
 These values can also be set during swap creation using
 .BR mkswap (8).
 The
 .B swaplabel
-utility allows to change the label or UUID on actively used swap device.
+utility allows to change the label or UUID on an actively used swap device.
 .SH OPTIONS
-.IP "\fB\-h, \-\-help\fP"
-Print help and exit.
-.IP "\fB\-L, \-\-label\fP \fIlabel\fP"
-Specify a new label for
-.IR device .
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
+.TP
+.BR \-L , " \-\-label " \fIlabel\fR
+Specify a new \fIlabel\fR for the device.
 Swap partition labels can be at most 16 characters long.  If
-.IR label
+.I label
 is longer than 16 characters,
-.B swapinfo
+.B swaplabel
 will truncate it and print a warning message.
-.IP "\fB\-U, \-\-uuid\fP \fIuuid\fP"
-Specify a new UUID for
-.IR device .
-.IR UUID
+.TP
+.BR \-U , " \-\-uuid " \fIUUID\fR
+Specify a new \fIUUID\fR for the device.
+The \fI UUID\fR
 must be in the standard 8-4-4-4-12 character format, such as is output by
 .BR uuidgen (1) .
 .PP
@@ -58,8 +59,8 @@ must be in the standard 8-4-4-4-12 character format, such as is output by
 .B swaplabel
 was written by Jason Borden <jborden@bluehost.com> and Karel Zak <kzak@redhat.com>.
 .SH AVAILABILITY
-.B swaplabel
-is part of the util-linux package and is available from ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
+The swaplabel command is part of the util-linux package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
 .SH SEE ALSO
 .BR mkswap (8),
 .BR swapon (8),

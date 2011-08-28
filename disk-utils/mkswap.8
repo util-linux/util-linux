@@ -8,9 +8,9 @@
 mkswap \- set up a Linux swap area
 .SH SYNOPSIS
 .B mkswap
-.RB [ options ]
-.IR device
-.RB [ size ]
+.RI [ options ]
+.I device
+.RI [ size ]
 .SH DESCRIPTION
 .B mkswap
 sets up a Linux swap area on a device or in a file.
@@ -47,54 +47,59 @@ The swap header does not touch the first block.  A boot loader or disk label
 can be there, but it is not a recommended setup.  The recommended setup is to
 use a separate partition for a Linux swap area.
 
-.B mkswap, like many others mkfs-like utils, erases the first block to remove
-.B old on-disk filesystems.
+.BR mkswap ,
+like many others mkfs-like utils,
+.B erases the first partition block to make any previous filesystem invisible.
 
+However,
 .B mkswap
 refuses to erase the first block on a device with a disk
-label (SUN, BSD, ...) or on a whole disk (e.g. /dev/sda).
+label (SUN, BSD, ...) and on a whole disk (e.g. /dev/sda).
 
 .SH OPTIONS
 .TP
 .BR \-c , " \-\-check"
 Check the device (if it is a block device) for bad blocks
 before creating the swap area.
-If any are found, the count is printed.
+If any bad blocks are found, the count is printed.
 .TP
 .BR \-f , " \-\-force"
-Force -- go ahead even if the command is stupid.
+Go ahead even if the command is stupid.
 This allows the creation of a swap area larger than the file
 or partition it resides on.
 
-Without this option,
+Also, without this option,
 .B mkswap
-will refuse to erase the first block on a device with a partition table or on
+will refuse to erase the first block on a device with a partition table and on
 a whole disk (e.g. /dev/sda).
 .TP
-.BR \-L , " \-\-label" \ device-label
-Specify a label, to allow
+.BR \-L , " \-\-label " \fIlabel\fR
+Specify a \fIlabel\fR for the device, to allow
 .B swapon
 by label.
 .TP
-.BR \-p , " \-\-pagesize" \ SIZE
-Specify the page size (in bytes) to use.  This option is usually unnecessary,
+.BR \-p , " \-\-pagesize " \fIsize\fR
+Specify the page \fIsize\fR (in bytes) to use.  This option is usually unnecessary;
 .B mkswap
 reads the size from the kernel.
 .TP
-.BR \-U , " \-\-uuid" \ UUID
-Specify the uuid to use.  The default is to generate a UUID.
+.BR \-U , " \-\-uuid " \fIUUID\fR
+Specify the \fIUUID\fR to use.  The default is to generate a UUID.
 .TP
-.BR \-v , " \-\-swapversion" \ 1
-Specify the swap-space version.  The old \-v 0 option has become obsolete
-and now only \-v 1 is supported.
-
-The kernel has not supported v0 swap-space format since 2.5.22 (Jun 2002).
-The new version v1 is supported since 2.1.117 (Aug 1998).
+.BR \-v , " \-\-swapversion 1"
+Specify the swap-space version.  (This option is currently pointless, as the old
+.B \-v 0
+option has become obsolete and now only
+.B \-v 1
+is supported.
+The kernel has not supported v0 swap-space format since 2.5.22 (June 2002).
+The new version v1 is supported since 2.1.117 (August 1998).)
+.TP
+.BR \-h , " \-\-help"
+Display help text and exit.
 .TP
 .BR \-V , " \-\-version"
-Output version information and exit.
-.BR \-h , " \-\-help"
-Output help screen and exit.
+Display version information and exit.
 
 .SH NOTES
 The maximum useful size of a swap area depends on the architecture and

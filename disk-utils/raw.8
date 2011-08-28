@@ -9,12 +9,10 @@ raw \- bind a Linux raw character device
 .B raw
 .I /dev/raw/raw<N> /dev/<blockdev>
 .PP
-.B raw
-.B \-q
+.B raw \-q
 .I /dev/raw/raw<N>
 .PP
-.B raw
-.B \-qa
+.B raw \-qa
 .SH DESCRIPTION
 .B raw
 is used to bind a Linux raw character device to a block device.  Any
@@ -38,7 +36,7 @@ to an existing block device file.
 .PP
 The bindings already in existence can be queried with the 
 .I \-q
-option, with is used either with a raw device filename to query that one
+option, which is used either with a raw device filename to query that one
 device, or with the 
 .I \-a
 option to query all bound raw devices.
@@ -70,16 +68,16 @@ will query an existing binding instead of setting a new one.
 .B -a
 With
 .B -q
-, specifies that all bound raw devices should be queried.
+, specify that all bound raw devices should be queried.
 .TP
 .B -h
-provides a usage summary.
+Provide a usage summary.
 .SH BUGS
 The Linux
-.B dd
-(1) command should be used without bs= option or the blocksize needs to be a
-multiple of the sector size of the device (512 bytes usually) otherwise it
-will fail with "Invalid Argument" messages (EINVAL).
+.BR dd (1)
+command should be used without the \fBbs=\fR option, or the blocksize
+needs to be a multiple of the sector size of the device (512 bytes usually),
+otherwise it will fail with "Invalid Argument" messages (EINVAL).
 
 .PP
 Raw I/O devices do not maintain cache coherency with the Linux block

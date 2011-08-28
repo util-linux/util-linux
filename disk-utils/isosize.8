@@ -3,7 +3,7 @@
 isosize \- output the length of an iso9660 filesystem
 .SH SYNOPSIS
 .B isosize
-[\fIoptions\fR] \fIiso9660_image_file\fR
+.RI [ options ] " iso9660_image_file"
 .SH DESCRIPTION
 .\" Add any additional description here
 .PP
@@ -14,19 +14,19 @@ any switches (and errors) it will output the size of the iso9660
 filesystem in bytes.  This can now be a large number (>> 4 GB).
 .SH OPTIONS
 .TP
-\fB\-x\fR, \fB\-\-sectors\fR
+.BR \-x , " \-\-sectors"
 Show the block count and block size in human-readable form.
 The output uses the term "sectors" for "blocks".
 .TP
-\fB\-d\fR, \fB\-\-divisor\fR=\fINUM\fR
+.BR \-d , " \-\-divisor " \fInumber\fR
 Only has an effect when
 .B \-x
-is not given.  The number shown (if no errors)
+is not given.  The value shown (if no errors)
 is the iso9660 file size in bytes divided by
-.IR NUM .
+.IR number .
 So if
-.I NUM
-is the block size then the shown number will be the block count.
+.I number
+is the block size then the shown value will be the block count.
 .PP
 The size of the file (or block device) holding an iso9660
 filesystem can be marginally larger than the actual size of the

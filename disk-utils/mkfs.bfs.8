@@ -5,44 +5,48 @@
 mkfs.bfs \- make an SCO bfs filesystem
 .SH SYNOPSIS
 .B mkfs.bfs
-[\fIoptions\fR] \fIdevice \fR[\fIblock-count\fR]
+.RI [ options ] " device " [ block-count ]
 .SH DESCRIPTION
 .B mkfs.bfs
-creates an SCO bfs file-system on a block device
+creates an SCO bfs filesystem on a block device
 (usually a disk partition or a file accessed via the loop device).
 .PP
 The
 .I block-count
-parameter is the desired size of the file system, in blocks.
+parameter is the desired size of the filesystem, in blocks.
 If nothing is specified, the entire partition will be used.
 .SH OPTIONS
 .TP
-\fB\-N\fR, \fB\-\-inodes\fR=\fINUM\fR
-Specify the desired number of inodes (at most 512).
-If nothing is specified some default number in the range 48-512 is picked
+.BR \-N , " \-\-inodes " \fInumber\fR
+Specify the desired \fInumber\fR of inodes (at most 512).
+If nothing is specified, some default number in the range 48-512 is picked
 depending on the size of the partition.
 .TP
-\fB\-V\fR, \fB\-\-vname\fR=\fINAME\fR
-Specify the volume label. I have no idea if/where this is used.
+.BR \-V , " \-\-vname " \fIlabel\fR
+Specify the volume \fIlabel\fR.  I have no idea if/where this is used.
 .TP
-\fB\-F\fR, \fB\-\-fname\fR=\fINAME\fR
-Specify the fsname. I have no idea if/where this is used.
+.BR \-F , " \-\-fname " \fIname\fR
+Specify the filesystem \fIname\fR.  I have no idea if/where this is used.
 .TP
-\fB\-v\fR, \fB\-\-verbose\fR
+.BR \-v , " \-\-verbose"
 Explain what is being done.
 .TP
-\fB\-c\fR
+.B \-c
 This option is silently ignored.
 .TP
-\fB\-l\fR
+.B \-l
 This option is silently ignored.
 .TP
-\fB\-V\fR, \fB\-\-version\fR
+.BR \-h , " \-\-help"
+Display help text and exit.
+.TP
+.BR \-V , " \-\-version"
 Output version information and exit.
-\fB\-V\fR works only when specified as an only option.
-.TP
-\fB\-h\fR, \fB\-\-help\fR
-Display help and exit.
+Option
+.B \-V
+only works as
+.B \-\-version
+when it is the only option.
 .SH "EXIT CODES"
 The exit code returned by
 .B mkfs.bfs

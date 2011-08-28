@@ -5,12 +5,12 @@
 fdformat \- low-level format a floppy disk
 .SH SYNOPSIS
 .B fdformat
-[\fIoptions\fR] \fIdevice\fR
+.RI [ options ] " device"
 .SH DESCRIPTION
 .B fdformat
-does a low level format on a floppy disk.
+does a low-level format on a floppy disk.
 .I device
-is usually one of the following (for floppy devices, the major = 2, and the
+is usually one of the following (for floppy devices the major = 2, and the
 minor is shown for informational purposes only):
 .sp
 .nf
@@ -46,8 +46,7 @@ to load the disk parameters.
 .SH OPTIONS
 .TP
 \fB\-n\fR, \fB\-\-no\-verify\fR
-No verify.  This option will disable the verification that is performed
-after the format.
+Skip the verification that is normally performed after the formatting.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Output version information and exit.
