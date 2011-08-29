@@ -61,6 +61,7 @@ CONTRIBUTORS:
       Américo Wang <xiyou.wangcong@gmail.com>
       Andrea Galbusera <gizero@gmail.com>
       Andreas Dilger <adilger@sun.com>
+      Andreas Schwab <schwab@linux-m68k.org>
       Andrew McGill <list2008@lunch.za.net>
       Andrew Nayenko <resver@gmail.com>
       Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
@@ -71,8 +72,10 @@ CONTRIBUTORS:
       Aurelien Jarno <aurelien@aurel32.net>
       Balint Cristian <cbalint@redhat.com>
       Bastian Friedrich <bastian.friedrich@collax.com>
+      Ben Hutchings <ben@decadent.org.uk>
       Benno Schulenberg <bensberg@justemail.net>
       Bernardo Innocenti <bernie@codewiz.org>
+      Bernhard Voelker <mail@bernhard-voelker.de>
       Bernhard Walle <bwalle@suse.de>
       Bryn M. Reeves <bmr@errorists.org>
       Cai Qian <qcai@redhat.com>
@@ -116,6 +119,7 @@ CONTRIBUTORS:
       Gabriel Barazer <gabriel@oxeva.fr>
       Gabriel Burt <gburt@novell.com>
       Gerrit Renker <gerrit@erg.abdn.ac.uk>
+      Giulio Orsero <giulioo@gmail.com>
       Guan Xin <guanx.bac@gmail.com>
       Guillem Jover <guillem@hadrons.org>
       Hajime Taira <htaira@redhat.com>
@@ -225,6 +229,7 @@ CONTRIBUTORS:
       Petr Písař <petr.pisar@atlas.cz>
       Petr Uzel <petr.uzel@suse.cz>
       Phan Vinh Thinh <teppi82@gmail.com>
+      Philipp Thomas <pth@suse.de>
       Phillip Susi <psusi@cfl.rr.com>
       Pierre Hauweele <antegallya@gmail.com>
       Po-Yu Chuang <ratbert@faraday-tech.com>
@@ -255,6 +260,7 @@ CONTRIBUTORS:
       Sukadev Bhattiprolu <sukadev@linux.vnet.ibm.com>
       Sven Eckelmann <sven.eckelmann@gmx.de>
       Sven Jost <sven.jost@googlemail.com>
+      Takeshi Hamasaki <hmatrjp@users.sourceforge.jp>
       Theodore Ts'o <tytso@mit.edu>
       Thomas Fehr <fehr@suse.de>
       Thorsten Glaser <tg@mirbsd.org>
