@@ -51,7 +51,7 @@ used the following manner:
 .PP
 \fC(
 .br
-  flock -n 9
+  flock -n 9 || exit 1
 .br
   # ... commands executed under lock ...
 .br
