@@ -49,7 +49,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.19-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2011-08-17 00:37+0200\n"
+"POT-Creation-Date: 2011-08-29 12:13+0200\n"
 "PO-Revision-Date: 2011-04-09 19:30+01:00\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -289,7 +289,7 @@ msgid ""
 msgstr ""
 
 #: disk-utils/fdformat.c:129 disk-utils/mkfs.bfs.c:88
-#: disk-utils/mkfs.cramfs.c:767 disk-utils/mkswap.c:498 fdisk/sfdisk.c:2616
+#: disk-utils/mkfs.cramfs.c:767 disk-utils/mkswap.c:498 fdisk/sfdisk.c:2614
 #: fsck/fsck.c:1414 getopt/getopt.c:430 hwclock/hwclock.c:1354
 #: misc-utils/cal.c:351 misc-utils/kill.c:195 misc-utils/logger.c:234
 #: misc-utils/look.c:124 misc-utils/mcookie.c:116 misc-utils/namei.c:458
@@ -588,7 +588,7 @@ msgstr "ugyldig fildataforskydning"
 msgid "compiled without -x support"
 msgstr "kompileret uden understøttelse for -x"
 
-#: disk-utils/fsck.cramfs.c:676 fdisk/sfdisk.c:2842
+#: disk-utils/fsck.cramfs.c:676 fdisk/sfdisk.c:2840
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: O.k.\n"
@@ -4112,7 +4112,7 @@ msgstr "Disk %s indeholder ikke en gyldig partitionstabel\n"
 msgid "Cannot open %s\n"
 msgstr "Kan ikke åbne %s\n"
 
-#: fdisk/fdisk.c:2920 fdisk/sfdisk.c:2715
+#: fdisk/fdisk.c:2920 fdisk/sfdisk.c:2713
 #, c-format
 msgid "cannot open %s\n"
 msgstr "kan ikke åbne %s\n"
@@ -5539,12 +5539,12 @@ msgstr ""
 msgid "Warning: partition %s does not start at a cylinder boundary\n"
 msgstr "Advarsel: Partition %s starter ikke på en cylindergrænse\n"
 
-#: fdisk/sfdisk.c:1320
+#: fdisk/sfdisk.c:1319
 #, c-format
 msgid "Warning: partition %s does not end at a cylinder boundary\n"
 msgstr "Advarsel: Partition %s slutter ikke på en cylindergrænse\n"
 
-#: fdisk/sfdisk.c:1339
+#: fdisk/sfdisk.c:1337
 msgid ""
 "Warning: more than one primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
@@ -5553,7 +5553,7 @@ msgstr ""
 "Dette generer ikke LILO, men DOS MBR vil ikke kunne starte op fra denne "
 "disk.\n"
 
-#: fdisk/sfdisk.c:1346
+#: fdisk/sfdisk.c:1344
 msgid ""
 "Warning: usually one can boot from primary partitions only\n"
 "LILO disregards the `bootable' flag.\n"
@@ -5561,7 +5561,7 @@ msgstr ""
 "Advarsel: Normalt kan man kun starte op fra primærpartitioner\n"
 "LILO ignorerer opstartsflaget.\n"
 
-#: fdisk/sfdisk.c:1352
+#: fdisk/sfdisk.c:1350
 msgid ""
 "Warning: no primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
@@ -5569,33 +5569,33 @@ msgstr ""
 "Advarsel: Ingen primærpartition er markeret opstartbar (aktiv)\n"
 "Det generer ikke LILO, men DOS MBR vil ikke kunne starte op fra denne disk.\n"
 
-#: fdisk/sfdisk.c:1366
+#: fdisk/sfdisk.c:1364
 msgid "start"
 msgstr "start"
 
-#: fdisk/sfdisk.c:1369
+#: fdisk/sfdisk.c:1367
 #, c-format
 msgid ""
 "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 "partition %s: start: (c,h,s) forventede (%ld,%ld,%ld) fandt (%ld,%ld,%ld)\n"
 
-#: fdisk/sfdisk.c:1375
+#: fdisk/sfdisk.c:1373
 msgid "end"
 msgstr "slut"
 
-#: fdisk/sfdisk.c:1378
+#: fdisk/sfdisk.c:1376
 #, c-format
 msgid "partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 "partition %s: slut: (c,h,s) forventede (%ld,%ld,%ld) fandt (%ld,%ld,%ld)\n"
 
-#: fdisk/sfdisk.c:1381
+#: fdisk/sfdisk.c:1379
 #, c-format
 msgid "partition %s ends on cylinder %ld, beyond the end of the disk\n"
 msgstr "partition %s slutter på cylinder %ld, efter diskens slutning\n"
 
-#: fdisk/sfdisk.c:1406
+#: fdisk/sfdisk.c:1404
 #, c-format
 msgid ""
 "Warning: shifted start of the extd partition from %ld to %ld\n"
@@ -5604,7 +5604,7 @@ msgstr ""
 "Advarsel: Ændrede starten på udvidet partition fra %ld til %ld\n"
 "(Vedrører kun oplistningen. Ændrer ikke indholdet.)\n"
 
-#: fdisk/sfdisk.c:1411
+#: fdisk/sfdisk.c:1409
 msgid ""
 "Warning: extended partition does not start at a cylinder boundary.\n"
 "DOS and Linux will interpret the contents differently.\n"
@@ -5612,133 +5612,133 @@ msgstr ""
 "Advarsel: Udvidet partition starter ikke på en cylindergrænse.\n"
 "DOS og Linux vil opfatte indholdet forskelligt.\n"
 
-#: fdisk/sfdisk.c:1429 fdisk/sfdisk.c:1506
+#: fdisk/sfdisk.c:1427 fdisk/sfdisk.c:1504
 #, c-format
 msgid "too many partitions - ignoring those past nr (%d)\n"
 msgstr "for mange partitioner - ignorerer dem efter nr. (%d)\n"
 
-#: fdisk/sfdisk.c:1444
+#: fdisk/sfdisk.c:1442
 msgid "tree of partitions?\n"
 msgstr "træ med partitioner?\n"
 
-#: fdisk/sfdisk.c:1552
+#: fdisk/sfdisk.c:1550
 msgid "detected Disk Manager - unable to handle that\n"
 msgstr "fandt Disk Manager - kan ikke håndtere sådan en\n"
 
-#: fdisk/sfdisk.c:1560
+#: fdisk/sfdisk.c:1558
 msgid "DM6 signature found - giving up\n"
 msgstr "Fandt DM6-signatur - opgiver\n"
 
-#: fdisk/sfdisk.c:1580
+#: fdisk/sfdisk.c:1578
 msgid "strange..., an extended partition of size 0?\n"
 msgstr "mærkeligt..., en udvidet partition med størrelsen 0?\n"
 
-#: fdisk/sfdisk.c:1587 fdisk/sfdisk.c:1598
+#: fdisk/sfdisk.c:1585 fdisk/sfdisk.c:1596
 msgid "strange..., a BSD partition of size 0?\n"
 msgstr "mærkeligt..., en BSD-partition med størrelsen 0?\n"
 
-#: fdisk/sfdisk.c:1641
+#: fdisk/sfdisk.c:1639
 #, c-format
 msgid " %s: unrecognized partition table type\n"
 msgstr " %s: Ukendt partitionstabeltype\n"
 
-#: fdisk/sfdisk.c:1653
+#: fdisk/sfdisk.c:1651
 msgid "-n flag was given: Nothing changed\n"
 msgstr "flaget -n blev givet: Intet ændret\n"
 
-#: fdisk/sfdisk.c:1670
+#: fdisk/sfdisk.c:1668
 msgid "Failed saving the old sectors - aborting\n"
 msgstr "Kunne ikke gemme de gamle sektorer- afbryder\n"
 
-#: fdisk/sfdisk.c:1675 fdisk/sfdisk.c:1680
+#: fdisk/sfdisk.c:1673 fdisk/sfdisk.c:1678
 #, c-format
 msgid "Failed writing the partition on %s\n"
 msgstr "Mislykket skrivning af partition på %s\n"
 
-#: fdisk/sfdisk.c:1758
+#: fdisk/sfdisk.c:1756
 msgid "long or incomplete input line - quitting\n"
 msgstr "lang eller uafsluttet inddatalinje - afbryder\n"
 
-#: fdisk/sfdisk.c:1794
+#: fdisk/sfdisk.c:1792
 #, c-format
 msgid "input error: `=' expected after %s field\n"
 msgstr "inddatafejl: forventer »=« efter %s-felt\n"
 
-#: fdisk/sfdisk.c:1801
+#: fdisk/sfdisk.c:1799
 #, c-format
 msgid "input error: unexpected character %c after %s field\n"
 msgstr "inddatafejl: uventet tegn %c efter %s-felt\n"
 
-#: fdisk/sfdisk.c:1807
+#: fdisk/sfdisk.c:1805
 #, c-format
 msgid "unrecognized input: %s\n"
 msgstr "ukendt inddata: %s\n"
 
-#: fdisk/sfdisk.c:1848
+#: fdisk/sfdisk.c:1846
 msgid "number too big\n"
 msgstr "tal for stort\n"
 
-#: fdisk/sfdisk.c:1852
+#: fdisk/sfdisk.c:1850
 msgid "trailing junk after number\n"
 msgstr "uvedkommende tegn efter tallet\n"
 
-#: fdisk/sfdisk.c:1976
+#: fdisk/sfdisk.c:1974
 msgid "no room for partition descriptor\n"
 msgstr "ikke plads til partitionsbeskrivelse\n"
 
-#: fdisk/sfdisk.c:2009
+#: fdisk/sfdisk.c:2007
 msgid "cannot build surrounding extended partition\n"
 msgstr "kunne ikke opbygge den omgivende udvidede partition\n"
 
-#: fdisk/sfdisk.c:2060
+#: fdisk/sfdisk.c:2058
 msgid "too many input fields\n"
 msgstr "for mange inddatafelter\n"
 
-#: fdisk/sfdisk.c:2094
+#: fdisk/sfdisk.c:2092
 msgid "No room for more\n"
 msgstr "Ikke plads til mere\n"
 
-#: fdisk/sfdisk.c:2113
+#: fdisk/sfdisk.c:2111
 msgid "Illegal type\n"
 msgstr "Ugyldig type\n"
 
-#: fdisk/sfdisk.c:2147
+#: fdisk/sfdisk.c:2145
 #, c-format
 msgid "Warning: given size (%lu) exceeds max allowable size (%lu)\n"
 msgstr ""
 "Advarsel: Den angivne størrelse(%lu) overstiger den maksimalt tilladte "
 "(%lu)\n"
 
-#: fdisk/sfdisk.c:2153
+#: fdisk/sfdisk.c:2151
 msgid "Warning: empty partition\n"
 msgstr "Advarsel: Tom partition\n"
 
-#: fdisk/sfdisk.c:2167
+#: fdisk/sfdisk.c:2165
 #, c-format
 msgid "Warning: bad partition start (earliest %lu)\n"
 msgstr "Advarsel: Ugyldig partitionsbegyndelse (tidligst %lu)\n"
 
-#: fdisk/sfdisk.c:2180
+#: fdisk/sfdisk.c:2178
 msgid "unrecognized bootable flag - choose - or *\n"
 msgstr "ukendt opstartsflag, vælg - eller *\n"
 
-#: fdisk/sfdisk.c:2197 fdisk/sfdisk.c:2211
+#: fdisk/sfdisk.c:2195 fdisk/sfdisk.c:2209
 msgid "partial c,h,s specification?\n"
 msgstr "delvis c,h,s-specifikation?\n"
 
-#: fdisk/sfdisk.c:2222
+#: fdisk/sfdisk.c:2220
 msgid "Extended partition not where expected\n"
 msgstr "Udvidet partition ikke hvor den forventedes\n"
 
-#: fdisk/sfdisk.c:2254
+#: fdisk/sfdisk.c:2252
 msgid "bad input\n"
 msgstr "ugyldige inddata\n"
 
-#: fdisk/sfdisk.c:2277
+#: fdisk/sfdisk.c:2275
 msgid "too many partitions\n"
 msgstr "for mange partitioner\n"
 
-#: fdisk/sfdisk.c:2310
+#: fdisk/sfdisk.c:2308
 msgid ""
 "Input in the following format; absent fields get a default value.\n"
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
@@ -5748,7 +5748,7 @@ msgstr ""
 "<start> <størr> <type [E,S,L,X,hex]> <opstartsflag [-,*]> <c,h,s> <c,h,s>\n"
 "Du behøver normalt kun at angive <start> og <størr> (og måske <type>).\n"
 
-#: fdisk/sfdisk.c:2330 getopt/getopt.c:314 hwclock/hwclock.c:1374
+#: fdisk/sfdisk.c:2328 getopt/getopt.c:314 hwclock/hwclock.c:1374
 #: misc-utils/cal.c:786 misc-utils/logger.c:138 misc-utils/look.c:366
 #: misc-utils/mcookie.c:66 misc-utils/namei.c:411 misc-utils/rename.c:64
 #: misc-utils/uuidd.c:54 misc-utils/uuidgen.c:33 misc-utils/whereis.c:132
@@ -5766,12 +5766,12 @@ msgid ""
 "Usage:\n"
 msgstr "Brug:\n"
 
-#: fdisk/sfdisk.c:2332
+#: fdisk/sfdisk.c:2330
 #, fuzzy, c-format
 msgid " %s [options] <device> [...]\n"
 msgstr "Brug: %s [tilvalg] enhed ...\n"
 
-#: fdisk/sfdisk.c:2334 getopt/getopt.c:322 hwclock/hwclock.c:1394
+#: fdisk/sfdisk.c:2332 getopt/getopt.c:322 hwclock/hwclock.c:1394
 #: misc-utils/cal.c:791 misc-utils/logger.c:142 misc-utils/look.c:370
 #: misc-utils/mcookie.c:70 misc-utils/namei.c:415 misc-utils/rename.c:69
 #: misc-utils/uuidd.c:58 misc-utils/uuidgen.c:37 misc-utils/whereis.c:136
@@ -5791,7 +5791,7 @@ msgstr ""
 "\n"
 "Tilvalg:\n"
 
-#: fdisk/sfdisk.c:2335
+#: fdisk/sfdisk.c:2333
 msgid ""
 " -s, --show-size           list size of a partition\n"
 " -c, --id                  change or print partition Id\n"
@@ -5799,7 +5799,7 @@ msgid ""
 "     --print-id            print Id\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2339
+#: fdisk/sfdisk.c:2337
 msgid ""
 " -l, --list                list partitions of each device\n"
 " -d, --dump                idem, but in a format suitable for later input\n"
@@ -5809,7 +5809,7 @@ msgid ""
 "(MB)\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2344
+#: fdisk/sfdisk.c:2342
 msgid ""
 " -1, --one-only            reserved option that does nothing currently\n"
 " -T, --list-types          list the known partition types\n"
@@ -5818,7 +5818,7 @@ msgid ""
 " -R, --re-read             make the kernel reread the partition table\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2349
+#: fdisk/sfdisk.c:2347
 msgid ""
 " -N <number>               change only the partition with this <number>\n"
 " -n                        do not actually write to disk\n"
@@ -5827,21 +5827,21 @@ msgid ""
 " -I <file>                 restore sectors from <file>\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2353
+#: fdisk/sfdisk.c:2351
 msgid ""
 " -V, --verify              check that the listed partitions are reasonable\n"
 " -v, --version             display version information and exit\n"
 " -h, --help                display this help text and exit\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2357
+#: fdisk/sfdisk.c:2355
 #, fuzzy
 msgid ""
 "\n"
 "Dangerous options:\n"
 msgstr "farlige tilvalg:"
 
-#: fdisk/sfdisk.c:2358
+#: fdisk/sfdisk.c:2356
 msgid ""
 " -f, --force               disable all consistency checking\n"
 "     --no-reread           do not check whether the partition is in use\n"
@@ -5850,7 +5850,7 @@ msgid ""
 "Linux\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2362
+#: fdisk/sfdisk.c:2360
 #, fuzzy
 msgid ""
 " -g, --show-geometry       print the kernel's idea of the geometry\n"
@@ -5859,7 +5859,7 @@ msgstr ""
 "    -G [eller --show-geometry]: vis kernens bud på den geometri ud fra\n"
 "                                partitionstabellen"
 
-#: fdisk/sfdisk.c:2364
+#: fdisk/sfdisk.c:2362
 #, fuzzy
 msgid ""
 " -A, --activate[=<device>] activate bootable flag\n"
@@ -5870,13 +5870,13 @@ msgstr ""
 "    -x [eller --show-extended]: medtag udvidede partitioner i uddata\n"
 "                                eller forvent beskrivelser for dem i inddata"
 
-#: fdisk/sfdisk.c:2368
+#: fdisk/sfdisk.c:2366
 msgid ""
 "     --leave-last          do not allocate the last cylinder\n"
 "     --IBM                 same as --leave-last\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2370
+#: fdisk/sfdisk.c:2368
 msgid ""
 "     --in-order            partitions are in order\n"
 "     --not-in-order        partitions are not in order\n"
@@ -5884,7 +5884,7 @@ msgid ""
 "     --not-inside-outer    not all logicals inside outermost extended\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2374
+#: fdisk/sfdisk.c:2372
 msgid ""
 "     --nested              every partition is disjoint from all others\n"
 "     --chained             like nested, but extended partitions may lie "
@@ -5892,7 +5892,7 @@ msgid ""
 "     --onesector           partitions are mutually disjoint\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2378
+#: fdisk/sfdisk.c:2376
 msgid ""
 "\n"
 "Override the detected geometry using:\n"
@@ -5902,26 +5902,26 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2388
+#: fdisk/sfdisk.c:2386
 msgid "Usage:"
 msgstr "Brug:"
 
-#: fdisk/sfdisk.c:2389
+#: fdisk/sfdisk.c:2387
 #, c-format
 msgid "%s device\t\t list active partitions on device\n"
 msgstr "%s enhed\t\t vis aktive partitioner på enhed\n"
 
-#: fdisk/sfdisk.c:2390
+#: fdisk/sfdisk.c:2388
 #, c-format
 msgid "%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"
 msgstr "%s enhed n1 n2 ... aktiver partitionerne på n1 ..., deaktiver resten\n"
 
-#: fdisk/sfdisk.c:2392
+#: fdisk/sfdisk.c:2390
 #, c-format
 msgid "%s -An device\t activate partition n, inactivate the other ones\n"
 msgstr "%s -An enhed\t aktiver partition n, deaktiver de andre\n"
 
-#: fdisk/sfdisk.c:2521
+#: fdisk/sfdisk.c:2519
 #, c-format
 msgid ""
 "\n"
@@ -5934,63 +5934,63 @@ msgstr ""
 "understøttes ikke af GPT. Brug GNU Parted.\n"
 "\n"
 
-#: fdisk/sfdisk.c:2526
+#: fdisk/sfdisk.c:2524
 #, c-format
 msgid "Use the --force flag to overrule this check.\n"
 msgstr "Brug flaget --force for at undertrykke dette tjek.\n"
 
-#: fdisk/sfdisk.c:2565
+#: fdisk/sfdisk.c:2563
 msgid "no command?\n"
 msgstr "ingen kommando?\n"
 
-#: fdisk/sfdisk.c:2735
+#: fdisk/sfdisk.c:2733
 #, c-format
 msgid "total: %llu blocks\n"
 msgstr "i alt: %llu blokke\n"
 
 # Det er separate symboler på kommandolinjen, så mellemrum:
-#: fdisk/sfdisk.c:2778
+#: fdisk/sfdisk.c:2776
 msgid "usage: sfdisk --print-id device partition-number\n"
 msgstr "brug: sfdisk --print-id enhed partitionsnummer\n"
 
-#: fdisk/sfdisk.c:2780
+#: fdisk/sfdisk.c:2778
 msgid "usage: sfdisk --change-id device partition-number Id\n"
 msgstr "brug: sfdisk --change-id enhed partitionsnummer id\n"
 
-#: fdisk/sfdisk.c:2782
+#: fdisk/sfdisk.c:2780
 msgid "usage: sfdisk --id device partition-number [Id]\n"
 msgstr "brug: sfdisk --id enhed partitionsnummer [id]\n"
 
-#: fdisk/sfdisk.c:2789
+#: fdisk/sfdisk.c:2787
 msgid "can specify only one device (except with -l or -s)\n"
 msgstr "du kan kun angive én enhed (undtagen med -l eller -s)\n"
 
-#: fdisk/sfdisk.c:2815
+#: fdisk/sfdisk.c:2813
 #, c-format
 msgid "cannot open %s read-write\n"
 msgstr "kunne ikke åbne %s til skrivning\n"
 
-#: fdisk/sfdisk.c:2817
+#: fdisk/sfdisk.c:2815
 #, c-format
 msgid "cannot open %s for reading\n"
 msgstr "kunne ikke åbne %s til læsning\n"
 
-#: fdisk/sfdisk.c:2861 fdisk/sfdisk.c:2893
+#: fdisk/sfdisk.c:2859 fdisk/sfdisk.c:2891
 #, c-format
 msgid "%s: %ld cylinders, %ld heads, %ld sectors/track\n"
 msgstr "%s: %ld cylindre, %ld hoveder, %ld sektorer/spor\n"
 
-#: fdisk/sfdisk.c:2912
+#: fdisk/sfdisk.c:2910
 #, c-format
 msgid "Cannot get size of %s\n"
 msgstr "Kan ikke få størrelsen %s\n"
 
-#: fdisk/sfdisk.c:2992
+#: fdisk/sfdisk.c:2990
 #, c-format
 msgid "bad active byte: 0x%x instead of 0x80\n"
 msgstr "ugyldig aktiv-byte: 0x%x i stedet for 0x80\n"
 
-#: fdisk/sfdisk.c:3011 fdisk/sfdisk.c:3068 fdisk/sfdisk.c:3101
+#: fdisk/sfdisk.c:3009 fdisk/sfdisk.c:3066 fdisk/sfdisk.c:3099
 msgid ""
 "Done\n"
 "\n"
@@ -5998,7 +5998,7 @@ msgstr ""
 "Færdig\n"
 "\n"
 
-#: fdisk/sfdisk.c:3020
+#: fdisk/sfdisk.c:3018
 #, c-format
 msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
@@ -6007,35 +6007,35 @@ msgstr ""
 "Du har %d aktive primærpartitioner. Dette generer ikke LILO,\n"
 "men DOS MBR vil kun kunne starte op fra en disk med én aktiv partition.\n"
 
-#: fdisk/sfdisk.c:3037
+#: fdisk/sfdisk.c:3035
 #, c-format
 msgid "partition %s has id %x and is not hidden\n"
 msgstr "partition %s har id %x og er ikke skjult\n"
 
-#: fdisk/sfdisk.c:3097
+#: fdisk/sfdisk.c:3095
 #, c-format
 msgid "Bad Id %lx\n"
 msgstr "Ugyldig id %lx\n"
 
-#: fdisk/sfdisk.c:3114
+#: fdisk/sfdisk.c:3112
 msgid "This disk is currently in use.\n"
 msgstr "Denne disk er i brug for øjeblikket.\n"
 
-#: fdisk/sfdisk.c:3135
+#: fdisk/sfdisk.c:3133
 #, c-format
 msgid "Fatal error: cannot find %s\n"
 msgstr "Fatal fejl: kunne ikke finde %s\n"
 
-#: fdisk/sfdisk.c:3138
+#: fdisk/sfdisk.c:3136
 #, c-format
 msgid "Warning: %s is not a block device\n"
 msgstr "Advarsel: %s er ikke en blokenhed\n"
 
-#: fdisk/sfdisk.c:3144
+#: fdisk/sfdisk.c:3142
 msgid "Checking that no-one is using this disk right now ...\n"
 msgstr "Tjekker, at ingen benytter denne disk for øjeblikket...\n"
 
-#: fdisk/sfdisk.c:3146
+#: fdisk/sfdisk.c:3144
 msgid ""
 "\n"
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
@@ -6048,30 +6048,30 @@ msgstr ""
 "Afmonter alle filsystemer og swapoff alle swappartitioner på denne disk.\n"
 "Brug flaget --no-reread for at undertrykke dette tjek.\n"
 
-#: fdisk/sfdisk.c:3150
+#: fdisk/sfdisk.c:3148
 msgid "Use the --force flag to overrule all checks.\n"
 msgstr "Brug flaget --force for at undertrykke alle tjek.\n"
 
-#: fdisk/sfdisk.c:3154
+#: fdisk/sfdisk.c:3152
 msgid "OK\n"
 msgstr "O.k.\n"
 
-#: fdisk/sfdisk.c:3163
+#: fdisk/sfdisk.c:3161
 #, c-format
 msgid "Old situation:\n"
 msgstr "Gammel situation:\n"
 
-#: fdisk/sfdisk.c:3167
+#: fdisk/sfdisk.c:3165
 #, c-format
 msgid "Partition %d does not exist, cannot change it\n"
 msgstr "Partition %d findes ikke. Kan ikke ændre den\n"
 
-#: fdisk/sfdisk.c:3175
+#: fdisk/sfdisk.c:3173
 #, c-format
 msgid "New situation:\n"
 msgstr "Ny situation:\n"
 
-#: fdisk/sfdisk.c:3180
+#: fdisk/sfdisk.c:3178
 msgid ""
 "I don't like these partitions - nothing changed.\n"
 "(If you really want this, use the --force option.)\n"
@@ -6079,7 +6079,7 @@ msgstr ""
 "Jeg kan ikke lide disse partitioner - intet blev ændret.\n"
 "(Hvis du virkelig ønsker det, kan du bruge flaget --force.)\n"
 
-#: fdisk/sfdisk.c:3183
+#: fdisk/sfdisk.c:3181
 msgid "I don't like this - probably you should answer No\n"
 msgstr "Jeg kan ikke lide dette her - du bør nok svare nej (n)\n"
 
@@ -6087,17 +6087,17 @@ msgstr "Jeg kan ikke lide dette her - du bør nok svare nej (n)\n"
 # af ynq, hvilket er temmelig usmart.  Jeg har skrevet til
 # Report-Msgid-Bugs-To-adressen.  Men det bliver i hvertfald nødt til at
 # være ynq.
-#: fdisk/sfdisk.c:3188
+#: fdisk/sfdisk.c:3186
 #, c-format
 msgid "Are you satisfied with this? [ynq] "
 msgstr "Er du tilfreds med dette? [ynq] "
 
-#: fdisk/sfdisk.c:3190
+#: fdisk/sfdisk.c:3188
 #, c-format
 msgid "Do you want to write this to disk? [ynq] "
 msgstr "Vil du virkelig skrive dette til disken? [ynq] "
 
-#: fdisk/sfdisk.c:3195
+#: fdisk/sfdisk.c:3193
 #, c-format
 msgid ""
 "\n"
@@ -6106,16 +6106,16 @@ msgstr ""
 "\n"
 "sfdisk: inddata sluttede for tidligt\n"
 
-#: fdisk/sfdisk.c:3197
+#: fdisk/sfdisk.c:3195
 msgid "Quitting - nothing changed\n"
 msgstr "Afslutter - intet blev ændret\n"
 
-#: fdisk/sfdisk.c:3203
+#: fdisk/sfdisk.c:3201
 #, c-format
 msgid "Please answer one of y,n,q\n"
 msgstr "Svar venligst y,n,q\n"
 
-#: fdisk/sfdisk.c:3211
+#: fdisk/sfdisk.c:3209
 #, c-format
 msgid ""
 "Successfully wrote the new partition table\n"
@@ -6124,7 +6124,7 @@ msgstr ""
 "Skrivning af ny partitionstabel lykkedes\n"
 "\n"
 
-#: fdisk/sfdisk.c:3218
+#: fdisk/sfdisk.c:3216
 msgid ""
 "If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
@@ -9336,32 +9336,32 @@ msgstr ""
 " -v | --verbose           uddybende tilstand\n"
 "\n"
 
-#: mount/lomount.c:1152
+#: mount/lomount.c:1153
 #, c-format
 msgid "%s: invalid offset '%s' specified"
 msgstr "%s: ugyldig forskydningsværdi »%s« angivet"
 
-#: mount/lomount.c:1156
+#: mount/lomount.c:1157
 #, c-format
 msgid "%s: invalid sizelimit '%s' specified"
 msgstr "%s: ugyldig størrelsesbegrænsning »%s« angivet"
 
-#: mount/lomount.c:1171 mount/lomount.c:1211
+#: mount/lomount.c:1172 mount/lomount.c:1212
 #, c-format
 msgid "Loop device is %s\n"
 msgstr "Løkkeenhed er %s\n"
 
-#: mount/lomount.c:1198
+#: mount/lomount.c:1199
 #, c-format
 msgid "stolen loop=%s...trying again\n"
 msgstr "stjålet loop=%s...forsøger igen\n"
 
-#: mount/lomount.c:1208
+#: mount/lomount.c:1209
 #, c-format
 msgid "%s: %s: device is busy"
 msgstr "%s: %s: enhed er optaget"
 
-#: mount/lomount.c:1225
+#: mount/lomount.c:1226
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -12711,12 +12711,12 @@ msgid "disable rtc alarm interrupt failed"
 msgstr "deaktiver rtc alarmafbrydelse"
 
 # slår til
-#: sys-utils/setarch.c:49
+#: sys-utils/setarch.c:51
 #, c-format
 msgid "Switching on %s.\n"
 msgstr "Tænder %s.\n"
 
-#: sys-utils/setarch.c:112
+#: sys-utils/setarch.c:118
 #, c-format
 msgid ""
 "Usage: %s%s [options] [program [program arguments]]\n"
@@ -12727,7 +12727,7 @@ msgstr ""
 "\n"
 "Tilvalg:\n"
 
-#: sys-utils/setarch.c:116
+#: sys-utils/setarch.c:122
 #, c-format
 msgid ""
 " -h, --help               displays this help text\n"
@@ -12762,7 +12762,12 @@ msgstr ""
 "GB\n"
 "     --4gb                ignoreret (kun for baglæns kompatibilitet)\n"
 
-#: sys-utils/setarch.c:130
+#: sys-utils/setarch.c:137
+#, c-format
+msgid "     --uname-2.6          turns on UNAME26\n"
+msgstr ""
+
+#: sys-utils/setarch.c:139
 #, c-format
 msgid ""
 "\n"
@@ -12771,7 +12776,7 @@ msgstr ""
 "\n"
 "For yderligere information se setarch(8).\n"
 
-#: sys-utils/setarch.c:142
+#: sys-utils/setarch.c:151
 #, c-format
 msgid ""
 "%s: %s\n"
@@ -12780,16 +12785,16 @@ msgstr ""
 "%s: %s\n"
 "Brug »%s --help« for yderligere detaljer.\n"
 
-#: sys-utils/setarch.c:214 sys-utils/setarch.c:229
+#: sys-utils/setarch.c:223 sys-utils/setarch.c:238
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr "%s: Ukendt arkitektur"
 
-#: sys-utils/setarch.c:247 sys-utils/setarch.c:254
+#: sys-utils/setarch.c:256 sys-utils/setarch.c:263
 msgid "Not enough arguments"
 msgstr "Ikke nok parametre"
 
-#: sys-utils/setarch.c:263 sys-utils/setarch.c:316
+#: sys-utils/setarch.c:272 sys-utils/setarch.c:328
 #, c-format
 msgid "Failed to set personality to %s"
 msgstr "Kunne ikke angive personlighed som %s"

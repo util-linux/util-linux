@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2011-08-17 00:37+0200\n"
+"POT-Creation-Date: 2011-08-29 12:13+0200\n"
 "PO-Revision-Date: 2006-03-06 15:45+0200\n"
 "Last-Translator: Nilgün Belma Bugüner <nilgun@buguner.name.tr>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
@@ -255,7 +255,7 @@ msgid ""
 msgstr ""
 
 #: disk-utils/fdformat.c:129 disk-utils/mkfs.bfs.c:88
-#: disk-utils/mkfs.cramfs.c:767 disk-utils/mkswap.c:498 fdisk/sfdisk.c:2616
+#: disk-utils/mkfs.cramfs.c:767 disk-utils/mkswap.c:498 fdisk/sfdisk.c:2614
 #: fsck/fsck.c:1414 getopt/getopt.c:430 hwclock/hwclock.c:1354
 #: misc-utils/cal.c:351 misc-utils/kill.c:195 misc-utils/logger.c:234
 #: misc-utils/look.c:124 misc-utils/mcookie.c:116 misc-utils/namei.c:458
@@ -557,7 +557,7 @@ msgstr "%s: geçersiz cramfs -- geçersiz dosya verisi başlangıcı\n"
 msgid "compiled without -x support"
 msgstr "%s: -x desteği olmaksızın derlenmiş\n"
 
-#: disk-utils/fsck.cramfs.c:676 fdisk/sfdisk.c:2842
+#: disk-utils/fsck.cramfs.c:676 fdisk/sfdisk.c:2840
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: TAMAM\n"
@@ -4034,7 +4034,7 @@ msgstr "%s diski geçerli bir disk bölümleme tablosu içermiyor\n"
 msgid "Cannot open %s\n"
 msgstr "%s açılamıyor\n"
 
-#: fdisk/fdisk.c:2920 fdisk/sfdisk.c:2715
+#: fdisk/fdisk.c:2920 fdisk/sfdisk.c:2713
 #, c-format
 msgid "cannot open %s\n"
 msgstr "%s açılamıyor\n"
@@ -5485,12 +5485,12 @@ msgstr ""
 msgid "Warning: partition %s does not start at a cylinder boundary\n"
 msgstr "Uyarı: %s disk bölümü bir silindir sınırından başlamıyor\n"
 
-#: fdisk/sfdisk.c:1320
+#: fdisk/sfdisk.c:1319
 #, c-format
 msgid "Warning: partition %s does not end at a cylinder boundary\n"
 msgstr "Uyarı: %s disk bölümü bir silindir sınırında bitmiyor\n"
 
-#: fdisk/sfdisk.c:1339
+#: fdisk/sfdisk.c:1337
 msgid ""
 "Warning: more than one primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
@@ -5498,7 +5498,7 @@ msgstr ""
 "Uyarı: birden fazla disk bölümü önyükleme flaması içeriyor.\n"
 "Bu LILO için sorun yaratmaz ama DOS MBR bu diski çalıştıramaz.\n"
 
-#: fdisk/sfdisk.c:1346
+#: fdisk/sfdisk.c:1344
 msgid ""
 "Warning: usually one can boot from primary partitions only\n"
 "LILO disregards the `bootable' flag.\n"
@@ -5506,7 +5506,7 @@ msgstr ""
 "Uyarı: birincil disk bölümlerinden sadece bir tanesi önyüklenebilir,\n"
 "LILO `bootable' flamasına aldırmaz.\n"
 
-#: fdisk/sfdisk.c:1352
+#: fdisk/sfdisk.c:1350
 msgid ""
 "Warning: no primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
@@ -5514,11 +5514,11 @@ msgstr ""
 "Uyarı hiçbir disk bölümü önyükleme bayrağı içermiyor\n"
 "Bu LILO için sorun oluşturmaz ama DOS MBR bu diski çalıştıramaz.\n"
 
-#: fdisk/sfdisk.c:1366
+#: fdisk/sfdisk.c:1364
 msgid "start"
 msgstr "başlangıç"
 
-#: fdisk/sfdisk.c:1369
+#: fdisk/sfdisk.c:1367
 #, c-format
 msgid ""
 "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
@@ -5526,23 +5526,23 @@ msgstr ""
 "%s: başlangıç: (sld,kafa,sekt) sırasıyla (%ld,%ld,%ld) olmalıydı\n"
 "(%ld,%ld,%ld) bulundu\n"
 
-#: fdisk/sfdisk.c:1375
+#: fdisk/sfdisk.c:1373
 msgid "end"
 msgstr "bitiş"
 
-#: fdisk/sfdisk.c:1378
+#: fdisk/sfdisk.c:1376
 #, c-format
 msgid "partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 "%s: bitiş: (sld,kafa,sekt) sırasıyla (%ld,%ld,%ld) olmalıydı\n"
 "(%ld,%ld,%ld) bulundu\n"
 
-#: fdisk/sfdisk.c:1381
+#: fdisk/sfdisk.c:1379
 #, c-format
 msgid "partition %s ends on cylinder %ld, beyond the end of the disk\n"
 msgstr "%s diskin sonunu aşarak %ld. silindirde bitiyor\n"
 
-#: fdisk/sfdisk.c:1406
+#: fdisk/sfdisk.c:1404
 #, c-format
 msgid ""
 "Warning: shifted start of the extd partition from %ld to %ld\n"
@@ -5551,7 +5551,7 @@ msgstr ""
 "Uyarı: ek disk bölümünün başlangıcı %ld den %ld ye kaydırıldı\n"
 "(Sadece liste uyumluluğu için. İçeriği değişmiyor.)\n"
 
-#: fdisk/sfdisk.c:1411
+#: fdisk/sfdisk.c:1409
 msgid ""
 "Warning: extended partition does not start at a cylinder boundary.\n"
 "DOS and Linux will interpret the contents differently.\n"
@@ -5559,131 +5559,131 @@ msgstr ""
 "Uyarı: ek disk bölümü bir silindir sınırında başlamıyor.\n"
 "DOS ve Linux içerikleri farklı yorumlayacaktır.\n"
 
-#: fdisk/sfdisk.c:1429 fdisk/sfdisk.c:1506
+#: fdisk/sfdisk.c:1427 fdisk/sfdisk.c:1504
 #, c-format
 msgid "too many partitions - ignoring those past nr (%d)\n"
 msgstr "disk bölümü sayısı çok fazla - Bu sonuncusu (%d) disk bölümü\n"
 
-#: fdisk/sfdisk.c:1444
+#: fdisk/sfdisk.c:1442
 msgid "tree of partitions?\n"
 msgstr "ağacında yok sayılsın mı?\n"
 
-#: fdisk/sfdisk.c:1552
+#: fdisk/sfdisk.c:1550
 msgid "detected Disk Manager - unable to handle that\n"
 msgstr "Disk yöneticisi saptadı - bulunan DM6 imzası\n"
 
-#: fdisk/sfdisk.c:1560
+#: fdisk/sfdisk.c:1558
 msgid "DM6 signature found - giving up\n"
 msgstr "ile çalışılamıyor - bırakılıyor\n"
 
-#: fdisk/sfdisk.c:1580
+#: fdisk/sfdisk.c:1578
 msgid "strange..., an extended partition of size 0?\n"
 msgstr "tuhaf..., sıfır uzunlukta bir ek disk bölümü?\n"
 
-#: fdisk/sfdisk.c:1587 fdisk/sfdisk.c:1598
+#: fdisk/sfdisk.c:1585 fdisk/sfdisk.c:1596
 msgid "strange..., a BSD partition of size 0?\n"
 msgstr "tuhaf..., sıfır uzunlukta bir BSD disk bölümü?\n"
 
-#: fdisk/sfdisk.c:1641
+#: fdisk/sfdisk.c:1639
 #, c-format
 msgid " %s: unrecognized partition table type\n"
 msgstr " %s: disk bölümleme tablosu türü tanınmıyor\n"
 
-#: fdisk/sfdisk.c:1653
+#: fdisk/sfdisk.c:1651
 msgid "-n flag was given: Nothing changed\n"
 msgstr "-n flaması verilmiş: Hiçbir şey değişmedi\n"
 
-#: fdisk/sfdisk.c:1670
+#: fdisk/sfdisk.c:1668
 msgid "Failed saving the old sectors - aborting\n"
 msgstr "Eski sektörlere yazmada başarısızlık - çıkılıyor\n"
 
-#: fdisk/sfdisk.c:1675 fdisk/sfdisk.c:1680
+#: fdisk/sfdisk.c:1673 fdisk/sfdisk.c:1678
 #, c-format
 msgid "Failed writing the partition on %s\n"
 msgstr "%s disk bölümüne yazarken hata oluştu\n"
 
-#: fdisk/sfdisk.c:1758
+#: fdisk/sfdisk.c:1756
 msgid "long or incomplete input line - quitting\n"
 msgstr "uzun ve eksik girdi satırı - çıkılıyor\n"
 
-#: fdisk/sfdisk.c:1794
+#: fdisk/sfdisk.c:1792
 #, c-format
 msgid "input error: `=' expected after %s field\n"
 msgstr "girdi hatası: %s alanından sonra bir `=' gerekli\n"
 
-#: fdisk/sfdisk.c:1801
+#: fdisk/sfdisk.c:1799
 #, c-format
 msgid "input error: unexpected character %c after %s field\n"
 msgstr "girdi hatası: %c karakteri gereksiz (%s alanından sonra)\n"
 
-#: fdisk/sfdisk.c:1807
+#: fdisk/sfdisk.c:1805
 #, c-format
 msgid "unrecognized input: %s\n"
 msgstr "anlaşılmayan girdi: %s\n"
 
-#: fdisk/sfdisk.c:1848
+#: fdisk/sfdisk.c:1846
 msgid "number too big\n"
 msgstr "sayı çok büyük\n"
 
-#: fdisk/sfdisk.c:1852
+#: fdisk/sfdisk.c:1850
 msgid "trailing junk after number\n"
 msgstr "sayıdan sonrasında süprüntü\n"
 
-#: fdisk/sfdisk.c:1976
+#: fdisk/sfdisk.c:1974
 msgid "no room for partition descriptor\n"
 msgstr "disk bölümü betimleyici için yer yok\n"
 
-#: fdisk/sfdisk.c:2009
+#: fdisk/sfdisk.c:2007
 msgid "cannot build surrounding extended partition\n"
 msgstr "kuşatan ek disk bölümü kurgulanamıyor\n"
 
-#: fdisk/sfdisk.c:2060
+#: fdisk/sfdisk.c:2058
 msgid "too many input fields\n"
 msgstr "girdi alanları çok fazla\n"
 
-#: fdisk/sfdisk.c:2094
+#: fdisk/sfdisk.c:2092
 msgid "No room for more\n"
 msgstr "Daha fazla yer yok\n"
 
-#: fdisk/sfdisk.c:2113
+#: fdisk/sfdisk.c:2111
 msgid "Illegal type\n"
 msgstr "Kuraldışı tür\n"
 
-#: fdisk/sfdisk.c:2147
+#: fdisk/sfdisk.c:2145
 #, c-format
 msgid "Warning: given size (%lu) exceeds max allowable size (%lu)\n"
 msgstr "Uyarı: belirtilen (%lu) uzunluk, izin verilen (%lu) uzunluktan fazla\n"
 
-#: fdisk/sfdisk.c:2153
+#: fdisk/sfdisk.c:2151
 msgid "Warning: empty partition\n"
 msgstr "Uyarı: boş disk bölümü\n"
 
-#: fdisk/sfdisk.c:2167
+#: fdisk/sfdisk.c:2165
 #, c-format
 msgid "Warning: bad partition start (earliest %lu)\n"
 msgstr "Uyarı: disk bölümü başlangıcı hatalı (en erken %lu)\n"
 
-#: fdisk/sfdisk.c:2180
+#: fdisk/sfdisk.c:2178
 msgid "unrecognized bootable flag - choose - or *\n"
 msgstr "anlaşılmayan önyükleme flaması; - ya da * seçiniz\n"
 
-#: fdisk/sfdisk.c:2197 fdisk/sfdisk.c:2211
+#: fdisk/sfdisk.c:2195 fdisk/sfdisk.c:2209
 msgid "partial c,h,s specification?\n"
 msgstr "kısmi sld,kafa,sekt özellikleri?\n"
 
-#: fdisk/sfdisk.c:2222
+#: fdisk/sfdisk.c:2220
 msgid "Extended partition not where expected\n"
 msgstr "Ek disk bölümü gereken yerde değil\n"
 
-#: fdisk/sfdisk.c:2254
+#: fdisk/sfdisk.c:2252
 msgid "bad input\n"
 msgstr "girdi hatalı\n"
 
-#: fdisk/sfdisk.c:2277
+#: fdisk/sfdisk.c:2275
 msgid "too many partitions\n"
 msgstr "çok fazla disk bölümü var\n"
 
-#: fdisk/sfdisk.c:2310
+#: fdisk/sfdisk.c:2308
 msgid ""
 "Input in the following format; absent fields get a default value.\n"
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
@@ -5696,7 +5696,7 @@ msgstr ""
 "Genellikle <başlangıç> ve <uzunluk> değerleri (ve tabii ki <türü>)\n"
 "belirtmek yeterlidir.\n"
 
-#: fdisk/sfdisk.c:2330 getopt/getopt.c:314 hwclock/hwclock.c:1374
+#: fdisk/sfdisk.c:2328 getopt/getopt.c:314 hwclock/hwclock.c:1374
 #: misc-utils/cal.c:786 misc-utils/logger.c:138 misc-utils/look.c:366
 #: misc-utils/mcookie.c:66 misc-utils/namei.c:411 misc-utils/rename.c:64
 #: misc-utils/uuidd.c:54 misc-utils/uuidgen.c:33 misc-utils/whereis.c:132
@@ -5714,12 +5714,12 @@ msgid ""
 "Usage:\n"
 msgstr "Kullanımı:\n"
 
-#: fdisk/sfdisk.c:2332
+#: fdisk/sfdisk.c:2330
 #, fuzzy, c-format
 msgid " %s [options] <device> [...]\n"
 msgstr "Kullanımı: %s [seçenekler] aygıt ...\n"
 
-#: fdisk/sfdisk.c:2334 getopt/getopt.c:322 hwclock/hwclock.c:1394
+#: fdisk/sfdisk.c:2332 getopt/getopt.c:322 hwclock/hwclock.c:1394
 #: misc-utils/cal.c:791 misc-utils/logger.c:142 misc-utils/look.c:370
 #: misc-utils/mcookie.c:70 misc-utils/namei.c:415 misc-utils/rename.c:69
 #: misc-utils/uuidd.c:58 misc-utils/uuidgen.c:37 misc-utils/whereis.c:136
@@ -5739,7 +5739,7 @@ msgstr ""
 "\n"
 "%d disk bölümü:\n"
 
-#: fdisk/sfdisk.c:2335
+#: fdisk/sfdisk.c:2333
 msgid ""
 " -s, --show-size           list size of a partition\n"
 " -c, --id                  change or print partition Id\n"
@@ -5747,7 +5747,7 @@ msgid ""
 "     --print-id            print Id\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2339
+#: fdisk/sfdisk.c:2337
 msgid ""
 " -l, --list                list partitions of each device\n"
 " -d, --dump                idem, but in a format suitable for later input\n"
@@ -5757,7 +5757,7 @@ msgid ""
 "(MB)\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2344
+#: fdisk/sfdisk.c:2342
 msgid ""
 " -1, --one-only            reserved option that does nothing currently\n"
 " -T, --list-types          list the known partition types\n"
@@ -5766,7 +5766,7 @@ msgid ""
 " -R, --re-read             make the kernel reread the partition table\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2349
+#: fdisk/sfdisk.c:2347
 msgid ""
 " -N <number>               change only the partition with this <number>\n"
 " -n                        do not actually write to disk\n"
@@ -5775,21 +5775,21 @@ msgid ""
 " -I <file>                 restore sectors from <file>\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2353
+#: fdisk/sfdisk.c:2351
 msgid ""
 " -V, --verify              check that the listed partitions are reasonable\n"
 " -v, --version             display version information and exit\n"
 " -h, --help                display this help text and exit\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2357
+#: fdisk/sfdisk.c:2355
 #, fuzzy
 msgid ""
 "\n"
 "Dangerous options:\n"
 msgstr "tehlikeli seçenekler:"
 
-#: fdisk/sfdisk.c:2358
+#: fdisk/sfdisk.c:2356
 msgid ""
 " -f, --force               disable all consistency checking\n"
 "     --no-reread           do not check whether the partition is in use\n"
@@ -5798,7 +5798,7 @@ msgid ""
 "Linux\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2362
+#: fdisk/sfdisk.c:2360
 #, fuzzy
 msgid ""
 " -g, --show-geometry       print the kernel's idea of the geometry\n"
@@ -5807,7 +5807,7 @@ msgstr ""
 "    -G [veya --show-pt-geometry]: bölümleme tablosundan alınan geometriyi "
 "basar"
 
-#: fdisk/sfdisk.c:2364
+#: fdisk/sfdisk.c:2362
 #, fuzzy
 msgid ""
 " -A, --activate[=<device>] activate bootable flag\n"
@@ -5818,13 +5818,13 @@ msgstr ""
 "    -x  --show-extended ek disk bölümlerini gösterir ve\n"
 "                        betimleyicileri için girdi bekler"
 
-#: fdisk/sfdisk.c:2368
+#: fdisk/sfdisk.c:2366
 msgid ""
 "     --leave-last          do not allocate the last cylinder\n"
 "     --IBM                 same as --leave-last\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2370
+#: fdisk/sfdisk.c:2368
 msgid ""
 "     --in-order            partitions are in order\n"
 "     --not-in-order        partitions are not in order\n"
@@ -5832,7 +5832,7 @@ msgid ""
 "     --not-inside-outer    not all logicals inside outermost extended\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2374
+#: fdisk/sfdisk.c:2372
 msgid ""
 "     --nested              every partition is disjoint from all others\n"
 "     --chained             like nested, but extended partitions may lie "
@@ -5840,7 +5840,7 @@ msgid ""
 "     --onesector           partitions are mutually disjoint\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2378
+#: fdisk/sfdisk.c:2376
 msgid ""
 "\n"
 "Override the detected geometry using:\n"
@@ -5850,30 +5850,30 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2388
+#: fdisk/sfdisk.c:2386
 msgid "Usage:"
 msgstr "Kullanımı:"
 
-#: fdisk/sfdisk.c:2389
+#: fdisk/sfdisk.c:2387
 #, c-format
 msgid "%s device\t\t list active partitions on device\n"
 msgstr "%s aygıt\t\t aygıt üstündeki etkin disk bölümlerini gösterir\n"
 
-#: fdisk/sfdisk.c:2390
+#: fdisk/sfdisk.c:2388
 #, c-format
 msgid "%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"
 msgstr ""
 "%s aygıt n1 n2 ... n1, n2 ile belirtilen disk bölümleri etkinleştirilir,\n"
 "                   diğerleri etkisizleştirilir\n"
 
-#: fdisk/sfdisk.c:2392
+#: fdisk/sfdisk.c:2390
 #, c-format
 msgid "%s -An device\t activate partition n, inactivate the other ones\n"
 msgstr ""
 "%s -An aygıt\t n. disk bölümünü etkinleştirilir, diğerlerini "
 "etkisizleştirilir\n"
 
-#: fdisk/sfdisk.c:2521
+#: fdisk/sfdisk.c:2519
 #, c-format
 msgid ""
 "\n"
@@ -5882,62 +5882,62 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2526
+#: fdisk/sfdisk.c:2524
 #, fuzzy, c-format
 msgid "Use the --force flag to overrule this check.\n"
 msgstr "Tüm denetimleri kaldırmak için --force seçeneğini kullanın.\n"
 
-#: fdisk/sfdisk.c:2565
+#: fdisk/sfdisk.c:2563
 msgid "no command?\n"
 msgstr "Komut?\n"
 
-#: fdisk/sfdisk.c:2735
+#: fdisk/sfdisk.c:2733
 #, c-format
 msgid "total: %llu blocks\n"
 msgstr "toplam: %llu blok\n"
 
-#: fdisk/sfdisk.c:2778
+#: fdisk/sfdisk.c:2776
 msgid "usage: sfdisk --print-id device partition-number\n"
 msgstr "Kullanımı: sfdisk --print-id aygıt disk-bölümü-numarası\n"
 
-#: fdisk/sfdisk.c:2780
+#: fdisk/sfdisk.c:2778
 msgid "usage: sfdisk --change-id device partition-number Id\n"
 msgstr "kullanımı: sfdisk --change-id aygıt disk-bölümü-numarası kimlik\n"
 
-#: fdisk/sfdisk.c:2782
+#: fdisk/sfdisk.c:2780
 msgid "usage: sfdisk --id device partition-number [Id]\n"
 msgstr "kullanımı: sfdisk --id aygıt disk-bölümü-numarası [kimlik]\n"
 
-#: fdisk/sfdisk.c:2789
+#: fdisk/sfdisk.c:2787
 msgid "can specify only one device (except with -l or -s)\n"
 msgstr "sadece bir aygıt belirtilebilir (-l ya da -s ile gerekir)\n"
 
-#: fdisk/sfdisk.c:2815
+#: fdisk/sfdisk.c:2813
 #, c-format
 msgid "cannot open %s read-write\n"
 msgstr "%s oku-yaz açılamıyor\n"
 
-#: fdisk/sfdisk.c:2817
+#: fdisk/sfdisk.c:2815
 #, c-format
 msgid "cannot open %s for reading\n"
 msgstr "%s okumak için açılamıyor\n"
 
-#: fdisk/sfdisk.c:2861 fdisk/sfdisk.c:2893
+#: fdisk/sfdisk.c:2859 fdisk/sfdisk.c:2891
 #, c-format
 msgid "%s: %ld cylinders, %ld heads, %ld sectors/track\n"
 msgstr "%s: %ld silindir, %ld kafa, %ld sektör/iz\n"
 
-#: fdisk/sfdisk.c:2912
+#: fdisk/sfdisk.c:2910
 #, c-format
 msgid "Cannot get size of %s\n"
 msgstr "%s gibi bir boyut alınamıyor\n"
 
-#: fdisk/sfdisk.c:2992
+#: fdisk/sfdisk.c:2990
 #, c-format
 msgid "bad active byte: 0x%x instead of 0x80\n"
 msgstr "hatalı etkin bayt: 0x80 yerine 0x%x\n"
 
-#: fdisk/sfdisk.c:3011 fdisk/sfdisk.c:3068 fdisk/sfdisk.c:3101
+#: fdisk/sfdisk.c:3009 fdisk/sfdisk.c:3066 fdisk/sfdisk.c:3099
 msgid ""
 "Done\n"
 "\n"
@@ -5945,7 +5945,7 @@ msgstr ""
 "Bitti\n"
 "\n"
 
-#: fdisk/sfdisk.c:3020
+#: fdisk/sfdisk.c:3018
 #, c-format
 msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
@@ -5954,35 +5954,35 @@ msgstr ""
 "%d etkin birincil disk bölümü var. Bu LILO için sorun olmamakla beraber\n"
 "DOS MBR sadece 1 etkin disk bölümü önyüklemesi yapabilir.\n"
 
-#: fdisk/sfdisk.c:3037
+#: fdisk/sfdisk.c:3035
 #, c-format
 msgid "partition %s has id %x and is not hidden\n"
 msgstr "%s disk bölümünün kimliği %x ve gizli değil\n"
 
-#: fdisk/sfdisk.c:3097
+#: fdisk/sfdisk.c:3095
 #, c-format
 msgid "Bad Id %lx\n"
 msgstr "Kimlik %lx hatalı\n"
 
-#: fdisk/sfdisk.c:3114
+#: fdisk/sfdisk.c:3112
 msgid "This disk is currently in use.\n"
 msgstr "Bu disk şu an kullanılıyor.\n"
 
-#: fdisk/sfdisk.c:3135
+#: fdisk/sfdisk.c:3133
 #, c-format
 msgid "Fatal error: cannot find %s\n"
 msgstr "Ölümcül hata: %s bulunamıyor\n"
 
-#: fdisk/sfdisk.c:3138
+#: fdisk/sfdisk.c:3136
 #, c-format
 msgid "Warning: %s is not a block device\n"
 msgstr "Uyarı: %s bir blok aygıtı değil\n"
 
-#: fdisk/sfdisk.c:3144
+#: fdisk/sfdisk.c:3142
 msgid "Checking that no-one is using this disk right now ...\n"
 msgstr "Diskin kullanımda olup olmadığı denetleniyor...\n"
 
-#: fdisk/sfdisk.c:3146
+#: fdisk/sfdisk.c:3144
 msgid ""
 "\n"
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
@@ -5995,30 +5995,30 @@ msgstr ""
 "alanlarını swapoff ile kapatın. --no-reread bayrağını kullanarak\n"
 "yeniden okuma işlemini engelleyin.\n"
 
-#: fdisk/sfdisk.c:3150
+#: fdisk/sfdisk.c:3148
 msgid "Use the --force flag to overrule all checks.\n"
 msgstr "Tüm denetimleri kaldırmak için --force seçeneğini kullanın.\n"
 
-#: fdisk/sfdisk.c:3154
+#: fdisk/sfdisk.c:3152
 msgid "OK\n"
 msgstr "TAMAM\n"
 
-#: fdisk/sfdisk.c:3163
+#: fdisk/sfdisk.c:3161
 #, c-format
 msgid "Old situation:\n"
 msgstr "Eski durum:\n"
 
-#: fdisk/sfdisk.c:3167
+#: fdisk/sfdisk.c:3165
 #, c-format
 msgid "Partition %d does not exist, cannot change it\n"
 msgstr "%d. disk bölümü olmadığından geçilemiyor\n"
 
-#: fdisk/sfdisk.c:3175
+#: fdisk/sfdisk.c:3173
 #, c-format
 msgid "New situation:\n"
 msgstr "Yeni durum:\n"
 
-#: fdisk/sfdisk.c:3180
+#: fdisk/sfdisk.c:3178
 msgid ""
 "I don't like these partitions - nothing changed.\n"
 "(If you really want this, use the --force option.)\n"
@@ -6026,21 +6026,21 @@ msgstr ""
 "Bu disk bölümlerinde hiç bir değişiklik yapılmadı.\n"
 "(Bunu gerçekten istiyorsanız --force seçeneğini kullanın.)\n"
 
-#: fdisk/sfdisk.c:3183
+#: fdisk/sfdisk.c:3181
 msgid "I don't like this - probably you should answer No\n"
 msgstr "Uygulanamıyor - siz de Hayır derdiniz, büyük ihtimalle\n"
 
-#: fdisk/sfdisk.c:3188
+#: fdisk/sfdisk.c:3186
 #, c-format
 msgid "Are you satisfied with this? [ynq] "
 msgstr "Bundan memnun musunuz? [ehs] "
 
-#: fdisk/sfdisk.c:3190
+#: fdisk/sfdisk.c:3188
 #, c-format
 msgid "Do you want to write this to disk? [ynq] "
 msgstr "Bunu diske yazmak ister misiniz? [ehs] "
 
-#: fdisk/sfdisk.c:3195
+#: fdisk/sfdisk.c:3193
 #, c-format
 msgid ""
 "\n"
@@ -6049,16 +6049,16 @@ msgstr ""
 "\n"
 "sfdisk: girdi sonu eksik\n"
 
-#: fdisk/sfdisk.c:3197
+#: fdisk/sfdisk.c:3195
 msgid "Quitting - nothing changed\n"
 msgstr "Çıkılıyor - Değişiklik yok\n"
 
-#: fdisk/sfdisk.c:3203
+#: fdisk/sfdisk.c:3201
 #, c-format
 msgid "Please answer one of y,n,q\n"
 msgstr "Lütfen e, h, s harflerinden biri ile yanıtlayın\n"
 
-#: fdisk/sfdisk.c:3211
+#: fdisk/sfdisk.c:3209
 #, c-format
 msgid ""
 "Successfully wrote the new partition table\n"
@@ -6067,7 +6067,7 @@ msgstr ""
 "Yeni disk bölümleme tablosu başarıyla yazıldı\n"
 "\n"
 
-#: fdisk/sfdisk.c:3218
+#: fdisk/sfdisk.c:3216
 msgid ""
 "If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
@@ -9192,32 +9192,32 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:1152
+#: mount/lomount.c:1153
 #, fuzzy, c-format
 msgid "%s: invalid offset '%s' specified"
 msgstr "Ayar değeri geçersiz: %s\n"
 
-#: mount/lomount.c:1156
+#: mount/lomount.c:1157
 #, fuzzy, c-format
 msgid "%s: invalid sizelimit '%s' specified"
 msgstr "Ayar değeri geçersiz: %s\n"
 
-#: mount/lomount.c:1171 mount/lomount.c:1211
+#: mount/lomount.c:1172 mount/lomount.c:1212
 #, fuzzy, c-format
 msgid "Loop device is %s\n"
 msgstr "loop: %s aygıtı açılamıyor: %s\n"
 
-#: mount/lomount.c:1198
+#: mount/lomount.c:1199
 #, c-format
 msgid "stolen loop=%s...trying again\n"
 msgstr ""
 
-#: mount/lomount.c:1208
+#: mount/lomount.c:1209
 #, fuzzy, c-format
 msgid "%s: %s: device is busy"
 msgstr "umount: %s: aygıt meşgul"
 
-#: mount/lomount.c:1225
+#: mount/lomount.c:1226
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Derleme sırasında loop desteği verilmemiş. Lütfen yeniden derleyin.\n"
@@ -12394,12 +12394,12 @@ msgstr ""
 msgid "disable rtc alarm interrupt failed"
 msgstr ""
 
-#: sys-utils/setarch.c:49
+#: sys-utils/setarch.c:51
 #, c-format
 msgid "Switching on %s.\n"
 msgstr ""
 
-#: sys-utils/setarch.c:112
+#: sys-utils/setarch.c:118
 #, c-format
 msgid ""
 "Usage: %s%s [options] [program [program arguments]]\n"
@@ -12407,7 +12407,7 @@ msgid ""
 "Options:\n"
 msgstr ""
 
-#: sys-utils/setarch.c:116
+#: sys-utils/setarch.c:122
 #, c-format
 msgid ""
 " -h, --help               displays this help text\n"
@@ -12427,31 +12427,36 @@ msgid ""
 "     --4gb                ignored (for backward compatibility only)\n"
 msgstr ""
 
-#: sys-utils/setarch.c:130
+#: sys-utils/setarch.c:137
+#, c-format
+msgid "     --uname-2.6          turns on UNAME26\n"
+msgstr ""
+
+#: sys-utils/setarch.c:139
 #, c-format
 msgid ""
 "\n"
 "For more information see setarch(8).\n"
 msgstr ""
 
-#: sys-utils/setarch.c:142
+#: sys-utils/setarch.c:151
 #, fuzzy, c-format
 msgid ""
 "%s: %s\n"
 "Try `%s --help' for more information.\n"
 msgstr "Daha fazla bilgi için `getopt --help' yazınız.\n"
 
-#: sys-utils/setarch.c:214 sys-utils/setarch.c:229
+#: sys-utils/setarch.c:223 sys-utils/setarch.c:238
 #, fuzzy, c-format
 msgid "%s: Unrecognized architecture"
 msgstr " %s: disk bölümleme tablosu türü tanınmıyor\n"
 
-#: sys-utils/setarch.c:247 sys-utils/setarch.c:254
+#: sys-utils/setarch.c:256 sys-utils/setarch.c:263
 #, fuzzy
 msgid "Not enough arguments"
 msgstr "Çok fazla argüman belirtildi.\n"
 
-#: sys-utils/setarch.c:263 sys-utils/setarch.c:316
+#: sys-utils/setarch.c:272 sys-utils/setarch.c:328
 #, fuzzy, c-format
 msgid "Failed to set personality to %s"
 msgstr "%s disk bölümüne yazarken hata oluştu\n"
