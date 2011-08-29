@@ -18,22 +18,24 @@
 
 */
 
+#include <errno.h>
+#include <features.h>
+#include <getopt.h>
+#include <grp.h>
+#include <pwd.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <getopt.h>
-#include <errno.h>
-#include <time.h>
-#include <pwd.h>
-#include <grp.h>
-#include <unistd.h>
-#include <sys/types.h>
 #include <sys/ipc.h>
-#include <sys/sem.h>
 #include <sys/msg.h>
+#include <sys/sem.h>
 #include <sys/shm.h>
+#include <sys/types.h>
+#include <time.h>
+#include <unistd.h>
 
-#include "nls.h"
 #include "c.h"
+#include "nls.h"
 
 /*-------------------------------------------------------------------*/
 /* SHM_DEST and SHM_LOCKED are defined in kernel headers,
