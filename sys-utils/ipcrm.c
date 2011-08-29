@@ -9,25 +9,18 @@
  *
  */
 
+#include <errno.h>
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <errno.h>
-
-#include <sys/types.h>
 #include <sys/ipc.h>
-#include <sys/shm.h>
 #include <sys/msg.h>
 #include <sys/sem.h>
+#include <sys/shm.h>
 #include "c.h"
 #include "nls.h"
 #include "strutils.h"
-
-/* for getopt */
-#include <unistd.h>
-/* for tolower and isupper */
-#include <ctype.h>
 
 #ifndef HAVE_UNION_SEMUN
 /* according to X/OPEN we have to define it ourselves */
