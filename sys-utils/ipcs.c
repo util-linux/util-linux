@@ -109,54 +109,59 @@ void print_shm (int id);
 void print_msg (int id);
 void print_sem (int id);
 
-static void
-usage(int rc) {
-	printf (_("Usage: %1$s [-asmq] [-t|-c|-l|-u|-p]\n"
-	          "       %1$s [-s|-m|-q] -i id\n"
-	          "       %1$s -h for help\n"),
-		program_invocation_short_name);
-	exit(rc);
-}
-
-static void
-help (int rc) {
-	printf (_("Usage: %1$s [resource]... [output-format]\n"
-	          "       %1$s [resource] -i id\n\n"),
-		program_invocation_short_name);
-
-	printf (_("Provide information on IPC facilities for which you "
-		  "have read access.\n\n"));
-
-	printf (_(
-	"    -h      display this help\n"
-	"    -i id   print details on resource identified by id\n\n"));
-
-	printf (_("Resource options:\n"
-	"    -m      shared memory segments\n"
-	"    -q      message queues\n"
-	"    -s      semaphores\n"
-	"    -a      all (default)\n\n"));
-
-	printf (_("Output format:\n"
-	"    -t      time\n"
-	"    -p      pid\n"
-	"    -c      creator\n"
-	"    -l      limits\n"
-	"    -u      summary\n"));
-	exit(rc);
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
+{
+	fprintf(out, USAGE_HEADER);
+	fprintf(out, " %s [resource] [...] [output-format]\n", program_invocation_short_name);
+	fprintf(out, " %s [resource] -i <id>\n", program_invocation_short_name);
+	fprintf(out, USAGE_OPTIONS);
+	fputs(_(" -i, --id <id>  print details on resource identified by id\n"), out);
+	fprintf(out, USAGE_HELP);
+	fprintf(out, USAGE_VERSION);
+	fputs(_("\n"), out);
+	fputs(_("Resource options:\n"), out);
+	fputs(_(" -m, --shmems      shared memory segments\n"), out);
+	fputs(_(" -q, --queues      message queues\n"), out);
+	fputs(_(" -s, --semaphores  semaphores\n"), out);
+	fputs(_(" -a, --all         all (default)\n"), out);
+	fputs(_("\n"), out);
+	fputs(_("Output format:\n"), out);
+	fputs(_(" -t, --time        show attach, detach and change times\n"), out);
+	fputs(_(" -p, --pid         show creator and last operations PIDs\n"), out);
+	fputs(_(" -c, --creator     show creator and owner\n"), out);
+	fputs(_(" -l, --limits      show resource limits\n"), out);
+	fputs(_(" -u, --summary     show status summary\n"), out);
+	fprintf(out, USAGE_BEGIN_TAIL);
+	fprintf(out, USAGE_MAN_TAIL, "ipcs(1)");
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int
 main (int argc, char **argv) {
 	int opt, msg = 0, sem = 0, shm = 0, id=0, print=0;
 	char format = 0;
-	char options[] = "atcluphsmqi:";
+	static const struct option longopts[] = {
+		{"id", required_argument, NULL, 'i'},
+		{"shmems", no_argument, NULL, 'm'},
+		{"queues", no_argument, NULL, 'q'},
+		{"semaphores", no_argument, NULL, 's'},
+		{"all", no_argument, NULL, 'a'},
+		{"time", no_argument, NULL, 't'},
+		{"pid", no_argument, NULL, 'p'},
+		{"creator", no_argument, NULL, 'c'},
+		{"limits", no_argument, NULL, 'l'},
+		{"summary", no_argument, NULL, 'u'},
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
+	char options[] = "i:mqsatpcluVh";
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((opt = getopt (argc, argv, options)) != -1) {
+	while ((opt = getopt_long(argc, argv, options, longopts, NULL)) != -1) {
 		switch (opt) {
 		case 'i':
 			id = atoi (optarg);
@@ -190,9 +195,12 @@ main (int argc, char **argv) {
 			format = STATUS;
 			break;
 		case 'h':
-			help(EXIT_SUCCESS);
-		case '?':
-			usage(EXIT_SUCCESS);
+			usage(stdout);
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
+		default:
+			usage(stderr);
 		}
 	}
 
@@ -205,7 +213,7 @@ main (int argc, char **argv) {
 		if (msg)
 			print_msg (id);
 		if (!shm && !sem && !msg )
-			usage (EXIT_FAILURE);
+			usage (stderr);
 	} else {
 		if ( !shm && !msg && !sem)
 			msg = sem = shm = 1;
