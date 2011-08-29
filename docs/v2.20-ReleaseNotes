@@ -61,10 +61,14 @@ mountpoint(1):
   - this NEW COMMAND is libmount based re-implementation of mountpoint(1) from
     sysvinit suite
 
+setarch(8):
+  - supports new command line options "--uname-2.6" to enable UNAME26
+    personality flag
+
 simpleinit:
   - this set of deprecated utils has been REMOVED
 
-Wall(1):
+wall(1):
   - support new command line option "--timeout" to specify write timeout to 
     terminals in seconds.
 
@@ -144,6 +148,7 @@ blockdev:
    - use pathnames.h to find partitions  [Sami Kerola]
 build-sys:
    - Enable automake's -Wno-portability option.  [Sami Kerola]
+   - add --enable-ddate  [Karel Zak]
    - add required files to dist  [Sami Kerola]
    - add term-utils/  [Karel Zak]
    - add term-utils/.gitignore  [Karel Zak]
@@ -180,9 +185,11 @@ build-sys:
    - print helpful error when pkg.m4 is missing  [Sami Kerola]
    - provide alternatives for err, errx, warn and warnx  [Fabian Groffen]
    - release++ (v2.20-rc1)  [Karel Zak]
+   - release++ (v2.20-rc2)  [Karel Zak]
    - remove and ignore generated files  [Karel Zak]
    - remove check-news  [Karel Zak]
    - remove unnecessary files from getopt  [Sami Kerola]
+   - rename --enable-partx to --disable-partx  [Karel Zak]
    - stop building line(1) by default  [Sami Kerola]
    - use AC_LANG_SOURCE to suppress warnings  [Sami Kerola]
    - use AUTOMAKE_OPTIONS = gnu  [Sami Kerola]
@@ -258,6 +265,7 @@ cytune:
    - fix compiler warnings [-Wsign-compare]  [Karel Zak]
    - remove unused variable  [Karel Zak]
 ddate:
+   - fix St. Tib's Day in other languages  [Karel Zak]
    - remove non-ascii chars from ddate  [Karel Zak]
    - use ARRAY_SIZE  [Karel Zak]
 dmesg:
@@ -300,8 +308,10 @@ docs:
    - add long options to mkfs.bfs.8  [Sami Kerola]
    - agetty long options  [Sami Kerola]
    - agetty manual update  [Sami Kerola]
+   - also uniformize headers and footers of troff-formatted man pages  [Benno Schulenberg]
    - col manual update  [Sami Kerola]
    - colcrt manual update  [Sami Kerola]
+   - drop the pluralization item with ngettext() in TODO file  [Benno Schulenberg]
    - favour small patches  [Sami Kerola]
    - inform about cal long options  [Sami Kerola]
    - inform about mcookie long options  [Sami Kerola]
@@ -315,15 +325,20 @@ docs:
    - scriptreplay mention basic long options  [Sami Kerola]
    - sfdisk manual update  [Sami Kerola]
    - tell mount/* is in maintenance mode  [Sami Kerola]
+   - tweak the formatting and wording of several disk-utils man pages  [Benno Schulenberg]
+   - tweak the formatting and wording of some text-utils man pages  [Benno Schulenberg]
    - un-deprecate kill(1)  [Karel Zak]
+   - uniformize the header and footer lines in man pages  [Benno Schulenberg]
    - update AUTHORS file  [Karel Zak]
    - update DEPRECATED file  [Karel Zak]
    - update ReleaseNotes  [Karel Zak]
+   - update ReleaseNotes  fix typo in v2.20-ReleaseNotes  [Bernhard Voelker]
    - update TODO  [Karel Zak]
    - update TODO  [Sami Kerola]
    - update TODO file  [Karel Zak]
    - update TODO file  [Sami Kerola]
    - update exmaple files  [Karel Zak]
+   - update v2.20 ReleaseNotes  [Karel Zak]
    - uuidgen.1 mention long options  [Sami Kerola]
 elvtune, isosize:
    - print usage text in case of invalid option  [Francesco Cosoleto]
@@ -350,9 +365,9 @@ fdisk:
    - print logical partition number while adding it  [Francesco Cosoleto]
    - quit from partition type dialog after invalid response  [Francesco Cosoleto]
    - use a single variable for the current disklabel  [Francesco Cosoleto]
-   - correct the grammar of an error message  [Benno Schulenberg]
 fdisk, display, hexdump.h:
    - Use standard C types instead of u_int, u_char, u_long, etc.  [Josiah Worcester]
+   - correct the grammar of an error message  [Benno Schulenberg]
 findmnt:
    - (man page) short option for --timeout is not -t but -w  [Benno Schulenberg]
    - add --pairs to output in key="value" format  [Karel Zak]
@@ -370,6 +385,7 @@ findmnt:
    - slice up the help text into manageable chunks  [Benno Schulenberg]
 flock:
    - cleanup usage()  [Karel Zak]
+   - fix example in man page  [Karel Zak]
 fsck:
    - fix -C parsing  [Karel Zak]
    - fix clang compiler warning  [Sami Kerola]
@@ -461,6 +477,7 @@ include:
 ionice:
    - IOPRIO_PRIO_* macros  [Karel Zak]
    - add long options  [Sami Kerola]
+   - adjust synopsis and wording and formatting on the man page  [Benno Schulenberg]
    - allow to use names for -c <class>  [Karel Zak]
    - coding style fixes  [Sami Kerola]
    - fix -V output  [Sami Kerola]
@@ -510,6 +527,7 @@ lib:
    - [linux_version.c] simplify version parsing  [Karel Zak]
    - [loopdev.c] add module for work loop devices  [Karel Zak]
    - [loopdev.c] cleanup flags usage  [Karel Zak]
+   - [loopdev.c] correct qsort compare function  [Karel Zak]
    - [loopdev.c] correct trivial typo  [Davidlohr Bueso]
    - [mangle.c] fix compiler warnings [-Wsign-compare]  [Karel Zak]
    - [procutils.c]  add missing files. Sorry.  [Karel Zak]
@@ -596,6 +614,7 @@ libmount:
    - cut up mount's help text into manageable chunks  [Benno Schulenberg]
    - don't export functions for vfs/fs/userspace mount options  [Karel Zak]
    - fix compiler warnings [-Wunused-parameter -Wsign-compare]  [Karel Zak]
+   - fix debug message  [Karel Zak]
    - fix fstype caching  [Karel Zak]
    - fix leak in sample program  [Karel Zak]
    - fix memory leak in cache  [Karel Zak]
@@ -655,14 +674,18 @@ login-utils:
    - include fix  [Sami Kerola]
 look:
    - add long options  [Sami Kerola]
+   - adjust the formatting and some wording of the man page  [Benno Schulenberg]
    - cleanup usage()  [Karel Zak]
    - fix manpage formatting  [Petr Uzel]
 losetup:
+   - allow to use --verbose with --all  [Karel Zak]
    - cleanup usage()  [Karel Zak]
+   - correct qsort compare function  [Andreas Schwab]
    - spelling fixes  [Petr Uzel]
 lsblk:
    - add --pairs to output in key="value" format  [Karel Zak]
    - add TYPE column to lsblk output  [Milan Broz]
+   - add note to the man page  [Karel Zak]
    - add queue request size attribute  [Milan Broz]
    - add state attribute  [Milan Broz]
    - add support for discard topology (-D option)  [Martin K. Petersen]
@@ -811,6 +834,7 @@ partx, lsblk:
 pg:
    - fix compiler warnings [-Wunused-result]  [Karel Zak]
    - fix write_all() usage  [Karel Zak]
+   - normalize formatting of the man page, and tweak some of its wording  [Benno Schulenberg]
    - return value warning fix  [Sami Kerola]
    - use size_t for wcstombs() return code  [Sami Kerola]
 po:
@@ -820,7 +844,11 @@ po:
    - merge changes  [Karel Zak]
    - update cs.po (from translationproject.org)  [Petr Písař]
    - update da.po (from translationproject.org)  [Joe Hansen]
+   - update de.po (from translationproject.org)  [Philipp Thomas]
    - update fr.po (from translationproject.org)  [David Prévot]
+   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+   - update nl.po (from translationproject.org)  [Benno Schulenberg]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
 procutils:
    - include missing header  [Davidlohr Bueso]
 raw:
@@ -863,8 +891,10 @@ scriptreplay:
    - cleanup usage()  [Karel Zak]
    - end printing with new line  [Sami Kerola]
    - fix buffer overflow  [Sami Kerola]
+   - improve synopsis and formatting and wording in man page  [Benno Schulenberg]
    - support long options  [Sami Kerola]
 setarch:
+   - add --uname-2.6 option for personality flag UNAME26  [Ben Hutchings]
    - fix compiler warnings [-Wsign-compare]  [Karel Zak]
 setterm:
    - add note about long dump file paths to man page  [Sami Kerola]
@@ -888,6 +918,7 @@ sfdisk:
    - help screen format  [Sami Kerola]
    - improve descriptions of options --no-reread and --show-extended  [Benno Schulenberg]
    - indent usage()  [Karel Zak]
+   - make some tests conditional to !Linux  [Giulio Orsero]
    - previously undocumented options to usage  [Sami Kerola]
    - remove inconsistent and wasteful newlines in the _() calls  [Benno Schulenberg]
    - rename warn to my_warn  [Fabian Groffen]
@@ -937,6 +968,7 @@ tests:
    - add tests for [u]mount regular file  [Karel Zak]
    - don't run mount/regfile test on old kernel  [Karel Zak]
    - fix compiler warnings [-Wunused-parameter]  [Karel Zak]
+   - grammar fixes  [Davidlohr Bueso]
    - remove generated file  [Karel Zak]
    - test column(1) with multiple input files  [Karel Zak]
    - update GPT test  [Karel Zak]
@@ -979,6 +1011,8 @@ umount:
 unshare:
    - cleanup usage()  [Karel Zak]
 uuidd:
+   - (man page) alphabetize the options  [Benno Schulenberg]
+   - (man page) repair the snipped up description of option -T  [Benno Schulenberg]
    - add "-q" to synopsis, order options alphabetically  [Benno Schulenberg]
    - cleanup usage()  [Karel Zak]
    - coding style fixes  [Sami Kerola]
@@ -992,6 +1026,8 @@ uuidd:
 uuidgen:
    - add long options  [Sami Kerola]
    - cleanup usage()  [Karel Zak]
+vipw:
+   - (man page) uniformize header and footer, tweak the formatting  [Benno Schulenberg]
 wall:
    - add long options and 79 char cut info to the man page  [Sami Kerola]
    - build with SUID_{C,LD}FLAGS  [Petr Uzel]
