@@ -299,8 +299,6 @@ findv(char **dirv, int dirc, char *cp)
 
 	while (dirc > 0)
 		findin(*dirv++, cp), dirc--;
-	while (*dirp)
-		findin(*dirp++, cp);
 }
 
 static void
@@ -315,9 +313,11 @@ looksrc(char *cp)
 static void
 lookbin(char *cp)
 {
-	if (Bflag == 0)
+	if (Bflag == 0) {
 		findv(bindirs, ARRAY_SIZE(bindirs)-1, cp);
-	else
+		while (*dirp)
+			findin(*dirp++, cp);		/* look $PATH */
+	 } else
 		findv(Bflag, Bcnt, cp);
 }
 
@@ -424,8 +424,6 @@ main(int argc, char **argv)
 	if (argc == 0)
 		usage(stderr);
 
-	fillpath();
-
 	do
 		if (argv[0][0] == '-') {
 			register char *cp = argv[0] + 1;
@@ -475,8 +473,11 @@ main(int argc, char **argv)
 				usage(stderr);
 			}
 			argv++;
-		} else
+		} else {
+			if (Bcnt == 0 && pathdir == NULL)
+				fillpath();
 			lookup(*argv++);
+		}
 	while (--argc > 0);
 
 	freepath();
