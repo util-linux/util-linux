@@ -55,7 +55,6 @@
 #include <getopt.h>
 #include <unistd.h>
 #include <fcntl.h>
-#include <libintl.h>
 #include <limits.h>
 #include <locale.h>
 #include <stddef.h>
