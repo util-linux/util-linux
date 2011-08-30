@@ -50,6 +50,7 @@
 #define _PATH_PROC_XENCAP	_PATH_PROC_XEN "/capabilities"
 #define _PATH_PROC_CPUINFO	"/proc/cpuinfo"
 #define _PATH_PROC_PCIDEVS	"/proc/bus/pci/devices"
+#define _PATH_PROC_SYSINFO	"/proc/sysinfo"
 
 /* virtualization types */
 enum {
@@ -69,14 +70,16 @@ enum {
 	HYPER_XEN,
 	HYPER_KVM,
 	HYPER_MSHV,
-	HYPER_VMWARE
+	HYPER_VMWARE,
+	HYPER_IBM
 };
 const char *hv_vendors[] = {
 	[HYPER_NONE]	= NULL,
 	[HYPER_XEN]	= "Xen",
 	[HYPER_KVM]	= "KVM",
 	[HYPER_MSHV]	= "Microsoft",
-	[HYPER_VMWARE]  = "VMware"
+	[HYPER_VMWARE]  = "VMware",
+	[HYPER_IBM]	= "IBM"
 };
 
 /* CPU modes */
@@ -94,6 +97,34 @@ struct cpu_cache {
 	cpu_set_t	**sharedmaps;
 };
 
+/* dispatching modes */
+enum {
+	DISP_HORIZONTAL = 0,
+	DISP_VERTICAL	= 1
+};
+
+const char *disp_modes[] = {
+	[DISP_HORIZONTAL]	= N_("horizontal"),
+	[DISP_VERTICAL]		= N_("vertical")
+};
+
+/* cpu polarization */
+enum {
+	POLAR_UNKNOWN	= 0,
+	POLAR_VLOW,
+	POLAR_VMEDIUM,
+	POLAR_VHIGH,
+	POLAR_HORIZONTAL
+};
+
+const char *polar_modes[] = {
+	[POLAR_UNKNOWN]		= "U",
+	[POLAR_VLOW]		= "VL",
+	[POLAR_VMEDIUM]		= "VM",
+	[POLAR_VHIGH]		= "VH",
+	[POLAR_HORIZONTAL]	= "H"
+};
+
 /* global description */
 struct lscpu_desc {
 	char	*arch;
@@ -107,6 +138,7 @@ struct lscpu_desc {
 	char	*stepping;
 	char    *bogomips;
 	char	*flags;
+	int	dispatching;	/* none, horizontal or vertical */
 	int	mode;		/* rm, lm or/and tm */
 
 	int		ncpus;		/* number of CPUs */
@@ -134,6 +166,9 @@ struct lscpu_desc {
 
 	int		ncaches;
 	struct cpu_cache *caches;
+
+	int		*polarization;	/* cpu polarization */
+	int		*addresses;	/* physical cpu addresses */
 };
 
 static size_t sysrootlen;
@@ -164,7 +199,9 @@ enum {
 	COL_SOCKET,
 	COL_NODE,
 	COL_BOOK,
-	COL_CACHE
+	COL_CACHE,
+	COL_POLARIZATION,
+	COL_ADDRESS
 };
 
 static const char *colnames[] =
@@ -174,7 +211,9 @@ static const char *colnames[] =
 	[COL_SOCKET] = "Socket",
 	[COL_NODE] = "Node",
 	[COL_BOOK] = "Book",
-	[COL_CACHE] = "Cache"
+	[COL_CACHE] = "Cache",
+	[COL_POLARIZATION] = "Polarization",
+	[COL_ADDRESS] = "Address"
 };
 
 
@@ -434,8 +473,7 @@ read_basicinfo(struct lscpu_desc *desc)
 		else if (lookup(buf, "features", &desc->flags)) ;	/* s390 */
 		else if (lookup(buf, "type", &desc->flags)) ;		/* sparc64 */
 		else if (lookup(buf, "bogomips", &desc->bogomips)) ;
-		/* S390 */
-		else if (lookup(buf, "bogomips per cpu", &desc->bogomips)) ;
+		else if (lookup(buf, "bogomips per cpu", &desc->bogomips)) ; /* s390 */
 		else
 			continue;
 	}
@@ -476,6 +514,12 @@ read_basicinfo(struct lscpu_desc *desc)
 		desc->online = path_cpulist(_PATH_SYS_SYSTEM "/cpu/online");
 		desc->nthreads = CPU_COUNT_S(setsize, desc->online);
 	}
+
+	/* get dispatching mode */
+	if (path_exist(_PATH_SYS_SYSTEM "/cpu/dispatching"))
+		desc->dispatching = path_getnum(_PATH_SYS_SYSTEM "/cpu/dispatching");
+	else
+		desc->dispatching = -1;
 }
 
 static int
@@ -599,6 +643,21 @@ read_hypervisor(struct lscpu_desc *desc)
 		/* Xen full-virt on non-x86_64 */
 		desc->hyper = HYPER_XEN;
 		desc->virtype = VIRT_FULL;
+	} else if (path_exist(_PATH_PROC_SYSINFO)) {
+		FILE *fd = path_fopen("r", 0, _PATH_PROC_SYSINFO);
+		char buf[BUFSIZ];
+
+		desc->hyper = HYPER_IBM;
+		desc->virtype = VIRT_FULL;
+		while (fgets(buf, sizeof(buf), fd) != NULL) {
+			if (!strstr(buf, "Control Program:"))
+				continue;
+			if (!strstr(buf, "KVM"))
+				desc->hyper = HYPER_IBM;
+			else
+				desc->hyper = HYPER_KVM;
+		}
+		fclose(fd);
 	}
 }
 
@@ -650,28 +709,70 @@ read_topology(struct lscpu_desc *desc, int num)
 		nthreads = CPU_COUNT_S(setsize, thread_siblings);
 		/* cores within one socket */
 		ncores = CPU_COUNT_S(setsize, core_siblings) / nthreads;
-		/* number of sockets within one book */
-		nsockets = desc->ncpus / nthreads / ncores;
+		/* number of sockets within one book.
+		 * Because of odd / non-present cpu maps and to keep
+		 * calculation easy we make sure that nsockets and
+		 * nbooks is at least 1.
+		 */
+		nsockets = desc->ncpus / nthreads / ncores ?: 1;
 		/* number of books */
-		nbooks = desc->ncpus / nthreads / ncores / nsockets;
+		nbooks = desc->ncpus / nthreads / ncores / nsockets ?: 1;
 
 		/* all threads, see also read_basicinfo()
-		 * -- this is fallback for kernels where is not
+		 * -- fallback for kernels without
 		 *    /sys/devices/system/cpu/online.
 		 */
 		if (!desc->nthreads)
-			desc->nthreads = nsockets * ncores * nthreads;
+			desc->nthreads = nbooks * nsockets * ncores * nthreads;
+		/* For each map we make sure that it can have up to ncpus
+		 * entries. This is because we cannot reliably calculate the
+		 * number of cores, sockets and books on all architectures.
+		 * E.g. completely virtualized architectures like s390 may
+		 * have multiple sockets of different sizes.
+		 */
+		desc->coremaps = xcalloc(desc->ncpus, sizeof(cpu_set_t *));
+		desc->socketmaps = xcalloc(desc->ncpus, sizeof(cpu_set_t *));
 		if (book_siblings)
-			desc->bookmaps = xcalloc(nbooks, sizeof(cpu_set_t *));
-
-		desc->socketmaps = xcalloc(nsockets, sizeof(cpu_set_t *));
-		desc->coremaps = xcalloc(ncores * nsockets, sizeof(cpu_set_t *));
+			desc->bookmaps = xcalloc(desc->ncpus, sizeof(cpu_set_t *));
 	}
 
 	add_cpuset_to_array(desc->socketmaps, &desc->nsockets, core_siblings);
 	add_cpuset_to_array(desc->coremaps, &desc->ncores, thread_siblings);
 	if (book_siblings)
 		add_cpuset_to_array(desc->bookmaps, &desc->nbooks, book_siblings);
+}
+static void
+read_polarization(struct lscpu_desc *desc, int num)
+{
+	char mode[64];
+
+	if (desc->dispatching < 0)
+		return;
+	if (!path_exist(_PATH_SYS_CPU "/cpu%d/polarization", num))
+		return;
+	if (!desc->polarization)
+		desc->polarization = xcalloc(desc->ncpus, sizeof(int));
+	path_getstr(mode, sizeof(mode), _PATH_SYS_CPU "/cpu%d/polarization", num);
+	if (strncmp(mode, "vertical:low", sizeof(mode)) == 0)
+		desc->polarization[num] = POLAR_VLOW;
+	else if (strncmp(mode, "vertical:medium", sizeof(mode)) == 0)
+		desc->polarization[num] = POLAR_VMEDIUM;
+	else if (strncmp(mode, "vertical:high", sizeof(mode)) == 0)
+		desc->polarization[num] = POLAR_VHIGH;
+	else if (strncmp(mode, "horizontal", sizeof(mode)) == 0)
+		desc->polarization[num] = POLAR_HORIZONTAL;
+	else
+		desc->polarization[num] = POLAR_UNKNOWN;
+}
+
+static void
+read_address(struct lscpu_desc *desc, int num)
+{
+	if (!path_exist(_PATH_SYS_CPU "/cpu%d/address", num))
+		return;
+	if (!desc->addresses)
+		desc->addresses = xcalloc(desc->ncpus, sizeof(int));
+	desc->addresses[num] = path_getnum(_PATH_SYS_CPU "/cpu%d/address", num);
 }
 
 static int
@@ -823,6 +924,14 @@ print_parsable_cell(struct lscpu_desc *desc, int i, int col, int compatible)
 			if (x == ca->nsharedmaps)
 				putchar(',');
 		}
+		break;
+	case COL_POLARIZATION:
+		if (desc->polarization)
+			printf("%s", polar_modes[desc->polarization[i]]);
+		break;
+	case COL_ADDRESS:
+		if (desc->addresses)
+			printf("%d", desc->addresses[i]);
 		break;
 	}
 }
@@ -981,13 +1090,38 @@ print_readable(struct lscpu_desc *desc, int hex)
 	}
 
 	if (desc->nsockets) {
+		int cores_per_socket, sockets_per_book, books;
+
+		cores_per_socket = sockets_per_book = books = 0;
+		/* s390 detects its cpu topology via /proc/sysinfo, if present.
+		 * Using simply the cpu topology masks in sysfs will not give
+		 * usable results since everything is virtualized. E.g.
+		 * virtual core 0 may have only 1 cpu, but virtual core 2 may
+		 * five cpus.
+		 * If the cpu topology is not exported (e.g. 2nd level guest)
+		 * fall back to old calculation scheme.
+		 */
+		if (path_exist(_PATH_PROC_SYSINFO)) {
+			FILE *fd = path_fopen("r", 0, _PATH_PROC_SYSINFO);
+			char buf[BUFSIZ];
+			int t0, t1, t2;
+
+			while (fgets(buf, sizeof(buf), fd) != NULL) {
+				if (sscanf(buf, "CPU Topology SW:%d%d%d%d%d%d",
+					   &t0, &t1, &t2, &books, &sockets_per_book,
+					   &cores_per_socket) == 6)
+					break;
+			}
+		}
 		print_n(_("Thread(s) per core:"), desc->nthreads / desc->ncores);
-		print_n(_("Core(s) per socket:"), desc->ncores / desc->nsockets);
+		print_n(_("Core(s) per socket:"),
+			cores_per_socket ?: desc->ncores / desc->nsockets);
 		if (desc->nbooks) {
-			print_n(_("Socket(s) per book:"), desc->nsockets / desc->nbooks);
-			print_n(_("Book(s):"), desc->nbooks);
+			print_n(_("Socket(s) per book:"),
+				sockets_per_book ?: desc->nsockets / desc->nbooks);
+			print_n(_("Book(s):"), books ?: desc->nbooks);
 		} else {
-			print_n(_("Socket(s):"), desc->nsockets);
+			print_n(_("Socket(s):"), sockets_per_book ?: desc->nsockets);
 		}
 	}
 	if (desc->nnodes)
@@ -1014,6 +1148,8 @@ print_readable(struct lscpu_desc *desc, int hex)
 		print_s(_("Hypervisor vendor:"), hv_vendors[desc->hyper]);
 		print_s(_("Virtualization type:"), virt_types[desc->virtype]);
 	}
+	if (desc->dispatching >= 0)
+		print_s(_("Dispatching mode:"), disp_modes[desc->dispatching]);
 	if (desc->ncaches) {
 		char buf[512];
 		int i;
@@ -1110,6 +1246,8 @@ int main(int argc, char *argv[])
 			continue;
 		read_topology(desc, i);
 		read_cache(desc, i);
+		read_polarization(desc, i);
+		read_address(desc, i);
 	}
 
 	qsort(desc->caches, desc->ncaches, sizeof(struct cpu_cache), cachecmp);
