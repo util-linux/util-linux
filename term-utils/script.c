@@ -55,7 +55,9 @@
 #include <getopt.h>
 #include <unistd.h>
 #include <fcntl.h>
+#ifdef ENABLE_NLS
 #include <libintl.h>
+#endif
 #include <limits.h>
 #include <locale.h>
 #include <stddef.h>
