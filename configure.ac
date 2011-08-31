@@ -623,15 +623,6 @@ char *c = crypt("abc","pw");
 
 AM_CONDITIONAL(NEED_LIBCRYPT, test "x$need_libcrypt" = xyes)
 
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#include <stdio.h>
-]], [[
-printf(__progname);
-]])],
-[AC_DEFINE(HAVE___PROGNAME, 1, Do we have __progname?)
-])
-
-
 AC_CHECK_TYPES([union semun], [], [], [[
 #include <sys/sem.h>
 ]])
