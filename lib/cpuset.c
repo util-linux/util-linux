@@ -264,8 +264,9 @@ int cpumask_parse(const char *str, cpu_set_t *set, size_t setsize)
 /*
  * Parses string with CPUs mask.
  */
-int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize)
+int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail)
 {
+	size_t max = cpuset_nbits(setsize);
 	const char *p, *q;
 	q = str;
 
@@ -297,6 +298,8 @@ int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize)
 		if (!(a <= b))
 			return 1;
 		while (a <= b) {
+			if (fail && (a >= max))
+				return 1;
 			CPU_SET_S(a, setsize, set);
 			a += s;
 		}
@@ -359,7 +362,7 @@ int main(int argc, char *argv[])
 	if (mask)
 		rc = cpumask_parse(mask, set, setsize);
 	else
-		rc = cpulist_parse(range, set, setsize);
+		rc = cpulist_parse(range, set, setsize, 0);
 
 	if (rc)
 		errx(EXIT_FAILURE, "failed to parse string: %s", mask ? : range);

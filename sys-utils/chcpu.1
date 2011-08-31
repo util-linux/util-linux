@@ -1,0 +1,94 @@
+.TH CHCPU 1 "August 2011" Linux "User Manuals"
+.SH NAME
+chcpu \- CPU configuration utility
+.SH SYNOPSIS
+.B chcpu
+\fB-c\fP|\fB\-d\fP|\fB\-e\fP|\fB\-g\fP
+.IR cpu-list
+.br
+.B
+\fBchcpu \-p\fP \fImode\fP
+.br
+.B chcpu
+.RB [ \-rhV\ ]
+.br
+.SH DESCRIPTION
+.B chcpu
+can modify the logical state of CPUs. It can enable and disable CPUs, scan
+for new CPUs, change the CPU dispatching mode of the underlying hypervisor
+and request (configure) or give logical CPUs back (deconfigure) to the
+the underlying hypervisor.
+
+Some options have a \fIcpu-list\fP argument. A \fIcpu-list\fP may specify
+multiple CPUs, separated by comma, and ranges.  For example,
+.BR 0,5,7,9-11 .
+.SH OPTIONS
+The --configure, --deconfigure, --disable, --dispatch, --enable and --rescan
+options are mutually exclusive.
+.TP
+.BR \-c , " \-\-configure " <\fIcpu-list\fP>
+Configure all CPUs specified with \fIcpu-list\fP. If
+.BR chcpu
+fails to configure a CPU specified in the \fIcpu-list\fP it will skip that
+CPU and continue with the next one until all specified CPUs have been
+processed.
+.br
+Configuring a CPU means that the underlying hypervisor is informed that
+a logical CPU within a guest should be used. If the hypervisor has enough
+resources the request will succeed.
+.TP
+.BR \-d , " \-\-disable " <\fIcpu-list\fP>
+Disable all CPUs specified with \fIcpu-list\fP. If
+.BR chcpu
+fails to disable a CPU specified in the \fIcpu-list\fP it will skip that
+CPU and continue with the next one until all specified CPUs have been
+processed.
+.br
+When a CPU has been disabled its state is offline.
+.TP
+.BR \-e , " \-\-enable " <\fIcpu-list\fP>
+Enable all CPUs specified with \fIcpu-list\fP. If
+.BR chcpu
+fails to enable a CPU specified in the \fIcpu-list\fP it will skip that
+CPU and continue with the next one until all specified CPUs have been
+processed.
+.br
+When a CPU has been enabled its state is online.
+.TP
+.BR \-g , " \-\-deconfigure " <\fIcpu-list\fP>
+Deconfigure all CPUs specified with \fIcpu-list\fP. If
+.BR chcpu
+fails to deconfigure a CPU specified in the \fIcpu-list\fP it will skip
+that CPU and continue with the next one until all specified CPUs have been
+processed. Only disabled (offline) CPUs can be deconfigured.
+.br
+Deconfiguring a CPU means that the underlying hypervisor is informed that
+the CPU will not be used anymore and that the hypervisor can add the CPU
+back to its CPU pool.
+.TP
+.BR \-h , " \-\-help"
+Print a help text and exit.
+.TP
+.BR \-p , " \-\-dispatch " <\fImode\fP>
+Set the CPU dispatching \fImode\fP if the underlying hypervisor supports this.
+\fImode\fP may be horizontal or vertical.
+.TP
+.BR \-r , " \-\-rescan"
+Trigger a rescan of CPUs. If new CPUs have been attached to the system the
+kernel will detect them. On some systems no event will be generated if a
+CPU gets attached. In that case a CPU rescan must be manually triggered.
+.TP
+.BR \-V , " \-\-version"
+Output version information and exit.
+.SH AUTHOR
+.nf
+Heiko Carstens <heiko.carstens@de.ibm.com>
+.fi
+.SH COPYRIGHT
+Copyright IBM Corp. 2011
+.br
+.SH "SEE ALSO"
+.BR lscpu (1)
+.SH AVAILABILITY
+The chcpu command is part of the util-linux package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux/.

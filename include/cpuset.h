@@ -67,7 +67,7 @@ extern cpu_set_t *cpuset_alloc(int ncpus, size_t *setsize, size_t *nbits);
 extern void cpuset_free(cpu_set_t *set);
 
 extern char *cpulist_create(char *str, size_t len, cpu_set_t *set, size_t setsize);
-extern int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize);
+extern int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail);
 
 extern char *cpumask_create(char *str, size_t len, cpu_set_t *set, size_t setsize);
 extern int cpumask_parse(const char *str, cpu_set_t *set, size_t setsize);
