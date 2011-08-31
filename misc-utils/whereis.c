@@ -241,7 +241,7 @@ findin(char *dir, char *cp)
 
 static int inpath(const char *str)
 {
-	int i;
+	size_t i;
 
 	for (i = 0; i < ARRAY_SIZE(bindirs) - 1 ; i++)
 		if (!strcmp(bindirs[i], str))
