@@ -442,12 +442,12 @@ static int get_next_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 
 		if (!begin)
 			begin = p;
-		if (*p == '\n')
-			end = p;
 		if (i + 1 == rec->next_size) {
 			end = p + 1;
 			i++;
-		}
+		} else if (*p == '\n' && *(p + 1) == '<')
+			end = p;
+
 		if (begin && !*begin)
 			begin = NULL;	/* zero(s) at the end of the buffer? */
 		if (!begin || !end)
@@ -468,9 +468,6 @@ static int get_next_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 				}
 			}
 		}
-
-		if (end <= begin)
-			return -1;	/* error */
 
 		if (*begin == '[' && (*(begin + 1) == ' ' ||
 				      isdigit(*(begin + 1)))) {
@@ -534,11 +531,14 @@ static void print_buffer(const char *buf, size_t size,
 	}
 
 	while (get_next_record(ctl, &rec) == 0) {
-		if (!rec.mesg_size)
-			continue;
 
 		if (!accept_record(ctl, &rec))
 			continue;
+
+		if (!rec.mesg_size) {
+			putchar('\n');
+			continue;
+		}
 
 		if (ctl->decode && rec.level >= 0 && rec.facility >= 0)
 			printf("%-6s:%-6s: ", facility_names[rec.facility].name,
