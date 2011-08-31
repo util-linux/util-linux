@@ -210,4 +210,17 @@ static inline int dirfd(DIR *d)
 #define IUTF8 0040000
 #endif
 
+/*
+ * Constant strings for usage() functions. For more info see
+ * Documentation/howto-usage-function.txt and sys-utils/arch.c
+ */
+#define USAGE_HEADER     _("\nUsage:\n")
+#define USAGE_OPTIONS    _("\nOptions:\n")
+#define USAGE_HELP       _(" -h, --help     display this help and exit\n")
+#define USAGE_VERSION    _(" -V, --version  output version information and exit\n")
+#define USAGE_BEGIN_TAIL _("\n")
+#define USAGE_MAN_TAIL   _("For more details see %s.\n")
+
+#define UTIL_LINUX_VERSION _("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING
+
 #endif /* UTIL_LINUX_C_H */
