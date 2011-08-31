@@ -92,6 +92,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&jmraid_idinfo,
 
 	&drbd_idinfo,
+	&drbdproxy_datalog_idinfo,
 	&lvm2_idinfo,
 	&lvm1_idinfo,
 	&snapcow_idinfo,
