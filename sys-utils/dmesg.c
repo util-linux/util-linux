@@ -480,10 +480,9 @@ static int get_next_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 						break;
 				}
 			}
+			if (begin < end && *begin == ' ')
+				begin++;
 		}
-
-		if (begin < end && *begin == ' ')
-			begin++;
 
 		rec->mesg = begin;
 		rec->mesg_size = end - begin;
