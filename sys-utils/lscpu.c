@@ -915,13 +915,11 @@ print_parsable_cell(struct lscpu_desc *desc, int i, int col, int compatible)
 
 			for (x = 0; x < ca->nsharedmaps; x++) {
 				if (CPU_ISSET_S(i, setsize, ca->sharedmaps[x])) {
-					if (j != desc->ncaches - 1)
-						putchar(compatible ? ',' : ':');
 					printf("%d", x);
 					break;
 				}
 			}
-			if (x == ca->nsharedmaps)
+			if (j != 0)
 				putchar(compatible ? ',' : ':');
 		}
 		break;
