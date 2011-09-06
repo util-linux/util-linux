@@ -174,6 +174,7 @@ struct lscpu_desc {
 
 	int		*polarization;	/* cpu polarization */
 	int		*addresses;	/* physical cpu addresses */
+	int		*configured;	/* cpu configured */
 };
 
 enum {
@@ -218,7 +219,8 @@ enum {
 	COL_BOOK,
 	COL_CACHE,
 	COL_POLARIZATION,
-	COL_ADDRESS
+	COL_ADDRESS,
+	COL_CONFIGURED,
 };
 
 static const char *colnames[] =
@@ -230,7 +232,8 @@ static const char *colnames[] =
 	[COL_BOOK] = "Book",
 	[COL_CACHE] = "Cache",
 	[COL_POLARIZATION] = "Polarization",
-	[COL_ADDRESS] = "Address"
+	[COL_ADDRESS] = "Address",
+	[COL_CONFIGURED] = "Configured",
 };
 
 
@@ -792,6 +795,16 @@ read_address(struct lscpu_desc *desc, int num)
 	desc->addresses[num] = path_getnum(_PATH_SYS_CPU "/cpu%d/address", num);
 }
 
+static void
+read_configured(struct lscpu_desc *desc, int num)
+{
+	if (!path_exist(_PATH_SYS_CPU "/cpu%d/configure", num))
+		return;
+	if (!desc->configured)
+		desc->configured = xcalloc(desc->ncpus, sizeof(int));
+	desc->configured[num] = path_getnum(_PATH_SYS_CPU "/cpu%d/configure", num);
+}
+
 static int
 cachecmp(const void *a, const void *b)
 {
@@ -958,6 +971,11 @@ get_cell_data(struct lscpu_desc *desc, int cpu, int col,
 	case COL_ADDRESS:
 		if (desc->addresses)
 			snprintf(buf, bufsz, "%d", desc->addresses[cpu]);
+		break;
+	case COL_CONFIGURED:
+		if (desc->configured)
+			snprintf(buf, bufsz,
+				 desc->configured[cpu] ? _("Y") : _("N"));
 		break;
 	}
 	return buf;
@@ -1359,6 +1377,7 @@ int main(int argc, char *argv[])
 		read_cache(desc, i);
 		read_polarization(desc, i);
 		read_address(desc, i);
+		read_configured(desc, i);
 	}
 
 	qsort(desc->caches, desc->ncaches, sizeof(struct cpu_cache), cachecmp);
@@ -1395,6 +1414,8 @@ int main(int argc, char *argv[])
 				columns[ncolumns++] = COL_CORE;
 			if (desc->caches)
 				columns[ncolumns++] = COL_CACHE;
+			if (desc->configured)
+				columns[ncolumns++] = COL_CONFIGURED;
 			if (desc->polarization)
 				columns[ncolumns++] = COL_POLARIZATION;
 			if (desc->addresses)
