@@ -137,6 +137,7 @@ struct lscpu_desc {
 	char	*family;
 	char	*model;
 	char	*virtflag;	/* virtualization flag (vmx, svm) */
+	char	*hypervisor;	/* hypervisor software */
 	int	hyper;		/* hypervisor vendor ID */
 	int	virtype;	/* VIRT_PARA|FULL|NONE ? */
 	char	*mhz;
@@ -672,14 +673,31 @@ read_hypervisor(struct lscpu_desc *desc)
 		char buf[BUFSIZ];
 
 		desc->hyper = HYPER_IBM;
+		desc->hypervisor = "PR/SM";
 		desc->virtype = VIRT_FULL;
 		while (fgets(buf, sizeof(buf), fd) != NULL) {
+			char *str;
+
 			if (!strstr(buf, "Control Program:"))
 				continue;
 			if (!strstr(buf, "KVM"))
 				desc->hyper = HYPER_IBM;
 			else
 				desc->hyper = HYPER_KVM;
+			str = strchr(buf, ':');
+			if (!str)
+				continue;
+			if (asprintf(&str, str + 1) == -1)
+				errx(EXIT_FAILURE, _("failed to allocate memory"));
+			/* remove leading, trailing and repeating whitespace */
+			while (*str == ' ')
+				str++;
+			desc->hypervisor = str;
+			str += strlen(str) - 1;
+			while ((*str == '\n') || (*str == ' '))
+				*(str--) = '\0';
+			while ((str = strstr(desc->hypervisor, "  ")))
+				memmove(str, str + 1, strlen(str));
 		}
 		fclose(fd);
 	}
@@ -1276,6 +1294,8 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		else if (!strcmp(desc->virtflag, "vmx"))
 			print_s(_("Virtualization:"), "VT-x");
 	}
+	if (desc->hypervisor)
+		print_s(_("Hypervisor:"), desc->hypervisor);
 	if (desc->hyper) {
 		print_s(_("Hypervisor vendor:"), hv_vendors[desc->hyper]);
 		print_s(_("Virtualization type:"), virt_types[desc->virtype]);

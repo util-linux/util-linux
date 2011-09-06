@@ -8,6 +8,7 @@ Socket(s) per book:    6
 Book(s):               4
 Vendor ID:             IBM/S390
 BogoMIPS:              14367.00
+Hypervisor:            PR/SM
 Hypervisor vendor:     IBM
 Virtualization type:   full
 Dispatching mode:      vertical
