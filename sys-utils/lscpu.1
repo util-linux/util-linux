@@ -6,7 +6,7 @@
 lscpu \- display information on CPU architecture
 .SH SYNOPSIS
 .B lscpu
-.RB [ \-ehpxV ]
+.RB [ \-aehpxV ]
 .RB [ \-s
 .IR directory ]
 .SH DESCRIPTION
@@ -27,6 +27,8 @@ the defined order.
 
 .SH OPTIONS
 .TP
+.BR \-a , " \-\-all"
+Include online and offline CPUs in output.
 .TP
 .BR \-e , " \-\-extended " \fI[=list]\fP
 Print CPU list out in human-readable format.

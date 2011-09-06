@@ -1305,12 +1305,13 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	      _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -h, --help              print this help\n"
-		" -p, --parse[=<list>]    print out a parsable format\n"
+	fputs(_(" -a, --all               print online and offline CPUs\n"
 		" -e, --extended[=<list>] print out a extended readable format\n"
+		" -h, --help              print this help\n"
+		" -p, --parse[=<list>]    print out a parsable format\n"
 		" -s, --sysroot <dir>     use directory DIR as system root\n"
-		" -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
-		" -V, --version           print version information and exit\n\n"), out);
+		" -V, --version           print version information and exit\n"
+		" -x, --hex               print hexadecimal masks rather than lists of CPUs\n\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -1323,6 +1324,7 @@ int main(int argc, char *argv[])
 	int columns[ARRAY_SIZE(colnames)], ncolumns = 0;
 
 	static const struct option longopts[] = {
+		{ "all",        no_argument,       0, 'a' },
 		{ "help",	no_argument,       0, 'h' },
 		{ "extended",	optional_argument, 0, 'e' },
 		{ "parse",	optional_argument, 0, 'p' },
@@ -1336,13 +1338,16 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "e::hp::s:xV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "ae::hp::s:xV", longopts, NULL)) != -1) {
 
 		if (mod->mode != OUTPUT_SUMMARY && strchr("ep", c))
 			errx(EXIT_FAILURE,
 			     _("extended and parsable are mutually exclusive"));
 
 		switch (c) {
+		case 'a':
+			mod->allcpus = 1;
+			break;
 		case 'h':
 			usage(stdout);
 		case 'p':
