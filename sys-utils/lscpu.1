@@ -6,7 +6,7 @@
 lscpu \- display information on CPU architecture
 .SH SYNOPSIS
 .B lscpu
-.RB [ \-hpx ]
+.RB [ \-hpxV ]
 .RB [ \-s
 .IR directory ]
 .SH DESCRIPTION
@@ -47,6 +47,9 @@ a snapshot from a different system.
 .BR \-x , " \-\-hex"
 Use hexadecimal masks for CPU sets (e.g. 0x3).  The default is to print the sets
 in list format (e.g. 0,1).
+.TP
+.BR \-V , " \-\-version"
+Output version information and exit.
 .SH BUGS
 The basic overview about CPU family, model, etc. is always based on the first
 CPU only.

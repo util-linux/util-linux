@@ -1178,7 +1178,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -h, --help          print this help\n"
 		" -p, --parse <list>  print out a parsable instead of a readable format\n"
 		" -s, --sysroot <dir> use directory DIR as system root\n"
-		" -x, --hex           print hexadecimal masks rather than lists of CPUs\n\n"), out);
+		" -x, --hex           print hexadecimal masks rather than lists of CPUs\n"
+		" -V, --version       print version information and exit\n\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -1195,6 +1196,7 @@ int main(int argc, char *argv[])
 		{ "parse",	optional_argument, 0, 'p' },
 		{ "sysroot",	required_argument, 0, 's' },
 		{ "hex",	no_argument,	   0, 'x' },
+		{ "version",	no_argument,	   0, 'V' },
 		{ NULL,		0, 0, 0 }
 	};
 
@@ -1202,7 +1204,7 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "hp::s:x", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hp::s:xV", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage(stdout);
@@ -1233,6 +1235,10 @@ int main(int argc, char *argv[])
 		case 'x':
 			hex = 1;
 			break;
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+			       PACKAGE_STRING);
+			return EXIT_SUCCESS;
 		default:
 			usage(stderr);
 		}
