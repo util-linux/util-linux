@@ -712,6 +712,9 @@ read_cache(struct lscpu_desc *desc, int num)
 		struct cpu_cache *ca = &desc->caches[i];
 		cpu_set_t *map;
 
+		if (!path_exist(_PATH_SYS_SYSTEM "/cpu/cpu%d/cache/index%d",
+				num, i))
+			continue;
 		if (!ca->name) {
 			int type, level;
 
