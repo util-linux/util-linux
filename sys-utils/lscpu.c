@@ -922,7 +922,7 @@ print_parsable_cell(struct lscpu_desc *desc, int i, int col, int compatible)
 				}
 			}
 			if (x == ca->nsharedmaps)
-				putchar(',');
+				putchar(compatible ? ',' : ':');
 		}
 		break;
 	case COL_POLARIZATION:
