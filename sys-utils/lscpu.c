@@ -184,9 +184,10 @@ enum {
 };
 
 struct lscpu_modifier {
-	int mode;		/* OUTPUT_* */
-	int hex:1;		/* print CPU masks rather than CPU lists */
-	int compat:1;		/* use backwardly compatible format */
+	int		mode;		/* OUTPUT_* */
+	unsigned int	hex:1,		/* print CPU masks rather than CPU lists */
+			compat:1,	/* use backwardly compatible format */
+			allcpus:1;	/* print all CPUs */
 };
 
 static size_t sysrootlen;
@@ -221,6 +222,7 @@ enum {
 	COL_POLARIZATION,
 	COL_ADDRESS,
 	COL_CONFIGURED,
+	COL_ONLINE,
 };
 
 static const char *colnames[] =
@@ -234,6 +236,7 @@ static const char *colnames[] =
 	[COL_POLARIZATION] = "Polarization",
 	[COL_ADDRESS] = "Address",
 	[COL_CONFIGURED] = "Configured",
+	[COL_ONLINE] = "Online",
 };
 
 
@@ -977,6 +980,10 @@ get_cell_data(struct lscpu_desc *desc, int cpu, int col,
 			snprintf(buf, bufsz,
 				 desc->configured[cpu] ? _("Y") : _("N"));
 		break;
+	case COL_ONLINE:
+		if (desc->online)
+			snprintf(buf, bufsz, is_cpu_online(desc, cpu) ? _("Y") : _("N"));
+		break;
 	}
 	return buf;
 }
@@ -1072,7 +1079,7 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 	for (i = 0; i < desc->ncpus; i++) {
 		int c;
 
-		if (desc->online && !is_cpu_online(desc, i))
+		if (!mod->allcpus && desc->online && !is_cpu_online(desc, i))
 			continue;
 		for (c = 0; c < ncols; c++) {
 			if (mod->compat && cols[c] == COL_CACHE) {
@@ -1118,7 +1125,7 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 		int c;
 		struct tt_line *line;
 
-		if (desc->online && !is_cpu_online(desc, i))
+		if (!mod->allcpus && desc->online && !is_cpu_online(desc, i))
 			continue;
 
 		line = tt_add_line(tt, NULL);
@@ -1126,7 +1133,7 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 		for (c = 0; c < ncols; c++) {
 			data = get_cell_data(desc, i, cols[c], mod,
 					     buf, sizeof(buf));
-			tt_line_set_data(line, c, xstrdup(data));
+			tt_line_set_data(line, c, data && *data ? xstrdup(data) : "-");
 		}
 	}
 
@@ -1401,6 +1408,7 @@ int main(int argc, char *argv[])
 		print_parsable(desc, columns, ncolumns, mod);
 		break;
 	case OUTPUT_READABLE:
+		mod->allcpus = 1;
 		if (!ncolumns) {
 			/* No list was given. Just print whatever is there. */
 			columns[ncolumns++] = COL_CPU;
@@ -1414,6 +1422,8 @@ int main(int argc, char *argv[])
 				columns[ncolumns++] = COL_CORE;
 			if (desc->caches)
 				columns[ncolumns++] = COL_CACHE;
+			if (desc->online)
+				columns[ncolumns++] = COL_ONLINE;
 			if (desc->configured)
 				columns[ncolumns++] = COL_CONFIGURED;
 			if (desc->polarization)
