@@ -1218,8 +1218,8 @@ int main(int argc, char *argv[])
 			} else {
 				columns[ncolumns++] = COL_CPU;
 				columns[ncolumns++] = COL_CORE;
-				columns[ncolumns++] = COL_SOCKET,
-				columns[ncolumns++] = COL_NODE,
+				columns[ncolumns++] = COL_SOCKET;
+				columns[ncolumns++] = COL_NODE;
 				columns[ncolumns++] = COL_CACHE;
 				compatible = 1;
 			}
