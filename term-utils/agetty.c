@@ -985,7 +985,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 	 * In case of a virtual console the ioctl TIOCMGET fails and
 	 * the error number will be set to EINVAL.
 	 */
-	if (ioctl(STDIN_FILENO, TIOCMGET, &serial) < 0 && (errno = EINVAL)) {
+	if (ioctl(STDIN_FILENO, TIOCMGET, &serial) < 0 && (errno == EINVAL)) {
 		op->flags |= F_VCONSOLE;
 		if (!op->term)
 			op->term = DEFAULT_VCTERM;
