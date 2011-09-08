@@ -2020,11 +2020,15 @@ mount_one (const char *spec, const char *node, const char *types,
 
 #ifdef HAVE_LIBMOUNT_MOUNT
 static struct libmnt_table *minfo;	/* parsed mountinfo file */
-#endif
 
 /* Check if an fsname/dir pair was already in the old mtab.  */
 static int
 mounted (const char *spec0, const char *node0, struct mntentchn *fstab_mc) {
+#else
+static int
+mounted (const char *spec0, const char *node0,
+	 struct mntentchn *fstab_mc __attribute__((__unused__))) {
+#endif
 	struct mntentchn *mc, *mc0;
 	const char *spec, *node;
 	int ret = 0;
