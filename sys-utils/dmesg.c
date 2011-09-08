@@ -16,6 +16,11 @@
 #include <sys/sysinfo.h>
 #include <ctype.h>
 #include <time.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 #include "c.h"
 #include "nls.h"
@@ -104,6 +109,14 @@ struct dmesg_control {
 	struct timeval	lasttime;	/* last printed timestamp */
 	time_t		boot_time;	/* system boot time */
 
+	/*
+	 * For the --file option we mmap whole file. The unnecessary (already
+	 * printed) pages are always unmapped. The result is that we have in
+	 * memory only the currenly used page(s).
+	 */
+	char		*mmap_buff;
+	size_t		pagesize;
+
 	unsigned int	raw:1,		/* raw mode */
 			fltr_lev:1,	/* filter out by levels[] */
 			fltr_fac:1,	/* filter out by facilities[] */
@@ -139,6 +152,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -D, --console-off           disable printing messages to console\n"
 		" -d, --show-delta            show time delta between printed messages\n"
 		" -E, --console-on            enable printing messages to console\n"
+		" -F, --file <file>           use the file instead of the kernel log buffer\n"
 		" -f, --facility <list>       restrict output to defined facilities\n"
 		" -h, --help                  display this help and exit\n"
 		" -k, --kernel                display kernel messages\n"
@@ -332,9 +346,33 @@ static time_t get_boot_time(void)
 }
 
 /*
+ * mmap file with the log
+ */
+static ssize_t read_file_buffer(struct dmesg_control *ctl,
+				char **buf, const char *filename)
+{
+	struct stat st;
+	int fd = open(filename, O_RDONLY);
+
+	if (fd < 0)
+		err(EXIT_FAILURE, _("cannot open: %s"), filename);
+	if (fstat(fd, &st))
+		err(EXIT_FAILURE, _("cannot stat: %s"), filename);
+
+	*buf = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
+	if (*buf == MAP_FAILED)
+		err(EXIT_FAILURE, _("cannot mmap: %s"), filename);
+	ctl->mmap_buff = *buf;
+	ctl->pagesize = getpagesize();
+	close(fd);
+
+	return st.st_size;
+}
+
+/*
  * Reads messages from kernel ring buffer
  */
-static int read_buffer(char **buf, size_t bufsize, int clear)
+static int read_kernel_buffer(char **buf, size_t bufsize, int clear)
 {
 	size_t sz;
 	int rc = -1;
@@ -436,6 +474,16 @@ static int get_next_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 	rec->tv.tv_sec = 0;
 	rec->tv.tv_usec = 0;
 
+	/*
+	 * Unmap already printed file data from memory
+	 */
+	if (ctl->mmap_buff && (size_t) (rec->next - ctl->mmap_buff) > ctl->pagesize) {
+		void *x = ctl->mmap_buff;
+
+		ctl->mmap_buff += ctl->pagesize;
+		munmap(x, ctl->pagesize);
+	}
+
 	for (i = 0; i < rec->next_size; i++) {
 		const char *p = rec->next + i;
 		const char *end = NULL;
@@ -511,6 +559,37 @@ static int accept_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 	return 1;
 }
 
+static void raw_print(const char *buf, size_t size,
+		      struct dmesg_control *ctl)
+{
+	int lastc = '\n';
+
+	if (!ctl->mmap_buff) {
+		/*
+		 * Print whole ring buffer
+		 */
+		safe_fwrite(buf, size, stdout);
+		lastc = buf[size - 1];
+	} else {
+		/*
+		 * Print file in small chunks to save memory
+		 */
+		while (size) {
+			size_t sz = size > ctl->pagesize ? ctl->pagesize : size;
+			char *x = ctl->mmap_buff;
+
+			safe_fwrite(x, sz, stdout);
+			lastc = x[sz - 1];
+			size -= sz;
+			ctl->mmap_buff += sz;
+			munmap(x, sz);
+		}
+	}
+
+	if (lastc != '\n')
+		putchar('\n');
+}
+
 /*
  * Prints the 'buf' kernel ring buffer; the messages are filtered out according
  * to 'levels' and 'facilities' bitarrays.
@@ -522,10 +601,7 @@ static void print_buffer(const char *buf, size_t size,
 	char tbuf[256];
 
 	if (ctl->raw) {
-		/* print whole buffer */
-		safe_fwrite(buf, size, stdout);
-		if (buf[size - 1] != '\n')
-			putchar('\n');
+		raw_print(buf, size, ctl);
 		return;
 	}
 
@@ -579,8 +655,9 @@ static void print_buffer(const char *buf, size_t size,
 int main(int argc, char *argv[])
 {
 	char *buf = NULL;
+	const char *filename = NULL;
 	int  bufsize = 0;
-	int  n;
+	ssize_t  n;
 	int  c;
 	int  console_level = 0;
 	int  cmd = -1;
@@ -593,6 +670,7 @@ int main(int argc, char *argv[])
 		{ "console-off",   no_argument,       NULL, 'D' },
 		{ "console-on",    no_argument,       NULL, 'E' },
 		{ "decode",        no_argument,	      NULL, 'x' },
+		{ "file",          required_argument, NULL, 'F' },
 		{ "facility",      required_argument, NULL, 'f' },
 		{ "help",          no_argument,	      NULL, 'h' },
 		{ "kernel",        no_argument,       NULL, 'k' },
@@ -611,7 +689,7 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "CcDdEf:hkl:n:rs:TtuVx",
+	while ((c = getopt_long(argc, argv, "CcDdEF:f:hkl:n:rs:TtuVx",
 				longopts, NULL)) != -1) {
 
 		if (cmd != -1 && strchr("CcnDE", c))
@@ -634,6 +712,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'E':
 			cmd = SYSLOG_ACTION_CONSOLE_ON;
+			break;
+		case 'F':
+			filename = optarg;
 			break;
 		case 'f':
 			ctl.fltr_fac = 1;
@@ -713,12 +794,18 @@ int main(int argc, char *argv[])
 	switch (cmd) {
 	case SYSLOG_ACTION_READ_ALL:
 	case SYSLOG_ACTION_READ_CLEAR:
-		if (!bufsize)
-			bufsize = get_buffer_size();
-		n = read_buffer(&buf, bufsize, cmd == SYSLOG_ACTION_READ_CLEAR);
+		if (filename)
+			n = read_file_buffer(&ctl, &buf, filename);
+		else  {
+			if (!bufsize)
+				bufsize = get_buffer_size();
+			n = read_kernel_buffer(&buf, bufsize,
+					cmd == SYSLOG_ACTION_READ_CLEAR);
+		}
 		if (n > 0)
 			print_buffer(buf, n, &ctl);
-		free(buf);
+		if (!filename)
+			free(buf);
 		break;
 	case SYSLOG_ACTION_CLEAR:
 	case SYSLOG_ACTION_CONSOLE_OFF:
@@ -733,7 +820,7 @@ int main(int argc, char *argv[])
 		break;
 	}
 
-	if (n < 0)
+	if (n < 0 && !filename)
 		err(EXIT_FAILURE, _("klogctl failed"));
 
 	return EXIT_SUCCESS;
