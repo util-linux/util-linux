@@ -263,6 +263,11 @@ int cpumask_parse(const char *str, cpu_set_t *set, size_t setsize)
 
 /*
  * Parses string with list of CPU ranges.
+ * Returns 0 on success.
+ * Returns 1 on error.
+ * Returns 2 if fail is set and a cpu number passed in the list doesn't fit
+ * into the cpu_set. If fail is not set cpu numbers that do not fit are
+ * ignored and 0 is returned instead.
  */
 int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail)
 {
@@ -303,7 +308,7 @@ int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail)
 			return 1;
 		while (a <= b) {
 			if (fail && (a >= max))
-				return 1;
+				return 2;
 			CPU_SET_S(a, setsize, set);
 			a += s;
 		}

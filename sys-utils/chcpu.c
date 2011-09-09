@@ -210,6 +210,18 @@ static int cpu_configure(cpu_set_t *cpu_set, size_t setsize, int configure)
 	return EXIT_SUCCESS;
 }
 
+static void cpu_parse(char *cpu_string, cpu_set_t *cpu_set, size_t setsize)
+{
+	int rc;
+
+	rc = cpulist_parse(cpu_string, cpu_set, setsize, 1);
+	if (rc == 0)
+		return;
+	if (rc == 2)
+		errx(EXIT_FAILURE, _("invalid CPU number in CPU list: %s"), cpu_string);
+	errx(EXIT_FAILURE, _("failed to parse CPU list: %s"), cpu_string);
+}
+
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fprintf(out, _(
@@ -269,27 +281,19 @@ int main(int argc, char *argv[])
 		switch (c) {
 		case 'c':
 			cmd = CMD_CPU_CONFIGURE;
-			if (cpulist_parse(argv[optind - 1], cpu_set, setsize, 1))
-				errx(EXIT_FAILURE, _("failed to parse CPU list: %s"),
-				     argv[optind -1 ]);
+			cpu_parse(argv[optind - 1], cpu_set, setsize);
 			break;
 		case 'd':
 			cmd = CMD_CPU_DISABLE;
-			if (cpulist_parse(argv[optind - 1], cpu_set, setsize, 1))
-				errx(EXIT_FAILURE, _("failed to parse CPU list: %s"),
-				     argv[optind -1 ]);
+			cpu_parse(argv[optind - 1], cpu_set, setsize);
 			break;
 		case 'e':
 			cmd = CMD_CPU_ENABLE;
-			if (cpulist_parse(argv[optind - 1], cpu_set, setsize, 1))
-				errx(EXIT_FAILURE, _("failed to parse CPU list: %s"),
-				     argv[optind -1 ]);
+			cpu_parse(argv[optind - 1], cpu_set, setsize);
 			break;
 		case 'g':
 			cmd = CMD_CPU_DECONFIGURE;
-			if (cpulist_parse(argv[optind - 1], cpu_set, setsize, 1))
-				errx(EXIT_FAILURE, _("failed to parse CPU list: %s"),
-				     argv[optind -1 ]);
+			cpu_parse(argv[optind - 1], cpu_set, setsize);
 			break;
 		case 'h':
 			usage(stdout);
