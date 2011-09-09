@@ -40,7 +40,6 @@
 #include "strutils.h"
 #include "bitops.h"
 
-
 #define CACHE_MAX 100
 
 /* /sys paths */
@@ -117,12 +116,17 @@ enum {
 	POLAR_HORIZONTAL
 };
 
-const char *polar_modes[] = {
-	[POLAR_UNKNOWN]		= "U",
-	[POLAR_VLOW]		= "VL",
-	[POLAR_VMEDIUM]		= "VM",
-	[POLAR_VHIGH]		= "VH",
-	[POLAR_HORIZONTAL]	= "H"
+struct polarization_modes {
+	char *parsable;
+	char *readable;
+};
+
+struct polarization_modes polar_modes[] = {
+	[POLAR_UNKNOWN]	   = {"U",  "-"},
+	[POLAR_VLOW]	   = {"VL", "vert-low"},
+	[POLAR_VMEDIUM]	   = {"VM", "vert-medium"},
+	[POLAR_VHIGH]	   = {"VH", "vert-high"},
+	[POLAR_HORIZONTAL] = {"H",  "horizontal"},
 };
 
 /* global description */
@@ -169,6 +173,17 @@ struct lscpu_desc {
 
 	int		*polarization;	/* cpu polarization */
 	int		*addresses;	/* physical cpu addresses */
+};
+
+enum {
+	OUTPUT_SUMMARY	= 0,	/* default */
+	OUTPUT_PARSABLE,	/* -p */
+};
+
+struct lscpu_modifier {
+	int mode;		/* OUTPUT_* */
+	int hex:1;		/* print CPU masks rather than CPU lists */
+	int compat:1;		/* use backwardly compatible format */
 };
 
 static size_t sysrootlen;
@@ -870,7 +885,8 @@ read_nodes(struct lscpu_desc *desc)
 }
 
 static void
-print_parsable_cell(struct lscpu_desc *desc, int i, int col, int compatible)
+print_parsable_cell(struct lscpu_desc *desc, int i, int col,
+		    struct lscpu_modifier *mod)
 {
 	int j;
 	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
@@ -923,12 +939,12 @@ print_parsable_cell(struct lscpu_desc *desc, int i, int col, int compatible)
 				}
 			}
 			if (j != 0)
-				putchar(compatible ? ',' : ':');
+				putchar(mod->compat ? ',' : ':');
 		}
 		break;
 	case COL_POLARIZATION:
 		if (desc->polarization)
-			printf("%s", polar_modes[desc->polarization[i]]);
+			printf("%s", polar_modes[desc->polarization[i]].parsable);
 		break;
 	case COL_ADDRESS:
 		if (desc->addresses)
@@ -938,7 +954,7 @@ print_parsable_cell(struct lscpu_desc *desc, int i, int col, int compatible)
 }
 
 /*
- * We support two formats:
+ * We support two parsable formats:
  *
  * 1) "compatible" -- this format is compatible with the original lscpu(1)
  * output and it contains fixed set of the columns. The CACHE columns are at
@@ -961,7 +977,8 @@ print_parsable_cell(struct lscpu_desc *desc, int i, int col, int compatible)
  *	1,1,0,0,1:1:0
  */
 static void
-print_parsable(struct lscpu_desc *desc, int cols[], int ncols, int compatible)
+print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
+	       struct lscpu_modifier *mod)
 {
 	int i, c;
 
@@ -973,16 +990,16 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols, int compatible)
 	fputs("# ", stdout);
 	for (i = 0; i < ncols; i++) {
 		if (cols[i] == COL_CACHE) {
-			if (compatible && !desc->ncaches)
+			if (mod->compat && !desc->ncaches)
 				continue;
 			if (i > 0)
 				putchar(',');
-			if (compatible && i != 0)
+			if (mod->compat && i != 0)
 				putchar(',');
 			for (c = desc->ncaches - 1; c >= 0; c--) {
 				printf("%s", desc->caches[c].name);
 				if (c > 0)
-					putchar(compatible ? ',' : ':');
+					putchar(mod->compat ? ',' : ':');
 			}
 			if (!desc->ncaches)
 				fputs(colnames[cols[i]], stdout);
@@ -998,7 +1015,7 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols, int compatible)
 		if (desc->online && !is_cpu_online(desc, i))
 			continue;
 		for (c = 0; c < ncols; c++) {
-			if (compatible && cols[c] == COL_CACHE) {
+			if (mod->compat && cols[c] == COL_CACHE) {
 				if (!desc->ncaches)
 					continue;
 				if (c > 0)
@@ -1006,7 +1023,7 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols, int compatible)
 			}
 			if (c > 0)
 				putchar(',');
-			print_parsable_cell(desc, i, cols[c], compatible);
+			print_parsable_cell(desc, i, cols[c], mod);
 		}
 		putchar('\n');
 	}
@@ -1035,7 +1052,7 @@ print_cpuset(const char *key, cpu_set_t *set, int hex)
 }
 
 static void
-print_readable(struct lscpu_desc *desc, int hex)
+print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 {
 	char buf[512];
 	int i;
@@ -1065,9 +1082,9 @@ print_readable(struct lscpu_desc *desc, int hex)
 	print_n(_("CPU(s):"), desc->ncpus);
 
 	if (desc->online)
-		print_cpuset(hex ? _("On-line CPU(s) mask:") :
-				   _("On-line CPU(s) list:"),
-				desc->online, hex);
+		print_cpuset(mod->hex ? _("On-line CPU(s) mask:") :
+					_("On-line CPU(s) list:"),
+				desc->online, mod->hex);
 
 	if (desc->online && CPU_COUNT_S(setsize, desc->online) != desc->ncpus) {
 		cpu_set_t *set;
@@ -1084,9 +1101,9 @@ print_readable(struct lscpu_desc *desc, int hex)
 			if (!is_cpu_online(desc, i))
 				CPU_SET_S(i, setsize, set);
 		}
-		print_cpuset(hex ? _("Off-line CPU(s) mask:") :
-				   _("Off-line CPU(s) list:"),
-			     set, hex);
+		print_cpuset(mod->hex ? _("Off-line CPU(s) mask:") :
+					_("Off-line CPU(s) list:"),
+			     set, mod->hex);
 		cpuset_free(set);
 	}
 
@@ -1164,7 +1181,7 @@ print_readable(struct lscpu_desc *desc, int hex)
 
 	for (i = 0; i < desc->nnodes; i++) {
 		snprintf(buf, sizeof(buf), _("NUMA node%d CPU(s):"), i);
-		print_cpuset(buf, desc->nodemaps[i], hex);
+		print_cpuset(buf, desc->nodemaps[i], mod->hex);
 	}
 }
 
@@ -1175,21 +1192,21 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	      _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -h, --help          print this help\n"
-		" -p, --parse <list>  print out a parsable instead of a readable format\n"
-		" -s, --sysroot <dir> use directory DIR as system root\n"
-		" -x, --hex           print hexadecimal masks rather than lists of CPUs\n"
-		" -V, --version       print version information and exit\n\n"), out);
+	fputs(_(" -h, --help              print this help\n"
+		" -p, --parse[=<list>]    print out a parsable format\n"
+		" -s, --sysroot <dir>     use directory DIR as system root\n"
+		" -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
+		" -V, --version           print version information and exit\n\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
 {
-	struct lscpu_desc _desc, *desc = &_desc;
-	int parsable = 0, c, i, hex = 0;
+	struct lscpu_modifier _mod = { .mode = OUTPUT_SUMMARY }, *mod = &_mod;
+	struct lscpu_desc _desc = { .flags = 0 }, *desc = &_desc;
+	int c, i;
 	int columns[ARRAY_SIZE(colnames)], ncolumns = 0;
-	int compatible = 0;
 
 	static const struct option longopts[] = {
 		{ "help",	no_argument,       0, 'h' },
@@ -1209,7 +1226,6 @@ int main(int argc, char *argv[])
 		case 'h':
 			usage(stdout);
 		case 'p':
-			parsable = 1;
 			if (optarg) {
 				if (*optarg == '=')
 					optarg++;
@@ -1218,14 +1234,8 @@ int main(int argc, char *argv[])
 						column_name_to_id);
 				if (ncolumns < 0)
 					return EXIT_FAILURE;
-			} else {
-				columns[ncolumns++] = COL_CPU;
-				columns[ncolumns++] = COL_CORE;
-				columns[ncolumns++] = COL_SOCKET;
-				columns[ncolumns++] = COL_NODE;
-				columns[ncolumns++] = COL_CACHE;
-				compatible = 1;
 			}
+			mod->mode = OUTPUT_PARSABLE;
 			break;
 		case 's':
 			sysrootlen = strlen(optarg);
@@ -1233,7 +1243,7 @@ int main(int argc, char *argv[])
 			pathbuf[sizeof(pathbuf) - 1] = '\0';
 			break;
 		case 'x':
-			hex = 1;
+			mod->hex = 1;
 			break;
 		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,
@@ -1243,8 +1253,6 @@ int main(int argc, char *argv[])
 			usage(stderr);
 		}
 	}
-
-	memset(desc, 0, sizeof(*desc));
 
 	read_basicinfo(desc);
 
@@ -1260,14 +1268,24 @@ int main(int argc, char *argv[])
 	qsort(desc->caches, desc->ncaches, sizeof(struct cpu_cache), cachecmp);
 
 	read_nodes(desc);
-
 	read_hypervisor(desc);
 
-	/* Show time! */
-	if (parsable)
-		print_parsable(desc, columns, ncolumns, compatible);
-	else
-		print_readable(desc, hex);
+	switch(mod->mode) {
+		case OUTPUT_SUMMARY:
+			print_summary(desc, mod);
+			break;
+		case OUTPUT_PARSABLE:
+			if (!ncolumns) {
+				columns[ncolumns++] = COL_CPU;
+				columns[ncolumns++] = COL_CORE;
+				columns[ncolumns++] = COL_SOCKET;
+				columns[ncolumns++] = COL_NODE;
+				columns[ncolumns++] = COL_CACHE;
+				mod->compat = 1;
+			}
+			print_parsable(desc, columns, ncolumns, mod);
+			break;
+	}
 
 	return EXIT_SUCCESS;
 }
