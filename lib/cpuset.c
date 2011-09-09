@@ -273,7 +273,7 @@ int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail)
 {
 	size_t max = cpuset_nbits(setsize);
 	const char *p, *q;
-	int r;
+	int r = 0;
 
 	q = str;
 	CPU_ZERO_S(setsize, set);
