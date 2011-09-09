@@ -221,7 +221,7 @@ char *cpumask_create(char *str, size_t len,
 }
 
 /*
- * Parses string with list of CPU ranges.
+ * Parses string with CPUs mask.
  */
 int cpumask_parse(const char *str, cpu_set_t *set, size_t setsize)
 {
@@ -262,7 +262,7 @@ int cpumask_parse(const char *str, cpu_set_t *set, size_t setsize)
 }
 
 /*
- * Parses string with CPUs mask.
+ * Parses string with list of CPU ranges.
  */
 int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail)
 {
