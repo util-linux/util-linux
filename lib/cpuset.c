@@ -268,8 +268,9 @@ int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail)
 {
 	size_t max = cpuset_nbits(setsize);
 	const char *p, *q;
-	q = str;
+	int r;
 
+	q = str;
 	CPU_ZERO_S(setsize, set);
 
 	while (p = q, q = nexttoken(q, ','), p) {
@@ -277,8 +278,9 @@ int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail)
 		unsigned int b;	/* end of range */
 		unsigned int s;	/* stride */
 		const char *c1, *c2;
+		char c;
 
-		if (sscanf(p, "%u", &a) < 1)
+		if ((r = sscanf(p, "%u%c", &a, &c)) < 1)
 			return 1;
 		b = a;
 		s = 1;
@@ -286,11 +288,11 @@ int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail)
 		c1 = nexttoken(p, '-');
 		c2 = nexttoken(p, ',');
 		if (c1 != NULL && (c2 == NULL || c1 < c2)) {
-			if (sscanf(c1, "%u", &b) < 1)
+			if ((r = sscanf(c1, "%u%c", &b, &c)) < 1)
 				return 1;
 			c1 = nexttoken(c1, ':');
 			if (c1 != NULL && (c2 == NULL || c1 < c2)) {
-				if (sscanf(c1, "%u", &s) < 1)
+				if ((r = sscanf(c1, "%u%c", &s, &c)) < 1)
 					return 1;
 				if (s == 0)
 					return 1;
@@ -307,6 +309,8 @@ int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail)
 		}
 	}
 
+	if (r == 2)
+		return 1;
 	return 0;
 }
 
