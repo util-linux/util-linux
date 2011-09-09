@@ -884,58 +884,107 @@ read_nodes(struct lscpu_desc *desc)
 					i);
 }
 
-static void
-print_parsable_cell(struct lscpu_desc *desc, int cpu, int col,
-		    struct lscpu_modifier *mod)
+static char *
+get_cell_data(struct lscpu_desc *desc, int cpu, int col,
+	      struct lscpu_modifier *mod,
+	      char *buf, size_t bufsz)
 {
 	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
 	size_t idx;
-	int j;
+
+	*buf = '\0';
 
 	switch (col) {
 	case COL_CPU:
-		printf("%d", cpu);
+		snprintf(buf, bufsz, "%d", cpu);
 		break;
 	case COL_CORE:
 		if (cpuset_ary_isset(cpu, desc->coremaps,
 				     desc->ncores, setsize, &idx) == 0)
-			printf("%zd", idx);
+			snprintf(buf, bufsz, "%zd", idx);
 		break;
 	case COL_SOCKET:
 		if (cpuset_ary_isset(cpu, desc->socketmaps,
 				     desc->nsockets, setsize, &idx) == 0)
-			printf("%zd", idx);
+			snprintf(buf, bufsz, "%zd", idx);
 		break;
 	case COL_NODE:
 		if (cpuset_ary_isset(cpu, desc->nodemaps,
 				     desc->nnodes, setsize, &idx) == 0)
-			printf("%zd", idx);
+			snprintf(buf, bufsz, "%zd", idx);
 		break;
 	case COL_BOOK:
 		if (cpuset_ary_isset(cpu, desc->bookmaps,
 				     desc->nbooks, setsize, &idx) == 0)
-			printf("%zd", idx);
+			snprintf(buf, bufsz, "%zd", idx);
 		break;
 	case COL_CACHE:
+	{
+		char *p = buf;
+		size_t sz = bufsz;
+		int j;
+
 		for (j = desc->ncaches - 1; j >= 0; j--) {
 			struct cpu_cache *ca = &desc->caches[j];
 
 			if (cpuset_ary_isset(cpu, ca->sharedmaps,
-					     ca->nsharedmaps, setsize, &idx) == 0)
-				printf("%zd", idx);
-			if (j != 0)
-				putchar(mod->compat ? ',' : ':');
+					     ca->nsharedmaps, setsize, &idx) == 0) {
+				int x = snprintf(p, sz, "%zd", idx);
+				if (x <= 0 || (size_t) x + 2 >= sz)
+					return NULL;
+				p += x;
+				sz -= x;
+			}
+			if (j != 0) {
+				*p++ = mod->compat ? ',' : ':';
+				*p = '\0';
+				sz++;
+			}
 		}
 		break;
+	}
 	case COL_POLARIZATION:
 		if (desc->polarization)
-			printf("%s", polar_modes[desc->polarization[cpu]].parsable);
+			snprintf(buf, bufsz, "%s",
+				 polar_modes[desc->polarization[cpu]].parsable);
 		break;
 	case COL_ADDRESS:
 		if (desc->addresses)
-			printf("%d", desc->addresses[cpu]);
+			snprintf(buf, bufsz, "%d", desc->addresses[cpu]);
 		break;
 	}
+	return buf;
+}
+
+static char *
+get_cell_header(struct lscpu_desc *desc, int col,
+		struct lscpu_modifier *mod,
+	        char *buf, size_t bufsz)
+{
+	*buf = '\0';
+
+	if (col == COL_CACHE) {
+		char *p = buf;
+		size_t sz = bufsz;
+		int i;
+
+		for (i = desc->ncaches - 1; i >= 0; i--) {
+			int x = snprintf(p, sz, "%s", desc->caches[i].name);
+			if (x <= 0 || (size_t) x + 2 > sz)
+				return NULL;
+			sz -= x;
+			p += x;
+			if (i > 0) {
+				*p++ = mod->compat ? ',' : ':';
+				*p = '\0';
+				sz++;
+			}
+		}
+		if (desc->ncaches)
+			return buf;
+	}
+	snprintf(buf, bufsz, colnames[col]);
+	return buf;
 }
 
 /*
@@ -965,8 +1014,12 @@ static void
 print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 	       struct lscpu_modifier *mod)
 {
-	int i, c;
+	char buf[BUFSIZ], *data;
+	int i;
 
+	/*
+	 * Header
+	 */
 	printf(_(
 	"# The following is the parsable format, which can be fed to other\n"
 	"# programs. Each different item in every column has an unique ID\n"
@@ -977,26 +1030,23 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 		if (cols[i] == COL_CACHE) {
 			if (mod->compat && !desc->ncaches)
 				continue;
-			if (i > 0)
-				putchar(',');
 			if (mod->compat && i != 0)
 				putchar(',');
-			for (c = desc->ncaches - 1; c >= 0; c--) {
-				printf("%s", desc->caches[c].name);
-				if (c > 0)
-					putchar(mod->compat ? ',' : ':');
-			}
-			if (!desc->ncaches)
-				fputs(colnames[cols[i]], stdout);
-		} else {
-			if (i > 0)
-				putchar(',');
-			fputs(colnames[cols[i]], stdout);
 		}
+		if (i > 0)
+			putchar(',');
+
+		data = get_cell_header(desc, cols[i], mod, buf, sizeof(buf));
+		fputs(data && *data ? data : "", stdout);
 	}
 	putchar('\n');
 
+	/*
+	 * Data
+	 */
 	for (i = 0; i < desc->ncpus; i++) {
+		int c;
+
 		if (desc->online && !is_cpu_online(desc, i))
 			continue;
 		for (c = 0; c < ncols; c++) {
@@ -1008,7 +1058,10 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 			}
 			if (c > 0)
 				putchar(',');
-			print_parsable_cell(desc, i, cols[c], mod);
+
+			data = get_cell_data(desc, i, cols[c], mod,
+					     buf, sizeof(buf));
+			fputs(data && *data ? data : "", stdout);
 		}
 		putchar('\n');
 	}
