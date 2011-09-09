@@ -39,6 +39,7 @@
 #include "c.h"
 #include "strutils.h"
 #include "bitops.h"
+#include "tt.h"
 
 #define CACHE_MAX 100
 
@@ -178,6 +179,7 @@ struct lscpu_desc {
 enum {
 	OUTPUT_SUMMARY	= 0,	/* default */
 	OUTPUT_PARSABLE,	/* -p */
+	OUTPUT_READABLE,	/* -e */
 };
 
 struct lscpu_modifier {
@@ -944,9 +946,14 @@ get_cell_data(struct lscpu_desc *desc, int cpu, int col,
 		break;
 	}
 	case COL_POLARIZATION:
-		if (desc->polarization)
+		if (desc->polarization) {
+			int x = desc->polarization[cpu];
+
 			snprintf(buf, bufsz, "%s",
-				 polar_modes[desc->polarization[cpu]].parsable);
+				 mod->mode == OUTPUT_PARSABLE ?
+						polar_modes[x].parsable :
+						polar_modes[x].readable);
+		}
 		break;
 	case COL_ADDRESS:
 		if (desc->addresses)
@@ -988,7 +995,7 @@ get_cell_header(struct lscpu_desc *desc, int col,
 }
 
 /*
- * We support two parsable formats:
+ * [-p] backend, we support two parsable formats:
  *
  * 1) "compatible" -- this format is compatible with the original lscpu(1)
  * output and it contains fixed set of the columns. The CACHE columns are at
@@ -1067,6 +1074,46 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 	}
 }
 
+/*
+ * [-e] backend
+ */
+static void
+print_readable(struct lscpu_desc *desc, int cols[], int ncols,
+	       struct lscpu_modifier *mod)
+{
+	int i;
+	char buf[BUFSIZ], *data;
+	struct tt *tt = tt_new_table(0);
+
+	if (!tt)
+		 err(EXIT_FAILURE, _("failed to initialize output table"));
+
+	for (i = 0; i < ncols; i++) {
+		char *p = data = get_cell_header(desc, cols[i],
+						 mod, buf, sizeof(buf));
+		while (p && *p != '\0')
+			*p++ = toupper((unsigned int) *p);
+		tt_define_column(tt, xstrdup(data), 0, 0);
+	}
+
+	for (i = 0; i < desc->ncpus; i++) {
+		int c;
+		struct tt_line *line;
+
+		if (desc->online && !is_cpu_online(desc, i))
+			continue;
+
+		line = tt_add_line(tt, NULL);
+
+		for (c = 0; c < ncols; c++) {
+			data = get_cell_data(desc, i, cols[c], mod,
+					     buf, sizeof(buf));
+			tt_line_set_data(line, c, xstrdup(data));
+		}
+	}
+
+	tt_print_table(tt);
+}
 
 /* output formats "<key>  <value>"*/
 #define print_s(_key, _val)	printf("%-23s%s\n", _key, _val)
@@ -1089,6 +1136,9 @@ print_cpuset(const char *key, cpu_set_t *set, int hex)
 
 }
 
+/*
+ * default output
+ */
 static void
 print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 {
@@ -1232,6 +1282,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_("\nOptions:\n"), out);
 	fputs(_(" -h, --help              print this help\n"
 		" -p, --parse[=<list>]    print out a parsable format\n"
+		" -e, --extended[=<list>] print out a extended readable format\n"
 		" -s, --sysroot <dir>     use directory DIR as system root\n"
 		" -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 		" -V, --version           print version information and exit\n\n"), out);
@@ -1248,6 +1299,7 @@ int main(int argc, char *argv[])
 
 	static const struct option longopts[] = {
 		{ "help",	no_argument,       0, 'h' },
+		{ "extended",	optional_argument, 0, 'e' },
 		{ "parse",	optional_argument, 0, 'p' },
 		{ "sysroot",	required_argument, 0, 's' },
 		{ "hex",	no_argument,	   0, 'x' },
@@ -1259,11 +1311,17 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "hp::s:xV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "e::hp::s:xV", longopts, NULL)) != -1) {
+
+		if (mod->mode != OUTPUT_SUMMARY && strchr("ep", c))
+			errx(EXIT_FAILURE,
+			     _("extended and parsable are mutually exclusive"));
+
 		switch (c) {
 		case 'h':
 			usage(stdout);
 		case 'p':
+		case 'e':
 			if (optarg) {
 				if (*optarg == '=')
 					optarg++;
@@ -1273,7 +1331,7 @@ int main(int argc, char *argv[])
 				if (ncolumns < 0)
 					return EXIT_FAILURE;
 			}
-			mod->mode = OUTPUT_PARSABLE;
+			mod->mode = c == 'p' ? OUTPUT_PARSABLE : OUTPUT_READABLE;
 			break;
 		case 's':
 			sysrootlen = strlen(optarg);
@@ -1309,20 +1367,41 @@ int main(int argc, char *argv[])
 	read_hypervisor(desc);
 
 	switch(mod->mode) {
-		case OUTPUT_SUMMARY:
-			print_summary(desc, mod);
-			break;
-		case OUTPUT_PARSABLE:
-			if (!ncolumns) {
-				columns[ncolumns++] = COL_CPU;
-				columns[ncolumns++] = COL_CORE;
-				columns[ncolumns++] = COL_SOCKET;
+	case OUTPUT_SUMMARY:
+		print_summary(desc, mod);
+		break;
+	case OUTPUT_PARSABLE:
+		if (!ncolumns) {
+			columns[ncolumns++] = COL_CPU;
+			columns[ncolumns++] = COL_CORE;
+			columns[ncolumns++] = COL_SOCKET;
+			columns[ncolumns++] = COL_NODE;
+			columns[ncolumns++] = COL_CACHE;
+			mod->compat = 1;
+		}
+		print_parsable(desc, columns, ncolumns, mod);
+		break;
+	case OUTPUT_READABLE:
+		if (!ncolumns) {
+			/* No list was given. Just print whatever is there. */
+			columns[ncolumns++] = COL_CPU;
+			if (desc->nodemaps)
 				columns[ncolumns++] = COL_NODE;
+			if (desc->bookmaps)
+				columns[ncolumns++] = COL_BOOK;
+			if (desc->socketmaps)
+				columns[ncolumns++] = COL_SOCKET;
+			if (desc->coremaps)
+				columns[ncolumns++] = COL_CORE;
+			if (desc->caches)
 				columns[ncolumns++] = COL_CACHE;
-				mod->compat = 1;
-			}
-			print_parsable(desc, columns, ncolumns, mod);
-			break;
+			if (desc->polarization)
+				columns[ncolumns++] = COL_POLARIZATION;
+			if (desc->addresses)
+				columns[ncolumns++] = COL_ADDRESS;
+		}
+		print_readable(desc, columns, ncolumns, mod);
+		break;
 	}
 
 	return EXIT_SUCCESS;

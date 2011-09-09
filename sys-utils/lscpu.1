@@ -6,7 +6,7 @@
 lscpu \- display information on CPU architecture
 .SH SYNOPSIS
 .B lscpu
-.RB [ \-hpxV ]
+.RB [ \-ehpxV ]
 .RB [ \-s
 .IR directory ]
 .SH DESCRIPTION
@@ -18,24 +18,37 @@ a human-readable format.  It supports both online and offline CPUs.
 It can also print out in a parsable format,
 including how different caches are shared by different CPUs,
 which can be fed to other programs.
+
+Some options have a \fIlist\fP argument. The \fIlist\fP argument is a comma
+delimited list of the columns. Currently supported are CPU, Core, Node, Socket,
+Book, Cache, Polarization and Address columns.
+If the \fIlist\fP argument is given then all requested columns are printed in
+the defined order.
+
 .SH OPTIONS
+.TP
+.TP
+.BR \-e , " \-\-extended " \fI[=list]\fP
+Print CPU list out in human-readable format.
+
+If the \fIlist\fP argument is not given then all columns where data is
+available will be printed.
+
+Note that the optional \fIlist\fP argument cannot be separated from the
+option by a space, the correct form is for example '\fB-e=cpu,node\fP' or '\fB--extended=cpu,node\fP'.
 .TP
 .BR \-h , " \-\-help"
 Print a help message.
 .TP
 .BR \-p , " \-\-parse " \fI[=list]\fP
-Print out in parsable instead of human-readable format.
+Print out in parsable format.
 
 If the \fIlist\fP argument is not given then the default backwardly compatible
 output is printed.  The backwardly compatible format uses two commas to
 separate CPU cache columns. If no CPU caches are identified, then the cache
 columns are not printed at all.
-
-The \fIlist\fP argument is comma delimited list of the columns. Currently
-supported are CPU, Core, Node, Socket, Book, Cache, Polarization and Address
-columns.
-If the \fIlist\fP argument is given then always all requested columns are printed in
-the defined order. The Cache columns are separated by ':'.
+.br
+If the \fIlist\fP argument is given then the cache columns are separated by ':'.
 
 Note that the optional \fIlist\fP argument cannot be separated from the
 option by a space, the correct form is for example '\fB-p=cpu,node\fP' or '\fB--parse=cpu,node\fP'.
