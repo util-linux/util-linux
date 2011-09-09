@@ -885,70 +885,55 @@ read_nodes(struct lscpu_desc *desc)
 }
 
 static void
-print_parsable_cell(struct lscpu_desc *desc, int i, int col,
+print_parsable_cell(struct lscpu_desc *desc, int cpu, int col,
 		    struct lscpu_modifier *mod)
 {
-	int j;
 	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
+	size_t idx;
+	int j;
 
 	switch (col) {
 	case COL_CPU:
-		printf("%d", i);
+		printf("%d", cpu);
 		break;
 	case COL_CORE:
-		for (j = 0; j < desc->ncores; j++) {
-			if (CPU_ISSET_S(i, setsize, desc->coremaps[j])) {
-				printf("%d", j);
-				break;
-			}
-		}
+		if (cpuset_ary_isset(cpu, desc->coremaps,
+				     desc->ncores, setsize, &idx) == 0)
+			printf("%zd", idx);
 		break;
 	case COL_SOCKET:
-		for (j = 0; j < desc->nsockets; j++) {
-			if (CPU_ISSET_S(i, setsize, desc->socketmaps[j])) {
-				printf("%d", j);
-				break;
-			}
-		}
+		if (cpuset_ary_isset(cpu, desc->socketmaps,
+				     desc->nsockets, setsize, &idx) == 0)
+			printf("%zd", idx);
 		break;
 	case COL_NODE:
-		for (j = 0; j < desc->nnodes; j++) {
-			if (CPU_ISSET_S(i, setsize, desc->nodemaps[j])) {
-				printf("%d", j);
-				break;
-			}
-		}
+		if (cpuset_ary_isset(cpu, desc->nodemaps,
+				     desc->nnodes, setsize, &idx) == 0)
+			printf("%zd", idx);
 		break;
 	case COL_BOOK:
-		for (j = 0; j < desc->nbooks; j++) {
-			if (CPU_ISSET_S(i, setsize, desc->bookmaps[j])) {
-				printf("%d", j);
-				break;
-			}
-		}
+		if (cpuset_ary_isset(cpu, desc->bookmaps,
+				     desc->nbooks, setsize, &idx) == 0)
+			printf("%zd", idx);
 		break;
 	case COL_CACHE:
 		for (j = desc->ncaches - 1; j >= 0; j--) {
 			struct cpu_cache *ca = &desc->caches[j];
-			int x;
 
-			for (x = 0; x < ca->nsharedmaps; x++) {
-				if (CPU_ISSET_S(i, setsize, ca->sharedmaps[x])) {
-					printf("%d", x);
-					break;
-				}
-			}
+			if (cpuset_ary_isset(cpu, ca->sharedmaps,
+					     ca->nsharedmaps, setsize, &idx) == 0)
+				printf("%zd", idx);
 			if (j != 0)
 				putchar(mod->compat ? ',' : ':');
 		}
 		break;
 	case COL_POLARIZATION:
 		if (desc->polarization)
-			printf("%s", polar_modes[desc->polarization[i]].parsable);
+			printf("%s", polar_modes[desc->polarization[cpu]].parsable);
 		break;
 	case COL_ADDRESS:
 		if (desc->addresses)
-			printf("%d", desc->addresses[i]);
+			printf("%d", desc->addresses[cpu]);
 		break;
 	}
 }
