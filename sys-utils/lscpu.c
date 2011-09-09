@@ -187,7 +187,8 @@ struct lscpu_modifier {
 	int		mode;		/* OUTPUT_* */
 	unsigned int	hex:1,		/* print CPU masks rather than CPU lists */
 			compat:1,	/* use backwardly compatible format */
-			allcpus:1;	/* print all CPUs */
+			allcpus:1,	/* print all CPUs */
+			online:1;	/* print online CPUs only */
 };
 
 static size_t sysrootlen;
@@ -1305,7 +1306,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	      _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -a, --all               print online and offline CPUs\n"
+	fputs(_(" -a, --all               print online and offline CPUs (default for -e)\n"
+		" -b, --online            print online CPUs only (default for -p)\n"
 		" -e, --extended[=<list>] print out a extended readable format\n"
 		" -h, --help              print this help\n"
 		" -p, --parse[=<list>]    print out a parsable format\n"
@@ -1325,6 +1327,7 @@ int main(int argc, char *argv[])
 
 	static const struct option longopts[] = {
 		{ "all",        no_argument,       0, 'a' },
+		{ "online",     no_argument,       0, 'b' },
 		{ "help",	no_argument,       0, 'h' },
 		{ "extended",	optional_argument, 0, 'e' },
 		{ "parse",	optional_argument, 0, 'p' },
@@ -1338,15 +1341,21 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "ae::hp::s:xV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "abe::hp::s:xV", longopts, NULL)) != -1) {
 
 		if (mod->mode != OUTPUT_SUMMARY && strchr("ep", c))
 			errx(EXIT_FAILURE,
-			     _("extended and parsable are mutually exclusive"));
+			     _("extended and parsable formats are mutually exclusive"));
+		if ((mod->allcpus || mod->online) && strchr("ab", c))
+			errx(EXIT_FAILURE,
+			     _("--all and --online options are mutually exclusive"));
 
 		switch (c) {
 		case 'a':
 			mod->allcpus = 1;
+			break;
+		case 'b':
+			mod->online = 1;
 			break;
 		case 'h':
 			usage(stdout);
@@ -1413,7 +1422,8 @@ int main(int argc, char *argv[])
 		print_parsable(desc, columns, ncolumns, mod);
 		break;
 	case OUTPUT_READABLE:
-		mod->allcpus = 1;
+		if (!mod->online)
+			mod->allcpus = 1;
 		if (!ncolumns) {
 			/* No list was given. Just print whatever is there. */
 			columns[ncolumns++] = COL_CPU;
