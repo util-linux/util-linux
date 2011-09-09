@@ -289,8 +289,8 @@ int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize, int fail)
 			if (sscanf(c1, "%u", &b) < 1)
 				return 1;
 			c1 = nexttoken(c1, ':');
-			if (c1 != NULL && (c2 == NULL || c1 < c2))
-				if (sscanf(c1, "%u", &s) < 1) {
+			if (c1 != NULL && (c2 == NULL || c1 < c2)) {
+				if (sscanf(c1, "%u", &s) < 1)
 					return 1;
 			}
 		}
