@@ -347,6 +347,25 @@ AC_DEFUN([UTIL_RESTORE_FLAGS], [
 
 AX_CHECK_TLS
 
+AC_ARG_ENABLE([most-builds],
+  AS_HELP_STRING([--enable-most-builds], [build everthing other than experimental code]),
+  [], enable_most_builds=no
+)
+if test "x$enable_most_builds" = xyes; then
+  enable_arch=yes
+  enable_ddate=yes
+  enable_elvtune=yes
+  enable_kill=yes
+  enable_last=yes
+  enable_line=yes
+  enable_mesg=yes
+  enable_raw=yes
+  enable_rename=yes
+  enable_reset=yes
+  enable_login_utils=yes
+  enable_write=yes
+fi
+
 AC_ARG_ENABLE([mount],
   AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
   [], enable_mount=check
