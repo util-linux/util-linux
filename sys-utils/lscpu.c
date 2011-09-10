@@ -995,13 +995,24 @@ get_cell_data(struct lscpu_desc *desc, int cpu, int col,
 			snprintf(buf, bufsz, "%d", desc->addresses[cpu]);
 		break;
 	case COL_CONFIGURED:
-		if (desc->configured)
+		if (!desc->configured)
+			break;
+		if (mod->mode == OUTPUT_PARSABLE)
 			snprintf(buf, bufsz,
 				 desc->configured[cpu] ? _("Y") : _("N"));
+		else
+			snprintf(buf, bufsz,
+				 desc->configured[cpu] ? _("Yes") : _("No"));
 		break;
 	case COL_ONLINE:
-		if (desc->online)
-			snprintf(buf, bufsz, is_cpu_online(desc, cpu) ? _("Y") : _("N"));
+		if (!desc->online)
+			break;
+		if (mod->mode == OUTPUT_PARSABLE)
+			snprintf(buf, bufsz,
+				 is_cpu_online(desc, cpu) ? _("Y") : _("N"));
+		else
+			snprintf(buf, bufsz,
+				 is_cpu_online(desc, cpu) ? _("Yes") : _("No"));
 		break;
 	}
 	return buf;
