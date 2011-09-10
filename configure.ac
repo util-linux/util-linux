@@ -868,7 +868,7 @@ AM_CONDITIONAL(BUILD_ARCH, test "x$enable_arch" = xyes)
 
 AC_ARG_ENABLE([ddate],
   AS_HELP_STRING([--enable-ddate], [do build ddate]),
-  [], enable_date=no
+  [], enable_ddate=no
 )
 AM_CONDITIONAL(BUILD_DDATE, test "x$enable_ddate" = xyes)
 
