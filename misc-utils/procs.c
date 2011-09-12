@@ -79,11 +79,13 @@ get_pids (char *process_name, int get_all) {
 	    pids_size += 5;
 	    pids = (int *) realloc (pids, sizeof (int) * pids_size);
 	}
-	pids[num_pids++] = pid;
-	pids[num_pids] = -1;
+	if (pids) {
+		pids[num_pids++] = pid;
+		pids[num_pids] = -1;
+	}
     }
     closedir (dir);
-    return (pids);
+    return pids;
 }
 
 /*
