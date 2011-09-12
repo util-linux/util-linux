@@ -198,6 +198,7 @@ static inline int dirfd(DIR *d)
 /*
  * Fallback defines for old versions of glibc
  */
+#include <fcntl.h>
 #ifndef O_CLOEXEC
 #define O_CLOEXEC 0
 #endif
