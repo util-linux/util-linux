@@ -174,6 +174,7 @@ struct options {
 #define F_NONL		(1<<17) /* No newline before issue */
 #define F_NOHOSTNAME	(1<<18) /* Do not show the hostname */
 #define F_LONGHNAME	(1<<19) /* Show Full qualified hostname */
+#define F_NOHINTS	(1<<20) /* Don't print hints */
 
 #define serial_tty_option(opt, flag)	\
 	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
@@ -538,6 +539,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 
 	enum {
 		VERSION_OPTION = CHAR_MAX + 1,
+		NOHINTS_OPTION,
 		NOHOSTNAME_OPTION,
 		LONGHOSTNAME_OPTION,
 		HELP_OPTION
@@ -568,6 +570,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		{  "timeout",	     required_argument,  0,  't'  },
 		{  "detect-case",    no_argument,	 0,  'U'  },
 		{  "wait-cr",	     no_argument,	 0,  'w'  },
+		{  "nohints",        no_argument,        0,  NOHINTS_OPTION },
 		{  "nohostname",     no_argument,	 0,  NOHOSTNAME_OPTION },
 		{  "long-hostname",  no_argument,	 0,  LONGHOSTNAME_OPTION },
 		{  "version",	     no_argument,	 0,  VERSION_OPTION  },
@@ -653,6 +656,9 @@ static void parse_args(int argc, char **argv, struct options *op)
 			break;
 		case 'w':
 			op->flags |= F_WAITCRLF;
+			break;
+		case NOHINTS_OPTION:
+			op->flags |= F_NOHINTS;
 			break;
 		case NOHOSTNAME_OPTION:
 			op->flags |= F_NOHOSTNAME;
@@ -1298,7 +1304,8 @@ static void do_prompt(struct options *op, struct termios *tp)
 		getc(stdin);
 	}
 #ifdef KDGKBLED
-	if (op->autolog == (char*)0 && (op->flags & F_VCONSOLE)) {
+	if (!(op->flags & F_NOHINTS) && !op->autolog &&
+	    (op->flags & F_VCONSOLE)) {
 		int kb = 0;
 
 		if (ioctl(STDIN_FILENO, KDGKBLED, &kb) == 0) {
@@ -1655,6 +1662,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		       " -U, --detect-case          detect uppercase terminal\n"
 		       " -w, --wait-cr              wait carriage-return\n"
 		       "     --noclear              do not clear the screen before prompt\n"
+		       "     --nohints              do not print hints\n"
 		       "     --nonewline            do not print a newline before issue\n"
 		       "     --no-hostname          no hostname at all will be shown\n"
 		       "     --long-hostname        show full qualified hostname\n"
