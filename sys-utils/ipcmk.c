@@ -28,7 +28,7 @@
 #include <sys/msg.h>
 #include <sys/sem.h>
 #include <sys/shm.h>
-#include <time.h>
+#include <sys/time.h>
 
 #include "c.h"
 #include "nls.h"
@@ -36,7 +36,9 @@
 
 key_t create_key(void)
 {
-	srandom(time(NULL));
+	struct timeval now;
+	gettimeofday(&now, NULL);
+	srandom(now.tv_usec);
 	return random();
 }
 
