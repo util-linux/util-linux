@@ -18,6 +18,7 @@
 #include <sys/msg.h>
 #include <sys/sem.h>
 #include <sys/shm.h>
+#include <sys/types.h>
 #include "c.h"
 #include "nls.h"
 #include "strutils.h"
@@ -35,7 +36,8 @@ union semun {
 typedef enum type_id {
 	SHM,
 	SEM,
-	MSG
+	MSG,
+	ALL
 } type_id;
 
 /* print the new usage */
@@ -51,6 +53,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -Q, --queue-key <key>      remove message queue by key\n"), out);
 	fputs(_(" -s, --semaphore-id <id>    remove semaprhore by id\n"), out);
 	fputs(_(" -S, --semaphore-key <key>  remove semaprhore by key\n"), out);
+	fputs(_(" -a, --all[=<shm|msg|sem>]  remove all\n"), out);
 	fprintf(out, USAGE_HELP);
 	fprintf(out, USAGE_VERSION);
 	fprintf(out, USAGE_BEGIN_TAIL);
@@ -191,6 +194,8 @@ static int key_to_id(type_id type, char *optarg)
 	case SEM:
 		id = semget(key, 0, 0);
 		break;
+	case ALL:
+		abort();
 	default:
 		errx(EXIT_FAILURE, "impossible occurred");
 	}
@@ -214,12 +219,72 @@ static int key_to_id(type_id type, char *optarg)
 	return id;
 }
 
+int remove_all(type_id type)
+{
+	int ret = 0;
+	int id, rm_me, maxid;
+
+	struct shmid_ds shmseg;
+	struct shm_info shm_info;
+
+	struct semid_ds semary;
+	struct seminfo seminfo;
+	union semun arg;
+
+	struct msqid_ds msgque;
+	struct msginfo msginfo;
+
+	if (type == SHM || type == ALL) {
+		maxid =
+		    shmctl(0, SHM_INFO, (struct shmid_ds *)(void *)&shm_info);
+		if (maxid < 0)
+			errx(EXIT_FAILURE,
+			     _("kernel not configured for shared memory"));
+		for (id = 0; id <= maxid; id++) {
+			rm_me = shmctl(id, SHM_STAT, &shmseg);
+			if (rm_me < 0)
+				continue;
+			ret |= remove_id(SHM, 0, rm_me);
+		}
+	}
+	if (type == SEM || type == ALL) {
+		arg.array = (ushort *) (void *)&seminfo;
+		maxid = semctl(0, 0, SEM_INFO, arg);
+		if (maxid < 0)
+			errx(EXIT_FAILURE,
+			     _("kernel not configured for semaphores"));
+		for (id = 0; id <= maxid; id++) {
+			arg.buf = (struct semid_ds *)&semary;
+			rm_me = semctl(id, 0, SEM_STAT, arg);
+			if (rm_me < 0)
+				continue;
+			ret |= remove_id(SEM, 0, rm_me);
+		}
+	}
+	if (type == MSG || type == ALL) {
+		maxid =
+		    msgctl(0, MSG_INFO, (struct msqid_ds *)(void *)&msginfo);
+		if (maxid < 0)
+			errx(EXIT_FAILURE,
+			     _("kernel not configured for message queues"));
+		for (id = 0; id <= maxid; id++) {
+			rm_me = msgctl(id, MSG_STAT, &msgque);
+			if (rm_me < 0)
+				continue;
+			ret |= remove_id(MSG, 0, rm_me);
+		}
+	}
+	return ret;
+}
+
 int main(int argc, char **argv)
 {
 	int c;
 	int ret = 0;
 	int id = -1;
 	int iskey;
+	int rm_all = 0;
+	type_id what_all;
 
 	static const struct option longopts[] = {
 		{"shmem-id", required_argument, NULL, 'm'},
@@ -228,6 +293,7 @@ int main(int argc, char **argv)
 		{"queue-key", required_argument, NULL, 'Q'},
 		{"semaphore-id", required_argument, NULL, 's'},
 		{"semaphore-key", required_argument, NULL, 'S'},
+		{"all", optional_argument, NULL, 'a'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
@@ -248,7 +314,7 @@ int main(int argc, char **argv)
 
 	/* process new syntax to conform with SYSV ipcrm */
 	for (id = -1;
-	    (c = getopt_long(argc, argv, "q:m:s:Q:M:S:hV", longopts, NULL)) != -1;
+	    (c = getopt_long(argc, argv, "q:m:s:Q:M:S:a::hV", longopts, NULL)) != -1;
 	    id = -1) {
 		switch (c) {
 		case 'M':
@@ -296,6 +362,22 @@ int main(int argc, char **argv)
 			if (remove_id(SEM, iskey, id))
 				ret++;
 			break;
+		case 'a':
+			rm_all = 1;
+			if (optarg) {
+				if (!strcmp(optarg, "shm"))
+					what_all = SHM;
+				else if (!strcmp(optarg, "msg"))
+					what_all = MSG;
+				else if (!strcmp(optarg, "sem"))
+					what_all = SEM;
+				else
+					errx(EXIT_FAILURE,
+					     _("unknown argument: %s"), optarg);
+			} else {
+				what_all = ALL;
+			}
+			break;
 		case 'h':
 			usage(stdout);
 		case 'V':
@@ -306,8 +388,12 @@ int main(int argc, char **argv)
 		}
 	}
 
+	if (rm_all)
+		if (remove_all(what_all))
+			ret++;
+
 	/* print usage if we still have some arguments left over */
-	if (optind != argc) {
+	if (optind < argc) {
 		warnx(_("unknown argument: %s"), argv[optind]);
 		usage(stderr);
 	}

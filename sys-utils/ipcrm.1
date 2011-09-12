@@ -64,6 +64,14 @@ removes the semaphore created with
 \fB\-s\fR, \fB\-\-semaphore\-id\fR \fIsemid\fR
 removes the semaphore identified by
 .IR semid .
+.TP
+\fB-a\fR, \fB\-\-all\fR [\fIshm msg sem\fR]
+Remove all resources. When option argument is provided the removal is
+performed only to for the specified resource types. Warning! Do not use
+.B \-a
+if you are unsure how the software using resources might react on missing
+objects. Some programs create these resources at start up and may not have
+any code to deal unexpected disappearance.
 .LP
 The details of the removes are described in
 .IR msgctl (2),
