@@ -506,7 +506,7 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 
 		if (path == NULL && src == NULL)
 			return fs;			/* source is "none" */
-		if (p && strcmp(p, path) == 0)
+		if (path && p && strcmp(p, path) == 0)
 			return fs;
 		if (!p && src)
 			ntags++;			/* mnt_fs_get_srcpath() returs nothing, it's TAG */
@@ -845,7 +845,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 
 	tgt = mnt_fs_get_target(fstab_fs);
 
-	if (tgt || src || root) {
+	if (tgt && src && root) {
 		struct libmnt_iter itr;
 		struct libmnt_fs *fs;
 
@@ -856,8 +856,8 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 				   *t = mnt_fs_get_target(fs),
 				   *r = mnt_fs_get_root(fs);
 
-			if (s && t && r && !strcmp(t, tgt) &&
-			    !strcmp(s, src) && !strcmp(r, root))
+			if (t && s && r &&
+			    !strcmp(t, tgt) && !strcmp(s, src) && !strcmp(r, root))
 				break;
 		}
 		if (fs)
