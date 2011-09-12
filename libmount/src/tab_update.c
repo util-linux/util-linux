@@ -718,7 +718,7 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 
 	assert(upd);
 
-	if (!upd->filename || !upd)
+	if (!upd || !upd->filename)
 		return -EINVAL;
 	if (!upd->ready)
 		return 0;
