@@ -313,8 +313,7 @@ main(int argc, char **argv) {
  *  Decode a symbolic name to a numeric value
  */
 int
-pencode(s)
-	register char *s;
+pencode(char *s)
 {
 	char *save;
 	int fac, lev;
@@ -340,9 +339,7 @@ pencode(s)
 }
 
 int
-decode(name, codetab)
-	char *name;
-	CODE *codetab;
+decode(char *name, CODE *codetab)
 {
 	register CODE *c;
 
