@@ -742,8 +742,7 @@ ascii_day(char *p, int day) {
 }
 
 void
-trim_trailing_spaces(s)
-	char *s;
+trim_trailing_spaces(char *s)
 {
 	char *p;
 
@@ -769,10 +768,7 @@ center_str(const char* src, char* dest, size_t dest_size, size_t width)
 }
 
 void
-center(str, len, separate)
-	const char *str;
-	size_t len;
-	int separate;
+center(const char *str, size_t len, int separate)
 {
 	char lineout[FMT_ST_CHARS];
 	center_str(str, lineout, ARRAY_SIZE(lineout), len);
