@@ -1259,8 +1259,7 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 		if (rc)
 			continue;
 
-		if (cxt->helper)
-			free(cxt->helper);
+		free(cxt->helper);
 		cxt->helper = strdup(helper);
 		if (!cxt->helper)
 			return -ENOMEM;
