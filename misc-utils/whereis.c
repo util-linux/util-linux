@@ -343,7 +343,7 @@ getlist(int *argcp, char ***argvp, char ***flagp, int *cntp)
 }
 
 static void
-zerof()
+zerof(void)
 {
 	if (sflag && bflag && mflag)
 		sflag = bflag = mflag = 0;
