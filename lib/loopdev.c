@@ -369,9 +369,10 @@ static int loop_scandir(const char *dirname, int **ary, int hasprefix)
 			}
 			*ary = tmp;
 		}
-		(*ary)[count++] = n;
+		if (*ary)
+			(*ary)[count++] = n;
 	}
-	if (count)
+	if (count && *ary)
 		qsort(*ary, count, sizeof(int), cmpnum);
 
 	closedir(dir);
