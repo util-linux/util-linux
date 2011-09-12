@@ -106,6 +106,7 @@ int main(int argc, char **argv)
 {
 	struct winsize win;
 	int ch, tflag = 0, xflag = 0;
+	int i;
 	long termwidth = 80;
 	int entries = 0;		/* number of records */
 	unsigned int eval = 0;		/* exit value */
@@ -198,7 +199,7 @@ int main(int argc, char **argv)
 	else
 		r_columnate(maxlength, termwidth, list, entries);
 
-	for (int i = 0; i < entries; i++)
+	for (i = 0; i < entries; i++)
 		free(list[i]);
 	free(list);
 

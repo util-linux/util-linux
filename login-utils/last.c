@@ -448,7 +448,7 @@ ttyconv(char *arg) {
 			(void)strcpy(mval, "console");
 		else {
 			(void)strcpy(mval, "tty");
-			(void)strcpy(mval + 3, arg);
+			(void)strncpy(mval + 3, arg, 4);
 		}
 		return mval;
 	}
