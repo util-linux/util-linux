@@ -32,9 +32,9 @@ struct libmnt_lock {
 	char	*linkfile;	/* path to link file (e.g. /etc/mtab~.<id>) */
 	int	lockfile_fd;	/* lock file descriptor */
 
-	int	locked : 1;	/* do we own the lock? */
-	int	sigblock : 1;	/* block signals when locked */
-	int	simplelock : 1;	/* use flock rather than normal mtab lock */
+	unsigned int	locked :1,	/* do we own the lock? */
+			sigblock :1,	/* block signals when locked */
+			simplelock :1;	/* use flock rather than normal mtab lock */
 
 	sigset_t oldsigmask;
 };
