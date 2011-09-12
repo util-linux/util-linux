@@ -824,10 +824,10 @@ int main(int argc, char **argv)
 			fprintf(stderr, "Failed to allocate device name array\n");
 			goto exit;
 		}
-	}
 
-	while (optind < argc)
-		devices[numdev++] = argv[optind++];
+		while (optind < argc)
+			devices[numdev++] = argv[optind++];
+	}
 
 	if (version) {
 		print_version(stdout);
