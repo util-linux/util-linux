@@ -705,6 +705,22 @@ static void loginpam_acct(struct login_context *cxt)
 	}
 }
 
+static void loginpam_session(struct login_context *cxt)
+{
+	int rc;
+	pam_handle_t *pamh = cxt->pamh;
+
+	rc = pam_open_session(pamh, 0);
+	if (is_pam_failure(rc))
+		loginpam_err(pamh, rc);
+
+	rc = pam_setcred(pamh, PAM_ESTABLISH_CRED);
+	if (is_pam_failure(rc)) {
+		pam_close_session(pamh, 0);
+		loginpam_err(pamh, rc);
+	}
+}
+
 /*
  * We need to check effective UID/GID. For example $HOME could be on root
  * squashed NFS or on NFS with UID mapping and access(2) uses real UID/GID.
@@ -980,15 +996,10 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	retcode = pam_open_session(pamh, 0);
-	if (is_pam_failure(retcode))
-		loginpam_err(pamh, retcode);
-
-	retcode = pam_setcred(pamh, PAM_ESTABLISH_CRED);
-	if (is_pam_failure(retcode)) {
-		pam_close_session(pamh, 0);
-		loginpam_err(pamh, retcode);
-	}
+	/*
+	 * Open PAM session (after successful authentication and account check)
+	 */
+	loginpam_session(&cxt);
 
 	/* committed to login -- turn off timeout */
 	alarm((unsigned int)0);
