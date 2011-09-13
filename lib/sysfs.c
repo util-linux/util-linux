@@ -140,6 +140,7 @@ int sysfs_init(struct sysfs_cxt *cxt, dev_t devno, struct sysfs_cxt *parent)
 	int fd, rc = 0;
 
 	memset(cxt, 0, sizeof(*cxt));
+	cxt->dir_fd = -1;
 
 	if (!sysfs_devno_path(devno, path, sizeof(path)))
 		goto err;
