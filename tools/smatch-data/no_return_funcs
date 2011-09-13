@@ -7,3 +7,5 @@ help
 server_loop
 terminate_intr
 usage
+err
+errx
