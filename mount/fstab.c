@@ -272,10 +272,15 @@ getmntfilebackward (const char *name, struct mntentchn *mcprev) {
 	mc0 = mtab_head();
 	if (!mcprev)
 		mcprev = mc0;
+
 	for (mc = mcprev->prev; mc && mc != mc0; mc = mc->prev)
-		if (streq(mc->m.mnt_dir, name) ||
-		    streq(mc->m.mnt_fsname, name))
+		if (streq(mc->m.mnt_dir, name))
 			return mc;
+
+	for (mc = mcprev->prev; mc && mc != mc0; mc = mc->prev)
+		if (streq(mc->m.mnt_fsname, name))
+			return mc;
+
 	return NULL;
 }
 
