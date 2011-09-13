@@ -25,7 +25,7 @@ chfn_SOURCES = chfn.c $(chfn_chsh_common)
 chsh_SOURCES = chsh.c $(chfn_chsh_common)
 chfn_chsh_common = islocal.c setpwnam.c islocal.h setpwnam.h \
 	$(top_srcdir)/lib/env.c
-login_SOURCES = login.c login.h $(top_srcdir)/lib/setproctitle.c
+login_SOURCES = login.c $(top_srcdir)/lib/setproctitle.c
 vipw_SOURCES = vipw.c setpwnam.h
 
 chfn_LDADD = $(login_ldadd_common)

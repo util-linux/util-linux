@@ -63,7 +63,6 @@
 #include "c.h"
 #include "setproctitle.h"
 #include "pathnames.h"
-#include "login.h"
 #include "strutils.h"
 #include "nls.h"
 #include "xalloc.h"
@@ -117,6 +116,7 @@ int timeout = LOGIN_TIMEOUT;
 static void timedout(int);
 static void sigint(int);
 static void motd(void);
+static void sleepexit(int eval);
 
 /*
  * Nice and simple code provided by Linus Torvalds 16-Feb-93
@@ -660,7 +660,6 @@ static int get_hushlogin_status(struct passwd *pwd)
 
 	return 0;
 }
-
 
 int main(int argc, char **argv)
 {
@@ -1224,7 +1223,6 @@ int main(int argc, char **argv)
  * What I did was add a second timeout while trying to write the message so
  * the process just exits if the second timeout expires.
  */
-
 static void timedout2(int sig __attribute__ ((__unused__)))
 {
 	struct termios ti;
@@ -1249,7 +1247,7 @@ static void timedout(int sig __attribute__ ((__unused__)))
 
 jmp_buf motdinterrupt;
 
-void motd(void)
+static void motd(void)
 {
 	int fd, nchars;
 	void (*oldint) (int);
@@ -1268,14 +1266,14 @@ void motd(void)
 	close(fd);
 }
 
-void sigint(int sig __attribute__ ((__unused__)))
+static void sigint(int sig __attribute__ ((__unused__)))
 {
 	longjmp(motdinterrupt, 1);
 }
 
 
 /* Should not be called from PAM code... */
-void sleepexit(int eval)
+static void sleepexit(int eval)
 {
 	sleep(LOGIN_EXIT_TIMEOUT);
 	exit(eval);
