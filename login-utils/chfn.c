@@ -235,10 +235,7 @@ int main (int argc, char **argv) {
  *	parse the command line arguments.
  *	returns true if no information beyond the username was given.
  */
-static boolean parse_argv (argc, argv, pinfo)
-    int argc;
-    char *argv[];
-    struct finfo *pinfo;
+static boolean parse_argv(int argc, char *argv[], struct finfo *pinfo)
 {
     int index, c, status;
     boolean info_given;
@@ -316,9 +313,7 @@ static boolean parse_argv (argc, argv, pinfo)
  *	take a struct password and fill in the fields of the
  *	struct finfo.
  */
-static void parse_passwd (pw, pinfo)
-    struct passwd *pw;
-    struct finfo *pinfo;
+static void parse_passwd(struct passwd *pw, struct finfo *pinfo)
 {
     char *gecos;
     char *cp;
@@ -351,9 +346,7 @@ static void parse_passwd (pw, pinfo)
  *  ask_info () --
  *	prompt the user for the finger information and store it.
  */
-static void ask_info (oldfp, newfp)
-    struct finfo *oldfp;
-    struct finfo *newfp;
+static void ask_info(struct finfo *oldfp, struct finfo *newfp)
 {
     newfp->full_name = prompt (_("Name"), oldfp->full_name);
     newfp->office = prompt (_("Office"), oldfp->office);
@@ -366,14 +359,12 @@ static void ask_info (oldfp, newfp)
  *  prompt () --
  *	ask the user for a given field and check that the string is legal.
  */
-static char *prompt (question, def_val)
-    char *question;
-    char *def_val;
+static char *prompt(char *question, char *def_val)
 {
     static char *blank = "none";
     int len;
     char *ans, *cp;
-  
+
     while (true) {
 	if (! def_val) def_val = "";
 	printf("%s [%s]: ", question, def_val);
@@ -403,9 +394,7 @@ static char *prompt (question, def_val)
  *	output "msg" followed by a description of the problem, and
  *	return (-1).
  */
-static int check_gecos_string (msg, gecos)
-    char *msg;
-    char *gecos;
+static int check_gecos_string(char *msg, char *gecos)
 {
     unsigned int i, c;
 
@@ -436,9 +425,7 @@ static int check_gecos_string (msg, gecos)
  *  set_changed_data () --
  *	incorporate the new data into the old finger info.
  */
-static boolean set_changed_data (oldfp, newfp)
-    struct finfo *oldfp;
-    struct finfo *newfp;
+static boolean set_changed_data(struct finfo *oldfp, struct finfo *newfp)
 {
     boolean changed = false;
 
@@ -459,8 +446,7 @@ static boolean set_changed_data (oldfp, newfp)
  *	save the given finger info in /etc/passwd.
  *	return zero on success.
  */
-static int save_new_data (pinfo)
-     struct finfo *pinfo;
+static int save_new_data(struct finfo *pinfo)
 {
     char *gecos;
     int len;
