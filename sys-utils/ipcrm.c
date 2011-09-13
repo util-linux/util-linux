@@ -40,6 +40,8 @@ typedef enum type_id {
 	ALL
 } type_id;
 
+static int verbose = 0;
+
 /* print the new usage */
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
@@ -54,6 +56,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -s, --semaphore-id <id>    remove semaprhore by id\n"), out);
 	fputs(_(" -S, --semaphore-key <key>  remove semaprhore by key\n"), out);
 	fputs(_(" -a, --all[=<shm|msg|sem>]  remove all\n"), out);
+	fputs(_(" -v, --verbose              explain what is being done\n"), out);
 	fprintf(out, USAGE_HELP);
 	fprintf(out, USAGE_VERSION);
 	fprintf(out, USAGE_BEGIN_TAIL);
@@ -71,12 +74,18 @@ int remove_id(int type, int iskey, int id)
 	/* do the removal */
 	switch (type) {
 	case SHM:
+		if (verbose)
+			printf(_("removing shared memory segment id `%d'\n"), id);
 		shmctl(id, IPC_RMID, NULL);
 		break;
 	case MSG:
+		if (verbose)
+			printf(_("removing message queue id `%d'\n"), id);
 		msgctl(id, IPC_RMID, NULL);
 		break;
 	case SEM:
+		if (verbose)
+			printf(_("removing semaphore id `%d'\n"), id);
 		semctl(id, 0, IPC_RMID, arg);
 		break;
 	default:
@@ -294,6 +303,7 @@ int main(int argc, char **argv)
 		{"semaphore-id", required_argument, NULL, 's'},
 		{"semaphore-key", required_argument, NULL, 'S'},
 		{"all", optional_argument, NULL, 'a'},
+		{"verbose", no_argument, NULL, 'v'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
@@ -314,7 +324,7 @@ int main(int argc, char **argv)
 
 	/* process new syntax to conform with SYSV ipcrm */
 	for (id = -1;
-	    (c = getopt_long(argc, argv, "q:m:s:Q:M:S:a::hV", longopts, NULL)) != -1;
+	    (c = getopt_long(argc, argv, "q:m:s:Q:M:S:a::vhV", longopts, NULL)) != -1;
 	    id = -1) {
 		switch (c) {
 		case 'M':
@@ -377,6 +387,9 @@ int main(int argc, char **argv)
 			} else {
 				what_all = ALL;
 			}
+			break;
+		case 'v':
+			verbose = 1;
 			break;
 		case 'h':
 			usage(stdout);
