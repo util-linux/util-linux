@@ -66,6 +66,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 int remove_id(int type, int iskey, int id)
 {
+        int ret;
 	char *errmsg;
 	/* needed to delete semaphores */
 	union semun arg;
@@ -76,43 +77,44 @@ int remove_id(int type, int iskey, int id)
 	case SHM:
 		if (verbose)
 			printf(_("removing shared memory segment id `%d'\n"), id);
-		shmctl(id, IPC_RMID, NULL);
+		ret = shmctl(id, IPC_RMID, NULL);
 		break;
 	case MSG:
 		if (verbose)
 			printf(_("removing message queue id `%d'\n"), id);
-		msgctl(id, IPC_RMID, NULL);
+		ret = msgctl(id, IPC_RMID, NULL);
 		break;
 	case SEM:
 		if (verbose)
 			printf(_("removing semaphore id `%d'\n"), id);
-		semctl(id, 0, IPC_RMID, arg);
+		ret = semctl(id, 0, IPC_RMID, arg);
 		break;
 	default:
 		errx(EXIT_FAILURE, "impossible occurred");
 	}
 
 	/* how did the removal go? */
-	switch (errno) {
-	case 0:
-		return 0;
-	case EACCES:
-	case EPERM:
-		errmsg = iskey ? _("permission denied for key") : _("permission denied for id");
-		break;
-	case EINVAL:
-		errmsg = iskey ? _("invalid key") : _("invalid id");
-		break;
-	case EIDRM:
-		errmsg = iskey ? _("already removed key") : _("already removed id");
-		break;
-	default:
-		if (iskey)
-			err(EXIT_FAILURE, _("key failed"));
-		err(EXIT_FAILURE, _("id failed"));
+	if (ret < 0) {
+		switch (errno) {
+		case EACCES:
+		case EPERM:
+			errmsg = iskey ? _("permission denied for key") : _("permission denied for id");
+			break;
+		case EINVAL:
+			errmsg = iskey ? _("invalid key") : _("invalid id");
+			break;
+		case EIDRM:
+			errmsg = iskey ? _("already removed key") : _("already removed id");
+			break;
+		default:
+			if (iskey)
+				err(EXIT_FAILURE, _("key failed"));
+			err(EXIT_FAILURE, _("id failed"));
+		}
+		warnx("%s (%d)", errmsg, id);
+		return 1;
 	}
-	warnx("%s (%d)", errmsg, id);
-	return 1;
+	return 0;
 }
 
 static int remove_arg_list(type_id type, int argc, char **argv)
