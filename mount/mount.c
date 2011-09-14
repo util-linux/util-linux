@@ -32,7 +32,6 @@
 #include "devname.h"
 #include "mount_constants.h"
 #include "sundries.h"
-#include "xmalloc.h"
 #include "mount_mntent.h"
 #include "fstab.h"
 #include "lomount.h"

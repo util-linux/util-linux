@@ -5,7 +5,7 @@ sbin_PROGRAMS = losetup swapon
 dist_man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
 
 # generic sources for all programs (mount, umount, losetup)
-srcs_common = sundries.c xmalloc.c $(top_srcdir)/lib/canonicalize.c sundries.h xmalloc.h
+srcs_common = sundries.c $(top_srcdir)/lib/canonicalize.c sundries.h
 
 # generic header for mount and umount
 hdrs_mount = fstab.h mount_mntent.h mount_constants.h \

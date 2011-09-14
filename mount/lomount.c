@@ -21,7 +21,6 @@
 #include "strutils.h"
 #include "nls.h"
 #include "sundries.h"
-#include "xmalloc.h"
 #include "pathnames.h"
 
 #ifdef LOOP_SET_FD

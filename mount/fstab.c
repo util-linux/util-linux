@@ -12,10 +12,10 @@
 #include <sys/time.h>
 #include <time.h>
 #include <mntent.h>
+
 #include "mount_mntent.h"
 #include "fstab.h"
 #include "sundries.h"
-#include "xmalloc.h"
 #include "fsprobe.h"
 #include "pathnames.h"
 #include "nls.h"
