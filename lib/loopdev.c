@@ -116,7 +116,7 @@ int loopcxt_init(struct loopdev_cxt *lc, int flags)
 	lc->flags = flags;
 	loopcxt_set_device(lc, NULL);
 
-	if (!(lc->flags && LOOPDEV_FL_NOSYSFS) &&
+	if (!(lc->flags & LOOPDEV_FL_NOSYSFS) &&
 	    get_linux_version() >= KERNEL_VERSION(2,6,37))
 		/*
 		 * Use only sysfs for basic information about loop devices
@@ -244,7 +244,7 @@ int loopcxt_init_iterator(struct loopdev_cxt *lc, int flags)
 		/*
 		 * Check for /dev/loop/<N> subdirectory
 		 */
-		if (!(lc->flags && LOOPDEV_FL_DEVSUBDIR) &&
+		if (!(lc->flags & LOOPDEV_FL_DEVSUBDIR) &&
 		    stat(_PATH_DEV_LOOP, &st) == 0 && S_ISDIR(st.st_mode))
 			lc->flags |= LOOPDEV_FL_DEVSUBDIR;
 
