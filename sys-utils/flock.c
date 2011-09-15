@@ -129,6 +129,7 @@ int main(int argc, char *argv[])
   int have_timeout = 0;
   int type = LOCK_EX;
   int block = 0;
+  int open_accmode;
   int fd = -1;
   int opt, ix;
   int do_close = 0;
@@ -211,9 +212,11 @@ int main(int argc, char *argv[])
     }
 
     filename = argv[optind];
-    fd = open(filename, O_RDONLY|O_NOCTTY|O_CREAT, 0666);
+    open_accmode = ((type == LOCK_SH || access(filename, R_OK|W_OK) < 0) ?
+                    O_RDONLY : O_RDWR);
+    fd = open(filename, open_accmode|O_NOCTTY|O_CREAT, 0666);
     /* Linux doesn't like O_CREAT on a directory, even though it should be a
-       no-op */
+       no-op; POSIX doesn't allow O_RDWR or O_WRONLY */
     if (fd < 0 && errno == EISDIR)
         fd = open(filename, O_RDONLY|O_NOCTTY);
 
