@@ -1289,6 +1289,10 @@ int main(int argc, char *argv[])
 			usage(stderr);
 		}
 	}
+
+	if (argc != optind)
+		usage(stderr);
+
 	/* set default cpu display mode if none was specified */
 	if (!mod->online && !mod->offline) {
 		mod->online = 1;
