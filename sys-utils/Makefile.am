@@ -26,7 +26,8 @@ lscpu_SOURCES = lscpu.c $(top_srcdir)/lib/cpuset.c \
 			$(top_srcdir)/lib/path.c
 dist_man_MANS += lscpu.1
 sbin_PROGRAMS += chcpu
-chcpu_SOURCES = chcpu.c $(top_srcdir)/lib/cpuset.c
+chcpu_SOURCES = chcpu.c $(top_srcdir)/lib/cpuset.c \
+			$(top_srcdir)/lib/path.c
 dist_man_MANS += chcpu.1
 endif
 

@@ -58,6 +58,18 @@ path_vfopen(const char *mode, int exit_on_error, const char *path, va_list ap)
 	return f;
 }
 
+static int
+path_vopen(int flags, const char *path, va_list ap)
+{
+	int fd;
+	const char *p = path_vcreate(path, ap);
+
+	fd = open(p, flags);
+	if (fd == -1)
+		err(EXIT_FAILURE, _("error: cannot open %s"), p);
+	return fd;
+}
+
 FILE *
 path_fopen(const char *mode, int exit_on_error, const char *path, ...)
 {
@@ -108,6 +120,20 @@ path_getnum(const char *path, ...)
 			errx(EXIT_FAILURE, _("parse error: %s"), pathbuf);
 	}
 	fclose(fd);
+	return result;
+}
+
+int
+path_writestr(const char *str, const char *path, ...)
+{
+	int fd, result;
+	va_list ap;
+
+	va_start(ap, path);
+	fd = path_vopen(O_WRONLY, path, ap);
+	va_end(ap);
+	result = write(fd, str, strlen(str));
+	close(fd);
 	return result;
 }
 
