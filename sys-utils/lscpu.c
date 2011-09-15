@@ -195,8 +195,8 @@ struct lscpu_modifier {
 	int		system;		/* SYSTEM_* */
 	unsigned int	hex:1,		/* print CPU masks rather than CPU lists */
 			compat:1,	/* use backwardly compatible format */
-			allcpus:1,	/* print all CPUs */
-			online:1;	/* print online CPUs only */
+			online:1,	/* print online CPUs */
+			offline:1;	/* print offline CPUs */
 };
 
 static int maxcpus;		/* size in bits of kernel cpu mask */
@@ -963,7 +963,9 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 	for (i = 0; i < desc->ncpus; i++) {
 		int c;
 
-		if (!mod->allcpus && desc->online && !is_cpu_online(desc, i))
+		if (!mod->offline && desc->online && !is_cpu_online(desc, i))
+			continue;
+		if (!mod->online && desc->online && is_cpu_online(desc, i))
 			continue;
 		for (c = 0; c < ncols; c++) {
 			if (mod->compat && cols[c] == COL_CACHE) {
@@ -1006,7 +1008,9 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 		int c;
 		struct tt_line *line;
 
-		if (!mod->allcpus && desc->online && !is_cpu_online(desc, i))
+		if (!mod->offline && desc->online && !is_cpu_online(desc, i))
+			continue;
+		if (!mod->online && desc->online && is_cpu_online(desc, i))
 			continue;
 
 		line = tt_add_line(tt, NULL);
@@ -1192,6 +1196,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all               print online and offline CPUs (default for -e)\n"
 		" -b, --online            print online CPUs only (default for -p)\n"
+		" -c, --offline           print offline CPUs only\n"
 		" -e, --extended[=<list>] print out a extended readable format\n"
 		" -h, --help              print this help\n"
 		" -p, --parse[=<list>]    print out a parsable format\n"
@@ -1221,6 +1226,7 @@ int main(int argc, char *argv[])
 	static const struct option longopts[] = {
 		{ "all",        no_argument,       0, 'a' },
 		{ "online",     no_argument,       0, 'b' },
+		{ "offline",    no_argument,       0, 'c' },
 		{ "help",	no_argument,       0, 'h' },
 		{ "extended",	optional_argument, 0, 'e' },
 		{ "parse",	optional_argument, 0, 'p' },
@@ -1234,21 +1240,24 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "abe::hp::s:xV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "abce::hp::s:xV", longopts, NULL)) != -1) {
 
 		if (mod->mode != OUTPUT_SUMMARY && strchr("ep", c))
 			errx(EXIT_FAILURE,
 			     _("extended and parsable formats are mutually exclusive"));
-		if ((mod->allcpus || mod->online) && strchr("ab", c))
+		if ((mod->online || mod->offline) && strchr("abc", c))
 			errx(EXIT_FAILURE,
-			     _("--all and --online options are mutually exclusive"));
+			     _("--all, --online and --offline options are mutually exclusive"));
 
 		switch (c) {
 		case 'a':
-			mod->allcpus = 1;
+			mod->online = mod->offline = 1;
 			break;
 		case 'b':
 			mod->online = 1;
+			break;
+		case 'c':
+			mod->offline = 1;
 			break;
 		case 'h':
 			usage(stdout);
@@ -1280,14 +1289,15 @@ int main(int argc, char *argv[])
 			usage(stderr);
 		}
 	}
-	if (mod->mode == OUTPUT_READABLE && !mod->online)
-		mod->allcpus = 1;
+	/* set default cpu display mode if none was specified */
+	if (!mod->online && !mod->offline) {
+		mod->online = 1;
+		mod->offline = mod->mode == OUTPUT_READABLE ? 1 : 0;
+	}
 
 	read_basicinfo(desc, mod);
 
 	for (i = 0; i < desc->ncpus; i++) {
-		if (desc->online && !is_cpu_online(desc, i) && !mod->allcpus)
-			continue;
 		read_topology(desc, i);
 		read_cache(desc, i);
 		read_polarization(desc, i);
