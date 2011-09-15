@@ -125,7 +125,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 			goto done;
 	}
 
-	if (!rc && cxt->user_mountflags && MNT_MS_USER)
+	if (!rc && cxt->user_mountflags & MNT_MS_USER)
 		rc = mnt_optstr_fix_user(&fs->user_optstr);
 
 	/* refresh merged optstr */

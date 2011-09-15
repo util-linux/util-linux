@@ -52,7 +52,7 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 	type = mnt_fs_get_fstype(cxt->fs);
 	fl = __mnt_fs_get_flags(cxt->fs);
 
-	if (!(fl && (MNT_FS_PSEUDO | MNT_FS_NET | MNT_FS_SWAP)) &&
+	if (!(fl & (MNT_FS_PSEUDO | MNT_FS_NET | MNT_FS_SWAP)) &&
 	    (!type || strcmp(type, "auto") == 0 || blkid_known_fstype(type))) {
 		struct stat st;
 
