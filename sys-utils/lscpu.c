@@ -1280,11 +1280,13 @@ int main(int argc, char *argv[])
 			usage(stderr);
 		}
 	}
+	if (mod->mode == OUTPUT_READABLE && !mod->online)
+		mod->allcpus = 1;
 
 	read_basicinfo(desc, mod);
 
 	for (i = 0; i < desc->ncpus; i++) {
-		if (desc->online && !is_cpu_online(desc, i))
+		if (desc->online && !is_cpu_online(desc, i) && !mod->allcpus)
 			continue;
 		read_topology(desc, i);
 		read_cache(desc, i);
@@ -1314,8 +1316,6 @@ int main(int argc, char *argv[])
 		print_parsable(desc, columns, ncolumns, mod);
 		break;
 	case OUTPUT_READABLE:
-		if (!mod->online)
-			mod->allcpus = 1;
 		if (!ncolumns) {
 			/* No list was given. Just print whatever is there. */
 			columns[ncolumns++] = COL_CPU;
