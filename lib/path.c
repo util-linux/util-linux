@@ -27,6 +27,7 @@
 #include <stdio.h>
 #include <errno.h>
 
+#include "writeall.h"
 #include "cpuset.h"
 #include "path.h"
 #include "nls.h"
@@ -132,7 +133,7 @@ path_writestr(const char *str, const char *path, ...)
 	va_start(ap, path);
 	fd = path_vopen(O_WRONLY, path, ap);
 	va_end(ap);
-	result = write(fd, str, strlen(str));
+	result = write_all(fd, str, strlen(str));
 	close(fd);
 	return result;
 }
