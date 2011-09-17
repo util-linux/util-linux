@@ -478,6 +478,7 @@ int main(int argc, char **argv)
 				fprintf(stderr, _("Bad number: %s\n"), optarg);
 				return EXIT_FAILURE;
 			}
+			break;
 		case 'p':
 			pidfile_path = optarg;
 			drop_privs = 1;
