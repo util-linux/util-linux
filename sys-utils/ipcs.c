@@ -134,8 +134,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -c, --creator     show creator and owner\n"), out);
 	fputs(_(" -l, --limits      show resource limits\n"), out);
 	fputs(_(" -u, --summary     show status summary\n"), out);
-	fprintf(out, USAGE_BEGIN_TAIL);
-	fprintf(out, USAGE_MAN_TAIL, "ipcs(1)");
+	fprintf(out, USAGE_MAN_TAIL("ipcs(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 

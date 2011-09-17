@@ -33,11 +33,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out, " %s\n", program_invocation_short_name);
 	fprintf(out, USAGE_OPTIONS);
 	/* Additional options to here. */
+	fprintf(out, USAGE_SEPARATOR);
 	fprintf(out, USAGE_HELP);
 	fprintf(out, USAGE_VERSION);
-	fprintf(out, USAGE_BEGIN_TAIL);
-	/* Remove USAGE_MAN_TAIL line when man page does not exist. */
-	fprintf(out, USAGE_MAN_TAIL, "arch(1)");
+	fprintf(out, USAGE_MAN_TAIL("arch(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 

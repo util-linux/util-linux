@@ -71,10 +71,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -Q, --queue              create message queue\n"), out);
 	fputs(_(" -p, --mode <mode>        permission for the resource (default is 0644)\n"), out);
 
+	fprintf(out, USAGE_SEPARATOR);
 	fprintf(out, USAGE_HELP);
 	fprintf(out, USAGE_VERSION);
-	fprintf(out, USAGE_BEGIN_TAIL);
-	fprintf(out, USAGE_MAN_TAIL, "ipcmk(1)");
+	fprintf(out, USAGE_MAN_TAIL("ipcmk(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 

@@ -57,10 +57,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -S, --semaphore-key <key>  remove semaprhore by key\n"), out);
 	fputs(_(" -a, --all[=<shm|msg|sem>]  remove all\n"), out);
 	fputs(_(" -v, --verbose              explain what is being done\n"), out);
+	fprintf(out, USAGE_SEPARATOR);
 	fprintf(out, USAGE_HELP);
 	fprintf(out, USAGE_VERSION);
-	fprintf(out, USAGE_BEGIN_TAIL);
-	fprintf(out, USAGE_MAN_TAIL, "ipcrm(1)");
+	fprintf(out, USAGE_MAN_TAIL("ipcrm(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
