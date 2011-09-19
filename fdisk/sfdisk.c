@@ -928,7 +928,7 @@ unitsize(int format) {
     }
 }
 
-static unsigned long
+static unsigned long long
 get_disksize(int format) {
     if (B.total_size && leave_last)
 	/* don't use last cylinder (--leave-last option) */
@@ -1266,7 +1266,7 @@ partitions_ok(struct disk_desc *z) {
 
     /* Do they start past zero and end before end-of-disk? */
     {
-	unsigned long ds = get_disksize(F_SECTOR);
+	unsigned long long ds = get_disksize(F_SECTOR);
 	for (p = partitions; p < partitions + partno; p++)
 	    if (p->size) {
 		if (p->start == 0) {
@@ -1926,7 +1926,7 @@ first_free(int pno, int is_extended, struct part_desc *ep, int format,
 static unsigned long
 max_length(int pno, int is_extended, struct part_desc *ep, int format,
 	   unsigned long start, struct disk_desc *z) {
-    unsigned long fu;
+    unsigned long long fu;
     unsigned long unit = unitsize(format);
     struct part_desc *partitions = &(z->partitions[0]), *pp = 0;
 
