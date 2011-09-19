@@ -1550,14 +1550,13 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
 	do_warn(_("detected Disk Manager - unable to handle that\n"));
 	return 0;
     }
-    {
-	unsigned int sig = *(unsigned short *)(s->data + 2);
-	if (sig <= 0x1ae
-	    && *(unsigned short *)(s->data + sig) == 0x55aa
-	    && (1 & *(unsigned char *)(s->data + sig + 2))) {
+
+    unsigned int sig = *(unsigned short *)(s->data + 2);
+    if (sig <= 0x1ae
+	&& *(unsigned short *)(s->data + sig) == 0x55aa
+	&& (1 & *(unsigned char *)(s->data + sig + 2))) {
 	    do_warn(_("DM6 signature found - giving up\n"));
 	    return 0;
-	}
     }
 
     for (pno = 0; pno < 4; pno++, cp += sizeof(struct partition)) {
