@@ -1313,12 +1313,14 @@ partitions_ok(struct disk_desc *z) {
 		    && (p->p.start_sect >= B.cylindersize)) {
 		    my_warn(_("Warning: partition %s does not start "
 			      "at a cylinder boundary\n"), PNO(p));
-		    return 0;
+		    if (specified_format == F_CYLINDER)
+			return 0;
 		}
 		if ((p->start + p->size) % B.cylindersize) {
 		    my_warn(_("Warning: partition %s does not end "
 			      "at a cylinder boundary\n"), PNO(p));
-		    return 0;
+		    if (specified_format == F_CYLINDER)
+			return 0;
 		}
 	    }
     }
