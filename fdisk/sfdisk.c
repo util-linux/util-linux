@@ -46,6 +46,7 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/utsname.h>
+#include <limits.h>
 
 #include "c.h"
 #include "nls.h"
@@ -1195,7 +1196,7 @@ pnumber(struct part_desc *p, struct disk_desc *z) {
 }
 
 static int
-partitions_ok(struct disk_desc *z) {
+partitions_ok(int fd, struct disk_desc *z) {
     struct part_desc *partitions = &(z->partitions[0]), *p, *q;
     int partno = z->partno;
 
@@ -1281,6 +1282,43 @@ partitions_ok(struct disk_desc *z) {
 		}
 	    }
     }
+
+    int sector_size;
+    if (blkdev_get_sector_size(fd, &sector_size) == -1)
+	sector_size = DEFAULT_SECTOR_SIZE;
+
+    /* Is the size of partitions less than 2^32 sectors limit? */
+    for (p = partitions; p < partitions + partno; p++)
+	if (p->size > UINT_MAX) {
+	    unsigned long long bytes = p->size * sector_size;
+	    int giga = bytes / 1000000000;
+	    int hectogiga = (giga + 50) / 100;
+	    my_warn(_("Warning: partition %s has size %d.%d TB (%llu bytes),\n"
+		      "which is larger than the %llu bytes limit imposed\n"
+		      "by the DOS partition table for %d-byte sectors\n"),
+		    PNO(p), hectogiga / 10, hectogiga % 10,
+		    bytes,
+		    (unsigned long long) UINT_MAX * sector_size,
+		    sector_size);
+	    return 0;
+	}
+
+    /* Do the partitions start below the 2^32 sectors limit? */
+    for (p = partitions; p < partitions + partno; p++)
+	if (p->start > UINT_MAX) {
+	    unsigned long long bytes = p->start * sector_size;
+	    int giga = bytes / 1000000000;
+	    int hectogiga = (giga + 50) / 100;
+	    my_warn(_("Warning: partition %s starts at sector %llu (%d.%d TB for %d-byte sectors),\n"
+		      "which exceeds the DOS partition table limit of %llu sectors\n"),
+		    PNO(p),
+		    p->start,
+		    hectogiga / 10,
+		    hectogiga % 10,
+		    sector_size,
+		    (unsigned long long) UINT_MAX);
+	    return 0;
+	}
 
     /* At most one chain of DOS extended partitions ? */
     /* It seems that the OS/2 fdisk has the additional requirement
@@ -2875,7 +2913,7 @@ do_list(char *dev, int silent) {
 	out_partitions(dev, z);
 
     if (verify) {
-	if (partitions_ok(z))
+	if (partitions_ok(fd, z))
 	    my_warn(_("%s: OK\n"), dev);
 	else
 	    exit_status = 1;
@@ -3212,7 +3250,7 @@ do_fdisk(char *dev) {
 	printf(_("New situation:\n"));
 	out_partitions(dev, z);
 
-	if (!partitions_ok(z) && !force) {
+	if (!partitions_ok(fd, z) && !force) {
 	    if (!interactive)
 		fatal(_("I don't like these partitions - nothing changed.\n"
 			"(If you really want this, use the --force option.)\n"));
