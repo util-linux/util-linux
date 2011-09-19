@@ -156,7 +156,7 @@ fatal(char *s, ...) {
  */
 
 static int
-sseek(char *dev, unsigned int fd, unsigned long s) {
+sseek(char *dev, int fd, unsigned long s) {
     off_t in, out;
     in = ((off_t) s << 9);
     out = 1;
