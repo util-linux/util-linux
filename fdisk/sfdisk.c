@@ -186,7 +186,7 @@ sseek(char *dev, int fd, unsigned long s) {
  */
 struct sector {
     struct sector *next;
-    unsigned long sectornumber;
+    unsigned long long sectornumber;
     int to_be_written;
     char data[512];
 } *sectorhead;
@@ -203,7 +203,7 @@ free_sectors(void) {
 }
 
 static struct sector *
-get_sector(char *dev, int fd, unsigned long sno) {
+get_sector(char *dev, int fd, unsigned long long sno) {
     struct sector *s;
 
     for (s = sectorhead; s; s = s->next)
@@ -739,9 +739,9 @@ copy_from_part(struct partition *p, char *cp) {
    for equality with EXTENDED_PARTITION (and these Disk Manager types). */
 
 struct part_desc {
-    unsigned long start;
-    unsigned long size;
-    unsigned long sector, offset;	/* disk location of this info */
+    unsigned long long start;
+    unsigned long long size;
+    unsigned long long sector, offset;	/* disk location of this info */
     struct partition p;
     struct part_desc *ep;	/* extended partition containing this one */
     int ptype;
@@ -980,27 +980,27 @@ out_partition_header(char *dev, int format, struct geometry G) {
 }
 
 static void
-out_rounddown(int width, unsigned long n, unsigned long unit, int inc) {
-    printf("%*lu", width, inc + n / unit);
+out_rounddown(int width, unsigned long long n, unsigned long unit, int inc) {
+    printf("%*llu", width, inc + n / unit);
     if (unit != 1)
 	putchar((n % unit) ? '+' : ' ');
     putchar(' ');
 }
 
 static void
-out_roundup(int width, unsigned long n, unsigned long unit, int inc) {
-    if (n == (unsigned long)(-1))
+out_roundup(int width, unsigned long long n, unsigned long unit, int inc) {
+    if (n == (unsigned long long)(-1))
 	printf("%*s", width, "-");
     else
-	printf("%*lu", width, inc + n / unit);
+	printf("%*llu", width, inc + n / unit);
     if (unit != 1)
 	putchar(((n + 1) % unit) ? '-' : ' ');
     putchar(' ');
 }
 
 static void
-out_roundup_size(int width, unsigned long n, unsigned long unit) {
-    printf("%*lu", width, (n + unit - 1) / unit);
+out_roundup_size(int width, unsigned long long n, unsigned long unit) {
+    printf("%*llu", width, (n + unit - 1) / unit);
     if (unit != 1)
 	putchar((n % unit) ? '-' : ' ');
     putchar(' ');
@@ -1047,7 +1047,7 @@ get_fdisk_geometry(struct disk_desc *z) {
 static void
 out_partition(char *dev, int format, struct part_desc *p,
 	      struct disk_desc *z, struct geometry G) {
-    unsigned long start, end, size;
+    unsigned long long start, end, size;
     int pno, lpno;
 
     if (!format && !(format = specified_format))
@@ -1068,8 +1068,8 @@ out_partition(char *dev, int format, struct part_desc *p,
     size = p->size;
 
     if (dump) {
-	printf(" start=%9lu", start);
-	printf(", size=%9lu", size);
+	printf(" start=%9llu", start);
+	printf(", size=%9llu", size);
 	if (p->ptype == DOS_TYPE) {
 	    printf(", Id=%2x", p->p.sys_type);
 	    if (p->p.bootable == 0x80)
@@ -1258,7 +1258,7 @@ partitions_ok(struct disk_desc *z) {
 		if (is_extended(q->p.sys_type))
 		    if (p->start <= q->start && p->start + p->size > q->start) {
 			my_warn(_("Warning: partition %s contains part of "
-				  "the partition table (sector %lu),\n"
+				  "the partition table (sector %llu),\n"
 				  "and will destroy it when filled\n"),
 				PNO(p), q->start);
 			return 0;
@@ -1391,7 +1391,7 @@ static void
 extended_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z) {
     char *cp;
     struct sector *s;
-    unsigned long start, here, next;
+    unsigned long long start, here, next;
     int i, moretodo = 1;
     struct partition p;
     struct part_desc *partitions = &(z->partitions[0]);
@@ -1489,7 +1489,7 @@ static void
 bsd_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z) {
     struct bsd_disklabel *l;
     struct bsd_partition *bp, *bp0;
-    unsigned long start = ep->start;
+    unsigned long long start = ep->start;
     struct sector *s;
     struct part_desc *partitions = &(z->partitions[0]);
     size_t pno = z->partno;
@@ -1916,10 +1916,10 @@ int all_logicals_inside_outermost_extended = 1;
 enum { NESTED, CHAINED, ONESECTOR } boxes = NESTED;
 
 /* find the default value for <start> - assuming entire units */
-static unsigned long
+static unsigned long long
 first_free(int pno, int is_extended, struct part_desc *ep, int format,
-	   unsigned long mid, struct disk_desc *z) {
-    unsigned long ff, fff;
+	   unsigned long long mid, struct disk_desc *z) {
+    unsigned long long ff, fff;
     unsigned long unit = unitsize(format);
     struct part_desc *partitions = &(z->partitions[0]), *pp = 0;
 
@@ -1960,9 +1960,9 @@ first_free(int pno, int is_extended, struct part_desc *ep, int format,
 }
 
 /* find the default value for <size> - assuming entire units */
-static unsigned long
+static unsigned long long
 max_length(int pno, int is_extended, struct part_desc *ep, int format,
-	   unsigned long start, struct disk_desc *z) {
+	   unsigned long long start, struct disk_desc *z) {
     unsigned long long fu;
     unsigned long unit = unitsize(format);
     struct part_desc *partitions = &(z->partitions[0]), *pp = 0;
@@ -1992,7 +1992,7 @@ max_length(int pno, int is_extended, struct part_desc *ep, int format,
 /* ep is 0 or points to surrounding extended partition */
 static int
 compute_start_sect(struct part_desc *p, struct part_desc *ep) {
-    unsigned long base;
+    unsigned long long base;
     int inc = (DOS && B.sectors) ? B.sectors : 1;
     int delta;
 
@@ -2004,7 +2004,7 @@ compute_start_sect(struct part_desc *p, struct part_desc *ep) {
 	delta = 0;
 
     if (delta < 0) {
-	unsigned long old_size = p->size;
+	unsigned long long old_size = p->size;
 	p->start -= delta;
 	p->size += delta;
 	if (is_extended(p->p.sys_type) && boxes == ONESECTOR)
@@ -2073,7 +2073,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
     char *fields[11];
     int fno, pct = pno % 4;
     struct part_desc p, *orig;
-    unsigned long ff, ff1, ul, ml, ml1, def;
+    unsigned long long ff, ff1, ul, ml, ml1, def;
     int format, lpno, is_extd;
 
     if (eof || eob)
@@ -2144,7 +2144,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 	ul = EXTENDED_PARTITION;
     else if (!strcmp(fields[2], "X"))
 	ul = LINUX_EXTENDED;
-    else if (get_ul(fields[2], &ul, LINUX_NATIVE, 16))
+    else if (get_ull(fields[2], &ul, LINUX_NATIVE, 16))
 	return 0;
     if (ul > 255) {
 	my_warn(_("Illegal type\n"));
@@ -2160,7 +2160,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
     if (fno < 1 || !*(fields[0]))
 	p.start = def;
     else {
-	if (get_ul(fields[0], &ul, def / unitsize(0), 0))
+	if (get_ull(fields[0], &ul, def / unitsize(0), 0))
 	    return 0;
 	p.start = ul * unitsize(0);
 	p.start -= (p.start % unitsize(format));
@@ -2175,7 +2175,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
     else if (!strcmp(fields[1], "+"))
 	p.size = ml1;
     else {
-	if (get_ul(fields[1], &ul, def / unitsize(0), 0))
+	if (get_ull(fields[1], &ul, def / unitsize(0), 0))
 	    return 0;
 	p.size = ul * unitsize(0) + unitsize(format) - 1;
 	p.size -= (p.size % unitsize(format));
