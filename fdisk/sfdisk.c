@@ -1861,6 +1861,44 @@ get_ul(char *u, unsigned long *up, unsigned long def, int base) {
     return 0;
 }
 
+
+/* read a number, use default if absent */
+/* a sign gives an offset from the default */
+static int
+get_ull(char *u, unsigned long long *up, unsigned long long def, int base) {
+    char *nu;
+    int sign = 0;
+    unsigned long long val;
+
+    if (*u == '+') {
+	sign = 1;
+	u++;
+    } else if (*u == '-') {
+	sign = -1;
+	u++;
+    }
+    if (*u) {
+	errno = 0;
+	val = strtoull(u, &nu, base);
+	if (errno == ERANGE) {
+	    do_warn(_("number too big\n"));
+	    return -1;
+	}
+	if (*nu) {
+	    do_warn(_("trailing junk after number\n"));
+	    return -1;
+	}
+	if (sign == 1)
+	    val = def + val;
+	else if (sign == -1)
+	    val = def - val;
+	*up = val;
+    } else
+	*up = def;
+    return 0;
+}
+
+
 /* There are two common ways to structure extended partitions:
    as nested boxes, and as a chain. Sometimes the partitions
    must be given in order. Sometimes all logical partitions
