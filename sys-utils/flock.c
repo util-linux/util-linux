@@ -41,20 +41,6 @@
 
 #include "nls.h"
 
-static const struct option long_options[] = {
-	{"shared", 0, NULL, 's'},
-	{"exclusive", 0, NULL, 'x'},
-	{"unlock", 0, NULL, 'u'},
-	{"nonblocking", 0, NULL, 'n'},
-	{"nb", 0, NULL, 'n'},
-	{"timeout", 1, NULL, 'w'},
-	{"wait", 1, NULL, 'w'},
-	{"close", 0, NULL, 'o'},
-	{"help", 0, NULL, 'h'},
-	{"version", 0, NULL, 'V'},
-	{0, 0, 0, 0}
-};
-
 const char *program;
 
 static void usage(int ex)
@@ -128,6 +114,20 @@ int main(int argc, char *argv[])
 	char **cmd_argv = NULL, *sh_c_argv[4];
 	const char *filename = NULL;
 	struct sigaction sa, old_sa;
+
+	static const struct option long_options[] = {
+		{"shared", no_argument, NULL, 's'},
+		{"exclusive", no_argument, NULL, 'x'},
+		{"unlock", no_argument, NULL, 'u'},
+		{"nonblocking", no_argument, NULL, 'n'},
+		{"nb", no_argument, NULL, 'n'},
+		{"timeout", required_argument, NULL, 'w'},
+		{"wait", required_argument, NULL, 'w'},
+		{"close", no_argument, NULL, 'o'},
+		{"help", no_argument, NULL, 'h'},
+		{"version", no_argument, NULL, 'V'},
+		{NULL, 0, NULL, 0}
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
