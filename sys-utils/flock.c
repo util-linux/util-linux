@@ -39,9 +39,8 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+#include "c.h"
 #include "nls.h"
-
-const char *program;
 
 static void usage(int ex)
 {
@@ -49,7 +48,8 @@ static void usage(int ex)
 	fprintf(stderr,
 		_(" %1$s [-sxun][-w #] fd#\n"
 		  " %1$s [-sxon][-w #] file [-c] command...\n"
-		  " %1$s [-sxon][-w #] directory [-c] command...\n"), program);
+		  " %1$s [-sxon][-w #] directory [-c] command...\n"),
+		program_invocation_short_name);
 
 	fputs(_("\nOptions:\n"), stderr);
 	fputs(_(" -s  --shared     Get a shared lock\n"
@@ -108,7 +108,6 @@ int main(int argc, char *argv[])
 	int fd = -1;
 	int opt, ix;
 	int do_close = 0;
-	int err;
 	int status;
 	char *eon;
 	char **cmd_argv = NULL, *sh_c_argv[4];
@@ -132,8 +131,6 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-
-	program = argv[0];
 
 	if (argc < 2)
 		usage(EX_USAGE);
@@ -183,12 +180,10 @@ int main(int argc, char *argv[])
 		/* Run command */
 		if (!strcmp(argv[optind + 1], "-c") ||
 		    !strcmp(argv[optind + 1], "--command")) {
-			if (argc != optind + 3) {
-				fprintf(stderr,
-					_("%s: %s requires exactly one command argument\n"),
-					program, argv[optind + 1]);
-				exit(EX_USAGE);
-			}
+			if (argc != optind + 3)
+				errx(EX_USAGE,
+				     _("%s requires exactly one command argument"),
+				     argv[optind + 1]);
 			cmd_argv = sh_c_argv;
 			cmd_argv[0] = getenv("SHELL");
 			if (!cmd_argv[0] || !*cmd_argv[0])
@@ -213,12 +208,10 @@ int main(int argc, char *argv[])
 			fd = open(filename, O_RDONLY | O_NOCTTY);
 
 		if (fd < 0) {
-			err = errno;
-			fprintf(stderr, _("%s: cannot open lock file %s: %s\n"),
-				program, argv[optind], strerror(err));
-			exit((err == ENOMEM || err == EMFILE
-			      || err == ENFILE) ? EX_OSERR : (err == EROFS
-							      || err ==
+			warn(_("cannot open lock file %s"), argv[optind]);
+			exit((errno == ENOMEM || errno == EMFILE
+			      || errno == ENFILE) ? EX_OSERR : (errno == EROFS
+							      || errno ==
 							      ENOSPC) ?
 			     EX_CANTCREAT : EX_NOINPUT);
 		}
@@ -226,16 +219,11 @@ int main(int argc, char *argv[])
 		/* Use provided file descriptor */
 		fd = (int)strtol(argv[optind], &eon, 10);
 		if (*eon || !argv[optind]) {
-			fprintf(stderr, _("%s: bad number: %s\n"), program,
-				argv[optind]);
-			exit(EX_USAGE);
+			errx(EX_USAGE, _("bad number: %s"), argv[optind]);
 		}
 	} else {
 		/* Bad options */
-		fprintf(stderr,
-			_("%s: requires file descriptor, file or directory\n"),
-			program);
-		exit(EX_USAGE);
+		errx(EX_USAGE, _("requires file descriptor, file or directory"));
 	}
 
 	if (have_timeout) {
@@ -257,7 +245,7 @@ int main(int argc, char *argv[])
 	}
 
 	while (flock(fd, type | block)) {
-		switch ((err = errno)) {
+		switch (errno) {
 		case EWOULDBLOCK:
 			/* -n option set and failed to lock */
 			exit(1);
@@ -271,13 +259,11 @@ int main(int argc, char *argv[])
 		default:
 			/* Other errors */
 			if (filename)
-				fprintf(stderr, "%s: %s: %s\n", program,
-					filename, strerror(err));
+				warn("%s", filename);
 			else
-				fprintf(stderr, "%s: %d: %s\n", program, fd,
-					strerror(err));
-			exit((err == ENOLCK
-			      || err == ENOMEM) ? EX_OSERR : EX_DATAERR);
+				warn("%d", fd);
+			exit((errno == ENOLCK
+			      || errno == ENOMEM) ? EX_OSERR : EX_DATAERR);
 		}
 	}
 
@@ -297,19 +283,14 @@ int main(int argc, char *argv[])
 		f = fork();
 
 		if (f < 0) {
-			err = errno;
-			fprintf(stderr, _("%s: fork failed: %s\n"), program,
-				strerror(err));
-			exit(EX_OSERR);
+			err(EX_OSERR, _("fork failed"));
 		} else if (f == 0) {
 			if (do_close)
 				close(fd);
 			execvp(cmd_argv[0], cmd_argv);
-			err = errno;
 			/* execvp() failed */
-			fprintf(stderr, "%s: %s: %s\n", program, cmd_argv[0],
-				strerror(err));
-			_exit((err == ENOMEM) ? EX_OSERR : EX_UNAVAILABLE);
+			warn("%s", cmd_argv[0]);
+			_exit((errno == ENOMEM) ? EX_OSERR : EX_UNAVAILABLE);
 		} else {
 			do {
 				w = waitpid(f, &status, 0);
@@ -318,10 +299,8 @@ int main(int argc, char *argv[])
 			} while (w != f);
 
 			if (w == -1) {
-				err = errno;
 				status = EXIT_FAILURE;
-				fprintf(stderr, "%s: waitpid failed: %s\n",
-					program, strerror(err));
+				warn(_("waitpid failed"));
 			} else if (WIFEXITED(status))
 				status = WEXITSTATUS(status);
 			else if (WIFSIGNALED(status))
