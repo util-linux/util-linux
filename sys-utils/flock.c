@@ -44,23 +44,24 @@
 
 static void usage(int ex)
 {
-	fputs(_("\nUsage:\n"), stderr);
+	fprintf(stderr, USAGE_HEADER);
 	fprintf(stderr,
-		_(" %1$s [-sxun][-w #] fd#\n"
-		  " %1$s [-sxon][-w #] file [-c] command...\n"
-		  " %1$s [-sxon][-w #] directory [-c] command...\n"),
+		_(" %1$s [options] <file descriptor number>\n"
+		  " %1$s [options] <file> -c <command>\n"
+		  " %1$s [options} <directory> -c <command>\n"),
 		program_invocation_short_name);
-
-	fputs(_("\nOptions:\n"), stderr);
-	fputs(_(" -s  --shared     Get a shared lock\n"
-		" -x  --exclusive  Get an exclusive lock\n"
-		" -u  --unlock     Remove a lock\n"
-		" -n  --nonblock   Fail rather than wait\n"
-		" -w  --timeout    Wait for a limited amount of time\n"
-		" -o  --close      Close file descriptor before running command\n"
-		" -c  --command    Run a single command string through the shell\n"
-		" -h  --help       Display this text\n"
-		" -V  --version    Display version\n\n"), stderr);
+	fputs(USAGE_OPTIONS, stderr);
+	fputs(_(  " -s  --shared             get a shared lock\n"), stderr);
+	fputs(_(  " -x  --exclusive          get an exclusive lock (default)\n"), stderr);
+	fputs(_(  " -u  --unlock             remove a lock\n"), stderr);
+	fputs(_(  " -n  --nonblock           fail rather than wait\n"), stderr);
+	fputs(_(  " -w  --timeout <secs>     wait for a limited amount of time\n"), stderr);
+	fputs(_(  " -o  --close              close file descriptor before running command\n"), stderr);
+	fputs(_(  " -c  --command <command>  run a single command string through the shell\n"), stderr);
+	fprintf(stderr, USAGE_SEPARATOR);
+	fprintf(stderr, USAGE_HELP);
+	fprintf(stderr, USAGE_VERSION);
+	fprintf(stderr, USAGE_MAN_TAIL("flock(1)"));
 	exit(ex);
 }
 
