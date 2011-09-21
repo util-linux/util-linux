@@ -40,6 +40,7 @@ rtcwake_SOURCES = rtcwake.c $(top_srcdir)/lib/strutils.c
 dmesg_SOURCES = dmesg.c $(top_srcdir)/lib/strutils.c
 ipcmk_SOURCES = ipcmk.c $(top_srcdir)/lib/strutils.c
 ipcrm_SOURCES = ipcrm.c  $(top_srcdir)/lib/strutils.c
+flock_SOURCES = flock.c $(top_srcdir)/lib/strutils.c
 
 if BUILD_MOUNTPOINT
 bin_PROGRAMS += mountpoint

@@ -41,6 +41,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "strutils.h"
 
 static void __attribute__((__noreturn__)) usage(int ex)
 {
@@ -217,10 +218,7 @@ int main(int argc, char *argv[])
 		}
 	} else if (optind < argc) {
 		/* Use provided file descriptor */
-		fd = (int)strtol(argv[optind], &eon, 10);
-		if (*eon || !argv[optind]) {
-			errx(EX_USAGE, _("bad number: %s"), argv[optind]);
-		}
+		fd = (int)strtol_or_err(argv[optind], "bad number");
 	} else {
 		/* Bad options */
 		errx(EX_USAGE, _("requires file descriptor, file or directory"));
