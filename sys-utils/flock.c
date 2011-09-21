@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'V':
 			printf("flock (%s)\n", PACKAGE_STRING);
-			exit(0);
+			exit(EX_OK);
 		default:
 			/* optopt will be set if this was an unrecognized
 			 * option, i.e.  *not* 'h' or '?
@@ -209,11 +209,11 @@ int main(int argc, char *argv[])
 
 		if (fd < 0) {
 			warn(_("cannot open lock file %s"), argv[optind]);
-			exit((errno == ENOMEM || errno == EMFILE
-			      || errno == ENFILE) ? EX_OSERR : (errno == EROFS
-							      || errno ==
-							      ENOSPC) ?
-			     EX_CANTCREAT : EX_NOINPUT);
+			if (errno == ENOMEM || errno == EMFILE || errno == ENFILE)
+				exit(EX_OSERR);
+			if (errno == EROFS || errno == ENOSPC)
+				exit(EX_CANTCREAT);
+			exit(EX_NOINPUT);
 		}
 	} else if (optind < argc) {
 		/* Use provided file descriptor */
@@ -247,12 +247,17 @@ int main(int argc, char *argv[])
 	while (flock(fd, type | block)) {
 		switch (errno) {
 		case EWOULDBLOCK:
-			/* -n option set and failed to lock */
+			/* -n option set and failed to lock. The numeric
+			 * exit value is specified in man flock.1
+			 */
 			exit(1);
 		case EINTR:
 			/* Signal received */
 			if (timeout_expired)
-				/* -w option set and failed to lock */
+				/* -w option set and failed to lock. The
+				 * numeric exit value is specified in man
+				 * flock.1
+				 */
 				exit(1);
 			/* otherwise try again */
 			continue;
@@ -274,7 +279,7 @@ int main(int argc, char *argv[])
 		sigaction(SIGALRM, &old_sa, NULL);
 	}
 
-	status = 0;
+	status = EX_OK;
 
 	if (cmd_argv) {
 		pid_t w, f;
