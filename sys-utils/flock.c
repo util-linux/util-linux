@@ -42,7 +42,7 @@
 #include "c.h"
 #include "nls.h"
 
-static void usage(int ex)
+static void __attribute__((__noreturn__)) usage(int ex)
 {
 	fprintf(stderr, USAGE_HEADER);
 	fprintf(stderr,
@@ -67,9 +67,8 @@ static void usage(int ex)
 
 static sig_atomic_t timeout_expired = 0;
 
-static void timeout_handler(int sig)
+static void timeout_handler(int sig __attribute__((__unused__)))
 {
-	(void)sig;
 	timeout_expired = 1;
 }
 
