@@ -198,8 +198,7 @@ opentty(const char * tty) {
 
 	fd = open(tty, O_RDWR | O_NONBLOCK);
 	if (fd == -1) {
-		syslog(LOG_ERR, _("FATAL: can't reopen tty: %s"),
-		       strerror(errno));
+		syslog(LOG_ERR, _("FATAL: can't reopen tty: %m"));
 		sleepexit(EXIT_FAILURE);
 	}
 

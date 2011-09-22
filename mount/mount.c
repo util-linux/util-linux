@@ -781,10 +781,10 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
 			int i = 0;
 
 			if (setgid(getgid()) < 0)
-				die(EX_FAIL, _("mount: cannot set group id: %s"), strerror(errno));
+				die(EX_FAIL, _("mount: cannot set group id: %m"));
 
 			if (setuid(getuid()) < 0)
-				die(EX_FAIL, _("mount: cannot set user id: %s"), strerror(errno));
+				die(EX_FAIL, _("mount: cannot set user id: %m"));
 
 			oo = fix_opts_string (flags, extra_opts, NULL);
 			mountargs[i++] = mountprog;			/* 1 */
@@ -1470,8 +1470,7 @@ cdrom_setspeed(const char *spec) {
 			    _("mount: cannot open %s for setting speed"),
 			    spec);
 		if (ioctl(cdrom, CDROM_SELECT_SPEED, speed) < 0)
-			die(EX_FAIL, _("mount: cannot set speed: %s"),
-			    strerror(errno));
+			die(EX_FAIL, _("mount: cannot set speed: %m"));
 		close(cdrom);
 	}
 }

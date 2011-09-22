@@ -142,8 +142,8 @@ int main(int argc, char *argv[])
 		err = stat(block_name, &statbuf);
 		if (err) {
 			fprintf (stderr,
-				 _("Cannot locate block device '%s' (%s)\n"),
-				 block_name, strerror(errno));
+				 _("Cannot locate block device '%s' (%m)\n"),
+				 block_name);
 			exit(2);
 		}
 
@@ -201,8 +201,8 @@ static int query(int minor_raw, const char *raw_name, int quiet)
 
 		err = stat(raw_name, &statbuf);
 		if (err) {
-			fprintf (stderr, _("Cannot locate raw device '%s' (%s)\n"),
-				 raw_name, strerror(errno));
+			fprintf (stderr, _("Cannot locate raw device '%s' (%m)\n"),
+				 raw_name);
 			exit(2);
 		}
 
@@ -227,8 +227,7 @@ static int query(int minor_raw, const char *raw_name, int quiet)
 		if (has_worked && errno == EINVAL)
 			return 0;
 		fprintf (stderr,
-			 _("Error querying raw device (%s)\n"),
-			 strerror(errno));
+			 _("Error querying raw device (%m)\n"));
 		exit(3);
 	}
 	/* If one query has worked, mark that fact so that we don't
@@ -253,8 +252,7 @@ static int bind(int minor_raw, int block_major, int block_minor)
 	err = ioctl(master_fd, RAW_SETBIND, &rq);
 	if (err < 0) {
 		fprintf (stderr,
-			 _("Error setting raw device (%s)\n"),
-			 strerror(errno));
+			 _("Error setting raw device (%m)\n"));
 		exit(3);
 	}
 	printf (_("%sraw%d:  bound to major %d, minor %d\n"),

@@ -260,8 +260,7 @@ static dev_t lvm_get_devno(const char *lvm_device)
 
 	DBG(DEBUG_DEVNAME, printf("opening %s\n", lvm_device));
 	if ((lvf = fopen(lvm_device, "r")) == NULL) {
-		DBG(DEBUG_DEVNAME, printf("%s: (%d) %s\n", lvm_device, errno,
-					  strerror(errno)));
+		DBG(DEBUG_DEVNAME, printf("%s: (%d) %m\n", lvm_device, errno));
 		return 0;
 	}
 

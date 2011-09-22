@@ -129,10 +129,10 @@ check_special_umountprog(const char *node,
 				int i = 0;
 
 				if(setgid(getgid()) < 0)
-					die(EX_FAIL, _("umount: cannot set group id: %s"), strerror(errno));
+					die(EX_FAIL, _("umount: cannot set group id: %m"));
 
 				if(setuid(getuid()) < 0)
-					die(EX_FAIL, _("umount: cannot set user id: %s"), strerror(errno));
+					die(EX_FAIL, _("umount: cannot set user id: %m"));
 
 				umountargs[i++] = umountprog;
 				umountargs[i++] = xstrdup(node);
@@ -244,12 +244,10 @@ static const char *chdir_to_parent(const char *node, char **resbuf)
 	}
 
 	if (chdir(parent) == -1)
-		die (2, _("umount: failed to chdir to %s: %s"),
-					parent, strerror(errno));
+		die (2, _("umount: failed to chdir to %s: %m"), parent);
 
 	if (!getcwd(buf, sizeof(buf)))
-		die (2, _("umount: failed to obtain current directory: %s"),
-			strerror(errno));
+		die (2, _("umount: failed to obtain current directory: %m"));
 
 	if (strcmp(buf, parent) != 0)
 		die (2, _("umount: mountpoint moved (%s -> %s)"), parent, buf);

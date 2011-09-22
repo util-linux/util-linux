@@ -173,8 +173,7 @@ pw_lock(void) {
 	lockfd = open(orig_file, O_RDONLY, 0);
 
 	if (lockfd < 0) {
-		(void)fprintf(stderr, "%s: %s: %s\n",
-		    progname, orig_file, strerror(errno));
+		(void)fprintf(stderr, "%s: %s: %m\n", progname, orig_file);
 		unlink(tmp_file);
 		exit(EXIT_FAILURE);
 	}

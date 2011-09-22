@@ -875,8 +875,7 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 
 		if (errno == EBUSY) {
 			if (verbose)
-				printf(_("ioctl LOOP_SET_FD failed: %s\n"),
-							strerror(errno));
+				printf(_("ioctl LOOP_SET_FD failed: %m\n"));
 			rc = 2;
 		} else
 			perror("ioctl: LOOP_SET_FD");

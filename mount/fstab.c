@@ -1103,7 +1103,7 @@ main(int argc, char **argv)
 	nloops = atoi(argv[4]);
 
 	if (stat(filename, &st) < -1)
-		die(EXIT_FAILURE, "%s: %s\n", filename, strerror(errno));
+		die(EXIT_FAILURE, "%s: %m\n", filename);
 
 	fprintf(stderr, "%05d (pid=%05d): START\n", id, pid);
 

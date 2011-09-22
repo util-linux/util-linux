@@ -504,7 +504,7 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 
 	fd = open(devname, O_RDONLY);
 	if (fd < 0) {
-		fprintf(stderr, "error: %s: %s\n", devname, strerror(errno));
+		fprintf(stderr, "error: %s: %m\n", devname);
 		return 2;
 	}
 	if (blkid_probe_set_device(pr, fd, offset, size))

@@ -211,8 +211,8 @@ main(int argc, char **argv) {
 			exit(1);
 		}
 		if (write(fd, &multiplier, to_write) != to_write) {
-			fprintf(stderr, _("readprofile: error writing %s: %s\n"),
-				defaultpro, strerror(errno));
+			fprintf(stderr, _("readprofile: error writing %s: %m\n"),
+				defaultpro);
 			exit(1);
 		}
 		close(fd);
@@ -225,7 +225,7 @@ main(int argc, char **argv) {
 	if (((proFd=open(proFile,O_RDONLY)) < 0)
 	    || ((int)(len=lseek(proFd,0,SEEK_END)) < 0)
 	    || (lseek(proFd,0,SEEK_SET) < 0)) {
-		fprintf(stderr,"%s: %s: %s\n",prgname,proFile,strerror(errno));
+		fprintf(stderr,"%s: %s: %m\n", prgname, proFile);
 		exit(1);
 	}
 
@@ -233,7 +233,7 @@ main(int argc, char **argv) {
 
 	rc = read(proFd,buf,len);
 	if (rc < 0 || (size_t) rc != len) {
-		fprintf(stderr,"%s: %s: %s\n",prgname,proFile,strerror(errno));
+		fprintf(stderr,"%s: %s: %m\n", prgname, proFile);
 		exit(1);
 	}
 	close(proFd);

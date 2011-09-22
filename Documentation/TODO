@@ -149,9 +149,6 @@ login-utils:
 libblkid
 --------
 
- - remove strerrr() from debug messages (use %m) to make BLKID_DEBUG= output
-   thread-safe
-
  - (!) don't use internally blkid_loff_t, rather use off_t, size_t, ssize_t,
        stdint.h types and so on...
 

@@ -2631,10 +2631,10 @@ reread_partition_table(int leave) {
         }
 
 	if (i) {
-		printf(_("\nWARNING: Re-reading the partition table failed with error %d: %s.\n"
+		printf(_("\nWARNING: Re-reading the partition table failed with error %d: %m.\n"
 			 "The kernel still uses the old table. The new table will be used at\n"
 			 "the next reboot or after you run partprobe(8) or kpartx(8)\n"),
-			errno, strerror(errno));
+			errno);
 	}
 
 	if (dos_changed)
