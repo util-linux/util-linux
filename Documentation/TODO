@@ -99,10 +99,6 @@ docs
 
  - (!) add API documentation to libuuid
 
- - add Documentation/ directory with:
-	   - man page template 
-	   - usage() HOW-TO
-	   - move README.devel to the Documentation/
 
 build-sys
 --------
