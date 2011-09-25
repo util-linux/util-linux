@@ -168,6 +168,30 @@ char *strndup(const char *s, size_t n)
 #endif
 
 /*
+ * same as strtod(3) but exit on failure instead of returning crap
+ */
+double strtod_or_err(const char *str, const char *errmesg)
+{
+	double num;
+	char *end = NULL;
+
+	if (str == NULL || *str == '\0')
+		goto err;
+	errno = 0;
+	num = strtod(str, &end);
+
+	if (errno || str == end || (end && *end))
+		goto err;
+
+	return num;
+ err:
+	if (errno)
+		err(EXIT_FAILURE, "%s: '%s'", errmesg, str);
+	else
+		errx(EXIT_FAILURE, "%s: '%s'", errmesg, str);
+	return 0;
+}
+/*
  * same as strtol(3) but exit on failure instead of returning crap
  */
 long strtol_or_err(const char *str, const char *errmesg)
