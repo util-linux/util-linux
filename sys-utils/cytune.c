@@ -84,6 +84,10 @@ struct cyclades_control {
 struct cyclades_control *cmon;
 int cmon_index;
 
+static int global_argc, global_optind;
+static char ***global_argv;
+
+
 #define mvtime(tvpto, tvpfrom)  (((tvpto)->tv_sec = (tvpfrom)->tv_sec),(tvpto)->tv_usec = (tvpfrom)->tv_usec)
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
@@ -114,9 +118,6 @@ dtime(struct timeval * tvpnew, struct timeval * tvpold) {
   diff += ((double)tvpnew->tv_usec - (double)tvpold->tv_usec)/1000000;
   return diff;
 }
-
-static int global_argc, global_optind;
-static char ***global_argv;
 
 static void
 summary(int sig) {
@@ -158,41 +159,142 @@ summary(int sig) {
   cc->timeout_value = 0;
 }
 
-static int query   = 0;
-static int interval = 1;
-
-static int set     = 0;
-static int set_val = -1;
-static int get     = 0;
-
-static int set_def     = 0;
-static int set_def_val = -1;
-static int get_def     = 0;
-
-static int set_time = 0;
-static int set_time_val = -1;
-
-static int set_def_time = 0;
-static int set_def_time_val = -1;
-
-
-int main(int argc, char *argv[]) {
-
+void query_tty_stats(int argc, char **argv, int interval, int numfiles,
+		     unsigned long *threshold_value,
+		     unsigned long *timeout_value)
+{
+  struct cyclades_monitor cywork;
   struct timeval lasttime, thistime;
   struct timezone tz = {0,0};
-  double diff;
-  int errflg = 0;
-  int file;
-  int numfiles;
-  struct cyclades_monitor cywork;
-  
   int i;
-  unsigned long threshold_value;
-  unsigned long timeout_value;
+  double diff;
   double xfer_rate;
 #ifdef XMIT
   double xmit_rate;
 #endif
+
+  cmon = xmalloc(sizeof(struct cyclades_control) * numfiles);
+
+  if(signal(SIGINT, summary)||
+     signal(SIGQUIT, summary)||
+     signal(SIGTERM, summary)) {
+    err(EXIT_FAILURE, _("cannot set signal handler"));
+  }
+  if(gettimeofday(&lasttime,&tz)) {
+    err(EXIT_FAILURE, _("gettimeofday failed"));
+  }
+  for(i = optind; i < argc; i ++) {
+    cmon_index = i - optind;
+    cmon[cmon_index].cfile = open(argv[i], O_RDONLY);
+    if(-1 == cmon[cmon_index].cfile) {
+      err(EXIT_FAILURE, _("cannot open %s"),argv[i]);
+    }
+    if(ioctl(cmon[cmon_index].cfile, CYGETMON, &cmon[cmon_index].c)) {
+      err(EXIT_FAILURE, _("cannot issue CYGETMON on %s"),argv[i]);
+    }
+    summary(-1);
+    if(ioctl(cmon[cmon_index].cfile, CYGETTHRESH, &threshold_value)) {
+      err(EXIT_FAILURE, _("cannot get threshold for %s"),argv[i]);
+    }
+    if(ioctl(cmon[cmon_index].cfile, CYGETTIMEOUT, &timeout_value)) {
+      err(EXIT_FAILURE, _("cannot get timeout for %s"),argv[i]);
+    }
+  }
+  while(1) {
+    sleep(interval);
+
+    if(gettimeofday(&thistime,&tz)) {
+      err(EXIT_FAILURE, _("gettimeofday failed"));
+    }
+    diff = dtime(&thistime, &lasttime);
+    mvtime(&lasttime, &thistime);
+
+    for(i = optind; i < argc; i ++) {
+      cmon_index = i - optind;
+      if(ioctl(cmon[cmon_index].cfile, CYGETMON, &cywork)) {
+        err(EXIT_FAILURE, _("cannot issue CYGETMON on %s"),argv[i]);
+      }
+      if(ioctl(cmon[cmon_index].cfile, CYGETTHRESH, &threshold_value)) {
+        err(EXIT_FAILURE, _("cannot get threshold for %s"),argv[i]);
+      }
+      if(ioctl(cmon[cmon_index].cfile, CYGETTIMEOUT, &timeout_value)) {
+        err(EXIT_FAILURE, _("cannot get timeout for %s"),argv[i]);
+      }
+
+      xfer_rate = cywork.char_count/diff;
+#ifdef XMIT
+      xmit_rate = cywork.send_count/diff;
+#endif
+
+      if((*threshold_value) != cmon[cmon_index].threshold_value ||
+	 (*timeout_value) != cmon[cmon_index].timeout_value) {
+	summary(-2);
+	/* Note that the summary must come before the setting of */
+	/* threshold_value */
+	cmon[cmon_index].threshold_value = (*threshold_value);
+	cmon[cmon_index].timeout_value = (*timeout_value);
+      } else {
+	/* Don't record this first cycle after change */
+	if(xfer_rate > cmon[cmon_index].maxtran)
+	  cmon[cmon_index].maxtran = xfer_rate;
+#ifdef XMIT
+	if(xmit_rate > cmon[cmon_index].maxxmit)
+          cmon[cmon_index].maxxmit = xmit_rate;
+#endif
+	if(cmon[cmon_index].maxmax < 0 ||
+	   cywork.char_max > (unsigned long) cmon[cmon_index].maxmax)
+	  cmon[cmon_index].maxmax = cywork.char_max;
+      }
+
+#ifdef XMIT
+      printf(_("%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, "
+	       "%lu max, %lu now\n"),
+	     argv[i],
+	     cywork.int_count,cywork.char_count,cywork.send_count,
+	     threshold_value,timeout_value,
+	     cywork.char_max,cywork.char_last);
+      printf(_("   %f int/sec; %f rec, %f send (char/sec)\n"),
+	     cywork.int_count/diff,
+	     xfer_rate,
+	     xmit_rate);
+#else
+      printf(_("%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, "
+	       "%lu max, %lu now\n"),
+	     argv[i],
+	     cywork.int_count,cywork.char_count,
+	     threshold_value,timeout_value,
+	     cywork.char_max,cywork.char_last);
+      printf(_("   %f int/sec; %f rec (char/sec)\n"),
+	     cywork.int_count/diff,
+	     xfer_rate);
+#endif
+      memcpy(&cmon[cmon_index].c, &cywork, sizeof (struct cyclades_monitor));
+    }
+  }
+  free(cmon);
+  return;
+}
+
+int main(int argc, char *argv[]) {
+  int query   = 0;
+  int interval = 1;
+  int set     = 0;
+  int set_val = -1;
+  int get     = 0;
+  int set_def     = 0;
+  int set_def_val = -1;
+  int get_def     = 0;
+  int set_time = 0;
+  int set_time_val = -1;
+  int set_def_time = 0;
+  int set_def_time_val = -1;
+  int errflg = 0;
+  int file;
+  int numfiles;
+  
+  int i;
+  unsigned long threshold_value;
+  unsigned long timeout_value;
   
   static const struct option longopts[] = {
     {"set-threshold", required_argument, NULL, 's'},
@@ -338,106 +440,7 @@ int main(int argc, char *argv[]) {
 
   if(!query) return EXIT_SUCCESS;	/* must have been something earlier */
 
-  /* query stuff after this line */
-  
-  cmon = xmalloc(sizeof(struct cyclades_control) * numfiles);
-
-  if(signal(SIGINT, summary)||
-     signal(SIGQUIT, summary)||
-     signal(SIGTERM, summary)) {
-    err(EXIT_FAILURE, _("cannot set signal handler"));
-  }
-  if(gettimeofday(&lasttime,&tz)) {
-    err(EXIT_FAILURE, _("gettimeofday failed"));
-  }
-  for(i = optind; i < argc; i ++) {
-    cmon_index = i - optind;
-    cmon[cmon_index].cfile = open(argv[i], O_RDONLY);
-    if(-1 == cmon[cmon_index].cfile) {
-      err(EXIT_FAILURE, _("cannot open %s"),argv[i]);
-    }
-    if(ioctl(cmon[cmon_index].cfile, CYGETMON, &cmon[cmon_index].c)) {
-      err(EXIT_FAILURE, _("cannot issue CYGETMON on %s"),argv[i]);
-    }
-    summary(-1);
-    if(ioctl(cmon[cmon_index].cfile, CYGETTHRESH, &threshold_value)) {
-      err(EXIT_FAILURE, _("cannot get threshold for %s"),argv[i]);
-    }
-    if(ioctl(cmon[cmon_index].cfile, CYGETTIMEOUT, &timeout_value)) {
-      err(EXIT_FAILURE, _("cannot get timeout for %s"),argv[i]);
-    }
-  }
-  while(1) {
-    sleep(interval);
-    
-    if(gettimeofday(&thistime,&tz)) {
-      err(EXIT_FAILURE, _("gettimeofday failed"));
-    }
-    diff = dtime(&thistime, &lasttime);
-    mvtime(&lasttime, &thistime);
-
-    for(i = optind; i < argc; i ++) {
-      cmon_index = i - optind;
-      if(ioctl(cmon[cmon_index].cfile, CYGETMON, &cywork)) {
-        err(EXIT_FAILURE, _("cannot issue CYGETMON on %s"),argv[i]);
-      }
-      if(ioctl(cmon[cmon_index].cfile, CYGETTHRESH, &threshold_value)) {
-        err(EXIT_FAILURE, _("cannot get threshold for %s"),argv[i]);
-      }
-      if(ioctl(cmon[cmon_index].cfile, CYGETTIMEOUT, &timeout_value)) {
-        err(EXIT_FAILURE, _("cannot get timeout for %s"),argv[i]);
-      }
-
-      xfer_rate = cywork.char_count/diff;
-#ifdef XMIT
-      xmit_rate = cywork.send_count/diff;
-#endif
-
-      if(threshold_value != cmon[cmon_index].threshold_value ||
-	 timeout_value != cmon[cmon_index].timeout_value) {
-	summary(-2);
-	/* Note that the summary must come before the setting of */
-	/* threshold_value */
-	cmon[cmon_index].threshold_value = threshold_value;	 
-	cmon[cmon_index].timeout_value = timeout_value;	 
-      } else {
-	/* Don't record this first cycle after change */
-	if(xfer_rate > cmon[cmon_index].maxtran) 
-	  cmon[cmon_index].maxtran = xfer_rate;
-#ifdef XMIT
-	if(xmit_rate > cmon[cmon_index].maxxmit)
-          cmon[cmon_index].maxxmit = xmit_rate;
-#endif
-	if(cmon[cmon_index].maxmax < 0 ||
-	   cywork.char_max > (unsigned long) cmon[cmon_index].maxmax)
-	  cmon[cmon_index].maxmax = cywork.char_max;
-      }
-
-#ifdef XMIT
-      printf(_("%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, "
-	       "%lu max, %lu now\n"),
-	     argv[i],
-	     cywork.int_count,cywork.char_count,cywork.send_count,
-	     threshold_value,timeout_value,
-	     cywork.char_max,cywork.char_last);
-      printf(_("   %f int/sec; %f rec, %f send (char/sec)\n"),
-	     cywork.int_count/diff,
-	     xfer_rate,
-	     xmit_rate);
-#else
-      printf(_("%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, "
-	       "%lu max, %lu now\n"),
-	     argv[i],
-	     cywork.int_count,cywork.char_count,
-	     threshold_value,timeout_value,
-	     cywork.char_max,cywork.char_last);
-      printf(_("   %f int/sec; %f rec (char/sec)\n"),
-	     cywork.int_count/diff,
-	     xfer_rate);
-#endif
-      memcpy(&cmon[cmon_index].c, &cywork, sizeof (struct cyclades_monitor));
-    }
-  }
+  query_tty_stats(argc, argv, interval, numfiles, &threshold_value, &timeout_value);
 
   return EXIT_SUCCESS;
 }
