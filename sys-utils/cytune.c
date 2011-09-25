@@ -55,6 +55,7 @@
 
 #include "c.h"
 #include "cyclades.h"
+#include "strutils.h"
 
 #if 0
 #ifndef XMIT
@@ -218,41 +219,41 @@ int main(int argc, char *argv[]) {
       query = 1;
       break;
     case 'i':
-      interval = atoi(optarg);
+      interval = (int) strtoul_or_err(optarg, _("Invalid interval value"));
       if(interval <= 0) {
-	fprintf(stderr, _("Invalid interval value: %s\n"),optarg);
+	warnx( _("Invalid interval value: %d"),interval);
 	errflg ++;
       }
       break;
     case 's':
       ++set;
-      set_val = atoi(optarg);
+      set_val = (int) strtoul_or_err(optarg, _("Invalid set value"));
       if(set_val <= 0 || set_val > 12) {
-	fprintf(stderr, _("Invalid set value: %s\n"),optarg);
+	warnx(_("Invalid set value: %d"),set_val);
 	errflg ++;
       }
       break;
     case 'S':
        ++set_def;
-      set_def_val = atoi(optarg);
+      set_def_val = (int) strtoul_or_err(optarg, _("Invalid default value"));
       if(set_def_val < 0 || set_def_val > 12) {
-	fprintf(stderr, _("Invalid default value: %s\n"),optarg);
+	warnx(_("Invalid default value: %d"),set_def_val);
 	errflg ++;
       }
       break;
     case 't':
       ++set_time;
-      set_time_val = atoi(optarg);
+      set_time_val = (int) strtoul_or_err(optarg, _("Invalid set time value"));
       if(set_time_val <= 0 || set_time_val > 255) {
-	fprintf(stderr, _("Invalid set time value: %s\n"),optarg);
+	warnx(_("Invalid set time value: %d"),set_time_val);
 	errflg ++;
       }
       break;
     case 'T':
        ++set_def_time;
-      set_def_time_val = atoi(optarg);
+      set_def_time_val = (int) strtoul_or_err(optarg, _("Invalid default time value"));
       if(set_def_time_val < 0 || set_def_time_val > 255) {
-	fprintf(stderr, _("Invalid default time value: %s\n"),optarg);
+	warnx(_("Invalid default time value: %d"), set_def_time_val);
 	errflg ++;
       }
       break;

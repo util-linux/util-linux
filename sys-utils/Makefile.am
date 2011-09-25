@@ -33,7 +33,7 @@ endif
 
 endif
 
-cytune_SOURCES = cytune.c cyclades.h
+cytune_SOURCES = cytune.c cyclades.h $(top_srcdir)/lib/strutils.c
 tunelp_SOURCES = tunelp.c lp.h
 fstrim_SOURCES = fstrim.c $(top_srcdir)/lib/strutils.c
 rtcwake_SOURCES = rtcwake.c $(top_srcdir)/lib/strutils.c
