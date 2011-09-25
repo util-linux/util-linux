@@ -132,18 +132,20 @@ summary(int sig) {
   if (sig > 0) {
     for(i = local_optind; i < argc; i ++) {
       cc = &cmon[cmon_index];
-      fprintf(stderr, _("File %s, For threshold value %lu, Maximum characters in fifo were %d,\nand the maximum transfer rate in characters/second was %f\n"), 
+      warnx(_("File %s, For threshold value %lu, Maximum characters in fifo were %d,\n"
+              "and the maximum transfer rate in characters/second was %f"),
 	      argv[i],
 	      cc->threshold_value,
 	      cc->maxmax,
 	      cc->maxtran);
     }
     
-    exit(0);
+    exit(EXIT_SUCCESS);
   }
   cc = &cmon[cmon_index];
   if (cc->threshold_value > 0 && sig != -1) {
-    fprintf(stderr, _("File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\nand the maximum transfer rate in characters/second was %f\n"),
+    warnx(_("File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\n"
+            "and the maximum transfer rate in characters/second was %f"),
 	    argv[cmon_index+local_optind],
 	    cc->threshold_value,
 	    cc->timeout_value,
@@ -284,17 +286,13 @@ int main(int argc, char *argv[]) {
     for(i = optind; i < argc; i++) {
       file = open(argv[i],O_RDONLY);
       if(file == -1) {
-        int errsv = errno;
-	fprintf(stderr, _("Can't open %s: %s\n"),argv[i],strerror(errsv));
-	exit(1);
+	err(EXIT_FAILURE, _("cannot open %s"),argv[i]);
       }
       if(ioctl(file,
 	       set ? CYSETTHRESH : CYSETDEFTHRESH,
 	       set ? set_val : set_def_val)) {
-	int errsv = errno;
-	fprintf(stderr, _("Can't set %s to threshold %d: %s\n"),
-		argv[i],set?set_val:set_def_val,strerror(errsv));
-	exit(1);
+        err(EXIT_FAILURE, _("cannot set %s to threshold %d"),
+		argv[i],set?set_val:set_def_val);
       }
       close(file);
     }
@@ -303,17 +301,13 @@ int main(int argc, char *argv[]) {
     for(i = optind; i < argc; i++) {
       file = open(argv[i],O_RDONLY);
       if(file == -1) {
-        int errsv = errno;
-	fprintf(stderr, _("Can't open %s: %s\n"),argv[i],strerror(errsv));
-	exit(1);
+	err(EXIT_FAILURE, _("cannot open %s"),argv[i]);
       }
       if(ioctl(file,
 	       set_time ? CYSETTIMEOUT : CYSETDEFTIMEOUT,
 	       set_time ? set_time_val : set_def_time_val)) {
-	int errsv = errno;
-	fprintf(stderr, _("Can't set %s to time threshold %d: %s\n"),
-		argv[i],set_time?set_time_val:set_def_time_val,strerror(errsv));
-	exit(1);
+	err(EXIT_FAILURE, _("cannot set %s to time threshold %d"),
+		argv[i],set_time?set_time_val:set_def_time_val);
       }
       close(file);
     }
@@ -323,21 +317,14 @@ int main(int argc, char *argv[]) {
     for(i = optind; i < argc; i++) {
       file = open(argv[i],O_RDONLY);
       if(file == -1) {
-        int errsv = errno;
-	fprintf(stderr, _("Can't open %s: %s\n"),argv[i],strerror(errsv));
-	exit(1);
+        err(EXIT_FAILURE, _("cannot open %s"),argv[i]);
       }
       if(ioctl(file, get ? CYGETTHRESH : CYGETDEFTHRESH, &threshold_value)) {
-        int errsv = errno;
-	fprintf(stderr, _("Can't get threshold for %s: %s\n"),
-		argv[i],strerror(errsv));
-	exit(1);
+        err(EXIT_FAILURE, _("cannot get threshold for %s"),
+		argv[i]);
       }
       if(ioctl(file, get ? CYGETTIMEOUT : CYGETDEFTIMEOUT, &timeout_value)) {
-      	int errsv = errno;
-	fprintf(stderr, _("Can't get timeout for %s: %s\n"),
-		argv[i],strerror(errsv));
-	exit(1);
+	err(EXIT_FAILURE, _("cannot get timeout for %s"), argv[i]);
       }
       close(file);
       if (get)
@@ -349,7 +336,7 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  if(!query) return 0;		/* must have been something earlier */
+  if(!query) return EXIT_SUCCESS;	/* must have been something earlier */
 
   /* query stuff after this line */
   
@@ -358,47 +345,33 @@ int main(int argc, char *argv[]) {
   if(signal(SIGINT, summary)||
      signal(SIGQUIT, summary)||
      signal(SIGTERM, summary)) {
-    perror(_("Can't set signal handler"));
-    exit(1);
+    err(EXIT_FAILURE, _("cannot set signal handler"));
   }
   if(gettimeofday(&lasttime,&tz)) {
-    perror(_("gettimeofday failed"));
-    exit(1);
+    err(EXIT_FAILURE, _("gettimeofday failed"));
   }
   for(i = optind; i < argc; i ++) {
     cmon_index = i - optind;
     cmon[cmon_index].cfile = open(argv[i], O_RDONLY);
     if(-1 == cmon[cmon_index].cfile) {
-      int errsv = errno;
-      fprintf(stderr, _("Can't open %s: %s\n"),argv[i],strerror(errsv));
-      exit(1);
+      err(EXIT_FAILURE, _("cannot open %s"),argv[i]);
     }
     if(ioctl(cmon[cmon_index].cfile, CYGETMON, &cmon[cmon_index].c)) {
-      int errsv = errno;
-      fprintf(stderr, _("Can't issue CYGETMON on %s: %s\n"),
-	      argv[i],strerror(errsv));
-      exit(1);
+      err(EXIT_FAILURE, _("cannot issue CYGETMON on %s"),argv[i]);
     }
     summary(-1);
     if(ioctl(cmon[cmon_index].cfile, CYGETTHRESH, &threshold_value)) {
-      int errsv = errno;
-      fprintf(stderr, _("Can't get threshold for %s: %s\n"),
-	      argv[i],strerror(errsv));
-      exit(1);
+      err(EXIT_FAILURE, _("cannot get threshold for %s"),argv[i]);
     }
     if(ioctl(cmon[cmon_index].cfile, CYGETTIMEOUT, &timeout_value)) {
-      int errsv = errno;
-      fprintf(stderr, _("Can't get timeout for %s: %s\n"),
-	      argv[i],strerror(errsv));
-      exit(1);
+      err(EXIT_FAILURE, _("cannot get timeout for %s"),argv[i]);
     }
   }
   while(1) {
     sleep(interval);
     
     if(gettimeofday(&thistime,&tz)) {
-      perror(_("gettimeofday failed"));
-      exit(1);
+      err(EXIT_FAILURE, _("gettimeofday failed"));
     }
     diff = dtime(&thistime, &lasttime);
     mvtime(&lasttime, &thistime);
@@ -406,22 +379,13 @@ int main(int argc, char *argv[]) {
     for(i = optind; i < argc; i ++) {
       cmon_index = i - optind;
       if(ioctl(cmon[cmon_index].cfile, CYGETMON, &cywork)) {
-        int errsv = errno;
-	fprintf(stderr, _("Can't issue CYGETMON on %s: %s\n"),
-		argv[i],strerror(errsv));
-	exit(1);
+        err(EXIT_FAILURE, _("cannot issue CYGETMON on %s"),argv[i]);
       }
       if(ioctl(cmon[cmon_index].cfile, CYGETTHRESH, &threshold_value)) {
-        int errsv = errno;
-	fprintf(stderr, _("Can't get threshold for %s: %s\n"),
-		argv[i],strerror(errsv));
-	exit(1);
+        err(EXIT_FAILURE, _("cannot get threshold for %s"),argv[i]);
       }
       if(ioctl(cmon[cmon_index].cfile, CYGETTIMEOUT, &timeout_value)) {
-        int errsv = errno;
-	fprintf(stderr, _("Can't get timeout for %s: %s\n"),
-		argv[i],strerror(errsv));
-	exit(1);
+        err(EXIT_FAILURE, _("cannot get timeout for %s"),argv[i]);
       }
 
       xfer_rate = cywork.char_count/diff;
@@ -475,5 +439,5 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
