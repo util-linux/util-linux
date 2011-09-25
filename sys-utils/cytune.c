@@ -246,8 +246,8 @@ void query_tty_stats(int argc, char **argv, int interval, int numfiles,
 			printf(_("%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, "
 				 "%lu max, %lu now\n"), argv[i],
 			       cywork.int_count, cywork.char_count,
-			       cywork.send_count, threshold_value,
-			       timeout_value, cywork.char_max,
+			       cywork.send_count, *threshold_value,
+			       *timeout_value, cywork.char_max,
 			       cywork.char_last);
 			printf(_("   %f int/sec; %f rec, %f send (char/sec)\n"),
 			       cywork.int_count / diff, xfer_rate, xmit_rate);
@@ -255,7 +255,7 @@ void query_tty_stats(int argc, char **argv, int interval, int numfiles,
 			printf(_("%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, "
 				 "%lu max, %lu now\n"), argv[i],
 			       cywork.int_count, cywork.char_count,
-			       threshold_value, timeout_value, cywork.char_max,
+			       *threshold_value, *timeout_value, cywork.char_max,
 			       cywork.char_last);
 			printf(_("   %f int/sec; %f rec (char/sec)\n"),
 			       cywork.int_count / diff, xfer_rate);
