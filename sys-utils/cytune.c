@@ -40,6 +40,7 @@
   * - fixed strerr(errno) in gettext calls
   */
 
+#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -52,6 +53,7 @@
 #include <signal.h>
 #include <termios.h>
 
+#include "c.h"
 #include "cyclades.h"
 
 #if 0
@@ -83,6 +85,26 @@ int cmon_index;
 
 #define mvtime(tvpto, tvpfrom)  (((tvpto)->tv_sec = (tvpfrom)->tv_sec),(tvpto)->tv_usec = (tvpfrom)->tv_usec)
 
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
+{
+	fprintf(out, USAGE_HEADER);
+	fprintf(out, _(" %s [options] <tty> [...]\n"), program_invocation_short_name);
+	fprintf(out, USAGE_OPTIONS);
+	fprintf(out, _(" -s, --set-threshold <num>          set interruption threshold value\n"));
+	fprintf(out, _(" -g, --get-threshold                display current threshold value\n"));
+	fprintf(out, _(" -S, --set-default-threshold <num>  set default threshold value\n"));
+	fprintf(out, _(" -t, --set-flush <num>              set flush timeout to value\n"));
+	fprintf(out, _(" -G, --get-glush                    display default flush timeout value\n"));
+	fprintf(out, _(" -T, --set-default-flush <num>      set the default flush timeout to value\n"));
+	fprintf(out, _(" -q, --stats                        display statistics about the tty\n"));
+	fprintf(out, _(" -i, --interval <seconds>           gather statistics every <seconds> interval\n"));
+	fprintf(out, USAGE_SEPARATOR);
+	fprintf(out, USAGE_HELP);
+	fprintf(out, USAGE_VERSION);
+	fprintf(out, USAGE_MAN_TAIL("cytune(8)"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
 
 static inline double
 dtime(struct timeval * tvpnew, struct timeval * tvpold) {
@@ -169,6 +191,20 @@ int main(int argc, char *argv[]) {
   double xmit_rate;
 #endif
   
+  static const struct option longopts[] = {
+    {"set-threshold", required_argument, NULL, 's'},
+    {"get-threshold", no_argument, NULL, 'g'},
+    {"set-default-threshold", required_argument, NULL, 'S'},
+    {"set-flush", required_argument, NULL, 't'},
+    {"get-flush", no_argument, NULL, 'G'},
+    {"set-default-flush", required_argument, NULL, 'T'},
+    {"stats", no_argument, NULL, 'q'},
+    {"interval", required_argument, NULL, 'i'},
+    {"version", no_argument, NULL, 'V'},
+    {"help", no_argument, NULL, 'h'},
+    {NULL, 0, NULL, 0}
+  };
+
   global_argc = argc;		/* For signal routine. */
   global_argv = &argv;		/* For signal routine. */
 
@@ -176,7 +212,7 @@ int main(int argc, char *argv[]) {
   bindtextdomain(PACKAGE, LOCALEDIR);
   textdomain(PACKAGE);
 
-  while ((i = getopt(argc, argv, "qs:S:t:T:gGi:")) != -1) {
+  while ((i = getopt_long(argc, argv, "qs:S:t:T:gGi:Vh", longopts, NULL)) != -1) {
     switch (i) {
     case 'q':
       query = 1;
@@ -222,8 +258,14 @@ int main(int argc, char *argv[]) {
       break;
     case 'g': ++get;     break;
     case 'G': ++get_def; break;
+    case 'V':
+      printf(_("%s from %s\n"), program_invocation_short_name,
+             PACKAGE_STRING);
+      return EXIT_SUCCESS;
+    case 'h':
+      usage(stdout);
     default:
-      errflg ++;
+      usage(stderr);
     }
   }
   numfiles = argc - optind;
@@ -232,10 +274,7 @@ int main(int argc, char *argv[]) {
 	 !get && !get_def && !set_time && !set_def_time) || 
      (set && set_def) || (set_time && set_def_time) || 
      (get && get_def)) {
-    fprintf(stderr, 
-	    _("Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) [-g|-G] file [file...]\n"),
-	    argv[0]);
-    exit(1);
+     usage(stderr);
   }
 
   global_optind = optind;	/* For signal routine. */
