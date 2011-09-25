@@ -73,30 +73,15 @@ static void timeout_handler(int sig __attribute__((__unused__)))
 	timeout_expired = 1;
 }
 
-static char *strtotimeval(const char *str, struct timeval *tv)
+static void strtotimeval(const char *str, struct timeval *tv)
 {
-	char *s;
-	/* Fractional seconds */
-	long fs;
-	int i;
+	double user_input;
 
-	tv->tv_sec = strtol(str, &s, 10);
-	fs = 0;
-	if (*s == '.') {
-		s++;
-		for (i = 0; i < 6; i++) {
-			if (!isdigit(*s))
-				break;
-			fs *= 10;
-			fs += *s++ - '0';
-		}
-		for (; i < 6; i++)
-			fs *= 10;
-		while (isdigit(*s))
-			s++;
-	}
-	tv->tv_usec = fs;
-	return s;
+	user_input = strtod_or_err(str, "bad number");
+	tv->tv_sec = (time_t) user_input;
+	tv->tv_usec = (long)((user_input - tv->tv_sec) * 1000000);
+	if ((tv->tv_sec + tv->tv_usec) == 0)
+		errx(EX_USAGE, _("timeout cannot be zero"));
 }
 
 int main(int argc, char *argv[])
@@ -110,7 +95,6 @@ int main(int argc, char *argv[])
 	int opt, ix;
 	int do_close = 0;
 	int status;
-	char *eon;
 	char **cmd_argv = NULL, *sh_c_argv[4];
 	const char *filename = NULL;
 	struct sigaction sa, old_sa;
@@ -161,9 +145,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'w':
 			have_timeout = 1;
-			eon = strtotimeval(optarg, &timeout.it_value);
-			if (*eon)
-				usage(EX_USAGE);
+			strtotimeval(optarg, &timeout.it_value);
 			break;
 		case 'V':
 			printf("flock (%s)\n", PACKAGE_STRING);
