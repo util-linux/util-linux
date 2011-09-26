@@ -1459,7 +1459,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 			case '#':
 				cp->erase = ascval; /* set erase character */
 				if (bp > logname) {
-					if ((tp->c_cflag & (ECHO)) == 0)
+					if ((tp->c_lflag & ECHO) == 0)
 						write_all(1, erase[cp->parity], 3);
 					bp--;
 				}
@@ -1468,7 +1468,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 			case '@':
 				cp->kill = ascval;		/* set kill character */
 				while (bp > logname) {
-					if ((tp->c_cflag & (ECHO)) == 0)
+					if ((tp->c_lflag & ECHO) == 0)
 						write_all(1, erase[cp->parity], 3);
 					bp--;
 				}
@@ -1480,7 +1480,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 					break;
 				if ((size_t)(bp - logname) >= sizeof(logname) - 1)
 					log_err(_("%s: input overrun"), op->tty);
-				if ((tp->c_cflag & (ECHO)) == 0)
+				if ((tp->c_lflag & ECHO) == 0)
 					write_all(1, &c, 1);	/* echo the character */
 				*bp++ = ascval;			/* and store it */
 				break;
