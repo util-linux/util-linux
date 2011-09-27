@@ -89,9 +89,12 @@ enum {
 static void __attribute__((__noreturn__))
 show_help(void)
 {
-  printf(_("Usage: %s%s [options] [program [program arguments]]\n\nOptions:\n"),
-         program_invocation_short_name, !strcmp(program_invocation_short_name, "setarch") ? " <arch>" : "");
+   printf(USAGE_HEADER);
+   printf(_(" %s%s [options] [program [program arguments]]\n"),
+         program_invocation_short_name,
+	 !strcmp(program_invocation_short_name, "setarch") ? " <arch>" : "");
 
+   printf(USAGE_OPTIONS);
    printf(_(
    " -v, --verbose            says what options are being switched on\n"
    " -R, --addr-no-randomize  disables randomization of the virtual address space\n"
@@ -104,14 +107,14 @@ show_help(void)
    " -S, --whole-seconds      turns on WHOLE_SECONDS\n"
    " -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
    " -3, --3gb                limits the used address space to a maximum of 3 GB\n"
-   "     --4gb                ignored (for backward compatibility only)\n"));
-
-   printf(_(
+   "     --4gb                ignored (for backward compatibility only)\n"
    "     --uname-2.6          turns on UNAME26\n"));
+
+  printf(USAGE_SEPARATOR);
   printf(USAGE_HELP);
   printf(USAGE_VERSION);
+  printf(USAGE_MAN_TAIL("setarch(8)"));
 
-  printf(_("\nFor more information see setarch(8).\n"));
   exit(EXIT_SUCCESS);
 }
 
