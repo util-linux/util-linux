@@ -230,15 +230,15 @@ enum {
 static const char *colnames[] =
 {
 	[COL_CPU] = "CPU",
-	[COL_CORE] = "Core",
-	[COL_SOCKET] = "Socket",
-	[COL_NODE] = "Node",
-	[COL_BOOK] = "Book",
-	[COL_CACHE] = "Cache",
-	[COL_POLARIZATION] = "Polarization",
-	[COL_ADDRESS] = "Address",
-	[COL_CONFIGURED] = "Configured",
-	[COL_ONLINE] = "Online",
+	[COL_CORE] = "CORE",
+	[COL_SOCKET] = "SOCKET",
+	[COL_NODE] = "NODE",
+	[COL_BOOK] = "BOOK",
+	[COL_CACHE] = "CACHE",
+	[COL_POLARIZATION] = "POLARIZATION",
+	[COL_ADDRESS] = "ADDRESS",
+	[COL_CONFIGURED] = "CONFIGURED",
+	[COL_ONLINE] = "ONLINE",
 };
 
 
@@ -1089,6 +1089,8 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 
 	fputs("# ", stdout);
 	for (i = 0; i < ncols; i++) {
+		char *p;
+
 		if (cols[i] == COL_CACHE) {
 			if (mod->compat && !desc->ncaches)
 				continue;
@@ -1098,7 +1100,11 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 		if (i > 0)
 			putchar(',');
 
-		data = get_cell_header(desc, cols[i], mod, buf, sizeof(buf));
+		p = data = get_cell_header(desc, cols[i],
+					   mod, buf, sizeof(buf));
+		while (p && *p != '\0')
+			*p++ = tolower((unsigned int) *p);
+
 		fputs(data && *data ? data : "", stdout);
 	}
 	putchar('\n');
@@ -1144,10 +1150,7 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 		 err(EXIT_FAILURE, _("failed to initialize output table"));
 
 	for (i = 0; i < ncols; i++) {
-		char *p = data = get_cell_header(desc, cols[i],
-						 mod, buf, sizeof(buf));
-		while (p && *p != '\0')
-			*p++ = toupper((unsigned int) *p);
+		data = get_cell_header(desc, cols[i], mod, buf, sizeof(buf));
 		tt_define_column(tt, xstrdup(data), 0, 0);
 	}
 
@@ -1332,11 +1335,13 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fputs(_("\nUsage:\n"), out);
+	size_t i;
+
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options]\n"), program_invocation_short_name);
 
-	fputs(_("\nOptions:\n"), out);
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all               print online and offline CPUs (default for -e)\n"
 		" -b, --online            print online CPUs only (default for -p)\n"
 		" -e, --extended[=<list>] print out a extended readable format\n"
@@ -1344,7 +1349,16 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -p, --parse[=<list>]    print out a parsable format\n"
 		" -s, --sysroot <dir>     use directory DIR as system root\n"
 		" -V, --version           print version information and exit\n"
-		" -x, --hex               print hexadecimal masks rather than lists of CPUs\n\n"), out);
+		" -x, --hex               print hexadecimal masks rather than lists of CPUs\n"), out);
+
+	fprintf(out, _("\nAvailable columns:\n"));
+
+	for (i = 0; i < ARRAY_SIZE(colnames); i++) {
+		fprintf(out, " %-13s", colnames[i]);
+		if (i && (i+1) % 5 == 0)
+			fputc('\n', out);
+	}
+	fprintf(out, _("\nFor more details see lscpu(1).\n"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
