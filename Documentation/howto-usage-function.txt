@@ -56,6 +56,7 @@ Options:
                            description on two, or multiple lines, where the
                            consecutive lines are intended by two spaces
  -f, --foobar            next option description resets indent
+
  -h, --help     display this help and exit
  -V, --version  output version information and exit
 
@@ -83,9 +84,8 @@ translation work.
 The argument, e.g. `arg', can be better. For example if an option is
 expecting number as argument a `num' is suitable argument description.
 
-Order of the options has no special meaning. It is good idea to write
-options that are somehow related next to each other. Usually --help and
---version, in this order, are last options in print out.
+Order of the options has no special meaning, with a exception of --help and
+--version which are expected to be last ones of the list.
 
 Last line of the usage print out is either empty, or a message informing
 about manual page. For example: `For more details see example(1).' In

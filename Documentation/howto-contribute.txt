@@ -98,3 +98,21 @@ Various notes
 
 	* Patches relying on features that are not in Linus' tree
 	  are not accepted.
+
+	* Do not use `else' after non-returning functions. For
+	  example
+
+	  if (this)
+		err(EXIT_FAIL, "this failed");
+	  else
+		err(EXIT_FAIL, "that failed");
+
+	  is wrong and should be wrote
+
+	  if (this)
+		err(EXIT_FAIL, "this failed");
+	  err(EXIT_FAIL, "that failed");
+
+	* When you use if shortshort hand make sure it is not wrapped to
+	  multiple lines. In case the shorthand does not look good on one
+	  line use normal "if () else" syntax.
