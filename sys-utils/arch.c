@@ -30,10 +30,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fprintf(out, USAGE_HEADER);
 	/* Synopsis */
-	fprintf(out, " %s\n", program_invocation_short_name);
+	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 	fprintf(out, USAGE_OPTIONS);
-	/* Additional options to here. */
-	fprintf(out, USAGE_SEPARATOR);
 	fprintf(out, USAGE_HELP);
 	fprintf(out, USAGE_VERSION);
 	fprintf(out, USAGE_MAN_TAIL("arch(1)"));
