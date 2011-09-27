@@ -1309,10 +1309,10 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		print_s(_("Hypervisor:"), desc->hypervisor);
 	if (desc->hyper) {
 		print_s(_("Hypervisor vendor:"), hv_vendors[desc->hyper]);
-		print_s(_("Virtualization type:"), virt_types[desc->virtype]);
+		print_s(_("Virtualization type:"), _(virt_types[desc->virtype]));
 	}
 	if (desc->dispatching >= 0)
-		print_s(_("Dispatching mode:"), disp_modes[desc->dispatching]);
+		print_s(_("Dispatching mode:"), _(disp_modes[desc->dispatching]));
 	if (desc->ncaches) {
 		char buf[512];
 		int i;
