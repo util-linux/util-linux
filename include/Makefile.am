@@ -22,6 +22,7 @@ dist_noinst_HEADERS = \
 	md5.h \
 	minix.h \
 	nls.h \
+	path.h \
 	pathnames.h \
 	procutils.h \
 	setproctitle.h \
