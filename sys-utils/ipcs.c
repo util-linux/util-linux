@@ -115,7 +115,7 @@ void print_sem (int id);
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fprintf(out, USAGE_HEADER);
-	fprintf(out, " %s [resource] [...] [output-format]\n", program_invocation_short_name);
+	fprintf(out, " %s [resource ...] [output-format]\n", program_invocation_short_name);
 	fprintf(out, " %s [resource] -i <id>\n", program_invocation_short_name);
 	fprintf(out, USAGE_OPTIONS);
 	fputs(_(" -i, --id <id>  print details on resource identified by id\n"), out);
