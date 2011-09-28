@@ -64,7 +64,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-int remove_id(int type, int iskey, int id)
+static int remove_id(int type, int iskey, int id)
 {
         int ret;
 	char *errmsg;
@@ -163,7 +163,7 @@ static int deprecated_main(int argc, char **argv)
 	return 1;
 }
 
-unsigned long strtokey(const char *str, const char *errmesg)
+static unsigned long strtokey(const char *str, const char *errmesg)
 {
 	unsigned long num;
 	char *end = NULL;
@@ -230,7 +230,7 @@ static int key_to_id(type_id type, char *optarg)
 	return id;
 }
 
-int remove_all(type_id type)
+static int remove_all(type_id type)
 {
 	int ret = 0;
 	int id, rm_me, maxid;
