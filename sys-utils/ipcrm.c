@@ -323,52 +323,45 @@ int main(int argc, char **argv)
 		return EXIT_SUCCESS;
 
 	/* process new syntax to conform with SYSV ipcrm */
-	for (id = -1;
-	    (c = getopt_long(argc, argv, "q:m:s:Q:M:S:a::vhV", longopts, NULL)) != -1;
-	    id = -1) {
+	while((c = getopt_long(argc, argv, "q:m:s:Q:M:S:a::vhV", longopts, NULL)) != -1) {
+		iskey = 0;
 		switch (c) {
 		case 'M':
-			iskey = 0;
+			iskey = 1;
 			id = key_to_id(SHM, optarg);
 			if (id < 0) {
 				ret++;
 				break;
 			}
 		case 'm':
-			if (id < 0) {
-				iskey = 1;
+			if (!iskey)
 				id = strtoll_or_err(optarg, _("failed to parse argument"));
-			}
 			if (remove_id(SHM, iskey, id))
 				ret++;
 			break;
 		case 'Q':
-			iskey = 0;
+			iskey = 1;
 			id = key_to_id(MSG, optarg);
 			if (id < 0) {
 				ret++;
 				break;
 			}
 		case 'q':
-			if (id < 0) {
-				iskey = 1;
+			if (!iskey)
 				id = strtoll_or_err(optarg, _("failed to parse argument"));
-			}
 			if (remove_id(MSG, iskey, id))
 				ret++;
 			break;
 		case 'S':
-			iskey = 0;
+			iskey = 1;
 			id = key_to_id(SEM, optarg);
 			if (id < 0) {
 				ret++;
 				break;
 			}
 		case 's':
-			if (id < 0) {
-				iskey = 1;
+			if (!iskey)
 				id = strtoll_or_err(optarg, _("failed to parse argument"));
-			}
 			if (remove_id(SEM, iskey, id))
 				ret++;
 			break;
