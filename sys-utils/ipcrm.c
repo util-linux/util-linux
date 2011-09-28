@@ -107,9 +107,7 @@ static int remove_id(int type, int iskey, int id)
 			errmsg = iskey ? _("already removed key") : _("already removed id");
 			break;
 		default:
-			if (iskey)
-				err(EXIT_FAILURE, _("key failed"));
-			err(EXIT_FAILURE, _("id failed"));
+			err(EXIT_FAILURE, iskey ? _("key failed") : _("id failed"));
 		}
 		warnx("%s (%d)", errmsg, id);
 		return 1;
