@@ -887,6 +887,7 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	memset(&lc->info, 0, sizeof(lc->info));
 	lc->has_info = 0;
 
+	DBG(lc, loopdev_debug("setup success [rc=0]"));
 	return 0;
 err:
 	if (file_fd >= 0)
@@ -894,7 +895,7 @@ err:
 	if (dev_fd >= 0)
 		ioctl(dev_fd, LOOP_CLR_FD, 0);
 
-	DBG(lc, loopdev_debug("setup done [rc=%d]", rc));
+	DBG(lc, loopdev_debug("setup failed [rc=%d]", rc));
 	return rc;
 }
 

@@ -34,8 +34,8 @@
 #include "sundries.h"
 #include "mount_mntent.h"
 #include "fstab.h"
-#include "lomount.h"
-#include "loop.h"
+#include "loopdev.h"
+#include "linux_version.h"
 #include "getusername.h"
 #include "env.h"
 #include "nls.h"
@@ -268,8 +268,8 @@ print_one (const struct my_mntent *me) {
 	 * mount(8) output if the device has been initialized by mount(8).
 	 */
 	if (strncmp(me->mnt_fsname, "/dev/loop", 9) == 0 &&
-	    is_loop_autoclear(me->mnt_fsname))
-		fsname = loopdev_get_loopfile(me->mnt_fsname);
+	    loopdev_is_autoclear(me->mnt_fsname))
+		fsname = loopdev_get_backing_file(me->mnt_fsname);
 
 	if (!fsname)
 		fsname = (char *) me->mnt_fsname;
@@ -1160,8 +1160,8 @@ is_mounted_same_loopfile(const char *node0, const char *loopfile, unsigned long 
 		char *p;
 
 		if (strncmp(mnt->m.mnt_fsname, "/dev/loop", 9) == 0)
-			res = loopfile_used_with((char *) mnt->m.mnt_fsname,
-					loopfile, offset);
+			res = loopdev_is_used((char *) mnt->m.mnt_fsname,
+					loopfile, offset, LOOPDEV_FL_OFFSET);
 
 		else if (mnt->m.mnt_opts &&
 			 (p = strstr(mnt->m.mnt_opts, "loop=")))
@@ -1169,7 +1169,8 @@ is_mounted_same_loopfile(const char *node0, const char *loopfile, unsigned long 
 			char *dev = xstrdup(p+5);
 			if ((p = strchr(dev, ',')))
 				*p = '\0';
-			res = loopfile_used_with(dev, loopfile, offset);
+			res =  loopdev_is_used(dev,
+					loopfile, offset, LOOPDEV_FL_OFFSET);
 			free(dev);
 		}
 	}
@@ -1199,6 +1200,7 @@ loop_check(const char **spec, const char **type, int *flags,
 	   const char *node) {
   int looptype;
   uintmax_t offset = 0, sizelimit = 0;
+  struct loopdev_cxt lc;
 
   /*
    * In the case of a loop mount, either type is of the form lo@/dev/loop5
@@ -1249,7 +1251,6 @@ loop_check(const char **spec, const char **type, int *flags,
 	printf(_("mount: skipping the setup of a loop device\n"));
     } else {
       int loop_opts = 0;
-      int res;
 
       /* since 2.6.37 we don't have to store backing filename to mtab
        * because kernel provides the name in /sys
@@ -1259,11 +1260,11 @@ loop_check(const char **spec, const char **type, int *flags,
 
 	if (verbose)
 	  printf(_("mount: enabling autoclear loopdev flag\n"));
-	loop_opts = SETLOOP_AUTOCLEAR;
+	loop_opts = LO_FLAGS_AUTOCLEAR;
       }
 
       if (*flags & MS_RDONLY)
-        loop_opts |= SETLOOP_RDONLY;
+        loop_opts |= LO_FLAGS_READ_ONLY;
 
       if (opt_offset && parse_offset(&opt_offset, &offset)) {
         error(_("mount: invalid offset '%s' specified"), opt_offset);
@@ -1279,55 +1280,88 @@ loop_check(const char **spec, const char **type, int *flags,
         return EX_FAIL;
       }
 
+      loopcxt_init(&lc, 0);
+      /* loopcxt_enable_debug(&lc, 1); */
+
+      if (*loopdev && **loopdev)
+	loopcxt_set_device(&lc, *loopdev);	/* use loop=<devname> */
+
       do {
-        if (!*loopdev || !**loopdev)
-	  *loopdev = find_unused_loop_device();
-	if (!*loopdev)
-	  return EX_SYSERR;	/* no more loop devices */
+	int rc;
+
+        if ((!*loopdev || !**loopdev) && loopcxt_find_unused(&lc) == 0)
+	    *loopdev = loopcxt_strdup_device(&lc);
+
+	if (!*loopdev) {
+	  error(_("mount: failed to found free loop device"));
+	  goto err;	/* no more loop devices */
+	}
 	if (verbose)
 	  printf(_("mount: going to use the loop device %s\n"), *loopdev);
 
-	if ((res = set_loop(*loopdev, *loopfile, offset, sizelimit,
-			    opt_encryption, pfd, &loop_opts))) {
-	  if (res == 2) {
-	     /* loop dev has been grabbed by some other process,
-	        try again, if not given explicitly */
-	     if (!opt_loopdev) {
-	       if (verbose)
-	         printf(_("mount: stolen loop=%s ...trying again\n"), *loopdev);
-	       my_free(*loopdev);
-	       *loopdev = NULL;
-	       continue;
-	     }
-	     error(_("mount: stolen loop=%s"), *loopdev);
-	     return EX_FAIL;
+	rc = loopcxt_set_backing_file(&lc, *loopfile);
 
-	  } else {
-	     if (verbose)
-	       printf(_("mount: failed setting up loop device\n"));
-	     if (!opt_loopdev) {
-	       my_free(*loopdev);
-	       *loopdev = NULL;
-	     }
-	     return EX_FAIL;
-	  }
+	if (!rc && offset)
+	  rc = loopcxt_set_offset(&lc, offset);
+	if (!rc && sizelimit)
+	  rc = loopcxt_set_sizelimit(&lc, sizelimit);
+	if (!rc)
+	  loopcxt_set_flags(&lc, loop_opts);
+	if (rc) {
+	   error(_("mount: %s: failed to set loopdev attributes"), *loopdev);
+	   goto err;
 	}
+
+	/* setup the device */
+	rc = loopcxt_setup_device(&lc);
+	if (!rc)
+	  break;	/* success */
+
+	if (rc != -EBUSY) {
+	  if (verbose)
+	    printf(_("mount: failed setting up loop device\n"));
+	  if (!opt_loopdev) {
+	    my_free(*loopdev);
+	    *loopdev = NULL;
+	  }
+	  goto err;
+	}
+
+	if (!opt_loopdev) {
+	  if (verbose)
+	    printf(_("mount: stolen loop=%s ...trying again\n"), *loopdev);
+	    my_free(*loopdev);
+	    *loopdev = NULL;
+	    continue;
+	}
+	error(_("mount: stolen loop=%s"), *loopdev);
+	goto err;
+
       } while (!*loopdev);
 
       if (verbose > 1)
 	printf(_("mount: setup loop device successfully\n"));
       *spec = *loopdev;
 
-      if (loop_opts & SETLOOP_RDONLY)
+      if (loopcxt_is_readonly(&lc))
         *flags |= MS_RDONLY;
 
-      if (loop_opts & SETLOOP_AUTOCLEAR)
+      if (loopcxt_is_autoclear(&lc))
         /* Prevent recording loop dev in mtab for cleanup on umount */
         *loop = 0;
     }
   }
 
+  /* We have to keep the device open until mount(2), otherwise it will
+   * be auto-cleared by kernel (because LO_FLAGS_AUTOCLEAR) */
+  loopcxt_set_fd(&lc, -1, 0);
+
+  loopcxt_deinit(&lc);
   return 0;
+
+err:
+  loopcxt_deinit(&lc);
+  return EX_FAIL;
 }
 
 
@@ -1693,7 +1727,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   mnt_err = errno;
 
   if (loop)
-	del_loop(spec);
+	loopdev_delete(spec);
 
   block_signals (SIG_UNBLOCK);
 
