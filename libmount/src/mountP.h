@@ -53,12 +53,18 @@
 # include <stdio.h>
 # include <stdarg.h>
 
-# define DBG(m,x)	do { \
-				if ((MNT_DEBUG_ ## m) & libmount_debug_mask) {\
+# define ON_DBG(m, x)	do { \
+				if ((MNT_DEBUG_ ## m) & libmount_debug_mask) { \
+					x; \
+				} \
+			} while (0)
+
+# define DBG(m, x)	do { \
+				if ((MNT_DEBUG_ ## m) & libmount_debug_mask) { \
 					fprintf(stderr, "libmount: %8s: ", # m); \
 					x; \
 				} \
-			} while(0)
+			} while (0)
 
 # define DBG_FLUSH	do { fflush(stderr); } while(0)
 
@@ -87,7 +93,8 @@ mnt_debug_h(void *handler, const char *mesg, ...)
 }
 
 #else /* !CONFIG_LIBMOUNT_DEBUG */
-# define DBG(m,x) do { ; } while(0)
+# define ON_DBG(m,x) do { ; } while (0)
+# define DBG(m,x) do { ; } while (0)
 # define DBG_FLUSH do { ; } while(0)
 #endif
 

@@ -86,7 +86,10 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 		DBG(CXT, mnt_debug_h(cxt, "enabling READ-ONLY flag"));
 		lo_flags |= LO_FLAGS_READ_ONLY;
 	}
+
 	loopcxt_init(&lc, 0);
+
+	ON_DBG(CXT, loopcxt_enable_debug(&lc, 1));
 
 	optstr = mnt_fs_get_user_options(cxt->fs);
 
