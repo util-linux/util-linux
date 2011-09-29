@@ -116,6 +116,18 @@ grep -q $DEVICE $LIBMOUNT_MTAB &&
 ts_finalize_subtest
 
 
+ts_init_subtest "mount-loopdev"
+mkdir -p $MOUNTPOINT &> /dev/null
+img=$(ts_image_init)
+mkfs.ext3 -F $img &> /dev/null
+$TESTPROG --mount -o loop $img $MOUNTPOINT >> $TS_OUTPUT 2>&1
+grep -q $MOUNTPOINT $LIBMOUNT_MTAB || \
+	echo "(loopdev) cannot find $MOUNTPOINT in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+$TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+grep -q $MOUNTPOINT $LIBMOUNT_MTAB &&
+	echo "umount failed: found $MOUNTPOINT in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
 ts_log "...done."
 rmmod scsi_debug
 ts_finalize
