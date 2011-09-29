@@ -51,9 +51,14 @@ void *xcalloc(const size_t nelems, const size_t size)
 
 static inline char *xstrdup(const char *str)
 {
-	char *ret = strdup(str);
+	char *ret;
 
-	if (!ret && str)
+	if (!str)
+		return NULL;
+
+	ret = strdup(str);
+
+	if (!ret)
 		err(XALLOC_EXIT_CODE, "cannot duplicate string");
 	return ret;
 }
