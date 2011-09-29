@@ -65,11 +65,12 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 
 int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 {
-	const char *backing_file;
-	char *loopdev = NULL;
+	const char *backing_file, *optstr;
+	char *loopdev = NULL, *val = NULL;
 	size_t len;
 	struct loopdev_cxt lc;
-	int rc, lo_flags = 0;
+	int rc = 0, lo_flags = 0;
+	uint64_t offset = 0, sizelimit = 0;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -87,18 +88,41 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	}
 	loopcxt_init(&lc, 0);
 
-	
-	if ((cxt->user_mountflags & MNT_MS_LOOP) &&
-	    mnt_fs_get_option(cxt->fs, "loop", &loopdev, &len) == 0 && loopdev) {
+	optstr = mnt_fs_get_user_options(cxt->fs);
 
-		char *tmp = strndup(loopdev, len);
-		if (!tmp)
-			rc = -ENOMEM;
-		else {
-			rc = loopcxt_set_device(&lc, tmp);
-			free(tmp);
-		}
+	/*
+	 * loop=
+	 */
+	if (rc == 0 && (cxt->user_mountflags & MNT_MS_LOOP) &&
+	    mnt_optstr_get_option(optstr, "loop", &val, &len) == 0 && val) {
+
+		val = strndup(val, len);
+		rc = val ? loopcxt_set_device(&lc, val) : -ENOMEM;
+		free(val);
 	}
+
+	/*
+	 * offset=
+	 */
+	if (rc == 0 && (cxt->user_mountflags & MNT_MS_OFFSET) &&
+	    mnt_optstr_get_option(optstr, "offset", &val, &len) == 0) {
+		rc = mnt_parse_offset(val, len, &offset);
+		if (rc)
+			DBG(CXT, mnt_debug_h(cxt, "failed to parse offset="));
+	}
+
+	/*
+	 * sizelimit=
+	 */
+	if (rc == 0 && (cxt->user_mountflags & MNT_MS_SIZELIMIT) &&
+	    mnt_optstr_get_option(optstr, "sizelimit", &val, &len) == 0) {
+		rc = mnt_parse_offset(val, len, &sizelimit);
+		if (rc)
+			DBG(CXT, mnt_debug_h(cxt, "failed to parse sizelimit="));
+	}
+
+	if (rc)
+		goto done;
 
 	/* since 2.6.37 we don't have to store backing filename to mtab
 	 * because kernel provides the name in /sys.
@@ -119,12 +143,21 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 						loopcxt_get_device(&lc)));
 		}
 
-		/* set device attributes */
+		/* set device attributes
+		 * -- note that loopcxt_find_unused() resets "lc"
+		 */
 		rc = loopcxt_set_backing_file(&lc, backing_file);
-		if (rc)
-			goto done;
 
-		loopcxt_set_flags(&lc, lo_flags);
+		if (!rc && offset)
+			rc = loopcxt_set_offset(&lc, offset);
+		if (!rc && sizelimit)
+			rc = loopcxt_set_sizelimit(&lc, sizelimit);
+		if (!rc)
+			loopcxt_set_flags(&lc, lo_flags);
+		if (rc) {
+			DBG(CXT, mnt_debug_h(cxt, "failed to set loopdev attributes"));
+			goto done;
+		}
 
 		/* setup the device */
 		rc = loopcxt_setup_device(&lc);
@@ -133,7 +166,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 
 		if (loopdev || rc != -EBUSY) {
 			DBG(CXT, mnt_debug_h(cxt, "failed to setup device"));
-			break;
+			goto done;
 		}
 		DBG(CXT, mnt_debug_h(cxt, "loopdev stolen...trying again"));
 	} while (1);
