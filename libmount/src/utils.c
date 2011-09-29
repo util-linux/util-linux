@@ -53,6 +53,24 @@ int startswith(const char *s, const char *sx)
         return !strncmp(s, sx, off);
 }
 
+int mnt_parse_offset(const char *str, size_t len, uintmax_t *res)
+{
+	char *p;
+	int rc = 0;
+
+	if (!str && !*str)
+		return -EINVAL;
+
+	p = strndup(str, len);
+	if (!p)
+		return -errno;
+
+	if (strtosize(p, res))
+		rc = -EINVAL;
+	free(p);
+	return rc;
+}
+
 /* returns basename and keeps dirname in the @path, if @path is "/" (root)
  * then returns empty string */
 static char *stripoff_last_component(char *path)

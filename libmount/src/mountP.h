@@ -118,6 +118,8 @@ extern int mnt_run_test(struct libmnt_test *tests, int argc, char *argv[]);
 extern int endswith(const char *s, const char *sx);
 extern int startswith(const char *s, const char *sx);
 
+extern int mnt_parse_offset(const char *str, size_t len, uintmax_t *res);
+
 extern int mnt_chdir_to_parent(const char *target, char **filename);
 extern char *mnt_get_username(const uid_t uid);
 extern int mnt_get_uid(const char *username, uid_t *uid);

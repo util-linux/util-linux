@@ -127,17 +127,11 @@ static int mnt_loopdev_associated_fs(const char *devname, struct libmnt_fs *fs)
 
 	/* check for offset option in @fs */
 	optstr = (char *) mnt_fs_get_user_options(fs);
-	if (optstr && !mnt_optstr_get_option(optstr, "offset=", &val, &valsz)) {
-		int rc;
 
-		val = strndup(val, valsz);
-		if (!val)
-			return 0;
-		rc = strtosize(val, &offset);
-		free(val);
-		if (rc)
-			return 0;
-	}
+	if (optstr &&
+	    mnt_optstr_get_option(optstr, "offset", &val, &valsz) == 0 &&
+	    mnt_parse_offset(val, valsz, &offset) != 0)
+		return 0;
 
 	/* TODO:
 	 * if (mnt_loopdev_associated_file(devname, src, offset))
