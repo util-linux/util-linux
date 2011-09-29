@@ -65,8 +65,8 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 
 int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 {
-	const char *backing_file, *optstr;
-	char *loopdev = NULL, *val = NULL;
+	const char *backing_file, *optstr, *loopdev = NULL;
+	char *val = NULL;
 	size_t len;
 	struct loopdev_cxt lc;
 	int rc = 0, lo_flags = 0;
@@ -102,6 +102,9 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 		val = strndup(val, len);
 		rc = val ? loopcxt_set_device(&lc, val) : -ENOMEM;
 		free(val);
+
+		if (rc == 0)
+			loopdev = loopcxt_get_device(&lc);
 	}
 
 	/*
@@ -182,12 +185,14 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 		cxt->flags |= MNT_FL_LOOPDEV_READY;
 
 		if ((cxt->user_mountflags & MNT_MS_LOOP) &&
-		    loopcxt_is_autoclear(&lc))
+		    loopcxt_is_autoclear(&lc)) {
 			/*
 			 * autoclear flag accepted by kernel, don't store
 			 * the "loop=" option to mtab.
 			 */
 			cxt->user_mountflags &= ~MNT_MS_LOOP;
+			mnt_optstr_remove_option(&cxt->fs->user_optstr, "loop");
+		}
 
 		if (!(cxt->mountflags & MS_RDONLY) &&
 		    loopcxt_is_readonly(&lc))
