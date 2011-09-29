@@ -88,6 +88,7 @@ struct loopdev_cxt {
 	int		flags;		/* LOOPDEV_FL_* flags */
 	unsigned int	has_info:1;	/* .info contains data */
 	unsigned int	extra_check:1;	/* unusual stuff for iterator */
+	unsigned int	debug:1;	/* debug mode ON/OFF */
 
 	struct sysfs_cxt	sysfs;	/* pointer to /sys/dev/block/<maj:min>/ */
 	struct loop_info64	info;	/* for GET/SET ioctl */
@@ -124,6 +125,7 @@ extern int loopdev_delete(const char *device);
  */
 extern int loopcxt_init(struct loopdev_cxt *lc, int flags);
 extern void loopcxt_deinit(struct loopdev_cxt *lc);
+extern void loopcxt_enable_debug(struct loopdev_cxt *lc, int enable);
 
 extern int loopcxt_set_device(struct loopdev_cxt *lc, const char *device);
 extern char *loopcxt_strdup_device(struct loopdev_cxt *lc);

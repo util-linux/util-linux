@@ -38,6 +38,34 @@
 #include "loopdev.h"
 #include "canonicalize.h"
 
+#define CONFIG_LOOPDEV_DEBUG
+
+#ifdef CONFIG_LOOPDEV_DEBUG
+# include <stdio.h>
+# include <stdarg.h>
+
+# define DBG(l,x)	do { \
+				if ((l)->debug) {\
+					fprintf(stderr, "loopdev:  [%p]: ", (l)); \
+					x; \
+				} \
+			} while(0)
+
+static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
+loopdev_debug(const char *mesg, ...)
+{
+	va_list ap;
+	va_start(ap, mesg);
+	vfprintf(stderr, mesg, ap);
+	va_end(ap);
+	fputc('\n', stderr);
+}
+
+#else /* !CONFIG_LOOPDEV_DEBUG */
+# define DBG(m,x) do { ; } while(0)
+#endif
+
+
 #define loopcxt_ioctl_enabled(_lc)	(!((_lc)->flags & LOOPDEV_FL_NOIOCTL))
 
 /*
@@ -84,6 +112,8 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 	}
 
 	sysfs_deinit(&lc->sysfs);
+
+	DBG(lc, loopdev_debug("%s successfully set", device));
 	return 0;
 }
 
@@ -136,11 +166,25 @@ void loopcxt_deinit(struct loopdev_cxt *lc)
 	if (!lc)
 		return;
 
+	DBG(lc, loopdev_debug("de-initialize"));
+
 	free(lc->filename);
 	lc->filename = NULL;
 
 	loopcxt_set_device(lc, NULL);
 	loopcxt_deinit_iterator(lc);
+}
+
+/*
+ * @lc: context
+ * @enable: TRUE/FALSE
+ *
+ * Enabled/disables debug messages
+ */
+void loopcxt_enable_debug(struct loopdev_cxt *lc, int enable)
+{
+	if (lc)
+		lc->debug = enable ? 1 : 0;
 }
 
 /*
@@ -177,12 +221,17 @@ struct sysfs_cxt *loopcxt_get_sysfs(struct loopdev_cxt *lc)
 
 	if (!lc->sysfs.devno) {
 		dev_t devno = sysfs_devname_to_devno(lc->device, NULL);
-		if (!devno)
+		if (!devno) {
+			DBG(lc, loopdev_debug("sysfs: failed devname to devno"));
 			return NULL;
-
-		if (sysfs_init(&lc->sysfs, devno, NULL))
+		}
+		if (sysfs_init(&lc->sysfs, devno, NULL)) {
+			DBG(lc, loopdev_debug("sysfs: init failed"));
 			return NULL;
+		}
 	}
+
+	DBG(lc, loopdev_debug("sysfs: returns context"));
 	return &lc->sysfs;
 }
 
@@ -201,6 +250,7 @@ int loopcxt_get_fd(struct loopdev_cxt *lc)
 	if (lc->fd < 0) {
 		lc->mode = lc->flags & LOOPDEV_FL_RDWR ? O_RDWR : O_RDONLY;
 		lc->fd = open(lc->device, lc->mode);
+		DBG(lc, loopdev_debug("open %s", lc->fd < 0 ? "failed" : "ok"));
 	}
 	return lc->fd;
 }
@@ -230,6 +280,8 @@ int loopcxt_init_iterator(struct loopdev_cxt *lc, int flags)
 
 	if (!lc)
 		return -EINVAL;
+
+	DBG(lc, loopdev_debug("iter: initialize"));
 
 	iter = &lc->iter;
 
@@ -264,6 +316,8 @@ int loopcxt_deinit_iterator(struct loopdev_cxt *lc)
 
 	if (!lc)
 		return -EINVAL;
+
+	DBG(lc, loopdev_debug("iter: de-initialize"));
 
 	iter = &lc->iter;
 
@@ -303,6 +357,7 @@ static int loopiter_set_device(struct loopdev_cxt *lc, const char *device)
 	if ((lc->iter.flags & LOOPITER_FL_FREE) && !used)
 		return 0;
 
+	DBG(lc, loopdev_debug("iter: setting device"));
 	loopcxt_set_device(lc, NULL);
 	return 1;
 }
@@ -329,7 +384,6 @@ static int loop_scandir(const char *dirname, int **ary, int hasprefix)
 	dir = opendir(dirname);
 	if (!dir)
 		return 0;
-
 	free(*ary);
 	*ary = NULL;
 
@@ -392,6 +446,9 @@ int loopcxt_next(struct loopdev_cxt *lc)
 
 	if (!lc)
 		return -EINVAL;
+
+	DBG(lc, loopdev_debug("iter: next"));
+
 	iter = &lc->iter;
 	if (iter->done)
 		return 1;
@@ -483,6 +540,8 @@ struct loop_info64 *loopcxt_get_info(struct loopdev_cxt *lc)
 	if (lc->has_info)
 		return &lc->info;
 
+	DBG(lc, loopdev_debug("reading loop_info64"));
+
 	fd = loopcxt_get_fd(lc);
 	if (fd < 0)
 		return NULL;
@@ -522,6 +581,8 @@ char *loopcxt_get_backing_file(struct loopdev_cxt *lc)
 			res = strdup((char *) lo->lo_file_name);
 		}
 	}
+
+	DBG(lc, loopdev_debug("return backing file: %s", res));
 	return res;
 }
 
@@ -631,6 +692,8 @@ int loopcxt_set_offset(struct loopdev_cxt *lc, uint64_t offset)
 	if (!lc)
 		return -EINVAL;
 	lc->info.lo_offset = offset;
+
+	DBG(lc, loopdev_debug("set offset=%jd", offset));
 	return 0;
 }
 
@@ -642,6 +705,8 @@ int loopcxt_set_sizelimit(struct loopdev_cxt *lc, uint64_t sizelimit)
 	if (!lc)
 		return -EINVAL;
 	lc->info.lo_sizelimit = sizelimit;
+
+	DBG(lc, loopdev_debug("set sizelimit=%jd", sizelimit));
 	return 0;
 }
 
@@ -658,6 +723,8 @@ int loopcxt_set_flags(struct loopdev_cxt *lc, uint32_t flags)
 	if (!lc)
 		return -EINVAL;
 	lc->info.lo_flags = flags;
+
+	DBG(lc, loopdev_debug("set flags=%u", (unsigned) flags));
 	return 0;
 }
 
@@ -681,6 +748,7 @@ int loopcxt_set_backing_file(struct loopdev_cxt *lc, const char *filename)
 	strncpy((char *)lc->info.lo_file_name, lc->filename, LO_NAME_SIZE);
 	lc->info.lo_file_name[LO_NAME_SIZE- 1] = '\0';
 
+	DBG(lc, loopdev_debug("set backing file=%s", lc->info.lo_file_name));
 	return 0;
 }
 
@@ -710,6 +778,8 @@ int loopcxt_set_encryption(struct loopdev_cxt *lc,
 {
 	if (!lc)
 		return -EINVAL;
+
+	DBG(lc, loopdev_debug("setting encryption '%s'", encryption));
 
 	if (encryption && *encryption) {
 		if (digits_only(encryption)) {
@@ -760,6 +830,8 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	if (!lc || !*lc->device || !lc->filename)
 		return -EINVAL;
 
+	DBG(lc, loopdev_debug("device setup requested"));
+
 	/*
 	 * Open backing file and device
 	 */
@@ -770,8 +842,10 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 		if (mode != O_RDONLY && (errno == EROFS || errno == EACCES))
 			file_fd = open(lc->filename, mode = O_RDONLY);
 
-		if (file_fd < 0)
+		if (file_fd < 0) {
+			DBG(lc, loopdev_debug("open backing file failed: %m"));
 			return -errno;
+		}
 	}
 
 	if (lc->fd != -1 && lc->mode != mode) {
@@ -800,14 +874,16 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	 */
 	if (ioctl(dev_fd, LOOP_SET_FD, file_fd) < 0) {
 		rc = -errno;
+		DBG(lc, loopdev_debug("LOOP_SET_FD failed: %m"));
 		goto err;
 	}
 	close(file_fd);
 	file_fd = -1;
 
-	if (ioctl(dev_fd, LOOP_SET_STATUS64, &lc->info))
+	if (ioctl(dev_fd, LOOP_SET_STATUS64, &lc->info)) {
+		DBG(lc, loopdev_debug("LOOP_SET_STATUS64 failed: %m"));
 		goto err;
-
+	}
 	memset(&lc->info, 0, sizeof(lc->info));
 	lc->has_info = 0;
 
@@ -818,6 +894,7 @@ err:
 	if (dev_fd >= 0)
 		ioctl(dev_fd, LOOP_CLR_FD, 0);
 
+	DBG(lc, loopdev_debug("setup done [rc=%d]", rc));
 	return rc;
 }
 
@@ -828,14 +905,20 @@ int loopcxt_delete_device(struct loopdev_cxt *lc)
 	if (fd < 0)
 		return -EINVAL;
 
-	if (ioctl(fd, LOOP_CLR_FD, 0) < 0)
+	if (ioctl(fd, LOOP_CLR_FD, 0) < 0) {
+		DBG(lc, loopdev_debug("LOOP_CLR_FD failed: %m"));
 		return -errno;
+	}
+
+	DBG(lc, loopdev_debug("device removed"));
 	return 0;
 }
 
 int loopcxt_find_unused(struct loopdev_cxt *lc)
 {
 	int rc;
+
+	DBG(lc, loopdev_debug("find_unused requested"));
 
 	rc = loopcxt_init_iterator(lc, LOOPITER_FL_FREE);
 	if (rc)
@@ -844,6 +927,7 @@ int loopcxt_find_unused(struct loopdev_cxt *lc)
 	rc = loopcxt_next(lc);
 	loopcxt_deinit_iterator(lc);
 
+	DBG(lc, loopdev_debug("find_unused done [rc=%d]", rc));
 	return rc;
 }
 
@@ -996,13 +1080,15 @@ char *loopdev_find_by_backing_file(const char *filename, uint64_t offset, int fl
 #include <errno.h>
 #include <err.h>
 
-static void test_loop_info(const char *device, int flags)
+static void test_loop_info(const char *device, int flags, int debug)
 {
 	struct loopdev_cxt lc;
 	char *p;
 	uint64_t u64;
 
 	loopcxt_init(&lc, flags);
+	loopcxt_enable_debug(&lc, debug);
+
 	if (loopcxt_set_device(&lc, device))
 		err(EXIT_FAILURE, "failed to set device");
 
@@ -1021,12 +1107,13 @@ static void test_loop_info(const char *device, int flags)
 	loopcxt_deinit(&lc);
 }
 
-static void test_loop_scan(int flags)
+static void test_loop_scan(int flags, int debug)
 {
 	struct loopdev_cxt lc;
 	int rc;
 
 	loopcxt_init(&lc, 0);
+	loopcxt_enable_debug(&lc, debug);
 
 	if (loopcxt_init_iterator(&lc, flags))
 		err(EXIT_FAILURE, "iterator initlization failed");
@@ -1048,12 +1135,13 @@ static void test_loop_scan(int flags)
 	loopcxt_deinit(&lc);
 }
 
-static int test_loop_setup(const char *filename, const char *device)
+static int test_loop_setup(const char *filename, const char *device, int debug)
 {
 	struct loopdev_cxt lc;
 	int rc = 0;
 
 	loopcxt_init(&lc, 0);
+	loopcxt_enable_debug(&lc, debug);
 
 	if (device) {
 		rc = loopcxt_set_device(&lc, device);
@@ -1090,27 +1178,31 @@ static int test_loop_setup(const char *filename, const char *device)
 
 int main(int argc, char *argv[])
 {
+	int dbg;
+
 	if (argc < 2)
 		goto usage;
 
+	dbg = getenv("LOOPDEV_DEBUG") == NULL ? 0 : 1;
+
 	if (argc == 3 && strcmp(argv[1], "--info") == 0) {
 		printf("---sysfs & ioctl:---\n");
-		test_loop_info(argv[2], 0);
+		test_loop_info(argv[2], 0, dbg);
 		printf("---sysfs only:---\n");
-		test_loop_info(argv[2], LOOPDEV_FL_NOIOCTL);
+		test_loop_info(argv[2], LOOPDEV_FL_NOIOCTL, dbg);
 		printf("---ioctl only:---\n");
-		test_loop_info(argv[2], LOOPDEV_FL_NOSYSFS);
+		test_loop_info(argv[2], LOOPDEV_FL_NOSYSFS, dbg);
 
 	} else if (argc == 2 && strcmp(argv[1], "--used") == 0) {
 		printf("---all used devices---\n");
-		test_loop_scan(LOOPITER_FL_USED);
+		test_loop_scan(LOOPITER_FL_USED, dbg);
 
 	} else if (argc == 2 && strcmp(argv[1], "--free") == 0) {
 		printf("---all free devices---\n");
-		test_loop_scan(LOOPITER_FL_FREE);
+		test_loop_scan(LOOPITER_FL_FREE, dbg);
 
 	} else if (argc >= 3 && strcmp(argv[1], "--setup") == 0) {
-		test_loop_setup(argv[2], argv[3]);
+		test_loop_setup(argv[2], argv[3], dbg);
 
 	} else if (argc == 3 && strcmp(argv[1], "--delete") == 0) {
 		if (loopdev_delete(argv[2]))
