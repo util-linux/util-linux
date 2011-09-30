@@ -16,8 +16,7 @@
 #include "sundries.h"
 #include "getusername.h"
 #include "pathnames.h"
-#include "lomount.h"
-#include "loop.h"
+#include "loopdev.h"
 #include "fstab.h"
 #include "env.h"
 #include "nls.h"
@@ -299,7 +298,7 @@ umount_one (const char *spec, const char *node, const char *type,
 	 * Ignore the option "-d" for non-loop devices and loop devices with
 	 * LO_FLAGS_AUTOCLEAR flag.
 	 */
-	if (delloop && is_loop_device(spec))
+	if (delloop && is_loopdev(spec))
 		myloop = 1;
 
 	if (restricted) {
@@ -407,8 +406,8 @@ umount_one (const char *spec, const char *node, const char *type,
 			loopdev = spec;
 	}
  gotloop:
-	if (loopdev && !is_loop_autoclear(loopdev))
-		del_loop(loopdev);
+	if (loopdev && !loopdev_is_autoclear(loopdev))
+		loopdev_delete(loopdev);
 
  writemtab:
 	if (!nomtab &&
@@ -559,8 +558,8 @@ is_valid_loop(struct mntentchn *mc, struct mntentchn *fs)
 	}
 
 	/* check association */
-	if (loopfile_used_with((char *) mc->m.mnt_fsname,
-				fs->m.mnt_fsname, offset) == 1) {
+	if (loopdev_is_used((char *) mc->m.mnt_fsname, fs->m.mnt_fsname,
+				offset, LOOPDEV_FL_OFFSET) == 1) {
 		if (verbose > 1)
 			printf(_("device %s is associated with %s\n"),
 			       mc->m.mnt_fsname, fs->m.mnt_fsname);
@@ -644,20 +643,18 @@ try_loopdev:
 	 * (only if it is a regular file)
 	 */
 	if (!mc && !loopdev && !stat(file, &statbuf) && S_ISREG(statbuf.st_mode)) {
-		switch (find_loopdev_by_backing_file(file, &loopdev)) {
-		case 0:
+		int count = loopdev_count_by_backing_file(file, &loopdev);
+
+		if (count == 1) {
 			if (verbose)
 				printf(_("%s is associated with %s\n"),
 				       arg, loopdev);
 			file = loopdev;
 			goto try_loopdev;
-			break;
-		case 2:
-			if (verbose)
-				printf(_("%s is associated with more than one loop device: not unmounting\n"),
-				       arg);
-			break;
-		}
+
+		} else if (count > 1 && verbose)
+			printf(_("%s is associated with more than one "
+				 "loop device: not unmounting\n"), arg);
 	}
 
 	if (mc) {

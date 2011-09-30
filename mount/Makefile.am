@@ -11,10 +11,20 @@ srcs_common = sundries.c $(top_srcdir)/lib/canonicalize.c sundries.h
 hdrs_mount = fstab.h mount_mntent.h mount_constants.h getusername.h
 
 # generic sources for mount and umount
-srcs_mount = fstab.c mount_mntent.c getusername.c devname.c devname.h \
-	$(srcs_common) $(hdrs_mount) $(top_srcdir)/lib/env.c \
-	$(top_srcdir)/lib/linux_version.c $(top_srcdir)/lib/blkdev.c \
-	$(top_srcdir)/lib/fsprobe.c $(top_srcdir)/lib/mangle.c
+srcs_mount =	$(srcs_common) $(hdrs_mount) \
+		fstab.c \
+		mount_mntent.c \
+		getusername.c \
+		devname.c devname.h \
+		$(top_srcdir)/lib/env.c \
+		$(top_srcdir)/lib/linux_version.c \
+		$(top_srcdir)/lib/blkdev.c \
+		$(top_srcdir)/lib/fsprobe.c \
+		$(top_srcdir)/lib/mangle.c \
+		$(top_srcdir)/lib/at.c \
+		$(top_srcdir)/lib/sysfs.c \
+		$(top_srcdir)/lib/loopdev.c \
+		$(top_srcdir)/lib/strutils.c
 
 # generic flags for all programs (except losetup)
 # -- note that pkg-config autoconf macros (pkg.m4) does not differentiate
@@ -24,20 +34,12 @@ ldadd_static =
 cflags_common = $(AM_CFLAGS)
 ldflags_static = -all-static
 
-mount_SOURCES = mount.c \
-		$(srcs_mount) \
-		$(top_srcdir)/lib/setproctitle.c \
-		$(top_srcdir)/lib/strutils.c \
-		$(top_srcdir)/lib/at.c \
-		$(top_srcdir)/lib/sysfs.c \
-		$(top_srcdir)/lib/loopdev.c
-
+mount_SOURCES = mount.c $(srcs_mount) $(top_srcdir)/lib/setproctitle.c
 mount_CFLAGS = $(SUID_CFLAGS) $(cflags_common)
 mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 mount_LDADD = $(ldadd_common)
 
-umount_SOURCES = umount.c $(srcs_mount) $(top_srcdir)/lib/strutils.c \
-		 lomount.c lomount.h loop.h
+umount_SOURCES = umount.c $(srcs_mount)
 umount_CFLAGS = $(SUID_CFLAGS) $(cflags_common)
 umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 umount_LDADD = $(ldadd_common)

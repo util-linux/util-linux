@@ -1076,6 +1076,46 @@ char *loopdev_find_by_backing_file(const char *filename, uint64_t offset, int fl
 	return res;
 }
 
+/*
+ * Returns number of loop devices associated with @file, if only one loop
+ * device is associeted with the given @filename and @loopdev is not NULL then
+ * @loopdev returns name of the device.
+ */
+int loopdev_count_by_backing_file(const char *filename, char **loopdev)
+{
+	struct loopdev_cxt lc;
+	int count = 0;
+
+	if (!filename)
+		return -1;
+
+	loopcxt_init(&lc, 0);
+	if (loopcxt_init_iterator(&lc, LOOPITER_FL_USED))
+		return -1;
+
+	while(loopcxt_next(&lc) == 0) {
+		char *backing = loopcxt_get_backing_file(&lc);
+
+		if (!backing || strcmp(backing, filename)) {
+			free(backing);
+			continue;
+		}
+
+		free(backing);
+		if (loopdev && count == 0)
+			*loopdev = loopcxt_strdup_device(&lc);
+		count++;
+	}
+
+	loopcxt_deinit(&lc);
+
+	if (loopdev && count > 1) {
+		free(*loopdev);
+		*loopdev = NULL;
+	}
+	return count;
+}
+
 
 #ifdef TEST_PROGRAM_LOOPDEV
 #include <errno.h>

@@ -119,6 +119,7 @@ extern char *loopdev_find_by_backing_file(const char *filename,
 					  uint64_t offset, int flags);
 extern int loopcxt_find_unused(struct loopdev_cxt *lc);
 extern int loopdev_delete(const char *device);
+extern int loopdev_count_by_backing_file(const char *filename, char **loopdev);
 
 /*
  * Low-level
