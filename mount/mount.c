@@ -1294,6 +1294,7 @@ loop_check(const char **spec, const char **type, int *flags,
 
 	if (!*loopdev) {
 	  error(_("mount: failed to found free loop device"));
+	  loopcxt_deinit(&lc);
 	  goto err;	/* no more loop devices */
 	}
 	if (verbose)
@@ -1307,8 +1308,10 @@ loop_check(const char **spec, const char **type, int *flags,
 	  rc = loopcxt_set_sizelimit(&lc, sizelimit);
 	if (!rc)
 	  loopcxt_set_flags(&lc, loop_opts);
+
 	if (rc) {
 	   error(_("mount: %s: failed to set loopdev attributes"), *loopdev);
+	   loopcxt_deinit(&lc);
 	   goto err;
 	}
 
@@ -1324,6 +1327,7 @@ loop_check(const char **spec, const char **type, int *flags,
 	    my_free(*loopdev);
 	    *loopdev = NULL;
 	  }
+	  loopcxt_deinit(&lc);
 	  goto err;
 	}
 
@@ -1335,6 +1339,7 @@ loop_check(const char **spec, const char **type, int *flags,
 	    continue;
 	}
 	error(_("mount: stolen loop=%s"), *loopdev);
+	loopcxt_deinit(&lc);
 	goto err;
 
       } while (!*loopdev);
@@ -1349,18 +1354,16 @@ loop_check(const char **spec, const char **type, int *flags,
       if (loopcxt_is_autoclear(&lc))
         /* Prevent recording loop dev in mtab for cleanup on umount */
         *loop = 0;
+
+      /* We have to keep the device open until mount(2), otherwise it will
+       * be auto-cleared by kernel (because LO_FLAGS_AUTOCLEAR) */
+      loopcxt_set_fd(&lc, -1, 0);
+      loopcxt_deinit(&lc);
     }
   }
 
-  /* We have to keep the device open until mount(2), otherwise it will
-   * be auto-cleared by kernel (because LO_FLAGS_AUTOCLEAR) */
-  loopcxt_set_fd(&lc, -1, 0);
-
-  loopcxt_deinit(&lc);
   return 0;
-
 err:
-  loopcxt_deinit(&lc);
   return EX_FAIL;
 }
 
