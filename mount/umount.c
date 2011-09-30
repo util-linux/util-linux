@@ -652,9 +652,9 @@ try_loopdev:
 			file = loopdev;
 			goto try_loopdev;
 
-		} else if (count > 1 && verbose)
-			printf(_("%s is associated with more than one "
-				 "loop device: not unmounting\n"), arg);
+		} else if (count > 1)
+			fprintf(stderr, _("umount: warning: %s is associated "
+				"with more than one loop device\n"), arg);
 	}
 
 	if (mc) {
