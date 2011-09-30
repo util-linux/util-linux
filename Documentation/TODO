@@ -1,6 +1,10 @@
 
  Note that items with (!) have high priority.
 
+prlimit
+-------
+  - add new command line wrapper for prlimit(2)
+
 dmesg
 -----
 
