@@ -930,7 +930,7 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 	if (!(*options & SETLOOP_AUTOCLEAR))
 		close (fd);
 
-	if (verbose > 1)
+	if (verbose)
 		printf(_("set_loop(%s,%s,%llu,%llu): success\n"),
 		       device, filename, offset, sizelimit);
 	if (file != filename)
@@ -951,7 +951,7 @@ del_loop (const char *device) {
 		goto error;
 	}
 	close (fd);
-	if (verbose > 1)
+	if (verbose)
 		printf(_("del_loop(%s): success\n"), device);
 	return 0;
 
