@@ -54,11 +54,12 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
 	int rc, n = 0;
 	char *src, *fstype, *optstr;
 
-	rc = sscanf(s,	"%ms "	/* (1) source */
-			"%ms "	/* (2) target */
-			"%ms "	/* (3) FS type */
-			"%ms "  /* (4) options */
-			"%n",	/* byte count */
+	rc = sscanf(s,	UL_SCNsA" "	/* (1) source */
+			UL_SCNsA" "	/* (2) target */
+			UL_SCNsA" "	/* (3) FS type */
+			UL_SCNsA" "	/* (4) options */
+			"%n",		/* byte count */
+
 			&src,
 			&fs->target,
 			&fstype,
@@ -114,9 +115,9 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 	rc = sscanf(s,	"%u "		/* (1) id */
 			"%u "		/* (2) parent */
 			"%u:%u "	/* (3) maj:min */
-			"%ms "		/* (4) mountroot */
-			"%ms "		/* (5) target */
-			"%ms"		/* (6) vfs options (fs-independent) */
+			UL_SCNsA" "	/* (4) mountroot */
+			UL_SCNsA" "	/* (5) target */
+			UL_SCNsA	/* (6) vfs options (fs-independent) */
 			"%n",		/* number of read bytes */
 
 			&fs->id,
@@ -138,9 +139,9 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 	}
 	s = p + 3;
 
-	rc += sscanf(s,	"%ms "		/* (8) FS type */
-			"%ms "		/* (9) source */
-			"%ms",		/* (10) fs options (fs specific) */
+	rc += sscanf(s,	UL_SCNsA" "	/* (8) FS type */
+			UL_SCNsA" "	/* (9) source */
+			UL_SCNsA,	/* (10) fs options (fs specific) */
 
 			&fstype,
 			&src,

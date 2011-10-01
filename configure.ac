@@ -477,6 +477,44 @@ elif test "x$enable_libmount" = xno; then
     build_libmount=no
 fi
 
+AC_DEFUN([UTIL_SCANF_TYPE_MODIFIER], [dnl
+# include <stdio.h>
+int main()
+{
+	int i;
+	char *s;
+	i = sscanf("x", $1, &s);
+	if (i == 1)
+		return 0;
+	return 1;
+}])
+AC_MSG_CHECKING([needed scanf type modifiers])
+AC_CACHE_VAL([scanf_cv_type_modifier],
+  AC_RUN_IFELSE([AC_LANG_SOURCE([UTIL_SCANF_TYPE_MODIFIER(["%ms"])])],
+    [scanf_cv_type_modifier=ms],
+    AC_RUN_IFELSE([AC_LANG_SOURCE([UTIL_SCANF_TYPE_MODIFIER(["%as"])])],
+      [scanf_cv_type_modifier=as],
+      [scanf_cv_type_modifier=no]
+    )
+  )
+)
+
+case "$scanf_cv_type_modifier" in
+ms)
+  AC_MSG_RESULT([(%ms) yes])
+  AC_DEFINE([HAVE_SCANF_MS_MODIFIER], [1], [scanf %ms modifier]) ;;
+as)
+  AC_MSG_RESULT([(%as) yes])
+  AC_DEFINE([HAVE_SCANF_AS_MODIFIER], [1], [scanf %as modifier]) ;;
+*)
+  AC_MSG_RESULT([no])
+  if "x$build_libmount" = xyes; then
+    AC_MSG_WARN([%as or %ms for sscanf() not found; do not build libmount])
+    build_libmount=no
+  fi
+esac
+
+
 case "$enable_libblkid:$build_libmount" in
 no:yes)
   AC_MSG_ERROR([cannot enable libmount when libblkid is disabled]) ;;

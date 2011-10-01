@@ -224,4 +224,13 @@ static inline int dirfd(DIR *d)
 
 #define UTIL_LINUX_VERSION _("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING
 
+/*
+ * scanf modifiers for "strings allocation"
+ */
+#ifdef HAVE_SCANF_MS_MODIFIER
+#define UL_SCNsA	"%ms"
+#elif defined(HAVE_SCANF_AS_MODIFIER)
+#define UL_SCNsA	"%as"
+#endif
+
 #endif /* UTIL_LINUX_C_H */
