@@ -33,7 +33,7 @@
 
 /* &a[0] degrades to a pointer: a different type from an array */
 # define __must_be_array(a) \
-	BUILD_BUG_ON_ZERO(__builtin_types_compatible_p(__typeof__(a), __typeof__(&a[0])))
+	UL_BUILD_BUG_ON_ZERO(__builtin_types_compatible_p(__typeof__(a), __typeof__(&a[0])))
 
 # define ignore_result(x) ({ \
 	__typeof__(x) __dummy __attribute__((__unused__)) = (x); (void) __dummy; \
@@ -69,7 +69,7 @@
  * e.g. in a structure initializer (or where-ever else comma expressions
  * aren't permitted).
  */
-#define BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:-!!(e); }))
+#define UL_BUILD_BUG_ON_ZERO(e) (sizeof(struct { int:-!!(e); }))
 #define BUILD_BUG_ON_NULL(e) ((void *)sizeof(struct { int:-!!(e); }))
 
 #ifndef ARRAY_SIZE
