@@ -211,4 +211,13 @@ static inline int dirfd(DIR *d)
 #define IUTF8 0040000
 #endif
 
+/*
+ * scanf modifiers for "strings allocation"
+ */
+#ifdef HAVE_SCANF_MS_MODIFIER
+#define UL_SCNsA	"%ms"
+#elif defined(HAVE_SCANF_AS_MODIFIER)
+#define UL_SCNsA	"%as"
+#endif
+
 #endif /* UTIL_LINUX_C_H */
