@@ -6,6 +6,7 @@
 #include <sys/types.h>
 
 extern int strtosize(const char *str, uintmax_t *res);
+extern double strtod_or_err(const char *str, const char *errmesg);
 extern long strtol_or_err(const char *str, const char *errmesg);
 extern long long strtoll_or_err(const char *str, const char *errmesg);
 extern unsigned long strtoul_or_err(const char *str, const char *errmesg);
