@@ -1041,10 +1041,8 @@ static void init_environ(struct login_context *cxt)
 
 int main(int argc, char **argv)
 {
-	extern int optind;
-	extern char *optarg, **environ;
-	register int ch;
-	register char *p;
+	int c;
+	char *p;
 	int cnt;
 	char *domain;
 	char tbuf[PATH_MAX + 2];
@@ -1083,8 +1081,8 @@ int main(int argc, char **argv)
 	gethostname(tbuf, sizeof(tbuf));
 	domain = strchr(tbuf, '.');
 
-	while ((ch = getopt(argc, argv, "fh:p")) != -1)
-		switch (ch) {
+	while ((c = getopt(argc, argv, "fh:p")) != -1)
+		switch (c) {
 		case 'f':
 			cxt.noauth = 1;
 			break;
