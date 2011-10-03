@@ -66,6 +66,9 @@ lsblk_SOURCES = lsblk.c \
 		$(top_srcdir)/lib/at.c
 lsblk_LDADD = $(ul_libblkid_la)
 lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+if HAVE_UDEV
+lsblk_LDADD += -ludev
+endif
 endif
 
 if HAVE_STATIC_BLKID

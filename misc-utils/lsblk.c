@@ -41,6 +41,10 @@
 
 #include <blkid.h>
 
+#ifdef HAVE_LIBUDEV
+#include <libudev.h>
+#endif
+
 #include <assert.h>
 
 #include "pathnames.h"
@@ -284,20 +288,58 @@ static char *get_device_mountpoint(struct blkdev_cxt *cxt)
 	return strlen(mnt) ? xstrdup(mnt) : NULL;
 }
 
-/* TODO: read info from udev db (if possible) for non-root users
- */
+#ifndef HAVE_LIBUDEV
+static int probe_device_by_udev(struct blkdev_cxt *cxt
+				__attribute__((__unused__)))
+{
+	return -1;
+}
+#else
+static int probe_device_by_udev(struct blkdev_cxt *cxt)
+{
+	struct udev *udev;
+	struct udev_device *dev;
+
+	udev = udev_new();
+	if (!udev)
+		return -1;
+
+	dev = udev_device_new_from_subsystem_sysname(udev, "block", cxt->name);
+	if (dev) {
+		const char *data;
+
+		if ((data = udev_device_get_property_value(dev, "ID_FS_LABEL")))
+			cxt->label = xstrdup(data);
+		if ((data = udev_device_get_property_value(dev, "ID_FS_TYPE")))
+			cxt->fstype = xstrdup(data);
+		if ((data = udev_device_get_property_value(dev, "ID_FS_UUID")))
+			cxt->uuid = xstrdup(data);
+
+		udev_device_unref(dev);
+	}
+
+	udev_unref(udev);
+        return 0;
+}
+#endif /* HAVE_LIBUDEV */
+
 static void probe_device(struct blkdev_cxt *cxt)
 {
-	char *path = NULL;
 	blkid_probe pr = NULL;
 
 	if (cxt->probed)
 		return;
+
 	cxt->probed = 1;
 
 	if (!cxt->size)
 		return;
 
+	/* try udev DB */
+	if (probe_device_by_udev(cxt) == 0)
+		return;				/* success */
+
+	/* try libblkid */
 	pr = blkid_new_probe_from_filename(cxt->filename);
 	if (!pr)
 		return;
@@ -320,7 +362,6 @@ static void probe_device(struct blkdev_cxt *cxt)
 			cxt->label = xstrdup(data);
 	}
 
-	free(path);
 	blkid_free_probe(pr);
 	return;
 }

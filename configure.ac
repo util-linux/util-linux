@@ -1111,10 +1111,27 @@ else
   UTIL_CHECK_LIB(audit, audit_log_user_message)
   case "$with_audit:$have_audit" in
   yes:no)
-   AC_MSG_ERROR([Audit selected but libaudit not found (or doesn't support audit_log_user_message())])
+   AC_MSG_ERROR([Audit selected but libaudit not found (or does not support audit_log_user_message())])
    ;;
   esac
 fi
+
+
+AC_ARG_WITH([udev], AS_HELP_STRING([--without-udev], [compile without udev support]),
+  [], with_udev=auto
+)
+
+if test "x$with_udev" = xno; then
+  AM_CONDITIONAL(HAVE_UDEV, false)
+else
+  UTIL_CHECK_LIB(udev, udev_new)
+  case "$with_udev:$have_udev" in
+  yes:no)
+   AC_MSG_ERROR([udev selected but libudev not found])
+   ;;
+  esac
+fi
+
 
 AC_ARG_ENABLE([schedutils],
   AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, teskset]),
