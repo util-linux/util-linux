@@ -65,7 +65,6 @@ install-exec-hook::
 
 endif
 
-noinst_PROGRAMS = islocal_test
-islocal_test_SOURCES = islocal.c
-islocal_test_CPPFLAGS = -DMAIN_TEST_ISLOCAL $(AM_CPPFLAGS)
-
+noinst_PROGRAMS = test_islocal
+test_islocal_SOURCES = islocal.c
+test_islocal_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)

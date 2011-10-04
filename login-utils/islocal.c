@@ -92,12 +92,12 @@ is_local(const char *user)
 	}
 }
 
-#if MAIN_TEST_ISLOCAL
+#ifdef TEST_PROGRAM
 int
 main (int argc, char *argv[])
 {
-	if (argc < 2) {
-		fprintf(stderr, "No test passwd file was specified.\n");
+	if (argc <= 2) {
+		fprintf(stderr, "usage: %s <passwdfile> <username> [...]\n", argv[0]);
 		return 1;
 	} else {
 		int i;
