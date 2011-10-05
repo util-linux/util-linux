@@ -264,13 +264,20 @@ static void open_tty(const char *tty)
 
 static void chown_tty(struct login_context *cxt)
 {
-	struct group *gr;
+	const char *grname;
 	uid_t uid = cxt->pwd->pw_uid;
 	gid_t gid = cxt->pwd->pw_gid;
 
-	gr = getgrnam(TTYGRPNAME);
-	if (gr)
-		gid = gr->gr_gid;
+	grname = getlogindefs_str("TTYGROUP", TTYGRPNAME);
+	if (grname && *grname) {
+		if (*grname >= 0 && *grname <= 9)		/* group by ID */
+			gid = getlogindefs_num("TTYGROUP", gid);
+		else {						/* group by name */
+			struct group *gr = getgrnam(grname);
+			if (gr)
+				gid = gr->gr_gid;
+		}
+	}
 
 	if (fchown(0, uid, gid))				/* tty */
 		chown_err(cxt->tty_name, uid, gid);

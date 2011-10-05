@@ -149,6 +149,15 @@ The default value is 5.
 .RS 4
 The terminal permissions. The default value is 0600.
 .RE
+.PP
+\fBTTYGROUP\fR (string)
+.RS 4
+The login tty will be owned by the
+\fBTTYGROUP\fR. The default value is 'tty'. If the \fBTTYGROUP\fR does not exist
+then the ownership of the terminal is set to the user\'s primary group.
+.SP
+The \fBTTYGROUP\fR can be either the name of a group or a numeric group identifier.
+.RE
 
 .SH FILES
 .nf
