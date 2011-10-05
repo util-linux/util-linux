@@ -25,6 +25,7 @@ TS_HELPER_LIBMOUNT_CONTEXT="$top_builddir/libmount/src/test_context"
 TS_HELPER_LIBMOUNT_TABDIFF="$top_builddir/libmount/src/test_tab_diff"
 
 TS_HELPER_ISLOCAL="$top_builddir/login-utils/test_islocal"
+TS_HELPER_LOGINDEFS="$top_builddir/login-utils/test_logindefs"
 
 # TODO: use partx
 TS_HELPER_PARTITIONS="$top_builddir/libblkid/samples/partitions"

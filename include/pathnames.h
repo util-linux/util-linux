@@ -72,6 +72,8 @@
 /* used in term-utils/agetty.c */
 #define _PATH_ISSUE		"/etc/issue"
 
+#define _PATH_LOGINDEFS		"/etc/login.defs"
+
 /* used in misc-utils/look.c */
 #define _PATH_WORDS             "/usr/share/dict/words"
 #define _PATH_WORDS_ALT         "/usr/share/dict/web2"

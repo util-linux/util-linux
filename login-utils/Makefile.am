@@ -65,6 +65,9 @@ install-exec-hook::
 
 endif
 
-noinst_PROGRAMS = test_islocal
+noinst_PROGRAMS = test_islocal test_logindefs
 test_islocal_SOURCES = islocal.c
 test_islocal_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)
+
+test_logindefs_SOURCES = logindefs.c logindefs.h
+test_logindefs_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)
