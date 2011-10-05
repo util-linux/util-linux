@@ -1105,6 +1105,8 @@ int main(int argc, char **argv)
 		.conv = { misc_conv, NULL }	/* PAM conversation function */
 	};
 
+	timeout = getlogindefs_num("LOGIN_TIMEOUT", LOGIN_TIMEOUT);
+
 	signal(SIGALRM, timedout);
 	siginterrupt(SIGALRM, 1);	/* we have to interrupt syscalls like ioclt() */
 	alarm((unsigned int)timeout);
