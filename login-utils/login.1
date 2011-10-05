@@ -175,6 +175,14 @@ The default is to check "/etc/hushlogins" and if does not exist then
 
 If the \fBHUSHLOGIN_FILE\fR item is empty then all checks are disabled.
 .RE
+.PP
+\fBDEFAULT_HOME\fR (boolean)
+.RS 4
+Indicate if login is allowed if we can\'t cd to the home directory. If set to
+\fIyes\fR, the user will login in the root (/) directory if it is not possible
+to cd to her home directory. The default value is 'yes'.
+.RE
+
 .SH FILES
 .nf
 .I /var/run/utmp

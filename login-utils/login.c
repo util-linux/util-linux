@@ -1313,6 +1313,9 @@ int main(int argc, char **argv)
 	/* wait until here to change directory! */
 	if (chdir(pwd->pw_dir) < 0) {
 		warn(_("%s: change directory failed"), pwd->pw_dir);
+
+		if (!getlogindefs_bool("DEFAULT_HOME", 1))
+			exit(0);
 		if (chdir("/"))
 			exit(EXIT_FAILURE);
 		pwd->pw_dir = "/";
