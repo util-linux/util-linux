@@ -198,6 +198,18 @@ Enable display of unknown usernames when login failures are recorded\&.
 Note that logging unknown usernames may be a security issue if an user enter
 her password instead of her login name.
 .RE
+.PP
+\fBENV_PATH\fR (string)
+.RS 4
+If set, it will be used to define the PATH environment variable when a regular
+user login. The default value is "/usr/local/bin:/bin:/usr/bin".
+.RE
+.PP
+\fBENV_ROOTPATH\fR (string), \fBENV_SUPATH\fR (string)
+.RS 4
+If set, it will be used to define the PATH environment variable when the superuser
+login. The default value is "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin".
+.RE
 .SH FILES
 .nf
 .I /var/run/utmp

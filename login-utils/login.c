@@ -1111,9 +1111,17 @@ static void init_environ(struct login_context *cxt)
 	}
 
 	setenv("HOME", pwd->pw_dir, 0);	/* legal to override */
-	setenv("PATH", pwd->pw_uid ? _PATH_DEFPATH : _PATH_DEFPATH_ROOT, 1);
 	setenv("SHELL", pwd->pw_shell, 1);
 	setenv("TERM", termenv, 1);
+
+	if (pwd->pw_uid)
+		setenv("PATH", getlogindefs_str("ENV_PATH", _PATH_DEFPATH), 1);
+	else {
+		const char *x = getlogindefs_str("ENV_ROOTPATH", NULL);
+		if (!x)
+			x = getlogindefs_str("ENV_SUPATH", _PATH_DEFPATH_ROOT);
+		setenv("PATH", x, 1);
+	}
 
 	/* mailx will give a funny error msg if you forget this one */
 	len = snprintf(tmp, sizeof(tmp), "%s/%s", _PATH_MAILDIR, pwd->pw_name);
