@@ -845,6 +845,8 @@ static int effective_access(const char *path, int mode)
  *
  * The ~/.hushlogin is ignored if the global hush file exists.
  *
+ * The HUSHLOGIN_FILE login.def variable overwrites the default hush filename.
+ *
  * Note that shadow-utils login(1) does not support "a1)". The "a1)" is
  * necessary if you want to use PAM for "Last login" message.
  *
@@ -862,12 +864,23 @@ static int effective_access(const char *path, int mode)
 static int get_hushlogin_status(struct passwd *pwd)
 {
 	const char *files[] = { _PATH_HUSHLOGINS, _PATH_HUSHLOGIN, NULL };
+	const char *file;
 	char buf[BUFSIZ];
 	int i;
 
+	file = getlogindefs_str("HUSHLOGIN_FILE", NULL);
+	if (file) {
+		if (!*file)
+			return 0;	/* empty HUSHLOGIN_FILE defined */
+
+		files[0] = file;
+		files[1] = NULL;
+	}
+
 	for (i = 0; files[i]; i++) {
-		const char *file = files[i];
 		int ok = 0;
+
+		file = files[i];
 
 		/* Global hush-file*/
 		if (*file == '/') {

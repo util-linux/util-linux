@@ -158,7 +158,23 @@ then the ownership of the terminal is set to the user\'s primary group.
 .SP
 The \fBTTYGROUP\fR can be either the name of a group or a numeric group identifier.
 .RE
+.PP
+\fBHUSHLOGIN_FILE\fR (string)
+.RS 4
+If defined, this file can inhibit all the usual chatter during the login
+sequence.  If a full pathname (e.g. /etc/hushlogins) is specified, then hushed
+mode will be enabled if the user\'s name or shell are found in the file. If
+this global hush login file is empty then the hushed mode will be enabled for
+all users.
 
+If not a full pathname is specified, then hushed mode will be enabled if the
+file exists in the user\'s home directory.
+
+The default is to check "/etc/hushlogins" and if does not exist then
+"~/.hushlogin".
+
+If the \fBHUSHLOGIN_FILE\fR item is empty then all checks are disabled.
+.RE
 .SH FILES
 .nf
 .I /var/run/utmp
