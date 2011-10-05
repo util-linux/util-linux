@@ -114,6 +114,26 @@ and
 .I /etc/pam.d/remote
 ).
 
+
+.SH CONFIG FILE ITEMS
+.B login
+reads the
+.IR /etc/login.defs (5)
+configuration file. Note that the configuration file could be distributed with
+another package (e.g. shadow-utils). The following configuration items are
+relevant for
+.BR login (1):
+.PP
+\fBMOTD_FILE\fR (string)
+.RS 4
+If defined, ":" delimited list of "message of the day" files to be displayed
+upon login. The default value is "/etc/motd". If the \fBMOTD_FILE\fR item is
+empty or "quiet" login is enabled then the message of the day is not displayed.
+Note that the same functionality is also provided by
+.BR pam_motd (8)
+PAM module.
+.RE
+
 .SH FILES
 .nf
 .I /var/run/utmp

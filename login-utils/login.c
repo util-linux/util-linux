@@ -43,7 +43,6 @@
 #include <grp.h>
 #include <pwd.h>
 #include <utmp.h>
-#include <setjmp.h>
 #include <stdlib.h>
 #include <sys/syslog.h>
 #include <sys/sysmacros.h>
@@ -52,6 +51,7 @@
 #include <lastlog.h>
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
+#include <sys/sendfile.h>
 
 #ifdef HAVE_LIBAUDIT
 # include <libaudit.h>
@@ -67,6 +67,8 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "writeall.h"
+
+#include "logindefs.h"
 
 #define is_pam_failure(_rc)	((_rc) != PAM_SUCCESS)
 
@@ -122,8 +124,6 @@ static int timeout = LOGIN_TIMEOUT;
 static int child_pid = 0;
 static volatile int got_sig = 0;
 
-jmp_buf motdinterrupt;
-
 /*
  * Robert Ambrose writes:
  * A couple of my users have a problem with login processes hanging around
@@ -173,12 +173,6 @@ static void sig_handler(int signal)
 		kill(-child_pid, SIGHUP);	/* because the shell often ignores SIGTERM */
 }
 
-static void sigint(int sig __attribute__ ((__unused__)))
-{
-	longjmp(motdinterrupt, 1);
-}
-
-
 /* Should not be called from PAM code... */
 static void sleepexit(int eval)
 {
@@ -186,23 +180,38 @@ static void sleepexit(int eval)
 	exit(eval);
 }
 
+/*
+ * Output the /etc/motd file
+ *
+ * motd() determines the name of a login announcement file and outputs it to
+ * the user's terminal at login time.  The MOTD_FILE configuration option is a
+ * colon-delimited list of filenames. The empty MOTD_FILE option disables motd
+ * printing at all.
+ */
 static void motd(void)
 {
-	int fd, nchars;
-	void (*oldint) (int);
-	char tbuf[8192];
+	char *motdlist, *motdfile, *cp;
+	const char *mb;
 
-	if ((fd = open(_PATH_MOTDFILE, O_RDONLY, 0)) < 0)
+	mb = getlogindefs_str("MOTD_FILE", _PATH_MOTDFILE);
+	if (!mb || !*mb)
 		return;
-	oldint = signal(SIGINT, sigint);
-	if (setjmp(motdinterrupt) == 0)
-		while ((nchars = read(fd, tbuf, sizeof(tbuf))) > 0) {
-			if (write(fileno(stdout), tbuf, nchars)) {
-				;	/* glibc warn_unused_result */
-			}
-		}
-	signal(SIGINT, oldint);
-	close(fd);
+
+	motdlist = xstrdup(mb);
+
+	for (cp = motdlist; (motdfile = strtok(cp, ":")); cp = NULL) {
+		struct stat st;
+		int fd;
+
+		if (stat(motdfile, &st) || !st.st_size)
+			continue;
+		fd = open(motdfile, O_RDONLY, 0);
+		if (fd < 0)
+			continue;
+
+		sendfile(fileno(stdout), fd, NULL, st.st_size);
+		close(fd);
+	}
 }
 
 /*
