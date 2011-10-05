@@ -11,6 +11,8 @@ login \- begin session on the system
 .BR \-h
 .IR host
 ] [
+.BR \-H
+] [
 .BR \-f
 .IR username
 |
@@ -113,7 +115,13 @@ necessary to create a proper PAM config files (e.g.
 and 
 .I /etc/pam.d/remote
 ).
-
+.TP
+.B \-H
+Used by other servers (i.e.,
+.BR telnetd (8))
+to tell
+.B login
+that printing the hostname should be suppressed in the login: prompt.
 
 .SH CONFIG FILE ITEMS
 .B login
