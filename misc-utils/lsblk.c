@@ -947,6 +947,13 @@ errx_mutually_exclusive(const char *opts)
 	errx(EXIT_FAILURE, "%s %s", opts, _("options are mutually exclusive"));
 }
 
+static void check_sysdevblock(void)
+{
+	if (access(_PATH_SYS_DEVBLOCK, R_OK) != 0)
+		err(EXIT_FAILURE, _("failed to access sysfs directory: %s"),
+		    _PATH_SYS_DEVBLOCK);
+}
+
 int main(int argc, char *argv[])
 {
 	struct lsblk _ls;
@@ -1058,6 +1065,8 @@ int main(int argc, char *argv[])
 			help(stderr);
 		}
 	}
+
+	check_sysdevblock();
 
 	if (!ncolumns) {
 		columns[ncolumns++] = COL_NAME;
