@@ -711,11 +711,15 @@ static pam_handle_t *init_loginpam(struct login_context *cxt)
 
 static void loginpam_auth(struct login_context *cxt)
 {
-	int rc, failcount = 0;
+	int rc, failcount = 0, show_unknown;
+	const char *hostname = cxt->hostname ? cxt->hostname :
+			       cxt->tty_name ? cxt->tty_name : "<unknown>";
 	pam_handle_t *pamh = cxt->pamh;
 
 	/* if we didn't get a user on the command line, set it to NULL */
 	loginpam_get_username(pamh, &cxt->username);
+
+	show_unknown = getlogindefs_bool("LOG_UNKFAIL_ENAB", 0);
 
 	/*
 	 * There may be better ways to deal with some of these conditions, but
@@ -732,11 +736,19 @@ static void loginpam_auth(struct login_context *cxt)
 		(rc == PAM_CRED_INSUFFICIENT) ||
 		(rc == PAM_AUTHINFO_UNAVAIL))) {
 
-		loginpam_get_username(pamh, &cxt->username);
+		if (rc == PAM_USER_UNKNOWN && !show_unknown)
+			/*
+			 * logging unknown usernames may be a security issue if
+			 * an user enter her password instead of her login name
+			 */
+			cxt->username = NULL;
+		else
+			loginpam_get_username(pamh, &cxt->username);
 
 		syslog(LOG_NOTICE,
 		       _("FAILED LOGIN %d FROM %s FOR %s, %s"),
-		       failcount, cxt->hostname, cxt->username,
+		       failcount, hostname,
+		       cxt->username ? cxt->username : "(unknown)",
 		       pam_strerror(pamh, rc));
 
 		log_btmp(cxt);
@@ -750,17 +762,22 @@ static void loginpam_auth(struct login_context *cxt)
 
 	if (is_pam_failure(rc)) {
 
-		loginpam_get_username(pamh, &cxt->username);
+		if (rc == PAM_USER_UNKNOWN && !show_unknown)
+			cxt->username = NULL;
+		else
+			loginpam_get_username(pamh, &cxt->username);
 
 		if (rc == PAM_MAXTRIES)
 			syslog(LOG_NOTICE,
 			       _("TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"),
-			       failcount, cxt->hostname, cxt->username,
+			       failcount, hostname,
+			       cxt->username ? cxt->username : "(unknown)",
 			       pam_strerror(pamh, rc));
 		else
 			syslog(LOG_NOTICE,
 			       _("FAILED LOGIN SESSION FROM %s FOR %s, %s"),
-			       cxt->hostname, cxt->username,
+			       hostname,
+			       cxt->username ? cxt->username : "(unknown)",
 			       pam_strerror(pamh, rc));
 
 		log_btmp(cxt);

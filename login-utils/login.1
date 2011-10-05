@@ -182,7 +182,14 @@ Indicate if login is allowed if we can\'t cd to the home directory. If set to
 \fIyes\fR, the user will login in the root (/) directory if it is not possible
 to cd to her home directory. The default value is 'yes'.
 .RE
-
+.PP
+\fBLOG_UNKFAIL_ENAB\fR (boolean)
+.RS 4
+Enable display of unknown usernames when login failures are recorded\&.
+.sp
+Note that logging unknown usernames may be a security issue if an user enter
+her password instead of her login name.
+.RE
 .SH FILES
 .nf
 .I /var/run/utmp
