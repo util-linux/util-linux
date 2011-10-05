@@ -176,7 +176,7 @@ static void sig_handler(int signal)
 /* Should not be called from PAM code... */
 static void sleepexit(int eval)
 {
-	sleep(LOGIN_EXIT_TIMEOUT);
+	sleep(getlogindefs_num("FAIL_DELAY", LOGIN_EXIT_TIMEOUT));
 	exit(eval);
 }
 

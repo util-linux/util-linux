@@ -138,7 +138,12 @@ PAM module.
 .RS 4
 Max time in seconds for login. The default value is 60.
 .RE
-
+.PP
+\fBFAIL_DELAY\fR (number)
+.RS 4
+Delay in seconds before being allowed another attempt after a login failure.
+The default value is 5.
+.RE
 .SH FILES
 .nf
 .I /var/run/utmp
