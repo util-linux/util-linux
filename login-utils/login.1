@@ -219,9 +219,9 @@ login. The default value is "/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin
 .I /etc/motd
 .I /etc/passwd
 .I /etc/nologin
-.I /etc/usertty
 .I /etc/pam.d/login
 .I /etc/pam.d/remote
+.I /etc/hushlogins
 .I .hushlogin
 .fi
 .SH "SEE ALSO"
@@ -254,6 +254,8 @@ Derived from BSD login 5.40 (5/9/89) by Michael Glad (glad@daimi.dk)
 for HP-UX
 .br
 Ported to Linux 0.12: Peter Orbaek (poe@daimi.aau.dk)
+.br
+Rewritten to PAM-only version by Karel Zak (kzak@redhat.com)
 .SH AVAILABILITY
 The login command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.

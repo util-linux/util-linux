@@ -4,6 +4,9 @@
  * This program is derived from 4.3 BSD software and is subject to the
  * copyright notice below.
  *
+ * Copyright (C) 2011 Karel Zak <kzak@redhat.com>
+ * Rewritten to PAM-only version.
+ *
  * Michael Glad (glad@daimi.dk)
  * Computer Science Department, Aarhus University, Denmark
  * 1990-07-04
