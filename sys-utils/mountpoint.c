@@ -40,18 +40,18 @@
 
 static int quiet;
 
-static char *dir_to_device(const char *spec)
+static dev_t dir_to_device(const char *spec)
 {
 	struct libmnt_table *tb = mnt_new_table_from_file("/proc/self/mountinfo");
 	struct libmnt_fs *fs;
-	char *res = NULL;
+	dev_t res = 0;
 
 	if (!tb)
-		return NULL;
+		return 0;
 
 	fs = mnt_table_find_target(tb, spec, MNT_ITER_BACKWARD);
 	if (fs && mnt_fs_get_target(fs))
-		res = xstrdup(mnt_fs_get_source(fs));
+		res = mnt_fs_get_devno(fs);
 
 	mnt_free_table(tb);
 	return res;
@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 	if (dev_devno)
 		rc = print_devno(spec, &st);
 	else {
-		char *src;
+		dev_t src;
 
 		if (!S_ISDIR(st.st_mode)) {
 			if (!quiet)
@@ -160,10 +160,9 @@ int main(int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 		if (fs_devno)
-			rc = print_devno(src, NULL);
+			printf("%u:%u\n", major(src), minor(src));
 		else if (!quiet)
 			printf(_("%s is a mountpoint\n"), spec);
-		free(src);
 	}
 
 	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
