@@ -850,7 +850,7 @@ get_cell_data(struct lscpu_desc *desc, int cpu, int col,
 				 desc->configured[cpu] ? _("Y") : _("N"));
 		else
 			snprintf(buf, bufsz,
-				 desc->configured[cpu] ? _("Yes") : _("No"));
+				 desc->configured[cpu] ? _("yes") : _("no"));
 		break;
 	case COL_ONLINE:
 		if (!desc->online)
@@ -860,7 +860,7 @@ get_cell_data(struct lscpu_desc *desc, int cpu, int col,
 				 is_cpu_online(desc, cpu) ? _("Y") : _("N"));
 		else
 			snprintf(buf, bufsz,
-				 is_cpu_online(desc, cpu) ? _("Yes") : _("No"));
+				 is_cpu_online(desc, cpu) ? _("yes") : _("no"));
 		break;
 	}
 	return buf;
