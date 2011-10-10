@@ -1197,7 +1197,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -a, --all               print online and offline CPUs (default for -e)\n"
 		" -b, --online            print online CPUs only (default for -p)\n"
 		" -c, --offline           print offline CPUs only\n"
-		" -e, --extended[=<list>] print out a extended readable format\n"
+		" -e, --extended[=<list>] print out an extended readable format\n"
 		" -h, --help              print this help\n"
 		" -p, --parse[=<list>]    print out a parsable format\n"
 		" -s, --sysroot <dir>     use directory DIR as system root\n"
