@@ -30,6 +30,18 @@ libmount (mount/umount)
  features should be implemented to libmount or to the new mount/umount
  implementation in the libmount/samples/ directory.
 
+ - support MS_PROPAGATION flags in fstab -- note that kernel assumes that
+   these flags are not mixed with another mount flags, it means that:
+
+	/dev/sda1	/mnt/foo	auto 	ro,shared
+
+   has be implemented by two syscalls:
+
+	mount("/dev/sda1", "/mnt/foo", "ext4", MS_RDONLY, NULL);
+	mount(NULL, "/mnt/foo", "none", MS_REMOUNT|MS_SHARED, NULL);
+
+   yeah, there is race ;-(
+
  - (!) on systems with regular mtab file it is impossible to umount by "umount
    /dev/loop0" if the loop device has been created by "mount -o loop", because
    there is backing file in the mtab (instead of the device name). 
