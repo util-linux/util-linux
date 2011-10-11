@@ -46,8 +46,30 @@ static dev_t dir_to_device(const char *spec)
 	struct libmnt_fs *fs;
 	dev_t res = 0;
 
-	if (!tb)
+	if (!tb) {
+		/*
+		 * Fallback. Traditional way to detect mountpoints. This way
+		 * is independent on /proc, but not able to detect bind mounts.
+		 */
+		struct stat pst, st;
+		char buf[PATH_MAX];
+		int len;
+
+		if (stat(spec, &st) != 0)
+			return 0;
+
+		len = snprintf(buf, sizeof(buf), "%s/..", spec);
+		if (len < 0 || (size_t) len + 1 > sizeof(buf))
+			return 0;
+		if (stat(buf, &pst) !=0)
+			return 0;
+
+		if ((st.st_dev != pst.st_dev) ||
+		    (st.st_dev == pst.st_dev && st.st_ino == pst.st_ino))
+			return st.st_dev;
+
 		return 0;
+	}
 
 	fs = mnt_table_find_target(tb, spec, MNT_ITER_BACKWARD);
 	if (fs && mnt_fs_get_target(fs))
