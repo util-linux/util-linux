@@ -44,6 +44,7 @@ static dev_t dir_to_device(const char *spec)
 {
 	struct libmnt_table *tb = mnt_new_table_from_file("/proc/self/mountinfo");
 	struct libmnt_fs *fs;
+	struct libmnt_cache *cache;
 	dev_t res = 0;
 
 	if (!tb) {
@@ -52,13 +53,17 @@ static dev_t dir_to_device(const char *spec)
 		 * is independent on /proc, but not able to detect bind mounts.
 		 */
 		struct stat pst, st;
-		char buf[PATH_MAX];
+		char buf[PATH_MAX], *cn;
 		int len;
 
 		if (stat(spec, &st) != 0)
 			return 0;
 
-		len = snprintf(buf, sizeof(buf), "%s/..", spec);
+		cn = mnt_resolve_path(spec, NULL);	/* canonicalize */
+
+		len = snprintf(buf, sizeof(buf), "%s/..", cn ? cn : spec);
+		free(cn);
+
 		if (len < 0 || (size_t) len + 1 > sizeof(buf))
 			return 0;
 		if (stat(buf, &pst) !=0)
@@ -71,11 +76,16 @@ static dev_t dir_to_device(const char *spec)
 		return 0;
 	}
 
+	/* to canonicalize all necessary paths */
+	cache = mnt_new_cache();
+	mnt_table_set_cache(tb, cache);
+
 	fs = mnt_table_find_target(tb, spec, MNT_ITER_BACKWARD);
 	if (fs && mnt_fs_get_target(fs))
 		res = mnt_fs_get_devno(fs);
 
 	mnt_free_table(tb);
+	mnt_free_cache(cache);
 	return res;
 }
 
