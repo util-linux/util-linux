@@ -116,7 +116,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char **argv)
 {
-	int c, fs_devno = 0, dev_devno = 0, rc = EXIT_FAILURE;
+	int c, fs_devno = 0, dev_devno = 0, rc = 0;
 	char *spec;
 	struct stat st;
 
@@ -162,36 +162,30 @@ int main(int argc, char **argv)
 
 	if (stat(spec, &st)) {
 		if (!quiet)
-			warn("%s", spec);
-		goto finish;
+			err(EXIT_FAILURE, "%s", spec);
+		return EXIT_FAILURE;
 	}
-
-	if (dev_devno) {
-		if (print_devno(spec, &st) == 0)
-			rc = EXIT_SUCCESS;
-	} else {
+	if (dev_devno)
+		rc = print_devno(spec, &st);
+	else {
 		dev_t src;
 
 		if (!S_ISDIR(st.st_mode)) {
 			if (!quiet)
-				warnx(_("%s: not a directory"), spec);
-			goto finish;
+				errx(EXIT_FAILURE, _("%s: not a directory"), spec);
+			return EXIT_FAILURE;
 		}
 		src = dir_to_device(spec);
 		if (!src) {
 			if (!quiet)
 				printf(_("%s is not a mountpoint\n"), spec);
-			goto finish;
+			return EXIT_FAILURE;
 		}
-
-		rc = EXIT_SUCCESS;
-
 		if (fs_devno)
 			printf("%u:%u\n", major(src), minor(src));
 		else if (!quiet)
 			printf(_("%s is a mountpoint\n"), spec);
 	}
 
-finish:
-	return rc;
+	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
 }
