@@ -206,7 +206,7 @@ static int maxcpus;		/* size in bits of kernel cpu mask */
 			CPU_ISSET_S((_cpu), CPU_ALLOC_SIZE(maxcpus), (_d)->online) : 0)
 
 /*
- * Parsable output
+ * IDs
  */
 enum {
 	COL_CPU,
@@ -221,27 +221,35 @@ enum {
 	COL_ONLINE,
 };
 
-static const char *colnames[] =
-{
-	[COL_CPU] = "CPU",
-	[COL_CORE] = "CORE",
-	[COL_SOCKET] = "SOCKET",
-	[COL_NODE] = "NODE",
-	[COL_BOOK] = "BOOK",
-	[COL_CACHE] = "CACHE",
-	[COL_POLARIZATION] = "POLARIZATION",
-	[COL_ADDRESS] = "ADDRESS",
-	[COL_CONFIGURED] = "CONFIGURED",
-	[COL_ONLINE] = "ONLINE",
+/* column description
+ */
+struct lscpu_coldesc {
+	const char *name;
+	const char *help;
+
+	unsigned int  is_abbr:1;	/* name is abbreviation */
 };
 
+static struct lscpu_coldesc coldescs[] =
+{
+	[COL_CPU]          = { "CPU", N_("logical CPU number"), 1 },
+	[COL_CORE]         = { "CORE", N_("logical core number") },
+	[COL_SOCKET]       = { "SOCKET", N_("logical socket number") },
+	[COL_NODE]         = { "NODE", N_("logical NUMA node number") },
+	[COL_BOOK]         = { "BOOK", N_("logical book number") },
+	[COL_CACHE]        = { "CACHE", N_("shows how caches are shared between CPUs") },
+	[COL_POLARIZATION] = { "POLARIZATION", N_("CPU dispatching mode on virtual hardware") },
+	[COL_ADDRESS]      = { "ADDRESS", N_("physical address of a CPU") },
+	[COL_CONFIGURED]   = { "CONFIGURED", N_("shows if the hypervisor has allocated the CPU") },
+	[COL_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU") }
+};
 
 static int column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
 
-	for (i = 0; i < ARRAY_SIZE(colnames); i++) {
-		const char *cn = colnames[i];
+	for (i = 0; i < ARRAY_SIZE(coldescs); i++) {
+		const char *cn = coldescs[i].name;
 
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
 			return i;
@@ -893,7 +901,7 @@ get_cell_header(struct lscpu_desc *desc, int col,
 		if (desc->ncaches)
 			return buf;
 	}
-	snprintf(buf, bufsz, colnames[col]);
+	snprintf(buf, bufsz, coldescs[col].name);
 	return buf;
 }
 
@@ -937,9 +945,9 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 
 	fputs("# ", stdout);
 	for (i = 0; i < ncols; i++) {
-		char *p;
+		int col = cols[i];
 
-		if (cols[i] == COL_CACHE) {
+		if (col == COL_CACHE) {
 			if (mod->compat && !desc->ncaches)
 				continue;
 			if (mod->compat && i != 0)
@@ -948,11 +956,18 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 		if (i > 0)
 			putchar(',');
 
-		p = data = get_cell_header(desc, cols[i],
-					   mod, buf, sizeof(buf));
-		while (p && *p != '\0')
-			*p++ = tolower((unsigned int) *p);
+		data = get_cell_header(desc, col, mod, buf, sizeof(buf));
 
+		if (data && * data && col != COL_CACHE &&
+		    !coldescs[col].is_abbr) {
+			/*
+			 * For normal column names use mixed case (e.g. "Socket")
+			 */
+			char *p = data + 1;
+
+			while (p && *p != '\0')
+				*p++ = tolower((unsigned int) *p);
+		}
 		fputs(data && *data ? data : "", stdout);
 	}
 	putchar('\n');
@@ -1206,11 +1221,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, _("\nAvailable columns:\n"));
 
-	for (i = 0; i < ARRAY_SIZE(colnames); i++) {
-		fprintf(out, " %-13s", colnames[i]);
-		if (i && (i+1) % 5 == 0)
-			fputc('\n', out);
-	}
+	for (i = 0; i < ARRAY_SIZE(coldescs); i++)
+		fprintf(out, " %13s  %s\n", coldescs[i].name, _(coldescs[i].help));
+
 	fprintf(out, _("\nFor more details see lscpu(1).\n"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
@@ -1221,7 +1234,7 @@ int main(int argc, char *argv[])
 	struct lscpu_modifier _mod = { .mode = OUTPUT_SUMMARY }, *mod = &_mod;
 	struct lscpu_desc _desc = { .flags = 0 }, *desc = &_desc;
 	int c, i;
-	int columns[ARRAY_SIZE(colnames)], ncolumns = 0;
+	int columns[ARRAY_SIZE(coldescs)], ncolumns = 0;
 
 	static const struct option longopts[] = {
 		{ "all",        no_argument,       0, 'a' },
