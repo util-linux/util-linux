@@ -132,6 +132,7 @@ extern int loopcxt_set_device(struct loopdev_cxt *lc, const char *device);
 extern char *loopcxt_strdup_device(struct loopdev_cxt *lc);
 extern const char *loopcxt_get_device(struct loopdev_cxt *lc);
 extern struct sysfs_cxt *loopcxt_get_sysfs(struct loopdev_cxt *lc);
+extern struct loop_info64 *loopcxt_get_info(struct loopdev_cxt *lc);
 
 extern int loopcxt_get_fd(struct loopdev_cxt *lc);
 extern int loopcxt_set_fd(struct loopdev_cxt *lc, int fd, int mode);
