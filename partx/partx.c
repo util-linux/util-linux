@@ -558,41 +558,6 @@ done:
 	return rc;
 }
 
-static int parse_range(const char *str, int *lower, int *upper)
-{
-	char *end = NULL;
-
-	if (!str)
-		return 0;
-
-	*upper = *lower = 0;
-	errno = 0;
-
-	if (*str == ':') {				/* <:N> */
-		str++;
-		*upper = strtol(str, &end, 10);
-		if (errno || !end || *end || end == str)
-			return -1;
-	} else {
-		*upper = *lower = strtol(str, &end, 10);
-		if (errno || !end || end == str)
-			return -1;
-
-		if (*end == ':' && !*(end + 1))		/* <M:> */
-			*upper = 0;
-		else if (*end == '-' || *end == ':') {	/* <M:N> <M-N> */
-			str = end + 1;
-			end = NULL;
-			errno = 0;
-			*upper = strtol(str, &end, 10);
-
-			if (errno || !end || *end || end == str)
-				return -1;
-		}
-	}
-	return 0;
-}
-
 static blkid_partlist get_partlist(blkid_probe pr,
 			const char *device, char *type)
 {

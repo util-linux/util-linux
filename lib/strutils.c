@@ -424,7 +424,7 @@ int string_to_idarray(const char *list, int ary[], size_t arysz,
  * as a possition in the 'ary' bit array. It means that the 'id' has to be in
  * range <0..N> where N < sizeof(ary) * NBBY.
  *
- * Returns: 0 on sucess, <0 on error.
+ * Returns: 0 on success, <0 on error.
  */
 int string_to_bitarray(const char *list,
 		     char *ary,
@@ -460,6 +460,49 @@ int string_to_bitarray(const char *list,
 	}
 	return 0;
 }
+
+/*
+ * Parse the lower and higher values in a string containing
+ * "lower:higher" or "lower-higher" format. Note that either
+ * the lower or the higher values may be missing.
+ *
+ * Returns: 0 on success, <0 on error.
+ */
+int parse_range(const char *str, int *lower, int *upper)
+{
+	char *end = NULL;
+
+	if (!str)
+		return 0;
+
+	*upper = *lower = 0;
+	errno = 0;
+
+	if (*str == ':') {				/* <:N> */
+		str++;
+		*upper = strtol(str, &end, 10);
+		if (errno || !end || *end || end == str)
+			return -1;
+	} else {
+		*upper = *lower = strtol(str, &end, 10);
+		if (errno || !end || end == str)
+			return -1;
+
+		if (*end == ':' && !*(end + 1))		/* <M:> */
+			*upper = 0;
+		else if (*end == '-' || *end == ':') {	/* <M:N> <M-N> */
+			str = end + 1;
+			end = NULL;
+			errno = 0;
+			*upper = strtol(str, &end, 10);
+
+			if (errno || !end || *end || end == str)
+				return -1;
+		}
+	}
+	return 0;
+}
+
 
 #ifdef TEST_PROGRAM
 
