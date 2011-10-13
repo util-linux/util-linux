@@ -495,7 +495,6 @@ int main(int argc, char **argv)
 
 		strcpy(new_devname, "/dev/");
 		strcat(new_devname, devname);
-		free(devname);
 		devname = new_devname;
 	}
 
