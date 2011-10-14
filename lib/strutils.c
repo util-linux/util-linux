@@ -464,18 +464,19 @@ int string_to_bitarray(const char *list,
 /*
  * Parse the lower and higher values in a string containing
  * "lower:higher" or "lower-higher" format. Note that either
- * the lower or the higher values may be missing.
+ * the lower or the higher values may be missing, and the def
+ * value will be assigned to it by default.
  *
  * Returns: 0 on success, <0 on error.
  */
-int parse_range(const char *str, int *lower, int *upper)
+int parse_range(const char *str, int *lower, int *upper, int def)
 {
 	char *end = NULL;
 
 	if (!str)
 		return 0;
 
-	*upper = *lower = 0;
+	*upper = *lower = def;
 	errno = 0;
 
 	if (*str == ':') {				/* <:N> */

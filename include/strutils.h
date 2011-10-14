@@ -45,6 +45,6 @@ extern int string_to_idarray(const char *list, int ary[], size_t arysz,
 extern int string_to_bitarray(const char *list, char *ary,
 			    int (*name2bit)(const char *, size_t));
 
-extern int parse_range(const char *str, int *lower, int *upper);
+extern int parse_range(const char *str, int *lower, int *upper, int def);
 
 #endif
