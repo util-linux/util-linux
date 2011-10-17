@@ -445,6 +445,7 @@ static char *remove_context_options(char *opts)
 			p = begin;
 			changed = 1;
 		}
+		begin = end = NULL;
 	}
 
 	if (changed && verbose)
