@@ -410,7 +410,7 @@ int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg)
 		rc = mnt_context_enable_lazy(cxt, TRUE);
 		break;
 	case 'f':
-		rc = mnt_context_enable_fake(cxt, TRUE);
+		rc = mnt_context_enable_force(cxt, TRUE);
 		break;
 	case 'v':
 		rc = mnt_context_enable_verbose(cxt, TRUE);
