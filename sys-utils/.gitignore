@@ -26,6 +26,7 @@ pivot_root
 ppc32.8
 ppc64.8
 ppc.8
+prlimit
 readprofile
 renice
 rtcwake
