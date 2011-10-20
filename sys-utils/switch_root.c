@@ -111,15 +111,27 @@ done:
 static int switchroot(const char *newroot)
 {
 	/*  Don't try to unmount the old "/", there's no way to do it. */
-	const char *umounts[] = { "/dev", "/proc", "/sys", NULL };
+	const char *umounts[] = { "/dev", "/proc", "/sys", "/run", NULL };
 	int i;
 	int cfd;
 	pid_t pid;
+	struct stat newroot_stat, sb;
+
+	if (stat(newroot, &newroot_stat) != 0) {
+		warn("failed to stat directory %s", newroot);
+		return -1;
+	}
 
 	for (i = 0; umounts[i] != NULL; i++) {
 		char newmount[PATH_MAX];
 
 		snprintf(newmount, sizeof(newmount), "%s%s", newroot, umounts[i]);
+
+		if ((stat(newmount, &sb) != 0) || (sb.st_dev != newroot_stat.st_dev)) {
+			/* mount point seems to be mounted already or stat failed */
+			umount(umounts[i]);
+			continue;
+		}
 
 		if (mount(umounts[i], newmount, NULL, MS_MOVE, NULL) < 0) {
 			warn("failed to mount moving %s to %s",
