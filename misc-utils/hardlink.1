@@ -6,11 +6,11 @@ hardlink \- Consolidate duplicate files via hardlinks
 \fBhardlink\fP [\fB-c\fP] [\fB-n\fP] [\fB-v\fP] [\fB-vv\fP] [\fB-h\fP] directory1 [ directory2 ... ]
 .SH "DESCRIPTION"
 .PP
-This manual page documents \fBhardlink\fP, a 
+This manual page documents \fBhardlink\fP, a
 program which consolidates duplicate files in one or more directories
 using hardlinks.
 .PP
-\fBhardlink\fP traverses one 
+\fBhardlink\fP traverses one
 or more directories searching for duplicate files.  When it finds duplicate
 files, it uses one of them as the master.  It then removes all other
 duplicates and places a hardlink for each one pointing to the master file.
@@ -34,8 +34,15 @@ Print every hardlinked file and bytes saved. Also print summary after hardlinkin
 Show help.
 .SH "AUTHOR"
 .PP
-\fBhardlink\fP was written by Jakub Jelinek <jakub@redhat.com>. 
+\fBhardlink\fP was written by Jakub Jelinek <jakub@redhat.com>.
 .PP
 Man page written by Brian Long.
 .PP
 Man page updated by Jindrich Novy <jnovy@redhat.com>
+.SH "BUGS"
+.PP
+\fBhardlink\fP assumes that its target directory trees do not change from under
+it.  If a directory tree does change, this may result in \fBhardlink\fP
+accessing files and/or directories outside of the intended directory tree.
+Thus, you must avoid running \fBhardlink\fP on potentially changing directory
+trees, and especially on directory trees under control of another user.
