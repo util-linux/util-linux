@@ -46,3 +46,6 @@ config/ltmain.sh
 
 # GTK_DOC_CHECK depends on gtk-doc.m4
 !m4/gtk-doc.m4
+
+# util-linux specific macros
+!m4/ul.m4

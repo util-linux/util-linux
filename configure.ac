@@ -194,6 +194,7 @@ AC_CHECK_FUNCS(
 	usleep \
 	nanosleep \
 	personality \
+	updwtmp \
 	jrand48 \
 	lchown \
 	llseek \
@@ -281,68 +282,26 @@ AC_LINK_IFELSE([AC_LANG_PROGRAM([extern char *__progname;],
            AC_MSG_RESULT(no))
 
 dnl Static compilation
-m4_define([UTIL_STATIC_PROGRAMS], [losetup, mount, umount, fdisk, sfdisk, blkid])
+m4_define([UL_STATIC_PROGRAMS], [losetup, mount, umount, fdisk, sfdisk, blkid])
 
 AC_ARG_ENABLE([static-programs],
   [AS_HELP_STRING([--enable-static-programs=LIST],
       [link static the programs in LIST (comma-separated,
-      supported for ]m4_defn([UTIL_STATIC_PROGRAMS])[)])])
+      supported for ]m4_defn([UL_STATIC_PROGRAMS])[)])])
 
 case $enable_static_programs in
-yes) enable_static_programs=m4_quote(UTIL_STATIC_PROGRAMS) ;;
+yes) enable_static_programs=m4_quote(UL_STATIC_PROGRAMS) ;;
 no) enable_static_programs= ;;
 esac
 
 dnl Set all the individual AM_CONDITIONALs
-m4_foreach([UTIL_PRG], m4_defn([UTIL_STATIC_PROGRAMS]), [
+m4_foreach([UL_PRG], m4_defn([UL_STATIC_PROGRAMS]), [
   case ,$enable_static_programs, in
-   *,UTIL_PRG,*) static_[]UTIL_PRG=yes ;;
+   *,UL_PRG,*) static_[]UL_PRG=yes ;;
   esac
-  AM_CONDITIONAL([HAVE_STATIC_]m4_toupper(UTIL_PRG),
-    [test "x$static_[]UTIL_PRG" = xyes])
+  AM_CONDITIONAL([HAVE_STATIC_]m4_toupper(UL_PRG),
+    [test "x$static_[]UL_PRG" = xyes])
 ])
-
-dnl UTIL_PKG_STATIC(VARIABLE, MODULES)
-dnl ----------------------------------
-AC_DEFUN([UTIL_PKG_STATIC], [
-  if AC_RUN_LOG([pkg-config --exists --print-errors "$2"]); then
-    $1=`pkg-config --libs --static "$2"`
-  else
-    AC_MSG_ERROR([pkg-config description of $2, needed for static build, is not available])
-  fi
-])
-
-dnl UTIL_CHECK_LIB(LIBRARY, FUNCTION, [VARSUFFIX = $1]))
-dnl The VARSUFFIX is optional and overrides the default behaviour. For example:
-dnl     UTIL_CHECK_LIB(yyy, func, xxx) generates have_xxx and HAVE_LIBXXX
-dnl     UTIL_CHECK_LIB(yyy, func)      generates have_yyy and HAVE_LIBYYY
-dnl ---------------------------------
-AC_DEFUN([UTIL_CHECK_LIB], [
-  m4_define([suffix], m4_default([$3],$1))
-  [have_]suffix=yes
-  m4_ifdef([$3],
-    [AC_CHECK_LIB([$1], [$2], [AC_DEFINE(AS_TR_CPP([HAVE_LIB]suffix), 1)], [[have_]suffix=no])],
-    [AC_CHECK_LIB([$1], [$2], [], [[have_]suffix=no])])
-  AM_CONDITIONAL(AS_TR_CPP([HAVE_]suffix), [test [$have_]suffix = yes])
-])
-
-dnl UTIL_SET_FLAGS(CFLAGS, CPPFLAGS, LDFLAGS)
-AC_DEFUN([UTIL_SET_FLAGS], [
-  old_CFLAGS="$CFLAGS"
-  old_CPPFLAGS="$CPPFLAGS"
-  old_LDFLAGS="$LDFLAGS"
-  CFLAGS="$CFLAGS $1"
-  CPPFLAGS="$CPPFLAGS $2"
-  LDFLAGS="$LDFLAGS $3"
-])
-
-dnl UTIL_RESTORE_FLAGS()
-AC_DEFUN([UTIL_RESTORE_FLAGS], [
-  CFLAGS="$old_CFLAGS"
-  CPPFLAGS="$old_CPPFLAGS"
-  LDFLAGS="$old_LDFLAGS"
-])
-
 
 AX_CHECK_TLS
 
@@ -476,7 +435,7 @@ elif test "x$enable_libmount" = xno; then
     build_libmount=no
 fi
 
-AC_DEFUN([UTIL_SCANF_TYPE_MODIFIER], [dnl
+AC_DEFUN([UL_SCANF_TYPE_MODIFIER], [dnl
 # include <stdio.h>
 int main()
 {
@@ -489,9 +448,9 @@ int main()
 }])
 AC_MSG_CHECKING([needed scanf type modifiers])
 AC_CACHE_VAL([scanf_cv_type_modifier],
-  AC_RUN_IFELSE([AC_LANG_SOURCE([UTIL_SCANF_TYPE_MODIFIER(["%ms"])])],
+  AC_RUN_IFELSE([AC_LANG_SOURCE([UL_SCANF_TYPE_MODIFIER(["%ms"])])],
     [scanf_cv_type_modifier=ms],
-    AC_RUN_IFELSE([AC_LANG_SOURCE([UTIL_SCANF_TYPE_MODIFIER(["%as"])])],
+    AC_RUN_IFELSE([AC_LANG_SOURCE([UL_SCANF_TYPE_MODIFIER(["%as"])])],
       [scanf_cv_type_modifier=as],
       [scanf_cv_type_modifier=no]
     )
@@ -561,8 +520,8 @@ esac
 AM_CONDITIONAL(BUILD_MOUNTPOINT, test "x$build_mountpoint" = xyes)
 
 
-UTIL_CHECK_LIB(util, openpty)
-UTIL_CHECK_LIB(termcap, tgetnum)
+UL_CHECK_LIB(util, openpty)
+UL_CHECK_LIB(termcap, tgetnum)
 
 AM_GNU_GETTEXT_VERSION([0.14.1])
 AM_GNU_GETTEXT([external])
@@ -584,14 +543,14 @@ if test "x$with_ncurses" != xno; then
   have_ncurses=no
   AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h], [
     if test "x$with_ncurses" = xauto; then
-      UTIL_CHECK_LIB(ncursesw, initscr, ncurses)
+      UL_CHECK_LIB(ncursesw, initscr, ncurses)
       if test "x$have_ncurses" = xyes; then
         AC_CHECK_HEADERS([ncursesw/ncurses.h])
         NCURSES_LIBS="-lncursesw"
       fi
     fi
     if test "x$have_ncurses" = xno; then
-      UTIL_CHECK_LIB(ncurses, initscr)
+      UL_CHECK_LIB(ncurses, initscr)
       if test "x$have_ncurses" = xyes; then
         NCURSES_LIBS="-lncurses"
       fi
@@ -637,7 +596,7 @@ AC_ARG_WITH([utempter],
 )
 
 if test "x$with_utempter" = xyes; then
-  UTIL_CHECK_LIB(utempter, utempter_add_record)
+  UL_CHECK_LIB(utempter, utempter_add_record)
   if test "x$have_utempter" = xno; then
     AC_MSG_ERROR([utempter selected but libutempter not found])
   fi
@@ -701,66 +660,9 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 ])
 
 
-dnl UTIL_CHECK_SYSCALL(SYSCALL, FALLBACK, ...)
-dnl Only specify FALLBACK if the SYSCALL
-dnl you're checking for is a "newish" one
-dnl -------------------------------------
-AC_DEFUN([UTIL_CHECK_SYSCALL], [
-  dnl This macro uses host_cpu.
-  AC_REQUIRE([AC_CANONICAL_HOST])
-  AC_CACHE_CHECK([for syscall $1],
-    [util_cv_syscall_$1],
-    [_UTIL_SYSCALL_CHECK_DECL([SYS_$1],
-      [syscall=SYS_$1],
-      [dnl Our libc failed use, so see if we can get the kernel
-      dnl headers to play ball ...
-      _UTIL_SYSCALL_CHECK_DECL([_NR_$1],
-	[syscall=_NR_$1],
-	[
-	  syscall=no
-	  if test "x$linux_os" = xyes; then
-	    case $host_cpu in
-	      _UTIL_CHECK_SYSCALL_FALLBACK(m4_shift($@))
-	    esac
-	  fi
-        ])
-      ])
-    util_cv_syscall_$1=$syscall
-    ])
-  AM_CONDITIONAL([HAVE_]m4_toupper($1), [test "x$util_cv_syscall_$1" != xno])
-  case $util_cv_syscall_$1 in #(
-  no) AC_MSG_WARN([Unable to detect syscall $1.]) ;;
-  SYS_*) ;;
-  *) AC_DEFINE_UNQUOTED([SYS_$1], [$util_cv_syscall_$1],
-	[Fallback syscall number for $1]) ;;
-  esac
-])
-
-dnl _UTIL_SYSCALL_CHECK_DECL(SYMBOL, ACTION-IF-FOUND, ACTION-IF-NOT-FOUND)
-dnl Check if SYMBOL is declared, using the headers needed for syscall checks.
-dnl -------------------------------------
-m4_define([_UTIL_SYSCALL_CHECK_DECL],
-[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#include <sys/syscall.h>
-#include <unistd.h>
-]], [[int test = $1;]])],
-[$2], [$3])
-])
-
-dnl _UTIL_CHECK_SYSCALL_FALLBACK(PATTERN, VALUE, ...)
-dnl Helper macro to create the body for the above `case'.
-dnl -------------------------------------
-m4_define([_UTIL_CHECK_SYSCALL_FALLBACK],
-[m4_ifval([$1],
-  [#(
-  $1) syscall="$2" ;;dnl
-  _UTIL_CHECK_SYSCALL_FALLBACK(m4_shiftn(2, $@))])dnl
-])
-
-
-UTIL_CHECK_SYSCALL([pivot_root])
-UTIL_CHECK_SYSCALL([sched_getaffinity])
-UTIL_CHECK_SYSCALL([ioprio_set],
+UL_CHECK_SYSCALL([pivot_root])
+UL_CHECK_SYSCALL([sched_getaffinity])
+UL_CHECK_SYSCALL([ioprio_set],
   [alpha],    [442],
   [i*86],     [289],
   [ia64*],    [1274],
@@ -769,7 +671,7 @@ UTIL_CHECK_SYSCALL([ioprio_set],
   [sparc*],   [196],
   [sh*],      [288],
   [x86_64*],  [251])
-UTIL_CHECK_SYSCALL([ioprio_get],
+UL_CHECK_SYSCALL([ioprio_get],
   [alpha],    [443],
   [i*86],     [290],
   [ia64*],    [1275],
@@ -780,7 +682,7 @@ UTIL_CHECK_SYSCALL([ioprio_get],
   [x86_64*],  [252])
 
 dnl fallocate could be available as libc function or as syscall only
-UTIL_CHECK_SYSCALL([fallocate])
+UL_CHECK_SYSCALL([fallocate])
 
 dnl check for valid fallocate() function
 dnl with 32 bits glibc 2.10, fallocate() exists but not fallocate64()
@@ -817,7 +719,7 @@ AC_DEFINE(HAVE_FALLOCATE,1,[Have valid fallocate() function])],[
 AC_MSG_RESULT([no])])
 
 dnl unshare could be available as libc function or as syscall only
-UTIL_CHECK_SYSCALL([unshare])
+UL_CHECK_SYSCALL([unshare])
 AC_CHECK_FUNCS([unshare])
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
@@ -876,26 +778,15 @@ AC_CHECK_DECLS([CPU_ALLOC], [], [], [[
 #include <sched.h>
 ]])
 
-
-dnl UTIL_SET_ARCH(ARCHNAME, PATTERN)
-dnl ---------------------------------
-AC_DEFUN([UTIL_SET_ARCH], [
-  cpu_$1=false
-  case "$host" in
-   $2) cpu_$1=true ;;
-  esac
-  AM_CONDITIONAL(AS_TR_CPP(ARCH_$1), [test "x$cpu_$1" = xtrue])
-])
-
-UTIL_SET_ARCH(I86, i?86-*)
-UTIL_SET_ARCH(86_64, x86_64*)
-UTIL_SET_ARCH(IA64, ia64*)
-UTIL_SET_ARCH(S390, s390*)
-UTIL_SET_ARCH(SPARC, sparc*)
-UTIL_SET_ARCH(PPC, ppc*|powerpc*)
-UTIL_SET_ARCH(M68K, m68*)
-UTIL_SET_ARCH(MIPS, mips*)
-UTIL_SET_ARCH(HPPA, hppa*)
+UL_SET_ARCH(I86, i?86-*)
+UL_SET_ARCH(86_64, x86_64*)
+UL_SET_ARCH(IA64, ia64*)
+UL_SET_ARCH(S390, s390*)
+UL_SET_ARCH(SPARC, sparc*)
+UL_SET_ARCH(PPC, ppc*|powerpc*)
+UL_SET_ARCH(M68K, m68*)
+UL_SET_ARCH(MIPS, mips*)
+UL_SET_ARCH(HPPA, hppa*)
 
 AC_ARG_ENABLE([arch],
   AS_HELP_STRING([--enable-arch], [do build arch]),
@@ -980,7 +871,7 @@ else
             build_pivot_root=no;;
   esac
   if test "x$build_pivot_root" = xyes; then
-    case $enable_pivot_root:$util_cv_syscall_pivot_root in
+    case $enable_pivot_root:$ul_cv_syscall_pivot_root in
     yes:no) AC_MSG_ERROR([pivot_root selected but pivot_root syscall not found]);;
     check:no) AC_MSG_WARN([pivot_root syscall not found; do not build pivot_root])
               build_pivot_root=no;;
@@ -1004,7 +895,7 @@ else
             build_fallocate=no;;
   esac
   if test "x$build_fallocate" = xyes; then
-    case $enable_fallocate:$util_cv_syscall_fallocate in
+    case $enable_fallocate:$ul_cv_syscall_fallocate in
     yes:no) AC_MSG_ERROR([fallocate selected but fallocate syscall not found]);;
     check:no) AC_MSG_WARN([fallocate syscall not found; do not build fallocate])
               build_fallocate=no;;
@@ -1028,7 +919,7 @@ else
             build_unshare=no;;
   esac
   if test "x$build_unshare" = xyes; then
-    case $enable_unshare:$util_cv_syscall_unshare in
+    case $enable_unshare:$ul_cv_syscall_unshare in
     yes:no) AC_MSG_ERROR([unshare selected but unshare syscall not found]);;
     check:no) AC_MSG_WARN([unshare syscall not found; do not build unshare])
               build_unshare=no;;
@@ -1112,7 +1003,7 @@ AC_ARG_WITH([selinux],
 if test "x$with_selinux" = xno; then
   AM_CONDITIONAL(HAVE_SELINUX, false)
 else
-  UTIL_CHECK_LIB(selinux, getprevcon)
+  UL_CHECK_LIB(selinux, getprevcon)
   case "$with_selinux:$have_selinux" in
   yes:no) AC_MSG_ERROR([SELinux selected but libselinux not found]);;
   esac
@@ -1138,7 +1029,7 @@ AC_ARG_WITH([audit],
 if test "x$with_audit" = xno; then
   AM_CONDITIONAL(HAVE_AUDIT, false)
 else
-  UTIL_CHECK_LIB(audit, audit_log_user_message)
+  UL_CHECK_LIB(audit, audit_log_user_message)
   case "$with_audit:$have_audit" in
   yes:no)
    AC_MSG_ERROR([Audit selected but libaudit not found (or does not support audit_log_user_message())])
@@ -1154,14 +1045,13 @@ AC_ARG_WITH([udev], AS_HELP_STRING([--without-udev], [compile without udev suppo
 if test "x$with_udev" = xno; then
   AM_CONDITIONAL(HAVE_UDEV, false)
 else
-  UTIL_CHECK_LIB(udev, udev_new)
+  UL_CHECK_LIB(udev, udev_new)
   case "$with_udev:$have_udev" in
   yes:no)
    AC_MSG_ERROR([udev selected but libudev not found])
    ;;
   esac
 fi
-
 
 AC_ARG_ENABLE([schedutils],
   AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, teskset]),
