@@ -49,7 +49,6 @@ enum {
 	COL_TYPE,
 	COL_FLAGS,
 	COL_SCHEME,
-	__NCOLUMNS
 };
 
 enum {
@@ -72,7 +71,7 @@ struct colinfo {
 };
 
 /* columns descriptions */
-struct colinfo infos[__NCOLUMNS] = {
+struct colinfo infos[] = {
 	[COL_PARTNO]   = { "NR",    0.25, TT_FL_RIGHT, N_("partition number") },
 	[COL_START]    = { "START",   0.30, TT_FL_RIGHT, N_("start of the partition in sectors") },
 	[COL_END]      = { "END",     0.30, TT_FL_RIGHT, N_("end of the partition in sectors") },
@@ -84,8 +83,11 @@ struct colinfo infos[__NCOLUMNS] = {
 	[COL_FLAGS]    = { "FLAGS",   0.1, TT_FL_TRUNC, N_("partition flags")},
 	[COL_TYPE]     = { "TYPE",    1, TT_FL_RIGHT, N_("partition type hex or uuid")},
 };
+
+#define NCOLS ARRAY_SIZE(infos)
+
 /* array with IDs of enabled columns */
-static int columns[__NCOLUMNS], ncolumns;
+static int columns[NCOLS], ncolumns;
 
 static int verbose;
 static int partx_flags;
@@ -137,9 +139,9 @@ static void assoc_loopdev(const char *fname)
 
 static inline int get_column_id(int num)
 {
-	assert(ARRAY_SIZE(columns) == __NCOLUMNS);
+	assert(ARRAY_SIZE(columns) == NCOLS);
 	assert(num < ncolumns);
-	assert(columns[num] < __NCOLUMNS);
+	assert(columns[num] < (int) NCOLS);
 	return columns[num];
 }
 
@@ -150,11 +152,11 @@ static inline struct colinfo *get_column_info(int num)
 
 static int column_name_to_id(const char *name, size_t namesz)
 {
-	int i;
+	size_t i;
 
 	assert(name);
 
-	for (i = 0; i < __NCOLUMNS; i++) {
+	for (i = 0; i < NCOLS; i++) {
 		const char *cn = infos[i].name;
 
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
@@ -600,7 +602,7 @@ static blkid_partlist get_partlist(blkid_probe pr,
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	int i;
+	size_t i;
 
 	fputs(_("\nUsage:\n"), out);
 	fprintf(out,
@@ -624,7 +626,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fputs(_("\nAvailable columns (for --show, --raw or --pairs):\n"), out);
 
-	for (i = 0; i < __NCOLUMNS; i++)
+	for (i = 0; i < NCOLS; i++)
 		fprintf(out, " %10s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, _("\nFor more information see partx(8).\n"));
