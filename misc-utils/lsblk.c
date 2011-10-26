@@ -88,8 +88,6 @@ enum {
 	COL_DGRAN,
 	COL_DMAX,
 	COL_DZERO,
-
-	__NCOLUMNS
 };
 
 /* column names */
@@ -101,7 +99,7 @@ struct colinfo {
 };
 
 /* columns descriptions */
-static struct colinfo infos[__NCOLUMNS] = {
+static struct colinfo infos[] = {
 	[COL_NAME]   = { "NAME",    0.25, TT_FL_TREE, N_("device name") },
 	[COL_KNAME]  = { "KNAME",   0.3, 0, N_("internal kernel device name") },
 	[COL_MAJMIN] = { "MAJ:MIN", 6, 0, N_("major:minor device number") },
@@ -140,7 +138,9 @@ struct lsblk {
 };
 
 struct lsblk *lsblk;	/* global handler */
-int columns[__NCOLUMNS];/* enabled columns */
+
+#define NCOLS ARRAY_SIZE(infos)
+int columns[NCOLS];/* enabled columns */
 int ncolumns;		/* number of enabled columns */
 
 int excludes[256];
@@ -190,9 +190,9 @@ static int is_maj_excluded(int maj)
 /* array with IDs of enabled columns */
 static int get_column_id(int num)
 {
-	assert(ARRAY_SIZE(columns) == __NCOLUMNS);
+	assert(ARRAY_SIZE(columns) == NCOLS);
 	assert(num < ncolumns);
-	assert(columns[num] < __NCOLUMNS);
+	assert(columns[num] < (int) NCOLS);
 	return columns[num];
 }
 
@@ -203,9 +203,9 @@ static struct colinfo *get_column_info(int num)
 
 static int column_name_to_id(const char *name, size_t namesz)
 {
-	int i;
+	size_t i;
 
-	for (i = 0; i < __NCOLUMNS; i++) {
+	for (i = 0; i < NCOLS; i++) {
 		const char *cn = infos[i].name;
 
 		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
@@ -907,7 +907,7 @@ static void parse_excludes(const char *str)
 
 static void __attribute__((__noreturn__)) help(FILE *out)
 {
-	int i;
+	size_t i;
 
 	fprintf(out, _(
 		"\nUsage:\n"
@@ -933,7 +933,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 
 	fprintf(out, _("\nAvailable columns:\n"));
 
-	for (i = 0; i < __NCOLUMNS; i++)
+	for (i = 0; i < NCOLS; i++)
 		fprintf(out, " %10s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, _("\nFor more information see lsblk(8).\n"));
