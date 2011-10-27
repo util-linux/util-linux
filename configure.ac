@@ -345,16 +345,16 @@ AC_ARG_ENABLE([libblkid],
   AS_HELP_STRING([--disable-libblkid], [do not build libblkid and many related utilities]),
   [], enable_libblkid=yes
 )
+build_libblkid=$enable_libblkid
 AC_SUBST([LIBBLKID_DATE])
 AC_SUBST([LIBBLKID_VERSION])
 AC_SUBST([LIBBLKID_VERSION_INFO])
-AM_CONDITIONAL(BUILD_LIBBLKID, test "x$enable_libblkid" = xyes)
 AC_DEFINE_UNQUOTED(LIBBLKID_VERSION, "$LIBBLKID_VERSION", [libblkid version string])
 AC_DEFINE_UNQUOTED(LIBBLKID_DATE, "$LIBBLKID_DATE", [libblkid date string])
-
-if test "x$enable_libblkid" = xyes; then
+if test "x$build_libblkid" = xyes; then
   AC_DEFINE(HAVE_LIBBLKID, 1, [Define to 1 if you have the -lblkid.])
 fi
+AM_CONDITIONAL(BUILD_LIBBLKID, test "x$build_libblkid" = xyes)
 
 dnl
 dnl libmount
@@ -411,7 +411,7 @@ as)
 esac
 
 
-case "$enable_libblkid:$build_libmount" in
+case "$build_libblkid:$build_libmount" in
 no:yes)
   AC_MSG_ERROR([cannot enable libmount when libblkid is disabled]) ;;
 esac
