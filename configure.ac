@@ -172,6 +172,7 @@ AC_CHECK_HEADERS(
 	sys/user.h \
 	sys/swap.h \
 	sys/resource.h \
+	security/pam_misc.h \
 	linux/raw.h \
 	unistd.h ])
 
@@ -182,6 +183,7 @@ AC_CHECK_HEADERS([langinfo.h],
 dnl Convert some ac_cv_header_* variables to have_*
 dnl
 have_linux_raw_h=$ac_cv_header_linux_raw_h
+have_security_pam_misc_h=$ac_cv_header_security_pam_misc_h
 
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
@@ -906,12 +908,9 @@ AC_ARG_ENABLE([login-utils],
   AS_HELP_STRING([--enable-login-utils], [build chfn, chsh, login, newgrp, vipw]),
   [], enable_login_utils=no
 )
-AM_CONDITIONAL(BUILD_LOGIN_UTILS, test "x$enable_login_utils" = xyes)
-
-if test "x$enable_login_utils" = xyes; then
-  AC_CHECK_HEADERS([security/pam_misc.h], [],
-    [AC_MSG_ERROR([login-utils enabled, but security/pam_misc.h not found])])
-fi
+build_login_utils=yes
+UL_REQUIRES_HAVE([login_utils], [security_pam_misc_h], [PAM header file])
+AM_CONDITIONAL(BUILD_LOGIN_UTILS, test "x$build_login_utils" = xyes)
 
 
 AC_ARG_WITH([selinux],

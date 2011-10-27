@@ -150,6 +150,8 @@ login-utils:
 -----------
 
  - use err() and warn() macros rather than fprintf(stderr, ...)
+ - (!) merge newgrp from shadow-utils
+ - (!) enable login utils by default
 
 libblkid
 --------
