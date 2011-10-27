@@ -854,6 +854,15 @@ UL_REQUIRES_HAVE([chcpu], [cpu_set_t], [cpu_set_t type])
 AM_CONDITIONAL(BUILD_CHCPU, test "x$build_chcpu" = xyes)
 
 
+UL_BUILD_INIT([prlimit], [check])
+UL_REQUIRES_LINUX([prlimit])
+UL_REQUIRES_SYSCALL_CHECK([prlimit], [UL_CHECK_SYSCALL([prlimit64])], [prlimit64])
+AM_CONDITIONAL(BUILD_PRLIMIT, test "x$build_prlimit" = xyes)
+if test "x$build_prlimit" = xyes; then
+  AC_CHECK_FUNCS([prlimit])
+fi
+
+
 AC_ARG_ENABLE([switch_root],
   AS_HELP_STRING([--disable-switch_root], [do not build switch_root]),
   [], enable_switch_root=check

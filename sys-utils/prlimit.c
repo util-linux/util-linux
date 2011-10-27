@@ -33,6 +33,10 @@
 #include "xalloc.h"
 #include "strutils.h"
 
+#ifndef RLIMIT_RTTIME
+# define RLIMIT_RTTIME 15
+#endif
+
 enum {
 	AS,
 	CORE,
@@ -122,6 +126,16 @@ struct colinfo infos[] = {
 static int columns[NCOLS], ncolumns;
 static pid_t pid; /* calling process (default) */
 static int verbose;
+
+#ifndef HAVE_PRLIMIT
+# include <sys/syscall.h>
+static int prlimit(pid_t p, int resource,
+		   const struct rlimit *new_limit,
+		   struct rlimit *old_limit)
+{
+	return syscall(SYS_prlimit, p, resource, new_limit, old_limit);
+}
+#endif
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
