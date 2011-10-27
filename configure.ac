@@ -834,12 +834,14 @@ UL_REQUIRES_SYSCALL_CHECK([pivot_root], [UL_CHECK_SYSCALL([pivot_root])])
 AM_CONDITIONAL(BUILD_PIVOT_ROOT, test "x$build_pivot_root" = xyes)
 
 
-
 AC_ARG_ENABLE([elvtune],
   AS_HELP_STRING([--enable-elvtune], [build elvtune (only works with 2.2 and 2.4 kernels)]),
   [], enable_elvtune=no
 )
-AM_CONDITIONAL(BUILD_ELVTUNE, test "x$enable_elvtune" = xyes)
+build_elvtune=yes
+UL_REQUIRES_LINUX([elvtune])
+AM_CONDITIONAL(BUILD_ELVTUNE, test "x$build_elvtune" = xyes)
+
 
 AC_ARG_ENABLE([kill],
   AS_HELP_STRING([--enable-kill], [build kill]),
