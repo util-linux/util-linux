@@ -302,6 +302,47 @@ m4_foreach([UL_PRG], m4_defn([UL_STATIC_PROGRAMS]), [
 
 AX_CHECK_TLS
 
+AC_DEFUN([UL_SCANF_TYPE_MODIFIER], [dnl
+# include <stdio.h>
+int main()
+{
+	int i;
+	char *s;
+	i = sscanf("x", $1, &s);
+	if (i == 1)
+		return 0;
+	return 1;
+}])
+
+AC_CACHE_VAL([scanf_cv_alloc_modifier],
+  AC_RUN_IFELSE([AC_LANG_SOURCE([UL_SCANF_TYPE_MODIFIER(["%ms"])])],
+    [scanf_cv_alloc_modifier=ms],
+    AC_RUN_IFELSE([AC_LANG_SOURCE([UL_SCANF_TYPE_MODIFIER(["%as"])])],
+      [scanf_cv_alloc_modifier=as],
+      [scanf_cv_alloc_modifier=no]
+    )
+  )
+)
+
+AC_MSG_CHECKING([scanf string alloc modifiers])
+case "$scanf_cv_alloc_modifier" in
+ms)
+  AC_MSG_RESULT([(%ms) yes])
+  AC_DEFINE([HAVE_SCANF_MS_MODIFIER], [1], [scanf %ms modifier])
+  have_scanf_alloc_modifier=yes
+  ;;
+as)
+  AC_MSG_RESULT([(%as) yes])
+  have_scanf_alloc_modifier=yes
+  AC_DEFINE([HAVE_SCANF_AS_MODIFIER], [1], [scanf %as modifier])
+  ;;
+*)
+  AC_MSG_RESULT([no])
+  have_scanf_alloc_modifier=no
+  ;;
+esac
+
+
 AC_ARG_ENABLE([most-builds],
   AS_HELP_STRING([--enable-most-builds], [build everthing other than experimental code]),
   [], enable_most_builds=no
@@ -364,62 +405,15 @@ AC_ARG_ENABLE([libmount],
   [], enable_libmount=check
 )
 build_libmount=yes
-if test "x$enable_libmount" = xcheck; then
-  if test "x$linux_os" = xno; then
-    AC_MSG_WARN([non-linux system; do not build libmount])
-    build_libmount=no
-  fi
-elif test "x$enable_libmount" = xno; then
-    build_libmount=no
-fi
-
-AC_DEFUN([UL_SCANF_TYPE_MODIFIER], [dnl
-# include <stdio.h>
-int main()
-{
-	int i;
-	char *s;
-	i = sscanf("x", $1, &s);
-	if (i == 1)
-		return 0;
-	return 1;
-}])
-AC_MSG_CHECKING([needed scanf type modifiers])
-AC_CACHE_VAL([scanf_cv_type_modifier],
-  AC_RUN_IFELSE([AC_LANG_SOURCE([UL_SCANF_TYPE_MODIFIER(["%ms"])])],
-    [scanf_cv_type_modifier=ms],
-    AC_RUN_IFELSE([AC_LANG_SOURCE([UL_SCANF_TYPE_MODIFIER(["%as"])])],
-      [scanf_cv_type_modifier=as],
-      [scanf_cv_type_modifier=no]
-    )
-  )
-)
-
-case "$scanf_cv_type_modifier" in
-ms)
-  AC_MSG_RESULT([(%ms) yes])
-  AC_DEFINE([HAVE_SCANF_MS_MODIFIER], [1], [scanf %ms modifier]) ;;
-as)
-  AC_MSG_RESULT([(%as) yes])
-  AC_DEFINE([HAVE_SCANF_AS_MODIFIER], [1], [scanf %as modifier]) ;;
-*)
-  AC_MSG_RESULT([no])
-  if "x$build_libmount" = xyes; then
-    AC_MSG_WARN([%as or %ms for sscanf() not found; do not build libmount])
-    build_libmount=no
-  fi
-esac
-
-
-case "$build_libblkid:$build_libmount" in
-no:yes)
-  AC_MSG_ERROR([cannot enable libmount when libblkid is disabled]) ;;
-esac
+UL_REQUIRES_LINUX([libmount])
+UL_REQUIRES_BUILD([libmount], [libblkid])
+UL_REQUIRES_HAVE([libmount], [scanf_alloc_modifier], [scanf string alloc modifier])
+AM_CONDITIONAL(BUILD_LIBMOUNT, test "x$build_libmount" = xyes)
 
 AC_SUBST([LIBMOUNT_VERSION])
 AC_SUBST([LIBMOUNT_VERSION_INFO])
 AC_DEFINE_UNQUOTED(LIBMOUNT_VERSION, "$LIBMOUNT_VERSION", [libmount version string])
-AM_CONDITIONAL(BUILD_LIBMOUNT, test "x$build_libmount" = xyes)
+
 
 
 AC_ARG_ENABLE([mount],
