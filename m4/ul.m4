@@ -124,3 +124,130 @@ m4_define([_UL_CHECK_SYSCALL_FALLBACK],
   $1) syscall="$2" ;;dnl
   _UL_CHECK_SYSCALL_FALLBACK(m4_shiftn(2, $@))])dnl
 ])
+
+
+dnl UL_REQUIRES_LINUX(NAME, [VARSUFFIX = $1])
+dnl
+dnl Modifies $build_<name>  variable according to $enable_<name> and OS type. The
+dnl $enable_<name> could be "yes", "no" and "check". If build_<name> is "no" then
+dnl all checks are skiped.
+dnl
+dnl The default <name> for $build_ and $enable_ could be overwrited by option $2.
+dnl
+AC_DEFUN([UL_REQUIRES_LINUX], [
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  m4_define([suffix], m4_default([$2],$1))
+  if test "x$[build_]suffix" = xyes; then
+    case $[enable_]suffix:$linux_os in #(
+    no:*)
+      [build_]suffix=no ;;
+    yes:yes)
+      [build_]suffix=yes ;;
+    yes:*)
+      AC_MSG_ERROR([$1 selected for non-linux system]);;
+    check:yes)
+      [build_]suffix=yes ;;
+    check:*)
+      AC_MSG_WARN([non-linux system; do not build $1])
+      [build_]suffix=no ;;
+    esac
+  fi
+])
+
+dnl UL_REQUIRES_HAVE(NAME, HAVENAME, HAVEDESC [VARSUFFIX=$1])
+dnl
+dnl Modifies $build_<name> variable according to $enable_<name> and
+dnl $have_<havename>.  The <havedesc> is description used ifor warning/error
+dnl message (e.g. "function").
+dnl
+dnl The default <name> for $build_ and $enable_ could be overwrited by option $3.
+dnl
+AC_DEFUN([UL_REQUIRES_HAVE], [
+  m4_define([suffix], m4_default([$4],$1))
+
+  if test "x$[build_]suffix" = xyes; then
+    case $[enable_]suffix:$[have_]$2 in #(
+    no:*)
+      [build_]suffix=no ;;
+    yes:yes)
+      [build_]suffix=yes ;;
+    yes:*)
+      AC_MSG_ERROR([$1 selected, but required $3 not available]);;
+    check:yes)
+      [build_]suffix=yes ;;
+    check:*)
+      AC_MSG_WARN([$3 not found; do not build $1])
+      [build_]suffix=no ;;
+    esac
+  fi
+])
+
+dnl UL_REQUIRES_BUILD(NAME, BUILDNAME, [VARSUFFIX=$1])
+dnl
+dnl Modifies $build_<name> variable according to $enable_<name> and $have_funcname.
+dnl
+dnl The default <name> for $build_ and $enable_ could be overwrited by option $3.
+dnl
+AC_DEFUN([UL_REQUIRES_BUILD], [
+  m4_define([suffix], m4_default([$3],$1))
+
+  if test "x$[build_]suffix" = xyes; then
+    case $[enable_]suffix:$[build_]$2 in #(
+    no:*)
+      [build_]suffix=no ;;
+    yes:yes)
+      [build_]suffix=yes ;;
+    yes:*)
+      AC_MSG_ERROR([$2 is needed to build $1]);;
+    check:yes)
+      [build_]suffix=yes ;;
+    check:*)
+      AC_MSG_WARN([$2 disabled; do not build $1])
+      [build_]suffix=no ;;
+    esac
+  fi
+])
+
+dnl UL_REQUIRES_SYSCALL_CHECK(NAME, SYSCALL-TEST, [SYSCALLNAME=$1], [VARSUFFIX=$1])
+dnl
+dnl Modifies $build_<name> variable according to $enable_<name> and SYSCALL-TEST
+dnl result. The $enable_<name> variable could be "yes", "no" and "check". If build_<name>
+dnl is "no" then all checks are skiped.
+dnl
+dnl Note that SYSCALL-TEST has to define $ul_cv_syscall_<name> variable, see
+dnl also UL_CHECK_SYSCALL().
+dnl
+dnl The default <name> for $build_ and $enable_ count be overwrited by option $4 and
+dnl $ul_cv_syscall_ could be overwrited by $3.
+dnl
+AC_DEFUN([UL_REQUIRES_SYSCALL_CHECK], [
+  m4_define([suffix], m4_default([$4],$1))
+  m4_define([callname], m4_default([$3],$1))
+
+  dnl This is default, $3 will redefine the condition
+  dnl
+  dnl TODO: remove this junk, AM_CONDITIONAL should not be used for any HAVE_*
+  dnl       variables, all we need is BUILD_* only.
+  dnl
+  AM_CONDITIONAL([HAVE_]m4_toupper(callname), [false])
+
+  if test "x$[build_]suffix" = xyes; then
+    if test "x$[enable_]suffix" = xno; then
+      [build_]suffix=no
+    else
+      $2
+      case $[enable_]suffix:$[ul_cv_syscall_]callname in #(
+      no:*)
+        [build_]suffix=no ;;
+      yes:no)
+        AC_MSG_ERROR([$1 selected but callname syscall not found]) ;;
+      check:no)
+        AC_MSG_WARN([callname syscall not found; do not build $1])
+        [build_]suffix=no ;;
+      *)
+        dnl default $ul_cv_syscall_ is SYS_ value
+        [build_]suffix=yes ;;
+      esac
+    fi
+  fi
+])
