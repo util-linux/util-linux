@@ -788,17 +788,9 @@ AC_ARG_ENABLE([cramfs],
   AS_HELP_STRING([--disable-cramfs], [do not build fsck.cramfs, mkfs.cramfs]),
   [], enable_cramfs=check
 )
-
-if test "x$enable_cramfs" = xno; then
-  build_cramfs=no
-else
-  build_cramfs=yes
-  dnl Trick: leave the third parameter empty to get the default action.
-  AC_CHECK_LIB(z, crc32, [], build_cramfs=no)
-  case $enable_cramfs:$build_cramfs in
-  yes:no) AC_MSG_ERROR([cramfs selected but libz not found]);;
-  esac
-fi
+build_cramfs=yes
+AC_CHECK_LIB(z, crc32, [have_z=yes], [have_z=no])
+UL_REQUIRES_HAVE([cramfs], [z], [z library])
 AM_CONDITIONAL(BUILD_CRAMFS, test "x$build_cramfs" = xyes)
 
 
