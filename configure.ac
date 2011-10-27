@@ -355,9 +355,6 @@ AC_DEFINE_UNQUOTED(LIBBLKID_DATE, "$LIBBLKID_DATE", [libblkid date string])
 if test "x$enable_libblkid" = xyes; then
   AC_DEFINE(HAVE_LIBBLKID, 1, [Define to 1 if you have the -lblkid.])
 else
-  if test "x$build_mount" = xyes; then
-    AC_MSG_ERROR([libblkid is needed to build util-linux mount])
-  fi
   if test "x$enable_fsck" = xyes; then
     AC_MSG_ERROR([libblkid is needed to build util-linux fsck])
   fi
@@ -437,15 +434,22 @@ AC_ARG_ENABLE([mount],
   [], enable_mount=check
 )
 build_mount=yes
-if test "x$enable_mount" = xcheck; then
-  if test "x$linux_os" = xno; then
-    AC_MSG_WARN([non-linux system; do not build mount utilities])
-    build_mount=no
-  fi
-elif test "x$enable_mount" = xno; then
-    build_mount=no
-fi
+UL_REQUIRES_LINUX([mount])
+UL_REQUIRES_BUILD([mount], [libblkid])
 AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
+
+
+AC_ARG_ENABLE([libmount-mount],
+  AS_HELP_STRING([--enable-libmount-mount], [link mount(8) with libmount (EXPERIMENTAL)]),
+  [], enable_libmount_mount=no
+)
+build_libmount_mount=yes
+UL_REQUIRES_BUILD([libmount_mount], [mount])
+UL_REQUIRES_BUILD([libmount_mount], [libmount])
+if test "x$build_libmount_mount" = xyes; then
+  AC_DEFINE(HAVE_LIBMOUNT_MOUNT, 1, [use libmount for mount(8)])
+fi
+AM_CONDITIONAL(BUILD_LIBMOUNT_MOUNT, test "x$build_libmount_mount" = xyes)
 
 
 AC_ARG_ENABLE([fsck],
@@ -488,21 +492,6 @@ if test "x$enable_uuidd" = xyes; then
 fi
 AM_CONDITIONAL(BUILD_UUIDD, test "x$enable_uuidd" = xyes)
 
-
-
-
-AC_ARG_ENABLE([libmount-mount],
-  AS_HELP_STRING([--enable-libmount-mount], [link mount(8) with libmount (EXPERIMENTAL)]),
-  [], enable_libmount_mount=no
-)
-
-case "$build_libmount:$enable_libmount_mount" in
-no:yes)
-  AC_MSG_ERROR([cannot link mount(8) with libmount when libmount is disabled]) ;;
-yes:yes)
-  AC_DEFINE(HAVE_LIBMOUNT_MOUNT, 1, [use libmount for mount(8)])
-esac
-AM_CONDITIONAL(BUILD_LIBMOUNT_MOUNT, test "x$enable_libmount_mount" = xyes)
 
 
 AC_ARG_ENABLE([mountpoint],

@@ -29,9 +29,9 @@ srcs_mount =	$(srcs_common) $(hdrs_mount) \
 # generic flags for all programs (except losetup)
 # -- note that pkg-config autoconf macros (pkg.m4) does not differentiate
 #    between CFLAGS and CPPFLAGS, we follow this behaviour and use CFLAGS only.
-ldadd_common =
-ldadd_static =
-cflags_common = $(AM_CFLAGS)
+ldadd_common = $(ul_libblkid_la)
+ldadd_static = $(ul_libblkid_la)
+cflags_common = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 ldflags_static = -all-static
 
 mount_SOURCES = mount.c $(srcs_mount) $(top_srcdir)/lib/setproctitle.c
@@ -79,11 +79,6 @@ losetup_static_LDFLAGS = $(ldflags_static)
 losetup_static_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)
 endif
 
-if BUILD_LIBBLKID
-ldadd_common += $(ul_libblkid_la)
-ldadd_static += $(ul_libblkid_la)
-cflags_common += -I$(ul_libblkid_incdir)
-endif
 
 if HAVE_SELINUX
 mount_LDADD += $(SELINUX_LIBS)
