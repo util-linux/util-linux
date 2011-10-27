@@ -159,17 +159,62 @@ AC_CHECK_HEADERS(
 	sys/types.h \
 	sys/un.h \
 	sys/user.h \
+	sys/swap.h \
 	sys/resource.h \
 	linux/raw.h \
 	unistd.h ])
+
+AC_CHECK_HEADERS([langinfo.h],
+		[AM_CONDITIONAL([HAVE_LANGINFO], [true])],
+		[AM_CONDITIONAL([HAVE_LANGINFO], [false])])
 
 dnl Convert some ac_cv_header_* variables to have_*
 dnl
 have_linux_raw_h=$ac_cv_header_linux_raw_h
 
-AC_CHECK_HEADERS([langinfo.h],
-		[AM_CONDITIONAL([HAVE_LANGINFO], [true])],
-		[AM_CONDITIONAL([HAVE_LANGINFO], [false])])
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#include <time.h>
+#include <unistd.h>
+]], [[
+    int a = 0;
+    struct tm *tm = localtime(0);
+    if (a == -1)  /* false */
+        sleep(tm->tm_gmtoff);
+]])],
+[AC_DEFINE(HAVE_TM_GMTOFF,1,[Does struct tm have a field tm_gmtoff?])
+])
+
+AC_CHECK_MEMBERS([struct termios.c_line],,,
+    [[#include <termios.h>]])
+
+AC_CHECK_MEMBERS([struct stat.st_mtim.tv_nsec],,,
+	[#include <sys/stat.h>])
+
+AC_CHECK_DECLS([
+ UNAME26,
+ ADDR_NO_RANDOMIZE,
+ FDPIC_FUNCPTRS,
+ MMAP_PAGE_ZERO,
+ ADDR_COMPAT_LAYOUT,
+ READ_IMPLIES_EXEC,
+ ADDR_LIMIT_32BIT,
+ WHOLE_SECONDS,
+ STICKY_TIMEOUTS,
+ ADDR_LIMIT_3GB], [], [], [#include <linux/personality.h>])
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+[[
+#ifdef HAVE_SYS_SWAP_H
+# include <sys/swap.h>
+#endif
+#include <unistd.h>
+]],
+[[swapon("/dev/null", 0);]])],
+[AC_DEFINE(SWAPON_HAS_TWO_ARGS, 1, [Is swapon() declared with two parameters?])
+],
+[AC_MSG_NOTICE([Your libc thinks that swapon has 1 arg only.])
+])
 
 
 AC_CHECK_DECLS([_NL_TIME_WEEK_1STDAY],[],[],[[#include <langinfo.h>]])
@@ -689,50 +734,6 @@ dnl unshare could be available as libc function or as syscall only
 UL_CHECK_SYSCALL([unshare])
 AC_CHECK_FUNCS([unshare])
 
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#include <time.h>
-#include <unistd.h>
-]], [[
-    int a = 0;
-    struct tm *tm = localtime(0);
-    if (a == -1)  /* false */
-        sleep(tm->tm_gmtoff);
-]])],
-[AC_DEFINE(HAVE_TM_GMTOFF,1,[Does struct tm have a field tm_gmtoff?])
-])
-
-AC_CHECK_MEMBERS([struct termios.c_line],,,
-    [[#include <termios.h>]])
-
-AC_CHECK_MEMBERS([struct stat.st_mtim.tv_nsec],,,
-	[#include <sys/stat.h>])
-
-AC_CHECK_DECLS([
- UNAME26,
- ADDR_NO_RANDOMIZE,
- FDPIC_FUNCPTRS,
- MMAP_PAGE_ZERO,
- ADDR_COMPAT_LAYOUT,
- READ_IMPLIES_EXEC,
- ADDR_LIMIT_32BIT,
- WHOLE_SECONDS,
- STICKY_TIMEOUTS,
- ADDR_LIMIT_3GB], [], [], [#include <linux/personality.h>])
-
-AC_CHECK_HEADERS([sys/swap.h])
-
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
-[[
-#ifdef HAVE_SYS_SWAP_H
-# include <sys/swap.h>
-#endif
-#include <unistd.h>
-]],
-[[swapon("/dev/null", 0);]])],
-[AC_DEFINE(SWAPON_HAS_TWO_ARGS, 1, [Is swapon() declared with two parameters?])
-],
-[AC_MSG_NOTICE([Your libc thinks that swapon has 1 arg only.])
-])
 
 
 UL_SET_ARCH(I86, i?86-*)
