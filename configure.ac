@@ -476,6 +476,136 @@ char *c = crypt("abc","pw");
 AM_CONDITIONAL(HAVE_LIBCRYPT, test "x$have_libcrypt" = xyes)
 
 
+AC_ARG_WITH([selinux],
+  AS_HELP_STRING([--with-selinux], [compile with SELinux support]),
+  [], with_selinux=no
+)
+
+if test "x$with_selinux" = xno; then
+  AM_CONDITIONAL(HAVE_SELINUX, false)
+else
+  UL_CHECK_LIB(selinux, getprevcon)
+  case "$with_selinux:$have_selinux" in
+  yes:no) AC_MSG_ERROR([SELinux selected but libselinux not found]);;
+  esac
+fi
+
+if test "x$have_selinux" = xyes; then
+  SELINUX_LIBS="-lselinux -lsepol"
+  SELINUX_LIBS_STATIC="-lselinux -lsepol"
+  old_LDFLAGS="$LDFLAGS"
+  LDFLAGS="$LDFLAGS $SELINUX_LIBS"
+  # This function is missing in old libselinux 1.xx versions
+  AC_CHECK_FUNCS([security_get_initial_context])
+  LDFLAGS="$old_LDFLAGS"
+fi
+AC_SUBST([SELINUX_LIBS])
+AC_SUBST([SELINUX_LIBS_STATIC])
+
+AC_ARG_WITH([audit],
+  AS_HELP_STRING([--with-audit], [compile with audit support]),
+  [], with_audit=no
+)
+
+if test "x$with_audit" = xno; then
+  AM_CONDITIONAL(HAVE_AUDIT, false)
+else
+  UL_CHECK_LIB(audit, audit_log_user_message)
+  case "$with_audit:$have_audit" in
+  yes:no)
+   AC_MSG_ERROR([Audit selected but libaudit not found (or does not support audit_log_user_message())])
+   ;;
+  esac
+fi
+
+AC_ARG_WITH([udev], AS_HELP_STRING([--without-udev], [compile without udev support]),
+  [], with_udev=auto
+)
+
+if test "x$with_udev" = xno; then
+  AM_CONDITIONAL(HAVE_UDEV, false)
+else
+  UL_CHECK_LIB(udev, udev_new)
+  case "$with_udev:$have_udev" in
+  yes:no)
+   AC_MSG_ERROR([udev selected but libudev not found])
+   ;;
+  esac
+fi
+
+AC_ARG_WITH([ncurses],
+  AS_HELP_STRING([--with-ncurses], [build with non-wide ncurses, default is wide version
+                                    (--without-ncurses disables all ncurses(w) support)]),
+  [], with_ncurses=auto
+)
+AM_CONDITIONAL(HAVE_NCURSES, false)
+
+if test "x$with_ncurses" != xno; then
+  have_ncurses=no
+  AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h], [
+    if test "x$with_ncurses" = xauto; then
+      UL_CHECK_LIB(ncursesw, initscr, ncurses)
+      if test "x$have_ncurses" = xyes; then
+        AC_CHECK_HEADERS([ncursesw/ncurses.h])
+        NCURSES_LIBS="-lncursesw"
+      fi
+    fi
+    if test "x$have_ncurses" = xno; then
+      UL_CHECK_LIB(ncurses, initscr)
+      if test "x$have_ncurses" = xyes; then
+        NCURSES_LIBS="-lncurses"
+      fi
+    fi
+  ])
+  if test "x$have_ncurses" = xno; then
+    AC_MSG_ERROR([ncurses or ncursesw selected, but library not found (--without-ncurses to disable)])
+  fi
+fi
+AC_SUBST([NCURSES_LIBS])
+
+
+AC_ARG_WITH([slang],
+  AS_HELP_STRING([--with-slang], [compile cfdisk with slang]),
+  [], with_slang=no
+)
+
+have_tinfo=no
+AC_CHECK_LIB(tinfo, tgetent, [have_tinfo=yes])
+AM_CONDITIONAL(HAVE_TINFO, test "x$have_tinfo" = xyes)
+
+use_slang=no
+if test "x$with_slang" = xyes; then
+  AC_CHECK_HEADERS([slang.h slang/slang.h])
+  AC_CHECK_HEADERS([slcurses.h slang/slcurses.h],
+                   [use_slang=yes], [], [
+#ifdef HAVE_SLANG_H
+#include <slang.h>
+#elif defined(HAVE_SLANG_SLANG_H)
+#include <slang/slang.h>
+#endif
+])
+  if test "x$use_slang" = xno; then
+    AC_MSG_ERROR([slang selected but slcurses.h not found])
+  fi
+fi
+AM_CONDITIONAL(USE_SLANG, test "x$use_slang" = xyes)
+
+
+AC_ARG_WITH([utempter],
+  AS_HELP_STRING([--with-utempter], [compile script(1) with libutempter]),
+  [], with_utempter=no
+)
+
+if test "x$with_utempter" = xyes; then
+  UL_CHECK_LIB(utempter, utempter_add_record)
+  if test "x$have_utempter" = xno; then
+    AC_MSG_ERROR([utempter selected but libutempter not found])
+  fi
+else
+  AM_CONDITIONAL(HAVE_UTEMPTER, false)
+fi
+
+
 AC_ARG_ENABLE([most-builds],
   AS_HELP_STRING([--enable-most-builds], [build everthing other than experimental code]),
   [], enable_most_builds=no
@@ -611,77 +741,6 @@ UL_REQUIRES_BUILD([mountpoint], [libmount])
 AM_CONDITIONAL(BUILD_MOUNTPOINT, test "x$build_mountpoint" = xyes)
 
 
-AC_ARG_WITH([ncurses],
-  AS_HELP_STRING([--with-ncurses], [build with non-wide ncurses, default is wide version
-                                    (--without-ncurses disables all ncurses(w) support)]),
-  [], with_ncurses=auto
-)
-AM_CONDITIONAL(HAVE_NCURSES, false)
-
-if test "x$with_ncurses" != xno; then
-  have_ncurses=no
-  AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h], [
-    if test "x$with_ncurses" = xauto; then
-      UL_CHECK_LIB(ncursesw, initscr, ncurses)
-      if test "x$have_ncurses" = xyes; then
-        AC_CHECK_HEADERS([ncursesw/ncurses.h])
-        NCURSES_LIBS="-lncursesw"
-      fi
-    fi
-    if test "x$have_ncurses" = xno; then
-      UL_CHECK_LIB(ncurses, initscr)
-      if test "x$have_ncurses" = xyes; then
-        NCURSES_LIBS="-lncurses"
-      fi
-    fi
-  ])
-  if test "x$have_ncurses" = xno; then
-    AC_MSG_ERROR([ncurses or ncursesw selected, but library not found (--without-ncurses to disable)])
-  fi
-fi
-AC_SUBST([NCURSES_LIBS])
-
-
-AC_ARG_WITH([slang],
-  AS_HELP_STRING([--with-slang], [compile cfdisk with slang]),
-  [], with_slang=no
-)
-
-have_tinfo=no
-AC_CHECK_LIB(tinfo, tgetent, [have_tinfo=yes])
-AM_CONDITIONAL(HAVE_TINFO, test "x$have_tinfo" = xyes)
-
-use_slang=no
-if test "x$with_slang" = xyes; then
-  AC_CHECK_HEADERS([slang.h slang/slang.h])
-  AC_CHECK_HEADERS([slcurses.h slang/slcurses.h],
-                   [use_slang=yes], [], [
-#ifdef HAVE_SLANG_H
-#include <slang.h>
-#elif defined(HAVE_SLANG_SLANG_H)
-#include <slang/slang.h>
-#endif
-])
-  if test "x$use_slang" = xno; then
-    AC_MSG_ERROR([slang selected but slcurses.h not found])
-  fi
-fi
-AM_CONDITIONAL(USE_SLANG, test "x$use_slang" = xyes)
-
-
-AC_ARG_WITH([utempter],
-  AS_HELP_STRING([--with-utempter], [compile script(1) with libutempter]),
-  [], with_utempter=no
-)
-
-if test "x$with_utempter" = xyes; then
-  UL_CHECK_LIB(utempter, utempter_add_record)
-  if test "x$have_utempter" = xno; then
-    AC_MSG_ERROR([utempter selected but libutempter not found])
-  fi
-else
-  AM_CONDITIONAL(HAVE_UTEMPTER, false)
-fi
 
 UL_CHECK_SYSCALL([sched_getaffinity])
 UL_CHECK_SYSCALL([ioprio_set],
@@ -913,63 +972,6 @@ UL_REQUIRES_HAVE([login_utils], [security_pam_misc_h], [PAM header file])
 AM_CONDITIONAL(BUILD_LOGIN_UTILS, test "x$build_login_utils" = xyes)
 
 
-AC_ARG_WITH([selinux],
-  AS_HELP_STRING([--with-selinux], [compile with SELinux support]),
-  [], with_selinux=no
-)
-
-if test "x$with_selinux" = xno; then
-  AM_CONDITIONAL(HAVE_SELINUX, false)
-else
-  UL_CHECK_LIB(selinux, getprevcon)
-  case "$with_selinux:$have_selinux" in
-  yes:no) AC_MSG_ERROR([SELinux selected but libselinux not found]);;
-  esac
-fi
-
-if test "x$have_selinux" = xyes; then
-  SELINUX_LIBS="-lselinux -lsepol"
-  SELINUX_LIBS_STATIC="-lselinux -lsepol"
-  old_LDFLAGS="$LDFLAGS"
-  LDFLAGS="$LDFLAGS $SELINUX_LIBS"
-  # This function is missing in old libselinux 1.xx versions
-  AC_CHECK_FUNCS([security_get_initial_context])
-  LDFLAGS="$old_LDFLAGS"
-fi
-AC_SUBST([SELINUX_LIBS])
-AC_SUBST([SELINUX_LIBS_STATIC])
-
-AC_ARG_WITH([audit],
-  AS_HELP_STRING([--with-audit], [compile with audit support]),
-  [], with_audit=no
-)
-
-if test "x$with_audit" = xno; then
-  AM_CONDITIONAL(HAVE_AUDIT, false)
-else
-  UL_CHECK_LIB(audit, audit_log_user_message)
-  case "$with_audit:$have_audit" in
-  yes:no)
-   AC_MSG_ERROR([Audit selected but libaudit not found (or does not support audit_log_user_message())])
-   ;;
-  esac
-fi
-
-
-AC_ARG_WITH([udev], AS_HELP_STRING([--without-udev], [compile without udev support]),
-  [], with_udev=auto
-)
-
-if test "x$with_udev" = xno; then
-  AM_CONDITIONAL(HAVE_UDEV, false)
-else
-  UL_CHECK_LIB(udev, udev_new)
-  case "$with_udev:$have_udev" in
-  yes:no)
-   AC_MSG_ERROR([udev selected but libudev not found])
-   ;;
-  esac
-fi
 
 AC_ARG_ENABLE([schedutils],
   AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, teskset]),
