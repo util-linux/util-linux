@@ -735,10 +735,17 @@ if test "x$build_fallocate" = xyes; then
 fi
 
 
-dnl unshare could be available as libc function or as syscall only
-UL_CHECK_SYSCALL([unshare])
-AC_CHECK_FUNCS([unshare])
-
+AC_ARG_ENABLE([unshare],
+  AS_HELP_STRING([--disable-unshare], [do not build unshare]),
+  [], enable_unshare=check
+)
+build_unshare=yes
+UL_REQUIRES_LINUX([unshare])
+UL_REQUIRES_SYSCALL_CHECK([unshare], [UL_CHECK_SYSCALL([unshare])])
+AM_CONDITIONAL(BUILD_UNSHARE, test "x$build_unshare" = xyes)
+if test "x$build_unshare" = xyes; then
+  AC_CHECK_FUNCS([unshare])
+fi
 
 
 UL_SET_ARCH(I86, i?86-*)
@@ -852,31 +859,6 @@ else
   fi
 fi
 AM_CONDITIONAL(BUILD_PIVOT_ROOT, test "x$build_pivot_root" = xyes)
-
-
-
-AC_ARG_ENABLE([unshare],
-  AS_HELP_STRING([--disable-unshare], [do not build unshare]),
-  [], enable_unshare=check
-)
-if test "x$enable_unshare" = xno; then
-  build_unshare=no
-else
-  build_unshare=yes
-  case $enable_unshare:$linux_os in
-  yes:no) AC_MSG_ERROR([unshare selected for non-linux system]);;
-  check:no) AC_MSG_WARN([non-linux system; do not build unshare])
-            build_unshare=no;;
-  esac
-  if test "x$build_unshare" = xyes; then
-    case $enable_unshare:$ul_cv_syscall_unshare in
-    yes:no) AC_MSG_ERROR([unshare selected but unshare syscall not found]);;
-    check:no) AC_MSG_WARN([unshare syscall not found; do not build unshare])
-              build_unshare=no;;
-    esac
-  fi
-fi
-AM_CONDITIONAL(BUILD_UNSHARE, test "x$build_unshare" = xyes)
 
 
 
