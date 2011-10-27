@@ -54,11 +54,9 @@ dist_man_MANS += elvtune.8
 elvtune_SOURCES = elvtune.c $(top_srcdir)/lib/linux_version.c
 endif
 
-if HAVE_RAW
 if BUILD_RAW
 sbin_PROGRAMS += raw
 dist_man_MANS += raw.8
-endif
 endif
 
 if BUILD_CRAMFS

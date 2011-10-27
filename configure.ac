@@ -151,11 +151,12 @@ AC_CHECK_HEADERS(
 	sys/un.h \
 	sys/user.h \
 	sys/resource.h \
+	linux/raw.h \
 	unistd.h ])
 
-AC_CHECK_HEADERS([linux/raw.h],
-		 [AM_CONDITIONAL([HAVE_RAW], [true])],
-		 [AM_CONDITIONAL([HAVE_RAW], [false])])
+dnl Convert some ac_cv_header_* variables to have_*
+dnl
+have_linux_raw_h=$ac_cv_header_linux_raw_h
 
 AC_CHECK_HEADERS([langinfo.h],
 		[AM_CONDITIONAL([HAVE_LANGINFO], [true])],
@@ -970,9 +971,12 @@ AM_CONDITIONAL(BUILD_MESG, test "x$enable_mesg" = xyes)
 
 AC_ARG_ENABLE([raw],
   AS_HELP_STRING([--enable-raw], [build raw]),
-  [], enable_raw=no
+  [], enable_raw=check
 )
-AM_CONDITIONAL(BUILD_RAW, test "x$enable_raw" = xyes)
+build_raw=yes
+UL_REQUIRES_LINUX([raw])
+UL_REQUIRES_HAVE([raw], [linux_raw_h], [raw.h header file])
+AM_CONDITIONAL(BUILD_RAW, test "x$build_raw" = xyes)
 
 
 AC_ARG_ENABLE([rename],
