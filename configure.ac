@@ -741,28 +741,6 @@ UL_REQUIRES_BUILD([mountpoint], [libmount])
 AM_CONDITIONAL(BUILD_MOUNTPOINT, test "x$build_mountpoint" = xyes)
 
 
-
-UL_CHECK_SYSCALL([sched_getaffinity])
-UL_CHECK_SYSCALL([ioprio_set],
-  [alpha],    [442],
-  [i*86],     [289],
-  [ia64*],    [1274],
-  [powerpc*], [273],
-  [s390*],    [282],
-  [sparc*],   [196],
-  [sh*],      [288],
-  [x86_64*],  [251])
-UL_CHECK_SYSCALL([ioprio_get],
-  [alpha],    [443],
-  [i*86],     [290],
-  [ia64*],    [1275],
-  [powerpc*], [274],
-  [s390*],    [283],
-  [sparc*],   [218],
-  [sh*],      [289],
-  [x86_64*],  [252])
-
-
 AC_ARG_ENABLE([fallocate],
   AS_HELP_STRING([--disable-fallocate], [do not build fallocate]),
   [], enable_fallocate=check
@@ -977,7 +955,45 @@ AC_ARG_ENABLE([schedutils],
   AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, teskset]),
   [], enable_schedutils=yes
 )
-AM_CONDITIONAL(BUILD_SCHEDUTILS, test "x$enable_schedutils" = xyes)
+build_schedutils=$enable_schedutils
+AM_CONDITIONAL(BUILD_SCHEDUTILS, test "x$build_schedutils" = xyes)
+
+enable_ionice=check
+build_ionice=yes
+UL_REQUIRES_BUILD([ionice], [schedutils])
+UL_REQUIRES_SYSCALL_CHECK([ionice],
+	[UL_CHECK_SYSCALL([ioprio_set],
+	  [alpha],    [442],
+	  [i*86],     [289],
+	  [ia64*],    [1274],
+	  [powerpc*], [273],
+	  [s390*],    [282],
+	  [sparc*],   [196],
+	  [sh*],      [288],
+	  [x86_64*],  [251])],
+	[ioprio_set])
+
+UL_REQUIRES_SYSCALL_CHECK([ionice],
+	[UL_CHECK_SYSCALL([ioprio_get],
+	  [alpha],    [443],
+	  [i*86],     [290],
+	  [ia64*],    [1275],
+	  [powerpc*], [274],
+	  [s390*],    [283],
+	  [sparc*],   [218],
+	  [sh*],      [289],
+	  [x86_64*],  [252])],
+	[ioprio_get])
+
+AM_CONDITIONAL(BUILD_IONICE, test "x$build_ionice" = xyes)
+
+enable_taskset=check
+build_taskset=yes
+UL_REQUIRES_BUILD([taskset], [schedutils])
+UL_REQUIRES_SYSCALL_CHECK([taskset],
+	[UL_CHECK_SYSCALL([sched_getaffinity])],
+	[sched_getaffinity])
+AM_CONDITIONAL(BUILD_TASKSET, test "x$build_taskset" = xyes)
 
 
 AC_ARG_ENABLE([wall],
