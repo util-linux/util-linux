@@ -354,10 +354,6 @@ AC_DEFINE_UNQUOTED(LIBBLKID_DATE, "$LIBBLKID_DATE", [libblkid date string])
 
 if test "x$enable_libblkid" = xyes; then
   AC_DEFINE(HAVE_LIBBLKID, 1, [Define to 1 if you have the -lblkid.])
-else
-  if test "x$build_partx" = xyes; then
-    AC_MSG_ERROR([libblkid is needed to build util-linux partx])
-  fi
 fi
 
 dnl
@@ -463,16 +459,9 @@ AC_ARG_ENABLE([partx],
   [], enable_partx=check
 )
 build_partx=yes
-if test "x$enable_partx" = xcheck; then
-  if test "x$linux_os" = xno; then
-    AC_MSG_WARN([non-linux system; do not build partx utilities])
-    build_partx=no
-  fi
-elif test "x$enable_partx" = xno; then
-    build_partx=no
-fi
+UL_REQUIRES_LINUX([partx])
+UL_REQUIRES_BUILD([partx], [libblkid])
 AM_CONDITIONAL(BUILD_PARTX, test "x$build_partx" = xyes)
-
 
 
 AC_ARG_ENABLE([uuidd],
