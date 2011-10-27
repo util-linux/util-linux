@@ -103,6 +103,17 @@ case ${host_os} in
 esac
 AM_CONDITIONAL([LINUX], test "x$linux_os" = xyes)
 
+dnl define ARCH_<NAME> conditionals
+UL_SET_ARCH(I86, i?86-*)
+UL_SET_ARCH(86_64, x86_64*)
+UL_SET_ARCH(IA64, ia64*)
+UL_SET_ARCH(S390, s390*)
+UL_SET_ARCH(SPARC, sparc*)
+UL_SET_ARCH(PPC, ppc*|powerpc*)
+UL_SET_ARCH(M68K, m68*)
+UL_SET_ARCH(MIPS, mips*)
+UL_SET_ARCH(HPPA, hppa*)
+
 AC_SYS_LARGEFILE
 
 AM_GNU_GETTEXT_VERSION([0.14.1])
@@ -748,21 +759,14 @@ if test "x$build_unshare" = xyes; then
 fi
 
 
-UL_SET_ARCH(I86, i?86-*)
-UL_SET_ARCH(86_64, x86_64*)
-UL_SET_ARCH(IA64, ia64*)
-UL_SET_ARCH(S390, s390*)
-UL_SET_ARCH(SPARC, sparc*)
-UL_SET_ARCH(PPC, ppc*|powerpc*)
-UL_SET_ARCH(M68K, m68*)
-UL_SET_ARCH(MIPS, mips*)
-UL_SET_ARCH(HPPA, hppa*)
-
 AC_ARG_ENABLE([arch],
   AS_HELP_STRING([--enable-arch], [do build arch]),
   [], enable_arch=no
 )
-AM_CONDITIONAL(BUILD_ARCH, test "x$enable_arch" = xyes)
+build_arch=yes
+UL_REQUIRES_LINUX([arch])
+AM_CONDITIONAL(BUILD_ARCH, test "x$build_arch" = xyes)
+
 
 AC_ARG_ENABLE([ddate],
   AS_HELP_STRING([--enable-ddate], [do build ddate]),
