@@ -415,7 +415,6 @@ AC_SUBST([LIBMOUNT_VERSION_INFO])
 AC_DEFINE_UNQUOTED(LIBMOUNT_VERSION, "$LIBMOUNT_VERSION", [libmount version string])
 
 
-
 AC_ARG_ENABLE([mount],
   AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
   [], enable_mount=check
@@ -460,20 +459,14 @@ AM_CONDITIONAL(BUILD_PARTX, test "x$build_partx" = xyes)
 
 AC_ARG_ENABLE([uuidd],
   AS_HELP_STRING([--disable-uuidd], [do not build the uuid daemon]),
-  [], enable_uuidd=auto
+  [], enable_uuidd=check
 )
-
-case "$enable_uuidd:$enable_libuuid" in
-yes:no)
-  AC_MSG_ERROR([cannot enable uuidd when libuuid is disabled]) ;;
-auto:*)
-  enable_uuidd=$enable_libuuid ;;
-esac
-if test "x$enable_uuidd" = xyes; then
+build_uuidd=yes
+UL_REQUIRES_BUILD([uuidd], [libuuid])
+if test "x$build_uuidd" = xyes; then
   AC_DEFINE(HAVE_UUIDD, 1, [Define to 1 if you want to use uuid daemon.])
 fi
-AM_CONDITIONAL(BUILD_UUIDD, test "x$enable_uuidd" = xyes)
-
+AM_CONDITIONAL(BUILD_UUIDD, test "x$build_uuidd" = xyes)
 
 
 AC_ARG_ENABLE([mountpoint],
