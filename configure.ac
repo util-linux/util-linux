@@ -800,11 +800,13 @@ UL_REQUIRES_LINUX([lsblk])
 UL_REQUIRES_BUILD([lsblk], [libblkid])
 AM_CONDITIONAL(BUILD_LSBLK, test "x$build_lsblk" = xyes)
 
+
 enable_lscpu=check
 build_lscpu=yes
 UL_REQUIRES_LINUX([lscpu])
 UL_REQUIRES_HAVE([lscpu], [cpu_set_t], [cpu_set_t type])
 AM_CONDITIONAL(BUILD_LSCPU, test "x$build_lscpu" = xyes)
+
 
 enable_chcpu=check
 build_chcpu=yes
@@ -817,23 +819,9 @@ AC_ARG_ENABLE([switch_root],
   AS_HELP_STRING([--disable-switch_root], [do not build switch_root]),
   [], enable_switch_root=check
 )
-if test "x$enable_switch_root" = xno; then
-  build_switch_root=no
-else
-  build_switch_root=yes
-  case $enable_switch_root:$linux_os in
-  yes:no) AC_MSG_ERROR([switch_root selected for non-linux system]);;
-  check:no) AC_MSG_WARN([non-linux system; do not build switch_root])
-            build_switch_root=no;;
-  esac
-  if test "x$build_switch_root" = xyes; then
-    case $enable_switch_root:$have_openat in
-    yes:no) AC_MSG_ERROR([switch_root selected but openat() function not found]);;
-    check:no) AC_MSG_WARN([openat() function not found; do not build switch_root])
-              build_switch_root=no;;
-    esac
-  fi
-fi
+build_switch_root=yes
+UL_REQUIRES_LINUX([switch_root])
+UL_REQUIRES_HAVE([switch_root], [openat], [openat function])
 AM_CONDITIONAL(BUILD_SWITCH_ROOT, test "x$build_switch_root" = xyes)
 
 
