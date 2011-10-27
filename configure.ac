@@ -681,7 +681,6 @@ else
   AM_CONDITIONAL(HAVE_UTEMPTER, false)
 fi
 
-UL_CHECK_SYSCALL([pivot_root])
 UL_CHECK_SYSCALL([sched_getaffinity])
 UL_CHECK_SYSCALL([ioprio_set],
   [alpha],    [442],
@@ -829,23 +828,9 @@ AC_ARG_ENABLE([pivot_root],
   AS_HELP_STRING([--disable-pivot_root], [do not build pivot_root]),
   [], enable_pivot_root=check
 )
-if test "x$enable_pivot_root" = xno; then
-  build_pivot_root=no
-else
-  build_pivot_root=yes
-  case $enable_pivot_root:$linux_os in
-  yes:no) AC_MSG_ERROR([pivot_root selected for non-linux system]);;
-  check:no) AC_MSG_WARN([non-linux system; do not build pivot_root])
-            build_pivot_root=no;;
-  esac
-  if test "x$build_pivot_root" = xyes; then
-    case $enable_pivot_root:$ul_cv_syscall_pivot_root in
-    yes:no) AC_MSG_ERROR([pivot_root selected but pivot_root syscall not found]);;
-    check:no) AC_MSG_WARN([pivot_root syscall not found; do not build pivot_root])
-              build_pivot_root=no;;
-    esac
-  fi
-fi
+build_pivot_root=yes
+UL_REQUIRES_LINUX([switch_root])
+UL_REQUIRES_SYSCALL_CHECK([pivot_root], [UL_CHECK_SYSCALL([pivot_root])])
 AM_CONDITIONAL(BUILD_PIVOT_ROOT, test "x$build_pivot_root" = xyes)
 
 
