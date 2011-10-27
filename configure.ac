@@ -473,21 +473,8 @@ AC_ARG_ENABLE([mountpoint],
   AS_HELP_STRING([--disable-mountpoint], [do not build mountpoint]),
   [], enable_mountpoint=check
 )
-
 build_mountpoint=yes
-if test "x$enable_mountpoint" = xcheck; then
-  if test "x$build_libmount" = xno; then
-    AC_MSG_WARN([libmount disabled; do not build mountpoint])
-    build_mountpoint=no
-  fi
-elif test "x$enable_mountpoint" = xno; then
-    build_mountpoint=no
-fi
-
-case "$build_libmount:$build_mountpoint" in
-no:yes)
-  AC_MSG_ERROR([cannot enable mountpoint when libmount is disabled]) ;;
-esac
+UL_REQUIRES_BUILD([mountpoint], [libmount])
 AM_CONDITIONAL(BUILD_MOUNTPOINT, test "x$build_mountpoint" = xyes)
 
 
