@@ -10,6 +10,9 @@ util-linux build system
 	...
 	endif
 
+ - "if BUILD_<NAME>" blocks are never nested within another "if BUILD_<NAME>",
+   all dependencies have to be resolved in configure.ac (see UL_REQUIRES_BUILD())
+
  - all BUILD_<NAME> in configure.am are always based on build_<name> variables,
    for example:
 
