@@ -647,7 +647,7 @@ AC_ARG_ENABLE([libblkid],
   AS_HELP_STRING([--disable-libblkid], [do not build libblkid and many related utilities]),
   [], enable_libblkid=yes
 )
-build_libblkid=$enable_libblkid
+UL_BUILD_INIT([libblkid])
 AC_SUBST([LIBBLKID_DATE])
 AC_SUBST([LIBBLKID_VERSION])
 AC_SUBST([LIBBLKID_VERSION_INFO])
@@ -665,7 +665,7 @@ AC_ARG_ENABLE([libmount],
   AS_HELP_STRING([--disable-libmount], [do not build libmount]),
   [], enable_libmount=check
 )
-build_libmount=yes
+UL_BUILD_INIT([libmount])
 UL_REQUIRES_LINUX([libmount])
 UL_REQUIRES_BUILD([libmount], [libblkid])
 UL_REQUIRES_HAVE([libmount], [scanf_alloc_modifier], [scanf string alloc modifier])
@@ -680,7 +680,7 @@ AC_ARG_ENABLE([mount],
   AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
   [], enable_mount=check
 )
-build_mount=yes
+UL_BUILD_INIT([mount])
 UL_REQUIRES_LINUX([mount])
 UL_REQUIRES_BUILD([mount], [libblkid])
 AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
@@ -690,7 +690,7 @@ AC_ARG_ENABLE([libmount-mount],
   AS_HELP_STRING([--enable-libmount-mount], [link mount(8) with libmount (EXPERIMENTAL)]),
   [], enable_libmount_mount=no
 )
-build_libmount_mount=yes
+UL_BUILD_INIT([libmount_mount])
 UL_REQUIRES_BUILD([libmount_mount], [mount])
 UL_REQUIRES_BUILD([libmount_mount], [libmount])
 if test "x$build_libmount_mount" = xyes; then
@@ -703,7 +703,7 @@ AC_ARG_ENABLE([fsck],
   AS_HELP_STRING([--disable-fsck], [do not build fsck]),
   [], enable_fsck=check
 )
-build_fsck=yes
+UL_BUILD_INIT([fsck])
 UL_REQUIRES_BUILD([fsck], [libblkid])
 AM_CONDITIONAL(BUILD_FSCK, test "x$build_fsck" = xyes)
 
@@ -712,7 +712,7 @@ AC_ARG_ENABLE([partx],
   AS_HELP_STRING([--disable-partx], [do not build addpart, delpart, partx]),
   [], enable_partx=check
 )
-build_partx=yes
+UL_BUILD_INIT([partx])
 UL_REQUIRES_LINUX([partx])
 UL_REQUIRES_BUILD([partx], [libblkid])
 AM_CONDITIONAL(BUILD_PARTX, test "x$build_partx" = xyes)
@@ -722,7 +722,7 @@ AC_ARG_ENABLE([uuidd],
   AS_HELP_STRING([--disable-uuidd], [do not build the uuid daemon]),
   [], enable_uuidd=check
 )
-build_uuidd=yes
+UL_BUILD_INIT([uuidd])
 UL_REQUIRES_BUILD([uuidd], [libuuid])
 if test "x$build_uuidd" = xyes; then
   AC_DEFINE(HAVE_UUIDD, 1, [Define to 1 if you want to use uuid daemon.])
@@ -734,7 +734,7 @@ AC_ARG_ENABLE([mountpoint],
   AS_HELP_STRING([--disable-mountpoint], [do not build mountpoint]),
   [], enable_mountpoint=check
 )
-build_mountpoint=yes
+UL_BUILD_INIT([mountpoint])
 UL_REQUIRES_BUILD([mountpoint], [libmount])
 AM_CONDITIONAL(BUILD_MOUNTPOINT, test "x$build_mountpoint" = xyes)
 
@@ -743,7 +743,7 @@ AC_ARG_ENABLE([fallocate],
   AS_HELP_STRING([--disable-fallocate], [do not build fallocate]),
   [], enable_fallocate=check
 )
-build_fallocate=yes
+UL_BUILD_INIT([fallocate])
 UL_REQUIRES_LINUX([fallocate])
 UL_REQUIRES_SYSCALL_CHECK([fallocate], [UL_CHECK_SYSCALL([fallocate])])
 AM_CONDITIONAL(BUILD_FALLOCATE, test "x$build_fallocate" = xyes)
@@ -786,7 +786,7 @@ AC_ARG_ENABLE([unshare],
   AS_HELP_STRING([--disable-unshare], [do not build unshare]),
   [], enable_unshare=check
 )
-build_unshare=yes
+UL_BUILD_INIT([unshare])
 UL_REQUIRES_LINUX([unshare])
 UL_REQUIRES_SYSCALL_CHECK([unshare], [UL_CHECK_SYSCALL([unshare])])
 AM_CONDITIONAL(BUILD_UNSHARE, test "x$build_unshare" = xyes)
@@ -799,7 +799,7 @@ AC_ARG_ENABLE([arch],
   AS_HELP_STRING([--enable-arch], [do build arch]),
   [], enable_arch=no
 )
-build_arch=yes
+UL_BUILD_INIT([arch])
 UL_REQUIRES_LINUX([arch])
 AM_CONDITIONAL(BUILD_ARCH, test "x$build_arch" = xyes)
 
@@ -808,7 +808,7 @@ AC_ARG_ENABLE([ddate],
   AS_HELP_STRING([--enable-ddate], [do build ddate]),
   [], enable_ddate=no
 )
-build_ddate=$enable_ddate
+UL_BUILD_INIT([ddate])
 AM_CONDITIONAL(BUILD_DDATE, test "x$build_ddate" = xyes)
 
 
@@ -816,7 +816,7 @@ AC_ARG_ENABLE([agetty],
   AS_HELP_STRING([--disable-agetty], [do not build agetty]),
   [], enable_agetty=yes
 )
-build_agetty=$enable_agetty
+UL_BUILD_INIT([agetty])
 AM_CONDITIONAL(BUILD_AGETTY, test "x$build_agetty" = xyes)
 
 
@@ -824,7 +824,7 @@ AC_ARG_ENABLE([cramfs],
   AS_HELP_STRING([--disable-cramfs], [do not build fsck.cramfs, mkfs.cramfs]),
   [], enable_cramfs=check
 )
-build_cramfs=yes
+UL_BUILD_INIT([cramfs])
 AC_CHECK_LIB(z, crc32, [have_z=yes], [have_z=no])
 UL_REQUIRES_HAVE([cramfs], [z], [z library])
 AM_CONDITIONAL(BUILD_CRAMFS, test "x$build_cramfs" = xyes)
@@ -836,22 +836,19 @@ fi
 AM_CONDITIONAL(BUILD_HWCLOCK, test "x$build_hwclock" = xyes)
 
 
-enable_lsblk=check
-build_lsblk=yes
+UL_BUILD_INIT([lsblk], [check])
 UL_REQUIRES_LINUX([lsblk])
 UL_REQUIRES_BUILD([lsblk], [libblkid])
 AM_CONDITIONAL(BUILD_LSBLK, test "x$build_lsblk" = xyes)
 
 
-enable_lscpu=check
-build_lscpu=yes
+UL_BUILD_INIT([lscpu], [check])
 UL_REQUIRES_LINUX([lscpu])
 UL_REQUIRES_HAVE([lscpu], [cpu_set_t], [cpu_set_t type])
 AM_CONDITIONAL(BUILD_LSCPU, test "x$build_lscpu" = xyes)
 
 
-enable_chcpu=check
-build_chcpu=yes
+UL_BUILD_INIT([chcpu], [check])
 UL_REQUIRES_LINUX([chcpu])
 UL_REQUIRES_HAVE([chcpu], [cpu_set_t], [cpu_set_t type])
 AM_CONDITIONAL(BUILD_CHCPU, test "x$build_chcpu" = xyes)
@@ -861,7 +858,7 @@ AC_ARG_ENABLE([switch_root],
   AS_HELP_STRING([--disable-switch_root], [do not build switch_root]),
   [], enable_switch_root=check
 )
-build_switch_root=yes
+UL_BUILD_INIT([switch_root])
 UL_REQUIRES_LINUX([switch_root])
 UL_REQUIRES_HAVE([switch_root], [openat], [openat function])
 AM_CONDITIONAL(BUILD_SWITCH_ROOT, test "x$build_switch_root" = xyes)
@@ -871,7 +868,7 @@ AC_ARG_ENABLE([pivot_root],
   AS_HELP_STRING([--disable-pivot_root], [do not build pivot_root]),
   [], enable_pivot_root=check
 )
-build_pivot_root=yes
+UL_BUILD_INIT([pivot_root])
 UL_REQUIRES_LINUX([switch_root])
 UL_REQUIRES_SYSCALL_CHECK([pivot_root], [UL_CHECK_SYSCALL([pivot_root])])
 AM_CONDITIONAL(BUILD_PIVOT_ROOT, test "x$build_pivot_root" = xyes)
@@ -881,7 +878,7 @@ AC_ARG_ENABLE([elvtune],
   AS_HELP_STRING([--enable-elvtune], [build elvtune (only works with 2.2 and 2.4 kernels)]),
   [], enable_elvtune=no
 )
-build_elvtune=yes
+UL_BUILD_INIT([elvtune])
 UL_REQUIRES_LINUX([elvtune])
 AM_CONDITIONAL(BUILD_ELVTUNE, test "x$build_elvtune" = xyes)
 
@@ -890,7 +887,7 @@ AC_ARG_ENABLE([kill],
   AS_HELP_STRING([--disable-kill], [do not build kill]),
   [], enable_kill=check
 )
-build_kill=yes
+UL_BUILD_INIT([kill])
 UL_REQUIRES_LINUX([kill])
 AM_CONDITIONAL(BUILD_KILL, test "x$enable_kill" = xyes)
 
@@ -899,7 +896,7 @@ AC_ARG_ENABLE([last],
   AS_HELP_STRING([--enable-last], [build last]),
   [], enable_last=no
 )
-build_last=$enable_last
+UL_BUILD_INIT([last])
 AM_CONDITIONAL(BUILD_LAST, test "x$build_last" = xyes)
 
 
@@ -907,7 +904,7 @@ AC_ARG_ENABLE([line],
   AS_HELP_STRING([--enable-line], [build line]),
   [], enable_line=no
 )
-build_line=$enable_line
+UL_BUILD_INIT([line])
 AM_CONDITIONAL(BUILD_LINE, test "x$build_line" = xyes)
 
 
@@ -915,7 +912,7 @@ AC_ARG_ENABLE([mesg],
   AS_HELP_STRING([--enable-mesg], [build mesg]),
   [], enable_mesg=no
 )
-build_mesg=$enable_mesg
+UL_BUILD_INIT([mesg])
 AM_CONDITIONAL(BUILD_MESG, test "x$build_mesg" = xyes)
 
 
@@ -923,7 +920,7 @@ AC_ARG_ENABLE([raw],
   AS_HELP_STRING([--enable-raw], [build raw]),
   [], enable_raw=check
 )
-build_raw=yes
+UL_BUILD_INIT([raw])
 UL_REQUIRES_LINUX([raw])
 UL_REQUIRES_HAVE([raw], [linux_raw_h], [raw.h header file])
 AM_CONDITIONAL(BUILD_RAW, test "x$build_raw" = xyes)
@@ -933,7 +930,7 @@ AC_ARG_ENABLE([rename],
   AS_HELP_STRING([--disable-rename], [do not build rename]),
   [], enable_rename=yes
 )
-build_rename=$enable_rename
+UL_BUILD_INIT([rename])
 AM_CONDITIONAL(BUILD_RENAME, test "x$build_rename" = xyes)
 
 
@@ -941,7 +938,7 @@ AC_ARG_ENABLE([reset],
   AS_HELP_STRING([--enable-reset], [build reset]),
   [], enable_reset=no
 )
-build_reset=$enable_reset
+UL_BUILD_INIT([reset])
 AM_CONDITIONAL(BUILD_RESET, test "x$build_reset" = xyes)
 
 
@@ -949,7 +946,7 @@ AC_ARG_ENABLE([login-utils],
   AS_HELP_STRING([--enable-login-utils], [build chfn, chsh, login, newgrp, vipw]),
   [], enable_login_utils=no
 )
-build_login_utils=yes
+UL_BUILD_INIT([login_utils])
 UL_REQUIRES_HAVE([login_utils], [security_pam_misc_h], [PAM header file])
 AM_CONDITIONAL(BUILD_LOGIN_UTILS, test "x$build_login_utils" = xyes)
 
@@ -959,11 +956,10 @@ AC_ARG_ENABLE([schedutils],
   AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, teskset]),
   [], enable_schedutils=yes
 )
-build_schedutils=$enable_schedutils
+UL_BUILD_INIT([schedutils])
 AM_CONDITIONAL(BUILD_SCHEDUTILS, test "x$build_schedutils" = xyes)
 
-enable_ionice=check
-build_ionice=yes
+UL_BUILD_INIT([ionice], [check])
 UL_REQUIRES_BUILD([ionice], [schedutils])
 UL_REQUIRES_SYSCALL_CHECK([ionice],
 	[UL_CHECK_SYSCALL([ioprio_set],
@@ -991,8 +987,7 @@ UL_REQUIRES_SYSCALL_CHECK([ionice],
 
 AM_CONDITIONAL(BUILD_IONICE, test "x$build_ionice" = xyes)
 
-enable_taskset=check
-build_taskset=yes
+UL_BUILD_INIT([taskset], [check])
 UL_REQUIRES_BUILD([taskset], [schedutils])
 UL_REQUIRES_SYSCALL_CHECK([taskset],
 	[UL_CHECK_SYSCALL([sched_getaffinity])],
@@ -1004,7 +999,7 @@ AC_ARG_ENABLE([wall],
   AS_HELP_STRING([--disable-wall], [do not build wall]),
   [], enable_wall=yes
 )
-build_wall=$enable_wall
+UL_BUILD_INIT([wasll])
 AM_CONDITIONAL(BUILD_WALL, test "x$build_wall" = xyes)
 
 
@@ -1012,7 +1007,7 @@ AC_ARG_ENABLE([write],
   AS_HELP_STRING([--enable-write], [build write]),
   [], enable_write=no
 )
-build_write=$enable_write
+UL_BUILD_INIT([write])
 AM_CONDITIONAL(BUILD_WRITE, test "x$build_write" = xyes)
 
 

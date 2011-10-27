@@ -135,9 +135,9 @@ dnl
 dnl The default <name> for $build_ and $enable_ could be overwrited by option $2.
 dnl
 AC_DEFUN([UL_REQUIRES_LINUX], [
-  AC_REQUIRE([AC_CANONICAL_HOST])
   m4_define([suffix], m4_default([$2],$1))
-  if test "x$[build_]suffix" = xyes; then
+  if test "x$[build_]suffix" != xno; then
+    AC_REQUIRE([AC_CANONICAL_HOST])
     case $[enable_]suffix:$linux_os in #(
     no:*)
       [build_]suffix=no ;;
@@ -165,7 +165,7 @@ dnl
 AC_DEFUN([UL_REQUIRES_HAVE], [
   m4_define([suffix], m4_default([$4],$1))
 
-  if test "x$[build_]suffix" = xyes; then
+  if test "x$[build_]suffix" != xno; then
     case $[enable_]suffix:$[have_]$2 in #(
     no:*)
       [build_]suffix=no ;;
@@ -191,7 +191,7 @@ dnl
 AC_DEFUN([UL_REQUIRES_BUILD], [
   m4_define([suffix], m4_default([$3],$1))
 
-  if test "x$[build_]suffix" = xyes; then
+  if test "x$[build_]suffix" != xno; then
     case $[enable_]suffix:$[build_]$2 in #(
     no:*)
       [build_]suffix=no ;;
@@ -231,7 +231,7 @@ AC_DEFUN([UL_REQUIRES_SYSCALL_CHECK], [
   dnl
   AM_CONDITIONAL([HAVE_]m4_toupper(callname), [false])
 
-  if test "x$[build_]suffix" = xyes; then
+  if test "x$[build_]suffix" != xno; then
     if test "x$[enable_]suffix" = xno; then
       [build_]suffix=no
     else
@@ -250,4 +250,22 @@ AC_DEFUN([UL_REQUIRES_SYSCALL_CHECK], [
       esac
     fi
   fi
+])
+
+dnl UL_INIT_BUILD(NAME, [ENABLE_STATE], [VARSUFFIX = $1])
+dnl
+dnl Initializes $build_<name>  variable according to $enable_<name>. If
+dnl $enable_<name> is undefined then ENABLE_STATE is used and $enable_<name> is
+dnl set to ENABLE_STATE.
+dnl
+dnl The default <name> for $build_ and $enable_ could be overwrited by option $2.
+dnl
+AC_DEFUN([UL_BUILD_INIT], [
+  m4_define([suffix], m4_default([$3],$1))
+  m4_define([estate], m4_default([$2],$enable_[]suffix))
+
+ifelse(estate, [check], [build_[]suffix='yes' enable_[]suffix='check'],
+       estate, [yes],   [build_[]suffix='yes' enable_[]suffix='yes'],
+       estate, [no],    [build_[]suffix='no'  enable_[]suffix='no'],
+       [build_[]suffix='yes'])
 ])
