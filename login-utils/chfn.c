@@ -33,10 +33,6 @@
 #include <ctype.h>
 #include <getopt.h>
 
-#ifdef HAVE_CRYPT_H
-#include <crypt.h>
-#endif
-
 #include "islocal.h"
 #include "setpwnam.h"
 #include "strutils.h"
@@ -51,7 +47,7 @@
 #include "selinux_utils.h"
 #endif
 
-#if defined(REQUIRE_PASSWORD) && defined(HAVE_SECURITY_PAM_MISC_H)
+#ifdef REQUIRE_PASSWORD
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
 
@@ -64,7 +60,7 @@
 	} \
     } while(0)
 
-#endif
+#endif /* REQUIRE_PASSWORD */
 
 typedef unsigned char boolean;
 #define false 0
@@ -180,7 +176,6 @@ int main (int argc, char **argv) {
     printf (_("Changing finger information for %s.\n"), oldf.username);
 
 #ifdef REQUIRE_PASSWORD
-#ifdef HAVE_SECURITY_PAM_MISC_H
     if(uid != 0) {
 	pam_handle_t *pamh = NULL;
 	struct pam_conv conv = { misc_conv, NULL };
@@ -206,17 +201,6 @@ int main (int argc, char **argv) {
 	/* no need to establish a session; this isn't a session-oriented
 	 * activity... */
     }
-# else /* HAVE_SECURITY_PAM_MISC_H */
-    /* require password, unless root */
-    if(uid != 0 && oldf.pw->pw_passwd && oldf.pw->pw_passwd[0]) {
-	char *pwdstr = getpass(_("Password: "));
-	if(strncmp(oldf.pw->pw_passwd,
-		   crypt(pwdstr, oldf.pw->pw_passwd), 13)) {
-	    puts(_("Incorrect password."));
-	    exit(EXIT_FAILURE);
-	}
-    }
-# endif /* HAVE_SECURITY_PAM_MISC_H */
 #endif /* REQUIRE_PASSWORD */
 
 
