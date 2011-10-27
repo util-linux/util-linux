@@ -772,13 +772,17 @@ AC_ARG_ENABLE([ddate],
   AS_HELP_STRING([--enable-ddate], [do build ddate]),
   [], enable_ddate=no
 )
-AM_CONDITIONAL(BUILD_DDATE, test "x$enable_ddate" = xyes)
+build_ddate=$enable_ddate
+AM_CONDITIONAL(BUILD_DDATE, test "x$build_ddate" = xyes)
+
 
 AC_ARG_ENABLE([agetty],
   AS_HELP_STRING([--disable-agetty], [do not build agetty]),
   [], enable_agetty=yes
 )
-AM_CONDITIONAL(BUILD_AGETTY, test "x$enable_agetty" = xyes)
+build_agetty=$enable_agetty
+AM_CONDITIONAL(BUILD_AGETTY, test "x$build_agetty" = xyes)
+
 
 AC_ARG_ENABLE([cramfs],
   AS_HELP_STRING([--disable-cramfs], [do not build fsck.cramfs, mkfs.cramfs]),
