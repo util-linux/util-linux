@@ -32,10 +32,6 @@
 #include <ctype.h>
 #include <getopt.h>
 
-#ifdef HAVE_CRYPT_H
-#include <crypt.h>
-#endif
-
 #include "c.h"
 #include "islocal.h"
 #include "setpwnam.h"
@@ -44,7 +40,7 @@
 #include "pathnames.h"
 #include "xalloc.h"
 
-#if defined(REQUIRE_PASSWORD) && defined(HAVE_SECURITY_PAM_MISC_H)
+#ifdef REQUIRE_PASSWORD
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
 
@@ -57,7 +53,7 @@
 	} \
     } while(0)
 
-#endif /* PAM */
+#endif /* REQUIRE_PASSWORD */
 
 #ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>
@@ -172,7 +168,6 @@ main (int argc, char *argv[]) {
     printf( _("Changing shell for %s.\n"), pw->pw_name );
 
 #ifdef REQUIRE_PASSWORD
-#ifdef HAVE_SECURITY_PAM_MISC_H
     if (uid != 0) {
 	pam_handle_t *pamh = NULL;
 	struct pam_conv conv = { misc_conv, NULL };
@@ -198,17 +193,6 @@ main (int argc, char *argv[]) {
 	/* no need to establish a session; this isn't a session-oriented
 	 * activity... */
     }
-#else /* HAVE_SECURITY_PAM_MISC_H */
-    /* require password, unless root */
-    if(uid != 0 && pw->pw_passwd && pw->pw_passwd[0]) {
-	char *pwdstr = getpass(_("Password: "));
-	if(strncmp(pw->pw_passwd,
-		   crypt(pwdstr, pw->pw_passwd), 13)) {
-	    puts(_("Incorrect password."));
-	    return EXIT_FAILURE;
-	}
-    }
-#endif /* HAVE_SECURITY_PAM_MISC_H */
 #endif /* REQUIRE_PASSWORD */
 
     if (! shell) {
