@@ -630,9 +630,10 @@ AC_ARG_ENABLE([libuuid],
   AS_HELP_STRING([--disable-libuuid], [do not build libuuid and uuid utilities]),
   [], enable_libuuid=yes
 )
+UL_BUILD_INIT([libuuid])
 AC_SUBST([LIBUUID_VERSION])
 AC_SUBST([LIBUUID_VERSION_INFO])
-AM_CONDITIONAL(BUILD_LIBUUID, test "x$enable_libuuid" = xyes)
+AM_CONDITIONAL(BUILD_LIBUUID, test "x$build_libuuid" = xyes)
 
 if test "x$enable_libuuid" = xyes; then
   AC_DEFINE(HAVE_LIBUUID, 1, [Define to 1 if you have the -luuid.])
