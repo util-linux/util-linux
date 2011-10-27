@@ -691,18 +691,25 @@ UL_CHECK_SYSCALL([ioprio_get],
   [sh*],      [289],
   [x86_64*],  [252])
 
-dnl fallocate could be available as libc function or as syscall only
-UL_CHECK_SYSCALL([fallocate])
 
-dnl check for valid fallocate() function
-dnl with 32 bits glibc 2.10, fallocate() exists but not fallocate64()
-dnl when _FILE_OFFSET_BITS==64, fallocate() is redirect to fallocate64()
-dnl and program can't be linked.
-dnl AC_CHECK_FUNC can't catch such errors since it's redefining
-dnl function prototype.
-AC_MSG_CHECKING([for valid fallocate() function])
-AC_LINK_IFELSE([
-AC_LANG_PROGRAM([[
+AC_ARG_ENABLE([fallocate],
+  AS_HELP_STRING([--disable-fallocate], [do not build fallocate]),
+  [], enable_fallocate=check
+)
+build_fallocate=yes
+UL_REQUIRES_LINUX([fallocate])
+UL_REQUIRES_SYSCALL_CHECK([fallocate], [UL_CHECK_SYSCALL([fallocate])])
+AM_CONDITIONAL(BUILD_FALLOCATE, test "x$build_fallocate" = xyes)
+
+if test "x$build_fallocate" = xyes; then
+  dnl check for valid fallocate() function
+  dnl with 32 bits glibc 2.10, fallocate() exists but not fallocate64()
+  dnl when _FILE_OFFSET_BITS==64, fallocate() is redirect to fallocate64()
+  dnl and program can't be linked.
+  dnl AC_CHECK_FUNC can't catch such errors since it's redefining
+  dnl function prototype.
+  AC_MSG_CHECKING([for valid fallocate() function])
+  AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
 #endif
@@ -717,16 +724,16 @@ AC_LANG_PROGRAM([[
 #endif
 ]],[[
    long ret;
-
    ret = fallocate(0, FALLOC_FL_KEEP_SIZE, 0xfffffffful, 0xfffffffful);
-
    if (ret != 0) {
       return 1;
    }
    ]])],[
-AC_MSG_RESULT([yes])
-AC_DEFINE(HAVE_FALLOCATE,1,[Have valid fallocate() function])],[
-AC_MSG_RESULT([no])])
+  AC_MSG_RESULT([yes])
+  AC_DEFINE(HAVE_FALLOCATE,1,[Have valid fallocate() function])],[
+  AC_MSG_RESULT([no])])
+fi
+
 
 dnl unshare could be available as libc function or as syscall only
 UL_CHECK_SYSCALL([unshare])
@@ -846,29 +853,6 @@ else
 fi
 AM_CONDITIONAL(BUILD_PIVOT_ROOT, test "x$build_pivot_root" = xyes)
 
-
-AC_ARG_ENABLE([fallocate],
-  AS_HELP_STRING([--disable-fallocate], [do not build fallocate]),
-  [], enable_fallocate=check
-)
-if test "x$enable_fallocate" = xno; then
-  build_fallocate=no
-else
-  build_fallocate=yes
-  case $enable_fallocate:$linux_os in
-  yes:no) AC_MSG_ERROR([fallocate selected for non-linux system]);;
-  check:no) AC_MSG_WARN([non-linux system; do not build fallocate])
-            build_fallocate=no;;
-  esac
-  if test "x$build_fallocate" = xyes; then
-    case $enable_fallocate:$ul_cv_syscall_fallocate in
-    yes:no) AC_MSG_ERROR([fallocate selected but fallocate syscall not found]);;
-    check:no) AC_MSG_WARN([fallocate syscall not found; do not build fallocate])
-              build_fallocate=no;;
-    esac
-  fi
-fi
-AM_CONDITIONAL(BUILD_FALLOCATE, test "x$build_fallocate" = xyes)
 
 
 AC_ARG_ENABLE([unshare],
