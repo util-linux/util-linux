@@ -1000,14 +1000,16 @@ AC_ARG_ENABLE([wall],
   AS_HELP_STRING([--disable-wall], [do not build wall]),
   [], enable_wall=yes
 )
-AM_CONDITIONAL(BUILD_WALL, test "x$enable_wall" = xyes)
+build_wall=$enable_wall
+AM_CONDITIONAL(BUILD_WALL, test "x$build_wall" = xyes)
 
 
 AC_ARG_ENABLE([write],
   AS_HELP_STRING([--enable-write], [build write]),
   [], enable_write=no
 )
-AM_CONDITIONAL(BUILD_WRITE, test "x$enable_write" = xyes)
+build_write=$enable_write
+AM_CONDITIONAL(BUILD_WRITE, test "x$build_write" = xyes)
 
 
 AC_ARG_ENABLE([chsh-only-listed],
