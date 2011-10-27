@@ -844,9 +844,11 @@ AM_CONDITIONAL(BUILD_ELVTUNE, test "x$build_elvtune" = xyes)
 
 
 AC_ARG_ENABLE([kill],
-  AS_HELP_STRING([--enable-kill], [build kill]),
-  [], enable_kill=no
+  AS_HELP_STRING([--disable-kill], [do not build kill]),
+  [], enable_kill=check
 )
+build_kill=yes
+UL_REQUIRES_LINUX([kill])
 AM_CONDITIONAL(BUILD_KILL, test "x$enable_kill" = xyes)
 
 
