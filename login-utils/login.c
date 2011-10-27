@@ -59,9 +59,6 @@
 #ifdef HAVE_LIBAUDIT
 # include <libaudit.h>
 #endif
-#ifdef HAVE_CRYPT_H
-# include <crypt.h>
-#endif
 
 #include "c.h"
 #include "setproctitle.h"
