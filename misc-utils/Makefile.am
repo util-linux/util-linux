@@ -25,6 +25,24 @@ usrbin_exec_PROGRAMS += ddate
 dist_man_MANS += ddate.1
 endif
 
+if BUILD_LSBLK
+bin_PROGRAMS += lsblk
+dist_man_MANS += lsblk.8
+lsblk_SOURCES = lsblk.c \
+		$(top_srcdir)/lib/canonicalize.c \
+		$(top_srcdir)/lib/ismounted.c \
+		$(top_srcdir)/lib/tt.c \
+		$(top_srcdir)/lib/mbsalign.c \
+		$(top_srcdir)/lib/strutils.c \
+		$(top_srcdir)/lib/sysfs.c \
+		$(top_srcdir)/lib/at.c
+lsblk_LDADD = $(ul_libblkid_la)
+lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+if HAVE_UDEV
+lsblk_LDADD += -ludev
+endif
+endif
+
 if BUILD_LIBUUID
 usrbin_exec_PROGRAMS += uuidgen
 dist_man_MANS += uuidgen.1
@@ -54,24 +72,6 @@ wipefs_SOURCES = wipefs.c $(top_srcdir)/lib/strutils.c
 wipefs_LDADD = $(ul_libblkid_la)
 wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 
-if BUILD_LSBLK
-bin_PROGRAMS += lsblk
-dist_man_MANS += lsblk.8
-lsblk_SOURCES = lsblk.c \
-		$(top_srcdir)/lib/canonicalize.c \
-		$(top_srcdir)/lib/ismounted.c \
-		$(top_srcdir)/lib/tt.c \
-		$(top_srcdir)/lib/mbsalign.c \
-		$(top_srcdir)/lib/strutils.c \
-		$(top_srcdir)/lib/sysfs.c \
-		$(top_srcdir)/lib/at.c
-lsblk_LDADD = $(ul_libblkid_la)
-lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
-if HAVE_UDEV
-lsblk_LDADD += -ludev
-endif
-endif
-
 if HAVE_STATIC_BLKID
 sbin_PROGRAMS += blkid.static
 blkid_static_SOURCES = $(blkid_SOURCES)
@@ -79,7 +79,7 @@ blkid_static_LDFLAGS = -all-static
 blkid_static_LDADD = $(ul_libblkid_la)
 blkid_static_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 endif
-endif
+endif # BUILD_LIBBLKID
 
 if BUILD_LIBMOUNT
 bin_PROGRAMS += findmnt
@@ -94,7 +94,7 @@ findmnt_SOURCES =	findmnt.c \
 if !HAVE_LANGINFO
 findmnt_SOURCES += $(top_srcdir)/lib/langinfo.c
 endif
-endif
+endif # BUILD_LIBMOUNT
 
 cal_SOURCES = cal.c $(top_srcdir)/lib/mbsalign.c $(top_srcdir)/lib/strutils.c
 if !HAVE_LANGINFO
