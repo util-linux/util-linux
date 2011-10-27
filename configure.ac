@@ -890,14 +890,16 @@ AC_ARG_ENABLE([rename],
   AS_HELP_STRING([--disable-rename], [do not build rename]),
   [], enable_rename=yes
 )
-AM_CONDITIONAL(BUILD_RENAME, test "x$enable_rename" = xyes)
+build_rename=$enable_rename
+AM_CONDITIONAL(BUILD_RENAME, test "x$build_rename" = xyes)
 
 
 AC_ARG_ENABLE([reset],
   AS_HELP_STRING([--enable-reset], [build reset]),
   [], enable_reset=no
 )
-AM_CONDITIONAL(BUILD_RESET, test "x$enable_reset" = xyes)
+build_reset=$enable_reset
+AM_CONDITIONAL(BUILD_RESET, test "x$build_reset" = xyes)
 
 
 AC_ARG_ENABLE([login-utils],
