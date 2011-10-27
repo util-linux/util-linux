@@ -1,0 +1,30 @@
+util-linux build system
+=======================
+
+ - all util-linux specific autoconf macros use UL_ prefix
+
+ - utils in Makedile.am files are enabled/disabled according to BUILD_<NAME>
+   conditions (AM_CONDITIONAL), for example:
+
+	if BUILD_HWCLOCK
+	...
+	endif
+
+ - all BUILD_<NAME> in configure.am are always based on build_<name> variables,
+   for example:
+
+	AM_CONDITIONAL([BUILD_HWCLOCK], test "x$build_hwclock" = xyes)
+
+   the $build_<name> should be available in whole configure script
+
+ - AC_ARG_ENABLE() status is always stored in $enable_<name> variable, possible
+   setting:
+
+	"check" - util/feature is optional, if any subcomponent (function, lib,
+                  ...) is missing a warning is printed and the util/feature is
+                  disabled
+
+	"yes"	- util/feature is required, if any subcomponent (function, lib,
+                  ...) is missing an error is printed and ./configure aborted
+
+	"no"	- the util/feature is unwanted
