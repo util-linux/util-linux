@@ -286,9 +286,7 @@ AC_CHECK_FUNCS(
 AC_FUNC_FSEEKO
 
 AC_CHECK_FUNCS([openat fstatat unlinkat], [have_openat=yes], [have_openat=no])
-
 AC_CHECK_FUNCS([ioperm iopl], [have_io=yes])
-AM_CONDITIONAL([BUILD_HWCLOCK], test "x$have_io" = xyes -o "x$linux_os" = xyes)
 
 AC_CHECK_MEMBER(struct sockaddr.sa_len,
 		AC_DEFINE_UNQUOTED(HAVE_SA_LEN,1,[Define if struct sockaddr contains sa_len]),,
@@ -830,6 +828,12 @@ build_cramfs=yes
 AC_CHECK_LIB(z, crc32, [have_z=yes], [have_z=no])
 UL_REQUIRES_HAVE([cramfs], [z], [z library])
 AM_CONDITIONAL(BUILD_CRAMFS, test "x$build_cramfs" = xyes)
+
+
+if test "x$have_io" = xyes -o "x$linux_os" = xyes; then
+  build_hwclock=yes
+fi
+AM_CONDITIONAL(BUILD_HWCLOCK, test "x$build_hwclock" = xyes)
 
 
 enable_lsblk=check
