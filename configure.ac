@@ -351,6 +351,39 @@ as)
   ;;
 esac
 
+UL_CHECK_LIB(util, openpty)
+UL_CHECK_LIB(termcap, tgetnum)
+
+AC_CHECK_TYPES([union semun], [], [], [[
+#include <sys/sem.h>
+]])
+AC_CHECK_TYPES(loff_t)
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#include <wchar.h>
+#include <wctype.h>
+#include <stdio.h>
+]], [[
+  wchar_t wc;
+  wint_t w;
+  w = fgetwc(stdin);
+  if (w == WEOF) exit(1);
+  wc = w;
+  fputwc(wc,stdout);
+]])],
+[AC_DEFINE(HAVE_WIDECHAR,1,Do we have wide character support?)
+])
+
+AC_CHECK_TYPES([cpu_set_t], [have_cpu_set_t=yes], [], [[
+#include <sched.h>
+]])
+
+AM_CONDITIONAL(HAVE_CPU_SET_T, [test "x$have_cpu_set_t" = xyes])
+
+AC_CHECK_DECLS([CPU_ALLOC], [], [], [[
+#include <sched.h>
+]])
+
 
 AC_ARG_ENABLE([most-builds],
   AS_HELP_STRING([--enable-most-builds], [build everthing other than experimental code]),
@@ -487,10 +520,6 @@ UL_REQUIRES_BUILD([mountpoint], [libmount])
 AM_CONDITIONAL(BUILD_MOUNTPOINT, test "x$build_mountpoint" = xyes)
 
 
-UL_CHECK_LIB(util, openpty)
-UL_CHECK_LIB(termcap, tgetnum)
-
-
 AC_ARG_WITH([ncurses],
   AS_HELP_STRING([--with-ncurses], [build with non-wide ncurses, default is wide version
                                     (--without-ncurses disables all ncurses(w) support)]),
@@ -596,27 +625,6 @@ char *c = crypt("abc","pw");
 ])
 
 AM_CONDITIONAL(NEED_LIBCRYPT, test "x$need_libcrypt" = xyes)
-
-AC_CHECK_TYPES([union semun], [], [], [[
-#include <sys/sem.h>
-]])
-AC_CHECK_TYPES(loff_t)
-
-
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#include <wchar.h>
-#include <wctype.h>
-#include <stdio.h>
-]], [[
-  wchar_t wc;
-  wint_t w;
-  w = fgetwc(stdin);
-  if (w == WEOF) exit(1);
-  wc = w;
-  fputwc(wc,stdout);
-]])],
-[AC_DEFINE(HAVE_WIDECHAR,1,Do we have wide character support?)
-])
 
 
 UL_CHECK_SYSCALL([pivot_root])
@@ -726,16 +734,6 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
 [AC_MSG_NOTICE([Your libc thinks that swapon has 1 arg only.])
 ])
 
-
-AC_CHECK_TYPES([cpu_set_t], [have_cpu_set_t=yes], [], [[
-#include <sched.h>
-]])
-
-AM_CONDITIONAL(HAVE_CPU_SET_T, [test "x$have_cpu_set_t" = xyes])
-
-AC_CHECK_DECLS([CPU_ALLOC], [], [], [[
-#include <sched.h>
-]])
 
 UL_SET_ARCH(I86, i?86-*)
 UL_SET_ARCH(86_64, x86_64*)
