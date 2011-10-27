@@ -6,14 +6,12 @@ AC_PREREQ(2.60)
 
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
-
 AM_INIT_AUTOMAKE([-Wall foreign 1.10 dist-bzip2 -Wno-portability])
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])],
                             [AC_SUBST([AM_DEFAULT_VERBOSITY], [1])])
 
 AC_CONFIG_SRCDIR(mount/mount.c)
-
 AC_PREFIX_DEFAULT([/usr])
 
 dnl version details from <major>.<minor>[-<suffix>]
@@ -104,8 +102,6 @@ case ${host_os} in
     ;;
 esac
 AM_CONDITIONAL([LINUX], test "x$linux_os" = xyes)
-
-AC_PATH_PROG(PERL, perl)
 
 AC_SYS_LARGEFILE
 
