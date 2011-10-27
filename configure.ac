@@ -324,45 +324,9 @@ if test "x$enable_most_builds" = xyes; then
   enable_write=yes
 fi
 
-AC_ARG_ENABLE([mount],
-  AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
-  [], enable_mount=check
-)
-build_mount=yes
-if test "x$enable_mount" = xcheck; then
-  if test "x$linux_os" = xno; then
-    AC_MSG_WARN([non-linux system; do not build mount utilities])
-    build_mount=no
-  fi
-elif test "x$enable_mount" = xno; then
-    build_mount=no
-fi
-AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
-
-
-AC_ARG_ENABLE([fsck],
-  AS_HELP_STRING([--disable-fsck], [do not build fsck]),
-  [], enable_fsck=yes
-)
-AM_CONDITIONAL(BUILD_FSCK, test "x$enable_fsck" = xyes)
-
-
-AC_ARG_ENABLE([partx],
-  AS_HELP_STRING([--disable-partx], [do not build addpart, delpart, partx]),
-  [], enable_partx=check
-)
-build_partx=yes
-if test "x$enable_partx" = xcheck; then
-  if test "x$linux_os" = xno; then
-    AC_MSG_WARN([non-linux system; do not build partx utilities])
-    build_partx=no
-  fi
-elif test "x$enable_partx" = xno; then
-    build_partx=no
-fi
-AM_CONDITIONAL(BUILD_PARTX, test "x$build_partx" = xyes)
-
-
+dnl
+dnl libuuid
+dnl
 AC_ARG_ENABLE([libuuid],
   AS_HELP_STRING([--disable-libuuid], [do not build libuuid and uuid utilities]),
   [], enable_libuuid=yes
@@ -377,24 +341,9 @@ else
   AC_MSG_WARN([uuid library is not found; mkswap(8) will not generate UUIDs])
 fi
 
-
-AC_ARG_ENABLE([uuidd],
-  AS_HELP_STRING([--disable-uuidd], [do not build the uuid daemon]),
-  [], enable_uuidd=auto
-)
-
-case "$enable_uuidd:$enable_libuuid" in
-yes:no)
-  AC_MSG_ERROR([cannot enable uuidd when libuuid is disabled]) ;;
-auto:*)
-  enable_uuidd=$enable_libuuid ;;
-esac
-if test "x$enable_uuidd" = xyes; then
-  AC_DEFINE(HAVE_UUIDD, 1, [Define to 1 if you want to use uuid daemon.])
-fi
-AM_CONDITIONAL(BUILD_UUIDD, test "x$enable_uuidd" = xyes)
-
-
+dnl
+dnl libblkid
+dnl
 AC_ARG_ENABLE([libblkid],
   AS_HELP_STRING([--disable-libblkid], [do not build libblkid and blkid utilities]),
   [], enable_libblkid=yes
@@ -420,7 +369,9 @@ else
   fi
 fi
 
-
+dnl
+dnl libmount
+dnl
 AC_ARG_ENABLE([libmount],
   AS_HELP_STRING([--disable-libmount], [do not build libmount]),
   [], enable_libmount=check
@@ -482,6 +433,65 @@ AC_SUBST([LIBMOUNT_VERSION])
 AC_SUBST([LIBMOUNT_VERSION_INFO])
 AC_DEFINE_UNQUOTED(LIBMOUNT_VERSION, "$LIBMOUNT_VERSION", [libmount version string])
 AM_CONDITIONAL(BUILD_LIBMOUNT, test "x$build_libmount" = xyes)
+
+
+AC_ARG_ENABLE([mount],
+  AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
+  [], enable_mount=check
+)
+build_mount=yes
+if test "x$enable_mount" = xcheck; then
+  if test "x$linux_os" = xno; then
+    AC_MSG_WARN([non-linux system; do not build mount utilities])
+    build_mount=no
+  fi
+elif test "x$enable_mount" = xno; then
+    build_mount=no
+fi
+AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
+
+
+AC_ARG_ENABLE([fsck],
+  AS_HELP_STRING([--disable-fsck], [do not build fsck]),
+  [], enable_fsck=yes
+)
+AM_CONDITIONAL(BUILD_FSCK, test "x$enable_fsck" = xyes)
+
+
+AC_ARG_ENABLE([partx],
+  AS_HELP_STRING([--disable-partx], [do not build addpart, delpart, partx]),
+  [], enable_partx=check
+)
+build_partx=yes
+if test "x$enable_partx" = xcheck; then
+  if test "x$linux_os" = xno; then
+    AC_MSG_WARN([non-linux system; do not build partx utilities])
+    build_partx=no
+  fi
+elif test "x$enable_partx" = xno; then
+    build_partx=no
+fi
+AM_CONDITIONAL(BUILD_PARTX, test "x$build_partx" = xyes)
+
+
+
+AC_ARG_ENABLE([uuidd],
+  AS_HELP_STRING([--disable-uuidd], [do not build the uuid daemon]),
+  [], enable_uuidd=auto
+)
+
+case "$enable_uuidd:$enable_libuuid" in
+yes:no)
+  AC_MSG_ERROR([cannot enable uuidd when libuuid is disabled]) ;;
+auto:*)
+  enable_uuidd=$enable_libuuid ;;
+esac
+if test "x$enable_uuidd" = xyes; then
+  AC_DEFINE(HAVE_UUIDD, 1, [Define to 1 if you want to use uuid daemon.])
+fi
+AM_CONDITIONAL(BUILD_UUIDD, test "x$enable_uuidd" = xyes)
+
+
 
 
 AC_ARG_ENABLE([libmount-mount],
