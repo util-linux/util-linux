@@ -794,15 +794,13 @@ else
 fi
 AM_CONDITIONAL(BUILD_CRAMFS, test "x$build_cramfs" = xyes)
 
+
+enable_lsblk=check
 build_lsblk=yes
-if test "x$have_openat" = xno; then
-  AC_MSG_WARN([openat() function not found; do not build lsblk])
-  build_lsblk=no
-elif test "x$linux_os" = xno; then
-  AC_MSG_WARN([non-linux system; do not build lsblk])
-  build_lsblk=no
-fi
+UL_REQUIRES_LINUX([lsblk])
+UL_REQUIRES_BUILD([lsblk], [libblkid])
 AM_CONDITIONAL(BUILD_LSBLK, test "x$build_lsblk" = xyes)
+
 
 AC_ARG_ENABLE([switch_root],
   AS_HELP_STRING([--disable-switch_root], [do not build switch_root]),
