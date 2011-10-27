@@ -105,6 +105,15 @@ AM_CONDITIONAL([LINUX], test "x$linux_os" = xyes)
 
 AC_SYS_LARGEFILE
 
+AM_GNU_GETTEXT_VERSION([0.14.1])
+AM_GNU_GETTEXT([external])
+if test -d "$srcdir/po"
+then
+    ALL_LINGUAS=`cd $srcdir/po > /dev/null && echo *.po | sed 's/\.po//g'`
+else
+    ALL_LINGUAS="af am ar as be bg bn_IN bn ca cs cy da de el en_GB es et eu_ES fa fi fr gl gu he hi hr hu hy id is it ja ka kn ko ku lo lt lv mk ml mr ms my nb nl nn no nso or pa pl pt_BR pt ro ru si sk sl sq sr@Latn sr sv ta te th tr uk ur vi zh_CN zh_TW zu"
+fi
+
 AC_CHECK_HEADERS([linux/compiler.h linux/blkpg.h linux/major.h], [], [], [
 #ifdef HAVE_LINUX_COMPILER_H
 #include <linux/compiler.h>
@@ -481,14 +490,6 @@ AM_CONDITIONAL(BUILD_MOUNTPOINT, test "x$build_mountpoint" = xyes)
 UL_CHECK_LIB(util, openpty)
 UL_CHECK_LIB(termcap, tgetnum)
 
-AM_GNU_GETTEXT_VERSION([0.14.1])
-AM_GNU_GETTEXT([external])
-if test -d "$srcdir/po"
-then
-    ALL_LINGUAS=`cd $srcdir/po > /dev/null && echo *.po | sed 's/\.po//g'`
-else
-    ALL_LINGUAS="af am ar as be bg bn_IN bn ca cs cy da de el en_GB es et eu_ES fa fi fr gl gu he hi hr hu hy id is it ja ka kn ko ku lo lt lv mk ml mr ms my nb nl nn no nso or pa pl pt_BR pt ro ru si sk sl sq sr@Latn sr sv ta te th tr uk ur vi zh_CN zh_TW zu"
-fi
 
 AC_ARG_WITH([ncurses],
   AS_HELP_STRING([--with-ncurses], [build with non-wide ncurses, default is wide version
