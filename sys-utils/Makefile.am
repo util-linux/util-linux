@@ -16,8 +16,9 @@ usrsbin_exec_PROGRAMS += ldattach tunelp rtcwake
 
 dist_man_MANS += dmesg.1 ctrlaltdel.8 cytune.8 setarch.8 \
 		ldattach.8 tunelp.8 rtcwake.8 fsfreeze.8 fstrim.8
+endif
 
-if HAVE_CPU_SET_T
+if BUILD_LSCPU
 usrbin_exec_PROGRAMS += lscpu
 lscpu_SOURCES = lscpu.c $(top_srcdir)/lib/cpuset.c \
 			$(top_srcdir)/lib/strutils.c \
@@ -25,12 +26,13 @@ lscpu_SOURCES = lscpu.c $(top_srcdir)/lib/cpuset.c \
 			$(top_srcdir)/lib/tt.c \
 			$(top_srcdir)/lib/path.c
 dist_man_MANS += lscpu.1
+endif
+
+if BUILD_CHCPU
 sbin_PROGRAMS += chcpu
 chcpu_SOURCES = chcpu.c $(top_srcdir)/lib/cpuset.c \
 			$(top_srcdir)/lib/path.c
 dist_man_MANS += chcpu.8
-endif
-
 endif
 
 cytune_SOURCES = cytune.c cyclades.h $(top_srcdir)/lib/strutils.c

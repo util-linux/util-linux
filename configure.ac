@@ -788,6 +788,18 @@ UL_REQUIRES_LINUX([lsblk])
 UL_REQUIRES_BUILD([lsblk], [libblkid])
 AM_CONDITIONAL(BUILD_LSBLK, test "x$build_lsblk" = xyes)
 
+enable_lscpu=check
+build_lscpu=yes
+UL_REQUIRES_LINUX([lscpu])
+UL_REQUIRES_HAVE([lscpu], [cpu_set_t], [cpu_set_t type])
+AM_CONDITIONAL(BUILD_LSCPU, test "x$build_lscpu" = xyes)
+
+enable_chcpu=check
+build_chcpu=yes
+UL_REQUIRES_LINUX([chcpu])
+UL_REQUIRES_HAVE([chcpu], [cpu_set_t], [cpu_set_t type])
+AM_CONDITIONAL(BUILD_CHCPU, test "x$build_chcpu" = xyes)
+
 
 AC_ARG_ENABLE([switch_root],
   AS_HELP_STRING([--disable-switch_root], [do not build switch_root]),
