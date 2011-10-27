@@ -342,7 +342,7 @@ dnl
 dnl libblkid
 dnl
 AC_ARG_ENABLE([libblkid],
-  AS_HELP_STRING([--disable-libblkid], [do not build libblkid and blkid utilities]),
+  AS_HELP_STRING([--disable-libblkid], [do not build libblkid and many related utilities]),
   [], enable_libblkid=yes
 )
 AC_SUBST([LIBBLKID_DATE])
@@ -355,9 +355,6 @@ AC_DEFINE_UNQUOTED(LIBBLKID_DATE, "$LIBBLKID_DATE", [libblkid date string])
 if test "x$enable_libblkid" = xyes; then
   AC_DEFINE(HAVE_LIBBLKID, 1, [Define to 1 if you have the -lblkid.])
 else
-  if test "x$enable_fsck" = xyes; then
-    AC_MSG_ERROR([libblkid is needed to build util-linux fsck])
-  fi
   if test "x$build_partx" = xyes; then
     AC_MSG_ERROR([libblkid is needed to build util-linux partx])
   fi
@@ -454,9 +451,11 @@ AM_CONDITIONAL(BUILD_LIBMOUNT_MOUNT, test "x$build_libmount_mount" = xyes)
 
 AC_ARG_ENABLE([fsck],
   AS_HELP_STRING([--disable-fsck], [do not build fsck]),
-  [], enable_fsck=yes
+  [], enable_fsck=check
 )
-AM_CONDITIONAL(BUILD_FSCK, test "x$enable_fsck" = xyes)
+build_fsck=yes
+UL_REQUIRES_BUILD([fsck], [libblkid])
+AM_CONDITIONAL(BUILD_FSCK, test "x$build_fsck" = xyes)
 
 
 AC_ARG_ENABLE([partx],
