@@ -429,6 +429,39 @@ AC_CHECK_DECLS([CPU_ALLOC], [], [], [[
 #include <sched.h>
 ]])
 
+# on Solaris, you can't mix and match standards, since we use c99
+# aparently at this stage, XOPEN_SOURCE will conflict.  As workaround,
+# check for crypt.h and use that without XOPEN_SOURCE.
+AC_CHECK_HEADERS([crypt.h])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+#ifdef HAVE_CRYPT_H
+#include <crypt.h>
+#else
+#define _XOPEN_SOURCE
+#include <unistd.h>
+#endif
+]], [[
+char *c = crypt("abc","pw");
+]])],[],[
+  LIBS="$LIBS -lcrypt"
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+  #ifdef HAVE_CRYPT_H
+  #include <crypt.h>
+  #else
+  #define _XOPEN_SOURCE
+  #include <unistd.h>
+  #endif
+  ]], [[
+  char *c = crypt("abc","pw");
+  ]])],[
+  AC_DEFINE(HAVE_LIBCRYPT, 1, [Do we need -lcrypt?])
+  have_libcrypt=yes
+  ],[
+  AC_MSG_ERROR([crypt() is not available])
+  ])
+])
+AM_CONDITIONAL(HAVE_LIBCRYPT, test "x$have_libcrypt" = xyes)
+
 
 AC_ARG_ENABLE([most-builds],
   AS_HELP_STRING([--enable-most-builds], [build everthing other than experimental code]),
@@ -636,41 +669,6 @@ if test "x$with_utempter" = xyes; then
 else
   AM_CONDITIONAL(HAVE_UTEMPTER, false)
 fi
-
-# on Solaris, you can't mix and match standards, since we use c99
-# aparently at this stage, XOPEN_SOURCE will conflict.  As workaround,
-# check for crypt.h and use that without XOPEN_SOURCE.
-AC_CHECK_HEADERS([crypt.h])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-#ifdef HAVE_CRYPT_H
-#include <crypt.h>
-#else
-#define _XOPEN_SOURCE
-#include <unistd.h>
-#endif
-]], [[
-char *c = crypt("abc","pw");
-]])],[],[
-  LIBS="$LIBS -lcrypt"
-  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-  #ifdef HAVE_CRYPT_H
-  #include <crypt.h>
-  #else
-  #define _XOPEN_SOURCE
-  #include <unistd.h>
-  #endif
-  ]], [[
-  char *c = crypt("abc","pw");
-  ]])],[
-  AC_DEFINE(NEED_LIBCRYPT, 1, [Do we need -lcrypt?])
-  need_libcrypt=yes
-  ],[
-  AC_MSG_ERROR([crypt() is not available])
-  ])
-])
-
-AM_CONDITIONAL(NEED_LIBCRYPT, test "x$need_libcrypt" = xyes)
-
 
 UL_CHECK_SYSCALL([pivot_root])
 UL_CHECK_SYSCALL([sched_getaffinity])

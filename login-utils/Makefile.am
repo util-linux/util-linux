@@ -45,7 +45,7 @@ newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
 login_ldadd_common += -lpam -lpam_misc
 
-if NEED_LIBCRYPT
+if HAVE_LIBCRYPT
 newgrp_LDADD += -lcrypt
 endif
 
