@@ -64,6 +64,9 @@
 #include "nls.h"
 #include "xalloc.h"
 
+#define EXIT_BAD_VALUE	3
+#define EXIT_LP_IO_ERR	4
+
 struct command {
 	long op;
 	long val;
@@ -91,7 +94,7 @@ static long get_val(char *val)
 	long ret;
 	if (!(sscanf(val, "%ld", &ret) == 1)) {
 		fprintf(stderr, _("%s: bad value\n"), progname);
-		exit(3);
+		exit(EXIT_BAD_VALUE);
 	}
 	return ret;
 }
@@ -219,7 +222,7 @@ int main(int argc, char **argv)
 		case 'v':
 		case 'V':
 			print_version(progname);
-			exit(0);
+			return EXIT_SUCCESS;
 		default:
 			print_usage(progname);
 		}
@@ -295,7 +298,7 @@ int main(int argc, char **argv)
 		retval = ioctl(fd, LPGETIRQ - offset, &irq);
 		if (retval == -1) {
 			perror(_("LPGETIRQ error"));
-			exit(4);
+			return EXIT_LP_IO_ERR;
 		}
 		if (irq == (int)0xdeadbeef)
 		        /* up to 1.1.77 will do this */
@@ -308,5 +311,5 @@ int main(int argc, char **argv)
 
 	close(fd);
 
-	return 0;
+	return EXIT_SUCCESS;
 }
