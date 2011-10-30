@@ -87,15 +87,11 @@ static void print_version(char *progname)
 	printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
 }
 
-static char *progname;
-
 static long get_val(char *val)
 {
 	long ret;
-	if (!(sscanf(val, "%ld", &ret) == 1)) {
-		fprintf(stderr, _("%s: bad value\n"), progname);
-		exit(EXIT_BAD_VALUE);
-	}
+	if (!(sscanf(val, "%ld", &ret) == 1))
+		errx(EXIT_BAD_VALUE, _("bad value"));
 	return ret;
 }
 
@@ -109,20 +105,16 @@ static long get_onoff(char *val)
 int main(int argc, char **argv)
 {
 	int c, fd, irq, status, show_irq, offset = 0, retval;
-	char *filename, *p;
+	char *filename;
 	struct stat statbuf;
 	struct command *cmds, *cmdst;
-
-	progname = argv[0];
-	if ((p = strrchr(progname, '/')) != NULL)
-		progname = p + 1;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
 	if (argc < 2)
-		print_usage(progname);
+		print_usage(program_invocation_short_name);
 
 	cmdst = cmds = xmalloc(sizeof(struct command));
 	cmds->next = 0;
@@ -131,7 +123,7 @@ int main(int argc, char **argv)
 	while ((c = getopt(argc, argv, "t:c:w:a:i:ho:C:sq:rT:vV")) != -1) {
 		switch (c) {
 		case 'h':
-			print_usage(progname);
+			print_usage(program_invocation_short_name);
 			break;
 		case 'i':
 			cmds->op = LPSETIRQ;
@@ -221,15 +213,15 @@ int main(int argc, char **argv)
 #endif
 		case 'v':
 		case 'V':
-			print_version(progname);
+			print_version(program_invocation_short_name);
 			return EXIT_SUCCESS;
 		default:
-			print_usage(progname);
+			print_usage(program_invocation_short_name);
 		}
 	}
 
 	if (optind != argc - 1)
-		print_usage(progname);
+		print_usage(program_invocation_short_name);
 
 	filename = strdup(argv[optind]);
 	fd = open(filename, O_WRONLY | O_NONBLOCK, 0);
@@ -237,16 +229,14 @@ int main(int argc, char **argv)
 	 * and printer is off or off-line or in an error condition.
 	 * Otherwise we would abort...
          */
-	if (fd < 0) {
-		perror(filename);
-		return -1;
-	}
+	if (fd < 0)
+		err(EXIT_FAILURE, "%s", filename);
 
 	fstat(fd, &statbuf);
 
 	if (!S_ISCHR(statbuf.st_mode)) {
-		printf(_("%s: %s not an lp device.\n"), argv[0], filename);
-		print_usage(progname);
+		warnx(_("%s not an lp device"), filename);
+		print_usage(program_invocation_short_name);
 	}
 	/* Allow for binaries compiled under a new kernel to work on
 	 * the old ones The irq argument to ioctl isn't touched by
@@ -265,7 +255,7 @@ int main(int argc, char **argv)
 			status = 0xdeadbeef;
 			retval = ioctl(fd, LPGETSTATUS - offset, &status);
 			if (retval < 0)
-				perror(_("LPGETSTATUS error"));
+				warnx(_("LPGETSTATUS error"));
 			else {
 				if (status == (int)0xdeadbeef)
 					/* a few 1.1.7x kernels will do this */
@@ -285,9 +275,8 @@ int main(int argc, char **argv)
 			}
 		} else
 #endif /* LPGETSTATUS */
-		if (ioctl(fd, cmds->op - offset, cmds->val) < 0) {
-			perror(_("tunelp: ioctl failed"));
-		}
+		if (ioctl(fd, cmds->op - offset, cmds->val) < 0)
+			warn(_("ioctl failed"));
 		cmdst = cmds;
 		cmds = cmds->next;
 		free(cmdst);
@@ -296,10 +285,8 @@ int main(int argc, char **argv)
 	if (show_irq) {
 		irq = 0xdeadbeef;
 		retval = ioctl(fd, LPGETIRQ - offset, &irq);
-		if (retval == -1) {
-			perror(_("LPGETIRQ error"));
-			return EXIT_LP_IO_ERR;
-		}
+		if (retval == -1)
+			err(EXIT_LP_IO_ERR, _("LPGETIRQ error"));
 		if (irq == (int)0xdeadbeef)
 		        /* up to 1.1.77 will do this */
 			irq = retval;
