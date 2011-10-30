@@ -5,32 +5,13 @@
 .\" Public license for conditions under which this file may be redistributed.
 .\"
 .\" Polished a bit - aeb
-.TH TUNELP 8 "May 1999" "util-linux" "System Administration"
+.TH TUNELP 8 "October 2011" "util-linux" "System Administration"
 .SH NAME
 tunelp \- set various parameters for the lp device
 .SH SYNOPSIS
 .B tunelp
+[options]
 .I device
-.RB [ \-i
-.IR IRQ ]
-.RB [ \-t
-.IR TIME ]
-.RB [ \-c
-.IR CHARS ]
-.RB [ \-w
-.IR WAIT ]
-.RB [ \-a
-.RB { on | off }]
-.RB [ \-o
-.RB { on | off }]
-.RB [ \-C
-.RB { on | off }]
-.RB [ \-r ]
-.RB [ \-s ]
-.RB [ \-q
-.RB { on | off }]
-.RB [ \-T
-.RB { on | off }]
 .SH DESCRIPTION
 \fBtunelp\fP sets several parameters for the /dev/lp\fI?\fP devices, for better
 performance (or for any performance at all, if your printer won't work
@@ -39,7 +20,7 @@ interrupts, and if so, which one.  With parameters, it sets the device
 characteristics accordingly.  The parameters are as follows:
 
 .TP
-.BI \-i " IRQ"
+\fB\-i\fR, \fB\-\-irq\fR \fIargument\fR
 specifies the IRQ to use for the parallel port in question.  If this
 is set to something non-zero, \-t and \-c have no effect.  If your port
 does not use interrupts, this option will make printing stop.
@@ -59,7 +40,7 @@ Read
 for more details on parport.
 
 .TP
-.BI \-t " TIME"
+\fB\-t\fR, \fB\-\-time\fR \fImilliseconds\fR
 is the amount of time in jiffies that the driver waits if the
 printer doesn't take a character for the number of tries dictated by
 the \-c parameter.  10 is the default value.  If you want fastest
@@ -71,7 +52,7 @@ should be lower for printing graphics than text, by a factor of
 approximately 10, for best performance.
 
 .TP
-.BI \-c " CHARS"
+\fB\-c\fR, \fB\-\-chars\fR \fIcharacters\fR
 is the number of times to try to output a character to the
 printer before sleeping for \-t \fITIME\fP.  It is the number of times around
 a loop that tries to send a character to the printer.  120 appears to
@@ -86,7 +67,7 @@ Setting \-t \fITIME\fP to 0 is equivalent to setting \-c \fICHARS\fP
 to infinity.
 
 .TP
-.BI \-w " WAIT"
+\fB\-w\fR, \fB\-\-wait\fR \fImilliseconds\fR
 is the number of usec we wait while playing with the strobe signal.
 While most printers appear to be able to deal with an extremely
 short strobe, some printers demand a longer one.  Increasing this from
@@ -95,7 +76,7 @@ make it possible to use longer cables. It's also possible to decrease this
 value to 0 if your printer is fast enough or your machine is slow enough.
 
 .TP
-.BR \-a " {" on | off }
+\fB\-a\fR, \fB\-\-abort\fR \fI<on|off>\fR
 This is whether to abort on printer error - the default
 is not to.  If you are sitting at your computer, you probably want to
 be able to see an error and fix it, and have the printer go on
@@ -104,7 +85,7 @@ your printer spooler find out that the printer isn't ready, quit
 trying, and send you mail about it.  The choice is yours.
 
 .TP
-.BR \-o " {" on | off }
+\fB\-o\fR, \fB\-\-check\-status\fR \fI<on|off>\fR
 This option is much like \-a.  It makes any
 .I open()
 of this device check to see that the device is on-line and not reporting any
@@ -112,7 +93,7 @@ out of paper or other errors.  This is the correct setting for most
 versions of lpd.
 
 .TP
-.BR \-C " {" on | off }
+\fB\-C\fR, \fB\-\-careful\fR \fI<on|off>\fR
 This option adds extra ("careful") error checking.  When
 this option is on, the printer driver will ensure that the printer is
 on-line and not reporting any out of paper or other errors before
@@ -123,14 +104,14 @@ NOTE: This option is obsolete because it's the default in 2.1.131 kernel
 or later.
 
 .TP
-.B \-s
+\fB\-s\fR, \fB\-\-status\fR
 This option returns the current printer status, both as a
 decimal number from 0..255, and as a list of active flags.  When
 this option is specified, \-q off, turning off the display of the
 current IRQ, is implied.
 
 .TP
-.BR \-T " {" on | off }
+\fB\-T\fR, \fB\-\-trust\-irq\fR \fI<on|off>\fR
 This option is obsolete. It was added in Linux 2.1.131,
 and removed again in Linux 2.3.10. The below is for these
 old kernels only.
@@ -150,12 +131,12 @@ NOTE: Trusting the irq is reported to corrupt the printing on some hardware,
 you must try to know if your printer will work or not...
 
 .TP
-.B \-r
+\fB\-r\fR, \fB\-\-reset\fR
 This option resets the port.  It requires a Linux kernel version of
 1.1.80 or later.
 
 .TP
-.BR \-q " {" on | off }
+\fB\-q\fR, \fB\-\-print-irq\fR \fI<on|off>\fR
 This option sets printing the display of the current IRQ setting.
 
 
