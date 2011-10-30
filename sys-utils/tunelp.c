@@ -51,6 +51,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <getopt.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -73,18 +74,32 @@ struct command {
 	struct command *next;
 };
 
-static void print_usage(char *progname)
+static void __attribute__((__noreturn__)) print_usage(FILE *out)
 {
-	printf(_
-	       ("Usage: %s <device> [ -i <IRQ> | -t <TIME> | -c <CHARS> | -w <WAIT> | \n"
-		"          -a [on|off] | -o [on|off] | -C [on|off] | -q [on|off] | -s | \n"
-		"          -T [on|off] ]\n"), progname);
-	exit(1);
-}
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] <device>\n"), program_invocation_short_name);
 
-static void print_version(char *progname)
-{
-	printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -i, --irq <num>              specify parallel port irq\n"), out);
+	fputs(_(" -t, --time <ms>              driver wait time in milliseconds\n"), out);
+	fputs(_(" -c, --chars <num>            number of output characters before sleep\n"), out);
+	fputs(_(" -w, --wait <us>              strobe wait in micro seconds\n"), out);
+	/* TRANSLATORS: do not translate <on|off> arguments. The
+	   argument reader does not recognize locale, unless `on' is
+	   exactly that very same string. */
+	fputs(_(" -a, --abort <on|off>         abort on error\n"), out);
+	fputs(_(" -o, --check-status <on|off>  check printer status before printing\n"), out);
+	fputs(_(" -C, --careful <on|off>       extra checking to status check\n"), out);
+	fputs(_(" -s, --status                 query printer status\n"), out);
+	fputs(_(" -T, --trust-irq <on|off>     make driver to trust irq\n"), out);
+	fputs(_(" -r, --reset                  reset the port\n"), out);
+	fputs(_(" -q, --print-irq <on|off>     display current irq setting\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("tunelp(8)"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 static long get_val(char *val)
@@ -108,22 +123,38 @@ int main(int argc, char **argv)
 	char *filename;
 	struct stat statbuf;
 	struct command *cmds, *cmdst;
+	static const struct option longopts[] = {
+		{"irq", required_argument, NULL, 'i'},
+		{"time", required_argument, NULL, 't'},
+		{"chars", required_argument, NULL, 'c'},
+		{"wait", required_argument, NULL, 'w'},
+		{"abort", required_argument, NULL, 'a'},
+		{"check-status", required_argument, NULL, 'o'},
+		{"careful", required_argument, NULL, 'C'},
+		{"status", no_argument, NULL, 's'},
+		{"trust-irq", required_argument, NULL, 'T'},
+		{"reset", no_argument, NULL, 'r'},
+		{"print-irq", required_argument, NULL, 'q'},
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, NULL, 0}
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
 	if (argc < 2)
-		print_usage(program_invocation_short_name);
+		print_usage(stderr);
 
 	cmdst = cmds = xmalloc(sizeof(struct command));
 	cmds->next = 0;
 
 	show_irq = 1;
-	while ((c = getopt(argc, argv, "t:c:w:a:i:ho:C:sq:rT:vV")) != -1) {
+	while ((c = getopt_long(argc, argv, "t:c:w:a:i:ho:C:sq:rT:vV", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
-			print_usage(program_invocation_short_name);
+			print_usage(stdout);
 			break;
 		case 'i':
 			cmds->op = LPSETIRQ;
@@ -213,15 +244,15 @@ int main(int argc, char **argv)
 #endif
 		case 'v':
 		case 'V':
-			print_version(program_invocation_short_name);
+			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		default:
-			print_usage(program_invocation_short_name);
+			print_usage(stderr);
 		}
 	}
 
 	if (optind != argc - 1)
-		print_usage(program_invocation_short_name);
+		print_usage(stderr);
 
 	filename = strdup(argv[optind]);
 	fd = open(filename, O_WRONLY | O_NONBLOCK, 0);
@@ -236,7 +267,7 @@ int main(int argc, char **argv)
 
 	if (!S_ISCHR(statbuf.st_mode)) {
 		warnx(_("%s not an lp device"), filename);
-		print_usage(program_invocation_short_name);
+		print_usage(stderr);
 	}
 	/* Allow for binaries compiled under a new kernel to work on
 	 * the old ones The irq argument to ioctl isn't touched by
