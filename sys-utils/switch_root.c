@@ -32,7 +32,9 @@
 #include <errno.h>
 #include <ctype.h>
 #include <dirent.h>
+
 #include "c.h"
+#include "nls.h"
 
 #ifndef MS_MOVE
 #define MS_MOVE 8192
@@ -170,18 +172,17 @@ static int switchroot(const char *newroot)
 	return 0;
 }
 
-static void usage(FILE *output)
+static void __attribute__((__noreturn__)) usage(FILE *output)
 {
-	fprintf(output, "usage: %s <newrootdir> <init> <args to init>\n",
-			program_invocation_short_name);
-	exit(output == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
-}
+	fputs(USAGE_HEADER, output);
+	fprintf(output, " %s [options] <newrootdir> <init> <args to init>\n",
+		program_invocation_short_name);
+	fputs(USAGE_OPTIONS, output);
+	fputs(USAGE_HELP, output);
+	fputs(USAGE_VERSION, output);
+	fprintf(output, USAGE_MAN_TAIL("switch_root(8)"));
 
-static void version(void)
-{
-	fprintf(stdout,  "%s from %s\n", program_invocation_short_name,
-			PACKAGE_STRING);
-	exit(EXIT_SUCCESS);
+	exit(output == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -190,8 +191,10 @@ int main(int argc, char *argv[])
 
 	if (argv[1] && (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")))
 		usage(stdout);
-	if (argv[1] && (!strcmp(argv[1], "--version") || !strcmp(argv[1], "-V")))
-		version();
+	if (argv[1] && (!strcmp(argv[1], "--version") || !strcmp(argv[1], "-V"))) {
+		printf(UTIL_LINUX_VERSION);
+		return EXIT_SUCCESS;
+	}
 	if (argc < 3)
 		usage(stderr);
 
