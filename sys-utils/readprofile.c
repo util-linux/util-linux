@@ -40,6 +40,7 @@
  * "readprofile -s -m /boot/System.map-test | grep __d_lookup | sort -n -k3"
  */
 
+#include <getopt.h>
 #include <errno.h>
 #include <stdio.h>
 #include <fcntl.h>
@@ -60,7 +61,6 @@ static char *prgname;
 /* These are the defaults */
 static char defaultmap[]="/boot/System.map";
 static char defaultpro[]="/proc/profile";
-static char optstring[]="M:m:np:itvarVbs";
 
 static FILE *
 myopen(char *name, char *mode, int *flag) {
@@ -98,23 +98,31 @@ boot_uname_r_str(void) {
 	return s;
 }
 
-static void
-usage(void) {
-	fprintf(stderr, _(
-		"%s: Usage: \"%s [options]\n"
-		"\t -m <mapfile>  (defaults: \"%s\" and\n\t\t\t\t  \"%s\")\n"
-		"\t -p <pro-file> (default: \"%s\")\n"
-		"\t -M <mult>     set the profiling multiplier to <mult>\n"
-		"\t -i            print only info about the sampling step\n"
-		"\t -v            print verbose data\n"
-		"\t -a            print all symbols, even if count is 0\n"
-		"\t -b            print individual histogram-bin counts\n"
-		"\t -s            print individual counters within functions\n"
-		"\t -r            reset all the counters (root only)\n"
-		"\t -n            disable byte order auto-detection\n"
-		"\t -V            print version and exit\n"),
-		prgname, prgname, defaultmap, boot_uname_r_str(), defaultpro);
-	exit(1);
+static void __attribute__((__noreturn__))
+usage(FILE *out) {
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+
+	fprintf(out,
+	      _(" -m, --mapfile <mapfile>   (defaults: \"%s\" and\n"), defaultmap);
+	fprintf(out,
+	      _("                                      \"%s\")\n"), boot_uname_r_str());
+	fprintf(out,
+	      _(" -p, --profile <pro-file>  (default:  \"%s\")\n"), defaultpro);
+	fputs(_(" -M, --multiplier <mult>   set the profiling multiplier to <mult>\n"), out);
+	fputs(_(" -i, --info                print only info about the sampling step\n"), out);
+	fputs(_(" -v, --verbose             print verbose data\n"), out);
+	fputs(_(" -a, --all                 print all symbols, even if count is 0\n"), out);
+	fputs(_(" -b, --histbin             print individual histogram-bin counts\n"), out);
+	fputs(_(" -s, --counters            print individual counters within functions\n"), out);
+	fputs(_(" -r, --reset               reset all the counters (root only)\n"), out);
+	fputs(_(" -n, --no-auto             disable byte order auto-detection\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("readprofile(8)"));
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int
@@ -138,6 +146,23 @@ main(int argc, char **argv) {
 	int popenMap;   /* flag to tell if popen() has been used */
 	int header_printed;
 
+	static const char optstring[]="m:p:M:ivabsrnVh";
+	static const struct option longopts[] = {
+		{"mapfile", required_argument, NULL, 'm'},
+		{"profile", required_argument, NULL, 'p'},
+		{"multiplier", required_argument, NULL, 'M'},
+		{"info", no_argument, NULL, 'i'},
+		{"verbose", no_argument, NULL, 'v'},
+		{"all", no_argument, NULL, 'a'},
+		{"histbin", no_argument, NULL, 'b'},
+		{"counters", no_argument, NULL, 's'},
+		{"reest", no_argument, NULL, 'r'},
+		{"no-auto", no_argument, NULL, 'n'},
+		{"version", no_argument, NULL, 'V'},
+		{"help", no_argument, NULL, 'h'},
+		{NULL, 0, 0, 0}
+	};
+
 #define next (current^1)
 
 	setlocale(LC_ALL, "");
@@ -148,7 +173,7 @@ main(int argc, char **argv) {
 	proFile = defaultpro;
 	mapFile = defaultmap;
 
-	while ((c = getopt(argc, argv, optstring)) != -1) {
+	while ((c = getopt_long(argc, argv, optstring, longopts, NULL)) != -1) {
 		switch(c) {
 		case 'm':
 			mapFile = optarg;
@@ -181,11 +206,12 @@ main(int argc, char **argv) {
 			optVerbose++;
 			break;
 		case 'V':
-			printf(_("%s (%s)\n"), prgname,
-			       PACKAGE_STRING);
-			exit(0);
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
+		case 'h':
+			usage(stdout);
 		default:
-			usage();
+			usage(stderr);
 		}
 	}
 
