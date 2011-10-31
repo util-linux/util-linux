@@ -56,8 +56,6 @@
 
 #define S_LEN 128
 
-static char *prgname;
-
 /* These are the defaults */
 static char defaultmap[]="/boot/System.map";
 static char defaultpro[]="/proc/profile";
@@ -82,7 +80,6 @@ myopen(char *name, char *mode, int *flag) {
 #ifndef BOOT_SYSTEM_MAP
 #define BOOT_SYSTEM_MAP "/boot/System.map-"
 #endif
-
 static char *
 boot_uname_r_str(void) {
 	struct utsname uname_info;
@@ -169,7 +166,6 @@ main(int argc, char **argv) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	prgname = argv[0];
 	proFile = defaultpro;
 	mapFile = defaultmap;
 
@@ -232,17 +228,12 @@ main(int argc, char **argv) {
 		/* try to become root, just in case */
 		setuid(0);
 		fd = open(defaultpro,O_WRONLY);
-		if (fd < 0) {
-			perror(defaultpro);
-			exit(1);
-		}
-		if (write(fd, &multiplier, to_write) != to_write) {
-			fprintf(stderr, _("readprofile: error writing %s: %m\n"),
-				defaultpro);
-			exit(1);
-		}
+		if (fd < 0)
+			err(EXIT_FAILURE, "%s", defaultpro);
+		if (write(fd, &multiplier, to_write) != to_write)
+			err(EXIT_FAILURE, _("error writing %s"), defaultpro);
 		close(fd);
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
 	/*
@@ -250,18 +241,14 @@ main(int argc, char **argv) {
 	 */
 	if (((proFd=open(proFile,O_RDONLY)) < 0)
 	    || ((int)(len=lseek(proFd,0,SEEK_END)) < 0)
-	    || (lseek(proFd,0,SEEK_SET) < 0)) {
-		fprintf(stderr,"%s: %s: %m\n", prgname, proFile);
-		exit(1);
-	}
+	    || (lseek(proFd,0,SEEK_SET) < 0))
+		err(EXIT_FAILURE, "%s", proFile);
 
 	buf = xmalloc(len);
 
 	rc = read(proFd,buf,len);
-	if (rc < 0 || (size_t) rc != len) {
-		fprintf(stderr,"%s: %s: %m\n", prgname, proFile);
-		exit(1);
-	}
+	if (rc < 0 || (size_t) rc != len)
+		err(EXIT_FAILURE,"%s", proFile);
 	close(proFd);
 
 	if (!optNative) {
@@ -277,8 +264,8 @@ main(int argc, char **argv) {
 				small++;
 		}
 		if (big > small) {
-			fprintf(stderr,_("Assuming reversed byte order. "
-				"Use -n to force native byte order.\n"));
+			warnx(_("Assuming reversed byte order. "
+				"Use -n to force native byte order."));
 			for (p = buf; p < buf+entries; p++)
 				for (i = 0; i < sizeof(*buf)/2; i++) {
 					unsigned char *b = (unsigned char *) p;
@@ -294,7 +281,7 @@ main(int argc, char **argv) {
 	step = buf[0];
 	if (optInfo) {
 		printf(_("Sampling_step: %i\n"), step);
-		exit(0);
+		exit(EXIT_SUCCESS);
 	} 
 
 	total = 0;
@@ -304,20 +291,13 @@ main(int argc, char **argv) {
 		mapFile = boot_uname_r_str();
 		map = myopen(mapFile, "r", &popenMap);
 	}
-	if (map == NULL) {
-		int errsv = errno;
-		fprintf(stderr, "%s: ", prgname);
-		errno = errsv;
-		perror(mapFile);
-		exit(1);
-	}
+	if (map == NULL)
+		err(EXIT_FAILURE, "%s", mapFile);
 
 	while (fgets(mapline,S_LEN,map)) {
-		if (sscanf(mapline,"%llx %s %s",&fn_add,mode,fn_name) != 3) {
-			fprintf(stderr,_("%s: %s(%i): wrong map line\n"),
-				prgname, mapFile, maplineno);
-			exit(1);
-		}
+		if (sscanf(mapline, "%llx %s %s", &fn_add, mode, fn_name) != 3)
+			errx(EXIT_FAILURE, _("%s(%i): wrong map line"), mapFile,
+			     maplineno);
 		/* only elf works like this */
 		if (!strcmp(fn_name,"_stext") || !strcmp(fn_name,"__stext")) {
 			add0 = fn_add;
@@ -326,11 +306,8 @@ main(int argc, char **argv) {
 		maplineno++;
 	}
 
-	if (!add0) {
-		fprintf(stderr,_("%s: can't find \"_stext\" in %s\n"),
-			prgname, mapFile);
-		exit(1);
-	}
+	if (!add0)
+		errx(EXIT_FAILURE, _("can't find \"_stext\" in %s"), mapFile);
 
 	/*
 	 * Main loop.
@@ -339,11 +316,9 @@ main(int argc, char **argv) {
 		unsigned int this=0;
 		int done = 0;
 
-		if (sscanf(mapline,"%llx %s %s",&next_add,mode,next_name)!=3) {
-			fprintf(stderr,_("%s: %s(%i): wrong map line\n"),
-				prgname,mapFile, maplineno);
-			exit(1);
-		}
+		if (sscanf(mapline, "%llx %s %s", &next_add, mode, next_name) != 3)
+			errx(EXIT_FAILURE, _("%s(%i): wrong map line"), mapFile,
+			     maplineno);
 		header_printed = 0;
 
 		/* the kernel only profiles up to _etext */
@@ -362,11 +337,9 @@ main(int argc, char **argv) {
 				break;	/* only text is profiled */
 		}
 
-		if (indx >= len / sizeof(*buf)) {
-			fprintf(stderr, _("%s: profile address out of range. "
-					  "Wrong map file?\n"), prgname);
-			exit(1);
-		}
+		if (indx >= len / sizeof(*buf))
+			errx(EXIT_FAILURE,
+			     _("profile address out of range. Wrong map file?"));
 
 		while (indx < (next_add-add0)/step) {
 			if (optBins && (buf[indx] || optAll)) {
@@ -426,5 +399,5 @@ main(int argc, char **argv) {
 		       total,_("total"),total/(double)(fn_add-add0));
 	
 	popenMap ? pclose(map) : fclose(map);
-	exit(0);
+	exit(EXIT_SUCCESS);
 }
