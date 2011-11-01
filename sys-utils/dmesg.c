@@ -429,10 +429,11 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 	for (i = 0; i < size; i++) {
 		const char *p = buf + i;
 		int rc, hex = 0;
+        size_t len = 1;
 
 #ifdef HAVE_WIDECHAR
 		wchar_t wc;
-		size_t len = mbrtowc(&wc, p, size - i, &s);
+		len = mbrtowc(&wc, p, size - i, &s);
 
 		if (len == 0)				/* L'\0' */
 			return;
@@ -440,16 +441,15 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 		if (len == (size_t)-1 || len == (size_t)-2) {		/* invalid sequence */
 			memset(&s, 0, sizeof (s));
 			len = hex = 1;
-
 		} else if (len > 1 && !iswprint(wc)) {	/* non-printable multibyte */
 			hex = 1;
-		} else
-#endif
-		{
-			if (!isprint((unsigned int) *p) &&
-			    !isspace((unsigned int) *p))		/* non-printable */
-				hex = 1;
 		}
+		i += len - 1;
+#else
+		if (!isprint((unsigned int) *p) &&
+			!isspace((unsigned int) *p))        /* non-printable */
+			hex = 1;
+#endif
 		if (hex)
 			rc = fwrite_hex(p, len, out);
 		else
