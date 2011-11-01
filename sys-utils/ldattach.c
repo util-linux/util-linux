@@ -70,10 +70,10 @@ static const struct ld_table ld_discs[] = {
 	{ "SYNC_PPP",		N_SYNC_PPP },
 	{ "SYNCPPP",		N_SYNC_PPP },
 	{ "HCI",		N_HCI },
-	{ "GIGASET_M101",	N_GIGASET_M101 },
-	{ "GIGASET",		N_GIGASET_M101 },
-	{ "M101",		N_GIGASET_M101 },
 	{ "PPS",		N_PPS },
+	{ "M101",		N_GIGASET_M101 },
+	{ "GIGASET",		N_GIGASET_M101 },
+	{ "GIGASET_M101",	N_GIGASET_M101 },
 	{ NULL, 		0 }
 };
 
@@ -115,7 +115,7 @@ static void print_table(FILE * out, const struct ld_table *tab)
 
 	for (t = tab, i = 1; t && t->name; t++, i++) {
 		fprintf(out, "  %-10s", t->name);
-		if (!(i % 3))
+		if (!(i % 6))
 			fputc('\n', out);
 	}
 }
@@ -147,17 +147,30 @@ static void __attribute__ ((__noreturn__)) usage(int exitcode)
 {
 	FILE *out = exitcode == EXIT_SUCCESS ? stdout : stderr;
 
-	fputs(_("\nUsage:\n"), out);
-	fprintf(out,
-		_(" %s [ -dhV78neo12 ] [ -s <speed> ] [ -i [-]<iflag> ] <ldisc> <device>\n"),
-		progname);
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] <ldisc> <device>\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
 
+	fputs(_(" -d, --debug             print verbose messages to stderr\n"), out);
+	fputs(_(" -s, --speed <value>     set serial line speed\n"), out);
+	fputs(_(" -7, --sevenbits         set character size to 7 bits\n"), out);
+	fputs(_(" -8, --eightbits         set character size to 8 bits\n"), out);
+	fputs(_(" -n, --noparity          set parity to none\n"), out);
+	fputs(_(" -e, --evenparity        set parity to even\n"), out);
+	fputs(_(" -o, --oddparity         set parity to odd\n"), out);
+	fputs(_(" -1, --onestopbit        set stop bits to one\n"), out);
+	fputs(_(" -2, --twostopbits       set stop bits to two\n"), out);
+	fputs(_(" -i, --iflag [-]<iflag>  set input mode flag\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 	fputs(_("\nKnown <ldisc> names:\n"), out);
 	print_table(out, ld_discs);
-
 	fputs(_("\nKnown <iflag> names:\n"), out);
 	print_table(out, ld_iflags);
 	fputc('\n', out);
+	fprintf(out, USAGE_MAN_TAIL("ldattach(8)"));
 	exit(exitcode);
 }
 
@@ -250,8 +263,8 @@ int main(int argc, char **argv)
 			parse_iflag(optarg, &set_iflag, &clr_iflag);
 			break;
 		case 'V':
-			printf(_("ldattach from %s\n"), PACKAGE_STRING);
-			break;
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		case 'h':
 			usage(EXIT_SUCCESS);
 		default:
