@@ -26,6 +26,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "strutils.h"
 
 #define dbg(format, arg...) \
 	do { \
@@ -123,16 +124,13 @@ static void print_table(FILE * out, const struct ld_table *tab)
 static int parse_iflag(char *str, int *set_iflag, int *clr_iflag)
 {
 	int iflag;
-	char *s, *end;
+	char *s;
 
 	for (s = strtok(str, ","); s != NULL; s = strtok(NULL, ",")) {
 		if (*s == '-')
 			s++;
-		if ((iflag = lookup_table(ld_iflags, s)) < 0) {
-			iflag = strtol(s, &end, 0);
-			if (*end || iflag < 0)
-				errx(EXIT_FAILURE, _("invalid iflag: %s"), s);
-		}
+		if ((iflag = lookup_table(ld_iflags, s)) < 0)
+			iflag = strtol_or_err(s, _("invalid iflag"));
 		if (s > str && *(s - 1) == '-')
 			*clr_iflag |= iflag;
 		else
@@ -206,7 +204,6 @@ int main(int argc, char **argv)
 	int set_iflag = 0, clr_iflag = 0;
 	int ldisc;
 	int optc;
-	char *end;
 	char *dev;
 	static const struct option opttbl[] = {
 		{"speed", required_argument, NULL, 's'},
@@ -254,10 +251,7 @@ int main(int argc, char **argv)
 			parity = optc;
 			break;
 		case 's':
-			speed = strtol(optarg, &end, 10);
-			if (*end || speed <= 0)
-				errx(EXIT_FAILURE, _("invalid speed: %s"),
-				     optarg);
+			speed = strtol_or_err(optarg, _("invalid speed"));
 			break;
 		case 'i':
 			parse_iflag(optarg, &set_iflag, &clr_iflag);
@@ -278,13 +272,8 @@ int main(int argc, char **argv)
 
 	/* parse line discipline specification */
 	ldisc = lookup_table(ld_discs, argv[optind]);
-	if (ldisc < 0) {
-		ldisc = strtol(argv[optind], &end, 0);
-		if (*end || ldisc < 0)
-			errx(EXIT_FAILURE,
-			     _("invalid line discipline: %s"),
-			     argv[optind]);
-	}
+	if (ldisc < 0)
+		ldisc = strtol_or_err(argv[optind], _("invalid line discipline"));
 
 	/* open device */
 	dev = argv[optind + 1];
