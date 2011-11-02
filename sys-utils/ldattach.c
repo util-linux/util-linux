@@ -28,12 +28,6 @@
 #include "nls.h"
 #include "strutils.h"
 
-#define dbg(format, arg...) \
-	do { \
-		if (debug) \
-			fprintf(stderr, "%s:" format "\n", progname, ## arg); \
-	} while (0)
-
 #ifndef N_GIGASET_M101
 # define N_GIGASET_M101 16
 #endif
@@ -98,6 +92,22 @@ static const struct ld_table ld_iflags[] =
 	{ "IUTF8",	IUTF8 },
 	{ NULL,		0 }
 };
+
+void dbg(char *fmt, ...)
+{
+	va_list args;
+
+	if (debug == 0)
+		return;
+	fflush(NULL);
+	fprintf(stderr, "%s: ", program_invocation_short_name);
+	va_start(args, fmt);
+	vfprintf(stderr, fmt, args);
+	va_end(args);
+	fprintf(stderr, "\n");
+	fflush(NULL);
+	return;
+}
 
 static int lookup_table(const struct ld_table *tab, const char *str)
 {
@@ -235,7 +245,7 @@ int main(int argc, char **argv)
 			    NULL)) >= 0) {
 		switch (optc) {
 		case 'd':
-			debug++;
+			debug = 1;
 			break;
 		case '1':
 		case '2':
