@@ -604,7 +604,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	size_t i;
 
-	fputs(_("\nUsage:\n"), out);
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [-a|-d|-s] [--nr <n:m> | <partition>] <disk>\n"),
 		program_invocation_short_name);
@@ -629,7 +629,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	for (i = 0; i < NCOLS; i++)
 		fprintf(out, " %10s  %s\n", infos[i].name, _(infos[i].help));
 
-	fprintf(out, _("\nFor more information see partx(8).\n"));
+	fprintf(out, USAGE_MAN_TAIL("partx(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
