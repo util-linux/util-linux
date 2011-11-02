@@ -59,27 +59,28 @@ enum {
 struct prlimit_desc {
 	const char *name;
 	const char *help;
+	const char *unit;
 	int resource;
 };
 
 static struct prlimit_desc prlimit_desc[] =
 {
-	[AS]         = { "AS",         N_("address space limit"),                RLIMIT_AS },
-	[CORE]       = { "CORE",       N_("max core file size"),                 RLIMIT_CORE },
-	[CPU]        = { "CPU",        N_("CPU time in secs"),                   RLIMIT_CPU },
-	[DATA]       = { "DATA",       N_("max data size"),                      RLIMIT_DATA },
-	[FSIZE]      = { "FSIZE",      N_("max file size"),                      RLIMIT_FSIZE },
-	[LOCKS]      = { "LOCKS",      N_("max amount of file locks held"),      RLIMIT_LOCKS },
-	[MEMLOCK]    = { "MEMLOCK",    N_("max locked-in-memory address space"), RLIMIT_MEMLOCK },
-	[MSGQUEUE]   = { "MSGQUEUE",   N_("max bytes in POSIX mqueues"),         RLIMIT_MSGQUEUE },
-	[NICE]       = { "NICE",       N_("max nice prio allowed to raise"),     RLIMIT_NICE },
-	[NOFILE]     = { "NOFILE",     N_("max amount of open files"),           RLIMIT_NOFILE },
-	[NPROC]      = { "NPROC",      N_("max number of processes"),            RLIMIT_NPROC },
-	[RSS]        = { "RSS",        N_("max resident set size"),              RLIMIT_RSS },
-	[RTPRIO]     = { "RTPRIO",     N_("max real-time priority"),             RLIMIT_RTPRIO },
-	[RTTIME]     = { "RTTIME",     N_("timeout for real-time tasks"),        RLIMIT_RTTIME },
-	[SIGPENDING] = { "SIGPENDING", N_("max amount of pending signals"),      RLIMIT_SIGPENDING },
-	[STACK]      = { "STACK",      N_("max stack size"),                     RLIMIT_STACK }
+	[AS]         = { "AS",         N_("address space limit"),                N_("bytes"),     RLIMIT_AS },
+	[CORE]       = { "CORE",       N_("max core file size"),                 N_("blocks"),    RLIMIT_CORE },
+	[CPU]        = { "CPU",        N_("CPU time"),                           N_("seconds"),   RLIMIT_CPU },
+	[DATA]       = { "DATA",       N_("max data size"),                      N_("bytes"),     RLIMIT_DATA },
+	[FSIZE]      = { "FSIZE",      N_("max file size"),                      N_("blocks"),    RLIMIT_FSIZE },
+	[LOCKS]      = { "LOCKS",      N_("max amount of file locks held"),      NULL,            RLIMIT_LOCKS },
+	[MEMLOCK]    = { "MEMLOCK",    N_("max locked-in-memory address space"), N_("bytes"),     RLIMIT_MEMLOCK },
+	[MSGQUEUE]   = { "MSGQUEUE",   N_("max bytes in POSIX mqueues"),         N_("bytes"),     RLIMIT_MSGQUEUE },
+	[NICE]       = { "NICE",       N_("max nice prio allowed to raise"),     NULL,            RLIMIT_NICE },
+	[NOFILE]     = { "NOFILE",     N_("max amount of open files"),           NULL,            RLIMIT_NOFILE },
+	[NPROC]      = { "NPROC",      N_("max number of processes"),            NULL,            RLIMIT_NPROC },
+	[RSS]        = { "RSS",        N_("max resident set size"),              N_("pages"),     RLIMIT_RSS },
+	[RTPRIO]     = { "RTPRIO",     N_("max real-time priority"),             NULL,            RLIMIT_RTPRIO },
+	[RTTIME]     = { "RTTIME",     N_("timeout for real-time tasks"),        N_("microsecs"), RLIMIT_RTTIME },
+	[SIGPENDING] = { "SIGPENDING", N_("max amount of pending signals"),      NULL,            RLIMIT_SIGPENDING },
+	[STACK]      = { "STACK",      N_("max stack size"),                     N_("bytes"),     RLIMIT_STACK }
 };
 
 struct prlimit {
@@ -95,6 +96,7 @@ enum {
 	COL_RES,
 	COL_SOFT,
 	COL_HARD,
+	COL_UNITS,
 };
 
 /* column names */
@@ -111,6 +113,7 @@ struct colinfo infos[] = {
 	[COL_HELP]    = { "DESCRIPTION", 0.1,  TT_FL_TRUNC, N_("resource description")},
 	[COL_SOFT]    = { "SOFT",        0.1,  TT_FL_RIGHT, N_("soft limit")},
 	[COL_HARD]    = { "HARD",        1,    TT_FL_RIGHT, N_("hard limit (ceiling)")},
+	[COL_UNITS]   = { "UNITS",       0.1,  TT_FL_TRUNC, N_("units")},
 };
 
 #define NCOLS ARRAY_SIZE(infos)
@@ -230,6 +233,9 @@ static void add_tt_line(struct tt *tt, struct prlimit *l)
 			rc = l->rlim.rlim_max == RLIM_INFINITY ?
 				asprintf(&str, "%s", "unlimited") :
 				asprintf(&str, "%llu", (unsigned long long) l->rlim.rlim_max);
+			break;
+		case COL_UNITS:
+			str = l->desc->unit ? xstrdup(_(l->desc->unit)) : NULL;
 			break;
 		default:
 			break;
@@ -571,6 +577,7 @@ int main(int argc, char **argv)
 		columns[ncolumns++] = COL_HELP;
 		columns[ncolumns++] = COL_SOFT;
 		columns[ncolumns++] = COL_HARD;
+		columns[ncolumns++] = COL_UNITS;
 	}
 
 	if (!n) {
