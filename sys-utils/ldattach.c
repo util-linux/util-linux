@@ -309,6 +309,10 @@ int main(int argc, char **argv)
 	case '2':
 		ts.c_cflag |= CSTOPB;
 		break;
+	case '-':
+		break;
+	default:
+		abort();
 	}
 	switch (bits) {
 	case '7':
@@ -317,6 +321,10 @@ int main(int argc, char **argv)
 	case '8':
 		ts.c_cflag = (ts.c_cflag & ~CSIZE) | CS8;
 		break;
+	case '-':
+		break;
+	default:
+		abort();
 	}
 	switch (parity) {
 	case 'n':
@@ -329,6 +337,10 @@ int main(int argc, char **argv)
 	case 'o':
 		ts.c_cflag |= (PARENB | PARODD);
 		break;
+	case '-':
+		break;
+	default:
+		abort();
 	}
 
 	ts.c_cflag |= CREAD;	/* just to be on the safe side */
