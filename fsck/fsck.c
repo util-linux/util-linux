@@ -57,14 +57,35 @@
 #include "xalloc.h"
 
 static const char *ignored_types[] = {
+	"9p",
+	"afs",
+	"autofs",
+	"binfmt_misc",
+	"cgroup",
+	"cifs",
+	"cpuset",
+	"debugfs",
+	"devfs",
+	"devpts",
+	"devtmpfs",
+	"dlmfs",
+	"fusectl",
+	"fuse.gvfs-fuse-daemon",
+	"hugetlbfs",
 	"ignore",
 	"iso9660",
+	"mqueue"
+	"ncpfs",
 	"nfs",
 	"proc",
+	"rpc_pipefs",
+	"securityfs",
+	"smbfs",
+	"spufs",
 	"sw",
 	"swap",
+	"sysfs",
 	"tmpfs",
-	"devpts",
 	NULL
 };
 
@@ -953,6 +974,18 @@ static int device_exists(const char *device)
 	return 1;
 }
 
+static int ignored_type(const char *fstype)
+{
+	const char **ip;
+
+	for(ip = ignored_types; *ip; ip++) {
+		if (strcmp(fstype, *ip) == 0)
+			return 1;
+	}
+
+	return 0;
+}
+
 /* Check if we should ignore this filesystem. */
 static int ignore(struct fs_info *fs)
 {
@@ -1000,8 +1033,8 @@ static int ignore(struct fs_info *fs)
 	if (!fs_match(fs, &fs_type_compiled)) return 1;
 
 	/* Are we ignoring this type? */
-	for(ip = ignored_types; *ip; ip++)
-		if (strcmp(fs->type, *ip) == 0) return 1;
+	if (fs->type && ignored_type(fs->type))
+		return 1;
 
 	/* Do we really really want to check this fs? */
 	for(ip = really_wanted; *ip; ip++)
@@ -1461,7 +1494,9 @@ int main(int argc, char *argv[])
 					      0, -1, -1);
 			if (!fs)
 				continue;
-		}
+		} else if (fs->type && ignored_type(fs->type))
+			continue;
+
 		if (ignore_mounted && is_mounted(fs->device))
 			continue;
 		status |= fsck_device(fs, interactive);
