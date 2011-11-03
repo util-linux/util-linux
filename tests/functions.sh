@@ -168,12 +168,14 @@ function ts_init_subtest {
 
 function ts_init {
 	local is_fake=$( ts_has_option "fake" "$*")
+	local is_force=$( ts_has_option "force" "$*")
 
 	ts_init_env "$*"
 
 	printf "%13s: %-30s ..." "$TS_COMPONENT" "$TS_DESC"
 
 	[ "$is_fake" == "yes" ] && ts_skip "fake mode"
+	[ "$TS_OPTIONAL" == "yes" -a "$is_force" != "yes" ] && ts_skip "optional"
 }
 
 function ts_init_suid {
