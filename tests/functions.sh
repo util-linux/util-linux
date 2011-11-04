@@ -129,7 +129,9 @@ function ts_init_env {
 	declare -a TS_SUID_USER
 	declare -a TS_SUID_GROUP
 
-	. $TS_TOPDIR/commands.sh
+	if [ -f $TS_TOPDIR/commands.sh ]; then
+		. $TS_TOPDIR/commands.sh
+	fi
 
 	export BLKID_FILE
 
