@@ -92,11 +92,11 @@ umount_LDADD += $(ul_libmount_la)
 umount_CFLAGS += $(AM_CFLAGS) -I$(ul_libmount_incdir)
 if HAVE_STATIC_MOUNT
 mount_static_LDADD += $(ul_libmount_la)
-mount_static_CFLAGS += $(AM_CFLAGS) -I$(ul_libmount_incdir)
+mount_static_CFLAGS += -I$(ul_libmount_incdir)
 endif
 if HAVE_STATIC_UMOUNT
 umount_static_LDADD += $(ul_libmount_la)
-umount_static_CFLAGS += $(AM_CFLAGS) -I$(ul_libmount_incdir)
+umount_static_CFLAGS += -I$(ul_libmount_incdir)
 endif
 endif
 
