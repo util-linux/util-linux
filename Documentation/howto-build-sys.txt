@@ -31,3 +31,26 @@ util-linux build system
                   ...) is missing an error is printed and ./configure aborted
 
 	"no"	- the util/feature is unwanted
+
+
+ - some basic scenarios for the ./configure script are defined in the
+   tools/config-gen.d/ directory. If you want to use these predefined scenarios
+   then call
+
+	./tools/config-gen [<scenario> ...]
+
+   for example
+
+	./tools/config-gen all selinux
+
+   will build all utils with enabled selinux support. You can also define some
+   CFLAGS, for example:
+
+	CFLAGS=$(rpm --eval '%optflags') ./tools/config-gen all
+
+   will use the default distro flags.
+
+ - the tools/config-gen script is also used for build system regression tests,
+   the test is not enabled by default, you have to use
+
+	tests/run.sh build-sys --force
