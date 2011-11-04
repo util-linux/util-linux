@@ -267,5 +267,5 @@ AC_DEFUN([UL_BUILD_INIT], [
 ifelse(estate, [check], [build_[]suffix='yes' enable_[]suffix='check'],
        estate, [yes],   [build_[]suffix='yes' enable_[]suffix='yes'],
        estate, [no],    [build_[]suffix='no'  enable_[]suffix='no'],
-       [build_[]suffix='yes'])
+       [build_[]suffix=$enable_[]suffix])
 ])
