@@ -151,7 +151,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 	fputs(_("\nGeneral Options:\n"), out);
 	fputs(_(" -p, --pid <pid>        process id\n"
-		" -o, --output <type>    define which output columns to use\n"
+		" -o, --output <list>    define which output columns to use\n"
+		"     --noheadings       don't print headings\n"
+		"     --raw              use the raw output format\n"
 		"     --verbose          verbose output\n"
 		" -h, --help             display this help and exit\n"
 		" -V, --version          output version information and exit\n"), out);
@@ -262,7 +264,7 @@ static int column_name_to_id(const char *name, size_t namesz)
 	return -1;
 }
 
-static int show_limits(struct prlimit lims[], int tt_flags, size_t n)
+static int show_limits(struct prlimit lims[], size_t n, int tt_flags)
 {
 	int i;
 	struct tt *tt;
@@ -293,7 +295,7 @@ done:
 }
 
 
-static void do_prlimit(struct prlimit lims[], size_t n)
+static void do_prlimit(struct prlimit lims[], size_t n, int tt_flags)
 {
 	size_t i, nshows = 0;
 
@@ -323,7 +325,7 @@ static void do_prlimit(struct prlimit lims[], size_t n)
 	}
 
 	if (nshows)
-		show_limits(lims, 0, n);
+		show_limits(lims, n, tt_flags);
 }
 
 
@@ -444,12 +446,14 @@ static int add_prlim(char *ops, struct prlimit *lim, size_t id)
 
 int main(int argc, char **argv)
 {
-	int opt;
+	int opt, tt_flags = 0;
         size_t n = 0;
 	struct prlimit lims[MAX_RESOURCES] = { PRLIMIT_EMPTY_LIMIT };
 
 	enum {
-		VERBOSE_OPTION = CHAR_MAX + 1
+		VERBOSE_OPTION = CHAR_MAX + 1,
+		RAW_OPTION,
+		NOHEADINGS_OPTION
 	};
 
 	static const struct option longopts[] = {
@@ -473,6 +477,8 @@ int main(int argc, char **argv)
 		{ "stack",      optional_argument, NULL, 's' },
 		{ "version",    no_argument, NULL, 'V' },
 		{ "help",       no_argument, NULL, 'h' },
+		{ "noheadings", no_argument, NULL, NOHEADINGS_OPTION },
+		{ "raw",        no_argument, NULL, RAW_OPTION },
 		{ "verbose",    no_argument, NULL, VERBOSE_OPTION },
 		{ NULL, 0, NULL, 0 }
 	};
@@ -559,9 +565,17 @@ int main(int argc, char **argv)
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
+
+		case NOHEADINGS_OPTION:
+			tt_flags |= TT_FL_NOHEADINGS;
+			break;
 		case VERBOSE_OPTION:
 			verbose++;
 			break;
+		case RAW_OPTION:
+			tt_flags |= TT_FL_RAW;
+			break;
+
 		default:
 			usage(stderr);
 			break;
@@ -586,7 +600,7 @@ int main(int argc, char **argv)
 			add_prlim(NULL, &lims[n], n);
 	}
 
-	do_prlimit(lims, n);
+	do_prlimit(lims, n, tt_flags);
 
 	return EXIT_SUCCESS;
 }
