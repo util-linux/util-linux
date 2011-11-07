@@ -177,7 +177,10 @@ static void sig_handler(int signal)
 		kill(-child_pid, SIGHUP);	/* because the shell often ignores SIGTERM */
 }
 
-/* Should not be called from PAM code... */
+/*
+ * Let use delay for all exit() calls when user is not authenticated or
+ * session fully initialized (loginpam_session()).
+ */
 static void sleepexit(int eval)
 {
 	sleep(getlogindefs_num("FAIL_DELAY", LOGIN_EXIT_TIMEOUT));
@@ -681,8 +684,7 @@ static int loginpam_err(pam_handle_t *pamh, int retcode)
 		syslog(LOG_ERR, "%s", msg);
 	}
 	pam_end(pamh, retcode);
-	exit(EXIT_FAILURE);
-
+	sleepexit(EXIT_FAILURE);
 }
 
 /*
@@ -720,7 +722,7 @@ static pam_handle_t *init_loginpam(struct login_context *cxt)
 		warnx(_("PAM failure, aborting: %s"), pam_strerror(pamh, rc));
 		syslog(LOG_ERR, _("Couldn't initialize PAM: %s"),
 		       pam_strerror(pamh, rc));
-		exit(EXIT_FAILURE);
+		sleepexit(EXIT_FAILURE);
 	}
 
 	/* hostname & tty are either set to NULL or their correct values,
@@ -827,7 +829,7 @@ static void loginpam_auth(struct login_context *cxt)
 
 		fprintf(stderr, _("\nLogin incorrect\n"));
 		pam_end(pamh, rc);
-		exit(EXIT_SUCCESS);
+		sleepexit(EXIT_SUCCESS);
 	}
 }
 
@@ -857,7 +859,7 @@ static void loginpam_acct(struct login_context *cxt)
 		syslog(LOG_ERR, _("NULL user name in %s:%d. Abort."),
 		       __FUNCTION__, __LINE__);
 		pam_end(pamh, PAM_SYSTEM_ERR);
-		exit(EXIT_FAILURE);
+		sleepexit(EXIT_FAILURE);
 	}
 }
 
@@ -1039,7 +1041,7 @@ static void fork_session(struct login_context *cxt)
 
 		pam_setcred(cxt->pamh, PAM_DELETE_CRED);
 		pam_end(cxt->pamh, pam_close_session(cxt->pamh, 0));
-		exit(EXIT_FAILURE);
+		sleepexit(EXIT_FAILURE);
 	}
 
 	if (child_pid) {
@@ -1287,7 +1289,7 @@ int main(int argc, char **argv)
 		syslog(LOG_ERR, _("Invalid user name \"%s\" in %s:%d. Abort."),
 		       cxt.username, __FUNCTION__, __LINE__);
 		pam_end(cxt.pamh, PAM_SYSTEM_ERR);
-		exit(EXIT_FAILURE);
+		sleepexit(EXIT_FAILURE);
 	}
 
 	pwd = cxt.pwd;
@@ -1309,7 +1311,7 @@ int main(int argc, char **argv)
 		syslog(LOG_ERR, _("groups initialization failed: %m"));
 		warnx(_("\nSession setup problem, abort."));
 		pam_end(cxt.pamh, PAM_SYSTEM_ERR);
-		exit(EXIT_FAILURE);
+		sleepexit(EXIT_FAILURE);
 	}
 
 	/*
