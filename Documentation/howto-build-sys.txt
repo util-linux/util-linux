@@ -50,6 +50,10 @@ util-linux build system
 
    will use the default distro flags.
 
+   WARNING: config-gen is not designed for end-user or downstream distributions!
+            It's for development purpose only. All end-users and downstream have
+            to use standard ./configure script only.
+
  - the tools/config-gen script is also used for build system regression tests,
    the test is not enabled by default, you have to use
 
