@@ -111,36 +111,6 @@ build-sys
  - use non-recursive build-sys, see
    http://thread.gmane.org/gmane.linux.utilities.util-linux-ng/3297
 
- - we use something like
-
-	AC_ARG_ENABLE(...., enable_foo=check)
-	build_foo=yes
-	if test "x$enable_foo" = xcheck; then
-		if test "x$linux_os" = xno; then
-			build_foo=no
-		fi
-	fi
-	AM_CONDITIONAL(BUILD_FOO, test "x$build_foo" = xyes)
-
-   for Linux-only utils in configure.ac. It would be nice to set all defaults
-   for all "$enable_" variables at the begin of the configure script according to
-   $linux_os. Something like:
-
-	if test "x$linux_os" = xno
-		enable_mount=no
-		enable_libmount=no
-		enable_lsblk=no
-	fi
-
-   then we can remove all "if test "x$enable_foo" = xcheck;" stuff from the rest
-   of the configure script.
-
- - it would be nice to remove all "if BUILD_LIB{MOUNT,BLKID,UUID}" from the 
-   Makefiles (e.g. misc-utils/Makefile.am) and use BUILD_<utilname> only
-
-   The configure.ac has to care about dependence between utils and librares and
-   enable BUILD_<utilname>.
-
 lib/tt.c
 --------
 
