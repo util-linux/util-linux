@@ -24,6 +24,13 @@
 /* #define LOOP_CHANGE_FD	0x4C06 */
 #define LOOP_SET_CAPACITY	0x4C07
 
+/* /dev/loop-control interface */
+#ifndef LOOP_CTL_ADD
+# define LOOP_CTL_ADD		0x4C80
+# define LOOP_CTL_REMOVE	0x4C81
+# define LOOP_CTL_GET_FREE	0x4C82
+#endif
+
 /*
  * loop_info.lo_flags
  */
@@ -104,7 +111,8 @@ enum {
 	LOOPDEV_FL_OFFSET	= (1 << 4),
 	LOOPDEV_FL_NOSYSFS	= (1 << 5),
 	LOOPDEV_FL_NOIOCTL	= (1 << 6),
-	LOOPDEV_FL_DEVSUBDIR	= (1 << 7)
+	LOOPDEV_FL_DEVSUBDIR	= (1 << 7),
+	LOOPDEV_FL_CONTROL	= (1 << 8),	/* system with /dev/loop-control */
 };
 
 /*

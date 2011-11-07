@@ -121,7 +121,9 @@
 #endif
 
 #define _PATH_DEV_LOOP		"/dev/loop"
+#define _PATH_DEV_LOOPCTL	"/dev/loop-control"
 #define _PATH_DEV_TTY		"/dev/tty"
+
 
 /* udev paths */
 #define _PATH_DEV_BYLABEL	"/dev/disk/by-label"

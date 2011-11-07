@@ -139,6 +139,8 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
  */
 int loopcxt_init(struct loopdev_cxt *lc, int flags)
 {
+	struct stat st;
+
 	if (!lc)
 		return -EINVAL;
 
@@ -152,6 +154,9 @@ int loopcxt_init(struct loopdev_cxt *lc, int flags)
 		 * Use only sysfs for basic information about loop devices
 		 */
 		lc->flags |= LOOPDEV_FL_NOIOCTL;
+
+	if (!(lc->flags & LOOPDEV_FL_CONTROL) && !stat(_PATH_DEV_LOOPCTL, &st))
+		lc->flags |= LOOPDEV_FL_CONTROL;
 
 	return 0;
 }
@@ -917,18 +922,35 @@ int loopcxt_delete_device(struct loopdev_cxt *lc)
 
 int loopcxt_find_unused(struct loopdev_cxt *lc)
 {
-	int rc;
+	int rc = -1;
 
 	DBG(lc, loopdev_debug("find_unused requested"));
 
-	rc = loopcxt_init_iterator(lc, LOOPITER_FL_FREE);
-	if (rc)
-		return rc;
+	if (lc->flags & LOOPDEV_FL_CONTROL) {
+		int ctl = open(_PATH_DEV_LOOPCTL, O_RDWR);
 
-	rc = loopcxt_next(lc);
-	loopcxt_deinit_iterator(lc);
+		if (ctl >= 0)
+			rc = ioctl(ctl, LOOP_CTL_GET_FREE);
+		if (rc >= 0) {
+			char name[16];
+			snprintf(name, sizeof(name), "loop%d", rc);
 
-	DBG(lc, loopdev_debug("find_unused done [rc=%d]", rc));
+			rc = loopiter_set_device(lc, name);
+		}
+		if (ctl >= 0)
+			close(ctl);
+		DBG(lc, loopdev_debug("find_unused by loop-control [rc=%d]", rc));
+	}
+
+	if (rc < 0) {
+		rc = loopcxt_init_iterator(lc, LOOPITER_FL_FREE);
+		if (rc)
+			return rc;
+
+		rc = loopcxt_next(lc);
+		loopcxt_deinit_iterator(lc);
+		DBG(lc, loopdev_debug("find_unused by scan [rc=%d]", rc));
+	}
 	return rc;
 }
 
