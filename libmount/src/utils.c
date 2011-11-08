@@ -80,34 +80,40 @@ static char *stripoff_last_component(char *path)
 	if (!p)
 		return NULL;
 	*p = '\0';
-	return ++p;
+	return p + 1;
 }
 
-/* Note that the @target has to be absolute path (so at least "/")
+/*
+ * Note that the @target has to be absolute path (so at least "/").  The
+ * @filename returns allocated buffer with last path component, for example:
+ *
+ * mnt_chdir_to_parent("/mnt/test", &buf) ==> chdir("/mnt"), buf="test"
  */
 int mnt_chdir_to_parent(const char *target, char **filename)
 {
-	char *path, *last = NULL;
+	char *buf, *parent, *last = NULL;
 	char cwd[PATH_MAX];
 	int rc = -EINVAL;
 
 	if (!target || *target != '/')
 		return -EINVAL;
 
-	path = strdup(target);
-	if (!path)
+	DBG(UTILS, mnt_debug("moving to %s parent", target));
+
+	buf = strdup(target);
+	if (!buf)
 		return -ENOMEM;
 
-	if (*(path + 1) != '\0') {
-		last = stripoff_last_component(path);
+	if (*(buf + 1) != '\0') {
+		last = stripoff_last_component(buf);
 		if (!last)
 			goto err;
 	}
-	if (!*path)
-		*path = '/';	/* root */
 
-	if (chdir(path) == -1) {
-		DBG(UTILS, mnt_debug("failed to chdir to %s: %m", path));
+	parent = buf && *buf ? buf : "/";
+
+	if (chdir(parent) == -1) {
+		DBG(UTILS, mnt_debug("failed to chdir to %s: %m", parent));
 		rc = -errno;
 		goto err;
 	}
@@ -116,14 +122,17 @@ int mnt_chdir_to_parent(const char *target, char **filename)
 		rc = -errno;
 		goto err;
 	}
-	if (strcmp(cwd, path) != 0) {
-		DBG(UTILS, mnt_debug("path moved (%s -> %s)", path, cwd));
+	if (strcmp(cwd, parent) != 0) {
+		DBG(UTILS, mnt_debug(
+		    "unexpected chdir (expected=%s, cwd=%s)", parent, cwd));
 		goto err;
 	}
 
-	DBG(CXT, mnt_debug("current directory moved to %s", path));
+	DBG(CXT, mnt_debug(
+		"current directory moved to %s [last_component='%s']",
+		parent, last));
 
-	*filename = path;
+	*filename = buf;
 
 	if (!last || !*last)
 		memcpy(*filename, ".", 2);
@@ -131,7 +140,7 @@ int mnt_chdir_to_parent(const char *target, char **filename)
 		memcpy(*filename, last, strlen(last) + 1);
 	return 0;
 err:
-	free(path);
+	free(buf);
 	return rc;
 }
 
