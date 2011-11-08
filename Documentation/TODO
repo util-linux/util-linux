@@ -136,6 +136,10 @@ libblkid
 
  - (!) add support for dasd PT (used for example on s390)
 
+ - (!!!) add blkid_probe_wipe_device() to zap *all* singnatures on the device.
+   This function should be used in wipefs(8) and all mkfs-like programs (e.g.
+   mkswap).
+
  - (!!!) support PARTUUID= tag
 
    * the partitions probing is already supported by low-level part of the
@@ -148,10 +152,6 @@ libblkid
 
 wipefs
 ------
-
- - some filesystem (namely FAT) contains more magic strings, so if you erase
-   one magic string the FS is still detectable by libblkid. We have to inform
-   users that there is more valid magic string for the same FS.
 
  - (!!!) allow to wipe partition tables
 
