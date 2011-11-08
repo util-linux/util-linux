@@ -16,6 +16,7 @@
 #include <stddef.h>
 
 #include "mountP.h"
+#include "strutils.h"
 
 /**
  * mnt_new_fs:
@@ -1142,7 +1143,7 @@ int mnt_fs_match_source(struct libmnt_fs *fs, const char *source, struct libmnt_
 		return 0;
 
 	/* 1) native paths/tags */
-	if (!strcmp(source, fs->source))
+	if (streq_except_trailing_slash(source, fs->source))
 		return 1;
 
 	if (!cache)
@@ -1156,7 +1157,7 @@ int mnt_fs_match_source(struct libmnt_fs *fs, const char *source, struct libmnt_
 
 	/* 2) canonicalized and native */
 	src = mnt_fs_get_srcpath(fs);
-	if (src && !strcmp(cn, src))
+	if (src && streq_except_trailing_slash(cn, src))
 		return 1;
 
 	/* 3) canonicalized and canonicalized */

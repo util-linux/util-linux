@@ -47,4 +47,6 @@ extern int string_to_bitarray(const char *list, char *ary,
 
 extern int parse_range(const char *str, int *lower, int *upper, int def);
 
+extern int streq_except_trailing_slash(const char *s1, const char *s2);
+
 #endif

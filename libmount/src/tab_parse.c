@@ -14,6 +14,7 @@
 #include "mangle.h"
 #include "mountP.h"
 #include "pathnames.h"
+#include "strutils.h"
 
 static inline char *skip_spaces(char *s)
 {
@@ -654,8 +655,14 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 		if (fs->flags & MNT_FS_MERGED)
 			continue;
 
-		if (s && t && r && !strcmp(t, target) &&
-		    !strcmp(s, src) && !strcmp(r, root))
+		/*
+		 * Note that kernel can add tailing slash to the network
+		 * filesystem source path
+		 */
+		if (s && t && r &&
+		    strcmp(t, target) == 0 &&
+		    streq_except_trailing_slash(s, src) &&
+		    strcmp(r, root) == 0)
 			break;
 	}
 

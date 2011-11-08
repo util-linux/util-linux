@@ -44,6 +44,7 @@
 #include <blkid.h>
 
 #include "mountP.h"
+#include "strutils.h"
 
 /**
  * mnt_new_table:
@@ -506,7 +507,7 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 
 		if (path == NULL && src == NULL)
 			return fs;			/* source is "none" */
-		if (path && p && strcmp(p, path) == 0)
+		if (path && p && streq_except_trailing_slash(p, path))
 			return fs;
 		if (!p && src)
 			ntags++;			/* mnt_fs_get_srcpath() returs nothing, it's TAG */
@@ -520,7 +521,7 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 		mnt_reset_iter(&itr, direction);
 		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 			p = mnt_fs_get_srcpath(fs);
-			if (p && strcmp(p, cn) == 0)
+			if (p && streq_except_trailing_slash(p, cn))
 				return fs;
 		}
 	}
@@ -551,7 +552,7 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 				 if (mnt_fs_get_tag(fs, &t, &v))
 					 continue;
 				 x = mnt_resolve_tag(t, v, tb->cache);
-				 if (x && !strcmp(x, cn))
+				 if (x && streq_except_trailing_slash(x, cn))
 					 return fs;
 			 }
 		}
@@ -566,7 +567,7 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 			p = mnt_fs_get_srcpath(fs);
 			if (p)
 				p = mnt_resolve_path(p, tb->cache);
-			if (p && strcmp(cn, p) == 0)
+			if (p && streq_except_trailing_slash(cn, p))
 				return fs;
 		}
 	}
@@ -856,8 +857,14 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 				   *t = mnt_fs_get_target(fs),
 				   *r = mnt_fs_get_root(fs);
 
+			/*
+			 * Note that kernel can add tailing slash to the
+			 * network filesystem source paths.
+			 */
 			if (t && s && r &&
-			    !strcmp(t, tgt) && !strcmp(s, src) && !strcmp(r, root))
+			    strcmp(t, tgt) == 0 &&
+			    streq_except_trailing_slash(s, src) &&
+			    strcmp(r, root) == 0)
 				break;
 		}
 		if (fs)

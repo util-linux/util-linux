@@ -20,6 +20,7 @@
 #include "pathnames.h"
 #include "nls.h"
 #include "usleep.h"
+#include "strutils.h"
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
@@ -436,7 +437,7 @@ getfs_by_devdir (const char *dev, const char *dir) {
 				ok = has_uuid(dev, fs + 5);
 			} else {
 				fs = canonicalize_spec(mc->m.mnt_fsname);
-				ok = streq(fs, dev);
+				ok = streq_except_trailing_slash(fs, dev);
 				my_free(fs);
 			}
 		}
