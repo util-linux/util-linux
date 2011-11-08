@@ -268,7 +268,7 @@ static void fillpath(void)
 		return;
 	pathcp = xstrdup(path);
 
-	for (tmp = pathcp; ;tmp = NULL, tok) {
+	for (tmp = pathcp; ; tmp = NULL) {
 		tok = strtok_r(tmp, ":", &key);
 		if (!tok)
 			break;
