@@ -102,7 +102,7 @@ endif
 
 if !BUILD_LIBMOUNT_MOUNT
 noinst_PROGRAMS = mtab_lock_test
-mtab_lock_test_SOURCES = fstab.c $(srcs_common) $(hdrs_mount)
+mtab_lock_test_SOURCES = fstab.c $(srcs_common) $(top_srcdir)/lib/strutils.c $(hdrs_mount)
 mtab_lock_test_CPPFLAGS = -DMAIN_TEST_MTABLOCK $(AM_CPPFLAGS)
 endif
 
