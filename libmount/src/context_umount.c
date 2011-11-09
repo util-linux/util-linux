@@ -508,7 +508,7 @@ static int do_umount(struct libmnt_context *cxt)
 		cxt->mountflags |= MS_REMOUNT | MS_RDONLY;
 		cxt->flags &= ~MNT_FL_LOOPDEL;
 		DBG(CXT, mnt_debug_h(cxt,
-			"umount(2) failed [errno=%d] -- tring remount read-only",
+			"umount(2) failed [errno=%d] -- trying to remount read-only",
 			-cxt->syscall_status));
 
 		rc = mount(src, mnt_fs_get_target(cxt->fs), NULL,

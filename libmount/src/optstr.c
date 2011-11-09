@@ -652,7 +652,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 	if (!optstr || !map)
 		return -EINVAL;
 
-	DBG(CXT, mnt_debug("appling 0x%08lu flags '%s'", flags, *optstr));
+	DBG(CXT, mnt_debug("applying 0x%08lu flags '%s'", flags, *optstr));
 
 	maps[0] = map;
 	next = *optstr;

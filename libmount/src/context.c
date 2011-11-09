@@ -1542,7 +1542,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 
 	/* try mtab */
 	if (rc < 0 && (cxt->optsmode & MNT_OMODE_MTAB)) {
-		DBG(CXT, mnt_debug_h(cxt, "tring to apply from mtab"));
+		DBG(CXT, mnt_debug_h(cxt, "trying to apply from mtab"));
 		rc = mnt_context_get_mtab(cxt, &tab);
 		if (!rc)
 			rc = apply_table(cxt, tab, MNT_ITER_BACKWARD);

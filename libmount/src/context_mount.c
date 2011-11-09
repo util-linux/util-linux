@@ -461,7 +461,7 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 		 */
 		char *p, *p0;
 
-		DBG(CXT, mnt_debug_h(cxt, "tring mount by FS pattern list"));
+		DBG(CXT, mnt_debug_h(cxt, "trying to mount by FS pattern list"));
 
 		p0 = p = strdup(pattern);
 		if (!p)
@@ -483,7 +483,7 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 	/*
 	 * try /etc/filesystems and /proc/filesystems
 	 */
-	DBG(CXT, mnt_debug_h(cxt, "tring mount by filesystems lists"));
+	DBG(CXT, mnt_debug_h(cxt, "trying to mount by filesystems lists"));
 
 	rc = mnt_get_filesystems(&filesystems, neg ? pattern : NULL);
 	if (rc)

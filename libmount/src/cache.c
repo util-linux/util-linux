@@ -681,7 +681,7 @@ int test_read_tags(struct libmnt_test *ts, int argc, char *argv[])
 
 		if (*line == '/') {
 			if (mnt_cache_read_tags(cache, line) < 0)
-				fprintf(stderr, "%s: read tags faild\n", line);
+				fprintf(stderr, "%s: read tags failed\n", line);
 
 		} else if (strchr(line, '=')) {
 			char *tag, *val;
