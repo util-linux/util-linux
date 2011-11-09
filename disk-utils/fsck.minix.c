@@ -609,7 +609,7 @@ read_tables(void) {
 	if (!inode_map)
 		die(_("Unable to allocate buffer for inode map"));
 	zone_map = malloc(zmaps * MINIX_BLOCK_SIZE);
-	if (!inode_map)
+	if (!zone_map)
 		die(_("Unable to allocate buffer for zone map"));
 	inode_buffer = malloc(buffsz);
 	if (!inode_buffer)
