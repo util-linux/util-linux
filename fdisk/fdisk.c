@@ -77,6 +77,60 @@ static void delete_partition(int i);
 				s |= (sector >> 2) & 0xc0;	\
 			}
 
+/* menu list description */
+
+struct menulist_descr {
+	char command;				/* command key */
+	char *description;			/* command description */
+	enum labeltype label[2];		/* disklabel types associated with main and expert menu */
+};
+
+static const struct menulist_descr menulist[] = {
+	{'a', N_("toggle a bootable flag"), {DOS_LABEL, 0}},
+	{'a', N_("toggle a read only flag"), {SUN_LABEL, 0}},
+	{'a', N_("select bootable partition"), {SGI_LABEL, 0}},
+	{'a', N_("change number of alternate cylinders"), {0, SUN_LABEL}},
+	{'b', N_("edit bsd disklabel"), {DOS_LABEL, 0}},
+	{'b', N_("edit bootfile entry"), {SGI_LABEL, 0}},
+	{'b', N_("move beginning of data in a partition"), {0, DOS_LABEL}},
+	{'c', N_("toggle the dos compatibility flag"), {DOS_LABEL, 0}},
+	{'c', N_("toggle the mountable flag"), {SUN_LABEL, 0}},
+	{'c', N_("select sgi swap partition"), {SGI_LABEL, 0}},
+	{'c', N_("change number of cylinders"), {0, DOS_LABEL | SUN_LABEL}},
+	{'d', N_("delete a partition"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL, 0}},
+	{'d', N_("print the raw data in the partition table"), {0, ANY_LABEL}},
+	{'e', N_("change number of extra sectors per cylinder"), {0, SUN_LABEL}},
+	{'e', N_("list extended partitions"), {0, DOS_LABEL}},
+	{'e', N_("edit drive data"), {OSF_LABEL, 0}},
+	{'f', N_("fix partition order"), {0, DOS_LABEL}},
+	{'g', N_("create an IRIX (SGI) partition table"), {0, DOS_LABEL | SGI_LABEL}},
+	{'h', N_("change number of heads"), {0, DOS_LABEL | SUN_LABEL}},
+	{'i', N_("change interleave factor"), {0, SUN_LABEL}},
+	{'i', N_("change the disk identifier"), {0, DOS_LABEL}},
+	{'i', N_("install bootstrap"), {OSF_LABEL, 0}},
+	{'l', N_("list known partition types"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL, 0}},
+	{'m', N_("print this menu"), {ANY_LABEL, ANY_LABEL}},
+	{'n', N_("add a new partition"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL, 0}},
+	{'o', N_("create a new empty DOS partition table"), {~OSF_LABEL, 0}},
+	{'o', N_("change rotation speed (rpm)"), {0, SUN_LABEL}},
+	{'p', N_("print the partition table"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL, DOS_LABEL | SUN_LABEL}},
+	{'q', N_("quit without saving changes"), {ANY_LABEL, ANY_LABEL}},
+	{'r', N_("return to main menu"), {OSF_LABEL, DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL}},
+	{'s', N_("create a new empty Sun disklabel"), {~OSF_LABEL, 0}},
+	{'s', N_("change number of sectors/track"), {0, DOS_LABEL | SUN_LABEL}},
+	{'s', N_("show complete disklabel"), {OSF_LABEL, 0}},
+	{'t', N_("change a partition's system id"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL, 0}},
+	{'u', N_("change display/entry units"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL, 0}},
+	{'v', N_("verify the partition table"), {DOS_LABEL | SUN_LABEL | SGI_LABEL, DOS_LABEL | SUN_LABEL | SGI_LABEL}},
+	{'w', N_("write table to disk and exit"), {DOS_LABEL | SUN_LABEL | SGI_LABEL, DOS_LABEL | SUN_LABEL | SGI_LABEL}},
+	{'w', N_("write disklabel to disk"), {OSF_LABEL, 0}},
+	{'x', N_("extra functionality (experts only)"), {DOS_LABEL | SUN_LABEL, 0}},
+#if !defined (__alpha__)
+	{'x', N_("link BSD partition to non-BSD partition"), {OSF_LABEL, 0}},
+#endif
+	{'y', N_("change number of physical cylinders"), {0, SUN_LABEL}},
+};
+
 /* A valid partition table sector ends in 0x55 0xaa */
 static unsigned int
 part_table_flag(unsigned char *b) {
@@ -374,143 +428,15 @@ is_dos_partition(int t) {
 		t == 0xc1 || t == 0xc4 || t == 0xc6);
 }
 
-static void
-menu(void) {
-	if (disklabel == SUN_LABEL) {
-	   puts(_("Command action"));
-	   puts(_("   a   toggle a read only flag"));		/* sun */
-	   puts(_("   b   edit bsd disklabel"));
-	   puts(_("   c   toggle the mountable flag"));		/* sun */
-	   puts(_("   d   delete a partition"));
-	   puts(_("   l   list known partition types"));
-	   puts(_("   m   print this menu"));
-	   puts(_("   n   add a new partition"));
-	   puts(_("   o   create a new empty DOS partition table"));
-	   puts(_("   p   print the partition table"));
-	   puts(_("   q   quit without saving changes"));
-	   puts(_("   s   create a new empty Sun disklabel"));	/* sun */
-	   puts(_("   t   change a partition's system id"));
-	   puts(_("   u   change display/entry units"));
-	   puts(_("   v   verify the partition table"));
-	   puts(_("   w   write table to disk and exit"));
-	   puts(_("   x   extra functionality (experts only)"));
-	}
-	else if (disklabel == SGI_LABEL) {
-	   puts(_("Command action"));
-	   puts(_("   a   select bootable partition"));    /* sgi flavour */
-	   puts(_("   b   edit bootfile entry"));          /* sgi */
-	   puts(_("   c   select sgi swap partition"));    /* sgi flavour */
-	   puts(_("   d   delete a partition"));
-	   puts(_("   l   list known partition types"));
-	   puts(_("   m   print this menu"));
-	   puts(_("   n   add a new partition"));
-	   puts(_("   o   create a new empty DOS partition table"));
-	   puts(_("   p   print the partition table"));
-	   puts(_("   q   quit without saving changes"));
-	   puts(_("   s   create a new empty Sun disklabel"));	/* sun */
-	   puts(_("   t   change a partition's system id"));
-	   puts(_("   u   change display/entry units"));
-	   puts(_("   v   verify the partition table"));
-	   puts(_("   w   write table to disk and exit"));
-	}
-	else if (disklabel == AIX_LABEL || disklabel == MAC_LABEL) {
-	   puts(_("Command action"));
-	   puts(_("   m   print this menu"));
-	   puts(_("   o   create a new empty DOS partition table"));
-	   puts(_("   q   quit without saving changes"));
-	   puts(_("   s   create a new empty Sun disklabel"));	/* sun */
-	}
-	else {
-	   puts(_("Command action"));
-	   puts(_("   a   toggle a bootable flag"));
-	   puts(_("   b   edit bsd disklabel"));
-	   puts(_("   c   toggle the dos compatibility flag"));
-	   puts(_("   d   delete a partition"));
-	   puts(_("   l   list known partition types"));
-	   puts(_("   m   print this menu"));
-	   puts(_("   n   add a new partition"));
-	   puts(_("   o   create a new empty DOS partition table"));
-	   puts(_("   p   print the partition table"));
-	   puts(_("   q   quit without saving changes"));
-	   puts(_("   s   create a new empty Sun disklabel"));	/* sun */
-	   puts(_("   t   change a partition's system id"));
-	   puts(_("   u   change display/entry units"));
-	   puts(_("   v   verify the partition table"));
-	   puts(_("   w   write table to disk and exit"));
-	   puts(_("   x   extra functionality (experts only)"));
-	}
-}
+void print_menu(enum menutype menu)
+{
+	size_t i;
 
-static void
-xmenu(void) {
-	if (disklabel == SUN_LABEL) {
-	   puts(_("Command action"));
-	   puts(_("   a   change number of alternate cylinders"));      /*sun*/
-	   puts(_("   c   change number of cylinders"));
-	   puts(_("   d   print the raw data in the partition table"));
-	   puts(_("   e   change number of extra sectors per cylinder"));/*sun*/
-	   puts(_("   h   change number of heads"));
-	   puts(_("   i   change interleave factor"));			/*sun*/
-	   puts(_("   o   change rotation speed (rpm)"));		/*sun*/
-	   puts(_("   m   print this menu"));
-	   puts(_("   p   print the partition table"));
-	   puts(_("   q   quit without saving changes"));
-	   puts(_("   r   return to main menu"));
-	   puts(_("   s   change number of sectors/track"));
-	   puts(_("   v   verify the partition table"));
-	   puts(_("   w   write table to disk and exit"));
-	   puts(_("   y   change number of physical cylinders"));	/*sun*/
-	}
-	else if (disklabel == SGI_LABEL) {
-	   puts(_("Command action"));
-	   puts(_("   b   move beginning of data in a partition")); /* !sun */
-	   puts(_("   c   change number of cylinders"));
-	   puts(_("   d   print the raw data in the partition table"));
-	   puts(_("   e   list extended partitions"));		/* !sun */
-	   puts(_("   g   create an IRIX (SGI) partition table"));/* sgi */
-	   puts(_("   h   change number of heads"));
-	   puts(_("   m   print this menu"));
-	   puts(_("   p   print the partition table"));
-	   puts(_("   q   quit without saving changes"));
-	   puts(_("   r   return to main menu"));
-	   puts(_("   s   change number of sectors/track"));
-	   puts(_("   v   verify the partition table"));
-	   puts(_("   w   write table to disk and exit"));
-	}
-	else if (disklabel == AIX_LABEL || disklabel == MAC_LABEL) {
-	   puts(_("Command action"));
-	   puts(_("   b   move beginning of data in a partition")); /* !sun */
-	   puts(_("   c   change number of cylinders"));
-	   puts(_("   d   print the raw data in the partition table"));
-	   puts(_("   e   list extended partitions"));		/* !sun */
-	   puts(_("   g   create an IRIX (SGI) partition table"));/* sgi */
-	   puts(_("   h   change number of heads"));
-	   puts(_("   m   print this menu"));
-	   puts(_("   p   print the partition table"));
-	   puts(_("   q   quit without saving changes"));
-	   puts(_("   r   return to main menu"));
-	   puts(_("   s   change number of sectors/track"));
-	   puts(_("   v   verify the partition table"));
-	   puts(_("   w   write table to disk and exit"));
-	}
-	else {
-	   puts(_("Command action"));
-	   puts(_("   b   move beginning of data in a partition")); /* !sun */
-	   puts(_("   c   change number of cylinders"));
-	   puts(_("   d   print the raw data in the partition table"));
-	   puts(_("   e   list extended partitions"));		/* !sun */
-	   puts(_("   f   fix partition order"));		/* !sun, !aix, !sgi */
-	   puts(_("   g   create an IRIX (SGI) partition table"));/* sgi */
-	   puts(_("   h   change number of heads"));
-	   puts(_("   i   change the disk identifier")); /* dos only */
-	   puts(_("   m   print this menu"));
-	   puts(_("   p   print the partition table"));
-	   puts(_("   q   quit without saving changes"));
-	   puts(_("   r   return to main menu"));
-	   puts(_("   s   change number of sectors/track"));
-	   puts(_("   v   verify the partition table"));
-	   puts(_("   w   write table to disk and exit"));
-	}
+	puts(_("Command action"));
+
+	for (i = 0; i < ARRAY_SIZE(menulist); i++)
+		if (menulist[i].label[menu] & disklabel)
+			printf("   %c   %s\n", menulist[i].command, menulist[i].description);
 }
 
 static int
@@ -2825,7 +2751,7 @@ expert_command_prompt(void)
 				sun_set_pcylcount();
 			break;
 		default:
-			xmenu();
+			print_menu(EXPERT_MENU);
 		}
 	}
 }
@@ -2986,8 +2912,12 @@ static void command_prompt(void)
 					printf(_("Boot file unchanged\n"));
 				else
 					sgi_set_bootfile(line_ptr);
-			} else
+			} else if (disklabel == DOS_LABEL) {
+				disklabel = OSF_LABEL;
 				bsd_command_prompt();
+				disklabel = DOS_LABEL;
+			} else
+				unknown_command(c);
 			break;
 		case 'c':
 			if (disklabel == DOS_LABEL)
@@ -3023,7 +2953,7 @@ static void command_prompt(void)
 			list_types(get_sys_types());
 			break;
 		case 'm':
-			menu();
+			print_menu(MAIN_MENU);
 			break;
 		case 'n':
 			new_partition();
@@ -3063,7 +2993,7 @@ static void command_prompt(void)
 			break;
 		default:
 			unknown_command(c);
-			menu();
+			print_menu(MAIN_MENU);
 		}
 	}
 }

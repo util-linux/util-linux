@@ -45,6 +45,11 @@ struct partition {
 	unsigned char size4[4];         /* nr of sectors in partition */
 } PACKED;
 
+enum menutype {
+	MAIN_MENU,
+	EXPERT_MENU,
+};
+
 enum failure {ioctl_error,
 	unable_to_open, unable_to_read, unable_to_seek,
 	unable_to_write};
@@ -75,6 +80,7 @@ extern struct partition *get_part_table(int);
 extern int valid_part_table_flag(unsigned char *b);
 extern unsigned int read_int(unsigned int low, unsigned int dflt,
 			     unsigned int high, unsigned int base, char *mesg);
+extern void print_menu(enum menutype);
 extern void print_partition_size(int num, unsigned long long start, unsigned long long stop, int sysid);
 
 extern unsigned char *MBRbuffer;
@@ -96,12 +102,13 @@ extern unsigned long long get_start_sect(struct partition *p);
 extern unsigned long long get_nr_sects(struct partition *p);
 
 enum labeltype {
-	DOS_LABEL,
-	SUN_LABEL,
-	SGI_LABEL,
-	AIX_LABEL,
-	OSF_LABEL,
-	MAC_LABEL
+	DOS_LABEL = 1,
+	SUN_LABEL = 2,
+	SGI_LABEL = 4,
+	AIX_LABEL = 8,
+	OSF_LABEL = 16,
+	MAC_LABEL = 32,
+	ANY_LABEL = -1
 };
 
 extern enum labeltype disklabel;

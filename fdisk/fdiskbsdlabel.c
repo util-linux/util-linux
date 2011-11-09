@@ -123,27 +123,6 @@ btrydev (char * dev) {
 	return 0;
 }
 
-static void
-bmenu (void) {
-  puts (_("Command action"));
-  puts (_("   d   delete a BSD partition"));
-  puts (_("   e   edit drive data"));
-  puts (_("   i   install bootstrap"));
-  puts (_("   l   list known filesystem types"));
-  puts (_("   m   print this menu"));
-  puts (_("   n   add a new BSD partition"));
-  puts (_("   p   print BSD partition table"));
-  puts (_("   q   quit without saving changes"));
-  puts (_("   r   return to main menu"));
-  puts (_("   s   show complete disklabel"));
-  puts (_("   t   change a partition's filesystem id"));
-  puts (_("   u   change units (cylinders/sectors)"));
-  puts (_("   w   write disklabel to disk"));
-#if !defined (__alpha__)
-  puts (_("   x   link BSD partition to non-BSD partition"));
-#endif
-}
-
 #if !defined (__alpha__)
 static int
 hidden(int type) {
@@ -243,7 +222,7 @@ bsd_command_prompt (void)
 	break;
 #endif
       default:
-	bmenu ();
+	print_menu(MAIN_MENU);
 	break;
     }
   }
