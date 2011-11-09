@@ -136,7 +136,7 @@ static int prlimit(pid_t p, int resource,
 		   const struct rlimit *new_limit,
 		   struct rlimit *old_limit)
 {
-	return syscall(SYS_prlimit, p, resource, new_limit, old_limit);
+	return syscall(SYS_prlimit64, p, resource, new_limit, old_limit);
 }
 #endif
 
