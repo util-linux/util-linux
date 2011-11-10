@@ -80,8 +80,8 @@ struct colinfo {
 
 /* columns descriptions (don't use const, this is writable) */
 static struct colinfo infos[FINDMNT_NCOLUMNS] = {
-	[COL_SOURCE]       = { "SOURCE",       0.25, 0, N_("source device") },
-	[COL_TARGET]       = { "TARGET",       0.30, TT_FL_TREE, N_("mountpoint") },
+	[COL_SOURCE]       = { "SOURCE",       0.25, TT_FL_NOEXTREMES, N_("source device") },
+	[COL_TARGET]       = { "TARGET",       0.30, TT_FL_TREE | TT_FL_NOEXTREMES, N_("mountpoint") },
 	[COL_FSTYPE]       = { "FSTYPE",       0.10, TT_FL_TRUNC, N_("filesystem type") },
 	[COL_OPTIONS]      = { "OPTIONS",      0.10, TT_FL_TRUNC, N_("all mount options") },
 	[COL_VFS_OPTIONS]  = { "VFS-OPTIONS",  0.20, TT_FL_TRUNC, N_("VFS specific mount options") },
