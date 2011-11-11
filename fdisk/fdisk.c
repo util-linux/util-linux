@@ -103,7 +103,7 @@ static const struct menulist_descr menulist[] = {
 	{'e', N_("list extended partitions"), {0, DOS_LABEL}},
 	{'e', N_("edit drive data"), {OSF_LABEL, 0}},
 	{'f', N_("fix partition order"), {0, DOS_LABEL}},
-	{'g', N_("create an IRIX (SGI) partition table"), {0, DOS_LABEL | SGI_LABEL}},
+	{'g', N_("create an IRIX (SGI) partition table"), {0, ANY_LABEL}},
 	{'h', N_("change number of heads"), {0, DOS_LABEL | SUN_LABEL}},
 	{'i', N_("change interleave factor"), {0, SUN_LABEL}},
 	{'i', N_("change the disk identifier"), {0, DOS_LABEL}},
@@ -124,7 +124,7 @@ static const struct menulist_descr menulist[] = {
 	{'v', N_("verify the partition table"), {DOS_LABEL | SUN_LABEL | SGI_LABEL, DOS_LABEL | SUN_LABEL | SGI_LABEL}},
 	{'w', N_("write table to disk and exit"), {DOS_LABEL | SUN_LABEL | SGI_LABEL, DOS_LABEL | SUN_LABEL | SGI_LABEL}},
 	{'w', N_("write disklabel to disk"), {OSF_LABEL, 0}},
-	{'x', N_("extra functionality (experts only)"), {DOS_LABEL | SUN_LABEL, 0}},
+	{'x', N_("extra functionality (experts only)"), {DOS_LABEL | SUN_LABEL | SGI_LABEL, 0}},
 #if !defined (__alpha__)
 	{'x', N_("link BSD partition to non-BSD partition"), {OSF_LABEL, 0}},
 #endif
@@ -2984,12 +2984,7 @@ static void command_prompt(void)
 			write_table(); 		/* does not return */
 			break;
 		case 'x':
-			if (disklabel == SGI_LABEL) {
-				fprintf(stderr,
-					_("\n\tSorry, no experts menu for SGI "
-					"partition tables available.\n\n"));
-			} else
-				expert_command_prompt();
+			expert_command_prompt();
 			break;
 		default:
 			unknown_command(c);
