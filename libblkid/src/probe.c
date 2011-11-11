@@ -109,6 +109,7 @@
 #endif
 
 #include "blkidP.h"
+#include "writeall.h"
 
 /* chains */
 extern const struct blkid_chaindrv superblocks_drv;
@@ -914,6 +915,91 @@ int blkid_do_probe(blkid_probe pr)
 	} while (rc == 1);
 
 	return rc;
+}
+
+/**
+ * blkid_do_wipe:
+ * @pr: prober
+ * @dryrun: if TRUE then don't touch the device.
+ *
+ * This function erases the current signature detected by @pr. The @pr has to
+ * be open in O_RDWR mode and BLKID_SUBLKS_MAGIC flag has to be enabled.
+ *
+ * After successful signature removing the @pr prober will be moved one step
+ * back and the next blkid_do_probe() call will again call previously called
+ * probing function.
+ *
+ *  <example>
+ *  <title>wipe all filesystems or raids from the device</title>
+ *   <programlisting>
+ *      fd = open(devname, O_RDWR);
+ *      blkid_probe_set_device(pr, fd, 0, 0);
+ *
+ *      blkid_probe_enable_superblocks(pr, 1);
+ *      blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_MAGIC);
+ *
+ *	while (blkid_do_probe(pr) == 0)
+ *		blkid_do_wipe(pr, FALSE);
+ *  </programlisting>
+ * </example>
+ *
+ * Returns: 0 on success, 1 when probing is done and -1 in case of error.
+ */
+int blkid_do_wipe(blkid_probe pr, int dryrun)
+{
+	const char *off;
+	size_t len = 0;
+	loff_t offset, l;
+	char buf[BUFSIZ];
+	int fd;
+	struct blkid_chain *chn;
+
+	if (!pr)
+		return -1;
+
+	chn = pr->cur_chain;
+	if (!chn)
+		return -1;
+
+	if (blkid_probe_lookup_value(pr, "SBMAGIC_OFFSET", &off, NULL) ||
+	    blkid_probe_lookup_value(pr, "SBMAGIC", NULL, &len) ||
+	    len == 0 || off == NULL)
+		return 0;
+
+	offset = strtoll(off, NULL, 10);
+	fd = blkid_probe_get_fd(pr);
+	if (fd < 0)
+		return -1;
+
+	if (len > sizeof(buf))
+		len = sizeof(buf);
+
+	DBG(DEBUG_LOWPROBE, printf(
+	    "wiping [offset=0x%jx, len=%zd, chain=%s, idx=%d, dryrun=%s]\n",
+	    offset, len, chn->driver->name, chn->idx, dryrun ? "yes" : "not"));
+
+	l = lseek(fd, offset, SEEK_SET);
+	if (l == (off_t) -1)
+		return -1;
+
+	memset(buf, 0, len);
+
+	if (!dryrun && len) {
+		if (write_all(fd, buf, len))
+			return -1;
+		fsync(fd);
+
+		blkid_probe_reset_buffer(pr);
+
+		if (chn->idx >= 0) {
+			chn->idx--;
+			DBG(DEBUG_LOWPROBE,
+				printf("wipe: moving %s chain index to %d\n",
+				chn->driver->name,
+				chn->idx));
+		}
+	}
+	return 0;
 }
 
 /**

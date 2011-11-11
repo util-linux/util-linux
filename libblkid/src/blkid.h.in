@@ -319,6 +319,8 @@ extern int blkid_probe_lookup_value(blkid_probe pr, const char *name,
                         const char **data, size_t *len);
 extern int blkid_probe_has_value(blkid_probe pr, const char *name);
 
+extern int blkid_do_wipe(blkid_probe pr, int dryrun);
+
 /*
  * Deprecated functions/macros
  */
