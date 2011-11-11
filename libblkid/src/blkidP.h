@@ -426,6 +426,8 @@ extern int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
                 const char *fmt, va_list ap);
 extern int blkid_probe_sprintf_value(blkid_probe pr, const char *name,
                 const char *fmt, ...);
+extern int blkid_probe_set_magic(blkid_probe pr, blkid_loff_t offset,
+		size_t len, unsigned char *magic);
 
 extern void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len);
 extern size_t blkid_rtrim_whitespace(unsigned char *str);

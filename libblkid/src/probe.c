@@ -1213,6 +1213,39 @@ int blkid_probe_sprintf_value(blkid_probe pr, const char *name,
 	return rc;
 }
 
+int blkid_probe_set_magic(blkid_probe pr, blkid_loff_t offset,
+			size_t len, unsigned char *magic)
+{
+	int rc = 0;
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+
+	if (!chn || !magic || !len || chn->binary)
+		return 0;
+
+	switch (chn->driver->id) {
+	case BLKID_CHAIN_SUBLKS:
+		if (!(chn->flags & BLKID_SUBLKS_MAGIC))
+			return 0;
+		rc = blkid_probe_set_value(pr, "SBMAGIC", magic, len);
+		if (!rc)
+			rc = blkid_probe_sprintf_value(pr,
+					"SBMAGIC_OFFSET", "%llu", offset);
+		break;
+	case BLKID_CHAIN_PARTS:
+		if (!(chn->flags & BLKID_PARTS_MAGIC))
+			return 0;
+		rc = blkid_probe_set_value(pr, "PTMAGIC", magic, len);
+		if (!rc)
+			rc = blkid_probe_sprintf_value(pr,
+					"PTMAGIC_OFFSET", "%llu", offset);
+		break;
+	default:
+		break;
+	}
+
+	return rc;
+}
+
 /**
  * blkid_probe_get_devno:
  * @pr: probe
