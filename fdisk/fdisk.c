@@ -2735,7 +2735,8 @@ move_begin(int i) {
 }
 
 static void
-xselect(void) {
+expert_command_prompt(void)
+{
 	char c;
 
 	while(1) {
@@ -3084,7 +3085,7 @@ main(int argc, char **argv) {
 		printf(_("Detected an OSF/1 disklabel on %s, entering "
 			 "disklabel mode.\n"),
 		       disk_device);
-		bselect();
+		bsd_command_prompt();
 		/* If we return we may want to make an empty DOS label? */
 		disklabel = DOS_LABEL;
 	}
@@ -3119,7 +3120,7 @@ main(int argc, char **argv) {
 				else
 					sgi_set_bootfile(line_ptr);
 			} else
-				bselect();
+				bsd_command_prompt();
 			break;
 		case 'c':
 			if (disklabel == DOS_LABEL)
@@ -3191,7 +3192,7 @@ main(int argc, char **argv) {
 					_("\n\tSorry, no experts menu for SGI "
 					"partition tables available.\n\n"));
 			} else
-				xselect();
+				expert_command_prompt();
 			break;
 		default:
 			unknown_command(c);

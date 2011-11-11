@@ -160,7 +160,8 @@ is_bsd_partition_type(int type) {
 #endif
 
 void
-bselect (void) {
+bsd_command_prompt (void)
+{
 #if !defined (__alpha__)
   int t, ss;
   struct partition *p;

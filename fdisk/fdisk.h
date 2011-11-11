@@ -107,7 +107,7 @@ enum labeltype {
 extern enum labeltype disklabel;
 
 /* prototypes for fdiskbsdlabel.c */
-extern void bselect(void);
+extern void bsd_command_prompt(void);
 extern int check_osf_label(void);
 extern int btrydev(char * dev);
 extern void xbsd_print_disklabel(int);
