@@ -2946,7 +2946,127 @@ unknown_command(int c) {
 	printf(_("%c: unknown command\n"), c);
 }
 
+static void command_prompt(void)
+{
+	int c, j;
 
+	if (disklabel == OSF_LABEL) {
+		putchar('\n');
+		/* OSF label, and no DOS label */
+		printf(_("Detected an OSF/1 disklabel on %s, entering "
+			 "disklabel mode.\n"),
+		       disk_device);
+		bsd_command_prompt();
+		/* If we return we may want to make an empty DOS label? */
+		disklabel = DOS_LABEL;
+	}
+
+	while (1) {
+		putchar('\n');
+		c = tolower(read_char(_("Command (m for help): ")));
+		switch (c) {
+		case 'a':
+			if (disklabel == DOS_LABEL)
+				toggle_active(get_partition(1, partitions));
+			else if (disklabel == SUN_LABEL)
+				toggle_sunflags(get_partition(1, partitions),
+						SUN_FLAG_UNMNT);
+			else if (disklabel == SGI_LABEL)
+				sgi_set_bootpartition(
+					get_partition(1, partitions));
+			else
+				unknown_command(c);
+			break;
+		case 'b':
+			if (disklabel == SGI_LABEL) {
+				printf(_("\nThe current boot file is: %s\n"),
+				       sgi_get_bootfile());
+				if (read_chars(_("Please enter the name of the "
+					       "new boot file: ")) == '\n')
+					printf(_("Boot file unchanged\n"));
+				else
+					sgi_set_bootfile(line_ptr);
+			} else
+				bsd_command_prompt();
+			break;
+		case 'c':
+			if (disklabel == DOS_LABEL)
+				toggle_dos_compatibility_flag();
+			else if (disklabel == SUN_LABEL)
+				toggle_sunflags(get_partition(1, partitions),
+						SUN_FLAG_RONLY);
+			else if (disklabel == SGI_LABEL)
+				sgi_set_swappartition(
+						get_partition(1, partitions));
+			else
+				unknown_command(c);
+			break;
+		case 'd':
+			/* If sgi_label then don't use get_existing_partition,
+			   let the user select a partition, since
+			   get_existing_partition() only works for Linux-like
+			   partition tables */
+			if (disklabel != SGI_LABEL) {
+				j = get_existing_partition(1, partitions);
+			} else {
+				j = get_partition(1, partitions);
+			}
+			if (j >= 0)
+				delete_partition(j);
+			break;
+		case 'i':
+			if (disklabel == SGI_LABEL)
+				create_sgiinfo();
+			else
+				unknown_command(c);
+		case 'l':
+			list_types(get_sys_types());
+			break;
+		case 'm':
+			menu();
+			break;
+		case 'n':
+			new_partition();
+			break;
+		case 'o':
+			create_doslabel();
+			break;
+		case 'p':
+			list_table(0);
+			break;
+		case 'q':
+			close(fd);
+			printf("\n");
+			exit(0);
+		case 's':
+			create_sunlabel();
+			break;
+		case 't':
+			change_sysid();
+			break;
+		case 'u':
+			change_units();
+			break;
+		case 'v':
+			verify();
+			break;
+		case 'w':
+			write_table(); 		/* does not return */
+			break;
+		case 'x':
+			if (disklabel == SGI_LABEL) {
+				fprintf(stderr,
+					_("\n\tSorry, no experts menu for SGI "
+					"partition tables available.\n\n"));
+			} else
+				expert_command_prompt();
+			break;
+		default:
+			unknown_command(c);
+			menu();
+		}
+	}
+}
 
 int
 main(int argc, char **argv) {
@@ -3077,127 +3197,14 @@ main(int argc, char **argv) {
 	else
 		usage(stderr);
 
+	fprintf(stderr, _("Welcome to fdisk (%s).\n\n"
+		"Changes will remain in memory only, until you decide to write them.\n"
+		"Be careful before using the write command.\n\n"), PACKAGE_STRING);
+
 	gpt_warning(disk_device);
 	get_boot(fdisk);
 
-	if (disklabel == OSF_LABEL) {
-		/* OSF label, and no DOS label */
-		printf(_("Detected an OSF/1 disklabel on %s, entering "
-			 "disklabel mode.\n"),
-		       disk_device);
-		bsd_command_prompt();
-		/* If we return we may want to make an empty DOS label? */
-		disklabel = DOS_LABEL;
-	}
+	command_prompt();
 
-	fprintf(stderr, _("Welcome to fdisk (%s).\n\n"
-		"Changes will remain in memory only, until you decide to write them.\n"
-		"Be careful before using the write command.\n"), PACKAGE_STRING);
-
-	while (1) {
-		putchar('\n');
-		c = tolower(read_char(_("Command (m for help): ")));
-		switch (c) {
-		case 'a':
-			if (disklabel == DOS_LABEL)
-				toggle_active(get_partition(1, partitions));
-			else if (disklabel == SUN_LABEL)
-				toggle_sunflags(get_partition(1, partitions),
-						SUN_FLAG_UNMNT);
-			else if (disklabel == SGI_LABEL)
-				sgi_set_bootpartition(
-					get_partition(1, partitions));
-			else
-				unknown_command(c);
-			break;
-		case 'b':
-			if (disklabel == SGI_LABEL) {
-				printf(_("\nThe current boot file is: %s\n"),
-				       sgi_get_bootfile());
-				if (read_chars(_("Please enter the name of the "
-					       "new boot file: ")) == '\n')
-					printf(_("Boot file unchanged\n"));
-				else
-					sgi_set_bootfile(line_ptr);
-			} else
-				bsd_command_prompt();
-			break;
-		case 'c':
-			if (disklabel == DOS_LABEL)
-				toggle_dos_compatibility_flag();
-			else if (disklabel == SUN_LABEL)
-				toggle_sunflags(get_partition(1, partitions),
-						SUN_FLAG_RONLY);
-			else if (disklabel == SGI_LABEL)
-				sgi_set_swappartition(
-						get_partition(1, partitions));
-			else
-				unknown_command(c);
-			break;
-		case 'd':
-        		/* If sgi_label then don't use get_existing_partition,
-			   let the user select a partition, since
-			   get_existing_partition() only works for Linux-like
-			   partition tables */
-			if (disklabel != SGI_LABEL) {
-                		j = get_existing_partition(1, partitions);
-        		} else {
-                		j = get_partition(1, partitions);
-        		}
-			if (j >= 0)
-				delete_partition(j);
-			break;
-		case 'i':
-			if (disklabel == SGI_LABEL)
-				create_sgiinfo();
-			else
-				unknown_command(c);
-		case 'l':
-			list_types(get_sys_types());
-			break;
-		case 'm':
-			menu();
-			break;
-		case 'n':
-			new_partition();
-			break;
-		case 'o':
-			create_doslabel();
-			break;
-		case 'p':
-			list_table(0);
-			break;
-		case 'q':
-			close(fd);
-			printf("\n");
-			exit(0);
-		case 's':
-			create_sunlabel();
-			break;
-		case 't':
-			change_sysid();
-			break;
-		case 'u':
-			change_units();
-			break;
-		case 'v':
-			verify();
-			break;
-		case 'w':
-			write_table(); 		/* does not return */
-			break;
-		case 'x':
-			if (disklabel == SGI_LABEL) {
-				fprintf(stderr,
-					_("\n\tSorry, no experts menu for SGI "
-					"partition tables available.\n\n"));
-			} else
-				expert_command_prompt();
-			break;
-		default:
-			unknown_command(c);
-			menu();
-		}
-	}
 	return 0;
 }
