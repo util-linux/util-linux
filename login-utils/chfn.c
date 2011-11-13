@@ -34,6 +34,7 @@
 #include <getopt.h>
 #include <stdbool.h>
 
+#include "pamfail.h"
 #include "islocal.h"
 #include "setpwnam.h"
 #include "strutils.h"
@@ -47,21 +48,6 @@
 #include <selinux/av_permissions.h>
 #include "selinux_utils.h"
 #endif
-
-#ifdef REQUIRE_PASSWORD
-#include <security/pam_appl.h>
-#include <security/pam_misc.h>
-
-#define PAM_FAIL_CHECK(_ph, _rc) \
-    do { \
-	if ((_rc) != PAM_SUCCESS) { \
-	    fprintf(stderr, "\n%s\n", pam_strerror((_ph), (_rc))); \
-	    pam_end((_ph), (_rc)); \
-	    exit(EXIT_FAILURE); \
-	} \
-    } while(0)
-
-#endif /* REQUIRE_PASSWORD */
 
 static char buf[1024];
 
@@ -177,20 +163,22 @@ int main (int argc, char **argv) {
 	int retcode;
 
 	retcode = pam_start("chfn", oldf.username, &conv, &pamh);
-	if(retcode != PAM_SUCCESS)
-	    errx(EXIT_FAILURE, _("PAM failure, aborting: %s"),
-		    pam_strerror(pamh, retcode));
+	if (pam_fail_check(pamh, retcode))
+            exit(EXIT_FAILURE);
 
 	retcode = pam_authenticate(pamh, 0);
-	PAM_FAIL_CHECK(pamh, retcode);
+	if (pam_fail_check(pamh, retcode))
+            exit(EXIT_FAILURE);
 
 	retcode = pam_acct_mgmt(pamh, 0);
 	if (retcode == PAM_NEW_AUTHTOK_REQD)
 	    retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
-	PAM_FAIL_CHECK(pamh, retcode);
+	if (pam_fail_check(pamh, retcode))
+	    exit(EXIT_FAILURE);
 
 	retcode = pam_setcred(pamh, 0);
-	PAM_FAIL_CHECK(pamh, retcode);
+	if (pam_fail_check(pamh, retcode))
+	    exit(EXIT_FAILURE);
 
 	pam_end(pamh, 0);
 	/* no need to establish a session; this isn't a session-oriented
