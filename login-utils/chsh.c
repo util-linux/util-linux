@@ -82,11 +82,15 @@ static boolean get_shell_list (char *shell);
 
 static void __attribute__((__noreturn__)) usage (FILE *fp)
 {
-    fprintf (fp,
-	     _("Usage: %1$s [-s shell] [username]\n"
-	       "   or: %1$s (--list-shells | --help | --version)\n"),
-	     whoami);
-
+    fputs(USAGE_HEADER, fp);
+    fprintf(fp, _(" %s [options] [username]\n"), program_invocation_short_name);
+    fputs(USAGE_OPTIONS, fp);
+    fputs(_(" -s, --shell <shell>  specify login shell\n"), fp);
+    fputs(_(" -l, --list-shells    print list of shells and exit\n"), fp);
+    fputs(USAGE_SEPARATOR, fp);
+    fputs(_(" -u, --help     display this help and exit\n"), fp);
+    fputs(_(" -v, --version  output version information and exit\n"), fp);
+    fprintf(fp, USAGE_MAN_TAIL("chsh(1)"));
     exit(fp == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
@@ -242,7 +246,7 @@ parse_argv (int argc, char *argv[], struct sinfo *pinfo) {
 	case -1:
 	    break;
 	case 'v':
-	    printf ("%s\n", PACKAGE_STRING);
+	    printf (UTIL_LINUX_VERSION);
 	    exit (EXIT_SUCCESS);
 	case 'u':
 	    usage (stdout);
