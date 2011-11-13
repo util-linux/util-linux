@@ -68,8 +68,6 @@ typedef unsigned char boolean;
 /* Only root is allowed to assign a luser a non-listed shell, by default */
 #define ONLY_LISTED_SHELLS 1
 
-static char *whoami;
-
 struct sinfo {
     char *username;
     char *shell;
@@ -96,7 +94,7 @@ static void __attribute__((__noreturn__)) usage (FILE *fp)
 
 int
 main (int argc, char *argv[]) {
-    char *cp, *shell, *oldshell;
+    char *shell, *oldshell;
     uid_t uid;
     struct sinfo info;
     struct passwd *pw;
@@ -106,12 +104,6 @@ main (int argc, char *argv[]) {
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
 
-    /* whoami is the program name for error messages */
-    whoami = argv[0];
-    if (! whoami) whoami = "chsh";
-    for (cp = whoami; *cp; cp++)
-	if (*cp == '/') whoami = cp + 1;
-
     uid = getuid ();
     memset(&info, 0, sizeof(info));
 
@@ -120,17 +112,17 @@ main (int argc, char *argv[]) {
     if (! info.username) {
 	pw = getpwuid (uid);
 	if (! pw)
-	    errx(EXIT_FAILURE, _("%s: you (user %d) don't exist."), whoami, uid);
+	    errx(EXIT_FAILURE, _("you (user %d) don't exist."), uid);
     }
     else {
 	pw = getpwnam (info.username);
 	if (! pw)
-	    errx(EXIT_FAILURE, _("%s: user \"%s\" does not exist."),
-			    whoami, info.username);
+	    errx(EXIT_FAILURE, _("user \"%s\" does not exist."),
+			    info.username);
     }
 
     if (!(is_local(pw->pw_name)))
-       errx(EXIT_FAILURE, _("%s: can only change local entries."), whoami);
+       errx(EXIT_FAILURE, _("can only change local entries."));
 
 #ifdef HAVE_LIBSELINUX
     if (is_selinux_enabled() > 0) {
@@ -140,14 +132,13 @@ main (int argc, char *argv[]) {
 	  if (getprevcon(&user_context) < 0)
 	    user_context = (security_context_t) NULL;
 
-	  errx(EXIT_FAILURE, _("%s: %s is not authorized to change the shell of %s"),
-		  whoami, user_context ? : _("Unknown user context"),
+	  errx(EXIT_FAILURE, _("%s is not authorized to change the shell of %s"),
+		  user_context ? : _("Unknown user context"),
 		  pw->pw_name);
 	}
       }
       if (setupDefaultContext("/etc/passwd") != 0)
-	errx(EXIT_FAILURE, _("%s: can't set default context for /etc/passwd"),
-		whoami);
+	errx(EXIT_FAILURE, _("can't set default context for /etc/passwd"));
     }
 #endif
 
@@ -158,13 +149,13 @@ main (int argc, char *argv[]) {
     /* reality check */
     if (uid != 0 && uid != pw->pw_uid) {
 	errno = EACCES;
-	err(EXIT_FAILURE, _("%s: running UID doesn't match UID of user we're "
-			 "altering, shell change denied"), whoami);
+	err(EXIT_FAILURE, _("running UID doesn't match UID of user we're "
+			 "altering, shell change denied"));
     }
     if (uid != 0 && !get_shell_list(oldshell)) {
 	errno = EACCES;
-	err(EXIT_FAILURE, _("%s: your shell is not in /etc/shells, "
-			    "shell change denied"), whoami);
+	err(EXIT_FAILURE, _("your shell is not in /etc/shells, "
+			    "shell change denied"));
     }
 
     shell = info.shell;
@@ -179,8 +170,8 @@ main (int argc, char *argv[]) {
 
 	retcode = pam_start("chsh", pw->pw_name, &conv, &pamh);
 	if(retcode != PAM_SUCCESS)
-	    errx(EXIT_FAILURE, _("%s: PAM failure, aborting: %s"),
-		    whoami, pam_strerror(pamh, retcode));
+	    errx(EXIT_FAILURE, _("PAM failure, aborting: %s"),
+		    pam_strerror(pamh, retcode));
 
 	retcode = pam_authenticate(pamh, 0);
 	PAM_FAIL_CHECK(pamh, retcode);
@@ -208,14 +199,12 @@ main (int argc, char *argv[]) {
     if (check_shell (shell) < 0)
         return EXIT_FAILURE;
 
-    if (! strcmp (pw->pw_shell, shell)) {
-	printf (_("Shell not changed.\n"));
-	return EXIT_SUCCESS;
-    }
+    if (! strcmp (pw->pw_shell, shell))
+	errx (EXIT_SUCCESS, _("Shell not changed."));
     pw->pw_shell = shell;
     if (setpwnam (pw) < 0) {
-	warn(_("setpwnam failed"));
-	printf( _("Shell *NOT* changed.  Try again later.\n") );
+	warn(_("setpwnam failed\n"
+	       "Shell *NOT* changed.  Try again later."));
 	return EXIT_FAILURE;
     }
     printf (_("Shell changed.\n"));
@@ -284,10 +273,8 @@ prompt (char *question, char *def_val) {
     if (! def_val) def_val = "";
     printf("%s [%s]: ", question, def_val);
     *buf = 0;
-    if (fgets (buf, sizeof (buf), stdin) == NULL) {
-	printf (_("\nAborted.\n"));
-	exit (EXIT_FAILURE);
-    }
+    if (fgets (buf, sizeof (buf), stdin) == NULL)
+	errx (EXIT_FAILURE, _("Aborted."));
     /* remove the newline at the end of buf. */
     ans = buf;
     while (isspace (*ans)) ans++;
@@ -313,44 +300,41 @@ check_shell (char *shell) {
 	return -1;
 
     if (*shell != '/') {
-	printf (_("%s: shell must be a full path name.\n"), whoami);
+	warnx (_("shell must be a full path name"));
 	return -1;
     }
     if (access (shell, F_OK) < 0) {
-	printf (_("%s: \"%s\" does not exist.\n"), whoami, shell);
+	warnx (_("\"%s\" does not exist"), shell);
 	return -1;
     }
     if (access (shell, X_OK) < 0) {
-	printf (_("%s: \"%s\" is not executable.\n"), whoami, shell);
+	printf (_("\"%s\" is not executable"), shell);
 	return -1;
     }
     /* keep /etc/passwd clean. */
     for (i = 0; i < strlen (shell); i++) {
 	c = shell[i];
 	if (c == ',' || c == ':' || c == '=' || c == '"' || c == '\n') {
-	    printf (_("%s: '%c' is not allowed.\n"), whoami, c);
+	    warnx (_("'%c' is not allowed"), c);
 	    return -1;
 	}
 	if (iscntrl (c)) {
-	    printf (_("%s: Control characters are not allowed.\n"), whoami);
+	    warnx (_("control characters are not allowed"));
 	    return -1;
 	}
     }
 #ifdef ONLY_LISTED_SHELLS
     if (! get_shell_list (shell)) {
        if (!getuid())
-	  printf (_("Warning: \"%s\" is not listed in /etc/shells.\n"), shell);
-       else {
-	  printf (_("%s: \"%s\" is not listed in /etc/shells.\n"),
-		  whoami, shell);
-	  printf( _("%s: Use -l option to see list.\n"), whoami );
-	  exit(EXIT_FAILURE);
-       }
+	  warnx(_("Warning: \"%s\" is not listed in /etc/shells."), shell);
+       else
+	  errx(EXIT_FAILURE, _("\"%s\" is not listed in /etc/shells.\n"
+	                       "Use %s -l to see list."), shell, program_invocation_short_name);
     }
 #else
     if (! get_shell_list (shell)) {
-       printf (_("Warning: \"%s\" is not listed in /etc/shells.\n"), shell);
-       printf( _("Use %s -l to see list.\n"), whoami );
+       warnx(_("\"%s\" is not listed in /etc/shells.\n"
+               "Use %s -l to see list."), shell, program_invocation_short_name);
     }
 #endif
     return 0;
@@ -371,7 +355,8 @@ get_shell_list (char *shell_name) {
     found = false;
     fp = fopen ("/etc/shells", "r");
     if (! fp) {
-	if (! shell_name) printf (_("No known shells.\n"));
+	if (! shell_name)
+	    warnx (_("No known shells."));
 	return true;
     }
     while (fgets (buf, sizeof (buf), fp) != NULL) {
