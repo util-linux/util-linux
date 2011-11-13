@@ -32,6 +32,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <getopt.h>
+#include <stdbool.h>
 
 #include "islocal.h"
 #include "setpwnam.h"
@@ -62,10 +63,6 @@
 
 #endif /* REQUIRE_PASSWORD */
 
-typedef unsigned char boolean;
-#define false 0
-#define true 1
-
 static char buf[1024];
 
 struct finfo {
@@ -78,12 +75,12 @@ struct finfo {
     char *other;
 };
 
-static boolean parse_argv (int argc, char *argv[], struct finfo *pinfo);
+static int parse_argv (int argc, char *argv[], struct finfo *pinfo);
 static void parse_passwd (struct passwd *pw, struct finfo *pinfo);
 static void ask_info (struct finfo *oldfp, struct finfo *newfp);
 static char *prompt (char *question, char *def_val);
 static int check_gecos_string (char *msg, char *gecos);
-static boolean set_changed_data (struct finfo *oldfp, struct finfo *newfp);
+static int set_changed_data (struct finfo *oldfp, struct finfo *newfp);
 static int save_new_data (struct finfo *pinfo);
 
 /* we do not accept gecos field sizes longer than MAX_FIELD_SIZE */
@@ -108,7 +105,7 @@ static void __attribute__((__noreturn__)) usage(FILE *fp)
 int main (int argc, char **argv) {
     uid_t uid;
     struct finfo oldf, newf;
-    boolean interactive;
+    int interactive;
     int status;
 
     sanitize_env();
@@ -217,10 +214,10 @@ int main (int argc, char **argv) {
  *	parse the command line arguments.
  *	returns true if no information beyond the username was given.
  */
-static boolean parse_argv(int argc, char *argv[], struct finfo *pinfo)
+static int parse_argv(int argc, char *argv[], struct finfo *pinfo)
 {
     int index, c, status;
-    boolean info_given;
+    int info_given;
 
     static struct option long_options[] = {
 	{ "full-name",	  required_argument, 0, 'f' },
@@ -403,9 +400,9 @@ static int check_gecos_string(char *msg, char *gecos)
  *  set_changed_data () --
  *	incorporate the new data into the old finger info.
  */
-static boolean set_changed_data(struct finfo *oldfp, struct finfo *newfp)
+static int set_changed_data(struct finfo *oldfp, struct finfo *newfp)
 {
-    boolean changed = false;
+    int changed = false;
 
     if (newfp->full_name) {
 	oldfp->full_name = newfp->full_name; changed = true; }

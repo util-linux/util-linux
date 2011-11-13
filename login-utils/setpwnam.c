@@ -61,14 +61,10 @@
 #include <sys/resource.h>
 #include <sys/stat.h>
 #include <paths.h>
+#include <stdbool.h>
 
 #include "setpwnam.h"
 #include "c.h"
-
-#define false 0
-#define true 1
-
-typedef int boolean;
 
 static void pw_init(void);
 
@@ -83,7 +79,7 @@ setpwnam (struct passwd *pwd)
 {
     FILE *fp = NULL, *pwf = NULL;
     int x, save_errno, fd, ret;
-    boolean found;
+    int found;
     int oldumask;
     int namelen;
     int buflen = 256;

@@ -31,6 +31,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <getopt.h>
+#include <stdbool.h>
 
 #include "c.h"
 #include "islocal.h"
@@ -61,10 +62,6 @@
 #include "selinux_utils.h"
 #endif
 
-typedef unsigned char boolean;
-#define false 0
-#define true 1
-
 /* Only root is allowed to assign a luser a non-listed shell, by default */
 #define ONLY_LISTED_SHELLS 1
 
@@ -76,7 +73,7 @@ struct sinfo {
 static void parse_argv (int argc, char *argv[], struct sinfo *pinfo);
 static char *prompt (char *question, char *def_val);
 static int check_shell (char *shell);
-static boolean get_shell_list (char *shell);
+static int get_shell_list (char *shell);
 
 static void __attribute__((__noreturn__)) usage (FILE *fp)
 {
@@ -345,10 +342,10 @@ check_shell (char *shell) {
  *	return true.  if not, return false.
  *	if the given shell is NULL, /etc/shells is outputted to stdout.
  */
-static boolean
+static int
 get_shell_list (char *shell_name) {
     FILE *fp;
-    boolean found;
+    int found;
     int len;
     char buf[PATH_MAX];
 
