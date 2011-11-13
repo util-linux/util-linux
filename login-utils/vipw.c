@@ -44,8 +44,6 @@
  * - fixed strerr(errno) in gettext calls
  */
 
-static char version_string[] = "vipw 1.4";
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
@@ -313,7 +311,7 @@ int main(int argc, char *argv[]) {
 
 	if ((argc > 1) &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-		printf("%s\n", version_string);
+		printf(UTIL_LINUX_VERSION);
 		exit(EXIT_SUCCESS);
 	}
 
