@@ -444,7 +444,7 @@ ttyconv(char *arg) {
 	if (strlen(arg) == 2) {
 		/* either 6 for "ttyxx" or 8 for "console" */
 		mval = xmalloc(8);
-		if (!strcmp(arg, "co"))
+		if (!strncmp(arg, "co", 2))
 			(void)strcpy(mval, "console");
 		else {
 			(void)strcpy(mval, "tty");
