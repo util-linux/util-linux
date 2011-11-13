@@ -66,8 +66,6 @@ typedef unsigned char boolean;
 #define false 0
 #define true 1
 
-static char *whoami;
-
 static char buf[1024];
 
 struct finfo {
@@ -108,7 +106,6 @@ static void __attribute__((__noreturn__)) usage(FILE *fp)
 }
 
 int main (int argc, char **argv) {
-    char *cp;
     uid_t uid;
     struct finfo oldf, newf;
     boolean interactive;
@@ -118,12 +115,6 @@ int main (int argc, char **argv) {
     setlocale(LC_ALL, "");	/* both for messages and for iscntrl() below */
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
-
-    /* whoami is the program name for error messages */
-    whoami = argv[0];
-    if (! whoami) whoami = "chfn";
-    for (cp = whoami; *cp; cp++)
-	if (*cp == '/') whoami = cp + 1;
 
     /*
      *	"oldf" contains the users original finger information.
@@ -143,13 +134,13 @@ int main (int argc, char **argv) {
     if (! newf.username) {
 	parse_passwd (getpwuid (uid), &oldf);
 	if (! oldf.username)
-	    errx(EXIT_FAILURE, _("%s: you (user %d) don't exist."), whoami, uid);
+	    errx(EXIT_FAILURE, _("you (user %d) don't exist."), uid);
     }
     else {
 	parse_passwd (getpwnam (newf.username), &oldf);
 	if (! oldf.username)
-	    errx(EXIT_FAILURE, _("%s: user \"%s\" does not exist."),
-			    whoami, newf.username);
+	    errx(EXIT_FAILURE, _("user \"%s\" does not exist."),
+			    newf.username);
     }
 
     if (!(is_local(oldf.username)))
@@ -163,9 +154,9 @@ int main (int argc, char **argv) {
 	  if (getprevcon(&user_context) < 0)
 	    user_context = NULL;
 
-	  errx(EXIT_FAILURE, _("%s: %s is not authorized to change "
+	  errx(EXIT_FAILURE, _("%s is not authorized to change "
 			"the finger info of %s"),
-			 whoami, user_context ? : _("Unknown user context"),
+			 user_context ? : _("Unknown user context"),
 			 oldf.username);
 	}
       }
@@ -190,8 +181,8 @@ int main (int argc, char **argv) {
 
 	retcode = pam_start("chfn", oldf.username, &conv, &pamh);
 	if(retcode != PAM_SUCCESS)
-	    errx(EXIT_FAILURE, _("%s: PAM failure, aborting: %s"),
-		    whoami, pam_strerror(pamh, retcode));
+	    errx(EXIT_FAILURE, _("PAM failure, aborting: %s"),
+		    pam_strerror(pamh, retcode));
 
 	retcode = pam_authenticate(pamh, 0);
 	PAM_FAIL_CHECK(pamh, retcode);
@@ -260,30 +251,23 @@ static boolean parse_argv(int argc, char *argv[], struct finfo *pinfo)
 	info_given = true;
 	status = 0;
 
-	xstrncpy (buf, whoami, sizeof(buf)-128); 
-	strcat (buf, ": ");
-
 	/* now store the argument */
 	switch (c) {
 	case 'f':
 	    pinfo->full_name = optarg;
-	    strcat (buf, "full name");
-	    status = check_gecos_string (buf, optarg);
+	    status = check_gecos_string (_("Name"), optarg);
 	    break;
 	case 'o':
 	    pinfo->office = optarg;
-	    strcat (buf, "office");
-	    status = check_gecos_string (buf, optarg);
+	    status = check_gecos_string (_("Office"), optarg);
 	    break;
 	case 'p':
 	    pinfo->office_phone = optarg;
-	    strcat (buf, "office phone");
-	    status = check_gecos_string (buf, optarg);
+	    status = check_gecos_string (_("Office Phone"), optarg);
 	    break;
 	case 'h':
 	    pinfo->home_phone = optarg;
-	    strcat (buf, "home phone");
-	    status = check_gecos_string (buf, optarg);
+	    status = check_gecos_string (_("Home Phone"), optarg);
 	    break;
 	default:
 	    usage (stderr);
@@ -360,10 +344,8 @@ static char *prompt(char *question, char *def_val)
 	if (! def_val) def_val = "";
 	printf("%s [%s]: ", question, def_val);
 	*buf = 0;
-	if (fgets (buf, sizeof (buf), stdin) == NULL) {
-	    printf (_("\nAborted.\n"));
-	    exit (EXIT_FAILURE);
-	}
+	if (fgets (buf, sizeof (buf), stdin) == NULL)
+	    errx (EXIT_FAILURE, _("Aborted."));
 	/* remove the newline at the end of buf. */
 	ans = buf;
 	while (isspace (*ans)) ans++;
@@ -390,22 +372,27 @@ static int check_gecos_string(char *msg, char *gecos)
     unsigned int i, c;
 
     if (strlen(gecos) > MAX_FIELD_SIZE) {
-	if (msg != NULL)
-	    printf("%s: ", msg);
-	printf(_("field is too long.\n"));
+        if (msg)
+	    warnx (_("field %s is too long"), msg);
+        else
+            warnx (_("field is too long"));
 	return -1;
     }
 
     for (i = 0; i < strlen (gecos); i++) {
 	c = gecos[i];
 	if (c == ',' || c == ':' || c == '=' || c == '"' || c == '\n') {
-	    if (msg) printf ("%s: ", msg);
-	    printf (_("'%c' is not allowed.\n"), c);
+	    if (msg)
+	        warnx (_("%s: '%c' is not allowed"), msg, c);
+            else
+                warnx (_("'%c' is not allowed"), c);
 	    return -1;
 	}
 	if (iscntrl (c)) {
-	    if (msg) printf ("%s: ", msg);
-	    printf (_("Control characters are not allowed.\n"));
+	    if (msg)
+	        warnx (_("%s: control characters are not allowed"), msg);
+            else
+	        warnx (_("control characters are not allowed"));
 	    return -1;
 	}
     }
@@ -466,7 +453,7 @@ static int save_new_data(struct finfo *pinfo)
     /* write the new struct passwd to the passwd file. */
     pinfo->pw->pw_gecos = gecos;
     if (setpwnam (pinfo->pw) < 0) {
-	perror ("setpwnam");
+	warn ("setpwnam");
 	printf( _("Finger information *NOT* changed.  Try again later.\n" ));
 	return -1;
     }
