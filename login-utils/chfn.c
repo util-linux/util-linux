@@ -93,10 +93,17 @@ static int save_new_data (struct finfo *pinfo);
 
 static void __attribute__((__noreturn__)) usage(FILE *fp)
 {
-    fprintf (fp, _("Usage: %s [ -f full-name ] [ -o office ] "), whoami);
-    fprintf (fp, _("[ -p office-phone ]\n	[ -h home-phone ] "));
-    fprintf (fp, _("[ --help ] [ --version ]\n"));
-
+    fputs(USAGE_HEADER, fp);
+    fprintf(fp, _(" %s [options] [username]\n"), program_invocation_short_name);
+    fputs(USAGE_OPTIONS, fp);
+    fputs(_(" -f, --full-name <full-name>  real name\n"), fp);
+    fputs(_(" -o, --office <office>        office number\n"), fp);
+    fputs(_(" -p, --office-phone <phone>   office phone number\n"), fp);
+    fputs(_(" -h, --home-phone <phone>     home phone number\n"), fp);
+    fputs(USAGE_SEPARATOR, fp);
+    fputs(_(" -u, --help     display this help and exit\n"), fp);
+    fputs(_(" -v, --version  output version information and exit\n"), fp);
+    fprintf(fp, USAGE_MAN_TAIL("chfn(1)"));
     exit(fp == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
@@ -241,7 +248,7 @@ static boolean parse_argv(int argc, char *argv[], struct finfo *pinfo)
 	if (c == -1) break;
 	/* version?  output version and exit. */
 	if (c == 'v') {
-	    printf ("%s\n", PACKAGE_STRING);
+	    printf (UTIL_LINUX_VERSION);
 	    exit (EXIT_SUCCESS);
 	}
 	if (c == 'u')
