@@ -197,7 +197,7 @@ int setpwnam(struct passwd *pwd)
 }
 
 /* Set up the limits so that we're not foiled */
-static void pw_init()
+static void pw_init(void)
 {
 	struct rlimit rlim;
 
