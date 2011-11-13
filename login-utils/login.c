@@ -1241,7 +1241,7 @@ int main(int argc, char **argv)
 	 * -h is used by other servers to pass the name of the remote
 	 *    host to login so that it may be placed in utmp and wtmp
 	 */
-	while ((c = getopt(argc, argv, "fHh:p")) != -1)
+	while ((c = getopt(argc, argv, "fHh:pV")) != -1)
 		switch (c) {
 		case 'f':
 			cxt.noauth = 1;
@@ -1264,6 +1264,9 @@ int main(int argc, char **argv)
 			cxt.keep_env = 1;
 			break;
 
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		case '?':
 		default:
 			fprintf(stderr, _("usage: login [ -p ] [ -h host ] [ -H ] [ -f username | username ]\n"));
