@@ -62,9 +62,6 @@
 #include "selinux_utils.h"
 #endif
 
-/* Only root is allowed to assign a luser a non-listed shell, by default */
-#define ONLY_LISTED_SHELLS 1
-
 struct sinfo {
     char *username;
     char *shell;
