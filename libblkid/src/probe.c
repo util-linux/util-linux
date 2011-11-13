@@ -947,11 +947,11 @@ int blkid_do_probe(blkid_probe pr)
  */
 int blkid_do_wipe(blkid_probe pr, int dryrun)
 {
-	const char *off;
+	const char *off = NULL;
 	size_t len = 0;
 	loff_t offset, l;
 	char buf[BUFSIZ];
-	int fd;
+	int fd, rc;
 	struct blkid_chain *chn;
 
 	if (!pr)
@@ -961,9 +961,22 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	if (!chn)
 		return -1;
 
-	if (blkid_probe_lookup_value(pr, "SBMAGIC_OFFSET", &off, NULL) ||
-	    blkid_probe_lookup_value(pr, "SBMAGIC", NULL, &len) ||
-	    len == 0 || off == NULL)
+	switch (chn->driver->id) {
+	case BLKID_CHAIN_SUBLKS:
+		rc = blkid_probe_lookup_value(pr, "SBMAGIC_OFFSET", &off, NULL);
+		if (!rc)
+			rc = blkid_probe_lookup_value(pr, "SBMAGIC", NULL, &len);
+		break;
+	case BLKID_CHAIN_PARTS:
+		rc = blkid_probe_lookup_value(pr, "PTMAGIC_OFFSET", &off, NULL);
+		if (!rc)
+			rc = blkid_probe_lookup_value(pr, "PTMAGIC", NULL, &len);
+		break;
+	default:
+		return 0;
+	}
+
+	if (rc || len == 0 || off == NULL)
 		return 0;
 
 	offset = strtoll(off, NULL, 10);

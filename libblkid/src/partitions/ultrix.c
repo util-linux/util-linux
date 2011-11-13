@@ -15,7 +15,9 @@
 #include "partitions.h"
 
 #define ULTRIX_MAXPARTITIONS	8
+
 #define ULTRIX_MAGIC		0x032957
+#define ULTRIX_MAGIC_STR	"\x02\x29\x57"
 
 /* sector with partition table */
 #define ULTRIX_SECTOR		((16384 - sizeof(struct ultrix_disklabel)) >> 9)
@@ -61,6 +63,10 @@ static int probe_ultrix_pt(blkid_probe pr,
 	tab = blkid_partlist_new_parttable(ls, "ultrix", 0);
 	if (!tab)
 		goto err;
+
+	blkid_probe_set_magic(pr, (ULTRIX_SECTOR << 9) + ULTRIX_OFFSET,
+			sizeof(ULTRIX_MAGIC_STR) - 1,
+			(unsigned char *) ULTRIX_MAGIC_STR);
 
 	for (i = 0; i < ULTRIX_MAXPARTITIONS; i++) {
 		if (!l->pt_part[i].pi_nblocks)

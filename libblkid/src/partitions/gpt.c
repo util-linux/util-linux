@@ -26,6 +26,7 @@
 
 /* Signature - “EFI PART” */
 #define GPT_HEADER_SIGNATURE 0x5452415020494645ULL
+#define GPT_HEADER_SIGNATURE_STR "EFI PART"
 
 /* basic types */
 typedef uint16_t efi_char16_t;
@@ -325,6 +326,10 @@ static int probe_gpt_pt(blkid_probe pr,
 	tab = blkid_partlist_new_parttable(ls, "gpt", lba << 9);
 	if (!tab)
 		goto err;
+
+	blkid_probe_set_magic(pr, lba << 9,
+			      sizeof(GPT_HEADER_SIGNATURE_STR) - 1,
+			      (unsigned char *) GPT_HEADER_SIGNATURE_STR);
 
 	ssf = blkid_probe_get_sectorsize(pr) / 512;
 

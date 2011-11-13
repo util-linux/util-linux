@@ -142,35 +142,51 @@ add_offset(struct wipe_desc *wp0, loff_t offset, int zap)
 static struct wipe_desc *
 get_desc_for_probe(struct wipe_desc *wp, blkid_probe pr)
 {
-	const char *off, *type, *usage, *mag;
+	const char *off, *type, *mag, *p, *usage = NULL;
 	size_t len;
+	loff_t offset;
+	int rc;
 
-	if (blkid_probe_lookup_value(pr, "TYPE", &type, NULL) == 0 &&
-	    blkid_probe_lookup_value(pr, "SBMAGIC_OFFSET", &off, NULL) == 0 &&
-	    blkid_probe_lookup_value(pr, "SBMAGIC", &mag, &len) == 0 &&
-	    blkid_probe_lookup_value(pr, "USAGE", &usage, NULL) == 0) {
+	/* superblocks */
+	if (blkid_probe_lookup_value(pr, "TYPE", &type, NULL) == 0) {
+		rc = blkid_probe_lookup_value(pr, "SBMAGIC_OFFSET", &off, NULL);
+		if (!rc)
+			rc = blkid_probe_lookup_value(pr, "SBMAGIC", &mag, &len);
+		if (rc)
+			return wp;
 
-		loff_t offset = strtoll(off, NULL, 10);
-		const char *p;
+	/* partitions */
+	} else if (blkid_probe_lookup_value(pr, "PTTYPE", &type, NULL) == 0) {
+		rc = blkid_probe_lookup_value(pr, "PTMAGIC_OFFSET", &off, NULL);
+		if (!rc)
+			rc = blkid_probe_lookup_value(pr, "PTMAGIC", &mag, &len);
+		if (rc)
+			return wp;
+		usage = "partition table";
+	} else
+		return wp;
 
-		wp = add_offset(wp, offset, 0);
-		if (!wp)
-			return NULL;
+	offset = strtoll(off, NULL, 10);
 
+	wp = add_offset(wp, offset, 0);
+	if (!wp)
+		return NULL;
+
+	if (usage || blkid_probe_lookup_value(pr, "USAGE", &usage, NULL) == 0)
 		wp->usage = xstrdup(usage);
-		wp->type = xstrdup(type);
-		wp->on_disk = 1;
 
-		wp->magic = xmalloc(len);
-		memcpy(wp->magic, mag, len);
-		wp->len = len;
+	wp->type = xstrdup(type);
+	wp->on_disk = 1;
 
-		if (blkid_probe_lookup_value(pr, "LABEL", &p, NULL) == 0)
-			wp->label = xstrdup(p);
+	wp->magic = xmalloc(len);
+	memcpy(wp->magic, mag, len);
+	wp->len = len;
 
-		if (blkid_probe_lookup_value(pr, "UUID", &p, NULL) == 0)
-			wp->uuid = xstrdup(p);
-	}
+	if (blkid_probe_lookup_value(pr, "LABEL", &p, NULL) == 0)
+		wp->label = xstrdup(p);
+
+	if (blkid_probe_lookup_value(pr, "UUID", &p, NULL) == 0)
+		wp->uuid = xstrdup(p);
 
 	return wp;
 }
@@ -179,7 +195,6 @@ static blkid_probe
 new_probe(const char *devname, int mode)
 {
 	blkid_probe pr;
-	int rc;
 
 	if (!devname)
 		return NULL;
@@ -198,23 +213,13 @@ new_probe(const char *devname, int mode)
 	if (!pr)
 		goto error;
 
-	blkid_probe_enable_superblocks(pr, 0);	/* enabled by default ;-( */
-
-	blkid_probe_enable_partitions(pr, 1);
-	rc = blkid_do_fullprobe(pr);
-	blkid_probe_enable_partitions(pr, 0);
-
-	if (rc == 0) {
-		const char *type = NULL;
-		blkid_probe_lookup_value(pr, "PTTYPE", &type, NULL);
-		warnx(_("WARNING: %s: appears to contain '%s' "
-				"partition table"), devname, type);
-	}
-
 	blkid_probe_enable_superblocks(pr, 1);
 	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_MAGIC |
 			BLKID_SUBLKS_TYPE | BLKID_SUBLKS_USAGE |
 			BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID);
+
+	blkid_probe_enable_partitions(pr, 1);
+	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_MAGIC);
 
 	return pr;
 error:
