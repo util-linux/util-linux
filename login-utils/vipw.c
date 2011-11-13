@@ -74,7 +74,6 @@ static char version_string[] = "vipw 1.4";
 
 #define FILENAMELEN 67
 
-char *progname;
 enum { VIPW, VIGR };
 int program;
 char orig_file[FILENAMELEN];   /* original file /etc/passwd or /etc/group */
@@ -141,12 +140,9 @@ pw_lock(void) {
 #if 0 /* flock()ing is superfluous here, with the ptmp/ptmptmp system. */
 	if (flock(lockfd, LOCK_EX|LOCK_NB)) {
 		if (program == VIPW)
-			fprintf(stderr, _("%s: the password file is busy.\n"),
-				progname);
+			err(EXIT_FAILURE, _("cannot lock password file"));
 		else
-			fprintf(stderr, _("%s: the group file is busy.\n"),
-				progname);
-		exit(1);
+			err(EXIT_FAILURE, _("cannot lock group file"));
 	}
 #endif
 
@@ -157,23 +153,17 @@ pw_lock(void) {
 	(void)unlink(tmptmp_file);
 	if (ret == -1) {
 	    if (errno == EEXIST)
-		(void)fprintf(stderr,
-			      _("%s: the %s file is busy (%s present)\n"),
-			      progname,
+		errx(EXIT_FAILURE, _("the %s file is busy (%s present)"),
 			      program == VIPW ? "password" : "group",
 			      tmp_file);
-	    else {
-		int errsv = errno;
-		(void)fprintf(stderr, _("%s: can't link %s: %s\n"), progname,
-			      tmp_file, strerror(errsv));
-	    }
-	    exit(EXIT_FAILURE);
+	    else
+		err(EXIT_FAILURE, _("can't link %s"), tmp_file);
 	}
 
 	lockfd = open(orig_file, O_RDONLY, 0);
 
 	if (lockfd < 0) {
-		(void)fprintf(stderr, "%s: %s: %m\n", progname, orig_file);
+		warn("%s", orig_file);
 		unlink(tmp_file);
 		exit(EXIT_FAILURE);
 	}
@@ -199,13 +189,13 @@ pw_unlock(void) {
 	  security_context_t passwd_context=NULL;
 	  int ret=0;
 	  if (getfilecon(orig_file,&passwd_context) < 0) {
-	    (void) fprintf(stderr,_("%s: Can't get context for %s"),progname,orig_file);
+	    warnx(_("Can't get context for %s"), orig_file);
 	    pw_error(orig_file, 1, 1);
 	  }
 	  ret=setfilecon(tmp_file,passwd_context);
 	  freecon(passwd_context);
 	  if (ret!=0) {
-	    (void) fprintf(stderr,_("%s: Can't set context for %s"),progname,tmp_file);
+	    warnx(_("Can't set context for %s"), tmp_file);
 	    pw_error(tmp_file, 1, 1);
 	  }
 	}
@@ -213,10 +203,9 @@ pw_unlock(void) {
 
 	if (rename(tmp_file, orig_file) == -1) {
 		int errsv = errno;
-		fprintf(stderr,
-			_("%s: can't unlock %s: %s (your changes are still in %s)\n"),
-			progname, orig_file, strerror(errsv), tmp_file);
-		exit(EXIT_FAILURE);
+		errx(EXIT_FAILURE,
+		     ("can't unlock %s: %s (your changes are still in %s)"),
+		     orig_file, strerror(errsv), tmp_file);
 	}
 	unlink(tmp_file);
 }
@@ -266,15 +255,12 @@ pw_edit(int notsetuid) {
 void
 pw_error(char *name, int err, int eval) {
 	if (err) {
-		int sverrno = errno;
-
-		fprintf(stderr, "%s: ", progname);
 		if (name)
-			(void)fprintf(stderr, "%s: ", name);
-		fprintf(stderr, "%s\n", strerror(sverrno));
+			warn("%s: ", name);
+		else
+			warn(NULL);
 	}
-	fprintf(stderr,
-	    _("%s: %s unchanged\n"), progname, orig_file);
+	warnx(_("%s unchanged"), orig_file);
 	unlink(tmp_file);
 	exit(eval);
 }
@@ -295,7 +281,7 @@ edit_file(int is_shadow)
 	if (stat(tmp_file, &end))
 		pw_error(tmp_file, 1, 1);
 	if (begin.st_mtime == end.st_mtime) {
-		(void)fprintf(stderr, _("%s: no changes made\n"), progname);
+		warnx(_("no changes made"));
 		pw_error((char *)NULL, 0, 0);
 	}
 	/* see pw_lock() where we create the file with mode 600 */
@@ -313,8 +299,7 @@ int main(int argc, char *argv[]) {
 	textdomain(PACKAGE);
 
 	memset(tmp_file, '\0', FILENAMELEN);
-	progname = (strrchr(argv[0], '/')) ? strrchr(argv[0], '/') + 1 : argv[0];
-	if (!strcmp(progname, "vigr")) {
+	if (!strcmp(program_invocation_short_name, "vigr")) {
 		program = VIGR;
 		xstrncpy(orig_file, GROUP_FILE, sizeof(orig_file));
 		xstrncpy(tmp_file, GTMP_FILE, sizeof(tmp_file));
