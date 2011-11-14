@@ -46,6 +46,7 @@ flock_SOURCES = flock.c $(top_srcdir)/lib/strutils.c
 prlimit_SOURCES = prlimit.c $(top_srcdir)/lib/strutils.c \
 			$(top_srcdir)/lib/mbsalign.c \
 			$(top_srcdir)/lib/tt.c
+ldattach_SOURCES = ldattach.c $(top_srcdir)/lib/strutils.c
 
 if BUILD_MOUNTPOINT
 bin_PROGRAMS += mountpoint
