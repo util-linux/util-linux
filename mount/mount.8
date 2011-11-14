@@ -182,6 +182,14 @@ The file
 .BR fstab (5)),
 may contain lines describing what devices are usually
 mounted where, using which options.
+
+If the
+.B mount
+command is linked with libmount, then filesystems could be also defined in
+.I /etc/fstab.d/*.fstab
+files. See
+.BR fstab (5)
+for more details.
 .LP
 The command
 .RS
@@ -206,7 +214,7 @@ filesystems are mounted simultaneously.
 When mounting a filesystem mentioned in
 .IR fstab
 or
-.IR mtab ,
+.IR mtab,
 it suffices to give only the device, or only the mount point.
 
 
@@ -2760,6 +2768,9 @@ support (for example /sbin/mount.fuse -t fuse.sshfs).
 .I /etc/fstab
 filesystem table
 .TP
+.I /etc/fstab.d
+directory with filesystem tables
+.TP
 .I /etc/mtab
 table of mounted filesystems
 .TP
@@ -2778,6 +2789,7 @@ a list of filesystem types to try
 .BR fstab (5),
 .BR umount (8),
 .BR swapon (8),
+.BR findmnt (8),
 .BR nfs (5),
 .BR xfs (5),
 .BR e2label (8),

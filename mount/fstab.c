@@ -150,23 +150,36 @@ read_mntentchn(mntFILE *mfp, const char *fnam, struct mntentchn *mc0) {
 }
 
 #ifdef HAVE_LIBMOUNT_MOUNT
-
-#define USE_UNSTABLE_LIBMOUNT_API
 #include <libmount.h>			/* libmount */
 
-static void read_mounttable()
+static int parser_errcb(struct libmnt_table *tb __attribute__((__unused__)),
+			const char *filename, int line)
 {
-	struct mntentchn *mc0 = &mounttable, *mc = mc0;
+	fprintf(stderr, _("%s: %d: parse error -- line ignored.\n"),
+		filename, line);
+
+	return 1;	/* = recoverable error
+			 * (the line is ignored, parsing continue) */
+}
+
+static void read_tab_common(struct mntentchn *mc0,
+			    int (* reader)(struct libmnt_table *tb,
+					   const char *filename),
+			    const char *name_in_errmsg)
+{
+	struct mntentchn *mc = mc0;
 	struct libmnt_table *tb = mnt_new_table();
 	struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_FORWARD);
 	struct libmnt_fs *fs;
 
-	got_mtab = 1;
 	mc->nxt = mc->prev = NULL;
 
 	if (!tb || !itr)
 		goto err;
-	if (mnt_table_parse_mtab(tb, NULL))
+
+	mnt_table_set_parser_errcb(tb, parser_errcb);
+
+	if (reader(tb, NULL))
 		goto err;
 
 	while(mnt_table_next_fs(tb, itr, &fs) == 0) {
@@ -187,12 +200,23 @@ static void read_mounttable()
 	mc0->prev = mc;
 	return;
 err:
-	error(_("warning: failed to read mtab"));
+	error(_("warning: failed to parse %s"), name_in_errmsg);
 	mnt_free_table(tb);
 	mnt_free_iter(itr);
 	mc->nxt = mc->prev = NULL;
 }
 
+static void read_mounttable()
+{
+	got_mtab = 1;
+	read_tab_common(&mounttable, mnt_table_parse_mtab, "mtab");
+}
+
+static void read_fstab()
+{
+	got_fstab = 1;
+	read_tab_common(&fstab, mnt_table_parse_fstab, "fstab");
+}
 #else /* !HAVE_LIBMOUNT_MOUNT */
 
 /*
@@ -226,7 +250,6 @@ read_mounttable() {
 	}
 	read_mntentchn(mfp, fnam, mc);
 }
-#endif /* HAVE_LIBMOUNT_MOUNT */
 
 static void
 read_fstab() {
@@ -247,6 +270,7 @@ read_fstab() {
 	}
 	read_mntentchn(mfp, fnam, mc);
 }
+#endif /* !HAVE_LIBMOUNT_MOUNT */
 
 
 /* Given the name NAME, try to find it in mtab.  */
