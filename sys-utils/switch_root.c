@@ -40,6 +40,10 @@
 #define MS_MOVE 8192
 #endif
 
+#ifndef MNT_DETACH
+#define MNT_DETACH       0x00000002	/* Just detach from the tree */
+#endif
+
 /* remove all files/directories below dirName -- don't cross mountpoints */
 static int recursiveRemove(int fd)
 {
@@ -131,7 +135,7 @@ static int switchroot(const char *newroot)
 
 		if ((stat(newmount, &sb) != 0) || (sb.st_dev != newroot_stat.st_dev)) {
 			/* mount point seems to be mounted already or stat failed */
-			umount(umounts[i]);
+			umount2(umounts[i], MNT_DETACH);
 			continue;
 		}
 
