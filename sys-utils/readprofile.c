@@ -145,7 +145,6 @@ int main(int argc, char **argv)
 	int popenMap;		/* flag to tell if popen() has been used */
 	int header_printed;
 
-	static const char optstring[] = "m:p:M:ivabsrnVh";
 	static const struct option longopts[] = {
 		{"mapfile", required_argument, NULL, 'm'},
 		{"profile", required_argument, NULL, 'p'},
@@ -171,7 +170,7 @@ int main(int argc, char **argv)
 	proFile = defaultpro;
 	mapFile = defaultmap;
 
-	while ((c = getopt_long(argc, argv, optstring, longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "m:p:M:ivabsrnVh", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'm':
 			mapFile = optarg;
