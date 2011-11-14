@@ -1584,25 +1584,16 @@ toggle_dos_compatibility_flag(void) {
 	update_sector_offset();
 }
 
-static void
-delete_partition(int i) {
+static void dos_delete_partition(int i)
+{
 	struct pte *pe = &ptes[i];
 	struct partition *p = pe->part_table;
 	struct partition *q = pe->ext_pointer;
 
-/* Note that for the fifth partition (i == 4) we don't actually
- * decrement partitions.
- */
+	/* Note that for the fifth partition (i == 4) we don't actually
+	   decrement partitions. */
 
-	if (warn_geometry())
-		return;		/* C/H/S not set */
-	pe->changed = 1;
-
-	if (disklabel == SUN_LABEL)
-		sun_delete_partition(i);
-	else if (disklabel == SGI_LABEL)
-		sgi_delete_partition(i);
-	else if (i < 4) {
+	if (i < 4) {
 		if (IS_EXTENDED (p->sys_ind) && i == ext_index) {
 			partitions = 4;
 			ptes[ext_index].ext_pointer = NULL;
@@ -1646,6 +1637,23 @@ delete_partition(int i) {
 			/* the only logical: clear only */
 			clear_partition(ptes[i].part_table);
 	}
+}
+
+static void
+delete_partition(int i)
+{
+	if (warn_geometry())
+		return;		/* C/H/S not set */
+
+	ptes[i].changed = 1;
+
+	if (disklabel == DOS_LABEL)
+		dos_delete_partition(i);
+	else if (disklabel == SUN_LABEL)
+		sun_delete_partition(i);
+	else if (disklabel == SGI_LABEL)
+		sgi_delete_partition(i);
+
 	printf(_("Partition %d is deleted\n"), i + 1);
 }
 
