@@ -357,7 +357,7 @@ static char *line_get_data(struct tt_line *ln, struct tt_column *cl,
  * is marked as "extreme". In the second pass all extreme fields are ignored
  * and column width is counted from non-extreme fields only.
  */
-static size_t count_column_width(struct tt *tb, struct tt_column *cl,
+static void count_column_width(struct tt *tb, struct tt_column *cl,
 				 char *buf, size_t bufsz)
 {
 	struct list_head *lp;
