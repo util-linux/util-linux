@@ -63,8 +63,8 @@ struct device_parameter { /* 48 bytes */
 
 typedef struct {
 	unsigned int   magic;		 /* expect SGI_LABEL_MAGIC */
-	unsigned short boot_part;        /* active boot partition */
-	unsigned short swap_part;        /* active swap partition */
+	short boot_part;		/* active boot partition */
+	short swap_part;		/* active swap partition */
 	unsigned char  boot_file[16];    /* name of the bootfile */
 	struct device_parameter devparam;	/*  1 * 48 bytes */
 	struct volume_directory {		/* 15 * 16 bytes */

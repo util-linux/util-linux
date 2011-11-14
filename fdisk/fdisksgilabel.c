@@ -262,13 +262,13 @@ sgi_get_sysid(int i)
 int
 sgi_get_bootpartition(void)
 {
-	return SSWAP16(sgilabel->boot_part);
+	return (short) SSWAP16(sgilabel->boot_part);
 }
 
 int
 sgi_get_swappartition(void)
 {
-	return SSWAP16(sgilabel->swap_part);
+	return (short) SSWAP16(sgilabel->swap_part);
 }
 
 void
@@ -513,10 +513,10 @@ verify_sgi(int verbose)
 	 * Go for details now
 	 */
 	if (verbose) {
-		if (!sgi_get_num_sectors(sgi_get_bootpartition())) {
+		if (sgi_get_bootpartition() < 0 || !sgi_get_num_sectors(sgi_get_bootpartition())) {
 			printf(_("\nThe boot partition does not exist.\n"));
 		}
-		if (!sgi_get_num_sectors(sgi_get_swappartition())) {
+		if (sgi_get_swappartition() < 0 || !sgi_get_num_sectors(sgi_get_swappartition())) {
 			printf(_("\nThe swap partition does not exist.\n"));
 		} else {
 			if ((sgi_get_sysid(sgi_get_swappartition()) != SGI_SWAP)
