@@ -1542,11 +1542,11 @@ get_nonexisting_partition(int warn, int max) {
 }
 
 const char *
-str_units(int n) {	/* n==1: use singular */
-	if (n == 1)
-		return display_in_cyl_units ? _("cylinder") : _("sector");
-	else
-		return display_in_cyl_units ? _("cylinders") : _("sectors");
+str_units(int n)
+{
+	if (display_in_cyl_units)
+		return P_("cylinder", "cylinders", n);
+	return P_("sector", "sectors", n);
 }
 
 void change_units(void)
