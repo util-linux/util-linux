@@ -581,8 +581,7 @@ int main(int argc, char **argv)
 			break;
 		}
 	}
-
-	if (argc == 1)
+	if (argc > optind)
 		usage(stderr);
 
 	if (!ncolumns) {
