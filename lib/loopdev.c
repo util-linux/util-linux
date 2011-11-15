@@ -735,9 +735,63 @@ int loopcxt_get_backing_inode(struct loopdev_cxt *lc, ino_t *ino)
 }
 
 /*
+ * Check if the kernel supports partitioned loop devices.
+ *
+ * Notes:
+ *   - kernels < 3.2 support partitioned loop devices and PT scanning
+ *     only if max_part= module paremeter is non-zero
+ *
+ *   - kernels >= 3.2 always support partitioned loop devices
+ *
+ *   - kernels >= 3.2 always support BLKPG_{ADD,DEL}_PARTITION ioctls
+ *
+ *   - kernels >= 3.2 enable PT scanner only if max_part= is non-zero or if the
+ *     LO_FLAGS_PARTSCAN flag is set for the device. The PT scanner is disabled
+ *     by default.
+ *
+ *  See kernel commit e03c8dd14915fabc101aa495828d58598dc5af98.
+ */
+int loopmod_supports_partscan(void)
+{
+	int rc, ret = 0;
+	FILE *f;
+
+	if (get_linux_version() >= KERNEL_VERSION(3,2,0))
+		return 1;
+
+	f = fopen("/sys/module/loop/parameters/max_part", "r");
+	if (!f)
+		return 0;
+	rc = fscanf(f, "%d", &ret);
+	fclose(f);
+	return rc = 1 ? ret : 0;
+}
+
+/*
  * @lc: context
  *
- * Returns: 1 of the autoclear flags is set.
+ * Returns: 1 if the partscan flags is set *or* (for old kernels) partitions
+ * scannig is enabled for all loop devices.
+ */
+int loopcxt_is_partscan(struct loopdev_cxt *lc)
+{
+	struct sysfs_cxt *sysfs = loopcxt_get_sysfs(lc);
+
+	if (sysfs) {
+		/* kernel >= 3.2 */
+		int fl;
+		if (sysfs_read_int(sysfs, "loop/partscan", &fl) == 0)
+			return fl;
+	}
+
+	/* old kernels (including kernels without loopN/loop/<flags> directory */
+	return loopmod_supports_partscan();
+}
+
+/*
+ * @lc: context
+ *
+ * Returns: 1 if the autoclear flags is set.
  */
 int loopcxt_is_autoclear(struct loopdev_cxt *lc)
 {
@@ -760,7 +814,7 @@ int loopcxt_is_autoclear(struct loopdev_cxt *lc)
 /*
  * @lc: context
  *
- * Returns: 1 of the readonly flags is set.
+ * Returns: 1 if the readonly flags is set.
  */
 int loopcxt_is_readonly(struct loopdev_cxt *lc)
 {
@@ -1076,6 +1130,12 @@ int loopcxt_delete_device(struct loopdev_cxt *lc)
 	return 0;
 }
 
+/*
+ * Note that LOOP_CTL_GET_FREE ioctl is supported since kernel 3.1. In older
+ * kernels we have to check all loop devices to found unused one.
+ *
+ * See kernel commit 770fe30a46a12b6fb6b63fbe1737654d28e8484.
+ */
 int loopcxt_find_unused(struct loopdev_cxt *lc)
 {
 	int rc = -1;

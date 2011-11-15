@@ -94,23 +94,6 @@ static int partx_flags;
 static struct loopdev_cxt lc;
 static int loopdev;
 
-/*
- * Check if the kernel supports partitioned loop devices.
- * In a near future (around linux 3.2, hopefully) this will come
- * always out of the box, until then we need to check.
- */
-static int loopmod_supports_parts(void)
-{
-	int rc, ret = 0;
-	FILE *f = fopen("/sys/module/loop/parameters/max_part", "r");
-
-	if (!f)
-		return 0;
-	rc = fscanf(f, "%d", &ret);
-	fclose(f);
-	return rc = 1 ? ret : 0;
-}
-
 static void assoc_loopdev(const char *fname)
 {
 	int rc;
@@ -392,9 +375,12 @@ static int add_parts(int fd, const char *device,
 	if (errfirst)
 		add_parts_warnx(device, errfirst, errlast);
 
-	/* the kernel adds *all* loopdev partitions, so we should delete
-	   any extra, unwanted ones, when the -n option is passed */
-	if (loopdev && (lower || upper)) {
+	/*
+	 * The kernel with enabled partitions scanner for loop devices add *all*
+	 * partitions, so we should delete any extra, unwanted ones, when the -n
+	 * option is passed.
+	 */
+	if (loopdev && loopcxt_is_partscan(&lc) && (lower || upper)) {
 		for (i = 0; i < nparts; i++) {
 			blkid_partition par = blkid_partlist_get_partition(ls, i);
 			int n = blkid_partition_get_partno(par);
@@ -841,7 +827,7 @@ int main(int argc, char **argv)
 			if (what == ACT_DELETE)
 				errx(EXIT_FAILURE, _("%s: cannot delete partitions"),
 				     wholedisk);
-			if (!loopmod_supports_parts())
+			if (!loopmod_supports_partscan())
 				errx(EXIT_FAILURE, _("%s: partitioned loop devices unsupported"),
 				     wholedisk);
 			assoc_loopdev(wholedisk);

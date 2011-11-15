@@ -120,6 +120,8 @@ enum {
 /*
  * High-level
  */
+extern int loopmod_supports_partscan(void);
+
 extern int is_loopdev(const char *device);
 extern int loopdev_is_autoclear(const char *device);
 
@@ -173,6 +175,7 @@ extern int loopcxt_get_encrypt_type(struct loopdev_cxt *lc, uint32_t *type);
 extern const char *loopcxt_get_crypt_name(struct loopdev_cxt *lc);
 extern int loopcxt_is_autoclear(struct loopdev_cxt *lc);
 extern int loopcxt_is_readonly(struct loopdev_cxt *lc);
+extern int loopcxt_is_partscan(struct loopdev_cxt *lc);
 extern int loopcxt_find_by_backing_file(struct loopdev_cxt *lc,
 				const char *filename,
                                 uint64_t offset, int flags);
