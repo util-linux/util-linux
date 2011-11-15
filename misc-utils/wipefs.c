@@ -36,6 +36,7 @@
 #include "xalloc.h"
 #include "strutils.h"
 #include "writeall.h"
+#include "match.h"
 #include "c.h"
 
 struct wipe_desc {
@@ -56,6 +57,8 @@ struct wipe_desc {
 
 #define WP_MODE_PRETTY		0		/* default */
 #define WP_MODE_PARSABLE	1
+
+static const char *type_pattern;
 
 static void
 print_pretty(struct wipe_desc *wp, int line)
@@ -164,6 +167,9 @@ get_desc_for_probe(struct wipe_desc *wp, blkid_probe pr)
 			return wp;
 		usage = "partition table";
 	} else
+		return wp;
+
+	if (type_pattern && !match_fstype(type, type_pattern))
 		return wp;
 
 	offset = strtoll(off, NULL, 10);
@@ -336,6 +342,7 @@ usage(FILE *out)
 		" -n, --no-act        do everything except the actual write() call\n"
 		" -o, --offset <num>  offset to erase, in bytes\n"
 		" -p, --parsable      print out in parsable instead of printable format\n"
+		" -t, --types <list>  limit the set of filesystem, RAIDs or partition tables\n"
 		" -V, --version       output version information and exit\n"), out);
 
 	fprintf(out, _("\nFor more information see wipefs(8).\n"));
@@ -357,6 +364,7 @@ main(int argc, char **argv)
 	    { "no-act",    0, 0, 'n' },
 	    { "offset",    1, 0, 'o' },
 	    { "parsable",  0, 0, 'p' },
+	    { "types",     1, 0, 't' },
 	    { "version",   0, 0, 'V' },
 	    { NULL,        0, 0, 0 }
 	};
@@ -365,7 +373,7 @@ main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "ahno:pV", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "ahno:pt:V", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			all++;
@@ -382,6 +390,9 @@ main(int argc, char **argv)
 			break;
 		case 'p':
 			mode = WP_MODE_PARSABLE;
+			break;
+		case 't':
+			type_pattern = optarg;
 			break;
 		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,

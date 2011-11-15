@@ -68,7 +68,9 @@ blkid_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 findfs_LDADD = $(ul_libblkid_la)
 findfs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 
-wipefs_SOURCES = wipefs.c $(top_srcdir)/lib/strutils.c
+wipefs_SOURCES = wipefs.c \
+		 $(top_srcdir)/lib/strutils.c \
+		 $(top_srcdir)/lib/match.c
 wipefs_LDADD = $(ul_libblkid_la)
 wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 
