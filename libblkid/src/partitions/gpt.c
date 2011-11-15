@@ -315,6 +315,10 @@ static int probe_gpt_pt(blkid_probe pr,
 
 	blkid_probe_use_wiper(pr, lba * blkid_probe_get_size(pr), 8);
 
+	blkid_probe_set_magic(pr, lba << 9,
+			      sizeof(GPT_HEADER_SIGNATURE_STR) - 1,
+			      (unsigned char *) GPT_HEADER_SIGNATURE_STR);
+
 	if (blkid_partitions_need_typeonly(pr))
 		/* caller does not ask for details about partitions */
 		return 0;
@@ -326,10 +330,6 @@ static int probe_gpt_pt(blkid_probe pr,
 	tab = blkid_partlist_new_parttable(ls, "gpt", lba << 9);
 	if (!tab)
 		goto err;
-
-	blkid_probe_set_magic(pr, lba << 9,
-			      sizeof(GPT_HEADER_SIGNATURE_STR) - 1,
-			      (unsigned char *) GPT_HEADER_SIGNATURE_STR);
 
 	ssf = blkid_probe_get_sectorsize(pr) / 512;
 

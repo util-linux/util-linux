@@ -52,6 +52,10 @@ static int probe_ultrix_pt(blkid_probe pr,
 	if (l->pt_magic != ULTRIX_MAGIC || l->pt_valid != 1)
 		goto nothing;
 
+	blkid_probe_set_magic(pr, (ULTRIX_SECTOR << 9) + ULTRIX_OFFSET,
+			sizeof(ULTRIX_MAGIC_STR) - 1,
+			(unsigned char *) ULTRIX_MAGIC_STR);
+
 	if (blkid_partitions_need_typeonly(pr))
 		/* caller does not ask for details about partitions */
 		return 0;
@@ -63,10 +67,6 @@ static int probe_ultrix_pt(blkid_probe pr,
 	tab = blkid_partlist_new_parttable(ls, "ultrix", 0);
 	if (!tab)
 		goto err;
-
-	blkid_probe_set_magic(pr, (ULTRIX_SECTOR << 9) + ULTRIX_OFFSET,
-			sizeof(ULTRIX_MAGIC_STR) - 1,
-			(unsigned char *) ULTRIX_MAGIC_STR);
 
 	for (i = 0; i < ULTRIX_MAXPARTITIONS; i++) {
 		if (!l->pt_part[i].pi_nblocks)
