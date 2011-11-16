@@ -305,8 +305,8 @@ static void maketbl(wchar_t **list, int entries, wchar_t *separator)
 				cols = xrealloc(cols, maxcols * sizeof(wchar_t *));
 				lens = xrealloc(lens, maxcols * sizeof(ssize_t));
 				/* zero fill only new memory */
-				memset(lens + ((maxcols - DEFCOLS) * sizeof(ssize_t)), 0,
-				       DEFCOLS * sizeof(int));
+				memset(lens + (maxcols - DEFCOLS), 0,
+				       DEFCOLS * sizeof(*lens));
 			}
 			p = NULL;
 		}
