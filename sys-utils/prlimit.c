@@ -294,7 +294,6 @@ done:
 	return 0;
 }
 
-
 static void do_prlimit(struct prlimit lims[], size_t n, int tt_flags)
 {
 	size_t i, nshows = 0;
@@ -321,7 +320,10 @@ static void do_prlimit(struct prlimit lims[], size_t n, int tt_flags)
 		}
 
 		if (prlimit(pid, lims[i].desc->resource, new, &lims[i].rlim) == -1)
-			err(EXIT_FAILURE, _("failed to get resource limits for PID %d"), pid);
+			err(EXIT_FAILURE, lims[i].modify ?
+				_("failed to set the %s resource limit") :
+				_("failed to get the %s resource limit"),
+				lims[i].desc->name);
 	}
 
 	if (nshows)
