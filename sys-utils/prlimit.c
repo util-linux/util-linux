@@ -319,22 +319,23 @@ static void do_prlimit(struct prlimit lims[], size_t n, int tt_flags)
 
 	for (i = 0; i < n; i++) {
 		struct rlimit *new = NULL;
+		struct prlimit *lim = &lims[i];
 
-		if (lims[i].modify) {
-			if (lims[i].modify != (PRLIMIT_HARD | PRLIMIT_SOFT))
-				get_unknown_hardsoft(&lims[i]);
+		if (lim->modify) {
+			if (lim->modify != (PRLIMIT_HARD | PRLIMIT_SOFT))
+				get_unknown_hardsoft(lim);
 
-			if ((lims[i].rlim.rlim_cur > lims[i].rlim.rlim_max) &&
-				(lims[i].rlim.rlim_cur != RLIM_INFINITY ||
-				 lims[i].rlim.rlim_max != RLIM_INFINITY))
+			if ((lim->rlim.rlim_cur > lim->rlim.rlim_max) &&
+				(lim->rlim.rlim_cur != RLIM_INFINITY ||
+				 lim->rlim.rlim_max != RLIM_INFINITY))
 				errx(EXIT_FAILURE, _("the soft limit %s cannot exceed the hard limit"),
-						lims[i].desc->name);
-			new = &lims[i].rlim;
+						lim->desc->name);
+			new = &lim->rlim;
 		} else
 			nshows++;
 
 		if (verbose && new) {
-			printf(_("New %s limit: "), lims[i].desc->name);
+			printf(_("New %s limit: "), lim->desc->name);
 			if (new->rlim_cur == RLIM_INFINITY)
 				printf("<%s", _("unlimited"));
 			else
@@ -346,11 +347,11 @@ static void do_prlimit(struct prlimit lims[], size_t n, int tt_flags)
 				printf(":%ju>\n", new->rlim_max);
 		}
 
-		if (prlimit(pid, lims[i].desc->resource, new, &lims[i].rlim) == -1)
-			err(EXIT_FAILURE, lims[i].modify ?
+		if (prlimit(pid, lim->desc->resource, new, &lim->rlim) == -1)
+			err(EXIT_FAILURE, lim->modify ?
 				_("failed to set the %s resource limit") :
 				_("failed to get the %s resource limit"),
-				lims[i].desc->name);
+				lim->desc->name);
 	}
 
 	if (nshows)
