@@ -328,7 +328,7 @@ static void do_prlimit(struct list_head *lims)
 	struct list_head *p, *pnext;
 
 	list_for_each_safe(p, pnext, lims) {
-		struct rlimit *new = NULL;
+		struct rlimit *new = NULL, *old = NULL;
 		struct prlimit *lim = list_entry(p, struct prlimit, lims);
 
 		if (lim->modify) {
@@ -341,7 +341,8 @@ static void do_prlimit(struct list_head *lims)
 				errx(EXIT_FAILURE, _("the soft limit %s cannot exceed the hard limit"),
 						lim->desc->name);
 			new = &lim->rlim;
-		}
+		} else
+			old = &lim->rlim;
 
 		if (verbose && new) {
 			printf(_("New %s limit: "), lim->desc->name);
@@ -356,7 +357,7 @@ static void do_prlimit(struct list_head *lims)
 				printf(":%ju>\n", new->rlim_max);
 		}
 
-		if (prlimit(pid, lim->desc->resource, new, &lim->rlim) == -1)
+		if (prlimit(pid, lim->desc->resource, new, old) == -1)
 			err(EXIT_FAILURE, lim->modify ?
 				_("failed to set the %s resource limit") :
 				_("failed to get the %s resource limit"),
