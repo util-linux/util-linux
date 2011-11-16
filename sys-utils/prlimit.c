@@ -86,7 +86,7 @@ static struct prlimit_desc prlimit_desc[] =
 struct prlimit {
 	struct rlimit rlim;
 	struct prlimit_desc *desc;
-	int modify;
+	int modify;			/* PRLIMIT_{SOFT,HARD} mask */
 };
 
 #define PRLIMIT_EMPTY_LIMIT	{{ 0, 0, }, NULL, 0 }
@@ -294,6 +294,25 @@ done:
 	return 0;
 }
 
+/*
+ * If one of the limits is unknown (default value for not being passed), we
+ * need to get the current limit and use it.  I see no other way other than
+ * using prlimit(2).
+ */
+static void get_unknown_hardsoft(struct prlimit *lim)
+{
+	struct rlimit old;
+
+	if (prlimit(pid, lim->desc->resource, NULL, &old) == -1)
+		err(EXIT_FAILURE, _("failed to get old %s limit"),
+				lim->desc->name);
+
+	if (!(lim->modify & PRLIMIT_SOFT))
+		lim->rlim.rlim_cur = old.rlim_cur;
+	else if (!(lim->modify & PRLIMIT_HARD))
+		lim->rlim.rlim_max = old.rlim_max;
+}
+
 static void do_prlimit(struct prlimit lims[], size_t n, int tt_flags)
 {
 	size_t i, nshows = 0;
@@ -301,9 +320,17 @@ static void do_prlimit(struct prlimit lims[], size_t n, int tt_flags)
 	for (i = 0; i < n; i++) {
 		struct rlimit *new = NULL;
 
-		if (lims[i].modify)
+		if (lims[i].modify) {
+			if (lims[i].modify != (PRLIMIT_HARD | PRLIMIT_SOFT))
+				get_unknown_hardsoft(&lims[i]);
+
+			if ((lims[i].rlim.rlim_cur > lims[i].rlim.rlim_max) &&
+				(lims[i].rlim.rlim_cur != RLIM_INFINITY ||
+				 lims[i].rlim.rlim_max != RLIM_INFINITY))
+				errx(EXIT_FAILURE, _("the soft limit %s cannot exceed the hard limit"),
+						lims[i].desc->name);
 			new = &lims[i].rlim;
-		else
+		} else
 			nshows++;
 
 		if (verbose && new) {
@@ -404,31 +431,10 @@ static int parse_prlim(struct rlimit *lim, char *ops, size_t id)
 		errx(EXIT_FAILURE, _("failed to parse %s limit"),
 		     prlimit_desc[id].name);
 
-	/*
-	 * If one of the limits is unknown (default value for not being passed), we need
-	 * to get the current limit and use it.
-	 * I see no other way other than using prlimit(2).
-	 */
-	if (found != (PRLIMIT_HARD | PRLIMIT_SOFT)) {
-		struct rlimit old;
-
-		if (prlimit(pid, prlimit_desc[id].resource, NULL, &old) == -1)
-			errx(EXIT_FAILURE, _("failed to get old %s limit"),
-			     prlimit_desc[id].name);
-
-		if (!(found & PRLIMIT_SOFT))
-			soft = old.rlim_cur;
-		else if (!(found & PRLIMIT_HARD))
-			hard = old.rlim_max;
-	}
-
-	if (soft > hard && (soft != RLIM_INFINITY || hard != RLIM_INFINITY))
-		errx(EXIT_FAILURE, _("the soft limit cannot exceed the ceiling value"));
-
 	lim->rlim_cur = soft;
 	lim->rlim_max = hard;
 
-	return 0;
+	return found;
 }
 
 /*
@@ -438,10 +444,8 @@ static int add_prlim(char *ops, struct prlimit *lim, size_t id)
 {
 	lim->desc = &prlimit_desc[id];
 
-	if (ops) { /* planning on modifying a limit? */
-		lim->modify = 1;
-		parse_prlim(&lim->rlim, ops, id);
-	}
+	if (ops)
+		lim->modify = parse_prlim(&lim->rlim, ops, id);
 
 	return 0;
 }
