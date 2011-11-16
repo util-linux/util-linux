@@ -32,6 +32,7 @@
 #include "tt.h"
 #include "xalloc.h"
 #include "strutils.h"
+#include "list.h"
 
 #ifndef RLIMIT_RTTIME
 # define RLIMIT_RTTIME 15
@@ -84,6 +85,8 @@ static struct prlimit_desc prlimit_desc[] =
 };
 
 struct prlimit {
+	struct list_head lims;
+
 	struct rlimit rlim;
 	struct prlimit_desc *desc;
 	int modify;			/* PRLIMIT_{SOFT,HARD} mask */
@@ -139,6 +142,8 @@ static int prlimit(pid_t p, int resource,
 	return syscall(SYS_prlimit64, p, resource, new_limit, old_limit);
 }
 #endif
+
+static void rem_prlim(struct prlimit *lim);
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
@@ -264,9 +269,10 @@ static int column_name_to_id(const char *name, size_t namesz)
 	return -1;
 }
 
-static int show_limits(struct prlimit lims[], size_t n, int tt_flags)
+static int show_limits(struct list_head *lims, int tt_flags)
 {
 	int i;
+	struct list_head *p, *pnext;
 	struct tt *tt;
 
 	tt = tt_new_table(tt_flags);
@@ -284,9 +290,13 @@ static int show_limits(struct prlimit lims[], size_t n, int tt_flags)
 		}
 	}
 
-	for (i = 0; (size_t) i < n; i++)
-		if (!lims[i].modify) /* only display old limits */
-			add_tt_line(tt, &lims[i]);
+
+	list_for_each_safe(p, pnext, lims) {
+		struct prlimit *lim = list_entry(p, struct prlimit, lims);
+
+		add_tt_line(tt, lim);
+		rem_prlim(lim);
+	}
 
 	tt_print_table(tt);
 done:
@@ -313,13 +323,13 @@ static void get_unknown_hardsoft(struct prlimit *lim)
 		lim->rlim.rlim_max = old.rlim_max;
 }
 
-static void do_prlimit(struct prlimit lims[], size_t n, int tt_flags)
+static void do_prlimit(struct list_head *lims)
 {
-	size_t i, nshows = 0;
+	struct list_head *p, *pnext;
 
-	for (i = 0; i < n; i++) {
+	list_for_each_safe(p, pnext, lims) {
 		struct rlimit *new = NULL;
-		struct prlimit *lim = &lims[i];
+		struct prlimit *lim = list_entry(p, struct prlimit, lims);
 
 		if (lim->modify) {
 			if (lim->modify != (PRLIMIT_HARD | PRLIMIT_SOFT))
@@ -331,8 +341,7 @@ static void do_prlimit(struct prlimit lims[], size_t n, int tt_flags)
 				errx(EXIT_FAILURE, _("the soft limit %s cannot exceed the hard limit"),
 						lim->desc->name);
 			new = &lim->rlim;
-		} else
-			nshows++;
+		}
 
 		if (verbose && new) {
 			printf(_("New %s limit: "), lim->desc->name);
@@ -352,10 +361,10 @@ static void do_prlimit(struct prlimit lims[], size_t n, int tt_flags)
 				_("failed to set the %s resource limit") :
 				_("failed to get the %s resource limit"),
 				lim->desc->name);
-	}
 
-	if (nshows)
-		show_limits(lims, n, tt_flags);
+		if (lim->modify)
+			rem_prlim(lim);		/* modify only; don't show */
+	}
 }
 
 
@@ -438,24 +447,32 @@ static int parse_prlim(struct rlimit *lim, char *ops, size_t id)
 	return found;
 }
 
-/*
- * Add a resource limit to the limits array
- */
-static int add_prlim(char *ops, struct prlimit *lim, size_t id)
+static struct prlimit *add_prlim(char *ops, struct list_head *lims, size_t id)
 {
+	struct prlimit *lim = calloc(1, sizeof(*lim));
+
+	INIT_LIST_HEAD(&lim->lims);
 	lim->desc = &prlimit_desc[id];
 
 	if (ops)
 		lim->modify = parse_prlim(&lim->rlim, ops, id);
 
+	list_add_tail(&lim->lims, lims);
 	return 0;
+}
+
+static void rem_prlim(struct prlimit *lim)
+{
+	if (!lim)
+		return;
+	list_del(&lim->lims);
+	free(lim);
 }
 
 int main(int argc, char **argv)
 {
 	int opt, tt_flags = 0;
-        size_t n = 0;
-	struct prlimit lims[MAX_RESOURCES] = { PRLIMIT_EMPTY_LIMIT };
+	struct list_head lims;
 
 	enum {
 		VERBOSE_OPTION = CHAR_MAX + 1,
@@ -494,6 +511,8 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
+	INIT_LIST_HEAD(&lims);
+
 	/*
 	 * Something is very wrong if this doesn't succeed,
 	 * assuming STACK is the last resource, of course.
@@ -505,52 +524,52 @@ int main(int argc, char **argv)
 				 longopts, NULL)) != -1) {
 		switch(opt) {
 		case 'c':
-			add_prlim(optarg, &lims[n++], CORE);
+			add_prlim(optarg, &lims, CORE);
 			break;
 		case 'd':
-			add_prlim(optarg, &lims[n++], DATA);
+			add_prlim(optarg, &lims, DATA);
 			break;
 		case 'e':
-			add_prlim(optarg, &lims[n++], NICE);
+			add_prlim(optarg, &lims, NICE);
 			break;
 		case 'f':
-			add_prlim(optarg, &lims[n++], FSIZE);
+			add_prlim(optarg, &lims, FSIZE);
 			break;
 		case 'i':
-			add_prlim(optarg, &lims[n++], SIGPENDING);
+			add_prlim(optarg, &lims, SIGPENDING);
 			break;
 		case 'l':
-			add_prlim(optarg, &lims[n++], MEMLOCK);
+			add_prlim(optarg, &lims, MEMLOCK);
 			break;
 		case 'm':
-			add_prlim(optarg, &lims[n++], RSS);
+			add_prlim(optarg, &lims, RSS);
 			break;
 		case 'n':
-			add_prlim(optarg, &lims[n++], NOFILE);
+			add_prlim(optarg, &lims, NOFILE);
 			break;
 		case 'q':
-			add_prlim(optarg, &lims[n++], MSGQUEUE);
+			add_prlim(optarg, &lims, MSGQUEUE);
 			break;
 		case 'r':
-			add_prlim(optarg, &lims[n++], RTPRIO);
+			add_prlim(optarg, &lims, RTPRIO);
 			break;
 		case 's':
-			add_prlim(optarg, &lims[n++], STACK);
+			add_prlim(optarg, &lims, STACK);
 			break;
 		case 't':
-			add_prlim(optarg, &lims[n++], CPU);
+			add_prlim(optarg, &lims, CPU);
 			break;
 		case 'u':
-			add_prlim(optarg, &lims[n++], NPROC);
+			add_prlim(optarg, &lims, NPROC);
 			break;
 		case 'v':
-			add_prlim(optarg, &lims[n++], AS);
+			add_prlim(optarg, &lims, AS);
 			break;
 		case 'x':
-			add_prlim(optarg, &lims[n++], LOCKS);
+			add_prlim(optarg, &lims, LOCKS);
 			break;
 		case 'y':
-			add_prlim(optarg, &lims[n++], RTTIME);
+			add_prlim(optarg, &lims, RTTIME);
 			break;
 
 		case 'p':
@@ -600,13 +619,18 @@ int main(int argc, char **argv)
 		columns[ncolumns++] = COL_UNITS;
 	}
 
-	if (!n) {
+	if (list_empty(&lims)) {
 		/* default is to print all resources */
-		for (; n < MAX_RESOURCES; n++)
-			add_prlim(NULL, &lims[n], n);
+		size_t n;
+
+		for (n = 0; n < MAX_RESOURCES; n++)
+			add_prlim(NULL, &lims, n);
 	}
 
-	do_prlimit(lims, n, tt_flags);
+	do_prlimit(&lims);
+
+	if (!list_empty(&lims))
+		show_limits(&lims, tt_flags);
 
 	return EXIT_SUCCESS;
 }
