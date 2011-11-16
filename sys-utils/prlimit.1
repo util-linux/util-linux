@@ -9,11 +9,21 @@ get and set a process resource limits.
 .SH SYNOPSIS
 .B prlimit
 .RB [options]
-.RB [ \-\-{resource_name}[=limits] ]
+.RB [ \-\-{resource_name}[=limits]
+.RB [ \-\-pid\ PID]
+
+.B prlimit
+.RB [options]
+.RB [ \-\-{resource_name}[=limits]]
+.RB "command " [ argument ...]
 
 .SH DESCRIPTION
 Given a process id and one or more resources, \fBprlimit\fP tries to retrieve
 and/or modify the limits.
+
+When \fIcommand\fR is given,
+.B prlimit
+will run this command with the given arguments.
 
 The \fIlimits\fP format is composed by a soft and a hard (ceiling) value, separated
 by a semicolon (:), in order to modify the existing value(s). If no limits are
@@ -92,6 +102,8 @@ of open files to 1024 and 4095, respectively.
 Modify only the soft limit for the amount of processes.
 .IP "\fBprlimit \-\-pid $$ --nproc=unlimited\fP"
 Set the amount of processes for both soft and ceiling values to unlimited.
+.IP "\fBprlimit --cpu=10 sort -u hugefile\fP"
+Set the soft and hard CPU time limit and run 'sort'.
 
 .SH "SEE ALSO"
 .BR prlimit (2),

@@ -152,7 +152,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,
-		_(" %s [options]\n"), program_invocation_short_name);
+		_(" %s [options] [-p PID]\n"), program_invocation_short_name);
+	fprintf(out,
+		_(" %s [options] COMMAND\n"), program_invocation_short_name);
 
 	fputs(_("\nGeneral Options:\n"), out);
 	fputs(_(" -p, --pid <pid>        process id\n"
@@ -521,7 +523,7 @@ int main(int argc, char **argv)
 	assert(MAX_RESOURCES == STACK + 1);
 
 	while((opt = getopt_long(argc, argv,
-				 "c::d::e::f::i::l::m::n::q::r::s::t::u::v::x::y::p:o:vVh",
+				 "+c::d::e::f::i::l::m::n::q::r::s::t::u::v::x::y::p:o:vVh",
 				 longopts, NULL)) != -1) {
 		switch(opt) {
 		case 'c':
@@ -608,8 +610,9 @@ int main(int argc, char **argv)
 			break;
 		}
 	}
-	if (argc > optind)
-		usage(stderr);
+	if (argc > optind && pid)
+		errx(EXIT_FAILURE,
+			_("--pid option and COMMAND are mutually exclusive"));
 
 	if (!ncolumns) {
 		/* default columns */
@@ -632,6 +635,12 @@ int main(int argc, char **argv)
 
 	if (!list_empty(&lims))
 		show_limits(&lims, tt_flags);
+
+	if (argc > optind) {
+		/* prlimit [options] COMMAND */
+		execvp(argv[optind], &argv[optind]);
+		err(EXIT_FAILURE, _("executing %s failed"), argv[optind]);
+	}
 
 	return EXIT_SUCCESS;
 }
