@@ -71,16 +71,16 @@ static struct prlimit_desc prlimit_desc[] =
 	[CPU]        = { "CPU",        N_("CPU time"),                           N_("seconds"),   RLIMIT_CPU },
 	[DATA]       = { "DATA",       N_("max data size"),                      N_("bytes"),     RLIMIT_DATA },
 	[FSIZE]      = { "FSIZE",      N_("max file size"),                      N_("blocks"),    RLIMIT_FSIZE },
-	[LOCKS]      = { "LOCKS",      N_("max amount of file locks held"),      NULL,            RLIMIT_LOCKS },
+	[LOCKS]      = { "LOCKS",      N_("max number of file locks held"),      NULL,            RLIMIT_LOCKS },
 	[MEMLOCK]    = { "MEMLOCK",    N_("max locked-in-memory address space"), N_("bytes"),     RLIMIT_MEMLOCK },
 	[MSGQUEUE]   = { "MSGQUEUE",   N_("max bytes in POSIX mqueues"),         N_("bytes"),     RLIMIT_MSGQUEUE },
 	[NICE]       = { "NICE",       N_("max nice prio allowed to raise"),     NULL,            RLIMIT_NICE },
-	[NOFILE]     = { "NOFILE",     N_("max amount of open files"),           NULL,            RLIMIT_NOFILE },
+	[NOFILE]     = { "NOFILE",     N_("max number of open files"),           NULL,            RLIMIT_NOFILE },
 	[NPROC]      = { "NPROC",      N_("max number of processes"),            NULL,            RLIMIT_NPROC },
 	[RSS]        = { "RSS",        N_("max resident set size"),              N_("pages"),     RLIMIT_RSS },
 	[RTPRIO]     = { "RTPRIO",     N_("max real-time priority"),             NULL,            RLIMIT_RTPRIO },
 	[RTTIME]     = { "RTTIME",     N_("timeout for real-time tasks"),        N_("microsecs"), RLIMIT_RTTIME },
-	[SIGPENDING] = { "SIGPENDING", N_("max amount of pending signals"),      NULL,            RLIMIT_SIGPENDING },
+	[SIGPENDING] = { "SIGPENDING", N_("max number of pending signals"),      NULL,            RLIMIT_SIGPENDING },
 	[STACK]      = { "STACK",      N_("max stack size"),                     N_("bytes"),     RLIMIT_STACK }
 };
 
@@ -170,10 +170,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" -d, --data             maximum size of a process's data segment\n"
 		" -e, --nice             maximum nice priority allowed to raise\n"
 		" -f, --fsize            maximum size of files written by the process\n"
-		" -i, --sigpending       maximum amount of pending signals\n"
+		" -i, --sigpending       maximum number of pending signals\n"
 		" -l, --memlock          maximum size a process may lock into memory\n"
 		" -m, --rss              maximum resident set size\n"
-		" -n, --nofile           maximum amount of open files\n"
+		" -n, --nofile           maximum number of open files\n"
 		" -q, --msgqueue         maximum bytes in POSIX message queues\n"
 		" -r, --rtprio           maximum real-time scheduling priority\n"
 		" -s, --stack            maximum stack size\n"

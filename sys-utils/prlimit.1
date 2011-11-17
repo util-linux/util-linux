@@ -33,7 +33,7 @@ infinity limit (RLIM_INFINITY), the -1 or 'unlimited' string can be passed.
 
 Because of the nature of limits, the soft value must be lower or equal to the
 high limit. To see all the available resource limits, refer to the RESOURCE
-OPTIONS section. 
+OPTIONS section.
 
 .IP "\fB<soft>:<hard>\fP  Specify both limits"
 .IP "\fB<soft>:\fP        Specify only the soft limit"
@@ -67,15 +67,15 @@ Maximum nice priority allowed to raise.
 .IP "\fB\-f, \-\-fsize\fP[=limits]"
 Maximum file size.
 .IP "\fB\-i, \-\-sigpending\fP[=limits]"
-Maximum amount of pending signals.
+Maximum number of pending signals.
 .IP "\fB\-l, \-\-memlock\fP[=limits]"
 Maximum locked-in-memory address space.
 .IP "\fB\-m, \-\-rss\fP[=limits]"
 Maximum Resident Set Size (RSS).
 .IP "\fB\-n, \-\-nofile\fP[=limits]"
-Maximum amount of open files.
+Maximum number of open files.
 .IP "\fB\-q, \-\-msgqueue\fP[=limits]"
-Maximum amount of bytes in POSIX message queues.
+Maximum number of bytes in POSIX message queues.
 .IP "\fB\-r, \-\-rtprio\fP[=limits]"
 Maximum real-time priority.
 .IP "\fB\-s, \-\-stack\fP[=limits]"
@@ -83,11 +83,11 @@ Maximum size of the stack.
 .IP "\fB\-t, \-\-cpu\fP[=limits]"
 CPU time, in seconds.
 .IP "\fB\-u, \-\-nproc\fP[=limits]"
-Maximum amount of processes.
+Maximum number of processes.
 .IP "\fB\-v, \-\-as\fP[=limits]"
 Address space limit.
 .IP "\fB\-x, \-\-locks\fP[=limits]"
-Maximum amount of file locks held.
+Maximum number of file locks held.
 .IP "\fB\-y, \-\-rttime\fP[=limits]"
 Timeout for real-time tasks.
 
@@ -96,12 +96,12 @@ Timeout for real-time tasks.
 .IP "\fBprlimit \-\-pid 13134\fP"
 Display limit values for all current resources.
 .IP "\fBprlimit \-\-pid 13134 \--rss --nofile=1024:4095\fP"
-Display the limits of the RSS and set the soft and hard limits for the amount
+Display the limits of the RSS and set the soft and hard limits for the number
 of open files to 1024 and 4095, respectively.
 .IP "\fBprlimit \-\-pid 13134 --nproc=512:\fP"
-Modify only the soft limit for the amount of processes.
+Modify only the soft limit for the number of processes.
 .IP "\fBprlimit \-\-pid $$ --nproc=unlimited\fP"
-Set the amount of processes for both soft and ceiling values to unlimited.
+Set the number of processes for both soft and ceiling values to unlimited.
 .IP "\fBprlimit --cpu=10 sort -u hugefile\fP"
 Set the soft and hard CPU time limit and run 'sort'.
 
