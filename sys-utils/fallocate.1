@@ -5,6 +5,7 @@ fallocate \- preallocate space to a file
 .SH SYNOPSIS
 .B fallocate
 .RB [ \-n ]
+.RB [ \-p ]
 .RB [ \-o
 .IR offset ]
 .B \-l
@@ -31,6 +32,8 @@ same meaning as "KiB") or decimal (10^N) suffixes KB, MB, GB, PB and EB.
 .IP "\fB\-n, \-\-keep-size\fP"
 Do not modify the apparent length of the file.  This may effectively allocate
 blocks past EOF, which can be removed with a truncate.
+.IP "\fB\-p, \-\-punch-hole\fP"
+Punch holes in the file, the range should not exceed the length of the file.
 .IP "\fB\-o, \-\-offset\fP \fIoffset\fP
 Specifies the beginning offset of the allocation, in bytes.
 .IP "\fB\-l, \-\-length\fP \fIlength\fP
