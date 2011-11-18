@@ -863,16 +863,37 @@ static void loginpam_acct(struct login_context *cxt)
 	}
 }
 
+/*
+ * Note that position of the pam_setcred() call is discussable:
+ *
+ *  - the PAM docs recommends pam_setcred() before pam_open_session()
+ *  - but the original RFC http://www.opengroup.org/rfc/mirror-rfc/rfc86.0.txt
+ *    uses pam_setcred() after pam_open_session()
+ *
+ * The old login versions (before year 2011) followed the RFC. This is probably
+ * not optimal, because there could be dependence between some session modules
+ * and user's credentials.
+ *
+ * The best is probably to follow openssh and call pam_setcred() before and
+ * after pam_open_session().                -- kzak@redhat.com (18-Nov-2011)
+ *
+ */
 static void loginpam_session(struct login_context *cxt)
 {
 	int rc;
 	pam_handle_t *pamh = cxt->pamh;
 
-	rc = pam_open_session(pamh, 0);
+	rc = pam_setcred(pamh, PAM_ESTABLISH_CRED);
 	if (is_pam_failure(rc))
 		loginpam_err(pamh, rc);
 
-	rc = pam_setcred(pamh, PAM_ESTABLISH_CRED);
+	rc = pam_open_session(pamh, 0);
+	if (is_pam_failure(rc)) {
+		pam_setcred(cxt->pamh, PAM_DELETE_CRED);
+		loginpam_err(pamh, rc);
+	}
+
+	rc = pam_setcred(pamh, PAM_REINITIALIZE_CRED);
 	if (is_pam_failure(rc)) {
 		pam_close_session(pamh, 0);
 		loginpam_err(pamh, rc);
