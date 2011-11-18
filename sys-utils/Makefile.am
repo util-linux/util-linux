@@ -2,11 +2,11 @@ include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS =
 sbin_PROGRAMS =
-usrbin_exec_PROGRAMS = flock ipcrm ipcs ipcmk renice setsid prlimit
+usrbin_exec_PROGRAMS = flock ipcrm ipcs ipcmk renice setsid
 usrsbin_exec_PROGRAMS = readprofile
 
 dist_man_MANS = flock.1 ipcrm.1 ipcs.1 ipcmk.1 renice.1 setsid.1 \
-		readprofile.8 prlimit.1
+		readprofile.8
 
 if LINUX
 bin_PROGRAMS += dmesg
@@ -16,6 +16,14 @@ usrsbin_exec_PROGRAMS += ldattach tunelp rtcwake
 
 dist_man_MANS += dmesg.1 ctrlaltdel.8 cytune.8 setarch.8 \
 		ldattach.8 tunelp.8 rtcwake.8 fsfreeze.8 fstrim.8
+endif
+
+if BUILD_PRLIMIT
+usrbin_exec_PROGRAMS += prlimit
+dist_man_MANS += prlimit.1
+prlimit_SOURCES = prlimit.c $(top_srcdir)/lib/strutils.c \
+			$(top_srcdir)/lib/mbsalign.c \
+			$(top_srcdir)/lib/tt.c
 endif
 
 if BUILD_LSCPU
@@ -43,9 +51,6 @@ dmesg_SOURCES = dmesg.c $(top_srcdir)/lib/strutils.c
 ipcmk_SOURCES = ipcmk.c $(top_srcdir)/lib/strutils.c
 ipcrm_SOURCES = ipcrm.c  $(top_srcdir)/lib/strutils.c
 flock_SOURCES = flock.c $(top_srcdir)/lib/strutils.c
-prlimit_SOURCES = prlimit.c $(top_srcdir)/lib/strutils.c \
-			$(top_srcdir)/lib/mbsalign.c \
-			$(top_srcdir)/lib/tt.c
 ldattach_SOURCES = ldattach.c $(top_srcdir)/lib/strutils.c
 
 if BUILD_MOUNTPOINT
