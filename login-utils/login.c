@@ -137,7 +137,8 @@ static volatile int got_sig = 0;
  * What I did was add a second timeout while trying to write the message so
  * the process just exits if the second timeout expires.
  */
-static void timedout2(int sig __attribute__ ((__unused__)))
+static void __attribute__ ((__noreturn__))
+timedout2(int sig __attribute__ ((__unused__)))
 {
 	struct termios ti;
 
@@ -181,7 +182,7 @@ static void sig_handler(int signal)
  * Let use delay for all exit() calls when user is not authenticated or
  * session fully initialized (loginpam_session()).
  */
-static void sleepexit(int eval)
+static void __attribute__ ((__noreturn__)) sleepexit(int eval)
 {
 	sleep(getlogindefs_num("FAIL_DELAY", LOGIN_EXIT_TIMEOUT));
 	exit(eval);
@@ -675,7 +676,7 @@ static int loginpam_get_username(pam_handle_t *pamh, char **name)
 	return rc;
 }
 
-static int loginpam_err(pam_handle_t *pamh, int retcode)
+static void loginpam_err(pam_handle_t *pamh, int retcode)
 {
 	const char *msg = pam_strerror(pamh, retcode);
 
