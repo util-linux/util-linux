@@ -107,8 +107,6 @@ static char *ttyconv(char *);
 
 int
 main(int argc, char **argv) {
-	extern int	optind;
-	extern char	*optarg;
 	int	ch;
 
 	setlocale(LC_ALL, "");
@@ -369,7 +367,9 @@ want(struct utmp *bp, int check) {
 			if ((in_addr_t) bp->ut_addr == inet_addr(step->name))
 			  return YES;
 			break;
-	}
+		default:
+			abort();
+		}
 	return NO;
 }
 
