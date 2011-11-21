@@ -121,7 +121,6 @@ static int badblocks;
 static size_t namelen = 30;
 static size_t dirsize = 32;
 static int magic = MINIX_SUPER_MAGIC2;
-static int version2;
 
 static char root_block[MINIX_BLOCK_SIZE];
 
@@ -697,7 +696,6 @@ int main(int argc, char ** argv) {
 		case '2':
 		case 'v': /* kept for backwards compatiblitly */
 			fs_version = 2;
-			version2 = 1;
 			break;
 		case '3':
 			fs_version = 3;
