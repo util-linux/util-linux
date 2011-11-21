@@ -490,7 +490,7 @@ static void setup_tables(void) {
 
 	if (fs_version == 3) {
 		Super3.s_log_zone_size = 0;
-		Super3.s_blocksize = BLOCKS;
+		Super3.s_blocksize = MINIX_BLOCK_SIZE;
 	}
 	else {
 		Super.s_log_zone_size = 0;
