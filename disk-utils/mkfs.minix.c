@@ -703,6 +703,8 @@ int main(int argc, char ** argv) {
 			break;
 		case '3':
 			fs_version = 3;
+			namelen = 60;
+			dirsize = 64;
 			break;
 		default:
 			usage();
