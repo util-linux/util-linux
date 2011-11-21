@@ -84,6 +84,22 @@ static void strtotimeval(const char *str, struct timeval *tv)
 		errx(EX_USAGE, _("timeout cannot be zero"));
 }
 
+static void setup_timer(struct itimerval *timer, struct itimerval *old_timer,
+			struct sigaction *sa, struct sigaction *old_sa)
+{
+	memset(sa, 0, sizeof sa);
+	sa->sa_handler = timeout_handler;
+	sa->sa_flags = SA_RESETHAND;
+	sigaction(SIGALRM, sa, old_sa);
+	setitimer(ITIMER_REAL, timer, old_timer);
+}
+
+static void cancel_timer(struct itimerval *old_timer, struct sigaction *old_sa)
+{
+	setitimer(ITIMER_REAL, old_timer, NULL);
+	sigaction(SIGALRM, old_sa, NULL);
+}
+
 int main(int argc, char *argv[])
 {
 	struct itimerval timeout, old_timer;
@@ -215,13 +231,8 @@ int main(int argc, char *argv[])
 			 */
 			have_timeout = 0;
 			block = LOCK_NB;
-		} else {
-			memset(&sa, 0, sizeof sa);
-			sa.sa_handler = timeout_handler;
-			sa.sa_flags = SA_RESETHAND;
-			sigaction(SIGALRM, &sa, &old_sa);
-			setitimer(ITIMER_REAL, &timeout, &old_timer);
-		}
+		} else
+			setup_timer(&timeout, &old_timer, &sa, &old_sa);
 	}
 
 	while (flock(fd, type | block)) {
@@ -252,12 +263,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (have_timeout) {
-		/* Cancel itimer */
-		setitimer(ITIMER_REAL, &old_timer, NULL);
-		/* Cancel signal handler */
-		sigaction(SIGALRM, &old_sa, NULL);
-	}
+	if (have_timeout)
+		cancel_timer(&old_timer, &old_sa);
 
 	status = EX_OK;
 
