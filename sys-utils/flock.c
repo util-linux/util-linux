@@ -100,13 +100,42 @@ static void cancel_timer(struct itimerval *old_timer, struct sigaction *old_sa)
 	sigaction(SIGALRM, old_sa, NULL);
 }
 
+static int open_file(const char *filename, int *flags)
+{
+
+	int fd;
+	int fl = *flags == 0 ? O_RDONLY : *flags;
+
+	errno = 0;
+	fl |= O_NOCTTY | O_CREAT;
+	fd = open(filename, fl, 0666);
+
+	/* Linux doesn't like O_CREAT on a directory, even though it
+	 * should be a no-op; POSIX doesn't allow O_RDWR or O_WRONLY
+	 */
+	if (fd < 0 && errno == EISDIR) {
+		fl = O_RDONLY | O_NOCTTY;
+		fd = open(filename, fl);
+	}
+	if (fd < 0) {
+		warn(_("cannot open lock file %s"), filename);
+		if (errno == ENOMEM || errno == EMFILE || errno == ENFILE)
+			exit(EX_OSERR);
+		if (errno == EROFS || errno == ENOSPC)
+			exit(EX_CANTCREAT);
+		exit(EX_NOINPUT);
+	}
+	*flags = fl;
+	return fd;
+}
+
 int main(int argc, char *argv[])
 {
 	struct itimerval timeout, old_timer;
 	int have_timeout = 0;
 	int type = LOCK_EX;
 	int block = 0;
-	int open_accmode;
+	int open_flags = 0;
 	int fd = -1;
 	int opt, ix;
 	int do_close = 0;
@@ -195,25 +224,8 @@ int main(int argc, char *argv[])
 		}
 
 		filename = argv[optind];
-		open_accmode =
-		    ((type == LOCK_SH
-		      || access(filename,
-				R_OK | W_OK) < 0) ? O_RDONLY : O_RDWR);
-		fd = open(filename, open_accmode | O_NOCTTY | O_CREAT, 0666);
-		/* Linux doesn't like O_CREAT on a directory, even though it
-		 * should be a no-op; POSIX doesn't allow O_RDWR or O_WRONLY
-		 */
-		if (fd < 0 && errno == EISDIR)
-			fd = open(filename, O_RDONLY | O_NOCTTY);
+		fd = open_file(filename, &open_flags);
 
-		if (fd < 0) {
-			warn(_("cannot open lock file %s"), argv[optind]);
-			if (errno == ENOMEM || errno == EMFILE || errno == ENFILE)
-				exit(EX_OSERR);
-			if (errno == EROFS || errno == ENOSPC)
-				exit(EX_CANTCREAT);
-			exit(EX_NOINPUT);
-		}
 	} else if (optind < argc) {
 		/* Use provided file descriptor */
 		fd = (int)strtol_or_err(argv[optind], "bad number");
@@ -252,6 +264,22 @@ int main(int argc, char *argv[])
 				exit(1);
 			/* otherwise try again */
 			continue;
+		case EIO:
+			/* Probably NFSv4 where flock() is emulated by fcntl().
+			 * Let's try to reopen in read-write mode.
+			 */
+			if (!(open_flags & O_RDWR) &&
+			    type != LOCK_SH &&
+			    access(filename, R_OK | W_OK) == 0) {
+
+				close(fd);
+				open_flags = O_RDWR;
+				fd = open_file(filename, &open_flags);
+
+				if (open_flags & O_RDWR)
+					break;
+			}
+			/* go through */
 		default:
 			/* Other errors */
 			if (filename)
