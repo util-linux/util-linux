@@ -788,13 +788,12 @@ int main(int argc, char ** argv) {
 
 	if (fs_version == 3)
 		magic = MINIX3_SUPER_MAGIC;
-
-	if (fs_version == 2) {
+	else if (fs_version == 2) {
 		if (namelen == 14)
 			magic = MINIX2_SUPER_MAGIC;
 		else
 			magic = MINIX2_SUPER_MAGIC2;
-	} else
+	} else /* fs_version == 1 */
 		if (BLOCKS > MINIX_MAX_INODES)
 			BLOCKS = MINIX_MAX_INODES;
 	setup_tables();
