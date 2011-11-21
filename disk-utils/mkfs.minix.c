@@ -179,6 +179,8 @@ static void super_set_state(void)
 		Super.s_state |= MINIX_VALID_FS;
 		Super.s_state &= ~MINIX_ERROR_FS;
 		break;
+	default: /* v3 */
+		break;
 	}
 }
 
@@ -419,6 +421,8 @@ static void super_set_nzones(void)
 {
 	switch (fs_version) {
 	case 3:
+		Super3.s_zones = BLOCKS;
+		break;
 	case 2:
 		Super.s_zones = BLOCKS;
 		break;
