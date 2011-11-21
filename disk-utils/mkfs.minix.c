@@ -399,8 +399,7 @@ static void make_root_inode_v2_v3 (void) {
 		inode->i_size = 3 * dirsize;
 	else {
 		root_block[2 * dirsize] = '\0';
-		if (fs_version == 2)
-			inode->i_size = 2 * dirsize;
+		inode->i_size = 2 * dirsize;
 	}
 
 	inode->i_mode = S_IFDIR + 0755;
@@ -512,12 +511,14 @@ static void setup_tables(void) {
 	else
 		inodes = ((inodes + MINIX_INODES_PER_BLOCK - 1) &
 			  ~(MINIX_INODES_PER_BLOCK - 1));
-	if (inodes > MINIX_MAX_INODES)
-		inodes = MINIX_MAX_INODES;
+
 	if (fs_version == 3)
 		Super3.s_ninodes = inodes;
-	else
+	else {
 		Super.s_ninodes = inodes;
+		if (inodes > MINIX_MAX_INODES)
+			inodes = MINIX_MAX_INODES;
+	}
 
 	super_set_map_blocks(inodes);
 	imaps = get_nimaps();
