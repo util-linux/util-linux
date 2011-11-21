@@ -729,14 +729,25 @@ int main(int argc, char ** argv) {
 	}
 	check_mount();		/* is it already mounted? */
 	tmp = root_block;
-	*(short *)tmp = 1;
-	strcpy(tmp+2,".");
-	tmp += dirsize;
-	*(short *)tmp = 1;
-	strcpy(tmp+2,"..");
-	tmp += dirsize;
-	*(short *)tmp = 2;
-	strcpy(tmp+2,".badblocks");
+	if (fs_version == 3) {
+		*(uint32_t *)tmp = 1;
+		strcpy(tmp+4,".");
+		tmp += dirsize;
+		*(uint32_t *)tmp = 1;
+		strcpy(tmp+4,"..");
+		tmp += dirsize;
+		*(uint32_t *)tmp = 2;
+		strcpy(tmp+4, ".badblocks");
+	} else {
+		*(uint16_t *)tmp = 1;
+		strcpy(tmp+2,".");
+		tmp += dirsize;
+		*(uint16_t *)tmp = 1;
+		strcpy(tmp+2,"..");
+		tmp += dirsize;
+		*(uint16_t *)tmp = 2;
+		strcpy(tmp+2, ".badblocks");
+	}
 	if (stat(device_name, &statbuf) < 0)
 		err(MKFS_ERROR, _("%s: stat failed"), device_name);
 	if (S_ISBLK(statbuf.st_mode))
