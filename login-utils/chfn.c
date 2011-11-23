@@ -21,8 +21,6 @@
  *
  */
 
-#define _BSD_SOURCE           /* for strcasecmp() */
-
 #include <sys/types.h>
 #include <stdio.h>
 #include <string.h>

@@ -46,9 +46,6 @@
 
 #undef DEBUG
 
-/*  because I use getpwent(), putpwent(), etc... */
-#define _SVID_SOURCE
-
 #include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
