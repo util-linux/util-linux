@@ -1091,7 +1091,8 @@ static void termio_init(struct options *op, struct termios *tp)
 #else
 	tp->c_iflag = 0;
 #endif
-	tp->c_lflag = tp->c_oflag = 0;
+	tp->c_lflag = 0;
+	tp->c_oflag &= OPOST | ONLCR;
 
 	if ((op->flags & F_KEEPCFLAGS) == 0)
 		tp->c_cflag = CS8 | HUPCL | CREAD | (tp->c_cflag & CLOCAL);
