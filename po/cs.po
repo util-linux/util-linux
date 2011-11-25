@@ -8195,7 +8195,7 @@ msgstr "Den svatého Tiba"
 #: misc-utils/findfs.c:24
 #, c-format
 msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
-msgstr "Použití: %s JMENOVKA=<JMENOVKA>|UUID=<UUID>\n"
+msgstr "Použití: %s LABEL=<JMENOVKA>|UUID=<UUID>\n"
 
 #: misc-utils/findfs.c:55 misc-utils/logger.c:94
 #, c-format
