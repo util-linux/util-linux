@@ -21,6 +21,7 @@
 #include "mangle.h"
 #include "canonicalize.h"
 #include "env.h"
+#include "match.h"
 
 int endswith(const char *s, const char *sx)
 {
