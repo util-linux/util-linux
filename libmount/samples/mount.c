@@ -192,7 +192,8 @@ static int mount_all(struct libmnt_context *cxt,
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out, _("Usage:\n"
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(
 		" %1$s [-lhV]\n"
 		" %1$s -a [options]\n"
 		" %1$s [options] <source> | <directory>\n"
@@ -200,8 +201,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" %1$s <operation> <mountpoint> [<target>]\n"),
 		program_invocation_short_name);
 
+	fputs(USAGE_OPTIONS, out);
 	fprintf(out, _(
-	"\nOptions:\n"
 	" -a, --all               mount all filesystems mentioned in fstab\n"
 	" -c, --no-canonicalize   don't canonicalize paths\n"
 	" -f, --fake              dry run; skip the mount(2) syscall\n"
@@ -220,6 +221,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -v, --verbose           say what is being done\n"
 	" -V, --version           display version information and exit\n"
 	" -w, --read-write        mount the filesystem read-write (default)\n"));
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 
 	fprintf(out, _(
 	"\nSource:\n"
@@ -248,7 +253,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" --make-rprivate         recursively mark a whole subtree as private\n"
 	" --make-runbindable      recursively mark a whole subtree as unbindable\n"));
 
-	fprintf(out, _("\nFor more information see mount(8).\n"));
+	fprintf(out, USAGE_MAN_TAIL("mount(8)"));
 
 	exit(out == stderr ? EX_USAGE : EX_SUCCESS);
 }
