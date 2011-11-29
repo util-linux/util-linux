@@ -22,6 +22,7 @@ dist_noinst_HEADERS = \
 	md5.h \
 	minix.h \
 	nls.h \
+	pamfail.h \
 	path.h \
 	pathnames.h \
 	procutils.h \
