@@ -260,6 +260,17 @@ int main(int argc, char **argv)
 	char *types = NULL;
 	unsigned long oper = 0;
 
+	enum {
+		MOUNT_OPT_SHARED = CHAR_MAX + 1,
+		MOUNT_OPT_SLAVE,
+		MOUNT_OPT_PRIVATE,
+		MOUNT_OPT_UNBINDABLE,
+		MOUNT_OPT_RSHARED,
+		MOUNT_OPT_RSLAVE,
+		MOUNT_OPT_RPRIVATE,
+		MOUNT_OPT_RUNBINDABLE
+	};
+
 	static const struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
 		{ "fake", 0, 0, 'f' },
@@ -280,14 +291,14 @@ int main(int argc, char **argv)
 		{ "bind", 0, 0, 'B' },
 		{ "move", 0, 0, 'M' },
 		{ "rbind", 0, 0, 'R' },
-		{ "make-shared", 0, 0, 136 },
-		{ "make-slave", 0, 0, 137 },
-		{ "make-private", 0, 0, 138 },
-		{ "make-unbindable", 0, 0, 139 },
-		{ "make-rshared", 0, 0, 140 },
-		{ "make-rslave", 0, 0, 141 },
-		{ "make-rprivate", 0, 0, 142 },
-		{ "make-runbindable", 0, 0, 143 },
+		{ "make-shared", 0, 0, MOUNT_OPT_SHARED },
+		{ "make-slave", 0, 0, MOUNT_OPT_SLAVE },
+		{ "make-private", 0, 0, MOUNT_OPT_PRIVATE },
+		{ "make-unbindable", 0, 0, MOUNT_OPT_UNBINDABLE },
+		{ "make-rshared", 0, 0, MOUNT_OPT_RSHARED },
+		{ "make-rslave", 0, 0, MOUNT_OPT_RSLAVE },
+		{ "make-rprivate", 0, 0, MOUNT_OPT_RPRIVATE },
+		{ "make-runbindable", 0, 0, MOUNT_OPT_RUNBINDABLE },
 		{ "no-canonicalize", 0, 0, 'c' },
 		{ "internal-only", 0, 0, 'i' },
 		{ "show-labels", 0, 0, 'l' },
@@ -383,28 +394,28 @@ int main(int argc, char **argv)
 		case 'R':
 			oper = (MS_BIND | MS_REC);
 			break;
-		case 136:
+		case MOUNT_OPT_SHARED:
 			oper = MS_SHARED;
 			break;
-		case 137:
+		case MOUNT_OPT_SLAVE:
 			oper = MS_SLAVE;
 			break;
-		case 138:
+		case MOUNT_OPT_PRIVATE:
 			oper = MS_PRIVATE;
 			break;
-		case 139:
+		case MOUNT_OPT_UNBINDABLE:
 			oper = MS_UNBINDABLE;
 			break;
-		case 140:
+		case MOUNT_OPT_RSHARED:
 			oper = (MS_SHARED | MS_REC);
 			break;
-		case 141:
+		case MOUNT_OPT_RSLAVE:
 			oper = (MS_SLAVE | MS_REC);
 			break;
-		case 142:
+		case MOUNT_OPT_RPRIVATE:
 			oper = (MS_PRIVATE | MS_REC);
 			break;
-		case 143:
+		case MOUNT_OPT_RUNBINDABLE:
 			oper = (MS_UNBINDABLE | MS_REC);
 			break;
 		default:
