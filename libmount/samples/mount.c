@@ -31,6 +31,7 @@
 
 #include "nls.h"
 #include "c.h"
+#include "env.h"
 
 /*** TODO: DOCS:
  *
@@ -305,6 +306,7 @@ int main(int argc, char **argv)
 		{ NULL, 0, 0, 0 }
 	};
 
+	sanitize_env();
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
