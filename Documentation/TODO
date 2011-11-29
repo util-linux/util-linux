@@ -26,6 +26,8 @@ libmount (mount/umount)
  features should be implemented to libmount or to the new mount/umount
  implementation in the libmount/samples/ directory.
 
+ - add x-mount-mkdir mount option to libmount to allow "mkdir /mountpoint"
+
  - support MS_PROPAGATION flags in fstab -- note that kernel assumes that
    these flags are not mixed with another mount flags, it means that:
 
