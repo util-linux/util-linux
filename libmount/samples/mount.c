@@ -32,6 +32,7 @@
 #include "nls.h"
 #include "c.h"
 #include "env.h"
+#include "optutils.h"
 
 /*** TODO: DOCS:
  *
@@ -75,7 +76,7 @@ static void __attribute__((__noreturn__)) print_version(void)
 
 	mnt_get_library_version(&ver);
 
-	printf("%s from %s (libmount %s)\n",
+	printf(_("%s from %s (libmount %s)\n"),
 			program_invocation_short_name, PACKAGE_STRING, ver);
 	exit(EX_SUCCESS);
 }
@@ -87,16 +88,6 @@ static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)
 		warnx(_("%s: parse error: ignore entry at line %d."),
 							filename, line);
 	return 0;
-}
-
-static const char *opt_to_longopt(int c, const struct option *opts)
-{
-	const struct option *o;
-
-	for (o = opts; o->name; o++)
-		if (o->val == c)
-			return o->name;
-	return NULL;
 }
 
 static void print_all(struct libmnt_context *cxt, char *pattern, int show_label)
@@ -328,7 +319,7 @@ int main(int argc, char **argv)
 
 		/* only few options are allowed for non-root users */
 		if (mnt_context_is_restricted(cxt) && !strchr("hlLUVv", c))
-			exit_non_root(opt_to_longopt(c, longopts));
+			exit_non_root(option_to_longopt(c, longopts));
 
 		switch(c) {
 		case 'a':
