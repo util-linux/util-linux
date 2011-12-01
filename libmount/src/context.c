@@ -1358,7 +1358,7 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 
 	if (cxt->action == MNT_ACT_UMOUNT)
 		rc = mnt_update_set_fs(cxt->update, cxt->mountflags,
-					mnt_fs_get_target(cxt->fs), NULL);
+					mnt_context_get_target(cxt), NULL);
 	else
 		rc = mnt_update_set_fs(cxt->update, cxt->mountflags,
 					NULL, cxt->fs);

@@ -456,6 +456,9 @@ extern int mnt_context_umount(struct libmnt_context *cxt);
 extern int mnt_context_next_mount(struct libmnt_context *cxt,
 			   struct libmnt_iter *itr, struct libmnt_fs **fs,
 			   int *mntrc, int *ignored);
+extern int mnt_context_next_umount(struct libmnt_context *cxt,
+			   struct libmnt_iter *itr, struct libmnt_fs **fs,
+			   int *mntrc, int *ignored);
 
 extern int mnt_context_prepare_mount(struct libmnt_context *cxt);
 extern int mnt_context_do_mount(struct libmnt_context *cxt);

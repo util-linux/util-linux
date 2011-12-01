@@ -90,17 +90,19 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 		return 0;
 	}
 
-	/* copy from mtab to our FS description
-	 */
-	mnt_fs_set_source(cxt->fs, NULL);
-	mnt_fs_set_target(cxt->fs, NULL);
+	if (fs != cxt->fs) {
+		/* copy from mtab to our FS description
+		 */
+		mnt_fs_set_source(cxt->fs, NULL);
+		mnt_fs_set_target(cxt->fs, NULL);
 
-	if (!mnt_copy_fs(cxt->fs, fs)) {
-		DBG(CXT, mnt_debug_h(cxt, "umount: failed to copy FS"));
-		return -errno;
+		if (!mnt_copy_fs(cxt->fs, fs)) {
+			DBG(CXT, mnt_debug_h(cxt, "umount: failed to copy FS"));
+			return -errno;
+		}
+		DBG(CXT, mnt_debug_h(cxt, "umount: mtab applied"));
 	}
 
-	DBG(CXT, mnt_debug_h(cxt, "umount: mtab applied"));
 	cxt->flags |= MNT_FL_TAB_APPLIED;
 	return rc;
 }
@@ -464,12 +466,9 @@ static int do_umount(struct libmnt_context *cxt)
 	if (!target)
 		return -EINVAL;
 
-	if (cxt->flags & MNT_FL_FAKE)
-		return 0;
-
 	DBG(CXT, mnt_debug_h(cxt, "do umount"));
 
-	if (cxt->restricted) {
+	if (cxt->restricted && !(cxt->flags & MNT_FL_FAKE)) {
 		/*
 		 * extra paranoa for non-root users
 		 * -- chdir to the parent of the mountpoint and use NOFOLLOW
@@ -490,14 +489,18 @@ static int do_umount(struct libmnt_context *cxt)
 	else if (cxt->flags & MNT_FL_FORCE)
 		flags |= MNT_FORCE;
 
-	DBG(CXT, mnt_debug_h(cxt, "umount(2) [target='%s', flags=0x%08x]",
-				target, flags));
+	DBG(CXT, mnt_debug_h(cxt, "umount(2) [target='%s', flags=0x%08x]%s",
+				target, flags,
+				cxt->flags & MNT_FL_FAKE ? " (FAKE)" : ""));
 
-	rc = flags ? umount2(target, flags) : umount(target);
-	if (rc < 0)
-		cxt->syscall_status = -errno;
-
-	free(tgtbuf);
+	if (cxt->flags & MNT_FL_FAKE)
+		rc = 0;
+	else {
+		rc = flags ? umount2(target, flags) : umount(target);
+		if (rc < 0)
+			cxt->syscall_status = -errno;
+		free(tgtbuf);
+	}
 
 	/*
 	 * try remount read-only
@@ -556,7 +559,7 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 
 	if (!cxt || !cxt->fs || (cxt->fs->flags & MNT_FS_SWAP))
 		return -EINVAL;
-	if (!mnt_fs_get_source(cxt->fs) && !mnt_fs_get_target(cxt->fs))
+	if (!mnt_context_get_source(cxt) && !mnt_context_get_target(cxt))
 		return -EINVAL;
 	if (cxt->flags & MNT_FL_PREPARED)
 		return 0;
@@ -719,6 +722,8 @@ int mnt_context_umount(struct libmnt_context *cxt)
 	assert(cxt->helper_exec_status == 1);
 	assert(cxt->syscall_status == 1);
 
+	DBG(CXT, mnt_debug_h(cxt, "umount: %s", mnt_context_get_target(cxt)));
+
 	rc = mnt_context_prepare_umount(cxt);
 	if (!rc)
 		rc = mnt_context_prepare_update(cxt);
@@ -727,4 +732,96 @@ int mnt_context_umount(struct libmnt_context *cxt)
 	if (!rc)
 		rc = mnt_context_update_tabs(cxt);
 	return rc;
+}
+
+
+/**
+ * mnt_context_next_umount:
+ * @cxt: context
+ * @itr: iterator
+ * @fs: returns the current filesystem
+ * @mntrc: returns the return code from mnt_context_umount()
+ * @ignored: returns 1 for not matching
+ *
+ * This function tries to umount the next filesystem from mtab (as returned by
+ * mnt_context_get_mtab()).
+ *
+ * You can filter out filesystems by:
+ *	mnt_context_set_options_pattern() to simulate umount -a -O pattern
+ *	mnt_context_set_fstype_pattern()  to simulate umount -a -t pattern
+ *
+ * If the filesystem is not mounted or does not match defined criteria,
+ * then the function mnt_context_next_umount() returns zero, but the @ignored is
+ * non-zero. Note that the root filesystem is always ignored.
+ *
+ * If umount(2) syscall or umount.type helper failed, then the
+ * mnt_context_next_umount() function returns zero, but the @mntrc is non-zero.
+ * Use also mnt_context_get_status() to check if the filesystem was
+ * successfully umounted.
+ *
+ * Returns: 0 on success,
+ *         <0 in case of error (!= umount(2) errors)
+ *          1 at the end of the list.
+ */
+int mnt_context_next_umount(struct libmnt_context *cxt,
+			   struct libmnt_iter *itr,
+			   struct libmnt_fs **fs,
+			   int *mntrc,
+			   int *ignored)
+{
+	struct libmnt_table *mtab;
+	const char *tgt;
+	int rc;
+
+	if (ignored)
+		*ignored = 0;
+	if (mntrc)
+		*mntrc = 0;
+
+	if (!cxt || !fs || !itr)
+		return -EINVAL;
+
+	mnt_context_get_mtab(cxt, &mtab);
+	cxt->mtab = NULL;		/* do not reset mtab */
+	mnt_reset_context(cxt);
+	cxt->mtab = mtab;
+
+	do {
+		rc = mnt_table_next_fs(mtab, itr, fs);
+		if (rc != 0)
+			return rc;	/* no more filesystems (or error) */
+
+		tgt = mnt_fs_get_target(*fs);
+	} while (!tgt);
+
+	DBG(CXT, mnt_debug_h(cxt, "next-umount: trying %s", tgt));
+
+	/* ignore root filesystem */
+	if ((tgt && (strcmp(tgt, "/") == 0 || strcmp(tgt, "root") == 0)) ||
+
+	/* ignore filesystems not match with options patterns */
+	   (cxt->fstype_pattern && !mnt_fs_match_fstype(*fs,
+					cxt->fstype_pattern)) ||
+
+	/* ignore filesystems not match with type patterns */
+	   (cxt->optstr_pattern && !mnt_fs_match_options(*fs,
+					cxt->optstr_pattern))) {
+		if (ignored)
+			*ignored = 1;
+		DBG(CXT, mnt_debug_h(cxt, "next-umount: not-match "
+				"[fstype: %s, t-pattern: %s, options: %s, O-pattern: %s]",
+				mnt_fs_get_fstype(*fs),
+				cxt->fstype_pattern,
+				mnt_fs_get_options(*fs),
+				cxt->optstr_pattern));
+		return 0;
+	}
+
+	rc = mnt_context_set_fs(cxt, *fs);
+	if (rc)
+		return rc;
+	rc = mnt_context_umount(cxt);
+	if (mntrc)
+		*mntrc = rc;
+	return 0;
 }

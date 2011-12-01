@@ -205,3 +205,8 @@ global:
 	mnt_tabdiff_next_change;
 	mnt_table_is_fs_mounted;
 } MOUNT_2.19;
+
+MOUNT_2.21 {
+global:
+	mnt_context_next_umount;
+} MOUNT_2.20;
