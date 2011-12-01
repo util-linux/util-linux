@@ -62,14 +62,12 @@
 #include "nls.h"
 #include "c.h"
 
-#ifdef HAVE_LIBUTIL
-# ifdef HAVE_PTY_H
-#  include <pty.h>
-# endif
+#if defined(HAVE_LIBUTIL) && defined(HAVE_PTY_H)
+# include <pty.h>
 #endif
 
 #ifdef HAVE_LIBUTEMPTER
-#include <utempter.h>
+# include <utempter.h>
 #endif
 
 #define DEFAULT_OUTPUT "typescript"
@@ -501,15 +499,13 @@ done(void) {
 
 void
 getmaster(void) {
-#ifdef HAVE_LIBUTIL
-# ifdef HAVE_PTY_H
+#if defined(HAVE_LIBUTIL) && defined(HAVE_PTY_H)
 	tcgetattr(STDIN_FILENO, &tt);
 	ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&win);
 	if (openpty(&master, &slave, NULL, &tt, &win) < 0) {
 		warn(_("openpty failed"));
 		fail();
 	}
-# endif
 #else
 	char *pty, *bank, *cp;
 	struct stat stb;
