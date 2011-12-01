@@ -259,7 +259,10 @@ static int check_option(const char *haystack, size_t len,
 	const char *p;
 	int no = 0;
 
-	if (needle_len >= 2 && !strncmp(needle, "no", 2)) {
+	if (needle_len >= 1 && *needle == '+') {
+		needle++;
+		needle_len--;
+	} else if (needle_len >= 2 && !strncmp(needle, "no", 2)) {
 		no = 1;
 		needle += 2;
 		needle_len -= 2;
@@ -291,9 +294,19 @@ static int check_option(const char *haystack, size_t len,
  * Unlike fs type matching, nonetdev,user and nonetdev,nouser have
  * DIFFERENT meanings; each option is matched explicitly as specified.
  *
+ * The "no" prefix interpretation could be disable by "+" prefix, for example
+ * "+noauto" matches if @optstr literally contains "noauto" string.
+ *
  * "xxx,yyy,zzz" : "nozzz"	-> False
  *
  * "xxx,yyy,zzz" : "xxx,noeee"	-> True
+ *
+ * "bar,zzz"     : "nofoo"      -> True
+ *
+ * "nofoo,bar"   : "+nofoo"     -> True
+ *
+ * "bar,zzz"     : "+nofoo"     -> False
+ *
  *
  * Returns: 1 if pattern is matching, else 0. This function also returns 0
  *          if @pattern is NULL and @optstr is non-NULL.
