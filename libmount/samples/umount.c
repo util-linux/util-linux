@@ -108,9 +108,42 @@ static void __attribute__((__noreturn__)) exit_non_root(const char *option)
 	errx(EXIT_FAILURE, _("only root can do that"));
 }
 
-static int umount_all(struct libmnt_context *cxt __attribute__((__unused__)))
+static int umount_all(struct libmnt_context *cxt)
 {
-	return -1;	/* TODO */
+	struct libmnt_iter *itr;
+	struct libmnt_fs *fs;
+	int mntrc, ignored, rc = 0;
+
+	itr = mnt_new_iter(MNT_ITER_BACKWARD);
+	if (!itr) {
+		warn(_("failed to initialize libmount iterator"));
+		return -ENOMEM;
+	}
+
+	while (mnt_context_next_umount(cxt, itr, &fs, &mntrc, &ignored) == 0) {
+
+		const char *tgt = mnt_fs_get_target(fs);
+
+		if (ignored) {
+			if (mnt_context_is_verbose(cxt))
+				printf(_("%-25s: ignored\n"), tgt);
+		} else if (!mnt_context_get_status(cxt)) {
+			if (mntrc > 0) {
+				errno = mntrc;
+				printf(_("%-25s: failed: %s\n"), tgt,
+						strerror(mntrc));
+			} else
+				printf(_("%-25s: failed\n"), tgt);
+			rc |= 1;
+		} else {
+			if (mnt_context_is_verbose(cxt))
+				printf("%-25s: successfully umounted\n", tgt);
+
+			rc |= 0;
+		}
+	}
+
+	return rc;
 }
 
 static int umount_one(struct libmnt_context *cxt, const char *spec)
@@ -134,7 +167,7 @@ static int umount_one(struct libmnt_context *cxt, const char *spec)
 
 int main(int argc, char **argv)
 {
-	int c, rc, all = 0;
+	int c, rc = 0, all = 0;
 	struct libmnt_context *cxt;
 	char *types = NULL;
 
