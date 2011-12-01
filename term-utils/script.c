@@ -62,8 +62,10 @@
 #include "nls.h"
 #include "c.h"
 
-#if HAVE_LIBUTIL && HAVE_PTY_H
-#include <pty.h>
+#ifdef HAVE_LIBUTIL
+# ifdef HAVE_PTY_H
+#  include <pty.h>
+# endif
 #endif
 
 #ifdef HAVE_LIBUTEMPTER
@@ -499,13 +501,15 @@ done(void) {
 
 void
 getmaster(void) {
-#if HAVE_LIBUTIL && HAVE_PTY_H
+#ifdef HAVE_LIBUTIL
+# ifdef HAVE_PTY_H
 	tcgetattr(STDIN_FILENO, &tt);
 	ioctl(STDIN_FILENO, TIOCGWINSZ, (char *)&win);
 	if (openpty(&master, &slave, NULL, &tt, &win) < 0) {
 		warn(_("openpty failed"));
 		fail();
 	}
+# endif
 #else
 	char *pty, *bank, *cp;
 	struct stat stb;

@@ -19,13 +19,13 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#if HAVE_ERRNO_H
+#ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
 
 #include "blkidP.h"
 
-#if HAVE_STDLIB_H
+#ifdef HAVE_STDLIB_H
 # ifndef _XOPEN_SOURCE
 #  define _XOPEN_SOURCE 600	/* for inclusion of strtoull */
 # endif
