@@ -157,22 +157,22 @@ static int mount_all(struct libmnt_context *cxt,
 
 		if (ignored) {
 			if (mnt_context_is_verbose(cxt))
-				printf(ignored == 1 ? _("%-20s: ignored\n") :
-						      _("%-20s: already mounted\n"),
+				printf(ignored == 1 ? _("%-25s: ignored\n") :
+						      _("%-25s: already mounted\n"),
 						tgt);
 		} else if (!mnt_context_get_status(cxt)) {
 			if (mntrc > 0) {
 				errno = mntrc;
-				printf(_("%-20s: failed: %s\n"), tgt,
+				printf(_("%-25s: failed: %s\n"), tgt,
 						strerror(mntrc));
 				rc |= EX_FAIL;
 			} else {
-				printf(_("%-20s: failed\n"), tgt);
+				printf(_("%-25s: failed\n"), tgt);
 				rc |= EX_SYSERR;
 			}
 		} else {
 			if (mnt_context_is_verbose(cxt))
-				printf("%-20s: successfully mounted\n", tgt);
+				printf("%-25s: successfully mounted\n", tgt);
 
 			rc |= EX_SOMEOK;
 		}
