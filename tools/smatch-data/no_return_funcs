@@ -9,3 +9,4 @@ terminate_intr
 usage
 err
 errx
+log_err
