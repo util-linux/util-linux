@@ -136,10 +136,8 @@ static void print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 
 /*
  * mount -a [-F]
- * ... -F is not supported yet (TODO)
  */
-static int mount_all(struct libmnt_context *cxt,
-		     int forkme __attribute__((unused)))
+static int mount_all(struct libmnt_context *cxt)
 {
 	struct libmnt_iter *itr;
 	struct libmnt_fs *fs;
@@ -160,22 +158,37 @@ static int mount_all(struct libmnt_context *cxt,
 				printf(ignored == 1 ? _("%-25s: ignored\n") :
 						      _("%-25s: already mounted\n"),
 						tgt);
-		} else if (!mnt_context_get_status(cxt)) {
-			if (mntrc > 0) {
-				errno = mntrc;
-				printf(_("%-25s: failed: %s\n"), tgt,
-						strerror(mntrc));
-				rc |= EX_FAIL;
-			} else {
-				printf(_("%-25s: failed\n"), tgt);
-				rc |= EX_SYSERR;
-			}
-		} else {
-			if (mnt_context_is_verbose(cxt))
-				printf("%-25s: successfully mounted\n", tgt);
 
-			rc |= EX_SOMEOK;
+		} else if (mnt_context_is_fork(cxt)) {
+			printf("%-25s: mount successfully forked\n", tgt);
+
+		} else {
+			if (!mnt_context_get_status(cxt)) {
+				if (mntrc > 0) {
+					errno = mntrc;
+					printf(_("%-25s: failed: %s\n"), tgt,
+							strerror(mntrc));
+					rc |= EX_FAIL;
+				} else {
+					printf(_("%-25s: failed\n"), tgt);
+					rc |= EX_SYSERR;
+				}
+			} else {
+				if (mnt_context_is_verbose(cxt))
+					printf("%-25s: successfully mounted\n", tgt);
+
+				rc |= EX_SOMEOK;
+			}
 		}
+	}
+
+	if (mnt_context_is_parent(cxt)) {
+		/* wait for mount --fork children */
+		int nerrs = 0, nchildren = 0;
+
+		rc = mnt_context_wait_for_children(cxt, &nchildren, &nerrs);
+		if (!rc && nchildren)
+			rc = nchildren == nerrs ? EX_FAIL : EX_SOMEOK;
 	}
 
 	return rc;
@@ -251,7 +264,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 int main(int argc, char **argv)
 {
-	int c, rc = EX_SUCCESS, all = 0, forkme = 0, show_labels = 0;
+	int c, rc = EX_SUCCESS, all = 0, show_labels = 0;
 	struct libmnt_context *cxt;
 	char *source = NULL, *srcbuf = NULL;
 	char *types = NULL;
@@ -332,7 +345,7 @@ int main(int argc, char **argv)
 			mnt_context_enable_fake(cxt, TRUE);
 			break;
 		case 'F':
-			forkme = 1;
+			mnt_context_enable_fork(cxt, TRUE);
 			break;
 		case 'h':
 			usage(stdout);
@@ -445,7 +458,7 @@ int main(int argc, char **argv)
 		/*
 		 * A) Mount all
 		 */
-		rc = mount_all(cxt, forkme);
+		rc = mount_all(cxt);
 		goto done;
 
 	} else if (argc == 0 && source) {

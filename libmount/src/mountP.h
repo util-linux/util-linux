@@ -61,12 +61,16 @@
 
 # define DBG(m, x)	do { \
 				if ((MNT_DEBUG_ ## m) & libmount_debug_mask) { \
-					fprintf(stderr, "libmount: %8s: ", # m); \
+					fprintf(stderr, "%d: libmount: %8s: ", getpid(), # m); \
 					x; \
 				} \
 			} while (0)
 
-# define DBG_FLUSH	do { fflush(stderr); } while(0)
+# define DBG_FLUSH	do { \
+				if (libmount_debug_mask && \
+				    libmount_debug_mask != MNT_DEBUG_INIT) \
+					fflush(stderr); \
+			} while(0)
 
 extern int libmount_debug_mask;
 
@@ -299,6 +303,11 @@ struct libmnt_context
 
 	char	*orig_user;	/* original (non-fixed) user= option */
 
+	pid_t	*children;	/* "mount -a --fork" PIDs */
+	int	nchildren;	/* number of children */
+	pid_t	pid;		/* 0=parent; PID=child */
+
+
 	int	syscall_status;	/* 1: not called yet, 0: success, <0: -errno */
 };
 
@@ -313,6 +322,7 @@ struct libmnt_context
 #define MNT_FL_FORCE		(1 << 8)
 #define MNT_FL_NOCANONICALIZE	(1 << 9)
 #define MNT_FL_RDONLY_UMOUNT	(1 << 11)	/* remount,ro after EBUSY umount(2) */
+#define MNT_FL_FORK		(1 << 12)
 
 #define MNT_FL_EXTERN_FS	(1 << 15)	/* cxt->fs is not private */
 #define MNT_FL_EXTERN_FSTAB	(1 << 16)	/* cxt->fstab is not private */
@@ -369,6 +379,8 @@ extern int mnt_context_is_loopdev(struct libmnt_context *cxt);
 extern int mnt_context_setup_loopdev(struct libmnt_context *cxt);
 extern int mnt_context_delete_loopdev(struct libmnt_context *cxt);
 extern int mnt_context_clear_loopdev(struct libmnt_context *cxt);
+
+extern int mnt_fork_context(struct libmnt_context *cxt);
 
 /* tab_update.c */
 extern struct libmnt_fs *mnt_update_get_fs(struct libmnt_update *upd);

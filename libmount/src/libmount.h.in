@@ -390,6 +390,7 @@ extern int mnt_context_disable_mtab(struct libmnt_context *cxt, int disable);
 extern int mnt_context_enable_force(struct libmnt_context *cxt, int enable);
 extern int mnt_context_enable_verbose(struct libmnt_context *cxt, int enable);
 extern int mnt_context_enable_loopdel(struct libmnt_context *cxt, int enable);
+extern int mnt_context_enable_fork(struct libmnt_context *cxt, int enable);
 
 extern int mnt_context_get_optsmode(struct libmnt_context *cxt);
 extern int mnt_context_is_lazy(struct libmnt_context *cxt);
@@ -399,6 +400,13 @@ extern int mnt_context_is_fake(struct libmnt_context *cxt);
 extern int mnt_context_is_nomtab(struct libmnt_context *cxt);
 extern int mnt_context_is_force(struct libmnt_context *cxt);
 extern int mnt_context_is_verbose(struct libmnt_context *cxt);
+
+extern int mnt_context_is_fork(struct libmnt_context *cxt);
+extern int mnt_context_is_parent(struct libmnt_context *cxt);
+extern int mnt_context_is_child(struct libmnt_context *cxt);
+
+extern int mnt_context_wait_for_children(struct libmnt_context *cxt,
+                                  int *nchildren, int *nerrs);
 
 extern int mnt_context_is_fs_mounted(struct libmnt_context *cxt,
                               struct libmnt_fs *fs, int *mounted);

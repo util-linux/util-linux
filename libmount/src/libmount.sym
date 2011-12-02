@@ -208,5 +208,10 @@ global:
 
 MOUNT_2.21 {
 global:
+	mnt_context_enable_fork;
+	mnt_context_is_child;
+	mnt_context_is_fork;
+	mnt_context_is_parent;
 	mnt_context_next_umount;
+	mnt_context_wait_for_children;
 } MOUNT_2.20;

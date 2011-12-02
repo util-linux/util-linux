@@ -33,6 +33,8 @@
 
 #include "mountP.h"
 
+#include <sys/wait.h>
+
 /**
  * mnt_new_context:
  *
@@ -93,6 +95,8 @@ void mnt_free_context(struct libmnt_context *cxt)
 	mnt_context_clear_loopdev(cxt);
 	mnt_free_lock(cxt->lock);
 	mnt_free_update(cxt->update);
+
+	free(cxt->children);
 
 	DBG(CXT, mnt_debug_h(cxt, "<---- free"));
 	free(cxt);
@@ -161,6 +165,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->flags |= (fl & MNT_FL_NOHELPERS);
 	cxt->flags |= (fl & MNT_FL_LOOPDEL);
 	cxt->flags |= (fl & MNT_FL_LAZY);
+	cxt->flags |= (fl & MNT_FL_FORK);
 	cxt->flags |= (fl & MNT_FL_FORCE);
 	cxt->flags |= (fl & MNT_FL_NOCANONICALIZE);
 	cxt->flags |= (fl & MNT_FL_RDONLY_UMOUNT);
@@ -171,10 +176,13 @@ static int set_flag(struct libmnt_context *cxt, int flag, int enable)
 {
 	if (!cxt)
 		return -EINVAL;
-	if (enable)
+	if (enable) {
+		DBG(CXT, mnt_debug_h(cxt, "enabling flag %04x", flag));
 		cxt->flags |= flag;
-	else
+	} else {
+		DBG(CXT, mnt_debug_h(cxt, "disabling flag %04x", flag));
 		cxt->flags &= ~flag;
+	}
 	return 0;
 }
 
@@ -251,6 +259,21 @@ int mnt_context_disable_canonicalize(struct libmnt_context *cxt, int disable)
 int mnt_context_enable_lazy(struct libmnt_context *cxt, int enable)
 {
 	return set_flag(cxt, MNT_FL_LAZY, enable);
+}
+
+/**
+ * mnt_context_enable_fork:
+ * @cxt: mount context
+ * @enable: TRUE or FALSE
+ *
+ * Enable/disable fork(2) call in mnt_context_next_mount() (see mount(8) man
+ * page, option -F).
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_enable_fork(struct libmnt_context *cxt, int enable)
+{
+	return set_flag(cxt, MNT_FL_FORK, enable);
 }
 
 /**
@@ -1681,6 +1704,116 @@ int mnt_context_is_fs_mounted(struct libmnt_context *cxt,
 
 	*mounted = mnt_table_is_fs_mounted(mtab, fs);
 	return 0;
+}
+
+static int mnt_context_add_child(struct libmnt_context *cxt, pid_t pid)
+{
+	pid_t *pids;
+
+	if (!cxt)
+		return -EINVAL;
+
+	pids = realloc(cxt->children, sizeof(pid_t) * cxt->nchildren + 1);
+	if (!pids)
+		return -ENOMEM;
+
+	DBG(CXT, mnt_debug_h(cxt, "add new child %d", pid));
+	cxt->children = pids;
+	cxt->children[cxt->nchildren++] = pid;
+
+	return 0;
+}
+
+int mnt_fork_context(struct libmnt_context *cxt)
+{
+	int rc = 0;
+	pid_t pid;
+
+	if (!mnt_context_is_parent(cxt))
+		return -EINVAL;
+
+	DBG(CXT, mnt_debug_h(cxt, "forking context"));
+
+	DBG_FLUSH;
+
+	pid = fork();
+
+	switch (pid) {
+	case -1: /* error */
+		DBG(CXT, mnt_debug_h(cxt, "fork failed %m"));
+		return -errno;
+
+	case 0: /* child */
+		cxt->pid = getpid();
+		cxt->flags &= ~MNT_FL_FORK;
+		DBG(CXT, mnt_debug_h(cxt, "child created"));
+		break;
+
+	default:
+		rc = mnt_context_add_child(cxt, pid);
+		break;
+	}
+
+	return rc;
+}
+
+int mnt_context_wait_for_children(struct libmnt_context *cxt,
+				  int *nchildren, int *nerrs)
+{
+	int i;
+
+	if (!cxt)
+		return -EINVAL;
+
+	assert(mnt_context_is_parent(cxt));
+
+	for (i = 0; i < cxt->nchildren; i++) {
+		pid_t pid = cxt->children[i];
+		int rc = 0, ret = 0;
+
+		if (!pid)
+			continue;
+		do {
+			DBG(CXT, mnt_debug_h(cxt,
+					"waiting for child (%d/%d): %d",
+					i + 1, cxt->nchildren, pid));
+			errno = 0;
+			rc = waitpid(pid, &ret, 0);
+
+		} while (rc == -1 && errno == EINTR);
+
+		if (nchildren)
+			(*nchildren)++;
+
+		if (rc != -1 && nerrs) {
+			if (WIFEXITED(ret))
+				(*nerrs) += WEXITSTATUS(ret) == 0 ? 0 : 1;
+			else
+				(*nerrs)++;
+		}
+		cxt->children[i] = 0;
+	}
+
+	cxt->nchildren = 0;
+	free(cxt->children);
+	cxt->children = NULL;
+	return 0;
+}
+
+int mnt_context_is_fork(struct libmnt_context *cxt)
+{
+	return cxt && (cxt->flags & MNT_FL_FORK);
+}
+
+
+int mnt_context_is_parent(struct libmnt_context *cxt)
+{
+	return mnt_context_is_fork(cxt) && cxt->pid == 0;
+}
+
+int mnt_context_is_child(struct libmnt_context *cxt)
+{
+	return !mnt_context_is_fork(cxt) && cxt->pid;
 }
 
 #ifdef TEST_PROGRAM

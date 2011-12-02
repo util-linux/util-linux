@@ -762,12 +762,30 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 		return 0;
 	}
 
+	if (mnt_context_is_fork(cxt)) {
+		rc = mnt_fork_context(cxt);
+		if (rc)
+			return rc;		/* fork error */
+
+		if (mnt_context_is_parent(cxt)) {
+			return 0;		/* parent */
+		}
+	}
+
+	/* child or non-forked */
+
 	rc = mnt_context_set_fs(cxt, *fs);
-	if (rc)
-		return rc;
-	rc = mnt_context_mount(cxt);
-	if (mntrc)
-		*mntrc = rc;
+	if (!rc) {
+		rc = mnt_context_mount(cxt);
+		if (mntrc)
+			*mntrc = rc;
+	}
+
+	if (mnt_context_is_child(cxt)) {
+		DBG(CXT, mnt_debug_h(cxt, "next-mount: child exit [rc=%d]", rc));
+		DBG_FLUSH;
+		exit(rc);
+	}
 	return 0;
 }
 
