@@ -592,16 +592,14 @@ static blkid_partlist get_partlist(blkid_probe pr,
 	}
 
 	tab = blkid_partlist_get_table(ls);
-	if (verbose && tab)
+	if (verbose && tab) {
 		printf(_("%s: partition table type '%s' detected\n"),
-		       device, blkid_parttable_get_type(tab));
+			       device, blkid_parttable_get_type(tab));
 
-	if (!blkid_partlist_numof_partitions(ls)) {
-		warnx(_("%s: %s partition table does not contains "
-			"usable partitions"), device,
-			blkid_parttable_get_type(tab));
-		return NULL;
+		if (!blkid_partlist_numof_partitions(ls))
+			printf(_("%s: partition table with no partitions"), device);
 	}
+
 	return ls;
 }
 
