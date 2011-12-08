@@ -614,7 +614,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	      _(" %s [-a|-d|-s] [--nr <n:m> | <partition>] <disk>\n"),
 		program_invocation_short_name);
 
-	fputs(_("\nOptions:\n"), out);
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --add            add specified partitions or all of them\n"
 		" -d, --delete         delete specified partitions or all of them\n"
 		" -l, --list           list partitions (DEPRECATED)\n"
@@ -622,12 +622,16 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 		" -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 		" -g, --noheadings     don't print headings for --show\n"
+		" -n, --nr <n:m>       specify the range of partitions (e.g. --nr 2:4)\n"
+		" -o, --output <type>  define which output columns to use\n"
 		" -P, --pairs          use key=\"value\" output format\n"
 		" -r, --raw            use raw output format\n"
 		" -t, --type <type>    specify the partition type (dos, bsd, solaris, etc.)\n"
-		" -n, --nr <n:m>       specify the range of partitions (e.g. --nr 2:4)\n"
-		" -o, --output <type>  define which output columns to use\n"
-		" -h, --help           print this help\n"), out);
+		" -v, --verbose        verbose mode\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 
 	fputs(_("\nAvailable columns (for --show, --raw or --pairs):\n"), out);
 
@@ -667,6 +671,7 @@ int main(int argc, char **argv)
 		{ "output",	required_argument, NULL, 'o' },
 		{ "pairs",      no_argument,       NULL, 'P' },
 		{ "help",	no_argument,       NULL, 'h' },
+		{ "verbose",	no_argument,       NULL, 'v' },
 		{ NULL, 0, NULL, 0 }
 	};
 
