@@ -281,7 +281,7 @@ main(int argc, char **argv) {
 			}
 		}
 		if (p != buf) {
-		    if (!usock)
+		    if (!usock && !udpserver)
 			syslog(pri, "%s", buf);
 		    else
 			mysyslog(LogSock, logflags, pri, tag, buf);
@@ -295,13 +295,13 @@ main(int argc, char **argv) {
 		    if (len > 0 && buf[len - 1] == '\n')
 			    buf[len - 1] = '\0';
 
-		    if (!usock)
+		    if (!usock && !udpserver)
 			syslog(pri, "%s", buf);
 		    else
 			mysyslog(LogSock, logflags, pri, tag, buf);
 		}
 	}
-	if (!usock)
+	if (!usock && !udpserver)
 		closelog();
 	else
 		close(LogSock);
