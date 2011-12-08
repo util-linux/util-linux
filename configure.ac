@@ -862,12 +862,22 @@ ruman1dir='${mandir}/ru/man1'
 AC_SUBST([ruman1dir])
 
 
+AC_ARG_ENABLE([eject],
+  AS_HELP_STRING([--disable-eject], [do not build eject]),
+  [], enable_eject=yes
+)
+UL_BUILD_INIT([eject])
+UL_REQUIRES_LINUX([eject])
+
+
 AC_ARG_ENABLE([agetty],
   AS_HELP_STRING([--disable-agetty], [do not build agetty]),
   [], enable_agetty=yes
 )
 UL_BUILD_INIT([agetty])
 AM_CONDITIONAL(BUILD_AGETTY, test "x$build_agetty" = xyes)
+
+
 
 
 AC_ARG_ENABLE([cramfs],

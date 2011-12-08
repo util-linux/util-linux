@@ -32,6 +32,12 @@ dist_man_MANS = \
 
 namei_SOURCES = namei.c $(top_srcdir)/lib/strutils.c
 
+
+usrbin_exec_PROGRAMS += eject
+eject_SOURCES = eject.c
+dist_man_MANS += eject.1
+
+
 if BUILD_DDATE
 usrbin_exec_PROGRAMS += ddate
 dist_man_MANS += ddate.1
