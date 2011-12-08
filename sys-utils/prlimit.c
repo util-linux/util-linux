@@ -450,7 +450,7 @@ static int parse_prlim(struct rlimit *lim, char *ops, size_t id)
 	return found;
 }
 
-static struct prlimit *add_prlim(char *ops, struct list_head *lims, size_t id)
+static int add_prlim(char *ops, struct list_head *lims, size_t id)
 {
 	struct prlimit *lim = calloc(1, sizeof(*lim));
 
