@@ -925,7 +925,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 
 		if (((tid = tcgetsid(fd)) < 0) || (pid != tid)) {
 			if (ioctl(fd, TIOCSCTTY, 1) == -1)
-				log_err("/dev/%s: cannot get controlling tty: %m", tty);
+				log_warn("/dev/%s: cannot get controlling tty: %m", tty);
 		}
 
 		if (op->flags & F_HANGUP) {
@@ -950,7 +950,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 			log_err(_("/dev/%s: cannot open as standard input: %m"), tty);
 		if (((tid = tcgetsid(STDIN_FILENO)) < 0) || (pid != tid)) {
 			if (ioctl(STDIN_FILENO, TIOCSCTTY, 1) == -1)
-				log_err("/dev/%s: cannot get controlling tty: %m", tty);
+				log_warn("/dev/%s: cannot get controlling tty: %m", tty);
 		}
 
 	} else {
