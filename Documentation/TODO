@@ -9,6 +9,27 @@ dmesg
 
  - add --color to colorize err and panic messages
 
+hwclock
+-------
+
+ - (!!!) add "hwclock -c|--compare" to provide info about RTC frequency offset
+   like "adjtimex -c", shell version:
+
+	#!/bin/bash
+	date > /dev/null
+	hwdate=$(hwclock -r)
+	time1_sys=$(date +'%s.%N')
+	time1_hw=$(date -d "${hwdate% -*}" +'%s')
+
+	while sleep 10; do
+	    hwdate=$(hwclock -r)
+	    time2_sys=$(date +'%s.%N')
+	    time2_hw=$(date -d "${hwdate% -*}" +'%s')
+	    awk "END { x = (($time1_hw - $time1_sys) - ($time2_hw - $time2_sys)) /
+	($time2_hw - $time1_hw); printf \"sysclock/RTC frequency offset: %.0f ppm (%.0f
+	ticks)\n\", x * 1e6, x * 1e4}" < /dev/null
+	done
+
 ldattach
 --------
 
