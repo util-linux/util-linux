@@ -770,7 +770,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, _(
 	"\nOptions:\n"
-	" -s, --fstab            search in static table of filesystems\n"
+	" -s, --fstab[=<fstab>]  search in static table of filesystems\n"
 	" -m, --mtab             search in table of mounted filesystems\n"
 	" -k, --kernel           search in kernel table of mounted\n"
         "                          filesystems (default)\n\n"));
@@ -839,7 +839,7 @@ int main(int argc, char *argv[])
 	    { "direction",    1, 0, 'd' },
 	    { "evaluate",     0, 0, 'e' },
 	    { "first-only",   0, 0, 'f' },
-	    { "fstab",        0, 0, 's' },
+	    { "fstab",        2, 0, 's' },
 	    { "help",         0, 0, 'h' },
 	    { "invert",       0, 0, 'i' },
 	    { "kernel",       0, 0, 'k' },
@@ -872,7 +872,8 @@ int main(int argc, char *argv[])
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"acd:ehifo:O:p::Pklmnrst:uvRS:T:w:", longopts, NULL)) != -1) {
+				"acd:ehifo:O:p::Pklmnrs::t:uvRS:T:w:",
+				longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			tt_flags |= TT_FL_ASCII;
@@ -938,7 +939,7 @@ int main(int argc, char *argv[])
 		case 's':		/* fstab */
 			if (tabfile)
 				errx_mutually_exclusive("--{fstab,mtab,kernel}");
-			tabfile = _PATH_MNTTAB;
+			tabfile = optarg ? optarg : _PATH_MNTTAB;
 			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 'k':		/* kernel (mountinfo) */

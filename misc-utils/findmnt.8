@@ -36,12 +36,14 @@ The command prints all mounted filesystems in the tree-like format by default.
 .SH OPTIONS
 .IP "\fB\-h, \-\-help\fP"
 Print help and exit.
-.IP "\fB\-s, \-\-fstab\fP"
+.IP "\fB\-s, \-\-fstab\fR[\fI=fstab\fR]\fP"
 Search in
 .IR /etc/fstab
 and
 .IR /etc/fstab.d .
-The output is in the list format (see --list).
+The output is in the list format (see --list). Optionally, search the file
+specified by
+.IR fstab .
 .IP "\fB\-m, \-\-mtab\fP"
 Search in
 .IR /etc/mtab .
