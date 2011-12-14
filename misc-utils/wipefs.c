@@ -132,10 +132,7 @@ add_offset(struct wipe_desc *wp0, loff_t offset, int zap)
 		wp = wp->next;
 	}
 
-	wp = calloc(1, sizeof(struct wipe_desc));
-	if (!wp)
-		err(EXIT_FAILURE, _("calloc failed"));
-
+	wp = xcalloc(1, sizeof(struct wipe_desc));
 	wp->offset = offset;
 	wp->next = wp0;
 	wp->zap = zap;
