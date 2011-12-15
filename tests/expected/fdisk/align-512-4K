@@ -1,15 +1,15 @@
 Create partitions
-Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel
-
-Warning: invalid flag 0x0000 of partition table 4 will be corrected by w(rite)
-
-The device presents a logical sector size that is smaller than
-the physical sector size. Aligning to a physical sector (or optimal
-I/O) size boundary is recommended, or performance may be impacted.
 
 
 Changes will remain in memory only, until you decide to write them.
 Be careful before using the write command.
+
+Device does not contain a recognized partition table
+
+
+The device presents a logical sector size that is smaller than
+the physical sector size. Aligning to a physical sector (or optimal
+I/O) size boundary is recommended, or performance may be impacted.
 
 Command (m for help): Partition type:
    p   primary (0 primary, 0 extended, 4 free)
