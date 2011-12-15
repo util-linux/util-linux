@@ -361,7 +361,7 @@ static void reset_partlist(blkid_partlist ls)
 	ls->next_partno = 1;
 	INIT_LIST_HEAD(&ls->l_tabs);
 
-	DBG(DEBUG_LOWPROBE, printf("partlist reseted\n"));
+	DBG(DEBUG_LOWPROBE, printf("partlist reset\n"));
 }
 
 static blkid_partlist partitions_init_data(struct blkid_chain *chn)
@@ -673,7 +673,7 @@ int blkid_partitions_do_subprobe(blkid_probe pr, blkid_partition parent,
 
 	blkid_probe_set_dimension(prc, off, sz);
 
-	/* clone is always with reseted chain, fix it */
+	/* clone is always with reset chain, fix it */
 	prc->cur_chain = blkid_probe_get_chain(pr);
 
 	/*

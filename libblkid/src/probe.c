@@ -21,7 +21,7 @@
  * The probing routines is possible to filter (enable/disable) by type (e.g.
  * fstype "vfat" or partype "gpt") or by usage flags (e.g. BLKID_USAGE_RAID).
  * These filters are per-chain. Note that always when you touch the chain
- * filter the current probing position is reseted and probing starts from
+ * filter the current probing position is reset and probing starts from
  * scratch.  It means that the chain filter should not be modified during
  * probing, for example in loop where you call blkid_do_probe().
  *
@@ -36,7 +36,7 @@
  *      The interface is always specific to the probing chain.
  *
  *  Note that the previous probing result (binary or NAME=value) is always
- *  zeroized when a chain probing function is called. For example
+ *  zeroized when a chain probing function is called. For example:
  *
  * <informalexample>
  *   <programlisting>
@@ -131,7 +131,7 @@ static void blkid_probe_reset_buffer(blkid_probe pr);
 /**
  * blkid_new_probe:
  *
- * Returns: a pointer to the newly allocated probe struct.
+ * Returns: a pointer to the newly allocated probe struct or NULL in case of error.
  */
 blkid_probe blkid_new_probe(void)
 {
@@ -434,7 +434,7 @@ unsigned long *blkid_probe_get_filter(blkid_probe pr, int chain, int create)
 
 	chn = &pr->chains[chain];
 
-	/* always when you touch the chain filter all indexes are reseted and
+	/* always when you touch the chain filter all indexes are reset and
 	 * probing starts from scratch
 	 */
 	blkid_probe_chain_reset_position(chn);
@@ -831,7 +831,7 @@ static inline void blkid_probe_end(blkid_probe pr)
  * Calls probing functions in all enabled chains. The superblocks chain is
  * enabled by default. The blkid_do_probe() stores result from only one
  * probing function. It's necessary to call this routine in a loop to get
- * results from all probing functions in all chains. The probing is reseted
+ * results from all probing functions in all chains. The probing is reset
  * by blkid_reset_probe() or by filter functions.
  *
  * This is string-based NAME=value interface only.
@@ -1263,7 +1263,7 @@ int blkid_probe_set_magic(blkid_probe pr, blkid_loff_t offset,
  * blkid_probe_get_devno:
  * @pr: probe
  *
- * Returns: block device number, or 0 for regilar files.
+ * Returns: block device number, or 0 for regular files.
  */
 dev_t blkid_probe_get_devno(blkid_probe pr)
 {
@@ -1274,7 +1274,7 @@ dev_t blkid_probe_get_devno(blkid_probe pr)
  * blkid_probe_get_wholedisk_devno:
  * @pr: probe
  *
- * Returns: device number of the wholedisk, or 0 for regilar files.
+ * Returns: device number of the wholedisk, or 0 for regular files.
  */
 dev_t blkid_probe_get_wholedisk_devno(blkid_probe pr)
 {
