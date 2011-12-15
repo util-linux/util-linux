@@ -1472,10 +1472,15 @@ get_partition(int warn, int max) {
 	return get_partition_dflt(warn, max, 0);
 }
 
+/* User partition selection unless one partition only is available */
+
 static int
 get_existing_partition(int warn, int max) {
 	int pno = -1;
 	int i;
+
+	if (disklabel != DOS_LABEL)
+		goto not_implemented;
 
 	for (i = 0; i < max; i++) {
 		struct pte *pe = &ptes[i];
@@ -1495,7 +1500,8 @@ get_existing_partition(int warn, int max) {
 	printf(_("No partition is defined yet!\n"));
 	return -1;
 
- not_unique:
+not_implemented:
+not_unique:
 	return get_partition(warn, max);
 }
 
@@ -1650,14 +1656,7 @@ change_sysid(void) {
 	int i, sys, origsys;
 	struct partition *p;
 
-	/* If sgi_label then don't use get_existing_partition,
-	   let the user select a partition, since get_existing_partition()
-	   only works for Linux like partition tables. */
-	if (disklabel != SGI_LABEL) {
-		i = get_existing_partition(0, partitions);
-	} else {
-		i = get_partition(0, partitions);
-	}
+	i = get_existing_partition(0, partitions);
 
 	if (i == -1)
 		return;
@@ -2922,15 +2921,7 @@ static void command_prompt(void)
 				unknown_command(c);
 			break;
 		case 'd':
-			/* If sgi_label then don't use get_existing_partition,
-			   let the user select a partition, since
-			   get_existing_partition() only works for Linux-like
-			   partition tables */
-			if (disklabel != SGI_LABEL) {
-				j = get_existing_partition(1, partitions);
-			} else {
-				j = get_partition(1, partitions);
-			}
+			j = get_existing_partition(1, partitions);
 			if (j >= 0)
 				delete_partition(j);
 			break;
