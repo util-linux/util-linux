@@ -2800,15 +2800,13 @@ gpt_warning(char *dev)
 }
 
 static void
-try(char *device, int user_specified) {
+try(char *device)
+{
 	int gb;
 
 	disk_device = device;
 	if (setjmp(listingbuf))
 		return;
-	if (!user_specified)
-		if (is_ide_cdrom_or_tape(device))
-			return;
 	gpt_warning(device);
 	if ((fd = open(disk_device, type_open)) >= 0) {
 		gb = get_boot(try_only);
@@ -2859,7 +2857,7 @@ tryprocpt(void) {
 		if (is_whole_disk(devname)) {
 			char *cn = canonicalize_path(devname);
 			if (cn) {
-				try(cn, 0);
+				try(cn);
 				free(cn);
 			}
 		}
@@ -3079,7 +3077,8 @@ main(int argc, char **argv) {
 			dummy(&k);
 			listing = 1;
 			for (k = optind; k < argc; k++)
-				try(argv[k], 1);
+				if (!is_ide_cdrom_or_tape(argv[k]))
+					try(argv[k]);
 		} else {
 			/* we no longer have default device names */
 			/* but we can use /proc/partitions instead */
