@@ -1635,6 +1635,9 @@ static void dos_delete_partition(int i)
 static void
 delete_partition(int i)
 {
+	if (i < 0)
+		return;
+
 	if (warn_geometry())
 		return;		/* C/H/S not set */
 
@@ -2869,7 +2872,7 @@ unknown_command(int c) {
 
 static void command_prompt(void)
 {
-	int c, j;
+	int c;
 
 	if (disklabel == OSF_LABEL) {
 		putchar('\n');
@@ -2921,9 +2924,7 @@ static void command_prompt(void)
 				unknown_command(c);
 			break;
 		case 'd':
-			j = get_existing_partition(1, partitions);
-			if (j >= 0)
-				delete_partition(j);
+			delete_partition(get_existing_partition(1, partitions));
 			break;
 		case 'i':
 			if (disklabel == SGI_LABEL)
