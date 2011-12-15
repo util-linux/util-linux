@@ -15,24 +15,17 @@
 #include <string.h>		/* strstr */
 #include <unistd.h>		/* write */
 #include <sys/ioctl.h>		/* ioctl */
-#include <sys/stat.h>		/* stat */
-#include <sys/sysmacros.h>	/* major */
 
 #include "nls.h"
 #include "blkdev.h"
 
 #include <endian.h>
-#ifdef HAVE_LINUX_MAJOR_H
-#include <linux/major.h>	/* FLOPPY_MAJOR */
-#endif
 
 #include "common.h"
 #include "fdisk.h"
 #include "fdisksunlabel.h"
 
 static int     other_endian = 0;
-static int     scsi_disk = 0;
-static int     floppy = 0;
 
 struct systypes sun_sys_types[] = {
 	{SUN_TAG_UNASSIGNED, N_("Unassigned")},
@@ -65,37 +58,6 @@ static inline uint32_t __swap32(uint32_t x) {
 				 : (uint16_t)(x))
 #define SSWAP32(x) (other_endian ? __swap32(x) \
 				 : (uint32_t)(x))
-
-#ifndef FLOPPY_MAJOR
-#define FLOPPY_MAJOR 2
-#endif
-#ifndef IDE0_MAJOR
-#define IDE0_MAJOR 3
-#endif
-#ifndef IDE1_MAJOR
-#define IDE1_MAJOR 22
-#endif
-void guess_device_type(int fd)
-{
-	struct stat bootstat;
-
-	if (fstat (fd, &bootstat) < 0) {
-                scsi_disk = 0;
-                floppy = 0;
-	} else if (S_ISBLK(bootstat.st_mode)
-		   && (major(bootstat.st_rdev) == IDE0_MAJOR ||
-		       major(bootstat.st_rdev) == IDE1_MAJOR)) {
-                scsi_disk = 0;
-                floppy = 0;
-	} else if (S_ISBLK(bootstat.st_mode)
-		   && major(bootstat.st_rdev) == FLOPPY_MAJOR) {
-                scsi_disk = 0;
-                floppy = 1;
-	} else {
-                scsi_disk = 1;
-                floppy = 0;
-	}
-}
 
 static void set_sun_partition(int i, uint32_t start, uint32_t stop, uint16_t sysid)
 {

@@ -1031,7 +1031,6 @@ get_geometry(int fd, struct geom *g) {
 	unsigned long long llcyls, nsects = 0;
 
 	get_topology(fd);
-	guess_device_type(fd);
 	heads = cylinders = sectors = 0;
 	kern_heads = kern_sectors = 0;
 	pt_heads = pt_sectors = 0;
