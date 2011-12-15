@@ -452,7 +452,7 @@ verify_sgi(int verbose)
 		lastblock = sgi_get_num_sectors(Index[0]);
 	} else {
 		if (verbose)
-			printf(_("One Partition (#11) should cover the entire disk.\n"));
+			printf(_("Partition 11 should cover the entire disk.\n"));
 		if (debug>2)
 			printf("sysid=%d\tpartition=%d\n",
 			       sgi_get_sysid(Index[0]), Index[0]+1);
@@ -570,7 +570,7 @@ sgi_set_partition(int i, unsigned int start, unsigned int length, int sys) {
 	sgilabel->partitions[i].start_sector = SSWAP32(start);
 	set_changed(i);
 	if (sgi_gaps() < 0)	/* rebuild freelist */
-		printf(_("Do You know, You got a partition overlap on the disk?\n"));
+		printf(_("Partition overlap on the disk.\n"));
 	if (length)
 		print_partition_size(i + 1, start, start + length, sys);
 }

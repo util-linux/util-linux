@@ -1193,7 +1193,7 @@ get_boot(enum action what) {
 			return -1;
 
 		fprintf(stderr,
-			_("Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel\n"));
+			_("Device does not contain a recognized partition table\n"));
 #ifdef __sparc__
 		create_sunlabel();
 #else
