@@ -288,7 +288,7 @@ unsigned long grain = DEFAULT_SECTOR_SIZE,
 	      alignment_offset;
 int has_topology;
 
-enum labeltype disklabel = DOS_LABEL;	/* Current disklabel */
+enum labeltype disklabel;	/* Current disklabel */
 
 jmp_buf listingbuf;
 
@@ -850,6 +850,30 @@ dos_set_mbr_id(void) {
 	dos_print_mbr_id();
 }
 
+static void dos_init(void)
+{
+	int i;
+
+	disklabel = DOS_LABEL;
+	partitions = 4;
+	ext_index = 0;
+	extended_offset = 0;
+
+	for (i = 0; i < 4; i++) {
+		struct pte *pe = &ptes[i];
+
+		pe->part_table = pt_offset(MBRbuffer, i);
+		pe->ext_pointer = NULL;
+		pe->offset = 0;
+		pe->sectorbuffer = MBRbuffer;
+		pe->changed = 0;
+	}
+
+	warn_geometry();
+	warn_limits();
+	warn_alignment();
+}
+
 static void
 create_doslabel(void) {
 	unsigned int id = get_random_id();
@@ -857,19 +881,17 @@ create_doslabel(void) {
 	fprintf(stderr, _("Building a new DOS disklabel with disk identifier 0x%08x.\n"), id);
 	sun_nolabel();  /* otherwise always recognised as sun */
 	sgi_nolabel();  /* otherwise always recognised as sgi */
-	disklabel = DOS_LABEL;
-	partitions = 4;
 
-	/* Zero out the MBR buffer */
-	extended_offset = 0;
+	dos_init();
+	zeroize_mbr_buffer();
+
 	set_all_unchanged();
 	set_changed(0);
-	get_boot(create_empty_dos);
 
 	/* Generate an MBR ID for this disk */
 	dos_write_mbr_id(MBRbuffer, id);
 
-	/* Mark it bootable (unfortunately required) */
+	/* Put MBR signature */
 	write_part_table_flag(MBRbuffer);
 }
 
@@ -1084,100 +1106,14 @@ void zeroize_mbr_buffer(void)
 		memset(MBRbuffer, 0, MAX_SECTOR_SIZE);
 }
 
-/*
- * Read MBR.  Returns:
- *   -1: no 0xaa55 flag present (possibly entire disk BSD)
- *    0: found or created label
- *    1: I/O error
- */
-static int
-get_boot(enum action what) {
+static int check_dos_label(void)
+{
 	int i;
 
-	partitions = 4;
-	ext_index = 0;
-	extended_offset = 0;
-
-	for (i = 0; i < 4; i++) {
-		struct pte *pe = &ptes[i];
-
-		pe->part_table = pt_offset(MBRbuffer, i);
-		pe->ext_pointer = NULL;
-		pe->offset = 0;
-		pe->sectorbuffer = MBRbuffer;
-		pe->changed = (what == create_empty_dos);
-	}
-
-	memset(MBRbuffer, 0, 512);
-
-	if (what == create_empty_dos)
-		goto got_dos_table;		/* skip reading disk */
-
-	if (what != try_only) {
-		if ((fd = open(disk_device, O_RDWR)) < 0) {
-			if ((fd = open(disk_device, O_RDONLY)) < 0)
-				fatal(unable_to_open);
-			else
-				printf(_("You will not be able to write "
-					    "the partition table.\n"));
-		}
-	}
-
-	if (512 != read(fd, MBRbuffer, 512)) {
-		if (what == try_only)
-			return 1;
-		fatal(unable_to_read);
-	}
-
-	get_geometry(fd, NULL);
-
-	update_units();
-
-	if (check_sun_label())
+	if (!valid_part_table_flag(MBRbuffer))
 		return 0;
 
-	if (check_sgi_label())
-		return 0;
-
-	if (check_aix_label())
-		return 0;
-
-	if (check_mac_label())
-		return 0;
-
-	if (check_osf_label()) {
-		if (!valid_part_table_flag(MBRbuffer)) {
-			disklabel = OSF_LABEL;
-			return 0;
-		}
-		printf(_("This disk has both DOS and BSD magic.\n"
-			 "Give the 'b' command to go to BSD mode.\n"));
-	}
-
-got_dos_table:
-
-	if (!valid_part_table_flag(MBRbuffer)) {
-		switch(what) {
-		case fdisk:
-			fprintf(stderr,
-				_("Device contains neither a valid DOS "
-				  "partition table, nor Sun, SGI or OSF "
-				  "disklabel\n"));
-#ifdef __sparc__
-			create_sunlabel();
-#else
-			create_doslabel();
-#endif
-			return 0;
-		case try_only:
-		        return -1;
-		case create_empty_dos:
-			break;
-		default:
-			fprintf(stderr, _("Internal error\n"));
-			exit(1);
-		}
-	}
+	dos_init();
 
 	for (i = 0; i < 4; i++) {
 		struct pte *pe = &ptes[i];
@@ -1203,10 +1139,67 @@ got_dos_table:
 		}
 	}
 
-	warn_geometry();
-	warn_limits();
-	warn_alignment();
+	return 1;
+}
 
+/*
+ * Read MBR.  Returns:
+ *   -1: no 0xaa55 flag present (possibly entire disk BSD)
+ *    0: found or created label
+ *    1: I/O error
+ */
+static int
+get_boot(enum action what) {
+
+	disklabel = ANY_LABEL;
+	memset(MBRbuffer, 0, 512);
+
+	if (what != try_only) {
+		if ((fd = open(disk_device, O_RDWR)) < 0) {
+			if ((fd = open(disk_device, O_RDONLY)) < 0)
+				fatal(unable_to_open);
+			else
+				printf(_("You will not be able to write "
+					    "the partition table.\n"));
+		}
+	}
+
+	if (512 != read(fd, MBRbuffer, 512)) {
+		if (what == try_only)
+			return 1;
+		fatal(unable_to_read);
+	}
+
+	get_geometry(fd, NULL);
+
+	update_units();
+
+	if (!check_dos_label())
+		if (check_sun_label() || check_sgi_label() || check_aix_label() || check_mac_label())
+			return 0;
+
+	if (check_osf_label()) {
+		if (!valid_part_table_flag(MBRbuffer)) {
+			disklabel = OSF_LABEL;
+			return 0;
+		}
+		printf(_("This disk has both DOS and BSD magic.\n"
+			 "Give the 'b' command to go to BSD mode.\n"));
+		return 0;
+	}
+
+	if (disklabel == ANY_LABEL) {
+		if (what == try_only)
+			return -1;
+
+		fprintf(stderr,
+			_("Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel\n"));
+#ifdef __sparc__
+		create_sunlabel();
+#else
+		create_doslabel();
+#endif
+	}
 	return 0;
 }
 
