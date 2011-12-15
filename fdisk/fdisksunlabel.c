@@ -109,6 +109,12 @@ static void set_sun_partition(int i, uint32_t start, uint32_t stop, uint16_t sys
 	print_partition_size(i + 1, start, stop, sysid);
 }
 
+static void init(void)
+{
+	disklabel = SUN_LABEL;
+	partitions = SUN_NUM_PARTITIONS;
+}
+
 void sun_nolabel(void)
 {
 	sunlabel->magic = 0;
@@ -125,6 +131,8 @@ int check_sun_label(void)
 		other_endian = 0;
 		return 0;
 	}
+
+	init();
 	other_endian = (sunlabel->magic == SUN_LABEL_MAGIC_SWAPPED);
 
 	ush = ((unsigned short *) (sunlabel + 1)) - 1;
@@ -176,8 +184,6 @@ int check_sun_label(void)
 		}
 	}
 	update_units();
-	disklabel = SUN_LABEL;
-	partitions = SUN_NUM_PARTITIONS;
 	return 1;
 }
 
@@ -195,7 +201,10 @@ void create_sunlabel(void)
 #else
 	other_endian = 0;
 #endif
+
+	init();
 	zeroize_mbr_buffer();
+
 	sunlabel->magic = SSWAP16(SUN_LABEL_MAGIC);
 	sunlabel->sanity = SSWAP32(SUN_LABEL_SANE);
 	sunlabel->version = SSWAP32(SUN_LABEL_VERSION);
@@ -249,9 +258,6 @@ void create_sunlabel(void)
 	} else
 	        ndiv = cylinders * 2 / 3;
 
-	/* Make sure print_partition_size() uses correct sysid names */
-	disklabel = SUN_LABEL;
-
 	set_sun_partition(0, 0, ndiv * heads * sectors,
 			  SUN_TAG_LINUX_NATIVE);
 	set_sun_partition(1, ndiv * heads * sectors,
@@ -270,7 +276,6 @@ void create_sunlabel(void)
 	}
 
 	set_all_unchanged();
-	get_boot(create_empty_sun);
 	set_changed(0);
 }
 

@@ -51,6 +51,7 @@
 
 #include "gpt.h"
 
+static int get_boot(enum action what);
 static void delete_partition(int i);
 
 #define hex_val(c)	({ \
@@ -1090,7 +1091,7 @@ void zeroize_mbr_buffer(void)
  *    0: found or created label
  *    1: I/O error
  */
-int
+static int
 get_boot(enum action what) {
 	int i;
 
@@ -1107,9 +1108,6 @@ get_boot(enum action what) {
 		pe->sectorbuffer = MBRbuffer;
 		pe->changed = (what == create_empty_dos);
 	}
-
-	if (what == create_empty_sun && check_sun_label())
-		return 0;
 
 	memset(MBRbuffer, 0, 512);
 
@@ -1175,7 +1173,6 @@ got_dos_table:
 		case try_only:
 		        return -1;
 		case create_empty_dos:
-		case create_empty_sun:
 			break;
 		default:
 			fprintf(stderr, _("Internal error\n"));

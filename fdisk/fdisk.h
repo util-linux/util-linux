@@ -54,7 +54,7 @@ enum failure {ioctl_error,
 	unable_to_open, unable_to_read, unable_to_seek,
 	unable_to_write};
 
-enum action {fdisk, try_only, create_empty_dos, create_empty_sun};
+enum action {fdisk, try_only, create_empty_dos};
 
 struct geom {
 	unsigned int heads;
@@ -69,7 +69,6 @@ extern unsigned int display_in_cyl_units, units_per_sector;
 extern void change_units(void);
 extern void fatal(enum failure why);
 extern void get_geometry(int fd, struct geom *);
-extern int get_boot(enum action what);
 extern int  get_partition(int warn, int max);
 extern void list_types(struct systypes *sys);
 extern int read_line (int *asked);
