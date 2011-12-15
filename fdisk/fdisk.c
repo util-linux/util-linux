@@ -292,8 +292,6 @@ int has_topology;
 
 enum labeltype disklabel = DOS_LABEL;	/* Current disklabel */
 
-int	possibly_osf_label = 0;
-
 jmp_buf listingbuf;
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
@@ -862,7 +860,6 @@ create_doslabel(void) {
 	sun_nolabel();  /* otherwise always recognised as sun */
 	sgi_nolabel();  /* otherwise always recognised as sgi */
 	disklabel = DOS_LABEL;
-	possibly_osf_label = 0;
 	partitions = 4;
 
 	/* Zero out the MBR buffer */
@@ -1155,7 +1152,6 @@ get_boot(enum action what) {
 		return 0;
 
 	if (check_osf_label()) {
-		possibly_osf_label = 1;
 		if (!valid_part_table_flag(MBRbuffer)) {
 			disklabel = OSF_LABEL;
 			return 0;
