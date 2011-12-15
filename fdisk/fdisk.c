@@ -230,9 +230,6 @@ get_random_id(void) {
 	return (unsigned int)(tv.tv_sec + (tv.tv_usec << 12) + getpid());
 }
 
-/* normally O_RDWR, -l option gives O_RDONLY */
-static int type_open = O_RDWR;
-
 /*
  * Raw disk label. For DOS-type partition tables the MBR,
  * with descriptions of the primary partitions.
@@ -1120,7 +1117,7 @@ get_boot(enum action what) {
 		goto got_dos_table;		/* skip reading disk */
 
 	if (what != try_only) {
-		if ((fd = open(disk_device, type_open)) < 0) {
+		if ((fd = open(disk_device, O_RDWR)) < 0) {
 			if ((fd = open(disk_device, O_RDONLY)) < 0)
 				fatal(unable_to_open);
 			else
@@ -2810,7 +2807,7 @@ print_partition_table_from_option(char *device)
 	if (setjmp(listingbuf))
 		return;
 	gpt_warning(device);
-	if ((fd = open(disk_device, type_open)) >= 0) {
+	if ((fd = open(disk_device, O_RDONLY)) >= 0) {
 		gb = get_boot(try_only);
 		if (gb > 0) { /* I/O error */
 		} else if (gb < 0) { /* no DOS signature */
@@ -3072,7 +3069,6 @@ main(int argc, char **argv) {
 
 	if (optl) {
 		nowarn = 1;
-		type_open = O_RDONLY;
 		if (argc > optind) {
 			int k;
 			/* avoid gcc warning:
@@ -3091,7 +3087,6 @@ main(int argc, char **argv) {
 		unsigned long long size;
 
 		nowarn = 1;
-		type_open = O_RDONLY;
 
 		opts = argc - optind;
 		if (opts <= 0)
@@ -3099,7 +3094,7 @@ main(int argc, char **argv) {
 
 		for (j = optind; j < argc; j++) {
 			disk_device = argv[j];
-			if ((fd = open(disk_device, type_open)) < 0)
+			if ((fd = open(disk_device, O_RDONLY)) < 0)
 				fatal(unable_to_open);
 			if (blkdev_get_sectors(fd, &size) == -1)
 				fatal(ioctl_error);
