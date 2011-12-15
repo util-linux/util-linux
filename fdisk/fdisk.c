@@ -2906,15 +2906,9 @@ static void command_prompt(void)
 				unknown_command(c);
 			break;
 		case 'b':
-			if (disklabel == SGI_LABEL) {
-				printf(_("\nThe current boot file is: %s\n"),
-				       sgi_get_bootfile());
-				if (read_chars(_("Please enter the name of the "
-					       "new boot file: ")) == '\n')
-					printf(_("Boot file unchanged\n"));
-				else
-					sgi_set_bootfile(line_ptr);
-			} else if (disklabel == DOS_LABEL) {
+			if (disklabel == SGI_LABEL)
+				sgi_set_bootfile();
+			else if (disklabel == DOS_LABEL) {
 				disklabel = OSF_LABEL;
 				bsd_command_prompt();
 				disklabel = DOS_LABEL;

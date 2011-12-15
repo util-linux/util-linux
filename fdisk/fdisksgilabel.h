@@ -133,7 +133,6 @@ extern void	sgi_set_bootpartition( int i );
 extern void	sgi_set_swappartition( int i );
 extern int	sgi_get_bootpartition( void );
 extern int	sgi_get_swappartition( void );
-extern void	sgi_set_bootfile( const char* aFile );
-extern const char *sgi_get_bootfile( void );
+extern void	sgi_set_bootfile(void);
 
 #endif /* FDISK_SGI_LABEL_H */

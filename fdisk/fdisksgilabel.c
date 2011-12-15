@@ -316,20 +316,21 @@ sgi_check_bootfile(const char* aFile) {
 	return 0;	/* filename did not change */
 }
 
-const char *
-sgi_get_bootfile(void) {
-	return (char *) sgilabel->boot_file;
-}
-
 void
-sgi_set_bootfile(const char* aFile) {
+sgi_set_bootfile(void)
+{
+	printf(_("\nThe current boot file is: %s\n"), sgilabel->boot_file);
+	if (read_chars(_("Please enter the name of the new boot file: ")) == '\n') {
+		printf(_("Boot file unchanged\n"));
+		return;
+	}
 
-	if (sgi_check_bootfile(aFile)) {
+	if (sgi_check_bootfile(line_ptr)) {
 		size_t i = 0;
 		while (i < 16) {
-			if ((aFile[i] != '\n')	/* in principle caught again by next line */
-			    &&  (strlen(aFile) > i))
-				sgilabel->boot_file[i] = aFile[i];
+			if ((line_ptr[i] != '\n')	/* in principle caught again by next line */
+			    &&  (strlen(line_ptr) > i))
+				sgilabel->boot_file[i] = line_ptr[i];
 			else
 				sgilabel->boot_file[i] = 0;
 			i++;
