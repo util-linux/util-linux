@@ -190,7 +190,7 @@ struct chardata {
 };
 
 /* Initial values for the above. */
-struct chardata init_chardata = {
+static const struct chardata init_chardata = {
 	DEF_ERASE,		/* default erase character */
 	DEF_KILL,		/* default kill character */
 	13,			/* default eol char */
@@ -203,7 +203,7 @@ struct Speedtab {
 	speed_t code;
 };
 
-static struct Speedtab speedtab[] = {
+static const struct Speedtab speedtab[] = {
 	{50, B50},
 	{75, B75},
 	{110, B110},
@@ -282,7 +282,7 @@ int main(int argc, char **argv)
 	char *username = NULL;			/* login name, given to /bin/login */
 	struct chardata chardata;		/* will be set by get_logname() */
 	struct termios termios;			/* terminal mode bits */
-	static struct options options = {
+	struct options options = {
 		.flags  =  F_ISSUE,		/* show /etc/issue (SYSV_STYLE) */
 		.login  =  _PATH_LOGIN,		/* default login program */
 		.tty    = "tty1",		/* default tty line */
@@ -1637,7 +1637,7 @@ static int caps_lock(char *s)
 /* Convert speed string to speed code; return 0 on failure. */
 static speed_t bcode(char *s)
 {
-	struct Speedtab *sp;
+	const struct Speedtab *sp;
 	long speed = atol(s);
 
 	for (sp = speedtab; sp->speed; sp++)
