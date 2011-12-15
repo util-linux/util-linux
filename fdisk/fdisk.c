@@ -2799,8 +2799,10 @@ gpt_warning(char *dev)
 			"The util fdisk doesn't support GPT. Use GNU Parted.\n\n"), dev);
 }
 
+/* Print disk geometry and partition table of a specified device (-l option) */
+
 static void
-try(char *device)
+print_partition_table_from_option(char *device)
 {
 	int gb;
 
@@ -2837,7 +2839,8 @@ try(char *device)
  * try all things in /proc/partitions that look like a full disk
  */
 static void
-tryprocpt(void) {
+print_all_partition_table_from_option(void)
+{
 	FILE *procpt;
 	char line[128], ptname[128], devname[256];
 	int ma, mi;
@@ -2857,7 +2860,7 @@ tryprocpt(void) {
 		if (is_whole_disk(devname)) {
 			char *cn = canonicalize_path(devname);
 			if (cn) {
-				try(cn);
+				print_partition_table_from_option(cn);
 				free(cn);
 			}
 		}
@@ -3078,12 +3081,9 @@ main(int argc, char **argv) {
 			listing = 1;
 			for (k = optind; k < argc; k++)
 				if (!is_ide_cdrom_or_tape(argv[k]))
-					try(argv[k]);
-		} else {
-			/* we no longer have default device names */
-			/* but we can use /proc/partitions instead */
-			tryprocpt();
-		}
+					print_partition_table_from_option(argv[k]);
+		} else
+			print_all_partition_table_from_option();
 		exit(0);
 	}
 
