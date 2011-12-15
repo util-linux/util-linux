@@ -1179,8 +1179,6 @@ got_dos_table:
 			create_doslabel();
 #endif
 			return 0;
-		case require:
-			return -1;
 		case try_only:
 		        return -1;
 		case create_empty_dos:
