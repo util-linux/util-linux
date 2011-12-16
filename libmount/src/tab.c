@@ -11,7 +11,7 @@
  * @short_description: container for entries from fstab, mtab or mountinfo
  *
  * Note that mnt_table_find_* functions are mount(8) compatible. These functions
- * try to found an entry in more iterations where the first attempt is always
+ * try to find an entry in more iterations where the first attempt is always
  * based on comparison with unmodified (non-canonicalized or un-evaluated)
  * paths or tags. For example fstab with two entries:
  * <informalexample>
