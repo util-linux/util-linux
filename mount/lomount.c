@@ -15,6 +15,8 @@
 #include <sys/sysmacros.h>
 #include <inttypes.h>
 #include <dirent.h>
+#include <getopt.h>
+#include <stdarg.h>
 
 #include "loop.h"
 #include "lomount.h"
@@ -448,8 +450,6 @@ find_loopdev_by_backing_file(const char *filename, char **loopdev)
 	return devs_n ? 2 : 1;		/* more loopdevs or error */
 }
 
-#ifdef MAIN
-
 static int
 set_capacity(const char *device)
 {
@@ -609,9 +609,6 @@ show_associated_loop_devices(char *filename, unsigned long long offset, int isof
 
 	return 0;
 }
-
-
-#endif /* MAIN */
 
 /* check if the loopfile is already associated with the same given
  * parameters.
@@ -1026,12 +1023,8 @@ find_loopdev_by_backing_file(const char *filename, char **loopdev)
 
 #endif /* !LOOP_SET_FD */
 
-#ifdef MAIN
-
 #ifdef LOOP_SET_FD
 
-#include <getopt.h>
-#include <stdarg.h>
 
 static void
 usage(FILE *out) {
@@ -1263,4 +1256,3 @@ main(int argc, char **argv) {
 	return -1;
 }
 #endif /* !LOOP_SET_FD*/
-#endif /* MAIN */

@@ -52,7 +52,6 @@ swapon_LDADD = $(ldadd_common)
 
 losetup_SOURCES = lomount.c $(srcs_common) loop.h lomount.h \
 		$(top_srcdir)/lib/strutils.c
-losetup_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)
 
 mount_static_LDADD =
 
@@ -76,7 +75,6 @@ if HAVE_STATIC_LOSETUP
 bin_PROGRAMS += losetup.static
 losetup_static_SOURCES = $(losetup_SOURCES)
 losetup_static_LDFLAGS = $(ldflags_static)
-losetup_static_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)
 endif
 
 
