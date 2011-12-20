@@ -20,9 +20,12 @@
 
 #include "strutils.h"
 #include "nls.h"
-#include "sundries.h"
 #include "pathnames.h"
 #include "loopdev.h"
+#include "xalloc.h"
+#include "canonicalize.h"
+
+static int verbose;
 
 static int is_associated(int dev, struct stat *file, unsigned long long offset, int isoff);
 
@@ -390,7 +393,7 @@ find_loopdev_by_backing_file(const char *filename, char **loopdev)
 	}
 
 	if (looplist_open(&ll, LLFLG_USEDONLY) == -1) {
-		error(_("%s: /dev directory does not exist."), progname);
+		warnx(_("/dev directory does not exist."));
 		return 1;
 	}
 
@@ -509,7 +512,7 @@ show_used_loop_devices (void) {
 	int fd;
 
 	if (looplist_open(&ll, LLFLG_USEDONLY) == -1) {
-		error(_("%s: /dev directory does not exist."), progname);
+		warnx(_("/dev directory does not exist."));
 		return 1;
 	}
 
@@ -520,7 +523,7 @@ show_used_loop_devices (void) {
 	looplist_close(&ll);
 
 	if (!ll.ct_succ && ll.ct_perm) {
-		error(_("%s: no permission to look at /dev/loop%s<N>"), progname,
+		warnx(_("no permission to look at /dev/loop%s<N>"),
 				(ll.flag & LLFLG_SUBDIR) ? "/" : "");
 		return 1;
 	}
@@ -541,7 +544,7 @@ show_associated_loop_devices(char *filename, unsigned long long offset, int isof
 	}
 
 	if (looplist_open(&ll, LLFLG_USEDONLY) == -1) {
-		error(_("%s: /dev directory does not exist."), progname);
+		warnx(_("/dev directory does not exist."));
 		return 1;
 	}
 
@@ -595,7 +598,7 @@ loopfile_used (const char *filename, unsigned long long offset) {
 	}
 
 	if (looplist_open(&ll, LLFLG_USEDONLY) == -1) {
-		error(_("%s: /dev directory does not exist."), progname);
+		warnx(_("/dev directory does not exist."));
 		return NULL;
 	}
 
@@ -640,7 +643,7 @@ find_unused_loop_device (void) {
 	int fd;
 
 	if (looplist_open(&ll, LLFLG_FREEONLY) == -1) {
-		error(_("%s: /dev directory does not exist."), progname);
+		warnx(_("/dev directory does not exist."));
 		return NULL;
 	}
 
@@ -653,16 +656,16 @@ find_unused_loop_device (void) {
 		return devname;
 
 	if (!ll.ct_succ && ll.ct_perm)
-		error(_("%s: no permission to look at /dev/loop%s<N>"), progname,
+		warnx(_("no permission to look at /dev/loop%s<N>"),
 				(ll.flag & LLFLG_SUBDIR) ? "/" : "");
 	else if (ll.ct_succ)
-		error(_("%s: could not find any free loop device"), progname);
+		warnx(_("could not find any free loop device"));
 	else
-		error(_(
-		    "%s: Could not find any loop device. Maybe this kernel "
+		warnx(_(
+		    "Could not find any loop device. Maybe this kernel "
 		    "does not know\n"
 		    "       about the loop device? (If so, recompile or "
-		    "`modprobe loop'.)"), progname);
+		    "`modprobe loop'.)"));
 	return NULL;
 }
 
@@ -689,7 +692,7 @@ xgetpass(int pfd, const char *prompt) {
 			pass = realloc(tmppass, buflen);
 			if (pass == NULL) {
 				/* realloc failed. Stop reading. */
-				error(_("Out of memory while reading passphrase"));
+				warn(_("Out of memory while reading passphrase"));
 				pass = tmppass; /* the old buffer hasn't changed */
 				break;
 			}
@@ -759,7 +762,7 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 	}
 	memset(&loopinfo64, 0, sizeof(loopinfo64));
 
-	if (!(filename = canonicalize(file)))
+	if (!(filename = canonicalize_path(file)))
 		filename = (char *) file;
 	xstrncpy((char *)loopinfo64.lo_file_name, filename, LO_NAME_SIZE);
 
@@ -868,7 +871,7 @@ delete_all_devices (void)
 	int ok = 0;
 
 	if (looplist_open(&ll, LLFLG_USEDONLY) == -1) {
-		error(_("%s: /dev directory does not exist."), progname);
+		warnx(_("/dev directory does not exist."));
 		return 1;
 	}
 
@@ -879,7 +882,7 @@ delete_all_devices (void)
 	looplist_close(&ll);
 
 	if (!ll.ct_succ && ll.ct_perm) {
-		error(_("%s: no permission to look at /dev/loop%s<N>"), progname,
+		warnx(_("no permission to look at /dev/loop%s<N>"),
 				(ll.flag & LLFLG_SUBDIR) ? "/" : "");
 		return 1;
 	}
@@ -924,7 +927,7 @@ usage(FILE *out) {
 	  " %1$s -c | --set-capacity <loopdev>           resize\n"
 	  " %1$s -j | --associated <file> [-o <num>]     list all associated with <file>\n"
 	  " %1$s [options] {-f|--find|loopdev} <file>    setup\n"),
-	progname);
+	program_invocation_short_name);
 
   fputs(_("\nOptions:\n"), out);
   fputs(_(" -e, --encryption <type> enable data encryption with specified <name/num>\n"
@@ -973,10 +976,6 @@ main(int argc, char **argv) {
 
 	capacity = delete = delete_all = find = all = 0;
 	assoc = offset = sizelimit = encryption = passfd = NULL;
-
-	progname = argv[0];
-	if ((p = strrchr(progname, '/')) != NULL)
-		progname = p+1;
 
 	while ((c = getopt_long(argc, argv, "acdDe:E:fhj:o:p:rsv",
 				longopts, NULL)) != -1) {
@@ -1061,12 +1060,11 @@ main(int argc, char **argv) {
 	}
 
 	if (offset && strtosize(offset, &off)) {
-		error(_("%s: invalid offset '%s' specified"), progname, offset);
+		warnx(_("invalid offset '%s' specified"), offset);
 		usage(stderr);
 	}
 	if (sizelimit && strtosize(sizelimit, &slimit)) {
-		error(_("%s: invalid sizelimit '%s' specified"),
-					progname, sizelimit);
+		warnx(_("invalid sizelimit '%s' specified"), sizelimit);
 		usage(stderr);
 	}
 
@@ -1119,7 +1117,7 @@ main(int argc, char **argv) {
 
 		if (device) {
 			if (res == 2)
-				error(_("%s: %s: device is busy"), progname, device);
+				warnx(_("%s: device is busy"), device);
 			else if (res == 0) {
 				if (verbose)
 					printf(_("Loop device is %s\n"), device);

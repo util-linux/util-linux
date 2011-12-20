@@ -4,7 +4,7 @@ bin_PROGRAMS = mount umount
 sbin_PROGRAMS = losetup swapon
 dist_man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
 
-# generic sources for all programs (mount, umount, losetup)
+# generic sources for all programs (mount, umount)
 srcs_common = sundries.c $(top_srcdir)/lib/canonicalize.c sundries.h
 
 # generic header for mount and umount
@@ -26,7 +26,7 @@ srcs_mount =	$(srcs_common) $(hdrs_mount) \
 		$(top_srcdir)/lib/loopdev.c \
 		$(top_srcdir)/lib/strutils.c
 
-# generic flags for all programs (except losetup)
+# generic flags for all programs
 # -- note that pkg-config autoconf macros (pkg.m4) does not differentiate
 #    between CFLAGS and CPPFLAGS, we follow this behaviour and use CFLAGS only.
 ldadd_common = $(ul_libblkid_la)
@@ -50,7 +50,8 @@ swapon_SOURCES = swapon.c swap_constants.h $(top_srcdir)/lib/linux_version.c \
 swapon_CFLAGS = $(cflags_common)
 swapon_LDADD = $(ldadd_common)
 
-losetup_SOURCES = lomount.c $(srcs_common) loop.h lomount.h \
+losetup_SOURCES = lomount.c \
+		$(top_srcdir)/lib/canonicalize.c \
 		$(top_srcdir)/lib/strutils.c
 
 mount_static_LDADD =
