@@ -27,37 +27,6 @@
 
 static int is_associated(int dev, struct stat *file, unsigned long long offset, int isoff);
 
-static int
-loop_info64_to_old(const struct loop_info64 *info64, struct loop_info *info)
-{
-        memset(info, 0, sizeof(*info));
-        info->lo_number = info64->lo_number;
-        info->lo_device = info64->lo_device;
-        info->lo_inode = info64->lo_inode;
-        info->lo_rdevice = info64->lo_rdevice;
-        info->lo_offset = info64->lo_offset;
-        info->lo_encrypt_type = info64->lo_encrypt_type;
-        info->lo_encrypt_key_size = info64->lo_encrypt_key_size;
-        info->lo_flags = info64->lo_flags;
-        info->lo_init[0] = info64->lo_init[0];
-        info->lo_init[1] = info64->lo_init[1];
-        if (info->lo_encrypt_type == LO_CRYPT_CRYPTOAPI)
-                memcpy(info->lo_name, info64->lo_crypt_name, LO_NAME_SIZE);
-        else
-                memcpy(info->lo_name, info64->lo_file_name, LO_NAME_SIZE);
-        memcpy(info->lo_encrypt_key, info64->lo_encrypt_key, LO_KEY_SIZE);
-
-        /* error in case values were truncated */
-        if (info->lo_device != info64->lo_device ||
-            info->lo_rdevice != info64->lo_rdevice ||
-            info->lo_inode != info64->lo_inode ||
-            info->lo_offset < 0 ||
-	    (uint64_t) info->lo_offset != info64->lo_offset)
-                return -EOVERFLOW;
-
-        return 0;
-}
-
 #define LOOPMAJOR		7
 #define NLOOPS_DEFAULT		8	/* /dev/loop[0-7] */
 
@@ -114,7 +83,6 @@ char *loopdev_get_loopfile(const char *device)
 	char *res = loopfile_from_sysfs(device);
 
 	if (!res) {
-		struct loop_info lo;
 		struct loop_info64 lo64;
 		int fd;
 
@@ -126,10 +94,6 @@ char *loopdev_get_loopfile(const char *device)
 			lo64.lo_file_name[LO_NAME_SIZE-1] = 0;
 			res = xstrdup((char *) lo64.lo_file_name);
 
-		} else if (ioctl(fd, LOOP_GET_STATUS, &lo) == 0) {
-			lo.lo_name[LO_NAME_SIZE-2] = '*';
-			lo.lo_name[LO_NAME_SIZE-1] = 0;
-			res = xstrdup((char *) lo.lo_name);
 		}
 		close(fd);
 	}
@@ -148,10 +112,10 @@ is_loop_device (const char *device) {
 static int
 is_loop_used(int fd)
 {
-	struct loop_info li;
+	struct loop_info64 li;
 
 	errno = 0;
-	if (ioctl (fd, LOOP_GET_STATUS, &li) < 0 && errno == ENXIO)
+	if (ioctl (fd, LOOP_GET_STATUS64, &li) < 0 && errno == ENXIO)
 		return 0;
 	return 1;
 }
@@ -159,16 +123,12 @@ is_loop_used(int fd)
 static int
 is_loopfd_autoclear(int fd)
 {
-	struct loop_info lo;
 	struct loop_info64 lo64;
 
 	if (ioctl(fd, LOOP_GET_STATUS64, &lo64) == 0) {
 		if (lo64.lo_flags & LO_FLAGS_AUTOCLEAR)
 			return 1;
 
-	} else if (ioctl(fd, LOOP_GET_STATUS, &lo) == 0) {
-		if (lo.lo_flags & LO_FLAGS_AUTOCLEAR)
-			return 1;
 	}
 	return 0;
 }
@@ -472,7 +432,6 @@ err:
 
 static int
 show_loop_fd(int fd, char *device) {
-	struct loop_info loopinfo;
 	struct loop_info64 loopinfo64;
 	int errsv;
 
@@ -514,22 +473,6 @@ show_loop_fd(int fd, char *device) {
 			printf(_(", encryption %s (type %" PRIu32 ")"),
 			       e, loopinfo64.lo_encrypt_type);
 		}
-		printf("\n");
-		return 0;
-	}
-
-	if (ioctl(fd, LOOP_GET_STATUS, &loopinfo) == 0) {
-		printf ("%s: [%04x]:%ld (%s)",
-			device, (unsigned int)loopinfo.lo_device, loopinfo.lo_inode,
-			loopinfo.lo_name);
-
-		if (loopinfo.lo_offset)
-			printf(_(", offset %d"), loopinfo.lo_offset);
-
-		if (loopinfo.lo_encrypt_type)
-			printf(_(", encryption type %d\n"),
-			       loopinfo.lo_encrypt_type);
-
 		printf("\n");
 		return 0;
 	}
@@ -618,7 +561,6 @@ static int
 is_associated(int dev, struct stat *file, unsigned long long offset, int isoff)
 {
 	struct loop_info64 linfo64;
-	struct loop_info64 linfo;
 	int ret = 0;
 
 	if (ioctl(dev, LOOP_GET_STATUS64, &linfo64) == 0) {
@@ -627,11 +569,6 @@ is_associated(int dev, struct stat *file, unsigned long long offset, int isoff)
 		    (isoff == 0 || offset == linfo64.lo_offset))
 			ret = 1;
 
-	} else if (ioctl(dev, LOOP_GET_STATUS, &linfo) == 0) {
-		if (file->st_dev == linfo.lo_device &&
-	            file->st_ino == linfo.lo_inode &&
-		    (isoff == 0 || offset == linfo.lo_offset))
-			ret = 1;
 	}
 
 	return ret;
@@ -887,22 +824,8 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 		loopinfo64.lo_flags = LO_FLAGS_AUTOCLEAR;
 
 	i = ioctl(fd, LOOP_SET_STATUS64, &loopinfo64);
-	if (i) {
-		struct loop_info loopinfo;
-		int errsv = errno;
-
-		i = loop_info64_to_old(&loopinfo64, &loopinfo);
-		if (i) {
-			errno = errsv;
-			*options &= ~SETLOOP_AUTOCLEAR;
-			perror("ioctl: LOOP_SET_STATUS64");
-		} else {
-			i = ioctl(fd, LOOP_SET_STATUS, &loopinfo);
-			if (i)
-				perror("ioctl: LOOP_SET_STATUS");
-		}
-		memset(&loopinfo, 0, sizeof(loopinfo));
-	}
+	if (i)
+		perror("ioctl: LOOP_SET_STATUS64");
 
 	if ((*options & SETLOOP_AUTOCLEAR) && !is_loopfd_autoclear(fd))
 		/* kernel doesn't support loop auto-destruction */

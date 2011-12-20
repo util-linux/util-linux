@@ -35,21 +35,6 @@ enum {
 #define LO_NAME_SIZE	64
 #define LO_KEY_SIZE	32
 
-struct loop_info {
-	int		lo_number;
-	my_dev_t	lo_device;
-	unsigned long	lo_inode;
-	my_dev_t	lo_rdevice;
-	int		lo_offset;
-	int		lo_encrypt_type;
-	int		lo_encrypt_key_size;
-	int		lo_flags;
-	char		lo_name[LO_NAME_SIZE];
-	unsigned char	lo_encrypt_key[LO_KEY_SIZE];
-	unsigned long	lo_init[2];
-	char		reserved[4];
-};
-
 struct loop_info64 {
 	uint64_t	lo_device;
 	uint64_t	lo_inode;
