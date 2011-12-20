@@ -23,6 +23,10 @@ sbin_PROGRAMS += losetup
 dist_man_MANS += losetup.8
 
 losetup_SOURCES = losetup.c \
+		$(top_srcdir)/lib/linux_version.c \
+		$(top_srcdir)/lib/at.c \
+		$(top_srcdir)/lib/sysfs.c \
+		$(top_srcdir)/lib/loopdev.c \
 		$(top_srcdir)/lib/canonicalize.c \
 		$(top_srcdir)/lib/strutils.c
 

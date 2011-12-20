@@ -1,5 +1,7 @@
-/* Originally from Ted's losetup.c */
 /*
+ * Copyright (C) 2011 Karel Zak <kzak@redhat.com>
+ * Originally from Ted's losetup.c
+ *
  * losetup.c - setup and control loop devices
  */
 #include <stdio.h>
@@ -24,6 +26,14 @@
 #include "loopdev.h"
 #include "xalloc.h"
 #include "canonicalize.h"
+
+enum {
+	A_CREATE,		/* setup a new device */
+	A_DELETE,		/* delete one or all devices */
+	A_SHOW,			/* list devices */
+	A_FIND_FREE,		/* find first unused */
+	A_SET_CAPACITY,		/* set device capacity */
+};
 
 static int verbose;
 
@@ -914,6 +924,71 @@ error:
 	return 1;
 }
 
+
+static int printf_loopdev(struct loopdev_cxt *lc)
+{
+	uint64_t x;
+	dev_t dev = 0;
+	ino_t ino = 0;
+	char *fname = NULL;
+	int type;
+
+	fname = loopcxt_get_backing_file(lc);
+	if (!fname)
+		return -EINVAL;
+
+	if (loopcxt_get_backing_devno(lc, &dev) == 0)
+		loopcxt_get_backing_inode(lc, &ino);
+
+	if (!dev && !ino) {
+		/*
+		 * Probably non-root user (no permissions to
+		 * call LOOP_GET_STATUS ioctls).
+		 */
+		printf("%s: []: (%s)",
+			loopcxt_get_device(lc), fname);
+
+		if (loopcxt_get_offset(lc, &x) == 0 && x)
+				printf(_(", offset %ju"), x);
+
+		if (loopcxt_get_sizelimit(lc, &x) == 0 && x)
+				printf(_(", sizelimit %ju"), x);
+		printf("\n");
+		return 0;
+	}
+
+	printf("%s: [%04d]:%" PRIu64 " (%s)",
+		loopcxt_get_device(lc), dev, ino, fname);
+
+	if (loopcxt_get_offset(lc, &x) == 0 && x)
+			printf(_(", offset %ju"), x);
+
+	if (loopcxt_get_sizelimit(lc, &x) == 0 && x)
+			printf(_(", sizelimit %ju"), x);
+
+	if (loopcxt_get_encrypt_type(lc, &type) == 0) {
+		const char *e = loopcxt_get_crypt_name(lc);
+
+		if ((!e || !*e) && type == 1)
+			e = "XOR";
+		if (e && *e)
+			printf(_(", encryption %s (type %ju)"), e, type);
+	}
+	printf("\n");
+	return 0;
+}
+
+static int show_all_loops(struct loopdev_cxt *lc)
+{
+	if (loopcxt_init_iterator(lc, LOOPITER_FL_USED))
+		return EXIT_FAILURE;
+
+	while (loopcxt_next(lc) == 0)
+		printf_loopdev(lc);
+
+	return EXIT_SUCCESS;
+}
+
 static void
 usage(FILE *out) {
 
@@ -942,15 +1017,21 @@ usage(FILE *out) {
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
  }
 
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
+	struct loopdev_cxt lc;
+	int act = 0;
+
 	char *p, *offset, *sizelimit, *encryption, *passfd, *device, *file, *assoc;
-	int delete, delete_all, find, c, all, capacity;
+	int delete, delete_all, find, c, capacity;
 	int res = 0;
 	int showdev = 0;
 	int ro = 0;
 	int pfd = -1;
 	uintmax_t off = 0, slimit = 0;
+
+	loopcxt_init(&lc, 0);
+	/*loopcxt_enable_debug(&lc, TRUE);*/
 
 	static const struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
@@ -974,14 +1055,20 @@ main(int argc, char **argv) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	capacity = delete = delete_all = find = all = 0;
+	capacity = delete = delete_all = find = 0;
 	assoc = offset = sizelimit = encryption = passfd = NULL;
 
 	while ((c = getopt_long(argc, argv, "acdDe:E:fhj:o:p:rsv",
 				longopts, NULL)) != -1) {
+
+		if (act && strchr("acdDf", c))
+			errx(EXIT_FAILURE,
+				_("the options %s are mutually exclusive"),
+				"--{all,set-capacity,detach,detach-all,find}");
+
 		switch (c) {
 		case 'a':
-			all = 1;
+			act = A_SHOW;
 			break;
 		case 'c':
 			capacity = 1;
@@ -1030,23 +1117,37 @@ main(int argc, char **argv) {
 		}
 	}
 
-	if (argc == 1) {
+	if (argc == 1)
 		usage(stderr);
-	} else if (delete) {
-		if (argc < optind+1 || encryption || offset || sizelimit ||
-		    capacity || find || all || showdev || assoc || ro)
-			usage(stderr);
-	} else if (delete_all) {
-		if (argc > optind || encryption || offset || sizelimit ||
-		    capacity || find || all || showdev || assoc || ro)
-			usage(stderr);
-	} else if (find) {
-		if (capacity || all || assoc || argc < optind || argc > optind+1)
-			usage(stderr);
-	} else if (all || delete_all) {
+
+	switch (act) {
+	case A_SHOW:
 		/* only -v is allowed */
 		if ((argc == 3 && verbose == 0) || argc > 3)
 			usage(stderr);
+
+		res = show_all_loops(&lc);
+	default:
+		break;
+	}
+
+	loopcxt_deinit(&lc);
+
+	if (act)
+		return res;
+
+	if (delete) {
+		if (argc < optind+1 || encryption || offset || sizelimit ||
+		    capacity || find || showdev || assoc || ro)
+			usage(stderr);
+	} else if (delete_all) {
+		if (argc > optind || encryption || offset || sizelimit ||
+		    capacity || find || showdev || assoc || ro)
+			usage(stderr);
+	} else if (find) {
+		if (capacity || assoc || argc < optind || argc > optind+1)
+			usage(stderr);
+	} else if (delete_all) {
 	} else if (assoc) {
 		if (capacity || encryption || showdev || passfd || ro)
 			usage(stderr);
@@ -1068,9 +1169,7 @@ main(int argc, char **argv) {
 		usage(stderr);
 	}
 
-	if (all)
-		return show_used_loop_devices();
-	else if (delete_all)
+	if (delete_all)
 		return delete_all_devices();
 	else if (assoc)
 		return show_associated_loop_devices(assoc, off, offset ? 1 : 0);
