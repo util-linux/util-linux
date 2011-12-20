@@ -18,12 +18,11 @@
 #include <getopt.h>
 #include <stdarg.h>
 
-#include "loop.h"
-#include "lomount.h"
 #include "strutils.h"
 #include "nls.h"
 #include "sundries.h"
 #include "pathnames.h"
+#include "loopdev.h"
 
 static int is_associated(int dev, struct stat *file, unsigned long long offset, int isoff);
 
@@ -48,6 +47,11 @@ struct looplist {
 #define LLFLG_PROCFS	(1 << 4)	/* try to found used devices in /proc/partitions */
 #define LLFLG_SUBDIR	(1 << 5)	/* /dev/loop/N */
 #define LLFLG_DFLT	(1 << 6)	/* directly try to check default loops */
+
+#define SETLOOP_RDONLY     (1<<0)  /* Open loop read-only */
+#define SETLOOP_AUTOCLEAR  (1<<1)  /* Automatically detach loop on close (2.6.25?) */
+
+static int del_loop (const char *device);
 
 /* TODO: move to lib/sysfs.c */
 static char *loopfile_from_sysfs(const char *device)
@@ -882,7 +886,7 @@ delete_all_devices (void)
 	return ok;
 }
 
-int
+static int
 del_loop (const char *device) {
 	int fd, errsv;
 
