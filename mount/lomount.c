@@ -25,8 +25,6 @@
 #include "sundries.h"
 #include "pathnames.h"
 
-#ifdef LOOP_SET_FD
-
 static int is_associated(int dev, struct stat *file, unsigned long long offset, int isoff);
 
 static int
@@ -986,46 +984,6 @@ error:
 	return 1;
 }
 
-#else /* no LOOP_SET_FD defined */
-static void
-mutter(void) {
-	fprintf(stderr,
-		_("This mount was compiled without loop support. "
-		  "Please recompile.\n"));
-}
-
-int
-set_loop(const char *device, const char *file, unsigned long long offset,
-         unsigned long long sizelimit, const char *encryption, int pfd, int *loopro,
-         int keysz, int hash_pass) {
-	mutter();
-	return 1;
-}
-
-int
-del_loop (const char *device) {
-	mutter();
-	return 1;
-}
-
-char *
-find_unused_loop_device (void) {
-	mutter();
-	return 0;
-}
-
-int
-find_loopdev_by_backing_file(const char *filename, char **loopdev)
-{
-	mutter();
-	return 1;
-}
-
-#endif /* !LOOP_SET_FD */
-
-#ifdef LOOP_SET_FD
-
-
 static void
 usage(FILE *out) {
 
@@ -1246,13 +1204,3 @@ main(int argc, char **argv) {
 	return res;
 }
 
-#else /* LOOP_SET_FD not defined */
-
-int
-main(int argc, char **argv) {
-	fprintf(stderr,
-		_("No loop support was available at compile time. "
-		  "Please recompile.\n"));
-	return -1;
-}
-#endif /* !LOOP_SET_FD*/
