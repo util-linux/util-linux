@@ -395,7 +395,7 @@ static wchar_t *mbs_to_wcs(const char *s)
 	n = mbstowcs((wchar_t *)0, s, 0);
 	if (n < 0)
 		return NULL;
-	wcs = malloc((n + 1) * sizeof(wchar_t));
+	wcs = xmalloc((n + 1) * sizeof(wchar_t));
 	if (!wcs)
 		return NULL;
 	n = mbstowcs(wcs, s, n + 1);
