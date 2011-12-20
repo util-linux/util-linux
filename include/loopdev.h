@@ -96,6 +96,7 @@ struct loopdev_cxt {
 	unsigned int	has_info:1;	/* .info contains data */
 	unsigned int	extra_check:1;	/* unusual stuff for iterator */
 	unsigned int	debug:1;	/* debug mode ON/OFF */
+	unsigned int	info_failed:1;	/* LOOP_GET_STATUS ioctl failed */
 
 	struct sysfs_cxt	sysfs;	/* pointer to /sys/dev/block/<maj:min>/ */
 	struct loop_info64	info;	/* for GET/SET ioctl */
@@ -120,6 +121,7 @@ enum {
  */
 extern int is_loopdev(const char *device);
 extern int loopdev_is_autoclear(const char *device);
+
 extern char *loopdev_get_backing_file(const char *device);
 extern int loopdev_is_used(const char *device, const char *filename,
 			   uint64_t offset, int flags);
@@ -161,12 +163,22 @@ int loopcxt_set_encryption(struct loopdev_cxt *lc,
                            const char *password);
 
 extern char *loopcxt_get_backing_file(struct loopdev_cxt *lc);
+extern int loopcxt_get_backing_devno(struct loopdev_cxt *lc, dev_t *devno);
+extern int loopcxt_get_backing_inode(struct loopdev_cxt *lc, ino_t *ino);
 extern int loopcxt_get_offset(struct loopdev_cxt *lc, uint64_t *offset);
 extern int loopcxt_get_sizelimit(struct loopdev_cxt *lc, uint64_t *size);
+extern int loopcxt_get_encrypt_type(struct loopdev_cxt *lc, uint32_t *type);
+extern const char *loopcxt_get_crypt_name(struct loopdev_cxt *lc);
 extern int loopcxt_is_autoclear(struct loopdev_cxt *lc);
 extern int loopcxt_is_readonly(struct loopdev_cxt *lc);
 extern int loopcxt_find_by_backing_file(struct loopdev_cxt *lc,
 				const char *filename,
                                 uint64_t offset, int flags);
+
+extern int loopcxt_is_used(struct loopdev_cxt *lc,
+                    struct stat *st,
+                    const char *backing_file,
+                    uint64_t offset,
+                    int flags);
 
 #endif /* UTIL_LINUX_LOOPDEV_H */

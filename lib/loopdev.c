@@ -88,6 +88,7 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 	lc->fd = -1;
 	lc->mode = 0;
 	lc->has_info = 0;
+	lc->info_failed = 0;
 	*lc->device = '\0';
 	memset(&lc->info, 0, sizeof(lc->info));
 
@@ -236,7 +237,6 @@ struct sysfs_cxt *loopcxt_get_sysfs(struct loopdev_cxt *lc)
 		}
 	}
 
-	DBG(lc, loopdev_debug("sysfs: returns context"));
 	return &lc->sysfs;
 }
 
@@ -540,12 +540,10 @@ struct loop_info64 *loopcxt_get_info(struct loopdev_cxt *lc)
 {
 	int fd;
 
-	if (!lc)
+	if (!lc || lc->info_failed)
 		return NULL;
 	if (lc->has_info)
 		return &lc->info;
-
-	DBG(lc, loopdev_debug("reading loop_info64"));
 
 	fd = loopcxt_get_fd(lc);
 	if (fd < 0)
@@ -553,7 +551,12 @@ struct loop_info64 *loopcxt_get_info(struct loopdev_cxt *lc)
 
 	if (ioctl(fd, LOOP_GET_STATUS64, &lc->info) == 0) {
 		lc->has_info = 1;
+		lc->info_failed = 0;
+		DBG(lc, loopdev_debug("reading loop_info64 OK"));
 		return &lc->info;
+	} else {
+		lc->info_failed = 1;
+		DBG(lc, loopdev_debug("reading loop_info64 FAILED"));
 	}
 
 	return NULL;
@@ -587,7 +590,7 @@ char *loopcxt_get_backing_file(struct loopdev_cxt *lc)
 		}
 	}
 
-	DBG(lc, loopdev_debug("return backing file: %s", res));
+	DBG(lc, loopdev_debug("get_backing_file [%s]", res));
 	return res;
 }
 
@@ -610,10 +613,11 @@ int loopcxt_get_offset(struct loopdev_cxt *lc, uint64_t *offset)
 		if (lo) {
 			if (offset)
 				*offset = lo->lo_offset;
-			return 0;
+			rc = 0;
 		}
 	}
 
+	DBG(lc, loopdev_debug("get_offset [rc=%d]", rc));
 	return rc;
 }
 
@@ -636,10 +640,92 @@ int loopcxt_get_sizelimit(struct loopdev_cxt *lc, uint64_t *size)
 		if (lo) {
 			if (size)
 				*size = lo->lo_sizelimit;
-			return 0;
+			rc = 0;
 		}
 	}
 
+	DBG(lc, loopdev_debug("get_sizelimit [rc=%d]", rc));
+	return rc;
+}
+
+/*
+ * @lc: context
+ * @devno: returns encryption type
+ *
+ * Cryptoloop is DEPRECATED!
+ *
+ * Returns: <0 on error, 0 on success
+ */
+int loopcxt_get_encrypt_type(struct loopdev_cxt *lc, uint32_t *type)
+{
+	struct loop_info64 *lo = loopcxt_get_info(lc);
+	int rc = -EINVAL;
+
+	if (lo) {
+		if (type)
+			*type = lo->lo_encrypt_type;
+		rc = 0;
+	}
+	DBG(lc, loopdev_debug("get_encrypt_type [rc=%d]", rc));
+	return rc;
+}
+
+/*
+ * @lc: context
+ * @devno: returns crypt name
+ *
+ * Cryptoloop is DEPRECATED!
+ *
+ * Returns: <0 on error, 0 on success
+ */
+const char *loopcxt_get_crypt_name(struct loopdev_cxt *lc)
+{
+	struct loop_info64 *lo = loopcxt_get_info(lc);
+
+	if (lo)
+		return (char *) lo->lo_crypt_name;
+
+	DBG(lc, loopdev_debug("get_crypt_name failed"));
+	return NULL;
+}
+
+/*
+ * @lc: context
+ * @devno: returns backing file devno
+ *
+ * Returns: <0 on error, 0 on success
+ */
+int loopcxt_get_backing_devno(struct loopdev_cxt *lc, dev_t *devno)
+{
+	struct loop_info64 *lo = loopcxt_get_info(lc);
+	int rc = -EINVAL;
+
+	if (lo) {
+		if (devno)
+			*devno = lo->lo_device;
+		rc = 0;
+	}
+	DBG(lc, loopdev_debug("get_backing_devno [rc=%d]", rc));
+	return rc;
+}
+
+/*
+ * @lc: context
+ * @ino: returns backing file inode
+ *
+ * Returns: <0 on error, 0 on success
+ */
+int loopcxt_get_backing_inode(struct loopdev_cxt *lc, ino_t *ino)
+{
+	struct loop_info64 *lo = loopcxt_get_info(lc);
+	int rc = -EINVAL;
+
+	if (lo) {
+		if (ino)
+			*ino = lo->lo_inode;
+		rc = 0;
+	}
+	DBG(lc, loopdev_debug("get_backing_inode [rc=%d]", rc));
 	return rc;
 }
 
@@ -687,6 +773,67 @@ int loopcxt_is_readonly(struct loopdev_cxt *lc)
 			return lo->lo_flags & LO_FLAGS_READ_ONLY;
 	}
 	return 0;
+}
+
+/*
+ * @lc: context
+ * @st: backing file stat or NULL
+ * @backing_file: filename
+ * @offset: offset
+ * @flags: LOOPDEV_FL_OFFSET if @offset should not be ignored
+ *
+ * Returns 1 if the current @lc loopdev is associated with the given backing
+ * file. Note that the preferred way is to use devno and inode number rather
+ * than filename. The @backing_file filename is poor solution usable in case
+ * that you don't have rights to call stat().
+ *
+ * Don't forget that old kernels provide very restricted (in size) backing
+ * filename by LOOP_GET_STAT64 ioctl only.
+ */
+int loopcxt_is_used(struct loopdev_cxt *lc,
+		    struct stat *st,
+		    const char *backing_file,
+		    uint64_t offset,
+		    int flags)
+{
+	ino_t ino;
+	dev_t dev;
+
+	if (!lc)
+		return 0;
+
+	DBG(lc, loopdev_debug("checking %s vs. %s",
+				loopcxt_get_device(lc),
+				backing_file));
+
+	if (st && loopcxt_get_backing_inode(lc, &ino) == 0 &&
+		  loopcxt_get_backing_devno(lc, &dev) == 0) {
+
+		if (ino == st->st_ino && dev == st->st_dev)
+			goto found;
+
+		/* don't use filename if we have devno and inode */
+		return 0;
+	}
+
+	/* poor man's solution */
+	if (backing_file) {
+		char *name = loopcxt_get_backing_file(lc);
+		int rc = name && strcmp(name, backing_file) == 0;
+
+		free(name);
+		if (rc)
+			goto found;
+	}
+
+	return 0;
+found:
+	if (flags & LOOPDEV_FL_OFFSET) {
+		uint64_t off;
+
+		return loopcxt_get_offset(lc, &off) == 0 && off == offset;
+	}
+	return 1;
 }
 
 /*
@@ -891,6 +1038,7 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	}
 	memset(&lc->info, 0, sizeof(lc->info));
 	lc->has_info = 0;
+	lc->info_failed = 0;
 
 	DBG(lc, loopdev_debug("setup success [rc=0]"));
 	return 0;
@@ -998,7 +1146,7 @@ int loopdev_is_used(const char *device, const char *filename,
 		    uint64_t offset, int flags)
 {
 	struct loopdev_cxt lc;
-	char *backing = NULL;
+	struct stat st;
 	int rc = 0;
 
 	if (!device)
@@ -1007,23 +1155,10 @@ int loopdev_is_used(const char *device, const char *filename,
 	loopcxt_init(&lc, 0);
 	loopcxt_set_device(&lc, device);
 
-	backing = loopcxt_get_backing_file(&lc);
-	if (!backing)
-		goto done;
-	if (filename && strcmp(filename, backing) != 0)
-		goto done;
-	if (flags & LOOPDEV_FL_OFFSET) {
-		uint64_t off;
+	rc = !stat(filename, &st);
+	rc = loopcxt_is_used(&lc, rc ? &st : NULL, filename, offset, flags);
 
-		if (loopcxt_get_offset(&lc, &off) != 0 || off != offset)
-			goto done;
-	}
-
-	rc = 1;
-done:
-	free(backing);
 	loopcxt_deinit(&lc);
-
 	return rc;
 }
 
@@ -1046,33 +1181,23 @@ int loopdev_delete(const char *device)
 int loopcxt_find_by_backing_file(struct loopdev_cxt *lc, const char *filename,
 				 uint64_t offset, int flags)
 {
-	int rc;
+	int rc, hasst;
+	struct stat st;
 
 	if (!filename)
 		return -EINVAL;
+
+	hasst = !stat(filename, &st);
 
 	rc = loopcxt_init_iterator(lc, LOOPITER_FL_USED);
 	if (rc)
 		return rc;
 
-	while((rc = loopcxt_next(lc)) == 0) {
-		char *backing = loopcxt_get_backing_file(lc);
+	while ((rc = loopcxt_next(lc)) == 0) {
 
-		if (!backing || strcmp(backing, filename)) {
-			free(backing);
-			continue;
-		}
-
-		free(backing);
-
-		if (flags & LOOPDEV_FL_OFFSET) {
-			uint64_t off;
-			if (loopcxt_get_offset(lc, &off) != 0 || offset != off)
-				continue;
-		}
-
-		rc = 0;
-		break;
+		if (loopcxt_is_used(lc, hasst ? &st : NULL,
+					filename, offset, flags))
+			break;
 	}
 
 	loopcxt_deinit_iterator(lc);
