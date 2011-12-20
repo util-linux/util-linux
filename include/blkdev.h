@@ -72,6 +72,12 @@
 # ifdef __linux__
 #  define HDIO_GETGEO 0x0301
 # endif
+
+/* uniform CD-ROM information */
+#ifndef CDROM_GET_CAPABILITY
+# define CDROM_GET_CAPABILITY 0x5331
+#endif
+
 struct hd_geometry {
 	unsigned char heads;
 	unsigned char sectors;
@@ -97,5 +103,8 @@ int blkdev_is_misaligned(int fd);
 
 /* get physical block device size */
 int blkdev_get_physector_size(int fd, int *sector_size);
+
+/* is the device cdrom capable? */
+int blkdev_is_cdrom(int fd);
 
 #endif /* BLKDEV_H */

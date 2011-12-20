@@ -2746,37 +2746,16 @@ expert_command_prompt(void)
 	}
 }
 
-static int
-is_ide_cdrom_or_tape(char *device) {
-	FILE *procf;
-	char buf[100];
-	struct stat statbuf;
-	int is_ide = 0;
+static int is_ide_cdrom_or_tape(char *device)
+{
+	int fd, ret;
 
-	/* No device was given explicitly, and we are trying some
-	   likely things.  But opening /dev/hdc may produce errors like
-           "hdc: tray open or drive not ready"
-	   if it happens to be a CD-ROM drive. It even happens that
-	   the process hangs on the attempt to read a music CD.
-	   So try to be careful. This only works since 2.1.73. */
-
-	if (strncmp("/dev/hd", device, 7))
+	if (fd = open(device, O_RDONLY) < 0)
 		return 0;
+	ret = blkdev_is_cdrom(fd);
 
-	snprintf(buf, sizeof(buf), "/proc/ide/%s/media", device+5);
-	procf = fopen(buf, "r");
-	if (procf != NULL && fgets(buf, sizeof(buf), procf))
-		is_ide = (!strncmp(buf, "cdrom", 5) ||
-			  !strncmp(buf, "tape", 4));
-	else
-		/* Now when this proc file does not exist, skip the
-		   device when it is read-only. */
-		if (stat(device, &statbuf) == 0)
-			is_ide = ((statbuf.st_mode & 0222) == 0);
-
-	if (procf)
-		fclose(procf);
-	return is_ide;
+	close(fd);
+	return ret;
 }
 
 static void

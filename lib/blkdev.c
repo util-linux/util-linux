@@ -243,6 +243,19 @@ int blkdev_is_misaligned(int fd)
 #endif
 }
 
+int blkdev_is_cdrom(int fd)
+{
+#ifdef CDROM_GET_CAPABILITY
+	int ret;
+
+	if ((ret = ioctl(fd, CDROM_GET_CAPABILITY, NULL)) < 0)
+		return 0;
+	else
+		return ret;
+#else
+	return 0;
+#endif
+}
 
 #ifdef TEST_PROGRAM
 #include <stdio.h>
