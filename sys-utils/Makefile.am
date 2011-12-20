@@ -18,6 +18,23 @@ dist_man_MANS += dmesg.1 ctrlaltdel.8 cytune.8 setarch.8 \
 		ldattach.8 tunelp.8 rtcwake.8 fsfreeze.8 fstrim.8
 endif
 
+if BUILD_LOSETUP
+sbin_PROGRAMS += losetup
+dist_man_MANS += losetup.8
+
+losetup_SOURCES = losetup.c \
+		$(top_srcdir)/lib/canonicalize.c \
+		$(top_srcdir)/lib/strutils.c
+
+if HAVE_STATIC_LOSETUP
+bin_PROGRAMS += losetup.static
+losetup_static_SOURCES = $(losetup_SOURCES)
+losetup_static_LDFLAGS = -all-static
+endif
+
+endif # BUILD_LOSETUP
+
+
 if BUILD_PRLIMIT
 usrbin_exec_PROGRAMS += prlimit
 dist_man_MANS += prlimit.1

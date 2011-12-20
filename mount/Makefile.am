@@ -1,8 +1,8 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS = mount umount
-sbin_PROGRAMS = losetup swapon
-dist_man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
+sbin_PROGRAMS = swapon
+dist_man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8
 
 # generic sources for all programs (mount, umount)
 srcs_common = sundries.c $(top_srcdir)/lib/canonicalize.c sundries.h
@@ -50,10 +50,6 @@ swapon_SOURCES = swapon.c swap_constants.h $(top_srcdir)/lib/linux_version.c \
 swapon_CFLAGS = $(cflags_common)
 swapon_LDADD = $(ldadd_common)
 
-losetup_SOURCES = lomount.c \
-		$(top_srcdir)/lib/canonicalize.c \
-		$(top_srcdir)/lib/strutils.c
-
 mount_static_LDADD =
 
 if HAVE_STATIC_MOUNT
@@ -71,13 +67,6 @@ umount_static_CFLAGS = $(cflags_common)
 umount_static_LDFLAGS = $(ldflags_static)
 umount_static_LDADD = $(ldadd_static)
 endif
-
-if HAVE_STATIC_LOSETUP
-bin_PROGRAMS += losetup.static
-losetup_static_SOURCES = $(losetup_SOURCES)
-losetup_static_LDFLAGS = $(ldflags_static)
-endif
-
 
 if HAVE_SELINUX
 mount_LDADD += $(SELINUX_LIBS)

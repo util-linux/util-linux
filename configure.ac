@@ -687,6 +687,15 @@ UL_REQUIRES_BUILD([mount], [libblkid])
 AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
 
 
+AC_ARG_ENABLE([losetup],
+  AS_HELP_STRING([--disable-losetup], [do not build losetup]),
+  [], enable_losetup=check
+)
+UL_BUILD_INIT([losetup])
+UL_REQUIRES_LINUX([losetup])
+AM_CONDITIONAL(BUILD_LOSETUP, test "x$build_losetup" = xyes)
+
+
 AC_ARG_ENABLE([libmount-mount],
   AS_HELP_STRING([--enable-libmount-mount], [link mount(8) with libmount (EXPERIMENTAL)]),
   [], enable_libmount_mount=no

@@ -14,6 +14,7 @@ ipcs
 ldattach
 linux32.8
 linux64.8
+losetup
 lscpu
 mips32.8
 mips64.8
