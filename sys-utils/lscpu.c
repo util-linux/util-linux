@@ -363,9 +363,9 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	if (desc->flags) {
 		snprintf(buf, sizeof(buf), " %s ", desc->flags);
 		if (strstr(buf, " svm "))
-			desc->virtflag = strdup("svm");
+			desc->virtflag = xstrdup("svm");
 		else if (strstr(buf, " vmx "))
-			desc->virtflag = strdup("vmx");
+			desc->virtflag = xstrdup("vmx");
 		if (strstr(buf, " lm "))
 			desc->mode |= MODE_32BIT | MODE_64BIT;		/* x86_64 */
 		if (strstr(buf, " zarch "))
