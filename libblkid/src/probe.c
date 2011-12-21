@@ -1341,6 +1341,9 @@ blkid_probe blkid_probe_get_wholedisk_probe(blkid_probe pr)
 		DBG(DEBUG_LOWPROBE, printf("allocate a wholedisk probe\n"));
 
 		pr->disk_probe = blkid_new_probe_from_filename(disk_path);
+
+		free(disk_path);
+
 		if (!pr->disk_probe)
 			return NULL;	/* ENOMEM? */
 	}
