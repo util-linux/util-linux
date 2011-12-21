@@ -29,7 +29,8 @@
 
 enum {
 	A_CREATE,		/* setup a new device */
-	A_DELETE,		/* delete one or all devices */
+	A_DELETE,		/* delete given device(s) */
+	A_DELETE_ALL,		/* delete all devices */
 	A_SHOW,			/* list devices */
 	A_FIND_FREE,		/* find first unused */
 	A_SET_CAPACITY,		/* set device capacity */
@@ -63,8 +64,6 @@ struct looplist {
 
 #define SETLOOP_RDONLY     (1<<0)  /* Open loop read-only */
 #define SETLOOP_AUTOCLEAR  (1<<1)  /* Automatically detach loop on close (2.6.25?) */
-
-static int del_loop (const char *device);
 
 /* TODO: move to lib/sysfs.c */
 static char *loopfile_from_sysfs(const char *device)
@@ -824,58 +823,6 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 	return 0;
 }
 
-static int
-delete_all_devices (void)
-{
-	struct looplist ll;
-	int fd;
-	int ok = 0;
-
-	if (looplist_open(&ll, LLFLG_USEDONLY) == -1) {
-		warnx(_("/dev directory does not exist."));
-		return 1;
-	}
-
-	while((fd = looplist_next(&ll)) != -1) {
-		close(fd);
-		ok |= del_loop(ll.name);
-	}
-	looplist_close(&ll);
-
-	if (!ll.ct_succ && ll.ct_perm) {
-		warnx(_("no permission to look at /dev/loop%s<N>"),
-				(ll.flag & LLFLG_SUBDIR) ? "/" : "");
-		return 1;
-	}
-	return ok;
-}
-
-static int
-del_loop (const char *device) {
-	int fd, errsv;
-
-	if ((fd = open (device, O_RDONLY)) < 0) {
-		errsv = errno;
-		goto error;
-	}
-	if (ioctl (fd, LOOP_CLR_FD, 0) < 0) {
-		errsv = errno;
-		goto error;
-	}
-	close (fd);
-	if (verbose)
-		printf(_("del_loop(%s): success\n"), device);
-	return 0;
-
-error:
-	fprintf(stderr, _("loop: can't delete device %s: %s\n"),
-		 device, strerror(errsv));
-	if (fd >= 0)
-		close(fd);
-	return 1;
-}
-
-
 static int printf_loopdev(struct loopdev_cxt *lc)
 {
 	uint64_t x;
@@ -947,6 +894,7 @@ static int show_all_loops(struct loopdev_cxt *lc, const char *file,
 
 		printf_loopdev(lc);
 	}
+	loopcxt_deinit_iterator(lc);
 	return 0;
 }
 
@@ -961,7 +909,31 @@ static int set_capacity(struct loopdev_cxt *lc)
 	else
 		return 0;
 
-	return 1;
+	return -1;
+}
+
+static int delete_loop(struct loopdev_cxt *lc)
+{
+	if (loopcxt_delete_device(lc))
+		warn(_("%s: detach failed"), loopcxt_get_device(lc));
+	else
+		return 0;
+
+	return -1;
+}
+
+static int delete_all_loops(struct loopdev_cxt *lc)
+{
+	int res = 0;
+
+	if (loopcxt_init_iterator(lc, LOOPITER_FL_USED))
+		return -1;
+
+	while (loopcxt_next(lc) == 0)
+		res += delete_loop(lc);
+
+	loopcxt_deinit_iterator(lc);
+	return res;
 }
 
 static void
@@ -1000,7 +972,7 @@ int main(int argc, char **argv)
 	uint64_t offset = 0;
 
 	char *p, *sizelimit, *encryption, *passfd, *device;
-	int delete, delete_all, find, c;
+	int find, c;
 	int res = 0;
 	int showdev = 0;
 	int ro = 0;
@@ -1013,7 +985,7 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
 		{ "set-capacity", 1, 0, 'c' },
-		{ "detach", 0, 0, 'd' },
+		{ "detach", 1, 0, 'd' },
 		{ "detach-all", 0, 0, 'D' },
 		{ "encryption", 1, 0, 'e' },
 		{ "find", 0, 0, 'f' },
@@ -1032,10 +1004,10 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	delete = delete_all = find = 0;
+	find = 0;
 	sizelimit = encryption = passfd = NULL;
 
-	while ((c = getopt_long(argc, argv, "ac:dDe:E:fhj:o:p:rsv",
+	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:o:p:rsv",
 				longopts, NULL)) != -1) {
 
 		if (act && strchr("acdDfj", c))
@@ -1055,10 +1027,11 @@ int main(int argc, char **argv)
 			ro = 1;
 			break;
 		case 'd':
-			delete = 1;
+			act = A_DELETE;
+			loopcxt_set_device(&lc, optarg);
 			break;
 		case 'D':
-			delete_all = 1;
+			act = A_DELETE_ALL;
 			break;
 		case 'E':
 		case 'e':
@@ -1102,7 +1075,18 @@ int main(int argc, char **argv)
 	if (argc == 1)
 		usage(stderr);
 
+
 	switch (act) {
+	case A_DELETE:
+		res = delete_loop(&lc);
+		while (optind < argc) {
+			loopcxt_set_device(&lc, argv[optind++]);
+			res += delete_loop(&lc);
+		}
+		break;
+	case A_DELETE_ALL:
+		res = delete_all_loops(&lc);
+		break;
 	case A_SHOW:
 		res = show_all_loops(&lc, file, offset, flags);
 		break;
@@ -1118,15 +1102,7 @@ int main(int argc, char **argv)
 	if (act)
 		return res ? EXIT_FAILURE : EXIT_SUCCESS;
 
-	if (delete) {
-		if (argc < optind+1 || encryption || sizelimit ||
-		    find || showdev || ro)
-			usage(stderr);
-	} else if (delete_all) {
-		if (argc > optind || encryption || sizelimit ||
-		    find || showdev || ro)
-			usage(stderr);
-	} else if (find) {
+	if (find) {
 		if ( argc < optind || argc > optind+1)
 			usage(stderr);
 	} else {
@@ -1139,9 +1115,7 @@ int main(int argc, char **argv)
 		usage(stderr);
 	}
 
-	if (delete_all)
-		return delete_all_devices();
-	else if (find) {
+	if (find) {
 		device = find_unused_loop_device();
 		if (device == NULL)
 			return -1;
@@ -1152,7 +1126,7 @@ int main(int argc, char **argv)
 			return 0;
 		}
 		file = argv[optind];
-	} else if (!delete) {
+	} else {
 		device = argv[optind];
 		if (argc == optind+1)
 			file = NULL;
@@ -1160,10 +1134,7 @@ int main(int argc, char **argv)
 			file = argv[optind+1];
 	}
 
-	if (delete) {
-		while (optind < argc)
-			res += del_loop(argv[optind++]);
-	} else if (file == NULL)
+	if (file == NULL)
 		res = show_loop(device);
 	else {
 		if (passfd && sscanf(passfd, "%d", &pfd) != 1)
