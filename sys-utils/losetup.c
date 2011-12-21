@@ -1038,6 +1038,7 @@ int main(int argc, char **argv)
 			encryption = optarg;
 			break;
 		case 'f':
+			act = A_FIND_FREE;
 			find = 1;
 			break;
 		case 'h':
@@ -1086,6 +1087,12 @@ int main(int argc, char **argv)
 		break;
 	case A_DELETE_ALL:
 		res = delete_all_loops(&lc);
+		break;
+	case A_FIND_FREE:
+		if (loopcxt_find_unused(&lc))
+			warn(_("find unused loop device failed"));
+		else
+			printf("%s\n", loopcxt_get_device(&lc));
 		break;
 	case A_SHOW:
 		res = show_all_loops(&lc, file, offset, flags);
