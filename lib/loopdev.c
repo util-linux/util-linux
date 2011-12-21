@@ -118,6 +118,11 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 	return 0;
 }
 
+int loopcxt_has_device(struct loopdev_cxt *lc)
+{
+	return lc && *lc->device;
+}
+
 /*
  * @lc: context
  * @flags: LOOPDEV_FL_* flags
@@ -948,12 +953,15 @@ int loopcxt_set_encryption(struct loopdev_cxt *lc,
 		lc->info.lo_encrypt_key_size = 0;
 		break;
 	default:
+		DBG(lc, loopdev_debug("setting encryption key"));
 		memset(lc->info.lo_encrypt_key, 0, LO_KEY_SIZE);
 		strncpy((char *)lc->info.lo_encrypt_key, password, LO_KEY_SIZE);
 		lc->info.lo_encrypt_key[LO_KEY_SIZE - 1] = '\0';
 		lc->info.lo_encrypt_key_size = LO_KEY_SIZE;
 		break;
 	}
+
+	DBG(lc, loopdev_debug("encryption successfully set"));
 	return 0;
 }
 

@@ -114,6 +114,7 @@ enum {
 	LOOPDEV_FL_NOIOCTL	= (1 << 6),
 	LOOPDEV_FL_DEVSUBDIR	= (1 << 7),
 	LOOPDEV_FL_CONTROL	= (1 << 8),	/* system with /dev/loop-control */
+	LOOPDEV_FL_SIZELIMIT	= (1 << 9)
 };
 
 /*
@@ -139,6 +140,7 @@ extern void loopcxt_deinit(struct loopdev_cxt *lc);
 extern void loopcxt_enable_debug(struct loopdev_cxt *lc, int enable);
 
 extern int loopcxt_set_device(struct loopdev_cxt *lc, const char *device);
+extern int loopcxt_has_device(struct loopdev_cxt *lc);
 extern char *loopcxt_strdup_device(struct loopdev_cxt *lc);
 extern const char *loopcxt_get_device(struct loopdev_cxt *lc);
 extern struct sysfs_cxt *loopcxt_get_sysfs(struct loopdev_cxt *lc);
