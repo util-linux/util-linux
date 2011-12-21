@@ -540,34 +540,6 @@ show_used_loop_devices (void) {
 	return 0;
 }
 
-/* list all associated loop devices */
-static int
-show_associated_loop_devices(char *filename, unsigned long long offset, int isoff)
-{
-	struct looplist ll;
-	struct stat filestat;
-	int fd;
-
-	if (stat(filename, &filestat) == -1) {
-		perror(filename);
-		return 1;
-	}
-
-	if (looplist_open(&ll, LLFLG_USEDONLY) == -1) {
-		warnx(_("/dev directory does not exist."));
-		return 1;
-	}
-
-	while((fd = looplist_next(&ll)) != -1) {
-		if (is_associated(fd, &filestat, offset, isoff) == 1)
-			show_loop_fd(fd, ll.name);
-		close(fd);
-	}
-	looplist_close(&ll);
-
-	return 0;
-}
-
 /* check if the loopfile is already associated with the same given
  * parameters.
  *
@@ -978,14 +950,24 @@ static int printf_loopdev(struct loopdev_cxt *lc)
 	return 0;
 }
 
-static int show_all_loops(struct loopdev_cxt *lc)
+static int show_all_loops(struct loopdev_cxt *lc, const char *file,
+			  uint64_t offset, int flags)
 {
+	struct stat sbuf, *st = &sbuf;
+
 	if (loopcxt_init_iterator(lc, LOOPITER_FL_USED))
 		return EXIT_FAILURE;
 
-	while (loopcxt_next(lc) == 0)
-		printf_loopdev(lc);
+	if (!file || stat(file, st))
+		st = NULL;
 
+	while (loopcxt_next(lc) == 0) {
+
+		if (file && !loopcxt_is_used(lc, st, file, offset, flags))
+			continue;
+
+		printf_loopdev(lc);
+	}
 	return EXIT_SUCCESS;
 }
 
@@ -1020,15 +1002,17 @@ usage(FILE *out) {
 int main(int argc, char **argv)
 {
 	struct loopdev_cxt lc;
-	int act = 0;
+	int act = 0, flags = 0;
+	char *file = NULL;
+	uint64_t offset = 0;
 
-	char *p, *offset, *sizelimit, *encryption, *passfd, *device, *file, *assoc;
+	char *p, *sizelimit, *encryption, *passfd, *device;
 	int delete, delete_all, find, c, capacity;
 	int res = 0;
 	int showdev = 0;
 	int ro = 0;
 	int pfd = -1;
-	uintmax_t off = 0, slimit = 0;
+	uintmax_t slimit = 0;
 
 	loopcxt_init(&lc, 0);
 	/*loopcxt_enable_debug(&lc, TRUE);*/
@@ -1056,15 +1040,15 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 
 	capacity = delete = delete_all = find = 0;
-	assoc = offset = sizelimit = encryption = passfd = NULL;
+	sizelimit = encryption = passfd = NULL;
 
 	while ((c = getopt_long(argc, argv, "acdDe:E:fhj:o:p:rsv",
 				longopts, NULL)) != -1) {
 
-		if (act && strchr("acdDf", c))
+		if (act && strchr("acdDfj", c))
 			errx(EXIT_FAILURE,
 				_("the options %s are mutually exclusive"),
-				"--{all,set-capacity,detach,detach-all,find}");
+				"--{all,associated,set-capacity,detach,detach-all,find}");
 
 		switch (c) {
 		case 'a':
@@ -1093,10 +1077,14 @@ int main(int argc, char **argv)
 			usage(stdout);
 			break;
 		case 'j':
-			assoc = optarg;
+			act = A_SHOW;
+			file = optarg;
 			break;
 		case 'o':
-			offset = optarg;
+			if (strtosize(optarg, &offset))
+				errx(EXIT_FAILURE,
+				     _("invalid offset '%s' specified"), optarg);
+			flags |= LOOPDEV_FL_OFFSET;
 			break;
 		case 'p':
 			passfd = optarg;
@@ -1122,11 +1110,8 @@ int main(int argc, char **argv)
 
 	switch (act) {
 	case A_SHOW:
-		/* only -v is allowed */
-		if ((argc == 3 && verbose == 0) || argc > 3)
-			usage(stderr);
-
-		res = show_all_loops(&lc);
+		res = show_all_loops(&lc, file, offset, flags);
+		break;
 	default:
 		break;
 	}
@@ -1137,22 +1122,18 @@ int main(int argc, char **argv)
 		return res;
 
 	if (delete) {
-		if (argc < optind+1 || encryption || offset || sizelimit ||
-		    capacity || find || showdev || assoc || ro)
+		if (argc < optind+1 || encryption || sizelimit ||
+		    capacity || find || showdev || ro)
 			usage(stderr);
 	} else if (delete_all) {
-		if (argc > optind || encryption || offset || sizelimit ||
-		    capacity || find || showdev || assoc || ro)
+		if (argc > optind || encryption || sizelimit ||
+		    capacity || find || showdev || ro)
 			usage(stderr);
 	} else if (find) {
-		if (capacity || assoc || argc < optind || argc > optind+1)
-			usage(stderr);
-	} else if (delete_all) {
-	} else if (assoc) {
-		if (capacity || encryption || showdev || passfd || ro)
+		if (capacity || argc < optind || argc > optind+1)
 			usage(stderr);
 	} else if (capacity) {
-		if (argc != optind + 1 || encryption || offset || sizelimit ||
+		if (argc != optind + 1 || encryption || sizelimit ||
 		    showdev || ro)
 			usage(stderr);
 	} else {
@@ -1160,10 +1141,6 @@ int main(int argc, char **argv)
 			usage(stderr);
 	}
 
-	if (offset && strtosize(offset, &off)) {
-		warnx(_("invalid offset '%s' specified"), offset);
-		usage(stderr);
-	}
 	if (sizelimit && strtosize(sizelimit, &slimit)) {
 		warnx(_("invalid sizelimit '%s' specified"), sizelimit);
 		usage(stderr);
@@ -1171,8 +1148,6 @@ int main(int argc, char **argv)
 
 	if (delete_all)
 		return delete_all_devices();
-	else if (assoc)
-		return show_associated_loop_devices(assoc, off, offset ? 1 : 0);
 	else if (find) {
 		device = find_unused_loop_device();
 		if (device == NULL)
@@ -1203,7 +1178,7 @@ int main(int argc, char **argv)
 		if (passfd && sscanf(passfd, "%d", &pfd) != 1)
 			usage(stderr);
 		do {
-			res = set_loop(device, file, off, slimit, encryption, pfd, &ro);
+			res = set_loop(device, file, offset, slimit, encryption, pfd, &ro);
 			if (res == 2 && find) {
 				if (verbose)
 					printf(_("stolen loop=%s...trying again\n"),
