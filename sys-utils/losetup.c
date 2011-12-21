@@ -425,27 +425,6 @@ find_loopdev_by_backing_file(const char *filename, char **loopdev)
 	return devs_n ? 2 : 1;		/* more loopdevs or error */
 }
 
-static int
-set_capacity(const char *device)
-{
-	int errsv;
-	int fd = open(device, O_RDONLY);
-
-	if (fd == -1)
-		goto err;
-
-	if (ioctl(fd, LOOP_SET_CAPACITY) != 0)
-		goto err;
-
-	return 0;
-err:
-	errsv = errno;
-	fprintf(stderr, _("loop: can't set capacity on device %s: %s\n"),
-					device, strerror (errsv));
-	if (fd != -1)
-		close(fd);
-	return 2;
-}
 
 static int
 show_loop_fd(int fd, char *device) {
@@ -956,7 +935,7 @@ static int show_all_loops(struct loopdev_cxt *lc, const char *file,
 	struct stat sbuf, *st = &sbuf;
 
 	if (loopcxt_init_iterator(lc, LOOPITER_FL_USED))
-		return EXIT_FAILURE;
+		return -1;
 
 	if (!file || stat(file, st))
 		st = NULL;
@@ -968,7 +947,21 @@ static int show_all_loops(struct loopdev_cxt *lc, const char *file,
 
 		printf_loopdev(lc);
 	}
-	return EXIT_SUCCESS;
+	return 0;
+}
+
+static int set_capacity(struct loopdev_cxt *lc)
+{
+	int fd = loopcxt_get_fd(lc);
+
+	if (fd < 0)
+		warn(_("%s: open failed"), loopcxt_get_device(lc));
+	else if (ioctl(fd, LOOP_SET_CAPACITY) != 0)
+		warnx(_("%s: set capacity failed"), loopcxt_get_device(lc));
+	else
+		return 0;
+
+	return 1;
 }
 
 static void
@@ -1007,7 +1000,7 @@ int main(int argc, char **argv)
 	uint64_t offset = 0;
 
 	char *p, *sizelimit, *encryption, *passfd, *device;
-	int delete, delete_all, find, c, capacity;
+	int delete, delete_all, find, c;
 	int res = 0;
 	int showdev = 0;
 	int ro = 0;
@@ -1019,7 +1012,7 @@ int main(int argc, char **argv)
 
 	static const struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
-		{ "set-capacity", 0, 0, 'c' },
+		{ "set-capacity", 1, 0, 'c' },
 		{ "detach", 0, 0, 'd' },
 		{ "detach-all", 0, 0, 'D' },
 		{ "encryption", 1, 0, 'e' },
@@ -1039,10 +1032,10 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	capacity = delete = delete_all = find = 0;
+	delete = delete_all = find = 0;
 	sizelimit = encryption = passfd = NULL;
 
-	while ((c = getopt_long(argc, argv, "acdDe:E:fhj:o:p:rsv",
+	while ((c = getopt_long(argc, argv, "ac:dDe:E:fhj:o:p:rsv",
 				longopts, NULL)) != -1) {
 
 		if (act && strchr("acdDfj", c))
@@ -1055,7 +1048,8 @@ int main(int argc, char **argv)
 			act = A_SHOW;
 			break;
 		case 'c':
-			capacity = 1;
+			act = A_SET_CAPACITY;
+			loopcxt_set_device(&lc, optarg);
 			break;
 		case 'r':
 			ro = 1;
@@ -1112,6 +1106,9 @@ int main(int argc, char **argv)
 	case A_SHOW:
 		res = show_all_loops(&lc, file, offset, flags);
 		break;
+	case A_SET_CAPACITY:
+		res = set_capacity(&lc);
+		break;
 	default:
 		break;
 	}
@@ -1119,22 +1116,18 @@ int main(int argc, char **argv)
 	loopcxt_deinit(&lc);
 
 	if (act)
-		return res;
+		return res ? EXIT_FAILURE : EXIT_SUCCESS;
 
 	if (delete) {
 		if (argc < optind+1 || encryption || sizelimit ||
-		    capacity || find || showdev || ro)
+		    find || showdev || ro)
 			usage(stderr);
 	} else if (delete_all) {
 		if (argc > optind || encryption || sizelimit ||
-		    capacity || find || showdev || ro)
+		    find || showdev || ro)
 			usage(stderr);
 	} else if (find) {
-		if (capacity || argc < optind || argc > optind+1)
-			usage(stderr);
-	} else if (capacity) {
-		if (argc != optind + 1 || encryption || sizelimit ||
-		    showdev || ro)
+		if ( argc < optind || argc > optind+1)
 			usage(stderr);
 	} else {
 		if (argc < optind+1 || argc > optind+2)
@@ -1170,8 +1163,6 @@ int main(int argc, char **argv)
 	if (delete) {
 		while (optind < argc)
 			res += del_loop(argv[optind++]);
-	} else if (capacity) {
-		res = set_capacity(device);
 	} else if (file == NULL)
 		res = show_loop(device);
 	else {
