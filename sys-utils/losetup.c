@@ -192,33 +192,40 @@ static int delete_all_loops(struct loopdev_cxt *lc)
 	return res;
 }
 
-static void
-usage(FILE *out) {
+static void usage(FILE *out)
+{
+	fputs(USAGE_HEADER, out);
 
-  fputs(_("\nUsage:\n"), out);
-  fprintf(out,
-	_(" %1$s loop_device                             give info\n"
-	  " %1$s -a | --all                              list all used\n"
-	  " %1$s -d | --detach <loopdev> [<loopdev> ...] delete\n"
-	  " %1$s -D | --detach-all                       delete all used\n"
-	  " %1$s -f | --find                             find unused\n"
-	  " %1$s -c | --set-capacity <loopdev>           resize\n"
-	  " %1$s -j | --associated <file> [-o <num>]     list all associated with <file>\n"
-	  " %1$s [options] {-f|--find|loopdev} <file>    setup\n"),
-	program_invocation_short_name);
+	fprintf(out,
+	      _(" %1$s [options] [<loopdev>]\n"
+		" %1$s [options] -f | <loopdev> <file>\n"),
+		program_invocation_short_name);
 
-  fputs(_("\nOptions:\n"), out);
-  fputs(_(" -e, --encryption <type> enable data encryption with specified <name/num>\n"
-	  " -h, --help              this help\n"
-	  " -o, --offset <num>      start at offset <num> into file\n"
-	  "     --sizelimit <num>   loop limited to only <num> bytes of the file\n"
-	  " -p, --pass-fd <num>     read passphrase from file descriptor <num>\n"
-	  " -r, --read-only         setup read-only loop device\n"
-	  "     --show              print device name (with -f <file>)\n"
-	  " -v, --verbose           verbose mode\n\n"), out);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -a, --all                     list all used devices\n"
+		" -d, --detach <loopdev> [...]  detach one or more devices\n"
+		" -D, --detach-all              detach all used devices\n"
+		" -f, --find                    find first unused device\n"
+		" -c, --set-capacity <loopdev>  resize device\n"
+		" -j, --associated <file>       list all devices associated with <file>\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+
+	fputs(_(" -e, --encryption <type>       enable encryption with specified <name/num>\n"
+		" -o, --offset <num>            start at offset <num> into file\n"
+		"     --sizelimit <num>         device limited to <num> bytes of the file\n"
+		" -p, --pass-fd <num>           read passphrase from file descriptor <num>\n"
+		" -r, --read-only               setup read-only loop device\n"
+		"     --show                    print device name after setup (with -f)\n"
+		" -v, --verbose                 verbose mode\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+
+	fprintf(out, USAGE_MAN_TAIL("losetup(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
- }
+}
 
 int main(int argc, char **argv)
 {
@@ -228,7 +235,11 @@ int main(int argc, char **argv)
 	uint64_t offset = 0, sizelimit = 0;
 	int res = 0, showdev = 0, lo_flags = 0;
 
-		static const struct option longopts[] = {
+	enum {
+		OPT_SIZELIMIT = CHAR_MAX + 1,
+		OPT_SHOW
+	};
+	static const struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
 		{ "set-capacity", 1, 0, 'c' },
 		{ "detach", 1, 0, 'd' },
@@ -238,11 +249,12 @@ int main(int argc, char **argv)
 		{ "help", 0, 0, 'h' },
 		{ "associated", 1, 0, 'j' },
 		{ "offset", 1, 0, 'o' },
-		{ "sizelimit", 1, 0, 128 },
+		{ "sizelimit", 1, 0, OPT_SIZELIMIT },
 		{ "pass-fd", 1, 0, 'p' },
 		{ "read-only", 0, 0, 'r' },
-	        { "show", 0, 0, 's' },
+	        { "show", 0, 0, OPT_SHOW },
 		{ "verbose", 0, 0, 'v' },
+		{ "version", 0, 0, 'V' },
 		{ NULL, 0, 0, 0 }
 	};
 
@@ -253,7 +265,7 @@ int main(int argc, char **argv)
 	loopcxt_init(&lc, 0);
 	loopcxt_enable_debug(&lc, getenv("LOOPDEV_DEBUG") ? TRUE : FALSE);
 
-	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:o:p:rsv",
+	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:o:p:rvV",
 				longopts, NULL)) != -1) {
 
 		if (act && strchr("acdDfj", c))
@@ -303,13 +315,16 @@ int main(int argc, char **argv)
 			passfd = strtol_or_err(optarg,
 					_("invalid passphrase file descriptor"));
 			break;
-		case 's':
+		case OPT_SHOW:
 			showdev = 1;
 			break;
 		case 'v':
 			verbose = 1;
 			break;
-	        case 128:			/* --sizelimit */
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
+		case OPT_SIZELIMIT:			/* --sizelimit */
 			if (strtosize(optarg, &sizelimit))
 				errx(EXIT_FAILURE,
 				     _("invalid size '%s' specified"), optarg);
