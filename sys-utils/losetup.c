@@ -32,6 +32,7 @@ enum {
 	A_DELETE,		/* delete given device(s) */
 	A_DELETE_ALL,		/* delete all devices */
 	A_SHOW,			/* list devices */
+	A_SHOW_ONE,		/* print info about one device */
 	A_FIND_FREE,		/* find first unused */
 	A_SET_CAPACITY,		/* set device capacity */
 };
@@ -329,6 +330,13 @@ int main(int argc, char **argv)
 		act = A_CREATE;
 		file = argv[optind++];
 	}
+	if (!act && optind + 1 == argc) {
+		/*
+		 * losetup <device>
+		 */
+		act = A_SHOW_ONE;
+		loopcxt_set_device(&lc, argv[optind++]);
+	}
 	if (!act) {
 		/*
 		 * losetup <loopdev> <backing_file>
@@ -420,6 +428,11 @@ int main(int argc, char **argv)
 		break;
 	case A_SHOW:
 		res = show_all_loops(&lc, file, offset, flags);
+		break;
+	case A_SHOW_ONE:
+		res = printf_loopdev(&lc);
+		if (res)
+			warn(_("%s"), loopcxt_get_device(&lc));
 		break;
 	case A_SET_CAPACITY:
 		res = set_capacity(&lc);
