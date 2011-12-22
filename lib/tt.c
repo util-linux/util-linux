@@ -729,6 +729,7 @@ int tt_print_table(struct tt *tb)
 			line_sz = ln->data_sz;
 	}
 
+	line_sz++;			/* make a space for \0 */
 	line = malloc(line_sz);
 	if (!line)
 		return -1;
