@@ -68,21 +68,6 @@ to detach loop devices and to query the status of a loop device. If only the
 \fIloopdev\fP argument is given, the status of the corresponding loop
 device is shown.
 
-.SS "Encryption"
-It is possible to specify transfer functions (for encryption/decryption
-or other purposes) using one of the
-.B \-E
-and
-.B \-e
-options.
-There are two mechanisms to specify the desired encryption: by number
-and by name. If an encryption is specified by number then one
-has to make sure that the Linux kernel knows about the encryption with that
-number, probably by patching the kernel. Standard numbers that are
-always present are 0 (no encryption) and 1 (XOR encryption).
-When the cryptoloop module is loaded (or compiled in), it uses number 18.
-This cryptoloop module will take the name of an arbitrary encryption type
-and find the module that knows how to perform that encryption.
 .SH OPTIONS
 The \fIsize\fR and \fIoffset\fR arguments may be followed by binary (2^N)
 suffixes KiB, MiB, GiB, TiB, PiB and EiB (the "iB" is optional, e.g. "K" has the
@@ -122,12 +107,29 @@ print device name if the
 option and a
 .I file
 argument are present.
-
-The short form of this option (\fB\-s\fP) is deprecated.  This short form could
-be in collision with Loop-AES implementation where the same option is used for
-\fB\-\-sizelimit\fP.
 .IP "\fB\-v, \-\-verbose\fP"
 verbose mode
+
+.SH ENCRYPTION
+.B Cryptoloop is deprecated in favor of dm-crypt. For more details see
+.B cryptsetup (8). It is possible that all bug reports regarding to -E/-e
+.B options will be ignored.
+
+
+It is possible to specify transfer functions (for encryption/decryption
+or other purposes) using one of the
+.B \-E
+and
+.B \-e
+options.
+There are two mechanisms to specify the desired encryption: by number
+and by name. If an encryption is specified by number then one
+has to make sure that the Linux kernel knows about the encryption with that
+number, probably by patching the kernel. Standard numbers that are
+always present are 0 (no encryption) and 1 (XOR encryption).
+When the cryptoloop module is loaded (or compiled in), it uses number 18.
+This cryptoloop module will take the name of an arbitrary encryption type
+and find the module that knows how to perform that encryption.
 
 .SH RETURN VALUE
 .B losetup
@@ -135,54 +137,32 @@ returns 0 on success, nonzero on failure. When
 .B losetup
 displays the status of a loop device, it returns 1 if the device
 is not configured and 2 if an error occurred which prevented
-.B losetup
 from determining the status of the device.
 
 .SH FILES
-.nf
-/dev/loop0, /dev/loop1, ...   loop devices (major=7)
-.fi
+.TP
+.I /dev/loop[0..N]
+loop block devices
+.TP
+.I /dev/loop-cotrol
+loop control device
+
 .SH EXAMPLE
-If you are using the loadable module you must have the module loaded
-first with the command
-.IP
-# modprobe loop
-.LP
-Maybe also encryption modules are needed.
-.IP
-# modprobe des
-# modprobe cryptoloop
-.LP
 The following commands can be used as an example of using the loop device.
 .nf
 .IP
-# dd if=/dev/zero of=/file bs=1k count=100
-# losetup -e des /dev/loop0 /file
-Password:
-Init (up to 16 hex digits):
-# mkfs -t ext2 /dev/loop0 100
-# mount -t ext2 /dev/loop0 /mnt
+# dd if=/dev/zero of=~/file.img bs=1MiB count=10
+# losetup --find --show ~/file.img
+/dev/loop0
+# mkfs -t ext2 /dev/loop0
+# mount /dev/loop0 /mnt
  ...
 # umount /dev/loop0
-# losetup -d /dev/loop0
+# losetup --detach /dev/loop0
 .fi
-.LP
-If you are using the loadable module you may remove the module with
-the command
-.IP
-# rmmod loop
-.LP
-.fi
-.SH RESTRICTION
-DES encryption is painfully slow. On the other hand, XOR is terribly weak.
-
-Cryptoloop is deprecated in favor of dm-crypt. For more details see
-.BR cryptsetup (8).
+.SH AUTHORS
+Karel Zak <kzak@redhat.com>, based on original version from
+Theodore Ts'o <tytso@athena.mit.edu>
 .SH AVAILABILITY
 The losetup command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
-.\" .SH AUTHORS
-.\" .nf
-.\" Original version: Theodore Ts'o <tytso@athena.mit.edu>
-.\" Original DES by: Eric Young <eay@psych.psy.uq.oz.au>
-.\" .fi
