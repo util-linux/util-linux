@@ -6,26 +6,18 @@
  */
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
-#include <fcntl.h>
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
-#include <sys/mman.h>
-#include <sys/sysmacros.h>
 #include <inttypes.h>
-#include <dirent.h>
 #include <getopt.h>
-#include <stdarg.h>
 
-#include "strutils.h"
+#include "c.h"
 #include "nls.h"
-#include "pathnames.h"
+#include "strutils.h"
 #include "loopdev.h"
-#include "xalloc.h"
-#include "canonicalize.h"
 
 enum {
 	A_CREATE = 1,		/* setup a new device */
@@ -373,7 +365,8 @@ int main(int argc, char **argv)
 			_("the options %s are allowed to loop device setup only"),
 			"--{encryption,sizelimit,pass-fd,read-only,show}");
 
-	if (act != A_CREATE && act != A_SHOW && (flags & LOOPDEV_FL_OFFSET))
+	if ((flags & LOOPDEV_FL_OFFSET) &&
+	    act != A_CREATE && (act != A_SHOW || !file))
 		errx(EXIT_FAILURE, _("the option --offset is not allowed in this context."));
 
 	switch (act) {
