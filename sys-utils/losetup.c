@@ -228,10 +228,7 @@ int main(int argc, char **argv)
 	uint64_t offset = 0, sizelimit = 0;
 	int res = 0, showdev = 0, lo_flags = 0;
 
-	loopcxt_init(&lc, 0);
-	/*loopcxt_enable_debug(&lc, TRUE);*/
-
-	static const struct option longopts[] = {
+		static const struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
 		{ "set-capacity", 1, 0, 'c' },
 		{ "detach", 1, 0, 'd' },
@@ -252,6 +249,9 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+
+	loopcxt_init(&lc, 0);
+	loopcxt_enable_debug(&lc, getenv("LOOPDEV_DEBUG") ? TRUE : FALSE);
 
 	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:o:p:rsv",
 				longopts, NULL)) != -1) {
