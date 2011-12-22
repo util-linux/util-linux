@@ -2827,7 +2827,8 @@ print_all_partition_table_from_option(void)
 		if (is_whole_disk(devname)) {
 			char *cn = canonicalize_path(devname);
 			if (cn) {
-				print_partition_table_from_option(cn);
+				if (!is_ide_cdrom_or_tape(cn))
+					print_partition_table_from_option(cn);
 				free(cn);
 			}
 		}
@@ -3036,8 +3037,7 @@ main(int argc, char **argv) {
 			dummy(&k);
 			listing = 1;
 			for (k = optind; k < argc; k++)
-				if (!is_ide_cdrom_or_tape(argv[k]))
-					print_partition_table_from_option(argv[k]);
+				print_partition_table_from_option(argv[k]);
 		} else
 			print_all_partition_table_from_option();
 		exit(0);
