@@ -841,6 +841,8 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	src_fs = mnt_table_get_fs_root(tb, fstab_fs, flags, &root);
 	if (src_fs)
 		src = mnt_fs_get_srcpath(src_fs);
+	else if (fstab_fs->flags & MNT_FS_PSEUDO)
+		src = mnt_fs_get_source(fstab_fs);
 	else
 		src = mnt_resolve_spec(mnt_fs_get_source(fstab_fs), tb->cache);
 
