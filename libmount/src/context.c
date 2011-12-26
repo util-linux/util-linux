@@ -1101,7 +1101,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 
 		rc = path ? mnt_fs_set_source(cxt->fs, path) : -EINVAL;
 
-	} else if (cache) {
+	} else if (cache && !(cxt->fs->flags & MNT_FS_PSEUDO)) {
 		/*
 		 * Source is PATH (canonicalize)
 		 */
