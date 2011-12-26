@@ -2033,7 +2033,7 @@ is_existing_file (const char *s) {
 static int
 mount_one (const char *spec, const char *node, const char *types,
 	   const char *fstabopts, char *cmdlineopts, int freq, int pass) {
-	const char *nspec;
+	const char *nspec = NULL;
 	char *opts;
 
 	/* Substitute values in opts, if required */
@@ -2063,7 +2063,8 @@ mount_one (const char *spec, const char *node, const char *types,
 			      strncmp(types, "nfs", 3) &&
 			      strncmp(types, "cifs", 4) &&
 			      strncmp(types, "smbfs", 5))) {
-		nspec = spec_to_devname(spec);
+		if (!is_pseudo_fs(types))
+			nspec = spec_to_devname(spec);
 		if (nspec)
 			spec = nspec;
 	}
