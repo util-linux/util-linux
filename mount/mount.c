@@ -207,6 +207,8 @@ static const struct opt_map opt_map[] = {
 
 static int opt_nofail = 0;
 
+static int invuser_flags;
+
 static const char *opt_loopdev, *opt_vfstype, *opt_offset, *opt_sizelimit,
         *opt_encryption, *opt_speed, *opt_comment, *opt_uhelper, *opt_helper;
 
@@ -473,7 +475,7 @@ static int has_context_option(char *opts)
  * For the options uid= and gid= replace user or group name by its value.
  */
 static inline void
-parse_opt(char *opt, int *mask, char **extra_opts) {
+parse_opt(char *opt, int *mask, int *inv_user, char **extra_opts) {
 	const struct opt_map *om;
 
 	for (om = opt_map; om->opt != NULL; om++)
@@ -482,6 +484,9 @@ parse_opt(char *opt, int *mask, char **extra_opts) {
 				*mask &= ~om->mask;
 			else
 				*mask |= om->mask;
+			if (om->inv && ((*mask & MS_USER) || (*mask & MS_USERS))
+			    && (om->mask & MS_SECURE))
+				*inv_user |= om->mask;
 			if ((om->mask == MS_USER || om->mask == MS_USERS)
 			    && !om->inv)
 				*mask |= MS_SECURE;
@@ -566,7 +571,7 @@ parse_opts (const char *options, int *flags, char **extra_opts) {
 			/* end of option item or last item */
 			if (*p == '\0' || *(p+1) == '\0') {
 				if (!parse_string_opt(opt))
-					parse_opt(opt, flags, extra_opts);
+					parse_opt(opt, flags, &invuser_flags, extra_opts);
 				opt = NULL;
 			}
 		}
@@ -587,7 +592,9 @@ parse_opts (const char *options, int *flags, char **extra_opts) {
 
 /* Try to build a canonical options string.  */
 static char *
-fix_opts_string (int flags, const char *extra_opts, const char *user) {
+fix_opts_string (int flags, const char *extra_opts,
+		 const char *user, int inv_user)
+{
 	const struct opt_map *om;
 	const struct string_opt_map *m;
 	char *new_opts;
@@ -610,6 +617,16 @@ fix_opts_string (int flags, const char *extra_opts, const char *user) {
 
 	if (user)
 		new_opts = append_opt(new_opts, "user=", user);
+
+	if (inv_user) {
+		for (om = opt_map; om->opt != NULL; om++) {
+			if (om->mask && om->inv
+			    && (inv_user & om->mask) == om->mask) {
+				new_opts = append_opt(new_opts, om->opt, NULL);
+				inv_user &= ~om->mask;
+			}
+		}
+	}
 
 	return new_opts;
 }
@@ -662,7 +679,7 @@ create_mtab (void) {
 		mnt.mnt_dir = "/";
 		mnt.mnt_fsname = spec_to_devname(fstab->m.mnt_fsname);
 		mnt.mnt_type = fstab->m.mnt_type;
-		mnt.mnt_opts = fix_opts_string (flags, extra_opts, NULL);
+		mnt.mnt_opts = fix_opts_string (flags, extra_opts, NULL, 0);
 		mnt.mnt_freq = mnt.mnt_passno = 0;
 		free(extra_opts);
 
@@ -787,7 +804,7 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
 			if (setuid(getuid()) < 0)
 				die(EX_FAIL, _("mount: cannot set user id: %m"));
 
-			oo = fix_opts_string (flags, extra_opts, NULL);
+			oo = fix_opts_string(flags, extra_opts, NULL, invuser_flags);
 			mountargs[i++] = mountprog;			/* 1 */
 			mountargs[i++] = (char *) spec;			/* 2 */
 			mountargs[i++] = (char *) node;			/* 3 */
@@ -1659,7 +1676,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   }
 
 #ifdef HAVE_LIBMOUNT_MOUNT
-  mtab_opts = fix_opts_string(flags & ~MS_NOMTAB, extra_opts, user);
+  mtab_opts = fix_opts_string(flags & ~MS_NOMTAB, extra_opts, user, 0);
   mtab_flags = flags;
 
   if (fake)
@@ -1703,7 +1720,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   }
 
   if (fake || mnt5_res == 0) {
-      char *mo = fix_opts_string (flags & ~MS_NOMTAB, extra_opts, user);
+      char *mo = fix_opts_string (flags & ~MS_NOMTAB, extra_opts, user, 0);
       const char *tp = types ? types : "unknown";
 
       /* Mount succeeded, report this (if verbose) and write mtab entry.  */
