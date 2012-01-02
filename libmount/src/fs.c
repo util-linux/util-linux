@@ -470,7 +470,7 @@ int mnt_fs_is_swaparea(struct libmnt_fs *fs)
  *
  * Returns: 1 if the filesystem is a pseudo fs type (proc, cgroups)
  */
-int mnt_fs_is_pseudo(struct libmnt_fs *fs)
+int mnt_fs_is_pseudofs(struct libmnt_fs *fs)
 {
 	return mnt_fs_get_flags(fs) & MNT_FS_PSEUDO;
 }
