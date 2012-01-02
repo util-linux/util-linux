@@ -1081,7 +1081,8 @@ int mnt_fs_get_attribute(struct libmnt_fs *fs, const char *name,
  *
  * Returns: 1 if @fs target is equal to @target else 0.
  */
-int mnt_fs_match_target(struct libmnt_fs *fs, const char *target, struct libmnt_cache *cache)
+int mnt_fs_match_target(struct libmnt_fs *fs, const char *target,
+			struct libmnt_cache *cache)
 {
 	int rc = 0;
 
@@ -1127,7 +1128,8 @@ int mnt_fs_match_target(struct libmnt_fs *fs, const char *target, struct libmnt_
  *
  * Returns: 1 if @fs source is equal to @source else 0.
  */
-int mnt_fs_match_source(struct libmnt_fs *fs, const char *source, struct libmnt_cache *cache)
+int mnt_fs_match_source(struct libmnt_fs *fs, const char *source,
+			struct libmnt_cache *cache)
 {
 	char *cn;
 	const char *src, *t, *v;

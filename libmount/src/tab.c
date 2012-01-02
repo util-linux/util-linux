@@ -731,18 +731,22 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 
 	if (tb && (mountflags & MS_BIND)) {
 		const char *src, *src_root;
+		char *xsrc = NULL;
 
 		DBG(TAB, mnt_debug("fs-root for bind"));
 
-		src = mnt_resolve_spec(mnt_fs_get_source(fs), tb->cache);
-		if (!src)
-			goto err;
+		src = xsrc = mnt_resolve_spec(mnt_fs_get_source(fs), tb->cache);
+		if (src)
+			mnt = mnt_get_mountpoint(src);
+		if (mnt)
+			root = mnt_get_fs_root(src, mnt);
 
-		mnt = mnt_get_mountpoint(src);
+		if (xsrc && !tb->cache) {
+			free(xsrc);
+			src = NULL;
+		}
 		if (!mnt)
 			goto err;
-
-		root = mnt_get_fs_root(src, mnt);
 
 		src_fs = mnt_table_find_target(tb, mnt, MNT_ITER_BACKWARD);
 		if (!src_fs)  {
@@ -827,6 +831,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	char *root = NULL;
 	struct libmnt_fs *src_fs;
 	const char *src, *tgt;
+	char *xsrc;
 	int flags = 0, rc = 0;
 
 	assert(tb);
@@ -844,7 +849,8 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	else if (fstab_fs->flags & MNT_FS_PSEUDO)
 		src = mnt_fs_get_source(fstab_fs);
 	else
-		src = mnt_resolve_spec(mnt_fs_get_source(fstab_fs), tb->cache);
+		src = xsrc = mnt_resolve_spec(mnt_fs_get_source(fstab_fs),
+					      tb->cache);
 
 	tgt = mnt_fs_get_target(fstab_fs);
 
@@ -872,6 +878,9 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 		if (fs)
 			rc = 1;		/* success */
 	}
+
+	if (xsrc && !tb->cache)
+		free(xsrc);
 
 	free(root);
 	return rc;
