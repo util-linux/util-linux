@@ -515,7 +515,7 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 	assert(cxt->helper_exec_status == 1);
 	assert(cxt->syscall_status == 1);
 
-	if (!cxt || !cxt->fs || (cxt->fs->flags & MNT_FS_SWAP))
+	if (!cxt || !cxt->fs || mnt_fs_is_swaparea(cxt->fs))
 		return -EINVAL;
 	if (!mnt_fs_get_source(cxt->fs) && !mnt_fs_get_target(cxt->fs))
 		return -EINVAL;
@@ -726,10 +726,10 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 	DBG(CXT, mnt_debug_h(cxt, "next-mount: trying %s", tgt));
 
 	/*  ignore swap */
-	if (((*fs)->flags & MNT_FS_SWAP) ||
+	if (mnt_fs_is_swaparea(*fs) ||
 
 	/* ignore root filesystem */
-	  (tgt && (strcmp(tgt, "/") == 0 || strcmp(tgt, "root") == 0)) ||
+	   (tgt && (strcmp(tgt, "/") == 0 || strcmp(tgt, "root") == 0)) ||
 
 	/* ignore noauto filesystems */
 	   (o && mnt_optstr_get_option(o, "noauto", NULL, NULL) == 0) ||

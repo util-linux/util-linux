@@ -224,9 +224,9 @@ struct libmnt_fs {
 #define MNT_FS_KERNEL	(1 << 4) /* data from /proc/{mounts,self/mountinfo} */
 #define MNT_FS_MERGED	(1 << 5) /* already merged data from /run/mount/utab */
 
-extern int __mnt_fs_get_flags(struct libmnt_fs *fs);
-extern int __mnt_fs_set_flags(struct libmnt_fs *fs, int flags);
-
+#define mnt_fs_is_regular(_f)	(!(mnt_fs_is_pseudofs(_f) \
+				   || mnt_fs_is_netfs(_f) \
+				   || mnt_fs_is_swaparea(_f)))
 
 /*
  * mtab/fstab/mountinfo file

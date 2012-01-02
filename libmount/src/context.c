@@ -1085,7 +1085,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 	/* ignore filesystems without source or filesystems
 	 * where the source is quasi-path (//foo/bar)
 	 */
-	if (!src || (cxt->fs->flags & MNT_FS_NET))
+	if (!src || mnt_fs_is_netfs(cxt->fs))
 		return 0;
 
 	DBG(CXT, mnt_debug_h(cxt, "srcpath '%s'", src));
@@ -1101,7 +1101,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 
 		rc = path ? mnt_fs_set_source(cxt->fs, path) : -EINVAL;
 
-	} else if (cache && !(cxt->fs->flags & MNT_FS_PSEUDO)) {
+	} else if (cache && !mnt_fs_is_pseudofs(cxt->fs)) {
 		/*
 		 * Source is PATH (canonicalize)
 		 */
@@ -1119,7 +1119,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 		path = src;
 
 	if ((cxt->mountflags & (MS_BIND | MS_MOVE | MS_PROPAGATION)) ||
-	    (cxt->fs->flags & MNT_FS_PSEUDO)) {
+	    mnt_fs_is_pseudofs(cxt->fs)) {
 		DBG(CXT, mnt_debug_h(cxt, "PROPAGATION/pseudo FS source: %s", path));
 		return rc;
 	}
@@ -1254,7 +1254,7 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 		type = mnt_fs_get_fstype(cxt->fs);
 
 	if ((cxt->flags & MNT_FL_NOHELPERS) || !type ||
-	    !strcmp(type, "none") || (cxt->fs->flags & MNT_FS_SWAP))
+	    !strcmp(type, "none") || mnt_fs_is_swaparea(cxt->fs))
 		return 0;
 
 	path = strtok_r(search_path, ":", &p);

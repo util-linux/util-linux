@@ -456,7 +456,7 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 		char *p;
 
-		if (!fs->target || !(fs->flags & MNT_FS_SWAP) ||
+		if (!fs->target || !mnt_fs_is_swaparea(fs) ||
 		    (*fs->target == '/' && *(fs->target + 1) == '\0'))
 		       continue;
 
@@ -562,7 +562,7 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 	if (ntags <= mnt_table_get_nents(tb)) {
 		mnt_reset_iter(&itr, direction);
 		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
-			if (fs->flags & (MNT_FS_NET | MNT_FS_PSEUDO))
+			if (mnt_fs_is_netfs(fs) || mnt_fs_is_pseudofs(fs))
 				continue;
 			p = mnt_fs_get_srcpath(fs);
 			if (p)
@@ -837,7 +837,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	assert(tb);
 	assert(fstab_fs);
 
-	if (fstab_fs->flags & MNT_FS_SWAP)
+	if (mnt_fs_is_swaparea(fstab_fs))
 		return 0;
 
 	if (mnt_fs_get_option(fstab_fs, "bind", NULL, NULL) == 0)
@@ -846,7 +846,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	src_fs = mnt_table_get_fs_root(tb, fstab_fs, flags, &root);
 	if (src_fs)
 		src = mnt_fs_get_srcpath(src_fs);
-	else if (fstab_fs->flags & MNT_FS_PSEUDO)
+	else if (mnt_fs_is_pseudofs(fstab_fs))
 		src = mnt_fs_get_source(fstab_fs);
 	else
 		src = xsrc = mnt_resolve_spec(mnt_fs_get_source(fstab_fs),

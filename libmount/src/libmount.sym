@@ -214,4 +214,7 @@ global:
 	mnt_context_is_parent;
 	mnt_context_next_umount;
 	mnt_context_wait_for_children;
+	mnt_fs_is_netfs;
+	mnt_fs_is_pseudofs;
+	mnt_fs_is_swaparea;
 } MOUNT_2.20;

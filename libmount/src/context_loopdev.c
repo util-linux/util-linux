@@ -20,7 +20,6 @@
 int mnt_context_is_loopdev(struct libmnt_context *cxt)
 {
 	const char *type, *src;
-	int fl;
 
 	assert(cxt);
 	/* The mount flags have to be merged, otherwise we have to use
@@ -50,9 +49,8 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 	 * regular files could be implemented.
 	 */
 	type = mnt_fs_get_fstype(cxt->fs);
-	fl = __mnt_fs_get_flags(cxt->fs);
 
-	if (!(fl & (MNT_FS_PSEUDO | MNT_FS_NET | MNT_FS_SWAP)) &&
+	if (mnt_fs_is_regular(cxt->fs) &&
 	    (!type || strcmp(type, "auto") == 0 || blkid_known_fstype(type))) {
 		struct stat st;
 

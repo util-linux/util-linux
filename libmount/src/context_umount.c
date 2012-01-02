@@ -557,7 +557,7 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 	assert(cxt->helper_exec_status == 1);
 	assert(cxt->syscall_status == 1);
 
-	if (!cxt || !cxt->fs || (cxt->fs->flags & MNT_FS_SWAP))
+	if (!cxt || !cxt->fs || mnt_fs_is_swaparea(cxt->fs))
 		return -EINVAL;
 	if (!mnt_context_get_source(cxt) && !mnt_context_get_target(cxt))
 		return -EINVAL;

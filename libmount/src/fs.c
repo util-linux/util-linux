@@ -437,18 +437,9 @@ int mnt_fs_set_target(struct libmnt_fs *fs, const char *target)
 	return 0;
 }
 
-int __mnt_fs_get_flags(struct libmnt_fs *fs)
+static int mnt_fs_get_flags(struct libmnt_fs *fs)
 {
 	return fs ? fs->flags : 0;
-}
-
-int __mnt_fs_set_flags(struct libmnt_fs *fs, int flags)
-{
-	if (fs) {
-		fs->flags = flags;
-		return 0;
-	}
-	return -EINVAL;
 }
 
 /**
@@ -459,7 +450,40 @@ int __mnt_fs_set_flags(struct libmnt_fs *fs, int flags)
  */
 int mnt_fs_is_kernel(struct libmnt_fs *fs)
 {
-	return __mnt_fs_get_flags(fs) & MNT_FS_KERNEL;
+	return mnt_fs_get_flags(fs) & MNT_FS_KERNEL;
+}
+
+/**
+ * mnt_fs_is_swaparea:
+ * @fs: filesystem
+ *
+ * Returns: 1 if the filesystem uses "swap" as a type
+ */
+int mnt_fs_is_swaparea(struct libmnt_fs *fs)
+{
+	return mnt_fs_get_flags(fs) & MNT_FS_SWAP;
+}
+
+/**
+ * mnt_fs_is_pseudofs:
+ * @fs: filesystem
+ *
+ * Returns: 1 if the filesystem is a pseudo fs type (proc, cgroups)
+ */
+int mnt_fs_is_pseudo(struct libmnt_fs *fs)
+{
+	return mnt_fs_get_flags(fs) & MNT_FS_PSEUDO;
+}
+
+/**
+ * mnt_fs_is_netfs:
+ * @fs: filesystem
+ *
+ * Returns: 1 if the filesystem is a network filesystem
+ */
+int mnt_fs_is_netfs(struct libmnt_fs *fs)
+{
+	return mnt_fs_get_flags(fs) & MNT_FS_NET;
 }
 
 /**
