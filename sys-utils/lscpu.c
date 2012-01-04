@@ -542,7 +542,7 @@ read_hypervisor(struct lscpu_desc *desc)
 			str = strchr(buf, ':');
 			if (!str)
 				continue;
-			if (asprintf(&str, str + 1) == -1)
+			if (asprintf(&str, "%s", str + 1) == -1)
 				errx(EXIT_FAILURE, _("failed to allocate memory"));
 			/* remove leading, trailing and repeating whitespace */
 			while (*str == ' ')
@@ -901,7 +901,7 @@ get_cell_header(struct lscpu_desc *desc, int col,
 		if (desc->ncaches)
 			return buf;
 	}
-	snprintf(buf, bufsz, coldescs[col].name);
+	snprintf(buf, bufsz, "%s", coldescs[col].name);
 	return buf;
 }
 
