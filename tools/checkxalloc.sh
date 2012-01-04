@@ -11,3 +11,13 @@ cd "$(git rev-parse --show-toplevel)" || {
 
 git grep -zl '#include "xalloc.h"' |
   xargs -0 grep -nwE '[^x](([cm]|re)alloc|strdup)\('
+
+result=$?
+
+if [ $result -eq 123 ]; then
+	exit 0			# not found
+elif [ $result -eq 0 ]; then
+	exit 1			# found
+fi
+
+exit $result

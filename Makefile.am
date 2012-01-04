@@ -88,6 +88,8 @@ checkconfig:
 		-name '*.[hcS]' -type f -print | sort -u \
 		| xargs $(top_srcdir)/tools/checkconfig.sh $(top_srcdir)
 
+checkxalloc:
+	@ $(top_srcdir)/tools/checkxalloc.sh
 
 ENABLE_ALL = --enable-static-programs --enable-most-builds
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --disable-use-tty-group $(ENABLE_ALL)
