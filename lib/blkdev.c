@@ -35,6 +35,12 @@ blkdev_valid_offset (int fd, off_t offset) {
 	return 1;
 }
 
+int is_blkdev(int fd)
+{
+	struct stat st;
+	return (fstat(fd, &st) == 0 && S_ISBLK(st.st_mode));
+}
+
 off_t
 blkdev_find_size (int fd) {
 	uintmax_t high, low = 0;
