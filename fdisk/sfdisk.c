@@ -769,13 +769,6 @@ reread_ioctl(int fd) {
     return 0;
 }
 
-static int
-is_blockdev(int fd) {
-    struct stat statbuf;
-
-    return (fstat(fd, &statbuf) == 0 && S_ISBLK(statbuf.st_mode));
-}
-
 /* reread after writing */
 static int
 reread_disk_partition(char *dev, int fd) {
@@ -783,10 +776,10 @@ reread_disk_partition(char *dev, int fd) {
     fflush(stdout);
     sync();
 
-    if (reread_ioctl(fd) && is_blockdev(fd)) {
+    if (reread_ioctl(fd) && is_blkdev(fd)) {
 	warnx(_("The command to re-read the partition table failed.\n"
-		  "Run partprobe(8), kpartx(8) or reboot your system now,\n"
-		  "before using mkfs\n"));
+		"Run partprobe(8), kpartx(8) or reboot your system now,\n"
+		"before using mkfs\n"));
 	return 0;
     }
 
