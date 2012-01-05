@@ -20,16 +20,11 @@
  *
  * The current program is a rewrite from scratch, and I started a
  * version numbering at 3.0.
- * 	Andries Brouwer, aeb@cwi.nl, 950813
+ *	Andries Brouwer, aeb@cwi.nl, 950813
  *
  * Well, a good user interface is still lacking. On the other hand,
  * many configurations cannot be handled by any other fdisk.
  * I changed the name to sfdisk to prevent confusion. - aeb, 970501
- *
- * Changes:
- * 19990319 - Arnaldo Carvalho de Melo <acme@conectiva.com.br> - i18n
- * 20040428 - Jeroen Dobbelaere <jeroen.dobbelaere@acunia.com> - added PACKED
- * 20040824 - David A. Wheeler <dwheeler@dwheeler.com> - warnings to stderr
  */
 
 #define PROGNAME "sfdisk"
@@ -114,15 +109,6 @@ error(char *s, ...) {
     fflush(stderr);
     va_end(p);
 }
-
-/*
- * arm needs PACKED - use it everywhere?
- */
-#if defined(__GNUC__) && (defined(__arm__) || defined(__alpha__))
-#define PACKED __attribute__ ((packed))
-#else
-#define PACKED
-#endif
 
 /*
  *  A. About seeking
@@ -497,7 +483,7 @@ get_cylindersize(char *dev, int fd, int silent) {
 
 typedef struct {
     unsigned char h, s, c;
-} PACKED chs;			/* has some c bits in s */
+} __attribute__ ((packed)) chs;			/* has some c bits in s */
 chs zero_chs = { 0, 0, 0 };
 
 typedef struct {
@@ -656,7 +642,7 @@ struct partition {
     chs end_chs;
     unsigned int start_sect;	/* starting sector counting from 0 */
     unsigned int nr_sects;	/* nr of sectors in partition */
-} PACKED;
+} __attribute__ ((packed));
 
 /* Unfortunately, partitions are not aligned, and non-Intel machines
    are unhappy with non-aligned integers. So, we need a copy by hand. */
