@@ -26,12 +26,6 @@
 #define cround(n)	(display_in_cyl_units ? ((n)/units_per_sector)+1 : (n))
 #define scround(x)	(((x)+units_per_sector-1)/units_per_sector)
 
-#if defined(__GNUC__) && (defined(__arm__) || defined(__alpha__))
-# define PACKED __attribute__ ((packed))
-#else
-# define PACKED
-#endif
-
 struct partition {
 	unsigned char boot_ind;         /* 0x80 - active */
 	unsigned char head;             /* starting head */
@@ -43,7 +37,7 @@ struct partition {
 	unsigned char end_cyl;          /* end cylinder */
 	unsigned char start4[4];        /* starting sector counting from 0 */
 	unsigned char size4[4];         /* nr of sectors in partition */
-} PACKED;
+} __attribute__ ((packed));
 
 enum menutype {
 	MAIN_MENU,
