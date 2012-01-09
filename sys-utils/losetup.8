@@ -49,7 +49,7 @@ Setup loop device:
 .in +8
 .RB [ \-p
 .IR pfd ]
-.RB [ \-r ]
+.RB [ \-rP ]
 .RB { \-f [ \-\-show ]| \fIloopdev\fP }
 .I file
 .sp
@@ -99,6 +99,8 @@ the data end is set to no more than \fIsize\fP bytes after the data start
 read the passphrase from file descriptor with number
 .I num
 instead of from the terminal
+.IP "\fB\-P, \-\-partscan\fP"
+force kernel to scan partition table on newly created loop device
 .IP "\fB\-r, \-\-read-only\fP"
 setup read-only loop device
 .IP "\fB\-\-show\fP"

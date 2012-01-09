@@ -37,7 +37,8 @@
 enum {
 	LO_FLAGS_READ_ONLY  = 1,
 	LO_FLAGS_USE_AOPS   = 2,
-	LO_FLAGS_AUTOCLEAR  = 4, /* New in 2.6.25 */
+	LO_FLAGS_AUTOCLEAR  = 4,	/* kernel >= 2.6.25 */
+	LO_FLAGS_PARTSCAN   = 8,	/* kernel >= 3.2 */
 };
 
 #define LO_NAME_SIZE	64

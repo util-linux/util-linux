@@ -206,6 +206,7 @@ static void usage(FILE *out)
 		" -o, --offset <num>            start at offset <num> into file\n"
 		"     --sizelimit <num>         device limited to <num> bytes of the file\n"
 		" -p, --pass-fd <num>           read passphrase from file descriptor <num>\n"
+		" -P, --partscan                create partitioned loop device\n"
 		" -r, --read-only               setup read-only loop device\n"
 		"     --show                    print device name after setup (with -f)\n"
 		" -v, --verbose                 verbose mode\n"), out);
@@ -243,6 +244,7 @@ int main(int argc, char **argv)
 		{ "offset", 1, 0, 'o' },
 		{ "sizelimit", 1, 0, OPT_SIZELIMIT },
 		{ "pass-fd", 1, 0, 'p' },
+		{ "partscan", 0, 0, 'P' },
 		{ "read-only", 0, 0, 'r' },
 	        { "show", 0, 0, OPT_SHOW },
 		{ "verbose", 0, 0, 'v' },
@@ -257,7 +259,7 @@ int main(int argc, char **argv)
 	loopcxt_init(&lc, 0);
 	loopcxt_enable_debug(&lc, getenv("LOOPDEV_DEBUG") ? TRUE : FALSE);
 
-	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:o:p:rvV",
+	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:o:p:PrvV",
 				longopts, NULL)) != -1) {
 
 		if (act && strchr("acdDfj", c))
@@ -306,6 +308,9 @@ int main(int argc, char **argv)
 		case 'p':
 			passfd = strtol_or_err(optarg,
 					_("invalid passphrase file descriptor"));
+			break;
+		case 'P':
+			lo_flags |= LO_FLAGS_PARTSCAN;
 			break;
 		case OPT_SHOW:
 			showdev = 1;
