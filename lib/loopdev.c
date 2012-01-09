@@ -110,11 +110,10 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 			strncpy(lc->device, device, sizeof(lc->device));
 			lc->device[sizeof(lc->device) - 1] = '\0';
 		}
+		DBG(lc, loopdev_debug("%s successfully assigned", device));
 	}
 
 	sysfs_deinit(&lc->sysfs);
-
-	DBG(lc, loopdev_debug("%s successfully set", device));
 	return 0;
 }
 
@@ -1061,6 +1060,7 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 			return -errno;
 		}
 	}
+	DBG(lc, loopdev_debug("setup: backing file open: OK"));
 
 	if (lc->fd != -1 && lc->mode != mode) {
 		close(lc->fd);
@@ -1083,6 +1083,8 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 		goto err;
 	}
 
+	DBG(lc, loopdev_debug("setup: device open: OK"));
+
 	/*
 	 * Set FD
 	 */
@@ -1091,6 +1093,9 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 		DBG(lc, loopdev_debug("LOOP_SET_FD failed: %m"));
 		goto err;
 	}
+
+	DBG(lc, loopdev_debug("setup: LOOP_SET_FD: OK"));
+
 	close(file_fd);
 	file_fd = -1;
 
@@ -1098,6 +1103,9 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 		DBG(lc, loopdev_debug("LOOP_SET_STATUS64 failed: %m"));
 		goto err;
 	}
+
+	DBG(lc, loopdev_debug("setup: LOOP_SET_STATUS64: OK"));
+
 	memset(&lc->info, 0, sizeof(lc->info));
 	lc->has_info = 0;
 	lc->info_failed = 0;
