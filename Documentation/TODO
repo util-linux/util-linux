@@ -1,6 +1,11 @@
 
  Note that items with (!) have high priority.
 
+lscpu
+-----
+  - detect more hypervisors, see 'virt-what' shell script
+    http://people.redhat.com/~rjones/virt-what/
+
 dmesg
 -----
 
