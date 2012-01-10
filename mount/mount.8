@@ -1262,11 +1262,13 @@ to the options given in
 .IR /etc/fstab .)
 
 .TP
-.BR check= { none | nocheck }
+.BR check=none " or " nocheck
 No checking is done at mount time. This is the default. This is fast.
 It is wise to invoke
 .BR e2fsck (8)
-every now and then, e.g. at boot time.
+every now and then, e.g. at boot time. The non-default behavior is unssuported
+(check=normal and check=strict options have been removed). Note that these mount options
+don't have to be supported if ext4 kernel driver is used for ext2 and ext3 filesystems.
 .TP
 .B debug
 Print debugging info upon each (re)mount.
