@@ -839,7 +839,7 @@ xattrs are supported, you can save time not having to label every file by
 assigning the entire disk one security context.
 
 A commonly used option for removable media is
-.BR context=system_u:object_r:removable_t .
+.BR context="system_u:object_r:removable_t" .
 
 Two other options are
 .BR fscontext=
@@ -875,8 +875,23 @@ useful for things like stateless linux.
 Note that kernel rejects any remount request that includes the context
 option even if unchanged from the current context.
 
+.B Warning that \fIcontext\fP value might contains comma
+and in this case the value has to be properly quoted otherwise
+.BR mount (8)
+will interpret the comma as separator between mount options. Don't forget that
+shell strips off quotes and
+.BR "double quoting is required" ,
+for example:
+.RS
+.RS
+.sp
+mount -t tmpfs none /mnt \-o 'context="system_u:object_r:tmp_t:s0:c127,c456",noexec'
+.sp
+.RE
+
 For more details, see
 .BR selinux (8)
+.RE
 
 .TP
 .B defaults
