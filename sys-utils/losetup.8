@@ -74,7 +74,8 @@ suffixes KiB, MiB, GiB, TiB, PiB and EiB (the "iB" is optional, e.g. "K" has the
 same meaning as "KiB") or decimal (10^N) suffixes KB, MB, GB, PB and EB.
 
 .IP "\fB\-a, \-\-all\fP"
-show status of all loop devices
+show status of all loop devices. Note that not all information are accessible
+for non-root users.
 .IP "\fB\-c, \-\-set-capacity\fP \fIloopdev\fP
 force loop driver to reread size of the file associated with the specified loop device
 .IP "\fB\-d, \-\-detach\fP \fIloopdev\fP..."
