@@ -17,7 +17,6 @@
 
 #include "bitops.h"
 #include "blkdev.h"
-#include "swap_constants.h"
 #include "nls.h"
 #include "fsprobe.h"
 #include "pathnames.h"
@@ -35,6 +34,18 @@
 
 #ifndef SWAP_FLAG_DISCARD
 # define SWAP_FLAG_DISCARD	0x10000 /* discard swap cluster after use */
+#endif
+
+#ifndef SWAP_FLAG_PREFER
+# define SWAP_FLAG_PREFER	0x8000	/* set if swap priority specified */
+#endif
+
+#ifndef SWAP_FLAG_PRIO_MASK
+# define SWAP_FLAG_PRIO_MASK	0x7fff
+#endif
+
+#ifndef SWAP_FLAG_PRIO_SHIFT
+# define SWAP_FLAG_PRIO_SHIFT	0
 #endif
 
 #ifndef SWAPON_HAS_TWO_ARGS
