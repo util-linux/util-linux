@@ -38,4 +38,5 @@ dist_noinst_HEADERS = \
 	widechar.h \
 	writeall.h \
 	rpmatch.h \
+	xgetpass.h \
 	xalloc.h

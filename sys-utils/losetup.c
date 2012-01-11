@@ -18,6 +18,7 @@
 #include "nls.h"
 #include "strutils.h"
 #include "loopdev.h"
+#include "xgetpass.h"
 
 enum {
 	A_CREATE = 1,		/* setup a new device */
@@ -31,45 +32,6 @@ enum {
 
 static int verbose;
 
-/*
- * A function to read the passphrase either from the terminal or from
- * an open file descriptor.
- */
-static char *xgetpass(int pfd, const char *prompt)
-{
-	char *pass;
-	int buflen, i;
-
-        if (pfd < 0) /* terminal */
-		return getpass(prompt);
-
-	pass = NULL;
-	buflen = 0;
-	for (i=0; ; i++) {
-		if (i >= buflen-1) {
-				/* we're running out of space in the buffer.
-				 * Make it bigger: */
-			char *tmppass = pass;
-			buflen += 128;
-			pass = realloc(tmppass, buflen);
-			if (pass == NULL) {
-				/* realloc failed. Stop reading. */
-				warn(_("Out of memory while reading passphrase"));
-				pass = tmppass; /* the old buffer hasn't changed */
-				break;
-			}
-		}
-		if (read(pfd, pass+i, 1) != 1 ||
-		    pass[i] == '\n' || pass[i] == 0)
-			break;
-	}
-
-	if (pass == NULL)
-		return "";
-
-	pass[i] = 0;
-	return pass;
-}
 
 static int printf_loopdev(struct loopdev_cxt *lc)
 {

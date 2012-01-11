@@ -33,6 +33,7 @@ losetup_SOURCES = losetup.c \
 		$(top_srcdir)/lib/sysfs.c \
 		$(top_srcdir)/lib/loopdev.c \
 		$(top_srcdir)/lib/canonicalize.c \
+		$(top_srcdir)/lib/xgetpass.c \
 		$(top_srcdir)/lib/strutils.c
 
 if HAVE_STATIC_LOSETUP
