@@ -67,12 +67,31 @@ mount_SOURCES = mount.c \
 		$(top_srcdir)/lib/strutils.c
 
 mount_LDADD = $(ul_libmount_la)
-mount_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS) -I$(ul_libmount_incdir)
+mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
 umount_SOURCES = umount.c $(top_srcdir)/lib/env.c
 umount_LDADD = $(ul_libmount_la)
-umount_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+umount_CFLAGS = $(AM_CFLAGS) $(SUID_CFLAGS) -I$(ul_libmount_incdir)
+umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
+
+if HAVE_STATIC_MOUNT
+bin_PROGRAMS += mount.static
+mount_static_SOURCES = $(mount_SOURCES)
+mount_static_CFLAGS = $(mount_CFLAGS)
+mount_static_LDFLAGS = $(mount_LDFLAGS) -all-static
+mount_static_LDADD = $(mount_LDADD)
 endif
+
+if HAVE_STATIC_UMOUNT
+bin_PROGRAMS += umount.static
+umount_static_SOURCES = $(umount_SOURCES)
+umount_static_CFLAGS = $(umount_CFLAGS)
+umount_static_LDFLAGS = $(umount_LDFLAGS) -all-static
+umount_static_LDADD = $(umount_LDADD)
+endif
+
+endif # BUILD_NEW_MOUNT
 
 
 if BUILD_SWAPON
