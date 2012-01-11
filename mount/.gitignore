@@ -1,4 +1,3 @@
 mount
 mtab_lock_test
-swapon
 umount

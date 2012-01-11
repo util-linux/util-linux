@@ -9,6 +9,10 @@ dist_man_MANS = flock.1 ipcrm.1 ipcs.1 ipcmk.1 renice.1 setsid.1 \
 		readprofile.8
 
 if LINUX
+#
+# Linux-only utils with no another dependencies. All another dependencies have
+# to be resolved in configure.ac end exported to makefiles by BUILD_*.
+#
 bin_PROGRAMS += dmesg
 sbin_PROGRAMS += ctrlaltdel fsfreeze fstrim
 usrbin_exec_PROGRAMS += cytune setarch
@@ -16,7 +20,8 @@ usrsbin_exec_PROGRAMS += ldattach tunelp rtcwake
 
 dist_man_MANS += dmesg.1 ctrlaltdel.8 cytune.8 setarch.8 \
 		ldattach.8 tunelp.8 rtcwake.8 fsfreeze.8 fstrim.8
-endif
+endif # LINUX
+
 
 if BUILD_LOSETUP
 sbin_PROGRAMS += losetup
@@ -35,7 +40,6 @@ bin_PROGRAMS += losetup.static
 losetup_static_SOURCES = $(losetup_SOURCES)
 losetup_static_LDFLAGS = -all-static
 endif
-
 endif # BUILD_LOSETUP
 
 
@@ -45,6 +49,21 @@ dist_man_MANS += prlimit.1
 prlimit_SOURCES = prlimit.c $(top_srcdir)/lib/strutils.c \
 			$(top_srcdir)/lib/mbsalign.c \
 			$(top_srcdir)/lib/tt.c
+endif
+
+if BUILD_SWAPON
+sbin_PROGRAMS += swapon
+dist_man_MANS += swapoff.8 swapon.8
+
+swapon_SOURCES = swapon.c \
+		$(top_srcdir)/lib/linux_version.c \
+		$(top_srcdir)/lib/blkdev.c \
+		$(top_srcdir)/lib/fsprobe.c \
+		$(top_srcdir)/lib/canonicalize.c \
+		$(top_srcdir)/lib/mangle.c
+
+swapon_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+swapon_LDADD = $(ul_libblkid_la)
 endif
 
 if BUILD_LSCPU
@@ -142,6 +161,9 @@ $(SETARCH_MAN_LINKS):
 	$(AM_V_GEN)echo ".so man8/setarch.8" > $@
 
 install-exec-hook:
+if BUILD_SWAPON
+	cd $(DESTDIR)$(sbindir) && ln -sf swapon swapoff
+endif
 	for I in $(SETARCH_LINKS); do \
 		cd $(DESTDIR)$(usrbin_execdir) && ln -sf setarch $$I ; \
 	done

@@ -1,8 +1,7 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS = mount umount
-sbin_PROGRAMS = swapon
-dist_man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8
+dist_man_MANS = fstab.5 mount.8 umount.8
 
 # generic sources for all programs (mount, umount)
 srcs_common = sundries.c $(top_srcdir)/lib/canonicalize.c sundries.h
@@ -43,12 +42,6 @@ umount_SOURCES = umount.c $(srcs_mount)
 umount_CFLAGS = $(SUID_CFLAGS) $(cflags_common)
 umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 umount_LDADD = $(ldadd_common)
-
-swapon_SOURCES = swapon.c swap_constants.h $(top_srcdir)/lib/linux_version.c \
-		$(top_srcdir)/lib/blkdev.c $(top_srcdir)/lib/fsprobe.c \
-		$(top_srcdir)/lib/canonicalize.c $(top_srcdir)/lib/mangle.c
-swapon_CFLAGS = $(cflags_common)
-swapon_LDADD = $(ldadd_common)
 
 mount_static_LDADD =
 
@@ -95,7 +88,6 @@ mtab_lock_test_CPPFLAGS = -DMAIN_TEST_MTABLOCK $(AM_CPPFLAGS)
 endif
 
 install-exec-hook:
-	cd $(DESTDIR)$(sbindir) && ln -sf swapon swapoff
 if MAKEINSTALL_DO_SETUID
 	chmod 4755 $(DESTDIR)$(bindir)/mount
 	chmod 4755 $(DESTDIR)$(bindir)/umount

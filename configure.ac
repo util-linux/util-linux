@@ -846,6 +846,12 @@ fi
 AM_CONDITIONAL(BUILD_HWCLOCK, test "x$build_hwclock" = xyes)
 
 
+UL_BUILD_INIT([swapon], [check])
+UL_REQUIRES_LINUX([swapon])
+UL_REQUIRES_BUILD([swapon], [libblkid])
+AM_CONDITIONAL(BUILD_SWAPON, test "x$build_swapon" = xyes)
+
+
 UL_BUILD_INIT([lsblk], [check])
 UL_REQUIRES_LINUX([lsblk])
 UL_REQUIRES_BUILD([lsblk], [libblkid])
