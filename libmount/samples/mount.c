@@ -26,6 +26,7 @@
 #include <getopt.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 
 #include <libmount.h>
 
@@ -33,12 +34,12 @@
 #include "c.h"
 #include "env.h"
 #include "optutils.h"
+#include "strutils.h"
+#include "xgetpass.h"
 
 /*** TODO: DOCS:
  *
- *  -p, --pass-fd	is unsupported
  *  --guess-fstype	is unsupported
- *  -c =                --no-canonicalize
  */
 
 /* exit status */
@@ -50,6 +51,8 @@
 #define EX_FILEIO      16	/* problems writing, locking, ... mtab/fstab */
 #define EX_FAIL	       32	/* mount failure */
 #define EX_SOMEOK      64	/* some mount succeeded */
+
+static int passfd = -1;
 
 static void __attribute__((__noreturn__)) exit_non_root(const char *option)
 {
@@ -88,6 +91,31 @@ static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)
 		warnx(_("%s: parse error: ignore entry at line %d."),
 							filename, line);
 	return 0;
+}
+
+static char *encrypt_pass_get(struct libmnt_context *cxt)
+{
+	if (!cxt)
+		return 0;
+
+#ifdef MCL_FUTURE
+	if (mlockall(MCL_CURRENT | MCL_FUTURE)) {
+		warn(_("couldn't lock into memory"));
+		return NULL;
+	}
+#endif
+	return xgetpass(passfd, _("Password: "));
+}
+
+static void encrypt_pass_release(struct libmnt_context *cxt, char *pwd)
+{
+	char *p = pwd;
+
+	while (p && *p)
+		*p++ = '\0';
+
+	free(pwd);
+	munlockall();
 }
 
 static void print_all(struct libmnt_context *cxt, char *pattern, int show_label)
@@ -219,6 +247,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(
 	" -o, --options <list>    comma-separated list of mount options\n"
 	" -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"
+	" -p, --pass-fd <num>     read the passphrase from file descriptor\n"
 	" -r, --read-only         mount the filesystem read-only (same as -o ro)\n"
 	" -t, --types <list>      limit the set of filesystem types\n"));
 	fprintf(out, _(
@@ -295,6 +324,7 @@ int main(int argc, char **argv)
 		{ "rw", 0, 0, 'w' },
 		{ "options", 1, 0, 'o' },
 		{ "test-opts", 1, 0, 'O' },
+		{ "pass-fd", 1, 0, 'p' },
 		{ "types", 1, 0, 't' },
 		{ "uuid", 1, 0, 'U' },
 		{ "label", 1, 0, 'L'},
@@ -327,11 +357,11 @@ int main(int argc, char **argv)
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
-	while ((c = getopt_long(argc, argv, "aBcfFhilL:Mno:O:rRsU:vVwt:",
+	while ((c = getopt_long(argc, argv, "aBcfFhilL:Mno:O:p:rRsU:vVwt:",
 					longopts, NULL)) != -1) {
 
 		/* only few options are allowed for non-root users */
-		if (mnt_context_is_restricted(cxt) && !strchr("hlLUVv", c))
+		if (mnt_context_is_restricted(cxt) && !strchr("hlLUVvp", c))
 			exit_non_root(option_to_longopt(c, longopts));
 
 		switch(c) {
@@ -377,6 +407,10 @@ int main(int argc, char **argv)
 		case 'O':
 			if (mnt_context_set_options_pattern(cxt, optarg))
 				err(EX_SYSERR, _("failed to set options pattern"));
+			break;
+		case 'p':
+			passfd = strtol_or_err(optarg,
+					_("invalid passphrase file descriptor"));
 			break;
 		case 'L':
 		case 'U':
@@ -453,6 +487,8 @@ int main(int argc, char **argv)
 		mnt_context_set_fstype_pattern(cxt, types);
 	else if (types)
 		mnt_context_set_fstype(cxt, types);
+
+	mnt_context_set_passwd_cb(cxt, encrypt_pass_get, encrypt_pass_release);
 
 	if (all) {
 		/*
