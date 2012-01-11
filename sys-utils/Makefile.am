@@ -52,6 +52,29 @@ prlimit_SOURCES = prlimit.c $(top_srcdir)/lib/strutils.c \
 			$(top_srcdir)/lib/tt.c
 endif
 
+
+if BUILD_NEW_MOUNT
+# 
+# The original (stable) mount is in mount/ directory
+# -- temporary we share man pages
+#
+bin_PROGRAMS += mount umount
+dist_man_MANS += ../mount/fstab.5 ../mount/mount.8 ../mount/umount.8
+
+mount_SOURCES = mount.c \
+		$(top_srcdir)/lib/env.c \
+		$(top_srcdir)/lib/xgetpass.c \
+		$(top_srcdir)/lib/strutils.c
+
+mount_LDADD = $(ul_libmount_la)
+mount_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+
+umount_SOURCES = umount.c $(top_srcdir)/lib/env.c
+umount_LDADD = $(ul_libmount_la)
+umount_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+endif
+
+
 if BUILD_SWAPON
 sbin_PROGRAMS += swapon
 dist_man_MANS += swapoff.8 swapon.8
@@ -164,6 +187,12 @@ $(SETARCH_MAN_LINKS):
 install-exec-hook:
 if BUILD_SWAPON
 	cd $(DESTDIR)$(sbindir) && ln -sf swapon swapoff
+endif
+if BUILD_NEW_MOUNT
+if MAKEINSTALL_DO_SETUID
+	chmod 4755 $(DESTDIR)$(bindir)/mount
+	chmod 4755 $(DESTDIR)$(bindir)/umount
+endif
 endif
 	for I in $(SETARCH_LINKS); do \
 		cd $(DESTDIR)$(usrbin_execdir) && ln -sf setarch $$I ; \

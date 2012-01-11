@@ -19,6 +19,7 @@ lscpu
 mips32.8
 mips64.8
 mips.8
+mount
 mountpoint
 parisc32.8
 parisc64.8
@@ -43,5 +44,6 @@ swapon
 switch_root
 tunelp
 unshare
+umount
 x86_64.8
 chcpu

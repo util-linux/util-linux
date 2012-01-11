@@ -697,7 +697,7 @@ AM_CONDITIONAL(BUILD_LOSETUP, test "x$build_losetup" = xyes)
 
 
 AC_ARG_ENABLE([libmount-mount],
-  AS_HELP_STRING([--enable-libmount-mount], [link mount(8) with libmount (EXPERIMENTAL)]),
+  AS_HELP_STRING([--enable-libmount-mount], [link old mount(8) with libmount]),
   [], enable_libmount_mount=no
 )
 UL_BUILD_INIT([libmount_mount])
@@ -707,6 +707,18 @@ if test "x$build_libmount_mount" = xyes; then
   AC_DEFINE(HAVE_LIBMOUNT_MOUNT, 1, [use libmount for mount(8)])
 fi
 AM_CONDITIONAL(BUILD_LIBMOUNT_MOUNT, test "x$build_libmount_mount" = xyes)
+
+
+AC_ARG_ENABLE([new-mount],
+  AS_HELP_STRING([--enable-new-mount], [build new pure libmount based mount(8) (EXPERIMENTAL)]),
+  [], enable_new_mount=no
+)
+UL_BUILD_INIT([new_mount])
+UL_REQUIRES_BUILD([new_mount], [libmount])
+if test "x$build_new_mount" = xyes; then
+  AM_CONDITIONAL(BUILD_MOUNT, [false])
+fi
+AM_CONDITIONAL(BUILD_NEW_MOUNT, test "x$build_new_mount" = xyes)
 
 
 AC_ARG_ENABLE([fsck],
@@ -1180,7 +1192,6 @@ libmount/src/Makefile
 libmount/src/libmount.h
 libmount/docs/Makefile
 libmount/docs/version.xml
-libmount/samples/Makefile
 libuuid/uuid.pc
 libuuid/Makefile
 libuuid/man/Makefile

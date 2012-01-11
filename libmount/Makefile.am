@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-SUBDIRS = src samples
+SUBDIRS = src
 
 if ENABLE_GTK_DOC
 SUBDIRS += docs
