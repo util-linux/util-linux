@@ -897,6 +897,26 @@ struct libmnt_cache *mnt_context_get_cache(struct libmnt_context *cxt)
 }
 
 /**
+ * mnt_context_set_passwd_cb:
+ * @cxt: mount context
+ *
+ * Sets callbacks for encryption password.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_set_passwd_cb(struct libmnt_context *cxt,
+			      char *(*get)(struct libmnt_context *),
+			      void (*release)(struct libmnt_context *, char *))
+{
+	if (!cxt)
+		return -EINVAL;
+
+	cxt->pwd_get_cb = get;
+	cxt->pwd_release_cb = release;
+	return 0;
+}
+
+/**
  * mnt_context_get_lock:
  * @cxt: mount context
  *

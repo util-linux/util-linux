@@ -147,6 +147,7 @@ static const struct libmnt_optmap userspace_opts_map[] =
    { "loop[=]", MNT_MS_LOOP },                             /* use the loop device */
    { "offset=", MNT_MS_OFFSET, MNT_NOMTAB },		   /* loop device offset */
    { "sizelimit=", MNT_MS_SIZELIMIT, MNT_NOMTAB },	   /* loop device size limit */
+   { "encryption=", MNT_MS_ENCRYPTION, MNT_NOMTAB },	   /* loop device encryption */
 
    { "nofail",  MNT_MS_NOFAIL, MNT_NOMTAB },               /* Do not fail if ENOENT on dev */
 

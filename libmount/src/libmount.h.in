@@ -431,6 +431,10 @@ extern int mnt_context_set_fstype_pattern(struct libmnt_context *cxt,
 extern int mnt_context_set_options_pattern(struct libmnt_context *cxt,
 				      const char *pattern);
 
+extern int mnt_context_set_passwd_cb(struct libmnt_context *cxt,
+			      char *(*get)(struct libmnt_context *),
+			      void (*release)(struct libmnt_context *, char *));
+
 extern int mnt_context_set_tables_errcb(struct libmnt_context *cxt,
         int (*cb)(struct libmnt_table *tb, const char *filename, int line));
 extern int mnt_context_set_fstab(struct libmnt_context *cxt,
@@ -498,6 +502,7 @@ extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status
 #define MNT_MS_XCOMMENT (1 << 13)
 #define MNT_MS_OFFSET   (1 << 14)
 #define MNT_MS_SIZELIMIT (1 << 15)
+#define MNT_MS_ENCRYPTION (1 << 16)
 
 /*
  * mount(2) MS_* masks (MNT_MAP_LINUX map)

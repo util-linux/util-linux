@@ -34,7 +34,8 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 
 	if (cxt->user_mountflags & (MNT_MS_LOOP |
 				    MNT_MS_OFFSET |
-				    MNT_MS_SIZELIMIT))
+				    MNT_MS_SIZELIMIT |
+				    MNT_MS_ENCRYPTION))
 		return 1;
 
 	if (cxt->mountflags & (MS_BIND | MS_MOVE | MS_PROPAGATION))
@@ -64,7 +65,7 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 {
 	const char *backing_file, *optstr, *loopdev = NULL;
-	char *val = NULL;
+	char *val = NULL, *enc = NULL, *pwd = NULL;
 	size_t len;
 	struct loopdev_cxt lc;
 	int rc = 0, lo_flags = 0;
@@ -125,6 +126,20 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 			DBG(CXT, mnt_debug_h(cxt, "failed to parse sizelimit="));
 	}
 
+	/*
+	 * encryption=
+	 */
+	if (rc == 0 && (cxt->user_mountflags & MNT_MS_ENCRYPTION) &&
+	    mnt_optstr_get_option(optstr, "encryption", &val, &len) == 0) {
+		enc = strndup(val, len);
+		if (val && !enc)
+			rc = -ENOMEM;
+		if (enc && cxt->pwd_get_cb) {
+			DBG(CXT, mnt_debug_h(cxt, "asking for pass"));
+			pwd = cxt->pwd_get_cb(cxt);
+		}
+	}
+
 	if (rc)
 		goto done;
 
@@ -156,6 +171,8 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 			rc = loopcxt_set_offset(&lc, offset);
 		if (!rc && sizelimit)
 			rc = loopcxt_set_sizelimit(&lc, sizelimit);
+		if (!rc && enc && pwd)
+			loopcxt_set_encryption(&lc, enc, pwd);
 		if (!rc)
 			loopcxt_set_flags(&lc, lo_flags);
 		if (rc) {
@@ -208,6 +225,11 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 		loopcxt_set_fd(&lc, -1, 0);
 	}
 done:
+	free(enc);
+	if (pwd && cxt->pwd_release_cb) {
+		DBG(CXT, mnt_debug_h(cxt, "release pass"));
+		cxt->pwd_release_cb(cxt, pwd);
+	}
 	loopcxt_deinit(&lc);
 	return rc;
 }

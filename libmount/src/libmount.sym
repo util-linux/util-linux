@@ -213,6 +213,7 @@ global:
 	mnt_context_is_fork;
 	mnt_context_is_parent;
 	mnt_context_next_umount;
+	mnt_context_set_passwd_cb;
 	mnt_context_wait_for_children;
 	mnt_fs_is_netfs;
 	mnt_fs_is_pseudofs;

@@ -276,6 +276,9 @@ struct libmnt_context
 	int	(*table_errcb)(struct libmnt_table *tb,	/* callback for libmnt_table structs */
 			 const char *filename, int line);
 
+	char	*(*pwd_get_cb)(struct libmnt_context *);		/* get encryption password */
+	void	(*pwd_release_cb)(struct libmnt_context *, char *);	/* release password */
+
 	int	optsmode;	/* fstab optstr mode MNT_OPTSMODE_{AUTO,FORCE,IGNORE} */
 	int	loopdev_fd;	/* open loopdev */
 
