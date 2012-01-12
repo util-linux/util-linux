@@ -22,6 +22,7 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 	const char *type, *src;
 
 	assert(cxt);
+
 	/* The mount flags have to be merged, otherwise we have to use
 	 * expensive mnt_context_get_user_mflags() instead of cxt->user_mountflags. */
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
@@ -35,15 +36,20 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 	if (cxt->user_mountflags & (MNT_MS_LOOP |
 				    MNT_MS_OFFSET |
 				    MNT_MS_SIZELIMIT |
-				    MNT_MS_ENCRYPTION))
+				    MNT_MS_ENCRYPTION)) {
+
+		DBG(CXT, mnt_debug_h(cxt, "loopdev specific options detected"));
 		return 1;
+	}
 
 	if (cxt->mountflags & (MS_BIND | MS_MOVE | MS_PROPAGATION))
 		return 0;
 
-	/* Automatically create a loop device from a regular file if a filesystem
-	 * is not specified or the filesystem is known for libblkid (these
-	 * filesystems work with block devices only).
+	/* Automatically create a loop device from a regular file if a
+	 * filesystem is not specified or the filesystem is known for libblkid
+	 * (these filesystems work with block devices only). The file size
+	 * should be at least 1KiB otherwise we will create empty loopdev where
+	 * is no mountable filesystem...
 	 *
 	 * Note that there is not a restriction (on kernel side) that prevents regular
 	 * file as a mount(2) source argument. A filesystem that is able to mount
@@ -55,11 +61,12 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 	    (!type || strcmp(type, "auto") == 0 || blkid_known_fstype(type))) {
 		struct stat st;
 
-		if (stat(src, &st) || !S_ISREG(st.st_mode))
-			return 0;
+		if (stat(src, &st) == 0 && S_ISREG(st.st_mode) &&
+		    st.st_size > 1024)
+			return 1;
 	}
 
-	return 1;
+	return 0;
 }
 
 int mnt_context_setup_loopdev(struct libmnt_context *cxt)
