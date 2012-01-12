@@ -15,6 +15,7 @@
 #include <sys/mount.h>
 
 #include "pathnames.h"
+#include "loopdev.h"
 #include "strutils.h"
 #include "mountP.h"
 
@@ -40,7 +41,7 @@
 
 static int lookup_umount_fs(struct libmnt_context *cxt)
 {
-	int rc;
+	int rc, loopdev = 0;
 	const char *tgt;
 	struct libmnt_table *mtab = NULL;
 	struct libmnt_fs *fs;
@@ -60,6 +61,8 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 		DBG(CXT, mnt_debug_h(cxt, "umount: failed to read mtab"));
 		return rc;
 	}
+
+try_loopdev:
 	fs = mnt_table_find_target(mtab, tgt, MNT_ITER_BACKWARD);
 	if (!fs) {
 		/* maybe the option is source rather than target (mountpoint) */
@@ -82,6 +85,34 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 						tgt, mnt_fs_get_source(fs1)));
 				return -EINVAL;
 			}
+		}
+	}
+
+	if (!fs && !loopdev) {
+		/*
+		 * Maybe target is /path/file.img, try to convert to /dev/loopN
+		 */
+		struct stat st;
+
+		if (stat(tgt, &st) == 0 && S_ISREG(st.st_mode)) {
+			char *dev = NULL;
+			int count = loopdev_count_by_backing_file(tgt, &dev);
+
+			if (count == 1) {
+				DBG(CXT, mnt_debug_h(cxt,
+					"umount: %s --> %s (retry)", tgt, dev));
+				mnt_fs_set_source(cxt->fs, tgt);
+				mnt_fs_set_target(cxt->fs, dev);
+				free(dev);
+				tgt = mnt_fs_get_target(cxt->fs);
+
+				loopdev = 1;		/* to avoid endless loop */
+				goto try_loopdev;
+
+			} else if (count > 1)
+				DBG(CXT, mnt_debug_h(cxt,
+					"umount: warning: %s is associated "
+					"with more than one loodev", tgt));
 		}
 	}
 
@@ -109,15 +140,14 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 
 /* check if @devname is loopdev and if the device is associated
  * with a source from @fstab_fs
- *
- * TODO : move this to loopdev.c
  */
-static int mnt_loopdev_associated_fs(const char *devname, struct libmnt_fs *fs)
+static int is_associated_fs(const char *devname, struct libmnt_fs *fs)
 {
 	uintmax_t offset = 0;
 	const char *src;
 	char *val, *optstr;
 	size_t valsz;
+	int flags = 0;
 
 	/* check if it begins with /dev/loop */
 	if (strncmp(devname, _PATH_DEV_LOOP, sizeof(_PATH_DEV_LOOP)))
@@ -131,15 +161,14 @@ static int mnt_loopdev_associated_fs(const char *devname, struct libmnt_fs *fs)
 	optstr = (char *) mnt_fs_get_user_options(fs);
 
 	if (optstr &&
-	    mnt_optstr_get_option(optstr, "offset", &val, &valsz) == 0 &&
-	    mnt_parse_offset(val, valsz, &offset) != 0)
-		return 0;
+	    mnt_optstr_get_option(optstr, "offset", &val, &valsz) == 0) {
+		flags |= LOOPDEV_FL_OFFSET;
 
-	/* TODO:
-	 * if (mnt_loopdev_associated_file(devname, src, offset))
-	 *	return 1;
-	 */
-	return 0;
+		if (mnt_parse_offset(val, valsz, &offset) != 0)
+			return 0;
+	}
+
+	return loopdev_is_used(devname, src, offset, flags);
 }
 
 static int prepare_helper_from_options(struct libmnt_context *cxt,
@@ -240,7 +269,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		if (fs) {
 			const char *dev = mnt_fs_get_srcpath(cxt->fs);		/* devname from mtab */
 
-			if (!dev || !mnt_loopdev_associated_fs(dev, fs))
+			if (!dev || !is_associated_fs(dev, fs))
 				fs = NULL;
 		}
 		if (!fs) {

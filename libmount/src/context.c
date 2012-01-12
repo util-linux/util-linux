@@ -1185,7 +1185,7 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	}
 
 	if (rc)
-		DBG(CXT, mnt_debug_h(cxt, "failed to prepare target"));
+		DBG(CXT, mnt_debug_h(cxt, "failed to prepare target '%s'", tgt));
 	else
 		DBG(CXT, mnt_debug_h(cxt, "final target '%s'",
 					mnt_fs_get_target(cxt->fs)));
