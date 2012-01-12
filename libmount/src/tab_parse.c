@@ -52,8 +52,8 @@ static int next_number(char **s, int *num)
  */
 static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
 {
-	int rc, n = 0;
-	char *src, *fstype, *optstr;
+	int rc, n = 0, xrc;
+	char *src = NULL, *fstype = NULL, *optstr = NULL;
 
 	rc = sscanf(s,	UL_SCNsA" "	/* (1) source */
 			UL_SCNsA" "	/* (2) target */
@@ -66,17 +66,20 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
 			&fstype,
 			&optstr,
 			&n);
+	xrc = rc;
 
-	if (rc == 4) {
+	if (rc == 3 || rc == 4) {			/* options are optional */
 		unmangle_string(src);
 		unmangle_string(fs->target);
 		unmangle_string(fstype);
-		unmangle_string(optstr);
+
+		if (optstr && *optstr)
+			unmangle_string(optstr);
 
 		rc = __mnt_fs_set_source_ptr(fs, src);
 		if (!rc)
 			rc = __mnt_fs_set_fstype_ptr(fs, fstype);
-		if (!rc)
+		if (!rc && optstr)
 			rc = mnt_fs_set_options(fs, optstr);
 		free(optstr);
 	} else {
@@ -84,12 +87,16 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
 		rc = -EINVAL;
 	}
 
-	if (rc)
+	if (rc) {
+		DBG(TAB, mnt_debug("tab parse error: [set vars, rc=%d]\n", rc));
 		return rc;	/* error */
+	}
 
 	fs->passno = fs->freq = 0;
-	s = skip_spaces(s + n);
-	if (*s) {
+
+	if (xrc == 4 && n)
+		s = skip_spaces(s + n);
+	if (xrc == 4 && *s) {
 		if (next_number(&s, &fs->freq) != 0) {
 			if (*s) {
 				DBG(TAB, mnt_debug("tab parse error: [freq]"));
