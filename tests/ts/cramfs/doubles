@@ -24,8 +24,6 @@ ts_skip_nonroot
 
 set -o pipefail
 
-set -x
-
 ORIGPWD=$(pwd)
 IMAGE_NAME="${TS_TESTNAME}.img"
 IMAGE_PATH="$TS_OUTDIR/$IMAGE_NAME"
