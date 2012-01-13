@@ -171,7 +171,6 @@ static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 static int evaluate_permissions(struct libmnt_context *cxt)
 {
 	unsigned long u_flags = 0;
-	const char *srcpath;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -200,7 +199,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		 */
 		if (!(cxt->flags & MNT_FL_TAB_APPLIED))
 		{
-			DBG(CXT, mnt_debug_h(cxt, "fstab not applied, ignore user mount"));
+			DBG(CXT, mnt_debug_h(cxt, "perms: fstab not applied, ignore user mount"));
 			return -EPERM;
 		}
 
@@ -209,9 +208,6 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		 * are applied by mnt_optstr_get_flags() from mnt_context_merge_mflags()
 		 */
 
-		srcpath = mnt_fs_get_srcpath(cxt->fs);
-		if (!srcpath)
-			return -EINVAL;
 
 		/*
 		 * MS_OWNER: Allow owners to mount when fstab contains the
@@ -222,6 +218,21 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		 */
 		if (u_flags & (MNT_MS_OWNER | MNT_MS_GROUP)) {
 			struct stat sb;
+			struct libmnt_cache *cache = NULL;
+			char *xsrc = NULL;
+			const char *srcpath = mnt_fs_get_srcpath(cxt->fs);
+
+			if (!srcpath) {					/* Ah... source is TAG */
+				cache = mnt_context_get_cache(cxt);
+				xsrc = mnt_resolve_spec(
+						mnt_context_get_source(cxt),
+						cache);
+				srcpath = xsrc;
+			}
+			if (!srcpath) {
+				DBG(CXT, mnt_debug_h(cxt, "perms: src undefined"));
+				return -EPERM;
+			}
 
 			if (strncmp(srcpath, "/dev/", 5) == 0 &&
 			    stat(srcpath, &sb) == 0 &&
@@ -229,6 +240,9 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 			     ((u_flags & MNT_MS_GROUP) && mnt_in_group(sb.st_gid))))
 
 				cxt->user_mountflags |= MNT_MS_USER;
+
+			if (!cache && xsrc)
+				free(xsrc);
 		}
 
 		if (!(cxt->user_mountflags & (MNT_MS_USER | MNT_MS_USERS))) {

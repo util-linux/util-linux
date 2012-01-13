@@ -1621,7 +1621,13 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
  * mnt_context_get_status:
  * @cxt: mount context
  *
- * Returns: 1 if mount.type or mount(2) syscall was successful.
+ * Global libmount status.
+ *
+ * The real exit code of the mount.type helper has to be tested by
+ * mnt_context_get_helper_status(). The mnt_context_get_status() only inform
+ * that exec() has been sucessful.
+ *
+ * Returns: 1 if mount.type or mount(2) syscall has been succesfully called.
  */
 int mnt_context_get_status(struct libmnt_context *cxt)
 {
