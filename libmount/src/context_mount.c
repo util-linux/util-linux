@@ -39,7 +39,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 
 	if (!cxt)
 		return -EINVAL;
-	if (!cxt->fs)
+	if (!cxt->fs || (cxt->flags & MNT_FL_MOUNTOPTS_FIXED))
 		return 0;
 
 	DBG(CXT, mnt_debug_h(cxt, "mount: fixing optstr"));
@@ -133,6 +133,8 @@ static int fix_optstr(struct libmnt_context *cxt)
 	fs->optstr = NULL;
 	fs->optstr = mnt_fs_strdup_options(fs);
 done:
+	cxt->flags |= MNT_FL_MOUNTOPTS_FIXED;
+
 	DBG(CXT, mnt_debug_h(cxt, "fixed options [rc=%d]: "
 		"vfs: '%s' fs: '%s' user: '%s', optstr: '%s'", rc,
 		fs->vfs_optstr, fs->fs_optstr, fs->user_optstr, fs->optstr));

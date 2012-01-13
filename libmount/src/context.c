@@ -1001,7 +1001,18 @@ int mnt_context_set_mflags(struct libmnt_context *cxt, unsigned long flags)
 {
 	if (!cxt)
 		return -EINVAL;
+
 	cxt->mountflags = flags;
+
+	if ((cxt->flags & MNT_FL_MOUNTOPTS_FIXED) && cxt->fs)
+		/*
+		 * the final mount options are already generated, refresh...
+		 */
+		return mnt_optstr_apply_flags(
+				&cxt->fs->vfs_optstr,
+				cxt->mountflags,
+				mnt_get_builtin_optmap(MNT_LINUX_MAP));
+
 	return 0;
 }
 

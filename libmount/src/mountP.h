@@ -338,6 +338,7 @@ struct libmnt_context
 #define MNT_FL_PREPARED		(1 << 24)
 #define MNT_FL_HELPER		(1 << 25)	/* [u]mount.<type> */
 #define MNT_FL_LOOPDEV_READY	(1 << 26)	/* /dev/loop<N> initialized by library */
+#define MNT_FL_MOUNTOPTS_FIXED  (1 << 27)
 
 /* default flags */
 #define MNT_FL_DEFAULT		0

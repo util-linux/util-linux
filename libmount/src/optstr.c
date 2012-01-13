@@ -652,7 +652,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 	if (!optstr || !map)
 		return -EINVAL;
 
-	DBG(CXT, mnt_debug("applying 0x%08lu flags '%s'", flags, *optstr));
+	DBG(CXT, mnt_debug("applying 0x%08lu flags to '%s'", flags, *optstr));
 
 	maps[0] = map;
 	next = *optstr;
@@ -745,6 +745,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 		}
 	}
 
+	DBG(CXT, mnt_debug("new optstr '%s'", *optstr));
 	return rc;
 err:
 	DBG(CXT, mnt_debug("failed to apply flags [rc=%d]", rc));
