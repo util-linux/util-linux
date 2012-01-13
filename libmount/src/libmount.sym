@@ -209,11 +209,16 @@ global:
 MOUNT_2.21 {
 global:
 	mnt_context_enable_fork;
+	mnt_context_get_helper_status;
+	mnt_context_get_syscall_errno;
+	mnt_context_helper_executed;
 	mnt_context_is_child;
 	mnt_context_is_fork;
 	mnt_context_is_parent;
 	mnt_context_next_umount;
+	mnt_context_reset_status;
 	mnt_context_set_passwd_cb;
+	mnt_context_syscall_called;
 	mnt_context_wait_for_children;
 	mnt_fs_is_netfs;
 	mnt_fs_is_pseudofs;

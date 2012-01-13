@@ -556,6 +556,13 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
  *
  * Call mount(2) or mount.type helper. Unnecessary for mnt_context_mount().
  *
+ * Note that this function could be called only once. If you want to mount
+ * another source or target than you have to call mnt_reset_context().
+ *
+ * If you want to call mount(2) for the same source and target with a diffrent
+ * mount flags or fstype then you call mnt_context_reset_state() and then try
+ * again mnt_context_do_mount().
+ *
  * WARNING: non-zero return code does not mean that mount(2) syscall or
  *          umount.type helper wasn't sucessfully called.
  *
@@ -626,6 +633,11 @@ int mnt_context_finalize_mount(struct libmnt_context *cxt)
  *	mnt_context_finalize_mount(cxt);
  *
  * See also mnt_context_disable_helpers().
+ *
+ * Note that this function could be called only once. If you want to mount with
+ * different setting than you have to call mnt_reset_context(). It's NOT enough
+ * to call mnt_context_reset_state() if you want call this function more than
+ * once, whole context has to be reseted.
  *
  * WARNING: non-zero return code does not mean that mount(2) syscall or
  *          mount.type helper wasn't sucessfully called.

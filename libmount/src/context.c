@@ -52,8 +52,8 @@ struct libmnt_context *mnt_new_context(void)
 	ruid = getuid();
 	euid = geteuid();
 
-	cxt->syscall_status = 1;	/* not called yet */
-	cxt->helper_exec_status = 1;
+	mnt_context_reset_status(cxt);
+
 	cxt->loopdev_fd = -1;
 
 	/* if we're really root and aren't running setuid */
@@ -151,9 +151,8 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->user_mountflags = 0;
 	cxt->mountdata = NULL;
 	cxt->flags = MNT_FL_DEFAULT;
-	cxt->syscall_status = 1;
-	cxt->helper_exec_status = 1;
-	cxt->helper_status = 0;
+
+	mnt_context_reset_status(cxt);
 
 	/* restore non-resetable flags */
 	cxt->flags |= (fl & MNT_FL_EXTERN_FSTAB);
@@ -169,6 +168,29 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->flags |= (fl & MNT_FL_FORCE);
 	cxt->flags |= (fl & MNT_FL_NOCANONICALIZE);
 	cxt->flags |= (fl & MNT_FL_RDONLY_UMOUNT);
+	return 0;
+}
+
+/**
+ * mnt_context_reset_status:
+ * @cxt: context
+ *
+ * Resets mount(2) and mount.<type> statuses, so mnt_context_do_mount() or
+ * mnt_context_do_umount() could be again called with the same settings.
+ *
+ * BE CAREFUL -- after this soft reset the libmount will NOT parse mount
+ * options, evaluate permissions or apply stuff from fstab.
+ *
+ * Returns: 0 on success, negative number in case of error.
+ */
+int mnt_context_reset_status(struct libmnt_context *cxt)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	cxt->syscall_status = 1;		/* means not called yet */
+	cxt->helper_exec_status = 1;
+	cxt->helper_status = 0;
 	return 0;
 }
 
@@ -1599,7 +1621,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
  * mnt_context_get_status:
  * @cxt: mount context
  *
- * Returns: 1 if /sbin/mount.type or mount(2) syscall was successfull.
+ * Returns: 1 if mount.type or mount(2) syscall was successful.
  */
 int mnt_context_get_status(struct libmnt_context *cxt)
 {
@@ -1607,15 +1629,65 @@ int mnt_context_get_status(struct libmnt_context *cxt)
 }
 
 /**
+ * mnt_context_helper_executed:
+ * @cxt: mount context
+ *
+ * Returns: 1 if mount.type helper has been executed, or 0.
+ */
+int mnt_context_helper_executed(struct libmnt_context *cxt)
+{
+	return cxt->helper_exec_status != 1;
+}
+
+/**
+ * mnt_context_get_helper_status:
+ * @cxt: mount context
+ *
+ * Return: mount.<type> exit status, result is reliable only if
+ *         mnt_context_helper_executed() returns 1.
+ */
+int mnt_context_get_helper_status(struct libmnt_context *cxt)
+{
+	return cxt->helper_status;
+}
+
+/**
+ * mnt_context_syscall_called:
+ * @cxt: mount context
+ *
+ * Returns: 1 if mount(2) syscall has been called, or 0.
+ */
+int mnt_context_syscall_called(struct libmnt_context *cxt)
+{
+	return cxt->syscall_status != 1;
+}
+
+/**
+ * mnt_context_get_syscall_errno:
+ * @cxt: mount context
+ *
+ * The result from this function is reliable only if
+ * mnt_context_syscall_called() returns 1.
+ *
+ * Returns: mount(2) errno if the syscall failed or 0.
+ */
+int mnt_context_get_syscall_errno(struct libmnt_context *cxt)
+{
+	if (cxt->syscall_status < 0)
+		return -cxt->syscall_status;
+
+	return 0;
+}
+
+/**
  * mnt_context_set_syscall_status:
  * @cxt: mount context
  * @status: mount(2) status
  *
- * The @status should be 0 on succcess, or negative number on error (-1 or
- * -errno).
+ * The @status should be 0 on success, or negative number on error (-errno).
  *
- * This function should be used if [u]mount(2) syscall was NOT called by
- * libmount (by mnt_context_mount() or mnt_context_do_mount()) only.
+ * This function should be used only if [u]mount(2) syscall is NOT called by
+ * libmount code.
  *
  * Returns: 0 or negative number in case of error.
  */
@@ -1634,6 +1706,8 @@ int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status)
  * @cxt: context
  * @buf: buffer
  * @bufsiz: size of the buffer
+ *
+ * Not implemented yet.
  *
  * Returns: 0 or negative number in case of error.
  */

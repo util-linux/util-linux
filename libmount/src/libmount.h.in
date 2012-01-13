@@ -462,7 +462,16 @@ extern int mnt_context_get_user_mflags(struct libmnt_context *cxt,
 
 extern int mnt_context_set_mountdata(struct libmnt_context *cxt, void *data);
 extern int mnt_context_apply_fstab(struct libmnt_context *cxt);
+
+extern int mnt_context_reset_status(struct libmnt_context *cxt);
 extern int mnt_context_get_status(struct libmnt_context *cxt);
+
+extern int mnt_context_helper_executed(struct libmnt_context *cxt);
+extern int mnt_context_get_helper_status(struct libmnt_context *cxt);
+
+extern int mnt_context_syscall_called(struct libmnt_context *cxt);
+extern int mnt_context_get_syscall_errno(struct libmnt_context *cxt);
+
 extern int mnt_context_strerror(struct libmnt_context *cxt, char *buf,
 				size_t bufsiz);
 
