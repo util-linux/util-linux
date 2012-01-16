@@ -1041,6 +1041,7 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_NAME;
 			columns[ncolumns++] = COL_FSTYPE;
 			columns[ncolumns++] = COL_LABEL;
+			columns[ncolumns++] = COL_UUID;
 			columns[ncolumns++] = COL_TARGET;
 			break;
 		case 'm':
