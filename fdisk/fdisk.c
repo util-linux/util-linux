@@ -1303,6 +1303,7 @@ read_int_with_suffix(unsigned int low, unsigned int dflt, unsigned int high,
 {
 	unsigned int res;
 	int default_ok = 1;
+	int absolute = 0;
 	static char *ms = NULL;
 	static size_t mslen = 0;
 
@@ -1331,9 +1332,9 @@ read_int_with_suffix(unsigned int low, unsigned int dflt, unsigned int high,
 
 		if (*line_ptr == '+' || *line_ptr == '-') {
 			int minus = (*line_ptr == '-');
-			int absolute = 0;
 			int suflen;
 
+			absolute = 0;
 			res = atoi(line_ptr + 1);
 
 			while (isdigit(*++line_ptr))
@@ -1400,8 +1401,6 @@ read_int_with_suffix(unsigned int low, unsigned int dflt, unsigned int high,
 				bytes += unit/2;	/* round */
 				bytes /= unit;
 				res = bytes;
-				if (is_suffix_used)
-					*is_suffix_used = absolute;
 			}
 			if (minus)
 				res = -res;
@@ -1413,13 +1412,17 @@ read_int_with_suffix(unsigned int low, unsigned int dflt, unsigned int high,
 				use_default = 0;
 			}
 		}
-		if (use_default)
-			printf(_("Using default value %u\n"), res = dflt);
+		if (use_default) {
+			printf(_("Using default value %u\n"), dflt);
+			return dflt;
+		}
 		if (res >= low && res <= high)
 			break;
 		else
 			printf(_("Value out of range.\n"));
 	}
+	if (is_suffix_used)
+			*is_suffix_used = absolute > 0;
 	return res;
 }
 
