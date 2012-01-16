@@ -536,8 +536,10 @@ static int do_umount(struct libmnt_context *cxt)
 	if (rc < 0 && cxt->syscall_status == -EBUSY &&
 	    (cxt->flags & MNT_FL_RDONLY_UMOUNT) && src) {
 
-		cxt->mountflags |= MS_REMOUNT | MS_RDONLY;
+		mnt_context_set_mflags(cxt, (cxt->mountflags |
+					     MS_REMOUNT | MS_RDONLY));
 		cxt->flags &= ~MNT_FL_LOOPDEL;
+
 		DBG(CXT, mnt_debug_h(cxt,
 			"umount(2) failed [errno=%d] -- trying to remount read-only",
 			-cxt->syscall_status));
@@ -615,11 +617,13 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 			rc = mnt_context_prepare_helper(cxt, "umount", NULL);
 	}
 
-/* TODO
-	if ((cxt->flags & MNT_FL_LOOPDEL) &&
-	    (!mnt_is_loopdev(src) || mnt_loopdev_is_autoclear(src)))
-		cxt->flags &= ~MNT_FL_LOOPDEL;
-*/
+	if (!rc && (cxt->flags & MNT_FL_LOOPDEL) && cxt->fs) {
+		const char *src = mnt_fs_get_srcpath(cxt->fs);
+
+		if (src && (!is_loopdev(src) || loopdev_is_autoclear(src)))
+			cxt->flags &= ~MNT_FL_LOOPDEL;
+	}
+
 	if (rc) {
 		DBG(CXT, mnt_debug_h(cxt, "umount: preparing failed"));
 		return rc;
@@ -661,36 +665,30 @@ int mnt_context_do_umount(struct libmnt_context *cxt)
 	rc = do_umount(cxt);
 	if (rc)
 		return rc;
-/* TODO
-	if (cxt->flags & MNT_FL_LOOPDEL)
-		rc = mnt_loopdev_clean(mnt_fs_get_source(cxt->fs));
-*/
-	if (cxt->flags & MNT_FL_NOMTAB)
-		return rc;
 
-	if ((cxt->flags & MNT_FL_RDONLY_UMOUNT) &&
-	    (cxt->mountflags & (MS_RDONLY | MS_REMOUNT))
-					== (MS_RDONLY | MS_REMOUNT)) {
+	if (mnt_context_get_status(cxt) && !(cxt->flags & MNT_FL_FAKE)) {
 		/*
-		 * fix options, remount --> read-only mount
+		 * Umounted, do some post-umount operations
+		 *	- remove loopdev
+		 *	- refresh in-memory mtab stuff if remount rather than
+		 *	  umount has been performed
 		 */
-		const char *o = mnt_fs_get_options(cxt->fs);
-		char *n = o ? strdup(o) : NULL;
+		if ((cxt->flags & MNT_FL_LOOPDEL)
+		    && !(cxt->mountflags & MS_REMOUNT))
+			rc = mnt_context_delete_loopdev(cxt);
 
-		DBG(CXT, mnt_debug_h(cxt, "fix remount-on-umount update"));
+		if (!(cxt->flags & MNT_FL_NOMTAB)
+		    && mnt_context_get_status(cxt)
+		    && !cxt->helper
+		    && (cxt->flags & MNT_FL_RDONLY_UMOUNT)
+		    && (cxt->mountflags & MS_REMOUNT)) {
 
-		if (n)
-			mnt_optstr_remove_option(&n, "rw");
-		rc = mnt_optstr_prepend_option(&n, "ro", NULL);
-		if (!rc)
-			rc = mnt_fs_set_options(cxt->fs, n);
-
-		/* use "remount" instead of "umount" in /etc/mtab */
-		if (!rc && cxt->update && cxt->mtab_writable)
-			rc = mnt_update_set_fs(cxt->update,
-					       cxt->mountflags, NULL, cxt->fs);
+			/* use "remount" instead of "umount" in /etc/mtab */
+			if (!rc && cxt->update && cxt->mtab_writable)
+				rc = mnt_update_set_fs(cxt->update,
+						       cxt->mountflags, NULL, cxt->fs);
+		}
 	}
-
 	return rc;
 }
 
