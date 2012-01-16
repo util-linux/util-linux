@@ -455,10 +455,6 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 			rc = mnt_fs_set_fstype(fs, try_type);
 	}
 
-	/* TODO: check if the result is really read-only/read-write
-	 *       and if necessary update cxt->mountflags
-	 */
-
 	return rc;
 }
 
@@ -591,6 +587,7 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
 int mnt_context_do_mount(struct libmnt_context *cxt)
 {
 	const char *type;
+	int res;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -607,9 +604,40 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 
 	type = mnt_fs_get_fstype(cxt->fs);
 	if (type)
-		return do_mount(cxt, NULL);
+		res = do_mount(cxt, NULL);
+	else
+		res = do_mount_by_pattern(cxt, cxt->fstype_pattern);
 
-	return do_mount_by_pattern(cxt, cxt->fstype_pattern);
+	if (mnt_context_get_status(cxt)
+	    && !(cxt->flags & MNT_FL_FAKE)
+	    && !cxt->helper) {
+		/*
+		 * Mounted by mount(2), do some post-mount checks
+		 *
+		 * Kernel allows to use MS_RDONLY for bind mounts, but the
+		 * read-only request could be silently ignored. Check it to
+		 * avoid 'ro' in mtab and 'rw' in /proc/mounts.
+		 */
+		if ((cxt->mountflags & MS_BIND)
+		    && (cxt->mountflags & MS_RDONLY)
+		    && !mnt_is_readonly(mnt_context_get_target(cxt)))
+
+			mnt_context_set_mflags(cxt,
+					cxt->mountflags & ~MS_RDONLY);
+
+
+		/* Kernel can silently add MS_RDONLY flag when mounting file
+		 * system that does not have write support. Check this to avoid
+		 * 'ro' in /proc/mounts and 'rw' in mtab.
+		 */
+		if (!(cxt->mountflags & (MS_RDONLY | MS_PROPAGATION | MS_MOVE))
+		    && mnt_is_readonly(mnt_context_get_target(cxt)))
+
+			mnt_context_set_mflags(cxt,
+					cxt->mountflags | MS_RDONLY);
+	}
+
+	return res;
 }
 
 /**

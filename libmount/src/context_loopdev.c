@@ -289,8 +289,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 			 * mount planned read-write, but loopdev is read-only,
 			 * let's fix mount options...
 			 */
-			cxt->mountflags |= MS_RDONLY;
-
+			mnt_context_set_mflags(cxt, cxt->mountflags | MS_RDONLY);
 
 		/* we have to keep the device open until mount(1),
 		 * otherwise it will auto-cleared by kernel

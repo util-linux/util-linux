@@ -145,6 +145,41 @@ err:
 	return rc;
 }
 
+/*
+ * Check if @path is on read-only filesystem independently on file permissions.
+ */
+int mnt_is_readonly(const char *path)
+{
+	if (access(path, W_OK) == 0)
+		return 0;
+	if (errno == EROFS)
+		return 1;
+	if (errno != EACCES)
+		return 0;
+
+#ifdef HAVE_FUTIMENS
+	/*
+	 * access(2) returns EACCES on read-only FS:
+	 *
+	 * - for set-uid application if one component of the path is not
+	 *   accessible for the current rUID. (Note that euidaccess(2) does not
+	 *   check for EROFS at all).
+	 *
+	 * - for read-write filesystem with read-only VFS node (aka -o remount,ro,bind)
+	 */
+	{
+		struct timespec times[2];
+
+		times[0].tv_nsec = UTIME_NOW;	/* atime */
+		times[1].tv_nsec = UTIME_OMIT;	/* mtime */
+
+		if (utimensat(AT_FDCWD, path, times, 0) == -1)
+			return errno == EROFS;
+	}
+#endif
+	return 0;
+}
+
 /**
  * mnt_mangle:
  * @str: string
