@@ -307,8 +307,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	 * Check user=<username> setting from mtab if there is user, owner or
 	 * group option in /etc/fstab
 	 */
-	if ((u_flags & MNT_MS_USER) || (u_flags & MNT_MS_OWNER) ||
-	    (u_flags & MNT_MS_GROUP)) {
+	if (u_flags & (MNT_MS_USER | MNT_MS_OWNER | MNT_MS_GROUP)) {
 
 		char *curr_user = NULL;
 		char *mtab_user = NULL;
@@ -670,7 +669,8 @@ int mnt_context_do_umount(struct libmnt_context *cxt)
 		return rc;
 
 	if ((cxt->flags & MNT_FL_RDONLY_UMOUNT) &&
-	    (cxt->mountflags & (MS_RDONLY | MS_REMOUNT))) {
+	    (cxt->mountflags & (MS_RDONLY | MS_REMOUNT))
+					== (MS_RDONLY | MS_REMOUNT)) {
 		/*
 		 * fix options, remount --> read-only mount
 		 */
