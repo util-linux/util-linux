@@ -286,10 +286,14 @@ try_readonly:
 
 	if (!mnt_context_syscall_called(cxt)) {
 		/*
-		 * libmount errors
+		 * libmount errors (extra library checks)
 		 */
-		if (rc == -EPERM) {
+		switch (rc) {
+		case -EPERM:
 			warnx(_("only root can mount %s on %s"), src, tgt);
+			return EX_USAGE;
+		case -EBUSY:
+			warnx(_("%s is already mounted"), src);
 			return EX_USAGE;
 		}
 

@@ -1225,7 +1225,7 @@ int loopdev_is_used(const char *device, const char *filename,
 	struct stat st;
 	int rc = 0;
 
-	if (!device)
+	if (!device || !filename)
 		return 0;
 
 	loopcxt_init(&lc, 0);
@@ -1242,6 +1242,9 @@ int loopdev_delete(const char *device)
 {
 	struct loopdev_cxt lc;
 	int rc;
+
+	if (!device)
+		return -EINVAL;
 
 	loopcxt_init(&lc, 0);
 	rc = loopcxt_set_device(&lc, device);

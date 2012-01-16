@@ -69,6 +69,68 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 	return 0;
 }
 
+
+/* Check, if there already exists a mounted loop device on the mountpoint node
+ * with the same parameters.
+ */
+static int is_mounted_same_loopfile(struct libmnt_context *cxt,
+				    const char *target,
+				    const char *backing_file,
+				    uint64_t offset)
+{
+	struct libmnt_table *tb;
+	struct libmnt_iter itr;
+	struct libmnt_fs *fs;
+	struct libmnt_cache *cache;
+
+	assert(cxt);
+	assert(cxt->fs);
+	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
+
+	if (!target || !backing_file || mnt_context_get_mtab(cxt, &tb))
+		return 0;
+
+	DBG(CXT, mnt_debug_h(cxt, "checking if %s mounted on %d",
+				backing_file, target));
+
+	cache = mnt_context_get_cache(cxt);
+	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
+
+	/* Search for mountpoint node in mtab, procceed if any of these has the
+	 * loop option set or the device is a loop device
+	 */
+	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
+		const char *src = mnt_fs_get_source(fs);
+		const char *opts = mnt_fs_get_user_options(fs);
+		char *val;
+		size_t len;
+		int res = 0;
+
+		if (!src || !mnt_fs_match_target(fs, target, cache))
+			continue;
+
+		if (strncmp(src, "/dev/loop", 9) == 0) {
+			res = loopdev_is_used((char *) src, backing_file,
+					offset, LOOPDEV_FL_OFFSET);
+
+		} else if (opts && (cxt->user_mountflags & MNT_MS_LOOP) &&
+		    mnt_optstr_get_option(opts, "loop", &val, &len) == 0 && val) {
+
+			val = strndup(val, len);
+			res = loopdev_is_used((char *) val, backing_file,
+					offset, LOOPDEV_FL_OFFSET);
+			free(val);
+		}
+
+		if (res) {
+			DBG(CXT, mnt_debug_h(cxt, "%s already mounted", backing_file));
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
 int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 {
 	const char *backing_file, *optstr, *loopdev = NULL;
@@ -146,6 +208,11 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 			pwd = cxt->pwd_get_cb(cxt);
 		}
 	}
+
+	if (rc == 0 && is_mounted_same_loopfile(cxt,
+				mnt_context_get_target(cxt),
+				backing_file, offset))
+		rc = -EBUSY;
 
 	if (rc)
 		goto done;
