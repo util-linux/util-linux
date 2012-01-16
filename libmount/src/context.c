@@ -223,9 +223,31 @@ int mnt_context_is_restricted(struct libmnt_context *cxt)
 /**
  * mnt_context_set_optsmode
  * @cxt: mount context
- * @mode: mask, see MNT_OMASK_* flags in libmount mount.h
+ * @mode: MNT_OMASK_* flags
  *
- * Controls how to use mount options from fstab/mtab.
+ * Controls how to use mount optionsmsource and target paths from fstab/mtab.
+ *
+ * @MNT_OMODE_IGNORE: ignore mtab/fstab options
+ * @MNT_OMODE_APPEND: append mtab/fstab options to existing options
+ * @MNT_OMODE_PREPEND: prepend mtab/fstab options to existing options
+ * @MNT_OMODE_REPLACE: replace existing options with options from mtab/fstab
+ *
+ * @MNT_OMODE_FORCE: always read mtab/fstab (although source and target is defined)
+ *
+ * @MNT_OMODE_FSTAB: read from fstab
+ * @MNT_OMODE_MTAB: read from mtab if fstab not enabled or failed
+ * @MNT_OMODE_NOTAB: do not read fstab/mtab at all
+ *
+ * @MNT_OMODE_AUTO: default mode (MNT_OMODE_PREPEND | MNT_OMODE_FSTAB | MNT_OMODE_MTAB)
+ * @MNT_OMODE_USER: default for non-root users (MNT_OMODE_REPLACE | MNT_OMODE_FORCE | MNT_OMODE_FSTAB)
+ *
+ * Notes:
+ *
+ * - MNT_OMODE_USER is always used if mount context is in restricted mode
+ * - MNT_OMODE_AUTO is used if nothing other is defined
+ * - the flags are eavaluated in this order: MNT_OMODE_NOTAB, MNT_OMODE_FORCE,
+ *   MNT_OMODE_FSTAB, MNT_OMODE_MTAB and then the mount options from fstab/mtab
+ *   are set according to MNT_OMODE_{IGNORE,APPEND,PREPAND,REPLACE}
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -1359,11 +1381,6 @@ int mnt_context_merge_mflags(struct libmnt_context *cxt)
 		return rc;
 	cxt->mountflags = fl;
 
-	/* TODO: if cxt->fs->fs_optstr contains 'ro' then set the MS_RDONLY to
-	 * mount flags, it's possible that superblock is read-only, but VFS is
-	 * read-write.
-	 */
-
 	fl = 0;
 	rc = mnt_context_get_user_mflags(cxt, &fl);
 	if (rc)
@@ -1579,7 +1596,10 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	} else if (cxt->optsmode == 0) {
 		DBG(CXT, mnt_debug_h(cxt, "use default optmode"));
 		cxt->optsmode = MNT_OMODE_AUTO;
-
+	} else if (cxt->optsmode & MNT_OMODE_NOTAB) {
+		cxt->optsmode &= ~MNT_OMODE_FSTAB;
+		cxt->optsmode &= ~MNT_OMODE_MTAB;
+		cxt->optsmode &= ~MNT_OMODE_FORCE;
 	}
 
 	if (cxt->fs) {
@@ -1600,6 +1620,14 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	/* fstab is not required if source and target are specified */
 	if (src && tgt && !(cxt->optsmode & MNT_OMODE_FORCE)) {
 		DBG(CXT, mnt_debug_h(cxt, "fstab not required -- skip"));
+		return 0;
+	}
+
+	if (!src && tgt
+	    && !(cxt->optsmode & MNT_OMODE_FSTAB)
+	    && !(cxt->optsmode & MNT_OMODE_MTAB)) {
+		DBG(CXT, mnt_debug_h(cxt, "only target; fstab/mtab not required "
+					  "-- skip, probably MS_PROPAGATION"));
 		return 0;
 	}
 

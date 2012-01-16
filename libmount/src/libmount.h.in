@@ -355,7 +355,9 @@ extern int mnt_tabdiff_next_change(struct libmnt_tabdiff *df,
 
 /* context.c */
 
-/* mode for mount options from fstab */
+/*
+ * Mode for mount options from fstab (or mtab), see mnt_context_set_optsmode().
+ */
 enum {
 	MNT_OMODE_IGNORE  = (1 << 1),	/* ignore mtab/fstab options */
 	MNT_OMODE_APPEND  = (1 << 2),	/* append mtab/fstab options to existing options */
@@ -366,6 +368,7 @@ enum {
 
 	MNT_OMODE_FSTAB   = (1 << 10),	/* read from fstab */
 	MNT_OMODE_MTAB    = (1 << 11),	/* read from mtab if fstab not enabled or failed */
+	MNT_OMODE_NOTAB   = (1 << 12),	/* do not read fstab/mtab at all */
 
 	/* default */
 	MNT_OMODE_AUTO   = (MNT_OMODE_PREPEND | MNT_OMODE_FSTAB | MNT_OMODE_MTAB),

@@ -43,6 +43,10 @@
 /*** TODO: DOCS:
  *
  *  --guess-fstype	is unsupported
+ *
+ *  --options-mode={ignore,append,prepend,replace}	MNT_OMODE_{IGNORE, ...}
+ *  --options-source={fstab,mtab,disable}		MNT_OMODE_{FSTAB,MTAB,NOTAB}
+ *  --options-source-force				MNT_OMODE_FORCE
  */
 
 /* exit status */
@@ -801,8 +805,13 @@ int main(int argc, char **argv)
 	} else
 		usage(stderr);
 
-	if (oper)
+	if (oper) {
+		/* MS_PROPAGATION operations, let's set the mount flags */
 		mnt_context_set_mflags(cxt, oper);
+
+		/* For -make* or --bind is fstab unnecessary */
+		mnt_context_set_optsmode(cxt, MNT_OMODE_NOTAB);
+	}
 
 	rc = mnt_context_mount(cxt);
 	rc = mk_exit_code(cxt, rc);
