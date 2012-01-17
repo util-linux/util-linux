@@ -59,7 +59,7 @@ int mnt_parse_offset(const char *str, size_t len, uintmax_t *res)
 	char *p;
 	int rc = 0;
 
-	if (!str && !*str)
+	if (!str || !*str)
 		return -EINVAL;
 
 	p = strndup(str, len);

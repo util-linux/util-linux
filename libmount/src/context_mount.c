@@ -243,7 +243,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 
 				cxt->user_mountflags |= MNT_MS_USER;
 
-			if (!cache && xsrc)
+			if (!cache)
 				free(xsrc);
 		}
 
