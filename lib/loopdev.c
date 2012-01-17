@@ -41,7 +41,6 @@
 #define CONFIG_LOOPDEV_DEBUG
 
 #ifdef CONFIG_LOOPDEV_DEBUG
-# include <stdio.h>
 # include <stdarg.h>
 
 # define DBG(l,x)	do { \
