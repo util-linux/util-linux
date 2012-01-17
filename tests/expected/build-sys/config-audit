@@ -33,7 +33,6 @@ partitions:  libblkid libuuid
 superblocks:  libblkid libuuid 
 topology:  libblkid libuuid 
 libblkid.so.1.1.0:  libuuid 
-mount:  libblkid libmount libuuid 
 libmount.so.1.1.0:  libblkid libuuid 
 libuuid.so.1.3.0:  ld-linux-x86-64 
 tst_uuid:  libuuid 
@@ -59,9 +58,7 @@ namei:
 rename:  
 whereis:  
 mount:  libblkid libuuid 
-swapon:  libblkid libuuid 
 umount:  libblkid libuuid 
-losetup:  
 mtab_lock_test:  
 partx:  libblkid libuuid 
 addpart:  
@@ -70,6 +67,7 @@ chrt:
 ionice:  
 taskset:  
 mountpoint:  libblkid libmount libuuid 
+swapon:  libblkid libuuid 
 chcpu:  
 ctrlaltdel:  
 cytune:  
@@ -82,6 +80,7 @@ ipcmk:
 ipcrm:  
 ipcs:  
 ldattach:  
+losetup:  
 lscpu:  
 pivot_root:  
 prlimit:  

@@ -51,9 +51,7 @@ namei:
 rename:  
 whereis:  
 mount:  libblkid libuuid 
-swapon:  libblkid libuuid 
 umount:  libblkid libuuid 
-losetup:  
 mtab_lock_test:  
 partx:  libblkid libuuid 
 addpart:  
@@ -61,6 +59,7 @@ delpart:
 chrt:  
 ionice:  
 taskset:  
+swapon:  libblkid libuuid 
 chcpu:  
 ctrlaltdel:  
 cytune:  
@@ -73,6 +72,7 @@ ipcmk:
 ipcrm:  
 ipcs:  
 ldattach:  
+losetup:  
 lscpu:  
 pivot_root:  
 prlimit:  

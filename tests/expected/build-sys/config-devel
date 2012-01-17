@@ -36,7 +36,6 @@ partitions:  libblkid libuuid
 superblocks:  libblkid libuuid 
 topology:  libblkid libuuid 
 libblkid.so.1.1.0:  libuuid 
-mount:  libblkid libmount libselinux libsepol libuuid 
 libmount.so.1.1.0:  libblkid libselinux libsepol libuuid 
 libuuid.so.1.3.0:  ld-linux-x86-64 
 tst_uuid:  libuuid 
@@ -66,10 +65,7 @@ namei:
 rename:  
 whereis:  
 mount:  libblkid libmount libselinux libsepol libuuid 
-swapon:  libblkid libuuid 
 umount:  libblkid libmount libselinux libsepol libuuid 
-losetup:  
-losetup.static: STATIC
 mount.static: STATIC
 umount.static: STATIC
 partx:  libblkid libuuid 
@@ -79,6 +75,7 @@ chrt:
 ionice:  
 taskset:  
 mountpoint:  libblkid libmount libselinux libsepol libuuid 
+swapon:  libblkid libuuid 
 arch:  
 chcpu:  
 ctrlaltdel:  
@@ -92,6 +89,8 @@ ipcmk:
 ipcrm:  
 ipcs:  
 ldattach:  
+losetup:  
+losetup.static: STATIC
 lscpu:  
 pivot_root:  
 prlimit:  

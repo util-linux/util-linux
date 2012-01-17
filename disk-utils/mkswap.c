@@ -389,8 +389,9 @@ wipe_device(int fd, const char *devname, int force, int is_blkdev)
 	char *type = NULL;
 	int whole = 0;
 	int zap = 1;
+#ifdef HAVE_LIBBLKID
 	blkid_probe pr = NULL;
-
+#endif
 	if (!force) {
 		if (lseek(fd, 0, SEEK_SET) != 0)
 			errx(EXIT_FAILURE, _("unable to rewind swap-device"));

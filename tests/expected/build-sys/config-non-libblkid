@@ -54,6 +54,7 @@ ipcmk:
 ipcrm:  
 ipcs:  
 ldattach:  
+losetup:  
 lscpu:  
 pivot_root:  
 prlimit:  

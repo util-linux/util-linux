@@ -27,11 +27,11 @@ for conf in $config_gen_dir/config-gen.d/*.conf; do
 	opts=$(ul_get_configuration $conf)
 
 	olddir=$(pwd)
-	cd $top_builddir	
+	cd $top_builddir
 
 	./configure $opts &> /dev/null
 	make -j &> /dev/null
-	
+
 	bins=$(find . -type f -perm /a+x | sort)
 	for b in $bins; do
 		libs=$(readelf --dynamic $b 2> /dev/null   | \
