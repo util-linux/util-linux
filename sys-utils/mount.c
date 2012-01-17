@@ -113,7 +113,8 @@ static char *encrypt_pass_get(struct libmnt_context *cxt)
 	return xgetpass(passfd, _("Password: "));
 }
 
-static void encrypt_pass_release(struct libmnt_context *cxt, char *pwd)
+static void encrypt_pass_release(struct libmnt_context *cxt
+			__attribute__((__unused__)), char *pwd)
 {
 	char *p = pwd;
 
@@ -354,7 +355,6 @@ try_readonly:
 	case EBUSY:
 	{
 		struct libmnt_table *tb;
-		int count = 0;
 
 		if (mflags & MS_REMOUNT) {
 			warnx(_("%s is busy"), tgt);
