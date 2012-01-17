@@ -90,7 +90,7 @@ static int is_mounted_same_loopfile(struct libmnt_context *cxt,
 	if (!target || !backing_file || mnt_context_get_mtab(cxt, &tb))
 		return 0;
 
-	DBG(CXT, mnt_debug_h(cxt, "checking if %s mounted on %d",
+	DBG(CXT, mnt_debug_h(cxt, "checking if %s mounted on %s",
 				backing_file, target));
 
 	cache = mnt_context_get_cache(cxt);

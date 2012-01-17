@@ -831,7 +831,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	char *root = NULL;
 	struct libmnt_fs *src_fs;
 	const char *src, *tgt;
-	char *xsrc;
+	char *xsrc = NULL;
 	int flags = 0, rc = 0;
 
 	assert(tb);
