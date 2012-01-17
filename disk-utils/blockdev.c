@@ -462,7 +462,7 @@ static void report_device(char *device, int quiet)
 	close(fd);
 }
 
-static void report_header()
+static void report_header(void)
 {
 	printf(_("RO    RA   SSZ   BSZ   StartSec            Size   Device\n"));
 }
