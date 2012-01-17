@@ -1070,35 +1070,35 @@ update_mtab (const char *dir, struct my_mntent *instead) {
  *  number and writes the number back to the file.
  */
 /* dummy */
-char *fsprobe_get_label_by_devname(const char *spec __attribute((__unused__)))
+char *fsprobe_get_label_by_devname(const char *spec __attribute__((__unused__)))
 {
 	return NULL;
 }
-char *fsprobe_get_uuid_by_devname(const char *spec __attribute((__unused__)))
+char *fsprobe_get_uuid_by_devname(const char *spec __attribute__((__unused__)))
 {
 	return NULL;
 }
-int fsprobe_parse_spec(const char *spec __attribute((__unused__)),
-		       char **name __attribute((__unused__)),
-		       char **value __attribute((__unused__)))
+int fsprobe_parse_spec(const char *spec __attribute__((__unused__)),
+		       char **name __attribute__((__unused__)),
+		       char **value __attribute__((__unused__)))
 {
 	return 0;
 }
-struct my_mntent *my_getmntent (mntFILE *mfp __attribute((__unused__)))
+struct my_mntent *my_getmntent (mntFILE *mfp __attribute__((__unused__)))
 {
 	return NULL;
 }
-mntFILE *my_setmntent (const char *file __attribute((__unused__)),
-		       char *mode __attribute((__unused__)))
+mntFILE *my_setmntent (const char *file __attribute__((__unused__)),
+		       char *mode __attribute__((__unused__)))
 {
 	return NULL;
 }
-void my_endmntent (mntFILE *mfp __attribute((__unused__)))
+void my_endmntent (mntFILE *mfp __attribute__((__unused__)))
 {
 	/* nothing */
 }
-int my_addmntent (mntFILE *mfp __attribute((__unused__)),
-		  struct my_mntent *mnt __attribute((__unused__)))
+int my_addmntent (mntFILE *mfp __attribute__((__unused__)),
+		  struct my_mntent *mnt __attribute__((__unused__)))
 {
 	return 0;
 }
