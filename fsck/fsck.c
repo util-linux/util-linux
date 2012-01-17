@@ -421,7 +421,7 @@ static void interpret_type(struct fs_info *fs)
 {
 	char	*t;
 
-	if (strcmp(fs->type, "auto") != 0)
+	if (fs->type && strcmp(fs->type, "auto") != 0)
 		return;
 	t = fsprobe_get_fstype_by_devname(fs->device);
 	if (t) {
@@ -1030,11 +1030,15 @@ static int ignore(struct fs_info *fs)
 	 * If a specific fstype is specified, and it doesn't match,
 	 * ignore it.
 	 */
-	if (!fs_match(fs, &fs_type_compiled)) return 1;
+	if (!fs_match(fs, &fs_type_compiled))
+		return 1;
 
 	/* Are we ignoring this type? */
 	if (fs->type && ignored_type(fs->type))
 		return 1;
+
+	if (!fs->type)
+		return 0;		/* should not happen */
 
 	/* Do we really really want to check this fs? */
 	for(ip = really_wanted; *ip; ip++)
