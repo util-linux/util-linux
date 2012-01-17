@@ -6,6 +6,7 @@
 #define UTIL_LINUX_C_H
 
 #include <limits.h>
+#include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdarg.h>

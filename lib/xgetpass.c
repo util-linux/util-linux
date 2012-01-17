@@ -34,8 +34,8 @@ char *xgetpass(int pfd, const char *prompt)
 				break;
 			}
 		}
-		if (read(pfd, pass + i, 1) != 1 ||
-		    pass[i] == '\n' || pass[i] == 0)
+		if (pass && (read(pfd, pass + i, 1) != 1 ||
+			     pass[i] == '\n' || pass[i] == 0))
 			break;
 	}
 
