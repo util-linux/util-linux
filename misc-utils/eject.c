@@ -29,17 +29,12 @@
  *
  */
 
-#include "i18n.h"
+//#include "i18n.h"
+#include "linux_version.h"
+#include "c.h"
+#include "nls.h"
 
-
-#define DEFAULTDEVICE "/dev/sr0"
-
-
-#include <linux/version.h>
-/* handy macro found in 2.1 kernels, but not in older ones */
-#ifndef KERNEL_VERSION
-#define KERNEL_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
-#endif
+#define EJECT_DEFAULT_DEVICE "/dev/sr0"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -48,9 +43,8 @@
 #include <fcntl.h>
 #include <limits.h>
 
-#ifdef GETOPTLONG
+
 #include <getopt.h>
-#endif /* GETOPTLONG */
 #include <errno.h>
 #include <regex.h>
 #include <sys/types.h>
@@ -58,11 +52,7 @@
 #include <sys/ioctl.h>
 #include <sys/wait.h>
 #include <sys/mtio.h>
-#include <linux/types.h>
 #include <linux/cdrom.h>
-#if LINUX_VERSION_CODE < KERNEL_VERSION(2,1,0)
-#include <linux/ucdrom.h>
-#endif
 #include <linux/fd.h>
 #include <sys/mount.h>
 #include <scsi/scsi.h>
@@ -166,7 +156,7 @@ static void usage()
 "Parameter <name> can be a device file or a mount point.\n"
 "If omitted, name defaults to `%s'.\n"
 "By default tries -r, -s, -f, and -q in order until success.\n"),
-			DEFAULTDEVICE);
+			EJECT_DEFAULT_DEVICE);
   exit(1);
 }
 
@@ -905,7 +895,7 @@ void HandleXOption(char *deviceName)
 /* main program */
 int main(int argc, char **argv)
 {
-	const char *defaultDevice = DEFAULTDEVICE;  /* default if no name passed by user */
+	const char *defaultDevice = EJECT_DEFAULT_DEVICE;  /* default if no name passed by user */
 	int worked = 0;    /* set to 1 when successfully ejected */
 	char *device = 0;  /* name passed from user */
 	char *fullName;    /* expanded name */
@@ -918,7 +908,9 @@ int main(int argc, char **argv)
 	char *pattern;	   /* regex for device if multiple partitions */
 	int ld = 6;	   /* symbolic link max depth */
 
-	I18NCODE
+	setlocale(LC_ALL,"");
+	textdomain("eject");
+	bindtextdomain("eject",LOCALEDIR);
 
 	/* program name is global variable used by other procedures */
 	programName = strdup(argv[0]);
