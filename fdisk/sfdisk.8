@@ -26,6 +26,12 @@ doesn't understand the GUID Partition Table (GPT) format and it is not
 designed for large partitions.  In these cases use the more advanced GNU
 .BR parted (8).
 
+Note that
+.B sfdisk
+does not align partitions to block device I/O limits. This functionality is
+provided by
+.BR fdisk (8).
+
 .SS "List sizes"
 .BI "sfdisk \-s " partition
 gives the size of
