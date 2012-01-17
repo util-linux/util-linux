@@ -10,3 +10,4 @@ usage
 err
 errx
 log_err
+sleepexit
