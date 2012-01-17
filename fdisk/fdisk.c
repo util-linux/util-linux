@@ -2753,7 +2753,7 @@ static int is_ide_cdrom_or_tape(char *device)
 {
 	int fd, ret;
 
-	if (fd = open(device, O_RDONLY) < 0)
+	if ((fd = open(device, O_RDONLY) < 0))
 		return 0;
 	ret = blkdev_is_cdrom(fd);
 
