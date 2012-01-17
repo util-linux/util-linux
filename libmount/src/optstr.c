@@ -700,7 +700,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 					continue;
 				if (ent->id == MS_RDONLY ||
 				    (ent->mask & MNT_INVERT) ||
-				    (fl & ent->id) != ent->id) {
+				    (fl & ent->id) != (unsigned long) ent->id) {
 
 					char *end = val ? val + valsz :
 							  name + namesz;
@@ -724,7 +724,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 		for (ent = map; ent && ent->name; ent++) {
 			if ((ent->mask & MNT_INVERT)
 			    || ent->id == 0
-			    || (fl & ent->id) != ent->id)
+			    || (fl & ent->id) != (unsigned long) ent->id)
 				continue;
 
 			/* don't add options which require values (e.g. offset=%d) */
