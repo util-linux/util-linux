@@ -39,7 +39,7 @@ static int printf_loopdev(struct loopdev_cxt *lc)
 	dev_t dev = 0;
 	ino_t ino = 0;
 	char *fname = NULL;
-	int type;
+	uint32_t type;
 
 	fname = loopcxt_get_backing_file(lc);
 	if (!fname)
@@ -66,7 +66,7 @@ static int printf_loopdev(struct loopdev_cxt *lc)
 	}
 
 	printf("%s: [%04d]:%" PRIu64 " (%s)",
-		loopcxt_get_device(lc), dev, ino, fname);
+		loopcxt_get_device(lc), (int) dev, ino, fname);
 
 	if (loopcxt_get_offset(lc, &x) == 0 && x)
 			printf(_(", offset %ju"), x);
@@ -80,7 +80,7 @@ static int printf_loopdev(struct loopdev_cxt *lc)
 		if ((!e || !*e) && type == 1)
 			e = "XOR";
 		if (e && *e)
-			printf(_(", encryption %s (type %ju)"), e, type);
+			printf(_(", encryption %s (type %u)"), e, type);
 	}
 	printf("\n");
 	return 0;
