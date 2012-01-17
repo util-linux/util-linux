@@ -53,7 +53,6 @@
 #include "gpt.h"
 #include "pathnames.h"
 #include "canonicalize.h"
-#include "blkdev.h"
 
 /*
  * Table of contents:
