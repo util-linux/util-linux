@@ -99,3 +99,14 @@ BUILT_SOURCES = .version
 .version:
 	echo $(VERSION) > $@-t && mv $@-t $@
 
+CHANGELOG_FILE = v$(VERSION)-ChangeLog
+changelog:
+	if test "x$$PREVIOUS_VERSION" == "x"; then \
+		echo "Usage make changelog PREVIOUS_VERSION=<version>"; \
+		exit 1; \
+	fi
+	@ echo "Changes between v$(PREVIOUS_VERSION) and v$(VERSION)" > $(CHANGELOG_FILE)
+	@ echo "--------------------------------------------" >> $(CHANGELOG_FILE)
+	@ echo >> $(CHANGELOG_FILE)
+	$(AM_V_GEN) git log --stat v$(PREVIOUS_VERSION)..HEAD >> $(CHANGELOG_FILE)
+
