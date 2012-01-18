@@ -34,7 +34,7 @@
 #include "c.h"
 #include "nls.h"
 
-#define EJECT_DEFAULT_DEVICE "/dev/sr0"
+#define EJECT_DEFAULT_DEVICE "/dev/cdrom"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -42,7 +42,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <limits.h>
-
+#include <err.h>
 
 #include <getopt.h>
 #include <errno.h>
@@ -66,16 +66,6 @@
  */
 #define TRAY_WAS_ALREADY_OPEN_USECS  200000	/* about 0.2 seconds */
 
-
-#define CLOSE(fd) if (close(fd)==-1) { \
-    perror(programName); \
-    exit(1); \
-}
-
-#define FCLOSE(fd) if (fclose(fd)==-1) { \
-    perror(programName); \
-    exit(1); \
-}
 
 /* Global Variables */
 const char *version = VERSION; /* program version */
@@ -143,7 +133,8 @@ static void usage()
 "  -m\t-- do not unmount device even if it is mounted\n"
 )
 , version);
-#ifdef GETOPTLONG
+
+
 	fprintf(stderr,_(
 "Long options:\n"
 "  -h --help   -v --verbose	 -d --default\n"
@@ -151,7 +142,8 @@ static void usage()
 "  -r --cdrom  -s --scsi	 -f --floppy\n"
 "  -q --tape   -n --noop	 -V --version\n"
 "  -p --proc   -m --no-unmount -T --traytoggle\n"));
-#endif /* GETOPTLONG */
+
+
 	fprintf(stderr,_(
 "Parameter <name> can be a device file or a mount point.\n"
 "If omitted, name defaults to `%s'.\n"
@@ -165,7 +157,7 @@ static void usage()
 static void parse_args(int argc, char **argv, char **device)
 {
 	const char *flags = "a:c:x:dfhnqrstTvVpm";
-#ifdef GETOPTLONG
+
 	static struct option long_options[] =
 	{
 		{"help",	no_argument,	   NULL, 'h'},
@@ -187,14 +179,11 @@ static void parse_args(int argc, char **argv, char **device)
 		{0, 0, 0, 0}
 	};
 	int option_index;
-#endif /* GETOPTLONG */
+
 	int c;
 
-#ifdef GETOPTLONG
+
 	while ((c = getopt_long(argc, argv, flags, long_options, &option_index)) != EOF) {
-#else
-	while ((c = getopt(argc, argv, flags)) != EOF) {
-#endif /* GETOPTLONG */
 		switch (c) {
 		  case 'a':
 			  a_option = 1;
@@ -292,6 +281,17 @@ static void parse_args(int argc, char **argv, char **device)
 	}
 }
 
+void e_close(int fp) {
+	if (close(fp)==-1) {
+		err(1, NULL);
+	}
+}
+
+void e_fclose(FILE *fp) {
+	if (fclose(fp)==-1) {
+		err(1, NULL);
+	}
+}
 
 /* Return 1 if file/device exists, 0 otherwise. */
 static int FileExists(const char *name)
@@ -704,7 +704,7 @@ static int MountedDevice(const char *name, char **mountName, char **deviceName)
 			GetMajorMinor(s1, &mtabmaj, &mtabmin);
 			if (((strcmp(s1, name) == 0) || (strcmp(s2, name) == 0)) ||
 				((maj != -1) && (maj == mtabmaj) && (min == mtabmin))) {
-				FCLOSE(fp);
+				e_fclose(fp);
 				*deviceName = strdup(s1);
 				*mountName = strdup(s2);
 				return 1;
@@ -713,7 +713,7 @@ static int MountedDevice(const char *name, char **mountName, char **deviceName)
 	}
 	*deviceName = 0;
 	*mountName = 0;
-	FCLOSE(fp);
+	e_fclose(fp);
 	return 0;
 }
 
@@ -748,13 +748,13 @@ static int MountableDevice(const char *name, char **mountName, char **deviceName
 	while (fgets(line, sizeof(line), fp) != 0) {
 		rc = sscanf(line, "%1023s %1023s", s1, s2);
 		if (rc >= 2 && s1[0] != '#' && strcmp(s2, name) == 0) {
-			FCLOSE(fp);
+			e_fclose(fp);
 			*deviceName = strdup(s1);
 			*mountName = strdup(s2);
 			return 1;
 		}
 	}
-	FCLOSE(fp);
+	e_fclose(fp);
 	return 0;
 }
 
@@ -796,7 +796,7 @@ static void UnmountDevices(const char *pattern)
 			}
 		}
 	}
-	FCLOSE(fp);
+	e_fclose(fp);
 }
 
 
@@ -902,11 +902,11 @@ int main(int argc, char **argv)
 	char *deviceName;  /* name of device */
 	char *linkName;    /* name of device's symbolic link */
 	char *mountName;   /* name of device's mount point */
-	int fd; 	   /* file descriptor for device */
+	int fd;            /* file descriptor for device */
 	int mounted = 0;   /* true if device is mounted */
 	int mountable = 0; /* true if device is in /etc/fstab */
-	char *pattern;	   /* regex for device if multiple partitions */
-	int ld = 6;	   /* symbolic link max depth */
+	char *pattern;     /* regex for device if multiple partitions */
+	int ld = 6;        /* symbolic link max depth */
 
 	setlocale(LC_ALL,"");
 	textdomain("eject");
@@ -1119,7 +1119,7 @@ int main(int argc, char **argv)
 	}
 
 	/* cleanup */
-	CLOSE(fd);
+	e_close(fd);
 	free(device);
 	free(deviceName);
 	free(fullName);
