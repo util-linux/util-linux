@@ -6,7 +6,7 @@ AC_PREREQ(2.60)
 
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([-Wall foreign 1.10 dist-bzip2 -Wno-portability])
+AM_INIT_AUTOMAKE([-Wall foreign 1.10 tar-pax dist-bzip2 no-dist-gzip dist-xz -Wno-portability])
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])],
                             [AC_SUBST([AM_DEFAULT_VERBOSITY], [1])])
