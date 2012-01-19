@@ -435,6 +435,30 @@ int mnt_table_parse_file(struct libmnt_table *tb, const char *filename)
 	return rc;
 }
 
+static int mnt_table_parse_dir_filter(const struct dirent *d)
+{
+	size_t namesz;
+
+#ifdef _DIRENT_HAVE_D_TYPE
+	if (d->d_type != DT_UNKNOWN && d->d_type != DT_REG &&
+	    d->d_type != DT_LNK)
+		return 0;
+#endif
+	if (*d->d_name == '.')
+		return 0;
+
+#define MNT_MNTTABDIR_EXTSIZ	(sizeof(MNT_MNTTABDIR_EXT) - 1)
+
+	namesz = strlen(d->d_name);
+	if (!namesz || namesz < MNT_MNTTABDIR_EXTSIZ + 1 ||
+	    strcmp(d->d_name + (namesz - MNT_MNTTABDIR_EXTSIZ),
+		   MNT_MNTTABDIR_EXT))
+		return 0;
+
+	/* Accept this */
+	return 1;
+}
+
 #ifdef HAVE_SCANDIRAT
 static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 {
@@ -445,7 +469,8 @@ static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 	dd = open(dirname, O_RDONLY|O_CLOEXEC|O_DIRECTORY);
 	if (dd < 0)
 	        return -errno;
-	n = scandirat(dd, ".", &namelist, NULL, versionsort);
+
+	n = scandirat(dd, ".", &namelist, mnt_table_parse_dir_filter, versionsort);
 	if (n <= 0) {
 	        close(dd);
 	        return 0;
@@ -454,24 +479,7 @@ static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 	for (i = 0; i < n; i++) {
 		struct dirent *d = namelist[i];
 		struct stat st;
-		size_t namesz;
 		FILE *f;
-
-#ifdef _DIRENT_HAVE_D_TYPE
-		if (d->d_type != DT_UNKNOWN && d->d_type != DT_REG &&
-		    d->d_type != DT_LNK)
-			continue;
-#endif
-		if (*d->d_name == '.')
-			continue;
-
-#define MNT_MNTTABDIR_EXTSIZ	(sizeof(MNT_MNTTABDIR_EXT) - 1)
-
-		namesz = strlen(d->d_name);
-		if (!namesz || namesz < MNT_MNTTABDIR_EXTSIZ + 1 ||
-		    strcmp(d->d_name + (namesz - MNT_MNTTABDIR_EXTSIZ),
-			    MNT_MNTTABDIR_EXT))
-				continue;
 
 		if (fstat_at(dd, ".", d->d_name, &st, 0) ||
 		    !S_ISREG(st.st_mode))
@@ -497,7 +505,7 @@ static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 	DIR *dir = NULL;
 	struct dirent **namelist = NULL;
 
-	n = scandir(dirname, &namelist, NULL, versionsort);
+	n = scandir(dirname, &namelist, mnt_table_parse_dir_filter, versionsort);
 	if (n <= 0)
 		return 0;
 
@@ -509,24 +517,7 @@ static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 	for (i = 0; i < n; i++) {
 		struct dirent *d = namelist[i];
 		struct stat st;
-		size_t namesz;
 		FILE *f;
-
-#ifdef _DIRENT_HAVE_D_TYPE
-		if (d->d_type != DT_UNKNOWN && d->d_type != DT_REG &&
-		    d->d_type != DT_LNK)
-			continue;
-#endif
-		if (*d->d_name == '.')
-			continue;
-
-#define MNT_MNTTABDIR_EXTSIZ	(sizeof(MNT_MNTTABDIR_EXT) - 1)
-
-		namesz = strlen(d->d_name);
-		if (!namesz || namesz < MNT_MNTTABDIR_EXTSIZ + 1 ||
-		    strcmp(d->d_name + (namesz - MNT_MNTTABDIR_EXTSIZ),
-			    MNT_MNTTABDIR_EXT))
-				continue;
 
 		if (fstat_at(dirfd(dir), _PATH_MNTTAB_DIR, d->d_name, &st, 0) ||
 		    !S_ISREG(st.st_mode))
