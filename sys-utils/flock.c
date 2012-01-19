@@ -87,7 +87,7 @@ static void strtotimeval(const char *str, struct timeval *tv)
 static void setup_timer(struct itimerval *timer, struct itimerval *old_timer,
 			struct sigaction *sa, struct sigaction *old_sa)
 {
-	memset(sa, 0, sizeof sa);
+	memset(sa, 0, sizeof *sa);
 	sa->sa_handler = timeout_handler;
 	sa->sa_flags = SA_RESETHAND;
 	sigaction(SIGALRM, sa, old_sa);
