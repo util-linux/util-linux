@@ -5,6 +5,12 @@
  * GNU Lesser General Public License.
  */
 
+#ifdef HAVE_SCANDIRAT
+#ifndef __USE_GNU
+#define __USE_GNU
+#endif	/* !__USE_GNU */
+#endif	/* HAVE_SCANDIRAT */
+
 #include <ctype.h>
 #include <limits.h>
 #include <dirent.h>
@@ -429,14 +435,68 @@ int mnt_table_parse_file(struct libmnt_table *tb, const char *filename)
 	return rc;
 }
 
+#ifdef HAVE_SCANDIRAT
+static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
+{
+	int n = 0, i;
+	int dd;
+	struct dirent **namelist = NULL;
+
+	dd = open(dirname, O_RDONLY|O_CLOEXEC|O_DIRECTORY);
+	if (dd < 0)
+	        return -errno;
+	n = scandirat(dd, ".", &namelist, NULL, versionsort);
+	if (n <= 0) {
+	        close(dd);
+	        return 0;
+	}
+
+	for (i = 0; i < n; i++) {
+		struct dirent *d = namelist[i];
+		struct stat st;
+		size_t namesz;
+		FILE *f;
+
+#ifdef _DIRENT_HAVE_D_TYPE
+		if (d->d_type != DT_UNKNOWN && d->d_type != DT_REG &&
+		    d->d_type != DT_LNK)
+			continue;
+#endif
+		if (*d->d_name == '.')
+			continue;
+
+#define MNT_MNTTABDIR_EXTSIZ	(sizeof(MNT_MNTTABDIR_EXT) - 1)
+
+		namesz = strlen(d->d_name);
+		if (!namesz || namesz < MNT_MNTTABDIR_EXTSIZ + 1 ||
+		    strcmp(d->d_name + (namesz - MNT_MNTTABDIR_EXTSIZ),
+			    MNT_MNTTABDIR_EXT))
+				continue;
+
+		if (fstat_at(dd, ".", d->d_name, &st, 0) ||
+		    !S_ISREG(st.st_mode))
+			continue;
+
+		f = fopen_at(dd, ".", d->d_name, O_RDONLY, "r");
+		if (f) {
+			mnt_table_parse_stream(tb, f, d->d_name);
+			fclose(f);
+		}
+	}
+
+	for (i = 0; i < n; i++)
+		free(namelist[i]);
+	free(namelist);
+	close(dd);
+	return 0;
+}
+#else
 static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 {
 	int n = 0, i;
 	DIR *dir = NULL;
 	struct dirent **namelist = NULL;
 
-	/* TODO: it would be nice to have a scandir() implementation that
-	 *       is able to use already opened directory */
 	n = scandir(dirname, &namelist, NULL, versionsort);
 	if (n <= 0)
 		return 0;
@@ -487,6 +547,7 @@ static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 		closedir(dir);
 	return 0;
 }
+#endif
 
 struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt)
 {

@@ -263,6 +263,7 @@ AC_CHECK_FUNCS(
 	lchown \
 	llseek \
 	lseek64 \
+	scandirat \
 	strtoull \
 	sysconf \
 	getdtablesize \
