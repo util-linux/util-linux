@@ -49,6 +49,14 @@ function add_file {
 		local sig=$(echo "$name" | sed 's/\.tar\.xz/.tar.sign/')
 		xz -d -c $subdir/$name | $GPG_CMD --output $subdir/$sig
 		;;
+	*.tar.gz)
+		local sig=$(echo "$name" | sed 's/\.tar\.gz/.tar.sign/')
+		gzip -d -c $subdir/$name | $GPG_CMD --output $subdir/$sig
+		;;
+	*.tar.bz2)
+		local sig=$(echo "$name" | sed 's/\.tar\.bz2/.tar.sign/')
+		bzip2 -d -c $subdir/$name | $GPG_CMD --output $subdir/$sig
+		;;
 	*)
 		local sig="${name}.sign"
 		cat $subdir/$name | $GPG_CMD --output $subdir/$sig
