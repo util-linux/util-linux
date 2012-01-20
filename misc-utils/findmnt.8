@@ -189,6 +189,13 @@ Monitors mount, umount, remount and move on /mnt/foo.
 Waits for /mnt/foo umount.
 .IP "\fBfindmnt --poll=remount -t ext3 -O ro\fP"
 Monitors remounts to read-only mode on all ext3 filesystems.
+.SH ENVIRONMENT
+.IP LIBMOUNT_FSTAB=<path>
+overrides the default location of the fstab file
+.IP LIBMOUNT_MTAB=<path>
+overrides the default location of the mtab file
+.IP LIBMOUNT_DEBUG=0xffff
+enables debug output
 .SH AUTHORS
 .nf
 Karel Zak <kzak@redhat.com>
