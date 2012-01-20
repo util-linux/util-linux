@@ -66,7 +66,7 @@ mount_SOURCES = mount.c \
 		$(top_srcdir)/lib/xgetpass.c \
 		$(top_srcdir)/lib/strutils.c
 
-mount_LDADD = $(ul_libmount_la)
+mount_LDADD = $(ul_libmount_la) $(SELINUX_LIBS)
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS) -I$(ul_libmount_incdir)
 mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
@@ -80,7 +80,7 @@ bin_PROGRAMS += mount.static
 mount_static_SOURCES = $(mount_SOURCES)
 mount_static_CFLAGS = $(mount_CFLAGS)
 mount_static_LDFLAGS = $(mount_LDFLAGS) -all-static
-mount_static_LDADD = $(mount_LDADD)
+mount_static_LDADD = $(mount_LDADD) $(SELINUX_LIBS_STATIC)
 endif
 
 if HAVE_STATIC_UMOUNT
@@ -90,7 +90,6 @@ umount_static_CFLAGS = $(umount_CFLAGS)
 umount_static_LDFLAGS = $(umount_LDFLAGS) -all-static
 umount_static_LDADD = $(umount_LDADD)
 endif
-
 endif # BUILD_NEW_MOUNT
 
 
