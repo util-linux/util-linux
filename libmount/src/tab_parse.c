@@ -501,7 +501,7 @@ static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 #else
 static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 {
-	int n = 0, i;
+	int n = 0, i, r = 0;
 	DIR *dir = NULL;
 	struct dirent **namelist = NULL;
 
@@ -511,8 +511,10 @@ static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 
 	/* let use "at" functions rather than play crazy games with paths... */
 	dir = opendir(dirname);
-	if (!dir)
-		return -errno;
+	if (!dir) {
+		r = -errno;
+		goto out;
+	}
 
 	for (i = 0; i < n; i++) {
 		struct dirent *d = namelist[i];
@@ -531,12 +533,13 @@ static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 		}
 	}
 
+out:
 	for (i = 0; i < n; i++)
 		free(namelist[i]);
 	free(namelist);
 	if (dir)
 		closedir(dir);
-	return 0;
+	return r;
 }
 #endif
 
