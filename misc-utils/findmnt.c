@@ -489,7 +489,7 @@ static int parser_errcb(struct libmnt_table *tb __attribute__ ((__unused__)),
 }
 
 /* calls libmount fstab/mtab/mountinfo parser */
-static struct libmnt_table *parse_tabfile(const char *path)
+static struct libmnt_table *parse_tabfile(const char *path, int force_path)
 {
 	int rc;
 	struct libmnt_table *tb = mnt_new_table();
@@ -501,9 +501,13 @@ static struct libmnt_table *parse_tabfile(const char *path)
 
 	mnt_table_set_parser_errcb(tb, parser_errcb);
 
-	if (!strcmp(path, _PATH_MNTTAB))
+	/*
+	 * If force_path is not set then use library defaults for mtab and
+	 * fstab (the library is able to follow env.variables).
+	 */
+	if (!force_path && strcmp(path, _PATH_MNTTAB) == 0)
 		rc = mnt_table_parse_fstab(tb, NULL);
-	else if (!strcmp(path, _PATH_MOUNTED))
+	else if (!force_path && strcmp(path, _PATH_MOUNTED) == 0)
 		rc = mnt_table_parse_mtab(tb, NULL);
 	else
 		rc = mnt_table_parse_file(tb, path);
@@ -514,6 +518,24 @@ static struct libmnt_table *parse_tabfile(const char *path)
 		return NULL;
 	}
 	return tb;
+}
+
+/* checks if @tb contains parent->child relations */
+static int tab_is_tree(struct libmnt_table *tb)
+{
+	struct libmnt_fs *fs = NULL;
+	struct libmnt_iter *itr = NULL;
+	int rc = 0;
+
+	itr = mnt_new_iter(MNT_ITER_BACKWARD);
+	if (!itr)
+		return 0;
+
+	if (mnt_table_next_fs(tb, itr, &fs) == 0)
+		rc = mnt_fs_get_id(fs) > 0 && mnt_fs_get_parent_id(fs) > 0;
+
+	mnt_free_iter(itr);
+	return rc;
 }
 
 /* filter function for libmount (mnt_table_find_next_fs()) */
@@ -770,7 +792,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, _(
 	"\nOptions:\n"
-	" -s, --fstab[=<fstab>]  search in static table of filesystems\n"
+	" -s, --fstab            search in static table of filesystems\n"
 	" -m, --mtab             search in table of mounted filesystems\n"
 	" -k, --kernel           search in kernel table of mounted\n"
         "                          filesystems (default)\n\n"));
@@ -784,6 +806,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -c, --canonicalize     canonicalize printed paths\n"
 	" -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 	" -e, --evaluate         convert tags (LABEL/UUID) to device names\n"
+	" -F, --tab-file <path>  alternative file for --fstab, --mtab or --kernel options\n"
 	" -f, --first-only       print the first found filesystem only\n"));
 
 	fprintf(out, _(
@@ -826,7 +849,7 @@ int main(int argc, char *argv[])
 {
 	/* libmount */
 	struct libmnt_table *tb = NULL;
-	char *tabfile = NULL;
+	char *tabfile = NULL, *alt_tabfile = NULL;
 	int direction = MNT_ITER_FORWARD;
 	int i, c, rc = -1, timeout = -1;
 
@@ -839,7 +862,7 @@ int main(int argc, char *argv[])
 	    { "direction",    1, 0, 'd' },
 	    { "evaluate",     0, 0, 'e' },
 	    { "first-only",   0, 0, 'f' },
-	    { "fstab",        2, 0, 's' },
+	    { "fstab",        0, 0, 's' },
 	    { "help",         0, 0, 'h' },
 	    { "invert",       0, 0, 'i' },
 	    { "kernel",       0, 0, 'k' },
@@ -856,6 +879,7 @@ int main(int argc, char *argv[])
 	    { "fsroot",       0, 0, 'v' },
 	    { "submounts",    0, 0, 'R' },
 	    { "source",       1, 0, 'S' },
+	    { "tab-file",     1, 0, 'F' },
 	    { "target",       1, 0, 'T' },
 	    { "timeout",      1, 0, 'w' },
 
@@ -872,7 +896,7 @@ int main(int argc, char *argv[])
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"acd:ehifo:O:p::Pklmnrs::t:uvRS:T:w:",
+				"acd:ehifF:o:O:p::Pklmnrst:uvRS:T:w:",
 				longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
@@ -901,6 +925,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'f':
 			flags |= FL_FIRSTONLY;
+			break;
+		case 'F':
+			alt_tabfile = optarg;
 			break;
 		case 'u':
 			disable_columns_truncate();
@@ -939,7 +966,7 @@ int main(int argc, char *argv[])
 		case 's':		/* fstab */
 			if (tabfile)
 				errx_mutually_exclusive("--{fstab,mtab,kernel}");
-			tabfile = optarg ? optarg : _PATH_MNTTAB;
+			tabfile = _PATH_MNTTAB;
 			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 'k':		/* kernel (mountinfo) */
@@ -998,6 +1025,9 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_OPTIONS;
 	}
 
+	if (alt_tabfile)
+		tabfile = alt_tabfile;
+
 	if (!tabfile) {
 		tabfile = _PATH_PROC_MOUNTINFO;
 
@@ -1042,9 +1072,12 @@ int main(int argc, char *argv[])
 	 */
 	mnt_init_debug(0);
 
-	tb = parse_tabfile(tabfile);
+	tb = parse_tabfile(tabfile, alt_tabfile ? 1 : 0);
 	if (!tb)
 		goto leave;
+
+	if ((tt_flags & TT_FL_TREE) && !tab_is_tree(tb))
+		tt_flags &= ~TT_FL_TREE;
 
 	cache = mnt_new_cache();
 	if (!cache) {

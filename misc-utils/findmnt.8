@@ -36,14 +36,12 @@ The command prints all mounted filesystems in the tree-like format by default.
 .SH OPTIONS
 .IP "\fB\-h, \-\-help\fP"
 Print help and exit.
-.IP "\fB\-s, \-\-fstab\fR[\fI=fstab\fR]\fP"
+.IP "\fB\-s, \-\-fstab\fP"
 Search in
 .IR /etc/fstab
 and
 .IR /etc/fstab.d .
-The output is in the list format (see --list). Optionally, search the file
-specified by
-.IR fstab .
+The output is in the list format (see --list).
 .IP "\fB\-m, \-\-mtab\fP"
 Search in
 .IR /etc/mtab .
@@ -61,7 +59,10 @@ or
 .IR backward .
 .IP "\fB\-e, \-\-evaluate\fP"
 Convert all tags (LABEL or UUID) to the device names.
-.IP "\fB\-f, \-\-first-only\fP"
+.IP "\fB\-F, \-\-tab\-file \fIpath\fP"
+Search in an alternative file, if used with \fB\-\-fstab\fP, \fB\-\-mtab\fP
+or \fB\-\-kernel\fP then overwrites the default paths.
+.IP "\fB\-f, \-\-first\-only\fP"
 Print the first matching filesystem only.
 .IP "\fB\-i, \-\-invert\fP"
 Invert the sense of matching.
