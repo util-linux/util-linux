@@ -28,7 +28,7 @@
 #include <sys/types.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
-
+#include <stdarg.h>
 #include <libmount.h>
 
 #include "nls.h"
@@ -232,24 +232,30 @@ static int mount_all(struct libmnt_context *cxt)
  *
  * Returns exit status (EX_*) and prints error message.
  */
-static int handle_generic_errors(int rc, const char *msg)
+static int handle_generic_errors(int rc, const char *msg, ...)
 {
+	va_list va;
+
+	va_start(va, msg);
 	errno = -rc;
 
 	switch(errno) {
 	case EINVAL:
 	case EPERM:
-		warn(msg);
-		return EX_USAGE;
+		vwarn(msg, va);
+		rc = EX_USAGE;
+		break;
 	case ENOMEM:
-		warn(msg);
-		return EX_SYSERR;
+		vwarn(msg, va);
+		rc = EX_SYSERR;
+		break;
 	default:
+		vwarn(msg, va);
+		rc = EX_FAIL;
 		break;
 	}
-
-	warn(msg);
-	return EX_FAIL;
+	va_end(va);
+	return rc;
 }
 
 #if defined(HAVE_LIBSELINUX) && defined(HAVE_SECURITY_GET_INITIAL_CONTEXT)
@@ -300,7 +306,6 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 	const char *src = mnt_context_get_source(cxt);
 
 try_readonly:
-
 	if (mnt_context_helper_executed(cxt))
 		/*
 		 * /sbin/mount.<type> called, return status
@@ -346,7 +351,8 @@ try_readonly:
 				warnx(_("you must specify the filesystem type"));
 			return EX_USAGE;
 		}
-		return handle_generic_errors(rc, _("mount failed"));
+		return handle_generic_errors(rc, _("%s: mount failed"),
+					     tgt ? tgt : src);
 
 	} else if (mnt_context_get_syscall_errno(cxt) == 0) {
 		/*
@@ -355,7 +361,8 @@ try_readonly:
 		 */
 		if (rc < 0)
 			return handle_generic_errors(rc,
-					_("filesystem mounted, but mount(8) failed"));
+				_("%s: filesystem mounted, but mount(8) failed"),
+				tgt ? tgt : src);
 
 		return EX_SOFTWARE;	/* internal error */
 
