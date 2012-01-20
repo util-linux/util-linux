@@ -60,6 +60,8 @@
 static int passfd = -1;
 static int readwrite;
 
+static int mk_exit_code(struct libmnt_context *cxt, int rc);
+
 static void __attribute__((__noreturn__)) exit_non_root(const char *option)
 {
 	const uid_t ruid = getuid();
@@ -196,24 +198,16 @@ static int mount_all(struct libmnt_context *cxt)
 						tgt);
 
 		} else if (mnt_context_is_fork(cxt)) {
-			printf("%-25s: mount successfully forked\n", tgt);
-
+			if (mnt_context_is_verbose(cxt))
+				printf("%-25s: mount successfully forked\n", tgt);
 		} else {
-			if (!mnt_context_get_status(cxt)) {
-				if (mntrc > 0) {
-					errno = mntrc;
-					printf(_("%-25s: failed: %s\n"), tgt,
-							strerror(mntrc));
-					rc |= EX_FAIL;
-				} else {
-					printf(_("%-25s: failed\n"), tgt);
-					rc |= EX_SYSERR;
-				}
-			} else {
+			rc |= mk_exit_code(cxt, mntrc);
+
+			if (mnt_context_get_status(cxt)) {
+				rc |= EX_SOMEOK;
+
 				if (mnt_context_is_verbose(cxt))
 					printf("%-25s: successfully mounted\n", tgt);
-
-				rc |= EX_SOMEOK;
 			}
 		}
 	}
