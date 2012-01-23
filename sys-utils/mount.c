@@ -286,7 +286,7 @@ static void selinux_warning(struct libmnt_context *cxt, const char *tgt)
 	}
 }
 #else
-# define selinux_warning(_x)
+# define selinux_warning(_x, _y)
 #endif
 
 
