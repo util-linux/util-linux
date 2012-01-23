@@ -56,10 +56,10 @@ endif
 if BUILD_NEW_MOUNT
 # 
 # The original (stable) mount is in mount/ directory
-# -- temporary we share man pages
+# -- temporary we share some man pages
 #
 bin_PROGRAMS += mount umount
-dist_man_MANS += ../mount/fstab.5 ../mount/mount.8 ../mount/umount.8
+dist_man_MANS += mount.8 ../mount/fstab.5 ../mount/umount.8
 
 mount_SOURCES = mount.c \
 		$(top_srcdir)/lib/env.c \
