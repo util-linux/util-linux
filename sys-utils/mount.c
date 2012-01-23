@@ -534,6 +534,26 @@ try_readonly:
 	return MOUNT_EX_FAIL;
 }
 
+static struct libmnt_table *append_fstab(struct libmnt_context *cxt,
+					 struct libmnt_table *fstab,
+					 const char *path)
+{
+
+	if (!fstab) {
+		fstab = mnt_new_table();
+		if (!fstab)
+			err(MOUNT_EX_SYSERR, _("failed to initialize libmount table"));
+
+		mnt_table_set_parser_errcb(fstab, table_parser_errcb);
+		mnt_context_set_fstab(cxt, fstab);
+	}
+
+	if (mnt_table_parse_fstab(fstab, path))
+		errx(MOUNT_EX_USAGE,_("%s: failed to parse"), path);
+
+	return fstab;
+}
+
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
@@ -550,7 +570,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -a, --all               mount all filesystems mentioned in fstab\n"
 	" -c, --no-canonicalize   don't canonicalize paths\n"
 	" -f, --fake              dry run; skip the mount(2) syscall\n"
-	" -F, --fork              fork off for each device (use with -a)\n"));
+	" -F, --fork              fork off for each device (use with -a)\n"
+	" -T, --fstab <path>      alternative file to /etc/fstab\n"));
 	fprintf(out, _(
 	" -h, --help              display this help text and exit\n"
 	" -i, --internal-only     don't call the mount.<type> helpers\n"
@@ -607,6 +628,7 @@ int main(int argc, char **argv)
 {
 	int c, rc = MOUNT_EX_SUCCESS, all = 0, show_labels = 0;
 	struct libmnt_context *cxt;
+	struct libmnt_table *fstab = NULL;
 	char *source = NULL, *srcbuf = NULL;
 	char *types = NULL;
 	unsigned long oper = 0;
@@ -625,6 +647,7 @@ int main(int argc, char **argv)
 	static const struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
 		{ "fake", 0, 0, 'f' },
+		{ "fstab", 1, 0, 'T' },
 		{ "fork", 0, 0, 'F' },
 		{ "help", 0, 0, 'h' },
 		{ "no-mtab", 0, 0, 'n' },
@@ -669,7 +692,7 @@ int main(int argc, char **argv)
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
-	while ((c = getopt_long(argc, argv, "aBcfFhilL:Mno:O:p:rRsU:vVwt:",
+	while ((c = getopt_long(argc, argv, "aBcfFhilL:Mno:O:p:rRsU:vVwt:T:",
 					longopts, NULL)) != -1) {
 
 		/* only few options are allowed for non-root users */
@@ -740,6 +763,9 @@ int main(int argc, char **argv)
 			break;
 		case 't':
 			types = optarg;
+			break;
+		case 'T':
+			fstab = append_fstab(cxt, fstab, optarg);
 			break;
 		case 's':
 			mnt_context_enable_sloppy(cxt, TRUE);
@@ -854,6 +880,7 @@ int main(int argc, char **argv)
 done:
 	free(srcbuf);
 	mnt_free_context(cxt);
+	mnt_free_table(fstab);
 	return rc;
 }
 
