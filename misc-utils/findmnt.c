@@ -69,6 +69,12 @@ enum {
 	FINDMNT_NCOLUMNS
 };
 
+enum {
+	TABTYPE_FSTAB = 1,
+	TABTYPE_MTAB,
+	TABTYPE_KERNEL
+};
+
 /* column names */
 struct colinfo {
 	const char	*name;		/* header */
@@ -488,35 +494,61 @@ static int parser_errcb(struct libmnt_table *tb __attribute__ ((__unused__)),
 	return 0;
 }
 
-/* calls libmount fstab/mtab/mountinfo parser */
-static struct libmnt_table *parse_tabfile(const char *path, int force_path)
+static char **append_tabfile(char **files, int *nfiles, char *filename)
 {
-	int rc;
-	struct libmnt_table *tb = mnt_new_table();
+	void *tmp = realloc(files, sizeof(char *) * (*nfiles + 1));
 
+	if (!tmp) {
+		free(files);
+		return NULL;
+	}
+	files = tmp;
+	files[(*nfiles)++] = filename;
+	return files;
+}
+
+/* calls libmount fstab/mtab/mountinfo parser */
+static struct libmnt_table *parse_tabfiles(char **files,
+					   int nfiles,
+					   int tabtype)
+{
+	struct libmnt_table *tb;
+	int rc;
+
+	tb = mnt_new_table();
 	if (!tb) {
 		warn(_("failed to initialize libmount table"));
 		return NULL;
 	}
-
 	mnt_table_set_parser_errcb(tb, parser_errcb);
 
-	/*
-	 * If force_path is not set then use library defaults for mtab and
-	 * fstab (the library is able to follow env.variables).
-	 */
-	if (!force_path && strcmp(path, _PATH_MNTTAB) == 0)
-		rc = mnt_table_parse_fstab(tb, NULL);
-	else if (!force_path && strcmp(path, _PATH_MOUNTED) == 0)
-		rc = mnt_table_parse_mtab(tb, NULL);
-	else
-		rc = mnt_table_parse_file(tb, path);
+	do {
+		/* NULL means that libmount will use default paths */
+		const char *path = nfiles ? *files++ : NULL;
 
-	if (rc) {
-		mnt_free_table(tb);
-		warn(_("can't read %s"), path);
-		return NULL;
-	}
+		switch (tabtype) {
+		case TABTYPE_FSTAB:
+			rc = mnt_table_parse_fstab(tb, path);
+			break;
+		case TABTYPE_MTAB:
+			rc = mnt_table_parse_mtab(tb, path);
+			break;
+		case TABTYPE_KERNEL:
+			if (!path)
+				path = access(_PATH_PROC_MOUNTINFO, R_OK) == 0 ?
+					      _PATH_PROC_MOUNTINFO :
+					      _PATH_PROC_MOUNTS;
+
+			rc = mnt_table_parse_file(tb, path);
+			break;
+		}
+		if (rc) {
+			mnt_free_table(tb);
+			warn(_("can't read %s"), path);
+			return NULL;
+		}
+	} while (--nfiles > 0);
+
 	return tb;
 }
 
@@ -847,11 +879,11 @@ errx_mutually_exclusive(const char *opts)
 
 int main(int argc, char *argv[])
 {
-	/* libmount */
 	struct libmnt_table *tb = NULL;
-	char *tabfile = NULL, *alt_tabfile = NULL;
+	char **tabfiles = NULL;
 	int direction = MNT_ITER_FORWARD;
 	int i, c, rc = -1, timeout = -1;
+	int ntabfiles = 0, tabtype = 0;
 
 	/* table.h */
 	struct tt *tt = NULL;
@@ -927,7 +959,7 @@ int main(int argc, char *argv[])
 			flags |= FL_FIRSTONLY;
 			break;
 		case 'F':
-			alt_tabfile = optarg;
+			tabfiles = append_tabfile(tabfiles, &ntabfiles, optarg);
 			break;
 		case 'u':
 			disable_columns_truncate();
@@ -958,21 +990,21 @@ int main(int argc, char *argv[])
 			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 'm':		/* mtab */
-			if (tabfile)
+			if (tabtype)
 				errx_mutually_exclusive("--{fstab,mtab,kernel}");
-			tabfile = _PATH_MOUNTED;
+			tabtype = TABTYPE_MTAB;
 			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 's':		/* fstab */
-			if (tabfile)
+			if (tabtype)
 				errx_mutually_exclusive("--{fstab,mtab,kernel}");
-			tabfile = _PATH_MNTTAB;
+			tabtype = TABTYPE_FSTAB;
 			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 'k':		/* kernel (mountinfo) */
-			if (tabfile)
+			if (tabtype)
 				 errx_mutually_exclusive("--{fstab,mtab,kernel}");
-			tabfile = _PATH_PROC_MOUNTINFO;
+			tabtype = TABTYPE_KERNEL;
 			break;
 		case 't':
 			set_match(COL_FSTYPE, optarg);
@@ -1025,16 +1057,15 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_OPTIONS;
 	}
 
-	if (alt_tabfile)
-		tabfile = alt_tabfile;
+	if (!tabtype)
+		tabtype = TABTYPE_KERNEL;
 
-	if (!tabfile) {
-		tabfile = _PATH_PROC_MOUNTINFO;
 
-		if (access(tabfile, R_OK)) {		/* old kernel? */
-			tabfile = _PATH_PROC_MOUNTS;
-			tt_flags &= ~TT_FL_TREE;
-		}
+	if (flags & FL_POLL) {
+		if (tabtype != TABTYPE_KERNEL)
+			errx_mutually_exclusive("--{poll,fstab,mtab}");
+		if (ntabfiles > 1)
+			errx(EXIT_FAILURE, _("--poll accepts only one file, but mure specified by --tab-file"));
 	}
 
 	if (optind < argc && (get_match(COL_SOURCE) || get_match(COL_TARGET)))
@@ -1072,7 +1103,7 @@ int main(int argc, char *argv[])
 	 */
 	mnt_init_debug(0);
 
-	tb = parse_tabfile(tabfile, alt_tabfile ? 1 : 0);
+	tb = parse_tabfiles(tabfiles, ntabfiles, tabtype);
 	if (!tb)
 		goto leave;
 
@@ -1118,8 +1149,8 @@ int main(int argc, char *argv[])
 	 * Fill in data to the output table
 	 */
 	if (flags & FL_POLL)
-		/* poll mode */
-		rc = poll_table(tb, tabfile, timeout, tt, direction);
+		/* poll mode (accept the first tabfile only) */
+		rc = poll_table(tb, *tabfiles, timeout, tt, direction);
 
 	else if ((tt_flags & TT_FL_TREE) && is_listall_mode())
 		/* whole tree */
@@ -1138,6 +1169,7 @@ leave:
 
 	mnt_free_table(tb);
 	mnt_free_cache(cache);
+	free(tabfiles);
 
 	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
 }
