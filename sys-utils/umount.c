@@ -33,6 +33,7 @@
 #include "c.h"
 #include "env.h"
 #include "optutils.h"
+#include "exitcodes.h"
 
 static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)),
 			const char *filename, int line)
@@ -51,7 +52,7 @@ static void __attribute__((__noreturn__)) print_version(void)
 
 	printf(_("%s from %s (libmount %s)\n"),
 			program_invocation_short_name, PACKAGE_STRING, ver);
-	exit(EXIT_SUCCESS);
+	exit(MOUNT_EX_SUCCESS);
 }
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
@@ -85,7 +86,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("umount(8)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(out == stderr ? MOUNT_EX_USAGE : MOUNT_EX_SUCCESS);
 }
 
 static void __attribute__((__noreturn__)) exit_non_root(const char *option)
@@ -96,16 +97,125 @@ static void __attribute__((__noreturn__)) exit_non_root(const char *option)
 	if (ruid == 0 && euid != 0) {
 		/* user is root, but setuid to non-root */
 		if (option)
-			errx(EXIT_FAILURE,
+			errx(MOUNT_EX_USAGE,
 				_("only root can use \"--%s\" option "
 				 "(effective UID is %u)"),
 					option, euid);
-		errx(EXIT_FAILURE, _("only root can do that "
+		errx(MOUNT_EX_USAGE, _("only root can do that "
 				 "(effective UID is %u)"), euid);
 	}
 	if (option)
-		errx(EXIT_FAILURE, _("only root can use \"--%s\" option"), option);
-	errx(EXIT_FAILURE, _("only root can do that"));
+		errx(MOUNT_EX_USAGE, _("only root can use \"--%s\" option"), option);
+	errx(MOUNT_EX_USAGE, _("only root can do that"));
+}
+
+/*
+ * Handles generic errors like ENOMEM, ...
+ *
+ * rc = 0 success
+ *     <0 error (usually -errno)
+ *
+ * Returns exit status (MOUNT_EX_*) and prints error message.
+ */
+static int handle_generic_errors(int rc, const char *msg, ...)
+{
+	va_list va;
+
+	va_start(va, msg);
+	errno = -rc;
+
+	switch(errno) {
+	case EINVAL:
+	case EPERM:
+		vwarn(msg, va);
+		rc = MOUNT_EX_USAGE;
+		break;
+	case ENOMEM:
+		vwarn(msg, va);
+		rc = MOUNT_EX_SYSERR;
+		break;
+	default:
+		vwarn(msg, va);
+		rc = MOUNT_EX_FAIL;
+		break;
+	}
+	va_end(va);
+	return rc;
+}
+
+static int mk_exit_code(struct libmnt_context *cxt, int rc)
+{
+	int syserr;
+	const char *tgt = mnt_context_get_target(cxt);
+
+	if (mnt_context_helper_executed(cxt))
+		/*
+		 * /sbin/umount.<type> called, return status
+		 */
+		return mnt_context_get_helper_status(cxt);
+
+	if (rc == 0 && mnt_context_get_status(cxt) == 1)
+		/*
+		 * Libmount success && syscall success.
+		 */
+		return MOUNT_EX_SUCCESS;
+
+
+	if (!mnt_context_syscall_called(cxt)) {
+		/*
+		 * libmount errors (extra library checks)
+		 */
+		return handle_generic_errors(rc, _("%s: umount failed"), tgt);
+
+	} else if (mnt_context_get_syscall_errno(cxt) == 0) {
+		/*
+		 * umount(2) syscall success, but something else failed
+		 * (probably error in mtab processing).
+		 */
+		if (rc < 0)
+			return handle_generic_errors(rc,
+				_("%s: filesystem umounted, but mount(8) failed"),
+				tgt);
+
+		return MOUNT_EX_SOFTWARE;	/* internal error */
+
+	}
+
+	/*
+	 * umount(2) errors
+	 */
+	syserr = mnt_context_get_syscall_errno(cxt);
+
+	switch(syserr) {
+	case ENXIO:
+		warnx(_("%s: invalid block device"), tgt);	/* ??? */
+		break;
+	case EINVAL:
+		warnx(_("%s: not mounted"), tgt);
+		break;
+	case EIO:
+		warnx(_("%s: can't write superblock"), tgt);
+		break;
+	case EBUSY:
+		warnx(_("%s: target is busy.\n"
+		       "        (In some cases useful info about processes that use\n"
+		       "         the device is found by lsof(8) or fuser(1))"),
+			tgt);
+	case ENOENT:
+		warnx(_("%s: not found"), tgt);
+		break;
+	case EPERM:
+		warnx(_("%s: must be superuser to umount"), tgt);
+		break;
+	case EACCES:
+		warnx(_("%s: block devices not permitted on fs"), tgt);
+		break;
+	default:
+		errno = syserr;
+		warn(_("%s"), tgt);
+		break;
+	}
+	return MOUNT_EX_FAIL;
 }
 
 static int umount_all(struct libmnt_context *cxt)
@@ -127,19 +237,11 @@ static int umount_all(struct libmnt_context *cxt)
 		if (ignored) {
 			if (mnt_context_is_verbose(cxt))
 				printf(_("%-25s: ignored\n"), tgt);
-		} else if (!mnt_context_get_status(cxt)) {
-			if (mntrc > 0) {
-				errno = mntrc;
-				printf(_("%-25s: failed: %s\n"), tgt,
-						strerror(mntrc));
-			} else
-				printf(_("%-25s: failed\n"), tgt);
-			rc |= 1;
 		} else {
+			rc |= mk_exit_code(cxt, mntrc);
+
 			if (mnt_context_is_verbose(cxt))
 				printf("%-25s: successfully umounted\n", tgt);
-
-			rc |= 0;
 		}
 	}
 
@@ -154,12 +256,10 @@ static int umount_one(struct libmnt_context *cxt, const char *spec)
 		return -EINVAL;
 
 	if (mnt_context_set_target(cxt, spec))
-		err(EXIT_FAILURE, _("failed to set umount target"));
+		err(MOUNT_EX_SYSERR, _("failed to set umount target"));
 
 	rc = mnt_context_umount(cxt);
-	if (rc)
-		/* TODO mnt_context_strerror() */
-		warnx(_("%s: umount failed"), spec);
+	rc = mk_exit_code(cxt, rc);
 
 	mnt_reset_context(cxt);
 	return rc;
@@ -201,7 +301,7 @@ int main(int argc, char **argv)
 	mnt_init_debug(0);
 	cxt = mnt_new_context();
 	if (!cxt)
-		err(EXIT_FAILURE, _("libmount context allocation failed"));
+		err(MOUNT_EX_SYSERR, _("libmount context allocation failed"));
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
@@ -246,7 +346,7 @@ int main(int argc, char **argv)
 			break;
 		case 'O':
 			if (mnt_context_set_options_pattern(cxt, optarg))
-				err(EXIT_FAILURE, _("failed to set options pattern"));
+				err(MOUNT_EX_SYSERR, _("failed to set options pattern"));
 			break;
 		case 't':
 			types = optarg;
@@ -276,11 +376,10 @@ int main(int argc, char **argv)
 	} else if (argc < 1) {
 		usage(stderr);
 
-	} else while (argc--) {
+	} else while (argc--)
 		rc += umount_one(cxt, *argv++);
-	}
 
 	mnt_free_context(cxt);
-	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
+	return rc;
 }
 
