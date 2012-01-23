@@ -277,6 +277,8 @@ extern struct libmnt_table *mnt_new_table_from_dir(const char *dirname);
 extern int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f,
 				  const char *filename);
 extern int mnt_table_parse_file(struct libmnt_table *tb, const char *filename);
+extern int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname);
+
 extern int mnt_table_parse_fstab(struct libmnt_table *tb, const char *filename);
 extern int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename);
 extern int mnt_table_set_parser_errcb(struct libmnt_table *tb,

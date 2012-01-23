@@ -224,4 +224,5 @@ global:
 	mnt_fs_is_pseudofs;
 	mnt_fs_is_swaparea;
 	mnt_get_library_features;
+	mnt_table_parse_dir;
 } MOUNT_2.20;

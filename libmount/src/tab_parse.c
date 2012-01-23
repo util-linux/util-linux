@@ -460,7 +460,7 @@ static int mnt_table_parse_dir_filter(const struct dirent *d)
 }
 
 #ifdef HAVE_SCANDIRAT
-static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
+static int __mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 {
 	int n = 0, i;
 	int dd;
@@ -499,7 +499,7 @@ static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 	return 0;
 }
 #else
-static int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
+static int __mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 {
 	int n = 0, i, r = 0;
 	DIR *dir = NULL;
@@ -543,6 +543,23 @@ out:
 }
 #endif
 
+/**
+ * mnt_table_parse_dir:
+ * @tb: mount table
+ * @dirname: directory
+ *
+ * The directory:
+ *	- files are sorted by strverscmp(3)
+ *	- files that starts with "." are ignored (e.g. ".10foo.fstab")
+ *	- files without the ".fstab" extension are ignored
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
+{
+	return __mnt_table_parse_dir(tb, dirname);
+}
+
 struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt)
 {
 	struct libmnt_table *tb;
@@ -583,7 +600,7 @@ struct libmnt_table *mnt_new_table_from_file(const char *filename)
 
 /**
  * mnt_new_table_from_dir
- * @dirname: for example /etc/fstab.d
+ * @dirname: directory with *.fstab files
  *
  * Returns: newly allocated tab on success and NULL in case of error.
  */
@@ -632,14 +649,8 @@ int mnt_table_set_parser_errcb(struct libmnt_table *tb,
  * @tb: table
  * @filename: overwrites default (/etc/fstab or $LIBMOUNT_FSTAB) or NULL
  *
- * This function parses /etc/fstab or /etc/fstab.d and appends new lines to the
- * @tab. If the system contains classic fstab file and also fstab.d directory
- * then the fstab file is parsed before the fstab.d directory.
- *
- * The fstab.d directory:
- *	- files are sorted by strverscmp(3)
- *	- files that starts with "." are ignored (e.g. ".10foo.fstab")
- *	- files without the ".fstab" extension are ignored
+ * This function parses /etc/fstab and appends new lines to the @tab. If the
+ * @filename is a directory then mnt_table_parse_dir() is called.
  *
  * See also mnt_table_set_parser_errcb().
  *
@@ -647,7 +658,8 @@ int mnt_table_set_parser_errcb(struct libmnt_table *tb,
  */
 int mnt_table_parse_fstab(struct libmnt_table *tb, const char *filename)
 {
-	FILE *f;
+	struct stat st;
+	int rc = 0;
 
 	assert(tb);
 
@@ -656,24 +668,23 @@ int mnt_table_parse_fstab(struct libmnt_table *tb, const char *filename)
 	if (!filename)
 		filename = mnt_get_fstab_path();
 
+	if (!filename || stat(filename, &st))
+		return -EINVAL;
+
 	tb->fmt = MNT_FMT_FSTAB;
 
-	f = fopen(filename, "r");
-	if (f) {
-		int rc = mnt_table_parse_stream(tb, f, filename);
-		fclose(f);
+	if (S_ISREG(st.st_mode))
+		rc = mnt_table_parse_file(tb, filename);
+	else if (S_ISDIR(st.st_mode))
+		rc = mnt_table_parse_dir(tb, filename);
+	else
+		rc = -EINVAL;
 
-		if (rc)
-			return rc;
-
-		if (strcmp(filename, _PATH_MNTTAB))
-			/* /etc/fstab.d sould be used together with /etc/fstab only */
-			return 0;
+	if (rc == 0 && strcmp(filename, _PATH_MNTTAB) == 0) {
+		if (!access(_PATH_MNTTAB_DIR, R_OK))
+			rc = mnt_table_parse_dir(tb, _PATH_MNTTAB_DIR);
 	}
-
-	if (!access(_PATH_MNTTAB_DIR, R_OK))
-		return mnt_table_parse_dir(tb, _PATH_MNTTAB_DIR);
-	return 0;
+	return rc;
 }
 
 /*
