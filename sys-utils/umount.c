@@ -44,17 +44,27 @@ static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)
 	return 0;
 }
 
+
 static void __attribute__((__noreturn__)) print_version(void)
 {
 	const char *ver = NULL;
+	const char **features = NULL, **p;
 
 	mnt_get_library_version(&ver);
+	mnt_get_library_features(&features);
 
-	printf(_("%s from %s (libmount %s)\n"),
-			program_invocation_short_name, PACKAGE_STRING, ver);
+	printf(_("%s from %s (libmount %s"),
+			program_invocation_short_name,
+			PACKAGE_STRING,
+			ver);
+	p = features;
+	while (p && *p) {
+		fputs(p == features ? ": " : ", ", stdout);
+		fputs(*p++, stdout);
+	}
+	fputs(")\n", stdout);
 	exit(MOUNT_EX_SUCCESS);
 }
-
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
@@ -66,7 +76,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_OPTIONS, out);
 	fprintf(out, _(
-	" -a, --all               mount all filesystems mentioned in fstab\n"
+	" -a, --all               umount all filesystems\n"
 	" -c, --no-canonicalize   don't canonicalize paths\n"
 	" -d, --detach-loop       if mounted loop device, also free this loop device\n"
 	"     --fake              dry run; skip the umount(2) syscall\n"
