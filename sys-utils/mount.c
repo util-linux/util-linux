@@ -37,6 +37,7 @@
 #include "optutils.h"
 #include "strutils.h"
 #include "xgetpass.h"
+#include "exitcodes.h"
 
 /*** TODO: DOCS:
  *
@@ -46,16 +47,6 @@
  *  --options-source={fstab,mtab,disable}		MNT_OMODE_{FSTAB,MTAB,NOTAB}
  *  --options-source-force				MNT_OMODE_FORCE
  */
-
-/* exit status */
-#define EX_SUCCESS	0
-#define EX_USAGE	1	/* incorrect invocation or permission */
-#define EX_SYSERR	2	/* out of memory, cannot fork, ... */
-#define EX_SOFTWARE	4	/* internal mount bug or wrong version */
-#define EX_USER		8	/* user interrupt */
-#define EX_FILEIO      16	/* problems writing, locking, ... mtab/fstab */
-#define EX_FAIL	       32	/* mount failure */
-#define EX_SOMEOK      64	/* some mount succeeded */
 
 static int passfd = -1;
 static int readwrite;
@@ -70,15 +61,15 @@ static void __attribute__((__noreturn__)) exit_non_root(const char *option)
 	if (ruid == 0 && euid != 0) {
 		/* user is root, but setuid to non-root */
 		if (option)
-			errx(EX_USAGE, _("only root can use \"--%s\" option "
+			errx(MOUNT_EX_USAGE, _("only root can use \"--%s\" option "
 					 "(effective UID is %u)"),
 					option, euid);
-		errx(EX_USAGE, _("only root can do that "
+		errx(MOUNT_EX_USAGE, _("only root can do that "
 				 "(effective UID is %u)"), euid);
 	}
 	if (option)
-		errx(EX_USAGE, _("only root can use \"--%s\" option"), option);
-	errx(EX_USAGE, _("only root can do that"));
+		errx(MOUNT_EX_USAGE, _("only root can use \"--%s\" option"), option);
+	errx(MOUNT_EX_USAGE, _("only root can do that"));
 }
 
 static void __attribute__((__noreturn__)) print_version(void)
@@ -89,7 +80,7 @@ static void __attribute__((__noreturn__)) print_version(void)
 
 	printf(_("%s from %s (libmount %s)\n"),
 			program_invocation_short_name, PACKAGE_STRING, ver);
-	exit(EX_SUCCESS);
+	exit(MOUNT_EX_SUCCESS);
 }
 
 static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)),
@@ -135,11 +126,11 @@ static void print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 	struct libmnt_cache *cache = NULL;
 
 	if (mnt_context_get_mtab(cxt, &tb))
-		err(EX_SYSERR, _("failed to read mtab"));
+		err(MOUNT_EX_SYSERR, _("failed to read mtab"));
 
 	itr = mnt_new_iter(MNT_ITER_FORWARD);
 	if (!itr)
-		err(EX_SYSERR, _("failed to initialize libmount iterator"));
+		err(MOUNT_EX_SYSERR, _("failed to initialize libmount iterator"));
 	if (show_label)
 		cache = mnt_new_cache();
 
@@ -179,12 +170,12 @@ static int mount_all(struct libmnt_context *cxt)
 {
 	struct libmnt_iter *itr;
 	struct libmnt_fs *fs;
-	int mntrc, ignored, rc = EX_SUCCESS;
+	int mntrc, ignored, rc = MOUNT_EX_SUCCESS;
 
 	itr = mnt_new_iter(MNT_ITER_FORWARD);
 	if (!itr) {
 		warn(_("failed to initialize libmount iterator"));
-		return EX_SYSERR;
+		return MOUNT_EX_SYSERR;
 	}
 
 	while (mnt_context_next_mount(cxt, itr, &fs, &mntrc, &ignored) == 0) {
@@ -204,7 +195,7 @@ static int mount_all(struct libmnt_context *cxt)
 			rc |= mk_exit_code(cxt, mntrc);
 
 			if (mnt_context_get_status(cxt)) {
-				rc |= EX_SOMEOK;
+				rc |= MOUNT_EX_SOMEOK;
 
 				if (mnt_context_is_verbose(cxt))
 					printf("%-25s: successfully mounted\n", tgt);
@@ -218,7 +209,7 @@ static int mount_all(struct libmnt_context *cxt)
 
 		rc = mnt_context_wait_for_children(cxt, &nchildren, &nerrs);
 		if (!rc && nchildren)
-			rc = nchildren == nerrs ? EX_FAIL : EX_SOMEOK;
+			rc = nchildren == nerrs ? MOUNT_EX_FAIL : MOUNT_EX_SOMEOK;
 	}
 
 	return rc;
@@ -230,7 +221,7 @@ static int mount_all(struct libmnt_context *cxt)
  * rc = 0 success
  *     <0 error (usually -errno)
  *
- * Returns exit status (EX_*) and prints error message.
+ * Returns exit status (MOUNT_EX_*) and prints error message.
  */
 static int handle_generic_errors(int rc, const char *msg, ...)
 {
@@ -243,15 +234,15 @@ static int handle_generic_errors(int rc, const char *msg, ...)
 	case EINVAL:
 	case EPERM:
 		vwarn(msg, va);
-		rc = EX_USAGE;
+		rc = MOUNT_EX_USAGE;
 		break;
 	case ENOMEM:
 		vwarn(msg, va);
-		rc = EX_SYSERR;
+		rc = MOUNT_EX_SYSERR;
 		break;
 	default:
 		vwarn(msg, va);
-		rc = EX_FAIL;
+		rc = MOUNT_EX_FAIL;
 		break;
 	}
 	va_end(va);
@@ -293,7 +284,7 @@ static void selinux_warning(struct libmnt_context *cxt, const char *tgt)
  * rc = 0 success
  *     <0 error (usually -errno or -1)
  *
- * Returns exit status (EX_*) and/or prints error message.
+ * Returns exit status (MOUNT_EX_*) and/or prints error message.
  */
 static int mk_exit_code(struct libmnt_context *cxt, int rc)
 {
@@ -318,7 +309,7 @@ try_readonly:
 		 */
 		selinux_warning(cxt, tgt);
 
-		return EX_SUCCESS;	/* mount(2) success */
+		return MOUNT_EX_SUCCESS;	/* mount(2) success */
 	}
 
 	if (!mnt_context_syscall_called(cxt)) {
@@ -328,10 +319,10 @@ try_readonly:
 		switch (rc) {
 		case -EPERM:
 			warnx(_("only root can mount %s on %s"), src, tgt);
-			return EX_USAGE;
+			return MOUNT_EX_USAGE;
 		case -EBUSY:
 			warnx(_("%s is already mounted"), src);
-			return EX_USAGE;
+			return MOUNT_EX_USAGE;
 		}
 
 		if (src == NULL || tgt == NULL) {
@@ -340,7 +331,7 @@ try_readonly:
 			else
 				warnx(_("can't find %s in %s"), src ? src : tgt,
 						mnt_get_fstab_path());
-			return EX_USAGE;
+			return MOUNT_EX_USAGE;
 		}
 
 		if (!mnt_context_get_fstype(cxt)) {
@@ -349,7 +340,7 @@ try_readonly:
 					"and none was specified"));
 			else
 				warnx(_("you must specify the filesystem type"));
-			return EX_USAGE;
+			return MOUNT_EX_USAGE;
 		}
 		return handle_generic_errors(rc, _("%s: mount failed"),
 					     tgt ? tgt : src);
@@ -364,7 +355,7 @@ try_readonly:
 				_("%s: filesystem mounted, but mount(8) failed"),
 				tgt ? tgt : src);
 
-		return EX_SOFTWARE;	/* internal error */
+		return MOUNT_EX_SOFTWARE;	/* internal error */
 
 	}
 
@@ -421,7 +412,7 @@ try_readonly:
 			warnx(_("mount point %s is a symbolic link to nowhere"), tgt);
 		else if (stat(src, &st)) {
 			if (uflags & MNT_MS_NOFAIL)
-				return EX_SUCCESS;
+				return MOUNT_EX_SUCCESS;
 
 			warnx(_("special device %s does not exist"), src);
 		} else {
@@ -435,7 +426,7 @@ try_readonly:
 			warnx(_("mount point %s is not a directory"), tgt);
 		else if (stat(src, &st) && errno == ENOTDIR) {
 			if (uflags & MNT_MS_NOFAIL)
-				return EX_SUCCESS;
+				return MOUNT_EX_SUCCESS;
 
 			warnx(_("special device %s does not exist "
 				 "(a path prefix is not a directory)"), src);
@@ -477,7 +468,7 @@ try_readonly:
 
 	case ENOTBLK:
 		if (uflags & MNT_MS_NOFAIL)
-			return EX_SUCCESS;
+			return MOUNT_EX_SUCCESS;
 
 		if (stat(src, &st))
 			warnx(_("%s is not a block device, and stat(2) fails?"), src);
@@ -492,7 +483,7 @@ try_readonly:
 
 	case ENXIO:
 		if (uflags & MNT_MS_NOFAIL)
-			return EX_SUCCESS;
+			return MOUNT_EX_SUCCESS;
 
 		warnx(_("%s is not a valid block device"), src);
 		break;
@@ -530,7 +521,7 @@ try_readonly:
 		break;
 	}
 
-	return EX_FAIL;
+	return MOUNT_EX_FAIL;
 }
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
@@ -599,12 +590,12 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fprintf(out, USAGE_MAN_TAIL("mount(8)"));
 
-	exit(out == stderr ? EX_USAGE : EX_SUCCESS);
+	exit(out == stderr ? MOUNT_EX_USAGE : MOUNT_EX_SUCCESS);
 }
 
 int main(int argc, char **argv)
 {
-	int c, rc = EX_SUCCESS, all = 0, show_labels = 0;
+	int c, rc = MOUNT_EX_SUCCESS, all = 0, show_labels = 0;
 	struct libmnt_context *cxt;
 	char *source = NULL, *srcbuf = NULL;
 	char *types = NULL;
@@ -664,7 +655,7 @@ int main(int argc, char **argv)
 	mnt_init_debug(0);
 	cxt = mnt_new_context();
 	if (!cxt)
-		err(EX_SYSERR, _("libmount context allocation failed"));
+		err(MOUNT_EX_SYSERR, _("libmount context allocation failed"));
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
@@ -699,7 +690,7 @@ int main(int argc, char **argv)
 			break;
 		case 'r':
 			if (mnt_context_append_options(cxt, "ro"))
-				err(EX_SYSERR, _("failed to append options"));
+				err(MOUNT_EX_SYSERR, _("failed to append options"));
 			readwrite = 0;
 			break;
 		case 'v':
@@ -710,16 +701,16 @@ int main(int argc, char **argv)
 			break;
 		case 'w':
 			if (mnt_context_append_options(cxt, "rw"))
-				err(EX_SYSERR, _("failed to append options"));
+				err(MOUNT_EX_SYSERR, _("failed to append options"));
 			readwrite = 1;
 			break;
 		case 'o':
 			if (mnt_context_append_options(cxt, optarg))
-				err(EX_SYSERR, _("failed to append options"));
+				err(MOUNT_EX_SYSERR, _("failed to append options"));
 			break;
 		case 'O':
 			if (mnt_context_set_options_pattern(cxt, optarg))
-				err(EX_SYSERR, _("failed to set options pattern"));
+				err(MOUNT_EX_SYSERR, _("failed to set options pattern"));
 			break;
 		case 'p':
 			passfd = strtol_or_err(optarg,
@@ -728,10 +719,10 @@ int main(int argc, char **argv)
 		case 'L':
 		case 'U':
 			if (source)
-				errx(EX_USAGE, _("only one <source> may be specified"));
+				errx(MOUNT_EX_USAGE, _("only one <source> may be specified"));
 			if (asprintf(&srcbuf, "%s=\"%s\"",
 				     c == 'L' ? "LABEL" : "UUID", optarg) <= 0)
-				err(EX_SYSERR, _("failed to allocate source buffer"));
+				err(MOUNT_EX_SYSERR, _("failed to allocate source buffer"));
 			source = srcbuf;
 			break;
 		case 'l':
