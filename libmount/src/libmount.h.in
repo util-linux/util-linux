@@ -120,6 +120,7 @@ extern void mnt_init_debug(int mask);
 /* version.c */
 extern int mnt_parse_version_string(const char *ver_string);
 extern int mnt_get_library_version(const char **ver_string);
+extern int mnt_get_library_features(const char ***features);
 
 /* utils.c */
 extern char *mnt_mangle(const char *str);
