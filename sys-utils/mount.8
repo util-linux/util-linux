@@ -561,11 +561,18 @@ These two options require the file
 .I /proc/partitions
 (present since Linux 2.1.116) to exist.
 .IP "\fB\-T, \-\-fstab \fIpath\fP"
-Specifies alternative fstab file. If the \fIpath\fP is directory then the files in the directory
-are sorted by
+Specifies alternative fstab file. If the \fIpath\fP is directory then the files
+in the directory are sorted by
 .BR strverscmp (3),
 files that starts with "." or without .fstab extension are ignored. The option
-can be specified more than once.
+can be specified more than once. This option is mostly designed for initramfs
+or chroot scripts where additional configuration is specified outside standard
+system configuration.
+
+Note that mount(8) does not pass the option \fB\-\-fstab\fP to
+/sbin/mount.<type> helpers, it means that the alternative fstab files will be
+invisible for the helpers. This is no problem for normal mounts, but user
+(non-root) mounts always require fstab to verify user's rights.
 .IP "\fB\-t, \-\-types \fIvfstype\fP"
 The argument following the
 .B \-t
