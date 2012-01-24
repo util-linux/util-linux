@@ -45,11 +45,9 @@
 fstab \- static information about the filesystems
 .SH SYNOPSIS
 .B /etc/fstab
-.sp
-.B /etc/fstab.d
 .SH DESCRIPTION
 The file
-.B /etc/fstab
+.B fstab
 contains descriptive information about the various file systems.
 .B fstab
 is only read by programs, and not written; it is the duty of the system
@@ -66,20 +64,6 @@ and
 sequentially iterate through
 .B fstab
 doing their thing.
-
-The directory
-.B /etc/fstab.d
-is optional and contains fstab-like files. All files without .fstab extension or with '.' prefix
-are ignored. The directory
-.B /etc/fstab.d
-is supported by
-.BR mount (8)
-and
-.BR umount (8)
-programs only if linked with libmount. The files in the directory are parsed in
-order defined by
-.BR strverscmp (3)
-function. The command \fBfindmnt --fstab\fP returns complete list of the filesystems.
 
 .B The first field
 .RI ( fs_spec ).
@@ -260,7 +244,6 @@ or
 .SH "SEE ALSO"
 .BR mount (8),
 .BR swapon (8),
-.BR findmnt (8),
 .BR fs (5),
 .BR nfs (5),
 .BR xfs (5),
