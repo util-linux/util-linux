@@ -175,14 +175,6 @@ mounted where, using which options. The default location of the
 .BR fstab (5)
 file could be overrided by --fstab <path> command line option (see below for
 more details).
-
-If the
-.B mount
-command is linked with libmount, then filesystems could be also defined in
-.I /etc/fstab.d/*.fstab
-files. See
-.BR fstab (5)
-for more details.
 .LP
 The command
 .RS
@@ -2783,9 +2775,6 @@ support (for example /sbin/mount.fuse -t fuse.sshfs).
 .TP 18n
 .I /etc/fstab
 filesystem table
-.TP
-.I /etc/fstab.d
-directory with filesystem tables
 .TP
 .I /etc/mtab
 table of mounted filesystems

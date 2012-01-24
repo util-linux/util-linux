@@ -102,7 +102,7 @@ mnt_debug_h(void *handler, const char *mesg, ...)
 # define DBG_FLUSH do { ; } while(0)
 #endif
 
-/* extension for files in the /etc/fstab.d directory */
+/* extension for files in the directory */
 #define MNT_MNTTABDIR_EXT	".fstab"
 
 /* library private paths */

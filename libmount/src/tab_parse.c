@@ -680,10 +680,6 @@ int mnt_table_parse_fstab(struct libmnt_table *tb, const char *filename)
 	else
 		rc = -EINVAL;
 
-	if (rc == 0 && strcmp(filename, _PATH_MNTTAB) == 0) {
-		if (!access(_PATH_MNTTAB_DIR, R_OK))
-			rc = mnt_table_parse_dir(tb, _PATH_MNTTAB_DIR);
-	}
 	return rc;
 }
 
