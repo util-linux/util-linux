@@ -76,10 +76,9 @@ same meaning as "KiB") or decimal (10^N) suffixes KB, MB, GB, PB and EB.
 .BI \-c " cachefile"
 Read from
 .I cachefile
-instead of reading from the default cache file
-.IR /etc/blkid.tab .
-If you want to start with a clean cache (i.e. don't report devices previously
-scanned but not necessarily available at this time), specify
+instead of reading from the default cache file (see CONFIGURATION FILE section
+for more details).  If you want to start with a clean cache (i.e. don't report
+devices previously scanned but not necessarily available at this time), specify
 .IR /dev/null .
 .TP
 .B \-d
@@ -255,6 +254,33 @@ For usage or other errors, an exit code of 4 is returned.
 
 If the ambivalent low-level probing result was detected, an exit code of 8 is
 returned.
+.SH CONFIGURATION FILE
+The standard location of the
+.I /etc/blkid.conf
+config file can be overridden by the environment variable BLKID_CONF.
+The following options control the libblkid library:
+.TP
+.I SEND_UEVENT=<yes|not>
+Sends uevent when
+.I /dev/disk/by-{label,uuid}/
+symlink does not match with LABEL or UUID on the device. Default is "yes".
+.TP
+.I CACHE_FILE=<path>
+Overrides the standard location of the cache file. This setting can be
+overridden by the environment variable BLKID_FILE. Default is
+.I /run/blkid/blkid.tab
+or
+.I /etc/blkid.tab
+on systems without /run direcotry
+.TP
+.I EVALUATE=<methods>
+Defines LABEL and UUID evaluation method(s). Currently, the libblkid library
+supports "udev" and "scan" methods. More than one methods may be specified in
+a comma separated list. Default is "udev,scan". The "udev" method uses udev
+.I /dev/disk/by-*
+symlinks and the "scan" method scans all block devices from the
+.I /proc/partitions
+file.
 .SH AUTHOR
 .B blkid
 was written by Andreas Dilger for libblkid and improved by Theodore Ts'o

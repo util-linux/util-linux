@@ -286,8 +286,16 @@ extern char *blkid_strdup(const char *s);
 extern char *blkid_strndup(const char *s, const int length);
 extern char *blkid_strconcat(const char *a, const char *b, const char *c);
 
-#define BLKID_CACHE_FILE	"/etc/blkid.tab"
+/* config file */
 #define BLKID_CONFIG_FILE	"/etc/blkid.conf"
+
+/* cache file on systemds with /run */
+#define BLKID_RUNTIME_TOPDIR	"/run"
+#define BLKID_RUNTIME_DIR	BLKID_RUNTIME_TOPDIR "/blkid"
+#define BLKID_CACHE_FILE	BLKID_RUNTIME_DIR "/blkid.tab"
+
+/* old systems */
+#define BLKID_CACHE_FILE_OLD	"/etc/blkid.tab"
 
 #define BLKID_ERR_IO	 5
 #define BLKID_ERR_PROC	 9

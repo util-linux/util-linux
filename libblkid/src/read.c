@@ -489,7 +489,7 @@ int main(int argc, char**argv)
 	}
 	if ((ret = blkid_get_cache(&cache, argv[1])) < 0)
 		fprintf(stderr, "error %d reading cache file %s\n", ret,
-			argv[1] ? argv[1] : BLKID_CACHE_FILE);
+			argv[1] ? argv[1] : blkid_get_cache_filename(NULL));
 
 	blkid_put_cache(cache);
 
