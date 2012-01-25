@@ -147,11 +147,16 @@ done:
  */
 static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 {
+	struct libmnt_optmap const *maps[1];
+	char *next, *name, *val;
+	size_t namesz, valsz;
 	int rc = 0;
 
 	assert(cxt);
 	assert(cxt->fs);
 	assert(optstr);
+
+	DBG(CXT, mnt_debug_h(cxt, "mount: generate heper mount options"));
 
 	*optstr = mnt_fs_strdup_options(cxt->fs);
 	if (!*optstr)
@@ -159,13 +164,32 @@ static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 
 	if (cxt->flags & MNT_FL_SAVED_USER)
 		rc = mnt_optstr_set_option(optstr, "user", cxt->orig_user);
-	if (rc) {
-		free(*optstr);
-		*optstr = NULL;
+	if (rc)
+		goto err;
+
+	/* remove userspace options with MNT_NOHLPS flag */
+	maps[0] = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
+	next = *optstr;
+
+	while (!mnt_optstr_next_option(&next, &name, &namesz, &val, &valsz)) {
+		const struct libmnt_optmap *ent;
+
+		mnt_optmap_get_entry(maps, 1, name, namesz, &ent);
+		if (ent && ent->id && (ent->mask & MNT_NOHLPS)) {
+			next = name;
+			rc = mnt_optstr_remove_option_at(optstr, name,
+					val ? val + valsz : name + namesz);
+			if (rc)
+				goto err;
+		}
 	}
+
+	return rc;
+err:
+	free(*optstr);
+	*optstr = NULL;
 	return rc;
 }
-
 
 /*
  * this has to be called before fix_optstr()
