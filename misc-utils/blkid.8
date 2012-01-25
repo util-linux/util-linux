@@ -19,8 +19,6 @@ blkid \- locate/print block device attributes
 .RB [ \-dghlv ]
 .RB [ \-c
 .IR file ]
-.RB [ \-w
-.IR file ]
 .RB [ \-o
 .IR format ]
 .in +6
@@ -237,17 +235,6 @@ Look up the device that uses this \fIuuid\fR.  For more details see the \fB-L\fR
 .TP
 .B \-v
 Display version number and exit.
-.TP
-.BI \-w " writecachefile"
-Write the device cache to
-.I writecachefile
-instead of writing it to the default cache file
-.IR /etc/blkid.tab .
-If you don't want to save the cache at all, specify
-.IR /dev/null.
-If not specified, it will be the same file as that given with the
-.B \-c
-option.
 .TP
 .I device
 Display tokens from only the specified device.  It is possible to

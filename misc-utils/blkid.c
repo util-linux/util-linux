@@ -62,7 +62,7 @@ static void usage(int error)
 		"Usage:\n"
 		" %1$s -L <label> | -U <uuid>\n\n"
 		" %1$s [-c <file>] [-ghlLv] [-o <format>] [-s <tag>] \n"
-		"       [-t <token>] [-w <file>] [<dev> ...]\n\n"
+		"       [-t <token>] [<dev> ...]\n\n"
 		" %1$s -p [-s <tag>] [-O <offset>] [-S <size>] \n"
 		"       [-o <format>] <dev> ...\n\n"
 		" %1$s -i [-s <tag>] [-o <format>] <dev> ...\n\n"
@@ -80,7 +80,6 @@ static void usage(int error)
 		" -L <label>  convert LABEL to device name\n"
 		" -U <uuid>   convert UUID to device name\n"
 		" -v          print version and exit\n"
-		" -w <file>   write cache to different file (/dev/null = no write)\n"
 		" <dev>       specify device(s) to probe (default: all devices)\n\n"
 		"Low-level probing options:\n"
 		" -p          low-level superblocks probing (bypass cache)\n"
@@ -673,7 +672,6 @@ int main(int argc, char **argv)
 	char *show[128] = { NULL, };
 	char *search_type = NULL, *search_value = NULL;
 	char *read = NULL;
-	char *write = NULL;
 	int fltr_usage = 0;
 	char **fltr_type = NULL;
 	int fltr_flag = BLKID_FLTR_ONLYIN;
@@ -695,8 +693,6 @@ int main(int argc, char **argv)
 				read = NULL;
 			else
 				read = optarg;
-			if (!write)
-				write = read;
 			break;
 		case 'd':
 			raw_chars = 1;
@@ -803,10 +799,7 @@ int main(int argc, char **argv)
 			version = 1;
 			break;
 		case 'w':
-			if (optarg && !*optarg)
-				write = NULL;
-			else
-				write = optarg;
+			/* ignore - backward compatibility */
 			break;
 		case 'h':
 			err = 0;
