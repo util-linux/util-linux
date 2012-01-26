@@ -343,7 +343,7 @@ static int insert_value(char **str, char *pos, const char *substr, char **next)
 
 	if (next) {
 		/* set pointer to the next option */
-		*next = pos + subsz + sep + 1;
+		*next = pos + subsz;
 		if (**next == ',')
 			(*next)++;
 	}
@@ -994,6 +994,7 @@ int test_append(struct libmnt_test *ts, int argc, char *argv[])
 	rc = mnt_optstr_append_option(&optstr, name, value);
 	if (!rc)
 		printf("result: >%s<\n", optstr);
+	free(optstr);
 	return rc;
 }
 
@@ -1014,6 +1015,7 @@ int test_prepend(struct libmnt_test *ts, int argc, char *argv[])
 	rc = mnt_optstr_prepend_option(&optstr, name, value);
 	if (!rc)
 		printf("result: >%s<\n", optstr);
+	free(optstr);
 	return rc;
 }
 
@@ -1161,6 +1163,7 @@ int test_remove(struct libmnt_test *ts, int argc, char *argv[])
 	rc = mnt_optstr_remove_option(&optstr, name);
 	if (!rc)
 		printf("result: >%s<\n", optstr);
+	free(optstr);
 	return rc;
 }
 
