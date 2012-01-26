@@ -1997,7 +1997,7 @@ int test_mount(struct libmnt_test *ts, int argc, char *argv[])
 		mnt_context_set_target(cxt, argv[idx++]);
 	}
 
-	/* this is unnecessary -- libmount is able to internaly
+	/* this is unnecessary! -- libmount is able to internaly
 	 * create and manage the lock
 	 */
 	lock = mnt_context_get_lock(cxt);
@@ -2010,6 +2010,7 @@ int test_mount(struct libmnt_test *ts, int argc, char *argv[])
 	else
 		printf("successfully mounted\n");
 
+	lock = NULL;	/* because we use atexit lock_fallback */
 	mnt_free_context(cxt);
 	return rc;
 }
@@ -2064,6 +2065,7 @@ int test_umount(struct libmnt_test *ts, int argc, char *argv[])
 	else
 		printf("successfully umounted\n");
 err:
+	lock = NULL;	/* because we use atexit lock_fallback */
 	mnt_free_context(cxt);
 	return rc;
 }
