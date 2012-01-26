@@ -780,6 +780,7 @@ static int update(const char *target, struct libmnt_fs *fs, unsigned long mountf
 
 	rc = mnt_update_table(upd, NULL);
 done:
+	mnt_free_update(upd);
 	return rc;
 }
 
