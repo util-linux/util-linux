@@ -78,6 +78,7 @@ function ts_has_option {
 function ts_init_core_env {
 	TS_NS="$TS_COMPONENT/$TS_TESTNAME"
 	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME"
+	TS_VGDUMP="$TS_OUTDIR/$TS_TESTNAME.vgdump"
 	TS_DIFF="$TS_DIFFDIR/$TS_TESTNAME"
 	TS_EXPECTED="$TS_TOPDIR/expected/$TS_NS"
 	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME}-mnt"
@@ -86,10 +87,14 @@ function ts_init_core_env {
 function ts_init_core_subtest_env {
 	TS_NS="$TS_COMPONENT/$TS_TESTNAME-$TS_SUBNAME"
 	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME-$TS_SUBNAME"
-	> $TS_OUTPUT
+	TS_VGDUMP="$TS_OUTDIR/$TS_TESTNAME-$TS_SUBNAME.vgdump"
 	TS_DIFF="$TS_DIFFDIR/$TS_TESTNAME-$TS_SUBNAME"
 	TS_EXPECTED="$TS_TOPDIR/expected/$TS_NS"
 	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-mnt"
+
+	rm -f $TS_OUTPUT $TS_VGDUMP
+	touch $TS_OUTPUT
+	[ -n "$TS_VALGRIND_CMD" ] && touch $TS_VGDUMP
 }
 
 function ts_init_env {
@@ -135,8 +140,9 @@ function ts_init_env {
 
 	export BLKID_FILE
 
-	rm -f $TS_OUTPUT
+	rm -f $TS_OUTPUT $TS_VGDUMP
 	touch $TS_OUTPUT
+	[ -n "$TS_VALGRIND_CMD" ] && touch $TS_VGDUMP
 
 	if [ "$TS_VERBOSE" == "yes" ]; then
 		echo
@@ -150,6 +156,7 @@ function ts_init_env {
 		echo "  namespace: $TS_NS"
 		echo "    verbose: $TS_VERBOSE"
 		echo "     output: $TS_OUTPUT"
+		echo "   valgrind: $TS_VGDUMP"
 		echo "   expected: $TS_EXPECTED"
 		echo " mountpoint: $TS_MOUNTPOINT"
 		echo
@@ -171,6 +178,11 @@ function ts_init_subtest {
 function ts_init {
 	local is_fake=$( ts_has_option "fake" "$*")
 	local is_force=$( ts_has_option "force" "$*")
+	local is_memcheck=$( ts_has_option "memcheck" "$*")
+
+	if [ "$is_memcheck" == "yes" -a -f /usr/bin/valgrind ]; then
+		TS_VALGRIND_CMD="/usr/bin/valgrind"
+	fi
 
 	ts_init_env "$*"
 
@@ -193,6 +205,16 @@ function ts_init_suid {
 	chmod u+s $PROG &> /dev/null
 }
 
+function ts_valgrind {
+	if [ -z "$TS_VALGRIND_CMD" ]; then
+		$*
+	else
+		$TS_VALGRIND_CMD --tool=memcheck --leak-check=full \
+				 --leak-resolution=high --num-callers=20 \
+				 --log-file="$TS_VGDUMP" $*
+	fi
+}
+
 function ts_gen_diff {
 	local res=0
 
@@ -205,6 +227,15 @@ function ts_gen_diff {
 	return $res
 }
 
+function tt_gen_mem_report {
+	[ -z "$TS_VALGRIND_CMD" ] && echo "$1"
+
+	grep -q -E 'ERROR SUMMARY: [1-9]' $TS_VGDUMP &> /dev/null
+	if [ $? -eq 0 ]; then
+		echo "mem-error detected!"
+	fi
+}
+
 function ts_finalize_subtest {
 	local res=0
 
@@ -214,7 +245,7 @@ function ts_finalize_subtest {
 			ts_failed_subtest "$1"
 			res=1
 		else
-			ts_ok_subtest "$1"
+			ts_ok_subtest "$(tt_gen_mem_report "$1")"
 		fi
 	else
 		ts_skip_subtest "output undefined"
