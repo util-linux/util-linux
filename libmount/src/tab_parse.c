@@ -82,18 +82,28 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
 		if (optstr && *optstr)
 			unmangle_string(optstr);
 
+		/* note that __foo functions does not reallocate the string
+		 */
 		rc = __mnt_fs_set_source_ptr(fs, src);
-		if (!rc)
+		if (!rc) {
+			src = NULL;
 			rc = __mnt_fs_set_fstype_ptr(fs, fstype);
+			if (!rc)
+				fstype = NULL;
+		}
 		if (!rc && optstr)
 			rc = mnt_fs_set_options(fs, optstr);
 		free(optstr);
+		optstr = NULL;
 	} else {
 		DBG(TAB, mnt_debug("tab parse error: [sscanf rc=%d]: '%s'", rc, s));
 		rc = -EINVAL;
 	}
 
 	if (rc) {
+		free(src);
+		free(fstype);
+		free(optstr);
 		DBG(TAB, mnt_debug("tab parse error: [set vars, rc=%d]\n", rc));
 		return rc;	/* error */
 	}
@@ -124,7 +134,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 {
 	int rc, end = 0;
 	unsigned int maj, min;
-	char *fstype, *src, *p;
+	char *fstype = NULL, *src = NULL, *p;
 
 	rc = sscanf(s,	"%u "		/* (1) id */
 			"%u "		/* (2) parent */
@@ -178,14 +188,20 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 			unmangle_string(fs->fs_optstr);
 
 		rc = __mnt_fs_set_fstype_ptr(fs, fstype);
-		if (!rc)
+		if (!rc) {
+			fstype = NULL;
 			rc = __mnt_fs_set_source_ptr(fs, src);
+			if (!rc)
+				src = NULL;
+		}
 
 		/* merge VFS and FS options to the one string */
 		fs->optstr = mnt_fs_strdup_options(fs);
 		if (!fs->optstr)
 			rc = -ENOMEM;
 	} else {
+		free(fstype);
+		free(src);
 		DBG(TAB, mnt_debug(
 			"mountinfo parse error [sscanf rc=%d]: '%s'", rc, s));
 		rc = -EINVAL;
