@@ -343,6 +343,7 @@ done:
 	mnt_free_table(tb_old);
 	mnt_free_table(tb_new);
 	mnt_free_tabdiff(diff);
+	mnt_free_iter(itr);
 	return rc;
 }
 
