@@ -222,6 +222,7 @@ static int mount_all(struct libmnt_context *cxt)
 			rc = nchildren == nerrs ? MOUNT_EX_FAIL : MOUNT_EX_SOMEOK;
 	}
 
+	mnt_free_iter(itr);
 	return rc;
 }
 
