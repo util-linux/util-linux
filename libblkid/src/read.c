@@ -370,10 +370,12 @@ static int blkid_parse_line(blkid_cache cache, blkid_dev *dev_p, char *cp)
 		DBG(DEBUG_READ,
 		    printf("blkid: device %s has no TYPE\n",dev->bid_name));
 		blkid_free_dev(dev);
+		goto done;
 	}
 
 	DBG(DEBUG_READ, blkid_debug_dump_dev(dev));
 
+done:
 	return ret;
 }
 
