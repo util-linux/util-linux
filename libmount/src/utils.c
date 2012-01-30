@@ -498,13 +498,14 @@ int mnt_get_uid(const char *username, uid_t *uid)
 	int rc = -1;
         struct passwd pwd;
 	struct passwd *pw;
-	size_t sz = sysconf(_SC_GETPW_R_SIZE_MAX);
+	size_t sz;
+	long xsz = sysconf(_SC_GETPW_R_SIZE_MAX);
 	char *buf;
 
 	if (!username || !uid)
 		return -EINVAL;
-	if (sz <= 0)
-		sz = 16384;        /* Should be more than enough */
+
+	sz = xsz <= 0 ? 16384 : (size_t) xsz;
 
 	buf = malloc(sz);
 	if (!buf)
@@ -527,13 +528,14 @@ int mnt_get_gid(const char *groupname, gid_t *gid)
 	int rc = -1;
         struct group grp;
 	struct group *gr;
-	size_t sz = sysconf(_SC_GETGR_R_SIZE_MAX);
+	size_t sz;
+	long xsz = sysconf(_SC_GETGR_R_SIZE_MAX);
 	char *buf;
 
 	if (!groupname || !gid)
 		return -EINVAL;
-	if (sz <= 0)
-		sz = 16384;        /* Should be more than enough */
+
+	sz = xsz <= 0 ? 16384 : (size_t) xsz;
 
 	buf = malloc(sz);
 	if (!buf)
