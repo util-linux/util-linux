@@ -260,7 +260,7 @@ static int inpath(const char *str)
 
 static void fillpath(void)
 {
-	char *key=NULL, *tmp=NULL, *tok=NULL, *pathcp, *path = getenv("PATH");
+	char *key=NULL, *tok=NULL, *pathcp, *path = getenv("PATH");
 	int i = 0;
 
 
@@ -268,10 +268,8 @@ static void fillpath(void)
 		return;
 	pathcp = xstrdup(path);
 
-	for (tmp = pathcp; ; tmp = NULL) {
-		tok = strtok_r(tmp, ":", &key);
-		if (!tok)
-			break;
+	for (tok = strtok_r(pathcp, ":", &key); tok;
+	     tok = strtok_r(NULL, ":", &key)) {
 
 		/* make sure we don't repeat the search path */
 		if (inpath(tok))
