@@ -517,7 +517,6 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 		struct stat st;
 		struct libmnt_iter itr;
 		struct libmnt_fs *fs;
-		int fd;
 
 		mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
@@ -538,7 +537,6 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 			goto leave;
 		}
 
-		fd = fileno(f);
 		rc = fchmod(fd, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) ? -errno : 0;
 
 		if (!rc && stat(upd->filename, &st) == 0)
@@ -546,6 +544,7 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 			rc = fchown(fd, st.st_uid, st.st_gid) ? -errno : 0;
 
 		fclose(f);
+		f = NULL;
 		rc = rename(uq, upd->filename) ? -errno : 0;
 	} else {
 		rc = -errno;
@@ -553,6 +552,9 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 	}
 
 leave:
+	if (f)
+		fclose(f);
+
 	unlink(uq);	/* be paranoid */
 	free(uq);
 	return rc;
