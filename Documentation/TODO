@@ -74,9 +74,6 @@ libmount (mount/umount)
    translate the device name to backing file and then search in mtab for the 
    filename. See loopdev_get_loopfile().
 
- - (!!!) add libmount based umount(8) (see libmount/samples/ where is new mount(8) 
-   implementation.
-
  - (!) add --source and --target options to specify device and mountpoint
 
      fstab:
@@ -95,24 +92,17 @@ libmount (mount/umount)
  - add ---target-prefix option to specify prefix for mountpoints
    so then you can
 
-	LIBMOUNT_FSTAB=/etc/fstab.foo mount -a --target-prefix=$FOO_ROOT
+	mount --fstab=/etc/fstab.sandbox -a --target-prefix=/mnt/sandbox
 
-   to create a new hierarchy of filesystems at $FOO_ROOT.
+   to create a new hierarchy of filesystems at sandbox
 
  - umount by label:
 	# mount LABEL=mylabel
 	# umount LABEL=mylabel
 
-losetup
--------
 
- - (!!!) use new lib/sysfs.c code for losetup(8), the new implementation should
-   be moved to sys-utils/losetup.c.
-
- - (!!!) add support for LOOP_CTL_ ioctls (probably will be in kernel 3.1 or 3.2)
-
-libblkd and libmountL
-----------------------------
+libblkd and libmount
+--------------------
 
  - use __attribute__((notnull)) and __attribute__((warn_unused_result))
    Note that the code has to be usefull for non-gcc compilers too.
@@ -174,11 +164,6 @@ libblkid
 
    * add PARTUUID to wipefs output
 
-wipefs
-------
-
- - (!!!) allow to wipe partition tables
-
 fdisk(s)
 --------
 
@@ -219,12 +204,15 @@ misc
      - move all mountpoints to the newroot (there are hardcoded /proc /sys and /dev paths now)
      - add --dont-move[=<list of dirs>] options
 
- - use TZ=UTC and LANG=en_US.UTF-8 for tests
+ - use TZ=UTC
 
  - add mllockall() and SCHED_FIFO to hwclock,
    see http://lkml.org/lkml/2008/10/12/132
  
  - use rpmatch() for all Y/N questions
+
+ - (!) rewrite ipcs to use /proc/sys/kernel rather than unreliable syscalls
+   (there are problems with 32bit userspace on 64bit kernel)
 
 
 ---------------
@@ -267,9 +255,6 @@ exotic requests
 	  do {
 		try to mount all unmounted entries
 	  } while (not all mounted && at least one new was successfully mounted)
-
- - rewrite ipcs to use /proc/sys/kernel rather than unreliable syscalls
-   (there are problems with 32bit userspace on 64bit kernel)
 
 
  - add SELinux security contexts support to the 'ipcs' utility
