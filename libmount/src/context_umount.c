@@ -808,10 +808,13 @@ int mnt_context_next_umount(struct libmnt_context *cxt,
 	if (!cxt || !fs || !itr)
 		return -EINVAL;
 
-	mnt_context_get_mtab(cxt, &mtab);
+	rc = mnt_context_get_mtab(cxt, &mtab);
 	cxt->mtab = NULL;		/* do not reset mtab */
 	mnt_reset_context(cxt);
 	cxt->mtab = mtab;
+
+	if (rc)
+		return rc;
 
 	do {
 		rc = mnt_table_next_fs(mtab, itr, fs);
