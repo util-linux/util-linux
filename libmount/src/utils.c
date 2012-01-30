@@ -427,6 +427,7 @@ err:
 
 static int get_filesystems(const char *filename, char ***filesystems, const char *pattern)
 {
+	int rc = 0;
 	FILE *f;
 	char line[128];
 
@@ -436,7 +437,6 @@ static int get_filesystems(const char *filename, char ***filesystems, const char
 
 	while (fgets(line, sizeof(line), f)) {
 		char name[sizeof(line)];
-		int rc;
 
 		if (*line == '#' || strncmp(line, "nodev", 5) == 0)
 			continue;
@@ -446,9 +446,11 @@ static int get_filesystems(const char *filename, char ***filesystems, const char
 			continue;
 		rc = add_filesystem(filesystems, name);
 		if (rc)
-			return rc;
+			break;
 	}
-	return 0;
+
+	fclose(f);
+	return rc;
 }
 
 int mnt_get_filesystems(char ***filesystems, const char *pattern)
