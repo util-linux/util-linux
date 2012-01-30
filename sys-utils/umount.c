@@ -255,6 +255,7 @@ static int umount_all(struct libmnt_context *cxt)
 		}
 	}
 
+	mnt_free_iter(itr);
 	return rc;
 }
 
