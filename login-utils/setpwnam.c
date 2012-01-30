@@ -76,7 +76,7 @@ int setpwnam(struct passwd *pwd)
 	int oldumask;
 	int namelen;
 	int buflen = 256;
-	int contlen;
+	int contlen, rc;
 	char *linebuf = NULL;
 
 	oldumask = umask(0);	/* Create with exact permissions */
@@ -159,9 +159,11 @@ int setpwnam(struct passwd *pwd)
 		fputs(linebuf, fp);
 	}
 
-	if (fclose(fp) < 0)
-		goto fail;
+	rc = fclose(fp);
 	fp = NULL;
+	if (rc < 0)
+		goto fail;
+
 	close(fd);
 	fd = -1;
 	fclose(pwf);	/* I don't think I want to know if this failed */
