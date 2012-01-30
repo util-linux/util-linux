@@ -707,7 +707,7 @@ static int poll_match(struct libmnt_fs *fs)
 static int poll_table(struct libmnt_table *tb, const char *tabfile,
 		  int timeout, struct tt *tt, int direction)
 {
-	FILE *f;
+	FILE *f = NULL;
 	int rc = -1;
 	struct libmnt_iter *itr = NULL;
 	struct libmnt_table *tb_new = NULL;
@@ -807,6 +807,8 @@ done:
 	mnt_free_table(tb_new);
 	mnt_free_tabdiff(diff);
 	mnt_free_iter(itr);
+	if (f)
+		fclose(f);
 	return rc;
 }
 
