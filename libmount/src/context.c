@@ -1348,7 +1348,9 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 		rc = stat(helper, &st);
 		if (rc == -1 && errno == ENOENT && strchr(type, '.')) {
 			/* If type ends with ".subtype" try without it */
-			*strrchr(helper, '.') = '\0';
+			char *hs = strrchr(helper, '.');
+			if (hs)
+				*hs = '\0';
 			rc = stat(helper, &st);
 		}
 
