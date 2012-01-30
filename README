@@ -5,11 +5,6 @@
 
      Note that in years 2006-2010 this project used the name "util-linux-ng".
 
-WEB PAGE:
-
-     http://kernel.org/~kzak/util-linux/
-
-
 MAILING LIST:
 
       E-MAIL: util-linux@vger.kernel.org
@@ -25,6 +20,7 @@ SOURCE CODE:
 
       Web interface:
           http://git.kernel.org/?p=utils/util-linux/util-linux.git
+          https://github.com/karelzak/util-linux
       Checkout:
           git clone git://git.kernel.org/pub/scm/utils/util-linux/util-linux.git util-linux
 
