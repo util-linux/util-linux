@@ -644,18 +644,19 @@ static struct passwd *get_passwd_entry(const char *username,
 					 struct passwd *pwd)
 {
 	struct passwd *res = NULL;
-	size_t sz;
+	size_t sz = 16384;
 	int x;
 
 	if (!pwdbuf || !username)
 		return NULL;
 
 #ifdef _SC_GETPW_R_SIZE_MAX
-	sz = sysconf(_SC_GETPW_R_SIZE_MAX);
-	if (sz <= 0)
+	{
+		long xsz = sysconf(_SC_GETPW_R_SIZE_MAX);
+		if (xsz > 0)
+			sz = (size_t) xsz;
+	}
 #endif
-		sz = 16384;
-
 	*pwdbuf = xrealloc(*pwdbuf, sz);
 
 	x = getpwnam_r(username, pwd, *pwdbuf, sz, &res);
