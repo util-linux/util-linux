@@ -303,6 +303,7 @@ swap_reinitialize(const char *device) {
 		/* mkswap returns: 0=suss, 1=error */
 		if (WIFEXITED(status) && WEXITSTATUS(status)==0)
 			return 0; /* ok */
+		break;
 	}
 	return -1; /* error */
 }
