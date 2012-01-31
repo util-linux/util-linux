@@ -467,6 +467,16 @@ int mnt_get_filesystems(char ***filesystems, const char *pattern)
 	return get_filesystems(_PATH_PROC_FILESYSTEMS, filesystems, pattern);
 }
 
+static size_t get_pw_record_size(void)
+{
+#ifdef _SC_GETPW_R_SIZE_MAX
+	long sz = sysconf(_SC_GETPW_R_SIZE_MAX);
+	if (sz > 0)
+		return sz;
+#endif
+	return 16384;
+}
+
 /*
  * Returns allocated string with username or NULL.
  */
@@ -474,15 +484,8 @@ char *mnt_get_username(const uid_t uid)
 {
         struct passwd pwd;
 	struct passwd *res;
-#ifdef _SC_GETPW_R_SIZE_MAX
-	size_t sz = sysconf(_SC_GETPW_R_SIZE_MAX);
-#else
-	size_t sz = 0;
-#endif
+	size_t sz = get_pw_record_size();
 	char *buf, *username = NULL;
-
-	if (sz <= 0)
-		sz = 16384;        /* Should be more than enough */
 
 	buf = malloc(sz);
 	if (!buf)
@@ -500,14 +503,11 @@ int mnt_get_uid(const char *username, uid_t *uid)
 	int rc = -1;
         struct passwd pwd;
 	struct passwd *pw;
-	size_t sz;
-	long xsz = sysconf(_SC_GETPW_R_SIZE_MAX);
+	size_t sz = get_pw_record_size();
 	char *buf;
 
 	if (!username || !uid)
 		return -EINVAL;
-
-	sz = xsz <= 0 ? 16384 : (size_t) xsz;
 
 	buf = malloc(sz);
 	if (!buf)
@@ -530,14 +530,11 @@ int mnt_get_gid(const char *groupname, gid_t *gid)
 	int rc = -1;
         struct group grp;
 	struct group *gr;
-	size_t sz;
-	long xsz = sysconf(_SC_GETGR_R_SIZE_MAX);
+	size_t sz = get_pw_record_size();
 	char *buf;
 
 	if (!groupname || !gid)
 		return -EINVAL;
-
-	sz = xsz <= 0 ? 16384 : (size_t) xsz;
 
 	buf = malloc(sz);
 	if (!buf)
