@@ -452,7 +452,7 @@ static void log_btmp(struct login_context *cxt)
 
 	if (cxt->hostname) {
 		xstrncpy(ut.ut_host, cxt->hostname, sizeof(ut.ut_host));
-		if (cxt->hostaddress && *cxt->hostaddress)
+		if (*cxt->hostaddress)
 			memcpy(&ut.ut_addr_v6, cxt->hostaddress,
 			       sizeof(ut.ut_addr_v6));
 	}
@@ -604,7 +604,7 @@ static void log_utmp(struct login_context *cxt)
 	ut.ut_pid = cxt->pid;
 	if (cxt->hostname) {
 		xstrncpy(ut.ut_host, cxt->hostname, sizeof(ut.ut_host));
-		if (cxt->hostaddress && *cxt->hostaddress)
+		if (*cxt->hostaddress)
 			memcpy(&ut.ut_addr_v6, cxt->hostaddress,
 			       sizeof(ut.ut_addr_v6));
 	}
