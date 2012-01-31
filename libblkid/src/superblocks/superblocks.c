@@ -344,6 +344,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		const struct blkid_idinfo *id;
 		const struct blkid_idmag *mag = NULL;
 		blkid_loff_t off = 0;
+		int rc = 0;
 
 		chn->idx = i;
 		id = idinfos[i];
@@ -383,15 +384,21 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 
 		/* all cheks passed */
 		if (chn->flags & BLKID_SUBLKS_TYPE)
-			blkid_probe_set_value(pr, "TYPE",
+			rc = blkid_probe_set_value(pr, "TYPE",
 				(unsigned char *) id->name,
 				strlen(id->name) + 1);
 
-		blkid_probe_set_usage(pr, id->usage);
+		if (!rc)
+			rc = blkid_probe_set_usage(pr, id->usage);
 
-		if (mag)
-			blkid_probe_set_magic(pr, off, mag->len,
+		if (!rc && mag)
+			rc = blkid_probe_set_magic(pr, off, mag->len,
 					(unsigned char *) mag->magic);
+		if (rc) {
+			blkid_probe_chain_reset_vals(pr, chn);
+			DBG(DEBUG_LOWPROBE, printf("failed to set result -- ingnore\n"));
+			continue;
+		}
 
 		DBG(DEBUG_LOWPROBE,
 			printf("<-- leaving probing loop (type=%s) [SUBLKS idx=%d]\n",
