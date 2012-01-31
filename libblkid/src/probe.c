@@ -951,7 +951,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 	size_t len = 0;
 	loff_t offset, l;
 	char buf[BUFSIZ];
-	int fd, rc;
+	int fd, rc = 0;
 	struct blkid_chain *chn;
 
 	if (!pr)
@@ -1097,7 +1097,6 @@ int blkid_do_fullprobe(blkid_probe pr)
 	blkid_probe_start(pr);
 
 	for (i = 0; i < BLKID_NCHAINS; i++) {
-		int rc;
 		struct blkid_chain *chn;
 
 		chn = pr->cur_chain = &pr->chains[i];
