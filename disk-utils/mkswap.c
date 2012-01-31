@@ -407,10 +407,10 @@ wipe_device(int fd, const char *devname, int force, int is_blkdev)
 			blkid_probe_enable_partitions(pr, 1);
 			blkid_probe_enable_superblocks(pr, 0);
 
-			if (blkid_do_fullprobe(pr) == 0)
-				blkid_probe_lookup_value(pr, "PTTYPE",
-						(const char **) &type, NULL);
-			if (type) {
+			if (blkid_do_fullprobe(pr) == 0 &&
+			    blkid_probe_lookup_value(pr, "PTTYPE",
+					(const char **) &type, NULL) == 0 &&
+			    type) {
 				type = xstrdup(type);
 				zap = 0;
 			}
