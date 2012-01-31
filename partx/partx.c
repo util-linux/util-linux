@@ -166,7 +166,9 @@ static int get_partno_from_device(char *partition, dev_t devno)
 	if (devno) {
 		struct sysfs_cxt cxt;
 
-		sysfs_init(&cxt, devno, NULL);
+		if (sysfs_init(&cxt, devno, NULL))
+			goto err;
+
 		if (sysfs_read_int(&cxt, "partition", &partno) >= 0) {
 			sysfs_deinit(&cxt);
 			return partno;
