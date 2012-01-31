@@ -557,7 +557,7 @@ static int idinfo_probe(blkid_probe pr, const struct blkid_idinfo *id,
 				"%s probefunc failed\n", id->name));
 		}
 		if (rc == 0 && mag && chn && !chn->binary)
-			blkid_probe_set_magic(pr, off, mag->len,
+			rc = blkid_probe_set_magic(pr, off, mag->len,
 					(unsigned char *) mag->magic);
 
 		DBG(DEBUG_LOWPROBE, printf(
