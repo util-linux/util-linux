@@ -804,6 +804,7 @@ int main(int argc, char **argv)
 			break;
 		case 'h':
 			err = 0;
+			/* fallthrough */
 		default:
 			usage(err);
 		}
