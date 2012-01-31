@@ -74,9 +74,11 @@ int blkid_flush_cache(blkid_cache cache)
 
 	filename = cache->bic_filename ? cache->bic_filename :
 					 blkid_get_cache_filename(NULL);
+	if (!filename)
+		return -BLKID_ERR_PARAM;
 
-	if (filename && strncmp(filename,
-		BLKID_RUNTIME_DIR "/", sizeof(BLKID_RUNTIME_DIR)) == 0) {
+	if (strncmp(filename,
+	    BLKID_RUNTIME_DIR "/", sizeof(BLKID_RUNTIME_DIR)) == 0) {
 
 		/* default destination, create the directory if necessary */
 		if (stat(BLKID_RUNTIME_DIR, &st) && errno == ENOENT) {
