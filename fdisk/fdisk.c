@@ -2907,6 +2907,7 @@ static void command_prompt(void)
 				create_sgiinfo();
 			else
 				unknown_command(c);
+			break;
 		case 'l':
 			list_types(get_sys_types());
 			break;
