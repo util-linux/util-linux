@@ -1322,7 +1322,9 @@ int main(int argc, char *argv[])
 		read_configured(desc, i);
 	}
 
-	qsort(desc->caches, desc->ncaches, sizeof(struct cpu_cache), cachecmp);
+	if (desc->caches)
+		qsort(desc->caches, desc->ncaches,
+				sizeof(struct cpu_cache), cachecmp);
 
 	read_nodes(desc);
 	read_hypervisor(desc);
