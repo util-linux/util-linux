@@ -162,9 +162,15 @@ int blkid_flush_cache(blkid_cache cache)
 				}
 				free(backup);
 			}
-			rename(opened, filename);
-			DBG(DEBUG_SAVE,
-			    printf("moved temp cache %s\n", opened));
+			if (rename(opened, filename)) {
+				ret = errno;
+				DBG(DEBUG_SAVE,
+					printf("can't rename %s to %s\n",
+						opened, filename));
+			} else {
+				DBG(DEBUG_SAVE,
+				    printf("moved temp cache %s\n", opened));
+			}
 		}
 	}
 
