@@ -52,9 +52,10 @@ static int probe_ultrix_pt(blkid_probe pr,
 	if (l->pt_magic != ULTRIX_MAGIC || l->pt_valid != 1)
 		goto nothing;
 
-	blkid_probe_set_magic(pr, (ULTRIX_SECTOR << 9) + ULTRIX_OFFSET,
+	if (blkid_probe_set_magic(pr, (ULTRIX_SECTOR << 9) + ULTRIX_OFFSET,
 			sizeof(ULTRIX_MAGIC_STR) - 1,
-			(unsigned char *) ULTRIX_MAGIC_STR);
+			(unsigned char *) ULTRIX_MAGIC_STR))
+		goto err;
 
 	if (blkid_partitions_need_typeonly(pr))
 		/* caller does not ask for details about partitions */
