@@ -440,10 +440,12 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 
 		count++;
 
-		if (idinfos[chn->idx]->usage & (BLKID_USAGE_RAID | BLKID_USAGE_CRYPTO))
+		if (chn->idx >= 0 &&
+		    idinfos[chn->idx]->usage & (BLKID_USAGE_RAID | BLKID_USAGE_CRYPTO))
 			break;
 
-		if (!(idinfos[chn->idx]->flags & BLKID_IDINFO_TOLERANT))
+		if (chn->idx >= 0 &&
+		    !(idinfos[chn->idx]->flags & BLKID_IDINFO_TOLERANT))
 			intol++;
 
 		if (count == 1) {
