@@ -448,9 +448,9 @@ done:
 static int lowprobe_superblocks(blkid_probe pr)
 {
 	struct stat st;
-	int rc;
+	int rc, fd = blkid_probe_get_fd(pr);
 
-	if (fstat(blkid_probe_get_fd(pr), &st))
+	if (fd < 0 || fstat(fd, &st))
 		return -1;
 
 	blkid_probe_enable_partitions(pr, 1);
