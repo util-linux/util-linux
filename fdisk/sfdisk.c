@@ -849,6 +849,7 @@ set_format(char c) {
     switch (c) {
     default:
 	warnx(_("unrecognized format - using sectors\n"));
+	/* fallthrough */
     case 'S':
 	specified_format = F_SECTOR;
 	break;
