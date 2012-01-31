@@ -211,6 +211,7 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 		       "        (In some cases useful info about processes that use\n"
 		       "         the device is found by lsof(8) or fuser(1))"),
 			tgt);
+		break;
 	case ENOENT:
 		warnx(_("%s: not found"), tgt);
 		break;
