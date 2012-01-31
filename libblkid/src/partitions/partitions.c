@@ -533,7 +533,7 @@ int blkid_is_nested_dimension(blkid_partition par,
 static int idinfo_probe(blkid_probe pr, const struct blkid_idinfo *id,
 			struct blkid_chain *chn)
 {
-	const struct blkid_idmag *mag;
+	const struct blkid_idmag *mag = NULL;
 	blkid_loff_t off;
 	int rc = 1;		/* = nothing detected */
 

@@ -774,7 +774,7 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 	blkid_loff_t off = 0;
 
 	if (id)
-		mag = id->magics ? &id->magics[0] : NULL;
+		mag = &id->magics[0];
 	if (res)
 		*res = NULL;
 
@@ -799,7 +799,7 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 		mag++;
 	}
 
-	if (id && id->magics && id->magics[0].magic)
+	if (id && id->magics[0].magic)
 		/* magic string(s) defined, but not found */
 		return 1;
 

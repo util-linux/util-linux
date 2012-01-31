@@ -357,8 +357,6 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		if (id->minsz && id->minsz > pr->size)
 			continue;	/* the device is too small */
 
-		mag = id->magics ? &id->magics[0] : NULL;
-
 		/* don't probe for RAIDs, swap or journal on CD/DVDs */
 		if ((id->usage & (BLKID_USAGE_RAID | BLKID_USAGE_OTHER)) &&
 		    blkid_probe_is_cdrom(pr))
