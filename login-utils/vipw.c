@@ -215,11 +215,13 @@ static void pw_edit(int notsetuid)
 {
 	int pstat;
 	pid_t pid;
-	char *p, *editor;
+	char *p, *editor, *tk;
 
-	if (!(editor = getenv("EDITOR")))
-		editor = strdup(_PATH_VI);	/* adia@egnatia.ee.auth.gr */
-	if ((p = strrchr(strtok(editor, " \t"), '/')) != NULL)
+	editor = getenv("EDITOR");
+	editor = strdup(editor ? editor : _PATH_VI);
+
+	tk = strtok(editor, " \t");
+	if (tk && (p = strrchr(tk, '/')) != NULL)
 		++p;
 	else
 		p = editor;
