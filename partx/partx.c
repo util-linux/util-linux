@@ -165,14 +165,16 @@ static int get_partno_from_device(char *partition, dev_t devno)
 
 	if (devno) {
 		struct sysfs_cxt cxt;
+		int rc;
 
 		if (sysfs_init(&cxt, devno, NULL))
 			goto err;
 
-		if (sysfs_read_int(&cxt, "partition", &partno) >= 0) {
-			sysfs_deinit(&cxt);
+		rc = sysfs_read_int(&cxt, "partition", &partno);
+		sysfs_deinit(&cxt);
+
+		if (rc == 0)
 			return partno;
-		}
 	}
 
 	sz = strlen(partition);
