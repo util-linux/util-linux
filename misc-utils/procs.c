@@ -69,8 +69,8 @@ get_pids (char *process_name, int get_all) {
 	    fp = fopen (fname, "r");
 	    if (! fp) continue;
 	    cp = fgets (buf, sizeof (buf), fp);
-	    if (cp == NULL) continue;
 	    fclose (fp);
+	    if (cp == NULL) continue;
 	    cp = parse_parens (buf);
 	    if (cp == NULL) continue;
 	}
