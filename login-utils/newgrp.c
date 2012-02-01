@@ -28,9 +28,13 @@ static char *get_gshadow_pwd(char *groupname)
 {
 	char buf[BUFSIZ];
 	char *pwd = NULL;
-	FILE *f = fopen(_PATH_GSHADOW, "r");
+	FILE *f;
 
-	if (groupname == NULL || *groupname == '\0' || f == NULL)
+	if (groupname == NULL || *groupname == '\0')
+		return NULL;
+
+	f = fopen(_PATH_GSHADOW, "r");
+	if (!f)
 		return NULL;
 
 	while (fgets(buf, sizeof buf, f)) {
