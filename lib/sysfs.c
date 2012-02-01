@@ -148,11 +148,12 @@ int sysfs_init(struct sysfs_cxt *cxt, dev_t devno, struct sysfs_cxt *parent)
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
 		goto err;
+	cxt->dir_fd = fd;
+
 	cxt->dir_path = strdup(path);
 	if (!cxt->dir_path)
 		goto err;
 	cxt->devno = devno;
-	cxt->dir_fd = fd;
 	cxt->parent = parent;
 	return 0;
 err:
