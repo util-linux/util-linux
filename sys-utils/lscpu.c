@@ -383,9 +383,10 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	else if (mod->system == SYSTEM_LIVE)
 		/* the root is '/' so we are working with data from the current kernel */
 		maxcpus = get_max_number_of_cpus();
-	else
-		/* we are reading some /sys snapshot instead of the real /sys,
-		 * let's use any crazy number... */
+
+	if (maxcpus <= 0)
+		/* error or we are reading some /sys snapshot instead of the
+		 * real /sys, let's use any crazy number... */
 		maxcpus = desc->ncpus > 2048 ? desc->ncpus : 2048;
 
 	/* get mask for online CPUs */

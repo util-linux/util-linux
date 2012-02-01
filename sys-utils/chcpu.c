@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 
 	maxcpus = get_max_number_of_cpus();
-	if (maxcpus <= 0)
+	if ((int) maxcpus <= 0)
 		errx(EXIT_FAILURE, _("cannot determine NR_CPUS; aborting"));
 	if (path_exist(_PATH_SYS_CPU_ONLINE))
 		onlinecpus = path_cpulist(maxcpus, _PATH_SYS_CPU_ONLINE);
