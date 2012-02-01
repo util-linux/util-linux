@@ -193,8 +193,7 @@ sgi_list_table(int xtra) {
 			 "Units = %s of %d * %d bytes\n\n"),
 		       disk_device, heads, sectors, cylinders,
 		       SSWAP16(sgiparam.pcylcount),
-		       SSWAP16(sgiparam.sparecyl),
-		       SSWAP16(sgiparam.ilfact),
+		       (int) sgiparam.sparecyl, SSWAP16(sgiparam.ilfact),
 		       (char *)sgilabel,
 		       str_units(PLURAL), units_per_sector,
                        sector_size);
