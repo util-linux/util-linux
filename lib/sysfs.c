@@ -409,6 +409,7 @@ char *sysfs_get_slave(struct sysfs_cxt *cxt)
 	return name;
 err:
 	free(name);
+	closedir(dir);
 	return NULL;
 }
 
