@@ -47,4 +47,4 @@ $(ul_libmount_la):
 # smatch scan -- smatch and cgcc are expected in $PATH
 #
 checksmatch:
-	$(MAKE) CHECK="smatch --data=$(top_srcdir)/tools/smatch-data" CC=cgcc
+	$(MAKE) CHECK="smatch --data=$(abs_top_srcdir)/tools/smatch-data" CC=cgcc

@@ -1150,11 +1150,12 @@ int main(int argc, char *argv[])
 	/*
 	 * Fill in data to the output table
 	 */
-	if (flags & FL_POLL)
+	if (flags & FL_POLL) {
 		/* poll mode (accept the first tabfile only) */
-		rc = poll_table(tb, *tabfiles, timeout, tt, direction);
+		if (tabfiles && ntabfiles > 0)
+			rc = poll_table(tb, *tabfiles, timeout, tt, direction);
 
-	else if ((tt_flags & TT_FL_TREE) && is_listall_mode())
+	} else if ((tt_flags & TT_FL_TREE) && is_listall_mode())
 		/* whole tree */
 		rc = create_treenode(tt, tb, NULL, NULL);
 	else
