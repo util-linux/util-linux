@@ -427,6 +427,7 @@ static int loop_scandir(const char *dirname, int **ary, int hasprefix)
 			tmp = realloc(*ary, arylen * sizeof(int));
 			if (!tmp) {
 				free(*ary);
+				closedir(dir);
 				return -1;
 			}
 			*ary = tmp;
