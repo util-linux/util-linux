@@ -191,7 +191,8 @@ static void pretty_print_line(const char *device, const char *fs_type,
 	len = pretty_print_word(device, device_len, 0, 1);
 	len = pretty_print_word(fs_type, fs_type_len, len, 0);
 	len = pretty_print_word(label, label_len, len, 0);
-	len = pretty_print_word(mtpt, mtpt_len, len, 0);
+	pretty_print_word(mtpt, mtpt_len, len, 0);
+
 	fputs(uuid, stdout);
 	fputc('\n', stdout);
 }
