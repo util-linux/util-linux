@@ -386,7 +386,6 @@ static int exec_helper(struct libmnt_context *cxt)
 
 		args[i] = NULL;					/* 10 */
 #ifdef CONFIG_LIBMOUNT_DEBUG
-		i = 0;
 		for (i = 0; args[i]; i++)
 			DBG(CXT, mnt_debug_h(cxt, "argv[%d] = \"%s\"",
 							i, args[i]));
