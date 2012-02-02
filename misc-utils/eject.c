@@ -29,7 +29,6 @@
  *
  */
 
-//#include "i18n.h"
 #include "linux_version.h"
 #include "c.h"
 #include "nls.h"
@@ -43,6 +42,7 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <err.h>
+#include <stdarg.h>
 
 #include <getopt.h>
 #include <errno.h>
@@ -87,7 +87,7 @@ int m_option = 0;
 int a_arg = 0;
 int c_arg = 0;
 int x_arg = 0;
-char *programName; /* used in error messages */
+
 
 /*
  * These are the basenames of devices which can have multiple
@@ -196,8 +196,7 @@ static void parse_args(int argc, char **argv, char **device)
 			  else if (!strcmp(optarg, "on"))
 				  a_arg = 1;
 			  else {
-				  fprintf(stderr, _("%s: invalid argument to --auto/-a option\n"), programName);
-				  exit(1);
+				  errx(1, _("invalid argument to --auto/-a option"));
 			  }
 			  break;
 		  case 'c':
@@ -208,8 +207,7 @@ static void parse_args(int argc, char **argv, char **device)
 			  else {
 				  c_arg = atoi(optarg);
 				  if (c_arg <= 0) {
-					  fprintf(stderr, _("%s: invalid argument to --changerslot/-c option\n"), programName);
-					  exit(1);
+					  errx(1, _("invalid argument to --changerslot/-c option"));
 				  }
 			  }
 			  break;
@@ -220,8 +218,7 @@ static void parse_args(int argc, char **argv, char **device)
 			  else {
 				  x_arg = atoi(optarg);
 				  if (x_arg <= 0) {
-					  fprintf(stderr, _("%s: invalid argument to --cdspeed/-x option\n"), programName);
-					  exit(1);
+					  errx(1, _("%s: invalid argument to --cdspeed/-x option"));
 				  }
 			  }
 			  break;
@@ -273,8 +270,7 @@ static void parse_args(int argc, char **argv, char **device)
 	}
 	/* check for a single additional argument */
 	if ((argc - optind) > 1) {
-		fprintf(stderr, _("%s: too many arguments\n"), programName);
-		exit(1);
+		errx(1, _("%s: too many arguments"));
 	}
 	if ((argc - optind) == 1) { /* one argument */
 		*device = strdup(argv[optind]);
@@ -332,8 +328,7 @@ static char *FindDevice(const char *name)
 
 	buf = (char *) malloc(strlen(name)+14); /* to allow for "/dev/cdroms/ + "0" + null */
 	if (buf==NULL) {
-		fprintf(stderr, _("%s: could not allocate memory\n"), programName);
-		exit(1);
+		errx(1, _("could not allocate memory"));
 	}
 	if ((name[0] == '.') || (name[0] == '/')) {
 		strcpy(buf, name);
@@ -397,8 +392,7 @@ static void AutoEject(int fd, int onOff)
 
 	status = ioctl(fd, CDROMEJECT_SW, onOff);
 	if (status != 0) {
-		fprintf(stderr, _("%s: CD-ROM auto-eject command failed: %s\n"), programName, strerror(errno));
-		exit(1);
+		err(1, _("CD-ROM auto-eject command failed"));
 	}
 }
 
@@ -414,17 +408,15 @@ static void ChangerSelect(int fd, int slot)
 #ifdef CDROM_SELECT_DISC
 	status = ioctl(fd, CDROM_SELECT_DISC, slot);
 	if (status < 0) {
-		fprintf(stderr, _("%s: CD-ROM select disc command failed: %s\n"), programName, strerror(errno));
-		exit(1);
+		err(1, _("CD-ROM select disc command failed"));
 	}
 #elif defined CDROMLOADFROMSLOT
 	status = ioctl(fd, CDROMLOADFROMSLOT, slot);
 	if (status != 0) {
-		fprintf(stderr, _("%s: CD-ROM load from slot command failed: %s\n"), programName, strerror(errno));
-		exit(1);
+		err(1, _("CD-ROM load from slot command failed"));
 	}
 #else
-    fprintf(stderr, _("%s: IDE/ATAPI CD-ROM changer not supported by this kernel\n"), programName);
+    warnx( _("IDE/ATAPI CD-ROM changer not supported by this kernel\n") );
 #endif
 }
 
@@ -439,11 +431,10 @@ static void CloseTray(int fd)
 #ifdef CDROMCLOSETRAY
 	status = ioctl(fd, CDROMCLOSETRAY);
 	if (status != 0) {
-		fprintf(stderr, _("%s: CD-ROM tray close command failed: %s\n"), programName, strerror(errno));
-		exit(1);
+		err(1, _("CD-ROM tray close command failed"));
 	}
 #else
-    fprintf(stderr, _("%s: CD-ROM tray close command not supported by this kernel\n"), programName);
+     warnx( _("CD-ROM tray close command not supported by this kernel\n"));
 #endif
 }
 
@@ -490,7 +481,7 @@ static void ToggleTray(int fd)
 		CloseTray(fd);
 
 #else
-    fprintf(stderr, _("%s: CD-ROM tray toggle command not supported by this kernel\n"), programName);
+    warnx( _("CD-ROM tray toggle command not supported by this kernel"));
 #endif
 
 }
@@ -507,11 +498,10 @@ static void SelectSpeedCdrom(int fd, int speed)
 #ifdef CDROM_SELECT_SPEED
 	status = ioctl(fd, CDROM_SELECT_SPEED, speed);
 	if (status != 0) {
-		fprintf(stderr, _("%s: CD-ROM select speed command failed: %s\n"), programName, strerror(errno));
-		exit(1);
+		err(1, _("CD-ROM select speed command failed"));
 	}
 #else
-    fprintf(stderr, _("%s: CD-ROM select speed command not supported by this kernel\n"), programName);
+    warnx( _("CD-ROM select speed command not supported by this kernel"));
 #endif
 }
 
@@ -621,22 +611,18 @@ static void Unmount(const char *fullName)
 			  execl("/bin/umount", "/bin/umount", fullName, "-n", NULL);
 		  else
 			  execl("/bin/umount", "/bin/umount", fullName, NULL);
-		  fprintf(stderr, _("%s: unable to exec /bin/umount of `%s': %s\n"),
-				  programName, fullName, strerror(errno));
-		  exit(1);
+		  errx(1, _("unable to exec /bin/umount of `%s'"), fullName);
 		  break;
 	  case -1:
-		  fprintf(stderr, _("%s: unable to fork: %s\n"), programName, strerror(errno));
+		  warn( _("unable to fork"));
 		  break;
 	  default: /* parent */
 		  wait(&status);
 		  if (WIFEXITED(status) == 0) {
-			  fprintf(stderr, _("%s: unmount of `%s' did not exit normally\n"), programName, fullName);
-			  exit(1);
+			  errx(1, _("unmount of `%s' did not exit normally\n"), fullName);
 		  }
 		  if (WEXITSTATUS(status) != 0) {
-			  fprintf(stderr, _("%s: unmount of `%s' failed\n"), programName, fullName);
-			  exit(1);
+			  errx(1, _("unmount of `%s' failed\n"), fullName);
 		  }
 		  break;
 	}
@@ -648,8 +634,7 @@ static int OpenDevice(const char *fullName)
 {
 	int fd = open(fullName, O_RDONLY|O_NONBLOCK);
 	if (fd == -1) {
-		fprintf(stderr, _("%s: unable to open `%s'\n"), programName, fullName);
-		exit(1);
+		errx(1 , _("unable to open `%s'\n"), fullName);
 	}
 	return fd;
 }
@@ -693,8 +678,7 @@ static int MountedDevice(const char *name, char **mountName, char **deviceName)
 	fp = fopen((p_option ? "/proc/mounts" : "/etc/mtab"), "r");
 	if (fp == NULL)
 	{
-		fprintf(stderr, _("unable to open %s: %s\n"), (p_option ? "/proc/mounts" : "/etc/mtab"), strerror(errno));
-		exit(1);
+		err(1, _("unable to open %s"), (p_option ? "/proc/mounts" : "/etc/mtab"));
 	}
 
 	while (fgets(line, sizeof(line), fp) != 0) {
@@ -740,7 +724,7 @@ static int MountableDevice(const char *name, char **mountName, char **deviceName
 /*		fprintf(stderr, _("%s: unable to open /etc/fstab: %s\n"), programName, strerror(errno));
 		exit(1);*/
 		if (v_option) {
-			printf( _("%s: unable to open /etc/fstab: %s\n"), programName, strerror(errno));
+			warn( _("unable to open /etc/fstab") );
 		}
 		return -1;
 	}
@@ -773,15 +757,13 @@ static void UnmountDevices(const char *pattern)
 	int status;
 
 	if (regcomp(&preg, pattern, REG_EXTENDED)!=0) {
-		perror(programName);
-		exit(1);
+    err(0, _("regcomp"));
 	}
 
 	fp = fopen((p_option ? "/proc/mounts" : "/etc/mtab"), "r");
 	if (fp == NULL)
 	{
-		fprintf(stderr, _("unable to open %s: %s\n"),(p_option ? "/proc/mounts" : "/etc/mtab"), strerror(errno));
-		exit(1);
+		err(1, _("unable to open %s"),(p_option ? "/proc/mounts" : "/etc/mtab"));
 	}
 
 	while (fgets(line, sizeof(line), fp) != 0) {
@@ -790,7 +772,7 @@ static void UnmountDevices(const char *pattern)
 			status = regexec(&preg, s1, 0, 0, 0);
 			if (status == 0) {
 				if (v_option)
-					printf(_("%s: unmounting `%s'\n"), programName, s1);
+					printf(_("%s: unmounting `%s'\n"), program_invocation_short_name, s1);
 				Unmount(s1);
 				regfree(&preg);
 			}
@@ -863,12 +845,12 @@ static char *MultiplePartitions(const char *name)
 			result[strlen(partitionDevice[i]) + 6] = 0;
 			strcat(result, "([0-9]?[0-9])?$");
 			if (v_option)
-				printf(_("%s: `%s' is a multipartition device\n"), programName, name);
+				printf(_("%s: `%s' is a multipartition device\n"), program_invocation_short_name, name);
 			return result;
 		}
 	}
 	if (v_option)
-		printf(_("%s: `%s' is not a multipartition device\n"), programName, name);
+		printf(_("%s: `%s' is not a multipartition device\n"), program_invocation_short_name, name);
 	return 0;
 }
 
@@ -881,9 +863,9 @@ void HandleXOption(char *deviceName)
 		if (v_option)
 		{
 			if (x_arg == 0)
-				printf(_("%s: setting CD-ROM speed to auto\n"), programName);
+				printf(_("%s: setting CD-ROM speed to auto\n"), program_invocation_short_name);
 			else
-				printf(_("%s: setting CD-ROM speed to %dX\n"), programName, x_arg);
+				printf(_("%s: setting CD-ROM speed to %dX\n"), program_invocation_short_name, x_arg);
 		}
 		fd = OpenDevice(deviceName);
 		SelectSpeedCdrom(fd, x_arg);
@@ -895,6 +877,7 @@ void HandleXOption(char *deviceName)
 /* main program */
 int main(int argc, char **argv)
 {
+
 	const char *defaultDevice = EJECT_DEFAULT_DEVICE;  /* default if no name passed by user */
 	int worked = 0;    /* set to 1 when successfully ejected */
 	char *device = 0;  /* name passed from user */
@@ -913,7 +896,7 @@ int main(int argc, char **argv)
 	bindtextdomain("eject",LOCALEDIR);
 
 	/* program name is global variable used by other procedures */
-	programName = strdup(argv[0]);
+	char *programName = program_invocation_short_name;
 
 	/* parse the command line arguments */
 	parse_args(argc, argv, &device);
@@ -1114,8 +1097,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!worked) {
-		fprintf(stderr, _("%s: unable to eject, last error: %s\n"), programName, strerror(errno));
-		exit(1);
+		err(1, _("unable to eject, last error"), programName, strerror(errno));
 	}
 
 	/* cleanup */
