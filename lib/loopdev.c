@@ -763,7 +763,7 @@ int loopmod_supports_partscan(void)
 		return 0;
 	rc = fscanf(f, "%d", &ret);
 	fclose(f);
-	return rc = 1 ? ret : 0;
+	return rc == 1 ? ret : 0;
 }
 
 /*
