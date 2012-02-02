@@ -513,7 +513,7 @@ static struct libmnt_table *parse_tabfiles(char **files,
 					   int tabtype)
 {
 	struct libmnt_table *tb;
-	int rc;
+	int rc = 0;
 
 	tb = mnt_new_table();
 	if (!tb) {
