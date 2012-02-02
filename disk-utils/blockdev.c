@@ -281,13 +281,13 @@ int main(int argc, char **argv)
 static void do_commands(int fd, char **argv, int d)
 {
 	int res, i, j;
-	int iarg;
-	unsigned int uarg;
-	unsigned short huarg;
-	long larg;
-	long long llarg;
-	unsigned long lu;
-	unsigned long long llu;
+	int iarg = 0;
+	unsigned int uarg = 0;
+	unsigned short huarg = 0;
+	long larg = 0;
+	long long llarg = 0;
+	unsigned long lu = 0;
+	unsigned long long llu = 0;
 	int verbose = 0;
 
 	for (i = 1; i < d; i++) {
