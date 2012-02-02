@@ -1416,14 +1416,13 @@ static void usage(const char *fmt, ...)
 		 "\n"), usageto);
 #endif
 
-	fflush(usageto);
 	if (fmt) {
-		usageto = stderr;
 		va_start(ap, fmt);
-		vfprintf(stderr, fmt, ap);
+		vfprintf(usageto, fmt, ap);
 		va_end(ap);
 	}
 
+	fflush(usageto);
 	hwclock_exit(fmt ? EX_USAGE : EX_OK);
 }
 
