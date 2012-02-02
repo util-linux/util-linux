@@ -469,10 +469,11 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 {
 	char buf[1024];
 	char *p = NULL;
+	int st_rc = 0;
 
 	if (!cxt->st.st_rdev && (id == COL_OWNER || id == COL_GROUP ||
 				 id == COL_MODE))
-		stat(cxt->filename, &cxt->st);
+		st_rc = stat(cxt->filename, &cxt->st);
 
 	switch(id) {
 	case COL_NAME:
@@ -487,14 +488,14 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		break;
 	case COL_OWNER:
 	{
-		struct passwd *pw = getpwuid(cxt->st.st_uid);
+		struct passwd *pw = st_rc ? NULL : getpwuid(cxt->st.st_uid);
 		if (pw)
 			tt_line_set_data(ln, col, xstrdup(pw->pw_name));
 		break;
 	}
 	case COL_GROUP:
 	{
-		struct group *gr = getgrgid(cxt->st.st_gid);
+		struct group *gr = st_rc ? NULL : getgrgid(cxt->st.st_gid);
 		if (gr)
 			tt_line_set_data(ln, col, xstrdup(gr->gr_name));
 		break;
@@ -502,8 +503,11 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 	case COL_MODE:
 	{
 		char md[11];
-		strmode(cxt->st.st_mode, md);
-		tt_line_set_data(ln, col, xstrdup(md));
+
+		if (!st_rc) {
+			strmode(cxt->st.st_mode, md);
+			tt_line_set_data(ln, col, xstrdup(md));
+		}
 		break;
 	}
 	case COL_MAJMIN:
