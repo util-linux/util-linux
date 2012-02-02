@@ -1138,12 +1138,14 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 			char buf[BUFSIZ];
 			int t0, t1, t2;
 
-			while (fgets(buf, sizeof(buf), fd) != NULL) {
+			while (fd && fgets(buf, sizeof(buf), fd) != NULL) {
 				if (sscanf(buf, "CPU Topology SW:%d%d%d%d%d%d",
 					   &t0, &t1, &t2, &books, &sockets_per_book,
 					   &cores_per_socket) == 6)
 					break;
 			}
+			if (fd)
+				fclose(fd);
 		}
 		print_n(_("Thread(s) per core:"), desc->nthreads / desc->ncores);
 		print_n(_("Core(s) per socket:"),
