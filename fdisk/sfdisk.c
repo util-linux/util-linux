@@ -123,7 +123,6 @@ static int
 sseek(char *dev, int fd, unsigned long s) {
     off_t in, out;
     in = ((off_t) s << 9);
-    out = 1;
 
     if ((out = lseek(fd, in, SEEK_SET)) != in) {
 	perror("lseek");
