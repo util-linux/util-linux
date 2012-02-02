@@ -344,7 +344,7 @@ restore_sectors(char *dev) {
     }
     free(ss0);
 
-    if (!reread_disk_partition(dev, fdout))
+    if (!reread_disk_partition(dev, fdout))	/* closes fdout */
 	goto err;
     close(fdin);
 
@@ -3102,7 +3102,7 @@ do_change_id(char *dev, char *pnam, char *id) {
     pno = asc_to_index(pnam, z);
     if (id == 0) {
 	printf("%x\n", z->partitions[pno].p.sys_type);
-	return;
+	goto done;
     }
     i = strtoul(id, NULL, 16);
     if (i > 255)
@@ -3114,6 +3114,7 @@ do_change_id(char *dev, char *pnam, char *id) {
     else
 	exit_status = 1;
 
+done:
     close(fd);
 }
 
@@ -3224,9 +3225,10 @@ do_fdisk(char *dev) {
     else
 	exit_status = 1;
 
-    if (!reread_disk_partition(dev, fd))
+    if (!reread_disk_partition(dev, fd)) {	/* close fd on success */
+	close(fd);
 	exit_status = 1;
-
+    }
     my_warn(_("If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 	      "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
 	      "(See fdisk(8).)\n"));
