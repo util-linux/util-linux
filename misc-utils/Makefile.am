@@ -34,7 +34,7 @@ namei_SOURCES = namei.c $(top_srcdir)/lib/strutils.c
 
 
 usrbin_exec_PROGRAMS += eject
-eject_SOURCES = eject.c
+eject_SOURCES = eject.c $(top_srcdir)/lib/strutils.c
 dist_man_MANS += eject.1
 
 

@@ -32,6 +32,8 @@
 #include "linux_version.h"
 #include "c.h"
 #include "nls.h"
+#include "strutils.h"
+#include "xalloc.h"
 
 #define EJECT_DEFAULT_DEVICE "/dev/cdrom"
 
@@ -68,26 +70,24 @@
 
 
 /* Global Variables */
-const char *version = VERSION; /* program version */
-int a_option = 0; /* command flags and arguments */
-int c_option = 0;
-int d_option = 0;
-int f_option = 0;
-int h_option = 0;
-int n_option = 0;
-int q_option = 0;
-int r_option = 0;
-int s_option = 0;
-int t_option = 0;
-int T_option = 0;
-int v_option = 0;
-int x_option = 0;
-int p_option = 0;
-int m_option = 0;
-int a_arg = 0;
-int c_arg = 0;
-int x_arg = 0;
-
+static int a_option; /* command flags and arguments */
+static int c_option;
+static int d_option;
+static int f_option;
+static int h_option;
+static int n_option;
+static int q_option;
+static int r_option;
+static int s_option;
+static int t_option;
+static int T_option;
+static int v_option;
+static int x_option;
+static int p_option;
+static int m_option;
+static int a_arg;
+static long int c_arg;
+static long int x_arg;
 
 /*
  * These are the basenames of devices which can have multiple
@@ -111,7 +111,6 @@ static void usage()
 {
 //    perror(_("%s: device is `%s'\n"));
 	fprintf(stderr,_(
-"Eject version %s by Jeff Tranter (tranter@pobox.com)\n"
 "Usage:\n"
 "  eject -h				-- display command usage and exit\n"
 "  eject -V				-- display program version and exit\n"
@@ -132,7 +131,7 @@ static void usage()
 "  -p\t-- use /proc/mounts instead of /etc/mtab\n"
 "  -m\t-- do not unmount device even if it is mounted\n"
 )
-, version);
+);
 
 
 	fprintf(stderr,_(
@@ -205,21 +204,15 @@ static void parse_args(int argc, char **argv, char **device)
 			  if (!strcmp(optarg, "0"))
 				  c_arg = 0;
 			  else {
-				  c_arg = atoi(optarg);
-				  if (c_arg <= 0) {
-					  errx(1, _("invalid argument to --changerslot/-c option"));
-				  }
-			  }
+				  c_arg = strtol_or_err( optarg, _("invalid argument to --changerslot/-c option"));
+				}
 			  break;
 		  case 'x':
 			  x_option = 1;
 			  if (!strcmp(optarg, "0"))
 				  x_arg = 0;
 			  else {
-				  x_arg = atoi(optarg);
-				  if (x_arg <= 0) {
-					  errx(1, _("%s: invalid argument to --cdspeed/-x option"));
-				  }
+				  x_arg = strtol_or_err( optarg, _("invalid argument to --cdspeed/-x option"));
 			  }
 			  break;
 		  case 'd':
@@ -260,11 +253,12 @@ static void parse_args(int argc, char **argv, char **device)
 			  v_option = 1;
 			  break;
 		  case 'V':
-			  printf(_("eject version %s by Jeff Tranter (tranter@pobox.com)\n"), version);
-			  exit(0);
+			  printf(UTIL_LINUX_VERSION);
+
 			  break;
+      default:
 		  case '?':
-			  exit(1);
+			  usage();
 			  break;
 		}
 	}
@@ -273,7 +267,7 @@ static void parse_args(int argc, char **argv, char **device)
 		errx(1, _("%s: too many arguments"));
 	}
 	if ((argc - optind) == 1) { /* one argument */
-		*device = strdup(argv[optind]);
+		*device = xstrdup(argv[optind]);
 	}
 }
 
