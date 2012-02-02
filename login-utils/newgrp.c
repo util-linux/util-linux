@@ -138,7 +138,8 @@ int main(int argc, char *argv[])
 	if (!(pw_entry = getpwuid(getuid())))
 		err(EXIT_FAILURE, _("who are you?"));
 
-	shell = (pw_entry->pw_shell[0] ? pw_entry->pw_shell : _PATH_BSHELL);
+	shell = (pw_entry->pw_shell && *pw_entry->pw_shell ?
+				pw_entry->pw_shell : _PATH_BSHELL);
 
 	if (argc < 2) {
 		if (setgid(pw_entry->pw_gid) < 0)

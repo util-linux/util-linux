@@ -1363,7 +1363,7 @@ int main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	if (*pwd->pw_shell == '\0')
+	if (pwd->pw_shell == NULL || *pwd->pw_shell == '\0')
 		pwd->pw_shell = _PATH_BSHELL;
 
 	init_environ(&cxt);		/* init $HOME, $TERM ... */

@@ -185,7 +185,7 @@ int main(int argc, char **argv)
 	if (check_shell(shell) < 0)
 		return EXIT_FAILURE;
 
-	if (!strcmp(pw->pw_shell, shell))
+	if (strcmp(oldshell, shell) == 0)
 		errx(EXIT_SUCCESS, _("Shell not changed."));
 	pw->pw_shell = shell;
 	if (setpwnam(pw) < 0) {
