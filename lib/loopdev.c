@@ -320,7 +320,7 @@ int loopcxt_init_iterator(struct loopdev_cxt *lc, int flags)
  */
 int loopcxt_deinit_iterator(struct loopdev_cxt *lc)
 {
-	struct loopdev_iter *iter = &lc->iter;
+	struct loopdev_iter *iter;
 
 	if (!lc)
 		return -EINVAL;
