@@ -545,7 +545,9 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 
 		fclose(f);
 		f = NULL;
-		rc = rename(uq, upd->filename) ? -errno : 0;
+
+		if (!rc)
+			rc = rename(uq, upd->filename) ? -errno : 0;
 	} else {
 		rc = -errno;
 		close(fd);
