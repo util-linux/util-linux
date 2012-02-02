@@ -2922,14 +2922,14 @@ do_size(char *dev, int silent) {
 	    perror(dev);
 	    errx(EXIT_FAILURE, _("Cannot get size of %s"), dev);
 	}
-	return;
+	goto done;
     }
 
     size /= 2;			/* convert sectors to blocks */
 
     /* a CDROM drive without mounted CD yields MAXINT */
     if (silent && size == ((1 << 30) - 1))
-	return;
+	goto done;
 
     if (silent)
 	printf("%s: %9llu\n", dev, size);
@@ -2938,6 +2938,7 @@ do_size(char *dev, int silent) {
 
     total_size += size;
 
+done:
     close(fd);
 }
 
