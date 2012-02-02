@@ -1439,7 +1439,7 @@ int main(int argc, char **argv)
 				    p + 1 : pwd->pw_shell), sizeof(tbuf) - 1);
 
 		childArgv[childArgc++] = pwd->pw_shell;
-		childArgv[childArgc++] = tbuf;
+		childArgv[childArgc++] = xstrdup(tbuf);
 	}
 
 	childArgv[childArgc++] = NULL;
