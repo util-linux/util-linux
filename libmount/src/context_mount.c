@@ -27,12 +27,14 @@
  */
 static int fix_optstr(struct libmnt_context *cxt)
 {
-	int rc = 0, se_rem = 0, se_fix = 0;
+	int rc = 0;
 	char *next;
 	char *name, *val;
 	size_t namesz, valsz;
 	struct libmnt_fs *fs;
-
+#ifdef HAVE_LIBSELINUX
+	int se_fix = 0, se_rem = 0;
+#endif
 	assert(cxt);
 	assert(cxt->fs);
 	assert((cxt->flags & MNT_FL_MOUNTFLAGS_MERGED));
