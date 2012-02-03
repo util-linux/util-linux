@@ -658,8 +658,8 @@ sgi_add_partition(int n, int sys)
 		}
 		if (display_in_cyl_units)
 			first *= units_per_sector;
-		else
-			first = first; /* align to cylinder if you know how ... */
+		/*else
+			first = first; * align to cylinder if you know how ... */
 		if (!last)
 			last = isinfreelist(first);
 		if (last == 0) {
@@ -673,8 +673,8 @@ sgi_add_partition(int n, int sys)
 			scround(first), mesg)+1;
 	if (display_in_cyl_units)
 		last *= units_per_sector;                                     
-	else                                                             
-		last = last; /* align to cylinder if You know how ... */
+	/*else                                                             
+		last = last; * align to cylinder if You know how ... */
 	if ((sys == SGI_VOLUME) && (first != 0 || last != sgi_get_lastblock()))
 		printf(_("It is highly recommended that eleventh partition\n"
 			 "covers the entire disk and is of type `SGI volume'\n"));
