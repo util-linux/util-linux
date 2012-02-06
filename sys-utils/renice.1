@@ -36,58 +36,52 @@
 renice \- alter priority of running processes
 .SH SYNOPSIS
 .B renice
--n priority [options] <pid> [...]
+.RB [ \-n ]
+.I priority
+.RB [ \-gpu ]
+.IR identifier ...
 .SH DESCRIPTION
-.B Renice
+.B renice
 alters the scheduling priority of one or more running processes.  The
-following
-.I who
-parameters are interpreted as process ID's, process group ID's, or user
-names.
-.BR Renice 'ing
+first argument is the \fIpriority\fR value to be used.
+The other arguments are interpreted as process IDs (by default),
+process group IDs, user IDs, or user names.
+.BR renice 'ing
 a process group causes all processes in the process group to have their
 scheduling priority altered.
-.BR Renice 'ing
+.BR renice 'ing
 a user causes all processes owned by the user to have their scheduling
-priority altered.  By default, the processes to be affected are specified by
-their process ID's.
+priority altered.
 .PP
 .SH OPTIONS
 .TP
-\fB\-n\fR, \fB\-\-priority\fR \fIpriority\fR
-The scheduling
+.BR \-n , " \-\-priority " \fIpriority\fR
+Specify the scheduling
 .I priority
-of the process, process group, or user.  Use of
+to be used for the process, process group, or user.  Use of the option
 .BR \-n " or " \-\-priority
-can only exist as the first argument of
-.B renice
-command.
+is optional, but when used it must be the first argument.
 .TP
-\fB\-g\fR, \fB\-\-pgrp\fR \fIpgid\fR
-Force
-.I who
-parameters to be interpreted as \fIprocess group ID\fR's.
+.BR \-g , " \-\-pgrp " \fIpgid\fR...
+Force the succeeding arguments to be interpreted as process group IDs.
 .TP
-\fB\-u\fR, \fB\-\-user\fR \fIname\fR or \fIuid\fR
-Force the
-.I who
-parameters to be interpreted as \fIuser name\fR or \fIid\fR.
+.BR \-u , " \-\-user " \fIname_or_uid\fR...
+Force the succeeding arguments to be interpreted as usernames or UIDs.
 .TP
-\fB\-p\fR, \fB\-\-pid\fR \fIprocess id\fR
-Resets the
-.I who
-interpretation to be (the default) \fIprocess ID\fR's.
+.BR \-p , " \-\-pid " \fIpid\fR...
+Force the succeeding arguments to be interpreted as process IDs
+(the default).
 .TP
-\fB\-v\fR, \fB\-\-version\fR
-Print version.
+.BR \-h , " \-\-help"
+Display a help text.
 .TP
-\fB\-h\fR, \fB\-\-help\fR
-Print help.
+.BR \-V , " \-\-version"
+Display version information.
 .SH EXAMPLES
+The following command would change the priority of the processes with
+PIDs 987 and 32, plus all processes owned by the users daemon and root:
 .TP
-.B renice +1 987 -u daemon root -p 32
-would change the priority of process ID's 987 and 32, and all processes owned
-by users daemon and root.
+.B "       renice" +1 987 -u daemon root -p 32
 .SH NOTES
 Users other than the super-user may only alter the priority of processes they
 own, and can only monotonically increase their ``nice value'' (for security
@@ -105,7 +99,7 @@ negative (to make things go very fast).
 .SH FILES
 .TP
 .B /etc/passwd
-to map user names to user ID's
+to map user names to user IDs
 .SH SEE ALSO
 .BR getpriority (2),
 .BR setpriority (2)

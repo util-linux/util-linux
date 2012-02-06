@@ -65,7 +65,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -p, --pid <id>         interpret argument as process ID (default)\n"
 		" -u, --user <name|id>   interpret argument as username or user ID\n"
 		" -h, --help             display help text and exit\n"
-		" -v, --version          display version information and exit\n"), out);
+		" -V, --version          display version information and exit\n"), out);
 
 	fputs(_("\nFor more information see renice(1).\n"), out);
 
@@ -73,9 +73,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 }
 
 /*
- * Change the priority (nice) of processes
- * or groups of processes which are already
- * running.
+ * Change the priority (the nice value) of processes
+ * or groups of processes which are already running.
  */
 int
 main(int argc, char **argv)
@@ -98,8 +97,10 @@ main(int argc, char **argv)
 			usage(stdout);
 
 		if (strcmp(*argv, "-v") == 0 ||
+		    strcmp(*argv, "-V") == 0 ||
 		    strcmp(*argv, "--version") == 0) {
-			printf(_("renice from %s\n"), PACKAGE_STRING);
+			printf(_("%s from %s\n"),
+			       program_invocation_short_name, PACKAGE_STRING);
 			exit(EXIT_SUCCESS);
 		}
 	}
