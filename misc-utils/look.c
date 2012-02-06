@@ -370,9 +370,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	      _(" %s [options] string [file]\n"), program_invocation_short_name);
 
 	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -a, --alternative      use alternate dictionary\n"
-		" -d, --alphanum         compare only alpha numeric characters\n"
-		" -f, --ignore-case      ignore when comparing\n"
+	fputs(_(" -a, --alternative      use alternative dictionary\n"
+		" -d, --alphanum         compare only alphanumeric characters\n"
+		" -f, --ignore-case      ignore case differences when comparing\n"
 		" -t, --terminate <char> define string termination character\n"
 		" -V, --version          output version information and exit\n"
 		" -h, --help             display this help and exit\n\n"), out);

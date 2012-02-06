@@ -142,13 +142,13 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 	fputs(_("\nOptions:\n"), out);
 	fputs(_(" -f <file>  define search scope\n"
-		" -b         search only binaries\n"
+		" -b         search only for binaries\n"
 		" -B <dirs>  define binaries lookup path\n"
-		" -m         search only manual paths\n"
+		" -m         search only for manuals\n"
 		" -M <dirs>  define man lookup path\n"
-		" -s         search only sources path\n"
+		" -s         search only for sources\n"
 		" -S <dirs>  define sources lookup path\n"
-		" -u         search from unusual entities\n"
+		" -u         search for unusual entries\n"
 		" -V         output version information and exit\n"
 		" -h         display this help and exit\n\n"), out);
 
