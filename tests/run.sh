@@ -28,6 +28,9 @@ while [ -n "$1" ]; do
 	--fake)
 		OPTS="$OPTS --fake"
 		;;
+	--memcheck)
+		OPTS="$OPTS --memcheck"
+		;;
 	--*)
 		echo "Unknown option $1"
 		echo "Usage: run [--fake] [--force] [<component> ...]"
