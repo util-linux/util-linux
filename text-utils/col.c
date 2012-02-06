@@ -141,7 +141,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 static void __attribute__((__noreturn__)) wrerr(void)
 {
-	errx(EXIT_FAILURE, _("write error."));
+	errx(EXIT_FAILURE, _("write error"));
 }
 
 int main(int argc, char **argv)

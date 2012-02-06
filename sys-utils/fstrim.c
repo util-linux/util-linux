@@ -123,7 +123,7 @@ int main(int argc, char **argv)
 	}
 
 	if (optind == argc)
-		errx(EXIT_FAILURE, _("no mountpoint specified."));
+		errx(EXIT_FAILURE, _("no mountpoint specified"));
 
 	path = argv[optind++];
 
