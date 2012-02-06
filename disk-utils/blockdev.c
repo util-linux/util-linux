@@ -229,7 +229,7 @@ int main(int argc, char **argv)
 
 	/* -V not together with commands */
 	if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
-		printf(_("%s (%s)\n"), program_invocation_short_name,
+		printf(_("%s from %s\n"), program_invocation_short_name,
 		       PACKAGE_STRING);
 		return EXIT_SUCCESS;
 	}

@@ -811,7 +811,8 @@ main (int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf ("umount (%s)\n", PACKAGE_STRING);
+			printf(_("%s from %s\n"),
+			       program_invocation_short_name, PACKAGE_STRING);
 			exit (0);
 		case 't':		/* specify file system type */
 			types = optarg;

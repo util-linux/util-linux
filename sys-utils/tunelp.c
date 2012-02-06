@@ -246,7 +246,8 @@ int main(int argc, char **argv)
 #endif
 		case 'v':
 		case 'V':
-			printf(UTIL_LINUX_VERSION);
+			printf(_("%s from %s\n"),
+			       program_invocation_short_name, PACKAGE_STRING);
 			return EXIT_SUCCESS;
 		default:
 			print_usage(stderr);

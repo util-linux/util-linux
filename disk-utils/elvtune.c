@@ -64,7 +64,8 @@ usage(void) {
 
 static void
 version(void) {
-	fprintf(stderr, "elvtune (%s)\n", PACKAGE_STRING);
+	fprintf(stderr, _("%s from %s\n"),
+			program_invocation_short_name, PACKAGE_STRING);
 }
 
 int

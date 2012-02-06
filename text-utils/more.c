@@ -568,7 +568,8 @@ void argscan(char *s)
 		case '\t':
 			break;
 		case 'V':
-			printf(_("more (%s)\n"), PACKAGE_STRING);
+                        printf(_("%s from %s\n"),
+                               program_invocation_short_name, PACKAGE_STRING);
 			exit(EXIT_SUCCESS);
 			break;
 		default:
