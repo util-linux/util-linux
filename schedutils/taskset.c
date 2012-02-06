@@ -93,8 +93,7 @@ static void print_affinity(struct taskset *ts, int isnew)
 	}
 
 	if (!str)
-		/* this is internal error... */
-		errx(EXIT_FAILURE, _("conversion from cpuset to string failed"));
+		errx(EXIT_FAILURE, _("internal error: conversion from cpuset to string failed"));
 
 	printf(msg, ts->pid, str);
 }

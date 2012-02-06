@@ -74,7 +74,7 @@ ttymsg(struct iovec *iov, size_t iovcnt, char *line, int tmout) {
 	int fd, forked = 0, errsv;
 
 	if (iovcnt > sizeof(localiov) / sizeof(localiov[0]))
-		return (_("too many iov's (change code in wall/ttymsg.c)"));
+		return (_("internal error: too many iov's"));
 
 	/* The old code here rejected the line argument when it contained a '/',
 	   saying: "A slash may be an attempt to break security...".
