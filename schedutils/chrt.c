@@ -263,8 +263,8 @@ int main(int argc, char **argv)
 			verbose = 1;
 			break;
 		case 'V':
-			printf("%s from %s\n", program_invocation_short_name,
-					       PACKAGE_STRING);
+			printf(_("%s from %s\n"), program_invocation_short_name,
+			       PACKAGE_STRING);
 			return EXIT_SUCCESS;
 		case 'h':
 			ret = EXIT_SUCCESS;

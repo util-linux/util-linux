@@ -88,7 +88,6 @@ static int do_rename(char *from, char *to, char *s, int verbose, int symtarget)
 			printf("`%s' -> `%s'\n", s, newname);
 	}
 
-
 	free(newname);
 	return 1;
 }
@@ -148,7 +147,7 @@ int main(int argc, char **argv)
 	argv += optind;
 
 	if (argc < 3) {
-		warnx("not enough arguments");
+		warnx(_("not enough arguments"));
 		usage(stderr);
 	}
 

@@ -353,7 +353,7 @@ int main(int argc, char **argv)
 		if (options.autolog) {
 			/* Autologin prompt */
 			do_prompt(&options, &termios);
-			printf("%s%s (automatic login)\n", LOGIN, options.autolog);
+			printf(_("%s%s (automatic login)\n"), LOGIN, options.autolog);
 		} else {
 			/* Read the login name. */
 			debug("reading login name\n");
@@ -901,7 +901,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 
 		if (((tid = tcgetsid(fd)) < 0) || (pid != tid)) {
 			if (ioctl(fd, TIOCSCTTY, 1) == -1)
-				log_warn("/dev/%s: cannot get controlling tty: %m", tty);
+				log_warn(_("/dev/%s: cannot get controlling tty: %m"), tty);
 		}
 
 		close(STDIN_FILENO);
@@ -923,7 +923,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 			closed = 1;
 
 			if (vhangup())
-				log_err("/dev/%s: vhangup() failed: %m", tty);
+				log_err(_("/dev/%s: vhangup() failed: %m"), tty);
 		} else
 			close(fd);
 
@@ -933,7 +933,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 
 		if (((tid = tcgetsid(STDIN_FILENO)) < 0) || (pid != tid)) {
 			if (ioctl(STDIN_FILENO, TIOCSCTTY, 1) == -1)
-				log_warn("/dev/%s: cannot get controlling tty: %m", tty);
+				log_warn(_("/dev/%s: cannot get controlling tty: %m"), tty);
 		}
 
 	} else {
@@ -949,7 +949,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 	}
 
 	if (tcsetpgrp(STDIN_FILENO, pid))
-		log_warn("/dev/%s: cannot set process group: %m", tty);
+		log_warn(_("/dev/%s: cannot set process group: %m"), tty);
 
 	/* Get rid of the present outputs. */
 	if (!closed) {
@@ -980,7 +980,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 	 */
 	memset(tp, 0, sizeof(struct termios));
 	if (tcgetattr(STDIN_FILENO, tp) < 0)
-		log_err("%s: tcgetattr: %m", tty);
+		log_err(_("%s: failed to get terminal attributes: %m"), tty);
 
 	/*
 	 * Detect if this is a virtual console or serial/modem line.
@@ -1138,7 +1138,7 @@ static void reset_vc(const struct options *op, struct termios *tp)
 	reset_virtual_console(tp, fl);
 
 	if (tcsetattr(STDIN_FILENO, TCSADRAIN, tp))
-		log_warn("tcsetattr problem: %m");
+		log_warn(_("setting terminal attributes failed: %m"));
 }
 
 /* Extract baud rate from modem status message. */
@@ -1276,7 +1276,7 @@ static void do_prompt(struct options *op, struct termios *tp)
 	}
 #endif	/* ISSUE */
 	if (op->flags & F_LOGINPAUSE) {
-		puts("[press ENTER to login]");
+		puts(_("[press ENTER to login]"));
 		getc(stdin);
 	}
 #ifdef KDGKBLED
@@ -1497,7 +1497,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 
 		len = mbstowcs((wchar_t *)0, logname, 0);
 		if (len < 0)
-			log_err("%s: invalid character conversion for login name", op->tty);
+			log_err(_("%s: invalid character conversion for login name"), op->tty);
 
 		wcs = (wchar_t *) malloc((len + 1) * sizeof(wchar_t));
 		if (!wcs)
@@ -1505,13 +1505,13 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 
 		len = mbstowcs(wcs, logname, len + 1);
 		if (len < 0)
-			log_err("%s: invalid character conversion for login name", op->tty);
+			log_err(_("%s: invalid character conversion for login name"), op->tty);
 
 		wcp = wcs;
 		while (*wcp) {
 			const wint_t wc = *wcp++;
 			if (!iswprint(wc))
-				log_err("%s: invalid character 0x%x in login name", op->tty, wc);
+				log_err(_("%s: invalid character 0x%x in login name"), op->tty, wc);
 		}
 		free(wcs);
 	} else
@@ -1596,7 +1596,7 @@ static void termio_final(struct options *op, struct termios *tp, struct chardata
 
 	/* Finally, make the new settings effective. */
 	if (tcsetattr(STDIN_FILENO, TCSANOW, tp) < 0)
-		log_err("%s: tcsetattr: TCSANOW: %m", op->tty);
+		log_err(_("%s: failed to set terminal attributes: %m"), op->tty);
 }
 
 /*
@@ -2053,6 +2053,6 @@ static void check_username(const char* nm)
 	return;
 err:
 	errno = EPERM;
-	log_err("checkname: %m");
+	log_err(_("checkname failed: %m"));
 }
 

@@ -434,7 +434,7 @@ wipe_device(int fd, const char *devname, int force)
 			fprintf(stderr, _("        (%s partition table detected). "), type);
 		else
 			fprintf(stderr, _("        (compiled without libblkid). "));
-		fprintf(stderr, "Use -f to force.\n");
+		fprintf(stderr, _("Use -f to force.\n"));
 	}
 #ifdef HAVE_LIBBLKID
 	blkid_free_probe(pr);
@@ -485,13 +485,13 @@ main(int argc, char **argv) {
 			force=1;
 			break;
 		case 'p':
-			user_pagesize = strtou32_or_err(optarg, _("parse page size failed"));
+			user_pagesize = strtou32_or_err(optarg, _("parsing page size failed"));
 			break;
 		case 'L':
 			opt_label = optarg;
 			break;
 		case 'v':
-			version = strtos32_or_err(optarg, _("parse version number failed"));
+			version = strtos32_or_err(optarg, _("parsing version number failed"));
 			break;
 		case 'U':
 #ifdef HAVE_LIBUUID
@@ -515,7 +515,7 @@ main(int argc, char **argv) {
 	if (optind < argc)
 		block_count = argv[optind++];
 	if (optind != argc) {
-		warnx(("only one device as argument is currently supported."));
+		warnx(_("only one device argument is currently supported"));
 		usage(stderr);
 	}
 
@@ -526,7 +526,7 @@ main(int argc, char **argv) {
 #ifdef HAVE_LIBUUID
 	if(opt_uuid) {
 		if (uuid_parse(opt_uuid, uuid_dat) != 0)
-			errx(EXIT_FAILURE, _("error: UUID parsing failed"));
+			errx(EXIT_FAILURE, _("error: parsing UUID failed"));
 	} else
 		uuid_generate(uuid_dat);
 	uuid = uuid_dat;

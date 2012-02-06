@@ -82,8 +82,8 @@ static void ioprio_print(int pid)
 			name = to_prio[ioclass];
 
 		if (ioclass != IOPRIO_CLASS_IDLE)
-			printf("%s: prio %lu\n", name,
-					IOPRIO_PRIO_DATA(ioprio));
+			printf(_("%s: priority %lu\n"), name,
+			       IOPRIO_PRIO_DATA(ioprio));
 		else
 			printf("%s\n", name);
 	}

@@ -163,7 +163,7 @@ int main(int argc, char **argv)
 			ts.use_list = 1;
 			break;
 		case 'V':
-			printf("%s from %s\n", program_invocation_short_name,
+			printf(_("%s from %s\n"), program_invocation_short_name,
 			       PACKAGE_STRING);
 			return EXIT_SUCCESS;
 		case 'h':
