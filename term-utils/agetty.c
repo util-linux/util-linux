@@ -1819,6 +1819,9 @@ static void output_special_char(unsigned char c, struct options *op,
 		time(&now);
 		tm = localtime(&now);
 
+		if (!tm)
+			break;
+
 		if (c == 'd') /* ISO 8601 */
 			printf("%s %s %d  %d",
 				      nl_langinfo(ABDAY_1 + tm->tm_wday),
