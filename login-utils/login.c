@@ -217,7 +217,7 @@ static const char *get_thishost(struct login_context *cxt, const char **domain)
  */
 static void motd(void)
 {
-	char *motdlist, *motdfile, *cp;
+	char *motdlist, *motdfile;
 	const char *mb;
 
 	mb = getlogindefs_str("MOTD_FILE", _PATH_MOTDFILE);
@@ -226,7 +226,9 @@ static void motd(void)
 
 	motdlist = xstrdup(mb);
 
-	for (cp = motdlist; (motdfile = strtok(cp, ":")); cp = NULL) {
+	for (motdfile = strtok(motdlist, ":"); motdfile;
+	     motdfile = strtok(NULL, ":")) {
+
 		struct stat st;
 		int fd;
 
@@ -239,6 +241,8 @@ static void motd(void)
 		sendfile(fileno(stdout), fd, NULL, st.st_size);
 		close(fd);
 	}
+
+	free(motdlist);
 }
 
 /*
