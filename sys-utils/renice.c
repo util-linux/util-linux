@@ -54,18 +54,18 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(_("\nUsage:\n"), out);
 	fprintf(out,
-	      _(" %1$s [-n] <priority> [-p] <pid> [<pid>  ...]\n"
-		" %1$s [-n] <priority>  -g <pgrp> [<pgrp> ...]\n"
-		" %1$s [-n] <priority>  -u <user> [<user> ...]\n"),
+	      _(" %1$s [-n] <priority> [-p|--pid] <pid>...\n"
+		" %1$s [-n] <priority>  -g|--pgrp <pgid>...\n"
+		" %1$s [-n] <priority>  -u|--user <user>...\n"),
 		program_invocation_short_name);
 
 	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -g, --pgrp <id>        interpret as process group ID\n"
-		" -h, --help             print help\n"
-		" -n, --priority <num>   set the nice increment value\n"
-		" -p, --pid <id>         force to be interpreted as process ID\n"
-		" -u, --user <name|id>   interpret as username or user ID\n"
-		" -v, --version          print version\n"), out);
+	fputs(_(" -g, --pgrp <id>        interpret argument as process group ID\n"
+		" -n, --priority <num>   specify the nice increment value\n"
+		" -p, --pid <id>         interpret argument as process ID (default)\n"
+		" -u, --user <name|id>   interpret argument as username or user ID\n"
+		" -h, --help             display help text and exit\n"
+		" -v, --version          display version information and exit\n"), out);
 
 	fputs(_("\nFor more information see renice(1).\n"), out);
 
