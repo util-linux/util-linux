@@ -65,6 +65,7 @@
 #include "nls.h"
 #include "setpwnam.h"
 #include "strutils.h"
+#include "xalloc.h"
 
 #ifdef HAVE_LIBSELINUX
 # include <selinux/selinux.h>
@@ -218,7 +219,7 @@ static void pw_edit(int notsetuid)
 	char *p, *editor, *tk;
 
 	editor = getenv("EDITOR");
-	editor = strdup(editor ? editor : _PATH_VI);
+	editor = xstrdup(editor ? editor : _PATH_VI);
 
 	tk = strtok(editor, " \t");
 	if (tk && (p = strrchr(tk, '/')) != NULL)
@@ -251,6 +252,8 @@ static void pw_edit(int notsetuid)
 	}
 	if (pid == -1 || !WIFEXITED(pstat) || WEXITSTATUS(pstat) != 0)
 		pw_error(editor, 1, 1);
+
+	free(editor);
 }
 
 void pw_error(char *name, int err, int eval)
