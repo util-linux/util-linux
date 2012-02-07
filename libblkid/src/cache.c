@@ -262,7 +262,7 @@ int main(int argc, char** argv)
 			argv[0], ret);
 		exit(1);
 	}
-	if ((ret = blkid_probe_all(cache) < 0))
+	if ((ret = blkid_probe_all(cache)) < 0)
 		fprintf(stderr, "error probing devices\n");
 
 	blkid_put_cache(cache);
