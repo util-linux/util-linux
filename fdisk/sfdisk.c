@@ -291,7 +291,7 @@ restore_sectors(char *dev) {
     int fdin = -1, fdout = -1;
     int ct;
     struct stat statbuf;
-    char *ss0, *ss;
+    char *ss0 = NULL, *ss;
     unsigned long sno;
 
     if (stat(restore_sector_file, &statbuf) < 0) {
@@ -304,10 +304,12 @@ restore_sectors(char *dev) {
 	error(_("partition restore file has wrong size - not restoring\n"));
 	goto err;
     }
-    if (!(ss = (char *)malloc(statbuf.st_size))) {
+    if (!(ss0 = (char *)malloc(statbuf.st_size))) {
 	error(_("out of memory?\n"));
 	goto err;
     }
+    ss = ss0;
+
     fdin = open(restore_sector_file, O_RDONLY);
     if (fdin < 0) {
 	perror(restore_sector_file);
@@ -328,7 +330,6 @@ restore_sectors(char *dev) {
 	goto err;
     }
 
-    ss0 = ss;
     ct = statbuf.st_size / 516;
     while (ct--) {
 	sno = chars_to_ulong((unsigned char *)ss);
@@ -342,6 +343,7 @@ restore_sectors(char *dev) {
 	ss += 516;
     }
     free(ss0);
+    ss0 = NULL;
 
     if (!reread_disk_partition(dev, fdout))	/* closes fdout */
 	goto err;
@@ -350,6 +352,7 @@ restore_sectors(char *dev) {
     return 1;
 
  err:
+    free(ss0);
     if (fdin >= 0)
 	close(fdin);
     if (fdout >= 0)
