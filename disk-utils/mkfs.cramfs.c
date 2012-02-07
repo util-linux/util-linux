@@ -875,6 +875,7 @@ int main(int argc, char **argv)
 			(long long) fslen_ub, offset);
 
 	written = write(fd, rom_image, offset);
+	close(fd);
 	if (written < 0)
 		err(MKFS_ERROR, _("ROM image"));
 	if (offset != written)
