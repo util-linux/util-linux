@@ -1196,7 +1196,7 @@ int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
 		const char *fmt, va_list ap)
 {
 	struct blkid_prval *v;
-	size_t len;
+	ssize_t len;
 
 	v = blkid_probe_assign_value(pr, name);
 	if (!v)
