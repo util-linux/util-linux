@@ -168,8 +168,6 @@ int main(int argc, char *argv[])
 	}
 
 	return bind(raw_minor, block_major, block_minor);
-	return 0;
-
 }
 
 
