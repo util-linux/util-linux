@@ -425,7 +425,7 @@ void blkid_read_cache(blkid_cache cache)
 			continue;
 		end = strlen(buf) - 1;
 		/* Continue reading next line if it ends with a backslash */
-		while (buf[end] == '\\' && end < sizeof(buf) - 2 &&
+		while (end < (sizeof(buf) - 2) && buf[end] == '\\' &&
 		       fgets(buf + end, sizeof(buf) - end, file)) {
 			end = strlen(buf) - 1;
 			lineno++;
