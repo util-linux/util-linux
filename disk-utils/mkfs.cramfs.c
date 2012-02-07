@@ -725,10 +725,15 @@ int main(int argc, char **argv)
 		case 'h':
 			usage(MKFS_OK);
 		case 'b':
-			blksize = strtoll_or_err(optarg, _("failed to parse blocksize argument"));
-			if (blksize <= 0)
-				usage(MKFS_USAGE);
+		{
+			long long tmp = strtoll_or_err(optarg,
+					_("failed to parse blocksize argument"));
+
+			if (tmp <= 0 || UINT_MAX < tmp)
+				errx(MKFS_USAGE, _("invalid block size"));
+			blksize = tmp;
 			break;
+		}
 		case 'E':
 			opt_errors = 1;
 			break;
