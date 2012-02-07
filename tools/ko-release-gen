@@ -26,7 +26,7 @@ VERSION=$(cat .version)
 VERSION_MAJOR=$(echo $VERSION | sed 's/-rc[0-9]//')
 DISTDIR=${1:-"kernel.org"}/v${VERSION_MAJOR}
 
-GPG_CMD="gpg --use-agent --armor --detach-sign --quiet --batch"
+GPG_CMD="gpg --use-agent --armor --detach-sign --quiet"
 
 function die {
 	echo $1
@@ -76,9 +76,13 @@ function add_html_dir {
 
 rm -rf $DISTDIR
 
+eval $(gpg-agent --daemon)
+
 add_file	util-linux-${VERSION}.tar.xz
 add_file	v${VERSION}-ChangeLog
 add_file	Documentation/releases/v${VERSION_MAJOR}-ReleaseNotes
 add_html_dir	libmount/docs/html libmount-docs
 add_html_dir	libblkid/docs/html libblkid-docs
+
+killall gpg-agent
 
