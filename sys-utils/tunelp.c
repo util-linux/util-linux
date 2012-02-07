@@ -254,7 +254,7 @@ int main(int argc, char **argv)
 	if (optind != argc - 1)
 		print_usage(stderr);
 
-	filename = strdup(argv[optind]);
+	filename = xstrdup(argv[optind]);
 	fd = open(filename, O_WRONLY | O_NONBLOCK, 0);
 	/* Need to open O_NONBLOCK in case ABORTOPEN is already set
 	 * and printer is off or off-line or in an error condition.
@@ -326,7 +326,7 @@ int main(int argc, char **argv)
 		else
 			printf(_("%s using polling\n"), filename);
 	}
-
+	free(filename);
 	close(fd);
 
 	return EXIT_SUCCESS;
