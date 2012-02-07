@@ -155,11 +155,13 @@ static int switchroot(const char *newroot)
 	cfd = open("/", O_RDONLY);
 
 	if (mount(newroot, "/", NULL, MS_MOVE, NULL) < 0) {
+		close(cfd);
 		warn(_("failed to mount moving %s to /"), newroot);
 		return -1;
 	}
 
 	if (chroot(".")) {
+		close(cfd);
 		warn(_("failed to change root"));
 		return -1;
 	}
