@@ -130,7 +130,7 @@ int main(int argc, char **argv)
 	cpu_set_t *new_set;
 	pid_t pid = 0;
 	int c, all_tasks = 0;
-	unsigned int ncpus;
+	int ncpus;
 	size_t new_setsize, nbits;
 	struct taskset ts;
 
