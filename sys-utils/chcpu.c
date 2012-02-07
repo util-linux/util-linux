@@ -47,7 +47,7 @@
 #define _PATH_SYS_CPU_DISPATCH	_PATH_SYS_CPU "/dispatching"
 
 static cpu_set_t *onlinecpus;
-static size_t maxcpus;
+static int maxcpus;
 
 #define is_cpu_online(cpu) (CPU_ISSET_S((cpu), CPU_ALLOC_SIZE(maxcpus), onlinecpus))
 #define num_online_cpus()  (CPU_COUNT_S(CPU_ALLOC_SIZE(maxcpus), onlinecpus))
@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 
 	maxcpus = get_max_number_of_cpus();
-	if ((int) maxcpus <= 0)
+	if (maxcpus < 1)
 		errx(EXIT_FAILURE, _("cannot determine NR_CPUS; aborting"));
 	if (path_exist(_PATH_SYS_CPU_ONLINE))
 		onlinecpus = path_cpulist(maxcpus, _PATH_SYS_CPU_ONLINE);
