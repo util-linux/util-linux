@@ -149,7 +149,6 @@ AC_CHECK_HEADERS(
         net/if.h \
 	net/if_dl.h \
         netinet/in.h \
-	rpcsvc/nfs_prot.h \
 	stdlib.h \
 	asm/io.h \
 	sys/disk.h \
@@ -169,7 +168,6 @@ AC_CHECK_HEADERS(
 	sys/stat.h \
 	sys/types.h \
 	sys/un.h \
-	sys/user.h \
 	sys/swap.h \
 	sys/resource.h \
 	security/pam_misc.h \
@@ -247,14 +245,12 @@ AC_CHECK_DECL([lseek64],
 	 #include <unistd.h>])
 
 AC_CHECK_FUNCS(
-	[inet_aton \
+	[\
 	err \
 	errx \
 	futimens \
-	fstat64 \
 	fsync \
 	getdomainname \
-	get_current_dir_name \
 	usleep \
 	nanosleep \
 	personality \
