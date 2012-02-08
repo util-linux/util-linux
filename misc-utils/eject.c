@@ -63,7 +63,7 @@
 #include <scsi/scsi_ioctl.h>
 #include <sys/time.h>
 
-/* Used by the ToggleTray() function. If ejecting the tray takes this
+/* Used by the toggle_tray() function. If ejecting the tray takes this
  * time or less, the tray was probably already ejected, so we close it
  * again.
  */
@@ -94,47 +94,47 @@ static long int x_arg;
  * These are the basenames of devices which can have multiple
  * partitions per device.
  */
-const char *partitionDevice[] = {
-	"hd",
-	"sd",
-	"xd",
-	"dos_hd",
-	"mfm",
-	"ad",
-	"ed",
-	"ftl",
-	"pd",
-	0};
+const char *partition_device[] = {
+    "hd",
+    "sd",
+    "xd",
+    "dos_hd",
+    "mfm",
+    "ad",
+    "ed",
+    "ftl",
+    "pd",
+    0
+};
 
 
 /* Display command usage on standard error and exit. */
-static void usage()
-{
-fprintf(stderr,_(
-  "Usage:\n"
-  " eject [options] <name>\n"
-  "Options:\n"
-  " -h, --help         display command usage and exit\n"
-  " -V  --version      display program version and exit\n"
-  " -d, --default      display default device\n"
-  " -a, --auto         turn auto-eject feature on or off\n"
-  " -c, --changerslot  switch discs on a CD-ROM changer\n"
-  " -t, --trayclose    close tray\n"
-  " -T, --traytoggle   toggle tray\n"
-  " -x, --cdspeed      set CD-ROM max speed\n"
-  " -v, --verbose      enable verbose output\n"
-  " -n, --noop         don't eject, just show device found\n"
-  " -r, --cdrom        eject CD-ROM\n"
-  " -s, --scsi         eject SCSI device\n"
-  " -f, --loppy        eject floppy\n"
-  " -q, --tape         eject tape\n"
-  "  -p, --proc         use /proc/mounts instead of /etc/mtab\n"
-  " -m, --no-unmount   do not unmount device even if it is mounted\n"
-  "\n"
-  "Parameter <name> can be a device file or a mount point.\n"
-  "If omitted, name defaults to `%s'.\n"
-  "By default tries -r, -s, -f, and -q in order until success.\n"),
-	EJECT_DEFAULT_DEVICE);
+static void usage() {
+    fprintf(stderr, _(
+        "Usage:\n"
+        " eject [options] <name>\n"
+        "Options:\n"
+        " -h, --help         display command usage and exit\n"
+        " -V  --version      display program version and exit\n"
+        " -d, --default      display default device\n"
+        " -a, --auto         turn auto-eject feature on or off\n"
+        " -c, --changerslot  switch discs on a CD-ROM changer\n"
+        " -t, --trayclose    close tray\n"
+        " -T, --traytoggle   toggle tray\n"
+        " -x, --cdspeed      set CD-ROM max speed\n"
+        " -v, --verbose      enable verbose output\n"
+        " -n, --noop         don't eject, just show device found\n"
+        " -r, --cdrom        eject CD-ROM\n"
+        " -s, --scsi         eject SCSI device\n"
+        " -f, --loppy        eject floppy\n"
+        " -q, --tape         eject tape\n"
+        "  -p, --proc         use /proc/mounts instead of /etc/mtab\n"
+        " -m, --no-unmount   do not unmount device even if it is mounted\n"
+        "\n"
+        "Parameter <name> can be a device file or a mount point.\n"
+        "If omitted, name defaults to `%s'.\n"
+        "By default tries -r, -s, -f, and -q in order until success.\n"),
+         EJECT_DEFAULT_DEVICE);
   exit(1);
 }
 
@@ -271,21 +271,18 @@ void e_fclose(FILE *fp) {
 }
 
 /* Return 1 if file/device exists, 0 otherwise. */
-static int FileExists(const char *name)
-{
-
-	/*
-	 * access() uses the UID, not the EUID. This way a normal user
-	 * cannot find out if a file (say, /root/fubar) exists or not, even
-	 * if eject is SUID root
-	 */
-	if (access (name, F_OK) == 0) {
-		return 1;
-	}	else {
-		return 0;
-	}
+static int file_exists(const char *name) {
+    /*
+    * access() uses the UID, not the EUID. This way a normal user
+    * cannot find out if a file (say, /root/fubar) exists or not, even
+    * if eject is SUID root
+   */
+   if (access (name, F_OK) == 0) {
+       return 1;
+   } else {
+       return 0;
+   }
 }
-
 
 /*
  * Given name, such as foo, see if any of the following exist:
@@ -296,21 +293,20 @@ static int FileExists(const char *name)
  * If found, return the full path. If not found, return 0.
  * Returns pointer to dynamically allocated string.
  */
-static char *find_device(const char *name)
-{
+static char *find_device(const char *name) {
 	char *buf;
 
 	buf = (char *) xmalloc(strlen(name)+14); /* to allow for "/dev/cdroms/ + "0" + null */
 
 	if ((name[0] == '.') || (name[0] == '/')) {
 		strcpy(buf, name);
-		if (FileExists(buf))
+		if (file_exists(buf))
 			return buf;
 	}
 
 	strcpy(buf, "/dev/");
 	strcat(buf, name);
-	if (FileExists(buf))
+	if (file_exists(buf))
 		return buf;
 
 	free(buf);
@@ -320,8 +316,7 @@ static char *find_device(const char *name)
 
 
 /* Set or clear auto-eject mode. */
-static void AutoEject(int fd, int onOff)
-{
+static void auto_eject(int fd, int onOff) {
 	int status;
 
 	status = ioctl(fd, CDROMEJECT_SW, onOff);
@@ -335,8 +330,7 @@ static void AutoEject(int fd, int onOff)
  * Changer select. CDROM_SELECT_DISC is preferred, older kernels used
  * CDROMLOADFROMSLOT.
  */
-static void ChangerSelect(int fd, int slot)
-{
+static void changer_select(int fd, int slot) {
 	int status;
 
 #ifdef CDROM_SELECT_DISC
@@ -358,8 +352,7 @@ static void ChangerSelect(int fd, int slot)
 /*
  * Close tray. Not supported by older kernels.
  */
-static void CloseTray(int fd)
-{
+static void close_tray(int fd) {
 	int status;
 
 #ifdef CDROMCLOSETRAY
@@ -382,8 +375,7 @@ static void CloseTray(int fd)
  * CloseTray().
  *
  */
-static void ToggleTray(int fd)
-{
+static void toggle_tray(int fd) {
 	struct timeval time_start, time_stop;
 	int time_elapsed;
 
@@ -412,7 +404,7 @@ static void ToggleTray(int fd)
 	 * was already open. In this case, close it now. Else the tray was
 	 * closed before. This would mean that we are done.  */
 	if (time_elapsed < TRAY_WAS_ALREADY_OPEN_USECS)
-		CloseTray(fd);
+		close_tray(fd);
 
 #else
     warnx( _("CD-ROM tray toggle command not supported by this kernel"));
@@ -425,8 +417,7 @@ static void ToggleTray(int fd)
  * Thanks to Roland Krivanek (krivanek@fmph.uniba.sk)
  * http://dmpc.dbp.fmph.uniba.sk/~krivanek/cdrom_speed/
  */
-static void SelectSpeedCdrom(int fd, int speed)
-{
+static void select_speed(int fd, int speed) {
 	int status;
 
 #ifdef CDROM_SELECT_SPEED
@@ -443,8 +434,7 @@ static void SelectSpeedCdrom(int fd, int speed)
 /*
  * Eject using CDROMEJECT ioctl. Return 1 if successful, 0 otherwise.
  */
-static int EjectCdrom(int fd)
-{
+static int eject_cdrom(int fd) {
 	int status;
 
 	status = ioctl(fd, CDROMEJECT);
@@ -455,8 +445,7 @@ static int EjectCdrom(int fd)
 /*
  * Eject using SCSI commands. Return 1 if successful, 0 otherwise.
  */
-static int EjectScsi(int fd)
-{
+static int eject_scsi(int fd) {
 	int status;
 	struct sdata {
 		int  inlen;
@@ -509,8 +498,7 @@ static int EjectScsi(int fd)
 /*
  * Eject using FDEJECT ioctl. Return 1 if successful, 0 otherwise.
  */
-static int EjectFloppy(int fd)
-{
+static int eject_floppy(int fd) {
 	int status;
 
 	status = ioctl(fd, FDEJECT);
@@ -521,8 +509,7 @@ static int EjectFloppy(int fd)
 /*
  * Eject using tape ioctl. Return 1 if successful, 0 otherwise.
  */
-static int EjectTape(int fd)
-{
+static int eject_tape(int fd) {
 	int status;
 	struct mtop op;
 
@@ -534,8 +521,7 @@ static int EjectTape(int fd)
 
 
 /* Unmount a device. */
-static void Unmount(const char *fullName)
-{
+static void unmount(const char *fullName) {
 	int status;
 
 	switch (fork()) {
@@ -564,8 +550,7 @@ static void Unmount(const char *fullName)
 
 
 /* Open a device file. */
-static int OpenDevice(const char *fullName)
-{
+static int open_device(const char *fullName) {
 	int fd = open(fullName, O_RDONLY|O_NONBLOCK);
 	if (fd == -1) {
 		errx(1 , _("unable to open `%s'\n"), fullName);
@@ -578,8 +563,7 @@ static int OpenDevice(const char *fullName)
  * Get major and minor device numbers for a device file name, so we
  * can check for duplicate devices.
  */
-static int GetMajorMinor(const char *name, int *maj, int *min)
-{
+static int get_major_minor(const char *name, int *maj, int *min) {
 	struct stat sstat;
 	*maj = *min = -1;
 	if (stat(name, &sstat) == -1)
@@ -596,8 +580,7 @@ static int GetMajorMinor(const char *name, int *maj, int *min)
  * See if device has been mounted by looking in mount table.  If so, set
  * device name and mount point name, and return 1, otherwise return 0.
  */
-static int MountedDevice(const char *name, char **mountName, char **deviceName)
-{
+static int mounted_device(const char *name, char **mountName, char **deviceName) {
 	FILE *fp;
 	char line[1024];
 	char s1[1024];
@@ -607,7 +590,7 @@ static int MountedDevice(const char *name, char **mountName, char **deviceName)
 	int maj;
 	int min;
 
-	GetMajorMinor(name, &maj, &min);
+	get_major_minor(name, &maj, &min);
 
 	fp = fopen((p_option ? "/proc/mounts" : "/etc/mtab"), "r");
 	if (fp == NULL)
@@ -619,7 +602,7 @@ static int MountedDevice(const char *name, char **mountName, char **deviceName)
 		rc = sscanf(line, "%1023s %1023s", s1, s2);
 		if (rc >= 2) {
 			int mtabmaj, mtabmin;
-			GetMajorMinor(s1, &mtabmaj, &mtabmin);
+			get_major_minor(s1, &mtabmaj, &mtabmin);
 			if (((strcmp(s1, name) == 0) || (strcmp(s2, name) == 0)) ||
 				((maj != -1) && (maj == mtabmaj) && (min == mtabmin))) {
 				e_fclose(fp);
@@ -640,8 +623,7 @@ static int MountedDevice(const char *name, char **mountName, char **deviceName)
  * Step through mount table and unmount all devices that match a regular
  * expression.
  */
-static void UnmountDevices(const char *pattern)
-{
+static void unmount_devices(const char *pattern) {
 	regex_t preg;
 	FILE *fp;
 	char s1[1024];
@@ -666,7 +648,7 @@ static void UnmountDevices(const char *pattern)
 			if (status == 0) {
 				if (v_option)
 					printf(_("%s: unmounting `%s'\n"), program_invocation_short_name, s1);
-				Unmount(s1);
+				unmount(s1);
 				regfree(&preg);
 			}
 		}
@@ -679,18 +661,17 @@ static void UnmountDevices(const char *pattern)
  * multiple partitions.  If so, return a regular expression that matches
  * partitions for that device, otherwise return 0.
  */
-static char *MultiplePartitions(const char *name)
-{
+static char *multiple_partitions(const char *name) {
 	int i = 0;
 	int status;
 	regex_t preg;
 	char pattern[256];
 	char *result = 0;
 
-	for (i = 0; partitionDevice[i] != 0; i++) {
+	for (i = 0; partition_device[i] != 0; i++) {
 		/* look for ^/dev/foo[a-z]([0-9]?[0-9])?$, e.g. /dev/hda1 */
 		strcpy(pattern, "^/dev/");
-		strcat(pattern, partitionDevice[i]);
+		strcat(pattern, partition_device[i]);
 		strcat(pattern, "[a-z]([0-9]?[0-9])?$");
 		regcomp(&preg, pattern, REG_EXTENDED|REG_NOSUB);
 		status = regexec(&preg, name, 1, 0, 0);
@@ -698,7 +679,7 @@ static char *MultiplePartitions(const char *name)
 		if (status == 0) {
 			result = (char *) malloc(strlen(name) + 25);
 			strcpy(result, name);
-			result[strlen(partitionDevice[i]) + 6] = 0;
+			result[strlen(partition_device[i]) + 6] = 0;
 			strcat(result, "([0-9]?[0-9])?$");
 			if (v_option)
 				printf(_("%s: `%s' is a multipartition device\n"), program_invocation_short_name, name);
@@ -712,8 +693,7 @@ static char *MultiplePartitions(const char *name)
 
 
 /* handle -x option */
-void HandleXOption(char *deviceName)
-{
+void handle_x_option(char *deviceName) {
 	int fd; 	   /* file descriptor for device */
 	if (x_option) {
 		if (v_option)
@@ -723,16 +703,15 @@ void HandleXOption(char *deviceName)
 			else
 				printf(_("%s: setting CD-ROM speed to %dX\n"), program_invocation_short_name, x_arg);
 		}
-		fd = OpenDevice(deviceName);
-		SelectSpeedCdrom(fd, x_arg);
+		fd = open_device(deviceName);
+		select_speed(fd, x_arg);
 		exit(0);
 	}
 }
 
 
 /* main program */
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
 
 	const char *defaultDevice = EJECT_DEFAULT_DEVICE;  /* default if no name passed by user */
 	int worked = 0;    /* set to 1 when successfully ejected */
@@ -803,7 +782,7 @@ int main(int argc, char **argv)
 	}
 
 	/* if mount point, get device name */
-	mounted = MountedDevice(fullName, &mountName, &deviceName);
+	mounted = mounted_device(fullName, &mountName, &deviceName);
 	if (v_option) {
 		if (mounted)
 			printf(_("%s: `%s' is mounted at `%s'\n"), programName, deviceName, mountName);
@@ -830,8 +809,8 @@ int main(int argc, char **argv)
 			else
 				printf(_("%s: disabling auto-eject mode for `%s'\n"), programName, deviceName);
 		}
-		fd = OpenDevice(deviceName);
-		AutoEject(fd, a_arg);
+		fd = open_device(deviceName);
+		auto_eject(fd, a_arg);
 		exit(0);
 	}
 
@@ -839,9 +818,9 @@ int main(int argc, char **argv)
 	if (t_option) {
 		if (v_option)
 			printf(_("%s: closing tray\n"), programName);
-		fd = OpenDevice(deviceName);
-		CloseTray(fd);
-		HandleXOption(deviceName);
+		fd = open_device(deviceName);
+		close_tray(fd);
+		handle_x_option(deviceName);
 		exit(0);
 	}
 
@@ -849,35 +828,35 @@ int main(int argc, char **argv)
 	if (T_option) {
 		if (v_option)
 			printf(_("%s: toggling tray\n"), programName);
-		fd = OpenDevice(deviceName);
-		ToggleTray(fd);
-		HandleXOption(deviceName);
+		fd = open_device(deviceName);
+		toggle_tray(fd);
+		handle_x_option(deviceName);
 		exit(0);
 	}
 
 	/* handle -x option only */
-	if (!c_option) HandleXOption(deviceName);
+	if (!c_option) handle_x_option(deviceName);
 
 	/* unmount device if mounted */
 	if ((m_option != 1) && mounted) {
 		if (v_option)
 			printf(_("%s: unmounting `%s'\n"), programName, deviceName);
-		Unmount(deviceName);
+		unmount(deviceName);
 	}
 
 	/* if it is a multipartition device, unmount any other partitions on
 	   the device */
-	pattern = MultiplePartitions(deviceName);
+	pattern = multiple_partitions(deviceName);
 	if ((m_option != 1) && (pattern != 0))
-		UnmountDevices(pattern);
+		unmount_devices(pattern);
 
 	/* handle -c option */
 	if (c_option) {
 		if (v_option)
 			printf(_("%s: selecting CD-ROM disc #%d\n"), programName, c_arg);
-		fd = OpenDevice(deviceName);
-		ChangerSelect(fd, c_arg);
-		HandleXOption(deviceName);
+		fd = open_device(deviceName);
+		changer_select(fd, c_arg);
+		handle_x_option(deviceName);
 		exit(0);
 	}
 
@@ -887,13 +866,13 @@ int main(int argc, char **argv)
 	}
 
 	/* open device */
-	fd = OpenDevice(deviceName);
+	fd = open_device(deviceName);
 
 	/* try various methods of ejecting until it works */
 	if (r_option) {
 		if (v_option)
 			printf(_("%s: trying to eject `%s' using CD-ROM eject command\n"), programName, deviceName);
-		worked = EjectCdrom(fd);
+		worked = eject_cdrom(fd);
 		if (v_option) {
 			if (worked)
 				printf(_("%s: CD-ROM eject command succeeded\n"), programName);
@@ -905,7 +884,7 @@ int main(int argc, char **argv)
 	if (s_option && !worked) {
 		if (v_option)
 			printf(_("%s: trying to eject `%s' using SCSI commands\n"), programName, deviceName);
-		worked = EjectScsi(fd);
+		worked = eject_scsi(fd);
 		if (v_option) {
 			if (worked)
 				printf(_("%s: SCSI eject succeeded\n"), programName);
@@ -917,7 +896,7 @@ int main(int argc, char **argv)
 	if (f_option && !worked) {
 		if (v_option)
 			printf(_("%s: trying to eject `%s' using floppy eject command\n"), programName, deviceName);
-		worked = EjectFloppy(fd);
+		worked = eject_floppy(fd);
 		if (v_option) {
 			if (worked)
 				printf(_("%s: floppy eject command succeeded\n"), programName);
@@ -929,7 +908,7 @@ int main(int argc, char **argv)
 	if (q_option && !worked) {
 		if (v_option)
 			printf(_("%s: trying to eject `%s' using tape offline command\n"), programName, deviceName);
-		worked = EjectTape(fd);
+		worked = eject_tape(fd);
 		if (v_option) {
 			if (worked)
 				printf(_("%s: tape offline command succeeded\n"), programName);
