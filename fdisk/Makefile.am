@@ -2,9 +2,15 @@ include $(top_srcdir)/config/include-Makefile.am
 
 EXTRA_DIST = partitiontype.c
 
-fdisk_common = i386_sys_types.c common.h gpt.c gpt.h \
-	$(top_srcdir)/lib/blkdev.c $(top_srcdir)/lib/wholedisk.c \
-	$(top_srcdir)/lib/mbsalign.c $(top_srcdir)/lib/strutils.c
+fdisk_common = \
+	common.h \
+	gpt.c \
+	gpt.h \
+	i386_sys_types.c \
+	$(top_srcdir)/lib/blkdev.c \
+	$(top_srcdir)/lib/mbsalign.c \
+	$(top_srcdir)/lib/strutils.c \
+	$(top_srcdir)/lib/wholedisk.c
 
 if LINUX
 fdisk_common += $(top_srcdir)/lib/linux_version.c
@@ -14,10 +20,21 @@ if !ARCH_M68K
 
 sbin_PROGRAMS = fdisk
 dist_man_MANS = fdisk.8
-fdisk_SOURCES = fdisk.c fdiskbsdlabel.c fdisksgilabel.c \
-	fdisksunlabel.c fdiskaixlabel.c fdiskmaclabel.c partname.c \
-	fdisk.h fdisksunlabel.h fdisksgilabel.h fdiskaixlabel.h \
-	fdiskbsdlabel.h fdiskmaclabel.h $(fdisk_common) \
+fdisk_SOURCES = \
+	fdisk.c \
+	fdisk.h \
+	fdiskaixlabel.c \
+	fdiskaixlabel.h \
+	fdiskbsdlabel.c \
+	fdiskbsdlabel.h \
+	fdiskmaclabel.c \
+	fdiskmaclabel.h \
+	fdisksgilabel.c \
+	fdisksgilabel.h \
+	fdisksunlabel.c \
+	fdisksunlabel.h \
+	partname.c \
+	$(fdisk_common) \
 	$(top_srcdir)/lib/canonicalize.c
 
 cflags_blkid = $(AM_CFLAGS)
@@ -43,7 +60,10 @@ if !ARCH_SPARC
 
 sbin_PROGRAMS += sfdisk
 dist_man_MANS += sfdisk.8
-sfdisk_SOURCES = sfdisk.c partname.c $(fdisk_common) \
+sfdisk_SOURCES = \
+	partname.c \
+	sfdisk.c \
+	$(fdisk_common) \
 	$(top_srcdir)/lib/canonicalize.c
 
 if HAVE_STATIC_SFDISK
@@ -70,4 +90,3 @@ endif
 
 endif # !ARCH_SPARC
 endif # !ARCH_M68K
-

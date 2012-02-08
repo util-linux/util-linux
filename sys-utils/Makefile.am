@@ -2,11 +2,23 @@ include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS =
 sbin_PROGRAMS =
-usrbin_exec_PROGRAMS = flock ipcrm ipcs ipcmk renice setsid
+usrbin_exec_PROGRAMS = \
+	flock \
+	ipcmk \
+	ipcrm \
+	ipcs \
+	renice \
+	setsid
 usrsbin_exec_PROGRAMS = readprofile
 
-dist_man_MANS = flock.1 ipcrm.1 ipcs.1 ipcmk.1 renice.1 setsid.1 \
-		readprofile.8
+dist_man_MANS = \
+	flock.1 \
+	ipcmk.1 \
+	ipcrm.1 \
+	ipcs.1 \
+	readprofile.8 \
+	renice.1 \
+	setsid.1
 
 if LINUX
 #
@@ -18,8 +30,16 @@ sbin_PROGRAMS += ctrlaltdel fsfreeze fstrim
 usrbin_exec_PROGRAMS += cytune setarch
 usrsbin_exec_PROGRAMS += ldattach tunelp rtcwake
 
-dist_man_MANS += dmesg.1 ctrlaltdel.8 cytune.8 setarch.8 \
-		ldattach.8 tunelp.8 rtcwake.8 fsfreeze.8 fstrim.8
+dist_man_MANS += \
+	ctrlaltdel.8 \
+	cytune.8 \
+	dmesg.1 \
+	fsfreeze.8 \
+	fstrim.8 \
+	ldattach.8 \
+	rtcwake.8 \
+	setarch.8 \
+	tunelp.8
 endif # LINUX
 
 
@@ -27,14 +47,15 @@ if BUILD_LOSETUP
 sbin_PROGRAMS += losetup
 dist_man_MANS += losetup.8
 
-losetup_SOURCES = losetup.c \
-		$(top_srcdir)/lib/linux_version.c \
-		$(top_srcdir)/lib/at.c \
-		$(top_srcdir)/lib/sysfs.c \
-		$(top_srcdir)/lib/loopdev.c \
-		$(top_srcdir)/lib/canonicalize.c \
-		$(top_srcdir)/lib/xgetpass.c \
-		$(top_srcdir)/lib/strutils.c
+losetup_SOURCES = \
+	losetup.c \
+	$(top_srcdir)/lib/at.c \
+	$(top_srcdir)/lib/canonicalize.c \
+	$(top_srcdir)/lib/linux_version.c \
+	$(top_srcdir)/lib/loopdev.c \
+	$(top_srcdir)/lib/strutils.c \
+	$(top_srcdir)/lib/sysfs.c \
+	$(top_srcdir)/lib/xgetpass.c
 
 if HAVE_STATIC_LOSETUP
 bin_PROGRAMS += losetup.static
@@ -47,9 +68,11 @@ endif # BUILD_LOSETUP
 if BUILD_PRLIMIT
 usrbin_exec_PROGRAMS += prlimit
 dist_man_MANS += prlimit.1
-prlimit_SOURCES = prlimit.c $(top_srcdir)/lib/strutils.c \
-			$(top_srcdir)/lib/mbsalign.c \
-			$(top_srcdir)/lib/tt.c
+prlimit_SOURCES = \
+	prlimit.c \
+	$(top_srcdir)/lib/mbsalign.c \
+	$(top_srcdir)/lib/strutils.c \
+	$(top_srcdir)/lib/tt.c
 endif
 
 
@@ -61,10 +84,11 @@ if BUILD_NEW_MOUNT
 bin_PROGRAMS += mount umount
 dist_man_MANS += mount.8 ../mount/fstab.5 ../mount/umount.8
 
-mount_SOURCES = mount.c \
-		$(top_srcdir)/lib/env.c \
-		$(top_srcdir)/lib/xgetpass.c \
-		$(top_srcdir)/lib/strutils.c
+mount_SOURCES = \
+	mount.c \
+	$(top_srcdir)/lib/env.c \
+	$(top_srcdir)/lib/strutils.c \
+	$(top_srcdir)/lib/xgetpass.c
 
 mount_LDADD = $(ul_libmount_la) $(SELINUX_LIBS)
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS) -I$(ul_libmount_incdir)
@@ -97,12 +121,13 @@ if BUILD_SWAPON
 sbin_PROGRAMS += swapon
 dist_man_MANS += swapoff.8 swapon.8
 
-swapon_SOURCES = swapon.c \
-		$(top_srcdir)/lib/linux_version.c \
-		$(top_srcdir)/lib/blkdev.c \
-		$(top_srcdir)/lib/fsprobe.c \
-		$(top_srcdir)/lib/canonicalize.c \
-		$(top_srcdir)/lib/mangle.c
+swapon_SOURCES = \
+	swapon.c \
+	$(top_srcdir)/lib/blkdev.c \
+	$(top_srcdir)/lib/canonicalize.c \
+	$(top_srcdir)/lib/fsprobe.c \
+	$(top_srcdir)/lib/linux_version.c \
+	$(top_srcdir)/lib/mangle.c
 
 swapon_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 swapon_LDADD = $(ul_libblkid_la)
@@ -110,22 +135,30 @@ endif
 
 if BUILD_LSCPU
 usrbin_exec_PROGRAMS += lscpu
-lscpu_SOURCES = lscpu.c $(top_srcdir)/lib/cpuset.c \
-			$(top_srcdir)/lib/strutils.c \
-			$(top_srcdir)/lib/mbsalign.c \
-			$(top_srcdir)/lib/tt.c \
-			$(top_srcdir)/lib/path.c
+lscpu_SOURCES = \
+	lscpu.c \
+	$(top_srcdir)/lib/cpuset.c \
+	$(top_srcdir)/lib/mbsalign.c \
+	$(top_srcdir)/lib/path.c \
+	$(top_srcdir)/lib/strutils.c \
+	$(top_srcdir)/lib/tt.c
 dist_man_MANS += lscpu.1
 endif
 
 if BUILD_CHCPU
 sbin_PROGRAMS += chcpu
-chcpu_SOURCES = chcpu.c $(top_srcdir)/lib/cpuset.c \
-			$(top_srcdir)/lib/path.c
+chcpu_SOURCES = \
+	chcpu.c \
+	$(top_srcdir)/lib/cpuset.c \
+	$(top_srcdir)/lib/path.c
 dist_man_MANS += chcpu.8
 endif
 
-cytune_SOURCES = cytune.c cyclades.h $(top_srcdir)/lib/strutils.c
+cytune_SOURCES = \
+	cytune.c \
+	cyclades.h \
+	$(top_srcdir)/lib/strutils.c
+
 tunelp_SOURCES = tunelp.c lp.h
 fstrim_SOURCES = fstrim.c $(top_srcdir)/lib/strutils.c
 rtcwake_SOURCES = rtcwake.c $(top_srcdir)/lib/strutils.c
@@ -223,4 +256,3 @@ uninstall-hook:
 	for I in $(SETARCH_LINKS); do \
 		rm -f $(DESTDIR)$(usrbin_execdir)/$$I ; \
 	done
-

@@ -17,20 +17,20 @@ endif
 MAN_DIRS = man/ru
 
 SUBDIRS = \
-	include \
+	$(MAN_DIRS) \
+	$(SHLIBS_DIRS) \
 	disk-utils \
 	fdisk \
 	getopt \
+	include \
 	lib \
-	$(SHLIBS_DIRS) \
-	$(MAN_DIRS) \
 	login-utils \
 	misc-utils \
 	po \
 	sys-utils \
 	term-utils \
-	text-utils \
-	tests
+	tests \
+	text-utils
 
 
 RCS_FIND_IGNORE = \( -name SCCS -o -name BitKeeper -o -name .svn -o \
@@ -60,12 +60,11 @@ AUTOMAKE_OPTIONS = gnu
 ACLOCAL_AMFLAGS = -I m4
 
 EXTRA_DIST = \
-		.version \
-		autogen.sh \
-		README.licensing \
-		po/update-potfiles \
-		tools \
-		Documentation
+	.version \
+	autogen.sh \
+	Documentation \
+	po/update-potfiles \
+	README.licensing
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.

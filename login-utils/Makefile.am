@@ -14,20 +14,43 @@ endif
 if BUILD_LOGIN_UTILS
 
 bin_PROGRAMS += login
-usrbin_exec_PROGRAMS += chfn chsh newgrp
-usrsbin_exec_PROGRAMS += vipw
-dist_man_MANS += chfn.1 chsh.1 login.1 newgrp.1 vipw.8 vigr.8
+usrbin_exec_PROGRAMS += \
+	chfn \
+	chsh \
+	newgrp
+usrsbin_exec_PROGRAMS += \
+	vipw
+dist_man_MANS += \
+	chfn.1 \
+	chsh.1 \
+	login.1 \
+	newgrp.1 \
+	vigr.8 \
+	vipw.8
 
 # login, chfn and chsh libs
 login_ldadd_common =
 
-chfn_SOURCES = chfn.c $(chfn_chsh_common)
-chsh_SOURCES = chsh.c $(chfn_chsh_common)
-chfn_chsh_common = islocal.c setpwnam.c islocal.h setpwnam.h \
+chfn_SOURCES = \
+	chfn.c \
+	$(chfn_chsh_common)
+chsh_SOURCES = \
+	chsh.c \
+	$(chfn_chsh_common)
+chfn_chsh_common = \
+	islocal.c \
+	islocal.h \
+	setpwnam.c \
+	setpwnam.h \
 	$(top_srcdir)/lib/env.c
-login_SOURCES = login.c logindefs.c logindefs.h \
-		$(top_srcdir)/lib/setproctitle.c
-vipw_SOURCES = vipw.c setpwnam.h
+login_SOURCES = \
+	login.c \
+	logindefs.c \
+	logindefs.h \
+	$(top_srcdir)/lib/setproctitle.c
+vipw_SOURCES = \
+	vipw.c \
+	setpwnam.h
 
 chfn_LDADD = $(login_ldadd_common)
 chsh_LDADD = $(login_ldadd_common)

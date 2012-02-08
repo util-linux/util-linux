@@ -1,39 +1,59 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-AM_CPPFLAGS += -I$(ul_libmount_incdir) \
-	       -I$(ul_libmount_srcdir) \
-	       -I$(ul_libblkid_incdir)
+AM_CPPFLAGS += \
+	-I$(ul_libblkid_incdir) \
+	-I$(ul_libmount_incdir) \
+	-I$(ul_libmount_srcdir)
 
 # includes
 mountincdir = $(includedir)/libmount
 nodist_mountinc_HEADERS = libmount.h
 
 usrlib_exec_LTLIBRARIES = libmount.la
-libmount_la_SOURCES =	mountP.h version.c utils.c test.c init.c cache.c \
-			optstr.c optmap.c iter.c lock.c \
-			fs.c tab.c tab_parse.c tab_update.c tab_diff.c \
-			context.c context_mount.c context_umount.c \
-			context_loopdev.c \
-			$(mountinc_HEADERS) \
-			$(top_srcdir)/lib/at.c \
-			$(top_srcdir)/lib/match.c \
-			$(top_srcdir)/include/list.h \
-			$(top_srcdir)/lib/mangle.c \
-			$(top_srcdir)/lib/canonicalize.c \
-			$(top_srcdir)/lib/strutils.c \
-			$(top_srcdir)/lib/env.c \
-			$(top_srcdir)/lib/loopdev.c \
-			$(top_srcdir)/lib/sysfs.c \
-			$(top_srcdir)/lib/linux_version.c
+libmount_la_SOURCES = \
+	cache.c \
+	context.c \
+	context_loopdev.c \
+	context_mount.c \
+	context_umount.c \
+	fs.c \
+	init.c \
+	iter.c \
+	lock.c \
+	mountP.h \
+	optmap.c \
+	optstr.c \
+	tab.c \
+	tab_diff.c \
+	tab_parse.c \
+	tab_update.c \
+	test.c \
+	utils.c \
+	version.c \
+	$(mountinc_HEADERS) \
+	$(top_srcdir)/include/list.h \
+	$(top_srcdir)/lib/at.c \
+	$(top_srcdir)/lib/canonicalize.c \
+	$(top_srcdir)/lib/env.c \
+	$(top_srcdir)/lib/linux_version.c \
+	$(top_srcdir)/lib/loopdev.c \
+	$(top_srcdir)/lib/mangle.c \
+	$(top_srcdir)/lib/match.c \
+	$(top_srcdir)/lib/strutils.c \
+	$(top_srcdir)/lib/sysfs.c
 
 nodist_libmount_la_SOURCES = mountP.h
 
 libmount_la_LIBADD = $(ul_libblkid_la) $(SELINUX_LIBS)
 
-libmount_la_DEPENDENCIES = $(libmount_la_LIBADD) libmount.sym libmount.h.in
+libmount_la_DEPENDENCIES = \
+	$(libmount_la_LIBADD) \
+	libmount.sym \
+	libmount.h.in
 
-libmount_la_LDFLAGS = -Wl,--version-script=$(ul_libmount_srcdir)/libmount.sym \
-                      -version-info $(LIBMOUNT_VERSION_INFO)
+libmount_la_LDFLAGS = \
+	-Wl,--version-script=$(ul_libmount_srcdir)/libmount.sym \
+	-version-info $(LIBMOUNT_VERSION_INFO)
 
 TESTS_LIBS = -luuid
 
@@ -60,13 +80,19 @@ uninstall-hook:
 	rm -f $(DESTDIR)$(libdir)/libmount.so*
 
 
-tests = test_version test_cache test_optstr test_lock \
-	test_tab test_utils test_tab_update test_context \
-	test_tab_diff
+tests = \
+	test_cache \
+	test_context \
+	test_lock \
+	test_optstr \
+	test_tab \
+	test_tab_diff \
+	test_tab_update \
+	test_utils \
+	test_version
 
 tests: all $(tests)
 test_%: %.c
 	$(AM_V_CC)$(COMPILE) -DTEST_PROGRAM $< .libs/libmount.a \
 		$(ul_libblkid_builddir)/.libs/libblkid.a -o $@ \
 		$(TESTS_LIBS)
-

@@ -13,4 +13,3 @@ pkgconfig_DATA = blkid.pc
 dist_man_MANS = libblkid.3
 
 EXTRA_DIST = blkid.pc.in libblkid.3
-

@@ -2,9 +2,17 @@ include $(top_srcdir)/config/include-Makefile.am
 
 AM_CPPFLAGS += -DTEST_PROGRAM
 
-noinst_PROGRAMS = test_blkdev test_ismounted test_wholedisk test_mangle \
-		  test_tt test_canonicalize test_strutils test_procutils \
-		  test_at
+noinst_PROGRAMS = \
+	test_at \
+	test_blkdev \
+	test_canonicalize \
+	test_ismounted \
+	test_mangle \
+	test_procutils \
+	test_strutils \
+	test_tt \
+	test_wholedisk
+
 if LINUX
 if HAVE_CPU_SET_T
 noinst_PROGRAMS += test_cpuset
@@ -28,10 +36,11 @@ test_cpuset_SOURCES = cpuset.c
 test_sysfs_SOURCES = sysfs.c at.c
 test_sysfs_CFLAGS = -DTEST_PROGRAM_SYSFS
 
-test_loopdev_SOURCES = loopdev.c \
-		       $(test_sysfs_SOURCES) \
-		       $(top_srcdir)/lib/linux_version.c \
-		       $(top_srcdir)/lib/canonicalize.c
+test_loopdev_SOURCES = \
+	loopdev.c \
+	$(test_sysfs_SOURCES) \
+	$(top_srcdir)/lib/canonicalize.c \
+	$(top_srcdir)/lib/linux_version.c
 
 test_loopdev_CFLAGS = -DTEST_PROGRAM_LOOPDEV
 endif
@@ -44,4 +53,3 @@ test_canonicalize_CFLAGS = -DTEST_PROGRAM_CANONICALIZE
 if LINUX
 test_blkdev_SOURCES += linux_version.c
 endif
-

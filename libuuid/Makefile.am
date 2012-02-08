@@ -7,4 +7,3 @@ pkgconfigdir = $(usrlib_execdir)/pkgconfig
 pkgconfig_DATA = uuid.pc
 
 EXTRA_DIST = uuid.pc.in
-

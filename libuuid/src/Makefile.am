@@ -10,16 +10,29 @@ uuidincdir = $(includedir)/uuid
 uuidinc_HEADERS = uuid.h
 
 usrlib_exec_LTLIBRARIES = libuuid.la
-libuuid_la_SOURCES = clear.c compare.c copy.c gen_uuid.c \
-           isnull.c pack.c parse.c unpack.c unparse.c uuidd.h \
-           uuidd.h uuidP.h uuid_time.c $(uuidinc_HEADERS)
+
+libuuid_la_SOURCES = \
+	clear.c \
+	compare.c \
+	copy.c \
+	gen_uuid.c \
+	isnull.c \
+	pack.c \
+	parse.c \
+	unpack.c \
+	unparse.c \
+	uuidd.h \
+	uuidd.h \
+	uuidP.h \
+	uuid_time.c \
+	$(uuidinc_HEADERS)
 
 libuuid_la_DEPENDENCIES = uuid.sym
 
 libuuid_la_LIBADD = $(SOCKET_LIBS)
 
 libuuid_la_LDFLAGS = -Wl,--version-script=$(ul_libuuid_srcdir)/uuid.sym \
-                     -version-info $(LIBUUID_VERSION_INFO)
+		     -version-info $(LIBUUID_VERSION_INFO)
 
 EXTRA_DIST = uuid.sym gen_uuid_nt.c
 
@@ -37,4 +50,3 @@ install-exec-hook:
 
 uninstall-hook:
 	rm -f $(DESTDIR)$(libdir)/libuuid.so*
-

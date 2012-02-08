@@ -4,9 +4,9 @@ dist_noinst_HEADERS = \
 	at.h \
 	bitops.h \
 	blkdev.h \
+	c.h \
 	canonicalize.h \
 	carefulputc.h \
-	c.h \
 	cpuset.h \
 	crc32.h \
 	env.h \
@@ -28,6 +28,7 @@ dist_noinst_HEADERS = \
 	path.h \
 	pathnames.h \
 	procutils.h \
+	rpmatch.h \
 	setproctitle.h \
 	strutils.h \
 	swapheader.h \
@@ -37,6 +38,5 @@ dist_noinst_HEADERS = \
 	wholedisk.h \
 	widechar.h \
 	writeall.h \
-	rpmatch.h \
 	xgetpass.h \
 	xalloc.h

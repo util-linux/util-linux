@@ -15,6 +15,9 @@ endif
 
 if BUILD_TASKSET
 usrbin_exec_PROGRAMS += taskset
-taskset_SOURCES = taskset.c $(top_srcdir)/lib/cpuset.c $(srcs_common)
+taskset_SOURCES = \
+	taskset.c \
+	$(top_srcdir)/lib/cpuset.c \
+	$(srcs_common)
 dist_man_MANS += taskset.1
 endif

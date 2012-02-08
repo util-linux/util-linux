@@ -9,7 +9,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([-Wall foreign 1.10 tar-pax dist-bzip2 no-dist-gzip dist-xz -Wno-portability])
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])],
-                            [AC_SUBST([AM_DEFAULT_VERBOSITY], [1])])
+			    [AC_SUBST([AM_DEFAULT_VERBOSITY], [1])])
 
 AC_CONFIG_SRCDIR(mount/mount.c)
 AC_PREFIX_DEFAULT([/usr])
@@ -17,7 +17,7 @@ AC_PREFIX_DEFAULT([/usr])
 dnl version details from <major>.<minor>[-<suffix>]
 PACKAGE_VERSION_MAJOR=$(echo $PACKAGE_VERSION | awk -F. '{print $1}')
 PACKAGE_VERSION_MINOR=$(echo $PACKAGE_VERSION | awk -F. '{print $2}' \
-                                              | awk -F- '{print $1}')
+					      | awk -F- '{print $1}')
 PACKAGE_VERSION_RELEASE=0
 
 dnl libblkid version
@@ -130,49 +130,49 @@ AC_CHECK_HEADERS([linux/compiler.h linux/blkpg.h linux/major.h], [], [], [
 #include <linux/compiler.h>
 #endif
 ])
-AC_CHECK_HEADERS(
-	[err.h \
+AC_CHECK_HEADERS([ \
+	asm/io.h \
+	err.h \
 	errno.h \
+	fcntl.h \
 	getopt.h \
+	inttypes.h \
+	linux/cdrom.h \
+	linux/falloc.h \
 	linux/fd.h \
+	linux/raw.h \
 	linux/tiocl.h \
 	linux/version.h \
-	linux/falloc.h \
-	linux/cdrom.h \
-	fcntl.h \
 	locale.h \
-	stdint.h \
-	inttypes.h \
+	mntent.h \
+	net/if.h \
+	net/if_dl.h \
+	netinet/in.h \
 	paths.h \
 	pty.h \
-	mntent.h \
-        net/if.h \
-	net/if_dl.h \
-        netinet/in.h \
+	security/pam_misc.h \
+	stdint.h \
 	stdlib.h \
-	asm/io.h \
 	sys/disk.h \
 	sys/disklabel.h \
-	sys/ioctl.h \
-	sys/ioccom.h \
+	sys/file.h \
 	sys/io.h \
-	sys/time.h \
+	sys/ioccom.h \
+	sys/ioctl.h \
 	sys/mkdev.h \
 	sys/prctl.h \
 	sys/queue.h \
-	sys/sockio.h \
+	sys/resource.h \
 	sys/socket.h \
-	sys/syscall.h \
-	sys/file.h \
-	sys/ioctl.h \
+	sys/sockio.h \
 	sys/stat.h \
+	sys/swap.h \
+	sys/syscall.h \
+	sys/time.h \
 	sys/types.h \
 	sys/un.h \
-	sys/swap.h \
-	sys/resource.h \
-	security/pam_misc.h \
-	linux/raw.h \
-	unistd.h ])
+	unistd.h \
+])
 
 AC_CHECK_HEADERS([langinfo.h],
 		[AM_CONDITIONAL([HAVE_LANGINFO], [true])],
@@ -191,7 +191,7 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
     int a = 0;
     struct tm *tm = localtime(0);
     if (a == -1)  /* false */
-        sleep(tm->tm_gmtoff);
+	sleep(tm->tm_gmtoff);
 ]])],
 [AC_DEFINE(HAVE_TM_GMTOFF,1,[Does struct tm have a field tm_gmtoff?])
 ])
@@ -244,42 +244,42 @@ AC_CHECK_DECL([lseek64],
 	 #define _LARGEFILE64_SOURCE
 	 #include <unistd.h>])
 
-AC_CHECK_FUNCS(
-	[\
+AC_CHECK_FUNCS([ \
+	__secure_getenv \
 	err \
 	errx \
-	futimens \
 	fsync \
+	futimens \
 	getdomainname \
-	usleep \
-	nanosleep \
-	personality \
-	updwtmp \
+	getdtablesize \
+	getexecname \
+	getmntinfo \
+	getrlimit \
+	inotify_init \
 	jrand48 \
 	lchown \
 	llseek \
 	lseek64 \
+	nanosleep \
+	personality \
+	posix_fadvise \
+	prctl \
+	rpmatch \
 	scandirat \
-	strtoull \
-	sysconf \
-	getdtablesize \
-	getexecname \
-	getrlimit \
-	sigqueue \
-	srandom \
 	setresgid \
 	setresuid \
+	sigqueue \
+	srandom \
+	strnchr \
 	strndup \
 	strnlen \
-	strnchr \
-	inotify_init \
-	prctl \
-	posix_fadvise \
-	getmntinfo \
-	__secure_getenv \
+	strtoull \
+	sysconf \
+	updwtmp \
+	usleep \
 	warn \
 	warnx \
-	rpmatch])
+])
 AC_FUNC_FSEEKO
 
 AC_CHECK_FUNCS([openat fstatat unlinkat], [have_openat=yes], [have_openat=no])
@@ -327,18 +327,18 @@ esac
 
 AC_MSG_CHECKING(whether program_invocation_short_name is defined)
 AC_TRY_COMPILE([#include <argp.h>],
-               [program_invocation_short_name = "test";],
-               AC_DEFINE(HAVE_PROGRAM_INVOCATION_SHORT_NAME, 1,
-                         [Define if program_invocation_short_name is defined])
-               AC_MSG_RESULT(yes),
-               AC_MSG_RESULT(no))
+	       [program_invocation_short_name = "test";],
+	       AC_DEFINE(HAVE_PROGRAM_INVOCATION_SHORT_NAME, 1,
+			 [Define if program_invocation_short_name is defined])
+	       AC_MSG_RESULT(yes),
+	       AC_MSG_RESULT(no))
 
 AC_MSG_CHECKING([whether __progname is defined])
 AC_LINK_IFELSE([AC_LANG_PROGRAM([extern char *__progname;],
-           [if (*__progname == 0) return;])],
-           AC_DEFINE(HAVE___PROGNAME, 1, [Define if __progname is defined])
-           AC_MSG_RESULT(yes),
-           AC_MSG_RESULT(no))
+	   [if (*__progname == 0) return;])],
+	   AC_DEFINE(HAVE___PROGNAME, 1, [Define if __progname is defined])
+	   AC_MSG_RESULT(yes),
+	   AC_MSG_RESULT(no))
 
 dnl Static compilation
 m4_define([UL_STATIC_PROGRAMS], [losetup, mount, umount, fdisk, sfdisk, blkid])
@@ -530,7 +530,7 @@ fi
 
 AC_ARG_WITH([ncurses],
   AS_HELP_STRING([--with-ncurses], [build with non-wide ncurses, default is wide version
-                                    (--without-ncurses disables all ncurses(w) support)]),
+				    (--without-ncurses disables all ncurses(w) support)]),
   [], with_ncurses=auto
 )
 AM_CONDITIONAL(HAVE_NCURSES, false)
@@ -541,14 +541,14 @@ if test "x$with_ncurses" != xno; then
     if test "x$with_ncurses" = xauto; then
       UL_CHECK_LIB(ncursesw, initscr, ncurses)
       if test "x$have_ncurses" = xyes; then
-        AC_CHECK_HEADERS([ncursesw/ncurses.h])
-        NCURSES_LIBS="-lncursesw"
+	AC_CHECK_HEADERS([ncursesw/ncurses.h])
+	NCURSES_LIBS="-lncursesw"
       fi
     fi
     if test "x$have_ncurses" = xno; then
       UL_CHECK_LIB(ncurses, initscr)
       if test "x$have_ncurses" = xyes; then
-        NCURSES_LIBS="-lncurses"
+	NCURSES_LIBS="-lncurses"
       fi
     fi
   ])
@@ -572,7 +572,7 @@ use_slang=no
 if test "x$with_slang" = xyes; then
   AC_CHECK_HEADERS([slang.h slang/slang.h])
   AC_CHECK_HEADERS([slcurses.h slang/slcurses.h],
-                   [use_slang=yes], [], [
+		   [use_slang=yes], [], [
 #ifdef HAVE_SLANG_H
 #include <slang.h>
 #elif defined(HAVE_SLANG_SLANG_H)
@@ -997,26 +997,26 @@ UL_BUILD_INIT([ionice], [check])
 UL_REQUIRES_BUILD([ionice], [schedutils])
 UL_REQUIRES_SYSCALL_CHECK([ionice],
 	[UL_CHECK_SYSCALL([ioprio_set],
-	  [alpha],    [442],
-	  [i*86],     [289],
-	  [ia64*],    [1274],
-	  [powerpc*], [273],
-	  [s390*],    [282],
-	  [sparc*],   [196],
-	  [sh*],      [288],
-	  [x86_64*],  [251])],
+	  [alpha],	[442],
+	  [i*86],	[289],
+	  [ia64*],	[1274],
+	  [powerpc*],	[273],
+	  [s390*],	[282],
+	  [sparc*],	[196],
+	  [sh*],	[288],
+	  [x86_64*],	[251])],
 	[ioprio_set])
 
 UL_REQUIRES_SYSCALL_CHECK([ionice],
 	[UL_CHECK_SYSCALL([ioprio_get],
-	  [alpha],    [443],
-	  [i*86],     [290],
-	  [ia64*],    [1275],
-	  [powerpc*], [274],
-	  [s390*],    [283],
-	  [sparc*],   [218],
-	  [sh*],      [289],
-	  [x86_64*],  [252])],
+	  [alpha],	[443],
+	  [i*86],	[290],
+	  [ia64*],	[1275],
+	  [powerpc*],	[274],
+	  [s390*],	[283],
+	  [sparc*],	[218],
+	  [sh*],	[289],
+	  [x86_64*],	[252])],
 	[ioprio_get])
 
 AM_CONDITIONAL(BUILD_IONICE, test "x$build_ionice" = xyes)
@@ -1109,7 +1109,7 @@ AC_ARG_ENABLE([fs-paths-extra],
   AS_HELP_STRING([--enable-fs-paths-extra=paths], [additional search paths for fs helpers]),
   [case "$enableval" in
      yes|no) fs_paths_extra="" ;;
-          *) fs_paths_extra="$enableval" ;;
+	  *) fs_paths_extra="$enableval" ;;
     esac],
   [fs_paths_extra=""]
 )
@@ -1157,6 +1157,7 @@ LIBS=""
 AC_CONFIG_HEADERS(config.h)
 
 AC_CONFIG_FILES([
+Makefile
 disk-utils/Makefile
 fdisk/Makefile
 fsck/Makefile
@@ -1164,40 +1165,39 @@ getopt/Makefile
 hwclock/Makefile
 include/Makefile
 lib/Makefile
+libblkid/Makefile
+libblkid/blkid.pc
+libblkid/docs/Makefile
+libblkid/docs/version.xml
+libblkid/samples/Makefile
+libblkid/src/Makefile
+libblkid/src/blkid.h
+libblkid/src/partitions/Makefile
+libblkid/src/superblocks/Makefile
+libblkid/src/topology/Makefile
+libmount/Makefile
+libmount/docs/Makefile
+libmount/docs/version.xml
+libmount/mount.pc
+libmount/src/Makefile
+libmount/src/libmount.h
+libuuid/Makefile
+libuuid/man/Makefile
+libuuid/src/Makefile
+libuuid/uuid.pc
 login-utils/Makefile
-Makefile
 man/ru/Makefile
-misc-utils/chkdupexe:misc-utils/chkdupexe.pl
 misc-utils/Makefile
+misc-utils/chkdupexe:misc-utils/chkdupexe.pl
 mount/Makefile
 partx/Makefile
 po/Makefile.in
 schedutils/Makefile
-libblkid/blkid.pc
-libblkid/Makefile
-libblkid/docs/Makefile
-libblkid/docs/version.xml
-libblkid/src/Makefile
-libblkid/src/blkid.h
-libblkid/src/superblocks/Makefile
-libblkid/src/topology/Makefile
-libblkid/src/partitions/Makefile
-libblkid/samples/Makefile
-libmount/mount.pc
-libmount/Makefile
-libmount/src/Makefile
-libmount/src/libmount.h
-libmount/docs/Makefile
-libmount/docs/version.xml
-libuuid/uuid.pc
-libuuid/Makefile
-libuuid/man/Makefile
-libuuid/src/Makefile
 sys-utils/Makefile
 term-utils/Makefile
+tests/Makefile
 tests/commands.sh
 tests/helpers/Makefile
-tests/Makefile
 text-utils/Makefile
 ])
 

@@ -10,21 +10,46 @@ uuid_cflags = -I$(ul_libuuid_srcdir)
 uuid_ldadd = $(ul_libuuid_la)
 endif
 
-dist_man_MANS = isosize.8 mkfs.8 mkswap.8 \
-           fsck.minix.8 mkfs.minix.8 mkfs.bfs.8
+dist_man_MANS = \
+	fsck.minix.8 \
+	isosize.8 \
+	mkfs.8 \
+	mkfs.bfs.8 \
+	mkfs.minix.8 \
+	mkswap.8
 
-sbin_PROGRAMS = mkfs mkswap fsck.minix mkfs.minix mkfs.bfs
+sbin_PROGRAMS = \
+	fsck.minix \
+	mkfs \
+	mkfs.bfs \
+	mkfs.minix \
+	mkswap
 
-fsck_minix_SOURCES = fsck.minix.c minix_programs.h $(top_srcdir)/lib/ismounted.c
-mkfs_minix_SOURCES = mkfs.minix.c minix_programs.h $(utils_common) \
-		    $(top_srcdir)/lib/strutils.c 
-mkfs_bfs_SOURCES = mkfs.bfs.c $(utils_common) $(top_srcdir)/lib/strutils.c
+fsck_minix_SOURCES = \
+	fsck.minix.c \
+	minix_programs.h \
+	$(top_srcdir)/lib/ismounted.c
+
+mkfs_minix_SOURCES = \
+	minix_programs.h \
+	mkfs.minix.c \
+	$(top_srcdir)/lib/strutils.c \
+	$(utils_common)
+
+mkfs_bfs_SOURCES = \
+	mkfs.bfs.c \
+	$(top_srcdir)/lib/strutils.c \
+	$(utils_common)
 
 swaplabel_SOURCES = swaplabel.c $(utils_common)
 swaplabel_LDADD = $(uuid_ldadd)
 swaplabel_CFLAGS = $(AM_CFLAGS) $(uuid_cflags)
 
-mkswap_SOURCES = mkswap.c $(utils_common) $(top_srcdir)/lib/wholedisk.c $(top_srcdir)/lib/strutils.c
+mkswap_SOURCES = \
+	mkswap.c \
+	$(top_srcdir)/lib/strutils.c \
+	$(top_srcdir)/lib/wholedisk.c \
+	$(utils_common)
 mkswap_LDADD = $(uuid_ldadd)
 mkswap_CFLAGS = $(AM_CFLAGS) $(uuid_cflags)
 
@@ -60,11 +85,17 @@ dist_man_MANS += raw.8
 endif
 
 if BUILD_CRAMFS
-cramfs_common = $(utils_common) cramfs.h cramfs_common.c
+cramfs_common = \
+	$(utils_common) \
+	cramfs.h \
+	cramfs_common.c
 sbin_PROGRAMS += fsck.cramfs mkfs.cramfs
 fsck_cramfs_SOURCES = fsck.cramfs.c $(cramfs_common)
-mkfs_cramfs_SOURCES = mkfs.cramfs.c $(cramfs_common) $(top_srcdir)/lib/md5.c \
-		      $(top_srcdir)/lib/strutils.c
+mkfs_cramfs_SOURCES = \
+	mkfs.cramfs.c \
+	$(cramfs_common) \
+	$(top_srcdir)/lib/md5.c \
+	$(top_srcdir)/lib/strutils.c
 fsck_cramfs_LDADD = -lz
 mkfs_cramfs_LDADD = -lz
 endif
@@ -72,4 +103,3 @@ endif
 if HAVE_SELINUX
 mkswap_LDADD += -lselinux
 endif
-
