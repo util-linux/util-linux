@@ -292,13 +292,6 @@ static int FileExists(const char *name)
  *
  * foo (if foo starts with '.' or '/')
  * /dev/foo
- * /media/foo
- * /mnt/foo
- * /dev/cdroms/foo
- * /dev/cdroms/foo0
- * /dev/dsk/foo
- * /dev/rdsk/foo
- * ./foo
  *
  * If found, return the full path. If not found, return 0.
  * Returns pointer to dynamically allocated string.
@@ -316,44 +309,6 @@ static char *find_device(const char *name)
 	}
 
 	strcpy(buf, "/dev/");
-	strcat(buf, name);
-	if (FileExists(buf))
-		return buf;
-
-	strcpy(buf, "/media/");
-	strcat(buf, name);
-	if (FileExists(buf))
-		return buf;
-
-	strcpy(buf, "/mnt/");
-	strcat(buf, name);
-	if (FileExists(buf))
-		return buf;
-
-	/* for devfs under Linux */
-	strcpy(buf, "/dev/cdroms/");
-	strcat(buf, name);
-	if (FileExists(buf))
-		return buf;
-
-	strcpy(buf, "/dev/cdroms/");
-	strcat(buf, name);
-	strcat(buf, "0");
-	if (FileExists(buf))
-		return buf;
-
-	/* for devfs under Solaris */
-	strcpy(buf, "/dev/rdsk/");
-	strcat(buf, name);
-	if (FileExists(buf))
-		return buf;
-
-	strcpy(buf, "/dev/dsk/");
-	strcat(buf, name);
-	if (FileExists(buf))
-		return buf;
-
-	strcpy(buf, "./");
 	strcat(buf, name);
 	if (FileExists(buf))
 		return buf;
