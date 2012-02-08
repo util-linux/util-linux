@@ -34,6 +34,7 @@
 #include "nls.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "canonicalize.h"
 
 #define EJECT_DEFAULT_DEVICE "/dev/cdrom"
 
@@ -759,43 +760,6 @@ static void UnmountDevices(const char *pattern)
 	e_fclose(fp);
 }
 
-
-/* Check if name is a symbolic link. If so, return what it points to. */
-static char *SymLink(const char *name)
-{
-	int status;
-	char s1[PATH_MAX];
-	char s2[PATH_MAX];
-	char s4[PATH_MAX];
-	char result[PATH_MAX];
-	char *s3;
-
-	memset(s1, 0, sizeof(s1));
-	memset(s2, 0, sizeof(s2));
-	memset(s4, 0, sizeof(s4));
-	memset(result, 0, sizeof(result));
-
-	status = readlink(name, s1, sizeof(s1) - 1);
-
-	if (status == -1)
-		return 0;
-
-	s1[status] = 0;
-	if (s1[0] == '/') { /* absolute link */
-		return strdup(s1);
-	} else { /* relative link, add base name */
-		strncpy(s2, name, sizeof(s2)-1);
-		s3 = strrchr(s2, '/');
-		if (s3 != 0) {
-			s3[1] = 0;
-			snprintf(result, sizeof(result)-1, "%s%s", s2, s1);
-		}
-	}
-	realpath(result, s4);
-	return strdup(s4);
-}
-
-
 /*
  * Given a name, see if it matches a pattern for a device that can have
  * multiple partitions.  If so, return a regular expression that matches
@@ -910,7 +874,7 @@ int main(int argc, char **argv)
 		printf(_("%s: expanded name is `%s'\n"), programName, fullName);
 
 	/* check for a symbolic link */
-	while ((linkName = SymLink(fullName)) && (ld > 0)) {
+	while ((linkName = canonicalize_path(fullName)) && (ld > 0)) {
 		if (v_option)
 			printf(_("%s: `%s' is a link to `%s'\n"), programName, fullName, linkName);
 		free(fullName);
