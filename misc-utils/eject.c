@@ -109,45 +109,31 @@ const char *partitionDevice[] = {
 /* Display command usage on standard error and exit. */
 static void usage()
 {
-//    perror(_("%s: device is `%s'\n"));
-	fprintf(stderr,_(
-"Usage:\n"
-"  eject -h				-- display command usage and exit\n"
-"  eject -V				-- display program version and exit\n"
-"  eject [-vnrsfq] [<name>]		-- eject device\n"
-"  eject [-vn] -d			-- display default device\n"
-"  eject [-vn] -a on|off|1|0 [<name>]	-- turn auto-eject feature on or off\n"
-"  eject [-vn] -c <slot> [<name>]	-- switch discs on a CD-ROM changer\n"
-"  eject [-vn] -t [<name>]		-- close tray\n"
-"  eject [-vn] -T [<name>]		-- toggle tray\n"
-"  eject [-vn] -x <speed> [<name>]	-- set CD-ROM max speed\n"
-"Options:\n"
-"  -v\t-- enable verbose output\n"
-"  -n\t-- don't eject, just show device found\n"
-"  -r\t-- eject CD-ROM\n"
-"  -s\t-- eject SCSI device\n"
-"  -f\t-- eject floppy\n"
-"  -q\t-- eject tape\n"
-"  -p\t-- use /proc/mounts instead of /etc/mtab\n"
-"  -m\t-- do not unmount device even if it is mounted\n"
-)
-);
-
-
-	fprintf(stderr,_(
-"Long options:\n"
-"  -h --help   -v --verbose	 -d --default\n"
-"  -a --auto   -c --changerslot  -t --trayclose  -x --cdspeed\n"
-"  -r --cdrom  -s --scsi	 -f --floppy\n"
-"  -q --tape   -n --noop	 -V --version\n"
-"  -p --proc   -m --no-unmount -T --traytoggle\n"));
-
-
-	fprintf(stderr,_(
-"Parameter <name> can be a device file or a mount point.\n"
-"If omitted, name defaults to `%s'.\n"
-"By default tries -r, -s, -f, and -q in order until success.\n"),
-			EJECT_DEFAULT_DEVICE);
+fprintf(stderr,_(
+  "Usage:\n"
+  " eject [options] <name>\n"
+  "Options:\n"
+  " -h, --help         display command usage and exit\n"
+  " -V  --version      display program version and exit\n"
+  " -d, --default      display default device\n"
+  " -a, --auto         turn auto-eject feature on or off\n"
+  " -c, --changerslot  switch discs on a CD-ROM changer\n"
+  " -t, --trayclose    close tray\n"
+  " -T, --traytoggle   toggle tray\n"
+  " -x, --cdspeed      set CD-ROM max speed\n"
+  " -v, --verbose      enable verbose output\n"
+  " -n, --noop         don't eject, just show device found\n"
+  " -r, --cdrom        eject CD-ROM\n"
+  " -s, --scsi         eject SCSI device\n"
+  " -f, --loppy        eject floppy\n"
+  " -q, --tape         eject tape\n"
+  "  -p, --proc         use /proc/mounts instead of /etc/mtab\n"
+  " -m, --no-unmount   do not unmount device even if it is mounted\n"
+  "\n"
+  "Parameter <name> can be a device file or a mount point.\n"
+  "If omitted, name defaults to `%s'.\n"
+  "By default tries -r, -s, -f, and -q in order until success.\n"),
+	EJECT_DEFAULT_DEVICE);
   exit(1);
 }
 
@@ -254,7 +240,7 @@ static void parse_args(int argc, char **argv, char **device)
 			  break;
 		  case 'V':
 			  printf(UTIL_LINUX_VERSION);
-
+        exit(EXIT_SUCCESS);
 			  break;
       default:
 		  case '?':
@@ -316,14 +302,12 @@ static int FileExists(const char *name)
  * If found, return the full path. If not found, return 0.
  * Returns pointer to dynamically allocated string.
  */
-static char *FindDevice(const char *name)
+static char *find_device(const char *name)
 {
 	char *buf;
 
-	buf = (char *) malloc(strlen(name)+14); /* to allow for "/dev/cdroms/ + "0" + null */
-	if (buf==NULL) {
-		errx(1, _("could not allocate memory"));
-	}
+	buf = (char *) xmalloc(strlen(name)+14); /* to allow for "/dev/cdroms/ + "0" + null */
+
 	if ((name[0] == '.') || (name[0] == '/')) {
 		strcpy(buf, name);
 		if (FileExists(buf))
@@ -428,7 +412,7 @@ static void CloseTray(int fd)
 		err(1, _("CD-ROM tray close command failed"));
 	}
 #else
-     warnx( _("CD-ROM tray close command not supported by this kernel\n"));
+    warnx( _("CD-ROM tray close command not supported by this kernel\n"));
 #endif
 }
 
@@ -886,8 +870,8 @@ int main(int argc, char **argv)
 	int ld = 6;        /* symbolic link max depth */
 
 	setlocale(LC_ALL,"");
-	textdomain("eject");
-	bindtextdomain("eject",LOCALEDIR);
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
 
 	/* program name is global variable used by other procedures */
 	char *programName = program_invocation_short_name;
@@ -918,10 +902,9 @@ int main(int argc, char **argv)
 		printf(_("%s: device name is `%s'\n"), programName, device);
 
 	/* figure out full device or mount point name */
-	fullName = FindDevice(device);
+	fullName = find_device(device);
 	if (fullName == 0) {
-		fprintf(stderr, _("%s: unable to find or open device for: `%s'\n"), programName, device);
-		exit(1);
+		errx(1, _("unable to find or open device for: `%s'"), device);
 	}
 	if (v_option)
 		printf(_("%s: expanded name is `%s'\n"), programName, fullName);
@@ -938,8 +921,7 @@ int main(int argc, char **argv)
 	}
 	/* handle max depth exceeded option */
 	if (ld <= 0) {
-		printf(_("%s: maximum symbolic link depth exceeded: `%s'\n"), programName, fullName);
-		exit(1);
+		errx(1, _("maximum symbolic link depth exceeded: `%s'"), fullName);
 	}
 
 	/* if mount point, get device name */
