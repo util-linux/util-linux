@@ -761,7 +761,7 @@ static pam_handle_t *init_loginpam(struct login_context *cxt)
 
 static void loginpam_auth(struct login_context *cxt)
 {
-	int rc, failcount = 0, show_unknown;
+	int rc, failcount = 0, show_unknown, retries;
 	const char *hostname = cxt->hostname ? cxt->hostname :
 			       cxt->tty_name ? cxt->tty_name : "<unknown>";
 	pam_handle_t *pamh = cxt->pamh;
@@ -770,17 +770,18 @@ static void loginpam_auth(struct login_context *cxt)
 	loginpam_get_username(pamh, &cxt->username);
 
 	show_unknown = getlogindefs_bool("LOG_UNKFAIL_ENAB", 0);
+	retries = getlogindefs_num("LOGIN_RETRIES", LOGIN_MAX_TRIES);
 
 	/*
 	 * There may be better ways to deal with some of these conditions, but
 	 * at least this way I don't think we'll be giving away information...
 	 *
 	 * Perhaps someday we can trust that all PAM modules will pay attention
-	 * to failure count and get rid of MAX_LOGIN_TRIES?
+	 * to failure count and get rid of LOGIN_MAX_TRIES?
 	 */
 	rc = pam_authenticate(pamh, 0);
 
-	while ((failcount++ < LOGIN_MAX_TRIES) &&
+	while ((++failcount < retries) &&
 	       ((rc == PAM_AUTH_ERR) ||
 		(rc == PAM_USER_UNKNOWN) ||
 		(rc == PAM_CRED_INSUFFICIENT) ||
