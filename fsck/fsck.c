@@ -1,5 +1,5 @@
 /*
- * pfsck --- A generic, parallelizing front-end for the fsck program.
+ * fsck --- A generic, parallelizing front-end for the fsck program.
  * It will automatically try to run fsck programs in parallel if the
  * devices are on separate spindles.  It is based on the same ideas as
  * the generic front end for fsck by David Engel and Fred van Kempen,
@@ -19,7 +19,7 @@
  * Copyright (C) 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
  *	         2001, 2002, 2003, 2004, 2005 by  Theodore Ts'o.
  *
- * Copyright (C) 2009 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2009, 2012 Karel Zak <kzak@redhat.com>
  *
  * This file may be redistributed under the terms of the GNU Public
  * License.
@@ -330,8 +330,6 @@ static void unlock_disk(struct fsck_instance *inst)
 	}
 }
 
-
-
 static void free_instance(struct fsck_instance *i)
 {
 	if (lockdisk)
@@ -498,21 +496,22 @@ static struct fs_info *lookup(char *filesys)
 /* Find fsck program for a given fs type. */
 static char *find_fsck(char *type)
 {
-  char *s;
-  const char *tpl;
-  static char prog[256];
-  char *p = string_copy(fsck_path);
-  struct stat st;
+	char *s;
+	const char *tpl;
+	static char prog[256];
+	char *p = string_copy(fsck_path);
+	struct stat st;
 
-  /* Are we looking for a program or just a type? */
-  tpl = (strncmp(type, "fsck.", 5) ? "%s/fsck.%s" : "%s/%s");
+	/* Are we looking for a program or just a type? */
+	tpl = (strncmp(type, "fsck.", 5) ? "%s/fsck.%s" : "%s/%s");
 
-  for(s = strtok(p, ":"); s; s = strtok(NULL, ":")) {
-	sprintf(prog, tpl, s, type);
-	if (stat(prog, &st) == 0) break;
-  }
-  free(p);
-  return(s ? prog : NULL);
+	for(s = strtok(p, ":"); s; s = strtok(NULL, ":")) {
+		sprintf(prog, tpl, s, type);
+		if (stat(prog, &st) == 0) break;
+	}
+	free(p);
+
+	return(s ? prog : NULL);
 }
 
 static int progress_active(NOARGS)
