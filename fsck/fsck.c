@@ -50,10 +50,11 @@
 #include "nls.h"
 #include "pathnames.h"
 #include "ismounted.h"
+#include "exitcodes.h"
 #include "c.h"
 #include "fsck.h"
 
-#define XALLOC_EXIT_CODE	EXIT_ERROR
+#define XALLOC_EXIT_CODE	FSCK_EX_ERROR
 #include "xalloc.h"
 
 static const char *ignored_types[] = {
@@ -604,7 +605,7 @@ static int execute(const char *type, struct fs_info *fs, int interactive)
 		(void) execv(s, argv);
 		perror(argv[0]);
 		free(inst);
-		exit(EXIT_ERROR);
+		exit(FSCK_EX_ERROR);
 	}
 
 	for (i=0; i < argc; i++)
@@ -710,17 +711,17 @@ static struct fsck_instance *wait_one(int flags)
 	else if (WIFSIGNALED(status)) {
 		sig = WTERMSIG(status);
 		if (sig == SIGINT) {
-			status = EXIT_UNCORRECTED;
+			status = FSCK_EX_UNCORRECTED;
 		} else {
 			warnx(_("Warning... %s for device %s exited "
 			       "with signal %d."),
 			       inst->prog, inst->fs->device, sig);
-			status = EXIT_ERROR;
+			status = FSCK_EX_ERROR;
 		}
 	} else {
 		warnx(_("%s %s: status is %x, should never happen."),
 		       inst->prog, inst->fs->device, status);
-		status = EXIT_ERROR;
+		status = FSCK_EX_ERROR;
 	}
 	inst->exit_status = status;
 	inst->flags |= FLAG_DONE;
@@ -743,7 +744,7 @@ static struct fsck_instance *wait_one(int flags)
 				if (fork() == 0) {
 					sleep(1);
 					kill(inst2->pid, SIGUSR1);
-					exit(EXIT_OK);
+					exit(FSCK_EX_OK);
 				}
 			} else
 				kill(inst2->pid, SIGUSR1);
@@ -820,7 +821,7 @@ static int fsck_device(struct fs_info *fs, int interactive)
 		warnx(_("error %d while executing fsck.%s for %s"),
 			retval, type, fs->device);
 		num_running--;
-		return EXIT_ERROR;
+		return FSCK_EX_ERROR;
 	}
 	return 0;
 }
@@ -887,7 +888,7 @@ static void compile_fs_type(char *fs_type, struct fs_type_compile *cmp)
 			}
 			if ((negate && !cmp->negate) ||
 			    (!negate && cmp->negate)) {
-				errx(EXIT_USAGE,
+				errx(FSCK_EX_USAGE,
 					_("Either all or none of the filesystem types passed to -t must be prefixed\n"
 					  "with 'no' or '!'."));
 			}
@@ -1129,7 +1130,7 @@ static int disk_already_active(struct fs_info *fs)
 static int check_all(NOARGS)
 {
 	struct fs_info *fs = NULL;
-	int status = EXIT_OK;
+	int status = FSCK_EX_OK;
 	int not_done_yet = 1;
 	int passno = 1;
 	int pass_done;
@@ -1160,7 +1161,7 @@ static int check_all(NOARGS)
 			    !(ignore_mounted && is_mounted(fs->device))) {
 				status |= fsck_device(fs, 1);
 				status |= wait_many(FLAG_WAIT_ALL);
-				if (status > EXIT_NONDESTRUCT)
+				if (status > FSCK_EX_NONDESTRUCT)
 					return status;
 			}
 			fs->flags |= FLAG_DONE;
@@ -1266,7 +1267,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -?         display this help and exit\n\n"
 		"See fsck.* commands for fs-options."));
 
-	exit(EXIT_USAGE);
+	exit(FSCK_EX_USAGE);
 }
 
 static void signal_cancel(int sig FSCK_ATTR((unused)))
@@ -1301,7 +1302,7 @@ static void PRS(int argc, char *argv[])
 			continue;
 		if ((arg[0] == '/' && !opts_for_fsck) || strchr(arg, '=')) {
 			if (num_devices >= MAX_DEVICES)
-				errx(EXIT_ERROR, _("too many devices"));
+				errx(FSCK_EX_ERROR, _("too many devices"));
 			dev = fsprobe_get_devname_by_spec(arg);
 			if (!dev && strchr(arg, '=')) {
 				/*
@@ -1311,18 +1312,18 @@ static void PRS(int argc, char *argv[])
 				if (access(_PATH_PROC_PARTITIONS, R_OK) < 0) {
 					warn(_("couldn't open %s"),
 						_PATH_PROC_PARTITIONS);
-					errx(EXIT_ERROR, _("Is /proc mounted?"));
+					errx(FSCK_EX_ERROR, _("Is /proc mounted?"));
 				}
 				/*
 				 * Check to see if this is because
 				 * we're not running as root
 				 */
 				if (geteuid())
-					errx(EXIT_ERROR,
+					errx(FSCK_EX_ERROR,
 						_("must be root to scan for matching filesystems: %s"),
 						arg);
 				else
-					errx(EXIT_ERROR,
+					errx(FSCK_EX_ERROR,
 						_("couldn't find matching filesystem: %s"),
 						arg);
 			}
@@ -1331,7 +1332,7 @@ static void PRS(int argc, char *argv[])
 		}
 		if (arg[0] != '-' || opts_for_fsck) {
 			if (num_args >= MAX_ARGS)
-				errx(EXIT_ERROR, _("too many arguments"));
+				errx(FSCK_EX_ERROR, _("too many arguments"));
 			args[num_args++] = string_copy(arg);
 			continue;
 		}
@@ -1416,7 +1417,7 @@ static void PRS(int argc, char *argv[])
 			options[0] = '-';
 			options[++opt] = '\0';
 			if (num_args >= MAX_ARGS)
-				errx(EXIT_ERROR, _("too many arguments"));
+				errx(FSCK_EX_ERROR, _("too many arguments"));
 			args[num_args++] = string_copy(options);
 			opt = 0;
 		}
