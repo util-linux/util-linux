@@ -251,7 +251,7 @@ static void parse_args(int argc, char **argv, char **device)
 	}
 	/* check for a single additional argument */
 	if ((argc - optind) > 1) {
-		errx(1, _("%s: too many arguments"));
+		errx(1, _("too many arguments"));
 	}
 	if ((argc - optind) == 1) { /* one argument */
 		*device = xstrdup(argv[optind]);
@@ -699,9 +699,12 @@ void handle_x_option(char *deviceName) {
 		if (v_option)
 		{
 			if (x_arg == 0)
-				printf(_("%s: setting CD-ROM speed to auto\n"), program_invocation_short_name);
+				printf(_("%s: setting CD-ROM speed to auto\n"),
+						program_invocation_short_name);
 			else
-				printf(_("%s: setting CD-ROM speed to %dX\n"), program_invocation_short_name, x_arg);
+				printf(_("%s: setting CD-ROM speed to %ldX\n"),
+						program_invocation_short_name,
+						x_arg);
 		}
 		fd = open_device(deviceName);
 		select_speed(fd, x_arg);
@@ -853,7 +856,7 @@ int main(int argc, char **argv) {
 	/* handle -c option */
 	if (c_option) {
 		if (v_option)
-			printf(_("%s: selecting CD-ROM disc #%d\n"), programName, c_arg);
+			printf(_("%s: selecting CD-ROM disc #%ld\n"), programName, c_arg);
 		fd = open_device(deviceName);
 		changer_select(fd, c_arg);
 		handle_x_option(deviceName);
@@ -918,7 +921,7 @@ int main(int argc, char **argv) {
 	}
 
 	if (!worked) {
-		err(1, _("unable to eject, last error"), programName, strerror(errno));
+		err(1, _("unable to eject, last error"));
 	}
 
 	/* cleanup */
