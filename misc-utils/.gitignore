@@ -18,4 +18,4 @@ wipefs
 findmnt
 lsblk
 lslocks
-
+eject
