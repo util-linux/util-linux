@@ -10,6 +10,7 @@
 #define FSCK_OK			0	/* No errors */
 #define FSCK_NONDESTRUCT	1	/* File system errors corrected */
 #define FSCK_REBOOT		2	/* System should be rebooted */
+#define FSCK_DESTRUCT		FSCK_REBOOT	/* Alias */
 #define FSCK_UNCORRECTED	4	/* File system errors left uncorrected */
 #define FSCK_ERROR		8	/* Operational error */
 #define FSCK_USAGE		16	/* Usage or syntax error */
@@ -24,5 +25,7 @@
 #define MOUNT_EX_FILEIO		16	/* problems writing, locking, ... mtab/fstab */
 #define MOUNT_EX_FAIL		32	/* mount failure */
 #define MOUNT_EX_SOMEOK		64	/* some mount succeeded */
+
+
 
 #endif	/* UTIL_LINUX_EXITCODES_H */
