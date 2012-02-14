@@ -53,8 +53,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -M, --shmem-key <key>      remove shared memory segment by key\n"), out);
 	fputs(_(" -q, --queue-id <id>        remove message queue by id\n"), out);
 	fputs(_(" -Q, --queue-key <key>      remove message queue by key\n"), out);
-	fputs(_(" -s, --semaphore-id <id>    remove semaprhore by id\n"), out);
-	fputs(_(" -S, --semaphore-key <key>  remove semaprhore by key\n"), out);
+	fputs(_(" -s, --semaphore-id <id>    remove semaphore by id\n"), out);
+	fputs(_(" -S, --semaphore-key <key>  remove semaphore by key\n"), out);
 	fputs(_(" -a, --all[=<shm|msg|sem>]  remove all\n"), out);
 	fputs(_(" -v, --verbose              explain what is being done\n"), out);
 	fprintf(out, USAGE_SEPARATOR);

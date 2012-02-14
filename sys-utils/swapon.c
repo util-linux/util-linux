@@ -120,7 +120,7 @@ swapon_usage(FILE *out, int n) {
 		" -e, --ifexists         silently skip devices that do not exis\n"
 		" -f, --fixpgsz          reinitialize the swap space if necessary\n"
 		" -h, --help             display help and exit\n"
-		" -p, --priority <prio>  specify the priority of the swap device.\n"
+		" -p, --priority <prio>  specify the priority of the swap device\n"
 		" -s, --summary          display summary about used swap devices and exit\n"
 		" -v, --verbose          verbose mode\n"
 		" -V, --version          display version and exit\n"), out);

@@ -137,7 +137,7 @@ static void summary(int sig)
 	}
 	cc = &cmon[cmon_index];
 	if (cc->threshold_value > 0 && sig != -1) {
-		warnx(_("File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\n"
+		warnx(_("File %s, For threshold value %lu and timeout value %lu, Maximum characters in fifo were %d,\n"
 			"and the maximum transfer rate in characters/second was %f"),
 		      argv[cmon_index + local_optind], cc->threshold_value,
 		      cc->timeout_value, cc->maxmax, cc->maxtran);
