@@ -303,7 +303,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	      "  -d        display help instead of ring bell\n"
               "  -f        count logical, rather than screen lines\n"
               "  -l        suppress pause after form feed\n"
-              "  -p        suppress scroll, clean screen and disblay text\n"
+              "  -p        suppress scroll, clean screen and display text\n"
               "  -c        suppress scroll, display text and clean line ends\n"
               "  -u        suppress underlining\n"
               "  -s        squeeze multiple blank lines into one\n"
