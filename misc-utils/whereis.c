@@ -147,7 +147,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" -M <dirs>  define man lookup path\n"
 		" -s         search only sources path\n"
 		" -S <dirs>  define sources lookup path\n"
-		" -u         search from unusual enties\n"
+		" -u         search from unusual entities\n"
 		" -V         output version information and exit\n"
 		" -h         display this help and exit\n\n"), out);
 

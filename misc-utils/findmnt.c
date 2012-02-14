@@ -1067,7 +1067,7 @@ int main(int argc, char *argv[])
 		if (tabtype != TABTYPE_KERNEL)
 			errx_mutually_exclusive("--{poll,fstab,mtab}");
 		if (ntabfiles > 1)
-			errx(EXIT_FAILURE, _("--poll accepts only one file, but mure specified by --tab-file"));
+			errx(EXIT_FAILURE, _("--poll accepts only one file, but more specified by --tab-file"));
 	}
 
 	if (optind < argc && (get_match(COL_SOURCE) || get_match(COL_TARGET)))
