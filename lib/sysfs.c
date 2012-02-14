@@ -281,10 +281,11 @@ int sysfs_is_partition_dirent(DIR *dir, struct dirent *d, const char *parent_nam
 	char path[256];
 
 #ifdef _DIRENT_HAVE_D_TYPE
-	if (d->d_type != DT_DIR)
+	if (d->d_type != DT_DIR &&
+	    d->d_type != DT_LNK)
 		return 0;
 #endif
-	if (strncmp(parent_name, d->d_name, strlen(parent_name)))
+	if (parent_name && strncmp(parent_name, d->d_name, strlen(parent_name)))
 		return 0;
 
 	/* Cannot use /partition file, not supported on old sysfs */

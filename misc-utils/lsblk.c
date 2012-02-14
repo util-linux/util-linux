@@ -134,6 +134,7 @@ struct lsblk {
 	struct tt *tt;			/* output table */
 	unsigned int all_devices:1;	/* print all devices */
 	unsigned int bytes:1;		/* print SIZE in bytes */
+	unsigned int inverse:1;		/* print inverse dependencies */
 	unsigned int nodeps:1;		/* don't print slaves/holders */
 };
 
@@ -166,8 +167,9 @@ struct blkdev_cxt {
 	char *uuid;		/* UUID of device / filesystem */
 	char *label;		/* FS label */
 
+	int npartitions;	/* # of partitions this device has */
 	int nholders;		/* # of devices mapped directly to this device
-				 * /sys/block/.../holders + number of partition */
+				 * /sys/block/.../holders */
 	int nslaves;		/* # of devices this device maps to */
 	int maj, min;		/* devno */
 	int discard;		/* supports discard */
@@ -529,7 +531,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 			tt_line_set_data(ln, col, xstrdup(cxt->fstype));
 		break;
 	case COL_TARGET:
-		if (!cxt->nholders) {
+		if (!(cxt->nholders + cxt->npartitions)) {
 			p = get_device_mountpoint(cxt);
 			if (p)
 				tt_line_set_data(ln, col, p);
@@ -551,8 +553,8 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		break;
 	case COL_RM:
 		p = sysfs_strdup(&cxt->sysfs, "removable");
-		if (!p && cxt->parent)
-			p = sysfs_strdup(&cxt->parent->sysfs, "removable");
+		if (!p && cxt->sysfs.parent)
+			p = sysfs_strdup(cxt->sysfs.parent, "removable");
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
@@ -685,14 +687,14 @@ static void print_device(struct blkdev_cxt *cxt, struct tt_line *tt_parent)
 
 static int set_cxt(struct blkdev_cxt *cxt,
 		    struct blkdev_cxt *parent,
-		    const char *name,
-		    int partition)
+		    struct blkdev_cxt *wholedisk,
+		    const char *name)
 {
 	dev_t devno;
 
 	cxt->parent = parent;
 	cxt->name = xstrdup(name);
-	cxt->partition = partition;
+	cxt->partition = wholedisk != NULL;
 
 	cxt->filename = get_device_path(cxt);
 	if (!cxt->filename) {
@@ -700,16 +702,25 @@ static int set_cxt(struct blkdev_cxt *cxt,
 		return -1;
 	}
 
-	devno = sysfs_devname_to_devno(name,
-			partition && parent ? parent->name : NULL);
+	devno = sysfs_devname_to_devno(name, wholedisk ? wholedisk->name : NULL);
+
 	if (!devno) {
 		warnx(_("%s: unknown device name"), name);
 		return -1;
 	}
 
-	if (sysfs_init(&cxt->sysfs, devno, parent ? &parent->sysfs : NULL)) {
-		warnx(_("%s: failed to initialize sysfs handler"), name);
-		return -1;
+	if (lsblk->inverse) {
+		if (sysfs_init(&cxt->sysfs, devno, wholedisk ? &wholedisk->sysfs : NULL)) {
+			warnx(_("%s: failed to initialize sysfs handler"), name);
+			return -1;
+		}
+		if (parent)
+			parent->sysfs.parent = &cxt->sysfs;
+	} else {
+		if (sysfs_init(&cxt->sysfs, devno, parent ? &parent->sysfs : NULL)) {
+			warnx(_("%s: failed to initialize sysfs handler"), name);
+			return -1;
+		}
 	}
 
 	cxt->maj = major(devno);
@@ -731,70 +742,157 @@ static int set_cxt(struct blkdev_cxt *cxt,
 			return -1;
 		}
 	}
-	cxt->nholders = sysfs_count_dirents(&cxt->sysfs, "holders") +
-			sysfs_count_partitions(&cxt->sysfs, name);
 
+	cxt->npartitions = sysfs_count_partitions(&cxt->sysfs, name);
+	cxt->nholders = sysfs_count_dirents(&cxt->sysfs, "holders");
 	cxt->nslaves = sysfs_count_dirents(&cxt->sysfs, "slaves");
 
 	return 0;
 }
 
+static int process_blkdev(struct blkdev_cxt *cxt, struct blkdev_cxt *parent,
+			  int do_partitions, const char *part_name);
+
 /*
- * List devices (holders) mapped to device
+ * List device partitions if any.
  */
-static int list_holders(struct blkdev_cxt *cxt)
+static int list_partitions(struct blkdev_cxt *wholedisk_cxt, struct blkdev_cxt *parent_cxt,
+			   const char *part_name)
 {
 	DIR *dir;
 	struct dirent *d;
-	struct blkdev_cxt holder = {};
+	struct blkdev_cxt part_cxt = {};
+	int r = -1;
+
+	assert(wholedisk_cxt);
+
+	/*
+	 * Do not process further if there are no partitions for
+	 * this device or the device itself is a partition.
+	 */
+	if (!wholedisk_cxt->npartitions || wholedisk_cxt->partition)
+		return -1;
+
+	dir = sysfs_opendir(&wholedisk_cxt->sysfs, NULL);
+	if (!dir)
+		err(EXIT_FAILURE, _("failed to open device directory in sysfs"));
+
+	while ((d = xreaddir(dir))) {
+		/* Process particular partition only? */
+		if (part_name && strcmp(part_name, d->d_name))
+			continue;
+
+		if (!(sysfs_is_partition_dirent(dir, d, wholedisk_cxt->name)))
+			continue;
+
+		if (lsblk->inverse) {
+			/*
+			 * <parent_cxt>
+			 * `-<part_cxt>
+			 *   `-<wholedisk_cxt>
+			 *    `-...
+			 */
+			if (set_cxt(&part_cxt, parent_cxt, wholedisk_cxt, d->d_name))
+				goto next;
+
+			if (!parent_cxt && part_cxt.nholders)
+				goto next;
+
+			wholedisk_cxt->parent = &part_cxt;
+			print_device(&part_cxt, parent_cxt ? parent_cxt->tt_line : NULL);
+			if (!lsblk->nodeps)
+				process_blkdev(wholedisk_cxt, &part_cxt, 0, NULL);
+		} else {
+			/*
+			 * <parent_cxt>
+			 * `-<wholedisk_cxt>
+			 *   `-<part_cxt>
+			 *    `-...
+			 */
+			if (set_cxt(&part_cxt, wholedisk_cxt, wholedisk_cxt, d->d_name))
+				goto next;
+			/* Print whole disk only once */
+			if (r)
+				print_device(wholedisk_cxt, parent_cxt ? parent_cxt->tt_line : NULL);
+			if (!lsblk->nodeps)
+				process_blkdev(&part_cxt, wholedisk_cxt, 0, NULL);
+		}
+	next:
+		reset_blkdev_cxt(&part_cxt);
+		r = 0;
+	}
+
+	closedir(dir);
+	return r;
+}
+
+static int get_wholedisk_from_partition_dirent(DIR *dir, struct dirent *d,
+					       struct blkdev_cxt *cxt)
+{
+	char path[PATH_MAX];
+	char *p;
+	int len;
+
+	if ((len = readlinkat(dirfd(dir), d->d_name, path, sizeof(path))) < 0)
+		return 0;
+	path[len]='\0';
+
+	/* The path ends with ".../<device>/<partition>" */
+	p = strrchr(path, '/'); *p = '\0';
+	p = strrchr(path, '/'); p++;
+
+	return set_cxt(cxt, NULL, NULL, p);
+}
+
+/*
+ * List device dependencies: partitions, holders (inverse = 0) or slaves (inverse = 1).
+ */
+static int list_deps(struct blkdev_cxt *cxt)
+{
+	DIR *dir;
+	struct dirent *d;
+	struct blkdev_cxt dep = {};
 
 	assert(cxt);
 
 	if (lsblk->nodeps)
 		return 0;
 
-	if (!cxt->nholders)
+	if (!(lsblk->inverse ? cxt->nslaves : cxt->nholders))
 		return 0;
 
-	/* Partitions */
-	dir = sysfs_opendir(&cxt->sysfs, NULL);
-	if (!dir)
-		err(EXIT_FAILURE, _("failed to open device directory in sysfs"));
-
-	while ((d = xreaddir(dir))) {
-		if (!sysfs_is_partition_dirent(dir, d, cxt->name))
-			continue;
-
-		if (set_cxt(&holder, cxt, d->d_name, 1)) {
-			reset_blkdev_cxt(&holder);
-			continue;
-		}
-		print_device(&holder, cxt->tt_line);
-		list_holders(&holder);
-		reset_blkdev_cxt(&holder);
-	}
-	closedir(dir);
-
-	/* Holders */
-	dir = sysfs_opendir(&cxt->sysfs, "holders");
+	dir = sysfs_opendir(&cxt->sysfs, lsblk->inverse ? "slaves" : "holders");
 	if (!dir)
 		return 0;
 
 	while ((d = xreaddir(dir))) {
-		if (set_cxt(&holder, cxt, d->d_name, 0)) {
-			reset_blkdev_cxt(&holder);
-			continue;
+		/* Is the dependency a partition? */
+		if (sysfs_is_partition_dirent(dir, d, NULL)) {
+		    if (!get_wholedisk_from_partition_dirent(dir, d, &dep))
+			    process_blkdev(&dep, cxt, 1, d->d_name);
 		}
-		print_device(&holder, cxt->tt_line);
-		list_holders(&holder);
-		reset_blkdev_cxt(&holder);
+		/* The dependency is a whole device. */
+		else if (!set_cxt(&dep, cxt, NULL, d->d_name))
+			process_blkdev(&dep, cxt, 1, NULL);
+
+		reset_blkdev_cxt(&dep);
 	}
 	closedir(dir);
 
 	return 0;
 }
 
-/* Iterate top-level devices in sysfs */
+static int process_blkdev(struct blkdev_cxt *cxt, struct blkdev_cxt *parent,
+			  int do_partitions, const char *part_name)
+{
+	if (do_partitions && cxt->npartitions)
+		return list_partitions(cxt, parent, part_name);
+
+	print_device(cxt, parent ? parent->tt_line : NULL);
+	return list_deps(cxt);
+}
+
+/* Iterate devices in sysfs */
 static int iterate_block_devices(void)
 {
 	DIR *dir;
@@ -805,18 +903,17 @@ static int iterate_block_devices(void)
 		return EXIT_FAILURE;
 
 	while ((d = xreaddir(dir))) {
-		if (set_cxt(&cxt, NULL, d->d_name, 0))
-			goto next;
-
-		/* Skip devices in the middle of dependence tree */
-		if (cxt.nslaves > 0)
+		if (set_cxt(&cxt, NULL, NULL, d->d_name))
 			goto next;
 
 		if (!lsblk->all_devices && is_maj_excluded(cxt.maj))
 			goto next;
 
-		print_device(&cxt, NULL);
-		list_holders(&cxt);
+		/* Skip devices in the middle of dependency tree. */
+		if ((lsblk->inverse ? cxt.nholders : cxt.nslaves) > 0)
+			goto next;
+
+		process_blkdev(&cxt, NULL, 1, NULL);
 	next:
 		reset_blkdev_cxt(&cxt);
 	}
@@ -844,13 +941,14 @@ static int process_one_device(char *devname)
 	}
 	if (st.st_rdev == disk) {
 		/*
-		 * unpartitioned device
+		 * Device is not a partition.
 		 */
-		if (set_cxt(&cxt, NULL, buf, 0))
+		if (set_cxt(&cxt, NULL, NULL, buf))
 			goto leave;
+		process_blkdev(&cxt, NULL, !lsblk->inverse, NULL);
 	} else {
 		/*
-		 * Parititioned, read sysfs name of the device
+		 * Partition, read sysfs name of the device.
 		 */
 		ssize_t len;
 		char path[PATH_MAX], *name;
@@ -871,14 +969,17 @@ static int process_one_device(char *devname)
 		/* sysfs device name */
 		name = strrchr(buf, '/') + 1;
 
-		if (set_cxt(&parent, NULL, diskname, 0))
+		if (set_cxt(&parent, NULL, NULL, diskname))
 			goto leave;
-		if (set_cxt(&cxt, &parent, name, 1))
+		if (set_cxt(&cxt, &parent, &parent, name))
 			goto leave;
+
+		if (lsblk->inverse)
+			process_blkdev(&parent, &cxt, 1, cxt.name);
+		else
+			process_blkdev(&cxt, &parent, 1, NULL);
 	}
 
-	print_device(&cxt, NULL);
-	list_holders(&cxt);
 	status = EXIT_SUCCESS;
 leave:
 	free(diskname);
@@ -938,6 +1039,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 		" -o, --output <list>  output columns\n"
 		" -P, --pairs          use key=\"value\" output format\n"
 		" -r, --raw            use raw output format\n"
+		" -s, --inverse        inverse dependencies\n"
 		" -t, --topology       output info about topology\n"));
 
 	fprintf(out, _("\nAvailable columns:\n"));
@@ -981,6 +1083,7 @@ int main(int argc, char *argv[])
 		{ "list",       0, 0, 'l' },
 		{ "ascii",	0, 0, 'i' },
 		{ "raw",        0, 0, 'r' },
+		{ "inverse",	0, 0, 's' },
 		{ "fs",         0, 0, 'f' },
 		{ "exclude",    1, 0, 'e' },
 		{ "topology",   0, 0, 't' },
@@ -995,7 +1098,7 @@ int main(int argc, char *argv[])
 	lsblk = &_ls;
 	memset(lsblk, 0, sizeof(*lsblk));
 
-	while((c = getopt_long(argc, argv, "abdDe:fhlnmo:Pirt", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "abdDe:fhlnmo:Pirst", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			lsblk->all_devices = 1;
@@ -1045,6 +1148,9 @@ int main(int argc, char *argv[])
 		case 'r':
 			tt_flags &= ~TT_FL_TREE;	/* disable the default */
 			tt_flags |= TT_FL_RAW;		/* enable raw */
+			break;
+		case 's':
+			lsblk->inverse = 1;
 			break;
 		case 'f':
 			columns[ncolumns++] = COL_NAME;
