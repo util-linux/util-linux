@@ -44,8 +44,6 @@
 #include <signal.h>
 #include <dirent.h>
 #include <blkid.h>
-
-#include "fsprobe.h"
 #include <libmount.h>
 
 #include "nls.h"
@@ -110,6 +108,7 @@ char *fsck_path = 0;
 
 /* parsed fstab */
 static struct libmnt_table *fstab;
+static struct libmnt_cache *mntcache;
 
 static int count_slaves(dev_t disk);
 
@@ -359,14 +358,12 @@ static void load_fs_info(void)
 {
 	const char *path;
 
-	mnt_init_debug(0);
-
 	fstab = mnt_new_table();
 	if (!fstab)
 		err(FSCK_EX_ERROR, ("failed to initialize libmount table"));
 
 	mnt_table_set_parser_errcb(fstab, parser_errcb);
-	mnt_table_set_cache(fstab, mnt_new_cache());
+	mnt_table_set_cache(fstab, mntcache);
 
 	errno = 0;
 
@@ -386,17 +383,20 @@ static void load_fs_info(void)
 	}
 }
 
-/* Lookup filesys in /etc/fstab and return the corresponding entry. */
-static struct libmnt_fs *lookup(char *spec)
+/*
+ * Lookup filesys in /etc/fstab and return the corresponding entry.
+ * The @path has to be real path (no TAG) by mnt_resolve_spec().
+ */
+static struct libmnt_fs *lookup(char *path)
 {
 	struct libmnt_fs *fs;
 
-	if (!spec)
+	if (!path)
 		return NULL;
 
-	fs = mnt_table_find_source(fstab, spec, MNT_ITER_FORWARD);
+	fs = mnt_table_find_srcpath(fstab, path, MNT_ITER_FORWARD);
 	if (!fs)
-		fs = mnt_table_find_target(fstab, spec, MNT_ITER_FORWARD);
+		fs = mnt_table_find_target(fstab, path, MNT_ITER_FORWARD);
 
 	return fs;
 }
@@ -1243,7 +1243,9 @@ static void PRS(int argc, char *argv[])
 		if ((arg[0] == '/' && !opts_for_fsck) || strchr(arg, '=')) {
 			if (num_devices >= MAX_DEVICES)
 				errx(FSCK_EX_ERROR, _("too many devices"));
-			dev = fsprobe_get_devname_by_spec(arg);
+
+			dev = mnt_resolve_spec(arg, mntcache);
+
 			if (!dev && strchr(arg, '=')) {
 				/*
 				 * Check to see if we failed because
@@ -1383,7 +1385,9 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	fsprobe_init();
+	mnt_init_debug(0);		/* init libmount debug mask */
+	mntcache = mnt_new_cache();	/* no fatal error if failed */
+
 	PRS(argc, argv);
 
 	if (!notitle)
@@ -1452,8 +1456,7 @@ int main(int argc, char *argv[])
 	}
 	status |= wait_many(FLAG_WAIT_ALL);
 	free(fsck_path);
-	fsprobe_exit();
-	mnt_free_cache(mnt_table_get_cache(fstab));
+	mnt_free_cache(mntcache);
 	mnt_free_table(fstab);
 	return status;
 }
