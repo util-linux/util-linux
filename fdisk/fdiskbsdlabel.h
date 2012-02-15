@@ -46,7 +46,7 @@
 
 #define BSD_LINUX_BOOTDIR "/usr/ucb/mdec"
 
-#if defined (i386) || defined (__sparc__) || defined (__arm__) || \
+#if defined (__i386__) || defined (__sparc__) || defined (__arm__) || \
     defined (__mips__) || defined (__s390__) || defined (__sh__) || \
     defined(__x86_64__) || defined (__avr32__) || defined(__cris__)
 #define BSD_LABELSECTOR   1
