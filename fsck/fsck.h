@@ -28,17 +28,13 @@
  * Internal structure for mount tabel entries.
  */
 
-struct fs_info {
-	char  *device;
-	char  *mountpt;
-	char  *type;
-	char  *opts;
-	int   freq;
-	int   passno;
-	int   flags;
-	dev_t disk;
-	int   stacked;
-	struct fs_info *next;
+struct fsck_fs_data
+{
+	const char	*device;
+	dev_t		disk;
+	unsigned int	stacked:1,
+			done:1,
+			eval_device:1;
 };
 
 #define FLAG_DONE 1
@@ -55,7 +51,7 @@ struct fsck_instance {
 	time_t	start_time;
 	char *	prog;
 	char *	type;
-	struct fs_info *fs;
+	struct libmnt_fs *fs;
 	struct fsck_instance *next;
 };
 
