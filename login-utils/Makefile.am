@@ -26,7 +26,9 @@ endif # BUILD_SULOGIN
 
 
 if BUILD_LOGIN_UTILS
-bin_PROGRAMS += login
+bin_PROGRAMS += \
+	login \
+	su
 usrbin_exec_PROGRAMS += \
 	chfn \
 	chsh \
@@ -41,7 +43,7 @@ dist_man_MANS += \
 	vigr.8 \
 	vipw.8
 
-# login, chfn and chsh libs
+# login, su, chfn and chsh libs
 login_ldadd_common =
 
 chfn_SOURCES = \
@@ -67,20 +69,27 @@ vipw_SOURCES = \
 	vipw.c \
 	setpwnam.h \
 	$(top_srcdir)/lib/fileutils.c
+su_SOURCES = \
+	su.c \
+	getdef.c \
+	getdef.h
 
 chfn_LDADD = $(login_ldadd_common)
 chsh_LDADD = $(login_ldadd_common)
 login_LDADD = $(login_ldadd_common)
+su_LDADD = $(login_ldadd_common)
 newgrp_LDADD =
 vipw_LDADD =
 
 chfn_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 chsh_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 newgrp_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
+su_CFLAGS = -DUSE_PAM=1 $(SUID_CFLAGS) $(AM_CFLAGS)
 
 chfn_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 chsh_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
+su_LDFLAGS = $(SUID_LDFLAGS)
 
 login_ldadd_common += -lpam -lpam_misc
 

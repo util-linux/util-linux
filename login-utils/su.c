@@ -57,6 +57,19 @@
 
    Written by David MacKenzie <djm@gnu.ai.mit.edu>.  */
 
+#ifndef MAX
+# define MAX(a,b) ((a) > (b) ? (a) : (b))
+#endif
+
+/* Exit statuses for programs like 'env' that exec other programs.
+   EXIT_FAILURE might not be 1, so use EXIT_FAIL in such programs.  */
+enum
+{
+  EXIT_FAIL = 1,
+  EXIT_CANNOT_INVOKE = 126,
+  EXIT_ENOENT = 127
+};
+
 #include <config.h>
 #include <stdio.h>
 #include <getopt.h>
@@ -70,16 +83,6 @@
 # include <sys/wait.h>
 # include <sys/fsuid.h>
 #endif
-
-/* Hide any system prototype for getusershell.
-   This is necessary because some Cray systems have a conflicting
-   prototype (returning `int') in <unistd.h>.  */
-#define getusershell _getusershell_sys_proto_
-
-#include "system.h"
-#include "getpass.h"
-
-#undef getusershell
 
 #if HAVE_SYSLOG_H && HAVE_SYSLOG
 # include <syslog.h>
@@ -110,6 +113,10 @@
 
 #include "error.h"
 
+#include <stdbool.h>
+#include "xalloc.h"
+#include "nls.h"
+
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "su"
 
@@ -136,14 +143,11 @@
 #ifndef USE_PAM
 char *crypt ();
 #endif
-char *getusershell ();
-void endusershell ();
-void setusershell ();
 
 extern char **environ;
 
 static void run_shell (char const *, char const *, char **, size_t)
-     ATTRIBUTE_NORETURN;
+     __attribute__ ((__noreturn__));
 
 /* The name this program was run with.  */
 char *program_name;
@@ -165,6 +169,7 @@ static bool _pam_session_opened;
 static bool _pam_cred_established;
 #endif
 
+
 static struct option const longopts[] =
 {
   {"command", required_argument, NULL, 'c'},
@@ -173,8 +178,8 @@ static struct option const longopts[] =
   {"login", no_argument, NULL, 'l'},
   {"preserve-environment", no_argument, NULL, 'p'},
   {"shell", required_argument, NULL, 's'},
-  {GETOPT_HELP_OPTION_DECL},
-  {GETOPT_VERSION_OPTION_DECL},
+  {"help", no_argument, 0, 'u'},
+  {"version", no_argument, 0, 'v'},
   {NULL, 0, NULL, 0}
 };
 
@@ -190,7 +195,7 @@ xsetenv (char const *name, char const *val)
   string[namelen] = '=';
   strcpy (string + namelen + 1, val);
   if (putenv (string) != 0)
-    xalloc_die ();
+    error (EXIT_FAILURE, 0, _("out of memory"));
 }
 
 #if defined SYSLOG_SUCCESS || defined SYSLOG_FAILURE
@@ -221,7 +226,7 @@ log_su (struct passwd const *pw, bool successful)
   if (!tty)
     tty = "none";
   /* 4.2BSD openlog doesn't have the third parameter.  */
-  openlog (last_component (program_name), 0
+  openlog (basename (program_name), 0
 # ifdef LOG_AUTH
 	   , LOG_AUTH
 # endif
@@ -290,7 +295,7 @@ export_pamenv (void)
   while (env && *env)
     {
       if (putenv (*env) != 0)
-	xalloc_die ();
+	error (EXIT_FAILURE, 0, _("out of memory"));
       env++;
     }
 }
@@ -484,7 +489,7 @@ correct_password (const struct passwd *pw)
     }
   encrypted = crypt (unencrypted, correct);
   memset (unencrypted, 0, strlen (unencrypted));
-  return STREQ (encrypted, correct);
+  return !strcmp (encrypted, correct);
 #endif /* !USE_PAM */
 }
 
@@ -672,7 +677,6 @@ modify_environment (const struct passwd *pw, const char *shell)
 static void
 init_groups (const struct passwd *pw)
 {
-#ifdef HAVE_INITGROUPS
   errno = 0;
   if (initgroups (pw->pw_name, pw->pw_gid) == -1)
     {
@@ -682,7 +686,6 @@ init_groups (const struct passwd *pw)
       error (EXIT_FAIL, errno, _("cannot set groups"));
     }
   endgrent ();
-#endif
 
 #ifdef USE_PAM
   retval = pam_setcred (pamh, PAM_ESTABLISH_CRED);
@@ -712,7 +715,7 @@ run_shell (char const *shell, char const *command, char **additional_args,
 	   size_t n_additional_args)
 {
   size_t n_args = 1 + fast_startup + 2 * !!command + n_additional_args + 1;
-  char const **args = xnmalloc (n_args, sizeof *args);
+  char const **args = xcalloc (n_args, sizeof *args);
   size_t argno = 1;
 
   if (simulate_login)
@@ -720,14 +723,14 @@ run_shell (char const *shell, char const *command, char **additional_args,
       char *arg0;
       char *shell_basename;
 
-      shell_basename = last_component (shell);
+      shell_basename = basename (shell);
       arg0 = xmalloc (strlen (shell_basename) + 2);
       arg0[0] = '-';
       strcpy (arg0 + 1, shell_basename);
       args[0] = arg0;
     }
   else
-    args[0] = last_component (shell);
+    args[0] = basename (shell);
   if (fast_startup)
     args[argno++] = "-f";
   if (command)
@@ -757,7 +760,7 @@ restricted_shell (const char *shell)
   setusershell ();
   while ((line = getusershell ()) != NULL)
     {
-      if (*line != '#' && STREQ (line, shell))
+      if (*line != '#' && !strcmp (line, shell))
 	{
 	  endusershell ();
 	  return false;
@@ -788,13 +791,12 @@ Change the effective user id and group id to that of USER.\n\
   -p                           same as -m\n\
   -s, --shell=SHELL            run SHELL if /etc/shells allows it\n\
 "), stdout);
-      fputs (HELP_OPTION_DESCRIPTION, stdout);
-      fputs (VERSION_OPTION_DESCRIPTION, stdout);
+      fputs (_(" -u, --help     display this help and exit\n"), stdout);
+      fputs (_(" -v, --version  output version information and exit\n"), stdout);
       fputs (_("\
 \n\
 A mere - implies -l.   If USER not given, assume root.\n\
 "), stdout);
-      emit_bug_reporting_address ();
     }
   exit (status);
 }
@@ -810,14 +812,10 @@ main (int argc, char **argv)
   struct passwd *pw;
   struct passwd pw_copy;
 
-  initialize_main (&argc, &argv);
   program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
-
-  initialize_exit_failure (EXIT_FAIL);
-  atexit (close_stdout);
 
   fast_startup = false;
   simulate_login = false;
@@ -853,16 +851,19 @@ main (int argc, char **argv)
 	  shell = optarg;
 	  break;
 
-	case_GETOPT_HELP_CHAR;
+	case 'u':
+	  usage(0);
 
-	case_GETOPT_VERSION_CHAR (PROGRAM_NAME, AUTHORS);
+	case 'v':
+	  printf(UTIL_LINUX_VERSION);
+	  exit(EXIT_SUCCESS);
 
 	default:
 	  usage (EXIT_FAIL);
 	}
     }
 
-  if (optind < argc && STREQ (argv[optind], "-"))
+  if (optind < argc && !strcmp (argv[optind], "-"))
     {
       simulate_login = true;
       ++optind;
@@ -943,3 +944,5 @@ main (int argc, char **argv)
 
   run_shell (shell, command, argv + optind, MAX (0, argc - optind));
 }
+
+// vim: sw=2 cinoptions=>4,n-2,{2,^-2,\:2,=2,g0,h2,p5,t0,+2,(0,u0,w1,m1
