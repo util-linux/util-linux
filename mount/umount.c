@@ -100,7 +100,8 @@ static int fake = 0;
 static int
 check_special_umountprog(const char *node,
 			 const char *type, int *status) {
-	char umountprog[120];
+	char search_path[] = FS_SEARCH_PATH;
+	char *path, umountprog[150];
 	struct stat statbuf;
 	int res;
 
@@ -110,10 +111,16 @@ check_special_umountprog(const char *node,
 	if (type == NULL || strcmp(type, "none") == 0)
 		return 0;
 
-	if (strlen(type) < 100) {
+	path = strtok(search_path, ":");
+	while (path) {
 		int type_opt = 0;
 
-		sprintf(umountprog, "/sbin/umount.%s", type);
+		res = snprintf(umountprog, sizeof(umountprog), "%s/umount.%s",
+			       path, type);
+		path = strtok(NULL, ":");
+		if (res < 0 || (size_t) res >= sizeof(umountprog))
+			continue;
+
 		res = stat(umountprog, &statbuf);
 		if (res == -1 && errno == ENOENT && strchr(type, '.')) {
 			/* If type ends with ".subtype" try without it */
