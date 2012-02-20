@@ -465,7 +465,8 @@ static char *find_fsck(const char *type)
 
 	for(s = strtok(p, ":"); s; s = strtok(NULL, ":")) {
 		sprintf(prog, tpl, s, type);
-		if (stat(prog, &st) == 0) break;
+		if (stat(prog, &st) == 0)
+			break;
 	}
 	free(p);
 
@@ -1003,8 +1004,12 @@ static int ignore(struct libmnt_fs *fs)
 		return 1;
 
 	type = mnt_fs_get_fstype(fs);
-	if (!type)
-		return 0;		/* should not happen */
+	if (!type) {
+		if (verbose)
+			printf(_("%s: skipping unknown filesystem type\n"),
+				fs_get_device(fs));
+		return 1;
+	}
 
 	/* Are we ignoring this type? */
 	if (fs_ignored_type(fs))
