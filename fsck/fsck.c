@@ -48,7 +48,6 @@
 
 #include "nls.h"
 #include "pathnames.h"
-#include "ismounted.h"
 #include "exitcodes.h"
 #include "c.h"
 #include "fsck.h"
@@ -107,7 +106,7 @@ const char fsck_prefix_path[] = FS_SEARCH_PATH;
 char *fsck_path = 0;
 
 /* parsed fstab */
-static struct libmnt_table *fstab;
+static struct libmnt_table *fstab, *mtab;
 static struct libmnt_cache *mntcache;
 
 static int count_slaves(dev_t disk);
@@ -122,6 +121,30 @@ static int string_to_int(const char *s)
 		return -1;
 	else
 		return (int) l;
+}
+
+static int is_mounted(struct libmnt_fs *fs)
+{
+	int rc;
+
+	if (!mtab) {
+		mtab = mnt_new_table();
+		if (!mtab)
+			err(FSCK_EX_ERROR, ("failed to initialize libmount table"));
+		if (!mntcache)
+			mntcache = mnt_new_cache();
+		mnt_table_set_cache(mtab, mntcache);
+		mnt_table_parse_mtab(mtab, NULL);
+	}
+
+	rc = mnt_table_is_fs_mounted(mtab, fs);
+	if (verbose) {
+		if (rc)
+			printf(_("%s is mounted\n"), mnt_fs_get_target(fs));
+		else
+			printf(_("%s is not mounted\n"), mnt_fs_get_target(fs));
+	}
+	return rc;
 }
 
 static int ignore(struct libmnt_fs *);
@@ -1071,7 +1094,7 @@ static int check_all(void)
 		if (fs) {
 			if (!skip_root &&
 			    !fs_is_done(fs) &&
-			    !(ignore_mounted && is_mounted(fs_get_device(fs)))) {
+			    !(ignore_mounted && is_mounted(fs))) {
 				status |= fsck_device(fs, 1);
 				status |= wait_many(FLAG_WAIT_ALL);
 				if (status > FSCK_EX_NONDESTRUCT) {
@@ -1119,7 +1142,7 @@ static int check_all(void)
 				not_done_yet++;
 				continue;
 			}
-			if (ignore_mounted && is_mounted(fs_get_device(fs))) {
+			if (ignore_mounted && is_mounted(fs)) {
 				fs_set_done(fs);
 				continue;
 			}
@@ -1427,7 +1450,7 @@ int main(int argc, char *argv[])
 		else if (fs_ignored_type(fs))
 			continue;
 
-		if (ignore_mounted && is_mounted(fs_get_device(fs)))
+		if (ignore_mounted && is_mounted(fs))
 			continue;
 		status |= fsck_device(fs, interactive);
 		if (serialize ||
@@ -1447,6 +1470,7 @@ int main(int argc, char *argv[])
 	free(fsck_path);
 	mnt_free_cache(mntcache);
 	mnt_free_table(fstab);
+	mnt_free_table(mtab);
 	return status;
 }
 

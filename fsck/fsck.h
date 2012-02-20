@@ -58,5 +58,3 @@ struct fsck_instance {
 extern char *base_device(const char *device);
 extern const char *identify_fs(const char *fs_name, const char *fs_types);
 
-/* ismounted.h */
-extern int is_mounted(const char *file);
