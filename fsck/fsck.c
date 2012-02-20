@@ -115,32 +115,35 @@ struct fsck_instance {
 /*
  * Global variables for options
  */
-char *devices[MAX_DEVICES];
-char *args[MAX_ARGS];
-int num_devices, num_args;
+static char *devices[MAX_DEVICES];
+static char *args[MAX_ARGS];
+static int num_devices, num_args;
 
-int lockdisk = 0;
-int verbose = 0;
-int doall = 0;
-int noexecute = 0;
-int serialize = 0;
-int skip_root = 0;
-int ignore_mounted = 0;
-int notitle = 0;
-int parallel_root = 0;
-int progress = 0;
-int progress_fd = 0;
-int force_all_parallel = 0;
-int num_running = 0;
-int max_running = 0;
-volatile int cancel_requested = 0;
-int kill_sent = 0;
-char *fstype = NULL;
-struct fsck_instance *instance_list;
-const char fsck_prefix_path[] = FS_SEARCH_PATH;
-char *fsck_path = 0;
+static int lockdisk;
+static int verbose;
+static int doall;
+static int noexecute;
+static int serialize;
+static int skip_root;
+static int ignore_mounted;
+static int notitle;
+static int parallel_root;
+static int progress;
+static int progress_fd;
+static int force_all_parallel;
 
-/* parsed fstab */
+static int num_running;
+static int max_running;
+
+static volatile int cancel_requested;
+static int kill_sent;
+static char *fstype;
+static struct fsck_instance *instance_list;
+
+static const char fsck_prefix_path[] = FS_SEARCH_PATH;
+static char *fsck_path;
+
+/* parsed fstab and mtab */
 static struct libmnt_table *fstab, *mtab;
 static struct libmnt_cache *mntcache;
 
@@ -800,7 +803,7 @@ struct fs_type_compile {
 
 static void compile_fs_type(char *fs_type, struct fs_type_compile *cmp)
 {
-	char 	*cp, *list, *s;
+	char	*cp, *list, *s;
 	int	num = 2;
 	int	negate, first_negate = 1;
 
