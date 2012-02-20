@@ -350,6 +350,8 @@ static void unlock_disk(struct fsck_instance *inst)
 		 */
 		flock(inst->lock, LOCK_UN);
 		close(inst->lock);
+
+		inst->lock = -1;
 	}
 }
 
@@ -497,8 +499,7 @@ static int execute(const char *type, struct libmnt_fs *fs, int interactive)
 	struct fsck_instance *inst, *p;
 	pid_t	pid;
 
-	inst = xmalloc(sizeof(struct fsck_instance));
-	memset(inst, 0, sizeof(struct fsck_instance));
+	inst = xcalloc(1, sizeof(*inst));
 
 	sprintf(prog, "fsck.%s", type);
 	argv[0] = xstrdup(prog);
@@ -556,16 +557,14 @@ static int execute(const char *type, struct libmnt_fs *fs, int interactive)
 	if (noexecute)
 		pid = -1;
 	else if ((pid = fork()) < 0) {
-		perror("fork");
+		warn(_("fork failed"));
 		free(inst);
 		return errno;
 	} else if (pid == 0) {
 		if (!interactive)
 			close(0);
-		(void) execv(s, argv);
-		perror(argv[0]);
-		free(inst);
-		exit(FSCK_EX_ERROR);
+		execv(s, argv);
+		err(FSCK_EX_ERROR, _("%s: execute failed"), s);
 	}
 
 	for (i=0; i < argc; i++)
@@ -655,7 +654,7 @@ static struct fsck_instance *wait_one(int flags)
 				warnx(_("wait: no more child process?!?"));
 				return NULL;
 			}
-			perror("wait");
+			warn(_("waidpid failed"));
 			continue;
 		}
 		for (prev = 0, inst = instance_list;
@@ -815,10 +814,8 @@ static void compile_fs_type(char *fs_type, struct fs_type_compile *cmp)
 		}
 	}
 
-	cmp->list = xmalloc(num * sizeof(char *));
-	cmp->type = xmalloc(num * sizeof(int));
-	memset(cmp->list, 0, num * sizeof(char *));
-	memset(cmp->type, 0, num * sizeof(int));
+	cmp->list = xcalloc(num, sizeof(char *));
+	cmp->type = xcalloc(num, sizeof(int));
 	cmp->negate = 0;
 
 	if (!fs_type)
@@ -855,9 +852,7 @@ static void compile_fs_type(char *fs_type, struct fs_type_compile *cmp)
 					  "with 'no' or '!'."));
 			}
 		}
-#if 0
-		printf("Adding %s to list (type %d).\n", s, cmp->type[num]);
-#endif
+
 		cmp->list[num++] = xstrdup(s);
 		s = strtok(NULL, ",");
 	}
@@ -932,10 +927,8 @@ static int device_exists(const char *device)
 
 	if (stat(device, &st) == -1)
 		return 0;
-
 	if (!S_ISBLK(st.st_mode))
 		return 0;
-
 	return 1;
 }
 
@@ -1060,6 +1053,7 @@ static int count_slaves(dev_t disk)
 
 		count++;
 	}
+
 	closedir(dir);
 	return count;
 }
@@ -1097,6 +1091,7 @@ static int disk_already_active(struct libmnt_fs *fs)
 		if (!idisk || disk == idisk)
 			return 1;
 	}
+
 	return 0;
 }
 
