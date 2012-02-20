@@ -112,17 +112,6 @@ static struct libmnt_cache *mntcache;
 
 static int count_slaves(dev_t disk);
 
-static char *string_copy(const char *s)
-{
-	char	*ret;
-
-	if (!s)
-		return 0;
-	ret = xmalloc(strlen(s)+1);
-	strcpy(ret, s);
-	return ret;
-}
-
 static int string_to_int(const char *s)
 {
 	long l;
@@ -165,7 +154,7 @@ static const char *fs_get_device(struct libmnt_fs *fs)
 		data->eval_device = 1;
 		data->device = mnt_resolve_spec(spec, mnt_table_get_cache(fstab));
 		if (!data->device)
-			data->device = string_copy(spec);
+			data->device = xstrdup(spec);
 	}
 
 	return data->device;
@@ -407,7 +396,7 @@ static char *find_fsck(const char *type)
 	char *s;
 	const char *tpl;
 	static char prog[256];
-	char *p = string_copy(fsck_path);
+	char *p = xstrdup(fsck_path);
 	struct stat st;
 
 	/* Are we looking for a program or just a type? */
@@ -450,11 +439,11 @@ static int execute(const char *type, struct libmnt_fs *fs, int interactive)
 	memset(inst, 0, sizeof(struct fsck_instance));
 
 	sprintf(prog, "fsck.%s", type);
-	argv[0] = string_copy(prog);
+	argv[0] = xstrdup(prog);
 	argc = 1;
 
 	for (i=0; i <num_args; i++)
-		argv[argc++] = string_copy(args[i]);
+		argv[argc++] = xstrdup(args[i]);
 
 	if (progress) {
 		if ((strcmp(type, "ext2") == 0) ||
@@ -470,11 +459,11 @@ static int execute(const char *type, struct libmnt_fs *fs, int interactive)
 			} else if (progress_fd)
 				snprintf(tmp, 80, "-C%d", progress_fd * -1);
 			if (tmp[0])
-				argv[argc++] = string_copy(tmp);
+				argv[argc++] = xstrdup(tmp);
 		}
 	}
 
-	argv[argc++] = string_copy(fs_get_device(fs));
+	argv[argc++] = xstrdup(fs_get_device(fs));
 	argv[argc] = 0;
 
 	s = find_fsck(prog);
@@ -521,8 +510,8 @@ static int execute(const char *type, struct libmnt_fs *fs, int interactive)
 		free(argv[i]);
 
 	inst->pid = pid;
-	inst->prog = string_copy(prog);
-	inst->type = string_copy(type);
+	inst->prog = xstrdup(prog);
+	inst->type = xstrdup(type);
 	inst->start_time = time(0);
 	inst->next = NULL;
 
@@ -773,7 +762,7 @@ static void compile_fs_type(char *fs_type, struct fs_type_compile *cmp)
 	if (!fs_type)
 		return;
 
-	list = string_copy(fs_type);
+	list = xstrdup(fs_type);
 	num = 0;
 	s = strtok(list, ",");
 	while(s) {
@@ -807,7 +796,7 @@ static void compile_fs_type(char *fs_type, struct fs_type_compile *cmp)
 #if 0
 		printf("Adding %s to list (type %d).\n", s, cmp->type[num]);
 #endif
-		cmp->list[num++] = string_copy(s);
+		cmp->list[num++] = xstrdup(s);
 		s = strtok(NULL, ",");
 	}
 	free(list);
@@ -823,7 +812,7 @@ static int opt_in_list(const char *opt, const char *optlist)
 
 	if (!optlist)
 		return 0;
-	list = string_copy(optlist);
+	list = xstrdup(optlist);
 
 	s = strtok(list, ",");
 	while(s) {
@@ -1269,13 +1258,13 @@ static void PRS(int argc, char *argv[])
 						_("couldn't find matching filesystem: %s"),
 						arg);
 			}
-			devices[num_devices++] = dev ? dev : string_copy(arg);
+			devices[num_devices++] = dev ? dev : xstrdup(arg);
 			continue;
 		}
 		if (arg[0] != '-' || opts_for_fsck) {
 			if (num_args >= MAX_ARGS)
 				errx(FSCK_EX_ERROR, _("too many arguments"));
-			args[num_args++] = string_copy(arg);
+			args[num_args++] = xstrdup(arg);
 			continue;
 		}
 		for (j=1; arg[j]; j++) {
@@ -1340,7 +1329,7 @@ static void PRS(int argc, char *argv[])
 					tmp = argv[++i];
 				else
 					usage();
-				fstype = string_copy(tmp);
+				fstype = xstrdup(tmp);
 				compile_fs_type(fstype, &fs_type_compiled);
 				goto next_arg;
 			case '-':
@@ -1360,7 +1349,7 @@ static void PRS(int argc, char *argv[])
 			options[++opt] = '\0';
 			if (num_args >= MAX_ARGS)
 				errx(FSCK_EX_ERROR, _("too many arguments"));
-			args[num_args++] = string_copy(options);
+			args[num_args++] = xstrdup(options);
 			opt = 0;
 		}
 	}
@@ -1403,7 +1392,7 @@ int main(int argc, char *argv[])
 		strcat (fsck_path, ":");
 		strcat (fsck_path, oldpath);
 	} else {
-		fsck_path = string_copy(fsck_prefix_path);
+		fsck_path = xstrdup(fsck_prefix_path);
 	}
 
 	if ((num_devices == 1) || (serialize))
