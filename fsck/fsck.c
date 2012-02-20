@@ -50,10 +50,16 @@
 #include "pathnames.h"
 #include "exitcodes.h"
 #include "c.h"
-#include "fsck.h"
 
 #define XALLOC_EXIT_CODE	FSCK_EX_ERROR
 #include "xalloc.h"
+
+#ifndef DEFAULT_FSTYPE
+# define DEFAULT_FSTYPE	"ext2"
+#endif
+
+#define MAX_DEVICES 32
+#define MAX_ARGS 32
 
 static const char *ignored_types[] = {
 	"ignore",
@@ -75,7 +81,36 @@ static const char *really_wanted[] = {
 	NULL
 };
 
-#define BASE_MD "/dev/md"
+/*
+ * Internal structure for mount tabel entries.
+ */
+struct fsck_fs_data
+{
+	const char	*device;
+	dev_t		disk;
+	unsigned int	stacked:1,
+			done:1,
+			eval_device:1;
+};
+
+/*
+ * Structure to allow exit codes to be stored
+ */
+struct fsck_instance {
+	int	pid;
+	int	flags;		/* FLAG_{DONE|PROGRESS} */
+	int	lock;		/* flock()ed whole disk file descriptor or -1 */
+	int	exit_status;
+	time_t	start_time;
+	char *	prog;
+	char *	type;
+
+	struct libmnt_fs *fs;
+	struct fsck_instance *next;
+};
+
+#define FLAG_DONE 1
+#define FLAG_PROGRESS 2
 
 /*
  * Global variables for options
@@ -434,7 +469,7 @@ static char *find_fsck(const char *type)
 	return(s ? prog : NULL);
 }
 
-static int progress_active(NOARGS)
+static int progress_active(void)
 {
 	struct fsck_instance *inst;
 
@@ -1222,7 +1257,7 @@ static void __attribute__((__noreturn__)) usage(void)
 	exit(FSCK_EX_USAGE);
 }
 
-static void signal_cancel(int sig FSCK_ATTR((unused)))
+static void signal_cancel(int sig __attribute__((__unused__)))
 {
 	cancel_requested++;
 }
