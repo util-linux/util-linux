@@ -854,7 +854,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	assert(tb);
 	assert(fstab_fs);
 
-	if (mnt_fs_is_swaparea(fstab_fs))
+	if (mnt_fs_is_swaparea(fstab_fs) || mnt_table_get_nents(tb) == 0)
 		return 0;
 
 	if (is_mountinfo(tb)) {
