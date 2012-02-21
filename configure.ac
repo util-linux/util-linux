@@ -1037,7 +1037,7 @@ AC_ARG_ENABLE([wall],
   AS_HELP_STRING([--disable-wall], [do not build wall]),
   [], enable_wall=yes
 )
-UL_BUILD_INIT([wasll])
+UL_BUILD_INIT([wall])
 AM_CONDITIONAL(BUILD_WALL, test "x$build_wall" = xyes)
 
 
