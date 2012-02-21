@@ -24,7 +24,7 @@ called "platters", which rotate about a central axis.  Devices called
 "heads" move to specified places on the disk surface to read or write
 information.  There is usually one head on each side of every platter,
 and all these heads are attached to a comb-like controller arm which
-moves all of them at the same time, either closer to the centre of the
+moves all of them at the same time, either closer to the center of the
 disk, or closer to the outer edge.
 
 Suppose the arm is in one position, putting an area of the disk
@@ -117,7 +117,7 @@ on your disk.  If you set aside a partition for some purpose, it is not
 easy to change its size: you must backup all the data from the partition,
 whether to floppies, to another partition, to another hard disk, or
 somewhere else; then you must edit the table which describes this
-partition, so changing its size; then you must reboot and initialise
+partition, so changing its size; then you must reboot and initialize
 the new partition, formatting it, for example, under DOS, or running
 `mkfs' under Linux; finally you can copy all the data back.  It is
 possible, if you have several partitions, to copy data back and forth
@@ -388,7 +388,7 @@ specify the size of a partition in megabytes, kilobytes, or in the
 current units (cylinders or sectors).  A plus sign `+' indicates that
 your answer is a size rather than a boundary, and the suffix `m' or `k'
 (upper or lower case) indicates that the size is not given in units of
-sectors or cyliners, but in megabytes or kilobytes respectively.  Thus
+sectors or cylinders, but in megabytes or kilobytes respectively.  Thus
 possible answers to the last cylinder request above are
 
 700

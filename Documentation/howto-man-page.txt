@@ -37,7 +37,7 @@ Tell in description an
 .I argument
 is optional, and what happens when is or is not given.  Notice that
 .I argument
-is not abreviated, like in usage function.  Assuming usage function would
+is not abbreviated, like in usage function.  Assuming usage function would
 define argument to be
 .IR num ,
 the manual page should say
@@ -83,12 +83,12 @@ When in the source a new sentence begins somewhere midline, it should use a
 double space before its initial letter.  This is done because groff uses double
 spaces last sentence ends to end of line, and next begins from new line.
 Unless double spaces are used in middle of of line the spacing style is
-inconsistant.
+inconsistent.
 .SH ENVIRONMENT
 Tell which environment variables affect, and how, to execution of the command.
 .TP
 .B EXAMPLE_PATH
-Configuratio file path.  Notice that a well-known environment variables such as
+Configuration file path.  Notice that a well-known environment variables such as
 .B HOME
 does not need explanation.
 .SH FILES

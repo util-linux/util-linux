@@ -42,19 +42,19 @@ The libmount & libblkid
 -----------------------
 
 Both of the libraries can be debugged by setting an environment variable
-consistig a number. The number will be used as a bit mask, so the more 1 the
-greater the debugging level. Seach for `DEBUG' from files
+consisting of a number. The number will be used as a bit mask, so the more 1 the
+higher the debugging level. Search for `DEBUG' from files
 
 	libblkid/src/blkidP.h
 	libmount/src/mountP.h
 
-to see what the different bit mean. At the time of writing this the following
+to see what the different bits mean. At the time of writing this the following
 enabled full debug.
 
 	export LIBBLKID_DEBUG=0xffff
 	export LIBMOUNT_DEBUG=0xffff
 
-The libblkid reads by default /etc/blkid.conf which can be overriden by the
+The libblkid reads by default /etc/blkid.conf which can be overridden by the
 environment variable BLKID_CONF. See manual libblkid/libblkid.3 for details
 about the configuration file.
 
@@ -62,9 +62,9 @@ Block device information is normally kept in a cache file (see blkid man page
 for more information about the cache file location) that can be overridden by
 the environment variable BLKID_FILE.
 
-To libmount uses three paths, which can be override by using environment
+To libmount uses three paths, which can be overridden by using environment
 variables. Notice that these environment variables are ignored for non-root
-users
+users.
 
 	env variable		if not set defaults to
 	LIBMOUNT_FSTAB		/etc/fstab

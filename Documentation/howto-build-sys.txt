@@ -3,7 +3,7 @@ util-linux build system
 
  - all util-linux specific autoconf macros use UL_ prefix
 
- - utils in Makedile.am files are enabled/disabled according to BUILD_<NAME>
+ - utils in Makefile.am files are enabled/disabled according to BUILD_<NAME>
    conditions (AM_CONDITIONAL), for example:
 
 	if BUILD_HWCLOCK

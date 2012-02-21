@@ -4,7 +4,7 @@ Release schedule
 The util-linux uses <major>.<minor>.<maint> version numbering.
 Since the major version is pretty much fixed the release means an
 upgrade of minor number. Minor version is update roughly twice
-per year. Easiet way to estimate when next version will occur is
+per year. Easiest way to estimate when next version will occur is
 to see time stamp of previous release.
 
 Before a release there are few release candidates, which will be
@@ -16,8 +16,8 @@ restricted. Usually there are two release candidates.
   rc1	 1-2 weeks	bug fixes only
   rc2	 1-2 weeks	translations, fatal/trivial bug fixes
 
-The lengty time, usually about five months, after the release can
-be considered as merge window.
+The period between a release and next release candidate can be considered as
+merge window.
 
 Release criteria
 ----------------

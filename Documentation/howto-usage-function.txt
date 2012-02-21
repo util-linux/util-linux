@@ -1,7 +1,7 @@
 Well-known options
 ------------------
 
-Following options are well-known, and they should not be used to any
+Following options are well-known, and they should not be used for any
 other purpose.
 
  -h, --help     display usage and exit
@@ -17,12 +17,12 @@ options resulting to a usage print out due getopt failure.
 How usage is supposed to look
 -----------------------------
 
-The usage output begins with empty followed by `Usage:', and on next line
-there synopsis begins. Synopsis, and all other lines which vary, are
-intended by one space (0x40).
+The usage output begins with empty line followed by `Usage:' and synopsis
+beginning on the next line. Synopsis and all other lines which vary are
+indented by one space (0x40).
 
-The synopsis line tells how to execute the command. Some times you may
-need multiple synopsis lines, this documented separately under Synopsis
+The synopsis line describes how to execute the command. Sometimes you may
+need multiple synopsis lines, this is documented separately under Synopsis
 title.
 
 Notations; Diamond brackets markup an argument. Anything optional is
@@ -31,11 +31,11 @@ optional option arguments. In the later case `=' character in front of
 the option argument, because one has to use it. Square brackets with
 three dots inside mean unlimited repetition of previous.
 
-Short option is always wrote first followed by long option. Options are
-separated with comma and one space. Lonely short or long option does not
+Short option are always written first followed by long option. Options are
+separated with comma and one space. Lonely short or long option do not
 affect where writing of the option begins.
 
-Bellow, in between snips, is an example of how the usage output should
+Below, in between snips, is an example of how the usage output should
 look like.
 
 -- snip
@@ -75,7 +75,7 @@ Option description should not exceed width of 80 characters. If you need
 longer description use multiple lines and indentation.
 
 The description begins from the point of longest option plus two spaces.
-In case adding a new option will would cause a description re-indentation
+In case adding a new option would cause a description re-indentation
 need it either has to be done, or the new option should begin description
 from next line. Usually the later is better. The --help and --version
 will not follow this rule, since they are defined as constants to ease
@@ -121,7 +121,7 @@ synopsis lines.
  ionice [options] -p <pid> [...]
  ionice [options] <command> [<args>] [...]
 
-Notice that the synopsis not meant to be repetition of options segment.
+Notice that the synopsis is not meant to be repetition of options segment.
 The fundamental difference in execution is a bit difficult to define
 other than usually command author, package maintainer or patch submitter
 will know when it should be done that way.
