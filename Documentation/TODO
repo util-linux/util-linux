@@ -167,6 +167,11 @@ libblkid
 fdisk(s)
 --------
 
+ - add to "First sector" dialog a line with information about available
+   gaps (free areas) to make it more user friendly if you want to skip
+   any useless (small) areas between existing partitions. 
+   See https://bugzilla.redhat.com/show_bug.cgi?id=715114
+
  - add "move end" command to move end of the last primary/extended partition.
    This feature seems very attractive to users who resizing their disks 
    (for example in virtual machines).
