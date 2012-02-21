@@ -64,6 +64,7 @@ EXTRA_DIST = \
 		autogen.sh \
 		README.licensing \
 		po/update-potfiles \
+		tools \
 		Documentation
 
 # Arrange so that .tarball-version appears only in the distribution
