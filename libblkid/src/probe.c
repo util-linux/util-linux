@@ -923,7 +923,8 @@ int blkid_do_probe(blkid_probe pr)
  * @dryrun: if TRUE then don't touch the device.
  *
  * This function erases the current signature detected by @pr. The @pr has to
- * be open in O_RDWR mode and BLKID_SUBLKS_MAGIC flag has to be enabled.
+ * be open in O_RDWR mode, BLKID_SUBLKS_MAGIC or/and BLKID_PARTS_MAGIC flags
+ * has to be enabled.
  *
  * After successful signature removing the @pr prober will be moved one step
  * back and the next blkid_do_probe() call will again call previously called
