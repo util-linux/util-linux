@@ -163,7 +163,6 @@ global:
 	mnt_table_find_tag;
 	mnt_table_find_target;
 	mnt_table_get_cache;
-	mnt_table_get_name;
 	mnt_table_get_nents;
 	mnt_table_get_root_fs;
 	mnt_table_next_child_fs;
