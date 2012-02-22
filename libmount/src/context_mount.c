@@ -597,7 +597,7 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
  * another source or target than you have to call mnt_reset_context().
  *
  * If you want to call mount(2) for the same source and target with a diffrent
- * mount flags or fstype then you call mnt_context_reset_state() and then try
+ * mount flags or fstype then you call mnt_context_reset_status() and then try
  * again mnt_context_do_mount().
  *
  * WARNING: non-zero return code does not mean that mount(2) syscall or
@@ -705,7 +705,7 @@ int mnt_context_finalize_mount(struct libmnt_context *cxt)
  *
  * Note that this function could be called only once. If you want to mount with
  * different setting than you have to call mnt_reset_context(). It's NOT enough
- * to call mnt_context_reset_state() if you want call this function more than
+ * to call mnt_context_reset_status() if you want call this function more than
  * once, whole context has to be reseted.
  *
  * WARNING: non-zero return code does not mean that mount(2) syscall or

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008-2009 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2008,2009,2012 Karel Zak <kzak@redhat.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
@@ -848,7 +848,7 @@ static int set_uint_value(char **optstr, unsigned int num,
  * @valsz: size of the value
  * @next: returns pointer to the next option (optional argument)
 
- * Translates "<username>" or "useruid" to the real UID.
+ * Translates "username" or "useruid" to the real UID.
  *
  * For example:
  *	if (!mnt_optstr_get_option(optstr, "uid", &val, &valsz))
@@ -899,7 +899,7 @@ int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next)
  * @valsz: size of the value
  * @next: returns pointer to the next option (optional argument)
 
- * Translates "<groupname>" or "usergid" to the real GID.
+ * Translates "groupname" or "usergid" to the real GID.
  *
  * Returns: 0 on success, negative number in case of error.
  */

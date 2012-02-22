@@ -418,7 +418,7 @@ static int exec_helper(struct libmnt_context *cxt)
 /*
  * mnt_context_helper_setopt() backend.
  *
- * This function applies umount.<type> command line option (for example parsed
+ * This function applies umount.type command line option (for example parsed
  * by getopt() or getopt_long()) to @cxt. All unknown options are ignored and
  * then 1 is returned.
  *

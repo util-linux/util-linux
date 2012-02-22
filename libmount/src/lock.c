@@ -298,7 +298,7 @@ static int mnt_wait_mtab_lock(struct libmnt_lock *ml, struct flock *fl, time_t m
  *
  * Where does the link point to? Obvious choices are mtab and mtab~~.
  * HJLu points out that the latter leads to races. Right now we use
- * mtab~.<pid> instead.
+ * mtab~.pid instead.
  *
  *
  * The original mount locking code has used sleep(1) between attempts and
@@ -319,7 +319,7 @@ static int mnt_wait_mtab_lock(struct libmnt_lock *ml, struct flock *fl, time_t m
  * backwardly compatible code.
  *
  * Don't forget that this code has to be compatible with 3rd party mounts
- * (/sbin/mount.<foo>) and has to work with NFS.
+ * (/sbin/mount.foo) and has to work with NFS.
  * -- kzak@redhat.com [May-2009]
  */
 

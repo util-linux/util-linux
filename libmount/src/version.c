@@ -68,16 +68,20 @@ int mnt_get_library_version(const char **ver_string)
  * @features: returns pointer to the static array of strings, the array is
  *            terminated by NULL.
  *
- * Example:
+ * Returns: number of items in the features array not including the last NULL,
+ *          or less then zero in case of error
  *
+ * Example:
+ * <informalexample>
+ *   <programlisting>
  *	const char *features;
  *
  *	mnt_get_library_features(&features);
  *	while (features && *features)
  *		printf("%s\n", *features++);
+ *   </programlisting>
+ * </informalexample>
  *
- * Returns: number of items in the features array not including the last NULL,
- *          or less then zero in case of error
  */
 int mnt_get_library_features(const char ***features)
 {

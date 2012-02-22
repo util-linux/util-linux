@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2010,2011,2012 Karel Zak <kzak@redhat.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
@@ -175,7 +175,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
  * mnt_context_reset_status:
  * @cxt: context
  *
- * Resets mount(2) and mount.<type> statuses, so mnt_context_do_mount() or
+ * Resets mount(2) and mount.type statuses, so mnt_context_do_mount() or
  * mnt_context_do_umount() could be again called with the same settings.
  *
  * BE CAREFUL -- after this soft reset the libmount will NOT parse mount
@@ -943,8 +943,10 @@ struct libmnt_cache *mnt_context_get_cache(struct libmnt_context *cxt)
 /**
  * mnt_context_set_passwd_cb:
  * @cxt: mount context
+ * @get: callback to get password
+ * @release: callback to release (delallocate) password
  *
- * Sets callbacks for encryption password.
+ * Sets callbacks for encryption password (e.g encrypted loopdev)
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -1690,7 +1692,7 @@ int mnt_context_helper_executed(struct libmnt_context *cxt)
  * mnt_context_get_helper_status:
  * @cxt: mount context
  *
- * Return: mount.<type> exit status, result is reliable only if
+ * Return: mount.type helper exit status, result is reliable only if
  *         mnt_context_helper_executed() returns 1.
  */
 int mnt_context_get_helper_status(struct libmnt_context *cxt)
