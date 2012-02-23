@@ -137,6 +137,10 @@ static const struct libmnt_optmap userspace_opts_map[] =
    { "group",   MNT_MS_GROUP, MNT_NOMTAB },                /* Let the group of the device mount */
    { "nogroup", MNT_MS_GROUP, MNT_INVERT | MNT_NOMTAB },   /* Device group has no special privs */
 
+   /*
+    * Note that traditional init scripts assume _netdev option in /etc/mtab to
+    * umount network block devices on shutdown.
+    */
    { "_netdev", MNT_MS_NETDEV },                           /* Device requires network */
 
    { "comment=", MNT_MS_COMMENT, MNT_NOHLPS | MNT_NOMTAB },/* fstab comment only */

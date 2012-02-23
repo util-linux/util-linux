@@ -110,6 +110,7 @@ struct opt_map {
   int  skip;			/* skip in mtab option string */
   int  inv;			/* true if flag value should be inverted */
   int  mask;			/* flag mask value */
+  int  cmask;			/* comments mask */
 };
 
 /* Custom mount options for our own purposes.  */
@@ -121,6 +122,9 @@ struct opt_map {
 #define MS_GROUP	0x08000000
 #define MS_COMMENT	0x02000000
 #define MS_LOOP		0x00010000
+
+#define MS_COMMENT_NOFAIL	(1 << 1)
+#define MS_COMMENT_NETDEV	(1 << 2)
 
 /* Options that we keep the mount system call from seeing.  */
 #define MS_NOSYS	(MS_NOAUTO|MS_USERS|MS_USER|MS_COMMENT|MS_LOOP)
@@ -162,7 +166,7 @@ static const struct opt_map opt_map[] = {
   { "noowner",	0, 1, MS_OWNER  },	/* Device owner has no special privs */
   { "group",	0, 0, MS_GROUP  },	/* Let the group of the device mount */
   { "nogroup",	0, 1, MS_GROUP  },	/* Device group has no special privs */
-  { "_netdev",	0, 0, MS_COMMENT},	/* Device requires network */
+  { "_netdev",	0, 0, MS_COMMENT, MS_COMMENT_NETDEV },	/* Device requires network */
   { "comment",	0, 0, MS_COMMENT},	/* fstab comment only (kudzu,_netdev)*/
 
   /* add new options here */
@@ -201,12 +205,13 @@ static const struct opt_map opt_map[] = {
   { "strictatime", 0, 0, MS_STRICTATIME }, /* Strict atime semantics */
   { "nostrictatime", 0, 1, MS_STRICTATIME }, /* kernel default atime */
 #endif
-  { "nofail",	0, 0, MS_COMMENT},	/* Do not fail if ENOENT on dev */
+  { "nofail",	0, 0, MS_COMMENT, MS_COMMENT_NOFAIL },	/* Do not fail if ENOENT on dev */
   { NULL,	0, 0, 0		}
 };
 
 static int opt_nofail;
 static int invuser_flags;
+static int comment_flags;
 
 static const char *opt_loopdev, *opt_vfstype, *opt_offset, *opt_sizelimit,
         *opt_encryption, *opt_speed, *opt_comment, *opt_uhelper, *opt_helper;
@@ -244,6 +249,7 @@ clear_string_opts(void) {
 static void
 clear_flags_opts(void) {
 	invuser_flags = 0;
+	comment_flags = 0;
 	opt_nofail = 0;
 }
 
@@ -504,8 +510,11 @@ parse_opt(char *opt, int *mask, int *inv_user, char **extra_opts) {
 				verbose = 0;
 			}
 #endif
-			if (streq(opt, "nofail"))
-				opt_nofail = 1;
+			if (om->mask == MS_COMMENT) {
+				comment_flags |= om->cmask;
+				if (om->cmask == MS_COMMENT_NOFAIL)
+					opt_nofail = 1;
+			}
 			return;
 		}
 
@@ -611,6 +620,8 @@ fix_opts_string (int flags, const char *extra_opts,
 		if (om->skip)
 			continue;
 		if (om->inv || !om->mask || (flags & om->mask) != om->mask)
+			continue;
+		if (om->mask == MS_COMMENT && !(comment_flags & om->cmask))
 			continue;
 		new_opts = append_opt(new_opts, om->opt, NULL);
 		flags &= ~om->mask;
