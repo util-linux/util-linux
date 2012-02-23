@@ -55,8 +55,16 @@ libmount (mount/umount)
 -----------------------
 
  Note that the old mount/[u]mount.c code is in MAINTENANCE MODE only. All new
- features should be implemented to libmount or to the new mount/umount
- implementation in the libmount/samples/ directory.
+ features should be implemented to libmount or to the new sys-utils/{mount,umount}.c
+ utils.
+
+ - add options to control fstab/mtab mount options usage, something like:
+
+   --options-mode={ignore,append,prepend,replace}      MNT_OMODE_{IGNORE, ...}
+   --options-source={fstab,mtab,disable}               MNT_OMODE_{FSTAB,MTAB,NOTAB}
+   --options-source-force                              MNT_OMODE_FORCE
+
+   (all this already supported by libmount)
 
  - add x-mount-mkdir mount option to libmount to allow "mkdir /mountpoint"
 
