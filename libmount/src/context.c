@@ -228,17 +228,23 @@ int mnt_context_is_restricted(struct libmnt_context *cxt)
  * Controls how to use mount optionsmsource and target paths from fstab/mtab.
  *
  * @MNT_OMODE_IGNORE: ignore mtab/fstab options
+ *
  * @MNT_OMODE_APPEND: append mtab/fstab options to existing options
+ *
  * @MNT_OMODE_PREPEND: prepend mtab/fstab options to existing options
+ *
  * @MNT_OMODE_REPLACE: replace existing options with options from mtab/fstab
  *
  * @MNT_OMODE_FORCE: always read mtab/fstab (although source and target is defined)
  *
  * @MNT_OMODE_FSTAB: read from fstab
+ *
  * @MNT_OMODE_MTAB: read from mtab if fstab not enabled or failed
+ *
  * @MNT_OMODE_NOTAB: do not read fstab/mtab at all
  *
  * @MNT_OMODE_AUTO: default mode (MNT_OMODE_PREPEND | MNT_OMODE_FSTAB | MNT_OMODE_MTAB)
+ *
  * @MNT_OMODE_USER: default for non-root users (MNT_OMODE_REPLACE | MNT_OMODE_FORCE | MNT_OMODE_FSTAB)
  *
  * Notes:
