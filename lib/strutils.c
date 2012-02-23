@@ -393,6 +393,8 @@ int string_to_idarray(const char *list, int ary[], size_t arysz,
 		const char *end = NULL;
 		int id;
 
+		if (n >= arysz)
+			return -2;
 		if (!begin)
 			begin = p;		/* begin of the column name */
 		if (*p == ',')
@@ -408,8 +410,6 @@ int string_to_idarray(const char *list, int ary[], size_t arysz,
 		if (id == -1)
 			return -1;
 		ary[ n++ ] = id;
-		if (n >= arysz)
-			return -2;
 		begin = NULL;
 		if (end && !*end)
 			break;
