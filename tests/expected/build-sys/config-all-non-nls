@@ -108,6 +108,7 @@ mesg:
 script:  libutil 
 scriptreplay:  
 setterm:  libtinfo 
+wall:  
 write:  
 test_byteswap:  
 test_md5:  
