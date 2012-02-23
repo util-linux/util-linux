@@ -205,8 +205,7 @@ static const struct opt_map opt_map[] = {
   { NULL,	0, 0, 0		}
 };
 
-static int opt_nofail = 0;
-
+static int opt_nofail;
 static int invuser_flags;
 
 static const char *opt_loopdev, *opt_vfstype, *opt_offset, *opt_sizelimit,
@@ -240,6 +239,12 @@ clear_string_opts(void) {
 
 	for (m = &string_opt_map[0]; m->tag; m++)
 		*(m->valptr) = NULL;
+}
+
+static void
+clear_flags_opts(void) {
+	invuser_flags = 0;
+	opt_nofail = 0;
 }
 
 static int
@@ -545,6 +550,7 @@ parse_opt(char *opt, int *mask, int *inv_user, char **extra_opts) {
 	*extra_opts = append_opt(*extra_opts, opt, NULL);
 }
 
+
 /* Take -o options list and compute 4th and 5th args to mount(2).  flags
    gets the standard options (indicated by bits) and extra_opts all the rest */
 static void
@@ -553,6 +559,7 @@ parse_opts (const char *options, int *flags, char **extra_opts) {
 	*extra_opts = NULL;
 
 	clear_string_opts();
+	clear_flags_opts();
 
 	if (options != NULL) {
 		char *opts = xstrdup(options);
