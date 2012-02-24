@@ -135,6 +135,7 @@ build-sys:
    - add path.h to Makefile.am  [Karel Zak]
    - add sleepexit from login.c to smatch non-return functions  [Karel Zak]
    - add smatch data  [Karel Zak]
+   - add tools/ to EXTRA_DIST  [Karel Zak]
    - add tools/config-gen and basic compilation scenarios  [Karel Zak]
    - check HAVE_ definitions with #ifdef [smatch scan]  [Sami Kerola]
    - check scanf %ms modifier  [Karel Zak]
@@ -170,6 +171,7 @@ build-sys:
    - enable .xz, disable .gz  [Karel Zak]
    - enhance error message for missing libtoolize  [Sami Kerola]
    - fix UL_INIT_BUILD macro  [Karel Zak]
+   - fix building of wall  [Petr Uzel]
    - fix libuuid  initialization  [Karel Zak]
    - fixes to USAGE_* macros  [Sami Kerola]
    - improve changelog target  [Karel Zak]
@@ -181,6 +183,7 @@ build-sys:
    - move swapon from mount/ to sys-utils/  [Karel Zak]
    - move type checks before --enable-*  [Karel Zak]
    - release++ (v2.21-rc1)  [Karel Zak]
+   - release++ (v2.21-rc2)  [Karel Zak]
    - remove redundant __progname check  [Karel Zak]
    - remove redundant flags from mount/Makefile.am  [Karel Zak]
    - remove unnecessary perl check  [Karel Zak]
@@ -202,6 +205,7 @@ chcpu:
    - man page update  [Heiko Carstens]
    - new tool  [Heiko Carstens]
    - provide better user feedback  [Heiko Carstens]
+   - use appropriate variable type [cppcheck]  [Sami Kerola]
 chcpu,cpuset:
    - reduce code duplication for cpu list parsing  [Heiko Carstens]
 chfn:
@@ -239,6 +243,7 @@ cytune:
    - add long options and usage()  [Sami Kerola]
    - check numeric user inputs  [Sami Kerola]
    - coding style fixes  [Sami Kerola]
+   - cytune.8 fix formatting  [Petr Uzel]
    - fix printf type warning  [Sami Kerola]
    - refactor main(), new function query_tty_stats()  [Sami Kerola]
    - use libc error printing facilities  [Sami Kerola]
@@ -266,6 +271,9 @@ docs:
    - add non-return function and if shorthand tips  [Sami Kerola]
    - add note about BUILD_* macros  [Karel Zak]
    - add note about config-gen purpose  [Karel Zak]
+   - add note about fdisk to TODO  [Karel Zak]
+   - add note about losetup to TODO  [Karel Zak]
+   - add note about mount(8) options to TODO  [Karel Zak]
    - add notes about tools/config-gen  [Karel Zak]
    - add prlimit to the TODO file  [Karel Zak]
    - add usage() howto for contributors  [Sami Kerola]
@@ -307,11 +315,14 @@ docs:
    - require kernel support before accepting use of it  [Sami Kerola]
    - restructure flock.1 manual page  [Sami Kerola]
    - tell what the Documentation/ is about  [Sami Kerola]
+   - trivial documentation fixes and improvements  [Petr Uzel]
    - update AUTHORS file  [Karel Zak]
    - update TODO  [Karel Zak]
    - update TODO  [Petr Uzel]
    - update TODO file  [Davidlohr Bueso]
    - update TODO file  [Karel Zak]
+   - update copyright years  [Karel Zak]
+   - update v2.21-ReleaseNotes  [Karel Zak]
    - use .LGPL extension for file with GNU Lesser License  [Karel Zak]
    - use correct translation project url  [Sami Kerola]
 fallocate:
@@ -343,6 +354,7 @@ fdisk:
    - print welcome message  [Francesco Cosoleto]
    - remove PACKED macro  [Karel Zak]
    - remove possibly_osf_label variable that is only assigned  [Francesco Cosoleto]
+   - remove redundant declaration [cppcheck]  [Sami Kerola]
    - remove uneecessary code  [Karel Zak]
    - remove unused 'require' member in enum action  [Francesco Cosoleto]
    - remove unused guess_device_type() function  [Francesco Cosoleto]
@@ -351,6 +363,7 @@ fdisk:
    - rename try() and tryprocpt() functions  [Francesco Cosoleto]
    - rewrite print menu system  [Francesco Cosoleto]
    - split delete_partition() off from dos_delete_partition()  [Francesco Cosoleto]
+   - update information about GNU Parted in fdisk.8  [Petr Uzel]
    - use CDROM_GET_CAPABILITY ioctl  [Davidlohr Bueso]
    - use ngettext() in str_units() for plural forms  [Francesco Cosoleto]
 findmnt:
@@ -363,8 +376,10 @@ findmnt:
    - support multiple --tab-file options  [Karel Zak]
    - use warnx for libmnt error callback  [Dave Reisner]
 flock:
+   - add missing word »be« to flock.1  [Paul Menzel]
    - align with howto-usage-function.txt  [Sami Kerola]
    - fix coding style  [Sami Kerola]
+   - fix flock.1 grammar by removing »s«  [Paul Menzel]
    - fix sizeof usage [clang -Wsizeof-pointer-memaccess]  [Karel Zak]
    - make flock(1) work on NFSv4  [Michal Kubecek]
    - move long_options struct to function scope  [Sami Kerola]
@@ -467,23 +482,30 @@ lib,tt:
    - add TT_FL_NOEXTREMES  [Karel Zak]
    - don't trim last line char  [Karel Zak]
    - fix compiler warning [-Wreturn-type]  [Karel Zak]
+lib/fsprobe:
+   - mar this internal API as deprecated  [Karel Zak]
 lib/loopdev:
    - fix part scan detection code  [Karel Zak]
    - fix possible dir leak on error  [Karel Zak]
    - remove dead assigment and null deference  [Karel Zak]
+lib/strutils:
+   - move array bounds check in string_to_idarray() to appropriate place.  [Chandan B Rajenda]
 lib/sysfs:
    - fix handle leak  [Karel Zak]
    - fix possible fd leak on error  [Karel Zak]
 libblkid:
    - DRBD proxy data-log identification.  [Philipp Marek]
    - add BLKID_PARTS_MAGIC  [Karel Zak]
+   - add BLKID_PARTS_MAGIC to blkid_do_wipe() docs  [Karel Zak]
    - add blkid_do_wipe()  [Karel Zak]
+   - allow return value to indicate error [cppcheck]  [Sami Kerola]
    - check blkid_probe_set_magic() return in GPT code [coverity scan]  [Karel Zak]
    - check blkid_probe_set_magic() return in ultrix code [coverity scan]  [Karel Zak]
    - check blkid_probe_set_magic() return value [coverity scan]  [Karel Zak]
    - check for NULL in blkid_flush_cache() [coverity scan]  [Karel Zak]
    - check rename() return value [coverity scan]  [Karel Zak]
    - check return values in safe_probe code [coverity scan]  [Karel Zak]
+   - clarify operation order [cppcheck]  [Sami Kerola]
    - comparing an array to null is not useful [coverity scan]  [Karel Zak]
    - don't call CDROM_GET_CAPABILITY for partitions  [Karel Zak]
    - export PTMAGIC also if only PTTYPE requested  [Karel Zak]
@@ -494,6 +516,7 @@ libblkid:
    - fix smatch warning  [Sami Kerola]
    - fix suspicious implicit sign extension [coverity scan]  [Karel Zak]
    - fix use-after-free [coverity scan]  [Karel Zak]
+   - improve reiserfs and btrfs min. size limits  [Karel Zak]
    - make fd usage in md code more robust  [Karel Zak]
    - minor docs changes  [Francesco Cosoleto]
    - more robust idx usage [coverity scan]  [Karel Zak]
@@ -501,6 +524,8 @@ libblkid:
    - remove >> 9 from GPT code  [Karel Zak]
    - remove unnecessary position check from list_for_each_safe loops  [Karel Zak]
    - silence a format string warning [-Wformat]  [Francesco Cosoleto]
+   - update docs  [Karel Zak]
+   - verify arroy bound before reference [cppcheck]  [Sami Kerola]
 libmount:
    - Use filter arg of scandir* to pickup /etc/fstab.d/*.fstab files  [Masatake YAMATO]
    - add "+" prefix for options pattern (e.g findmnt -O)  [Karel Zak]
@@ -520,6 +545,8 @@ libmount:
    - always trust the source of a pseudofs  [Dave Reisner]
    - avoid duplicate loopdevs  [Karel Zak]
    - avoid resolving pseudofs source on update  [Dave Reisner]
+   - clean up context docs  [Karel Zak]
+   - cleanup docs  [Karel Zak]
    - cleanup post-umount operations  [Karel Zak]
    - consolidate MNT_FS_* code  [Karel Zak]
    - consolidate sysconf() usage  [Karel Zak]
@@ -559,6 +586,7 @@ libmount:
    - remove dead assigment  [Karel Zak]
    - remove fstab.d support  [Karel Zak]
    - remove magic constatnt from mount(8)  [Karel Zak]
+   - remove teaser proto for mnt_table_get_name  [Dave Reisner]
    - scandirat based mnt_table_parse_dir implementation  [Masatake YAMATO]
    - support -o loop=<devname>  [Karel Zak]
    - support dirs for mnt_table_parse_fstab(), add mnt_table_parse_dir()  [Karel Zak]
@@ -587,6 +615,7 @@ login:
    - PAM initialization refactoring  [Karel Zak]
    - PAM session initialization refactoring  [Karel Zak]
    - add -H option for compatibility with Suse  [Karel Zak]
+   - add LOGIN_RETRIES, cleanup retries check code  [Karel Zak]
    - add hostname to login_context struct  [Karel Zak]
    - add login.defs code and tests  [Karel Zak]
    - add pid to login_context struct  [Karel Zak]
@@ -714,6 +743,11 @@ lscpu:
    - use xalloc libs  [Dave Reisner]
 misc:
    - use %m in format string instead of %s and strerror(errno)  [Petr Uzel]
+mkfs.bfs:
+   - add setlocale  [Davidlohr Bueso]
+mkfs.cramfs:
+   - check blocksize user input [cppcheck]  [Sami Kerola]
+   - close open file after usage [cppcheck]  [Sami Kerola]
 mkfs.minix:
    - Fix super_set_nzones()  [Maurizio Lombardi]
    - In Minix V3 filesystems the maximum filename lenght is 60 chars and the dirsize is 64 bytes.  [Maurizio Lombardi]
@@ -742,8 +776,11 @@ mount:
    - append inverting options for mount.<type>  [Karel Zak]
    - avoid canonicalizing pseudofs paths  [Dave Reisner]
    - check for target before source on remount  [Karel Zak]
+   - clear flags before options parsing  [Karel Zak]
    - define fallback selinux_warning macro with 2 params  [Dave Reisner]
+   - distinguish between MS_COMMENT flags (netdev, nofail, ...)  [Karel Zak]
    - don't canonicalize the source of a pseudofs  [Dave Reisner]
+   - enable fstab.d  [Masatake YAMATO]
    - fix __attribute__ keyword  [Karel Zak]
    - fix build  [Davidlohr Bueso]
    - fix compiler warning [-Wunused-parameter]  [Karel Zak]
@@ -781,8 +818,12 @@ pivot_root:
 po:
    - merge changes  [Karel Zak]
    - update cs.po (from translationproject.org)  [Petr Pisar]
+   - update cs.po (from translationproject.org)  [Petr Písař]
    - update fr.po (from translationproject.org)  [David Prévot]
    - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
+   - update nl.po (from translationproject.org)  [Benno Schulenberg]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
 prlimit:
    - add --{raw,noheadings} options  [Karel Zak]
    - add a units column  [Davidlohr Bueso]
@@ -803,6 +844,7 @@ prlimit:
    - use xalloc libs  [Davidlohr Bueso]
 raw:
    - fix shadowing of minor function  [maximilian attems]
+   - remove unnecessary return [cppcheck]  [Sami Kerola]
 readprifile:
    - remove unnecessary optstring array  [Karel Zak]
 readprofile:
@@ -827,6 +869,7 @@ setpwnam:
    - fix coding style  [Sami Kerola]
    - remove non-ANSI definitions [smatch scan]  [Sami Kerola]
 setsid:
+   - add "+" to getopt_long()  [Harald Hoyer]
    - add long options and fix coding style  [Sami Kerola]
 setterm:
    - order man page items alphabetically  [Jari Aalto]
@@ -839,6 +882,7 @@ sfdisk:
    - fix poor coding style  [Karel Zak]
    - fix typo in cdrom detection  [Karel Zak]
    - fix weird indentation in msdos_partition()  [Petr Uzel]
+   - free variable which got the allocation [cppcheck]  [Sami Kerola]
    - get_disksize() returns long long  [Petr Uzel]
    - introduce get_ull() function  [Petr Uzel]
    - make the cylinder boundary check less fatal  [Petr Uzel]
@@ -857,8 +901,11 @@ swapon:
 switch_root:
    - add nls support  [Sami Kerola]
    - align with howto-usage-function.txt  [Sami Kerola]
+   - close open file after usage [cppcheck]  [Sami Kerola]
    - handle /run and do not mount over existing mounts  [Harald Hoyer]
    - umount mount points we cannot move with MNT_DETACH  [Harald Hoyer]
+taskset:
+   - use appropriate variable type [cppcheck]  [Sami Kerola]
 test:
    - refresh build-sys tests  [Karel Zak]
 tests:
@@ -876,12 +923,14 @@ tests:
    - add valgrind to libmount tab parse test  [Karel Zak]
    - add valgrind to libmount tabdiff tests  [Karel Zak]
    - add valgrind to libmount tags eval. tests  [Karel Zak]
+   - add wall to build-sys tests  [Karel Zak]
    - call valgrind from libmount optstr test  [Karel Zak]
    - call valgrind from libmount utils and update tests  [Karel Zak]
    - cleanup islocal test  [Karel Zak]
    - cleanup paths  [Karel Zak]
    - fix mount/special to be compatible with libmount  [Karel Zak]
    - fix options evaluation, add support for optional tests  [Karel Zak]
+   - make minix tests more robust  [Karel Zak]
    - remove obsolete checktty test  [Karel Zak]
    - remove unexpected set -x  [Karel Zak]
    - remove unssuported losetup -s  [Karel Zak]
@@ -890,9 +939,11 @@ tests:
    - update tests with fdisk output  [Karel Zak]
 tools:
    - add new code checking script  [Dave Reisner]
+   - use gpg-aggent in ko-release-gen  [Karel Zak]
 tunelp:
    - add long options and align with howto-usage-function.txt  [Sami Kerola]
    - fix coding style  [Sami Kerola]
+   - free allocation, use xalloc  [Sami Kerola]
    - use libc error printing facilities  [Sami Kerola]
    - use symbolic exit values  [Sami Kerola]
 umount:
@@ -900,8 +951,10 @@ umount:
    - (new) use the same exit codes as mount(8)  [Karel Zak]
    - add missing break  [Karel Zak]
    - add warning  [Karel Zak]
+   - respect fs search path  [Mike Frysinger]
    - use new lib/loopdev.c code  [Karel Zak]
 unshare:
+   - add note about MS_SHARED to unshare.1  [Karel Zak]
    - align with howto-usage-function.txt  [Sami Kerola]
 uuidd:
    - Add missing break to option case statement  [Eric Sandeen]
@@ -924,5 +977,3 @@ wipefs:
    - use xalloc lib  [Davidlohr Bueso]
 write:
    - fix path for freopen()  [Karel Zak]
-
-- fix path for freopen()  [Karel Zak]
