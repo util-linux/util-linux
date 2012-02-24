@@ -10,3 +10,5 @@ proc                    /proc                   proc    defaults        0 0
 
 foo.com:/mnt/share	/mnt/remote		nfs	noauto
 //bar.com/gogogo        /mnt/gogogo             cifs    user=SRGROUP/baby,noauto
+
+/dev/foo		/any/foo/		auto	defaults 0 0

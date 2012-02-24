@@ -47,6 +47,16 @@ ts_valgrind $TESTPROG --find-forward "$TS_SELF/files/fstab" target /home/foo &> 
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "find-target2"
+ts_valgrind $TESTPROG --find-forward "$TS_SELF/files/fstab" target /any/foo &> $TS_OUTPUT
+sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
+ts_finalize_subtest
+
+ts_init_subtest "find-target3"
+ts_valgrind $TESTPROG --find-forward "$TS_SELF/files/fstab" target /any/foo/ &> $TS_OUTPUT
+sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
+ts_finalize_subtest
+
 ts_init_subtest "find-pair"
 ts_valgrind $TESTPROG --find-pair "$TS_SELF/files/mtab" /dev/mapper/kzak-home /home/kzak &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
