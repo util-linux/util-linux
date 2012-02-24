@@ -2760,6 +2760,10 @@ mount failure
 .TP
 .BR 64
 some mount succeeded
+.RE
+
+The command mount -a returns 0 (all success), 32 (all failed) or 64 (some
+failed, some success).
 
 .SH NOTES
 The syntax of external mount helpers is:
