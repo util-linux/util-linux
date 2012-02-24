@@ -456,7 +456,7 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 		char *p;
 
-		if (!fs->target || !mnt_fs_is_swaparea(fs) ||
+		if (!fs->target || mnt_fs_is_swaparea(fs) ||
 		    (*fs->target == '/' && *(fs->target + 1) == '\0'))
 		       continue;
 
