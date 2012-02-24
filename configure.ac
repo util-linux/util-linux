@@ -387,6 +387,8 @@ AC_CACHE_VAL([scanf_cv_alloc_modifier],
       [scanf_cv_alloc_modifier=as],
       [scanf_cv_alloc_modifier=no]
     )
+    ,
+    [scanf_cv_alloc_modifier=no]
   )
 )
 
