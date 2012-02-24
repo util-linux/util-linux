@@ -830,8 +830,8 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 {
 	char *root = NULL;
 	struct libmnt_fs *src_fs;
-	const char *src, *tgt;
-	char *xsrc = NULL;
+	const char *src;
+	char *xsrc = NULL, *tgt;
 	int flags = 0, rc = 0;
 
 	assert(tb);
@@ -852,7 +852,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 		src = xsrc = mnt_resolve_spec(mnt_fs_get_source(fstab_fs),
 					      tb->cache);
 
-	tgt = mnt_fs_get_target(fstab_fs);
+	tgt = mnt_resolve_path(mnt_fs_get_target(fstab_fs), tb->cache);
 
 	if (tgt && src && root) {
 		struct libmnt_iter itr;
@@ -870,7 +870,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 			 * network filesystem source paths.
 			 */
 			if (t && s && r &&
-			    strcmp(t, tgt) == 0 &&
+			    streq_except_trailing_slash(t, tgt) &&
 			    streq_except_trailing_slash(s, src) &&
 			    strcmp(r, root) == 0)
 				break;
@@ -881,6 +881,8 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 
 	if (xsrc && !tb->cache)
 		free(xsrc);
+	if (!tb->cache)
+		free(tgt);
 
 	free(root);
 	return rc;
