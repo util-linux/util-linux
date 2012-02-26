@@ -1,7 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 if BUILD_DDATE
-mandir = @mandir@/ru
-dist_man_MANS =
-dist_man_MANS += ddate.1
+ruman_DATA = ddate.1
+EXTRA_DIST = $(ruman_DATA)
 endif
