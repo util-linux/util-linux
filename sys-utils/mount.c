@@ -347,7 +347,11 @@ try_readonly:
 			return MOUNT_EX_USAGE;
 		}
 
-		if (src == NULL || tgt == NULL) {
+		/*
+		 * TODO: add mnt_context_fstab_applied() to check if we found
+		 *       target/source in the file.
+		 */
+		if (!tgt) {
 			if (mflags & MS_REMOUNT)
 				warnx(_("%s not mounted"), src ? src : tgt);
 			else

@@ -451,8 +451,10 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 	src = mnt_fs_get_srcpath(cxt->fs);
 	target = mnt_fs_get_target(cxt->fs);
 
-	if (!src || !target)
+	if (!target)
 		return -EINVAL;
+	if (!src)
+		src = "none";
 
 	type = try_type ? : mnt_fs_get_fstype(cxt->fs);
 
