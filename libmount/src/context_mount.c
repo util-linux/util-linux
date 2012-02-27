@@ -369,7 +369,12 @@ static int exec_helper(struct libmnt_context *cxt)
 		args[i++] = mnt_fs_get_srcpath(cxt->fs);/* 2 */
 		args[i++] = mnt_fs_get_target(cxt->fs);	/* 3 */
 
-		if (mnt_context_is_sloppy(cxt))
+		/*
+		 * TODO: remove the exception for "nfs", -s is documented
+		 *       for years should be usable everywhere.
+		 */
+		if (mnt_context_is_sloppy(cxt) &&
+		    type && startswith(type, "nfs"))
 			args[i++] = "-s";		/* 4 */
 		if (mnt_context_is_fake(cxt))
 			args[i++] = "-f";		/* 5 */
