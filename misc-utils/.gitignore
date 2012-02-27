@@ -17,3 +17,5 @@ blkid
 wipefs
 findmnt
 lsblk
+lslocks
+

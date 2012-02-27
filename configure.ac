@@ -892,6 +892,11 @@ if test "x$build_prlimit" = xyes; then
 fi
 
 
+UL_BUILD_INIT([lslocks], [check])
+UL_REQUIRES_LINUX([lslocks])
+AM_CONDITIONAL(BUILD_LSLOCKS, test "x$build_lslocks" = xyes)
+
+
 AC_ARG_ENABLE([switch_root],
   AS_HELP_STRING([--disable-switch_root], [do not build switch_root]),
   [], enable_switch_root=check

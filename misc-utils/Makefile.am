@@ -37,6 +37,16 @@ usrbin_exec_PROGRAMS += ddate
 dist_man_MANS += ddate.1
 endif
 
+if BUILD_LSLOCKS
+usrbin_exec_PROGRAMS += lslocks
+lslocks_SOURCES = \
+	lslocks.c \
+	$(top_srcdir)/lib/at.c \
+	$(top_srcdir)/lib/strutils.c \
+	$(top_srcdir)/lib/tt.c \
+	$(top_srcdir)/lib/mbsalign.c
+endif
+
 if BUILD_LSBLK
 bin_PROGRAMS += lsblk
 dist_man_MANS += lsblk.8
