@@ -53,6 +53,7 @@
 #include "gpt.h"
 #include "pathnames.h"
 #include "canonicalize.h"
+#include "rpmatch.h"
 
 /*
  * Table of contents:
@@ -3140,7 +3141,7 @@ do_reread(char *dev) {
 static void
 do_fdisk(char *dev) {
     int fd;
-    int c, answer;
+    char answer[32];
     struct stat statbuf;
     int interactive = isatty(0);
     struct disk_desc *z;
@@ -3197,22 +3198,20 @@ do_fdisk(char *dev) {
 	    else
 		warnx(_("I don't like this - probably you should answer No\n"));
 	}
- ask:
 	if (interactive) {
+ ask:
 	    if (no_write)
+		/* TRANSLATORS: sfdisk uses rpmatch which means the answers y and n
+		 * should be translated, but that is not the case with q answer. */
 		printf(_("Are you satisfied with this? [ynq] "));
 	    else
 		printf(_("Do you want to write this to disk? [ynq] "));
-	    answer = c = getchar();
-	    while (c != '\n' && c != EOF)
-		c = getchar();
-	    if (c == EOF)
-		printf(_("\nsfdisk: premature end of input\n"));
-	    if (c == EOF || answer == 'q' || answer == 'Q') {
+	    fgets(answer, sizeof(answer), stdin);
+	    if (answer[0] == 'q' || answer[0] == 'Q') {
 		errx(EXIT_FAILURE, _("Quitting - nothing changed"));
-	    } else if (answer == 'n' || answer == 'N') {
+	    } else if (rpmatch(answer) == 1) {
 		continue;
-	    } else if (answer == 'y' || answer == 'Y') {
+	    } else if (rpmatch(answer) == 0) {
 		break;
 	    } else {
 		printf(_("Please answer one of y,n,q\n"));
