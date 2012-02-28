@@ -62,9 +62,9 @@
 static int timeout;
 static int profile;
 
-static void (*saved_sigint)  = SIG_DFL;
-static void (*saved_sigtstp) = SIG_DFL;
-static void (*saved_sigquit) = SIG_DFL;
+struct sigaction saved_sigint;
+struct sigaction saved_sigtstp;
+struct sigaction saved_sigquit;
 
 #ifndef IUCLC
 #  define IUCLC	0
@@ -142,13 +142,27 @@ out:
 /*
  *	Called at timeout.
  */
-static
-# ifdef __GNUC__
-void alrm_handler(int sig __attribute__((unused)))
-# else
-void alrm_handler(int sig)
-# endif
+static void alrm_handler(int sig __attribute__((unused)))
 {
+	return;
+}
+
+static void mask_signal(int signal, void (*handler)(int),
+		struct sigaction *origaction)
+{
+	struct sigaction newaction;
+
+	newaction.sa_handler = handler;
+	sigemptyset(&newaction.sa_mask);
+	newaction.sa_flags = 0;
+
+	sigaction(signal, NULL, origaction);
+	sigaction(signal, &newaction, NULL);
+}
+
+static void unmask_signal(int signal, struct sigaction *sa)
+{
+	sigaction(signal, sa, NULL);
 }
 
 /*
@@ -447,9 +461,9 @@ static void sushell(struct passwd *pwd)
 	 *	Try to execute a shell.
 	 */
 	setenv("SHELL", sushell, 1);
-	signal(SIGINT,  saved_sigint);
-	signal(SIGTSTP, saved_sigtstp);
-	signal(SIGQUIT, saved_sigquit);
+	unmask_signal(SIGINT, &saved_sigint);
+	unmask_signal(SIGTSTP, &saved_sigtstp);
+	unmask_signal(SIGQUIT, &saved_sigquit);
 #ifdef WITH_SELINUX
 	if (is_selinux_enabled() > 0) {
 		security_context_t scon=NULL;
@@ -493,6 +507,7 @@ int main(int argc, char **argv)
 	int c, fd = -1;
 	int opt_e = 0;
 	pid_t pid, pgrp, ppgrp, ttypgrp;
+	struct sigaction saved_sighup;
 
 	/*
 	 *	See if we have a timeout flag.
@@ -524,9 +539,9 @@ int main(int argc, char **argv)
 	/*
 	 *	See if we need to open an other tty device.
 	 */
-	saved_sigint  = signal(SIGINT,  SIG_IGN);
-	saved_sigtstp = signal(SIGQUIT, SIG_IGN);
-	saved_sigquit = signal(SIGTSTP, SIG_IGN);
+	mask_signal(SIGQUIT, SIG_IGN, &saved_sigquit);
+	mask_signal(SIGTSTP, SIG_IGN, &saved_sigtstp);
+	mask_signal(SIGINT,  SIG_IGN, &saved_sigint);
 	if (optind < argc)
 		tty = argv[optind];
 
@@ -558,10 +573,10 @@ int main(int argc, char **argv)
 					setsid();
 				}
 
-				signal(SIGHUP, SIG_IGN);
+				sigaction(SIGHUP, NULL, &saved_sighup);
 				if (ttypgrp > 0)
 					ioctl(0, TIOCNOTTY, (char *)1);
-				signal(SIGHUP, SIG_DFL);
+				sigaction(SIGHUP, &saved_sighup, NULL);
 				close(0);
 				close(1);
 				close(2);
@@ -610,9 +625,9 @@ int main(int argc, char **argv)
 		if (pwd->pw_passwd[0] == 0 ||
 		    strcmp(crypt(p, pwd->pw_passwd), pwd->pw_passwd) == 0)
 			sushell(pwd);
-		saved_sigquit = signal(SIGQUIT, SIG_IGN);
-		saved_sigtstp = signal(SIGTSTP, SIG_IGN);
-		saved_sigint  = signal(SIGINT,  SIG_IGN);
+		mask_signal(SIGQUIT, SIG_IGN, &saved_sigquit);
+		mask_signal(SIGTSTP, SIG_IGN, &saved_sigtstp);
+		mask_signal(SIGINT,  SIG_IGN, &saved_sigint);
 		printf("Login incorrect.\n");
 	}
 
