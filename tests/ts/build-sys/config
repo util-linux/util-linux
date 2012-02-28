@@ -52,9 +52,18 @@ for conf in $config_gen_dir/config-gen.d/*.conf; do
 			esac
 		fi
 	done
-	make -j clean &> /dev/null
-	cd $olddir
 
+	# clean the tree, but exclude tests/{diff,output} dirs
+	#
+	[ -d tests/diff ]   && mv tests/diff   tests/diff.save
+	[ -d tests/output ] && mv tests/output tests/output.save
+
+	make -j clean &> /dev/null
+
+	[ -d tests/diff.save ]   && mv tests/diff.save   tests/diff
+	[ -d tests/output.save ] && mv tests/output.save tests/output
+
+	cd $olddir
 	ts_finalize_subtest
 done
 

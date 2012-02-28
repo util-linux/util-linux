@@ -8,5 +8,5 @@ EXTRA_DIST = \
 	run.sh \
 	ts
 
-distclean-local:
+clean-local:
 	rm -rf output diff
