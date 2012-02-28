@@ -347,11 +347,12 @@ int main(int argc, char *argv[])
 		printf((program == VIGR)
 		       ? _("You are using shadow groups on this system.\n")
 		       : _("You are using shadow passwords on this system.\n"));
+		/* TRANSLATORS: this program uses for y and n rpmatch(3),
+		 * which means they can be translated. */
 		printf(_("Would you like to edit %s now [y/n]? "), orig_file);
 
-		/* EOF means no */
 		if (fgets(response, sizeof(response), stdin)) {
-			if (response[0] == 'y' || response[0] == 'Y')
+			if (rpmatch(response) == 1)
 				edit_file(1);
 		}
 	}
