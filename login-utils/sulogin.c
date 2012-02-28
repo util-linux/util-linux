@@ -39,10 +39,9 @@
 #include <pwd.h>
 #include <shadow.h>
 #include <termios.h>
-#include <sys/ttydefaults.h>
 #include <errno.h>
 #include <sys/ioctl.h>
-#if defined(__GLIBC__)
+#ifdef HAVE_CRYPT_H
 #  include <crypt.h>
 #endif
 
