@@ -50,6 +50,8 @@
 #  include <selinux/get_context_list.h>
 #endif
 
+#include "c.h"
+#include "nls.h"
 #include "pathnames.h"
 
 static int timeout;
@@ -398,9 +400,20 @@ static void sushell(struct passwd *pwd)
 	perror("/bin/sh");
 }
 
-static void usage(void)
+static void usage(FILE *out)
 {
-	fprintf(stderr, "Usage: sulogin [-e] [-p] [-t timeout] [tty device]\n");
+	fprintf(out, USAGE_HEADER);
+	fprintf(out, _(
+			" %s [options] [tty device]\n"), program_invocation_short_name);
+
+	fprintf(out, USAGE_OPTIONS);
+	fprintf(out, _(
+			" -p        start a login shell\n"
+			" -t SEC    set max time to wait for a password (default: no limit)\n"
+			" -e        examine shadow files directly if getpwnam(3) fails\n"
+			" -h        display this help message\n"));
+
+	fprintf(out, _("\nFor more information see sulogin(8).\n"));
 }
 
 int main(int argc, char **argv)
@@ -417,7 +430,7 @@ int main(int argc, char **argv)
 	 *	See if we have a timeout flag.
 	 */
 	opterr = 0;
-	while ((c = getopt(argc, argv, "ept:")) != EOF) {
+	while ((c = getopt(argc, argv, "ehpt:")) != EOF) {
 		switch(c) {
 		case 't':
 			timeout = atoi(optarg);
@@ -428,8 +441,11 @@ int main(int argc, char **argv)
 		case 'e':
 			opt_e = 1;
 			break;
+		case 'h':
+			usage(stdout);
+			return 0;
 		default:
-			usage();
+			usage(stderr);
 			/* Do not exit! */
 			break;
 		}
