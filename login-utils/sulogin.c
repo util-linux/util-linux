@@ -63,79 +63,6 @@ struct sigaction saved_sigint;
 struct sigaction saved_sigtstp;
 struct sigaction saved_sigquit;
 
-#ifndef IUCLC
-#  define IUCLC	0
-#endif
-
-#if defined(SANE_TIO) && (SANE_TIO == 1)
-/*
- *	Fix the tty modes and set reasonable defaults.
- *	(I'm not sure if this is needed under Linux, but..)
- */
-static void fixtty(void)
-{
-	struct termios tty;
-	int serial;
-
-	/* Skip serial console */
-	if (ioctl (0, TIOCMGET, (char*)&serial) == 0)
-		goto out;
-	/* Expected error */
-	serial = errno = 0;
-
-	tcgetattr(0, &tty);
-
-	/* Use defaults of <sys/ttydefaults.h> for base settings */
-	tty.c_iflag |= TTYDEF_IFLAG;
-	tty.c_oflag |= TTYDEF_OFLAG;
-	tty.c_lflag |= TTYDEF_LFLAG;
-	tty.c_cflag |= (TTYDEF_SPEED | TTYDEF_CFLAG);
-
-	/* Sane setting, allow eight bit characters, no carriage return delay
-	 * the same result as `stty sane cr0 pass8'
-	 */
-	tty.c_iflag |=  (BRKINT | ICRNL | IMAXBEL);
-#ifdef IUTF8 /* Not defined on FreeBSD */
-	tty.c_iflag |= IUTF8;
-#endif /* IUTF8 */
-	tty.c_iflag &= ~(IGNBRK | INLCR | IGNCR | IXOFF | IUCLC | IXANY | ISTRIP);
-	tty.c_oflag |=  (OPOST | ONLCR | NL0 | CR0 | TAB0 | BS0 | VT0 | FF0);
-	tty.c_oflag &= ~(OLCUC | OCRNL | ONOCR | ONLRET | OFILL | OFDEL |\
-			 NLDLY|CRDLY|TABDLY|BSDLY|VTDLY|FFDLY);
-	tty.c_lflag |=  (ISIG | ICANON | IEXTEN | ECHO|ECHOE|ECHOK|ECHOCTL|ECHOKE);
-	tty.c_lflag &= ~(ECHONL | NOFLSH | XCASE | TOSTOP | ECHOPRT);
-	tty.c_cflag |=  (CREAD | CS8 | B9600);
-	tty.c_cflag &= ~(PARENB);
-
-	/* VTIME and VMIN can overlap with VEOF and VEOL since they are
-	 * only used for non-canonical mode. We just set the at the
-	 * beginning, so nothing bad should happen.
-	 */
-	tty.c_cc[VTIME]    = 0;
-	tty.c_cc[VMIN]     = 1;
-	tty.c_cc[VINTR]    = CINTR;
-	tty.c_cc[VQUIT]    = CQUIT;
-	tty.c_cc[VERASE]   = CERASE; /* ASCII DEL (0177) */
-	tty.c_cc[VKILL]    = CKILL;
-	tty.c_cc[VEOF]     = CEOF;
-	tty.c_cc[VSWTC]    = _POSIX_VDISABLE;
-	tty.c_cc[VSTART]   = CSTART;
-	tty.c_cc[VSTOP]    = CSTOP;
-	tty.c_cc[VSUSP]    = CSUSP;
-	tty.c_cc[VEOL]     = _POSIX_VDISABLE;
-	tty.c_cc[VREPRINT] = CREPRINT;
-	tty.c_cc[VDISCARD] = CDISCARD;
-	tty.c_cc[VWERASE]  = CWERASE;
-	tty.c_cc[VLNEXT]   = CLNEXT;
-	tty.c_cc[VEOL2]    = _POSIX_VDISABLE;
-
-	tcsetattr(0, TCSANOW, &tty);
-out:
-	return;
-}
-#endif
-
-
 /*
  *	Called at timeout.
  */
@@ -366,18 +293,12 @@ static char *getpasswd(char *crypted)
 	static char pass[128];
 	char *ret = pass;
 	int i;
-#if defined(USE_ONELINE)
-	if (crypted[0])
-		printf("Give root password for login: ");
-	else
-		printf("Press enter for login: ");
-#else
+
 	if (crypted[0])
 		printf("Give root password for maintenance\n");
 	else
 		printf("Press enter for maintenance");
 	printf("(or type Control-D to continue): ");
-#endif
 	fflush(stdout);
 
 	tcgetattr(0, &old);
@@ -596,10 +517,6 @@ int main(int argc, char **argv)
 		if (ioctl(0, TIOCSCTTY, (char *)1))
 			perror("ioctl(TIOCSCTTY)");
 	}
-
-#if defined(SANE_TIO) && (SANE_TIO == 1)
-	fixtty();
-#endif
 
 	/*
 	 *	Get the root password.
