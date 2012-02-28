@@ -292,7 +292,7 @@ static char *getpasswd(char *crypted)
 	struct termios old, tty;
 	static char pass[128];
 	char *ret = pass;
-	int i;
+	size_t i;
 
 	if (crypted[0])
 		printf("Give root password for maintenance\n");
@@ -318,7 +318,7 @@ static char *getpasswd(char *crypted)
 	if (read(0, pass, sizeof(pass) - 1) <= 0)
 		ret = NULL;
 	else {
-		for (i = 0; i < (int)sizeof(pass) && pass[i]; i++)
+		for (i = 0; i < sizeof(pass) && pass[i]; i++)
 			if (pass[i] == '\r' || pass[i] == '\n') {
 				pass[i] = 0;
 				break;
