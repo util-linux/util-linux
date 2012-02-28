@@ -189,9 +189,6 @@ fdisk(s)
    This feature seems very attractive to users who resizing their disks 
    (for example in virtual machines).
 
- - sfdisk has to use rpmatch() for answers to y/n questions
-   (e.g. "Are you satisfied with this? [ynq]")
-
  - sfdisk rounds to cylinders is -uM (megabyte units) is specified, this is
    pretty stupid feature. It has to round to sectors if -uS or -uM is specified.
 
@@ -227,8 +224,6 @@ misc
  - add mllockall() and SCHED_FIFO to hwclock,
    see http://lkml.org/lkml/2008/10/12/132
  
- - use rpmatch() for all Y/N questions
-
  - (!) rewrite ipcs to use /proc/sys/kernel rather than unreliable syscalls
    (there are problems with 32bit userspace on 64bit kernel)
 
