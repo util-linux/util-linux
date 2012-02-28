@@ -54,7 +54,6 @@
 #define F_PASSWD	"/etc/passwd"
 #define F_SHADOW	"/etc/shadow"
 #define BINSH		"/bin/sh"
-#define STATICSH	"/bin/sash"
 
 static int timeout;
 static int profile;
@@ -400,12 +399,6 @@ static void sushell(struct passwd *pwd)
 	setenv("SHELL", BINSH, 1);
 	execl(BINSH, profile ? "-sh" : "sh", NULL);
 	perror(BINSH);
-
-	/* Fall back to staticly linked shell if both the users shell
-	   and /bin/sh failed to execute. */
-	setenv("SHELL", STATICSH, 1);
-	execl(STATICSH, STATICSH, NULL);
-	perror(STATICSH);
 }
 
 static void usage(void)
