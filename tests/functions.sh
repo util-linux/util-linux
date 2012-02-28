@@ -93,6 +93,8 @@ function ts_init_core_subtest_env {
 	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-mnt"
 
 	rm -f $TS_OUTPUT $TS_VGDUMP
+	[ -d "$TS_OUTDIR" ]  || mkdir -p "$TS_OUTDIR"
+
 	touch $TS_OUTPUT
 	[ -n "$TS_VALGRIND_CMD" ] && touch $TS_VGDUMP
 }
@@ -127,8 +129,6 @@ function ts_init_env {
 
 	BLKID_FILE="$TS_OUTDIR/${TS_TESTNAME}.blkidtab"
 
-	[ -d "$TS_OUTDIR" ]  || mkdir -p "$TS_OUTDIR"
-	[ -d "$TS_DIFFDIR" ] || mkdir -p "$TS_DIFFDIR"
 
 	declare -a TS_SUID_PROGS
 	declare -a TS_SUID_USER
@@ -141,6 +141,8 @@ function ts_init_env {
 	export BLKID_FILE
 
 	rm -f $TS_OUTPUT $TS_VGDUMP
+	[ -d "$TS_OUTDIR" ]  || mkdir -p "$TS_OUTDIR"
+
 	touch $TS_OUTPUT
 	[ -n "$TS_VALGRIND_CMD" ] && touch $TS_VGDUMP
 
@@ -219,8 +221,15 @@ function ts_gen_diff {
 	local res=0
 
 	if [ -s "$TS_OUTPUT" ]; then
+
+		[ -d "$TS_DIFFDIR" ] || mkdir -p "$TS_DIFFDIR"
 		diff -u $TS_EXPECTED $TS_OUTPUT > $TS_DIFF
-		[ -s $TS_DIFF ] && res=1
+
+		if [ -s $TS_DIFF ]; then
+			res=1
+		else
+			rm -f $TS_DIFF;
+		fi
 	else
 		res=1
 	fi

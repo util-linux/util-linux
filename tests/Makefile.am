@@ -7,5 +7,5 @@ EXTRA_DIST = 	expected \
 		functions.sh \
 		run.sh
 
-distclean-local:
+clean-local:
 	rm -rf output diff
