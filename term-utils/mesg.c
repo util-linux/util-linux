@@ -66,6 +66,8 @@
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(_("\nUsage:\n"), out);
+	/* TRANSLATORS: this program uses for y and n rpmatch(3),
+	 * which means they can be translated.  */
 	fprintf(out,
 	      _(" %s [options] [y | n]\n"), program_invocation_short_name);
 
@@ -127,8 +129,8 @@ int main(int argc, char *argv[])
 		return IS_NOT_ALLOWED;
 	}
 
-	switch (*argv[0]) {
-	case 'y':
+	switch (rpmatch(argv[0])) {
+	case 1:
 #ifdef USE_TTY_GROUP
 		if (chmod(tty, sb.st_mode | S_IWGRP) < 0)
 #else
@@ -138,14 +140,16 @@ int main(int argc, char *argv[])
 		if (verbose)
 			puts(_("write access to your terminal is allowed"));
 		return IS_ALLOWED;
-	case 'n':
+	case 0:
 		if (chmod(tty, sb.st_mode & ~(S_IWGRP|S_IWOTH)) < 0)
 			 err(MESG_EXIT_FAILURE, _("change %s mode failed"), tty);
 		if (verbose)
 			puts(_("write access to your terminal is denied"));
 		return IS_NOT_ALLOWED;
-	default:
-		warnx(_("invalid argument: %c"), *argv[0]);
+        case -1:
+		warnx(_("invalid argument: %s"), argv[0]);
 		usage(stderr);
+        default:
+                abort();
 	}
 }
