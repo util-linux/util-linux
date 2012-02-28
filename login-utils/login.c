@@ -1145,13 +1145,10 @@ static void init_environ(struct login_context *cxt)
 	setenv("TERM", termenv, 1);
 
 	if (pwd->pw_uid)
-		setenv("PATH", getlogindefs_str("ENV_PATH", _PATH_DEFPATH), 1);
-	else {
-		const char *x = getlogindefs_str("ENV_ROOTPATH", NULL);
-		if (!x)
-			x = getlogindefs_str("ENV_SUPATH", _PATH_DEFPATH_ROOT);
-		setenv("PATH", x, 1);
-	}
+		logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH);
+
+	else if (logindefs_setenv("PATH", "ENV_ROOTPATH", NULL) != 0)
+		logindefs_setenv("PATH", "ENV_SUPATH", _PATH_DEFPATH_ROOT);
 
 	/* mailx will give a funny error msg if you forget this one */
 	len = snprintf(tmp, sizeof(tmp), "%s/%s", _PATH_MAILDIR, pwd->pw_name);

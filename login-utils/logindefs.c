@@ -211,6 +211,43 @@ const char *getlogindefs_str(const char *name, const char *dflt)
 	return ptr->value;
 }
 
+/*
+ * For compatibililty with shadow-utils we have tu support additional
+ * syntax for environment variables in login.defs(5) file. The standard
+ * syntax is:
+ *
+ *	ENV_FOO   data
+ *
+ * but shadow-utils supports also
+ *
+ *	ENV_FOO FOO=data
+ *
+ * the FOO= prefix has to be remove before we call setenv().
+ */
+int logindefs_setenv(const char *name, const char *conf, const char *dflt)
+{
+	const char *val = getlogindefs_str(conf, dflt);
+	const char *p;
+
+	if (!val)
+		return -1;
+
+	p = strchr(val, '=');
+	if (p) {
+		size_t sz = strlen(name);
+
+		if (strncmp(val, name, sz) == 0 && *(p + 1)) {
+			val = p + 1;
+			if (*val == '"')
+				val++;
+			if (!*val)
+				val = dflt;
+		}
+	}
+
+	return val ? setenv(name, val, 1) : -1;
+}
+
 #ifdef TEST_PROGRAM
 int main(int argc, char *argv[])
 {
