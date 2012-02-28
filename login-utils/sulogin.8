@@ -1,0 +1,87 @@
+'\" -*- coding: UTF-8 -*-
+.\" Copyright (C) 1998-2006 Miquel van Smoorenburg.
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+.\"
+.TH SULOGIN 8 "17 Jan 2006" "" "Linux System Administrator's Manual"
+.SH NAME
+sulogin \- Single-user login
+.SH SYNOPSIS
+.B sulogin
+[ \fB\-e\fP ]
+[ \fB\-p\fP ]
+[ \fB\-t\fP \fISECONDS\fP ]
+[ \fITTY\fP ]
+.SH DESCRIPTION
+.I sulogin
+is invoked by \fBinit(8)\fP when the system goes into single user mode.
+(This is done through an entry in \fIinittab(5)\fP.)
+\fBInit\fP also
+tries to execute \fIsulogin\fP when
+the boot loader (e.g., \fBgrub\fP(8))
+passes it the \fB\-b\fP option.
+.PP
+The user is prompted
+.IP "" .5i
+Give root password for system maintenance
+.br
+(or type Control\-D for normal startup):
+.PP
+\fIsulogin\fP will be connected to the current terminal, or to the
+optional device that can be specified on the command line
+(typically \fB/dev/console\fP).
+.PP
+If the \fB\-t\fP option is used then the program only waits
+the given number of seconds for user input.
+.PP
+If the \fB\-p\fP option is used then the single-user shell is invoked
+with a \fIdash\fP as the first character in \fIargv[0]\fP.
+This causes the shell process to behave as a login shell.
+The default is \fInot\fP to do this,
+so that the shell will \fInot\fP read \fB/etc/profile\fP
+or \fB$HOME/.profile\fP at startup.
+.PP
+After the user exits the single-user shell,
+or presses control\-D at the prompt,
+the system will (continue to) boot to the default runlevel.
+.SH ENVIRONMENT VARIABLES
+\fIsulogin\fP looks for the environment variable \fBSUSHELL\fP or
+\fBsushell\fP to determine what shell to start. If the environment variable
+is not set, it will try to execute root's shell from /etc/passwd. If that
+fails it will fall back to \fB/bin/sh\fP.
+.PP
+This is very valuable together with the \fB\-b\fP option to init. To boot
+the system into single user mode, with the root file system mounted read/write,
+using a special "fail safe" shell that is statically linked (this example
+is valid for the LILO bootprompt)
+.PP
+boot: linux \-b rw sushell=/sbin/sash
+.SH FALLBACK METHODS
+\fIsulogin\fP checks the root password using the standard method (getpwnam)
+first.
+Then, if the \fB\-e\fP option was specified,
+\fIsulogin\fP examines these files directly to find the root password:
+.PP
+/etc/passwd,
+.br
+/etc/shadow (if present)
+.PP
+If they are damaged or nonexistent, sulogin will start a root shell
+without asking for a password. Only use the \fB\-e\fP option if you
+are sure the console is physically protected against unauthorized access.
+.SH AUTHOR
+Miquel van Smoorenburg <miquels@cistron.nl>
+.SH SEE ALSO
+init(8), inittab(5).

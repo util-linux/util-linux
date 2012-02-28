@@ -14,6 +14,7 @@ endif
 if BUILD_LOGIN_UTILS
 
 bin_PROGRAMS += login
+sbin_PROGRAMS += sulogin
 usrbin_exec_PROGRAMS += \
 	chfn \
 	chsh \
@@ -26,7 +27,8 @@ dist_man_MANS += \
 	login.1 \
 	newgrp.1 \
 	vigr.8 \
-	vipw.8
+	vipw.8 \
+	sulogin.8
 
 # login, chfn and chsh libs
 login_ldadd_common =
@@ -57,6 +59,7 @@ chsh_LDADD = $(login_ldadd_common)
 login_LDADD = $(login_ldadd_common)
 newgrp_LDADD =
 vipw_LDADD =
+sulogin_LDADD =
 
 chfn_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 chsh_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
@@ -70,6 +73,7 @@ login_ldadd_common += -lpam -lpam_misc
 
 if HAVE_LIBCRYPT
 newgrp_LDADD += -lcrypt
+sulogin_LDADD += -lcrypt
 endif
 
 if HAVE_AUDIT
