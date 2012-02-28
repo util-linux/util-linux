@@ -51,9 +51,6 @@
 #  include <selinux/get_context_list.h>
 #endif
 
-#define CHECK_DES	1
-#define CHECK_MD5	1
-
 #define F_PASSWD	"/etc/passwd"
 #define F_SHADOW	"/etc/shadow"
 #define BINSH		"/bin/sh"
@@ -179,7 +176,6 @@ static int valid(const char *pass)
 
 	if (pass[0] == 0)
 		return 1;
-#if CHECK_MD5
 	if (pass[0] != '$')
 		goto check_des;
 
@@ -233,8 +229,6 @@ static int valid(const char *pass)
 	 */
 	return 1;
 check_des:
-#endif
-#if CHECK_DES
 	if (strlen(pass) != 13)
 		return 0;
 
@@ -245,7 +239,6 @@ check_des:
 		    *s != '.' && *s != '/')
 			return 0;
 	}
-#endif
 	return 1;
 }
 
