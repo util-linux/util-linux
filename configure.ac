@@ -831,8 +831,8 @@ AC_ARG_ENABLE([ddate],
 )
 UL_BUILD_INIT([ddate])
 AM_CONDITIONAL(BUILD_DDATE, test "x$build_ddate" = xyes)
-rumandir='${mandir}/ru/man1'
-AC_SUBST([rumandir])
+ruman1dir='${mandir}/ru/man1'
+AC_SUBST([ruman1dir])
 
 
 AC_ARG_ENABLE([agetty],
