@@ -68,6 +68,7 @@
 #define _PATH_SHADOW_GROUP      "/etc/gshadow"
 #define _PATH_SHADOW_GTMP       "/etc/sgtmp"
 #define _PATH_SHADOW_GTMPTMP    "/etc/sgtmptmp"
+#define _PATH_SHELLS		"/etc/shells"
 
 /* used in term-utils/agetty.c */
 #define _PATH_ISSUE		"/etc/issue"

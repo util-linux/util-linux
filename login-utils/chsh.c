@@ -118,9 +118,9 @@ int main(int argc, char **argv)
 				     pw->pw_name);
 			}
 		}
-		if (setupDefaultContext("/etc/passwd") != 0)
+		if (setupDefaultContext(_PATH_PASSWD) != 0)
 			errx(EXIT_FAILURE,
-			     _("can't set default context for /etc/passwd"));
+			     _("can't set default context for %s"), _PATH_PASSWD);
 	}
 #endif
 
@@ -137,8 +137,8 @@ int main(int argc, char **argv)
 	}
 	if (uid != 0 && !get_shell_list(oldshell)) {
 		errno = EACCES;
-		err(EXIT_FAILURE, _("your shell is not in /etc/shells, "
-				    "shell change denied"));
+		err(EXIT_FAILURE, _("your shell is not in %s, "
+				    "shell change denied"), _PATH_SHELLS);
 	}
 
 	shell = info.shell;
@@ -316,18 +316,18 @@ static int check_shell(char *shell)
 	if (!get_shell_list(shell)) {
 		if (!getuid())
 			warnx(_
-			      ("Warning: \"%s\" is not listed in /etc/shells."),
-			      shell);
+			      ("Warning: \"%s\" is not listed in %s."),
+			      shell, _PATH_SHELLS);
 		else
 			errx(EXIT_FAILURE,
-			     _("\"%s\" is not listed in /etc/shells.\n"
-			       "Use %s -l to see list."), shell,
+			     _("\"%s\" is not listed in %s.\n"
+			       "Use %s -l to see list."), shell, _PATH_SHELLS,
 			     program_invocation_short_name);
 	}
 #else
 	if (!get_shell_list(shell)) {
-		warnx(_("\"%s\" is not listed in /etc/shells.\n"
-			"Use %s -l to see list."), shell,
+		warnx(_("\"%s\" is not listed in %s.\n"
+			"Use %s -l to see list."), shell, _PATH_SHELLS,
 		      program_invocation_short_name);
 	}
 #endif
@@ -347,7 +347,7 @@ static int get_shell_list(char *shell_name)
 	char buf[PATH_MAX];
 
 	found = false;
-	fp = fopen("/etc/shells", "r");
+	fp = fopen(_PATH_SHELLS, "r");
 	if (!fp) {
 		if (!shell_name)
 			warnx(_("No known shells."));
