@@ -387,7 +387,23 @@ AC_CACHE_VAL([scanf_cv_alloc_modifier],
       [scanf_cv_alloc_modifier=no]
     )
     ,
-    [scanf_cv_alloc_modifier=no]
+
+    [AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+     #include <stdio.h>
+
+     #ifdef __GLIBC__
+
+     #if !(__GLIBC_PREREQ(2, 7))
+     #error %m is not available
+     #endif
+
+     #else
+
+     #error Your C-library is not supported.
+     #endif
+     ])],
+    [scanf_cv_alloc_modifier=ms],
+    [scanf_cv_alloc_modifier=no])]
   )
 )
 
