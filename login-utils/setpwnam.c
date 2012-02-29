@@ -47,6 +47,7 @@
 #include <fcntl.h>
 #include <paths.h>
 #include <pwd.h>
+#include <shadow.h>
 #include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -58,6 +59,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "fileutils.h"
 #include "setpwnam.h"
 
 static void pw_init(void);
@@ -71,47 +73,26 @@ static void pw_init(void);
 int setpwnam(struct passwd *pwd)
 {
 	FILE *fp = NULL, *pwf = NULL;
-	int x, save_errno, fd, ret;
+	int save_errno;
 	int found;
-	int oldumask;
 	int namelen;
 	int buflen = 256;
 	int contlen, rc;
 	char *linebuf = NULL;
-
-	oldumask = umask(0);	/* Create with exact permissions */
+	char *tmpname = NULL;
 
 	pw_init();
 
-	/* sanity check */
-	for (x = 0; x < 3; x++) {
-		if (x > 0)
-			sleep(1);
-		fd = open(PTMPTMP_FILE, O_WRONLY | O_CREAT | O_EXCL, 0644);
-		if (fd == -1) {
-			umask(oldumask);
-			return -1;
-		}
-		ret = link(PTMPTMP_FILE, PTMP_FILE);
-		unlink(PTMPTMP_FILE);
-		if (ret == -1)
-			close(fd);
-		else
-			break;
-	}
-	umask(oldumask);
-	if (ret == -1)
+	if ((fp = xmkstemp(&tmpname)) == NULL)
 		return -1;
 
 	/* ptmp should be owned by root.root or root.wheel */
-	if (chown(PTMP_FILE, (uid_t) 0, (gid_t) 0) < 0)
-		return -1;
-
-	/* open ptmp for writing and passwd for reading */
-	fp = fdopen(fd, "w");
-	if (!fp)
+	if (fchown(fileno(fp), (uid_t) 0, (gid_t) 0) < 0)
 		goto fail;
 
+	/* acquire exclusive lock */
+	if (lckpwdf() < 0)
+		goto fail;
 	pwf = fopen(PASSWD_FILE, "r");
 	if (!pwf)
 		goto fail;
@@ -159,13 +140,14 @@ int setpwnam(struct passwd *pwd)
 		fputs(linebuf, fp);
 	}
 
+	/* xmkstemp is too restrictive by default for passwd file */
+	if (fchmod(fileno(fp), 0644) < 0)
+		goto fail;
 	rc = fclose(fp);
 	fp = NULL;
 	if (rc < 0)
 		goto fail;
 
-	close(fd);
-	fd = -1;
 	fclose(pwf);	/* I don't think I want to know if this failed */
 	pwf = NULL;
 
@@ -179,21 +161,23 @@ int setpwnam(struct passwd *pwd)
 	/* we don't care if we can't create the backup file */
 	ignore_result(link(PASSWD_FILE, PASSWD_FILE ".OLD"));
 	/* we DO care if we can't rename to the passwd file */
-	if (rename(PTMP_FILE, PASSWD_FILE) < 0)
+	if (rename(tmpname, PASSWD_FILE) < 0)
 		goto fail;
 	/* finally:  success */
+	ulckpwdf();
 	return 0;
 
  fail:
 	save_errno = errno;
+	ulckpwdf();
 	if (fp != NULL)
 		fclose(fp);
+	if (tmpname != NULL)
+		unlink(tmpname);
+	free(tmpname);
 	if (pwf != NULL)
 		fclose(pwf);
-	if (fd >= 0)
-		close(fd);
 	free(linebuf);
-	unlink(PTMP_FILE);
 	errno = save_errno;
 	return -1;
 }

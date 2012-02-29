@@ -55,7 +55,8 @@ chfn_chsh_common = \
 	islocal.h \
 	setpwnam.c \
 	setpwnam.h \
-	$(top_srcdir)/lib/env.c
+	$(top_srcdir)/lib/env.c \
+	$(top_srcdir)/lib/fileutils.c
 login_SOURCES = \
 	login.c \
 	logindefs.c \
