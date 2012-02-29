@@ -62,7 +62,7 @@ struct colinfo {
 };
 
 /* columns descriptions */
-struct colinfo infos[] = {
+static struct colinfo infos[] = {
 	[COL_SRC]     = { "COMMAND", 15, 0, N_("command of the process holding the lock") },
 	[COL_PID]     = { "PID",     5,  TT_FL_RIGHT, N_("PID of the process holding the lock") },
 	[COL_SIZE]    = { "SIZE",    4,  TT_FL_RIGHT, N_("size of the lock") },
@@ -90,6 +90,14 @@ struct lock {
 	int mandatory;
 	char *size;
 };
+
+static void disable_columns_truncate(void)
+{
+	size_t i;
+
+	for (i = 0; i < NCOLS; i++)
+		infos[i].flags &= ~TT_FL_TRUNC;
+}
 
 /*
  * Return a PID's command name
@@ -465,6 +473,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" -o, --output <list>    define which output columns to use\n"
 		" -n, --noheadings       don't print headings\n"
 		" -r  --raw              use the raw output format\n"
+		" -u, --notruncate       don't truncate text in columns\n"
 		" -h, --help             display this help and exit\n"
 		" -V, --version          output version information and exit\n"), out);
 
@@ -486,6 +495,7 @@ int main(int argc, char *argv[])
 		{ "pid",	required_argument, NULL, 'p' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ "output",     required_argument, NULL, 'o' },
+		{ "notruncate", no_argument,       NULL, 'u' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ "noheadings", no_argument,       NULL, 'n' },
 		{ "raw",        no_argument,       NULL, 'r' },
@@ -497,7 +507,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 
 	while ((c = getopt_long(argc, argv,
-				"p:o:nrhV", long_opts, NULL)) != -1) {
+				"p:o:nruhV", long_opts, NULL)) != -1) {
 
 		switch(c) {
 		case 'p':
@@ -520,6 +530,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'r':
 			tt_flags |= TT_FL_RAW;
+			break;
+		case 'u':
+			disable_columns_truncate();
 			break;
 		case '?':
 		default:

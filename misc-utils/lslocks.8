@@ -23,10 +23,11 @@ Print a help text and exit.
 Specify which output columns to print. Use
 .B "--help"
 to get a list of all supported columns.
-.IP "\fB\-\-noheadings\fP"
+.IP "\fB\-n, \-\-noheadings\fP"
 Do not print a header line.
-
-.IP "\fB\-\-raw\fP"
+.IP "\fB\-u, \-\-notruncate\fP"
+Do not truncate text in columns.
+.IP "\fB\-r, \-\-raw\fP"
 Use the raw output format.
 
 .SH OUTPUT
@@ -53,7 +54,9 @@ Ending offset of the lock.
 
 .IP "PATH"
 Full path of the lock - if none is found or no permissions to read the path it
-will fallback to the device's mountpoint.
+will fallback to the device's mountpoint. The path might be truncated, use
+.B "--notruncate"
+to get the full path.
 
 .SH NOTES
 .nf
