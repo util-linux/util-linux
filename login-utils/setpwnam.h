@@ -15,38 +15,15 @@
 #include "pathnames.h"
 
 #ifndef DEBUG
-#define PASSWD_FILE    _PATH_PASSWD
-#define PTMP_FILE      _PATH_PTMP
-#define PTMPTMP_FILE   _PATH_PTMPTMP
-
-#define GROUP_FILE     _PATH_GROUP
-#define GTMP_FILE      _PATH_GTMP
-#define GTMPTMP_FILE   _PATH_GTMPTMP
-
-#define SHADOW_FILE	_PATH_SHADOW_PASSWD
-#define SPTMP_FILE	_PATH_SHADOW_PTMP
-#define SPTMPTMP_FILE	_PATH_SHADOW_PTMPTMP
-
-#define SGROUP_FILE	_PATH_SHADOW_GROUP
-#define SGTMP_FILE	_PATH_SHADOW_GTMP
-#define SGTMPTMP_FILE	_PATH_SHADOW_GTMPTMP
-
+# define PASSWD_FILE	_PATH_PASSWD
+# define GROUP_FILE	_PATH_GROUP
+# define SHADOW_FILE	_PATH_SHADOW_PASSWD
+# define SGROUP_FILE	_PATH_SHADOW_GROUP
 #else
-#define PASSWD_FILE    "/tmp/passwd"
-#define PTMP_FILE      "/tmp/ptmp"
-#define PTMPTMP_FILE   "/tmp/ptmptmp"
-
-#define GROUP_FILE     "/tmp/group"
-#define GTMP_FILE      "/tmp/gtmp"
-#define GTMPTMP_FILE   "/tmp/gtmptmp"
-
-#define SHADOW_FILE	"/tmp/shadow"
-#define SPTMP_FILE	"/tmp/sptmp"
-#define SPTMPTMP_FILE	"/tmp/sptmptmp"
-
-#define SGROUP_FILE	"/tmp/gshadow"
-#define SGTMP_FILE	"/tmp/sgtmp"
-#define SGTMPTMP_FILE	"/tmp/sgtmptmp"
+# define PASSWD_FILE	"/tmp/passwd"
+# define GROUP_FILE	"/tmp/group"
+# define SHADOW_FILE	"/tmp/shadow"
+# define SGROUP_FILE	"/tmp/gshadow"
 #endif
 
 extern int setpwnam (struct passwd *pwd);

@@ -64,7 +64,8 @@ login_SOURCES = \
 	$(top_srcdir)/lib/setproctitle.c
 vipw_SOURCES = \
 	vipw.c \
-	setpwnam.h
+	setpwnam.h \
+	$(top_srcdir)/lib/fileutils.c
 
 chfn_LDADD = $(login_ldadd_common)
 chsh_LDADD = $(login_ldadd_common)
