@@ -543,7 +543,7 @@ read_hypervisor(struct lscpu_desc *desc)
 			str = strchr(buf, ':');
 			if (!str)
 				continue;
-			if (asprintf(&str, "%s", str + 1) == -1)
+			if (xasprintf(&str, "%s", str + 1) == -1)
 				errx(EXIT_FAILURE, _("failed to allocate memory"));
 			/* remove leading, trailing and repeating whitespace */
 			while (*str == ' ')

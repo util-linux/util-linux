@@ -769,7 +769,7 @@ int main(int argc, char **argv)
 		case 'U':
 			if (source)
 				errx(MOUNT_EX_USAGE, _("only one <source> may be specified"));
-			if (asprintf(&srcbuf, "%s=\"%s\"",
+			if (xasprintf(&srcbuf, "%s=\"%s\"",
 				     c == 'L' ? "LABEL" : "UUID", optarg) <= 0)
 				err(MOUNT_EX_SYSERR, _("failed to allocate source buffer"));
 			source = srcbuf;

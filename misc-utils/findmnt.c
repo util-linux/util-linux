@@ -38,6 +38,7 @@
 #include "c.h"
 #include "tt.h"
 #include "strutils.h"
+#include "xalloc.h"
 
 /* flags */
 enum {
@@ -305,7 +306,7 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 		if (root && str && !(flags & FL_NOFSROOT) && strcmp(root, "/")) {
 			char *tmp;
 
-			if (asprintf(&tmp, "%s[%s]", str, root) > 0)
+			if (xasprintf(&tmp, "%s[%s]", str, root) > 0)
 				str = tmp;
 		}
 		break;
@@ -338,10 +339,10 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 			char *tmp;
 			int rc = 0;
 			if ((tt_flags & TT_FL_RAW) || (tt_flags & TT_FL_EXPORT))
-				rc = asprintf(&tmp, "%u:%u",
+				rc = xasprintf(&tmp, "%u:%u",
 					      major(devno), minor(devno));
 			else
-				rc = asprintf(&tmp, "%3u:%-3u",
+				rc = xasprintf(&tmp, "%3u:%-3u",
 					      major(devno), minor(devno));
 			if (rc)
 				str = tmp;

@@ -530,7 +530,7 @@ static void do_symlink(char *path, struct cramfs_inode *i)
 	if (opt_verbose) {
 		char *str;
 
-		asprintf(&str, "%s -> %s", path, outbuffer);
+		xasprintf(&str, "%s -> %s", path, outbuffer);
 		print_node('l', i, str);
 		if (opt_verbose > 1)
 			printf(_("  uncompressing block at %ld to %ld (%ld)\n"),

@@ -9,6 +9,7 @@
 
 #include "c.h"
 #include "pathnames.h"
+#include "xalloc.h"
 
 /* Create open temporary file in safe way.  Please notice that the
  * file permissions are -rw------- by default. */
@@ -22,10 +23,10 @@ FILE *xmkstemp(char **tmpname)
 
 	tmpenv = getenv("TMPDIR");
 	if (tmpenv)
-		asprintf(&localtmp, "%s/%s.XXXXXX", tmpenv,
+		xasprintf(&localtmp, "%s/%s.XXXXXX", tmpenv,
 			 program_invocation_short_name);
 	else
-		asprintf(&localtmp, "%s/%s.XXXXXX", _PATH_TMP,
+		xasprintf(&localtmp, "%s/%s.XXXXXX", _PATH_TMP,
 			 program_invocation_short_name);
 	old_mode = umask(077);
 	fd = mkstemp(localtmp);
