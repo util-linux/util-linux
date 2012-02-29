@@ -11,6 +11,7 @@ dist_noinst_HEADERS = \
 	crc32.h \
 	env.h \
 	exitcodes.h \
+	fileutils.h \
 	fsprobe.h \
 	ismounted.h \
 	linux_reboot.h \
@@ -38,5 +39,5 @@ dist_noinst_HEADERS = \
 	wholedisk.h \
 	widechar.h \
 	writeall.h \
-	xgetpass.h \
-	xalloc.h
+	xalloc.h \
+	xgetpass.h

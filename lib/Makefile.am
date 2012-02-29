@@ -6,6 +6,7 @@ noinst_PROGRAMS = \
 	test_at \
 	test_blkdev \
 	test_canonicalize \
+	test_fileutils \
 	test_ismounted \
 	test_mangle \
 	test_procutils \
@@ -45,6 +46,7 @@ test_loopdev_SOURCES = \
 test_loopdev_CFLAGS = -DTEST_PROGRAM_LOOPDEV
 endif
 
+test_fileutils_SOURCES = fileutils.c
 test_tt_SOURCES = tt.c $(top_srcdir)/lib/mbsalign.c
 
 test_canonicalize_SOURCES = canonicalize.c
