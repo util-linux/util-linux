@@ -249,7 +249,7 @@ read_offsets(struct wipe_desc *wp, const char *devname)
 }
 
 static struct wipe_desc *
-do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all)
+do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet)
 {
 	blkid_probe pr = new_probe(devname, O_RDWR);
 	struct wipe_desc *w;
@@ -271,7 +271,7 @@ do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all)
 		if (blkid_do_wipe(pr, noact))
 			warn(_("failed to erase %s magic string at offset 0x%08jx"),
 			     wp->type, wp->offset);
-		else {
+		else if (!quiet) {
 			size_t i;
 
 			printf(_("%zd bytes were erased at offset 0x%08jx (%s): "),
@@ -287,7 +287,7 @@ do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all)
 	}
 
 	for (w = wp; w != NULL; w = w->next) {
-		if (!w->on_disk)
+		if (!w->on_disk && !quiet)
 			warnx(_("offset 0x%jx not found"), w->offset);
 	}
 
@@ -339,6 +339,7 @@ usage(FILE *out)
 		" -n, --no-act        do everything except the actual write() call\n"
 		" -o, --offset <num>  offset to erase, in bytes\n"
 		" -p, --parsable      print out in parsable instead of printable format\n"
+		" -q, --quiet         suppress output messages\n"
 		" -t, --types <list>  limit the set of filesystem, RAIDs or partition tables\n"
 		" -V, --version       output version information and exit\n"), out);
 
@@ -352,7 +353,7 @@ int
 main(int argc, char **argv)
 {
 	struct wipe_desc *wp = NULL;
-	int c, all = 0, has_offset = 0, noact = 0, mode = 0;
+	int c, all = 0, has_offset = 0, noact = 0, mode = 0, quiet = 0;
 	const char *devname;
 
 	static const struct option longopts[] = {
@@ -361,6 +362,7 @@ main(int argc, char **argv)
 	    { "no-act",    0, 0, 'n' },
 	    { "offset",    1, 0, 'o' },
 	    { "parsable",  0, 0, 'p' },
+	    { "quiet",     0, 0, 'q' },
 	    { "types",     1, 0, 't' },
 	    { "version",   0, 0, 'V' },
 	    { NULL,        0, 0, 0 }
@@ -370,7 +372,7 @@ main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "ahno:pt:V", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "ahno:pqt:V", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			all++;
@@ -387,6 +389,9 @@ main(int argc, char **argv)
 			break;
 		case 'p':
 			mode = WP_MODE_PARSABLE;
+			break;
+		case 'q':
+			quiet++;
 			break;
 		case 't':
 			type_pattern = optarg;
@@ -422,7 +427,7 @@ main(int argc, char **argv)
 		/*
 		 * Erase
 		 */
-		wp = do_wipe(wp, devname, noact, all);
+		wp = do_wipe(wp, devname, noact, all, quiet);
 	}
 
 	free_wipe(wp);
