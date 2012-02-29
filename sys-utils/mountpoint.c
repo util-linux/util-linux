@@ -40,12 +40,11 @@
 
 static int quiet;
 
-static dev_t dir_to_device(const char *spec)
+static int dir_to_device(const char *spec, dev_t *dev)
 {
 	struct libmnt_table *tb = mnt_new_table_from_file("/proc/self/mountinfo");
 	struct libmnt_fs *fs;
 	struct libmnt_cache *cache;
-	dev_t res = 0;
 
 	if (!tb) {
 		/*
@@ -57,7 +56,7 @@ static dev_t dir_to_device(const char *spec)
 		int len;
 
 		if (stat(spec, &st) != 0)
-			return 0;
+			return -1;
 
 		cn = mnt_resolve_path(spec, NULL);	/* canonicalize */
 
@@ -65,15 +64,17 @@ static dev_t dir_to_device(const char *spec)
 		free(cn);
 
 		if (len < 0 || (size_t) len + 1 > sizeof(buf))
-			return 0;
+			return -1;
 		if (stat(buf, &pst) !=0)
-			return 0;
+			return -1;
 
 		if ((st.st_dev != pst.st_dev) ||
-		    (st.st_dev == pst.st_dev && st.st_ino == pst.st_ino))
-			return st.st_dev;
+		    (st.st_dev == pst.st_dev && st.st_ino == pst.st_ino)) {
+			*dev = st.st_dev;
+			return 0;
+		}
 
-		return 0;
+		return -1;
 	}
 
 	/* to canonicalize all necessary paths */
@@ -82,11 +83,11 @@ static dev_t dir_to_device(const char *spec)
 
 	fs = mnt_table_find_target(tb, spec, MNT_ITER_BACKWARD);
 	if (fs && mnt_fs_get_target(fs))
-		res = mnt_fs_get_devno(fs);
+		*dev = mnt_fs_get_devno(fs);
 
 	mnt_free_table(tb);
 	mnt_free_cache(cache);
-	return res;
+	return 0;
 }
 
 static int print_devno(const char *devname, struct stat *st)
@@ -185,8 +186,8 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE, _("%s: not a directory"), spec);
 			return EXIT_FAILURE;
 		}
-		src = dir_to_device(spec);
-		if (!src) {
+
+		if ( dir_to_device(spec, &src)) {
 			if (!quiet)
 				printf(_("%s is not a mountpoint\n"), spec);
 			return EXIT_FAILURE;
