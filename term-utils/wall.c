@@ -66,6 +66,7 @@
 #include "pathnames.h"
 #include "carefulputc.h"
 #include "c.h"
+#include "fileutils.h"
 
 #define	IGNOREUSER	"sleeper"
 #define WRITE_TIME_OUT	300		/* in seconds */
@@ -188,24 +189,15 @@ makemsg(char *fname, size_t *mbufsize, int print_banner)
 	struct stat sbuf;
 	time_t now;
 	FILE *fp;
-	int fd;
-	char *p, *whom, *where, *hostname, *lbuf, *tmpname, *tmpenv, *mbuf;
+	char *p, *whom, *where, *hostname, *lbuf, *tmpname, *mbuf;
 	long line_max;
 
 	hostname = xmalloc(sysconf(_SC_HOST_NAME_MAX) + 1);
 	line_max = sysconf(_SC_LINE_MAX);
 	lbuf = xmalloc(line_max);
 
-	tmpname = xmalloc(PATH_MAX);
-	tmpenv = getenv("TMPDIR");
-	if ((tmpenv))
-		snprintf(tmpname, PATH_MAX, "%s/%s.XXXXXX", tmpenv,
-			program_invocation_short_name);
-	else
-		snprintf(tmpname, PATH_MAX, "%s/%s.XXXXXX", _PATH_TMP,
-			program_invocation_short_name);
-	if (!(fd = mkstemp(tmpname)) || !(fp = fdopen(fd, "r+")))
-		err(EXIT_FAILURE, _("can't open temporary file %s"), tmpname);
+	if ((fp = xmkstemp(&tmpname)) == NULL)
+		err(EXIT_FAILURE, _("can't open temporary file"));
 	unlink(tmpname);
 	free(tmpname);
 
@@ -280,7 +272,7 @@ makemsg(char *fname, size_t *mbufsize, int print_banner)
 	free(lbuf);
 	rewind(fp);
 
-	if (fstat(fd, &sbuf))
+	if (fstat(fileno(fp), &sbuf))
 		err(EXIT_FAILURE, _("fstat failed"));
 
 	*mbufsize = (size_t) sbuf.st_size;
@@ -289,7 +281,6 @@ makemsg(char *fname, size_t *mbufsize, int print_banner)
 	if (fread(mbuf, 1, *mbufsize, fp) != *mbufsize)
 		err(EXIT_FAILURE, _("fread failed"));
 
-	close(fd);
 	fclose(fp);
 	return mbuf;
 }

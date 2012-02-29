@@ -51,7 +51,7 @@ endif
 
 if BUILD_WALL
 usrbin_exec_PROGRAMS += wall
-wall_SOURCES = wall.c ttymsg.c ttymsg.h $(top_srcdir)/lib/strutils.c
+wall_SOURCES = wall.c ttymsg.c ttymsg.h $(top_srcdir)/lib/strutils.c $(top_srcdir)/lib/fileutils.c
 dist_man_MANS += wall.1
 wall_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 wall_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
