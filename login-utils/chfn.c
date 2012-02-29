@@ -142,9 +142,9 @@ int main(int argc, char **argv)
 				     oldf.username);
 			}
 		}
-		if (setupDefaultContext("/etc/passwd"))
+		if (setupDefaultContext(_PATH_PASSWD))
 			errx(EXIT_FAILURE,
-			     _("can't set default context for /etc/passwd"));
+			     _("can't set default context for %s"), _PATH_PASSWD);
 	}
 #endif
 
