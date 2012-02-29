@@ -63,4 +63,15 @@ static inline char *xstrdup(const char *str)
         return ret;
 }
 
+static inline int xasprintf(char **strp, char *fmt, ...)
+{
+	int ret;
+	va_list args;
+	va_start(args, fmt);
+	ret = vasprintf(&(*strp), fmt, args);
+	va_end(args);
+	if (ret < 0)
+		err(XALLOC_EXIT_CODE, "cannot allocate string");
+	return ret;
+}
 #endif
