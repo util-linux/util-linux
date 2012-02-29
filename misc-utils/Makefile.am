@@ -39,6 +39,7 @@ endif
 
 if BUILD_LSLOCKS
 usrbin_exec_PROGRAMS += lslocks
+dist_man_MANS += lslocks.8
 lslocks_SOURCES = \
 	lslocks.c \
 	$(top_srcdir)/lib/at.c \
