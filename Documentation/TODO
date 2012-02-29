@@ -41,11 +41,6 @@ hwclock
 	ticks)\n\", x * 1e6, x * 1e4}" < /dev/null
 	done
 
-ldattach
---------
-
-  - write usage()
-
 minix (fsck, mkfs)
 ------------------
 
