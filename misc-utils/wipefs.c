@@ -59,6 +59,7 @@ struct wipe_desc {
 #define WP_MODE_PARSABLE	1
 
 static const char *type_pattern;
+int ndevices;
 
 static void
 print_pretty(struct wipe_desc *wp, int line)
@@ -136,6 +137,19 @@ add_offset(struct wipe_desc *wp0, loff_t offset, int zap)
 	wp->offset = offset;
 	wp->next = wp0;
 	wp->zap = zap;
+	return wp;
+}
+
+static struct wipe_desc *
+clone_offset(struct wipe_desc *wp0)
+{
+	struct wipe_desc *wp = NULL;
+
+	while(wp0) {
+		wp = add_offset(wp, wp0->offset, wp0->zap);
+		wp0 = wp0->next;
+	}
+
 	return wp;
 }
 
@@ -269,13 +283,18 @@ do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet
 			continue;
 
 		if (blkid_do_wipe(pr, noact))
-			warn(_("failed to erase %s magic string at offset 0x%08jx"),
-			     wp->type, wp->offset);
+			warn(_("%s: failed to erase %s magic string at offset 0x%08jx"),
+			     devname, wp->type, wp->offset);
 		else if (!quiet) {
 			size_t i;
 
-			printf(_("%zd bytes were erased at offset 0x%08jx (%s): "),
-				wp->len, wp->offset, wp->type);
+			if (ndevices > 1)
+				printf(_("%s: %zd bytes were erased at offset 0x%08jx (%s): "),
+					devname, wp->len, wp->offset, wp->type);
+			else
+				/* wipefs does not printf devname originally */
+				printf(_("%zd bytes were erased at offset 0x%08jx (%s): "),
+					wp->len, wp->offset, wp->type);
 
 			for (i = 0; i < wp->len; i++) {
 				printf("%02x", wp->magic[i]);
@@ -288,7 +307,7 @@ do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet
 
 	for (w = wp; w != NULL; w = w->next) {
 		if (!w->on_disk && !quiet)
-			warnx(_("offset 0x%jx not found"), w->offset);
+			warnx(_("%s: offset 0x%jx not found"), devname, w->offset);
 	}
 
 	fsync(blkid_probe_get_fd(pr));
@@ -352,9 +371,8 @@ usage(FILE *out)
 int
 main(int argc, char **argv)
 {
-	struct wipe_desc *wp = NULL;
+	struct wipe_desc *wp0 = NULL, *wp;
 	int c, all = 0, has_offset = 0, noact = 0, mode = 0, quiet = 0;
-	const char *devname;
 
 	static const struct option longopts[] = {
 	    { "all",       0, 0, 'a' },
@@ -384,7 +402,7 @@ main(int argc, char **argv)
 			noact++;
 			break;
 		case 'o':
-			wp = add_offset(wp, strtoll_offset(optarg), 1);
+			wp0 = add_offset(wp0, strtoll_offset(optarg), 1);
 			has_offset++;
 			break;
 		case 'p':
@@ -406,30 +424,33 @@ main(int argc, char **argv)
 		}
 	}
 
-	if (wp && all)
+	if (wp0 && all)
 		errx(EXIT_FAILURE, _("--offset and --all are mutually exclusive"));
+
 	if (optind == argc)
 		usage(stderr);
-
-	devname = argv[optind++];
-
-	if (optind != argc)
-		errx(EXIT_FAILURE, _("only one device as argument is currently supported."));
 
 	if (!all && !has_offset) {
 		/*
 		 * Print only
 		 */
-		wp = read_offsets(wp, devname);
-		if (wp)
-			print_all(wp, mode);
+		while (optind < argc) {
+			wp0 = read_offsets(NULL, argv[optind++]);
+			if (wp0)
+				print_all(wp0, mode);
+			free_wipe(wp0);
+		}
 	} else {
 		/*
 		 * Erase
 		 */
-		wp = do_wipe(wp, devname, noact, all, quiet);
+		ndevices = argc - optind;
+		while (optind < argc) {
+			wp = clone_offset(wp0);
+			wp = do_wipe(wp, argv[optind++], noact, all, quiet);
+			free_wipe(wp);
+		}
 	}
 
-	free_wipe(wp);
 	return EXIT_SUCCESS;
 }
