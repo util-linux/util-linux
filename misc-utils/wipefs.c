@@ -59,7 +59,6 @@ struct wipe_desc {
 #define WP_MODE_PARSABLE	1
 
 static const char *type_pattern;
-int ndevices;
 
 static void
 print_pretty(struct wipe_desc *wp, int line)
@@ -288,13 +287,8 @@ do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet
 		else if (!quiet) {
 			size_t i;
 
-			if (ndevices > 1)
-				printf(_("%s: %zd bytes were erased at offset 0x%08jx (%s): "),
-					devname, wp->len, wp->offset, wp->type);
-			else
-				/* wipefs does not printf devname originally */
-				printf(_("%zd bytes were erased at offset 0x%08jx (%s): "),
-					wp->len, wp->offset, wp->type);
+			printf(_("%s: %zd bytes were erased at offset 0x%08jx (%s): "),
+				devname, wp->len, wp->offset, wp->type);
 
 			for (i = 0; i < wp->len; i++) {
 				printf("%02x", wp->magic[i]);
@@ -444,7 +438,6 @@ main(int argc, char **argv)
 		/*
 		 * Erase
 		 */
-		ndevices = argc - optind;
 		while (optind < argc) {
 			wp = clone_offset(wp0);
 			wp = do_wipe(wp, argv[optind++], noact, all, quiet);
