@@ -388,6 +388,7 @@ void blkid_reset_probe(blkid_probe pr)
 		return;
 
 	blkid_probe_reset_vals(pr);
+	blkid_probe_set_wiper(pr, 0, 0);
 
 	pr->cur_chain = NULL;
 
@@ -989,7 +990,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 		len = sizeof(buf);
 
 	DBG(DEBUG_LOWPROBE, printf(
-	    "wiping [offset=0x%jx, len=%zd, chain=%s, idx=%d, dryrun=%s]\n",
+	    "do_wipe [offset=0x%jx, len=%zd, chain=%s, idx=%d, dryrun=%s]\n",
 	    offset, len, chn->driver->name, chn->idx, dryrun ? "yes" : "not"));
 
 	l = lseek(fd, offset, SEEK_SET);
@@ -1008,9 +1009,22 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 		if (chn->idx >= 0) {
 			chn->idx--;
 			DBG(DEBUG_LOWPROBE,
-				printf("wipe: moving %s chain index to %d\n",
+				printf("do_wipe: moving %s chain index to %d\n",
 				chn->driver->name,
 				chn->idx));
+		}
+		if (chn->idx == -1) {
+			/* blkid_do_probe() goes to the next chain if the index
+			 * of the current chain is -1, so we have to set the
+			 * chain pointer to the previos chain.
+			 */
+			size_t idx = chn->driver->id > 0 ?
+					chn->driver->id - 1 : 0;
+
+			if (idx > 0)
+				pr->cur_chain = &pr->chains[idx];
+			else if (idx == 0)
+				pr->cur_chain = NULL;
 		}
 	}
 	return 0;
@@ -1579,8 +1593,9 @@ size_t blkid_rtrim_whitespace(unsigned char *str)
  * for later resolution to conflicts between superblocks.
  *
  * For example we found valid LVM superblock, LVM wipes 8KiB at the begin of
- * the device. If we found another signature (for example MBR) this wiped area
- * then the signature has been added later and LVM superblock should be ignore.
+ * the device. If we found another signature (for example MBR) within the
+ * wiped area then the signature has been added later and LVM superblock
+ * should be ignore.
  *
  * Note that this heuristic is not 100% reliable, for example "pvcreate --zero
  * n" allows to keep the begin of the device unmodified. It's probably better
@@ -1588,6 +1603,16 @@ size_t blkid_rtrim_whitespace(unsigned char *str)
  * than for conflicts between filesystem superblocks -- existence of unwanted
  * partition table is very unusual, because PT is pretty visible (parsed and
  * interpreted by kernel).
+ *
+ * Note that we usually expect only one signature on the device, it means that
+ * we have to remember only one wiped area from previously successfully
+ * detected signature.
+ *
+ * blkid_probe_set_wiper() -- defines wiped area (e.g. LVM)
+ * blkid_probe_use_wiper() -- try to use area (e.g. MBR)
+ *
+ * Note that there is not relation between _wiper and blkid_to_wipe().
+ *
  */
 void blkid_probe_set_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
 {
@@ -1638,12 +1663,17 @@ int blkid_probe_is_wiped(blkid_probe pr, struct blkid_chain **chn,
 	return 0;
 }
 
+/*
+ *  Try to use any area -- if the area has been previously wiped then the
+ *  previous probing result should be ignored (reseted).
+ */
 void blkid_probe_use_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
 {
 	struct blkid_chain *chn = NULL;
 
 	if (blkid_probe_is_wiped(pr, &chn, off, size) && chn) {
-		DBG(DEBUG_LOWPROBE, printf("wiped area detected -- ignore previous results\n"));
+		DBG(DEBUG_LOWPROBE, printf("previously wiped area modified "
+				       " -- ignore previous results\n"));
 		blkid_probe_set_wiper(pr, 0, 0);
 		blkid_probe_chain_reset_vals(pr, chn);
 	}
