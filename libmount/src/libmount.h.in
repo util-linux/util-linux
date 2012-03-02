@@ -223,6 +223,9 @@ extern int mnt_fs_set_target(struct libmnt_fs *fs, const char *target);
 extern const char *mnt_fs_get_fstype(struct libmnt_fs *fs);
 extern int mnt_fs_set_fstype(struct libmnt_fs *fs, const char *fstype);
 
+extern int mnt_fs_streq_srcpath(struct libmnt_fs *fs, const char *path);
+extern int mnt_fs_streq_target(struct libmnt_fs *fs, const char *path);
+
 extern char *mnt_fs_strdup_options(struct libmnt_fs *fs);
 extern const char *mnt_fs_get_options(struct libmnt_fs *fs);
 extern int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr);

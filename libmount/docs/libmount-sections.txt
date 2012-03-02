@@ -174,9 +174,9 @@ mnt_fs_get_userdata
 mnt_fs_get_user_options
 mnt_fs_get_vfs_options
 mnt_fs_is_kernel
-mnt_fs_is_swaparea
 mnt_fs_is_netfs
 mnt_fs_is_pseudofs
+mnt_fs_is_swaparea
 mnt_fs_match_fstype
 mnt_fs_match_options
 mnt_fs_match_source
@@ -195,6 +195,8 @@ mnt_fs_set_source
 mnt_fs_set_target
 mnt_fs_set_userdata
 mnt_fs_strdup_options
+mnt_fs_streq_srcpath
+mnt_fs_streq_target
 mnt_fs_to_mntent
 mnt_new_fs
 mnt_reset_fs

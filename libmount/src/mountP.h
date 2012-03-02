@@ -366,7 +366,6 @@ extern int mnt_optstr_fix_user(char **optstr);
 extern struct libmnt_fs *mnt_copy_mtab_fs(const struct libmnt_fs *fs);
 extern int __mnt_fs_set_source_ptr(struct libmnt_fs *fs, char *source);
 extern int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype);
-extern int mnt_fs_streq_srcpath(struct libmnt_fs *fs, const char *path);
 
 /* context.c */
 extern int mnt_context_prepare_srcpath(struct libmnt_context *cxt);

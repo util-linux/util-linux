@@ -728,21 +728,14 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
 
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
-		const char *s = mnt_fs_get_srcpath(fs),
-			   *t = mnt_fs_get_target(fs),
-			   *r = mnt_fs_get_root(fs);
+		const char *r = mnt_fs_get_root(fs);
 
 		if (fs->flags & MNT_FS_MERGED)
 			continue;
 
-		/*
-		 * Note that kernel can add tailing slash to the network
-		 * filesystem source path
-		 */
-		if (s && t && r &&
-		    strcmp(t, target) == 0 &&
-		    mnt_fs_streq_srcpath(fs, src) &&
-		    strcmp(r, root) == 0)
+		if (r && strcmp(r, root) == 0
+		    && mnt_fs_streq_target(fs, target)
+		    && mnt_fs_streq_srcpath(fs, src))
 			break;
 	}
 

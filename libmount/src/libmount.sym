@@ -225,3 +225,9 @@ global:
 	mnt_get_library_features;
 	mnt_table_parse_dir;
 } MOUNT_2.20;
+
+MOUNT_2.22 {
+global:
+	mnt_fs_streq_target;
+	mnt_fs_streq_srcpath;
+} MOUNT_2.21;

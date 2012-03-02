@@ -423,7 +423,7 @@ try_readonly:
 				const char *s = mnt_fs_get_srcpath(fs),
 					   *t = mnt_fs_get_target(fs);
 
-				if (t && s && mnt_fs_streq_strpath(fs, src))
+				if (t && s && mnt_fs_streq_srcpath(fs, src))
 					fprintf(stderr, _(
 						"       %s is already mounted on %s\n"), s, t);
 			}
