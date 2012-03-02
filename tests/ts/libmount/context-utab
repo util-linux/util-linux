@@ -67,6 +67,8 @@ grep -q $DEVICE /proc/mounts || \
 	echo "(by device) cannot find $DEVICE in /proc/mounts" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
+sleep 1
+
 ts_init_subtest "umount-by-devname"
 ts_valgrind $TESTPROG --umount $DEVICE >> $TS_OUTPUT 2>&1
 grep -q $DEVICE /proc/mounts &&
@@ -81,6 +83,8 @@ grep -q $DEVICE $LIBMOUNT_UTAB || \
 	echo "(by label) cannot find $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
+sleep 1
+
 ts_init_subtest "umount"
 ts_valgrind $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
 grep -q $DEVICE $LIBMOUNT_UTAB && \
@@ -94,6 +98,8 @@ if [ -x "/sbin/mkfs.btrfs" ]; then
 	/sbin/btrfsctl -S sub $MOUNTPOINT &> /dev/null
 	umount $MOUNTPOINT &> /dev/null
 
+	sleep 1
+
 	ts_init_subtest "mount-uhelper-subvol"
 	mkdir -p $MOUNTPOINT &>  /dev/null
 	ts_valgrind $TESTPROG --mount -o uhelper=foo,rw,subvol=sub $DEVICE  $MOUNTPOINT >> $TS_OUTPUT 2>&1
@@ -104,6 +110,8 @@ if [ -x "/sbin/mkfs.btrfs" ]; then
 	ts_log "All mount options (btrfs subvolume + utab) ---"
 	$TS_CMD_FINDMNT --mtab $MOUNTPOINT -o OPTIONS -n >> $TS_OUTPUT 2>&1
 	ts_log "---"
+
+	sleep 1
 
 	ts_init_subtest "umount-subvol"
 	ts_valgrind $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
