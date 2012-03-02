@@ -310,6 +310,8 @@ static void print_value(int output, int num, const char *devname,
 		print_udev_format(name, value);
 
 	} else if (output & OUTPUT_EXPORT_LIST) {
+		if (num == 1 && devname)
+			printf("DEVNAME=%s\n", devname);
 		fputs(name, stdout);
 		fputs("=", stdout);
 		safe_print(value, valsz);
