@@ -1165,6 +1165,10 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 
 	src = mnt_fs_get_source(cxt->fs);
 
+	if (!src && (cxt->mountflags & MS_PROPAGATION))
+		/* mount --make-{shared,private,...} */
+		return mnt_fs_set_source(cxt->fs, "none");
+
 	/* ignore filesystems without source or filesystems
 	 * where the source is quasi-path (//foo/bar)
 	 */
@@ -1203,7 +1207,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 
 	if ((cxt->mountflags & (MS_BIND | MS_MOVE | MS_PROPAGATION)) ||
 	    mnt_fs_is_pseudofs(cxt->fs)) {
-		DBG(CXT, mnt_debug_h(cxt, "PROPAGATION/pseudo FS source: %s", path));
+		DBG(CXT, mnt_debug_h(cxt, "BIND/MOVE/pseudo FS source: %s", path));
 		return rc;
 	}
 

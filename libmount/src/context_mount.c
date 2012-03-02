@@ -453,9 +453,12 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 
 	if (!target)
 		return -EINVAL;
-	if (!src)
+	if (!src) {
+		/* unnecessary, should be already resolved in
+		 * mnt_context_prepare_srcpath(), but for sure... */
+		DBG(CXT, mnt_debug_h(cxt, "WARNING: source is NULL -- using \"none\"!"));
 		src = "none";
-
+	}
 	type = try_type ? : mnt_fs_get_fstype(cxt->fs);
 
 	if (!(flags & MS_MGC_MSK))
