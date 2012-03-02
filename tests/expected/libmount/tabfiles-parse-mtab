@@ -42,7 +42,7 @@ fstype: ext4
 optstr: rw,noatime
 VFS-optstr: rw,noatime
 ------ fs:
-source: (null)
+source: none
 target: /proc/sys/fs/binfmt_misc
 fstype: binfmt_misc
 optstr: rw

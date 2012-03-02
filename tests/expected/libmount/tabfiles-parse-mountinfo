@@ -296,7 +296,7 @@ id:     41
 parent: 20
 devno:  253:0
 ------ fs:
-source: (null)
+source: none
 target: /proc/sys/fs/binfmt_misc
 fstype: binfmt_misc
 optstr: rw,relatime
