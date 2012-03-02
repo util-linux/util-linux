@@ -45,8 +45,9 @@
 enum {
 	COL_SRC = 0,
 	COL_PID,
+	COL_TYPE,
 	COL_SIZE,
-	COL_ACCESS,
+	COL_MODE,
 	COL_M,
 	COL_START,
 	COL_END,
@@ -63,14 +64,15 @@ struct colinfo {
 
 /* columns descriptions */
 static struct colinfo infos[] = {
-	[COL_SRC]     = { "COMMAND", 15, 0, N_("command of the process holding the lock") },
-	[COL_PID]     = { "PID",     5,  TT_FL_RIGHT, N_("PID of the process holding the lock") },
-	[COL_SIZE]    = { "SIZE",    4,  TT_FL_RIGHT, N_("size of the lock") },
-	[COL_ACCESS]  = { "ACCESS",  5,  0, N_("lock access type") },
-	[COL_M]       = { "M",       1,  0, N_("mandatory state of the lock: 0 (none), 1 (set)")},
-	[COL_START]   = { "START",   10, TT_FL_RIGHT, N_("relative byte offset of the lock")},
-	[COL_END]     = { "END",     10, TT_FL_RIGHT, N_("ending offset of the lock")},
-	[COL_PATH]    = { "PATH",    0,  TT_FL_TRUNC, N_("path of the locked file")},
+	[COL_SRC]  = { "COMMAND",15, 0, N_("command of the process holding the lock") },
+	[COL_PID]  = { "PID",     5, TT_FL_RIGHT, N_("PID of the process holding the lock") },
+	[COL_TYPE] = { "TYPE",    5, TT_FL_RIGHT, N_("kind of lock: FL_FLOCK or FL_POSIX.") },
+	[COL_SIZE] = { "SIZE",    4, TT_FL_RIGHT, N_("size of the lock") },
+	[COL_MODE] = { "MODE",    5, 0, N_("lock access mode") },
+	[COL_M]    = { "M",       1, 0, N_("mandatory state of the lock: 0 (none), 1 (set)")},
+	[COL_START] = { "START", 10, TT_FL_RIGHT, N_("relative byte offset of the lock")},
+	[COL_END]  = { "END",    10, TT_FL_RIGHT, N_("ending offset of the lock")},
+	[COL_PATH] = { "PATH",    0, TT_FL_TRUNC, N_("path of the locked file")},
 };
 #define NCOLS ARRAY_SIZE(infos)
 static int columns[NCOLS], ncolumns;
@@ -85,6 +87,7 @@ struct lock {
 	pid_t pid;
 	char *path;
 	char *type;
+	char *mode;
 	off_t start;
 	off_t end;
 	int mandatory;
@@ -244,19 +247,21 @@ static int get_local_locks(struct list_head *locks)
 		     tok = strtok(NULL, " "), i++) {
 
 			/*
-			 * /proc/locks as *exactly* 8 "blocks" of text
+			 * /proc/locks has *exactly* 8 "blocks" of text
 			 * separated by ' ' - check <kernel>/fs/locks.c
 			 */
 			switch (i) {
-			case 0:
-			case 1: /* not intereted! */
+			case 0: /* ignore */
+				break;
+			case 1: /* posix, flock, etc */
+				l->type = xstrdup(tok);
 				break;
 
 			case 2: /* is this a mandatory lock? other values are advisory or noinode */
 				l->mandatory = *tok == 'M' ? TRUE : FALSE;
 				break;
-			case 3: /* lock type */
-				l->type = xstrdup(tok);
+			case 3: /* lock mode */
+				l->mode = xstrdup(tok);
 				break;
 
 			case 4: /* PID */
@@ -308,8 +313,9 @@ static int get_local_locks(struct list_head *locks)
 			 */
 			free(l->path);
 			free(l->size);
-			free(l->type);
+			free(l->mode);
 			free(l->cmdname);
+			free(l->type);
 			free(l);
 
 			continue;
@@ -360,8 +366,9 @@ static void rem_lock(struct lock *lock)
 
 	free(lock->path);
 	free(lock->size);
-	free(lock->type);
+	free(lock->mode);
 	free(lock->cmdname);
+	free(lock->type);
 	list_del(&lock->locks);
 	free(lock);
 }
@@ -397,11 +404,14 @@ static void add_tt_line(struct tt *tt, struct lock *l)
 		case COL_PID:
 			rc = asprintf(&str, "%d", l->pid);
 			break;
+		case COL_TYPE:
+			rc = asprintf(&str, "%s", l->type);
+			break;
 		case COL_SIZE:
 			rc = asprintf(&str, "%s", l->size);
 			break;
-		case COL_ACCESS:
-			rc = asprintf(&str, "%s", l->type);
+		case COL_MODE:
+			rc = asprintf(&str, "%s", l->mode);
 			break;
 		case COL_M:
 			rc = asprintf(&str, "%d", l->mandatory);
@@ -546,8 +556,9 @@ int main(int argc, char *argv[])
 		/* default columns */
 		columns[ncolumns++] = COL_SRC;
 		columns[ncolumns++] = COL_PID;
+		columns[ncolumns++] = COL_TYPE;
 		columns[ncolumns++] = COL_SIZE;
-		columns[ncolumns++] = COL_ACCESS;
+		columns[ncolumns++] = COL_MODE;
 		columns[ncolumns++] = COL_M;
 		columns[ncolumns++] = COL_START;
 		columns[ncolumns++] = COL_END;

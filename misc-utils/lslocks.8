@@ -37,10 +37,13 @@ The command name of the process holding the lock.
 .IP "PID"
 Process ID which holds the lock.
 
+.IP "TYPE"
+Type of lock, can be FLOCK (created with flock(2)) or POSIX (created with fcntl(2) and lockf(2))
+
 .IP "SIZE"
 Size of the locked file.
 
-.IP "ACCESS"
+.IP "MODE"
 Lock access permissions (read, write).
 
 .IP "M"
@@ -71,6 +74,8 @@ Davidlohr Bueso <dave@gnu.org>
 
 .SH "SEE ALSO"
 .BR flock (1)
+.BR fcntl (2)
+.BR lockf (2)
 
 .SH AVAILABILITY
 The lslocks command is part of the util-linux package and is available from
