@@ -304,11 +304,7 @@ int __mnt_fs_set_source_ptr(struct libmnt_fs *fs, char *source)
 
 	assert(fs);
 
-	if (source && !strcmp(source, "none")) {
-		free(source);
-		source = NULL;
-
-	} else if (source && strchr(source, '=')) {
+	if (source && strchr(source, '=')) {
 		if (blkid_parse_tag_string(source, &t, &v) != 0)
 			return -1;
 	}
@@ -341,6 +337,7 @@ int mnt_fs_set_source(struct libmnt_fs *fs, const char *source)
 
 	if (!fs)
 		return -EINVAL;
+
 	if (source) {
 		p = strdup(source);
 		if (!p)

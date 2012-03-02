@@ -480,9 +480,8 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
  * The 2nd, 3rd and 4th iterations are not performed when @tb cache is not
  * set (see mnt_table_set_cache()).
  *
- * Note that valid source path is NULL; the libmount uses NULL instead of
- * "none".  The "none" is used in /proc/{mounts,self/mountninfo} for pseudo
- * filesystems.
+ * Note that NULL is a valid source path; it will be replaced with "none". The
+ * "none" is used in /proc/{mounts,self/mountinfo} for pseudo filesystems.
  *
  * Returns: a tab entry or NULL.
  */
@@ -505,7 +504,7 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 
 		p = mnt_fs_get_srcpath(fs);
 
-		if (path == NULL && src == NULL)
+		if (path == NULL && (src == NULL || !strcmp(src, "none")))
 			return fs;			/* source is "none" */
 		if (path && p && streq_except_trailing_slash(p, path))
 			return fs;
