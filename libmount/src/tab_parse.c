@@ -741,7 +741,7 @@ static struct libmnt_fs *mnt_table_merge_user_fs(struct libmnt_table *tb, struct
 		 */
 		if (s && t && r &&
 		    strcmp(t, target) == 0 &&
-		    streq_except_trailing_slash(s, src) &&
+		    mnt_fs_streq_srcpath(fs, src) &&
 		    strcmp(r, root) == 0)
 			break;
 	}

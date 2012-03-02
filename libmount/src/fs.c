@@ -350,6 +350,23 @@ int mnt_fs_set_source(struct libmnt_fs *fs, const char *source)
 	return rc;
 }
 
+int mnt_fs_streq_srcpath(struct libmnt_fs *fs, const char *path)
+{
+	const char *p = mnt_fs_get_srcpath(fs);
+
+	if (p == NULL && path == NULL)
+		return 1;
+	if (p == NULL || path == NULL)
+		return 0;
+
+	if (mnt_fs_is_pseudofs(fs))
+		/* don't think about pseudo-fs source as about path */
+		return strcmp(p, path) == 0;
+
+	return streq_except_trailing_slash(p, path);
+}
+
+
 /**
  * mnt_fs_get_tag:
  * @fs: fs
@@ -1143,10 +1160,6 @@ int mnt_fs_match_target(struct libmnt_fs *fs, const char *target,
  * The 2nd, 3rd and 4th attempts are not performed when @cache is NULL. The
  * 2nd and 3rd attempts are not performed if @fs->source is tag.
  *
- * Note that valid source path is NULL; the libmount uses NULL instead of
- * "none".  The "none" is used in /proc/{mounts,self/mountninfo} for pseudo
- * filesystems.
- *
  * Returns: 1 if @fs source is equal to @source else 0.
  */
 int mnt_fs_match_source(struct libmnt_fs *fs, const char *source,
@@ -1158,15 +1171,15 @@ int mnt_fs_match_source(struct libmnt_fs *fs, const char *source,
 	if (!fs)
 		return 0;
 
-	/* undefined source -- "none" in /proc */
-	if (source == NULL && fs->source == NULL)
+	/* 1) native paths... */
+	if (mnt_fs_streq_srcpath(fs, source) == 1)
 		return 1;
 
-	if (source == NULL || fs->source == NULL)
+	if (!source || !fs->source)
 		return 0;
 
-	/* 1) native paths/tags */
-	if (streq_except_trailing_slash(source, fs->source))
+	/* ... and tags */
+	if (fs->tagname && strcmp(source, fs->source) == 0)
 		return 1;
 
 	if (!cache)
@@ -1180,7 +1193,7 @@ int mnt_fs_match_source(struct libmnt_fs *fs, const char *source,
 
 	/* 2) canonicalized and native */
 	src = mnt_fs_get_srcpath(fs);
-	if (src && streq_except_trailing_slash(cn, src))
+	if (src && mnt_fs_streq_srcpath(fs, cn))
 		return 1;
 
 	/* 3) canonicalized and canonicalized */

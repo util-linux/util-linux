@@ -500,16 +500,10 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 	/* native paths */
 	mnt_reset_iter(&itr, direction);
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
-		const char *src = mnt_fs_get_source(fs);
-
-		p = mnt_fs_get_srcpath(fs);
-
-		if (path == NULL && (src == NULL || !strcmp(src, "none")))
-			return fs;			/* source is "none" */
-		if (path && p && streq_except_trailing_slash(p, path))
+		if (mnt_fs_streq_srcpath(fs, path))
 			return fs;
-		if (!p && src)
-			ntags++;			/* mnt_fs_get_srcpath() returs nothing, it's TAG */
+		if (mnt_fs_get_tag(fs, NULL, NULL) == 0)
+			ntags++;
 	}
 
 	if (!path || !tb->cache || !(cn = mnt_resolve_path(path, tb->cache)))
@@ -519,8 +513,7 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 	if (ntags < mnt_table_get_nents(tb)) {
 		mnt_reset_iter(&itr, direction);
 		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
-			p = mnt_fs_get_srcpath(fs);
-			if (p && streq_except_trailing_slash(p, cn))
+			if (mnt_fs_streq_srcpath(fs, cn))
 				return fs;
 		}
 	}
@@ -860,18 +853,14 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 		mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
 		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
-			const char *s = mnt_fs_get_srcpath(fs),
-				   *t = mnt_fs_get_target(fs),
+			const char *t = mnt_fs_get_target(fs),
 				   *r = mnt_fs_get_root(fs);
 
-			/*
-			 * Note that kernel can add tailing slash to the
-			 * network filesystem source paths.
-			 */
-			if (t && s && r &&
-			    streq_except_trailing_slash(t, tgt) &&
-			    streq_except_trailing_slash(s, src) &&
-			    strcmp(r, root) == 0)
+			if (t && r
+			    && mnt_fs_get_srcpath(fs)
+			    && mnt_fs_streq_srcpath(fs, src)
+			    && streq_except_trailing_slash(t, tgt)
+			    && strcmp(r, root) == 0)
 				break;
 		}
 		if (fs)
