@@ -180,12 +180,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 		unmangle_string(fs->vfs_optstr);
 		unmangle_string(fstype);
 		unmangle_string(src);
-
-		if (!strcmp(fs->fs_optstr, "none")) {
-			free(fs->fs_optstr);
-			fs->fs_optstr = NULL;
-		} else
-			unmangle_string(fs->fs_optstr);
+		unmangle_string(fs->fs_optstr);
 
 		rc = __mnt_fs_set_fstype_ptr(fs, fstype);
 		if (!rc) {
