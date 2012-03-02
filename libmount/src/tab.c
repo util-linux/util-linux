@@ -438,7 +438,7 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 	/* native @target */
 	mnt_reset_iter(&itr, direction);
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
-		if (fs->target && streq_except_trailing_slash(fs->target, path))
+		if (mnt_fs_streq_target(fs, path))
 			return fs;
 	}
 	if (!tb->cache || !(cn = mnt_resolve_path(path, tb->cache)))
@@ -447,7 +447,7 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 	/* canonicalized paths in struct libmnt_table */
 	mnt_reset_iter(&itr, direction);
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
-		if (fs->target && strcmp(fs->target, cn) == 0)
+		if (mnt_fs_streq_target(fs, cn))
 			return fs;
 	}
 
@@ -461,7 +461,8 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 		       continue;
 
 		p = mnt_resolve_path(fs->target, tb->cache);
-		if (strcmp(cn, p) == 0)
+		/* both canonicalized, strcmp() is fine here */
+		if (p && strcmp(cn, p) == 0)
 			return fs;
 	}
 	return NULL;
@@ -544,7 +545,9 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 				 if (mnt_fs_get_tag(fs, &t, &v))
 					 continue;
 				 x = mnt_resolve_tag(t, v, tb->cache);
-				 if (x && streq_except_trailing_slash(x, cn))
+
+				 /* both canonicalized, strcmp() is fine here */
+				 if (x && strcmp(x, cn) == 0)
 					 return fs;
 			 }
 		}
@@ -559,7 +562,9 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 			p = mnt_fs_get_srcpath(fs);
 			if (p)
 				p = mnt_resolve_path(p, tb->cache);
-			if (p && streq_except_trailing_slash(cn, p))
+
+			/* both canonicalized, strcmp() is fine here */
+			if (p && strcmp(p, cn) == 0)
 				return fs;
 		}
 	}
@@ -853,14 +858,11 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 		mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
 		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
-			const char *t = mnt_fs_get_target(fs),
-				   *r = mnt_fs_get_root(fs);
+			const char *r = mnt_fs_get_root(fs);
 
-			if (t && r
-			    && mnt_fs_get_srcpath(fs)
+			if (r && strcmp(r, root) == 0
 			    && mnt_fs_streq_srcpath(fs, src)
-			    && streq_except_trailing_slash(t, tgt)
-			    && strcmp(r, root) == 0)
+			    && mnt_fs_streq_target(fs, tgt))
 				break;
 		}
 		if (fs)

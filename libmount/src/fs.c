@@ -350,22 +350,40 @@ int mnt_fs_set_source(struct libmnt_fs *fs, const char *source)
 	return rc;
 }
 
+/*
+ * Compares @fs source path with @path. The tailing slash is ignored.
+ * See also mnt_fs_match_source().
+ *
+ * Returns: 1 if @fs source path equal to @path, otherwise 0.
+ */
 int mnt_fs_streq_srcpath(struct libmnt_fs *fs, const char *path)
 {
-	const char *p = mnt_fs_get_srcpath(fs);
+	const char *p;
 
-	if (p == NULL && path == NULL)
-		return 1;
-	if (p == NULL || path == NULL)
+	if (!fs)
 		return 0;
 
-	if (mnt_fs_is_pseudofs(fs))
-		/* don't think about pseudo-fs source as about path */
-		return strcmp(p, path) == 0;
+	p = mnt_fs_get_srcpath(fs);
 
-	return streq_except_trailing_slash(p, path);
+	if (!mnt_fs_is_pseudofs(fs))
+		return streq_except_trailing_slash(p, path);
+
+	if (!p && !path)
+		return 1;
+
+	return p && path && strcmp(p, path) == 0;
 }
 
+/*
+ * Compares @fs target path with @path. The tailing slash is ignored.
+ * See also mnt_fs_match_target().
+ *
+ * Returns: 1 if @fs target path equal to @path, otherwise 0.
+ */
+int mnt_fs_streq_target(struct libmnt_fs *fs, const char *path)
+{
+	return fs && streq_except_trailing_slash(mnt_fs_get_target(fs), path);
+}
 
 /**
  * mnt_fs_get_tag:
@@ -1128,7 +1146,7 @@ int mnt_fs_match_target(struct libmnt_fs *fs, const char *target,
 		return 0;
 
 	/* 1) native paths */
-	rc = !strcmp(target, fs->target);
+	rc = mnt_fs_streq_target(fs, target);
 
 	if (!rc && cache) {
 		/* 2) - canonicalized and non-canonicalized */

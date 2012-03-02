@@ -301,6 +301,25 @@ static void selinux_warning(struct libmnt_context *cxt, const char *tgt)
 # define selinux_warning(_x, _y)
 #endif
 
+/* temporary in mount(8) for v2.21.x releases, in v2.22 will be in libmount
+ */
+static int mnt_fs_streq_srcpath(struct libmnt_fs *fs, const char *path)
+{
+	const char *p;
+
+	if (!fs)
+		return 0;
+
+	p = mnt_fs_get_srcpath(fs);
+
+	if (!mnt_fs_is_pseudofs(fs))
+		return streq_except_trailing_slash(p, path);
+
+	if (!p && !path)
+		return 1;
+
+	return p && path && strcmp(p, path) == 0;
+}
 
 /*
  * rc = 0 success
@@ -423,7 +442,7 @@ try_readonly:
 				const char *s = mnt_fs_get_srcpath(fs),
 					   *t = mnt_fs_get_target(fs);
 
-				if (t && s && mnt_fs_streq_strpath(fs, src))
+				if (t && s && mnt_fs_streq_srcpath(fs, src))
 					fprintf(stderr, _(
 						"       %s is already mounted on %s\n"), s, t);
 			}
