@@ -19,17 +19,9 @@
         _PATH_UMOUNT /bin/umount
         _PATH_PASSWD /etc/passwd
        _PATH_GSHADOW /etc/gshadow
-          _PATH_PTMP /etc/ptmp
-       _PATH_PTMPTMP /etc/ptmptmp
          _PATH_GROUP /etc/group
-          _PATH_GTMP /etc/gtmp
-       _PATH_GTMPTMP /etc/gtmptmp
  _PATH_SHADOW_PASSWD /etc/shadow
-   _PATH_SHADOW_PTMP /etc/sptmp
-_PATH_SHADOW_PTMPTMP /etc/sptmptmp
   _PATH_SHADOW_GROUP /etc/gshadow
-   _PATH_SHADOW_GTMP /etc/sgtmp
-_PATH_SHADOW_GTMPTMP /etc/sgtmptmp
          _PATH_WORDS /usr/share/dict/words
      _PATH_WORDS_ALT /usr/share/dict/web2
         _PATH_UMOUNT /bin/umount

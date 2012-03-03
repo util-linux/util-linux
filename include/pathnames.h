@@ -51,23 +51,14 @@
 /* used in login-utils/shutdown.c */
 
 /* used in login-utils/setpwnam.h and login-utils/islocal.c */
-#define _PATH_PASSWD            "/etc/passwd"
+#define _PATH_PASSWD		"/etc/passwd"
 
-/* used in login-utils/newgrp */
+/* used in login-utils/newgrp and login-utils/setpwnam.h*/
 #define _PATH_GSHADOW		"/etc/gshadow"
 
 /* used in login-utils/setpwnam.h */
-#define _PATH_PTMP              "/etc/ptmp"
-#define _PATH_PTMPTMP           "/etc/ptmptmp"
-#define _PATH_GROUP             "/etc/group"
-#define _PATH_GTMP              "/etc/gtmp"
-#define _PATH_GTMPTMP           "/etc/gtmptmp"
-#define _PATH_SHADOW_PASSWD     "/etc/shadow"
-#define _PATH_SHADOW_PTMP       "/etc/sptmp"
-#define _PATH_SHADOW_PTMPTMP    "/etc/sptmptmp"
-#define _PATH_SHADOW_GROUP      "/etc/gshadow"
-#define _PATH_SHADOW_GTMP       "/etc/sgtmp"
-#define _PATH_SHADOW_GTMPTMP    "/etc/sgtmptmp"
+#define _PATH_GROUP		"/etc/group"
+#define _PATH_SHADOW_PASSWD	"/etc/shadow"
 #define _PATH_SHELLS		"/etc/shells"
 
 /* used in term-utils/agetty.c */

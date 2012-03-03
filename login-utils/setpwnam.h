@@ -18,7 +18,7 @@
 # define PASSWD_FILE	_PATH_PASSWD
 # define GROUP_FILE	_PATH_GROUP
 # define SHADOW_FILE	_PATH_SHADOW_PASSWD
-# define SGROUP_FILE	_PATH_SHADOW_GROUP
+# define SGROUP_FILE	_PATH_GSHADOW
 #else
 # define PASSWD_FILE	"/tmp/passwd"
 # define GROUP_FILE	"/tmp/group"
