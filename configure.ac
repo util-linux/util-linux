@@ -114,6 +114,9 @@ UL_SET_ARCH(M68K, m68*)
 UL_SET_ARCH(MIPS, mips*)
 UL_SET_ARCH(HPPA, hppa*)
 
+dnl script chkdupexe requires perl
+AC_PATH_PROG(PERL, perl)
+
 AC_SYS_LARGEFILE
 
 AM_GNU_GETTEXT_VERSION([0.14.1])
