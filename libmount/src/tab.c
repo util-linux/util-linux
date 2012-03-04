@@ -286,6 +286,11 @@ int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 
 		id = mnt_fs_get_id(fs);
 
+		/* avoid infinite loop. This only happens in rare cases
+		 * such as in early userspace when the rootfs is its own parent */
+		if (id == parent_id)
+			continue;
+
 		if ((!lastchld_id || id > lastchld_id) &&
 		    (!*chld || id < chld_id)) {
 			*chld = fs;
