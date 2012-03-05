@@ -399,31 +399,31 @@ static void add_tt_line(struct tt *tt, struct lock *l)
 
 		switch (get_column_id(i)) {
 		case COL_SRC:
-			rc = asprintf(&str, "%s", l->cmdname ? l->cmdname : notfnd);
+			rc = xasprintf(&str, "%s", l->cmdname ? l->cmdname : notfnd);
 			break;
 		case COL_PID:
-			rc = asprintf(&str, "%d", l->pid);
+			rc = xasprintf(&str, "%d", l->pid);
 			break;
 		case COL_TYPE:
-			rc = asprintf(&str, "%s", l->type);
+			rc = xasprintf(&str, "%s", l->type);
 			break;
 		case COL_SIZE:
-			rc = asprintf(&str, "%s", l->size);
+			rc = xasprintf(&str, "%s", l->size);
 			break;
 		case COL_MODE:
-			rc = asprintf(&str, "%s", l->mode);
+			rc = xasprintf(&str, "%s", l->mode);
 			break;
 		case COL_M:
-			rc = asprintf(&str, "%d", l->mandatory);
+			rc = xasprintf(&str, "%d", l->mandatory);
 			break;
 		case COL_START:
-			rc = asprintf(&str, "%ld", l->start);
+			rc = xasprintf(&str, "%ld", l->start);
 			break;
 		case COL_END:
-			rc = asprintf(&str, "%ld", l->end);
+			rc = xasprintf(&str, "%ld", l->end);
 			break;
 		case COL_PATH:
-			rc = asprintf(&str, "%s", l->path ? l->path : notfnd);
+			rc = xasprintf(&str, "%s", l->path ? l->path : notfnd);
 			break;
 		default:
 			break;
