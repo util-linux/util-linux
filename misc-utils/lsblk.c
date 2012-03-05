@@ -1085,14 +1085,15 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 		" -P, --pairs          use key=\"value\" output format\n"
 		" -r, --raw            use raw output format\n"
 		" -s, --inverse        inverse dependencies\n"
-		" -t, --topology       output info about topology\n"));
+		" -t, --topology       output info about topology\n"
+		" -V, --version        output version information and exit\n"));
 
-	fprintf(out, _("\nAvailable columns:\n"));
+	fprintf(out, _("\nAvailable columns (for --output):\n"));
 
 	for (i = 0; i < NCOLS; i++)
-		fprintf(out, " %10s  %s\n", infos[i].name, _(infos[i].help));
+		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
-	fprintf(out, _("\nFor more information see lsblk(8).\n"));
+	fprintf(out, USAGE_MAN_TAIL("lsblk(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -1133,6 +1134,7 @@ int main(int argc, char *argv[])
 		{ "exclude",    1, 0, 'e' },
 		{ "topology",   0, 0, 't' },
 		{ "pairs",      0, 0, 'P' },
+		{ "version",    0, 0, 'V' },
 		{ NULL, 0, 0, 0 },
 	};
 
@@ -1143,7 +1145,7 @@ int main(int argc, char *argv[])
 	lsblk = &_ls;
 	memset(lsblk, 0, sizeof(*lsblk));
 
-	while((c = getopt_long(argc, argv, "abdDe:fhlnmo:Pirst", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "abdDe:fhlnmo:PirstV", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			lsblk->all_devices = 1;
@@ -1222,6 +1224,10 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_SCHED;
 			columns[ncolumns++] = COL_RQ_SIZE;
 			break;
+		case 'V':
+			printf(_("%s from %s\n"), program_invocation_short_name,
+				PACKAGE_STRING);
+			return EXIT_SUCCESS;
 		default:
 			help(stderr);
 		}
