@@ -261,56 +261,6 @@ read_offsets(struct wipe_desc *wp, const char *devname)
 	return wp;
 }
 
-static struct wipe_desc *
-do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet)
-{
-	blkid_probe pr = new_probe(devname, O_RDWR);
-	struct wipe_desc *w;
-
-	if (!pr)
-		return NULL;
-
-	while (blkid_do_probe(pr) == 0) {
-		w = get_desc_for_probe(wp, pr);
-		if (!w)
-			break;
-		wp = w;
-		if (!wp->on_disk)
-			continue;
-		wp->zap = all ? 1 : wp->zap;
-		if (!wp->zap)
-			continue;
-
-		if (blkid_do_wipe(pr, noact))
-			warn(_("%s: failed to erase %s magic string at offset 0x%08jx"),
-			     devname, wp->type, wp->offset);
-		else if (!quiet) {
-			size_t i;
-
-			printf(_("%s: %zd bytes were erased at offset 0x%08jx (%s): "),
-				devname, wp->len, wp->offset, wp->type);
-
-			for (i = 0; i < wp->len; i++) {
-				printf("%02x", wp->magic[i]);
-				if (i + 1 < wp->len)
-					fputc(' ', stdout);
-			}
-			putchar('\n');
-		}
-	}
-
-	for (w = wp; w != NULL; w = w->next) {
-		if (!w->on_disk && !quiet)
-			warnx(_("%s: offset 0x%jx not found"), devname, w->offset);
-	}
-
-	fsync(blkid_probe_get_fd(pr));
-	close(blkid_probe_get_fd(pr));
-	blkid_free_probe(pr);
-
-	return wp;
-}
-
 static void
 free_wipe(struct wipe_desc *wp)
 {
@@ -326,6 +276,74 @@ free_wipe(struct wipe_desc *wp)
 
 		wp = next;
 	}
+}
+
+static void do_wipe_real(blkid_probe pr, const char *devname, struct wipe_desc *w, int noact, int quiet)
+{
+	size_t i;
+
+	if (blkid_do_wipe(pr, noact))
+		warn(_("%s: failed to erase %s magic string at offset 0x%08jx"),
+		     devname, w->type, w->offset);
+
+	if (quiet)
+		return;
+
+	printf(_("%s: %zd bytes were erased at offset 0x%08jx (%s): "),
+		devname, w->len, w->offset, w->type);
+
+	for (i = 0; i < w->len; i++) {
+		printf("%02x", w->magic[i]);
+		if (i + 1 < w->len)
+			fputc(' ', stdout);
+	}
+	putchar('\n');
+}
+
+static struct wipe_desc *
+do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet)
+{
+	blkid_probe pr = new_probe(devname, O_RDWR);
+	struct wipe_desc *w, *wp0 = clone_offset(wp);
+	int zap = all ? 1 : wp->zap;
+
+	if (!pr)
+		return NULL;
+
+	while (blkid_do_probe(pr) == 0) {
+		wp = get_desc_for_probe(wp, pr);
+		if (!wp)
+			break;
+
+		/* Check if offset is in provided list */
+		w = wp0;
+		while(w && w->offset != wp->offset)
+			w = w->next;
+		if (wp0 && !w)
+			continue;
+
+		/* Mark done if found in provided list */
+		if (w)
+			w->on_disk = wp->on_disk;
+
+		if (!wp->on_disk)
+			continue;
+
+		if (zap)
+			do_wipe_real(pr, devname, wp, noact, quiet);
+	}
+
+	for (w = wp0; w != NULL; w = w->next) {
+		if (!w->on_disk && !quiet)
+			warnx(_("%s: offset 0x%jx not found"), devname, w->offset);
+	}
+
+	fsync(blkid_probe_get_fd(pr));
+	close(blkid_probe_get_fd(pr));
+	blkid_free_probe(pr);
+	free_wipe(wp0);
+
+	return wp;
 }
 
 static loff_t
