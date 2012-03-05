@@ -10,7 +10,7 @@ cd "$(git rev-parse --show-toplevel)" || {
 }
 
 git grep -zl '#include "xalloc.h"' |
-  xargs -0 grep -nwE '[^x](([cm]|re)alloc|strdup)\('
+  xargs -0 grep -nwE '[^x](([cm]|re)alloc|strdup|asprintf)\('
 
 result=$?
 
