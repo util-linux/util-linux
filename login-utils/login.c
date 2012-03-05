@@ -128,6 +128,22 @@ static int timeout = LOGIN_TIMEOUT;
 static int child_pid = 0;
 static volatile int got_sig = 0;
 
+#ifdef LOGIN_CHOWN_VCS
+/* true if the filedescriptor fd is a console tty, very Linux specific */
+static int is_consoletty(int fd)
+{
+	struct stat stb;
+
+	if ((fstat(fd, &stb) >= 0)
+	    && (major(stb.st_rdev) == TTY_MAJOR)
+	    && (minor(stb.st_rdev) < 64)) {
+		return 1;
+	}
+	return 0;
+}
+#endif
+
+
 /*
  * Robert Ambrose writes:
  * A couple of my users have a problem with login processes hanging around
@@ -316,15 +332,15 @@ static void chown_tty(struct login_context *cxt)
 
 #ifdef LOGIN_CHOWN_VCS
 	if (is_consoletty(0)) {
-		if (chown(cxt->vcs, uid, gid))			/* vcs */
-			chown_err(cxt->vcs, uid, gid);
-		if (chmod(cxt->vcs, cxt->tty_mode))
-			chmod_err(cxt->vcs, cxt->tty_mode);
+		if (chown(cxt->vcsn, uid, gid))			/* vcs */
+			chown_err(cxt->vcsn, uid, gid);
+		if (chmod(cxt->vcsn, cxt->tty_mode))
+			chmod_err(cxt->vcsn, cxt->tty_mode);
 
-		if (chown(cxt->vcsa, uid, gid))			/* vcsa */
-			chown_err(cxt->vcsa, uid, gid);
-		if (chmod(cxt->vcsa, cxt->tty_mode))
-			chmod_err(cxt->vcsa, cxt->tty_mode);
+		if (chown(cxt->vcsan, uid, gid))			/* vcsa */
+			chown_err(cxt->vcsan, uid, gid);
+		if (chmod(cxt->vcsan, cxt->tty_mode))
+			chmod_err(cxt->vcsan, cxt->tty_mode);
 	}
 #endif
 }
@@ -402,21 +418,6 @@ static void init_tty(struct login_context *cxt)
 	tcsetattr(0, TCSAFLUSH, &tt);
 }
 
-
-#ifdef LOGIN_CHOWN_VCS
-/* true if the filedescriptor fd is a console tty, very Linux specific */
-static int is_consoletty(int fd)
-{
-	struct stat stb;
-
-	if ((fstat(fd, &stb) >= 0)
-	    && (major(stb.st_rdev) == TTY_MAJOR)
-	    && (minor(stb.st_rdev) < 64)) {
-		return 1;
-	}
-	return 0;
-}
-#endif
 
 /*
  * Log failed login attempts in _PATH_BTMP if that exists.
