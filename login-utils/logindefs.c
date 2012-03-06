@@ -212,7 +212,7 @@ const char *getlogindefs_str(const char *name, const char *dflt)
 }
 
 /*
- * For compatibility with shadow-utils we have tu support additional
+ * For compatibility with shadow-utils we have to support additional
  * syntax for environment variables in login.defs(5) file. The standard
  * syntax is:
  *
