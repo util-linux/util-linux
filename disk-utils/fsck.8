@@ -7,7 +7,7 @@
 fsck \- check and repair a Linux filesystem
 .SH SYNOPSIS
 .B fsck
-.RB [ \-lsAVRTMNP ]
+.RB [ \-lrsAVRTMNP ]
 .RB [ \-C
 .RI [ fd ]]
 .RB [ \-t
@@ -102,6 +102,14 @@ instances are executed in the same time.  The option is ignored when used for
 multiple devices or for non-rotating disks.  \fBfsck\fR does not lock underlying
 devices when executed to check stacked devices (e.g. MD or DM) -- this feature is
 not implemented yet.
+.TP
+.B \-r
+Report certain statistics for each fsck when it completes. These statistics
+include the exit status, the maximum run set size (in kilobytes), the elapsed
+all-clock time and the user and system CPU time used by the fsck run. For
+example:
+
+/dev/sda1: status 0, maxrss 92828, real 4, user 2.677592, sys 0.861868
 .TP
 .B \-s
 Serialize

@@ -43,6 +43,7 @@
 #include <errno.h>
 #include <signal.h>
 #include <dirent.h>
+#include <sys/resource.h>
 #include <blkid.h>
 #include <libmount.h>
 
@@ -102,9 +103,11 @@ struct fsck_instance {
 	int	lock;		/* flock()ed whole disk file descriptor or -1 */
 	int	exit_status;
 	time_t	start_time;
+	time_t  end_time;
 	char *	prog;
 	char *	type;
 
+	struct rusage rusage;
 	struct libmnt_fs *fs;
 	struct fsck_instance *next;
 };
@@ -131,6 +134,7 @@ static int parallel_root;
 static int progress;
 static int progress_fd;
 static int force_all_parallel;
+static int report_stats;
 
 static int num_running;
 static int max_running;
@@ -489,6 +493,32 @@ static int progress_active(void)
 }
 
 /*
+ * Process run statistics for finished fsck instances.
+ *
+ * If report_stats is 0, do nothing, otherwise print a selection of
+ * interesting rusage statistics as well as elapsed wallclock time.
+ */
+static void print_stats(struct fsck_instance *inst)
+{
+	time_t time_diff;
+
+	if (!inst || !report_stats || noexecute)
+		return;
+
+	time_diff = inst->end_time - inst->start_time;
+	fprintf(stdout, "%s: status %d, maxrss %ld, "
+			"real %d, user %d.%06d, sys %d.%06d\n",
+		fs_get_device(inst->fs),
+		inst->exit_status,
+		inst->rusage.ru_maxrss,
+		(int)time_diff,
+		(int)inst->rusage.ru_utime.tv_sec,
+		(int)inst->rusage.ru_utime.tv_usec,
+		(int)inst->rusage.ru_stime.tv_sec,
+		(int)inst->rusage.ru_stime.tv_usec);
+}
+
+/*
  * Execute a particular fsck program, and link it into the list of
  * child processes we are waiting for.
  */
@@ -616,6 +646,7 @@ static struct fsck_instance *wait_one(int flags)
 	int	sig;
 	struct fsck_instance *inst, *inst2, *prev;
 	pid_t	pid;
+	struct rusage rusage;
 
 	if (!instance_list)
 		return NULL;
@@ -640,7 +671,7 @@ static struct fsck_instance *wait_one(int flags)
 	inst = prev = NULL;
 
 	do {
-		pid = waitpid(-1, &status, flags);
+		pid = wait4(-1, &status, flags, &rusage);
 		if (cancel_requested && !kill_sent) {
 			kill_all(SIGTERM);
 			kill_sent++;
@@ -682,8 +713,12 @@ static struct fsck_instance *wait_one(int flags)
 		       inst->prog, fs_get_device(inst->fs), status);
 		status = FSCK_EX_ERROR;
 	}
+
 	inst->exit_status = status;
 	inst->flags |= FLAG_DONE;
+	inst->end_time = time(0);
+	memcpy(&inst->rusage, &rusage, sizeof(struct rusage));
+
 	if (progress && (inst->flags & FLAG_PROGRESS) &&
 	    !progress_active()) {
 		for (inst2 = instance_list; inst2; inst2 = inst2->next) {
@@ -716,6 +751,9 @@ ret_inst:
 		prev->next = inst->next;
 	else
 		instance_list = inst->next;
+
+	print_stats(inst);
+
 	if (verbose > 1)
 		printf(_("Finished with %s (exit status %d)\n"),
 		       fs_get_device(inst->fs), inst->exit_status);
@@ -1248,6 +1286,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -t <type>  specify filesystem types to be checked;\n"
 		"              type is allowed to be comma-separated list\n"
 		" -P         check filesystems in parallel, including root\n"
+		" -r         report statistics for each device fsck\n"
 		" -s         serialize fsck operations\n"
 		" -l         lock the device using flock()\n"
 		" -N         do not execute, just show what would be done\n"
@@ -1376,6 +1415,9 @@ static void PRS(int argc, char *argv[])
 				break;
 			case 'P':
 				parallel_root = 1;
+				break;
+			case 'r':
+				report_stats = 1;
 				break;
 			case 's':
 				serialize = 1;
