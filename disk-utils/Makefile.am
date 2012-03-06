@@ -64,6 +64,14 @@ usrsbin_exec_PROGRAMS += fdformat
 blockdev_SOURCES = blockdev.c $(utils_common)
 endif
 
+if BUILD_FSCK
+sbin_PROGRAMS += fsck
+dist_man_MANS += fsck.8
+fsck_SOURCES = fsck.c
+fsck_LDADD = $(ul_libmount_la) $(ul_libblkid_la)
+fsck_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir) -I$(ul_libblkid_incdir)
+endif
+
 if BUILD_LIBBLKID
 sbin_PROGRAMS += swaplabel
 dist_man_MANS += swaplabel.8

@@ -48,10 +48,6 @@ if BUILD_MOUNT
 SUBDIRS += mount
 endif
 
-if BUILD_FSCK
-SUBDIRS += fsck
-endif
-
 if BUILD_SCHEDUTILS
 SUBDIRS += schedutils
 endif

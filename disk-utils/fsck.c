@@ -1511,4 +1511,3 @@ int main(int argc, char *argv[])
 	mnt_free_table(mtab);
 	return status;
 }
-

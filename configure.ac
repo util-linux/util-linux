@@ -744,7 +744,7 @@ AC_ARG_ENABLE([fsck],
   [], enable_fsck=check
 )
 UL_BUILD_INIT([fsck])
-UL_REQUIRES_BUILD([fsck], [libblkid])
+UL_REQUIRES_BUILD([fsck], [libmount])
 AM_CONDITIONAL(BUILD_FSCK, test "x$build_fsck" = xyes)
 
 
@@ -1196,7 +1196,6 @@ AC_CONFIG_FILES([
 Makefile
 disk-utils/Makefile
 fdisk/Makefile
-fsck/Makefile
 getopt/Makefile
 hwclock/Makefile
 include/Makefile

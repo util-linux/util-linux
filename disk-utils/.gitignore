@@ -1,13 +1,14 @@
 blockdev
+elvtune
 fdformat
+fsck
 fsck.cramfs
 fsck.minix
 isosize
 mkfs
 mkfs.bfs
+mkfs.cramfs
 mkfs.minix
 mkswap
-mkfs.cramfs
-elvtune
 raw
 swaplabel
