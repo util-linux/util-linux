@@ -48,6 +48,7 @@ wipefs:  libblkid libuuid
 cal:  libncursesw libtinfo 
 logger:  
 look:  
+lslocks:  
 mcookie:  
 namei:  
 rename:  

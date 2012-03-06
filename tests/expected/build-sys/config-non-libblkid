@@ -35,6 +35,7 @@ uuidgen:  libuuid
 cal:  libncursesw libtinfo 
 logger:  
 look:  
+lslocks:  
 mcookie:  
 namei:  
 rename:  

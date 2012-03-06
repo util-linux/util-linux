@@ -31,6 +31,7 @@ test_logindefs:
 cal:  libncursesw libtinfo 
 logger:  
 look:  
+lslocks:  
 mcookie:  
 namei:  
 rename:  

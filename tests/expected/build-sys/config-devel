@@ -60,6 +60,7 @@ ddate:
 kill:  
 logger:  
 look:  
+lslocks:  
 mcookie:  
 namei:  
 rename:  

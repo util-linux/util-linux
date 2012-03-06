@@ -51,6 +51,7 @@ blkid.static: STATIC
 cal:  libncursesw libtinfo 
 logger:  
 look:  
+lslocks:  
 mcookie:  
 namei:  
 rename:  
