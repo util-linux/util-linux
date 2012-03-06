@@ -1307,7 +1307,7 @@ static void signal_cancel(int sig __attribute__((__unused__)))
 	cancel_requested++;
 }
 
-static void PRS(int argc, char *argv[])
+static void parse_argv(int argc, char *argv[])
 {
 	int	i, j;
 	char	*arg, *dev, *tmp = 0;
@@ -1483,7 +1483,7 @@ int main(int argc, char *argv[])
 	mnt_init_debug(0);		/* init libmount debug mask */
 	mntcache = mnt_new_cache();	/* no fatal error if failed */
 
-	PRS(argc, argv);
+	parse_argv(argc, argv);
 
 	if (!notitle)
 		printf(_("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING);
