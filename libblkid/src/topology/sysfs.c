@@ -44,7 +44,8 @@ static int probe_sysfs_tp(blkid_probe pr,
 {
 	dev_t dev, disk = 0;
 	int rc;
-	struct sysfs_cxt sysfs, parent;
+	struct sysfs_cxt sysfs = UL_SYSFSCXT_EMPTY,
+			 parent = UL_SYSFSCXT_EMPTY;
 	size_t i, count = 0;
 
 	dev = blkid_probe_get_devno(pr);
@@ -76,7 +77,7 @@ static int probe_sysfs_tp(blkid_probe pr,
 				}
 			}
 			if (!ok)
-				continue;	/* attrinute does not exist */
+				continue;	/* attribute does not exist */
 		}
 
 		if (val->set_ulong) {
@@ -102,8 +103,8 @@ static int probe_sysfs_tp(blkid_probe pr,
 
 done:
 	sysfs_deinit(&sysfs);
-	if (disk)
-		sysfs_deinit(&parent);
+	sysfs_deinit(&parent);
+
 	if (count)
 		return 0;		/* success */
 	return rc;			/* error or nothing */

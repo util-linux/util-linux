@@ -550,7 +550,7 @@ static int probe_all_removable(blkid_cache cache)
 		return -BLKID_ERR_PROC;
 
 	while((d = readdir(dir))) {
-		struct sysfs_cxt sysfs;
+		struct sysfs_cxt sysfs = UL_SYSFSCXT_EMPTY;
 		int removable = 0;
 		dev_t devno;
 

@@ -346,7 +346,7 @@ static int get_dm_wholedisk(struct sysfs_cxt *cxt, char *diskname,
 int blkid_devno_to_wholedisk(dev_t dev, char *diskname,
 			size_t len, dev_t *diskdevno)
 {
-	struct sysfs_cxt cxt;
+	struct sysfs_cxt cxt = UL_SYSFSCXT_EMPTY;
 	int is_part = 0;
 
 	if (!dev || sysfs_init(&cxt, dev, NULL) != 0)

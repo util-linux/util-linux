@@ -137,7 +137,7 @@ char *sysfs_devno_to_devpath(dev_t devno, char *buf, size_t bufsiz)
 int sysfs_init(struct sysfs_cxt *cxt, dev_t devno, struct sysfs_cxt *parent)
 {
 	char path[PATH_MAX];
-	int fd, rc = 0;
+	int fd, rc;
 
 	memset(cxt, 0, sizeof(*cxt));
 	cxt->dir_fd = -1;
@@ -157,7 +157,7 @@ int sysfs_init(struct sysfs_cxt *cxt, dev_t devno, struct sysfs_cxt *parent)
 	cxt->parent = parent;
 	return 0;
 err:
-	rc = -errno;
+	rc = errno > 0 ? -errno : -1;
 	sysfs_deinit(cxt);
 	return rc;
 }
@@ -445,7 +445,7 @@ char *sysfs_get_devname(struct sysfs_cxt *cxt, char *buf, size_t bufsiz)
 
 int main(int argc, char *argv[])
 {
-	struct sysfs_cxt cxt;
+	struct sysfs_cxt cxt = UL_SYSFSCXT_EMPTY;
 	char *devname;
 	dev_t devno;
 	char path[PATH_MAX];
