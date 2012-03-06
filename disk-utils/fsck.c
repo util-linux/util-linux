@@ -44,6 +44,7 @@
 #include <signal.h>
 #include <dirent.h>
 #include <sys/resource.h>
+#include <sys/time.h>
 #include <blkid.h>
 #include <libmount.h>
 
@@ -102,8 +103,8 @@ struct fsck_instance {
 	int	flags;		/* FLAG_{DONE|PROGRESS} */
 	int	lock;		/* flock()ed whole disk file descriptor or -1 */
 	int	exit_status;
-	time_t	start_time;
-	time_t  end_time;
+	struct timeval start_time;
+	struct timeval end_time;
 	char *	prog;
 	char *	type;
 
@@ -500,18 +501,20 @@ static int progress_active(void)
  */
 static void print_stats(struct fsck_instance *inst)
 {
-	time_t time_diff;
+	double time_diff;
 
 	if (!inst || !report_stats || noexecute)
 		return;
 
-	time_diff = inst->end_time - inst->start_time;
-	fprintf(stdout, "%s: status %d, maxrss %ld, "
-			"real %d, user %d.%06d, sys %d.%06d\n",
+	time_diff = (inst->end_time.tv_sec  - inst->start_time.tv_sec)
+		  + (inst->end_time.tv_usec - inst->start_time.tv_usec) / 1E6;
+
+	fprintf(stdout, "%s: status %d, rss %ld, "
+			"real %f, user %d.%06d, sys %d.%06d\n",
 		fs_get_device(inst->fs),
 		inst->exit_status,
 		inst->rusage.ru_maxrss,
-		(int)time_diff,
+		time_diff,
 		(int)inst->rusage.ru_utime.tv_sec,
 		(int)inst->rusage.ru_utime.tv_usec,
 		(int)inst->rusage.ru_stime.tv_sec,
@@ -603,7 +606,7 @@ static int execute(const char *type, struct libmnt_fs *fs, int interactive)
 	inst->pid = pid;
 	inst->prog = xstrdup(prog);
 	inst->type = xstrdup(type);
-	inst->start_time = time(0);
+	gettimeofday(&inst->start_time, NULL);
 	inst->next = NULL;
 
 	/*
@@ -716,7 +719,7 @@ static struct fsck_instance *wait_one(int flags)
 
 	inst->exit_status = status;
 	inst->flags |= FLAG_DONE;
-	inst->end_time = time(0);
+	gettimeofday(&inst->end_time, NULL);
 	memcpy(&inst->rusage, &rusage, sizeof(struct rusage));
 
 	if (progress && (inst->flags & FLAG_PROGRESS) &&
@@ -734,7 +737,7 @@ static struct fsck_instance *wait_one(int flags)
 			 * bit before sending the kill, to give it
 			 * time to set up the signal handler
 			 */
-			if (inst2->start_time < time(0)+2) {
+			if (inst2->start_time.tv_sec < time(0) + 2) {
 				if (fork() == 0) {
 					sleep(1);
 					kill(inst2->pid, SIGUSR1);
