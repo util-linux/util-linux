@@ -47,6 +47,7 @@
 
 #include <assert.h>
 
+#include "c.h"
 #include "pathnames.h"
 #include "blkdev.h"
 #include "canonicalize.h"
@@ -55,7 +56,7 @@
 #include "tt.h"
 #include "xalloc.h"
 #include "strutils.h"
-#include "c.h"
+#include "at.h"
 #include "sysfs.h"
 
 /* column IDs */
@@ -826,20 +827,29 @@ static int list_partitions(struct blkdev_cxt *wholedisk_cxt, struct blkdev_cxt *
 	return r;
 }
 
-static int get_wholedisk_from_partition_dirent(DIR *dir, struct dirent *d,
-					       struct blkdev_cxt *cxt)
+static int get_wholedisk_from_partition_dirent(DIR *dir, const char *dirname,
+				struct dirent *d, struct blkdev_cxt *cxt)
 {
 	char path[PATH_MAX];
 	char *p;
 	int len;
 
-	if ((len = readlinkat(dirfd(dir), d->d_name, path, sizeof(path))) < 0)
+	if ((len = readlink_at(dirfd(dir), dirname,
+			       d->d_name, path, sizeof(path))) < 0)
 		return 0;
-	path[len]='\0';
+
+	path[len] = '\0';
 
 	/* The path ends with ".../<device>/<partition>" */
-	p = strrchr(path, '/'); *p = '\0';
-	p = strrchr(path, '/'); p++;
+	p = strrchr(path, '/');
+	if (!p)
+		return 0;
+	*p = '\0';
+
+	p = strrchr(path, '/');
+	if (!p)
+		return 0;
+	p++;
 
 	return set_cxt(cxt, NULL, NULL, p);
 }
@@ -852,6 +862,8 @@ static int list_deps(struct blkdev_cxt *cxt)
 	DIR *dir;
 	struct dirent *d;
 	struct blkdev_cxt dep = {};
+	char dirname[PATH_MAX];
+	const char *depname;
 
 	assert(cxt);
 
@@ -861,14 +873,17 @@ static int list_deps(struct blkdev_cxt *cxt)
 	if (!(lsblk->inverse ? cxt->nslaves : cxt->nholders))
 		return 0;
 
-	dir = sysfs_opendir(&cxt->sysfs, lsblk->inverse ? "slaves" : "holders");
+	depname = lsblk->inverse ? "slaves" : "holders";
+	dir = sysfs_opendir(&cxt->sysfs, depname);
 	if (!dir)
 		return 0;
+
+	snprintf(dirname, sizeof(dirname), "%s/%s", cxt->sysfs.dir_path, depname);
 
 	while ((d = xreaddir(dir))) {
 		/* Is the dependency a partition? */
 		if (sysfs_is_partition_dirent(dir, d, NULL)) {
-		    if (!get_wholedisk_from_partition_dirent(dir, d, &dep))
+		    if (!get_wholedisk_from_partition_dirent(dir, dirname, d, &dep))
 			    process_blkdev(&dep, cxt, 1, d->d_name);
 		}
 		/* The dependency is a whole device. */
