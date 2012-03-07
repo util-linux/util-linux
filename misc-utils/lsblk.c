@@ -478,9 +478,14 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 	switch(id) {
 	case COL_NAME:
 		if (cxt->dm_name) {
-			snprintf(buf, sizeof(buf), "%s (%s)",
+			if ((lsblk->tt->flags & TT_FL_RAW) ||
+			    (lsblk->tt->flags & TT_FL_EXPORT))
+				tt_line_set_data(ln, col, xstrdup(cxt->dm_name));
+			else {
+				snprintf(buf, sizeof(buf), "%s (%s)",
 					cxt->dm_name, cxt->name);
-			tt_line_set_data(ln, col, xstrdup(buf));
+				tt_line_set_data(ln, col, xstrdup(buf));
+			}
 			break;
 		}
 	case COL_KNAME:
