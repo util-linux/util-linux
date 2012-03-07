@@ -286,15 +286,27 @@ int mnt_context_get_optsmode(struct libmnt_context *cxt)
  * canonicalies paths when search in fstab and when prepare source and target paths
  * for mount(2) syscall.
  *
- * This fuction has effect to the private fstab instance only (see
- * mnt_context_set_fstab()). If you want to use an external fstab then you need
- * manage your private struct libmnt_cache (see mnt_table_set_cache(fstab, NULL).
+ * This fuction has effect to the private (within context) fstab instance only
+ * (see mnt_context_set_fstab()). If you want to use an external fstab then you
+ * need manage your private struct libmnt_cache (see mnt_table_set_cache(fstab,
+ * NULL).
  *
  * Returns: 0 on success, negative number in case of error.
  */
 int mnt_context_disable_canonicalize(struct libmnt_context *cxt, int disable)
 {
 	return set_flag(cxt, MNT_FL_NOCANONICALIZE, disable);
+}
+
+/**
+ * mnt_context_is_nocanonicalize:
+ * @cxt: mount context
+ *
+ * Returns: 1 if no-canonicalize mode enabled or 0.
+ */
+int mnt_context_is_nocanonicalize(struct libmnt_context *cxt)
+{
+	return cxt && (cxt->flags & MNT_FL_NOCANONICALIZE) ? 1 : 0;
 }
 
 /**
@@ -309,6 +321,17 @@ int mnt_context_disable_canonicalize(struct libmnt_context *cxt, int disable)
 int mnt_context_enable_lazy(struct libmnt_context *cxt, int enable)
 {
 	return set_flag(cxt, MNT_FL_LAZY, enable);
+}
+
+/**
+ * mnt_context_is_lazy:
+ * @cxt: mount context
+ *
+ * Returns: 1 if lazy umount is enabled or 0
+ */
+int mnt_context_is_lazy(struct libmnt_context *cxt)
+{
+	return cxt && (cxt->flags & MNT_FL_LAZY) ? 1 : 0;
 }
 
 /**
@@ -327,16 +350,37 @@ int mnt_context_enable_fork(struct libmnt_context *cxt, int enable)
 }
 
 /**
- * mnt_context_is_lazy:
+ * mnt_context_is_fork:
  * @cxt: mount context
  *
- * Returns: 1 if lazy umount is enabled or 0
+ * Returns: 1 if fork (mount -F) is enabled or 0
  */
-int mnt_context_is_lazy(struct libmnt_context *cxt)
+int mnt_context_is_fork(struct libmnt_context *cxt)
 {
-	return cxt && (cxt->flags & MNT_FL_LAZY) ? 1 : 0;
+	return cxt && (cxt->flags & MNT_FL_FORK) ? 1 : 0;
 }
 
+/**
+ * mnt_context_is_parent:
+ * @cxt: mount context
+ *
+ * Return: 1 if mount -F enabled and the current context is parent, or 0
+ */
+int mnt_context_is_parent(struct libmnt_context *cxt)
+{
+	return mnt_context_is_fork(cxt) && cxt->pid == 0;
+}
+
+/**
+ * mnt_context_is_child:
+ * @cxt: mount context
+ *
+ * Return: 1 if mount -F enabled and the current context is child, or 0
+ */
+int mnt_context_is_child(struct libmnt_context *cxt)
+{
+	return !mnt_context_is_fork(cxt) && cxt->pid;
+}
 
 /**
  * mnt_context_enable_rdonly_umount:
@@ -380,6 +424,18 @@ int mnt_context_disable_helpers(struct libmnt_context *cxt, int disable)
 {
 	return set_flag(cxt, MNT_FL_NOHELPERS, disable);
 }
+
+/**
+ * mnt_context_is_nohelpers
+ * @cxt: mount context
+ *
+ * Returns: 1 if helpers are disabled (mount -i) or 0
+ */
+int mnt_context_is_nohelpers(struct libmnt_context *cxt)
+{
+	return cxt && (cxt->flags & MNT_FL_NOHELPERS) ? 1 : 0;
+}
+
 
 /**
  * mnt_context_enable_sloppy:
@@ -518,6 +574,17 @@ int mnt_context_is_verbose(struct libmnt_context *cxt)
 int mnt_context_enable_loopdel(struct libmnt_context *cxt, int enable)
 {
 	return set_flag(cxt, MNT_FL_LOOPDEL, enable);
+}
+
+/**
+ * mnt_context_is_loopdel:
+ * @cxt: mount context
+ *
+ * Returns: 1 if loop device should be deleted after umount (umount -d) or 0.
+ */
+int mnt_context_is_loopdel(struct libmnt_context *cxt)
+{
+	return cxt && (cxt->flags & MNT_FL_LOOPDEL) ? 1 : 0;
 }
 
 /**
@@ -934,7 +1001,7 @@ int mnt_context_set_cache(struct libmnt_context *cxt, struct libmnt_cache *cache
  */
 struct libmnt_cache *mnt_context_get_cache(struct libmnt_context *cxt)
 {
-	if (!cxt || (cxt->flags & MNT_FL_NOCANONICALIZE))
+	if (!cxt || mnt_context_is_nocanonicalize(cxt))
 		return NULL;
 
 	if (!cxt->cache) {
@@ -995,7 +1062,7 @@ struct libmnt_lock *mnt_context_get_lock(struct libmnt_context *cxt)
 	 * the lock. The mnt_update_* functions are able to allocate the lock
 	 * only when mtab/utab update is really necessary.
 	 */
-	if (!cxt || (cxt->flags & MNT_FL_NOMTAB))
+	if (!cxt || mnt_context_is_nomtab(cxt))
 		return NULL;
 
 	if (!cxt->lock) {
@@ -1340,8 +1407,10 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 	if (!type)
 		type = mnt_fs_get_fstype(cxt->fs);
 
-	if ((cxt->flags & MNT_FL_NOHELPERS) || !type ||
-	    !strcmp(type, "none") || mnt_fs_is_swaparea(cxt->fs))
+	if (mnt_context_is_nohelpers(cxt)
+	    || !type
+	    || !strcmp(type, "none")
+	    || mnt_fs_is_swaparea(cxt->fs))
 		return 0;
 
 	path = strtok_r(search_path, ":", &p);
@@ -1432,9 +1501,9 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 
 	if (cxt->action == MNT_ACT_UMOUNT && target && !strcmp(target, "/"))
 		/* Don't try to touch mtab if umounting root FS */
-		cxt->flags |= MNT_FL_NOMTAB;
+		mnt_context_disable_mtab(cxt, TRUE);
 
-	if (cxt->flags & MNT_FL_NOMTAB) {
+	if (mnt_context_is_nomtab(cxt)) {
 		DBG(CXT, mnt_debug_h(cxt, "skip update: NOMTAB flag"));
 		return 0;
 	}
@@ -1479,7 +1548,7 @@ int mnt_context_update_tabs(struct libmnt_context *cxt)
 
 	assert(cxt);
 
-	if (cxt->flags & MNT_FL_NOMTAB) {
+	if (mnt_context_is_nomtab(cxt)) {
 		DBG(CXT, mnt_debug_h(cxt, "don't update: NOMTAB flag"));
 		return 0;
 	}
@@ -1898,7 +1967,7 @@ int mnt_fork_context(struct libmnt_context *cxt)
 
 	case 0: /* child */
 		cxt->pid = getpid();
-		cxt->flags &= ~MNT_FL_FORK;
+		mnt_context_enable_fork(cxt, FALSE);
 		DBG(CXT, mnt_debug_h(cxt, "child created"));
 		break;
 
@@ -1953,21 +2022,7 @@ int mnt_context_wait_for_children(struct libmnt_context *cxt,
 	return 0;
 }
 
-int mnt_context_is_fork(struct libmnt_context *cxt)
-{
-	return cxt && (cxt->flags & MNT_FL_FORK);
-}
 
-
-int mnt_context_is_parent(struct libmnt_context *cxt)
-{
-	return mnt_context_is_fork(cxt) && cxt->pid == 0;
-}
-
-int mnt_context_is_child(struct libmnt_context *cxt)
-{
-	return !mnt_context_is_fork(cxt) && cxt->pid;
-}
 
 #ifdef TEST_PROGRAM
 

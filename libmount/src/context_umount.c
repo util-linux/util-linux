@@ -178,7 +178,7 @@ static int prepare_helper_from_options(struct libmnt_context *cxt,
 	const char *opts;
 	size_t valsz;
 
-	if (cxt->flags & MNT_FL_NOHELPERS)
+	if (mnt_context_is_nohelpers(cxt))
 		return 0;
 
 	opts = mnt_fs_get_user_options(cxt->fs);
@@ -369,15 +369,15 @@ static int exec_helper(struct libmnt_context *cxt)
 		args[i++] = cxt->helper;			/* 1 */
 		args[i++] = mnt_fs_get_target(cxt->fs);		/* 2 */
 
-		if (cxt->flags & MNT_FL_NOMTAB)
+		if (mnt_context_is_nomtab(cxt))
 			args[i++] = "-n";			/* 3 */
-		if (cxt->flags & MNT_FL_LAZY)
+		if (mnt_context_is_lazy(cxt))
 			args[i++] = "-l";			/* 4 */
-		if (cxt->flags & MNT_FL_FORCE)
+		if (mnt_context_is_force(cxt))
 			args[i++] = "-f";			/* 5 */
-		if (cxt->flags & MNT_FL_VERBOSE)
+		if (mnt_context_is_verbose(cxt))
 			args[i++] = "-v";			/* 6 */
-		if (cxt->flags & MNT_FL_RDONLY_UMOUNT)
+		if (mnt_context_is_rdonly_umount(cxt))
 			args[i++] = "-r";			/* 7 */
 		if (type && !endswith(cxt->helper, type)) {
 			args[i++] = "-t";			/* 8 */
@@ -495,7 +495,7 @@ static int do_umount(struct libmnt_context *cxt)
 
 	DBG(CXT, mnt_debug_h(cxt, "do umount"));
 
-	if (cxt->restricted && !(cxt->flags & MNT_FL_FAKE)) {
+	if (cxt->restricted && !mnt_context_is_fake(cxt)) {
 		/*
 		 * extra paranoa for non-root users
 		 * -- chdir to the parent of the mountpoint and use NOFOLLOW
@@ -510,17 +510,17 @@ static int do_umount(struct libmnt_context *cxt)
 		target = tgtbuf;
 	}
 
-	if (cxt->flags & MNT_FL_LAZY)
+	if (mnt_context_is_lazy(cxt))
 		flags |= MNT_DETACH;
 
-	else if (cxt->flags & MNT_FL_FORCE)
+	else if (mnt_context_is_force(cxt))
 		flags |= MNT_FORCE;
 
 	DBG(CXT, mnt_debug_h(cxt, "umount(2) [target='%s', flags=0x%08x]%s",
 				target, flags,
-				cxt->flags & MNT_FL_FAKE ? " (FAKE)" : ""));
+				mnt_context_is_fake(cxt) ? " (FAKE)" : ""));
 
-	if (cxt->flags & MNT_FL_FAKE)
+	if (mnt_context_is_fake(cxt))
 		rc = 0;
 	else {
 		rc = flags ? umount2(target, flags) : umount(target);
@@ -532,12 +532,14 @@ static int do_umount(struct libmnt_context *cxt)
 	/*
 	 * try remount read-only
 	 */
-	if (rc < 0 && cxt->syscall_status == -EBUSY &&
-	    (cxt->flags & MNT_FL_RDONLY_UMOUNT) && src) {
+	if (rc < 0
+	    && cxt->syscall_status == -EBUSY
+	    && mnt_context_is_rdonly_umount(cxt)
+	    && src) {
 
 		mnt_context_set_mflags(cxt, (cxt->mountflags |
 					     MS_REMOUNT | MS_RDONLY));
-		cxt->flags &= ~MNT_FL_LOOPDEL;
+		mnt_context_enable_loopdel(cxt, FALSE);
 
 		DBG(CXT, mnt_debug_h(cxt,
 			"umount(2) failed [errno=%d] -- trying to remount read-only",
@@ -616,11 +618,11 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 			rc = mnt_context_prepare_helper(cxt, "umount", NULL);
 	}
 
-	if (!rc && (cxt->flags & MNT_FL_LOOPDEL) && cxt->fs) {
+	if (!rc && mnt_context_is_loopdel(cxt) && cxt->fs) {
 		const char *src = mnt_fs_get_srcpath(cxt->fs);
 
 		if (src && (!is_loopdev(src) || loopdev_is_autoclear(src)))
-			cxt->flags &= ~MNT_FL_LOOPDEL;
+			mnt_context_enable_loopdel(cxt, FALSE);
 	}
 
 	if (rc) {
@@ -665,21 +667,21 @@ int mnt_context_do_umount(struct libmnt_context *cxt)
 	if (rc)
 		return rc;
 
-	if (mnt_context_get_status(cxt) && !(cxt->flags & MNT_FL_FAKE)) {
+	if (mnt_context_get_status(cxt) && !mnt_context_is_fake(cxt)) {
 		/*
 		 * Umounted, do some post-umount operations
 		 *	- remove loopdev
 		 *	- refresh in-memory mtab stuff if remount rather than
 		 *	  umount has been performed
 		 */
-		if ((cxt->flags & MNT_FL_LOOPDEL)
+		if (mnt_context_is_loopdel(cxt)
 		    && !(cxt->mountflags & MS_REMOUNT))
 			rc = mnt_context_delete_loopdev(cxt);
 
-		if (!(cxt->flags & MNT_FL_NOMTAB)
+		if (!mnt_context_is_nomtab(cxt)
 		    && mnt_context_get_status(cxt)
 		    && !cxt->helper
-		    && (cxt->flags & MNT_FL_RDONLY_UMOUNT)
+		    && mnt_context_is_rdonly_umount(cxt)
 		    && (cxt->mountflags & MS_REMOUNT)) {
 
 			/* use "remount" instead of "umount" in /etc/mtab */

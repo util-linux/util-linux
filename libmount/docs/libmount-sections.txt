@@ -56,6 +56,9 @@ mnt_context_is_force
 mnt_context_is_fork
 mnt_context_is_fs_mounted
 mnt_context_is_lazy
+mnt_context_is_loopdel
+mnt_context_is_nocanonicalize
+mnt_context_is_nohelpers
 mnt_context_is_nomtab
 mnt_context_is_parent
 mnt_context_is_rdonly_umount

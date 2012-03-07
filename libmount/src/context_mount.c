@@ -467,11 +467,11 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 	DBG(CXT, mnt_debug_h(cxt, "%smount(2) "
 			"[source=%s, target=%s, type=%s, "
 			" mountflags=0x%08lx, mountdata=%s]",
-			(cxt->flags & MNT_FL_FAKE) ? "(FAKE) " : "",
+			mnt_context_is_fake(cxt) ? "(FAKE) " : "",
 			src, target, type,
 			flags, cxt->mountdata ? "yes" : "<none>"));
 
-	if (cxt->flags & MNT_FL_FAKE)
+	if (mnt_context_is_fake(cxt))
 		cxt->syscall_status = 0;
 	else {
 		if (mount(src, target, type, flags, cxt->mountdata)) {
@@ -607,11 +607,11 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
  * another source or target than you have to call mnt_reset_context().
  *
  * If you want to call mount(2) for the same source and target with a diffrent
- * mount flags or fstype then you call mnt_context_reset_status() and then try
+ * mount flags or fstype then call mnt_context_reset_status() and then try
  * again mnt_context_do_mount().
  *
  * WARNING: non-zero return code does not mean that mount(2) syscall or
- *          umount.type helper wasn't sucessfully called.
+ *          mount.type helper wasn't sucessfully called.
  *
  *          Check mnt_context_get_status() after error!
 *
@@ -644,7 +644,7 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 		res = do_mount_by_pattern(cxt, cxt->fstype_pattern);
 
 	if (mnt_context_get_status(cxt)
-	    && !(cxt->flags & MNT_FL_FAKE)
+	    && !mnt_context_is_fake(cxt)
 	    && !cxt->helper) {
 		/*
 		 * Mounted by mount(2), do some post-mount checks

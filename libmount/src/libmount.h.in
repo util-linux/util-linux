@@ -412,6 +412,9 @@ extern int mnt_context_is_fake(struct libmnt_context *cxt);
 extern int mnt_context_is_nomtab(struct libmnt_context *cxt);
 extern int mnt_context_is_force(struct libmnt_context *cxt);
 extern int mnt_context_is_verbose(struct libmnt_context *cxt);
+extern int mnt_context_is_loopdel(struct libmnt_context *cxt);
+extern int mnt_context_is_nohelpers(struct libmnt_context *cxt);
+extern int mnt_context_is_nocanonicalize(struct libmnt_context *cxt);
 
 extern int mnt_context_is_fork(struct libmnt_context *cxt);
 extern int mnt_context_is_parent(struct libmnt_context *cxt);

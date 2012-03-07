@@ -230,4 +230,7 @@ MOUNT_2.22 {
 global:
 	mnt_fs_streq_target;
 	mnt_fs_streq_srcpath;
+	mnt_context_is_loopdel;
+	mnt_context_is_nocanonicalize;
+	mnt_context_is_nohelpers;
 } MOUNT_2.21;
