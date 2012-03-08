@@ -437,6 +437,16 @@ doshell(void) {
 	else
 		shname = shell;
 
+	/*
+	 * When invoked from within /etc/csh.login, script spawns a csh shell
+	 * that spawns programs that cannot be killed with a SIGTERM. This is
+	 * because csh has a documented behaviour wherein it disables all
+	 * signals when processing the /etc/csh.* files.
+	 *
+	 * Let's restore the default behavior.
+	 */
+	signal(SIGTERM, SIG_DFL);
+
 	if (cflg)
 		execl(shell, shname, "-c", cflg, NULL);
 	else
