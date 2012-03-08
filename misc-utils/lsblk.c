@@ -339,7 +339,7 @@ static void probe_device(struct blkdev_cxt *cxt)
 		return;
 
 	/* try udev DB */
-	if (probe_device_by_udev(cxt) == 0)
+	if (getuid() != 0 && probe_device_by_udev(cxt) == 0)
 		return;				/* success */
 
 	/* try libblkid */
@@ -468,6 +468,29 @@ static char *get_type(struct blkdev_cxt *cxt)
 	return res;
 }
 
+#define is_parsable(_l)	(((_l)->tt->flags & TT_FL_RAW) || \
+			 ((_l)->tt->flags & TT_FL_EXPORT))
+
+static char *encode_str(const char *str)
+{
+	size_t sz;
+	char *enc = NULL;
+
+	if (!str)
+		goto err;
+
+	sz = strlen(str) * 4;
+	enc = xmalloc(sz);
+
+	if (blkid_encode_string(str, enc, sz) != 0)
+		goto err;
+
+	return enc;
+err:
+	free(enc);
+	return xstrdup("");
+}
+
 static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line *ln)
 {
 	char buf[1024];
@@ -481,9 +504,9 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 	switch(id) {
 	case COL_NAME:
 		if (cxt->dm_name) {
-			if ((lsblk->tt->flags & TT_FL_RAW) ||
-			    (lsblk->tt->flags & TT_FL_EXPORT))
-				tt_line_set_data(ln, col, xstrdup(cxt->dm_name));
+			if (is_parsable(lsblk))
+				tt_line_set_data(ln, col,
+					encode_str(cxt->dm_name));
 			else {
 				snprintf(buf, sizeof(buf), "%s (%s)",
 					cxt->dm_name, cxt->name);
@@ -492,7 +515,10 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 			break;
 		}
 	case COL_KNAME:
-		tt_line_set_data(ln, col, xstrdup(cxt->name));
+		if (is_parsable(lsblk))
+			tt_line_set_data(ln, col, encode_str(cxt->name));
+		else
+			tt_line_set_data(ln, col, xstrdup(cxt->name));
 		break;
 	case COL_OWNER:
 	{
@@ -519,8 +545,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		break;
 	}
 	case COL_MAJMIN:
-		if ((lsblk->tt->flags & TT_FL_RAW) ||
-		    (lsblk->tt->flags & TT_FL_EXPORT))
+		if (is_parsable(lsblk))
 			snprintf(buf, sizeof(buf), "%u:%u", cxt->maj, cxt->min);
 		else
 			snprintf(buf, sizeof(buf), "%3u:%-3u", cxt->maj, cxt->min);
@@ -540,7 +565,12 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		break;
 	case COL_LABEL:
 		probe_device(cxt);
-		if (cxt->label)
+		if (!cxt->label)
+			break;
+
+		if (is_parsable(lsblk))
+			tt_line_set_data(ln, col, encode_str(cxt->label));
+		else
 			tt_line_set_data(ln, col, xstrdup(cxt->label));
 		break;
 	case COL_UUID:
