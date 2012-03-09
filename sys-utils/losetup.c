@@ -362,7 +362,7 @@ int main(int argc, char **argv)
 			if (flags & LOOPDEV_FL_OFFSET)
 				loopcxt_set_offset(&lc, offset);
 			if (flags & LOOPDEV_FL_SIZELIMIT)
-				loopcxt_set_offset(&lc, sizelimit);
+				loopcxt_set_sizelimit(&lc, sizelimit);
 			if (lo_flags)
 				loopcxt_set_flags(&lc, lo_flags);
 			if ((res = loopcxt_set_backing_file(&lc, file))) {
