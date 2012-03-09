@@ -704,16 +704,18 @@ struct libmnt_fs *mnt_table_find_pair(struct libmnt_table *tb, const char *sourc
 }
 
 /*
- * @tb: /proc/self/mountinfo
- * @fs: filesystem
- * @mountflags: MS_BIND or 0
- * @fsroot: fs-root that will be probably used in the mountinfo file
+ * tb: /proc/self/mountinfo
+ * fs: filesystem
+ * mountflags: MS_BIND or 0
+ * fsroot: fs-root that will be probably used in the mountinfo file
  *          for @fs after mount(2)
  *
  * For btrfs subvolumes this function returns NULL, but @fsroot properly set.
  *
  * Returns: entry from @tb that will be used as a source for @fs if the @fs is
  *          bindmount.
+ *
+ * Don't export to library API!
  */
 struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 					struct libmnt_fs *fs,
@@ -816,6 +818,20 @@ err:
 	return NULL;
 }
 
+static int is_mountinfo(struct libmnt_table *tb)
+{
+	struct libmnt_fs *fs;
+
+	if (!tb)
+		return 0;
+
+	fs = list_first_entry(&tb->ents, struct libmnt_fs, ents);
+	if (fs && mnt_fs_is_kernel(fs) && mnt_fs_get_root(fs))
+		return 1;
+
+	return 0;
+}
+
 /**
  * mnt_table_is_mounted:
  * @tb: /proc/self/mountinfo file
@@ -831,10 +847,9 @@ err:
 int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 {
 	char *root = NULL;
-	struct libmnt_fs *src_fs;
-	const char *src;
+	const char *src = NULL;
 	char *xsrc = NULL, *tgt;
-	int flags = 0, rc = 0;
+	int rc = 0;
 
 	assert(tb);
 	assert(fstab_fs);
@@ -842,12 +857,21 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	if (mnt_fs_is_swaparea(fstab_fs))
 		return 0;
 
-	if (mnt_fs_get_option(fstab_fs, "bind", NULL, NULL) == 0)
-		flags = MS_BIND;
+	if (is_mountinfo(tb)) {
+		/* @tb is mountinfo, so we can try to use fs-roots */
+		struct libmnt_fs *fs;
+		int flags = 0;
 
-	src_fs = mnt_table_get_fs_root(tb, fstab_fs, flags, &root);
-	if (src_fs)
-		src = mnt_fs_get_srcpath(src_fs);
+		if (mnt_fs_get_option(fstab_fs, "bind", NULL, NULL) == 0)
+			flags = MS_BIND;
+
+		fs = mnt_table_get_fs_root(tb, fstab_fs, flags, &root);
+		if (fs)
+			src = mnt_fs_get_srcpath(fs);
+	}
+
+	if (src)
+		src = xsrc = mnt_resolve_spec(src, tb->cache);
 	else if (mnt_fs_is_pseudofs(fstab_fs))
 		src = mnt_fs_get_source(fstab_fs);
 	else
@@ -856,18 +880,26 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 
 	tgt = mnt_resolve_path(mnt_fs_get_target(fstab_fs), tb->cache);
 
-	if (tgt && src && root) {
+	if (tgt && src) {
 		struct libmnt_iter itr;
 		struct libmnt_fs *fs;
 
 		mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
 		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
-			const char *r = mnt_fs_get_root(fs);
 
-			if (r && strcmp(r, root) == 0
-			    && mnt_fs_streq_srcpath(fs, src)
-			    && mnt_fs_streq_target(fs, tgt))
+			if (root) {
+				/* mountinfo: compare root, source and target */
+				const char *r = mnt_fs_get_root(fs);
+
+				if (r && strcmp(r, root) == 0 &&
+				    mnt_fs_streq_srcpath(fs, src) &&
+				    mnt_fs_streq_target(fs, tgt))
+					break;
+			}
+			/* mtab: compare source and target */
+			else if (mnt_fs_streq_srcpath(fs, src) &&
+				 mnt_fs_streq_target(fs, tgt))
 				break;
 		}
 		if (fs)

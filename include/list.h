@@ -166,6 +166,10 @@ _INLINE_ void list_splice(struct list_head *list, struct list_head *head)
 #define list_entry(ptr, type, member) \
 	((type *)((char *)(ptr)-(unsigned long)(&((type *)0)->member)))
 
+
+#define list_first_entry(head, type, member) \
+	((head) && (head)->next != (head) ? list_entry((head)->next, type, member) : NULL)
+
 /**
  * list_for_each - iterate over elements in a list
  * @pos:	the &struct list_head to use as a loop counter.
