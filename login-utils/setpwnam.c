@@ -83,7 +83,7 @@ int setpwnam(struct passwd *pwd)
 
 	pw_init();
 
-	if ((fp = xmkstemp(&tmpname)) == NULL)
+	if ((fp = xfmkstemp(&tmpname)) == NULL)
 		return -1;
 
 	/* ptmp should be owned by root.root or root.wheel */
@@ -140,7 +140,7 @@ int setpwnam(struct passwd *pwd)
 		fputs(linebuf, fp);
 	}
 
-	/* xmkstemp is too restrictive by default for passwd file */
+	/* xfmkstemp is too restrictive by default for passwd file */
 	if (fchmod(fileno(fp), 0644) < 0)
 		goto fail;
 	rc = fclose(fp);

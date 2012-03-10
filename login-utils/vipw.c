@@ -143,7 +143,7 @@ static FILE * pw_tmpfile(int lockfd)
 	FILE *fd;
 	char *tmpname = NULL;
 
-	if ((fd = xmkstemp(&tmpname)) == NULL) {
+	if ((fd = xfmkstemp(&tmpname)) == NULL) {
 		ulckpwdf();
 		err(EXIT_FAILURE, _("can't open temporary file"));
 	}

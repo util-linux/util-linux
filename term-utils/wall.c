@@ -196,7 +196,7 @@ makemsg(char *fname, size_t *mbufsize, int print_banner)
 	line_max = sysconf(_SC_LINE_MAX);
 	lbuf = xmalloc(line_max);
 
-	if ((fp = xmkstemp(&tmpname)) == NULL)
+	if ((fp = xfmkstemp(&tmpname)) == NULL)
 		err(EXIT_FAILURE, _("can't open temporary file"));
 	unlink(tmpname);
 	free(tmpname);
