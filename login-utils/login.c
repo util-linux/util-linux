@@ -1149,6 +1149,7 @@ static void init_environ(struct login_context *cxt)
 	}
 
 	setenv("HOME", pwd->pw_dir, 0);	/* legal to override */
+	setenv("USER", pwd->pw_name, 1);
 	setenv("SHELL", pwd->pw_shell, 1);
 	setenv("TERM", termenv, 1);
 

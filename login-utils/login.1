@@ -40,10 +40,11 @@ for more information.
 The user and group ID will be set according to their values in the
 .I /etc/passwd
 file. There is one exception if the user ID is zero: in this case,
-only the primary group ID of the account is set. This should prevent
-that the system adminitrator cannot login in case of network problems.
+only the primary group ID of the account is set. This should allow
+the system adminitrator to login even in case of network problems.
 The value for
 .BR $HOME ,
+.BR $USER ,
 .BR $SHELL ,
 .BR $PATH ,
 .BR $LOGNAME ,
