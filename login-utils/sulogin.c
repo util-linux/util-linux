@@ -1,14 +1,10 @@
 /*
- * sulogin	This program gives Linux machines a reasonable
- *		secure way to boot single user. It forces the
- *		user to supply the root password before a
- *		shell is started.
+ * sulogin
  *
- *		If there is a shadow password file and the
- *		encrypted root password is "x" the shadow
- *		password will be used.
- *
- * Version:	@(#)sulogin 2.85-3 23-Apr-2003 miquels@cistron.nl
+ * This program gives Linux machines a reasonable secure way to boot single
+ * user. It forces the user to supply the root password before a shell is
+ * started. If there is a shadow password file and the encrypted root password
+ * is "x" the shadow password will be used.
  *
  * Copyright (C) 1998-2003 Miquel van Smoorenburg.
  *
@@ -25,9 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
- *
  */
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdio.h>
@@ -42,12 +36,12 @@
 #include <errno.h>
 #include <sys/ioctl.h>
 #ifdef HAVE_CRYPT_H
-#  include <crypt.h>
+# include <crypt.h>
 #endif
 
 #ifdef HAVE_LIBSELINUX
-#  include <selinux/selinux.h>
-#  include <selinux/get_context_list.h>
+# include <selinux/selinux.h>
+# include <selinux/get_context_list.h>
 #endif
 
 #include "c.h"
@@ -62,7 +56,7 @@ struct sigaction saved_sigtstp;
 struct sigaction saved_sigquit;
 
 /*
- *	Called at timeout.
+ * Called at timeout.
  */
 static void alrm_handler(int sig __attribute__((unused)))
 {
@@ -88,9 +82,8 @@ static void unmask_signal(int signal, struct sigaction *sa)
 }
 
 /*
- *	See if an encrypted password is valid. The encrypted
- *	password is checked for traditional-style DES and
- *	FreeBSD-style MD5 encryption.
+ * See if an encrypted password is valid. The encrypted password is checked for
+ * traditional-style DES and FreeBSD-style MD5 encryption.
  */
 static int valid(const char *pass)
 {
@@ -105,7 +98,7 @@ static int valid(const char *pass)
 		goto check_des;
 
 	/*
-	 *	up to 4 bytes for the signature e.g. $1$
+	 * up to 4 bytes for the signature e.g. $1$
 	 */
 	for (s = pass+1; *s && *s != '$'; s++);
 
@@ -119,7 +112,7 @@ static int valid(const char *pass)
 	strncpy(id, pass, off);
 
 	/*
-	 *	up to 16 bytes for the salt
+	 * up to 16 bytes for the salt
 	 */
 	for (; *s && *s != '$'; s++);
 
@@ -132,25 +125,25 @@ static int valid(const char *pass)
 	len = strlen(s);
 
 	/*
-	 *	the MD5 hash (128 bits or 16 bytes) encoded in base64 = 22 bytes
+	 * the MD5 hash (128 bits or 16 bytes) encoded in base64 = 22 bytes
 	 */
 	if ((strcmp(id, "$1$") == 0) && (len < 22 || len > 24))
 		return 0;
 
 	/*
-	 *	the SHA-256 hash 43 bytes
+	 * the SHA-256 hash 43 bytes
 	 */
 	if ((strcmp(id, "$5$") == 0) && (len < 42 || len > 44))
 		return 0;
 
 	/*
-	 *      the SHA-512 hash 86 bytes
+	 * the SHA-512 hash 86 bytes
 	 */
 	if ((strcmp(id, "$6$") == 0) && (len < 85 || len > 87))
 		return 0;
 
 	/*
-	 *	e.g. Blowfish hash
+	 * e.g. Blowfish hash
 	 */
 	return 1;
 check_des:
@@ -168,7 +161,7 @@ check_des:
 }
 
 /*
- *	Set a variable if the value is not NULL.
+ * Set a variable if the value is not NULL.
  */
 static void set(char **var, char *val)
 {
@@ -177,7 +170,7 @@ static void set(char **var, char *val)
 }
 
 /*
- *	Get the root password entry.
+ * Get the root password entry.
  */
 static struct passwd *getrootpwent(int try_manually)
 {
@@ -190,20 +183,21 @@ static struct passwd *getrootpwent(int try_manually)
 	char *p;
 
 	/*
-	 *	First, we try to get the password the standard
-	 *	way using normal library calls.
+	 * First, we try to get the password the standard way using normal
+	 * library calls.
 	 */
 	if ((pw = getpwnam("root")) &&
 	    !strcmp(pw->pw_passwd, "x") &&
 	    (spw = getspnam("root")))
 		pw->pw_passwd = spw->sp_pwdp;
+
 	if (pw || !try_manually)
 		return pw;
 
 	/*
-	 *	If we come here, we could not retrieve the root
-	 *	password through library calls and we try to
-	 *	read the password and shadow files manually.
+	 * If we come here, we could not retrieve the root password through
+	 * library calls and we try to read the password and shadow files
+	 * manually.
 	 */
 	pwd.pw_name = "root";
 	pwd.pw_passwd = "";
@@ -219,7 +213,7 @@ static struct passwd *getrootpwent(int try_manually)
 	}
 
 	/*
-	 *	Find root in the password file.
+	 * Find root in the password file.
 	 */
 	while ((p = fgets(line, 256, fp)) != NULL) {
 		if (strncmp(line, "root:", 5) != 0)
@@ -234,11 +228,11 @@ static struct passwd *getrootpwent(int try_manually)
 		p = line;
 		break;
 	}
+
 	fclose(fp);
 
 	/*
-	 *	If the encrypted password is valid
-	 *	or not found, return.
+	 * If the encrypted password is valid or not found, return.
 	 */
 	if (p == NULL) {
 		fprintf(stderr, _("%s: no entry for root\n"), _PATH_PASSWD);
@@ -248,8 +242,7 @@ static struct passwd *getrootpwent(int try_manually)
 		return &pwd;
 
 	/*
-	 *	The password is invalid. If there is a
-	 *	shadow password, try it.
+	 * The password is invalid. If there is a shadow password, try it.
 	 */
 	strcpy(pwd.pw_passwd, "");
 	if ((fp = fopen(_PATH_SHADOW_PASSWD, "r")) == NULL) {
@@ -266,8 +259,7 @@ static struct passwd *getrootpwent(int try_manually)
 	fclose(fp);
 
 	/*
-	 *	If the password is still invalid,
-	 *	NULL it, and return.
+	 * If the password is still invalid, NULL it, and return.
 	 */
 	if (p == NULL) {
 		fprintf(stderr, _("%s: no entry for root\n"), _PATH_SHADOW_PASSWD);
@@ -281,8 +273,8 @@ static struct passwd *getrootpwent(int try_manually)
 }
 
 /*
- *	Ask for the password. Note that there is no
- *	default timeout as we normally skip this during boot.
+ * Ask for the password. Note that there is no default timeout as we normally
+ * skip this during boot.
  */
 static char *getpasswd(char *crypted)
 {
@@ -330,7 +322,7 @@ static char *getpasswd(char *crypted)
 }
 
 /*
- *	Password was OK, execute a shell.
+ * Password was OK, execute a shell.
  */
 static void sushell(struct passwd *pwd)
 {
@@ -340,7 +332,7 @@ static void sushell(struct passwd *pwd)
 	char *sushell;
 
 	/*
-	 *	Set directory and shell.
+	 * Set directory and shell.
 	 */
 	chdir(pwd->pw_dir);
 	if ((p = getenv("SUSHELL")) != NULL)
@@ -357,10 +349,11 @@ static void sushell(struct passwd *pwd)
 		p = sushell;
 	else
 		p++;
+
 	snprintf(shell, sizeof(shell), profile ? "-%s" : "%s", p);
 
 	/*
-	 *	Set some important environment variables.
+	 * Set some important environment variables.
 	 */
 	getcwd(home, sizeof(home));
 	setenv("HOME", home, 1);
@@ -370,7 +363,7 @@ static void sushell(struct passwd *pwd)
 		setenv("SHLVL","0",1);
 
 	/*
-	 *	Try to execute a shell.
+	 * Try to execute a shell.
 	 */
 	setenv("SHELL", sushell, 1);
 	unmask_signal(SIGINT, &saved_sigint);
@@ -427,7 +420,7 @@ int main(int argc, char **argv)
 	struct sigaction saved_sighup;
 
 	/*
-	 *	See if we have a timeout flag.
+	 * See if we have a timeout flag.
 	 */
 	opterr = 0;
 	while ((c = getopt(argc, argv, "ehpt:")) != EOF) {
@@ -458,7 +451,7 @@ int main(int argc, char **argv)
 	}
 
 	/*
-	 *	See if we need to open an other tty device.
+	 * See if we need to open an other tty device.
 	 */
 	mask_signal(SIGQUIT, SIG_IGN, &saved_sigquit);
 	mask_signal(SIGTSTP, SIG_IGN, &saved_sigtstp);
@@ -479,8 +472,8 @@ int main(int argc, char **argv)
 		} else {
 
 			/*
-			 *	Only go through this trouble if the new
-			 *	tty doesn't fall in this process group.
+			 * Only go through this trouble if the new tty doesn't
+			 * fall in this process group.
 			 */
 			pid = getpid();
 			pgrp = getpgid(0);
@@ -526,7 +519,7 @@ int main(int argc, char **argv)
 	}
 
 	/*
-	 *	Get the root password.
+	 * Get the root password.
 	 */
 	if ((pwd = getrootpwent(opt_e)) == NULL) {
 		fprintf(stderr, _("%s: cannot open password database.\n"),
@@ -535,7 +528,7 @@ int main(int argc, char **argv)
 	}
 
 	/*
-	 *	Ask for the password.
+	 * Ask for the password.
 	 */
 	while (pwd) {
 		if ((p = getpasswd(pwd->pw_passwd)) == NULL)
@@ -550,7 +543,7 @@ int main(int argc, char **argv)
 	}
 
 	/*
-	 *	User pressed Control-D.
+	 * User pressed Control-D.
 	 */
 	return 0;
 }
