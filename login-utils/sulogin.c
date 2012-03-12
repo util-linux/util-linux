@@ -50,6 +50,7 @@
 #include "nls.h"
 #include "pathnames.h"
 #include "strutils.h"
+#include "ttyutils.h"
 
 static unsigned int timeout;
 static int profile;
@@ -405,6 +406,36 @@ static void sushell(struct passwd *pwd)
 	warn(_("%s: exec failed"), "/bin/sh");
 }
 
+static void fixtty(void)
+{
+	struct termios tp;
+	int x = 0, fl = 0;
+
+	/* Skip serial console */
+	if (ioctl(STDIN_FILENO, TIOCMGET, (char *) &x) == 0)
+		return;
+
+#if defined(IUTF8) && defined(KDGKBMODE)
+	/* Detect mode of current keyboard setup, e.g. for UTF-8 */
+	if (ioctl(STDIN_FILENO, KDGKBMODE, &x) == 0 && x == K_UNICODE) {
+		setlocale(LC_CTYPE, "C.UTF-8");
+		fl |= UL_TTY_UTF8;
+	}
+#else
+	setlocale(LC_CTYPE, "POSIX");
+#endif
+	memset(&tp, 0, sizeof(struct termios));
+	if (tcgetattr(STDIN_FILENO, &tp) < 0) {
+		warn(_("tcgetattr failed"));
+		return;
+	}
+
+	reset_virtual_console(&tp, fl);
+
+	if (tcsetattr(0, TCSADRAIN, &tp))
+		warn(_("tcsetattr failed"));
+}
+
 static void usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
@@ -543,6 +574,8 @@ int main(int argc, char **argv)
 		if (ioctl(0, TIOCSCTTY, (char *)1))
 			warn(_("TIOCSCTTY: ioctl failed"));
 	}
+
+	fixtty();
 
 	/*
 	 * Get the root password.
