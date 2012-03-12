@@ -246,7 +246,7 @@ static struct passwd *getrootpwent(int try_manually)
 	 */
 	strcpy(pwd.pw_passwd, "");
 	if ((fp = fopen(_PATH_SHADOW_PASSWD, "r")) == NULL) {
-		fprintf(stderr, _("%s: root password garbled\n"), _PATH_PASSWD);
+		warn(_("%s: open failed"), _PATH_PASSWD);
 		return &pwd;
 	}
 	while ((p = fgets(sline, 256, fp)) != NULL) {
@@ -262,11 +262,11 @@ static struct passwd *getrootpwent(int try_manually)
 	 * If the password is still invalid, NULL it, and return.
 	 */
 	if (p == NULL) {
-		fprintf(stderr, _("%s: no entry for root\n"), _PATH_SHADOW_PASSWD);
+		warnx(_("%s: no entry for root"), _PATH_SHADOW_PASSWD);
 		strcpy(pwd.pw_passwd, "");
 	}
 	if (!valid(pwd.pw_passwd)) {
-		fprintf(stderr, _("%s: root password garbled\n"), _PATH_SHADOW_PASSWD);
+		warnx(_("%s: root password garbled"), _PATH_SHADOW_PASSWD);
 		strcpy(pwd.pw_passwd, "");
 	}
 	return &pwd;
@@ -377,7 +377,7 @@ static void sushell(struct passwd *pwd)
 		if (getseuserbyname("root", &seuser, &level) == 0) {
 			if (get_default_context_with_level(seuser, level, 0, &scon) == 0) {
 				if (setexeccon(scon) != 0)
-					fprintf(stderr, _("setexeccon failed\n"));
+					warnx(_("setexeccon failed"));
 				freecon(scon);
 			}
 		}
@@ -444,11 +444,8 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (geteuid() != 0) {
-		fprintf(stderr, _("%s: only root can run this program.\n"),
-				program_invocation_short_name);
-		exit(1);
-	}
+	if (geteuid() != 0)
+		errx(EXIT_FAILURE, _("only root can run this program."));
 
 	/*
 	 * See if we need to open an other tty device.
@@ -467,7 +464,7 @@ int main(int argc, char **argv)
 		}
 
 		if (!isatty(fd)) {
-			fprintf(stderr, "%s: not a tty\n", tty);
+			warn(_("%s: not a tty"), tty);
 			close(fd);
 		} else {
 
@@ -522,8 +519,7 @@ int main(int argc, char **argv)
 	 * Get the root password.
 	 */
 	if ((pwd = getrootpwent(opt_e)) == NULL) {
-		fprintf(stderr, _("%s: cannot open password database.\n"),
-				program_invocation_short_name);
+		warnx(_("cannot open password database."));
 		sleep(2);
 	}
 
@@ -539,7 +535,7 @@ int main(int argc, char **argv)
 		mask_signal(SIGQUIT, SIG_IGN, &saved_sigquit);
 		mask_signal(SIGTSTP, SIG_IGN, &saved_sigtstp);
 		mask_signal(SIGINT,  SIG_IGN, &saved_sigint);
-		printf(_("Login incorrect\n"));
+		fprintf(stderr, _("Login incorrect\n\n"));
 	}
 
 	/*
