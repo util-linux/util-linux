@@ -379,7 +379,8 @@ static void sushell(struct passwd *pwd)
 	unmask_signal(SIGINT, &saved_sigint);
 	unmask_signal(SIGTSTP, &saved_sigtstp);
 	unmask_signal(SIGQUIT, &saved_sigquit);
-#ifdef WITH_SELINUX
+
+#ifdef HAVE_LIBSELINUX
 	if (is_selinux_enabled() > 0) {
 		security_context_t scon=NULL;
 		char *seuser=NULL;

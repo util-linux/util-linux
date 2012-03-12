@@ -88,6 +88,7 @@ chfn_SOURCES += selinux_utils.c selinux_utils.h
 chsh_SOURCES += selinux_utils.c selinux_utils.h
 vipw_LDADD += -lselinux
 login_ldadd_common += -lselinux
+sulogin_LDADD += -lselinux
 endif
 
 
