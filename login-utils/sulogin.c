@@ -327,15 +327,22 @@ static char *getpasswd(char *crypted)
  */
 static void sushell(struct passwd *pwd)
 {
-	char shell[128];
-	char home[128];
+	char shell[PATH_MAX];
+	char home[PATH_MAX];
 	char *p;
 	char *sushell;
 
 	/*
 	 * Set directory and shell.
 	 */
-	chdir(pwd->pw_dir);
+	if (chdir(pwd->pw_dir) != 0) {
+		warn(_("%s: change directory failed"), pwd->pw_dir);
+		printf(_("Logging in with home = \"/\".\n"));
+
+		if (chdir("/") != 0)
+			warn(_("change directory to system root failed"));
+	}
+
 	if ((p = getenv("SUSHELL")) != NULL)
 		sushell = p;
 	else if ((p = getenv("sushell")) != NULL)
@@ -356,8 +363,9 @@ static void sushell(struct passwd *pwd)
 	/*
 	 * Set some important environment variables.
 	 */
-	getcwd(home, sizeof(home));
-	setenv("HOME", home, 1);
+	if (getcwd(home, sizeof(home)) != NULL)
+		setenv("HOME", home, 1);
+
 	setenv("LOGNAME", "root", 1);
 	setenv("USER", "root", 1);
 	if (!profile)
