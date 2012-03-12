@@ -986,7 +986,7 @@ AM_CONDITIONAL(BUILD_RESET, test "x$build_reset" = xyes)
 
 
 AC_ARG_ENABLE([login-utils],
-  AS_HELP_STRING([--enable-login-utils], [build chfn, chsh, login, newgrp, vipw]),
+  AS_HELP_STRING([--enable-login-utils], [build chfn, chsh, login, sulogin, newgrp, vipw]),
   [], enable_login_utils=no
 )
 UL_BUILD_INIT([login_utils])
