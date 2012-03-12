@@ -436,7 +436,7 @@ int main(int argc, char **argv)
 			break;
 		case 'h':
 			usage(stdout);
-			return 0;
+			return EXIT_SUCCESS;
 		default:
 			usage(stderr);
 			/* Do not exit! */
@@ -541,5 +541,5 @@ int main(int argc, char **argv)
 	/*
 	 * User pressed Control-D.
 	 */
-	return 0;
+	return EXIT_SUCCESS;
 }
