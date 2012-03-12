@@ -164,7 +164,7 @@ check_des:
 /*
  * Set a variable if the value is not NULL.
  */
-static void set(char **var, char *val)
+static inline void set(char **var, char *val)
 {
 	if (val)
 		*var = val;
@@ -438,6 +438,10 @@ int main(int argc, char **argv)
 		{ "version",      0, 0, 'V' },
 		{ NULL,           0, 0, 0 }
 	};
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	/*
 	 * See if we have a timeout flag.
