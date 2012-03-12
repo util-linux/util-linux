@@ -1,5 +1,6 @@
 '\" -*- coding: UTF-8 -*-
 .\" Copyright (C) 1998-2006 Miquel van Smoorenburg.
+.\" Copyright (C) 2012 Karel Zak <kzak@redhat.com>
 .\"
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License as published by
@@ -15,7 +16,7 @@
 .\" along with this program; if not, write to the Free Software
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 .\"
-.TH SULOGIN 8 "28 Feb 2012" "" "Linux System Administrator's Manual"
+.TH SULOGIN 8 "Mar 2012" "" "Linux System Administrator's Manual"
 .SH NAME
 sulogin \- Single-user login
 .SH SYNOPSIS
@@ -63,4 +64,9 @@ Output version.
 is not set, it will try to execute root's shell from /etc/passwd. If that
 fails it will fall back to \fB/bin/sh\fP.
 .SH AUTHOR
-Miquel van Smoorenburg <miquels@cistron.nl>
+.B sulogin
+was written by Miquel van Smoorenburg for sysvinit and later ported
+to util-linux by Dave Reisner and Karel Zak.
+.SH AVAILABILITY
+The sulogin command is part of the util-linux package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
