@@ -39,18 +39,24 @@ optional tty device that can be specified on the command line
 After the user exits the single-user shell or presses control\-D at the
 prompt, the system will continue to boot.
 .SH OPTIONS
-.IP "\fB\-t \fIseconds\fP"
-Specify the maximum amount of time to wait for user input. By default,
-sulogin will wait forever.
-.IP "\fB\-p\fP"
-Specifying this option causes sulogin to start the shell process as a
-login shell.
-.IP "\fB\-e\fP"
+.IP "\fB\-e, \-\-force\fP"
 If the default method of obtaining the root password via \fBgetpwnam\fP(3) from
 the system fails, manually examine /etc/passwd and /etc/shadow to get the
 password. If they are damaged or nonexistent, sulogin will start a root shell
-without asking for a password. Only use the \fB\-e\fP option if you are sure
-the console is physically protected against unauthorized access.
+without asking for a password.
+
+Only use the \fB\-e\fP option if you are sure the console is physically
+protected against unauthorized access.
+.IP "\fB\-h, \-\-help\fP"
+Print a help message.
+.IP "\fB\-p, \-\-login\-shell\fP"
+Specifying this option causes sulogin to start the shell process as a
+login shell.
+.IP "\fB\-t, \-\-timeout \fIseconds\fP"
+Specify the maximum amount of time to wait for user input. By default,
+sulogin will wait forever.
+.IP "\fB\-V, \-\-version\fP"
+Output version.
 .SH ENVIRONMENT VARIABLES
 \fIsulogin\fP looks for the environment variable \fBSUSHELL\fP or
 \fBsushell\fP to determine what shell to start. If the environment variable

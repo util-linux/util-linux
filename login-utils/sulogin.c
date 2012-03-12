@@ -34,6 +34,7 @@
 #include <shadow.h>
 #include <termios.h>
 #include <errno.h>
+#include <getopt.h>
 #include <sys/ioctl.h>
 #ifdef HAVE_CRYPT_H
 # include <crypt.h>
@@ -395,18 +396,20 @@ static void sushell(struct passwd *pwd)
 
 static void usage(FILE *out)
 {
-	fprintf(out, USAGE_HEADER);
+	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
-			" %s [options] [tty device]\n"), program_invocation_short_name);
+		" %s [options] [tty device]\n"), program_invocation_short_name);
 
-	fprintf(out, USAGE_OPTIONS);
-	fprintf(out, _(
-			" -p        start a login shell\n"
-			" -t SEC    max time to wait for a password (default: no limit)\n"
-			" -e        examine shadow files directly if getpwnam(3) fails\n"
-			" -h        display this help message\n"));
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -p, --login-shell        start a login shell\n"
+		" -t, --timeout <seconds>  max time to wait for a password (default: no limit)\n"
+		" -e, --force              examine password files directly if getpwnam(3) fails\n"),
+		out);
 
-	fprintf(out, _("\nFor more information see sulogin(8).\n"));
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("sulogin(8)"));
 }
 
 int main(int argc, char **argv)
@@ -419,11 +422,19 @@ int main(int argc, char **argv)
 	pid_t pid, pgrp, ppgrp, ttypgrp;
 	struct sigaction saved_sighup;
 
+	static const struct option longopts[] = {
+		{ "login-shell",  0, 0, 'p' },
+		{ "timeout",      1, 0, 't' },
+		{ "force",        0, 0, 'e' },
+		{ "help",         0, 0, 'h' },
+		{ "version",      0, 0, 'V' },
+		{ NULL,           0, 0, 0 }
+	};
+
 	/*
 	 * See if we have a timeout flag.
 	 */
-	opterr = 0;
-	while ((c = getopt(argc, argv, "ehpt:")) != EOF) {
+	while ((c = getopt_long(argc, argv, "ehpt:V", longopts, NULL)) != -1) {
 		switch(c) {
 		case 't':
 			timeout = atoi(optarg);
@@ -434,6 +445,9 @@ int main(int argc, char **argv)
 		case 'e':
 			opt_e = 1;
 			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		case 'h':
 			usage(stdout);
 			return EXIT_SUCCESS;
