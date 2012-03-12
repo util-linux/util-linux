@@ -11,10 +11,22 @@ usrbin_exec_PROGRAMS += last
 dist_man_MANS += last.1
 endif
 
-if BUILD_LOGIN_UTILS
-
-bin_PROGRAMS += login
+if BUILD_SULOGIN
 sbin_PROGRAMS += sulogin
+dist_man_MANS += sulogin.8
+sulogin_SOURCES = sulogin.c $(top_srcdir)/lib/strutils.c
+sulogin_LDADD =
+if HAVE_LIBCRYPT
+sulogin_LDADD += -lcrypt
+endif
+if HAVE_SELINUX
+sulogin_LDADD += -lselinux
+endif
+endif # BUILD_SULOGIN
+
+
+if BUILD_LOGIN_UTILS
+bin_PROGRAMS += login
 usrbin_exec_PROGRAMS += \
 	chfn \
 	chsh \
@@ -27,8 +39,7 @@ dist_man_MANS += \
 	login.1 \
 	newgrp.1 \
 	vigr.8 \
-	vipw.8 \
-	sulogin.8
+	vipw.8
 
 # login, chfn and chsh libs
 login_ldadd_common =
@@ -50,9 +61,6 @@ login_SOURCES = \
 	logindefs.c \
 	logindefs.h \
 	$(top_srcdir)/lib/setproctitle.c
-sulogin_SOURCES = \
-	sulogin.c \
-	$(top_srcdir)/lib/strutils.c
 vipw_SOURCES = \
 	vipw.c \
 	setpwnam.h
@@ -62,7 +70,6 @@ chsh_LDADD = $(login_ldadd_common)
 login_LDADD = $(login_ldadd_common)
 newgrp_LDADD =
 vipw_LDADD =
-sulogin_LDADD =
 
 chfn_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 chsh_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
@@ -76,7 +83,6 @@ login_ldadd_common += -lpam -lpam_misc
 
 if HAVE_LIBCRYPT
 newgrp_LDADD += -lcrypt
-sulogin_LDADD += -lcrypt
 endif
 
 if HAVE_AUDIT
@@ -88,7 +94,6 @@ chfn_SOURCES += selinux_utils.c selinux_utils.h
 chsh_SOURCES += selinux_utils.c selinux_utils.h
 vipw_LDADD += -lselinux
 login_ldadd_common += -lselinux
-sulogin_LDADD += -lselinux
 endif
 
 

@@ -760,6 +760,14 @@ UL_REQUIRES_BUILD([mountpoint], [libmount])
 AM_CONDITIONAL(BUILD_MOUNTPOINT, test "x$build_mountpoint" = xyes)
 
 
+AC_ARG_ENABLE([sulogin],
+  AS_HELP_STRING([--disable-sulogin], [do not build sulogin]),
+  [], enable_sulogin=yes
+)
+UL_BUILD_INIT([sulogin])
+AM_CONDITIONAL(BUILD_SULOGIN, test "x$build_sulogin" = xyes)
+
+
 AC_ARG_ENABLE([fallocate],
   AS_HELP_STRING([--disable-fallocate], [do not build fallocate]),
   [], enable_fallocate=check
@@ -986,7 +994,7 @@ AM_CONDITIONAL(BUILD_RESET, test "x$build_reset" = xyes)
 
 
 AC_ARG_ENABLE([login-utils],
-  AS_HELP_STRING([--enable-login-utils], [build chfn, chsh, login, sulogin, newgrp, vipw]),
+  AS_HELP_STRING([--enable-login-utils], [build chfn, chsh, login, newgrp, vipw]),
   [], enable_login_utils=no
 )
 UL_BUILD_INIT([login_utils])
