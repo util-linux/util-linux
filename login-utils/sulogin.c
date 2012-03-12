@@ -48,8 +48,9 @@
 #include "c.h"
 #include "nls.h"
 #include "pathnames.h"
+#include "strutils.h"
 
-static int timeout;
+static unsigned int timeout;
 static int profile;
 
 struct sigaction saved_sigint;
@@ -449,7 +450,7 @@ int main(int argc, char **argv)
 	while ((c = getopt_long(argc, argv, "ehpt:V", longopts, NULL)) != -1) {
 		switch(c) {
 		case 't':
-			timeout = atoi(optarg);
+			timeout = strtoul_or_err(optarg, _("failed to parse timeout"));
 			break;
 		case 'p':
 			profile = 1;

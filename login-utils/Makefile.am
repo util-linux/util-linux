@@ -50,6 +50,9 @@ login_SOURCES = \
 	logindefs.c \
 	logindefs.h \
 	$(top_srcdir)/lib/setproctitle.c
+sulogin_SOURCES = \
+	sulogin.c \
+	$(top_srcdir)/lib/strutils.c
 vipw_SOURCES = \
 	vipw.c \
 	setpwnam.h
