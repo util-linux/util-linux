@@ -208,7 +208,7 @@ static struct passwd *getrootpwent(int try_manually)
 	pwd.pw_gid = 0;
 
 	if ((fp = fopen(_PATH_PASSWD, "r")) == NULL) {
-		perror(_PATH_PASSWD);
+		warn(_("%s: open failed"), _PATH_PASSWD);
 		return &pwd;
 	}
 
@@ -235,7 +235,7 @@ static struct passwd *getrootpwent(int try_manually)
 	 * If the encrypted password is valid or not found, return.
 	 */
 	if (p == NULL) {
-		fprintf(stderr, _("%s: no entry for root\n"), _PATH_PASSWD);
+		warnx(_("%s: no entry for root\n"), _PATH_PASSWD);
 		return &pwd;
 	}
 	if (valid(pwd.pw_passwd))
@@ -386,11 +386,11 @@ static void sushell(struct passwd *pwd)
 	}
 #endif
 	execl(sushell, shell, NULL);
-	perror(sushell);
+	warn(_("%s: exec failed"), sushell);
 
 	setenv("SHELL", "/bin/sh", 1);
 	execl("/bin/sh", profile ? "-sh" : "sh", NULL);
-	perror("/bin/sh");
+	warn(_("%s: exec failed"), "/bin/sh");
 }
 
 static void usage(FILE *out)
@@ -462,7 +462,7 @@ int main(int argc, char **argv)
 	if (tty || (tty = getenv("CONSOLE"))) {
 
 		if ((fd = open(tty, O_RDWR)) < 0) {
-			perror(tty);
+			warn(_("%s: open failed"), tty);
 			fd = dup(0);
 		}
 
@@ -496,9 +496,9 @@ int main(int argc, char **argv)
 				close(2);
 				if (fd > 2)
 					close(fd);
-				if ((fd = open(tty, O_RDWR|O_NOCTTY)) < 0) {
-					perror(tty);
-				} else {
+				if ((fd = open(tty, O_RDWR|O_NOCTTY)) < 0)
+					warn(_("%s: open failed"), tty);
+				else {
 					ioctl(0, TIOCSCTTY, (char *)1);
 					tcsetpgrp(fd, ppgrp);
 					dup2(fd, 0);
@@ -515,7 +515,7 @@ int main(int argc, char **argv)
 		/* We are init. We hence need to set a session anyway */
 		setsid();
 		if (ioctl(0, TIOCSCTTY, (char *)1))
-			perror("ioctl(TIOCSCTTY)");
+			warn(_("TIOCSCTTY: ioctl failed"));
 	}
 
 	/*
