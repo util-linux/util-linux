@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <termio.h>
 
 #include "c.h"
 #include "nls.h"
@@ -25,6 +26,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out, _(" %s [options] <program> [arguments ...]\n"),
 		program_invocation_short_name);
 	fprintf(out, USAGE_OPTIONS);
+	fprintf(out, _(
+		" -c, --ctty \tset the controlling terminal to the current one\n"
+		));
 	fprintf(out, USAGE_HELP);
 	fprintf(out, USAGE_VERSION);
 	fprintf(out, USAGE_MAN_TAIL("setsid(1)"));
@@ -34,7 +38,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 int main(int argc, char **argv)
 {
 	int ch;
+	int ctty = 0;
+
 	static const struct option longopts[] = {
+		{"ctty", no_argument, NULL, 'c'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
@@ -44,11 +51,14 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((ch = getopt_long(argc, argv, "+Vh", longopts, NULL)) != -1)
+	while ((ch = getopt_long(argc, argv, "+Vhc", longopts, NULL)) != -1)
 		switch (ch) {
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
+		case 'c':
+			ctty=1;
+			break;
 		case 'h':
 			usage(stdout);
 		default:
@@ -74,6 +84,10 @@ int main(int argc, char **argv)
 		/* cannot happen */
 		err(EXIT_FAILURE, _("setsid failed"));
 
-	execvp(argv[1], argv + 1);
+	if (ctty) {
+		if (ioctl(STDIN_FILENO, TIOCSCTTY, 1))
+			warn(_("failed to set the controlling terminal"));
+	}
+	execvp(argv[optind], argv + optind + 1);
 	err(EXIT_FAILURE, _("execvp failed"));
 }
