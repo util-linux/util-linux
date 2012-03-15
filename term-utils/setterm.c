@@ -715,7 +715,7 @@ usage(FILE *out) {
 		" -version\n"
 		" -help\n"), out);
 
-	fprintf(out, _("\nFor more information see lsblk(1).\n"));
+	fprintf(out, USAGE_MAN_TAIL("setterm(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
