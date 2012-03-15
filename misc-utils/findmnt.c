@@ -876,8 +876,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	int i;
 
+	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
-	"\nUsage:\n"
 	" %1$s [options]\n"
 	" %1$s [options] <device> | <mountpoint>\n"
 	" %1$s [options] <device> <mountpoint>\n"
@@ -921,16 +921,18 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 	" -R, --submounts        print all submounts for the matching filesystems\n"
 	" -S, --source <string>  the device to mount (by name, LABEL= or UUID=)\n"
-	" -T, --target <string>  the mountpoint to use\n\n"));
+	" -T, --target <string>  the mountpoint to use\n"));
 
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 
 	fprintf(out, _("\nAvailable columns:\n"));
 
 	for (i = 0; i < FINDMNT_NCOLUMNS; i++)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
-
-	fprintf(out, _("\nFor more information see findmnt(1).\n"));
+	fprintf(out, USAGE_MAN_TAIL("findmnt(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -980,6 +982,7 @@ int main(int argc, char *argv[])
 	    { "tab-file",     1, 0, 'F' },
 	    { "target",       1, 0, 'T' },
 	    { "timeout",      1, 0, 'w' },
+	    { "version",      0, 0, 'V' },
 
 	    { NULL,           0, 0, 0 }
 	};
@@ -994,7 +997,7 @@ int main(int argc, char *argv[])
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"AacDd:ehifF:o:O:p::Pklmnrst:uvRS:T:w:",
+				"AacDd:ehifF:o:O:p::Pklmnrst:uvRS:T:w:V",
 				longopts, NULL)) != -1) {
 		switch(c) {
 		case 'A':
@@ -1113,6 +1116,9 @@ int main(int argc, char *argv[])
 			timeout = strtol_or_err(optarg,
 					_("failed to parse timeout"));
 			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		default:
 			usage(stderr);
 			break;
