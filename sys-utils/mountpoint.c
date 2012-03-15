@@ -112,18 +112,19 @@ static int print_devno(const char *devname, struct stat *st)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fputs(_("\nUsage:\n"), out);
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %1$s [-qd] /path/to/directory\n"
 		" %1$s -x /dev/device\n"), program_invocation_short_name);
 
-	fputs(_("\nOptions:\n"), out);
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -q, --quiet        quiet mode - don't print anything\n"
 		" -d, --fs-devno     print maj:min device number of the filesystem\n"
-		" -x, --devno        print maj:min device number of the block device\n"
-		" -h, --help         this help\n"), out);
-
-	fprintf(out, _("\nFor more information see mountpoint(1).\n"));
+		" -x, --devno        print maj:min device number of the block device\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("mountpoint(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -139,6 +140,7 @@ int main(int argc, char **argv)
 		{ "fs-devno", 0, 0, 'd' },
 		{ "devno", 0, 0, 'x' },
 		{ "help", 0, 0, 'h' },
+		{ "version", 0, 0, 'V' },
 		{ NULL, 0, 0, 0 }
 	};
 
@@ -148,7 +150,7 @@ int main(int argc, char **argv)
 
 	mnt_init_debug(0);
 
-	while ((c = getopt_long(argc, argv, "qdxh", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "qdxhV", longopts, NULL)) != -1) {
 
 		switch(c) {
 		case 'q':
@@ -163,6 +165,9 @@ int main(int argc, char **argv)
 		case 'h':
 			usage(stdout);
 			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		default:
 			usage(stderr);
 			break;
