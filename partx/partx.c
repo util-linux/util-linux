@@ -659,6 +659,7 @@ int main(int argc, char **argv)
 		{ "output",	required_argument, NULL, 'o' },
 		{ "pairs",      no_argument,       NULL, 'P' },
 		{ "help",	no_argument,       NULL, 'h' },
+		{ "version",    no_argument,       NULL, 'V' },
 		{ "verbose",	no_argument,       NULL, 'v' },
 		{ NULL, 0, NULL, 0 }
 	};
@@ -668,7 +669,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 
 	while ((c = getopt_long(argc, argv,
-				"abdglrsvn:t:o:Ph", long_opts, NULL)) != -1) {
+				"abdglrsvn:t:o:PhV", long_opts, NULL)) != -1) {
 
 		switch(c) {
 		case 'a':
@@ -728,6 +729,9 @@ int main(int argc, char **argv)
 			break;
 		case 'h':
 			usage(stdout);
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		case '?':
 		default:
 			usage(stderr);
