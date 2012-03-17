@@ -1,31 +1,63 @@
+#include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
 
+#include "c.h"
+#include "nls.h"
 #include "partx.h"
+#include "strutils.h"
 
-int
-main(int argc, char **argv)
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	int fd;
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s <disk device> <partition number> <start> <length>\n"),
+		program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("addpart(8)"));
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
 
-	if (argc != 5) {
-		fprintf(stderr,
-			"usage: %s diskdevice partitionnr start length\n",
-			argv[0]);
-		exit(1);
-	}
-	if ((fd = open(argv[1], O_RDONLY)) < 0) {
-		perror(argv[1]);
-		exit(1);
-	}
+int main(int argc, char **argv)
+{
+	int c, fd;
 
-	if (partx_add_partition(fd, atoi(argv[2]),
-				atoll(argv[3]),
-				atoll(argv[4]))) {
-		perror("BLKPG");
-		exit(1);
-	}
+	static const struct option longopts[] = {
+		{"help", no_argument, 0, 'h'},
+		{"version", no_argument, 0, 'V'},
+		{NULL, no_argument, 0, '0'},
+	};
 
-	return 0;
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
+	while ((c = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
+		switch (c) {
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
+		case 'h':
+			usage(stdout);
+		default:
+			usage(stderr);
+		}
+
+	if (argc != 5)
+		usage(stderr);
+	if ((fd = open(argv[1], O_RDONLY)) < 0)
+		err(EXIT_FAILURE, "%s", argv[1]);
+
+	if (partx_add_partition(fd,
+				strtol_or_err(argv[2],
+					      _("failed to parse argument")),
+				strtoll_or_err(argv[3],
+					       _("failed to parse argument")),
+				strtoll_or_err(argv[4],
+					       _("failed to parse argument"))))
+		err(EXIT_FAILURE, "BLKPG");
+
+	return EXIT_SUCCESS;
 }

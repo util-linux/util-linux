@@ -4,6 +4,7 @@ usrsbin_exec_PROGRAMS = addpart delpart
 dist_man_MANS = addpart.8 delpart.8
 
 usrsbin_exec_PROGRAMS += partx
+addpart_SOURCES = addpart.c $(top_srcdir)/lib/strutils.c
 partx_SOURCES = \
 	partx.c \
 	partx.h \
