@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 	int  c;
 	char * raw_name;
 	char * block_name;
-	int  err;
+	int  retval;
 	int  block_major, block_minor;
 	int  i, rc;
 
@@ -140,13 +140,11 @@ int main(int argc, char *argv[])
 	if (rc != 1)
 		usage(EXIT_FAILURE);
 
-	if (raw_minor == 0) {
-		fprintf (stderr,
-			_("Device '%s' is the control raw device "
-			"(use raw<N> where <N> is greater than zero)\n"),
-			raw_name);
-		exit(EXIT_RAW_ACCESS);
-	}
+	if (raw_minor == 0)
+		errx(EXIT_RAW_ACCESS,
+		     _("Device '%s' is the control raw device "
+		       "(use raw<N> where <N> is greater than zero)"),
+		     raw_name);
 
 	if (do_query)
 		return query(raw_minor, raw_name, 0);
@@ -159,20 +157,15 @@ int main(int argc, char *argv[])
 	switch (argc - optind) {
 	case 1:
 		block_name = argv[optind];
-		err = stat(block_name, &statbuf);
-		if (err) {
-			fprintf (stderr,
-				 _("Cannot locate block device '%s' (%m)\n"),
-				 block_name);
-			exit(EXIT_RAW_ACCESS);
-		}
-
-		if (!S_ISBLK(statbuf.st_mode)) {
-			fprintf (stderr, _("Device '%s' is not a block device\n"),
-				 block_name);
-			exit(EXIT_RAW_ACCESS);
-		}
-
+		retval = stat(block_name, &statbuf);
+		if (retval)
+			err(EXIT_RAW_ACCESS,
+			    _("Cannot locate block device '%s'"),
+			    block_name);
+		if (!S_ISBLK(statbuf.st_mode))
+			errx(EXIT_RAW_ACCESS,
+			     _("Device '%s' is not a block device"),
+			     block_name);
 		block_major = major(statbuf.st_rdev);
 		block_minor = minor(statbuf.st_rdev);
 		break;
@@ -193,61 +186,49 @@ int main(int argc, char *argv[])
 
 void open_raw_ctl(void)
 {
-	int errsv;
-
 	master_fd = open(RAWDEVCTL, O_RDWR, 0);
 	if (master_fd < 0) {
-		errsv = errno;
 		master_fd = open(RAWDEVCTL_OLD, O_RDWR, 0);
-		if (master_fd < 0) {
-			fprintf (stderr,
-				 _("Cannot open master raw device '%s' (%s)\n"),
-				 RAWDEVCTL, strerror(errsv));
-			exit(EXIT_RAW_ACCESS);
-		}
+		if (master_fd < 0)
+			err(EXIT_RAW_ACCESS,
+			    _("Cannot open master raw device '%s'"), RAWDEVCTL);
 	}
 }
+
 
 static int query(int minor_raw, const char *raw_name, int quiet)
 {
 	struct raw_config_request rq;
 	static int has_worked = 0;
-	int err;
+	int retval;
 
 	if (raw_name) {
 		struct stat statbuf;
 
-		err = stat(raw_name, &statbuf);
-		if (err) {
-			fprintf (stderr, _("Cannot locate raw device '%s' (%m)\n"),
-				 raw_name);
-			exit(EXIT_RAW_ACCESS);
-		}
-
-		if (!S_ISCHR(statbuf.st_mode)) {
-			fprintf (stderr, _("Raw device '%s' is not a character dev\n"),
-				 raw_name);
-			exit(EXIT_RAW_ACCESS);
-		}
-		if (major(statbuf.st_rdev) != RAW_MAJOR) {
-			fprintf (stderr, _("Device '%s' is not a raw dev\n"),
-				 raw_name);
-			exit(EXIT_RAW_ACCESS);
-		}
+		retval = stat(raw_name, &statbuf);
+		if (retval)
+			err(EXIT_RAW_ACCESS,
+			    _("Cannot locate raw device '%s'"), raw_name);
+		if (!S_ISCHR(statbuf.st_mode))
+			errx(EXIT_RAW_ACCESS,
+			     _("Raw device '%s' is not a character dev"),
+			     raw_name);
+		if (major(statbuf.st_rdev) != RAW_MAJOR)
+			errx(EXIT_RAW_ACCESS,
+			     _("Device '%s' is not a raw dev"), raw_name);
 		minor_raw = minor(statbuf.st_rdev);
 	}
 
 	rq.raw_minor = minor_raw;
-	err = ioctl(master_fd, RAW_GETBIND, &rq);
-	if (err < 0) {
+	retval = ioctl(master_fd, RAW_GETBIND, &rq);
+	if (retval < 0) {
 		if (quiet && errno == ENODEV)
 			return 3;
 		if (has_worked && errno == EINVAL)
 			return 0;
-		fprintf (stderr,
-			 _("Error querying raw device (%m)\n"));
-		exit(EXIT_RAW_IOCTL);
+		err(EXIT_RAW_IOCTL, _("Error querying raw device"));
 	}
+
 	/* If one query has worked, mark that fact so that we don't
 	 * report spurious fatal errors if raw(8) has been built to
 	 * support more raw minor numbers than the kernel has. */
@@ -262,17 +243,12 @@ static int query(int minor_raw, const char *raw_name, int quiet)
 static int bind(int minor_raw, int block_major, int block_minor)
 {
 	struct raw_config_request rq;
-	int err;
 
 	rq.raw_minor   = minor_raw;
 	rq.block_major = block_major;
 	rq.block_minor = block_minor;
-	err = ioctl(master_fd, RAW_SETBIND, &rq);
-	if (err < 0) {
-		fprintf (stderr,
-			 _("Error setting raw device (%m)\n"));
-		exit(EXIT_RAW_IOCTL);
-	}
+	if (!ioctl(master_fd, RAW_SETBIND, &rq))
+		err(EXIT_RAW_IOCTL, _("Error setting raw device"));
 	printf (_("%sraw%d:  bound to major %d, minor %d\n"),
 		RAWDEVDIR, raw_minor, (int) rq.block_major, (int) rq.block_minor);
 	return 0;
