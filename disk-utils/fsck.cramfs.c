@@ -63,8 +63,6 @@
 #define XALLOC_EXIT_CODE FSCK_EX_ERROR
 #include "xalloc.h"
 
-static const char *progname = "cramfsck";
-
 static int fd;			/* ROM image file descriptor */
 static char *filename;		/* ROM image filename */
 struct cramfs_super super;	/* just find the cramfs superblock once */
@@ -110,12 +108,14 @@ static void __attribute__((__noreturn__)) usage(int status)
 {
 	FILE *stream = status ? stderr : stdout;
 
-	fprintf(stream, _("usage: %s [-hv] [-x dir] file\n"
-		" -h         print this help\n"
-		" -x dir     extract into dir\n"
-		" -v         be more verbose\n"
-		" file       file to test\n"), progname);
-
+	fputs(USAGE_HEADER, stream);
+	fprintf(stream,
+		_(" %s [options] file\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, stream);
+	fputs(_(" -x, --destination <dir>  extract into directory\n"), stream);
+	fputs(_(" -v, --verbose            be more verbose\n"), stream);
+	fputs(USAGE_HELP, stream);
+	fputs(USAGE_VERSION, stream);
 	exit(status);
 }
 
@@ -633,23 +633,31 @@ int main(int argc, char **argv)
 	int start = 0;
 	size_t length = 0;
 
+	static const struct option longopts[] = {
+		{"destination", required_argument, 0, 'x'},
+		{"verbose", no_argument, 0, 'v'},
+		{"version", no_argument, 0, 'V'},
+		{"help", no_argument, 0, 'h'},
+		{NULL, no_argument, 0, '0'},
+	};
+
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
 	page_size = getpagesize();
 
-	if (argc)
-		progname = argv[0];
-
 	outbuffer = xmalloc(page_size * 2);
 
 	/* command line options */
-	while ((c = getopt(argc, argv, "hx:v")) != EOF)
+	while ((c = getopt_long(argc, argv, "x:vVh", longopts, NULL)) != EOF)
 		switch (c) {
 		case 'h':
 			usage(FSCK_EX_OK);
 			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		case 'x':
 #ifdef INCLUDE_FS_TESTS
 			opt_extract = 1;
