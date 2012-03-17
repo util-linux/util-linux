@@ -216,13 +216,27 @@ quit(int status)
 /*
  * Usage message and similar routines.
  */
-static void
-usage(void)
+static void usage(FILE * out)
 {
-	fprintf(stderr, _("%s: Usage: %s [-number] [-p string] [-cefnrs] "
-			  "[+line] [+/pattern/] [files]\n"),
-			progname, progname);
-	quit(2);
+	fputs(USAGE_HEADER, out);
+	fprintf(out,
+	      _(" %s [options] [+line] [+/pattern/] [files]\n"),
+		program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -number      lines per page\n"), out);
+	fputs(_(" -c           clear screen before displaying\n"), out);
+	fputs(_(" -e           do not pause at end of a file\n"), out);
+	fputs(_(" -f           do not split long lines\n"), out);
+	fputs(_(" -n           terminate command with new line\n"), out);
+	fputs(_(" -p <prompt>  specify prompt\n"), out);
+	fputs(_(" -r           disallow shell escape\n"), out);
+	fputs(_(" -s           print messages to stdout\n"), out);
+	fputs(_(" +number      start at the given line\n"), out);
+	fputs(_(" +/pattern/   start at the line containing pattern\n"), out);
+	fputs(_(" -h           display this help and exit\n"), out);
+	fputs(_(" -V           output version information and exit\n"), out);
+	fprintf(out, USAGE_MAN_TAIL("pg(1)"));
+	quit(out == stderr ? 2 : 0);
 }
 
 static void
@@ -230,14 +244,14 @@ needarg(char *s)
 {
 	fprintf(stderr, _("%s: option requires an argument -- %s\n"),
 		progname, s);
-	usage();
+	usage(stderr);
 }
 
 static void
 invopt(char *s)
 {
 	fprintf(stderr, _("%s: illegal option -- %s\n"), progname, s);
-	usage();
+	usage(stderr);
 }
 
 #ifdef HAVE_WIDECHAR
@@ -1637,6 +1651,8 @@ main(int argc, char **argv)
 			case 's':
 				sflag = 1;
 				break;
+			case 'h':
+				usage(stdout);
 			case 'V':
 				printf(UTIL_LINUX_VERSION);
 				return EXIT_SUCCESS;
