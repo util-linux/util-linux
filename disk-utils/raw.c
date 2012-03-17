@@ -21,6 +21,7 @@
 #include <sys/sysmacros.h>
 #include <linux/raw.h>
 #include <linux/major.h>
+#include <getopt.h>
 
 #include "c.h"
 #include "nls.h"
@@ -34,7 +35,6 @@
 
 #define RAW_NR_MINORS 8192
 
-char *	progname;
 int	do_query = 0;
 int	do_query_all = 0;
 
@@ -57,6 +57,8 @@ static void __attribute__ ((__noreturn__)) usage(int err)
 		  " %1$s -q %2$srawN\n"
 		  " %1$s -qa\n"), program_invocation_short_name, RAWDEVDIR);
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -q, --query    set query mode\n"), out);
+	fputs(_(" -a, --all      query all raw devices\n"), out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("raw(8)"));
@@ -75,22 +77,31 @@ int main(int argc, char *argv[])
 
 	struct stat statbuf;
 
+	static const struct option longopts[] = {
+		{"query", no_argument, 0, 'q'},
+		{"all", no_argument, 0, 'a'},
+		{"version", no_argument, 0, 'V'},
+		{"help", no_argument, 0, 'h'},
+		{NULL, no_argument, 0, '0'},
+	};
+
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	progname = argv[0];
-
-	while ((c = getopt(argc, argv, "ahq")) != -1) {
+	while ((c = getopt_long(argc, argv, "qaVh", longopts, NULL)) != -1) {
 		switch (c) {
-		case 'a':
-			do_query_all = 1;
-			break;
-		case 'h':
-			usage(0);
 		case 'q':
 			do_query = 1;
 			break;
+		case 'a':
+			do_query_all = 1;
+			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
+		case 'h':
+			usage(0);
 		default:
 			usage(1);
 		}
