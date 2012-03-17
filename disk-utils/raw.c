@@ -21,6 +21,8 @@
 #include <sys/sysmacros.h>
 #include <linux/raw.h>
 #include <linux/major.h>
+
+#include "c.h"
 #include "nls.h"
 
 
@@ -44,15 +46,20 @@ static int query(int minor_raw, const char *raw_name, int quiet);
 static int bind(int minor_raw, int block_major, int block_minor);
 
 
-static void usage(int err)
+static void __attribute__ ((__noreturn__)) usage(int err)
 {
-	fprintf(stderr,
-		_("Usage:\n"
-		  "  %1$s %2$srawN <major> <minor>\n"
-		  "  %1$s %2$srawN /dev/<blockdevice>\n"
-		  "  %1$s -q %2$srawN\n"
-		  "  %1$s -qa\n"),
-		progname, RAWDEVDIR);
+	FILE *out = err == EXIT_SUCCESS ? stdout : stderr;
+
+	fputs(USAGE_HEADER, out);
+	fprintf(out,
+		_(" %1$s %2$srawN <major> <minor>\n"
+		  " %1$s %2$srawN /dev/<blockdevice>\n"
+		  " %1$s -q %2$srawN\n"
+		  " %1$s -qa\n"), program_invocation_short_name, RAWDEVDIR);
+	fputs(USAGE_OPTIONS, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("raw(8)"));
 	exit(err);
 }
 
