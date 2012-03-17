@@ -25,14 +25,10 @@
 
 #include "c.h"
 #include "nls.h"
+#include "pathnames.h"
 
 #define EXIT_RAW_ACCESS 3
 #define EXIT_RAW_IOCTL 4
-
-#define RAWDEVDIR "/dev/raw/"
-#define RAWDEVCTL RAWDEVDIR "rawctl"
-/* deprecated */
-#define RAWDEVCTL_OLD "/dev/rawctl"
 
 
 #define RAW_NR_MINORS 8192
@@ -57,7 +53,8 @@ static void __attribute__ ((__noreturn__)) usage(int err)
 		_(" %1$s %2$srawN <major> <minor>\n"
 		  " %1$s %2$srawN /dev/<blockdevice>\n"
 		  " %1$s -q %2$srawN\n"
-		  " %1$s -qa\n"), program_invocation_short_name, RAWDEVDIR);
+		  " %1$s -qa\n"), program_invocation_short_name,
+		_PATH_RAWDEVDIR);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -q, --query    set query mode\n"), out);
 	fputs(_(" -a, --all      query all raw devices\n"), out);
@@ -136,7 +133,7 @@ int main(int argc, char *argv[])
 	 * udev the raw0 causes a create udev event for char 162/0, which
 	 * causes udev to *remove* /dev/rawctl
 	 */
-	rc = sscanf(raw_name, RAWDEVDIR "raw%d", &raw_minor);
+	rc = sscanf(raw_name, _PATH_RAWDEVDIR "raw%d", &raw_minor);
 	if (rc != 1)
 		usage(EXIT_FAILURE);
 
@@ -186,12 +183,13 @@ int main(int argc, char *argv[])
 
 void open_raw_ctl(void)
 {
-	master_fd = open(RAWDEVCTL, O_RDWR, 0);
+	master_fd = open(_PATH_RAWDEVCTL, O_RDWR, 0);
 	if (master_fd < 0) {
-		master_fd = open(RAWDEVCTL_OLD, O_RDWR, 0);
+		master_fd = open(_PATH_RAWDEVCTL_OLD, O_RDWR, 0);
 		if (master_fd < 0)
 			err(EXIT_RAW_ACCESS,
-			    _("Cannot open master raw device '%s'"), RAWDEVCTL);
+			    _("Cannot open master raw device '%s'"),
+			    _PATH_RAWDEVCTL);
 	}
 }
 
@@ -235,8 +233,9 @@ static int query(int minor_raw, const char *raw_name, int quiet)
 	has_worked = 1;
 	if (quiet && !rq.block_major && !rq.block_minor)
 		return 0;
-	printf (_("%sraw%d:  bound to major %d, minor %d\n"),
-		RAWDEVDIR, minor_raw, (int) rq.block_major, (int) rq.block_minor);
+	printf(_("%sraw%d:  bound to major %d, minor %d\n"),
+	       _PATH_RAWDEVDIR, minor_raw, (int)rq.block_major,
+	       (int)rq.block_minor);
 	return 0;
 }
 
@@ -249,8 +248,9 @@ static int bind(int minor_raw, int block_major, int block_minor)
 	rq.block_minor = block_minor;
 	if (!ioctl(master_fd, RAW_SETBIND, &rq))
 		err(EXIT_RAW_IOCTL, _("Error setting raw device"));
-	printf (_("%sraw%d:  bound to major %d, minor %d\n"),
-		RAWDEVDIR, raw_minor, (int) rq.block_major, (int) rq.block_minor);
+	printf(_("%sraw%d:  bound to major %d, minor %d\n"),
+	       _PATH_RAWDEVDIR, raw_minor, (int)rq.block_major,
+	       (int)rq.block_minor);
 	return 0;
 }
 

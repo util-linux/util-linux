@@ -137,5 +137,12 @@
 #define _PATH_BTMP		"/var/log/btmp"
 #endif
 
+/* raw paths*/
+#define _PATH_RAWDEVDIR		"/dev/raw/"
+#define _PATH_RAWDEVCTL		_PATH_RAWDEVDIR "rawctl"
+/* deprecated */
+#define _PATH_RAWDEVCTL_OLD	"/dev/rawctl"
+
+
 #endif /* PATHNAMES_H */
 
