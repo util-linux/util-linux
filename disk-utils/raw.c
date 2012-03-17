@@ -65,6 +65,29 @@ static void __attribute__ ((__noreturn__)) usage(int err)
 }
 
 
+long strtol_octal_or_err(const char *str, const char *errmesg)
+{
+	long num;
+	char *end = NULL;
+
+	if (str == NULL || *str == '\0')
+		goto err;
+	errno = 0;
+	num = strtol(str, &end, 0);
+
+	if (errno || str == end || (end && *end))
+		goto err;
+
+	return num;
+ err:
+	if (errno)
+		err(EXIT_FAILURE, "%s: '%s'", errmesg, str);
+	else
+		errx(EXIT_FAILURE, "%s: '%s'", errmesg, str);
+	return 0;
+}
+
+
 int main(int argc, char *argv[])
 {
 	int  c;
@@ -168,8 +191,12 @@ int main(int argc, char *argv[])
 		break;
 
 	case 2:
-		block_major = strtol(argv[optind], 0, 0);
-		block_minor = strtol(argv[optind+1], 0, 0);
+		block_major =
+		    strtol_octal_or_err(argv[optind],
+					_("failed to parse argument"));
+		block_minor =
+		    strtol_octal_or_err(argv[optind + 1],
+					_("failed to parse argument"));
 		break;
 
 	default:
