@@ -142,9 +142,8 @@ jmp_buf		jmpenv;			/* jump from signal handlers */
 int		canjump;		/* jmpenv is valid */
 wchar_t		wbuf[READBUF];		/* used in several widechar routines */
 
-const char *copyright =
-"@(#)pg 1.44 2/8/02. Copyright (c) 2000-2001 Gunnar Ritter. ";
-const char *helpscreen = N_("All rights reserved.\n\
+char *copyright;
+const char *helpscreen = N_("\
 -------------------------------------------------------\n\
   h                       this screen\n\
   q or Q                  quit program\n\
@@ -1500,7 +1499,7 @@ found_bw:
 				 * Help!
 				 */
 				const char *help = _(helpscreen);
-				write_all(1, copyright + 4, strlen(copyright + 4));
+				write_all(1, copyright, strlen(copyright));
 				write_all(1, help, strlen(help));
 				goto newcmd;
 			}
@@ -1574,6 +1573,9 @@ main(int argc, char **argv)
 	FILE *input;
 
 	progname = basename(argv[0]);
+	xasprintf(&copyright,
+		  _("%s %s Copyright (c) 2000-2001 Gunnar Ritter. All rights reserved.\n"),
+		  program_invocation_short_name, PACKAGE_VERSION);
 
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -1635,6 +1637,9 @@ main(int argc, char **argv)
 			case 's':
 				sflag = 1;
 				break;
+			case 'V':
+				printf(UTIL_LINUX_VERSION);
+				return EXIT_SUCCESS;
 			default:
 				invopt(&argv[arg][i]);
 			}
