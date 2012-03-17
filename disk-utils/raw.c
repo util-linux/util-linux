@@ -5,23 +5,23 @@
  *
  * This file may be redistributed under the terms of the GNU General
  * Public License, version 2.
- * 
+ *
  * Copyright Red Hat Software, 1999, 2000
  *
  */
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
 #include <errno.h>
-#include <string.h>
 #include <fcntl.h>
-#include <sys/stat.h>
-#include <sys/ioctl.h>
-#include <sys/sysmacros.h>
-#include <linux/raw.h>
-#include <linux/major.h>
 #include <getopt.h>
+#include <linux/major.h>
+#include <linux/raw.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <sys/sysmacros.h>
+#include <unistd.h>
 
 #include "c.h"
 #include "nls.h"
@@ -30,19 +30,17 @@
 #define EXIT_RAW_ACCESS 3
 #define EXIT_RAW_IOCTL 4
 
-
 #define RAW_NR_MINORS 8192
 
-int	do_query = 0;
-int	do_query_all = 0;
+int do_query;
+int do_query_all;
 
-int	master_fd;
-int	raw_minor;
+int master_fd;
+int raw_minor;
 
 void open_raw_ctl(void);
 static int query(int minor_raw, const char *raw_name, int quiet);
 static int bind(int minor_raw, int block_major, int block_minor);
-
 
 static void __attribute__ ((__noreturn__)) usage(int err)
 {
@@ -63,7 +61,6 @@ static void __attribute__ ((__noreturn__)) usage(int err)
 	fprintf(out, USAGE_MAN_TAIL("raw(8)"));
 	exit(err);
 }
-
 
 long strtol_octal_or_err(const char *str, const char *errmesg)
 {
@@ -87,15 +84,14 @@ long strtol_octal_or_err(const char *str, const char *errmesg)
 	return 0;
 }
 
-
 int main(int argc, char *argv[])
 {
-	int  c;
-	char * raw_name;
-	char * block_name;
-	int  retval;
-	int  block_major, block_minor;
-	int  i, rc;
+	int c;
+	char *raw_name;
+	char *block_name;
+	int retval;
+	int block_major, block_minor;
+	int i, rc;
 
 	struct stat statbuf;
 
@@ -111,7 +107,7 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "qaVh", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "qaVh", longopts, NULL)) != -1)
 		switch (c) {
 		case 'q':
 			do_query = 1;
@@ -127,12 +123,10 @@ int main(int argc, char *argv[])
 		default:
 			usage(EXIT_FAILURE);
 		}
-	}
 
 	/*
 	 * Check for, and open, the master raw device, /dev/raw
 	 */
-
 	open_raw_ctl();
 
 	if (do_query_all) {
@@ -170,18 +164,16 @@ int main(int argc, char *argv[])
 		return query(raw_minor, raw_name, 0);
 
 	/*
-	 * It's not a query, so we still have some parsing to do.  Have
-	 * we been given a block device filename or a major/minor pair?
+	 * It's not a query, so we still have some parsing to do.  Have we been
+	 * given a block device filename or a major/minor pair?
 	 */
-
 	switch (argc - optind) {
 	case 1:
 		block_name = argv[optind];
 		retval = stat(block_name, &statbuf);
 		if (retval)
 			err(EXIT_RAW_ACCESS,
-			    _("Cannot locate block device '%s'"),
-			    block_name);
+			    _("Cannot locate block device '%s'"), block_name);
 		if (!S_ISBLK(statbuf.st_mode))
 			errx(EXIT_RAW_ACCESS,
 			     _("Device '%s' is not a block device"),
@@ -200,13 +192,11 @@ int main(int argc, char *argv[])
 		break;
 
 	default:
-		block_major = block_minor = 0; /* just to keep gcc happy */
 		usage(EXIT_FAILURE);
 	}
 
 	return bind(raw_minor, block_major, block_minor);
 }
-
 
 void open_raw_ctl(void)
 {
@@ -220,18 +210,15 @@ void open_raw_ctl(void)
 	}
 }
 
-
 static int query(int minor_raw, const char *raw_name, int quiet)
 {
 	struct raw_config_request rq;
 	static int has_worked = 0;
-	int retval;
 
 	if (raw_name) {
 		struct stat statbuf;
 
-		retval = stat(raw_name, &statbuf);
-		if (retval)
+		if (!stat(raw_name, &statbuf))
 			err(EXIT_RAW_ACCESS,
 			    _("Cannot locate raw device '%s'"), raw_name);
 		if (!S_ISCHR(statbuf.st_mode))
@@ -245,8 +232,7 @@ static int query(int minor_raw, const char *raw_name, int quiet)
 	}
 
 	rq.raw_minor = minor_raw;
-	retval = ioctl(master_fd, RAW_GETBIND, &rq);
-	if (retval < 0) {
+	if (ioctl(master_fd, RAW_GETBIND, &rq) < 0) {
 		if (quiet && errno == ENODEV)
 			return 3;
 		if (has_worked && errno == EINVAL)
@@ -254,9 +240,9 @@ static int query(int minor_raw, const char *raw_name, int quiet)
 		err(EXIT_RAW_IOCTL, _("Error querying raw device"));
 	}
 
-	/* If one query has worked, mark that fact so that we don't
-	 * report spurious fatal errors if raw(8) has been built to
-	 * support more raw minor numbers than the kernel has. */
+	/* If one query has worked, mark that fact so that we don't report
+	 * spurious fatal errors if raw(8) has been built to support more raw
+	 * minor numbers than the kernel has. */
 	has_worked = 1;
 	if (quiet && !rq.block_major && !rq.block_minor)
 		return 0;
@@ -270,7 +256,7 @@ static int bind(int minor_raw, int block_major, int block_minor)
 {
 	struct raw_config_request rq;
 
-	rq.raw_minor   = minor_raw;
+	rq.raw_minor = minor_raw;
 	rq.block_major = block_major;
 	rq.block_minor = block_minor;
 	if (!ioctl(master_fd, RAW_SETBIND, &rq))
@@ -280,4 +266,3 @@ static int bind(int minor_raw, int block_major, int block_minor)
 	       (int)rq.block_minor);
 	return 0;
 }
-
