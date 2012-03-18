@@ -1300,7 +1300,7 @@ main(int argc, char **argv) {
 	}
 	IN = open(device_name, repair ? O_RDWR : O_RDONLY);
 	if (IN < 0)
-		die(_("unable to open '%s': %m"), device_name);
+		die(_("unable to open '%s': %s"), device_name, strerror(errno));
 	for (count = 0; count < 3; count++)
 		sync();
 	read_superblock();
