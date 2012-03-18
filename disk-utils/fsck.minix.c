@@ -102,6 +102,7 @@
 #include <sys/stat.h>
 #include <signal.h>
 
+#include "c.h"
 #include "exitcodes.h"
 #include "minix_programs.h"
 #include "nls.h"
@@ -125,7 +126,6 @@ static char *inode_buffer;
 #define Inode (((struct minix_inode *) inode_buffer) - 1)
 #define Inode2 (((struct minix2_inode *) inode_buffer) - 1)
 
-static char *program_name = "fsck.minix";
 static char *device_name;
 static int IN;
 static int repair, automatic, verbose, list, show, warn_mode, force;
@@ -194,9 +194,20 @@ leave(int status) {
 
 static void
 usage(void) {
+	fputs(USAGE_HEADER, stderr);
 	fprintf(stderr,
-		_("Usage: %s [-larvsmf] /dev/name\n"),
-		program_name);
+		_(" %s [options] <device>\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, stderr);
+	fputs(_(" -l  list all filenames\n"), stderr);
+	fputs(_(" -a  automatic repair\n"), stderr);
+	fputs(_(" -r  interactive repair\n"), stderr);
+	fputs(_(" -v  be verbose\n"), stderr);
+	fputs(_(" -s  output super-block information\n"), stderr);
+	fputs(_(" -m  activate mode not cleared warnings\n"), stderr);
+	fputs(_(" -f  force check\n"), stderr);
+	fputs(USAGE_SEPARATOR, stderr);
+	fputs(USAGE_VERSION, stderr);
+	fprintf(stderr, USAGE_MAN_TAIL("fsck.minix(8)"));
 	leave(FSCK_EX_USAGE);
 }
 
@@ -207,7 +218,7 @@ static void
 die(const char *fmt, ...) {
 	va_list ap;
 
-	fprintf(stderr, "%s: ", program_name);
+	fprintf(stderr, "%s: ", program_invocation_short_name);
 	va_start(ap, fmt);
 	vfprintf(stderr, fmt, ap);
 	va_end (ap);
@@ -1258,11 +1269,6 @@ main(int argc, char ** argv) {
 	struct termios tmp;
 	int count;
 	int retcode = 0;
-	char *p;
-
-	program_name = (argc && *argv) ? argv[0] : "fsck.minix";
-	if ((p = strrchr(program_name, '/')) != NULL)
-		program_name = p+1;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -1270,7 +1276,7 @@ main(int argc, char ** argv) {
 
 	if (argc == 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-		printf(_("%s (%s)\n"), program_name, PACKAGE_STRING);
+		printf(UTIL_LINUX_VERSION);
 		exit(FSCK_EX_OK);
 	}
 
