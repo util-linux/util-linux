@@ -153,16 +153,16 @@ err:
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out, _("Usage: %s [options] <device>\n\nOptions:\n"),
-			program_invocation_short_name);
-
-	fprintf(out, _(
-		" -h, --help          this help\n"
-		" -L, --label <label> specify a new label\n"
-		" -U, --uuid <uuid>   specify a new uuid\n"));
-
-	fprintf(out, _("\nFor more information see swaplabel(8).\n"));
-
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] <device>\n"),
+		program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -L, --label <label> specify a new label\n"
+		" -U, --uuid <uuid>   specify a new uuid\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("swaplabel(8)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
@@ -174,6 +174,7 @@ int main(int argc, char *argv[])
 
 	static const struct option longopts[] = {
 	    { "help",      0, 0, 'h' },
+	    { "version",   0, 0, 'V' },
 	    { "label",     1, 0, 'L' },
 	    { "uuid",      1, 0, 'U' },
 	    { NULL,        0, 0, 0 }
@@ -183,11 +184,14 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long(argc, argv, "hL:U:", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hVL:U:", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage(stdout);
 			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		case 'L':
 			label = optarg;
 			break;
