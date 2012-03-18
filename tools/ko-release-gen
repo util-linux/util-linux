@@ -29,12 +29,12 @@ DISTDIR=${1:-"kernel.org"}/v${VERSION_MAJOR}
 
 GPG_CMD="gpg --use-agent --armor --detach-sign --quiet"
 
-function die {
+die() {
 	echo $1
 	exit 1
 }
 
-function add_file {
+add_file() {
 	local src="$1"
 	local name=$(basename $1)
 	local subdir=$DISTDIR/${2:-""}
@@ -66,11 +66,11 @@ function add_file {
 	echo " OK "
 }
 
-function add_html_dir {
+add_html_dir() {
 	local src="$1"		# source dir
 	local tgt="$2"		# target dir
 	
-	for fl in $(ls $src/*.{html,css,png}); do
+	for fl in $(ls $src/*.html $src/*.css $src/*.png); do
 		add_file $fl $tgt
 	done
 }
