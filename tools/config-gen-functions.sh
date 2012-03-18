@@ -11,7 +11,7 @@
 #
 #    ul_get_configuration $top_srcdir/tools/config-gen.d/all
 #
-function ul_get_configuration {
+ul_get_configuration() {
 	local conf="$1"
 	local dir=$(dirname $1)
 	local opts=$(cat $conf)

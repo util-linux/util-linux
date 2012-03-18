@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 #
 # Copyright (C) 2011 Karel Zak <kzak@redhat.com> 
 # 
@@ -24,7 +24,8 @@ for x in $opts; do
 done
 if [ -n "$CFLAGS" ]; then
 	echo "CFLAGS:	$CFLAGS"
-	export CFLAGS="$CFLAGS"
+	CFLAGS="$CFLAGS"
+	export CFLAGS
 fi
 
 echo
