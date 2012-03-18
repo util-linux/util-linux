@@ -8,4 +8,4 @@ tput rmul
 tput rs1
 tput rs2
 tput rs3
-echo -e \\033c
+printf "\\033c\n"
