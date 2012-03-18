@@ -102,6 +102,7 @@
 #include <sys/stat.h>
 #include <signal.h>
 
+#include "exitcodes.h"
 #include "minix_programs.h"
 #include "nls.h"
 #include "pathnames.h"
@@ -195,7 +196,7 @@ usage(void) {
 	fprintf(stderr,
 		_("Usage: %s [-larvsmf] /dev/name\n"),
 		program_name);
-	leave(16);
+	leave(FSCK_EX_USAGE);
 }
 
 static void die(const char *fmt, ...)
@@ -210,7 +211,7 @@ die(const char *fmt, ...) {
 	vfprintf(stderr, fmt, ap);
 	va_end (ap);
 	fputc('\n', stderr);
-	leave(8);
+	leave(FSCK_EX_ERROR);
 }
 
 /*
@@ -297,7 +298,7 @@ check_mount(void)
 		cont = 0;
 	if (!cont) {
 		printf (_("check aborted.\n"));
-		exit (0);
+		exit (FSCK_EX_OK);
 	}
 	return;
 }
@@ -1268,7 +1269,7 @@ main(int argc, char ** argv) {
 	if (argc == 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
 		printf(_("%s (%s)\n"), program_name, PACKAGE_STRING);
-		exit(0);
+		exit(FSCK_EX_OK);
 	}
 
 	if (INODE_SIZE * MINIX_INODES_PER_BLOCK != MINIX_BLOCK_SIZE)
