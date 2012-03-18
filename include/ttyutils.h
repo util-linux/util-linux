@@ -1,3 +1,5 @@
+#ifndef UTIL_LINUX_TTYUTILS_H
+#define UTIL_LINUX_TTYUTILS_H
 
 #include <termios.h>
 
@@ -71,3 +73,5 @@ static inline void reset_virtual_console(struct termios *tp, int flags)
 	tp->c_cc[VLNEXT]   = CLNEXT;
 	tp->c_cc[VEOL2]    = _POSIX_VDISABLE;
 }
+
+#endif /* UTIL_LINUX_TTYUTILS_H */
