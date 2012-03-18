@@ -111,6 +111,7 @@
 #include "writeall.h"
 
 #define ROOT_INO 1
+#define YESNO_LENGTH 64
 
 /*
  * Global variables used in minix_programs.h inline fuctions
@@ -238,7 +239,8 @@ get_current_name(void) {
 
 static int
 ask(const char * string, int def) {
-	int c;
+	int resp;
+	char input[YESNO_LENGTH];
 
 	if (!repair) {
 		printf("\n");
@@ -251,30 +253,30 @@ ask(const char * string, int def) {
 		      errors_uncorrected = 1;
 		return def;
 	}
-	printf(def?"%s (y/n)? ":"%s (n/y)? ",string);
-	for (;;) {
-		fflush(stdout);
-		if ((c=getchar())==EOF) {
-		        if (!def)
-			      errors_uncorrected = 1;
-			return def;
-		}
-		c=toupper(c);
-		if (c == 'Y') {
-			def = 1;
-			break;
-		} else if (c == 'N') {
-			def = 0;
-			break;
-		} else if (c == ' ' || c == '\n')
-			break;
+	/* TRANSLATORS: these yes no questions uses rpmatch(), and should be
+	 * translated.  */
+	printf(def ? _("%s (y/n)? ") : _("%s (n/y)? "), string);
+	fflush(stdout);
+	fgets(input, YESNO_LENGTH, stdin);
+	resp = rpmatch(input);
+	switch (resp) {
+	case -1:
+		/* def = def */
+		break;
+	case 0:
+	case 1:
+		def = resp;
+		break;
+	default:
+		/* rpmatch bug? */
+		abort();
 	}
 	if (def)
-		printf("y\n");
+		printf(_("y\n"));
 	else {
-		printf("n\n");
+		printf(_("n\n"));
 		errors_uncorrected = 1;
-	     }
+	}
 	return def;
 }
 
