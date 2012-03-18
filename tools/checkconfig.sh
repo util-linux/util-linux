@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 #
 # This script checks for HAVE_ and ENABLE_ macros which are
@@ -11,7 +11,7 @@
 #
 
 
-function die() {
+die() {
 	echo "error: $1"
 	exit 1
 }
@@ -24,7 +24,7 @@ config="$srcdir/config.h.in"
 
 shift
 
-while (( "$#" )); do
+while [ "$#" -ne 0 ]; do
 	srcfile=$1
 	shift
 
