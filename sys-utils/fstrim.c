@@ -52,19 +52,18 @@ struct fstrim_range {
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fputs(_("\nUsage:\n"), out);
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
 	      _(" %s [options] <mount point>\n"), program_invocation_short_name);
-
-	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -h, --help          this help\n"
-		" -o, --offset <num>  offset in bytes to discard from\n"
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -o, --offset <num>  offset in bytes to discard from\n"
 		" -l, --length <num>  length of bytes to discard from the offset\n"
 		" -m, --minimum <num> minimum extent length to discard\n"
 		" -v, --verbose       print number of discarded bytes\n"), out);
-
-	fputs(_("\nFor more information see fstrim(8).\n"), out);
-
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("fstrim(8)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
@@ -77,6 +76,7 @@ int main(int argc, char **argv)
 
 	static const struct option longopts[] = {
 	    { "help",      0, 0, 'h' },
+	    { "version",   0, 0, 'V' },
 	    { "offset",    1, 0, 'o' },
 	    { "length",    1, 0, 'l' },
 	    { "minimum",   1, 0, 'm' },
@@ -91,11 +91,14 @@ int main(int argc, char **argv)
 	memset(&range, 0, sizeof(range));
 	range.len = ULLONG_MAX;
 
-	while ((c = getopt_long(argc, argv, "ho:l:m:v", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hVo:l:m:v", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 			usage(stdout);
 			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		case 'l':
 			range.len = strtosize_or_err(optarg,
 					_("failed to parse length"));
