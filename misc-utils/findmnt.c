@@ -30,6 +30,8 @@
 #endif
 #include <assert.h>
 #include <poll.h>
+#include <sys/statvfs.h>
+#include <sys/types.h>
 
 #include <libmount.h>
 
@@ -66,6 +68,10 @@ enum {
 	COL_ACTION,
 	COL_OLD_TARGET,
 	COL_OLD_OPTIONS,
+	COL_SIZE,
+	COL_AVAIL,
+	COL_USED,
+	COL_USEPERC,
 
 	FINDMNT_NCOLUMNS
 };
@@ -99,6 +105,10 @@ static struct colinfo infos[FINDMNT_NCOLUMNS] = {
 	[COL_ACTION]       = { "ACTION",         10, TT_FL_STRICTWIDTH, N_("action detected by --poll") },
 	[COL_OLD_OPTIONS]  = { "OLD-OPTIONS",  0.10, TT_FL_TRUNC, N_("old mount options saved by --poll") },
 	[COL_OLD_TARGET]   = { "OLD-TARGET",   0.30, 0, N_("old mountpoint saved by --poll") },
+	[COL_SIZE]         = { "SIZE",            8, TT_FL_RIGHT, N_("filesystem size") },
+	[COL_AVAIL]        = { "AVAIL",           8, TT_FL_RIGHT, N_("filesystem size available") },
+	[COL_USED]         = { "USED",            8, TT_FL_RIGHT, N_("filesystem size used") },
+	[COL_USEPERC]      = { "USE%",            8, TT_FL_RIGHT, N_("filesystem use percentage") },
 };
 
 /* global flags */
@@ -281,14 +291,49 @@ static const char *get_tag(struct libmnt_fs *fs, const char *tagname)
 	return res;
 }
 
+static const char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
+{
+	struct statvfs buf;
+	uint64_t vfs_attr;
+	char *sizestr;
+
+	if (statvfs(mnt_fs_get_target(fs), &buf) != 0)
+		return NULL;
+
+	switch(sizetype) {
+	case COL_SIZE:
+		vfs_attr = buf.f_frsize * buf.f_blocks;
+		break;
+	case COL_AVAIL:
+		vfs_attr = buf.f_frsize * buf.f_bfree;
+		break;
+	case COL_USED:
+		vfs_attr = buf.f_frsize * (buf.f_blocks - buf.f_bfree);
+		break;
+	case COL_USEPERC:
+		if (buf.f_blocks == 0)
+			return "-";
+
+		if (asprintf(&sizestr, "%.0f%%",
+					(double)(buf.f_blocks - buf.f_bfree) /
+					buf.f_blocks * 100) == -1)
+			err(EXIT_FAILURE, "failed to allocate string");
+		return sizestr;
+	}
+
+	return vfs_attr == 0 ? "0" :
+		size_to_human_string(SIZE_SUFFIX_1LETTER, vfs_attr);
+}
+
 /* reads FS data from libmount
  * TODO: add function that will deallocate data allocated by get_data()
  */
 static const char *get_data(struct libmnt_fs *fs, int num)
 {
 	const char *str = NULL;
+	int col_id = get_column_id(num);
 
-	switch(get_column_id(num)) {
+	switch (col_id) {
 	case COL_SOURCE:
 	{
 		const char *root = mnt_fs_get_root(fs);
@@ -347,7 +392,14 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 			if (rc)
 				str = tmp;
 		}
+		break;
 	}
+	case COL_SIZE:
+	case COL_AVAIL:
+	case COL_USED:
+	case COL_USEPERC:
+		str = get_vfs_attr(fs, col_id);
+		break;
 	default:
 		break;
 	}
