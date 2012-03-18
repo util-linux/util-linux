@@ -885,6 +885,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(
 	" -a, --ascii            use ASCII chars for tree formatting\n"
 	" -c, --canonicalize     canonicalize printed paths\n"
+	" -D, --df               imitate the output of df(1)\n"
 	" -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 	" -e, --evaluate         convert tags (LABEL/UUID) to device names\n"
 	" -F, --tab-file <path>  alternative file for --fstab, --mtab or --kernel options\n"
@@ -931,7 +932,7 @@ int main(int argc, char *argv[])
 	struct libmnt_table *tb = NULL;
 	char **tabfiles = NULL;
 	int direction = MNT_ITER_FORWARD;
-	int i, c, rc = -1, timeout = -1;
+	int i, c, rc = -1, timeout = -1, df_output = 0;
 	int ntabfiles = 0, tabtype = 0;
 
 	/* table.h */
@@ -941,6 +942,7 @@ int main(int argc, char *argv[])
 	    { "ascii",        0, 0, 'a' },
 	    { "canonicalize", 0, 0, 'c' },
 	    { "direction",    1, 0, 'd' },
+	    { "df",           0, 0, 'D' },
 	    { "evaluate",     0, 0, 'e' },
 	    { "first-only",   0, 0, 'f' },
 	    { "fstab",        0, 0, 's' },
@@ -977,7 +979,7 @@ int main(int argc, char *argv[])
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"acd:ehifF:o:O:p::Pklmnrst:uvRS:T:w:",
+				"acDd:ehifF:o:O:p::Pklmnrst:uvRS:T:w:",
 				longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
@@ -985,6 +987,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'c':
 			flags |= FL_CANONICALIZE;
+			break;
+		case 'D':
+			tt_flags &= ~TT_FL_TREE;
+			df_output = 1;
 			break;
 		case 'd':
 			if (!strcmp(optarg, "forward"))
@@ -1093,6 +1099,16 @@ int main(int argc, char *argv[])
 			usage(stderr);
 			break;
 		}
+	}
+
+	if (df_output) {
+		columns[ncolumns++] = COL_SOURCE;
+		columns[ncolumns++] = COL_FSTYPE;
+		columns[ncolumns++] = COL_SIZE;
+		columns[ncolumns++] = COL_USED;
+		columns[ncolumns++] = COL_AVAIL;
+		columns[ncolumns++] = COL_USEPERC;
+		columns[ncolumns++] = COL_TARGET;
 	}
 
 	/* default columns */
