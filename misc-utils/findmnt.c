@@ -906,7 +906,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -f, --first-only       print the first found filesystem only\n"));
 
 	fprintf(out, _(
-	" -h, --help             display this help text and exit\n"
 	" -i, --invert           invert the sense of matching\n"
 	" -l, --list             use list format output\n"
 	" -n, --noheadings       don't print column headings\n"
