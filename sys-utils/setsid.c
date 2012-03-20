@@ -22,15 +22,18 @@
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out, USAGE_HEADER);
-	fprintf(out, _(" %s [options] <program> [arguments ...]\n"),
-		program_invocation_short_name);
-	fprintf(out, USAGE_OPTIONS);
+	fputs(USAGE_HEADER, out);
 	fprintf(out, _(
-		" -c, --ctty \tset the controlling terminal to the current one\n"
-		));
-	fprintf(out, USAGE_HELP);
-	fprintf(out, USAGE_VERSION);
+		" %s [options] <program> [arguments ...]\n"),
+		program_invocation_short_name);
+
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -c, --ctty     set the controlling terminal to the current one\n"),
+		out);
+
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+
 	fprintf(out, USAGE_MAN_TAIL("setsid(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
