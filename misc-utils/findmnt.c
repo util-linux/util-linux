@@ -107,10 +107,10 @@ static struct colinfo infos[FINDMNT_NCOLUMNS] = {
 	[COL_ACTION]       = { "ACTION",         10, TT_FL_STRICTWIDTH, N_("action detected by --poll") },
 	[COL_OLD_OPTIONS]  = { "OLD-OPTIONS",  0.10, TT_FL_TRUNC, N_("old mount options saved by --poll") },
 	[COL_OLD_TARGET]   = { "OLD-TARGET",   0.30, 0, N_("old mountpoint saved by --poll") },
-	[COL_SIZE]         = { "SIZE",            8, TT_FL_RIGHT, N_("filesystem size") },
-	[COL_AVAIL]        = { "AVAIL",           8, TT_FL_RIGHT, N_("filesystem size available") },
-	[COL_USED]         = { "USED",            8, TT_FL_RIGHT, N_("filesystem size used") },
-	[COL_USEPERC]      = { "USE%",            8, TT_FL_RIGHT, N_("filesystem use percentage") },
+	[COL_SIZE]         = { "SIZE",            5, TT_FL_RIGHT, N_("filesystem size") },
+	[COL_AVAIL]        = { "AVAIL",           5, TT_FL_RIGHT, N_("filesystem size available") },
+	[COL_USED]         = { "USED",            5, TT_FL_RIGHT, N_("filesystem size used") },
+	[COL_USEPERC]      = { "USE%",            3, TT_FL_RIGHT, N_("filesystem use percentage") },
 };
 
 /* global flags */
