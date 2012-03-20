@@ -2785,10 +2785,8 @@ print_partition_table_from_option(char *device)
 		if (gb > 0) { /* I/O error */
 		} else if (gb < 0) { /* no DOS signature */
 			list_disk_geometry();
-			if (disklabel != AIX_LABEL && disklabel != MAC_LABEL && btrydev(device) < 0)
-				fprintf(stderr,
-					_("Disk %s doesn't contain a valid "
-					  "partition table\n"), device);
+			if (disklabel != AIX_LABEL && disklabel != MAC_LABEL)
+				btrydev(device);
 		} else {
 			list_table(0);
 		}
