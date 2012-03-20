@@ -314,10 +314,9 @@ static const char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 		if (buf.f_blocks == 0)
 			return "-";
 
-		if (asprintf(&sizestr, "%.0f%%",
-					(double)(buf.f_blocks - buf.f_bfree) /
-					buf.f_blocks * 100) == -1)
-			err(EXIT_FAILURE, "failed to allocate string");
+		xasprintf(&sizestr, "%.0f%%",
+				(double)(buf.f_blocks - buf.f_bfree) /
+				buf.f_blocks * 100);
 		return sizestr;
 	}
 
@@ -326,7 +325,6 @@ static const char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 }
 
 /* reads FS data from libmount
- * TODO: add function that will deallocate data allocated by get_data()
  */
 static const char *get_data(struct libmnt_fs *fs, int num)
 {
