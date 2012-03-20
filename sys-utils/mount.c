@@ -38,6 +38,7 @@
 #include "strutils.h"
 #include "xgetpass.h"
 #include "exitcodes.h"
+#include "xalloc.h"
 
 /*** TODO: DOCS:
  *
