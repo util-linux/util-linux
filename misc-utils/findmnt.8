@@ -47,11 +47,17 @@ The output is in the list format (see --list).
 Search in
 .IR /proc/self/mountinfo .
 The output is in the tree-like format.  This is the default.
+
+.IP "\fB\-A, \-\-all\fP"
+Disable all built-in filters and print all filesystems.
+.IP "\fB\-a, \-\-ascii\fP"
+Use ascii characters for tree formatting.
 .IP "\fB\-c, \-\-canonicalize\fP"
 Canonicalize all printed paths.
 .IP "\fB\-D, \-\-df\fP"
 Imitate the output of df(1). This option is equivalent to
-"-o SOURCE,FSTYPE,SIZE,USED,AVAIL,USE%,TARGET".
+"-o SOURCE,FSTYPE,SIZE,USED,AVAIL,USE%,TARGET", but excludes all
+pseudo filesystem. Use \fB\-\-all\fP to print all filesystems.
 .IP "\fB\-d, \-\-direction \fIword\fP"
 The search direction -
 .IR forward
@@ -148,8 +154,6 @@ available for umount and remount actions
 Use key="value" output format.
 .IP "\fB\-r, \-\-raw\fP"
 Use raw output format.
-.IP "\fB\-a, \-\-ascii\fP"
-Use ascii characters for tree formatting.
 .IP "\fB\-t, \-\-types \fIlist\fP"
 Limit the set of printed filesystems.  More than one type may be
 specified in a comma-separated list.  The list of filesystem types can be

@@ -51,7 +51,9 @@ enum {
 	FL_NOSWAPMATCH	= (1 << 6),
 	FL_NOFSROOT	= (1 << 7),
 	FL_SUBMOUNTS	= (1 << 8),
-	FL_POLL		= (1 << 9)
+	FL_POLL		= (1 << 9),
+	FL_DF		= (1 << 10),
+	FL_ALL		= (1 << 11)
 };
 
 /* column IDs */
@@ -192,6 +194,9 @@ static int is_tabdiff_column(int id)
  */
 static int is_listall_mode(void)
 {
+	if ((flags & FL_DF) && !(flags & FL_ALL))
+		return 0;
+
 	return (!get_match(COL_SOURCE) &&
 		!get_match(COL_TARGET) &&
 		!get_match(COL_FSTYPE) &&
@@ -638,6 +643,16 @@ static int match_func(struct libmnt_fs *fs,
 	if (m && !mnt_fs_match_options(fs, m))
 		return rc;
 
+	if ((flags & FL_DF) && !(flags & FL_ALL)) {
+		const char *type = mnt_fs_get_fstype(fs);
+
+		if (type && strstr(type, "tmpfs"))	/* tmpfs is wanted */
+			return !rc;
+
+		if (mnt_fs_is_pseudofs(fs))
+			return rc;
+	}
+
 	return !rc;
 }
 
@@ -881,6 +896,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -w, --timeout <num>    upper limit in milliseconds that --poll will block\n\n"));
 
 	fprintf(out, _(
+	" -A, --all              disable all built-in filters, print all filesystems\n"
 	" -a, --ascii            use ASCII chars for tree formatting\n"
 	" -c, --canonicalize     canonicalize printed paths\n"
 	" -D, --df               imitate the output of df(1)\n"
@@ -930,13 +946,14 @@ int main(int argc, char *argv[])
 	struct libmnt_table *tb = NULL;
 	char **tabfiles = NULL;
 	int direction = MNT_ITER_FORWARD;
-	int i, c, rc = -1, timeout = -1, df_output = 0;
+	int i, c, rc = -1, timeout = -1;
 	int ntabfiles = 0, tabtype = 0;
 
 	/* table.h */
 	struct tt *tt = NULL;
 
 	static const struct option longopts[] = {
+	    { "all",          0, 0, 'A' },
 	    { "ascii",        0, 0, 'a' },
 	    { "canonicalize", 0, 0, 'c' },
 	    { "direction",    1, 0, 'd' },
@@ -977,9 +994,12 @@ int main(int argc, char *argv[])
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"acDd:ehifF:o:O:p::Pklmnrst:uvRS:T:w:",
+				"AacDd:ehifF:o:O:p::Pklmnrst:uvRS:T:w:",
 				longopts, NULL)) != -1) {
 		switch(c) {
+		case 'A':
+			flags |= FL_ALL;
+			break;
 		case 'a':
 			tt_flags |= TT_FL_ASCII;
 			break;
@@ -988,7 +1008,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'D':
 			tt_flags &= ~TT_FL_TREE;
-			df_output = 1;
+			flags |= FL_DF;
 			break;
 		case 'd':
 			if (!strcmp(optarg, "forward"))
@@ -1099,7 +1119,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (df_output) {
+	if (!ncolumns && (flags & FL_DF)) {
 		columns[ncolumns++] = COL_SOURCE;
 		columns[ncolumns++] = COL_FSTYPE;
 		columns[ncolumns++] = COL_SIZE;
