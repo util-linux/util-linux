@@ -497,13 +497,7 @@ static int parser_errcb(struct libmnt_table *tb __attribute__ ((__unused__)),
 
 static char **append_tabfile(char **files, int *nfiles, char *filename)
 {
-	void *tmp = realloc(files, sizeof(char *) * (*nfiles + 1));
-
-	if (!tmp) {
-		free(files);
-		return NULL;
-	}
-	files = tmp;
+	files = xrealloc(files, sizeof(char *) * (*nfiles + 1));
 	files[(*nfiles)++] = filename;
 	return files;
 }

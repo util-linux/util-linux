@@ -305,10 +305,8 @@ restore_sectors(char *dev) {
 	error(_("partition restore file has wrong size - not restoring\n"));
 	goto err;
     }
-    if (!(ss0 = (char *)malloc(statbuf.st_size))) {
-	error(_("out of memory?\n"));
-	goto err;
-    }
+
+    ss0 = xmalloc(statbuf.st_size);
     ss = ss0;
 
     fdin = open(restore_sector_file, O_RDONLY);

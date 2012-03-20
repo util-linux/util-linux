@@ -197,9 +197,7 @@ read_proc_swaps(void) {
 			       *p = '\0';
 		}
 
-		q = realloc(swapFiles, (numSwaps+1) * sizeof(*swapFiles));
-		if (q == NULL)
-			break;
+		q = xrealloc(swapFiles, (numSwaps+1) * sizeof(*swapFiles));
 		swapFiles = q;
 
 		if ((p = unmangle(line, NULL)) == NULL)
@@ -640,7 +638,7 @@ swapon_all(void) {
 		if (!streq(fstab->mnt_type, MNTTYPE_SWAP))
 			continue;
 
-		opts = strdup(fstab->mnt_opts);
+		opts = xstrdup(fstab->mnt_opts);
 
 		for (opt = strtok(opts, ","); opt != NULL;
 		     opt = strtok(NULL, ",")) {
