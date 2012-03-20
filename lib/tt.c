@@ -448,7 +448,7 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 	}
 
 	if (width < tb->termwidth) {
-		/* cool, use the extra space for the extreme columns or/and last column
+		/* try to found extreme column which fits into available space
 		 */
 		if (extremes) {
 			/* enlarge the first extreme column */
@@ -459,6 +459,12 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 
 				if (!cl->is_extreme)
 					continue;
+
+				if (cl->width_max - cl->width >
+						(tb->termwidth - width))
+					/* this column is tooo large, ignore */
+					continue;
+
 				add = tb->termwidth - width;
 				if (add && cl->width + add > cl->width_max)
 					add = cl->width_max - cl->width;
