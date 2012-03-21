@@ -48,9 +48,10 @@ static int fix_optstr(struct libmnt_context *cxt)
 
 	fs = cxt->fs;
 
-	/* The propagation flags should not be used together with any other flags */
+	/* The propagation flags should not be used together with any other
+	 * flags (except MS_REC and MS_SILENT) */
 	if (cxt->mountflags & MS_PROPAGATION)
-		cxt->mountflags &= MS_PROPAGATION;
+		cxt->mountflags &= (MS_PROPAGATION | MS_REC | MS_SILENT);
 
 	if (!mnt_optstr_get_option(fs->user_optstr, "user", &val, &valsz)) {
 		if (val) {
