@@ -19,6 +19,17 @@
 
 #include "superblocks.h"
 
+struct iso9660_date {
+	unsigned char year[4];
+	unsigned char month[2];
+	unsigned char day[2];
+	unsigned char hour[2];
+	unsigned char minute[2];
+	unsigned char second[2];
+	unsigned char hundredth[2];
+	unsigned char offset;
+} __attribute__ ((packed));
+
 /* PVD - Primary volume descriptor */
 struct iso_volume_descriptor {
 	unsigned char	vd_type;
@@ -30,6 +41,9 @@ struct iso_volume_descriptor {
 	unsigned char	unused[8];
 	unsigned char	space_size[8];
 	unsigned char	escape_sequences[8];
+	unsigned char   unused1[717];
+	struct iso9660_date created;
+	struct iso9660_date modified;
 } __attribute__((packed));
 
 #define ISO_SUPERBLOCK_OFFSET		0x8000
@@ -77,6 +91,51 @@ static int probe_iso9660_hsfs(blkid_probe pr, const struct blkid_idmag *mag)
 	return 0;
 }
 
+static int probe_iso9660_set_uuid (blkid_probe pr, const struct iso9660_date *date)
+{
+	unsigned char buffer[16];
+	unsigned int i, zeros = 0;
+
+	buffer[0] = date->year[0];
+	buffer[1] = date->year[1];
+	buffer[2] = date->year[2];
+	buffer[3] = date->year[3];
+	buffer[4] = date->month[0];
+	buffer[5] = date->month[1];
+	buffer[6] = date->day[0];
+	buffer[7] = date->day[1];
+	buffer[8] = date->hour[0];
+	buffer[9] = date->hour[1];
+	buffer[10] = date->minute[0];
+	buffer[11] = date->minute[1];
+	buffer[12] = date->second[0];
+	buffer[13] = date->second[1];
+	buffer[14] = date->hundredth[0];
+	buffer[15] = date->hundredth[1];
+
+	/* count the number of zeros ('0') in the date buffer */
+	for (i = 0, zeros = 0; i < sizeof(buffer); i++)
+		if (buffer[i] == '0')
+			zeros++;
+
+	/* due to the iso9660 standard if all date fields are '0' and offset is 0, the date is unset */
+	if (zeros == sizeof(buffer) && date->offset == 0)
+		return 0;
+
+	/* generate an UUID using this date and return success */
+	blkid_probe_sprintf_uuid (pr, buffer, sizeof(buffer),
+		"%c%c%c%c-%c%c-%c%c-%c%c-%c%c-%c%c-%c%c",
+		buffer[0], buffer[1], buffer[2], buffer[3],
+		buffer[4], buffer[5],
+		buffer[6], buffer[7],
+		buffer[8], buffer[9],
+		buffer[10], buffer[11],
+		buffer[12], buffer[13],
+		buffer[14], buffer[15]);
+
+	return 1;
+}
+
 /* iso9660 [+ Microsoft Joliet Extension] */
 static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 {
@@ -93,6 +152,10 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 		return -1;
 
 	memcpy(label, iso->volume_id, sizeof(label));
+
+	/* create an UUID using the modified/created date */
+	if (! probe_iso9660_set_uuid(pr, &iso->modified))
+		probe_iso9660_set_uuid(pr, &iso->created);
 
 	/* Joliet Extension */
 	off = ISO_VD_OFFSET;
@@ -135,7 +198,6 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 has_label:
 	return 0;
 }
-
 
 const struct blkid_idinfo iso9660_idinfo =
 {
