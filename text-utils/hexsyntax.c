@@ -53,7 +53,8 @@ void
 newsyntax(int argc, char ***argvp)
 {
 	int ch;
-	char *p, **argv;
+	char **argv;
+	uintmax_t o;
 
 	argv = *argvp;
 	while ((ch = getopt(argc, argv, "bcCde:f:n:os:vxV")) != -1) {
@@ -82,26 +83,20 @@ newsyntax(int argc, char ***argvp)
 			addfile(optarg);
 			break;
 		case 'n':
-		        length = strtol_or_err(optarg, _("bad length value"));
+			if (strtosize(optarg, &o))
+				errx(EXIT_FAILURE,
+				     _("invalid length value '%s' specified"), optarg);
+			length = o;
 			break;
 		case 'o':
 			add("\"%07.7_Ax\n\"");
 			add("\"%07.7_ax \" 8/2 \" %06o \" \"\\n\"");
 			break;
 		case 's':
-			if ((skip = strtol(optarg, &p, 0)) < 0)
-				err(EXIT_FAILURE, _("bad skip value"));
-			switch(*p) {
-			case 'b':
-				skip *= 512;
-				break;
-			case 'k':
-				skip *= 1024;
-				break;
-			case 'm':
-				skip *= 1048576;
-				break;
-			}
+			if (strtosize(optarg, &o))
+				errx(EXIT_FAILURE,
+				     _("invalid skip value '%s' specified"), optarg);
+			skip = o;
 			break;
 		case 'v':
 			vflag = ALL;

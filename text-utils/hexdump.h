@@ -75,7 +75,7 @@ extern FS *fshead;			/* head of format strings list */
 extern int blocksize;			/* data block size */
 extern int deprecated;			/* od compatibility */
 extern int exitval;			/* final exit value */
-extern int length;			/* max bytes to read */
+extern ssize_t length;			/* max bytes to read */
 extern off_t skip;                      /* bytes to skip */
 
 enum _vflag { ALL, DUP, FIRST, WAIT };	/* -v values */

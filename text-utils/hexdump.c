@@ -47,7 +47,7 @@
 FS *fshead;				/* head of format strings */
 int blocksize;				/* data block size */
 int exitval;				/* final exit value */
-int length = -1;			/* max bytes to read */
+ssize_t length = -1;			/* max bytes to read */
 
 int main(int argc, char **argv)
 {
