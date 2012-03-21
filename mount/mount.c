@@ -601,9 +601,10 @@ parse_opts (const char *options, int *flags, char **extra_opts) {
 
 	*flags |= mounttype;
 
-	/* The propagation flags should not be used together with any other flags */
+	/* The propagation flags should not be used together with any
+	 * other flags (except MS_REC and MS_SILENT) */
 	if (*flags & MS_PROPAGATION)
-		*flags &= MS_PROPAGATION;
+		*flags &= (MS_PROPAGATION | MS_REC | MS_SILENT);
 }
 
 /* Try to build a canonical options string.  */
