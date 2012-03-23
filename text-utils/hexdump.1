@@ -44,6 +44,9 @@ utility is a filter which displays the specified files, or
 standard input if no files are specified, in a user-specified
 format.
 .SH OPTIONS
+The \fIlength\fR and \fIoffset\fR arguments may be followed by binary (2^N)
+suffixes KiB, MiB, GiB, TiB, PiB and EiB (the "iB" is optional, e.g. "K" has the
+same meaning as "KiB") or decimal (10^N) suffixes KB, MB, GB, PB and EB.
 .TP
 .B \-b
 \fIOne-byte octal display\fR.  Display the input offset in hexadecimal,
@@ -90,29 +93,7 @@ quantities of input data, in octal, per line.
 .BI \-s \ offset
 Skip
 .I offset
-bytes from the beginning of the input.  By default,
-.I offset
-is interpreted as a decimal number.  With a leading
-.B 0x
-or
-.BR 0X ,
-.I offset
-is interpreted as a hexadecimal number, otherwise, with a leading
-.BR 0 ,
-.I offset
-is interpreted as an octal number.  Appending the character
-.BR b ,
-.BR k ,
-or
-.B m
-to
-.I offset
-causes it to be interpreted as a multiple of
-.IR 512 ,
-.IR 1024 ,
-or
-.IR 1048576 ,
-respectively.
+bytes from the beginning of the input.
 .TP
 .B \-v
 The
