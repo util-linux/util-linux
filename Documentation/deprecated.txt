@@ -2,6 +2,11 @@ The following is a list of commands or features that are deprecated.  All
 deprecated utils are in maintenance mode and we keep them in source tree for
 backward compatibility only.
 
+What:   'udev' and 'list' blkid(8) output formats
+Why:    udevd links libblkid directly; the 'list' is unnecessary, use lsblk(8)
+
+--------------------------
+
 What:   line(1) command
 Why:    useless, nobody uses this command, head(1) is better
 

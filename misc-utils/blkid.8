@@ -156,7 +156,10 @@ print the value of the tags
 .TP
 .B list
 print the devices in a user-friendly format; this output format is unsupported
-for low-level probing (\fB-p\fR or \fB-i\fR)
+for low-level probing (\fB-p\fR or \fB-i\fR). This output format is \fBDEPRECATED\fR
+in favour of
+.BR lsblk (8)
+command.
 .TP
 .B device
 print the device name only; this output format is always enabled for \fB-L\fR
@@ -168,7 +171,7 @@ prefixed by ID_FS_ or ID_PART_ prefixes
 
 The udev output returns the ID_FS_AMBIVALENT tag if more superblocks are detected,
 and ID_PART_ENTRY_* tags are always returned for all partitions including empty
-partitions.
+partitions. This output format is \fBDEPRECATED\fR.
 .TP
 .B export
 print key=value pairs for easy import into the environment; this output format

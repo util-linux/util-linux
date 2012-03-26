@@ -31,8 +31,8 @@ extern int optind;
 
 #define OUTPUT_VALUE_ONLY	(1 << 1)
 #define OUTPUT_DEVICE_ONLY	(1 << 2)
-#define OUTPUT_PRETTY_LIST	(1 << 3)
-#define OUTPUT_UDEV_LIST	(1 << 4)
+#define OUTPUT_PRETTY_LIST	(1 << 3)		/* deprecated */
+#define OUTPUT_UDEV_LIST	(1 << 4)		/* deprecated */
 #define OUTPUT_EXPORT_LIST	(1 << 5)
 
 #define LOWPROBE_TOPOLOGY	(1 << 1)
@@ -73,7 +73,7 @@ static void usage(int error)
 		" -h          print this usage message and exit\n"
 		" -g          garbage collect the blkid cache\n"
 		" -o <format> output format; can be one of:\n"
-		"               value, device, list, udev, export or full; (default: full)\n"
+		"               value, device, export or full; (default: full)\n"
 		" -k          list all known filesystems/RAIDs and exit\n"
 		" -s <tag>    show specified tag(s) (default show all tags)\n"
 		" -t <token>  find device with a specific token (NAME=value pair)\n"
@@ -749,7 +749,7 @@ int main(int argc, char **argv)
 			else if (!strcmp(optarg, "device"))
 				output_format = OUTPUT_DEVICE_ONLY;
 			else if (!strcmp(optarg, "list"))
-				output_format = OUTPUT_PRETTY_LIST;
+				output_format = OUTPUT_PRETTY_LIST;	/* deprecated */
 			else if (!strcmp(optarg, "udev"))
 				output_format = OUTPUT_UDEV_LIST;
 			else if (!strcmp(optarg, "export"))
