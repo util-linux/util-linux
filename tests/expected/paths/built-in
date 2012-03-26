@@ -21,7 +21,6 @@
        _PATH_GSHADOW /etc/gshadow
          _PATH_GROUP /etc/group
  _PATH_SHADOW_PASSWD /etc/shadow
-  _PATH_SHADOW_GROUP /etc/gshadow
          _PATH_WORDS /usr/share/dict/words
      _PATH_WORDS_ALT /usr/share/dict/web2
         _PATH_UMOUNT /bin/umount
