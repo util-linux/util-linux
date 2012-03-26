@@ -69,9 +69,10 @@ has two main forms of operation: either searching for a device with a
 specific NAME=value pair, or displaying NAME=value pairs for one or
 more specified devices.
 .SH OPTIONS
-The \fIsize\fR and \fIoffset\fR arguments may be followed by binary (2^N) 
-suffixes KiB, MiB, GiB, TiB, PiB and EiB (the "iB" is optional, e.g. "K" has the
-same meaning as "KiB") or decimal (10^N) suffixes KB, MB, GB, PB and EB.
+The \fIsize\fR and \fIoffset\fR arguments may be followed by the multiplicative
+suffixes KiB=1024, MiB=1024*1024, and so on for GiB, TiB, PiB, EiB, ZiB and YiB
+(the "iB" is optional, e.g. "K" has the same meaning as "KiB") or the suffixes
+KB=1000, MB=1000*1000, and so on for GB, PB, EB, ZB and YB.
 .TP
 .BI \-c " cachefile"
 Read from
