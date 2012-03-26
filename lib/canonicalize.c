@@ -174,16 +174,9 @@ canonicalize_path(const char *path)
 	if (path == NULL)
 		return NULL;
 
-	if (!myrealpath(path, canonical, PATH_MAX+1)) {
-		char *res = strdup(path);
-		if (res) {
-			p = strrchr(res, '/');
-			/* delete trailing slash */
-			if (p && p > res && *(p + 1) == '\0')
-				*p = '\0';
-		}
-		return res;
-	}
+	if (!myrealpath(path, canonical, PATH_MAX+1))
+		return strdup(path);
+
 
 	p = strrchr(canonical, '/');
 	if (p && strncmp(p, "/dm-", 4) == 0 && isdigit(*(p + 4))) {
