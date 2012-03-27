@@ -17,6 +17,8 @@ eject [\-vn] \-a on|off|1|0 [<name>]
 .br
 eject [\-vn] \-c slot [<name>]
 .br
+eject [\-vn] \-i on|off|1|0 [<name>]
+.br
 eject [\-vn] \-t [<name>]
 .br
 eject [-vn] -T [<name>]
@@ -79,6 +81,13 @@ changer. Linux 2.0 or higher is required to use this feature. The
 CD-ROM drive can not be in use (mounted data CD or playing a music CD)
 for a change request to work. Please also note that the first slot of
 the changer is referred to as 0, not 1.
+
+.TP 0.5i
+.B \-i on|1|off|0
+This option controls locking of the hardware eject button. When
+enabled, the drive will not be ejected when the button is pressed.
+This is useful when you are carrying a laptop in a bag or case and
+don't want it to eject if the button is inadvertently pressed.
 
 .TP 0.5i
 .B \-t

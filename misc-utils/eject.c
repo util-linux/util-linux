@@ -75,7 +75,9 @@ static int v_option;
 static int x_option;
 static int p_option;
 static int m_option;
+static int i_option;
 static int a_arg;
+static int i_arg;
 static long int c_arg;
 static long int x_arg;
 
@@ -136,6 +138,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" -d, --default      display default device\n"
 		" -a, --auto         turn auto-eject feature on or off\n"
 		" -c, --changerslot  switch discs on a CD-ROM changer\n"
+		" -i, --manualeject <on|off> toggle manual eject protection on/off\n"
 		" -t, --trayclose    close tray\n"
 		" -T, --traytoggle   toggle tray\n"
 		" -x, --cdspeed      set CD-ROM max speed\n"
@@ -166,6 +169,7 @@ static void parse_args(int argc, char **argv, char **device)
 		{"default",	no_argument,	   NULL, 'd'},
 		{"auto",	required_argument, NULL, 'a'},
 		{"changerslot", required_argument, NULL, 'c'},
+		{"manualeject", required_argument, NULL, 'i'},
 		{"trayclose",	no_argument,	   NULL, 't'},
 		{"traytoggle",	no_argument,	   NULL, 'T'},
 		{"cdspeed",	required_argument, NULL, 'x'},
@@ -182,7 +186,7 @@ static void parse_args(int argc, char **argv, char **device)
 	int c;
 
 	while ((c = getopt_long(argc, argv,
-				"a:c:x:dfhnqrstTvVpm", long_opts, NULL)) != -1) {
+				"a:c:i:x:dfhnqrstTvVpm", long_opts, NULL)) != -1) {
 		switch (c) {
 		case 'a':
 			a_option = 1;
@@ -209,6 +213,15 @@ static void parse_args(int argc, char **argv, char **device)
 			break;
 		case 'h':
 			usage(stdout);
+			break;
+		case 'i':
+			i_option = 1;
+			if (!strcmp(optarg, "0") || !strcmp(optarg, "off"))
+				i_arg = 0;
+			else if (!strcmp(optarg, "1") || !strcmp(optarg, "on"))
+				i_arg = 1;
+			else
+				errx(EXIT_FAILURE, _("invalid argument to --manualeject/-i option"));
 			break;
 		case 'm':
 			m_option = 1;
@@ -287,6 +300,27 @@ static void auto_eject(int fd, int on)
 		err(EXIT_FAILURE, _("CD-ROM auto-eject command failed"));
 }
 
+/*
+ * Stops CDROM from opening on manual eject pressing the button.
+ * This can be useful when you carry your laptop
+ * in your bag while it's on and no CD inserted in it's drive.
+ * Implemented as found in Documentation/ioctl/cdrom.txt
+ *
+ * TODO: Maybe we should check this also:
+ * EDRIVE_CANT_DO_THIS   Door lock function not supported.
+ * EBUSY                 Attempt to unlock when multiple users
+ *                       have the drive open and not CAP_SYS_ADMIN
+ */
+static void manual_eject(int fd, int on)
+{
+	if (ioctl(fd, CDROM_LOCKDOOR, on) < 0)
+		err(EXIT_FAILURE, _("CD-ROM lock door command failed"));
+
+	if (on)
+		info(_("CD-Drive may NOT be ejected with device button"));
+	else
+		info(_("CD-Drive may be ejected with device button"));
+}
 
 /*
  * Changer select. CDROM_SELECT_DISC is preferred, older kernels used
@@ -714,6 +748,13 @@ int main(int argc, char **argv)
 	if (n_option) {
 		info(_("device is `%s'"), device);
 		verbose(_("exiting due to -n/--noop option"));
+		exit(0);
+	}
+
+	/* handle -i option */
+	if (i_option) {
+		fd = open_device(device);
+		manual_eject(fd, i_arg);
 		exit(0);
 	}
 
