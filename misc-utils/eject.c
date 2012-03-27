@@ -229,18 +229,6 @@ static void parse_args(int argc, char **argv, char **device)
 		*device = xstrdup(argv[optind]);
 }
 
-void e_close(int fp) {
-	if (close(fp)==-1) {
-		err(1, NULL);
-	}
-}
-
-void e_fclose(FILE *fp) {
-	if (fclose(fp)==-1) {
-		err(1, NULL);
-	}
-}
-
 /* Return 1 if file/device exists, 0 otherwise. */
 static int file_exists(const char *name) {
     /*
@@ -576,7 +564,7 @@ static int mounted_device(const char *name, char **mountName, char **deviceName)
 			get_major_minor(s1, &mtabmaj, &mtabmin);
 			if (((strcmp(s1, name) == 0) || (strcmp(s2, name) == 0)) ||
 				((maj != -1) && (maj == mtabmaj) && (min == mtabmin))) {
-				e_fclose(fp);
+				fclose(fp);
 				*deviceName = strdup(s1);
 				*mountName = strdup(s2);
 				return 1;
@@ -585,7 +573,7 @@ static int mounted_device(const char *name, char **mountName, char **deviceName)
 	}
 	*deviceName = 0;
 	*mountName = 0;
-	e_fclose(fp);
+	fclose(fp);
 	return 0;
 }
 
@@ -624,7 +612,7 @@ static void unmount_devices(const char *pattern) {
 			}
 		}
 	}
-	e_fclose(fp);
+	fclose(fp);
 }
 
 /*
@@ -895,7 +883,7 @@ int main(int argc, char **argv) {
 	}
 
 	/* cleanup */
-	e_close(fd);
+	close(fd);
 	free(device);
 	free(deviceName);
 	free(fullName);
