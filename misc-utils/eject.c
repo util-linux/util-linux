@@ -1,12 +1,7 @@
-/********************************************************************
- *
- *		L I N U X   E J E C T	C O M M A N D
- *
- *		  by Jeff Tranter (tranter@pobox.com)
- *
- ********************************************************************
- *
+/*
  * Copyright (C) 1994-2005 Jeff Tranter (tranter@pobox.com)
+ * Copyright (C) 2012 Karel Zak <kzak@redhat.com>
+ * Copyright (C) Michal Luscon <mluscon@redhat.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,22 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
- *
- ********************************************************************
- *
- * See the man page for a description of what this program does and what
- * the requirements to run it are.
- *
  */
-
-#include "linux_version.h"
-#include "c.h"
-#include "nls.h"
-#include "strutils.h"
-#include "xalloc.h"
-#include "canonicalize.h"
-
-#define EJECT_DEFAULT_DEVICE "/dev/cdrom"
 
 #include <unistd.h>
 #include <stdlib.h>
@@ -63,6 +43,16 @@
 #include <scsi/scsi_ioctl.h>
 #include <sys/time.h>
 
+#include "linux_version.h"
+#include "c.h"
+#include "nls.h"
+#include "strutils.h"
+#include "xalloc.h"
+#include "canonicalize.h"
+
+#define EJECT_DEFAULT_DEVICE "/dev/cdrom"
+
+
 /* Used by the toggle_tray() function. If ejecting the tray takes this
  * time or less, the tray was probably already ejected, so we close it
  * again.
@@ -75,7 +65,6 @@ static int a_option; /* command flags and arguments */
 static int c_option;
 static int d_option;
 static int f_option;
-static int h_option;
 static int n_option;
 static int q_option;
 static int r_option;
@@ -241,9 +230,9 @@ static void parse_args(int argc, char **argv, char **device)
 			  break;
 		  case 'V':
 			  printf(UTIL_LINUX_VERSION);
-        exit(EXIT_SUCCESS);
+	        exit(EXIT_SUCCESS);
 			  break;
-      default:
+		default:
 		  case '?':
 			  usage();
 			  break;
@@ -725,13 +714,12 @@ int main(int argc, char **argv) {
 	char *mountName;   /* name of device's mount point */
 	int fd;            /* file descriptor for device */
 	int mounted = 0;   /* true if device is mounted */
-	int mountable = 0; /* true if device is in /etc/fstab */
 	char *pattern;     /* regex for device if multiple partitions */
 	int ld = 6;        /* symbolic link max depth */
 
 	setlocale(LC_ALL,"");
-  bindtextdomain(PACKAGE, LOCALEDIR);
-  textdomain(PACKAGE);
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	/* program name is global variable used by other procedures */
 	char *programName = program_invocation_short_name;
