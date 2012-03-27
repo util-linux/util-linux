@@ -584,7 +584,8 @@ static void unmount_devices(const char *pattern)
  * multiple partitions.  If so, return a regular expression that matches
  * partitions for that device, otherwise return 0.
  */
-static char *multiple_partitions(const char *name) {
+static char *multiple_partitions(const char *name)
+{
 	int i = 0;
 	int status;
 	regex_t preg;
@@ -616,11 +617,12 @@ static char *multiple_partitions(const char *name) {
 
 
 /* handle -x option */
-void handle_x_option(char *deviceName) {
-	int fd; 	   /* file descriptor for device */
+void set_device_speed(char *name)
+{
+	int fd;
+
 	if (x_option) {
-		if (v_option)
-		{
+		if (v_option) {
 			if (x_arg == 0)
 				printf(_("%s: setting CD-ROM speed to auto\n"),
 						program_invocation_short_name);
@@ -629,9 +631,9 @@ void handle_x_option(char *deviceName) {
 						program_invocation_short_name,
 						x_arg);
 		}
-		fd = open_device(deviceName);
+		fd = open_device(name);
 		select_speed(fd, x_arg);
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 }
 
@@ -745,7 +747,7 @@ int main(int argc, char **argv) {
 			printf(_("%s: closing tray\n"), programName);
 		fd = open_device(deviceName);
 		close_tray(fd);
-		handle_x_option(deviceName);
+		set_device_speed(deviceName);
 		exit(0);
 	}
 
@@ -755,12 +757,13 @@ int main(int argc, char **argv) {
 			printf(_("%s: toggling tray\n"), programName);
 		fd = open_device(deviceName);
 		toggle_tray(fd);
-		handle_x_option(deviceName);
+		set_device_speed(deviceName);
 		exit(0);
 	}
 
 	/* handle -x option only */
-	if (!c_option) handle_x_option(deviceName);
+	if (!c_option)
+		set_device_speed(deviceName);
 
 	/* unmount device if mounted */
 	if ((m_option != 1) && mounted) {
@@ -781,7 +784,7 @@ int main(int argc, char **argv) {
 			printf(_("%s: selecting CD-ROM disc #%ld\n"), programName, c_arg);
 		fd = open_device(deviceName);
 		changer_select(fd, c_arg);
-		handle_x_option(deviceName);
+		set_device_speed(deviceName);
 		exit(0);
 	}
 
