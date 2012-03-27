@@ -132,9 +132,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 /* Handle command line options. */
 static void parse_args(int argc, char **argv, char **device)
 {
-	const char *flags = "a:c:x:dfhnqrstTvVpm";
-
-	static struct option long_options[] =
+	static struct option long_opts[] =
 	{
 		{"help",	no_argument,	   NULL, 'h'},
 		{"verbose",	no_argument,	   NULL, 'v'},
@@ -154,97 +152,81 @@ static void parse_args(int argc, char **argv, char **device)
 		{"no-unmount",	no_argument,	   NULL, 'm'},
 		{0, 0, 0, 0}
 	};
-	int option_index;
-
 	int c;
 
-
-	while ((c = getopt_long(argc, argv, flags, long_options, &option_index)) != EOF) {
+	while ((c = getopt_long(argc, argv,
+				"a:c:x:dfhnqrstTvVpm", long_opts, NULL)) != -1) {
 		switch (c) {
-		  case 'a':
-			  a_option = 1;
-			  if (!strcmp(optarg, "0"))
-				  a_arg = 0;
-			  else if (!strcmp(optarg, "off"))
-				  a_arg = 0;
-			  else if (!strcmp(optarg, "1"))
-				  a_arg = 1;
-			  else if (!strcmp(optarg, "on"))
-				  a_arg = 1;
-			  else {
-				  errx(1, _("invalid argument to --auto/-a option"));
-			  }
-			  break;
-		  case 'c':
-			  c_option = 1;
-			  /* atoi() returns 0 on error, so "0" must be parsed separately */
-			  if (!strcmp(optarg, "0"))
-				  c_arg = 0;
-			  else {
-				  c_arg = strtol_or_err( optarg, _("invalid argument to --changerslot/-c option"));
-				}
-			  break;
-		  case 'x':
-			  x_option = 1;
-			  if (!strcmp(optarg, "0"))
-				  x_arg = 0;
-			  else {
-				  x_arg = strtol_or_err( optarg, _("invalid argument to --cdspeed/-x option"));
-			  }
-			  break;
-		  case 'd':
-			  d_option = 1;
-			  break;
-		  case 'f':
-			  f_option = 1;
-			  break;
-		  case 'h':
-			  usage(stdout);
-			  break;
-		  case 'm':
-			  m_option = 1;
-			  break;
-		  case 'n':
-			  n_option = 1;
-			  break;
-		  case 'p':
-			  p_option = 1;
-			  break;
-		  case 'q':
-			  q_option = 1;
-			  break;
-		  case 'r':
-			  r_option = 1;
-			  break;
-		  case 's':
-			  s_option = 1;
-			  break;
-		  case 't':
-			  t_option = 1;
-			  break;
-		  case 'T':
-			  T_option = 1;
-			  break;
-		  case 'v':
-			  v_option = 1;
-			  break;
-		  case 'V':
-			  printf(UTIL_LINUX_VERSION);
-	        exit(EXIT_SUCCESS);
-			  break;
+		case 'a':
+			a_option = 1;
+			if (!strcmp(optarg, "0") || !strcmp(optarg, "off"))
+				a_arg = 0;
+			else if (!strcmp(optarg, "1") || !strcmp(optarg, "on"))
+				a_arg = 1;
+			else
+				errx(EXIT_FAILURE, _("invalid argument to --auto/-a option"));
+			break;
+		case 'c':
+			c_option = 1;
+			c_arg = strtoul_or_err(optarg, _("invalid argument to --changerslot/-c option"));
+			break;
+		case 'x':
+			x_option = 1;
+			x_arg = strtoul_or_err(optarg, _("invalid argument to --cdspeed/-x option"));
+			break;
+		case 'd':
+			d_option = 1;
+			break;
+		case 'f':
+			f_option = 1;
+			break;
+		case 'h':
+			usage(stdout);
+			break;
+		case 'm':
+			m_option = 1;
+			break;
+		case 'n':
+			n_option = 1;
+			break;
+		case 'p':
+			p_option = 1;
+			break;
+		case 'q':
+			q_option = 1;
+			break;
+		case 'r':
+			r_option = 1;
+			break;
+		case 's':
+			s_option = 1;
+			break;
+		case 't':
+			t_option = 1;
+			break;
+		case 'T':
+			T_option = 1;
+			break;
+		case 'v':
+			v_option = 1;
+			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			exit(EXIT_SUCCESS);
+			break;
 		default:
-		  case '?':
-			  usage(stderr);
-			  break;
+		case '?':
+			usage(stderr);
+			break;
 		}
 	}
+
 	/* check for a single additional argument */
-	if ((argc - optind) > 1) {
-		errx(1, _("too many arguments"));
-	}
-	if ((argc - optind) == 1) { /* one argument */
+	if ((argc - optind) > 1)
+		errx(EXIT_FAILURE, _("too many arguments"));
+
+	if ((argc - optind) == 1)
 		*device = xstrdup(argv[optind]);
-	}
 }
 
 void e_close(int fp) {
