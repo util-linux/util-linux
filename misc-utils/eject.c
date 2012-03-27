@@ -601,7 +601,7 @@ static char *multiple_partitions(const char *name)
 		status = regexec(&preg, name, 1, 0, 0);
 		regfree(&preg);
 		if (status == 0) {
-			result = (char *) malloc(strlen(name) + 25);
+			result = xmalloc(strlen(name) + 25);
 			strcpy(result, name);
 			result[strlen(partition_device[i]) + 6] = 0;
 			strcat(result, "([0-9]?[0-9])?$");
@@ -672,7 +672,7 @@ int main(int argc, char **argv) {
 
 	/* if no device, use default */
 	if (device == 0) {
-		device = strdup(defaultDevice);
+		device = xstrdup(defaultDevice);
 		if (v_option)
 			printf(_("%s: using default device `%s'\n"), programName, device);
 	}
@@ -698,7 +698,7 @@ int main(int argc, char **argv) {
 		if (v_option)
 			printf(_("%s: `%s' is a link to `%s'\n"), programName, fullName, linkName);
 		free(fullName);
-		fullName = strdup(linkName);
+		fullName = xstrdup(linkName);
 		free(linkName);
 		linkName = 0;
 		ld--;
@@ -717,7 +717,7 @@ int main(int argc, char **argv) {
 			printf(_("%s: `%s' is not mounted\n"), programName, fullName);
 	}
 	if (!mounted) {
-		deviceName = strdup(fullName);
+		deviceName = xstrdup(fullName);
 	}
 
 	/* handle -n option */
