@@ -303,8 +303,18 @@ static char *find_device(const char *name)
 /* Set or clear auto-eject mode. */
 static void auto_eject(int fd, int on)
 {
-	if (ioctl(fd, CDROMEJECT_SW, on) != 0)
-		err(EXIT_FAILURE, _("CD-ROM auto-eject command failed"));
+	int status = -1;
+
+#if defined(CDROM_SET_OPTIONS) && defined(CDROM_CLEAR_OPTIONS)
+	if (on)
+		status = ioctl(fd, CDROM_SET_OPTIONS, CDO_AUTO_EJECT);
+	else
+		status = ioctl(fd, CDROM_CLEAR_OPTIONS, CDO_AUTO_EJECT);
+#else
+	errno = ENOSYS;
+#endif
+	if (status < 0)
+		err(EXIT_FAILURE,_("CD-ROM auto-eject command failed"));
 }
 
 /*
