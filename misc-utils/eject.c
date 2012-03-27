@@ -273,7 +273,7 @@ static char *find_device(const char *name)
 		char buf[PATH_MAX];
 
 		snprintf(buf, sizeof(buf), "/dev/%s", name);
-		if (access(name, F_OK) == 0)
+		if (access(buf, F_OK) == 0)
 			return xstrdup(buf);
 	}
 
@@ -527,7 +527,7 @@ static int get_major_minor(const char *name, int *maj, int *min)
  *
  * TODO: use libmount here
  */
-static int mounted_device(const char *name, char **mountName, char **deviceName)
+static int mounted_device(const char *name, char **mountName)
 {
 	FILE *fp;
 	const char *fname;
@@ -555,13 +555,11 @@ static int mounted_device(const char *name, char **mountName, char **deviceName)
 			if (((strcmp(s1, name) == 0) || (strcmp(s2, name) == 0)) ||
 				((maj != -1) && (maj == mtabmaj) && (min == mtabmin))) {
 				fclose(fp);
-				*deviceName = xstrdup(s1);
 				*mountName = xstrdup(s2);
 				return 1;
 			}
 		}
 	}
-	*deviceName = 0;
 	*mountName = 0;
 	fclose(fp);
 	return 0;
@@ -662,16 +660,13 @@ void set_device_speed(char *name)
 /* main program */
 int main(int argc, char **argv)
 {
+	char *device = NULL;
+
 	int worked = 0;    /* set to 1 when successfully ejected */
-	char *device = 0;  /* name passed from user */
-	char *fullName;    /* expanded name */
-	char *deviceName;  /* name of device */
-	char *linkName;    /* name of device's symbolic link */
 	char *mountName;   /* name of device's mount point */
 	int fd;            /* file descriptor for device */
 	int mounted = 0;   /* true if device is mounted */
 	char *pattern;     /* regex for device if multiple partitions */
-	int ld = 6;        /* symbolic link max depth */
 
 	setlocale(LC_ALL,"");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -680,60 +675,44 @@ int main(int argc, char **argv)
 	/* parse the command line arguments */
 	parse_args(argc, argv, &device);
 
-
 	/* handle -d option */
 	if (d_option) {
 		info(_("default device: `%s'"), EJECT_DEFAULT_DEVICE);
 		exit(0);
 	}
 
-	/* if no device, use default */
-	if (device == 0) {
-		device = xstrdup(EJECT_DEFAULT_DEVICE);
+	if (!device) {
+		device = canonicalize_path(EJECT_DEFAULT_DEVICE);
 		verbose(_("using default device `%s'"), device);
+	} else {
+		char *p;
+
+		if (device[strlen(device)-1] == '/')
+			device[strlen(device)-1] = '\0';
+
+		/* figure out full device or mount point name */
+		p = find_device(device);
+		free(device);
+
+		device = canonicalize_path(p);
+		free(p);
 	}
 
-	/* Strip any trailing slash from name in case user used bash/tcsh
-	   style filename completion (e.g. /mnt/cdrom/) */
-	if (device[strlen(device)-1] == '/')
-		device[strlen(device)-1] = 0;
+	if (!device)
+		errx(EXIT_FAILURE, _("%s: unable to find device"), device);
 
 	verbose(_("device name is `%s'"), device);
 
-	/* figure out full device or mount point name */
-	fullName = find_device(device);
-	if (fullName == 0)
-		errx(EXIT_FAILURE, _("%s: unable to find device"), device);
-
-	verbose(_("expanded name is `%s'"), fullName);
-
-	/* check for a symbolic link */
-	while ((linkName = canonicalize_path(fullName)) && (ld > 0)) {
-		verbose(_("`%s' is a link to `%s'"), fullName, linkName);
-		free(fullName);
-		fullName = xstrdup(linkName);
-		free(linkName);
-		linkName = 0;
-		ld--;
-	}
-	/* handle max depth exceeded option */
-	if (ld <= 0)
-		errx(EXIT_FAILURE, _("maximum symbolic link depth exceeded: `%s'"), fullName);
-
 	/* if mount point, get device name */
-	mounted = mounted_device(fullName, &mountName, &deviceName);
+	mounted = mounted_device(device, &mountName);
 	if (mounted)
-		verbose(_("`%s' is mounted at `%s'"), deviceName, mountName);
+		verbose(_("`%s' is mounted at `%s'"), device, mountName);
 	else
-		verbose(_("`%s' is not mounted\n"), fullName);
-
-	if (!mounted) {
-		deviceName = xstrdup(fullName);
-	}
+		verbose(_("`%s' is not mounted\n"), device);
 
 	/* handle -n option */
 	if (n_option) {
-		info(_("device is `%s'"), deviceName);
+		info(_("device is `%s'"), device);
 		verbose(_("exiting due to -n/--noop option"));
 		exit(0);
 	}
@@ -741,54 +720,54 @@ int main(int argc, char **argv)
 	/* handle -a option */
 	if (a_option) {
 		if (a_arg)
-			verbose(_("%s: enabling auto-eject mode"), deviceName);
+			verbose(_("%s: enabling auto-eject mode"), device);
 		else
-			verbose(_("%s: disabling auto-eject mode"), deviceName);
-		fd = open_device(deviceName);
+			verbose(_("%s: disabling auto-eject mode"), device);
+		fd = open_device(device);
 		auto_eject(fd, a_arg);
 		exit(0);
 	}
 
 	/* handle -t option */
 	if (t_option) {
-		verbose(_("%s: closing tray"), deviceName);
-		fd = open_device(deviceName);
+		verbose(_("%s: closing tray"), device);
+		fd = open_device(device);
 		close_tray(fd);
-		set_device_speed(deviceName);
+		set_device_speed(device);
 		exit(0);
 	}
 
 	/* handle -T option */
 	if (T_option) {
-		verbose(_("%s: toggling tray"), deviceName);
-		fd = open_device(deviceName);
+		verbose(_("%s: toggling tray"), device);
+		fd = open_device(device);
 		toggle_tray(fd);
-		set_device_speed(deviceName);
+		set_device_speed(device);
 		exit(0);
 	}
 
 	/* handle -x option only */
 	if (!c_option)
-		set_device_speed(deviceName);
+		set_device_speed(device);
 
 	/* unmount device if mounted */
 	if ((m_option != 1) && mounted) {
-		verbose(_("%s: unmounting"), deviceName);
-		unmount_one(deviceName);
+		verbose(_("%s: unmounting"), device);
+		unmount_one(device);
 	}
 
 	/* if it is a multipartition device, unmount any other partitions on
 	   the device */
-	pattern = multiple_partitions(deviceName);
+	pattern = multiple_partitions(device);
 	if ((m_option != 1) && (pattern != 0))
 		unmount_devices(pattern);
 
 	/* handle -c option */
 	if (c_option) {
-		verbose(_("%s: selecting CD-ROM disc #%ld\n"), deviceName, c_arg);
-		fd = open_device(deviceName);
+		verbose(_("%s: selecting CD-ROM disc #%ld"), device, c_arg);
+		fd = open_device(device);
 		changer_select(fd, c_arg);
-		set_device_speed(deviceName);
+		set_device_speed(device);
 		exit(0);
 	}
 
@@ -798,32 +777,32 @@ int main(int argc, char **argv)
 	}
 
 	/* open device */
-	fd = open_device(deviceName);
+	fd = open_device(device);
 
 	/* try various methods of ejecting until it works */
 	if (r_option) {
-		verbose(_("%s: trying to eject using CD-ROM eject command"), deviceName);
+		verbose(_("%s: trying to eject using CD-ROM eject command"), device);
 		worked = eject_cdrom(fd);
 		verbose(worked ? _("CD-ROM eject command succeeded") :
 				 _("CD-ROM eject command failed"));
 	}
 
 	if (s_option && !worked) {
-		verbose(_("%s: trying to eject using SCSI commands"), deviceName);
+		verbose(_("%s: trying to eject using SCSI commands"), device);
 		worked = eject_scsi(fd);
 		verbose(worked ? _("SCSI eject succeeded") :
 				 _("SCSI eject failed"));
 	}
 
 	if (f_option && !worked) {
-		verbose(_("%s: trying to eject using floppy eject command"), deviceName);
+		verbose(_("%s: trying to eject using floppy eject command"), device);
 		worked = eject_floppy(fd);
 		verbose(worked ? _("floppy eject command succeeded") :
 				 _("floppy eject command failed"));
 	}
 
 	if (q_option && !worked) {
-		verbose(_("%s: trying to eject using tape offline command"), deviceName);
+		verbose(_("%s: trying to eject using tape offline command"), device);
 		worked = eject_tape(fd);
 		verbose(worked ? _("tape offline command succeeded") :
 				 _("tape offline command failed"));
@@ -835,9 +814,6 @@ int main(int argc, char **argv)
 	/* cleanup */
 	close(fd);
 	free(device);
-	free(deviceName);
-	free(fullName);
-	free(linkName);
 	free(mountName);
 	free(pattern);
 	exit(0);
