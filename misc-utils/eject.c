@@ -589,7 +589,7 @@ static int eject_scsi(int fd)
  */
 static int eject_floppy(int fd)
 {
-	return ioctl(fd, FDEJECT) == 0;
+	return ioctl(fd, FDEJECT) >= 0;
 }
 
 
@@ -600,7 +600,7 @@ static int eject_tape(int fd)
 {
 	struct mtop op = { .mt_op = MTOFFL, .mt_count = 0 };
 
-	return ioctl(fd, MTIOCTOP, &op) == 0;
+	return ioctl(fd, MTIOCTOP, &op) >= 0;
 }
 
 
@@ -644,7 +644,10 @@ static void unmount_one(const char *name)
 /* Open a device file. */
 static int open_device(const char *name)
 {
-	int fd = open(name, O_RDONLY|O_NONBLOCK);
+	int fd = open(name, O_RDWR|O_NONBLOCK);
+
+	if (fd < 0)
+		fd = open(name, O_RDONLY|O_NONBLOCK);
 	if (fd == -1)
 		errx(EXIT_FAILURE, _("%s: open failed"), name);
 	return fd;
@@ -659,13 +662,19 @@ static int get_major_minor(const char *name, int *maj, int *min)
 {
 	struct stat sstat;
 
-	*maj = *min = -1;
+	if (maj)
+		*maj = -1;
+	if (min)
+		*min = -1;
+
 	if (stat(name, &sstat) == -1)
 		return -1;
 	if (!S_ISBLK(sstat.st_mode))
 		return -1;
-	*maj = major(sstat.st_rdev);
-	*min = minor(sstat.st_rdev);
+	if (maj)
+		*maj = major(sstat.st_rdev);
+	if (min)
+		*min = minor(sstat.st_rdev);
 	return 0;
 }
 
@@ -770,7 +779,8 @@ static char *multiple_partitions(const char *name)
 		strcpy(pattern, "^/dev/");
 		strcat(pattern, partition_device[i]);
 		strcat(pattern, "[a-z]([0-9]?[0-9])?$");
-		regcomp(&preg, pattern, REG_EXTENDED|REG_NOSUB);
+		if (regcomp(&preg, pattern, REG_EXTENDED|REG_NOSUB) != 0)
+			err(EXIT_FAILURE, _("failed to compile regex"));
 		status = regexec(&preg, name, 1, 0, 0);
 		regfree(&preg);
 		if (status == 0) {
@@ -865,6 +875,8 @@ int main(int argc, char **argv)
 		verbose(_("exiting due to -n/--noop option"));
 		exit(0);
 	}
+
+	/* TODO: Check if device has removable flag */
 
 	/* handle -i option */
 	if (i_option) {
