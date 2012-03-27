@@ -362,8 +362,15 @@ static void changer_select(int fd, int slot)
  */
 static void close_tray(int fd)
 {
-#ifdef CDROMCLOSETRAY
-	if (ioctl(fd, CDROMCLOSETRAY) != 0)
+	int status;
+
+#if defined(CDROMCLOSETRAY) || defined(CDIOCCLOSE)
+#if defined(CDROMCLOSETRAY)
+	status = ioctl(fd, CDROMCLOSETRAY);
+#elif defined(CDIOCCLOSE)
+	status = ioctl(fd, CDIOCCLOSE);
+#endif
+	if (status != 0)
 		err(EXIT_FAILURE, _("CD-ROM tray close command failed"));
 #else
 	warnx(_("CD-ROM tray close command not supported by this kernel\n"));
