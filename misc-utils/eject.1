@@ -25,6 +25,8 @@ eject [-vn] -T [<name>]
 .br
 eject [\-vn] \-x <speed> [<name>]
 .br
+eject [\-vn] \-X [<name>]
+.br
 eject \-V
 
 .SH DESCRIPTION
@@ -109,6 +111,15 @@ for 8X speed), or 0 for maximum data rate. Not all devices support
 this command and you can only specify speeds that the drive is capable
 of. Every time the media is changed this option is cleared. This
 option can be used alone, or with the \-t and \-c options.
+
+.TP 0.5i
+.B \-X 
+With this option the CD-ROM drive will be probed to detect the
+available speeds. The output is a list of speeds which can be used as
+an argument of the \-x option. This only works with Linux 2.6.13 or
+higher, on previous versions solely the maximum speed will be
+reported. Also note that some drive may not correctly report the speed
+and therefore this option does not work with them.
 
 .TP 0.5i
 .B \-n
@@ -311,10 +322,12 @@ The \-x option was added by Nobuyuki Tsuchimura (tutimura@nn.iij4u.or.jp),
 with thanks to Roland Krivanek (krivanek@fmph.uniba.sk) and his
 cdrom_speed command.
 
-The -T option was added by Sybren Stuvel (sybren@thirdtower.com), with
+The \-T option was added by Sybren Stuvel (sybren@thirdtower.com), with
 big thanks to Benjamin Schwenk (benjaminschwenk@yahoo.de).
 
- .SH SEE ALSO
+The \-X option was added by Eric Piel (Eric.Piel@tremplin-utc.net).
+
+.SH SEE ALSO
 
  mount(2), umount(2), mount(8), umount(8)
 

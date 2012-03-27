@@ -49,6 +49,7 @@
 #include "strutils.h"
 #include "xalloc.h"
 #include "canonicalize.h"
+#include "pathnames.h"
 
 #define EJECT_DEFAULT_DEVICE "/dev/cdrom"
 
@@ -71,6 +72,7 @@ static int r_option;
 static int s_option;
 static int t_option;
 static int T_option;
+static int X_option;
 static int v_option;
 static int x_option;
 static int p_option;
@@ -142,6 +144,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" -t, --trayclose    close tray\n"
 		" -T, --traytoggle   toggle tray\n"
 		" -x, --cdspeed      set CD-ROM max speed\n"
+		" -X, --listspeed    list CD-ROM available speeds\n"
 		" -v, --verbose      enable verbose output\n"
 		" -n, --noop         don't eject, just show device found\n"
 		" -r, --cdrom        eject CD-ROM\n"
@@ -173,6 +176,7 @@ static void parse_args(int argc, char **argv, char **device)
 		{"trayclose",	no_argument,	   NULL, 't'},
 		{"traytoggle",	no_argument,	   NULL, 'T'},
 		{"cdspeed",	required_argument, NULL, 'x'},
+		{"listspeed",   no_argument,       NULL, 'X'},
 		{"noop",	no_argument,	   NULL, 'n'},
 		{"cdrom",	no_argument,	   NULL, 'r'},
 		{"scsi",	no_argument,	   NULL, 's'},
@@ -186,7 +190,7 @@ static void parse_args(int argc, char **argv, char **device)
 	int c;
 
 	while ((c = getopt_long(argc, argv,
-				"a:c:i:x:dfhnqrstTvVpm", long_opts, NULL)) != -1) {
+				"a:c:i:x:dfhnqrstTXvVpm", long_opts, NULL)) != -1) {
 		switch (c) {
 		case 'a':
 			a_option = 1;
@@ -246,6 +250,9 @@ static void parse_args(int argc, char **argv, char **device)
 			break;
 		case 'T':
 			T_option = 1;
+			break;
+		case 'X':
+			X_option = 1;
 			break;
 		case 'v':
 			v_option = 1;
@@ -407,6 +414,92 @@ static void select_speed(int fd, int speed)
 #ifdef CDROM_SELECT_SPEED
 	if (ioctl(fd, CDROM_SELECT_SPEED, speed) != 0)
 		err(EXIT_FAILURE, _("CD-ROM select speed command failed"));
+#else
+	warnx(_("CD-ROM select speed command not supported by this kernel"));
+#endif
+}
+
+/*
+ * Read Speed of CD-ROM drive. From Linux 2.6.13, the current speed
+ * is correctly reported
+ */
+static int read_speed(const char *devname)
+{
+	int drive_number = -1;
+	char *name;
+	FILE *f;
+
+	f = fopen(_PATH_PROC_CDROMINFO, "r");
+	if (!f)
+		err(EXIT_FAILURE, _("%s: open failed"), _PATH_PROC_CDROMINFO);
+
+	name = rindex(devname, '/') + 1;
+
+	while (!feof(f)) {
+		char line[512];
+		char *str;
+
+		if (!fgets(line, sizeof(line), f))
+			break;
+
+		/* find drive number in line "drive name" */
+		if (drive_number == -1) {
+			if (strncmp(line, "drive name:", 11) == 0) {
+				str = strtok(&line[11], "\t ");
+				drive_number = 0;
+				while (strncmp(name, str, strlen(name)) != 0) {
+					drive_number++;
+					str = strtok(NULL, "\t ");
+					if (!str)
+						errx(EXIT_FAILURE,
+						     _("%s: failed to finding CD-ROM name"),
+						     _PATH_PROC_CDROMINFO);
+				}
+			}
+		/* find line "drive speed" and read the correct speed */
+		} else {
+			if (strncmp(line, "drive speed:", 12) == 0) {
+				int i;
+				char *str;
+
+				str = strtok(&line[12], "\t ");
+				for (i = 1; i < drive_number; i++)
+					str = strtok(NULL, "\t ");
+
+				if (!str)
+					errx(EXIT_FAILURE,
+						_("%s: failed to read speed"),
+						_PATH_PROC_CDROMINFO);
+				return atoi(str);
+			}
+		}
+	}
+
+	errx(EXIT_FAILURE, _("failed to read speed"));
+}
+
+/*
+ * List Speed of CD-ROM drive.
+ */
+static void list_speeds(const char *name, int fd)
+{
+#ifdef CDROM_SELECT_SPEED
+	int max_speed, curr_speed = 0, prev_speed;
+
+	select_speed(fd, 0);
+	max_speed = read_speed(name);
+
+	while (curr_speed < max_speed) {
+		prev_speed = curr_speed;
+		select_speed(fd, prev_speed + 1);
+		curr_speed = read_speed(name);
+		if (curr_speed > prev_speed)
+			printf("%d ", curr_speed);
+		else
+			curr_speed = prev_speed + 1;
+	}
+
+	printf("\n");
 #else
 	warnx(_("CD-ROM select speed command not supported by this kernel"));
 #endif
@@ -784,6 +877,14 @@ int main(int argc, char **argv)
 		fd = open_device(device);
 		toggle_tray(fd);
 		set_device_speed(device);
+		exit(0);
+	}
+
+	/* handle -X option */
+	if (X_option) {
+		verbose(_("%s: listing CD-ROM speed"), device);
+		fd = open_device(device);
+		list_speeds(device, fd);
 		exit(0);
 	}
 
