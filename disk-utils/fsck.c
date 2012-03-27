@@ -430,7 +430,6 @@ static void load_fs_info(void)
 	path = getenv("FSTAB_FILE");
 
 	if (mnt_table_parse_fstab(fstab, path)) {
-		mnt_free_table(fstab);
 		if (!path)
 			path = mnt_get_fstab_path();
 		if (errno)
