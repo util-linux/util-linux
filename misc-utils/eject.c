@@ -96,35 +96,36 @@ const char *partition_device[] = {
     0
 };
 
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
+{
+	fputs(USAGE_HEADER, out);
 
-/* Display command usage on standard error and exit. */
-static void usage() {
-    fprintf(stderr, _(
-        "Usage:\n"
-        " eject [options] <name>\n"
-        "Options:\n"
-        " -h, --help         display command usage and exit\n"
-        " -V  --version      display program version and exit\n"
-        " -d, --default      display default device\n"
-        " -a, --auto         turn auto-eject feature on or off\n"
-        " -c, --changerslot  switch discs on a CD-ROM changer\n"
-        " -t, --trayclose    close tray\n"
-        " -T, --traytoggle   toggle tray\n"
-        " -x, --cdspeed      set CD-ROM max speed\n"
-        " -v, --verbose      enable verbose output\n"
-        " -n, --noop         don't eject, just show device found\n"
-        " -r, --cdrom        eject CD-ROM\n"
-        " -s, --scsi         eject SCSI device\n"
-        " -f, --loppy        eject floppy\n"
-        " -q, --tape         eject tape\n"
-        "  -p, --proc         use /proc/mounts instead of /etc/mtab\n"
-        " -m, --no-unmount   do not unmount device even if it is mounted\n"
-        "\n"
-        "Parameter <name> can be a device file or a mount point.\n"
-        "If omitted, name defaults to `%s'.\n"
-        "By default tries -r, -s, -f, and -q in order until success.\n"),
-         EJECT_DEFAULT_DEVICE);
-  exit(1);
+	fprintf(out,
+		_(" %s [options] [<device>|<mountpoint>]\n"), program_invocation_short_name);
+
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -h, --help         display command usage and exit\n"
+	        " -V  --version      display program version and exit\n"
+		" -d, --default      display default device\n"
+		" -a, --auto         turn auto-eject feature on or off\n"
+		" -c, --changerslot  switch discs on a CD-ROM changer\n"
+		" -t, --trayclose    close tray\n"
+		" -T, --traytoggle   toggle tray\n"
+		" -x, --cdspeed      set CD-ROM max speed\n"
+		" -v, --verbose      enable verbose output\n"
+		" -n, --noop         don't eject, just show device found\n"
+		" -r, --cdrom        eject CD-ROM\n"
+		" -s, --scsi         eject SCSI device\n"
+		" -f, --loppy        eject floppy\n"
+		" -q, --tape         eject tape\n"
+		" -p, --proc         use /proc/mounts instead of /etc/mtab\n"
+		" -m, --no-unmount   do not unmount device even if it is mounted\n"),
+		out);
+
+	fputs(_("\nBy default tries -r, -s, -f, and -q in order until success.\n"), out);
+	fprintf(out, USAGE_MAN_TAIL("eject(1)"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 
@@ -198,8 +199,7 @@ static void parse_args(int argc, char **argv, char **device)
 			  f_option = 1;
 			  break;
 		  case 'h':
-			  usage();
-			  exit(0);
+			  usage(stdout);
 			  break;
 		  case 'm':
 			  m_option = 1;
@@ -234,7 +234,7 @@ static void parse_args(int argc, char **argv, char **device)
 			  break;
 		default:
 		  case '?':
-			  usage();
+			  usage(stderr);
 			  break;
 		}
 	}
