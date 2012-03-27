@@ -96,6 +96,33 @@ const char *partition_device[] = {
     0
 };
 
+static void vinfo(const char *fmt, va_list va)
+{
+	fprintf(stdout, "%s: ", program_invocation_short_name);
+	vprintf(fmt, va);
+	fputc('\n', stdout);
+}
+
+static inline void verbose(const char *fmt, ...)
+{
+	va_list va;
+
+	if (!v_option)
+		return;
+
+	va_start(va, fmt);
+	vinfo(fmt, va);
+	va_end(va);
+}
+
+static inline void info(const char *fmt, ...)
+{
+	va_list va;
+	va_start(va, fmt);
+	vinfo(fmt, va);
+	va_end(va);
+}
+
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
@@ -569,8 +596,7 @@ static void unmount_devices(const char *pattern)
 		if (status >= 2) {
 			status = regexec(&preg, s1, 0, 0, 0);
 			if (status == 0) {
-				if (v_option)
-					printf(_("%s: unmounting `%s'\n"), program_invocation_short_name, s1);
+				verbose(_("%s: unmounting"), s1);
 				unmount_one(s1);
 				regfree(&preg);
 			}
@@ -605,13 +631,11 @@ static char *multiple_partitions(const char *name)
 			strcpy(result, name);
 			result[strlen(partition_device[i]) + 6] = 0;
 			strcat(result, "([0-9]?[0-9])?$");
-			if (v_option)
-				printf(_("%s: `%s' is a multipartition device\n"), program_invocation_short_name, name);
+			verbose(_("%s: multipartition device"), name);
 			return result;
 		}
 	}
-	if (v_option)
-		printf(_("%s: `%s' is not a multipartition device\n"), program_invocation_short_name, name);
+	verbose(_("%s: not a multipartition device"), name);
 	return 0;
 }
 
@@ -621,20 +645,17 @@ void set_device_speed(char *name)
 {
 	int fd;
 
-	if (x_option) {
-		if (v_option) {
-			if (x_arg == 0)
-				printf(_("%s: setting CD-ROM speed to auto\n"),
-						program_invocation_short_name);
-			else
-				printf(_("%s: setting CD-ROM speed to %ldX\n"),
-						program_invocation_short_name,
-						x_arg);
-		}
-		fd = open_device(name);
-		select_speed(fd, x_arg);
-		exit(EXIT_SUCCESS);
-	}
+	if (!x_option)
+		return;
+
+	if (x_arg == 0)
+		verbose(_("setting CD-ROM speed to auto"));
+	else
+		verbose(_("setting CD-ROM speed to %ldX"), x_arg);
+
+	fd = open_device(name);
+	select_speed(fd, x_arg);
+	exit(EXIT_SUCCESS);
 }
 
 
@@ -656,24 +677,20 @@ int main(int argc, char **argv)
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	/* program name is global variable used by other procedures */
-	char *programName = program_invocation_short_name;
-
 	/* parse the command line arguments */
 	parse_args(argc, argv, &device);
 
 
 	/* handle -d option */
 	if (d_option) {
-		printf(_("%s: default device: `%s'\n"), programName, EJECT_DEFAULT_DEVICE);
+		info(_("default device: `%s'"), EJECT_DEFAULT_DEVICE);
 		exit(0);
 	}
 
 	/* if no device, use default */
 	if (device == 0) {
 		device = xstrdup(EJECT_DEFAULT_DEVICE);
-		if (v_option)
-			printf(_("%s: using default device `%s'\n"), programName, device);
+		verbose(_("using default device `%s'"), device);
 	}
 
 	/* Strip any trailing slash from name in case user used bash/tcsh
@@ -681,21 +698,18 @@ int main(int argc, char **argv)
 	if (device[strlen(device)-1] == '/')
 		device[strlen(device)-1] = 0;
 
-	if (v_option)
-		printf(_("%s: device name is `%s'\n"), programName, device);
+	verbose(_("device name is `%s'"), device);
 
 	/* figure out full device or mount point name */
 	fullName = find_device(device);
-	if (fullName == 0) {
-		errx(1, _("unable to find or open device for: `%s'"), device);
-	}
-	if (v_option)
-		printf(_("%s: expanded name is `%s'\n"), programName, fullName);
+	if (fullName == 0)
+		errx(EXIT_FAILURE, _("%s: unable to find device"), device);
+
+	verbose(_("expanded name is `%s'"), fullName);
 
 	/* check for a symbolic link */
 	while ((linkName = canonicalize_path(fullName)) && (ld > 0)) {
-		if (v_option)
-			printf(_("%s: `%s' is a link to `%s'\n"), programName, fullName, linkName);
+		verbose(_("`%s' is a link to `%s'"), fullName, linkName);
 		free(fullName);
 		fullName = xstrdup(linkName);
 		free(linkName);
@@ -703,38 +717,33 @@ int main(int argc, char **argv)
 		ld--;
 	}
 	/* handle max depth exceeded option */
-	if (ld <= 0) {
-		errx(1, _("maximum symbolic link depth exceeded: `%s'"), fullName);
-	}
+	if (ld <= 0)
+		errx(EXIT_FAILURE, _("maximum symbolic link depth exceeded: `%s'"), fullName);
 
 	/* if mount point, get device name */
 	mounted = mounted_device(fullName, &mountName, &deviceName);
-	if (v_option) {
-		if (mounted)
-			printf(_("%s: `%s' is mounted at `%s'\n"), programName, deviceName, mountName);
-		else
-			printf(_("%s: `%s' is not mounted\n"), programName, fullName);
-	}
+	if (mounted)
+		verbose(_("`%s' is mounted at `%s'"), deviceName, mountName);
+	else
+		verbose(_("`%s' is not mounted\n"), fullName);
+
 	if (!mounted) {
 		deviceName = xstrdup(fullName);
 	}
 
 	/* handle -n option */
 	if (n_option) {
-		printf(_("%s: device is `%s'\n"), programName, deviceName);
-		if (v_option)
-			printf(_("%s: exiting due to -n/--noop option\n"), programName);
+		info(_("device is `%s'"), deviceName);
+		verbose(_("exiting due to -n/--noop option"));
 		exit(0);
 	}
 
 	/* handle -a option */
 	if (a_option) {
-		if (v_option) {
-			if (a_arg)
-				printf(_("%s: enabling auto-eject mode for `%s'\n"), programName, deviceName);
-			else
-				printf(_("%s: disabling auto-eject mode for `%s'\n"), programName, deviceName);
-		}
+		if (a_arg)
+			verbose(_("%s: enabling auto-eject mode"), deviceName);
+		else
+			verbose(_("%s: disabling auto-eject mode"), deviceName);
 		fd = open_device(deviceName);
 		auto_eject(fd, a_arg);
 		exit(0);
@@ -742,8 +751,7 @@ int main(int argc, char **argv)
 
 	/* handle -t option */
 	if (t_option) {
-		if (v_option)
-			printf(_("%s: closing tray\n"), programName);
+		verbose(_("%s: closing tray"), deviceName);
 		fd = open_device(deviceName);
 		close_tray(fd);
 		set_device_speed(deviceName);
@@ -752,8 +760,7 @@ int main(int argc, char **argv)
 
 	/* handle -T option */
 	if (T_option) {
-		if (v_option)
-			printf(_("%s: toggling tray\n"), programName);
+		verbose(_("%s: toggling tray"), deviceName);
 		fd = open_device(deviceName);
 		toggle_tray(fd);
 		set_device_speed(deviceName);
@@ -766,8 +773,7 @@ int main(int argc, char **argv)
 
 	/* unmount device if mounted */
 	if ((m_option != 1) && mounted) {
-		if (v_option)
-			printf(_("%s: unmounting `%s'\n"), programName, deviceName);
+		verbose(_("%s: unmounting"), deviceName);
 		unmount_one(deviceName);
 	}
 
@@ -779,8 +785,7 @@ int main(int argc, char **argv)
 
 	/* handle -c option */
 	if (c_option) {
-		if (v_option)
-			printf(_("%s: selecting CD-ROM disc #%ld\n"), programName, c_arg);
+		verbose(_("%s: selecting CD-ROM disc #%ld\n"), deviceName, c_arg);
 		fd = open_device(deviceName);
 		changer_select(fd, c_arg);
 		set_device_speed(deviceName);
@@ -797,56 +802,35 @@ int main(int argc, char **argv)
 
 	/* try various methods of ejecting until it works */
 	if (r_option) {
-		if (v_option)
-			printf(_("%s: trying to eject `%s' using CD-ROM eject command\n"), programName, deviceName);
+		verbose(_("%s: trying to eject using CD-ROM eject command"), deviceName);
 		worked = eject_cdrom(fd);
-		if (v_option) {
-			if (worked)
-				printf(_("%s: CD-ROM eject command succeeded\n"), programName);
-			else
-				printf(_("%s: CD-ROM eject command failed\n"), programName);
-		}
+		verbose(worked ? _("CD-ROM eject command succeeded") :
+				 _("CD-ROM eject command failed"));
 	}
 
 	if (s_option && !worked) {
-		if (v_option)
-			printf(_("%s: trying to eject `%s' using SCSI commands\n"), programName, deviceName);
+		verbose(_("%s: trying to eject using SCSI commands"), deviceName);
 		worked = eject_scsi(fd);
-		if (v_option) {
-			if (worked)
-				printf(_("%s: SCSI eject succeeded\n"), programName);
-			else
-				printf(_("%s: SCSI eject failed\n"), programName);
-		}
+		verbose(worked ? _("SCSI eject succeeded") :
+				 _("SCSI eject failed"));
 	}
 
 	if (f_option && !worked) {
-		if (v_option)
-			printf(_("%s: trying to eject `%s' using floppy eject command\n"), programName, deviceName);
+		verbose(_("%s: trying to eject using floppy eject command"), deviceName);
 		worked = eject_floppy(fd);
-		if (v_option) {
-			if (worked)
-				printf(_("%s: floppy eject command succeeded\n"), programName);
-			else
-				printf(_("%s: floppy eject command failed\n"), programName);
-		}
+		verbose(worked ? _("floppy eject command succeeded") :
+				 _("floppy eject command failed"));
 	}
 
 	if (q_option && !worked) {
-		if (v_option)
-			printf(_("%s: trying to eject `%s' using tape offline command\n"), programName, deviceName);
+		verbose(_("%s: trying to eject using tape offline command"), deviceName);
 		worked = eject_tape(fd);
-		if (v_option) {
-			if (worked)
-				printf(_("%s: tape offline command succeeded\n"), programName);
-			else
-				printf(_("%s: tape offline command failed\n"), programName);
-		}
+		verbose(worked ? _("tape offline command succeeded") :
+				 _("tape offline command failed"));
 	}
 
-	if (!worked) {
-		err(1, _("unable to eject, last error"));
-	}
+	if (!worked)
+		errx(EXIT_FAILURE, _("unable to eject"));
 
 	/* cleanup */
 	close(fd);
