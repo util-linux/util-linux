@@ -537,53 +537,52 @@ static int eject_cdrom(int fd)
 }
 
 /*
- * Eject using SCSI commands. Return 1 if successful, 0 otherwise.
+ * Eject using SCSI SG_IO commands. Return 1 if successful, 0 otherwise.
  */
 static int eject_scsi(int fd)
 {
-	struct sdata {
-		int  inlen;
-		int  outlen;
-		char cmd[256];
-	} scsi_cmd;
+	int status, k;
+	sg_io_hdr_t io_hdr;
+	unsigned char allowRmBlk[6] = {ALLOW_MEDIUM_REMOVAL, 0, 0, 0, 0, 0};
+	unsigned char startStop1Blk[6] = {START_STOP, 0, 0, 0, 1, 0};
+	unsigned char startStop2Blk[6] = {START_STOP, 0, 0, 0, 2, 0};
+	unsigned char inqBuff[2];
+	unsigned char sense_buffer[32];
 
-	scsi_cmd.inlen	= 0;
-	scsi_cmd.outlen = 0;
-	scsi_cmd.cmd[0] = ALLOW_MEDIUM_REMOVAL;
-	scsi_cmd.cmd[1] = 0;
-	scsi_cmd.cmd[2] = 0;
-	scsi_cmd.cmd[3] = 0;
-	scsi_cmd.cmd[4] = 0;
-	scsi_cmd.cmd[5] = 0;
-	if (ioctl(fd, SCSI_IOCTL_SEND_COMMAND, (void *)&scsi_cmd) != 0)
+	if ((ioctl(fd, SG_GET_VERSION_NUM, &k) < 0) || (k < 30000)) {
+		verbose(_("not an sg device, or old sg driver"));
+		return 0;
+	}
+
+	memset(&io_hdr, 0, sizeof(sg_io_hdr_t));
+	io_hdr.interface_id = 'S';
+	io_hdr.cmd_len = 6;
+	io_hdr.mx_sb_len = sizeof(sense_buffer);
+	io_hdr.dxfer_direction = SG_DXFER_NONE;
+	io_hdr.dxfer_len = 0;
+	io_hdr.dxferp = inqBuff;
+	io_hdr.sbp = sense_buffer;
+	io_hdr.timeout = 10000;
+
+	io_hdr.cmdp = allowRmBlk;
+	status = ioctl(fd, SG_IO, (void *)&io_hdr);
+	if (status < 0)
 		return 0;
 
-	scsi_cmd.inlen	= 0;
-	scsi_cmd.outlen = 0;
-	scsi_cmd.cmd[0] = START_STOP;
-	scsi_cmd.cmd[1] = 0;
-	scsi_cmd.cmd[2] = 0;
-	scsi_cmd.cmd[3] = 0;
-	scsi_cmd.cmd[4] = 1;
-	scsi_cmd.cmd[5] = 0;
-	if (ioctl(fd, SCSI_IOCTL_SEND_COMMAND, (void *)&scsi_cmd) != 0)
+	io_hdr.cmdp = startStop1Blk;
+	status = ioctl(fd, SG_IO, (void *)&io_hdr);
+	if (status < 0)
 		return 0;
 
-	scsi_cmd.inlen	= 0;
-	scsi_cmd.outlen = 0;
-	scsi_cmd.cmd[0] = START_STOP;
-	scsi_cmd.cmd[1] = 0;
-	scsi_cmd.cmd[2] = 0;
-	scsi_cmd.cmd[3] = 0;
-	scsi_cmd.cmd[4] = 2;
-	scsi_cmd.cmd[5] = 0;
-	if (ioctl(fd, SCSI_IOCTL_SEND_COMMAND, (void *)&scsi_cmd) != 0)
+	io_hdr.cmdp = startStop2Blk;
+	status = ioctl(fd, SG_IO, (void *)&io_hdr);
+	if (status < 0)
 		return 0;
 
 	/* force kernel to reread partition table when new disc inserted */
-	return ioctl(fd, BLKRRPART) == 0;
+	status = ioctl(fd, BLKRRPART);
+	return 1;
 }
-
 
 /*
  * Eject using FDEJECT ioctl. Return 1 if successful, 0 otherwise.
