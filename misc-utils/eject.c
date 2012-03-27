@@ -429,40 +429,48 @@ static int eject_tape(int fd)
 
 
 /* Unmount a device. */
-static void unmount(const char *fullName) {
+static void unmount_one(const char *name)
+{
 	int status;
 
 	switch (fork()) {
-	  case 0: /* child */
-		  seteuid(getuid()); /* reduce likelyhood of security holes when running setuid */
-		  if(p_option)
-			  execl("/bin/umount", "/bin/umount", fullName, "-n", NULL);
-		  else
-			  execl("/bin/umount", "/bin/umount", fullName, NULL);
-		  errx(1, _("unable to exec /bin/umount of `%s'"), fullName);
-		  break;
-	  case -1:
-		  warn( _("unable to fork"));
-		  break;
-	  default: /* parent */
-		  wait(&status);
-		  if (WIFEXITED(status) == 0) {
-			  errx(1, _("unmount of `%s' did not exit normally\n"), fullName);
-		  }
-		  if (WEXITSTATUS(status) != 0) {
-			  errx(1, _("unmount of `%s' failed\n"), fullName);
-		  }
-		  break;
+	case 0: /* child */
+		if (setgid(getgid()) < 0)
+			err(EXIT_FAILURE, _("cannot set group id"));
+
+		if (setuid(getuid()) < 0)
+			err(EXIT_FAILURE, _("eject: cannot set user id"));
+
+		if (p_option)
+			execl("/bin/umount", "/bin/umount", name, "-n", NULL);
+		else
+			execl("/bin/umount", "/bin/umount", name, NULL);
+
+		errx(EXIT_FAILURE, _("unable to exec /bin/umount of `%s'"), name);
+
+	case -1:
+		warn( _("unable to fork"));
+		break;
+
+	default: /* parent */
+		wait(&status);
+		if (WIFEXITED(status) == 0)
+			errx(EXIT_FAILURE,
+			     _("unmount of `%s' did not exit normally"), name);
+
+		if (WEXITSTATUS(status) != 0)
+			errx(EXIT_FAILURE, _("unmount of `%s' failed\n"), name);
+		break;
 	}
 }
 
 
 /* Open a device file. */
-static int open_device(const char *fullName) {
-	int fd = open(fullName, O_RDONLY|O_NONBLOCK);
-	if (fd == -1) {
-		errx(1 , _("unable to open `%s'\n"), fullName);
-	}
+static int open_device(const char *name)
+{
+	int fd = open(name, O_RDONLY|O_NONBLOCK);
+	if (fd == -1)
+		errx(EXIT_FAILURE, _("%s: open failed"), name);
 	return fd;
 }
 
@@ -500,11 +508,10 @@ static int mounted_device(const char *name, char **mountName, char **deviceName)
 
 	get_major_minor(name, &maj, &min);
 
+
 	fp = fopen((p_option ? "/proc/mounts" : "/etc/mtab"), "r");
 	if (fp == NULL)
-	{
-		err(1, _("unable to open %s"), (p_option ? "/proc/mounts" : "/etc/mtab"));
-	}
+		err(EXIT_FAILURE, _("%s: open failed"), (p_option ? "/proc/mounts" : "/etc/mtab"));
 
 	while (fgets(line, sizeof(line), fp) != 0) {
 		rc = sscanf(line, "%1023s %1023s", s1, s2);
@@ -556,7 +563,7 @@ static void unmount_devices(const char *pattern) {
 			if (status == 0) {
 				if (v_option)
 					printf(_("%s: unmounting `%s'\n"), program_invocation_short_name, s1);
-				unmount(s1);
+				unmount_one(s1);
 				regfree(&preg);
 			}
 		}
@@ -751,7 +758,7 @@ int main(int argc, char **argv) {
 	if ((m_option != 1) && mounted) {
 		if (v_option)
 			printf(_("%s: unmounting `%s'\n"), programName, deviceName);
-		unmount(deviceName);
+		unmount_one(deviceName);
 	}
 
 	/* if it is a multipartition device, unmount any other partitions on
