@@ -15,10 +15,11 @@
 #include <stdint.h>
 #include <ctype.h>
 
+#include <blkid.h>
+
 #include "bitops.h"
 #include "blkdev.h"
 #include "nls.h"
-#include "fsprobe.h"
 #include "pathnames.h"
 #include "swapheader.h"
 #include "mangle.h"
@@ -257,9 +258,8 @@ display_summary(void)
 
 /* calls mkswap */
 static int
-swap_reinitialize(const char *device) {
-	const char *label = fsprobe_get_label_by_devname(device);
-	const char *uuid  = fsprobe_get_uuid_by_devname(device);
+swap_reinitialize(const char *device, const char *label, const char *uuid)
+{
 	pid_t pid;
 	int status, ret;
 	char *cmd[7];
@@ -420,6 +420,29 @@ swap_get_size(const char *hdr, const char *devname, unsigned int pagesize)
 	return ((unsigned long long) last_page + 1) * pagesize;
 }
 
+void
+swap_get_info(const char *hdr, char **label, char **uuid)
+{
+	struct swap_header_v1_2 *s = (struct swap_header_v1_2 *) hdr;
+
+	if (s && *s->volume_name && label)
+		*label = xstrdup(s->volume_name);
+
+	if (s && *s->uuid && uuid) {
+		const unsigned char *u = s->uuid;
+		char str[37];
+
+		snprintf(str, sizeof(str),
+			"%02x%02x%02x%02x-"
+			"%02x%02x-%02x%02x-"
+			"%02x%02x-%02x%02x%02x%02x%02x%02x",
+			u[0], u[1], u[2], u[3],
+			u[4], u[5], u[6], u[7],
+			u[8], u[9], u[10], u[11], u[12], u[13], u[14], u[15]);
+		*uuid = xstrdup(str);
+	}
+}
+
 static int
 swapon_checks(const char *special)
 {
@@ -492,9 +515,17 @@ swapon_checks(const char *special)
 					special, swapsize);
 		} else if (syspg < 0 || (unsigned) syspg != pagesize) {
 			if (fixpgsz) {
+				char *label = NULL, *uuid = NULL;
+				int rc;
+
+				swap_get_info(hdr, &label, &uuid);
+
 				warnx(_("%s: swap format pagesize does not match."),
 					special);
-				if (swap_reinitialize(special) < 0)
+				rc = swap_reinitialize(special, label, uuid);
+				free(label);
+				free(uuid);
+				if (rc < 0)
 					goto err;
 			} else
 				warnx(_("%s: swap format pagesize does not match. "
@@ -533,7 +564,7 @@ do_swapon(const char *orig_special, int prio, int fl_discard, int canonic) {
 		printf(_("%s on %s\n"), progname, orig_special);
 
 	if (!canonic) {
-		special = fsprobe_get_devname_by_spec(orig_special);
+		special = blkid_evaluate_spec(orig_special, NULL);
 		if (!special)
 			return cannot_find(orig_special);
 	}
@@ -568,14 +599,14 @@ cannot_find(const char *special) {
 
 static int
 swapon_by_label(const char *label, int prio, int dsc) {
-	const char *special = fsprobe_get_devname_by_label(label);
+	const char *special = blkid_evaluate_tag("LABEL", label, NULL);
 	return special ? do_swapon(special, prio, dsc, CANONIC) :
 			 cannot_find(label);
 }
 
 static int
 swapon_by_uuid(const char *uuid, int prio, int dsc) {
-	const char *special = fsprobe_get_devname_by_uuid(uuid);
+	const char *special = blkid_evaluate_tag("UUID", uuid, NULL);
 	return special ? do_swapon(special, prio, dsc, CANONIC) :
 			 cannot_find(uuid);
 }
@@ -588,7 +619,7 @@ do_swapoff(const char *orig_special, int quiet, int canonic) {
 		printf(_("%s on %s\n"), progname, orig_special);
 
 	if (!canonic) {
-		special = fsprobe_get_devname_by_spec(orig_special);
+		special = blkid_evaluate_spec(orig_special, NULL);
 		if (!special)
 			return cannot_find(orig_special);
 	}
@@ -607,13 +638,13 @@ do_swapoff(const char *orig_special, int quiet, int canonic) {
 
 static int
 swapoff_by_label(const char *label, int quiet) {
-	const char *special = fsprobe_get_devname_by_label(label);
+	const char *special = blkid_evaluate_tag("LABEL", label, NULL);
 	return special ? do_swapoff(special, quiet, CANONIC) : cannot_find(label);
 }
 
 static int
 swapoff_by_uuid(const char *uuid, int quiet) {
-	const char *special = fsprobe_get_devname_by_uuid(uuid);
+	const char *special = blkid_evaluate_tag("UUID", uuid, NULL);
 	return special ? do_swapoff(special, quiet, CANONIC) : cannot_find(uuid);
 }
 
@@ -656,7 +687,7 @@ swapon_all(void) {
 		if (skip)
 			continue;
 
-		special = fsprobe_get_devname_by_spec(fstab->mnt_fsname);
+		special = blkid_evaluate_spec(fstab->mnt_fsname, NULL);
 		if (!special) {
 			if (!nofail)
 				status |= cannot_find(fstab->mnt_fsname);
@@ -840,7 +871,7 @@ main_swapoff(int argc, char *argv[]) {
 			if (!streq(fstab->mnt_type, MNTTYPE_SWAP))
 				continue;
 
-			special = fsprobe_get_devname_by_spec(fstab->mnt_fsname);
+			special = blkid_evaluate_spec(fstab->mnt_fsname, NULL);
 			if (!special)
 				continue;
 

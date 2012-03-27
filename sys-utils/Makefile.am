@@ -125,7 +125,6 @@ swapon_SOURCES = \
 	swapon.c \
 	$(top_srcdir)/lib/blkdev.c \
 	$(top_srcdir)/lib/canonicalize.c \
-	$(top_srcdir)/lib/fsprobe.c \
 	$(top_srcdir)/lib/linux_version.c \
 	$(top_srcdir)/lib/mangle.c
 
