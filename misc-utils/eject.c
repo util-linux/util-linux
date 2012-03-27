@@ -479,12 +479,14 @@ static int open_device(const char *name)
  * Get major and minor device numbers for a device file name, so we
  * can check for duplicate devices.
  */
-static int get_major_minor(const char *name, int *maj, int *min) {
+static int get_major_minor(const char *name, int *maj, int *min)
+{
 	struct stat sstat;
+
 	*maj = *min = -1;
 	if (stat(name, &sstat) == -1)
 		return -1;
-	if (! S_ISBLK(sstat.st_mode))
+	if (!S_ISBLK(sstat.st_mode))
 		return -1;
 	*maj = major(sstat.st_rdev);
 	*min = minor(sstat.st_rdev);
@@ -495,9 +497,13 @@ static int get_major_minor(const char *name, int *maj, int *min) {
 /*
  * See if device has been mounted by looking in mount table.  If so, set
  * device name and mount point name, and return 1, otherwise return 0.
+ *
+ * TODO: use libmount here
  */
-static int mounted_device(const char *name, char **mountName, char **deviceName) {
+static int mounted_device(const char *name, char **mountName, char **deviceName)
+{
 	FILE *fp;
+	const char *fname;
 	char line[1024];
 	char s1[1024];
 	char s2[1024];
@@ -508,10 +514,11 @@ static int mounted_device(const char *name, char **mountName, char **deviceName)
 
 	get_major_minor(name, &maj, &min);
 
+	fname = p_option ? "/proc/mounts" : "/etc/mtab";
 
-	fp = fopen((p_option ? "/proc/mounts" : "/etc/mtab"), "r");
-	if (fp == NULL)
-		err(EXIT_FAILURE, _("%s: open failed"), (p_option ? "/proc/mounts" : "/etc/mtab"));
+	fp = fopen(fname, "r");
+	if (!fp)
+		err(EXIT_FAILURE, _("%s: open failed"), fname);
 
 	while (fgets(line, sizeof(line), fp) != 0) {
 		rc = sscanf(line, "%1023s %1023s", s1, s2);
@@ -521,8 +528,8 @@ static int mounted_device(const char *name, char **mountName, char **deviceName)
 			if (((strcmp(s1, name) == 0) || (strcmp(s2, name) == 0)) ||
 				((maj != -1) && (maj == mtabmaj) && (min == mtabmin))) {
 				fclose(fp);
-				*deviceName = strdup(s1);
-				*mountName = strdup(s2);
+				*deviceName = xstrdup(s1);
+				*mountName = xstrdup(s2);
 				return 1;
 			}
 		}
@@ -533,31 +540,32 @@ static int mounted_device(const char *name, char **mountName, char **deviceName)
 	return 0;
 }
 
-
 /*
  * Step through mount table and unmount all devices that match a regular
  * expression.
+ *
+ * TODO: replace obscure regex voodoo with /sys scan
  */
-static void unmount_devices(const char *pattern) {
+static void unmount_devices(const char *pattern)
+{
 	regex_t preg;
 	FILE *fp;
-	char s1[1024];
-	char s2[1024];
+	const char *fname;
 	char line[1024];
-	int status;
 
-	if (regcomp(&preg, pattern, REG_EXTENDED)!=0) {
-    err(0, _("regcomp"));
-	}
+	if (regcomp(&preg, pattern, REG_EXTENDED) != 0)
+		err(EXIT_FAILURE, _("regcomp failed"));
 
-	fp = fopen((p_option ? "/proc/mounts" : "/etc/mtab"), "r");
-	if (fp == NULL)
-	{
-		err(1, _("unable to open %s"),(p_option ? "/proc/mounts" : "/etc/mtab"));
-	}
+	fname = p_option ? "/proc/mounts" : "/etc/mtab";
+	fp = fopen(fname, "r");
+	if (!fp)
+		err(EXIT_FAILURE, _("%s: open failed"), fname);
 
 	while (fgets(line, sizeof(line), fp) != 0) {
-		status = sscanf(line, "%1023s %1023s", s1, s2);
+		char s1[1024];
+		char s2[1024];
+
+		int status = sscanf(line, "%1023s %1023s", s1, s2);
 		if (status >= 2) {
 			status = regexec(&preg, s1, 0, 0, 0);
 			if (status == 0) {
