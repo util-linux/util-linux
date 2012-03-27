@@ -21,10 +21,10 @@ srcs_mount = \
 	fstab.c \
 	getusername.c \
 	mount_mntent.c \
+	fsprobe.c \
 	$(top_srcdir)/lib/at.c \
 	$(top_srcdir)/lib/blkdev.c \
 	$(top_srcdir)/lib/env.c \
-	$(top_srcdir)/lib/fsprobe.c \
 	$(top_srcdir)/lib/linux_version.c \
 	$(top_srcdir)/lib/loopdev.c \
 	$(top_srcdir)/lib/mangle.c \

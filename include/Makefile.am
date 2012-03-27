@@ -12,7 +12,6 @@ dist_noinst_HEADERS = \
 	env.h \
 	exitcodes.h \
 	fileutils.h \
-	fsprobe.h \
 	ismounted.h \
 	linux_reboot.h \
 	linux_version.h \
