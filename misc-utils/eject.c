@@ -238,36 +238,26 @@ static void parse_args(int argc, char **argv, char **device)
  * If found, return the full path. If not found, return 0.
  * Returns pointer to dynamically allocated string.
  */
-static char *find_device(const char *name) {
-	char *buf;
+static char *find_device(const char *name)
+{
+	if ((*name == '.' || *name == '/') && access(name, F_OK) == 0)
+		return xstrdup(name);
+	else {
+		char buf[PATH_MAX];
 
-	buf = (char *) xmalloc(strlen(name)+14); /* to allow for "/dev/cdroms/ + "0" + null */
-
-	if ((name[0] == '.') || (name[0] == '/')) {
-		strcpy(buf, name);
-		if (access(buf, F_OK) == 0)
-			return buf;
+		snprintf(buf, sizeof(buf), "/dev/%s", name);
+		if (access(name, F_OK) == 0)
+			return xstrdup(buf);
 	}
 
-	strcpy(buf, "/dev/");
-	strcat(buf, name);
-	if (access (name, F_OK) == 0)
-		return buf;
-
-	free(buf);
-	buf = 0;
-	return 0;
+	return NULL;
 }
 
-
 /* Set or clear auto-eject mode. */
-static void auto_eject(int fd, int onOff) {
-	int status;
-
-	status = ioctl(fd, CDROMEJECT_SW, onOff);
-	if (status != 0) {
-		err(1, _("CD-ROM auto-eject command failed"));
-	}
+static void auto_eject(int fd, int on)
+{
+	if (ioctl(fd, CDROMEJECT_SW, on) != 0)
+		err(EXIT_FAILURE, _("CD-ROM auto-eject command failed"));
 }
 
 
@@ -275,38 +265,30 @@ static void auto_eject(int fd, int onOff) {
  * Changer select. CDROM_SELECT_DISC is preferred, older kernels used
  * CDROMLOADFROMSLOT.
  */
-static void changer_select(int fd, int slot) {
-	int status;
-
+static void changer_select(int fd, int slot)
+{
 #ifdef CDROM_SELECT_DISC
-	status = ioctl(fd, CDROM_SELECT_DISC, slot);
-	if (status < 0) {
-		err(1, _("CD-ROM select disc command failed"));
-	}
+	if (ioctl(fd, CDROM_SELECT_DISC, slot) < 0)
+		err(EXIT_FAILURE, _("CD-ROM select disc command failed"));
+
 #elif defined CDROMLOADFROMSLOT
-	status = ioctl(fd, CDROMLOADFROMSLOT, slot);
-	if (status != 0) {
-		err(1, _("CD-ROM load from slot command failed"));
-	}
+	if (ioctl(fd, CDROMLOADFROMSLOT, slot) != 0)
+		err(EXIT_FAILURE, _("CD-ROM load from slot command failed"));
 #else
-    warnx( _("IDE/ATAPI CD-ROM changer not supported by this kernel\n") );
+	warnx(_("IDE/ATAPI CD-ROM changer not supported by this kernel\n") );
 #endif
 }
-
 
 /*
  * Close tray. Not supported by older kernels.
  */
-static void close_tray(int fd) {
-	int status;
-
+static void close_tray(int fd)
+{
 #ifdef CDROMCLOSETRAY
-	status = ioctl(fd, CDROMCLOSETRAY);
-	if (status != 0) {
-		err(1, _("CD-ROM tray close command failed"));
-	}
+	if (ioctl(fd, CDROMCLOSETRAY) != 0)
+		err(EXIT_FAILURE, _("CD-ROM tray close command failed"));
 #else
-    warnx( _("CD-ROM tray close command not supported by this kernel\n"));
+	warnx(_("CD-ROM tray close command not supported by this kernel\n"));
 #endif
 }
 
@@ -320,12 +302,12 @@ static void close_tray(int fd) {
  * CloseTray().
  *
  */
-static void toggle_tray(int fd) {
+static void toggle_tray(int fd)
+{
 	struct timeval time_start, time_stop;
 	int time_elapsed;
 
 #ifdef CDROMCLOSETRAY
-
 	/* Try to open the CDROM tray and measure the time therefor
 	 * needed.  In my experience the function needs less than 0.05
 	 * seconds if the tray was already open, and at least 1.5 seconds
@@ -333,10 +315,8 @@ static void toggle_tray(int fd) {
 	gettimeofday(&time_start, NULL);
 
 	/* Send the CDROMEJECT command to the device. */
-	if (ioctl(fd, CDROMEJECT, 0) < 0) {
-		perror("ioctl");
-		exit(1);
-	}
+	if (ioctl(fd, CDROMEJECT, 0) < 0)
+		err(EXIT_FAILURE, _("CD-ROM eject command failed"));
 
 	/* Get the second timestamp, to measure the time needed to open
 	 * the tray.  */
@@ -350,9 +330,8 @@ static void toggle_tray(int fd) {
 	 * closed before. This would mean that we are done.  */
 	if (time_elapsed < TRAY_WAS_ALREADY_OPEN_USECS)
 		close_tray(fd);
-
 #else
-    warnx( _("CD-ROM tray toggle command not supported by this kernel"));
+	warnx(_("CD-ROM tray toggle command not supported by this kernel"));
 #endif
 
 }
@@ -362,36 +341,29 @@ static void toggle_tray(int fd) {
  * Thanks to Roland Krivanek (krivanek@fmph.uniba.sk)
  * http://dmpc.dbp.fmph.uniba.sk/~krivanek/cdrom_speed/
  */
-static void select_speed(int fd, int speed) {
-	int status;
-
+static void select_speed(int fd, int speed)
+{
 #ifdef CDROM_SELECT_SPEED
-	status = ioctl(fd, CDROM_SELECT_SPEED, speed);
-	if (status != 0) {
-		err(1, _("CD-ROM select speed command failed"));
-	}
+	if (ioctl(fd, CDROM_SELECT_SPEED, speed) != 0)
+		err(EXIT_FAILURE, _("CD-ROM select speed command failed"));
 #else
-    warnx( _("CD-ROM select speed command not supported by this kernel"));
+	warnx(_("CD-ROM select speed command not supported by this kernel"));
 #endif
 }
-
 
 /*
  * Eject using CDROMEJECT ioctl. Return 1 if successful, 0 otherwise.
  */
-static int eject_cdrom(int fd) {
-	int status;
-
-	status = ioctl(fd, CDROMEJECT);
-	return (status == 0);
+static int eject_cdrom(int fd)
+{
+	return ioctl(fd, CDROMEJECT) == 0;
 }
-
 
 /*
  * Eject using SCSI commands. Return 1 if successful, 0 otherwise.
  */
-static int eject_scsi(int fd) {
-	int status;
+static int eject_scsi(int fd)
+{
 	struct sdata {
 		int  inlen;
 		int  outlen;
@@ -406,8 +378,7 @@ static int eject_scsi(int fd) {
 	scsi_cmd.cmd[3] = 0;
 	scsi_cmd.cmd[4] = 0;
 	scsi_cmd.cmd[5] = 0;
-	status = ioctl(fd, SCSI_IOCTL_SEND_COMMAND, (void *)&scsi_cmd);
-	if (status != 0)
+	if (ioctl(fd, SCSI_IOCTL_SEND_COMMAND, (void *)&scsi_cmd) != 0)
 		return 0;
 
 	scsi_cmd.inlen	= 0;
@@ -418,8 +389,7 @@ static int eject_scsi(int fd) {
 	scsi_cmd.cmd[3] = 0;
 	scsi_cmd.cmd[4] = 1;
 	scsi_cmd.cmd[5] = 0;
-	status = ioctl(fd, SCSI_IOCTL_SEND_COMMAND, (void *)&scsi_cmd);
-	if (status != 0)
+	if (ioctl(fd, SCSI_IOCTL_SEND_COMMAND, (void *)&scsi_cmd) != 0)
 		return 0;
 
 	scsi_cmd.inlen	= 0;
@@ -430,38 +400,31 @@ static int eject_scsi(int fd) {
 	scsi_cmd.cmd[3] = 0;
 	scsi_cmd.cmd[4] = 2;
 	scsi_cmd.cmd[5] = 0;
-	status = ioctl(fd, SCSI_IOCTL_SEND_COMMAND, (void *)&scsi_cmd);
-	if (status != 0)
+	if (ioctl(fd, SCSI_IOCTL_SEND_COMMAND, (void *)&scsi_cmd) != 0)
 		return 0;
 
 	/* force kernel to reread partition table when new disc inserted */
-	status = ioctl(fd, BLKRRPART);
-	return (status == 0);
+	return ioctl(fd, BLKRRPART) == 0;
 }
 
 
 /*
  * Eject using FDEJECT ioctl. Return 1 if successful, 0 otherwise.
  */
-static int eject_floppy(int fd) {
-	int status;
-
-	status = ioctl(fd, FDEJECT);
-	return (status == 0);
+static int eject_floppy(int fd)
+{
+	return ioctl(fd, FDEJECT) == 0;
 }
 
 
 /*
- * Eject using tape ioctl. Return 1 if successful, 0 otherwise.
+ * Rewind and eject using tape ioctl. Return 1 if successful, 0 otherwise.
  */
-static int eject_tape(int fd) {
-	int status;
-	struct mtop op;
+static int eject_tape(int fd)
+{
+	struct mtop op = { .mt_op = MTOFFL, .mt_count = 0 };
 
-	op.mt_op = MTOFFL; /* rewind and eject */
-	op.mt_count = 0;   /* not used */
-	status = ioctl(fd, MTIOCTOP, &op);
-	return (status == 0);
+	return ioctl(fd, MTIOCTOP, &op) == 0;
 }
 
 
