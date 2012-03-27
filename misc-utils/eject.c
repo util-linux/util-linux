@@ -527,7 +527,13 @@ static void list_speeds(const char *name, int fd)
  */
 static int eject_cdrom(int fd)
 {
+#if defined(CDROMEJECT)
 	return ioctl(fd, CDROMEJECT) == 0;
+#elif defined(CDIOCEJECT)
+	return ioctl(fd, CDIOCEJECT) == 0;
+#else
+	warnx(_("CD-ROM eject unsupported"));
+#endif
 }
 
 /*
