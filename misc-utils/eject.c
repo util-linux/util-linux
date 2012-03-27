@@ -229,20 +229,6 @@ static void parse_args(int argc, char **argv, char **device)
 		*device = xstrdup(argv[optind]);
 }
 
-/* Return 1 if file/device exists, 0 otherwise. */
-static int file_exists(const char *name) {
-    /*
-    * access() uses the UID, not the EUID. This way a normal user
-    * cannot find out if a file (say, /root/fubar) exists or not, even
-    * if eject is SUID root
-   */
-   if (access (name, F_OK) == 0) {
-       return 1;
-   } else {
-       return 0;
-   }
-}
-
 /*
  * Given name, such as foo, see if any of the following exist:
  *
@@ -259,13 +245,13 @@ static char *find_device(const char *name) {
 
 	if ((name[0] == '.') || (name[0] == '/')) {
 		strcpy(buf, name);
-		if (file_exists(buf))
+		if (access(buf, F_OK) == 0)
 			return buf;
 	}
 
 	strcpy(buf, "/dev/");
 	strcat(buf, name);
-	if (file_exists(buf))
+	if (access (name, F_OK) == 0)
 		return buf;
 
 	free(buf);
