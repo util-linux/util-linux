@@ -639,9 +639,8 @@ void set_device_speed(char *name)
 
 
 /* main program */
-int main(int argc, char **argv) {
-
-	const char *defaultDevice = EJECT_DEFAULT_DEVICE;  /* default if no name passed by user */
+int main(int argc, char **argv)
+{
 	int worked = 0;    /* set to 1 when successfully ejected */
 	char *device = 0;  /* name passed from user */
 	char *fullName;    /* expanded name */
@@ -666,13 +665,13 @@ int main(int argc, char **argv) {
 
 	/* handle -d option */
 	if (d_option) {
-		printf(_("%s: default device: `%s'\n"), programName, defaultDevice);
+		printf(_("%s: default device: `%s'\n"), programName, EJECT_DEFAULT_DEVICE);
 		exit(0);
 	}
 
 	/* if no device, use default */
 	if (device == 0) {
-		device = xstrdup(defaultDevice);
+		device = xstrdup(EJECT_DEFAULT_DEVICE);
 		if (v_option)
 			printf(_("%s: using default device `%s'\n"), programName, device);
 	}
