@@ -43,12 +43,13 @@
 #include <scsi/scsi_ioctl.h>
 #include <sys/time.h>
 
+#include <libmount.h>
+
 #include "linux_version.h"
 #include "c.h"
 #include "nls.h"
 #include "strutils.h"
 #include "xalloc.h"
-#include "canonicalize.h"
 #include "pathnames.h"
 
 #define EJECT_DEFAULT_DEVICE "/dev/cdrom"
@@ -653,74 +654,49 @@ static int open_device(const char *name)
 	return fd;
 }
 
-
-/*
- * Get major and minor device numbers for a device file name, so we
- * can check for duplicate devices.
- */
-static int get_major_minor(const char *name, int *maj, int *min)
-{
-	struct stat sstat;
-
-	if (maj)
-		*maj = -1;
-	if (min)
-		*min = -1;
-
-	if (stat(name, &sstat) == -1)
-		return -1;
-	if (!S_ISBLK(sstat.st_mode))
-		return -1;
-	if (maj)
-		*maj = major(sstat.st_rdev);
-	if (min)
-		*min = minor(sstat.st_rdev);
-	return 0;
-}
-
-
 /*
  * See if device has been mounted by looking in mount table.  If so, set
  * device name and mount point name, and return 1, otherwise return 0.
- *
- * TODO: use libmount here
  */
-static int mounted_device(const char *name, char **mountName)
+static int device_get_mountpoint(char **devname, char **mnt)
 {
-	FILE *fp;
-	const char *fname;
-	char line[1024];
-	char s1[1024];
-	char s2[1024];
-	int rc;
+	struct libmnt_table *mtab;
+	struct libmnt_cache *cache;
+	struct libmnt_fs *fs;
+	int rc = -1;
 
-	int maj;
-	int min;
+	mtab = mnt_new_table();
+	if (!mtab)
+		err(EXIT_FAILURE, _("failed to initialize libmount table"));
 
-	get_major_minor(name, &maj, &min);
+	cache = mnt_new_cache();
+	mnt_table_set_cache(mtab, cache);
 
-	fname = p_option ? "/proc/mounts" : "/etc/mtab";
+	if (p_option)
+		rc = mnt_table_parse_file(mtab, _PATH_PROC_MOUNTINFO);
+	else
+		rc = mnt_table_parse_mtab(mtab, NULL);
 
-	fp = fopen(fname, "r");
-	if (!fp)
-		err(EXIT_FAILURE, _("%s: open failed"), fname);
+	if (rc)
+		goto done;
 
-	while (fgets(line, sizeof(line), fp) != 0) {
-		rc = sscanf(line, "%1023s %1023s", s1, s2);
-		if (rc >= 2) {
-			int mtabmaj, mtabmin;
-			get_major_minor(s1, &mtabmaj, &mtabmin);
-			if (((strcmp(s1, name) == 0) || (strcmp(s2, name) == 0)) ||
-				((maj != -1) && (maj == mtabmaj) && (min == mtabmin))) {
-				fclose(fp);
-				*mountName = xstrdup(s2);
-				return 1;
-			}
+	fs = mnt_table_find_source(mtab, *devname, MNT_ITER_BACKWARD);
+	if (!fs) {
+		/* maybe 'devname' is mountpoint rather than a real device */
+		fs = mnt_table_find_target(mtab, *devname, MNT_ITER_BACKWARD);
+		if (fs) {
+			free(*devname);
+			*devname = xstrdup(mnt_fs_get_source(fs));
 		}
 	}
-	*mountName = 0;
-	fclose(fp);
-	return 0;
+	if (fs) {
+		*mnt = xstrdup(mnt_fs_get_target(fs));
+		rc = 0;
+	}
+done:
+	mnt_free_table(mtab);
+	mnt_free_cache(cache);
+	return rc;
 }
 
 /*
@@ -820,11 +796,10 @@ void set_device_speed(char *name)
 int main(int argc, char **argv)
 {
 	char *device = NULL;
-
-	int worked = 0;    /* set to 1 when successfully ejected */
-	char *mountName;   /* name of device's mount point */
-	int fd;            /* file descriptor for device */
+	char *mountpoint = NULL;
 	int mounted = 0;   /* true if device is mounted */
+	int worked = 0;    /* set to 1 when successfully ejected */
+	int fd;            /* file descriptor for device */
 	char *pattern;     /* regex for device if multiple partitions */
 
 	setlocale(LC_ALL,"");
@@ -841,7 +816,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!device) {
-		device = canonicalize_path(EJECT_DEFAULT_DEVICE);
+		device = mnt_resolve_path(EJECT_DEFAULT_DEVICE, NULL);
 		verbose(_("using default device `%s'"), device);
 	} else {
 		char *p;
@@ -853,7 +828,7 @@ int main(int argc, char **argv)
 		p = find_device(device);
 		free(device);
 
-		device = canonicalize_path(p);
+		device = mnt_resolve_path(p, NULL);
 		free(p);
 	}
 
@@ -862,12 +837,11 @@ int main(int argc, char **argv)
 
 	verbose(_("device name is `%s'"), device);
 
-	/* if mount point, get device name */
-	mounted = mounted_device(device, &mountName);
+	mounted = device_get_mountpoint(&device, &mountpoint) == 0;
 	if (mounted)
-		verbose(_("`%s' is mounted at `%s'"), device, mountName);
+		verbose(_("%s: is mounted at `%s'"), device, mountpoint);
 	else
-		verbose(_("`%s' is not mounted\n"), device);
+		verbose(_("%s: is not mounted"), device);
 
 	/* handle -n option */
 	if (n_option) {
@@ -990,7 +964,7 @@ int main(int argc, char **argv)
 	/* cleanup */
 	close(fd);
 	free(device);
-	free(mountName);
+	free(mountpoint);
 	free(pattern);
 	exit(0);
 }
