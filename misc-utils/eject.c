@@ -605,8 +605,8 @@ static int eject_tape(int fd)
 }
 
 
-/* Unmount a device. */
-static void unmount_one(const char *name)
+/* umount a device. */
+static void umount_one(const char *name)
 {
 	int status;
 
@@ -729,7 +729,7 @@ static void unmount_devices(const char *pattern)
 			status = regexec(&preg, s1, 0, 0, 0);
 			if (status == 0) {
 				verbose(_("%s: unmounting"), s1);
-				unmount_one(s1);
+				umount_one(s1);
 				regfree(&preg);
 			}
 		}
@@ -903,7 +903,7 @@ int main(int argc, char **argv)
 	/* unmount device if mounted */
 	if ((m_option != 1) && mounted) {
 		verbose(_("%s: unmounting"), device);
-		unmount_one(device);
+		umount_one(mountpoint);
 	}
 
 	/* if it is a multipartition device, unmount any other partitions on
