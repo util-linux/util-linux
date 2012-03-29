@@ -2,6 +2,8 @@
  * Copyright (C) 2011 Karel Zak <kzak@redhat.com>
  */
 
+#include <ctype.h>
+
 #include "c.h"
 #include "at.h"
 #include "pathnames.h"
@@ -285,8 +287,26 @@ int sysfs_is_partition_dirent(DIR *dir, struct dirent *d, const char *parent_nam
 	    d->d_type != DT_LNK)
 		return 0;
 #endif
-	if (parent_name && strncmp(parent_name, d->d_name, strlen(parent_name)))
-		return 0;
+	if (parent_name) {
+		const char *p = parent_name;
+		size_t len;
+
+		/* /dev/sda --> "sda" */
+		if (*parent_name == '/') {
+			p = strrchr(parent_name, '/');
+			if (!p)
+				return 0;
+			p++;
+		}
+
+		len = strlen(p);
+		if (strlen(d->d_name) <= len)
+			return 0;
+
+		/* partitions subdir name is "<parent>[:digit:]" */
+		return strncmp(p, d->d_name, len) == 0
+		       && isdigit(*(d->d_name + len));
+	}
 
 	/* Cannot use /partition file, not supported on old sysfs */
 	snprintf(path, sizeof(path), "%s/start", d->d_name);
