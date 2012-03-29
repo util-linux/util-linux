@@ -62,6 +62,7 @@ TS_CMD_NAMEI=${TS_CMD_NAMEI-"$top_builddir/misc-utils/namei"}
 TS_CMD_LOOK=${TS_CMD_LOOK-"$top_builddir/misc-utils/look"}
 TS_CMD_CAL=${TS_CMD_CAL-"$top_builddir/misc-utils/cal"}
 TS_CMD_SCRIPT=${TS_CMD_SCRIPT-"$top_builddir/term-utils/script"}
+TS_CMD_EJECT=${TS_CMD_EJECT-"$top_builddir/misc-utils/eject"}
 
 
 TS_CMD_HWCLOCK=${TS_CMD_HWCLOCK-"$top_builddir/hwclock/hwclock"}
