@@ -87,23 +87,6 @@ static long int x_arg;
 struct libmnt_table *mtab;
 struct libmnt_cache *cache;
 
-/*
- * These are the basenames of devices which can have multiple
- * partitions per device.
- */
-const char *partition_device[] = {
-    "hd",
-    "sd",
-    "xd",
-    "dos_hd",
-    "mfm",
-    "ad",
-    "ed",
-    "ftl",
-    "pd",
-    0
-};
-
 static void vinfo(const char *fmt, va_list va)
 {
 	fprintf(stdout, "%s: ", program_invocation_short_name);
@@ -804,7 +787,7 @@ int main(int argc, char **argv)
 	/* handle -d option */
 	if (d_option) {
 		info(_("default device: `%s'"), EJECT_DEFAULT_DEVICE);
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	if (!device) {
@@ -848,7 +831,7 @@ int main(int argc, char **argv)
 	if (n_option) {
 		info(_("device is `%s'"), device);
 		verbose(_("exiting due to -n/--noop option"));
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	/* TODO: Check if device has removable flag */
@@ -857,7 +840,7 @@ int main(int argc, char **argv)
 	if (i_option) {
 		fd = open_device(device);
 		manual_eject(fd, i_arg);
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	/* handle -a option */
@@ -868,7 +851,7 @@ int main(int argc, char **argv)
 			verbose(_("%s: disabling auto-eject mode"), device);
 		fd = open_device(device);
 		auto_eject(fd, a_arg);
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	/* handle -t option */
@@ -877,7 +860,7 @@ int main(int argc, char **argv)
 		fd = open_device(device);
 		close_tray(fd);
 		set_device_speed(device);
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	/* handle -T option */
@@ -886,7 +869,7 @@ int main(int argc, char **argv)
 		fd = open_device(device);
 		toggle_tray(fd);
 		set_device_speed(device);
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	/* handle -X option */
@@ -894,7 +877,7 @@ int main(int argc, char **argv)
 		verbose(_("%s: listing CD-ROM speed"), device);
 		fd = open_device(device);
 		list_speeds(device, fd);
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	/* handle -x option only */
@@ -916,13 +899,12 @@ int main(int argc, char **argv)
 		fd = open_device(device);
 		changer_select(fd, c_arg);
 		set_device_speed(device);
-		exit(0);
+		return EXIT_SUCCESS;
 	}
 
 	/* if user did not specify type of eject, try all four methods */
-	if ((r_option + s_option + f_option + q_option) == 0) {
+	if (r_option + s_option + f_option + q_option == 0)
 		r_option = s_option = f_option = q_option = 1;
-	}
 
 	/* open device */
 	fd = open_device(device);
@@ -967,5 +949,5 @@ int main(int argc, char **argv)
 	mnt_free_table(mtab);
 	mnt_free_cache(cache);
 
-	exit(0);
+	return EXIT_SUCCESS;
 }
