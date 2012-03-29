@@ -33,7 +33,11 @@ dist_man_MANS = \
 namei_SOURCES = namei.c $(top_srcdir)/lib/strutils.c
 
 usrbin_exec_PROGRAMS += eject
-eject_SOURCES = eject.c $(top_srcdir)/lib/strutils.c
+eject_SOURCES =  \
+	eject.c \
+	$(top_srcdir)/lib/strutils.c \
+	$(top_srcdir)/lib/sysfs.c \
+	$(top_srcdir)/lib/at.c
 eject_LDADD = $(ul_libmount_la)
 eject_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 dist_man_MANS += eject.1

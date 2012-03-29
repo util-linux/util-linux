@@ -45,12 +45,12 @@
 
 #include <libmount.h>
 
-#include "linux_version.h"
 #include "c.h"
 #include "nls.h"
 #include "strutils.h"
 #include "xalloc.h"
 #include "pathnames.h"
+#include "sysfs.h"
 
 #define EJECT_DEFAULT_DEVICE "/dev/cdrom"
 
@@ -83,6 +83,9 @@ static int a_arg;
 static int i_arg;
 static long int c_arg;
 static long int x_arg;
+
+struct libmnt_table *mtab;
+struct libmnt_cache *cache;
 
 /*
  * These are the basenames of devices which can have multiple
@@ -288,6 +291,9 @@ static void parse_args(int argc, char **argv, char **device)
  */
 static char *find_device(const char *name)
 {
+	if (!name)
+		return NULL;
+
 	if ((*name == '.' || *name == '/') && access(name, F_OK) == 0)
 		return xstrdup(name);
 	else {
@@ -610,6 +616,11 @@ static void umount_one(const char *name)
 {
 	int status;
 
+	if (!name)
+		return;
+
+	verbose(_("%s: unmounting"), name);
+
 	switch (fork()) {
 	case 0: /* child */
 		if (setgid(getgid()) < 0)
@@ -641,7 +652,6 @@ static void umount_one(const char *name)
 	}
 }
 
-
 /* Open a device file. */
 static int open_device(const char *name)
 {
@@ -660,25 +670,26 @@ static int open_device(const char *name)
  */
 static int device_get_mountpoint(char **devname, char **mnt)
 {
-	struct libmnt_table *mtab;
-	struct libmnt_cache *cache;
 	struct libmnt_fs *fs;
-	int rc = -1;
+	int rc;
 
-	mtab = mnt_new_table();
-	if (!mtab)
-		err(EXIT_FAILURE, _("failed to initialize libmount table"));
+	*mnt = NULL;
 
-	cache = mnt_new_cache();
-	mnt_table_set_cache(mtab, cache);
+	if (!mtab) {
+		mtab = mnt_new_table();
+		if (!mtab)
+			err(EXIT_FAILURE, _("failed to initialize libmount table"));
 
-	if (p_option)
-		rc = mnt_table_parse_file(mtab, _PATH_PROC_MOUNTINFO);
-	else
-		rc = mnt_table_parse_mtab(mtab, NULL);
+		cache = mnt_new_cache();
+		mnt_table_set_cache(mtab, cache);
 
-	if (rc)
-		goto done;
+		if (p_option)
+			rc = mnt_table_parse_file(mtab, _PATH_PROC_MOUNTINFO);
+		else
+			rc = mnt_table_parse_mtab(mtab, NULL);
+		if (rc)
+			err(EXIT_FAILURE, _("failed to parse mount table"));
+	}
 
 	fs = mnt_table_find_source(mtab, *devname, MNT_ITER_BACKWARD);
 	if (!fs) {
@@ -689,89 +700,71 @@ static int device_get_mountpoint(char **devname, char **mnt)
 			*devname = xstrdup(mnt_fs_get_source(fs));
 		}
 	}
+
 	if (fs) {
 		*mnt = xstrdup(mnt_fs_get_target(fs));
-		rc = 0;
+		/* We'll call umount(), so remove the filesystem from the table
+		 * to avoid duplicate results in the next device_get_mountpoint()
+		 * call */
+		mnt_free_fs(fs);
 	}
-done:
-	mnt_free_table(mtab);
-	mnt_free_cache(cache);
-	return rc;
+	return *mnt ? 0 : -1;
 }
 
-/*
- * Step through mount table and unmount all devices that match a regular
- * expression.
- *
- * TODO: replace obscure regex voodoo with /sys scan
- */
-static void unmount_devices(const char *pattern)
+static char *get_disk_devname(const char *device)
 {
-	regex_t preg;
-	FILE *fp;
-	const char *fname;
-	char line[1024];
+	struct stat st;
+	dev_t diskno = 0;
+	char diskname[128];
 
-	if (regcomp(&preg, pattern, REG_EXTENDED) != 0)
-		err(EXIT_FAILURE, _("regcomp failed"));
+	if (stat(device, &st) != 0)
+		return NULL;
 
-	fname = p_option ? "/proc/mounts" : "/etc/mtab";
-	fp = fopen(fname, "r");
-	if (!fp)
-		err(EXIT_FAILURE, _("%s: open failed"), fname);
+	/* get whole-disk devno */
+	if (sysfs_devno_to_wholedisk(st.st_rdev, diskname,
+				sizeof(diskname), &diskno) != 0)
+		return NULL;
 
-	while (fgets(line, sizeof(line), fp) != 0) {
-		char s1[1024];
-		char s2[1024];
+	return st.st_rdev == diskno ? NULL : find_device(diskname);
+}
 
-		int status = sscanf(line, "%1023s %1023s", s1, s2);
-		if (status >= 2) {
-			status = regexec(&preg, s1, 0, 0, 0);
-			if (status == 0) {
-				verbose(_("%s: unmounting"), s1);
-				umount_one(s1);
-				regfree(&preg);
+static void umount_partitions(const char *disk)
+{
+	struct sysfs_cxt cxt = UL_SYSFSCXT_EMPTY;
+	dev_t devno;
+	DIR *dir = NULL;
+	struct dirent *d;
+
+	devno = sysfs_devname_to_devno(disk, NULL);
+	if (sysfs_init(&cxt, devno, NULL) != 0)
+		return;
+
+	/* open /sys/block/<wholedisk> */
+	if (!(dir = sysfs_opendir(&cxt, NULL)))
+		goto done;
+
+	/* scan for partition subdirs */
+	while ((d = readdir(dir))) {
+		if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, ".."))
+			continue;
+
+		if (sysfs_is_partition_dirent(dir, d, disk)) {
+			char *mnt = NULL;
+			char *dev = find_device(d->d_name);
+
+			if (dev && device_get_mountpoint(&dev, &mnt) == 0) {
+				verbose(_("%s: mounted at %s"), dev, mnt);
+				umount_one(mnt);
 			}
+			free(dev);
 		}
 	}
-	fclose(fp);
+
+done:
+	if (dir)
+		closedir(dir);
+	sysfs_deinit(&cxt);
 }
-
-/*
- * Given a name, see if it matches a pattern for a device that can have
- * multiple partitions.  If so, return a regular expression that matches
- * partitions for that device, otherwise return 0.
- */
-static char *multiple_partitions(const char *name)
-{
-	int i = 0;
-	int status;
-	regex_t preg;
-	char pattern[256];
-	char *result = 0;
-
-	for (i = 0; partition_device[i] != 0; i++) {
-		/* look for ^/dev/foo[a-z]([0-9]?[0-9])?$, e.g. /dev/hda1 */
-		strcpy(pattern, "^/dev/");
-		strcat(pattern, partition_device[i]);
-		strcat(pattern, "[a-z]([0-9]?[0-9])?$");
-		if (regcomp(&preg, pattern, REG_EXTENDED|REG_NOSUB) != 0)
-			err(EXIT_FAILURE, _("failed to compile regex"));
-		status = regexec(&preg, name, 1, 0, 0);
-		regfree(&preg);
-		if (status == 0) {
-			result = xmalloc(strlen(name) + 25);
-			strcpy(result, name);
-			result[strlen(partition_device[i]) + 6] = 0;
-			strcat(result, "([0-9]?[0-9])?$");
-			verbose(_("%s: multipartition device"), name);
-			return result;
-		}
-	}
-	verbose(_("%s: not a multipartition device"), name);
-	return 0;
-}
-
 
 /* handle -x option */
 void set_device_speed(char *name)
@@ -796,11 +789,10 @@ void set_device_speed(char *name)
 int main(int argc, char **argv)
 {
 	char *device = NULL;
+	char *disk = NULL;
 	char *mountpoint = NULL;
-	int mounted = 0;   /* true if device is mounted */
 	int worked = 0;    /* set to 1 when successfully ejected */
 	int fd;            /* file descriptor for device */
-	char *pattern;     /* regex for device if multiple partitions */
 
 	setlocale(LC_ALL,"");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -837,11 +829,20 @@ int main(int argc, char **argv)
 
 	verbose(_("device name is `%s'"), device);
 
-	mounted = device_get_mountpoint(&device, &mountpoint) == 0;
-	if (mounted)
-		verbose(_("%s: is mounted at `%s'"), device, mountpoint);
+	device_get_mountpoint(&device, &mountpoint);
+	if (mountpoint)
+		verbose(_("%s: mounted at %s"), device, mountpoint);
 	else
-		verbose(_("%s: is not mounted"), device);
+		verbose(_("%s: not mounted"), device);
+
+	disk = get_disk_devname(device);
+	if (disk) {
+		verbose(_("%s: disc device: %s (disk device will be used for eject)"), device, disk);
+		free(device);
+		device = disk;
+		disk = NULL;
+	} else
+		verbose(_("%s: is whole-disk device"), device);
 
 	/* handle -n option */
 	if (n_option) {
@@ -900,17 +901,14 @@ int main(int argc, char **argv)
 	if (!c_option)
 		set_device_speed(device);
 
-	/* unmount device if mounted */
-	if ((m_option != 1) && mounted) {
-		verbose(_("%s: unmounting"), device);
-		umount_one(mountpoint);
-	}
 
 	/* if it is a multipartition device, unmount any other partitions on
 	   the device */
-	pattern = multiple_partitions(device);
-	if ((m_option != 1) && (pattern != 0))
-		unmount_devices(pattern);
+	if (m_option != 1) {
+		if (mountpoint)
+			umount_one(mountpoint);		/* usually whole-disk */
+		umount_partitions(device);
+	}
 
 	/* handle -c option */
 	if (c_option) {
@@ -965,6 +963,9 @@ int main(int argc, char **argv)
 	close(fd);
 	free(device);
 	free(mountpoint);
-	free(pattern);
+
+	mnt_free_table(mtab);
+	mnt_free_cache(cache);
+
 	exit(0);
 }
