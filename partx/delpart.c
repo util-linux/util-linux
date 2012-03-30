@@ -47,14 +47,14 @@ int main(int argc, char **argv)
 
 	if (argc != 3)
 		usage(stderr);
+
+
 	if ((fd = open(argv[1], O_RDONLY)) < 0)
-		err(EXIT_FAILURE, "%s", argv[1]);
+		err(EXIT_FAILURE, _("%s: open failed"), argv[1]);
 
 	if (partx_del_partition(fd,
-				strtol_or_err(argv[2],
-					      _("failed to parse argument"))))
-
-		err(EXIT_FAILURE, "BLKPG");
+			strtol_or_err(argv[2], _("failed to parse partition number"))))
+		err(EXIT_FAILURE, _("failed to remove partition"));
 
 	return EXIT_SUCCESS;
 }
