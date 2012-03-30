@@ -54,7 +54,6 @@ newsyntax(int argc, char ***argvp)
 {
 	int ch;
 	char **argv;
-	uintmax_t o;
 
 	argv = *argvp;
 	while ((ch = getopt(argc, argv, "bcCde:f:n:os:vxV")) != -1) {
@@ -83,20 +82,14 @@ newsyntax(int argc, char ***argvp)
 			addfile(optarg);
 			break;
 		case 'n':
-			if (strtosize(optarg, &o))
-				errx(EXIT_FAILURE,
-				     _("invalid length value '%s' specified"), optarg);
-			length = o;
+			length = strtosize_or_err(optarg, _("failed to parse length"));
 			break;
 		case 'o':
 			add("\"%07.7_Ax\n\"");
 			add("\"%07.7_ax \" 8/2 \" %06o \" \"\\n\"");
 			break;
 		case 's':
-			if (strtosize(optarg, &o))
-				errx(EXIT_FAILURE,
-				     _("invalid skip value '%s' specified"), optarg);
-			skip = o;
+			skip = strtosize_or_err(optarg, _("failed to parse offset"));
 			break;
 		case 'v':
 			vflag = ALL;
