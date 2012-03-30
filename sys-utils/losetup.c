@@ -262,9 +262,7 @@ int main(int argc, char **argv)
 			file = optarg;
 			break;
 		case 'o':
-			if (strtosize(optarg, &offset))
-				errx(EXIT_FAILURE,
-				     _("invalid offset '%s' specified"), optarg);
+			offset = strtosize_or_err(optarg, _("failed to parse offset"));
 			flags |= LOOPDEV_FL_OFFSET;
 			break;
 		case 'p':
@@ -284,9 +282,7 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case OPT_SIZELIMIT:			/* --sizelimit */
-			if (strtosize(optarg, &sizelimit))
-				errx(EXIT_FAILURE,
-				     _("invalid size '%s' specified"), optarg);
+			sizelimit = strtosize_or_err(optarg, _("failed to parse size"));
 			flags |= LOOPDEV_FL_SIZELIMIT;
                         break;
 		default:
