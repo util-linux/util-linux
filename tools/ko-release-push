@@ -20,7 +20,7 @@ cd "$(git rev-parse --show-toplevel)" || {
 	echo "error: cannot found version file (call make distcheck)"
 
 VERSION=${2:-$(cat .version)}
-VERSION_MAJOR=$(echo $VERSION | sed 's/-rc[0-9]//')
+VERSION_MAJOR=$(echo $VERSION | sed 's/-rc[0-9]//; s/\(.*\..*\)\..*/\1/')
 BASEDIR=${1:-"kernel.org"}
 DISTDIR="${BASEDIR}/v${VERSION_MAJOR}"
 
