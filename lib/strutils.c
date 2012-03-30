@@ -184,60 +184,56 @@ double strtod_or_err(const char *str, const char *errmesg)
 		goto err;
 
 	return num;
- err:
+err:
 	if (errno)
-		err(EXIT_FAILURE, "%s: '%s'", errmesg, str);
-	else
-		errx(EXIT_FAILURE, "%s: '%s'", errmesg, str);
-	return 0;
+		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
+
+	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 }
 /*
  * same as strtol(3) but exit on failure instead of returning crap
  */
 long strtol_or_err(const char *str, const char *errmesg)
 {
-       long num;
-       char *end = NULL;
+	long num;
+	char *end = NULL;
 
-       if (str == NULL || *str == '\0')
-               goto err;
-       errno = 0;
-       num = strtol(str, &end, 10);
+	if (str == NULL || *str == '\0')
+		goto err;
+	errno = 0;
+	num = strtol(str, &end, 10);
 
-       if (errno || str == end || (end && *end))
-               goto err;
+	if (errno || str == end || (end && *end))
+		goto err;
 
-       return num;
+	return num;
 err:
-       if (errno)
-               err(EXIT_FAILURE, "%s: '%s'", errmesg, str);
-       else
-               errx(EXIT_FAILURE, "%s: '%s'", errmesg, str);
-       return 0;
+	if (errno)
+		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
+	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 }
 /*
  * same as strtoll(3) but exit on failure instead of returning crap
  */
 long long strtoll_or_err(const char *str, const char *errmesg)
 {
-       long long num;
-       char *end = NULL;
+	long long num;
+	char *end = NULL;
 
-       if (str == NULL || *str == '\0')
-               goto err;
-       errno = 0;
-       num = strtoll(str, &end, 10);
+	if (str == NULL || *str == '\0')
+		goto err;
+	errno = 0;
+	num = strtoll(str, &end, 10);
 
-       if (errno || str == end || (end && *end))
-               goto err;
+	if (errno || str == end || (end && *end))
+		goto err;
 
-       return num;
+	return num;
 err:
-       if (errno)
-               err(EXIT_FAILURE, "%s: '%s'", errmesg, str);
-       else
-               errx(EXIT_FAILURE, "%s: '%s'", errmesg, str);
-       return 0;
+	if (errno)
+		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
+
+	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 }
 /*
  * same as strtoul(3) but exit on failure instead of returning crap
@@ -258,10 +254,22 @@ unsigned long strtoul_or_err(const char *str, const char *errmesg)
 	return num;
 err:
 	if (errno)
-		err(EXIT_FAILURE, "%s: '%s'", errmesg, str);
-	else
-		errx(EXIT_FAILURE, "%s: '%s'", errmesg, str);
-	return 0;
+		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
+
+	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
+}
+
+uintmax_t strtosize_or_err(const char *str, const char *errmesg)
+{
+	uintmax_t num;
+
+	if (strtosize(str, &num) == 0)
+		return num;
+
+	if (errno)
+		err(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
+
+	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 }
 
 /*

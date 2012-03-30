@@ -5,11 +5,18 @@
 #include <string.h>
 #include <sys/types.h>
 
+/* default strtoxx_or_err() exit code */
+#ifndef STRTOXX_EXIT_CODE
+# define STRTOXX_EXIT_CODE EXIT_FAILURE
+#endif
+
+
 extern int strtosize(const char *str, uintmax_t *res);
 extern double strtod_or_err(const char *str, const char *errmesg);
 extern long strtol_or_err(const char *str, const char *errmesg);
 extern long long strtoll_or_err(const char *str, const char *errmesg);
 extern unsigned long strtoul_or_err(const char *str, const char *errmesg);
+extern uintmax_t strtosize_or_err(const char *str, const char *errmesg);
 
 #ifndef HAVE_STRNLEN
 extern size_t strnlen(const char *s, size_t maxlen);
