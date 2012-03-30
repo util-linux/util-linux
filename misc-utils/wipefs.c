@@ -346,16 +346,6 @@ do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet
 	return wp;
 }
 
-static loff_t
-strtoll_offset(const char *str)
-{
-	uintmax_t sz;
-
-	if (strtosize(str, &sz))
-		errx(EXIT_FAILURE, _("invalid offset value '%s' specified"), str);
-	return sz;
-}
-
 
 static void __attribute__((__noreturn__))
 usage(FILE *out)
@@ -414,7 +404,8 @@ main(int argc, char **argv)
 			noact++;
 			break;
 		case 'o':
-			wp0 = add_offset(wp0, strtoll_offset(optarg), 1);
+			wp0 = add_offset(wp0, strtosize_or_err(optarg,
+					 _("failed to parse offset")), 1);
 			has_offset++;
 			break;
 		case 'p':
