@@ -186,12 +186,12 @@ static void timedout(int sig __attribute__ ((__unused__)))
  */
 static void sig_handler(int signal)
 {
-	if (child_pid)
+	if (child_pid) {
+		if (signal == SIGTERM)
+			signal = SIGHUP;	/* because the shell often ignores SIGTERM */
 		kill(-child_pid, signal);
-	else
+	} else
 		got_sig = 1;
-	if (signal == SIGTERM)
-		kill(-child_pid, SIGHUP);	/* because the shell often ignores SIGTERM */
 }
 
 /*
