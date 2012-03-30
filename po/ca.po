@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2012-02-24 11:35+0100\n"
+"POT-Creation-Date: 2012-03-30 11:36+0200\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -278,8 +278,8 @@ msgstr "%s de %s\n"
 msgid "cannot stat file %s"
 msgstr "no es pot fer \"stat\" al dispositiu %s"
 
-#: disk-utils/fdformat.c:147 misc-utils/lsblk.c:833 partx/partx.c:840
-#: sys-utils/mountpoint.c:102
+#: disk-utils/fdformat.c:147 misc-utils/lsblk.c:838 partx/partx.c:840
+#: sys-utils/mountpoint.c:106
 #, fuzzy, c-format
 msgid "%s: not a block device"
 msgstr "%s: no és un dispositiu de bloc\n"
@@ -328,7 +328,7 @@ msgstr "(Fitxer següent: %s)"
 
 #: disk-utils/fsck.cramfs.c:145 disk-utils/fsck.cramfs.c:497
 #: sys-utils/rtcwake.c:117 sys-utils/rtcwake.c:276 sys-utils/rtcwake.c:514
-#: term-utils/script.c:232 term-utils/script.c:553
+#: term-utils/script.c:232 term-utils/script.c:563
 #, fuzzy, c-format
 msgid "open failed: %s"
 msgstr "no ha estat possible executar openpty\n"
@@ -4080,44 +4080,39 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/fdisk.c:2790
-#, c-format
-msgid "Disk %s doesn't contain a valid partition table\n"
-msgstr "El disc %s no conté una taula de particions vàlida\n"
-
-#: fdisk/fdisk.c:2801
+#: fdisk/fdisk.c:2799
 #, c-format
 msgid "Cannot open %s\n"
 msgstr "No es pot obrir %s\n"
 
-#: fdisk/fdisk.c:2821 fdisk/sfdisk.c:2728
+#: fdisk/fdisk.c:2819 fdisk/sfdisk.c:2728
 #, c-format
 msgid "cannot open %s\n"
 msgstr "no es pot obrir %s\n"
 
-#: fdisk/fdisk.c:2846
+#: fdisk/fdisk.c:2844
 #, c-format
 msgid "%c: unknown command\n"
 msgstr "%c: ordre desconeguda\n"
 
-#: fdisk/fdisk.c:2856
+#: fdisk/fdisk.c:2854
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr ""
 "En entrar el mode d'etiqueta, s'ha detectat una etiqueta de disc OSF/1 en "
 "%s.\n"
 
-#: fdisk/fdisk.c:2866
+#: fdisk/fdisk.c:2864
 msgid "Command (m for help): "
 msgstr "Ordre (m per a obtenir ajuda): "
 
-#: fdisk/fdisk.c:3025
+#: fdisk/fdisk.c:3023
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
 msgstr ""
 "Aquest nucli troba la mida del sector automàtiament; s'ignorarà l'opció -b\n"
 
-#: fdisk/fdisk.c:3029
+#: fdisk/fdisk.c:3027
 #, c-format
 msgid ""
 "Warning: the -b (set sector size) option should be used with one specified "
@@ -4126,7 +4121,7 @@ msgstr ""
 "Avís: l'opció -b (estableix la mida del sector) s'ha d'usar amb un "
 "dispositiu específic\n"
 
-#: fdisk/fdisk.c:3079
+#: fdisk/fdisk.c:3077
 #, fuzzy, c-format
 msgid ""
 "Welcome to fdisk (%s).\n"
@@ -5765,7 +5760,7 @@ msgstr ""
 #: misc-utils/mcookie.c:66 misc-utils/namei.c:411 misc-utils/rename.c:64
 #: misc-utils/uuidd.c:54 misc-utils/uuidgen.c:33 misc-utils/whereis.c:138
 #: misc-utils/wipefs.c:332 sys-utils/dmesg.c:145 sys-utils/fallocate.c:59
-#: sys-utils/fsfreeze.c:40 sys-utils/fstrim.c:55 sys-utils/mountpoint.c:111
+#: sys-utils/fsfreeze.c:40 sys-utils/fstrim.c:55 sys-utils/mountpoint.c:115
 #: sys-utils/renice.c:54 sys-utils/swapon.c:114 sys-utils/swapon.c:135
 #: term-utils/mesg.c:68 term-utils/script.c:129 term-utils/scriptreplay.c:39
 #: term-utils/setterm.c:675 term-utils/wall.c:87 term-utils/write.c:78
@@ -5785,7 +5780,7 @@ msgstr "Forma d'ús: %s [opcions] dispositiu ...\n"
 #: misc-utils/mcookie.c:70 misc-utils/namei.c:415 misc-utils/rename.c:69
 #: misc-utils/uuidd.c:58 misc-utils/uuidgen.c:37 misc-utils/whereis.c:142
 #: misc-utils/wipefs.c:336 sys-utils/dmesg.c:149 sys-utils/fallocate.c:63
-#: sys-utils/fsfreeze.c:44 sys-utils/fstrim.c:59 sys-utils/mountpoint.c:116
+#: sys-utils/fsfreeze.c:44 sys-utils/fstrim.c:59 sys-utils/mountpoint.c:120
 #: sys-utils/renice.c:61 sys-utils/swapon.c:117 sys-utils/swapon.c:138
 #: term-utils/mesg.c:72 term-utils/script.c:133 term-utils/scriptreplay.c:44
 #: term-utils/setterm.c:679 term-utils/wall.c:91 term-utils/write.c:83
@@ -7511,106 +7506,106 @@ msgstr ""
 "interromput %10.10s %5.5s \n"
 
 #. TRANSLATORS: The standard value for %d is 60.
-#: login-utils/login.c:157
+#: login-utils/login.c:173
 #, fuzzy, c-format
 msgid "timed out after %d seconds"
 msgstr "S'ha excedit el temps d'espera per a l'entrada al cap de %d segons.\n"
 
-#: login-utils/login.c:265
+#: login-utils/login.c:281
 #, fuzzy, c-format
 msgid "FATAL: can't reopen tty: %m"
 msgstr "S'ha produït un error fatal: no s'ha pogut reobrir tty: %s"
 
-#: login-utils/login.c:271
+#: login-utils/login.c:287
 #, fuzzy, c-format
 msgid "FATAL: %s is not a terminal"
 msgstr "%s no es un dispositiu de bloc especial"
 
-#: login-utils/login.c:289
+#: login-utils/login.c:305
 #, fuzzy, c-format
 msgid "chown (%s, %lu, %lu) failed: %m"
 msgstr "no s'ha estat possible muntar"
 
-#: login-utils/login.c:293
+#: login-utils/login.c:309
 #, fuzzy, c-format
 msgid "chmod (%s, %u) failed: %m"
 msgstr "/dev: chdir() ha fallat: %m"
 
-#: login-utils/login.c:358
+#: login-utils/login.c:374
 msgid "FATAL: bad tty"
 msgstr "S'ha produït un error fatal: terminal erroni"
 
-#: login-utils/login.c:386
+#: login-utils/login.c:402
 #, c-format
 msgid "FATAL: %s: change permissions failed: %m"
 msgstr ""
 
-#: login-utils/login.c:520
+#: login-utils/login.c:521
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Última entrada: %.*s "
 
-#: login-utils/login.c:522
+#: login-utils/login.c:523
 #, c-format
 msgid "from %.*s\n"
 msgstr "des de %.*s\n"
 
-#: login-utils/login.c:525
+#: login-utils/login.c:526
 #, c-format
 msgid "on %.*s\n"
 msgstr "a %.*s\n"
 
-#: login-utils/login.c:542
+#: login-utils/login.c:543
 #, fuzzy
 msgid "write lastlog failed"
 msgstr "S'ha produït un error en obrir %s"
 
-#: login-utils/login.c:627
+#: login-utils/login.c:628
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "MARCATGE DIRECTE A %s PER %s"
 
-#: login-utils/login.c:632
+#: login-utils/login.c:633
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "ENTRADA DEL ROOT A %s DES DE %s"
 
-#: login-utils/login.c:635
+#: login-utils/login.c:636
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "ENTRADA DEL ROOT A %s"
 
-#: login-utils/login.c:638
+#: login-utils/login.c:639
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "ENTRADA A %s PER %s DES DE %s"
 
-#: login-utils/login.c:641
+#: login-utils/login.c:642
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "ENTRADA A %s PER %s"
 
-#: login-utils/login.c:702
+#: login-utils/login.c:703
 msgid "login: "
 msgstr "entrada: "
 
-#: login-utils/login.c:728
+#: login-utils/login.c:729
 #, fuzzy, c-format
 msgid "PAM failure, aborting: %s"
 msgstr "login: PAM ha fallat; s'està avortant: %s\n"
 
-#: login-utils/login.c:729
+#: login-utils/login.c:730
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "No s'ha pogut inicialitzar PAM: %s"
 
 # FIXME, please describe parameters
-#: login-utils/login.c:800
+#: login-utils/login.c:801
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "S'HA INTENTAT ACCEDIR SENSE ÈXIT %d VEGADES DES DE %s PER A %s, %s"
 
-#: login-utils/login.c:808
+#: login-utils/login.c:809
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -7619,17 +7614,17 @@ msgstr ""
 "L'entrada no és correcta\n"
 "\n"
 
-#: login-utils/login.c:823
+#: login-utils/login.c:824
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "S'HA INTENTAT ENTRAR MASSA VEGADES (%d) DES DE %s PER A %s, %s"
 
-#: login-utils/login.c:829
+#: login-utils/login.c:830
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "NO S'HA POGUT INICIAR LA SESSIÓ DES DE %s PER A %s, %s"
 
-#: login-utils/login.c:837
+#: login-utils/login.c:838
 #, c-format
 msgid ""
 "\n"
@@ -7638,7 +7633,7 @@ msgstr ""
 "\n"
 "Entrada incorrecta\n"
 
-#: login-utils/login.c:865 login-utils/login.c:1319 login-utils/login.c:1343
+#: login-utils/login.c:866 login-utils/login.c:1317 login-utils/login.c:1341
 #, fuzzy
 msgid ""
 "\n"
@@ -7647,81 +7642,81 @@ msgstr ""
 "\n"
 "S'ha produït un problema en iniciar la sessió, s'avortarà.\n"
 
-#: login-utils/login.c:866
+#: login-utils/login.c:867
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "Nom d'usuari NUL a %s:%d. S'avortarà."
 
-#: login-utils/login.c:1068 login-utils/vipw.c:232 sys-utils/flock.c:306
+#: login-utils/login.c:1069 login-utils/vipw.c:232 sys-utils/flock.c:306
 #: sys-utils/swapon.c:274 term-utils/script.c:263 term-utils/script.c:273
 #, fuzzy
 msgid "fork failed"
 msgstr "no s'ha pogut bifurcar\n"
 
-#: login-utils/login.c:1120
+#: login-utils/login.c:1121
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "TIOCSCTTY ha fallat: %m"
 
-#: login-utils/login.c:1263
+#: login-utils/login.c:1261
 #, c-format
 msgid "login: -h for super-user only.\n"
 msgstr "login: només el superusuari pot fer servir -h.\n"
 
-#: login-utils/login.c:1278
+#: login-utils/login.c:1276
 #, fuzzy, c-format
 msgid "usage: login [ -p ] [ -h host ] [ -H ] [ -f username | username ]\n"
 msgstr ""
 "forma d'ús: last [-#] [-f fitxer] [-t tty] [-h nom_ordinador] [usuari ...]\n"
 
-#: login-utils/login.c:1320
+#: login-utils/login.c:1318
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Nom d'usuari invàlid \"%s\" a %s:%d. S'avortarà."
 
-#: login-utils/login.c:1342
+#: login-utils/login.c:1340
 #, fuzzy, c-format
 msgid "groups initialization failed: %m"
 msgstr ""
 "\n"
 "S'ha produït un error en tancar el fitxer\n"
 
-#: login-utils/login.c:1367
+#: login-utils/login.c:1365
 #, fuzzy
 msgid "setgid() failed"
 msgstr "setuid() ha fallat"
 
-#: login-utils/login.c:1397
+#: login-utils/login.c:1395
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Teniu correu nou.\n"
 
-#: login-utils/login.c:1399
+#: login-utils/login.c:1397
 #, c-format
 msgid "You have mail.\n"
 msgstr "Teniu correu.\n"
 
-#: login-utils/login.c:1413
+#: login-utils/login.c:1411
 msgid "setuid() failed"
 msgstr "setuid() ha fallat"
 
-#: login-utils/login.c:1419
+#: login-utils/login.c:1417
 #, fuzzy, c-format
 msgid "%s: change directory failed"
 msgstr "la cerca ha fallat"
 
-#: login-utils/login.c:1426
+#: login-utils/login.c:1424
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "S'està entrant amb el directori inicial = «/».\n"
 
-#: login-utils/login.c:1455
+#: login-utils/login.c:1453
 #, fuzzy
 msgid "couldn't exec shell script"
 msgstr ""
 "login: no s'ha pogut executar la seqüènca de l'intèrpret d'ordres: %s.\n"
 
-#: login-utils/login.c:1457
+#: login-utils/login.c:1455
 #, fuzzy
 msgid "no shell"
 msgstr "No hi ha intèrpret d'ordres"
@@ -7731,7 +7726,7 @@ msgstr "No hi ha intèrpret d'ordres"
 msgid "%s: %s contains invalid numerical value: %s"
 msgstr "Valor d'interval invàlid: %s\n"
 
-#: login-utils/newgrp.c:91 sys-utils/losetup.c:350 sys-utils/mount.c:116
+#: login-utils/newgrp.c:91 sys-utils/losetup.c:350 sys-utils/mount.c:117
 msgid "Password: "
 msgstr "Contrasenya: "
 
@@ -7755,7 +7750,7 @@ msgstr "setuid() ha fallat"
 msgid "no such group"
 msgstr "newgrp: Aquest grup no existeix."
 
-#: login-utils/newgrp.c:160 sys-utils/mount.c:387
+#: login-utils/newgrp.c:160 sys-utils/mount.c:422
 #, fuzzy
 msgid "permission denied"
 msgstr "mount: s'ha denegat el permís"
@@ -7987,7 +7982,7 @@ msgstr "No s'ha pogut assignar la memòria temporal.\n"
 msgid "%s: parse error at line %d"
 msgstr "s'ha produït un error en cercar"
 
-#: misc-utils/findmnt.c:520 misc-utils/findmnt.c:719 sys-utils/mount.c:546
+#: misc-utils/findmnt.c:520 misc-utils/findmnt.c:719 sys-utils/mount.c:581
 #, fuzzy
 msgid "failed to initialize libmount table"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
@@ -7997,8 +7992,8 @@ msgstr "No s'ha pogut assignar la memòria temporal.\n"
 msgid "can't read %s"
 msgstr "%s: no s'ha pogut llegir %s.\n"
 
-#: misc-utils/findmnt.c:659 misc-utils/findmnt.c:725 sys-utils/mount.c:143
-#: sys-utils/mount.c:187 sys-utils/umount.c:240
+#: misc-utils/findmnt.c:659 misc-utils/findmnt.c:725 sys-utils/mount.c:144
+#: sys-utils/mount.c:190 sys-utils/umount.c:240
 #, fuzzy
 msgid "failed to initialize libmount iterator"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
@@ -8086,7 +8081,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:865 misc-utils/lsblk.c:938 sys-utils/lscpu.c:1225
+#: misc-utils/findmnt.c:865 misc-utils/lsblk.c:943 sys-utils/lscpu.c:1225
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8100,7 +8095,7 @@ msgid ""
 "For more information see findmnt(1).\n"
 msgstr "S'ha canviat la informació del finger.\n"
 
-#: misc-utils/findmnt.c:879 misc-utils/lsblk.c:951
+#: misc-utils/findmnt.c:879 misc-utils/lsblk.c:956
 msgid "options are mutually exclusive"
 msgstr ""
 
@@ -8129,7 +8124,7 @@ msgstr ""
 msgid "failed to initialize libmount cache"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
 
-#: misc-utils/findmnt.c:1127 misc-utils/lsblk.c:1094 partx/partx.c:526
+#: misc-utils/findmnt.c:1127 misc-utils/lsblk.c:1099 partx/partx.c:526
 #: sys-utils/lscpu.c:1016 sys-utils/prlimit.c:282
 #, fuzzy
 msgid "failed to initialize output table"
@@ -8140,7 +8135,7 @@ msgstr "No s'ha pogut assignar la memòria temporal.\n"
 msgid "%s column is requested, but --poll is not enabled"
 msgstr ""
 
-#: misc-utils/findmnt.c:1145 misc-utils/lsblk.c:1104 partx/partx.c:534
+#: misc-utils/findmnt.c:1145 misc-utils/lsblk.c:1109 partx/partx.c:534
 #: sys-utils/prlimit.c:290
 #, fuzzy
 msgid "failed to initialize output column"
@@ -8379,57 +8374,57 @@ msgstr ""
 msgid "discard zeroes data"
 msgstr ""
 
-#: misc-utils/lsblk.c:694
+#: misc-utils/lsblk.c:699
 #, fuzzy, c-format
 msgid "%s: failed to get device path"
 msgstr "no s'ha pogut rebobinar el dispositiu d'intercanvi"
 
-#: misc-utils/lsblk.c:701
+#: misc-utils/lsblk.c:706
 #, fuzzy, c-format
 msgid "%s: unknown device name"
 msgstr "umount: %s: dispositiu desconegut"
 
-#: misc-utils/lsblk.c:706
+#: misc-utils/lsblk.c:711
 #, fuzzy, c-format
 msgid "%s: failed to initialize sysfs handler"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
 
-#: misc-utils/lsblk.c:725
+#: misc-utils/lsblk.c:730
 #, fuzzy, c-format
 msgid "%s: failed to get dm name"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: misc-utils/lsblk.c:757
+#: misc-utils/lsblk.c:762
 msgid "failed to open device directory in sysfs"
 msgstr ""
 
-#: misc-utils/lsblk.c:837
+#: misc-utils/lsblk.c:842
 #, fuzzy, c-format
 msgid "%s: failed to get whole-disk device number"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: misc-utils/lsblk.c:854
+#: misc-utils/lsblk.c:859
 #, fuzzy, c-format
 msgid "failed to compose sysfs path for %s"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: misc-utils/lsblk.c:861
+#: misc-utils/lsblk.c:866
 #, fuzzy, c-format
 msgid "%s: failed to read link"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: misc-utils/lsblk.c:900
+#: misc-utils/lsblk.c:905
 #, fuzzy, c-format
 msgid "failed to parse list '%s'"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:905
+#: misc-utils/lsblk.c:910
 #, c-format
 msgid "the list of excluded devices is too large (limit is %d devices)"
 msgstr ""
 
-#: misc-utils/lsblk.c:917
+#: misc-utils/lsblk.c:922
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8437,7 +8432,7 @@ msgid ""
 " %s [options] [<device> ...]\n"
 msgstr "Forma d'ús: %s [opcions] dispositiu ...\n"
 
-#: misc-utils/lsblk.c:921
+#: misc-utils/lsblk.c:926
 #, c-format
 msgid ""
 "\n"
@@ -8460,14 +8455,14 @@ msgid ""
 " -t, --topology       output info about topology\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:943
+#: misc-utils/lsblk.c:948
 #, fuzzy, c-format
 msgid ""
 "\n"
 "For more information see lsblk(8).\n"
 msgstr "S'ha canviat la informació del finger.\n"
 
-#: misc-utils/lsblk.c:957
+#: misc-utils/lsblk.c:962
 #, fuzzy, c-format
 msgid "failed to access sysfs directory: %s"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
@@ -8927,77 +8922,77 @@ msgstr "mount: no s'ha pogut trobar %s a %s o %s"
 msgid "mount: SELinux *context= options are ignore on remount.\n"
 msgstr ""
 
-#: mount/mount.c:660
+#: mount/mount.c:661
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
 msgstr "mount: segons mtab, %s ja està muntat a %s"
 
-#: mount/mount.c:665
+#: mount/mount.c:666
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
 msgstr "mount: segons mtab, %s està muntat a %s"
 
-#: mount/mount.c:689
+#: mount/mount.c:690
 #, c-format
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: no s'ha pogut obrir %s per a escriptura: %s"
 
-#: mount/mount.c:706
+#: mount/mount.c:707
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: s'ha produït un error en escriure %s: %s"
 
-#: mount/mount.c:714
+#: mount/mount.c:715
 #, c-format
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: s'ha produït un error en canviar el mode de %s: %s"
 
-#: mount/mount.c:820
+#: mount/mount.c:821
 #, fuzzy, c-format
 msgid "mount: cannot set group id: %m"
 msgstr "mount : no s'ha pogut establir la velocitat de: %s"
 
-#: mount/mount.c:823
+#: mount/mount.c:824
 #, fuzzy, c-format
 msgid "mount: cannot set user id: %m"
 msgstr "mount : no s'ha pogut establir la velocitat de: %s"
 
-#: mount/mount.c:870 mount/mount.c:2289
+#: mount/mount.c:871 mount/mount.c:2290
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: no s'ha pogut bifurcar: %s"
 
-#: mount/mount.c:1006
+#: mount/mount.c:1007
 #, c-format
 msgid "Trying %s\n"
 msgstr "S'està provant amb %s\n"
 
-#: mount/mount.c:1034
+#: mount/mount.c:1035
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: no heu especificat cap tipus de sistema de fitxers per a %s\n"
 
-#: mount/mount.c:1037
+#: mount/mount.c:1038
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       Es provarà amb tots els tipus indicats a %s o %s\n"
 
-#: mount/mount.c:1040
+#: mount/mount.c:1041
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "       i sembla que això és espai d'intercanvi\n"
 
-#: mount/mount.c:1042
+#: mount/mount.c:1043
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       Provaré amb el tipus %s\n"
 
-#: mount/mount.c:1067
+#: mount/mount.c:1068
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s sembla espai d'intercanvi - no s'ha muntat"
 
-#: mount/mount.c:1075
+#: mount/mount.c:1076
 #, c-format
 msgid ""
 "mount: %s: more filesystems detected. This should not happen,\n"
@@ -9005,175 +9000,175 @@ msgid ""
 "       use wipefs(8) to clean up the device.\n"
 msgstr ""
 
-#: mount/mount.c:1163
+#: mount/mount.c:1164
 msgid "mount failed"
 msgstr "no s'ha estat possible muntar"
 
-#: mount/mount.c:1165
+#: mount/mount.c:1166
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: només l'usuari root pot muntar %s a %s"
 
-#: mount/mount.c:1254
+#: mount/mount.c:1255
 msgid "mount: loop device specified twice"
 msgstr "mount: el dispositiu loop està especificat dues vegades"
 
-#: mount/mount.c:1259
+#: mount/mount.c:1260
 msgid "mount: type specified twice"
 msgstr "mount: el tipus està especificat dues vegades"
 
-#: mount/mount.c:1287
+#: mount/mount.c:1288
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: s'està ometent la configuració d'un dispositiu loop\n"
 
-#: mount/mount.c:1298
+#: mount/mount.c:1299
 #, fuzzy, c-format
 msgid "mount: enabling autoclear loopdev flag\n"
 msgstr "mount: s'usarà el dispositiu loop %s\n"
 
-#: mount/mount.c:1306
+#: mount/mount.c:1307
 #, fuzzy, c-format
 msgid "mount: invalid offset '%s' specified"
 msgstr "Valor establert invàlid: %s\n"
 
-#: mount/mount.c:1310
+#: mount/mount.c:1311
 #, fuzzy, c-format
 msgid "mount: invalid sizelimit '%s' specified"
 msgstr "Valor establert invàlid: %s\n"
 
-#: mount/mount.c:1315
+#: mount/mount.c:1316
 #, fuzzy, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount: segons mtab, %s ja està muntat a %s"
 
-#: mount/mount.c:1332
+#: mount/mount.c:1333
 #, fuzzy
 msgid "mount: failed to found free loop device"
 msgstr "mount: no ha estat possible configurar el dispositiu loop\n"
 
-#: mount/mount.c:1337
+#: mount/mount.c:1338
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: s'usarà el dispositiu loop %s\n"
 
-#: mount/mount.c:1349
+#: mount/mount.c:1350
 #, fuzzy, c-format
 msgid "mount: %s: failed to set loopdev attributes"
 msgstr "mount: no ha estat possible configurar el dispositiu loop\n"
 
-#: mount/mount.c:1361
+#: mount/mount.c:1362
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: no ha estat possible configurar el dispositiu loop\n"
 
-#: mount/mount.c:1372
+#: mount/mount.c:1373
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:1377
+#: mount/mount.c:1378
 #, fuzzy, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: %s: %s"
 
-#: mount/mount.c:1384
+#: mount/mount.c:1385
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: s'ha configurat el dispositiu loop amb èxit\n"
 
-#: mount/mount.c:1475 mount/mount.c:1507
+#: mount/mount.c:1476 mount/mount.c:1508
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: no s'ha trobat %s; s'està creant...\n"
 
-#: mount/mount.c:1530
+#: mount/mount.c:1531
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: l'argument a -p o --pass-fd ha de ser un nombre"
 
-#: mount/mount.c:1543
+#: mount/mount.c:1544
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: no s'ha pogut obrir %s per establir-ne la velocitat"
 
-#: mount/mount.c:1546
+#: mount/mount.c:1547
 #, fuzzy, c-format
 msgid "mount: cannot set speed: %m"
 msgstr "mount : no s'ha pogut establir la velocitat de: %s"
 
-#: mount/mount.c:1637
+#: mount/mount.c:1638
 #, fuzzy, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: segons mtab, %s ja està muntat a %s"
 
-#: mount/mount.c:1724
+#: mount/mount.c:1725
 #, fuzzy, c-format
 msgid "mount: warning: %s seems to be mounted read-write.\n"
 msgstr "umount: %s ocupat - s'ha tornat a muntar de només lectura\n"
 
-#: mount/mount.c:1736
+#: mount/mount.c:1737
 #, fuzzy, c-format
 msgid "mount: warning: %s seems to be mounted read-only.\n"
 msgstr "umount: %s ocupat - s'ha tornat a muntar de només lectura\n"
 
-#: mount/mount.c:1777
+#: mount/mount.c:1778
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 "mount: no s'ha pogut determinar el tipus de sistema de fitxers i no n'heu "
 "especificat cap"
 
-#: mount/mount.c:1780
+#: mount/mount.c:1781
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: haureu d'especificar el tipus del sistema de fitxers"
 
-#: mount/mount.c:1783
+#: mount/mount.c:1784
 msgid "mount: mount failed"
 msgstr "mount: no ha estat possible muntar"
 
-#: mount/mount.c:1789 mount/mount.c:1826
+#: mount/mount.c:1790 mount/mount.c:1827
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: el punt de muntatge %s no és un directori"
 
-#: mount/mount.c:1791
+#: mount/mount.c:1792
 msgid "mount: permission denied"
 msgstr "mount: s'ha denegat el permís"
 
-#: mount/mount.c:1793
+#: mount/mount.c:1794
 msgid "mount: must be superuser to use mount"
 msgstr "mount: haureu de ser un superusuari per a usar mount"
 
-#: mount/mount.c:1797 mount/mount.c:1801
+#: mount/mount.c:1798 mount/mount.c:1802
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s està ocupat"
 
-#: mount/mount.c:1803
+#: mount/mount.c:1804
 msgid "mount: proc already mounted"
 msgstr "mount: proc ja està muntat"
 
-#: mount/mount.c:1805
+#: mount/mount.c:1806
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s ja està muntat o %s està ocupat"
 
-#: mount/mount.c:1811
+#: mount/mount.c:1812
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: el punt de muntatge %s no existeix"
 
-#: mount/mount.c:1813
+#: mount/mount.c:1814
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: el punt de muntatge %s és un enllaç simbòlic sense destí"
 
-#: mount/mount.c:1818
+#: mount/mount.c:1819
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: el dispositiu especial %s no existeix"
 
-#: mount/mount.c:1830
+#: mount/mount.c:1831
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -9182,12 +9177,12 @@ msgstr ""
 "mount: el dispositiu especial %s no existeix\n"
 "       (un prefix de camí no és un directori)\n"
 
-#: mount/mount.c:1842
+#: mount/mount.c:1843
 #, fuzzy, c-format
 msgid "mount: %s not mounted or bad option"
 msgstr "mount: %s encara no està muntat o una opció és incorrecta"
 
-#: mount/mount.c:1844
+#: mount/mount.c:1845
 #, fuzzy, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -9198,13 +9193,13 @@ msgstr ""
 "       superbloc incorrecte a %s, manca la pàgina de codis o algun altre "
 "error"
 
-#: mount/mount.c:1851
+#: mount/mount.c:1852
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)"
 msgstr ""
 
-#: mount/mount.c:1860
+#: mount/mount.c:1861
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -9212,7 +9207,7 @@ msgstr ""
 "        (podria ser que aquest fos el dispositiu IDE on utilitzeu ide-scsi\n"
 "        de manera que sr0 o sda o siguin necessaris?)"
 
-#: mount/mount.c:1865
+#: mount/mount.c:1866
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -9220,7 +9215,7 @@ msgstr ""
 "        (no esteu intentant muntar una partició estesa,\n"
 "        en comptes d'alguna partició lògica de dins?)"
 
-#: mount/mount.c:1872
+#: mount/mount.c:1873
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -9228,51 +9223,51 @@ msgstr ""
 "        En alguns casos, es pot trobar informació útil a syslog,\n"
 "        proveu dmesg | tail o així\n"
 
-#: mount/mount.c:1878 sys-utils/mount.c:469
+#: mount/mount.c:1879 sys-utils/mount.c:504
 msgid "mount table full"
 msgstr "la taula de dispositius muntats està plena"
 
-#: mount/mount.c:1880
+#: mount/mount.c:1881
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: no s'ha pogut llegir el superbloc"
 
-#: mount/mount.c:1886
+#: mount/mount.c:1887
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "umount: %s: dispositiu desconegut"
 
-#: mount/mount.c:1891
+#: mount/mount.c:1892
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: no es reconeix el sitema de fitxers «%s»"
 
-#: mount/mount.c:1903
+#: mount/mount.c:1904
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: probablement volíeu dir %s"
 
-#: mount/mount.c:1906
+#: mount/mount.c:1907
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: potser volíeu dir «iso9660»?"
 
-#: mount/mount.c:1909
+#: mount/mount.c:1910
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: potser volíeu dir «vfat»?"
 
-#: mount/mount.c:1912
+#: mount/mount.c:1913
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s té un número de dispositiu incorrecte o el tipus de sistema de "
 "fitxers %s no està implementat"
 
-#: mount/mount.c:1920
+#: mount/mount.c:1921
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: %s no és cap dispositiu de blocs, i stat falla?"
 
-#: mount/mount.c:1922
+#: mount/mount.c:1923
 #, fuzzy, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -9281,54 +9276,54 @@ msgstr ""
 "mount: el nucli no reconeix %s com a dispositiu de blocs\n"
 "       (potser fent «insmod controlador»?)"
 
-#: mount/mount.c:1925
+#: mount/mount.c:1926
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr "mount: %s no és un dispositiu de blocs (proveu amb `-o loop')"
 
-#: mount/mount.c:1928
+#: mount/mount.c:1929
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s no és un dispositiu de blocs"
 
-#: mount/mount.c:1933
+#: mount/mount.c:1934
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s no és un dispositiu de blocs vàlid"
 
-#: mount/mount.c:1936
+#: mount/mount.c:1937
 msgid "block device "
 msgstr "dispositiu de blocs "
 
-#: mount/mount.c:1938
+#: mount/mount.c:1939
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount : no s'ha pogut muntar %s%s com a només de lectura"
 
-#: mount/mount.c:1942
+#: mount/mount.c:1943
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr ""
 "mount : %s%s està protegit contra escriptura però se li ha donat el "
 "senyalador explícit «-w»"
 
-#: mount/mount.c:1946
+#: mount/mount.c:1947
 #, fuzzy, c-format
 msgid "mount: cannot remount %s%s read-write, is write-protected"
 msgstr "mount : no s'ha pogut muntar %s%s com a només de lectura"
 
-#: mount/mount.c:1961
+#: mount/mount.c:1962
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr ""
 "mount: %s%s està protegit contra escriptura; es muntarà en només lectura"
 
-#: mount/mount.c:1969
+#: mount/mount.c:1970
 #, fuzzy, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: %s ja està muntat a %s\n"
 
-#: mount/mount.c:1987 sys-utils/mount.c:278
+#: mount/mount.c:1988 sys-utils/mount.c:290
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9338,29 +9333,29 @@ msgid ""
 "       this file system.  For more details see restorecon(8) and mount(8).\n"
 msgstr ""
 
-#: mount/mount.c:2067
+#: mount/mount.c:2068
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr ""
 "mount: no s'ha especificat cap tipus; s'assumirà nfs per als dos punts\n"
 
-#: mount/mount.c:2073
+#: mount/mount.c:2074
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: no s'ha especificat cap tipus; s'assumirà smb a causa del prefix //\n"
 
-#: mount/mount.c:2177
+#: mount/mount.c:2178
 #, c-format
 msgid "mount: ignore %s (unparsable offset= option)\n"
 msgstr ""
 
-#: mount/mount.c:2190
+#: mount/mount.c:2191
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s ja està muntat a %s\n"
 
-#: mount/mount.c:2371
+#: mount/mount.c:2372
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9420,24 +9415,24 @@ msgstr ""
 "Altres opcions: [-nfFrsvw] [-o opcions] [-p dfcontrasenya].\n"
 "Per a més detalls, consulteu «man 8 mount».\n"
 
-#: mount/mount.c:2703
+#: mount/mount.c:2704
 #, fuzzy, c-format
 msgid "mount: only root can do that (effective UID is %u)"
 msgstr "mount: només l'usuari root pot fer això"
 
-#: mount/mount.c:2706
+#: mount/mount.c:2707
 msgid "mount: only root can do that"
 msgstr "mount: només l'usuari root pot fer això"
 
-#: mount/mount.c:2717
+#: mount/mount.c:2718
 msgid "nothing was mounted"
 msgstr "no s'ha muntat res"
 
-#: mount/mount.c:2735 mount/mount.c:2761
+#: mount/mount.c:2736 mount/mount.c:2762
 msgid "mount: no such partition found"
 msgstr "mount: no s'ha trobat aquesta partició"
 
-#: mount/mount.c:2738
+#: mount/mount.c:2739
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: no s'ha pogut trobar %s a %s o %s"
@@ -10007,7 +10002,7 @@ msgstr "No s'ha pogut escriure la partició a %s\n"
 msgid "failed to set pid %d's policy"
 msgstr "No s'ha pogut escriure la partició a %s\n"
 
-#: schedutils/chrt.c:334 sys-utils/switch_root.c:221 term-utils/script.c:445
+#: schedutils/chrt.c:334 sys-utils/switch_root.c:221 term-utils/script.c:455
 #, fuzzy, c-format
 msgid "failed to execute %s"
 msgstr "no ha estat possible executar ioctl() per llegir l'hora de %s"
@@ -10948,7 +10943,7 @@ msgstr "no ha estat possible executar ioctl() per llegir l'hora de %s"
 msgid "no mountpoint specified."
 msgstr "No s'ha especificat l'opció --date.\n"
 
-#: sys-utils/fstrim.c:137 sys-utils/mountpoint.c:185
+#: sys-utils/fstrim.c:137 sys-utils/mountpoint.c:189
 #, fuzzy, c-format
 msgid "%s: not a directory"
 msgstr "el node d'identificació arrel no és un directori"
@@ -11857,7 +11852,7 @@ msgstr ""
 msgid "invalid offset '%s' specified"
 msgstr "Valor establert invàlid: %s\n"
 
-#: sys-utils/losetup.c:272 sys-utils/mount.c:751
+#: sys-utils/losetup.c:272 sys-utils/mount.c:786
 msgid "invalid passphrase file descriptor"
 msgstr ""
 
@@ -11885,7 +11880,7 @@ msgstr ""
 msgid "the option --offset is not allowed in this context."
 msgstr ""
 
-#: sys-utils/losetup.c:348 sys-utils/mount.c:112
+#: sys-utils/losetup.c:348 sys-utils/mount.c:113
 #, fuzzy
 msgid "couldn't lock into memory"
 msgstr "No s'ha pogut blocar en memòria, s'està sortint.\n"
@@ -12151,151 +12146,151 @@ msgstr ""
 "%s: Les opcions --adjust i --noadjfile s'exclouen mútuament. Les heu "
 "especificat totes dues.\n"
 
-#: sys-utils/mount.c:64 sys-utils/umount.c:111
+#: sys-utils/mount.c:65 sys-utils/umount.c:111
 #, fuzzy, c-format
 msgid "only root can use \"--%s\" option (effective UID is %u)"
 msgstr "mount: només l'usuari root pot fer això"
 
-#: sys-utils/mount.c:67 sys-utils/umount.c:114
+#: sys-utils/mount.c:68 sys-utils/umount.c:114
 #, fuzzy, c-format
 msgid "only root can do that (effective UID is %u)"
 msgstr "mount: només l'usuari root pot fer això"
 
-#: sys-utils/mount.c:71 sys-utils/umount.c:118
+#: sys-utils/mount.c:72 sys-utils/umount.c:118
 #, fuzzy, c-format
 msgid "only root can use \"--%s\" option"
 msgstr "mount: només l'usuari root pot muntar %s a %s"
 
-#: sys-utils/mount.c:72 sys-utils/umount.c:119
+#: sys-utils/mount.c:73 sys-utils/umount.c:119
 #, fuzzy
 msgid "only root can do that"
 msgstr "mount: només l'usuari root pot fer això"
 
-#: sys-utils/mount.c:83 sys-utils/umount.c:56
+#: sys-utils/mount.c:84 sys-utils/umount.c:56
 #, fuzzy, c-format
 msgid "%s from %s (libmount %s"
 msgstr "%s des de %s%s\n"
 
-#: sys-utils/mount.c:100 sys-utils/umount.c:42
+#: sys-utils/mount.c:101 sys-utils/umount.c:42
 #, fuzzy, c-format
 msgid "%s: parse error: ignore entry at line %d."
 msgstr "s'ha produït un error en cercar"
 
-#: sys-utils/mount.c:139
+#: sys-utils/mount.c:140
 #, fuzzy
 msgid "failed to read mtab"
 msgstr "no es pot fer stat per a %s"
 
-#: sys-utils/mount.c:197 sys-utils/umount.c:250
+#: sys-utils/mount.c:200 sys-utils/umount.c:250
 #, c-format
 msgid "%-25s: ignored\n"
 msgstr ""
 
-#: sys-utils/mount.c:198
+#: sys-utils/mount.c:201
 #, fuzzy, c-format
 msgid "%-25s: already mounted\n"
 msgstr "mount: %s ja està muntat a %s\n"
 
-#: sys-utils/mount.c:332
+#: sys-utils/mount.c:363
 #, fuzzy, c-format
 msgid "only root can mount %s on %s"
 msgstr "mount: només l'usuari root pot muntar %s a %s"
 
-#: sys-utils/mount.c:335
+#: sys-utils/mount.c:366
 #, fuzzy, c-format
 msgid "%s is already mounted"
 msgstr "mount: %s ja està muntat a %s\n"
 
-#: sys-utils/mount.c:341
+#: sys-utils/mount.c:376
 #, fuzzy, c-format
 msgid "%s not mounted"
 msgstr "umount: %s: no s'ha trobat"
 
-#: sys-utils/mount.c:343
+#: sys-utils/mount.c:378
 #, fuzzy, c-format
 msgid "can't find %s in %s"
 msgstr "mount: no s'ha pogut trobar %s a %s"
 
-#: sys-utils/mount.c:350
+#: sys-utils/mount.c:385
 #, fuzzy
 msgid "I could not determine the filesystem type, and none was specified"
 msgstr ""
 "mount: no s'ha pogut determinar el tipus de sistema de fitxers i no n'heu "
 "especificat cap"
 
-#: sys-utils/mount.c:353
+#: sys-utils/mount.c:388
 #, fuzzy
 msgid "you must specify the filesystem type"
 msgstr "mount: haureu d'especificar el tipus del sistema de fitxers"
 
-#: sys-utils/mount.c:356
+#: sys-utils/mount.c:391
 #, fuzzy, c-format
 msgid "%s: mount failed"
 msgstr "no s'ha estat possible muntar"
 
-#: sys-utils/mount.c:366
+#: sys-utils/mount.c:401
 #, fuzzy, c-format
 msgid "%s: filesystem mounted, but mount(8) failed"
 msgstr "mount: no ha estat possible muntar"
 
-#: sys-utils/mount.c:385 sys-utils/mount.c:437
+#: sys-utils/mount.c:420 sys-utils/mount.c:472
 #, fuzzy, c-format
 msgid "mount point %s is not a directory"
 msgstr "mount: el punt de muntatge %s no és un directori"
 
-#: sys-utils/mount.c:389
+#: sys-utils/mount.c:424
 #, fuzzy
 msgid "must be superuser to use mount"
 msgstr "mount: haureu de ser un superusuari per a usar mount"
 
-#: sys-utils/mount.c:397
+#: sys-utils/mount.c:432
 #, fuzzy, c-format
 msgid "%s is busy"
 msgstr "mount: %s està ocupat"
 
-#: sys-utils/mount.c:401
+#: sys-utils/mount.c:436
 #, fuzzy, c-format
 msgid "%s is already mounted or %s busy"
 msgstr "mount: %s ja està muntat o %s està ocupat"
 
-#: sys-utils/mount.c:413
+#: sys-utils/mount.c:448
 #, fuzzy, c-format
 msgid "       %s is already mounted on %s\n"
 msgstr "mount: %s ja està muntat a %s\n"
 
-#: sys-utils/mount.c:421
+#: sys-utils/mount.c:456
 #, fuzzy, c-format
 msgid "mount point %s does not exist"
 msgstr "mount: el punt de muntatge %s no existeix"
 
-#: sys-utils/mount.c:423
+#: sys-utils/mount.c:458
 #, fuzzy, c-format
 msgid "mount point %s is a symbolic link to nowhere"
 msgstr "mount: el punt de muntatge %s és un enllaç simbòlic sense destí"
 
-#: sys-utils/mount.c:428
+#: sys-utils/mount.c:463
 #, fuzzy, c-format
 msgid "special device %s does not exist"
 msgstr "mount: el dispositiu especial %s no existeix"
 
-#: sys-utils/mount.c:431 sys-utils/mount.c:446
+#: sys-utils/mount.c:466 sys-utils/mount.c:481
 #, fuzzy
 msgid "mount(2) failed"
 msgstr "no s'ha estat possible muntar"
 
-#: sys-utils/mount.c:442
+#: sys-utils/mount.c:477
 #, fuzzy, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr ""
 "mount: el dispositiu especial %s no existeix\n"
 "       (un prefix de camí no és un directori)\n"
 
-#: sys-utils/mount.c:452
+#: sys-utils/mount.c:487
 #, fuzzy, c-format
 msgid "%s not mounted or bad option"
 msgstr "mount: %s encara no està muntat o una opció és incorrecta"
 
-#: sys-utils/mount.c:454
+#: sys-utils/mount.c:489
 #, fuzzy, c-format
 msgid ""
 "wrong fs type, bad option, bad superblock on %s,\n"
@@ -12306,14 +12301,14 @@ msgstr ""
 "       superbloc incorrecte a %s, manca la pàgina de codis o algun altre "
 "error"
 
-#: sys-utils/mount.c:460
+#: sys-utils/mount.c:495
 #, c-format
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)\n"
 msgstr ""
 
-#: sys-utils/mount.c:464
+#: sys-utils/mount.c:499
 #, fuzzy, c-format
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
@@ -12322,22 +12317,22 @@ msgstr ""
 "        En alguns casos, es pot trobar informació útil a syslog,\n"
 "        proveu dmesg | tail o així\n"
 
-#: sys-utils/mount.c:473
+#: sys-utils/mount.c:508
 #, fuzzy, c-format
 msgid "%s: can't read superblock"
 msgstr "mount: %s: no s'ha pogut llegir el superbloc"
 
-#: sys-utils/mount.c:477
+#: sys-utils/mount.c:512
 #, fuzzy, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "mount: no es reconeix el sitema de fitxers «%s»"
 
-#: sys-utils/mount.c:485
+#: sys-utils/mount.c:520
 #, fuzzy, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "mount: %s no és cap dispositiu de blocs, i stat falla?"
 
-#: sys-utils/mount.c:487
+#: sys-utils/mount.c:522
 #, fuzzy, c-format
 msgid ""
 "the kernel does not recognize %s as a block device\n"
@@ -12346,60 +12341,60 @@ msgstr ""
 "mount: el nucli no reconeix %s com a dispositiu de blocs\n"
 "       (potser fent «insmod controlador»?)"
 
-#: sys-utils/mount.c:490
+#: sys-utils/mount.c:525
 #, fuzzy, c-format
 msgid "%s is not a block device (maybe try `-o loop'?)"
 msgstr "mount: %s no és un dispositiu de blocs (proveu amb `-o loop')"
 
-#: sys-utils/mount.c:492
+#: sys-utils/mount.c:527
 #, fuzzy, c-format
 msgid " %s is not a block device"
 msgstr "%s: no és un dispositiu de bloc\n"
 
-#: sys-utils/mount.c:499
+#: sys-utils/mount.c:534
 #, fuzzy, c-format
 msgid "%s is not a valid block device"
 msgstr "mount: %s no és un dispositiu de blocs vàlid"
 
-#: sys-utils/mount.c:505
+#: sys-utils/mount.c:540
 #, fuzzy, c-format
 msgid "cannot mount %s read-only"
 msgstr "mount : no s'ha pogut muntar %s%s com a només de lectura"
 
-#: sys-utils/mount.c:508
+#: sys-utils/mount.c:543
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit `-w' flag given"
 msgstr ""
 "mount : %s%s està protegit contra escriptura però se li ha donat el "
 "senyalador explícit «-w»"
 
-#: sys-utils/mount.c:511
+#: sys-utils/mount.c:546
 #, fuzzy, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "mount : no s'ha pogut muntar %s%s com a només de lectura"
 
-#: sys-utils/mount.c:514
+#: sys-utils/mount.c:549
 #, fuzzy, c-format
 msgid "%s is write-protected, mounting read-only"
 msgstr ""
 "mount: %s%s està protegit contra escriptura; es muntarà en només lectura"
 
-#: sys-utils/mount.c:527
+#: sys-utils/mount.c:562
 #, fuzzy, c-format
 msgid "no medium found on %s"
 msgstr "mount: %s ja està muntat a %s\n"
 
-#: sys-utils/mount.c:531
+#: sys-utils/mount.c:566
 #, fuzzy, c-format
 msgid "mount %s on %s failed"
 msgstr "%s: no s'ha pogut reanomenar %s a %s: %s\n"
 
-#: sys-utils/mount.c:553
+#: sys-utils/mount.c:588
 #, fuzzy, c-format
 msgid "%s: failed to parse"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: sys-utils/mount.c:562
+#: sys-utils/mount.c:597
 #, c-format
 msgid ""
 " %1$s [-lhV]\n"
@@ -12409,7 +12404,7 @@ msgid ""
 " %1$s <operation> <mountpoint> [<target>]\n"
 msgstr ""
 
-#: sys-utils/mount.c:571
+#: sys-utils/mount.c:606
 #, c-format
 msgid ""
 " -a, --all               mount all filesystems mentioned in fstab\n"
@@ -12419,7 +12414,7 @@ msgid ""
 " -T, --fstab <path>      alternative file to /etc/fstab\n"
 msgstr ""
 
-#: sys-utils/mount.c:577
+#: sys-utils/mount.c:612
 #, c-format
 msgid ""
 " -h, --help              display this help text and exit\n"
@@ -12428,7 +12423,7 @@ msgid ""
 " -n, --no-mtab           don't write to /etc/mtab\n"
 msgstr ""
 
-#: sys-utils/mount.c:582
+#: sys-utils/mount.c:617
 #, c-format
 msgid ""
 " -o, --options <list>    comma-separated list of mount options\n"
@@ -12438,7 +12433,7 @@ msgid ""
 " -t, --types <list>      limit the set of filesystem types\n"
 msgstr ""
 
-#: sys-utils/mount.c:588
+#: sys-utils/mount.c:623
 #, c-format
 msgid ""
 " -v, --verbose           say what is being done\n"
@@ -12446,7 +12441,7 @@ msgid ""
 " -w, --read-write        mount the filesystem read-write (default)\n"
 msgstr ""
 
-#: sys-utils/mount.c:597
+#: sys-utils/mount.c:632
 #, c-format
 msgid ""
 "\n"
@@ -12457,7 +12452,7 @@ msgid ""
 " UUID=<uuid>             specifies device by filesystem UUID\n"
 msgstr ""
 
-#: sys-utils/mount.c:603
+#: sys-utils/mount.c:638
 #, c-format
 msgid ""
 " <device>                specifies device by path\n"
@@ -12465,7 +12460,7 @@ msgid ""
 " <file>                  regular file for loopdev setup\n"
 msgstr ""
 
-#: sys-utils/mount.c:608
+#: sys-utils/mount.c:643
 #, c-format
 msgid ""
 "\n"
@@ -12475,7 +12470,7 @@ msgid ""
 " -R, --rbind             mount a subtree and all submounts somewhere else\n"
 msgstr ""
 
-#: sys-utils/mount.c:613
+#: sys-utils/mount.c:648
 #, c-format
 msgid ""
 " --make-shared           mark a subtree as shared\n"
@@ -12484,7 +12479,7 @@ msgid ""
 " --make-unbindable       mark a subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:618
+#: sys-utils/mount.c:653
 #, c-format
 msgid ""
 " --make-rshared          recursively mark a whole subtree as shared\n"
@@ -12493,38 +12488,38 @@ msgid ""
 " --make-runbindable      recursively mark a whole subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:692 sys-utils/umount.c:316
+#: sys-utils/mount.c:727 sys-utils/umount.c:316
 #, fuzzy
 msgid "libmount context allocation failed"
 msgstr "mount: no ha estat possible muntar"
 
-#: sys-utils/mount.c:727 sys-utils/mount.c:738 sys-utils/mount.c:743
+#: sys-utils/mount.c:762 sys-utils/mount.c:773 sys-utils/mount.c:778
 #, fuzzy
 msgid "failed to append options"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: sys-utils/mount.c:747 sys-utils/umount.c:361
+#: sys-utils/mount.c:782 sys-utils/umount.c:361
 #, fuzzy
 msgid "failed to set options pattern"
 msgstr "No s'ha pogut escriure la partició a %s\n"
 
-#: sys-utils/mount.c:756
+#: sys-utils/mount.c:791
 msgid "only one <source> may be specified"
 msgstr ""
 
-#: sys-utils/mount.c:759
+#: sys-utils/mount.c:794
 #, fuzzy
 msgid "failed to allocate source buffer"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
 
-#: sys-utils/mountpoint.c:113
+#: sys-utils/mountpoint.c:117
 #, c-format
 msgid ""
 " %1$s [-qd] /path/to/directory\n"
 " %1$s -x /dev/device\n"
 msgstr ""
 
-#: sys-utils/mountpoint.c:117
+#: sys-utils/mountpoint.c:121
 msgid ""
 " -q, --quiet        quiet mode - don't print anything\n"
 " -d, --fs-devno     print maj:min device number of the filesystem\n"
@@ -12532,19 +12527,19 @@ msgid ""
 " -h, --help         this help\n"
 msgstr ""
 
-#: sys-utils/mountpoint.c:122
+#: sys-utils/mountpoint.c:126
 #, fuzzy, c-format
 msgid ""
 "\n"
 "For more information see mountpoint(1).\n"
 msgstr "S'ha canviat la informació del finger.\n"
 
-#: sys-utils/mountpoint.c:191
+#: sys-utils/mountpoint.c:195
 #, fuzzy, c-format
 msgid "%s is not a mountpoint\n"
 msgstr "el node d'identificació arrel no és un directori"
 
-#: sys-utils/mountpoint.c:197
+#: sys-utils/mountpoint.c:201
 #, fuzzy, c-format
 msgid "%s is a mountpoint\n"
 msgstr "%s està muntat.\t "
@@ -13884,7 +13879,7 @@ msgstr "S'ha iniciat l'execució de script a %s"
 msgid "cannot write script file"
 msgstr "%s: no s'ha pogut trobar el dispositiu per a %s\n"
 
-#: term-utils/script.c:475
+#: term-utils/script.c:485
 #, c-format
 msgid ""
 "\n"
@@ -13893,17 +13888,17 @@ msgstr ""
 "\n"
 "S'ha finalitzat l'execució de script a %s"
 
-#: term-utils/script.c:484
+#: term-utils/script.c:494
 #, c-format
 msgid "Script done, file is %s\n"
 msgstr "S'ha fet la seqüència, el fitxer és %s\n"
 
-#: term-utils/script.c:506
+#: term-utils/script.c:516
 #, fuzzy
 msgid "openpty failed"
 msgstr "no ha estat possible executar openpty\n"
 
-#: term-utils/script.c:542
+#: term-utils/script.c:552
 #, fuzzy
 msgid "out of pty's"
 msgstr "No queden pty\n"
@@ -14914,6 +14909,9 @@ msgstr "Seqüència d'escapament desconeguda en l'entrada: %o, %o\n"
 #, fuzzy
 msgid "Input line too long."
 msgstr "Línia d'entrada massa llarga.\n"
+
+#~ msgid "Disk %s doesn't contain a valid partition table\n"
+#~ msgstr "El disc %s no conté una taula de particions vàlida\n"
 
 #, fuzzy
 #~ msgid "%s: %d: parse error -- line ignored.\n"
