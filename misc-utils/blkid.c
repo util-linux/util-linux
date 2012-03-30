@@ -41,6 +41,8 @@ extern int optind;
 #include <blkid.h>
 
 #include "ismounted.h"
+
+#define STRTOXX_EXIT_CODE	4		/* strtoxx_or_err() */
 #include "strutils.h"
 
 const char *progname = "blkid";
@@ -764,10 +766,7 @@ int main(int argc, char **argv)
 			}
 			break;
 		case 'O':
-			if (strtosize(optarg, &offset))
-				fprintf(stderr,
-					"Invalid offset '%s' specified\n",
-					optarg);
+			offset = strtosize_or_err(optarg, "failed to parse offset");
 			break;
 		case 'p':
 			lowprobe |= LOWPROBE_SUPERBLOCKS;
@@ -781,10 +780,7 @@ int main(int argc, char **argv)
 			show[numtag] = NULL;
 			break;
 		case 'S':
-			if (strtosize(optarg, &size))
-				fprintf(stderr,
-					"Invalid size '%s' specified\n",
-					optarg);
+			size = strtosize_or_err(optarg, "failed to parse size");
 			break;
 		case 't':
 			if (search_type) {
