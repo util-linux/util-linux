@@ -97,20 +97,16 @@ int main(int argc, char **argv)
 			usage(stdout);
 			break;
 		case 'l':
-			if (strtosize(optarg, (uint64_t *) &range.len))
-				errx(EXIT_FAILURE,
-				     _("failed to parse length: %s"), optarg);
+			range.len = strtosize_or_err(optarg,
+					_("failed to parse length"));
 			break;
 		case 'o':
-			if (strtosize(optarg, (uint64_t *) &range.start))
-				errx(EXIT_FAILURE,
-				     _("failed to parse offset: %s"), optarg);
+			range.start = strtosize_or_err(optarg,
+					_("failed to parse offset"));
 			break;
 		case 'm':
-			if (strtosize(optarg, (uint64_t *) &range.minlen))
-				errx(EXIT_FAILURE,
-				     _("failed to parse minimum extent length: %s"),
-				     optarg);
+			range.minlen = strtosize_or_err(optarg,
+					_("failed to parse minimum extent length"));
 			break;
 		case 'v':
 			verbose = 1;
