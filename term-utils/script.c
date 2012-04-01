@@ -133,7 +133,7 @@ usage(FILE *out)
 	fputs(_("\nOptions:\n"), out);
 	fputs(_(" -a, --append            append the output\n"
 		" -c, --command <command> run command rather than interactive shell\n"
-		" -r, --return            return exit code of the child process\n"
+		" -e, --return            return exit code of the child process\n"
 		" -f, --flush             run flush after each write\n"
 		"     --force             use output file even when it is a link\n"
 		" -q, --quiet             be quiet\n"
