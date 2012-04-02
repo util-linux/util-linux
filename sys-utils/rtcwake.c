@@ -63,7 +63,7 @@ enum ClockMode {
 
 static unsigned		verbose;
 static unsigned		dryrun;
-static unsigned		ioctl_aie_on;  // ioctl(AIE_ON) succeeded
+static unsigned		ioctl_aie_on;  /* ioctl(AIE_ON) succeeded */
 enum ClockMode		clock_mode = CM_AUTO;
 
 static struct option long_options[] = {
@@ -616,7 +616,6 @@ int main(int argc, char **argv)
 	}
 
 	if (!dryrun && ioctl_aie_on && ioctl(fd, RTC_AIE_OFF, 0) < 0)
-
 		warn(_("disable rtc alarm interrupt failed"));
 
 	close(fd);
