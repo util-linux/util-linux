@@ -144,11 +144,12 @@ int loopcxt_has_device(struct loopdev_cxt *lc)
 int loopcxt_init(struct loopdev_cxt *lc, int flags)
 {
 	struct stat st;
+	struct loopdev_cxt dummy = UL_LOOPDEVCXT_EMPTY;
 
 	if (!lc)
 		return -EINVAL;
 
-	memset(lc, 0, sizeof(*lc));
+	memcpy(lc, &dummy, sizeof(dummy));
 	lc->flags = flags;
 	loopcxt_set_device(lc, NULL);
 

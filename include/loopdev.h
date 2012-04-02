@@ -104,6 +104,8 @@ struct loopdev_cxt {
 	struct loopdev_iter	iter;	/* scans /sys or /dev for used/free devices */
 };
 
+#define UL_LOOPDEVCXT_EMPTY { .fd = -1, .sysfs = UL_SYSFSCXT_EMPTY }
+
 /*
  * loopdev_cxt.flags
  */

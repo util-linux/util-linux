@@ -23,6 +23,7 @@ struct sysfs_cxt {
 	struct sysfs_cxt *parent;
 };
 
+#define UL_SYSFSCXT_EMPTY { 0, -1, NULL, NULL }
 
 extern char *sysfs_devno_attribute_path(dev_t devno, char *buf,
                                  size_t bufsiz, const char *attr);
