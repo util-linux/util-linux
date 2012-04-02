@@ -276,7 +276,6 @@ umount_one (const char *spec, const char *node, const char *type,
 	int extra_flags = 0;
 	const char *loopdev, *target = node;
 	char *targetbuf = NULL;
-	int myloop = 0;
 
 	/* Special case for root.  As of 0.99pl10 we can (almost) unmount root;
 	   the kernel will remount it readonly so that we can carry on running
@@ -301,12 +300,6 @@ umount_one (const char *spec, const char *node, const char *type,
 	/* Skip the actual umounting for --fake */
 	if (fake)
 		goto writemtab;
-	/*
-	 * Ignore the option "-d" for non-loop devices and loop devices with
-	 * LO_FLAGS_AUTOCLEAR flag.
-	 */
-	if (delloop && is_loopdev(spec))
-		myloop = 1;
 
 	if (restricted) {
 		if (umount_nofollow_support())
@@ -409,12 +402,21 @@ umount_one (const char *spec, const char *node, const char *type,
 		}
 
 		/* Also free loop devices when -d flag is given */
-		if (myloop)
+		if (delloop)
 			loopdev = spec;
 	}
  gotloop:
-	if (loopdev && !loopdev_is_autoclear(loopdev))
-		loopdev_delete(loopdev);
+	if (loopdev) {
+		struct loopdev_cxt lc;
+
+		loopcxt_init(&lc, 0);
+		loopcxt_set_device(&lc, loopdev);
+
+		if (loopcxt_get_backing_file(&lc)
+		    && loopcxt_is_autoclear(&lc) == 0)
+			loopcxt_delete_device(&lc);
+		loopcxt_deinit(&lc);
+	}
 
  writemtab:
 	if (!nomtab &&
