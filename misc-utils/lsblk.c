@@ -40,6 +40,7 @@
 #include <ctype.h>
 
 #include <blkid.h>
+#include <libmount.h>
 
 #ifdef HAVE_LIBUDEV
 #include <libudev.h>
@@ -51,7 +52,6 @@
 #include "pathnames.h"
 #include "blkdev.h"
 #include "canonicalize.h"
-#include "ismounted.h"
 #include "nls.h"
 #include "tt.h"
 #include "xalloc.h"
@@ -147,6 +147,9 @@ int ncolumns;		/* number of enabled columns */
 
 int excludes[256];
 size_t nexcludes;
+
+static struct libmnt_table *mtab, *swaps;
+static struct libmnt_cache *mntcache;
 
 struct blkdev_cxt {
 	struct blkdev_cxt *parent;
@@ -270,25 +273,67 @@ static char *get_device_path(struct blkdev_cxt *cxt)
 	return xstrdup(path);
 }
 
+static int is_active_swap(const char *filename)
+{
+	if (!swaps) {
+		swaps = mnt_new_table();
+		if (!swaps)
+			return 0;
+		if (!mntcache)
+			mntcache = mnt_new_cache();
+
+		mnt_table_set_cache(swaps, mntcache);
+		mnt_table_parse_swaps(swaps, NULL);
+	}
+
+	return mnt_table_find_srcpath(swaps, filename, MNT_ITER_BACKWARD) != 0;
+}
+
 static char *get_device_mountpoint(struct blkdev_cxt *cxt)
 {
-	int fl = 0;
-	char mnt[PATH_MAX];
+	struct libmnt_fs *fs;
+	const char *fsroot;
 
 	assert(cxt);
 	assert(cxt->filename);
 
-	*mnt = '\0';
+	if (!mtab) {
+		mtab = mnt_new_table();
+		if (!mtab)
+			return NULL;
+		if (!mntcache)
+			mntcache = mnt_new_cache();
 
-	/*
-	 * TODO: use libmount and parse /proc/mountinfo only once
-	 */
-	if (check_mount_point(cxt->filename, &fl, mnt, sizeof(mnt)) == 0 &&
-	    (fl & MF_MOUNTED)) {
-		if (fl & MF_SWAP)
-			strcpy(mnt, "[SWAP]");
+		mnt_table_set_cache(mtab, mntcache);
+		mnt_table_parse_mtab(mtab, NULL);
 	}
-	return strlen(mnt) ? xstrdup(mnt) : NULL;
+
+	/* try /etc/mtab or /proc/self/mountinfo */
+	fs = mnt_table_find_srcpath(mtab, cxt->filename, MNT_ITER_BACKWARD);
+	if (!fs)
+		return is_active_swap(cxt->filename) ? xstrdup("[SWAP]") : NULL;
+
+	/* found */
+	fsroot = mnt_fs_get_root(fs);
+	if (fsroot && strcmp(fsroot, "/") != 0) {
+		/* hmm.. we found bind mount or btrfs subvolume, let's try to
+		 * get real FS root mountpoint */
+		struct libmnt_fs *rfs;
+		struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_BACKWARD);
+
+		mnt_table_set_iter(mtab, itr, fs);
+		while (mnt_table_next_fs(mtab, itr, &rfs) == 0) {
+			fsroot = mnt_fs_get_root(rfs);
+			if ((!fsroot || strcmp(fsroot, "/") == 0)
+			    && mnt_fs_match_source(rfs, cxt->filename, mntcache)) {
+				fs = rfs;
+				break;
+			}
+		}
+		mnt_free_iter(itr);
+	}
+
+	return xstrdup(mnt_fs_get_target(fs));
 }
 
 #ifndef HAVE_LIBUDEV
@@ -1249,6 +1294,9 @@ int main(int argc, char *argv[])
 		errx_mutually_exclusive("--{all,exclude}");
 	else if (!nexcludes)
 		excludes[nexcludes++] = 1;	/* default: ignore RAM disks */
+
+	mnt_init_debug(0);
+
 	/*
 	 * initialize output columns
 	 */
@@ -1277,5 +1325,8 @@ int main(int argc, char *argv[])
 
 leave:
 	tt_free_table(lsblk->tt);
+	mnt_free_table(mtab);
+	mnt_free_table(swaps);
+	mnt_free_cache(mntcache);
 	return status;
 }

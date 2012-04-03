@@ -895,6 +895,7 @@ AM_CONDITIONAL(BUILD_SWAPON, test "x$build_swapon" = xyes)
 UL_BUILD_INIT([lsblk], [check])
 UL_REQUIRES_LINUX([lsblk])
 UL_REQUIRES_BUILD([lsblk], [libblkid])
+UL_REQUIRES_BUILD([lsblk], [libmount])
 AM_CONDITIONAL(BUILD_LSBLK, test "x$build_lsblk" = xyes)
 
 

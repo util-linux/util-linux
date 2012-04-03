@@ -55,13 +55,12 @@ lsblk_SOURCES = \
 	lsblk.c \
 	$(top_srcdir)/lib/at.c \
 	$(top_srcdir)/lib/canonicalize.c \
-	$(top_srcdir)/lib/ismounted.c \
 	$(top_srcdir)/lib/mbsalign.c \
 	$(top_srcdir)/lib/strutils.c \
 	$(top_srcdir)/lib/sysfs.c \
 	$(top_srcdir)/lib/tt.c
-lsblk_LDADD = $(ul_libblkid_la)
-lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+lsblk_LDADD = $(ul_libblkid_la) $(ul_libmount_la)
+lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libmount_incdir)
 if HAVE_UDEV
 lsblk_LDADD += -ludev
 endif
