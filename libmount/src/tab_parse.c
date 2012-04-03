@@ -295,6 +295,7 @@ static int mnt_table_parse_next(struct libmnt_table *tb, FILE *f, struct libmnt_
 {
 	char buf[BUFSIZ];
 	char *s;
+	int rc;
 
 	assert(tb);
 	assert(f);
@@ -329,23 +330,23 @@ static int mnt_table_parse_next(struct libmnt_table *tb, FILE *f, struct libmnt_
 	if (tb->fmt == MNT_FMT_GUESS)
 		tb->fmt = guess_table_format(s);
 
-	if (tb->fmt == MNT_FMT_FSTAB) {
-		if (mnt_parse_table_line(fs, s) != 0)
-			goto err;
-
-	} else if (tb->fmt == MNT_FMT_MOUNTINFO) {
-		if (mnt_parse_mountinfo_line(fs, s) != 0)
-			goto err;
-
-	} else if (tb->fmt == MNT_FMT_UTAB) {
-		if (mnt_parse_utab_line(fs, s) != 0)
-			goto err;
+	switch (tb->fmt) {
+	case MNT_FMT_FSTAB:
+		rc = mnt_parse_table_line(fs, s);
+		break;
+	case MNT_FMT_MOUNTINFO:
+		rc = mnt_parse_mountinfo_line(fs, s);
+		break;
+	case MNT_FMT_UTAB:
+		rc = mnt_parse_utab_line(fs, s);
+		break;
+	default:
+		rc = -1;	/* unknown format */
+		break;
 	}
 
-
-	/*DBG(TAB, mnt_fs_print_debug(fs, stderr));*/
-
-	return 0;
+	if (rc == 0)
+		return 0;
 err:
 	DBG(TAB, mnt_debug_h(tb, "%s:%d: %s parse error", filename, *nlines,
 				tb->fmt == MNT_FMT_MOUNTINFO ? "mountinfo" :
