@@ -131,6 +131,7 @@ extern int mnt_fstype_is_pseudofs(const char *type);
 extern int mnt_match_fstype(const char *type, const char *pattern);
 extern int mnt_match_options(const char *optstr, const char *pattern);
 extern const char *mnt_get_fstab_path(void);
+extern const char *mnt_get_swaps_path(void);
 extern const char *mnt_get_mtab_path(void);
 extern int mnt_has_regular_mtab(const char **mtab, int *writable);
 
@@ -259,6 +260,11 @@ extern int mnt_fs_get_id(struct libmnt_fs *fs);
 extern int mnt_fs_get_parent_id(struct libmnt_fs *fs);
 extern dev_t mnt_fs_get_devno(struct libmnt_fs *fs);
 
+extern const char *mnt_fs_get_swaptype(struct libmnt_fs *fs);
+extern off_t mnt_fs_get_size(struct libmnt_fs *fs);
+extern off_t mnt_fs_get_usedsize(struct libmnt_fs *fs);
+extern int mnt_fs_get_priority(struct libmnt_fs *fs);
+
 extern int mnt_fs_match_target(struct libmnt_fs *fs, const char *target,
 			       struct libmnt_cache *cache);
 extern int mnt_fs_match_source(struct libmnt_fs *fs, const char *source,
@@ -284,6 +290,7 @@ extern int mnt_table_parse_file(struct libmnt_table *tb, const char *filename);
 extern int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname);
 
 extern int mnt_table_parse_fstab(struct libmnt_table *tb, const char *filename);
+extern int mnt_table_parse_swaps(struct libmnt_table *tb, const char *filename);
 extern int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename);
 extern int mnt_table_set_parser_errcb(struct libmnt_table *tb,
                 int (*cb)(struct libmnt_table *tb, const char *filename, int line));

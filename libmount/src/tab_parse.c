@@ -269,6 +269,56 @@ enomem:
 }
 
 /*
+ * Parses one line from /proc/swaps
+ */
+static int mnt_parse_swaps_line(struct libmnt_fs *fs, char *s)
+{
+	uintmax_t fsz, usz;
+	int rc;
+	char *src = NULL;
+
+	rc = sscanf(s,	UL_SCNsA" "	/* (1) source */
+			UL_SCNsA" "	/* (2) type */
+			"%jd"		/* (3) size */
+			"%jd"		/* (4) used */
+			"%d",		/* priority */
+
+			&src,
+			&fs->swaptype,
+			&fsz,
+			&usz,
+			&fs->priority);
+
+	if (rc == 5) {
+		size_t sz;
+
+		fs->size = fsz;
+		fs->usedsize = usz;
+
+		unmangle_string(src);
+
+		/* remove "(deleted)" suffix */
+		sz = strlen(src);
+		if (sz > PATH_DELETED_SUFFIX_SZ) {
+			char *p = src + (sz - PATH_DELETED_SUFFIX_SZ);
+			if (strcmp(p, PATH_DELETED_SUFFIX) == 0)
+				*p = '\0';
+		}
+
+		rc = mnt_fs_set_source(fs, src);
+		if (!rc)
+			mnt_fs_set_fstype(fs, "swap");
+		free(src);
+	} else {
+		DBG(TAB, mnt_debug("tab parse error: [sscanf rc=%d]: '%s'", rc, s));
+		rc = -EINVAL;
+	}
+
+	return rc;
+}
+
+
+/*
  * Returns {m,fs}tab or mountinfo file format (MNT_FMT_*)
  *
  * Note that we aren't trying to guess utab file format, because this file has
@@ -281,8 +331,13 @@ static int guess_table_format(char *line)
 {
 	unsigned int a, b;
 
+	DBG(TAB, mnt_debug("trying to guess table type"));
+
 	if (sscanf(line, "%u %u", &a, &b) == 2)
 		return MNT_FMT_MOUNTINFO;
+
+	if (strncmp(line, "Filename\t", 9) == 0)
+		return MNT_FMT_SWAPS;
 
 	return MNT_FMT_FSTAB;		/* fstab, mtab or /proc/mounts */
 }
@@ -302,6 +357,7 @@ static int mnt_table_parse_next(struct libmnt_table *tb, FILE *f, struct libmnt_
 	assert(fs);
 
 	/* read the next non-blank non-comment line */
+next_line:
 	do {
 		if (fgets(buf, sizeof(buf), f) == NULL)
 			return -EINVAL;
@@ -327,8 +383,11 @@ static int mnt_table_parse_next(struct libmnt_table *tb, FILE *f, struct libmnt_
 		s = skip_spaces(buf);
 	} while (*s == '\0' || *s == '#');
 
-	if (tb->fmt == MNT_FMT_GUESS)
+	if (tb->fmt == MNT_FMT_GUESS) {
 		tb->fmt = guess_table_format(s);
+		if (tb->fmt == MNT_FMT_SWAPS)
+			goto next_line;			/* skip swap header */
+	}
 
 	switch (tb->fmt) {
 	case MNT_FMT_FSTAB:
@@ -340,6 +399,11 @@ static int mnt_table_parse_next(struct libmnt_table *tb, FILE *f, struct libmnt_
 	case MNT_FMT_UTAB:
 		rc = mnt_parse_utab_line(fs, s);
 		break;
+	case MNT_FMT_SWAPS:
+		if (strncmp(s, "Filename\t", 9) == 0)
+			goto next_line;			/* skip swap header */
+		rc = mnt_parse_swaps_line(fs, s);
+		break;
 	default:
 		rc = -1;	/* unknown format */
 		break;
@@ -350,6 +414,7 @@ static int mnt_table_parse_next(struct libmnt_table *tb, FILE *f, struct libmnt_
 err:
 	DBG(TAB, mnt_debug_h(tb, "%s:%d: %s parse error", filename, *nlines,
 				tb->fmt == MNT_FMT_MOUNTINFO ? "mountinfo" :
+				tb->fmt == MNT_FMT_SWAPS ? "swaps" :
 				tb->fmt == MNT_FMT_FSTAB ? "tab" : "utab"));
 
 	/* by default all errors are recoverable, otherwise behavior depends on
@@ -654,6 +719,34 @@ int mnt_table_set_parser_errcb(struct libmnt_table *tb,
 	assert(tb);
 	tb->errcb = cb;
 	return 0;
+}
+
+/**
+ * mnt_table_parse_swaps:
+ * @tb: table
+ * @filename: overwrites default (/proc/swaps or $LIBMOUNT_SWAPS) or NULL
+ *
+ * This function parses /proc/swaps and appends new lines to the @tab.
+ *
+ * See also mnt_table_set_parser_errcb().
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_parse_swaps(struct libmnt_table *tb, const char *filename)
+{
+	assert(tb);
+
+	if (!tb)
+		return -EINVAL;
+	if (!filename) {
+		filename = mnt_get_swaps_path();
+		if (!filename)
+			return -EINVAL;
+	}
+
+	tb->fmt = MNT_FMT_SWAPS;
+
+	return mnt_table_parse_file(tb, filename);
 }
 
 /**

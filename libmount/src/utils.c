@@ -705,6 +705,17 @@ done:
 }
 
 /**
+ * mnt_get_swaps_path:
+ *
+ * Returns: path to /proc/swaps or $LIBMOUNT_SWAPS.
+ */
+const char *mnt_get_swaps_path(void)
+{
+	const char *p = safe_getenv("LIBMOUNT_SWAPS");
+	return p ? : _PATH_PROC_SWAPS;
+}
+
+/**
  * mnt_get_fstab_path:
  *
  * Returns: path to /etc/fstab or $LIBMOUNT_FSTAB.

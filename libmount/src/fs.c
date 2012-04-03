@@ -53,6 +53,7 @@ void mnt_free_fs(struct libmnt_fs *fs)
 	free(fs->tagname);
 	free(fs->tagval);
 	free(fs->root);
+	free(fs->swaptype);
 	free(fs->target);
 	free(fs->fstype);
 	free(fs->optstr);
@@ -147,6 +148,8 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 		goto err;
 	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, root)))
 		goto err;
+	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, swaptype)))
+		goto err;
 	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, target)))
 		goto err;
 	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, fstype)))
@@ -167,6 +170,9 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 	dest->freq       = src->freq;
 	dest->passno     = src->passno;
 	dest->flags      = src->flags;
+	dest->size	 = src->size;
+	dest->usedsize   = src->usedsize;
+	dest->priority   = src->priority;
 
 	return dest;
 err:
@@ -1017,6 +1023,69 @@ int mnt_fs_set_root(struct libmnt_fs *fs, const char *root)
 }
 
 /**
+ * mnt_fs_get_swaptype:
+ * @fs: /proc/swaps entry
+ *
+ * Returns: swap type or NULL
+ */
+const char *mnt_fs_get_swaptype(struct libmnt_fs *fs)
+{
+	assert(fs);
+	return fs ? fs->swaptype : NULL;
+}
+
+/**
+ * mnt_fs_get_size:
+ * @fs: /proc/swaps entry
+ *
+ * Returns: size
+ */
+off_t mnt_fs_get_size(struct libmnt_fs *fs)
+{
+	assert(fs);
+	return fs ? fs->size : 0;
+}
+
+/**
+ * mnt_fs_get_usedsize:
+ * @fs: /proc/swaps entry
+ *
+ * Returns: used size
+ */
+off_t mnt_fs_get_usedsize(struct libmnt_fs *fs)
+{
+	assert(fs);
+	return fs ? fs->usedsize : 0;
+}
+
+/**
+ * mnt_fs_get_priority:
+ * @fs: /proc/swaps entry
+ *
+ * Returns: priority
+ */
+int mnt_fs_get_priority(struct libmnt_fs *fs)
+{
+	assert(fs);
+	return fs ? fs->priority : 0;
+}
+
+/**
+ * mnt_fs_set_priority:
+ * @fs: /proc/swaps entry
+ *
+ * Returns: 0 or -1 in case of error
+ */
+int mnt_fs_set_priority(struct libmnt_fs *fs, int prio)
+{
+	assert(fs);
+	if (!fs)
+		return -EINVAL;
+	fs->priority = prio;
+	return 0;
+}
+
+/**
  * mnt_fs_get_bindsrc:
  * @fs: /run/mount/utab entry
  *
@@ -1314,6 +1383,16 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 
 	if (mnt_fs_get_root(fs))
 		fprintf(file, "root:   %s\n", mnt_fs_get_root(fs));
+
+	if (mnt_fs_get_swaptype(fs))
+		fprintf(file, "swaptype: %s\n", mnt_fs_get_swaptype(fs));
+	if (mnt_fs_get_size(fs))
+		fprintf(file, "size: %jd\n", mnt_fs_get_size(fs));
+	if (mnt_fs_get_usedsize(fs))
+		fprintf(file, "usedsize: %jd\n", mnt_fs_get_usedsize(fs));
+	if (mnt_fs_get_priority(fs))
+		fprintf(file, "priority: %d\n", mnt_fs_get_priority(fs));
+
 	if (mnt_fs_get_bindsrc(fs))
 		fprintf(file, "bindsrc: %s\n", mnt_fs_get_bindsrc(fs));
 	if (mnt_fs_get_freq(fs))

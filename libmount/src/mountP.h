@@ -194,7 +194,7 @@ struct libmnt_fs {
 
 	char		*bindsrc;	/* utab, full path from fstab[1] for bind mounts */
 
-	char		*source;	/* fstab[1], mountinfo[10]:
+	char		*source;	/* fstab[1], mountinfo[10], swaps[1]:
                                          * source dev, file, dir or TAG */
 	char		*tagname;	/* fstab[1]: tag name - "LABEL", "UUID", ..*/
 	char		*tagval;	/*           tag value */
@@ -211,6 +211,12 @@ struct libmnt_fs {
 
 	int		freq;		/* fstab[5]: dump frequency in days */
 	int		passno;		/* fstab[6]: pass number on parallel fsck */
+
+	/* /proc/swaps */
+	char		*swaptype;	/* swaps[2]: device type (partition, file, ...) */
+	off_t		size;		/* swaps[3]: swaparea size */
+	off_t		usedsize;	/* swaps[4]: used size */
+	int		priority;	/* swaps[5]: swap priority */
 
 	int		flags;		/* MNT_FS_* flags */
 
@@ -255,7 +261,8 @@ enum {
 	MNT_FMT_FSTAB,			/* /etc/{fs,m}tab */
 	MNT_FMT_MTAB = MNT_FMT_FSTAB,	/* alias */
 	MNT_FMT_MOUNTINFO,		/* /proc/#/mountinfo */
-	MNT_FMT_UTAB			/* /dev/.mount/utab */
+	MNT_FMT_UTAB,			/* /run/mount/utab */
+	MNT_FMT_SWAPS			/* /proc/swaps */
 };
 
 
