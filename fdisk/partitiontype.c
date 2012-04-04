@@ -10,6 +10,8 @@
 #include <fcntl.h>
 #include <stdlib.h>
 
+#include "closestream.h"
+
 struct aix_label {
 	unsigned int   magic;
 	/* more ... */
@@ -53,6 +55,7 @@ main(int argc, char **argv) {
 	struct sgi_label *psgi;
 	struct sun_label *psun;
 
+	atexit(close_stdout);
 	if (argc != 2) {
 		fprintf(stderr, "call: %s device\n", argv[0]);
 		exit(1);

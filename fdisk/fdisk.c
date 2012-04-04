@@ -33,6 +33,7 @@
 #include "pathnames.h"
 #include "canonicalize.h"
 #include "strutils.h"
+#include "closestream.h"
 
 #include "fdisksunlabel.h"
 #include "fdisksgilabel.h"
@@ -2958,6 +2959,7 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt(argc, argv, "b:c::C:hH:lsS:u::vV")) != -1) {
 		switch (c) {
