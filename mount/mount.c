@@ -41,6 +41,7 @@
 #include "nls.h"
 #include "blkdev.h"
 #include "strutils.h"
+#include "closestream.h"
 
 #define DO_PS_FIDDLING
 
@@ -2519,6 +2520,7 @@ main(int argc, char *argv[]) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	progname = argv[0];
 	if ((p = strrchr(progname, '/')) != NULL)

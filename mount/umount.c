@@ -21,6 +21,7 @@
 #include "env.h"
 #include "nls.h"
 #include "strutils.h"
+#include "closestream.h"
 
 #if defined(MNT_FORCE)
 /* Interesting ... it seems libc knows about MNT_FORCE and presumably
@@ -778,6 +779,7 @@ main (int argc, char *argv[]) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	progname = argv[0];
 	if ((p = strrchr(progname, '/')) != NULL)
