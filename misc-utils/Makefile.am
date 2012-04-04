@@ -17,13 +17,11 @@ usrbin_exec_PROGRAMS = \
 logger_SOURCES = logger.c $(top_srcdir)/lib/strutils.c
 mcookie_SOURCES = mcookie.c $(top_srcdir)/lib/md5.c
 
-usrbin_exec_SCRIPTS = chkdupexe
-
-CLEANFILES = chkdupexe
+usrbin_exec_SCRIPTS =
+CLEANFILES =
 
 dist_man_MANS = \
 	cal.1 \
-	chkdupexe.1 \
 	logger.1 \
 	look.1 \
 	mcookie.1 \
@@ -31,6 +29,12 @@ dist_man_MANS = \
 	whereis.1
 
 namei_SOURCES = namei.c $(top_srcdir)/lib/strutils.c
+
+if BUILD_CHKDUPEXE
+usrbin_exec_SCRIPTS += chkdupexe
+CLEANFILES += chkdupexe
+dist_man_MANS += chkdupexe.1
+endif
 
 if BUILD_DDATE
 usrbin_exec_PROGRAMS += ddate

@@ -114,9 +114,6 @@ UL_SET_ARCH(M68K, m68*)
 UL_SET_ARCH(MIPS, mips*)
 UL_SET_ARCH(HPPA, hppa*)
 
-dnl script chkdupexe requires perl
-AC_PATH_PROG(PERL, perl)
-
 AC_SYS_LARGEFILE
 
 AM_GNU_GETTEXT_VERSION([0.14.1])
@@ -1082,6 +1079,19 @@ UL_BUILD_INIT([write])
 AM_CONDITIONAL(BUILD_WRITE, test "x$build_write" = xyes)
 
 
+AC_ARG_ENABLE([chkdupexe],
+  AS_HELP_STRING([--enable-chkdupexe], [build deprecated chkdupexe]),
+  [], enable_chkdupexe=no
+)
+UL_BUILD_INIT([chkdupexe])
+AM_CONDITIONAL(BUILD_CHKDUPEXE, test "x$build_chkdupexe" = xyes)
+
+if test "x$build_chkdupexe" = xyes; then
+	AC_PATH_PROG(PERL, perl)
+	AC_CONFIG_FILES([misc-utils/chkdupexe:misc-utils/chkdupexe.pl])
+fi
+
+
 AC_ARG_ENABLE([chsh-only-listed],
   AS_HELP_STRING([--disable-chsh-only-listed], [chsh: allow shells not in /etc/shells]),
   [], enable_chsh_only_listed=yes
@@ -1224,7 +1234,6 @@ libuuid/uuid.pc
 login-utils/Makefile
 man/ru/Makefile
 misc-utils/Makefile
-misc-utils/chkdupexe:misc-utils/chkdupexe.pl
 mount/Makefile
 partx/Makefile
 po/Makefile.in
