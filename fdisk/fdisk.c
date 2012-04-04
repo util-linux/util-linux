@@ -954,19 +954,6 @@ get_topology(int fd) {
 }
 
 static void
-get_kernel_geometry(int fd) {
-#ifdef HDIO_GETGEO
-	struct hd_geometry geometry;
-
-	if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
-		kern_heads = geometry.heads;
-		kern_sectors = geometry.sectors;
-		/* never use geometry.cylinders - it is truncated */
-	}
-#endif
-}
-
-static void
 get_partition_table_geometry(void) {
 	unsigned char *bufp = MBRbuffer;
 	struct partition *p;
@@ -1057,7 +1044,7 @@ get_geometry(int fd, struct geom *g) {
 	kern_heads = kern_sectors = 0;
 	pt_heads = pt_sectors = 0;
 
-	get_kernel_geometry(fd);
+	blkdev_get_geometry(fd, &kern_heads, &kern_sectors);
 	get_partition_table_geometry();
 
 	heads = user_heads ? user_heads :
