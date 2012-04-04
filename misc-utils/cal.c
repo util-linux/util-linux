@@ -67,6 +67,7 @@
 #include <errno.h>
 
 #include "c.h"
+#include "closestream.h"
 #include "nls.h"
 #include "mbsalign.h"
 #include "strutils.h"
@@ -278,6 +279,7 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW) || defined(HAVE_LIBTERMCAP)
 	if ((term = getenv("TERM"))) {

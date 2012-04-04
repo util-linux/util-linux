@@ -60,6 +60,7 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "pathnames.h"
+#include "closestream.h"
 
 #define	EQUAL		0
 #define	GREATER		1
@@ -99,6 +100,7 @@ main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	setlocale(LC_ALL, "");
 

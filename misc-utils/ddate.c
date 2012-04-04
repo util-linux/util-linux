@@ -63,6 +63,7 @@
 #include <stdio.h>
 
 #include "nls.h"
+#include "closestream.h"
 #include "c.h"
 
 #ifndef __GNUC__
@@ -169,6 +170,7 @@ main (int argc, char *argv[]) {
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
+    atexit(close_stdout);
 
     srandom(time(NULL));
     /* do args here */

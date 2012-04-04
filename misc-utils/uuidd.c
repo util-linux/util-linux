@@ -35,6 +35,7 @@ extern int optind;
 #include "uuidd.h"
 #include "writeall.h"
 
+#include "closestream.h"
 #include "nls.h"
 
 #ifdef __GNUC__
@@ -455,6 +456,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c =
 		getopt_long(argc, argv, "p:s:T:krtn:dqVh", longopts,

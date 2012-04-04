@@ -24,6 +24,7 @@ extern int optind;
 #include "uuid.h"
 #include "nls.h"
 #include "c.h"
+#include "closestream.h"
 
 #define DO_TYPE_TIME	1
 #define DO_TYPE_RANDOM	2
@@ -62,6 +63,7 @@ main (int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "rtVh", longopts, NULL)) != -1)
 		switch (c) {

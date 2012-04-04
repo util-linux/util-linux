@@ -40,6 +40,7 @@
 #include "at.h"
 #include "strutils.h"
 #include "c.h"
+#include "closestream.h"
 
 /* column IDs */
 enum {
@@ -515,6 +516,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv,
 				"p:o:nruhV", long_opts, NULL)) != -1) {

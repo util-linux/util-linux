@@ -38,6 +38,7 @@
 #include "nls.h"
 #include "widechar.h"
 #include "strutils.h"
+#include "closestream.h"
 
 #ifndef MAXSYMLINKS
 #define MAXSYMLINKS 256
@@ -448,6 +449,7 @@ main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "hVlmnovx", longopts, NULL)) != -1) {
 		switch(c) {

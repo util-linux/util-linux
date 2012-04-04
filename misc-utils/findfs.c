@@ -12,6 +12,7 @@
 #include <blkid.h>
 
 #include "nls.h"
+#include "closestream.h"
 #include "c.h"
 
 static void __attribute__((__noreturn__)) usage(int rc)
@@ -35,6 +36,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	if (argc != 2)
 		/* we return '2' for backward compatibility

@@ -58,6 +58,7 @@
 #include "strutils.h"
 #include "at.h"
 #include "sysfs.h"
+#include "closestream.h"
 
 /* column IDs */
 enum {
@@ -1186,6 +1187,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	lsblk = &_ls;
 	memset(lsblk, 0, sizeof(*lsblk));
