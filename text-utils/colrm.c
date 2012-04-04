@@ -41,11 +41,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <unistd.h>
 
 #include "nls.h"
 #include "widechar.h"
 #include "strutils.h"
 #include "c.h"
+#include "closestream.h"
 
 /*
 COLRM removes unwanted columns from a file
@@ -162,6 +164,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((opt =
 		getopt_long(argc, argv, "bfhl:pxVH", longopts,
@@ -187,7 +190,5 @@ int main(int argc, char **argv)
 		;
 
 	fflush(stdout);
-	if (ferror(stdout) || fclose(stdout))
-		return EXIT_FAILURE;
 	return EXIT_SUCCESS;
 }
