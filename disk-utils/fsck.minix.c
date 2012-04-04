@@ -110,6 +110,7 @@
 #include "bitops.h"
 #include "ismounted.h"
 #include "writeall.h"
+#include "closestream.h"
 
 #define ROOT_INO 1
 #define YESNO_LENGTH 64
@@ -1242,6 +1243,7 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	if (argc == 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {

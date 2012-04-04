@@ -38,6 +38,7 @@
 #include <sys/utsname.h>
 #include "nls.h"
 #include "blkdev.h"
+#include "closestream.h"
 #include "linux_version.h"
 
 /* this has to match with the kernel structure */
@@ -79,6 +80,7 @@ main(int argc, char * argv[]) {
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	for (;;) {
 		int opt;

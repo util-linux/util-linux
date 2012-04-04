@@ -57,6 +57,7 @@
 #include "writeall.h"
 #include "xalloc.h"
 #include "c.h"
+#include "closestream.h"
 
 #ifdef HAVE_LIBUUID
 # include <uuid.h>
@@ -496,6 +497,7 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while((c = getopt_long(argc, argv, "cfp:L:v:U:Vh", longopts, NULL)) != -1) {
 		switch (c) {

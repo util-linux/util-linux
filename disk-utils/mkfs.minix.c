@@ -85,6 +85,7 @@
 #include "exitcodes.h"
 #include "strutils.h"
 #include "writeall.h"
+#include "closestream.h"
 
 #define MINIX_ROOT_INO 1
 #define MINIX_BAD_INO 2
@@ -660,6 +661,7 @@ int main(int argc, char ** argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	if (argc == 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {

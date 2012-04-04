@@ -28,6 +28,7 @@
 #include "nls.h"
 #include "c.h"
 #include "strutils.h"
+#include "closestream.h"
 
 #define ISODCL(from, to) (to - from + 1)
 
@@ -181,6 +182,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((opt = getopt_long(argc, argv, "d:xVh", longopts, NULL)) != -1)
 		switch (opt) {
