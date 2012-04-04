@@ -22,6 +22,7 @@
 #include "c.h"
 #include "nls.h"
 #include "strutils.h"
+#include "closestream.h"
 
 #ifndef HAVE_UNION_SEMUN
 /* according to X/OPEN we have to define it ourselves */
@@ -316,6 +317,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	/* check to see if the command is being invoked in the old way if so
 	 * then remove argument list */

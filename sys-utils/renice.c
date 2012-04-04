@@ -46,6 +46,7 @@
 #include <errno.h>
 #include "nls.h"
 #include "c.h"
+#include "closestream.h"
 
 static int donice(int,int,int);
 
@@ -86,6 +87,7 @@ main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	argc--;
 	argv++;

@@ -39,6 +39,7 @@
 #include "xgetpass.h"
 #include "exitcodes.h"
 #include "xalloc.h"
+#include "closestream.h"
 
 /*** TODO: DOCS:
  *
@@ -701,6 +702,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	mnt_init_debug(0);
 	cxt = mnt_new_context();

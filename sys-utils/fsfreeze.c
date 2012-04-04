@@ -23,6 +23,7 @@
 
 #include "blkdev.h"
 #include "nls.h"
+#include "closestream.h"
 #include "c.h"
 
 static int freeze_f(int fd)
@@ -68,6 +69,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "hfu", longopts, NULL)) != -1) {
 		switch(c) {

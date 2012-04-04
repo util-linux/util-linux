@@ -19,6 +19,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "closestream.h"
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
@@ -53,6 +54,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((ch = getopt_long(argc, argv, "+Vhc", longopts, NULL)) != -1)
 		switch (ch) {

@@ -35,6 +35,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "closestream.h"
 
 #ifndef MS_MOVE
 #define MS_MOVE 8192
@@ -194,6 +195,7 @@ static void __attribute__((__noreturn__)) usage(FILE *output)
 int main(int argc, char *argv[])
 {
 	char *newroot, *init, **initargs;
+	atexit(close_stdout);
 
 	if (argv[1] && (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")))
 		usage(stdout);
