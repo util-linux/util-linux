@@ -54,6 +54,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <getopt.h>
+
+#include "closestream.h"
 #include "nls.h"
 #include "c.h"
 
@@ -88,6 +90,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	static const struct option longopts[] = {
 		{ "verbose",    no_argument,       0, 'v' },

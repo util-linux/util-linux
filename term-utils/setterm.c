@@ -121,6 +121,7 @@
 #include "c.h"
 #include "xalloc.h"
 #include "nls.h"
+#include "closestream.h"
 
 #if __GNU_LIBRARY__ < 5
 #ifndef __alpha__
@@ -1113,7 +1114,8 @@ perform_sequence(int vcterm) {
 			err(EXIT_DUMPFILE, _("can not open dump file %s for output"),
 				opt_sn_name); 
 		screendump(opt_sn_num, F);
-		fclose(F);
+		if (close_stream(F) != 0)
+			errx(EXIT_FAILURE, _("write error"));
 	}
 
 	/* -msg [on|off]. */
@@ -1225,6 +1227,7 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	if (argc < 2)
 		bad_arg = TRUE;

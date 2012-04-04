@@ -59,6 +59,7 @@
 #include <locale.h>
 #include <stddef.h>
 
+#include "closestream.h"
 #include "nls.h"
 #include "c.h"
 
@@ -180,6 +181,7 @@ main(int argc, char **argv) {
 	setlocale(LC_NUMERIC, "C");	/* see comment above */
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((ch = getopt_long(argc, argv, "ac:efqt::Vh", longopts, NULL)) != -1)
 		switch(ch) {
@@ -283,7 +285,8 @@ main(int argc, char **argv) {
 	}
 	doinput();
 
-	fclose(timingfd);
+	if (close_stream(timingfd) != 0)
+		errx(EXIT_FAILURE, _("write error"));
 	return EXIT_SUCCESS;
 }
 
@@ -292,7 +295,8 @@ doinput(void) {
 	ssize_t cc;
 	char ibuf[BUFSIZ];
 
-	fclose(fscript);
+	if (close_stream(fscript) != 0)
+		errx(EXIT_FAILURE, _("write error"));
 
 	while (die == 0) {
 		if ((cc = read(STDIN_FILENO, ibuf, BUFSIZ)) > 0) {
@@ -404,6 +408,8 @@ dooutput(FILE *timingfd) {
 
 	if (flgs)
 		fcntl(master, F_SETFL, flgs);
+	if (close_stream(timingfd) != 0)
+		errx(EXIT_FAILURE, _("write error"));
 	done();
 }
 
@@ -423,7 +429,8 @@ doshell(void) {
 
 	getslave();
 	close(master);
-	fclose(fscript);
+	if (close_stream(fscript) != 0)
+		errx(EXIT_FAILURE, _("write error"));
 	dup2(slave, STDIN_FILENO);
 	dup2(slave, STDOUT_FILENO);
 	dup2(slave, STDERR_FILENO);
@@ -484,7 +491,8 @@ done(void) {
 			my_strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
 			fprintf(fscript, _("\nScript done on %s"), buf);
 		}
-		fclose(fscript);
+		if (close_stream(fscript) != 0)
+			errx(EXIT_FAILURE, _("write error"));
 		close(master);
 
 		master = -1;
