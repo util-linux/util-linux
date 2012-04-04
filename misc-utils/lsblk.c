@@ -524,7 +524,7 @@ static char *encode_str(const char *str)
 	if (!str)
 		goto err;
 
-	sz = strlen(str) * 4;
+	sz = strlen(str) * 4 + 1;
 	enc = xmalloc(sz);
 
 	if (blkid_encode_string(str, enc, sz) != 0)
