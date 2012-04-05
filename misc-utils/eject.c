@@ -61,6 +61,16 @@
  */
 #define TRAY_WAS_ALREADY_OPEN_USECS  200000	/* about 0.2 seconds */
 
+/* eject(1) is able to eject only 'removable' devices (attribute in /sys)
+ * _or_ devices connected by hotplug subsystem.
+ */
+static const char *hotplug_subsystems[] = {
+	"usb",
+	"ieee1394",
+	"pcmcia",
+	"mmc",
+	"ccw"
+};
 
 /* Global Variables */
 static int a_option; /* command flags and arguments */
@@ -749,6 +759,116 @@ done:
 	sysfs_deinit(&cxt);
 }
 
+static int is_hotpluggable_subsystem(const char *name)
+{
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(hotplug_subsystems); i++)
+		if (strcmp(name, hotplug_subsystems[i]) == 0)
+			return 1;
+
+	return 0;
+}
+
+#define SUBSYSTEM_LINKNAME	"/subsystem"
+
+/*
+ * For example:
+ *
+ * chain: /sys/dev/block/../../devices/pci0000:00/0000:00:1a.0/usb1/1-1/1-1.2/ \
+ *                           1-1.2:1.0/host65/target65:0:0/65:0:0:0/block/sdb
+ *
+ * The function check if <chain>/subsystem symlink exists, if yes then returns
+ * basename of the readlink result, and remove the last subdirectory from the
+ * <chain> path.
+ */
+static char *get_subsystem(char *chain, char *buf, size_t bufsz)
+{
+	size_t len;
+	char *p;
+
+	if (!chain || !*chain)
+		return NULL;
+
+	len = strlen(chain);
+	if (len + sizeof(SUBSYSTEM_LINKNAME) > PATH_MAX)
+		return NULL;
+
+	do {
+		ssize_t sz;
+
+		/* append "/subsystem" to the path */
+		memcpy(chain + len, SUBSYSTEM_LINKNAME, sizeof(SUBSYSTEM_LINKNAME));
+
+		/* try if subsystem symlink exists */
+		sz = readlink(chain, buf, bufsz);
+
+		/* remove last subsystem from chain */
+		chain[len] = '\0';
+		p = strrchr(chain, '/');
+		if (p) {
+			*p = '\0';
+			len = p - chain;
+		}
+
+		if (sz > 0) {
+			/* we found symlink to subsystem, return basename */
+			buf[sz] = '\0';
+			return basename(buf);
+		}
+
+	} while (p);
+
+	return NULL;
+}
+
+static int is_hotpluggable(const char* device)
+{
+	struct sysfs_cxt cxt = UL_SYSFSCXT_EMPTY;
+	char devchain[PATH_MAX];
+	char subbuf[PATH_MAX];
+	dev_t devno;
+	int rc = 0;
+	ssize_t sz;
+	char *sub;
+
+	devno = sysfs_devname_to_devno(device, NULL);
+	if (sysfs_init(&cxt, devno, NULL) != 0)
+		return 0;
+
+	/* check /sys/dev/block/<maj>:<min>/removable attribute */
+	if (sysfs_read_int(&cxt, "removable", &rc) == 0 && rc == 1) {
+		verbose(_("%s: is removable device"), device);
+		goto done;
+	}
+
+	/* read /sys/dev/block/<maj>:<min> symlink */
+	sz = sysfs_readlink(&cxt, NULL, devchain, sizeof(devchain));
+	if (sz <= 0 || sz + sizeof(_PATH_SYS_DEVBLOCK "/") > sizeof(devchain))
+		goto done;
+
+	devchain[sz++] = '\0';
+
+	/* create absolute patch from the link */
+	memmove(devchain + sizeof(_PATH_SYS_DEVBLOCK "/") - 1, devchain, sz);
+	memcpy(devchain, _PATH_SYS_DEVBLOCK "/",
+	       sizeof(_PATH_SYS_DEVBLOCK "/") - 1);
+
+	while ((sub = get_subsystem(devchain, subbuf, sizeof(subbuf)))) {
+		rc = is_hotpluggable_subsystem(sub);
+		if (rc) {
+			verbose(_("%s: connected by hotplug subsystem: %s"),
+				device, sub);
+			break;
+		}
+	}
+
+done:
+	sysfs_deinit(&cxt);
+	return rc;
+}
+
+
 /* handle -x option */
 void set_device_speed(char *name)
 {
@@ -827,14 +947,15 @@ int main(int argc, char **argv)
 	} else
 		verbose(_("%s: is whole-disk device"), device);
 
+	if (!is_hotpluggable(device))
+		errx(EXIT_FAILURE, _("%s: is not hot-pluggable device"), device);
+
 	/* handle -n option */
 	if (n_option) {
 		info(_("device is `%s'"), device);
 		verbose(_("exiting due to -n/--noop option"));
 		return EXIT_SUCCESS;
 	}
-
-	/* TODO: Check if device has removable flag */
 
 	/* handle -i option */
 	if (i_option) {
