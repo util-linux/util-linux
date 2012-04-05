@@ -521,6 +521,7 @@ static int read_speed(const char *devname)
 					errx(EXIT_FAILURE,
 						_("%s: failed to read speed"),
 						_PATH_PROC_CDROMINFO);
+				fclose(f);
 				return atoi(str);
 			}
 		}
