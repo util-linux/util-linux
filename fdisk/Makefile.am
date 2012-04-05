@@ -10,6 +10,7 @@ fdisk_common = \
 	$(top_srcdir)/lib/blkdev.c \
 	$(top_srcdir)/lib/mbsalign.c \
 	$(top_srcdir)/lib/strutils.c \
+	$(top_srcdir)/lib/randutils.c \
 	$(top_srcdir)/lib/wholedisk.c
 
 if LINUX
