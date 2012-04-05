@@ -7,6 +7,11 @@ TS_DESC="umount"
 ts_init "$*"
 ts_skip_nonroot
 
+#
+# Note that eject --force is required because scsi_debug is 
+# not removable device.
+#
+
 modprobe --dry-run --quiet scsi_debug
 [ "$?" == 0 ] || ts_skip "missing scsi_debug module"
 
@@ -56,7 +61,7 @@ function deinit_device {
 
 ts_init_subtest "by-disk"
 DEVICE=$(init_device)
-$TS_CMD_EJECT $DEVICE && ts_log "Success"
+$TS_CMD_EJECT --force $DEVICE && ts_log "Success"
 deinit_device
 ts_finalize_subtest
 
@@ -66,7 +71,7 @@ mkfs.ext2 -q -F $DEVICE
 mkdir -p $TS_MOUNTPOINT
 mount $DEVICE $TS_MOUNTPOINT
 sleep 1
-$TS_CMD_EJECT $DEVICE && ts_log "Success"
+$TS_CMD_EJECT --force $DEVICE && ts_log "Success"
 deinit_device
 ts_finalize_subtest
 
@@ -78,7 +83,7 @@ mkdir -p ${TS_MOUNTPOINT}1
 mkdir -p ${TS_MOUNTPOINT}2
 mount ${DEVICE}1 ${TS_MOUNTPOINT}1
 mount ${DEVICE}2 ${TS_MOUNTPOINT}2
-$TS_CMD_EJECT $DEVICE && ts_log "Success"
+$TS_CMD_EJECT --force $DEVICE && ts_log "Success"
 deinit_device
 ts_finalize_subtest
 
@@ -86,7 +91,7 @@ ts_finalize_subtest
 ts_init_subtest "by-partition"
 DEVICE=$(init_device)
 init_partitions $DEVICE
-$TS_CMD_EJECT ${DEVICE}1 && ts_log "Success"
+$TS_CMD_EJECT --force ${DEVICE}1 && ts_log "Success"
 deinit_device
 ts_finalize_subtest
 
@@ -98,7 +103,7 @@ mkdir -p ${TS_MOUNTPOINT}1
 mkdir -p ${TS_MOUNTPOINT}2
 mount ${DEVICE}1 ${TS_MOUNTPOINT}1
 mount ${DEVICE}2 ${TS_MOUNTPOINT}2
-$TS_CMD_EJECT ${DEVICE}1 && ts_log "Success"
+$TS_CMD_EJECT --force ${DEVICE}1 && ts_log "Success"
 deinit_device
 ts_finalize_subtest
 
