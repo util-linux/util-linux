@@ -62,4 +62,6 @@ extern char *sysfs_get_slave(struct sysfs_cxt *cxt);
 extern int sysfs_is_partition_dirent(DIR *dir, struct dirent *d,
 			const char *parent_name);
 
+extern int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
+            size_t len, dev_t *diskdevno);
 #endif /* UTIL_LINUX_SYSFS_H */

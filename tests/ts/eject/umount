@@ -1,0 +1,111 @@
+#!/bin/bash
+
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="umount"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+ts_skip_nonroot
+
+#
+# Note that eject --force is required because scsi_debug is 
+# not removable device.
+#
+
+modprobe --dry-run --quiet scsi_debug
+[ "$?" == 0 ] || ts_skip "missing scsi_debug module"
+
+rmmod scsi_debug &> /dev/null
+
+function init_device {
+	modprobe scsi_debug dev_size_mb=100
+	[ "$?" == 0 ] || ts_die "Cannot init device"
+
+	sleep 3
+
+	DEVNAME=$(grep scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
+	[ "x${DEVNAME}" == "x" ] && ts_die "Cannot find device"
+
+	echo "/dev/${DEVNAME}"
+	
+}
+
+function init_partitions {
+	local dev=$1
+
+	ts_log "Create partitions"
+	$TS_CMD_FDISK $dev >> /dev/null 2>&1 <<EOF
+n
+p
+1
+
++50M
+n
+p
+2
+
+
+p
+w
+EOF
+	sleep 1
+	mkfs.ext2 -q ${dev}1 
+	mkfs.ext2 -q ${dev}2
+}
+
+function deinit_device {
+	sleep 3
+	rmmod scsi_debug
+}
+
+
+ts_init_subtest "by-disk"
+DEVICE=$(init_device)
+$TS_CMD_EJECT --force $DEVICE && ts_log "Success"
+deinit_device
+ts_finalize_subtest
+
+ts_init_subtest "by-disk-mounted"
+DEVICE=$(init_device)
+mkfs.ext2 -q -F $DEVICE
+mkdir -p $TS_MOUNTPOINT
+mount $DEVICE $TS_MOUNTPOINT
+sleep 1
+$TS_CMD_EJECT --force $DEVICE && ts_log "Success"
+deinit_device
+ts_finalize_subtest
+
+
+ts_init_subtest "by-disk-mounted-partition"
+DEVICE=$(init_device)
+init_partitions $DEVICE
+mkdir -p ${TS_MOUNTPOINT}1
+mkdir -p ${TS_MOUNTPOINT}2
+mount ${DEVICE}1 ${TS_MOUNTPOINT}1
+mount ${DEVICE}2 ${TS_MOUNTPOINT}2
+$TS_CMD_EJECT --force $DEVICE && ts_log "Success"
+deinit_device
+ts_finalize_subtest
+
+
+ts_init_subtest "by-partition"
+DEVICE=$(init_device)
+init_partitions $DEVICE
+$TS_CMD_EJECT --force ${DEVICE}1 && ts_log "Success"
+deinit_device
+ts_finalize_subtest
+
+
+ts_init_subtest "by-partition-mounted"
+DEVICE=$(init_device)
+init_partitions $DEVICE
+mkdir -p ${TS_MOUNTPOINT}1
+mkdir -p ${TS_MOUNTPOINT}2
+mount ${DEVICE}1 ${TS_MOUNTPOINT}1
+mount ${DEVICE}2 ${TS_MOUNTPOINT}2
+$TS_CMD_EJECT --force ${DEVICE}1 && ts_log "Success"
+deinit_device
+ts_finalize_subtest
+
+
+ts_finalize

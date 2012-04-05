@@ -478,7 +478,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out,
 		_(" %s [options]\n"), program_invocation_short_name);
 
-	fputs(_("\nGeneral Options:\n"), out);
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -p, --pid <pid>        process id\n"
 		" -o, --output <list>    define which output columns to use\n"
 		" -n, --noheadings       don't print headings\n"
