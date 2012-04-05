@@ -568,6 +568,6 @@ int main(int argc, char *argv[])
 	free(hum);
 	free(hum2);
 
-	return EXIT_FAILURE;
+	return EXIT_SUCCESS;
 }
 #endif /* TEST_PROGRAM */
