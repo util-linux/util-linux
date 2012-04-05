@@ -133,26 +133,28 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		_(" %s [options] [<device>|<mountpoint>]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -h, --help         display command usage and exit\n"
-	        " -V  --version      display program version and exit\n"
-		" -d, --default      display default device\n"
-		" -a, --auto         turn auto-eject feature on or off\n"
-		" -c, --changerslot  switch discs on a CD-ROM changer\n"
-		" -F, --force        don't care about device type\n"
+	fputs(_(" -a, --auto <on|off>        turn auto-eject feature on or off\n"
+		" -c, --changerslot <slot>   switch discs on a CD-ROM changer\n"
+		" -d, --default              display default device\n"
+		" -f, --floppy               eject floppy\n"
+		" -F, --force                don't care about device type\n"
 		" -i, --manualeject <on|off> toggle manual eject protection on/off\n"
-		" -t, --trayclose    close tray\n"
-		" -T, --traytoggle   toggle tray\n"
-		" -x, --cdspeed      set CD-ROM max speed\n"
-		" -X, --listspeed    list CD-ROM available speeds\n"
-		" -v, --verbose      enable verbose output\n"
-		" -n, --noop         don't eject, just show device found\n"
-		" -r, --cdrom        eject CD-ROM\n"
-		" -s, --scsi         eject SCSI device\n"
-		" -f, --loppy        eject floppy\n"
-		" -q, --tape         eject tape\n"
-		" -p, --proc         use /proc/mounts instead of /etc/mtab\n"
-		" -m, --no-unmount   do not unmount device even if it is mounted\n"),
+		" -m, --no-unmount           do not unmount device even if it is mounted\n"
+		" -n, --noop                 don't eject, just show device found\n"
+		" -p, --proc                 use /proc/mounts instead of /etc/mtab\n"
+		" -q, --tape                 eject tape\n"
+		" -r, --cdrom                eject CD-ROM\n"
+		" -s, --scsi                 eject SCSI device\n"
+		" -t, --trayclose            close tray\n"
+		" -T, --traytoggle           toggle tray\n"
+		" -v, --verbose              enable verbose output\n"
+		" -x, --cdspeed <speed>      set CD-ROM max speed\n"
+		" -X, --listspeed            list CD-ROM available speeds\n"),
 		out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 
 	fputs(_("\nBy default tries -r, -s, -f, and -q in order until success.\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("eject(1)"));
@@ -164,27 +166,27 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 /* Handle command line options. */
 static void parse_args(int argc, char **argv, char **device)
 {
-	static struct option long_opts[] =
+	static const struct option long_opts[] =
 	{
-		{"help",	no_argument,	   NULL, 'h'},
-		{"verbose",	no_argument,	   NULL, 'v'},
-		{"default",	no_argument,	   NULL, 'd'},
 		{"auto",	required_argument, NULL, 'a'},
-		{"force",       no_argument,       NULL, 'F'},
+		{"cdrom",	no_argument,	   NULL, 'r'},
+		{"cdspeed",	required_argument, NULL, 'x'},
 		{"changerslot", required_argument, NULL, 'c'},
+		{"default",	no_argument,	   NULL, 'd'},
+		{"floppy",	no_argument,	   NULL, 'f'},
+		{"force",       no_argument,       NULL, 'F'},
+		{"help",	no_argument,	   NULL, 'h'},
+		{"listspeed",   no_argument,       NULL, 'X'},
 		{"manualeject", required_argument, NULL, 'i'},
+		{"noop",	no_argument,	   NULL, 'n'},
+		{"no-unmount",	no_argument,	   NULL, 'm'},
+		{"proc",	no_argument,	   NULL, 'p'},
+		{"scsi",	no_argument,	   NULL, 's'},
+		{"tape",	no_argument,	   NULL, 'q'},
 		{"trayclose",	no_argument,	   NULL, 't'},
 		{"traytoggle",	no_argument,	   NULL, 'T'},
-		{"cdspeed",	required_argument, NULL, 'x'},
-		{"listspeed",   no_argument,       NULL, 'X'},
-		{"noop",	no_argument,	   NULL, 'n'},
-		{"cdrom",	no_argument,	   NULL, 'r'},
-		{"scsi",	no_argument,	   NULL, 's'},
-		{"floppy",	no_argument,	   NULL, 'f'},
-		{"tape",	no_argument,	   NULL, 'q'},
+		{"verbose",	no_argument,	   NULL, 'v'},
 		{"version",	no_argument,	   NULL, 'V'},
-		{"proc",	no_argument,	   NULL, 'p'},
-		{"no-unmount",	no_argument,	   NULL, 'm'},
 		{0, 0, 0, 0}
 	};
 	int c;
