@@ -673,7 +673,7 @@ static int open_device(const char *name)
 	if (fd < 0)
 		fd = open(name, O_RDONLY|O_NONBLOCK);
 	if (fd == -1)
-		errx(EXIT_FAILURE, _("%s: open failed"), name);
+		err(EXIT_FAILURE, _("%s: open failed"), name);
 	return fd;
 }
 
