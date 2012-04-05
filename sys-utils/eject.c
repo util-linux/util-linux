@@ -64,7 +64,7 @@
 /* eject(1) is able to eject only 'removable' devices (attribute in /sys)
  * _or_ devices connected by hotplug subsystem.
  */
-static const char *hotplug_subsystems[] = {
+static const char * const hotplug_subsystems[] = {
 	"usb",
 	"ieee1394",
 	"pcmcia",
