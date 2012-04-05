@@ -10,6 +10,7 @@ noinst_PROGRAMS = \
 	test_ismounted \
 	test_mangle \
 	test_procutils \
+	test_randutils \
 	test_strutils \
 	test_tt \
 	test_wholedisk
@@ -30,6 +31,7 @@ test_at_SOURCES = at.c
 test_at_CFLAGS = -DTEST_PROGRAM_AT
 
 test_strutils_SOURCES = strutils.c
+test_randutils_SOURCES = randutils.c
 test_procutils_SOURCES = procutils.c
 
 if LINUX
