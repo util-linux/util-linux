@@ -43,6 +43,19 @@ dist_man_MANS += \
 endif # LINUX
 
 
+if BUILD_EJECT
+usrbin_exec_PROGRAMS += eject
+eject_SOURCES =  \
+	eject.c \
+	$(top_srcdir)/lib/strutils.c \
+	$(top_srcdir)/lib/sysfs.c \
+	$(top_srcdir)/lib/at.c
+eject_LDADD = $(ul_libmount_la)
+eject_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+dist_man_MANS += eject.1
+endif
+
+
 if BUILD_LOSETUP
 sbin_PROGRAMS += losetup
 dist_man_MANS += losetup.8

@@ -2,6 +2,7 @@ arch
 ctrlaltdel
 cytune
 dmesg
+eject
 fallocate
 flock
 fsfreeze

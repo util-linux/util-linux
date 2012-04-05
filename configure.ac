@@ -868,6 +868,7 @@ AC_ARG_ENABLE([eject],
 )
 UL_BUILD_INIT([eject])
 UL_REQUIRES_LINUX([eject])
+AM_CONDITIONAL(BUILD_EJECT, test "x$build_eject" = xyes)
 
 
 AC_ARG_ENABLE([agetty],
@@ -876,8 +877,6 @@ AC_ARG_ENABLE([agetty],
 )
 UL_BUILD_INIT([agetty])
 AM_CONDITIONAL(BUILD_AGETTY, test "x$build_agetty" = xyes)
-
-
 
 
 AC_ARG_ENABLE([cramfs],
