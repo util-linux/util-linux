@@ -77,6 +77,7 @@ static int a_option; /* command flags and arguments */
 static int c_option;
 static int d_option;
 static int f_option;
+static int F_option;
 static int n_option;
 static int q_option;
 static int r_option;
@@ -137,6 +138,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" -d, --default      display default device\n"
 		" -a, --auto         turn auto-eject feature on or off\n"
 		" -c, --changerslot  switch discs on a CD-ROM changer\n"
+		" -F, --force        don't care about device type\n"
 		" -i, --manualeject <on|off> toggle manual eject protection on/off\n"
 		" -t, --trayclose    close tray\n"
 		" -T, --traytoggle   toggle tray\n"
@@ -168,6 +170,7 @@ static void parse_args(int argc, char **argv, char **device)
 		{"verbose",	no_argument,	   NULL, 'v'},
 		{"default",	no_argument,	   NULL, 'd'},
 		{"auto",	required_argument, NULL, 'a'},
+		{"force",       no_argument,       NULL, 'F'},
 		{"changerslot", required_argument, NULL, 'c'},
 		{"manualeject", required_argument, NULL, 'i'},
 		{"trayclose",	no_argument,	   NULL, 't'},
@@ -187,7 +190,7 @@ static void parse_args(int argc, char **argv, char **device)
 	int c;
 
 	while ((c = getopt_long(argc, argv,
-				"a:c:i:x:dfhnqrstTXvVpm", long_opts, NULL)) != -1) {
+				"a:c:i:x:dfFhnqrstTXvVpm", long_opts, NULL)) != -1) {
 		switch (c) {
 		case 'a':
 			a_option = 1;
@@ -211,6 +214,9 @@ static void parse_args(int argc, char **argv, char **device)
 			break;
 		case 'f':
 			f_option = 1;
+			break;
+		case 'F':
+			F_option = 1;
 			break;
 		case 'h':
 			usage(stdout);
@@ -947,7 +953,7 @@ int main(int argc, char **argv)
 	} else
 		verbose(_("%s: is whole-disk device"), device);
 
-	if (!is_hotpluggable(device))
+	if (F_option == 0 && is_hotpluggable(device) == 0)
 		errx(EXIT_FAILURE, _("%s: is not hot-pluggable device"), device);
 
 	/* handle -n option */

@@ -9,7 +9,7 @@ eject \- eject removable media
 .SH SYNOPSIS
 eject \-h
 .br
-eject [\-vnrsfqp] [<name>]
+eject [\-vnrsfFqp] [<name>]
 .br
 eject [\-vn] \-d
 .br
@@ -69,6 +69,10 @@ command is doing.
 If invoked with this option,
 .B eject
 lists the default device name.
+
+.TP 0.5i
+.B \-F
+Force eject, don't check device type.
 
 .TP 0.5i
 .B \-a on|1|off|0
