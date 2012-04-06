@@ -1990,7 +1990,7 @@ static int
 compute_start_sect(struct part_desc *p, struct part_desc *ep) {
     unsigned long long base;
     int inc = (DOS && B.sectors) ? B.sectors : 1;
-    int delta;
+    long long delta;
 
     if (ep && p->start + p->size >= ep->start + 1)
 	delta = p->start - ep->start - inc;
@@ -2005,7 +2005,7 @@ compute_start_sect(struct part_desc *p, struct part_desc *ep) {
 	p->size += delta;
 	if (is_extended(p->p.sys_type) && boxes == ONESECTOR)
 	    p->size = inc;
-	else if ((ssize_t) old_size <= (ssize_t) - delta) {
+	else if ((long long) old_size <= -delta) {
 	    my_warn(_("no room for partition descriptor\n"));
 	    return 0;
 	}
