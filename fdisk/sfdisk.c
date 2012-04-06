@@ -200,8 +200,6 @@ msdos_signature(struct sector *s) {
     unsigned char *data = (unsigned char *)s->data;
     if (data[510] == 0x55 && data[511] == 0xaa)
 	return 1;
-    error(_("ERROR: sector %lu does not have an msdos signature\n"),
-	  s->sectornumber);
     return 0;
 }
 
@@ -1110,9 +1108,10 @@ static void
 out_partitions(char *dev, struct disk_desc *z) {
     int pno, format = 0;
 
-    if (z->partno == 0)
-	warnx(_("No partitions found\n"));
-    else {
+    if (z->partno == 0) {
+	if (!opt_list)
+	    warnx(_("No partitions found\n"));
+    } else {
 	if (get_fdisk_geometry(z) && !dump) {
 	    warnx(_("Warning: The partition table looks like it was made\n"
 		      "  for C/H/S=*/%ld/%ld (instead of %ld/%ld/%ld).\n"
@@ -1415,9 +1414,11 @@ extended_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z)
 	if (!(s = get_sector(dev, fd, here)))
 	    break;
 
-	if (!msdos_signature(s))
+	if (!msdos_signature(s)) {
+	    error(_("ERROR: sector %lu does not have an msdos signature\n"),
+	          s->sectornumber);
 	    break;
-
+	}
 	cp = s->data + 0x1be;
 
 	if (pno + 4 >= ARRAY_SIZE(z->partitions)) {
@@ -1632,7 +1633,8 @@ get_partitions(char *dev, int fd, struct disk_desc *z) {
 	&& !osf_partition(dev, fd, 0, z)
 	&& !sun_partition(dev, fd, 0, z)
 	&& !amiga_partition(dev, fd, 0, z)) {
-	warnx(_(" %s: unrecognized partition table type\n"), dev);
+	if (!opt_list)
+	    warnx(_(" %s: unrecognized partition table type\n"), dev);
 	return;
     }
 }
