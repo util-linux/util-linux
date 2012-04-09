@@ -139,6 +139,7 @@
 /* Storage for command-line options. */
 #define	MAX_SPEED	10	/* max. nr. of baud rates */
 
+
 struct options {
 	int flags;			/* toggle switches, see below */
 	int timeout;			/* time-out period */
@@ -270,6 +271,10 @@ static void log_warn (const char *, ...)
 static ssize_t append(char *dest, size_t len, const char  *sep, const char *src);
 static void check_username (const char* nm);
 static void login_options_to_argv(char *argv[], int *argc, char *str, char *username);
+
+static char* getUser();
+static char** getUsers();
+
 
 /* Fake hostname for ut_host specified on command line. */
 static char *fakehost;
@@ -1343,7 +1348,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 	struct termios stty;
 	tcgetattr(STDIN_FILENO, &saved_stty);
 	tcgetattr(STDIN_FILENO, &stty);
-	stty.c_lflag &= ~(ICANON | ECHO);
+	stty.c_lflag &= ~(ICANON | ECHO | ISIG);
 	tcsetattr(STDIN_FILENO, TCSAFLUSH, &stty);
 	        
         fflush(0);
@@ -1384,8 +1389,10 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 	long after = 0;
 	int reading = 1;
 
-	while (reading) {
-
+	while (reading)
+	{  
+	        printf("\ec");
+	        tcsetattr(STDIN_FILENO, TCSAFLUSH, &stty);
 		/* Write issue file and prompt */
 		do_prompt(op, tp);
 
@@ -1432,23 +1439,33 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 
 			switch (ascval)
 			{
+			    case CTL('C'):
+			    case CTL('D'):
+			        cp->eol = ascval;
+				printf("\n");
+				fflush(0);
+				break;
+			      
                             case CR:
                             case NL:
 	                        {
-	                            reading = 0;
-                                    cp->eol = ascval;
-                                    printf("\n");
-                                    fflush(0);
-                                    
-                                    tmp = malloc(sizeof(char) * (before + after + 1));
-                                    for (i = 0; i < before; i++)
-	                                *tmp++ = *(bp + i);
-                                    free(bp);
-                                    for (i = after - 1; i >= 0; i--)
-	                                *tmp++ = *(ap + i);
-                                    free(ap);
-                                    *tmp++ = 0;
-                                    logname = bp = tmp - (before + after + 1);
+				    if (before + after)
+				    {
+				        reading = 0;
+				        cp->eol = ascval;
+					printf("\n");
+					fflush(0);
+					
+				        tmp = malloc(sizeof(char) * (before + after + 1));
+					for (i = 0; i < before; i++)
+					    *tmp++ = *(bp + i);
+					free(bp);
+					for (i = after - 1; i >= 0; i--)
+					    *tmp++ = *(ap + i);
+					free(ap);
+					*tmp++ = 0;
+					logname = bp = tmp - (before + after + 1);
+				    }
                                 }
                                 break;
 
@@ -1629,14 +1646,37 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 		                            fflush(0);
 		                        }
 		                        break;
+				    
+				    case 'P': //PAUSE
+				    case '[': //F2
+				        if (ascval == '[')
+					{
+					    read(STDIN_FILENO, &ascval, 1);
+					    if (ascval != 'B')
+					        break;
+					}
+                                        cp->eol = ascval;
+					printf("\n");
+					fflush(0);
+					tmp = getUser();
+					if (tmp)
+					{
+					    reading = 0;
+					    free(bp);
+					    free(ap);
+					    logname = bp = tmp;
+					}
+					else
+					    printf("\ec");
+				        break;
 				    }
 				}
 				break;
 			    
-			    case CTL('D'):
-				tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_stty);
-				exit(EXIT_SUCCESS);
-				break;
+			    //case CTL('D'):
+				//tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_stty);
+				//exit(EXIT_SUCCESS);
+				//break;
 			    
 			    default:
 				{
@@ -2128,3 +2168,203 @@ err:
 	log_err("checkname: %m");
 }
 
+
+static char* getUser()
+{
+    char** users = getUsers();
+    if (users == 0)
+        return 0;
+    
+    long selected = 0;
+    long count = 0;
+    long i = 0;
+    
+    printf("\ec");
+    while (*(users + count) != 0)
+    {
+        if (count == selected)
+	  printf("\e[0;34;1m> ", count);
+	else
+	  printf("  ");
+	
+	printf("%s\e[0m\n", *(users + count));
+	count++;
+    }
+    printf("  %s\e[0m\n", *(users + count) = "(enter manually)");
+    count++;
+    
+    printf("\e[?25l");
+    fflush(0);
+    
+    struct termios saved_stty;
+    struct termios stty;
+    tcgetattr(STDIN_FILENO, &saved_stty);
+    tcgetattr(STDIN_FILENO, &stty);
+    stty.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &stty);
+    
+    char d;
+    long prev;
+    while (read(STDIN_FILENO, &d, 1))
+        if (d == 0x41) //up (sloppy)
+	{
+	    prev = selected--;
+	    while (selected < 0)
+	        selected += count;
+	    printf("\e7\e[%i;1H  %s", prev + 1, *(users + prev));
+	    if (selected + 1 < count)
+	        printf("\e[%i;1H\e[34;1m> %s", selected + 1, *(users + selected));
+	    else
+	        printf("\e[%i;1H\e[31m< %s", selected + 1, *(users + selected));
+	    printf("\e[0m\e8");
+	    fflush(0);
+	}
+        else if (d == 0x42) //down (sloppy)
+	{
+	    prev = selected++;
+	    if (selected >= count)
+	        selected %= count;
+	    printf("\e7\e[%i;1H  %s", prev + 1, *(users + prev));
+	    if (selected + 1 < count)
+	        printf("\e[%i;1H\e[34;1m> %s", selected + 1, *(users + selected));
+	    else
+	        printf("\e[%i;1H\e[31m< %s", selected + 1, *(users + selected));
+	    printf("\e[0m\e8");
+	    fflush(0);
+	}
+	else if ((d == 10) || (d == 13)) //enter || return*/
+	    break;
+    
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_stty);
+    
+    printf("\e[?25h");
+    fflush(0);
+    
+    long size = 0;
+    char* sel = *(users + selected);
+    while (*(sel + size) != 0)
+        size++;
+    
+    char* user = 0;
+    if (selected + 1 < count)
+    {
+        user = malloc(sizeof(char) * (size + 1));
+	for (i = 0; i <= size; i++)
+	    *(user + i) = *(sel + i);
+    }
+    
+    for (selected = 0; selected < count - 1; selected++)
+        free(*(users + selected));
+    free(users);
+    
+    return user;
+}
+
+
+static char** getUsers()
+{
+    char c;
+    FILE* file;
+    file = fopen("/etc/passwd", "r");
+    char* user  = malloc(sizeof(char) * 128);
+    char* shell = malloc(sizeof(char) * 128);
+    char* sh = shell;
+    long ptr = 0;
+    int column = 0;
+    int ok = 1;
+    
+    char** users = malloc(sizeof(char*) * 21);
+    long usersptr = 0;
+    long usersize = 0;
+    char* u;
+    
+    if (!file)
+        return 0;
+    else
+    {
+        while ((c = fgetc(file)) > 0)
+	{
+	    if ((c == ':') || (c == '\n'))
+	        c = '\0';
+	    
+	    if (column == 0)
+	    {
+	        usersize++;
+		*(user + ptr++) = c;
+		if (ptr == 128)
+		{
+		    ok = 0;
+		    ptr = 0;
+		}
+	    }
+	    if (column == 6)
+	    {
+		*(shell + ptr++) = c;
+		if (c == '/')
+		    ptr = 0;
+		if (ptr == 128)
+		{
+		    ok = 0;
+		    ptr = 0;
+		}
+	    }
+	    
+	    if (c == '\0')
+	    {
+	        column++;
+	        ptr = 0;
+	    }
+	    
+	    if (column == 7)
+	    {
+	        column = 0;
+		
+		if (*shell++ == 'f')
+		  if (*shell++ == 'a')
+		    if (*shell++ == 'l')
+		      if (*shell++ == 's')
+			if (*shell++ == 'e')
+			  if (*shell++ == 0)
+			    ok = 0;
+		shell = sh;
+		
+		if (*shell++ == 'n')
+		  if (*shell++ == 'o')
+		    if (*shell++ == 'l')
+		      if (*shell++ == 'o')
+			if (*shell++ == 'g')
+			  if (*shell++ == 'i')
+			    if (*shell++ == 'n')
+			      if (*shell++ == 0)
+				ok = 0;
+		shell = sh;
+		
+		if (ok)
+		{
+		    u = malloc(sizeof(char) * usersize);
+		    *(users + usersptr++) = u;
+		    for (ptr = 0; ptr < usersize; ptr++)
+		        *(u + ptr) = *(user + ptr);
+		    if (usersptr == 20)
+		        break;
+		}
+		usersize = ptr = 0;
+		ok = 1;
+	    }
+	}
+	fclose(file);
+    }
+    
+    free(user);
+    free(shell);
+
+    *(users + usersptr) = 0;
+    
+    if (usersptr == 0)
+    {
+        free(users);
+	return 0;
+    }
+    
+    return users;
+}
