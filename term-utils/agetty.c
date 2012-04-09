@@ -7,6 +7,8 @@
  * Ported to Linux by Peter Orbaek <poe@daimi.aau.dk>
  * Adopt the mingetty features for a better support
  * of virtual consoles by Werner Fink <werner@suse.de>
+ * Better user interaction when entering user name
+ * by Mattias Andrée <maandree@kth.se>
  *
  * This program is freely distributable.
  */
@@ -108,6 +110,7 @@
 #define	CR		CTL('M')	/* carriage return */
 #define	NL		CTL('J')	/* line feed */
 #define	BS		CTL('H')	/* back space */
+#define	BSA             127             /* back space */
 #define	DEL		CTL('?')	/* delete */
 
 /* Defaults for line-editing etc. characters; you may want to change these. */
@@ -1336,8 +1339,16 @@ static void next_speed(struct options *op, struct termios *tp)
 /* Get user name, establish parity, speed, erase, kill & eol. */
 static char *get_logname(struct options *op, struct termios *tp, struct chardata *cp)
 {
-	static char logname[BUFSIZ];
-	char *bp;
+	struct termios saved_stty;
+	struct termios stty;
+	tcgetattr(STDIN_FILENO, &saved_stty);
+	tcgetattr(STDIN_FILENO, &stty);
+	stty.c_lflag &= ~(ICANON | ECHO);
+	tcsetattr(STDIN_FILENO, TCSAFLUSH, &stty);
+	        
+        fflush(0);
+	
+	char* logname;
 	char c;			/* input character, full eight bits */
 	char ascval;		/* low 7 bits of input character */
 	int eightbit;
@@ -1360,16 +1371,28 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 	tcflush(STDIN_FILENO, TCIFLUSH);
 
 	eightbit = (op->flags & F_EIGHTBITS);
-	bp = logname;
-	*bp = '\0';
 
-	while (*logname == '\0') {
+	long bpz = BUFSIZ;
+	long apz = BUFSIZ;
+
+	char* bp = malloc(sizeof(char) * bpz);
+	char* ap = malloc(sizeof(char) * apz);
+	char* tmp;
+
+	long i;
+	long before = 0;
+	long after = 0;
+	int reading = 1;
+
+	while (reading) {
 
 		/* Write issue file and prompt */
 		do_prompt(op, tp);
 
 		cp->eol = '\0';
-
+		before = 0;
+		after = 0;
+        
 		/* Read name, watch for break and end-of-line. */
 		while (cp->eol == '\0') {
 
@@ -1406,46 +1429,183 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 			}
 
 			/* Do erase, kill and end-of-line processing. */
-			switch (ascval) {
-			case 0:
-				*bp = 0;
-				if (op->numspeed > 1)
-					return NULL;
-				break;
-			case CR:
-			case NL:
-				*bp = 0;			/* terminate logname */
-				cp->eol = ascval;		/* set end-of-line char */
-				break;
-			case BS:
-			case DEL:
-			case '#':
-				cp->erase = ascval; /* set erase character */
-				if (bp > logname) {
-					if ((tp->c_lflag & ECHO) == 0)
-						write_all(1, erase[cp->parity], 3);
-					bp--;
+
+			switch (ascval)
+			{
+                            case CR:
+                            case NL:
+	                        {
+	                            reading = 0;
+                                    cp->eol = ascval;
+                                    printf("\n");
+                                    fflush(0);
+                                    
+                                    tmp = malloc(sizeof(char) * (before + after + 1));
+                                    for (i = 0; i < before; i++)
+	                                *tmp++ = *(bp + i);
+                                    free(bp);
+                                    for (i = after - 1; i >= 0; i--)
+	                                *tmp++ = *(ap + i);
+                                    free(ap);
+                                    *tmp++ = 0;
+                                    logname = bp = tmp - (before + after + 1);
+                                }
+                                break;
+
+			    case BSA:
+			    case BS:
+				{
+				    if (before > 0)
+				    {
+				        before--;
+				        printf("\e[D");
+				        for (i = after - 1; i >= 0; i--)
+				            printf("%c", *(ap + i));
+				        printf(" \e[%iD", after + 1);
+				        fflush(0);
+				    }
 				}
 				break;
-			case CTL('U'):
-			case '@':
-				cp->kill = ascval;		/* set kill character */
-				while (bp > logname) {
-					if ((tp->c_lflag & ECHO) == 0)
-						write_all(1, erase[cp->parity], 3);
-					bp--;
+			    
+			    case 27:  //esc
+				{
+				    read(STDIN_FILENO, &ascval, 1);
+				    if (ascval == 'O')
+				    {
+				        read(STDIN_FILENO, &ascval, 1);
+				        switch (ascval)
+				        {
+				            case 'H': //HOME
+				                if (before > 0)
+				                {
+				                    printf("\e[%iD", before);
+				                    while (before != 0)
+				                    {
+				                        if (after == apz)
+				                        {
+				                            tmp = malloc(sizeof(char) * (apz + BUFSIZ));
+				                            for (i = 0; i < after; i++)
+				                                *(tmp + i) = *(ap + i);
+				                            free(ap);
+				                            ap = tmp;
+				                            apz += BUFSIZ;
+				                        }
+				                        before--;
+				                        *(ap + after) = *(bp + before);
+				                        after++;
+				                    }
+				                    before = 0;
+				                    fflush(0);
+				                }
+				                break;
+				            
+				            case 'F': //END
+				                if (after > 0)
+				                {
+				                    printf("\e[%iC", after);
+				                    while (after != 0)
+				                    {
+				                        if (before == bpz)
+				                        {
+				                            tmp = malloc(sizeof(char) * (bpz + BUFSIZ));
+				                            for (i = 0; i < before; i++)
+				                                *(tmp + i) = *(bp + i);
+				                            free(bp);
+				                            bp = tmp;
+				                            bpz += BUFSIZ;
+				                        }
+				                        after--;
+				                        *(bp + before) = *(ap + after);
+				                        before++;
+				                    }
+				                    after = 0;
+				                    fflush(0);
+				                }
+				                break;
+				        }
+				        break;
+				    }
+				    if (ascval != '[')
+				        break;
+				    read(STDIN_FILENO, &ascval, 1);
+				    switch (ascval)
+				    {
+				        case '3':
+				            read(STDIN_FILENO, &ascval, 1);
+				            if (ascval == '~') //DEL
+				                if (after > 0)
+				                {
+				                    after--;
+				                    for (i = after - 1; i >= 0; i--)
+				                        printf("%c", *(ap + i));
+				                    printf(" \e[%iD", after + 1);
+				                    fflush(0);
+				                }
+				            break;
+				        
+				        case 'D': //LEFT
+				            {
+				                if (before == 0)
+				                    break;
+				                printf("\e[D");
+				                fflush(0);
+				                if (after == apz)
+				                {
+				                    tmp = malloc(sizeof(char) * (apz + BUFSIZ));
+				                    for (i = 0; i < after; i++)
+				                        *(tmp + i) = *(ap + i);
+				                    free(ap);
+				                    ap = tmp;
+				                    apz += BUFSIZ;
+				                }
+				                before--;
+				                *(ap + after) = *(bp + before);
+				                after++;
+				            }
+				            break;
+				        
+				        case 'C': //RIGHT
+				            {
+				                if (after == 0)
+				                    break;
+				                printf("\e[C");
+				                fflush(0);
+				                after--;
+				                *(bp + before) = *(ap + after);
+				                before++;
+				            }
+				            break;
+				    }
 				}
 				break;
-			case CTL('D'):
+			    
+			    case CTL('D'):
+				tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_stty);
 				exit(EXIT_SUCCESS);
-			default:
-				if (!isascii(ascval) || !isprint(ascval))
-					break;
-				if ((size_t)(bp - logname) >= sizeof(logname) - 1)
-					log_err(_("%s: input overrun"), op->tty);
-				if ((tp->c_lflag & ECHO) == 0)
-					write_all(1, &c, 1);	/* echo the character */
-				*bp++ = ascval;			/* and store it */
+				break;
+			    
+			    default:
+				{
+				    if (ascval < ' ')
+				        break;
+			            if (!isascii(ascval) || !isprint(ascval))
+			                break;
+				    
+				    if (before == bpz)
+				    {
+				        tmp = malloc(sizeof(char) * (bpz + BUFSIZ));
+				        for (i = 0; i < before; i++)
+				            *(tmp + i) = *(ap + i);
+				        free(bp);
+				        bp = tmp;
+				        bpz += BUFSIZ;
+				    }
+				    *(bp + before++) = ascval;
+				    if (after > 0)
+				        after--;
+				    printf("%c", ascval);
+				    fflush(0);
+				}
 				break;
 			}
 		}
@@ -1485,6 +1645,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 				*bp = tolower(*bp);		/* map name to lower case */
 	}
 
+	tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_stty);
 	return logname;
 }
 
