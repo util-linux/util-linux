@@ -1575,6 +1575,60 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 				                before++;
 				            }
 				            break;
+				    
+		                    case '1': //HOME
+				        read(STDIN_FILENO, &ascval, 1);
+				        if (ascval != '~')
+				             break;
+		                        if (before > 0)
+		                        {
+		                            printf("\e[%iD", before);
+		                            while (before != 0)
+		                            {
+		                                if (after == apz)
+		                                {
+		                                    tmp = malloc(sizeof(char) * (apz + BUFSIZ));
+		                                    for (i = 0; i < after; i++)
+		                                        *(tmp + i) = *(ap + i);
+		                                    free(ap);
+		                                    ap = tmp;
+		                                    apz += BUFSIZ;
+		                                }
+		                                before--;
+		                                *(ap + after) = *(bp + before);
+		                                after++;
+		                            }
+		                            before = 0;
+		                            fflush(0);
+		                        }
+		                        break;
+		                    
+		                    case '4': //END
+				        read(STDIN_FILENO, &ascval, 1);
+				        if (ascval != '~')
+				             break;
+		                        if (after > 0)
+		                        {
+		                            printf("\e[%iC", after);
+		                            while (after != 0)
+		                            {
+		                                if (before == bpz)
+		                                {
+		                                    tmp = malloc(sizeof(char) * (bpz + BUFSIZ));
+		                                    for (i = 0; i < before; i++)
+		                                        *(tmp + i) = *(bp + i);
+		                                    free(bp);
+		                                    bp = tmp;
+		                                    bpz += BUFSIZ;
+		                                }
+		                                after--;
+		                                *(bp + before) = *(ap + after);
+		                                before++;
+		                            }
+		                            after = 0;
+		                            fflush(0);
+		                        }
+		                        break;
 				    }
 				}
 				break;
