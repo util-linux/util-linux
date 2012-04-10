@@ -276,14 +276,16 @@ int blkdev_get_geometry(int fd, unsigned int *h, unsigned int *s)
 #ifdef HDIO_GETGEO
 	struct hd_geometry geometry;
 
-	if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
+	if (ioctl(fd, HDIO_GETGEO, &geometry) == 0) {
 		*h = geometry.heads;
 		*s = geometry.sectors;
+		return 0;
 	}
 #else
 	*h = 0;
 	*s = 0;
 #endif
+	return -1;
 }
 
 #ifdef TEST_PROGRAM
