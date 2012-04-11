@@ -97,6 +97,7 @@
 #include <wctype.h>
 #endif
 
+#include "closestream.h"
 #include "nls.h"
 #include "rpmatch.h"
 #include "blkdev.h"
@@ -2767,6 +2768,7 @@ main(int argc, char **argv)
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
+    atexit(close_stdout);
 
     while ((c = getopt(argc, argv, "ac:gh:s:vzP:")) != -1)
 	switch (c) {

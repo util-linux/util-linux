@@ -54,6 +54,7 @@
 #include "pathnames.h"
 #include "canonicalize.h"
 #include "rpmatch.h"
+#include "closestream.h"
 
 /*
  * Table of contents:
@@ -2574,6 +2575,7 @@ main(int argc, char **argv) {
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
+    atexit(close_stdout);
 
     if (argc < 1)
 	errx(EXIT_FAILURE, _("no command?"));

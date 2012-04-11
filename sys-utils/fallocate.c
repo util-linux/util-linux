@@ -51,7 +51,7 @@
 #include "nls.h"
 #include "strutils.h"
 #include "c.h"
-
+#include "closestream.h"
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -104,6 +104,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "hVnpl:o:", longopts, NULL)) != -1) {
 		switch(c) {

@@ -52,6 +52,7 @@
 #include <getopt.h>
 
 #include "c.h"
+#include "closestream.h"
 #include "nls.h"
 #include "strutils.h"
 
@@ -188,6 +189,7 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	tag = NULL;
 	pri = LOG_NOTICE;

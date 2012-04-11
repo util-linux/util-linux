@@ -29,6 +29,7 @@
 #include <sys/syslog.h>
 
 #include "c.h"
+#include "closestream.h"
 #include "logindefs.h"
 #include "nls.h"
 #include "pathnames.h"
@@ -252,6 +253,7 @@ int logindefs_setenv(const char *name, const char *conf, const char *dflt)
 int main(int argc, char *argv[])
 {
 	char *name, *type;
+	atexit(close_stdout);
 
 	if (argc <= 1)
 		errx(EXIT_FAILURE, "usage: %s <filename> "

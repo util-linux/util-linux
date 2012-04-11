@@ -59,8 +59,10 @@
 #include <paths.h>
 #include <asm/param.h>
 #include <getopt.h>
+
 #include "c.h"
 #include "carefulputc.h"
+#include "closestream.h"
 #include "nls.h"
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out);
@@ -103,6 +105,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
 		switch (c) {

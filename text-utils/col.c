@@ -56,6 +56,7 @@
 #include "xalloc.h"
 #include "widechar.h"
 #include "strutils.h"
+#include "closestream.h"
 
 #define	BS	'\b'		/* backspace */
 #define	TAB	'\t'		/* tab */
@@ -174,6 +175,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	max_bufd_lines = 128 * 2;
 	compress_spaces = 1;		/* compress spaces into tabs */
@@ -388,8 +390,6 @@ int main(int argc, char **argv)
 		/* missing a \n on the last line? */
 		nblank_lines = 2;
 	flush_blanks();
-	if (ferror(stdout) || fclose(stdout))
-		return EXIT_FAILURE;
 	return ret;
 }
 

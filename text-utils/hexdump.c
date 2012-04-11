@@ -43,6 +43,7 @@
 
 #include "nls.h"
 #include "c.h"
+#include "closestream.h"
 
 FS *fshead;				/* head of format strings */
 int blocksize;				/* data block size */
@@ -57,6 +58,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	if (!(p = strrchr(argv[0], 'o')) || strcmp(p, "od")) {
 		newsyntax(argc, &argv);

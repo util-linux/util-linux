@@ -45,6 +45,7 @@
 #include "usleep.h"
 #include "strutils.h"
 #include "c.h"
+#include "closestream.h"
 
 #define DEFAULT_LINES  10
 
@@ -240,6 +241,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	static const struct option longopts[] = {
 		{ "lines",   required_argument, 0, 'n' },

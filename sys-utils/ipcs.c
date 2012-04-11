@@ -33,6 +33,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "closestream.h"
 
 /*
  * SHM_DEST and SHM_LOCKED are defined in kernel headers, but inside
@@ -162,6 +163,7 @@ int main (int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((opt = getopt_long(argc, argv, options, longopts, NULL)) != -1) {
 		switch (opt) {

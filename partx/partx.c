@@ -33,6 +33,7 @@
 #include "sysfs.h"
 #include "loopdev.h"
 #include "at.h"
+#include "closestream.h"
 
 /* this is the default upper limit, could be modified by --nr */
 #define SLICES_MAX	256
@@ -667,6 +668,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv,
 				"abdglrsvn:t:o:PhV", long_opts, NULL)) != -1) {

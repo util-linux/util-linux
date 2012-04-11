@@ -34,6 +34,7 @@
 
 #include "c.h"
 #include "env.h"
+#include "closestream.h"
 #include "islocal.h"
 #include "nls.h"
 #include "pamfail.h"
@@ -82,6 +83,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	uid = getuid();
 	memset(&info, 0, sizeof(info));

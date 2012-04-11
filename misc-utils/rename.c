@@ -22,6 +22,7 @@ for i in $@; do N=`echo "$i" | sed "s/$FROM/$TO/g"`; mv "$i" "$N"; done
 #include "nls.h"
 #include "xalloc.h"
 #include "c.h"
+#include "closestream.h"
 
 static int do_rename(char *from, char *to, char *s, int verbose)
 {
@@ -89,6 +90,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "vVh", longopts, NULL)) != -1)
 		switch (c) {

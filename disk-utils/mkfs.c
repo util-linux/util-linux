@@ -21,6 +21,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "closestream.h"
 #include "nls.h"
 #include "xalloc.h"
 
@@ -80,6 +81,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	if (argc == 2 && !strcmp(argv[1], "-V"))
 		print_version();

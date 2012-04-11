@@ -72,7 +72,7 @@
 #include <unistd.h>
 
 #include "c.h"
-#include "fileutils.h"
+#include "closestream.h"
 #include "nls.h"
 #include "setpwnam.h"
 #include "strutils.h"
@@ -283,7 +283,8 @@ static void edit_file(int is_shadow)
 		ch_ret = fchmod(fileno(tmp_fd), 0400);
 	if (ch_ret < 0)
 		err(EXIT_FAILURE, "%s: %s", _("cannot chmod file"), orig_file);
-	fclose(tmp_fd);
+	if (close_stream(tmp_fd) != 0)
+		err(EXIT_FAILURE, _("write error"));
 	pw_write();
 	close(passwd_file);
 	ulckpwdf();
@@ -294,6 +295,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	if (!strcmp(program_invocation_short_name, "vigr")) {
 		program = VIGR;

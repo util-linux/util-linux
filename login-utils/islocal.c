@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "closestream.h"
 #include "islocal.h"
 #include "nls.h"
 #include "pathnames.h"
@@ -94,6 +95,7 @@ int is_local(const char *user)
 #ifdef TEST_PROGRAM
 int main(int argc, char *argv[])
 {
+	atexit(close_stdout);
 	if (argc <= 2) {
 		fprintf(stderr, "usage: %s <passwdfile> <username> [...]\n",
 			argv[0]);

@@ -33,6 +33,7 @@
 #include "xalloc.h"
 #include "strutils.h"
 #include "list.h"
+#include "closestream.h"
 
 #ifndef RLIMIT_RTTIME
 # define RLIMIT_RTTIME 15
@@ -513,6 +514,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	INIT_LIST_HEAD(&lims);
 

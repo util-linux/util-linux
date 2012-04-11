@@ -39,6 +39,7 @@
 #include "gpt.h"
 #include "blkdev.h"
 #include "bitops.h"
+#include "closestream.h"
 
 #define GPT_HEADER_SIGNATURE 0x5452415020494645LL
 #define GPT_PRIMARY_PARTITION_TABLE_LBA 1
@@ -202,6 +203,7 @@ gpt_probe_signature_devname(char *devname)
 int
 main(int argc, char **argv)
 {
+	atexit(close_stdout);
 	if (argc!=2)
 	{
 		fprintf(stderr, "usage: %s <dev>\n", argv[0]);

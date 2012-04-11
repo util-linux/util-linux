@@ -23,6 +23,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "closestream.h"
 
 #define pivot_root(new_root,put_old) syscall(SYS_pivot_root,new_root,put_old)
 
@@ -50,6 +51,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((ch = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
 		switch (ch) {

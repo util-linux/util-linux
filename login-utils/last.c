@@ -56,6 +56,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
+#include "closestream.h"
 #include "pathnames.h"
 #include "nls.h"
 #include "xalloc.h"
@@ -121,6 +122,7 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((ch = getopt(argc, argv, "0123456789yli:f:h:t:")) != -1)
 		switch((char)ch) {

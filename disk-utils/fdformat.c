@@ -12,6 +12,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "closestream.h"
 #include "nls.h"
 #include "xalloc.h"
 
@@ -119,6 +120,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((ch = getopt_long(argc, argv, "nVh", longopts, NULL)) != -1)
 		switch (ch) {

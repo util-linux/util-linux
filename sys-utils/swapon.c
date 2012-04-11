@@ -26,6 +26,7 @@
 #include "canonicalize.h"
 #include "xalloc.h"
 #include "c.h"
+#include "closestream.h"
 
 #define PATH_MKSWAP	"/sbin/mkswap"
 
@@ -890,6 +891,7 @@ main(int argc, char *argv[]) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	progname = program_invocation_short_name;
 	if (!progname) {

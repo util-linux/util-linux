@@ -55,6 +55,7 @@
 #include "c.h"
 #include "xalloc.h"
 #include "strutils.h"
+#include "closestream.h"
 
 #ifdef HAVE_WIDECHAR
 #define wcs_width(s) wcswidth(s,wcslen(s))
@@ -131,6 +132,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	if (ioctl(STDIN_FILENO, TIOCGWINSZ, &win) == -1 || !win.ws_col) {
 		char *p;
@@ -202,9 +204,6 @@ int main(int argc, char **argv)
 	for (i = 0; i < entries; i++)
 		free(list[i]);
 	free(list);
-
-	if (ferror(stdout) || fclose(stdout))
-		eval += EXIT_FAILURE;
 
 	if (eval == 0)
 		return EXIT_SUCCESS;

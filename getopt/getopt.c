@@ -58,6 +58,7 @@
 #include <ctype.h>
 #include <getopt.h>
 
+#include "closestream.h"
 #include "nls.h"
 #include "xalloc.h"
 
@@ -363,6 +364,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	init_longopt();
 	getopt_long_fp = getopt_long;

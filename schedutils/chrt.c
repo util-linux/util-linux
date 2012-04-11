@@ -31,7 +31,7 @@
 
 #include "c.h"
 #include "nls.h"
-
+#include "closestream.h"
 #include "strutils.h"
 #include "procutils.h"
 
@@ -218,6 +218,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while((i = getopt_long(argc, argv, "+abfiphmoRrvV", longopts, NULL)) != -1)
 	{

@@ -51,8 +51,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "nls.h"
 
+#include "nls.h"
+#include "closestream.h"
 #include "pathnames.h"
 #include "ttymsg.h"
 

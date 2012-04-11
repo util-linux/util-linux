@@ -63,6 +63,7 @@
 #include "lp.h"
 #include "nls.h"
 #include "xalloc.h"
+#include "closestream.h"
 
 #define EXIT_BAD_VALUE	3
 #define EXIT_LP_IO_ERR	4
@@ -142,6 +143,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	if (argc < 2)
 		print_usage(stderr);

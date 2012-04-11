@@ -7,6 +7,7 @@ dist_noinst_HEADERS = \
 	c.h \
 	canonicalize.h \
 	carefulputc.h \
+	closestream.h \
 	cpuset.h \
 	crc32.h \
 	env.h \

@@ -67,6 +67,7 @@
 #include "carefulputc.h"
 #include "c.h"
 #include "fileutils.h"
+#include "closestream.h"
 
 #define	IGNOREUSER	"sleeper"
 #define WRITE_TIME_OUT	300		/* in seconds */
@@ -114,6 +115,7 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	static const struct option longopts[] = {
 		{ "nobanner",	no_argument,		0, 'n' },
@@ -281,6 +283,7 @@ makemsg(char *fname, size_t *mbufsize, int print_banner)
 	if (fread(mbuf, 1, *mbufsize, fp) != *mbufsize)
 		err(EXIT_FAILURE, _("fread failed"));
 
-	fclose(fp);
+	if (close_stream(fp) != 0)
+		errx(EXIT_FAILURE, _("write error"));
 	return mbuf;
 }

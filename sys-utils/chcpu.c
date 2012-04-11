@@ -40,6 +40,7 @@
 #include "strutils.h"
 #include "bitops.h"
 #include "path.h"
+#include "closestream.h"
 
 #define _PATH_SYS_CPU		"/sys/devices/system/cpu"
 #define _PATH_SYS_CPU_ONLINE	_PATH_SYS_CPU "/online"
@@ -246,6 +247,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	maxcpus = get_max_number_of_cpus();
 	if (maxcpus < 1)

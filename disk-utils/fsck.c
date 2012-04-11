@@ -52,6 +52,7 @@
 #include "pathnames.h"
 #include "exitcodes.h"
 #include "c.h"
+#include "closestream.h"
 
 #define XALLOC_EXIT_CODE	FSCK_EX_ERROR
 #include "xalloc.h"
@@ -1478,6 +1479,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_CTYPE, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	mnt_init_debug(0);		/* init libmount debug mask */
 	mntcache = mnt_new_cache();	/* no fatal error if failed */

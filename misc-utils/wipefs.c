@@ -38,6 +38,7 @@
 #include "writeall.h"
 #include "match.h"
 #include "c.h"
+#include "closestream.h"
 
 struct wipe_desc {
 	loff_t		offset;		/* magic string offset */
@@ -391,6 +392,7 @@ main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "ahno:pqt:V", longopts, NULL)) != -1) {
 		switch(c) {

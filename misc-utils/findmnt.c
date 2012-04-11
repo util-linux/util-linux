@@ -37,6 +37,7 @@
 
 #include "pathnames.h"
 #include "nls.h"
+#include "closestream.h"
 #include "c.h"
 #include "tt.h"
 #include "strutils.h"
@@ -991,6 +992,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	/* default output format */
 	tt_flags |= TT_FL_TREE;

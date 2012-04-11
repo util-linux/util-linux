@@ -35,6 +35,7 @@
 #include <sys/utsname.h>
 #include "nls.h"
 #include "c.h"
+#include "closestream.h"
 
 #define set_pers(pers) ((long)syscall(SYS_personality, pers))
 
@@ -251,6 +252,7 @@ int main(int argc, char *argv[])
   setlocale(LC_ALL, "");
   bindtextdomain(PACKAGE, LOCALEDIR);
   textdomain(PACKAGE);
+  atexit(close_stdout);
 
   if (argc < 1)
     show_usage(_("Not enough arguments"));

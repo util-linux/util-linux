@@ -53,6 +53,7 @@
 #include "xalloc.h"
 #include "nls.h"
 #include "c.h"
+#include "closestream.h"
 
 static char *bindirs[] = {
 	"/bin",
@@ -417,6 +418,7 @@ main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	argc--, argv++;
 	if (argc == 0)

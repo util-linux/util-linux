@@ -62,6 +62,7 @@
 #include "xalloc.h"
 #include "widechar.h"
 #include "c.h"
+#include "closestream.h"
 
 wchar_t *buf;
 
@@ -96,6 +97,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	signal(SIGINT, sig_handler);
 	signal(SIGTERM, sig_handler);

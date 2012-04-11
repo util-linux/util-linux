@@ -41,6 +41,7 @@
 #include "bitops.h"
 #include "tt.h"
 #include "path.h"
+#include "closestream.h"
 
 #define CACHE_MAX 100
 
@@ -1255,6 +1256,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "abce::hp::s:xV", longopts, NULL)) != -1) {
 

@@ -54,6 +54,7 @@
 #include "xalloc.h"
 #include "widechar.h"
 #include "c.h"
+#include "closestream.h"
 
 #ifdef HAVE_WIDECHAR
 /* Output an ASCII character as a wide character */
@@ -162,6 +163,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	signal(SIGINT, sig_handler);
 	signal(SIGTERM, sig_handler);
@@ -231,9 +233,6 @@ int main(int argc, char **argv)
 			filter(f);
 			fclose(f);
 		}
-	if (ferror(stdout) || fclose(stdout))
-		return EXIT_FAILURE;
-
 	free(obuf);
 	return EXIT_SUCCESS;
 }

@@ -34,6 +34,7 @@
 #include "env.h"
 #include "optutils.h"
 #include "exitcodes.h"
+#include "closestream.h"
 
 static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)),
 			const char *filename, int line)
@@ -309,6 +310,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	mnt_init_debug(0);
 	cxt = mnt_new_context();
