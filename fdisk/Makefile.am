@@ -1,7 +1,5 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-EXTRA_DIST = partitiontype.c
-
 fdisk_common = \
 	common.h \
 	gpt.c \
