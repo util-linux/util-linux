@@ -59,6 +59,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "fileutils.h"
 #include "closestream.h"
 #include "setpwnam.h"
 
@@ -143,7 +144,9 @@ int setpwnam(struct passwd *pwd)
 	/* xfmkstemp is too restrictive by default for passwd file */
 	if (fchmod(fileno(fp), 0644) < 0)
 		goto fail;
-	if (close_stream(fp) != 0)
+	rc = close_stream(fp);
+	fp = NULL;
+	if (rc != 0)
 		goto fail;
 
 	fclose(pwf);	/* I don't think I want to know if this failed */

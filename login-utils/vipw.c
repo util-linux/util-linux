@@ -72,6 +72,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "fileutils.h"
 #include "closestream.h"
 #include "nls.h"
 #include "setpwnam.h"
