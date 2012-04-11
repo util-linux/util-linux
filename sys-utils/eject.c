@@ -46,6 +46,7 @@
 #include <libmount.h>
 
 #include "c.h"
+#include "closestream.h"
 #include "nls.h"
 #include "strutils.h"
 #include "xalloc.h"
@@ -921,6 +922,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL,"");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	/* parse the command line arguments */
 	parse_args(argc, argv, &device);
