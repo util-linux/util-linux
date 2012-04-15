@@ -18,7 +18,7 @@
    Boston, MA 02111-1307, USA.  */
 
 /*  Changes by Rémy Card to use constants and add option -n.  */
-/*  Changes by Jindrich Novy to add option -h, replace mmap(2), fix overflows */
+/*  Changes by Jindrich Novy to add option -h, -f, replace mmap(2), fix overflows */
 
 #define _GNU_SOURCE
 #include <sys/types.h>
@@ -56,6 +56,7 @@ h *hps[NHASH];
 int no_link = 0;
 int verbose = 0;
 int content_only = 0;
+int force = 0;
 
 typedef struct _f {
   struct _f *next;
@@ -97,11 +98,12 @@ void doexit(int i)
 
 void usage(char *prog)
 {
-  fprintf (stderr, "Usage: %s [-cnvh] directories...\n", prog);
+  fprintf (stderr, "Usage: %s [-cnvhf] directories...\n", prog);
   fprintf (stderr, "  -c    When finding candidates for linking, compare only file contents.\n");
   fprintf (stderr, "  -n    Don't actually link anything, just report what would be done.\n");
   fprintf (stderr, "  -v    Print summary after hardlinking.\n");
   fprintf (stderr, "  -vv   Print every hardlinked file and bytes saved + summary.\n");
+  fprintf (stderr, "  -f    Force hardlinking across filesystems.\n");
   fprintf (stderr, "  -h    Show help.\n");
   exit(255);
 }
@@ -139,7 +141,7 @@ void growstr(dynstr *str, size_t newlen)
     doexit(4);
   }
 }
-
+dev_t dev = 0;
 void rf (const char *name)
 {
   struct stat st, st2, st3;
@@ -147,6 +149,13 @@ void rf (const char *name)
   nobjects++;
   if (lstat (name, &st))
     return;
+  if (st.st_dev != dev && !force) {
+    if (dev) {
+      fprintf(stderr, "%s is on different filesystem than the rest.\nUse -f option to override.\n", name);
+      doexit(6);
+    }
+    dev = st.st_dev;
+  }
   if (S_ISDIR (st.st_mode)) {
     d * dp = malloc(add3(sizeof(d), namelen, 1));
     if (!dp) {
@@ -318,7 +327,7 @@ int main(int argc, char **argv)
   int ch;
   int i;
   dynstr nam1 = {NULL, 0};
-  while ((ch = getopt (argc, argv, "cnvh")) != -1) {
+  while ((ch = getopt (argc, argv, "cnvhf")) != -1) {
     switch (ch) {
     case 'n':
       no_link++;
@@ -328,6 +337,9 @@ int main(int argc, char **argv)
       break;
     case 'c':
       content_only++;
+      break;
+    case 'f':
+      force=1;
       break;
     case 'h':
     default:
