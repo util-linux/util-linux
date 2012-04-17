@@ -349,16 +349,13 @@ try_readonly:
 			return MOUNT_EX_USAGE;
 		}
 
-		/*
-		 * TODO: add mnt_context_fstab_applied() to check if we found
-		 *       target/source in the file.
-		 */
-		if (!tgt) {
-			if (mflags & MS_REMOUNT)
-				warnx(_("%s not mounted"), src ? src : tgt);
-			else
+		if (!tgt || (!src && !(mflags & MS_PROPAGATION))) {
+			if (!mnt_context_fstab_applied(cxt))
 				warnx(_("can't find %s in %s"), src ? src : tgt,
 						mnt_get_fstab_path());
+			else if (mflags & MS_REMOUNT)
+				warnx(_("%s not mounted"), src ? src : tgt);
+
 			return MOUNT_EX_USAGE;
 		}
 
@@ -467,6 +464,8 @@ try_readonly:
 	case EINVAL:
 		if (mflags & MS_REMOUNT)
 			warnx(_("%s not mounted or bad option"), tgt);
+		else if (mflags & MS_PROPAGATION)
+			warnx(_("%s is not mountpoint or bad option"), tgt);
 		else
 			warnx(_("wrong fs type, bad option, bad superblock on %s,\n"
 				"       missing codepage or helper program, or other error"),
