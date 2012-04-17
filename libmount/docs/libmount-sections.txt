@@ -21,6 +21,7 @@ mnt_new_context
 mnt_reset_context
 mnt_context_append_options
 mnt_context_apply_fstab
+mnt_context_fstab_applied
 mnt_context_disable_canonicalize
 mnt_context_disable_helpers
 mnt_context_disable_mtab

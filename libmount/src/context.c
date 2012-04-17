@@ -1670,7 +1670,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	if (!cxt)
 		return -EINVAL;
 
-	if (cxt->flags & MNT_FL_TAB_APPLIED)
+	if (mnt_context_fstab_applied(cxt))
 		return 0;
 
 	if (mnt_context_is_restricted(cxt)) {
@@ -1737,6 +1737,17 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	if (rc)
 		DBG(CXT, mnt_debug_h(cxt, "failed to find entry in fstab/mtab"));
 	return rc;
+}
+
+/**
+ * mnt_context_fstab_applied:
+ * @cxt: mount context
+ *
+ * Returns: 1 if fstab (or mtab) has been applied to the context, or 0.
+ */
+int mnt_context_fstab_applied(struct libmnt_context *cxt)
+{
+	return cxt && (cxt->flags & MNT_FL_TAB_APPLIED);
 }
 
 /**

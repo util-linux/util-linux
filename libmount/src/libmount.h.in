@@ -511,6 +511,8 @@ extern int mnt_context_prepare_umount(struct libmnt_context *cxt);
 extern int mnt_context_do_umount(struct libmnt_context *cxt);
 extern int mnt_context_finalize_umount(struct libmnt_context *cxt);
 
+
+extern int mnt_context_fstab_applied(struct libmnt_context *cxt);
 extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status);
 
 /*
