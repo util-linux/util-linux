@@ -16,6 +16,7 @@
 #include <ctype.h>
 
 #include <blkid.h>
+#include <libmount.h>
 
 #include "bitops.h"
 #include "blkdev.h"
@@ -151,110 +152,60 @@ swapoff_usage(FILE *out, int n) {
 /*
  * contents of /proc/swaps
  */
-static int numSwaps;
-static char **swapFiles;	/* array of swap file and partition names */
+static struct libmnt_table *swaps;
+static struct libmnt_cache *mntcache;
 
-static void
-read_proc_swaps(void) {
-	FILE *swaps;
-	char line[1024];
-	char *p, **q;
-	size_t sz;
+static struct libmnt_table *get_swaps_table(void)
+{
+	if (!swaps) {
+		swaps = mnt_new_table();
+		if (!swaps)
+			return NULL;
+		if (!mntcache)
+			mntcache = mnt_new_cache();
 
-	numSwaps = 0;
-	swapFiles = NULL;
-
-	swaps = fopen(_PATH_PROC_SWAPS, "r");
-	if (swaps == NULL)
-		return;		/* nothing wrong */
-
-	/* skip the first line */
-	if (!fgets(line, sizeof(line), swaps)) {
-		/* do not whine about an empty file */
-		if (ferror(swaps))
-			warn(_("%s: unexpected file format"), _PATH_PROC_SWAPS);
-		fclose(swaps);
-		return;
+		mnt_table_set_cache(swaps, mntcache);
+		if (mnt_table_parse_swaps(swaps, NULL) != 0)
+			return NULL;
 	}
-	/* make sure the first line is the header */
-	if (line[0] != '\0' && strncmp(line, "Filename\t", 9))
-		goto valid_first_line;
 
-	while (fgets(line, sizeof(line), swaps)) {
- valid_first_line:
-		/*
-		 * Cut the line "swap_device  ... more info" after device.
-		 * This will fail with names with embedded spaces.
-		 */
-		for (p = line; *p && *p != ' '; p++);
-		*p = '\0';
-
-		/* the kernel can use " (deleted)" suffix for paths
-		 * in /proc/swaps, we have to remove this junk.
-		 */
-		sz = strlen(line);
-		if (sz > PATH_DELETED_SUFFIX_SZ) {
-		       p = line + (sz - PATH_DELETED_SUFFIX_SZ);
-		       if (strcmp(p, PATH_DELETED_SUFFIX) == 0)
-			       *p = '\0';
-		}
-
-		q = xrealloc(swapFiles, (numSwaps+1) * sizeof(*swapFiles));
-		swapFiles = q;
-
-		if ((p = unmangle(line, NULL)) == NULL)
-			break;
-
-		swapFiles[numSwaps++] = canonicalize_path(p);
-		free(p);
-	}
-	fclose(swaps);
+	return swaps;
 }
 
-/* note that swapFiles are always canonicalized */
-static int
-is_in_proc_swaps(const char *fname) {
-	int i;
-
-	for (i = 0; i < numSwaps; i++)
-		if (swapFiles[i] && !strcmp(fname, swapFiles[i]))
-			return 1;
-	return 0;
+static int is_active_swap(const char *filename)
+{
+	struct libmnt_table *st = get_swaps_table();
+	return st && mnt_table_find_srcpath(st, filename, MNT_ITER_BACKWARD);
 }
 
 static int
 display_summary(void)
 {
-	FILE *swaps;
-	char line[1024] ;
+	struct libmnt_table *st = get_swaps_table();
+	struct libmnt_iter *itr;
+	struct libmnt_fs *fs;
 
-	if ((swaps = fopen(_PATH_PROC_SWAPS, "r")) == NULL) {
-		warn(_("%s: open failed"), _PATH_PROC_SWAPS);
+	if (!st)
 		return -1;
+
+	itr = mnt_new_iter(MNT_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to initialize libmount iterator"));
+
+	if (mnt_table_get_nents(st) > 0)
+		printf(_("%-39s\tType\tSize\tUsed\tPriority\n"), _("Filename"));
+
+	while (mnt_table_next_fs(st, itr, &fs) == 0) {
+		printf("%-39s\t%s\t%jd\t%jd\t%d\n",
+			mnt_fs_get_source(fs),
+			mnt_fs_get_swaptype(fs),
+			mnt_fs_get_size(fs),
+			mnt_fs_get_usedsize(fs),
+			mnt_fs_get_priority(fs));
 	}
 
-	while (fgets(line, sizeof(line), swaps)) {
-		char *p, *dev, *cn;
-		if (!strncmp(line, "Filename\t", 9)) {
-			printf("%s", line);
-			continue;
-		}
-		for (p = line; *p && *p != ' '; p++);
-		*p = '\0';
-		for (++p; *p && isblank((unsigned int) *p); p++);
-
-		dev = unmangle(line, NULL);
-		if (!dev)
-			continue;
-		cn = canonicalize_path(dev);
-		if (cn)
-			printf("%-39s %s", cn, p);
-		free(dev);
-		free(cn);
-	}
-
-	fclose(swaps);
-	return 0 ;
+	mnt_free_iter(itr);
+	return 0;
 }
 
 /* calls mkswap */
@@ -655,8 +606,6 @@ swapon_all(void) {
 	struct mntent *fstab;
 	int status = 0;
 
-	read_proc_swaps();
-
 	fp = setmntent(_PATH_MNTTAB, "r");
 	if (fp == NULL)
 		err(2, _("%s: open failed"), _PATH_MNTTAB);
@@ -695,7 +644,7 @@ swapon_all(void) {
 			continue;
 		}
 
-		if (!is_in_proc_swaps(special) &&
+		if (!is_active_swap(special) &&
 		    (!nofail || !access(special, R_OK)))
 			status |= do_swapon(special, pri, dsc, CANONIC);
 
@@ -853,9 +802,18 @@ main_swapoff(int argc, char *argv[]) {
 		 * exists as ordinary file, not in procfs.
 		 * do_swapoff() exits immediately on EPERM.
 		 */
-		read_proc_swaps();
-		for(i=0; i<numSwaps; i++)
-			status |= do_swapoff(swapFiles[i], QUIET, CANONIC);
+		struct libmnt_table *st = get_swaps_table();
+
+		if (st && mnt_table_get_nents(st) > 0) {
+			struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_BACKWARD);
+			struct libmnt_fs *fs;
+
+			while (itr && mnt_table_next_fs(st, itr, &fs) == 0)
+				status |= do_swapoff(mnt_fs_get_source(fs),
+						     QUIET, CANONIC);
+
+			mnt_free_iter(itr);
+		}
 
 		/*
 		 * Unswap stuff mentioned in /etc/fstab.
@@ -876,7 +834,7 @@ main_swapoff(int argc, char *argv[]) {
 			if (!special)
 				continue;
 
-			if (!is_in_proc_swaps(special))
+			if (!is_active_swap(special))
 				do_swapoff(special, QUIET, CANONIC);
 		}
 		fclose(fp);
@@ -887,6 +845,8 @@ main_swapoff(int argc, char *argv[]) {
 
 int
 main(int argc, char *argv[]) {
+
+	int status;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -899,11 +859,17 @@ main(int argc, char *argv[]) {
 		progname = p ? p+1 : argv[0];
 	}
 
-	if (streq(progname, "swapon"))
-		return main_swapon(argc, argv);
-	else if (streq(progname, "swapoff"))
-		return main_swapoff(argc, argv);
+	mnt_init_debug(0);
 
-	errx(EXIT_FAILURE, _("'%s' is unsupported program name "
+	if (streq(progname, "swapon"))
+		status = main_swapon(argc, argv);
+	else if (streq(progname, "swapoff"))
+		status = main_swapoff(argc, argv);
+	else
+		errx(EXIT_FAILURE, _("'%s' is unsupported program name "
 			"(must be 'swapon' or 'swapoff')."), progname);
+
+	mnt_free_table(swaps);
+	mnt_free_cache(mntcache);
+	return status;
 }

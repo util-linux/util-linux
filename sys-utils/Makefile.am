@@ -141,8 +141,8 @@ swapon_SOURCES = \
 	$(top_srcdir)/lib/linux_version.c \
 	$(top_srcdir)/lib/mangle.c
 
-swapon_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
-swapon_LDADD = $(ul_libblkid_la)
+swapon_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libmount_incdir)
+swapon_LDADD = $(ul_libblkid_la) $(ul_libmount_la)
 endif
 
 if BUILD_LSCPU
