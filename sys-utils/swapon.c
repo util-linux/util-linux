@@ -15,7 +15,6 @@
 #include <stdint.h>
 #include <ctype.h>
 
-#include <blkid.h>
 #include <libmount.h>
 
 #include "bitops.h"
@@ -24,7 +23,6 @@
 #include "pathnames.h"
 #include "swapheader.h"
 #include "mangle.h"
-#include "canonicalize.h"
 #include "xalloc.h"
 #include "c.h"
 #include "closestream.h"
@@ -161,9 +159,6 @@ static struct libmnt_table *get_swaps_table(void)
 		swaps = mnt_new_table();
 		if (!swaps)
 			return NULL;
-		if (!mntcache)
-			mntcache = mnt_new_cache();
-
 		mnt_table_set_cache(swaps, mntcache);
 		if (mnt_table_parse_swaps(swaps, NULL) != 0)
 			return NULL;
@@ -516,7 +511,7 @@ do_swapon(const char *orig_special, int prio, int fl_discard, int canonic) {
 		printf(_("%s on %s\n"), progname, orig_special);
 
 	if (!canonic) {
-		special = blkid_evaluate_spec(orig_special, NULL);
+		special = mnt_resolve_spec(orig_special, mntcache);
 		if (!special)
 			return cannot_find(orig_special);
 	}
@@ -551,14 +546,14 @@ cannot_find(const char *special) {
 
 static int
 swapon_by_label(const char *label, int prio, int dsc) {
-	const char *special = blkid_evaluate_tag("LABEL", label, NULL);
+	const char *special = mnt_resolve_tag("LABEL", label, mntcache);
 	return special ? do_swapon(special, prio, dsc, CANONIC) :
 			 cannot_find(label);
 }
 
 static int
 swapon_by_uuid(const char *uuid, int prio, int dsc) {
-	const char *special = blkid_evaluate_tag("UUID", uuid, NULL);
+	const char *special = mnt_resolve_tag("UUID", uuid, mntcache);
 	return special ? do_swapon(special, prio, dsc, CANONIC) :
 			 cannot_find(uuid);
 }
@@ -571,7 +566,7 @@ do_swapoff(const char *orig_special, int quiet, int canonic) {
 		printf(_("%s on %s\n"), progname, orig_special);
 
 	if (!canonic) {
-		special = blkid_evaluate_spec(orig_special, NULL);
+		special = mnt_resolve_spec(orig_special, mntcache);
 		if (!special)
 			return cannot_find(orig_special);
 	}
@@ -590,13 +585,13 @@ do_swapoff(const char *orig_special, int quiet, int canonic) {
 
 static int
 swapoff_by_label(const char *label, int quiet) {
-	const char *special = blkid_evaluate_tag("LABEL", label, NULL);
+	const char *special = mnt_resolve_tag("LABEL", label, mntcache);
 	return special ? do_swapoff(special, quiet, CANONIC) : cannot_find(label);
 }
 
 static int
 swapoff_by_uuid(const char *uuid, int quiet) {
-	const char *special = blkid_evaluate_tag("UUID", uuid, NULL);
+	const char *special = mnt_resolve_tag("UUID", uuid, mntcache);
 	return special ? do_swapoff(special, quiet, CANONIC) : cannot_find(uuid);
 }
 
@@ -637,7 +632,7 @@ swapon_all(void) {
 		if (skip)
 			continue;
 
-		special = blkid_evaluate_spec(fstab->mnt_fsname, NULL);
+		special = mnt_resolve_spec(fstab->mnt_fsname, mntcache);
 		if (!special) {
 			if (!nofail)
 				status |= cannot_find(fstab->mnt_fsname);
@@ -647,8 +642,6 @@ swapon_all(void) {
 		if (!is_active_swap(special) &&
 		    (!nofail || !access(special, R_OK)))
 			status |= do_swapon(special, pri, dsc, CANONIC);
-
-		free((void *) special);
 	}
 	fclose(fp);
 
@@ -830,7 +823,7 @@ main_swapoff(int argc, char *argv[]) {
 			if (!streq(fstab->mnt_type, MNTTYPE_SWAP))
 				continue;
 
-			special = blkid_evaluate_spec(fstab->mnt_fsname, NULL);
+			special = mnt_resolve_spec(fstab->mnt_fsname, mntcache);
 			if (!special)
 				continue;
 
@@ -860,6 +853,7 @@ main(int argc, char *argv[]) {
 	}
 
 	mnt_init_debug(0);
+	mntcache = mnt_new_cache();
 
 	if (streq(progname, "swapon"))
 		status = main_swapon(argc, argv);

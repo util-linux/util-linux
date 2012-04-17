@@ -137,12 +137,10 @@ dist_man_MANS += swapoff.8 swapon.8
 swapon_SOURCES = \
 	swapon.c \
 	$(top_srcdir)/lib/blkdev.c \
-	$(top_srcdir)/lib/canonicalize.c \
-	$(top_srcdir)/lib/linux_version.c \
-	$(top_srcdir)/lib/mangle.c
+	$(top_srcdir)/lib/linux_version.c
 
-swapon_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libmount_incdir)
-swapon_LDADD = $(ul_libblkid_la) $(ul_libmount_la)
+swapon_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+swapon_LDADD = $(ul_libmount_la)
 endif
 
 if BUILD_LSCPU
