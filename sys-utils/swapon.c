@@ -77,7 +77,6 @@ static int ifexists;
 static int fixpgsz;
 
 static int verbose;
-static char *progname;
 
 static const struct option longswaponopts[] = {
 		/* swapon only */
@@ -106,7 +105,7 @@ static const struct option longswaponopts[] = {
 static void
 swapon_usage(FILE *out, int n) {
 	fputs(_("\nUsage:\n"), out);
-	fprintf(out, _(" %s [options] [<spec>]\n"), progname);
+	fprintf(out, _(" %s [options] [<spec>]\n"), program_invocation_name);
 
 	fputs(_("\nOptions:\n"), out);
 	fputs(_(" -a, --all              enable all swaps from /etc/fstab\n"
@@ -459,7 +458,7 @@ do_swapon(const char *orig_special, int prio, int fl_discard, int canonic) {
 	int flags = 0;
 
 	if (verbose)
-		printf(_("%s on %s\n"), progname, orig_special);
+		printf(_("swapon %s\n"), orig_special);
 
 	if (!canonic) {
 		special = mnt_resolve_spec(orig_special, mntcache);
@@ -547,11 +546,19 @@ swapon_all(void) {
 	return status;
 }
 
-static int
-main_swapon(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
 	int status = 0;
 	int c;
 	size_t i;
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	atexit(close_stdout);
+
+	mnt_init_debug(0);
+	mntcache = mnt_new_cache();
 
 	while ((c = getopt_long(argc, argv, "ahdefp:svVL:U:",
 				longswaponopts, NULL)) != -1) {
@@ -587,8 +594,8 @@ main_swapon(int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
-			exit(EXIT_SUCCESS);
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		case 0:
 			break;
 		case '?':
@@ -601,7 +608,7 @@ main_swapon(int argc, char *argv[]) {
 	if (!all && !numof_labels() && numof_uuids() && *argv == NULL)
 		swapon_usage(stderr, 2);
 
-	if (ifexists && (!all || strcmp(progname, "swapon")))
+	if (ifexists && !all)
 		swapon_usage(stderr, 1);
 
 	if (all)
@@ -616,31 +623,8 @@ main_swapon(int argc, char *argv[]) {
 	while (*argv != NULL)
 		status |= do_swapon(*argv++, priority, discard, !CANONIC);
 
-	return status;
-}
-
-int
-main(int argc, char *argv[]) {
-
-	int status;
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-	atexit(close_stdout);
-
-	progname = program_invocation_short_name;
-	if (!progname) {
-		char *p = strrchr(argv[0], '/');
-		progname = p ? p+1 : argv[0];
-	}
-
-	mnt_init_debug(0);
-	mntcache = mnt_new_cache();
-
-	status = main_swapon(argc, argv);
-
 	free_tables();
 	mnt_free_cache(mntcache);
+
 	return status;
 }
