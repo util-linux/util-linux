@@ -136,6 +136,7 @@ dist_man_MANS += swapoff.8 swapon.8
 
 swapon_SOURCES = \
 	swapon.c \
+	swapon-common.c \
 	$(top_srcdir)/lib/blkdev.c \
 	$(top_srcdir)/lib/linux_version.c
 

@@ -22,10 +22,11 @@
 #include "nls.h"
 #include "pathnames.h"
 #include "swapheader.h"
-#include "mangle.h"
 #include "xalloc.h"
 #include "c.h"
 #include "closestream.h"
+
+#include "swapon-common.h"
 
 #define PATH_MKSWAP	"/sbin/mkswap"
 
@@ -99,8 +100,6 @@ static const struct option longswaponopts[] = {
 
 static const struct option *longswapoffopts = &longswaponopts[4];
 
-static int cannot_find(const char *special);
-
 #define PRINT_USAGE_SPECIAL(_fp) \
 	fputs(_("\nThe <spec> parameter:\n" \
 		" -L <label>             LABEL of device to be used\n" \
@@ -145,51 +144,6 @@ swapoff_usage(FILE *out, int n) {
 	PRINT_USAGE_SPECIAL(out);
 
 	exit(n);
-}
-
-/*
- * contents of /proc/swaps
- */
-static struct libmnt_table *swaps, *fstab;
-static struct libmnt_cache *mntcache;
-
-static struct libmnt_table *get_fstab(void)
-{
-	if (!fstab) {
-		fstab = mnt_new_table();
-		if (!fstab)
-			return NULL;
-		mnt_table_set_cache(fstab, mntcache);
-		if (mnt_table_parse_fstab(fstab, NULL) != 0)
-			return NULL;
-	}
-
-	return fstab;
-}
-
-static struct libmnt_table *get_swaps(void)
-{
-	if (!swaps) {
-		swaps = mnt_new_table();
-		if (!swaps)
-			return NULL;
-		mnt_table_set_cache(swaps, mntcache);
-		if (mnt_table_parse_swaps(swaps, NULL) != 0)
-			return NULL;
-	}
-
-	return swaps;
-}
-
-static int match_swap(struct libmnt_fs *fs, void *data __attribute__((unused)))
-{
-	return fs && mnt_fs_is_swaparea(fs);
-}
-
-static int is_active_swap(const char *filename)
-{
-	struct libmnt_table *st = get_swaps();
-	return st && mnt_table_find_srcpath(st, filename, MNT_ITER_BACKWARD);
 }
 
 static int
@@ -558,12 +512,6 @@ do_swapon(const char *orig_special, int prio, int fl_discard, int canonic) {
 }
 
 static int
-cannot_find(const char *special) {
-	warnx(_("cannot find the device for %s"), special);
-	return -1;
-}
-
-static int
 swapon_by_label(const char *label, int prio, int dsc) {
 	const char *special = mnt_resolve_tag("LABEL", label, mntcache);
 	return special ? do_swapon(special, prio, dsc, CANONIC) :
@@ -658,25 +606,11 @@ swapon_all(void) {
 	return status;
 }
 
-static const char **llist = NULL;
-static int llct = 0;
-static const char **ulist = NULL;
-static int ulct = 0;
-
-static void addl(const char *label) {
-	llist = (const char **) xrealloc(llist, (++llct) * sizeof(char *));
-	llist[llct-1] = label;
-}
-
-static void addu(const char *uuid) {
-	ulist = (const char **) xrealloc(ulist, (++ulct) * sizeof(char *));
-	ulist[ulct-1] = uuid;
-}
-
 static int
 main_swapon(int argc, char *argv[]) {
 	int status = 0;
-	int c, i;
+	int c;
+	size_t i;
 
 	while ((c = getopt_long(argc, argv, "ahdefp:svVL:U:",
 				longswaponopts, NULL)) != -1) {
@@ -691,10 +625,10 @@ main_swapon(int argc, char *argv[]) {
 			priority = atoi(optarg);
 			break;
 		case 'L':
-			addl(optarg);
+			add_label(optarg);
 			break;
 		case 'U':
-			addu(optarg);
+			add_uuid(optarg);
 			break;
 		case 'd':
 			discard = 1;
@@ -723,7 +657,7 @@ main_swapon(int argc, char *argv[]) {
 	}
 	argv += optind;
 
-	if (!all && !llct && !ulct && *argv == NULL)
+	if (!all && !numof_labels() && numof_uuids() && *argv == NULL)
 		swapon_usage(stderr, 2);
 
 	if (ifexists && (!all || strcmp(progname, "swapon")))
@@ -732,11 +666,11 @@ main_swapon(int argc, char *argv[]) {
 	if (all)
 		status |= swapon_all();
 
-	for (i = 0; i < llct; i++)
-		status |= swapon_by_label(llist[i], priority, discard);
+	for (i = 0; i < numof_labels(); i++)
+		status |= swapon_by_label(get_label(i), priority, discard);
 
-	for (i = 0; i < ulct; i++)
-		status |= swapon_by_uuid(ulist[i], priority, discard);
+	for (i = 0; i < numof_uuids(); i++)
+		status |= swapon_by_uuid(get_uuid(i), priority, discard);
 
 	while (*argv != NULL)
 		status |= do_swapon(*argv++, priority, discard, !CANONIC);
@@ -749,7 +683,8 @@ main_swapoff(int argc, char *argv[]) {
 	FILE *fp;
 	struct mntent *fstab;
 	int status = 0;
-	int c, i;
+	int c;
+	size_t i;
 
 	while ((c = getopt_long(argc, argv, "ahvVL:U:",
 				 longswapoffopts, NULL)) != -1) {
@@ -767,10 +702,10 @@ main_swapoff(int argc, char *argv[]) {
 			printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
 			exit(EXIT_SUCCESS);
 		case 'L':
-			addl(optarg);
+			add_label(optarg);
 			break;
 		case 'U':
-			addu(optarg);
+			add_uuid(optarg);
 			break;
 		case 0:
 			break;
@@ -781,18 +716,18 @@ main_swapoff(int argc, char *argv[]) {
 	}
 	argv += optind;
 
-	if (!all && !llct && !ulct && *argv == NULL)
+	if (!all && !numof_labels() && !numof_uuids() && *argv == NULL)
 		swapoff_usage(stderr, 2);
 
 	/*
 	 * swapoff any explicitly given arguments.
 	 * Complain in case the swapoff call fails.
 	 */
-	for (i = 0; i < llct; i++)
-		status |= swapoff_by_label(llist[i], !QUIET);
+	for (i = 0; i < numof_labels(); i++)
+		status |= swapoff_by_label(get_label(i), !QUIET);
 
-	for (i = 0; i < ulct; i++)
-		status |= swapoff_by_uuid(ulist[i], !QUIET);
+	for (i = 0; i < numof_uuids(); i++)
+		status |= swapoff_by_uuid(get_uuid(i), !QUIET);
 
 	while (*argv != NULL)
 		status |= do_swapoff(*argv++, !QUIET, !CANONIC);
@@ -873,7 +808,7 @@ main(int argc, char *argv[]) {
 		errx(EXIT_FAILURE, _("'%s' is unsupported program name "
 			"(must be 'swapon' or 'swapoff')."), progname);
 
-	mnt_free_table(swaps);
+	free_tables();
 	mnt_free_cache(mntcache);
 	return status;
 }
