@@ -387,21 +387,6 @@ function ts_is_mounted {
 	return 1
 }
 
-function ts_swapoff {
-	local DEV="$1"
-
-	# swapoff doesn't exist in build tree
-	if [ ! -x "$TS_CMD_SWAPOFF" ]; then
-		ln -sf $TS_CMD_SWAPON $TS_CMD_SWAPOFF
-		REMSWAPOFF="true"
-	fi
-	LD_LIBRARY_PATH="$U_L_LIBRARY_PATH" \
-			$TS_CMD_SWAPOFF $DEV 2>&1 >> $TS_OUTPUT
-	if [ -n "$REMSWAPOFF" ]; then
-		rm -f $TS_CMD_SWAPOFF
-	fi
-}
-
 function ts_fstab_open {
 	echo "# <!-- util-linux test entry" >> /etc/fstab
 }

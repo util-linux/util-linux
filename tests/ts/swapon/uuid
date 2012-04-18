@@ -34,12 +34,11 @@ ts_device_has_uuid $DEVICE || ts_die "Cannot find UUID on $DEVICE" $DEVICE
 
 UUID=$(ts_uuid_by_devname $DEVICE)
 
-LD_LIBRARY_PATH="$U_L_LIBRARY_PATH" \
-	$TS_CMD_SWAPON -U $UUID 2>&1 >> $TS_OUTPUT
+$TS_CMD_SWAPON -U $UUID 2>&1 >> $TS_OUTPUT
 
 grep -q $DEVICE /proc/swaps || ts_die "Cannot find $DEVICE in /proc/swaps" $DEVICE
 
-ts_swapoff $DEVICE
+$TS_CMD_SWAPOFF $DEVICE
 ts_device_deinit $DEVICE
 
 ts_log "Success"
