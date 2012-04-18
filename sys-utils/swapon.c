@@ -150,10 +150,24 @@ swapoff_usage(FILE *out, int n) {
 /*
  * contents of /proc/swaps
  */
-static struct libmnt_table *swaps;
+static struct libmnt_table *swaps, *fstab;
 static struct libmnt_cache *mntcache;
 
-static struct libmnt_table *get_swaps_table(void)
+static struct libmnt_table *get_fstab(void)
+{
+	if (!fstab) {
+		fstab = mnt_new_table();
+		if (!fstab)
+			return NULL;
+		mnt_table_set_cache(fstab, mntcache);
+		if (mnt_table_parse_fstab(fstab, NULL) != 0)
+			return NULL;
+	}
+
+	return fstab;
+}
+
+static struct libmnt_table *get_swaps(void)
 {
 	if (!swaps) {
 		swaps = mnt_new_table();
@@ -167,16 +181,21 @@ static struct libmnt_table *get_swaps_table(void)
 	return swaps;
 }
 
+static int match_swap(struct libmnt_fs *fs, void *data __attribute__((unused)))
+{
+	return fs && mnt_fs_is_swaparea(fs);
+}
+
 static int is_active_swap(const char *filename)
 {
-	struct libmnt_table *st = get_swaps_table();
+	struct libmnt_table *st = get_swaps();
 	return st && mnt_table_find_srcpath(st, filename, MNT_ITER_BACKWARD);
 }
 
 static int
 display_summary(void)
 {
-	struct libmnt_table *st = get_swaps_table();
+	struct libmnt_table *st = get_swaps();
 	struct libmnt_iter *itr;
 	struct libmnt_fs *fs;
 
@@ -597,54 +616,45 @@ swapoff_by_uuid(const char *uuid, int quiet) {
 
 static int
 swapon_all(void) {
-	FILE *fp;
-	struct mntent *fstab;
+	struct libmnt_table *tb = get_fstab();
+	struct libmnt_iter *itr;
+	struct libmnt_fs *fs;
 	int status = 0;
 
-	fp = setmntent(_PATH_MNTTAB, "r");
-	if (fp == NULL)
-		err(2, _("%s: open failed"), _PATH_MNTTAB);
+	if (!tb)
+		err(2, _("failed to parse %s"), mnt_get_fstab_path());
 
-	while ((fstab = getmntent(fp)) != NULL) {
-		const char *special;
-		int skip = 0, nofail = ifexists;
-		int pri = priority, dsc = discard;
-		char *opt, *opts;
+	itr = mnt_new_iter(MNT_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to initialize libmount iterator"));
 
-		if (!streq(fstab->mnt_type, MNTTYPE_SWAP))
+	while (mnt_table_find_next_fs(tb, itr, match_swap, NULL, &fs) == 0) {
+		/* defaults */
+		int pri = priority, dsc = discard, nofail = ifexists;
+		char *p, *src;
+
+		if (mnt_fs_get_option(fs, "noauto", NULL, NULL) == 0)
 			continue;
+		if (mnt_fs_get_option(fs, "discard", NULL, NULL) == 0)
+			dsc = 1;
+		if (mnt_fs_get_option(fs, "nofail", NULL, NULL) == 0)
+			nofail = 1;
+		if (mnt_fs_get_option(fs, "pri", &p, NULL) == 0 && p)
+			pri = atoi(p);
 
-		opts = xstrdup(fstab->mnt_opts);
-
-		for (opt = strtok(opts, ","); opt != NULL;
-		     opt = strtok(NULL, ",")) {
-			if (strncmp(opt, "pri=", 4) == 0)
-				pri = atoi(opt+4);
-			if (strcmp(opt, "discard") == 0)
-				dsc = 1;
-			if (strcmp(opt, "noauto") == 0)
-				skip = 1;
-			if (strcmp(opt, "nofail") == 0)
-				nofail = 1;
-		}
-		free(opts);
-
-		if (skip)
-			continue;
-
-		special = mnt_resolve_spec(fstab->mnt_fsname, mntcache);
-		if (!special) {
+		src = mnt_resolve_spec(mnt_fs_get_source(fs), mntcache);
+		if (!src) {
 			if (!nofail)
-				status |= cannot_find(fstab->mnt_fsname);
+				status |= cannot_find(mnt_fs_get_source(fs));
 			continue;
 		}
 
-		if (!is_active_swap(special) &&
-		    (!nofail || !access(special, R_OK)))
-			status |= do_swapon(special, pri, dsc, CANONIC);
+		if (!is_active_swap(src) &&
+		    (!nofail || !access(src, R_OK)))
+			status |= do_swapon(src, pri, dsc, CANONIC);
 	}
-	fclose(fp);
 
+	mnt_free_iter(itr);
 	return status;
 }
 
@@ -795,7 +805,7 @@ main_swapoff(int argc, char *argv[]) {
 		 * exists as ordinary file, not in procfs.
 		 * do_swapoff() exits immediately on EPERM.
 		 */
-		struct libmnt_table *st = get_swaps_table();
+		struct libmnt_table *st = get_swaps();
 
 		if (st && mnt_table_get_nents(st) > 0) {
 			struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_BACKWARD);
