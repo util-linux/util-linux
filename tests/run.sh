@@ -61,7 +61,7 @@ else
 fi
 
 echo
-echo "------------------ Utils-linux regression tests ------------------"
+echo "-------------------- util-linux regression tests --------------------"
 echo
 echo "                    For development purpose only.                    "
 echo "                 Don't execute on production system!                 "
