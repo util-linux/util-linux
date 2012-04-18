@@ -78,51 +78,6 @@ static int fixpgsz;
 
 static int verbose;
 
-static const struct option longswaponopts[] = {
-		/* swapon only */
-	{ "priority", required_argument, 0, 'p' },
-	{ "discard", 0, 0, 'd' },
-	{ "ifexists", 0, 0, 'e' },
-	{ "summary", 0, 0, 's' },
-	{ "fixpgsz", 0, 0, 'f' },
-		/* also for swapoff */
-	{ "all", 0, 0, 'a' },
-	{ "help", 0, 0, 'h' },
-	{ "verbose", 0, 0, 'v' },
-	{ "version", 0, 0, 'V' },
-	{ NULL, 0, 0, 0 }
-};
-
-#define PRINT_USAGE_SPECIAL(_fp) \
-	fputs(_("\nThe <spec> parameter:\n" \
-		" -L <label>             LABEL of device to be used\n" \
-		" -U <uuid>              UUID of device to be used\n" \
-		" LABEL=<label>          LABEL of device to be used\n" \
-		" UUID=<uuid>            UUID of device to be used\n" \
-		" <device>               name of device to be used\n" \
-		" <file>                 name of file to be used\n\n"), _fp)
-
-static void
-swapon_usage(FILE *out, int n) {
-	fputs(_("\nUsage:\n"), out);
-	fprintf(out, _(" %s [options] [<spec>]\n"), program_invocation_name);
-
-	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -a, --all              enable all swaps from /etc/fstab\n"
-		" -d, --discard          discard freed pages before they are reused\n"
-		" -e, --ifexists         silently skip devices that do not exis\n"
-		" -f, --fixpgsz          reinitialize the swap space if necessary\n"
-		" -h, --help             display help and exit\n"
-		" -p, --priority <prio>  specify the priority of the swap device\n"
-		" -s, --summary          display summary about used swap devices and exit\n"
-		" -v, --verbose          verbose mode\n"
-		" -V, --version          display version and exit\n"), out);
-
-	PRINT_USAGE_SPECIAL(out);
-
-	exit(n);
-}
-
 static int
 display_summary(void)
 {
@@ -546,11 +501,54 @@ swapon_all(void) {
 	return status;
 }
 
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
+{
+	fputs(USAGE_HEADER, out);
+
+	fprintf(out, _(" %s [options] [<spec>]\n"), program_invocation_short_name);
+
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -a, --all              enable all swaps from /etc/fstab\n"
+		" -d, --discard          discard freed pages before they are reused\n"
+		" -e, --ifexists         silently skip devices that do not exis\n"
+		" -f, --fixpgsz          reinitialize the swap space if necessary\n"
+		" -p, --priority <prio>  specify the priority of the swap device\n"
+		" -s, --summary          display summary about used swap devices and exit\n"
+		" -v, --verbose          verbose mode\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+
+	fputs(_("\nThe <spec> parameter:\n" \
+		" -L <label>             LABEL of device to be used\n" \
+		" -U <uuid>              UUID of device to be used\n" \
+		" LABEL=<label>          LABEL of device to be used\n" \
+		" UUID=<uuid>            UUID of device to be used\n" \
+		" <device>               name of device to be used\n" \
+		" <file>                 name of file to be used\n"), out);
+
+	fprintf(out, USAGE_MAN_TAIL("swapon(8)"));
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 int main(int argc, char *argv[])
 {
-	int status = 0;
-	int c;
+	int status = 0, c;
 	size_t i;
+
+	static const struct option long_opts[] = {
+		{ "priority", 1, 0, 'p' },
+		{ "discard",  0, 0, 'd' },
+		{ "ifexists", 0, 0, 'e' },
+		{ "summary",  0, 0, 's' },
+		{ "fixpgsz",  0, 0, 'f' },
+		{ "all",      0, 0, 'a' },
+		{ "help",     0, 0, 'h' },
+		{ "verbose",  0, 0, 'v' },
+		{ "version",  0, 0, 'V' },
+		{ NULL, 0, 0, 0 }
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -561,13 +559,13 @@ int main(int argc, char *argv[])
 	mntcache = mnt_new_cache();
 
 	while ((c = getopt_long(argc, argv, "ahdefp:svVL:U:",
-				longswaponopts, NULL)) != -1) {
+				long_opts, NULL)) != -1) {
 		switch (c) {
 		case 'a':		/* all */
 			++all;
 			break;
 		case 'h':		/* help */
-			swapon_usage(stdout, 0);
+			usage(stdout);
 			break;
 		case 'p':		/* priority */
 			priority = atoi(optarg);
@@ -589,7 +587,7 @@ int main(int argc, char *argv[])
 			break;
 		case 's':		/* status report */
 			status = display_summary();
-			exit(status);
+			return status;
 		case 'v':		/* be chatty */
 			++verbose;
 			break;
@@ -600,16 +598,16 @@ int main(int argc, char *argv[])
 			break;
 		case '?':
 		default:
-			swapon_usage(stderr, 1);
+			usage(stderr);
 		}
 	}
 	argv += optind;
 
-	if (!all && !numof_labels() && numof_uuids() && *argv == NULL)
-		swapon_usage(stderr, 2);
+	if (!all && !numof_labels() && !numof_uuids() && *argv == NULL)
+		usage(stderr);
 
 	if (ifexists && !all)
-		swapon_usage(stderr, 1);
+		usage(stderr);
 
 	if (all)
 		status |= swapon_all();
