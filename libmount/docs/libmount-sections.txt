@@ -21,7 +21,6 @@ mnt_new_context
 mnt_reset_context
 mnt_context_append_options
 mnt_context_apply_fstab
-mnt_context_fstab_applied
 mnt_context_disable_canonicalize
 mnt_context_disable_helpers
 mnt_context_disable_mtab
@@ -33,6 +32,7 @@ mnt_context_enable_loopdel
 mnt_context_enable_rdonly_umount
 mnt_context_enable_sloppy
 mnt_context_enable_verbose
+mnt_context_fstab_applied
 mnt_context_get_cache
 mnt_context_get_fs
 mnt_context_get_fstab
@@ -41,6 +41,7 @@ mnt_context_get_helper_status
 mnt_context_get_lock
 mnt_context_get_mflags
 mnt_context_get_mtab
+mnt_context_get_options
 mnt_context_get_optsmode
 mnt_context_get_source
 mnt_context_get_status

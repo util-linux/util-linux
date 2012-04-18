@@ -231,6 +231,7 @@ global:
 	mnt_fs_streq_target;
 	mnt_fs_streq_srcpath;
 	mnt_context_fstab_applied;
+	mnt_context_get_options;
 	mnt_context_is_loopdel;
 	mnt_context_is_nocanonicalize;
 	mnt_context_is_nohelpers;

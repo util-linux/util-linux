@@ -445,6 +445,8 @@ extern const char *mnt_context_get_fstype(struct libmnt_context *cxt);
 extern int mnt_context_set_options(struct libmnt_context *cxt, const char *optstr);
 extern int mnt_context_append_options(struct libmnt_context *cxt,
 				      const char *optstr);
+extern const char *mnt_context_get_options(struct libmnt_context *cxt);
+
 extern int mnt_context_set_fstype_pattern(struct libmnt_context *cxt,
 				      const char *pattern);
 extern int mnt_context_set_options_pattern(struct libmnt_context *cxt,
