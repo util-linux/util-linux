@@ -398,6 +398,15 @@ command (then mount(8) does not read /etc/mtab), then you have to use bind flag
 .B mount -o remount,ro,bind
 .I olddir newdir
 .RE
+
+Note that
+.I remount,ro,bind
+will create a read-only mountpoint (VFS entry), but the original filesystem suberblock
+will be still writable, it means that the
+.I olddir
+will be writable, but the
+.I newdir
+will be read-only.
 .RE
 
 .B The move operation.
@@ -433,6 +442,11 @@ any not vice-versa.  A private mount carries no propagation abilities.  A
 unbindable mount is a private mount which cannot be cloned through a bind
 operation. Detailed semantics is documented in Documentation/filesystems/sharedsubtree.txt
 file in the kernel source tree.
+
+Note that Linux kernel does not allow to change more propagation flags by one
+.B mount (2)
+syscall and the flags cannot be mixed with another mount options. It means that
+more --make-* options cannot be used together or with another mount options.
 
 .RS
 .nf

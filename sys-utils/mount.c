@@ -789,37 +789,37 @@ int main(int argc, char **argv)
 			mnt_context_enable_sloppy(cxt, TRUE);
 			break;
 		case 'B':
-			oper = MS_BIND;
+			oper |= MS_BIND;
 			break;
 		case 'M':
-			oper = MS_MOVE;
+			oper |= MS_MOVE;
 			break;
 		case 'R':
-			oper = (MS_BIND | MS_REC);
+			oper |= (MS_BIND | MS_REC);
 			break;
 		case MOUNT_OPT_SHARED:
-			oper = MS_SHARED;
+			oper |= MS_SHARED;
 			break;
 		case MOUNT_OPT_SLAVE:
-			oper = MS_SLAVE;
+			oper |= MS_SLAVE;
 			break;
 		case MOUNT_OPT_PRIVATE:
-			oper = MS_PRIVATE;
+			oper |= MS_PRIVATE;
 			break;
 		case MOUNT_OPT_UNBINDABLE:
-			oper = MS_UNBINDABLE;
+			oper |= MS_UNBINDABLE;
 			break;
 		case MOUNT_OPT_RSHARED:
-			oper = (MS_SHARED | MS_REC);
+			oper |= (MS_SHARED | MS_REC);
 			break;
 		case MOUNT_OPT_RSLAVE:
-			oper = (MS_SLAVE | MS_REC);
+			oper |= (MS_SLAVE | MS_REC);
 			break;
 		case MOUNT_OPT_RPRIVATE:
-			oper = (MS_PRIVATE | MS_REC);
+			oper |= (MS_PRIVATE | MS_REC);
 			break;
 		case MOUNT_OPT_RUNBINDABLE:
-			oper = (MS_UNBINDABLE | MS_REC);
+			oper |= (MS_UNBINDABLE | MS_REC);
 			break;
 		default:
 			usage(stderr);
@@ -885,6 +885,12 @@ int main(int argc, char **argv)
 		usage(stderr);
 
 	if (oper) {
+		if (!is_power_of_2(oper))
+			errx(MOUNT_EX_USAGE, _("propagation flags (--make-* or --bind options) are mutually exclusive"));
+
+		if (oper != MS_BIND && mnt_context_get_options(cxt))
+			errx(MOUNT_EX_USAGE, _("propagation flags (--make-* options) cannot be mixed with another mount options"));
+
 		/* MS_PROPAGATION operations, let's set the mount flags */
 		mnt_context_set_mflags(cxt, oper);
 
