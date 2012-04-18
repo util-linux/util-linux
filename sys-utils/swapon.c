@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <string.h>
-#include <mntent.h>
 #include <errno.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -14,15 +13,15 @@
 
 #include <libmount.h>
 
+#include "c.h"
+#include "nls.h"
 #include "bitops.h"
 #include "blkdev.h"
-#include "nls.h"
 #include "pathnames.h"
-#include "swapheader.h"
 #include "xalloc.h"
-#include "c.h"
 #include "closestream.h"
 
+#include "swapheader.h"
 #include "swapon-common.h"
 
 #define PATH_MKSWAP	"/sbin/mkswap"
@@ -53,8 +52,6 @@
 # define swapon(path, flags) syscall(SYS_swapon, path, flags)
 #endif
 
-#define streq(s, t)	(strcmp ((s), (t)) == 0)
-
 #define QUIET	1
 #define CANONIC	1
 
@@ -75,11 +72,9 @@ static int discard;
 /* If true, don't complain if the device/file doesn't exist */
 static int ifexists;
 static int fixpgsz;
-
 static int verbose;
 
-static int
-display_summary(void)
+static int display_summary(void)
 {
 	struct libmnt_table *st = get_swaps();
 	struct libmnt_iter *itr;
@@ -109,8 +104,8 @@ display_summary(void)
 }
 
 /* calls mkswap */
-static int
-swap_reinitialize(const char *device, const char *label, const char *uuid)
+static int swap_reinitialize(const char *device,
+			     const char *label, const char *uuid)
 {
 	pid_t pid;
 	int status, ret;
@@ -158,8 +153,7 @@ swap_reinitialize(const char *device, const char *label, const char *uuid)
 	return -1; /* error */
 }
 
-static int
-swap_rewrite_signature(const char *devname, unsigned int pagesize)
+static int swap_rewrite_signature(const char *devname, unsigned int pagesize)
 {
 	int fd, rc = -1;
 
@@ -186,8 +180,7 @@ err:
 	return rc;
 }
 
-static int
-swap_detect_signature(const char *buf, int *sig)
+static int swap_detect_signature(const char *buf, int *sig)
 {
 	if (memcmp(buf, "SWAP-SPACE", 10) == 0 ||
             memcmp(buf, "SWAPSPACE2", 10) == 0)
@@ -205,8 +198,7 @@ swap_detect_signature(const char *buf, int *sig)
 	return 1;
 }
 
-static char *
-swap_get_header(int fd, int *sig, unsigned int *pagesize)
+static char *swap_get_header(int fd, int *sig, unsigned int *pagesize)
 {
 	char *buf;
 	ssize_t datasz;
@@ -244,8 +236,8 @@ err:
 }
 
 /* returns real size of swap space */
-unsigned long long
-swap_get_size(const char *hdr, const char *devname, unsigned int pagesize)
+static unsigned long long swap_get_size(const char *hdr, const char *devname,
+					unsigned int pagesize)
 {
 	unsigned int last_page = 0;
 	int swap_version = 0;
@@ -272,8 +264,7 @@ swap_get_size(const char *hdr, const char *devname, unsigned int pagesize)
 	return ((unsigned long long) last_page + 1) * pagesize;
 }
 
-void
-swap_get_info(const char *hdr, char **label, char **uuid)
+static void swap_get_info(const char *hdr, char **label, char **uuid)
 {
 	struct swap_header_v1_2 *s = (struct swap_header_v1_2 *) hdr;
 
@@ -295,8 +286,7 @@ swap_get_info(const char *hdr, char **label, char **uuid)
 	}
 }
 
-static int
-swapon_checks(const char *special)
+static int swapon_checks(const char *special)
 {
 	struct stat st;
 	int fd = -1, sig;
@@ -406,8 +396,9 @@ err:
 	return -1;
 }
 
-static int
-do_swapon(const char *orig_special, int prio, int fl_discard, int canonic) {
+static int do_swapon(const char *orig_special, int prio,
+		     int fl_discard, int canonic)
+{
 	int status;
 	const char *special = orig_special;
 	int flags = 0;
@@ -443,29 +434,29 @@ do_swapon(const char *orig_special, int prio, int fl_discard, int canonic) {
 	return status;
 }
 
-static int
-swapon_by_label(const char *label, int prio, int dsc) {
+static int swapon_by_label(const char *label, int prio, int dsc)
+{
 	const char *special = mnt_resolve_tag("LABEL", label, mntcache);
 	return special ? do_swapon(special, prio, dsc, CANONIC) :
 			 cannot_find(label);
 }
 
-static int
-swapon_by_uuid(const char *uuid, int prio, int dsc) {
+static int swapon_by_uuid(const char *uuid, int prio, int dsc)
+{
 	const char *special = mnt_resolve_tag("UUID", uuid, mntcache);
 	return special ? do_swapon(special, prio, dsc, CANONIC) :
 			 cannot_find(uuid);
 }
 
-static int
-swapon_all(void) {
+static int swapon_all(void)
+{
 	struct libmnt_table *tb = get_fstab();
 	struct libmnt_iter *itr;
 	struct libmnt_fs *fs;
 	int status = 0;
 
 	if (!tb)
-		err(2, _("failed to parse %s"), mnt_get_fstab_path());
+		err(EXIT_FAILURE, _("failed to parse %s"), mnt_get_fstab_path());
 
 	itr = mnt_new_iter(MNT_ITER_FORWARD);
 	if (!itr)
