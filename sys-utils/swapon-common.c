@@ -53,7 +53,7 @@ int match_swap(struct libmnt_fs *fs, void *data __attribute__((unused)))
 int is_active_swap(const char *filename)
 {
 	struct libmnt_table *st = get_swaps();
-	return st && mnt_table_find_srcpath(st, filename, MNT_ITER_BACKWARD);
+	return st && mnt_table_find_source(st, filename, MNT_ITER_BACKWARD);
 }
 
 

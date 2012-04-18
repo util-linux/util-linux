@@ -39,7 +39,7 @@ static int do_swapoff(const char *orig_special, int quiet, int canonic)
         const char *special = orig_special;
 
 	if (verbose)
-		printf(_("swapoff  %s\n"), orig_special);
+		printf(_("swapoff %s\n"), orig_special);
 
 	if (!canonic) {
 		special = mnt_resolve_spec(orig_special, mntcache);
@@ -92,11 +92,46 @@ static void usage(FILE *out, int n)
 	exit(n);
 }
 
+static int swapoff_all(void)
+{
+	int status = 0;
+	struct libmnt_table *tb;
+	struct libmnt_fs *fs;
+	struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_BACKWARD);
+
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to initialize libmount iterator"));
+
+	/*
+	 * In case /proc/swaps exists, unswap stuff listed there.  We are quiet
+	 * but report errors in status.  Errors might mean that /proc/swaps
+	 * exists as ordinary file, not in procfs.  do_swapoff() exits
+	 * immediately on EPERM.
+	 */
+	tb = get_swaps();
+
+	while (tb && mnt_table_find_next_fs(tb, itr, match_swap, NULL, &fs) == 0)
+		status |= do_swapoff(mnt_fs_get_source(fs), QUIET, CANONIC);
+
+	/*
+	 * Unswap stuff mentioned in /etc/fstab.  Probably it was unmounted
+	 * already, so errors are not bad.  Doing swapoff -a twice should not
+	 * give error messages.
+	 */
+	tb = get_fstab();
+	mnt_reset_iter(itr, MNT_ITER_FORWARD);
+
+	while (tb && mnt_table_find_next_fs(tb, itr, match_swap, NULL, &fs) == 0) {
+		if (!is_active_swap(mnt_fs_get_source(fs)))
+			do_swapoff(mnt_fs_get_source(fs), QUIET, !CANONIC);
+	}
+
+	mnt_free_iter(itr);
+	return status;
+}
 
 int main(int argc, char *argv[])
 {
-	FILE *fp;
-	struct mntent *fstab;
 	int status = 0, c;
 	size_t i;
 
@@ -149,10 +184,6 @@ int main(int argc, char *argv[])
 	mnt_init_debug(0);
 	mntcache = mnt_new_cache();
 
-	/*
-	 * swapoff any explicitly given arguments.
-	 * Complain in case the swapoff call fails.
-	 */
 	for (i = 0; i < numof_labels(); i++)
 		status |= swapoff_by_label(get_label(i), !QUIET);
 
@@ -162,51 +193,8 @@ int main(int argc, char *argv[])
 	while (*argv != NULL)
 		status |= do_swapoff(*argv++, !QUIET, !CANONIC);
 
-	if (all) {
-		/*
-		 * In case /proc/swaps exists, unswap stuff listed there.
-		 * We are quiet but report errors in status.
-		 * Errors might mean that /proc/swaps
-		 * exists as ordinary file, not in procfs.
-		 * do_swapoff() exits immediately on EPERM.
-		 */
-		struct libmnt_table *st = get_swaps();
-
-		if (st && mnt_table_get_nents(st) > 0) {
-			struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_BACKWARD);
-			struct libmnt_fs *fs;
-
-			while (itr && mnt_table_next_fs(st, itr, &fs) == 0)
-				status |= do_swapoff(mnt_fs_get_source(fs),
-						     QUIET, CANONIC);
-
-			mnt_free_iter(itr);
-		}
-
-		/*
-		 * Unswap stuff mentioned in /etc/fstab.
-		 * Probably it was unmounted already, so errors are not bad.
-		 * Doing swapoff -a twice should not give error messages.
-		 */
-		fp = setmntent(_PATH_MNTTAB, "r");
-		if (fp == NULL)
-			err(2, _("%s: open failed"), _PATH_MNTTAB);
-
-		while ((fstab = getmntent(fp)) != NULL) {
-			const char *special;
-
-			if (strcmp(fstab->mnt_type, MNTTYPE_SWAP) != 0)
-				continue;
-
-			special = mnt_resolve_spec(fstab->mnt_fsname, mntcache);
-			if (!special)
-				continue;
-
-			if (!is_active_swap(special))
-				do_swapoff(special, QUIET, CANONIC);
-		}
-		fclose(fp);
-	}
+	if (all)
+		status |= swapoff_all();
 
 	free_tables();
 	mnt_free_cache(mntcache);
