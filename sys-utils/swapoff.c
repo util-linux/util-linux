@@ -1,16 +1,6 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <getopt.h>
-#include <string.h>
-#include <mntent.h>
 #include <errno.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <fcntl.h>
-#include <stdint.h>
-#include <ctype.h>
+#include <getopt.h>
 
 #ifdef HAVE_SYS_SWAP_H
 # include <sys/swap.h>
@@ -71,16 +61,19 @@ static int swapoff_by_uuid(const char *uuid, int quiet)
 	return special ? do_swapoff(special, quiet, CANONIC) : cannot_find(uuid);
 }
 
-static void usage(FILE *out, int n)
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fputs(_("\nUsage:\n"), out);
+	fputs(USAGE_HEADER, out);
+
 	fprintf(out, _(" %s [options] [<spec>]\n"), program_invocation_short_name);
 
-	fputs(_("\nOptions:\n"), out);
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all              disable all swaps from /proc/swaps\n"
-		" -h, --help             display help and exit\n"
-		" -v, --verbose          verbose mode\n"
-		" -V, --version          display version and exit\n"), out);
+		" -v, --verbose          verbose mode\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 
 	fputs(_("\nThe <spec> parameter:\n" \
 		" -L <label>             LABEL of device to be used\n" \
@@ -88,8 +81,10 @@ static void usage(FILE *out, int n)
 		" LABEL=<label>          LABEL of device to be used\n" \
 		" UUID=<uuid>            UUID of device to be used\n" \
 		" <device>               name of device to be used\n" \
-		" <file>                 name of file to be used\n\n"), out);
-	exit(n);
+		" <file>                 name of file to be used\n"), out);
+
+	fprintf(out, USAGE_MAN_TAIL("swapoff(8)"));
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 static int swapoff_all(void)
@@ -155,7 +150,7 @@ int main(int argc, char *argv[])
 			++all;
 			break;
 		case 'h':		/* help */
-			usage(stdout, 0);
+			usage(stdout);
 			break;
 		case 'v':		/* be chatty */
 			++verbose;
@@ -169,17 +164,15 @@ int main(int argc, char *argv[])
 		case 'U':
 			add_uuid(optarg);
 			break;
-		case 0:
-			break;
 		case '?':
 		default:
-			usage(stderr, 1);
+			usage(stderr);
 		}
 	}
 	argv += optind;
 
 	if (!all && !numof_labels() && !numof_uuids() && *argv == NULL)
-		usage(stderr, 2);
+		usage(stderr);
 
 	mnt_init_debug(0);
 	mntcache = mnt_new_cache();
