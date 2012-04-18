@@ -913,24 +913,24 @@ out_partition_header(char *dev, int format, struct geometry G) {
 		G.cylindersize ? _("cylinders") : _("sectors"));
     case F_CYLINDER:
 	if (G.cylindersize) {
-	    printf(_("Units = cylinders of %lu bytes, blocks of 1024 bytes"
+	    printf(_("Units: cylinders of %lu bytes, blocks of 1024 bytes"
 		     ", counting from %d\n\n"), G.cylindersize << 9, increment);
 	    printf(_("   Device Boot Start     End   #cyls    #blocks   Id  System\n"));
 	    break;
 	}
 	/* fall through */
     case F_SECTOR:
-	printf(_("Units = sectors of 512 bytes, counting from %d\n\n"),
+	printf(_("Units: sectors of 512 bytes, counting from %d\n\n"),
 	       increment);
 	printf(_("   Device Boot    Start       End   #sectors  Id  System\n"));
 	break;
     case F_BLOCK:
-	printf(_("Units = blocks of 1024 bytes, counting from %d\n\n"),
+	printf(_("Units: blocks of 1024 bytes, counting from %d\n\n"),
 	       increment);
 	printf(_("   Device Boot   Start       End    #blocks   Id  System\n"));
 	break;
     case F_MEGABYTE:
-	printf(_("Units = mebibytes of 1048576 bytes, blocks of 1024 bytes"
+	printf(_("Units: 1MiB = 1024*1024 bytes, blocks of 1024 bytes"
 		 ", counting from %d\n\n"), increment);
 	printf(_("   Device Boot Start   End    MiB    #blocks   Id  System\n"));
 	break;
