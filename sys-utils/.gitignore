@@ -43,6 +43,7 @@ sparc32bash.8
 sparc64.8
 sparc.8
 swapon
+swapoff
 switch_root
 tunelp
 unshare

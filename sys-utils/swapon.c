@@ -1,6 +1,3 @@
-/*
- * A swapon(8)/swapoff(8) for Linux 0.99.
- */
 #include <stdlib.h>
 #include <stdio.h>
 #include <getopt.h>
@@ -54,7 +51,6 @@
 /* libc is insane, let's call the kernel */
 # include <sys/syscall.h>
 # define swapon(path, flags) syscall(SYS_swapon, path, flags)
-# define swapoff(path) syscall(SYS_swapoff, path)
 #endif
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
@@ -98,8 +94,6 @@ static const struct option longswaponopts[] = {
 	{ NULL, 0, 0, 0 }
 };
 
-static const struct option *longswapoffopts = &longswaponopts[4];
-
 #define PRINT_USAGE_SPECIAL(_fp) \
 	fputs(_("\nThe <spec> parameter:\n" \
 		" -L <label>             LABEL of device to be used\n" \
@@ -122,22 +116,6 @@ swapon_usage(FILE *out, int n) {
 		" -h, --help             display help and exit\n"
 		" -p, --priority <prio>  specify the priority of the swap device\n"
 		" -s, --summary          display summary about used swap devices and exit\n"
-		" -v, --verbose          verbose mode\n"
-		" -V, --version          display version and exit\n"), out);
-
-	PRINT_USAGE_SPECIAL(out);
-
-	exit(n);
-}
-
-static void
-swapoff_usage(FILE *out, int n) {
-	fputs(_("\nUsage:\n"), out);
-	fprintf(out, _(" %s [options] [<spec>]\n"), progname);
-
-	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -a, --all              disable all swaps from /proc/swaps\n"
-		" -h, --help             display help and exit\n"
 		" -v, --verbose          verbose mode\n"
 		" -V, --version          display version and exit\n"), out);
 
@@ -526,43 +504,6 @@ swapon_by_uuid(const char *uuid, int prio, int dsc) {
 }
 
 static int
-do_swapoff(const char *orig_special, int quiet, int canonic) {
-        const char *special = orig_special;
-
-	if (verbose)
-		printf(_("%s on %s\n"), progname, orig_special);
-
-	if (!canonic) {
-		special = mnt_resolve_spec(orig_special, mntcache);
-		if (!special)
-			return cannot_find(orig_special);
-	}
-
-	if (swapoff(special) == 0)
-		return 0;	/* success */
-
-	if (errno == EPERM)
-		errx(EXIT_FAILURE, _("Not superuser."));
-
-	if (!quiet || errno == ENOMEM)
-		warn(_("%s: swapoff failed"), orig_special);
-
-	return -1;
-}
-
-static int
-swapoff_by_label(const char *label, int quiet) {
-	const char *special = mnt_resolve_tag("LABEL", label, mntcache);
-	return special ? do_swapoff(special, quiet, CANONIC) : cannot_find(label);
-}
-
-static int
-swapoff_by_uuid(const char *uuid, int quiet) {
-	const char *special = mnt_resolve_tag("UUID", uuid, mntcache);
-	return special ? do_swapoff(special, quiet, CANONIC) : cannot_find(uuid);
-}
-
-static int
 swapon_all(void) {
 	struct libmnt_table *tb = get_fstab();
 	struct libmnt_iter *itr;
@@ -678,109 +619,6 @@ main_swapon(int argc, char *argv[]) {
 	return status;
 }
 
-static int
-main_swapoff(int argc, char *argv[]) {
-	FILE *fp;
-	struct mntent *fstab;
-	int status = 0;
-	int c;
-	size_t i;
-
-	while ((c = getopt_long(argc, argv, "ahvVL:U:",
-				 longswapoffopts, NULL)) != -1) {
-		switch (c) {
-		case 'a':		/* all */
-			++all;
-			break;
-		case 'h':		/* help */
-			swapoff_usage(stdout, 0);
-			break;
-		case 'v':		/* be chatty */
-			++verbose;
-			break;
-		case 'V':		/* version */
-			printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
-			exit(EXIT_SUCCESS);
-		case 'L':
-			add_label(optarg);
-			break;
-		case 'U':
-			add_uuid(optarg);
-			break;
-		case 0:
-			break;
-		case '?':
-		default:
-			swapoff_usage(stderr, 1);
-		}
-	}
-	argv += optind;
-
-	if (!all && !numof_labels() && !numof_uuids() && *argv == NULL)
-		swapoff_usage(stderr, 2);
-
-	/*
-	 * swapoff any explicitly given arguments.
-	 * Complain in case the swapoff call fails.
-	 */
-	for (i = 0; i < numof_labels(); i++)
-		status |= swapoff_by_label(get_label(i), !QUIET);
-
-	for (i = 0; i < numof_uuids(); i++)
-		status |= swapoff_by_uuid(get_uuid(i), !QUIET);
-
-	while (*argv != NULL)
-		status |= do_swapoff(*argv++, !QUIET, !CANONIC);
-
-	if (all) {
-		/*
-		 * In case /proc/swaps exists, unswap stuff listed there.
-		 * We are quiet but report errors in status.
-		 * Errors might mean that /proc/swaps
-		 * exists as ordinary file, not in procfs.
-		 * do_swapoff() exits immediately on EPERM.
-		 */
-		struct libmnt_table *st = get_swaps();
-
-		if (st && mnt_table_get_nents(st) > 0) {
-			struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_BACKWARD);
-			struct libmnt_fs *fs;
-
-			while (itr && mnt_table_next_fs(st, itr, &fs) == 0)
-				status |= do_swapoff(mnt_fs_get_source(fs),
-						     QUIET, CANONIC);
-
-			mnt_free_iter(itr);
-		}
-
-		/*
-		 * Unswap stuff mentioned in /etc/fstab.
-		 * Probably it was unmounted already, so errors are not bad.
-		 * Doing swapoff -a twice should not give error messages.
-		 */
-		fp = setmntent(_PATH_MNTTAB, "r");
-		if (fp == NULL)
-			err(2, _("%s: open failed"), _PATH_MNTTAB);
-
-		while ((fstab = getmntent(fp)) != NULL) {
-			const char *special;
-
-			if (!streq(fstab->mnt_type, MNTTYPE_SWAP))
-				continue;
-
-			special = mnt_resolve_spec(fstab->mnt_fsname, mntcache);
-			if (!special)
-				continue;
-
-			if (!is_active_swap(special))
-				do_swapoff(special, QUIET, CANONIC);
-		}
-		fclose(fp);
-	}
-
-	return status;
-}
-
 int
 main(int argc, char *argv[]) {
 
@@ -800,13 +638,7 @@ main(int argc, char *argv[]) {
 	mnt_init_debug(0);
 	mntcache = mnt_new_cache();
 
-	if (streq(progname, "swapon"))
-		status = main_swapon(argc, argv);
-	else if (streq(progname, "swapoff"))
-		status = main_swapoff(argc, argv);
-	else
-		errx(EXIT_FAILURE, _("'%s' is unsupported program name "
-			"(must be 'swapon' or 'swapoff')."), progname);
+	status = main_swapon(argc, argv);
 
 	free_tables();
 	mnt_free_cache(mntcache);

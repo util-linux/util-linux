@@ -131,7 +131,7 @@ endif # BUILD_NEW_MOUNT
 
 
 if BUILD_SWAPON
-sbin_PROGRAMS += swapon
+sbin_PROGRAMS += swapon swapoff
 dist_man_MANS += swapoff.8 swapon.8
 
 swapon_SOURCES = \
@@ -142,6 +142,10 @@ swapon_SOURCES = \
 
 swapon_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 swapon_LDADD = $(ul_libmount_la)
+
+swapoff_SOURCES = swapoff.c swapon-common.c
+swapoff_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+swapoff_LDADD = $(ul_libmount_la)
 endif
 
 if BUILD_LSCPU
