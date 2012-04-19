@@ -113,7 +113,7 @@ struct dmesg_control {
 	/*
 	 * For the --file option we mmap whole file. The unnecessary (already
 	 * printed) pages are always unmapped. The result is that we have in
-	 * memory only the currenly used page(s).
+	 * memory only the currently used page(s).
 	 */
 	char		*mmap_buff;
 	size_t		pagesize;

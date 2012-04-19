@@ -1817,7 +1817,7 @@ wrong_p_order(int *prev) {
  * The chain is sorted so that sectors increase, and so that
  * starting sectors increase.
  *
- * After this it may still be that cfdisk doesnt like the table.
+ * After this it may still be that cfdisk doesn't like the table.
  * (This is because cfdisk considers expanded parts, from link to
  * end of partition, and these may still overlap.)
  * Now

@@ -612,7 +612,7 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
  * again mnt_context_do_mount().
  *
  * WARNING: non-zero return code does not mean that mount(2) syscall or
- *          mount.type helper wasn't sucessfully called.
+ *          mount.type helper wasn't successfully called.
  *
  *          Check mnt_context_get_status() after error!
 *
@@ -720,7 +720,7 @@ int mnt_context_finalize_mount(struct libmnt_context *cxt)
  * once, whole context has to be reseted.
  *
  * WARNING: non-zero return code does not mean that mount(2) syscall or
- *          mount.type helper wasn't sucessfully called.
+ *          mount.type helper wasn't successfully called.
  *
  *          Check mnt_context_get_status() after error!
  *

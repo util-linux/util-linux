@@ -1799,7 +1799,7 @@ void __attribute__((__noreturn__)) hwaudit_exit(int status)
  * November 1996: Version 2.0.1. Modifications by Nicolai Langfeldt
  * (janl@math.uio.no) to make it compile on linux 1.2 machines as well as
  * more recent versions of the kernel. Introduced the NO_CLOCK access method
- * and wrote feature test code to detect absense of rtc headers.
+ * and wrote feature test code to detect absence of rtc headers.
  *
  ***************************************************************************
  * Maintenance notes

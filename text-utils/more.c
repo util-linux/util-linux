@@ -1574,7 +1574,7 @@ void do_shell (char *filename)
 }
 
 /*
-** Search for nth ocurrence of regular expression contained in buf in the file
+** Search for nth occurrence of regular expression contained in buf in the file
 */
 
 void search(char buf[], FILE *file, register int n)
@@ -2128,7 +2128,7 @@ reset_tty () {
     if (no_tty)
 	return;
     if (pstate) {
-	tputs(ULexit, fileno(stdout), ourputch);	/* putchar - if that isnt a macro */
+	tputs(ULexit, fileno(stdout), ourputch);	/* putchar - if that isn't a macro */
 	fflush(stdout);
 	pstate = 0;
     }

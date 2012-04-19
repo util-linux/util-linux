@@ -1,6 +1,6 @@
 
 /*
- * encode.c - string convertion routines (mostly for compatibility with
+ * encode.c - string conversion routines (mostly for compatibility with
  *            udev/volume_id)
  *
  * Copyright (C) 2008 Kay Sievers <kay.sievers@vrfy.org>

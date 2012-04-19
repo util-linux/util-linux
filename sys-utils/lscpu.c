@@ -560,7 +560,7 @@ read_hypervisor(struct lscpu_desc *desc)
 	}
 }
 
-/* add @set to the @ary, unnecesary set is deallocated. */
+/* add @set to the @ary, unnecessary set is deallocated. */
 static int add_cpuset_to_array(cpu_set_t **ary, int *items, cpu_set_t *set)
 {
 	int i;

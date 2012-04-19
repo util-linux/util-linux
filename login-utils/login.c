@@ -1102,7 +1102,7 @@ static void fork_session(struct login_context *cxt)
 		exit(EXIT_FAILURE);
 
 	/*
-	 * Problem: if the user's shell is a shell like ash that doesnt do
+	 * Problem: if the user's shell is a shell like ash that doesn't do
 	 * setsid() or setpgrp(), then a ctrl-\, sending SIGQUIT to every
 	 * process in the pgrp, will kill us.
 	 */

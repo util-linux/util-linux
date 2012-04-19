@@ -116,7 +116,7 @@ int cmos_epoch = 1900;
  * Martin Ostermann writes:
  *
  * The problem with the Jensen is twofold: First, it has the clock at a
- * different address. Secondly, it has a distinction beween "local" and
+ * different address. Secondly, it has a distinction between "local" and
  * normal bus addresses. The local ones pertain to the hardware integrated
  * into the chipset, like serial/parallel ports and of course, the RTC.
  * Those need to be addressed differently. This is handled fine in the
@@ -339,7 +339,7 @@ static inline unsigned long cmos_read(unsigned long reg)
 		 *
 		 * Other docs state that "any write to 0x70 should be
 		 * followed by an action to 0x71 or the RTC wil be left in
-		 * an unknown state". Most docs say that it doesnt matter at
+		 * an unknown state". Most docs say that it doesn't matter at
 		 * all what one does.
 		 */
 		/*

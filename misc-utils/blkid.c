@@ -580,7 +580,7 @@ done:
 	if (!nvals)
 		return 2;	/* nothing detected */
 
-	return 0;		/* sucess */
+	return 0;		/* success */
 }
 
 /* converts comma separated list to BLKID_USAGE_* mask */

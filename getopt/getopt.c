@@ -40,7 +40,7 @@
  */
 
 /* Exit codes:
- *   0) No errors, succesful operation.
+ *   0) No errors, successful operation.
  *   1) getopt(3) returned an error.
  *   2) A problem with parameter parsing for getopt(1).
  *   3) Internal error, out of memory
@@ -116,7 +116,7 @@ static const char *normalize(const char *arg)
 	}
 
 	/*
-	 * Each character in arg may take upto four characters in the
+	 * Each character in arg may take up to four characters in the
 	 * result: For a quote we need a closing quote, a backslash, a quote
 	 * and an opening quote! We need also the global opening and closing
 	 * quote, and one extra character for '\0'.

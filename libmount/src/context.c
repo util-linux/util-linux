@@ -1778,7 +1778,7 @@ int mnt_context_fstab_applied(struct libmnt_context *cxt)
  * mnt_context_get_helper_status(). The mnt_context_get_status() only inform
  * that exec() has been sucessful.
  *
- * Returns: 1 if mount.type or mount(2) syscall has been succesfully called.
+ * Returns: 1 if mount.type or mount(2) syscall has been successfully called.
  */
 int mnt_context_get_status(struct libmnt_context *cxt)
 {

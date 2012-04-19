@@ -173,7 +173,7 @@ int main(int argc, char **argv)
 	/*
 	 * FIXME: why terminal type is lpr when command begins with c and has
 	 * no terminal? If this behavior can be explained please insert
-	 * refrence or remove the code. In case this truly is desired command
+	 * reference or remove the code. In case this truly is desired command
 	 * behavior this should be mentioned in manual page.
 	 */
 	if (termtype == NULL || (argv[0][0] == 'c' && !isatty(STDOUT_FILENO)))

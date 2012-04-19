@@ -910,7 +910,7 @@ blkid_partition blkid_partlist_get_partition(blkid_partlist ls, int n)
  * This function tries to get start and size for @devno from sysfs and
  * returns a partition from @ls which matches with the values from sysfs.
  *
- * This funtion is necessary when you want to make a relation between an entry
+ * This function is necessary when you want to make a relation between an entry
  * in the partition table (@ls) and block devices in your system.
  *
  * Returns: partition object or NULL in case or error.

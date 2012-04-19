@@ -301,7 +301,7 @@ void do_shm (char format)
 	case STATUS:
 		printf (_("------ Shared Memory Status --------\n"));
 		/*
-		 * TRANSLATORS: This output format is mantained for backward
+		 * TRANSLATORS: This output format is maintained for backward
 		 * compatibility as ipcs is used in scripts. For consistency
 		 * with the rest, the translated form can follow this model:
 		 *
