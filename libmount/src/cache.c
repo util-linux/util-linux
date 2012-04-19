@@ -299,7 +299,8 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 {
 	size_t i, ntags = 0;
 	int rc;
-	const char *tags[] = { "LABEL", "UUID", "TYPE" };
+	const char *tags[] = { "LABEL", "UUID", "TYPE", "PARTUUID", "PARTLABEL" };
+	const char *blktags[] = { "LABEL", "UUID", "TYPE", "PART_ENTRY_UUID", "PART_ENTRY_NAME" };
 
 	assert(cache);
 	assert(devname);
@@ -329,6 +330,9 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 			BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID |
 			BLKID_SUBLKS_TYPE);
 
+	blkid_probe_enable_partitions(cache->pr, 1);
+	blkid_probe_set_partitions_flags(cache->pr, BLKID_PARTS_ENTRY_DETAILS);
+
 	if (blkid_do_safeprobe(cache->pr))
 		goto error;
 
@@ -343,7 +347,7 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 					"\ntag %s already cached", tags[i]));
 			continue;
 		}
-		if (blkid_probe_lookup_value(cache->pr, tags[i], &data, NULL))
+		if (blkid_probe_lookup_value(cache->pr, blktags[i], &data, NULL))
 			continue;
 		dev = strdup(devname);
 		if (!dev)
