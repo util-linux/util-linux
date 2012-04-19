@@ -127,19 +127,25 @@ but there are other possibilities. For example, in the case of an NFS mount,
 may look like
 .IR knuth.cwi.nl:/dir .
 It is possible to indicate a block special device using its
-volume
+filesystem
 .B LABEL
 or
 .B UUID
-(see the \-L and \-U options below).
+(see the \-L and \-U options below) and
+partition
+.B PARTUUID
+or
+.B PARTLABEL
+(partition identifiers are supported for GUID Partition Table (GPT) and MAC
+partition tables only).
 
-The recommended setup is to use LABEL=<label> or UUID=<uuid> tags rather than
-.B /dev/disk/by-{label,uuid}
+The recommended setup is to use tags (e.g. LABEL=<label>) rather than
+.B /dev/disk/by-{label,uuid,partuuid,partlabel}
 udev symlinks in the /etc/fstab file. The tags are
 more readable, robust and portable. The
 .BR mount (8)
 command internally uses udev
-symlinks, so use the symlinks in /etc/fstab has no advantage over LABEL=/UUID=.
+symlinks, so use the symlinks in /etc/fstab has no advantage over the tags.
 For more details see
 .BR libblkid (3).
 
@@ -218,7 +224,7 @@ program does not read the
 .I /etc/fstab
 file if
 .I device
-(or LABEL/UUID) and
+(or LABEL, UUID, PARTUUID or PARTLABEL) and
 .I dir
 are specified. For example:
 .RS

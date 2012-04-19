@@ -614,7 +614,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -L, --label <label>     synonym for LABEL=<label>\n"
 	" -U, --uuid <uuid>       synonym for UUID=<uuid>\n"
 	" LABEL=<label>           specifies device by filesystem label\n"
-	" UUID=<uuid>             specifies device by filesystem UUID\n"));
+	" UUID=<uuid>             specifies device by filesystem UUID\n"
+	" PARTLABEL=<label>       specifies device by partition label\n"
+	" PARTUUID=<uuid>         specifies device by partition UUID\n"));
+
 	fprintf(out, _(
 	" <device>                specifies device by path\n"
 	" <directory>             mountpoint for bind mounts (see --bind/rbind)\n"
