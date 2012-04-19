@@ -17,6 +17,7 @@ dist_man_MANS = \
 	ipcrm.1 \
 	ipcs.1 \
 	readprofile.8 \
+	fstab.5 \
 	renice.1 \
 	setsid.1
 
