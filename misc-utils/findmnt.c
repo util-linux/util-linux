@@ -67,6 +67,8 @@ enum {
 	COL_FS_OPTIONS,
 	COL_LABEL,
 	COL_UUID,
+	COL_PARTLABEL,
+	COL_PARTUUID,
 	COL_MAJMIN,
 	COL_ACTION,
 	COL_OLD_TARGET,
@@ -104,6 +106,8 @@ static struct colinfo infos[FINDMNT_NCOLUMNS] = {
 	[COL_FS_OPTIONS]   = { "FS-OPTIONS",   0.10, TT_FL_TRUNC, N_("FS specific mount options") },
 	[COL_LABEL]        = { "LABEL",        0.10, 0, N_("filesystem label") },
 	[COL_UUID]         = { "UUID",           36, 0, N_("filesystem UUID") },
+	[COL_PARTLABEL]    = { "PARTLABEL",    0.10, 0, N_("partition label") },
+	[COL_PARTUUID]     = { "PARTUUID",       36, 0, N_("partition UUID") },
 	[COL_MAJMIN]       = { "MAJ:MIN",         6, 0, N_("major:minor device number") },
 	[COL_ACTION]       = { "ACTION",         10, TT_FL_STRICTWIDTH, N_("action detected by --poll") },
 	[COL_OLD_OPTIONS]  = { "OLD-OPTIONS",  0.10, TT_FL_TRUNC, N_("old mount options saved by --poll") },
@@ -378,9 +382,16 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 	case COL_UUID:
 		str = get_tag(fs, "UUID");
 		break;
+	case COL_PARTUUID:
+		str = get_tag(fs, "PARTUUID");
+		break;
 	case COL_LABEL:
 		str = get_tag(fs, "LABEL");
 		break;
+	case COL_PARTLABEL:
+		str = get_tag(fs, "PARTLABEL");
+		break;
+
 	case COL_MAJMIN:
 	{
 		dev_t devno = mnt_fs_get_devno(fs);
@@ -902,7 +913,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -c, --canonicalize     canonicalize printed paths\n"
 	" -D, --df               imitate the output of df(1)\n"
 	" -d, --direction <word> direction of search, 'forward' or 'backward'\n"
-	" -e, --evaluate         convert tags (LABEL/UUID) to device names\n"
+	" -e, --evaluate         convert tags (LABEL/UUID,PARTUUID,PARTLABEL) to device names\n"
 	" -F, --tab-file <path>  alternative file for --fstab, --mtab or --kernel options\n"
 	" -f, --first-only       print the first found filesystem only\n"));
 
@@ -920,7 +931,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(
 	" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 	" -R, --submounts        print all submounts for the matching filesystems\n"
-	" -S, --source <string>  the device to mount (by name, LABEL= or UUID=)\n"
+	" -S, --source <string>  the device to mount (by name, LABEL=, UUID=, PARTUUID=, ...)\n"
 	" -T, --target <string>  the mountpoint to use\n"));
 
 	fputs(USAGE_SEPARATOR, out);
@@ -1184,7 +1195,8 @@ int main(int argc, char *argv[])
 		 */
 		const char *x = get_match(COL_SOURCE);
 
-		if (!strncmp(x, "LABEL=", 6) || !strncmp(x, "UUID=", 5))
+		if (!strncmp(x, "LABEL=", 6) || !strncmp(x, "UUID=", 5) ||
+		    !strncmp(x, "PARTLABEL=", 10) || !strncmp(x, "PARTUUID=", 9))
 			flags |= FL_NOSWAPMATCH;
 	}
 
