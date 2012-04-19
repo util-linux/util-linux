@@ -124,6 +124,8 @@
 #define _PATH_DEV_BYUUID	"/dev/disk/by-uuid"
 #define _PATH_DEV_BYID		"/dev/disk/by-id"
 #define _PATH_DEV_BYPATH	"/dev/disk/by-path"
+#define _PATH_DEV_BYPARTLABEL	"/dev/disk/by-partlabel"
+#define _PATH_DEV_BYPARTUUID	"/dev/disk/by-partuuid"
 
 /* hwclock paths */
 #define _PATH_ADJPATH		"/etc/adjtime"

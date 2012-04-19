@@ -31,8 +31,17 @@ static void blkid_probe_to_tags(blkid_probe pr, blkid_dev dev)
 	nvals = blkid_probe_numof_values(pr);
 
 	for (n = 0; n < nvals; n++) {
-		if (blkid_probe_get_value(pr, n, &name, &data, &len) == 0)
+		if (blkid_probe_get_value(pr, n, &name, &data, &len) != 0)
+			continue;
+		if (strncmp(name, "PART_ENTRY_", 11) == 0) {
+			if (strcmp(name, "PART_ENTRY_UUID") == 0)
+				blkid_set_tag(dev, "PARTUUID", data, len);
+			else if (strcmp(name, "PART_ENTRY_NAME") == 0)
+				blkid_set_tag(dev, "PARTLABEL", data, len);
+		} else {
+			/* superblock UUID, LABEL, ... */
 			blkid_set_tag(dev, name, data, len);
+		}
 	}
 }
 
@@ -131,6 +140,9 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 	blkid_probe_set_superblocks_flags(cache->probe,
 		BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID |
 		BLKID_SUBLKS_TYPE | BLKID_SUBLKS_SECTYPE);
+
+	blkid_probe_enable_partitions(cache->probe, TRUE);
+	blkid_probe_set_partitions_flags(cache->probe, BLKID_PARTS_ENTRY_DETAILS);
 
 	/*
 	 * If we already know the type, then try that first.
