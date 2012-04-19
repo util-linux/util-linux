@@ -28,6 +28,8 @@
 
 #include "nls.h"
 #include "c.h"
+#include "closestream.h"
+#include "pathnames.h"
 
 static const struct {
 	uint32_t flag;
@@ -55,7 +57,8 @@ static void usage(int status)
 	      _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -d, --device=	 device to use (/dev/watchdog)\n"), out);
+	fprintf(out,
+	      _(" -d, --device <path>   device to use (default is %s)\n"), _PATH_WATCHDOG_DEV);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -94,12 +97,13 @@ int main(int argc, char *argv[])
 	};
 
 	int c, status, sec, fd;
-	const char *device = "/dev/watchdog";
+	const char *device = _PATH_WATCHDOG_DEV;
 	struct watchdog_info ident;
 
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while((c = getopt_long(argc, argv, "hVd:", longopts, NULL)) != -1) {
 
@@ -176,5 +180,5 @@ int main(int argc, char *argv[])
 
 	close(fd);
 
-	return 0;
+	return EXIT_SUCCESS;
 }

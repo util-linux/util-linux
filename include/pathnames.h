@@ -146,6 +146,8 @@
 /* deprecated */
 #define _PATH_RAWDEVCTL_OLD	"/dev/rawctl"
 
+/* wdctl path */
+#define _PATH_WATCHDOG_DEV	"/dev/watchdog"
 
 #endif /* PATHNAMES_H */
 
