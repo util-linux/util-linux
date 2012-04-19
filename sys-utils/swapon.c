@@ -512,11 +512,13 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_VERSION, out);
 
 	fputs(_("\nThe <spec> parameter:\n" \
-		" -L <label>             LABEL of device to be used\n" \
-		" -U <uuid>              UUID of device to be used\n" \
-		" LABEL=<label>          LABEL of device to be used\n" \
-		" UUID=<uuid>            UUID of device to be used\n" \
-		" <device>               name of device to be used\n" \
+		" -L <label>             synonym for LABEL=<label>\n"
+		" -U <uuid>              synonym for UUID=<uuid>\n"
+		" LABEL=<label>          specifies device by swap area label\n"
+		" UUID=<uuid>            specifies device by swap area UUID\n"
+		" PARTLABEL=<label>      specifies device by partition label\n"
+		" PARTUUID=<uuid>        specifies device by partition UUID\n"
+		" <device>               name of device to be used\n"
 		" <file>                 name of file to be used\n"), out);
 
 	fprintf(out, USAGE_MAN_TAIL("swapon(8)"));
