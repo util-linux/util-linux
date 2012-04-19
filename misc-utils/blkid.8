@@ -114,7 +114,7 @@ block devices.  If this option is not specified,
 will print all of the devices that match the search parameter.
 .TP
 .BI \-L " label"
-Look up the device that uses this \fIlabel\fR (equal to: -l -o device -t
+Look up the device that uses this filesystem \fIlabel\fR (equal to: -l -o device -t
 LABEL=<label>).  This lookup method is able to reliably use /dev/disk/by-label
 udev symlinks (dependent on a setting in /etc/blkid.conf).  Avoid using the
 symlinks directly; it is not reliable to use the symlinks without verification.
@@ -235,7 +235,7 @@ probes for all supported formats except RAIDs.
 This option is only useful together with \fB-p\fR.
 .TP
 .BI \-U " uuid "
-Look up the device that uses this \fIuuid\fR.  For more details see the \fB-L\fR option.
+Look up the device that uses this filesystem \fIuuid\fR.  For more details see the \fB-L\fR option.
 .TP
 .B \-v
 Display version number and exit.
@@ -267,8 +267,8 @@ The following options control the libblkid library:
 .TP
 .I SEND_UEVENT=<yes|not>
 Sends uevent when
-.I /dev/disk/by-{label,uuid}/
-symlink does not match with LABEL or UUID on the device. Default is "yes".
+.I /dev/disk/by-{label,uuid,partuuid,partlabel}/
+symlink does not match with LABEL, UUID, PARTUUID or PARTLABEL on the device. Default is "yes".
 .TP
 .I CACHE_FILE=<path>
 Overrides the standard location of the cache file. This setting can be
