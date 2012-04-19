@@ -69,6 +69,8 @@ enum {
 	COL_TARGET,
 	COL_LABEL,
 	COL_UUID,
+	COL_PARTLABEL,
+	COL_PARTUUID,
 	COL_RO,
 	COL_RM,
 	COL_MODEL,
@@ -109,6 +111,10 @@ static struct colinfo infos[] = {
 	[COL_TARGET] = { "MOUNTPOINT", 0.10, TT_FL_TRUNC, N_("where the device is mounted") },
 	[COL_LABEL]  = { "LABEL",   0.1, 0, N_("filesystem LABEL") },
 	[COL_UUID]   = { "UUID",    36,  0, N_("filesystem UUID") },
+
+	[COL_PARTLABEL] = { "PARTLABEL", 0.1, 0, N_("partition LABEL") },
+	[COL_PARTUUID]  = { "PARTUUID",  36,  0, N_("partition UUID") },
+
 	[COL_RO]     = { "RO",      1, TT_FL_RIGHT, N_("read-only device") },
 	[COL_RM]     = { "RM",      1, TT_FL_RIGHT, N_("removable device") },
 	[COL_ROTA]   = { "ROTA",    1, TT_FL_RIGHT, N_("rotational device") },
@@ -169,8 +175,10 @@ struct blkdev_cxt {
 
 	int probed;		/* already probed */
 	char *fstype;		/* detected fs, NULL or "?" if cannot detect */
-	char *uuid;		/* UUID of device / filesystem */
-	char *label;		/* FS label */
+	char *uuid;		/* filesystem UUID (or stack uuid) */
+	char *label;		/* filesystem label */
+	char *partuuid;		/* partition UUID */
+	char *partlabel;	/* partiton label */
 
 	int npartitions;	/* # of partitions this device has */
 	int nholders;		/* # of devices mapped directly to this device
@@ -232,6 +240,8 @@ static void reset_blkdev_cxt(struct blkdev_cxt *cxt)
 	free(cxt->fstype);
 	free(cxt->uuid);
 	free(cxt->label);
+	free(cxt->partuuid);
+	free(cxt->partlabel);
 
 	sysfs_deinit(&cxt->sysfs);
 
@@ -363,7 +373,10 @@ static int probe_device_by_udev(struct blkdev_cxt *cxt)
 			cxt->fstype = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_FS_UUID")))
 			cxt->uuid = xstrdup(data);
-
+		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_UUID")))
+			cxt->partuuid = xstrdup(data);
+		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_NAME")))
+			cxt->partlabel = xstrdup(data);
 		udev_device_unref(dev);
 	}
 
@@ -393,13 +406,13 @@ static void probe_device(struct blkdev_cxt *cxt)
 	if (!pr)
 		return;
 
-	/* TODO: we have to enable partitions probing to avoid conflicts
-	 *       between raids and PT -- see blkid(8) code for more details
-	 */
 	blkid_probe_enable_superblocks(pr, 1);
 	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_LABEL |
 					      BLKID_SUBLKS_UUID |
 					      BLKID_SUBLKS_TYPE);
+	blkid_probe_enable_partitions(pr, 1);
+	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_ENTRY_DETAILS);
+
 	if (!blkid_do_safeprobe(pr)) {
 		const char *data = NULL;
 
@@ -409,6 +422,11 @@ static void probe_device(struct blkdev_cxt *cxt)
 			cxt->uuid = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "LABEL", &data, NULL))
 			cxt->label = xstrdup(data);
+		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_UUID", &data, NULL))
+			cxt->partuuid = xstrdup(data);
+		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_NAME", &data, NULL))
+			cxt->partlabel = xstrdup(data);
+
 	}
 
 	blkid_free_probe(pr);
@@ -623,6 +641,21 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		probe_device(cxt);
 		if (cxt->uuid)
 			tt_line_set_data(ln, col, xstrdup(cxt->uuid));
+		break;
+	case COL_PARTLABEL:
+		probe_device(cxt);
+		if (!cxt->partlabel)
+			break;
+
+		if (is_parsable(lsblk))
+			tt_line_set_data(ln, col, encode_str(cxt->partlabel));
+		else
+			tt_line_set_data(ln, col, xstrdup(cxt->partlabel));
+		break;
+	case COL_PARTUUID:
+		probe_device(cxt);
+		if (cxt->uuid)
+			tt_line_set_data(ln, col, xstrdup(cxt->partuuid));
 		break;
 	case COL_RO:
 		tt_line_set_data(ln, col, is_readonly_device(cxt) ?
