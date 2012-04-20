@@ -1289,7 +1289,7 @@ int main(int argc, char **argv)
 			*p++ = ' ';
 	}
 
-	for (cnt = getdtablesize(); cnt > 2; cnt--)
+	for (cnt = (getdtablesize() - 1); cnt > 2; cnt--)
 		close(cnt);
 
 	setpgrp();	 /* set pgid to pid this means that setsid() will fail */
