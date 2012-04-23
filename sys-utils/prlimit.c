@@ -585,7 +585,6 @@ int main(int argc, char **argv)
 			break;
 		case 'h':
 			usage(stdout);
-			break;
 		case 'o':
 			ncolumns = string_to_idarray(optarg,
 						     columns, ARRAY_SIZE(columns),
@@ -609,7 +608,6 @@ int main(int argc, char **argv)
 
 		default:
 			usage(stderr);
-			break;
 		}
 	}
 	if (argc > optind && pid)
