@@ -225,8 +225,7 @@ int	fd,				/* the disk */
 	partitions = 4;			/* maximum partition + 1 */
 
 unsigned int	user_cylinders, user_heads, user_sectors;
-unsigned int	pt_heads, pt_sectors;
-unsigned int	kern_heads, kern_sectors;
+unsigned int   pt_heads, pt_sectors;
 
 unsigned long long sector_offset = 1, extended_offset = 0, sectors;
 
@@ -998,10 +997,10 @@ update_sector_offset(void)
 void
 get_geometry(int fd, struct geom *g) {
 	unsigned long long llcyls, nsects = 0;
+	unsigned int kern_heads = 0, kern_sectors = 0;
 
 	get_topology(fd);
 	heads = cylinders = sectors = 0;
-	kern_heads = kern_sectors = 0;
 	pt_heads = pt_sectors = 0;
 
 	blkdev_get_geometry(fd, &kern_heads, &kern_sectors);
