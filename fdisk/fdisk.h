@@ -48,8 +48,6 @@ enum failure {ioctl_error,
 	unable_to_open, unable_to_read, unable_to_seek,
 	unable_to_write};
 
-enum action {fdisk, try_only};
-
 struct geom {
 	unsigned int heads;
 	unsigned int sectors;

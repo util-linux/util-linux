@@ -53,7 +53,6 @@
 
 #include "gpt.h"
 
-static int get_boot(enum action what);
 static void delete_partition(int i);
 
 #define hex_val(c)	({ \
@@ -1092,13 +1091,12 @@ static int check_dos_label(void)
  *    0: found or created label
  *    1: I/O error
  */
-static int
-get_boot(enum action what) {
+static int get_boot(int try_only) {
 
 	disklabel = ANY_LABEL;
 	memset(MBRbuffer, 0, 512);
 
-	if (what != try_only) {
+	if (!try_only) {
 		if ((fd = open(disk_device, O_RDWR)) < 0) {
 			if ((fd = open(disk_device, O_RDONLY)) < 0)
 				fatal(unable_to_open);
@@ -1109,7 +1107,7 @@ get_boot(enum action what) {
 	}
 
 	if (512 != read(fd, MBRbuffer, 512)) {
-		if (what == try_only)
+		if (try_only)
 			return 1;
 		fatal(unable_to_read);
 	}
@@ -1133,7 +1131,7 @@ get_boot(enum action what) {
 	}
 
 	if (disklabel == ANY_LABEL) {
-		if (what == try_only)
+		if (try_only)
 			return -1;
 
 		fprintf(stderr,
@@ -2710,7 +2708,7 @@ print_partition_table_from_option(char *device)
 		return;
 	gpt_warning(device);
 	if ((fd = open(disk_device, O_RDONLY)) >= 0) {
-		gb = get_boot(try_only);
+		gb = get_boot(1);
 		if (gb > 0) { /* I/O error */
 		} else if (gb < 0) { /* no DOS signature */
 			list_disk_geometry();
@@ -3004,7 +3002,7 @@ main(int argc, char **argv) {
 		"Be careful before using the write command.\n\n"), PACKAGE_STRING);
 
 	gpt_warning(disk_device);
-	get_boot(fdisk);
+	get_boot(0);
 
 	command_prompt();
 
