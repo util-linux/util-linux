@@ -45,8 +45,8 @@ static inline void dup_devnull(int to)
 
 static int start_command(struct child_process *cmd)
 {
-	int need_in, need_out, need_err;
-	int fdin[2], fdout[2], fderr[2];
+	int need_in;
+	int fdin[2];
 
 	/*
 	 * In case of errors we must keep the promise to close FDs
@@ -79,12 +79,10 @@ static int start_command(struct child_process *cmd)
 	}
 
 	if (cmd->pid < 0) {
-		int err = errno;
 		if (need_in)
 			close_pair(fdin);
 		else if (cmd->in)
 			close(cmd->in);
-
 		return -1;
 	}
 
