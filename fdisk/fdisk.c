@@ -1729,25 +1729,10 @@ static void check_consistency(struct partition *p, int partition) {
 		printf(_("logical=(%d, %d, %d)\n"),lec, leh, les);
 	}
 
-#if 0
-/* Beginning on cylinder boundary? */
-	if (pbh != !pbc || pbs != 1) {
-		printf(_("Partition %i does not start on cylinder "
-			"boundary:\n"), partition + 1);
-		printf(_("     phys=(%d, %d, %d) "), pbc, pbh, pbs);
-		printf(_("should be (%d, %d, 1)\n"), pbc, !pbc);
-	}
-#endif
-
 /* Ending on cylinder boundary? */
 	if (peh != (heads - 1) || pes != sectors) {
 		printf(_("Partition %i does not end on cylinder boundary.\n"),
 			partition + 1);
-#if 0
-		printf(_("     phys=(%d, %d, %d) "), pec, peh, pes);
-		printf(_("should be (%d, %d, %d)\n"),
-		pec, heads - 1, sectors);
-#endif
 	}
 }
 
@@ -2966,14 +2951,9 @@ main(int argc, char **argv) {
 		}
 	}
 
-#if 0
-	printf(_("This kernel finds the sector size itself - "
-		 "-b option ignored\n"));
-#else
 	if (user_set_sector_size && argc-optind != 1)
 		printf(_("Warning: the -b (set sector size) option should"
 			 " be used with one specified device\n"));
-#endif
 
 	init_mbr_buffer();
 
