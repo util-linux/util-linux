@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/time.h>
+#include <sys/resource.h>
 
 #include "c.h"
 #include "fileutils.h"
@@ -37,6 +39,28 @@ int xmkstemp(char **tmpname)
 	}
 	*tmpname = localtmp;
 	return fd;
+}
+
+/*
+ * portable getdtablesize()
+ */
+int get_fd_tabsize(void)
+{
+	int m;
+
+#if defined(HAVE_GETDTABLESIZE)
+	m = getdtablesize();
+#elif defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
+	struct rlimit rl;
+
+	getrlimit(RLIMIT_NOFILE, &rl);
+	m = rl.rlim_cur;
+#elif defined(HAVE_SYSCONF) && defined(_SC_OPEN_MAX)
+	m = sysconf(_SC_OPEN_MAX);
+#else
+	m = OPEN_MAX;
+#endif
+	return m;
 }
 
 #ifdef TEST_PROGRAM

@@ -17,4 +17,7 @@ static inline FILE *xfmkstemp(char **tmpname)
 	}
 	return ret;
 }
-#endif
+
+extern int get_fd_tabsize(void);
+
+#endif /* UTIL_LINUX_FILEUTILS */
