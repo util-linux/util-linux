@@ -838,8 +838,6 @@ create_doslabel(void) {
 	random_get_bytes(&id, sizeof(id));
 
 	fprintf(stderr, _("Building a new DOS disklabel with disk identifier 0x%08x.\n"), id);
-	sun_nolabel();  /* otherwise always recognised as sun */
-	sgi_nolabel();  /* otherwise always recognised as sgi */
 
 	dos_init();
 	zeroize_mbr_buffer();
