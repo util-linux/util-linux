@@ -2960,8 +2960,8 @@ main(int argc, char **argv) {
 			break;
 		case 'V':
 		case 'v':
-			printf("fdisk (%s)\n", PACKAGE_STRING);
-			exit(0);
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		default:
 			usage(stderr);
 		}
