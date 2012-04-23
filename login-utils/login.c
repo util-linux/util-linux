@@ -67,6 +67,7 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "writeall.h"
+#include "fileutils.h"
 
 #include "logindefs.h"
 
@@ -1290,7 +1291,7 @@ int main(int argc, char **argv)
 			*p++ = ' ';
 	}
 
-	for (cnt = (getdtablesize() - 1); cnt > 2; cnt--)
+	for (cnt = get_fd_tabsize() - 1; cnt > 2; cnt--)
 		close(cnt);
 
 	setpgrp();	 /* set pgid to pid this means that setsid() will fail */
