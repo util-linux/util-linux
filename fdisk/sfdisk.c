@@ -55,6 +55,7 @@
 #include "canonicalize.h"
 #include "rpmatch.h"
 #include "closestream.h"
+#include "strutils.h"
 
 /*
  * Table of contents:
@@ -2643,7 +2644,7 @@ main(int argc, char **argv) {
 	    activate = 1;
 	    break;
 	case 'C':
-	    U.cylinders = atoi(optarg);
+	    U.cylinders = strtoll_or_err(optarg, _("cannot parse number of cylinders"));
 	    break;
 	case 'D':
 	    DOS = 1;
@@ -2652,13 +2653,13 @@ main(int argc, char **argv) {
 	    DOS_extended = 1;
 	    break;
 	case 'H':
-	    U.heads = atoi(optarg);
+	    U.heads = strtol_or_err(optarg, _("cannot parse number of heads"));
 	    break;
 	case 'L':
 	    Linux = 1;
 	    break;
 	case 'N':
-	    one_only = atoi(optarg);
+	    one_only = strtol_or_err(optarg, _("cannot parse number of partitions"));
 	    break;
 	case 'I':
 	    restore_sector_file = optarg;
@@ -2670,7 +2671,7 @@ main(int argc, char **argv) {
 	    opt_reread = 1;
 	    break;
 	case 'S':
-	    U.sectors = atoi(optarg);
+	    U.sectors = strtol_or_err(optarg, _("cannot parse number of sectors"));
 	    break;
 	case 'T':
 	    list_types();
