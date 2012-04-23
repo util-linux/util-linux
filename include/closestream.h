@@ -2,11 +2,21 @@
 #define UTIL_LINUX_CLOSESTREAM_H
 
 #include <stdio.h>
+#ifdef HAVE_STDIO_EXT_H
 #include <stdio_ext.h>
+#endif
 #include <unistd.h>
 
 #include "c.h"
 #include "nls.h"
+
+#ifndef HAVE___FPENDING
+static inline int
+__fpending(FILE *stream __attribute__((__unused__)))
+{
+	return 0;
+}
+#endif
 
 static inline int
 close_stream(FILE * stream)
