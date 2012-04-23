@@ -9,6 +9,7 @@ noinst_PROGRAMS = \
 	test_fileutils \
 	test_ismounted \
 	test_mangle \
+	test_pager \
 	test_procutils \
 	test_randutils \
 	test_strutils \
@@ -37,6 +38,7 @@ test_procutils_SOURCES = procutils.c
 if LINUX
 test_cpuset_SOURCES = cpuset.c
 test_sysfs_SOURCES = sysfs.c at.c
+test_pager_SOURCES = pager.c
 test_sysfs_CFLAGS = -DTEST_PROGRAM_SYSFS
 
 test_loopdev_SOURCES = \
