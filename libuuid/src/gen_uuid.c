@@ -94,6 +94,7 @@
 #include "uuidP.h"
 #include "uuidd.h"
 #include "randutils.h"
+#include "fileutils.h"
 
 #ifdef HAVE_TLS
 #define THREAD_LOCAL static __thread
@@ -368,20 +369,7 @@ static ssize_t read_all(int fd, char *buf, size_t count)
  */
 static void close_all_fds(void)
 {
-	int i, max;
-
-#if defined(HAVE_SYSCONF) && defined(_SC_OPEN_MAX)
-	max = sysconf(_SC_OPEN_MAX);
-#elif defined(HAVE_GETDTABLESIZE)
-	max = getdtablesize();
-#elif defined(HAVE_GETRLIMIT) && defined(RLIMIT_NOFILE)
-	struct rlimit rl;
-
-	getrlimit(RLIMIT_NOFILE, &rl);
-	max = rl.rlim_cur;
-#else
-	max = OPEN_MAX;
-#endif
+	int i, max = get_fd_tabsize();
 
 	for (i=0; i < max; i++) {
 		close(i);
