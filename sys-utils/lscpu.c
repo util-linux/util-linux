@@ -967,8 +967,10 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 			 */
 			char *p = data + 1;
 
-			while (p && *p != '\0')
-				*p++ = tolower((unsigned int) *p);
+			while (p && *p != '\0') {
+				*p = tolower((unsigned int) *p);
+				p++;
+			}
 		}
 		fputs(data && *data ? data : "", stdout);
 	}
