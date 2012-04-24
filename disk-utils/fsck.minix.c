@@ -260,7 +260,7 @@ ask(const char *string, int def) {
 	 * translated.  */
 	printf(def ? _("%s (y/n)? ") : _("%s (n/y)? "), string);
 	fflush(stdout);
-	fgets(input, YESNO_LENGTH, stdin);
+	ignore_result( fgets(input, YESNO_LENGTH, stdin) );
 	resp = rpmatch(input);
 	switch (resp) {
 	case -1:
