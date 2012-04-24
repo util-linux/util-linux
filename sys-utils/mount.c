@@ -347,29 +347,28 @@ try_readonly:
 		case -EBUSY:
 			warnx(_("%s is already mounted"), src);
 			return MOUNT_EX_USAGE;
-		}
-
-		if (!tgt || (!src && !(mflags & MS_PROPAGATION))) {
-			if (!mnt_context_fstab_applied(cxt))
-				warnx(_("can't find %s in %s"), src ? src : tgt,
+		case -MNT_ERR_NOFSTAB:
+			warnx(_("can't find %s in %s"), src ? src : tgt,
 						mnt_get_fstab_path());
-			else if (mflags & MS_REMOUNT)
-				warnx(_("%s not mounted"), src ? src : tgt);
-
 			return MOUNT_EX_USAGE;
-		}
-
-		if (!mnt_context_get_fstype(cxt)) {
+		case -MNT_ERR_NOFSTYPE:
 			if (restricted)
 				warnx(_("I could not determine the filesystem type, "
 					"and none was specified"));
 			else
 				warnx(_("you must specify the filesystem type"));
 			return MOUNT_EX_USAGE;
-		}
-		return handle_generic_errors(rc, _("%s: mount failed"),
-					     tgt ? tgt : src);
+		case -MNT_ERR_NOSOURCE:
+			if (src)
+				warnx(_("can't find %s"), src);
+			else
+				warnx(_("mount source not defined"));
+			return MOUNT_EX_USAGE;
 
+		default:
+			return handle_generic_errors(rc, _("%s: mount failed"),
+					     tgt ? tgt : src);
+		}
 	} else if (mnt_context_get_syscall_errno(cxt) == 0) {
 		/*
 		 * mount(2) syscall success, but something else failed
