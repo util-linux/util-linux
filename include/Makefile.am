@@ -36,6 +36,7 @@ dist_noinst_HEADERS = \
 	swapheader.h \
 	sysfs.h \
 	tt.h \
+	ttyutils.h \
 	usleep.h \
 	wholedisk.h \
 	widechar.h \
