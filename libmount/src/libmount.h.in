@@ -115,6 +115,18 @@ enum {
 	MNT_ACT_UMOUNT
 };
 
+/*
+ * Errors -- by default libmount returns -errno for generic errors (ENOMEM,
+ * EINVAL, ...) and for mount(2) errors, but for some specific operations it
+ * returns private error codes. Note that maximum system errno value should be
+ * 4095 on UNIXes.
+ *
+ * See also mnt_context_get_syscall_errno() and mnt_context_get_helper_status().
+ */
+#define MNT_ERR_NOFSTAB      5000	/* not found required entry in fstab */
+#define MNT_ERR_NOFSTYPE     5001	/* failed to detect filesystem type */
+#define MNT_ERR_NOSOURCE     5002	/* required mount source undefined */
+
 /* init.c */
 extern void mnt_init_debug(int mask);
 

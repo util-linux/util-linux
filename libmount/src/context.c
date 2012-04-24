@@ -1271,7 +1271,7 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 		if (cache)
 			path = mnt_resolve_tag(t, v, cache);
 
-		rc = path ? mnt_fs_set_source(cxt->fs, path) : -EINVAL;
+		rc = path ? mnt_fs_set_source(cxt->fs, path) : -MNT_ERR_NOSOURCE;
 
 	} else if (cache && !mnt_fs_is_pseudofs(cxt->fs)) {
 		/*
@@ -1332,7 +1332,7 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	cache = mnt_context_get_cache(cxt);
 	if (cache) {
 		char *path = mnt_resolve_path(tgt, cache);
-		if (strcmp(path, tgt))
+		if (path && strcmp(path, tgt) != 0)
 			rc = mnt_fs_set_target(cxt->fs, path);
 	}
 
@@ -1344,11 +1344,15 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	return 0;
 }
 
+/*
+ * It's usully no error when we're not able to detect filesystem type -- we
+ * will try to use types from /{etc,proc}/filesystems.
+ */
 int mnt_context_guess_fstype(struct libmnt_context *cxt)
 {
 	char *type;
 	const char *dev;
-	int rc = -EINVAL;
+	int rc = 0;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -1375,7 +1379,7 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 
 	dev = mnt_fs_get_srcpath(cxt->fs);
 	if (!dev)
-		goto err;
+		goto done;
 
 	if (access(dev, F_OK) == 0) {
 		struct libmnt_cache *cache = mnt_context_get_cache(cxt);
@@ -1392,17 +1396,13 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 		else if (!strncmp(dev, "//", 2))
 			rc = mnt_fs_set_fstype(cxt->fs, "cifs");
 	}
-	if (rc)
-		goto err;
+
 done:
 	DBG(CXT, mnt_debug_h(cxt, "FS type: %s",
 				mnt_fs_get_fstype(cxt->fs)));
 	return 0;
 none:
 	return mnt_fs_set_fstype(cxt->fs, "none");
-err:
-	DBG(CXT, mnt_debug_h(cxt, "failed to detect FS type"));
-	return rc;
 }
 
 /*
@@ -1635,7 +1635,7 @@ static int apply_table(struct libmnt_context *cxt, struct libmnt_table *tb,
 	}
 
 	if (!fs)
-		return -EINVAL;
+		return -MNT_ERR_NOFSTAB;	/* not found */
 
 	DBG(CXT, mnt_debug_h(cxt, "apply entry:"));
 	DBG(CXT, mnt_fs_print_debug(fs, stderr));
