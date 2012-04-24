@@ -3209,7 +3209,7 @@ do_fdisk(char *dev) {
 		printf(_("Are you satisfied with this? [ynq] "));
 	    else
 		printf(_("Do you want to write this to disk? [ynq] "));
-	    fgets(answer, sizeof(answer), stdin);
+	    ignore_result( fgets(answer, sizeof(answer), stdin) );
 	    if (answer[0] == 'q' || answer[0] == 'Q') {
 		errx(EXIT_FAILURE, _("Quitting - nothing changed"));
 	    } else if (rpmatch(answer) == 1) {
