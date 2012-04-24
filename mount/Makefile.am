@@ -10,7 +10,7 @@ srcs_common = \
 	sundries.h
 
 # generic header for mount and umount
-hdrs_mount = fstab.h mount_mntent.h mount_constants.h getusername.h
+hdrs_mount = fstab.h mount_mntent.h mount_constants.h getusername.h fsprobe.h
 
 # generic sources for mount and umount
 srcs_mount = \
