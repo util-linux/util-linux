@@ -29,6 +29,7 @@ dist_noinst_HEADERS = \
 	path.h \
 	pathnames.h \
 	procutils.h \
+	randutils.h \
 	rpmatch.h \
 	setproctitle.h \
 	strutils.h \
