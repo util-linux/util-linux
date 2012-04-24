@@ -333,7 +333,7 @@ static const char *get_tag(struct libmnt_fs *fs, const char *tagname)
 static const char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 {
 	struct statvfs buf;
-	uint64_t vfs_attr;
+	uint64_t vfs_attr = 0;
 	char *sizestr;
 
 	if (statvfs(mnt_fs_get_target(fs), &buf) != 0)
