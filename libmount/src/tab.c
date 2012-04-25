@@ -703,6 +703,40 @@ struct libmnt_fs *mnt_table_find_pair(struct libmnt_table *tb, const char *sourc
 	return NULL;
 }
 
+/**
+ * mnt_table_find_devno
+ * @tb: /proc/self/mountinfo
+ * @devno: device number
+ * @direction: MNT_ITER_{FORWARD,BACKWARD}
+ *
+ * Note that zero could be valid device number for root pseudo filesystem (e.g.
+ * tmpfs).
+ *
+ * Returns: a tab entry or NULL.
+ */
+struct libmnt_fs *mnt_table_find_devno(struct libmnt_table *tb,
+				       dev_t devno, int direction)
+{
+	struct libmnt_fs *fs = NULL;
+	struct libmnt_iter itr;
+
+	assert(tb);
+
+	if (!tb)
+		return NULL;
+
+	DBG(TAB, mnt_debug_h(tb, "lookup DEVNO: %d", (int) devno));
+
+	mnt_reset_iter(&itr, direction);
+
+	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
+		if (mnt_fs_get_devno(fs) == devno)
+			return fs;
+	}
+
+	return NULL;
+}
+
 /*
  * tb: /proc/self/mountinfo
  * fs: filesystem

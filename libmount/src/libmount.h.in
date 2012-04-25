@@ -335,6 +335,8 @@ extern struct libmnt_fs *mnt_table_find_source(struct libmnt_table *tb,
 extern struct libmnt_fs *mnt_table_find_pair(struct libmnt_table *tb,
 				const char *source,
 				const char *target, int direction);
+extern struct libmnt_fs *mnt_table_find_devno(struct libmnt_table *tb,
+				dev_t devno, int direction);
 
 extern int mnt_table_find_next_fs(struct libmnt_table *tb,
 			struct libmnt_iter *itr,

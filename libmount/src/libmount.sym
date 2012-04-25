@@ -235,6 +235,7 @@ global:
 	mnt_context_is_loopdel;
 	mnt_context_is_nocanonicalize;
 	mnt_context_is_nohelpers;
+	mnt_table_find_devno;
 	mnt_table_parse_swaps;
 	mnt_get_swaps_path;
 	mnt_fs_get_swaptype;
