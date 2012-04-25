@@ -1310,9 +1310,8 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 	if (rc)
 		goto err;
 done:
-	DBG(CXT, mnt_debug_h(cxt, "FS type: %s",
-				mnt_fs_get_fstype(cxt->fs)));
-	return 0;
+	DBG(CXT, mnt_debug_h(cxt, "FS type: %s", mnt_fs_get_fstype(cxt->fs)));
+	return rc;
 none:
 	return mnt_fs_set_fstype(cxt->fs, "none");
 err:
