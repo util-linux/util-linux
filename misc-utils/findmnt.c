@@ -94,6 +94,7 @@ struct colinfo {
 	int		flags;		/* tt flags */
 	const char      *help;		/* column description */
 	const char	*match;		/* pattern for match_func() */
+	void		*match_data;	/* match specific data */
 };
 
 /* columns descriptions (don't use const, this is writable) */
@@ -173,11 +174,38 @@ static const char *get_match(int id)
 	return infos[id].match;
 }
 
+static void *get_match_data(int id)
+{
+	assert(id < FINDMNT_NCOLUMNS);
+	return infos[id].match_data;
+}
+
 static void set_match(int id, const char *match)
 {
 	assert(id < FINDMNT_NCOLUMNS);
 	infos[id].match = match;
 }
+
+static void set_match_data(int id, void *data)
+{
+	assert(id < FINDMNT_NCOLUMNS);
+	infos[id].match_data = data;
+}
+
+static void set_source_match(const char *data)
+{
+	int maj, min;
+
+	if (sscanf(data, "%d:%d", &maj, &min) == 2) {
+		dev_t *devno = xmalloc(sizeof(dev_t));
+
+		*devno = makedev(maj, min);
+		set_match(COL_MAJMIN, data);
+		set_match_data(COL_MAJMIN, (void *) devno);
+	} else
+		set_match(COL_SOURCE, data);
+}
+
 
 static int is_tabdiff_column(int id)
 {
@@ -205,7 +233,8 @@ static int is_listall_mode(void)
 	return (!get_match(COL_SOURCE) &&
 		!get_match(COL_TARGET) &&
 		!get_match(COL_FSTYPE) &&
-		!get_match(COL_OPTIONS));
+		!get_match(COL_OPTIONS) &&
+		!get_match(COL_MAJMIN));
 }
 
 /*
@@ -638,6 +667,7 @@ static int match_func(struct libmnt_fs *fs,
 {
 	int rc = flags & FL_INVERT ? 1 : 0;
 	const char *m;
+	void *md;
 
 	m = get_match(COL_TARGET);
 	if (m && !mnt_fs_match_target(fs, m, cache))
@@ -653,6 +683,10 @@ static int match_func(struct libmnt_fs *fs,
 
 	m = get_match(COL_OPTIONS);
 	if (m && !mnt_fs_match_options(fs, m))
+		return rc;
+
+	md = get_match_data(COL_MAJMIN);
+	if (md && mnt_fs_get_devno(fs) != *((dev_t *) md))
 		return rc;
 
 	if ((flags & FL_DF) && !(flags & FL_ALL)) {
@@ -760,7 +794,7 @@ static int poll_match(struct libmnt_fs *fs)
 	    get_match(COL_SOURCE) && !get_match(COL_TARGET)) {
 		/*
 		 * findmnt --poll /foo
-		 * The '/foo' source as well as target.
+		 * The '/foo' maybe source as well as target.
 		 */
 		const char *str = get_match(COL_SOURCE);
 
@@ -913,7 +947,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -c, --canonicalize     canonicalize printed paths\n"
 	" -D, --df               imitate the output of df(1)\n"
 	" -d, --direction <word> direction of search, 'forward' or 'backward'\n"
-	" -e, --evaluate         convert tags (LABEL/UUID,PARTUUID,PARTLABEL) to device names\n"
+	" -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
+	"                          to device names\n"
 	" -F, --tab-file <path>  alternative file for --fstab, --mtab or --kernel options\n"
 	" -f, --first-only       print the first found filesystem only\n"));
 
@@ -931,7 +966,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(
 	" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 	" -R, --submounts        print all submounts for the matching filesystems\n"
-	" -S, --source <string>  the device to mount (by name, LABEL=, UUID=, PARTUUID=, ...)\n"
+	" -S, --source <string>  the device to mount (by name, maj:min, \n"
+	"                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
 	" -T, --target <string>  the mountpoint to use\n"));
 
 	fputs(USAGE_SEPARATOR, out);
@@ -1117,7 +1153,7 @@ int main(int argc, char *argv[])
 			flags |= FL_SUBMOUNTS;
 			break;
 		case 'S':
-			set_match(COL_SOURCE, optarg);
+			set_source_match(optarg);
 			flags |= FL_NOSWAPMATCH;
 			break;
 		case 'T':
@@ -1175,7 +1211,7 @@ int main(int argc, char *argv[])
 			"with command line element that is not an option"));
 
 	if (optind < argc)
-		set_match(COL_SOURCE, argv[optind++]);	/* dev/tag/mountpoint */
+		set_source_match(argv[optind++]);	/* dev/tag/mountpoint/maj:min */
 	if (optind < argc)
 		set_match(COL_TARGET, argv[optind++]);	/* mountpoint */
 

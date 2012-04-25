@@ -31,6 +31,11 @@ or
 .IR mountpoint
 is not given, all filesystems are shown.
 .PP
+The device may be specified by device name, maj:min, filesystem LABEL or UUID
+or partition PARTUUID or PARTLABEL.  Note that device name may be interpreted
+as mountpoint (and vice versa) if --target or --source options are not
+specified.
+.PP
 The command prints all mounted filesystems in the tree-like format by default.
 .SH OPTIONS
 .IP "\fB\-h, \-\-help\fP"
@@ -154,8 +159,8 @@ defined by options \fB\-t\fP, \fB\-O\fP, \fB\-S\fP, \fB\-T\fP and
 printed in tree-like order.  The option enables the tree-like output format by
 default.  This option has no effect for \fB\-\-mtab\fP or \fB\-\-fstab\fP.
 .IP "\fB\-S, \-\-source \fIspec\fP"
-Explicitly define the mount source.  Supported are \fIdevice\fR, \fILABEL=\fR,
-\fIUUID=\fR, \fIPARTLABEL=\fR or \fIPARTUUID=\fR.
+Explicitly define the mount source.  Supported are \fIdevice\fR, \fImaj:min\fR,
+\fILABEL=\fR, \fIUUID=\fR, \fIPARTLABEL=\fR or \fIPARTUUID=\fR.
 .IP "\fB\-T, \-\-target \fIdir\fP"
 Explicitly define the mount target (mountpoint directory).
 .IP "\fB\-w, \-\-timeout \fImilliseconds\fP"
