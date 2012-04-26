@@ -237,6 +237,7 @@ global:
 	mnt_context_is_nohelpers;
 	mnt_table_find_devno;
 	mnt_table_parse_swaps;
+	mnt_get_mountpoint;
 	mnt_get_swaps_path;
 	mnt_fs_get_swaptype;
 	mnt_fs_get_size;
