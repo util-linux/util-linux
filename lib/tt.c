@@ -559,8 +559,8 @@ static void fputs_quoted(const char *data, FILE *out)
 
 	fputc('"', out);
 	for (p = data; p && *p; p++) {
-		if ((unsigned char) *p == 0x22)
-			fputs("\\x22", out);
+		if ((unsigned char) *p == 0x22 || !isprint((unsigned char) *p))
+			fprintf(out, "\\x%02x", *p);
 		else
 			fputc(*p, out);
 	}
@@ -572,7 +572,7 @@ static void fputs_nonblank(const char *data, FILE *out)
 	const char *p;
 
 	for (p = data; p && *p; p++) {
-		if (isblank((unsigned char) *p))
+		if (isblank((unsigned char) *p) || !isprint((unsigned char) *p))
 			fprintf(out, "\\x%02x", *p);
 		else
 			fputc(*p, out);
