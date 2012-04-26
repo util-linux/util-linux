@@ -661,6 +661,30 @@ static int tab_is_tree(struct libmnt_table *tb)
 	return rc;
 }
 
+static int match_by_file(const char *name, struct libmnt_fs *fs,
+		int (*match_fn)(struct libmnt_fs*, const char*, struct libmnt_cache*))
+{
+	char *resolved, *mountpoint;
+	int match;
+
+	/* match exactly by name */
+	if (match_fn(fs, name, cache))
+		return 1;
+
+	/* maybe its a file within a mountpoint */
+	resolved = mnt_resolve_path(name, cache);
+	if (resolved) {
+		mountpoint = mnt_get_mountpoint(resolved);
+		if (mountpoint) {
+			match = match_fn(fs, mountpoint, cache);
+			free(mountpoint);
+			return match;
+		}
+	}
+
+	return 0;
+}
+
 /* filter function for libmount (mnt_table_find_next_fs()) */
 static int match_func(struct libmnt_fs *fs,
 		      void *data __attribute__ ((__unused__)))
@@ -670,11 +694,11 @@ static int match_func(struct libmnt_fs *fs,
 	void *md;
 
 	m = get_match(COL_TARGET);
-	if (m && !mnt_fs_match_target(fs, m, cache))
+	if (m && !match_by_file(m, fs, mnt_fs_match_target))
 		return rc;
 
 	m = get_match(COL_SOURCE);
-	if (m && !mnt_fs_match_source(fs, m, cache))
+	if (m && !match_by_file(m, fs, mnt_fs_match_source))
 		return rc;
 
 	m = get_match(COL_FSTYPE);
