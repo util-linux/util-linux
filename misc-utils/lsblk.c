@@ -59,6 +59,7 @@
 #include "at.h"
 #include "sysfs.h"
 #include "closestream.h"
+#include "mangle.h"
 
 /* column IDs */
 enum {
@@ -367,16 +368,20 @@ static int probe_device_by_udev(struct blkdev_cxt *cxt)
 	if (dev) {
 		const char *data;
 
-		if ((data = udev_device_get_property_value(dev, "ID_FS_LABEL")))
+		if ((data = udev_device_get_property_value(dev, "ID_FS_LABEL"))) {
 			cxt->label = xstrdup(data);
+			unhexmangle_string(cxt->label);
+		}
 		if ((data = udev_device_get_property_value(dev, "ID_FS_TYPE")))
 			cxt->fstype = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_FS_UUID")))
 			cxt->uuid = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_UUID")))
 			cxt->partuuid = xstrdup(data);
-		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_NAME")))
+		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_NAME"))) {
 			cxt->partlabel = xstrdup(data);
+			unhexmangle_string(cxt->partlabel);
+		}
 		udev_device_unref(dev);
 	}
 
@@ -535,26 +540,6 @@ static char *get_type(struct blkdev_cxt *cxt)
 #define is_parsable(_l)	(((_l)->tt->flags & TT_FL_RAW) || \
 			 ((_l)->tt->flags & TT_FL_EXPORT))
 
-static char *encode_str(const char *str)
-{
-	size_t sz;
-	char *enc = NULL;
-
-	if (!str)
-		goto err;
-
-	sz = strlen(str) * 4 + 1;
-	enc = xmalloc(sz);
-
-	if (blkid_encode_string(str, enc, sz) != 0)
-		goto err;
-
-	return enc;
-err:
-	free(enc);
-	return xstrdup("");
-}
-
 static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line *ln)
 {
 	char buf[1024];
@@ -569,8 +554,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 	case COL_NAME:
 		if (cxt->dm_name) {
 			if (is_parsable(lsblk))
-				tt_line_set_data(ln, col,
-					encode_str(cxt->dm_name));
+				tt_line_set_data(ln, col, cxt->dm_name);
 			else {
 				snprintf(buf, sizeof(buf), "%s (%s)",
 					cxt->dm_name, cxt->name);
@@ -579,10 +563,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 			break;
 		}
 	case COL_KNAME:
-		if (is_parsable(lsblk))
-			tt_line_set_data(ln, col, encode_str(cxt->name));
-		else
-			tt_line_set_data(ln, col, xstrdup(cxt->name));
+		tt_line_set_data(ln, col, xstrdup(cxt->name));
 		break;
 	case COL_OWNER:
 	{
@@ -622,8 +603,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		break;
 	case COL_TARGET:
 		if (!(cxt->nholders + cxt->npartitions)) {
-			p = get_device_mountpoint(cxt);
-			if (p)
+			if ((p = get_device_mountpoint(cxt)))
 				tt_line_set_data(ln, col, p);
 		}
 		break;
@@ -632,10 +612,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		if (!cxt->label)
 			break;
 
-		if (is_parsable(lsblk))
-			tt_line_set_data(ln, col, encode_str(cxt->label));
-		else
-			tt_line_set_data(ln, col, xstrdup(cxt->label));
+		tt_line_set_data(ln, col, xstrdup(cxt->label));
 		break;
 	case COL_UUID:
 		probe_device(cxt);
@@ -647,10 +624,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		if (!cxt->partlabel)
 			break;
 
-		if (is_parsable(lsblk))
-			tt_line_set_data(ln, col, encode_str(cxt->partlabel));
-		else
-			tt_line_set_data(ln, col, xstrdup(cxt->partlabel));
+		tt_line_set_data(ln, col, xstrdup(cxt->partlabel));
 		break;
 	case COL_PARTUUID:
 		probe_device(cxt);
