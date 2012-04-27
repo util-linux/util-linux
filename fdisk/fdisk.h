@@ -44,9 +44,12 @@ enum menutype {
 	EXPERT_MENU,
 };
 
-enum failure {ioctl_error,
-	unable_to_open, unable_to_read, unable_to_seek,
-	unable_to_write};
+enum failure {
+	ioctl_error,
+	unable_to_read,
+	unable_to_seek,
+	unable_to_write
+};
 
 struct geom {
 	unsigned int heads;

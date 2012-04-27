@@ -264,10 +264,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 void fatal(enum failure why)
 {
+	close(fd);
 	switch (why) {
-		case unable_to_open:
-			err(EXIT_FAILURE, _("unable to open %s"), disk_device);
-
 		case unable_to_read:
 			err(EXIT_FAILURE, _("unable to read %s"), disk_device);
 
@@ -1087,18 +1085,14 @@ static int get_boot(int try_only) {
 	disklabel = ANY_LABEL;
 	memset(MBRbuffer, 0, 512);
 
-	if (try_only && (fd = open(disk_device, O_RDONLY)) < 0) {
-		fprintf(stderr, _("Cannot open %s\n"), disk_device);
-		fatal(unable_to_open);
-	}
+	if (try_only && (fd = open(disk_device, O_RDONLY)) < 0)
+		err(EXIT_FAILURE, _("unable to open %s"), disk_device);
 	else {
 		if ((fd = open(disk_device, O_RDWR)) < 0) {
 			/* ok, can we read-only the device? */
 			if ((fd = open(disk_device, O_RDONLY)) < 0)
-				fatal(unable_to_open);
-			else
-				printf(_("You will not be able to write "
-					 "the partition table.\n"));
+				err(EXIT_FAILURE, _("unable to open %s"), disk_device);
+			printf(_("You will not be able to write the partition table.\n"));
 		}
 	}
 
@@ -2958,7 +2952,7 @@ main(int argc, char **argv) {
 		for (j = optind; j < argc; j++) {
 			disk_device = argv[j];
 			if ((fd = open(disk_device, O_RDONLY)) < 0)
-				fatal(unable_to_open);
+				err(EXIT_FAILURE, _("unable to open %s"), disk_device);
 			if (blkdev_get_sectors(fd, &size) == -1)
 				fatal(ioctl_error);
 			close(fd);
