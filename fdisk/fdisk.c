@@ -14,7 +14,6 @@
 #include <string.h>
 #include <fcntl.h>
 #include <ctype.h>
-#include <setjmp.h>
 #include <errno.h>
 #include <getopt.h>
 #include <sys/stat.h>
@@ -245,8 +244,6 @@ int has_topology;
 
 enum labeltype disklabel;	/* Current disklabel */
 
-jmp_buf listingbuf;
-
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
 	fprintf(out, _("Usage:\n"
@@ -266,13 +263,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-void fatal(enum failure why) {
-
-	if (listing) {
-		close(fd);
-		longjmp(listingbuf, 1);
-	}
-
+void fatal(enum failure why)
+{
 	switch (why) {
 		case unable_to_open:
 			err(EXIT_FAILURE, _("unable to open %s"), disk_device);
@@ -2708,8 +2700,6 @@ print_partition_table_from_option(char *device)
 	int gb;
 
 	disk_device = device;
-	if (setjmp(listingbuf))
-		return;
 	gpt_warning(device);
 	gb = get_boot(1);
 	if (gb < 0) { /* no DOS signature */
@@ -2950,9 +2940,6 @@ main(int argc, char **argv) {
 		nowarn = 1;
 		if (argc > optind) {
 			int k;
-			/* avoid gcc warning:
-			   variable `k' might be clobbered by `longjmp' */
-			dummy(&k);
 			listing = 1;
 			for (k = optind; k < argc; k++)
 				print_partition_table_from_option(argv[k]);
