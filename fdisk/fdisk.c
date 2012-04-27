@@ -2740,8 +2740,6 @@ print_all_partition_table_from_option(void)
 	fclose(procpt);
 }
 
-static void dummy(int *kk __attribute__ ((__unused__))) {}
-
 static void
 unknown_command(int c) {
 	printf(_("%c: unknown command\n"), c);
