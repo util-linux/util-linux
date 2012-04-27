@@ -59,9 +59,6 @@ struct libmnt_cache {
 	 *    better to reuse the blkid_cache.
 	 */
 	blkid_cache		bc;
-	blkid_probe		pr;
-
-	char			*filename;
 };
 
 /**
@@ -100,10 +97,8 @@ void mnt_free_cache(struct libmnt_cache *cache)
 		free(e->key);
 	}
 	free(cache->ents);
-	free(cache->filename);
 	if (cache->bc)
 		blkid_put_cache(cache->bc);
-	blkid_free_probe(cache->pr);
 	free(cache);
 }
 
@@ -249,42 +244,6 @@ static char *cache_find_tag_value(struct libmnt_cache *cache,
 	return NULL;
 }
 
-/*
- * returns (in @res) blkid prober, the @cache argument is optional
- */
-static int cache_get_probe(struct libmnt_cache *cache, const char *devname,
-			   blkid_probe *res)
-{
-	blkid_probe pr = cache ? cache->pr : NULL;
-
-	assert(devname);
-
-	if (cache && cache->pr && (!cache->filename ||
-				   strcmp(devname, cache->filename))) {
-		blkid_free_probe(cache->pr);
-		free(cache->filename);
-		cache->filename = NULL;
-		pr = cache->pr = NULL;
-	}
-
-	if (!pr) {
-		pr = blkid_new_probe_from_filename(devname);
-		if (!pr)
-			return -1;
-		if (cache) {
-			cache->pr = pr;
-			cache->filename = strdup(devname);
-			if (!cache->filename)
-				return -ENOMEM;
-		}
-
-	}
-
-	if (res)
-		*res = pr;
-	return 0;
-}
-
 /**
  * mnt_cache_read_tags
  * @cache: pointer to struct libmnt_cache instance
@@ -297,8 +256,8 @@ static int cache_get_probe(struct libmnt_cache *cache, const char *devname,
  */
 int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 {
+	blkid_probe pr;
 	size_t i, ntags = 0;
-	int rc;
 	const char *tags[] = { "LABEL", "UUID", "TYPE" };
 
 	assert(cache);
@@ -319,17 +278,19 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 			return 0;
 	}
 
-	rc = cache_get_probe(cache, devname, NULL);
-	if (rc)
-		return rc;
+	pr =  blkid_new_probe_from_filename(devname);
+	if (!pr)
+		return -1;
 
-	blkid_probe_enable_superblocks(cache->pr, 1);
-
-	blkid_probe_set_superblocks_flags(cache->pr,
+	blkid_probe_enable_superblocks(pr, 1);
+	blkid_probe_set_superblocks_flags(pr,
 			BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID |
 			BLKID_SUBLKS_TYPE);
 
-	if (blkid_do_safeprobe(cache->pr))
+	blkid_probe_enable_partitions(pr, 1);
+	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_ENTRY_DETAILS);
+
+	if (blkid_do_safeprobe(pr))
 		goto error;
 
 	DBG(CACHE, mnt_debug_h(cache, "reading tags for: %s", devname));
@@ -343,7 +304,7 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 					"\ntag %s already cached", tags[i]));
 			continue;
 		}
-		if (blkid_probe_lookup_value(cache->pr, tags[i], &data, NULL))
+		if (blkid_probe_lookup_value(pr, tags[i], &data, NULL))
 			continue;
 		dev = strdup(devname);
 		if (!dev)
@@ -357,8 +318,10 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 	}
 
 	DBG(CACHE, mnt_debug_h(cache, "\tread %zd tags", ntags));
+	blkid_free_probe(pr);
 	return ntags ? 0 : 1;
 error:
+	blkid_free_probe(pr);
 	return -1;
 }
 
@@ -424,7 +387,11 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 	if (cache)
 		return mnt_cache_find_tag_value(cache, devname, "TYPE");
 
-	if (cache_get_probe(NULL, devname, &pr))
+	/*
+	 * no cache, probe directly
+	 */
+	pr =  blkid_new_probe_from_filename(devname);
+	if (!pr)
 		return NULL;
 
 	blkid_probe_enable_superblocks(pr, 1);
