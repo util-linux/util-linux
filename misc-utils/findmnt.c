@@ -192,6 +192,10 @@ static void set_match_data(int id, void *data)
 	infos[id].match_data = data;
 }
 
+/*
+ * source match means COL_SOURCE *or* COL_MAJMIN, depends on
+ * data format.
+ */
 static void set_source_match(const char *data)
 {
 	int maj, min;
@@ -202,8 +206,29 @@ static void set_source_match(const char *data)
 		*devno = makedev(maj, min);
 		set_match(COL_MAJMIN, data);
 		set_match_data(COL_MAJMIN, (void *) devno);
+		flags |= FL_NOSWAPMATCH;
 	} else
 		set_match(COL_SOURCE, data);
+}
+
+static void enable_extra_target_match(void)
+{
+	char *cn = NULL, *mnt = NULL;
+
+	/*
+	 * Check if match pattern is mountpoint, if not use the
+	 * real mountpoint.
+	 */
+	cn = mnt_resolve_path(get_match(COL_TARGET), cache);
+	if (!cn)
+		return;
+
+	mnt = mnt_get_mountpoint(cn);
+	if (!mnt || strcmp(mnt, cn) == 0)
+		return;
+
+	/* replace the current setting with the real mountpoint */
+	set_match(COL_TARGET, mnt);
 }
 
 
@@ -661,29 +686,6 @@ static int tab_is_tree(struct libmnt_table *tb)
 	return rc;
 }
 
-static int match_by_file(const char *name, struct libmnt_fs *fs,
-		int (*match_fn)(struct libmnt_fs*, const char*, struct libmnt_cache*))
-{
-	char *resolved, *mountpoint;
-	int match;
-
-	/* match exactly by name */
-	if (match_fn(fs, name, cache))
-		return 1;
-
-	/* maybe its a file within a mountpoint */
-	resolved = mnt_resolve_path(name, cache);
-	if (resolved) {
-		mountpoint = mnt_get_mountpoint(resolved);
-		if (mountpoint) {
-			match = match_fn(fs, mountpoint, cache);
-			free(mountpoint);
-			return match;
-		}
-	}
-
-	return 0;
-}
 
 /* filter function for libmount (mnt_table_find_next_fs()) */
 static int match_func(struct libmnt_fs *fs,
@@ -694,11 +696,11 @@ static int match_func(struct libmnt_fs *fs,
 	void *md;
 
 	m = get_match(COL_TARGET);
-	if (m && !match_by_file(m, fs, mnt_fs_match_target))
+	if (m && !mnt_fs_match_target(fs, m, cache))
 		return rc;
 
 	m = get_match(COL_SOURCE);
-	if (m && !match_by_file(m, fs, mnt_fs_match_source))
+	if (m && !mnt_fs_match_source(fs, m, cache))
 		return rc;
 
 	m = get_match(COL_FSTYPE);
@@ -1221,7 +1223,6 @@ int main(int argc, char *argv[])
 	if (!tabtype)
 		tabtype = TABTYPE_KERNEL;
 
-
 	if (flags & FL_POLL) {
 		if (tabtype != TABTYPE_KERNEL)
 			errx_mutually_exclusive("--{poll,fstab,mtab}");
@@ -1278,6 +1279,14 @@ int main(int argc, char *argv[])
 		goto leave;
 	}
 	mnt_table_set_cache(tb, cache);
+
+	if (tabtype == TABTYPE_KERNEL
+	    && (flags & FL_NOSWAPMATCH)
+	    && get_match(COL_TARGET))
+		/*
+		 * enable extra functionality for target match
+		 */
+		enable_extra_target_match();
 
 	/*
 	 * initialize output formatting (tt.h)
