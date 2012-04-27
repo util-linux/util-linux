@@ -216,7 +216,6 @@ char	*disk_device,			/* must be specified */
 
 int	fd,				/* the disk */
 	ext_index,			/* the prime extended partition */
-	listing = 0,			/* no aborts for fdisk -l */
 	nowarn = 0,			/* no warnings for fdisk -l/-s */
 	dos_compatible_flag = 0,	/* disabled by default */
 	dos_changed = 0,
@@ -2940,7 +2939,6 @@ main(int argc, char **argv) {
 		nowarn = 1;
 		if (argc > optind) {
 			int k;
-			listing = 1;
 			for (k = optind; k < argc; k++)
 				print_partition_table_from_option(argv[k]);
 		} else
