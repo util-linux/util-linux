@@ -87,12 +87,14 @@ extern void update_units(void);
 extern char read_chars(char *mesg);
 extern void set_changed(int);
 extern void set_all_unchanged(void);
+extern int warn_geometry(void);
+extern void warn_limits(void);
+extern void warn_alignment(void);
 
 #define PLURAL	0
 #define SINGULAR 1
 extern const char * str_units(int);
 
-extern unsigned long long get_start_sect(struct partition *p);
 extern unsigned long long get_nr_sects(struct partition *p);
 
 enum labeltype {
@@ -106,6 +108,66 @@ enum labeltype {
 };
 
 extern enum labeltype disklabel;
+
+/*
+ * Raw disk label. For DOS-type partition tables the MBR,
+ * with descriptions of the primary partitions.
+ */
+int MBRbuffer_changed;
+unsigned char *MBRbuffer;
+
+/* start_sect and nr_sects are stored little endian on all machines */
+/* moreover, they are not aligned correctly */
+static void
+store4_little_endian(unsigned char *cp, unsigned int val) {
+	cp[0] = (val & 0xff);
+	cp[1] = ((val >> 8) & 0xff);
+	cp[2] = ((val >> 16) & 0xff);
+	cp[3] = ((val >> 24) & 0xff);
+}
+
+static unsigned int read4_little_endian(const unsigned char *cp)
+{
+	return (unsigned int)(cp[0]) + ((unsigned int)(cp[1]) << 8)
+		+ ((unsigned int)(cp[2]) << 16)
+		+ ((unsigned int)(cp[3]) << 24);
+}
+
+static void set_nr_sects(struct partition *p, unsigned long long nr_sects)
+{
+	store4_little_endian(p->size4, nr_sects);
+}
+
+static void set_start_sect(struct partition *p, unsigned int start_sect)
+{
+	store4_little_endian(p->start4, start_sect);
+}
+
+static void seek_sector(int fd, unsigned long long secno)
+{
+	off_t offset = (off_t) secno * sector_size;
+	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
+		fatal(unable_to_seek);
+}
+
+static void read_sector(int fd, unsigned long long secno, unsigned char *buf)
+{
+	seek_sector(fd, secno);
+	if (read(fd, buf, sector_size) != sector_size)
+		fatal(unable_to_read);
+}
+
+static void write_sector(int fd, unsigned long long secno, unsigned char *buf)
+{
+	seek_sector(fd, secno);
+	if (write(fd, buf, sector_size) != sector_size)
+		fatal(unable_to_write);
+}
+
+static unsigned long long get_start_sect(struct partition *p)
+{
+	return read4_little_endian(p->start4);
+}
 
 /* prototypes for fdiskbsdlabel.c */
 extern void bsd_command_prompt(void);
