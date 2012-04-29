@@ -442,7 +442,7 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 
 	if (try_type && !cxt->helper) {
 		rc = mnt_context_prepare_helper(cxt, "mount", try_type);
-		if (!rc)
+		if (rc)
 			return rc;
 	}
 	if (cxt->helper)
@@ -520,6 +520,7 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 				*end = '\0';
 			rc = do_mount(cxt, p);
 			p = end ? end + 1 : NULL;
+
 		} while (!mnt_context_get_status(cxt) && p);
 
 		free(p0);
@@ -540,6 +541,8 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 	for (fp = filesystems; *fp; fp++) {
 		rc = do_mount(cxt, *fp);
 		if (mnt_context_get_status(cxt))
+			break;
+		if (mnt_context_get_syscall_errno(cxt) != EINVAL)
 			break;
 	}
 	mnt_free_filesystems(filesystems);
@@ -612,7 +615,7 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
  * again mnt_context_do_mount().
  *
  * WARNING: non-zero return code does not mean that mount(2) syscall or
- *          mount.type helper wasn't sucessfully called.
+ *          mount.type helper wasn't successfully called.
  *
  *          Check mnt_context_get_status() after error!
 *
@@ -720,7 +723,7 @@ int mnt_context_finalize_mount(struct libmnt_context *cxt)
  * once, whole context has to be reseted.
  *
  * WARNING: non-zero return code does not mean that mount(2) syscall or
- *          mount.type helper wasn't sucessfully called.
+ *          mount.type helper wasn't successfully called.
  *
  *          Check mnt_context_get_status() after error!
  *

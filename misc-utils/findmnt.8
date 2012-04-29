@@ -31,6 +31,11 @@ or
 .IR mountpoint
 is not given, all filesystems are shown.
 .PP
+The device may be specified by device name, maj:min, filesystem LABEL or UUID
+or partition PARTUUID or PARTLABEL.  Note that device name may be interpreted
+as mountpoint (and vice versa) if --target or --source options are not
+specified.
+.PP
 The command prints all mounted filesystems in the tree-like format by default.
 .SH OPTIONS
 .IP "\fB\-h, \-\-help\fP"
@@ -64,7 +69,7 @@ The search direction -
 or
 .IR backward .
 .IP "\fB\-e, \-\-evaluate\fP"
-Convert all tags (LABEL or UUID) to the device names.
+Convert all tags (LABEL, UUID, PARTUUID or PARTLABEL) to the device names.
 .IP "\fB\-F, \-\-tab\-file \fIpath\fP"
 Search in an alternative file, if used with \fB\-\-fstab\fP, \fB\-\-mtab\fP
 or \fB\-\-kernel\fP then overwrites the default paths.
@@ -84,9 +89,10 @@ Do not print a header line.
 Do not truncate text in columns.  The default is to not truncate the
 .BR TARGET ,
 .BR SOURCE ,
-.BR UUID
-and
-.BR LABEL
+.BR UUID ,
+.BR LABEL ,
+.BR PARTUUID ,
+.BR PARTLABEL
 columns.  This option disables text truncation also in all other columns.
 .IP "\fB\-O, \-\-options \fIlist\fP"
 Limit the set of printed filesystems.  More than one option
@@ -102,24 +108,8 @@ at the beginning does not have global meaning. The "no" could used for
 individual items in the list. The "no" prefix interpratation could be disabled
 by "+" prefix.
 .IP "\fB\-o, \-\-output \fIlist\fP"
-Define output columns.  Currently supported are
-.BR ACTION,
-.BR SOURCE ,
-.BR TARGET ,
-.BR OLD-TARGET,
-.BR FSTYPE ,
-.BR OPTIONS ,
-.BR OLD-OPTIONS,
-.BR VFS-OPTIONS ,
-.BR FS-OPTIONS ,
-.BR SIZE ,
-.BR AVAIL ,
-.BR USED ,
-.BR USE% ,
-.BR LABEL
-and
-.BR UUID .
-The
+Define output columns. See the \fB\-\-help\fP output to get list of the
+currently supported columns. The
 .BR TARGET
 column contains tree formatting if the
 .B \-\-list
@@ -151,9 +141,9 @@ available for umount and move actions
 available for umount and remount actions
 .RE
 .IP "\fB\-P, \-\-pairs\fP"
-Use key="value" output format.
+Use key="value" output format. All potentially unsafe characters are hex-escaped (\\x<code>).
 .IP "\fB\-r, \-\-raw\fP"
-Use raw output format.
+Use raw output format. All potentially unsafe characters are hex-escaped (\\x<code>).
 .IP "\fB\-t, \-\-types \fIlist\fP"
 Limit the set of printed filesystems.  More than one type may be
 specified in a comma-separated list.  The list of filesystem types can be
@@ -169,7 +159,8 @@ defined by options \fB\-t\fP, \fB\-O\fP, \fB\-S\fP, \fB\-T\fP and
 printed in tree-like order.  The option enables the tree-like output format by
 default.  This option has no effect for \fB\-\-mtab\fP or \fB\-\-fstab\fP.
 .IP "\fB\-S, \-\-source \fIspec\fP"
-Explicitly define the mount source.  Supported are \fIdevice\fR, \fILABEL=\fR and \fIUUID=\fR.
+Explicitly define the mount source.  Supported are \fIdevice\fR, \fImaj:min\fR,
+\fILABEL=\fR, \fIUUID=\fR, \fIPARTLABEL=\fR or \fIPARTUUID=\fR.
 .IP "\fB\-T, \-\-target \fIdir\fP"
 Explicitly define the mount target (mountpoint directory).
 .IP "\fB\-w, \-\-timeout \fImilliseconds\fP"

@@ -56,11 +56,12 @@
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <sys/wait.h>
-#include "strutils.h"
 
+#include "strutils.h"
 #include "nls.h"
 #include "xalloc.h"
 #include "widechar.h"
+#include "closestream.h"
 
 #define _REGEX_RE_COMP
 #include <regex.h>
@@ -90,7 +91,7 @@ void doclear(void);
 void cleareol(void);
 void clreos(void);
 void home(void);
-void error (char *mess);
+void more_error (char *mess);
 void do_shell (char *filename);
 int  colon (char *filename, int cmd, int nlines);
 int  expand (char **outbuf, char *inbuf);
@@ -330,6 +331,7 @@ int main(int argc, char **argv) {
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
+    atexit(close_stdout);
 
     nfiles = argc;
     fnames = argv;
@@ -1572,7 +1574,7 @@ void do_shell (char *filename)
 }
 
 /*
-** Search for nth ocurrence of regular expression contained in buf in the file
+** Search for nth occurrence of regular expression contained in buf in the file
 */
 
 void search(char buf[], FILE *file, register int n)
@@ -1589,7 +1591,7 @@ void search(char buf[], FILE *file, register int n)
     context.chrctr = startline;
     lncount = 0;
     if ((s = re_comp (buf)) != 0)
-	error (s);
+	more_error (s);
     while (!feof (file)) {
 	line3 = line2;
 	line2 = line1;
@@ -1632,7 +1634,7 @@ void search(char buf[], FILE *file, register int n)
 		    break;
 		}
 	} else if (rv == -1)
-	    error (_("Regular expression botch"));
+	    more_error (_("Regular expression botch"));
     }
     if (feof (file)) {
 	if (!no_intty) {
@@ -1643,7 +1645,7 @@ void search(char buf[], FILE *file, register int n)
 	    putsout(_("\nPattern not found\n"));
 	    end_it (0);
 	}
-	error (_("Pattern not found"));
+	more_error (_("Pattern not found"));
     }
 }
 
@@ -2025,7 +2027,7 @@ void ttyin (char buf[], register int nmax, char pchar) {
     *--sp = '\0';
     if (!eraseln) promptlen = maxlen;
     if (sp - buf >= nmax - 1)
-	error (_("Line too long"));
+	more_error (_("Line too long"));
 }
 
 /* return: 0 - unchanged, 1 - changed, -1 - overflow (unchanged) */
@@ -2060,7 +2062,7 @@ int expand (char **outbuf, char *inbuf) {
 	    break;
 	case '!':
 	    if (!shellp)
-		error (_("No previous command to substitute for"));
+		more_error (_("No previous command to substitute for"));
 	    strcpy (outstr, shell_line);
 	    outstr += strlen (shell_line);
 	    changed++;
@@ -2089,7 +2091,7 @@ void show (char c) {
     promptlen++;
 }
 
-void error (char *mess)
+void more_error (char *mess)
 {
     if (clreol)
 	cleareol ();
@@ -2126,7 +2128,7 @@ reset_tty () {
     if (no_tty)
 	return;
     if (pstate) {
-	tputs(ULexit, fileno(stdout), ourputch);	/* putchar - if that isnt a macro */
+	tputs(ULexit, fileno(stdout), ourputch);	/* putchar - if that isn't a macro */
 	fflush(stdout);
 	pstate = 0;
     }

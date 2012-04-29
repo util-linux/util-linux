@@ -97,6 +97,7 @@
 #include <wctype.h>
 #endif
 
+#include "closestream.h"
 #include "nls.h"
 #include "rpmatch.h"
 #include "blkdev.h"
@@ -2767,6 +2768,7 @@ main(int argc, char **argv)
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
+    atexit(close_stdout);
 
     while ((c = getopt(argc, argv, "ac:gh:s:vzP:")) != -1)
 	switch (c) {
@@ -2774,7 +2776,7 @@ main(int argc, char **argv)
 	    arrow_cursor = TRUE;
 	    break;
 	case 'c':
-	    user_cylinders = cylinders = atoll(optarg);
+		user_cylinders = cylinders = strtoll_or_err(optarg, _("cannot parse number of cylinders"));
 	    if (cylinders <= 0) {
 		fprintf(stderr, "%s: %s\n", argv[0], _("Illegal cylinders value"));
 		exit(1);
@@ -2784,14 +2786,14 @@ main(int argc, char **argv)
 	    use_partition_table_geometry = TRUE;
 	    break;
 	case 'h':
-	    user_heads = heads = atoi(optarg);
+	    user_heads = heads = strtol_or_err(optarg, _("cannot parse number of heads"));
 	    if (heads <= 0 || heads > MAX_HEADS) {
 		fprintf(stderr, "%s: %s\n", argv[0], _("Illegal heads value"));
 		exit(1);
 	    }
 	    break;
 	case 's':
-	    user_sectors = sectors = atoi(optarg);
+	    user_sectors = sectors = strtol_or_err(optarg, _("cannot parse number of sectors"));
 	    if (sectors <= 0 || sectors > MAX_SECTORS) {
 		fprintf(stderr, "%s: %s\n", argv[0], _("Illegal sectors value"));
 		exit(1);

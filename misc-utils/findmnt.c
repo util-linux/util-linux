@@ -37,6 +37,7 @@
 
 #include "pathnames.h"
 #include "nls.h"
+#include "closestream.h"
 #include "c.h"
 #include "tt.h"
 #include "strutils.h"
@@ -66,6 +67,8 @@ enum {
 	COL_FS_OPTIONS,
 	COL_LABEL,
 	COL_UUID,
+	COL_PARTLABEL,
+	COL_PARTUUID,
 	COL_MAJMIN,
 	COL_ACTION,
 	COL_OLD_TARGET,
@@ -91,6 +94,7 @@ struct colinfo {
 	int		flags;		/* tt flags */
 	const char      *help;		/* column description */
 	const char	*match;		/* pattern for match_func() */
+	void		*match_data;	/* match specific data */
 };
 
 /* columns descriptions (don't use const, this is writable) */
@@ -103,6 +107,8 @@ static struct colinfo infos[FINDMNT_NCOLUMNS] = {
 	[COL_FS_OPTIONS]   = { "FS-OPTIONS",   0.10, TT_FL_TRUNC, N_("FS specific mount options") },
 	[COL_LABEL]        = { "LABEL",        0.10, 0, N_("filesystem label") },
 	[COL_UUID]         = { "UUID",           36, 0, N_("filesystem UUID") },
+	[COL_PARTLABEL]    = { "PARTLABEL",    0.10, 0, N_("partition label") },
+	[COL_PARTUUID]     = { "PARTUUID",       36, 0, N_("partition UUID") },
 	[COL_MAJMIN]       = { "MAJ:MIN",         6, 0, N_("major:minor device number") },
 	[COL_ACTION]       = { "ACTION",         10, TT_FL_STRICTWIDTH, N_("action detected by --poll") },
 	[COL_OLD_OPTIONS]  = { "OLD-OPTIONS",  0.10, TT_FL_TRUNC, N_("old mount options saved by --poll") },
@@ -168,11 +174,63 @@ static const char *get_match(int id)
 	return infos[id].match;
 }
 
+static void *get_match_data(int id)
+{
+	assert(id < FINDMNT_NCOLUMNS);
+	return infos[id].match_data;
+}
+
 static void set_match(int id, const char *match)
 {
 	assert(id < FINDMNT_NCOLUMNS);
 	infos[id].match = match;
 }
+
+static void set_match_data(int id, void *data)
+{
+	assert(id < FINDMNT_NCOLUMNS);
+	infos[id].match_data = data;
+}
+
+/*
+ * source match means COL_SOURCE *or* COL_MAJMIN, depends on
+ * data format.
+ */
+static void set_source_match(const char *data)
+{
+	int maj, min;
+
+	if (sscanf(data, "%d:%d", &maj, &min) == 2) {
+		dev_t *devno = xmalloc(sizeof(dev_t));
+
+		*devno = makedev(maj, min);
+		set_match(COL_MAJMIN, data);
+		set_match_data(COL_MAJMIN, (void *) devno);
+		flags |= FL_NOSWAPMATCH;
+	} else
+		set_match(COL_SOURCE, data);
+}
+
+static void enable_extra_target_match(void)
+{
+	char *cn = NULL, *mnt = NULL;
+
+	/*
+	 * Check if match pattern is mountpoint, if not use the
+	 * real mountpoint.
+	 */
+	cn = mnt_resolve_path(get_match(COL_TARGET), cache);
+	if (!cn)
+		return;
+
+	mnt = mnt_get_mountpoint(cn);
+	if (!mnt || strcmp(mnt, cn) == 0)
+		return;
+
+	/* replace the current setting with the real mountpoint */
+	set_match(COL_TARGET, mnt);
+}
+
 
 static int is_tabdiff_column(int id)
 {
@@ -200,7 +258,8 @@ static int is_listall_mode(void)
 	return (!get_match(COL_SOURCE) &&
 		!get_match(COL_TARGET) &&
 		!get_match(COL_FSTYPE) &&
-		!get_match(COL_OPTIONS));
+		!get_match(COL_OPTIONS) &&
+		!get_match(COL_MAJMIN));
 }
 
 /*
@@ -299,7 +358,7 @@ static const char *get_tag(struct libmnt_fs *fs, const char *tagname)
 static const char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 {
 	struct statvfs buf;
-	uint64_t vfs_attr;
+	uint64_t vfs_attr = 0;
 	char *sizestr;
 
 	if (statvfs(mnt_fs_get_target(fs), &buf) != 0)
@@ -377,9 +436,16 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 	case COL_UUID:
 		str = get_tag(fs, "UUID");
 		break;
+	case COL_PARTUUID:
+		str = get_tag(fs, "PARTUUID");
+		break;
 	case COL_LABEL:
 		str = get_tag(fs, "LABEL");
 		break;
+	case COL_PARTLABEL:
+		str = get_tag(fs, "PARTLABEL");
+		break;
+
 	case COL_MAJMIN:
 	{
 		dev_t devno = mnt_fs_get_devno(fs);
@@ -620,12 +686,14 @@ static int tab_is_tree(struct libmnt_table *tb)
 	return rc;
 }
 
+
 /* filter function for libmount (mnt_table_find_next_fs()) */
 static int match_func(struct libmnt_fs *fs,
 		      void *data __attribute__ ((__unused__)))
 {
 	int rc = flags & FL_INVERT ? 1 : 0;
 	const char *m;
+	void *md;
 
 	m = get_match(COL_TARGET);
 	if (m && !mnt_fs_match_target(fs, m, cache))
@@ -641,6 +709,10 @@ static int match_func(struct libmnt_fs *fs,
 
 	m = get_match(COL_OPTIONS);
 	if (m && !mnt_fs_match_options(fs, m))
+		return rc;
+
+	md = get_match_data(COL_MAJMIN);
+	if (md && mnt_fs_get_devno(fs) != *((dev_t *) md))
 		return rc;
 
 	if ((flags & FL_DF) && !(flags & FL_ALL)) {
@@ -748,7 +820,7 @@ static int poll_match(struct libmnt_fs *fs)
 	    get_match(COL_SOURCE) && !get_match(COL_TARGET)) {
 		/*
 		 * findmnt --poll /foo
-		 * The '/foo' source as well as target.
+		 * The '/foo' maybe source as well as target.
 		 */
 		const char *str = get_match(COL_SOURCE);
 
@@ -901,7 +973,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -c, --canonicalize     canonicalize printed paths\n"
 	" -D, --df               imitate the output of df(1)\n"
 	" -d, --direction <word> direction of search, 'forward' or 'backward'\n"
-	" -e, --evaluate         convert tags (LABEL/UUID) to device names\n"
+	" -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
+	"                          to device names\n"
 	" -F, --tab-file <path>  alternative file for --fstab, --mtab or --kernel options\n"
 	" -f, --first-only       print the first found filesystem only\n"));
 
@@ -919,7 +992,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(
 	" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 	" -R, --submounts        print all submounts for the matching filesystems\n"
-	" -S, --source <string>  the device to mount (by name, LABEL= or UUID=)\n"
+	" -S, --source <string>  the device to mount (by name, maj:min, \n"
+	"                          LABEL=, UUID=, PARTUUID=, PARTLABEL=)\n"
 	" -T, --target <string>  the mountpoint to use\n"));
 
 	fputs(USAGE_SEPARATOR, out);
@@ -991,6 +1065,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	/* default output format */
 	tt_flags |= TT_FL_TREE;
@@ -1104,7 +1179,7 @@ int main(int argc, char *argv[])
 			flags |= FL_SUBMOUNTS;
 			break;
 		case 'S':
-			set_match(COL_SOURCE, optarg);
+			set_source_match(optarg);
 			flags |= FL_NOSWAPMATCH;
 			break;
 		case 'T':
@@ -1148,7 +1223,6 @@ int main(int argc, char *argv[])
 	if (!tabtype)
 		tabtype = TABTYPE_KERNEL;
 
-
 	if (flags & FL_POLL) {
 		if (tabtype != TABTYPE_KERNEL)
 			errx_mutually_exclusive("--{poll,fstab,mtab}");
@@ -1162,7 +1236,7 @@ int main(int argc, char *argv[])
 			"with command line element that is not an option"));
 
 	if (optind < argc)
-		set_match(COL_SOURCE, argv[optind++]);	/* dev/tag/mountpoint */
+		set_source_match(argv[optind++]);	/* dev/tag/mountpoint/maj:min */
 	if (optind < argc)
 		set_match(COL_TARGET, argv[optind++]);	/* mountpoint */
 
@@ -1182,7 +1256,8 @@ int main(int argc, char *argv[])
 		 */
 		const char *x = get_match(COL_SOURCE);
 
-		if (!strncmp(x, "LABEL=", 6) || !strncmp(x, "UUID=", 5))
+		if (!strncmp(x, "LABEL=", 6) || !strncmp(x, "UUID=", 5) ||
+		    !strncmp(x, "PARTLABEL=", 10) || !strncmp(x, "PARTUUID=", 9))
 			flags |= FL_NOSWAPMATCH;
 	}
 
@@ -1204,6 +1279,14 @@ int main(int argc, char *argv[])
 		goto leave;
 	}
 	mnt_table_set_cache(tb, cache);
+
+	if (tabtype == TABTYPE_KERNEL
+	    && (flags & FL_NOSWAPMATCH)
+	    && get_match(COL_TARGET))
+		/*
+		 * enable extra functionality for target match
+		 */
+		enable_extra_target_match();
 
 	/*
 	 * initialize output formatting (tt.h)

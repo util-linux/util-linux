@@ -33,6 +33,7 @@
 #include "xalloc.h"
 #include "strutils.h"
 #include "list.h"
+#include "closestream.h"
 
 #ifndef RLIMIT_RTTIME
 # define RLIMIT_RTTIME 15
@@ -513,6 +514,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	INIT_LIST_HEAD(&lims);
 
@@ -583,7 +585,6 @@ int main(int argc, char **argv)
 			break;
 		case 'h':
 			usage(stdout);
-			break;
 		case 'o':
 			ncolumns = string_to_idarray(optarg,
 						     columns, ARRAY_SIZE(columns),
@@ -607,7 +608,6 @@ int main(int argc, char **argv)
 
 		default:
 			usage(stderr);
-			break;
 		}
 	}
 	if (argc > optind && pid)

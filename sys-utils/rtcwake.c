@@ -41,6 +41,7 @@
 #include "usleep.h"
 #include "strutils.h"
 #include "c.h"
+#include "closestream.h"
 
 /* constants from legacy PC/AT hardware */
 #define	RTC_PF	0x40
@@ -285,7 +286,8 @@ static void suspend_system(const char *suspend)
 	}
 
 	/* this executes after wake from suspend */
-	fclose(f);
+	if (close_stream(f))
+		errx(EXIT_FAILURE, _("write error"));
 }
 
 
@@ -394,6 +396,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((t = getopt_long(argc, argv, "ahd:lm:ns:t:uVv",
 					long_options, NULL)) != EOF) {

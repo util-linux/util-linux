@@ -274,7 +274,7 @@ Version 1.21 (30-Oct-93): changes since 1.20
 	Rik Faith and Stephen Tweedie inspired this change.
 
 Version 1.20 (30-Jul-93): changes since 1.17:
-	Versions 1.18 and 1.19 were never made publically available.
+	Versions 1.18 and 1.19 were never made publicly available.
 	Agetty now supports a -L switch that makes it force the CLOCAL flag.
 	This is useful if you have a local terminal attached with a partly
 	wired serial cable that does not pass on the Carrier Detect signal.

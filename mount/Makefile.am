@@ -1,7 +1,7 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS = mount umount
-dist_man_MANS = fstab.5 mount.8 umount.8
+dist_man_MANS = mount.8 umount.8
 
 # generic sources for all programs (mount, umount)
 srcs_common = \
@@ -10,7 +10,7 @@ srcs_common = \
 	sundries.h
 
 # generic header for mount and umount
-hdrs_mount = fstab.h mount_mntent.h mount_constants.h getusername.h
+hdrs_mount = fstab.h mount_mntent.h mount_constants.h getusername.h fsprobe.h
 
 # generic sources for mount and umount
 srcs_mount = \

@@ -19,6 +19,7 @@
 #include "strutils.h"
 #include "loopdev.h"
 #include "xgetpass.h"
+#include "closestream.h"
 
 enum {
 	A_CREATE = 1,		/* setup a new device */
@@ -217,6 +218,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	loopcxt_init(&lc, 0);
 	loopcxt_enable_debug(&lc, getenv("LOOPDEV_DEBUG") ? TRUE : FALSE);

@@ -29,6 +29,7 @@
 #include "widechar.h"
 #include "writeall.h"
 #include "bitops.h"
+#include "closestream.h"
 
 /* Close the log.  Currently a NOP. */
 #define SYSLOG_ACTION_CLOSE          0
@@ -112,7 +113,7 @@ struct dmesg_control {
 	/*
 	 * For the --file option we mmap whole file. The unnecessary (already
 	 * printed) pages are always unmapped. The result is that we have in
-	 * memory only the currenly used page(s).
+	 * memory only the currently used page(s).
 	 */
 	char		*mmap_buff;
 	size_t		pagesize;
@@ -688,6 +689,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "CcDdEF:f:hkl:n:rs:TtuVx",
 				longopts, NULL)) != -1) {

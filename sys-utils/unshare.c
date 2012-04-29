@@ -27,6 +27,7 @@
 
 #include "nls.h"
 #include "c.h"
+#include "closestream.h"
 
 #ifndef CLONE_NEWSNS
 # define CLONE_NEWNS 0x00020000
@@ -91,6 +92,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while((c = getopt_long(argc, argv, "hVmuin", longopts, NULL)) != -1) {
 		switch(c) {

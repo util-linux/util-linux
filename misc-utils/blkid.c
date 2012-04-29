@@ -44,6 +44,7 @@ extern int optind;
 
 #define STRTOXX_EXIT_CODE	4		/* strtoxx_or_err() */
 #include "strutils.h"
+#include "closestream.h"
 
 const char *progname = "blkid";
 
@@ -579,7 +580,7 @@ done:
 	if (!nvals)
 		return 2;	/* nothing detected */
 
-	return 0;		/* sucess */
+	return 0;		/* success */
 }
 
 /* converts comma separated list to BLKID_USAGE_* mask */
@@ -691,6 +692,7 @@ int main(int argc, char **argv)
 	uintmax_t offset = 0, size = 0;
 
 	show[0] = NULL;
+	atexit(close_stdout);
 
 	while ((c = getopt (argc, argv, "c:df:ghilL:n:ko:O:ps:S:t:u:U:w:v")) != EOF)
 		switch (c) {

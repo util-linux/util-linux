@@ -38,6 +38,7 @@
 #include "nls.h"
 #include "widechar.h"
 #include "strutils.h"
+#include "closestream.h"
 
 #ifndef MAXSYMLINKS
 #define MAXSYMLINKS 256
@@ -179,6 +180,7 @@ readlink_to_namei(struct namei *nm, const char *path)
 {
 	char sym[PATH_MAX];
 	ssize_t sz;
+	int isrel = 0;
 
 	sz = readlink(path, sym, sizeof(sym));
 	if (sz < 1)
@@ -186,20 +188,26 @@ readlink_to_namei(struct namei *nm, const char *path)
 	if (*sym != '/') {
 		char *p = strrchr(path, '/');
 
-		nm->relstart = p ? p - path : 0;
-		if (nm->relstart)
+		if (p) {
+			isrel = 1;
+			nm->relstart = p ? p - path : 0;
 			sz += nm->relstart + 1;
+		}
 	}
 	nm->abslink = xmalloc(sz + 1);
 
-	if (*sym != '/' && nm->relstart) {
+	if (*sym != '/' && isrel) {
 		/* create the absolute path from the relative symlink */
 		memcpy(nm->abslink, path, nm->relstart);
 		*(nm->abslink + nm->relstart) = '/';
 		nm->relstart++;
 		memcpy(nm->abslink + nm->relstart, sym, sz - nm->relstart);
 	} else
+		/* - absolute link (foo -> /path/bar)
+		 * - or link without any subdir (foo -> bar)
+		 */
 		memcpy(nm->abslink, sym, sz);
+
 	nm->abslink[sz] = '\0';
 }
 
@@ -448,6 +456,7 @@ main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "hVlmnovx", longopts, NULL)) != -1) {
 		switch(c) {

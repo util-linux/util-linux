@@ -46,6 +46,7 @@
 #include <libmount.h>
 
 #include "c.h"
+#include "closestream.h"
 #include "nls.h"
 #include "strutils.h"
 #include "xalloc.h"
@@ -64,7 +65,7 @@
 /* eject(1) is able to eject only 'removable' devices (attribute in /sys)
  * _or_ devices connected by hotplug subsystem.
  */
-static const char *hotplug_subsystems[] = {
+static const char * const hotplug_subsystems[] = {
 	"usb",
 	"ieee1394",
 	"pcmcia",
@@ -386,6 +387,22 @@ static void close_tray(int fd)
 }
 
 /*
+ * Eject using CDROMEJECT ioctl.
+ */
+static int eject_cdrom(int fd)
+{
+#if defined(CDROMEJECT)
+	return ioctl(fd, CDROMEJECT);
+#elif defined(CDIOCEJECT)
+	return ioctl(fd, CDIOCEJECT);
+#else
+	warnx(_("CD-ROM eject unsupported"));
+	errno = ENOSYS;
+	return -1;
+#endif
+}
+
+/*
  * Toggle tray.
  *
  * Written by Benjamin Schwenk <benjaminschwenk@yahoo.de> and
@@ -400,7 +417,21 @@ static void toggle_tray(int fd)
 	struct timeval time_start, time_stop;
 	int time_elapsed;
 
-#ifdef CDROMCLOSETRAY
+#ifdef CDROM_DRIVE_STATUS
+	/* First ask the CDROM for info, otherwise fall back to manual.  */
+	switch (ioctl(fd, CDROM_DRIVE_STATUS)) {
+	case CDS_TRAY_OPEN:
+		close_tray(fd);
+		return;
+
+	case CDS_NO_DISC:
+	case CDS_DISC_OK:
+		if (eject_cdrom(fd))
+			err(EXIT_FAILURE, _("CD-ROM eject command failed"));
+		return;
+	}
+#endif
+
 	/* Try to open the CDROM tray and measure the time therefor
 	 * needed.  In my experience the function needs less than 0.05
 	 * seconds if the tray was already open, and at least 1.5 seconds
@@ -408,7 +439,7 @@ static void toggle_tray(int fd)
 	gettimeofday(&time_start, NULL);
 
 	/* Send the CDROMEJECT command to the device. */
-	if (ioctl(fd, CDROMEJECT, 0) < 0)
+	if (eject_cdrom(fd) < 0)
 		err(EXIT_FAILURE, _("CD-ROM eject command failed"));
 
 	/* Get the second timestamp, to measure the time needed to open
@@ -423,10 +454,6 @@ static void toggle_tray(int fd)
 	 * closed before. This would mean that we are done.  */
 	if (time_elapsed < TRAY_WAS_ALREADY_OPEN_USECS)
 		close_tray(fd);
-#else
-	warnx(_("CD-ROM tray toggle command not supported by this kernel"));
-#endif
-
 }
 
 /*
@@ -495,6 +522,7 @@ static int read_speed(const char *devname)
 					errx(EXIT_FAILURE,
 						_("%s: failed to read speed"),
 						_PATH_PROC_CDROMINFO);
+				fclose(f);
 				return atoi(str);
 			}
 		}
@@ -527,20 +555,6 @@ static void list_speeds(const char *name, int fd)
 	printf("\n");
 #else
 	warnx(_("CD-ROM select speed command not supported by this kernel"));
-#endif
-}
-
-/*
- * Eject using CDROMEJECT ioctl. Return 1 if successful, 0 otherwise.
- */
-static int eject_cdrom(int fd)
-{
-#if defined(CDROMEJECT)
-	return ioctl(fd, CDROMEJECT) == 0;
-#elif defined(CDIOCEJECT)
-	return ioctl(fd, CDIOCEJECT) == 0;
-#else
-	warnx(_("CD-ROM eject unsupported"));
 #endif
 }
 
@@ -661,7 +675,7 @@ static int open_device(const char *name)
 	if (fd < 0)
 		fd = open(name, O_RDONLY|O_NONBLOCK);
 	if (fd == -1)
-		errx(EXIT_FAILURE, _("%s: open failed"), name);
+		err(EXIT_FAILURE, _("%s: open failed"), name);
 	return fd;
 }
 
@@ -908,6 +922,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL,"");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	/* parse the command line arguments */
 	parse_args(argc, argv, &device);

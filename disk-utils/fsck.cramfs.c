@@ -59,6 +59,7 @@
 #include "blkdev.h"
 #include "c.h"
 #include "exitcodes.h"
+#include "closestream.h"
 
 #define XALLOC_EXIT_CODE FSCK_EX_ERROR
 #include "xalloc.h"
@@ -644,6 +645,7 @@ int main(int argc, char **argv)
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	page_size = getpagesize();
 

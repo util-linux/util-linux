@@ -58,6 +58,8 @@
 #include "strutils.h"
 #include "at.h"
 #include "sysfs.h"
+#include "closestream.h"
+#include "mangle.h"
 
 /* column IDs */
 enum {
@@ -68,6 +70,8 @@ enum {
 	COL_TARGET,
 	COL_LABEL,
 	COL_UUID,
+	COL_PARTLABEL,
+	COL_PARTUUID,
 	COL_RO,
 	COL_RM,
 	COL_MODEL,
@@ -108,6 +112,10 @@ static struct colinfo infos[] = {
 	[COL_TARGET] = { "MOUNTPOINT", 0.10, TT_FL_TRUNC, N_("where the device is mounted") },
 	[COL_LABEL]  = { "LABEL",   0.1, 0, N_("filesystem LABEL") },
 	[COL_UUID]   = { "UUID",    36,  0, N_("filesystem UUID") },
+
+	[COL_PARTLABEL] = { "PARTLABEL", 0.1, 0, N_("partition LABEL") },
+	[COL_PARTUUID]  = { "PARTUUID",  36,  0, N_("partition UUID") },
+
 	[COL_RO]     = { "RO",      1, TT_FL_RIGHT, N_("read-only device") },
 	[COL_RM]     = { "RM",      1, TT_FL_RIGHT, N_("removable device") },
 	[COL_ROTA]   = { "ROTA",    1, TT_FL_RIGHT, N_("rotational device") },
@@ -168,8 +176,10 @@ struct blkdev_cxt {
 
 	int probed;		/* already probed */
 	char *fstype;		/* detected fs, NULL or "?" if cannot detect */
-	char *uuid;		/* UUID of device / filesystem */
-	char *label;		/* FS label */
+	char *uuid;		/* filesystem UUID (or stack uuid) */
+	char *label;		/* filesystem label */
+	char *partuuid;		/* partition UUID */
+	char *partlabel;	/* partiton label */
 
 	int npartitions;	/* # of partitions this device has */
 	int nholders;		/* # of devices mapped directly to this device
@@ -231,6 +241,8 @@ static void reset_blkdev_cxt(struct blkdev_cxt *cxt)
 	free(cxt->fstype);
 	free(cxt->uuid);
 	free(cxt->label);
+	free(cxt->partuuid);
+	free(cxt->partlabel);
 
 	sysfs_deinit(&cxt->sysfs);
 
@@ -356,13 +368,20 @@ static int probe_device_by_udev(struct blkdev_cxt *cxt)
 	if (dev) {
 		const char *data;
 
-		if ((data = udev_device_get_property_value(dev, "ID_FS_LABEL")))
+		if ((data = udev_device_get_property_value(dev, "ID_FS_LABEL"))) {
 			cxt->label = xstrdup(data);
+			unhexmangle_string(cxt->label);
+		}
 		if ((data = udev_device_get_property_value(dev, "ID_FS_TYPE")))
 			cxt->fstype = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_FS_UUID")))
 			cxt->uuid = xstrdup(data);
-
+		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_UUID")))
+			cxt->partuuid = xstrdup(data);
+		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_NAME"))) {
+			cxt->partlabel = xstrdup(data);
+			unhexmangle_string(cxt->partlabel);
+		}
 		udev_device_unref(dev);
 	}
 
@@ -392,13 +411,13 @@ static void probe_device(struct blkdev_cxt *cxt)
 	if (!pr)
 		return;
 
-	/* TODO: we have to enable partitions probing to avoid conflicts
-	 *       between raids and PT -- see blkid(8) code for more details
-	 */
 	blkid_probe_enable_superblocks(pr, 1);
 	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_LABEL |
 					      BLKID_SUBLKS_UUID |
 					      BLKID_SUBLKS_TYPE);
+	blkid_probe_enable_partitions(pr, 1);
+	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_ENTRY_DETAILS);
+
 	if (!blkid_do_safeprobe(pr)) {
 		const char *data = NULL;
 
@@ -408,6 +427,11 @@ static void probe_device(struct blkdev_cxt *cxt)
 			cxt->uuid = xstrdup(data);
 		if (!blkid_probe_lookup_value(pr, "LABEL", &data, NULL))
 			cxt->label = xstrdup(data);
+		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_UUID", &data, NULL))
+			cxt->partuuid = xstrdup(data);
+		if (!blkid_probe_lookup_value(pr, "PART_ENTRY_NAME", &data, NULL))
+			cxt->partlabel = xstrdup(data);
+
 	}
 
 	blkid_free_probe(pr);
@@ -516,26 +540,6 @@ static char *get_type(struct blkdev_cxt *cxt)
 #define is_parsable(_l)	(((_l)->tt->flags & TT_FL_RAW) || \
 			 ((_l)->tt->flags & TT_FL_EXPORT))
 
-static char *encode_str(const char *str)
-{
-	size_t sz;
-	char *enc = NULL;
-
-	if (!str)
-		goto err;
-
-	sz = strlen(str) * 4 + 1;
-	enc = xmalloc(sz);
-
-	if (blkid_encode_string(str, enc, sz) != 0)
-		goto err;
-
-	return enc;
-err:
-	free(enc);
-	return xstrdup("");
-}
-
 static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line *ln)
 {
 	char buf[1024];
@@ -550,8 +554,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 	case COL_NAME:
 		if (cxt->dm_name) {
 			if (is_parsable(lsblk))
-				tt_line_set_data(ln, col,
-					encode_str(cxt->dm_name));
+				tt_line_set_data(ln, col, cxt->dm_name);
 			else {
 				snprintf(buf, sizeof(buf), "%s (%s)",
 					cxt->dm_name, cxt->name);
@@ -560,10 +563,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 			break;
 		}
 	case COL_KNAME:
-		if (is_parsable(lsblk))
-			tt_line_set_data(ln, col, encode_str(cxt->name));
-		else
-			tt_line_set_data(ln, col, xstrdup(cxt->name));
+		tt_line_set_data(ln, col, xstrdup(cxt->name));
 		break;
 	case COL_OWNER:
 	{
@@ -603,8 +603,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		break;
 	case COL_TARGET:
 		if (!(cxt->nholders + cxt->npartitions)) {
-			p = get_device_mountpoint(cxt);
-			if (p)
+			if ((p = get_device_mountpoint(cxt)))
 				tt_line_set_data(ln, col, p);
 		}
 		break;
@@ -613,15 +612,24 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		if (!cxt->label)
 			break;
 
-		if (is_parsable(lsblk))
-			tt_line_set_data(ln, col, encode_str(cxt->label));
-		else
-			tt_line_set_data(ln, col, xstrdup(cxt->label));
+		tt_line_set_data(ln, col, xstrdup(cxt->label));
 		break;
 	case COL_UUID:
 		probe_device(cxt);
 		if (cxt->uuid)
 			tt_line_set_data(ln, col, xstrdup(cxt->uuid));
+		break;
+	case COL_PARTLABEL:
+		probe_device(cxt);
+		if (!cxt->partlabel)
+			break;
+
+		tt_line_set_data(ln, col, xstrdup(cxt->partlabel));
+		break;
+	case COL_PARTUUID:
+		probe_device(cxt);
+		if (cxt->uuid)
+			tt_line_set_data(ln, col, xstrdup(cxt->partuuid));
 		break;
 	case COL_RO:
 		tt_line_set_data(ln, col, is_readonly_device(cxt) ?
@@ -1186,6 +1194,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	lsblk = &_ls;
 	memset(lsblk, 0, sizeof(*lsblk));

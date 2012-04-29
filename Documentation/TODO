@@ -114,7 +114,7 @@ libblkd and libmount
 --------------------
 
  - use __attribute__((notnull)) and __attribute__((warn_unused_result))
-   Note that the code has to be usefull for non-gcc compilers too.
+   Note that the code has to be useful for non-gcc compilers too.
 
 partx
 -----

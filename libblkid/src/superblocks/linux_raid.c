@@ -82,7 +82,7 @@ struct mdp1_super_block {
 	uint64_t	utime;		/* 40 bits second, 24 btes microseconds */
 	uint64_t	events;		/* incremented when superblock updated */
 	uint64_t	resync_offset;	/* data before this offset (from data_offset) known to be in sync */
-	uint32_t	sb_csum;	/* checksum upto dev_roles[max_dev] */
+	uint32_t	sb_csum;	/* checksum up to dev_roles[max_dev] */
 	uint32_t	max_dev;	/* size of dev_roles[] array to consider */
 	uint8_t		pad3[64-32];	/* set to 0 when writing */
 
@@ -160,7 +160,7 @@ static int probe_raid0(blkid_probe pr, blkid_loff_t off)
 	 * Check for collisions between RAID and partition table
 	 *
 	 * For example the superblock is at the end of the last partition, it's
-	 * the same possition as at the end of the disk...
+	 * the same position as at the end of the disk...
 	 */
 	if ((S_ISREG(pr->mode) || blkid_probe_is_wholedisk(pr)) &&
 	    blkid_probe_is_covered_by_pt(pr,

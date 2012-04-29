@@ -88,7 +88,8 @@ checkxalloc:
 	@ $(top_srcdir)/tools/checkxalloc.sh
 
 ENABLE_ALL = --enable-static-programs --enable-most-builds
-DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --disable-use-tty-group $(ENABLE_ALL)
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --disable-use-tty-group \
+			    --disable-silent-rules $(ENABLE_ALL)
 
 
 BUILT_SOURCES = .version

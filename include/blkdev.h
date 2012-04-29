@@ -110,4 +110,7 @@ int blkdev_get_physector_size(int fd, int *sector_size);
 /* is the device cdrom capable? */
 int blkdev_is_cdrom(int fd);
 
+/* get device's geometry - legacy */
+int blkdev_get_geometry(int fd, unsigned int *h, unsigned int *s);
+
 #endif /* BLKDEV_H */

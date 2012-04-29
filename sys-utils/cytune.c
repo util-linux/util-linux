@@ -52,6 +52,7 @@
 
 #include "c.h"
 #include "cyclades.h"
+#include "closestream.h"
 #include "strutils.h"
 
 #if 0
@@ -311,6 +312,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((i =
 		getopt_long(argc, argv, "qs:S:t:T:gGi:Vh", longopts,

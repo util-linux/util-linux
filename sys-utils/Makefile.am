@@ -17,6 +17,7 @@ dist_man_MANS = \
 	ipcrm.1 \
 	ipcs.1 \
 	readprofile.8 \
+	fstab.5 \
 	renice.1 \
 	setsid.1
 
@@ -25,7 +26,7 @@ if LINUX
 # Linux-only utils with no another dependencies. All another dependencies have
 # to be resolved in configure.ac end exported to makefiles by BUILD_*.
 #
-bin_PROGRAMS += dmesg
+bin_PROGRAMS += dmesg wdctl
 sbin_PROGRAMS += ctrlaltdel fsfreeze fstrim
 usrbin_exec_PROGRAMS += cytune setarch
 usrsbin_exec_PROGRAMS += ldattach tunelp rtcwake
@@ -95,7 +96,7 @@ if BUILD_NEW_MOUNT
 # -- temporary we share some man pages
 #
 bin_PROGRAMS += mount umount
-dist_man_MANS += mount.8 ../mount/fstab.5 ../mount/umount.8
+dist_man_MANS += mount.8 ../mount/umount.8
 
 mount_SOURCES = \
 	mount.c \
@@ -131,18 +132,22 @@ endif # BUILD_NEW_MOUNT
 
 
 if BUILD_SWAPON
-sbin_PROGRAMS += swapon
+sbin_PROGRAMS += swapon swapoff
 dist_man_MANS += swapoff.8 swapon.8
 
 swapon_SOURCES = \
 	swapon.c \
+	swapon-common.c \
+	swapon-common.h \
 	$(top_srcdir)/lib/blkdev.c \
-	$(top_srcdir)/lib/canonicalize.c \
-	$(top_srcdir)/lib/linux_version.c \
-	$(top_srcdir)/lib/mangle.c
+	$(top_srcdir)/lib/linux_version.c
 
-swapon_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
-swapon_LDADD = $(ul_libblkid_la)
+swapon_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+swapon_LDADD = $(ul_libmount_la)
+
+swapoff_SOURCES = swapoff.c swapon-common.c
+swapoff_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+swapoff_LDADD = $(ul_libmount_la)
 endif
 
 if BUILD_LSCPU
@@ -179,6 +184,7 @@ ipcmk_SOURCES = ipcmk.c $(top_srcdir)/lib/strutils.c
 ipcrm_SOURCES = ipcrm.c  $(top_srcdir)/lib/strutils.c
 flock_SOURCES = flock.c $(top_srcdir)/lib/strutils.c
 ldattach_SOURCES = ldattach.c $(top_srcdir)/lib/strutils.c
+wdctl_SOURCES = wdctl.c
 
 if BUILD_MOUNTPOINT
 bin_PROGRAMS += mountpoint

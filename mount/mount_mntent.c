@@ -14,6 +14,7 @@
 #include "sundries.h"		/* for xmalloc */
 #include "nls.h"
 #include "mangle.h"
+#include "closestream.h"
 
 static int
 is_space_or_tab (char c) {
@@ -50,10 +51,11 @@ my_setmntent (const char *file, char *mode) {
 }
 
 void
-my_endmntent (mntFILE *mfp) {
+my_endmntent(mntFILE * mfp) {
 	if (mfp) {
 		if (mfp->mntent_fp)
-			fclose(mfp->mntent_fp);
+			if (close_stream(mfp->mntent_fp))
+				fprintf(stderr, _("write error"));
 		free(mfp->mntent_file);
 		free(mfp);
 	}

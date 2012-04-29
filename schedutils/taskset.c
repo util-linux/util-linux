@@ -34,6 +34,7 @@
 #include "xalloc.h"
 #include "procutils.h"
 #include "c.h"
+#include "closestream.h"
 
 struct taskset {
 	pid_t		pid;		/* task PID */
@@ -146,6 +147,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	memset(&ts, 0, sizeof(ts));
 

@@ -429,7 +429,7 @@ int string_to_idarray(const char *list, int ary[], size_t arysz,
  * LIST ::= <item> [, <item>]
  *
  * The <item> is translated to 'id' by name2id() function and the 'id' is used
- * as a possition in the 'ary' bit array. It means that the 'id' has to be in
+ * as a position in the 'ary' bit array. It means that the 'id' has to be in
  * range <0..N> where N < sizeof(ary) * NBBY.
  *
  * Returns: 0 on success, <0 on error.
@@ -568,6 +568,6 @@ int main(int argc, char *argv[])
 	free(hum);
 	free(hum2);
 
-	return EXIT_FAILURE;
+	return EXIT_SUCCESS;
 }
 #endif /* TEST_PROGRAM */

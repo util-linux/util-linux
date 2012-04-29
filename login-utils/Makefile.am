@@ -61,6 +61,7 @@ login_SOURCES = \
 	login.c \
 	logindefs.c \
 	logindefs.h \
+	$(top_srcdir)/lib/fileutils.c \
 	$(top_srcdir)/lib/setproctitle.c
 vipw_SOURCES = \
 	vipw.c \

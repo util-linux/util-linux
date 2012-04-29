@@ -54,6 +54,8 @@
 #include "pathnames.h"
 #include "canonicalize.h"
 #include "rpmatch.h"
+#include "closestream.h"
+#include "strutils.h"
 
 /*
  * Table of contents:
@@ -911,24 +913,24 @@ out_partition_header(char *dev, int format, struct geometry G) {
 		G.cylindersize ? _("cylinders") : _("sectors"));
     case F_CYLINDER:
 	if (G.cylindersize) {
-	    printf(_("Units = cylinders of %lu bytes, blocks of 1024 bytes"
+	    printf(_("Units: cylinders of %lu bytes, blocks of 1024 bytes"
 		     ", counting from %d\n\n"), G.cylindersize << 9, increment);
 	    printf(_("   Device Boot Start     End   #cyls    #blocks   Id  System\n"));
 	    break;
 	}
 	/* fall through */
     case F_SECTOR:
-	printf(_("Units = sectors of 512 bytes, counting from %d\n\n"),
+	printf(_("Units: sectors of 512 bytes, counting from %d\n\n"),
 	       increment);
 	printf(_("   Device Boot    Start       End   #sectors  Id  System\n"));
 	break;
     case F_BLOCK:
-	printf(_("Units = blocks of 1024 bytes, counting from %d\n\n"),
+	printf(_("Units: blocks of 1024 bytes, counting from %d\n\n"),
 	       increment);
 	printf(_("   Device Boot   Start       End    #blocks   Id  System\n"));
 	break;
     case F_MEGABYTE:
-	printf(_("Units = mebibytes of 1048576 bytes, blocks of 1024 bytes"
+	printf(_("Units: 1MiB = 1024*1024 bytes, blocks of 1024 bytes"
 		 ", counting from %d\n\n"), increment);
 	printf(_("   Device Boot Start   End    MiB    #blocks   Id  System\n"));
 	break;
@@ -1991,7 +1993,7 @@ static int
 compute_start_sect(struct part_desc *p, struct part_desc *ep) {
     unsigned long long base;
     int inc = (DOS && B.sectors) ? B.sectors : 1;
-    int delta;
+    long long delta;
 
     if (ep && p->start + p->size >= ep->start + 1)
 	delta = p->start - ep->start - inc;
@@ -2006,7 +2008,7 @@ compute_start_sect(struct part_desc *p, struct part_desc *ep) {
 	p->size += delta;
 	if (is_extended(p->p.sys_type) && boxes == ONESECTOR)
 	    p->size = inc;
-	else if ((ssize_t) old_size <= (ssize_t) - delta) {
+	else if ((long long) old_size <= -delta) {
 	    my_warn(_("no room for partition descriptor\n"));
 	    return 0;
 	}
@@ -2574,6 +2576,7 @@ main(int argc, char **argv) {
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
+    atexit(close_stdout);
 
     if (argc < 1)
 	errx(EXIT_FAILURE, _("no command?"));
@@ -2641,7 +2644,7 @@ main(int argc, char **argv) {
 	    activate = 1;
 	    break;
 	case 'C':
-	    U.cylinders = atoi(optarg);
+	    U.cylinders = strtoll_or_err(optarg, _("cannot parse number of cylinders"));
 	    break;
 	case 'D':
 	    DOS = 1;
@@ -2650,13 +2653,13 @@ main(int argc, char **argv) {
 	    DOS_extended = 1;
 	    break;
 	case 'H':
-	    U.heads = atoi(optarg);
+	    U.heads = strtol_or_err(optarg, _("cannot parse number of heads"));
 	    break;
 	case 'L':
 	    Linux = 1;
 	    break;
 	case 'N':
-	    one_only = atoi(optarg);
+	    one_only = strtol_or_err(optarg, _("cannot parse number of partitions"));
 	    break;
 	case 'I':
 	    restore_sector_file = optarg;
@@ -2668,7 +2671,7 @@ main(int argc, char **argv) {
 	    opt_reread = 1;
 	    break;
 	case 'S':
-	    U.sectors = atoi(optarg);
+	    U.sectors = strtol_or_err(optarg, _("cannot parse number of sectors"));
 	    break;
 	case 'T':
 	    list_types();
@@ -3206,7 +3209,7 @@ do_fdisk(char *dev) {
 		printf(_("Are you satisfied with this? [ynq] "));
 	    else
 		printf(_("Do you want to write this to disk? [ynq] "));
-	    fgets(answer, sizeof(answer), stdin);
+	    ignore_result( fgets(answer, sizeof(answer), stdin) );
 	    if (answer[0] == 'q' || answer[0] == 'Q') {
 		errx(EXIT_FAILURE, _("Quitting - nothing changed"));
 	    } else if (rpmatch(answer) == 1) {

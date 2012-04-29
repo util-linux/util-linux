@@ -33,6 +33,7 @@
 #include "c.h"
 #include "nls.h"
 #include "strutils.h"
+#include "closestream.h"
 
 key_t create_key(void)
 {
@@ -98,6 +99,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while((opt = getopt_long(argc, argv, "hM:QS:p:Vh", longopts, NULL)) != -1) {
 		switch(opt) {

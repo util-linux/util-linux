@@ -63,6 +63,7 @@
 #include "xalloc.h"
 #include "widechar.h"
 #include "writeall.h"
+#include "closestream.h"
 
 #define	READBUF		LINE_MAX	/* size of input buffer */
 #define CMDBUF		255		/* size of command buffer */
@@ -1594,6 +1595,7 @@ main(int argc, char **argv)
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	if (tcgetattr(1, &otio) == 0) {
 		ontty = 1;

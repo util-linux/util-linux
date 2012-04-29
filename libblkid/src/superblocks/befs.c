@@ -122,7 +122,7 @@ struct bplustree_node {
 	char		name[0];
 } __attribute__((packed));
 
-unsigned char *get_block_run(blkid_probe pr, const struct befs_super_block *bs,
+static unsigned char *get_block_run(blkid_probe pr, const struct befs_super_block *bs,
 					const struct block_run *br, int fs_le)
 {
 	return blkid_probe_get_buffer(pr,
@@ -135,7 +135,7 @@ unsigned char *get_block_run(blkid_probe pr, const struct befs_super_block *bs,
 					<< FS32_TO_CPU(bs->block_shift, fs_le));
 }
 
-unsigned char *get_custom_block_run(blkid_probe pr,
+static unsigned char *get_custom_block_run(blkid_probe pr,
 				const struct befs_super_block *bs,
 				const struct block_run *br,
 				int64_t offset, uint32_t length, int fs_le)
@@ -154,7 +154,7 @@ unsigned char *get_custom_block_run(blkid_probe pr,
 			length);
 }
 
-unsigned char *get_tree_node(blkid_probe pr, const struct befs_super_block *bs,
+static unsigned char *get_tree_node(blkid_probe pr, const struct befs_super_block *bs,
 				const struct data_stream *ds,
 				int64_t start, uint32_t length, int fs_le)
 {
@@ -230,7 +230,7 @@ unsigned char *get_tree_node(blkid_probe pr, const struct befs_super_block *bs,
 	return NULL;
 }
 
-int32_t compare_keys(const char keys1[], uint16_t keylengths1[], int32_t index,
+static int32_t compare_keys(const char keys1[], uint16_t keylengths1[], int32_t index,
 			const char *key2, uint16_t keylength2, int fs_le)
 {
 	const char *key1;
@@ -251,7 +251,7 @@ int32_t compare_keys(const char keys1[], uint16_t keylengths1[], int32_t index,
 	return result;
 }
 
-int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
+static int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 			const struct befs_inode *bi, const char *key, int fs_le)
 {
 	struct bplustree_header *bh;
@@ -328,7 +328,7 @@ int64_t get_key_value(blkid_probe pr, const struct befs_super_block *bs,
 	return 0;
 }
 
-int get_uuid(blkid_probe pr, const struct befs_super_block *bs,
+static int get_uuid(blkid_probe pr, const struct befs_super_block *bs,
 					uint64_t * const uuid, int fs_le)
 {
 	struct befs_inode *bi;

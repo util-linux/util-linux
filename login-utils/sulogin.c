@@ -47,6 +47,7 @@
 #endif
 
 #include "c.h"
+#include "closestream.h"
 #include "nls.h"
 #include "pathnames.h"
 #include "strutils.h"
@@ -476,6 +477,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	/*
 	 * See if we have a timeout flag.

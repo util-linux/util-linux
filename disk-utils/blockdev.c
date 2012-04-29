@@ -15,6 +15,7 @@
 #include "nls.h"
 #include "blkdev.h"
 #include "pathnames.h"
+#include "closestream.h"
 
 struct bdc {
 	long		ioc;		/* ioctl code */
@@ -221,6 +222,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	if (argc < 2)
 		usage(stderr);

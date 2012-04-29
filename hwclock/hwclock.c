@@ -72,6 +72,7 @@
 
 #include "c.h"
 #include "clock.h"
+#include "closestream.h"
 #include "nls.h"
 #include "pathnames.h"
 #include "strutils.h"
@@ -164,7 +165,8 @@ static void write_date_to_file(struct tm *tm)
 	if ((fp = fopen(_PATH_LASTDATE, "w"))) {
 		fprintf(fp, "%02d.%02d.%04d\n", tm->tm_mday, tm->tm_mon + 1,
 			tm->tm_year + 1900);
-		fclose(fp);
+		if (close_stream(fp) != 0)
+			warn(_("cannot write %s"), _PATH_LASTDATE);
 	} else
 		warn(_("cannot write %s"), _PATH_LASTDATE);
 }
@@ -1026,7 +1028,7 @@ static void save_adjtime(const struct adjtime adjtime, const bool testing)
 					     adj_file_name);
 					err = 1;
 				}
-				if (fclose(adjfile) < 0) {
+				if (close_stream(adjfile) != 0) {
 					warn(_
 					     ("Could not update file with the clock adjustment "
 					      "parameters (%s) in it"),
@@ -1521,6 +1523,7 @@ int main(int argc, char **argv)
 #endif
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	/* Set option defaults */
 	show = set = systohc = hctosys = systz = adjust = noadjfile = predict =
@@ -1796,7 +1799,7 @@ void __attribute__((__noreturn__)) hwaudit_exit(int status)
  * November 1996: Version 2.0.1. Modifications by Nicolai Langfeldt
  * (janl@math.uio.no) to make it compile on linux 1.2 machines as well as
  * more recent versions of the kernel. Introduced the NO_CLOCK access method
- * and wrote feature test code to detect absense of rtc headers.
+ * and wrote feature test code to detect absence of rtc headers.
  *
  ***************************************************************************
  * Maintenance notes

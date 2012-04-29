@@ -26,13 +26,13 @@
  * @title: Superblocks probing
  * @short_description: filesystems and raids superblocks probing.
  *
- * The library API has been originaly designed for superblocks probing only.
+ * The library API has been originally designed for superblocks probing only.
  * This is reason why some *deprecated* superblock specific functions don't use
  * '_superblocks_' namespace in the function name. Please, don't use these
  * functions in new code.
  *
  * The 'superblocks' probers support NAME=value (tags) interface only. The
- * superblocks probing is enabled by default (and controled by
+ * superblocks probing is enabled by default (and controlled by
  * blkid_probe_enable_superblocks()).
  *
  * Currently supported tags:

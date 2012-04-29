@@ -26,6 +26,7 @@
 #endif
 
 #include "c.h"
+#include "closestream.h"
 #include "writeall.h"
 #include "swapheader.h"
 #include "strutils.h"
@@ -183,6 +184,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "hVL:U:", longopts, NULL)) != -1) {
 		switch (c) {

@@ -34,6 +34,7 @@
 #include <sys/utsname.h>
 
 #include "c.h"
+#include "closestream.h"
 #include "nls.h"
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
@@ -61,6 +62,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((ch = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
 		switch (ch) {

@@ -620,7 +620,7 @@ fi
 
 
 AC_ARG_ENABLE([most-builds],
-  AS_HELP_STRING([--enable-most-builds], [build everthing other than experimental code]),
+  AS_HELP_STRING([--enable-most-builds], [build everything other than experimental code]),
   [], enable_most_builds=no
 )
 if test "x$enable_most_builds" = xyes; then

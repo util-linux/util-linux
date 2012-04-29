@@ -33,6 +33,8 @@
 #include "pathnames.h"
 #include "canonicalize.h"
 #include "strutils.h"
+#include "randutils.h"
+#include "closestream.h"
 
 #include "fdisksunlabel.h"
 #include "fdisksgilabel.h"
@@ -51,7 +53,6 @@
 
 #include "gpt.h"
 
-static int get_boot(enum action what);
 static void delete_partition(int i);
 
 #define hex_val(c)	({ \
@@ -186,51 +187,6 @@ get_nr_sects(struct partition *p) {
 	return read4_little_endian(p->size4);
 }
 
-static ssize_t
-xread(int fd, void *buf, size_t count) {
-        char *p = buf;
-        ssize_t out = 0;
-        ssize_t rv;
-
-        while (count) {
-                rv = read(fd, p, count);
-                if (rv == -1) {
-                        if (errno == EINTR || errno == EAGAIN)
-                                continue;
-                        return out ? out : -1; /* Error */
-                } else if (rv == 0) {
-                        return out; /* EOF */
-                }
-
-                p += rv;
-                out += rv;
-                count -= rv;
-        }
-
-        return out;
-}
-
-static unsigned int
-get_random_id(void) {
-	int fd;
-	unsigned int v;
-	ssize_t rv = -1;
-	struct timeval tv;
-
-	fd = open("/dev/urandom", O_RDONLY);
-	if (fd >= 0) {
-	        rv = xread(fd, &v, sizeof v);
-		close(fd);
-	}
-
-	if (rv == sizeof v)
-		return v;
-
-	/* Fallback: sucks, but better than nothing */
-	gettimeofday(&tv, NULL);
-	return (unsigned int)(tv.tv_sec + (tv.tv_usec << 12) + getpid());
-}
-
 /*
  * Raw disk label. For DOS-type partition tables the MBR,
  * with descriptions of the primary partitions.
@@ -268,8 +224,7 @@ int	fd,				/* the disk */
 	partitions = 4;			/* maximum partition + 1 */
 
 unsigned int	user_cylinders, user_heads, user_sectors;
-unsigned int	pt_heads, pt_sectors;
-unsigned int	kern_heads, kern_sectors;
+unsigned int   pt_heads, pt_sectors;
 
 unsigned long long sector_offset = 1, extended_offset = 0, sectors;
 
@@ -876,11 +831,12 @@ static void dos_init(void)
 
 static void
 create_doslabel(void) {
-	unsigned int id = get_random_id();
+	unsigned int id;
+
+	/* random disk signature */
+	random_get_bytes(&id, sizeof(id));
 
 	fprintf(stderr, _("Building a new DOS disklabel with disk identifier 0x%08x.\n"), id);
-	sun_nolabel();  /* otherwise always recognised as sun */
-	sgi_nolabel();  /* otherwise always recognised as sgi */
 
 	dos_init();
 	zeroize_mbr_buffer();
@@ -951,19 +907,6 @@ get_topology(int fd) {
 	if (sector_size != DEFAULT_SECTOR_SIZE)
 		printf(_("Note: sector size is %d (not %d)\n"),
 		       sector_size, DEFAULT_SECTOR_SIZE);
-}
-
-static void
-get_kernel_geometry(int fd) {
-#ifdef HDIO_GETGEO
-	struct hd_geometry geometry;
-
-	if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
-		kern_heads = geometry.heads;
-		kern_sectors = geometry.sectors;
-		/* never use geometry.cylinders - it is truncated */
-	}
-#endif
 }
 
 static void
@@ -1051,13 +994,13 @@ update_sector_offset(void)
 void
 get_geometry(int fd, struct geom *g) {
 	unsigned long long llcyls, nsects = 0;
+	unsigned int kern_heads = 0, kern_sectors = 0;
 
 	get_topology(fd);
 	heads = cylinders = sectors = 0;
-	kern_heads = kern_sectors = 0;
 	pt_heads = pt_sectors = 0;
 
-	get_kernel_geometry(fd);
+	blkdev_get_geometry(fd, &kern_heads, &kern_sectors);
 	get_partition_table_geometry();
 
 	heads = user_heads ? user_heads :
@@ -1148,30 +1091,33 @@ static int check_dos_label(void)
  *    0: found or created label
  *    1: I/O error
  */
-static int
-get_boot(enum action what) {
+static int get_boot(int try_only) {
 
 	disklabel = ANY_LABEL;
 	memset(MBRbuffer, 0, 512);
 
-	if (what != try_only) {
+	if (try_only && (fd = open(disk_device, O_RDONLY)) < 0) {
+		fprintf(stderr, _("Cannot open %s\n"), disk_device);
+		fatal(unable_to_open);
+	}
+	else {
 		if ((fd = open(disk_device, O_RDWR)) < 0) {
+			/* ok, can we read-only the device? */
 			if ((fd = open(disk_device, O_RDONLY)) < 0)
 				fatal(unable_to_open);
 			else
 				printf(_("You will not be able to write "
-					    "the partition table.\n"));
+					 "the partition table.\n"));
 		}
 	}
 
 	if (512 != read(fd, MBRbuffer, 512)) {
-		if (what == try_only)
+		if (try_only)
 			return 1;
 		fatal(unable_to_read);
 	}
 
 	get_geometry(fd, NULL);
-
 	update_units();
 
 	if (!check_dos_label())
@@ -1189,7 +1135,7 @@ get_boot(enum action what) {
 	}
 
 	if (disklabel == ANY_LABEL) {
-		if (what == try_only)
+		if (try_only)
 			return -1;
 
 		fprintf(stderr,
@@ -1783,25 +1729,10 @@ static void check_consistency(struct partition *p, int partition) {
 		printf(_("logical=(%d, %d, %d)\n"),lec, leh, les);
 	}
 
-#if 0
-/* Beginning on cylinder boundary? */
-	if (pbh != !pbc || pbs != 1) {
-		printf(_("Partition %i does not start on cylinder "
-			"boundary:\n"), partition + 1);
-		printf(_("     phys=(%d, %d, %d) "), pbc, pbh, pbs);
-		printf(_("should be (%d, %d, 1)\n"), pbc, !pbc);
-	}
-#endif
-
 /* Ending on cylinder boundary? */
 	if (peh != (heads - 1) || pes != sectors) {
 		printf(_("Partition %i does not end on cylinder boundary.\n"),
 			partition + 1);
-#if 0
-		printf(_("     phys=(%d, %d, %d) "), pec, peh, pes);
-		printf(_("should be (%d, %d, %d)\n"),
-		pec, heads - 1, sectors);
-#endif
 	}
 }
 
@@ -1886,7 +1817,7 @@ wrong_p_order(int *prev) {
  * The chain is sorted so that sectors increase, and so that
  * starting sectors increase.
  *
- * After this it may still be that cfdisk doesnt like the table.
+ * After this it may still be that cfdisk doesn't like the table.
  * (This is because cfdisk considers expanded parts, from link to
  * end of partition, and these may still overlap.)
  * Now
@@ -2780,26 +2711,15 @@ print_partition_table_from_option(char *device)
 	if (setjmp(listingbuf))
 		return;
 	gpt_warning(device);
-	if ((fd = open(disk_device, O_RDONLY)) >= 0) {
-		gb = get_boot(try_only);
-		if (gb > 0) { /* I/O error */
-		} else if (gb < 0) { /* no DOS signature */
-			list_disk_geometry();
-			if (disklabel != AIX_LABEL && disklabel != MAC_LABEL)
-				btrydev(device);
-		} else {
-			list_table(0);
-		}
-		close(fd);
-	} else {
-		/* Ignore other errors, since we try IDE
-		   and SCSI hard disks which may not be
-		   installed on the system. */
-		if (errno == EACCES) {
-			fprintf(stderr, _("Cannot open %s\n"), device);
-			return;
-		}
+	gb = get_boot(1);
+	if (gb < 0) { /* no DOS signature */
+		list_disk_geometry();
+		if (disklabel != AIX_LABEL && disklabel != MAC_LABEL)
+			btrydev(device);
 	}
+	else if (!gb)
+		list_table(0);
+	close(fd);
 }
 
 /*
@@ -2958,6 +2878,7 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt(argc, argv, "b:c::C:hH:lsS:u::vV")) != -1) {
 		switch (c) {
@@ -2966,7 +2887,7 @@ main(int argc, char **argv) {
 			   so cannot be combined with multiple disks,
 			   and te same goes for the C/H/S options.
 			*/
-			sector_size = atoi(optarg);
+			sector_size = strtol_or_err(optarg, _("cannot parse sector size"));
 			if (sector_size != 512 && sector_size != 1024 &&
 			    sector_size != 2048 && sector_size != 4096)
 				usage(stderr);
@@ -2974,7 +2895,7 @@ main(int argc, char **argv) {
 			user_set_sector_size = 1;
 			break;
 		case 'C':
-			user_cylinders = atoi(optarg);
+			user_cylinders =  strtol_or_err(optarg, _("cannot parse number of cylinders"));
 			break;
 		case 'c':
 			dos_compatible_flag = 0;	/* default */
@@ -2988,12 +2909,12 @@ main(int argc, char **argv) {
 			usage(stdout);
 			break;
 		case 'H':
-			user_heads = atoi(optarg);
+			user_heads =  strtol_or_err(optarg, _("cannot parse number of heads"));
 			if (user_heads <= 0 || user_heads > 256)
 				user_heads = 0;
 			break;
 		case 'S':
-			user_sectors = atoi(optarg);
+			user_sectors =  strtol_or_err(optarg, _("cannot parse number of sectors"));
 			if (user_sectors <= 0 || user_sectors >= 64)
 				user_sectors = 0;
 			break;
@@ -3012,21 +2933,16 @@ main(int argc, char **argv) {
 			break;
 		case 'V':
 		case 'v':
-			printf("fdisk (%s)\n", PACKAGE_STRING);
-			exit(0);
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
 		default:
 			usage(stderr);
 		}
 	}
 
-#if 0
-	printf(_("This kernel finds the sector size itself - "
-		 "-b option ignored\n"));
-#else
 	if (user_set_sector_size && argc-optind != 1)
 		printf(_("Warning: the -b (set sector size) option should"
 			 " be used with one specified device\n"));
-#endif
 
 	init_mbr_buffer();
 
@@ -3079,7 +2995,7 @@ main(int argc, char **argv) {
 		"Be careful before using the write command.\n\n"), PACKAGE_STRING);
 
 	gpt_warning(disk_device);
-	get_boot(fdisk);
+	get_boot(0);
 
 	command_prompt();
 

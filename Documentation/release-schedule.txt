@@ -11,7 +11,7 @@ Before a release there are few release candidates, which will be
 collectively tested. During test period changes to code base are
 restricted. Usually there are two release candidates.
 
-  what	 lenght		what will be accepted to upstream
+  what	 length		what will be accepted to upstream
   -------------------------------------------------------
   rc1	 1-2 weeks	bug fixes only
   rc2	 1-2 weeks	translations, fatal/trivial bug fixes

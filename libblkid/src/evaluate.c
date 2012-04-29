@@ -65,6 +65,9 @@ static int verify_tag(const char *devname, const char *name, const char *value)
 	blkid_probe_set_superblocks_flags(pr,
 			BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID);
 
+	blkid_probe_enable_partitions(pr, TRUE);
+	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_ENTRY_DETAILS);
+
 	fd = open(devname, O_RDONLY);
 	if (fd < 0) {
 		errsv = errno;
@@ -139,6 +142,10 @@ static char *evaluate_by_udev(const char *token, const char *value, int uevent)
 		strcpy(dev, _PATH_DEV_BYUUID "/");
 	else if (!strcmp(token, "LABEL"))
 		strcpy(dev, _PATH_DEV_BYLABEL "/");
+	else if (!strcmp(token, "PARTLABEL"))
+		strcpy(dev, _PATH_DEV_BYPARTLABEL "/");
+	else if (!strcmp(token, "PARTUUID"))
+		strcpy(dev, _PATH_DEV_BYPARTUUID "/");
 	else {
 		DBG(DEBUG_EVALUATE,
 		    printf("unsupported token %s\n", token));

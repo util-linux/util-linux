@@ -40,6 +40,7 @@
 
 #include "c.h"
 #include "cramfs.h"
+#include "closestream.h"
 #include "md5.h"
 #include "nls.h"
 #include "exitcodes.h"
@@ -718,6 +719,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	/* command line options */
 	while ((c = getopt(argc, argv, "hb:Ee:i:n:N:psVvz")) != EOF) {

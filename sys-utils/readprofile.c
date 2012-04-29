@@ -53,6 +53,7 @@
 
 #include "nls.h"
 #include "xalloc.h"
+#include "closestream.h"
 
 #define S_LEN 128
 
@@ -166,6 +167,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	proFile = defaultpro;
 	mapFile = defaultmap;

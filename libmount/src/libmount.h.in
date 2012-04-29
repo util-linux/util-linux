@@ -115,6 +115,18 @@ enum {
 	MNT_ACT_UMOUNT
 };
 
+/*
+ * Errors -- by default libmount returns -errno for generic errors (ENOMEM,
+ * EINVAL, ...) and for mount(2) errors, but for some specific operations it
+ * returns private error codes. Note that maximum system errno value should be
+ * 4095 on UNIXes.
+ *
+ * See also mnt_context_get_syscall_errno() and mnt_context_get_helper_status().
+ */
+#define MNT_ERR_NOFSTAB      5000	/* not found required entry in fstab */
+#define MNT_ERR_NOFSTYPE     5001	/* failed to detect filesystem type */
+#define MNT_ERR_NOSOURCE     5002	/* required mount source undefined */
+
 /* init.c */
 extern void mnt_init_debug(int mask);
 
@@ -134,6 +146,7 @@ extern const char *mnt_get_fstab_path(void);
 extern const char *mnt_get_swaps_path(void);
 extern const char *mnt_get_mtab_path(void);
 extern int mnt_has_regular_mtab(const char **mtab, int *writable);
+extern char *mnt_get_mountpoint(const char *path);
 
 /* cache.c */
 extern struct libmnt_cache *mnt_new_cache(void);
@@ -323,6 +336,8 @@ extern struct libmnt_fs *mnt_table_find_source(struct libmnt_table *tb,
 extern struct libmnt_fs *mnt_table_find_pair(struct libmnt_table *tb,
 				const char *source,
 				const char *target, int direction);
+extern struct libmnt_fs *mnt_table_find_devno(struct libmnt_table *tb,
+				dev_t devno, int direction);
 
 extern int mnt_table_find_next_fs(struct libmnt_table *tb,
 			struct libmnt_iter *itr,
@@ -445,6 +460,8 @@ extern const char *mnt_context_get_fstype(struct libmnt_context *cxt);
 extern int mnt_context_set_options(struct libmnt_context *cxt, const char *optstr);
 extern int mnt_context_append_options(struct libmnt_context *cxt,
 				      const char *optstr);
+extern const char *mnt_context_get_options(struct libmnt_context *cxt);
+
 extern int mnt_context_set_fstype_pattern(struct libmnt_context *cxt,
 				      const char *pattern);
 extern int mnt_context_set_options_pattern(struct libmnt_context *cxt,
@@ -511,6 +528,8 @@ extern int mnt_context_prepare_umount(struct libmnt_context *cxt);
 extern int mnt_context_do_umount(struct libmnt_context *cxt);
 extern int mnt_context_finalize_umount(struct libmnt_context *cxt);
 
+
+extern int mnt_context_fstab_applied(struct libmnt_context *cxt);
 extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status);
 
 /*

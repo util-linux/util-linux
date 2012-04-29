@@ -1,7 +1,5 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-EXTRA_DIST = partitiontype.c
-
 fdisk_common = \
 	common.h \
 	gpt.c \
@@ -10,6 +8,7 @@ fdisk_common = \
 	$(top_srcdir)/lib/blkdev.c \
 	$(top_srcdir)/lib/mbsalign.c \
 	$(top_srcdir)/lib/strutils.c \
+	$(top_srcdir)/lib/randutils.c \
 	$(top_srcdir)/lib/wholedisk.c
 
 if LINUX

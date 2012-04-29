@@ -39,6 +39,7 @@
 #include "xgetpass.h"
 #include "exitcodes.h"
 #include "xalloc.h"
+#include "closestream.h"
 
 /*** TODO: DOCS:
  *
@@ -346,32 +347,28 @@ try_readonly:
 		case -EBUSY:
 			warnx(_("%s is already mounted"), src);
 			return MOUNT_EX_USAGE;
-		}
-
-		/*
-		 * TODO: add mnt_context_fstab_applied() to check if we found
-		 *       target/source in the file.
-		 */
-		if (!tgt) {
-			if (mflags & MS_REMOUNT)
-				warnx(_("%s not mounted"), src ? src : tgt);
-			else
-				warnx(_("can't find %s in %s"), src ? src : tgt,
+		case -MNT_ERR_NOFSTAB:
+			warnx(_("can't find %s in %s"), src ? src : tgt,
 						mnt_get_fstab_path());
 			return MOUNT_EX_USAGE;
-		}
-
-		if (!mnt_context_get_fstype(cxt)) {
+		case -MNT_ERR_NOFSTYPE:
 			if (restricted)
 				warnx(_("I could not determine the filesystem type, "
 					"and none was specified"));
 			else
 				warnx(_("you must specify the filesystem type"));
 			return MOUNT_EX_USAGE;
-		}
-		return handle_generic_errors(rc, _("%s: mount failed"),
-					     tgt ? tgt : src);
+		case -MNT_ERR_NOSOURCE:
+			if (src)
+				warnx(_("can't find %s"), src);
+			else
+				warnx(_("mount source not defined"));
+			return MOUNT_EX_USAGE;
 
+		default:
+			return handle_generic_errors(rc, _("%s: mount failed"),
+					     tgt ? tgt : src);
+		}
 	} else if (mnt_context_get_syscall_errno(cxt) == 0) {
 		/*
 		 * mount(2) syscall success, but something else failed
@@ -466,6 +463,8 @@ try_readonly:
 	case EINVAL:
 		if (mflags & MS_REMOUNT)
 			warnx(_("%s not mounted or bad option"), tgt);
+		else if (mflags & MS_PROPAGATION)
+			warnx(_("%s is not mountpoint or bad option"), tgt);
 		else
 			warnx(_("wrong fs type, bad option, bad superblock on %s,\n"
 				"       missing codepage or helper program, or other error"),
@@ -614,7 +613,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -L, --label <label>     synonym for LABEL=<label>\n"
 	" -U, --uuid <uuid>       synonym for UUID=<uuid>\n"
 	" LABEL=<label>           specifies device by filesystem label\n"
-	" UUID=<uuid>             specifies device by filesystem UUID\n"));
+	" UUID=<uuid>             specifies device by filesystem UUID\n"
+	" PARTLABEL=<label>       specifies device by partition label\n"
+	" PARTUUID=<uuid>         specifies device by partition UUID\n"));
+
 	fprintf(out, _(
 	" <device>                specifies device by path\n"
 	" <directory>             mountpoint for bind mounts (see --bind/rbind)\n"
@@ -701,6 +703,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	mnt_init_debug(0);
 	cxt = mnt_new_context();
@@ -788,37 +791,37 @@ int main(int argc, char **argv)
 			mnt_context_enable_sloppy(cxt, TRUE);
 			break;
 		case 'B':
-			oper = MS_BIND;
+			oper |= MS_BIND;
 			break;
 		case 'M':
-			oper = MS_MOVE;
+			oper |= MS_MOVE;
 			break;
 		case 'R':
-			oper = (MS_BIND | MS_REC);
+			oper |= (MS_BIND | MS_REC);
 			break;
 		case MOUNT_OPT_SHARED:
-			oper = MS_SHARED;
+			oper |= MS_SHARED;
 			break;
 		case MOUNT_OPT_SLAVE:
-			oper = MS_SLAVE;
+			oper |= MS_SLAVE;
 			break;
 		case MOUNT_OPT_PRIVATE:
-			oper = MS_PRIVATE;
+			oper |= MS_PRIVATE;
 			break;
 		case MOUNT_OPT_UNBINDABLE:
-			oper = MS_UNBINDABLE;
+			oper |= MS_UNBINDABLE;
 			break;
 		case MOUNT_OPT_RSHARED:
-			oper = (MS_SHARED | MS_REC);
+			oper |= (MS_SHARED | MS_REC);
 			break;
 		case MOUNT_OPT_RSLAVE:
-			oper = (MS_SLAVE | MS_REC);
+			oper |= (MS_SLAVE | MS_REC);
 			break;
 		case MOUNT_OPT_RPRIVATE:
-			oper = (MS_PRIVATE | MS_REC);
+			oper |= (MS_PRIVATE | MS_REC);
 			break;
 		case MOUNT_OPT_RUNBINDABLE:
-			oper = (MS_UNBINDABLE | MS_REC);
+			oper |= (MS_UNBINDABLE | MS_REC);
 			break;
 		default:
 			usage(stderr);
@@ -884,6 +887,12 @@ int main(int argc, char **argv)
 		usage(stderr);
 
 	if (oper) {
+		if (!is_power_of_2(oper))
+			errx(MOUNT_EX_USAGE, _("propagation flags (--make-* or --bind options) are mutually exclusive"));
+
+		if (oper != MS_BIND && mnt_context_get_options(cxt))
+			errx(MOUNT_EX_USAGE, _("propagation flags (--make-* options) cannot be mixed with another mount options"));
+
 		/* MS_PROPAGATION operations, let's set the mount flags */
 		mnt_context_set_mflags(cxt, oper);
 

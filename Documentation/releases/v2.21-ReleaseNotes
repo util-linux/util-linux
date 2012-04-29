@@ -750,7 +750,7 @@ mkfs.cramfs:
    - close open file after usage [cppcheck]  [Sami Kerola]
 mkfs.minix:
    - Fix super_set_nzones()  [Maurizio Lombardi]
-   - In Minix V3 filesystems the maximum filename lenght is 60 chars and the dirsize is 64 bytes.  [Maurizio Lombardi]
+   - In Minix V3 filesystems the maximum filename length is 60 chars and the dirsize is 64 bytes.  [Maurizio Lombardi]
    - Some bug fixes  [Maurizio Lombardi]
    - The s_blocksize field of the MinixV3 superblock must be initialized with a valid block size, not the total number of blocks of the device!  [Maurizio Lombardi]
    - The total number of zones is limited to 65536 only on V1 filesystems  [Maurizio Lombardi]

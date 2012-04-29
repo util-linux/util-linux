@@ -67,6 +67,7 @@
 #include <errno.h>
 
 #include "c.h"
+#include "closestream.h"
 #include "nls.h"
 #include "mbsalign.h"
 #include "strutils.h"
@@ -278,6 +279,7 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW) || defined(HAVE_LIBTERMCAP)
 	if ((term = getenv("TERM"))) {
@@ -297,7 +299,7 @@ main(int argc, char **argv) {
  * the locale database, which can be overridden with the
  * -s (Sunday) or -m (Monday) options.
  */
-#ifdef HAVE_DECL__NL_TIME_WEEK_1STDAY
+#if HAVE_DECL__NL_TIME_WEEK_1STDAY
 	/*
 	 * You need to use 2 locale variables to get the first day of the week.
 	 * This is needed to support first_weekday=2 and first_workday=1 for

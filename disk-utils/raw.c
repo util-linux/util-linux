@@ -24,6 +24,7 @@
 #include <unistd.h>
 
 #include "c.h"
+#include "closestream.h"
 #include "nls.h"
 #include "pathnames.h"
 
@@ -106,6 +107,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "qaVh", longopts, NULL)) != -1)
 		switch (c) {

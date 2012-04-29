@@ -192,7 +192,7 @@ fdisk:
 getopt:
    - remove old unused files  [Karel Zak]
 hexdump:
-   - don't use memset with zero lenght  [Karel Zak]
+   - don't use memset with zero length  [Karel Zak]
 hwclock:
    - add --rtc=<path> option and support for /dev/rtc0  [Karel Zak]
    - add support for audit system  [Karel Zak]

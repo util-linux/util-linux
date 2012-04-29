@@ -27,6 +27,7 @@
 #include "c.h"
 #include "nls.h"
 #include "strutils.h"
+#include "closestream.h"
 
 #ifndef N_GIGASET_M101
 # define N_GIGASET_M101 16
@@ -234,6 +235,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	/* parse options */
 	progname = program_invocation_short_name;

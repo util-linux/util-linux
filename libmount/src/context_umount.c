@@ -643,7 +643,7 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
  * See also mnt_context_disable_helpers().
  *
  * WARNING: non-zero return code does not mean that umount(2) syscall or
- *          umount.type helper wasn't sucessfully called.
+ *          umount.type helper wasn't successfully called.
  *
  *          Check mnt_context_get_status() after error!
 *
@@ -733,7 +733,7 @@ int mnt_context_finalize_umount(struct libmnt_context *cxt)
  * See also mnt_context_disable_helpers().
  *
  * WARNING: non-zero return code does not mean that umount(2) syscall or
- *          umount.type helper wasn't sucessfully called.
+ *          umount.type helper wasn't successfully called.
  *
  *          Check mnt_context_get_status() after error!
  *

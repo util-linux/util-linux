@@ -799,7 +799,7 @@ Do not use noatime feature, then the inode access time is controlled by kernel
 defaults. See also the description for
 .B strictatime
 and
-.B reatime
+.B relatime
 mount options.
 .TP
 .B noatime
@@ -860,7 +860,7 @@ filesystem that supports xattr labeling.
 The
 .BR rootcontext=
 option allows you to explicitly label the root inode of a FS being mounted
-before that FS or inode because visable to userspace. This was found to be
+before that FS or inode because visible to userspace. This was found to be
 useful for things like stateless linux.
 
 Note that kernel rejects any remount request that includes the context

@@ -48,7 +48,7 @@ typedef struct {
 struct gpt_header {
 	uint64_t	signature;		/* "EFI PART" */
 	uint32_t	revision;
-	uint32_t	header_size;		/* usualy 92 bytes */
+	uint32_t	header_size;		/* usually 92 bytes */
 	uint32_t	header_crc32;		/* checksum of header with this
 						 * field zeroed during calculation */
 	uint32_t	reserved1;
@@ -120,7 +120,7 @@ static inline int guidcmp(efi_guid_t left, efi_guid_t right)
 }
 
 /*
- * UUID is traditionaly 16 byte big-endian array, except Intel EFI
+ * UUID is traditionally 16 byte big-endian array, except Intel EFI
  * specification where the UUID is a structure of little-endian fields.
  */
 static void swap_efi_guid(efi_guid_t *uid)

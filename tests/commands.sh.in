@@ -30,8 +30,6 @@ TS_HELPER_LOGINDEFS="$top_builddir/login-utils/test_logindefs"
 # TODO: use partx
 TS_HELPER_PARTITIONS="$top_builddir/libblkid/samples/partitions"
 
-U_L_LIBRARY_PATH="$top_builddir/libblkid/src/.libs:$top_builddir/libuuid/src/.libs"
-
 # paths to commands
 if [ -x "$top_builddir/sys-utils/mount" ]; then
  TS_CMD_MOUNT=${TS_CMD_MOUNT:-"$top_builddir/sys-utils/mount"}
@@ -42,8 +40,8 @@ else
  TS_CMD_MTABLOCK=${TS_CMD_MTABLOCK:-"$top_builddir/mount/mtab_lock_test"}
 fi
 
-TS_CMD_SWAPON=${TS_CMD_SWAPON:-"$top_builddir/sys-utils/.libs/swapon"}
-TS_CMD_SWAPOFF=${TS_CMD_SWAPOFF:-"$top_builddir/sys-utils/.libs/swapoff"}
+TS_CMD_SWAPON=${TS_CMD_SWAPON:-"$top_builddir/sys-utils/swapon"}
+TS_CMD_SWAPOFF=${TS_CMD_SWAPOFF:-"$top_builddir/sys-utils/swapoff"}
 TS_CMD_LOSETUP=${TS_CMD_LOSETUP:-"$top_builddir/sys-utils/losetup"}
 
 TS_CMD_MKSWAP=${TS_CMD_MKSWAP:-"$top_builddir/disk-utils/mkswap"}

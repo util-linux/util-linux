@@ -37,6 +37,7 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "c.h"
+#include "closestream.h"
 
 static int quiet;
 
@@ -147,6 +148,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	mnt_init_debug(0);
 

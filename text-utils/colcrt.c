@@ -47,6 +47,7 @@
 
 #include "widechar.h"
 #include "c.h"
+#include "closestream.h"
 
 int plus(wchar_t c, wchar_t d);
 void move(int l, int m);
@@ -93,6 +94,7 @@ int main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	/* Take care of lonely hyphen option. */
 	for (i = 0; i < argc; i++)
@@ -141,8 +143,6 @@ int main(int argc, char **argv) {
 			fclose(f);
 	} while (argc > 0);
 	fflush(stdout);
-	if (ferror(stdout) || fclose(stdout))
-		return EXIT_FAILURE;
 	return EXIT_SUCCESS;
 }
 

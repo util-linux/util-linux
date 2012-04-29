@@ -127,19 +127,25 @@ but there are other possibilities. For example, in the case of an NFS mount,
 may look like
 .IR knuth.cwi.nl:/dir .
 It is possible to indicate a block special device using its
-volume
+filesystem
 .B LABEL
 or
 .B UUID
-(see the \-L and \-U options below).
+(see the \-L and \-U options below) and
+partition
+.B PARTUUID
+or
+.B PARTLABEL
+(partition identifiers are supported for GUID Partition Table (GPT) and MAC
+partition tables only).
 
-The recommended setup is to use LABEL=<label> or UUID=<uuid> tags rather than
-.B /dev/disk/by-{label,uuid}
+The recommended setup is to use tags (e.g. LABEL=<label>) rather than
+.B /dev/disk/by-{label,uuid,partuuid,partlabel}
 udev symlinks in the /etc/fstab file. The tags are
 more readable, robust and portable. The
 .BR mount (8)
 command internally uses udev
-symlinks, so use the symlinks in /etc/fstab has no advantage over LABEL=/UUID=.
+symlinks, so use the symlinks in /etc/fstab has no advantage over the tags.
 For more details see
 .BR libblkid (3).
 
@@ -218,7 +224,7 @@ program does not read the
 .I /etc/fstab
 file if
 .I device
-(or LABEL/UUID) and
+(or LABEL, UUID, PARTUUID or PARTLABEL) and
 .I dir
 are specified. For example:
 .RS
@@ -398,6 +404,15 @@ command (then mount(8) does not read /etc/mtab), then you have to use bind flag
 .B mount -o remount,ro,bind
 .I olddir newdir
 .RE
+
+Note that
+.I remount,ro,bind
+will create a read-only mountpoint (VFS entry), but the original filesystem suberblock
+will be still writable, it means that the
+.I olddir
+will be writable, but the
+.I newdir
+will be read-only.
 .RE
 
 .B The move operation.
@@ -433,6 +448,11 @@ any not vice-versa.  A private mount carries no propagation abilities.  A
 unbindable mount is a private mount which cannot be cloned through a bind
 operation. Detailed semantics is documented in Documentation/filesystems/sharedsubtree.txt
 file in the kernel source tree.
+
+Note that Linux kernel does not allow to change more propagation flags by one
+.B mount (2)
+syscall and the flags cannot be mixed with another mount options. It means that
+more --make-* options cannot be used together or with another mount options.
 
 .RS
 .nf
@@ -805,7 +825,7 @@ Do not use noatime feature, then the inode access time is controlled by kernel
 defaults. See also the description for
 .B strictatime
 and
-.B reatime
+.B relatime
 mount options.
 .TP
 .B noatime
@@ -866,7 +886,7 @@ filesystem that supports xattr labeling.
 The
 .BR rootcontext=
 option allows you to explicitly label the root inode of a FS being mounted
-before that FS or inode because visable to userspace. This was found to be
+before that FS or inode because visible to userspace. This was found to be
 useful for things like stateless linux.
 
 Note that kernel rejects any remount request that includes the context

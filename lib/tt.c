@@ -15,6 +15,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <termios.h>
+#include <ctype.h>
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
@@ -552,6 +553,32 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 	return;
 }
 
+static void fputs_quoted(const char *data, FILE *out)
+{
+	const char *p;
+
+	fputc('"', out);
+	for (p = data; p && *p; p++) {
+		if ((unsigned char) *p == 0x22 || !isprint((unsigned char) *p))
+			fprintf(out, "\\x%02x", *p);
+		else
+			fputc(*p, out);
+	}
+	fputc('"', out);
+}
+
+static void fputs_nonblank(const char *data, FILE *out)
+{
+	const char *p;
+
+	for (p = data; p && *p; p++) {
+		if (isblank((unsigned char) *p) || !isprint((unsigned char) *p))
+			fprintf(out, "\\x%02x", *p);
+		else
+			fputc(*p, out);
+	}
+}
+
 /* note that this function modifies @data
  */
 static void print_data(struct tt *tb, struct tt_column *cl, char *data)
@@ -563,7 +590,7 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 
 	/* raw mode */
 	if (tb->flags & TT_FL_RAW) {
-		fputs(data, stdout);
+		fputs_nonblank(data, stdout);
 		if (!is_last_column(tb, cl))
 			fputc(' ', stdout);
 		return;
@@ -571,7 +598,8 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 
 	/* NAME=value mode */
 	if (tb->flags & TT_FL_EXPORT) {
-		fprintf(stdout, "%s=\"%s\"", cl->name, data);
+		fprintf(stdout, "%s=", cl->name);
+		fputs_quoted(data, stdout);
 		if (!is_last_column(tb, cl))
 			fputc(' ', stdout);
 		return;

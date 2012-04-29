@@ -53,6 +53,7 @@
 #include "c.h"
 #include "kill.h"
 #include "nls.h"
+#include "closestream.h"
 #include "strutils.h"
 
 struct signv {
@@ -172,6 +173,7 @@ int main (int argc, char *argv[])
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
+    atexit(close_stdout);
 
     numsig = SIGTERM;
     do_pid = (! strcmp (progname, "pid")); 	/* Yecch */

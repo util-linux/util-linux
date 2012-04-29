@@ -28,6 +28,7 @@
 #include <unistd.h>
 #include <getopt.h>
 
+#include "closestream.h"
 #include "nls.h"
 #include "c.h"
 
@@ -153,6 +154,7 @@ main(int argc, char *argv[])
 
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((ch = getopt_long(argc, argv, "t:s:d:Vh", longopts, NULL)) != -1)
 		switch(ch) {

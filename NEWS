@@ -207,7 +207,7 @@ util-linux 2.12n,o
 * lomount: revert patch from 2.12j
 * lptune.8: -T option is obsolete
 * mkswap, mkswap.8, swapon: support labels
-  (use HAVE_BLKID=no as long as the blkid library doesnt support this)
+  (use HAVE_BLKID=no as long as the blkid library doesn't support this)
 * umount: allow user unmounting repeatedly mounted nfs mounts
 
 util-linux 2.12m
@@ -1288,7 +1288,7 @@ Outstanding bugs:
 - login/getty has a denial of service problem.
 - Several places needs a bit more polish.
 - There are a _lot_ of nonfatal warnings when compiling mount.  This will
-  not necesarily be fixed.
+  not necessarily be fixed.
 
 
 util-linux 2.6

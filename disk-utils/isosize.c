@@ -28,6 +28,7 @@
 #include "nls.h"
 #include "c.h"
 #include "strutils.h"
+#include "closestream.h"
 
 #define ISODCL(from, to) (to - from + 1)
 
@@ -157,7 +158,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		program_invocation_short_name);
 
 	fprintf(out, _("\nOptions:\n"
-		       " -d, --divisor=NUM      devide bytes NUM\n"
+		       " -d, --divisor=NUM      divide bytes NUM\n"
 		       " -x, --sectors          show sector count and size\n"
 		       " -V, --version          output version information and exit\n"
 		       " -H, --help             display this help and exit\n\n"));
@@ -181,6 +182,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((opt = getopt_long(argc, argv, "d:xVh", longopts, NULL)) != -1)
 		switch (opt) {

@@ -263,6 +263,31 @@ int blkdev_is_cdrom(int fd)
 #endif
 }
 
+/*
+ * Get kernel's interpretation of the device's geometry.
+ *
+ * Returns the heads and sectors - but not cylinders
+ * as it's truncated for disks with more than 65535 tracks.
+ *
+ * Note that this is deprecated in favor of LBA addressing.
+ */
+int blkdev_get_geometry(int fd, unsigned int *h, unsigned int *s)
+{
+#ifdef HDIO_GETGEO
+	struct hd_geometry geometry;
+
+	if (ioctl(fd, HDIO_GETGEO, &geometry) == 0) {
+		*h = geometry.heads;
+		*s = geometry.sectors;
+		return 0;
+	}
+#else
+	*h = 0;
+	*s = 0;
+#endif
+	return -1;
+}
+
 #ifdef TEST_PROGRAM
 #include <stdio.h>
 #include <stdlib.h>

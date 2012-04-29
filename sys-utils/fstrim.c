@@ -40,6 +40,7 @@
 #include "nls.h"
 #include "strutils.h"
 #include "c.h"
+#include "closestream.h"
 
 #ifndef FITRIM
 struct fstrim_range {
@@ -87,6 +88,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	memset(&range, 0, sizeof(range));
 	range.len = ULLONG_MAX;

@@ -41,6 +41,7 @@
 #include "bitops.h"
 #include "tt.h"
 #include "path.h"
+#include "closestream.h"
 
 #define CACHE_MAX 100
 
@@ -559,7 +560,7 @@ read_hypervisor(struct lscpu_desc *desc)
 	}
 }
 
-/* add @set to the @ary, unnecesary set is deallocated. */
+/* add @set to the @ary, unnecessary set is deallocated. */
 static int add_cpuset_to_array(cpu_set_t **ary, int *items, cpu_set_t *set)
 {
 	int i;
@@ -966,8 +967,10 @@ print_parsable(struct lscpu_desc *desc, int cols[], int ncols,
 			 */
 			char *p = data + 1;
 
-			while (p && *p != '\0')
-				*p++ = tolower((unsigned int) *p);
+			while (p && *p != '\0') {
+				*p = tolower((unsigned int) *p);
+				p++;
+			}
 		}
 		fputs(data && *data ? data : "", stdout);
 	}
@@ -1255,6 +1258,7 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "abce::hp::s:xV", longopts, NULL)) != -1) {
 
