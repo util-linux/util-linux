@@ -54,6 +54,9 @@
 
 static void delete_partition(int i);
 
+unsigned char *MBRbuffer;
+int MBRbuffer_changed;
+
 #define hex_val(c)	({ \
 				char _c = (c); \
 				isdigit(_c) ? _c - '0' : \
@@ -145,7 +148,6 @@ char	*disk_device,			/* must be specified */
 	line_buffer[LINE_LENGTH];
 
 int	fd,				/* the disk */
-	ext_index,			/* the prime extended partition */
 	nowarn = 0,			/* no warnings for fdisk -l/-s */
 	dos_compatible_flag = 0,	/* disabled by default */
 	dos_changed = 0,

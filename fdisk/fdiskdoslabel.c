@@ -12,6 +12,10 @@
 #include "fdisk.h"
 #include "fdiskdoslabel.h"
 
+struct pte ptes[MAXIMUM_PARTS];
+unsigned long long extended_offset;
+int ext_index;
+
 /* Allocate a buffer and read a partition table sector */
 static void read_pte(int fd, int pno, unsigned long long offset)
 {

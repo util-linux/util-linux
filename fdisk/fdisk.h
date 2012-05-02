@@ -77,7 +77,6 @@ extern unsigned int read_int(unsigned int low, unsigned int dflt,
 extern void print_menu(enum menutype);
 extern void print_partition_size(int num, unsigned long long start, unsigned long long stop, int sysid);
 
-extern unsigned char *MBRbuffer;
 extern void zeroize_mbr_buffer(void);
 
 extern unsigned int heads, cylinders, sector_size;
@@ -113,12 +112,12 @@ extern enum labeltype disklabel;
  * Raw disk label. For DOS-type partition tables the MBR,
  * with descriptions of the primary partitions.
  */
-int MBRbuffer_changed;
-unsigned char *MBRbuffer;
+extern unsigned char *MBRbuffer;
+extern int MBRbuffer_changed;
 
 /* start_sect and nr_sects are stored little endian on all machines */
 /* moreover, they are not aligned correctly */
-static void
+static inline void
 store4_little_endian(unsigned char *cp, unsigned int val) {
 	cp[0] = (val & 0xff);
 	cp[1] = ((val >> 8) & 0xff);
@@ -126,45 +125,45 @@ store4_little_endian(unsigned char *cp, unsigned int val) {
 	cp[3] = ((val >> 24) & 0xff);
 }
 
-static unsigned int read4_little_endian(const unsigned char *cp)
+static inline unsigned int read4_little_endian(const unsigned char *cp)
 {
 	return (unsigned int)(cp[0]) + ((unsigned int)(cp[1]) << 8)
 		+ ((unsigned int)(cp[2]) << 16)
 		+ ((unsigned int)(cp[3]) << 24);
 }
 
-static void set_nr_sects(struct partition *p, unsigned long long nr_sects)
+static inline void set_nr_sects(struct partition *p, unsigned long long nr_sects)
 {
 	store4_little_endian(p->size4, nr_sects);
 }
 
-static void set_start_sect(struct partition *p, unsigned int start_sect)
+static inline void set_start_sect(struct partition *p, unsigned int start_sect)
 {
 	store4_little_endian(p->start4, start_sect);
 }
 
-static void seek_sector(int fd, unsigned long long secno)
+static inline void seek_sector(int fd, unsigned long long secno)
 {
 	off_t offset = (off_t) secno * sector_size;
 	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
 		fatal(unable_to_seek);
 }
 
-static void read_sector(int fd, unsigned long long secno, unsigned char *buf)
+static inline void read_sector(int fd, unsigned long long secno, unsigned char *buf)
 {
 	seek_sector(fd, secno);
 	if (read(fd, buf, sector_size) != sector_size)
 		fatal(unable_to_read);
 }
 
-static void write_sector(int fd, unsigned long long secno, unsigned char *buf)
+static inline void write_sector(int fd, unsigned long long secno, unsigned char *buf)
 {
 	seek_sector(fd, secno);
 	if (write(fd, buf, sector_size) != sector_size)
 		fatal(unable_to_write);
 }
 
-static unsigned long long get_start_sect(struct partition *p)
+static inline unsigned long long get_start_sect(struct partition *p)
 {
 	return read4_little_endian(p->start4);
 }
