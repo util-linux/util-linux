@@ -152,6 +152,7 @@ AC_CHECK_HEADERS([ \
 	pty.h \
 	security/pam_misc.h \
 	stdint.h \
+	stdio_ext.h \
 	stdlib.h \
 	sys/disk.h \
 	sys/disklabel.h \
@@ -245,6 +246,7 @@ AC_CHECK_DECL([lseek64],
 	 #include <unistd.h>])
 
 AC_CHECK_FUNCS([ \
+	__fpending \
 	__secure_getenv \
 	err \
 	errx \
