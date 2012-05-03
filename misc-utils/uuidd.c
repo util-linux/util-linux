@@ -35,8 +35,12 @@ extern int optind;
 #include "uuidd.h"
 #include "writeall.h"
 #include "c.h"
-
 #include "closestream.h"
+
+#ifdef USE_SOCKET_ACTIVATION
+#include "sd-daemon.h"
+#endif
+
 #include "nls.h"
 
 #ifdef __GNUC__
@@ -58,19 +62,20 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	      _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -p, --pid <path>    path to pid file\n"
-		" -s, --socket <path> path to socket\n"
-		" -T, --timeout <sec> specify inactivity timeout\n"
-		" -k, --kill          kill running daemon\n"
-		" -r, --random        test random-based generation\n"
-		" -t, --time          test time-based generation\n"
-		" -n, --uuids <num>   request number of uuids\n"
-		" -P, --no-pid        do not create pid file\n"
-		" -F, --no-fork       do not daemonize using double-fork\n"
-		" -d, --debug         run in debugging mode\n"
-		" -q, --quiet         turn on quiet mode\n"
-		" -V, --version       output version information and exit\n"
-		" -h, --help          display this help and exit\n\n"), out);
+	fputs(_(" -p, --pid <path>        path to pid file\n"
+		" -s, --socket <path>     path to socket\n"
+		" -T, --timeout <sec>     specify inactivity timeout\n"
+		" -k, --kill              kill running daemon\n"
+		" -r, --random            test random-based generation\n"
+		" -t, --time              test time-based generation\n"
+		" -n, --uuids <num>       request number of uuids\n"
+		" -P, --no-pid            do not create pid file\n"
+		" -F, --no-fork           do not daemonize using double-fork\n"
+		" -S, --socket-activation do not create listening socket\n"
+		" -d, --debug             run in debugging mode\n"
+		" -q, --quiet             turn on quiet mode\n"
+		" -V, --version           output version information and exit\n"
+		" -h, --help              display this help and exit\n\n"), out);
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -302,7 +307,8 @@ static int create_socket(const char *socket_path, int will_fork, int quiet)
 }
 
 static void server_loop(const char *socket_path, const char *pidfile_path,
-			int debug, int timeout, int quiet, int no_fork)
+			int debug, int timeout, int quiet, int no_fork,
+			int no_sock)
 {
 	struct sockaddr_un	from_addr;
 	socklen_t		fromlen;
@@ -310,48 +316,68 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	uuid_t			uu;
 	char			reply_buf[1024], *cp;
 	char			op, str[UUID_STR_LEN];
-	int			i, s, ns, len, num;
+	int			i, ns, len, num;
+	int			s = 0;
 	int			fd_pidfile = -1;
 	int			ret;
 
-	signal(SIGALRM, terminate_intr);
-	alarm(30);
+#ifdef USE_SOCKET_ACTIVATION
+	if (!no_sock)	/* no_sock implies no_fork and no_pid */
+#endif
+	{
 
-	if (pidfile_path)
-		fd_pidfile = create_pidfile(pidfile_path, quiet);
+		signal(SIGALRM, terminate_intr);
+		alarm(30);
+		if (pidfile_path)
+			fd_pidfile = create_pidfile(pidfile_path, quiet);
 
-	ret = call_daemon(socket_path, UUIDD_OP_GETPID, reply_buf, sizeof(reply_buf), 0, NULL);
-	if (ret > 0) {
-		if (!quiet)
-			printf(_("uuidd daemon already running at pid %s\n"),
-			       reply_buf);
-		exit(EXIT_FAILURE);
+		ret = call_daemon(socket_path, UUIDD_OP_GETPID, reply_buf,
+				  sizeof(reply_buf), 0, NULL);
+		if (ret > 0) {
+			if (!quiet)
+				printf(_("uuidd daemon already running at pid %s\n"),
+				       reply_buf);
+			exit(EXIT_FAILURE);
+		}
+		alarm(0);
+
+		s = create_socket(socket_path, (!debug || !no_fork), quiet);
+		if (listen(s, SOMAXCONN) < 0) {
+			if (!quiet)
+				fprintf(stderr, _("Couldn't listen on unix "
+						  "socket %s: %m\n"), socket_path);
+			exit(EXIT_FAILURE);
+		}
+
+		if (!debug && !no_fork)
+			create_daemon();
+
+		if (pidfile_path) {
+			sprintf(reply_buf, "%8d\n", getpid());
+			ignore_result( ftruncate(fd_pidfile, 0) );
+			write_all(fd_pidfile, reply_buf, strlen(reply_buf));
+			if (fd_pidfile > 1)
+				close(fd_pidfile); /* Unlock the pid file */
+		}
+
 	}
-	alarm(0);
 
-	s = create_socket(socket_path, (!debug || !no_fork), quiet);
-	if (listen(s, SOMAXCONN) < 0) {
-		if (!quiet)
-			fprintf(stderr, _("Couldn't listen on unix "
-					  "socket %s: %m\n"), socket_path);
-		exit(EXIT_FAILURE);
-	}
-
-	if (!debug && !no_fork)
-		create_daemon();
 	signal(SIGHUP, terminate_intr);
 	signal(SIGINT, terminate_intr);
 	signal(SIGTERM, terminate_intr);
 	signal(SIGALRM, terminate_intr);
 	signal(SIGPIPE, SIG_IGN);
 
-	if (pidfile_path) {
-		sprintf(reply_buf, "%8d\n", getpid());
-		ignore_result( ftruncate(fd_pidfile, 0) );
-		write_all(fd_pidfile, reply_buf, strlen(reply_buf));
-		if (fd_pidfile > 1)
-			close(fd_pidfile); /* Unlock the pid file */
+#ifdef USE_SOCKET_ACTIVATION
+	if (no_sock) {
+		if (sd_listen_fds(0) != 1) {
+			fprintf(stderr, _("No or too many file descriptors received.\n"));
+			exit(EXIT_FAILURE);
+		}
+
+		s = SD_LISTEN_FDS_START + 0;
 	}
+#endif
 
 	while (1) {
 		fromlen = sizeof(from_addr);
@@ -482,6 +508,7 @@ int main(int argc, char **argv)
 	int		debug = 0, do_type = 0, do_kill = 0, num = 0;
 	int		timeout = 0, quiet = 0, drop_privs = 0;
 	int		no_pid = 0, no_fork = 0;
+	int		no_sock = 0, s_flag = 0;
 
 	static const struct option longopts[] = {
 		{"pid", required_argument, NULL, 'p'},
@@ -493,6 +520,7 @@ int main(int argc, char **argv)
 		{"uuids", required_argument, NULL, 'n'},
 		{"no-pid", no_argument, NULL, 'P'},
 		{"no-fork", no_argument, NULL, 'F'},
+		{"socket-activation", no_argument, NULL, 'S'},
 		{"debug", no_argument, NULL, 'd'},
 		{"quiet", no_argument, NULL, 'q'},
 		{"version", no_argument, NULL, 'V'},
@@ -506,7 +534,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	while ((c =
-		getopt_long(argc, argv, "p:s:T:krtn:PFdqVh", longopts,
+		getopt_long(argc, argv, "p:s:T:krtn:PFSdqVh", longopts,
 			    NULL)) != -1) {
 		switch (c) {
 		case 'd':
@@ -536,6 +564,18 @@ int main(int argc, char **argv)
 			no_fork = 1;
 			drop_privs = 1;
 			break;
+		case 'S':
+#ifdef USE_SOCKET_ACTIVATION
+			no_sock = 1;
+			drop_privs = 1;
+			no_fork = 1;
+			no_pid = 1;
+#else
+			fprintf(stderr,
+				_("uuidd has been built without support for socket activation.\n"));
+			return EXIT_FAILURE;
+#endif
+			break;
 		case 'q':
 			quiet++;
 			break;
@@ -545,6 +585,7 @@ int main(int argc, char **argv)
 			break;
 		case 's':
 			socket_path = optarg;
+			s_flag = 1;
 			drop_privs = 1;
 			break;
 		case 't':
@@ -579,6 +620,10 @@ int main(int argc, char **argv)
 	else if (pidfile_path_param)
 		pidfile_path = pidfile_path_param;
 
+	/* custom socket path and socket-activation make no sense */
+	if (s_flag && no_sock && !quiet)
+		fprintf(stderr, _("Both --socket-activation and --socket specified. "
+				  "Ignoring --socket\n"));
 
 	uid = getuid();
 	if (uid && drop_privs) {
@@ -661,6 +706,7 @@ int main(int argc, char **argv)
 		return EXIT_SUCCESS;
 	}
 
-	server_loop(socket_path, pidfile_path, debug, timeout, quiet, no_fork);
+	server_loop(socket_path, pidfile_path, debug, timeout, quiet, no_fork,
+		    no_sock);
 	return EXIT_SUCCESS;
 }

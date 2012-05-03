@@ -83,6 +83,12 @@ usrsbin_exec_PROGRAMS += uuidd
 dist_man_MANS += uuidd.8
 uuidd_LDADD = $(ul_libuuid_la)
 uuidd_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_srcdir)
+uuidd_SOURCES = \
+	uuidd.c
+if USE_SOCKET_ACTIVATION
+uuidd_SOURCES += sd-daemon.c
+uuidd_LDADD += -lrt
+endif
 endif
 
 if BUILD_LIBBLKID

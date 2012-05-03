@@ -42,6 +42,12 @@ Do not create pid file.
 .BR \-F , " \-\-no-fork "
 Do not daemonize using double-fork.
 .TP
+.BR \-S , " \-\-socket-activation "
+Do not create the socket and instead expect it to be provided by the calling
+process.  Implies --no-fork and --no-pid.  As of this writing, this option is
+supposed to be used only with systemd.  This option must be enabled with a configure
+option.
+.TP
 .B \-q
 Suppress some failure messages.
 .TP

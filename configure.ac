@@ -1131,6 +1131,18 @@ if test "x$enable_login_chown_vcs" = xyes; then
 fi
 
 
+AC_ARG_ENABLE([socket-activation],
+  AS_HELP_STRING([--enable-socket-activation], [build uuidd with support for systemd socket activation]),
+  [], enable_socket_activation=no
+)
+
+AM_CONDITIONAL(USE_SOCKET_ACTIVATION, test "x$enable_socket_activation" = xyes)
+
+if test "x$enable_socket_activation" = xyes; then
+  AC_DEFINE(USE_SOCKET_ACTIVATION, 1, [Should uuidd support socket activation?])
+fi
+
+
 AC_ARG_ENABLE([login-stat-mail],
   AS_HELP_STRING([--enable-login-stat-mail], [let login stat() the mailbox]),
   [], enable_login_stat_mail=no
