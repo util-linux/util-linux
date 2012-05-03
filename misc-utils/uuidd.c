@@ -207,19 +207,18 @@ static int call_daemon(const char *socket_path, int op, char *buf,
 	return ret;
 }
 
-static void server_loop(const char *socket_path, const char *pidfile_path,
-			int debug, int timeout, int quiet)
+/*
+ * Exclusively create and open a pid file with path @pidfile_path
+ *
+ * Set cleanup_pidfile global variable for the cleanup
+ * handler. @pidfile_path must not be NULL.
+ *
+ * Return file descriptor of the created pid_file.
+ */
+static int create_pidfile(const char *pidfile_path, int quiet)
 {
-	struct sockaddr_un	my_addr, from_addr;
-	struct flock		fl;
-	socklen_t		fromlen;
-	int32_t			reply_len = 0;
-	uuid_t			uu;
-	mode_t			save_umask;
-	char			reply_buf[1024], *cp;
-	char			op, str[UUID_STR_LEN];
-	int			i, s, ns, len, num;
-	int			fd_pidfile, ret;
+	int		fd_pidfile;
+	struct flock	fl;
 
 	fd_pidfile = open(pidfile_path, O_CREAT | O_RDWR, 0664);
 	if (fd_pidfile < 0) {
@@ -229,8 +228,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		exit(EXIT_FAILURE);
 	}
 	cleanup_pidfile = pidfile_path;
-	signal(SIGALRM, terminate_intr);
-	alarm(30);
+
 	fl.l_type = F_WRLCK;
 	fl.l_whence = SEEK_SET;
 	fl.l_start = 0;
@@ -243,6 +241,28 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			fprintf(stderr, _("Failed to lock %s: %m\n"), pidfile_path);
 		exit(EXIT_FAILURE);
 	}
+
+	return fd_pidfile;
+}
+
+static void server_loop(const char *socket_path, const char *pidfile_path,
+			int debug, int timeout, int quiet)
+{
+	struct sockaddr_un	my_addr, from_addr;
+	socklen_t		fromlen;
+	int32_t			reply_len = 0;
+	uuid_t			uu;
+	mode_t			save_umask;
+	char			reply_buf[1024], *cp;
+	char			op, str[UUID_STR_LEN];
+	int			i, s, ns, len, num;
+	int			fd_pidfile, ret;
+
+	signal(SIGALRM, terminate_intr);
+	alarm(30);
+
+	fd_pidfile = create_pidfile(pidfile_path, quiet);
+
 	ret = call_daemon(socket_path, UUIDD_OP_GETPID, reply_buf, sizeof(reply_buf), 0, NULL);
 	if (ret > 0) {
 		if (!quiet)
