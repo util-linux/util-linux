@@ -64,6 +64,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" -r, --random        test random-based generation\n"
 		" -t, --time          test time-based generation\n"
 		" -n, --uuids <num>   request number of uuids\n"
+		" -P, --no-pid        do not create pid file\n"
 		" -d, --debug         run in debugging mode\n"
 		" -q, --quiet         turn on quiet mode\n"
 		" -V, --version       output version information and exit\n"
@@ -112,7 +113,8 @@ static const char *cleanup_pidfile, *cleanup_socket;
 
 static void terminate_intr(int signo CODE_ATTR((unused)))
 {
-	unlink(cleanup_pidfile);
+	if (cleanup_pidfile)
+		unlink(cleanup_pidfile);
 	if (cleanup_socket)
 		unlink(cleanup_socket);
 	exit(EXIT_SUCCESS);
@@ -256,12 +258,14 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	char			reply_buf[1024], *cp;
 	char			op, str[UUID_STR_LEN];
 	int			i, s, ns, len, num;
-	int			fd_pidfile, ret;
+	int			fd_pidfile = -1;
+	int			ret;
 
 	signal(SIGALRM, terminate_intr);
 	alarm(30);
 
-	fd_pidfile = create_pidfile(pidfile_path, quiet);
+	if (pidfile_path)
+		fd_pidfile = create_pidfile(pidfile_path, quiet);
 
 	ret = call_daemon(socket_path, UUIDD_OP_GETPID, reply_buf, sizeof(reply_buf), 0, NULL);
 	if (ret > 0) {
@@ -321,13 +325,15 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	signal(SIGALRM, terminate_intr);
 	signal(SIGPIPE, SIG_IGN);
 
-	sprintf(reply_buf, "%8d\n", getpid());
-	if (ftruncate(fd_pidfile, 0)) {
-		/* Silence warn_unused_result */
+	if (pidfile_path) {
+		sprintf(reply_buf, "%8d\n", getpid());
+		if (ftruncate(fd_pidfile, 0)) {
+			/* Silence warn_unused_result */
+		}
+		write_all(fd_pidfile, reply_buf, strlen(reply_buf));
+		if (fd_pidfile > 1)
+			close(fd_pidfile); /* Unlock the pid file */
 	}
-	write_all(fd_pidfile, reply_buf, strlen(reply_buf));
-	if (fd_pidfile > 1)
-		close(fd_pidfile); /* Unlock the pid file */
 
 	while (1) {
 		fromlen = sizeof(from_addr);
@@ -446,7 +452,8 @@ static void __attribute__ ((__noreturn__)) unexpected_size(int size)
 int main(int argc, char **argv)
 {
 	const char	*socket_path = UUIDD_SOCKET_PATH;
-	const char	*pidfile_path = UUIDD_PIDFILE_PATH;
+	const char	*pidfile_path = NULL;
+	const char	*pidfile_path_param = NULL;
 	const char	*err_context;
 	char		buf[1024], *cp;
 	char		str[UUID_STR_LEN], *tmp;
@@ -456,6 +463,7 @@ int main(int argc, char **argv)
 	int		i, c, ret;
 	int		debug = 0, do_type = 0, do_kill = 0, num = 0;
 	int		timeout = 0, quiet = 0, drop_privs = 0;
+	int		no_pid = 0;
 
 	static const struct option longopts[] = {
 		{"pid", required_argument, NULL, 'p'},
@@ -465,6 +473,7 @@ int main(int argc, char **argv)
 		{"random", no_argument, NULL, 'r'},
 		{"time", no_argument, NULL, 't'},
 		{"uuids", required_argument, NULL, 'n'},
+		{"no-pid", no_argument, NULL, 'P'},
 		{"debug", no_argument, NULL, 'd'},
 		{"quiet", no_argument, NULL, 'q'},
 		{"version", no_argument, NULL, 'V'},
@@ -478,7 +487,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	while ((c =
-		getopt_long(argc, argv, "p:s:T:krtn:dqVh", longopts,
+		getopt_long(argc, argv, "p:s:T:krtn:PdqVh", longopts,
 			    NULL)) != -1) {
 		switch (c) {
 		case 'd':
@@ -497,7 +506,11 @@ int main(int argc, char **argv)
 			}
 			break;
 		case 'p':
-			pidfile_path = optarg;
+			pidfile_path_param = optarg;
+			drop_privs = 1;
+			break;
+		case 'P':
+			no_pid = 1;
 			drop_privs = 1;
 			break;
 		case 'q':
@@ -533,6 +546,17 @@ int main(int argc, char **argv)
 			usage(stderr);
 		}
 	}
+
+	if (no_pid && pidfile_path_param && !quiet)
+		fprintf(stderr, _("Both --pid and --no-pid specified. "
+				  "Ignoring --no-pid.\n"));
+
+	if (!no_pid && !pidfile_path_param)
+		pidfile_path = UUIDD_PIDFILE_PATH;
+	else if (pidfile_path_param)
+		pidfile_path = pidfile_path_param;
+
+
 	uid = getuid();
 	if (uid && drop_privs) {
 		gid = getgid();
