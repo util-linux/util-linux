@@ -249,34 +249,20 @@ static int create_pidfile(const char *pidfile_path, int quiet)
 	return fd_pidfile;
 }
 
-static void server_loop(const char *socket_path, const char *pidfile_path,
-			int debug, int timeout, int quiet, int no_fork)
+/*
+ * Create AF_UNIX, SOCK_STREAM socket and bind to @socket_path
+ *
+ * If @will_fork is true, then make sure the descriptor
+ * of the socket is >2, so that it wont be later closed
+ * during create_daemon().
+ *
+ * Return file descriptor corresponding to created socket.
+ */
+static int create_socket(const char *socket_path, int will_fork, int quiet)
 {
-	struct sockaddr_un	my_addr, from_addr;
-	socklen_t		fromlen;
-	int32_t			reply_len = 0;
-	uuid_t			uu;
+	struct sockaddr_un	my_addr;
 	mode_t			save_umask;
-	char			reply_buf[1024], *cp;
-	char			op, str[UUID_STR_LEN];
-	int			i, s, ns, len, num;
-	int			fd_pidfile = -1;
-	int			ret;
-
-	signal(SIGALRM, terminate_intr);
-	alarm(30);
-
-	if (pidfile_path)
-		fd_pidfile = create_pidfile(pidfile_path, quiet);
-
-	ret = call_daemon(socket_path, UUIDD_OP_GETPID, reply_buf, sizeof(reply_buf), 0, NULL);
-	if (ret > 0) {
-		if (!quiet)
-			printf(_("uuidd daemon already running at pid %s\n"),
-			       reply_buf);
-		exit(EXIT_FAILURE);
-	}
-	alarm(0);
+	int 			s;
 
 	if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
 		if (!quiet)
@@ -288,7 +274,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	 * Make sure the socket isn't using fd numbers 0-2 to avoid it
 	 * getting closed by create_daemon()
 	 */
-	while ((!debug || no_fork) && s <= 2) {
+	while (will_fork && s <= 2) {
 		s = dup(s);
 		if (s < 0)
 			err(EXIT_FAILURE, "dup");
@@ -310,7 +296,40 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		exit(EXIT_FAILURE);
 	}
 	umask(save_umask);
+	cleanup_socket = socket_path;
 
+	return s;
+}
+
+static void server_loop(const char *socket_path, const char *pidfile_path,
+			int debug, int timeout, int quiet, int no_fork)
+{
+	struct sockaddr_un	from_addr;
+	socklen_t		fromlen;
+	int32_t			reply_len = 0;
+	uuid_t			uu;
+	char			reply_buf[1024], *cp;
+	char			op, str[UUID_STR_LEN];
+	int			i, s, ns, len, num;
+	int			fd_pidfile = -1;
+	int			ret;
+
+	signal(SIGALRM, terminate_intr);
+	alarm(30);
+
+	if (pidfile_path)
+		fd_pidfile = create_pidfile(pidfile_path, quiet);
+
+	ret = call_daemon(socket_path, UUIDD_OP_GETPID, reply_buf, sizeof(reply_buf), 0, NULL);
+	if (ret > 0) {
+		if (!quiet)
+			printf(_("uuidd daemon already running at pid %s\n"),
+			       reply_buf);
+		exit(EXIT_FAILURE);
+	}
+	alarm(0);
+
+	s = create_socket(socket_path, (!debug || !no_fork), quiet);
 	if (listen(s, SOMAXCONN) < 0) {
 		if (!quiet)
 			fprintf(stderr, _("Couldn't listen on unix "
@@ -318,7 +337,6 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		exit(EXIT_FAILURE);
 	}
 
-	cleanup_socket = socket_path;
 	if (!debug && !no_fork)
 		create_daemon();
 	signal(SIGHUP, terminate_intr);
