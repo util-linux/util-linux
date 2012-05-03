@@ -416,7 +416,7 @@ static int get_uuid_via_daemon(int op, uuid_t out, int *num)
 				close_all_fds();
 				execl(uuidd_path, "uuidd", "-qT", "300",
 				      (char *) NULL);
-				exit(1);
+				exit(EXIT_FAILURE);
 			}
 			(void) waitpid(pid, 0, 0);
 			if (connect(s, (const struct sockaddr *) &srv_addr,
