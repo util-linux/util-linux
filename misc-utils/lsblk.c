@@ -370,7 +370,7 @@ static int is_readonly_device(struct blkdev_cxt *cxt)
 {
 	int fd, ro = 0;
 
-	if (sysfs_scanf(&cxt->sysfs, "ro", "%d", &ro) == 0)
+	if (sysfs_scanf(&cxt->sysfs, "ro", "%d", &ro) == 1)
 		return ro;
 
 	/* fallback if "ro" attribute does not exist */
