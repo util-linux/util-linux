@@ -26,7 +26,6 @@ libuuid_la_SOURCES = \
 	uuidP.h \
 	uuid_time.c \
 	$(uuidinc_HEADERS) \
-	$(top_srcdir)/lib/fileutils.c \
 	$(top_srcdir)/lib/randutils.c
 
 libuuid_la_DEPENDENCIES = uuid.sym
