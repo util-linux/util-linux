@@ -503,11 +503,9 @@ int main(int argc, char **argv)
 	char		buf[1024], *cp;
 	char		str[UUID_STR_LEN], *tmp;
 	uuid_t		uu;
-	uid_t		uid;
-	gid_t		gid;
 	int		i, c, ret;
 	int		debug = 0, do_type = 0, do_kill = 0, num = 0;
-	int		timeout = 0, quiet = 0, drop_privs = 0;
+	int		timeout = 0, quiet = 0;
 	int		no_pid = 0, no_fork = 0;
 	int		no_sock = 0, s_flag = 0;
 
@@ -540,11 +538,9 @@ int main(int argc, char **argv)
 		switch (c) {
 		case 'd':
 			debug++;
-			drop_privs = 1;
 			break;
 		case 'k':
 			do_kill++;
-			drop_privs = 1;
 			break;
 		case 'n':
 			num = strtol(optarg, &tmp, 0);
@@ -555,20 +551,16 @@ int main(int argc, char **argv)
 			break;
 		case 'p':
 			pidfile_path_param = optarg;
-			drop_privs = 1;
 			break;
 		case 'P':
 			no_pid = 1;
-			drop_privs = 1;
 			break;
 		case 'F':
 			no_fork = 1;
-			drop_privs = 1;
 			break;
 		case 'S':
 #ifdef USE_SOCKET_ACTIVATION
 			no_sock = 1;
-			drop_privs = 1;
 			no_fork = 1;
 			no_pid = 1;
 #else
@@ -582,16 +574,13 @@ int main(int argc, char **argv)
 			break;
 		case 'r':
 			do_type = UUIDD_OP_RANDOM_UUID;
-			drop_privs = 1;
 			break;
 		case 's':
 			socket_path = optarg;
 			s_flag = 1;
-			drop_privs = 1;
 			break;
 		case 't':
 			do_type = UUIDD_OP_TIME_UUID;
-			drop_privs = 1;
 			break;
 		case 'T':
 			timeout = strtol(optarg, &tmp, 0);
@@ -626,25 +615,6 @@ int main(int argc, char **argv)
 		fprintf(stderr, _("Both --socket-activation and --socket specified. "
 				  "Ignoring --socket\n"));
 
-	uid = getuid();
-	if (uid && drop_privs) {
-		gid = getgid();
-#ifdef HAVE_SETRESGID
-		if (setresgid(gid, gid, gid) < 0)
-			err(EXIT_FAILURE, "setresgid");
-#else
-		if (setregid(gid, gid) < 0)
-			err(EXIT_FAILURE, "setregid");
-#endif
-
-#ifdef HAVE_SETRESUID
-		if (setresuid(uid, uid, uid) < 0)
-			err(EXIT_FAILURE, "setresuid");
-#else
-		if (setreuid(uid, uid) < 0)
-			err(EXIT_FAILURE, "setreuid");
-#endif
-	}
 	if (num && do_type) {
 		ret = call_daemon(socket_path, do_type + 2, buf,
 				  sizeof(buf), &num, &err_context);
