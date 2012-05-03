@@ -335,7 +335,8 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 				  sizeof(reply_buf), 0, NULL);
 		if (ret > 0) {
 			if (!quiet)
-				printf(_("uuidd daemon already running at pid %s\n"),
+				fprintf(stderr,
+					_("uuidd daemon already running at pid %s\n"),
 				       reply_buf);
 			exit(EXIT_FAILURE);
 		}
@@ -396,7 +397,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			if (len < 0)
 				perror("read");
 			else
-				printf(_("Error reading from client, "
+				fprintf(stderr, _("Error reading from client, "
 					 "len = %d\n"), len);
 			goto shutdown_socket;
 		}
@@ -405,10 +406,10 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			if (read_all(ns, (char *) &num, sizeof(num)) != 4)
 				goto shutdown_socket;
 			if (debug)
-				printf(_("operation %d, incoming num = %d\n"),
+				fprintf(stderr, _("operation %d, incoming num = %d\n"),
 				       op, num);
 		} else if (debug)
-			printf(_("operation %d\n"), op);
+			fprintf(stderr, _("operation %d\n"), op);
 
 		switch (op) {
 		case UUIDD_OP_GETPID:
@@ -424,7 +425,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			__uuid_generate_time(uu, &num);
 			if (debug) {
 				uuid_unparse(uu, str);
-				printf(_("Generated time UUID: %s\n"), str);
+				fprintf(stderr, _("Generated time UUID: %s\n"), str);
 			}
 			memcpy(reply_buf, uu, sizeof(uu));
 			reply_len = sizeof(uu);
@@ -434,7 +435,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			__uuid_generate_random(uu, &num);
 			if (debug) {
 				uuid_unparse(uu, str);
-				printf(_("Generated random UUID: %s\n"), str);
+				fprintf(stderr, _("Generated random UUID: %s\n"), str);
 			}
 			memcpy(reply_buf, uu, sizeof(uu));
 			reply_len = sizeof(uu);
@@ -443,10 +444,10 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			__uuid_generate_time(uu, &num);
 			if (debug) {
 				uuid_unparse(uu, str);
-				printf(P_("Generated time UUID %s "
-					  "and %d following\n",
-					  "Generated time UUID %s "
-					  "and %d following\n", num - 1),
+				fprintf(stderr, P_("Generated time UUID %s "
+						   "and %d following\n",
+						   "Generated time UUID %s "
+						   "and %d following\n", num - 1),
 				       str, num - 1);
 			}
 			memcpy(reply_buf, uu, sizeof(uu));
@@ -464,13 +465,13 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			__uuid_generate_random((unsigned char *) reply_buf +
 					      sizeof(num), &num);
 			if (debug) {
-				printf(P_("Generated %d UUID:\n",
-					  "Generated %d UUIDs:\n", num), num);
+				fprintf(stderr, P_("Generated %d UUID:\n",
+						   "Generated %d UUIDs:\n", num), num);
 				for (i = 0, cp = reply_buf + sizeof(num);
 				     i < num;
 				     i++, cp += UUID_LEN) {
 					uuid_unparse((unsigned char *)cp, str);
-					printf("\t%s\n", str);
+					fprintf(stderr, "\t%s\n", str);
 				}
 			}
 			reply_len = (num * UUID_LEN) + sizeof(num);
@@ -478,7 +479,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			break;
 		default:
 			if (debug)
-				printf(_("Invalid operation %d\n"), op);
+				fprintf(stderr, _("Invalid operation %d\n"), op);
 			goto shutdown_socket;
 		}
 		write_all(ns, (char *) &reply_len, sizeof(reply_len));
