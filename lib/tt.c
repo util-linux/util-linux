@@ -20,9 +20,9 @@
 #include <sys/ioctl.h>
 #endif
 
+#include "c.h"
 #include "nls.h"
 #include "widechar.h"
-#include "c.h"
 #include "tt.h"
 #include "mbsalign.h"
 
