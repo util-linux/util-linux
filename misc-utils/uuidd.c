@@ -34,6 +34,7 @@ extern int optind;
 #include "uuid.h"
 #include "uuidd.h"
 #include "writeall.h"
+#include "c.h"
 
 #include "closestream.h"
 #include "nls.h"
@@ -327,9 +328,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 
 	if (pidfile_path) {
 		sprintf(reply_buf, "%8d\n", getpid());
-		if (ftruncate(fd_pidfile, 0)) {
-			/* Silence warn_unused_result */
-		}
+		ignore_result( ftruncate(fd_pidfile, 0) );
 		write_all(fd_pidfile, reply_buf, strlen(reply_buf));
 		if (fd_pidfile > 1)
 			close(fd_pidfile); /* Unlock the pid file */
