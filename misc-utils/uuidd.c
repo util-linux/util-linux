@@ -244,7 +244,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			fprintf(stderr, _("Failed to lock %s: %m\n"), pidfile_path);
 		exit(EXIT_FAILURE);
 	}
-	ret = call_daemon(socket_path, 0, reply_buf, sizeof(reply_buf), 0, 0);
+	ret = call_daemon(socket_path, UUIDD_OP_GETPID, reply_buf, sizeof(reply_buf), 0, NULL);
 	if (ret > 0) {
 		if (!quiet)
 			printf(_("uuidd daemon already running at pid %s\n"),
@@ -578,7 +578,7 @@ int main(int argc, char **argv)
 	}
 
 	if (do_kill) {
-		ret = call_daemon(socket_path, 0, buf, sizeof(buf), 0, 0);
+		ret = call_daemon(socket_path, UUIDD_OP_GETPID, buf, sizeof(buf), 0, NULL);
 		if ((ret > 0) && ((do_kill = atoi((char *) buf)) > 0)) {
 			ret = kill(do_kill, SIGTERM);
 			if (ret < 0) {
