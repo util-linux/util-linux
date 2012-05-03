@@ -18,3 +18,4 @@ wipefs
 findmnt
 lsblk
 lslocks
+uuidd.service

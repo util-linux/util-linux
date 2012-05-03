@@ -1142,6 +1142,16 @@ if test "x$enable_socket_activation" = xyes; then
   AC_DEFINE(USE_SOCKET_ACTIVATION, 1, [Should uuidd support socket activation?])
 fi
 
+AC_ARG_WITH([systemdsystemunitdir],
+  AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [directory for systemd service files]),
+  [], [with_systemdsystemunitdir=$($PKG_CONFIG --variable=systemdsystemunitdir systemd)])
+
+if test "x$with_systemdsystemunitdir" != "xno"; then
+  AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
+fi
+
+AM_CONDITIONAL(WITH_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != "xno" ])
+
 
 AC_ARG_ENABLE([login-stat-mail],
   AS_HELP_STRING([--enable-login-stat-mail], [let login stat() the mailbox]),
@@ -1265,6 +1275,7 @@ libuuid/uuid.pc
 login-utils/Makefile
 man/ru/Makefile
 misc-utils/Makefile
+misc-utils/uuidd.service
 mount/Makefile
 partx/Makefile
 po/Makefile.in
