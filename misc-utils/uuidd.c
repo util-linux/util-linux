@@ -229,7 +229,6 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		exit(EXIT_FAILURE);
 	}
 	cleanup_pidfile = pidfile_path;
-	cleanup_socket = 0;
 	signal(SIGALRM, terminate_intr);
 	alarm(30);
 	fl.l_type = F_WRLCK;
