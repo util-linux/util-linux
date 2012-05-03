@@ -58,12 +58,14 @@ int random_get_fd(void)
  * Use /dev/urandom if possible, and if not,
  * use glibc pseudo-random functions.
  */
-void random_get_bytes(void *buf, size_t nbytes)
+void random_get_bytes(void *buf, size_t nbytes, int fd)
 {
 	size_t i, n = nbytes;
-	int fd = random_get_fd();
 	int lose_counter = 0;
 	unsigned char *cp = (unsigned char *) buf;
+
+	if (fd < 0)
+		fd = random_get_fd();
 
 	if (fd >= 0) {
 		while (n > 0) {
@@ -111,7 +113,7 @@ int main(int argc, char *argv[])
 
 	/* generate and print 10 random numbers */
 	for (i = 0; i < 10; i++) {
-		random_get_bytes(&v, sizeof(v));
+		random_get_bytes(&v, sizeof(v), -1);
 		printf("%d\n", v);
 	}
 

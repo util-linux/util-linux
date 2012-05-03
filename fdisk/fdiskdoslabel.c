@@ -182,7 +182,7 @@ void create_doslabel(void)
 	unsigned int id;
 
 	/* random disk signature */
-	random_get_bytes(&id, sizeof(id));
+	random_get_bytes(&id, sizeof(id), -1);
 
 	fprintf(stderr, _("Building a new DOS disklabel with disk identifier 0x%08x.\n"), id);
 
