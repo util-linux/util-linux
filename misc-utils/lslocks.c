@@ -78,8 +78,6 @@ static struct colinfo infos[] = {
 #define NCOLS ARRAY_SIZE(infos)
 static int columns[NCOLS], ncolumns;
 static pid_t pid = 0;
-/* array with IDs of enabled columns */
-static int columns[NCOLS], ncolumns;
 
 struct lock {
 	struct list_head locks;
