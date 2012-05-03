@@ -66,6 +66,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" -t, --time          test time-based generation\n"
 		" -n, --uuids <num>   request number of uuids\n"
 		" -P, --no-pid        do not create pid file\n"
+		" -F, --no-fork       do not daemonize using double-fork\n"
 		" -d, --debug         run in debugging mode\n"
 		" -q, --quiet         turn on quiet mode\n"
 		" -V, --version       output version information and exit\n"
@@ -249,7 +250,7 @@ static int create_pidfile(const char *pidfile_path, int quiet)
 }
 
 static void server_loop(const char *socket_path, const char *pidfile_path,
-			int debug, int timeout, int quiet)
+			int debug, int timeout, int quiet, int no_fork)
 {
 	struct sockaddr_un	my_addr, from_addr;
 	socklen_t		fromlen;
@@ -287,7 +288,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	 * Make sure the socket isn't using fd numbers 0-2 to avoid it
 	 * getting closed by create_daemon()
 	 */
-	while (!debug && s <= 2) {
+	while ((!debug || no_fork) && s <= 2) {
 		s = dup(s);
 		if (s < 0)
 			err(EXIT_FAILURE, "dup");
@@ -318,7 +319,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	}
 
 	cleanup_socket = socket_path;
-	if (!debug)
+	if (!debug && !no_fork)
 		create_daemon();
 	signal(SIGHUP, terminate_intr);
 	signal(SIGINT, terminate_intr);
@@ -462,7 +463,7 @@ int main(int argc, char **argv)
 	int		i, c, ret;
 	int		debug = 0, do_type = 0, do_kill = 0, num = 0;
 	int		timeout = 0, quiet = 0, drop_privs = 0;
-	int		no_pid = 0;
+	int		no_pid = 0, no_fork = 0;
 
 	static const struct option longopts[] = {
 		{"pid", required_argument, NULL, 'p'},
@@ -473,6 +474,7 @@ int main(int argc, char **argv)
 		{"time", no_argument, NULL, 't'},
 		{"uuids", required_argument, NULL, 'n'},
 		{"no-pid", no_argument, NULL, 'P'},
+		{"no-fork", no_argument, NULL, 'F'},
 		{"debug", no_argument, NULL, 'd'},
 		{"quiet", no_argument, NULL, 'q'},
 		{"version", no_argument, NULL, 'V'},
@@ -486,7 +488,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	while ((c =
-		getopt_long(argc, argv, "p:s:T:krtn:PdqVh", longopts,
+		getopt_long(argc, argv, "p:s:T:krtn:PFdqVh", longopts,
 			    NULL)) != -1) {
 		switch (c) {
 		case 'd':
@@ -510,6 +512,10 @@ int main(int argc, char **argv)
 			break;
 		case 'P':
 			no_pid = 1;
+			drop_privs = 1;
+			break;
+		case 'F':
+			no_fork = 1;
 			drop_privs = 1;
 			break;
 		case 'q':
@@ -637,6 +643,6 @@ int main(int argc, char **argv)
 		return EXIT_SUCCESS;
 	}
 
-	server_loop(socket_path, pidfile_path, debug, timeout, quiet);
+	server_loop(socket_path, pidfile_path, debug, timeout, quiet, no_fork);
 	return EXIT_SUCCESS;
 }
