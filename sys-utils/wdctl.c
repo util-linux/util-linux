@@ -1,5 +1,3 @@
-/*-*- Mode: C; c-basic-offset: 8; indent-tabs-mode: t -*-*/
-
 /*
  * wdctl(8) - show hardware watchdog status
  *
@@ -20,7 +18,6 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 #include <linux/watchdog.h>
 #include <sys/ioctl.h>
 #include <getopt.h>
@@ -318,36 +315,12 @@ static int read_watchdog(struct wdinfo *wd)
 
 static void show_timeouts(struct wdinfo *wd)
 {
-	const char *sep;
-
-	if (!wd->has_timeout && !wd->has_pretimeout && !wd->has_timeleft)
-		return;
-
-	if (wd->has_timeout) {
-		printf(_("Timeout"));
-		sep = "/";
-	}
-	if (wd->has_pretimeout) {
-		printf(_("%sPre-timeout"), sep);
-		sep = "/";
-	}
+	if (wd->has_timeout)
+		printf(_("%-15s%2i seconds\n"), _("Timeout:"), wd->timeout);
+	if (wd->has_pretimeout)
+		printf(_("%-15s%2i seconds\n"), _("Pre-timeout:"), wd->pretimeout);
 	if (wd->has_timeleft)
-		printf(_("%sTimeleft"), sep);
-
-	fputs(": ", stdout);
-	sep = NULL;
-	if (wd->has_timeout) {
-		printf("%i", wd->timeout);
-		sep = "/";
-	}
-	if (wd->has_pretimeout) {
-		printf("%s%i", sep, wd->pretimeout);
-		sep = "/";
-	}
-	if (wd->has_timeleft)
-		printf("%s%i", sep, wd->timeleft);
-
-	fputs(_(" seconds\n"), stdout);
+		printf(_("%-15s%2i seconds\n"), _("Timeleft:"), wd->timeleft);
 }
 
 int main(int argc, char *argv[])
@@ -444,7 +417,8 @@ int main(int argc, char *argv[])
 		goto done;
 
 	if (!noident)
-		printf(_("Identity: %s [version %x]\n"),
+		printf(_("%-15s%s [version %x]\n"),
+				("Identity:"),
 				wd.ident.identity,
 				wd.ident.firmware_version);
 	if (!notimeouts)
