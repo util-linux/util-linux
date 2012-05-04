@@ -185,6 +185,7 @@ ipcrm_SOURCES = ipcrm.c  $(top_srcdir)/lib/strutils.c
 flock_SOURCES = flock.c $(top_srcdir)/lib/strutils.c
 ldattach_SOURCES = ldattach.c $(top_srcdir)/lib/strutils.c
 
+if BUILD_WDCTL
 bin_PROGRAMS += wdctl
 dist_man_MANS += wdctl.8
 wdctl_SOURCES = \
@@ -192,6 +193,7 @@ wdctl_SOURCES = \
 	$(top_srcdir)/lib/strutils.c \
 	$(top_srcdir)/lib/tt.c \
 	$(top_srcdir)/lib/mbsalign.c
+endif
 
 if BUILD_MOUNTPOINT
 bin_PROGRAMS += mountpoint

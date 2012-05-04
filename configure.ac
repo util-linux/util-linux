@@ -139,6 +139,7 @@ AC_CHECK_HEADERS([ \
 	inttypes.h \
 	linux/cdrom.h \
 	linux/falloc.h \
+	linux/watchdog.h \
 	linux/fd.h \
 	linux/raw.h \
 	linux/tiocl.h \
@@ -182,6 +183,7 @@ AC_CHECK_HEADERS([langinfo.h],
 dnl Convert some ac_cv_header_* variables to have_*
 dnl
 have_linux_raw_h=$ac_cv_header_linux_raw_h
+have_linux_watchdog_h=$ac_cv_header_linux_watchdog_h
 have_security_pam_misc_h=$ac_cv_header_security_pam_misc_h
 
 
@@ -917,6 +919,12 @@ UL_BUILD_INIT([chcpu], [check])
 UL_REQUIRES_LINUX([chcpu])
 UL_REQUIRES_HAVE([chcpu], [cpu_set_t], [cpu_set_t type])
 AM_CONDITIONAL(BUILD_CHCPU, test "x$build_chcpu" = xyes)
+
+
+UL_BUILD_INIT([wdctl], [check])
+UL_REQUIRES_LINUX([wdctl])
+UL_REQUIRES_HAVE([wdctl], [linux_watchdog_h], [linux/watchdog.h header file])
+AM_CONDITIONAL(BUILD_WDCTL, test "x$build_wdctl" = xyes)
 
 
 UL_BUILD_INIT([prlimit], [check])
