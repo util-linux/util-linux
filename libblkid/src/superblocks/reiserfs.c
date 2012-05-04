@@ -49,12 +49,12 @@ static int probe_reiser(blkid_probe pr, const struct blkid_idmag *mag)
 
 	blocksize = le16_to_cpu(rs->rs_blocksize);
 
-	/* The blocksize must be at least 1k */
-	if ((blocksize >> 10) == 0)
+	/* The blocksize must be at least 512B */
+	if ((blocksize >> 9) == 0)
 		return -BLKID_ERR_PARAM;
 
 	/* If the superblock is inside the journal, we have the wrong one */
-	if (mag->kboff / (blocksize >> 10) > le32_to_cpu(rs->rs_journal_block))
+	if (mag->kboff / (blocksize >> 9) > le32_to_cpu(rs->rs_journal_block) / 2)
 		return -BLKID_ERR_BIG;
 
 	/* LABEL/UUID are only valid for later versions of Reiserfs v3.6. */
