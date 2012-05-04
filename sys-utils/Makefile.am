@@ -186,6 +186,7 @@ flock_SOURCES = flock.c $(top_srcdir)/lib/strutils.c
 ldattach_SOURCES = ldattach.c $(top_srcdir)/lib/strutils.c
 
 bin_PROGRAMS += wdctl
+dist_man_MANS += wdctl.8
 wdctl_SOURCES = \
 	wdctl.c \
 	$(top_srcdir)/lib/strutils.c \
