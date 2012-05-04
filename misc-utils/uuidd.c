@@ -514,11 +514,11 @@ int main(int argc, char **argv)
 	char		str[UUID_STR_LEN], *tmp;
 	uuid_t		uu;
 	int		i, c, ret;
-	int		debug = 0, do_type = 0, do_kill = 0, num = 0;
-	int		timeout = 0, quiet = 0;
-	int		no_pid = 0, no_fork = 0;
-	int		no_sock = 0, s_flag = 0;
-	struct uuidd_cxt_t uuidd_cxt;
+	int		do_type = 0, do_kill = 0, num = 0;
+	int		no_pid = 0;
+	int		s_flag = 0;
+
+	struct uuidd_cxt_t uuidd_cxt = { .timeout = 0 };
 
 	static const struct option longopts[] = {
 		{"pid", required_argument, NULL, 'p'},
@@ -548,7 +548,7 @@ int main(int argc, char **argv)
 			    NULL)) != -1) {
 		switch (c) {
 		case 'd':
-			debug++;
+			uuidd_cxt.debug = 1;
 			break;
 		case 'k':
 			do_kill++;
@@ -567,12 +567,12 @@ int main(int argc, char **argv)
 			no_pid = 1;
 			break;
 		case 'F':
-			no_fork = 1;
+			uuidd_cxt.no_fork = 1;
 			break;
 		case 'S':
 #ifdef USE_SOCKET_ACTIVATION
-			no_sock = 1;
-			no_fork = 1;
+			uuidd_cxt.no_sock = 1;
+			uuidd_cxt.no_fork = 1;
 			no_pid = 1;
 #else
 			fprintf(stderr,
@@ -581,7 +581,7 @@ int main(int argc, char **argv)
 #endif
 			break;
 		case 'q':
-			quiet++;
+			uuidd_cxt.quiet = 1;
 			break;
 		case 'r':
 			do_type = UUIDD_OP_RANDOM_UUID;
@@ -594,8 +594,8 @@ int main(int argc, char **argv)
 			do_type = UUIDD_OP_TIME_UUID;
 			break;
 		case 'T':
-			timeout = strtol(optarg, &tmp, 0);
-			if ((timeout < 0) || *tmp) {
+			uuidd_cxt.timeout = strtol(optarg, &tmp, 0);
+			if (uuidd_cxt.timeout < 0 || *tmp) {
 				fprintf(stderr, _("Bad number: %s\n"), optarg);
 				return EXIT_FAILURE;
 			}
@@ -612,7 +612,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (no_pid && pidfile_path_param && !quiet)
+	if (no_pid && pidfile_path_param && !uuidd_cxt.quiet)
 		fprintf(stderr, _("Both --pid and --no-pid specified. "
 				  "Ignoring --no-pid.\n"));
 
@@ -622,7 +622,7 @@ int main(int argc, char **argv)
 		pidfile_path = pidfile_path_param;
 
 	/* custom socket path and socket-activation make no sense */
-	if (s_flag && no_sock && !quiet)
+	if (s_flag && uuidd_cxt.no_sock && !uuidd_cxt.quiet)
 		fprintf(stderr, _("Both --socket-activation and --socket specified. "
 				  "Ignoring --socket\n"));
 
@@ -675,24 +675,18 @@ int main(int argc, char **argv)
 		if ((ret > 0) && ((do_kill = atoi((char *) buf)) > 0)) {
 			ret = kill(do_kill, SIGTERM);
 			if (ret < 0) {
-				if (!quiet)
+				if (!uuidd_cxt.quiet)
 					fprintf(stderr,
 						_("Couldn't kill uuidd running "
 						  "at pid %d: %m\n"), do_kill);
 				return EXIT_FAILURE;
 			}
-			if (!quiet)
+			if (!uuidd_cxt.quiet)
 				printf(_("Killed uuidd running at pid %d\n"),
 				       do_kill);
 		}
 		return EXIT_SUCCESS;
 	}
-
-	uuidd_cxt.timeout = timeout;
-	uuidd_cxt.debug = debug;
-	uuidd_cxt.quiet = quiet;
-	uuidd_cxt.no_fork = no_fork;
-	uuidd_cxt.no_sock = no_sock;
 
 	server_loop(socket_path, pidfile_path, &uuidd_cxt);
 	return EXIT_SUCCESS;
