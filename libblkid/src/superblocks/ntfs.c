@@ -81,7 +81,7 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 		(ns->bios_parameter_block[1]  << 8);
 	sectors_per_cluster = ns->bios_parameter_block[2];
 
-	if ((bytes_per_sector < 512) || (sectors_per_cluster == 0))
+	if ((bytes_per_sector < 256) || (sectors_per_cluster == 0))
 		return 1;
 
 	if (ns->cluster_per_mft_record < 0)
