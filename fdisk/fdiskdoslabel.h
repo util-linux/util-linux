@@ -48,5 +48,6 @@ extern void dos_set_mbr_id(void);
 extern void dos_delete_partition(int i);
 extern int check_dos_label(void);
 extern int is_dos_partition(int t);
+extern void dos_init(void);
 
 #endif

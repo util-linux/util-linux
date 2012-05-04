@@ -763,6 +763,8 @@ static int get_boot(int try_only) {
 			return 0;
 
 	if (check_osf_label()) {
+		/* intialize partitions for BSD as well */
+		dos_init();
 		if (!valid_part_table_flag(MBRbuffer)) {
 			disklabel = OSF_LABEL;
 			return 0;

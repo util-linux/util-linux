@@ -54,7 +54,7 @@ static void clear_partition(struct partition *p)
 	set_nr_sects(p,0);
 }
 
-static void dos_init(void)
+void dos_init(void)
 {
 	int i;
 
