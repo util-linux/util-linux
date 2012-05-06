@@ -68,8 +68,6 @@ int MBRbuffer_changed;
 #define sector(s)	((s) & 0x3f)
 #define cylinder(s, c)	((c) | (((s) & 0xc0) << 2))
 
-#define hsc2sector(h,s,c) (sector(s) - 1 + sectors * \
-				((h) + heads * cylinder(s,c)))
 #define set_hsc(h,s,c,sector) { \
 				s = sector % sectors + 1;	\
 				sector /= sectors;	\
