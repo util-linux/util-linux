@@ -1672,31 +1672,12 @@ static void
 write_table(void) {
 	int i;
 
-	if (disklabel == DOS_LABEL) {
-		/* MBR (primary partitions) */
-		if (!MBRbuffer_changed) {
-			for (i = 0; i < 4; i++)
-				if (ptes[i].changed)
-					MBRbuffer_changed = 1;
-		}
-		if (MBRbuffer_changed) {
-			write_part_table_flag(MBRbuffer);
-			write_sector(fd, 0, MBRbuffer);
-		}
-		/* EBR (logical partitions) */
-		for (i = 4; i < partitions; i++) {
-			struct pte *pe = &ptes[i];
-
-			if (pe->changed) {
-				write_part_table_flag(pe->sectorbuffer);
-				write_sector(fd, pe->offset, pe->sectorbuffer);
-			}
-		}
-	}
-	else if (disklabel == SGI_LABEL) {
+	if (disklabel == DOS_LABEL)
+		dos_write_table();
+	else if (disklabel == SGI_LABEL)
 		/* no test on change? the printf below might be mistaken */
 		sgi_write_table();
-	} else if (disklabel == SUN_LABEL) {
+	else if (disklabel == SUN_LABEL) {
 		int needw = 0;
 
 		for (i=0; i<8; i++)

@@ -657,3 +657,28 @@ void dos_new_partition(void)
 			printf(_("Invalid partition type `%c'\n"), c);
 	}
 }
+
+void dos_write_table(void)
+{
+	int i;
+
+	/* MBR (primary partitions) */
+	if (!MBRbuffer_changed) {
+		for (i = 0; i < 4; i++)
+			if (ptes[i].changed)
+				MBRbuffer_changed = 1;
+	}
+	if (MBRbuffer_changed) {
+		write_part_table_flag(MBRbuffer);
+		write_sector(fd, 0, MBRbuffer);
+	}
+	/* EBR (logical partitions) */
+	for (i = 4; i < partitions; i++) {
+		struct pte *pe = &ptes[i];
+
+		if (pe->changed) {
+			write_part_table_flag(pe->sectorbuffer);
+			write_sector(fd, pe->offset, pe->sectorbuffer);
+		}
+	}
+}

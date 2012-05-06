@@ -52,5 +52,6 @@ extern int is_dos_partition(int t);
 extern void dos_init(void);
 extern void dos_add_partition(int n, int sys);
 extern void dos_new_partition(void);
+extern void dos_write_table(void);
 
 #endif
