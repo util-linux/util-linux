@@ -52,8 +52,6 @@
 
 #include "gpt.h"
 
-static void delete_partition(int i);
-
 unsigned char *MBRbuffer;
 int MBRbuffer_changed;
 
