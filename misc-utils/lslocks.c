@@ -204,7 +204,7 @@ static char *get_filename_sz(ino_t inode, pid_t pid, size_t *size)
 
 		ret = xstrdup(sym);
 		break;
-}
+	}
 out:
 	closedir(dirp);
 	return ret;
