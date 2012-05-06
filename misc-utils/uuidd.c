@@ -442,7 +442,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			break;
 		case UUIDD_OP_RANDOM_UUID:
 			num = 1;
-			__uuid_generate_random(uu, &num, -1);
+			__uuid_generate_random(uu, &num);
 			if (uuidd_cxt->debug) {
 				uuid_unparse(uu, str);
 				fprintf(stderr, _("Generated random UUID: %s\n"), str);
@@ -473,7 +473,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			if (num * UUID_LEN > (int) (sizeof(reply_buf) - sizeof(num)))
 				num = (sizeof(reply_buf) - sizeof(num)) / UUID_LEN;
 			__uuid_generate_random((unsigned char *) reply_buf +
-					      sizeof(num), &num, -1);
+					      sizeof(num), &num);
 			if (uuidd_cxt->debug) {
 				fprintf(stderr, P_("Generated %d UUID:\n",
 						   "Generated %d UUIDs:\n", num), num);

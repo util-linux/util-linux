@@ -277,7 +277,7 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 	}
 
 	if ((last.tv_sec == 0) && (last.tv_usec == 0)) {
-		random_get_bytes(&clock_seq, sizeof(clock_seq), -1);
+		random_get_bytes(&clock_seq, sizeof(clock_seq));
 		clock_seq &= 0x3FFF;
 		gettimeofday(&last, 0);
 		last.tv_sec--;
@@ -434,7 +434,7 @@ int __uuid_generate_time(uuid_t out, int *num)
 
 	if (!has_init) {
 		if (get_node_id(node_id) <= 0) {
-			random_get_bytes(node_id, 6, -1);
+			random_get_bytes(node_id, 6);
 			/*
 			 * Set multicast bit, to prevent conflicts
 			 * with IEEE 802 addresses obtained from
@@ -520,7 +520,7 @@ int uuid_generate_time_safe(uuid_t out)
 }
 
 
-void __uuid_generate_random(uuid_t out, int *num, int fd)
+void __uuid_generate_random(uuid_t out, int *num)
 {
 	uuid_t	buf;
 	struct uuid uu;
@@ -532,7 +532,7 @@ void __uuid_generate_random(uuid_t out, int *num, int fd)
 		n = *num;
 
 	for (i = 0; i < n; i++) {
-		random_get_bytes(buf, sizeof(buf), fd);
+		random_get_bytes(buf, sizeof(buf));
 		uuid_unpack(buf, &uu);
 
 		uu.clock_seq = (uu.clock_seq & 0x3FFF) | 0x8000;
@@ -548,7 +548,18 @@ void uuid_generate_random(uuid_t out)
 	int	num = 1;
 	/* No real reason to use the daemon for random uuid's -- yet */
 
-	__uuid_generate_random(out, &num, -1);
+	__uuid_generate_random(out, &num);
+}
+
+/*
+ * Check whether good random source (/dev/random or /dev/urandom)
+ * is available.
+ */
+static int have_random_source(void)
+{
+	struct stat s;
+
+	return (!stat("/dev/random", &s) || !stat("/dev/urandom", &s));
 }
 
 
@@ -560,11 +571,8 @@ void uuid_generate_random(uuid_t out)
  */
 void uuid_generate(uuid_t out)
 {
-	int	fd;
-	int	num = 1;
-
-	if ((fd = random_get_fd()) >= 0)
-		__uuid_generate_random(out, &num, fd);
+	if (have_random_source())
+		uuid_generate_random(out);
 	else
 		uuid_generate_time(out);
 }
