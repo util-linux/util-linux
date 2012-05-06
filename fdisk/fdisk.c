@@ -64,18 +64,8 @@ int MBRbuffer_changed;
 			})
 
 
-#define LINE_LENGTH	800
 #define sector(s)	((s) & 0x3f)
 #define cylinder(s, c)	((c) | (((s) & 0xc0) << 2))
-
-#define set_hsc(h,s,c,sector) { \
-				s = sector % sectors + 1;	\
-				sector /= sectors;	\
-				h = sector % heads;	\
-				sector /= heads;	\
-				c = sector & 0xff;	\
-				s |= (sector >> 2) & 0xc0;	\
-			}
 
 /* menu list description */
 
@@ -154,7 +144,7 @@ int	fd,				/* the disk */
 unsigned int	user_cylinders, user_heads, user_sectors;
 unsigned int   pt_heads, pt_sectors;
 
-unsigned long long sector_offset = 1, /* extended_offset = 0, */ sectors;
+unsigned long long sector_offset = 1, sectors;
 
 unsigned int	heads,
 	cylinders,
@@ -319,43 +309,6 @@ void list_types(struct systypes *sys)
 }
 
 static int
-is_cleared_partition(struct partition *p) {
-	return !(!p || p->boot_ind || p->head || p->sector || p->cyl ||
-		 p->sys_ind || p->end_head || p->end_sector || p->end_cyl ||
-		 get_start_sect(p) || get_nr_sects(p));
-}
-
-static void
-set_partition(int i, int doext, unsigned long long start,
-	      unsigned long long stop, int sysid) {
-	struct partition *p;
-	unsigned long long offset;
-
-	if (doext) {
-		p = ptes[i].ext_pointer;
-		offset = extended_offset;
-	} else {
-		p = ptes[i].part_table;
-		offset = ptes[i].offset;
-	}
-	p->boot_ind = 0;
-	p->sys_ind = sysid;
-	set_start_sect(p, start - offset);
-	set_nr_sects(p, stop - start + 1);
-
-	if (!doext)
-		print_partition_size(i + 1, start, stop, sysid);
-
-	if (dos_compatible_flag && (start/(sectors*heads) > 1023))
-		start = heads*sectors*1024 - 1;
-	set_hsc(p->head, p->sector, p->cyl, start);
-	if (dos_compatible_flag && (stop/(sectors*heads) > 1023))
-		stop = heads*sectors*1024 - 1;
-	set_hsc(p->end_head, p->end_sector, p->end_cyl, stop);
-	ptes[i].changed = 1;
-}
-
-static int
 test_c(char **m, char *mesg) {
 	int val = 0;
 	if (!*m)
@@ -368,8 +321,6 @@ test_c(char **m, char *mesg) {
 	return val;
 }
 
-#define alignment_required	(grain != sector_size)
-
 static int
 lba_is_aligned(unsigned long long lba)
 {
@@ -379,12 +330,7 @@ lba_is_aligned(unsigned long long lba)
 	return !((granularity + alignment_offset - offset) & (granularity - 1));
 }
 
-#define ALIGN_UP	1
-#define ALIGN_DOWN	2
-#define ALIGN_NEAREST	3
-
-static unsigned long long
-align_lba(unsigned long long lba, int direction)
+unsigned long long align_lba(unsigned long long lba, int direction)
 {
 	unsigned long long res;
 
@@ -433,23 +379,6 @@ align_lba(unsigned long long lba, int direction)
 				lba_is_aligned(res) ? "OK" : "FALSE");
 	***/
 	return res;
-}
-
-static unsigned long long
-align_lba_in_range(	unsigned long long lba,
-			unsigned long long start,
-			unsigned long long stop)
-{
-	start = align_lba(start, ALIGN_UP);
-	stop = align_lba(stop, ALIGN_DOWN);
-
-	lba = align_lba(lba, ALIGN_NEAREST);
-
-	if (lba < start)
-		return start;
-	else if (lba > stop)
-		return stop;
-	return lba;
 }
 
 int warn_geometry(void)
@@ -881,7 +810,7 @@ read_hex(struct systypes *sys)
         }
 }
 
-static unsigned int
+unsigned int
 read_int_with_suffix(unsigned int low, unsigned int dflt, unsigned int high,
 	 unsigned int base, char *mesg, int *is_suffix_used)
 {
@@ -1024,7 +953,6 @@ read_int(unsigned int low, unsigned int dflt, unsigned int high,
 	return read_int_with_suffix(low, dflt, high, base, mesg, NULL);
 }
 
-
 int
 get_partition_dflt(int warn, int max, int dflt) {
 	struct pte *pe;
@@ -1083,35 +1011,6 @@ get_existing_partition(int warn, int max) {
 not_implemented:
 not_unique:
 	return get_partition(warn, max);
-}
-
-static int
-get_nonexisting_partition(int warn, int max) {
-	int pno = -1;
-	int i;
-	int dflt = 0;
-
-	for (i = 0; i < max; i++) {
-		struct pte *pe = &ptes[i];
-		struct partition *p = pe->part_table;
-
-		if (p && is_cleared_partition(p)) {
-			if (pno >= 0) {
-				dflt = pno + 1;
-				goto not_unique;
-			}
-			pno = i;
-		}
-	}
-	if (pno >= 0) {
-		printf(_("Selected partition %d\n"), pno+1);
-		return pno;
-	}
-	printf(_("All primary partitions have been defined already!\n"));
-	return -1;
-
- not_unique:
-	return get_partition_dflt(warn, max, dflt);
 }
 
 const char *
@@ -1604,8 +1503,8 @@ x_list_table(int extend) {
 	}
 }
 
-static void
-fill_bounds(unsigned long long *first, unsigned long long *last) {
+void fill_bounds(unsigned long long *first, unsigned long long *last)
+{
 	int i;
 	struct pte *pe = &ptes[0];
 	struct partition *p;
@@ -1724,27 +1623,6 @@ verify(void) {
 		       n_sectors - total, sector_size);
 }
 
-static unsigned long long
-get_unused_start(int part_n,
-		unsigned long long start,
-		unsigned long long first[],
-		unsigned long long last[])
-{
-	int i;
-
-	for (i = 0; i < partitions; i++) {
-		unsigned long long lastplusoff;
-
-		if (start == ptes[i].offset)
-			start += sector_offset;
-		lastplusoff = last[i] + ((part_n < 4) ? 0 : sector_offset);
-		if (start >= first[i] && start <= lastplusoff)
-			start = lastplusoff + 1;
-	}
-
-	return start;
-}
-
 void print_partition_size(int num, unsigned long long start, unsigned long long stop, int sysid)
 {
 	char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
@@ -1753,171 +1631,8 @@ void print_partition_size(int num, unsigned long long start, unsigned long long 
 	free(str);
 }
 
-static void
-add_partition(int n, int sys) {
-	char mesg[256];		/* 48 does not suffice in Japanese */
-	int i, read = 0;
-	struct partition *p = ptes[n].part_table;
-	struct partition *q = ptes[ext_index].part_table;
-	unsigned long long start, stop = 0, limit, temp,
-		first[partitions], last[partitions];
-
-	if (p && p->sys_ind) {
-		printf(_("Partition %d is already defined.  Delete "
-			 "it before re-adding it.\n"), n + 1);
-		return;
-	}
-	fill_bounds(first, last);
-	if (n < 4) {
-		start = sector_offset;
-		if (display_in_cyl_units || !total_number_of_sectors)
-			limit = heads * sectors * cylinders - 1;
-		else
-			limit = total_number_of_sectors - 1;
-
-		if (limit > UINT_MAX)
-			limit = UINT_MAX;
-
-		if (extended_offset) {
-			first[ext_index] = extended_offset;
-			last[ext_index] = get_start_sect(q) +
-				get_nr_sects(q) - 1;
-		}
-	} else {
-		start = extended_offset + sector_offset;
-		limit = get_start_sect(q) + get_nr_sects(q) - 1;
-	}
-	if (display_in_cyl_units)
-		for (i = 0; i < partitions; i++)
-			first[i] = (cround(first[i]) - 1) * units_per_sector;
-
-	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
-	do {
-		unsigned long long dflt, aligned;
-
-		temp = start;
-		dflt = start = get_unused_start(n, start, first, last);
-
-		/* the default sector should be aligned and unused */
-		do {
-			aligned = align_lba_in_range(dflt, dflt, limit);
-			dflt = get_unused_start(n, aligned, first, last);
-		} while (dflt != aligned && dflt > aligned && dflt < limit);
-
-		if (dflt >= limit)
-			dflt = start;
-		if (start > limit)
-			break;
-		if (start >= temp+units_per_sector && read) {
-			printf(_("Sector %llu is already allocated\n"), temp);
-			temp = start;
-			read = 0;
-		}
-		if (!read && start == temp) {
-			unsigned long long i = start;
-
-			start = read_int(cround(i), cround(dflt), cround(limit),
-					 0, mesg);
-			if (display_in_cyl_units) {
-				start = (start - 1) * units_per_sector;
-				if (start < i) start = i;
-			}
-			read = 1;
-		}
-	} while (start != temp || !read);
-	if (n > 4) {			/* NOT for fifth partition */
-		struct pte *pe = &ptes[n];
-
-		pe->offset = start - sector_offset;
-		if (pe->offset == extended_offset) { /* must be corrected */
-			pe->offset++;
-			if (sector_offset == 1)
-				start++;
-		}
-	}
-
-	for (i = 0; i < partitions; i++) {
-		struct pte *pe = &ptes[i];
-
-		if (start < pe->offset && limit >= pe->offset)
-			limit = pe->offset - 1;
-		if (start < first[i] && limit >= first[i])
-			limit = first[i] - 1;
-	}
-	if (start > limit) {
-		printf(_("No free sectors available\n"));
-		if (n > 4)
-			partitions--;
-		return;
-	}
-	if (cround(start) == cround(limit)) {
-		stop = limit;
-	} else {
-		int is_suffix_used = 0;
-
-		snprintf(mesg, sizeof(mesg),
-			_("Last %1$s, +%2$s or +size{K,M,G}"),
-			 str_units(SINGULAR), str_units(PLURAL));
-
-		stop = read_int_with_suffix(cround(start), cround(limit), cround(limit),
-				cround(start), mesg, &is_suffix_used);
-		if (display_in_cyl_units) {
-			stop = stop * units_per_sector - 1;
-			if (stop >limit)
-				stop = limit;
-		}
-
-		if (is_suffix_used && alignment_required) {
-			/* the last sector has not been exactly requested (but
-			 * defined by +size{K,M,G} convention), so be smart
-			 * and align the end of the partition. The next
-			 * partition will start at phy.block boundary.
-			 */
-			stop = align_lba_in_range(stop, start, limit) - 1;
-			if (stop > limit)
-				stop = limit;
-		}
-	}
-
-	set_partition(n, 0, start, stop, sys);
-	if (n > 4)
-		set_partition(n - 1, 1, ptes[n].offset, stop, EXTENDED);
-
-	if (IS_EXTENDED (sys)) {
-		struct pte *pe4 = &ptes[4];
-		struct pte *pen = &ptes[n];
-
-		ext_index = n;
-		pen->ext_pointer = p;
-		pe4->offset = extended_offset = start;
-		pe4->sectorbuffer = xcalloc(1, sector_size);
-		pe4->part_table = pt_offset(pe4->sectorbuffer, 0);
-		pe4->ext_pointer = pe4->part_table + 1;
-		pe4->changed = 1;
-		partitions = 5;
-	}
-}
-
-static void
-add_logical(void) {
-	if (partitions > 5 || ptes[4].part_table->sys_ind) {
-		struct pte *pe = &ptes[partitions];
-
-		pe->sectorbuffer = xcalloc(1, sector_size);
-		pe->part_table = pt_offset(pe->sectorbuffer, 0);
-		pe->ext_pointer = pe->part_table + 1;
-		pe->offset = 0;
-		pe->changed = 1;
-		partitions++;
-	}
-	printf(_("Adding logical partition %d\n"), partitions);
-	add_partition(partitions - 1, LINUX_NATIVE);
-}
-
-static void
-new_partition(void) {
-	int i, free_primary = 0;
-
+static void new_partition(void)
+{
 	if (warn_geometry())
 		return;
 
@@ -1949,59 +1664,8 @@ new_partition(void) {
 		 return;
 	}
 
-	for (i = 0; i < 4; i++)
-		free_primary += !ptes[i].part_table->sys_ind;
-
-	if (!free_primary && partitions >= MAXIMUM_PARTS) {
-		printf(_("The maximum number of partitions has been created\n"));
-		return;
-	}
-
-	if (!free_primary) {
-		if (extended_offset) {
-			printf(_("All primary partitions are in use\n"));
-			add_logical();
-		} else
-			printf(_("If you want to create more than four partitions, you must replace a\n"
-				 "primary partition with an extended partition first.\n"));
-	} else if (partitions >= MAXIMUM_PARTS) {
-		printf(_("All logical partitions are in use\n"));
-		printf(_("Adding a primary partition\n"));
-		add_partition(get_partition(0, 4), LINUX_NATIVE);
-	} else {
-		char c, dflt, line[LINE_LENGTH];
-
-		dflt = (free_primary == 1 && !extended_offset) ? 'e' : 'p';
-		snprintf(line, sizeof(line),
-			 _("Partition type:\n"
-			   "   p   primary (%d primary, %d extended, %d free)\n"
-			   "%s\n"
-			   "Select (default %c): "),
-			 4 - (extended_offset ? 1 : 0) - free_primary, extended_offset ? 1 : 0, free_primary,
-			 extended_offset ? _("   l   logical (numbered from 5)") : _("   e   extended"),
-			 dflt);
-
-		c = tolower(read_chars(line));
-		if (c == '\n') {
-			c = dflt;
-			printf(_("Using default response %c\n"), c);
-		}
-		if (c == 'p') {
-			int i = get_nonexisting_partition(0, 4);
-			if (i >= 0)
-				add_partition(i, LINUX_NATIVE);
-			return;
-		} else if (c == 'l' && extended_offset) {
-			add_logical();
-			return;
-		} else if (c == 'e' && !extended_offset) {
-			int i = get_nonexisting_partition(0, 4);
-			if (i >= 0)
-				add_partition(i, EXTENDED);
-			return;
-		} else
-			printf(_("Invalid partition type `%c'\n"), c);
-	}
+	/* default to DOS/BSD */
+	dos_new_partition();
 }
 
 static void

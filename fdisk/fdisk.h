@@ -20,6 +20,12 @@
 #define LINUX_LVM       0x8e
 #define LINUX_RAID      0xfd
 
+#define ALIGN_UP	1
+#define ALIGN_DOWN	2
+#define ALIGN_NEAREST	3
+
+#define LINE_LENGTH	800
+
 #define IS_EXTENDED(i) \
 	((i) == EXTENDED || (i) == WIN98_EXTENDED || (i) == LINUX_EXTENDED)
 
@@ -78,7 +84,7 @@ extern void print_menu(enum menutype);
 extern void print_partition_size(int num, unsigned long long start, unsigned long long stop, int sysid);
 
 extern void zeroize_mbr_buffer(void);
-
+extern void fill_bounds(unsigned long long *first, unsigned long long *last);
 extern unsigned int heads, cylinders, sector_size;
 extern unsigned long long sectors;
 extern char *partition_type(unsigned char type);
@@ -89,6 +95,10 @@ extern void set_all_unchanged(void);
 extern int warn_geometry(void);
 extern void warn_limits(void);
 extern void warn_alignment(void);
+extern unsigned int read_int_with_suffix(unsigned int low, unsigned int dflt, unsigned int high,
+				  unsigned int base, char *mesg, int *is_suffix_used);
+extern unsigned long long align_lba(unsigned long long lba, int direction);
+extern int get_partition_dflt(int warn, int max, int dflt);
 
 #define PLURAL	0
 #define SINGULAR 1
@@ -114,7 +124,8 @@ extern enum labeltype disklabel;
  */
 extern unsigned char *MBRbuffer;
 extern int MBRbuffer_changed;
-
+extern unsigned long long total_number_of_sectors;
+extern unsigned long grain;
 /* start_sect and nr_sects are stored little endian on all machines */
 /* moreover, they are not aligned correctly */
 static inline void
@@ -166,6 +177,13 @@ static inline void write_sector(int fd, unsigned long long secno, unsigned char 
 static inline unsigned long long get_start_sect(struct partition *p)
 {
 	return read4_little_endian(p->start4);
+}
+
+static inline int is_cleared_partition(struct partition *p)
+{
+	return !(!p || p->boot_ind || p->head || p->sector || p->cyl ||
+		 p->sys_ind || p->end_head || p->end_sector || p->end_cyl ||
+		 get_start_sect(p) || get_nr_sects(p));
 }
 
 /* prototypes for fdiskbsdlabel.c */

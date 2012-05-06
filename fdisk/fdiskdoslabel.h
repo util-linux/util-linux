@@ -18,12 +18,13 @@ struct pte {
 };
 
 extern struct pte ptes[MAXIMUM_PARTS];
+extern int dos_compatible_flag;
 
 #define pt_offset(b, n)	((struct partition *)((b) + 0x1be + \
 					      (n) * sizeof(struct partition)))
 
 extern int ext_index; /* the prime extended partition */
-extern unsigned long long extended_offset;
+extern unsigned long long extended_offset, sector_offset;
 
 static inline void write_part_table_flag(unsigned char *b)
 {
@@ -49,5 +50,7 @@ extern void dos_delete_partition(int i);
 extern int check_dos_label(void);
 extern int is_dos_partition(int t);
 extern void dos_init(void);
+extern void dos_add_partition(int n, int sys);
+extern void dos_new_partition(void);
 
 #endif
