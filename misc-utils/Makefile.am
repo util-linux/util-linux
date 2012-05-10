@@ -1,7 +1,5 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-EXTRA_DIST = uuidd.rc
-
 bin_PROGRAMS =
 sbin_PROGRAMS =
 usrsbin_exec_PROGRAMS =
@@ -83,7 +81,22 @@ usrsbin_exec_PROGRAMS += uuidd
 dist_man_MANS += uuidd.8
 uuidd_LDADD = $(ul_libuuid_la)
 uuidd_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_srcdir)
+uuidd_SOURCES = \
+	uuidd.c
+if USE_SOCKET_ACTIVATION
+uuidd_SOURCES += sd-daemon.c
+uuidd_LDADD += -lrt
 endif
+if WITH_SYSTEMD
+systemdsystemunit_DATA = \
+	uuidd.service \
+	uuidd.socket
+endif
+endif
+
+EXTRA_DIST = uuidd.rc uuidd.service.in uuidd.socket
+CLEANFILES += uuidd.service
+
 
 if BUILD_LIBBLKID
 sbin_PROGRAMS += blkid findfs wipefs

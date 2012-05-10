@@ -78,8 +78,6 @@ static struct colinfo infos[] = {
 #define NCOLS ARRAY_SIZE(infos)
 static int columns[NCOLS], ncolumns;
 static pid_t pid = 0;
-/* array with IDs of enabled columns */
-static int columns[NCOLS], ncolumns;
 
 struct lock {
 	struct list_head locks;
@@ -206,7 +204,7 @@ static char *get_filename_sz(ino_t inode, pid_t pid, size_t *size)
 
 		ret = xstrdup(sym);
 		break;
-}
+	}
 out:
 	closedir(dirp);
 	return ret;

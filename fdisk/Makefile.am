@@ -32,6 +32,8 @@ fdisk_SOURCES = \
 	fdisksgilabel.h \
 	fdisksunlabel.c \
 	fdisksunlabel.h \
+	fdiskdoslabel.c \
+	fdiskdoslabel.h \
 	partname.c \
 	$(fdisk_common) \
 	$(top_srcdir)/lib/canonicalize.c

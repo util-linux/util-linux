@@ -20,6 +20,12 @@
 #define LINUX_LVM       0x8e
 #define LINUX_RAID      0xfd
 
+#define ALIGN_UP	1
+#define ALIGN_DOWN	2
+#define ALIGN_NEAREST	3
+
+#define LINE_LENGTH	800
+
 #define IS_EXTENDED(i) \
 	((i) == EXTENDED || (i) == WIN98_EXTENDED || (i) == LINUX_EXTENDED)
 
@@ -44,9 +50,12 @@ enum menutype {
 	EXPERT_MENU,
 };
 
-enum failure {ioctl_error,
-	unable_to_open, unable_to_read, unable_to_seek,
-	unable_to_write};
+enum failure {
+	ioctl_error,
+	unable_to_read,
+	unable_to_seek,
+	unable_to_write
+};
 
 struct geom {
 	unsigned int heads;
@@ -74,9 +83,8 @@ extern unsigned int read_int(unsigned int low, unsigned int dflt,
 extern void print_menu(enum menutype);
 extern void print_partition_size(int num, unsigned long long start, unsigned long long stop, int sysid);
 
-extern unsigned char *MBRbuffer;
 extern void zeroize_mbr_buffer(void);
-
+extern void fill_bounds(unsigned long long *first, unsigned long long *last);
 extern unsigned int heads, cylinders, sector_size;
 extern unsigned long long sectors;
 extern char *partition_type(unsigned char type);
@@ -84,12 +92,18 @@ extern void update_units(void);
 extern char read_chars(char *mesg);
 extern void set_changed(int);
 extern void set_all_unchanged(void);
+extern int warn_geometry(void);
+extern void warn_limits(void);
+extern void warn_alignment(void);
+extern unsigned int read_int_with_suffix(unsigned int low, unsigned int dflt, unsigned int high,
+				  unsigned int base, char *mesg, int *is_suffix_used);
+extern unsigned long long align_lba(unsigned long long lba, int direction);
+extern int get_partition_dflt(int warn, int max, int dflt);
 
 #define PLURAL	0
 #define SINGULAR 1
 extern const char * str_units(int);
 
-extern unsigned long long get_start_sect(struct partition *p);
 extern unsigned long long get_nr_sects(struct partition *p);
 
 enum labeltype {
@@ -103,6 +117,74 @@ enum labeltype {
 };
 
 extern enum labeltype disklabel;
+
+/*
+ * Raw disk label. For DOS-type partition tables the MBR,
+ * with descriptions of the primary partitions.
+ */
+extern unsigned char *MBRbuffer;
+extern int MBRbuffer_changed;
+extern unsigned long long total_number_of_sectors;
+extern unsigned long grain;
+/* start_sect and nr_sects are stored little endian on all machines */
+/* moreover, they are not aligned correctly */
+static inline void
+store4_little_endian(unsigned char *cp, unsigned int val) {
+	cp[0] = (val & 0xff);
+	cp[1] = ((val >> 8) & 0xff);
+	cp[2] = ((val >> 16) & 0xff);
+	cp[3] = ((val >> 24) & 0xff);
+}
+
+static inline unsigned int read4_little_endian(const unsigned char *cp)
+{
+	return (unsigned int)(cp[0]) + ((unsigned int)(cp[1]) << 8)
+		+ ((unsigned int)(cp[2]) << 16)
+		+ ((unsigned int)(cp[3]) << 24);
+}
+
+static inline void set_nr_sects(struct partition *p, unsigned long long nr_sects)
+{
+	store4_little_endian(p->size4, nr_sects);
+}
+
+static inline void set_start_sect(struct partition *p, unsigned int start_sect)
+{
+	store4_little_endian(p->start4, start_sect);
+}
+
+static inline void seek_sector(int fd, unsigned long long secno)
+{
+	off_t offset = (off_t) secno * sector_size;
+	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
+		fatal(unable_to_seek);
+}
+
+static inline void read_sector(int fd, unsigned long long secno, unsigned char *buf)
+{
+	seek_sector(fd, secno);
+	if (read(fd, buf, sector_size) != sector_size)
+		fatal(unable_to_read);
+}
+
+static inline void write_sector(int fd, unsigned long long secno, unsigned char *buf)
+{
+	seek_sector(fd, secno);
+	if (write(fd, buf, sector_size) != sector_size)
+		fatal(unable_to_write);
+}
+
+static inline unsigned long long get_start_sect(struct partition *p)
+{
+	return read4_little_endian(p->start4);
+}
+
+static inline int is_cleared_partition(struct partition *p)
+{
+	return !(!p || p->boot_ind || p->head || p->sector || p->cyl ||
+		 p->sys_ind || p->end_head || p->end_sector || p->end_cyl ||
+		 get_start_sect(p) || get_nr_sects(p));
+}
 
 /* prototypes for fdiskbsdlabel.c */
 extern void bsd_command_prompt(void);

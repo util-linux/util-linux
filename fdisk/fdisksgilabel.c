@@ -705,25 +705,26 @@ create_sgilabel(void)
 	res = blkdev_get_sectors(fd, &llsectors);
 
 #ifdef HDIO_GETGEO
-	if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
-		heads = geometry.heads;
-		sectors = geometry.sectors;
-		if (res == 0) {
-			/* the get device size ioctl was successful */
-			unsigned long long llcyls;
-			llcyls = llsectors / (heads * sectors * sec_fac);
-			cylinders = llcyls;
-			if (cylinders != llcyls)	/* truncated? */
-				cylinders = ~0;
-		} else {
-			/* otherwise print error and use truncated version */
-			cylinders = geometry.cylinders;
-			fprintf(stderr,
-				_("Warning:  BLKGETSIZE ioctl failed on %s.  "
-				  "Using geometry cylinder value of %d.\n"
-				  "This value may be truncated for devices"
-				  " > 33.8 GB.\n"), disk_device, cylinders);
-		}
+	if (ioctl(fd, HDIO_GETGEO, &geometry) < 0)
+		err(EXIT_FAILURE, _("HDIO_GETGEO ioctl failed on %s"), disk_device);
+
+	heads = geometry.heads;
+	sectors = geometry.sectors;
+	if (res == 0) {
+		/* the get device size ioctl was successful */
+		unsigned long long llcyls;
+		llcyls = llsectors / (heads * sectors * sec_fac);
+		cylinders = llcyls;
+		if (cylinders != llcyls)	/* truncated? */
+			cylinders = ~0;
+	} else {
+		/* otherwise print error and use truncated version */
+		cylinders = geometry.cylinders;
+		fprintf(stderr,
+			_("Warning:  BLKGETSIZE ioctl failed on %s.  "
+			  "Using geometry cylinder value of %d.\n"
+			  "This value may be truncated for devices"
+			  " > 33.8 GB.\n"), disk_device, cylinders);
 	}
 #endif
 	for (i = 0; i < 4; i++) {

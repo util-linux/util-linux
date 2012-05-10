@@ -139,6 +139,7 @@ AC_CHECK_HEADERS([ \
 	inttypes.h \
 	linux/cdrom.h \
 	linux/falloc.h \
+	linux/watchdog.h \
 	linux/fd.h \
 	linux/raw.h \
 	linux/tiocl.h \
@@ -152,6 +153,7 @@ AC_CHECK_HEADERS([ \
 	pty.h \
 	security/pam_misc.h \
 	stdint.h \
+	stdio_ext.h \
 	stdlib.h \
 	sys/disk.h \
 	sys/disklabel.h \
@@ -181,6 +183,7 @@ AC_CHECK_HEADERS([langinfo.h],
 dnl Convert some ac_cv_header_* variables to have_*
 dnl
 have_linux_raw_h=$ac_cv_header_linux_raw_h
+have_linux_watchdog_h=$ac_cv_header_linux_watchdog_h
 have_security_pam_misc_h=$ac_cv_header_security_pam_misc_h
 
 
@@ -245,6 +248,7 @@ AC_CHECK_DECL([lseek64],
 	 #include <unistd.h>])
 
 AC_CHECK_FUNCS([ \
+	__fpending \
 	__secure_getenv \
 	err \
 	errx \
@@ -917,6 +921,12 @@ UL_REQUIRES_HAVE([chcpu], [cpu_set_t], [cpu_set_t type])
 AM_CONDITIONAL(BUILD_CHCPU, test "x$build_chcpu" = xyes)
 
 
+UL_BUILD_INIT([wdctl], [check])
+UL_REQUIRES_LINUX([wdctl])
+UL_REQUIRES_HAVE([wdctl], [linux_watchdog_h], [linux/watchdog.h header file])
+AM_CONDITIONAL(BUILD_WDCTL, test "x$build_wdctl" = xyes)
+
+
 UL_BUILD_INIT([prlimit], [check])
 UL_REQUIRES_LINUX([prlimit])
 UL_REQUIRES_SYSCALL_CHECK([prlimit], [UL_CHECK_SYSCALL([prlimit64])], [prlimit64])
@@ -1121,6 +1131,28 @@ if test "x$enable_login_chown_vcs" = xyes; then
 fi
 
 
+AC_ARG_ENABLE([socket-activation],
+  AS_HELP_STRING([--enable-socket-activation], [build uuidd with support for systemd socket activation]),
+  [], enable_socket_activation=no
+)
+
+AM_CONDITIONAL(USE_SOCKET_ACTIVATION, test "x$enable_socket_activation" = xyes)
+
+if test "x$enable_socket_activation" = xyes; then
+  AC_DEFINE(USE_SOCKET_ACTIVATION, 1, [Should uuidd support socket activation?])
+fi
+
+AC_ARG_WITH([systemdsystemunitdir],
+  AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [directory for systemd service files]),
+  [], [with_systemdsystemunitdir=$($PKG_CONFIG --variable=systemdsystemunitdir systemd)])
+
+if test "x$with_systemdsystemunitdir" != "xno"; then
+  AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
+fi
+
+AM_CONDITIONAL(WITH_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != "xno" ])
+
+
 AC_ARG_ENABLE([login-stat-mail],
   AS_HELP_STRING([--enable-login-stat-mail], [let login stat() the mailbox]),
   [], enable_login_stat_mail=no
@@ -1243,6 +1275,7 @@ libuuid/uuid.pc
 login-utils/Makefile
 man/ru/Makefile
 misc-utils/Makefile
+misc-utils/uuidd.service
 mount/Makefile
 partx/Makefile
 po/Makefile.in

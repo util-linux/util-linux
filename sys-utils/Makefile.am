@@ -26,7 +26,7 @@ if LINUX
 # Linux-only utils with no another dependencies. All another dependencies have
 # to be resolved in configure.ac end exported to makefiles by BUILD_*.
 #
-bin_PROGRAMS += dmesg wdctl
+bin_PROGRAMS += dmesg
 sbin_PROGRAMS += ctrlaltdel fsfreeze fstrim
 usrbin_exec_PROGRAMS += cytune setarch
 usrsbin_exec_PROGRAMS += ldattach tunelp rtcwake
@@ -184,7 +184,16 @@ ipcmk_SOURCES = ipcmk.c $(top_srcdir)/lib/strutils.c
 ipcrm_SOURCES = ipcrm.c  $(top_srcdir)/lib/strutils.c
 flock_SOURCES = flock.c $(top_srcdir)/lib/strutils.c
 ldattach_SOURCES = ldattach.c $(top_srcdir)/lib/strutils.c
-wdctl_SOURCES = wdctl.c
+
+if BUILD_WDCTL
+bin_PROGRAMS += wdctl
+dist_man_MANS += wdctl.8
+wdctl_SOURCES = \
+	wdctl.c \
+	$(top_srcdir)/lib/strutils.c \
+	$(top_srcdir)/lib/tt.c \
+	$(top_srcdir)/lib/mbsalign.c
+endif
 
 if BUILD_MOUNTPOINT
 bin_PROGRAMS += mountpoint

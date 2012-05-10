@@ -470,6 +470,49 @@ int string_to_bitarray(const char *list,
 }
 
 /*
+ * LIST ::= <item> [, <item>]
+ *
+ * The <item> is translated to 'id' by name2flag() function and the flags is
+ * set to the 'mask'
+*
+ * Returns: 0 on success, <0 on error.
+ */
+int string_to_bitmask(const char *list,
+		     unsigned long *mask,
+		     long (*name2flag)(const char *, size_t))
+{
+	const char *begin = NULL, *p;
+
+	if (!list || !name2flag || !mask)
+		return -EINVAL;
+
+	for (p = list; p && *p; p++) {
+		const char *end = NULL;
+		long flag;
+
+		if (!begin)
+			begin = p;		/* begin of the level name */
+		if (*p == ',')
+			end = p;		/* terminate the name */
+		if (*(p + 1) == '\0')
+			end = p + 1;		/* end of string */
+		if (!begin || !end)
+			continue;
+		if (end <= begin)
+			return -1;
+
+		flag = name2flag(begin, end - begin);
+		if (flag < 0)
+			return flag;	/* error */
+		*mask |= flag;
+		begin = NULL;
+		if (end && !*end)
+			break;
+	}
+	return 0;
+}
+
+/*
  * Parse the lower and higher values in a string containing
  * "lower:higher" or "lower-higher" format. Note that either
  * the lower or the higher values may be missing, and the def

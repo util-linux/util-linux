@@ -174,6 +174,7 @@ static int probe_ufs(blkid_probe pr,
 	size_t i;
 	uint32_t magic;
 	struct ufs_super_block *ufs;
+	int is_be;
 
 	for (i = 0; i < ARRAY_SIZE(offsets); i++) {
 		uint32_t magLE, magBE;
@@ -192,6 +193,7 @@ static int probe_ufs(blkid_probe pr,
 		for (y = 0; y < ARRAY_SIZE(mags); y++) {
 			if (magLE == mags[y] || magBE == mags[y]) {
 				magic = mags[y];
+				is_be = (magBE == mags[y]);
 				goto found;
 			}
 		}
@@ -206,6 +208,23 @@ found:
 				sizeof(ufs->fs_u11.fs_u2.fs_volname));
 	} else
 		blkid_probe_set_version(pr, "1");
+	if (ufs->fs_id[0] || ufs->fs_id[1])
+	{
+		if (is_be)
+			blkid_probe_sprintf_uuid(pr,
+					 (unsigned char *) &ufs->fs_id,
+						 sizeof(ufs->fs_id),
+						 "%08x%08x",
+						 be32_to_cpu(ufs->fs_id[0]),
+						 be32_to_cpu(ufs->fs_id[1]));
+		else
+			blkid_probe_sprintf_uuid(pr,
+					 (unsigned char *) &ufs->fs_id,
+						 sizeof(ufs->fs_id),
+						 "%08x%08x",
+						 le32_to_cpu(ufs->fs_id[0]),
+						 le32_to_cpu(ufs->fs_id[1]));
+	}
 
 	if (blkid_probe_set_magic(pr,
 			(offsets[i] * 1024) +
