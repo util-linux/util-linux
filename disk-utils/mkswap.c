@@ -596,13 +596,8 @@ main(int argc, char **argv) {
 		exit(EXIT_FAILURE);
 	}
 
-	/* Want a block device. Probably not /dev/hda or /dev/hdb. */
 	if (!S_ISBLK(statbuf.st_mode))
 		check=0;
-	else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340)
-		errx(EXIT_FAILURE, _("error: "
-			"will not try to make swapdevice on '%s'"),
-			device_name);
 	else if (is_mounted(device_name))
 		errx(EXIT_FAILURE, _("error: "
 			"%s is mounted; will not make swapspace."),
