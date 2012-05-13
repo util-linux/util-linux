@@ -63,9 +63,7 @@
 #include "widechar.h"
 #include "closestream.h"
 
-#define _REGEX_RE_COMP
 #include <regex.h>
-#undef _REGEX_RE_COMP
 
 #ifndef XTABS
 #define XTABS TAB3
@@ -1584,21 +1582,24 @@ void search(char buf[], FILE *file, register int n)
     register long line2 = startline;
     register long line3 = startline;
     register int lncount;
-    int saveln, rv;
+    int saveln, rv, rc;
     char *s;
+    regex_t re;
 
     context.line = saveln = Currline;
     context.chrctr = startline;
     lncount = 0;
-    if ((s = re_comp (buf)) != 0)
+    if (rc = regcomp (&re, buf, REG_NOSUB) != 0) {
+	regerror (rc, &re, s, sizeof s);
 	more_error (s);
+    }
     while (!feof (file)) {
 	line3 = line2;
 	line2 = line1;
 	line1 = Ftell (file);
 	rdline (file);
 	lncount++;
-	if ((rv = re_exec (Line)) == 1) {
+	if ((rv = regexec (&re, Line, 0, NULL, 0)) == 0) {
 		if (--n == 0) {
 		    if (lncount > 3 || (lncount > 1 && no_intty))
 		    {
@@ -1633,7 +1634,7 @@ void search(char buf[], FILE *file, register int n)
 		    }
 		    break;
 		}
-	} else if (rv == -1)
+	} else if (rv != REG_NOMATCH)
 	    more_error (_("Regular expression botch"));
     }
     if (feof (file)) {
