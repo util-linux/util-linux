@@ -58,8 +58,8 @@
 #define	SYSLOG_NAMES
 #include <syslog.h>
 
-int	decode __P((char *, CODE *));
-int	pencode __P((char *));
+int	decode (char *, CODE *);
+int	pencode (char *);
 
 static int optd = 0;
 static int udpport = 514;
