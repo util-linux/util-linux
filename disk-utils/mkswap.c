@@ -582,6 +582,11 @@ main(int argc, char **argv) {
 			PAGES * pagesize / 1024);
 	}
 
+	if (is_mounted(device_name))
+		errx(EXIT_FAILURE, _("error: "
+			"%s is mounted; will not make swapspace."),
+			device_name);
+
 	if (stat(device_name, &statbuf) < 0) {
 		perror(device_name);
 		exit(EXIT_FAILURE);
@@ -598,10 +603,6 @@ main(int argc, char **argv) {
 
 	if (!S_ISBLK(statbuf.st_mode))
 		check=0;
-	else if (is_mounted(device_name))
-		errx(EXIT_FAILURE, _("error: "
-			"%s is mounted; will not make swapspace."),
-			device_name);
 	else if (blkdev_is_misaligned(DEV))
 		warnx(_("warning: %s is misaligned"), device_name);
 
