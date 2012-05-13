@@ -47,6 +47,7 @@ swaplabel_CFLAGS = $(AM_CFLAGS) $(uuid_cflags)
 
 mkswap_SOURCES = \
 	mkswap.c \
+	$(top_srcdir)/lib/ismounted.c \
 	$(top_srcdir)/lib/strutils.c \
 	$(top_srcdir)/lib/wholedisk.c \
 	$(utils_common)

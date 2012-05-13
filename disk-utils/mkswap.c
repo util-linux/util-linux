@@ -58,6 +58,7 @@
 #include "xalloc.h"
 #include "c.h"
 #include "closestream.h"
+#include "ismounted.h"
 
 #ifdef HAVE_LIBUUID
 # include <uuid.h>
@@ -348,29 +349,6 @@ get_size(const char *file)
 	return size;
 }
 
-/*
- * Check to make certain that our new filesystem won't be created on
- * an already mounted partition.  Code adapted from mke2fs, Copyright
- * (C) 1994 Theodore Ts'o.  Also licensed under GPL.
- * (C) 2006 Karel Zak -- port to mkswap
- */
-static int
-check_mount(void)
-{
-	FILE *f;
-	struct mntent *mnt;
-
-	if ((f = setmntent (_PATH_MOUNTED, "r")) == NULL)
-		return 0;
-	while ((mnt = getmntent (f)) != NULL)
-		if (strcmp (device_name, mnt->mnt_fsname) == 0)
-			break;
-	endmntent (f);
-	if (!mnt)
-		return 0;
-	return 1;
-}
-
 #ifdef HAVE_LIBBLKID
 static blkid_probe
 new_prober(int fd)
@@ -625,7 +603,7 @@ main(int argc, char **argv) {
 		errx(EXIT_FAILURE, _("error: "
 			"will not try to make swapdevice on '%s'"),
 			device_name);
-	else if (check_mount())
+	else if (is_mounted(device_name))
 		errx(EXIT_FAILURE, _("error: "
 			"%s is mounted; will not make swapspace."),
 			device_name);
