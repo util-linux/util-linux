@@ -1689,7 +1689,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 				    {
 				        tmp = malloc(sizeof(char) * (bpz + BUFSIZ));
 				        for (i = 0; i < before; i++)
-				            *(tmp + i) = *(ap + i);
+				            *(tmp + i) = *(bp + i);
 				        free(bp);
 				        bp = tmp;
 				        bpz += BUFSIZ;
