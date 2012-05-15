@@ -2776,7 +2776,7 @@ main(int argc, char **argv)
 	    arrow_cursor = TRUE;
 	    break;
 	case 'c':
-		user_cylinders = cylinders = strtoll_or_err(optarg, _("cannot parse number of cylinders"));
+		user_cylinders = cylinders = strtos64_or_err(optarg, _("cannot parse number of cylinders"));
 	    if (cylinders <= 0) {
 		fprintf(stderr, "%s: %s\n", argv[0], _("Illegal cylinders value"));
 		exit(1);
