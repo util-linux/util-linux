@@ -485,7 +485,7 @@ int main(int argc, char **argv)
 	while ((c = getopt_long(argc, argv, "ehpt:V", longopts, NULL)) != -1) {
 		switch(c) {
 		case 't':
-			timeout = strtoul_or_err(optarg, _("failed to parse timeout"));
+			timeout = strtou32_or_err(optarg, _("invalid timeout argument"));
 			break;
 		case 'p':
 			profile = 1;
