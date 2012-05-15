@@ -63,7 +63,7 @@ int	decode __P((char *, CODE *));
 int	pencode __P((char *));
 
 static int optd = 0;
-static int udpport = 514;
+static uint16_t udpport = 514;
 
 static int
 myopenlog(const char *sock) {
@@ -86,7 +86,7 @@ myopenlog(const char *sock) {
 }
 
 static int
-udpopenlog(const char *servername,int port) {
+udpopenlog(const char *servername, uint16_t port) {
 	int fd;
 	struct sockaddr_in s_addr;
 	struct hostent *serverhost;
@@ -169,7 +169,6 @@ main(int argc, char **argv) {
 	char *usock = NULL;
 	char *udpserver = NULL;
 	int LogSock = -1;
-	long tmpport;
 
 	static const struct option longopts[] = {
 		{ "id",		no_argument,	    0, 'i' },
@@ -225,12 +224,8 @@ main(int argc, char **argv) {
 			udpserver = optarg;
 			break;
 		case 'P':		/* change udp port */
-			tmpport = strtol_or_err(optarg,
-						_("failed to parse port number"));
-			if (tmpport < 0 || 65535 < tmpport)
-				errx(EXIT_FAILURE, _("port `%ld' out of range"),
-						tmpport);
-			udpport = (int) tmpport;
+			udpport = strtou16_or_err(optarg,
+						_("invalid port number argument"));
 			break;
 		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,

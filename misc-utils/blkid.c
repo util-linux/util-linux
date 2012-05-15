@@ -743,7 +743,7 @@ int main(int argc, char **argv)
 			}
 			break;
 		case 'O':
-			offset = strtosize_or_err(optarg, "failed to parse offset");
+			offset = strtosize_or_err(optarg, "invalid offset argument");
 			break;
 		case 'p':
 			lowprobe |= LOWPROBE_SUPERBLOCKS;
@@ -757,7 +757,7 @@ int main(int argc, char **argv)
 			show[numtag] = NULL;
 			break;
 		case 'S':
-			size = strtosize_or_err(optarg, "failed to parse size");
+			size = strtosize_or_err(optarg, "invalid size argument");
 			break;
 		case 't':
 			if (search_type) {

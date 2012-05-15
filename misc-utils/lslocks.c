@@ -268,7 +268,7 @@ static int get_local_locks(struct list_head *locks)
 				 * If user passed a pid we filter it later when adding
 				 * to the list, no need to worry now.
 				 */
-				l->pid = strtol_or_err(tok, _("failed to parse pid"));
+				l->pid = strtos32_or_err(tok, _("failed to parse pid"));
 				l->cmdname = get_cmdname(l->pid);
 				if (!l->cmdname)
 					l->cmdname = xstrdup(_("(unknown)"));
@@ -280,14 +280,14 @@ static int get_local_locks(struct list_head *locks)
 
 			case 6: /* start */
 				l->start = !strcmp(tok, "EOF") ? 0 :
-					   strtol_or_err(tok, _("failed to parse start"));
+					   strtou64_or_err(tok, _("failed to parse start"));
 				break;
 
 			case 7: /* end */
 				/* replace '\n' character */
 				tok[strlen(tok)-1] = '\0';
 				l->end = !strcmp(tok, "EOF") ? 0 :
-					 strtol_or_err(tok, _("failed to parse end"));
+					 strtou64_or_err(tok, _("failed to parse end"));
 				break;
 			default:
 				break;
@@ -521,7 +521,7 @@ int main(int argc, char *argv[])
 
 		switch(c) {
 		case 'p':
-			pid = strtol_or_err(optarg, _("cannot parse PID"));
+			pid = strtos32_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'o':
 			ncolumns = string_to_idarray(optarg,
