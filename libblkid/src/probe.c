@@ -109,7 +109,7 @@
 #endif
 
 #include "blkidP.h"
-#include "writeall.h"
+#include "all-io.h"
 
 /* chains */
 extern const struct blkid_chaindrv superblocks_drv;

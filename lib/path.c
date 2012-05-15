@@ -27,7 +27,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include "writeall.h"
+#include "all-io.h"
 #include "cpuset.h"
 #include "path.h"
 #include "nls.h"

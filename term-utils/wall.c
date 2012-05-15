@@ -110,7 +110,7 @@ main(int argc, char **argv) {
 	int print_banner = TRUE;
 	char *mbuf;
 	size_t mbufsize;
-	long timeout = WRITE_TIME_OUT;
+	unsigned timeout = WRITE_TIME_OUT;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -134,7 +134,7 @@ main(int argc, char **argv) {
 				warnx(_("--nobanner is available only for root"));
 			break;
 		case 't':
-			timeout = strtoll_or_err(optarg, _("invalid timeout argument"));
+			timeout = strtou32_or_err(optarg, _("invalid timeout argument"));
 			if (timeout < 1)
 				errx(EXIT_FAILURE, _("invalid timeout argument: %s"), optarg);
 			break;

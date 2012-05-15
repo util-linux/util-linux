@@ -31,16 +31,17 @@ char *mangle(const char *s)
 	if (!sp)
 		return NULL;
 	while(1) {
+		if (!*s) {
+			*sp = '\0';
+			break;
+		}
 		if (is_unwanted_char(*s)) {
 			*sp++ = '\\';
 			*sp++ = '0' + ((*s & 0300) >> 6);
 			*sp++ = '0' + ((*s & 070) >> 3);
 			*sp++ = '0' + (*s & 07);
-		} else {
+		} else
 			*sp++ = *s;
-			if (!*s)
-				break;
-		}
 		s++;
 	}
 	return ss;

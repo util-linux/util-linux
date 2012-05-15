@@ -35,7 +35,7 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "strutils.h"
-#include "writeall.h"
+#include "all-io.h"
 #include "match.h"
 #include "c.h"
 #include "closestream.h"
@@ -407,7 +407,7 @@ main(int argc, char **argv)
 			break;
 		case 'o':
 			wp0 = add_offset(wp0, strtosize_or_err(optarg,
-					 _("failed to parse offset")), 1);
+					 _("invalid offset argument")), 1);
 			has_offset++;
 			break;
 		case 'p':

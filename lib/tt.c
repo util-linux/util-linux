@@ -16,15 +16,13 @@
 #include <string.h>
 #include <termios.h>
 #include <ctype.h>
-#ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
 
 #include "c.h"
 #include "nls.h"
 #include "widechar.h"
 #include "tt.h"
 #include "mbsalign.h"
+#include "ttyutils.h"
 
 struct tt_symbols {
 	const char *branch;
@@ -250,30 +248,6 @@ int tt_line_set_data(struct tt_line *ln, int colnum, const char *data)
 	ln->data[cl->seqnum] = data;
 	if (data)
 		ln->data_sz += strlen(data);
-	return 0;
-}
-
-static int get_terminal_width(void)
-{
-#ifdef TIOCGSIZE
-	struct ttysize	t_win;
-#endif
-#ifdef TIOCGWINSZ
-	struct winsize	w_win;
-#endif
-        const char	*cp;
-
-#ifdef TIOCGSIZE
-	if (ioctl (0, TIOCGSIZE, &t_win) == 0)
-		return t_win.ts_cols;
-#endif
-#ifdef TIOCGWINSZ
-	if (ioctl (0, TIOCGWINSZ, &w_win) == 0)
-		return w_win.ws_col;
-#endif
-        cp = getenv("COLUMNS");
-	if (cp)
-		return strtol(cp, NULL, 10);
 	return 0;
 }
 

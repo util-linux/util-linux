@@ -254,7 +254,7 @@ int main(int argc, char **argv)
 			break;
 		case 'p':
 			errno = 0;
-			pid = strtol_or_err(argv[argc - 1], _("failed to parse pid"));
+			pid = strtos32_or_err(argv[argc - 1], _("invalid PID argument"));
 			break;
 		case 'r':
 			policy = SCHED_RR;
@@ -296,7 +296,7 @@ int main(int argc, char **argv)
 	}
 
 	errno = 0;
-	priority = strtol_or_err(argv[optind], _("failed to parse priority"));
+	priority = strtos32_or_err(argv[optind], _("invalid priority argument"));
 
 #ifdef SCHED_RESET_ON_FORK
 	/* sanity check */

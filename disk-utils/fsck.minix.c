@@ -109,7 +109,7 @@
 #include "pathnames.h"
 #include "bitops.h"
 #include "ismounted.h"
-#include "writeall.h"
+#include "all-io.h"
 #include "closestream.h"
 
 #define ROOT_INO 1

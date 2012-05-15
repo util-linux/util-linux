@@ -35,7 +35,7 @@
 #include <grp.h>
 
 #include "strutils.h"
-#include "writeall.h"
+#include "all-io.h"
 #include "nls.h"
 #include "pathnames.h"
 #include "c.h"

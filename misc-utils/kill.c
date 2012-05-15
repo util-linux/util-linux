@@ -245,7 +245,7 @@ int main (int argc, char *argv[])
 	    argc--, argv++;
 	    arg = *argv;
 #ifdef HAVE_SIGQUEUE
-	    sigdata.sival_int = strtol_or_err(arg, _("failed to parse sigval"));
+	    sigdata.sival_int = strtos32_or_err(arg, _("invalid sigval argument"));
 	    use_sigval = 1;
 #endif
 	    continue;

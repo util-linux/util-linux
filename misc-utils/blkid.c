@@ -16,11 +16,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <termios.h>
 #include <errno.h>
-#ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
 #ifdef HAVE_GETOPT_H
 #include <getopt.h>
 #else
@@ -45,6 +41,7 @@ extern int optind;
 #define STRTOXX_EXIT_CODE	4		/* strtoxx_or_err() */
 #include "strutils.h"
 #include "closestream.h"
+#include "ttyutils.h"
 
 const char *progname = "blkid";
 
@@ -124,30 +121,6 @@ static void safe_print(const char *cp, int len)
 	}
 }
 
-static int get_terminal_width(void)
-{
-#ifdef TIOCGSIZE
-	struct ttysize	t_win;
-#endif
-#ifdef TIOCGWINSZ
-	struct winsize	w_win;
-#endif
-        const char	*cp;
-
-#ifdef TIOCGSIZE
-	if (ioctl (0, TIOCGSIZE, &t_win) == 0)
-		return (t_win.ts_cols);
-#endif
-#ifdef TIOCGWINSZ
-	if (ioctl (0, TIOCGWINSZ, &w_win) == 0)
-		return (w_win.ws_col);
-#endif
-        cp = getenv("COLUMNS");
-	if (cp)
-		return strtol(cp, NULL, 10);
-	return 80;
-}
-
 static int pretty_print_word(const char *str, int max_len,
 			     int left_len, int overflow_nl)
 {
@@ -175,9 +148,11 @@ static void pretty_print_line(const char *device, const char *fs_type,
 	static int term_width = -1;
 	int len, w;
 
-	if (term_width < 0)
+	if (term_width < 0) {
 		term_width = get_terminal_width();
-
+		if (term_width <= 0)
+			term_width = 80;
+	}
 	if (term_width > 80) {
 		term_width -= 80;
 		w = term_width / 10;
@@ -768,7 +743,7 @@ int main(int argc, char **argv)
 			}
 			break;
 		case 'O':
-			offset = strtosize_or_err(optarg, "failed to parse offset");
+			offset = strtosize_or_err(optarg, "invalid offset argument");
 			break;
 		case 'p':
 			lowprobe |= LOWPROBE_SUPERBLOCKS;
@@ -782,7 +757,7 @@ int main(int argc, char **argv)
 			show[numtag] = NULL;
 			break;
 		case 'S':
-			size = strtosize_or_err(optarg, "failed to parse size");
+			size = strtosize_or_err(optarg, "invalid size argument");
 			break;
 		case 't':
 			if (search_type) {

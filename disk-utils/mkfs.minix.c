@@ -84,7 +84,7 @@
 #include "bitops.h"
 #include "exitcodes.h"
 #include "strutils.h"
-#include "writeall.h"
+#include "all-io.h"
 #include "closestream.h"
 
 #define MINIX_ROOT_INO 1

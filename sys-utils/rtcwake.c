@@ -445,16 +445,14 @@ int main(int argc, char **argv)
 
 			/* alarm time, seconds-to-sleep (relative) */
 		case 's':
-			seconds = strtol_or_err(optarg,
-					_("failed to parse seconds value"));
+			seconds = strtou32_or_err(optarg, _("invalid seconds argument"));
 			break;
 
 			/* alarm time, time_t (absolute, seconds since
 			 * 1/1 1970 UTC)
 			 */
 		case 't':
-			alarm = strtol_or_err(optarg,
-					_("failed to parse time_t value"));
+			alarm = strtou32_or_err(optarg, _("invalid time argument"));
 			break;
 
 		case 'u':

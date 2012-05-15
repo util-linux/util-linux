@@ -66,7 +66,7 @@ static int cramfs_is_big_endian = 0; /* target is big endian */
  * Note that kernels up to at least 2.3.39 don't support cramfs holes,
  * which is why this is turned off by default.
  */
-static int opt_edition = 0;
+static unsigned int opt_edition = 0;
 static int opt_errors = 0;
 static int opt_holes = 0;
 static int opt_pad = 0;
@@ -727,20 +727,13 @@ int main(int argc, char **argv)
 		case 'h':
 			usage(MKFS_EX_OK);
 		case 'b':
-		{
-			long long tmp = strtoll_or_err(optarg,
-					_("failed to parse blocksize argument"));
-
-			if (tmp <= 0 || UINT_MAX < tmp)
-				errx(MKFS_EX_USAGE, _("invalid block size"));
-			blksize = tmp;
+			blksize = strtou32_or_err(optarg, _("invalid blocksize argument"));
 			break;
-		}
 		case 'E':
 			opt_errors = 1;
 			break;
 		case 'e':
-			opt_edition = strtoll_or_err(optarg, _("edition number argument failed"));
+			opt_edition = strtou32_or_err(optarg, _("edition number argument failed"));
 			break;
 		case 'N':
 			if (strcmp(optarg, "big") == 0)

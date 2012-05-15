@@ -766,7 +766,7 @@ int main(int argc, char **argv)
 				err(MOUNT_EX_SYSERR, _("failed to set options pattern"));
 			break;
 		case 'p':
-			passfd = strtol_or_err(optarg,
+			passfd = strtou32_or_err(optarg,
 					_("invalid passphrase file descriptor"));
 			break;
 		case 'L':

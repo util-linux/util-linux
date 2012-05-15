@@ -185,7 +185,7 @@ int main(int argc, char **argv)
 
 	if (optind == argc - 1)
 		user_specified_total_blocks =
-			strtoll_or_err(argv[optind], _("invalid block-count"));
+			strtou64_or_err(argv[optind], _("invalid block-count"));
 	else if (optind != argc)
 		usage(stderr);
 

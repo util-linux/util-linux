@@ -1600,7 +1600,7 @@ int main(int argc, char **argv)
 			break;
 		case OPT_EPOCH:
 			epoch_option =		/* --epoch */
-			    strtoul_or_err(optarg, _("failed to parse epoch"));
+			    strtoul_or_err(optarg, _("invalid epoch argument"));
 			break;
 		case OPT_ADJFILE:
 			adj_file_name = optarg;	/* --adjfile */

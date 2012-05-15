@@ -1187,8 +1187,7 @@ int main(int argc, char *argv[])
 			flags |= FL_NOSWAPMATCH;
 			break;
 		case 'w':
-			timeout = strtol_or_err(optarg,
-					_("failed to parse timeout"));
+			timeout = strtos32_or_err(optarg, _("invalid timeout argument"));
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);

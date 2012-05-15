@@ -2644,7 +2644,7 @@ main(int argc, char **argv) {
 	    activate = 1;
 	    break;
 	case 'C':
-	    U.cylinders = strtoll_or_err(optarg, _("cannot parse number of cylinders"));
+	    U.cylinders = strtoul_or_err(optarg, _("invalid cylinders argument"));
 	    break;
 	case 'D':
 	    DOS = 1;
@@ -2653,13 +2653,13 @@ main(int argc, char **argv) {
 	    DOS_extended = 1;
 	    break;
 	case 'H':
-	    U.heads = strtol_or_err(optarg, _("cannot parse number of heads"));
+	    U.heads = strtoul_or_err(optarg, _("invalid heads argument"));
 	    break;
 	case 'L':
 	    Linux = 1;
 	    break;
 	case 'N':
-	    one_only = strtol_or_err(optarg, _("cannot parse number of partitions"));
+	    one_only = strtol_or_err(optarg, _("invalid number of partitions argument"));
 	    break;
 	case 'I':
 	    restore_sector_file = optarg;
@@ -2671,7 +2671,7 @@ main(int argc, char **argv) {
 	    opt_reread = 1;
 	    break;
 	case 'S':
-	    U.sectors = strtol_or_err(optarg, _("cannot parse number of sectors"));
+	    U.sectors = strtoul_or_err(optarg, _("invalid sectors argument"));
 	    break;
 	case 'T':
 	    list_types();

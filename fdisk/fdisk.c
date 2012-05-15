@@ -2109,7 +2109,7 @@ main(int argc, char **argv) {
 			   so cannot be combined with multiple disks,
 			   and te same goes for the C/H/S options.
 			*/
-			sector_size = strtol_or_err(optarg, _("cannot parse sector size"));
+			sector_size = strtou32_or_err(optarg, _("invalid sector size argument"));
 			if (sector_size != 512 && sector_size != 1024 &&
 			    sector_size != 2048 && sector_size != 4096)
 				usage(stderr);
@@ -2117,7 +2117,7 @@ main(int argc, char **argv) {
 			user_set_sector_size = 1;
 			break;
 		case 'C':
-			user_cylinders =  strtol_or_err(optarg, _("cannot parse number of cylinders"));
+			user_cylinders =  strtou32_or_err(optarg, _("invalid cylinders argument"));
 			break;
 		case 'c':
 			dos_compatible_flag = 0;	/* default */
@@ -2131,13 +2131,13 @@ main(int argc, char **argv) {
 			usage(stdout);
 			break;
 		case 'H':
-			user_heads =  strtol_or_err(optarg, _("cannot parse number of heads"));
-			if (user_heads <= 0 || user_heads > 256)
+			user_heads = strtou32_or_err(optarg, _("invalid heads argument"));
+			if (user_heads > 256)
 				user_heads = 0;
 			break;
 		case 'S':
-			user_sectors =  strtol_or_err(optarg, _("cannot parse number of sectors"));
-			if (user_sectors <= 0 || user_sectors >= 64)
+			user_sectors =  strtou32_or_err(optarg, _("invalid sectors argument"));
+			if (user_sectors >= 64)
 				user_sectors = 0;
 			break;
 		case 'l':

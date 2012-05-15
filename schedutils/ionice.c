@@ -145,13 +145,13 @@ int main(int argc, char **argv)
 	while ((c = getopt_long(argc, argv, "+n:c:p:tVh", longopts, NULL)) != EOF)
 		switch (c) {
 		case 'n':
-			data = strtol_or_err(optarg, _("failed to parse class data"));
+			data = strtos32_or_err(optarg, _("invalid class data argument"));
 			set |= 1;
 			break;
 		case 'c':
 			if (isdigit(*optarg))
-				ioclass = strtol_or_err(optarg,
-						_("failed to parse class"));
+				ioclass = strtos32_or_err(optarg,
+						_("invalid class argument"));
 			else {
 				ioclass = parse_ioclass(optarg);
 				if (ioclass < 0)
@@ -162,7 +162,7 @@ int main(int argc, char **argv)
 			set |= 2;
 			break;
 		case 'p':
-			pid = strtol_or_err(optarg, _("failed to parse pid"));
+			pid = strtos32_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 't':
 			tolerant = 1;
@@ -210,7 +210,7 @@ int main(int argc, char **argv)
 		ioprio_print(pid);
 
 		for(; argv[optind]; ++optind) {
-			pid = strtol_or_err(argv[optind], _("failed to parse pid"));
+			pid = strtos32_or_err(argv[optind], _("invalid PID argument"));
 			ioprio_print(pid);
 		}
 	} else if (set && pid) {
@@ -220,7 +220,7 @@ int main(int argc, char **argv)
 		ioprio_setpid(pid, ioclass, data);
 
 		for(; argv[optind]; ++optind) {
-			pid = strtol_or_err(argv[optind], _("failed to parse pid"));
+			pid = strtos32_or_err(argv[optind], _("invalid PID argument"));
 			ioprio_setpid(pid, ioclass, data);
 		}
 	} else if (argv[optind]) {

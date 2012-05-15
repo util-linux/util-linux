@@ -1,5 +1,5 @@
-#ifndef UTIL_LINUX_WRITEALL_H
-#define UTIL_LINUX_WRITEALL_H
+#ifndef UTIL_LINUX_ALL_IO_H
+#define UTIL_LINUX_ALL_IO_H
 
 #include <string.h>
 #include <unistd.h>
@@ -44,4 +44,29 @@ static inline int fwrite_all(const void *ptr, size_t size,
 	return 0;
 }
 
-#endif /* UTIL_LINUX_WRITEALL_H */
+static inline ssize_t read_all(int fd, char *buf, size_t count)
+{
+	ssize_t ret;
+	ssize_t c = 0;
+	int tries = 0;
+
+	memset(buf, 0, count);
+	while (count > 0) {
+		ret = read(fd, buf, count);
+		if (ret <= 0) {
+			if ((errno == EAGAIN || errno == EINTR || ret == 0) &&
+			    (tries++ < 5))
+				continue;
+			return c ? c : -1;
+		}
+		if (ret > 0)
+			tries = 0;
+		count -= ret;
+		buf += ret;
+		c += ret;
+	}
+	return c;
+}
+
+
+#endif /* UTIL_LINUX_ALL_IO_H */

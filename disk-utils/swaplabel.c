@@ -27,7 +27,7 @@
 
 #include "c.h"
 #include "closestream.h"
-#include "writeall.h"
+#include "all-io.h"
 #include "swapheader.h"
 #include "strutils.h"
 #include "nls.h"
