@@ -745,8 +745,7 @@ int main(int argc, char *argv[])
 			ctl.raw = 1;
 			break;
 		case 's':
-			bufsize = strtol_or_err(optarg,
-					_("failed to parse buffer size"));
+			bufsize = strtou32_or_err(optarg, _("invalid buffer size argument"));
 			if (bufsize < 4096)
 				bufsize = 4096;
 			break;

@@ -337,7 +337,7 @@ int main(int argc, char **argv)
 			}
 		case 'm':
 			if (!iskey)
-				id = strtoll_or_err(optarg, _("failed to parse argument"));
+				id = strtos32_or_err(optarg, _("failed to parse argument"));
 			if (remove_id(SHM, iskey, id))
 				ret++;
 			break;
@@ -350,7 +350,7 @@ int main(int argc, char **argv)
 			}
 		case 'q':
 			if (!iskey)
-				id = strtoll_or_err(optarg, _("failed to parse argument"));
+				id = strtos32_or_err(optarg, _("failed to parse argument"));
 			if (remove_id(MSG, iskey, id))
 				ret++;
 			break;
@@ -363,7 +363,7 @@ int main(int argc, char **argv)
 			}
 		case 's':
 			if (!iskey)
-				id = strtoll_or_err(optarg, _("failed to parse argument"));
+				id = strtos32_or_err(optarg, _("failed to parse argument"));
 			if (remove_id(SEM, iskey, id))
 				ret++;
 			break;

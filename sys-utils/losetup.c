@@ -268,7 +268,7 @@ int main(int argc, char **argv)
 			flags |= LOOPDEV_FL_OFFSET;
 			break;
 		case 'p':
-			passfd = strtol_or_err(optarg,
+			passfd = strtou32_or_err(optarg,
 					_("invalid passphrase file descriptor"));
 			break;
 		case 'P':

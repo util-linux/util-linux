@@ -581,7 +581,7 @@ int main(int argc, char **argv)
 			if (pid) /* we only work one pid at a time */
 				errx(EXIT_FAILURE, _("only use one PID at a time"));
 
-			pid = strtol_or_err(optarg, _("cannot parse PID"));
+			pid = strtos32_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'h':
 			usage(stdout);

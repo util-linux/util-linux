@@ -104,14 +104,14 @@ int main(int argc, char **argv)
 	while((opt = getopt_long(argc, argv, "hM:QS:p:Vh", longopts, NULL)) != -1) {
 		switch(opt) {
 		case 'M':
-			size = strtol_or_err(optarg, _("failed to parse size"));
+			size = strtou64_or_err(optarg, _("failed to parse size"));
 			ask_shm = 1;
 			break;
 		case 'Q':
 			ask_msg = 1;
 			break;
 		case 'S':
-			nsems = strtol_or_err(optarg, _("failed to parse elements"));
+			nsems = strtos32_or_err(optarg, _("failed to parse elements"));
 			ask_sem = 1;
 			break;
 		case 'p':
