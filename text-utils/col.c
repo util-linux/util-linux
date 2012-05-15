@@ -106,7 +106,7 @@ CSET last_set;			/* char_set of last char printed */
 LINE *lines;
 int compress_spaces;		/* if doing space -> tab conversion */
 int fine;			/* if `fine' resolution (half lines) */
-int max_bufd_lines;		/* max # lines to keep in memory */
+unsigned max_bufd_lines;	/* max # lines to keep in memory */
 int nblank_lines;		/* # blanks after last flushed line */
 int no_backspaces;		/* if not to output any backspaces */
 int pass_unknown_seqs;		/* whether to pass unknown control sequences */
@@ -157,7 +157,6 @@ int main(int argc, char **argv)
 	int this_line;			/* line l points to */
 	int nflushd_lines;		/* number of lines that were flushed */
 	int adjust, opt, warned;
-	unsigned long tmplong;
 	int ret = EXIT_SUCCESS;
 
 	static const struct option longopts[] = {
@@ -197,10 +196,7 @@ int main(int argc, char **argv)
 			 * Buffered line count, which is a value in half
 			 * lines e.g. twice the amount specified.
 			 */
-			tmplong = strtoul_or_err(optarg, _("bad -l argument")) * 2;
-			if ((INT_MAX) < tmplong)
-				errx(EXIT_FAILURE, _("argument %lu is too large"), tmplong);
-			max_bufd_lines = (int) tmplong;
+			max_bufd_lines = strtou32_or_err(optarg, _("bad -l argument")) * 2;
 			break;
 		case 'p':
 			pass_unknown_seqs = 1;
@@ -343,7 +339,8 @@ int main(int argc, char **argv)
 			}
 			this_line = cur_line + adjust;
 			nmove = this_line - nflushd_lines;
-			if (nmove >= max_bufd_lines + BUFFER_MARGIN) {
+			if (nmove > 0
+			    && (unsigned) nmove >= max_bufd_lines + BUFFER_MARGIN) {
 				nflushd_lines += nmove - max_bufd_lines;
 				flush_lines(nmove - max_bufd_lines);
 			}
