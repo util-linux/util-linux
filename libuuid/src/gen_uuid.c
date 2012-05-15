@@ -87,6 +87,7 @@
 #include <sys/syscall.h>
 #endif
 
+#include "all-io.h"
 #include "uuidP.h"
 #include "uuidd.h"
 #include "randutils.h"
@@ -334,31 +335,6 @@ try_again:
 }
 
 #if defined(HAVE_UUIDD) && defined(HAVE_SYS_UN_H)
-/* used in get_uuid_via_daemon() only */
-static ssize_t read_all(int fd, char *buf, size_t count)
-{
-	ssize_t ret;
-	ssize_t c = 0;
-	int tries = 0;
-
-	memset(buf, 0, count);
-	while (count > 0) {
-		ret = read(fd, buf, count);
-		if (ret <= 0) {
-			if ((errno == EAGAIN || errno == EINTR || ret == 0) &&
-			    (tries++ < 5))
-				continue;
-			return c ? c : -1;
-		}
-		if (ret > 0)
-			tries = 0;
-		count -= ret;
-		buf += ret;
-		c += ret;
-	}
-	return c;
-}
-
 /*
  * Try using the uuidd daemon to generate the UUID
  *

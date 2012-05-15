@@ -101,30 +101,6 @@ static void create_daemon(void)
 		err(EXIT_FAILURE, "setreuid");
 }
 
-static ssize_t read_all(int fd, char *buf, size_t count)
-{
-	ssize_t ret;
-	ssize_t c = 0;
-	int tries = 0;
-
-	memset(buf, 0, count);
-	while (count > 0) {
-		ret = read(fd, buf, count);
-		if (ret <= 0) {
-			if ((errno == EAGAIN || errno == EINTR || ret == 0) &&
-			    (tries++ < 5))
-				continue;
-			return c ? c : -1;
-		}
-		if (ret > 0)
-			tries = 0;
-		count -= ret;
-		buf += ret;
-		c += ret;
-	}
-	return c;
-}
-
 static const char *cleanup_pidfile, *cleanup_socket;
 
 static void terminate_intr(int signo CODE_ATTR((unused)))
