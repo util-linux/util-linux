@@ -148,9 +148,11 @@ static void pretty_print_line(const char *device, const char *fs_type,
 	static int term_width = -1;
 	int len, w;
 
-	if (term_width < 0)
+	if (term_width < 0) {
 		term_width = get_terminal_width();
-
+		if (term_width <= 0)
+			term_width = 80;
+	}
 	if (term_width > 80) {
 		term_width -= 80;
 		w = term_width / 10;

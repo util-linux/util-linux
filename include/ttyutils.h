@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <termios.h>
+#include <limits.h>
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
@@ -97,8 +98,17 @@ static inline int get_terminal_width(void)
 		return w_win.ws_col;
 #endif
         cp = getenv("COLUMNS");
-	if (cp)
-		return strtol(cp, NULL, 10);
+	if (cp) {
+		char *end = NULL;
+		long c;
+
+		errno = 0;
+		c = strtol(cp, &end, 10);
+
+		if (errno == 0 && end && *end == '\0' && end > cp &&
+		    c > 0 && c <= INT_MAX)
+			return c;
+	}
 	return 0;
 }
 
