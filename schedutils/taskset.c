@@ -157,8 +157,8 @@ int main(int argc, char **argv)
 			all_tasks = 1;
 			break;
 		case 'p':
-			pid = strtol_or_err(argv[argc - 1],
-					    _("failed to parse pid"));
+			pid = strtos32_or_err(argv[argc - 1],
+					    _("invalid PID argument"));
 			break;
 		case 'c':
 			ts.use_list = 1;
