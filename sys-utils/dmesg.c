@@ -27,7 +27,7 @@
 #include "strutils.h"
 #include "xalloc.h"
 #include "widechar.h"
-#include "writeall.h"
+#include "all-io.h"
 #include "bitops.h"
 #include "closestream.h"
 

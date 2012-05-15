@@ -35,7 +35,7 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "strutils.h"
-#include "writeall.h"
+#include "all-io.h"
 #include "match.h"
 #include "c.h"
 #include "closestream.h"

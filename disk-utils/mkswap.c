@@ -54,7 +54,7 @@
 #include "blkdev.h"
 #include "pathnames.h"
 #include "wholedisk.h"
-#include "writeall.h"
+#include "all-io.h"
 #include "xalloc.h"
 #include "c.h"
 #include "closestream.h"

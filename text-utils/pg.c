@@ -62,7 +62,7 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "widechar.h"
-#include "writeall.h"
+#include "all-io.h"
 #include "closestream.h"
 
 #define	READBUF		LINE_MAX	/* size of input buffer */

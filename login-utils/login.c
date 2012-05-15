@@ -66,7 +66,7 @@
 #include "strutils.h"
 #include "nls.h"
 #include "xalloc.h"
-#include "writeall.h"
+#include "all-io.h"
 #include "fileutils.h"
 
 #include "logindefs.h"

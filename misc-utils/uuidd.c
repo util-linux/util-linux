@@ -33,7 +33,7 @@ extern int optind;
 
 #include "uuid.h"
 #include "uuidd.h"
-#include "writeall.h"
+#include "all-io.h"
 #include "c.h"
 #include "closestream.h"
 

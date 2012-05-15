@@ -1,5 +1,5 @@
-#ifndef UTIL_LINUX_WRITEALL_H
-#define UTIL_LINUX_WRITEALL_H
+#ifndef UTIL_LINUX_ALL_IO_H
+#define UTIL_LINUX_ALL_IO_H
 
 #include <string.h>
 #include <unistd.h>
@@ -44,4 +44,4 @@ static inline int fwrite_all(const void *ptr, size_t size,
 	return 0;
 }
 
-#endif /* UTIL_LINUX_WRITEALL_H */
+#endif /* UTIL_LINUX_ALL_IO_H */

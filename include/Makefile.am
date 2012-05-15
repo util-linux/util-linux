@@ -1,6 +1,7 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 dist_noinst_HEADERS = \
+	all-io.h \
 	at.h \
 	bitops.h \
 	blkdev.h \
@@ -40,6 +41,5 @@ dist_noinst_HEADERS = \
 	usleep.h \
 	wholedisk.h \
 	widechar.h \
-	writeall.h \
 	xalloc.h \
 	xgetpass.h
