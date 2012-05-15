@@ -145,21 +145,21 @@ is_sparc64(void)
  * What to do? Let us allow the user to specify the pagesize explicitly.
  *
  */
-static long user_pagesize;
-static int pagesize;
+static unsigned int user_pagesize;
+static unsigned int pagesize;
 static unsigned long *signature_page = NULL;
 
 static void
 init_signature_page(void)
 {
 
-	int kernel_pagesize = pagesize = getpagesize();
+	unsigned int kernel_pagesize = pagesize = getpagesize();
 
 	if (user_pagesize) {
-		if ((user_pagesize & (user_pagesize - 1)) ||
-		    user_pagesize < (long) sizeof(struct swap_header_v1_2) + 10)
+		if (!is_power_of_2(user_pagesize) ||
+		    user_pagesize < sizeof(struct swap_header_v1_2) + 10)
 			errx(EXIT_FAILURE,
-				_("Bad user-specified page size %lu"),
+				_("Bad user-specified page size %u"),
 				user_pagesize);
 		pagesize = user_pagesize;
 	}
@@ -452,7 +452,7 @@ main(int argc, char **argv) {
 	unsigned long long sz;
 	off_t offset;
 	int force = 0;
-	long version = 1;
+	int version = 1;
 	char *block_count = 0;
 	char *opt_label = NULL;
 	unsigned char *uuid = NULL;
@@ -486,13 +486,13 @@ main(int argc, char **argv) {
 			force=1;
 			break;
 		case 'p':
-			user_pagesize = strtol_or_err(optarg, _("parse page size failed"));
+			user_pagesize = strtou32_or_err(optarg, _("parse page size failed"));
 			break;
 		case 'L':
 			opt_label = optarg;
 			break;
 		case 'v':
-			version = strtol_or_err(optarg, _("parse version number failed"));
+			version = strtos32_or_err(optarg, _("parse version number failed"));
 			break;
 		case 'U':
 #ifdef HAVE_LIBUUID
@@ -503,8 +503,7 @@ main(int argc, char **argv) {
 #endif
 			break;
 		case 'V':
-			printf(_("%s from %s\n"), program_invocation_short_name,
-						  PACKAGE_STRING);
+			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
 		case 'h':
 			usage(stdout);
@@ -523,8 +522,7 @@ main(int argc, char **argv) {
 
 	if (version != 1)
 		errx(EXIT_FAILURE,
-			_("does not support swapspace version %lu."),
-			version);
+			_("does not support swapspace version %d."), version);
 
 #ifdef HAVE_LIBUUID
 	if(opt_uuid) {
@@ -543,12 +541,8 @@ main(int argc, char **argv) {
 	}
 	if (block_count) {
 		/* this silly user specified the number of blocks explicitly */
-		long long blks;
-
-		blks = strtoll_or_err(block_count, "parse block count failed");
-		if (blks < 0)
-			usage(stderr);
-
+		uint64_t blks = strtou64_or_err(block_count,
+					_("invalid block count argument"));
 		PAGES = blks / (pagesize / 1024);
 	}
 	sz = get_size(device_name);
