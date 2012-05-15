@@ -16,11 +16,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <termios.h>
 #include <errno.h>
-#ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
-#endif
 #ifdef HAVE_GETOPT_H
 #include <getopt.h>
 #else
@@ -45,6 +41,7 @@ extern int optind;
 #define STRTOXX_EXIT_CODE	4		/* strtoxx_or_err() */
 #include "strutils.h"
 #include "closestream.h"
+#include "ttyutils.h"
 
 const char *progname = "blkid";
 
@@ -122,30 +119,6 @@ static void safe_print(const char *cp, int len)
 		}
 		fputc(ch, stdout);
 	}
-}
-
-static int get_terminal_width(void)
-{
-#ifdef TIOCGSIZE
-	struct ttysize	t_win;
-#endif
-#ifdef TIOCGWINSZ
-	struct winsize	w_win;
-#endif
-        const char	*cp;
-
-#ifdef TIOCGSIZE
-	if (ioctl (0, TIOCGSIZE, &t_win) == 0)
-		return (t_win.ts_cols);
-#endif
-#ifdef TIOCGWINSZ
-	if (ioctl (0, TIOCGWINSZ, &w_win) == 0)
-		return (w_win.ws_col);
-#endif
-        cp = getenv("COLUMNS");
-	if (cp)
-		return strtol(cp, NULL, 10);
-	return 80;
 }
 
 static int pretty_print_word(const char *str, int max_len,
