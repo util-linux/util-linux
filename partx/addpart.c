@@ -52,9 +52,9 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("%s: open failed"), argv[1]);
 
 	if (partx_add_partition(fd,
-			strtol_or_err(argv[2], _("failed to parse partition number")),
-			strtoll_or_err(argv[3],_("failed to parse start")),
-			strtoll_or_err(argv[4],_("failed to parse length"))))
+			strtou32_or_err(argv[2], _("invalid partition number argument")),
+			strtou64_or_err(argv[3], _("invalid start argument")),
+			strtou64_or_err(argv[4], _("invalid length argument"))))
 		err(EXIT_FAILURE, _("failed to add partition"));
 
 	return EXIT_SUCCESS;

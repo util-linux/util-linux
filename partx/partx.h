@@ -4,7 +4,7 @@
 #include <sys/ioctl.h>
 #include <linux/blkpg.h>
 
-static inline int partx_del_partition(int fd, int partno)
+static inline int partx_del_partition(int fd, unsigned int partno)
 {
 	struct blkpg_ioctl_arg a;
 	struct blkpg_partition p;
@@ -23,7 +23,7 @@ static inline int partx_del_partition(int fd, int partno)
 }
 
 static inline int partx_add_partition(int fd, int partno,
-			unsigned long start, unsigned long size)
+			uint64_t start, uint64_t size)
 {
 	struct blkpg_ioctl_arg a;
 	struct blkpg_partition p;

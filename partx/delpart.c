@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("%s: open failed"), argv[1]);
 
 	if (partx_del_partition(fd,
-			strtol_or_err(argv[2], _("failed to parse partition number"))))
+			strtou32_or_err(argv[2], _("invalid partition number argument"))))
 		err(EXIT_FAILURE, _("failed to remove partition"));
 
 	return EXIT_SUCCESS;
