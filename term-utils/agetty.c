@@ -1487,9 +1487,11 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 			    case 27:  //esc
 				{
 				    read(STDIN_FILENO, &ascval, 1);
+				    ascval &= 0x7F;
 				    if (ascval == 'O')
 				    {
 				        read(STDIN_FILENO, &ascval, 1);
+					ascval &= 0x7F;
 				        switch (ascval)
 				        {
 				            case 'H': //HOME
@@ -1545,10 +1547,12 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 				    if (ascval != '[')
 				        break;
 				    read(STDIN_FILENO, &ascval, 1);
+				    ascval &= 0x7F;
 				    switch (ascval)
 				    {
 				        case '3':
 				            read(STDIN_FILENO, &ascval, 1);
+					    ascval &= 0x7F;
 				            if (ascval == '~') //DEL
 				                if (after > 0)
 				                {
@@ -1595,6 +1599,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 				    
 		                    case '1': //HOME
 				        read(STDIN_FILENO, &ascval, 1);
+					ascval &= 0x7F;
 				        if (ascval != '~')
 				             break;
 		                        if (before > 0)
@@ -1622,6 +1627,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 		                    
 		                    case '4': //END
 				        read(STDIN_FILENO, &ascval, 1);
+					ascval &= 0x7F;
 				        if (ascval != '~')
 				             break;
 		                        if (after > 0)
@@ -1652,6 +1658,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 				        if (ascval == '[')
 					{
 					    read(STDIN_FILENO, &ascval, 1);
+					    ascval &= 0x7F;
 					    if (ascval != 'B')
 					        break;
 					}
