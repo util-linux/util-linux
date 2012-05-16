@@ -1,5 +1,8 @@
 include $(top_srcdir)/config/include-Makefile.am
 
+dist_noinst_HEADERS =
+
+
 SHLIBS_DIRS =
 
 if BUILD_LIBUUID
@@ -22,7 +25,6 @@ SUBDIRS = \
 	disk-utils \
 	fdisk \
 	getopt \
-	include \
 	lib \
 	login-utils \
 	misc-utils \
@@ -61,6 +63,10 @@ EXTRA_DIST = \
 	Documentation \
 	po/update-potfiles \
 	README.licensing
+
+
+include include/Makemodule.am
+
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.
