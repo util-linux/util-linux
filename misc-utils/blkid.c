@@ -720,7 +720,7 @@ int main(int argc, char **argv)
 
 			while (blkid_superblocks_get_name(idx++, &name, NULL) == 0)
 				printf("%s\n", name);
-			exit(0);
+			exit(EXIT_SUCCESS);
 		}
 		case 'o':
 			if (!strcmp(optarg, "value"))
