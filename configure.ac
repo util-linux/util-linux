@@ -1304,7 +1304,6 @@ disk-utils/Makefile
 fdisk/Makefile
 getopt/Makefile
 hwclock/Makefile
-lib/Makefile
 libblkid/Makefile
 libblkid/blkid.pc
 libblkid/docs/Makefile

@@ -1,0 +1,64 @@
+
+AM_CPPFLAGS += -DTEST_PROGRAM
+
+noinst_PROGRAMS += \
+	test_at \
+	test_blkdev \
+	test_canonicalize \
+	test_fileutils \
+	test_ismounted \
+	test_mangle \
+	test_pager \
+	test_procutils \
+	test_randutils \
+	test_strutils \
+	test_tt \
+	test_wholedisk
+
+if LINUX
+if HAVE_CPU_SET_T
+noinst_PROGRAMS += test_cpuset
+endif
+noinst_PROGRAMS += \
+	test_sysfs \
+	test_loopdev
+endif
+
+test_blkdev_SOURCES = lib/blkdev.c
+test_ismounted_SOURCES = lib/ismounted.c
+test_wholedisk_SOURCES = lib/wholedisk.c
+test_mangle_SOURCES = lib/mangle.c
+
+test_at_SOURCES = lib/at.c
+test_at_CFLAGS = -DTEST_PROGRAM_AT
+
+test_strutils_SOURCES = lib/strutils.c
+test_randutils_SOURCES = lib/randutils.c
+test_procutils_SOURCES = lib/procutils.c
+
+if LINUX
+test_cpuset_SOURCES = lib/cpuset.c
+test_sysfs_SOURCES = lib/sysfs.c lib/at.c
+test_pager_SOURCES = lib/pager.c
+test_sysfs_CFLAGS = -DTEST_PROGRAM_SYSFS
+
+test_loopdev_SOURCES = \
+	$(test_sysfs_SOURCES) \
+	lib/loopdev.c \
+	lib/canonicalize.c \
+	lib/linux_version.c
+
+test_loopdev_CFLAGS = -DTEST_PROGRAM_LOOPDEV
+endif
+
+test_fileutils_SOURCES = lib/fileutils.c
+test_tt_SOURCES = \
+	lib/tt.c \
+	lib/mbsalign.c
+
+test_canonicalize_SOURCES = lib/canonicalize.c
+test_canonicalize_CFLAGS = -DTEST_PROGRAM_CANONICALIZE
+
+if LINUX
+test_blkdev_SOURCES += lib/inux_version.c
+endif

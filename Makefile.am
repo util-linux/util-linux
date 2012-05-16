@@ -1,7 +1,7 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 dist_noinst_HEADERS =
-
+noinst_PROGRAMS =
 
 SHLIBS_DIRS =
 
@@ -25,7 +25,6 @@ SUBDIRS = \
 	disk-utils \
 	fdisk \
 	getopt \
-	lib \
 	login-utils \
 	misc-utils \
 	po \
@@ -66,6 +65,7 @@ EXTRA_DIST = \
 
 
 include include/Makemodule.am
+include lib/Makemodule.am
 
 
 # Arrange so that .tarball-version appears only in the distribution
