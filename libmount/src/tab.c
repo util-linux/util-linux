@@ -456,13 +456,18 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 			return fs;
 	}
 
-	/* non-canonicaled path in struct libmnt_table */
+	/* non-canonicaled path in struct libmnt_table
+	 * -- note that mountpoint in /proc/self/mountinfo is already
+	 *    canonicalized by kernel
+	 */
 	mnt_reset_iter(&itr, direction);
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 		char *p;
 
-		if (!fs->target || mnt_fs_is_swaparea(fs) ||
-		    (*fs->target == '/' && *(fs->target + 1) == '\0'))
+		if (!fs->target
+		    || mnt_fs_is_swaparea(fs)
+		    || mnt_fs_is_kernel(fs)
+		    || (*fs->target == '/' && *(fs->target + 1) == '\0'))
 		       continue;
 
 		p = mnt_resolve_path(fs->target, tb->cache);

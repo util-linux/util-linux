@@ -1131,7 +1131,8 @@ int mnt_fs_get_attribute(struct libmnt_fs *fs, const char *name,
  * Possible are three attempts:
  *	1) compare @target with @fs->target
  *	2) realpath(@target) with @fs->target
- *	3) realpath(@target) with realpath(@fs->target).
+ *	3) realpath(@target) with realpath(@fs->target) if @fs is not from
+ *	   /proc/self/mountinfo.
  *
  * The 2nd and 3rd attempts are not performed when @cache is NULL.
  *
@@ -1154,7 +1155,7 @@ int mnt_fs_match_target(struct libmnt_fs *fs, const char *target,
 		rc = (cn && strcmp(cn, fs->target) == 0);
 
 		/* 3) - canonicalized and canonicalized */
-		if (!rc && cn) {
+		if (!rc && cn && !mnt_fs_is_kernel(fs)) {
 			char *tcn = mnt_resolve_path(fs->target, cache);
 			rc = (tcn && strcmp(cn, tcn) == 0);
 		}
