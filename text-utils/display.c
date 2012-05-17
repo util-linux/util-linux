@@ -41,13 +41,10 @@
 #include <string.h>
 #include "hexdump.h"
 #include "xalloc.h"
+#include "c.h"
 
 static void doskip(const char *, int);
 static u_char *get(void);
-
-#ifndef MIN
-#define MIN(a,b) ((a)<(b)?(a):(b))
-#endif
 
 enum _vflag vflag = FIRST;
 
@@ -262,7 +259,7 @@ get(void)
 			return(curp);
 		}
 		n = fread((char *)curp + nread, sizeof(unsigned char),
-		    length == -1 ? need : MIN(length, need), stdin);
+		    length == -1 ? need : min(length, need), stdin);
 		if (!n) {
 			if (ferror(stdin))
 				warn("%s", _argv[-1]);
