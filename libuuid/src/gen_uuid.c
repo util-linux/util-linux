@@ -91,6 +91,7 @@
 #include "uuidP.h"
 #include "uuidd.h"
 #include "randutils.h"
+#include "c.h"
 
 #ifdef HAVE_TLS
 #define THREAD_LOCAL static __thread
@@ -150,9 +151,6 @@ static int get_node_id(unsigned char *node_id)
  * just sizeof(struct ifreq)
  */
 #ifdef HAVE_SA_LEN
-#ifndef max
-#define max(a,b) ((a) > (b) ? (a) : (b))
-#endif
 #define ifreq_size(i) max(sizeof(struct ifreq),\
      sizeof((i).ifr_name)+(i).ifr_addr.sa_len)
 #else
