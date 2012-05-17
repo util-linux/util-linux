@@ -868,11 +868,14 @@ int main(int argc, char **argv)
 				goto exit;
 		}
 
-		for (i = 0; i < numdev; i++)
+		for (i = 0; i < numdev; i++) {
 			err = lowprobe_device(pr, devices[i], lowprobe, show,
 					output_format,
 					(blkid_loff_t) offset,
 					(blkid_loff_t) size);
+			if (err)
+				break;
+		}
 		blkid_free_probe(pr);
 	} else if (eval) {
 		/*
