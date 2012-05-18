@@ -62,14 +62,16 @@ struct colinfo {
 	const char *help;
 };
 
-enum { COL_FLAG, COL_DESC, COL_STATUS, COL_BSTATUS };
+enum { COL_FLAG, COL_DESC, COL_STATUS, COL_BSTATUS, COL_DEVICE };
 
 /* columns descriptions */
 static struct colinfo infos[] = {
 	[COL_FLAG]    = { "FLAG",        14,  0, N_("flag name") },
 	[COL_DESC]    = { "DESCRIPTION", 0.1, TT_FL_TRUNC, N_("flag description") },
 	[COL_STATUS]  = { "STATUS",      1,   TT_FL_RIGHT, N_("flag status") },
-	[COL_BSTATUS] = { "BOOT-STATUS", 1,   TT_FL_RIGHT, N_("flag boot status") }
+	[COL_BSTATUS] = { "BOOT-STATUS", 1,   TT_FL_RIGHT, N_("flag boot status") },
+	[COL_DEVICE]  = { "DEVICE",      0.1, 0, N_("watchdog device name") }
+
 };
 
 #define NCOLS ARRAY_SIZE(infos)
@@ -146,6 +148,7 @@ static void usage(FILE *out)
 	      _(" -d, --device <path>   device to use (default is %s)\n"), _PATH_WATCHDOG_DEV);
 
 	fputs(_(" -f, --flags <list>    print selected flags only\n"
+		" -x, --flags-only      print only flags table (same as -I -T)\n"
 		" -F, --noflags         don't print information about flags\n"
 		" -n, --noheadings      don't print headings\n"
 		" -I, --noident         don't print watchdog identity information\n"
@@ -194,6 +197,9 @@ static void add_flag_line(struct tt *tt, struct wdinfo *wd, const struct wdflag 
 			break;
 		case COL_BSTATUS:
 			str = wd->bstatus & fl->flag ? "1" : "0";
+			break;
+		case COL_DEVICE:
+			str = wd->device;
 			break;
 		default:
 			break;
@@ -334,6 +340,7 @@ int main(int argc, char *argv[])
 	static const struct option long_opts[] = {
 		{ "device",     required_argument, NULL, 'd' },
 		{ "flags",      required_argument, NULL, 'f' },
+		{ "flags-only", no_argument,       NULL, 'x' },
 		{ "help",	no_argument,       NULL, 'h' },
 		{ "noflags",    no_argument,       NULL, 'F' },
 		{ "noheadings", no_argument,       NULL, 'n' },
@@ -352,7 +359,7 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv,
-				"d:f:hFnITo:PrV", long_opts, NULL)) != -1) {
+				"d:f:hFnITo:PrVx", long_opts, NULL)) != -1) {
 		switch(c) {
 		case 'd':
 			wd.device = optarg;
@@ -391,6 +398,10 @@ int main(int argc, char *argv[])
 		case 'P':
 			tt_flags |= TT_FL_EXPORT;
 			break;
+		case 'x':
+			noident = 1;
+			notimeouts = 1;
+			break;
 
 		case '?':
 		default:
@@ -416,11 +427,13 @@ int main(int argc, char *argv[])
 	if (rc)
 		goto done;
 
-	if (!noident)
+	if (!noident) {
+		printf("%-15s%s\n", _("Device:"), wd.device);
 		printf(_("%-15s%s [version %x]\n"),
 				("Identity:"),
 				wd.ident.identity,
 				wd.ident.firmware_version);
+	}
 	if (!notimeouts)
 		show_timeouts(&wd);
 	if (!noflags && !(noident && notimeouts))
