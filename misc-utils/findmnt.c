@@ -1320,8 +1320,7 @@ int main(int argc, char *argv[])
 	 */
 	if (flags & FL_POLL) {
 		/* poll mode (accept the first tabfile only) */
-		if (tabfiles && ntabfiles > 0)
-			rc = poll_table(tb, *tabfiles, timeout, tt, direction);
+		rc = poll_table(tb, tabfiles ? *tabfiles : _PATH_PROC_MOUNTINFO, timeout, tt, direction);
 
 	} else if ((tt_flags & TT_FL_TREE) && is_listall_mode())
 		/* whole tree */
