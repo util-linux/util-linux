@@ -1810,6 +1810,13 @@ move_begin(int i) {
 	}
 }
 
+static void __attribute__ ((__noreturn__)) handle_quit(void)
+{
+	close(fd);
+	printf("\n");
+	exit(EXIT_SUCCESS);
+}
+
 static void
 expert_command_prompt(void)
 {
@@ -1875,9 +1882,7 @@ expert_command_prompt(void)
 				x_list_table(0);
 			break;
 		case 'q':
-			close(fd);
-			printf("\n");
-			exit(0);
+			handle_quit();
 		case 'r':
 			return;
 		case 's':
@@ -2064,9 +2069,7 @@ static void command_prompt(void)
 			list_table(0);
 			break;
 		case 'q':
-			close(fd);
-			printf("\n");
-			exit(0);
+			handle_quit();
 		case 's':
 			create_sunlabel();
 			break;
