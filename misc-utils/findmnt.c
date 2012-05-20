@@ -867,8 +867,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	for (i = 0; i < FINDMNT_NCOLUMNS; i++)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
-
-	fprintf(out, _("\nFor more information see findmnt(1).\n"));
+	fprintf(out, USAGE_MAN_TAIL("findmnt(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
