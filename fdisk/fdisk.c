@@ -2095,8 +2095,8 @@ static void command_prompt(void)
 	}
 }
 
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	int j, c;
 	int optl = 0, opts = 0;
 
@@ -2130,9 +2130,6 @@ main(int argc, char **argv) {
 			else if (optarg && strcmp(optarg, "=nondos"))
 				usage(stderr);
 			break;
-		case 'h':
-			usage(stdout);
-			break;
 		case 'H':
 			user_heads = strtou32_or_err(optarg, _("invalid heads argument"));
 			if (user_heads > 256)
@@ -2160,6 +2157,8 @@ main(int argc, char **argv) {
 		case 'v':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
+		case 'h':
+			usage(stdout);
 		default:
 			usage(stderr);
 		}
