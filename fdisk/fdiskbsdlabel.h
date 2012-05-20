@@ -238,4 +238,9 @@ static struct systypes xbsd_fstypes[] = {
 #define	BSD_D_CHAIN    	0x10		/* can do back-back transfers */
 #define	BSD_D_DOSPART	0x20		/* within MSDOS partition */
 
+extern void bsd_command_prompt(void);
+extern int check_osf_label(void);
+extern int btrydev(char * dev);
+extern void xbsd_print_disklabel(int);
+
 #endif /* FDISK_BSD_LABEL_H */

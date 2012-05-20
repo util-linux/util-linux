@@ -185,9 +185,3 @@ static inline int is_cleared_partition(struct partition *p)
 		 p->sys_ind || p->end_head || p->end_sector || p->end_cyl ||
 		 get_start_sect(p) || get_nr_sects(p));
 }
-
-/* prototypes for fdiskbsdlabel.c */
-extern void bsd_command_prompt(void);
-extern int check_osf_label(void);
-extern int btrydev(char * dev);
-extern void xbsd_print_disklabel(int);

@@ -39,6 +39,7 @@
 #include "fdiskaixlabel.h"
 #include "fdiskmaclabel.h"
 #include "fdiskdoslabel.h"
+#include "fdiskbsdlabel.h"
 
 #ifdef HAVE_LINUX_COMPILER_H
 #include <linux/compiler.h>
