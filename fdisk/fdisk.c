@@ -2096,10 +2096,22 @@ static void command_prompt(void)
 	}
 }
 
+static unsigned long long get_dev_blocks(char *dev)
+{
+	int fd;
+	unsigned long long size;
+
+	if ((fd = open(dev, O_RDONLY)) < 0)
+		err(EXIT_FAILURE, _("unable to open %s"), dev);
+	if (blkdev_get_sectors(fd, &size) == -1)
+		fatal(ioctl_error);
+	close(fd);
+	return size/2;
+}
+
 int main(int argc, char **argv)
 {
-	int j, c;
-	int optl = 0, opts = 0;
+	int c, optl = 0, opts = 0;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -2183,27 +2195,18 @@ int main(int argc, char **argv)
 	}
 
 	if (opts) {
-		unsigned long long size;
-
-		nowarn = 1;
-
-		opts = argc - optind;
-		if (opts <= 0)
+		/* print partition size for one or more devices */
+		int i, ndevs = argc - optind;
+		if (ndevs <= 0)
 			usage(stderr);
 
-		for (j = optind; j < argc; j++) {
-			disk_device = argv[j];
-			if ((fd = open(disk_device, O_RDONLY)) < 0)
-				err(EXIT_FAILURE, _("unable to open %s"), disk_device);
-			if (blkdev_get_sectors(fd, &size) == -1)
-				fatal(ioctl_error);
-			close(fd);
-			if (opts == 1)
-				printf("%llu\n", size/2);
+		for (i = optind; i < argc; i++) {
+			if (ndevs == 1)
+				printf("%llu\n", get_dev_blocks(argv[i]));
 			else
-				printf("%s: %llu\n", argv[j], size/2);
+				printf("%s: %llu\n", argv[i], get_dev_blocks(argv[i]));
 		}
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
 	if (argc-optind == 1)
