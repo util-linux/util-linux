@@ -63,6 +63,15 @@ struct geom {
 	unsigned int cylinders;
 };
 
+struct fdisk_context {
+	int dev_fd;     /* device descriptor */
+	char *dev_path; /* device path */
+};
+
+extern struct fdisk_context *cxt;
+extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname);
+extern void fdisk_free_context(struct fdisk_context *cxt);
+
 /* prototypes for fdisk.c */
 extern char *disk_device, *line_ptr;
 extern int fd, partitions;

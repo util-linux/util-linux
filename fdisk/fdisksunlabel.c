@@ -172,11 +172,11 @@ void create_sunlabel(void)
 	sunlabel->version = SSWAP32(SUN_LABEL_VERSION);
 	sunlabel->num_partitions = SSWAP16(SUN_NUM_PARTITIONS);
 
-	res = blkdev_get_sectors(fd, &llsectors);
+	res = blkdev_get_sectors(cxt->dev_fd, &llsectors);
 	sec_fac = sector_size / 512;
 
 #ifdef HDIO_GETGEO
-	if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
+	if (!ioctl(cxt->dev_fd, HDIO_GETGEO, &geometry)) {
 	        heads = geometry.heads;
 	        sectors = geometry.sectors;
 		if (res == 0) {
@@ -190,7 +190,7 @@ void create_sunlabel(void)
 				_("Warning:  BLKGETSIZE ioctl failed on %s.  "
 				  "Using geometry cylinder value of %d.\n"
 				  "This value may be truncated for devices"
-				  " > 33.8 GB.\n"), disk_device, cylinders);
+				  " > 33.8 GB.\n"), cxt->dev_path, cylinders);
 		}
 	} else
 #endif
@@ -538,7 +538,7 @@ void sun_list_table(int xtra)
 	int i, w;
 	char *type;
 
-	w = strlen(disk_device);
+	w = strlen(cxt->dev_path);
 	if (xtra)
 		printf(
 		_("\nDisk %s (Sun disk label): %u heads, %llu sectors, %d rpm\n"
@@ -547,7 +547,7 @@ void sun_list_table(int xtra)
 		"Label ID: %s\n"
 		"Volume ID: %s\n"
 		"Units = %s of %d * 512 bytes\n\n"),
-		       disk_device, heads, sectors, SSWAP16(sunlabel->rpm),
+		       cxt->dev_path, heads, sectors, SSWAP16(sunlabel->rpm),
 		       cylinders, SSWAP16(sunlabel->acyl),
 		       SSWAP16(sunlabel->pcyl),
 		       SSWAP16(sunlabel->apc),
@@ -559,7 +559,7 @@ void sun_list_table(int xtra)
 		printf(
 	_("\nDisk %s (Sun disk label): %u heads, %llu sectors, %u cylinders\n"
 	"Units = %s of %d * 512 bytes\n\n"),
-		       disk_device, heads, sectors, cylinders,
+		       cxt->dev_path, heads, sectors, cylinders,
 		       str_units(PLURAL), units_per_sector);
 
 	printf(_("%*s Flag    Start       End    Blocks   Id  System\n"),
@@ -573,7 +573,7 @@ void sun_list_table(int xtra)
 			uint32_t len = SSWAP32(part->num_sectors);
 			printf(
 			    "%s %c%c %9lu %9lu %9lu%c  %2x  %s\n",
-/* device */		  partname(disk_device, i+1, w),
+/* device */		  partname(cxt->dev_path, i+1, w),
 /* flags */		  (tag->flag & SSWAP16(SUN_FLAG_UNMNT)) ? 'u' : ' ',
 			  (tag->flag & SSWAP16(SUN_FLAG_RONLY)) ? 'r' : ' ',
 /* start */		  (unsigned long) scround(start),
@@ -634,9 +634,9 @@ void sun_write_table(void)
 	while(ush < (unsigned short *)(&sunlabel->cksum))
 		csum ^= *ush++;
 	sunlabel->cksum = csum;
-	if (lseek(fd, 0, SEEK_SET) < 0)
+	if (lseek(cxt->dev_fd, 0, SEEK_SET) < 0)
 		fatal(unable_to_seek);
-	if (write(fd, sunlabel, SECTOR_SIZE) != SECTOR_SIZE)
+	if (write(cxt->dev_fd, sunlabel, SECTOR_SIZE) != SECTOR_SIZE)
 		fatal(unable_to_write);
 }
 
