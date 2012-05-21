@@ -389,9 +389,11 @@ static void init_tty(struct login_context *cxt)
 	}
 
 #ifdef LOGIN_CHOWN_VCS
-	/* find names of Virtual Console devices, for later mode change */
-	snprintf(cxt->vcsn, sizeof(cxt->vcsn), "/dev/vcs%s", cxt->tty_number);
-	snprintf(cxt->vcsan, sizeof(cxt->vcsan), "/dev/vcsa%s", cxt->tty_number);
+	if (cxt->tty_number) {
+		/* find names of Virtual Console devices, for later mode change */
+		snprintf(cxt->vcsn, sizeof(cxt->vcsn), "/dev/vcs%s", cxt->tty_number);
+		snprintf(cxt->vcsan, sizeof(cxt->vcsan), "/dev/vcsa%s", cxt->tty_number);
+	}
 #endif
 
 	tcgetattr(0, &tt);
@@ -578,7 +580,8 @@ static void log_utmp(struct login_context *cxt)
 	if (utp == NULL) {
 		setutent();
 		ut.ut_type = LOGIN_PROCESS;
-		strncpy(ut.ut_line, cxt->tty_name, sizeof(ut.ut_line));
+		if (cxt->tty_name)
+			strncpy(ut.ut_line, cxt->tty_name, sizeof(ut.ut_line));
 		utp = getutline(&ut);
 	}
 
@@ -588,11 +591,12 @@ static void log_utmp(struct login_context *cxt)
 		/* some gettys/telnetds don't initialize utmp... */
 		memset(&ut, 0, sizeof(ut));
 
-	if (ut.ut_id[0] == 0)
+	if (cxt->tty_number && ut.ut_id[0] == 0)
 		strncpy(ut.ut_id, cxt->tty_number, sizeof(ut.ut_id));
-
-	strncpy(ut.ut_user, cxt->username, sizeof(ut.ut_user));
-	xstrncpy(ut.ut_line, cxt->tty_name, sizeof(ut.ut_line));
+	if (cxt->username)
+		strncpy(ut.ut_user, cxt->username, sizeof(ut.ut_user));
+	if (cxt->tty_name)
+		xstrncpy(ut.ut_line, cxt->tty_name, sizeof(ut.ut_line));
 
 #ifdef _HAVE_UT_TV		/* in <utmpbits.h> included by <utmp.h> */
 	gettimeofday(&tv, NULL);
@@ -624,6 +628,9 @@ static void log_utmp(struct login_context *cxt)
 static void log_syslog(struct login_context *cxt)
 {
 	struct passwd *pwd = cxt->pwd;
+
+	if (!cxt->tty_name)
+		return;
 
 	if (!strncmp(cxt->tty_name, "ttyS", 4))
 		syslog(LOG_INFO, _("DIALUP AT %s BY %s"),
