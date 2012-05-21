@@ -32,6 +32,33 @@
 #define cround(n)	(display_in_cyl_units ? ((n)/units_per_sector)+1 : (n))
 #define scround(x)	(((x)+units_per_sector-1)/units_per_sector)
 
+/* fdisk debugging flags/options */
+#define FDISK_DEBUG_INIT	(1 << 1)
+#define FDISK_DEBUG_CONTEXT	(1 << 2)
+#define FDISK_DEBUG_ALL		0xFFFF
+
+# define ON_DBG(m, x)	do { \
+				if ((FDISK_DEBUG_ ## m) & fdisk_debug_mask) { \
+					x; \
+				}	   \
+			} while (0)
+
+# define DBG(m, x)	do { \
+				if ((FDISK_DEBUG_ ## m) & fdisk_debug_mask) { \
+					fprintf(stderr, "%d: fdisk: %8s: ", getpid(), # m); \
+					x;				\
+				} \
+			} while (0)
+
+# define DBG_FLUSH	do { \
+				if (fdisk_debug_mask && \
+				    fdisk_debug_mask != FDISK_DEBUG_INIT) \
+					fflush(stderr);			\
+			} while(0)
+
+extern int fdisk_debug_mask;
+extern void fdisk_init_debug(int mask);
+
 struct partition {
 	unsigned char boot_ind;         /* 0x80 - active */
 	unsigned char head;             /* starting head */

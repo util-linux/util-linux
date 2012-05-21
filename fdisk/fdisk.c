@@ -2168,6 +2168,8 @@ int main(int argc, char **argv)
 		}
 	}
 
+	fdisk_init_debug(0);
+
 	if (user_set_sector_size && argc-optind != 1)
 		printf(_("Warning: the -b (set sector size) option should"
 			 " be used with one specified device\n"));
