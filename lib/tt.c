@@ -527,7 +527,7 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 	return;
 }
 
-static void fputs_quoted(const char *data, FILE *out)
+void tt_fputs_quoted(const char *data, FILE *out)
 {
 	const char *p;
 
@@ -541,7 +541,7 @@ static void fputs_quoted(const char *data, FILE *out)
 	fputc('"', out);
 }
 
-static void fputs_nonblank(const char *data, FILE *out)
+void tt_fputs_nonblank(const char *data, FILE *out)
 {
 	const char *p;
 
@@ -564,7 +564,7 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 
 	/* raw mode */
 	if (tb->flags & TT_FL_RAW) {
-		fputs_nonblank(data, stdout);
+		tt_fputs_nonblank(data, stdout);
 		if (!is_last_column(tb, cl))
 			fputc(' ', stdout);
 		return;
@@ -573,7 +573,7 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 	/* NAME=value mode */
 	if (tb->flags & TT_FL_EXPORT) {
 		fprintf(stdout, "%s=", cl->name);
-		fputs_quoted(data, stdout);
+		tt_fputs_quoted(data, stdout);
 		if (!is_last_column(tb, cl))
 			fputc(' ', stdout);
 		return;
