@@ -24,7 +24,6 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <string.h>
-#include <strings.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/types.h>
