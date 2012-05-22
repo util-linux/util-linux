@@ -146,14 +146,14 @@ static void usage(FILE *out)
 	fputs(USAGE_OPTIONS, out);
 
 	fputs(_(" -f, --flags <list>    print selected flags only\n"
-		" -x, --flags-only      print only flags table (same as -I -T)\n"
 		" -F, --noflags         don't print information about flags\n"
-		" -n, --noheadings      don't print headings for flags table\n"
 		" -I, --noident         don't print watchdog identity information\n"
-		" -T, --notimeouts      don't print watchdog timeouts\n"
+		" -n, --noheadings      don't print headings for flags table\n"
+		" -O, --oneline         print all information on one line\n"
 		" -o, --output <list>   output columns of the flags\n"
-		" -P, --pairs           use key=\"value\" output format for flags table\n"
-		" -r, --raw             use raw output format for flags table\n"), out);
+		" -r, --raw             use raw output format for flags table\n"
+		" -T, --notimeouts      don't print watchdog timeouts\n"
+		" -x, --flags-only      print only flags table (same as -I -T)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -320,6 +320,50 @@ static int read_watchdog(struct wdinfo *wd)
 	return 0;
 }
 
+static void print_oneline(struct wdinfo *wd, uint32_t wanted,
+		int noident, int notimeouts, int noflags)
+{
+	printf("%s:", wd->device);
+
+	if (!noident) {
+		printf(" VERSION=\"%x\"", wd->ident.firmware_version);
+
+		printf(" IDENTITY=");
+		tt_fputs_quoted((char *) wd->ident.identity, stdout);
+	}
+	if (!notimeouts) {
+		if (wd->has_timeout)
+			printf(" TIMEOUT=\"%i\"", wd->timeout);
+		if (wd->has_pretimeout)
+			printf(" PRETIMEOUT=\"%i\"", wd->pretimeout);
+		if (wd->has_timeleft)
+			printf(" TIMELEFT=\"%i\"", wd->timeleft);
+	}
+
+	if (!noflags) {
+		size_t i;
+		uint32_t flags = wd->ident.options;
+
+		for (i = 0; i < ARRAY_SIZE(wdflags); i++) {
+			const struct wdflag *fl;
+
+			if ((wanted && !(wanted & wdflags[i].flag)) ||
+			    !(flags & wdflags[i].flag))
+				continue;
+
+			fl= &wdflags[i];
+
+			printf(" %s=\"%s\"", fl->name,
+					     wd->status & fl->flag ? "1" : "0");
+			printf(" %s_BOOT=\"%s\"", fl->name,
+					     wd->bstatus & fl->flag ? "1" : "0");
+
+		}
+	}
+
+	fputc('\n', stdout);
+}
+
 static void show_timeouts(struct wdinfo *wd)
 {
 	if (wd->has_timeout)
@@ -334,7 +378,7 @@ int main(int argc, char *argv[])
 {
 	struct wdinfo wd;
 	int c, tt_flags = 0, res = EXIT_SUCCESS, count = 0;
-	char noflags = 0, noident = 0, notimeouts = 0;
+	char noflags = 0, noident = 0, notimeouts = 0, oneline = 0;
 	uint32_t wanted = 0;
 
 	static const struct option long_opts[] = {
@@ -346,7 +390,7 @@ int main(int argc, char *argv[])
 		{ "noident",	no_argument,       NULL, 'I' },
 		{ "notimeouts", no_argument,       NULL, 'T' },
 		{ "output",     required_argument, NULL, 'o' },
-		{ "pairs",      no_argument,       NULL, 'P' },
+		{ "oneline",    no_argument,       NULL, 'O' },
 		{ "raw",        no_argument,       NULL, 'r' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{ NULL, 0, NULL, 0 }
@@ -358,7 +402,7 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv,
-				"d:f:hFnITo:PrVx", long_opts, NULL)) != -1) {
+				"d:f:hFnITo:OrVx", long_opts, NULL)) != -1) {
 		switch(c) {
 		case 'o':
 			ncolumns = string_to_idarray(optarg,
@@ -391,8 +435,8 @@ int main(int argc, char *argv[])
 		case 'r':
 			tt_flags |= TT_FL_RAW;
 			break;
-		case 'P':
-			tt_flags |= TT_FL_EXPORT;
+		case 'O':
+			oneline = 1;
 			break;
 		case 'x':
 			noident = 1;
@@ -436,6 +480,12 @@ int main(int argc, char *argv[])
 			continue;
 		}
 
+		if (oneline) {
+			print_oneline(&wd, wanted, noident, notimeouts, noflags);
+			continue;
+		}
+
+		/* pretty output */
 		if (!noident) {
 			printf("%-15s%s\n", _("Device:"), wd.device);
 			printf(_("%-15s%s [version %x]\n"),
