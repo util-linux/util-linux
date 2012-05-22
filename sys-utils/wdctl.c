@@ -141,28 +141,29 @@ static void usage(FILE *out)
 
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-	      _(" %s [options]\n"), program_invocation_short_name);
+	      _(" %s [options] [<device> ...]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fprintf(out,
-	      _(" -d, --device <path>   device to use (default is %s)\n"), _PATH_WATCHDOG_DEV);
 
 	fputs(_(" -f, --flags <list>    print selected flags only\n"
 		" -x, --flags-only      print only flags table (same as -I -T)\n"
 		" -F, --noflags         don't print information about flags\n"
-		" -n, --noheadings      don't print headings\n"
+		" -n, --noheadings      don't print headings for flags table\n"
 		" -I, --noident         don't print watchdog identity information\n"
 		" -T, --notimeouts      don't print watchdog timeouts\n"
 		" -o, --output <list>   output columns of the flags\n"
-		" -P, --pairs           use key=\"value\" output format\n"
-		" -r, --raw             use raw output format\n"), out);
+		" -P, --pairs           use key=\"value\" output format for flags table\n"
+		" -r, --raw             use raw output format for flags table\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 	fputs(USAGE_SEPARATOR, out);
 
-	fprintf(out, _("\nAvailable columns:\n"));
+	fprintf(out, _("The default device is %s.\n"), _PATH_WATCHDOG_DEV);
+	fputs(USAGE_SEPARATOR, out);
+
+	fputs(_("Available columns:\n"), out);
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %13s  %s\n", infos[i].name, _(infos[i].help));
 
@@ -278,10 +279,10 @@ static int read_watchdog(struct wdinfo *wd)
 
 	if (fd < 0) {
 		if (errno == EBUSY)
-			errx(EXIT_FAILURE, _("%s: watchdog already in use, terminating."),
+			warnx(_("%s: watchdog already in use, terminating."),
 					wd->device);
-		err(EXIT_FAILURE, _("%s: failed to open watchdog device"),
-				wd->device);
+		warn(_("%s: open failed"), wd->device);
+		return -1;
 	}
 
 	if (ioctl(fd, WDIOC_GETSUPPORT, &wd->ident) < 0)
@@ -331,14 +332,12 @@ static void show_timeouts(struct wdinfo *wd)
 
 int main(int argc, char *argv[])
 {
-	struct wdinfo wd = { .device = _PATH_WATCHDOG_DEV };
-
-	int c, tt_flags = 0, rc = 0;
+	struct wdinfo wd;
+	int c, tt_flags = 0, res = EXIT_SUCCESS, count = 0;
 	char noflags = 0, noident = 0, notimeouts = 0;
 	uint32_t wanted = 0;
 
 	static const struct option long_opts[] = {
-		{ "device",     required_argument, NULL, 'd' },
 		{ "flags",      required_argument, NULL, 'f' },
 		{ "flags-only", no_argument,       NULL, 'x' },
 		{ "help",	no_argument,       NULL, 'h' },
@@ -361,9 +360,6 @@ int main(int argc, char *argv[])
 	while ((c = getopt_long(argc, argv,
 				"d:f:hFnITo:PrVx", long_opts, NULL)) != -1) {
 		switch(c) {
-		case 'd':
-			wd.device = optarg;
-			break;
 		case 'o':
 			ncolumns = string_to_idarray(optarg,
 						     columns, ARRAY_SIZE(columns),
@@ -420,26 +416,38 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_BSTATUS;
 	}
 
-	if (optind < argc)
-		usage(stderr);
+	do {
+		int rc;
 
-	rc = read_watchdog(&wd);
-	if (rc)
-		goto done;
+		memset(&wd, 0, sizeof(wd));
 
-	if (!noident) {
-		printf("%-15s%s\n", _("Device:"), wd.device);
-		printf(_("%-15s%s [version %x]\n"),
-				("Identity:"),
-				wd.ident.identity,
-				wd.ident.firmware_version);
-	}
-	if (!notimeouts)
-		show_timeouts(&wd);
-	if (!noflags && !(noident && notimeouts))
-		fputc('\n', stdout);
-	if (!noflags)
-		show_flags(&wd, tt_flags, wanted);
-done:
-	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;
+		if (optind == argc)
+			wd.device = _PATH_WATCHDOG_DEV;
+		else
+			wd.device = argv[optind++];
+
+		if (count)
+			fputc('\n', stdout);
+		count++;
+
+		rc = read_watchdog(&wd);
+		if (rc) {
+			res = EXIT_FAILURE;
+			continue;
+		}
+
+		if (!noident) {
+			printf("%-15s%s\n", _("Device:"), wd.device);
+			printf(_("%-15s%s [version %x]\n"),
+					("Identity:"),
+					wd.ident.identity,
+					wd.ident.firmware_version);
+		}
+		if (!notimeouts)
+			show_timeouts(&wd);
+		if (!noflags)
+			show_flags(&wd, tt_flags, wanted);
+	} while (optind < argc);
+
+	return res;
 }
