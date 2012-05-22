@@ -1331,7 +1331,6 @@ misc-utils/uuidd.service
 mount/Makefile
 partx/Makefile
 po/Makefile.in
-schedutils/Makefile
 sys-utils/Makefile
 term-utils/Makefile
 tests/Makefile

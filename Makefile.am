@@ -2,6 +2,8 @@ include $(top_srcdir)/config/include-Makefile.am
 
 dist_noinst_HEADERS =
 noinst_PROGRAMS =
+usrbin_exec_PROGRAMS =
+dist_man_MANS =
 
 SHLIBS_DIRS =
 
@@ -49,9 +51,6 @@ if BUILD_MOUNT
 SUBDIRS += mount
 endif
 
-if BUILD_SCHEDUTILS
-SUBDIRS += schedutils
-endif
 
 AUTOMAKE_OPTIONS = gnu
 ACLOCAL_AMFLAGS = -I m4
@@ -66,6 +65,7 @@ EXTRA_DIST = \
 
 include include/Makemodule.am
 include lib/Makemodule.am
+include schedutils/Makemodule.am
 
 
 # Arrange so that .tarball-version appears only in the distribution
