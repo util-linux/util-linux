@@ -1,6 +1,4 @@
 
-AM_CPPFLAGS += -DTEST_PROGRAM
-
 noinst_PROGRAMS += \
 	test_at \
 	test_blkdev \
@@ -25,22 +23,38 @@ noinst_PROGRAMS += \
 endif
 
 test_blkdev_SOURCES = lib/blkdev.c
+test_blkdev_CFLAGS = -DTEST_PROGRAM
+
 test_ismounted_SOURCES = lib/ismounted.c
+test_ismounted_CFLAGS = -DTEST_PROGRAM
+
 test_wholedisk_SOURCES = lib/wholedisk.c
+test_wholedisk_CFLAGS = -DTEST_PROGRAM
+
 test_mangle_SOURCES = lib/mangle.c
+test_mangle_CFLAGS = -DTEST_PROGRAM
 
 test_at_SOURCES = lib/at.c
 test_at_CFLAGS = -DTEST_PROGRAM_AT
 
 test_strutils_SOURCES = lib/strutils.c
+test_strutils_CFLAGS = -DTEST_PROGRAM
+
 test_randutils_SOURCES = lib/randutils.c
+test_randutils_CFLAGS = -DTEST_PROGRAM
+
 test_procutils_SOURCES = lib/procutils.c
+test_procutils_CFLAGS = -DTEST_PROGRAM
 
 if LINUX
 test_cpuset_SOURCES = lib/cpuset.c
+test_cpuset_CFLAGS = -DTEST_PROGRAM
+
 test_sysfs_SOURCES = lib/sysfs.c lib/at.c
-test_pager_SOURCES = lib/pager.c
 test_sysfs_CFLAGS = -DTEST_PROGRAM_SYSFS
+
+test_pager_SOURCES = lib/pager.c
+test_pager_CFLAGS = -DTEST_PROGRAM
 
 test_loopdev_SOURCES = \
 	$(test_sysfs_SOURCES) \
@@ -52,13 +66,16 @@ test_loopdev_CFLAGS = -DTEST_PROGRAM_LOOPDEV
 endif
 
 test_fileutils_SOURCES = lib/fileutils.c
+test_fileutils_CFLAGS = -DTEST_PROGRAM
+
 test_tt_SOURCES = \
 	lib/tt.c \
 	lib/mbsalign.c
+test_tt_CFLAGS = -DTEST_PROGRAM
 
 test_canonicalize_SOURCES = lib/canonicalize.c
 test_canonicalize_CFLAGS = -DTEST_PROGRAM_CANONICALIZE
 
 if LINUX
-test_blkdev_SOURCES += lib/inux_version.c
+test_blkdev_SOURCES += lib/linux_version.c
 endif
