@@ -1634,8 +1634,7 @@ void search(char buf[], FILE *file, register int n)
 		    }
 		    break;
 		}
-	} else if (rv != REG_NOMATCH)
-	    more_error (_("Regular expression botch"));
+	}
     }
     if (feof (file)) {
 	if (!no_intty) {
