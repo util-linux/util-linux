@@ -39,7 +39,7 @@ void mnt_init_debug(int mask)
 		libmount_debug_mask = mask;
 
 	if (libmount_debug_mask)
-		printf("libmount: debug mask set to 0x%04x.\n",
+		fprintf(stderr, "libmount: debug mask set to 0x%04x.\n",
 				libmount_debug_mask);
 	libmount_debug_mask |= MNT_DEBUG_INIT;
 }
