@@ -2211,7 +2211,7 @@ int main(int argc, char **argv)
 	else
 		usage(stderr);
 
-	fprintf(stderr, _("Welcome to fdisk (%s).\n\n"
+	printf(_("Welcome to fdisk (%s).\n\n"
 		"Changes will remain in memory only, until you decide to write them.\n"
 		"Be careful before using the write command.\n\n"), PACKAGE_STRING);
 
