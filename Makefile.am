@@ -1,15 +1,23 @@
 include $(top_srcdir)/config/include-Makefile.am
 
+pkgconfigdir = $(usrlib_execdir)/pkgconfig
+
 dist_noinst_HEADERS =
 noinst_PROGRAMS =
 usrbin_exec_PROGRAMS =
 dist_man_MANS =
+man_MANS =
+pkgconfig_DATA =
+usrlib_exec_LTLIBRARIES =
+
+INSTALL_EXEC_HOOKS =
+UNINSTALL_HOOKS =
+
+EXTRA_DIST =
+CLEANFILES =
+
 
 SHLIBS_DIRS =
-
-if BUILD_LIBUUID
-SHLIBS_DIRS += libuuid
-endif
 
 if BUILD_LIBBLKID
 SHLIBS_DIRS += libblkid
@@ -55,7 +63,7 @@ endif
 AUTOMAKE_OPTIONS = gnu
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = \
+EXTRA_DIST += \
 	.version \
 	autogen.sh \
 	Documentation \
@@ -66,6 +74,7 @@ EXTRA_DIST = \
 include include/Makemodule.am
 include lib/Makemodule.am
 include schedutils/Makemodule.am
+include libuuid/Makemodule.am
 
 
 # Arrange so that .tarball-version appears only in the distribution

@@ -1320,9 +1320,6 @@ libmount/docs/version.xml
 libmount/mount.pc
 libmount/src/Makefile
 libmount/src/libmount.h
-libuuid/Makefile
-libuuid/man/Makefile
-libuuid/src/Makefile
 libuuid/uuid.pc
 login-utils/Makefile
 man/ru/Makefile
