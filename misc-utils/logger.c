@@ -58,11 +58,45 @@
 #define	SYSLOG_NAMES
 #include <syslog.h>
 
-int	decode (char *, CODE *);
-int	pencode (char *);
-
 static int optd = 0;
 static uint16_t udpport = 514;
+
+static int decode(char *name, CODE *codetab)
+{
+	register CODE *c;
+
+	if (isdigit(*name))
+		return (atoi(name));
+
+	for (c = codetab; c->c_name; c++)
+		if (!strcasecmp(name, c->c_name))
+			return (c->c_val);
+
+	return -1;
+}
+
+static int pencode(char *s)
+{
+	char *save;
+	int fac, lev;
+
+	for (save = s; *s && *s != '.'; ++s);
+	if (*s) {
+		*s = '\0';
+		fac = decode(save, facilitynames);
+		if (fac < 0)
+			errx(EXIT_FAILURE, _("unknown facility name: %s."), save);
+		*s++ = '.';
+	}
+	else {
+		fac = LOG_USER;
+		s = save;
+	}
+	lev = decode(s, prioritynames);
+	if (lev < 0)
+		errx(EXIT_FAILURE, _("unknown priority name: %s."), save);
+	return ((lev & LOG_PRIMASK) | (fac & LOG_FACMASK));
+}
 
 static int
 myopenlog(const char *sock) {
@@ -301,48 +335,4 @@ main(int argc, char **argv) {
 		close(LogSock);
 
 	return EXIT_SUCCESS;
-}
-
-/*
- *  Decode a symbolic name to a numeric value
- */
-int
-pencode(char *s)
-{
-	char *save;
-	int fac, lev;
-
-	for (save = s; *s && *s != '.'; ++s);
-	if (*s) {
-		*s = '\0';
-		fac = decode(save, facilitynames);
-		if (fac < 0)
-			errx(EXIT_FAILURE,
-			    _("unknown facility name: %s."), save);
-		*s++ = '.';
-	}
-	else {
-		fac = LOG_USER;
-		s = save;
-	}
-	lev = decode(s, prioritynames);
-	if (lev < 0)
-		errx(EXIT_FAILURE,
-		    _("unknown priority name: %s."), save);
-	return ((lev & LOG_PRIMASK) | (fac & LOG_FACMASK));
-}
-
-int
-decode(char *name, CODE *codetab)
-{
-	register CODE *c;
-
-	if (isdigit(*name))
-		return (atoi(name));
-
-	for (c = codetab; c->c_name; c++)
-		if (!strcasecmp(name, c->c_name))
-			return (c->c_val);
-
-	return (-1);
 }
