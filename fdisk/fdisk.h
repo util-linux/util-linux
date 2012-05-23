@@ -56,6 +56,16 @@
 					fflush(stderr);			\
 			} while(0)
 
+static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
+dbgprint(const char *mesg, ...)
+{
+	va_list ap;
+	va_start(ap, mesg);
+	vfprintf(stderr, mesg, ap);
+	va_end(ap);
+	fputc('\n', stderr);
+}
+
 extern int fdisk_debug_mask;
 extern void fdisk_init_debug(int mask);
 

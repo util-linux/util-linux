@@ -48,7 +48,7 @@ void fdisk_init_debug(int mask)
 		fdisk_debug_mask = mask;
 
 	if (fdisk_debug_mask)
-		printf("fdisk: debug mask set to 0x%04x.\n",
+		fprintf(stderr, "fdisk: debug mask set to 0x%04x.\n",
 		       fdisk_debug_mask);
 	fdisk_debug_mask |= FDISK_DEBUG_INIT;
 }
