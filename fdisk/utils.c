@@ -58,7 +58,7 @@ void fdisk_init_debug(int mask)
  *
  * Returns: newly allocated fdisk context
  */
-struct fdisk_context *fdisk_new_context_from_filename(const char *fname)
+struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int readonly)
 {
 	int fd, errsv = 0;
 	struct fdisk_context *cxt = NULL;
@@ -67,10 +67,10 @@ struct fdisk_context *fdisk_new_context_from_filename(const char *fname)
 	 * Attempt to open the device with r-w permissions
 	 * by default, otherwise try read-only.
 	 */
-	if ((fd = open(fname, O_RDWR)) < 0) {
+	if (readonly == 1 || (fd = open(fname, O_RDWR)) < 0) {
 		if ((fd = open(fname, O_RDONLY)) < 0)
 			return NULL;
-		DBG(CONTEXT, printf("opened %s as read-only\n", fname));
+		readonly = 1;
 	}
 
 	cxt = calloc(1, sizeof(*cxt));
@@ -82,11 +82,15 @@ struct fdisk_context *fdisk_new_context_from_filename(const char *fname)
 	if (!cxt->dev_path)
 		goto fail;
 
+	DBG(CONTEXT, dbgprint("context initialized for %s [%s]",
+			fname, readonly ? "READ-ONLY" : "READ-WRITE"));
 	return cxt;
 fail:
 	errsv = errno;
 	fdisk_free_context(cxt);
 	errno = errsv;
+
+	DBG(CONTEXT, dbgprint("failed to initialize context for %s: %m", fname));
 	return NULL;
 }
 
@@ -101,6 +105,7 @@ void fdisk_free_context(struct fdisk_context *cxt)
 	if (!cxt)
 		return;
 
+	DBG(CONTEXT, dbgprint("freeing context for %s", cxt->dev_path));
 	close(cxt->dev_fd);
 	free(cxt->dev_path);
 	free(cxt);

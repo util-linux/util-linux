@@ -1927,7 +1927,7 @@ print_partition_table_from_option(char *device)
 {
 	int gb;
 
-	cxt = fdisk_new_context_from_filename(device);
+	cxt = fdisk_new_context_from_filename(device, 1);	/* read-only */
 	if (!cxt)
 		err(EXIT_FAILURE, _("unable to open %s"), device);
 
@@ -1941,6 +1941,7 @@ print_partition_table_from_option(char *device)
 	else if (!gb)
 		list_table(0);
 	fdisk_free_context(cxt);
+	cxt = NULL;
 }
 
 /*
@@ -2203,7 +2204,7 @@ int main(int argc, char **argv)
 	}
 
 	if (argc-optind == 1) {
-		cxt = fdisk_new_context_from_filename(argv[optind]);
+		cxt = fdisk_new_context_from_filename(argv[optind], 0);
 		if (!cxt)
 			err(EXIT_FAILURE, _("unable to open %s"), argv[optind]);
 	}

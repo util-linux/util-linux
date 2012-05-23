@@ -106,7 +106,8 @@ struct fdisk_context {
 };
 
 extern struct fdisk_context *cxt;
-extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname);
+
+extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int readonly);
 extern void fdisk_free_context(struct fdisk_context *cxt);
 
 /* prototypes for fdisk.c */
