@@ -225,8 +225,7 @@ get(void)
 {
 	static int ateof = 1;
 	static u_char *curp, *savp;
-	ssize_t n;
-	int need, nread;
+	ssize_t n, need, nread;
 	u_char *tmpp;
 
 	if (!curp) {
