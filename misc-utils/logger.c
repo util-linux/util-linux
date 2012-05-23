@@ -248,8 +248,6 @@ main(int argc, char **argv) {
 	else
 		LogSock = myopenlog(usock);
 
-	(void) fclose(stdout);
-
 	/* log input line if appropriate */
 	if (argc > 0) {
 		register char *p, *endp;
