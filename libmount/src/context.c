@@ -1263,7 +1263,7 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 {
 	char *type;
 	const char *dev;
-	int rc = -EINVAL;
+	int rc = 0;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -1290,7 +1290,7 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 
 	dev = mnt_fs_get_srcpath(cxt->fs);
 	if (!dev)
-		goto err;
+		goto done;
 
 	if (access(dev, F_OK) == 0) {
 		struct libmnt_cache *cache = mnt_context_get_cache(cxt);
@@ -1307,16 +1307,12 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 		else if (!strncmp(dev, "//", 2))
 			rc = mnt_fs_set_fstype(cxt->fs, "cifs");
 	}
-	if (rc)
-		goto err;
+
 done:
 	DBG(CXT, mnt_debug_h(cxt, "FS type: %s", mnt_fs_get_fstype(cxt->fs)));
 	return rc;
 none:
 	return mnt_fs_set_fstype(cxt->fs, "none");
-err:
-	DBG(CXT, mnt_debug_h(cxt, "failed to detect FS type"));
-	return rc;
 }
 
 /*
