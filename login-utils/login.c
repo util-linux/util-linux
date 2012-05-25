@@ -49,7 +49,9 @@
 #include <stdlib.h>
 #include <sys/syslog.h>
 #include <sys/sysmacros.h>
-#include <linux/major.h>
+#ifdef HAVE_LINUX_MAJOR_H
+# include <linux/major.h>
+#endif
 #include <netdb.h>
 #include <lastlog.h>
 #include <security/pam_appl.h>
