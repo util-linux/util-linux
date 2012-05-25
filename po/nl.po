@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.21-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2012-03-30 11:36+0200\n"
+"POT-Creation-Date: 2012-05-25 11:48+0200\n"
 "PO-Revision-Date: 2012-02-19 20:29+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -273,12 +273,12 @@ msgstr ""
 #: disk-utils/fdformat.c:129 disk-utils/mkfs.bfs.c:88
 #: disk-utils/mkfs.cramfs.c:772 disk-utils/mkswap.c:526 fdisk/sfdisk.c:2629
 #: fsck/fsck.c:1451 getopt/getopt.c:430 hwclock/hwclock.c:1353
-#: misc-utils/cal.c:351 misc-utils/kill.c:195 misc-utils/logger.c:234
-#: misc-utils/look.c:124 misc-utils/mcookie.c:116 misc-utils/namei.c:458
+#: misc-utils/cal.c:351 misc-utils/kill.c:194 misc-utils/logger.c:233
+#: misc-utils/look.c:124 misc-utils/mcookie.c:116 misc-utils/namei.c:464
 #: misc-utils/rename.c:99 misc-utils/uuidd.c:505 misc-utils/uuidgen.c:75
 #: misc-utils/whereis.c:464 misc-utils/wipefs.c:395 schedutils/ionice.c:169
 #: sys-utils/chcpu.c:297 sys-utils/cytune.c:381 sys-utils/dmesg.c:765
-#: sys-utils/lscpu.c:1301 term-utils/agetty.c:681 term-utils/mesg.c:103
+#: sys-utils/lscpu.c:1303 term-utils/agetty.c:681 term-utils/mesg.c:103
 #: term-utils/script.c:211 term-utils/scriptreplay.c:170
 #: term-utils/setterm.c:811 term-utils/wall.c:139 term-utils/write.c:110
 #: text-utils/col.c:210 text-utils/colcrt.c:116 text-utils/colrm.c:171
@@ -343,7 +343,7 @@ msgid "stat failed: %s"
 msgstr "status opvragen is mislukt: %s"
 
 #: disk-utils/fsck.cramfs.c:145 disk-utils/fsck.cramfs.c:497
-#: sys-utils/rtcwake.c:117 sys-utils/rtcwake.c:276 sys-utils/rtcwake.c:514
+#: sys-utils/rtcwake.c:118 sys-utils/rtcwake.c:278 sys-utils/rtcwake.c:516
 #: term-utils/script.c:232 term-utils/script.c:563
 #, c-format
 msgid "open failed: %s"
@@ -5758,8 +5758,8 @@ msgstr ""
 "<soort>).\n"
 
 #: fdisk/sfdisk.c:2363 getopt/getopt.c:314 hwclock/hwclock.c:1373
-#: misc-utils/cal.c:782 misc-utils/logger.c:138 misc-utils/look.c:366
-#: misc-utils/mcookie.c:66 misc-utils/namei.c:411 misc-utils/rename.c:64
+#: misc-utils/cal.c:782 misc-utils/logger.c:137 misc-utils/look.c:366
+#: misc-utils/mcookie.c:66 misc-utils/namei.c:417 misc-utils/rename.c:64
 #: misc-utils/uuidd.c:54 misc-utils/uuidgen.c:33 misc-utils/whereis.c:138
 #: misc-utils/wipefs.c:332 sys-utils/dmesg.c:145 sys-utils/fallocate.c:59
 #: sys-utils/fsfreeze.c:40 sys-utils/fstrim.c:55 sys-utils/mountpoint.c:115
@@ -5779,8 +5779,8 @@ msgid " %s [options] <device> [...]\n"
 msgstr "  %s [opties] [<apparaat>...]\n"
 
 #: fdisk/sfdisk.c:2367 getopt/getopt.c:322 hwclock/hwclock.c:1393
-#: misc-utils/cal.c:787 misc-utils/logger.c:142 misc-utils/look.c:370
-#: misc-utils/mcookie.c:70 misc-utils/namei.c:415 misc-utils/rename.c:69
+#: misc-utils/cal.c:787 misc-utils/logger.c:141 misc-utils/look.c:370
+#: misc-utils/mcookie.c:70 misc-utils/namei.c:421 misc-utils/rename.c:69
 #: misc-utils/uuidd.c:58 misc-utils/uuidgen.c:37 misc-utils/whereis.c:142
 #: misc-utils/wipefs.c:336 sys-utils/dmesg.c:149 sys-utils/fallocate.c:63
 #: sys-utils/fsfreeze.c:44 sys-utils/fstrim.c:59 sys-utils/mountpoint.c:120
@@ -7268,7 +7268,7 @@ msgstr "ioctl(RTC_EPOCH_SET) op %s is mislukt"
 msgid "error: cannot open %s"
 msgstr "fout: kan %s niet openen"
 
-#: lib/path.c:174 sys-utils/lscpu.c:1112
+#: lib/path.c:174 sys-utils/lscpu.c:1114
 msgid "failed to callocate cpu set"
 msgstr "reserveren van geheugen voor processorenset is mislukt"
 
@@ -7560,75 +7560,75 @@ msgstr "'chmod' (%s, %u) is mislukt: %m"
 msgid "FATAL: bad tty"
 msgstr "FATAAL: slechte tty"
 
-#: login-utils/login.c:402
+#: login-utils/login.c:404
 #, c-format
 msgid "FATAL: %s: change permissions failed: %m"
 msgstr "FATAAL: %s: wijzigen van toegangsrechten is mislukt: %m"
 
-#: login-utils/login.c:521
+#: login-utils/login.c:523
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Laatste keer ingelogd: %.*s "
 
-#: login-utils/login.c:523
+#: login-utils/login.c:525
 #, c-format
 msgid "from %.*s\n"
 msgstr "vanaf %.*s\n"
 
-#: login-utils/login.c:526
+#: login-utils/login.c:528
 #, c-format
 msgid "on %.*s\n"
 msgstr "op %.*s\n"
 
-#: login-utils/login.c:543
+#: login-utils/login.c:545
 msgid "write lastlog failed"
 msgstr "schrijven van 'lastlog' is mislukt"
 
-#: login-utils/login.c:628
+#: login-utils/login.c:635
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "INBELLEN OP %s DOOR %s"
 
-#: login-utils/login.c:633
+#: login-utils/login.c:640
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "ROOT-LOGIN OP %s VANAF %s"
 
-#: login-utils/login.c:636
+#: login-utils/login.c:643
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "ROOT-LOGIN OP %s"
 
-#: login-utils/login.c:639
+#: login-utils/login.c:646
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "LOGIN OP %s DOOR %s VANAF %s"
 
-#: login-utils/login.c:642
+#: login-utils/login.c:649
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "LOGIN OP %s DOOR %s"
 
-#: login-utils/login.c:703
+#: login-utils/login.c:710
 msgid "login: "
 msgstr "inlognaam: "
 
-#: login-utils/login.c:729
+#: login-utils/login.c:736
 #, c-format
 msgid "PAM failure, aborting: %s"
 msgstr "PAM-fout -- gestopt: %s"
 
-#: login-utils/login.c:730
+#: login-utils/login.c:737
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "Kan PAM niet initialiseren: %s"
 
-#: login-utils/login.c:801
+#: login-utils/login.c:808
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "INLOGPOGING %d IS MISLUKT VANAF %s VOOR %s -- %s"
 
-#: login-utils/login.c:809
+#: login-utils/login.c:816
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -7637,17 +7637,17 @@ msgstr ""
 "Inloggegevens onjuist\n"
 "\n"
 
-#: login-utils/login.c:824
+#: login-utils/login.c:831
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "TE VEEL INLOGPOGINGEN (%d) VANAF %s VOOR %s -- %s"
 
-#: login-utils/login.c:830
+#: login-utils/login.c:837
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "INLOGSESSIE IS MISLUKT VANAF %s VOOR %s -- %s"
 
-#: login-utils/login.c:838
+#: login-utils/login.c:845
 #, c-format
 msgid ""
 "\n"
@@ -7656,7 +7656,7 @@ msgstr ""
 "\n"
 "Inloggegevens onjuist\n"
 
-#: login-utils/login.c:866 login-utils/login.c:1317 login-utils/login.c:1341
+#: login-utils/login.c:873 login-utils/login.c:1325 login-utils/login.c:1349
 msgid ""
 "\n"
 "Session setup problem, abort."
@@ -7664,75 +7664,75 @@ msgstr ""
 "\n"
 "Sessie-instellingsprobleem -- gestopt"
 
-#: login-utils/login.c:867
+#: login-utils/login.c:874
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "Lege gebruikersnaam in %s:%d -- gestopt"
 
-#: login-utils/login.c:1069 login-utils/vipw.c:232 sys-utils/flock.c:306
+#: login-utils/login.c:1076 login-utils/vipw.c:232 sys-utils/flock.c:306
 #: sys-utils/swapon.c:274 term-utils/script.c:263 term-utils/script.c:273
 msgid "fork failed"
 msgstr "fork() is mislukt"
 
-#: login-utils/login.c:1121
+#: login-utils/login.c:1128
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "ioctl(TIOCSCTTY) is mislukt: %m"
 
-#: login-utils/login.c:1261
+#: login-utils/login.c:1269
 #, c-format
 msgid "login: -h for super-user only.\n"
 msgstr "login: optie '-h' kan alleen door root gebruikt worden\n"
 
-#: login-utils/login.c:1276
+#: login-utils/login.c:1284
 #, c-format
 msgid "usage: login [ -p ] [ -h host ] [ -H ] [ -f username | username ]\n"
 msgstr ""
 "Gebruik:  login [-p] [-h host] [-H] [<gebruikersnaam>|-f <gebruikersnaam>]\n"
 
-#: login-utils/login.c:1318
+#: login-utils/login.c:1326
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Onjuiste gebruikersnaam '%s' in %s:%d -- gestopt"
 
-#: login-utils/login.c:1340
+#: login-utils/login.c:1348
 #, c-format
 msgid "groups initialization failed: %m"
 msgstr "initialisatie van groepen is mislukt: %m"
 
-#: login-utils/login.c:1365
+#: login-utils/login.c:1373
 msgid "setgid() failed"
 msgstr "setgid() is mislukt"
 
-#: login-utils/login.c:1395
+#: login-utils/login.c:1403
 #, c-format
 msgid "You have new mail.\n"
 msgstr "U hebt nieuwe e-mail.\n"
 
-#: login-utils/login.c:1397
+#: login-utils/login.c:1405
 #, c-format
 msgid "You have mail.\n"
 msgstr "U hebt e-mail.\n"
 
-#: login-utils/login.c:1411
+#: login-utils/login.c:1419
 msgid "setuid() failed"
 msgstr "setuid() is mislukt"
 
-#: login-utils/login.c:1417
+#: login-utils/login.c:1425
 #, c-format
 msgid "%s: change directory failed"
 msgstr "%s: wijzigen van map is mislukt"
 
-#: login-utils/login.c:1424
+#: login-utils/login.c:1432
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Ingelogd met home = '/'.\n"
 
-#: login-utils/login.c:1453
+#: login-utils/login.c:1461
 msgid "couldn't exec shell script"
 msgstr "kan shell-script niet uitvoeren"
 
-#: login-utils/login.c:1455
+#: login-utils/login.c:1463
 msgid "no shell"
 msgstr "geen shell"
 
@@ -7895,7 +7895,7 @@ msgstr "Sint Tibs dag"
 msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
 msgstr "Gebruik:  %s LABEL=<label>|UUID=<uuid>\n"
 
-#: misc-utils/findfs.c:55 misc-utils/logger.c:94
+#: misc-utils/findfs.c:55 misc-utils/logger.c:93
 #, c-format
 msgid "unable to resolve '%s'"
 msgstr "kan '%s' niet herleiden"
@@ -8086,7 +8086,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:865 misc-utils/lsblk.c:943 sys-utils/lscpu.c:1225
+#: misc-utils/findmnt.c:865 misc-utils/lsblk.c:943 sys-utils/lscpu.c:1227
 #, c-format
 msgid ""
 "\n"
@@ -8095,117 +8095,108 @@ msgstr ""
 "\n"
 "Beschikbare kolommen:\n"
 
-#: misc-utils/findmnt.c:871
-#, c-format
-msgid ""
-"\n"
-"For more information see findmnt(1).\n"
-msgstr ""
-"\n"
-"Voor meer informatie zie findmnt(1).\n"
-
-#: misc-utils/findmnt.c:879 misc-utils/lsblk.c:956
+#: misc-utils/findmnt.c:878 misc-utils/lsblk.c:956
 msgid "options are mutually exclusive"
 msgstr "opties gaan niet samen"
 
-#: misc-utils/findmnt.c:949
+#: misc-utils/findmnt.c:948
 #, c-format
 msgid "unknown direction '%s'"
 msgstr "onbekende richting '%s'"
 
-#: misc-utils/findmnt.c:1043
+#: misc-utils/findmnt.c:1042
 msgid "failed to parse timeout"
 msgstr "ontleden van wachttijdwaarde is mislukt"
 
-#: misc-utils/findmnt.c:1070
+#: misc-utils/findmnt.c:1069
 msgid "--poll accepts only one file, but mure specified by --tab-file"
 msgstr ""
 "optie '--poll' accepteert slechts één bestand, maar '--tab-file' geeft er "
 "meerdere"
 
-#: misc-utils/findmnt.c:1075
+#: misc-utils/findmnt.c:1074
 msgid ""
 "options --target and --source can't be used together with command line "
 "element that is not an option"
 msgstr "opties '--target' en '--source' gaan niet samen met andere argumenten"
 
-#: misc-utils/findmnt.c:1117
+#: misc-utils/findmnt.c:1116
 msgid "failed to initialize libmount cache"
 msgstr "initialiseren van libmount-cache is mislukt"
 
-#: misc-utils/findmnt.c:1127 misc-utils/lsblk.c:1099 partx/partx.c:526
-#: sys-utils/lscpu.c:1016 sys-utils/prlimit.c:282
+#: misc-utils/findmnt.c:1126 misc-utils/lsblk.c:1099 partx/partx.c:526
+#: sys-utils/lscpu.c:1018 sys-utils/prlimit.c:282
 msgid "failed to initialize output table"
 msgstr "initialiseren van uitvoertabel is mislukt"
 
-#: misc-utils/findmnt.c:1139
+#: misc-utils/findmnt.c:1138
 #, c-format
 msgid "%s column is requested, but --poll is not enabled"
 msgstr "kolom %s wordt gevraagd, maar '--poll' is niet gegeven"
 
-#: misc-utils/findmnt.c:1145 misc-utils/lsblk.c:1109 partx/partx.c:534
+#: misc-utils/findmnt.c:1144 misc-utils/lsblk.c:1109 partx/partx.c:534
 #: sys-utils/prlimit.c:290
 msgid "failed to initialize output column"
 msgstr "initialiseren van uitvoerkolom is mislukt"
 
-#: misc-utils/kill.c:213
+#: misc-utils/kill.c:212
 #, c-format
 msgid "%s: unknown signal %s\n"
 msgstr "%s: onbekend signaal %s\n"
 
-#: misc-utils/kill.c:246
+#: misc-utils/kill.c:245
 msgid "failed to parse sigval"
 msgstr "ontleden van signaalwaarde is mislukt"
 
-#: misc-utils/kill.c:287
+#: misc-utils/kill.c:286
 #, c-format
 msgid "%s: can't find process \"%s\"\n"
 msgstr "%s: kan proces '%s' niet vinden\n"
 
-#: misc-utils/kill.c:367
+#: misc-utils/kill.c:366
 #, c-format
 msgid "%s: unknown signal %s; valid signals:\n"
 msgstr "%s: onbekend signaal %s; geldige signalen zijn:\n"
 
-#: misc-utils/kill.c:415
+#: misc-utils/kill.c:414
 #, c-format
 msgid "usage: %s [ -s signal | -p ] [ -a ] pid ...\n"
 msgstr "Gebruik:  %s [ -s signaal | -p ] [ -a ] PID...\n"
 
-#: misc-utils/kill.c:416
+#: misc-utils/kill.c:415
 #, c-format
 msgid "       %s -l [ signal ]\n"
 msgstr "          %s -l [ signaal ]\n"
 
-#: misc-utils/logger.c:73
+#: misc-utils/logger.c:72
 #, c-format
 msgid "openlog %s: pathname too long"
 msgstr "openlog %s: padnaam is te lang"
 
-#: misc-utils/logger.c:79
+#: misc-utils/logger.c:78
 #, c-format
 msgid "socket %s"
 msgstr "socket %s"
 
-#: misc-utils/logger.c:82
+#: misc-utils/logger.c:81
 #, c-format
 msgid "connect %s"
 msgstr "verbinding %s"
 
-#: misc-utils/logger.c:97 misc-utils/uuidd.c:140
+#: misc-utils/logger.c:96 misc-utils/uuidd.c:140
 msgid "socket"
 msgstr "socket"
 
-#: misc-utils/logger.c:104 misc-utils/uuidd.c:151
+#: misc-utils/logger.c:103 misc-utils/uuidd.c:151
 msgid "connect"
 msgstr "verbinden"
 
-#: misc-utils/logger.c:140
+#: misc-utils/logger.c:139
 #, c-format
 msgid " %s [options] [message]\n"
 msgstr "  %s [opties] [<bericht>]\n"
 
-#: misc-utils/logger.c:143
+#: misc-utils/logger.c:142
 msgid ""
 " -d, --udp             use UDP (TCP is default)\n"
 " -i, --id              log the process ID too\n"
@@ -8217,7 +8208,7 @@ msgstr ""
 "  -f, --file <bestand>   de inhoud van dit bestand loggen\n"
 "  -h, --help             deze hulptekst tonen en stoppen\n"
 
-#: misc-utils/logger.c:147
+#: misc-utils/logger.c:146
 msgid ""
 " -n, --server <name>   write to this remote syslog server\n"
 " -P, --port <number>   use this UDP port\n"
@@ -8230,7 +8221,7 @@ msgstr ""
 "markeren\n"
 "  -s, --stderr           de regels ook naar standaardfoutuitvoer schrijven\n"
 
-#: misc-utils/logger.c:151
+#: misc-utils/logger.c:150
 msgid ""
 " -t, --tag <tag>       mark every line with this tag\n"
 " -u, --socket <socket> write to this Unix socket\n"
@@ -8242,26 +8233,26 @@ msgstr ""
 "  -V, --version          programmaversie tonen en stoppen\n"
 "\n"
 
-#: misc-utils/logger.c:200
+#: misc-utils/logger.c:199
 #, c-format
 msgid "file %s"
 msgstr "bestand %s"
 
-#: misc-utils/logger.c:227
+#: misc-utils/logger.c:226
 msgid "failed to parse port number"
 msgstr "ontleden van poortnummer is mislukt"
 
-#: misc-utils/logger.c:229
+#: misc-utils/logger.c:228
 #, c-format
 msgid "port `%ld' out of range"
 msgstr "poort '%ld' valt buiten bereik"
 
-#: misc-utils/logger.c:327
+#: misc-utils/logger.c:326
 #, c-format
 msgid "unknown facility name: %s."
 msgstr "onbekende voorzieningsnaam in prioriteit: %s"
 
-#: misc-utils/logger.c:337
+#: misc-utils/logger.c:336
 #, c-format
 msgid "unknown priority name: %s."
 msgstr "onbekende prioriteitsnaam: %s"
@@ -8489,7 +8480,7 @@ msgstr "kan geen toegang krijgen tot 'sysfs'-map: %s"
 
 #: misc-utils/mcookie.c:68 misc-utils/uuidd.c:56 misc-utils/uuidgen.c:35
 #: sys-utils/arch.c:33 sys-utils/dmesg.c:147 sys-utils/ipcmk.c:66
-#: sys-utils/lscpu.c:1212 sys-utils/readprofile.c:103 sys-utils/rtcwake.c:87
+#: sys-utils/lscpu.c:1214 sys-utils/readprofile.c:103 sys-utils/rtcwake.c:88
 #: term-utils/setterm.c:677
 #, c-format
 msgid " %s [options]\n"
@@ -8529,22 +8520,22 @@ msgstr "sluiten van %s is mislukt"
 msgid "failed to read symlink: %s"
 msgstr "lezen van symlink %s is mislukt"
 
-#: misc-utils/namei.c:224
+#: misc-utils/namei.c:230
 #, c-format
 msgid "could not stat '%s'"
 msgstr "kan status van '%s' niet opvragen"
 
-#: misc-utils/namei.c:363
+#: misc-utils/namei.c:369
 #, c-format
 msgid "%s - No such file or directory\n"
 msgstr "%s -- Bestand of map bestaat niet\n"
 
-#: misc-utils/namei.c:413
+#: misc-utils/namei.c:419
 #, c-format
 msgid " %s [options] pathname [pathname ...]\n"
 msgstr "  %s [opties] <padnaam>...\n"
 
-#: misc-utils/namei.c:416
+#: misc-utils/namei.c:422
 msgid ""
 " -h, --help          displays this help text\n"
 " -V, --version       output version information and exit\n"
@@ -8564,7 +8555,7 @@ msgstr ""
 "  -v, --vertical       bestandsmodus en eigenaarnamen verticaal uitlijnen\n"
 "  -V, --version        programmaversie tonen en stoppen\n"
 
-#: misc-utils/namei.c:425
+#: misc-utils/namei.c:431
 msgid ""
 "\n"
 "For more information see namei(1).\n"
@@ -8572,11 +8563,11 @@ msgstr ""
 "\n"
 "Voor meer informatie zie namei(1).\n"
 
-#: misc-utils/namei.c:485
+#: misc-utils/namei.c:491
 msgid "pathname argument is missing"
 msgstr "padnaam-argument ontbreekt"
 
-#: misc-utils/namei.c:509
+#: misc-utils/namei.c:515
 #, c-format
 msgid "%s: exceeded limit of symlinks"
 msgstr "%s: limiet op aantal symbolische koppelingen is overschreden"
@@ -12138,117 +12129,117 @@ msgstr ""
 "# andere programma's gebruikt kan worden.  Elk verschillend\n"
 "# item in elke kolom heeft een uniek ID, beginnend bij nul.\n"
 
-#: sys-utils/lscpu.c:1075
+#: sys-utils/lscpu.c:1077
 msgid "Architecture:"
 msgstr "Architectuur:"
 
-#: sys-utils/lscpu.c:1089
+#: sys-utils/lscpu.c:1091
 msgid "CPU op-mode(s):"
 msgstr "CPU-modus(sen):"
 
-#: sys-utils/lscpu.c:1092 sys-utils/lscpu.c:1094
+#: sys-utils/lscpu.c:1094 sys-utils/lscpu.c:1096
 msgid "Byte Order:"
 msgstr "Bytevolgorde:"
 
-#: sys-utils/lscpu.c:1096
+#: sys-utils/lscpu.c:1098
 msgid "CPU(s):"
 msgstr "CPU('s):"
 
-#: sys-utils/lscpu.c:1099
+#: sys-utils/lscpu.c:1101
 msgid "On-line CPU(s) mask:"
 msgstr "Online CPU('s)-masker:"
 
-#: sys-utils/lscpu.c:1100
+#: sys-utils/lscpu.c:1102
 msgid "On-line CPU(s) list:"
 msgstr "Online CPU('s)-lijst:"
 
-#: sys-utils/lscpu.c:1118
+#: sys-utils/lscpu.c:1120
 msgid "Off-line CPU(s) mask:"
 msgstr "Offline CPU('s)-masker:"
 
-#: sys-utils/lscpu.c:1119
+#: sys-utils/lscpu.c:1121
 msgid "Off-line CPU(s) list:"
 msgstr "Offline CPU('s)-lijst:"
 
-#: sys-utils/lscpu.c:1150
+#: sys-utils/lscpu.c:1152
 msgid "Thread(s) per core:"
 msgstr "Draden per kern:"
 
-#: sys-utils/lscpu.c:1151
+#: sys-utils/lscpu.c:1153
 msgid "Core(s) per socket:"
 msgstr "Kern(en) per voet:"
 
-#: sys-utils/lscpu.c:1154
+#: sys-utils/lscpu.c:1156
 msgid "Socket(s) per book:"
 msgstr "Voet(en) per boek:"
 
-#: sys-utils/lscpu.c:1156
+#: sys-utils/lscpu.c:1158
 msgid "Book(s):"
 msgstr "Boek(en):"
 
-#: sys-utils/lscpu.c:1158
+#: sys-utils/lscpu.c:1160
 msgid "Socket(s):"
 msgstr "CPU-voet(en):"
 
-#: sys-utils/lscpu.c:1162
+#: sys-utils/lscpu.c:1164
 msgid "NUMA node(s):"
 msgstr "NUMA-node(s):"
 
-#: sys-utils/lscpu.c:1164
+#: sys-utils/lscpu.c:1166
 msgid "Vendor ID:"
 msgstr "Producent-ID:"
 
-#: sys-utils/lscpu.c:1166
+#: sys-utils/lscpu.c:1168
 msgid "CPU family:"
 msgstr "CPU-familie:"
 
-#: sys-utils/lscpu.c:1168
+#: sys-utils/lscpu.c:1170
 msgid "Model:"
 msgstr "Model:"
 
-#: sys-utils/lscpu.c:1170
+#: sys-utils/lscpu.c:1172
 msgid "Stepping:"
 msgstr "Stepping:"
 
-#: sys-utils/lscpu.c:1172
+#: sys-utils/lscpu.c:1174
 msgid "CPU MHz:"
 msgstr "CPU-frequentie (MHz):"
 
-#: sys-utils/lscpu.c:1174
+#: sys-utils/lscpu.c:1176
 msgid "BogoMIPS:"
 msgstr "BogoMIPS:"
 
-#: sys-utils/lscpu.c:1177 sys-utils/lscpu.c:1179
+#: sys-utils/lscpu.c:1179 sys-utils/lscpu.c:1181
 msgid "Virtualization:"
 msgstr "Virtualisatie:"
 
-#: sys-utils/lscpu.c:1182
+#: sys-utils/lscpu.c:1184
 msgid "Hypervisor:"
 msgstr "Hypervisor:"
 
-#: sys-utils/lscpu.c:1184
+#: sys-utils/lscpu.c:1186
 msgid "Hypervisor vendor:"
 msgstr "Hypervisorproducent:"
 
-#: sys-utils/lscpu.c:1185
+#: sys-utils/lscpu.c:1187
 msgid "Virtualization type:"
 msgstr "Virtualisatiesoort:"
 
-#: sys-utils/lscpu.c:1188
+#: sys-utils/lscpu.c:1190
 msgid "Dispatching mode:"
 msgstr "Dispatching-modus:"
 
-#: sys-utils/lscpu.c:1195
+#: sys-utils/lscpu.c:1197
 #, c-format
 msgid "%s cache:"
 msgstr "%s-cache:"
 
-#: sys-utils/lscpu.c:1201
+#: sys-utils/lscpu.c:1203
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr "NUMA-node%d CPU('s):"
 
-#: sys-utils/lscpu.c:1215
+#: sys-utils/lscpu.c:1217
 msgid ""
 " -a, --all               print online and offline CPUs (default for -e)\n"
 " -b, --online            print online CPUs only (default for -p)\n"
@@ -12269,7 +12260,7 @@ msgstr ""
 "  -s, --sysroot MAP       deze map als hoofdmap gebruiken\n"
 "  -x, --hex               hexadecimale maskers tonen in plaats van lijsten\n"
 
-#: sys-utils/lscpu.c:1230
+#: sys-utils/lscpu.c:1232
 #, c-format
 msgid ""
 "\n"
@@ -12278,11 +12269,11 @@ msgstr ""
 "\n"
 "Voor meer informatie zie lscpu(1).\n"
 
-#: sys-utils/lscpu.c:1263
+#: sys-utils/lscpu.c:1265
 msgid "extended and parsable formats are mutually exclusive"
 msgstr "uitgebreide en ontleedbare opmaken gaan niet samen"
 
-#: sys-utils/lscpu.c:1266
+#: sys-utils/lscpu.c:1268
 msgid "--all, --online and --offline options are mutually exclusive"
 msgstr "opties '--all', '--online', en '--offline' gaan niet samen"
 
@@ -13066,7 +13057,7 @@ msgstr "instellen van prioriteit voor %d is mislukt (%s)"
 msgid "%d (%s) old priority %d, new priority %d\n"
 msgstr "%d (%s): oude prioriteit is %d, nieuwe prioriteit is %d\n"
 
-#: sys-utils/rtcwake.c:90
+#: sys-utils/rtcwake.c:91
 msgid ""
 " -d, --device <device>    select rtc device (rtc0|rtc1|...)\n"
 " -n, --dry-run            does everything, but suspend\n"
@@ -13088,150 +13079,150 @@ msgstr ""
 "  -u, --utc                 de hardwareklok bevat UTC\n"
 "  -v, --verbose             gedetailleerde uitvoer produceren\n"
 
-#: sys-utils/rtcwake.c:154
+#: sys-utils/rtcwake.c:155
 msgid "read rtc time failed"
 msgstr "lezen van hardwarekloktijd is mislukt"
 
-#: sys-utils/rtcwake.c:159
+#: sys-utils/rtcwake.c:160
 msgid "read system time failed"
 msgstr "lezen van systeemtijd is mislukt"
 
-#: sys-utils/rtcwake.c:177
+#: sys-utils/rtcwake.c:178
 msgid "convert rtc time failed"
 msgstr "omzetten van hardwarekloktijd is mislukt"
 
-#: sys-utils/rtcwake.c:237
+#: sys-utils/rtcwake.c:238
 msgid "set rtc alarm failed"
 msgstr "zetten van de wekker is mislukt"
 
-#: sys-utils/rtcwake.c:241
+#: sys-utils/rtcwake.c:242
 msgid "enable rtc alarm failed"
 msgstr "inschakelen van de wekker is mislukt"
 
-#: sys-utils/rtcwake.c:245
+#: sys-utils/rtcwake.c:247
 msgid "set rtc wake alarm failed"
 msgstr "zetten van de wekker is mislukt"
 
-#: sys-utils/rtcwake.c:347
+#: sys-utils/rtcwake.c:349
 msgid "read rtc alarm failed"
 msgstr "lezen van de wekker is mislukt"
 
-#: sys-utils/rtcwake.c:353
+#: sys-utils/rtcwake.c:355
 #, c-format
 msgid "alarm: off\n"
 msgstr "wekker: uit\n"
 
-#: sys-utils/rtcwake.c:370
+#: sys-utils/rtcwake.c:372
 msgid "convert time failed"
 msgstr "omzetten van hardwarekloktijd is mislukt"
 
-#: sys-utils/rtcwake.c:377
+#: sys-utils/rtcwake.c:379
 #, c-format
 msgid "alarm: on  %s"
 msgstr "wekker: aan  %s"
 
-#: sys-utils/rtcwake.c:433
+#: sys-utils/rtcwake.c:435
 #, c-format
 msgid "unrecognized suspend state '%s'"
 msgstr "onbekende slaaptoestand '%s'"
 
-#: sys-utils/rtcwake.c:444
+#: sys-utils/rtcwake.c:446
 msgid "failed to parse seconds value"
 msgstr "ontleden van secondenwaarde is mislukt"
 
-#: sys-utils/rtcwake.c:452
+#: sys-utils/rtcwake.c:454
 msgid "failed to parse time_t value"
 msgstr "ontleden van tijdstipwaarde is mislukt"
 
-#: sys-utils/rtcwake.c:476
+#: sys-utils/rtcwake.c:478
 #, c-format
 msgid "%s: assuming RTC uses UTC ...\n"
 msgstr "%s: aangenomen wordt dat de hardwareklok UTC bevat...\n"
 
-#: sys-utils/rtcwake.c:482
+#: sys-utils/rtcwake.c:484
 #, c-format
 msgid "Using UTC time.\n"
 msgstr "UTC wordt gebruikt.\n"
 
-#: sys-utils/rtcwake.c:483
+#: sys-utils/rtcwake.c:485
 #, c-format
 msgid "Using local time.\n"
 msgstr "Lokale tijd wordt gebruikt.\n"
 
-#: sys-utils/rtcwake.c:488
+#: sys-utils/rtcwake.c:490
 msgid "must provide wake time (see -t and -s options)"
 msgstr "u dient een wektijd op te geven, via '-s' of '-t'"
 
-#: sys-utils/rtcwake.c:505
+#: sys-utils/rtcwake.c:507
 #, c-format
 msgid "%s not enabled for wakeup events"
 msgstr "wekgebeurtenissen voor %s zijn niet ingeschakeld"
 
-#: sys-utils/rtcwake.c:520
+#: sys-utils/rtcwake.c:522
 #, c-format
 msgid "alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"
 msgstr "wektijdstip %ld, systeemtijd %ld, hardwarekloktijd %ld, seconden %u\n"
 
-#: sys-utils/rtcwake.c:526
+#: sys-utils/rtcwake.c:528
 #, c-format
 msgid "suspend to \"%s\" unavailable"
 msgstr "toestand opslaan naar \"%s\" is niet beschikbaar"
 
-#: sys-utils/rtcwake.c:534
+#: sys-utils/rtcwake.c:536
 #, c-format
 msgid "time doesn't go backward to %s"
 msgstr "tijd loopt niet achteruit naar %s"
 
-#: sys-utils/rtcwake.c:544
+#: sys-utils/rtcwake.c:546
 #, c-format
 msgid "%s: wakeup using %s at %s"
 msgstr "%s: ontwaking via %s op %s"
 
-#: sys-utils/rtcwake.c:548
+#: sys-utils/rtcwake.c:550
 #, c-format
 msgid "%s: wakeup from \"%s\" using %s at %s"
 msgstr "%s: ontwaking uit '%s' via %s op %s"
 
-#: sys-utils/rtcwake.c:557
+#: sys-utils/rtcwake.c:559
 #, c-format
 msgid "suspend mode: no; leaving\n"
 msgstr "slaapmodus: nee -- gestopt\n"
 
-#: sys-utils/rtcwake.c:565
+#: sys-utils/rtcwake.c:567
 #, c-format
 msgid "suspend mode: off; executing %s\n"
 msgstr "slaapmodus: uit -- uitvoeren van %s\n"
 
-#: sys-utils/rtcwake.c:575
+#: sys-utils/rtcwake.c:577
 #, c-format
 msgid "unable to execute %s"
 msgstr "kan %s niet uitvoeren"
 
-#: sys-utils/rtcwake.c:583
+#: sys-utils/rtcwake.c:585
 #, c-format
 msgid "suspend mode: on; reading rtc\n"
 msgstr "slaapmodus: aan -- lezen van hardwareklok\n"
 
-#: sys-utils/rtcwake.c:589
+#: sys-utils/rtcwake.c:591
 msgid "rtc read failed"
 msgstr "lezen van hardwareklok is mislukt"
 
-#: sys-utils/rtcwake.c:600
+#: sys-utils/rtcwake.c:602
 #, c-format
 msgid "suspend mode: disable; disabling alarm\n"
 msgstr "slaapmodus: uitgeschakeld -- wekker wordt uitgeschakeld\n"
 
-#: sys-utils/rtcwake.c:604
+#: sys-utils/rtcwake.c:606
 #, c-format
 msgid "suspend mode: show; printing alarm info\n"
 msgstr "slaapmodus: tonen -- wekkerinfo wordt getoond\n"
 
-#: sys-utils/rtcwake.c:611
+#: sys-utils/rtcwake.c:613
 #, c-format
 msgid "suspend mode: %s; suspending system\n"
 msgstr "slaapmodus: %s -- de computer gaat slapen\n"
 
-#: sys-utils/rtcwake.c:617
+#: sys-utils/rtcwake.c:620
 msgid "disable rtc alarm interrupt failed"
 msgstr "uitschakelen van hardwareklok-interrupt is mislukt"
 
@@ -14194,15 +14185,6 @@ msgid ""
 " -version\n"
 " -help\n"
 msgstr ""
-
-#: term-utils/setterm.c:718
-#, c-format
-msgid ""
-"\n"
-"For more information see lsblk(1).\n"
-msgstr ""
-"\n"
-"Voor meer informatie zie lsblk(1).\n"
 
 #: term-utils/setterm.c:1071
 msgid "cannot force blank"
@@ -15182,6 +15164,20 @@ msgstr "onbekende stuurcode in invoer: %o, %o"
 #: text-utils/ul.c:649
 msgid "Input line too long."
 msgstr "Invoerregel is te lang."
+
+#~ msgid ""
+#~ "\n"
+#~ "For more information see findmnt(1).\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Voor meer informatie zie findmnt(1).\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "For more information see lsblk(1).\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Voor meer informatie zie lsblk(1).\n"
 
 #~ msgid "Disk %s doesn't contain a valid partition table\n"
 #~ msgstr "Schijf %s bevat geen geldige partitietabel\n"

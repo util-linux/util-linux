@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.21-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2012-03-30 11:36+0200\n"
+"POT-Creation-Date: 2012-05-25 11:48+0200\n"
 "PO-Revision-Date: 2012-02-08 18:57+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
@@ -262,12 +262,12 @@ msgstr ""
 #: disk-utils/fdformat.c:129 disk-utils/mkfs.bfs.c:88
 #: disk-utils/mkfs.cramfs.c:772 disk-utils/mkswap.c:526 fdisk/sfdisk.c:2629
 #: fsck/fsck.c:1451 getopt/getopt.c:430 hwclock/hwclock.c:1353
-#: misc-utils/cal.c:351 misc-utils/kill.c:195 misc-utils/logger.c:234
-#: misc-utils/look.c:124 misc-utils/mcookie.c:116 misc-utils/namei.c:458
+#: misc-utils/cal.c:351 misc-utils/kill.c:194 misc-utils/logger.c:233
+#: misc-utils/look.c:124 misc-utils/mcookie.c:116 misc-utils/namei.c:464
 #: misc-utils/rename.c:99 misc-utils/uuidd.c:505 misc-utils/uuidgen.c:75
 #: misc-utils/whereis.c:464 misc-utils/wipefs.c:395 schedutils/ionice.c:169
 #: sys-utils/chcpu.c:297 sys-utils/cytune.c:381 sys-utils/dmesg.c:765
-#: sys-utils/lscpu.c:1301 term-utils/agetty.c:681 term-utils/mesg.c:103
+#: sys-utils/lscpu.c:1303 term-utils/agetty.c:681 term-utils/mesg.c:103
 #: term-utils/script.c:211 term-utils/scriptreplay.c:170
 #: term-utils/setterm.c:811 term-utils/wall.c:139 term-utils/write.c:110
 #: text-utils/col.c:210 text-utils/colcrt.c:116 text-utils/colrm.c:171
@@ -331,7 +331,7 @@ msgid "stat failed: %s"
 msgstr "помилка stat: %s"
 
 #: disk-utils/fsck.cramfs.c:145 disk-utils/fsck.cramfs.c:497
-#: sys-utils/rtcwake.c:117 sys-utils/rtcwake.c:276 sys-utils/rtcwake.c:514
+#: sys-utils/rtcwake.c:118 sys-utils/rtcwake.c:278 sys-utils/rtcwake.c:516
 #: term-utils/script.c:232 term-utils/script.c:563
 #, c-format
 msgid "open failed: %s"
@@ -5687,8 +5687,8 @@ msgstr ""
 "<тип>).\n"
 
 #: fdisk/sfdisk.c:2363 getopt/getopt.c:314 hwclock/hwclock.c:1373
-#: misc-utils/cal.c:782 misc-utils/logger.c:138 misc-utils/look.c:366
-#: misc-utils/mcookie.c:66 misc-utils/namei.c:411 misc-utils/rename.c:64
+#: misc-utils/cal.c:782 misc-utils/logger.c:137 misc-utils/look.c:366
+#: misc-utils/mcookie.c:66 misc-utils/namei.c:417 misc-utils/rename.c:64
 #: misc-utils/uuidd.c:54 misc-utils/uuidgen.c:33 misc-utils/whereis.c:138
 #: misc-utils/wipefs.c:332 sys-utils/dmesg.c:145 sys-utils/fallocate.c:59
 #: sys-utils/fsfreeze.c:40 sys-utils/fstrim.c:55 sys-utils/mountpoint.c:115
@@ -5707,8 +5707,8 @@ msgid " %s [options] <device> [...]\n"
 msgstr "%s [параметри]\n"
 
 #: fdisk/sfdisk.c:2367 getopt/getopt.c:322 hwclock/hwclock.c:1393
-#: misc-utils/cal.c:787 misc-utils/logger.c:142 misc-utils/look.c:370
-#: misc-utils/mcookie.c:70 misc-utils/namei.c:415 misc-utils/rename.c:69
+#: misc-utils/cal.c:787 misc-utils/logger.c:141 misc-utils/look.c:370
+#: misc-utils/mcookie.c:70 misc-utils/namei.c:421 misc-utils/rename.c:69
 #: misc-utils/uuidd.c:58 misc-utils/uuidgen.c:37 misc-utils/whereis.c:142
 #: misc-utils/wipefs.c:336 sys-utils/dmesg.c:149 sys-utils/fallocate.c:63
 #: sys-utils/fsfreeze.c:44 sys-utils/fstrim.c:59 sys-utils/mountpoint.c:120
@@ -7131,7 +7131,7 @@ msgstr "помилка у ioctl(RTC_EPOCH_SET) для %s"
 msgid "error: cannot open %s"
 msgstr "%s: не вдається відкрити %s\n"
 
-#: lib/path.c:174 sys-utils/lscpu.c:1112
+#: lib/path.c:174 sys-utils/lscpu.c:1114
 #, fuzzy
 msgid "failed to callocate cpu set"
 msgstr "не вдається виділити буфер.\n"
@@ -7442,76 +7442,76 @@ msgstr "помилка chdir(\"/dev\"): %m"
 msgid "FATAL: bad tty"
 msgstr "ФАТАЛЬНА ПОМИЛКА: неправильний tty"
 
-#: login-utils/login.c:402
+#: login-utils/login.c:404
 #, c-format
 msgid "FATAL: %s: change permissions failed: %m"
 msgstr ""
 
-#: login-utils/login.c:521
+#: login-utils/login.c:523
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Останній вхід: %.*s "
 
-#: login-utils/login.c:523
+#: login-utils/login.c:525
 #, c-format
 msgid "from %.*s\n"
 msgstr "з %.*s\n"
 
-#: login-utils/login.c:526
+#: login-utils/login.c:528
 #, c-format
 msgid "on %.*s\n"
 msgstr "на %.*s\n"
 
-#: login-utils/login.c:543
+#: login-utils/login.c:545
 #, fuzzy
 msgid "write lastlog failed"
 msgstr "Помилка відкривання %s"
 
-#: login-utils/login.c:628
+#: login-utils/login.c:635
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "ВХІД НА %s ВІД %s"
 
-#: login-utils/login.c:633
+#: login-utils/login.c:640
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "ВХІД ROOT НА %s З %s"
 
-#: login-utils/login.c:636
+#: login-utils/login.c:643
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "ВХІД ROOT НА %s"
 
-#: login-utils/login.c:639
+#: login-utils/login.c:646
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "ВХІД НА %s КОРИСТУВАЧ %s З %s"
 
-#: login-utils/login.c:642
+#: login-utils/login.c:649
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "ВХІД НА %s КОРИСТУВАЧ %s"
 
-#: login-utils/login.c:703
+#: login-utils/login.c:710
 msgid "login: "
 msgstr "Ім'я:"
 
-#: login-utils/login.c:729
+#: login-utils/login.c:736
 #, fuzzy, c-format
 msgid "PAM failure, aborting: %s"
 msgstr "login: помилка PAM, перервано: %s\n"
 
-#: login-utils/login.c:730
+#: login-utils/login.c:737
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "не вдається ініціалізувати PAM: %s"
 
-#: login-utils/login.c:801
+#: login-utils/login.c:808
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "ПОМИЛОК ВХОДУ %d З %s ДЛЯ %s, %s"
 
-#: login-utils/login.c:809
+#: login-utils/login.c:816
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -7520,17 +7520,17 @@ msgstr ""
 "Некоректний вхід\n"
 "\n"
 
-#: login-utils/login.c:824
+#: login-utils/login.c:831
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "НАДТО БАГАТО ПОМИЛОК ВХОДУ (%d) З %s ДЛЯ %s, %s"
 
-#: login-utils/login.c:830
+#: login-utils/login.c:837
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "НЕВДАЛИЙ СЕАНС ВХОДУ З %s ДЛЯ %s, %s"
 
-#: login-utils/login.c:838
+#: login-utils/login.c:845
 #, c-format
 msgid ""
 "\n"
@@ -7539,7 +7539,7 @@ msgstr ""
 "\n"
 "Некоректний вхід\n"
 
-#: login-utils/login.c:866 login-utils/login.c:1317 login-utils/login.c:1341
+#: login-utils/login.c:873 login-utils/login.c:1325 login-utils/login.c:1349
 #, fuzzy
 msgid ""
 "\n"
@@ -7548,79 +7548,79 @@ msgstr ""
 "\n"
 "Помилка встановлення сеансу, перервано.\n"
 
-#: login-utils/login.c:867
+#: login-utils/login.c:874
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "NULL ім'я користувача у %s:%d. Вихід."
 
-#: login-utils/login.c:1069 login-utils/vipw.c:232 sys-utils/flock.c:306
+#: login-utils/login.c:1076 login-utils/vipw.c:232 sys-utils/flock.c:306
 #: sys-utils/swapon.c:274 term-utils/script.c:263 term-utils/script.c:273
 #, fuzzy
 msgid "fork failed"
 msgstr "невдале розгалуження"
 
-#: login-utils/login.c:1121
+#: login-utils/login.c:1128
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "помилка TIOCSCTTY: %m"
 
-#: login-utils/login.c:1261
+#: login-utils/login.c:1269
 #, c-format
 msgid "login: -h for super-user only.\n"
 msgstr "login: параметр -h може використовувати лише адміністратор.\n"
 
-#: login-utils/login.c:1276
+#: login-utils/login.c:1284
 #, fuzzy, c-format
 msgid "usage: login [ -p ] [ -h host ] [ -H ] [ -f username | username ]\n"
 msgstr ""
 "Користування: last [-#] [-f file] [-t tty] [-h назва_вузла] "
 "[користувач ...]\n"
 
-#: login-utils/login.c:1318
+#: login-utils/login.c:1326
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Неправильне ім'я користувача \"%s\" у %s:%d. Вихід."
 
-#: login-utils/login.c:1340
+#: login-utils/login.c:1348
 #, c-format
 msgid "groups initialization failed: %m"
 msgstr ""
 
-#: login-utils/login.c:1365
+#: login-utils/login.c:1373
 #, fuzzy
 msgid "setgid() failed"
 msgstr "помилка setuid()"
 
-#: login-utils/login.c:1395
+#: login-utils/login.c:1403
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Для вас є нова пошта.\n"
 
-#: login-utils/login.c:1397
+#: login-utils/login.c:1405
 #, c-format
 msgid "You have mail.\n"
 msgstr "Для вас є пошта.\n"
 
-#: login-utils/login.c:1411
+#: login-utils/login.c:1419
 msgid "setuid() failed"
 msgstr "помилка setuid()"
 
-#: login-utils/login.c:1417
+#: login-utils/login.c:1425
 #, fuzzy, c-format
 msgid "%s: change directory failed"
 msgstr "помилка при встановленні позиції"
 
-#: login-utils/login.c:1424
+#: login-utils/login.c:1432
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Вхід з домашнім каталогом = \"/\".\n"
 
-#: login-utils/login.c:1453
+#: login-utils/login.c:1461
 #, fuzzy
 msgid "couldn't exec shell script"
 msgstr "login: не вдається виконати сценарій оболонки: %s.\n"
 
-#: login-utils/login.c:1455
+#: login-utils/login.c:1463
 #, fuzzy
 msgid "no shell"
 msgstr "Немає оболонки"
@@ -7784,7 +7784,7 @@ msgstr "День святого Tib"
 msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
 msgstr ""
 
-#: misc-utils/findfs.c:55 misc-utils/logger.c:94
+#: misc-utils/findfs.c:55 misc-utils/logger.c:93
 #, fuzzy, c-format
 msgid "unable to resolve '%s'"
 msgstr "не вдається відкрити '%s'"
@@ -7987,7 +7987,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:865 misc-utils/lsblk.c:943 sys-utils/lscpu.c:1225
+#: misc-utils/findmnt.c:865 misc-utils/lsblk.c:943 sys-utils/lscpu.c:1227
 #, c-format
 msgid ""
 "\n"
@@ -7996,115 +7996,106 @@ msgstr ""
 "\n"
 "Доступні стовпчики:\n"
 
-#: misc-utils/findmnt.c:871
-#, c-format
-msgid ""
-"\n"
-"For more information see findmnt(1).\n"
-msgstr ""
-"\n"
-"Додаткові відомості можна знайти у довідці до findmnt(1).\n"
-
-#: misc-utils/findmnt.c:879 misc-utils/lsblk.c:956
+#: misc-utils/findmnt.c:878 misc-utils/lsblk.c:956
 msgid "options are mutually exclusive"
 msgstr "параметри не можна використовувати одночасно"
 
-#: misc-utils/findmnt.c:949
+#: misc-utils/findmnt.c:948
 #, fuzzy, c-format
 msgid "unknown direction '%s'"
 msgstr "невідомий тип ресурсу: %s\n"
 
-#: misc-utils/findmnt.c:1043
+#: misc-utils/findmnt.c:1042
 msgid "failed to parse timeout"
 msgstr "не вдалося обробити значення часу очікування (тайм-ауту)"
 
-#: misc-utils/findmnt.c:1070
+#: misc-utils/findmnt.c:1069
 msgid "--poll accepts only one file, but mure specified by --tab-file"
 msgstr ""
 
-#: misc-utils/findmnt.c:1075
+#: misc-utils/findmnt.c:1074
 msgid ""
 "options --target and --source can't be used together with command line "
 "element that is not an option"
 msgstr ""
 
-#: misc-utils/findmnt.c:1117
+#: misc-utils/findmnt.c:1116
 msgid "failed to initialize libmount cache"
 msgstr "не вдалося ініціалізувати кеш libmount"
 
-#: misc-utils/findmnt.c:1127 misc-utils/lsblk.c:1099 partx/partx.c:526
-#: sys-utils/lscpu.c:1016 sys-utils/prlimit.c:282
+#: misc-utils/findmnt.c:1126 misc-utils/lsblk.c:1099 partx/partx.c:526
+#: sys-utils/lscpu.c:1018 sys-utils/prlimit.c:282
 msgid "failed to initialize output table"
 msgstr "не вдалося ініціалізувати таблицю виведення даних"
 
-#: misc-utils/findmnt.c:1139
+#: misc-utils/findmnt.c:1138
 #, c-format
 msgid "%s column is requested, but --poll is not enabled"
 msgstr ""
 
-#: misc-utils/findmnt.c:1145 misc-utils/lsblk.c:1109 partx/partx.c:534
+#: misc-utils/findmnt.c:1144 misc-utils/lsblk.c:1109 partx/partx.c:534
 #: sys-utils/prlimit.c:290
 msgid "failed to initialize output column"
 msgstr "не вдалося ініціалізувати стовпчик виведення"
 
-#: misc-utils/kill.c:213
+#: misc-utils/kill.c:212
 #, c-format
 msgid "%s: unknown signal %s\n"
 msgstr "%s: невідомий сигнал %s\n"
 
-#: misc-utils/kill.c:246
+#: misc-utils/kill.c:245
 msgid "failed to parse sigval"
 msgstr "не вдалося обробити sigval"
 
-#: misc-utils/kill.c:287
+#: misc-utils/kill.c:286
 #, c-format
 msgid "%s: can't find process \"%s\"\n"
 msgstr "%s: не вдається знайти процес \"%s\"\n"
 
-#: misc-utils/kill.c:367
+#: misc-utils/kill.c:366
 #, c-format
 msgid "%s: unknown signal %s; valid signals:\n"
 msgstr "%s: невідомий сигнал %s; правильні сигнали:\n"
 
-#: misc-utils/kill.c:415
+#: misc-utils/kill.c:414
 #, c-format
 msgid "usage: %s [ -s signal | -p ] [ -a ] pid ...\n"
 msgstr "використання: %s [ -s сигнал | -p ] [ -a ] pid ...\n"
 
-#: misc-utils/kill.c:416
+#: misc-utils/kill.c:415
 #, c-format
 msgid "       %s -l [ signal ]\n"
 msgstr "       %s -l [ сигнал ]\n"
 
-#: misc-utils/logger.c:73
+#: misc-utils/logger.c:72
 #, fuzzy, c-format
 msgid "openlog %s: pathname too long"
 msgstr "реєстраційне ім'я надто довге.\n"
 
-#: misc-utils/logger.c:79
+#: misc-utils/logger.c:78
 #, c-format
 msgid "socket %s"
 msgstr "сокет %s"
 
-#: misc-utils/logger.c:82
+#: misc-utils/logger.c:81
 #, c-format
 msgid "connect %s"
 msgstr "з'єднання %s"
 
-#: misc-utils/logger.c:97 misc-utils/uuidd.c:140
+#: misc-utils/logger.c:96 misc-utils/uuidd.c:140
 msgid "socket"
 msgstr "сокет"
 
-#: misc-utils/logger.c:104 misc-utils/uuidd.c:151
+#: misc-utils/logger.c:103 misc-utils/uuidd.c:151
 msgid "connect"
 msgstr "з'єднання"
 
-#: misc-utils/logger.c:140
+#: misc-utils/logger.c:139
 #, c-format
 msgid " %s [options] [message]\n"
 msgstr " %s [параметри] [повідомлення]\n"
 
-#: misc-utils/logger.c:143
+#: misc-utils/logger.c:142
 msgid ""
 " -d, --udp             use UDP (TCP is default)\n"
 " -i, --id              log the process ID too\n"
@@ -8112,7 +8103,7 @@ msgid ""
 " -h, --help            display this help text and exit\n"
 msgstr ""
 
-#: misc-utils/logger.c:147
+#: misc-utils/logger.c:146
 msgid ""
 " -n, --server <name>   write to this remote syslog server\n"
 " -P, --port <number>   use this UDP port\n"
@@ -8120,7 +8111,7 @@ msgid ""
 " -s, --stderr          output message to standard error as well\n"
 msgstr ""
 
-#: misc-utils/logger.c:151
+#: misc-utils/logger.c:150
 msgid ""
 " -t, --tag <tag>       mark every line with this tag\n"
 " -u, --socket <socket> write to this Unix socket\n"
@@ -8128,26 +8119,26 @@ msgid ""
 "\n"
 msgstr ""
 
-#: misc-utils/logger.c:200
+#: misc-utils/logger.c:199
 #, c-format
 msgid "file %s"
 msgstr "файл %s"
 
-#: misc-utils/logger.c:227
+#: misc-utils/logger.c:226
 msgid "failed to parse port number"
 msgstr "не вдалося обробити номер порту"
 
-#: misc-utils/logger.c:229
+#: misc-utils/logger.c:228
 #, c-format
 msgid "port `%ld' out of range"
 msgstr "порт `%ld' не належить до припустимого діапазону"
 
-#: misc-utils/logger.c:327
+#: misc-utils/logger.c:326
 #, c-format
 msgid "unknown facility name: %s."
 msgstr "невідома назва можливості: %s."
 
-#: misc-utils/logger.c:337
+#: misc-utils/logger.c:336
 #, c-format
 msgid "unknown priority name: %s."
 msgstr "невідома назва пріоритету: %s."
@@ -8368,7 +8359,7 @@ msgstr "не вдалося отримати доступу до каталог�
 
 #: misc-utils/mcookie.c:68 misc-utils/uuidd.c:56 misc-utils/uuidgen.c:35
 #: sys-utils/arch.c:33 sys-utils/dmesg.c:147 sys-utils/ipcmk.c:66
-#: sys-utils/lscpu.c:1212 sys-utils/readprofile.c:103 sys-utils/rtcwake.c:87
+#: sys-utils/lscpu.c:1214 sys-utils/readprofile.c:103 sys-utils/rtcwake.c:88
 #: term-utils/setterm.c:677
 #, c-format
 msgid " %s [options]\n"
@@ -8408,22 +8399,22 @@ msgstr "помилка під час спроби закрити %s"
 msgid "failed to read symlink: %s"
 msgstr "не вдалося прочитати символічне посилання: %s"
 
-#: misc-utils/namei.c:224
+#: misc-utils/namei.c:230
 #, c-format
 msgid "could not stat '%s'"
 msgstr "не вдалося виконати stat для «%s»"
 
-#: misc-utils/namei.c:363
+#: misc-utils/namei.c:369
 #, c-format
 msgid "%s - No such file or directory\n"
 msgstr "%s — немає такого файла або каталогу.\n"
 
-#: misc-utils/namei.c:413
+#: misc-utils/namei.c:419
 #, c-format
 msgid " %s [options] pathname [pathname ...]\n"
 msgstr " %s [параметри] шлях [шлях ...]\n"
 
-#: misc-utils/namei.c:416
+#: misc-utils/namei.c:422
 msgid ""
 " -h, --help          displays this help text\n"
 " -V, --version       output version information and exit\n"
@@ -8435,7 +8426,7 @@ msgid ""
 " -v, --vertical      vertical align of modes and owners\n"
 msgstr ""
 
-#: misc-utils/namei.c:425
+#: misc-utils/namei.c:431
 msgid ""
 "\n"
 "For more information see namei(1).\n"
@@ -8443,11 +8434,11 @@ msgstr ""
 "\n"
 "Докладніші відомості можна знайти у довіднику з namei(1).\n"
 
-#: misc-utils/namei.c:485
+#: misc-utils/namei.c:491
 msgid "pathname argument is missing"
 msgstr "не вказано аргументу шляху"
 
-#: misc-utils/namei.c:509
+#: misc-utils/namei.c:515
 #, c-format
 msgid "%s: exceeded limit of symlinks"
 msgstr "%s: перевищено обмеження на символічні посилання"
@@ -11891,127 +11882,127 @@ msgid ""
 "# starting from zero.\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:1075
+#: sys-utils/lscpu.c:1077
 #, fuzzy
 msgid "Architecture:"
 msgstr "Архітектура:"
 
-#: sys-utils/lscpu.c:1089
+#: sys-utils/lscpu.c:1091
 msgid "CPU op-mode(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1092 sys-utils/lscpu.c:1094
+#: sys-utils/lscpu.c:1094 sys-utils/lscpu.c:1096
 #, fuzzy
 msgid "Byte Order:"
 msgstr "Порядок байтів:"
 
-#: sys-utils/lscpu.c:1096
+#: sys-utils/lscpu.c:1098
 msgid "CPU(s):"
 msgstr "CPU:"
 
-#: sys-utils/lscpu.c:1099
+#: sys-utils/lscpu.c:1101
 msgid "On-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1100
+#: sys-utils/lscpu.c:1102
 msgid "On-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1118
+#: sys-utils/lscpu.c:1120
 msgid "Off-line CPU(s) mask:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1119
+#: sys-utils/lscpu.c:1121
 msgid "Off-line CPU(s) list:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1150
+#: sys-utils/lscpu.c:1152
 msgid "Thread(s) per core:"
 msgstr "Потоків на ядро:"
 
-#: sys-utils/lscpu.c:1151
+#: sys-utils/lscpu.c:1153
 msgid "Core(s) per socket:"
 msgstr "Ядер на сокет:"
 
-#: sys-utils/lscpu.c:1154
+#: sys-utils/lscpu.c:1156
 msgid "Socket(s) per book:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1156
+#: sys-utils/lscpu.c:1158
 msgid "Book(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1158
+#: sys-utils/lscpu.c:1160
 #, fuzzy
 msgid "Socket(s):"
 msgstr "сокет: %s"
 
-#: sys-utils/lscpu.c:1162
+#: sys-utils/lscpu.c:1164
 msgid "NUMA node(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1164
+#: sys-utils/lscpu.c:1166
 #, fuzzy
 msgid "Vendor ID:"
 msgstr "Ідентифікатор виробника:"
 
-#: sys-utils/lscpu.c:1166
+#: sys-utils/lscpu.c:1168
 #, fuzzy
 msgid "CPU family:"
 msgstr "Сімейство процесорів"
 
-#: sys-utils/lscpu.c:1168
+#: sys-utils/lscpu.c:1170
 #, fuzzy
 msgid "Model:"
 msgstr "Модель:"
 
-#: sys-utils/lscpu.c:1170
+#: sys-utils/lscpu.c:1172
 msgid "Stepping:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1172
+#: sys-utils/lscpu.c:1174
 #, fuzzy
 msgid "CPU MHz:"
 msgstr "ЦП %1: %2, %3 МГц"
 
-#: sys-utils/lscpu.c:1174
+#: sys-utils/lscpu.c:1176
 #, fuzzy
 msgid "BogoMIPS:"
 msgstr "Bogomips"
 
-#: sys-utils/lscpu.c:1177 sys-utils/lscpu.c:1179
+#: sys-utils/lscpu.c:1179 sys-utils/lscpu.c:1181
 #, fuzzy
 msgid "Virtualization:"
 msgstr "Віртуалізація"
 
-#: sys-utils/lscpu.c:1182
+#: sys-utils/lscpu.c:1184
 #, fuzzy
 msgid "Hypervisor:"
 msgstr "Гіпервізор:"
 
-#: sys-utils/lscpu.c:1184
+#: sys-utils/lscpu.c:1186
 msgid "Hypervisor vendor:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1185
+#: sys-utils/lscpu.c:1187
 msgid "Virtualization type:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1188
+#: sys-utils/lscpu.c:1190
 msgid "Dispatching mode:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1195
+#: sys-utils/lscpu.c:1197
 #, c-format
 msgid "%s cache:"
 msgstr ""
 
-#: sys-utils/lscpu.c:1201
+#: sys-utils/lscpu.c:1203
 #, c-format
 msgid "NUMA node%d CPU(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:1215
+#: sys-utils/lscpu.c:1217
 msgid ""
 " -a, --all               print online and offline CPUs (default for -e)\n"
 " -b, --online            print online CPUs only (default for -p)\n"
@@ -12024,18 +12015,18 @@ msgid ""
 " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:1230
+#: sys-utils/lscpu.c:1232
 #, fuzzy, c-format
 msgid ""
 "\n"
 "For more details see lscpu(1).\n"
 msgstr "Finger інформацію змінено.\n"
 
-#: sys-utils/lscpu.c:1263
+#: sys-utils/lscpu.c:1265
 msgid "extended and parsable formats are mutually exclusive"
 msgstr ""
 
-#: sys-utils/lscpu.c:1266
+#: sys-utils/lscpu.c:1268
 #, fuzzy
 msgid "--all, --online and --offline options are mutually exclusive"
 msgstr ""
@@ -12824,7 +12815,7 @@ msgstr "не вдається записати розділ на %s\n"
 msgid "%d (%s) old priority %d, new priority %d\n"
 msgstr "%d: старий пріоритет %d, новий пріоритет %d\n"
 
-#: sys-utils/rtcwake.c:90
+#: sys-utils/rtcwake.c:91
 msgid ""
 " -d, --device <device>    select rtc device (rtc0|rtc1|...)\n"
 " -n, --dry-run            does everything, but suspend\n"
@@ -12836,159 +12827,159 @@ msgid ""
 " -v, --verbose            verbose messages\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:154
+#: sys-utils/rtcwake.c:155
 #, fuzzy
 msgid "read rtc time failed"
 msgstr "помилка у gettimeofday"
 
-#: sys-utils/rtcwake.c:159
+#: sys-utils/rtcwake.c:160
 #, fuzzy
 msgid "read system time failed"
 msgstr "виділено семафорів = %d\n"
 
-#: sys-utils/rtcwake.c:177
+#: sys-utils/rtcwake.c:178
 #, fuzzy
 msgid "convert rtc time failed"
 msgstr "помилка підключення"
 
-#: sys-utils/rtcwake.c:237
+#: sys-utils/rtcwake.c:238
 #, fuzzy
 msgid "set rtc alarm failed"
 msgstr "помилка при встановленні позиції"
 
-#: sys-utils/rtcwake.c:241
+#: sys-utils/rtcwake.c:242
 msgid "enable rtc alarm failed"
 msgstr ""
 
-#: sys-utils/rtcwake.c:245
+#: sys-utils/rtcwake.c:247
 msgid "set rtc wake alarm failed"
 msgstr ""
 
-#: sys-utils/rtcwake.c:347
+#: sys-utils/rtcwake.c:349
 #, fuzzy
 msgid "read rtc alarm failed"
 msgstr "виділено семафорів = %d\n"
 
-#: sys-utils/rtcwake.c:353
+#: sys-utils/rtcwake.c:355
 #, c-format
 msgid "alarm: off\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:370
+#: sys-utils/rtcwake.c:372
 #, fuzzy
 msgid "convert time failed"
 msgstr "помилка у gettimeofday"
 
-#: sys-utils/rtcwake.c:377
+#: sys-utils/rtcwake.c:379
 #, c-format
 msgid "alarm: on  %s"
 msgstr ""
 
-#: sys-utils/rtcwake.c:433
+#: sys-utils/rtcwake.c:435
 #, fuzzy, c-format
 msgid "unrecognized suspend state '%s'"
 msgstr " %s: невідомий тип таблиці розділів\n"
 
-#: sys-utils/rtcwake.c:444
+#: sys-utils/rtcwake.c:446
 #, fuzzy
 msgid "failed to parse seconds value"
 msgstr "%s: не вдається відкрити: %s\n"
 
-#: sys-utils/rtcwake.c:452
+#: sys-utils/rtcwake.c:454
 #, fuzzy
 msgid "failed to parse time_t value"
 msgstr "%s: не вдається відкрити: %s\n"
 
-#: sys-utils/rtcwake.c:476
+#: sys-utils/rtcwake.c:478
 #, c-format
 msgid "%s: assuming RTC uses UTC ...\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:482
+#: sys-utils/rtcwake.c:484
 #, fuzzy, c-format
 msgid "Using UTC time.\n"
 msgstr "Використовується %s.\n"
 
-#: sys-utils/rtcwake.c:483
+#: sys-utils/rtcwake.c:485
 #, fuzzy, c-format
 msgid "Using local time.\n"
 msgstr "Використовується %s.\n"
 
-#: sys-utils/rtcwake.c:488
+#: sys-utils/rtcwake.c:490
 msgid "must provide wake time (see -t and -s options)"
 msgstr ""
 
-#: sys-utils/rtcwake.c:505
+#: sys-utils/rtcwake.c:507
 #, fuzzy, c-format
 msgid "%s not enabled for wakeup events"
 msgstr "%s: %s не є lp пристроєм.\n"
 
-#: sys-utils/rtcwake.c:520
+#: sys-utils/rtcwake.c:522
 #, c-format
 msgid "alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:526
+#: sys-utils/rtcwake.c:528
 #, c-format
 msgid "suspend to \"%s\" unavailable"
 msgstr ""
 
-#: sys-utils/rtcwake.c:534
+#: sys-utils/rtcwake.c:536
 #, c-format
 msgid "time doesn't go backward to %s"
 msgstr ""
 
-#: sys-utils/rtcwake.c:544
+#: sys-utils/rtcwake.c:546
 #, fuzzy, c-format
 msgid "%s: wakeup using %s at %s"
 msgstr "Повідомлення від %s@%s до %s у %s ..."
 
-#: sys-utils/rtcwake.c:548
+#: sys-utils/rtcwake.c:550
 #, fuzzy, c-format
 msgid "%s: wakeup from \"%s\" using %s at %s"
 msgstr "Повідомлення від %s@%s до %s у %s ..."
 
-#: sys-utils/rtcwake.c:557
+#: sys-utils/rtcwake.c:559
 #, c-format
 msgid "suspend mode: no; leaving\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:565
+#: sys-utils/rtcwake.c:567
 #, c-format
 msgid "suspend mode: off; executing %s\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:575
+#: sys-utils/rtcwake.c:577
 #, c-format
 msgid "unable to execute %s"
 msgstr "не вдалося виконати %s"
 
-#: sys-utils/rtcwake.c:583
+#: sys-utils/rtcwake.c:585
 #, c-format
 msgid "suspend mode: on; reading rtc\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:589
+#: sys-utils/rtcwake.c:591
 #, fuzzy
 msgid "rtc read failed"
 msgstr "(Наступний файл: %s)"
 
-#: sys-utils/rtcwake.c:600
+#: sys-utils/rtcwake.c:602
 #, c-format
 msgid "suspend mode: disable; disabling alarm\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:604
+#: sys-utils/rtcwake.c:606
 #, c-format
 msgid "suspend mode: show; printing alarm info\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:611
+#: sys-utils/rtcwake.c:613
 #, c-format
 msgid "suspend mode: %s; suspending system\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:617
+#: sys-utils/rtcwake.c:620
 msgid "disable rtc alarm interrupt failed"
 msgstr ""
 
@@ -13894,13 +13885,6 @@ msgid ""
 " -help\n"
 msgstr ""
 
-#: term-utils/setterm.c:718
-#, fuzzy, c-format
-msgid ""
-"\n"
-"For more information see lsblk(1).\n"
-msgstr "Finger інформацію змінено.\n"
-
 #: term-utils/setterm.c:1071
 #, fuzzy
 msgid "cannot force blank"
@@ -14789,6 +14773,19 @@ msgstr "Невідома escape-послідовність на вході: %o, 
 #, fuzzy
 msgid "Input line too long."
 msgstr "Вхідний рядок надто довгий.\n"
+
+#~ msgid ""
+#~ "\n"
+#~ "For more information see findmnt(1).\n"
+#~ msgstr ""
+#~ "\n"
+#~ "Додаткові відомості можна знайти у довідці до findmnt(1).\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "\n"
+#~ "For more information see lsblk(1).\n"
+#~ msgstr "Finger інформацію змінено.\n"
 
 #~ msgid "Disk %s doesn't contain a valid partition table\n"
 #~ msgstr "Диск %s не містить правильної таблиці розділів\n"
