@@ -63,9 +63,6 @@ enum
 #include <sys/fsuid.h>
 
 #include <syslog.h>
-#define SYSLOG_SUCCESS  1
-#define SYSLOG_FAILURE  1
-#define SYSLOG_NON_ROOT 1
 
 #include "error.h"
 
@@ -148,7 +145,6 @@ xsetenv (char const *name, char const *val)
     error (EXIT_FAILURE, 0, _("out of memory"));
 }
 
-#if defined SYSLOG_SUCCESS || defined SYSLOG_FAILURE
 /* Log the fact that someone has run su to the user given by PW;
    if SUCCESSFUL is true, they gave the correct password, etc.  */
 
@@ -157,10 +153,6 @@ log_su (struct passwd const *pw, bool successful)
 {
   const char *new_user, *old_user, *tty;
 
-# ifndef SYSLOG_NON_ROOT
-  if (pw->pw_uid)
-    return;
-# endif
   new_user = pw->pw_name;
   /* The utmp entry (via getlogin) is probably the best way to identify
      the user, especially if someone su's from a su-shell.  */
@@ -175,26 +167,13 @@ log_su (struct passwd const *pw, bool successful)
   tty = ttyname (STDERR_FILENO);
   if (!tty)
     tty = "none";
-  /* 4.2BSD openlog doesn't have the third parameter.  */
-  openlog (basename (program_name), 0
-# ifdef LOG_AUTH
-	   , LOG_AUTH
-# endif
-	   );
-  syslog (LOG_NOTICE,
-# ifdef SYSLOG_NON_ROOT
-	  "%s(to %s) %s on %s",
-# else
-	  "%s%s on %s",
-# endif
+
+  openlog (basename (program_name), 0 , LOG_AUTH);
+  syslog (LOG_NOTICE, "%s(to %s) %s on %s",
 	  successful ? "" : "FAILED SU ",
-# ifdef SYSLOG_NON_ROOT
-	  new_user,
-# endif
-	  old_user, tty);
+	  new_user, old_user, tty);
   closelog ();
 }
-#endif
 
 static struct pam_conv conv =
 {
@@ -801,18 +780,14 @@ main (int argc, char **argv)
 
   if (!correct_password (pw))
     {
-#ifdef SYSLOG_FAILURE
       log_su (pw, false);
-#endif
       sleep (getdef_num ("FAIL_DELAY", 1));
       error (EXIT_FAIL, 0, _("incorrect password"));
     }
-#ifdef SYSLOG_SUCCESS
   else
     {
       log_su (pw, true);
     }
-#endif
 
   if (request_same_session || !command || !pw->pw_uid)
     same_session = 1;
