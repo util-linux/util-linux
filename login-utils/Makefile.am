@@ -89,7 +89,7 @@ su_CFLAGS = -DUSE_PAM=1 $(SUID_CFLAGS) $(AM_CFLAGS)
 chfn_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 chsh_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-su_LDFLAGS = $(SUID_LDFLAGS)
+su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
 login_ldadd_common += -lpam -lpam_misc
 
