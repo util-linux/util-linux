@@ -27,6 +27,7 @@ test_blkdev_SOURCES = blkdev.c
 test_ismounted_SOURCES = ismounted.c
 test_wholedisk_SOURCES = wholedisk.c
 test_mangle_SOURCES = mangle.c
+test_pager_SOURCES = pager.c
 
 test_at_SOURCES = at.c
 test_at_CFLAGS = -DTEST_PROGRAM_AT
@@ -38,7 +39,6 @@ test_procutils_SOURCES = procutils.c
 if LINUX
 test_cpuset_SOURCES = cpuset.c
 test_sysfs_SOURCES = sysfs.c at.c
-test_pager_SOURCES = pager.c
 test_sysfs_CFLAGS = -DTEST_PROGRAM_SYSFS
 
 test_loopdev_SOURCES = \
