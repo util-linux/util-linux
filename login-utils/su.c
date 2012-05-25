@@ -1,5 +1,6 @@
-/* su for GNU.  Run a shell with substitute user and group IDs.
+/* su for Linux.  Run a shell with substitute user and group IDs.
    Copyright (C) 1992-2006 Free Software Foundation, Inc.
+   Copyright (C) 2012 SUSE Linux Products GmbH, Nuernberg
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -34,28 +35,7 @@
    (setting argv[0] to "-su", passing -c only to certain shells, etc.).
    I don't see the point in doing that, and it's ugly.
 
-   This program intentionally does not support a "wheel group" that
-   restricts who can su to UID 0 accounts.  RMS considers that to
-   be fascist.
-
-#ifdef USE_PAM
-
-   Actually, with PAM, su has nothing to do with whether or not a
-   wheel group is enforced by su.  RMS tries to restrict your access
-   to a su which implements the wheel group, but PAM considers that
-   to be fascist, and gives the user/sysadmin the opportunity to
-   enforce a wheel group by proper editing of /etc/pam.d/su
-
-#endif
-
-   Compile-time options:
-   -DSYSLOG_SUCCESS	Log successful su's (by default, to root) with syslog.
-   -DSYSLOG_FAILURE	Log failed su's (by default, to root) with syslog.
-
-   -DSYSLOG_NON_ROOT	Log all su's, not just those to root (UID 0).
-   Never logs attempted su's to nonexistent accounts.
-
-   Written by David MacKenzie <djm@gnu.ai.mit.edu>.  */
+   Based on an implemenation by David MacKenzie <djm@gnu.ai.mit.edu>.  */
 
 #ifndef MAX
 # define MAX(a,b) ((a) > (b) ? (a) : (b))
@@ -76,40 +56,16 @@ enum
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
-#ifdef USE_PAM
-# include <security/pam_appl.h>
-# include <security/pam_misc.h>
-# include <signal.h>
-# include <sys/wait.h>
-# include <sys/fsuid.h>
-#endif
+#include <security/pam_appl.h>
+#include <security/pam_misc.h>
+#include <signal.h>
+#include <sys/wait.h>
+#include <sys/fsuid.h>
 
-#if HAVE_SYSLOG_H && HAVE_SYSLOG
-# include <syslog.h>
-# define SYSLOG_SUCCESS  1
-# define SYSLOG_FAILURE  1
-# define SYSLOG_NON_ROOT 1
-#else
-# undef SYSLOG_SUCCESS
-# undef SYSLOG_FAILURE
-# undef SYSLOG_NON_ROOT
-#endif
-
-#if HAVE_SYS_PARAM_H
-# include <sys/param.h>
-#endif
-
-#ifndef HAVE_ENDGRENT
-# define endgrent() ((void) 0)
-#endif
-
-#ifndef HAVE_ENDPWENT
-# define endpwent() ((void) 0)
-#endif
-
-#if HAVE_SHADOW_H
-# include <shadow.h>
-#endif
+#include <syslog.h>
+#define SYSLOG_SUCCESS  1
+#define SYSLOG_FAILURE  1
+#define SYSLOG_NON_ROOT 1
 
 #include "error.h"
 
@@ -120,11 +76,9 @@ enum
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "su"
 
-#define AUTHORS "David MacKenzie"
-
-#if HAVE_PATHS_H
-# include <paths.h>
-#endif
+/* name of the pam configuration files. separate configs for su and su -  */
+#define PAM_SERVICE_NAME PROGRAM_NAME
+#define PAM_SERVICE_NAME_L PROGRAM_NAME "-l"
 
 #include "getdef.h"
 
@@ -139,10 +93,6 @@ enum
 
 /* The user to become if none is specified.  */
 #define DEFAULT_USER "root"
-
-#ifndef USE_PAM
-char *crypt ();
-#endif
 
 extern char **environ;
 
@@ -164,10 +114,10 @@ static bool change_environment;
 /* If true, then don't call setsid() with a command. */
 int same_session = 0;
 
-#ifdef USE_PAM
 static bool _pam_session_opened;
 static bool _pam_cred_established;
-#endif
+static sig_atomic_t volatile caught_signal = false;
+static pam_handle_t *pamh = NULL;
 
 
 static struct option const longopts[] =
@@ -246,12 +196,6 @@ log_su (struct passwd const *pw, bool successful)
 }
 #endif
 
-#ifdef USE_PAM
-# define PAM_SERVICE_NAME PROGRAM_NAME
-# define PAM_SERVICE_NAME_L PROGRAM_NAME "-l"
-static sig_atomic_t volatile caught_signal = false;
-static pam_handle_t *pamh = NULL;
-static int retval;
 static struct pam_conv conv =
 {
   misc_conv,
@@ -306,6 +250,7 @@ create_watching_parent (void)
   pid_t child;
   sigset_t ourset;
   int status = 0;
+  int retval;
 
   retval = pam_open_session (pamh, 0);
   if (retval != PAM_SUCCESS)
@@ -413,20 +358,13 @@ create_watching_parent (void)
     }
   exit (status);
 }
-#endif
-
-/* Ask the user for a password.
-   If PAM is in use, let PAM ask for the password if necessary.
-   Return true if the user gives the correct password for entry PW,
-   false if not.  Return true without asking for a password if run by UID 0
-   or if PW has an empty password.  */
 
 static bool
 correct_password (const struct passwd *pw)
 {
-#ifdef USE_PAM
   const struct passwd *lpw;
   const char *cp;
+  int retval;
 
   retval = pam_start (simulate_login ? PAM_SERVICE_NAME_L : PAM_SERVICE_NAME,
 		      pw->pw_name, &conv, &pamh);
@@ -465,32 +403,6 @@ correct_password (const struct passwd *pw)
   PAM_BAIL_P (return false);
   /* Must be authenticated if this point was reached.  */
   return true;
-#else /* !USE_PAM */
-  char *unencrypted, *encrypted, *correct;
-# if HAVE_GETSPNAM && HAVE_STRUCT_SPWD_SP_PWDP
-  /* Shadow passwd stuff for SVR3 and maybe other systems.  */
-  const struct spwd *sp = getspnam (pw->pw_name);
-
-  endspent ();
-  if (sp)
-    correct = sp->sp_pwdp;
-  else
-# endif
-    correct = pw->pw_passwd;
-
-  if (getuid () == 0 || !correct || correct[0] == '\0')
-    return true;
-
-  unencrypted = getpass (_("Password:"));
-  if (!unencrypted)
-    {
-      error (0, 0, _("getpass: cannot open /dev/tty"));
-      return false;
-    }
-  encrypted = crypt (unencrypted, correct);
-  memset (unencrypted, 0, strlen (unencrypted));
-  return !strcmp (encrypted, correct);
-#endif /* !USE_PAM */
 }
 
 /* Add or clear /sbin and /usr/sbin for the su command
@@ -667,9 +579,7 @@ modify_environment (const struct passwd *pw, const char *shell)
         }
     }
 
-#ifdef USE_PAM
   export_pamenv ();
-#endif
 }
 
 /* Become the user and group(s) specified by PW.  */
@@ -677,23 +587,20 @@ modify_environment (const struct passwd *pw, const char *shell)
 static void
 init_groups (const struct passwd *pw)
 {
+  int retval;
   errno = 0;
   if (initgroups (pw->pw_name, pw->pw_gid) == -1)
     {
-# ifdef USE_PAM
       cleanup_pam (PAM_ABORT);
-# endif
       error (EXIT_FAIL, errno, _("cannot set groups"));
     }
   endgrent ();
 
-#ifdef USE_PAM
   retval = pam_setcred (pamh, PAM_ESTABLISH_CRED);
   if (retval != PAM_SUCCESS)
     error (EXIT_FAILURE, 0, "%s", pam_strerror (pamh, retval));
   else
     _pam_cred_established = 1;
-#endif
 }
 
 static void
@@ -925,10 +832,8 @@ main (int argc, char **argv)
 
   init_groups (pw);
 
-#ifdef USE_PAM
   create_watching_parent ();
   /* Now we're in the child.  */
-#endif
 
   change_identity (pw);
   if (!same_session)
