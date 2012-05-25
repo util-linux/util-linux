@@ -25,7 +25,7 @@ Compiling
 	./configure SUID_CFLAGS="-fpie" SUID_LDFLAGS="-pie"
 
 	The SUID_* feature is currently supported for chfn, chsh,
-	newgrp, write, mount, and umount.
+	newgrp, su, write, mount, and umount.
 
 	Preferred compilation options for developers, when
 	using gcc, are:
