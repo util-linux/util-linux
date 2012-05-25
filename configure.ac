@@ -976,7 +976,7 @@ AC_ARG_ENABLE([kill],
 )
 UL_BUILD_INIT([kill])
 UL_REQUIRES_LINUX([kill])
-AM_CONDITIONAL(BUILD_KILL, test "x$enable_kill" = xyes)
+AM_CONDITIONAL(BUILD_KILL, test "x$build_kill" = xyes)
 
 
 AC_ARG_ENABLE([last],
