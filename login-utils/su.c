@@ -69,6 +69,7 @@ enum
 #include <stdbool.h>
 #include "xalloc.h"
 #include "nls.h"
+#include "pathnames.h"
 
 /* The official name of this program (e.g., no `g' prefix).  */
 #define PROGRAM_NAME "su"
@@ -77,13 +78,7 @@ enum
 #define PAM_SERVICE_NAME PROGRAM_NAME
 #define PAM_SERVICE_NAME_L PROGRAM_NAME "-l"
 
-#include "getdef.h"
-
-/* The default PATH for simulated logins to non-superuser accounts.  */
-#define DEFAULT_LOGIN_PATH "/usr/local/bin:/bin:/usr/bin"
-
-/* The default PATH for simulated logins to superuser accounts.  */
-#define DEFAULT_ROOT_LOGIN_PATH "/usr/sbin:/bin:/usr/bin:/sbin"
+#include "logindefs.h"
 
 /* The shell to run if none is given in the user's passwd entry.  */
 #define DEFAULT_SHELL "/bin/sh"
@@ -517,8 +512,8 @@ modify_environment (const struct passwd *pw, const char *shell)
       xsetenv ("USER", pw->pw_name);
       xsetenv ("LOGNAME", pw->pw_name);
       xsetenv ("PATH", (pw->pw_uid
-			? getdef_str ("PATH", DEFAULT_LOGIN_PATH)
-			: getdef_str ("SUPATH", DEFAULT_ROOT_LOGIN_PATH)));
+			? getlogindefs_str ("PATH", _PATH_DEFPATH)
+			: getlogindefs_str ("SUPATH", _PATH_DEFPATH_ROOT)));
     }
   else
     {
@@ -528,12 +523,12 @@ modify_environment (const struct passwd *pw, const char *shell)
         {
           xsetenv ("HOME", pw->pw_dir);
           xsetenv ("SHELL", shell);
-	  if (getdef_bool ("ALWAYS_SET_PATH", 0))
+	  if (getlogindefs_bool ("ALWAYS_SET_PATH", 0))
 	    xsetenv ("PATH", (pw->pw_uid
-			      ? getdef_str ("PATH",
-					    DEFAULT_LOGIN_PATH)
-			      : getdef_str ("SUPATH",
-					    DEFAULT_ROOT_LOGIN_PATH)));
+			      ? getlogindefs_str ("PATH",
+					    _PATH_DEFPATH)
+			      : getlogindefs_str ("SUPATH",
+					    _PATH_DEFPATH_ROOT)));
 	  else
 	    {
 	      char const *path = getenv ("PATH");
@@ -687,6 +682,12 @@ A mere - implies -l.   If USER not given, assume root.\n\
   exit (status);
 }
 
+void load_config(void)
+{
+  logindefs_load_file("/etc/default/su");
+  logindefs_load_file(_PATH_LOGINDEFS);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -757,6 +758,8 @@ main (int argc, char **argv)
   if (optind < argc)
     new_user = argv[optind++];
 
+  logindefs_load_defaults = load_config;
+
   pw = getpwnam (new_user);
   if (! (pw && pw->pw_name && pw->pw_name[0] && pw->pw_dir && pw->pw_dir[0]
 	 && pw->pw_passwd))
@@ -781,7 +784,7 @@ main (int argc, char **argv)
   if (!correct_password (pw))
     {
       log_su (pw, false);
-      sleep (getdef_num ("FAIL_DELAY", 1));
+      sleep (getlogindefs_num ("FAIL_DELAY", 1));
       error (EXIT_FAIL, 0, _("incorrect password"));
     }
   else

@@ -71,8 +71,8 @@ vipw_SOURCES = \
 	$(top_srcdir)/lib/fileutils.c
 su_SOURCES = \
 	su.c \
-	getdef.c \
-	getdef.h
+	logindefs.c \
+	logindefs.h
 
 chfn_LDADD = $(login_ldadd_common)
 chsh_LDADD = $(login_ldadd_common)
