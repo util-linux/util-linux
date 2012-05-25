@@ -57,7 +57,6 @@
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <paths.h>
-#include <asm/param.h>
 #include <getopt.h>
 
 #include "c.h"
