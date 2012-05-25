@@ -628,9 +628,9 @@ AC_ARG_ENABLE([most-builds],
   [], enable_most_builds=no
 )
 if test "x$enable_most_builds" = xyes; then
-  enable_arch=yes
+  enable_arch=check
   enable_ddate=yes
-  enable_elvtune=yes
+  enable_elvtune=check
   enable_last=yes
   enable_line=yes
   enable_mesg=yes
@@ -862,7 +862,7 @@ AC_SUBST([ruman1dir])
 
 AC_ARG_ENABLE([eject],
   AS_HELP_STRING([--disable-eject], [do not build eject]),
-  [], enable_eject=yes
+  [], enable_eject=check
 )
 UL_BUILD_INIT([eject])
 UL_REQUIRES_LINUX([eject])
