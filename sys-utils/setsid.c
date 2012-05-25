@@ -15,7 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <termio.h>
+#include <sys/ioctl.h>
 
 #include "c.h"
 #include "nls.h"
