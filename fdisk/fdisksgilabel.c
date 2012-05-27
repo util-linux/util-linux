@@ -691,7 +691,7 @@ create_sgilabel(struct fdisk_context *cxt)
 		int sysid;
 	} old[4];
 	int i=0;
-	unsigned long long llsectors;
+	sector_t llsectors;
 	int res; 		/* the result from the ioctl */
 	int sec_fac; 		/* the sector factor */
 
@@ -712,7 +712,7 @@ create_sgilabel(struct fdisk_context *cxt)
 	sectors = geometry.sectors;
 	if (res == 0) {
 		/* the get device size ioctl was successful */
-		unsigned long long llcyls;
+	        sector_t llcyls;
 		llcyls = llsectors / (heads * sectors * sec_fac);
 		cylinders = llcyls;
 		if (cylinders != llcyls)	/* truncated? */
