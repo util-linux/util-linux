@@ -25,7 +25,7 @@
 #define alignment_required	(grain != sector_size)
 
 struct pte ptes[MAXIMUM_PARTS];
-unsigned long long extended_offset;
+sector_t extended_offset;
 int ext_index;
 
 static int get_nonexisting_partition(int warn, int max)
@@ -59,7 +59,7 @@ static int get_nonexisting_partition(int warn, int max)
 
 
 /* Allocate a buffer and read a partition table sector */
-static void read_pte(struct fdisk_context *cxt, int pno, unsigned long long offset)
+static void read_pte(struct fdisk_context *cxt, int pno, sector_t offset)
 {
 	struct pte *pe = &ptes[pno];
 
@@ -368,11 +368,11 @@ int is_dos_partition(int t)
 		t == 0xc1 || t == 0xc4 || t == 0xc6);
 }
 
-static void set_partition(int i, int doext, unsigned long long start,
-			  unsigned long long stop, int sysid)
+static void set_partition(int i, int doext, sector_t start,
+			  sector_t stop, int sysid)
 {
 	struct partition *p;
-	unsigned long long offset;
+	sector_t offset;
 
 	if (doext) {
 		p = ptes[i].ext_pointer;
@@ -398,15 +398,13 @@ static void set_partition(int i, int doext, unsigned long long start,
 	ptes[i].changed = 1;
 }
 
-static unsigned long long get_unused_start(int part_n,
-					   unsigned long long start,
-					   unsigned long long first[],
-					   unsigned long long last[])
+static sector_t get_unused_start(int part_n, sector_t start,
+				 sector_t first[], sector_t last[])
 {
 	int i;
 
 	for (i = 0; i < partitions; i++) {
-		unsigned long long lastplusoff;
+		sector_t lastplusoff;
 
 		if (start == ptes[i].offset)
 			start += sector_offset;
@@ -418,9 +416,7 @@ static unsigned long long get_unused_start(int part_n,
 	return start;
 }
 
-static unsigned long long align_lba_in_range(	unsigned long long lba,
-						unsigned long long start,
-						unsigned long long stop)
+static sector_t align_lba_in_range(sector_t lba, sector_t start, sector_t stop)
 {
 	start = align_lba(start, ALIGN_UP);
 	stop = align_lba(stop, ALIGN_DOWN);
@@ -440,7 +436,7 @@ void dos_add_partition(int n, int sys)
 	int i, read = 0;
 	struct partition *p = ptes[n].part_table;
 	struct partition *q = ptes[ext_index].part_table;
-	unsigned long long start, stop = 0, limit, temp,
+	sector_t start, stop = 0, limit, temp,
 		first[partitions], last[partitions];
 
 	if (p && p->sys_ind) {
@@ -474,7 +470,7 @@ void dos_add_partition(int n, int sys)
 
 	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
 	do {
-		unsigned long long dflt, aligned;
+		sector_t dflt, aligned;
 
 		temp = start;
 		dflt = start = get_unused_start(n, start, first, last);
@@ -495,7 +491,7 @@ void dos_add_partition(int n, int sys)
 			read = 0;
 		}
 		if (!read && start == temp) {
-			unsigned long long i = start;
+			sector_t i = start;
 
 			start = read_int(cround(i), cround(dflt), cround(limit),
 					 0, mesg);
