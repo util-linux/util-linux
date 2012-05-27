@@ -100,6 +100,8 @@ struct geom {
 	unsigned int cylinders;
 };
 
+typedef unsigned long long sector_t;
+
 struct fdisk_context {
 	int dev_fd;     /* device descriptor */
 	char *dev_path; /* device path */
@@ -126,12 +128,12 @@ extern int valid_part_table_flag(unsigned char *b);
 extern unsigned int read_int(unsigned int low, unsigned int dflt,
 			     unsigned int high, unsigned int base, char *mesg);
 extern void print_menu(enum menutype);
-extern void print_partition_size(int num, unsigned long long start, unsigned long long stop, int sysid);
+extern void print_partition_size(int num, sector_t start, sector_t stop, int sysid);
 
 extern void zeroize_mbr_buffer(void);
-extern void fill_bounds(unsigned long long *first, unsigned long long *last);
+extern void fill_bounds(sector_t *first, sector_t *last);
 extern unsigned int heads, cylinders, sector_size;
-extern unsigned long long sectors;
+extern sector_t sectors;
 extern char *partition_type(unsigned char type);
 extern void update_units(void);
 extern char read_chars(char *mesg);
@@ -142,14 +144,14 @@ extern void warn_limits(void);
 extern void warn_alignment(void);
 extern unsigned int read_int_with_suffix(unsigned int low, unsigned int dflt, unsigned int high,
 				  unsigned int base, char *mesg, int *is_suffix_used);
-extern unsigned long long align_lba(unsigned long long lba, int direction);
+extern sector_t align_lba(sector_t lba, int direction);
 extern int get_partition_dflt(int warn, int max, int dflt);
 
 #define PLURAL	0
 #define SINGULAR 1
 extern const char * str_units(int);
 
-extern unsigned long long get_nr_sects(struct partition *p);
+extern sector_t get_nr_sects(struct partition *p);
 
 enum labeltype {
 	DOS_LABEL = 1,
@@ -169,7 +171,7 @@ extern enum labeltype disklabel;
  */
 extern unsigned char *MBRbuffer;
 extern int MBRbuffer_changed;
-extern unsigned long long total_number_of_sectors;
+extern sector_t total_number_of_sectors;
 extern unsigned long grain;
 /* start_sect and nr_sects are stored little endian on all machines */
 /* moreover, they are not aligned correctly */
@@ -188,7 +190,7 @@ static inline unsigned int read4_little_endian(const unsigned char *cp)
 		+ ((unsigned int)(cp[3]) << 24);
 }
 
-static inline void set_nr_sects(struct partition *p, unsigned long long nr_sects)
+static inline void set_nr_sects(struct partition *p, sector_t nr_sects)
 {
 	store4_little_endian(p->size4, nr_sects);
 }
@@ -198,28 +200,28 @@ static inline void set_start_sect(struct partition *p, unsigned int start_sect)
 	store4_little_endian(p->start4, start_sect);
 }
 
-static inline void seek_sector(struct fdisk_context *cxt, unsigned long long secno)
+static inline void seek_sector(struct fdisk_context *cxt, sector_t secno)
 {
 	off_t offset = (off_t) secno * sector_size;
 	if (lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1)
 		fatal(cxt, unable_to_seek);
 }
 
-static inline void read_sector(struct fdisk_context *cxt, unsigned long long secno, unsigned char *buf)
+static inline void read_sector(struct fdisk_context *cxt, sector_t secno, unsigned char *buf)
 {
 	seek_sector(cxt, secno);
 	if (read(cxt->dev_fd, buf, sector_size) != sector_size)
 		fatal(cxt, unable_to_read);
 }
 
-static inline void write_sector(struct fdisk_context *cxt, unsigned long long secno, unsigned char *buf)
+static inline void write_sector(struct fdisk_context *cxt, sector_t secno, unsigned char *buf)
 {
 	seek_sector(cxt, secno);
 	if (write(cxt->dev_fd, buf, sector_size) != sector_size)
 		fatal(cxt, unable_to_write);
 }
 
-static inline unsigned long long get_start_sect(struct partition *p)
+static inline sector_t get_start_sect(struct partition *p)
 {
 	return read4_little_endian(p->start4);
 }

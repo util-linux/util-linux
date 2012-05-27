@@ -125,8 +125,7 @@ valid_part_table_flag(unsigned char *b) {
 	return (b[510] == 0x55 && b[511] == 0xaa);
 }
 
-unsigned long long
-get_nr_sects(struct partition *p) {
+sector_t get_nr_sects(struct partition *p) {
 	return read4_little_endian(p->size4);
 }
 
@@ -141,7 +140,7 @@ int	nowarn = 0,			/* no warnings for fdisk -l/-s */
 unsigned int	user_cylinders, user_heads, user_sectors;
 unsigned int   pt_heads, pt_sectors;
 
-unsigned long long sector_offset = 1, sectors;
+sector_t sector_offset = 1, sectors;
 
 unsigned int	heads,
 	cylinders,
@@ -150,7 +149,7 @@ unsigned int	heads,
 	units_per_sector = 1,
 	display_in_cyl_units = 0;
 
-unsigned long long total_number_of_sectors;	/* in logical sectors */
+sector_t total_number_of_sectors; /* in logical sectors */
 unsigned long grain = DEFAULT_SECTOR_SIZE,
 	      io_size = DEFAULT_SECTOR_SIZE,
 	      min_io_size = DEFAULT_SECTOR_SIZE,
@@ -319,22 +318,22 @@ test_c(char **m, char *mesg) {
 }
 
 static int
-lba_is_aligned(unsigned long long lba)
+lba_is_aligned(sector_t lba)
 {
 	unsigned int granularity = max(phy_sector_size, min_io_size);
-	unsigned long long offset = (lba * sector_size) & (granularity - 1);
+	sector_t offset = (lba * sector_size) & (granularity - 1);
 
 	return !((granularity + alignment_offset - offset) & (granularity - 1));
 }
 
-unsigned long long align_lba(unsigned long long lba, int direction)
+sector_t align_lba(sector_t lba, int direction)
 {
-	unsigned long long res;
+	sector_t res;
 
 	if (lba_is_aligned(lba))
 		res = lba;
 	else {
-		unsigned long long sects_in_phy = grain / sector_size;
+		sector_t sects_in_phy = grain / sector_size;
 
 		if (lba < sector_offset)
 			res = sector_offset;
@@ -423,7 +422,7 @@ void warn_limits(void)
 "partition table format (GPT).\n\n"),
 			hectogiga / 10, hectogiga % 10,
 			bytes,
-			(unsigned long long ) UINT_MAX * sector_size,
+			(sector_t ) UINT_MAX * sector_size,
 			sector_size);
 	}
 }
@@ -563,7 +562,7 @@ update_sector_offset(void)
 		 *
 		 * c) or for very small devices use 1 phy.sector
 		 */
-		unsigned long long x = 0;
+		sector_t x = 0;
 
 		if (has_topology) {
 			if (alignment_offset)
@@ -593,7 +592,7 @@ update_sector_offset(void)
 
 void
 get_geometry(struct fdisk_context *cxt, struct geom *g) {
-	unsigned long long llcyls, nsects = 0;
+	sector_t llcyls, nsects = 0;
 	unsigned int kern_heads = 0, kern_sectors = 0;
 
 	get_topology(cxt);
@@ -1205,7 +1204,7 @@ static void check_consistency(struct partition *p, int partition) {
 }
 
 static void
-check_alignment(unsigned long long lba, int partition)
+check_alignment(sector_t lba, int partition)
 {
 	if (!lba_is_aligned(lba))
 		printf(_("Partition %i does not start on physical sector boundary.\n"),
@@ -1489,7 +1488,7 @@ x_list_table(struct fdisk_context *cxt, int extend) {
 	}
 }
 
-void fill_bounds(unsigned long long *first, unsigned long long *last)
+void fill_bounds(sector_t *first, sector_t *last)
 {
 	int i;
 	struct pte *pe = &ptes[0];
@@ -1536,8 +1535,7 @@ check(int n, unsigned int h, unsigned int s, unsigned int c,
 static void
 verify(void) {
 	int i, j;
-	unsigned long long total = 1;
-	unsigned long long n_sectors = total_number_of_sectors;
+	sector_t total = 1, n_sectors = total_number_of_sectors;
 	unsigned long long first[partitions], last[partitions];
 	struct partition *p;
 
@@ -1583,7 +1581,7 @@ verify(void) {
 
 	if (extended_offset) {
 		struct pte *pex = &ptes[ext_index];
-		unsigned long long e_last = get_start_sect(pex->part_table) +
+		sector_t e_last = get_start_sect(pex->part_table) +
 			get_nr_sects(pex->part_table) - 1;
 
 		for (i = 4; i < partitions; i++) {
@@ -1609,7 +1607,7 @@ verify(void) {
 		       n_sectors - total, sector_size);
 }
 
-void print_partition_size(int num, unsigned long long start, unsigned long long stop, int sysid)
+void print_partition_size(int num, sector_t start, sector_t stop, int sysid)
 {
 	char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
 				     (stop - start + 1) * sector_size);
@@ -2096,10 +2094,10 @@ static void command_prompt(struct fdisk_context *cxt)
 	}
 }
 
-static unsigned long long get_dev_blocks(char *dev)
+static sector_t get_dev_blocks(char *dev)
 {
 	int fd;
-	unsigned long long size;
+	sector_t size;
 
 	if ((fd = open(dev, O_RDONLY)) < 0)
 		err(EXIT_FAILURE, _("unable to open %s"), dev);
