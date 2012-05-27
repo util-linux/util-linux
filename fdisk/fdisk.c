@@ -1984,6 +1984,15 @@ unknown_command(int c) {
 	printf(_("%c: unknown command\n"), c);
 }
 
+static void print_welcome(void)
+{
+	printf(_("Welcome to fdisk (%s).\n\n"
+		 "Changes will remain in memory only, until you decide to write them.\n"
+		 "Be careful before using the write command.\n\n"), PACKAGE_STRING);
+
+	fflush(stdout);
+}
+
 static void command_prompt(void)
 {
 	int c;
@@ -2211,9 +2220,7 @@ int main(int argc, char **argv)
 	else
 		usage(stderr);
 
-	printf(_("Welcome to fdisk (%s).\n\n"
-		"Changes will remain in memory only, until you decide to write them.\n"
-		"Be careful before using the write command.\n\n"), PACKAGE_STRING);
+	print_welcome();
 
 	gpt_warning(cxt->dev_path);
 	get_boot(0);
