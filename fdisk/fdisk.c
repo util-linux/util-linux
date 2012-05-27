@@ -1887,7 +1887,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 			verify();
 			break;
 		case 'w':
-			write_table(cxt); 	/* does not return */
+			write_table(cxt);
 			break;
 		case 'y':
 			if (disklabel == SUN_LABEL)
@@ -2084,7 +2084,7 @@ static void command_prompt(struct fdisk_context *cxt)
 			verify();
 			break;
 		case 'w':
-			write_table(cxt); 		/* does not return */
+			write_table(cxt);
 			break;
 		case 'x':
 			expert_command_prompt(cxt);
