@@ -105,8 +105,6 @@ struct fdisk_context {
 	char *dev_path; /* device path */
 };
 
-extern struct fdisk_context *cxt;
-
 extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int readonly);
 extern void fdisk_free_context(struct fdisk_context *cxt);
 
@@ -115,14 +113,14 @@ extern char *disk_device, *line_ptr;
 extern int fd, partitions;
 extern unsigned int display_in_cyl_units, units_per_sector;
 extern void change_units(void);
-extern void fatal(enum failure why);
-extern void get_geometry(int fd, struct geom *);
+extern void fatal(struct fdisk_context *cxt, enum failure why);
+extern void get_geometry(struct fdisk_context *, struct geom *);
 extern int  get_partition(int warn, int max);
 extern void list_types(struct systypes *sys);
 extern int read_line (int *asked);
 extern char read_char(char *mesg);
 extern int read_hex(struct systypes *sys);
-extern void reread_partition_table(int leave);
+extern void reread_partition_table(struct fdisk_context *cxt, int leave);
 extern struct partition *get_part_table(int);
 extern int valid_part_table_flag(unsigned char *b);
 extern unsigned int read_int(unsigned int low, unsigned int dflt,
@@ -200,25 +198,25 @@ static inline void set_start_sect(struct partition *p, unsigned int start_sect)
 	store4_little_endian(p->start4, start_sect);
 }
 
-static inline void seek_sector(int fd, unsigned long long secno)
+static inline void seek_sector(struct fdisk_context *cxt, unsigned long long secno)
 {
 	off_t offset = (off_t) secno * sector_size;
-	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
-		fatal(unable_to_seek);
+	if (lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1)
+		fatal(cxt, unable_to_seek);
 }
 
-static inline void read_sector(int fd, unsigned long long secno, unsigned char *buf)
+static inline void read_sector(struct fdisk_context *cxt, unsigned long long secno, unsigned char *buf)
 {
-	seek_sector(fd, secno);
-	if (read(fd, buf, sector_size) != sector_size)
-		fatal(unable_to_read);
+	seek_sector(cxt, secno);
+	if (read(cxt->dev_fd, buf, sector_size) != sector_size)
+		fatal(cxt, unable_to_read);
 }
 
-static inline void write_sector(int fd, unsigned long long secno, unsigned char *buf)
+static inline void write_sector(struct fdisk_context *cxt, unsigned long long secno, unsigned char *buf)
 {
-	seek_sector(fd, secno);
-	if (write(fd, buf, sector_size) != sector_size)
-		fatal(unable_to_write);
+	seek_sector(cxt, secno);
+	if (write(cxt->dev_fd, buf, sector_size) != sector_size)
+		fatal(cxt, unable_to_write);
 }
 
 static inline unsigned long long get_start_sect(struct partition *p)

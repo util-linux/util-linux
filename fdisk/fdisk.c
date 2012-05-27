@@ -55,7 +55,6 @@
 
 unsigned char *MBRbuffer;
 int MBRbuffer_changed;
-struct fdisk_context *cxt = NULL;
 
 #define hex_val(c)	({ \
 				char _c = (c); \
@@ -180,7 +179,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-void fatal(enum failure why)
+void fatal(struct fdisk_context *cxt, enum failure why)
 {
 	close(cxt->dev_fd);
 	switch (why) {
@@ -453,7 +452,7 @@ void warn_alignment(void)
 }
 
 static void
-get_topology(int fd) {
+get_topology(struct fdisk_context *cxt) {
 	int arg;
 #ifdef HAVE_LIBBLKID
 	blkid_probe pr;
@@ -593,15 +592,15 @@ update_sector_offset(void)
 }
 
 void
-get_geometry(int fd, struct geom *g) {
+get_geometry(struct fdisk_context *cxt, struct geom *g) {
 	unsigned long long llcyls, nsects = 0;
 	unsigned int kern_heads = 0, kern_sectors = 0;
 
-	get_topology(fd);
+	get_topology(cxt);
 	heads = cylinders = sectors = 0;
 	pt_heads = pt_sectors = 0;
 
-	blkdev_get_geometry(fd, &kern_heads, &kern_sectors);
+	blkdev_get_geometry(cxt->dev_fd, &kern_heads, &kern_sectors);
 	get_partition_table_geometry();
 
 	heads = user_heads ? user_heads :
@@ -612,7 +611,7 @@ get_geometry(int fd, struct geom *g) {
 		kern_sectors ? kern_sectors : 63;
 
 	/* get number of 512-byte sectors, and convert it the real sectors */
-	if (blkdev_get_sectors(fd, &nsects) == 0)
+	if (blkdev_get_sectors(cxt->dev_fd, &nsects) == 0)
 		total_number_of_sectors = (nsects / (sector_size >> 9));
 
 	update_sector_offset();
@@ -658,7 +657,7 @@ void zeroize_mbr_buffer(void)
  *    0: found or created label
  *    1: I/O error
  */
-static int get_boot(int try_only) {
+static int get_boot(struct fdisk_context *cxt, int try_only) {
 
 	disklabel = ANY_LABEL;
 	memset(MBRbuffer, 0, 512);
@@ -666,17 +665,17 @@ static int get_boot(int try_only) {
 	if (512 != read(cxt->dev_fd, MBRbuffer, 512)) {
 		if (try_only)
 			return 1;
-		fatal(unable_to_read);
+		fatal(cxt, unable_to_read);
 	}
 
-	get_geometry(cxt->dev_fd, NULL);
+	get_geometry(cxt, NULL);
 	update_units();
 
-	if (!check_dos_label())
+	if (!check_dos_label(cxt))
 		if (check_sun_label() || check_sgi_label() || check_aix_label() || check_mac_label())
 			return 0;
 
-	if (check_osf_label()) {
+	if (check_osf_label(cxt)) {
 		/* intialize partitions for BSD as well */
 		dos_init();
 		if (!valid_part_table_flag(MBRbuffer)) {
@@ -695,7 +694,7 @@ static int get_boot(int try_only) {
 		fprintf(stderr,
 			_("Device does not contain a recognized partition table\n"));
 #ifdef __sparc__
-		create_sunlabel();
+		create_sunlabel(cxt);
 #else
 		create_doslabel();
 #endif
@@ -1214,7 +1213,7 @@ check_alignment(unsigned long long lba, int partition)
 }
 
 static void
-list_disk_geometry(void) {
+list_disk_geometry(struct fdisk_context *cxt) {
 	unsigned long long bytes = total_number_of_sectors * sector_size;
 	long megabytes = bytes/1000000;
 
@@ -1382,25 +1381,25 @@ fix_partition_table_order(void) {
 }
 
 static void
-list_table(int xtra) {
+list_table(struct fdisk_context *cxt, int xtra) {
 	struct partition *p;
 	char *type;
 	int i, w;
 
 	if (disklabel == SUN_LABEL) {
-		sun_list_table(xtra);
+		sun_list_table(cxt, xtra);
 		return;
 	}
 
 	if (disklabel == SGI_LABEL) {
-		sgi_list_table(xtra);
+		sgi_list_table(cxt, xtra);
 		return;
 	}
 
-	list_disk_geometry();
+	list_disk_geometry(cxt);
 
 	if (disklabel == OSF_LABEL) {
-		xbsd_print_disklabel(xtra);
+		xbsd_print_disklabel(cxt, xtra);
 		return;
 	}
 
@@ -1462,7 +1461,7 @@ list_table(int xtra) {
 }
 
 static void
-x_list_table(int extend) {
+x_list_table(struct fdisk_context *cxt, int extend) {
 	struct pte *pe;
 	struct partition *p;
 	int i;
@@ -1656,14 +1655,14 @@ static void new_partition(void)
 }
 
 static void
-write_table(void) {
+write_table(struct fdisk_context *cxt) {
 	int i;
 
 	if (disklabel == DOS_LABEL)
-		dos_write_table();
+		dos_write_table(cxt);
 	else if (disklabel == SGI_LABEL)
 		/* no test on change? the printf below might be mistaken */
-		sgi_write_table();
+		sgi_write_table(cxt);
 	else if (disklabel == SUN_LABEL) {
 		int needw = 0;
 
@@ -1671,15 +1670,15 @@ write_table(void) {
 			if (ptes[i].changed)
 				needw = 1;
 		if (needw)
-			sun_write_table();
+			sun_write_table(cxt);
 	}
 
 	printf(_("The partition table has been altered!\n\n"));
-	reread_partition_table(1);
+	reread_partition_table(cxt, 1);
 }
 
 void
-reread_partition_table(int leave) {
+reread_partition_table(struct fdisk_context *cxt, int leave) {
 	int i;
 	struct stat statbuf;
 
@@ -1740,10 +1739,10 @@ print_buffer(unsigned char pbuffer[]) {
 }
 
 static void
-print_raw(void) {
+print_raw(char *dev) {
 	int i;
 
-	printf(_("Device: %s\n"), cxt->dev_path);
+	printf(_("Device: %s\n"), dev);
 	if (disklabel == SUN_LABEL || disklabel == SGI_LABEL)
 		print_buffer(MBRbuffer);
 	else for (i = 3; i < partitions; i++)
@@ -1807,7 +1806,7 @@ static void __attribute__ ((__noreturn__)) handle_quit(struct fdisk_context *cxt
 }
 
 static void
-expert_command_prompt(void)
+expert_command_prompt(struct fdisk_context *cxt)
 {
 	char c;
 
@@ -1831,7 +1830,7 @@ expert_command_prompt(void)
 				sun_set_ncyl(cylinders);
 			break;
 		case 'd':
-			print_raw();
+			print_raw(cxt->dev_path);
 			break;
 		case 'e':
 			if (disklabel == SGI_LABEL)
@@ -1840,14 +1839,14 @@ expert_command_prompt(void)
 				sun_set_xcyl();
 			else
 			if (disklabel == DOS_LABEL)
-				x_list_table(1);
+				x_list_table(cxt, 1);
 			break;
 		case 'f':
 			if (disklabel == DOS_LABEL)
 				fix_partition_table_order();
 			break;
 		case 'g':
-			create_sgilabel();
+			create_sgilabel(cxt);
 			break;
 		case 'h':
 			user_heads = heads = read_int(1, heads, 256, 0,
@@ -1866,9 +1865,9 @@ expert_command_prompt(void)
 			break;
 		case 'p':
 			if (disklabel == SUN_LABEL)
-				list_table(1);
+				list_table(cxt, 1);
 			else
-				x_list_table(0);
+				x_list_table(cxt, 0);
 			break;
 		case 'q':
 			handle_quit(cxt);
@@ -1888,7 +1887,7 @@ expert_command_prompt(void)
 			verify();
 			break;
 		case 'w':
-			write_table(); 	/* does not return */
+			write_table(cxt); 	/* does not return */
 			break;
 		case 'y':
 			if (disklabel == SUN_LABEL)
@@ -1927,19 +1926,19 @@ print_partition_table_from_option(char *device)
 {
 	int gb;
 
-	cxt = fdisk_new_context_from_filename(device, 1);	/* read-only */
+	struct fdisk_context *cxt = fdisk_new_context_from_filename(device, 1);	/* read-only */
 	if (!cxt)
 		err(EXIT_FAILURE, _("unable to open %s"), device);
 
 	gpt_warning(device);
-	gb = get_boot(1);
+	gb = get_boot(cxt, 1);
 	if (gb < 0) { /* no DOS signature */
-		list_disk_geometry();
+		list_disk_geometry(cxt);
 		if (disklabel != AIX_LABEL && disklabel != MAC_LABEL)
-			btrydev(device);
+			btrydev(cxt);
 	}
 	else if (!gb)
-		list_table(0);
+		list_table(cxt, 0);
 	fdisk_free_context(cxt);
 	cxt = NULL;
 }
@@ -1993,7 +1992,7 @@ static void print_welcome(void)
 	fflush(stdout);
 }
 
-static void command_prompt(void)
+static void command_prompt(struct fdisk_context *cxt)
 {
 	int c;
 
@@ -2003,7 +2002,7 @@ static void command_prompt(void)
 		printf(_("Detected an OSF/1 disklabel on %s, entering "
 			 "disklabel mode.\n"),
 		       cxt->dev_path);
-		bsd_command_prompt();
+		bsd_command_prompt(cxt);
 		/* If we return we may want to make an empty DOS label? */
 		disklabel = DOS_LABEL;
 	}
@@ -2029,7 +2028,7 @@ static void command_prompt(void)
 				sgi_set_bootfile();
 			else if (disklabel == DOS_LABEL) {
 				disklabel = OSF_LABEL;
-				bsd_command_prompt();
+				bsd_command_prompt(cxt);
 				disklabel = DOS_LABEL;
 			} else
 				unknown_command(c);
@@ -2068,12 +2067,12 @@ static void command_prompt(void)
 			create_doslabel();
 			break;
 		case 'p':
-			list_table(0);
+			list_table(cxt, 0);
 			break;
 		case 'q':
 			handle_quit(cxt);
 		case 's':
-			create_sunlabel();
+			create_sunlabel(cxt);
 			break;
 		case 't':
 			change_sysid();
@@ -2085,10 +2084,10 @@ static void command_prompt(void)
 			verify();
 			break;
 		case 'w':
-			write_table(); 		/* does not return */
+			write_table(cxt); 		/* does not return */
 			break;
 		case 'x':
-			expert_command_prompt();
+			expert_command_prompt(cxt);
 			break;
 		default:
 			unknown_command(c);
@@ -2104,8 +2103,10 @@ static unsigned long long get_dev_blocks(char *dev)
 
 	if ((fd = open(dev, O_RDONLY)) < 0)
 		err(EXIT_FAILURE, _("unable to open %s"), dev);
-	if (blkdev_get_sectors(fd, &size) == -1)
-		fatal(ioctl_error);
+	if (blkdev_get_sectors(fd, &size) == -1) {
+		close(fd);
+		err(EXIT_FAILURE, _("BLKGETSIZE ioctl failed on %s"), dev);
+	}
 	close(fd);
 	return size/2;
 }
@@ -2113,6 +2114,7 @@ static unsigned long long get_dev_blocks(char *dev)
 int main(int argc, char **argv)
 {
 	int c, optl = 0, opts = 0;
+	struct fdisk_context *cxt = NULL;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -2223,9 +2225,9 @@ int main(int argc, char **argv)
 	print_welcome();
 
 	gpt_warning(cxt->dev_path);
-	get_boot(0);
+	get_boot(cxt, 0);
 
-	command_prompt();
+	command_prompt(cxt);
 
 	return 0;
 }

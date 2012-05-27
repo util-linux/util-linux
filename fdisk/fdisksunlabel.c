@@ -149,7 +149,7 @@ int check_sun_label(void)
 	return 1;
 }
 
-void create_sunlabel(void)
+void create_sunlabel(struct fdisk_context *cxt)
 {
 	struct hd_geometry geometry;
 	unsigned long long llsectors, llcyls;
@@ -533,7 +533,7 @@ int sun_change_sysid(int i, uint16_t sys)
 	return 1;
 }
 
-void sun_list_table(int xtra)
+void sun_list_table(struct fdisk_context *cxt, int xtra)
 {
 	int i, w;
 	char *type;
@@ -626,7 +626,7 @@ void sun_set_pcylcount(void)
 				 _("Number of physical cylinders")));
 }
 
-void sun_write_table(void)
+void sun_write_table(struct fdisk_context *cxt)
 {
 	unsigned short *ush = (unsigned short *)sunlabel;
 	unsigned short csum = 0;
@@ -635,9 +635,9 @@ void sun_write_table(void)
 		csum ^= *ush++;
 	sunlabel->cksum = csum;
 	if (lseek(cxt->dev_fd, 0, SEEK_SET) < 0)
-		fatal(unable_to_seek);
+		fatal(cxt, unable_to_seek);
 	if (write(cxt->dev_fd, sunlabel, SECTOR_SIZE) != SECTOR_SIZE)
-		fatal(unable_to_write);
+		fatal(cxt, unable_to_write);
 }
 
 int sun_get_sysid(int i)

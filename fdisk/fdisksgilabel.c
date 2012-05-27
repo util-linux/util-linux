@@ -178,7 +178,7 @@ check_sgi_label() {
 }
 
 void
-sgi_list_table(int xtra) {
+sgi_list_table(struct fdisk_context *cxt, int xtra) {
 	int i, w;
 	int kpi = 0;		/* kernel partition ID */
 	char *type;
@@ -350,7 +350,7 @@ create_sgiinfo(void) {
 sgiinfo *fill_sgiinfo(void);
 
 void
-sgi_write_table(void) {
+sgi_write_table(struct fdisk_context *cxt) {
 	sgilabel->csum = 0;
 	sgilabel->csum = SSWAP32(two_s_complement_32bit_sum(
 		(unsigned int*)sgilabel, 
@@ -358,9 +358,9 @@ sgi_write_table(void) {
 	assert(two_s_complement_32bit_sum(
 		(unsigned int*)sgilabel, sizeof(*sgilabel)) == 0);
 	if (lseek(cxt->dev_fd, 0, SEEK_SET) < 0)
-		fatal(unable_to_seek);
+		fatal(cxt, unable_to_seek);
 	if (write(cxt->dev_fd, sgilabel, SECTOR_SIZE) != SECTOR_SIZE)
-		fatal(unable_to_write);
+		fatal(cxt, unable_to_write);
 	if (! strncmp((char *) sgilabel->directory[0].vol_file_name, "sgilabel", 8)) {
 		/*
 		 * keep this habit of first writing the "sgilabel".
@@ -370,9 +370,9 @@ sgi_write_table(void) {
 		int infostartblock = SSWAP32(sgilabel->directory[0].vol_file_start);
 		if (lseek(cxt->dev_fd, (off_t) infostartblock*
 				SECTOR_SIZE, SEEK_SET) < 0)
-			fatal(unable_to_seek);
+			fatal(cxt, unable_to_seek);
 		if (write(cxt->dev_fd, info, SECTOR_SIZE) != SECTOR_SIZE)
-			fatal(unable_to_write);
+			fatal(cxt, unable_to_write);
 		free(info);
 	}
 }
@@ -682,7 +682,7 @@ sgi_add_partition(int n, int sys)
 }
 
 void
-create_sgilabel(void)
+create_sgilabel(struct fdisk_context *cxt)
 {
 	struct hd_geometry geometry;
 	struct {

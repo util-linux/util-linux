@@ -63,19 +63,21 @@
 
 static void xbsd_delete_part (void);
 static void xbsd_new_part (void);
-static void xbsd_write_disklabel (void);
-static int xbsd_create_disklabel (void);
+static void xbsd_write_disklabel (struct fdisk_context *cxt);
+static int xbsd_create_disklabel (struct fdisk_context *cxt);
 static void xbsd_edit_disklabel (void);
-static void xbsd_write_bootstrap (void);
+static void xbsd_write_bootstrap (struct fdisk_context *cxt);
 static void xbsd_change_fstype (void);
 static int xbsd_get_part_index (int max);
 static int xbsd_check_new_partition (int *i);
 static void xbsd_list_types (void);
 static unsigned short xbsd_dkcksum (struct xbsd_disklabel *lp);
-static int xbsd_initlabel  (struct partition *p, struct xbsd_disklabel *d,
+static int xbsd_initlabel  (struct fdisk_context *cxt,
+			    struct partition *p, struct xbsd_disklabel *d,
 			    int pindex);
-static int xbsd_readlabel  (struct partition *p, struct xbsd_disklabel *d);
-static int xbsd_writelabel (struct partition *p, struct xbsd_disklabel *d);
+static int xbsd_readlabel  (struct fdisk_context *cxt,
+			    struct partition *p, struct xbsd_disklabel *d);
+static int xbsd_writelabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disklabel *d);
 static void sync_disks (void);
 
 #if defined (__alpha__)
@@ -108,18 +110,18 @@ static struct xbsd_disklabel xbsd_dlabel;
  * so this does not mean that there is a BSD disk label.
  */
 int
-check_osf_label(void) {
-	if (xbsd_readlabel (NULL, &xbsd_dlabel) == 0)
+check_osf_label(struct fdisk_context *cxt) {
+	if (xbsd_readlabel (cxt, NULL, &xbsd_dlabel) == 0)
 		return 0;
 	return 1;
 }
 
 int
-btrydev (char * dev) {
-	if (xbsd_readlabel (NULL, &xbsd_dlabel) == 0)
+btrydev (struct fdisk_context *cxt) {
+	if (xbsd_readlabel (cxt, NULL, &xbsd_dlabel) == 0)
 		return -1;
-	printf(_("\nBSD label for device: %s\n"), dev);
-	xbsd_print_disklabel (0);
+	printf(_("\nBSD label for device: %s\n"), cxt->dev_path);
+	xbsd_print_disklabel (cxt, 0);
 	return 0;
 }
 
@@ -139,7 +141,7 @@ is_bsd_partition_type(int type) {
 #endif
 
 void
-bsd_command_prompt (void)
+bsd_command_prompt (struct fdisk_context *cxt)
 {
 #if !defined (__alpha__)
   int t, ss;
@@ -158,8 +160,8 @@ bsd_command_prompt (void)
       }
       printf (_("Reading disklabel of %s at sector %d.\n"),
 	      partname(cxt->dev_path, t+1, 0), ss + BSD_LABELSECTOR);
-      if (xbsd_readlabel (xbsd_part, &xbsd_dlabel) == 0)
-	if (xbsd_create_disklabel () == 0)
+      if (xbsd_readlabel (cxt, xbsd_part, &xbsd_dlabel) == 0)
+	if (xbsd_create_disklabel (cxt) == 0)
 	  return;
       break;
     }
@@ -172,8 +174,8 @@ bsd_command_prompt (void)
 
 #elif defined (__alpha__)
 
-  if (xbsd_readlabel (NULL, &xbsd_dlabel) == 0)
-    if (xbsd_create_disklabel () == 0)
+  if (xbsd_readlabel (cxt, NULL, &xbsd_dlabel) == 0)
+    if (xbsd_create_disklabel (cxt) == 0)
       exit ( EXIT_SUCCESS );
 
 #endif
@@ -188,7 +190,7 @@ bsd_command_prompt (void)
 	xbsd_edit_disklabel ();
 	break;
       case 'i':
-	xbsd_write_bootstrap ();
+	xbsd_write_bootstrap (cxt);
 	break;
       case 'l':
 	xbsd_list_types ();
@@ -197,7 +199,7 @@ bsd_command_prompt (void)
 	xbsd_new_part ();
 	break;
       case 'p':
-	xbsd_print_disklabel (0);
+	      xbsd_print_disklabel (cxt, 0);
 	break;
       case 'q':
 	close (cxt->dev_fd);
@@ -205,7 +207,7 @@ bsd_command_prompt (void)
       case 'r':
 	return;
       case 's':
-	xbsd_print_disklabel (1);
+	      xbsd_print_disklabel (cxt, 1);
 	break;
       case 't':
 	xbsd_change_fstype ();
@@ -214,7 +216,7 @@ bsd_command_prompt (void)
 	change_units();
 	break;
       case 'w':
-	xbsd_write_disklabel ();
+	xbsd_write_disklabel (cxt);
 	break;
 #if !defined (__alpha__)
       case 'x':
@@ -281,7 +283,7 @@ xbsd_new_part (void)
 }
 
 void
-xbsd_print_disklabel (int show_all) {
+xbsd_print_disklabel (struct fdisk_context *cxt, int show_all) {
   struct xbsd_disklabel *lp = &xbsd_dlabel;
   struct xbsd_partition *pp;
   FILE *f = stdout;
@@ -379,20 +381,20 @@ xbsd_print_disklabel (int show_all) {
 }
 
 static void
-xbsd_write_disklabel (void) {
+xbsd_write_disklabel (struct fdisk_context *cxt) {
 #if defined (__alpha__)
 	printf (_("Writing disklabel to %s.\n"), cxt->dev_path);
-	xbsd_writelabel (NULL, &xbsd_dlabel);
+	xbsd_writelabel (cxt, NULL, &xbsd_dlabel);
 #else
 	printf (_("Writing disklabel to %s.\n"),
 		partname(cxt->dev_path, xbsd_part_index+1, 0));
-	xbsd_writelabel (xbsd_part, &xbsd_dlabel);
+	xbsd_writelabel (cxt, xbsd_part, &xbsd_dlabel);
 #endif
-	reread_partition_table(0);	/* no exit yet */
+	reread_partition_table(cxt, 0);	/* no exit yet */
 }
 
 static int
-xbsd_create_disklabel (void) {
+xbsd_create_disklabel (struct fdisk_context *cxt) {
 	char c;
 
 #if defined (__alpha__)
@@ -405,7 +407,7 @@ xbsd_create_disklabel (void) {
 	while (1) {
 		c = read_char (_("Do you want to create a disklabel? (y/n) "));
 		if (tolower(c) == 'y') {
-			if (xbsd_initlabel (
+			if (xbsd_initlabel (cxt,
 #if defined (__alpha__) || defined (__powerpc__) || defined (__hppa__) || \
     defined (__s390__) || defined (__s390x__)
 				NULL, &xbsd_dlabel, 0
@@ -413,7 +415,7 @@ xbsd_create_disklabel (void) {
 				xbsd_part, &xbsd_dlabel, xbsd_part_index
 #endif
 				) == 1) {
-				xbsd_print_disklabel (1);
+				xbsd_print_disklabel (cxt, 1);
 				return 1;
 			} else
 				return 0;
@@ -491,7 +493,7 @@ xbsd_get_bootstrap (char *path, void *ptr, int size)
 }
 
 static void
-xbsd_write_bootstrap (void)
+xbsd_write_bootstrap (struct fdisk_context *cxt)
 {
   char *bootdir = BSD_LINUX_BOOTDIR;
   char path[sizeof(BSD_LINUX_BOOTDIR) + 1 + 2 + 4];  /* BSD_LINUX_BOOTDIR + / + {sd,wd} + boot */
@@ -546,9 +548,9 @@ xbsd_write_bootstrap (void)
 #endif
 
   if (lseek (cxt->dev_fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
-    fatal (unable_to_seek);
+	  fatal (cxt, unable_to_seek);
   if (BSD_BBSIZE != write (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE))
-    fatal (unable_to_write);
+	  fatal (cxt, unable_to_write);
 
 #if defined (__alpha__)
   printf (_("Bootstrap installed on %s.\n"), cxt->dev_path);
@@ -631,12 +633,12 @@ xbsd_dkcksum (struct xbsd_disklabel *lp) {
 }
 
 static int
-xbsd_initlabel (struct partition *p, struct xbsd_disklabel *d,
+xbsd_initlabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disklabel *d,
 		int pindex __attribute__((__unused__))) {
 	struct xbsd_partition *pp;
 	struct geom g;
 
-	get_geometry (cxt->dev_fd, &g);
+	get_geometry (cxt, &g);
 	memset (d, 0, sizeof (struct xbsd_disklabel));
 
 	d -> d_magic = BSD_DISKMAGIC;
@@ -704,7 +706,7 @@ xbsd_initlabel (struct partition *p, struct xbsd_disklabel *d,
  * If it has the right magic, return 1.
  */
 static int
-xbsd_readlabel (struct partition *p, struct xbsd_disklabel *d)
+xbsd_readlabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disklabel *d)
 {
 	int t, sector;
 
@@ -716,9 +718,9 @@ xbsd_readlabel (struct partition *p, struct xbsd_disklabel *d)
 #endif
 
 	if (lseek (cxt->dev_fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
-		fatal (unable_to_seek);
+		fatal (cxt, unable_to_seek);
 	if (BSD_BBSIZE != read (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE))
-		fatal (unable_to_read);
+		fatal (cxt, unable_to_read);
 
 	memmove (d,
 	         &disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE + BSD_LABELOFFSET],
@@ -741,7 +743,7 @@ xbsd_readlabel (struct partition *p, struct xbsd_disklabel *d)
 }
 
 static int
-xbsd_writelabel (struct partition *p, struct xbsd_disklabel *d)
+xbsd_writelabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disklabel *d)
 {
   unsigned int sector;
 
@@ -763,15 +765,15 @@ xbsd_writelabel (struct partition *p, struct xbsd_disklabel *d)
 #if defined (__alpha__) && BSD_LABELSECTOR == 0
   alpha_bootblock_checksum (disklabelbuffer);
   if (lseek (cxt->dev_fd, (off_t) 0, SEEK_SET) == -1)
-    fatal (unable_to_seek);
+	  fatal (cxt, unable_to_seek);
   if (BSD_BBSIZE != write (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE))
-    fatal (unable_to_write);
+	  fatal (cxt, unable_to_write);
 #else
   if (lseek (cxt->dev_fd, (off_t) sector * SECTOR_SIZE + BSD_LABELOFFSET,
 		   SEEK_SET) == -1)
-    fatal (unable_to_seek);
+	  fatal (cxt, unable_to_seek);
   if (sizeof (struct xbsd_disklabel) != write (cxt->dev_fd, d, sizeof (struct xbsd_disklabel)))
-    fatal (unable_to_write);
+	  fatal (cxt, unable_to_write);
 #endif
 
   sync_disks ();

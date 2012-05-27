@@ -59,13 +59,13 @@ static int get_nonexisting_partition(int warn, int max)
 
 
 /* Allocate a buffer and read a partition table sector */
-static void read_pte(int fd, int pno, unsigned long long offset)
+static void read_pte(struct fdisk_context *cxt, int pno, unsigned long long offset)
 {
 	struct pte *pe = &ptes[pno];
 
 	pe->offset = offset;
 	pe->sectorbuffer = xmalloc(sector_size);
-	read_sector(fd, offset, pe->sectorbuffer);
+	read_sector(cxt, offset, pe->sectorbuffer);
 	pe->changed = 0;
 	pe->part_table = pe->ext_pointer = NULL;
 }
@@ -120,7 +120,7 @@ void dos_init(void)
 	warn_alignment();
 }
 
-static void read_extended(int ext)
+static void read_extended(struct fdisk_context *cxt, int ext)
 {
 	int i;
 	struct pte *pex;
@@ -156,7 +156,7 @@ static void read_extended(int ext)
 			return;
 		}
 
-		read_pte(cxt->dev_fd, partitions, extended_offset + get_start_sect(p));
+		read_pte(cxt, partitions, extended_offset + get_start_sect(p));
 
 		if (!extended_offset)
 			extended_offset = get_start_sect(p);
@@ -317,7 +317,7 @@ void dos_delete_partition(int i)
 	}
 }
 
-int check_dos_label(void)
+int check_dos_label(struct fdisk_context *cxt)
 {
 	int i;
 
@@ -334,7 +334,7 @@ int check_dos_label(void)
 				fprintf(stderr, _("Ignoring extra extended "
 					"partition %d\n"), i + 1);
 			else
-				read_extended(i);
+				read_extended(cxt, i);
 		}
 	}
 
@@ -658,7 +658,7 @@ void dos_new_partition(void)
 	}
 }
 
-void dos_write_table(void)
+void dos_write_table(struct fdisk_context *cxt)
 {
 	int i;
 
@@ -670,7 +670,7 @@ void dos_write_table(void)
 	}
 	if (MBRbuffer_changed) {
 		write_part_table_flag(MBRbuffer);
-		write_sector(cxt->dev_fd, 0, MBRbuffer);
+		write_sector(cxt, 0, MBRbuffer);
 	}
 	/* EBR (logical partitions) */
 	for (i = 4; i < partitions; i++) {
@@ -678,7 +678,7 @@ void dos_write_table(void)
 
 		if (pe->changed) {
 			write_part_table_flag(pe->sectorbuffer);
-			write_sector(cxt->dev_fd, pe->offset, pe->sectorbuffer);
+			write_sector(cxt, pe->offset, pe->sectorbuffer);
 		}
 	}
 }

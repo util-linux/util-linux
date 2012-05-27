@@ -47,11 +47,11 @@ extern void create_doslabel(void);
 extern void dos_print_mbr_id(void);
 extern void dos_set_mbr_id(void);
 extern void dos_delete_partition(int i);
-extern int check_dos_label(void);
+extern int check_dos_label(struct fdisk_context *cxt);
 extern int is_dos_partition(int t);
 extern void dos_init(void);
 extern void dos_add_partition(int n, int sys);
 extern void dos_new_partition(void);
-extern void dos_write_table(void);
+extern void dos_write_table(struct fdisk_context *cxt);
 
 #endif
