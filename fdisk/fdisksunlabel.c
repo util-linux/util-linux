@@ -152,7 +152,7 @@ int check_sun_label(void)
 void create_sunlabel(struct fdisk_context *cxt)
 {
 	struct hd_geometry geometry;
-	unsigned long long llsectors, llcyls;
+	sector_t llsectors, llcyls;
 	unsigned int ndiv, sec_fac;
 	int res;
 
