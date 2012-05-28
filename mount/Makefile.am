@@ -29,6 +29,7 @@ srcs_mount = \
 	$(top_srcdir)/lib/loopdev.c \
 	$(top_srcdir)/lib/mangle.c \
 	$(top_srcdir)/lib/strutils.c \
+	$(top_srcdir)/lib/xgetpass.c \
 	$(top_srcdir)/lib/sysfs.c
 
 # generic flags for all programs

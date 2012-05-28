@@ -42,6 +42,7 @@
 #include "blkdev.h"
 #include "strutils.h"
 #include "closestream.h"
+#include "xgetpass.h"
 
 #define DO_PS_FIDDLING
 
@@ -1239,6 +1240,8 @@ loop_check(const char **spec, const char **type, int *flags,
   int looptype;
   uintmax_t offset = 0, sizelimit = 0;
   struct loopdev_cxt lc;
+  char *pwd = NULL;
+  int ret = EX_FAIL;
 
   /*
    * In the case of a loop mount, either type is of the form lo@/dev/loop5
@@ -1318,8 +1321,18 @@ loop_check(const char **spec, const char **type, int *flags,
         return EX_FAIL;
       }
 
+      if (opt_encryption) {
+#ifdef MCL_FUTURE
+        if (mlockall(MCL_CURRENT | MCL_FUTURE)) {
+	  error(_("mount: couldn't lock into memory"));
+          return EX_FAIL;
+	}
+#endif
+	pwd = xgetpass(pfd, _("Password: "));
+      }
+
       loopcxt_init(&lc, 0);
-      /* loopcxt_enable_debug(&lc, 1); */
+      /*loopcxt_enable_debug(&lc, 1);*/
 
       if (*loopdev && **loopdev)
 	loopcxt_set_device(&lc, *loopdev);	/* use loop=<devname> */
@@ -1344,6 +1357,8 @@ loop_check(const char **spec, const char **type, int *flags,
 	  rc = loopcxt_set_offset(&lc, offset);
 	if (!rc && sizelimit)
 	  rc = loopcxt_set_sizelimit(&lc, sizelimit);
+	if (!rc && opt_encryption && pwd)
+	  loopcxt_set_encryption(&lc, opt_encryption, pwd);
 	if (!rc)
 	  loopcxt_set_flags(&lc, loop_opts);
 
@@ -1359,8 +1374,7 @@ loop_check(const char **spec, const char **type, int *flags,
 	  break;	/* success */
 
 	if (rc != -EBUSY) {
-	  if (verbose)
-	    printf(_("mount: failed setting up loop device\n"));
+	  error(_("mount: %s: failed setting up loop device: %m"), *loopfile);
 	  if (!opt_loopdev) {
 	    my_free(*loopdev);
 	    *loopdev = NULL;
@@ -1400,9 +1414,15 @@ loop_check(const char **spec, const char **type, int *flags,
     }
   }
 
-  return 0;
+  ret = 0;
 err:
-  return EX_FAIL;
+  if (pwd) {
+    char *p = pwd;
+    while (*p)
+      *p++ = '\0';
+    free(pwd);
+  }
+  return ret;
 }
 
 
