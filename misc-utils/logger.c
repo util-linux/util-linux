@@ -130,7 +130,7 @@ udpopenlog(const char *servername, uint16_t port) {
 	if ((fd = socket(AF_INET, SOCK_DGRAM , 0)) == -1)
 		err(EXIT_FAILURE, _("socket"));
 
-	bcopy(serverhost->h_addr,&s_addr.sin_addr,serverhost->h_length);
+	memcpy(&s_addr.sin_addr, serverhost->h_addr, serverhost->h_length);
         s_addr.sin_family=AF_INET;
         s_addr.sin_port=htons(port);
 
