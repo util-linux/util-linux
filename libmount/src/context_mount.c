@@ -141,6 +141,9 @@ done:
 	DBG(CXT, mnt_debug_h(cxt, "fixed options [rc=%d]: "
 		"vfs: '%s' fs: '%s' user: '%s', optstr: '%s'", rc,
 		fs->vfs_optstr, fs->fs_optstr, fs->user_optstr, fs->optstr));
+
+	if (rc)
+		rc = -MNT_ERR_MOUNTOPT;
 	return rc;
 }
 

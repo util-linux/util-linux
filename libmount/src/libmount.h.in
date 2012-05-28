@@ -127,6 +127,7 @@ enum {
 #define MNT_ERR_NOFSTYPE     5001	/* failed to detect filesystem type */
 #define MNT_ERR_NOSOURCE     5002	/* required mount source undefined */
 #define MNT_ERR_LOOPDEV	     5003	/* loopdev setup failed, errno set by libc */
+#define MNT_ERR_MOUNTOPT     5004	/* failed to parse/use userspace mount options */
 
 /* init.c */
 extern void mnt_init_debug(int mask);

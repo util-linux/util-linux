@@ -181,8 +181,10 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	if (rc == 0 && (cxt->user_mountflags & MNT_MS_OFFSET) &&
 	    mnt_optstr_get_option(optstr, "offset", &val, &len) == 0) {
 		rc = mnt_parse_offset(val, len, &offset);
-		if (rc)
+		if (rc) {
 			DBG(CXT, mnt_debug_h(cxt, "failed to parse offset="));
+			rc = -MNT_ERR_MOUNTOPT;
+		}
 	}
 
 	/*
@@ -191,8 +193,10 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	if (rc == 0 && (cxt->user_mountflags & MNT_MS_SIZELIMIT) &&
 	    mnt_optstr_get_option(optstr, "sizelimit", &val, &len) == 0) {
 		rc = mnt_parse_offset(val, len, &sizelimit);
-		if (rc)
+		if (rc) {
 			DBG(CXT, mnt_debug_h(cxt, "failed to parse sizelimit="));
+			rc = -MNT_ERR_MOUNTOPT;
+		}
 	}
 
 	/*

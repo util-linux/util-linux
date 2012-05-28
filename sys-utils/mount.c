@@ -367,6 +367,12 @@ try_readonly:
 			else
 				warnx(_("mount source not defined"));
 			return MOUNT_EX_USAGE;
+		case -MNT_ERR_MOUNTOPT:
+			if (errno)
+				warn(_("failed to parse mount options"));
+			else
+				warnx(_("failed to parse mount options"));
+			return MOUNT_EX_USAGE;
 		case -MNT_ERR_LOOPDEV:
 			if (errno == ENOENT
 			    && (uflags & MNT_MS_ENCRYPTION)

@@ -539,6 +539,7 @@ int mnt_get_uid(const char *username, uid_t *uid)
 	} else {
 		DBG(UTILS, mnt_debug(
 			"cannot convert '%s' username to UID", username));
+		rc = errno ? -errno : -EINVAL;
 	}
 
 	free(buf);
@@ -566,6 +567,7 @@ int mnt_get_gid(const char *groupname, gid_t *gid)
 	} else {
 		DBG(UTILS, mnt_debug(
 			"cannot convert '%s' groupname to GID", groupname));
+		rc = errno ? -errno : -EINVAL;
 	}
 
 	free(buf);
