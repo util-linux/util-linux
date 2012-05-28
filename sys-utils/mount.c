@@ -902,7 +902,7 @@ int main(int argc, char **argv)
 		usage(stderr);
 
 	if (oper) {
-		if (!is_power_of_2(oper))
+		if (!is_power_of_2(oper & ~MS_REC))
 			errx(MOUNT_EX_USAGE, _("propagation flags (--make-* or --bind options) are mutually exclusive"));
 
 		if (oper != MS_BIND && mnt_context_get_options(cxt))
