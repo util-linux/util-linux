@@ -261,6 +261,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 
 		if (loopdev || rc != -EBUSY) {
 			DBG(CXT, mnt_debug_h(cxt, "failed to setup device"));
+			rc = -MNT_ERR_LOOPDEV;
 			goto done;
 		}
 		DBG(CXT, mnt_debug_h(cxt, "loopdev stolen...trying again"));
