@@ -100,28 +100,21 @@ endif
 endif # BUILD_NEWGRP
 
 
-if BUILD_LOGIN_UTILS
-usrsbin_exec_PROGRAMS += \
-	vipw
-dist_man_MANS += \
-	vigr.8 \
-	vipw.8
-
+if BUILD_VIPW
+usrsbin_exec_PROGRAMS += vipw
+dist_man_MANS += vigr.8 vipw.8
 vipw_SOURCES = \
 	vipw.c \
 	setpwnam.h \
 	$(top_srcdir)/lib/fileutils.c
-
 vipw_LDADD =
-
 if HAVE_SELINUX
 vipw_LDADD += -lselinux
 endif
-
 install-exec-hook::
 	cd $(DESTDIR)$(usrsbin_execdir) && ln -sf vipw vigr
+endif # BUILD_VIPW
 
-endif
 
 noinst_PROGRAMS = test_islocal test_logindefs
 test_islocal_SOURCES = islocal.c
