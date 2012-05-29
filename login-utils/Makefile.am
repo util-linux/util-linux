@@ -25,10 +25,27 @@ endif
 endif # BUILD_SULOGIN
 
 
+if BUILD_LOGIN
+bin_PROGRAMS += login
+dist_man_MANS += login.1
+login_SOURCES = \
+	login.c \
+	logindefs.c \
+	logindefs.h \
+	$(top_srcdir)/lib/fileutils.c \
+	$(top_srcdir)/lib/setproctitle.c
+login_LDADD = -lpam -lpam_misc
+if HAVE_AUDIT
+login_LDADD += -laudit
+endif
+if HAVE_SELINUX
+login_LDADD += -lselinux
+endif
+endif # BUILD_LOGIN
+
+
 if BUILD_LOGIN_UTILS
-bin_PROGRAMS += \
-	login \
-	su
+bin_PROGRAMS += su
 usrbin_exec_PROGRAMS += \
 	chfn \
 	chsh \
@@ -38,7 +55,6 @@ usrsbin_exec_PROGRAMS += \
 dist_man_MANS += \
 	chfn.1 \
 	chsh.1 \
-	login.1 \
 	newgrp.1 \
 	vigr.8 \
 	vipw.8
@@ -59,12 +75,6 @@ chfn_chsh_common = \
 	setpwnam.h \
 	$(top_srcdir)/lib/env.c \
 	$(top_srcdir)/lib/fileutils.c
-login_SOURCES = \
-	login.c \
-	logindefs.c \
-	logindefs.h \
-	$(top_srcdir)/lib/fileutils.c \
-	$(top_srcdir)/lib/setproctitle.c
 vipw_SOURCES = \
 	vipw.c \
 	setpwnam.h \
@@ -76,7 +86,6 @@ su_SOURCES = \
 
 chfn_LDADD = $(login_ldadd_common)
 chsh_LDADD = $(login_ldadd_common)
-login_LDADD = $(login_ldadd_common)
 su_LDADD = $(login_ldadd_common)
 newgrp_LDADD =
 vipw_LDADD =
@@ -97,9 +106,6 @@ if HAVE_LIBCRYPT
 newgrp_LDADD += -lcrypt
 endif
 
-if HAVE_AUDIT
-login_LDADD += -laudit
-endif
 
 if HAVE_SELINUX
 chfn_SOURCES += selinux_utils.c selinux_utils.h

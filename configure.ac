@@ -777,14 +777,6 @@ UL_REQUIRES_BUILD([mountpoint], [libmount])
 AM_CONDITIONAL(BUILD_MOUNTPOINT, test "x$build_mountpoint" = xyes)
 
 
-AC_ARG_ENABLE([sulogin],
-  AS_HELP_STRING([--disable-sulogin], [do not build sulogin]),
-  [], enable_sulogin=yes
-)
-UL_BUILD_INIT([sulogin])
-AM_CONDITIONAL(BUILD_SULOGIN, test "x$build_sulogin" = xyes)
-
-
 AC_ARG_ENABLE([fallocate],
   AS_HELP_STRING([--disable-fallocate], [do not build fallocate]),
   [], enable_fallocate=check
@@ -1027,13 +1019,29 @@ AM_CONDITIONAL(BUILD_RESET, test "x$build_reset" = xyes)
 
 
 AC_ARG_ENABLE([login-utils],
-  AS_HELP_STRING([--enable-login-utils], [build chfn, chsh, login, newgrp, vipw]),
+  AS_HELP_STRING([--enable-login-utils], [build chfn, chsh, newgrp, vipw]),
   [], enable_login_utils=no
 )
 UL_BUILD_INIT([login_utils])
 UL_REQUIRES_HAVE([login_utils], [security_pam_misc_h], [PAM header file])
 AM_CONDITIONAL(BUILD_LOGIN_UTILS, test "x$build_login_utils" = xyes)
 
+
+AC_ARG_ENABLE([login],
+  AS_HELP_STRING([--disable-login], [do not build login]),
+  [], enable_login=yes
+)
+UL_BUILD_INIT([login])
+UL_REQUIRES_HAVE([login], [security_pam_misc_h], [PAM header file])
+AM_CONDITIONAL(BUILD_LOGIN, test "x$build_login" = xyes)
+
+
+AC_ARG_ENABLE([sulogin],
+  AS_HELP_STRING([--disable-sulogin], [do not build sulogin]),
+  [], enable_sulogin=yes
+)
+UL_BUILD_INIT([sulogin])
+AM_CONDITIONAL(BUILD_SULOGIN, test "x$build_sulogin" = xyes)
 
 
 AC_ARG_ENABLE([schedutils],
