@@ -637,6 +637,7 @@ if test "x$enable_most_builds" = xyes; then
   enable_reset=yes
   enable_login_utils=yes
   enable_chfn_chsh=yes
+  enable_newgrp=yes
   enable_write=yes
 fi
 
@@ -1020,12 +1021,20 @@ AM_CONDITIONAL(BUILD_RESET, test "x$build_reset" = xyes)
 
 
 AC_ARG_ENABLE([login-utils],
-  AS_HELP_STRING([--enable-login-utils], [build newgrp, vipw]),
+  AS_HELP_STRING([--enable-login-utils], [build vipw]),
   [], enable_login_utils=no
 )
 UL_BUILD_INIT([login_utils])
 UL_REQUIRES_HAVE([login_utils], [security_pam_misc_h], [PAM header file])
 AM_CONDITIONAL(BUILD_LOGIN_UTILS, test "x$build_login_utils" = xyes)
+
+
+AC_ARG_ENABLE([newgrp],
+  AS_HELP_STRING([--enable-newgrp], [build newgrp]),
+  [], enable_newgrp=no
+)
+UL_BUILD_INIT([newgrp])
+AM_CONDITIONAL(BUILD_NEWGRP, test "x$build_newgrp" = xyes)
 
 
 AC_ARG_ENABLE([chfn-chsh],

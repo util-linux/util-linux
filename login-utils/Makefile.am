@@ -88,14 +88,22 @@ su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 su_LDADD = -lpam -lpam_misc
 endif
 
+if BUILD_NEWGRP
+usrbin_exec_PROGRAMS += newgrp
+dist_man_MANS += newgrp.1
+newgrp_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
+newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
+newgrp_LDADD =
+if HAVE_LIBCRYPT
+newgrp_LDADD += -lcrypt
+endif
+endif # BUILD_NEWGRP
+
 
 if BUILD_LOGIN_UTILS
-usrbin_exec_PROGRAMS += \
-	newgrp
 usrsbin_exec_PROGRAMS += \
 	vipw
 dist_man_MANS += \
-	newgrp.1 \
 	vigr.8 \
 	vipw.8
 
@@ -104,20 +112,11 @@ vipw_SOURCES = \
 	setpwnam.h \
 	$(top_srcdir)/lib/fileutils.c
 
-newgrp_LDADD =
 vipw_LDADD =
-
-newgrp_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
-newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-
-if HAVE_LIBCRYPT
-newgrp_LDADD += -lcrypt
-endif
 
 if HAVE_SELINUX
 vipw_LDADD += -lselinux
 endif
-
 
 install-exec-hook::
 	cd $(DESTDIR)$(usrsbin_execdir) && ln -sf vipw vigr
