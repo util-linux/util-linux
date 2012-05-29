@@ -45,6 +45,8 @@ struct item {
 
 static struct item *list = NULL;
 
+void (*logindefs_load_defaults)(void) = NULL;
+
 void free_getlogindefs_data(void)
 {
 	struct item *ptr;
@@ -77,7 +79,7 @@ static void store(const char *name, const char *value, const char *path)
 	list = new;
 }
 
-static void load_defaults(const char *filename)
+void logindefs_load_file(const char *filename)
 {
 	FILE *f;
 	char buf[BUFSIZ];
@@ -139,12 +141,20 @@ static void load_defaults(const char *filename)
 	fclose(f);
 }
 
+static void load_defaults()
+{
+	if (logindefs_load_defaults)
+		logindefs_load_defaults();
+	else
+		logindefs_load_file(_PATH_LOGINDEFS);
+}
+
 static struct item *search(const char *name)
 {
 	struct item *ptr;
 
 	if (!list)
-		load_defaults(_PATH_LOGINDEFS);
+		load_defaults();
 
 	ptr = list;
 	while (ptr != NULL) {
@@ -259,7 +269,7 @@ int main(int argc, char *argv[])
 		errx(EXIT_FAILURE, "usage: %s <filename> "
 		     "[<str|num|bool> <valname>]", argv[0]);
 
-	load_defaults(argv[1]);
+	logindefs_load_file(argv[1]);
 
 	if (argc != 4) {	/* list all */
 		struct item *ptr;
