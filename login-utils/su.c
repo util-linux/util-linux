@@ -65,16 +65,14 @@ enum
 #include "error.h"
 
 #include <stdbool.h>
+#include "c.h"
 #include "xalloc.h"
 #include "nls.h"
 #include "pathnames.h"
 
-/* The official name of this program (e.g., no `g' prefix).  */
-#define PROGRAM_NAME "su"
-
 /* name of the pam configuration files. separate configs for su and su -  */
-#define PAM_SERVICE_NAME PROGRAM_NAME
-#define PAM_SERVICE_NAME_L PROGRAM_NAME "-l"
+#define PAM_SERVICE_NAME "su"
+#define PAM_SERVICE_NAME_L "su-l"
 
 #include "logindefs.h"
 
@@ -88,9 +86,6 @@ extern char **environ;
 
 static void run_shell (char const *, char const *, char **, size_t)
      __attribute__ ((__noreturn__));
-
-/* The name this program was run with.  */
-char *program_name;
 
 /* If true, pass the `-f' option to the subshell.  */
 static bool fast_startup;
@@ -161,7 +156,7 @@ log_su (struct passwd const *pw, bool successful)
   if (!tty)
     tty = "none";
 
-  openlog (basename (program_name), 0 , LOG_AUTH);
+  openlog (program_invocation_short_name, 0 , LOG_AUTH);
   syslog (LOG_NOTICE, "%s(to %s) %s on %s",
 	  successful ? "" : "FAILED SU ",
 	  new_user, old_user, tty);
@@ -654,10 +649,10 @@ usage (int status)
 {
   if (status != EXIT_SUCCESS)
     fprintf (stderr, _("Try `%s --help' for more information.\n"),
-	     program_name);
+	     program_invocation_short_name);
   else
     {
-      printf (_("Usage: %s [OPTION]... [-] [USER [ARG]...]\n"), program_name);
+      printf (_("Usage: %s [OPTION]... [-] [USER [ARG]...]\n"), program_invocation_short_name);
       fputs (_("\
 Change the effective user id and group id to that of USER.\n\
 \n\
@@ -697,7 +692,6 @@ main (int argc, char **argv)
   struct passwd *pw;
   struct passwd pw_copy;
 
-  program_name = argv[0];
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
