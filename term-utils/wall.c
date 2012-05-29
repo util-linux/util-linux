@@ -72,14 +72,6 @@
 #define	IGNOREUSER	"sleeper"
 #define WRITE_TIME_OUT	300		/* in seconds */
 
-#ifndef MAXHOSTNAMELEN
-# ifdef HOST_NAME_MAX
-#  define MAXHOSTNAMELEN HOST_NAME_MAX
-# else
-#  define MAXHOSTNAMELEN 64
-# endif
-#endif
-
 /* Function prototypes */
 char *makemsg(char *fname, size_t *mbufsize, int print_banner);
 static void usage(FILE *out);

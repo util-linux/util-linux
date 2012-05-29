@@ -223,6 +223,17 @@ static inline int dirfd(DIR *d)
 #endif
 
 /*
+ * Fallback for MAXHOSTNAMELEN
+ */
+#ifndef MAXHOSTNAMELEN
+# ifdef HOST_NAME_MAX
+#  define MAXHOSTNAMELEN HOST_NAME_MAX
+# else
+#  define MAXHOSTNAMELEN 64
+# endif
+#endif
+
+/*
  * Constant strings for usage() functions. For more info see
  * Documentation/howto-usage-function.txt and sys-utils/arch.c
  */

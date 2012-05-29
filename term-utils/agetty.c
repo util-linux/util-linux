@@ -119,14 +119,6 @@
 #define DEF_EOL		0
 #define DEF_SWITCH	0		/* default switch char */
 
-#ifndef MAXHOSTNAMELEN
-#  ifdef HOST_NAME_MAX
-#    define MAXHOSTNAMELEN HOST_NAME_MAX
-#  else
-#    define MAXHOSTNAMELEN 64
-#  endif			/* HOST_NAME_MAX */
-#endif				/* MAXHOSTNAMELEN */
-
 /*
  * When multiple baud rates are specified on the command line, the first one
  * we will try is the first one specified.
