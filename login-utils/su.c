@@ -60,8 +60,6 @@ enum
 #include <security/pam_misc.h>
 #include <signal.h>
 #include <sys/wait.h>
-#include <sys/fsuid.h>
-
 #include <syslog.h>
 
 #include "error.h"
