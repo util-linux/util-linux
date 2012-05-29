@@ -613,7 +613,7 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
  * Note that this function could be called only once. If you want to mount
  * another source or target than you have to call mnt_reset_context().
  *
- * If you want to call mount(2) for the same source and target with a diffrent
+ * If you want to call mount(2) for the same source and target with a different
  * mount flags or fstype then call mnt_context_reset_status() and then try
  * again mnt_context_do_mount().
  *

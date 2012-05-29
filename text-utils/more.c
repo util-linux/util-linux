@@ -847,7 +847,7 @@ int get_line(register FILE *f, int *length)
     mbstate_t state, state_bak;		/* Current status of the stream. */
     char mbc[MB_LEN_MAX];		/* Buffer for one multibyte char. */
     size_t mblength;			/* Byte length of multibyte char. */
-    size_t mbc_pos = 0;			/* Postion of the MBC. */
+    size_t mbc_pos = 0;			/* Position of the MBC. */
     int use_mbc_buffer_flag = 0;	/* If 1, mbc has data. */
     int break_flag = 0;			/* If 1, exit while(). */
     long file_pos_bak = Ftell (f);
