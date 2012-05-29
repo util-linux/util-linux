@@ -1044,6 +1044,15 @@ UL_BUILD_INIT([chfn_chsh])
 UL_REQUIRES_HAVE([chfn_chsh], [security_pam_misc_h], [PAM header file])
 AM_CONDITIONAL(BUILD_CHFN_CHSH, test "x$build_chfn_chsh" = xyes)
 
+AC_ARG_ENABLE([chsh-only-listed],
+AS_HELP_STRING([--disable-chsh-only-listed], [chsh: allow shells not in /etc/shells]),
+[], enable_chsh_only_listed=yes
+)
+
+if test "x$enable_chsh_only_listed" = xyes; then
+AC_DEFINE(ONLY_LISTED_SHELLS, 1, [Should chsh allow only shells in /etc/shells?])
+fi
+
 
 AC_ARG_ENABLE([login],
   AS_HELP_STRING([--disable-login], [do not build login]),
@@ -1052,6 +1061,24 @@ AC_ARG_ENABLE([login],
 UL_BUILD_INIT([login])
 UL_REQUIRES_HAVE([login], [security_pam_misc_h], [PAM header file])
 AM_CONDITIONAL(BUILD_LOGIN, test "x$build_login" = xyes)
+
+AC_ARG_ENABLE([login-chown-vcs],
+  AS_HELP_STRING([--enable-login-chown-vcs], [let login chown /dev/vcsN]),
+  [], enable_login_chown_vcs=no
+)
+
+if test "x$enable_login_chown_vcs" = xyes; then
+  AC_DEFINE(LOGIN_CHOWN_VCS, 1, [Should login chown /dev/vcsN?])
+fi
+
+AC_ARG_ENABLE([login-stat-mail],
+  AS_HELP_STRING([--enable-login-stat-mail], [let login stat() the mailbox]),
+  [], enable_login_stat_mail=no
+)
+
+if test "x$enable_login_stat_mail" = xyes; then
+  AC_DEFINE(LOGIN_STAT_MAIL, 1, [Should login stat() the mailbox?])
+fi
 
 
 AC_ARG_ENABLE([sulogin],
@@ -1143,26 +1170,6 @@ if test "x$build_chkdupexe" = xyes; then
 fi
 
 
-AC_ARG_ENABLE([chsh-only-listed],
-  AS_HELP_STRING([--disable-chsh-only-listed], [chsh: allow shells not in /etc/shells]),
-  [], enable_chsh_only_listed=yes
-)
-
-if test "x$enable_chsh_only_listed" = xyes; then
-  AC_DEFINE(ONLY_LISTED_SHELLS, 1, [Should chsh allow only shells in /etc/shells?])
-fi
-
-
-AC_ARG_ENABLE([login-chown-vcs],
-  AS_HELP_STRING([--enable-login-chown-vcs], [let login chown /dev/vcsN]),
-  [], enable_login_chown_vcs=no
-)
-
-if test "x$enable_login_chown_vcs" = xyes; then
-  AC_DEFINE(LOGIN_CHOWN_VCS, 1, [Should login chown /dev/vcsN?])
-fi
-
-
 AC_ARG_ENABLE([socket-activation],
   AS_HELP_STRING([--enable-socket-activation], [build uuidd with support for systemd socket activation]),
   [], enable_socket_activation=no
@@ -1183,16 +1190,6 @@ if test "x$with_systemdsystemunitdir" != "xno"; then
 fi
 
 AM_CONDITIONAL(WITH_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != "xno" ])
-
-
-AC_ARG_ENABLE([login-stat-mail],
-  AS_HELP_STRING([--enable-login-stat-mail], [let login stat() the mailbox]),
-  [], enable_login_stat_mail=no
-)
-
-if test "x$enable_login_stat_mail" = xyes; then
-  AC_DEFINE(LOGIN_STAT_MAIL, 1, [Should login stat() the mailbox?])
-fi
 
 
 AC_ARG_ENABLE([pg-bell],
