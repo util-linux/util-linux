@@ -1054,6 +1054,15 @@ UL_BUILD_INIT([sulogin])
 AM_CONDITIONAL(BUILD_SULOGIN, test "x$build_sulogin" = xyes)
 
 
+AC_ARG_ENABLE([su],
+  AS_HELP_STRING([--disable-su], [do not build su]),
+  [], enable_su=yes
+)
+UL_BUILD_INIT([su])
+UL_REQUIRES_HAVE([su], [security_pam_misc_h], [PAM header file])
+AM_CONDITIONAL(BUILD_SU, test "x$build_su" = xyes)
+
+
 AC_ARG_ENABLE([schedutils],
   AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, teskset]),
   [], enable_schedutils=yes

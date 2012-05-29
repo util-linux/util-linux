@@ -77,8 +77,19 @@ chsh_LDADD = $(chfn_chsh_ldadd)
 endif # BUILD_CHFN_CHSH
 
 
-if BUILD_LOGIN_UTILS
+if BUILD_SU
 bin_PROGRAMS += su
+su_SOURCES = \
+	su.c \
+	logindefs.c \
+	logindefs.h
+su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
+su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
+su_LDADD = -lpam -lpam_misc
+endif
+
+
+if BUILD_LOGIN_UTILS
 usrbin_exec_PROGRAMS += \
 	newgrp
 usrsbin_exec_PROGRAMS += \
@@ -88,38 +99,23 @@ dist_man_MANS += \
 	vigr.8 \
 	vipw.8
 
-# su 
-login_ldadd_common =
-
 vipw_SOURCES = \
 	vipw.c \
 	setpwnam.h \
 	$(top_srcdir)/lib/fileutils.c
-su_SOURCES = \
-	su.c \
-	logindefs.c \
-	logindefs.h
 
-su_LDADD = $(login_ldadd_common)
 newgrp_LDADD =
 vipw_LDADD =
 
 newgrp_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
-su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
-
 newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-
-login_ldadd_common += -lpam -lpam_misc
 
 if HAVE_LIBCRYPT
 newgrp_LDADD += -lcrypt
 endif
 
-
 if HAVE_SELINUX
 vipw_LDADD += -lselinux
-login_ldadd_common += -lselinux
 endif
 
 
