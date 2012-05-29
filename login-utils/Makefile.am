@@ -44,37 +44,53 @@ endif
 endif # BUILD_LOGIN
 
 
-if BUILD_LOGIN_UTILS
-bin_PROGRAMS += su
-usrbin_exec_PROGRAMS += \
-	chfn \
-	chsh \
-	newgrp
-usrsbin_exec_PROGRAMS += \
-	vipw
-dist_man_MANS += \
-	chfn.1 \
-	chsh.1 \
-	newgrp.1 \
-	vigr.8 \
-	vipw.8
+if BUILD_CHFN_CHSH
+usrbin_exec_PROGRAMS += chfn chsh
+dist_man_MANS += chfn.1 chsh.1
 
-# login, su, chfn and chsh libs
-login_ldadd_common =
-
-chfn_SOURCES = \
-	chfn.c \
-	$(chfn_chsh_common)
-chsh_SOURCES = \
-	chsh.c \
-	$(chfn_chsh_common)
-chfn_chsh_common = \
+chfn_chsh_sources = \
 	islocal.c \
 	islocal.h \
 	setpwnam.c \
 	setpwnam.h \
 	$(top_srcdir)/lib/env.c \
 	$(top_srcdir)/lib/fileutils.c
+
+chfn_chsh_cflags = $(SUID_CFLAGS) $(AM_CFLAGS)
+chfn_chsh_ldflags = $(SUID_LDFLAGS) $(AM_LDFLAGS)
+chfn_chsh_ldadd = -lpam -lpam_misc
+
+if HAVE_SELINUX
+chfn_chsh_sources += selinux_utils.c selinux_utils.h
+chfn_chsh_ldadd += -lselinux
+endif
+
+chfn_SOURCES = chfn.c $(chfn_chsh_sources)
+chfn_CFLAGS = $(chfn_chsh_cflags)
+chfn_LDFLAGS = $(chfn_chsh_ldflags)
+chfn_LDADD = $(chfn_chsh_ldadd)
+
+chsh_SOURCES = chfn.c $(chfn_chsh_sources)
+chsh_CFLAGS = $(chfn_chsh_cflags)
+chsh_LDFLAGS = $(chfn_chsh_ldflags)
+chsh_LDADD = $(chfn_chsh_ldadd)
+endif # BUILD_CHFN_CHSH
+
+
+if BUILD_LOGIN_UTILS
+bin_PROGRAMS += su
+usrbin_exec_PROGRAMS += \
+	newgrp
+usrsbin_exec_PROGRAMS += \
+	vipw
+dist_man_MANS += \
+	newgrp.1 \
+	vigr.8 \
+	vipw.8
+
+# su 
+login_ldadd_common =
+
 vipw_SOURCES = \
 	vipw.c \
 	setpwnam.h \
@@ -84,19 +100,13 @@ su_SOURCES = \
 	logindefs.c \
 	logindefs.h
 
-chfn_LDADD = $(login_ldadd_common)
-chsh_LDADD = $(login_ldadd_common)
 su_LDADD = $(login_ldadd_common)
 newgrp_LDADD =
 vipw_LDADD =
 
-chfn_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
-chsh_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 newgrp_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 
-chfn_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-chsh_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
@@ -108,8 +118,6 @@ endif
 
 
 if HAVE_SELINUX
-chfn_SOURCES += selinux_utils.c selinux_utils.h
-chsh_SOURCES += selinux_utils.c selinux_utils.h
 vipw_LDADD += -lselinux
 login_ldadd_common += -lselinux
 endif
