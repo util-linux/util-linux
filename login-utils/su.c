@@ -195,7 +195,7 @@ cleanup_pam (int retcode)
 
 /* Signal handler for parent process.  */
 static void
-su_catch_sig (int sig)
+su_catch_sig (int sig __attribute__((__unused__)))
 {
   caught_signal = true;
 }
