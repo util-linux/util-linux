@@ -6,6 +6,7 @@ dist_noinst_HEADERS =
 noinst_PROGRAMS =
 noinst_LTLIBRARIES =
 usrbin_exec_PROGRAMS =
+usrsbin_exec_PROGRAMS =
 dist_man_MANS =
 man_MANS =
 pkgconfig_DATA =
@@ -31,7 +32,6 @@ SUBDIRS = \
 	disk-utils \
 	fdisk \
 	getopt \
-	login-utils \
 	misc-utils \
 	po \
 	sys-utils \
@@ -73,6 +73,7 @@ include libmount/Makemodule.am
 include schedutils/Makemodule.am
 include text-utils/Makemodule.am
 include term-utils/Makemodule.am
+include login-utils/Makemodule.am
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.

@@ -1,20 +1,16 @@
-include $(top_srcdir)/config/include-Makefile.am
-
-bin_PROGRAMS =
-usrbin_exec_PROGRAMS =
-sbin_PROGRAMS =
-usrsbin_exec_PROGRAMS =
-dist_man_MANS =
 
 if BUILD_LAST
 usrbin_exec_PROGRAMS += last
-dist_man_MANS += last.1
+dist_man_MANS += login-utils/last.1
+last_SOURCES = login-utils/last.c
 endif
 
 if BUILD_SULOGIN
 sbin_PROGRAMS += sulogin
-dist_man_MANS += sulogin.8
-sulogin_SOURCES = sulogin.c $(top_srcdir)/lib/strutils.c
+dist_man_MANS += login-utils/sulogin.8
+sulogin_SOURCES = \
+	login-utils/sulogin.c \
+	lib/strutils.c
 sulogin_LDADD =
 if HAVE_LIBCRYPT
 sulogin_LDADD += -lcrypt
@@ -27,13 +23,13 @@ endif # BUILD_SULOGIN
 
 if BUILD_LOGIN
 bin_PROGRAMS += login
-dist_man_MANS += login.1
+dist_man_MANS += login-utils/login.1
 login_SOURCES = \
-	login.c \
-	logindefs.c \
-	logindefs.h \
-	$(top_srcdir)/lib/fileutils.c \
-	$(top_srcdir)/lib/setproctitle.c
+	login-utils/login.c \
+	login-utils/logindefs.c \
+	login-utils/logindefs.h \
+	lib/fileutils.c \
+	lib/setproctitle.c
 login_LDADD = -lpam -lpam_misc
 if HAVE_AUDIT
 login_LDADD += -laudit
@@ -46,31 +42,35 @@ endif # BUILD_LOGIN
 
 if BUILD_CHFN_CHSH
 usrbin_exec_PROGRAMS += chfn chsh
-dist_man_MANS += chfn.1 chsh.1
+dist_man_MANS += \
+	login-utils/chfn.1 \
+	login-utils/chsh.1
 
 chfn_chsh_sources = \
-	islocal.c \
-	islocal.h \
-	setpwnam.c \
-	setpwnam.h \
-	$(top_srcdir)/lib/env.c \
-	$(top_srcdir)/lib/fileutils.c
+	login-utils/islocal.c \
+	login-utils/islocal.h \
+	login-utils/setpwnam.c \
+	login-utils/setpwnam.h \
+	lib/env.c \
+	lib/fileutils.c
 
 chfn_chsh_cflags = $(SUID_CFLAGS) $(AM_CFLAGS)
 chfn_chsh_ldflags = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 chfn_chsh_ldadd = -lpam -lpam_misc
 
 if HAVE_SELINUX
-chfn_chsh_sources += selinux_utils.c selinux_utils.h
+chfn_chsh_sources += \
+	login-utils/selinux_utils.c \
+	login-utils/selinux_utils.h
 chfn_chsh_ldadd += -lselinux
 endif
 
-chfn_SOURCES = chfn.c $(chfn_chsh_sources)
+chfn_SOURCES = login-utils/chfn.c $(chfn_chsh_sources)
 chfn_CFLAGS = $(chfn_chsh_cflags)
 chfn_LDFLAGS = $(chfn_chsh_ldflags)
 chfn_LDADD = $(chfn_chsh_ldadd)
 
-chsh_SOURCES = chsh.c $(chfn_chsh_sources)
+chsh_SOURCES = login-utils/chsh.c $(chfn_chsh_sources)
 chsh_CFLAGS = $(chfn_chsh_cflags)
 chsh_LDFLAGS = $(chfn_chsh_ldflags)
 chsh_LDADD = $(chfn_chsh_ldadd)
@@ -80,17 +80,19 @@ endif # BUILD_CHFN_CHSH
 if BUILD_SU
 bin_PROGRAMS += su
 su_SOURCES = \
-	su.c \
-	logindefs.c \
-	logindefs.h
+	login-utils/su.c \
+	login-utils/logindefs.c \
+	login-utils/logindefs.h
 su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 su_LDADD = -lpam -lpam_misc
 endif
 
+
 if BUILD_NEWGRP
 usrbin_exec_PROGRAMS += newgrp
-dist_man_MANS += newgrp.1
+dist_man_MANS += login-utils/newgrp.1
+newgrp_SOURCES = login-utils/newgrp.c
 newgrp_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 newgrp_LDADD =
@@ -102,23 +104,34 @@ endif # BUILD_NEWGRP
 
 if BUILD_VIPW
 usrsbin_exec_PROGRAMS += vipw
-dist_man_MANS += vigr.8 vipw.8
+dist_man_MANS += \
+	login-utils/vigr.8 \
+	login-utils/vipw.8
 vipw_SOURCES = \
-	vipw.c \
-	setpwnam.h \
-	$(top_srcdir)/lib/fileutils.c
+	login-utils/vipw.c \
+	login-utils/setpwnam.h \
+	lib/fileutils.c
 vipw_LDADD =
 if HAVE_SELINUX
 vipw_LDADD += -lselinux
 endif
+install-exec-hook-vipw::
+	cd $(DESTDIR)$(usrsbin_execdir) && ln -sf vipw vigr
+
+INSTALL_EXEC_HOOKS += install-exec-hook-vipw
 endif # BUILD_VIPW
 
 
-noinst_PROGRAMS = test_islocal test_logindefs
-test_islocal_SOURCES = islocal.c
+noinst_PROGRAMS += \
+	test_islocal \
+	test_logindefs
+
+test_islocal_SOURCES = login-utils/islocal.c
 test_islocal_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)
 
-test_logindefs_SOURCES = logindefs.c logindefs.h
+test_logindefs_SOURCES = \
+	login-utils/logindefs.c \
+	login-utils/logindefs.h
 test_logindefs_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)
 
 
