@@ -1,0 +1,155 @@
+.\" Contents of this manual page is copied from GNU Coreutils
+.\" info page at end of May 2012, with few additions such as
+.\" examples and see also sections.
+.TH SU "1" "May 2012" "util-linux" "User Commands"
+.SH NAME
+su \- run a shell with substitute user and group IDs
+.SH SYNOPSIS
+.B su
+[options] [\-]
+.I user
+[args]
+.SH DESCRIPTION
+.B su
+allows one user to temporarily become another user.  It runs a
+command (often an interactive shell) with the real and effective user
+ID, group ID, and supplemental groups of a given user.
+.PP
+If no user is given, the default is root, the super-user.  The shell
+to use is taken from user's passwd entry, or /bin/sh if none is
+specified there.  If user has a password,
+.B su
+prompts for the password unless run by a user with effective user ID
+of zero (the super-user).
+.PP
+By default,
+.B su
+does not change the current directory.  It sets the environment
+variables HOME and SHELL from the password entry for user, and if
+user is not the super-user, sets USER and LOGNAME to user.  By
+default, the shell is not a login shell.
+.PP
+Any additional
+.I args
+are passed as additional arguments to the shell.
+.PP
+.B su
+does not treat /bin/sh or any other shells specially (e.g., by
+setting argv[0] to -su, passing -c only to certain shells, etc.).
+.PP
+.B su
+can optionally be compiled to use syslog to report failed, and
+optionally successful,
+.B su
+attempts.  (If the system supports syslog.)
+.PP
+This implementation of
+.B su
+does not check if the user is a member of the wheel group.
+.SH OPTIONS
+.TP
+\fB\-c\fR, \fB\-\-command\fR [\fIcommand\fR]
+Pass command, a single command line to run, to the shell with a
+.I \-c
+option instead of starting an interactive shell.
+.TP
+\fB\-f\fR, \fB\-\-fast\fR
+Pass the
+.I \-f
+option to the shell.  This probably only makes sense if the shell run
+is csh or tcsh, for which the
+.I \-f
+option prevents reading the startup file (.cshrc).  With Bourne-like
+shells, the
+.I -f
+option disables file name pattern expansion (globbing), which is not
+likely to be useful.
+.TP
+\fB\-\fR, \fB\-l\fR, \fB\-\-login\fR
+Make the shell a login shell.  This means the following.  Unset all
+environment variables except TERM, HOME, and SHELL (which are set as
+described above), and USER and LOGNAME (which are set, even for the
+super-user, as described above), and set PATH to a compiled-in
+default value.  Change to user's home directory.  Prepend  '\-' to the
+shell's name, intended to make it read its login startup file(s).
+.TP
+\fB\-m\fR, \fB\-p\fR, \fB\-\-preserve\-environment\fR
+Do not change the environment variables HOME, USER, LOGNAME, or
+SHELL.  Run the shell given in the environment variable SHELL instead
+of the shell from user's passwd entry, unless the user running
+.B su
+is not the super-user and user's shell is restricted.  A restricted
+shell is one that is not listed in the file /etc/shells, or in a
+compiled-in list if that file does not exist.  Parts of what this
+option does can be overridden by
+.I \-\-login
+and
+.IR \-\-shell .
+.TP
+\fB\-s\fR, \fB\-\-shell\fR [\fIshell\fR]
+Run shell instead of the shell from user's passwd entry, unless the
+user running
+.B su
+is not the super-user and user's shell is restricted (see
+.I -m
+just above).
+.SH EXAMPLES
+.TP
+.B su \ \-m \ nobody \ \-c 'ls -l'
+Run ls as nobody user.  Notice that \-m is required since user nobody
+does not have a valid shell by default.
+.TP
+.B su \ \-l fred
+.TQ
+.B su \ \- fred
+Simulate a login for user fred.
+.TP
+.B su \ \-
+.br
+Simulate a login for root.
+.SH "EXIT STATUS"
+In common case
+.B su
+will exit with status of the subshell.  See other possibilities
+below.
+.PP
+.RS
+.PD 0
+.TP
+.B 0
+success
+.TP
+.B 1
+system and authentication errors
+.TP
+.B 126
+subshell is found but cannot be invoked
+.TP
+.B 127
+subshell cannot be found
+.PD
+.RE
+.SH FILES
+.TP
+.B /etc/pam.d/su
+PAM configuration for
+.BR su .
+.SH AUTHORS
+.MT djm@gnu.ai.mit.edu
+David MacKenzie
+.ME
+.br
+.MT jim@meyering.net
+Jim Meyering
+.ME
+.SH "SEE ALSO"
+.BR login (1),
+.BR passwd (5),
+.BR sudo (8),
+.BR syslogd (8)
+.SH AVAILABILITY
+The example command is part of the util-linux package and is
+available from
+.UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .
