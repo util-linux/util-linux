@@ -1,4 +1,4 @@
-if BUILD_MOUNT
+if BUILD_DEPRECATED_MOUNT
 
 bin_PROGRAMS += mount umount
 dist_man_MANS += \
@@ -96,4 +96,4 @@ install-exec-hook-mount:
 INSTALL_EXEC_HOOKS += install-exec-hook-mount
 endif
 
-endif # BUILD_MOUNT
+endif # BUILD_DEPRECATED_MOUNT

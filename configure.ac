@@ -720,14 +720,14 @@ AC_SUBST([LIBMOUNT_VERSION_INFO])
 AC_DEFINE_UNQUOTED(LIBMOUNT_VERSION, "$LIBMOUNT_VERSION", [libmount version string])
 
 
-AC_ARG_ENABLE([mount],
-  AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
-  [], enable_mount=check
+AC_ARG_ENABLE([deprecated-mount],
+  AS_HELP_STRING([--enable-deprecated-mount], [build old mount utilities]),
+  [], enable_deprecated_mount=no
 )
-UL_BUILD_INIT([mount])
-UL_REQUIRES_LINUX([mount])
-UL_REQUIRES_BUILD([mount], [libblkid])
-AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
+UL_BUILD_INIT([deprecated_mount])
+UL_REQUIRES_LINUX([deprecated_mount])
+UL_REQUIRES_BUILD([deprecated_mount], [libblkid])
+AM_CONDITIONAL(BUILD_DEPRECATED_MOUNT, test "x$build_deprecated_mount" = xyes)
 
 
 AC_ARG_ENABLE([losetup],
@@ -752,16 +752,16 @@ fi
 AM_CONDITIONAL(BUILD_LIBMOUNT_MOUNT, test "x$build_libmount_mount" = xyes)
 
 
-AC_ARG_ENABLE([new-mount],
-  AS_HELP_STRING([--enable-new-mount], [build new pure libmount based mount(8) (EXPERIMENTAL)]),
-  [], enable_new_mount=no
+AC_ARG_ENABLE([mount],
+  AS_HELP_STRING([--disable-mount], [do not build mount(8) and umount(8)]),
+  [], enable_mount=check
 )
-UL_BUILD_INIT([new_mount])
-UL_REQUIRES_BUILD([new_mount], [libmount])
-if test "x$build_new_mount" = xyes; then
-  AM_CONDITIONAL(BUILD_MOUNT, [false])
+UL_BUILD_INIT([mount])
+UL_REQUIRES_BUILD([mount], [libmount])
+if test "x$build_mount" = xyes; then
+  AM_CONDITIONAL(BUILD_DEPRECATED_MOUNT, [false])
 fi
-AM_CONDITIONAL(BUILD_NEW_MOUNT, test "x$build_new_mount" = xyes)
+AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
 
 
 AC_ARG_ENABLE([fsck],

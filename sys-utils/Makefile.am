@@ -90,13 +90,13 @@ prlimit_SOURCES = \
 endif
 
 
-if BUILD_NEW_MOUNT
+if BUILD_MOUNT
 # 
-# The original (stable) mount is in mount/ directory
+# The original mount is in mount/ directory
 # -- temporary we share some man pages
 #
 bin_PROGRAMS += mount umount
-dist_man_MANS += mount.8 ../mount/umount.8
+dist_man_MANS += mount.8 ../deprecated-mount/umount.8
 
 mount_SOURCES = \
 	mount.c \
@@ -128,7 +128,7 @@ umount_static_CFLAGS = $(umount_CFLAGS)
 umount_static_LDFLAGS = $(umount_LDFLAGS) -all-static
 umount_static_LDADD = $(umount_LDADD)
 endif
-endif # BUILD_NEW_MOUNT
+endif # BUILD_MOUNT
 
 
 if BUILD_SWAPON
@@ -266,7 +266,7 @@ install-exec-hook:
 if BUILD_SWAPON
 	cd $(DESTDIR)$(sbindir) && ln -sf swapon swapoff
 endif
-if BUILD_NEW_MOUNT
+if BUILD_MOUNT
 if MAKEINSTALL_DO_SETUID
 	chmod 4755 $(DESTDIR)$(bindir)/mount
 	chmod 4755 $(DESTDIR)$(bindir)/umount
