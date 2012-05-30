@@ -1,0 +1,86 @@
+
+usrbin_exec_PROGRAMS += \
+	col \
+	colcrt \
+	colrm \
+	column \
+	hexdump \
+	rev \
+	tailf
+
+dist_man_MANS += \
+	text-utils/col.1 \
+	text-utils/colcrt.1 \
+	text-utils/colrm.1 \
+	text-utils/column.1 \
+	text-utils/hexdump.1 \
+	text-utils/rev.1 \
+	text-utils/tailf.1
+
+col_SOURCES = \
+	text-utils/col.c \
+	lib/strutils.c
+
+colcrt_SOURCES = text-utils/colcrt.c
+
+colrm_SOURCES = \
+	text-utils/colrm.c \
+	lib/strutils.c
+
+column_SOURCES = \
+	text-utils/column.c \
+	lib/strutils.c
+
+hexdump_SOURCES = \
+	text-utils/conv.c \
+	text-utils/display.c \
+	text-utils/hexdump.c \
+	text-utils/hexdump.h \
+	text-utils/hexsyntax.c \
+	text-utils/parse.c \
+	lib/strutils.c
+
+rev_SOURCES = text-utils/rev.c
+
+tailf_SOURCES = \
+	text-utils/tailf.c \
+	lib/strutils.c
+
+
+if BUILD_LINE
+usrbin_exec_PROGRAMS += line
+line_SOURCES = text-utils/line.c
+dist_man_MANS += text-utils/line.1
+endif
+
+# TODO: add BUILD_{MORE,UL,PG}  ./configure.am
+if HAVE_NCURSES
+bin_PROGRAMS += more
+more_SOURCES = text-utils/more.c
+
+usrbin_exec_PROGRAMS += ul pg
+ul_SOURCES = text-utils/ul.c
+pg_SOURCES = text-utils/pg.c
+
+if HAVE_TINFO
+more_LDADD = -ltinfo
+pg_LDADD = -ltinfo @NCURSES_LIBS@
+ul_LDADD = -ltinfo
+else
+more_LDADD = @NCURSES_LIBS@
+pg_LDADD = @NCURSES_LIBS@
+ul_LDADD = @NCURSES_LIBS@
+endif
+
+dist_man_MANS += \
+	text-utils/ul.1 \
+	text-utils/more.1 \
+	text-utils/pg.1
+else
+if HAVE_TERMCAP
+bin_PROGRAMS += more
+more_SOURCES = text-utils/more.c
+more_LDADD = -ltermcap
+dist_man_MANS += text-utils/more.1
+endif
+endif # !HAVE_NCURSES
