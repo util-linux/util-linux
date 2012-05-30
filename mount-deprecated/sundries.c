@@ -223,7 +223,7 @@ matching_opts (const char *options, const char *test_opts) {
      q = alloca(len+1);
      if (q == NULL)
           die (EX_SYSERR, _("not enough memory"));
-     
+
      for (p = test_opts; p < test_opts+len; p++) {
 	  r = strchr(p, ',');
 	  if (r) {
@@ -298,4 +298,3 @@ char *canonicalize (const char *path)
 		die(EX_SYSERR, _("not enough memory"));
 	return res;
 }
-

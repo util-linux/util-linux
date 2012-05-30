@@ -48,11 +48,6 @@ if BUILD_PARTX
 SUBDIRS += partx
 endif
 
-if BUILD_MOUNT
-SUBDIRS += mount
-endif
-
-
 AUTOMAKE_OPTIONS = gnu
 ACLOCAL_AMFLAGS = -I m4
 
@@ -74,6 +69,7 @@ include schedutils/Makemodule.am
 include text-utils/Makemodule.am
 include term-utils/Makemodule.am
 include login-utils/Makemodule.am
+include mount-deprecated/Makemodule.am
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.

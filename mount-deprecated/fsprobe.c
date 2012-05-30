@@ -139,4 +139,3 @@ fsprobe_get_devname_by_label(const char *label)
 {
 	return blkid_evaluate_tag("LABEL", label, &blcache);
 }
-

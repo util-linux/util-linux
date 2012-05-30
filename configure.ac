@@ -11,7 +11,7 @@ AM_INIT_AUTOMAKE([-Wall foreign 1.10 tar-pax dist-bzip2 no-dist-gzip dist-xz -Wn
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])],
 			    [AC_SUBST([AM_DEFAULT_VERBOSITY], [1])])
 
-AC_CONFIG_SRCDIR(mount/mount.c)
+AC_CONFIG_SRCDIR(sys-utils/mount.c)
 AC_PREFIX_DEFAULT([/usr])
 
 dnl version details from <major>.<minor>[-<suffix>]
@@ -1316,7 +1316,6 @@ libuuid/uuid.pc
 man/ru/Makefile
 misc-utils/Makefile
 misc-utils/uuidd.service
-mount/Makefile
 partx/Makefile
 po/Makefile.in
 sys-utils/Makefile

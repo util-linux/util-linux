@@ -53,4 +53,3 @@ char *canonicalize_spec (const char *path);
 #define EX_SOMEOK      64	/* some mount succeeded */
 
 #endif /* SUNDRIES_H */
-

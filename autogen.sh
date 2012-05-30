@@ -14,7 +14,7 @@ cd $srcdir
 DIE=0
 HAS_GTKDOC=1
 
-test -f mount/mount.c || {
+test -f sys-utils/mount.c || {
 	echo
 	echo "You must run this script in the top-level util-linux directory"
 	echo

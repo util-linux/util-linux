@@ -12,4 +12,3 @@ spec_to_devname(const char *spec)
 		return xstrdup(spec);
 	return fsprobe_get_devname_by_spec(spec);
 }
-

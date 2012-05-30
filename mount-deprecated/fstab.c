@@ -349,7 +349,7 @@ is_mounted_once(const char *name) {
 	return (ct == 1);
 }
 
-/* Given the name FILE, try to find the option "loop=FILE" in mtab.  */ 
+/* Given the name FILE, try to find the option "loop=FILE" in mtab.  */
 struct mntentchn *
 getmntoptfile (const char *file) {
 	struct mntentchn *mc, *mc0;
@@ -1168,4 +1168,3 @@ main(int argc, char **argv)
 	exit(EXIT_SUCCESS);
 }
 #endif
-

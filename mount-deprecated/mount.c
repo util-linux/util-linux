@@ -2300,7 +2300,7 @@ do_mount_all (char *types, char *options, char *test_opts) {
 
 		}
 	}
-			      
+
 	/* now do everything */
 	for (cp = childhead.nxt; cp; cp = cp->nxt) {
 		pid_t p = -1;
