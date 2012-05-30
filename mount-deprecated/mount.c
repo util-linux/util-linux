@@ -88,15 +88,6 @@ static int restricted = 1;
 /* Contains the fd to read the passphrase from, if any. */
 static int pfd = -1;
 
-#ifdef HAVE_LIBMOUNT_MOUNT
-static struct libmnt_update *mtab_update;
-static char *mtab_opts;
-static unsigned long mtab_flags;
-
-static void prepare_mtab_entry(const char *spec, const char *node,
-			const char *type, const char *opts, unsigned long flags);
-#endif
-
 /* mount(2) options */
 struct mountargs {
        const char *spec;
@@ -761,10 +752,6 @@ do_mount (struct mountargs *args, int *special, int *status) {
 		*special = 1;
 		ret = 0;
 	} else {
-#ifdef HAVE_LIBMOUNT_MOUNT
-		prepare_mtab_entry(args->spec, args->node, args->type,
-				mtab_opts, mtab_flags);
-#endif
 		ret = do_mount_syscall(args);
 	}
 	if (ret == 0)
@@ -1426,87 +1413,6 @@ err:
 }
 
 
-#ifdef HAVE_LIBMOUNT_MOUNT
-static void
-verbose_mount_info(const char *spec, const char *node, const char *type,
-		  const char *opts)
-{
-	struct my_mntent mnt;
-
-	mnt.mnt_fsname = is_pseudo_fs(type) ? spec : canonicalize(spec);
-	mnt.mnt_dir = canonicalize (node);
-	mnt.mnt_type = type;
-	mnt.mnt_opts = opts;
-
-	print_one (&mnt);
-
-	if (spec != mnt.mnt_fsname)
-		my_free(mnt.mnt_fsname);
-	my_free(mnt.mnt_dir);
-}
-
-static void
-prepare_mtab_entry(const char *spec, const char *node, const char *type,
-					  const char *opts, unsigned long flags)
-{
-	struct libmnt_fs *fs = mnt_new_fs();
-	int rc = -1;
-
-	if (!mtab_update)
-		mtab_update = mnt_new_update();
-
-	if (mtab_update && fs) {
-		const char *cn_spec = is_pseudo_fs(type) ? spec : canonicalize(spec);
-		const char *cn_node = canonicalize(node);
-
-		mnt_fs_set_source(fs, cn_spec);
-		mnt_fs_set_target(fs, cn_node);
-		mnt_fs_set_fstype(fs, type);
-		mnt_fs_set_options(fs, opts);
-
-		rc = mnt_update_set_fs(mtab_update, flags, NULL, fs);
-
-		if (spec != cn_spec)
-			my_free(cn_spec);
-		my_free(cn_node);
-	}
-
-	mnt_free_fs(fs);
-
-	if (rc) {
-		mnt_free_update(mtab_update);
-		mtab_update = NULL;
-	}
-}
-
-static void update_mtab_entry(int flags)
-{
-	unsigned long fl;
-
-	if (!mtab_update)
-		return;
-
-	fl = mnt_update_get_mflags(mtab_update);
-
-	if ((flags & MS_RDONLY) != (fl & MS_RDONLY))
-		mnt_update_force_rdonly(mtab_update, flags & MS_RDONLY);
-
-	if (!nomtab) {
-		if (mtab_does_not_exist()) {
-			if (verbose > 1)
-				printf(_("mount: no %s found - creating it..\n"),
-				       _PATH_MOUNTED);
-			create_mtab ();
-		}
-
-		mnt_update_table(mtab_update, NULL);
-	}
-
-	mnt_free_update(mtab_update);
-	mtab_update = NULL;
-}
-
-#else /*!HAVE_LIBMOUNT_MOUNT */
 static void
 update_mtab_entry(const char *spec, const char *node, const char *type,
 		  const char *opts, int flags, int freq, int pass) {
@@ -1543,7 +1449,6 @@ update_mtab_entry(const char *spec, const char *node, const char *type,
 	my_free(mnt.mnt_fsname);
 	my_free(mnt.mnt_dir);
 }
-#endif /* !HAVE_LIBMOUNT_MOUNT */
 
 static void
 set_pfd(char *s) {
@@ -1715,14 +1620,6 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
       goto out;
   }
 
-#ifdef HAVE_LIBMOUNT_MOUNT
-  mtab_opts = fix_opts_string(flags & ~MS_NOMTAB, extra_opts, user, 0);
-  mtab_flags = flags;
-
-  if (fake)
-    prepare_mtab_entry(spec, node, types, mtab_opts, mtab_flags);
-#endif
-
   block_signals (SIG_BLOCK);
 
   if (!fake) {
@@ -1764,11 +1661,6 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
       const char *tp = types ? types : "unknown";
 
       /* Mount succeeded, report this (if verbose) and write mtab entry.  */
-#ifdef HAVE_LIBMOUNT_MOUNT
-      update_mtab_entry(flags);
-      if (verbose)
-	      verbose_mount_info(loop ? loopfile : spec, node, tp, mo);
-#else
       if (!(mounttype & MS_PROPAGATION))
 	      update_mtab_entry(loop ? loopfile : spec,
 			node,
@@ -1777,7 +1669,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 			flags,
 			freq,
 			pass);
-#endif
+
       block_signals (SIG_UNBLOCK);
       free(mo);
 
@@ -2112,50 +2004,14 @@ mount_one (const char *spec, const char *node, const char *types,
 	return try_mount_one (spec, node, types, opts, freq, pass, 0);
 }
 
-#ifdef HAVE_LIBMOUNT_MOUNT
-static struct libmnt_table *minfo;	/* parsed mountinfo file */
-
-/* Check if an fsname/dir pair was already in the old mtab.  */
-static int
-mounted (const char *spec0, const char *node0, struct mntentchn *fstab_mc) {
-#else
 static int
 mounted (const char *spec0, const char *node0,
 	 struct mntentchn *fstab_mc __attribute__((__unused__))) {
-#endif
+
 	struct mntentchn *mc, *mc0;
 	const char *spec, *node;
 	int ret = 0;
 
-#ifdef HAVE_LIBMOUNT_MOUNT
-	/*
-	 * Use libmount to check for already mounted bind mounts on systems
-	 * without mtab.
-	 */
-	if (fstab_mc && fstab_mc->m.mnt_opts &&
-	    mtab_is_a_symlink() && strstr(fstab_mc->m.mnt_opts, "bind")) {
-
-		struct libmnt_fs *fs = mnt_new_fs();
-		int rc = fs ? 0 : -1;
-
-		if (!rc)
-			rc = mnt_fs_set_fstype(fs, fstab_mc->m.mnt_type);
-		if (!rc)
-			rc = mnt_fs_set_source(fs, fstab_mc->m.mnt_fsname);
-		if (!rc)
-			rc = mnt_fs_set_target(fs, fstab_mc->m.mnt_dir);
-		if (!rc)
-			rc =  mnt_fs_set_options(fs, fstab_mc->m.mnt_opts);
-		if (!rc && !minfo)
-			 minfo = mnt_new_table_from_file("/proc/self/mountinfo");
-		if (!rc && minfo)
-			rc = mnt_table_is_fs_mounted(minfo, fs);
-
-		mnt_free_fs(fs);
-		if (rc == 1)
-			return 1;
-	}
-#endif
 	/* Handle possible UUID= and LABEL= in spec */
 	spec = spec_to_devname(spec0);
 	if (!spec)
@@ -2693,9 +2549,6 @@ main(int argc, char *argv[]) {
 		printf("mount: eUID:       %u\n", geteuid());
 	}
 
-#ifdef HAVE_LIBMOUNT_MOUNT
-	mnt_init_debug(0);
-#endif
 	argc -= optind;
 	argv += optind;
 

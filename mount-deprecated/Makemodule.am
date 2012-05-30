@@ -71,23 +71,6 @@ mount_LDADD += $(SELINUX_LIBS)
 mount_static_LDADD += $(SELINUX_LIBS_STATIC)
 endif
 
-# hybrid mount -- old mount + new code from libmount for mtab management
-#
-if BUILD_LIBMOUNT_MOUNT
-mount_LDADD += libmount.la
-mount_CFLAGS += $(AM_CFLAGS) -I$(ul_libmount_incdir)
-umount_LDADD += libmount.la
-umount_CFLAGS += $(AM_CFLAGS) -I$(ul_libmount_incdir)
-if HAVE_STATIC_MOUNT
-mount_static_LDADD += libmount.la
-mount_static_CFLAGS += -I$(ul_libmount_incdir)
-endif
-if HAVE_STATIC_UMOUNT
-umount_static_LDADD += libmount.la
-umount_static_CFLAGS += -I$(ul_libmount_incdir)
-endif
-endif
-
 if MAKEINSTALL_DO_SETUID
 install-exec-hook-mount:
 	chmod 4755 $(DESTDIR)$(bindir)/mount

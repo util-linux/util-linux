@@ -422,16 +422,8 @@ umount_one (const char *spec, const char *node, const char *type,
  writemtab:
 	if (!nomtab &&
 	    (umnt_err == 0 || umnt_err == EINVAL || umnt_err == ENOENT)) {
-#ifdef HAVE_LIBMOUNT_MOUNT
-		struct libmnt_update *upd = mnt_new_update();
 
-		if (upd && !mnt_update_set_fs(upd, 0, node, NULL))
-			mnt_update_table(upd, NULL);
-
-		mnt_free_update(upd);
-#else
 		update_mtab (node, NULL);
-#endif
 	}
 
 	block_signals(SIG_UNBLOCK);
@@ -861,9 +853,6 @@ main (int argc, char *argv[]) {
 
 	atexit(unlock_mtab);
 
-#ifdef HAVE_LIBMOUNT_MOUNT
-	mnt_init_debug(0);
-#endif
 	if (all) {
 		/* nodev stuff: sysfs, usbfs, oprofilefs, ... */
 		if (types == NULL)

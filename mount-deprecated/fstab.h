@@ -3,11 +3,6 @@
 
 #include "mount_mntent.h"
 
-#ifdef HAVE_LIBMOUNT_MOUNT
-#define USE_UNSTABLE_LIBMOUNT_API
-#include <libmount.h>
-#endif
-
 int mtab_is_writable(void);
 int mtab_is_a_symlink(void);
 int mtab_does_not_exist(void);
