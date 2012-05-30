@@ -143,13 +143,13 @@ etc
 .PD
 .RE
 .SH AUTHORS
-.UR rjh@\:example.org
+.MT rjh@\:example.org
 Random J. Hacker
-.UE
+.ME
 .br
-.UR fred@\:example.com
+.MT fred@\:example.com
 Fred Foobar
-.UE
+.ME
 .SH "SEE ALSO"
 .BR groff_man (7),
 .BR foo (1),
