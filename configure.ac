@@ -730,6 +730,16 @@ UL_REQUIRES_BUILD([deprecated_mount], [libblkid])
 AM_CONDITIONAL(BUILD_DEPRECATED_MOUNT, test "x$build_deprecated_mount" = xyes)
 
 
+AC_ARG_ENABLE([mount],
+  AS_HELP_STRING([--disable-mount], [do not build mount(8) and umount(8)]),
+  [], enable_mount=check
+)
+UL_BUILD_INIT([mount])
+UL_REQUIRES_BUILD([mount], [libmount])
+UL_CONFLICTS_BUILD([mount], [deprecated_mount], [old deprecated mount version])
+AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
+
+
 AC_ARG_ENABLE([losetup],
   AS_HELP_STRING([--disable-losetup], [do not build losetup]),
   [], enable_losetup=check
@@ -737,18 +747,6 @@ AC_ARG_ENABLE([losetup],
 UL_BUILD_INIT([losetup])
 UL_REQUIRES_LINUX([losetup])
 AM_CONDITIONAL(BUILD_LOSETUP, test "x$build_losetup" = xyes)
-
-
-AC_ARG_ENABLE([mount],
-  AS_HELP_STRING([--disable-mount], [do not build mount(8) and umount(8)]),
-  [], enable_mount=check
-)
-UL_BUILD_INIT([mount])
-UL_REQUIRES_BUILD([mount], [libmount])
-if test "x$build_mount" = xyes; then
-  AM_CONDITIONAL(BUILD_DEPRECATED_MOUNT, [false])
-fi
-AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
 
 
 AC_ARG_ENABLE([fsck],
