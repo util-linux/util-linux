@@ -182,6 +182,36 @@ AC_DEFUN([UL_REQUIRES_HAVE], [
   fi
 ])
 
+
+dnl
+dnl UL_CONFLICTS_BUILD(NAME, ANOTHER, ANOTHERDESC [VARSUFFIX=$1])
+dnl
+dnl - ends with error if $enable_<name> and $build_<another>
+dnl   are both set to 'yes'
+dnl - sets $build_<name> to 'no' if $build_<another> is 'yes' and
+dnl   $enable_<name> is 'check' or 'no'
+dnl
+dnl The <havedesc> is description used for warning/error
+dnl message (e.g. "function").
+dnl
+dnl The default <name> for $build_ and $enable_ could be overwrited by option $3.
+dnl
+AC_DEFUN([UL_CONFLICTS_BUILD], [
+  m4_define([suffix], m4_default([$4],$1))
+
+  if test "x$[build_]suffix" != xno; then
+    case $[enable_]suffix:$[build_]$2 in #(
+    no:*)
+      [build_]suffix=no ;;
+    check:yes)
+      [build_]suffix=no ;;
+    yes:yes)
+      AC_MSG_ERROR([$1 selected, but it conflicts with $3]);;
+    esac
+  fi
+])
+
+
 dnl UL_REQUIRES_BUILD(NAME, BUILDNAME, [VARSUFFIX=$1])
 dnl
 dnl Modifies $build_<name> variable according to $enable_<name> and $have_funcname.
