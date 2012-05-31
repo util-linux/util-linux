@@ -13,8 +13,9 @@
 #include <time.h>
 #include <unistd.h>
 
-#include "clock.h"
 #include "nls.h"
+
+#include "hwclock.h"
 
 /*
  * Get defines for rtc stuff.

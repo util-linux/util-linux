@@ -314,3 +314,23 @@ bin_PROGRAMS += arch
 dist_man_MANS += sys-utils/arch.1
 arch_SOURCES = sys-utils/arch.c
 endif
+
+if BUILD_HWCLOCK
+sbin_PROGRAMS += hwclock
+dist_man_MANS += sys-utils/hwclock.8
+hwclock_SOURCES = \
+	sys-utils/hwclock.c \
+	sys-utils/hwclock.h \
+	sys-utils/hwclock-cmos.c \
+	sys-utils/hwclock-kd.c \
+	lib/strutils.c
+
+if LINUX
+hwclock_SOURCES += sys-utils/hwclock-rtc.c
+endif
+
+hwclock_LDADD =
+if HAVE_AUDIT
+hwclock_LDADD += -laudit
+endif
+endif # BUILD_HWCLOCK

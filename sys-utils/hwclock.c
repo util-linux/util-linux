@@ -73,19 +73,20 @@
 #define OPTUTILS_EXIT_CODE EX_USAGE
 
 #include "c.h"
-#include "clock.h"
 #include "closestream.h"
 #include "nls.h"
 #include "optutils.h"
 #include "pathnames.h"
 #include "strutils.h"
+#include "hwclock.h"
 
-#define EXCL_ERROR "--{adjust,getepoch,hctosys,predict,set,setepoch,show,systohc,systz}"
 #ifdef HAVE_LIBAUDIT
 #include <libaudit.h>
 static int hwaudit_fd = -1;
 static int hwaudit_on;
 #endif
+
+#define EXCL_ERROR "--{adjust,getepoch,hctosys,predict,set,setepoch,show,systohc,systz}"
 
 /* The struct that holds our hardware access routines */
 struct clock_ops *ur;

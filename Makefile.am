@@ -17,9 +17,6 @@ dist_usrbin_exec_SCRIPTS =
 
 INSTALL_EXEC_HOOKS =
 UNINSTALL_HOOKS =
-
-INSTALL_EXEC_HOOKS =
-UNINSTALL_HOOKS =
 INSTALL_DATA_HOOKS =
 
 EXTRA_DIST =
@@ -38,10 +35,6 @@ SUBDIRS = \
 
 RCS_FIND_IGNORE = \( -name SCCS -o -name BitKeeper -o -name .svn -o \
 		-name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o
-
-if BUILD_HWCLOCK
-SUBDIRS += hwclock
-endif
 
 if BUILD_PARTX
 SUBDIRS += partx

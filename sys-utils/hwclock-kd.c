@@ -10,9 +10,10 @@
 # include <sys/ioctl.h>
 # include <unistd.h>
 
-# include "clock.h"
 # include "nls.h"
 # include "usleep.h"
+
+# include "hwclock.h"
 
 /* Get defines for KDGHWCLK and KDSHWCLK (m68k) */
 # include <linux/kd.h>

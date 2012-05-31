@@ -93,7 +93,7 @@ int inb(int c __attribute__ ((__unused__)))
 }
 #endif				/* __alpha__ */
 
-#include "clock.h"
+#include "hwclock.h"
 
 #define BCD_TO_BIN(val) ((val)=((val)&15) + ((val)>>4)*10)
 #define BIN_TO_BCD(val) ((val)=(((val)/10)<<4) + (val)%10)
