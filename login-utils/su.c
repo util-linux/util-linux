@@ -324,10 +324,7 @@ authenticate (const struct passwd *pw)
       if (is_pam_failure(retval))
 	goto done;
     }
-# if 0 /* Manpage discourages use of getlogin.  */
-  cp = getlogin ();
-  if (!(cp && *cp && (lpw = getpwnam (cp)) != NULL && lpw->pw_uid == getuid ()))
-# endif
+
   lpw = getpwuid (getuid ());
   if (lpw && lpw->pw_name)
     {
