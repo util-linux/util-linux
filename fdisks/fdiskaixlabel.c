@@ -1,7 +1,7 @@
 /*
   Changes:
   Sat Mar 20 09:51:38 EST 1999 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
-  	Internationalization
+	Internationalization
 */
 #include <stdio.h>              /* stderr */
 #include <string.h>             /* strstr */

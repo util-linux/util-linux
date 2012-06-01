@@ -2,10 +2,10 @@
    NetBSD disklabel editor for Linux fdisk
    Written by Bernhard Fastenrath (fasten@informatik.uni-bonn.de)
    with code from the NetBSD disklabel command:
-  
+
    Copyright (c) 1987, 1988 Regents of the University of California.
    All rights reserved.
-  
+
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions
    are met:
@@ -16,12 +16,12 @@
       documentation and/or other materials provided with the distribution.
    3. All advertising materials mentioning features or use of this software
       must display the following acknowledgement:
-  	This product includes software developed by the University of
-  	California, Berkeley and its contributors.
+	This product includes software developed by the University of
+	California, Berkeley and its contributors.
    4. Neither the name of the University nor the names of its contributors
       may be used to endorse or promote products derived from this software
       without specific prior written permission.
-  
+
    THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
    IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -364,13 +364,13 @@ xbsd_print_disklabel (struct fdisk_context *cxt, int show_all) {
 	  fprintf(f, "    %5ld %5ld %5.5s ",
 		  (long) pp->p_fsize, (long) pp->p_fsize * pp->p_frag, "");
 	  break;
-	  
+
 	case BSD_FS_BSDFFS:
 	  fprintf(f, "    %5ld %5ld %5d ",
 		  (long) pp->p_fsize, (long) pp->p_fsize * pp->p_frag,
 		  pp->p_cpg);
 	  break;
-	  
+
 	default:
 	  fprintf(f, "%22.22s", "");
 	  break;
@@ -435,7 +435,7 @@ edit_int (int def, char *mesg)
   }
   while (!isdigit (*line_ptr));
   return atoi (line_ptr);
-} 
+}
 
 static void
 xbsd_edit_disklabel (void)
@@ -624,7 +624,7 @@ static unsigned short
 xbsd_dkcksum (struct xbsd_disklabel *lp) {
 	unsigned short *start, *end;
 	unsigned short sum = 0;
-  
+
 	start = (unsigned short *) lp;
 	end = (unsigned short *) &lp->d_partitions[lp->d_npartitions];
 	while (start < end)
@@ -693,7 +693,7 @@ xbsd_initlabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disk
 						   the whole disk */
 	pp -> p_offset = 0;
 	pp -> p_size   = d -> d_secperunit;
-	pp -> p_fstype = BSD_FS_UNUSED;  
+	pp -> p_fstype = BSD_FS_UNUSED;
 #endif
 
 	return 1;
@@ -730,7 +730,7 @@ xbsd_readlabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disk
 	for (t = d -> d_npartitions; t < BSD_MAXPARTITIONS; t++) {
 		d -> d_partitions[t].p_size   = 0;
 		d -> d_partitions[t].p_offset = 0;
-		d -> d_partitions[t].p_fstype = BSD_FS_UNUSED;  
+		d -> d_partitions[t].p_fstype = BSD_FS_UNUSED;
 	}
 
 	if (d -> d_npartitions > BSD_MAXPARTITIONS)
@@ -837,7 +837,7 @@ alpha_bootblock_checksum (char *boot)
 {
   u_int64_t *dp, sum;
   int i;
-  
+
   dp = (u_int64_t *)boot;
   sum = 0;
   for (i = 0; i < 63; i++)

@@ -1,0 +1,94 @@
+
+fdisk_common_sources = \
+	fdisks/common.h \
+	fdisks/gpt.c \
+	fdisks/gpt.h \
+	fdisks/i386_sys_types.c \
+	lib/blkdev.c \
+	lib/mbsalign.c \
+	lib/strutils.c \
+	lib/randutils.c \
+	lib/wholedisk.c
+
+if LINUX
+fdisk_common_sources += lib/linux_version.c
+endif
+
+if !ARCH_M68K
+
+sbin_PROGRAMS += fdisk
+dist_man_MANS += fdisks/fdisk.8
+fdisk_SOURCES = \
+	fdisks/utils.c \
+	fdisks/fdisk.c \
+	fdisks/fdisk.h \
+	fdisks/fdiskaixlabel.c \
+	fdisks/fdiskaixlabel.h \
+	fdisks/fdiskbsdlabel.c \
+	fdisks/fdiskbsdlabel.h \
+	fdisks/fdiskmaclabel.c \
+	fdisks/fdiskmaclabel.h \
+	fdisks/fdisksgilabel.c \
+	fdisks/fdisksgilabel.h \
+	fdisks/fdisksunlabel.c \
+	fdisks/fdisksunlabel.h \
+	fdisks/fdiskdoslabel.c \
+	fdisks/fdiskdoslabel.h \
+	fdisks/partname.c \
+	$(fdisk_common_sources) \
+	lib/canonicalize.c
+
+if BUILD_LIBBLKID
+fdisk_CFLAGS = -I$(ul_libblkid_incdir)
+fdisk_LDADD = libblkid.la
+endif
+
+if HAVE_STATIC_FDISK
+sbin_PROGRAMS += fdisk.static
+fdisk_static_SOURCES = $(fdisk_SOURCES)
+fdisk_static_LDFLAGS = -all-static
+fdisk_static_CFLAGS = $(fdisk_CFLAGS)
+fdisk_static_LDADD = $(fdisk_LDADD)
+endif
+
+
+if !ARCH_SPARC
+
+sbin_PROGRAMS += sfdisk
+dist_man_MANS += fdisks/sfdisk.8
+sfdisk_SOURCES = \
+	fdisks/partname.c \
+	fdisks/sfdisk.c \
+	$(fdisk_common_sources) \
+	lib/canonicalize.c
+
+if HAVE_STATIC_SFDISK
+sbin_PROGRAMS += sfdisk.static
+sfdisk_static_SOURCES = $(sfdisk_SOURCES)
+sfdisk_static_LDFLAGS = -all-static
+endif
+
+
+if BUILD_CFDISK
+sbin_PROGRAMS += cfdisk
+dist_man_MANS += fdisks/cfdisk.8
+cfdisk_SOURCES = fdisks/cfdisk.c $(fdisk_common_sources)
+cfdisk_CFLAGS =
+cfdisk_LDADD =
+
+if BUILD_LIBBLKID
+cfdisk_CFLAGS += -I$(ul_libblkid_incdir)
+cfdisk_LDADD += libblkid.la
+endif
+
+if HAVE_SLANG
+cfdisk_LDADD += -lslang
+else
+if HAVE_NCURSES
+cfdisk_LDADD += @NCURSES_LIBS@
+endif
+endif
+endif # BUILD_CFDISK
+
+endif # !ARCH_SPARC
+endif # !ARCH_M68K

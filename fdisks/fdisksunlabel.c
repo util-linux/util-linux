@@ -344,8 +344,8 @@ void verify_sun(struct fdisk_context *cxt)
 	  (int (*)(const void *,const void *)) verify_sun_cmp);
 
     if (array[0] == -1) {
-    	printf(_("No partitions defined\n"));
-    	return;
+	printf(_("No partitions defined\n"));
+	return;
     }
     stop = cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors;
     if (starts[array[0]])
@@ -367,7 +367,7 @@ void add_sun_partition(struct fdisk_context *cxt, int n, int sys)
 	struct sun_tag_flag *tag = &sunlabel->part_tags[n];
 	uint32_t start, stop, stop2;
 	int whole_disk = 0;
-		
+
 	char mesg[256];
 	int i;
 	unsigned int first, last;
@@ -377,8 +377,9 @@ void add_sun_partition(struct fdisk_context *cxt, int n, int sys)
 			"it before re-adding it.\n"), n + 1);
 		return;
 	}
-	
+
 	fetch_sun(cxt, starts, lens, &start, &stop);
+
 	if (stop <= start) {
 		if (n == 2)
 			whole_disk = 1;

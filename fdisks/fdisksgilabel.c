@@ -202,7 +202,7 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 /* flags */               (sgi_get_bootpartition(cxt) == i) ? "boot" : "    ",
 /* start */               (long) scround(start),
 /* end */                 (long) scround(start+len)-1,
-/* no odd flag on end */  (long) len, 
+/* no odd flag on end */  (long) len,
 /* type id */             sgi_get_sysid(cxt, i),
 /* type name */           (type = partition_type(sgi_get_sysid(cxt, i)))
 				? type : _("Unknown"));
@@ -334,7 +334,7 @@ void
 sgi_write_table(struct fdisk_context *cxt) {
 	sgilabel->csum = 0;
 	sgilabel->csum = SSWAP32(two_s_complement_32bit_sum(
-		(unsigned int*)sgilabel, 
+		(unsigned int*)sgilabel,
 		sizeof(*sgilabel)));
 	assert(two_s_complement_32bit_sum(
 		(unsigned int*)sgilabel, sizeof(*sgilabel)) == 0);
@@ -705,8 +705,8 @@ sgi_add_partition(struct fdisk_context *cxt, int n, int sys)
 	last = read_int(cxt, scround(first), scround(last)-1, scround(last)-1,
 			scround(first), mesg)+1;
 	if (display_in_cyl_units)
-		last *= units_per_sector;                                     
-	/*else                                                             
+		last *= units_per_sector;
+	/*else
 		last = last; * align to cylinder if You know how ... */
 	if ((sys == SGI_VOLUME) && (first != 0 || last != sgi_get_lastblock(cxt)))
 		printf(_("It is highly recommended that eleventh partition\n"

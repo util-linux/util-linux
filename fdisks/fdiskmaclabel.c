@@ -80,4 +80,3 @@ IS_MAC:
     mac_nolabel(cxt);		/* %% */
     return 1;
 }
-

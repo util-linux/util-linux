@@ -28,7 +28,6 @@ MAN_DIRS = man/ru
 
 SUBDIRS = \
 	$(MAN_DIRS) \
-	fdisk \
 	po
 
 RCS_FIND_IGNORE = \( -name SCCS -o -name BitKeeper -o -name .svn -o \
@@ -58,6 +57,7 @@ include mount-deprecated/Makemodule.am
 include sys-utils/Makemodule.am
 include misc-utils/Makemodule.am
 include disk-utils/Makemodule.am
+include fdisks/Makemodule.am
 
 include tests/Makemodule.am
 

@@ -69,7 +69,7 @@ struct xbsd_disklabel {
 	int16_t	d_type;			/* drive type */
 	int16_t	d_subtype;		/* controller/d_type specific */
 	char	d_typename[16];		/* type name, e.g. "eagle" */
-	char	d_packname[16];			/* pack identifier */ 
+	char	d_packname[16];			/* pack identifier */
 			/* disk geometry: */
 	uint32_t	d_secsize;		/* # of bytes per sector */
 	uint32_t	d_nsectors;		/* # of data sectors per track */

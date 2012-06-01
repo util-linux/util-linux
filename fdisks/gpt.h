@@ -5,4 +5,3 @@ extern int gpt_probe_signature_fd(int fd);
 extern int gpt_probe_signature_devname(char *devname);
 
 #endif /* FDISK_GPT_H */
-

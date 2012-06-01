@@ -46,4 +46,3 @@ partname(char *dev, int pno, int lth) {
 	}
 	return bufp;
 }
-

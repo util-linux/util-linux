@@ -610,27 +610,32 @@ AC_ARG_WITH([slang],
   AS_HELP_STRING([--with-slang], [compile cfdisk with slang]),
   [], with_slang=no
 )
-
-have_tinfo=no
-AC_CHECK_LIB(tinfo, tgetent, [have_tinfo=yes])
-AM_CONDITIONAL(HAVE_TINFO, test "x$have_tinfo" = xyes)
-
-use_slang=no
+have_slang=no
 if test "x$with_slang" = xyes; then
   AC_CHECK_HEADERS([slang.h slang/slang.h])
   AC_CHECK_HEADERS([slcurses.h slang/slcurses.h],
-		   [use_slang=yes], [], [
+		   [have_slang=yes], [], [
 #ifdef HAVE_SLANG_H
 #include <slang.h>
 #elif defined(HAVE_SLANG_SLANG_H)
 #include <slang/slang.h>
 #endif
 ])
-  if test "x$use_slang" = xno; then
+  if test "x$have_slang" = xno; then
     AC_MSG_ERROR([slang selected but slcurses.h not found])
   fi
 fi
-AM_CONDITIONAL(USE_SLANG, test "x$use_slang" = xyes)
+AM_CONDITIONAL(HAVE_SLANG, test "x$have_slang" = xyes)
+
+
+if test "x$have_slang" = xyes -o "x$have_ncurses" = xyes; then
+  AM_CONDITIONAL(BUILD_CFDISK, true)
+fi
+
+
+have_tinfo=no
+AC_CHECK_LIB(tinfo, tgetent, [have_tinfo=yes])
+AM_CONDITIONAL(HAVE_TINFO, test "x$have_tinfo" = xyes)
 
 
 AC_ARG_WITH([utempter],
@@ -1290,7 +1295,6 @@ AC_CONFIG_HEADERS(config.h)
 
 AC_CONFIG_FILES([
 Makefile
-fdisk/Makefile
 libblkid/blkid.pc
 libblkid/docs/Makefile
 libblkid/docs/version.xml
