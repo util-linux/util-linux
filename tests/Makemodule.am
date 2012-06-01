@@ -1,0 +1,13 @@
+
+include tests/helpers/Makemodule.am
+
+EXTRA_DIST += \
+	tests/expected \
+	tests/functions.sh \
+	tests/run.sh \
+	tests/ts
+
+clean-local-tests:
+	rm -rf output diff
+
+CLEAN_LOCALS += clean-local-tests

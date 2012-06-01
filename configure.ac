@@ -1303,9 +1303,7 @@ libuuid/uuid.pc
 man/ru/Makefile
 misc-utils/uuidd.service
 po/Makefile.in
-tests/Makefile
 tests/commands.sh
-tests/helpers/Makefile
 ])
 
 

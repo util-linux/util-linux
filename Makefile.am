@@ -19,6 +19,7 @@ systemdsystemunit_DATA =
 INSTALL_EXEC_HOOKS =
 UNINSTALL_HOOKS =
 INSTALL_DATA_HOOKS =
+CLEAN_LOCALS =
 
 EXTRA_DIST =
 CLEANFILES =
@@ -28,8 +29,7 @@ MAN_DIRS = man/ru
 SUBDIRS = \
 	$(MAN_DIRS) \
 	fdisk \
-	po \
-	tests
+	po
 
 RCS_FIND_IGNORE = \( -name SCCS -o -name BitKeeper -o -name .svn -o \
 		-name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o
@@ -58,6 +58,9 @@ include mount-deprecated/Makemodule.am
 include sys-utils/Makemodule.am
 include misc-utils/Makemodule.am
 include disk-utils/Makemodule.am
+
+include tests/Makemodule.am
+
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.
@@ -120,3 +123,4 @@ uninstall-hook: $(UNINSTALL_HOOKS)
 
 install-data-hook: $(INSTALL_DATA_HOOKS)
 
+clean-local: $(CLEAN_LOCALS)
