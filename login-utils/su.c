@@ -62,6 +62,7 @@ enum
 #include "xalloc.h"
 #include "nls.h"
 #include "pathnames.h"
+#include "env.h"
 
 /* name of the pam configuration files. separate configs for su and su -  */
 #define PAM_SERVICE_NAME "su"
@@ -110,21 +111,6 @@ static struct option const longopts[] =
   {"version", no_argument, 0, 'v'},
   {NULL, 0, NULL, 0}
 };
-
-/* Add NAME=VAL to the environment, checking for out of memory errors.  */
-
-static void
-xsetenv (char const *name, char const *val)
-{
-  size_t namelen = strlen (name);
-  size_t vallen = strlen (val);
-  char *string = xmalloc (namelen + 1 + vallen + 1);
-  strcpy (string, name);
-  string[namelen] = '=';
-  strcpy (string + namelen + 1, val);
-  if (putenv (string) != 0)
-    error (EXIT_FAILURE, 0, _("out of memory"));
-}
 
 /* Log the fact that someone has run su to the user given by PW;
    if SUCCESSFUL is true, they gave the correct password, etc.  */
@@ -506,11 +492,11 @@ modify_environment (const struct passwd *pw, const char *shell)
       environ = xmalloc ((6 + !!term) * sizeof (char *));
       environ[0] = NULL;
       if (term)
-	xsetenv ("TERM", term);
-      xsetenv ("HOME", pw->pw_dir);
-      xsetenv ("SHELL", shell);
-      xsetenv ("USER", pw->pw_name);
-      xsetenv ("LOGNAME", pw->pw_name);
+	xsetenv ("TERM", term, 1);
+      xsetenv ("HOME", pw->pw_dir, 1);
+      xsetenv ("SHELL", shell, 1);
+      xsetenv ("USER", pw->pw_name, 1);
+      xsetenv ("LOGNAME", pw->pw_name, 1);
       set_path(pw);
     }
   else
@@ -519,8 +505,8 @@ modify_environment (const struct passwd *pw, const char *shell)
 	 USER and LOGNAME.  */
       if (change_environment)
         {
-          xsetenv ("HOME", pw->pw_dir);
-          xsetenv ("SHELL", shell);
+          xsetenv ("HOME", pw->pw_dir, 1);
+          xsetenv ("SHELL", shell, 1);
 	  if (getlogindefs_bool ("ALWAYS_SET_PATH", 0))
 	    set_path(pw);
 	  else
@@ -535,14 +521,14 @@ modify_environment (const struct passwd *pw, const char *shell)
 
 	      if (new)
 		{
-		  xsetenv ("PATH", new);
+		  xsetenv ("PATH", new, 1);
 		  free (new);
 		}
 	    }
           if (pw->pw_uid)
             {
-              xsetenv ("USER", pw->pw_name);
-              xsetenv ("LOGNAME", pw->pw_name);
+              xsetenv ("USER", pw->pw_name, 1);
+              xsetenv ("LOGNAME", pw->pw_name, 1);
             }
         }
     }
