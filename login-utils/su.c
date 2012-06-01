@@ -37,10 +37,6 @@
 
    Based on an implemenation by David MacKenzie <djm@gnu.ai.mit.edu>.  */
 
-#ifndef MAX
-# define MAX(a,b) ((a) > (b) ? (a) : (b))
-#endif
-
 /* Exit statuses for programs like 'env' that exec other programs.
    EXIT_FAILURE might not be 1, so use EXIT_FAIL in such programs.  */
 enum
@@ -817,7 +813,7 @@ main (int argc, char **argv)
   if (simulate_login && chdir (pw->pw_dir) != 0)
     error (0, errno, _("warning: cannot change directory to %s"), pw->pw_dir);
 
-  run_shell (shell, command, argv + optind, MAX (0, argc - optind));
+  run_shell (shell, command, argv + optind, max (0, argc - optind));
 }
 
 // vim: sw=2 cinoptions=>4,n-2,{2,^-2,\:2,=2,g0,h2,p5,t0,+2,(0,u0,w1,m1
