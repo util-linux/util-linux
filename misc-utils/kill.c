@@ -45,7 +45,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <strings.h>
 #include <ctype.h>		/* for isdigit() */
 #include <unistd.h>
 #include <signal.h>

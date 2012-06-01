@@ -173,6 +173,8 @@ int loopcxt_init(struct loopdev_cxt *lc, int flags)
  */
 void loopcxt_deinit(struct loopdev_cxt *lc)
 {
+	int errsv = errno;
+
 	if (!lc)
 		return;
 
@@ -183,6 +185,8 @@ void loopcxt_deinit(struct loopdev_cxt *lc)
 
 	loopcxt_set_device(lc, NULL);
 	loopcxt_deinit_iterator(lc);
+
+	errno = errsv;
 }
 
 /*

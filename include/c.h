@@ -109,9 +109,11 @@
 #define offsetof(TYPE, MEMBER) ((size_t) &((TYPE *)0)->MEMBER)
 #endif
 
+#ifndef container_of
 #define container_of(ptr, type, member) ({                       \
 	const __typeof__( ((type *)0)->member ) *__mptr = (ptr); \
 	(type *)( (char *)__mptr - offsetof(type,member) );})
+#endif
 
 #ifndef HAVE_PROGRAM_INVOCATION_SHORT_NAME
 # ifdef HAVE___PROGNAME
@@ -218,6 +220,17 @@ static inline int dirfd(DIR *d)
 
 #ifndef IUTF8
 #define IUTF8 0040000
+#endif
+
+/*
+ * Fallback for MAXHOSTNAMELEN
+ */
+#ifndef MAXHOSTNAMELEN
+# ifdef HOST_NAME_MAX
+#  define MAXHOSTNAMELEN HOST_NAME_MAX
+# else
+#  define MAXHOSTNAMELEN 64
+# endif
 #endif
 
 /*

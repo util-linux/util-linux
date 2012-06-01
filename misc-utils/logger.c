@@ -43,7 +43,6 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
-#include <strings.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -59,11 +58,45 @@
 #define	SYSLOG_NAMES
 #include <syslog.h>
 
-int	decode __P((char *, CODE *));
-int	pencode __P((char *));
-
 static int optd = 0;
 static uint16_t udpport = 514;
+
+static int decode(char *name, CODE *codetab)
+{
+	register CODE *c;
+
+	if (isdigit(*name))
+		return (atoi(name));
+
+	for (c = codetab; c->c_name; c++)
+		if (!strcasecmp(name, c->c_name))
+			return (c->c_val);
+
+	return -1;
+}
+
+static int pencode(char *s)
+{
+	char *save;
+	int fac, lev;
+
+	for (save = s; *s && *s != '.'; ++s);
+	if (*s) {
+		*s = '\0';
+		fac = decode(save, facilitynames);
+		if (fac < 0)
+			errx(EXIT_FAILURE, _("unknown facility name: %s."), save);
+		*s++ = '.';
+	}
+	else {
+		fac = LOG_USER;
+		s = save;
+	}
+	lev = decode(s, prioritynames);
+	if (lev < 0)
+		errx(EXIT_FAILURE, _("unknown priority name: %s."), save);
+	return ((lev & LOG_PRIMASK) | (fac & LOG_FACMASK));
+}
 
 static int
 myopenlog(const char *sock) {
@@ -97,7 +130,7 @@ udpopenlog(const char *servername, uint16_t port) {
 	if ((fd = socket(AF_INET, SOCK_DGRAM , 0)) == -1)
 		err(EXIT_FAILURE, _("socket"));
 
-	bcopy(serverhost->h_addr,&s_addr.sin_addr,serverhost->h_length);
+	memcpy(&s_addr.sin_addr, serverhost->h_addr, serverhost->h_length);
         s_addr.sin_family=AF_INET;
         s_addr.sin_port=htons(port);
 
@@ -249,8 +282,6 @@ main(int argc, char **argv) {
 	else
 		LogSock = myopenlog(usock);
 
-	(void) fclose(stdout);
-
 	/* log input line if appropriate */
 	if (argc > 0) {
 		register char *p, *endp;
@@ -304,48 +335,4 @@ main(int argc, char **argv) {
 		close(LogSock);
 
 	return EXIT_SUCCESS;
-}
-
-/*
- *  Decode a symbolic name to a numeric value
- */
-int
-pencode(char *s)
-{
-	char *save;
-	int fac, lev;
-
-	for (save = s; *s && *s != '.'; ++s);
-	if (*s) {
-		*s = '\0';
-		fac = decode(save, facilitynames);
-		if (fac < 0)
-			errx(EXIT_FAILURE,
-			    _("unknown facility name: %s."), save);
-		*s++ = '.';
-	}
-	else {
-		fac = LOG_USER;
-		s = save;
-	}
-	lev = decode(s, prioritynames);
-	if (lev < 0)
-		errx(EXIT_FAILURE,
-		    _("unknown priority name: %s."), save);
-	return ((lev & LOG_PRIMASK) | (fac & LOG_FACMASK));
-}
-
-int
-decode(char *name, CODE *codetab)
-{
-	register CODE *c;
-
-	if (isdigit(*name))
-		return (atoi(name));
-
-	for (c = codetab; c->c_name; c++)
-		if (!strcasecmp(name, c->c_name))
-			return (c->c_val);
-
-	return (-1);
 }

@@ -944,9 +944,12 @@ int main(int argc, char **argv)
 
 		/* figure out full device or mount point name */
 		p = find_device(device);
-		free(device);
+		if (p)
+			free(device);
+		else
+			p = device;
 
-		device = mnt_resolve_path(p, NULL);
+		device = mnt_resolve_spec(p, NULL);
 		free(p);
 	}
 

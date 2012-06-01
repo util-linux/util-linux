@@ -46,7 +46,7 @@
 #include "closestream.h"
 
 FS *fshead;				/* head of format strings */
-int blocksize;				/* data block size */
+ssize_t blocksize;			/* data block size */
 int exitval;				/* final exit value */
 ssize_t length = -1;			/* max bytes to read */
 

@@ -604,8 +604,6 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 		rc = mnt_context_merge_mflags(cxt);
 	if (!rc)
 		rc = evaluate_permissions(cxt);
-	if (!rc)
-	       rc = mnt_context_prepare_target(cxt);
 
 	if (!rc && !cxt->helper) {
 

@@ -156,7 +156,7 @@ static void read_extended(int ext)
 			return;
 		}
 
-		read_pte(fd, partitions, extended_offset + get_start_sect(p));
+		read_pte(cxt->dev_fd, partitions, extended_offset + get_start_sect(p));
 
 		if (!extended_offset)
 			extended_offset = get_start_sect(p);
@@ -670,7 +670,7 @@ void dos_write_table(void)
 	}
 	if (MBRbuffer_changed) {
 		write_part_table_flag(MBRbuffer);
-		write_sector(fd, 0, MBRbuffer);
+		write_sector(cxt->dev_fd, 0, MBRbuffer);
 	}
 	/* EBR (logical partitions) */
 	for (i = 4; i < partitions; i++) {
@@ -678,7 +678,7 @@ void dos_write_table(void)
 
 		if (pe->changed) {
 			write_part_table_flag(pe->sectorbuffer);
-			write_sector(fd, pe->offset, pe->sectorbuffer);
+			write_sector(cxt->dev_fd, pe->offset, pe->sectorbuffer);
 		}
 	}
 }

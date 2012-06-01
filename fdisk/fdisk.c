@@ -39,6 +39,7 @@
 #include "fdiskaixlabel.h"
 #include "fdiskmaclabel.h"
 #include "fdiskdoslabel.h"
+#include "fdiskbsdlabel.h"
 
 #ifdef HAVE_LINUX_COMPILER_H
 #include <linux/compiler.h>
@@ -54,6 +55,7 @@
 
 unsigned char *MBRbuffer;
 int MBRbuffer_changed;
+struct fdisk_context *cxt = NULL;
 
 #define hex_val(c)	({ \
 				char _c = (c); \
@@ -129,12 +131,10 @@ get_nr_sects(struct partition *p) {
 	return read4_little_endian(p->size4);
 }
 
-char	*disk_device,			/* must be specified */
-	*line_ptr,			/* interactive input */
+char	*line_ptr,			/* interactive input */
 	line_buffer[LINE_LENGTH];
 
-int	fd,				/* the disk */
-	nowarn = 0,			/* no warnings for fdisk -l/-s */
+int	nowarn = 0,			/* no warnings for fdisk -l/-s */
 	dos_compatible_flag = 0,	/* disabled by default */
 	dos_changed = 0,
 	partitions = 4;			/* maximum partition + 1 */
@@ -182,19 +182,19 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 
 void fatal(enum failure why)
 {
-	close(fd);
+	close(cxt->dev_fd);
 	switch (why) {
 		case unable_to_read:
-			err(EXIT_FAILURE, _("unable to read %s"), disk_device);
+			err(EXIT_FAILURE, _("unable to read %s"), cxt->dev_path);
 
 		case unable_to_seek:
-			err(EXIT_FAILURE, _("unable to seek on %s"), disk_device);
+			err(EXIT_FAILURE, _("unable to seek on %s"), cxt->dev_path);
 
 		case unable_to_write:
-			err(EXIT_FAILURE, _("unable to write %s"), disk_device);
+			err(EXIT_FAILURE, _("unable to write %s"), cxt->dev_path);
 
 		case ioctl_error:
-			err(EXIT_FAILURE, _("BLKGETSIZE ioctl failed on %s"), disk_device);
+			err(EXIT_FAILURE, _("BLKGETSIZE ioctl failed on %s"), cxt->dev_path);
 
 		default:
 			err(EXIT_FAILURE, _("fatal error"));
@@ -459,7 +459,7 @@ get_topology(int fd) {
 	blkid_probe pr;
 
 	pr = blkid_new_probe();
-	if (pr && blkid_probe_set_device(pr, fd, 0, 0) == 0) {
+	if (pr && blkid_probe_set_device(pr, cxt->dev_fd, 0, 0) == 0) {
 		blkid_topology tp = blkid_probe_get_topology(pr);
 
 		if (tp) {
@@ -493,7 +493,7 @@ get_topology(int fd) {
 		 */
 		phy_sector_size = sector_size;
 
-	else if (blkdev_get_sector_size(fd, &arg) == 0) {
+	else if (blkdev_get_sector_size(cxt->dev_fd, &arg) == 0) {
 		sector_size = arg;
 
 		if (!phy_sector_size)
@@ -663,24 +663,13 @@ static int get_boot(int try_only) {
 	disklabel = ANY_LABEL;
 	memset(MBRbuffer, 0, 512);
 
-	if (try_only && (fd = open(disk_device, O_RDONLY)) < 0)
-		err(EXIT_FAILURE, _("unable to open %s"), disk_device);
-	else {
-		if ((fd = open(disk_device, O_RDWR)) < 0) {
-			/* ok, can we read-only the device? */
-			if ((fd = open(disk_device, O_RDONLY)) < 0)
-				err(EXIT_FAILURE, _("unable to open %s"), disk_device);
-			printf(_("You will not be able to write the partition table.\n"));
-		}
-	}
-
-	if (512 != read(fd, MBRbuffer, 512)) {
+	if (512 != read(cxt->dev_fd, MBRbuffer, 512)) {
 		if (try_only)
 			return 1;
 		fatal(unable_to_read);
 	}
 
-	get_geometry(fd, NULL);
+	get_geometry(cxt->dev_fd, NULL);
 	update_units();
 
 	if (!check_dos_label())
@@ -1231,11 +1220,11 @@ list_disk_geometry(void) {
 
 	if (megabytes < 10000)
 		printf(_("\nDisk %s: %ld MB, %lld bytes\n"),
-		       disk_device, megabytes, bytes);
+		       cxt->dev_path, megabytes, bytes);
 	else {
 		long hectomega = (megabytes + 50) / 100;
 		printf(_("\nDisk %s: %ld.%ld GB, %llu bytes\n"),
-		       disk_device, hectomega / 10, hectomega % 10, bytes);
+		       cxt->dev_path, hectomega / 10, hectomega % 10, bytes);
 	}
 	printf(_("%d heads, %llu sectors/track, %d cylinders"),
 	       heads, sectors, cylinders);
@@ -1423,8 +1412,8 @@ list_table(int xtra) {
 	/* Heuristic: we list partition 3 of /dev/foo as /dev/foo3,
 	   but if the device name ends in a digit, say /dev/foo1,
 	   then the partition is called /dev/foo1p3. */
-	w = strlen(disk_device);
-	if (w && isdigit(disk_device[w-1]))
+	w = strlen(cxt->dev_path);
+	if (w && isdigit(cxt->dev_path[w-1]))
 		w++;
 	if (w < 5)
 		w = 5;
@@ -1449,7 +1438,7 @@ list_table(int xtra) {
 				pblocks *= (sector_size / 1024);
                         printf(
 			    "%s  %c %11lu %11lu %11lu%c  %2x  %s\n",
-			partname(disk_device, i+1, w+2),
+			partname(cxt->dev_path, i+1, w+2),
 /* boot flag */		!p->boot_ind ? ' ' : p->boot_ind == ACTIVE_FLAG
 			? '*' : '?',
 /* start */		(unsigned long) cround(get_partition_start(pe)),
@@ -1479,7 +1468,7 @@ x_list_table(int extend) {
 	int i;
 
 	printf(_("\nDisk %s: %d heads, %llu sectors, %d cylinders\n\n"),
-		disk_device, heads, sectors, cylinders);
+		cxt->dev_path, heads, sectors, cylinders);
         printf(_("Nr AF  Hd Sec  Cyl  Hd Sec  Cyl     Start      Size ID\n"));
 	for (i = 0 ; i < partitions; i++) {
 		pe = &ptes[i];
@@ -1694,12 +1683,12 @@ reread_partition_table(int leave) {
 	int i;
 	struct stat statbuf;
 
-	i = fstat(fd, &statbuf);
+	i = fstat(cxt->dev_fd, &statbuf);
 	if (i == 0 && S_ISBLK(statbuf.st_mode)) {
 		sync();
 #ifdef BLKRRPART
 		printf(_("Calling ioctl() to re-read partition table.\n"));
-		i = ioctl(fd, BLKRRPART);
+		i = ioctl(cxt->dev_fd, BLKRRPART);
 #else
 		errno = ENOSYS;
 		i = 1;
@@ -1720,7 +1709,7 @@ reread_partition_table(int leave) {
 		"information.\n"));
 
 	if (leave) {
-		if (fsync(fd) || close(fd)) {
+		if (fsync(cxt->dev_fd) || close(cxt->dev_fd)) {
 			fprintf(stderr, _("\nError closing file\n"));
 			exit(1);
 		}
@@ -1754,7 +1743,7 @@ static void
 print_raw(void) {
 	int i;
 
-	printf(_("Device: %s\n"), disk_device);
+	printf(_("Device: %s\n"), cxt->dev_path);
 	if (disklabel == SUN_LABEL || disklabel == SGI_LABEL)
 		print_buffer(MBRbuffer);
 	else for (i = 3; i < partitions; i++)
@@ -1808,6 +1797,13 @@ move_begin(int i) {
 		set_start_sect(p, new);
 		pe->changed = 1;
 	}
+}
+
+static void __attribute__ ((__noreturn__)) handle_quit(struct fdisk_context *cxt)
+{
+	fdisk_free_context(cxt);
+	printf("\n");
+	exit(EXIT_SUCCESS);
 }
 
 static void
@@ -1875,9 +1871,7 @@ expert_command_prompt(void)
 				x_list_table(0);
 			break;
 		case 'q':
-			close(fd);
-			printf("\n");
-			exit(0);
+			handle_quit(cxt);
 		case 'r':
 			return;
 		case 's':
@@ -1933,7 +1927,10 @@ print_partition_table_from_option(char *device)
 {
 	int gb;
 
-	disk_device = device;
+	cxt = fdisk_new_context_from_filename(device, 1);	/* read-only */
+	if (!cxt)
+		err(EXIT_FAILURE, _("unable to open %s"), device);
+
 	gpt_warning(device);
 	gb = get_boot(1);
 	if (gb < 0) { /* no DOS signature */
@@ -1943,7 +1940,8 @@ print_partition_table_from_option(char *device)
 	}
 	else if (!gb)
 		list_table(0);
-	close(fd);
+	fdisk_free_context(cxt);
+	cxt = NULL;
 }
 
 /*
@@ -1995,7 +1993,7 @@ static void command_prompt(void)
 		/* OSF label, and no DOS label */
 		printf(_("Detected an OSF/1 disklabel on %s, entering "
 			 "disklabel mode.\n"),
-		       disk_device);
+		       cxt->dev_path);
 		bsd_command_prompt();
 		/* If we return we may want to make an empty DOS label? */
 		disklabel = DOS_LABEL;
@@ -2064,9 +2062,7 @@ static void command_prompt(void)
 			list_table(0);
 			break;
 		case 'q':
-			close(fd);
-			printf("\n");
-			exit(0);
+			handle_quit(cxt);
 		case 's':
 			create_sunlabel();
 			break;
@@ -2092,10 +2088,22 @@ static void command_prompt(void)
 	}
 }
 
-int
-main(int argc, char **argv) {
-	int j, c;
-	int optl = 0, opts = 0;
+static unsigned long long get_dev_blocks(char *dev)
+{
+	int fd;
+	unsigned long long size;
+
+	if ((fd = open(dev, O_RDONLY)) < 0)
+		err(EXIT_FAILURE, _("unable to open %s"), dev);
+	if (blkdev_get_sectors(fd, &size) == -1)
+		fatal(ioctl_error);
+	close(fd);
+	return size/2;
+}
+
+int main(int argc, char **argv)
+{
+	int c, optl = 0, opts = 0;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -2127,9 +2135,6 @@ main(int argc, char **argv) {
 			else if (optarg && strcmp(optarg, "=nondos"))
 				usage(stderr);
 			break;
-		case 'h':
-			usage(stdout);
-			break;
 		case 'H':
 			user_heads = strtou32_or_err(optarg, _("invalid heads argument"));
 			if (user_heads > 256)
@@ -2157,10 +2162,14 @@ main(int argc, char **argv) {
 		case 'v':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
+		case 'h':
+			usage(stdout);
 		default:
 			usage(stderr);
 		}
 	}
+
+	fdisk_init_debug(0);
 
 	if (user_set_sector_size && argc-optind != 1)
 		printf(_("Warning: the -b (set sector size) option should"
@@ -2180,39 +2189,33 @@ main(int argc, char **argv) {
 	}
 
 	if (opts) {
-		unsigned long long size;
-
-		nowarn = 1;
-
-		opts = argc - optind;
-		if (opts <= 0)
+		/* print partition size for one or more devices */
+		int i, ndevs = argc - optind;
+		if (ndevs <= 0)
 			usage(stderr);
 
-		for (j = optind; j < argc; j++) {
-			disk_device = argv[j];
-			if ((fd = open(disk_device, O_RDONLY)) < 0)
-				err(EXIT_FAILURE, _("unable to open %s"), disk_device);
-			if (blkdev_get_sectors(fd, &size) == -1)
-				fatal(ioctl_error);
-			close(fd);
-			if (opts == 1)
-				printf("%llu\n", size/2);
+		for (i = optind; i < argc; i++) {
+			if (ndevs == 1)
+				printf("%llu\n", get_dev_blocks(argv[i]));
 			else
-				printf("%s: %llu\n", argv[j], size/2);
+				printf("%s: %llu\n", argv[i], get_dev_blocks(argv[i]));
 		}
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
-	if (argc-optind == 1)
-		disk_device = argv[optind];
+	if (argc-optind == 1) {
+		cxt = fdisk_new_context_from_filename(argv[optind], 0);
+		if (!cxt)
+			err(EXIT_FAILURE, _("unable to open %s"), argv[optind]);
+	}
 	else
 		usage(stderr);
 
-	fprintf(stderr, _("Welcome to fdisk (%s).\n\n"
+	printf(_("Welcome to fdisk (%s).\n\n"
 		"Changes will remain in memory only, until you decide to write them.\n"
 		"Be careful before using the write command.\n\n"), PACKAGE_STRING);
 
-	gpt_warning(disk_device);
+	gpt_warning(cxt->dev_path);
 	get_boot(0);
 
 	command_prompt();

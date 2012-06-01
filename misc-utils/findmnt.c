@@ -1005,7 +1005,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	for (i = 0; i < FINDMNT_NCOLUMNS; i++)
 		fprintf(out, " %11s  %s\n", infos[i].name, _(infos[i].help));
 
-	fprintf(out, USAGE_MAN_TAIL("findmnt(1)"));
+	fprintf(out, USAGE_MAN_TAIL("findmnt(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -1320,8 +1320,7 @@ int main(int argc, char *argv[])
 	 */
 	if (flags & FL_POLL) {
 		/* poll mode (accept the first tabfile only) */
-		if (tabfiles && ntabfiles > 0)
-			rc = poll_table(tb, *tabfiles, timeout, tt, direction);
+		rc = poll_table(tb, tabfiles ? *tabfiles : _PATH_PROC_MOUNTINFO, timeout, tt, direction);
 
 	} else if ((tt_flags & TT_FL_TREE) && is_listall_mode())
 		/* whole tree */

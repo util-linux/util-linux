@@ -20,6 +20,7 @@ if !ARCH_M68K
 sbin_PROGRAMS = fdisk
 dist_man_MANS = fdisk.8
 fdisk_SOURCES = \
+	utils.c \
 	fdisk.c \
 	fdisk.h \
 	fdiskaixlabel.c \

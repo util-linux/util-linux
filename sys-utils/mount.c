@@ -336,6 +336,9 @@ try_readonly:
 		return MOUNT_EX_SUCCESS;	/* mount(2) success */
 	}
 
+	mnt_context_get_mflags(cxt, &mflags);		/* mount(2) flags */
+	mnt_context_get_user_mflags(cxt, &uflags);	/* userspace flags */
+
 	if (!mnt_context_syscall_called(cxt)) {
 		/*
 		 * libmount errors (extra library checks)
@@ -364,7 +367,21 @@ try_readonly:
 			else
 				warnx(_("mount source not defined"));
 			return MOUNT_EX_USAGE;
-
+		case -MNT_ERR_MOUNTOPT:
+			if (errno)
+				warn(_("failed to parse mount options"));
+			else
+				warnx(_("failed to parse mount options"));
+			return MOUNT_EX_USAGE;
+		case -MNT_ERR_LOOPDEV:
+			if (errno == ENOENT
+			    && (uflags & MNT_MS_ENCRYPTION)
+			    && src && stat(src, &st) == 0)
+				warnx(_("%s: failed to setup loop device "
+					"(probably unknown encryption type)"), src);
+			else
+				warn(_("%s: failed to setup loop device"), src);
+			return MOUNT_EX_FAIL;
 		default:
 			return handle_generic_errors(rc, _("%s: mount failed"),
 					     tgt ? tgt : src);
@@ -388,8 +405,6 @@ try_readonly:
 	 */
 	syserr = mnt_context_get_syscall_errno(cxt);
 
-	mnt_context_get_mflags(cxt, &mflags);		/* mount(2) flags */
-	mnt_context_get_user_mflags(cxt, &uflags);	/* userspace flags */
 
 	switch(syserr) {
 	case EPERM:
@@ -887,7 +902,7 @@ int main(int argc, char **argv)
 		usage(stderr);
 
 	if (oper) {
-		if (!is_power_of_2(oper))
+		if (!is_power_of_2(oper & ~MS_REC))
 			errx(MOUNT_EX_USAGE, _("propagation flags (--make-* or --bind options) are mutually exclusive"));
 
 		if (oper != MS_BIND && mnt_context_get_options(cxt))

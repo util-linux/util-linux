@@ -19,7 +19,9 @@ multi-disc CD-ROM changers, the auto-eject feature supported by some devices,
 and close the disc tray of some CD-ROM drives.
 .PP
 The device corresponding to \fIdevice\fP or \fImountpoint\fP is ejected.  If no
-name is specified, the default name /dev/cdrom is used.
+name is specified, the default name /dev/cdrom is used. The device may be
+addressed by device name (e.g. 'sda'), device path (e.g. '/dev/sda'),
+UUID=<uuid> or LABEL=<label> tags.
 .PP
 There are four different methods of ejecting, depending on whether the device
 is a CD-ROM, SCSI device, removable floppy, or tape.  By default eject tries

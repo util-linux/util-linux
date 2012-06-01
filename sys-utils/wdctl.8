@@ -9,20 +9,20 @@ show hardware watchdog status
 .SH SYNOPSIS
 .B wdctl
 .RB [options]
-
+.RB [device...]
 .SH DESCRIPTION
-Show hardware watchdog status. Note that number of supported watchdog
-features is hardware specific.
+Show hardware watchdog status. The default device is /dev/watchdog. If more
+than one device is specified then the output is separated by one blank line.
+
+Note that number of supported watchdog features is hardware specific.
 
 .SH OPTIONS
-.IP "\fB\-d, \-\-device \fIpath\fP"
-Device to use, default is /dev/watchdog.
 .IP "\fB\-f, \-\-flags \fI<list>\fP"
 Print selected flags only.
 .IP "\fB\-F, \-\-noflags\fP"
 Don't print information about flags
 .IP "\fB\-n, \-\-noheadings\fP"
-Do not print a header line.
+Do not print a header line for flags table.
 .IP "\fB\-I, \-\-noident\fP"
 Don't print watchdog identity information
 .IP "\fB\-T, \-\-notimeouts\fP"
@@ -31,12 +31,14 @@ Don't print watchdog timeouts
 Define the output columns to use in table of watchdog flags. If no output
 arrangement is specified, then a default set is used.  Use \fB\-\-help\fP to
 get list of all supported columns.
-.IP "\fB\-P, \-\-pairs\fP"
-Use key="value" output format.
+.IP "\fB\-O, \-\-oneline\fP"
+Print all wanted information on one line in key="value" output format.
 .IP "\fB\-V, \-\-version\fP"
 Output version information and exit.
 .IP "\fB\-r, \-\-raw\fP"
 Use the raw output format.
+.IP "\fB\-x, \-\-flags-only\fP"
+Same as \fB\-I \-T\fP.
 .IP "\fB\-h, \-\-help\fP"
 Print a help text and exit.
 

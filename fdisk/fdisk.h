@@ -32,6 +32,43 @@
 #define cround(n)	(display_in_cyl_units ? ((n)/units_per_sector)+1 : (n))
 #define scround(x)	(((x)+units_per_sector-1)/units_per_sector)
 
+/* fdisk debugging flags/options */
+#define FDISK_DEBUG_INIT	(1 << 1)
+#define FDISK_DEBUG_CONTEXT	(1 << 2)
+#define FDISK_DEBUG_ALL		0xFFFF
+
+# define ON_DBG(m, x)	do { \
+				if ((FDISK_DEBUG_ ## m) & fdisk_debug_mask) { \
+					x; \
+				}	   \
+			} while (0)
+
+# define DBG(m, x)	do { \
+				if ((FDISK_DEBUG_ ## m) & fdisk_debug_mask) { \
+					fprintf(stderr, "%d: fdisk: %8s: ", getpid(), # m); \
+					x;				\
+				} \
+			} while (0)
+
+# define DBG_FLUSH	do { \
+				if (fdisk_debug_mask && \
+				    fdisk_debug_mask != FDISK_DEBUG_INIT) \
+					fflush(stderr);			\
+			} while(0)
+
+static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
+dbgprint(const char *mesg, ...)
+{
+	va_list ap;
+	va_start(ap, mesg);
+	vfprintf(stderr, mesg, ap);
+	va_end(ap);
+	fputc('\n', stderr);
+}
+
+extern int fdisk_debug_mask;
+extern void fdisk_init_debug(int mask);
+
 struct partition {
 	unsigned char boot_ind;         /* 0x80 - active */
 	unsigned char head;             /* starting head */
@@ -62,6 +99,16 @@ struct geom {
 	unsigned int sectors;
 	unsigned int cylinders;
 };
+
+struct fdisk_context {
+	int dev_fd;     /* device descriptor */
+	char *dev_path; /* device path */
+};
+
+extern struct fdisk_context *cxt;
+
+extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int readonly);
+extern void fdisk_free_context(struct fdisk_context *cxt);
 
 /* prototypes for fdisk.c */
 extern char *disk_device, *line_ptr;
@@ -185,9 +232,3 @@ static inline int is_cleared_partition(struct partition *p)
 		 p->sys_ind || p->end_head || p->end_sector || p->end_cyl ||
 		 get_start_sect(p) || get_nr_sects(p));
 }
-
-/* prototypes for fdiskbsdlabel.c */
-extern void bsd_command_prompt(void);
-extern int check_osf_label(void);
-extern int btrydev(char * dev);
-extern void xbsd_print_disklabel(int);

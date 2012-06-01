@@ -372,7 +372,9 @@ int main(int argc, char **argv)
 			if (res == 0)
 				break;			/* success */
 			if (errno != EBUSY) {
-				warn(_("failed to setup loop device"));
+				warn(_("%s: failed to setup loop device"),
+					hasdev && loopcxt_get_fd(&lc) < 0 ?
+					    loopcxt_get_device(&lc) : file);
 				break;
 			}
 		} while (hasdev == 0);

@@ -153,11 +153,11 @@ bsd_command_prompt (void)
       ss = get_start_sect(xbsd_part);
       if (ss == 0) {
 	fprintf (stderr, _("Partition %s has invalid starting sector 0.\n"),
-		 partname(disk_device, t+1, 0));
+		 partname(cxt->dev_path, t+1, 0));
 	return;
       }
       printf (_("Reading disklabel of %s at sector %d.\n"),
-	      partname(disk_device, t+1, 0), ss + BSD_LABELSECTOR);
+	      partname(cxt->dev_path, t+1, 0), ss + BSD_LABELSECTOR);
       if (xbsd_readlabel (xbsd_part, &xbsd_dlabel) == 0)
 	if (xbsd_create_disklabel () == 0)
 	  return;
@@ -166,7 +166,7 @@ bsd_command_prompt (void)
   }
 
   if (t == 4) {
-    printf (_("There is no *BSD partition on %s.\n"), disk_device);
+    printf (_("There is no *BSD partition on %s.\n"), cxt->dev_path);
     return;
   }
 
@@ -200,7 +200,7 @@ bsd_command_prompt (void)
 	xbsd_print_disklabel (0);
 	break;
       case 'q':
-	close (fd);
+	close (cxt->dev_fd);
 	exit ( EXIT_SUCCESS );
       case 'r':
 	return;
@@ -289,9 +289,9 @@ xbsd_print_disklabel (int show_all) {
 
   if (show_all) {
 #if defined (__alpha__)
-    fprintf(f, "# %s:\n", disk_device);
+    fprintf(f, "# %s:\n", cxt->dev_path);
 #else
-    fprintf(f, "# %s:\n", partname(disk_device, xbsd_part_index+1, 0));
+    fprintf(f, "# %s:\n", partname(cxt->dev_path, xbsd_part_index+1, 0));
 #endif
     if ((unsigned) lp->d_type < BSD_DKMAXTYPES)
       fprintf(f, _("type: %s\n"), xbsd_dktypenames[lp->d_type]);
@@ -381,11 +381,11 @@ xbsd_print_disklabel (int show_all) {
 static void
 xbsd_write_disklabel (void) {
 #if defined (__alpha__)
-	printf (_("Writing disklabel to %s.\n"), disk_device);
+	printf (_("Writing disklabel to %s.\n"), cxt->dev_path);
 	xbsd_writelabel (NULL, &xbsd_dlabel);
 #else
 	printf (_("Writing disklabel to %s.\n"),
-		partname(disk_device, xbsd_part_index+1, 0));
+		partname(cxt->dev_path, xbsd_part_index+1, 0));
 	xbsd_writelabel (xbsd_part, &xbsd_dlabel);
 #endif
 	reread_partition_table(0);	/* no exit yet */
@@ -396,10 +396,10 @@ xbsd_create_disklabel (void) {
 	char c;
 
 #if defined (__alpha__)
-	fprintf (stderr, _("%s contains no disklabel.\n"), disk_device);
+	fprintf (stderr, _("%s contains no disklabel.\n"), cxt->dev_path);
 #else
 	fprintf (stderr, _("%s contains no disklabel.\n"),
-		 partname(disk_device, xbsd_part_index+1, 0));
+		 partname(cxt->dev_path, xbsd_part_index+1, 0));
 #endif
 
 	while (1) {
@@ -545,16 +545,16 @@ xbsd_write_bootstrap (void)
   sector = get_start_sect(xbsd_part);
 #endif
 
-  if (lseek (fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
+  if (lseek (cxt->dev_fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
     fatal (unable_to_seek);
-  if (BSD_BBSIZE != write (fd, disklabelbuffer, BSD_BBSIZE))
+  if (BSD_BBSIZE != write (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE))
     fatal (unable_to_write);
 
 #if defined (__alpha__)
-  printf (_("Bootstrap installed on %s.\n"), disk_device);
+  printf (_("Bootstrap installed on %s.\n"), cxt->dev_path);
 #else
   printf (_("Bootstrap installed on %s.\n"),
-    partname (disk_device, xbsd_part_index+1, 0));
+    partname (cxt->dev_path, xbsd_part_index+1, 0));
 #endif
 
   sync_disks ();
@@ -636,12 +636,12 @@ xbsd_initlabel (struct partition *p, struct xbsd_disklabel *d,
 	struct xbsd_partition *pp;
 	struct geom g;
 
-	get_geometry (fd, &g);
+	get_geometry (cxt->dev_fd, &g);
 	memset (d, 0, sizeof (struct xbsd_disklabel));
 
 	d -> d_magic = BSD_DISKMAGIC;
 
-	if (strncmp (disk_device, "/dev/sd", 7) == 0)
+	if (strncmp (cxt->dev_path, "/dev/sd", 7) == 0)
 		d -> d_type = BSD_DTYPE_SCSI;
 	else
 		d -> d_type = BSD_DTYPE_ST506;
@@ -715,9 +715,9 @@ xbsd_readlabel (struct partition *p, struct xbsd_disklabel *d)
 	sector = 0;
 #endif
 
-	if (lseek (fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
+	if (lseek (cxt->dev_fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
 		fatal (unable_to_seek);
-	if (BSD_BBSIZE != read (fd, disklabelbuffer, BSD_BBSIZE))
+	if (BSD_BBSIZE != read (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE))
 		fatal (unable_to_read);
 
 	memmove (d,
@@ -762,15 +762,15 @@ xbsd_writelabel (struct partition *p, struct xbsd_disklabel *d)
 
 #if defined (__alpha__) && BSD_LABELSECTOR == 0
   alpha_bootblock_checksum (disklabelbuffer);
-  if (lseek (fd, (off_t) 0, SEEK_SET) == -1)
+  if (lseek (cxt->dev_fd, (off_t) 0, SEEK_SET) == -1)
     fatal (unable_to_seek);
-  if (BSD_BBSIZE != write (fd, disklabelbuffer, BSD_BBSIZE))
+  if (BSD_BBSIZE != write (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE))
     fatal (unable_to_write);
 #else
-  if (lseek (fd, (off_t) sector * SECTOR_SIZE + BSD_LABELOFFSET,
+  if (lseek (cxt->dev_fd, (off_t) sector * SECTOR_SIZE + BSD_LABELOFFSET,
 		   SEEK_SET) == -1)
     fatal (unable_to_seek);
-  if (sizeof (struct xbsd_disklabel) != write (fd, d, sizeof (struct xbsd_disklabel)))
+  if (sizeof (struct xbsd_disklabel) != write (cxt->dev_fd, d, sizeof (struct xbsd_disklabel)))
     fatal (unable_to_write);
 #endif
 

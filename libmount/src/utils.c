@@ -72,6 +72,15 @@ int mnt_parse_offset(const char *str, size_t len, uintmax_t *res)
 	return rc;
 }
 
+/* used as a callback by bsearch in mnt_fstype_is_pseudofs() */
+static int fstype_cmp(const void *v1, const void *v2)
+{
+	const char *s1 = *(const char **)v1;
+	const char *s2 = *(const char **)v2;
+
+	return strcmp(s1, s2);
+}
+
 /* returns basename and keeps dirname in the @path, if @path is "/" (root)
  * then returns empty string */
 static char *stripoff_last_component(char *path)
@@ -214,31 +223,41 @@ char *mnt_unmangle(const char *str)
  */
 int mnt_fstype_is_pseudofs(const char *type)
 {
-	if (!type)
-		return 0;
-	if (strcmp(type, "none")  == 0 ||
-	    strcmp(type, "proc")  == 0 ||
-	    strcmp(type, "tmpfs") == 0 ||
-	    strcmp(type, "sysfs") == 0 ||
-	    strcmp(type, "autofs") == 0 ||
-	    strcmp(type, "devpts") == 0||
-	    strcmp(type, "cgroup") == 0 ||
-	    strcmp(type, "devtmpfs") == 0 ||
-	    strcmp(type, "devfs") == 0 ||
-	    strcmp(type, "dlmfs") == 0 ||
-	    strcmp(type, "cpuset") == 0 ||
-	    strcmp(type, "configfs") == 0 ||
-	    strcmp(type, "securityfs") == 0 ||
-	    strcmp(type, "hugetlbfs") == 0 ||
-	    strcmp(type, "rpc_pipefs") == 0 ||
-	    strcmp(type, "fusectl") == 0 ||
-	    strcmp(type, "mqueue") == 0 ||
-	    strcmp(type, "binfmt_misc") == 0 ||
-	    strcmp(type, "fuse.gvfs-fuse-daemon") == 0 ||
-	    strcmp(type, "debugfs") == 0 ||
-	    strcmp(type, "spufs") == 0)
-		return 1;
-	return 0;
+	/* This array must remain sorted when adding new fstypes */
+	static const char *pseudofs[] = {
+		"anon_inodefs",
+		"autofs",
+		"bdev",
+		"binfmt_misc",
+		"cgroup",
+		"configfs",
+		"cpuset",
+		"debugfs",
+		"devfs",
+		"devpts",
+		"devtmpfs",
+		"dlmfs",
+		"fuse.gvfs-fuse-daemon",
+		"fusectl",
+		"hugetlbfs",
+		"mqueue",
+		"nfsd",
+		"none",
+		"pipefs",
+		"proc",
+		"pstore",
+		"ramfs",
+		"rootfs",
+		"rpc_pipefs",
+		"securityfs",
+		"sockfs",
+		"spufs",
+		"sysfs",
+		"tmpfs"
+	};
+
+	return !(bsearch(&type, pseudofs, ARRAY_SIZE(pseudofs),
+				sizeof(char*), fstype_cmp) == NULL);
 }
 
 /**
@@ -520,6 +539,7 @@ int mnt_get_uid(const char *username, uid_t *uid)
 	} else {
 		DBG(UTILS, mnt_debug(
 			"cannot convert '%s' username to UID", username));
+		rc = errno ? -errno : -EINVAL;
 	}
 
 	free(buf);
@@ -547,6 +567,7 @@ int mnt_get_gid(const char *groupname, gid_t *gid)
 	} else {
 		DBG(UTILS, mnt_debug(
 			"cannot convert '%s' groupname to GID", groupname));
+		rc = errno ? -errno : -EINVAL;
 	}
 
 	free(buf);

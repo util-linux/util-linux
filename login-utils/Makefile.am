@@ -25,85 +25,96 @@ endif
 endif # BUILD_SULOGIN
 
 
-if BUILD_LOGIN_UTILS
+if BUILD_LOGIN
 bin_PROGRAMS += login
-usrbin_exec_PROGRAMS += \
-	chfn \
-	chsh \
-	newgrp
-usrsbin_exec_PROGRAMS += \
-	vipw
-dist_man_MANS += \
-	chfn.1 \
-	chsh.1 \
-	login.1 \
-	newgrp.1 \
-	vigr.8 \
-	vipw.8
-
-# login, chfn and chsh libs
-login_ldadd_common =
-
-chfn_SOURCES = \
-	chfn.c \
-	$(chfn_chsh_common)
-chsh_SOURCES = \
-	chsh.c \
-	$(chfn_chsh_common)
-chfn_chsh_common = \
-	islocal.c \
-	islocal.h \
-	setpwnam.c \
-	setpwnam.h \
-	$(top_srcdir)/lib/env.c \
-	$(top_srcdir)/lib/fileutils.c
+dist_man_MANS += login.1
 login_SOURCES = \
 	login.c \
 	logindefs.c \
 	logindefs.h \
 	$(top_srcdir)/lib/fileutils.c \
 	$(top_srcdir)/lib/setproctitle.c
+login_LDADD = -lpam -lpam_misc
+if HAVE_AUDIT
+login_LDADD += -laudit
+endif
+if HAVE_SELINUX
+login_LDADD += -lselinux
+endif
+endif # BUILD_LOGIN
+
+
+if BUILD_CHFN_CHSH
+usrbin_exec_PROGRAMS += chfn chsh
+dist_man_MANS += chfn.1 chsh.1
+
+chfn_chsh_sources = \
+	islocal.c \
+	islocal.h \
+	setpwnam.c \
+	setpwnam.h \
+	$(top_srcdir)/lib/env.c \
+	$(top_srcdir)/lib/fileutils.c
+
+chfn_chsh_cflags = $(SUID_CFLAGS) $(AM_CFLAGS)
+chfn_chsh_ldflags = $(SUID_LDFLAGS) $(AM_LDFLAGS)
+chfn_chsh_ldadd = -lpam -lpam_misc
+
+if HAVE_SELINUX
+chfn_chsh_sources += selinux_utils.c selinux_utils.h
+chfn_chsh_ldadd += -lselinux
+endif
+
+chfn_SOURCES = chfn.c $(chfn_chsh_sources)
+chfn_CFLAGS = $(chfn_chsh_cflags)
+chfn_LDFLAGS = $(chfn_chsh_ldflags)
+chfn_LDADD = $(chfn_chsh_ldadd)
+
+chsh_SOURCES = chfn.c $(chfn_chsh_sources)
+chsh_CFLAGS = $(chfn_chsh_cflags)
+chsh_LDFLAGS = $(chfn_chsh_ldflags)
+chsh_LDADD = $(chfn_chsh_ldadd)
+endif # BUILD_CHFN_CHSH
+
+
+if BUILD_SU
+bin_PROGRAMS += su
+su_SOURCES = \
+	su.c \
+	logindefs.c \
+	logindefs.h
+su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
+su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
+su_LDADD = -lpam -lpam_misc
+endif
+
+if BUILD_NEWGRP
+usrbin_exec_PROGRAMS += newgrp
+dist_man_MANS += newgrp.1
+newgrp_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
+newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
+newgrp_LDADD =
+if HAVE_LIBCRYPT
+newgrp_LDADD += -lcrypt
+endif
+endif # BUILD_NEWGRP
+
+
+if BUILD_VIPW
+usrsbin_exec_PROGRAMS += vipw
+dist_man_MANS += vigr.8 vipw.8
 vipw_SOURCES = \
 	vipw.c \
 	setpwnam.h \
 	$(top_srcdir)/lib/fileutils.c
-
-chfn_LDADD = $(login_ldadd_common)
-chsh_LDADD = $(login_ldadd_common)
-login_LDADD = $(login_ldadd_common)
-newgrp_LDADD =
 vipw_LDADD =
-
-chfn_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
-chsh_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
-newgrp_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
-
-chfn_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-chsh_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-
-login_ldadd_common += -lpam -lpam_misc
-
-if HAVE_LIBCRYPT
-newgrp_LDADD += -lcrypt
-endif
-
-if HAVE_AUDIT
-login_LDADD += -laudit
-endif
-
 if HAVE_SELINUX
-chfn_SOURCES += selinux_utils.c selinux_utils.h
-chsh_SOURCES += selinux_utils.c selinux_utils.h
 vipw_LDADD += -lselinux
-login_ldadd_common += -lselinux
 endif
-
-
 install-exec-hook::
 	cd $(DESTDIR)$(usrsbin_execdir) && ln -sf vipw vigr
+endif # BUILD_VIPW
 
-endif
 
 noinst_PROGRAMS = test_islocal test_logindefs
 test_islocal_SOURCES = islocal.c

@@ -183,7 +183,7 @@ sgi_list_table(int xtra) {
 	int kpi = 0;		/* kernel partition ID */
 	char *type;
 
-	w = strlen(disk_device);
+	w = strlen(cxt->dev_path);
 
 	if (xtra) {
 		printf(_("\nDisk %s (SGI disk label): %d heads, %llu sectors\n"
@@ -191,7 +191,7 @@ sgi_list_table(int xtra) {
 			 "%d extra sects/cyl, interleave %d:1\n"
 			 "%s\n"
 			 "Units = %s of %d * %d bytes\n\n"),
-		       disk_device, heads, sectors, cylinders,
+		       cxt->dev_path, heads, sectors, cylinders,
 		       SSWAP16(sgiparam.pcylcount),
 		       (int) sgiparam.sparecyl, SSWAP16(sgiparam.ilfact),
 		       (char *)sgilabel,
@@ -201,7 +201,7 @@ sgi_list_table(int xtra) {
 		printf(_("\nDisk %s (SGI disk label): "
 			 "%d heads, %llu sectors, %d cylinders\n"
 			 "Units = %s of %d * %d bytes\n\n"),
-		       disk_device, heads, sectors, cylinders,
+		       cxt->dev_path, heads, sectors, cylinders,
 		       str_units(PLURAL), units_per_sector,
                        sector_size);
 	}
@@ -216,7 +216,7 @@ sgi_list_table(int xtra) {
 			printf(
 				"%2d: %s %4s %9ld %9ld %9ld  %2x  %s\n",
 /* fdisk part number */   i+1,
-/* device */              partname(disk_device, kpi, w+2),
+/* device */              partname(cxt->dev_path, kpi, w+2),
 /* flags */               (sgi_get_swappartition() == i) ? "swap" :
 /* flags */               (sgi_get_bootpartition() == i) ? "boot" : "    ", 
 /* start */               (long) scround(start),
@@ -357,9 +357,9 @@ sgi_write_table(void) {
 		sizeof(*sgilabel)));
 	assert(two_s_complement_32bit_sum(
 		(unsigned int*)sgilabel, sizeof(*sgilabel)) == 0);
-	if (lseek(fd, 0, SEEK_SET) < 0)
+	if (lseek(cxt->dev_fd, 0, SEEK_SET) < 0)
 		fatal(unable_to_seek);
-	if (write(fd, sgilabel, SECTOR_SIZE) != SECTOR_SIZE)
+	if (write(cxt->dev_fd, sgilabel, SECTOR_SIZE) != SECTOR_SIZE)
 		fatal(unable_to_write);
 	if (! strncmp((char *) sgilabel->directory[0].vol_file_name, "sgilabel", 8)) {
 		/*
@@ -368,10 +368,10 @@ sgi_write_table(void) {
 		 */
 		sgiinfo *info = fill_sgiinfo();
 		int infostartblock = SSWAP32(sgilabel->directory[0].vol_file_start);
-		if (lseek(fd, (off_t) infostartblock*
+		if (lseek(cxt->dev_fd, (off_t) infostartblock*
 				SECTOR_SIZE, SEEK_SET) < 0)
 			fatal(unable_to_seek);
-		if (write(fd, info, SECTOR_SIZE) != SECTOR_SIZE)
+		if (write(cxt->dev_fd, info, SECTOR_SIZE) != SECTOR_SIZE)
 			fatal(unable_to_write);
 		free(info);
 	}
@@ -702,11 +702,11 @@ create_sgilabel(void)
 
 	other_endian = (BYTE_ORDER == LITTLE_ENDIAN);
 
-	res = blkdev_get_sectors(fd, &llsectors);
+	res = blkdev_get_sectors(cxt->dev_fd, &llsectors);
 
 #ifdef HDIO_GETGEO
-	if (ioctl(fd, HDIO_GETGEO, &geometry) < 0)
-		err(EXIT_FAILURE, _("HDIO_GETGEO ioctl failed on %s"), disk_device);
+	if (ioctl(cxt->dev_fd, HDIO_GETGEO, &geometry) < 0)
+		err(EXIT_FAILURE, _("HDIO_GETGEO ioctl failed on %s"), cxt->dev_path);
 
 	heads = geometry.heads;
 	sectors = geometry.sectors;
@@ -724,7 +724,7 @@ create_sgilabel(void)
 			_("Warning:  BLKGETSIZE ioctl failed on %s.  "
 			  "Using geometry cylinder value of %d.\n"
 			  "This value may be truncated for devices"
-			  " > 33.8 GB.\n"), disk_device, cylinders);
+			  " > 33.8 GB.\n"), cxt->dev_path, cylinders);
 	}
 #endif
 	for (i = 0; i < 4; i++) {

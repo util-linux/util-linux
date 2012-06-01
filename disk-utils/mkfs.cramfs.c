@@ -80,10 +80,6 @@ static int warn_skip = 0;
 static int warn_size = 0;
 static int warn_uid = 0;
 
-#ifndef MIN
-# define MIN(_a,_b) ((_a) < (_b) ? (_a) : (_b))
-#endif
-
 /* entry.flags */
 #define CRAMFS_EFLAG_MD5	1
 #define CRAMFS_EFLAG_INVALID	2

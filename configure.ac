@@ -628,17 +628,16 @@ AC_ARG_ENABLE([most-builds],
   [], enable_most_builds=no
 )
 if test "x$enable_most_builds" = xyes; then
-  enable_arch=yes
+  enable_arch=check
   enable_ddate=yes
-  enable_elvtune=yes
-  enable_kill=yes
+  enable_elvtune=check
   enable_last=yes
   enable_line=yes
   enable_mesg=yes
-  enable_raw=yes
-  enable_rename=yes
   enable_reset=yes
-  enable_login_utils=yes
+  enable_vipw=yes
+  enable_chfn_chsh=yes
+  enable_newgrp=yes
   enable_write=yes
 fi
 
@@ -780,14 +779,6 @@ UL_REQUIRES_BUILD([mountpoint], [libmount])
 AM_CONDITIONAL(BUILD_MOUNTPOINT, test "x$build_mountpoint" = xyes)
 
 
-AC_ARG_ENABLE([sulogin],
-  AS_HELP_STRING([--disable-sulogin], [do not build sulogin]),
-  [], enable_sulogin=yes
-)
-UL_BUILD_INIT([sulogin])
-AM_CONDITIONAL(BUILD_SULOGIN, test "x$build_sulogin" = xyes)
-
-
 AC_ARG_ENABLE([fallocate],
   AS_HELP_STRING([--disable-fallocate], [do not build fallocate]),
   [], enable_fallocate=check
@@ -865,7 +856,7 @@ AC_SUBST([ruman1dir])
 
 AC_ARG_ENABLE([eject],
   AS_HELP_STRING([--disable-eject], [do not build eject]),
-  [], enable_eject=yes
+  [], enable_eject=check
 )
 UL_BUILD_INIT([eject])
 UL_REQUIRES_LINUX([eject])
@@ -976,7 +967,7 @@ AC_ARG_ENABLE([kill],
 )
 UL_BUILD_INIT([kill])
 UL_REQUIRES_LINUX([kill])
-AM_CONDITIONAL(BUILD_KILL, test "x$enable_kill" = xyes)
+AM_CONDITIONAL(BUILD_KILL, test "x$build_kill" = xyes)
 
 
 AC_ARG_ENABLE([last],
@@ -1029,14 +1020,82 @@ UL_BUILD_INIT([reset])
 AM_CONDITIONAL(BUILD_RESET, test "x$build_reset" = xyes)
 
 
-AC_ARG_ENABLE([login-utils],
-  AS_HELP_STRING([--enable-login-utils], [build chfn, chsh, login, newgrp, vipw]),
-  [], enable_login_utils=no
+AC_ARG_ENABLE([vipw],
+  AS_HELP_STRING([--enable-vipw], [build vipw]),
+  [], enable_vipw=no
 )
-UL_BUILD_INIT([login_utils])
-UL_REQUIRES_HAVE([login_utils], [security_pam_misc_h], [PAM header file])
-AM_CONDITIONAL(BUILD_LOGIN_UTILS, test "x$build_login_utils" = xyes)
+UL_BUILD_INIT([vipw])
+AM_CONDITIONAL(BUILD_VIPW, test "x$build_vipw" = xyes)
 
+
+AC_ARG_ENABLE([newgrp],
+  AS_HELP_STRING([--enable-newgrp], [build newgrp]),
+  [], enable_newgrp=no
+)
+UL_BUILD_INIT([newgrp])
+AM_CONDITIONAL(BUILD_NEWGRP, test "x$build_newgrp" = xyes)
+
+
+AC_ARG_ENABLE([chfn-chsh],
+  AS_HELP_STRING([--enable-chfn-chsh], [build chfn and chsh]),
+  [], enable_chfn_chsh=no
+)
+UL_BUILD_INIT([chfn_chsh])
+UL_REQUIRES_HAVE([chfn_chsh], [security_pam_misc_h], [PAM header file])
+AM_CONDITIONAL(BUILD_CHFN_CHSH, test "x$build_chfn_chsh" = xyes)
+
+AC_ARG_ENABLE([chsh-only-listed],
+AS_HELP_STRING([--disable-chsh-only-listed], [chsh: allow shells not in /etc/shells]),
+[], enable_chsh_only_listed=yes
+)
+
+if test "x$enable_chsh_only_listed" = xyes; then
+AC_DEFINE(ONLY_LISTED_SHELLS, 1, [Should chsh allow only shells in /etc/shells?])
+fi
+
+
+AC_ARG_ENABLE([login],
+  AS_HELP_STRING([--disable-login], [do not build login]),
+  [], enable_login=yes
+)
+UL_BUILD_INIT([login])
+UL_REQUIRES_HAVE([login], [security_pam_misc_h], [PAM header file])
+AM_CONDITIONAL(BUILD_LOGIN, test "x$build_login" = xyes)
+
+AC_ARG_ENABLE([login-chown-vcs],
+  AS_HELP_STRING([--enable-login-chown-vcs], [let login chown /dev/vcsN]),
+  [], enable_login_chown_vcs=no
+)
+
+if test "x$enable_login_chown_vcs" = xyes; then
+  AC_DEFINE(LOGIN_CHOWN_VCS, 1, [Should login chown /dev/vcsN?])
+fi
+
+AC_ARG_ENABLE([login-stat-mail],
+  AS_HELP_STRING([--enable-login-stat-mail], [let login stat() the mailbox]),
+  [], enable_login_stat_mail=no
+)
+
+if test "x$enable_login_stat_mail" = xyes; then
+  AC_DEFINE(LOGIN_STAT_MAIL, 1, [Should login stat() the mailbox?])
+fi
+
+
+AC_ARG_ENABLE([sulogin],
+  AS_HELP_STRING([--disable-sulogin], [do not build sulogin]),
+  [], enable_sulogin=yes
+)
+UL_BUILD_INIT([sulogin])
+AM_CONDITIONAL(BUILD_SULOGIN, test "x$build_sulogin" = xyes)
+
+
+AC_ARG_ENABLE([su],
+  AS_HELP_STRING([--disable-su], [do not build su]),
+  [], enable_su=yes
+)
+UL_BUILD_INIT([su])
+UL_REQUIRES_HAVE([su], [security_pam_misc_h], [PAM header file])
+AM_CONDITIONAL(BUILD_SU, test "x$build_su" = xyes)
 
 
 AC_ARG_ENABLE([schedutils],
@@ -1111,26 +1170,6 @@ if test "x$build_chkdupexe" = xyes; then
 fi
 
 
-AC_ARG_ENABLE([chsh-only-listed],
-  AS_HELP_STRING([--disable-chsh-only-listed], [chsh: allow shells not in /etc/shells]),
-  [], enable_chsh_only_listed=yes
-)
-
-if test "x$enable_chsh_only_listed" = xyes; then
-  AC_DEFINE(ONLY_LISTED_SHELLS, 1, [Should chsh allow only shells in /etc/shells?])
-fi
-
-
-AC_ARG_ENABLE([login-chown-vcs],
-  AS_HELP_STRING([--enable-login-chown-vcs], [let login chown /dev/vcsN]),
-  [], enable_login_chown_vcs=no
-)
-
-if test "x$enable_login_chown_vcs" = xyes; then
-  AC_DEFINE(LOGIN_CHOWN_VCS, 1, [Should login chown /dev/vcsN?])
-fi
-
-
 AC_ARG_ENABLE([socket-activation],
   AS_HELP_STRING([--enable-socket-activation], [build uuidd with support for systemd socket activation]),
   [], enable_socket_activation=no
@@ -1151,16 +1190,6 @@ if test "x$with_systemdsystemunitdir" != "xno"; then
 fi
 
 AM_CONDITIONAL(WITH_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != "xno" ])
-
-
-AC_ARG_ENABLE([login-stat-mail],
-  AS_HELP_STRING([--enable-login-stat-mail], [let login stat() the mailbox]),
-  [], enable_login_stat_mail=no
-)
-
-if test "x$enable_login_stat_mail" = xyes; then
-  AC_DEFINE(LOGIN_STAT_MAIL, 1, [Should login stat() the mailbox?])
-fi
 
 
 AC_ARG_ENABLE([pg-bell],
