@@ -37,11 +37,8 @@
 
    Based on an implemenation by David MacKenzie <djm@gnu.ai.mit.edu>.  */
 
-/* Exit statuses for programs like 'env' that exec other programs.
-   EXIT_FAILURE might not be 1, so use EXIT_FAIL in such programs.  */
 enum
 {
-  EXIT_FAIL = 1,
   EXIT_CANNOT_INVOKE = 126,
   EXIT_ENOENT = 127
 };
@@ -555,7 +552,7 @@ init_groups (const struct passwd *pw)
   if (initgroups (pw->pw_name, pw->pw_gid) == -1)
     {
       cleanup_pam (PAM_ABORT);
-      error (EXIT_FAIL, errno, _("cannot set groups"));
+      error (EXIT_FAILURE, errno, _("cannot set groups"));
     }
   endgrent ();
 
@@ -570,9 +567,9 @@ static void
 change_identity (const struct passwd *pw)
 {
   if (setgid (pw->pw_gid))
-    error (EXIT_FAIL, errno, _("cannot set group id"));
+    error (EXIT_FAILURE, errno, _("cannot set group id"));
   if (setuid (pw->pw_uid))
-    error (EXIT_FAIL, errno, _("cannot set user id"));
+    error (EXIT_FAILURE, errno, _("cannot set user id"));
 }
 
 /* Run SHELL, or DEFAULT_SHELL if SHELL is empty.
@@ -734,7 +731,7 @@ main (int argc, char **argv)
 	  exit(EXIT_SUCCESS);
 
 	default:
-	  usage (EXIT_FAIL);
+	  usage (EXIT_FAILURE);
 	}
     }
 
@@ -751,7 +748,7 @@ main (int argc, char **argv)
   pw = getpwnam (new_user);
   if (! (pw && pw->pw_name && pw->pw_name[0] && pw->pw_dir && pw->pw_dir[0]
 	 && pw->pw_passwd))
-    error (EXIT_FAIL, 0, _("user %s does not exist"), new_user);
+    error (EXIT_FAILURE, 0, _("user %s does not exist"), new_user);
 
   /* Make a copy of the password information and point pw at the local
      copy instead.  Otherwise, some systems (e.g. Linux) would clobber
@@ -773,7 +770,7 @@ main (int argc, char **argv)
     {
       log_su (pw, false);
       sleep (getlogindefs_num ("FAIL_DELAY", 1));
-      error (EXIT_FAIL, 0, _("incorrect password"));
+      error (EXIT_FAILURE, 0, _("incorrect password"));
     }
   else
     {
