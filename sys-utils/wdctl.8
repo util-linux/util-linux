@@ -1,8 +1,7 @@
 .\" wdctl.8 --
 .\" Copyright (C) 2012 Karel Zak <kzak@redhat.com>
 .\" May be distributed under the GNU General Public License
-
-.TH WDCTL 8 "May 2012" "util-linux" "System Administration"
+.TH WDCTL "8" "June 2012" "util-linux" "System Administration"
 .SH NAME
 wdctl \-
 show hardware watchdog status
@@ -11,42 +10,50 @@ show hardware watchdog status
 .RB [options]
 .RB [device...]
 .SH DESCRIPTION
-Show hardware watchdog status. The default device is /dev/watchdog. If more
-than one device is specified then the output is separated by one blank line.
-
+Show hardware watchdog status.  The default device is
+.IR /dev/watchdog .
+If more than one device is specified then the output is separated by
+one blank line.
+.PP
 Note that number of supported watchdog features is hardware specific.
-
 .SH OPTIONS
-.IP "\fB\-f, \-\-flags \fI<list>\fP"
+.IP "\fB\-f\fR, \fB\-\-flags \fI<list>\fP"
 Print selected flags only.
-.IP "\fB\-F, \-\-noflags\fP"
-Don't print information about flags
-.IP "\fB\-n, \-\-noheadings\fP"
+.IP "\fB\-F\fR, \fB\-\-noflags\fP"
+Do not print information about flags.
+.IP "\fB\-n\fR, \fB\-\-noheadings\fP"
 Do not print a header line for flags table.
-.IP "\fB\-I, \-\-noident\fP"
-Don't print watchdog identity information
-.IP "\fB\-T, \-\-notimeouts\fP"
-Don't print watchdog timeouts
-.IP "\fB\-o, \-\-output \fIlist\fP"
-Define the output columns to use in table of watchdog flags. If no output
-arrangement is specified, then a default set is used.  Use \fB\-\-help\fP to
-get list of all supported columns.
-.IP "\fB\-O, \-\-oneline\fP"
+.IP "\fB\-I\fR, \fB\-\-noident\fP"
+Do not print watchdog identity information.
+.IP "\fB\-T\fR, \fB\-\-notimeouts\fP"
+Do not print watchdog timeouts.
+.IP "\fB\-o\fR, \fB\-\-output \fIlist\fP"
+Define the output columns to use in table of watchdog flags.  If no
+output arrangement is specified, then a default set is used.  Use
+.B \-\-help
+to get list of all supported columns.
+.IP "\fB\-O\fR, \fB\-\-oneline\fP"
 Print all wanted information on one line in key="value" output format.
-.IP "\fB\-V, \-\-version\fP"
+.IP "\fB\-V\fR, \fB\-\-version\fP"
 Output version information and exit.
-.IP "\fB\-r, \-\-raw\fP"
+.IP "\fB\-r\fR, \fB\-\-raw\fP"
 Use the raw output format.
-.IP "\fB\-x, \-\-flags-only\fP"
+.IP "\fB\-x\fR, \fB\-\-flags-only\fP"
 Same as \fB\-I \-T\fP.
-.IP "\fB\-h, \-\-help\fP"
+.IP "\fB\-h\fR, \fB\-\-help\fP"
 Print a help text and exit.
-
 .SH AUTHORS
-.nf
-Karel Zak <kzak@redhat.com>
-Lennart Poettering <lennart@poettering.net>
-.fi
+.MT kzak@\:redhat\:.com
+Karel Zak
+.ME
+.br
+.MT lennart@\:poettering\:.net
+Lennart Poettering
+.ME
 .SH AVAILABILITY
-The wdctl command is part of the util-linux package and is available from
-ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
+The
+.B wdctl
+command is part of the util-linux package and is available from
+.UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .
