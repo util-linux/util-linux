@@ -70,7 +70,7 @@ chfn_CFLAGS = $(chfn_chsh_cflags)
 chfn_LDFLAGS = $(chfn_chsh_ldflags)
 chfn_LDADD = $(chfn_chsh_ldadd)
 
-chsh_SOURCES = chfn.c $(chfn_chsh_sources)
+chsh_SOURCES = chsh.c $(chfn_chsh_sources)
 chsh_CFLAGS = $(chfn_chsh_cflags)
 chsh_LDFLAGS = $(chfn_chsh_ldflags)
 chsh_LDADD = $(chfn_chsh_ldadd)
