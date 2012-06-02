@@ -1,152 +1,219 @@
-.\" Contents of this manual page is copied from GNU Coreutils
-.\" info page at end of May 2012, with few additions such as
-.\" examples and see also sections.
-.TH SU "1" "May 2012" "util-linux" "User Commands"
+.TH SU "1" "June 2012" "util-linux" "User Commands"
 .SH NAME
-su \- run a shell with substitute user and group IDs
+su \- run a command with substitute user and group ID
 .SH SYNOPSIS
 .B su
-[options] [\-]
-.I user
-[args]
+[options...] [\-] [user [args...]]
 .SH DESCRIPTION
 .B su
-allows one user to temporarily become another user.  It runs a
-command (often an interactive shell) with the real and effective user
-ID, group ID, and supplemental groups of a given user.
+allows to run commands with substitute user and group ID.
 .PP
-If no user is given, the default is root, the super-user.  The shell
-to use is taken from user's passwd entry, or /bin/sh if none is
-specified there.  If user has a password,
+When called without arguments
 .B su
-prompts for the password unless run by a user with effective user ID
-of zero (the super-user).
+defaults to running an interactive shell as
+.IR root .
 .PP
-By default,
+For backward compatibilty
 .B su
-does not change the current directory.  It sets the environment
-variables HOME and SHELL from the password entry for user, and if
-user is not the super-user, sets USER and LOGNAME to user.  By
-default, the shell is not a login shell.
+defaults to not change the current directory and to only set the
+enviroment variables
+.B HOME
+and
+.B SHELL
+(plus
+.B USER
+and
+.B LOGNAME
+if the target
+.I user
+is not root).  It is recommended to always use the
+.B \-\-login
+option (instead it's shortcut
+.BR \- )
+to avoid side effects caused by mixing environments.
 .PP
-Any additional
-.I args
-are passed as additional arguments to the shell.
-.PP
+This version of
 .B su
-does not treat /bin/sh or any other shells specially (e.g., by
-setting argv[0] to -su, passing -c only to certain shells, etc.).
-.PP
+uses PAM for authentication, account and session management.  Some
+configuration options found in other
 .B su
-can optionally be compiled to use syslog to report failed, and
-optionally successful,
-.B su
-attempts.  (If the system supports syslog.)
-.PP
-This implementation of
-.B su
-does not check if the user is a member of the wheel group.
+implementations such as e.g. support of a wheel group have to be
+configured via PAM.
 .SH OPTIONS
 .TP
-\fB\-c\fR, \fB\-\-command\fR [\fIcommand\fR]
-Pass command, a single command line to run, to the shell with a
-.I \-c
-option instead of starting an interactive shell.
+\fB\-c\fR \fIcommand\fR, \fB\-\-command\fR=\fIcommand\fR
+Pass
+.I command
+to the shell with the
+.B \-c
+option.
+.TP
+\fB\-\-session\-command\fR=\fIcommand\fR
+Same as
+.B \-c
+but do not create a new session (discouraged).
 .TP
 \fB\-f\fR, \fB\-\-fast\fR
-Pass the
-.I \-f
-option to the shell.  This probably only makes sense if the shell run
-is csh or tcsh, for which the
-.I \-f
-option prevents reading the startup file (.cshrc).  With Bourne-like
-shells, the
-.I -f
-option disables file name pattern expansion (globbing), which is not
-likely to be useful.
+Pass
+.B \-f
+to the shell which may or may not be useful depending on the
+shell.
 .TP
 \fB\-\fR, \fB\-l\fR, \fB\-\-login\fR
-Make the shell a login shell.  This means the following.  Unset all
-environment variables except TERM, HOME, and SHELL (which are set as
-described above), and USER and LOGNAME (which are set, even for the
-super-user, as described above), and set PATH to a compiled-in
-default value.  Change to user's home directory.  Prepend  '\-' to the
-shell's name, intended to make it read its login startup file(s).
+Starts the shell as login shell with an environment similar to a real
+login:
+.RS 10
 .TP
-\fB\-m\fR, \fB\-p\fR, \fB\-\-preserve\-environment\fR
-Do not change the environment variables HOME, USER, LOGNAME, or
-SHELL.  Run the shell given in the environment variable SHELL instead
-of the shell from user's passwd entry, unless the user running
+o
+clears all environment variables except for
+.B TERM
+.TP
+o
+initializes the environment variables
+.BR HOME ,
+.BR SHELL ,
+.BR USER ,
+.BR LOGNAME ,
+.B PATH
+.TP
+o
+changes to the target user's home directory
+.TP
+o
+sets argv[0] of the shell to
+.RB ' \- '
+in order to make the shell a login shell
+.RE
+.TP
+\fB\-m\fR, \fB\-p\fR, \fB\-\-preserve-environment\fR
+Preserves the whole environment, ie does not set
+.BR HOME ,
+.BR SHELL ,
+.B USER
+nor
+.BR LOGNAME .
+.TP
+\fB\-s\fR \fISHELL\fR, \fB\-\-shell\fR=\fISHELL\fR
+Runs the specified shell instead of the default.  The shell to run is
+selected according to the following rules in order:
+.RS 10
+.TP
+o
+the shell specified with
+.B \-\-shell
+.TP
+o
+The shell specified in the environment variable
+.B SHELL
+if the
+.B \-\-preserve-environment
+option is used.
+.TP
+o
+the shell listed in the passwd entry of the target user
+.TP
+o
+/bin/sh
+.RE
+.IP
+If the target user has a restricted shell (i.e. not listed in
+/etc/shells) the
+.B \-\-shell
+option and the
+.B SHELL
+environment variables are ignored unless the calling user is root.
+.TP
+\fB\-\-help\fR
+Display help text and exit.
+.TP
+\fB\-\-version\fR
+Display version information and exit.
+.SH CONFIG FILES
 .B su
-is not the super-user and user's shell is restricted.  A restricted
-shell is one that is not listed in the file /etc/shells, or in a
-compiled-in list if that file does not exist.  Parts of what this
-option does can be overridden by
-.I \-\-login
+reads the
+.I /etc/default/su
 and
-.IR \-\-shell .
-.TP
-\fB\-s\fR, \fB\-\-shell\fR [\fIshell\fR]
-Run shell instead of the shell from user's passwd entry, unless the
-user running
-.B su
-is not the super-user and user's shell is restricted (see
-.I -m
-just above).
-.SH EXAMPLES
-.TP
-.B su \ \-m \ nobody \ \-c 'ls -l'
-Run ls as nobody user.  Notice that \-m is required since user nobody
-does not have a valid shell by default.
-.TP
-.B su \ \-l fred
-.TQ
-.B su \ \- fred
-Simulate a login for user fred.
-.TP
-.B su \ \-
-.br
-Simulate a login for root.
-.SH "EXIT STATUS"
-In common case
-.B su
-will exit with status of the subshell.  See other possibilities
-below.
+.I /etc/login.defs
+configuration files.  The following configuration items are relevant
+for
+.BR su (1):
 .PP
-.RS
-.PD 0
+.B FAIL_DELAY
+(number)
+.RS 4
+Delay in seconds in case of authentication failure.  Number must be
+a non-negative integer.
+.RE
+.PP
+.B ENV_PATH
+(string)
+.RS 4
+Defines the PATH environment variable for a regular user.  The
+default value is
+.IR /usr/local/bin:\:/bin:\:/usr/bin .
+.RE
+.PP
+.B ENV_ROOTPATH
+(string)
+.br
+.B ENV_SUPATH
+(string)
+.RS 4
+Defines the PATH environment variable for root. The default value is
+.IR /usr/local/sbin:\:/usr/local/bin:\:/sbin:\:/bin:\:/usr/sbin:\:/usr/bin .
+.RE
+.PP
+.B ALWAYS_SET_PATH
+(boolean)
+.RS 4
+If set to
+.I yes
+and \-\-login and \-\-preserve\-environment were not specified
+.B su
+initializes
+.BR PATH .
+.RE
+.SH EXIT STATUS
+.B su
+normally returns the exit status of the command it executed.  If the
+command was killed by a signal,
+.B su
+returns the number of the signal plus 128.
+.PP
+Exit status generated by
+.B su
+itself:
+.RS 10
 .TP
-.B 0
-success
+1
+Generic error before executing the requested command
 .TP
-.B 1
-system and authentication errors
+126
+The requested command could not be executed
 .TP
-.B 126
-subshell is found but cannot be invoked
-.TP
-.B 127
-subshell cannot be found
-.PD
+127
+The requested command could was not found
 .RE
 .SH FILES
+.PD 0
+.TP 17
+/etc/pam.d/su
+default PAM configuration file
 .TP
-.B /etc/pam.d/su
-PAM configuration for
-.BR su .
-.SH AUTHORS
-.MT djm@gnu.ai.mit.edu
-David MacKenzie
-.ME
-.br
-.MT jim@meyering.net
-Jim Meyering
-.ME
+/etc/pam.d/su-l
+PAM configuration file if \-\-login is specified
+.TP
+/etc/default/su
+.TP
+/etc/login.defs
+.PD 1
 .SH "SEE ALSO"
-.BR login (1),
-.BR passwd (5),
-.BR sudo (8),
-.BR syslogd (8)
+.BR pam (8),
+.BR shells (5),
+.BR login.defs (5),
+.SH AUTHOR
+Derived from coreutils' su which was based on an implemenation from
+David MacKenzie.
 .SH AVAILABILITY
 The example command is part of the util-linux package and is
 available from
