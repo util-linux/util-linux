@@ -776,7 +776,7 @@ main (int argc, char **argv)
   if (!correct_password (pw))
     {
       log_su (pw, false);
-      sleep (getlogindefs_num ("FAIL_DELAY", 1));
+      sleep ((unsigned int)getlogindefs_num ("FAIL_DELAY", 1));
       error (EXIT_FAIL, 0, _("incorrect password"));
     }
   else
