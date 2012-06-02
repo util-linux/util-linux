@@ -6,4 +6,5 @@ login
 newgrp
 vipw
 last
+su
 sulogin
