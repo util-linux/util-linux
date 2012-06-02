@@ -319,15 +319,12 @@ static void chown_tty(struct login_context *cxt)
 
 	grname = getlogindefs_str("TTYGROUP", TTYGRPNAME);
 	if (grname && *grname) {
-		if (*grname >= 0 && *grname <= 9)		/* group by ID */
-			gid = (gid_t)getlogindefs_num("TTYGROUP", gid);
-		else {						/* group by name */
-			struct group *gr = getgrnam(grname);
-			if (gr)
-				gid = gr->gr_gid;
-		}
+		struct group *gr = getgrnam(grname);
+		if (gr)	/* group by name */
+			gid = gr->gr_gid;
+		else	/* group by ID */
+			gid = (gid_t) getlogindefs_num("TTYGROUP", gid);
 	}
-
 	if (fchown(0, uid, gid))				/* tty */
 		chown_err(cxt->tty_name, uid, gid);
 	if (fchmod(0, cxt->tty_mode))
