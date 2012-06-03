@@ -449,10 +449,10 @@ void dos_add_partition(struct fdisk_context *cxt, int n, int sys)
 	fill_bounds(first, last);
 	if (n < 4) {
 		start = sector_offset;
-		if (display_in_cyl_units || !total_number_of_sectors)
+		if (display_in_cyl_units || !cxt->total_sectors)
 			limit = heads * sectors * cylinders - 1;
 		else
-			limit = total_number_of_sectors - 1;
+			limit = cxt->total_sectors - 1;
 
 		if (limit > UINT_MAX)
 			limit = UINT_MAX;

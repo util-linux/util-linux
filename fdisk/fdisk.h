@@ -112,6 +112,9 @@ struct fdisk_context {
 	unsigned long phy_sector_size; /* physical size */
 	unsigned long sector_size; /* logical size */
 	unsigned long alignment_offset;
+
+	/* geometry */
+	sector_t total_sectors; /* in logical sectors */
 };
 
 extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int readonly);
@@ -181,8 +184,8 @@ extern enum labeltype disklabel;
  */
 extern unsigned char *MBRbuffer;
 extern int MBRbuffer_changed;
-extern sector_t total_number_of_sectors;
 extern unsigned long grain;
+
 /* start_sect and nr_sects are stored little endian on all machines */
 /* moreover, they are not aligned correctly */
 static inline void

@@ -145,7 +145,6 @@ unsigned int	heads,
 	units_per_sector = 1,
 	display_in_cyl_units = 0;
 
-sector_t total_number_of_sectors; /* in logical sectors */
 unsigned long grain = DEFAULT_SECTOR_SIZE;
 enum labeltype disklabel;	/* Current disklabel */
 
@@ -400,8 +399,8 @@ void update_units(void)
 
 void warn_limits(struct fdisk_context *cxt)
 {
-	if (total_number_of_sectors > UINT_MAX && !nowarn) {
-		unsigned long long bytes = total_number_of_sectors * cxt->sector_size;
+	if (cxt->total_sectors > UINT_MAX && !nowarn) {
+		unsigned long long bytes = cxt->total_sectors * cxt->sector_size;
 		int giga = bytes / 1000000000;
 		int hectogiga = (giga + 50) / 100;
 
@@ -509,7 +508,7 @@ update_sector_offset(struct fdisk_context *cxt)
 		sector_offset = x / cxt->sector_size;
 
 		/* don't use huge offset on small devices */
-		if (total_number_of_sectors <= sector_offset * 4)
+		if (cxt->total_sectors <= sector_offset * 4)
 			sector_offset = cxt->phy_sector_size / cxt->sector_size;
 
 		/* use 1MiB grain always when possible */
@@ -517,7 +516,7 @@ update_sector_offset(struct fdisk_context *cxt)
 			grain = 2048 * 512;
 
 		/* don't use huge grain on small devices */
-		if (total_number_of_sectors <= (grain * 4 / cxt->sector_size))
+		if (cxt->total_sectors <= (grain * 4 / cxt->sector_size))
 			grain = cxt->phy_sector_size;
 	}
 }
@@ -540,13 +539,9 @@ get_geometry(struct fdisk_context *cxt, struct geom *g) {
 		pt_sectors ? pt_sectors :
 		kern_sectors ? kern_sectors : 63;
 
-	/* get number of 512-byte sectors, and convert it the real sectors */
-	if (blkdev_get_sectors(cxt->dev_fd, &nsects) == 0)
-		total_number_of_sectors = (nsects / (cxt->sector_size >> 9));
-
 	update_sector_offset(cxt);
 
-	llcyls = total_number_of_sectors / (heads * sectors);
+	llcyls = cxt->total_sectors / (heads * sectors);
 	cylinders = llcyls;
 	if (cylinders != llcyls)	/* truncated? */
 		cylinders = ~0;
@@ -1146,7 +1141,7 @@ check_alignment(struct fdisk_context *cxt, sector_t lba, int partition)
 
 static void
 list_disk_geometry(struct fdisk_context *cxt) {
-	unsigned long long bytes = total_number_of_sectors * cxt->sector_size;
+	unsigned long long bytes = cxt->total_sectors * cxt->sector_size;
 	long megabytes = bytes/1000000;
 
 	if (megabytes < 10000)
@@ -1160,7 +1155,7 @@ list_disk_geometry(struct fdisk_context *cxt) {
 	printf(_("%d heads, %llu sectors/track, %d cylinders"),
 	       heads, sectors, cylinders);
 	if (units_per_sector == 1)
-		printf(_(", total %llu sectors"), total_number_of_sectors);
+		printf(_(", total %llu sectors"), cxt->total_sectors);
 	printf("\n");
 	printf(_("Units = %s of %d * %ld = %ld bytes\n"),
 	       str_units(PLURAL),
@@ -1468,7 +1463,7 @@ check(int n, unsigned int h, unsigned int s, unsigned int c,
 static void
 verify(struct fdisk_context *cxt) {
 	int i, j;
-	sector_t total = 1, n_sectors = total_number_of_sectors;
+	sector_t total = 1, n_sectors = cxt->total_sectors;
 	unsigned long long first[partitions], last[partitions];
 	struct partition *p;
 

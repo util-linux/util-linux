@@ -40,6 +40,16 @@ static unsigned long __get_sector_size(int fd)
 	return DEFAULT_SECTOR_SIZE;
 }
 
+static int __discover_geometry(struct fdisk_context *cxt)
+{
+	sector_t nsects;
+
+	/* get number of 512-byte sectors, and convert it the real sectors */
+	if (!blkdev_get_sectors(cxt->dev_fd, &nsects))
+		cxt->total_sectors = (nsects / (cxt->sector_size >> 9));
+	return 0;
+}
+
 static int __discover_topology(struct fdisk_context *cxt)
 {
 #ifdef HAVE_LIBBLKID
@@ -151,7 +161,9 @@ struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int rea
 	cxt->dev_path = strdup(fname);
 	if (!cxt->dev_path)
 		goto fail;
+
 	__discover_topology(cxt);
+	__discover_geometry(cxt);
 
 	DBG(CONTEXT, dbgprint("context initialized for %s [%s]",
 			      fname, readonly ? "READ-ONLY" : "READ-WRITE"));
