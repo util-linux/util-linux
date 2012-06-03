@@ -2154,6 +2154,10 @@ int main(int argc, char **argv)
 
 	print_welcome();
 
+	if (!fdisk_dev_sectsz_is_default(cxt))
+		printf(_("Note: sector size is %ld (not %d)\n"),
+		       cxt->sector_size, DEFAULT_SECTOR_SIZE);
+
 	gpt_warning(cxt->dev_path);
 	get_boot(cxt, 0);
 

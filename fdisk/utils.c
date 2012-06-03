@@ -80,11 +80,19 @@ static int __discover_topology(struct fdisk_context *cxt)
 	cxt->sector_size = __get_sector_size(cxt->dev_fd);
 	if (!cxt->phy_sector_size) /* could not discover physical size */
 		cxt->phy_sector_size = cxt->sector_size;
-	if (cxt->sector_size != DEFAULT_SECTOR_SIZE)
-		printf(_("Note: sector size is %ld (not %d)\n"),
-		       cxt->sector_size, DEFAULT_SECTOR_SIZE);
 
 	return 0;
+}
+
+/**
+ * fdisk_dev_sectsz_is_default:
+ * @cxt: fdisk context
+ *
+ * Returns 1 if the device's sector size is the default value, otherwise 0.
+ */
+int fdisk_dev_sectsz_is_default(struct fdisk_context *cxt)
+{
+	return cxt->sector_size == DEFAULT_SECTOR_SIZE;
 }
 
 /**
