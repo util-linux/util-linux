@@ -2124,7 +2124,7 @@ int main(int argc, char **argv)
 				print_partition_table_from_option(argv[k], sector_size);
 		} else
 			print_all_partition_table_from_option(sector_size);
-		exit(0);
+		exit(EXIT_SUCCESS);
 	}
 
 	if (opts) {
