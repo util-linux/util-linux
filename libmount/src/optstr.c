@@ -62,6 +62,11 @@ static int mnt_optstr_parse_next(char **optstr,	 char **name, size_t *namesz,
 	if (valsz)
 		*valsz = 0;
 
+	/* trim leading commas as to not invalidate option
+	 * strings with multiple consecutive commas */
+	while (optstr0 && *optstr0 == ',')
+		optstr0++;
+
 	for (p = optstr0; p && *p; p++) {
 		if (!start)
 			start = p;		/* begin of the option item */
