@@ -41,6 +41,8 @@ mkfs_bfs_SOURCES = \
 	$(top_srcdir)/lib/strutils.c \
 	$(utils_common)
 
+mkfs_LDADD = $(LDADD) $(LTLIBINTL)
+
 swaplabel_SOURCES = swaplabel.c $(utils_common)
 swaplabel_LDADD = $(uuid_ldadd)
 swaplabel_CFLAGS = $(AM_CFLAGS) $(uuid_cflags)
