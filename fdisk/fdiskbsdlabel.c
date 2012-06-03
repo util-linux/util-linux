@@ -62,7 +62,7 @@
 #include "fdiskbsdlabel.h"
 
 static void xbsd_delete_part (void);
-static void xbsd_new_part (void);
+static void xbsd_new_part (struct fdisk_context *cxt);
 static void xbsd_write_disklabel (struct fdisk_context *cxt);
 static int xbsd_create_disklabel (struct fdisk_context *cxt);
 static void xbsd_edit_disklabel (void);
@@ -86,7 +86,7 @@ void alpha_bootblock_checksum (char *boot);
 
 #if !defined (__alpha__)
 static int xbsd_translate_fstype (int linux_type);
-static void xbsd_link_part (void);
+static void xbsd_link_part (struct fdisk_context *cxt);
 static struct partition *xbsd_part;
 static int xbsd_part_index;
 #endif
@@ -196,7 +196,7 @@ bsd_command_prompt (struct fdisk_context *cxt)
 	xbsd_list_types ();
 	break;
       case 'n':
-	xbsd_new_part ();
+	xbsd_new_part (cxt);
 	break;
       case 'p':
 	      xbsd_print_disklabel (cxt, 0);
@@ -220,7 +220,7 @@ bsd_command_prompt (struct fdisk_context *cxt)
 	break;
 #if !defined (__alpha__)
       case 'x':
-	xbsd_link_part ();
+	xbsd_link_part (cxt);
 	break;
 #endif
       default:
@@ -245,7 +245,7 @@ xbsd_delete_part (void)
 }
 
 static void
-xbsd_new_part (void)
+xbsd_new_part (struct fdisk_context *cxt)
 {
   unsigned int begin, end;
   char mesg[256];
@@ -263,7 +263,7 @@ xbsd_new_part (void)
 #endif
 
   snprintf (mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
-  begin = read_int (bsd_cround (begin), bsd_cround (begin), bsd_cround (end),
+  begin = read_int (cxt, bsd_cround (begin), bsd_cround (begin), bsd_cround (end),
 		    0, mesg);
 
   if (display_in_cyl_units)
@@ -271,7 +271,7 @@ xbsd_new_part (void)
 
   snprintf (mesg, sizeof(mesg), _("Last %s or +size or +sizeM or +sizeK"),
 	   str_units(SINGULAR));
-  end = read_int (bsd_cround (begin), bsd_cround (end), bsd_cround (end),
+  end = read_int (cxt, bsd_cround (begin), bsd_cround (end), bsd_cround (end),
 		  bsd_cround (begin), mesg);
 
   if (display_in_cyl_units)
@@ -810,12 +810,12 @@ xbsd_translate_fstype (int linux_type)
 }
 
 static void
-xbsd_link_part (void)
+xbsd_link_part (struct fdisk_context *cxt)
 {
   int k, i;
   struct partition *p;
 
-  k = get_partition (1, partitions);
+  k = get_partition (cxt, 1, partitions);
 
   if (!xbsd_check_new_partition (&i))
     return;

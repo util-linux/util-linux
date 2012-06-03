@@ -105,9 +105,17 @@ typedef unsigned long long sector_t;
 struct fdisk_context {
 	int dev_fd;     /* device descriptor */
 	char *dev_path; /* device path */
+
+	/* topology */
+	unsigned long io_size;
+	unsigned long min_io_size;
+	unsigned long phy_sector_size; /* physical size */
+	unsigned long sector_size; /* logical size */
+	unsigned long alignment_offset;
 };
 
 extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int readonly);
+extern int fdisk_dev_has_topology(struct fdisk_context *cxt);
 extern void fdisk_free_context(struct fdisk_context *cxt);
 
 /* prototypes for fdisk.c */
@@ -117,7 +125,7 @@ extern unsigned int display_in_cyl_units, units_per_sector;
 extern void change_units(void);
 extern void fatal(struct fdisk_context *cxt, enum failure why);
 extern void get_geometry(struct fdisk_context *, struct geom *);
-extern int  get_partition(int warn, int max);
+extern int  get_partition(struct fdisk_context *cxt, int warn, int max);
 extern void list_types(struct systypes *sys);
 extern int read_line (int *asked);
 extern char read_char(char *mesg);
@@ -125,14 +133,15 @@ extern int read_hex(struct systypes *sys);
 extern void reread_partition_table(struct fdisk_context *cxt, int leave);
 extern struct partition *get_part_table(int);
 extern int valid_part_table_flag(unsigned char *b);
-extern unsigned int read_int(unsigned int low, unsigned int dflt,
+extern unsigned int read_int(struct fdisk_context *cxt,
+			     unsigned int low, unsigned int dflt,
 			     unsigned int high, unsigned int base, char *mesg);
 extern void print_menu(enum menutype);
-extern void print_partition_size(int num, sector_t start, sector_t stop, int sysid);
+extern void print_partition_size(struct fdisk_context *cxt, int num, sector_t start, sector_t stop, int sysid);
 
 extern void zeroize_mbr_buffer(void);
 extern void fill_bounds(sector_t *first, sector_t *last);
-extern unsigned int heads, cylinders, sector_size;
+extern unsigned int heads, cylinders;
 extern sector_t sectors;
 extern char *partition_type(unsigned char type);
 extern void update_units(void);
@@ -140,12 +149,13 @@ extern char read_chars(char *mesg);
 extern void set_changed(int);
 extern void set_all_unchanged(void);
 extern int warn_geometry(void);
-extern void warn_limits(void);
-extern void warn_alignment(void);
-extern unsigned int read_int_with_suffix(unsigned int low, unsigned int dflt, unsigned int high,
+extern void warn_limits(struct fdisk_context *cxt);
+extern void warn_alignment(struct fdisk_context *cxt);
+extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
+					 unsigned int low, unsigned int dflt, unsigned int high,
 				  unsigned int base, char *mesg, int *is_suffix_used);
-extern sector_t align_lba(sector_t lba, int direction);
-extern int get_partition_dflt(int warn, int max, int dflt);
+extern sector_t align_lba(struct fdisk_context *cxt, sector_t lba, int direction);
+extern int get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt);
 
 #define PLURAL	0
 #define SINGULAR 1
@@ -202,7 +212,7 @@ static inline void set_start_sect(struct partition *p, unsigned int start_sect)
 
 static inline void seek_sector(struct fdisk_context *cxt, sector_t secno)
 {
-	off_t offset = (off_t) secno * sector_size;
+	off_t offset = (off_t) secno * cxt->sector_size;
 	if (lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1)
 		fatal(cxt, unable_to_seek);
 }
@@ -210,14 +220,14 @@ static inline void seek_sector(struct fdisk_context *cxt, sector_t secno)
 static inline void read_sector(struct fdisk_context *cxt, sector_t secno, unsigned char *buf)
 {
 	seek_sector(cxt, secno);
-	if (read(cxt->dev_fd, buf, sector_size) != sector_size)
+	if (read(cxt->dev_fd, buf, cxt->sector_size) != cxt->sector_size)
 		fatal(cxt, unable_to_read);
 }
 
 static inline void write_sector(struct fdisk_context *cxt, sector_t secno, unsigned char *buf)
 {
 	seek_sector(cxt, secno);
-	if (write(cxt->dev_fd, buf, sector_size) != sector_size)
+	if (write(cxt->dev_fd, buf, cxt->sector_size) != cxt->sector_size)
 		fatal(cxt, unable_to_write);
 }
 
