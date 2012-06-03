@@ -141,7 +141,6 @@ sector_t sector_offset = 1, sectors;
 
 unsigned int	heads,
 	cylinders,
-	user_set_sector_size = 0,
 	units_per_sector = 1,
 	display_in_cyl_units = 0;
 
@@ -2061,7 +2060,6 @@ int main(int argc, char **argv)
 			    sector_size != 2048 && sector_size != 4096)
 				usage(stderr);
 			sector_offset = 2;
-			user_set_sector_size = 1;
 			break;
 		case 'C':
 			user_cylinders =  strtou32_or_err(optarg, _("invalid cylinders argument"));
@@ -2110,7 +2108,7 @@ int main(int argc, char **argv)
 
 	fdisk_init_debug(0);
 
-	if (user_set_sector_size && argc-optind != 1)
+	if (sector_size && argc-optind != 1)
 		printf(_("Warning: the -b (set sector size) option should"
 			 " be used with one specified device\n"));
 
@@ -2146,7 +2144,7 @@ int main(int argc, char **argv)
 		cxt = fdisk_new_context_from_filename(argv[optind], 0);
 		if (!cxt)
 			err(EXIT_FAILURE, _("unable to open %s"), argv[optind]);
-		if (user_set_sector_size) /* passed -b option, override autodiscovery */
+		if (sector_size) /* passed -b option, override autodiscovery */
 			cxt->phy_sector_size = cxt->sector_size = sector_size;
 	}
 	else
