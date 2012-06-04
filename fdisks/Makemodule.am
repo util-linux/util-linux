@@ -3,16 +3,7 @@ fdisk_common_sources = \
 	fdisks/common.h \
 	fdisks/gpt.c \
 	fdisks/gpt.h \
-	fdisks/i386_sys_types.c \
-	lib/blkdev.c \
-	lib/mbsalign.c \
-	lib/strutils.c \
-	lib/randutils.c \
-	lib/wholedisk.c
-
-if LINUX
-fdisk_common_sources += lib/linux_version.c
-endif
+	fdisks/i386_sys_types.c
 
 if !ARCH_M68K
 
@@ -35,12 +26,13 @@ fdisk_SOURCES = \
 	fdisks/fdiskdoslabel.c \
 	fdisks/fdiskdoslabel.h \
 	fdisks/partname.c \
-	$(fdisk_common_sources) \
-	lib/canonicalize.c
+	$(fdisk_common_sources)
+
+fdisk_LDADD = libcommon.la
 
 if BUILD_LIBBLKID
 fdisk_CFLAGS = -I$(ul_libblkid_incdir)
-fdisk_LDADD = libblkid.la
+fdisk_LDADD += libblkid.la
 endif
 
 if HAVE_STATIC_FDISK
@@ -59,13 +51,14 @@ dist_man_MANS += fdisks/sfdisk.8
 sfdisk_SOURCES = \
 	fdisks/partname.c \
 	fdisks/sfdisk.c \
-	$(fdisk_common_sources) \
-	lib/canonicalize.c
+	$(fdisk_common_sources)
+sfdisk_LDADD = libcommon.la
 
 if HAVE_STATIC_SFDISK
 sbin_PROGRAMS += sfdisk.static
 sfdisk_static_SOURCES = $(sfdisk_SOURCES)
 sfdisk_static_LDFLAGS = -all-static
+sfdisk_static_LDADD = $(sfdisk_LDADD)
 endif
 
 
@@ -74,7 +67,7 @@ sbin_PROGRAMS += cfdisk
 dist_man_MANS += fdisks/cfdisk.8
 cfdisk_SOURCES = fdisks/cfdisk.c $(fdisk_common_sources)
 cfdisk_CFLAGS =
-cfdisk_LDADD =
+cfdisk_LDADD = libcommon.la
 
 if BUILD_LIBBLKID
 cfdisk_CFLAGS += -I$(ul_libblkid_incdir)

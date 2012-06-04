@@ -6,15 +6,6 @@ nodist_mountinc_HEADERS = $(top_builddir)/libmount/src/libmount.h
 usrlib_exec_LTLIBRARIES += libmount.la
 libmount_la_SOURCES = \
 	include/list.h \
-	lib/at.c \
-	lib/canonicalize.c \
-	lib/env.c \
-	lib/linux_version.c \
-	lib/loopdev.c \
-	lib/mangle.c \
-	lib/match.c \
-	lib/strutils.c \
-	lib/sysfs.c \
 	\
 	libmount/src/cache.c \
 	libmount/src/context.c \
@@ -39,7 +30,7 @@ libmount_la_SOURCES = \
 
 nodist_libmount_la_SOURCES = libmount/src/mountP.h
 
-libmount_la_LIBADD = libblkid.la $(SELINUX_LIBS)
+libmount_la_LIBADD = libcommon.la libblkid.la $(SELINUX_LIBS)
 
 libmount_la_CFLAGS = \
 	-I$(ul_libblkid_incdir) \

@@ -74,16 +74,8 @@ endif
 if BUILD_LSBLK
 bin_PROGRAMS += lsblk
 dist_man_MANS += misc-utils/lsblk.8
-lsblk_SOURCES = \
-	misc-utils/lsblk.c \
-	lib/at.c \
-	lib/canonicalize.c \
-	lib/mbsalign.c \
-	lib/mangle.c \
-	lib/strutils.c \
-	lib/sysfs.c \
-	lib/tt.c
-lsblk_LDADD = libblkid.la libmount.la
+lsblk_SOURCES = misc-utils/lsblk.c
+lsblk_LDADD = libblkid.la libmount.la libcommon.la
 lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libmount_incdir)
 if HAVE_UDEV
 lsblk_LDADD += -ludev
@@ -125,11 +117,8 @@ CLEANFILES += misc-utils/uuidd.service
 if BUILD_LIBBLKID
 sbin_PROGRAMS += blkid
 dist_man_MANS += misc-utils/blkid.8
-blkid_SOURCES = \
-	misc-utils/blkid.c \
-	lib/ismounted.c \
-	lib/strutils.c
-blkid_LDADD = libblkid.la
+blkid_SOURCES = misc-utils/blkid.c
+blkid_LDADD = libblkid.la libcommon.la
 blkid_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 
 sbin_PROGRAMS += findfs
@@ -140,11 +129,8 @@ findfs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 
 sbin_PROGRAMS += wipefs
 dist_man_MANS += misc-utils/wipefs.8
-wipefs_SOURCES = \
-	misc-utils/wipefs.c \
-	lib/match.c \
-	lib/strutils.c
-wipefs_LDADD = libblkid.la
+wipefs_SOURCES = misc-utils/wipefs.c
+wipefs_LDADD = libblkid.la libcommon.la
 wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 
 if HAVE_STATIC_BLKID
@@ -160,17 +146,9 @@ endif # BUILD_LIBBLKID
 if BUILD_LIBMOUNT
 bin_PROGRAMS += findmnt
 dist_man_MANS += misc-utils/findmnt.8
-findmnt_LDADD = libmount.la
+findmnt_LDADD = libmount.la libcommon.la
 findmnt_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
-findmnt_SOURCES = \
-	misc-utils/findmnt.c \
-	lib/mbsalign.c \
-	lib/strutils.c \
-	lib/tt.c
-
-if !HAVE_LANGINFO
-findmnt_SOURCES += lib/langinfo.c
-endif
+findmnt_SOURCES = misc-utils/findmnt.c
 endif # BUILD_LIBMOUNT
 
 
@@ -179,8 +157,8 @@ bin_PROGRAMS += kill
 kill_SOURCES = \
 	misc-utils/kill.c \
 	misc-utils/kill.h \
-	misc-utils/procs.c \
-	lib/strutils.c
+	misc-utils/procs.c
+kill_LDADD = libcommon.la
 dist_man_MANS += misc-utils/kill.1
 endif
 

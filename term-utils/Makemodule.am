@@ -20,9 +20,7 @@ if BUILD_AGETTY
 sbin_PROGRAMS += agetty
 dist_man_MANS += term-utils/agetty.8
 agetty_SOURCES = term-utils/agetty.c
-if !HAVE_LANGINFO
-agetty_SOURCES += lib/langinfo.c
-endif
+agetty_LDADD = libcommon.la
 endif # BUILD_AGETTY
 
 
@@ -60,14 +58,11 @@ usrbin_exec_PROGRAMS += wall
 wall_SOURCES = \
 	term-utils/wall.c \
 	term-utils/ttymsg.c \
-	term-utils/ttymsg.h \
-	lib/strutils.c \
-	lib/fileutils.c
-
+	term-utils/ttymsg.h
 dist_man_MANS += term-utils/wall.1
 wall_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 wall_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-
+wall_LDADD = libcommon.la
 if USE_TTY_GROUP
 if MAKEINSTALL_DO_CHOWN
 install-exec-hook-wall::

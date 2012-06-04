@@ -17,19 +17,16 @@ dist_man_MANS += \
 	text-utils/rev.1 \
 	text-utils/tailf.1
 
-col_SOURCES = \
-	text-utils/col.c \
-	lib/strutils.c
+col_SOURCES = text-utils/col.c
+col_LDADD = libcommon.la
 
 colcrt_SOURCES = text-utils/colcrt.c
 
-colrm_SOURCES = \
-	text-utils/colrm.c \
-	lib/strutils.c
+colrm_SOURCES = text-utils/colrm.c
+colrm_LDADD = libcommon.la
 
-column_SOURCES = \
-	text-utils/column.c \
-	lib/strutils.c
+column_SOURCES = text-utils/column.c
+column_LDADD = libcommon.la
 
 hexdump_SOURCES = \
 	text-utils/conv.c \
@@ -37,15 +34,13 @@ hexdump_SOURCES = \
 	text-utils/hexdump.c \
 	text-utils/hexdump.h \
 	text-utils/hexsyntax.c \
-	text-utils/parse.c \
-	lib/strutils.c
+	text-utils/parse.c
+hexdump_LDADD = libcommon.la
 
 rev_SOURCES = text-utils/rev.c
 
-tailf_SOURCES = \
-	text-utils/tailf.c \
-	lib/strutils.c
-
+tailf_SOURCES = text-utils/tailf.c
+tailf_LDADD = libcommon.la
 
 if BUILD_LINE
 usrbin_exec_PROGRAMS += line

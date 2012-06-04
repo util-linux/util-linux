@@ -9,9 +9,8 @@ if BUILD_SULOGIN
 sbin_PROGRAMS += sulogin
 dist_man_MANS += login-utils/sulogin.8
 sulogin_SOURCES = \
-	login-utils/sulogin.c \
-	lib/strutils.c
-sulogin_LDADD =
+	login-utils/sulogin.c
+sulogin_LDADD = libcommon.la
 if HAVE_LIBCRYPT
 sulogin_LDADD += -lcrypt
 endif
@@ -27,10 +26,8 @@ dist_man_MANS += login-utils/login.1
 login_SOURCES = \
 	login-utils/login.c \
 	login-utils/logindefs.c \
-	login-utils/logindefs.h \
-	lib/fileutils.c \
-	lib/setproctitle.c
-login_LDADD = -lpam -lpam_misc
+	login-utils/logindefs.h
+login_LDADD = libcommon.la -lpam -lpam_misc
 if HAVE_AUDIT
 login_LDADD += -laudit
 endif
@@ -50,13 +47,10 @@ chfn_chsh_sources = \
 	login-utils/islocal.c \
 	login-utils/islocal.h \
 	login-utils/setpwnam.c \
-	login-utils/setpwnam.h \
-	lib/env.c \
-	lib/fileutils.c
-
+	login-utils/setpwnam.h
 chfn_chsh_cflags = $(SUID_CFLAGS) $(AM_CFLAGS)
 chfn_chsh_ldflags = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-chfn_chsh_ldadd = -lpam -lpam_misc
+chfn_chsh_ldadd = libcommon.la -lpam -lpam_misc
 
 if HAVE_SELINUX
 chfn_chsh_sources += \
@@ -109,9 +103,8 @@ dist_man_MANS += \
 	login-utils/vipw.8
 vipw_SOURCES = \
 	login-utils/vipw.c \
-	login-utils/setpwnam.h \
-	lib/fileutils.c
-vipw_LDADD =
+	login-utils/setpwnam.h
+vipw_LDADD = libcommon.la
 if HAVE_SELINUX
 vipw_LDADD += -lselinux
 endif

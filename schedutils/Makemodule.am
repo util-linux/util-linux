@@ -2,32 +2,21 @@ if BUILD_SCHEDUTILS
 
 usrbin_exec_PROGRAMS += chrt
 dist_man_MANS += schedutils/chrt.1
-
-sched_common = \
-	lib/strutils.c \
-	lib/procutils.c
-
-chrt_SOURCES = \
-	schedutils/chrt.c \
-	$(sched_common)
+chrt_SOURCES = schedutils/chrt.c
+chrt_LDADD = libcommon.la
 
 if BUILD_IONICE
 usrbin_exec_PROGRAMS += ionice
-ionice_SOURCES = \
-	schedutils/ionice.c \
-	$(sched_common)
-
 dist_man_MANS += schedutils/ionice.1
+ionice_SOURCES = schedutils/ionice.c
+ionice_LDADD = libcommon.la
 endif
 
 if BUILD_TASKSET
 usrbin_exec_PROGRAMS += taskset
-taskset_SOURCES = \
-	schedutils/taskset.c \
-	lib/cpuset.c \
-	$(sched_common)
-
 dist_man_MANS += schedutils/taskset.1
+taskset_SOURCES = schedutils/taskset.c
+taskset_LDADD = libcommon.la
 endif
 
 endif # BUILD_SCHEDUTILS

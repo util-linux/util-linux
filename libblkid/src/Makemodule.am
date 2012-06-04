@@ -6,15 +6,6 @@ nodist_blkidinc_HEADERS = $(top_builddir)/libblkid/src/blkid.h
 usrlib_exec_LTLIBRARIES += libblkid.la
 libblkid_la_SOURCES = \
 	include/list.h \
-	lib/at.c \
-	lib/blkdev.c \
-	lib/canonicalize.c \
-	lib/crc32.c \
-	lib/env.c \
-	lib/linux_version.c \
-	lib/md5.c \
-	lib/strutils.c \
-	lib/sysfs.c \
 	\
 	libblkid/src/blkidP.h \
 	libblkid/src/cache.c \
@@ -114,9 +105,10 @@ libblkid_la_SOURCES += \
 endif
 
 nodist_libblkid_la_SOURCES = libblkid/src/blkid.h
+libblkid_la_LIBADD = libcommon.la
 
 if BUILD_LIBUUID
-libblkid_la_LIBADD = libuuid.la
+libblkid_la_LIBADD += libuuid.la
 endif
 
 libblkid_la_CFLAGS = \
