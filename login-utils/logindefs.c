@@ -186,17 +186,17 @@ int getlogindefs_bool(const char *name, int dflt)
 	return ptr && ptr->value ? (strcasecmp(ptr->value, "yes") == 0) : dflt;
 }
 
-long getlogindefs_num(const char *name, long dflt)
+unsigned long getlogindefs_num(const char *name, long dflt)
 {
 	struct item *ptr = search(name);
 	char *end = NULL;
-	long retval;
+	unsigned long retval;
 
 	if (!ptr || !ptr->value)
 		return dflt;
 
 	errno = 0;
-	retval = strtol(ptr->value, &end, 0);
+	retval = strtoul(ptr->value, &end, 0);
 	if (end && *end == '\0' && !errno)
 		return retval;
 

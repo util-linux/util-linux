@@ -84,6 +84,9 @@ checkconfig:
 		-name '*.[hcS]' -type f -print | sort -u \
 		| xargs $(top_srcdir)/tools/checkconfig.sh $(top_srcdir)
 
+checkmans:
+	@$(top_srcdir)/tools/checkmans.sh
+
 checkxalloc:
 	@ $(top_srcdir)/tools/checkxalloc.sh
 
