@@ -127,6 +127,7 @@ void prepare_line_buffer(void);
 #define INIT_BUF	80
 #define SHELL_LINE	1000
 #define COMMAND_BUF	200
+#define REGERR_BUF	NUM_COLUMNS
 
 struct termios	otty, savetty0;
 long		file_pos, file_size;
@@ -1583,13 +1584,13 @@ void search(char buf[], FILE *file, register int n)
     register long line3 = startline;
     register int lncount;
     int saveln, rv, rc;
-    char *s;
     regex_t re;
 
     context.line = saveln = Currline;
     context.chrctr = startline;
     lncount = 0;
-    if (rc = regcomp (&re, buf, REG_NOSUB) != 0) {
+    if ((rc = regcomp (&re, buf, REG_NOSUB)) != 0) {
+	char s[REGERR_BUF];
 	regerror (rc, &re, s, sizeof s);
 	more_error (s);
     }
