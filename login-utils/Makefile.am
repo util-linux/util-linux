@@ -111,8 +111,6 @@ vipw_LDADD =
 if HAVE_SELINUX
 vipw_LDADD += -lselinux
 endif
-install-exec-hook::
-	cd $(DESTDIR)$(usrsbin_execdir) && ln -sf vipw vigr
 endif # BUILD_VIPW
 
 
@@ -122,3 +120,14 @@ test_islocal_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)
 
 test_logindefs_SOURCES = logindefs.c logindefs.h
 test_logindefs_CPPFLAGS = -DTEST_PROGRAM $(AM_CPPFLAGS)
+
+
+install-exec-hook:
+if BUILD_SU
+if MAKEINSTALL_DO_SETUID
+	chmod 4755 $(DESTDIR)$(bindir)/su
+endif
+endif
+if BUILD_VIPW
+	cd $(DESTDIR)$(usrsbin_execdir) && ln -sf vipw vigr
+endif
