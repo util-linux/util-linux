@@ -769,8 +769,8 @@ static pam_handle_t *init_loginpam(struct login_context *cxt)
 
 static void loginpam_auth(struct login_context *cxt)
 {
-	int rc, failcount = 0, show_unknown;
-	unsigned long retries;
+	int rc, show_unknown;
+	unsigned int retries, failcount = 0;
 	const char *hostname = cxt->hostname ? cxt->hostname :
 			       cxt->tty_name ? cxt->tty_name : "<unknown>";
 	pam_handle_t *pamh = cxt->pamh;
@@ -806,7 +806,7 @@ static void loginpam_auth(struct login_context *cxt)
 			loginpam_get_username(pamh, &cxt->username);
 
 		syslog(LOG_NOTICE,
-		       _("FAILED LOGIN %d FROM %s FOR %s, %s"),
+		       _("FAILED LOGIN %u FROM %s FOR %s, %s"),
 		       failcount, hostname,
 		       cxt->username ? cxt->username : "(unknown)",
 		       pam_strerror(pamh, rc));
@@ -829,7 +829,7 @@ static void loginpam_auth(struct login_context *cxt)
 
 		if (rc == PAM_MAXTRIES)
 			syslog(LOG_NOTICE,
-			       _("TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"),
+			       _("TOO MANY LOGIN TRIES (%u) FROM %s FOR %s, %s"),
 			       failcount, hostname,
 			       cxt->username ? cxt->username : "(unknown)",
 			       pam_strerror(pamh, rc));
