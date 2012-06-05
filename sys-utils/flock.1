@@ -71,13 +71,19 @@ cases, for example if the enclosed command group may have forked a background
 process which should not be holding the lock.
 .TP
 \fB\-n\fP, \fB\-\-nb\fP, \fB\-\-nonblock\fP
-Fail (with an exit code of 1) rather than wait if the lock cannot be
+Fail rather than wait if the lock cannot be
 immediately acquired.
+See the
+.I \-E
+option for the exit code used.
 .TP
 \fB\-w\fP, \fB\-\-wait\fP, \fB\-\-timeout\fP \fIseconds\fP
-Fail (with an exit code of 1) if the lock cannot be acquired within
+Fail if the lock cannot be acquired within
 .IR seconds .
 Decimal fractional values are allowed.
+See the
+.I \-E
+option for the exit code used.
 .TP
 \fB\-o\fP, \fB\-\-close\fP
 Close the file descriptor on which the lock is held before executing
@@ -85,6 +91,11 @@ Close the file descriptor on which the lock is held before executing
 This is useful if
 .B command
 spawns a child process which should not be holding the lock.
+.TP
+\fB\-E\fP, \fB\-\-conflict\-exit\-code\fP \fInumber\fP
+The exit code used when the \fB\-n\fP option is in use, and the
+conflicting lock exists, or the \fB\-w\fP option is in use,
+and the timeout is reached. The default value is 1.
 .TP
 \fB\-c\fP, \fB\-\-command\fP \fIcommand\fP
 Pass a single
@@ -134,7 +145,9 @@ return values for everything else but an options
 .I \-n
 or
 .I \-w
-failures which return 1.
+failures which return either the value given by the
+.I \-E
+option, or 1 by default.
 .SH AUTHOR
 .UR hpa@zytor.com
 H. Peter Anvin
