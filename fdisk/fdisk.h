@@ -224,14 +224,14 @@ static inline void seek_sector(struct fdisk_context *cxt, sector_t secno)
 static inline void read_sector(struct fdisk_context *cxt, sector_t secno, unsigned char *buf)
 {
 	seek_sector(cxt, secno);
-	if (read(cxt->dev_fd, buf, cxt->sector_size) != cxt->sector_size)
+	if (read(cxt->dev_fd, buf, cxt->sector_size) != (ssize_t) cxt->sector_size)
 		fatal(cxt, unable_to_read);
 }
 
 static inline void write_sector(struct fdisk_context *cxt, sector_t secno, unsigned char *buf)
 {
 	seek_sector(cxt, secno);
-	if (write(cxt->dev_fd, buf, cxt->sector_size) != cxt->sector_size)
+	if (write(cxt->dev_fd, buf, cxt->sector_size) != (ssize_t) cxt->sector_size)
 		fatal(cxt, unable_to_write);
 }
 
