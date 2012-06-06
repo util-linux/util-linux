@@ -521,8 +521,9 @@ update_sector_offset(struct fdisk_context *cxt)
 }
 
 void
-get_geometry(struct fdisk_context *cxt, struct geom *g) {
-	sector_t llcyls, nsects = 0;
+get_geometry(struct fdisk_context *cxt, struct geom *g)
+{
+	sector_t llcyls;
 	unsigned int kern_heads = 0, kern_sectors = 0;
 
 	heads = cylinders = sectors = 0;
