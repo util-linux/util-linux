@@ -100,6 +100,10 @@ static bool _pam_cred_established;
 static sig_atomic_t volatile caught_signal = false;
 static pam_handle_t *pamh = NULL;
 
+enum {
+  VERSION_OPTION = CHAR_MAX + 1,
+  HELP_OPTION
+};
 
 static struct option const longopts[] =
 {
@@ -109,8 +113,8 @@ static struct option const longopts[] =
   {"login", no_argument, NULL, 'l'},
   {"preserve-environment", no_argument, NULL, 'p'},
   {"shell", required_argument, NULL, 's'},
-  {"help", no_argument, 0, 'u'},
-  {"version", no_argument, 0, 'v'},
+  {"help", no_argument, 0, HELP_OPTION},
+  {"version", no_argument, 0, VERSION_OPTION},
   {NULL, 0, NULL, 0}
 };
 
@@ -661,10 +665,8 @@ Change the effective user id and group id to that of USER.\n\
   -m, --preserve-environment   do not reset environment variables\n\
   -p                           same as -m\n\
   -s, --shell=SHELL            run SHELL if /etc/shells allows it\n\
-"), stdout);
-      fputs (_(" -u, --help     display this help and exit\n"), stdout);
-      fputs (_(" -v, --version  output version information and exit\n"), stdout);
-      fputs (_("\
+      --help     display this help and exit\n\
+      --version  output version information and exit\n\
 \n\
 A mere - implies -l.   If USER not given, assume root.\n\
 "), stdout);
@@ -727,10 +729,10 @@ main (int argc, char **argv)
 	  shell = optarg;
 	  break;
 
-	case 'u':
+	case HELP_OPTION:
 	  usage(0);
 
-	case 'v':
+	case VERSION_OPTION:
 	  printf(UTIL_LINUX_VERSION);
 	  exit(EXIT_SUCCESS);
 
