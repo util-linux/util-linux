@@ -2,7 +2,7 @@ AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I$(top_srcdir)/include \
 	-DLOCALEDIR=\"$(localedir)\"
-AM_CFLAGS = -fsigned-char
+AM_CFLAGS = -fsigned-char $(WARN_CFLAGS)
 AM_LDFLAGS =
 
 # Automake (at least up to 1.10) mishandles dist_man_MANS inside conditionals.

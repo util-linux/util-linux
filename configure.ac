@@ -81,6 +81,21 @@ AC_C_CONST
 AC_C_VOLATILE
 AC_C_BIGENDIAN
 
+dnl Compiler warnings
+UL_WARN_ADD([-Wextra])
+UL_WARN_ADD([-Wno-missing-field-initializers])
+UL_WARN_ADD([-Wsign-compare])
+UL_WARN_ADD([-Wtype-limits])
+UL_WARN_ADD([-Wuninitialized])
+UL_WARN_ADD([-Werror=sequence-point])
+UL_WARN_ADD([-Wunused-parameter])
+UL_WARN_ADD([-fno-common])
+UL_WARN_ADD([-Wmissing-parameter-type])
+UL_WARN_ADD([-Wunused-result])
+UL_WARN_ADD([-Wunused-but-set-parameter])
+UL_WARN_ADD([-Wunused-but-set-variable])
+AC_SUBST([WARN_CFLAGS])
+
 dnl libtool-2
 LT_INIT
 
