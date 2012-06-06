@@ -93,6 +93,6 @@ int main(int argc, char **argv)
 		if (ioctl(STDIN_FILENO, TIOCSCTTY, 1))
 			warn(_("failed to set the controlling terminal"));
 	}
-	execvp(argv[optind], argv + optind + 1);
+	execvp(argv[optind], argv + optind);
 	err(EXIT_FAILURE, _("execvp failed"));
 }
