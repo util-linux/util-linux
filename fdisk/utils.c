@@ -33,7 +33,7 @@ int fdisk_debug_mask;
 
 static unsigned long __get_sector_size(int fd)
 {
-	unsigned int sect_sz;
+	int sect_sz;
 
 	if (!blkdev_get_sector_size(fd, &sect_sz))
 		return (unsigned long) sect_sz;
@@ -74,8 +74,10 @@ static int __discover_topology(struct fdisk_context *cxt)
 #endif
 
 	/* no blkid or error, use default values */
-	if (!cxt->min_io_size)      cxt->min_io_size = DEFAULT_SECTOR_SIZE;
-	if (!cxt->io_size)          cxt->io_size = DEFAULT_SECTOR_SIZE;
+	if (!cxt->min_io_size)
+		cxt->min_io_size = DEFAULT_SECTOR_SIZE;
+	if (!cxt->io_size)
+		cxt->io_size = DEFAULT_SECTOR_SIZE;
 
 	cxt->sector_size = __get_sector_size(cxt->dev_fd);
 	if (!cxt->phy_sector_size) /* could not discover physical size */
