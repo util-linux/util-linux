@@ -61,10 +61,12 @@ static int __discover_topology(struct fdisk_context *cxt)
 
 		if (tp) {
 			cxt->min_io_size = blkid_topology_get_minimum_io_size(tp);
-			cxt->io_size = blkid_topology_get_optimal_io_size(tp);
+			cxt->optimal_io_size = blkid_topology_get_optimal_io_size(tp);
 			cxt->phy_sector_size = blkid_topology_get_physical_sector_size(tp);
 			cxt->alignment_offset = blkid_topology_get_alignment_offset(tp);
 
+			/* I/O size used by fdisk */
+			cxt->io_size = cxt->optimal_io_size;
 			if (!cxt->io_size)
 				/* optimal IO is optional, default to minimum IO */
 				cxt->io_size = cxt->min_io_size;
@@ -110,8 +112,8 @@ int fdisk_dev_has_topology(struct fdisk_context *cxt)
 	 * optimal_io_size is set or alignment_offset is set or
 	 * minimum_io_size is not power of 2.
 	 */
-	if (cxt->io_size || cxt->alignment_offset ||
-	    (cxt->min_io_size & (cxt->min_io_size - 1)))
+	if (cxt->optimal_io_size || cxt->alignment_offset ||
+	    !is_power_of_2(cxt->min_io_size))
 		return 1;
 	return 0;
 }

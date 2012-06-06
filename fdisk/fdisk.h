@@ -107,10 +107,11 @@ struct fdisk_context {
 	char *dev_path; /* device path */
 
 	/* topology */
-	unsigned long io_size;
-	unsigned long min_io_size;
-	unsigned long phy_sector_size; /* physical size */
-	unsigned long sector_size; /* logical size */
+	unsigned long io_size;		/* I/O size used by fdisk */
+	unsigned long optimal_io_size;	/* optional I/O returned by device */
+	unsigned long min_io_size;	/* minimal I/O size */
+	unsigned long phy_sector_size;	/* physical size */
+	unsigned long sector_size;	/* logical size */
 	unsigned long alignment_offset;
 
 	/* geometry */
