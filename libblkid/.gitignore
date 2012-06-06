@@ -1,5 +1,0 @@
-*.sh
-bin/blkid
-bin/findfs
-test_*
-blkid.h
