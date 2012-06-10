@@ -93,7 +93,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 int
 main(int argc, char **argv) {
-	extern int optind;
 	int ch;
 	struct iovec iov;
 	struct utmp *utmpptr;

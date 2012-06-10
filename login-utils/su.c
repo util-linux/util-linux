@@ -78,7 +78,9 @@ enum
 /* The user to become if none is specified.  */
 #define DEFAULT_USER "root"
 
+#ifndef HAVE_ENVIRON_DECL
 extern char **environ;
+#endif
 
 static void run_shell (char const *, char const *, char **, size_t)
      __attribute__ ((__noreturn__));

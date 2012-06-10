@@ -578,7 +578,9 @@ static int lockfile_fd = -1;
 static int signals_have_been_setup = 0;
 
 /* Ensure that the lock is released if we are interrupted.  */
+#ifndef HAVE_STRSIGNAL_DECL
 extern char *strsignal(int sig);	/* not always in <string.h> */
+#endif
 
 static void
 handler (int sig) {

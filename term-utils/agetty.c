@@ -533,8 +533,6 @@ static void login_options_to_argv(char *argv[], int *argc,
 /* Parse command-line arguments. */
 static void parse_args(int argc, char **argv, struct options *op)
 {
-	extern char *optarg;
-	extern int optind;
 	int c;
 
 	enum {

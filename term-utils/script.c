@@ -158,7 +158,6 @@ int
 main(int argc, char **argv) {
 	sigset_t block_mask, unblock_mask;
 	struct sigaction sa;
-	extern int optind;
 	int ch;
 	FILE *timingfd = stderr;
 
