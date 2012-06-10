@@ -90,7 +90,7 @@ dev_t sysfs_devname_to_devno(const char *name, const char *parent)
 		if (!f)
 			return 0;
 
-		if (fscanf(f, "%u:%u", &maj, &min) == 2)
+		if (fscanf(f, "%d:%d", &maj, &min) == 2)
 			dev = makedev(maj, min);
 		fclose(f);
 	}
