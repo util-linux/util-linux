@@ -1971,6 +1971,18 @@ static void output_special_char(unsigned char c, struct options *op,
 	uname(&uts);
 
 	switch (c) {
+	case 'e':
+		printf("\e");
+		break;
+	case 'E':
+		printf("\e");
+		break;
+	case 'N':
+		printf("\n");
+		break;
+	case 'T':
+		printf("\t");
+		break;
 	case 's':
 		printf("%s", uts.sysname);
 		break;
