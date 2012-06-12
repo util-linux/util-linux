@@ -143,31 +143,36 @@ static int probe_lvm1(blkid_probe pr, const struct blkid_idmag *mag)
 	return 0;
 }
 
-#define MAX_SALT_SIZE 384
 struct verity_sb {
-	uint8_t signature[8];
-	uint8_t version;
-	uint8_t data_block_bits;
-	uint8_t hash_block_bits;
-	uint8_t pad1[1];
-	uint16_t salt_size;
-	uint8_t pad2[2];
-	uint32_t data_blocks_hi;
-	uint32_t data_blocks_lo;
-	uint8_t algorithm[16];
-	uint8_t salt[MAX_SALT_SIZE];
-	uint8_t pad3[88];
+	uint8_t  signature[8];	/* "verity\0\0" */
+	uint32_t version;	/* superblock version */
+	uint32_t hash_type;	/* 0 - Chrome OS, 1 - normal */
+	uint8_t  uuid[16];	/* UUID of hash device */
+	uint8_t  algorithm[32];/* hash algorithm name */
+	uint32_t data_block_size; /* data block in bytes */
+	uint32_t hash_block_size; /* hash block in bytes */
+	uint64_t data_blocks;	/* number of data blocks */
+	uint16_t salt_size;	/* salt size */
+	uint8_t  _pad1[6];
+	uint8_t  salt[256];	/* salt */
+	uint8_t  _pad2[168];
 } __attribute__((packed));
 
 static int probe_verity(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct verity_sb *sb;
+	unsigned int version;
 
 	sb = blkid_probe_get_sb(pr, mag, struct verity_sb);
 	if (sb == NULL)
 		return -1;
 
-	blkid_probe_sprintf_version(pr, "%u", sb->version);
+	version = le32_to_cpu(sb->version);
+	if (version != 1)
+		return 1;
+
+	blkid_probe_set_uuid(pr, sb->uuid);
+	blkid_probe_sprintf_version(pr, "%u", version);
 	return 0;
 }
 
