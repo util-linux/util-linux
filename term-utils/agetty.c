@@ -1646,27 +1646,39 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 		                        break;
 				    
 				    case 'P': //PAUSE
-				    case '[': //F2
+				    case '[': //F2 | F5
 				        if (ascval == '[')
 					{
 					    read(STDIN_FILENO, &ascval, 1);
 					    ascval &= 0x7F;
-					    if (ascval != 'B')
-					        break;
 					}
-                                        cp->eol = ascval;
-					printf("\n");
-					fflush(0);
-					tmp = getUser();
-					if (tmp)
+					if (ascval == 'B') //F2
 					{
-					    reading = 0;
-					    free(bp);
-					    free(ap);
-					    logname = bp = tmp;
+					  cp->eol = ascval;
+					  printf("\n");
+					  fflush(0);
+					  tmp = getUser();
+					  if (tmp)
+					  {
+					      reading = 0;
+					      free(bp);
+					      free(ap);
+					      logname = bp = tmp;
+					  }
+					  else
+					      printf("\ec");
 					}
-					else
-					    printf("\ec");
+					else if (ascval == 'E') //F5
+					{
+					  cp->eol = ascval;
+					  printf("\n");
+					  fflush(0);
+					  tmp = "nobody";
+					  reading = 0;
+					  free(bp);
+					  free(ap);
+					  logname = bp = tmp;
+					}
 				        break;
 				    }
 				}
