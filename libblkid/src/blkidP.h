@@ -13,8 +13,11 @@
 #ifndef _BLKID_BLKIDP_H
 #define _BLKID_BLKIDP_H
 
-
+/* support debug output if LIBBLKID_DEBUG env. variable is set */
 #define CONFIG_BLKID_DEBUG 1
+
+/* Always confirm that /dev/disk-by symlinks match with LABEL/UUID on device */
+/* #define CONFIG_BLKID_VERIFY_UDEV 1 */
 
 #include <sys/types.h>
 #include <dirent.h>
