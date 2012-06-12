@@ -58,7 +58,7 @@ swaplabel_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 swaplabel_LDADD = libblkid.la libcommon.la
 
 if BUILD_LIBUUID
-swaplabel_LDADD += $(uuid_ldadd)
+swaplabel_LDADD += libuuid.la
 swaplabel_CFLAGS += -I$(ul_libuuid_incdir)
 endif
 endif #BUILD_SWAPLABEL
