@@ -37,6 +37,7 @@
 #include "pathnames.h"
 #include "loopdev.h"
 #include "canonicalize.h"
+#include "at.h"
 
 #define CONFIG_LOOPDEV_DEBUG
 
@@ -64,8 +65,12 @@ loopdev_debug(const char *mesg, ...)
 # define DBG(m,x) do { ; } while(0)
 #endif
 
-
+/*
+ * see loopcxt_init()
+ */
 #define loopcxt_ioctl_enabled(_lc)	(!((_lc)->flags & LOOPDEV_FL_NOIOCTL))
+#define loopcxt_sysfs_available(_lc)	(!((_lc)->flags & LOOPDEV_FL_NOSYSFS)) \
+					 && !loopcxt_ioctl_enabled(_lc)
 
 /*
  * @lc: context
@@ -337,8 +342,11 @@ int loopcxt_deinit_iterator(struct loopdev_cxt *lc)
 	free(iter->minors);
 	if (iter->proc)
 		fclose(iter->proc);
+	if (iter->sysblock)
+		closedir(iter->sysblock);
 	iter->minors = NULL;
 	iter->proc = NULL;
+	iter->sysblock = NULL;
 	iter->done = 1;
 	return 0;
 }
@@ -448,6 +456,85 @@ static int loop_scandir(const char *dirname, int **ary, int hasprefix)
 }
 
 /*
+ * Set the next *used* loop device according to /proc/partitions.
+ *
+ * Loop devices smaller than 512 bytes are invisible for this function.
+ */
+static int loopcxt_next_from_proc(struct loopdev_cxt *lc)
+{
+	struct loopdev_iter *iter = &lc->iter;
+	char buf[BUFSIZ];
+
+	DBG(lc, loopdev_debug("iter: scan /proc/partitions"));
+
+	if (!iter->proc)
+		iter->proc = fopen(_PATH_PROC_PARTITIONS, "r");
+	if (!iter->proc)
+		return 1;
+
+	while (fgets(buf, sizeof(buf), iter->proc)) {
+		unsigned int m;
+		char name[128];
+
+
+		if (sscanf(buf, " %u %*s %*s %128[^\n ]",
+			   &m, name) != 2 || m != LOOPDEV_MAJOR)
+			continue;
+
+		DBG(lc, loopdev_debug("iter: check %s", name));
+
+		if (loopiter_set_device(lc, name) == 0)
+			return 0;
+	}
+
+	return 1;
+}
+
+/*
+ * Set the next *used* loop device according to
+ * /sys/block/loopN/loop/backing_file (kernel >= 2.6.37 is required).
+ *
+ * This is preferred method.
+ */
+static int loopcxt_next_from_sysfs(struct loopdev_cxt *lc)
+{
+	struct loopdev_iter *iter = &lc->iter;
+	struct dirent *d;
+	int fd;
+
+	DBG(lc, loopdev_debug("iter: scan /sys/block"));
+
+	if (!iter->sysblock)
+		iter->sysblock = opendir(_PATH_SYS_BLOCK);
+
+	if (!iter->sysblock)
+		return 1;
+
+	fd = dirfd(iter->sysblock);
+
+	while ((d = readdir(iter->sysblock))) {
+		char name[256];
+		struct stat st;
+
+		DBG(lc, loopdev_debug("iter: check %s", d->d_name));
+
+		if (strcmp(d->d_name, ".") == 0
+		    || strcmp(d->d_name, "..") == 0
+		    || strncmp(d->d_name, "loop", 4) != 0)
+			continue;
+
+		snprintf(name, sizeof(name), "%s/loop/backing_file", d->d_name);
+		if (fstat_at(fd, _PATH_SYS_BLOCK, name, &st, 0) != 0)
+			continue;
+
+		if (loopiter_set_device(lc, d->d_name) == 0)
+			return 0;
+	}
+
+	return 1;
+}
+
+/*
  * @lc: context, has to initialized by loopcxt_init_iterator()
  *
  * Returns: 0 on success, -1 on error, 1 at the end of scanning. The details
@@ -470,23 +557,14 @@ int loopcxt_next(struct loopdev_cxt *lc)
 	/* A) Look for used loop devices in /proc/partitions ("losetup -a" only)
 	 */
 	if (iter->flags & LOOPITER_FL_USED) {
-		char buf[BUFSIZ];
+		int rc;
 
-		if (!iter->proc)
-			iter->proc = fopen(_PATH_PROC_PARTITIONS, "r");
-
-		while (iter->proc && fgets(buf, sizeof(buf), iter->proc)) {
-			unsigned int m;
-			char name[128];
-
-			if (sscanf(buf, " %u %*s %*s %128[^\n ]",
-				   &m, name) != 2 || m != LOOPDEV_MAJOR)
-				continue;
-
-			if (loopiter_set_device(lc, name) == 0)
-				return 0;
-		}
-
+		if (loopcxt_sysfs_available(lc))
+			rc = loopcxt_next_from_sysfs(lc);
+		else
+			rc = loopcxt_next_from_proc(lc);
+		if (rc == 0)
+			return 0;
 		goto done;
 	}
 
