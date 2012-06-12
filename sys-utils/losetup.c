@@ -183,6 +183,26 @@ static void usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+static void warn_size(const char *filename, uint64_t size)
+{
+	struct stat st;
+
+	if (!size) {
+		if (stat(filename, &st))
+			return;
+		size = st.st_size;
+	}
+
+	if (size < 512)
+		warnx(_("%s: warning: file smaller than 512 bytes, the loop device "
+			"maybe be useless or invisible for system tools."),
+			filename);
+	else if (size % 512)
+		warnx(_("%s: warning: file does not fit into a 512-byte sector "
+		        "the end of the file will be ignored."),
+			filename);
+}
+
 int main(int argc, char **argv)
 {
 	struct loopdev_cxt lc;
@@ -381,8 +401,11 @@ int main(int argc, char **argv)
 
 		free(pass);
 
-		if (showdev && res == 0)
-			printf("%s\n", loopcxt_get_device(&lc));
+		if (res == 0) {
+			if (showdev)
+				printf("%s\n", loopcxt_get_device(&lc));
+			warn_size(file, sizelimit);
+		}
 		break;
 	}
 	case A_DELETE:
