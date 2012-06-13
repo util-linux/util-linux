@@ -983,8 +983,15 @@ int main(int argc, char **argv)
 		free(device);
 		device = disk;
 		disk = NULL;
-	} else
+	} else {
+		struct stat st;
+
+		if (stat(device, &st) != 0 || !S_ISBLK(st.st_mode))
+			errx(EXIT_FAILURE, _("%s: not found mountpoint or device "
+					"with the given name"), device);
+
 		verbose(_("%s: is whole-disk device"), device);
+	}
 
 	if (F_option == 0 && is_hotpluggable(device) == 0)
 		errx(EXIT_FAILURE, _("%s: is not hot-pluggable device"), device);
