@@ -722,13 +722,8 @@ static int device_get_mountpoint(char **devname, char **mnt)
 		}
 	}
 
-	if (fs) {
+	if (fs)
 		*mnt = xstrdup(mnt_fs_get_target(fs));
-		/* We'll call umount(), so remove the filesystem from the table
-		 * to avoid duplicate results in the next device_get_mountpoint()
-		 * call */
-		mnt_free_fs(fs);
-	}
 	return *mnt ? 0 : -1;
 }
 
@@ -776,13 +771,12 @@ static int umount_partitions(const char *disk, int checkonly)
 
 			if (dev && device_get_mountpoint(&dev, &mnt) == 0) {
 				verbose(_("%s: mounted on %s"), dev, mnt);
-				if (checkonly)
-					warnx(_("warning: %s: mounted on %s"), dev, mnt);
-				else
+				if (!checkonly)
 					umount_one(mnt);
 				count++;
 			}
 			free(dev);
+			free(mnt);
 		}
 	}
 
@@ -973,7 +967,7 @@ int main(int argc, char **argv)
 
 	device_get_mountpoint(&device, &mountpoint);
 	if (mountpoint)
-		verbose(_("%s: mounted at %s"), device, mountpoint);
+		verbose(_("%s: mounted on %s"), device, mountpoint);
 	else
 		verbose(_("%s: not mounted"), device);
 
@@ -1052,17 +1046,23 @@ int main(int argc, char **argv)
 		set_device_speed(device);
 
 
-	/* if it is a multipartition device, unmount any other partitions on
-	   the device */
-	if (m_option != 1) {
-		int rc;
+	/*
+	 * Unmount all partitions if -m is not specified; or umount given
+	 * mountpoint if -M is specified, otherwise print error of another
+	 * partition is mounted.
+	 */
+	if (!m_option) {
+		int ct = umount_partitions(device, M_option);
 
-		if (mountpoint)
-			umount_one(mountpoint);		/* usually whole-disk */
+		if (ct == 0 && mountpoint)
+			umount_one(mountpoint); /* probably whole-device */
 
-		rc = umount_partitions(device, M_option);
-		if (M_option && rc)
-			errx(EXIT_FAILURE, _("error: %s: device in use"), device);
+		if (M_option) {
+			if (ct == 1 && mountpoint)
+				umount_one(mountpoint);
+			else if (ct)
+				errx(EXIT_FAILURE, _("error: %s: device in use"), device);
+		}
 	}
 
 	/* handle -c option */
