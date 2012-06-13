@@ -59,10 +59,12 @@ This option allow you to use /proc/mounts instead /etc/mtab. It also passes the
 This option specifies that the drive should be ejected using a tape drive
 offline command.
 .IP "\fB\-m, \-\-no-unmount\fP"
-This option allows eject to work with device drivers which automatically mount
-removable media and therefore must be always mount(1)ed.  The option tells eject
-to not try to unmount the given device, even if it is mounted according to
-/etc/mtab or /proc/mounts.
+The option tells eject to not try to unmount at all.
+.IP "\fB\-M, \-\-no-partitions-unmount\fP"
+The option tells eject to not try to unmount another partitions on partitioned
+devices. If another partition is mounted the program will not attempt to eject
+the media. It will attempt to unmount only mountpoint or mounted device given
+on eject command line.
 .IP "\fB\-n, \-\-noop\fP"
 With this option the selected device is displayed but no action is performed.
 .IP "\fB\-t, \-\-trayclose\fP"
@@ -124,8 +126,9 @@ will follow the link and use the device that it points to.
 If
 .B eject
 determines that the device can have multiple partitions, it will attempt to
-unmount all mounted partitions of the device before ejecting.  If an unmount
-fails, the program will not attempt to eject the media.
+unmount all mounted partitions of the device before ejecting (see
+--no-partitions-unmount). If an unmount fails, the program will not attempt to
+eject the media.
 .PP
 You can eject an audio CD.  Some CD-ROM drives will refuse to open the tray if
 the drive is empty.  Some devices do not support the tray close command.
