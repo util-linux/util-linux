@@ -34,6 +34,7 @@
 #include "loopdev.h"
 #include "at.h"
 #include "closestream.h"
+#include "optutils.h"
 
 /* this is the default upper limit, could be modified by --nr */
 #define SLICES_MAX	256
@@ -52,8 +53,10 @@ enum {
 	COL_SCHEME,
 };
 
+#define ACT_ERROR "--{add,delete,show,list,raw,pairs}"
 enum {
-	ACT_LIST = 1,
+	ACT_NONE,
+	ACT_LIST,
 	ACT_SHOW,
 	ACT_ADD,
 	ACT_DELETE
@@ -632,15 +635,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static void __attribute__((__noreturn__))
-errx_mutually_exclusive(const char *opts)
-{
-	errx(EXIT_FAILURE, _("the options %s are mutually exclusive"), opts);
-}
-
 int main(int argc, char **argv)
 {
-	int fd, c, what = 0, lower = 0, upper = 0, rc = 0;
+	int fd, c, what = ACT_NONE, lower = 0, upper = 0, rc = 0;
 	int tt_flags = 0;
 	char *type = NULL;
 	char *device = NULL; /* pointer to argv[], ie: /dev/sda1 */
@@ -672,34 +669,21 @@ int main(int argc, char **argv)
 
 	while ((c = getopt_long(argc, argv,
 				"abdglrsvn:t:o:PhV", long_opts, NULL)) != -1) {
-
 		switch(c) {
 		case 'a':
-		case 'd':
-		case 'l':
-		case 'r':
-		case 'P':
-		case 's':
-			if (what)
-				 errx_mutually_exclusive("--{add,delete,show,list,raw,pairs}");
-			break;
-		}
-
-		switch(c) {
-		case 'a':
-			what = ACT_ADD;
+			exclusive_option(&what, ACT_ADD, ACT_ERROR);
 			break;
 		case 'b':
 			partx_flags |= FL_BYTES;
 			break;
 		case 'd':
-			what = ACT_DELETE;
+			exclusive_option(&what, ACT_DELETE, ACT_ERROR);
 			break;
 		case 'g':
 			tt_flags |= TT_FL_NOHEADINGS;
 			break;
 		case 'l':
-			what = ACT_LIST;
+			exclusive_option(&what, ACT_LIST, ACT_ERROR);
 			break;
 		case 'n':
 			if (parse_range(optarg, &lower, &upper, 0))
@@ -711,17 +695,18 @@ int main(int argc, char **argv)
 						column_name_to_id);
 			if (ncolumns < 0)
 				return EXIT_FAILURE;
+			exclusive_option(&what, ACT_SHOW, ACT_ERROR);
 			break;
 		case 'P':
 			tt_flags |= TT_FL_EXPORT;
-			what = ACT_SHOW;
+			exclusive_option(&what, ACT_SHOW, ACT_ERROR);
 			break;
 		case 'r':
 			tt_flags |= TT_FL_RAW;
-			what = ACT_SHOW;
+			exclusive_option(&what, ACT_SHOW, ACT_ERROR);
 			break;
 		case 's':
-			what = ACT_SHOW;
+			exclusive_option(&what, ACT_SHOW, ACT_ERROR);
 			break;
 		case 't':
 			type = optarg;
@@ -740,11 +725,7 @@ int main(int argc, char **argv)
 		}
 	}
 
-	/* -o <list> enables --show mode by default */
-	if (ncolumns && !what)
-		what = ACT_SHOW;
-
-	if (!what)
+	if (what == ACT_NONE)
 		what = ACT_SHOW;
 
 	/* --show default, could by modified by -o  */
@@ -869,7 +850,7 @@ int main(int argc, char **argv)
 			if (lower > upper) {
 				warnx(_("specified range <%d:%d> "
 					"does not make sense"), lower, upper);
-				rc = -1, what = 0;
+				rc = -1, what = ACT_NONE;
 			}
 
 			switch (what) {
@@ -882,6 +863,10 @@ int main(int argc, char **argv)
 			case ACT_ADD:
 				rc = add_parts(fd, wholedisk, ls, lower, upper);
 				break;
+			case ACT_NONE:
+				break;
+			default:
+				abort();
 			}
 		}
 		blkid_free_probe(pr);
