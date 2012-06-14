@@ -53,6 +53,15 @@ static int fix_optstr(struct libmnt_context *cxt)
 	if (cxt->mountflags & MS_PROPAGATION)
 		cxt->mountflags &= (MS_PROPAGATION | MS_REC | MS_SILENT);
 
+	/*
+	 * The "user" options is our business (so we can modify the option),
+	 * but exception is command line for /sbin/mount.<type> helpers. Let's
+	 * save the original user=<name> to call the helpers with unchanged
+	 * "user" setting.
+	 *
+	 * Don't check for MNT_MS_USER in cxt->user_mountflags, the flag maybe
+	 * removed by evaluate_permissions().
+	 */
 	if (!mnt_optstr_get_option(fs->user_optstr, "user", &val, &valsz)) {
 		if (val) {
 			cxt->orig_user = strndup(val, valsz);
@@ -210,6 +219,10 @@ err:
 
 /*
  * this has to be called before fix_optstr()
+ *
+ * Note that user=<name> maybe be used by some filesystems as filesystem
+ * specific option (e.g. cifs). Yes, developers of such filesystems have
+ * allocated pretty hot place in hell...
  */
 static int evaluate_permissions(struct libmnt_context *cxt)
 {
@@ -247,10 +260,22 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		}
 
 		/*
-		 * Note that MS_OWNERSECURE and MS_SECURE mount options
-		 * are applied by mnt_optstr_get_flags() from mnt_context_merge_mflags()
+		 * MS_OWNERSECURE and MS_SECURE mount options are already
+		 * applied by mnt_optstr_get_flags() in mnt_context_merge_mflags()
+		 * if "user" (but no user=<name> !) options is set.
+		 *
+		 * Let's ignore all user=<name> (if <name> is set) requests.
 		 */
+		if (cxt->user_mountflags & MNT_MS_USER) {
+			size_t valsz = 0;
 
+			if (!mnt_optstr_get_option(cxt->fs->user_optstr,
+					"user", NULL, &valsz) && valsz) {
+
+				DBG(CXT, mnt_debug_h(cxt, "perms: user=<name> detected, ignore"));
+				cxt->user_mountflags &= ~MNT_MS_USER;
+			}
+		}
 
 		/*
 		 * MS_OWNER: Allow owners to mount when fstab contains the

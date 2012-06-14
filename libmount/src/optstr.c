@@ -586,7 +586,7 @@ int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 {
 	struct libmnt_optmap const *maps[2];
 	char *name, *str = (char *) optstr;
-	size_t namesz = 0;
+	size_t namesz = 0, valsz = 0;
 	int nmaps = 0;
 
 	assert(optstr);
@@ -603,7 +603,7 @@ int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 		 */
 		maps[nmaps++] = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
 
-	while(!mnt_optstr_next_option(&str, &name, &namesz, NULL, NULL)) {
+	while(!mnt_optstr_next_option(&str, &name, &namesz, NULL, &valsz)) {
 		const struct libmnt_optmap *ent;
 		const struct libmnt_optmap *m;
 
@@ -617,9 +617,10 @@ int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 			else
 				*flags |= ent->id;
 
-		} else if (nmaps == 2 && m == maps[1]) {
+		} else if (nmaps == 2 && m == maps[1] && valsz == 0) {
 			/*
-			 * Special case -- translate "user" to MS_ options
+			 * Special case -- translate "user" (but no user=) to
+			 * MS_ options
 			 */
 			if (ent->mask & MNT_INVERT)
 				continue;
