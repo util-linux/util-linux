@@ -42,6 +42,7 @@
 #include "tt.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "optutils.h"
 
 /* flags */
 enum {
@@ -1010,12 +1011,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static void __attribute__((__noreturn__))
-errx_mutually_exclusive(const char *opts)
-{
-	errx(EXIT_FAILURE, "%s %s", opts, _("options are mutually exclusive"));
-}
-
 int main(int argc, char *argv[])
 {
 	struct libmnt_table *tb = NULL;
@@ -1023,6 +1018,20 @@ int main(int argc, char *argv[])
 	int direction = MNT_ITER_FORWARD;
 	int i, c, rc = -1, timeout = -1;
 	int ntabfiles = 0, tabtype = 0;
+
+	enum {
+		EXCL_NONE,
+
+		EXCL_FSTAB,
+		EXCL_KERNEL,
+		EXCL_MTAB,
+
+		EXCL_RAW,
+		EXCL_LIST,
+		EXCL_PAIRS
+	};
+	int excl_fmk = EXCL_NONE;
+	int excl_rlP = EXCL_NONE;
 
 	/* table.h */
 	struct tt *tt = NULL;
@@ -1136,37 +1145,34 @@ int main(int argc, char *argv[])
 			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 'P':
+			exclusive_option(&excl_rlP, EXCL_PAIRS, "--{raw,list,pairs}");
 			tt_flags |= TT_FL_EXPORT;
 			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 'm':		/* mtab */
-			if (tabtype)
-				errx_mutually_exclusive("--{fstab,mtab,kernel}");
+			exclusive_option(&excl_fmk, EXCL_MTAB, "--{fstab,mtab,kernel}");
 			tabtype = TABTYPE_MTAB;
 			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 's':		/* fstab */
-			if (tabtype)
-				errx_mutually_exclusive("--{fstab,mtab,kernel}");
+			exclusive_option(&excl_fmk, EXCL_FSTAB, "--{fstab,mtab,kernel}");
 			tabtype = TABTYPE_FSTAB;
 			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 'k':		/* kernel (mountinfo) */
-			if (tabtype)
-				 errx_mutually_exclusive("--{fstab,mtab,kernel}");
+			exclusive_option(&excl_fmk, EXCL_KERNEL, "--{fstab,mtab,kernel}");
 			tabtype = TABTYPE_KERNEL;
 			break;
 		case 't':
 			set_match(COL_FSTYPE, optarg);
 			break;
 		case 'r':
+			exclusive_option(&excl_rlP, EXCL_RAW, "--{raw,list,pairs}");
 			tt_flags &= ~TT_FL_TREE;	/* disable the default */
 			tt_flags |= TT_FL_RAW;		/* enable raw */
 			break;
 		case 'l':
-			if ((tt_flags & TT_FL_RAW) && (tt_flags & TT_FL_EXPORT))
-				errx_mutually_exclusive("--{raw,list,pairs}");
-
+			exclusive_option(&excl_rlP, EXCL_LIST, "--{raw,list,pairs}");
 			tt_flags &= ~TT_FL_TREE; /* disable the default */
 			break;
 		case 'n':
@@ -1224,7 +1230,7 @@ int main(int argc, char *argv[])
 
 	if (flags & FL_POLL) {
 		if (tabtype != TABTYPE_KERNEL)
-			errx_mutually_exclusive("--{poll,fstab,mtab}");
+			exclusive_option(&tabtype, tabtype + 1, "--{poll,fstab,mtab}");
 		if (ntabfiles > 1)
 			errx(EXIT_FAILURE, _("--poll accepts only one file, but more specified by --tab-file"));
 	}
