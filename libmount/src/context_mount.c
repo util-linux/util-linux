@@ -168,7 +168,7 @@ done:
 }
 
 /*
- * Converts already evalulated and fixed options to the form that is compatible
+ * Converts already evaluated and fixed options to the form that is compatible
  * with /sbin/mount.type helpers.
  */
 static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
@@ -182,7 +182,7 @@ static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 	assert(cxt->fs);
 	assert(optstr);
 
-	DBG(CXT, mnt_debug_h(cxt, "mount: generate heper mount options"));
+	DBG(CXT, mnt_debug_h(cxt, "mount: generate helper mount options"));
 
 	*optstr = mnt_fs_strdup_options(cxt->fs);
 	if (!*optstr)
