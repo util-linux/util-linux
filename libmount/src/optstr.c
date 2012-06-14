@@ -307,7 +307,7 @@ int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end)
 	sz = strlen(end);
 
 	memmove(begin, end, sz + 1);
-	if (!*begin && *(begin - 1) == ',')
+	if (!*begin && (begin > *optstr) && *(begin - 1) == ',')
 		*(begin - 1) = '\0';
 
 	return 0;
