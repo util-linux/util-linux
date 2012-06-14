@@ -67,15 +67,26 @@ static int fix_optstr(struct libmnt_context *cxt)
 	/*
 	 * Sync mount options with mount flags
 	 */
+	DBG(CXT, mnt_debug_h(cxt, "mount: fixing vfs optstr"));
 	rc = mnt_optstr_apply_flags(&fs->vfs_optstr, cxt->mountflags,
 				mnt_get_builtin_optmap(MNT_LINUX_MAP));
 	if (rc)
 		goto done;
 
+	DBG(CXT, mnt_debug_h(cxt, "mount: fixing user optstr"));
 	rc = mnt_optstr_apply_flags(&fs->user_optstr, cxt->user_mountflags,
 				mnt_get_builtin_optmap(MNT_USERSPACE_MAP));
 	if (rc)
 		goto done;
+
+	if (fs->vfs_optstr && *fs->vfs_optstr == '\0') {
+		free(fs->vfs_optstr);
+		fs->vfs_optstr = NULL;
+	}
+	if (fs->user_optstr && *fs->user_optstr == '\0') {
+		free(fs->user_optstr);
+		fs->user_optstr = NULL;
+	}
 
 	next = fs->fs_optstr;
 

@@ -174,6 +174,8 @@ static int __mnt_optstr_append_option(char **optstr,
 	size_t sz, osz;
 
 	assert(name);
+	assert(*name);
+	assert(nsz);
 
 	osz = *optstr ? strlen(*optstr) : 0;
 
@@ -219,7 +221,7 @@ int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
 {
 	size_t vsz, nsz;
 
-	if (!name)
+	if (!name || !*name)
 		return 0;
 
 	nsz = strlen(name);
