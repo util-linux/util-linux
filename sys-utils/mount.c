@@ -731,7 +731,7 @@ int main(int argc, char **argv)
 					longopts, NULL)) != -1) {
 
 		/* only few options are allowed for non-root users */
-		if (mnt_context_is_restricted(cxt) && !strchr("hlLUVvpri", c))
+		if (mnt_context_is_restricted(cxt) && !strchr("hlLUVvpris", c))
 			exit_non_root(option_to_longopt(c, longopts));
 
 		switch(c) {
