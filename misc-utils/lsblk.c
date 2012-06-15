@@ -153,8 +153,8 @@ struct lsblk *lsblk;	/* global handler */
 int columns[NCOLS];/* enabled columns */
 int ncolumns;		/* number of enabled columns */
 
-int excludes[256];
-size_t nexcludes;
+static int excludes[256];
+static size_t nexcludes;
 
 static struct libmnt_table *mtab, *swaps;
 static struct libmnt_cache *mntcache;
@@ -1080,8 +1080,6 @@ leave:
 
 static void parse_excludes(const char *str)
 {
-	nexcludes = 0;
-
 	while (str && *str) {
 		char *end = NULL;
 		unsigned long n;
