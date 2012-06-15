@@ -29,6 +29,7 @@
 #include "nls.h"
 #include "c.h"
 #include "closestream.h"
+#include "optutils.h"
 #include "pathnames.h"
 #include "strutils.h"
 #include "tt.h"
@@ -381,6 +382,13 @@ int main(int argc, char *argv[])
 	char noflags = 0, noident = 0, notimeouts = 0, oneline = 0;
 	uint32_t wanted = 0;
 
+	enum {
+		EXCL_NONE,
+		EXCL_FLAGS,
+		EXCL_NOFLAGS
+	};
+	int excl_flag = EXCL_NONE;
+
 	static const struct option long_opts[] = {
 		{ "flags",      required_argument, NULL, 'f' },
 		{ "flags-only", no_argument,       NULL, 'x' },
@@ -412,6 +420,7 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 			break;
 		case 'f':
+			exclusive_option(&excl_flag, EXCL_FLAGS, "--{flags,noflags}");
 			if (string_to_bitmask(optarg, (unsigned long *) &wanted, name2bit) != 0)
 				return EXIT_FAILURE;
 			break;
@@ -421,6 +430,7 @@ int main(int argc, char *argv[])
 		case 'h':
 			usage(stdout);
 		case 'F':
+			exclusive_option(&excl_flag, EXCL_NOFLAGS, "--{flags,noflags}");
 			noflags = 1;
 			break;
 		case 'I':
@@ -448,9 +458,6 @@ int main(int argc, char *argv[])
 			usage(stderr);
 		}
 	}
-
-	if (wanted && noflags)
-		errx(EXIT_FAILURE, _("--flags and --noflags are mutually exclusive"));
 
 	if (!ncolumns) {
 		/* default columns */
