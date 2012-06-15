@@ -595,7 +595,7 @@ int test_resolve_path(struct libmnt_test *ts, int argc, char *argv[])
 		size_t sz = strlen(line);
 		char *p;
 
-		if (line[sz - 1] == '\n')
+		if (sz > 0 && line[sz - 1] == '\n')
 			line[sz - 1] = '\0';
 
 		p = mnt_resolve_path(line, cache);
@@ -618,7 +618,7 @@ int test_resolve_spec(struct libmnt_test *ts, int argc, char *argv[])
 		size_t sz = strlen(line);
 		char *p;
 
-		if (line[sz - 1] == '\n')
+		if (sz > 0 && line[sz - 1] == '\n')
 			line[sz - 1] = '\0';
 
 		p = mnt_resolve_spec(line, cache);
@@ -641,7 +641,7 @@ int test_read_tags(struct libmnt_test *ts, int argc, char *argv[])
 	while(fgets(line, sizeof(line), stdin)) {
 		size_t sz = strlen(line);
 
-		if (line[sz - 1] == '\n')
+		if (sz > 0 && line[sz - 1] == '\n')
 			line[sz - 1] = '\0';
 
 		if (!strcmp(line, "quit"))

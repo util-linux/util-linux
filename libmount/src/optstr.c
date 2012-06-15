@@ -738,7 +738,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 			/* don't add options which require values (e.g. offset=%d) */
 			p = strchr(ent->name, '=');
 			if (p) {
-				if (*(p - 1) == '[')
+				if (p > ent->name && *(p - 1) == '[')
 					p--;			/* name[=] */
 				else
 					continue;		/* name= */
