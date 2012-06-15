@@ -168,7 +168,7 @@ static void usage(FILE *out)
 	for (i = 0; i < ARRAY_SIZE(infos); i++)
 		fprintf(out, " %13s  %s\n", infos[i].name, _(infos[i].help));
 
-	fprintf(out, USAGE_MAN_TAIL("wdctl(1)"));
+	fprintf(out, USAGE_MAN_TAIL("wdctl(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
