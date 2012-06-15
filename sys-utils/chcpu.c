@@ -41,6 +41,9 @@
 #include "bitops.h"
 #include "path.h"
 #include "closestream.h"
+#include "optutils.h"
+
+#define EXCL_ERROR "--{configure,deconfigure,disable,dispatch,enable}"
 
 #define _PATH_SYS_CPU		"/sys/devices/system/cpu"
 #define _PATH_SYS_CPU_ONLINE	_PATH_SYS_CPU "/online"
@@ -232,6 +235,16 @@ int main(int argc, char *argv[])
 	int cmd = -1;
 	int c;
 
+	enum {
+		EXCL_NONE,
+		EXCL_CONFIGURE,
+		EXCL_DECONFIGURE,
+		EXCL_DISABLE,
+		EXCL_DISPATCH,
+		EXCL_ENABLE
+	};
+	int excl_any = EXCL_NONE;
+
 	static const struct option longopts[] = {
 		{ "configure",	required_argument, 0, 'c' },
 		{ "deconfigure",required_argument, 0, 'g' },
@@ -260,30 +273,31 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, _("cpuset_alloc failed"));
 
 	while ((c = getopt_long(argc, argv, "c:d:e:g:hp:rV", longopts, NULL)) != -1) {
-		if (cmd != -1 && strchr("cdegpr", c))
-			errx(EXIT_FAILURE,
-			     _("configure, deconfigure, disable, dispatch, enable "
-			       "and rescan are mutually exclusive"));
 		switch (c) {
 		case 'c':
+			exclusive_option(&excl_any, EXCL_CONFIGURE, EXCL_ERROR);
 			cmd = CMD_CPU_CONFIGURE;
 			cpu_parse(argv[optind - 1], cpu_set, setsize);
 			break;
 		case 'd':
+			exclusive_option(&excl_any, EXCL_DISABLE, EXCL_ERROR);
 			cmd = CMD_CPU_DISABLE;
 			cpu_parse(argv[optind - 1], cpu_set, setsize);
 			break;
 		case 'e':
+			exclusive_option(&excl_any, EXCL_ENABLE, EXCL_ERROR);
 			cmd = CMD_CPU_ENABLE;
 			cpu_parse(argv[optind - 1], cpu_set, setsize);
 			break;
 		case 'g':
+			exclusive_option(&excl_any, EXCL_DECONFIGURE, EXCL_ERROR);
 			cmd = CMD_CPU_DECONFIGURE;
 			cpu_parse(argv[optind - 1], cpu_set, setsize);
 			break;
 		case 'h':
 			usage(stdout);
 		case 'p':
+			exclusive_option(&excl_any, EXCL_DISPATCH, EXCL_ERROR);
 			if (strcmp("horizontal", argv[optind - 1]) == 0)
 				cmd = CMD_CPU_DISPATCH_HORIZONTAL;
 			else if (strcmp("vertical", argv[optind - 1]) == 0)
