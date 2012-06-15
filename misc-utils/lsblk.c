@@ -510,10 +510,15 @@ static char *get_type(struct blkdev_cxt *cxt)
 		res = md_level ? md_level : xstrdup("md");
 
 	} else {
-		const char *type = cxt->partition ? "part" : "disk";
+		const char *type;
 		int x = 0;
+
 		sysfs_read_int(&cxt->sysfs, "device/type", &x);
-		res = blkdev_scsi_type_to_name(x);
+
+		type = blkdev_scsi_type_to_name(x);
+		if (!type)
+			type = cxt->partition ? "part" : "disk";
+		res = xstrdup(type);
 	}
 
 	for (p = res; p && *p; p++)
