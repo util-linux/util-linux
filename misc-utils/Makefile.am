@@ -56,9 +56,11 @@ dist_man_MANS += lsblk.8
 lsblk_SOURCES = \
 	lsblk.c \
 	$(top_srcdir)/lib/at.c \
+	$(top_srcdir)/lib/blkdev.c \
 	$(top_srcdir)/lib/canonicalize.c \
-	$(top_srcdir)/lib/mbsalign.c \
+	$(top_srcdir)/lib/linux_version.c \
 	$(top_srcdir)/lib/mangle.c \
+	$(top_srcdir)/lib/mbsalign.c \
 	$(top_srcdir)/lib/strutils.c \
 	$(top_srcdir)/lib/sysfs.c \
 	$(top_srcdir)/lib/tt.c

@@ -49,7 +49,7 @@ case "$1" in
 	log_end_msg $?
     ;;
   status)
-	if pidofproc -p $PIDFILE $DAEMON >& /dev/null ; then
+	if pidofproc -p $PIDFILE $DAEMON >/dev/null 2>&1; then
 	    echo "$DAEMON is running";
 	    exit 0;
 	else

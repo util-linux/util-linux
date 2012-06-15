@@ -435,6 +435,14 @@ static void toggle_tray(int fd)
 		if (eject_cdrom(fd))
 			err(EXIT_FAILURE, _("CD-ROM eject command failed"));
 		return;
+	case CDS_NO_INFO:
+		warnx(_("no CD-ROM information available"));
+		return;
+	case CDS_DRIVE_NOT_READY:
+		warnx(_("CD-ROM drive is not ready"));
+		return;
+	default:
+		abort();
 	}
 #endif
 

@@ -139,7 +139,6 @@ struct signv {
 #endif
 };
 
-int main (int argc, char *argv[]);
 extern char *mybasename(char *);
 int signame_to_signum (char *sig);
 int arg_to_signum (char *arg, int mask);
@@ -148,8 +147,6 @@ void printsig (int sig);
 void printsignals (FILE *fp);
 int usage (int status);
 int kill_verbose (char *procname, int pid, int sig);
-
-extern int *get_pids (char *, int);
 
 static char *progname;
 

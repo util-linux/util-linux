@@ -21,8 +21,9 @@
 #endif
 
 #include "blkdev.h"
-#include "linux_version.h"
 #include "c.h"
+#include "linux_version.h"
+#include "xalloc.h"
 
 static long
 blkdev_valid_offset (int fd, off_t offset) {
@@ -286,6 +287,51 @@ int blkdev_get_geometry(int fd, unsigned int *h, unsigned int *s)
 	*s = 0;
 #endif
 	return -1;
+}
+
+/*
+ * Convert scsi type to human readable string.  Return value is
+ * expected to free'd after use.
+ */
+char *blkdev_scsi_type_to_name(int type)
+{
+	char *type_str = NULL;
+
+	switch (type) {
+	case SCSI_TYPE_DISK:
+		return xstrdup("disk");
+	case SCSI_TYPE_TAPE:
+		return xstrdup("tape");
+	case SCSI_TYPE_PRINTER:
+		return xstrdup("printer");
+	case SCSI_TYPE_PROCESSOR:
+		return xstrdup("processor");
+	case SCSI_TYPE_WORM:
+		return xstrdup("worm");
+	case SCSI_TYPE_ROM:
+		return xstrdup("rom");
+	case SCSI_TYPE_SCANNER:
+		return xstrdup("scanner");
+	case SCSI_TYPE_MOD:
+		return xstrdup("mo-disk");
+	case SCSI_TYPE_MEDIUM_CHANGER:
+		return xstrdup("changer");
+	case SCSI_TYPE_COMM:
+		return xstrdup("comm");
+	case SCSI_TYPE_RAID:
+		return xstrdup("raid");
+	case SCSI_TYPE_ENCLOSURE:
+		return xstrdup("enclosure");
+	case SCSI_TYPE_RBC:
+		return xstrdup("rbc");
+	case SCSI_TYPE_OSD:
+		return xstrdup("osd");
+	case SCSI_TYPE_NO_LUN:
+		return xstrdup("no-lun");
+	default:
+		xasprintf(&type_str, "0x%02x", type);
+		return type_str;
+	}
 }
 
 #ifdef TEST_PROGRAM

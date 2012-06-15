@@ -774,7 +774,10 @@ err:
  *
  * Returns: 0 on success, negative number in case of error.
  */
-int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, char **next)
+int mnt_optstr_fix_secontext(char **optstr __attribute__ ((__unused__)),
+			     char *value   __attribute__ ((__unused__)),
+			     size_t valsz  __attribute__ ((__unused__)),
+			     char **next   __attribute__ ((__unused__)))
 {
 	int rc = 0;
 

@@ -105,7 +105,8 @@ void random_get_bytes(void *buf, size_t nbytes)
 }
 
 #ifdef TEST_PROGRAM
-int main(int argc, char *argv[])
+int main(int argc __attribute__ ((__unused__)),
+         char *argv[] __attribute__ ((__unused__)))
 {
 	unsigned int v, i;
 

@@ -512,24 +512,8 @@ static char *get_type(struct blkdev_cxt *cxt)
 	} else {
 		const char *type = cxt->partition ? "part" : "disk";
 		int x = 0;
-
 		sysfs_read_int(&cxt->sysfs, "device/type", &x);
-
-		switch (x) {
-			case 0x0c: /* TYPE_RAID */
-				type = "raid"; break;
-			case 0x01: /* TYPE_TAPE */
-				type = "raid"; break;
-			case 0x04: /* TYPE_WORM */
-			case 0x05: /* TYPE_ROM */
-				type = "rom"; break;
-			case 0x07: /* TYPE_MOD */
-				type = "mo-disk"; break;
-			case 0x0e: /* TYPE_RBC */
-				type = "rbc"; break;
-		}
-
-		res = xstrdup(type);
+		res = blkdev_scsi_type_to_name(x);
 	}
 
 	for (p = res; p && *p; p++)

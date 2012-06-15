@@ -262,6 +262,16 @@ AC_CHECK_DECL([lseek64],
 	 #define _LARGEFILE64_SOURCE
 	 #include <unistd.h>])
 
+AC_CHECK_DECL([environ],
+	[AC_DEFINE(HAVE_ENVIRON_DECL, 1,
+		[Define to 1 if have **environ prototype])],
+)
+
+AC_CHECK_DECL([strsignal],
+	[AC_DEFINE(HAVE_STRSIGNAL_DECL, 1,
+		[Define to 1 if have strsignal function prototype])],
+)
+
 AC_CHECK_FUNCS([ \
 	__fpending \
 	__secure_getenv \
