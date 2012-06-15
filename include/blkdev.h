@@ -134,7 +134,7 @@ int blkdev_get_geometry(int fd, unsigned int *h, unsigned int *s);
 #define SCSI_TYPE_NO_LUN		0x7f
 
 /* convert scsi type code to name */
-char *blkdev_scsi_type_to_name(int type);
+const char *blkdev_scsi_type_to_name(int type);
 
 
 #endif /* BLKDEV_H */
