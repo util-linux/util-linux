@@ -34,6 +34,7 @@
 #include "strutils.h"
 #include "list.h"
 #include "closestream.h"
+#include "optutils.h"
 
 #ifndef RLIMIT_RTTIME
 # define RLIMIT_RTTIME 15
@@ -483,6 +484,12 @@ int main(int argc, char **argv)
 		RAW_OPTION,
 		NOHEADINGS_OPTION
 	};
+	enum {
+		EXCL_NONE,
+		EXCL_COMMAND,
+		EXCL_PID
+	};
+	int excl_pcom = EXCL_NONE;
 
 	static const struct option longopts[] = {
 		{ "pid",	required_argument, NULL, 'p' },
@@ -578,9 +585,7 @@ int main(int argc, char **argv)
 			break;
 
 		case 'p':
-			if (pid) /* we only work one pid at a time */
-				errx(EXIT_FAILURE, _("only use one PID at a time"));
-
+			exclusive_option(&excl_pcom, EXCL_PID + optind, _("--pid and --pid"));
 			pid = strtos32_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'h':
@@ -611,9 +616,8 @@ int main(int argc, char **argv)
 		}
 	}
 	if (argc > optind && pid)
-		errx(EXIT_FAILURE,
-			_("--pid option and COMMAND are mutually exclusive"));
-
+		exclusive_option(&excl_pcom, EXCL_COMMAND,
+				 _("--pid and COMMAND"));
 	if (!ncolumns) {
 		/* default columns */
 		columns[ncolumns++] = COL_RES;
