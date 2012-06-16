@@ -409,7 +409,7 @@ static int
 has_pci_device(int vendor, int device)
 {
 	FILE *f;
-	int num, fn, ven, dev;
+	unsigned int num, fn, ven, dev;
 	int res = 1;
 
 	f = path_fopen("r", 0, _PATH_PROC_PCIDEVS);
