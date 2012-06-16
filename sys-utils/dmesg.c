@@ -30,6 +30,7 @@
 #include "all-io.h"
 #include "bitops.h"
 #include "closestream.h"
+#include "optutils.h"
 
 /* Close the log.  Currently a NOP. */
 #define SYSLOG_ACTION_CLOSE          0
@@ -53,6 +54,8 @@
 #define SYSLOG_ACTION_SIZE_UNREAD    9
 /* Return size of the log buffer */
 #define SYSLOG_ACTION_SIZE_BUFFER   10
+
+#define EXCL_ERROR "--{clear,read-clear,console-level,console-on,console-off}"
 
 /*
  * Priority and facility names
@@ -664,6 +667,16 @@ int main(int argc, char *argv[])
 	int  cmd = -1;
 	static struct dmesg_control ctl;
 
+	enum {
+		EXCL_NONE,
+		EXCL_CLEAR,
+		EXCL_READ_CLEAR,
+		EXCL_CONSOLE_LEVEL,
+		EXCL_CONSOLE_ON,
+		EXCL_CONSOLE_OFF
+	};
+	int excl_any = EXCL_NONE;
+
 	static const struct option longopts[] = {
 		{ "buffer-size",   required_argument, NULL, 's' },
 		{ "clear",         no_argument,	      NULL, 'C' },
@@ -693,26 +706,24 @@ int main(int argc, char *argv[])
 
 	while ((c = getopt_long(argc, argv, "CcDdEF:f:hkl:n:rs:TtuVx",
 				longopts, NULL)) != -1) {
-
-		if (cmd != -1 && strchr("CcnDE", c))
-			errx(EXIT_FAILURE, _("clear, read-clear, console-level, "
-			     "console-on, and console-off options are mutually "
-			     "exclusive"));
-
 		switch (c) {
 		case 'C':
+			exclusive_option(&excl_any, EXCL_CLEAR, EXCL_ERROR);
 			cmd = SYSLOG_ACTION_CLEAR;
 			break;
 		case 'c':
+			exclusive_option(&excl_any, EXCL_READ_CLEAR, EXCL_ERROR);
 			cmd = SYSLOG_ACTION_READ_CLEAR;
 			break;
 		case 'D':
+			exclusive_option(&excl_any, EXCL_CONSOLE_OFF, EXCL_ERROR);
 			cmd = SYSLOG_ACTION_CONSOLE_OFF;
 			break;
 		case 'd':
 			ctl.delta = 1;
 			break;
 		case 'E':
+			exclusive_option(&excl_any, EXCL_CONSOLE_ON, EXCL_ERROR);
 			cmd = SYSLOG_ACTION_CONSOLE_ON;
 			break;
 		case 'F':
@@ -738,6 +749,7 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 			break;
 		case 'n':
+			exclusive_option(&excl_any, EXCL_CONSOLE_LEVEL, EXCL_ERROR);
 			cmd = SYSLOG_ACTION_CONSOLE_LEVEL;
 			console_level = parse_level(optarg, 0);
 			break;
