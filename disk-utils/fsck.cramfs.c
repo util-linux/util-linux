@@ -671,6 +671,8 @@ int main(int argc, char **argv)
 		case 'v':
 			opt_verbose++;
 			break;
+		default:
+			usage(FSCK_EX_USAGE);
 		}
 
 	if ((argc - optind) != 1)
