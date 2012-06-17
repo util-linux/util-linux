@@ -106,33 +106,33 @@ typedef struct {
 #define SSWAP32(x) (other_endian ? swab32(x) : (uint32_t)(x))
 
 /* fdisk.c */
-#define sgilabel ((sgi_partition *)MBRbuffer)
+#define sgilabel ((sgi_partition *)cxt->mbr)
 #define sgiparam (sgilabel->devparam)
 
 /* fdisksgilabel.c */
 extern struct	systypes sgi_sys_types[];
-extern void	sgi_nolabel( void );
-extern int	check_sgi_label( void );
+extern void	sgi_nolabel(struct fdisk_context *cxt);
+extern int	check_sgi_label(struct fdisk_context *cxt);
 extern void	sgi_list_table( struct fdisk_context *cxt, int xtra );
-extern int  sgi_change_sysid( int i, int sys );
-extern unsigned int	sgi_get_start_sector( int i );
-extern unsigned int	sgi_get_num_sectors( int i );
-extern int	sgi_get_sysid( int i );
+extern int  sgi_change_sysid(struct fdisk_context *cxt, int i, int sys);
+extern unsigned int	sgi_get_start_sector(struct fdisk_context *cxt, int i );
+extern unsigned int	sgi_get_num_sectors(struct fdisk_context *cxt, int i );
+extern int	sgi_get_sysid(struct fdisk_context *cxt, int i );
 extern void	sgi_delete_partition( struct fdisk_context *cxt, int i );
 extern void	sgi_add_partition( struct fdisk_context *cxt, int n, int sys );
 extern void	create_sgilabel( struct fdisk_context *cxt );
-extern void	create_sgiinfo( void );
-extern int	verify_sgi( int verbose );
+extern void	create_sgiinfo(struct fdisk_context *cxt);
+extern int	verify_sgi(struct fdisk_context *cxt, int verbose );
 extern void	sgi_write_table( struct fdisk_context *cxt );
 extern void	sgi_set_ilfact( void );
 extern void	sgi_set_rspeed( void );
 extern void	sgi_set_pcylcount( void );
 extern void	sgi_set_xcyl( void );
 extern void	sgi_set_ncyl( void );
-extern void	sgi_set_bootpartition( int i );
-extern void	sgi_set_swappartition( int i );
-extern int	sgi_get_bootpartition( void );
-extern int	sgi_get_swappartition( void );
-extern void	sgi_set_bootfile(void);
+extern void	sgi_set_bootpartition(struct fdisk_context *cxt, int i );
+extern void	sgi_set_swappartition(struct fdisk_context *cxt, int i );
+extern int	sgi_get_bootpartition(struct fdisk_context *cxt);
+extern int	sgi_get_swappartition(struct fdisk_context *cxt);
+extern void	sgi_set_bootfile(struct fdisk_context *cxt);
 
 #endif /* FDISK_SGI_LABEL_H */

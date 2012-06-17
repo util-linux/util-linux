@@ -28,12 +28,12 @@ typedef struct {
 #define	MAC_LABEL_MAGIC_3_SWAPPED	0x0000d405
 
 /* fdisk.c */
-#define maclabel ((mac_partition *)MBRbuffer)
+#define maclabel ((mac_partition *)cxt->mbr)
 
 /* fdiskmaclabel.c */
 extern struct	systypes mac_sys_types[];
-extern void	mac_nolabel( void );
-extern int	check_mac_label( void );
+extern void	mac_nolabel(struct fdisk_context *cxt);
+extern int	check_mac_label(struct fdisk_context *cxt);
 
 #endif /* FDISK_MAC_LABEL_H */
 

@@ -108,10 +108,10 @@ void dos_init(struct fdisk_context *cxt)
 	for (i = 0; i < 4; i++) {
 		struct pte *pe = &ptes[i];
 
-		pe->part_table = pt_offset(MBRbuffer, i);
+		pe->part_table = pt_offset(cxt->mbr, i);
 		pe->ext_pointer = NULL;
 		pe->offset = 0;
-		pe->sectorbuffer = MBRbuffer;
+		pe->sectorbuffer = cxt->mbr;
 		pe->changed = 0;
 	}
 
@@ -214,9 +214,9 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 	}
 }
 
-void dos_print_mbr_id(void)
+void dos_print_mbr_id(struct fdisk_context *cxt)
 {
-	printf(_("Disk identifier: 0x%08x\n"), dos_read_mbr_id(MBRbuffer));
+	printf(_("Disk identifier: 0x%08x\n"), dos_read_mbr_id(cxt->mbr));
 }
 
 void create_doslabel(struct fdisk_context *cxt)
@@ -229,26 +229,25 @@ void create_doslabel(struct fdisk_context *cxt)
 	fprintf(stderr, _("Building a new DOS disklabel with disk identifier 0x%08x.\n"), id);
 
 	dos_init(cxt);
-	zeroize_mbr_buffer();
-
+	fdisk_mbr_zeroize(cxt);
 	set_all_unchanged();
 	set_changed(0);
 
 	/* Generate an MBR ID for this disk */
-	dos_write_mbr_id(MBRbuffer, id);
+	dos_write_mbr_id(cxt->mbr, id);
 
 	/* Put MBR signature */
-	write_part_table_flag(MBRbuffer);
+	write_part_table_flag(cxt->mbr);
 }
 
-void dos_set_mbr_id(void)
+void dos_set_mbr_id(struct fdisk_context *cxt)
 {
 	unsigned long new_id;
 	char *ep;
 	char ps[64];
 
 	snprintf(ps, sizeof ps, _("New disk identifier (current 0x%08x): "),
-		 dos_read_mbr_id(MBRbuffer));
+		 dos_read_mbr_id(cxt->mbr));
 
 	if (read_chars(ps) == '\n')
 		return;
@@ -257,9 +256,9 @@ void dos_set_mbr_id(void)
 	if (*ep != '\n')
 		return;
 
-	dos_write_mbr_id(MBRbuffer, new_id);
+	dos_write_mbr_id(cxt->mbr, new_id);
 	MBRbuffer_changed = 1;
-	dos_print_mbr_id();
+	dos_print_mbr_id(cxt);
 }
 
 void dos_delete_partition(int i)
@@ -321,7 +320,7 @@ int check_dos_label(struct fdisk_context *cxt)
 {
 	int i;
 
-	if (!valid_part_table_flag(MBRbuffer))
+	if (!valid_part_table_flag(cxt->mbr))
 		return 0;
 
 	dos_init(cxt);
@@ -668,8 +667,8 @@ void dos_write_table(struct fdisk_context *cxt)
 				MBRbuffer_changed = 1;
 	}
 	if (MBRbuffer_changed) {
-		write_part_table_flag(MBRbuffer);
-		write_sector(cxt, 0, MBRbuffer);
+		write_part_table_flag(cxt->mbr);
+		write_sector(cxt, 0, cxt->mbr);
 	}
 	/* EBR (logical partitions) */
 	for (i = 4; i < partitions; i++) {

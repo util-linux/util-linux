@@ -1,6 +1,7 @@
 /* fdisk.c -- Partition table manipulator for Linux.
  *
  * Copyright (C) 1992  A. V. Le Blanc (LeBlanc@mcc.ac.uk)
+ * Copyright (C) 2012  Davidlohr Bueso <dave@gnu.org>
  *
  * This program is free software.  You can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -50,7 +51,6 @@
 
 #include "gpt.h"
 
-unsigned char *MBRbuffer;
 int MBRbuffer_changed;
 
 #define hex_val(c)	({ \
@@ -231,10 +231,10 @@ void print_menu(enum menutype menu)
 }
 
 static int
-get_sysid(int i) {
+get_sysid(struct fdisk_context *cxt, int i) {
 	return (
-		disklabel == SUN_LABEL ? sun_get_sysid(i) :
-		disklabel == SGI_LABEL ? sgi_get_sysid(i) :
+		disklabel == SUN_LABEL ? sun_get_sysid(cxt, i) :
+		disklabel == SGI_LABEL ? sgi_get_sysid(cxt, i) :
 		ptes[i].part_table->sys_ind);
 }
 
@@ -439,8 +439,8 @@ void warn_alignment(struct fdisk_context *cxt)
 }
 
 static void
-get_partition_table_geometry(void) {
-	unsigned char *bufp = MBRbuffer;
+get_partition_table_geometry(struct fdisk_context *cxt) {
+	unsigned char *bufp = cxt->mbr;
 	struct partition *p;
 	int i, h, s, hh, ss;
 	int first = 1;
@@ -530,7 +530,7 @@ get_geometry(struct fdisk_context *cxt, struct geom *g)
 	pt_heads = pt_sectors = 0;
 
 	blkdev_get_geometry(cxt->dev_fd, &kern_heads, &kern_sectors);
-	get_partition_table_geometry();
+	get_partition_table_geometry(cxt);
 
 	heads = user_heads ? user_heads :
 		pt_heads ? pt_heads :
@@ -556,27 +556,6 @@ get_geometry(struct fdisk_context *cxt, struct geom *g)
 }
 
 /*
- * Please, always use allocated buffer if you want to cast the buffer to
- * any struct -- cast non-allocated buffer to any struct is against
- * strict-aliasing rules.  --kzak 16-Oct-2009
- */
-static void init_mbr_buffer(void)
-{
-	if (MBRbuffer)
-		return;
-
-	MBRbuffer = xcalloc(1, MAX_SECTOR_SIZE);
-}
-
-void zeroize_mbr_buffer(void)
-{
-	if (MBRbuffer)
-		memset(MBRbuffer, 0, MAX_SECTOR_SIZE);
-}
-
-
-
-/*
  * Read MBR.  Returns:
  *   -1: no 0xaa55 flag present (possibly entire disk BSD)
  *    0: found or created label
@@ -585,25 +564,19 @@ void zeroize_mbr_buffer(void)
 static int get_boot(struct fdisk_context *cxt, int try_only) {
 
 	disklabel = ANY_LABEL;
-	memset(MBRbuffer, 0, 512);
-
-	if (512 != read(cxt->dev_fd, MBRbuffer, 512)) {
-		if (try_only)
-			return 1;
-		fatal(cxt, unable_to_read);
-	}
 
 	get_geometry(cxt, NULL);
 	update_units();
 
 	if (!check_dos_label(cxt))
-		if (check_sun_label() || check_sgi_label() || check_aix_label() || check_mac_label())
+		if (check_sun_label(cxt) || check_sgi_label(cxt) || check_aix_label(cxt)
+		    || check_mac_label(cxt))
 			return 0;
 
 	if (check_osf_label(cxt)) {
 		/* intialize partitions for BSD as well */
 		dos_init(cxt);
-		if (!valid_part_table_flag(MBRbuffer)) {
+		if (!valid_part_table_flag(cxt->mbr)) {
 			disklabel = OSF_LABEL;
 			return 0;
 		}
@@ -879,7 +852,7 @@ get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt) {
 		    || (disklabel == SUN_LABEL &&
 			(!sunlabel->partitions[i].num_sectors ||
 			 !sunlabel->part_tags[i].tag))
-		    || (disklabel == SGI_LABEL && (!sgi_get_num_sectors(i)))
+		    || (disklabel == SGI_LABEL && (!sgi_get_num_sectors(cxt, i)))
 		   )
 			fprintf(stderr,
 				_("Warning: partition %d has empty type\n"),
@@ -983,7 +956,7 @@ delete_partition(struct fdisk_context *cxt, int i)
 	if (disklabel == DOS_LABEL)
 		dos_delete_partition(i);
 	else if (disklabel == SUN_LABEL)
-		sun_delete_partition(i);
+		sun_delete_partition(cxt, i);
 	else if (disklabel == SGI_LABEL)
 		sgi_delete_partition(cxt, i);
 
@@ -1001,7 +974,7 @@ static void change_sysid(struct fdisk_context *cxt)
 	if (i == -1)
 		return;
 	p = ptes[i].part_table;
-	origsys = sys = get_sysid(i);
+	origsys = sys = get_sysid(cxt, i);
 
 	/* if changing types T to 0 is allowed, then
 	   the reverse change must be allowed, too */
@@ -1042,10 +1015,10 @@ static void change_sysid(struct fdisk_context *cxt)
                         if (sys == origsys)
 				break;
 			if (disklabel == SUN_LABEL) {
-				ptes[i].changed = sun_change_sysid(i, sys);
+				ptes[i].changed = sun_change_sysid(cxt, i, sys);
 			} else
 			if (disklabel == SGI_LABEL) {
-				ptes[i].changed = sgi_change_sysid(i, sys);
+				ptes[i].changed = sgi_change_sysid(cxt, i, sys);
 			} else {
 				p->sys_ind = sys;
 				ptes[i].changed = 1;
@@ -1168,7 +1141,7 @@ list_disk_geometry(struct fdisk_context *cxt) {
 	if (cxt->alignment_offset)
 		printf(_("Alignment offset: %lu bytes\n"), cxt->alignment_offset);
 	if (disklabel == DOS_LABEL)
-		dos_print_mbr_id();
+		dos_print_mbr_id(cxt);
 	printf("\n");
 }
 
@@ -1471,12 +1444,12 @@ verify(struct fdisk_context *cxt) {
 		return;
 
 	if (disklabel == SUN_LABEL) {
-		verify_sun();
+		verify_sun(cxt);
 		return;
 	}
 
 	if (disklabel == SGI_LABEL) {
-		verify_sgi(1);
+		verify_sgi(cxt, 1);
 		return;
 	}
 
@@ -1671,7 +1644,7 @@ static void print_raw(struct fdisk_context *cxt)
 
 	printf(_("Device: %s\n"), cxt->dev_path);
 	if (disklabel == SUN_LABEL || disklabel == SGI_LABEL)
-		print_buffer(cxt, MBRbuffer);
+		print_buffer(cxt, cxt->mbr);
 	else for (i = 3; i < partitions; i++)
 		     print_buffer(cxt, ptes[i].sectorbuffer);
 }
@@ -1754,7 +1727,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 				read_int(cxt, 1, cylinders, 1048576, 0,
 					 _("Number of cylinders"));
 			if (disklabel == SUN_LABEL)
-				sun_set_ncyl(cylinders);
+				sun_set_ncyl(cxt, cylinders);
 			break;
 		case 'd':
 			print_raw(cxt);
@@ -1784,7 +1757,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 			if (disklabel == SUN_LABEL)
 				sun_set_ilfact(cxt);
 			else if (disklabel == DOS_LABEL)
-				dos_set_mbr_id();
+				dos_set_mbr_id(cxt);
 			break;
 		case 'o':
 			if (disklabel == SUN_LABEL)
@@ -1942,17 +1915,17 @@ static void command_prompt(struct fdisk_context *cxt)
 			if (disklabel == DOS_LABEL)
 				toggle_active(get_partition(cxt, 1, partitions));
 			else if (disklabel == SUN_LABEL)
-				toggle_sunflags(get_partition(cxt, 1, partitions),
+				toggle_sunflags(cxt, get_partition(cxt, 1, partitions),
 						SUN_FLAG_UNMNT);
 			else if (disklabel == SGI_LABEL)
-				sgi_set_bootpartition(
+				sgi_set_bootpartition(cxt,
 					get_partition(cxt, 1, partitions));
 			else
 				unknown_command(c);
 			break;
 		case 'b':
 			if (disklabel == SGI_LABEL)
-				sgi_set_bootfile();
+				sgi_set_bootfile(cxt);
 			else if (disklabel == DOS_LABEL) {
 				disklabel = OSF_LABEL;
 				bsd_command_prompt(cxt);
@@ -1964,10 +1937,10 @@ static void command_prompt(struct fdisk_context *cxt)
 			if (disklabel == DOS_LABEL)
 				toggle_dos_compatibility_flag(cxt);
 			else if (disklabel == SUN_LABEL)
-				toggle_sunflags(get_partition(cxt, 1, partitions),
+				toggle_sunflags(cxt, get_partition(cxt, 1, partitions),
 						SUN_FLAG_RONLY);
 			else if (disklabel == SGI_LABEL)
-				sgi_set_swappartition(
+				sgi_set_swappartition(cxt,
 					get_partition(cxt, 1, partitions));
 			else
 				unknown_command(c);
@@ -1977,7 +1950,7 @@ static void command_prompt(struct fdisk_context *cxt)
 			break;
 		case 'i':
 			if (disklabel == SGI_LABEL)
-				create_sgiinfo();
+				create_sgiinfo(cxt);
 			else
 				unknown_command(c);
 			break;
@@ -2113,7 +2086,7 @@ int main(int argc, char **argv)
 		printf(_("Warning: the -b (set sector size) option should"
 			 " be used with one specified device\n"));
 
-	init_mbr_buffer();
+	/* init_mbr_buffer(); */
 
 	if (optl) {
 		nowarn = 1;

@@ -20,12 +20,8 @@ typedef struct {
 #define	AIX_INFO_MAGIC		0x00072959
 #define	AIX_INFO_MAGIC_SWAPPED	0x59290700
 
-/* fdisk.c */
-#define aixlabel ((aix_partition *)MBRbuffer)
-
 /* fdiskaixlabel.c */
 extern struct	systypes aix_sys_types[];
-extern void	aix_nolabel( void );
-extern int	check_aix_label( void );
+extern int	check_aix_label(struct fdisk_context *cxt);
 
 #endif /* FDISK_AIX_LABEL_H */

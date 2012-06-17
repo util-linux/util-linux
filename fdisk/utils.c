@@ -31,6 +31,21 @@
 
 int fdisk_debug_mask;
 
+static int __init_mbr_buffer(struct fdisk_context *cxt)
+{
+	cxt->mbr = calloc(1, MAX_SECTOR_SIZE);
+	if (!cxt->mbr)
+		goto fail;
+
+	/* read MBR */
+	if (512 != read(cxt->dev_fd, cxt->mbr, 512))
+		goto fail;
+
+	return 0;
+fail:
+	return -1;
+}
+
 static unsigned long __get_sector_size(int fd)
 {
 	int sect_sz;
@@ -91,6 +106,18 @@ static int __discover_topology(struct fdisk_context *cxt)
 			       cxt->dev_path, cxt->sector_size, cxt->phy_sector_size,
 			       cxt->io_size, cxt->optimal_io_size, cxt->min_io_size));
 	return 0;
+}
+
+/**
+ * fdisk_mbr_zeroize:
+ * @cxt: fdisk context
+ *
+ * Zero's MBR buffer
+ */
+void fdisk_mbr_zeroize(struct fdisk_context *cxt)
+{
+	if (cxt->mbr)
+		bzero(cxt->mbr, MAX_SECTOR_SIZE);
 }
 
 /**
@@ -181,6 +208,9 @@ struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int rea
 	if (!cxt->dev_path)
 		goto fail;
 
+	if (__init_mbr_buffer(cxt) < 0)
+		goto fail;
+
 	__discover_topology(cxt);
 	__discover_geometry(cxt);
 
@@ -210,5 +240,6 @@ void fdisk_free_context(struct fdisk_context *cxt)
 	DBG(CONTEXT, dbgprint("freeing context for %s", cxt->dev_path));
 	close(cxt->dev_fd);
 	free(cxt->dev_path);
+	free(cxt->mbr);
 	free(cxt);
 }

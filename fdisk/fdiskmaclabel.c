@@ -39,16 +39,16 @@ mac_info( void ) {
 }
 
 void
-mac_nolabel( void )
+mac_nolabel(struct fdisk_context *cxt)
 {
     maclabel->magic = 0;
     partitions = 4;
-    zeroize_mbr_buffer();
+    fdisk_mbr_zeroize(cxt);
     return;
 }
 
 int
-check_mac_label( void )
+check_mac_label(struct fdisk_context *cxt)
 {
 	/*
 	Conversion: only 16 bit should compared
@@ -77,7 +77,7 @@ IS_MAC:
     partitions= 1016; // =?
     volumes = 15;	// =?
     mac_info();
-    mac_nolabel();		/* %% */
+    mac_nolabel(cxt);		/* %% */
     return 1;
 }
 

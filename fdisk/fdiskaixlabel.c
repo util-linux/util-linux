@@ -14,6 +14,8 @@
 #include "fdiskaixlabel.h"
 #include "nls.h"
 
+#define aixlabel ((aix_partition *)cxt->mbr)
+
 static	int     other_endian = 0;
 static  short	volumes=1;
 
@@ -39,16 +41,15 @@ aix_info( void ) {
 }
 
 void
-aix_nolabel( void )
+aix_nolabel(struct fdisk_context *cxt)
 {
     aixlabel->magic = 0;
     partitions = 4;
-    zeroize_mbr_buffer();
+    fdisk_mbr_zeroize(cxt);
     return;
 }
 
-int
-check_aix_label( void )
+int check_aix_label(struct fdisk_context *cxt)
 {
     if (aixlabel->magic != AIX_LABEL_MAGIC &&
 	aixlabel->magic != AIX_LABEL_MAGIC_SWAPPED) {
@@ -61,6 +62,6 @@ check_aix_label( void )
     partitions= 1016;
     volumes = 15;
     aix_info();
-    aix_nolabel();		/* %% */
+    aix_nolabel(cxt);		/* %% */
     return 1;
 }

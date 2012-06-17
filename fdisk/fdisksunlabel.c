@@ -78,13 +78,13 @@ static void init(void)
 	partitions = SUN_NUM_PARTITIONS;
 }
 
-void sun_nolabel(void)
+void sun_nolabel(struct fdisk_context *cxt)
 {
 	sunlabel->magic = 0;
 	partitions = 4;
 }
 
-int check_sun_label(void)
+int check_sun_label(struct fdisk_context *cxt)
 {
 	unsigned short *ush;
 	int csum;
@@ -166,7 +166,7 @@ void create_sunlabel(struct fdisk_context *cxt)
 #endif
 
 	init();
-	zeroize_mbr_buffer();
+	fdisk_mbr_zeroize(cxt);
 
 	sunlabel->magic = SSWAP16(SUN_LABEL_MAGIC);
 	sunlabel->sanity = SSWAP32(SUN_LABEL_SANE);
@@ -242,7 +242,7 @@ void create_sunlabel(struct fdisk_context *cxt)
 	set_changed(0);
 }
 
-void toggle_sunflags(int i, uint16_t mask)
+void toggle_sunflags(struct fdisk_context *cxt, int i, uint16_t mask)
 {
 	struct sun_tag_flag *p = &sunlabel->part_tags[i];
 
@@ -251,7 +251,8 @@ void toggle_sunflags(int i, uint16_t mask)
 	set_changed(i);
 }
 
-static void fetch_sun(uint32_t *starts, uint32_t *lens, uint32_t *start, uint32_t *stop)
+static void fetch_sun(struct fdisk_context *cxt, uint32_t *starts,
+		      uint32_t *lens, uint32_t *start, uint32_t *stop)
 {
 	int i, continuous = 1;
 
@@ -298,7 +299,7 @@ static int verify_sun_cmp(int *a, int *b)
     return -1;
 }
 
-void verify_sun(void)
+void verify_sun(struct fdisk_context *cxt)
 {
     uint32_t starts[SUN_NUM_PARTITIONS], lens[SUN_NUM_PARTITIONS], start, stop;
     uint32_t i,j,k,starto,endo;
@@ -306,7 +307,7 @@ void verify_sun(void)
 
     verify_sun_starts = starts;
 
-    fetch_sun(starts, lens, &start, &stop);
+    fetch_sun(cxt, starts, lens, &start, &stop);
 
     for (k = 0; k < 7; k++) {
 	for (i = 0; i < SUN_NUM_PARTITIONS; i++) {
@@ -347,6 +348,7 @@ void verify_sun(void)
     }
     qsort(array,ARRAY_SIZE(array),sizeof(array[0]),
 	  (int (*)(const void *,const void *)) verify_sun_cmp);
+
     if (array[0] == -1) {
     	printf(_("No partitions defined\n"));
     	return;
@@ -382,7 +384,7 @@ void add_sun_partition(struct fdisk_context *cxt, int n, int sys)
 		return;
 	}
 	
-	fetch_sun(starts, lens, &start, &stop);
+	fetch_sun(cxt, starts, lens, &start, &stop);
 	if (stop <= start) {
 		if (n == 2)
 			whole_disk = 1;
@@ -484,7 +486,7 @@ and is of type `Whole disk'\n"));
 	set_sun_partition(cxt, n, first, last, sys);
 }
 
-void sun_delete_partition(int i)
+void sun_delete_partition(struct fdisk_context *cxt, int i)
 {
 	struct sun_partition *part = &sunlabel->partitions[i];
 	struct sun_tag_flag *tag = &sunlabel->part_tags[i];
@@ -503,7 +505,7 @@ void sun_delete_partition(int i)
 	part->num_sectors = 0;
 }
 
-int sun_change_sysid(int i, uint16_t sys)
+int sun_change_sysid(struct fdisk_context *cxt, int i, uint16_t sys)
 {
 	struct sun_partition *part = &sunlabel->partitions[i];
 	struct sun_tag_flag *tag = &sunlabel->part_tags[i];
@@ -594,7 +596,7 @@ void sun_set_alt_cyl(struct fdisk_context *cxt)
 				 _("Number of alternate cylinders")));
 }
 
-void sun_set_ncyl(int cyl)
+void sun_set_ncyl(struct fdisk_context *cxt, int cyl)
 {
 	sunlabel->ncyl = SSWAP16(cyl);
 }
@@ -641,7 +643,7 @@ void sun_write_table(struct fdisk_context *cxt)
 		fatal(cxt, unable_to_write);
 }
 
-int sun_get_sysid(int i)
+int sun_get_sysid(struct fdisk_context *cxt, int i)
 {
 	return SSWAP16(sunlabel->part_tags[i].tag);
 }

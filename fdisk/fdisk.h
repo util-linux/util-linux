@@ -104,8 +104,9 @@ struct geom {
 typedef unsigned long long sector_t;
 
 struct fdisk_context {
-	int dev_fd;     /* device descriptor */
-	char *dev_path; /* device path */
+	int dev_fd;         /* device descriptor */
+	char *dev_path;     /* device path */
+	unsigned char *mbr; /* buffer with master boot record */
 
 	/* topology */
 	unsigned long io_size;		/* I/O size used by fdisk */
@@ -123,6 +124,7 @@ extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname, 
 extern int fdisk_dev_has_topology(struct fdisk_context *cxt);
 extern int fdisk_dev_sectsz_is_default(struct fdisk_context *cxt);
 extern void fdisk_free_context(struct fdisk_context *cxt);
+extern void fdisk_mbr_zeroize(struct fdisk_context *cxt);
 
 /* prototypes for fdisk.c */
 extern char *disk_device, *line_ptr;
@@ -145,7 +147,6 @@ extern unsigned int read_int(struct fdisk_context *cxt,
 extern void print_menu(enum menutype);
 extern void print_partition_size(struct fdisk_context *cxt, int num, sector_t start, sector_t stop, int sysid);
 
-extern void zeroize_mbr_buffer(void);
 extern void fill_bounds(sector_t *first, sector_t *last);
 extern unsigned int heads, cylinders;
 extern sector_t sectors;
@@ -180,12 +181,6 @@ enum labeltype {
 };
 
 extern enum labeltype disklabel;
-
-/*
- * Raw disk label. For DOS-type partition tables the MBR,
- * with descriptions of the primary partitions.
- */
-extern unsigned char *MBRbuffer;
 extern int MBRbuffer_changed;
 extern unsigned long grain;
 
