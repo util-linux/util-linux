@@ -147,6 +147,12 @@ void fdisk_init_debug(int mask)
 
 /**
  * fdisk_new_context:
+ * @filename: path to the device to be handled
+ * @readonly: how to open the device
+ *
+ * If the @readonly flag is set to false, fdisk will attempt to open
+ * the device with read-write mode and will fallback to read-only if
+ * unsuccessful.
  *
  * Returns: newly allocated fdisk context
  */
@@ -155,10 +161,6 @@ struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int rea
 	int fd, errsv = 0;
 	struct fdisk_context *cxt = NULL;
 
-	/*
-	 * Attempt to open the device with r-w permissions
-	 * by default, otherwise try read-only.
-	 */
 	if (readonly == 1 || (fd = open(fname, O_RDWR)) < 0) {
 		if ((fd = open(fname, O_RDONLY)) < 0)
 			return NULL;
