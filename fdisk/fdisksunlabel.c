@@ -78,12 +78,6 @@ static void init(void)
 	partitions = SUN_NUM_PARTITIONS;
 }
 
-void sun_nolabel(struct fdisk_context *cxt)
-{
-	sunlabel->magic = 0;
-	partitions = 4;
-}
-
 int check_sun_label(struct fdisk_context *cxt)
 {
 	unsigned short *ush;

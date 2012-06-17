@@ -78,7 +78,6 @@ struct sun_disk_label {
 /* fdisksunlabel.c */
 extern struct systypes sun_sys_types[];
 extern int check_sun_label(struct fdisk_context *cxt);
-extern void sun_nolabel(struct fdisk_context *cxt);
 extern void create_sunlabel(struct fdisk_context *cxt);
 extern void sun_delete_partition(struct fdisk_context *cxt, int i);
 extern int sun_change_sysid(struct fdisk_context *cxt, int i, uint16_t sys);
