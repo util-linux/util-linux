@@ -111,7 +111,6 @@ typedef struct {
 
 /* fdisksgilabel.c */
 extern struct	systypes sgi_sys_types[];
-extern void	sgi_nolabel(struct fdisk_context *cxt);
 extern int	check_sgi_label(struct fdisk_context *cxt);
 extern void	sgi_list_table( struct fdisk_context *cxt, int xtra );
 extern int  sgi_change_sysid(struct fdisk_context *cxt, int i, int sys);

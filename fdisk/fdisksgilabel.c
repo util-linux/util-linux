@@ -116,12 +116,6 @@ sgi_get_ntrks(struct fdisk_context *cxt) {
 	return SSWAP16(sgilabel->devparam.ntrks);
 }
 
-void
-sgi_nolabel(struct fdisk_context *cxt) {
-	sgilabel->magic = 0;
-	partitions = 4;
-}
-
 static unsigned int
 two_s_complement_32bit_sum(unsigned int *base, int size /* in bytes */) {
 	int i = 0;
