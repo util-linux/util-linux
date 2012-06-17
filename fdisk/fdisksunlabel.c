@@ -65,7 +65,7 @@ static void set_sun_partition(struct fdisk_context *cxt,
 	sunlabel->part_tags[i].tag = SSWAP16(sysid);
 	sunlabel->part_tags[i].flag = SSWAP16(0);
 	sunlabel->partitions[i].start_cylinder =
-		SSWAP32(start / (heads * sectors));
+		SSWAP32(start / (cxt->geom.heads * cxt->geom.sectors));
 	sunlabel->partitions[i].num_sectors =
 		SSWAP32(stop - start);
 	set_changed(i);
@@ -104,9 +104,9 @@ int check_sun_label(struct fdisk_context *cxt)
 	} else {
 		int need_fixing = 0;
 
-		heads = SSWAP16(sunlabel->nhead);
-		cylinders = SSWAP16(sunlabel->ncyl);
-		sectors = SSWAP16(sunlabel->nsect);
+		cxt->geom.heads = SSWAP16(sunlabel->nhead);
+		cxt->geom.cylinders = SSWAP16(sunlabel->ncyl);
+		cxt->geom.sectors = SSWAP16(sunlabel->nsect);
 
 		if (sunlabel->version != SSWAP32(SUN_LABEL_VERSION)) {
 			fprintf(stderr,_("Detected sun disklabel with wrong version [0x%08x].\n"),
@@ -140,7 +140,7 @@ int check_sun_label(struct fdisk_context *cxt)
 			set_changed(0);
 		}
 	}
-	update_units();
+	update_units(cxt);
 	return 1;
 }
 
@@ -172,57 +172,57 @@ void create_sunlabel(struct fdisk_context *cxt)
 
 #ifdef HDIO_GETGEO
 	if (!ioctl(cxt->dev_fd, HDIO_GETGEO, &geometry)) {
-	        heads = geometry.heads;
-	        sectors = geometry.sectors;
+	        cxt->geom.heads = geometry.heads;
+	        cxt->geom.sectors = geometry.sectors;
 		if (res == 0) {
-			llcyls = llsectors / (heads * sectors * sec_fac);
-			cylinders = llcyls;
-			if (cylinders != llcyls)
-				cylinders = ~0;
+			llcyls = llsectors / (cxt->geom.heads * cxt->geom.sectors * sec_fac);
+			cxt->geom.cylinders = llcyls;
+			if (cxt->geom.cylinders != llcyls)
+				cxt->geom.cylinders = ~0;
 		} else {
-			cylinders = geometry.cylinders;
+			cxt->geom.cylinders = geometry.cylinders;
 			fprintf(stderr,
 				_("Warning:  BLKGETSIZE ioctl failed on %s.  "
-				  "Using geometry cylinder value of %d.\n"
+				  "Using geometry cylinder value of %llu.\n"
 				  "This value may be truncated for devices"
-				  " > 33.8 GB.\n"), cxt->dev_path, cylinders);
+				  " > 33.8 GB.\n"), cxt->dev_path, cxt->geom.cylinders);
 		}
 	} else
 #endif
 	{
-	        heads = read_int(cxt, 1,1,1024,0,_("Heads"));
-		sectors = read_int(cxt, 1,1,1024,0,_("Sectors/track"));
-		cylinders = read_int(cxt, 1,1,65535,0,_("Cylinders"));
+	        cxt->geom.heads = read_int(cxt, 1,1,1024,0,_("Heads"));
+		cxt->geom.sectors = read_int(cxt, 1,1,1024,0,_("Sectors/track"));
+		cxt->geom.cylinders = read_int(cxt, 1,1,65535,0,_("Cylinders"));
 	}
 
 	sunlabel->acyl   = SSWAP16(2);
-	sunlabel->pcyl   = SSWAP16(cylinders);
-	sunlabel->ncyl   = SSWAP16(cylinders - 2);
+	sunlabel->pcyl   = SSWAP16(cxt->geom.cylinders);
+	sunlabel->ncyl   = SSWAP16(cxt->geom.cylinders - 2);
 	sunlabel->rpm    = SSWAP16(5400);
 	sunlabel->intrlv = SSWAP16(1);
 	sunlabel->apc    = SSWAP16(0);
 
-	sunlabel->nhead = SSWAP16(heads);
-	sunlabel->nsect = SSWAP16(sectors);
-	sunlabel->ncyl = SSWAP16(cylinders);
+	sunlabel->nhead = SSWAP16(cxt->geom.heads);
+	sunlabel->nsect = SSWAP16(cxt->geom.sectors);
+	sunlabel->ncyl = SSWAP16(cxt->geom.cylinders);
 
 	snprintf(sunlabel->label_id, sizeof(sunlabel->label_id),
-		 "Linux cyl %d alt %d hd %d sec %llu",
-		 cylinders, SSWAP16(sunlabel->acyl), heads, sectors);
+		 "Linux cyl %llu alt %d hd %d sec %llu",
+		 cxt->geom.cylinders, SSWAP16(sunlabel->acyl), cxt->geom.heads, cxt->geom.sectors);
 
-	if (cylinders * heads * sectors >= 150 * 2048) {
-	        ndiv = cylinders - (50 * 2048 / (heads * sectors)); /* 50M swap */
+	if (cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors >= 150 * 2048) {
+	        ndiv = cxt->geom.cylinders - (50 * 2048 / (cxt->geom.heads * cxt->geom.sectors)); /* 50M swap */
 	} else
-	        ndiv = cylinders * 2 / 3;
+	        ndiv = cxt->geom.cylinders * 2 / 3;
 
-	set_sun_partition(cxt, 0, 0, ndiv * heads * sectors,
+	set_sun_partition(cxt, 0, 0, ndiv * cxt->geom.heads * cxt->geom.sectors,
 			  SUN_TAG_LINUX_NATIVE);
-	set_sun_partition(cxt, 1, ndiv * heads * sectors,
-			  cylinders * heads * sectors,
+	set_sun_partition(cxt, 1, ndiv * cxt->geom.heads * cxt->geom.sectors,
+			  cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors,
 			  SUN_TAG_LINUX_SWAP);
 	sunlabel->part_tags[1].flag |= SSWAP16(SUN_FLAG_UNMNT);
 
-	set_sun_partition(cxt, 2, 0, cylinders * heads * sectors, SUN_TAG_BACKUP);
+	set_sun_partition(cxt, 2, 0, cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors, SUN_TAG_BACKUP);
 
 	{
 		unsigned short *ush = (unsigned short *)sunlabel;
@@ -251,7 +251,7 @@ static void fetch_sun(struct fdisk_context *cxt, uint32_t *starts,
 	int i, continuous = 1;
 
 	*start = 0;
-	*stop = cylinders * heads * sectors;
+	*stop = cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors;
 
 	for (i = 0; i < partitions; i++) {
 		struct sun_partition *part = &sunlabel->partitions[i];
@@ -261,7 +261,7 @@ static void fetch_sun(struct fdisk_context *cxt, uint32_t *starts,
 		    tag->tag != SSWAP16(SUN_TAG_UNASSIGNED) &&
 		    tag->tag != SSWAP16(SUN_TAG_BACKUP)) {
 			starts[i] = (SSWAP32(part->start_cylinder) *
-				     heads * sectors);
+				     cxt->geom.heads * cxt->geom.sectors);
 			lens[i] = SSWAP32(part->num_sectors);
 			if (continuous) {
 				if (starts[i] == *start)
@@ -305,7 +305,7 @@ void verify_sun(struct fdisk_context *cxt)
 
     for (k = 0; k < 7; k++) {
 	for (i = 0; i < SUN_NUM_PARTITIONS; i++) {
-	    if (k && (lens[i] % (heads * sectors))) {
+	    if (k && (lens[i] % (cxt->geom.heads * cxt->geom.sectors))) {
 	        printf(_("Partition %d doesn't end on cylinder boundary\n"), i+1);
 	    }
 	    if (lens[i]) {
@@ -347,7 +347,7 @@ void verify_sun(struct fdisk_context *cxt)
     	printf(_("No partitions defined\n"));
     	return;
     }
-    stop = cylinders * heads * sectors;
+    stop = cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors;
     if (starts[array[0]])
         printf(_("Unused gap - sectors 0-%d\n"), starts[array[0]]);
     for (i = 0; i < 7 && array[i+1] != -1; i++) {
@@ -399,7 +399,7 @@ void add_sun_partition(struct fdisk_context *cxt, int n, int sys)
 			first *= units_per_sector;
 		else {
 			/* Starting sector has to be properly aligned */
-			int cs = heads * sectors;
+			int cs = cxt->geom.heads * cxt->geom.sectors;
 			int x = first % cs;
 
 			if (x)
@@ -438,7 +438,7 @@ and is of type `Whole disk'\n"));
 		} else
 			break;
 	}
-	stop = cylinders * heads * sectors;	/* ancient */
+	stop = cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors;	/* ancient */
 	stop2 = stop;
 	for (i = 0; i < partitions; i++) {
 		if (starts[i] > first && starts[i] < stop)
@@ -490,7 +490,7 @@ void sun_delete_partition(struct fdisk_context *cxt, int i)
 	    tag->tag == SSWAP16(SUN_TAG_BACKUP) &&
 	    !part->start_cylinder &&
 	    (nsec = SSWAP32(part->num_sectors))
-	      == heads * sectors * cylinders)
+	      == cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders)
 		printf(_("If you want to maintain SunOS/Solaris compatibility, "
 		       "consider leaving this\n"
 		       "partition as Whole disk (5), starting at 0, with %u "
@@ -539,13 +539,13 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 	if (xtra)
 		printf(
 		_("\nDisk %s (Sun disk label): %u heads, %llu sectors, %d rpm\n"
-		"%u cylinders, %d alternate cylinders, %d physical cylinders\n"
+		"%llu cylinders, %d alternate cylinders, %d physical cylinders\n"
 		"%d extra sects/cyl, interleave %d:1\n"
 		"Label ID: %s\n"
 		"Volume ID: %s\n"
 		"Units = %s of %d * 512 bytes\n\n"),
-		       cxt->dev_path, heads, sectors, SSWAP16(sunlabel->rpm),
-		       cylinders, SSWAP16(sunlabel->acyl),
+		       cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, SSWAP16(sunlabel->rpm),
+		       cxt->geom.cylinders, SSWAP16(sunlabel->acyl),
 		       SSWAP16(sunlabel->pcyl),
 		       SSWAP16(sunlabel->apc),
 		       SSWAP16(sunlabel->intrlv),
@@ -554,9 +554,9 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 		       str_units(PLURAL), units_per_sector);
 	else
 		printf(
-	_("\nDisk %s (Sun disk label): %u heads, %llu sectors, %u cylinders\n"
+	_("\nDisk %s (Sun disk label): %u heads, %llu sectors, %llu cylinders\n"
 	"Units = %s of %d * 512 bytes\n\n"),
-		       cxt->dev_path, heads, sectors, cylinders,
+		       cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders,
 		       str_units(PLURAL), units_per_sector);
 
 	printf(_("%*s Flag    Start       End    Blocks   Id  System\n"),
@@ -566,7 +566,7 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 		struct sun_tag_flag *tag = &sunlabel->part_tags[i];
 
 		if (part->num_sectors) {
-			uint32_t start = SSWAP32(part->start_cylinder) * heads * sectors;
+			uint32_t start = SSWAP32(part->start_cylinder) * cxt->geom.heads * cxt->geom.sectors;
 			uint32_t len = SSWAP32(part->num_sectors);
 			printf(
 			    "%s %c%c %9lu %9lu %9lu%c  %2x  %s\n",
@@ -598,7 +598,7 @@ void sun_set_ncyl(struct fdisk_context *cxt, int cyl)
 void sun_set_xcyl(struct fdisk_context *cxt)
 {
 	sunlabel->apc =
-		SSWAP16(read_int(cxt, 0, SSWAP16(sunlabel->apc), sectors, 0,
+		SSWAP16(read_int(cxt, 0, SSWAP16(sunlabel->apc), cxt->geom.sectors, 0,
 				 _("Extra sectors per cylinder")));
 }
 

@@ -135,15 +135,8 @@ int	nowarn = 0,			/* no warnings for fdisk -l/-s */
 	partitions = 4;			/* maximum partition + 1 */
 
 unsigned int	user_cylinders, user_heads, user_sectors;
-unsigned int   pt_heads, pt_sectors;
-
-sector_t sector_offset = 1, sectors;
-
-unsigned int	heads,
-	cylinders,
-	units_per_sector = 1,
-	display_in_cyl_units = 0;
-
+sector_t sector_offset = 1;
+unsigned int units_per_sector = 1, display_in_cyl_units = 0;
 unsigned long grain = DEFAULT_SECTOR_SIZE;
 enum labeltype disklabel;	/* Current disklabel */
 
@@ -365,18 +358,18 @@ sector_t align_lba(struct fdisk_context *cxt, sector_t lba, int direction)
 	return res;
 }
 
-int warn_geometry(void)
+int warn_geometry(struct fdisk_context *cxt)
 {
 	char *m = NULL;
 	int prev = 0;
 
 	if (disklabel == SGI_LABEL)	/* cannot set cylinders etc anyway */
 		return 0;
-	if (!heads)
+	if (!cxt->geom.heads)
 		prev = test_c(&m, _("heads"));
-	if (!sectors)
+	if (!cxt->geom.sectors)
 		prev = test_c(&m, _("sectors"));
-	if (!cylinders)
+	if (!cxt->geom.cylinders)
 		prev = test_c(&m, _("cylinders"));
 	if (!m)
 		return 0;
@@ -386,9 +379,9 @@ int warn_geometry(void)
 	return 1;
 }
 
-void update_units(void)
+void update_units(struct fdisk_context *cxt)
 {
-	int cyl_units = heads * sectors;
+	int cyl_units = cxt->geom.heads * cxt->geom.sectors;
 
 	if (display_in_cyl_units && cyl_units)
 		units_per_sector = cyl_units;
@@ -438,8 +431,8 @@ void warn_alignment(struct fdisk_context *cxt)
 
 }
 
-static void
-get_partition_table_geometry(struct fdisk_context *cxt) {
+void
+get_partition_table_geometry(struct fdisk_context *cxt, unsigned int *ph, unsigned int *ps) {
 	unsigned char *bufp = cxt->mbr;
 	struct partition *p;
 	int i, h, s, hh, ss;
@@ -465,8 +458,8 @@ get_partition_table_geometry(struct fdisk_context *cxt) {
 	}
 
 	if (!first && !bad) {
-		pt_heads = hh;
-		pt_sectors = ss;
+		*ph = hh;
+		*ps = ss;
 	}
 }
 
@@ -479,7 +472,7 @@ update_sector_offset(struct fdisk_context *cxt)
 	grain = cxt->io_size;
 
 	if (dos_compatible_flag)
-		sector_offset = sectors;	/* usually 63 sectors */
+		sector_offset = cxt->geom.sectors;	/* usually 63 sectors */
 	else {
 		/*
 		 * Align the begin of partitions to:
@@ -520,41 +513,6 @@ update_sector_offset(struct fdisk_context *cxt)
 	}
 }
 
-void
-get_geometry(struct fdisk_context *cxt, struct geom *g)
-{
-	sector_t llcyls;
-	unsigned int kern_heads = 0, kern_sectors = 0;
-
-	heads = cylinders = sectors = 0;
-	pt_heads = pt_sectors = 0;
-
-	blkdev_get_geometry(cxt->dev_fd, &kern_heads, &kern_sectors);
-	get_partition_table_geometry(cxt);
-
-	heads = user_heads ? user_heads :
-		pt_heads ? pt_heads :
-		kern_heads ? kern_heads : 255;
-	sectors = user_sectors ? user_sectors :
-		pt_sectors ? pt_sectors :
-		kern_sectors ? kern_sectors : 63;
-
-	update_sector_offset(cxt);
-
-	llcyls = cxt->total_sectors / (heads * sectors);
-	cylinders = llcyls;
-	if (cylinders != llcyls)	/* truncated? */
-		cylinders = ~0;
-	if (!cylinders)
-		cylinders = user_cylinders;
-
-	if (g) {
-		g->heads = heads;
-		g->sectors = sectors;
-		g->cylinders = cylinders;
-	}
-}
-
 /*
  * Read MBR.  Returns:
  *   -1: no 0xaa55 flag present (possibly entire disk BSD)
@@ -564,9 +522,7 @@ get_geometry(struct fdisk_context *cxt, struct geom *g)
 static int get_boot(struct fdisk_context *cxt, int try_only) {
 
 	disklabel = ANY_LABEL;
-
-	get_geometry(cxt, NULL);
-	update_units();
+	update_units(cxt);
 
 	if (!check_dos_label(cxt))
 		if (check_sun_label(cxt) || check_sgi_label(cxt) || check_aix_label(cxt)
@@ -752,7 +708,7 @@ read_int_with_suffix(struct fdisk_context *cxt,
 				 * Cylinders
 				 */
 				if (!display_in_cyl_units)
-					res *= heads * sectors;
+					res *= cxt->geom.heads * cxt->geom.sectors;
 			} else if (*line_ptr &&
 				   *(line_ptr + 1) == 'B' &&
 				   *(line_ptr + 2) == '\0') {
@@ -907,10 +863,10 @@ str_units(int n)
 	return P_("sector", "sectors", n);
 }
 
-void change_units(void)
+void change_units(struct fdisk_context *cxt)
 {
 	display_in_cyl_units = !display_in_cyl_units;
-	update_units();
+	update_units(cxt);
 
 	if (display_in_cyl_units)
 		printf(_("Changing display/entry units to cylinders (DEPRECATED!)\n"));
@@ -948,7 +904,7 @@ delete_partition(struct fdisk_context *cxt, int i)
 	if (i < 0)
 		return;
 
-	if (warn_geometry())
+	if (warn_geometry(cxt))
 		return;		/* C/H/S not set */
 
 	ptes[i].changed = 1;
@@ -1044,16 +1000,17 @@ static void change_sysid(struct fdisk_context *cxt)
  * Lubkin Oct.  1991). */
 
 static void
-long2chs(unsigned long ls, unsigned int *c, unsigned int *h, unsigned int *s) {
-	int spc = heads * sectors;
+long2chs(struct fdisk_context *cxt, unsigned long ls,
+	 unsigned int *c, unsigned int *h, unsigned int *s) {
+	int spc = cxt->geom.heads * cxt->geom.sectors;
 
 	*c = ls / spc;
 	ls = ls % spc;
-	*h = ls / sectors;
-	*s = ls % sectors + 1;	/* sectors count from 1 */
+	*h = ls / cxt->geom.sectors;
+	*s = ls % cxt->geom.sectors + 1;	/* sectors count from 1 */
 }
 
-static void check_consistency(struct partition *p, int partition) {
+static void check_consistency(struct fdisk_context *cxt, struct partition *p, int partition) {
 	unsigned int pbc, pbh, pbs;	/* physical beginning c, h, s */
 	unsigned int pec, peh, pes;	/* physical ending c, h, s */
 	unsigned int lbc, lbh, lbs;	/* logical beginning c, h, s */
@@ -1062,7 +1019,7 @@ static void check_consistency(struct partition *p, int partition) {
 	if (!dos_compatible_flag)
 		return;
 
-	if (!heads || !sectors || (partition >= 4))
+	if (!cxt->geom.heads || !cxt->geom.sectors || (partition >= 4))
 		return;		/* do not check extended partitions */
 
 /* physical beginning c, h, s */
@@ -1076,13 +1033,13 @@ static void check_consistency(struct partition *p, int partition) {
 	pes = p->end_sector & 0x3f;
 
 /* compute logical beginning (c, h, s) */
-	long2chs(get_start_sect(p), &lbc, &lbh, &lbs);
+	long2chs(cxt, get_start_sect(p), &lbc, &lbh, &lbs);
 
 /* compute logical ending (c, h, s) */
-	long2chs(get_start_sect(p) + get_nr_sects(p) - 1, &lec, &leh, &les);
+	long2chs(cxt, get_start_sect(p) + get_nr_sects(p) - 1, &lec, &leh, &les);
 
 /* Same physical / logical beginning? */
-	if (cylinders <= 1024 && (pbc != lbc || pbh != lbh || pbs != lbs)) {
+	if (cxt->geom.cylinders <= 1024 && (pbc != lbc || pbh != lbh || pbs != lbs)) {
 		printf(_("Partition %d has different physical/logical "
 			"beginnings (non-Linux?):\n"), partition + 1);
 		printf(_("     phys=(%d, %d, %d) "), pbc, pbh, pbs);
@@ -1090,7 +1047,7 @@ static void check_consistency(struct partition *p, int partition) {
 	}
 
 /* Same physical / logical ending? */
-	if (cylinders <= 1024 && (pec != lec || peh != leh || pes != les)) {
+	if (cxt->geom.cylinders <= 1024 && (pec != lec || peh != leh || pes != les)) {
 		printf(_("Partition %d has different physical/logical "
 			"endings:\n"), partition + 1);
 		printf(_("     phys=(%d, %d, %d) "), pec, peh, pes);
@@ -1098,7 +1055,7 @@ static void check_consistency(struct partition *p, int partition) {
 	}
 
 /* Ending on cylinder boundary? */
-	if (peh != (heads - 1) || pes != sectors) {
+	if (peh != (cxt->geom.heads - 1) || pes != cxt->geom.sectors) {
 		printf(_("Partition %i does not end on cylinder boundary.\n"),
 			partition + 1);
 	}
@@ -1125,8 +1082,8 @@ list_disk_geometry(struct fdisk_context *cxt) {
 		printf(_("\nDisk %s: %ld.%ld GB, %llu bytes\n"),
 		       cxt->dev_path, hectomega / 10, hectomega % 10, bytes);
 	}
-	printf(_("%d heads, %llu sectors/track, %d cylinders"),
-	       heads, sectors, cylinders);
+	printf(_("%d heads, %llu sectors/track, %llu cylinders"),
+	       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
 	if (units_per_sector == 1)
 		printf(_(", total %llu sectors"), cxt->total_sectors);
 	printf("\n");
@@ -1347,7 +1304,7 @@ list_table(struct fdisk_context *cxt, int xtra) {
 /* type id */		p->sys_ind,
 /* type name */		(type = partition_type(p->sys_ind)) ?
 			type : _("Unknown"));
-			check_consistency(p, i);
+			check_consistency(cxt, p, i);
 			check_alignment(cxt, get_partition_start(pe), i);
 		}
 	}
@@ -1366,8 +1323,8 @@ x_list_table(struct fdisk_context *cxt, int extend) {
 	struct partition *p;
 	int i;
 
-	printf(_("\nDisk %s: %d heads, %llu sectors, %d cylinders\n\n"),
-		cxt->dev_path, heads, sectors, cylinders);
+	printf(_("\nDisk %s: %d heads, %llu sectors, %llu cylinders\n\n"),
+		cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
         printf(_("Nr AF  Hd Sec  Cyl  Hd Sec  Cyl     Start      Size ID\n"));
 	for (i = 0 ; i < partitions; i++) {
 		pe = &ptes[i];
@@ -1382,7 +1339,7 @@ x_list_table(struct fdisk_context *cxt, int extend) {
 				(unsigned long) get_start_sect(p),
 				(unsigned long) get_nr_sects(p), p->sys_ind);
 			if (p->sys_ind) {
-				check_consistency(p, i);
+				check_consistency(cxt, p, i);
 				check_alignment(cxt, get_partition_start(pe), i);
 			}
 		}
@@ -1408,26 +1365,26 @@ void fill_bounds(sector_t *first, sector_t *last)
 }
 
 static void
-check(int n, unsigned int h, unsigned int s, unsigned int c,
+check(struct fdisk_context *cxt, int n, unsigned int h, unsigned int s, unsigned int c,
       unsigned int start) {
 	unsigned int total, real_s, real_c;
 
 	real_s = sector(s) - 1;
 	real_c = cylinder(s, c);
-	total = (real_c * sectors + real_s) * heads + h;
+	total = (real_c * cxt->geom.sectors + real_s) * cxt->geom.heads + h;
 	if (!total)
 		fprintf(stderr, _("Warning: partition %d contains sector 0\n"), n);
-	if (h >= heads)
+	if (h >= cxt->geom.heads)
 		fprintf(stderr,
 			_("Partition %d: head %d greater than maximum %d\n"),
-			n, h + 1, heads);
-	if (real_s >= sectors)
+			n, h + 1, cxt->geom.heads);
+	if (real_s >= cxt->geom.sectors)
 		fprintf(stderr, _("Partition %d: sector %d greater than "
-			"maximum %llu\n"), n, s, sectors);
-	if (real_c >= cylinders)
+			"maximum %llu\n"), n, s, cxt->geom.sectors);
+	if (real_c >= cxt->geom.cylinders)
 		fprintf(stderr, _("Partitions %d: cylinder %d greater than "
-			"maximum %d\n"), n, real_c + 1, cylinders);
-	if (cylinders <= 1024 && start != total)
+			"maximum %llu\n"), n, real_c + 1, cxt->geom.cylinders);
+	if (cxt->geom.cylinders <= 1024 && start != total)
 		fprintf(stderr,
 			_("Partition %d: previous sectors %d disagrees with "
 			"total %d\n"), n, start, total);
@@ -1440,7 +1397,7 @@ verify(struct fdisk_context *cxt) {
 	unsigned long long first[partitions], last[partitions];
 	struct partition *p;
 
-	if (warn_geometry())
+	if (warn_geometry(cxt))
 		return;
 
 	if (disklabel == SUN_LABEL) {
@@ -1459,13 +1416,13 @@ verify(struct fdisk_context *cxt) {
 
 		p = pe->part_table;
 		if (p->sys_ind && !IS_EXTENDED (p->sys_ind)) {
-			check_consistency(p, i);
+			check_consistency(cxt, p, i);
 			check_alignment(cxt, get_partition_start(pe), i);
 			if (get_partition_start(pe) < first[i])
 				printf(_("Warning: bad start-of-data in "
 					"partition %d\n"), i + 1);
-			check(i + 1, p->end_head, p->end_sector, p->end_cyl,
-				last[i]);
+			check(cxt, i + 1, p->end_head, p->end_sector, p->end_cyl,
+			      last[i]);
 			total += last[i] + 1 - first[i];
 			for (j = 0; j < i; j++)
 			if ((first[i] >= first[j] && first[i] <= last[j])
@@ -1519,7 +1476,7 @@ void print_partition_size(struct fdisk_context *cxt,
 
 static void new_partition(struct fdisk_context *cxt)
 {
-	if (warn_geometry())
+	if (warn_geometry(cxt))
 		return;
 
 	if (disklabel == SUN_LABEL) {
@@ -1656,7 +1613,7 @@ move_begin(struct fdisk_context *cxt, int i) {
 	unsigned int new, free_start, curr_start, last;
 	int x;
 
-	if (warn_geometry())
+	if (warn_geometry(cxt))
 		return;
 	if (!p->sys_ind || !get_nr_sects(p) || IS_EXTENDED (p->sys_ind)) {
 		printf(_("Partition %d has no data area\n"), i + 1);
@@ -1723,11 +1680,11 @@ expert_command_prompt(struct fdisk_context *cxt)
 				move_begin(cxt, get_partition(cxt, 0, partitions));
 			break;
 		case 'c':
-			user_cylinders = cylinders =
-				read_int(cxt, 1, cylinders, 1048576, 0,
+			user_cylinders = cxt->geom.cylinders =
+				read_int(cxt, 1, cxt->geom.cylinders, 1048576, 0,
 					 _("Number of cylinders"));
 			if (disklabel == SUN_LABEL)
-				sun_set_ncyl(cxt, cylinders);
+				sun_set_ncyl(cxt, cxt->geom.cylinders);
 			break;
 		case 'd':
 			print_raw(cxt);
@@ -1749,9 +1706,9 @@ expert_command_prompt(struct fdisk_context *cxt)
 			create_sgilabel(cxt);
 			break;
 		case 'h':
-			user_heads = heads = read_int(cxt, 1, heads, 256, 0,
+			user_heads = cxt->geom.heads = read_int(cxt, 1, cxt->geom.heads, 256, 0,
 					 _("Number of heads"));
-			update_units();
+			update_units(cxt);
 			break;
 		case 'i':
 			if (disklabel == SUN_LABEL)
@@ -1774,14 +1731,14 @@ expert_command_prompt(struct fdisk_context *cxt)
 		case 'r':
 			return;
 		case 's':
-			user_sectors = sectors = read_int(cxt, 1, sectors, 63, 0,
+			user_sectors = cxt->geom.sectors = read_int(cxt, 1, cxt->geom.sectors, 63, 0,
 					   _("Number of sectors"));
 			if (dos_compatible_flag)
 				fprintf(stderr, _("Warning: setting "
 					"sector offset for DOS "
 					"compatiblity\n"));
 			update_sector_offset(cxt);
-			update_units();
+			update_units(cxt);
 			break;
 		case 'v':
 			verify(cxt);
@@ -1829,6 +1786,17 @@ static void print_partition_table_from_option(char *device, unsigned long sector
 		err(EXIT_FAILURE, _("unable to open %s"), device);
 	if (sector_size)  /* passed -b option, override autodiscovery */
 		cxt->phy_sector_size = cxt->sector_size = sector_size;
+	/* passed CHS option(s), override autodiscovery */
+	if (user_cylinders)
+		cxt->geom.cylinders = user_cylinders;
+	if (user_heads) {
+		cxt->geom.heads = user_heads;
+		fdisk_geom_set_cyls(cxt);
+	}
+	if (user_sectors) {
+		cxt->geom.sectors = user_sectors;
+		fdisk_geom_set_cyls(cxt);
+	}
 
 	gpt_warning(device);
 	gb = get_boot(cxt, 1);
@@ -1978,7 +1946,7 @@ static void command_prompt(struct fdisk_context *cxt)
 			change_sysid(cxt);
 			break;
 		case 'u':
-			change_units();
+			change_units(cxt);
 			break;
 		case 'v':
 			verify(cxt);
@@ -2086,8 +2054,6 @@ int main(int argc, char **argv)
 		printf(_("Warning: the -b (set sector size) option should"
 			 " be used with one specified device\n"));
 
-	/* init_mbr_buffer(); */
-
 	if (optl) {
 		nowarn = 1;
 		if (argc > optind) {
@@ -2120,6 +2086,17 @@ int main(int argc, char **argv)
 			err(EXIT_FAILURE, _("unable to open %s"), argv[optind]);
 		if (sector_size) /* passed -b option, override autodiscovery */
 			cxt->phy_sector_size = cxt->sector_size = sector_size;
+		/* passed CHS option(s), override autodiscovery */
+		if (user_cylinders)
+			cxt->geom.cylinders = user_cylinders;
+		if (user_heads) {
+			cxt->geom.heads = user_heads;
+			fdisk_geom_set_cyls(cxt);
+		}
+		if (user_sectors) {
+			cxt->geom.sectors = user_sectors;
+			fdisk_geom_set_cyls(cxt);
+		}
 	}
 	else
 		usage(stderr);

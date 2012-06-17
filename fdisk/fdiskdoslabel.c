@@ -14,12 +14,12 @@
 #include "fdiskdoslabel.h"
 
 #define set_hsc(h,s,c,sector) { \
-		s = sector % sectors + 1;			\
-		sector /= sectors;				\
-		h = sector % heads;				\
-		sector /= heads;				\
-		c = sector & 0xff;				\
-		s |= (sector >> 2) & 0xc0;			\
+		s = sector % cxt->geom.sectors + 1;			\
+		sector /= cxt->geom.sectors;				\
+		h = sector % cxt->geom.heads;				\
+		sector /= cxt->geom.heads;				\
+		c = sector & 0xff;					\
+		s |= (sector >> 2) & 0xc0;				\
 	}
 
 #define alignment_required	(grain != cxt->sector_size)
@@ -115,7 +115,7 @@ void dos_init(struct fdisk_context *cxt)
 		pe->changed = 0;
 	}
 
-	warn_geometry();
+	warn_geometry(cxt);
 	warn_limits(cxt);
 	warn_alignment(cxt);
 }
@@ -389,11 +389,11 @@ static void set_partition(struct fdisk_context *cxt,
 	if (!doext)
 		print_partition_size(cxt, i + 1, start, stop, sysid);
 
-	if (dos_compatible_flag && (start/(sectors*heads) > 1023))
-		start = heads*sectors*1024 - 1;
+	if (dos_compatible_flag && (start/(cxt->geom.sectors*cxt->geom.heads) > 1023))
+		start = cxt->geom.heads*cxt->geom.sectors*1024 - 1;
 	set_hsc(p->head, p->sector, p->cyl, start);
-	if (dos_compatible_flag && (stop/(sectors*heads) > 1023))
-		stop = heads*sectors*1024 - 1;
+	if (dos_compatible_flag && (stop/(cxt->geom.sectors*cxt->geom.heads) > 1023))
+		stop = cxt->geom.heads*cxt->geom.sectors*1024 - 1;
 	set_hsc(p->end_head, p->end_sector, p->end_cyl, stop);
 	ptes[i].changed = 1;
 }
@@ -449,7 +449,7 @@ void dos_add_partition(struct fdisk_context *cxt, int n, int sys)
 	if (n < 4) {
 		start = sector_offset;
 		if (display_in_cyl_units || !cxt->total_sectors)
-			limit = heads * sectors * cylinders - 1;
+			limit = cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders - 1;
 		else
 			limit = cxt->total_sectors - 1;
 

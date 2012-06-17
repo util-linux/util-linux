@@ -36,6 +36,7 @@
 #define FDISK_DEBUG_INIT	(1 << 1)
 #define FDISK_DEBUG_CONTEXT	(1 << 2)
 #define FDISK_DEBUG_TOPOLOGY    (1 << 3)
+#define FDISK_DEBUG_GEOMETRY    (1 << 4)
 #define FDISK_DEBUG_ALL		0xFFFF
 
 # define ON_DBG(m, x)	do { \
@@ -95,13 +96,16 @@ enum failure {
 	unable_to_write
 };
 
-struct geom {
-	unsigned int heads;
-	unsigned int sectors;
-	unsigned int cylinders;
-};
-
 typedef unsigned long long sector_t;
+
+/*
+ * Legacy CHS based geometry
+ */
+struct fdisk_geometry {
+	unsigned int heads;
+	sector_t sectors;
+	sector_t cylinders;
+};
 
 struct fdisk_context {
 	int dev_fd;         /* device descriptor */
@@ -118,6 +122,7 @@ struct fdisk_context {
 
 	/* geometry */
 	sector_t total_sectors; /* in logical sectors */
+	struct fdisk_geometry geom;
 };
 
 extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int readonly);
@@ -125,14 +130,14 @@ extern int fdisk_dev_has_topology(struct fdisk_context *cxt);
 extern int fdisk_dev_sectsz_is_default(struct fdisk_context *cxt);
 extern void fdisk_free_context(struct fdisk_context *cxt);
 extern void fdisk_mbr_zeroize(struct fdisk_context *cxt);
+extern void fdisk_geom_set_cyls(struct fdisk_context *cxt);
 
 /* prototypes for fdisk.c */
 extern char *disk_device, *line_ptr;
 extern int fd, partitions;
 extern unsigned int display_in_cyl_units, units_per_sector;
-extern void change_units(void);
+extern void change_units(struct fdisk_context *cxt);
 extern void fatal(struct fdisk_context *cxt, enum failure why);
-extern void get_geometry(struct fdisk_context *, struct geom *);
 extern int  get_partition(struct fdisk_context *cxt, int warn, int max);
 extern void list_types(struct systypes *sys);
 extern int read_line (int *asked);
@@ -151,11 +156,11 @@ extern void fill_bounds(sector_t *first, sector_t *last);
 extern unsigned int heads, cylinders;
 extern sector_t sectors;
 extern char *partition_type(unsigned char type);
-extern void update_units(void);
+extern void update_units(struct fdisk_context *cxt);
 extern char read_chars(char *mesg);
 extern void set_changed(int);
 extern void set_all_unchanged(void);
-extern int warn_geometry(void);
+extern int warn_geometry(struct fdisk_context *cxt);
 extern void warn_limits(struct fdisk_context *cxt);
 extern void warn_alignment(struct fdisk_context *cxt);
 extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
@@ -163,6 +168,9 @@ extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
 				  unsigned int base, char *mesg, int *is_suffix_used);
 extern sector_t align_lba(struct fdisk_context *cxt, sector_t lba, int direction);
 extern int get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt);
+extern void update_sector_offset(struct fdisk_context *cxt);
+extern void get_partition_table_geometry(struct fdisk_context *cxt,
+					 unsigned int *ph, unsigned int *ps);
 
 #define PLURAL	0
 #define SINGULAR 1

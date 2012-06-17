@@ -55,13 +55,50 @@ static unsigned long __get_sector_size(int fd)
 	return DEFAULT_SECTOR_SIZE;
 }
 
+/**
+ * fdisk_geom_set_cyls
+ * @cxt: fdisk context
+ *
+ * Sets the cylinders based on sectors and heads
+ */
+void fdisk_geom_set_cyls(struct fdisk_context *cxt)
+{
+	cxt->geom.cylinders = cxt->total_sectors /
+		(cxt->geom.heads * cxt->geom.sectors);
+}
+
 static int __discover_geometry(struct fdisk_context *cxt)
 {
 	sector_t nsects;
+	unsigned int h = 0, s = 0;
 
 	/* get number of 512-byte sectors, and convert it the real sectors */
 	if (!blkdev_get_sectors(cxt->dev_fd, &nsects))
 		cxt->total_sectors = (nsects / (cxt->sector_size >> 9));
+
+	get_partition_table_geometry(cxt, &h, &s);
+	if (h && s)
+		goto hs_ok;
+
+	/* what the kernel/bios thinks the geometry is */
+	blkdev_get_geometry(cxt->dev_fd, &h, &s);
+	if (h && s)
+		goto hs_ok;
+
+	/* unable to discover geometry, use default values */
+	s = 63;
+	h = 255;
+
+hs_ok: /* obtained heads and sectors */
+	cxt->geom.heads = h;
+	cxt->geom.sectors = s;
+	fdisk_geom_set_cyls(cxt);
+	update_sector_offset(cxt);
+
+	DBG(GEOMETRY, dbgprint("geometry discovered for %s: C/H/S: %lld/%d/%lld",
+			       cxt->dev_path, cxt->geom.cylinders,
+			       cxt->geom.heads, cxt->geom.sectors));
+
 	return 0;
 }
 

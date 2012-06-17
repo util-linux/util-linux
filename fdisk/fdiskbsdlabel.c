@@ -213,7 +213,7 @@ bsd_command_prompt (struct fdisk_context *cxt)
 	xbsd_change_fstype ();
 	break;
       case 'u':
-	change_units();
+	change_units(cxt);
 	break;
       case 'w':
 	xbsd_write_disklabel (cxt);
@@ -636,9 +636,7 @@ static int
 xbsd_initlabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disklabel *d,
 		int pindex __attribute__((__unused__))) {
 	struct xbsd_partition *pp;
-	struct geom g;
 
-	get_geometry (cxt, &g);
 	memset (d, 0, sizeof (struct xbsd_disklabel));
 
 	d -> d_magic = BSD_DISKMAGIC;
@@ -658,10 +656,10 @@ xbsd_initlabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disk
 	d -> d_flags = 0;
 #endif
 	d -> d_secsize = SECTOR_SIZE;		/* bytes/sector  */
-	d -> d_nsectors = g.sectors;		/* sectors/track */
-	d -> d_ntracks = g.heads;		/* tracks/cylinder (heads) */
-	d -> d_ncylinders = g.cylinders;
-	d -> d_secpercyl  = g.sectors * g.heads;/* sectors/cylinder */
+	d -> d_nsectors = cxt->geom.sectors;		/* sectors/track */
+	d -> d_ntracks = cxt->geom.heads;		/* tracks/cylinder (heads) */
+	d -> d_ncylinders = cxt->geom.cylinders;
+	d -> d_secpercyl  = cxt->geom.sectors * cxt->geom.heads;/* sectors/cylinder */
 	if (d -> d_secpercyl == 0)
 		d -> d_secpercyl = 1;		/* avoid segfaults */
 	d -> d_secperunit = d -> d_secpercyl * d -> d_ncylinders;

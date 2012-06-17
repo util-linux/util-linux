@@ -151,7 +151,7 @@ check_sgi_label(struct fdisk_context *cxt) {
 		fprintf(stderr,
 			_("Detected sgi disklabel with wrong checksum.\n"));
 	}
-	update_units();
+	update_units(cxt);
 	disklabel = SGI_LABEL;
 	partitions= 16;
 	volumes = 15;
@@ -168,11 +168,11 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 
 	if (xtra) {
 		printf(_("\nDisk %s (SGI disk label): %d heads, %llu sectors\n"
-			 "%d cylinders, %d physical cylinders\n"
+			 "%llu cylinders, %d physical cylinders\n"
 			 "%d extra sects/cyl, interleave %d:1\n"
 			 "%s\n"
 			 "Units = %s of %d * %ld bytes\n\n"),
-		       cxt->dev_path, heads, sectors, cylinders,
+		       cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders,
 		       SSWAP16(sgiparam.pcylcount),
 		       (int) sgiparam.sparecyl, SSWAP16(sgiparam.ilfact),
 		       (char *)sgilabel,
@@ -180,9 +180,9 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
                        cxt->sector_size);
 	} else {
 		printf(_("\nDisk %s (SGI disk label): "
-			 "%d heads, %llu sectors, %d cylinders\n"
+			 "%d heads, %llu sectors, %llu cylinders\n"
 			 "Units = %s of %d * %ld bytes\n\n"),
-		       cxt->dev_path, heads, sectors, cylinders,
+		       cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders,
 		       str_units(PLURAL), units_per_sector,
                        cxt->sector_size);
 	}
@@ -258,8 +258,8 @@ sgi_set_bootpartition(struct fdisk_context *cxt, int i)
 }
 
 static unsigned int
-sgi_get_lastblock(void) {
-	return heads * sectors * cylinders;
+sgi_get_lastblock(struct fdisk_context *cxt) {
+	return cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders;
 }
 
 void
@@ -445,7 +445,7 @@ verify_sgi(struct fdisk_context *cxt, int verbose)
 	int entire = 0, i = 0;
 	unsigned int start = 0;
 	long long gap = 0;	/* count unused blocks */
-	unsigned int lastblock = sgi_get_lastblock();
+	unsigned int lastblock = sgi_get_lastblock(cxt);
 
 	clearfreelist();
 	for (i=0; i<16; i++) {
@@ -613,7 +613,7 @@ sgi_set_entire(struct fdisk_context *cxt) {
 
 	for (n=10; n<partitions; n++) {
 		if (!sgi_get_num_sectors(cxt, n)) {
-			sgi_set_partition(cxt, n, 0, sgi_get_lastblock(), SGI_VOLUME);
+			sgi_set_partition(cxt, n, 0, sgi_get_lastblock(cxt), SGI_VOLUME);
 			break;
 		}
 	}
@@ -631,7 +631,7 @@ sgi_set_volhdr(struct fdisk_context *cxt)
 			 * Choose same default volume header size
 			 * as IRIX fx uses.
 			 */
-			if (4096 < sgi_get_lastblock())
+			if (4096 < sgi_get_lastblock(cxt))
 				sgi_set_partition(cxt, n, 0, 4096, SGI_VOLHDR);
 			break;
 		}
@@ -677,7 +677,7 @@ sgi_add_partition(struct fdisk_context *cxt, int n, int sys)
 	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
 	for (;;) {
 		if (sys == SGI_VOLUME) {
-			last = sgi_get_lastblock();
+			last = sgi_get_lastblock(cxt);
 			first = read_int(cxt, 0, 0, last-1, 0, mesg);
 			if (first != 0) {
 				printf(_("It is highly recommended that eleventh partition\n"
@@ -708,7 +708,7 @@ sgi_add_partition(struct fdisk_context *cxt, int n, int sys)
 		last *= units_per_sector;                                     
 	/*else                                                             
 		last = last; * align to cylinder if You know how ... */
-	if ((sys == SGI_VOLUME) && (first != 0 || last != sgi_get_lastblock()))
+	if ((sys == SGI_VOLUME) && (first != 0 || last != sgi_get_lastblock(cxt)))
 		printf(_("It is highly recommended that eleventh partition\n"
 			 "covers the entire disk and is of type `SGI volume'\n"));
 	sgi_set_partition(cxt, n, first, last-first, sys);
@@ -741,23 +741,23 @@ create_sgilabel(struct fdisk_context *cxt)
 	if (ioctl(cxt->dev_fd, HDIO_GETGEO, &geometry) < 0)
 		err(EXIT_FAILURE, _("HDIO_GETGEO ioctl failed on %s"), cxt->dev_path);
 
-	heads = geometry.heads;
-	sectors = geometry.sectors;
+	cxt->geom.heads = geometry.heads;
+	cxt->geom.sectors = geometry.sectors;
 	if (res == 0) {
 		/* the get device size ioctl was successful */
 	        sector_t llcyls;
-		llcyls = llsectors / (heads * sectors * sec_fac);
-		cylinders = llcyls;
-		if (cylinders != llcyls)	/* truncated? */
-			cylinders = ~0;
+		llcyls = llsectors / (cxt->geom.heads * cxt->geom.sectors * sec_fac);
+		cxt->geom.cylinders = llcyls;
+		if (cxt->geom.cylinders != llcyls)	/* truncated? */
+			cxt->geom.cylinders = ~0;
 	} else {
 		/* otherwise print error and use truncated version */
-		cylinders = geometry.cylinders;
+		cxt->geom.cylinders = geometry.cylinders;
 		fprintf(stderr,
 			_("Warning:  BLKGETSIZE ioctl failed on %s.  "
-			  "Using geometry cylinder value of %d.\n"
+			  "Using geometry cylinder value of %llu.\n"
 			  "This value may be truncated for devices"
-			  " > 33.8 GB.\n"), cxt->dev_path, cylinders);
+			  " > 33.8 GB.\n"), cxt->dev_path, cxt->geom.cylinders);
 	}
 #endif
 	for (i = 0; i < 4; i++) {
