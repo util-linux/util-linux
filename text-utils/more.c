@@ -177,6 +177,7 @@ int		soglitch;		/* terminal has standout mode glitch */
 int		ulglitch;		/* terminal has underline mode glitch */
 int		pstate = 0;		/* current UL state */
 static int	magic(FILE *, char *);
+char		*previousre;		/* previous search() buf[] item */
 struct {
     long chrctr, line;
 } context, screen_start;
@@ -420,6 +421,7 @@ int main(int argc, char **argv) {
 	    }
 	    if (srchopt)
 	    {
+		previousre = xstrdup(initbuf);
 		search (initbuf, stdin, 1);
 		if (noscroll)
 		    left--;
@@ -441,6 +443,7 @@ int main(int argc, char **argv) {
 	    if (firstf) {
 		firstf = 0;
 		if (srchopt) {
+		    previousre = xstrdup(initbuf);
 		    search (initbuf, f, 1);
 		    if (noscroll)
 			left--;
@@ -492,6 +495,7 @@ int main(int argc, char **argv) {
 	fnum++;
 	firstf = 0;
     }
+    free (previousre);
     reset_tty ();
     exit(EXIT_SUCCESS);
 }
@@ -1332,6 +1336,10 @@ int command (char *filename, register FILE *f)
 	    fflush (stdout);
 	    break;
 	case 'n':
+	    if (!previousre) {
+	        more_error (_("No previous regular expression"));
+	        break;
+            }
 	    lastp++;
 	    /* fallthrough */
 	case '/':
@@ -1342,11 +1350,13 @@ int command (char *filename, register FILE *f)
 	    fflush (stdout);
 	    if (lastp) {
 		putcerr('\r');
-		search (NULL, f, nlines);	/* Use previous r.e. */
+		search (previousre, f, nlines);
 	    }
 	    else {
 		ttyin (cmdbuf, sizeof(cmdbuf)-2, '/');
 		putcerr('\r');
+		free (previousre);
+		previousre = xstrdup(cmdbuf);
 		search (cmdbuf, f, nlines);
 	    }
 	    ret (dlines-1);
@@ -1647,6 +1657,8 @@ void search(char buf[], FILE *file, register int n)
 	    end_it (0);
 	}
 	more_error (_("Pattern not found"));
+	free (previousre);
+	previousre = NULL;
     }
 }
 
