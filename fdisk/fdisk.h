@@ -35,6 +35,7 @@
 /* fdisk debugging flags/options */
 #define FDISK_DEBUG_INIT	(1 << 1)
 #define FDISK_DEBUG_CONTEXT	(1 << 2)
+#define FDISK_DEBUG_TOPOLOGY    (1 << 3)
 #define FDISK_DEBUG_ALL		0xFFFF
 
 # define ON_DBG(m, x)	do { \

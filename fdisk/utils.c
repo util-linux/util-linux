@@ -85,6 +85,11 @@ static int __discover_topology(struct fdisk_context *cxt)
 	if (!cxt->phy_sector_size) /* could not discover physical size */
 		cxt->phy_sector_size = cxt->sector_size;
 
+	DBG(TOPOLOGY, dbgprint("topology discovered for %s:\n"
+			       "\tlogical/physical sector sizes: %ld/%ld\n"
+			       "\tfdisk/minimal/optimal io sizes: %ld/%ld/%ld\n",
+			       cxt->dev_path, cxt->sector_size, cxt->phy_sector_size,
+			       cxt->io_size, cxt->optimal_io_size, cxt->min_io_size));
 	return 0;
 }
 
