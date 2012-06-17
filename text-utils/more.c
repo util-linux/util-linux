@@ -318,7 +318,6 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 int main(int argc, char **argv) {
     FILE	*f;
     char	*s;
-    char	*p;
     int		ch;
     int		left;
     int		prnames = 0;
@@ -326,7 +325,7 @@ int main(int argc, char **argv) {
     int		srchopt = 0;
     int		clearit = 0;
     int		initline = 0;
-    char	initbuf[INIT_BUF];
+    char	*initbuf = NULL;
 
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
@@ -359,9 +358,7 @@ int main(int argc, char **argv) {
 	    s = *fnames;
 	    if (*++s == '/') {
 		srchopt++;
-		for (++s, p = initbuf; p < initbuf + (INIT_BUF - 1) && *s != '\0';)
-		    *p++ = *s++;
-		*p = '\0';
+		initbuf = xstrdup(s + 1);
 	    }
 	    else {
 		initopt++;
@@ -496,6 +493,7 @@ int main(int argc, char **argv) {
 	firstf = 0;
     }
     free (previousre);
+    free (initbuf);
     reset_tty ();
     exit(EXIT_SUCCESS);
 }
