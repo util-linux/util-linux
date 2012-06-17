@@ -116,23 +116,6 @@ sgi_get_ntrks(struct fdisk_context *cxt) {
 	return SSWAP16(sgilabel->devparam.ntrks);
 }
 
-#if 0
-static int
-sgi_get_head_vol0(void) {
-	return SSWAP16(sgilabel->devparam.head_vol0);
-}
-
-static int
-sgi_get_bytes(void) {
-	return SSWAP16(sgilabel->devparam.bytes);
-}
-
-static int
-sgi_get_pcylcount(void) {
-	return SSWAP16(sgilabel->devparam.pcylcount);
-}
-#endif
-
 void
 sgi_nolabel(struct fdisk_context *cxt) {
 	sgilabel->magic = 0;
