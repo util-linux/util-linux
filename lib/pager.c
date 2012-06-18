@@ -200,7 +200,8 @@ void setup_pager(void)
 
 #define MAX 255
 
-int main(int argc, char *argv[])
+int main(int argc __attribute__ ((__unused__)),
+	 char *argv[] __attribute__ ((__unused__)))
 {
 	int i;
 

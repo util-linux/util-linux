@@ -86,7 +86,6 @@ int (*getopt_long_fp) (int argc, char *const *argv, const char *optstr,
 static const char *normalize(const char *arg);
 static int generate_output(char *argv[], int argc, const char *optstr,
 			   const struct option *longopts);
-int main(int argc, char *argv[]);
 static void parse_error(const char *message);
 static void add_long_options(char *options);
 static void add_longopt(const char *name, int has_arg);

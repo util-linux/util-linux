@@ -48,6 +48,7 @@
  * API.
  */
 
+#ifdef CONFIG_BLKID_VERIFY_UDEV
 /* returns zero when the device has NAME=value (LABEL/UUID) */
 static int verify_tag(const char *devname, const char *name, const char *value)
 {
@@ -91,6 +92,7 @@ done:
 	/* for non-root users we use unverified udev links */
 	return errsv == EACCES ? 0 : rc;
 }
+#endif /* CONFIG_BLKID_VERIFY_UDEV*/
 
 /**
  * blkid_send_uevent:
@@ -169,8 +171,10 @@ static char *evaluate_by_udev(const char *token, const char *value, int uevent)
 	if (!path)
 		return NULL;
 
+#ifdef CONFIG_BLKID_VERIFY_UDEV
 	if (verify_tag(path, token, value))
 		goto failed;
+#endif
 	return path;
 
 failed:

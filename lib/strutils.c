@@ -9,10 +9,10 @@
 #include <ctype.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include <locale.h>
 #include <string.h>
 
 #include "c.h"
+#include "nls.h"
 #include "strutils.h"
 #include "bitops.h"
 

@@ -839,7 +839,8 @@ char *mnt_get_mountpoint(const char *path)
 			goto err;
 		dir = st.st_dev;
 		if (dir != base) {
-			*(p - 1) = '/';
+			if (p > mnt)
+				*(p - 1) = '/';
 			goto done;
 		}
 		base = dir;

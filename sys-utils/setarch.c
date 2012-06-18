@@ -259,12 +259,12 @@ int main(int argc, char *argv[])
 
   p = program_invocation_short_name;
   if (!strcmp(p, "setarch")) {
-    argv++;
     argc--;
     if (argc < 1)
       show_usage(_("Not enough arguments"));
-    p = argv[0];
-    argv[0] = argv[-1];      /* for getopt_long() to get the program name */
+    p = argv[1];
+    argv[1] = argv[0];		/* for getopt_long() to get the program name */
+    argv++;
     if (!strcmp(p, "-h") || !strcmp(p, "--help"))
       show_help();
     else if (!strcmp(p, "-V") || !strcmp(p, "--version"))

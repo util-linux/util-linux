@@ -21,7 +21,9 @@
 
 #include "env.h"
 
+#ifndef HAVE_ENVIRON_DECL
 extern char **environ;
+#endif
 
 static char * const forbid[] = {
         "_RLD_=",

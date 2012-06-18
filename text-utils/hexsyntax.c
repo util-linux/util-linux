@@ -45,6 +45,7 @@
 #include "hexdump.h"
 #include "nls.h"
 #include "strutils.h"
+#include "c.h"
 
 off_t skip;				/* bytes to skip */
 

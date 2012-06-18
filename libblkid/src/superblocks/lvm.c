@@ -4,6 +4,7 @@
  * Copyright (C) 2001 by Andreas Dilger
  * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2012 Milan Broz <mbroz@redhat.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
@@ -142,6 +143,39 @@ static int probe_lvm1(blkid_probe pr, const struct blkid_idmag *mag)
 	return 0;
 }
 
+struct verity_sb {
+	uint8_t  signature[8];	/* "verity\0\0" */
+	uint32_t version;	/* superblock version */
+	uint32_t hash_type;	/* 0 - Chrome OS, 1 - normal */
+	uint8_t  uuid[16];	/* UUID of hash device */
+	uint8_t  algorithm[32];/* hash algorithm name */
+	uint32_t data_block_size; /* data block in bytes */
+	uint32_t hash_block_size; /* hash block in bytes */
+	uint64_t data_blocks;	/* number of data blocks */
+	uint16_t salt_size;	/* salt size */
+	uint8_t  _pad1[6];
+	uint8_t  salt[256];	/* salt */
+	uint8_t  _pad2[168];
+} __attribute__((packed));
+
+static int probe_verity(blkid_probe pr, const struct blkid_idmag *mag)
+{
+	struct verity_sb *sb;
+	unsigned int version;
+
+	sb = blkid_probe_get_sb(pr, mag, struct verity_sb);
+	if (sb == NULL)
+		return -1;
+
+	version = le32_to_cpu(sb->version);
+	if (version != 1)
+		return 1;
+
+	blkid_probe_set_uuid(pr, sb->uuid);
+	blkid_probe_sprintf_version(pr, "%u", version);
+	return 0;
+}
+
 /* NOTE: the original libblkid uses "lvm2pv" as a name */
 const struct blkid_idinfo lvm2_idinfo =
 {
@@ -177,6 +211,18 @@ const struct blkid_idinfo snapcow_idinfo =
 	.magics		=
 	{
 		{ .magic = "SnAp", .len = 4 },
+		{ NULL }
+	}
+};
+
+const struct blkid_idinfo verity_hash_idinfo =
+{
+	.name		= "DM_verity_hash",
+	.usage		= BLKID_USAGE_CRYPTO,
+	.probefunc	= probe_verity,
+	.magics		=
+	{
+		{ .magic = "verity\0\0", .len = 8 },
 		{ NULL }
 	}
 };

@@ -56,8 +56,10 @@ struct wipe_desc {
 	struct wipe_desc	*next;
 };
 
-#define WP_MODE_PRETTY		0		/* default */
-#define WP_MODE_PARSABLE	1
+enum {
+	WP_MODE_PRETTY,		/* default */
+	WP_MODE_PARSABLE
+};
 
 static const char *type_pattern;
 
@@ -117,6 +119,8 @@ print_all(struct wipe_desc *wp, int mode)
 		case WP_MODE_PARSABLE:
 			print_parsable(wp, n++);
 			break;
+		default:
+			abort();
 		}
 		wp = wp->next;
 	}
@@ -375,7 +379,8 @@ int
 main(int argc, char **argv)
 {
 	struct wipe_desc *wp0 = NULL, *wp;
-	int c, all = 0, has_offset = 0, noact = 0, mode = 0, quiet = 0;
+	int c, all = 0, has_offset = 0, noact = 0, quiet = 0;
+	int mode = WP_MODE_PRETTY;
 
 	static const struct option longopts[] = {
 	    { "all",       0, 0, 'a' },

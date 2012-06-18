@@ -47,15 +47,11 @@
 #ifdef HAVE_LINUX_BLKPG_H
 #include <linux/blkpg.h>
 #endif
-#ifdef HAVE_LIBBLKID
-#include <blkid.h>
-#endif
 
 #include "gpt.h"
 
 unsigned char *MBRbuffer;
 int MBRbuffer_changed;
-struct fdisk_context *cxt = NULL;
 
 #define hex_val(c)	({ \
 				char _c = (c); \
@@ -126,8 +122,7 @@ valid_part_table_flag(unsigned char *b) {
 	return (b[510] == 0x55 && b[511] == 0xaa);
 }
 
-unsigned long long
-get_nr_sects(struct partition *p) {
+sector_t get_nr_sects(struct partition *p) {
 	return read4_little_endian(p->size4);
 }
 
@@ -142,23 +137,14 @@ int	nowarn = 0,			/* no warnings for fdisk -l/-s */
 unsigned int	user_cylinders, user_heads, user_sectors;
 unsigned int   pt_heads, pt_sectors;
 
-unsigned long long sector_offset = 1, sectors;
+sector_t sector_offset = 1, sectors;
 
 unsigned int	heads,
 	cylinders,
-	sector_size = DEFAULT_SECTOR_SIZE,
-	user_set_sector_size = 0,
 	units_per_sector = 1,
 	display_in_cyl_units = 0;
 
-unsigned long long total_number_of_sectors;	/* in logical sectors */
-unsigned long grain = DEFAULT_SECTOR_SIZE,
-	      io_size = DEFAULT_SECTOR_SIZE,
-	      min_io_size = DEFAULT_SECTOR_SIZE,
-	      phy_sector_size = DEFAULT_SECTOR_SIZE,
-	      alignment_offset;
-int has_topology;
-
+unsigned long grain = DEFAULT_SECTOR_SIZE;
 enum labeltype disklabel;	/* Current disklabel */
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
@@ -180,7 +166,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-void fatal(enum failure why)
+void fatal(struct fdisk_context *cxt, enum failure why)
 {
 	close(cxt->dev_fd);
 	switch (why) {
@@ -320,22 +306,22 @@ test_c(char **m, char *mesg) {
 }
 
 static int
-lba_is_aligned(unsigned long long lba)
+lba_is_aligned(struct fdisk_context *cxt, sector_t lba)
 {
-	unsigned int granularity = max(phy_sector_size, min_io_size);
-	unsigned long long offset = (lba * sector_size) & (granularity - 1);
+	unsigned int granularity = max(cxt->phy_sector_size, cxt->min_io_size);
+	sector_t offset = (lba * cxt->sector_size) & (granularity - 1);
 
-	return !((granularity + alignment_offset - offset) & (granularity - 1));
+	return !((granularity + cxt->alignment_offset - offset) & (granularity - 1));
 }
 
-unsigned long long align_lba(unsigned long long lba, int direction)
+sector_t align_lba(struct fdisk_context *cxt, sector_t lba, int direction)
 {
-	unsigned long long res;
+	sector_t res;
 
-	if (lba_is_aligned(lba))
+	if (lba_is_aligned(cxt, lba))
 		res = lba;
 	else {
-		unsigned long long sects_in_phy = grain / sector_size;
+		sector_t sects_in_phy = grain / cxt->sector_size;
 
 		if (lba < sector_offset)
 			res = sector_offset;
@@ -349,8 +335,8 @@ unsigned long long align_lba(unsigned long long lba, int direction)
 		else /* ALIGN_NEAREST */
 			res = ((lba + sects_in_phy / 2) / sects_in_phy) * sects_in_phy;
 
-		if (alignment_offset && !lba_is_aligned(res) &&
-		    res > alignment_offset / sector_size) {
+		if (cxt->alignment_offset && !lba_is_aligned(cxt, res) &&
+		    res > cxt->alignment_offset / cxt->sector_size) {
 			/*
 			 * apply alignment_offset
 			 *
@@ -359,8 +345,8 @@ unsigned long long align_lba(unsigned long long lba, int direction)
 			 * according the offset to be on the physical boundary.
 			 */
 			/* fprintf(stderr, "LBA: %llu apply alignment_offset\n", res); */
-			res -= (max(phy_sector_size, min_io_size) -
-					alignment_offset) / sector_size;
+			res -= (max(cxt->phy_sector_size, cxt->min_io_size) -
+					cxt->alignment_offset) / cxt->sector_size;
 
 			if (direction == ALIGN_UP && res < lba)
 				res += sects_in_phy;
@@ -410,31 +396,31 @@ void update_units(void)
 		units_per_sector = 1;	/* in sectors */
 }
 
-void warn_limits(void)
+void warn_limits(struct fdisk_context *cxt)
 {
-	if (total_number_of_sectors > UINT_MAX && !nowarn) {
-		unsigned long long bytes = total_number_of_sectors * sector_size;
+	if (cxt->total_sectors > UINT_MAX && !nowarn) {
+		unsigned long long bytes = cxt->total_sectors * cxt->sector_size;
 		int giga = bytes / 1000000000;
 		int hectogiga = (giga + 50) / 100;
 
 		fprintf(stderr, _("\n"
 "WARNING: The size of this disk is %d.%d TB (%llu bytes).\n"
 "DOS partition table format can not be used on drives for volumes\n"
-"larger than (%llu bytes) for %d-byte sectors. Use parted(1) and GUID \n"
+"larger than (%llu bytes) for %ld-byte sectors. Use parted(1) and GUID \n"
 "partition table format (GPT).\n\n"),
 			hectogiga / 10, hectogiga % 10,
 			bytes,
-			(unsigned long long ) UINT_MAX * sector_size,
-			sector_size);
+			(sector_t ) UINT_MAX * cxt->sector_size,
+			cxt->sector_size);
 	}
 }
 
-void warn_alignment(void)
+void warn_alignment(struct fdisk_context *cxt)
 {
 	if (nowarn)
 		return;
 
-	if (sector_size != phy_sector_size)
+	if (cxt->sector_size != cxt->phy_sector_size)
 		fprintf(stderr, _("\n"
 "The device presents a logical sector size that is smaller than\n"
 "the physical sector size. Aligning to a physical sector (or optimal\n"
@@ -450,64 +436,6 @@ void warn_alignment(void)
 "WARNING: cylinders as display units are deprecated. Use command 'u' to\n"
 "         change units to sectors.\n"));
 
-}
-
-static void
-get_topology(int fd) {
-	int arg;
-#ifdef HAVE_LIBBLKID
-	blkid_probe pr;
-
-	pr = blkid_new_probe();
-	if (pr && blkid_probe_set_device(pr, cxt->dev_fd, 0, 0) == 0) {
-		blkid_topology tp = blkid_probe_get_topology(pr);
-
-		if (tp) {
-			min_io_size = blkid_topology_get_minimum_io_size(tp);
-			io_size = blkid_topology_get_optimal_io_size(tp);
-			phy_sector_size = blkid_topology_get_physical_sector_size(tp);
-			alignment_offset = blkid_topology_get_alignment_offset(tp);
-
-			/* We assume that the device provides topology info if
-			 * optimal_io_size is set or alignment_offset is set or
-			 * minimum_io_size is not power of 2.
-			 *
-			 * See also update_sector_offset().
-			 */
-			if (io_size || alignment_offset ||
-			    (min_io_size & (min_io_size - 1)))
-				has_topology = 1;
-			if (!io_size)
-				/* optimal IO is optional, default to minimum IO */
-				io_size = min_io_size;
-		}
-	}
-	blkid_free_probe(pr);
-#endif
-
-	if (user_set_sector_size)
-		/* fdisk since 2.17 differentiate between logical and physical
-		 * sectors size. For backward compatibility the
-		 *    fdisk -b <sectorsize>
-		 * changes both, logical and physical sector size.
-		 */
-		phy_sector_size = sector_size;
-
-	else if (blkdev_get_sector_size(cxt->dev_fd, &arg) == 0) {
-		sector_size = arg;
-
-		if (!phy_sector_size)
-			phy_sector_size = sector_size;
-	}
-
-	if (!min_io_size)
-		min_io_size = phy_sector_size;
-	if (!io_size)
-		io_size = min_io_size;
-
-	if (sector_size != DEFAULT_SECTOR_SIZE)
-		printf(_("Note: sector size is %d (not %d)\n"),
-		       sector_size, DEFAULT_SECTOR_SIZE);
 }
 
 static void
@@ -546,9 +474,9 @@ get_partition_table_geometry(void) {
  * Sets LBA of the first partition
  */
 void
-update_sector_offset(void)
+update_sector_offset(struct fdisk_context *cxt)
 {
-	grain = io_size;
+	grain = cxt->io_size;
 
 	if (dos_compatible_flag)
 		sector_offset = sectors;	/* usually 63 sectors */
@@ -564,44 +492,44 @@ update_sector_offset(void)
 		 *
 		 * c) or for very small devices use 1 phy.sector
 		 */
-		unsigned long long x = 0;
+		sector_t x = 0;
 
-		if (has_topology) {
-			if (alignment_offset)
-				x = alignment_offset;
-			else if (io_size > 2048 * 512)
-				x = io_size;
+		if (fdisk_dev_has_topology(cxt)) {
+			if (cxt->alignment_offset)
+				x = cxt->alignment_offset;
+			else if (cxt->io_size > 2048 * 512)
+				x = cxt->io_size;
 		}
 		/* default to 1MiB */
 		if (!x)
 			x = 2048 * 512;
 
-		sector_offset = x / sector_size;
+		sector_offset = x / cxt->sector_size;
 
 		/* don't use huge offset on small devices */
-		if (total_number_of_sectors <= sector_offset * 4)
-			sector_offset = phy_sector_size / sector_size;
+		if (cxt->total_sectors <= sector_offset * 4)
+			sector_offset = cxt->phy_sector_size / cxt->sector_size;
 
 		/* use 1MiB grain always when possible */
 		if (grain < 2048 * 512)
 			grain = 2048 * 512;
 
 		/* don't use huge grain on small devices */
-		if (total_number_of_sectors <= (grain * 4 / sector_size))
-			grain = phy_sector_size;
+		if (cxt->total_sectors <= (grain * 4 / cxt->sector_size))
+			grain = cxt->phy_sector_size;
 	}
 }
 
 void
-get_geometry(int fd, struct geom *g) {
-	unsigned long long llcyls, nsects = 0;
+get_geometry(struct fdisk_context *cxt, struct geom *g)
+{
+	sector_t llcyls;
 	unsigned int kern_heads = 0, kern_sectors = 0;
 
-	get_topology(fd);
 	heads = cylinders = sectors = 0;
 	pt_heads = pt_sectors = 0;
 
-	blkdev_get_geometry(fd, &kern_heads, &kern_sectors);
+	blkdev_get_geometry(cxt->dev_fd, &kern_heads, &kern_sectors);
 	get_partition_table_geometry();
 
 	heads = user_heads ? user_heads :
@@ -611,13 +539,9 @@ get_geometry(int fd, struct geom *g) {
 		pt_sectors ? pt_sectors :
 		kern_sectors ? kern_sectors : 63;
 
-	/* get number of 512-byte sectors, and convert it the real sectors */
-	if (blkdev_get_sectors(fd, &nsects) == 0)
-		total_number_of_sectors = (nsects / (sector_size >> 9));
+	update_sector_offset(cxt);
 
-	update_sector_offset();
-
-	llcyls = total_number_of_sectors / (heads * sectors);
+	llcyls = cxt->total_sectors / (heads * sectors);
 	cylinders = llcyls;
 	if (cylinders != llcyls)	/* truncated? */
 		cylinders = ~0;
@@ -658,7 +582,7 @@ void zeroize_mbr_buffer(void)
  *    0: found or created label
  *    1: I/O error
  */
-static int get_boot(int try_only) {
+static int get_boot(struct fdisk_context *cxt, int try_only) {
 
 	disklabel = ANY_LABEL;
 	memset(MBRbuffer, 0, 512);
@@ -666,19 +590,19 @@ static int get_boot(int try_only) {
 	if (512 != read(cxt->dev_fd, MBRbuffer, 512)) {
 		if (try_only)
 			return 1;
-		fatal(unable_to_read);
+		fatal(cxt, unable_to_read);
 	}
 
-	get_geometry(cxt->dev_fd, NULL);
+	get_geometry(cxt, NULL);
 	update_units();
 
-	if (!check_dos_label())
+	if (!check_dos_label(cxt))
 		if (check_sun_label() || check_sgi_label() || check_aix_label() || check_mac_label())
 			return 0;
 
-	if (check_osf_label()) {
+	if (check_osf_label(cxt)) {
 		/* intialize partitions for BSD as well */
-		dos_init();
+		dos_init(cxt);
 		if (!valid_part_table_flag(MBRbuffer)) {
 			disklabel = OSF_LABEL;
 			return 0;
@@ -695,9 +619,9 @@ static int get_boot(int try_only) {
 		fprintf(stderr,
 			_("Device does not contain a recognized partition table\n"));
 #ifdef __sparc__
-		create_sunlabel();
+		create_sunlabel(cxt);
 #else
-		create_doslabel();
+		create_doslabel(cxt);
 #endif
 	}
 	return 0;
@@ -798,7 +722,8 @@ read_hex(struct systypes *sys)
 }
 
 unsigned int
-read_int_with_suffix(unsigned int low, unsigned int dflt, unsigned int high,
+read_int_with_suffix(struct fdisk_context *cxt,
+	unsigned int low, unsigned int dflt, unsigned int high,
 	 unsigned int base, char *mesg, int *is_suffix_used)
 {
 	unsigned int res;
@@ -897,7 +822,7 @@ read_int_with_suffix(unsigned int low, unsigned int dflt, unsigned int high,
 				unsigned long unit;
 
 				bytes = (unsigned long long) res * absolute;
-				unit = sector_size * units_per_sector;
+				unit = cxt->sector_size * units_per_sector;
 				bytes += unit/2;	/* round */
 				bytes /= unit;
 				res = bytes;
@@ -934,18 +859,19 @@ read_int_with_suffix(unsigned int low, unsigned int dflt, unsigned int high,
  * There is no default if DFLT is not between LOW and HIGH.
  */
 unsigned int
-read_int(unsigned int low, unsigned int dflt, unsigned int high,
+read_int(struct fdisk_context *cxt,
+	 unsigned int low, unsigned int dflt, unsigned int high,
 	 unsigned int base, char *mesg)
 {
-	return read_int_with_suffix(low, dflt, high, base, mesg, NULL);
+	return read_int_with_suffix(cxt, low, dflt, high, base, mesg, NULL);
 }
 
 int
-get_partition_dflt(int warn, int max, int dflt) {
+get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt) {
 	struct pte *pe;
 	int i;
 
-	i = read_int(1, dflt, max, 0, _("Partition number")) - 1;
+	i = read_int(cxt, 1, dflt, max, 0, _("Partition number")) - 1;
 	pe = &ptes[i];
 
 	if (warn) {
@@ -963,14 +889,14 @@ get_partition_dflt(int warn, int max, int dflt) {
 }
 
 int
-get_partition(int warn, int max) {
-	return get_partition_dflt(warn, max, 0);
+get_partition(struct fdisk_context *cxt, int warn, int max) {
+	return get_partition_dflt(cxt, warn, max, 0);
 }
 
 /* User partition selection unless one partition only is available */
 
 static int
-get_existing_partition(int warn, int max) {
+get_existing_partition(struct fdisk_context *cxt, int warn, int max) {
 	int pno = -1;
 	int i;
 
@@ -997,7 +923,7 @@ get_existing_partition(int warn, int max) {
 
 not_implemented:
 not_unique:
-	return get_partition(warn, max);
+	return get_partition(cxt, warn, max);
 }
 
 const char *
@@ -1033,18 +959,18 @@ toggle_active(int i) {
 }
 
 static void
-toggle_dos_compatibility_flag(void) {
+toggle_dos_compatibility_flag(struct fdisk_context *cxt) {
 	dos_compatible_flag = ~dos_compatible_flag;
 	if (dos_compatible_flag)
 		printf(_("DOS Compatibility flag is set (DEPRECATED!)\n"));
 	else
 		printf(_("DOS Compatibility flag is not set\n"));
 
-	update_sector_offset();
+	update_sector_offset(cxt);
 }
 
 static void
-delete_partition(int i)
+delete_partition(struct fdisk_context *cxt, int i)
 {
 	if (i < 0)
 		return;
@@ -1059,18 +985,18 @@ delete_partition(int i)
 	else if (disklabel == SUN_LABEL)
 		sun_delete_partition(i);
 	else if (disklabel == SGI_LABEL)
-		sgi_delete_partition(i);
+		sgi_delete_partition(cxt, i);
 
 	printf(_("Partition %d is deleted\n"), i + 1);
 }
 
-static void
-change_sysid(void) {
+static void change_sysid(struct fdisk_context *cxt)
+{
 	char *temp;
 	int i, sys, origsys;
 	struct partition *p;
 
-	i = get_existing_partition(0, partitions);
+	i = get_existing_partition(cxt, 0, partitions);
 
 	if (i == -1)
 		return;
@@ -1206,16 +1132,16 @@ static void check_consistency(struct partition *p, int partition) {
 }
 
 static void
-check_alignment(unsigned long long lba, int partition)
+check_alignment(struct fdisk_context *cxt, sector_t lba, int partition)
 {
-	if (!lba_is_aligned(lba))
+	if (!lba_is_aligned(cxt, lba))
 		printf(_("Partition %i does not start on physical sector boundary.\n"),
 			partition + 1);
 }
 
 static void
-list_disk_geometry(void) {
-	unsigned long long bytes = total_number_of_sectors * sector_size;
+list_disk_geometry(struct fdisk_context *cxt) {
+	unsigned long long bytes = cxt->total_sectors * cxt->sector_size;
 	long megabytes = bytes/1000000;
 
 	if (megabytes < 10000)
@@ -1229,18 +1155,18 @@ list_disk_geometry(void) {
 	printf(_("%d heads, %llu sectors/track, %d cylinders"),
 	       heads, sectors, cylinders);
 	if (units_per_sector == 1)
-		printf(_(", total %llu sectors"), total_number_of_sectors);
+		printf(_(", total %llu sectors"), cxt->total_sectors);
 	printf("\n");
-	printf(_("Units = %s of %d * %d = %d bytes\n"),
+	printf(_("Units = %s of %d * %ld = %ld bytes\n"),
 	       str_units(PLURAL),
-	       units_per_sector, sector_size, units_per_sector * sector_size);
+	       units_per_sector, cxt->sector_size, units_per_sector * cxt->sector_size);
 
-	printf(_("Sector size (logical/physical): %u bytes / %lu bytes\n"),
-				sector_size, phy_sector_size);
+	printf(_("Sector size (logical/physical): %lu bytes / %lu bytes\n"),
+				cxt->sector_size, cxt->phy_sector_size);
 	printf(_("I/O size (minimum/optimal): %lu bytes / %lu bytes\n"),
-				min_io_size, io_size);
-	if (alignment_offset)
-		printf(_("Alignment offset: %lu bytes\n"), alignment_offset);
+				cxt->min_io_size, cxt->io_size);
+	if (cxt->alignment_offset)
+		printf(_("Alignment offset: %lu bytes\n"), cxt->alignment_offset);
 	if (disklabel == DOS_LABEL)
 		dos_print_mbr_id();
 	printf("\n");
@@ -1382,25 +1308,25 @@ fix_partition_table_order(void) {
 }
 
 static void
-list_table(int xtra) {
+list_table(struct fdisk_context *cxt, int xtra) {
 	struct partition *p;
 	char *type;
 	int i, w;
 
 	if (disklabel == SUN_LABEL) {
-		sun_list_table(xtra);
+		sun_list_table(cxt, xtra);
 		return;
 	}
 
 	if (disklabel == SGI_LABEL) {
-		sgi_list_table(xtra);
+		sgi_list_table(cxt, xtra);
 		return;
 	}
 
-	list_disk_geometry();
+	list_disk_geometry(cxt);
 
 	if (disklabel == OSF_LABEL) {
-		xbsd_print_disklabel(xtra);
+		xbsd_print_disklabel(cxt, xtra);
 		return;
 	}
 
@@ -1430,12 +1356,12 @@ list_table(int xtra) {
 			unsigned int pblocks = psects;
 			unsigned int podd = 0;
 
-			if (sector_size < 1024) {
-				pblocks /= (1024 / sector_size);
-				podd = psects % (1024 / sector_size);
+			if (cxt->sector_size < 1024) {
+				pblocks /= (1024 / cxt->sector_size);
+				podd = psects % (1024 / cxt->sector_size);
 			}
-			if (sector_size > 1024)
-				pblocks *= (sector_size / 1024);
+			if (cxt->sector_size > 1024)
+				pblocks *= (cxt->sector_size / 1024);
                         printf(
 			    "%s  %c %11lu %11lu %11lu%c  %2x  %s\n",
 			partname(cxt->dev_path, i+1, w+2),
@@ -1449,7 +1375,7 @@ list_table(int xtra) {
 /* type name */		(type = partition_type(p->sys_ind)) ?
 			type : _("Unknown"));
 			check_consistency(p, i);
-			check_alignment(get_partition_start(pe), i);
+			check_alignment(cxt, get_partition_start(pe), i);
 		}
 	}
 
@@ -1462,7 +1388,7 @@ list_table(int xtra) {
 }
 
 static void
-x_list_table(int extend) {
+x_list_table(struct fdisk_context *cxt, int extend) {
 	struct pte *pe;
 	struct partition *p;
 	int i;
@@ -1484,13 +1410,13 @@ x_list_table(int extend) {
 				(unsigned long) get_nr_sects(p), p->sys_ind);
 			if (p->sys_ind) {
 				check_consistency(p, i);
-				check_alignment(get_partition_start(pe), i);
+				check_alignment(cxt, get_partition_start(pe), i);
 			}
 		}
 	}
 }
 
-void fill_bounds(unsigned long long *first, unsigned long long *last)
+void fill_bounds(sector_t *first, sector_t *last)
 {
 	int i;
 	struct pte *pe = &ptes[0];
@@ -1535,10 +1461,9 @@ check(int n, unsigned int h, unsigned int s, unsigned int c,
 }
 
 static void
-verify(void) {
+verify(struct fdisk_context *cxt) {
 	int i, j;
-	unsigned long long total = 1;
-	unsigned long long n_sectors = total_number_of_sectors;
+	sector_t total = 1, n_sectors = cxt->total_sectors;
 	unsigned long long first[partitions], last[partitions];
 	struct partition *p;
 
@@ -1562,7 +1487,7 @@ verify(void) {
 		p = pe->part_table;
 		if (p->sys_ind && !IS_EXTENDED (p->sys_ind)) {
 			check_consistency(p, i);
-			check_alignment(get_partition_start(pe), i);
+			check_alignment(cxt, get_partition_start(pe), i);
 			if (get_partition_start(pe) < first[i])
 				printf(_("Warning: bad start-of-data in "
 					"partition %d\n"), i + 1);
@@ -1584,7 +1509,7 @@ verify(void) {
 
 	if (extended_offset) {
 		struct pte *pex = &ptes[ext_index];
-		unsigned long long e_last = get_start_sect(pex->part_table) +
+		sector_t e_last = get_start_sect(pex->part_table) +
 			get_nr_sects(pex->part_table) - 1;
 
 		for (i = 4; i < partitions; i++) {
@@ -1606,30 +1531,31 @@ verify(void) {
 		printf(_("Total allocated sectors %llu greater than the maximum"
 			" %llu\n"), total, n_sectors);
 	else if (total < n_sectors)
-		printf(_("Remaining %lld unallocated %d-byte sectors\n"),
-		       n_sectors - total, sector_size);
+		printf(_("Remaining %lld unallocated %ld-byte sectors\n"),
+		       n_sectors - total, cxt->sector_size);
 }
 
-void print_partition_size(int num, unsigned long long start, unsigned long long stop, int sysid)
+void print_partition_size(struct fdisk_context *cxt,
+			  int num, sector_t start, sector_t stop, int sysid)
 {
 	char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
-				     (stop - start + 1) * sector_size);
+				     (stop - start + 1) * cxt->sector_size);
 	printf(_("Partition %d of type %s and of size %s is set\n"), num, partition_type(sysid), str);
 	free(str);
 }
 
-static void new_partition(void)
+static void new_partition(struct fdisk_context *cxt)
 {
 	if (warn_geometry())
 		return;
 
 	if (disklabel == SUN_LABEL) {
-		add_sun_partition(get_partition(0, partitions), LINUX_NATIVE);
+		add_sun_partition(cxt, get_partition(cxt, 0, partitions), LINUX_NATIVE);
 		return;
 	}
 
 	if (disklabel == SGI_LABEL) {
-		sgi_add_partition(get_partition(0, partitions), LINUX_NATIVE);
+		sgi_add_partition(cxt, get_partition(cxt, 0, partitions), LINUX_NATIVE);
 		return;
 	}
 
@@ -1652,18 +1578,18 @@ static void new_partition(void)
 	}
 
 	/* default to DOS/BSD */
-	dos_new_partition();
+	dos_new_partition(cxt);
 }
 
 static void
-write_table(void) {
+write_table(struct fdisk_context *cxt) {
 	int i;
 
 	if (disklabel == DOS_LABEL)
-		dos_write_table();
+		dos_write_table(cxt);
 	else if (disklabel == SGI_LABEL)
 		/* no test on change? the printf below might be mistaken */
-		sgi_write_table();
+		sgi_write_table(cxt);
 	else if (disklabel == SUN_LABEL) {
 		int needw = 0;
 
@@ -1671,15 +1597,15 @@ write_table(void) {
 			if (ptes[i].changed)
 				needw = 1;
 		if (needw)
-			sun_write_table();
+			sun_write_table(cxt);
 	}
 
 	printf(_("The partition table has been altered!\n\n"));
-	reread_partition_table(1);
+	reread_partition_table(cxt, 1);
 }
 
 void
-reread_partition_table(int leave) {
+reread_partition_table(struct fdisk_context *cxt, int leave) {
 	int i;
 	struct stat statbuf;
 
@@ -1722,10 +1648,10 @@ reread_partition_table(int leave) {
 
 #define MAX_PER_LINE	16
 static void
-print_buffer(unsigned char pbuffer[]) {
+print_buffer(struct fdisk_context *cxt, unsigned char pbuffer[]) {
 	unsigned int i, l;
 
-	for (i = 0, l = 0; i < sector_size; i++, l++) {
+	for (i = 0, l = 0; i < cxt->sector_size; i++, l++) {
 		if (l == 0)
 			printf("0x%03X:", i);
 		printf(" %02X", pbuffer[i]);
@@ -1739,19 +1665,19 @@ print_buffer(unsigned char pbuffer[]) {
 	printf("\n");
 }
 
-static void
-print_raw(void) {
+static void print_raw(struct fdisk_context *cxt)
+{
 	int i;
 
 	printf(_("Device: %s\n"), cxt->dev_path);
 	if (disklabel == SUN_LABEL || disklabel == SGI_LABEL)
-		print_buffer(MBRbuffer);
+		print_buffer(cxt, MBRbuffer);
 	else for (i = 3; i < partitions; i++)
-		print_buffer(ptes[i].sectorbuffer);
+		     print_buffer(cxt, ptes[i].sectorbuffer);
 }
 
 static void
-move_begin(int i) {
+move_begin(struct fdisk_context *cxt, int i) {
 	struct pte *pe = &ptes[i];
 	struct partition *p = pe->part_table;
 	unsigned int new, free_start, curr_start, last;
@@ -1788,7 +1714,7 @@ move_begin(int i) {
 
 	last = get_partition_start(pe) + get_nr_sects(p) - 1;
 
-	new = read_int(free_start, curr_start, last, free_start,
+	new = read_int(cxt, free_start, curr_start, last, free_start,
 		       _("New beginning of data")) - pe->offset;
 
 	if (new != get_nr_sects(p)) {
@@ -1807,7 +1733,7 @@ static void __attribute__ ((__noreturn__)) handle_quit(struct fdisk_context *cxt
 }
 
 static void
-expert_command_prompt(void)
+expert_command_prompt(struct fdisk_context *cxt)
 {
 	char c;
 
@@ -1817,82 +1743,82 @@ expert_command_prompt(void)
 		switch (c) {
 		case 'a':
 			if (disklabel == SUN_LABEL)
-				sun_set_alt_cyl();
+				sun_set_alt_cyl(cxt);
 			break;
 		case 'b':
 			if (disklabel == DOS_LABEL)
-				move_begin(get_partition(0, partitions));
+				move_begin(cxt, get_partition(cxt, 0, partitions));
 			break;
 		case 'c':
 			user_cylinders = cylinders =
-				read_int(1, cylinders, 1048576, 0,
+				read_int(cxt, 1, cylinders, 1048576, 0,
 					 _("Number of cylinders"));
 			if (disklabel == SUN_LABEL)
 				sun_set_ncyl(cylinders);
 			break;
 		case 'd':
-			print_raw();
+			print_raw(cxt);
 			break;
 		case 'e':
 			if (disklabel == SGI_LABEL)
 				sgi_set_xcyl();
 			else if (disklabel == SUN_LABEL)
-				sun_set_xcyl();
+				sun_set_xcyl(cxt);
 			else
 			if (disklabel == DOS_LABEL)
-				x_list_table(1);
+				x_list_table(cxt, 1);
 			break;
 		case 'f':
 			if (disklabel == DOS_LABEL)
 				fix_partition_table_order();
 			break;
 		case 'g':
-			create_sgilabel();
+			create_sgilabel(cxt);
 			break;
 		case 'h':
-			user_heads = heads = read_int(1, heads, 256, 0,
+			user_heads = heads = read_int(cxt, 1, heads, 256, 0,
 					 _("Number of heads"));
 			update_units();
 			break;
 		case 'i':
 			if (disklabel == SUN_LABEL)
-				sun_set_ilfact();
+				sun_set_ilfact(cxt);
 			else if (disklabel == DOS_LABEL)
 				dos_set_mbr_id();
 			break;
 		case 'o':
 			if (disklabel == SUN_LABEL)
-				sun_set_rspeed();
+				sun_set_rspeed(cxt);
 			break;
 		case 'p':
 			if (disklabel == SUN_LABEL)
-				list_table(1);
+				list_table(cxt, 1);
 			else
-				x_list_table(0);
+				x_list_table(cxt, 0);
 			break;
 		case 'q':
 			handle_quit(cxt);
 		case 'r':
 			return;
 		case 's':
-			user_sectors = sectors = read_int(1, sectors, 63, 0,
+			user_sectors = sectors = read_int(cxt, 1, sectors, 63, 0,
 					   _("Number of sectors"));
 			if (dos_compatible_flag)
 				fprintf(stderr, _("Warning: setting "
 					"sector offset for DOS "
 					"compatiblity\n"));
-			update_sector_offset();
+			update_sector_offset(cxt);
 			update_units();
 			break;
 		case 'v':
-			verify();
+			verify(cxt);
 			break;
 		case 'w':
-			write_table(); 	/* does not return */
+			write_table(cxt);
 			break;
 		case 'y':
 			if (disklabel == SUN_LABEL)
-				sun_set_pcylcount();
+				sun_set_pcylcount(cxt);
 			break;
 		default:
 			print_menu(EXPERT_MENU);
@@ -1921,25 +1847,25 @@ gpt_warning(char *dev)
 }
 
 /* Print disk geometry and partition table of a specified device (-l option) */
-
-static void
-print_partition_table_from_option(char *device)
+static void print_partition_table_from_option(char *device, unsigned long sector_size)
 {
 	int gb;
 
-	cxt = fdisk_new_context_from_filename(device, 1);	/* read-only */
+	struct fdisk_context *cxt = fdisk_new_context_from_filename(device, 1);	/* read-only */
 	if (!cxt)
 		err(EXIT_FAILURE, _("unable to open %s"), device);
+	if (sector_size)  /* passed -b option, override autodiscovery */
+		cxt->phy_sector_size = cxt->sector_size = sector_size;
 
 	gpt_warning(device);
-	gb = get_boot(1);
+	gb = get_boot(cxt, 1);
 	if (gb < 0) { /* no DOS signature */
-		list_disk_geometry();
+		list_disk_geometry(cxt);
 		if (disklabel != AIX_LABEL && disklabel != MAC_LABEL)
-			btrydev(device);
+			btrydev(cxt);
 	}
 	else if (!gb)
-		list_table(0);
+		list_table(cxt, 0);
 	fdisk_free_context(cxt);
 	cxt = NULL;
 }
@@ -1949,7 +1875,7 @@ print_partition_table_from_option(char *device)
  * try all things in /proc/partitions that look like a full disk
  */
 static void
-print_all_partition_table_from_option(void)
+print_all_partition_table_from_option(unsigned long sector_size)
 {
 	FILE *procpt;
 	char line[128], ptname[128], devname[256];
@@ -1971,7 +1897,7 @@ print_all_partition_table_from_option(void)
 			char *cn = canonicalize_path(devname);
 			if (cn) {
 				if (!is_ide_cdrom_or_tape(cn))
-					print_partition_table_from_option(cn);
+					print_partition_table_from_option(cn, sector_size);
 				free(cn);
 			}
 		}
@@ -1984,7 +1910,16 @@ unknown_command(int c) {
 	printf(_("%c: unknown command\n"), c);
 }
 
-static void command_prompt(void)
+static void print_welcome(void)
+{
+	printf(_("Welcome to fdisk (%s).\n\n"
+		 "Changes will remain in memory only, until you decide to write them.\n"
+		 "Be careful before using the write command.\n\n"), PACKAGE_STRING);
+
+	fflush(stdout);
+}
+
+static void command_prompt(struct fdisk_context *cxt)
 {
 	int c;
 
@@ -1994,7 +1929,7 @@ static void command_prompt(void)
 		printf(_("Detected an OSF/1 disklabel on %s, entering "
 			 "disklabel mode.\n"),
 		       cxt->dev_path);
-		bsd_command_prompt();
+		bsd_command_prompt(cxt);
 		/* If we return we may want to make an empty DOS label? */
 		disklabel = DOS_LABEL;
 	}
@@ -2005,13 +1940,13 @@ static void command_prompt(void)
 		switch (c) {
 		case 'a':
 			if (disklabel == DOS_LABEL)
-				toggle_active(get_partition(1, partitions));
+				toggle_active(get_partition(cxt, 1, partitions));
 			else if (disklabel == SUN_LABEL)
-				toggle_sunflags(get_partition(1, partitions),
+				toggle_sunflags(get_partition(cxt, 1, partitions),
 						SUN_FLAG_UNMNT);
 			else if (disklabel == SGI_LABEL)
 				sgi_set_bootpartition(
-					get_partition(1, partitions));
+					get_partition(cxt, 1, partitions));
 			else
 				unknown_command(c);
 			break;
@@ -2020,25 +1955,25 @@ static void command_prompt(void)
 				sgi_set_bootfile();
 			else if (disklabel == DOS_LABEL) {
 				disklabel = OSF_LABEL;
-				bsd_command_prompt();
+				bsd_command_prompt(cxt);
 				disklabel = DOS_LABEL;
 			} else
 				unknown_command(c);
 			break;
 		case 'c':
 			if (disklabel == DOS_LABEL)
-				toggle_dos_compatibility_flag();
+				toggle_dos_compatibility_flag(cxt);
 			else if (disklabel == SUN_LABEL)
-				toggle_sunflags(get_partition(1, partitions),
+				toggle_sunflags(get_partition(cxt, 1, partitions),
 						SUN_FLAG_RONLY);
 			else if (disklabel == SGI_LABEL)
 				sgi_set_swappartition(
-						get_partition(1, partitions));
+					get_partition(cxt, 1, partitions));
 			else
 				unknown_command(c);
 			break;
 		case 'd':
-			delete_partition(get_existing_partition(1, partitions));
+			delete_partition(cxt, get_existing_partition(cxt, 1, partitions));
 			break;
 		case 'i':
 			if (disklabel == SGI_LABEL)
@@ -2053,33 +1988,33 @@ static void command_prompt(void)
 			print_menu(MAIN_MENU);
 			break;
 		case 'n':
-			new_partition();
+			new_partition(cxt);
 			break;
 		case 'o':
-			create_doslabel();
+			create_doslabel(cxt);
 			break;
 		case 'p':
-			list_table(0);
+			list_table(cxt, 0);
 			break;
 		case 'q':
 			handle_quit(cxt);
 		case 's':
-			create_sunlabel();
+			create_sunlabel(cxt);
 			break;
 		case 't':
-			change_sysid();
+			change_sysid(cxt);
 			break;
 		case 'u':
 			change_units();
 			break;
 		case 'v':
-			verify();
+			verify(cxt);
 			break;
 		case 'w':
-			write_table(); 		/* does not return */
+			write_table(cxt);
 			break;
 		case 'x':
-			expert_command_prompt();
+			expert_command_prompt(cxt);
 			break;
 		default:
 			unknown_command(c);
@@ -2088,15 +2023,17 @@ static void command_prompt(void)
 	}
 }
 
-static unsigned long long get_dev_blocks(char *dev)
+static sector_t get_dev_blocks(char *dev)
 {
 	int fd;
-	unsigned long long size;
+	sector_t size;
 
 	if ((fd = open(dev, O_RDONLY)) < 0)
 		err(EXIT_FAILURE, _("unable to open %s"), dev);
-	if (blkdev_get_sectors(fd, &size) == -1)
-		fatal(ioctl_error);
+	if (blkdev_get_sectors(fd, &size) == -1) {
+		close(fd);
+		err(EXIT_FAILURE, _("BLKGETSIZE ioctl failed on %s"), dev);
+	}
 	close(fd);
 	return size/2;
 }
@@ -2104,6 +2041,8 @@ static unsigned long long get_dev_blocks(char *dev)
 int main(int argc, char **argv)
 {
 	int c, optl = 0, opts = 0;
+	unsigned long sector_size = 0;
+	struct fdisk_context *cxt = NULL;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -2122,7 +2061,6 @@ int main(int argc, char **argv)
 			    sector_size != 2048 && sector_size != 4096)
 				usage(stderr);
 			sector_offset = 2;
-			user_set_sector_size = 1;
 			break;
 		case 'C':
 			user_cylinders =  strtou32_or_err(optarg, _("invalid cylinders argument"));
@@ -2171,7 +2109,7 @@ int main(int argc, char **argv)
 
 	fdisk_init_debug(0);
 
-	if (user_set_sector_size && argc-optind != 1)
+	if (sector_size && argc-optind != 1)
 		printf(_("Warning: the -b (set sector size) option should"
 			 " be used with one specified device\n"));
 
@@ -2182,10 +2120,10 @@ int main(int argc, char **argv)
 		if (argc > optind) {
 			int k;
 			for (k = optind; k < argc; k++)
-				print_partition_table_from_option(argv[k]);
+				print_partition_table_from_option(argv[k], sector_size);
 		} else
-			print_all_partition_table_from_option();
-		exit(0);
+			print_all_partition_table_from_option(sector_size);
+		exit(EXIT_SUCCESS);
 	}
 
 	if (opts) {
@@ -2207,18 +2145,22 @@ int main(int argc, char **argv)
 		cxt = fdisk_new_context_from_filename(argv[optind], 0);
 		if (!cxt)
 			err(EXIT_FAILURE, _("unable to open %s"), argv[optind]);
+		if (sector_size) /* passed -b option, override autodiscovery */
+			cxt->phy_sector_size = cxt->sector_size = sector_size;
 	}
 	else
 		usage(stderr);
 
-	printf(_("Welcome to fdisk (%s).\n\n"
-		"Changes will remain in memory only, until you decide to write them.\n"
-		"Be careful before using the write command.\n\n"), PACKAGE_STRING);
+	print_welcome();
+
+	if (!fdisk_dev_sectsz_is_default(cxt))
+		printf(_("Note: sector size is %ld (not %d)\n"),
+		       cxt->sector_size, DEFAULT_SECTOR_SIZE);
 
 	gpt_warning(cxt->dev_path);
-	get_boot(0);
+	get_boot(cxt, 0);
 
-	command_prompt();
+	command_prompt(cxt);
 
 	return 0;
 }

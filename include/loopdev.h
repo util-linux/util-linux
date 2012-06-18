@@ -68,6 +68,7 @@ struct loop_info64 {
 
 struct loopdev_iter {
 	FILE		*proc;		/* /proc/partitions */
+	DIR		*sysblock;	/* /sys/block */
 	int		ncur;		/* current position */
 	int		*minors;	/* ary of minor numbers (when scan whole /dev) */
 	int		nminors;	/* number of items in *minors */

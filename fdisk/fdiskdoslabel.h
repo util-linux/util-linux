@@ -13,7 +13,7 @@ struct pte {
 	struct partition *part_table;	/* points into sectorbuffer */
 	struct partition *ext_pointer;	/* points into sectorbuffer */
 	char changed;			/* boolean */
-	unsigned long long offset;	/* disk sector number */
+	sector_t offset;	        /* disk sector number */
 	unsigned char *sectorbuffer;	/* disk sector contents */
 };
 
@@ -24,7 +24,7 @@ extern int dos_compatible_flag;
 					      (n) * sizeof(struct partition)))
 
 extern int ext_index; /* the prime extended partition */
-extern unsigned long long extended_offset, sector_offset;
+extern sector_t extended_offset, sector_offset;
 
 static inline void write_part_table_flag(unsigned char *b)
 {
@@ -38,20 +38,20 @@ static inline unsigned int part_table_flag(unsigned char *b)
 	return ((unsigned int) b[510]) + (((unsigned int) b[511]) << 8);
 }
 
-static inline unsigned long long get_partition_start(struct pte *pe)
+static inline sector_t get_partition_start(struct pte *pe)
 {
 	return pe->offset + get_start_sect(pe->part_table);
 }
 
-extern void create_doslabel(void);
+extern void create_doslabel(struct fdisk_context *cxt);
 extern void dos_print_mbr_id(void);
 extern void dos_set_mbr_id(void);
 extern void dos_delete_partition(int i);
-extern int check_dos_label(void);
+extern int check_dos_label(struct fdisk_context *cxt);
 extern int is_dos_partition(int t);
-extern void dos_init(void);
-extern void dos_add_partition(int n, int sys);
-extern void dos_new_partition(void);
-extern void dos_write_table(void);
+extern void dos_init(struct fdisk_context *cxt);
+extern void dos_add_partition(struct fdisk_context *cxt, int n, int sys);
+extern void dos_new_partition(struct fdisk_context *cxt);
+extern void dos_write_table(struct fdisk_context *cxt);
 
 #endif

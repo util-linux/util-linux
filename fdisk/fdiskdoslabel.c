@@ -22,13 +22,13 @@
 		s |= (sector >> 2) & 0xc0;			\
 	}
 
-#define alignment_required	(grain != sector_size)
+#define alignment_required	(grain != cxt->sector_size)
 
 struct pte ptes[MAXIMUM_PARTS];
-unsigned long long extended_offset;
+sector_t extended_offset;
 int ext_index;
 
-static int get_nonexisting_partition(int warn, int max)
+static int get_nonexisting_partition(struct fdisk_context *cxt, int warn, int max)
 {
 	int pno = -1;
 	int i;
@@ -54,18 +54,18 @@ static int get_nonexisting_partition(int warn, int max)
 	return -1;
 
  not_unique:
-	return get_partition_dflt(warn, max, dflt);
+	return get_partition_dflt(cxt, warn, max, dflt);
 }
 
 
 /* Allocate a buffer and read a partition table sector */
-static void read_pte(int fd, int pno, unsigned long long offset)
+static void read_pte(struct fdisk_context *cxt, int pno, sector_t offset)
 {
 	struct pte *pe = &ptes[pno];
 
 	pe->offset = offset;
-	pe->sectorbuffer = xmalloc(sector_size);
-	read_sector(fd, offset, pe->sectorbuffer);
+	pe->sectorbuffer = xmalloc(cxt->sector_size);
+	read_sector(cxt, offset, pe->sectorbuffer);
 	pe->changed = 0;
 	pe->part_table = pe->ext_pointer = NULL;
 }
@@ -96,7 +96,7 @@ static void clear_partition(struct partition *p)
 	set_nr_sects(p,0);
 }
 
-void dos_init(void)
+void dos_init(struct fdisk_context *cxt)
 {
 	int i;
 
@@ -116,11 +116,11 @@ void dos_init(void)
 	}
 
 	warn_geometry();
-	warn_limits();
-	warn_alignment();
+	warn_limits(cxt);
+	warn_alignment(cxt);
 }
 
-static void read_extended(int ext)
+static void read_extended(struct fdisk_context *cxt, int ext)
 {
 	int i;
 	struct pte *pex;
@@ -156,7 +156,7 @@ static void read_extended(int ext)
 			return;
 		}
 
-		read_pte(cxt->dev_fd, partitions, extended_offset + get_start_sect(p));
+		read_pte(cxt, partitions, extended_offset + get_start_sect(p));
 
 		if (!extended_offset)
 			extended_offset = get_start_sect(p);
@@ -219,7 +219,7 @@ void dos_print_mbr_id(void)
 	printf(_("Disk identifier: 0x%08x\n"), dos_read_mbr_id(MBRbuffer));
 }
 
-void create_doslabel(void)
+void create_doslabel(struct fdisk_context *cxt)
 {
 	unsigned int id;
 
@@ -228,7 +228,7 @@ void create_doslabel(void)
 
 	fprintf(stderr, _("Building a new DOS disklabel with disk identifier 0x%08x.\n"), id);
 
-	dos_init();
+	dos_init(cxt);
 	zeroize_mbr_buffer();
 
 	set_all_unchanged();
@@ -317,14 +317,14 @@ void dos_delete_partition(int i)
 	}
 }
 
-int check_dos_label(void)
+int check_dos_label(struct fdisk_context *cxt)
 {
 	int i;
 
 	if (!valid_part_table_flag(MBRbuffer))
 		return 0;
 
-	dos_init();
+	dos_init(cxt);
 
 	for (i = 0; i < 4; i++) {
 		struct pte *pe = &ptes[i];
@@ -334,7 +334,7 @@ int check_dos_label(void)
 				fprintf(stderr, _("Ignoring extra extended "
 					"partition %d\n"), i + 1);
 			else
-				read_extended(i);
+				read_extended(cxt, i);
 		}
 	}
 
@@ -368,11 +368,12 @@ int is_dos_partition(int t)
 		t == 0xc1 || t == 0xc4 || t == 0xc6);
 }
 
-static void set_partition(int i, int doext, unsigned long long start,
-			  unsigned long long stop, int sysid)
+static void set_partition(struct fdisk_context *cxt,
+			  int i, int doext, sector_t start,
+			  sector_t stop, int sysid)
 {
 	struct partition *p;
-	unsigned long long offset;
+	sector_t offset;
 
 	if (doext) {
 		p = ptes[i].ext_pointer;
@@ -387,7 +388,7 @@ static void set_partition(int i, int doext, unsigned long long start,
 	set_nr_sects(p, stop - start + 1);
 
 	if (!doext)
-		print_partition_size(i + 1, start, stop, sysid);
+		print_partition_size(cxt, i + 1, start, stop, sysid);
 
 	if (dos_compatible_flag && (start/(sectors*heads) > 1023))
 		start = heads*sectors*1024 - 1;
@@ -398,15 +399,13 @@ static void set_partition(int i, int doext, unsigned long long start,
 	ptes[i].changed = 1;
 }
 
-static unsigned long long get_unused_start(int part_n,
-					   unsigned long long start,
-					   unsigned long long first[],
-					   unsigned long long last[])
+static sector_t get_unused_start(int part_n, sector_t start,
+				 sector_t first[], sector_t last[])
 {
 	int i;
 
 	for (i = 0; i < partitions; i++) {
-		unsigned long long lastplusoff;
+		sector_t lastplusoff;
 
 		if (start == ptes[i].offset)
 			start += sector_offset;
@@ -418,14 +417,13 @@ static unsigned long long get_unused_start(int part_n,
 	return start;
 }
 
-static unsigned long long align_lba_in_range(	unsigned long long lba,
-						unsigned long long start,
-						unsigned long long stop)
+static sector_t align_lba_in_range(struct fdisk_context *cxt,
+				   sector_t lba, sector_t start, sector_t stop)
 {
-	start = align_lba(start, ALIGN_UP);
-	stop = align_lba(stop, ALIGN_DOWN);
+	start = align_lba(cxt, start, ALIGN_UP);
+	stop = align_lba(cxt, stop, ALIGN_DOWN);
 
-	lba = align_lba(lba, ALIGN_NEAREST);
+	lba = align_lba(cxt, lba, ALIGN_NEAREST);
 
 	if (lba < start)
 		return start;
@@ -434,13 +432,13 @@ static unsigned long long align_lba_in_range(	unsigned long long lba,
 	return lba;
 }
 
-void dos_add_partition(int n, int sys)
+void dos_add_partition(struct fdisk_context *cxt, int n, int sys)
 {
 	char mesg[256];		/* 48 does not suffice in Japanese */
 	int i, read = 0;
 	struct partition *p = ptes[n].part_table;
 	struct partition *q = ptes[ext_index].part_table;
-	unsigned long long start, stop = 0, limit, temp,
+	sector_t start, stop = 0, limit, temp,
 		first[partitions], last[partitions];
 
 	if (p && p->sys_ind) {
@@ -451,10 +449,10 @@ void dos_add_partition(int n, int sys)
 	fill_bounds(first, last);
 	if (n < 4) {
 		start = sector_offset;
-		if (display_in_cyl_units || !total_number_of_sectors)
+		if (display_in_cyl_units || !cxt->total_sectors)
 			limit = heads * sectors * cylinders - 1;
 		else
-			limit = total_number_of_sectors - 1;
+			limit = cxt->total_sectors - 1;
 
 		if (limit > UINT_MAX)
 			limit = UINT_MAX;
@@ -474,14 +472,14 @@ void dos_add_partition(int n, int sys)
 
 	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
 	do {
-		unsigned long long dflt, aligned;
+		sector_t dflt, aligned;
 
 		temp = start;
 		dflt = start = get_unused_start(n, start, first, last);
 
 		/* the default sector should be aligned and unused */
 		do {
-			aligned = align_lba_in_range(dflt, dflt, limit);
+			aligned = align_lba_in_range(cxt, dflt, dflt, limit);
 			dflt = get_unused_start(n, aligned, first, last);
 		} while (dflt != aligned && dflt > aligned && dflt < limit);
 
@@ -495,9 +493,9 @@ void dos_add_partition(int n, int sys)
 			read = 0;
 		}
 		if (!read && start == temp) {
-			unsigned long long i = start;
+			sector_t i = start;
 
-			start = read_int(cround(i), cround(dflt), cround(limit),
+			start = read_int(cxt, cround(i), cround(dflt), cround(limit),
 					 0, mesg);
 			if (display_in_cyl_units) {
 				start = (start - 1) * units_per_sector;
@@ -540,8 +538,9 @@ void dos_add_partition(int n, int sys)
 			_("Last %1$s, +%2$s or +size{K,M,G}"),
 			 str_units(SINGULAR), str_units(PLURAL));
 
-		stop = read_int_with_suffix(cround(start), cround(limit), cround(limit),
-				cround(start), mesg, &is_suffix_used);
+		stop = read_int_with_suffix(cxt,
+					    cround(start), cround(limit), cround(limit),
+					    cround(start), mesg, &is_suffix_used);
 		if (display_in_cyl_units) {
 			stop = stop * units_per_sector - 1;
 			if (stop >limit)
@@ -554,15 +553,15 @@ void dos_add_partition(int n, int sys)
 			 * and align the end of the partition. The next
 			 * partition will start at phy.block boundary.
 			 */
-			stop = align_lba_in_range(stop, start, limit) - 1;
+			stop = align_lba_in_range(cxt, stop, start, limit) - 1;
 			if (stop > limit)
 				stop = limit;
 		}
 	}
 
-	set_partition(n, 0, start, stop, sys);
+	set_partition(cxt, n, 0, start, stop, sys);
 	if (n > 4)
-		set_partition(n - 1, 1, ptes[n].offset, stop, EXTENDED);
+		set_partition(cxt, n - 1, 1, ptes[n].offset, stop, EXTENDED);
 
 	if (IS_EXTENDED (sys)) {
 		struct pte *pe4 = &ptes[4];
@@ -571,7 +570,7 @@ void dos_add_partition(int n, int sys)
 		ext_index = n;
 		pen->ext_pointer = p;
 		pe4->offset = extended_offset = start;
-		pe4->sectorbuffer = xcalloc(1, sector_size);
+		pe4->sectorbuffer = xcalloc(1, cxt->sector_size);
 		pe4->part_table = pt_offset(pe4->sectorbuffer, 0);
 		pe4->ext_pointer = pe4->part_table + 1;
 		pe4->changed = 1;
@@ -579,12 +578,12 @@ void dos_add_partition(int n, int sys)
 	}
 }
 
-static void add_logical(void)
+static void add_logical(struct fdisk_context *cxt)
 {
 	if (partitions > 5 || ptes[4].part_table->sys_ind) {
 		struct pte *pe = &ptes[partitions];
 
-		pe->sectorbuffer = xcalloc(1, sector_size);
+		pe->sectorbuffer = xcalloc(1, cxt->sector_size);
 		pe->part_table = pt_offset(pe->sectorbuffer, 0);
 		pe->ext_pointer = pe->part_table + 1;
 		pe->offset = 0;
@@ -592,14 +591,14 @@ static void add_logical(void)
 		partitions++;
 	}
 	printf(_("Adding logical partition %d\n"), partitions);
-	dos_add_partition(partitions - 1, LINUX_NATIVE);
+	dos_add_partition(cxt, partitions - 1, LINUX_NATIVE);
 }
 
 /*
  * Ask the user for new partition type information (logical, extended).
  * This function calls the actual partition adding logic - dos_add_partition.
  */
-void dos_new_partition(void)
+void dos_new_partition(struct fdisk_context *cxt)
 {
 	int i, free_primary = 0;
 
@@ -614,14 +613,14 @@ void dos_new_partition(void)
 	if (!free_primary) {
 		if (extended_offset) {
 			printf(_("All primary partitions are in use\n"));
-			add_logical();
+			add_logical(cxt);
 		} else
 			printf(_("If you want to create more than four partitions, you must replace a\n"
 				 "primary partition with an extended partition first.\n"));
 	} else if (partitions >= MAXIMUM_PARTS) {
 		printf(_("All logical partitions are in use\n"));
 		printf(_("Adding a primary partition\n"));
-		dos_add_partition(get_partition(0, 4), LINUX_NATIVE);
+		dos_add_partition(cxt, get_partition(cxt, 0, 4), LINUX_NATIVE);
 	} else {
 		char c, dflt, line[LINE_LENGTH];
 
@@ -641,24 +640,24 @@ void dos_new_partition(void)
 			printf(_("Using default response %c\n"), c);
 		}
 		if (c == 'p') {
-			int i = get_nonexisting_partition(0, 4);
+			int i = get_nonexisting_partition(cxt, 0, 4);
 			if (i >= 0)
-				dos_add_partition(i, LINUX_NATIVE);
+				dos_add_partition(cxt, i, LINUX_NATIVE);
 			return;
 		} else if (c == 'l' && extended_offset) {
-			add_logical();
+			add_logical(cxt);
 			return;
 		} else if (c == 'e' && !extended_offset) {
-			int i = get_nonexisting_partition(0, 4);
+			int i = get_nonexisting_partition(cxt, 0, 4);
 			if (i >= 0)
-				dos_add_partition(i, EXTENDED);
+				dos_add_partition(cxt, i, EXTENDED);
 			return;
 		} else
 			printf(_("Invalid partition type `%c'\n"), c);
 	}
 }
 
-void dos_write_table(void)
+void dos_write_table(struct fdisk_context *cxt)
 {
 	int i;
 
@@ -670,7 +669,7 @@ void dos_write_table(void)
 	}
 	if (MBRbuffer_changed) {
 		write_part_table_flag(MBRbuffer);
-		write_sector(cxt->dev_fd, 0, MBRbuffer);
+		write_sector(cxt, 0, MBRbuffer);
 	}
 	/* EBR (logical partitions) */
 	for (i = 4; i < partitions; i++) {
@@ -678,7 +677,7 @@ void dos_write_table(void)
 
 		if (pe->changed) {
 			write_part_table_flag(pe->sectorbuffer);
-			write_sector(cxt->dev_fd, pe->offset, pe->sectorbuffer);
+			write_sector(cxt, pe->offset, pe->sectorbuffer);
 		}
 	}
 }

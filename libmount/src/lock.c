@@ -138,6 +138,10 @@ int mnt_lock_use_simplelock(struct libmnt_lock *ml, int enable)
 	ml->simplelock = enable ? 1 : 0;
 
 	sz = strlen(ml->lockfile);
+	assert(sz);
+
+	if (sz < 1)
+		return -EINVAL;
 
 	/* Change lock name:
 	 *

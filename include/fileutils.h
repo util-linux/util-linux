@@ -1,13 +1,13 @@
 #ifndef UTIL_LINUX_FILEUTILS
 #define UTIL_LINUX_FILEUTILS
 
-extern int xmkstemp(char **tmpname);
+extern int xmkstemp(char **tmpname, char *dir);
 
-static inline FILE *xfmkstemp(char **tmpname)
+static inline FILE *xfmkstemp(char **tmpname, char *dir)
 {
 	int fd;
 	FILE *ret;
-	fd = xmkstemp(tmpname);
+	fd = xmkstemp(tmpname, dir);
 	if (fd == -1) {
 		return NULL;
 	}

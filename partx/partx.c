@@ -744,9 +744,8 @@ int main(int argc, char **argv)
 	if (ncolumns && !what)
 		what = ACT_SHOW;
 
-	/* backwardly compatible default */
 	if (!what)
-		what = ACT_LIST;
+		what = ACT_SHOW;
 
 	/* --show default, could by modified by -o  */
 	if (what == ACT_SHOW && !ncolumns) {

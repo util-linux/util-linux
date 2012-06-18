@@ -81,10 +81,11 @@ int setpwnam(struct passwd *pwd)
 	int contlen, rc;
 	char *linebuf = NULL;
 	char *tmpname = NULL;
+	char *atomic_dir = "/etc";
 
 	pw_init();
 
-	if ((fp = xfmkstemp(&tmpname)) == NULL)
+	if ((fp = xfmkstemp(&tmpname, atomic_dir)) == NULL)
 		return -1;
 
 	/* ptmp should be owned by root.root or root.wheel */

@@ -127,6 +127,7 @@ void prepare_line_buffer(void);
 #define INIT_BUF	80
 #define SHELL_LINE	1000
 #define COMMAND_BUF	200
+#define REGERR_BUF	NUM_COLUMNS
 
 struct termios	otty, savetty0;
 long		file_pos, file_size;
@@ -846,7 +847,7 @@ int get_line(register FILE *f, int *length)
     mbstate_t state, state_bak;		/* Current status of the stream. */
     char mbc[MB_LEN_MAX];		/* Buffer for one multibyte char. */
     size_t mblength;			/* Byte length of multibyte char. */
-    size_t mbc_pos = 0;			/* Postion of the MBC. */
+    size_t mbc_pos = 0;			/* Position of the MBC. */
     int use_mbc_buffer_flag = 0;	/* If 1, mbc has data. */
     int break_flag = 0;			/* If 1, exit while(). */
     long file_pos_bak = Ftell (f);
@@ -1583,13 +1584,13 @@ void search(char buf[], FILE *file, register int n)
     register long line3 = startline;
     register int lncount;
     int saveln, rv, rc;
-    char *s;
     regex_t re;
 
     context.line = saveln = Currline;
     context.chrctr = startline;
     lncount = 0;
-    if (rc = regcomp (&re, buf, REG_NOSUB) != 0) {
+    if ((rc = regcomp (&re, buf, REG_NOSUB)) != 0) {
+	char s[REGERR_BUF];
 	regerror (rc, &re, s, sizeof s);
 	more_error (s);
     }
@@ -1634,8 +1635,7 @@ void search(char buf[], FILE *file, register int n)
 		    }
 		    break;
 		}
-	} else if (rv != REG_NOMATCH)
-	    more_error (_("Regular expression botch"));
+	}
     }
     if (feof (file)) {
 	if (!no_intty) {

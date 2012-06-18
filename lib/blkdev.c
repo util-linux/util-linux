@@ -21,8 +21,9 @@
 #endif
 
 #include "blkdev.h"
-#include "linux_version.h"
 #include "c.h"
+#include "linux_version.h"
+#include "xalloc.h"
 
 static long
 blkdev_valid_offset (int fd, off_t offset) {
@@ -286,6 +287,48 @@ int blkdev_get_geometry(int fd, unsigned int *h, unsigned int *s)
 	*s = 0;
 #endif
 	return -1;
+}
+
+/*
+ * Convert scsi type to human readable string.
+ */
+const char *blkdev_scsi_type_to_name(int type)
+{
+	switch (type) {
+	case SCSI_TYPE_DISK:
+		return "disk";
+	case SCSI_TYPE_TAPE:
+		return "tape";
+	case SCSI_TYPE_PRINTER:
+		return "printer";
+	case SCSI_TYPE_PROCESSOR:
+		return "processor";
+	case SCSI_TYPE_WORM:
+		return "worm";
+	case SCSI_TYPE_ROM:
+		return "rom";
+	case SCSI_TYPE_SCANNER:
+		return "scanner";
+	case SCSI_TYPE_MOD:
+		return "mo-disk";
+	case SCSI_TYPE_MEDIUM_CHANGER:
+		return "changer";
+	case SCSI_TYPE_COMM:
+		return "comm";
+	case SCSI_TYPE_RAID:
+		return "raid";
+	case SCSI_TYPE_ENCLOSURE:
+		return "enclosure";
+	case SCSI_TYPE_RBC:
+		return "rbc";
+	case SCSI_TYPE_OSD:
+		return "osd";
+	case SCSI_TYPE_NO_LUN:
+		return "no-lun";
+	default:
+		break;
+	}
+	return NULL;
 }
 
 #ifdef TEST_PROGRAM

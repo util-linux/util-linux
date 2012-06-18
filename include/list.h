@@ -221,7 +221,7 @@ _INLINE_ struct list_head *merge(int (*cmp)(struct list_head *a,
 		}
 		tail = tail->next;
 	}
-	tail->next = a?:b;
+	tail->next = a ? a : b;
 	return head.next;
 }
 
@@ -252,7 +252,7 @@ _INLINE_ void merge_and_restore_back_links(int (*cmp)(struct list_head *a,
 		}
 		tail = tail->next;
 	}
-	tail->next = a ? : b;
+	tail->next = a ? a : b;
 
 	do {
 		/*

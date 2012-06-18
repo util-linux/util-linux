@@ -37,15 +37,8 @@
 
    Based on an implemenation by David MacKenzie <djm@gnu.ai.mit.edu>.  */
 
-#ifndef MAX
-# define MAX(a,b) ((a) > (b) ? (a) : (b))
-#endif
-
-/* Exit statuses for programs like 'env' that exec other programs.
-   EXIT_FAILURE might not be 1, so use EXIT_FAIL in such programs.  */
 enum
 {
-  EXIT_FAIL = 1,
   EXIT_CANNOT_INVOKE = 126,
   EXIT_ENOENT = 127
 };
@@ -62,17 +55,20 @@ enum
 #include <sys/wait.h>
 #include <syslog.h>
 
-#include "error.h"
+#include "err.h"
 
 #include <stdbool.h>
 #include "c.h"
 #include "xalloc.h"
 #include "nls.h"
 #include "pathnames.h"
+#include "env.h"
 
 /* name of the pam configuration files. separate configs for su and su -  */
 #define PAM_SERVICE_NAME "su"
 #define PAM_SERVICE_NAME_L "su-l"
+
+#define is_pam_failure(_rc)	((_rc) != PAM_SUCCESS)
 
 #include "logindefs.h"
 
@@ -82,7 +78,9 @@ enum
 /* The user to become if none is specified.  */
 #define DEFAULT_USER "root"
 
+#ifndef HAVE_ENVIRON_DECL
 extern char **environ;
+#endif
 
 static void run_shell (char const *, char const *, char **, size_t)
      __attribute__ ((__noreturn__));
@@ -104,6 +102,10 @@ static bool _pam_cred_established;
 static sig_atomic_t volatile caught_signal = false;
 static pam_handle_t *pamh = NULL;
 
+enum {
+  VERSION_OPTION = CHAR_MAX + 1,
+  HELP_OPTION
+};
 
 static struct option const longopts[] =
 {
@@ -113,25 +115,10 @@ static struct option const longopts[] =
   {"login", no_argument, NULL, 'l'},
   {"preserve-environment", no_argument, NULL, 'p'},
   {"shell", required_argument, NULL, 's'},
-  {"help", no_argument, 0, 'u'},
-  {"version", no_argument, 0, 'v'},
+  {"help", no_argument, 0, HELP_OPTION},
+  {"version", no_argument, 0, VERSION_OPTION},
   {NULL, 0, NULL, 0}
 };
-
-/* Add NAME=VAL to the environment, checking for out of memory errors.  */
-
-static void
-xsetenv (char const *name, char const *val)
-{
-  size_t namelen = strlen (name);
-  size_t vallen = strlen (val);
-  char *string = xmalloc (namelen + 1 + vallen + 1);
-  strcpy (string, name);
-  string[namelen] = '=';
-  strcpy (string + namelen + 1, val);
-  if (putenv (string) != 0)
-    error (EXIT_FAILURE, 0, _("out of memory"));
-}
 
 /* Log the fact that someone has run su to the user given by PW;
    if SUCCESSFUL is true, they gave the correct password, etc.  */
@@ -169,16 +156,11 @@ static struct pam_conv conv =
   NULL
 };
 
-# define PAM_BAIL_P(a) \
-  if (retval) \
-    { \
-      pam_end (pamh, retval); \
-      a; \
-    }
-
 static void
 cleanup_pam (int retcode)
 {
+  int saved_errno = errno;
+
   if (_pam_session_opened)
     pam_close_session (pamh, 0);
 
@@ -186,6 +168,8 @@ cleanup_pam (int retcode)
     pam_setcred (pamh, PAM_DELETE_CRED | PAM_SILENT);
 
   pam_end(pamh, retcode);
+
+  errno = saved_errno;
 }
 
 /* Signal handler for parent process.  */
@@ -206,7 +190,7 @@ export_pamenv (void)
   while (env && *env)
     {
       if (putenv (*env) != 0)
-	error (EXIT_FAILURE, 0, _("out of memory"));
+	err (EXIT_FAILURE, NULL);
       env++;
     }
 }
@@ -220,10 +204,10 @@ create_watching_parent (void)
   int retval;
 
   retval = pam_open_session (pamh, 0);
-  if (retval != PAM_SUCCESS)
+  if (is_pam_failure(retval))
     {
       cleanup_pam (retval);
-      error (EXIT_FAILURE, 0, _("cannot not open session: %s"),
+      errx (EXIT_FAILURE, _("cannot not open session: %s"),
 	     pam_strerror (pamh, retval));
     }
   else
@@ -233,7 +217,7 @@ create_watching_parent (void)
   if (child == (pid_t) -1)
     {
       cleanup_pam (PAM_ABORT);
-      error (EXIT_FAILURE, errno, _("cannot create child process"));
+      err (EXIT_FAILURE, _("cannot create child process"));
     }
 
   /* the child proceeds to run the shell */
@@ -245,12 +229,12 @@ create_watching_parent (void)
   /* su without pam support does not have a helper that keeps
      sitting on any directory so let's go to /.  */
   if (chdir ("/") != 0)
-    error (0, errno, _("warning: cannot change directory to %s"), "/");
+    warn (_("cannot change directory to %s"), "/");
 
   sigfillset (&ourset);
   if (sigprocmask (SIG_BLOCK, &ourset, NULL))
     {
-      error (0, errno, _("cannot block signals"));
+      warn (_("cannot block signals"));
       caught_signal = true;
     }
   if (!caught_signal)
@@ -264,7 +248,7 @@ create_watching_parent (void)
       {
         if (sigaddset(&ourset, SIGINT) || sigaddset(&ourset, SIGQUIT))
           {
-            error (0, errno, _("cannot set signal handler"));
+            warn (_("cannot set signal handler"));
             caught_signal = true;
           }
       }
@@ -272,13 +256,13 @@ create_watching_parent (void)
                     || sigaddset(&ourset, SIGALRM)
                     || sigaction(SIGTERM, &action, NULL)
                     || sigprocmask(SIG_UNBLOCK, &ourset, NULL))) {
-	  error (0, errno, _("cannot set signal handler"));
+	  warn (_("cannot set signal handler"));
 	  caught_signal = true;
 	}
     if (!caught_signal && !same_session && (sigaction(SIGINT, &action, NULL)
                                      || sigaction(SIGQUIT, &action, NULL)))
       {
-        error (0, errno, _("cannot set signal handler"));
+        warn (_("cannot set signal handler"));
         caught_signal = true;
       }
     }
@@ -326,8 +310,8 @@ create_watching_parent (void)
   exit (status);
 }
 
-static bool
-correct_password (const struct passwd *pw)
+static void
+authenticate (const struct passwd *pw)
 {
   const struct passwd *lpw;
   const char *cp;
@@ -335,7 +319,8 @@ correct_password (const struct passwd *pw)
 
   retval = pam_start (simulate_login ? PAM_SERVICE_NAME_L : PAM_SERVICE_NAME,
 		      pw->pw_name, &conv, &pamh);
-  PAM_BAIL_P (return false);
+  if (is_pam_failure(retval))
+    goto done;
 
   if (isatty (0) && (cp = ttyname (0)) != NULL)
     {
@@ -346,30 +331,40 @@ correct_password (const struct passwd *pw)
       else
 	tty = cp;
       retval = pam_set_item (pamh, PAM_TTY, tty);
-      PAM_BAIL_P (return false);
+      if (is_pam_failure(retval))
+	goto done;
     }
-# if 0 /* Manpage discourages use of getlogin.  */
-  cp = getlogin ();
-  if (!(cp && *cp && (lpw = getpwnam (cp)) != NULL && lpw->pw_uid == getuid ()))
-# endif
+
   lpw = getpwuid (getuid ());
   if (lpw && lpw->pw_name)
     {
       retval = pam_set_item (pamh, PAM_RUSER, (const void *) lpw->pw_name);
-      PAM_BAIL_P (return false);
+      if (is_pam_failure(retval))
+	goto done;
     }
+
   retval = pam_authenticate (pamh, 0);
-  PAM_BAIL_P (return false);
+  if (is_pam_failure(retval))
+    goto done;
+
   retval = pam_acct_mgmt (pamh, 0);
   if (retval == PAM_NEW_AUTHTOK_REQD)
     {
       /* Password has expired.  Offer option to change it.  */
       retval = pam_chauthtok (pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
-      PAM_BAIL_P (return false);
     }
-  PAM_BAIL_P (return false);
-  /* Must be authenticated if this point was reached.  */
-  return true;
+
+done:
+
+  log_su (pw, !is_pam_failure(retval));
+
+  if (is_pam_failure(retval))
+    {
+      const char *msg = pam_strerror(pamh, retval);
+      pam_end(pamh, retval);
+      sleep (getlogindefs_num ("FAIL_DELAY", 1));
+      errx (EXIT_FAILURE, "%s", msg?msg:_("incorrect password"));
+    }
 }
 
 /* Add or clear /sbin and /usr/sbin for the su command
@@ -483,6 +478,20 @@ clearsbin (const char *const path)
   return ret;
 }
 
+static void
+set_path(const struct passwd* pw)
+{
+  int r;
+  if (pw->pw_uid)
+    r = logindefs_setenv("PATH", "ENV_PATH", _PATH_DEFPATH);
+
+  else if ((r = logindefs_setenv("PATH", "ENV_ROOTPATH", NULL)) != 0)
+    r = logindefs_setenv("PATH", "ENV_SUPATH", _PATH_DEFPATH_ROOT);
+
+  if (r != 0)
+    err (EXIT_FAILURE,  _("failed to set PATH"));
+}
+
 /* Update `environ' for the new shell based on PW, with SHELL being
    the value for the SHELL environment variable.  */
 
@@ -499,14 +508,12 @@ modify_environment (const struct passwd *pw, const char *shell)
       environ = xmalloc ((6 + !!term) * sizeof (char *));
       environ[0] = NULL;
       if (term)
-	xsetenv ("TERM", term);
-      xsetenv ("HOME", pw->pw_dir);
-      xsetenv ("SHELL", shell);
-      xsetenv ("USER", pw->pw_name);
-      xsetenv ("LOGNAME", pw->pw_name);
-      xsetenv ("PATH", (pw->pw_uid
-			? getlogindefs_str ("PATH", _PATH_DEFPATH)
-			: getlogindefs_str ("SUPATH", _PATH_DEFPATH_ROOT)));
+	xsetenv ("TERM", term, 1);
+      xsetenv ("HOME", pw->pw_dir, 1);
+      xsetenv ("SHELL", shell, 1);
+      xsetenv ("USER", pw->pw_name, 1);
+      xsetenv ("LOGNAME", pw->pw_name, 1);
+      set_path(pw);
     }
   else
     {
@@ -514,14 +521,10 @@ modify_environment (const struct passwd *pw, const char *shell)
 	 USER and LOGNAME.  */
       if (change_environment)
         {
-          xsetenv ("HOME", pw->pw_dir);
-          xsetenv ("SHELL", shell);
+          xsetenv ("HOME", pw->pw_dir, 1);
+          xsetenv ("SHELL", shell, 1);
 	  if (getlogindefs_bool ("ALWAYS_SET_PATH", 0))
-	    xsetenv ("PATH", (pw->pw_uid
-			      ? getlogindefs_str ("PATH",
-					    _PATH_DEFPATH)
-			      : getlogindefs_str ("SUPATH",
-					    _PATH_DEFPATH_ROOT)));
+	    set_path(pw);
 	  else
 	    {
 	      char const *path = getenv ("PATH");
@@ -534,14 +537,14 @@ modify_environment (const struct passwd *pw, const char *shell)
 
 	      if (new)
 		{
-		  xsetenv ("PATH", new);
+		  xsetenv ("PATH", new, 1);
 		  free (new);
 		}
 	    }
           if (pw->pw_uid)
             {
-              xsetenv ("USER", pw->pw_name);
-              xsetenv ("LOGNAME", pw->pw_name);
+              xsetenv ("USER", pw->pw_name, 1);
+              xsetenv ("LOGNAME", pw->pw_name, 1);
             }
         }
     }
@@ -559,13 +562,13 @@ init_groups (const struct passwd *pw)
   if (initgroups (pw->pw_name, pw->pw_gid) == -1)
     {
       cleanup_pam (PAM_ABORT);
-      error (EXIT_FAIL, errno, _("cannot set groups"));
+      err (EXIT_FAILURE, _("cannot set groups"));
     }
   endgrent ();
 
   retval = pam_setcred (pamh, PAM_ESTABLISH_CRED);
-  if (retval != PAM_SUCCESS)
-    error (EXIT_FAILURE, 0, "%s", pam_strerror (pamh, retval));
+  if (is_pam_failure(retval))
+    errx (EXIT_FAILURE, "%s", pam_strerror (pamh, retval));
   else
     _pam_cred_established = 1;
 }
@@ -574,9 +577,9 @@ static void
 change_identity (const struct passwd *pw)
 {
   if (setgid (pw->pw_gid))
-    error (EXIT_FAIL, errno, _("cannot set group id"));
+    err (EXIT_FAILURE,  _("cannot set group id"));
   if (setuid (pw->pw_uid))
-    error (EXIT_FAIL, errno, _("cannot set user id"));
+    err (EXIT_FAILURE,  _("cannot set user id"));
 }
 
 /* Run SHELL, or DEFAULT_SHELL if SHELL is empty.
@@ -618,7 +621,7 @@ run_shell (char const *shell, char const *command, char **additional_args,
 
   {
     int exit_status = (errno == ENOENT ? EXIT_ENOENT : EXIT_CANNOT_INVOKE);
-    error (0, errno, "%s", shell);
+    warn ("%s", shell);
     exit (exit_status);
   }
 }
@@ -664,10 +667,8 @@ Change the effective user id and group id to that of USER.\n\
   -m, --preserve-environment   do not reset environment variables\n\
   -p                           same as -m\n\
   -s, --shell=SHELL            run SHELL if /etc/shells allows it\n\
-"), stdout);
-      fputs (_(" -u, --help     display this help and exit\n"), stdout);
-      fputs (_(" -v, --version  output version information and exit\n"), stdout);
-      fputs (_("\
+      --help     display this help and exit\n\
+      --version  output version information and exit\n\
 \n\
 A mere - implies -l.   If USER not given, assume root.\n\
 "), stdout);
@@ -730,15 +731,15 @@ main (int argc, char **argv)
 	  shell = optarg;
 	  break;
 
-	case 'u':
+	case HELP_OPTION:
 	  usage(0);
 
-	case 'v':
+	case VERSION_OPTION:
 	  printf(UTIL_LINUX_VERSION);
 	  exit(EXIT_SUCCESS);
 
 	default:
-	  usage (EXIT_FAIL);
+	  usage (EXIT_FAILURE);
 	}
     }
 
@@ -755,7 +756,7 @@ main (int argc, char **argv)
   pw = getpwnam (new_user);
   if (! (pw && pw->pw_name && pw->pw_name[0] && pw->pw_dir && pw->pw_dir[0]
 	 && pw->pw_passwd))
-    error (EXIT_FAIL, 0, _("user %s does not exist"), new_user);
+    errx (EXIT_FAILURE, _("user %s does not exist"), new_user);
 
   /* Make a copy of the password information and point pw at the local
      copy instead.  Otherwise, some systems (e.g. Linux) would clobber
@@ -773,16 +774,7 @@ main (int argc, char **argv)
 			  : DEFAULT_SHELL);
   endpwent ();
 
-  if (!correct_password (pw))
-    {
-      log_su (pw, false);
-      sleep (getlogindefs_num ("FAIL_DELAY", 1));
-      error (EXIT_FAIL, 0, _("incorrect password"));
-    }
-  else
-    {
-      log_su (pw, true);
-    }
+  authenticate (pw);
 
   if (request_same_session || !command || !pw->pw_uid)
     same_session = 1;
@@ -795,7 +787,7 @@ main (int argc, char **argv)
 	 probably a uucp account or has restricted access.  Don't
 	 compromise the account by allowing access with a standard
 	 shell.  */
-      error (0, 0, _("using restricted shell %s"), pw->pw_shell);
+      warnx (_("using restricted shell %s"), pw->pw_shell);
       shell = NULL;
     }
   shell = xstrdup (shell ? shell : pw->pw_shell);
@@ -815,9 +807,9 @@ main (int argc, char **argv)
   modify_environment (pw, shell);
 
   if (simulate_login && chdir (pw->pw_dir) != 0)
-    error (0, errno, _("warning: cannot change directory to %s"), pw->pw_dir);
+    warn (_("warning: cannot change directory to %s"), pw->pw_dir);
 
-  run_shell (shell, command, argv + optind, MAX (0, argc - optind));
+  run_shell (shell, command, argv + optind, max (0, argc - optind));
 }
 
 // vim: sw=2 cinoptions=>4,n-2,{2,^-2,\:2,=2,g0,h2,p5,t0,+2,(0,u0,w1,m1

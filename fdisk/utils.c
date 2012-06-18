@@ -20,11 +20,103 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#ifdef HAVE_LIBBLKID
+#include <blkid.h>
+#endif
 
+#include "nls.h"
+#include "blkdev.h"
 #include "common.h"
 #include "fdisk.h"
 
 int fdisk_debug_mask;
+
+static unsigned long __get_sector_size(int fd)
+{
+	int sect_sz;
+
+	if (!blkdev_get_sector_size(fd, &sect_sz))
+		return (unsigned long) sect_sz;
+	return DEFAULT_SECTOR_SIZE;
+}
+
+static int __discover_geometry(struct fdisk_context *cxt)
+{
+	sector_t nsects;
+
+	/* get number of 512-byte sectors, and convert it the real sectors */
+	if (!blkdev_get_sectors(cxt->dev_fd, &nsects))
+		cxt->total_sectors = (nsects / (cxt->sector_size >> 9));
+	return 0;
+}
+
+static int __discover_topology(struct fdisk_context *cxt)
+{
+#ifdef HAVE_LIBBLKID
+	blkid_probe pr;
+
+	pr = blkid_new_probe();
+	if (pr && blkid_probe_set_device(pr, cxt->dev_fd, 0, 0) == 0) {
+		blkid_topology tp = blkid_probe_get_topology(pr);
+
+		if (tp) {
+			cxt->min_io_size = blkid_topology_get_minimum_io_size(tp);
+			cxt->optimal_io_size = blkid_topology_get_optimal_io_size(tp);
+			cxt->phy_sector_size = blkid_topology_get_physical_sector_size(tp);
+			cxt->alignment_offset = blkid_topology_get_alignment_offset(tp);
+
+			/* I/O size used by fdisk */
+			cxt->io_size = cxt->optimal_io_size;
+			if (!cxt->io_size)
+				/* optimal IO is optional, default to minimum IO */
+				cxt->io_size = cxt->min_io_size;
+		}
+	}
+	blkid_free_probe(pr);
+#endif
+
+	/* no blkid or error, use default values */
+	if (!cxt->min_io_size)
+		cxt->min_io_size = DEFAULT_SECTOR_SIZE;
+	if (!cxt->io_size)
+		cxt->io_size = DEFAULT_SECTOR_SIZE;
+
+	cxt->sector_size = __get_sector_size(cxt->dev_fd);
+	if (!cxt->phy_sector_size) /* could not discover physical size */
+		cxt->phy_sector_size = cxt->sector_size;
+
+	return 0;
+}
+
+/**
+ * fdisk_dev_sectsz_is_default:
+ * @cxt: fdisk context
+ *
+ * Returns 1 if the device's sector size is the default value, otherwise 0.
+ */
+int fdisk_dev_sectsz_is_default(struct fdisk_context *cxt)
+{
+	return cxt->sector_size == DEFAULT_SECTOR_SIZE;
+}
+
+/**
+ * fdisk_dev_has_topology:
+ * @cxt: fdisk context
+ *
+ * Returns 1 if the device provides topology information, otherwise 0.
+ */
+int fdisk_dev_has_topology(struct fdisk_context *cxt)
+{
+	/*
+	 * Assume that the device provides topology info if
+	 * optimal_io_size is set or alignment_offset is set or
+	 * minimum_io_size is not power of 2.
+	 */
+	if (cxt->optimal_io_size || cxt->alignment_offset ||
+	    !is_power_of_2(cxt->min_io_size))
+		return 1;
+	return 0;
+}
 
 /**
  * fdisk_init_debug:
@@ -82,8 +174,11 @@ struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int rea
 	if (!cxt->dev_path)
 		goto fail;
 
+	__discover_topology(cxt);
+	__discover_geometry(cxt);
+
 	DBG(CONTEXT, dbgprint("context initialized for %s [%s]",
-			fname, readonly ? "READ-ONLY" : "READ-WRITE"));
+			      fname, readonly ? "READ-ONLY" : "READ-WRITE"));
 	return cxt;
 fail:
 	errsv = errno;

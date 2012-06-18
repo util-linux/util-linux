@@ -90,6 +90,7 @@ static int v_option;
 static int x_option;
 static int p_option;
 static int m_option;
+static int M_option;
 static int i_option;
 static int a_arg;
 static int i_arg;
@@ -134,23 +135,24 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		_(" %s [options] [<device>|<mountpoint>]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --auto <on|off>        turn auto-eject feature on or off\n"
-		" -c, --changerslot <slot>   switch discs on a CD-ROM changer\n"
-		" -d, --default              display default device\n"
-		" -f, --floppy               eject floppy\n"
-		" -F, --force                don't care about device type\n"
-		" -i, --manualeject <on|off> toggle manual eject protection on/off\n"
-		" -m, --no-unmount           do not unmount device even if it is mounted\n"
-		" -n, --noop                 don't eject, just show device found\n"
-		" -p, --proc                 use /proc/mounts instead of /etc/mtab\n"
-		" -q, --tape                 eject tape\n"
-		" -r, --cdrom                eject CD-ROM\n"
-		" -s, --scsi                 eject SCSI device\n"
-		" -t, --trayclose            close tray\n"
-		" -T, --traytoggle           toggle tray\n"
-		" -v, --verbose              enable verbose output\n"
-		" -x, --cdspeed <speed>      set CD-ROM max speed\n"
-		" -X, --listspeed            list CD-ROM available speeds\n"),
+	fputs(_(" -a, --auto <on|off>         turn auto-eject feature on or off\n"
+		" -c, --changerslot <slot>    switch discs on a CD-ROM changer\n"
+		" -d, --default               display default device\n"
+		" -f, --floppy                eject floppy\n"
+		" -F, --force                 don't care about device type\n"
+		" -i, --manualeject <on|off>  toggle manual eject protection on/off\n"
+		" -m, --no-unmount            do not unmount device even if it is mounted\n"
+		" -M, --no-partitions-unmount do not unmount another partitions\n"
+		" -n, --noop                  don't eject, just show device found\n"
+		" -p, --proc                  use /proc/mounts instead of /etc/mtab\n"
+		" -q, --tape                  eject tape\n"
+		" -r, --cdrom                 eject CD-ROM\n"
+		" -s, --scsi                  eject SCSI device\n"
+		" -t, --trayclose             close tray\n"
+		" -T, --traytoggle            toggle tray\n"
+		" -v, --verbose               enable verbose output\n"
+		" -x, --cdspeed <speed>       set CD-ROM max speed\n"
+		" -X, --listspeed             list CD-ROM available speeds\n"),
 		out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -181,6 +183,7 @@ static void parse_args(int argc, char **argv, char **device)
 		{"manualeject", required_argument, NULL, 'i'},
 		{"noop",	no_argument,	   NULL, 'n'},
 		{"no-unmount",	no_argument,	   NULL, 'm'},
+		{"no-partitions-unmount", no_argument, NULL, 'M' },
 		{"proc",	no_argument,	   NULL, 'p'},
 		{"scsi",	no_argument,	   NULL, 's'},
 		{"tape",	no_argument,	   NULL, 'q'},
@@ -193,7 +196,7 @@ static void parse_args(int argc, char **argv, char **device)
 	int c;
 
 	while ((c = getopt_long(argc, argv,
-				"a:c:i:x:dfFhnqrstTXvVpm", long_opts, NULL)) != -1) {
+				"a:c:i:x:dfFhnqrstTXvVpmM", long_opts, NULL)) != -1) {
 		switch (c) {
 		case 'a':
 			a_option = 1;
@@ -235,6 +238,9 @@ static void parse_args(int argc, char **argv, char **device)
 			break;
 		case 'm':
 			m_option = 1;
+			break;
+		case 'M':
+			M_option = 1;
 			break;
 		case 'n':
 			n_option = 1;
@@ -429,6 +435,14 @@ static void toggle_tray(int fd)
 		if (eject_cdrom(fd))
 			err(EXIT_FAILURE, _("CD-ROM eject command failed"));
 		return;
+	case CDS_NO_INFO:
+		warnx(_("no CD-ROM information available"));
+		return;
+	case CDS_DRIVE_NOT_READY:
+		warnx(_("CD-ROM drive is not ready"));
+		return;
+	default:
+		abort();
 	}
 #endif
 
@@ -716,13 +730,8 @@ static int device_get_mountpoint(char **devname, char **mnt)
 		}
 	}
 
-	if (fs) {
+	if (fs)
 		*mnt = xstrdup(mnt_fs_get_target(fs));
-		/* We'll call umount(), so remove the filesystem from the table
-		 * to avoid duplicate results in the next device_get_mountpoint()
-		 * call */
-		mnt_free_fs(fs);
-	}
 	return *mnt ? 0 : -1;
 }
 
@@ -743,16 +752,17 @@ static char *get_disk_devname(const char *device)
 	return st.st_rdev == diskno ? NULL : find_device(diskname);
 }
 
-static void umount_partitions(const char *disk)
+static int umount_partitions(const char *disk, int checkonly)
 {
 	struct sysfs_cxt cxt = UL_SYSFSCXT_EMPTY;
 	dev_t devno;
 	DIR *dir = NULL;
 	struct dirent *d;
+	int count = 0;
 
 	devno = sysfs_devname_to_devno(disk, NULL);
 	if (sysfs_init(&cxt, devno, NULL) != 0)
-		return;
+		return 0;
 
 	/* open /sys/block/<wholedisk> */
 	if (!(dir = sysfs_opendir(&cxt, NULL)))
@@ -768,10 +778,13 @@ static void umount_partitions(const char *disk)
 			char *dev = find_device(d->d_name);
 
 			if (dev && device_get_mountpoint(&dev, &mnt) == 0) {
-				verbose(_("%s: mounted at %s"), dev, mnt);
-				umount_one(mnt);
+				verbose(_("%s: mounted on %s"), dev, mnt);
+				if (!checkonly)
+					umount_one(mnt);
+				count++;
 			}
 			free(dev);
+			free(mnt);
 		}
 	}
 
@@ -779,6 +792,8 @@ done:
 	if (dir)
 		closedir(dir);
 	sysfs_deinit(&cxt);
+
+	return count;
 }
 
 static int is_hotpluggable_subsystem(const char *name)
@@ -960,7 +975,7 @@ int main(int argc, char **argv)
 
 	device_get_mountpoint(&device, &mountpoint);
 	if (mountpoint)
-		verbose(_("%s: mounted at %s"), device, mountpoint);
+		verbose(_("%s: mounted on %s"), device, mountpoint);
 	else
 		verbose(_("%s: not mounted"), device);
 
@@ -970,8 +985,15 @@ int main(int argc, char **argv)
 		free(device);
 		device = disk;
 		disk = NULL;
-	} else
+	} else {
+		struct stat st;
+
+		if (stat(device, &st) != 0 || !S_ISBLK(st.st_mode))
+			errx(EXIT_FAILURE, _("%s: not found mountpoint or device "
+					"with the given name"), device);
+
 		verbose(_("%s: is whole-disk device"), device);
+	}
 
 	if (F_option == 0 && is_hotpluggable(device) == 0)
 		errx(EXIT_FAILURE, _("%s: is not hot-pluggable device"), device);
@@ -1032,12 +1054,23 @@ int main(int argc, char **argv)
 		set_device_speed(device);
 
 
-	/* if it is a multipartition device, unmount any other partitions on
-	   the device */
-	if (m_option != 1) {
-		if (mountpoint)
-			umount_one(mountpoint);		/* usually whole-disk */
-		umount_partitions(device);
+	/*
+	 * Unmount all partitions if -m is not specified; or umount given
+	 * mountpoint if -M is specified, otherwise print error of another
+	 * partition is mounted.
+	 */
+	if (!m_option) {
+		int ct = umount_partitions(device, M_option);
+
+		if (ct == 0 && mountpoint)
+			umount_one(mountpoint); /* probably whole-device */
+
+		if (M_option) {
+			if (ct == 1 && mountpoint)
+				umount_one(mountpoint);
+			else if (ct)
+				errx(EXIT_FAILURE, _("error: %s: device in use"), device);
+		}
 	}
 
 	/* handle -c option */

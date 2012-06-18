@@ -84,8 +84,14 @@ checkconfig:
 		-name '*.[hcS]' -type f -print | sort -u \
 		| xargs $(top_srcdir)/tools/checkconfig.sh $(top_srcdir)
 
+checkmans:
+	@$(top_srcdir)/tools/checkmans.sh
+
 checkxalloc:
 	@ $(top_srcdir)/tools/checkxalloc.sh
+
+checkdecl:
+	@ $(top_srcdir)/tools/checkdecl.sh
 
 ENABLE_ALL = --enable-static-programs --enable-most-builds
 DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --disable-use-tty-group \

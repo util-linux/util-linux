@@ -16,14 +16,20 @@
 
 /* Create open temporary file in safe way.  Please notice that the
  * file permissions are -rw------- by default. */
-int xmkstemp(char **tmpname)
+int xmkstemp(char **tmpname, char *dir)
 {
 	char *localtmp;
 	char *tmpenv;
 	mode_t old_mode;
 	int fd;
 
-	tmpenv = getenv("TMPDIR");
+	/* Some use cases must be capable of being moved atomically
+	 * with rename(2), which is the reason why dir is here.  */
+	if (dir != NULL)
+		tmpenv = dir;
+	else
+		tmpenv = getenv("TMPDIR");
+
 	if (tmpenv)
 		xasprintf(&localtmp, "%s/%s.XXXXXX", tmpenv,
 			  program_invocation_short_name);
@@ -68,7 +74,7 @@ int main(void)
 {
 	FILE *f;
 	char *tmpname;
-	f = xfmkstemp(&tmpname);
+	f = xfmkstemp(&tmpname, NULL);
 	unlink(tmpname);
 	free(tmpname);
 	fclose(f);

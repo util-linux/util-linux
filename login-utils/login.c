@@ -127,7 +127,7 @@ struct login_context {
  * This bounds the time given to login.  Not a define so it can
  * be patched on machines where it's too small.
  */
-static int timeout = LOGIN_TIMEOUT;
+static unsigned int timeout = LOGIN_TIMEOUT;
 static int child_pid = 0;
 static volatile int got_sig = 0;
 
@@ -172,8 +172,8 @@ static void timedout(int sig __attribute__ ((__unused__)))
 {
 	signal(SIGALRM, timedout2);
 	alarm(10);
-	/* TRANSLATORS: The standard value for %d is 60. */
-	warnx(_("timed out after %d seconds"), timeout);
+	/* TRANSLATORS: The standard value for %u is 60. */
+	warnx(_("timed out after %u seconds"), timeout);
 	signal(SIGALRM, SIG_IGN);
 	alarm(0);
 	timedout2(0);
@@ -203,7 +203,7 @@ static void sig_handler(int signal)
  */
 static void __attribute__ ((__noreturn__)) sleepexit(int eval)
 {
-	sleep(getlogindefs_num("FAIL_DELAY", LOGIN_EXIT_TIMEOUT));
+	sleep((unsigned int)getlogindefs_num("FAIL_DELAY", LOGIN_EXIT_TIMEOUT));
 	exit(eval);
 }
 
@@ -319,15 +319,12 @@ static void chown_tty(struct login_context *cxt)
 
 	grname = getlogindefs_str("TTYGROUP", TTYGRPNAME);
 	if (grname && *grname) {
-		if (*grname >= 0 && *grname <= 9)		/* group by ID */
-			gid = getlogindefs_num("TTYGROUP", gid);
-		else {						/* group by name */
-			struct group *gr = getgrnam(grname);
-			if (gr)
-				gid = gr->gr_gid;
-		}
+		struct group *gr = getgrnam(grname);
+		if (gr)	/* group by name */
+			gid = gr->gr_gid;
+		else	/* group by ID */
+			gid = (gid_t) getlogindefs_num("TTYGROUP", gid);
 	}
-
 	if (fchown(0, uid, gid))				/* tty */
 		chown_err(cxt->tty_name, uid, gid);
 	if (fchmod(0, cxt->tty_mode))
@@ -772,7 +769,8 @@ static pam_handle_t *init_loginpam(struct login_context *cxt)
 
 static void loginpam_auth(struct login_context *cxt)
 {
-	int rc, failcount = 0, show_unknown, retries;
+	int rc, show_unknown;
+	unsigned int retries, failcount = 0;
 	const char *hostname = cxt->hostname ? cxt->hostname :
 			       cxt->tty_name ? cxt->tty_name : "<unknown>";
 	pam_handle_t *pamh = cxt->pamh;
@@ -808,7 +806,7 @@ static void loginpam_auth(struct login_context *cxt)
 			loginpam_get_username(pamh, &cxt->username);
 
 		syslog(LOG_NOTICE,
-		       _("FAILED LOGIN %d FROM %s FOR %s, %s"),
+		       _("FAILED LOGIN %u FROM %s FOR %s, %s"),
 		       failcount, hostname,
 		       cxt->username ? cxt->username : "(unknown)",
 		       pam_strerror(pamh, rc));
@@ -831,7 +829,7 @@ static void loginpam_auth(struct login_context *cxt)
 
 		if (rc == PAM_MAXTRIES)
 			syslog(LOG_NOTICE,
-			       _("TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"),
+			       _("TOO MANY LOGIN TRIES (%u) FROM %s FOR %s, %s"),
 			       failcount, hostname,
 			       cxt->username ? cxt->username : "(unknown)",
 			       pam_strerror(pamh, rc));
@@ -1235,11 +1233,11 @@ int main(int argc, char **argv)
 		.conv = { misc_conv, NULL }	/* PAM conversation function */
 	};
 
-	timeout = getlogindefs_num("LOGIN_TIMEOUT", LOGIN_TIMEOUT);
+	timeout = (unsigned int)getlogindefs_num("LOGIN_TIMEOUT", LOGIN_TIMEOUT);
 
 	signal(SIGALRM, timedout);
 	siginterrupt(SIGALRM, 1);	/* we have to interrupt syscalls like ioclt() */
-	alarm((unsigned int)timeout);
+	alarm(timeout);
 	signal(SIGQUIT, SIG_IGN);
 	signal(SIGINT, SIG_IGN);
 

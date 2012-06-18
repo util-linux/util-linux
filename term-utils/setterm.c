@@ -68,7 +68,7 @@
  * Semantics:
  *
  * Setterm writes to standard output a character string that will
- * invoke the specified terminal capabilities.  Where possibile
+ * invoke the specified terminal capabilities.  Where possible
  * terminfo is consulted to find the string to use.  Some options
  * however do not correspond to a terminfo capability.  In this case if
  * the terminal type is "con*", or "linux*" the string that invokes

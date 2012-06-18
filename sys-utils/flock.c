@@ -58,6 +58,7 @@ static void __attribute__((__noreturn__)) usage(int ex)
 	fputs(_(  " -u  --unlock             remove a lock\n"), stderr);
 	fputs(_(  " -n  --nonblock           fail rather than wait\n"), stderr);
 	fputs(_(  " -w  --timeout <secs>     wait for a limited amount of time\n"), stderr);
+	fputs(_(  " -E  --conflict-exit-code <number>  exit code after conflict or timeout\n"), stderr);
 	fputs(_(  " -o  --close              close file descriptor before running command\n"), stderr);
 	fputs(_(  " -c  --command <command>  run a single command string through the shell\n"), stderr);
 	fprintf(stderr, USAGE_SEPARATOR);
@@ -141,6 +142,11 @@ int main(int argc, char *argv[])
 	int opt, ix;
 	int do_close = 0;
 	int status;
+	/*
+	 * The default exit code for lock conflict or timeout
+	 * is specified in man flock.1
+	 */
+	int conflict_exit_code = 1;
 	char **cmd_argv = NULL, *sh_c_argv[4];
 	const char *filename = NULL;
 	struct sigaction sa, old_sa;
@@ -153,6 +159,7 @@ int main(int argc, char *argv[])
 		{"nb", no_argument, NULL, 'n'},
 		{"timeout", required_argument, NULL, 'w'},
 		{"wait", required_argument, NULL, 'w'},
+		{"conflict-exit-code", required_argument, NULL, 'E'},
 		{"close", no_argument, NULL, 'o'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
@@ -171,7 +178,7 @@ int main(int argc, char *argv[])
 
 	optopt = 0;
 	while ((opt =
-		getopt_long(argc, argv, "+sexnouw:hV?", long_options,
+		getopt_long(argc, argv, "+sexnouw:E:hV?", long_options,
 			    &ix)) != EOF) {
 		switch (opt) {
 		case 's':
@@ -193,6 +200,10 @@ int main(int argc, char *argv[])
 		case 'w':
 			have_timeout = 1;
 			strtotimeval(optarg, &timeout.it_value);
+			break;
+		case 'E':
+			conflict_exit_code = strtos32_or_err(optarg,
+				_("invalid exit code"));
 			break;
 		case 'V':
 			printf("flock (%s)\n", PACKAGE_STRING);
@@ -252,18 +263,13 @@ int main(int argc, char *argv[])
 	while (flock(fd, type | block)) {
 		switch (errno) {
 		case EWOULDBLOCK:
-			/* -n option set and failed to lock. The numeric
-			 * exit value is specified in man flock.1
-			 */
-			exit(1);
+			/* -n option set and failed to lock. */
+			exit(conflict_exit_code);
 		case EINTR:
 			/* Signal received */
 			if (timeout_expired)
-				/* -w option set and failed to lock. The
-				 * numeric exit value is specified in man
-				 * flock.1
-				 */
-				exit(1);
+				/* -w option set and failed to lock. */
+				exit(conflict_exit_code);
 			/* otherwise try again */
 			continue;
 		case EIO:

@@ -62,6 +62,11 @@ static int mnt_optstr_parse_next(char **optstr,	 char **name, size_t *namesz,
 	if (valsz)
 		*valsz = 0;
 
+	/* trim leading commas as to not invalidate option
+	 * strings with multiple consecutive commas */
+	while (optstr0 && *optstr0 == ',')
+		optstr0++;
+
 	for (p = optstr0; p && *p; p++) {
 		if (!start)
 			start = p;		/* begin of the option item */
@@ -169,6 +174,8 @@ static int __mnt_optstr_append_option(char **optstr,
 	size_t sz, osz;
 
 	assert(name);
+	assert(*name);
+	assert(nsz);
 
 	osz = *optstr ? strlen(*optstr) : 0;
 
@@ -214,7 +221,7 @@ int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
 {
 	size_t vsz, nsz;
 
-	if (!name)
+	if (!name || !*name)
 		return 0;
 
 	nsz = strlen(name);
@@ -300,7 +307,7 @@ int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end)
 	sz = strlen(end);
 
 	memmove(begin, end, sz + 1);
-	if (!*begin && *(begin - 1) == ',')
+	if (!*begin && (begin > *optstr) && *(begin - 1) == ',')
 		*(begin - 1) = '\0';
 
 	return 0;
@@ -579,7 +586,7 @@ int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 {
 	struct libmnt_optmap const *maps[2];
 	char *name, *str = (char *) optstr;
-	size_t namesz = 0;
+	size_t namesz = 0, valsz = 0;
 	int nmaps = 0;
 
 	assert(optstr);
@@ -596,7 +603,7 @@ int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 		 */
 		maps[nmaps++] = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
 
-	while(!mnt_optstr_next_option(&str, &name, &namesz, NULL, NULL)) {
+	while(!mnt_optstr_next_option(&str, &name, &namesz, NULL, &valsz)) {
 		const struct libmnt_optmap *ent;
 		const struct libmnt_optmap *m;
 
@@ -610,9 +617,10 @@ int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 			else
 				*flags |= ent->id;
 
-		} else if (nmaps == 2 && m == maps[1]) {
+		} else if (nmaps == 2 && m == maps[1] && valsz == 0) {
 			/*
-			 * Special case -- translate "user" to MS_ options
+			 * Special case -- translate "user" (but no user=) to
+			 * MS_ options
 			 */
 			if (ent->mask & MNT_INVERT)
 				continue;
@@ -730,7 +738,7 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 			/* don't add options which require values (e.g. offset=%d) */
 			p = strchr(ent->name, '=');
 			if (p) {
-				if (*(p - 1) == '[')
+				if (p > ent->name && *(p - 1) == '[')
 					p--;			/* name[=] */
 				else
 					continue;		/* name= */
@@ -766,7 +774,10 @@ err:
  *
  * Returns: 0 on success, negative number in case of error.
  */
-int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, char **next)
+int mnt_optstr_fix_secontext(char **optstr __attribute__ ((__unused__)),
+			     char *value   __attribute__ ((__unused__)),
+			     size_t valsz  __attribute__ ((__unused__)),
+			     char **next   __attribute__ ((__unused__)))
 {
 	int rc = 0;
 

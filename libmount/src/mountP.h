@@ -380,7 +380,6 @@ extern int mnt_context_guess_fstype(struct libmnt_context *cxt);
 extern int mnt_context_prepare_helper(struct libmnt_context *cxt,
 				      const char *name, const char *type);
 extern int mnt_context_prepare_update(struct libmnt_context *cxt);
-extern struct libmnt_fs *mnt_context_get_fs(struct libmnt_context *cxt);
 extern int mnt_context_merge_mflags(struct libmnt_context *cxt);
 extern int mnt_context_update_tabs(struct libmnt_context *cxt);
 
@@ -395,7 +394,6 @@ extern int mnt_context_clear_loopdev(struct libmnt_context *cxt);
 extern int mnt_fork_context(struct libmnt_context *cxt);
 
 /* tab_update.c */
-extern struct libmnt_fs *mnt_update_get_fs(struct libmnt_update *upd);
 extern int mnt_update_set_filename(struct libmnt_update *upd,
 				   const char *filename, int userspace_only);
 

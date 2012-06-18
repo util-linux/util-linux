@@ -15,7 +15,7 @@ static inline int write_all(int fd, const void *buf, size_t count)
 		if (tmp > 0) {
 			count -= tmp;
 			if (count)
-				buf += tmp;
+				buf = (void *) ((char *) buf + tmp);
 		} else if (errno != EINTR && errno != EAGAIN)
 			return -1;
 		if (errno == EAGAIN)	/* Try later, *sigh* */
@@ -35,7 +35,7 @@ static inline int fwrite_all(const void *ptr, size_t size,
 		if (tmp > 0) {
 			nmemb -= tmp;
 			if (nmemb)
-				ptr += (tmp * size);
+				ptr = (void *) ((char *) ptr + (tmp * size));
 		} else if (errno != EINTR && errno != EAGAIN)
 			return -1;
 		if (errno == EAGAIN)	/* Try later, *sigh* */
