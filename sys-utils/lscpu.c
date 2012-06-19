@@ -406,7 +406,7 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 }
 
 static int
-has_pci_device(int vendor, int device)
+has_pci_device(unsigned int vendor, unsigned int device)
 {
 	FILE *f;
 	unsigned int num, fn, ven, dev;
