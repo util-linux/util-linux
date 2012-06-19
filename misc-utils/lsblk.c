@@ -60,6 +60,7 @@
 #include "sysfs.h"
 #include "closestream.h"
 #include "mangle.h"
+#include "optutils.h"
 
 /* column IDs */
 enum {
@@ -1138,12 +1139,6 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static void __attribute__((__noreturn__))
-errx_mutually_exclusive(const char *opts)
-{
-	errx(EXIT_FAILURE, "%s %s", opts, _("options are mutually exclusive"));
-}
-
 static void check_sysdevblock(void)
 {
 	if (access(_PATH_SYS_DEVBLOCK, R_OK) != 0)
@@ -1156,6 +1151,19 @@ int main(int argc, char *argv[])
 	struct lsblk _ls;
 	int tt_flags = TT_FL_TREE;
 	int i, c, status = EXIT_FAILURE;
+
+	enum {
+		EXCL_NONE,
+
+		EXCL_RAW,
+		EXCL_LIST,
+		EXCL_PAIRS,
+
+		EXCL_ALL,
+		EXCL_EXCLUDE
+	};
+	int excl_rlP = EXCL_NONE;
+	int excl_ae = EXCL_NONE;
 
 	static const struct option longopts[] = {
 		{ "all",	0, 0, 'a' },
@@ -1189,6 +1197,7 @@ int main(int argc, char *argv[])
 	while((c = getopt_long(argc, argv, "abdDe:fhlnmo:PirstV", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
+			exclusive_option(&excl_ae, EXCL_ALL, "--{all,exclude}");
 			lsblk->all_devices = 1;
 			break;
 		case 'b':
@@ -1205,15 +1214,14 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_DZERO;
 			break;
 		case 'e':
+			exclusive_option(&excl_ae, EXCL_EXCLUDE, "--{all,exclude}");
 			parse_excludes(optarg);
 			break;
 		case 'h':
 			help(stdout);
 			break;
 		case 'l':
-			if ((tt_flags & TT_FL_RAW)|| (tt_flags & TT_FL_EXPORT))
-				errx_mutually_exclusive("--{raw,list,export}");
-
+			exclusive_option(&excl_rlP, EXCL_LIST, "--{raw,list,pairs}");
 			tt_flags &= ~TT_FL_TREE; /* disable the default */
 			break;
 		case 'n':
@@ -1227,6 +1235,7 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 			break;
 		case 'P':
+			exclusive_option(&excl_rlP, EXCL_PAIRS, "--{raw,list,pairs}");
 			tt_flags |= TT_FL_EXPORT;
 			tt_flags &= ~TT_FL_TREE;	/* disable the default */
 			break;
@@ -1234,6 +1243,7 @@ int main(int argc, char *argv[])
 			tt_flags |= TT_FL_ASCII;
 			break;
 		case 'r':
+			exclusive_option(&excl_rlP, EXCL_RAW, "--{raw,list,pairs}");
 			tt_flags &= ~TT_FL_TREE;	/* disable the default */
 			tt_flags |= TT_FL_RAW;		/* enable raw */
 			break;
@@ -1286,9 +1296,7 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_TARGET;
 	}
 
-	if (nexcludes && lsblk->all_devices)
-		errx_mutually_exclusive("--{all,exclude}");
-	else if (!nexcludes)
+	if (!nexcludes)
 		excludes[nexcludes++] = 1;	/* default: ignore RAM disks */
 
 	mnt_init_debug(0);

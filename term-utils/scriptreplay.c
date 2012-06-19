@@ -206,8 +206,7 @@ main(int argc, char *argv[])
 		double delay;
 		size_t blk;
 		char nl;
-
-		if (fscanf(tfile, "%lf %zd%c\n", &delay, &blk, &nl) != 3 ||
+		if (fscanf(tfile, "%lf %zu%c\n", &delay, &blk, &nl) != 3 ||
 				                                 nl != '\n') {
 			if (feof(tfile))
 				break;

@@ -34,12 +34,16 @@
 #include "nls.h"
 #include "c.h"
 #include "env.h"
-#include "optutils.h"
 #include "strutils.h"
 #include "xgetpass.h"
 #include "exitcodes.h"
 #include "xalloc.h"
 #include "closestream.h"
+
+#define OPTUTILS_EXIT_CODE MOUNT_EX_USAGE
+#include "optutils.h"
+
+#define EXCL_ERROR "--{bind,make-*}"
 
 /*** TODO: DOCS:
  *
@@ -678,6 +682,20 @@ int main(int argc, char **argv)
 		MOUNT_OPT_RUNBINDABLE
 	};
 
+	enum {
+	        EXCL_NONE,
+	        EXCL_BIND,
+	        EXCL_MAKE_SHARED,
+	        EXCL_MAKE_SLAVE,
+	        EXCL_MAKE_PRIVATE,
+	        EXCL_MAKE_UNBINDABLE,
+	        EXCL_MAKE_RSHARED,
+	        EXCL_MAKE_RSLAVE,
+	        EXCL_MAKE_RPRIVATE,
+	        EXCL_MAKE_RUNBINDABLE
+	};
+	int excl_any = EXCL_NONE;
+
 	static const struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
 		{ "fake", 0, 0, 'f' },
@@ -806,6 +824,7 @@ int main(int argc, char **argv)
 			mnt_context_enable_sloppy(cxt, TRUE);
 			break;
 		case 'B':
+			exclusive_option(&excl_any, EXCL_BIND, EXCL_ERROR);
 			oper |= MS_BIND;
 			break;
 		case 'M':
@@ -815,27 +834,35 @@ int main(int argc, char **argv)
 			oper |= (MS_BIND | MS_REC);
 			break;
 		case MOUNT_OPT_SHARED:
+			exclusive_option(&excl_any, EXCL_MAKE_SHARED, EXCL_ERROR);
 			oper |= MS_SHARED;
 			break;
 		case MOUNT_OPT_SLAVE:
+			exclusive_option(&excl_any, EXCL_MAKE_SLAVE, EXCL_ERROR);
 			oper |= MS_SLAVE;
 			break;
 		case MOUNT_OPT_PRIVATE:
+			exclusive_option(&excl_any, EXCL_MAKE_PRIVATE, EXCL_ERROR);
 			oper |= MS_PRIVATE;
 			break;
 		case MOUNT_OPT_UNBINDABLE:
+			exclusive_option(&excl_any, EXCL_MAKE_UNBINDABLE, EXCL_ERROR);
 			oper |= MS_UNBINDABLE;
 			break;
 		case MOUNT_OPT_RSHARED:
+			exclusive_option(&excl_any, EXCL_MAKE_RSHARED, EXCL_ERROR);
 			oper |= (MS_SHARED | MS_REC);
 			break;
 		case MOUNT_OPT_RSLAVE:
+			exclusive_option(&excl_any, EXCL_MAKE_RSLAVE, EXCL_ERROR);
 			oper |= (MS_SLAVE | MS_REC);
 			break;
 		case MOUNT_OPT_RPRIVATE:
+			exclusive_option(&excl_any, EXCL_MAKE_RPRIVATE, EXCL_ERROR);
 			oper |= (MS_PRIVATE | MS_REC);
 			break;
 		case MOUNT_OPT_RUNBINDABLE:
+			exclusive_option(&excl_any, EXCL_MAKE_RUNBINDABLE, EXCL_ERROR);
 			oper |= (MS_UNBINDABLE | MS_REC);
 			break;
 		default:
@@ -902,12 +929,6 @@ int main(int argc, char **argv)
 		usage(stderr);
 
 	if (oper) {
-		if (!is_power_of_2(oper & ~MS_REC))
-			errx(MOUNT_EX_USAGE, _("propagation flags (--make-* or --bind options) are mutually exclusive"));
-
-		if (oper != MS_BIND && mnt_context_get_options(cxt))
-			errx(MOUNT_EX_USAGE, _("propagation flags (--make-* options) cannot be mixed with another mount options"));
-
 		/* MS_PROPAGATION operations, let's set the mount flags */
 		mnt_context_set_mflags(cxt, oper);
 

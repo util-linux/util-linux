@@ -44,6 +44,9 @@ extern int optind;
 
 #define STRTOXX_EXIT_CODE	BLKID_EXIT_OTHER	/* strtoxx_or_err() */
 #include "strutils.h"
+#define OPTUTILS_EXIT_CODE	BLKID_EXIT_OTHER	/* exclusive_option() */
+#include "optutils.h"
+
 #include "closestream.h"
 #include "ttyutils.h"
 
@@ -672,6 +675,13 @@ int main(int argc, char **argv)
 	int c;
 	uintmax_t offset = 0, size = 0;
 
+	enum {
+		EXCL_NONE,
+		EXCL_NAMES,
+		EXCL_USAGE
+	};
+	int excl_opt = EXCL_NONE;
+
 	show[0] = NULL;
 	atexit(close_stdout);
 
@@ -692,17 +702,11 @@ int main(int argc, char **argv)
 			search_type = strdup("LABEL");
 			break;
 		case 'n':
-			if (fltr_usage) {
-				fprintf(stderr, "error: -u and -n options are mutually exclusive\n");
-				exit(BLKID_EXIT_OTHER);
-			}
+			exclusive_option(&excl_opt, EXCL_NAMES, "-{u,n}");
 			fltr_type = list_to_types(optarg, &fltr_flag);
 			break;
 		case 'u':
-			if (fltr_type) {
-				fprintf(stderr, "error: -u and -n options are mutually exclusive\n");
-				exit(BLKID_EXIT_OTHER);
-			}
+			exclusive_option(&excl_opt, EXCL_USAGE, "-{u,n}");
 			fltr_usage = list_to_usage(optarg, &fltr_flag);
 			break;
 		case 'U':

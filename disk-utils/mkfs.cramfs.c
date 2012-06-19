@@ -769,6 +769,8 @@ int main(int argc, char **argv)
 		case 'z':
 			opt_holes = 1;
 			break;
+		default:
+			usage(FSCK_EX_USAGE);
 		}
 	}
 
