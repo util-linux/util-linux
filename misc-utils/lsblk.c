@@ -142,7 +142,7 @@ static struct colinfo infos[] = {
 
 struct lsblk {
 	struct tt *tt;			/* output table */
-	unsigned int all_devices:1;	/* print all devices, icluding empty */
+	unsigned int all_devices:1;	/* print all devices, including empty */
 	unsigned int bytes:1;		/* print SIZE in bytes */
 	unsigned int inverse:1;		/* print inverse dependencies */
 	unsigned int nodeps:1;		/* don't print slaves/holders */
@@ -1100,8 +1100,10 @@ leave:
 	return status;
 }
 
-static void parse_excludes(const char *str)
+static void parse_excludes(const char *str0)
 {
+	const char *str = str0;
+
 	while (str && *str) {
 		char *end = NULL;
 		unsigned long n;
@@ -1109,8 +1111,10 @@ static void parse_excludes(const char *str)
 		errno = 0;
 		n = strtoul(str, &end, 10);
 
-		if (end == str || (errno != 0 && (n == ULONG_MAX || n == 0)))
-			err(EXIT_FAILURE, _("failed to parse list '%s'"), str);
+		if (end == str || (end && *end && *end != ','))
+			errx(EXIT_FAILURE, _("failed to parse list '%s'"), str0);
+		if (errno != 0 && (n == ULONG_MAX || n == 0))
+			err(EXIT_FAILURE, _("failed to parse list '%s'"), str0);
 		excludes[nexcludes++] = n;
 
 		if (nexcludes == ARRAY_SIZE(excludes))
@@ -1118,12 +1122,15 @@ static void parse_excludes(const char *str)
 			errx(EXIT_FAILURE, _("the list of excluded devices is "
 					"too large (limit is %d devices)"),
 					(int)ARRAY_SIZE(excludes));
+
 		str = end && *end ? end + 1 : NULL;
 	}
 }
 
-static void parse_includes(const char *str)
+static void parse_includes(const char *str0)
 {
+	const char *str = str0;
+
 	while (str && *str) {
 		char *end = NULL;
 		unsigned long n;
@@ -1131,8 +1138,10 @@ static void parse_includes(const char *str)
 		errno = 0;
 		n = strtoul(str, &end, 10);
 
-		if (end == str || (errno != 0 && (n == ULONG_MAX || n == 0)))
-			err(EXIT_FAILURE, _("failed to parse list '%s'"), str);
+		if (end == str || (end && *end && *end != ','))
+			errx(EXIT_FAILURE, _("failed to parse list '%s'"), str0);
+		if (errno != 0 && (n == ULONG_MAX || n == 0))
+			err(EXIT_FAILURE, _("failed to parse list '%s'"), str0);
 		includes[nincludes++] = n;
 
 		if (nincludes == ARRAY_SIZE(includes))
@@ -1159,7 +1168,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 		" -d, --nodeps         don't print slaves or holders\n"
 		" -D, --discard        print discard capabilities\n"
 		" -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
-		" -i, --include <list> show only devices with specified major numbers\n"
+		" -I, --include <list> show only devices with specified major numbers\n"
 		" -f, --fs             output info about filesystems\n"
 		" -h, --help           usage information (this)\n"
 		" -i, --ascii          use ascii characters only\n"
