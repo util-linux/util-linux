@@ -142,7 +142,7 @@ static struct colinfo infos[] = {
 
 struct lsblk {
 	struct tt *tt;			/* output table */
-	unsigned int all_devices:1;	/* print all devices */
+	unsigned int all_devices:1;	/* print all devices, icluding empty */
 	unsigned int bytes:1;		/* print SIZE in bytes */
 	unsigned int inverse:1;		/* print inverse dependencies */
 	unsigned int nodeps:1;		/* don't print slaves/holders */
@@ -151,11 +151,14 @@ struct lsblk {
 struct lsblk *lsblk;	/* global handler */
 
 #define NCOLS ARRAY_SIZE(infos)
-int columns[NCOLS];/* enabled columns */
-int ncolumns;		/* number of enabled columns */
+static int columns[NCOLS];/* enabled columns */
+static int ncolumns;		/* number of enabled columns */
 
 static int excludes[256];
 static size_t nexcludes;
+
+static int includes[256];
+static size_t nincludes;
 
 static struct libmnt_table *mtab, *swaps;
 static struct libmnt_cache *mntcache;
@@ -198,8 +201,26 @@ static int is_maj_excluded(int maj)
 
 	assert(ARRAY_SIZE(excludes) > nexcludes);
 
+	if (!nexcludes)
+		return 0;	/* filter not enabled, device not exluded */
+
 	for (i = 0; i < nexcludes; i++)
 		if (excludes[i] == maj)
+			return 1;
+	return 0;
+}
+
+static int is_maj_included(int maj)
+{
+	size_t i;
+
+	assert(ARRAY_SIZE(includes) > nincludes);
+
+	if (!nincludes)
+		return 1;	/* filter not enabled, device is included */
+
+	for (i = 0; i < nincludes; i++)
+		if (includes[i] == maj)
 			return 1;
 	return 0;
 }
@@ -994,7 +1015,7 @@ static int iterate_block_devices(void)
 		if (set_cxt(&cxt, NULL, NULL, d->d_name))
 			goto next;
 
-		if (!lsblk->all_devices && is_maj_excluded(cxt.maj))
+		if (is_maj_excluded(cxt.maj) || !is_maj_included(cxt.maj))
 			goto next;
 
 		/* Skip devices in the middle of dependency tree. */
@@ -1101,6 +1122,28 @@ static void parse_excludes(const char *str)
 	}
 }
 
+static void parse_includes(const char *str)
+{
+	while (str && *str) {
+		char *end = NULL;
+		unsigned long n;
+
+		errno = 0;
+		n = strtoul(str, &end, 10);
+
+		if (end == str || (errno != 0 && (n == ULONG_MAX || n == 0)))
+			err(EXIT_FAILURE, _("failed to parse list '%s'"), str);
+		includes[nincludes++] = n;
+
+		if (nincludes == ARRAY_SIZE(includes))
+			/* TRANSLATORS: The standard value for %d is 256. */
+			errx(EXIT_FAILURE, _("the list of included devices is "
+					"too large (limit is %d devices)"),
+					(int)ARRAY_SIZE(includes));
+		str = end && *end ? end + 1 : NULL;
+	}
+}
+
 static void __attribute__((__noreturn__)) help(FILE *out)
 {
 	size_t i;
@@ -1116,6 +1159,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 		" -d, --nodeps         don't print slaves or holders\n"
 		" -D, --discard        print discard capabilities\n"
 		" -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
+		" -i, --include <list> show only devices with specified major numbers\n"
 		" -f, --fs             output info about filesystems\n"
 		" -h, --help           usage information (this)\n"
 		" -i, --ascii          use ascii characters only\n"
@@ -1159,11 +1203,11 @@ int main(int argc, char *argv[])
 		EXCL_LIST,
 		EXCL_PAIRS,
 
-		EXCL_ALL,
-		EXCL_EXCLUDE
+		EXCL_EXCLUDE,
+		EXCL_INCLUDE,
 	};
 	int excl_rlP = EXCL_NONE;
-	int excl_ae = EXCL_NONE;
+	int excl_aeI = EXCL_NONE;
 
 	static const struct option longopts[] = {
 		{ "all",	0, 0, 'a' },
@@ -1180,6 +1224,7 @@ int main(int argc, char *argv[])
 		{ "inverse",	0, 0, 's' },
 		{ "fs",         0, 0, 'f' },
 		{ "exclude",    1, 0, 'e' },
+		{ "include",    1, 0, 'I' },
 		{ "topology",   0, 0, 't' },
 		{ "pairs",      0, 0, 'P' },
 		{ "version",    0, 0, 'V' },
@@ -1194,10 +1239,9 @@ int main(int argc, char *argv[])
 	lsblk = &_ls;
 	memset(lsblk, 0, sizeof(*lsblk));
 
-	while((c = getopt_long(argc, argv, "abdDe:fhlnmo:PirstV", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "abdDe:fhlnmo:PiI:rstV", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
-			exclusive_option(&excl_ae, EXCL_ALL, "--{all,exclude}");
 			lsblk->all_devices = 1;
 			break;
 		case 'b':
@@ -1214,7 +1258,7 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_DZERO;
 			break;
 		case 'e':
-			exclusive_option(&excl_ae, EXCL_EXCLUDE, "--{all,exclude}");
+			exclusive_option(&excl_aeI, EXCL_EXCLUDE, "--{exclude,include}");
 			parse_excludes(optarg);
 			break;
 		case 'h':
@@ -1241,6 +1285,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'i':
 			tt_flags |= TT_FL_ASCII;
+			break;
+		case 'I':
+			exclusive_option(&excl_aeI, EXCL_INCLUDE, "--{exclude,include}");
+			parse_includes(optarg);
 			break;
 		case 'r':
 			exclusive_option(&excl_rlP, EXCL_RAW, "--{raw,list,pairs}");
@@ -1296,7 +1344,7 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_TARGET;
 	}
 
-	if (!nexcludes)
+	if (nexcludes == 0 && nincludes == 0)
 		excludes[nexcludes++] = 1;	/* default: ignore RAM disks */
 
 	mnt_init_debug(0);
