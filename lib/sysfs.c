@@ -220,6 +220,9 @@ static int sysfs_open(struct sysfs_cxt *cxt, const char *attr)
 ssize_t sysfs_readlink(struct sysfs_cxt *cxt, const char *attr,
 		   char *buf, size_t bufsiz)
 {
+	if (!cxt->dir_path)
+		return -1;
+
 	if (attr)
 		return readlink_at(cxt->dir_fd, cxt->dir_path, attr, buf, bufsiz);
 
