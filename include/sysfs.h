@@ -32,8 +32,8 @@ extern char *sysfs_devno_path(dev_t devno, char *buf, size_t bufsiz);
 extern char *sysfs_devno_to_devpath(dev_t devno, char *buf, size_t bufsiz);
 extern dev_t sysfs_devname_to_devno(const char *name, const char *parent);
 
-extern int sysfs_init(struct sysfs_cxt *cxt, dev_t devno,
-				struct sysfs_cxt *parent);
+extern int sysfs_init(struct sysfs_cxt *cxt, dev_t devno, struct sysfs_cxt *parent)
+					__attribute__ ((warn_unused_result));
 extern void sysfs_deinit(struct sysfs_cxt *cxt);
 
 extern DIR *sysfs_opendir(struct sysfs_cxt *cxt, const char *attr);

@@ -622,7 +622,8 @@ int main(int argc, char *argv[])
 	printf("PARTITION: %s\n",
 		sysfs_devno_has_attribute(devno, "partition") ? "YES" : "NOT");
 
-	sysfs_init(&cxt, devno, NULL);
+	if (sysfs_init(&cxt, devno, NULL))
+		return EXIT_FAILURE;
 
 	len = sysfs_readlink(&cxt, NULL, path, sizeof(path) - 1);
 	if (len > 0) {
