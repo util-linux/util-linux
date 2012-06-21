@@ -254,7 +254,9 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	loopcxt_init(&lc, 0);
+	if (loopcxt_init(&lc, 0))
+		err(EXIT_FAILURE, _("failed to initialize loopcxt"));
+
 	loopcxt_enable_debug(&lc, getenv("LOOPDEV_DEBUG") ? TRUE : FALSE);
 
 	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:o:p:PrvV",
@@ -267,7 +269,9 @@ int main(int argc, char **argv)
 		case 'c':
 			exclusive_option(&excl_any, EXCL_SET_CAPACITY, EXCL_ERROR);
 			act = A_SET_CAPACITY;
-			loopcxt_set_device(&lc, optarg);
+			if (loopcxt_set_device(&lc, optarg))
+				err(EXIT_FAILURE, _("%s: failed to use device"),
+						optarg);
 			break;
 		case 'r':
 			lo_flags |= LO_FLAGS_READ_ONLY;
@@ -275,7 +279,9 @@ int main(int argc, char **argv)
 		case 'd':
 			exclusive_option(&excl_any, EXCL_DETACH, EXCL_ERROR);
 			act = A_DELETE;
-			loopcxt_set_device(&lc, optarg);
+			if (loopcxt_set_device(&lc, optarg))
+				err(EXIT_FAILURE, _("%s: failed to use device"),
+						optarg);
 			break;
 		case 'D':
 			exclusive_option(&excl_any, EXCL_DETACH_ALL, EXCL_ERROR);
@@ -341,7 +347,10 @@ int main(int argc, char **argv)
 		 * losetup <device>
 		 */
 		act = A_SHOW_ONE;
-		loopcxt_set_device(&lc, argv[optind++]);
+		if (loopcxt_set_device(&lc, argv[optind]))
+			err(EXIT_FAILURE, _("%s: failed to use device"),
+					argv[optind]);
+		optind++;
 	}
 	if (!act) {
 		/*
@@ -351,7 +360,10 @@ int main(int argc, char **argv)
 
 		if (optind >= argc)
 			errx(EXIT_FAILURE, _("no loop device specified"));
-		loopcxt_set_device(&lc, argv[optind++]);
+		if (loopcxt_set_device(&lc, argv[optind]))
+			err(EXIT_FAILURE, _("%s failed to use device"),
+					argv[optind]);
+		optind++;
 
 		if (optind >= argc)
 			errx(EXIT_FAILURE, _("no file specified"));
@@ -425,7 +437,10 @@ int main(int argc, char **argv)
 	case A_DELETE:
 		res = delete_loop(&lc);
 		while (optind < argc) {
-			loopcxt_set_device(&lc, argv[optind++]);
+			if (loopcxt_set_device(&lc, argv[optind]))
+				warn(_("%s: failed to use device"),
+						argv[optind]);
+			optind++;
 			res += delete_loop(&lc);
 		}
 		break;

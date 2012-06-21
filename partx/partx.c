@@ -102,7 +102,8 @@ static void assoc_loopdev(const char *fname)
 {
 	int rc;
 
-	loopcxt_init(&lc, 0);
+	if (loopcxt_init(&lc, 0))
+		err(EXIT_FAILURE, _("failed to initialize loopcxt"));
 
 	rc = loopcxt_find_unused(&lc);
 	if (rc)

@@ -141,11 +141,13 @@ extern int loopdev_count_by_backing_file(const char *filename, char **loopdev);
 /*
  * Low-level
  */
-extern int loopcxt_init(struct loopdev_cxt *lc, int flags);
+extern int loopcxt_init(struct loopdev_cxt *lc, int flags)
+				__attribute__ ((warn_unused_result));
 extern void loopcxt_deinit(struct loopdev_cxt *lc);
 extern void loopcxt_enable_debug(struct loopdev_cxt *lc, int enable);
 
-extern int loopcxt_set_device(struct loopdev_cxt *lc, const char *device);
+extern int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
+				__attribute__ ((warn_unused_result));
 extern int loopcxt_has_device(struct loopdev_cxt *lc);
 extern char *loopcxt_strdup_device(struct loopdev_cxt *lc);
 extern const char *loopcxt_get_device(struct loopdev_cxt *lc);
