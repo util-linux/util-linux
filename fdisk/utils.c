@@ -33,6 +33,8 @@ int fdisk_debug_mask;
 
 static int __init_mbr_buffer(struct fdisk_context *cxt)
 {
+	DBG(TOPOLOGY, dbgprint("initialize MBR buffer"));
+
 	cxt->mbr = calloc(1, MAX_SECTOR_SIZE);
 	if (!cxt->mbr)
 		goto fail;
@@ -107,6 +109,8 @@ static int __discover_topology(struct fdisk_context *cxt)
 #ifdef HAVE_LIBBLKID
 	blkid_probe pr;
 
+	DBG(TOPOLOGY, dbgprint("initialize libblkid prober"));
+
 	pr = blkid_new_probe();
 	if (pr && blkid_probe_set_device(pr, cxt->dev_fd, 0, 0) == 0) {
 		blkid_topology tp = blkid_probe_get_topology(pr);
@@ -153,8 +157,10 @@ static int __discover_topology(struct fdisk_context *cxt)
  */
 void fdisk_mbr_zeroize(struct fdisk_context *cxt)
 {
-	if (cxt->mbr)
+	if (cxt->mbr) {
+		DBG(CONTEXT, dbgprint("zeroize in-memory MBR"));
 		memset(cxt->mbr, 0, MAX_SECTOR_SIZE);
+	}
 }
 
 /**
@@ -229,6 +235,8 @@ struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int rea
 {
 	int fd, errsv = 0;
 	struct fdisk_context *cxt = NULL;
+
+	DBG(CONTEXT, dbgprint("initializing context for %s", fname));
 
 	if (readonly == 1 || (fd = open(fname, O_RDWR)) < 0) {
 		if ((fd = open(fname, O_RDONLY)) < 0)
