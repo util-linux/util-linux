@@ -821,9 +821,10 @@ static int set_cxt(struct blkdev_cxt *cxt,
 
 	cxt->maj = major(devno);
 	cxt->min = minor(devno);
+	cxt->size = 0;
 
-	sysfs_read_u64(&cxt->sysfs, "size", &cxt->size);	/* in sectors */
-	cxt->size <<= 9;					/* in bytes */
+	if (sysfs_read_u64(&cxt->sysfs, "size", &cxt->size) == 0)	/* in sectors */
+		cxt->size <<= 9;					/* in bytes */
 
 	sysfs_read_int(&cxt->sysfs, "queue/discard_granularity", &cxt->discard);
 
