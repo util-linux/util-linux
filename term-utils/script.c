@@ -416,16 +416,6 @@ void
 doshell(void) {
 	char *shname;
 
-#if 0
-	int t;
-
-	t = open(_PATH_DEV_TTY, O_RDWR);
-	if (t >= 0) {
-		ioctl(t, TIOCNOTTY, (char *)0);
-		close(t);
-	}
-#endif
-
 	getslave();
 	close(master);
 	if (close_stream(fscript) != 0)
