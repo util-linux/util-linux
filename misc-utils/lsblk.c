@@ -470,7 +470,8 @@ static int is_readonly_device(struct blkdev_cxt *cxt)
 	/* fallback if "ro" attribute does not exist */
 	fd = open(cxt->filename, O_RDONLY);
 	if (fd != -1) {
-		ioctl(fd, BLKROGET, &ro);
+		if (ioctl(fd, BLKROGET, &ro) != 0)
+			ro = 0;
 		close(fd);
 	}
 	return ro;
