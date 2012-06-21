@@ -154,7 +154,7 @@ static int __discover_topology(struct fdisk_context *cxt)
 void fdisk_mbr_zeroize(struct fdisk_context *cxt)
 {
 	if (cxt->mbr)
-		bzero(cxt->mbr, MAX_SECTOR_SIZE);
+		memset(cxt->mbr, 0, MAX_SECTOR_SIZE);
 }
 
 /**
