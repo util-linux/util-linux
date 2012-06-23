@@ -74,6 +74,7 @@ case $prefix:$localstatedir in
     localstatedir=${prefix}/${localstatedir}
     ;;
 esac
+AC_SUBST([localstatedir])
 
 libdirname=`basename "$libdir"`
 AC_SUBST([libdirname])
@@ -1315,6 +1316,7 @@ LIBS=""
 
 AC_CONFIG_HEADERS(config.h)
 
+
 AC_CONFIG_FILES([
 Makefile
 libblkid/blkid.pc
@@ -1326,7 +1328,10 @@ libmount/docs/version.xml
 libmount/mount.pc
 libmount/src/libmount.h
 libuuid/uuid.pc
+misc-utils/uuidd.8
+misc-utils/uuidd.rc
 misc-utils/uuidd.service
+misc-utils/uuidd.socket
 po/Makefile.in
 tests/commands.sh
 ])
