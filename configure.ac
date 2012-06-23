@@ -60,6 +60,21 @@ NONE:NONE | NONE:/usr | /usr:*)
   esac ;;
 esac
 
+case $prefix:$localstatedir in
+  NONE:'${prefix}/var')
+    localstatedir=/run
+    AC_MSG_NOTICE([  --localstatedir defaults to /run])
+    ;;
+  *:'${prefix}/var')
+    localstatedir=${prefix}/run
+    ;;
+  NONE:*)
+    ;;
+  *:*)
+    localstatedir=${prefix}/${localstatedir}
+    ;;
+esac
+
 libdirname=`basename "$libdir"`
 AC_SUBST([libdirname])
 
