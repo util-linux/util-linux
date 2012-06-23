@@ -63,6 +63,7 @@
 
 /* used in term-utils/agetty.c */
 #define _PATH_ISSUE		"/etc/issue"
+#define _PATH_NUMLOCK_ON	_PATH_LOCALSTATEDIR "/numlock-on"
 
 #define _PATH_LOGINDEFS		"/etc/login.defs"
 

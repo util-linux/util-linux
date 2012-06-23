@@ -1259,9 +1259,8 @@ static void do_prompt(struct options *op, struct termios *tp)
 		if (ioctl(STDIN_FILENO, KDGKBLED, &kb) == 0) {
 			char hint[256] = { '\0' };
 			int nl = 0;
-			struct stat st;
 
-			if (stat("/var/run/numlock-on", &st) == 0)
+			if (access(_PATH_NUMLOCK_ON, F_OK) == 0)
 				nl = 1;
 
 			if (nl && (kb & 0x02) == 0)
