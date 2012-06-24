@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <getopt.h>
@@ -23,6 +24,8 @@
 
 #include "swapheader.h"
 #include "swapon-common.h"
+#include "strutils.h"
+#include "tt.h"
 
 #define PATH_MKSWAP	"/sbin/mkswap"
 
@@ -74,6 +77,98 @@ static int ifexists;
 static int fixpgsz;
 static int verbose;
 
+/* column names */
+struct colinfo {
+        const char *name; /* header */
+        double     whint; /* width hint (N < 1 is in percent of termwidth) */
+        int        flags; /* TT_FL_* */
+        const char *help;
+};
+enum { COL_PATH, COL_TYPE, COL_SIZE, COL_USED, COL_PRIO };
+struct colinfo infos[] = {
+	[COL_PATH]     = { "NAME",	0.20, 0, N_("device file or partition path") },
+	[COL_TYPE]     = { "TYPE",	0.20, TT_FL_TRUNC, N_("type of the device")},
+	[COL_SIZE]     = { "SIZE",	0.20, TT_FL_RIGHT, N_("size of the swap area")},
+	[COL_USED]     = { "USED",	0.20, TT_FL_RIGHT, N_("bytes in use")},
+	[COL_PRIO]     = { "PRIO",	0.20, TT_FL_RIGHT, N_("swap priority")},
+};
+#define NCOLS ARRAY_SIZE(infos)
+static int columns[NCOLS], ncolumns;
+
+static int column_name_to_id(const char *name, size_t namesz)
+{
+	size_t i;
+
+	assert(name);
+
+	for (i = 0; i < NCOLS; i++) {
+		const char *cn = infos[i].name;
+
+		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+			return i;
+	}
+	warnx(_("unknown column: %s"), name);
+	return -1;
+}
+
+static inline int get_column_id(int num)
+{
+	assert(ARRAY_SIZE(columns) == NCOLS);
+	assert(num < ncolumns);
+	assert(columns[num] < (int)NCOLS);
+
+	return columns[num];
+}
+
+static inline struct colinfo *get_column_info(unsigned num)
+{
+	return &infos[get_column_id(num)];
+}
+
+static void add_tt_line(struct tt *tt, struct libmnt_fs *fs)
+{
+	int i;
+	struct tt_line *line;
+
+	assert(tt);
+	assert(fs);
+
+	line = tt_add_line(tt, NULL);
+	if (!line) {
+		warn(_("failed to add line to output"));
+		return;
+	}
+
+	for (i = 0; i < ncolumns; i++) {
+		char *str = NULL;
+		int rc = 0;
+
+		switch (get_column_id(i)) {
+		case COL_PATH:
+			rc = xasprintf(&str, "%s", mnt_fs_get_source(fs));
+			break;
+		case COL_TYPE:
+			rc = xasprintf(&str, "%s", mnt_fs_get_swaptype(fs));
+			break;
+		case COL_SIZE:
+			rc = xasprintf(&str, "%d", mnt_fs_get_size(fs));
+			break;
+		case COL_USED:
+			rc = xasprintf(&str, "%d", mnt_fs_get_usedsize(fs));
+			break;
+		case COL_PRIO:
+			rc = xasprintf(&str, "%d", mnt_fs_get_priority(fs));
+			break;
+		default:
+			break;
+		}
+
+		if (rc || str)
+			tt_line_set_data(line, i, str);
+	}
+	return;
+}
+
 static int display_summary(void)
 {
 	struct libmnt_table *st = get_swaps();
@@ -101,6 +196,49 @@ static int display_summary(void)
 
 	mnt_free_iter(itr);
 	return 0;
+}
+
+static int show_table(int tt_flags)
+{
+	struct libmnt_table *st = get_swaps();
+	struct libmnt_iter *itr;
+	struct libmnt_fs *fs;
+
+	int i, rc = 0;
+	struct list_head *p, *pnext;
+	struct tt *tt;
+
+	if (!st)
+		return -1;
+
+	itr = mnt_new_iter(MNT_ITER_FORWARD);
+	if (!itr)
+		err(EXIT_FAILURE, _("failed to initialize libmount iterator"));
+
+	tt = tt_new_table(tt_flags);
+	if (!tt) {
+		warn(_("failed to initialize output table"));
+		return -1;
+	}
+
+	for (i = 0; i < ncolumns; i++) {
+		struct colinfo *col = get_column_info(i);
+
+		if (!tt_define_column(tt, col->name, col->whint, col->flags)) {
+			warnx(_("failed to initialize output column"));
+			rc = -1;
+			goto done;
+		}
+	}
+
+	while (mnt_table_next_fs(st, itr, &fs) == 0)
+		add_tt_line(tt, fs);
+
+	mnt_free_iter(itr);
+	tt_print_table(tt);
+ done:
+	tt_free_table(tt);
+	return rc;
 }
 
 /* calls mkswap */
@@ -504,7 +642,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" -e, --ifexists         silently skip devices that do not exist\n"
 		" -f, --fixpgsz          reinitialize the swap space if necessary\n"
 		" -p, --priority <prio>  specify the priority of the swap device\n"
-		" -s, --summary          display summary about used swap devices and exit\n"
+		" -s, --summary          display summary about used swap devices\n"
+		"     --show[=<columns>] display summary in definable table\n"
+		"     --noheadings       don't print headings, use with --show\n"
+		"     --raw              use the raw output format, use with --show\n"
 		" -v, --verbose          verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -521,6 +662,10 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" <device>               name of device to be used\n"
 		" <file>                 name of file to be used\n"), out);
 
+	fputs(_("\nAvailable columns (for --show):\n"), out);
+	for (size_t i = 0; i < NCOLS; i++)
+		fprintf(out, " %4s  %s\n", infos[i].name, _(infos[i].help));
+
 	fprintf(out, USAGE_MAN_TAIL("swapon(8)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -528,7 +673,14 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 int main(int argc, char *argv[])
 {
 	int status = 0, c;
+	int show = 0, tt_flags = 0;
 	size_t i;
+
+	enum {
+		SHOW_OPTION = CHAR_MAX + 1,
+		RAW_OPTION,
+		NOHEADINGS_OPTION
+	};
 
 	static const struct option long_opts[] = {
 		{ "priority", 1, 0, 'p' },
@@ -540,6 +692,9 @@ int main(int argc, char *argv[])
 		{ "help",     0, 0, 'h' },
 		{ "verbose",  0, 0, 'v' },
 		{ "version",  0, 0, 'V' },
+		{ "show",     2, 0, SHOW_OPTION },
+		{ "noheadings", 0, 0, NOHEADINGS_OPTION },
+		{ "raw",      0, 0, RAW_OPTION },
 		{ NULL, 0, 0, 0 }
 	};
 
@@ -584,6 +739,23 @@ int main(int argc, char *argv[])
 		case 'v':		/* be chatty */
 			++verbose;
 			break;
+		case SHOW_OPTION:
+			if (optarg) {
+				ncolumns = string_to_idarray(optarg,
+							     columns,
+							     ARRAY_SIZE(columns),
+							     column_name_to_id);
+				if (ncolumns < 0)
+					return EXIT_FAILURE;
+			}
+			show = 1;
+			break;
+		case NOHEADINGS_OPTION:
+			tt_flags |= TT_FL_NOHEADINGS;
+			break;
+		case RAW_OPTION:
+			tt_flags |= TT_FL_RAW;
+			break;
 		case 'V':		/* version */
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
@@ -595,6 +767,19 @@ int main(int argc, char *argv[])
 		}
 	}
 	argv += optind;
+
+	if (show) {
+		if (!ncolumns) {
+			/* default columns */
+			columns[ncolumns++] = COL_PATH;
+			columns[ncolumns++] = COL_TYPE;
+			columns[ncolumns++] = COL_SIZE;
+			columns[ncolumns++] = COL_USED;
+			columns[ncolumns++] = COL_PRIO;
+		}
+		status = show_table(tt_flags);
+		return status;
+	}
 
 	if (!all && !numof_labels() && !numof_uuids() && *argv == NULL)
 		usage(stderr);

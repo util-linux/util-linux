@@ -164,6 +164,23 @@ for use with
 Display swap usage summary by device. Equivalent to "cat /proc/swaps".
 Not available before Linux 2.1.25.
 .TP
+\fB\-\-show\fR [\fIcolumn,column\fR]
+Display definable device table similar to
+.B \-\-summary
+output.  See \-\-help output for
+.I column
+list.
+.TP
+.B \-\-noheadings
+Do not print headings when displaying
+.B \-\-show
+output.
+.TP
+.B \-\-raw
+Display
+.B \-\-show
+output without aligning table columns.
+.TP
 .B "\-U \fIuuid\fP"
 Use the partition that has the specified
 .IR uuid .
