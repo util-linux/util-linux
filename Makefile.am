@@ -21,18 +21,10 @@ INSTALL_DATA_HOOKS =
 EXTRA_DIST =
 CLEANFILES =
 
-
-SHLIBS_DIRS =
-
-if BUILD_LIBMOUNT
-SHLIBS_DIRS += libmount
-endif
-
 MAN_DIRS = man/ru
 
 SUBDIRS = \
 	$(MAN_DIRS) \
-	$(SHLIBS_DIRS) \
 	disk-utils \
 	fdisk \
 	getopt \
@@ -74,9 +66,11 @@ EXTRA_DIST += \
 
 include include/Makemodule.am
 include lib/Makemodule.am
-include schedutils/Makemodule.am
 include libuuid/Makemodule.am
 include libblkid/Makemodule.am
+include libmount/Makemodule.am
+
+include schedutils/Makemodule.am
 
 
 # Arrange so that .tarball-version appears only in the distribution
