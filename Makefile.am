@@ -29,7 +29,6 @@ SUBDIRS = \
 	$(MAN_DIRS) \
 	disk-utils \
 	fdisk \
-	getopt \
 	po \
 	tests
 

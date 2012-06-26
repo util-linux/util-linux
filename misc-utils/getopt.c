@@ -17,9 +17,9 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/* 
+/*
  * Version 1.0-b4: Tue Sep 23 1997. First public release.
- * Version 1.0: Wed Nov 19 1997. 
+ * Version 1.0: Wed Nov 19 1997.
  *   Bumped up the version number to 1.0
  *   Fixed minor typo (CSH instead of TCSH)
  * Version 1.0.1: Tue Jun 3 1998
@@ -33,7 +33,7 @@
  * Version 1.0.6: Tue Jun 27 2000
  *   No important changes
  * Version 1.1.0: Tue Jun 30 2000
- *   Added NLS support (partly written by Arkadiusz Mi<B6>kiewicz 
+ *   Added NLS support (partly written by Arkadiusz Mi<B6>kiewicz
  *     <misiek@pld.org.pl>)
  * Version 1.1.4: Mon Nov 7 2005
  *   Fixed a few type's in the manpage
@@ -62,7 +62,7 @@
 #include "nls.h"
 #include "xalloc.h"
 
-/* NON_OPT is the code that is returned when a non-option is found in '+' 
+/* NON_OPT is the code that is returned when a non-option is found in '+'
  * mode */
 #define NON_OPT 1
 /* LONG_OPT is the code that is returned when a long option is found. */
@@ -158,7 +158,7 @@ static const char *normalize(const char *arg)
 	return BUFFER;
 }
 
-/* 
+/*
  * Generate the output. argv[0] is the program name (used for reporting errors).
  * argv[1..] contains the options to be parsed. argc must be the number of
  * elements in argv (ie. 1 if there are no options, only the program name),
@@ -264,7 +264,7 @@ static void add_longopt(const char *name, int has_arg)
 }
 
 
-/* 
+/*
  * Register several long options. options is a string of long options,
  * separated by commas or whitespace. This nukes options!
  */
@@ -438,7 +438,7 @@ int main(int argc, char *argv[])
 		default:
 			parse_error(_("internal error, contact the author."));
 		}
-	
+
 	if (!optstr) {
 		if (optind >= argc)
 			parse_error(_("missing optstring argument"));

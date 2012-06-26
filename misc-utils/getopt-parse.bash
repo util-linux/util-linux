@@ -16,7 +16,7 @@
 # --> `another arg'
 # --> `wow!*\?'
 
-# Note that we use `"$@"' to let each command-line parameter expand to a 
+# Note that we use `"$@"' to let each command-line parameter expand to a
 # separate word. The quotes around `$@' are essential!
 # We need TEMP as the `eval set --' would nuke the return value of getopt.
 TEMP=`getopt -o ab:c:: --long a-long,b-long:,c-long:: \
@@ -31,7 +31,7 @@ while true ; do
 	case "$1" in
 		-a|--a-long) echo "Option a" ; shift ;;
 		-b|--b-long) echo "Option b, argument \`$2'" ; shift 2 ;;
-		-c|--c-long) 
+		-c|--c-long)
 			# c has an optional argument. As we are in quoted mode,
 			# an empty parameter will be generated if its optional
 			# argument is not found.

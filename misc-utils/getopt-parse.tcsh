@@ -27,7 +27,7 @@
 # each element of argv becomes a separate argument for getopt. The braces
 # are needed because the result is also a list.
 set temp=(`getopt -s tcsh -o ab:c:: --long a-long,b-long:,c-long:: -- $argv:q`)
-if ($? != 0) then 
+if ($? != 0) then
   echo "Terminating..." >/dev/stderr
   exit 1
 endif
@@ -41,7 +41,7 @@ while (1)
 	switch($1:q)
 	case -a:
 	case --a-long:
-		echo "Option a" ; shift 
+		echo "Option a" ; shift
 		breaksw;
 	case -b:
 	case --b-long:
