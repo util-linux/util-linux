@@ -14,6 +14,7 @@ usrlib_exec_LTLIBRARIES =
 bin_PROGRAMS =
 sbin_PROGRAMS =
 dist_usrbin_exec_SCRIPTS =
+systemdsystemunit_DATA =
 
 INSTALL_EXEC_HOOKS =
 UNINSTALL_HOOKS =
@@ -29,7 +30,6 @@ SUBDIRS = \
 	disk-utils \
 	fdisk \
 	getopt \
-	misc-utils \
 	po \
 	tests
 
@@ -62,6 +62,7 @@ include term-utils/Makemodule.am
 include login-utils/Makemodule.am
 include mount-deprecated/Makemodule.am
 include sys-utils/Makemodule.am
+include misc-utils/Makemodule.am
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.

@@ -1199,7 +1199,7 @@ if test "x$with_systemdsystemunitdir" != "xno"; then
   AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
 fi
 
-AM_CONDITIONAL(WITH_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != "xno" ])
+AM_CONDITIONAL(HAVE_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != "xno" ])
 
 
 AC_ARG_ENABLE([pg-bell],
@@ -1298,7 +1298,6 @@ libmount/mount.pc
 libmount/src/libmount.h
 libuuid/uuid.pc
 man/ru/Makefile
-misc-utils/Makefile
 misc-utils/uuidd.service
 partx/Makefile
 po/Makefile.in
