@@ -1304,16 +1304,10 @@ disk-utils/Makefile
 fdisk/Makefile
 getopt/Makefile
 hwclock/Makefile
-libblkid/Makefile
 libblkid/blkid.pc
 libblkid/docs/Makefile
 libblkid/docs/version.xml
-libblkid/samples/Makefile
-libblkid/src/Makefile
 libblkid/src/blkid.h
-libblkid/src/partitions/Makefile
-libblkid/src/superblocks/Makefile
-libblkid/src/topology/Makefile
 libmount/Makefile
 libmount/docs/Makefile
 libmount/docs/version.xml
