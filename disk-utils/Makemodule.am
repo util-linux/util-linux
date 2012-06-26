@@ -1,0 +1,128 @@
+
+lib_blkdev_sources = lib/blkdev.c
+if LINUX
+lib_blkdev_sources += lib/linux_version.c
+endif
+
+
+sbin_PROGRAMS += fsck.minix
+dist_man_MANS += disk-utils/fsck.minix.8
+fsck_minix_SOURCES = \
+	disk-utils/fsck.minix.c \
+	disk-utils/minix_programs.h \
+	lib/ismounted.c
+
+sbin_PROGRAMS += mkfs.minix
+dist_man_MANS += disk-utils/mkfs.minix.8
+mkfs_minix_SOURCES = \
+	disk-utils/minix_programs.h \
+	disk-utils/mkfs.minix.c \
+	lib/strutils.c \
+	$(lib_blkdev_sources)
+
+sbin_PROGRAMS += mkfs
+dist_man_MANS += disk-utils/mkfs.8
+mkfs_SOURCES = disk-utils/mkfs.c
+
+usrbin_exec_PROGRAMS += isosize
+dist_man_MANS += disk-utils/isosize.8
+isosize_SOURCES = disk-utils/isosize.c lib/strutils.c
+
+sbin_PROGRAMS += mkfs.bfs
+dist_man_MANS += disk-utils/mkfs.bfs.8
+mkfs_bfs_SOURCES = \
+	disk-utils/mkfs.bfs.c \
+	lib/strutils.c \
+	$(lib_blkdev_sources)
+
+
+sbin_PROGRAMS += mkswap
+dist_man_MANS += disk-utils/mkswap.8
+mkswap_SOURCES = \
+	disk-utils/mkswap.c \
+	lib/ismounted.c \
+	lib/strutils.c \
+	lib/wholedisk.c \
+	$(lib_blkdev_sources)
+mkswap_CFLAGS = $(AM_CFLAGS)
+mkswap_LDADD =
+if BUILD_LIBUUID
+mkswap_CFLAGS += -I$(ul_libuuid_incdir)
+mkswap_LDADD += libuuid.la
+endif
+if BUILD_LIBBLKID
+mkswap_CFLAGS += -I$(ul_libblkid_incdir)
+mkswap_LDADD += libblkid.la
+endif
+if HAVE_SELINUX
+mkswap_LDADD += -lselinux
+endif
+
+
+if BUILD_SWAPLABEL
+sbin_PROGRAMS += swaplabel
+dist_man_MANS += disk-utils/swaplabel.8
+swaplabel_SOURCES = disk-utils/swaplabel.c $(lib_blkdev_sources)
+
+swaplabel_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+swaplabel_LDADD = libblkid.la
+
+if BUILD_LIBUUID
+swaplabel_LDADD += $(uuid_ldadd)
+swaplabel_CFLAGS += -I$(ul_libuuid_incdir)
+endif
+endif #BUILD_SWAPLABEL
+
+
+if BUILD_FSCK
+sbin_PROGRAMS += fsck
+dist_man_MANS += disk-utils/fsck.8
+fsck_SOURCES = disk-utils/fsck.c
+fsck_LDADD = libmount.la libblkid.la
+fsck_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir) -I$(ul_libblkid_incdir)
+endif
+
+
+if BUILD_ELVTUNE
+sbin_PROGRAMS += elvtune
+dist_man_MANS += disk-utils/elvtune.8
+elvtune_SOURCES = disk-utils/elvtune.c lib/linux_version.c
+endif
+
+
+if BUILD_RAW
+sbin_PROGRAMS += raw
+dist_man_MANS += disk-utils/raw.8
+raw_SOURCES = disk-utils/raw.c
+endif
+
+
+if BUILD_CRAMFS
+cramfs_common_sources = \
+	disk-utils/cramfs.h \
+	disk-utils/cramfs_common.c \
+	$(lib_blkdev_sources)
+
+sbin_PROGRAMS += fsck.cramfs
+fsck_cramfs_SOURCES = disk-utils/fsck.cramfs.c $(cramfs_common_sources)
+fsck_cramfs_LDADD = -lz
+
+sbin_PROGRAMS += mkfs.cramfs
+mkfs_cramfs_SOURCES = \
+	disk-utils/mkfs.cramfs.c \
+	$(cramfs_common_sources) \
+	lib/md5.c \
+	lib/strutils.c
+mkfs_cramfs_LDADD = -lz
+endif
+
+
+if LINUX
+sbin_PROGRAMS += blockdev
+dist_man_MANS += disk-utils/blockdev.8
+blockdev_SOURCES = disk-utils/blockdev.c $(lib_blkdev_sources)
+
+usrsbin_exec_PROGRAMS += fdformat
+dist_man_MANS += disk-utils/fdformat.8
+fdformat_SOURCES = disk-utils/fdformat.c
+endif # LINUX

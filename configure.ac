@@ -928,6 +928,11 @@ UL_REQUIRES_HAVE([wdctl], [linux_watchdog_h], [linux/watchdog.h header file])
 AM_CONDITIONAL(BUILD_WDCTL, test "x$build_wdctl" = xyes)
 
 
+UL_BUILD_INIT([swaplabel], [check])
+UL_REQUIRES_BUILD([swaplabel], [libblkid])
+AM_CONDITIONAL(BUILD_SWAPLABEL, test "x$build_swaplabel" = xyes)
+
+
 UL_BUILD_INIT([prlimit], [check])
 UL_REQUIRES_LINUX([prlimit])
 UL_REQUIRES_SYSCALL_CHECK([prlimit], [UL_CHECK_SYSCALL([prlimit64])], [prlimit64])
@@ -1285,7 +1290,6 @@ AC_CONFIG_HEADERS(config.h)
 
 AC_CONFIG_FILES([
 Makefile
-disk-utils/Makefile
 fdisk/Makefile
 libblkid/blkid.pc
 libblkid/docs/Makefile

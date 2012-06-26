@@ -27,7 +27,6 @@ MAN_DIRS = man/ru
 
 SUBDIRS = \
 	$(MAN_DIRS) \
-	disk-utils \
 	fdisk \
 	po \
 	tests
@@ -62,6 +61,7 @@ include login-utils/Makemodule.am
 include mount-deprecated/Makemodule.am
 include sys-utils/Makemodule.am
 include misc-utils/Makemodule.am
+include disk-utils/Makemodule.am
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.
