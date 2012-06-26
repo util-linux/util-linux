@@ -1303,7 +1303,6 @@ misc-utils/Makefile
 misc-utils/uuidd.service
 partx/Makefile
 po/Makefile.in
-sys-utils/Makefile
 tests/Makefile
 tests/commands.sh
 tests/helpers/Makefile

@@ -1,0 +1,316 @@
+
+usrbin_exec_PROGRAMS += flock
+dist_man_MANS += sys-utils/flock.1
+flock_SOURCES = sys-utils/flock.c lib/strutils.c
+
+usrbin_exec_PROGRAMS += ipcmk
+dist_man_MANS += sys-utils/ipcmk.1
+ipcmk_SOURCES = sys-utils/ipcmk.c lib/strutils.c
+
+usrbin_exec_PROGRAMS += ipcrm
+dist_man_MANS += sys-utils/ipcrm.1
+ipcrm_SOURCES = sys-utils/ipcrm.c lib/strutils.c
+
+usrbin_exec_PROGRAMS += ipcs
+dist_man_MANS += sys-utils/ipcs.1
+ipcs_SOURCES = sys-utils/ipcs.c
+
+usrbin_exec_PROGRAMS += renice
+dist_man_MANS += sys-utils/renice.1
+renice_SOURCES = sys-utils/renice.c
+
+usrbin_exec_PROGRAMS += setsid
+dist_man_MANS += sys-utils/setsid.1
+setsid_SOURCES = sys-utils/setsid.c
+
+usrsbin_exec_PROGRAMS += readprofile
+dist_man_MANS += sys-utils/readprofile.8
+readprofile_SOURCES = sys-utils/readprofile.c
+
+
+if LINUX
+#
+# Linux-only utils with no another dependencies. All another dependencies have
+# to be resolved in configure.ac end exported to makefiles by BUILD_*.
+#
+bin_PROGRAMS += dmesg
+dist_man_MANS += sys-utils/dmesg.1
+dmesg_SOURCES = sys-utils/dmesg.c lib/strutils.c
+
+sbin_PROGRAMS += ctrlaltdel
+dist_man_MANS += sys-utils/ctrlaltdel.8
+ctrlaltdel_SOURCES = sys-utils/ctrlaltdel.c
+
+sbin_PROGRAMS += fsfreeze
+dist_man_MANS += sys-utils/fsfreeze.8
+fsfreeze_SOURCES = sys-utils/fsfreeze.c
+
+sbin_PROGRAMS += fstrim
+dist_man_MANS += sys-utils/fstrim.8
+fstrim_SOURCES = sys-utils/fstrim.c lib/strutils.c
+
+usrbin_exec_PROGRAMS += cytune
+dist_man_MANS += sys-utils/cytune.8
+cytune_SOURCES = \
+	sys-utils/cytune.c \
+	sys-utils/cyclades.h \
+	lib/strutils.c
+
+usrsbin_exec_PROGRAMS += ldattach
+dist_man_MANS += sys-utils/ldattach.8
+ldattach_SOURCES = sys-utils/ldattach.c lib/strutils.c
+
+usrsbin_exec_PROGRAMS += tunelp
+dist_man_MANS += sys-utils/tunelp.8
+tunelp_SOURCES = sys-utils/tunelp.c sys-utils/lp.h
+
+usrsbin_exec_PROGRAMS += rtcwake
+dist_man_MANS += sys-utils/rtcwake.8
+rtcwake_SOURCES = sys-utils/rtcwake.c lib/strutils.c
+
+
+usrbin_exec_PROGRAMS += setarch
+dist_man_MANS += sys-utils/setarch.8
+setarch_SOURCES = sys-utils/setarch.c
+
+SETARCH_LINKS = linux32 linux64
+
+if ARCH_S390
+SETARCH_LINKS += s390 s390x
+endif
+if ARCH_I86
+SETARCH_LINKS += i386
+endif
+if ARCH_86_64
+SETARCH_LINKS += i386 x86_64
+endif
+if ARCH_PPC
+SETARCH_LINKS += ppc ppc64 ppc32
+endif
+if ARCH_SPARC
+SETARCH_LINKS += sparc sparc64 sparc32 sparc32bash
+endif
+if ARCH_MIPS
+SETARCH_LINKS += mips mips64 mips32
+endif
+if ARCH_IA64
+SETARCH_LINKS += i386 ia64
+endif
+if ARCH_HPPA
+SETARCH_LINKS += parisc parisc64 parisc32
+endif
+
+SETARCH_MAN_LINKS = $(addprefix sys-utils/,$(SETARCH_LINKS:=.8))
+man_MANS += $(SETARCH_MAN_LINKS)
+CLEANFILES += $(SETARCH_MAN_LINKS)
+
+$(SETARCH_MAN_LINKS):
+	$(AM_V_GEN)echo ".so man8/setarch.8" > $@
+
+install-exec-hook-setarch:
+	for I in $(SETARCH_LINKS); do \
+		cd $(DESTDIR)$(usrbin_execdir) && ln -sf setarch $$I ; \
+	done
+
+uninstall-hook-setarch:
+	for I in $(SETARCH_LINKS); do \
+		rm -f $(DESTDIR)$(usrbin_execdir)/$$I ; \
+	done
+
+INSTALL_EXEC_HOOKS += install-exec-hook-setarch
+UNINSTALL_HOOKS += uninstall-hook-setarch
+
+endif # LINUX
+
+
+if BUILD_EJECT
+usrbin_exec_PROGRAMS += eject
+eject_SOURCES =  \
+	sys-utils/eject.c \
+	lib/strutils.c \
+	lib/sysfs.c \
+	lib/at.c
+eject_LDADD = libmount.la
+eject_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+dist_man_MANS += sys-utils/eject.1
+endif
+
+
+if BUILD_LOSETUP
+sbin_PROGRAMS += losetup
+dist_man_MANS += sys-utils/losetup.8
+losetup_SOURCES = \
+	sys-utils/losetup.c \
+	lib/at.c \
+	lib/canonicalize.c \
+	lib/linux_version.c \
+	lib/loopdev.c \
+	lib/strutils.c \
+	lib/sysfs.c \
+	lib/xgetpass.c
+
+if HAVE_STATIC_LOSETUP
+bin_PROGRAMS += losetup.static
+losetup_static_SOURCES = $(losetup_SOURCES)
+losetup_static_LDFLAGS = -all-static
+endif
+endif # BUILD_LOSETUP
+
+
+if BUILD_PRLIMIT
+usrbin_exec_PROGRAMS += prlimit
+dist_man_MANS += sys-utils/prlimit.1
+prlimit_SOURCES = \
+	sys-utils/prlimit.c \
+	lib/mbsalign.c \
+	lib/strutils.c \
+	lib/tt.c
+endif
+
+
+if BUILD_MOUNT
+#
+# The original mount is in mount/ directory
+# -- temporary we share some man pages
+#
+bin_PROGRAMS += mount umount
+dist_man_MANS += \
+	sys-utils/mount.8 \
+	sys-utils/fstab.5 \
+	mount-deprecated/umount.8
+mount_SOURCES = \
+	sys-utils/mount.c \
+	lib/env.c \
+	lib/strutils.c \
+	lib/xgetpass.c
+
+mount_LDADD = libmount.la $(SELINUX_LIBS)
+mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS) -I$(ul_libmount_incdir)
+mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
+
+umount_SOURCES = \
+	sys-utils/umount.c \
+	lib/env.c
+umount_LDADD = libmount.la
+umount_CFLAGS = $(AM_CFLAGS) $(SUID_CFLAGS) -I$(ul_libmount_incdir)
+umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
+
+if HAVE_STATIC_MOUNT
+bin_PROGRAMS += mount.static
+mount_static_SOURCES = $(mount_SOURCES)
+mount_static_CFLAGS = $(mount_CFLAGS)
+mount_static_LDFLAGS = $(mount_LDFLAGS) -all-static
+mount_static_LDADD = $(mount_LDADD) $(SELINUX_LIBS_STATIC)
+endif
+
+if HAVE_STATIC_UMOUNT
+bin_PROGRAMS += umount.static
+umount_static_SOURCES = $(umount_SOURCES)
+umount_static_CFLAGS = $(umount_CFLAGS)
+umount_static_LDFLAGS = $(umount_LDFLAGS) -all-static
+umount_static_LDADD = $(umount_LDADD)
+endif
+
+if MAKEINSTALL_DO_SETUID
+install-exec-hook-mount:
+	chmod 4755 $(DESTDIR)$(bindir)/mount
+	chmod 4755 $(DESTDIR)$(bindir)/umount
+
+INSTALL_EXEC_HOOKS += install-exec-hook-mount
+endif
+endif # BUILD_MOUNT
+
+
+if BUILD_SWAPON
+sbin_PROGRAMS += swapon swapoff
+dist_man_MANS += \
+	sys-utils/swapoff.8 \
+	sys-utils/swapon.8
+
+swapon_SOURCES = \
+	sys-utils/swapon.c \
+	sys-utils/swapon-common.c \
+	sys-utils/swapon-common.h \
+	lib/blkdev.c \
+	lib/linux_version.c
+
+swapon_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+swapon_LDADD = libmount.la
+
+swapoff_SOURCES = \
+	sys-utils/swapoff.c \
+	sys-utils/swapon-common.c
+swapoff_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+swapoff_LDADD = libmount.la
+endif
+
+if BUILD_LSCPU
+usrbin_exec_PROGRAMS += lscpu
+lscpu_SOURCES = \
+	sys-utils/lscpu.c \
+	lib/cpuset.c \
+	lib/mbsalign.c \
+	lib/path.c \
+	lib/strutils.c \
+	lib/tt.c
+dist_man_MANS += sys-utils/lscpu.1
+endif
+
+if BUILD_CHCPU
+sbin_PROGRAMS += chcpu
+chcpu_SOURCES = \
+	sys-utils/chcpu.c \
+	lib/cpuset.c \
+	lib/path.c
+dist_man_MANS += sys-utils/chcpu.8
+endif
+
+if BUILD_WDCTL
+bin_PROGRAMS += wdctl
+dist_man_MANS += sys-utils/wdctl.8
+wdctl_SOURCES = \
+	sys-utils/wdctl.c \
+	lib/strutils.c \
+	lib/tt.c \
+	lib/mbsalign.c
+endif
+
+if BUILD_MOUNTPOINT
+bin_PROGRAMS += mountpoint
+mountpoint_LDADD = libmount.la
+mountpoint_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+dist_man_MANS += sys-utils/mountpoint.1
+mountpoint_SOURCES = sys-utils/mountpoint.c
+endif
+
+if BUILD_FALLOCATE
+usrbin_exec_PROGRAMS += fallocate
+fallocate_SOURCES = \
+	sys-utils/fallocate.c \
+	lib/strutils.c
+dist_man_MANS += sys-utils/fallocate.1
+endif
+
+if BUILD_PIVOT_ROOT
+sbin_PROGRAMS += pivot_root
+dist_man_MANS += sys-utils/pivot_root.8
+pivot_root_SOURCES = sys-utils/pivot_root.c
+endif
+
+if BUILD_SWITCH_ROOT
+sbin_PROGRAMS += switch_root
+dist_man_MANS += sys-utils/switch_root.8
+switch_root_SOURCES = sys-utils/switch_root.c
+endif
+
+if BUILD_UNSHARE
+usrbin_exec_PROGRAMS += unshare
+dist_man_MANS += sys-utils/unshare.1
+unshare_SOURCES = sys-utils/unshare.c
+endif
+
+if BUILD_ARCH
+bin_PROGRAMS += arch
+dist_man_MANS += sys-utils/arch.1
+arch_SOURCES = sys-utils/arch.c
+endif
