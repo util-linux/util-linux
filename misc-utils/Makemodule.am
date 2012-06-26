@@ -97,7 +97,7 @@ uuidd_LDADD = libuuid.la
 uuidd_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 uuidd_SOURCES = misc-utils/uuidd.c
 if USE_SOCKET_ACTIVATION
-uuidd_SOURCES += misc-utils/sd-daemon.c
+uuidd_SOURCES += misc-utils/sd-daemon.c misc-utils/sd-daemon.h
 uuidd_LDADD += -lrt
 endif
 if HAVE_SYSTEMD
