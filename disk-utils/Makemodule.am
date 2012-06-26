@@ -126,3 +126,40 @@ usrsbin_exec_PROGRAMS += fdformat
 dist_man_MANS += disk-utils/fdformat.8
 fdformat_SOURCES = disk-utils/fdformat.c
 endif # LINUX
+
+
+if BUILD_PARTX
+usrsbin_exec_PROGRAMS += partx addpart delpart
+dist_man_MANS += \
+	disk-utils/addpart.8 \
+	disk-utils/delpart.8 \
+	disk-utils/partx.8
+
+
+addpart_SOURCES = \
+	disk-utils/addpart.c \
+	disk-utils/partx.h \
+	lib/strutils.c
+
+delpart_SOURCES = \
+	disk-utils/delpart.c \
+	disk-utils/partx.h \
+	lib/strutils.c
+
+partx_SOURCES = \
+	disk-utils/partx.c \
+	disk-utils/partx.h \
+	lib/at.c \
+	lib/blkdev.c \
+	lib/canonicalize.c \
+	lib/linux_version.c \
+	lib/loopdev.c \
+	lib/mbsalign.c \
+	lib/strutils.c \
+	lib/sysfs.c \
+	lib/tt.c
+
+partx_CFLAGS = -I$(ul_libblkid_incdir)
+partx_LDADD = libblkid.la
+
+endif # BUILD_PARTX

@@ -1302,7 +1302,6 @@ libmount/src/libmount.h
 libuuid/uuid.pc
 man/ru/Makefile
 misc-utils/uuidd.service
-partx/Makefile
 po/Makefile.in
 tests/Makefile
 tests/commands.sh

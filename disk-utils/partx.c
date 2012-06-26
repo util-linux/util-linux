@@ -879,4 +879,3 @@ int main(int argc, char **argv)
 	close(fd);
 	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
 }
-
