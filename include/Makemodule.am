@@ -25,6 +25,7 @@ dist_noinst_HEADERS += \
 	include/minix.h \
 	include/nls.h \
 	include/optutils.h \
+	include/pager.h \
 	include/pamfail.h \
 	include/path.h \
 	include/pathnames.h \
