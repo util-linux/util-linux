@@ -72,7 +72,6 @@ docs: html-build.stamp
 
 $(REPORT_FILES): sgml-build.stamp
 
-
 #### setup ####
 
 setup-build.stamp:
