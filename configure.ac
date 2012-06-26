@@ -1296,15 +1296,12 @@ AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_FILES([
 Makefile
 libblkid/blkid.pc
-libblkid/docs/Makefile
 libblkid/docs/version.xml
 libblkid/src/blkid.h
-libmount/docs/Makefile
 libmount/docs/version.xml
 libmount/mount.pc
 libmount/src/libmount.h
 libuuid/uuid.pc
-man/ru/Makefile
 misc-utils/uuidd.service
 po/Makefile.in
 tests/commands.sh

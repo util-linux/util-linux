@@ -1,4 +1,23 @@
-include $(top_srcdir)/config/include-Makefile.am
+
+AM_CPPFLAGS = \
+	-include config.h \
+	-I$(top_srcdir)/include \
+	-DLOCALEDIR=\"$(localedir)\"
+AM_CFLAGS = -fsigned-char $(WARN_CFLAGS)
+AM_LDFLAGS =
+
+# Automake (at least up to 1.10) mishandles dist_man_MANS inside conditionals.
+# Unlike with other dist primaries, the files are not distributed if the
+# conditional is false.
+# Work the bug around until it is fixed:
+dist_noinst_DATA = $(dist_man_MANS)
+
+# Paths to in-tree libraries (use ul_ prefix to avoid possible collisions)
+# Note that blkid.h and libmount.h are generated and stored in build dirs.
+#
+ul_libblkid_incdir = $(top_builddir)/libblkid/src
+ul_libmount_incdir = $(top_builddir)/libmount/src
+ul_libuuid_incdir  = $(top_srcdir)/libuuid/src
 
 pkgconfigdir = $(usrlib_execdir)/pkgconfig
 
@@ -15,6 +34,7 @@ bin_PROGRAMS =
 sbin_PROGRAMS =
 dist_usrbin_exec_SCRIPTS =
 systemdsystemunit_DATA =
+ruman1_DATA =
 
 INSTALL_EXEC_HOOKS =
 UNINSTALL_HOOKS =
@@ -24,11 +44,7 @@ CLEAN_LOCALS =
 EXTRA_DIST =
 CLEANFILES =
 
-MAN_DIRS = man/ru
-
-SUBDIRS = \
-	$(MAN_DIRS) \
-	po
+SUBDIRS = po
 
 RCS_FIND_IGNORE = \( -name SCCS -o -name BitKeeper -o -name .svn -o \
 		-name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o
@@ -60,7 +76,6 @@ include disk-utils/Makemodule.am
 include fdisks/Makemodule.am
 
 include tests/Makemodule.am
-
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.
@@ -114,6 +129,12 @@ $(CHANGELOG_FILE):
 	@ echo "--------------------------------------------" >> $(CHANGELOG_FILE)
 	@ echo >> $(CHANGELOG_FILE)
 	$(AM_V_GEN) git log --stat v$(PREVIOUS_VERSION)..HEAD >> $(CHANGELOG_FILE)
+#
+#
+# smatch scan -- smatch and cgcc are expected in $PATH
+#
+checksmatch:
+	$(MAKE) CHECK="smatch --data=$(abs_top_srcdir)/tools/smatch-data" CC=cgcc
 
 changelog: $(CHANGELOG_FILE)
 
