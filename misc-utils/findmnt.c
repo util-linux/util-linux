@@ -78,6 +78,7 @@ enum {
 	COL_AVAIL,
 	COL_USED,
 	COL_USEPERC,
+	COL_FSROOT,
 
 	FINDMNT_NCOLUMNS
 };
@@ -118,6 +119,7 @@ static struct colinfo infos[FINDMNT_NCOLUMNS] = {
 	[COL_AVAIL]        = { "AVAIL",           5, TT_FL_RIGHT, N_("filesystem size available") },
 	[COL_USED]         = { "USED",            5, TT_FL_RIGHT, N_("filesystem size used") },
 	[COL_USEPERC]      = { "USE%",            3, TT_FL_RIGHT, N_("filesystem use percentage") },
+	[COL_FSROOT]       = { "FSROOT",       0.25, TT_FL_NOEXTREMES, N_("filesystem root") },
 };
 
 /* global flags */
@@ -469,6 +471,9 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 	case COL_USED:
 	case COL_USEPERC:
 		str = get_vfs_attr(fs, col_id);
+		break;
+	case COL_FSROOT:
+		str = mnt_fs_get_root(fs);
 		break;
 	default:
 		break;
