@@ -194,7 +194,7 @@ static int display_summary(void)
 		err(EXIT_FAILURE, _("failed to initialize libmount iterator"));
 
 	if (mnt_table_get_nents(st) > 0)
-		printf(_("%-39s\tType\tSize\tUsed\tPriority\n"), _("Filename"));
+		printf(_("%s\t\t\t\tType\t\tSize\tUsed\tPriority\n"), _("Filename"));
 
 	while (mnt_table_next_fs(st, itr, &fs) == 0) {
 		printf("%-39s\t%s\t%jd\t%jd\t%d\n",
