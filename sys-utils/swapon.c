@@ -125,7 +125,7 @@ static inline struct colinfo *get_column_info(unsigned num)
 	return &infos[get_column_id(num)];
 }
 
-static void add_tt_line(struct tt *tt, struct libmnt_fs *fs)
+static void add_tt_line(struct tt *tt, struct libmnt_fs *fs, int bytes)
 {
 	int i;
 	struct tt_line *line;
@@ -142,6 +142,7 @@ static void add_tt_line(struct tt *tt, struct libmnt_fs *fs)
 	for (i = 0; i < ncolumns; i++) {
 		char *str = NULL;
 		int rc = 0;
+		off_t size;
 
 		switch (get_column_id(i)) {
 		case COL_PATH:
@@ -151,10 +152,20 @@ static void add_tt_line(struct tt *tt, struct libmnt_fs *fs)
 			rc = xasprintf(&str, "%s", mnt_fs_get_swaptype(fs));
 			break;
 		case COL_SIZE:
-			rc = xasprintf(&str, "%d", mnt_fs_get_size(fs));
+			size = mnt_fs_get_size(fs);
+			size *= 1024;	/* convert to bytes */
+			if (bytes)
+				rc = xasprintf(&str, "%jd", size);
+			else
+				str = size_to_human_string(SIZE_SUFFIX_1LETTER, size);
 			break;
 		case COL_USED:
-			rc = xasprintf(&str, "%d", mnt_fs_get_usedsize(fs));
+			size = mnt_fs_get_usedsize(fs);
+			size *= 1024;	/* convert to bytes */
+			if (bytes)
+				rc = xasprintf(&str, "%jd", size);
+			else
+				str = size_to_human_string(SIZE_SUFFIX_1LETTER, size);
 			break;
 		case COL_PRIO:
 			rc = xasprintf(&str, "%d", mnt_fs_get_priority(fs));
@@ -198,7 +209,7 @@ static int display_summary(void)
 	return 0;
 }
 
-static int show_table(int tt_flags)
+static int show_table(int tt_flags, int bytes)
 {
 	struct libmnt_table *st = get_swaps();
 	struct libmnt_iter *itr;
@@ -232,7 +243,7 @@ static int show_table(int tt_flags)
 	}
 
 	while (mnt_table_next_fs(st, itr, &fs) == 0)
-		add_tt_line(tt, fs);
+		add_tt_line(tt, fs, bytes);
 
 	mnt_free_iter(itr);
 	tt_print_table(tt);
@@ -646,6 +657,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		"     --show[=<columns>] display summary in definable table\n"
 		"     --noheadings       don't print headings, use with --show\n"
 		"     --raw              use the raw output format, use with --show\n"
+		"     --bytes            display swap size in bytes in --show output\n"
 		" -v, --verbose          verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
@@ -674,12 +686,14 @@ int main(int argc, char *argv[])
 {
 	int status = 0, c;
 	int show = 0, tt_flags = 0;
+	int bytes = 0;
 	size_t i;
 
 	enum {
 		SHOW_OPTION = CHAR_MAX + 1,
 		RAW_OPTION,
-		NOHEADINGS_OPTION
+		NOHEADINGS_OPTION,
+		BYTES_OPTION
 	};
 
 	static const struct option long_opts[] = {
@@ -695,6 +709,7 @@ int main(int argc, char *argv[])
 		{ "show",     2, 0, SHOW_OPTION },
 		{ "noheadings", 0, 0, NOHEADINGS_OPTION },
 		{ "raw",      0, 0, RAW_OPTION },
+		{ "bytes",    0, 0, BYTES_OPTION },
 		{ NULL, 0, 0, 0 }
 	};
 
@@ -756,6 +771,9 @@ int main(int argc, char *argv[])
 		case RAW_OPTION:
 			tt_flags |= TT_FL_RAW;
 			break;
+		case BYTES_OPTION:
+			bytes = 1;
+			break;
 		case 'V':		/* version */
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
@@ -777,7 +795,7 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_USED;
 			columns[ncolumns++] = COL_PRIO;
 		}
-		status = show_table(tt_flags);
+		status = show_table(tt_flags, bytes);
 		return status;
 	}
 
