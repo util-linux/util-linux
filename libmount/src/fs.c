@@ -873,7 +873,7 @@ const char *mnt_fs_get_attributes(struct libmnt_fs *fs)
  *
  * The atrtributes are managed by libmount in userspace only. It's possible
  * that information stored in userspace will not be available for libmount
- * after CLONE_FS unshare. Be carefull, and don't use attributes if possible.
+ * after CLONE_FS unshare. Be careful, and don't use attributes if possible.
  *
  * Returns: 0 on success or negative number in case of error.
  */

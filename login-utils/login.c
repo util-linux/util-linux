@@ -364,7 +364,7 @@ static void init_tty(struct login_context *cxt)
 	 *
 	 * More precisely, the problem is  ttyn := ttyname(0); ...; chown(ttyn);
 	 * here ttyname() might return "/tmp/x", a hardlink to a pseudotty.
-	 * All of this is a problem only when login is suid, which it isnt.
+	 * All of this is a problem only when login is suid, which it isn't.
 	 */
 	if (!cxt->tty_path || !*cxt->tty_path ||
 	    lstat(cxt->tty_path, &st) != 0 || !S_ISCHR(st.st_mode) ||
@@ -1317,7 +1317,7 @@ int main(int argc, char **argv)
 	/*
 	 * Authentication may be skipped (for example, during krlogin, rlogin,
 	 * etc...), but it doesn't mean that we can skip other account checks.
-	 * The account could be disabled or password expired (althought
+	 * The account could be disabled or password expired (although
 	 * kerberos ticket is valid).         -- kzak@redhat.com (22-Feb-2006)
 	 */
 	loginpam_acct(&cxt);

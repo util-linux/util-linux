@@ -140,11 +140,11 @@ static int cpu_set_dispatch(int mode)
 	if (mode == 0) {
 		if (path_writestr("0", _PATH_SYS_CPU_DISPATCH) == -1)
 			err(EXIT_FAILURE, _("Failed to set horizontal dispatch mode"));
-		printf(_("Succesfully set horizontal dispatching mode\n"));
+		printf(_("Successfully set horizontal dispatching mode\n"));
 	} else {
 		if (path_writestr("1", _PATH_SYS_CPU_DISPATCH) == -1)
 			err(EXIT_FAILURE, _("Failed to set vertical dispatch mode"));
-		printf(_("Succesfully set vertical dispatching mode\n"));
+		printf(_("Successfully set vertical dispatching mode\n"));
 	}
 	return EXIT_SUCCESS;
 }

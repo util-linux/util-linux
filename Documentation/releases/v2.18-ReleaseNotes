@@ -148,7 +148,7 @@ docs:
    - update v2.18 ReleaseNotes  [Karel Zak]
 fallocate:
    - check for number of arguments  [Karel Zak]
-   - support suffixes for --offset and --lenght  [Karel Zak]
+   - support suffixes for --offset and --length  [Karel Zak]
 fdisk:
    - add -c option (switch off DOS mode)  [Karel Zak]
    - cleanup alignment, default to 1MiB offset  [Karel Zak]

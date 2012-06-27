@@ -1300,7 +1300,7 @@ HIGHLIGHTS for version 2.6:
 
 1) Removed programs:
    - md5sum, dsplit: available in GNU textutils.
-   - syslogd: Sysklogd is now prefered.  It is available at 
+   - syslogd: Sysklogd is now preferred.  It is available at
 	tsx-11.mit.edu:/pub/sources/sbin
 	sunsite.unc.edu:/pub/Linux/system/Daemons
 

@@ -1775,7 +1775,7 @@ int mnt_context_fstab_applied(struct libmnt_context *cxt)
  *
  * The real exit code of the mount.type helper has to be tested by
  * mnt_context_get_helper_status(). The mnt_context_get_status() only inform
- * that exec() has been sucessful.
+ * that exec() has been successful.
  *
  * Returns: 1 if mount.type or mount(2) syscall has been successfully called.
  */
