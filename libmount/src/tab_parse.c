@@ -423,6 +423,35 @@ err:
 	return tb->errcb ? tb->errcb(tb, filename, *nlines) : 1;
 }
 
+static pid_t path_to_tid(const char *filename)
+{
+	char *path = mnt_resolve_path(filename, NULL);
+	char *p, *end = NULL;
+	pid_t tid = 0;
+
+	if (!path)
+		goto done;
+	p = strrchr(path, '/');
+	if (!p)
+		goto done;
+	*p = '\0';
+	p = strrchr(path, '/');
+	if (!p)
+		goto done;
+	p++;
+
+	errno = 0;
+	tid = strtol(p, &end, 10);
+	if (errno || p == end || (end && *end)) {
+		tid = 0;
+		goto done;
+	}
+	DBG(TAB, mnt_debug("TID for %s is %d", filename, tid));
+done:
+	free(path);
+	return tid;
+}
+
 /**
  * mnt_table_parse_stream:
  * @tb: tab pointer
@@ -436,6 +465,7 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 	int nlines = 0;
 	int rc = -1;
 	int flags = 0;
+	pid_t tid = -1;
 
 	assert(tb);
 	assert(f);
@@ -460,6 +490,11 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 		if (!rc) {
 			rc = mnt_table_add_fs(tb, fs);
 			fs->flags |= flags;
+			if (tb->fmt == MNT_FMT_MOUNTINFO && filename) {
+				if (tid == -1)
+					tid = path_to_tid(filename);
+				fs->tid = tid;
+			}
 		}
 		if (rc) {
 			mnt_free_fs(fs);
