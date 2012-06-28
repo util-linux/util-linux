@@ -1280,7 +1280,7 @@ int main(int argc, char *argv[])
 	if (!tb)
 		goto leave;
 
-	if ((tt_flags & TT_FL_TREE) && !tab_is_tree(tb))
+	if ((tt_flags & TT_FL_TREE) && (ntabfiles > 1 || !tab_is_tree(tb)))
 		tt_flags &= ~TT_FL_TREE;
 
 	cache = mnt_new_cache();
