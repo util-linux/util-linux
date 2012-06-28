@@ -629,6 +629,14 @@ static char **append_tabfile(char **files, int *nfiles, char *filename)
 	return files;
 }
 
+static char **append_pid_tabfile(char **files, int *nfiles, pid_t pid)
+{
+	char *path = NULL;
+
+	xasprintf(&path, "/proc/%d/mountinfo", (int) pid);
+	return append_tabfile(files, nfiles, path);
+}
+
 /* calls libmount fstab/mtab/mountinfo parser */
 static struct libmnt_table *parse_tabfiles(char **files,
 					   int nfiles,
@@ -987,6 +995,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(
 	" -i, --invert           invert the sense of matching\n"
 	" -l, --list             use list format output\n"
+	" -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
 	" -n, --noheadings       don't print column headings\n"
 	" -u, --notruncate       don't truncate text in columns\n"));
 	fprintf(out, _(
@@ -1030,12 +1039,14 @@ int main(int argc, char *argv[])
 		EXCL_FSTAB,
 		EXCL_KERNEL,
 		EXCL_MTAB,
+		EXCL_TASK,
 
 		EXCL_RAW,
 		EXCL_LIST,
 		EXCL_PAIRS
 	};
 	int excl_fmk = EXCL_NONE;
+	int excl_fmN = EXCL_NONE;
 	int excl_rlP = EXCL_NONE;
 
 	/* table.h */
@@ -1067,6 +1078,7 @@ int main(int argc, char *argv[])
 	    { "submounts",    0, 0, 'R' },
 	    { "source",       1, 0, 'S' },
 	    { "tab-file",     1, 0, 'F' },
+	    { "task",         1, 0, 'N' },
 	    { "target",       1, 0, 'T' },
 	    { "timeout",      1, 0, 'w' },
 	    { "version",      0, 0, 'V' },
@@ -1085,7 +1097,7 @@ int main(int argc, char *argv[])
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"AacDd:ehifF:o:O:p::Pklmnrst:uvRS:T:w:V",
+				"AacDd:ehifF:o:O:p::PklmnN:rst:uvRS:T:w:V",
 				longopts, NULL)) != -1) {
 		switch(c) {
 		case 'A':
@@ -1156,11 +1168,13 @@ int main(int argc, char *argv[])
 			break;
 		case 'm':		/* mtab */
 			exclusive_option(&excl_fmk, EXCL_MTAB, "--{fstab,mtab,kernel}");
+			exclusive_option(&excl_fmN, EXCL_MTAB, "--{fstab,mtab,task}");
 			tabtype = TABTYPE_MTAB;
 			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 's':		/* fstab */
 			exclusive_option(&excl_fmk, EXCL_FSTAB, "--{fstab,mtab,kernel}");
+			exclusive_option(&excl_fmN, EXCL_FSTAB, "--{fstab,mtab,task}");
 			tabtype = TABTYPE_FSTAB;
 			tt_flags &= ~TT_FL_TREE;
 			break;
@@ -1182,6 +1196,13 @@ int main(int argc, char *argv[])
 			break;
 		case 'n':
 			tt_flags |= TT_FL_NOHEADINGS;
+			break;
+		case 'N':
+			exclusive_option(&excl_fmN, EXCL_KERNEL, "--{fstab,mtab,task}");
+			tabtype = TABTYPE_KERNEL;
+			tabfiles = append_pid_tabfile(tabfiles, &ntabfiles,
+					strtou32_or_err(optarg,
+						_("invalid TID argument")));
 			break;
 		case 'v':
 			flags |= FL_NOFSROOT;

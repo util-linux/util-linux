@@ -85,6 +85,12 @@ option and the option \fB\-\-submounts\fP is not used or if more that one
 source file (the option \fB\-F\fP) is specified.
 .IP "\fB\-v, \-\-nofsroot\fP"
 Do not print a [/dir] in the SOURCE column for bind-mounts or btrfs subvolumes.
+.IP "\fB\-N, \-\-task \fItid\fP"
+Use alternative namespace /proc/<tid>/mountinfo rather than the default
+/proc/self/mountinfo. If the option is specified more than once than tree-like
+output is disabled (see the \fB\-\-list\fP option). See also
+.BR unshare (1)
+command.
 .IP "\fB\-n, \-\-noheadings\fP"
 Do not print a header line.
 .IP "\fB\-u, \-\-notruncate\fP"
