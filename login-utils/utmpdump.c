@@ -184,11 +184,21 @@ void undump(FILE *fp)
 	free(linestart);
 }
 
-void
-usage(int result)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	printf(_("Usage: utmpdump [ -frhV ] [ filename ]\n"));
-	exit(result);
+	fputs(USAGE_HEADER, out);
+
+	fprintf(out,
+		_(" %s [options]\n"), program_invocation_short_name);
+
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -f, --follow           output appended data as the file grows\n"
+		" -r, --reverse          write back dumped data into utmp file\n"
+		" -h, --help             display this help and exit\n"
+		" -V, --version          output version information and exit\n"), out);
+
+	fprintf(out, USAGE_MAN_TAIL("utmpdump(1)"));
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int main(int argc, char **argv)
@@ -222,13 +232,13 @@ int main(int argc, char **argv)
 			break;
 
 		case 'h':
-			usage(0);
+			usage(stdout);
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
-			break;
+			return EXIT_SUCCESS;
 		default:
-			usage(1);
+			usage(stderr);
 		}
 	}
 
