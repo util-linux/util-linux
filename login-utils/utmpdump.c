@@ -149,7 +149,7 @@ int gettok(char *line, char *dest, int size, int eatspace)
 	return eaten + 1;
 }
 
-void undump(FILE *fp, int forever __attribute__((unused)))
+void undump(FILE *fp)
 {
 	struct utmp ut;
 	char s_addr[16], s_time[29], *linestart, *line;
@@ -228,7 +228,7 @@ int main(int argc, char **argv)
 	}
 
 	if (reverse)
-		undump(fp, forever);
+		undump(fp);
 	else
 		dump(fp, forever);
 
