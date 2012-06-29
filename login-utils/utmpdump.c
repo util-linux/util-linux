@@ -116,7 +116,8 @@ void dump(FILE *fp, int forever)
 	do {
 		while (fread(&ut, sizeof ut, 1, fp) == 1)
 			print_utline(ut);
-		if (forever) sleep(1);
+		if (forever)
+			sleep(1);
 	} while (forever);
 }
 
@@ -128,25 +129,21 @@ int gettok(char *line, char *dest, int size, int eatspace)
         char *t;
 
 	bpos = strchr(line, '[') - line;
-	if (bpos < 0) {
-		fprintf(stderr, _("Extraneous newline in file.  Exiting."));
-                exit(1);
-        }
+	if (bpos < 0)
+		errx(EXIT_FAILURE, _("Extraneous newline in file. Exiting."));
+
 	line += 1 + bpos;
-
 	epos = strchr(line, ']') - line;
-	if (epos < 0) {
-		fprintf(stderr, _("Extraneous newline in file.  Exiting."));
-                exit(1);
-        }
-	line[epos] = '\0';
+	if (epos < 0)
+		errx(EXIT_FAILURE,_("Extraneous newline in file. Exiting."));
 
+	line[epos] = '\0';
 	eaten = bpos + epos + 1;
 
-	if (eatspace)
+	if (eatspace) {
                 if ((t = strchr(line, ' ')))
                     *t = 0;
-
+	}
         strncpy(dest, line, size);
 
 	return eaten + 1;
@@ -198,6 +195,7 @@ int main(int argc, char **argv)
 	int c;
 	FILE *fp;
 	int reverse = 0, forever = 0;
+	const char *filename = NULL;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -224,22 +222,25 @@ int main(int argc, char **argv)
 	}
 
 	if (optind < argc) {
-		fprintf(stderr, _("Utmp %sdump of %s\n"), reverse ? "un" : "", argv[optind]);
-		if ((fp = fopen(argv[optind], "r")) == NULL) {
-			perror("Unable to open file");
-			exit(1);
-		}
-	}
-	else {
-		fprintf(stderr, _("Utmp %sdump of stdin\n"), reverse ? "un" : "");
+		filename = argv[optind];
+		fp = fopen(filename, "r");
+		if (!fp)
+			err(EXIT_FAILURE, _("%s: open failed"), filename);
+	} else {
+		filename = "stdin";
 		fp = stdin;
 	}
 
-	if (reverse)
+	if (reverse) {
+		fprintf(stderr, _("Utmp undump of %s\n"), filename);
 		undump(fp);
-	else
+	} else {
+		fprintf(stderr, _("Utmp dump of %s\n"), filename);
 		dump(fp, forever);
+	}
 
-	fclose(fp);
-	return 0;
+	if (fp != stdin)
+		fclose(fp);
+
+	return EXIT_SUCCESS;
 }
