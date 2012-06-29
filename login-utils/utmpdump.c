@@ -38,9 +38,10 @@
 
 #include "c.h"
 #include "nls.h"
+#include "xalloc.h"
 #include "closestream.h"
 
-char *timetostr(const time_t time)
+static char *timetostr(const time_t time)
 {
 	static char s[29];    /* [Sun Sep 01 00:00:00 1998 PST] */
 
@@ -52,7 +53,7 @@ char *timetostr(const time_t time)
 	return s;
 }
 
-time_t strtotime(const char *s_time)
+static time_t strtotime(const char *s_time)
 {
 	struct tm tm;
 
@@ -71,14 +72,14 @@ time_t strtotime(const char *s_time)
 }
 
 #define cleanse(x) xcleanse(x, sizeof(x))
-void xcleanse(char *s, int len)
+static void xcleanse(char *s, int len)
 {
 	for ( ; *s && len-- > 0; s++)
 		if (!isprint(*s) || *s == '[' || *s == ']')
 			*s = '?';
 }
 
-void unspace(char *s, int len)
+static void unspace(char *s, int len)
 {
 	while (*s && *s != ' ' && len--)
 		++s;
@@ -87,7 +88,7 @@ void unspace(char *s, int len)
 		*s = '\0';
 }
 
-void print_utline(struct utmp ut)
+static void print_utline(struct utmp ut)
 {
 	char *addr_string, *time_string;
 	struct in_addr in;
@@ -107,15 +108,15 @@ void print_utline(struct utmp ut)
                addr_string, time_string);
 }
 
-void dump(FILE *fp, int forever)
+static void dump(FILE *fp, int forever)
 {
 	struct utmp ut;
 
 	if (forever)
-		fseek(fp, -10 * sizeof ut, SEEK_END);
+		fseek(fp, -10 * sizeof(ut), SEEK_END);
 
 	do {
-		while (fread(&ut, sizeof ut, 1, fp) == 1)
+		while (fread(&ut, sizeof(ut), 1, fp) == 1)
 			print_utline(ut);
 		if (forever)
 			sleep(1);
@@ -124,7 +125,7 @@ void dump(FILE *fp, int forever)
 
 /* This function won't work properly if there's a ']' or a ' ' in the real
  * token.  Thankfully, this should never happen.  */
-int gettok(char *line, char *dest, int size, int eatspace)
+static int gettok(char *line, char *dest, int size, int eatspace)
 {
 	int bpos, epos, eaten;
         char *t;
@@ -150,17 +151,17 @@ int gettok(char *line, char *dest, int size, int eatspace)
 	return eaten + 1;
 }
 
-void undump(FILE *fp)
+static void undump(FILE *fp)
 {
 	struct utmp ut;
 	char s_addr[16], s_time[29], *linestart, *line;
 	int count = 0;
 
-	line = linestart = malloc(1024 * sizeof *linestart);
+	line = linestart = xmalloc(1024 * sizeof(*linestart));
 	s_addr[15] = 0;
 	s_time[28] = 0;
 
-	while(fgets(linestart, 1023, fp))
+	while (fgets(linestart, 1023, fp))
 	{
 		line = linestart;
                 memset(&ut, '\0', sizeof(ut));
