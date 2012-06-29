@@ -26,16 +26,18 @@ utmpdump \- dump UTMP and WTMP files in raw format
 \fButmpdump\fP is a simple program to dump UTMP and WTMP files
 in raw format, so they can be examined.
 .SH OPTIONS
-.IP \fB\-f\fP
+.IP "\fB\-f, \-\-follow\fP"
 output appended data as the file grows.
-.IP "\fB\-r\fP"
-reverse. Write back edited login information into utmp or wtmp files.
-.IP \fB\-h\fP
-usage information.
-.PP
-utmpdump can be useful in cases of corrupted utmp or wtmp entries.
-It can dump out utmp/wtmp to an ASCII file, then that file can
-be edited to remove bogus entries and reintegrated, using
+.IP "\fB\-r, \-\-reverse\fP
+Undump, write back edited login information into utmp or wtmp files.
+.IP "\fB\-h, \-\-help\fP"
+Print a help text and exit.
+.IP "\fB\-V, \-\-version\fP"
+Output version information and exit.
+.SH NOTES
+utmpdump can be useful in cases of corrupted utmp or wtmp entries.  It can dump
+out utmp/wtmp to an ASCII file, then that file can be edited to remove bogus
+entries and reintegrated, using
 .PP 
 .sp 1
 .in +1c

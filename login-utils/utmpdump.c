@@ -31,6 +31,7 @@
 #include <utmp.h>
 #include <time.h>
 #include <ctype.h>
+#include <getopt.h>
 #include <unistd.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -186,7 +187,7 @@ void undump(FILE *fp)
 void
 usage(int result)
 {
-	printf(_("Usage: utmpdump [ -frh ] [ filename ]\n"));
+	printf(_("Usage: utmpdump [ -frhV ] [ filename ]\n"));
 	exit(result);
 }
 
@@ -197,12 +198,20 @@ int main(int argc, char **argv)
 	int reverse = 0, forever = 0;
 	const char *filename = NULL;
 
+	static const struct option longopts[] = {
+		{ "follow",  0, 0, 'f' },
+		{ "reverse", 0, 0, 'r' },
+		{ "help",    0, 0, 'h' },
+		{ "version", 0, 0, 'V' },
+		{ NULL, 0, 0, 0 }
+	};
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt(argc, argv, "froh")) != EOF) {
+	while ((c = getopt_long(argc, argv, "frhV", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'r':
 			reverse = 1;
@@ -215,7 +224,9 @@ int main(int argc, char **argv)
 		case 'h':
 			usage(0);
 			break;
-
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			break;
 		default:
 			usage(1);
 		}
