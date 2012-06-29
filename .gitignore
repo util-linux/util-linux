@@ -158,6 +158,7 @@ tunelp
 ul
 umount
 unshare
+utmpdump
 uuidd
 uuidgen
 vipw

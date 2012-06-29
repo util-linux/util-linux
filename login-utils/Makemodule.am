@@ -37,6 +37,13 @@ endif
 endif # BUILD_LOGIN
 
 
+if BUILD_UTMPDUMP
+usrbin_exec_PROGRAMS += utmpdump
+dist_man_MANS += login-utils/utmpdump.1
+utmpdump_SOURCES = login-utils/utmpdump.c
+endif
+
+
 if BUILD_CHFN_CHSH
 usrbin_exec_PROGRAMS += chfn chsh
 dist_man_MANS += \

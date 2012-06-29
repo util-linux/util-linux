@@ -1,0 +1,66 @@
+'\" -*- coding: UTF-8 -*-
+.\" Copyright (C) 2010 Michael Krapp
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by 
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+.\"
+.TH UTMPDUMP 1 "Februar 8, 2010" "" "Linux System Administrator's Manual"
+.SH NAME
+utmpdump \- dump UTMP and WTMP files in raw format
+.SH SYNOPSIS
+.B utmpdump
+.RB [ \-froh ]
+.I filename
+.SH DESCRIPTION
+\fButmpdump\fP is a simple program to dump UTMP and WTMP files
+in raw format, so they can be examined.
+.SH OPTIONS
+.IP \fB\-f\fP
+output appended data as the file grows.
+.IP "\fB\-r\fP"
+reverse. Write back edited login information into utmp or wtmp files.
+.IP \fB\-o\fP
+use old libc5 format.
+.IP \fB\-h\fP
+usage information.
+.PP
+utmpdump can be useful in cases of corrupted utmp or wtmp entries.
+It can dump out utmp/wtmp to an ASCII file, then that file can
+be edited to remove bogus entries and reintegrated, using
+.PP 
+.sp 1
+.in +1c
+.nf
+\fButmpdump -r < ascii file > wtmp\fP
+.fi
+.in -1c
+.sp 1
+but be warned as
+.B utmpdump
+was written for debugging purpose only.
+.SH BUGS
+You may
+.B not
+use the option \fB\-r\fP as the format for the
+utmp/wtmp files strongly depends on the
+input format. This tool was
+.B not
+written for normal use but for debugging.
+.SH AUTHOR
+Michael Krapp
+.SH "SEE ALSO"
+.BR last (1),
+.BR w (1),
+.BR who (1),
+.BR utmp (5),

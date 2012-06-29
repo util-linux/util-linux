@@ -998,6 +998,14 @@ UL_BUILD_INIT([last])
 AM_CONDITIONAL(BUILD_LAST, test "x$build_last" = xyes)
 
 
+AC_ARG_ENABLE([utmpdump],
+  AS_HELP_STRING([--disable-utmpdump], [build utmpdump]),
+  [], enable_utmpdump=yes
+)
+UL_BUILD_INIT([utmpdump])
+AM_CONDITIONAL(BUILD_UTMPDUMP, test "x$build_utmpdump" = xyes)
+
+
 AC_ARG_ENABLE([line],
   AS_HELP_STRING([--enable-line], [build line]),
   [], enable_line=no
