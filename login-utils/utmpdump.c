@@ -25,7 +25,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,6 +34,10 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+#include "c.h"
+#include "nls.h"
+#include "closestream.h"
 
 char *timetostr(const time_t time)
 {
@@ -126,14 +129,14 @@ int gettok(char *line, char *dest, int size, int eatspace)
 
 	bpos = strchr(line, '[') - line;
 	if (bpos < 0) {
-		fprintf(stderr, "Extraneous newline in file.  Exiting.");
+		fprintf(stderr, _("Extraneous newline in file.  Exiting."));
                 exit(1);
         }
 	line += 1 + bpos;
 
 	epos = strchr(line, ']') - line;
 	if (epos < 0) {
-		fprintf(stderr, "Extraneous newline in file.  Exiting.");
+		fprintf(stderr, _("Extraneous newline in file.  Exiting."));
                 exit(1);
         }
 	line[epos] = '\0';
@@ -186,7 +189,7 @@ void undump(FILE *fp)
 void
 usage(int result)
 {
-	printf("Usage: utmpdump [ -frh ] [ filename ]\n");
+	printf(_("Usage: utmpdump [ -frh ] [ filename ]\n"));
 	exit(result);
 }
 
@@ -195,6 +198,11 @@ int main(int argc, char **argv)
 	int c;
 	FILE *fp;
 	int reverse = 0, forever = 0;
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt(argc, argv, "froh")) != EOF) {
 		switch (c) {
@@ -216,14 +224,14 @@ int main(int argc, char **argv)
 	}
 
 	if (optind < argc) {
-		fprintf(stderr, "Utmp %sdump of %s\n", reverse ? "un" : "", argv[optind]);
+		fprintf(stderr, _("Utmp %sdump of %s\n"), reverse ? "un" : "", argv[optind]);
 		if ((fp = fopen(argv[optind], "r")) == NULL) {
 			perror("Unable to open file");
 			exit(1);
 		}
 	}
 	else {
-		fprintf(stderr, "Utmp %sdump of stdin\n", reverse ? "un" : "");
+		fprintf(stderr, _("Utmp %sdump of stdin\n"), reverse ? "un" : "");
 		fp = stdin;
 	}
 
