@@ -1,30 +1,29 @@
 /*
- * utmpdump	Simple program to dump UTMP and WTMP files in
- *		raw format, so they can be examined.
+ * utmpdump
  *
- * Author:	Miquel van Smoorenburg, <miquels@cistron.nl>
- *              Danek Duvall <duvall@alumni.princeton.edu>
+ * Simple program to dump UTMP and WTMP files in raw format, so they can be
+ * examined.
  *
- * Version:	@(#)utmpdump  2.79  12-Sep-2000
+ * Based on utmpdump dump from sysvinit suite.
  *
- *		This file is part of the sysvinit suite,
- *		Copyright (C) 1991-2000 Miquel van Smoorenburg.
+ * Copyright (C) 1991-2000 Miquel van Smoorenburg <miquels@cistron.nl>
  *
- *		Additional Copyright on this file 1998 Danek Duvall.
+ * Copyright (C) 1998 Danek Duvall <duvall@alumni.princeton.edu>
+ * Copyright (C) 2012 Karel Zak <kzak@redhat.com>
  *
- *		This program is free software; you can redistribute it and/or modify
- *		it under the terms of the GNU General Public License as published by
- *		the Free Software Foundation; either version 2 of the License, or
- *		(at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *		This program is distributed in the hope that it will be useful,
- *		but WITHOUT ANY WARRANTY; without even the implied warranty of
- *		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *		GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *		You should have received a copy of the GNU General Public License
- *		along with this program; if not, write to the Free Software
- *		Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
 #include <stdio.h>
@@ -52,8 +51,7 @@ struct oldutmp {
 	long	ut_oldaddr;
 };
 
-struct utmp
-oldtonew(struct oldutmp src)
+struct utmp oldtonew(struct oldutmp src)
 {
         struct utmp dest;
 
@@ -70,8 +68,7 @@ oldtonew(struct oldutmp src)
         return dest;
 }
 
-struct oldutmp
-newtoold(struct utmp src)
+struct oldutmp newtoold(struct utmp src)
 {
         struct oldutmp dest;
 
@@ -88,8 +85,7 @@ newtoold(struct utmp src)
         return dest;
 }
 
-char *
-timetostr(const time_t time)
+char *timetostr(const time_t time)
 {
 	static char s[29];    /* [Sun Sep 01 00:00:00 1998 PST] */
 
@@ -101,11 +97,10 @@ timetostr(const time_t time)
 	return s;
 }
 
-time_t
-strtotime(const char *s_time)
+time_t strtotime(const char *s_time)
 {
 	struct tm tm;
-	
+
 	memset(&tm, '\0', sizeof(struct tm));
 
 	if (s_time[0] == ' ' || s_time[0] == '\0')
@@ -121,16 +116,14 @@ strtotime(const char *s_time)
 }
 
 #define cleanse(x) xcleanse(x, sizeof(x))
-void
-xcleanse(char *s, int len)
+void xcleanse(char *s, int len)
 {
 	for ( ; *s && len-- > 0; s++)
 		if (!isprint(*s) || *s == '[' || *s == ']')
 			*s = '?';
 }
 
-void
-unspace(char *s, int len)
+void unspace(char *s, int len)
 {
 	while (*s && *s != ' ' && len--)
 		++s;
@@ -139,8 +132,7 @@ unspace(char *s, int len)
 		*s = '\0';
 }
 
-void
-print_utline(struct utmp ut)
+void print_utline(struct utmp ut)
 {
 	char *addr_string, *time_string;
 	struct in_addr in;
@@ -160,8 +152,7 @@ print_utline(struct utmp ut)
                addr_string, time_string);
 }
 
-void
-dump(FILE *fp, int forever, int oldfmt)
+void dump(FILE *fp, int forever, int oldfmt)
 {
 	struct utmp ut;
 	struct oldutmp uto;
@@ -182,8 +173,7 @@ dump(FILE *fp, int forever, int oldfmt)
 
 /* This function won't work properly if there's a ']' or a ' ' in the real
  * token.  Thankfully, this should never happen.  */
-int
-gettok(char *line, char *dest, int size, int eatspace)
+int gettok(char *line, char *dest, int size, int eatspace)
 {
 	int bpos, epos, eaten;
         char *t;
@@ -213,12 +203,7 @@ gettok(char *line, char *dest, int size, int eatspace)
 	return eaten + 1;
 }
 
-void
-# ifdef __GNUC__
-undump(FILE *fp, int forever __attribute__((unused)), int oldfmt)
-#else
-undump(FILE *fp, int forever, int oldfmt)
-#endif
+void undump(FILE *fp, int forever __attribute__((unused)), int oldfmt)
 {
 	struct utmp ut;
 	struct oldutmp uto;
@@ -311,6 +296,5 @@ int main(int argc, char **argv)
 		dump(fp, forever, oldfmt);
 
 	fclose(fp);
-
 	return 0;
 }
