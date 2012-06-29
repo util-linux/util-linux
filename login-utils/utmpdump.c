@@ -36,55 +36,6 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-#define OLD_LINESIZE		12
-#define OLD_NAMESIZE		8
-#define OLD_HOSTSIZE		16
-
-struct oldutmp {
-	short	ut_type;
-	int	ut_pid;
-	char	ut_line[OLD_LINESIZE];
-	char	ut_id[4];
-	long	ut_oldtime;
-	char	ut_user[OLD_NAMESIZE];
-	char	ut_host[OLD_HOSTSIZE];
-	long	ut_oldaddr;
-};
-
-struct utmp oldtonew(struct oldutmp src)
-{
-        struct utmp dest;
-
-	memset(&dest, 0, sizeof dest);
-	dest.ut_type = src.ut_type;
-	dest.ut_pid  = src.ut_pid;
-	dest.ut_time = src.ut_oldtime;
-	dest.ut_addr = src.ut_oldaddr;
-	strncpy(dest.ut_id,   src.ut_id,   4);
-	strncpy(dest.ut_line, src.ut_line, OLD_LINESIZE);
-	strncpy(dest.ut_user, src.ut_user, OLD_NAMESIZE);
-	strncpy(dest.ut_host, src.ut_host, OLD_HOSTSIZE);
-
-        return dest;
-}
-
-struct oldutmp newtoold(struct utmp src)
-{
-        struct oldutmp dest;
-
-	memset(&dest, 0, sizeof dest);
-	dest.ut_type    = src.ut_type;
-	dest.ut_pid     = src.ut_pid;
-	dest.ut_oldtime = src.ut_time;
-	dest.ut_oldaddr = src.ut_addr;
-	strncpy(dest.ut_id,   src.ut_id,   4);
-	strncpy(dest.ut_line, src.ut_line, OLD_LINESIZE);
-	strncpy(dest.ut_user, src.ut_user, OLD_NAMESIZE);
-	strncpy(dest.ut_host, src.ut_host, OLD_HOSTSIZE);
-
-        return dest;
-}
-
 char *timetostr(const time_t time)
 {
 	static char s[29];    /* [Sun Sep 01 00:00:00 1998 PST] */
@@ -152,21 +103,16 @@ void print_utline(struct utmp ut)
                addr_string, time_string);
 }
 
-void dump(FILE *fp, int forever, int oldfmt)
+void dump(FILE *fp, int forever)
 {
 	struct utmp ut;
-	struct oldutmp uto;
 
 	if (forever)
-		fseek(fp, -10 * (oldfmt ? sizeof uto : sizeof ut), SEEK_END);
+		fseek(fp, -10 * sizeof ut, SEEK_END);
 
 	do {
-		if (oldfmt)
-			while (fread(&uto, sizeof uto, 1, fp) == 1)
-				print_utline(oldtonew(uto));
-		else
-			while (fread(&ut, sizeof ut, 1, fp) == 1)
-				print_utline(ut);
+		while (fread(&ut, sizeof ut, 1, fp) == 1)
+			print_utline(ut);
 		if (forever) sleep(1);
 	} while (forever);
 }
@@ -203,10 +149,9 @@ int gettok(char *line, char *dest, int size, int eatspace)
 	return eaten + 1;
 }
 
-void undump(FILE *fp, int forever __attribute__((unused)), int oldfmt)
+void undump(FILE *fp, int forever __attribute__((unused)))
 {
 	struct utmp ut;
-	struct oldutmp uto;
 	char s_addr[16], s_time[29], *linestart, *line;
 	int count = 0;
 
@@ -230,11 +175,7 @@ void undump(FILE *fp, int forever __attribute__((unused)), int oldfmt)
                 ut.ut_addr = inet_addr(s_addr);
                 ut.ut_time = strtotime(s_time);
 
-                if (oldfmt) {
-                        uto = newtoold(ut);
-                        fwrite(&uto, sizeof(uto), 1, stdout);
-                } else
-                        fwrite(&ut, sizeof(ut), 1, stdout);
+                fwrite(&ut, sizeof(ut), 1, stdout);
 
 		++count;
 	}
@@ -245,7 +186,7 @@ void undump(FILE *fp, int forever __attribute__((unused)), int oldfmt)
 void
 usage(int result)
 {
-	printf("Usage: utmpdump [ -froh ] [ filename ]\n");
+	printf("Usage: utmpdump [ -frh ] [ filename ]\n");
 	exit(result);
 }
 
@@ -253,7 +194,7 @@ int main(int argc, char **argv)
 {
 	int c;
 	FILE *fp;
-	int reverse = 0, forever = 0, oldfmt = 0;
+	int reverse = 0, forever = 0;
 
 	while ((c = getopt(argc, argv, "froh")) != EOF) {
 		switch (c) {
@@ -263,10 +204,6 @@ int main(int argc, char **argv)
 
 		case 'f':
 			forever = 1;
-			break;
-
-		case 'o':
-			oldfmt = 1;
 			break;
 
 		case 'h':
@@ -291,9 +228,9 @@ int main(int argc, char **argv)
 	}
 
 	if (reverse)
-		undump(fp, forever, oldfmt);
+		undump(fp, forever);
 	else
-		dump(fp, forever, oldfmt);
+		dump(fp, forever);
 
 	fclose(fp);
 	return 0;

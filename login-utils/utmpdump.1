@@ -20,7 +20,7 @@
 utmpdump \- dump UTMP and WTMP files in raw format
 .SH SYNOPSIS
 .B utmpdump
-.RB [ \-froh ]
+.RB [ \-frh ]
 .I filename
 .SH DESCRIPTION
 \fButmpdump\fP is a simple program to dump UTMP and WTMP files
@@ -30,8 +30,6 @@ in raw format, so they can be examined.
 output appended data as the file grows.
 .IP "\fB\-r\fP"
 reverse. Write back edited login information into utmp or wtmp files.
-.IP \fB\-o\fP
-use old libc5 format.
 .IP \fB\-h\fP
 usage information.
 .PP
