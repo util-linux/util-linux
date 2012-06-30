@@ -629,9 +629,7 @@ fi
 AM_CONDITIONAL(HAVE_SLANG, test "x$have_slang" = xyes)
 
 
-if test "x$have_slang" = xyes -o "x$have_ncurses" = xyes; then
-  AM_CONDITIONAL(BUILD_CFDISK, true)
-fi
+AM_CONDITIONAL(BUILD_CFDISK, test "x$have_slang" = xyes -o "x$have_ncurses" = xyes)
 
 
 have_tinfo=no
