@@ -239,8 +239,9 @@ global:
 	mnt_table_parse_swaps;
 	mnt_get_mountpoint;
 	mnt_get_swaps_path;
-	mnt_fs_get_swaptype;
-	mnt_fs_get_size;
-	mnt_fs_get_usedsize;
 	mnt_fs_get_priority;
+	mnt_fs_get_size;
+	mnt_fs_get_swaptype;
+	mnt_fs_get_tid;
+	mnt_fs_get_usedsize;
 } MOUNT_2.21;

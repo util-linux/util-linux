@@ -1,0 +1,220 @@
+
+# blkid.h is generated, so it's store in builddir!
+blkidincdir = $(includedir)/blkid
+nodist_blkidinc_HEADERS = $(top_builddir)/libblkid/src/blkid.h
+
+usrlib_exec_LTLIBRARIES += libblkid.la
+libblkid_la_SOURCES = \
+	include/list.h \
+	\
+	libblkid/src/blkidP.h \
+	libblkid/src/cache.c \
+	libblkid/src/config.c \
+	libblkid/src/dev.c \
+	libblkid/src/devname.c \
+	libblkid/src/devno.c \
+	libblkid/src/encode.c \
+	libblkid/src/evaluate.c \
+	libblkid/src/getsize.c \
+	libblkid/src/llseek.c \
+	libblkid/src/probe.c \
+	libblkid/src/read.c \
+	libblkid/src/resolve.c \
+	libblkid/src/save.c \
+	libblkid/src/superblocks/superblocks.h \
+	libblkid/src/tag.c \
+	libblkid/src/verify.c \
+	libblkid/src/version.c \
+	$(blkidinc_HEADERS) \
+	\
+	libblkid/src/partitions/aix.c \
+	libblkid/src/partitions/aix.h \
+	libblkid/src/partitions/blkid_parttypes.h \
+	libblkid/src/partitions/bsd.c \
+	libblkid/src/partitions/dos.c \
+	libblkid/src/partitions/dos.h \
+	libblkid/src/partitions/gpt.c \
+	libblkid/src/partitions/mac.c \
+	libblkid/src/partitions/minix.c \
+	libblkid/src/partitions/partitions.c \
+	libblkid/src/partitions/partitions.h \
+	libblkid/src/partitions/sgi.c \
+	libblkid/src/partitions/solaris_x86.c \
+	libblkid/src/partitions/sun.c \
+	libblkid/src/partitions/ultrix.c \
+	libblkid/src/partitions/unixware.c \
+	\
+	libblkid/src/superblocks/adaptec_raid.c \
+	libblkid/src/superblocks/befs.c \
+	libblkid/src/superblocks/bfs.c \
+	libblkid/src/superblocks/btrfs.c \
+	libblkid/src/superblocks/cramfs.c \
+	libblkid/src/superblocks/ddf_raid.c \
+	libblkid/src/superblocks/drbd.c \
+	libblkid/src/superblocks/drbdproxy_datalog.c \
+	libblkid/src/superblocks/exfat.c \
+	libblkid/src/superblocks/ext.c \
+	libblkid/src/superblocks/gfs.c \
+	libblkid/src/superblocks/hfs.c \
+	libblkid/src/superblocks/highpoint_raid.c \
+	libblkid/src/superblocks/hpfs.c \
+	libblkid/src/superblocks/iso9660.c \
+	libblkid/src/superblocks/isw_raid.c \
+	libblkid/src/superblocks/jfs.c \
+	libblkid/src/superblocks/jmicron_raid.c \
+	libblkid/src/superblocks/linux_raid.c \
+	libblkid/src/superblocks/lsi_raid.c \
+	libblkid/src/superblocks/luks.c \
+	libblkid/src/superblocks/lvm.c \
+	libblkid/src/superblocks/minix.c \
+	libblkid/src/superblocks/netware.c \
+	libblkid/src/superblocks/nilfs.c \
+	libblkid/src/superblocks/ntfs.c \
+	libblkid/src/superblocks/nvidia_raid.c \
+	libblkid/src/superblocks/ocfs.c \
+	libblkid/src/superblocks/promise_raid.c \
+	libblkid/src/superblocks/reiserfs.c \
+	libblkid/src/superblocks/romfs.c \
+	libblkid/src/superblocks/silicon_raid.c \
+	libblkid/src/superblocks/squashfs.c \
+	libblkid/src/superblocks/superblocks.c \
+	libblkid/src/superblocks/superblocks.h \
+	libblkid/src/superblocks/swap.c \
+	libblkid/src/superblocks/sysv.c \
+	libblkid/src/superblocks/ubifs.c \
+	libblkid/src/superblocks/udf.c \
+	libblkid/src/superblocks/ufs.c \
+	libblkid/src/superblocks/vfat.c \
+	libblkid/src/superblocks/via_raid.c \
+	libblkid/src/superblocks/vmfs.c \
+	libblkid/src/superblocks/vxfs.c \
+	libblkid/src/superblocks/xfs.c \
+	libblkid/src/superblocks/zfs.c \
+	\
+	libblkid/src/topology/topology.c \
+	libblkid/src/topology/topology.h
+
+if LINUX
+libblkid_la_SOURCES += \
+	libblkid/src/topology/dm.c \
+	libblkid/src/topology/evms.c \
+	libblkid/src/topology/ioctl.c \
+	libblkid/src/topology/lvm.c \
+	libblkid/src/topology/md.c \
+	libblkid/src/topology/sysfs.c
+endif
+
+nodist_libblkid_la_SOURCES = libblkid/src/blkid.h
+libblkid_la_LIBADD = libcommon.la
+
+if BUILD_LIBUUID
+libblkid_la_LIBADD += libuuid.la
+endif
+
+libblkid_la_CFLAGS = \
+	-I$(ul_libblkid_incdir) \
+	-I$(ul_libuuid_incdir) \
+	-I$(top_srcdir)/libblkid/src
+
+libblkid_la_DEPENDENCIES = \
+	$(libblkid_la_LIBADD) \
+	libblkid/src/blkid.sym \
+	libblkid/src/blkid.h.in
+
+libblkid_la_LDFLAGS = \
+	-Wl,--version-script=$(top_srcdir)/libblkid/src/blkid.sym \
+	-version-info $(LIBBLKID_VERSION_INFO)
+
+EXTRA_DIST += \
+	libblkid/src/blkid.sym \
+	libblkid/src/blkid.h.in
+
+noinst_PROGRAMS += \
+	test_blkid_cache \
+	test_blkid_config \
+	test_blkid_dev \
+	test_blkid_devname \
+	test_blkid_devno \
+	test_blkid_evaluate \
+	test_blkid_read \
+	test_blkid_resolve \
+	test_blkid_save \
+	test_blkid_tag \
+	test_blkid_verify
+
+blkid_tests_cflags  = -DTEST_PROGRAM $(libblkid_la_CFLAGS)
+blkid_tests_ldflags = libuuid.la -static
+blkid_tests_ldadd   = libblkid.la $(UUID_LIBS)
+
+test_blkid_cache_SOURCES = libblkid/src/cache.c
+test_blkid_cache_CFLAGS = $(blkid_tests_cflags)
+test_blkid_cache_LDFLAGS = $(blkid_tests_ldflags)
+test_blkid_cache_LDADD = $(blkid_tests_ldadd)
+
+test_blkid_config_SOURCES = libblkid/src/config.c
+test_blkid_config_CFLAGS = $(blkid_tests_cflags)
+test_blkid_config_LDFLAGS = $(blkid_tests_ldflags)
+test_blkid_config_LDADD = $(blkid_tests_ldadd)
+
+test_blkid_dev_SOURCES = libblkid/src/dev.c
+test_blkid_dev_CFLAGS = $(blkid_tests_cflags)
+test_blkid_dev_LDFLAGS = $(blkid_tests_ldflags)
+test_blkid_dev_LDADD = $(blkid_tests_ldadd)
+
+test_blkid_devname_SOURCES = libblkid/src/devname.c
+test_blkid_devname_CFLAGS = $(blkid_tests_cflags)
+test_blkid_devname_LDFLAGS = $(blkid_tests_ldflags)
+test_blkid_devname_LDADD = $(blkid_tests_ldadd)
+
+test_blkid_devno_SOURCES = libblkid/src/devno.c
+test_blkid_devno_CFLAGS = $(blkid_tests_cflags)
+test_blkid_devno_LDFLAGS = $(blkid_tests_ldflags)
+test_blkid_devno_LDADD = $(blkid_tests_ldadd)
+
+test_blkid_evaluate_SOURCES = libblkid/src/evaluate.c
+test_blkid_evaluate_CFLAGS = $(blkid_tests_cflags)
+test_blkid_evaluate_LDFLAGS = $(blkid_tests_ldflags)
+test_blkid_evaluate_LDADD = $(blkid_tests_ldadd)
+
+test_blkid_read_SOURCES = libblkid/src/read.c
+test_blkid_read_CFLAGS = $(blkid_tests_cflags)
+test_blkid_read_LDFLAGS = $(blkid_tests_ldflags)
+test_blkid_read_LDADD = $(blkid_tests_ldadd)
+
+test_blkid_resolve_SOURCES = libblkid/src/resolve.c
+test_blkid_resolve_CFLAGS = $(blkid_tests_cflags)
+test_blkid_resolve_LDFLAGS = $(blkid_tests_ldflags)
+test_blkid_resolve_LDADD = $(blkid_tests_ldadd)
+
+test_blkid_save_SOURCES = libblkid/src/save.c
+test_blkid_save_CFLAGS = $(blkid_tests_cflags)
+test_blkid_save_LDFLAGS = $(blkid_tests_ldflags)
+test_blkid_save_LDADD = $(blkid_tests_ldadd)
+
+test_blkid_tag_SOURCES = libblkid/src/tag.c
+test_blkid_tag_CFLAGS = $(blkid_tests_cflags)
+test_blkid_tag_LDFLAGS = $(blkid_tests_ldflags)
+test_blkid_tag_LDADD = $(blkid_tests_ldadd)
+
+test_blkid_verify_SOURCES = libblkid/src/verify.c
+test_blkid_verify_CFLAGS = $(blkid_tests_cflags)
+test_blkid_verify_LDFLAGS = $(blkid_tests_ldflags)
+test_blkid_verify_LDADD = $(blkid_tests_ldadd)
+
+# move lib from $(usrlib_execdir) to $(libdir) if needed
+install-exec-hook-libblkid:
+	if test "$(usrlib_execdir)" != "$(libdir)"; then \
+		mkdir -p $(DESTDIR)$(libdir); \
+		mv $(DESTDIR)$(usrlib_execdir)/libblkid.so.* $(DESTDIR)$(libdir); \
+		so_img_name=$$(readlink $(DESTDIR)$(usrlib_execdir)/libblkid.so); \
+		so_img_rel_target=$$(echo $(usrlib_execdir) | sed 's,\(^/\|\)[^/][^/]*,..,g'); \
+		(cd $(DESTDIR)$(usrlib_execdir) && \
+			rm -f libblkid.so && \
+			$(LN_S) $$so_img_rel_target$(libdir)/$$so_img_name libblkid.so); \
+	fi
+
+uninstall-hook-libblkid:
+	rm -f $(DESTDIR)$(libdir)/libblkid.so*
+
+INSTALL_EXEC_HOOKS += install-exec-hook-libblkid
+UNINSTALL_HOOKS += uninstall-hook-libblkid

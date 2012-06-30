@@ -1,0 +1,9 @@
+if BUILD_LIBUUID
+
+include libuuid/man/Makemodule.am
+include libuuid/src/Makemodule.am
+
+pkgconfig_DATA += libuuid/uuid.pc
+EXTRA_DIST     += libuuid/uuid.pc.in
+
+endif # BUILD_LIBUUID

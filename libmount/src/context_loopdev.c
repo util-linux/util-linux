@@ -155,7 +155,9 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 		lo_flags |= LO_FLAGS_READ_ONLY;
 	}
 
-	loopcxt_init(&lc, 0);
+	rc = loopcxt_init(&lc, 0);
+	if (rc)
+		return rc;
 
 	ON_DBG(CXT, loopcxt_enable_debug(&lc, 1));
 

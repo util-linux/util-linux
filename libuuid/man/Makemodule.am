@@ -1,0 +1,14 @@
+
+dist_man_MANS += \
+	libuuid/man/uuid.3 \
+	libuuid/man/uuid_clear.3 \
+	libuuid/man/uuid_compare.3 \
+	libuuid/man/uuid_copy.3 \
+	libuuid/man/uuid_generate.3 \
+	libuuid/man/uuid_is_null.3 \
+	libuuid/man/uuid_parse.3 \
+	libuuid/man/uuid_time.3 \
+	libuuid/man/uuid_unparse.3 \
+	libuuid/man/uuid_generate_random.3 \
+	libuuid/man/uuid_generate_time.3 \
+	libuuid/man/uuid_generate_time_safe.3

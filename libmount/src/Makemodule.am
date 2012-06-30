@@ -1,0 +1,134 @@
+
+# libmount.h is generated, so it's store in builddir!
+mountincdir = $(includedir)/libmount
+nodist_mountinc_HEADERS = $(top_builddir)/libmount/src/libmount.h
+
+usrlib_exec_LTLIBRARIES += libmount.la
+libmount_la_SOURCES = \
+	include/list.h \
+	\
+	libmount/src/cache.c \
+	libmount/src/context.c \
+	libmount/src/context_loopdev.c \
+	libmount/src/context_mount.c \
+	libmount/src/context_umount.c \
+	libmount/src/fs.c \
+	libmount/src/init.c \
+	libmount/src/iter.c \
+	libmount/src/lock.c \
+	libmount/src/mountP.h \
+	libmount/src/optmap.c \
+	libmount/src/optstr.c \
+	libmount/src/tab.c \
+	libmount/src/tab_diff.c \
+	libmount/src/tab_parse.c \
+	libmount/src/tab_update.c \
+	libmount/src/test.c \
+	libmount/src/utils.c \
+	libmount/src/version.c \
+	$(mountinc_HEADERS)
+
+nodist_libmount_la_SOURCES = libmount/src/mountP.h
+
+libmount_la_LIBADD = libcommon.la libblkid.la $(SELINUX_LIBS)
+
+libmount_la_CFLAGS = \
+	-I$(ul_libblkid_incdir) \
+	-I$(ul_libmount_incdir) \
+	-I$(top_srcdir)/libmount/src
+
+libmount_la_DEPENDENCIES = \
+	$(libmount_la_LIBADD) \
+	libmount/src/libmount.sym \
+	libmount/src/libmount.h.in
+
+libmount_la_LDFLAGS = \
+	-Wl,--version-script=$(top_srcdir)/libmount/src/libmount.sym \
+	-version-info $(LIBMOUNT_VERSION_INFO)
+
+EXTRA_DIST += \
+	libmount/src/libmount.sym \
+	libmount/src/libmount.h.in
+
+noinst_PROGRAMS += \
+	test_mount_cache \
+	test_mount_context \
+	test_mount_lock \
+	test_mount_optstr \
+	test_mount_tab \
+	test_mount_tab_diff \
+	test_mount_tab_update \
+	test_mount_utils \
+	test_mount_version
+
+libmount_tests_cflags  = -DTEST_PROGRAM $(libmount_la_CFLAGS)
+libmount_tests_ldflags = libblkid.la -static
+libmount_tests_ldadd   = libmount.la $(UUID_LIBS)
+
+if HAVE_SELINUX
+libmount_tests_ldadd += $(SELINUX_LIBS)
+endif
+
+test_mount_cache_SOURCES = libmount/src/cache.c
+test_mount_cache_CFLAGS = $(libmount_tests_cflags)
+test_mount_cache_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_cache_LDADD = $(libmount_tests_ldadd)
+
+test_mount_context_SOURCES = libmount/src/context.c
+test_mount_context_CFLAGS = $(libmount_tests_cflags)
+test_mount_context_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_context_LDADD = $(libmount_tests_ldadd)
+
+test_mount_lock_SOURCES = libmount/src/lock.c
+test_mount_lock_CFLAGS = $(libmount_tests_cflags)
+test_mount_lock_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_lock_LDADD = $(libmount_tests_ldadd)
+
+test_mount_optstr_SOURCES = libmount/src/optstr.c
+test_mount_optstr_CFLAGS = $(libmount_tests_cflags)
+test_mount_optstr_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_optstr_LDADD = $(libmount_tests_ldadd)
+
+test_mount_tab_SOURCES = libmount/src/tab.c
+test_mount_tab_CFLAGS = $(libmount_tests_cflags)
+test_mount_tab_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_tab_LDADD = $(libmount_tests_ldadd)
+
+test_mount_tab_diff_SOURCES = libmount/src/tab_diff.c
+test_mount_tab_diff_CFLAGS = $(libmount_tests_cflags)
+test_mount_tab_diff_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_tab_diff_LDADD = $(libmount_tests_ldadd)
+
+test_mount_tab_update_SOURCES = libmount/src/tab_update.c
+test_mount_tab_update_CFLAGS = $(libmount_tests_cflags)
+test_mount_tab_update_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_tab_update_LDADD = $(libmount_tests_ldadd)
+
+test_mount_utils_SOURCES = libmount/src/utils.c
+test_mount_utils_CFLAGS = $(libmount_tests_cflags)
+test_mount_utils_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_utils_LDADD = $(libmount_tests_ldadd)
+
+test_mount_version_SOURCES = libmount/src/version.c
+test_mount_version_CFLAGS = $(libmount_tests_cflags)
+test_mount_version_LDFLAGS = $(libmount_tests_ldflags)
+test_mount_version_LDADD = $(libmount_tests_ldadd)
+
+
+# move lib from $(usrlib_execdir) to $(libdir) if needed
+install-exec-hook-libmount:
+	if test "$(usrlib_execdir)" != "$(libdir)"; then \
+		mkdir -p $(DESTDIR)$(libdir); \
+		mv $(DESTDIR)$(usrlib_execdir)/libmount.so.* $(DESTDIR)$(libdir); \
+		so_img_name=$$(readlink $(DESTDIR)$(usrlib_execdir)/libmount.so); \
+		so_img_rel_target=$$(echo $(usrlib_execdir) | sed 's,\(^/\|\)[^/][^/]*,..,g'); \
+		(cd $(DESTDIR)$(usrlib_execdir) && \
+			rm -f libmount.so && \
+			$(LN_S) $$so_img_rel_target$(libdir)/$$so_img_name libmount.so); \
+	fi
+
+uninstall-hook-libmount:
+	rm -f $(DESTDIR)$(libdir)/libmount.so*
+
+INSTALL_EXEC_HOOKS += install-exec-hook-libmount
+UNINSTALL_HOOKS += uninstall-hook-libmount

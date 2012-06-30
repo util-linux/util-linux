@@ -1,0 +1,13 @@
+if BUILD_LIBMOUNT
+
+include libmount/src/Makemodule.am
+
+if ENABLE_GTK_DOC
+# Docs uses separate Makefiles
+SUBDIRS += libmount/docs
+endif
+
+pkgconfig_DATA += libmount/mount.pc
+EXTRA_DIST     += libmount/mount.pc.in
+
+endif # BUILD_LIBMOUNT

@@ -6,12 +6,12 @@ AC_PREREQ(2.60)
 
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
-AM_INIT_AUTOMAKE([-Wall foreign 1.10 tar-pax dist-bzip2 no-dist-gzip dist-xz -Wno-portability])
+AM_INIT_AUTOMAKE([-Wall foreign 1.10 tar-pax dist-bzip2 no-dist-gzip dist-xz -Wno-portability subdir-objects])
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])],
 			    [AC_SUBST([AM_DEFAULT_VERBOSITY], [1])])
 
-AC_CONFIG_SRCDIR(mount/mount.c)
+AC_CONFIG_SRCDIR(sys-utils/mount.c)
 AC_PREFIX_DEFAULT([/usr])
 
 dnl version details from <major>.<minor>[-<suffix>]
@@ -610,27 +610,32 @@ AC_ARG_WITH([slang],
   AS_HELP_STRING([--with-slang], [compile cfdisk with slang]),
   [], with_slang=no
 )
-
-have_tinfo=no
-AC_CHECK_LIB(tinfo, tgetent, [have_tinfo=yes])
-AM_CONDITIONAL(HAVE_TINFO, test "x$have_tinfo" = xyes)
-
-use_slang=no
+have_slang=no
 if test "x$with_slang" = xyes; then
   AC_CHECK_HEADERS([slang.h slang/slang.h])
   AC_CHECK_HEADERS([slcurses.h slang/slcurses.h],
-		   [use_slang=yes], [], [
+		   [have_slang=yes], [], [
 #ifdef HAVE_SLANG_H
 #include <slang.h>
 #elif defined(HAVE_SLANG_SLANG_H)
 #include <slang/slang.h>
 #endif
 ])
-  if test "x$use_slang" = xno; then
+  if test "x$have_slang" = xno; then
     AC_MSG_ERROR([slang selected but slcurses.h not found])
   fi
 fi
-AM_CONDITIONAL(USE_SLANG, test "x$use_slang" = xyes)
+AM_CONDITIONAL(HAVE_SLANG, test "x$have_slang" = xyes)
+
+
+if test "x$have_slang" = xyes -o "x$have_ncurses" = xyes; then
+  AM_CONDITIONAL(BUILD_CFDISK, true)
+fi
+
+
+have_tinfo=no
+AC_CHECK_LIB(tinfo, tgetent, [have_tinfo=yes])
+AM_CONDITIONAL(HAVE_TINFO, test "x$have_tinfo" = xyes)
 
 
 AC_ARG_WITH([utempter],
@@ -720,13 +725,23 @@ AC_SUBST([LIBMOUNT_VERSION_INFO])
 AC_DEFINE_UNQUOTED(LIBMOUNT_VERSION, "$LIBMOUNT_VERSION", [libmount version string])
 
 
+AC_ARG_ENABLE([deprecated-mount],
+  AS_HELP_STRING([--enable-deprecated-mount], [build old mount utilities]),
+  [], enable_deprecated_mount=no
+)
+UL_BUILD_INIT([deprecated_mount])
+UL_REQUIRES_LINUX([deprecated_mount])
+UL_REQUIRES_BUILD([deprecated_mount], [libblkid])
+AM_CONDITIONAL(BUILD_DEPRECATED_MOUNT, test "x$build_deprecated_mount" = xyes)
+
+
 AC_ARG_ENABLE([mount],
-  AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
+  AS_HELP_STRING([--disable-mount], [do not build mount(8) and umount(8)]),
   [], enable_mount=check
 )
 UL_BUILD_INIT([mount])
-UL_REQUIRES_LINUX([mount])
-UL_REQUIRES_BUILD([mount], [libblkid])
+UL_REQUIRES_BUILD([mount], [libmount])
+UL_CONFLICTS_BUILD([mount], [deprecated_mount], [old deprecated mount version])
 AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
 
 
@@ -737,31 +752,6 @@ AC_ARG_ENABLE([losetup],
 UL_BUILD_INIT([losetup])
 UL_REQUIRES_LINUX([losetup])
 AM_CONDITIONAL(BUILD_LOSETUP, test "x$build_losetup" = xyes)
-
-
-AC_ARG_ENABLE([libmount-mount],
-  AS_HELP_STRING([--enable-libmount-mount], [link old mount(8) with libmount]),
-  [], enable_libmount_mount=no
-)
-UL_BUILD_INIT([libmount_mount])
-UL_REQUIRES_BUILD([libmount_mount], [mount])
-UL_REQUIRES_BUILD([libmount_mount], [libmount])
-if test "x$build_libmount_mount" = xyes; then
-  AC_DEFINE(HAVE_LIBMOUNT_MOUNT, 1, [use libmount for mount(8)])
-fi
-AM_CONDITIONAL(BUILD_LIBMOUNT_MOUNT, test "x$build_libmount_mount" = xyes)
-
-
-AC_ARG_ENABLE([new-mount],
-  AS_HELP_STRING([--enable-new-mount], [build new pure libmount based mount(8) (EXPERIMENTAL)]),
-  [], enable_new_mount=no
-)
-UL_BUILD_INIT([new_mount])
-UL_REQUIRES_BUILD([new_mount], [libmount])
-if test "x$build_new_mount" = xyes; then
-  AM_CONDITIONAL(BUILD_MOUNT, [false])
-fi
-AM_CONDITIONAL(BUILD_NEW_MOUNT, test "x$build_new_mount" = xyes)
 
 
 AC_ARG_ENABLE([fsck],
@@ -943,6 +933,11 @@ UL_REQUIRES_HAVE([wdctl], [linux_watchdog_h], [linux/watchdog.h header file])
 AM_CONDITIONAL(BUILD_WDCTL, test "x$build_wdctl" = xyes)
 
 
+UL_BUILD_INIT([swaplabel], [check])
+UL_REQUIRES_BUILD([swaplabel], [libblkid])
+AM_CONDITIONAL(BUILD_SWAPLABEL, test "x$build_swaplabel" = xyes)
+
+
 UL_BUILD_INIT([prlimit], [check])
 UL_REQUIRES_LINUX([prlimit])
 UL_REQUIRES_SYSCALL_CHECK([prlimit], [UL_CHECK_SYSCALL([prlimit64])], [prlimit64])
@@ -1001,6 +996,14 @@ AC_ARG_ENABLE([last],
 )
 UL_BUILD_INIT([last])
 AM_CONDITIONAL(BUILD_LAST, test "x$build_last" = xyes)
+
+
+AC_ARG_ENABLE([utmpdump],
+  AS_HELP_STRING([--disable-utmpdump], [build utmpdump]),
+  [], enable_utmpdump=yes
+)
+UL_BUILD_INIT([utmpdump])
+AM_CONDITIONAL(BUILD_UTMPDUMP, test "x$build_utmpdump" = xyes)
 
 
 AC_ARG_ENABLE([line],
@@ -1214,7 +1217,7 @@ if test "x$with_systemdsystemunitdir" != "xno"; then
   AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
 fi
 
-AM_CONDITIONAL(WITH_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != "xno" ])
+AM_CONDITIONAL(HAVE_SYSTEMD, [test -n "$with_systemdsystemunitdir" -a "x$with_systemdsystemunitdir" != "xno" ])
 
 
 AC_ARG_ENABLE([pg-bell],
@@ -1300,46 +1303,18 @@ AC_CONFIG_HEADERS(config.h)
 
 AC_CONFIG_FILES([
 Makefile
-disk-utils/Makefile
-fdisk/Makefile
-getopt/Makefile
-hwclock/Makefile
-include/Makefile
-lib/Makefile
-libblkid/Makefile
 libblkid/blkid.pc
 libblkid/docs/Makefile
 libblkid/docs/version.xml
-libblkid/samples/Makefile
-libblkid/src/Makefile
 libblkid/src/blkid.h
-libblkid/src/partitions/Makefile
-libblkid/src/superblocks/Makefile
-libblkid/src/topology/Makefile
-libmount/Makefile
 libmount/docs/Makefile
 libmount/docs/version.xml
 libmount/mount.pc
-libmount/src/Makefile
 libmount/src/libmount.h
-libuuid/Makefile
-libuuid/man/Makefile
-libuuid/src/Makefile
 libuuid/uuid.pc
-login-utils/Makefile
-man/ru/Makefile
-misc-utils/Makefile
 misc-utils/uuidd.service
-mount/Makefile
-partx/Makefile
 po/Makefile.in
-schedutils/Makefile
-sys-utils/Makefile
-term-utils/Makefile
-tests/Makefile
 tests/commands.sh
-tests/helpers/Makefile
-text-utils/Makefile
 ])
 
 

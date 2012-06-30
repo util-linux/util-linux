@@ -68,8 +68,9 @@ static blkid_probe get_swap_prober(const char *devname)
 
 	if (rc == 0) {
 		/* supported is SWAPSPACE2 only */
-		blkid_probe_lookup_value(pr, "VERSION", &version, NULL);
-		if (strcmp(version, "2"))
+		if (blkid_probe_lookup_value(pr, "VERSION", &version, NULL) == 0
+		    && version
+		    && strcmp(version, "2"))
 			warnx(_("%s: unsupported swap version '%s'"),
 						devname, version);
 		else

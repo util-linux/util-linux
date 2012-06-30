@@ -501,7 +501,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all              enable all swaps from /etc/fstab\n"
 		" -d, --discard          discard freed pages before they are reused\n"
-		" -e, --ifexists         silently skip devices that do not exis\n"
+		" -e, --ifexists         silently skip devices that do not exist\n"
 		" -f, --fixpgsz          reinitialize the swap space if necessary\n"
 		" -p, --priority <prio>  specify the priority of the swap device\n"
 		" -s, --summary          display summary about used swap devices and exit\n"

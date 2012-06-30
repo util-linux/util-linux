@@ -487,8 +487,8 @@ char *mnt_pretty_path(const char *path, struct libmnt_cache *cache)
 	if (strncmp(pretty, "/dev/loop", 9) == 0) {
 		struct loopdev_cxt lc;
 
-		loopcxt_init(&lc, 0);
-		loopcxt_set_device(&lc, pretty);
+		if (loopcxt_init(&lc, 0) || loopcxt_set_device(&lc, pretty))
+			goto done;
 
 		if (loopcxt_is_autoclear(&lc)) {
 			char *tmp = loopcxt_get_backing_file(&lc);
@@ -502,6 +502,7 @@ char *mnt_pretty_path(const char *path, struct libmnt_cache *cache)
 
 	}
 
+done:
 	/* don't return pointer to the cache, allocate a new string */
 	return cache ? strdup(pretty) : pretty;
 }

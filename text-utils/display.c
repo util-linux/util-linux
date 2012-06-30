@@ -42,6 +42,7 @@
 #include "hexdump.h"
 #include "xalloc.h"
 #include "c.h"
+#include "nls.h"
 
 static void doskip(const char *, int);
 static u_char *get(void);
@@ -256,6 +257,10 @@ get(void)
 				memset((char *)curp + nread, 0, need);
 			eaddress = address + nread;
 			return(curp);
+		}
+		if (fileno(stdin) == -1) {
+			warnx(_("all input file arguments failed"));
+			return(NULL);
 		}
 		n = fread((char *)curp + nread, sizeof(unsigned char),
 		    length == -1 ? need : min(length, need), stdin);

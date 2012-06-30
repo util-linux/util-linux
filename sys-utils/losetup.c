@@ -20,6 +20,9 @@
 #include "loopdev.h"
 #include "xgetpass.h"
 #include "closestream.h"
+#include "optutils.h"
+
+#define EXCL_ERROR "--{all,associated,set-capacity,detach,detach-all,find}"
 
 enum {
 	A_CREATE = 1,		/* setup a new device */
@@ -212,6 +215,17 @@ int main(int argc, char **argv)
 	int res = 0, showdev = 0, lo_flags = 0;
 
 	enum {
+		EXCL_NONE,
+		EXCL_ALL,
+		EXCL_ASSOCIATED,
+		EXCL_SET_CAPACITY,
+		EXCL_DETACH,
+		EXCL_DETACH_ALL,
+		EXCL_FIND
+	};
+	int excl_any = EXCL_NONE;
+
+	enum {
 		OPT_SIZELIMIT = CHAR_MAX + 1,
 		OPT_SHOW
 	};
@@ -240,33 +254,37 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	loopcxt_init(&lc, 0);
+	if (loopcxt_init(&lc, 0))
+		err(EXIT_FAILURE, _("failed to initialize loopcxt"));
+
 	loopcxt_enable_debug(&lc, getenv("LOOPDEV_DEBUG") ? TRUE : FALSE);
 
 	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:o:p:PrvV",
 				longopts, NULL)) != -1) {
-
-		if (act && strchr("acdDfj", c))
-			errx(EXIT_FAILURE,
-				_("the options %s are mutually exclusive"),
-				"--{all,associated,set-capacity,detach,detach-all,find}");
-
 		switch (c) {
 		case 'a':
+			exclusive_option(&excl_any, EXCL_ALL, EXCL_ERROR);
 			act = A_SHOW;
 			break;
 		case 'c':
+			exclusive_option(&excl_any, EXCL_SET_CAPACITY, EXCL_ERROR);
 			act = A_SET_CAPACITY;
-			loopcxt_set_device(&lc, optarg);
+			if (loopcxt_set_device(&lc, optarg))
+				err(EXIT_FAILURE, _("%s: failed to use device"),
+						optarg);
 			break;
 		case 'r':
 			lo_flags |= LO_FLAGS_READ_ONLY;
 			break;
 		case 'd':
+			exclusive_option(&excl_any, EXCL_DETACH, EXCL_ERROR);
 			act = A_DELETE;
-			loopcxt_set_device(&lc, optarg);
+			if (loopcxt_set_device(&lc, optarg))
+				err(EXIT_FAILURE, _("%s: failed to use device"),
+						optarg);
 			break;
 		case 'D':
+			exclusive_option(&excl_any, EXCL_DETACH_ALL, EXCL_ERROR);
 			act = A_DELETE_ALL;
 			break;
 		case 'E':
@@ -274,12 +292,14 @@ int main(int argc, char **argv)
 			encryption = optarg;
 			break;
 		case 'f':
+			exclusive_option(&excl_any, EXCL_FIND, EXCL_ERROR);
 			act = A_FIND_FREE;
 			break;
 		case 'h':
 			usage(stdout);
 			break;
 		case 'j':
+			exclusive_option(&excl_any, EXCL_ASSOCIATED, EXCL_ERROR);
 			act = A_SHOW;
 			file = optarg;
 			break;
@@ -327,7 +347,10 @@ int main(int argc, char **argv)
 		 * losetup <device>
 		 */
 		act = A_SHOW_ONE;
-		loopcxt_set_device(&lc, argv[optind++]);
+		if (loopcxt_set_device(&lc, argv[optind]))
+			err(EXIT_FAILURE, _("%s: failed to use device"),
+					argv[optind]);
+		optind++;
 	}
 	if (!act) {
 		/*
@@ -337,7 +360,10 @@ int main(int argc, char **argv)
 
 		if (optind >= argc)
 			errx(EXIT_FAILURE, _("no loop device specified"));
-		loopcxt_set_device(&lc, argv[optind++]);
+		if (loopcxt_set_device(&lc, argv[optind]))
+			err(EXIT_FAILURE, _("%s failed to use device"),
+					argv[optind]);
+		optind++;
 
 		if (optind >= argc)
 			errx(EXIT_FAILURE, _("no file specified"));
@@ -411,7 +437,10 @@ int main(int argc, char **argv)
 	case A_DELETE:
 		res = delete_loop(&lc);
 		while (optind < argc) {
-			loopcxt_set_device(&lc, argv[optind++]);
+			if (loopcxt_set_device(&lc, argv[optind]))
+				warn(_("%s: failed to use device"),
+						argv[optind]);
+			optind++;
 			res += delete_loop(&lc);
 		}
 		break;

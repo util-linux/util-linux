@@ -272,11 +272,11 @@ static char** getUsers();
 static char *fakehost;
 
 #ifdef DEBUGGING
-#define debug(s) fprintf(dbf,s); fflush(dbf)
+#define debug(s) do { fprintf(dbf,s); fflush(dbf); while (0)
 FILE *dbf;
 #else
-#define debug(s)
-#endif				/* DEBUGGING */
+#define debug(s) do { ; } while (0)
+#endif
 
 int main(int argc, char **argv)
 {
@@ -937,7 +937,8 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 			 */
 			if (vhangup())
 				log_err("/dev/%s: vhangup() failed: %m", tty);
-			ioctl(fd, TIOCNOTTY);
+			if (ioctl(fd, TIOCNOTTY))
+				debug("TIOCNOTTY ioctl failed\n");
 		}
 
 		close(fd);
@@ -1122,7 +1123,8 @@ static void termio_init(struct options *op, struct termios *tp)
 			ws.ws_col = 80;
 			set++;
 		}
-		ioctl(STDIN_FILENO, TIOCSWINSZ, &ws);
+		if (ioctl(STDIN_FILENO, TIOCSWINSZ, &ws))
+			debug("TIOCSWINSZ ioctl failed\n");
 	}
 
 	/* Optionally enable hardware flow control. */

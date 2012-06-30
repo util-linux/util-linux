@@ -1,66 +1,81 @@
-include $(top_srcdir)/config/include-Makefile.am
 
-SHLIBS_DIRS =
+AM_CPPFLAGS = \
+	-include config.h \
+	-I$(top_srcdir)/include \
+	-DLOCALEDIR=\"$(localedir)\"
+AM_CFLAGS = -fsigned-char $(WARN_CFLAGS)
+AM_LDFLAGS =
 
-if BUILD_LIBUUID
-SHLIBS_DIRS += libuuid
-endif
+# Automake (at least up to 1.10) mishandles dist_man_MANS inside conditionals.
+# Unlike with other dist primaries, the files are not distributed if the
+# conditional is false.
+# Work the bug around until it is fixed:
+dist_noinst_DATA = $(dist_man_MANS)
 
-if BUILD_LIBBLKID
-SHLIBS_DIRS += libblkid
-endif
+# Paths to in-tree libraries (use ul_ prefix to avoid possible collisions)
+# Note that blkid.h and libmount.h are generated and stored in build dirs.
+#
+ul_libblkid_incdir = $(top_builddir)/libblkid/src
+ul_libmount_incdir = $(top_builddir)/libmount/src
+ul_libuuid_incdir  = $(top_srcdir)/libuuid/src
 
-if BUILD_LIBMOUNT
-SHLIBS_DIRS += libmount
-endif
+pkgconfigdir = $(usrlib_execdir)/pkgconfig
 
-MAN_DIRS = man/ru
+dist_noinst_HEADERS =
+noinst_PROGRAMS =
+noinst_LTLIBRARIES =
+usrbin_exec_PROGRAMS =
+usrsbin_exec_PROGRAMS =
+dist_man_MANS =
+man_MANS =
+pkgconfig_DATA =
+usrlib_exec_LTLIBRARIES =
+bin_PROGRAMS =
+sbin_PROGRAMS =
+dist_usrbin_exec_SCRIPTS =
+systemdsystemunit_DATA =
+ruman1_DATA =
 
-SUBDIRS = \
-	$(MAN_DIRS) \
-	$(SHLIBS_DIRS) \
-	disk-utils \
-	fdisk \
-	getopt \
-	include \
-	lib \
-	login-utils \
-	misc-utils \
-	po \
-	sys-utils \
-	term-utils \
-	tests \
-	text-utils
+INSTALL_EXEC_HOOKS =
+UNINSTALL_HOOKS =
+INSTALL_DATA_HOOKS =
+CLEAN_LOCALS =
 
+EXTRA_DIST =
+CLEANFILES =
+
+SUBDIRS = po
 
 RCS_FIND_IGNORE = \( -name SCCS -o -name BitKeeper -o -name .svn -o \
 		-name CVS -o -name .pc -o -name .hg -o -name .git \) -prune -o
 
-if BUILD_HWCLOCK
-SUBDIRS += hwclock
-endif
-
-if BUILD_PARTX
-SUBDIRS += partx
-endif
-
-if BUILD_MOUNT
-SUBDIRS += mount
-endif
-
-if BUILD_SCHEDUTILS
-SUBDIRS += schedutils
-endif
-
-AUTOMAKE_OPTIONS = gnu
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = \
+EXTRA_DIST += \
 	.version \
 	autogen.sh \
 	Documentation \
 	po/update-potfiles \
 	README.licensing
+
+
+include include/Makemodule.am
+include lib/Makemodule.am
+include libuuid/Makemodule.am
+include libblkid/Makemodule.am
+include libmount/Makemodule.am
+
+include schedutils/Makemodule.am
+include text-utils/Makemodule.am
+include term-utils/Makemodule.am
+include login-utils/Makemodule.am
+include mount-deprecated/Makemodule.am
+include sys-utils/Makemodule.am
+include misc-utils/Makemodule.am
+include disk-utils/Makemodule.am
+include fdisks/Makemodule.am
+
+include tests/Makemodule.am
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.
@@ -114,7 +129,19 @@ $(CHANGELOG_FILE):
 	@ echo "--------------------------------------------" >> $(CHANGELOG_FILE)
 	@ echo >> $(CHANGELOG_FILE)
 	$(AM_V_GEN) git log --stat v$(PREVIOUS_VERSION)..HEAD >> $(CHANGELOG_FILE)
+#
+#
+# smatch scan -- smatch and cgcc are expected in $PATH
+#
+checksmatch:
+	$(MAKE) CHECK="smatch --data=$(abs_top_srcdir)/tools/smatch-data" CC=cgcc
 
 changelog: $(CHANGELOG_FILE)
 
+install-exec-hook: $(INSTALL_EXEC_HOOKS)
 
+uninstall-hook: $(UNINSTALL_HOOKS)
+
+install-data-hook: $(INSTALL_DATA_HOOKS)
+
+clean-local: $(CLEAN_LOCALS)

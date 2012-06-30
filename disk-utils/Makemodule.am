@@ -1,0 +1,139 @@
+
+sbin_PROGRAMS += fsck.minix
+dist_man_MANS += disk-utils/fsck.minix.8
+fsck_minix_SOURCES = \
+	disk-utils/fsck.minix.c \
+	disk-utils/minix_programs.h \
+	lib/ismounted.c
+fsck_minix_LDADD = libcommon.la
+
+sbin_PROGRAMS += mkfs.minix
+dist_man_MANS += disk-utils/mkfs.minix.8
+mkfs_minix_SOURCES = \
+	disk-utils/minix_programs.h \
+	disk-utils/mkfs.minix.c
+mkfs_minix_LDADD = libcommon.la
+
+sbin_PROGRAMS += mkfs
+dist_man_MANS += disk-utils/mkfs.8
+mkfs_SOURCES = disk-utils/mkfs.c
+
+usrbin_exec_PROGRAMS += isosize
+dist_man_MANS += disk-utils/isosize.8
+isosize_SOURCES = disk-utils/isosize.c
+isosize_LDADD = libcommon.la
+
+sbin_PROGRAMS += mkfs.bfs
+dist_man_MANS += disk-utils/mkfs.bfs.8
+mkfs_bfs_SOURCES = \
+	disk-utils/mkfs.bfs.c
+mkfs_bfs_LDADD = libcommon.la
+
+sbin_PROGRAMS += mkswap
+dist_man_MANS += disk-utils/mkswap.8
+mkswap_SOURCES = \
+	disk-utils/mkswap.c
+mkswap_LDADD = libcommon.la
+
+mkswap_CFLAGS = $(AM_CFLAGS)
+if BUILD_LIBUUID
+mkswap_CFLAGS += -I$(ul_libuuid_incdir)
+mkswap_LDADD += libuuid.la
+endif
+if BUILD_LIBBLKID
+mkswap_CFLAGS += -I$(ul_libblkid_incdir)
+mkswap_LDADD += libblkid.la
+endif
+if HAVE_SELINUX
+mkswap_LDADD += -lselinux
+endif
+
+
+if BUILD_SWAPLABEL
+sbin_PROGRAMS += swaplabel
+dist_man_MANS += disk-utils/swaplabel.8
+swaplabel_SOURCES = disk-utils/swaplabel.c
+
+swaplabel_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+swaplabel_LDADD = libblkid.la libcommon.la
+
+if BUILD_LIBUUID
+swaplabel_LDADD += libuuid.la
+swaplabel_CFLAGS += -I$(ul_libuuid_incdir)
+endif
+endif #BUILD_SWAPLABEL
+
+
+if BUILD_FSCK
+sbin_PROGRAMS += fsck
+dist_man_MANS += disk-utils/fsck.8
+fsck_SOURCES = disk-utils/fsck.c
+fsck_LDADD = libmount.la libblkid.la
+fsck_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir) -I$(ul_libblkid_incdir)
+endif
+
+
+if BUILD_ELVTUNE
+sbin_PROGRAMS += elvtune
+dist_man_MANS += disk-utils/elvtune.8
+elvtune_SOURCES = disk-utils/elvtune.c
+elvtune_LDADD = libcommon.la
+endif
+
+
+if BUILD_RAW
+sbin_PROGRAMS += raw
+dist_man_MANS += disk-utils/raw.8
+raw_SOURCES = disk-utils/raw.c
+endif
+
+
+if BUILD_CRAMFS
+cramfs_common_sources = disk-utils/cramfs.h disk-utils/cramfs_common.c
+sbin_PROGRAMS += fsck.cramfs
+fsck_cramfs_SOURCES = disk-utils/fsck.cramfs.c $(cramfs_common_sources)
+fsck_cramfs_LDADD = -lz libcommon.la
+
+sbin_PROGRAMS += mkfs.cramfs
+mkfs_cramfs_SOURCES = disk-utils/mkfs.cramfs.c $(cramfs_common_sources)
+mkfs_cramfs_LDADD = -lz libcommon.la
+endif
+
+
+if LINUX
+sbin_PROGRAMS += blockdev
+dist_man_MANS += disk-utils/blockdev.8
+blockdev_SOURCES = disk-utils/blockdev.c
+blockdev_LDADD = libcommon.la
+
+usrsbin_exec_PROGRAMS += fdformat
+dist_man_MANS += disk-utils/fdformat.8
+fdformat_SOURCES = disk-utils/fdformat.c
+endif # LINUX
+
+
+if BUILD_PARTX
+usrsbin_exec_PROGRAMS += partx addpart delpart
+dist_man_MANS += \
+	disk-utils/addpart.8 \
+	disk-utils/delpart.8 \
+	disk-utils/partx.8
+
+
+addpart_SOURCES = \
+	disk-utils/addpart.c \
+	disk-utils/partx.h
+addpart_LDADD = libcommon.la
+
+delpart_SOURCES = \
+	disk-utils/delpart.c \
+	disk-utils/partx.h
+delpart_LDADD = libcommon.la
+
+partx_SOURCES = \
+	disk-utils/partx.c \
+	disk-utils/partx.h
+partx_CFLAGS = -I$(ul_libblkid_incdir)
+partx_LDADD = libblkid.la libcommon.la
+
+endif # BUILD_PARTX

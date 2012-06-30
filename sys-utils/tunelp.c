@@ -264,7 +264,8 @@ int main(int argc, char **argv)
 	if (fd < 0)
 		err(EXIT_FAILURE, "%s", filename);
 
-	fstat(fd, &statbuf);
+	if (fstat(fd, &statbuf))
+		err(EXIT_FAILURE, "%s: stat() failed", filename);
 
 	if (!S_ISCHR(statbuf.st_mode)) {
 		warnx(_("%s not an lp device"), filename);

@@ -235,8 +235,7 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 
 	if (state_fd == -2) {
 		save_umask = umask(0);
-		state_fd = open("/var/lib/libuuid/clock.txt",
-				O_RDWR|O_CREAT, 0660);
+		state_fd = open(LIBUUID_CLOCK_FILE, O_RDWR|O_CREAT, 0660);
 		(void) umask(save_umask);
 		if (state_fd != -1) {
 			state_f = fdopen(state_fd, "r+");

@@ -1,0 +1,173 @@
+.\" partx.8 --
+.\" Copyright 2007 Karel Zak <kzak@redhat.com>
+.\" Copyright 2007 Red Hat, Inc.
+.\" Copyright 2010 Davidlohr Bueso <dave@gnu.org>
+.\" May be distributed under the GNU General Public License
+.TH PARTX "8" "June 2012" "util-linux" "System Administration"
+.SH NAME
+partx \- tell the Linux kernel about the presence and numbering of
+on-disk partitions
+.SH SYNOPSIS
+partx [\-a|\-d|\-s] [\-t TYPE] [\-n M:N] [\-] disk
+.br
+partx [\-a|\-d|\-s] [\-t TYPE] partition [disk]
+.SH DESCRIPTION
+Given a device or disk-image,
+.B partx
+tries to parse the partition table and list its contents.  It
+optionally adds or removes partitions.
+.PP
+The
+.I disk
+argument is optional when a
+.I partition
+argument is provided.  To force scanning a partition as if it were a whole disk
+(for example to list nested subpartitions), use the argument "-".  For example:
+
+.RS 7
+.TP
+partx \-\-show \- /dev/sda3
+.RE
+.PP
+This will see sda3 as a whole-disk rather than a partition.
+.PP
+The
+.B partx is not an fdisk program
+\-\- adding and removing partitions does not change the disk, it just
+tells the kernel about the presence and numbering of on-disk
+partitions.
+.SH OPTIONS
+.IP "\fB\-a\fR, \fB\-\-add\fP"
+Add the specified partitions, or read the disk and add all partitions.
+.IP "\fB\-b\fR, \fB\-\-bytes\fP"
+Print the SIZE column in bytes rather than in human-readable format.
+.IP "\fB\-d\fR, \fB\-\-delete\fP"
+Delete the specified partitions or all partitions.
+.IP "\fB\-g\fR, \fB\-\-noheadings\fP"
+Do not print a header line.
+.IP "\fB\-h\fR, \fB\-\-help\fP"
+Print a help text and exit.
+.IP "\fB\-l\fR, \fB\-\-list\fP"
+List the partitions.  Note that all numbers are in 512-byte sectors.
+This output format is DEPRECATED in favour of
+.BR \-\-show .
+Do not use it in newly written scripts.
+.IP "\fB\-o\fR, \fB\-\-output \fIlist\fP"
+Define the output columns to use for
+.B \-\-show
+and
+.B \-\-raw
+output.  If no output arrangement is specified, then a default set is
+used.  Use
+.B \-\-help
+to get
+.I list
+of all supported columns.  This option cannot be combined with
+.BR \-\-add ,
+.B \-\-delete
+or
+.B \-\-list
+options.
+.IP "\fB\-P\fR, \fB\-\-pairs\fP"
+Output using key="value" format.
+.IP "\fB\-n\fR, \fB\-\-nr \fIM:N\fP"
+Specify the range of partitions.  For backward compatibility also the
+format
+.I M-N
+is supported.  The range may contain negative numbers, for example
+.BI \-\-nr \ :\-1
+means the last partition, and
+.BI \-\-nr \ \-2:\-1
+means the last two partitions.  Supported range specifications are:
+.RS 14
+.TP
+.I M
+Specifies just one partition (e.g. \fB\-\-nr\fR
+.IR 3 ).
+.TP
+.I M:
+Specifies lower limit only (e.g. \fB\-\-nr\fR
+.IR 2: ).
+.TP
+.I :N
+Specifies upper limit only (e.g. \fB\-\-nr\fR
+.IR :4 ).
+.TP
+.IR M:N \ or
+.TQ
+.I M-N
+Specifies lower and upper limits (e.g. \fB--nr\fR
+.IR 2:4 ).
+.RE
+.IP "\fB\-r\fR, \fB\-\-raw\fP"
+Use the raw output format.
+.IP "\fB\-s\fR, \fB\-\-show\fP"
+List the partitions.  All numbers (except SIZE) are in 512-byte
+sectors.  The output columns can be rearranged with the
+.B \-\-output
+option.
+.IP "\fB\-t\fR, \fB\-\-type \fItype\fP"
+Specify the partition table type
+.IR aix ,
+.IR bsd ,
+.IR dos ,
+.IR gpt ,
+.IR mac ,
+.IR minix ,
+.IR sgi ,
+.IR solaris_x86 ,
+.IR sun ,
+.I ultrix
+or
+.IR unixware .
+.IP "\fB\-v\fR, \fB\-\-verbose\fP"
+Verbose mode.
+.SH EXAMPLES
+.TP
+partx \-\-show /dev/sdb3
+.TQ
+partx \-\-show --nr 3 /dev/sdb
+.TQ
+partx \-\-show /dev/sdb3 /dev/sdb
+All three commands list partition 3 of /dev/sdb.
+.TP
+partx \-\-show \- /dev/sdb3
+Lists all subpartitions on /dev/sdb3 (the device is used as
+whole-disk).
+.TP
+partx \-o START -g --nr 5 /dev/sdb
+Prints the start sector of partition 5 on /dev/sdb without header.
+.TP
+partx \-o SECTORS,SIZE /dev/sda5 /dev/sda
+Lists the length in sectors and human-readable size of partition 5 on
+/dev/sda.
+.TP
+partx \-\-add --nr 3:5 /dev/sdd
+Adds all available partitions from 3 to 5 (inclusive) on /dev/sdd.
+.TP
+partx \-d --nr :-1 /dev/sdd
+Removes the last partition on /dev/sdd.
+.SH SEE ALSO
+.BR addpart (8),
+.BR delpart (8),
+.BR fdisk (8),
+.BR parted (8),
+.BR partprobe (8)
+.SH AUTHORS
+.MT dave@gnu.org
+Davidlohr Bueso
+.ME
+.br
+.MT kzak@redhat.com
+Karel Zak
+.ME
+.PP
+The original version was written by
+.MT aeb@cwi.nl
+Andries E. Brouwer
+.ME .
+.SH AVAILABILITY
+The partx command is part of the util-linux package and is available from
+.UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .

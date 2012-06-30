@@ -122,7 +122,10 @@ show_help(void)
 static void __attribute__((__noreturn__))
 show_usage(const char *s)
 {
-  errx(EXIT_FAILURE, _("%s\nTry `%s --help' for more information."), s, program_invocation_short_name);
+  if (s)
+    errx(EXIT_FAILURE, _("%s\nTry `%s --help' for more information."), s, program_invocation_short_name);
+  else
+    errx(EXIT_FAILURE, _("Try `%s --help' for more information."), program_invocation_short_name);
 }
 
 static void __attribute__((__noreturn__))
@@ -325,6 +328,8 @@ int main(int argc, char *argv[])
     case OPT_UNAME26:
 	turn_on(UNAME26, options);
 	break;
+    default:
+        show_usage(NULL);
     }
   }
 

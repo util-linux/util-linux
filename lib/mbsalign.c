@@ -271,6 +271,8 @@ mbsalign_unibyte:
           start_spaces = n_spaces;
           end_spaces = 0;
           break;
+	default:
+	  abort();
         }
 
       dest = mbs_align_pad (dest, dest_end, start_spaces);

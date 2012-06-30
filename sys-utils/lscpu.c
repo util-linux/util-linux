@@ -42,6 +42,7 @@
 #include "tt.h"
 #include "path.h"
 #include "closestream.h"
+#include "optutils.h"
 
 #define CACHE_MAX 100
 
@@ -405,10 +406,10 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 }
 
 static int
-has_pci_device(int vendor, int device)
+has_pci_device(unsigned int vendor, unsigned int device)
 {
 	FILE *f;
-	int num, fn, ven, dev;
+	unsigned int num, fn, ven, dev;
 	int res = 1;
 
 	f = path_fopen("r", 0, _PATH_PROC_PCIDEVS);
@@ -1242,6 +1243,19 @@ int main(int argc, char *argv[])
 	int c, i;
 	int columns[ARRAY_SIZE(coldescs)], ncolumns = 0;
 
+	enum {
+		EXCL_NONE,
+
+		EXCL_ALL,
+		EXCL_ONLINE,
+		EXCL_OFFLINE,
+
+		EXCL_EXTENDED,
+		EXCL_PARSE
+	};
+	int excl_ep = EXCL_NONE;
+	int excl_abc = EXCL_NONE;
+
 	static const struct option longopts[] = {
 		{ "all",        no_argument,       0, 'a' },
 		{ "online",     no_argument,       0, 'b' },
@@ -1261,28 +1275,27 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "abce::hp::s:xV", longopts, NULL)) != -1) {
-
-		if (mod->mode != OUTPUT_SUMMARY && strchr("ep", c))
-			errx(EXIT_FAILURE,
-			     _("extended and parsable formats are mutually exclusive"));
-		if ((mod->online || mod->offline) && strchr("abc", c))
-			errx(EXIT_FAILURE,
-			     _("--all, --online and --offline options are mutually exclusive"));
-
 		switch (c) {
 		case 'a':
+			exclusive_option(&excl_abc, EXCL_ALL, "--{all,online,offline}");
 			mod->online = mod->offline = 1;
 			break;
 		case 'b':
+			exclusive_option(&excl_abc, EXCL_ONLINE, "--{all,online,offline}");
 			mod->online = 1;
 			break;
 		case 'c':
+			exclusive_option(&excl_abc, EXCL_OFFLINE, "--{all,online,offline}");
 			mod->offline = 1;
 			break;
 		case 'h':
 			usage(stdout);
 		case 'p':
+			exclusive_option(&excl_ep, EXCL_PARSE, "--{extended,parse}");
+			goto hop_over;
 		case 'e':
+			exclusive_option(&excl_ep, EXCL_EXTENDED, "--{extended,parse}");
+			hop_over:
 			if (optarg) {
 				if (*optarg == '=')
 					optarg++;

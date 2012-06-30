@@ -160,10 +160,6 @@ denotes a file or partition to be used
 for swapping, cf.\&
 .BR swapon (8).
 An entry
-.I ignore
-causes the line to be ignored.  This is useful
-to show disk partitions which are currently unused.
-An entry
 .I none
 is useful for bind or move mounts.
 
@@ -205,6 +201,8 @@ allow a user to mount
 allow device owner to mount
 .TP
 .B comment
+or
+.B x-<name>
 for use by fstab-maintaining programs
 .TP
 .B nofail
@@ -240,22 +238,27 @@ or zero, a value of zero is returned and
 will assume that the filesystem does not need to be checked.
 .RE
 
+.SH NOTES
 The proper way to read records from
 .B fstab
 is to use the routines
 .BR getmntent (3)
 or
 .BR libmount .
+
+The keyword
+.B ignore
+as filesystem type (3rd field) is not more supported by the pure
+libmount based mount utility (since util-linux v2.22).
+
 .SH FILES
 .IR /etc/fstab ,
 .I <fstab.h>
 .SH "SEE ALSO"
+.BR findmnt (8),
 .BR mount (8),
 .BR swapon (8),
 .BR fs (5),
-.BR nfs (5),
-.BR xfs (5),
-.BR proc (5),
 .BR getmntent (3)
 .SH HISTORY
 The ancestor of this

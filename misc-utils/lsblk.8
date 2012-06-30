@@ -23,7 +23,8 @@ by default.  Use
 to get a list of all available columns.
 .SH OPTIONS
 .IP "\fB\-a, \-\-all\fP"
-List all block devices.
+.B lsblk
+does not list empty devices by default. This option disables this restriction.
 .IP "\fB\-b, \-\-bytes\fP"
 Print the SIZE column in bytes rather than in human-readable format.
 .IP "\fB\-d, \-\-nodeps\fP"
@@ -33,7 +34,11 @@ information about the sda device only.
 Print information about the discard (TRIM, UNMAP) capabilities for each device.
 .IP "\fB\-e, \-\-exclude \fIlist\fP
 Exclude the devices specified by a comma-separated \fIlist\fR of major device numbers.
-Note that RAM disks (major=1) are excluded by default.
+Note that RAM disks (major=1) are excluded by default. The filter is applied to the top-level
+devices only.
+.IP "\fB\-I, \-\-include \fIlist\fP
+Include devices specified by a comma-separated \fIlist\fR of major device numbers only.
+The filter is applied to the top-level devices.
 .IP "\fB\-f, \-\-fs\fP
 Output info about filesystems.  This option is equivalent to "-o NAME,FSTYPE,LABEL,MOUNTPOINT".
 The authoritative information about filesystems and raids is provided by the

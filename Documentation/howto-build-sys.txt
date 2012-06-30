@@ -1,6 +1,34 @@
 util-linux build system
 =======================
 
+ - the build system is non-recursive, individual subdirectories use
+   Makemodule.am files. These files are merged together by automake
+   into one global Makefile in the top-level directory
+
+ - all final build results (binaries, libtool scripts) are stored in top-level
+   source directory
+
+ - all Makemodule.am files have to be designed as top-level makefiles, it
+   means with full paths (e.g. foo_SOURCES = subdir/foo.c)
+
+ - always use '+=' operator for global variables (e.g. bin_PROGRAMS += foo)
+
+ - use libcommon.la (without path!) for lib/ stuff (e.g. foo_LDADD = libcommon.la)
+
+ - for libblkid, libuuid and libmount use lib<name>.la in _LDADD and
+   -I$(ul_lib<name>_incdir) in _CFLAGS, for example
+
+	foo_LDADD = libmount.la
+	foo_CFLAGS = -I$(ul_libmount_incdir)
+
+ - always use suffixes for hooks, for example
+
+	install-exec-hook-foo:
+		ln -sf foo foooo
+
+	INSTALL_EXEC_HOOKS += install-exec-hook-foo
+
+
  - all util-linux specific autoconf macros use UL_ prefix
 
  - utils in Makefile.am files are enabled/disabled according to BUILD_<NAME>

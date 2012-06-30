@@ -774,14 +774,22 @@ err:
  *
  * Returns: 0 on success, negative number in case of error.
  */
+#ifndef HAVE_LIBSELINUX
 int mnt_optstr_fix_secontext(char **optstr __attribute__ ((__unused__)),
 			     char *value   __attribute__ ((__unused__)),
 			     size_t valsz  __attribute__ ((__unused__)),
 			     char **next   __attribute__ ((__unused__)))
 {
+	return 0;
+}
+#else
+int mnt_optstr_fix_secontext(char **optstr,
+			     char *value,
+			     size_t valsz,
+			     char **next)
+{
 	int rc = 0;
 
-#ifdef HAVE_LIBSELINUX
 	security_context_t raw = NULL;
 	char *p, *val, *begin, *end;
 	size_t sz;
@@ -839,9 +847,10 @@ int mnt_optstr_fix_secontext(char **optstr __attribute__ ((__unused__)),
 	mnt_optstr_remove_option_at(optstr, begin, end);
 	rc = insert_value(optstr, begin, val, next);
 	free(val);
-#endif
+
 	return rc;
 }
+#endif
 
 static int set_uint_value(char **optstr, unsigned int num,
 			char *begin, char *end, char **next)

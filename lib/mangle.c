@@ -131,14 +131,18 @@ char *unmangle(const char *s, char **end)
 #include <errno.h>
 int main(int argc, char *argv[])
 {
+	char *p = NULL;
 	if (argc < 3) {
 		fprintf(stderr, "usage: %s --mangle|unmangle <string>\n",
 						program_invocation_short_name);
 		return EXIT_FAILURE;
 	}
 
-	if (!strcmp(argv[1], "--mangle"))
-		printf("mangled: '%s'\n", mangle(argv[2]));
+	if (!strcmp(argv[1], "--mangle")) {
+		p = mangle(argv[2]);
+		printf("mangled: '%s'\n", p);
+		free(p);
+	}
 
 	else if (!strcmp(argv[1], "--unmangle")) {
 		char *x = unmangle(argv[2], NULL);

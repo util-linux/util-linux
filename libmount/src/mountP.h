@@ -218,6 +218,7 @@ struct libmnt_fs {
 	int		priority;	/* swaps[5]: swap priority */
 
 	int		flags;		/* MNT_FS_* flags */
+	pid_t		tid;		/* /proc/<tid>/mountinfo otherwise zero */
 
 	void		*userdata;	/* library independent data */
 };

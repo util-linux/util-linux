@@ -60,6 +60,7 @@
 #include "sysfs.h"
 #include "closestream.h"
 #include "mangle.h"
+#include "optutils.h"
 
 /* column IDs */
 enum {
@@ -141,7 +142,7 @@ static struct colinfo infos[] = {
 
 struct lsblk {
 	struct tt *tt;			/* output table */
-	unsigned int all_devices:1;	/* print all devices */
+	unsigned int all_devices:1;	/* print all devices, including empty */
 	unsigned int bytes:1;		/* print SIZE in bytes */
 	unsigned int inverse:1;		/* print inverse dependencies */
 	unsigned int nodeps:1;		/* don't print slaves/holders */
@@ -150,11 +151,14 @@ struct lsblk {
 struct lsblk *lsblk;	/* global handler */
 
 #define NCOLS ARRAY_SIZE(infos)
-int columns[NCOLS];/* enabled columns */
-int ncolumns;		/* number of enabled columns */
+static int columns[NCOLS];/* enabled columns */
+static int ncolumns;		/* number of enabled columns */
 
-int excludes[256];
-size_t nexcludes;
+static int excludes[256];
+static size_t nexcludes;
+
+static int includes[256];
+static size_t nincludes;
 
 static struct libmnt_table *mtab, *swaps;
 static struct libmnt_cache *mntcache;
@@ -197,8 +201,26 @@ static int is_maj_excluded(int maj)
 
 	assert(ARRAY_SIZE(excludes) > nexcludes);
 
+	if (!nexcludes)
+		return 0;	/* filter not enabled, device not exluded */
+
 	for (i = 0; i < nexcludes; i++)
 		if (excludes[i] == maj)
+			return 1;
+	return 0;
+}
+
+static int is_maj_included(int maj)
+{
+	size_t i;
+
+	assert(ARRAY_SIZE(includes) > nincludes);
+
+	if (!nincludes)
+		return 1;	/* filter not enabled, device is included */
+
+	for (i = 0; i < nincludes; i++)
+		if (includes[i] == maj)
 			return 1;
 	return 0;
 }
@@ -448,7 +470,8 @@ static int is_readonly_device(struct blkdev_cxt *cxt)
 	/* fallback if "ro" attribute does not exist */
 	fd = open(cxt->filename, O_RDONLY);
 	if (fd != -1) {
-		ioctl(fd, BLKROGET, &ro);
+		if (ioctl(fd, BLKROGET, &ro) != 0)
+			ro = 0;
 		close(fd);
 	}
 	return ro;
@@ -798,9 +821,10 @@ static int set_cxt(struct blkdev_cxt *cxt,
 
 	cxt->maj = major(devno);
 	cxt->min = minor(devno);
+	cxt->size = 0;
 
-	sysfs_read_u64(&cxt->sysfs, "size", &cxt->size);	/* in sectors */
-	cxt->size <<= 9;					/* in bytes */
+	if (sysfs_read_u64(&cxt->sysfs, "size", &cxt->size) == 0)	/* in sectors */
+		cxt->size <<= 9;					/* in bytes */
 
 	sysfs_read_int(&cxt->sysfs, "queue/discard_granularity", &cxt->discard);
 
@@ -993,7 +1017,7 @@ static int iterate_block_devices(void)
 		if (set_cxt(&cxt, NULL, NULL, d->d_name))
 			goto next;
 
-		if (!lsblk->all_devices && is_maj_excluded(cxt.maj))
+		if (is_maj_excluded(cxt.maj) || !is_maj_included(cxt.maj))
 			goto next;
 
 		/* Skip devices in the middle of dependency tree. */
@@ -1078,9 +1102,9 @@ leave:
 	return status;
 }
 
-static void parse_excludes(const char *str)
+static void parse_excludes(const char *str0)
 {
-	nexcludes = 0;
+	const char *str = str0;
 
 	while (str && *str) {
 		char *end = NULL;
@@ -1089,8 +1113,10 @@ static void parse_excludes(const char *str)
 		errno = 0;
 		n = strtoul(str, &end, 10);
 
-		if (end == str || (errno != 0 && (n == ULONG_MAX || n == 0)))
-			err(EXIT_FAILURE, _("failed to parse list '%s'"), str);
+		if (end == str || (end && *end && *end != ','))
+			errx(EXIT_FAILURE, _("failed to parse list '%s'"), str0);
+		if (errno != 0 && (n == ULONG_MAX || n == 0))
+			err(EXIT_FAILURE, _("failed to parse list '%s'"), str0);
 		excludes[nexcludes++] = n;
 
 		if (nexcludes == ARRAY_SIZE(excludes))
@@ -1098,6 +1124,33 @@ static void parse_excludes(const char *str)
 			errx(EXIT_FAILURE, _("the list of excluded devices is "
 					"too large (limit is %d devices)"),
 					(int)ARRAY_SIZE(excludes));
+
+		str = end && *end ? end + 1 : NULL;
+	}
+}
+
+static void parse_includes(const char *str0)
+{
+	const char *str = str0;
+
+	while (str && *str) {
+		char *end = NULL;
+		unsigned long n;
+
+		errno = 0;
+		n = strtoul(str, &end, 10);
+
+		if (end == str || (end && *end && *end != ','))
+			errx(EXIT_FAILURE, _("failed to parse list '%s'"), str0);
+		if (errno != 0 && (n == ULONG_MAX || n == 0))
+			err(EXIT_FAILURE, _("failed to parse list '%s'"), str0);
+		includes[nincludes++] = n;
+
+		if (nincludes == ARRAY_SIZE(includes))
+			/* TRANSLATORS: The standard value for %d is 256. */
+			errx(EXIT_FAILURE, _("the list of included devices is "
+					"too large (limit is %d devices)"),
+					(int)ARRAY_SIZE(includes));
 		str = end && *end ? end + 1 : NULL;
 	}
 }
@@ -1117,6 +1170,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 		" -d, --nodeps         don't print slaves or holders\n"
 		" -D, --discard        print discard capabilities\n"
 		" -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
+		" -I, --include <list> show only devices with specified major numbers\n"
 		" -f, --fs             output info about filesystems\n"
 		" -h, --help           usage information (this)\n"
 		" -i, --ascii          use ascii characters only\n"
@@ -1140,12 +1194,6 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static void __attribute__((__noreturn__))
-errx_mutually_exclusive(const char *opts)
-{
-	errx(EXIT_FAILURE, "%s %s", opts, _("options are mutually exclusive"));
-}
-
 static void check_sysdevblock(void)
 {
 	if (access(_PATH_SYS_DEVBLOCK, R_OK) != 0)
@@ -1158,6 +1206,19 @@ int main(int argc, char *argv[])
 	struct lsblk _ls;
 	int tt_flags = TT_FL_TREE;
 	int i, c, status = EXIT_FAILURE;
+
+	enum {
+		EXCL_NONE,
+
+		EXCL_RAW,
+		EXCL_LIST,
+		EXCL_PAIRS,
+
+		EXCL_EXCLUDE,
+		EXCL_INCLUDE,
+	};
+	int excl_rlP = EXCL_NONE;
+	int excl_aeI = EXCL_NONE;
 
 	static const struct option longopts[] = {
 		{ "all",	0, 0, 'a' },
@@ -1174,6 +1235,7 @@ int main(int argc, char *argv[])
 		{ "inverse",	0, 0, 's' },
 		{ "fs",         0, 0, 'f' },
 		{ "exclude",    1, 0, 'e' },
+		{ "include",    1, 0, 'I' },
 		{ "topology",   0, 0, 't' },
 		{ "pairs",      0, 0, 'P' },
 		{ "version",    0, 0, 'V' },
@@ -1188,7 +1250,7 @@ int main(int argc, char *argv[])
 	lsblk = &_ls;
 	memset(lsblk, 0, sizeof(*lsblk));
 
-	while((c = getopt_long(argc, argv, "abdDe:fhlnmo:PirstV", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "abdDe:fhlnmo:PiI:rstV", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			lsblk->all_devices = 1;
@@ -1207,15 +1269,14 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_DZERO;
 			break;
 		case 'e':
+			exclusive_option(&excl_aeI, EXCL_EXCLUDE, "--{exclude,include}");
 			parse_excludes(optarg);
 			break;
 		case 'h':
 			help(stdout);
 			break;
 		case 'l':
-			if ((tt_flags & TT_FL_RAW)|| (tt_flags & TT_FL_EXPORT))
-				errx_mutually_exclusive("--{raw,list,export}");
-
+			exclusive_option(&excl_rlP, EXCL_LIST, "--{raw,list,pairs}");
 			tt_flags &= ~TT_FL_TREE; /* disable the default */
 			break;
 		case 'n':
@@ -1229,13 +1290,19 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 			break;
 		case 'P':
+			exclusive_option(&excl_rlP, EXCL_PAIRS, "--{raw,list,pairs}");
 			tt_flags |= TT_FL_EXPORT;
 			tt_flags &= ~TT_FL_TREE;	/* disable the default */
 			break;
 		case 'i':
 			tt_flags |= TT_FL_ASCII;
 			break;
+		case 'I':
+			exclusive_option(&excl_aeI, EXCL_INCLUDE, "--{exclude,include}");
+			parse_includes(optarg);
+			break;
 		case 'r':
+			exclusive_option(&excl_rlP, EXCL_RAW, "--{raw,list,pairs}");
 			tt_flags &= ~TT_FL_TREE;	/* disable the default */
 			tt_flags |= TT_FL_RAW;		/* enable raw */
 			break;
@@ -1288,9 +1355,7 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_TARGET;
 	}
 
-	if (nexcludes && lsblk->all_devices)
-		errx_mutually_exclusive("--{all,exclude}");
-	else if (!nexcludes)
+	if (nexcludes == 0 && nincludes == 0)
 		excludes[nexcludes++] = 1;	/* default: ignore RAM disks */
 
 	mnt_init_debug(0);

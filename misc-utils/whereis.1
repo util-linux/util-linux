@@ -30,24 +30,19 @@
 .\" SUCH DAMAGE.
 .\"
 .\" @(#)whereis.1 from UCB 4.2
-.TH WHEREIS 1 "July 2009" "util-linux" "User Commands"
+.TH WHEREIS 1 "June 2012" "util-linux" "User Commands"
 .SH NAME
 whereis \- locate the binary, source, and manual page files for a command
 .SH SYNOPSIS
 .B whereis
-.RB [ \-bmsu ]
+.RB [ options ]
 .RB [ \-BMS
 .IR directory ...
 .BR \-f ]
 .IR filename ...
-.IX  "whereis command"  ""  "\fLwhereis\fP \(em find program"
-.IX  find "program \(em \fLwhereis\fP"
-.IX  "locate program"  ""   "locate program \(em \fLwhereis\fP"
-.IX  command  locate  ""   "locate \(em \fLwhereis\fP"
 .SH DESCRIPTION
 .B whereis
-locates source/binary and manuals sections for specified
-files.
+locates source/binary and manuals sections for specified files.
 The supplied names are first stripped of leading pathname components
 and any (single) trailing extension of the form
 .BI . ext\fR,\fP
@@ -61,40 +56,32 @@ then attempts to locate the desired program in
 a list of standard Linux places.
 .SH OPTIONS
 .TP
-.B \-b
+.IP "\fB\-b\fP"
 Search only for binaries.
-.TP
-.B \-m
+.IP "\fB\-m\fP"
 Search only for manual sections.
-.TP
-.B \-s
+.IP "\fB\-s\fP"
 Search only for sources.
-.TP
-.B \-u
+.IP "\fB\-u\fP"
 Search for unusual entries.  A file is said to be unusual if it does
-not have one entry of each requested type.
-Thus
+not have one entry of each requested type. Thus
 .RB ` "whereis\ \ \-m\ \ \-u\ \ *" '
 asks for those files in the current
 directory which have no documentation.
-.TP
-.B \-B
+.IP "\fB\-B \fIlist\fP"
 Change or otherwise limit the places where
 .B whereis
-searches for binaries.
-.TP
-.B \-M
+searches for binaries by white-space separated list of directories.
+.IP "\fB\-M \fIlist\fP"
 Change or otherwise limit the places where
 .B whereis
-searches for
-manual sections.
-.TP
+searches for manual sections by white-space separated list of directories.
+.IP "\fB\-S \fIlist\fP"
 .B \-S
 Change or otherwise limit the places where
 .B whereis
-searches for sources.
-.TP
-.B \-f
+searches for sources white-space separated list of directories.
+.IP "\fB\-f\fP"
 Terminate the last directory list and signals the start of file names,
 and
 .I must
@@ -102,7 +89,7 @@ be used when any of the
 .BR \-B ,
 .BR \-M ,
 or
-.B \-S
+.BB \-S
 options are used.
 .SH EXAMPLE
 Find all files in
@@ -115,18 +102,24 @@ with source in
 .IP
 .nf
 .ft B
-example% cd /usr/bin
-example% whereis \-u \-M /usr/man/man1 \-S /usr/src \-f *
+$ cd /usr/bin
+$ whereis \-u \-M /usr/man/man1 \-S /usr/src \-f *
 .fi
 .ft R
 .SH FILES
+.B whereis
+has basic set of hard-coded paths (see below). If the option
+.B \-B
+is not specified then also follows
+.B $PATH
+environment variable (since version 2.21).
+
 .TP 20
-.B /{bin,sbin,etc}
+/{bin,sbin,etc}
 .TP
-.B /usr/{lib,bin,old,new,local,games,include,etc,src,man,sbin,
-.B X386,TeX,g++-include}
+/usr/{lib,bin,old,new,local,games,include,etc,src,man,sbin,X386,TeX,g++-include}
 .TP
-.B /usr/local/{X386,TeX,X11,include,lib,man,etc,bin,games,emacs}
+/usr/local/{X386,TeX,X11,include,lib,man,etc,bin,games,emacs}
 .SH "SEE ALSO"
 .BR chdir (2V)
 .SH BUGS
@@ -142,9 +135,6 @@ or
 must be full; that is, they must begin with a
 .RB ` / '.
 .PP
-.B whereis
-has a hard-coded path, so may not always find what
-you're looking for.
 .SH AVAILABILITY
 The whereis command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.

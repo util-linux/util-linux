@@ -1,0 +1,177 @@
+
+usrbin_exec_PROGRAMS += cal
+dist_man_MANS += misc-utils/cal.1
+cal_SOURCES = \
+	misc-utils/cal.c \
+	lib/mbsalign.c \
+	lib/strutils.c
+
+if !HAVE_LANGINFO
+cal_SOURCES += lib/langinfo.c
+endif
+
+cal_LDADD =
+
+if HAVE_TINFO
+cal_LDADD += -ltinfo @NCURSES_LIBS@
+else
+if HAVE_NCURSES
+cal_LDADD += @NCURSES_LIBS@
+else
+if HAVE_TERMCAP
+cal_LDADD += -ltermcap
+endif
+endif # !HAVE_NCURSES
+endif # !HAVE_TINFO
+
+
+usrbin_exec_PROGRAMS += logger
+dist_man_MANS += misc-utils/logger.1
+logger_SOURCES = misc-utils/logger.c lib/strutils.c
+
+usrbin_exec_PROGRAMS += look
+dist_man_MANS += misc-utils/look.1
+look_SOURCES = misc-utils/look.c
+
+usrbin_exec_PROGRAMS += mcookie
+dist_man_MANS += misc-utils/mcookie.1
+mcookie_SOURCES = misc-utils/mcookie.c lib/md5.c
+
+usrbin_exec_PROGRAMS += namei
+dist_man_MANS += misc-utils/namei.1
+namei_SOURCES = misc-utils/namei.c lib/strutils.c
+
+usrbin_exec_PROGRAMS += whereis
+dist_man_MANS += misc-utils/whereis.1
+whereis_SOURCES = misc-utils/whereis.c
+
+
+if BUILD_CHKDUPEXE
+dist_usrbin_exec_SCRIPTS += misc-utils/chkdupexe
+CLEANFILES += misc-utils/chkdupexe
+dist_man_MANS += misc-utils/chkdupexe.1
+endif
+
+if BUILD_DDATE
+usrbin_exec_PROGRAMS += ddate
+dist_man_MANS += misc-utils/ddate.1
+ddate_SOURCES = misc-utils/ddate.c
+ruman1_DATA += man/ru/ddate.1
+EXTRA_DIST += $(ruman1_DATA)
+endif
+
+if BUILD_LSLOCKS
+usrbin_exec_PROGRAMS += lslocks
+dist_man_MANS += misc-utils/lslocks.8
+lslocks_SOURCES = \
+	misc-utils/lslocks.c \
+	lib/at.c \
+	lib/strutils.c \
+	lib/tt.c \
+	lib/mbsalign.c
+endif
+
+if BUILD_LSBLK
+bin_PROGRAMS += lsblk
+dist_man_MANS += misc-utils/lsblk.8
+lsblk_SOURCES = misc-utils/lsblk.c
+lsblk_LDADD = libblkid.la libmount.la libcommon.la
+lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libmount_incdir)
+if HAVE_UDEV
+lsblk_LDADD += -ludev
+endif
+endif
+
+if BUILD_LIBUUID
+usrbin_exec_PROGRAMS += uuidgen
+dist_man_MANS += misc-utils/uuidgen.1
+uuidgen_SOURCES = misc-utils/uuidgen.c
+uuidgen_LDADD = libuuid.la
+uuidgen_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir)
+endif
+
+if BUILD_UUIDD
+usrsbin_exec_PROGRAMS += uuidd
+dist_man_MANS += misc-utils/uuidd.8
+uuidd_LDADD = libuuid.la
+uuidd_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir)
+uuidd_SOURCES = misc-utils/uuidd.c
+if USE_SOCKET_ACTIVATION
+uuidd_SOURCES += misc-utils/sd-daemon.c misc-utils/sd-daemon.h
+uuidd_LDADD += -lrt
+endif
+if HAVE_SYSTEMD
+systemdsystemunit_DATA += \
+	misc-utils/uuidd.service \
+	misc-utils/uuidd.socket
+endif
+endif # BUILD_UUIDD
+
+EXTRA_DIST += \
+	misc-utils/uuidd.rc \
+	misc-utils/uuidd.service.in \
+	misc-utils/uuidd.socket
+CLEANFILES += misc-utils/uuidd.service
+
+
+if BUILD_LIBBLKID
+sbin_PROGRAMS += blkid
+dist_man_MANS += misc-utils/blkid.8
+blkid_SOURCES = misc-utils/blkid.c
+blkid_LDADD = libblkid.la libcommon.la
+blkid_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+
+sbin_PROGRAMS += findfs
+dist_man_MANS += misc-utils/findfs.8
+findfs_LDADD = libblkid.la
+findfs_SOURCES = misc-utils/findfs.c
+findfs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+
+sbin_PROGRAMS += wipefs
+dist_man_MANS += misc-utils/wipefs.8
+wipefs_SOURCES = misc-utils/wipefs.c
+wipefs_LDADD = libblkid.la libcommon.la
+wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+
+if HAVE_STATIC_BLKID
+sbin_PROGRAMS += blkid.static
+blkid_static_SOURCES = $(blkid_SOURCES)
+blkid_static_LDFLAGS = -all-static
+blkid_static_LDADD = libblkid.la
+blkid_static_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+endif
+endif # BUILD_LIBBLKID
+
+
+if BUILD_LIBMOUNT
+bin_PROGRAMS += findmnt
+dist_man_MANS += misc-utils/findmnt.8
+findmnt_LDADD = libmount.la libcommon.la
+findmnt_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+findmnt_SOURCES = misc-utils/findmnt.c
+endif # BUILD_LIBMOUNT
+
+
+if BUILD_KILL
+bin_PROGRAMS += kill
+kill_SOURCES = \
+	misc-utils/kill.c \
+	misc-utils/kill.h \
+	misc-utils/procs.c
+kill_LDADD = libcommon.la
+dist_man_MANS += misc-utils/kill.1
+endif
+
+if BUILD_RENAME
+usrbin_exec_PROGRAMS += rename
+dist_man_MANS += misc-utils/rename.1
+rename_SOURCES = misc-utils/rename.c
+endif
+
+usrbin_exec_PROGRAMS += getopt
+dist_man_MANS += misc-utils/getopt.1
+getopt_SOURCES = misc-utils/getopt.c
+getoptexampledir = $(datadir)/getopt/
+dist_getoptexample_SCRIPTS = \
+	misc-utils/getopt-parse.bash \
+	misc-utils/getopt-parse.tcsh

@@ -274,6 +274,7 @@ extern int mnt_fs_set_bindsrc(struct libmnt_fs *fs, const char *src);
 extern int mnt_fs_get_id(struct libmnt_fs *fs);
 extern int mnt_fs_get_parent_id(struct libmnt_fs *fs);
 extern dev_t mnt_fs_get_devno(struct libmnt_fs *fs);
+extern pid_t mnt_fs_get_tid(struct libmnt_fs *fs);
 
 extern const char *mnt_fs_get_swaptype(struct libmnt_fs *fs);
 extern off_t mnt_fs_get_size(struct libmnt_fs *fs);

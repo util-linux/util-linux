@@ -1,5 +1,3 @@
-include $(top_srcdir)/config/include-Makefile.am
-
 ## Process this file with automake to produce Makefile.in
 
 # We require automake 1.10 at least.
@@ -50,8 +48,8 @@ FIXXREF_OPTIONS=
 # Used for dependencies. The docs will be rebuilt if any of these change.
 # e.g. HFILE_GLOB=$(top_srcdir)/gtk/*.h
 # e.g. CFILE_GLOB=$(top_srcdir)/gtk/*.c
-HFILE_GLOB=$(ul_libmount_incdir)/libmount.h
-CFILE_GLOB=$(ul_libmount_srcdir)/*.c
+HFILE_GLOB=$(top_builddir)/libmount/src/libmount.h
+CFILE_GLOB=$(top_srcdir)/libmount/src/*.c
 
 # Extra header to include when scanning, which are not under DOC_SOURCE_DIR
 # e.g. EXTRA_HFILES=$(top_srcdir}/contrib/extra.h
@@ -93,9 +91,3 @@ EXTRA_DIST += version.xml.in
 # for --rebuild-types in $(SCAN_OPTIONS), e.g. $(DOC_MODULE).types
 # for --rebuild-sections in $(SCAN_OPTIONS) e.g. $(DOC_MODULE)-sections.txt
 DISTCLEANFILES += version.xml
-
-# Comment this out if you want your docs-status tested during 'make check'
-if ENABLE_GTK_DOC
-#TESTS_ENVIRONMENT = cd $(srcsrc)
-#TESTS = $(GTKDOC_CHECK)
-endif

@@ -139,6 +139,7 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 	dest->id         = src->id;
 	dest->parent     = src->parent;
 	dest->devno      = src->devno;
+	dest->tid        = src->tid;
 
 	if (cpy_str_at_offset(dest, src, offsetof(struct libmnt_fs, source)))
 		goto err;
@@ -1158,6 +1159,18 @@ dev_t mnt_fs_get_devno(struct libmnt_fs *fs)
 }
 
 /**
+ * mnt_fs_get_tid:
+ * @fs: /proc/<tid>/mountinfo entry
+ *
+ * Returns: TID (task ID) for filesystems read from mountinfo file
+ */
+pid_t mnt_fs_get_tid(struct libmnt_fs *fs)
+{
+	assert(fs);
+	return fs ? fs->tid : 0;
+}
+
+/**
  * mnt_fs_get_option:
  * @fs: fstab/mtab/mountinfo entry pointer
  * @name: option name
@@ -1406,7 +1419,10 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 		fprintf(file, "parent: %d\n", mnt_fs_get_parent_id(fs));
 	if (mnt_fs_get_devno(fs))
 		fprintf(file, "devno:  %d:%d\n", major(mnt_fs_get_devno(fs)),
-						 minor(mnt_fs_get_devno(fs)));
+						minor(mnt_fs_get_devno(fs)));
+	if (mnt_fs_get_tid(fs))
+		fprintf(file, "tid:    %d\n", mnt_fs_get_tid(fs));
+
 	return 0;
 }
 
