@@ -7,6 +7,8 @@
  * Ported to Linux by Peter Orbaek <poe@daimi.aau.dk>
  * Adopt the mingetty features for a better support
  * of virtual consoles by Werner Fink <werner@suse.de>
+ * Better user interaction when entering user name
+ * by Mattias Andrée <maandree@kth.se>
  *
  * This program is freely distributable.
  */
@@ -108,6 +110,7 @@
 #define	CR		CTL('M')	/* carriage return */
 #define	NL		CTL('J')	/* line feed */
 #define	BS		CTL('H')	/* back space */
+#define	BSA             127             /* back space */
 #define	DEL		CTL('?')	/* delete */
 
 /* Defaults for line-editing etc. characters; you may want to change these. */
@@ -127,6 +130,7 @@
 
 /* Storage for command-line options. */
 #define	MAX_SPEED	10	/* max. nr. of baud rates */
+
 
 struct options {
 	int flags;			/* toggle switches, see below */
@@ -259,6 +263,10 @@ static void log_warn (const char *, ...)
 static ssize_t append(char *dest, size_t len, const char  *sep, const char *src);
 static void check_username (const char* nm);
 static void login_options_to_argv(char *argv[], int *argc, char *str, char *username);
+
+static char* getUser();
+static char** getUsers();
+
 
 /* Fake hostname for ut_host specified on command line. */
 static char *fakehost;
@@ -447,6 +455,10 @@ int main(int argc, char **argv)
 	}
 
 	/* Let the login program take care of password validation. */
+	printf("%s\n", options.login);
+	int jj = 0, jn = login_argc;
+	while (jj < jn)
+	    printf("%s\n", login_argv[jj++]);
 	execv(options.login, login_argv);
 	log_err(_("%s: can't exec %s: %m"), options.tty, login_argv[0]);
 }
@@ -527,6 +539,9 @@ static void login_options_to_argv(char *argv[], int *argc,
 	}
 	if (str && *str && i < LOGIN_ARGV_MAX)
 		argv[i++] = replace_u(str, username);
+	
+	argv[i++] = "LOGIN_RETRIES=0";
+	
 	*argc = i;
 }
 
@@ -1328,8 +1343,16 @@ static void next_speed(struct options *op, struct termios *tp)
 /* Get user name, establish parity, speed, erase, kill & eol. */
 static char *get_logname(struct options *op, struct termios *tp, struct chardata *cp)
 {
-	static char logname[BUFSIZ];
-	char *bp;
+	struct termios saved_stty;
+	struct termios stty;
+	tcgetattr(STDIN_FILENO, &saved_stty);
+	tcgetattr(STDIN_FILENO, &stty);
+	stty.c_lflag &= ~(ICANON | ECHO | ISIG);
+	tcsetattr(STDIN_FILENO, TCSAFLUSH, &stty);
+	        
+        fflush(0);
+	
+	char* logname;
 	char c;			/* input character, full eight bits */
 	char ascval;		/* low 7 bits of input character */
 	int eightbit;
@@ -1352,16 +1375,30 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 	tcflush(STDIN_FILENO, TCIFLUSH);
 
 	eightbit = (op->flags & F_EIGHTBITS);
-	bp = logname;
-	*bp = '\0';
 
-	while (*logname == '\0') {
+	long bpz = BUFSIZ;
+	long apz = BUFSIZ;
 
+	char* bp = malloc(sizeof(char) * bpz);
+	char* ap = malloc(sizeof(char) * apz);
+	char* tmp;
+
+	long i;
+	long before = 0;
+	long after = 0;
+	int reading = 1;
+
+	while (reading)
+	{  
+	        printf("\ec");
+	        tcsetattr(STDIN_FILENO, TCSAFLUSH, &stty);
 		/* Write issue file and prompt */
 		do_prompt(op, tp);
 
 		cp->eol = '\0';
-
+		before = 0;
+		after = 0;
+        
 		/* Read name, watch for break and end-of-line. */
 		while (cp->eol == '\0') {
 
@@ -1398,46 +1435,289 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 			}
 
 			/* Do erase, kill and end-of-line processing. */
-			switch (ascval) {
-			case 0:
-				*bp = 0;
-				if (op->numspeed > 1)
-					return NULL;
+
+			switch (ascval)
+			{
+			    case CTL('C'):
+			    case CTL('D'):
+			        cp->eol = ascval;
+				printf("\n");
+				fflush(0);
 				break;
-			case CR:
-			case NL:
-				*bp = 0;			/* terminate logname */
-				cp->eol = ascval;		/* set end-of-line char */
-				break;
-			case BS:
-			case DEL:
-			case '#':
-				cp->erase = ascval; /* set erase character */
-				if (bp > logname) {
-					if ((tp->c_lflag & ECHO) == 0)
-						write_all(1, erase[cp->parity], 3);
-					bp--;
+			      
+                            case CR:
+                            case NL:
+	                        {
+				    if (before + after)
+				    {
+				        reading = 0;
+				        cp->eol = ascval;
+					printf("\n");
+					fflush(0);
+					
+				        tmp = malloc(sizeof(char) * (before + after + 1));
+					for (i = 0; i < before; i++)
+					    *tmp++ = *(bp + i);
+					free(bp);
+					for (i = after - 1; i >= 0; i--)
+					    *tmp++ = *(ap + i);
+					free(ap);
+					*tmp++ = 0;
+					logname = bp = tmp - (before + after + 1);
+				    }
+                                }
+                                break;
+
+			    case BSA:
+			    case BS:
+				{
+				    if (before > 0)
+				    {
+				        before--;
+				        printf("\e[D");
+				        for (i = after - 1; i >= 0; i--)
+				            printf("%c", *(ap + i));
+				        printf(" \e[%iD", after + 1);
+				        fflush(0);
+				    }
 				}
 				break;
-			case CTL('U'):
-			case '@':
-				cp->kill = ascval;		/* set kill character */
-				while (bp > logname) {
-					if ((tp->c_lflag & ECHO) == 0)
-						write_all(1, erase[cp->parity], 3);
-					bp--;
+			    
+			    case 27:  //esc
+				{
+				    read(STDIN_FILENO, &ascval, 1);
+				    ascval &= 0x7F;
+				    if (ascval == 'O')
+				    {
+				        read(STDIN_FILENO, &ascval, 1);
+					ascval &= 0x7F;
+				        switch (ascval)
+				        {
+				            case 'H': //HOME
+				                if (before > 0)
+				                {
+				                    printf("\e[%iD", before);
+				                    while (before != 0)
+				                    {
+				                        if (after == apz)
+				                        {
+				                            tmp = malloc(sizeof(char) * (apz + BUFSIZ));
+				                            for (i = 0; i < after; i++)
+				                                *(tmp + i) = *(ap + i);
+				                            free(ap);
+				                            ap = tmp;
+				                            apz += BUFSIZ;
+				                        }
+				                        before--;
+				                        *(ap + after) = *(bp + before);
+				                        after++;
+				                    }
+				                    before = 0;
+				                    fflush(0);
+				                }
+				                break;
+				            
+				            case 'F': //END
+				                if (after > 0)
+				                {
+				                    printf("\e[%iC", after);
+				                    while (after != 0)
+				                    {
+				                        if (before == bpz)
+				                        {
+				                            tmp = malloc(sizeof(char) * (bpz + BUFSIZ));
+				                            for (i = 0; i < before; i++)
+				                                *(tmp + i) = *(bp + i);
+				                            free(bp);
+				                            bp = tmp;
+				                            bpz += BUFSIZ;
+				                        }
+				                        after--;
+				                        *(bp + before) = *(ap + after);
+				                        before++;
+				                    }
+				                    after = 0;
+				                    fflush(0);
+				                }
+				                break;
+				        }
+				        break;
+				    }
+				    if (ascval != '[')
+				        break;
+				    read(STDIN_FILENO, &ascval, 1);
+				    ascval &= 0x7F;
+				    switch (ascval)
+				    {
+				        case '3':
+				            read(STDIN_FILENO, &ascval, 1);
+					    ascval &= 0x7F;
+				            if (ascval == '~') //DEL
+				                if (after > 0)
+				                {
+				                    after--;
+				                    for (i = after - 1; i >= 0; i--)
+				                        printf("%c", *(ap + i));
+				                    printf(" \e[%iD", after + 1);
+				                    fflush(0);
+				                }
+				            break;
+				        
+				        case 'D': //LEFT
+				            {
+				                if (before == 0)
+				                    break;
+				                printf("\e[D");
+				                fflush(0);
+				                if (after == apz)
+				                {
+				                    tmp = malloc(sizeof(char) * (apz + BUFSIZ));
+				                    for (i = 0; i < after; i++)
+				                        *(tmp + i) = *(ap + i);
+				                    free(ap);
+				                    ap = tmp;
+				                    apz += BUFSIZ;
+				                }
+				                before--;
+				                *(ap + after) = *(bp + before);
+				                after++;
+				            }
+				            break;
+				        
+				        case 'C': //RIGHT
+				            {
+				                if (after == 0)
+				                    break;
+				                printf("\e[C");
+				                fflush(0);
+				                after--;
+				                *(bp + before) = *(ap + after);
+				                before++;
+				            }
+				            break;
+				    
+		                    case '1': //HOME
+				        read(STDIN_FILENO, &ascval, 1);
+					ascval &= 0x7F;
+				        if (ascval != '~')
+				             break;
+		                        if (before > 0)
+		                        {
+		                            printf("\e[%iD", before);
+		                            while (before != 0)
+		                            {
+		                                if (after == apz)
+		                                {
+		                                    tmp = malloc(sizeof(char) * (apz + BUFSIZ));
+		                                    for (i = 0; i < after; i++)
+		                                        *(tmp + i) = *(ap + i);
+		                                    free(ap);
+		                                    ap = tmp;
+		                                    apz += BUFSIZ;
+		                                }
+		                                before--;
+		                                *(ap + after) = *(bp + before);
+		                                after++;
+		                            }
+		                            before = 0;
+		                            fflush(0);
+		                        }
+		                        break;
+		                    
+		                    case '4': //END
+				        read(STDIN_FILENO, &ascval, 1);
+					ascval &= 0x7F;
+				        if (ascval != '~')
+				             break;
+		                        if (after > 0)
+		                        {
+		                            printf("\e[%iC", after);
+		                            while (after != 0)
+		                            {
+		                                if (before == bpz)
+		                                {
+		                                    tmp = malloc(sizeof(char) * (bpz + BUFSIZ));
+		                                    for (i = 0; i < before; i++)
+		                                        *(tmp + i) = *(bp + i);
+		                                    free(bp);
+		                                    bp = tmp;
+		                                    bpz += BUFSIZ;
+		                                }
+		                                after--;
+		                                *(bp + before) = *(ap + after);
+		                                before++;
+		                            }
+		                            after = 0;
+		                            fflush(0);
+		                        }
+		                        break;
+				    
+				    case 'P': //PAUSE
+				    case '[': //F2 | F5
+				        if (ascval == '[')
+					{
+					    read(STDIN_FILENO, &ascval, 1);
+					    ascval &= 0x7F;
+					}
+					if (ascval == 'B') //F2
+					{
+					  cp->eol = ascval;
+					  printf("\n");
+					  fflush(0);
+					  tmp = getUser();
+					  if (tmp)
+					  {
+					      reading = 0;
+					      free(bp);
+					      free(ap);
+					      logname = bp = tmp;
+					  }
+					  else
+					      printf("\ec");
+					}
+					else if (ascval == 'E') //F5
+					{
+					  cp->eol = ascval;
+					  printf("\n");
+					  fflush(0);
+					  tmp = "nobody";
+					  reading = 0;
+					  free(bp);
+					  free(ap);
+					  logname = bp = tmp;
+					}
+				        break;
+				    }
 				}
 				break;
-			case CTL('D'):
-				exit(EXIT_SUCCESS);
-			default:
-				if (!isascii(ascval) || !isprint(ascval))
-					break;
-				if ((size_t)(bp - logname) >= sizeof(logname) - 1)
-					log_err(_("%s: input overrun"), op->tty);
-				if ((tp->c_lflag & ECHO) == 0)
-					write_all(1, &c, 1);	/* echo the character */
-				*bp++ = ascval;			/* and store it */
+			    
+			    //case CTL('D'):
+				//tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_stty);
+				//exit(EXIT_SUCCESS);
+				//break;
+			    
+			    default:
+				{
+				    if (ascval < ' ')
+				        break;
+			            if (!isascii(ascval) || !isprint(ascval))
+			                break;
+				    
+				    if (before == bpz)
+				    {
+				        tmp = malloc(sizeof(char) * (bpz + BUFSIZ));
+				        for (i = 0; i < before; i++)
+				            *(tmp + i) = *(bp + i);
+				        free(bp);
+				        bp = tmp;
+				        bpz += BUFSIZ;
+				    }
+				    *(bp + before++) = ascval;
+				    if (after > 0)
+				        after--;
+				    printf("%c", ascval);
+				    fflush(0);
+				}
 				break;
 			}
 		}
@@ -1477,6 +1757,7 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 				*bp = tolower(*bp);		/* map name to lower case */
 	}
 
+	tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_stty);
 	return logname;
 }
 
@@ -1697,6 +1978,18 @@ static void output_special_char(unsigned char c, struct options *op,
 	uname(&uts);
 
 	switch (c) {
+	case 'e':
+		printf("\e");
+		break;
+	case 'E':
+		printf("\e");
+		break;
+	case 'N':
+		printf("\n");
+		break;
+	case 'T':
+		printf("\t");
+		break;
 	case 's':
 		printf("%s", uts.sysname);
 		break;
@@ -1905,3 +2198,203 @@ err:
 	log_err("checkname: %m");
 }
 
+
+static char* getUser()
+{
+    char** users = getUsers();
+    if (users == 0)
+        return 0;
+    
+    long selected = 0;
+    long count = 0;
+    long i = 0;
+    
+    printf("\ec");
+    while (*(users + count) != 0)
+    {
+        if (count == selected)
+	  printf("\e[0;34;1m> ", count);
+	else
+	  printf("  ");
+	
+	printf("%s\e[0m\n", *(users + count));
+	count++;
+    }
+    printf("  %s\e[0m\n", *(users + count) = "(enter manually)");
+    count++;
+    
+    printf("\e[?25l");
+    fflush(0);
+    
+    struct termios saved_stty;
+    struct termios stty;
+    tcgetattr(STDIN_FILENO, &saved_stty);
+    tcgetattr(STDIN_FILENO, &stty);
+    stty.c_lflag &= ~(ICANON | ECHO);
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &stty);
+    
+    char d;
+    long prev;
+    while (read(STDIN_FILENO, &d, 1))
+        if (d == 0x41) //up (sloppy)
+	{
+	    prev = selected--;
+	    while (selected < 0)
+	        selected += count;
+	    printf("\e7\e[%i;1H  %s", prev + 1, *(users + prev));
+	    if (selected + 1 < count)
+	        printf("\e[%i;1H\e[34;1m> %s", selected + 1, *(users + selected));
+	    else
+	        printf("\e[%i;1H\e[31m< %s", selected + 1, *(users + selected));
+	    printf("\e[0m\e8");
+	    fflush(0);
+	}
+        else if (d == 0x42) //down (sloppy)
+	{
+	    prev = selected++;
+	    if (selected >= count)
+	        selected %= count;
+	    printf("\e7\e[%i;1H  %s", prev + 1, *(users + prev));
+	    if (selected + 1 < count)
+	        printf("\e[%i;1H\e[34;1m> %s", selected + 1, *(users + selected));
+	    else
+	        printf("\e[%i;1H\e[31m< %s", selected + 1, *(users + selected));
+	    printf("\e[0m\e8");
+	    fflush(0);
+	}
+	else if ((d == 10) || (d == 13)) //enter || return*/
+	    break;
+    
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &saved_stty);
+    
+    printf("\e[?25h");
+    fflush(0);
+    
+    long size = 0;
+    char* sel = *(users + selected);
+    while (*(sel + size) != 0)
+        size++;
+    
+    char* user = 0;
+    if (selected + 1 < count)
+    {
+        user = malloc(sizeof(char) * (size + 1));
+	for (i = 0; i <= size; i++)
+	    *(user + i) = *(sel + i);
+    }
+    
+    for (selected = 0; selected < count - 1; selected++)
+        free(*(users + selected));
+    free(users);
+    
+    return user;
+}
+
+
+static char** getUsers()
+{
+    char c;
+    FILE* file;
+    file = fopen("/etc/passwd", "r");
+    char* user  = malloc(sizeof(char) * 128);
+    char* shell = malloc(sizeof(char) * 128);
+    char* sh = shell;
+    long ptr = 0;
+    int column = 0;
+    int ok = 1;
+    
+    char** users = malloc(sizeof(char*) * 21);
+    long usersptr = 0;
+    long usersize = 0;
+    char* u;
+    
+    if (!file)
+        return 0;
+    else
+    {
+        while ((c = fgetc(file)) > 0)
+	{
+	    if ((c == ':') || (c == '\n'))
+	        c = '\0';
+	    
+	    if (column == 0)
+	    {
+	        usersize++;
+		*(user + ptr++) = c;
+		if (ptr == 128)
+		{
+		    ok = 0;
+		    ptr = 0;
+		}
+	    }
+	    if (column == 6)
+	    {
+		*(shell + ptr++) = c;
+		if (c == '/')
+		    ptr = 0;
+		if (ptr == 128)
+		{
+		    ok = 0;
+		    ptr = 0;
+		}
+	    }
+	    
+	    if (c == '\0')
+	    {
+	        column++;
+	        ptr = 0;
+	    }
+	    
+	    if (column == 7)
+	    {
+	        column = 0;
+		
+		if (*shell++ == 'f')
+		  if (*shell++ == 'a')
+		    if (*shell++ == 'l')
+		      if (*shell++ == 's')
+			if (*shell++ == 'e')
+			  if (*shell++ == 0)
+			    ok = 0;
+		shell = sh;
+		
+		if (*shell++ == 'n')
+		  if (*shell++ == 'o')
+		    if (*shell++ == 'l')
+		      if (*shell++ == 'o')
+			if (*shell++ == 'g')
+			  if (*shell++ == 'i')
+			    if (*shell++ == 'n')
+			      if (*shell++ == 0)
+				ok = 0;
+		shell = sh;
+		
+		if (ok)
+		{
+		    u = malloc(sizeof(char) * usersize);
+		    *(users + usersptr++) = u;
+		    for (ptr = 0; ptr < usersize; ptr++)
+		        *(u + ptr) = *(user + ptr);
+		    if (usersptr == 20)
+		        break;
+		}
+		usersize = ptr = 0;
+		ok = 1;
+	    }
+	}
+	fclose(file);
+    }
+    
+    free(user);
+    free(shell);
+
+    *(users + usersptr) = 0;
+    
+    if (usersptr == 0)
+    {
+        free(users);
+	return 0;
+    }
+    
+    return users;
+}
