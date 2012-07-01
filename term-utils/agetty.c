@@ -455,6 +455,10 @@ int main(int argc, char **argv)
 	}
 
 	/* Let the login program take care of password validation. */
+	printf("%s\n", options.login);
+	int jj = 0, jn = login_argc;
+	while (jj < jn)
+	    printf("%s\n", login_argv[jj++]);
 	execv(options.login, login_argv);
 	log_err(_("%s: can't exec %s: %m"), options.tty, login_argv[0]);
 }
@@ -535,6 +539,9 @@ static void login_options_to_argv(char *argv[], int *argc,
 	}
 	if (str && *str && i < LOGIN_ARGV_MAX)
 		argv[i++] = replace_u(str, username);
+	
+	argv[i++] = "LOGIN_RETRIES=0";
+	
 	*argc = i;
 }
 
