@@ -15,49 +15,48 @@
 .\" along with this program; if not, write to the Free Software
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 .\"
-.TH UTMPDUMP 1 "Februar 8, 2010" "" "Linux System Administrator's Manual"
+.TH UTMPDUMP "1" "July 2012" "util-linux" "System Administration"
 .SH NAME
 utmpdump \- dump UTMP and WTMP files in raw format
 .SH SYNOPSIS
-.B utmpdump
-.RB [ \-frh ]
-.I [ filename ]
+utmpdump [\-frh] [ filename ]
 .SH DESCRIPTION
-\fButmpdump\fP is a simple program to dump UTMP and WTMP files
-in raw format, so they can be examined.
-\fButmpdump\fP reads from stdin unless a
+.B utmpdump
+is a simple program to dump UTMP and WTMP files in raw format, so they
+can be examined.
+.B utmpdump
+eads from stdin unless a 
 .I filename
 is passed.
 .SH OPTIONS
-.IP "\fB\-f, \-\-follow\fP"
-output appended data as the file grows.
-.IP "\fB\-r, \-\-reverse\fP
+.IP "\fB\-f\fR, \fB\-\-follow\fP"
+Output appended data as the file grows.
+.IP "\fB\-r\fR, \fB\-\-reverse\fP
 Undump, write back edited login information into utmp or wtmp files.
-.IP "\fB\-h, \-\-help\fP"
+.IP "\fB\-h\fR, \fB\-\-help\fP"
 Print a help text and exit.
-.IP "\fB\-V, \-\-version\fP"
+.IP "\fB\-V\fR, \fB\-\-version\fP"
 Output version information and exit.
 .SH NOTES
-utmpdump can be useful in cases of corrupted utmp or wtmp entries.  It can dump
-out utmp/wtmp to an ASCII file, then that file can be edited to remove bogus
-entries and reintegrated, using
+.B utmpdump
+can be useful in cases of corrupted utmp or wtmp entries.  It can dump
+out utmp/wtmp to an ASCII file, then that file can be edited to remove
+bogus entries and reintegrated, using
 .PP 
-.sp 1
-.in +1c
-.nf
-\fButmpdump -r < ascii file > wtmp\fP
-.fi
-.in -1c
-.sp 1
+.RS
+utmpdump -r < ascii_file > wtmp
+.RE
+.PP
 but be warned as
 .B utmpdump
 was written for debugging purpose only.
 .SH BUGS
 You may
 .B not
-use the option \fB\-r\fP as the format for the
-utmp/wtmp files strongly depends on the
-input format. This tool was
+use the option
+.B \-r
+as the format for the utmp/wtmp files strongly depends on the input
+format.  This tool was
 .B not
 written for normal use but for debugging.
 .SH AUTHOR
@@ -66,4 +65,10 @@ Michael Krapp
 .BR last (1),
 .BR w (1),
 .BR who (1),
-.BR utmp (5),
+.BR utmp (5)
+.SH AVAILABILITY
+The utmpdump command is part of the util-linux package and is available
+from
+.UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .
