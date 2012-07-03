@@ -190,7 +190,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,
-		_(" %s [options]\n"), program_invocation_short_name);
+		_(" %s [options] [filename]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -f, --follow           output appended data as the file grows\n"

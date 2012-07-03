@@ -21,10 +21,13 @@ utmpdump \- dump UTMP and WTMP files in raw format
 .SH SYNOPSIS
 .B utmpdump
 .RB [ \-frh ]
-.I filename
+.I [ filename ]
 .SH DESCRIPTION
 \fButmpdump\fP is a simple program to dump UTMP and WTMP files
 in raw format, so they can be examined.
+\fButmpdump\fP reads from stdin unless a
+.I filename
+is passed.
 .SH OPTIONS
 .IP "\fB\-f, \-\-follow\fP"
 output appended data as the file grows.
