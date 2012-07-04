@@ -1324,7 +1324,9 @@ from the parent directory, and also gets the setgid bit set
 if it is a directory itself.
 .TP
 .BR grpquota | noquota | quota | usrquota
-These options are accepted but ignored.
+The usrquota (same as quota) mount option enables user quota support on the
+filesystem. grpquota enables group quotas support. You need the quota utilities
+to actually enable and manage the quota system.
 .TP
 .BR nouid32
 Disables 32-bit UIDs and GIDs.  This is for interoperability with older
