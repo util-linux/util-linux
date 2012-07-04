@@ -43,7 +43,7 @@
 
 static char *timetostr(const time_t time)
 {
-	static char s[29];    /* [Sun Sep 01 00:00:00 1998 PST] */
+	static char s[29];	/* [Sun Sep 01 00:00:00 1998 PST] */
 
 	if (time != 0)
 		strftime(s, 29, "%a %b %d %T %Y %Z", localtime(&time));
@@ -101,11 +101,11 @@ static void print_utline(struct utmp ut)
 	cleanse(ut.ut_line);
 	cleanse(ut.ut_host);
 
-        /*            pid    id       user     line     host     addr       time */
+	/*            pid    id       user     line     host     addr       time */
 	printf("[%d] [%05d] [%-4.4s] [%-*.*s] [%-*.*s] [%-*.*s] [%-15.15s] [%-28.28s]\n",
 	       ut.ut_type, ut.ut_pid, ut.ut_id, 8, UT_NAMESIZE, ut.ut_user,
 	       12, UT_LINESIZE, ut.ut_line, 20, UT_HOSTSIZE, ut.ut_host,
-               addr_string, time_string);
+	       addr_string, time_string);
 }
 
 static void dump(FILE *fp, int forever)
@@ -128,7 +128,7 @@ static void dump(FILE *fp, int forever)
 static int gettok(char *line, char *dest, int size, int eatspace)
 {
 	int bpos, epos, eaten;
-        char *t;
+	char *t;
 
 	bpos = strchr(line, '[') - line;
 	if (bpos < 0)
@@ -137,16 +137,16 @@ static int gettok(char *line, char *dest, int size, int eatspace)
 	line += 1 + bpos;
 	epos = strchr(line, ']') - line;
 	if (epos < 0)
-		errx(EXIT_FAILURE,_("Extraneous newline in file. Exiting."));
+		errx(EXIT_FAILURE, _("Extraneous newline in file. Exiting."));
 
 	line[epos] = '\0';
 	eaten = bpos + epos + 1;
 
 	if (eatspace) {
-                if ((t = strchr(line, ' ')))
-                    *t = 0;
+		if ((t = strchr(line, ' ')))
+			*t = 0;
 	}
-        strncpy(dest, line, size);
+	strncpy(dest, line, size);
 
 	return eaten + 1;
 }
@@ -161,23 +161,22 @@ static void undump(FILE *fp)
 	s_addr[15] = 0;
 	s_time[28] = 0;
 
-	while (fgets(linestart, 1023, fp))
-	{
+	while (fgets(linestart, 1023, fp)) {
 		line = linestart;
-                memset(&ut, '\0', sizeof(ut));
-                sscanf(line, "[%hd] [%d] [%4c] ", &ut.ut_type, &ut.ut_pid, ut.ut_id);
+		memset(&ut, '\0', sizeof(ut));
+		sscanf(line, "[%hd] [%d] [%4c] ", &ut.ut_type, &ut.ut_pid, ut.ut_id);
 
 		line += 19;
-                line += gettok(line, ut.ut_user, sizeof(ut.ut_user), 1);
-                line += gettok(line, ut.ut_line, sizeof(ut.ut_line), 1);
-                line += gettok(line, ut.ut_host, sizeof(ut.ut_host), 1);
-		line += gettok(line, s_addr, sizeof(s_addr)-1, 1);
-		line += gettok(line, s_time, sizeof(s_time)-1, 0);
+		line += gettok(line, ut.ut_user, sizeof(ut.ut_user), 1);
+		line += gettok(line, ut.ut_line, sizeof(ut.ut_line), 1);
+		line += gettok(line, ut.ut_host, sizeof(ut.ut_host), 1);
+		line += gettok(line, s_addr, sizeof(s_addr) - 1, 1);
+		line += gettok(line, s_time, sizeof(s_time) - 1, 0);
 
-                ut.ut_addr = inet_addr(s_addr);
-                ut.ut_time = strtotime(s_time);
+		ut.ut_addr = inet_addr(s_addr);
+		ut.ut_time = strtotime(s_time);
 
-                fwrite(&ut, sizeof(ut), 1, stdout);
+		fwrite(&ut, sizeof(ut), 1, stdout);
 
 		++count;
 	}
