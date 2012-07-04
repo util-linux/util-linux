@@ -814,13 +814,13 @@ static int set_system_clock_timezone(const bool universal, const bool testing)
 		minuteswest -= 60;
 #endif
 
-	gettimeofday(&tv, NULL);
-	if (!universal)
-		tv.tv_sec += minuteswest * 60;
-
 	if (debug) {
 		struct tm broken_time;
 		char ctime_now[200];
+
+		gettimeofday(&tv, NULL);
+		if (!universal)
+			tv.tv_sec += minuteswest * 60;
 
 		broken_time = *gmtime(&tv.tv_sec);
 		strftime(ctime_now, sizeof(ctime_now), "%Y/%m/%d %H:%M:%S",
@@ -838,8 +838,9 @@ static int set_system_clock_timezone(const bool universal, const bool testing)
 		retcode = 0;
 	} else {
 		const struct timezone tz = { minuteswest, 0 };
+		const struct timeval *tv_null = NULL;
 
-		rc = settimeofday(&tv, &tz);
+		rc = settimeofday(tv_null, &tz);
 		if (rc) {
 			if (errno == EPERM) {
 				warnx(_
