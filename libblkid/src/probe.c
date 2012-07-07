@@ -1219,7 +1219,7 @@ int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
 
 	len = vsnprintf((char *) v->data, sizeof(v->data), fmt, ap);
 
-	if (len <= 0) {
+	if (len <= 0 || len >= sizeof(v->data)) {
 		blkid_probe_reset_last_value(pr);
 		return -1;
 	}
