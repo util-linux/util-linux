@@ -222,13 +222,12 @@ static int topology_set_value(blkid_probe pr, const char *name,
 		return 0;	/* ignore zeros */
 
 	if (chn->binary) {
-		unsigned long *v =
-			(unsigned long *) (chn->data + structoff);
-		*v = data;
+		memcpy(chn->data + structoff, &data, sizeof(data));
 		return 0;
 	}
-	return blkid_probe_sprintf_value(pr, name, "%llu", data);
+	return blkid_probe_sprintf_value(pr, name, "%lu", data);
 }
+
 
 /* the topology info is complete when we have at least "minimum_io_size" which
  * is provided by all blkid topology drivers */
