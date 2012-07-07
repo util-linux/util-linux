@@ -225,7 +225,7 @@ static int topology_set_value(blkid_probe pr, const char *name,
 		memcpy(chn->data + structoff, &data, sizeof(data));
 		return 0;
 	}
-	return blkid_probe_sprintf_value(pr, name, "%llu", data);
+	return blkid_probe_sprintf_value(pr, name, "%lu", data);
 }
 
 
