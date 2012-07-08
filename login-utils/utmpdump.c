@@ -79,15 +79,6 @@ static void xcleanse(char *s, int len)
 			*s = '?';
 }
 
-static void unspace(char *s, int len)
-{
-	while (*s && *s != ' ' && len--)
-		++s;
-
-	if (len > 0)
-		*s = '\0';
-}
-
 static void print_utline(struct utmp ut)
 {
 	char *addr_string, *time_string;
@@ -128,7 +119,6 @@ static void dump(FILE *fp, int forever)
 static int gettok(char *line, char *dest, int size, int eatspace)
 {
 	int bpos, epos, eaten;
-	char *t;
 
 	bpos = strchr(line, '[') - line;
 	if (bpos < 0)
@@ -143,6 +133,7 @@ static int gettok(char *line, char *dest, int size, int eatspace)
 	eaten = bpos + epos + 1;
 
 	if (eatspace) {
+		char *t;
 		if ((t = strchr(line, ' ')))
 			*t = 0;
 	}
