@@ -339,7 +339,9 @@ int main(int argc, char **argv)
 		if (!fp)
 			err(EXIT_FAILURE, _("%s: open failed"), filename);
 	} else {
-		filename = "stdin";
+		filename = "/dev/stdin";
+		if (forever)
+			warnx(_("warning: following standard input indefinitely is ineffective"));
 		fp = stdin;
 	}
 
