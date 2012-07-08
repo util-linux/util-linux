@@ -127,7 +127,7 @@ two_s_complement_32bit_sum(unsigned int *base, int size /* in bytes */) {
 	return sum;
 }
 
-int
+static int
 check_sgi_label(struct fdisk_context *cxt) {
 	if (sizeof(sgilabel) > 512) {
 		fprintf(stderr,
@@ -877,3 +877,9 @@ fill_sgiinfo(void)
 	strcpy((char *) info->installer, "Sfx version 5.3, Oct 18, 1994");
 	return info;
 }
+
+const struct fdisk_label sgi_label =
+{
+	.name = "sgi",
+	.probe = check_sgi_label
+};

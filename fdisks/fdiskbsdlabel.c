@@ -109,7 +109,7 @@ static struct xbsd_disklabel xbsd_dlabel;
  * Note: often reformatting with DOS-type label leaves the BSD magic,
  * so this does not mean that there is a BSD disk label.
  */
-int
+static int
 check_osf_label(struct fdisk_context *cxt) {
 	if (xbsd_readlabel (cxt, NULL, &xbsd_dlabel) == 0)
 		return 0;
@@ -845,3 +845,9 @@ alpha_bootblock_checksum (char *boot)
   dp[63] = sum;
 }
 #endif /* __alpha__ */
+
+const struct fdisk_label bsd_label =
+{
+	.name = "bsd",
+	.probe = check_osf_label
+};

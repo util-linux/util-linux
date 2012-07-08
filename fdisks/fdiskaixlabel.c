@@ -49,7 +49,7 @@ aix_nolabel(struct fdisk_context *cxt)
     return;
 }
 
-int check_aix_label(struct fdisk_context *cxt)
+static int check_aix_label(struct fdisk_context *cxt)
 {
     if (aixlabel->magic != AIX_LABEL_MAGIC &&
 	aixlabel->magic != AIX_LABEL_MAGIC_SWAPPED) {
@@ -65,3 +65,9 @@ int check_aix_label(struct fdisk_context *cxt)
     aix_nolabel(cxt);		/* %% */
     return 1;
 }
+
+const struct fdisk_label aix_label =
+{
+	.name = "aix",
+	.probe = check_aix_label
+};

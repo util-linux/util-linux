@@ -78,7 +78,7 @@ static void init(void)
 	partitions = SUN_NUM_PARTITIONS;
 }
 
-int check_sun_label(struct fdisk_context *cxt)
+static int check_sun_label(struct fdisk_context *cxt)
 {
 	unsigned short *ush;
 	int csum;
@@ -642,3 +642,9 @@ int sun_get_sysid(struct fdisk_context *cxt, int i)
 {
 	return SSWAP16(sunlabel->part_tags[i].tag);
 }
+
+const struct fdisk_label sun_label =
+{
+	.name = "sun",
+	.probe = check_sun_label,
+};

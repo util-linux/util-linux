@@ -33,6 +33,5 @@ typedef struct {
 /* fdiskmaclabel.c */
 extern struct	systypes mac_sys_types[];
 extern void	mac_nolabel(struct fdisk_context *cxt);
-extern int	check_mac_label(struct fdisk_context *cxt);
 
 #endif /* FDISK_MAC_LABEL_H */

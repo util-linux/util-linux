@@ -22,6 +22,4 @@ typedef struct {
 
 /* fdiskaixlabel.c */
 extern struct	systypes aix_sys_types[];
-extern int	check_aix_label(struct fdisk_context *cxt);
-
 #endif /* FDISK_AIX_LABEL_H */

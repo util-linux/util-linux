@@ -47,7 +47,7 @@ mac_nolabel(struct fdisk_context *cxt)
     return;
 }
 
-int
+static int
 check_mac_label(struct fdisk_context *cxt)
 {
 	/*
@@ -80,3 +80,9 @@ IS_MAC:
     mac_nolabel(cxt);		/* %% */
     return 1;
 }
+
+const struct fdisk_label mac_label =
+{
+	.name = "mac",
+	.probe = check_mac_label
+};

@@ -520,27 +520,6 @@ update_sector_offset(struct fdisk_context *cxt)
  *    1: I/O error
  */
 static int get_boot(struct fdisk_context *cxt, int try_only) {
-
-	disklabel = ANY_LABEL;
-	update_units(cxt);
-
-	if (!check_dos_label(cxt))
-		if (check_sun_label(cxt) || check_sgi_label(cxt) || check_aix_label(cxt)
-		    || check_mac_label(cxt))
-			return 0;
-
-	if (check_osf_label(cxt)) {
-		/* intialize partitions for BSD as well */
-		dos_init(cxt);
-		if (!valid_part_table_flag(cxt->mbr)) {
-			disklabel = OSF_LABEL;
-			return 0;
-		}
-		printf(_("This disk has both DOS and BSD magic.\n"
-			 "Give the 'b' command to go to BSD mode.\n"));
-		return 0;
-	}
-
 	if (disklabel == ANY_LABEL) {
 		if (try_only)
 			return -1;

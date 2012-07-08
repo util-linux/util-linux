@@ -31,6 +31,39 @@
 
 int fdisk_debug_mask;
 
+/*
+ * label probing functions
+ */
+static const struct fdisk_label *labels[] =
+{
+	&bsd_label,
+	&dos_label,
+	&sgi_label,
+	&sun_label,
+	&aix_label,
+	&mac_label,
+};
+
+static int __probe_labels(struct fdisk_context *cxt)
+{
+	int i, rc = 0;
+
+	disklabel = ANY_LABEL;
+	update_units(cxt);
+
+	for (i = 0; i < ARRAY_SIZE(labels); i++) {
+		rc = labels[i]->probe(cxt);
+		if (rc) {
+			DBG(LABEL, dbgprint("detected a %s label\n",
+					    labels[i]->name));
+			goto done;
+		}
+	}
+
+done:
+	return rc;
+}
+
 static int __init_mbr_buffer(struct fdisk_context *cxt)
 {
 	DBG(TOPOLOGY, dbgprint("initialize MBR buffer"));
@@ -258,6 +291,8 @@ struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int rea
 
 	__discover_topology(cxt);
 	__discover_geometry(cxt);
+
+	__probe_labels(cxt);
 
 	DBG(CONTEXT, dbgprint("context initialized for %s [%s]",
 			      fname, readonly ? "READ-ONLY" : "READ-WRITE"));

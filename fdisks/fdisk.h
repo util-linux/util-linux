@@ -37,6 +37,7 @@
 #define FDISK_DEBUG_CONTEXT	(1 << 2)
 #define FDISK_DEBUG_TOPOLOGY    (1 << 3)
 #define FDISK_DEBUG_GEOMETRY    (1 << 4)
+#define FDISK_DEBUG_LABEL       (1 << 5)
 #define FDISK_DEBUG_ALL		0xFFFF
 
 # define ON_DBG(m, x)	do { \
@@ -124,6 +125,24 @@ struct fdisk_context {
 	sector_t total_sectors; /* in logical sectors */
 	struct fdisk_geometry geom;
 };
+
+/*
+ * Label specific operations
+ */
+struct fdisk_label {
+	const char *name;
+	int (*probe)(struct fdisk_context *cxt);
+};
+
+/*
+ * labels
+ */
+extern const struct fdisk_label aix_label;
+extern const struct fdisk_label dos_label;
+extern const struct fdisk_label bsd_label;
+extern const struct fdisk_label mac_label;
+extern const struct fdisk_label sun_label;
+extern const struct fdisk_label sgi_label;
 
 extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int readonly);
 extern int fdisk_dev_has_topology(struct fdisk_context *cxt);

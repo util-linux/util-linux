@@ -239,7 +239,6 @@ static struct systypes xbsd_fstypes[] = {
 #define	BSD_D_DOSPART	0x20		/* within MSDOS partition */
 
 extern void bsd_command_prompt(struct fdisk_context *cxt);
-extern int check_osf_label(struct fdisk_context *cxt);
 extern int btrydev(struct fdisk_context *cxt);
 extern void xbsd_print_disklabel(struct fdisk_context *cxt, int);
 
