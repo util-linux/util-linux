@@ -1819,7 +1819,7 @@ static void
 print_all_partition_table_from_option(unsigned long sector_size)
 {
 	FILE *procpt;
-	char line[128], ptname[128], devname[256];
+	char line[128 + 1], ptname[128 + 1], devname[256];
 	int ma, mi;
 	unsigned long long sz;
 

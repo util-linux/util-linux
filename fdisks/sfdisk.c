@@ -2508,7 +2508,7 @@ static int is_ide_cdrom_or_tape(char *device)
 static char *
 nextproc(FILE * procf) {
     static char devname[256];
-    char line[1024], ptname[128];
+    char line[1024], ptname[128 + 1];
     int ma, mi;
     unsigned long long sz;
 

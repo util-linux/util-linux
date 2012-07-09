@@ -333,7 +333,7 @@ int blkid_driver_has_major(const char *drvname, int major)
 
 	while (fgets(buf, sizeof(buf), f)) {
 		int maj;
-		char name[64];
+		char name[64 + 1];
 
 		if (sscanf(buf, "%d %64[^\n ]", &maj, name) != 2)
 			continue;

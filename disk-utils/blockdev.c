@@ -411,7 +411,7 @@ static void report_all_devices(void)
 {
 	FILE *procpt;
 	char line[200];
-	char ptname[200];
+	char ptname[200 + 1];
 	char device[210];
 	int ma, mi, sz;
 

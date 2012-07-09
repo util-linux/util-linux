@@ -478,7 +478,7 @@ static int loopcxt_next_from_proc(struct loopdev_cxt *lc)
 
 	while (fgets(buf, sizeof(buf), iter->proc)) {
 		unsigned int m;
-		char name[128];
+		char name[128 + 1];
 
 
 		if (sscanf(buf, " %u %*s %*s %128[^\n ]",

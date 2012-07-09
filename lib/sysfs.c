@@ -373,7 +373,7 @@ int sysfs_read_int(struct sysfs_cxt *cxt, const char *attr, int *res)
 char *sysfs_strdup(struct sysfs_cxt *cxt, const char *attr)
 {
 	char buf[1024];
-	return sysfs_scanf(cxt, attr, "%1024[^\n]", buf) == 1 ?
+	return sysfs_scanf(cxt, attr, "%1023[^\n]", buf) == 1 ?
 						strdup(buf) : NULL;
 }
 
