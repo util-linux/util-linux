@@ -94,6 +94,7 @@ UL_WARN_ADD([-Wmissing-parameter-type])
 UL_WARN_ADD([-Wunused-result])
 UL_WARN_ADD([-Wunused-but-set-parameter])
 UL_WARN_ADD([-Wunused-but-set-variable])
+UL_WARN_ADD([-Wredundant-decls])
 AC_SUBST([WARN_CFLAGS])
 
 dnl libtool-2
