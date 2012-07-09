@@ -2,17 +2,17 @@
 usrbin_exec_PROGRAMS += flock
 dist_man_MANS += sys-utils/flock.1
 flock_SOURCES = sys-utils/flock.c
-flock_LDADD = libcommon.la
+flock_LDADD = $(LDADD) libcommon.la
 
 usrbin_exec_PROGRAMS += ipcmk
 dist_man_MANS += sys-utils/ipcmk.1
 ipcmk_SOURCES = sys-utils/ipcmk.c
-ipcmk_LDADD = libcommon.la
+ipcmk_LDADD = $(LDADD) libcommon.la
 
 usrbin_exec_PROGRAMS += ipcrm
 dist_man_MANS += sys-utils/ipcrm.1
 ipcrm_SOURCES = sys-utils/ipcrm.c
-ipcrm_LDADD = libcommon.la
+ipcrm_LDADD = $(LDADD) libcommon.la
 
 usrbin_exec_PROGRAMS += ipcs
 dist_man_MANS += sys-utils/ipcs.1
@@ -39,7 +39,7 @@ if LINUX
 bin_PROGRAMS += dmesg
 dist_man_MANS += sys-utils/dmesg.1
 dmesg_SOURCES = sys-utils/dmesg.c
-dmesg_LDADD = libcommon.la
+dmesg_LDADD = $(LDADD) libcommon.la
 
 sbin_PROGRAMS += ctrlaltdel
 dist_man_MANS += sys-utils/ctrlaltdel.8
@@ -52,17 +52,17 @@ fsfreeze_SOURCES = sys-utils/fsfreeze.c
 sbin_PROGRAMS += fstrim
 dist_man_MANS += sys-utils/fstrim.8
 fstrim_SOURCES = sys-utils/fstrim.c
-fstrim_LDADD = libcommon.la
+fstrim_LDADD = $(LDADD) libcommon.la
 
 usrbin_exec_PROGRAMS += cytune
 dist_man_MANS += sys-utils/cytune.8
 cytune_SOURCES = sys-utils/cytune.c sys-utils/cyclades.h
-cytune_LDADD = libcommon.la
+cytune_LDADD = $(LDADD) libcommon.la
 
 usrsbin_exec_PROGRAMS += ldattach
 dist_man_MANS += sys-utils/ldattach.8
 ldattach_SOURCES = sys-utils/ldattach.c
-ldattach_LDADD = libcommon.la
+ldattach_LDADD = $(LDADD) libcommon.la
 
 usrsbin_exec_PROGRAMS += tunelp
 dist_man_MANS += sys-utils/tunelp.8
@@ -71,7 +71,7 @@ tunelp_SOURCES = sys-utils/tunelp.c sys-utils/lp.h
 usrsbin_exec_PROGRAMS += rtcwake
 dist_man_MANS += sys-utils/rtcwake.8
 rtcwake_SOURCES = sys-utils/rtcwake.c
-rtcwake_LDADD = libcommon.la
+rtcwake_LDADD = $(LDADD) libcommon.la
 
 usrbin_exec_PROGRAMS += setarch
 dist_man_MANS += sys-utils/setarch.8
@@ -130,7 +130,7 @@ endif # LINUX
 if BUILD_EJECT
 usrbin_exec_PROGRAMS += eject
 eject_SOURCES =  sys-utils/eject.c
-eject_LDADD = libmount.la libcommon.la
+eject_LDADD = $(LDADD) libmount.la libcommon.la
 eject_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 dist_man_MANS += sys-utils/eject.1
 endif
@@ -140,7 +140,7 @@ if BUILD_LOSETUP
 sbin_PROGRAMS += losetup
 dist_man_MANS += sys-utils/losetup.8
 losetup_SOURCES = sys-utils/losetup.c
-losetup_LDADD = libcommon.la
+losetup_LDADD = $(LDADD) libcommon.la
 
 if HAVE_STATIC_LOSETUP
 bin_PROGRAMS += losetup.static
@@ -155,7 +155,7 @@ if BUILD_PRLIMIT
 usrbin_exec_PROGRAMS += prlimit
 dist_man_MANS += sys-utils/prlimit.1
 prlimit_SOURCES = sys-utils/prlimit.c
-prlimit_LDADD = libcommon.la
+prlimit_LDADD = $(LDADD) libcommon.la
 endif
 
 
@@ -170,12 +170,12 @@ dist_man_MANS += \
 	sys-utils/fstab.5 \
 	mount-deprecated/umount.8
 mount_SOURCES = sys-utils/mount.c
-mount_LDADD = libcommon.la libmount.la $(SELINUX_LIBS)
+mount_LDADD = $(LDADD) libcommon.la libmount.la $(SELINUX_LIBS)
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS) -I$(ul_libmount_incdir)
 mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
 umount_SOURCES = sys-utils/umount.c
-umount_LDADD = libcommon.la libmount.la
+umount_LDADD = $(LDADD) libcommon.la libmount.la
 umount_CFLAGS = $(AM_CFLAGS) $(SUID_CFLAGS) -I$(ul_libmount_incdir)
 umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
@@ -217,24 +217,24 @@ swapon_SOURCES = \
 	sys-utils/swapon-common.h
 
 swapon_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
-swapon_LDADD = libcommon.la libmount.la
+swapon_LDADD = $(LDADD) libcommon.la libmount.la
 
 swapoff_SOURCES = sys-utils/swapoff.c sys-utils/swapon-common.c
 swapoff_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
-swapoff_LDADD = libmount.la
+swapoff_LDADD = $(LDADD) libmount.la
 endif
 
 if BUILD_LSCPU
 usrbin_exec_PROGRAMS += lscpu
 lscpu_SOURCES = sys-utils/lscpu.c
-lscpu_LDADD = libcommon.la
+lscpu_LDADD = $(LDADD) libcommon.la
 dist_man_MANS += sys-utils/lscpu.1
 endif
 
 if BUILD_CHCPU
 sbin_PROGRAMS += chcpu
 chcpu_SOURCES = sys-utils/chcpu.c
-chcpu_LDADD = libcommon.la
+chcpu_LDADD = $(LDADD) libcommon.la
 dist_man_MANS += sys-utils/chcpu.8
 endif
 
@@ -242,12 +242,12 @@ if BUILD_WDCTL
 bin_PROGRAMS += wdctl
 dist_man_MANS += sys-utils/wdctl.8
 wdctl_SOURCES = sys-utils/wdctl.c
-wdctl_LDADD = libcommon.la
+wdctl_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_MOUNTPOINT
 bin_PROGRAMS += mountpoint
-mountpoint_LDADD = libmount.la
+mountpoint_LDADD = $(LDADD) libmount.la
 mountpoint_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 dist_man_MANS += sys-utils/mountpoint.1
 mountpoint_SOURCES = sys-utils/mountpoint.c
@@ -256,7 +256,7 @@ endif
 if BUILD_FALLOCATE
 usrbin_exec_PROGRAMS += fallocate
 fallocate_SOURCES = sys-utils/fallocate.c
-fallocate_LDADD = libcommon.la
+fallocate_LDADD = $(LDADD) libcommon.la
 dist_man_MANS += sys-utils/fallocate.1
 endif
 
@@ -295,7 +295,7 @@ hwclock_SOURCES = \
 if LINUX
 hwclock_SOURCES += sys-utils/hwclock-rtc.c
 endif
-hwclock_LDADD = libcommon.la
+hwclock_LDADD = $(LDADD) libcommon.la
 if HAVE_AUDIT
 hwclock_LDADD += -laudit
 endif

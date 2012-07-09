@@ -2,7 +2,7 @@
 usrbin_exec_PROGRAMS += script
 dist_man_MANS += term-utils/script.1
 script_SOURCES = term-utils/script.c
-script_LDADD =
+script_LDADD = $(LDADD)
 if HAVE_UTIL
 script_LDADD += -lutil
 endif
@@ -20,7 +20,7 @@ if BUILD_AGETTY
 sbin_PROGRAMS += agetty
 dist_man_MANS += term-utils/agetty.8
 agetty_SOURCES = term-utils/agetty.c
-agetty_LDADD = libcommon.la
+agetty_LDADD = $(LDADD) libcommon.la
 endif # BUILD_AGETTY
 
 
@@ -32,9 +32,9 @@ dist_man_MANS += term-utils/setterm.1
 setterm_SOURCES = term-utils/setterm.c
 endif
 if HAVE_TINFO
-setterm_LDADD = -ltinfo
+setterm_LDADD = $(LDADD) -ltinfo
 else
-setterm_LDADD = @NCURSES_LIBS@
+setterm_LDADD = $(LDADD) @NCURSES_LIBS@
 endif
 endif
 
@@ -62,7 +62,7 @@ wall_SOURCES = \
 dist_man_MANS += term-utils/wall.1
 wall_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 wall_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-wall_LDADD = libcommon.la
+wall_LDADD = $(LDADD) libcommon.la
 if USE_TTY_GROUP
 if MAKEINSTALL_DO_CHOWN
 install-exec-hook-wall::

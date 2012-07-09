@@ -10,7 +10,7 @@ if !HAVE_LANGINFO
 cal_SOURCES += lib/langinfo.c
 endif
 
-cal_LDADD =
+cal_LDADD = $(LDADD)
 
 if HAVE_TINFO
 cal_LDADD += -ltinfo @NCURSES_LIBS@
@@ -75,7 +75,7 @@ if BUILD_LSBLK
 bin_PROGRAMS += lsblk
 dist_man_MANS += misc-utils/lsblk.8
 lsblk_SOURCES = misc-utils/lsblk.c
-lsblk_LDADD = libblkid.la libmount.la libcommon.la
+lsblk_LDADD = $(LDADD) libblkid.la libmount.la libcommon.la
 lsblk_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir) -I$(ul_libmount_incdir)
 if HAVE_UDEV
 lsblk_LDADD += -ludev
@@ -86,14 +86,14 @@ if BUILD_LIBUUID
 usrbin_exec_PROGRAMS += uuidgen
 dist_man_MANS += misc-utils/uuidgen.1
 uuidgen_SOURCES = misc-utils/uuidgen.c
-uuidgen_LDADD = libuuid.la
+uuidgen_LDADD = $(LDADD) libuuid.la
 uuidgen_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 endif
 
 if BUILD_UUIDD
 usrsbin_exec_PROGRAMS += uuidd
 dist_man_MANS += misc-utils/uuidd.8
-uuidd_LDADD = libuuid.la
+uuidd_LDADD = $(LDADD) libuuid.la
 uuidd_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir)
 uuidd_SOURCES = misc-utils/uuidd.c
 if USE_SOCKET_ACTIVATION
@@ -118,26 +118,26 @@ if BUILD_LIBBLKID
 sbin_PROGRAMS += blkid
 dist_man_MANS += misc-utils/blkid.8
 blkid_SOURCES = misc-utils/blkid.c
-blkid_LDADD = libblkid.la libcommon.la
+blkid_LDADD = $(LDADD) libblkid.la libcommon.la
 blkid_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 
 sbin_PROGRAMS += findfs
 dist_man_MANS += misc-utils/findfs.8
-findfs_LDADD = libblkid.la
+findfs_LDADD = $(LDADD) libblkid.la
 findfs_SOURCES = misc-utils/findfs.c
 findfs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 
 sbin_PROGRAMS += wipefs
 dist_man_MANS += misc-utils/wipefs.8
 wipefs_SOURCES = misc-utils/wipefs.c
-wipefs_LDADD = libblkid.la libcommon.la
+wipefs_LDADD = $(LDADD) libblkid.la libcommon.la
 wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 
 if HAVE_STATIC_BLKID
 sbin_PROGRAMS += blkid.static
 blkid_static_SOURCES = $(blkid_SOURCES)
 blkid_static_LDFLAGS = -all-static
-blkid_static_LDADD = libblkid.la
+blkid_static_LDADD = $(LDADD) libblkid.la
 blkid_static_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 endif
 endif # BUILD_LIBBLKID
@@ -146,7 +146,7 @@ endif # BUILD_LIBBLKID
 if BUILD_LIBMOUNT
 bin_PROGRAMS += findmnt
 dist_man_MANS += misc-utils/findmnt.8
-findmnt_LDADD = libmount.la libcommon.la
+findmnt_LDADD = $(LDADD) libmount.la libcommon.la
 findmnt_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
 findmnt_SOURCES = misc-utils/findmnt.c
 endif # BUILD_LIBMOUNT
@@ -158,7 +158,7 @@ kill_SOURCES = \
 	misc-utils/kill.c \
 	misc-utils/kill.h \
 	misc-utils/procs.c
-kill_LDADD = libcommon.la
+kill_LDADD = $(LDADD) libcommon.la
 dist_man_MANS += misc-utils/kill.1
 endif
 

@@ -18,15 +18,15 @@ dist_man_MANS += \
 	text-utils/tailf.1
 
 col_SOURCES = text-utils/col.c
-col_LDADD = libcommon.la
+col_LDADD = $(LDADD) libcommon.la
 
 colcrt_SOURCES = text-utils/colcrt.c
 
 colrm_SOURCES = text-utils/colrm.c
-colrm_LDADD = libcommon.la
+colrm_LDADD = $(LDADD) libcommon.la
 
 column_SOURCES = text-utils/column.c
-column_LDADD = libcommon.la
+column_LDADD = $(LDADD) libcommon.la
 
 hexdump_SOURCES = \
 	text-utils/conv.c \
@@ -35,12 +35,12 @@ hexdump_SOURCES = \
 	text-utils/hexdump.h \
 	text-utils/hexsyntax.c \
 	text-utils/parse.c
-hexdump_LDADD = libcommon.la
+hexdump_LDADD = $(LDADD) libcommon.la
 
 rev_SOURCES = text-utils/rev.c
 
 tailf_SOURCES = text-utils/tailf.c
-tailf_LDADD = libcommon.la
+tailf_LDADD = $(LDADD) libcommon.la
 
 if BUILD_LINE
 usrbin_exec_PROGRAMS += line
@@ -58,13 +58,13 @@ ul_SOURCES = text-utils/ul.c
 pg_SOURCES = text-utils/pg.c
 
 if HAVE_TINFO
-more_LDADD = -ltinfo
-pg_LDADD = -ltinfo @NCURSES_LIBS@
-ul_LDADD = -ltinfo
+more_LDADD = $(LDADD) -ltinfo
+pg_LDADD = $(LDADD) -ltinfo @NCURSES_LIBS@
+ul_LDADD = $(LDADD) -ltinfo
 else
-more_LDADD = @NCURSES_LIBS@
-pg_LDADD = @NCURSES_LIBS@
-ul_LDADD = @NCURSES_LIBS@
+more_LDADD = $(LDADD) @NCURSES_LIBS@
+pg_LDADD = $(LDADD) @NCURSES_LIBS@
+ul_LDADD = $(LDADD) @NCURSES_LIBS@
 endif
 
 dist_man_MANS += \
@@ -75,7 +75,7 @@ else
 if HAVE_TERMCAP
 bin_PROGRAMS += more
 more_SOURCES = text-utils/more.c
-more_LDADD = -ltermcap
+more_LDADD = $(LDADD) -ltermcap
 dist_man_MANS += text-utils/more.1
 endif
 endif # !HAVE_NCURSES

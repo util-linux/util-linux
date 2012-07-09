@@ -28,7 +28,7 @@ fdisk_SOURCES = \
 	fdisks/partname.c \
 	$(fdisk_common_sources)
 
-fdisk_LDADD = libcommon.la
+fdisk_LDADD = $(LDADD) libcommon.la
 
 if BUILD_LIBBLKID
 fdisk_CFLAGS = -I$(ul_libblkid_incdir)
@@ -52,7 +52,7 @@ sfdisk_SOURCES = \
 	fdisks/partname.c \
 	fdisks/sfdisk.c \
 	$(fdisk_common_sources)
-sfdisk_LDADD = libcommon.la
+sfdisk_LDADD = $(LDADD) libcommon.la
 
 if HAVE_STATIC_SFDISK
 sbin_PROGRAMS += sfdisk.static
@@ -67,7 +67,7 @@ sbin_PROGRAMS += cfdisk
 dist_man_MANS += fdisks/cfdisk.8
 cfdisk_SOURCES = fdisks/cfdisk.c $(fdisk_common_sources)
 cfdisk_CFLAGS =
-cfdisk_LDADD = libcommon.la
+cfdisk_LDADD = $(LDADD) libcommon.la
 
 if BUILD_LIBBLKID
 cfdisk_CFLAGS += -I$(ul_libblkid_incdir)

@@ -10,7 +10,7 @@ sbin_PROGRAMS += sulogin
 dist_man_MANS += login-utils/sulogin.8
 sulogin_SOURCES = \
 	login-utils/sulogin.c
-sulogin_LDADD = libcommon.la
+sulogin_LDADD = $(LDADD) libcommon.la
 if HAVE_LIBCRYPT
 sulogin_LDADD += -lcrypt
 endif
@@ -27,7 +27,7 @@ login_SOURCES = \
 	login-utils/login.c \
 	login-utils/logindefs.c \
 	login-utils/logindefs.h
-login_LDADD = libcommon.la -lpam -lpam_misc
+login_LDADD = $(LDADD) libcommon.la -lpam -lpam_misc
 if HAVE_AUDIT
 login_LDADD += -laudit
 endif
@@ -69,12 +69,12 @@ endif
 chfn_SOURCES = login-utils/chfn.c $(chfn_chsh_sources)
 chfn_CFLAGS = $(chfn_chsh_cflags)
 chfn_LDFLAGS = $(chfn_chsh_ldflags)
-chfn_LDADD = $(chfn_chsh_ldadd)
+chfn_LDADD = $(LDADD) $(chfn_chsh_ldadd)
 
 chsh_SOURCES = login-utils/chsh.c $(chfn_chsh_sources)
 chsh_CFLAGS = $(chfn_chsh_cflags)
 chsh_LDFLAGS = $(chfn_chsh_ldflags)
-chsh_LDADD = $(chfn_chsh_ldadd)
+chsh_LDADD = $(LDADD) $(chfn_chsh_ldadd)
 endif # BUILD_CHFN_CHSH
 
 
@@ -86,7 +86,7 @@ su_SOURCES = \
 	login-utils/logindefs.h
 su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-su_LDADD = -lpam -lpam_misc
+su_LDADD = $(LDADD) -lpam -lpam_misc
 endif
 
 
@@ -96,7 +96,7 @@ dist_man_MANS += login-utils/newgrp.1
 newgrp_SOURCES = login-utils/newgrp.c
 newgrp_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-newgrp_LDADD =
+newgrp_LDADD = $(LDADD)
 if HAVE_LIBCRYPT
 newgrp_LDADD += -lcrypt
 endif
@@ -111,7 +111,7 @@ dist_man_MANS += \
 vipw_SOURCES = \
 	login-utils/vipw.c \
 	login-utils/setpwnam.h
-vipw_LDADD = libcommon.la
+vipw_LDADD = $(LDADD) libcommon.la
 if HAVE_SELINUX
 vipw_LDADD += -lselinux
 endif
