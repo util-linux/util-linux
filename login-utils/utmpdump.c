@@ -35,6 +35,10 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/stat.h>
+#ifdef HAVE_INOTIFY_INIT
+#include <sys/inotify.h>
+#endif
 
 #include "c.h"
 #include "nls.h"
@@ -99,20 +103,116 @@ static void print_utline(struct utmp ut)
 	       addr_string, time_string);
 }
 
-static void dump(FILE *fp, int forever)
+#ifdef HAVE_INOTIFY_INIT
+#define EVENTS		(IN_MODIFY|IN_DELETE_SELF|IN_MOVE_SELF|IN_UNMOUNT)
+#define NEVENTS		4
+
+static void roll_file(const char *filename, off_t *size)
+{
+	FILE *fp;
+	struct stat st;
+	struct utmp ut;
+	off_t pos;
+
+	if (!(fp = fopen(filename, "r")))
+		err(EXIT_FAILURE, _("%s: open failed"), filename);
+
+	if (fstat(fileno(fp), &st) == -1)
+		err(EXIT_FAILURE, _("%s: stat failed"), filename);
+
+	if (st.st_size == *size) {
+		fclose(fp);
+		return;
+	}
+
+	if (fseek(fp, *size, SEEK_SET) != (off_t) -1) {
+		while (fread(&ut, sizeof(ut), 1, fp) == 1)
+			print_utline(ut);
+	}
+
+	pos = ftello(fp);
+	/* If we've successfully read something, use the file position, this
+	 * avoids data duplication.  If we read nothing or hit an error,
+	 * reset to the reported size, this handles truncated files.
+	 */
+	*size = (pos != -1 && pos != *size) ? pos : st.st_size;
+
+	fclose(fp);
+}
+
+static int follow_by_inotify(FILE *fp, const char *filename)
+{
+	char buf[NEVENTS * sizeof(struct inotify_event)];
+	struct utmp ut;
+	int fd, wd, event;
+	ssize_t length;
+	off_t size;
+
+	fd = inotify_init();
+	if (fd == -1)
+		return -1;	/* probably reached any limit ... */
+
+	size = ftello(fp);
+	fclose(fp);
+
+	wd = inotify_add_watch(fd, filename, EVENTS);
+	if (wd == -1)
+		err(EXIT_FAILURE, _("%s: cannot add inotify watch."), filename);
+
+	while (wd >= 0) {
+		errno = 0;
+		length = read(fd, buf, sizeof(buf));
+
+		if (length < 0 && (errno == EINTR || errno == EAGAIN))
+			continue;
+		if (length < 0)
+			err(EXIT_FAILURE, _("%s: cannot read inotify events"),
+				    filename);
+
+		for (event = 0; event < length;) {
+			struct inotify_event *ev =
+				    (struct inotify_event *) &buf[event];
+
+			if (ev->mask & IN_MODIFY)
+				roll_file(filename, &size);
+			else {
+				close(wd);
+				wd = -1;
+				break;
+			}
+			event += sizeof(struct inotify_event) + ev->len;
+		}
+	}
+
+	close(fd);
+	return 0;
+}
+#endif /* HAVE_INOTIFY_INIT */
+
+static void dump(FILE *fp, const char *filename, int follow)
 {
 	struct utmp ut;
 
-	if (forever)
+	if (follow)
 		fseek(fp, -10 * sizeof(ut), SEEK_END);
 
-	do {
-		while (fread(&ut, sizeof(ut), 1, fp) == 1)
-			print_utline(ut);
-		if (forever)
+	while (fread(&ut, sizeof(ut), 1, fp) == 1)
+		print_utline(ut);
+
+	if (!follow)
+		return;
+#ifdef HAVE_INOTIFY_INIT
+	if (follow_by_inotify(fp, filename) != 0)
+#endif
+		/* fallback for systems without inotify or with non-free
+		 * inotify instances */
+		for (;;) {
+			while (fread(&ut, sizeof(ut), 1, fp) == 1)
+				print_utline(ut);
 			sleep(1);
-	} while (forever);
+		}
 }
+
 
 /* This function won't work properly if there's a ']' or a ' ' in the real
  * token.  Thankfully, this should never happen.  */
@@ -248,7 +348,7 @@ int main(int argc, char **argv)
 		undump(fp);
 	} else {
 		fprintf(stderr, _("Utmp dump of %s\n"), filename);
-		dump(fp, forever);
+		dump(fp, filename, forever);
 	}
 
 	if (fp != stdin)
