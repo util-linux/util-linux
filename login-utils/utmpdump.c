@@ -120,10 +120,8 @@ static void roll_file(const char *filename, off_t *size)
 	if (fstat(fileno(fp), &st) == -1)
 		err(EXIT_FAILURE, _("%s: stat failed"), filename);
 
-	if (st.st_size == *size) {
-		fclose(fp);
-		return;
-	}
+	if (st.st_size == *size)
+		goto done;
 
 	if (fseek(fp, *size, SEEK_SET) != (off_t) -1) {
 		while (fread(&ut, sizeof(ut), 1, fp) == 1)
@@ -137,6 +135,7 @@ static void roll_file(const char *filename, off_t *size)
 	 */
 	*size = (pos != -1 && pos != *size) ? pos : st.st_size;
 
+done:
 	fclose(fp);
 }
 
@@ -189,7 +188,7 @@ static int follow_by_inotify(FILE *fp, const char *filename)
 }
 #endif /* HAVE_INOTIFY_INIT */
 
-static void dump(FILE *fp, const char *filename, int follow)
+static FILE *dump(FILE *fp, const char *filename, int follow)
 {
 	struct utmp ut;
 
@@ -200,9 +199,12 @@ static void dump(FILE *fp, const char *filename, int follow)
 		print_utline(ut);
 
 	if (!follow)
-		return;
+		return fp;
+
 #ifdef HAVE_INOTIFY_INIT
-	if (follow_by_inotify(fp, filename) != 0)
+	if (follow_by_inotify(fp, filename) == 0)
+		return NULL;				/* file already closed */
+	else
 #endif
 		/* fallback for systems without inotify or with non-free
 		 * inotify instances */
@@ -211,6 +213,8 @@ static void dump(FILE *fp, const char *filename, int follow)
 				print_utline(ut);
 			sleep(1);
 		}
+
+	return fp;
 }
 
 
@@ -295,8 +299,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 int main(int argc, char **argv)
 {
 	int c;
-	FILE *fp;
-	int reverse = 0, forever = 0;
+	FILE *fp = NULL;
+	int reverse = 0, follow = 0;
 	const char *filename = NULL;
 
 	static const struct option longopts[] = {
@@ -319,7 +323,7 @@ int main(int argc, char **argv)
 			break;
 
 		case 'f':
-			forever = 1;
+			follow = 1;
 			break;
 
 		case 'h':
@@ -339,9 +343,9 @@ int main(int argc, char **argv)
 		if (!fp)
 			err(EXIT_FAILURE, _("%s: open failed"), filename);
 	} else {
+		if (follow)
+			errx(EXIT_FAILURE, _("following standard input is unsupported"));
 		filename = "/dev/stdin";
-		if (forever)
-			warnx(_("warning: following standard input indefinitely is ineffective"));
 		fp = stdin;
 	}
 
@@ -350,10 +354,10 @@ int main(int argc, char **argv)
 		undump(fp);
 	} else {
 		fprintf(stderr, _("Utmp dump of %s\n"), filename);
-		dump(fp, filename, forever);
+		fp = dump(fp, filename, follow);
 	}
 
-	if (fp != stdin)
+	if (fp && fp != stdin)
 		fclose(fp);
 
 	return EXIT_SUCCESS;
