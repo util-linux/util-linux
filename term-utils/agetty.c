@@ -958,7 +958,7 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 	}
 
 	if (tcsetpgrp(STDIN_FILENO, pid))
-		log_err("/dev/%s: cannot set process group: %m", tty);
+		log_warn("/dev/%s: cannot set process group: %m", tty);
 
 	/* Get rid of the present outputs. */
 	close(STDOUT_FILENO);
