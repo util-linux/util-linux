@@ -1490,10 +1490,10 @@ with other ext4 mount options.
 
 The ext4 filesystem enables write barriers by default.
 .TP
-.BI inode_readahead= n
+.BI inode_readahead_blks= n
 This tuning parameter controls the maximum number of inode table blocks that
 ext4's inode table readahead algorithm will pre-read into the buffer cache.
-The default value is 32 blocks.
+The value must be a power of 2. The default value is 32 blocks.
 .TP
 .BI stripe= n
 Number of filesystem blocks that mballoc will try to use for allocation size
