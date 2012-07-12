@@ -409,6 +409,14 @@ static void init_tty(struct login_context *cxt)
 	/* Kill processes left on this tty */
 	tcsetattr(0, TCSAFLUSH, &ttt);
 
+	/*
+	 * Let's close file decriptors before vhangup
+	 * https://lkml.org/lkml/2012/6/5/145
+	 */
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
+
 	signal(SIGHUP, SIG_IGN);	/* so vhangup() wont kill us */
 	vhangup();
 	signal(SIGHUP, SIG_DFL);
