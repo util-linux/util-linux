@@ -1256,7 +1256,7 @@ int blkid_probe_set_magic(blkid_probe pr, blkid_loff_t offset,
 		rc = blkid_probe_set_value(pr, "SBMAGIC", magic, len);
 		if (!rc)
 			rc = blkid_probe_sprintf_value(pr,
-					"SBMAGIC_OFFSET", "%llu", offset);
+					"SBMAGIC_OFFSET", "%llu", (unsigned long long)offset);
 		break;
 	case BLKID_CHAIN_PARTS:
 		if (!(chn->flags & BLKID_PARTS_MAGIC))
@@ -1264,7 +1264,7 @@ int blkid_probe_set_magic(blkid_probe pr, blkid_loff_t offset,
 		rc = blkid_probe_set_value(pr, "PTMAGIC", magic, len);
 		if (!rc)
 			rc = blkid_probe_sprintf_value(pr,
-					"PTMAGIC_OFFSET", "%llu", offset);
+					"PTMAGIC_OFFSET", "%llu", (unsigned long long)offset);
 		break;
 	default:
 		break;
