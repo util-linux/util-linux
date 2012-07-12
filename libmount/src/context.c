@@ -1687,7 +1687,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 	if (!cxt)
 		return -EINVAL;
 
-	if (mnt_context_fstab_applied(cxt))
+	if (mnt_context_tab_applied(cxt))	/* already applied */
 		return 0;
 
 	if (mnt_context_is_restricted(cxt)) {
@@ -1757,12 +1757,12 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 }
 
 /**
- * mnt_context_fstab_applied:
+ * mnt_context_tab_applied:
  * @cxt: mount context
  *
  * Returns: 1 if fstab (or mtab) has been applied to the context, or 0.
  */
-int mnt_context_fstab_applied(struct libmnt_context *cxt)
+int mnt_context_tab_applied(struct libmnt_context *cxt)
 {
 	return cxt && (cxt->flags & MNT_FL_TAB_APPLIED);
 }
