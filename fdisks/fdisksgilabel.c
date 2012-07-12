@@ -151,7 +151,6 @@ check_sgi_label(struct fdisk_context *cxt) {
 		fprintf(stderr,
 			_("Detected sgi disklabel with wrong checksum.\n"));
 	}
-	update_units(cxt);
 	disklabel = SGI_LABEL;
 	partitions= 16;
 	volumes = 15;
