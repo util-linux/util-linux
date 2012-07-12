@@ -110,7 +110,7 @@ static struct xbsd_disklabel xbsd_dlabel;
  * so this does not mean that there is a BSD disk label.
  */
 static int
-check_osf_label(struct fdisk_context *cxt) {
+osf_probe_label(struct fdisk_context *cxt) {
 	if (xbsd_readlabel (cxt, NULL, &xbsd_dlabel) == 0)
 		return 0;
 	return 1;
@@ -849,5 +849,5 @@ alpha_bootblock_checksum (char *boot)
 const struct fdisk_label bsd_label =
 {
 	.name = "bsd",
-	.probe = check_osf_label
+	.probe = osf_probe_label,
 };

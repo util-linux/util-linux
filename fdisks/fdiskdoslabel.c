@@ -316,7 +316,7 @@ void dos_delete_partition(int i)
 	}
 }
 
-static int check_dos_label(struct fdisk_context *cxt)
+static int dos_probe_label(struct fdisk_context *cxt)
 {
 	int i;
 
@@ -684,5 +684,5 @@ void dos_write_table(struct fdisk_context *cxt)
 const struct fdisk_label dos_label =
 {
 	.name = "dos",
-	.probe = check_dos_label,
+	.probe = dos_probe_label,
 };

@@ -48,7 +48,7 @@ mac_nolabel(struct fdisk_context *cxt)
 }
 
 static int
-check_mac_label(struct fdisk_context *cxt)
+mac_probe_label(struct fdisk_context *cxt)
 {
 	/*
 	Conversion: only 16 bit should compared
@@ -83,5 +83,5 @@ IS_MAC:
 const struct fdisk_label mac_label =
 {
 	.name = "mac",
-	.probe = check_mac_label
+	.probe = mac_probe_label,
 };

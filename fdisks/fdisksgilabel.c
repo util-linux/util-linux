@@ -128,7 +128,7 @@ two_s_complement_32bit_sum(unsigned int *base, int size /* in bytes */) {
 }
 
 static int
-check_sgi_label(struct fdisk_context *cxt) {
+sgi_probe_label(struct fdisk_context *cxt) {
 	if (sizeof(sgilabel) > 512) {
 		fprintf(stderr,
 			_("According to MIPS Computer Systems, Inc the "
@@ -880,5 +880,5 @@ fill_sgiinfo(void)
 const struct fdisk_label sgi_label =
 {
 	.name = "sgi",
-	.probe = check_sgi_label
+	.probe = sgi_probe_label,
 };
