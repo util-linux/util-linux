@@ -243,7 +243,7 @@ look(char *front, char *back)
  *	more trouble than it's worth.
  */
 #define	SKIP_PAST_NEWLINE(p, back) \
-	while (p < back && *p++ != '\n');
+	while (p < back && *p++ != '\n')
 
 char *
 binary_search(char *front, char *back)
