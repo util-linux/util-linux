@@ -49,8 +49,6 @@ global:
 	blkid_evaluate_tag;
 	blkid_free_probe;
 	blkid_new_probe;
-	blkid_probe_all;
-	blkid_probe_all_new;
 	blkid_probe_filter_types;
 	blkid_probe_filter_usage;
 	blkid_probe_get_value;
