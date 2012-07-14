@@ -142,7 +142,6 @@ done:
 static int follow_by_inotify(FILE *fp, const char *filename)
 {
 	char buf[NEVENTS * sizeof(struct inotify_event)];
-	struct utmp ut;
 	int fd, wd, event;
 	ssize_t length;
 	off_t size;
