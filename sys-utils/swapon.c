@@ -216,7 +216,6 @@ static int show_table(int tt_flags, int bytes)
 	struct libmnt_fs *fs;
 
 	int i, rc = 0;
-	struct list_head *p, *pnext;
 	struct tt *tt;
 
 	if (!st)
