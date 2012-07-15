@@ -752,7 +752,7 @@ int main(int argc, char ** argv) {
 		strcpy(tmp+2, ".badblocks");
 	}
 	if (stat(device_name, &statbuf) < 0)
-		err(MKFS_EX_ERROR, _("%s: stat failed"), device_name);
+		err(MKFS_EX_ERROR, _("stat failed %s"), device_name);
 	if (S_ISBLK(statbuf.st_mode))
 		DEV = open(device_name,O_RDWR | O_EXCL);
 	else

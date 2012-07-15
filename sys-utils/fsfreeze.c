@@ -104,7 +104,7 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("%s: open failed"), path);
 
 	if (fstat(fd, &sb) == -1) {
-		warn(_("%s: fstat failed"), path);
+		warn(_("stat failed %s"), path);
 		goto done;
 	}
 

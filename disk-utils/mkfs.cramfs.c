@@ -745,7 +745,7 @@ int main(int argc, char **argv)
 		case 'i':
 			opt_image = optarg;
 			if (lstat(opt_image, &st) < 0)
-				err(MKFS_EX_USAGE, _("cannot stat %s"), opt_image);
+				err(MKFS_EX_USAGE, _("stat failed %s"), opt_image);
 			image_length = st.st_size; /* may be padded later */
 			fslen_ub += (image_length + 3); /* 3 is for padding */
 			break;
@@ -780,7 +780,7 @@ int main(int argc, char **argv)
 	outfile = argv[optind + 1];
 
 	if (stat(dirname, &st) < 0)
-		err(MKFS_EX_USAGE, _("cannot stat %s"), dirname);
+		err(MKFS_EX_USAGE, _("stat failed %s"), dirname);
 	fd = open(outfile, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 	if (fd < 0)
 		err(MKFS_EX_USAGE, _("cannot open %s"), outfile);

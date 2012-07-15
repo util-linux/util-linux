@@ -99,7 +99,7 @@ roll_file(const char *filename, off_t *size)
 		err(EXIT_FAILURE, _("cannot open \"%s\" for read"), filename);
 
 	if (fstat(fd, &st) == -1)
-		err(EXIT_FAILURE, _("cannot stat \"%s\""), filename);
+		err(EXIT_FAILURE, _("stat failed %s"), filename);
 
 	if (st.st_size == *size) {
 		close(fd);
@@ -277,7 +277,7 @@ int main(int argc, char **argv)
 	filename = argv[optind];
 
 	if (stat(filename, &st) != 0)
-		err(EXIT_FAILURE, _("cannot stat \"%s\""), filename);
+		err(EXIT_FAILURE, _("stat failed %s"), filename);
 
 	size = st.st_size;;
 	tailf(filename, lines);

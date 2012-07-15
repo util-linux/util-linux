@@ -361,7 +361,7 @@ static ssize_t read_file_buffer(struct dmesg_control *ctl,
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open: %s"), filename);
 	if (fstat(fd, &st))
-		err(EXIT_FAILURE, _("cannot stat: %s"), filename);
+		err(EXIT_FAILURE, _("stat failed %s"), filename);
 
 	*buf = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
 	if (*buf == MAP_FAILED)

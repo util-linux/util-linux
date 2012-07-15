@@ -133,7 +133,7 @@ int main(int argc, char **argv)
 	}
 
 	if (stat(path, &sb) == -1)
-		err(EXIT_FAILURE, _("%s: stat failed"), path);
+		err(EXIT_FAILURE, _("stat failed %s"), path);
 	if (!S_ISDIR(sb.st_mode))
 		errx(EXIT_FAILURE, _("%s: not a directory"), path);
 

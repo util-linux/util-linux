@@ -266,7 +266,7 @@ makemsg(char *fname, size_t *mbufsize, int print_banner)
 	rewind(fp);
 
 	if (fstat(fileno(fp), &sbuf))
-		err(EXIT_FAILURE, _("fstat failed"));
+		err(EXIT_FAILURE, _("stat failed"));
 
 	*mbufsize = (size_t) sbuf.st_size;
 	mbuf = xmalloc(*mbufsize);

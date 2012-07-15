@@ -443,7 +443,7 @@ static int swapon_checks(const char *special)
 	unsigned long long devsize = 0;
 
 	if (stat(special, &st) < 0) {
-		warn(_("%s: stat failed"), special);
+		warn(_("stat failed %s"), special);
 		goto err;
 	}
 
