@@ -244,7 +244,7 @@ makemsg(char *fname, size_t *mbufsize, int print_banner)
 			     fname);
 
 		if (!freopen(fname, "r", stdin))
-			err(EXIT_FAILURE, _("cannot open file %s"), fname);
+			err(EXIT_FAILURE, _("cannot open %s"), fname);
 	}
 
 	while (fgets(lbuf, line_max, stdin)) {

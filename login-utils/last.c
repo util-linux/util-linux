@@ -242,7 +242,7 @@ wtmp(void) {
 	(void)signal(SIGQUIT, onintr);
 
 	if ((fd = open(file,O_RDONLY)) < 0)
-		err(EXIT_FAILURE, _("%s: open failed"), file);
+		err(EXIT_FAILURE, _("cannot open %s"), file);
 
 	fstat(fd, &st);
 	utl_len = st.st_size;

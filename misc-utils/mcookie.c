@@ -144,7 +144,7 @@ int main(int argc, char **argv)
 			fd = open(file, O_RDONLY);
 
 		if (fd < 0) {
-			warn(_("Could not open %s"), file);
+			warn(_("cannot open %s"), file);
 		} else {
 			count = hash_file(&ctx, fd);
 			if (verbose)
@@ -178,7 +178,7 @@ int main(int argc, char **argv)
 			if (rngs[i].minlength && r >= rngs[i].minlength)
 				break;
 		} else if (verbose)
-			warn(_("Could not open %s"), rngs[i].path);
+			warn(_("cannot open %s"), rngs[i].path);
 	}
 
 	MD5Final(digest, &ctx);

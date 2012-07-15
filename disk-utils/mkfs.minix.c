@@ -759,7 +759,7 @@ int main(int argc, char ** argv) {
 		DEV = open(device_name,O_RDWR);
 
 	if (DEV<0)
-		err(MKFS_EX_ERROR, _("%s: open failed"), device_name);
+		err(MKFS_EX_ERROR, _("cannot open %s"), device_name);
 
 	if (S_ISBLK(statbuf.st_mode)) {
 		int sectorsize;

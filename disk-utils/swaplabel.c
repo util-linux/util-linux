@@ -102,7 +102,7 @@ static int change_info(const char *devname, const char *label, const char *uuid)
 
 	fd = open(devname, O_RDWR);
 	if (fd < 0) {
-		warn(_("%s: failed to open"), devname);
+		warn(_("cannot open %s"), devname);
 		goto err;
 	}
 #ifdef HAVE_LIBUUID

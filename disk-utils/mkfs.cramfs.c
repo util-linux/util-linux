@@ -657,7 +657,7 @@ static unsigned int write_file(char *file, char *base, unsigned int offset)
 
 	fd = open(file, O_RDONLY);
 	if (fd < 0)
-		err(MKFS_EX_ERROR, _("cannot open file %s"), file);
+		err(MKFS_EX_ERROR, _("cannot open %s"), file);
 	buf = mmap(NULL, image_length, PROT_READ, MAP_PRIVATE, fd, 0);
 	memcpy(base + offset, buf, image_length);
 	munmap(buf, image_length);

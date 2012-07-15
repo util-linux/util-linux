@@ -359,7 +359,7 @@ static ssize_t read_file_buffer(struct dmesg_control *ctl,
 	int fd = open(filename, O_RDONLY);
 
 	if (fd < 0)
-		err(EXIT_FAILURE, _("cannot open: %s"), filename);
+		err(EXIT_FAILURE, _("cannot open %s"), filename);
 	if (fstat(fd, &st))
 		err(EXIT_FAILURE, _("stat failed %s"), filename);
 

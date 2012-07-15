@@ -893,7 +893,7 @@ static int poll_table(struct libmnt_table *tb, const char *tabfile,
 
 	f = fopen(tabfile, "r");
 	if (!f) {
-		warn(_("%s: open failed"), tabfile);
+		warn(_("cannot open %s"), tabfile);
 		goto done;
 	}
 

@@ -59,7 +59,7 @@ tailf(const char *filename, int lines)
 	int  i;
 
 	if (!(str = fopen(filename, "r")))
-		err(EXIT_FAILURE, _("cannot open \"%s\" for read"), filename);
+		err(EXIT_FAILURE, _("cannot open %s"), filename);
 
 	buf = xmalloc((lines ? lines : 1) * BUFSIZ);
 	p = buf;
@@ -96,7 +96,7 @@ roll_file(const char *filename, off_t *size)
 
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
-		err(EXIT_FAILURE, _("cannot open \"%s\" for read"), filename);
+		err(EXIT_FAILURE, _("cannot open %s"), filename);
 
 	if (fstat(fd, &st) == -1)
 		err(EXIT_FAILURE, _("stat failed %s"), filename);

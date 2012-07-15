@@ -281,7 +281,7 @@ static int read_adjtime(struct adjtime *adjtime_p)
 
 	adjfile = fopen(adj_file_name, "r");	/* open file for reading */
 	if (adjfile == NULL) {
-		warn("cannot open file %s", adj_file_name);
+		warn("cannot open %s", adj_file_name);
 		return EX_OSFILE;
 	}
 

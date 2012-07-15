@@ -282,7 +282,7 @@ static int read_watchdog(struct wdinfo *wd)
 		if (errno == EBUSY)
 			warnx(_("%s: watchdog already in use, terminating."),
 					wd->device);
-		warn(_("%s: open failed"), wd->device);
+		warn(_("cannot open %s"), wd->device);
 		return -1;
 	}
 

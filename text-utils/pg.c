@@ -1310,7 +1310,7 @@ found_bw:
 				save = fopen(p, "wb");
 				if (save == NULL) {
 					cmd.count = errno;
-					mesg(_("Cannot open "));
+					mesg(_("cannot open "));
 					mesg(p);
 					mesg(": ");
 					mesg(strerror(cmd.count));

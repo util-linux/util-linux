@@ -634,7 +634,7 @@ static int get_permissions_cmos(void)
 
 	if (use_dev_port) {
 		if ((dev_port_fd = open("/dev/port", O_RDWR)) < 0) {
-			warn(_("Cannot open /dev/port"));
+			warn(_("cannot open %s"), "/dev/port");
 			rc = 1;
 		} else
 			rc = 0;

@@ -117,7 +117,7 @@ static int set_capacity(struct loopdev_cxt *lc)
 	int fd = loopcxt_get_fd(lc);
 
 	if (fd < 0)
-		warn(_("%s: open failed"), loopcxt_get_device(lc));
+		warn(_("cannot open %s"), loopcxt_get_device(lc));
 	else if (ioctl(fd, LOOP_SET_CAPACITY) != 0)
 		warnx(_("%s: set capacity failed"), loopcxt_get_device(lc));
 	else

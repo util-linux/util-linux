@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
-		err(EXIT_FAILURE, _("%s: open failed"), path);
+		err(EXIT_FAILURE, _("cannot open %s"), path);
 
 	if (fstat(fd, &sb) == -1) {
 		warn(_("stat failed %s"), path);

@@ -213,7 +213,7 @@ static struct passwd *getrootpwent(int try_manually)
 	pwd.pw_gid = 0;
 
 	if ((fp = fopen(_PATH_PASSWD, "r")) == NULL) {
-		warn(_("%s: open failed"), _PATH_PASSWD);
+		warn(_("cannot open %s"), _PATH_PASSWD);
 		return &pwd;
 	}
 
@@ -251,7 +251,7 @@ static struct passwd *getrootpwent(int try_manually)
 	 */
 	strcpy(pwd.pw_passwd, "");
 	if ((fp = fopen(_PATH_SHADOW_PASSWD, "r")) == NULL) {
-		warn(_("%s: open failed"), _PATH_PASSWD);
+		warn(_("cannot open %s"), _PATH_PASSWD);
 		return &pwd;
 	}
 	while ((p = fgets(sline, 256, fp)) != NULL) {
@@ -521,7 +521,7 @@ int main(int argc, char **argv)
 	if (tty || (tty = getenv("CONSOLE"))) {
 
 		if ((fd = open(tty, O_RDWR)) < 0) {
-			warn(_("%s: open failed"), tty);
+			warn(_("cannot open %s"), tty);
 			fd = dup(0);
 		}
 
@@ -556,7 +556,7 @@ int main(int argc, char **argv)
 				if (fd > 2)
 					close(fd);
 				if ((fd = open(tty, O_RDWR|O_NOCTTY)) < 0)
-					warn(_("%s: open failed"), tty);
+					warn(_("cannot open %s"), tty);
 				else {
 					ioctl(0, TIOCSCTTY, (char *)1);
 					tcsetpgrp(fd, ppgrp);

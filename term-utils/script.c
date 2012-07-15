@@ -205,7 +205,7 @@ main(int argc, char **argv) {
 		case 't':
 			if (optarg)
 				if ((timingfd = fopen(optarg, "w")) == NULL)
-					err(EXIT_FAILURE, _("cannot open timing file %s"), optarg);
+					err(EXIT_FAILURE, _("cannot open %s"), optarg);
 			tflg = 1;
 			break;
 		case 'V':
@@ -230,7 +230,7 @@ main(int argc, char **argv) {
 		die_if_link(fname);
 	}
 	if ((fscript = fopen(fname, aflg ? "a" : "w")) == NULL) {
-		warn(_("open failed: %s"), fname);
+		warn(_("cannot open %s"), fname);
 		fail();
 	}
 
@@ -557,7 +557,7 @@ getslave(void) {
 	line[strlen("/dev/")] = 't';
 	slave = open(line, O_RDWR);
 	if (slave < 0) {
-		warn(_("open failed: %s"), line);
+		warn(_("cannot open %s"), line);
 		fail();
 	}
 	tcsetattr(slave, TCSANOW, &tt);

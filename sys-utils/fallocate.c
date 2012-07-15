@@ -150,7 +150,7 @@ int main(int argc, char **argv)
 
 	fd = open(fname, O_WRONLY|O_CREAT, 0644);
 	if (fd < 0)
-		err(EXIT_FAILURE, _("%s: open failed"), fname);
+		err(EXIT_FAILURE, _("cannot open %s"), fname);
 
 #ifdef HAVE_FALLOCATE
 	error = fallocate(fd, mode, offset, length);

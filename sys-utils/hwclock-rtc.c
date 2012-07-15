@@ -159,7 +159,7 @@ static int open_rtc_or_exit(void)
 	int rtc_fd = open_rtc();
 
 	if (rtc_fd < 0) {
-		warn(_("open() of %s failed"), rtc_dev_name);
+		warn(_("cannot open %s"), rtc_dev_name);
 		hwclock_exit(EX_OSFILE);
 	}
 	return rtc_fd;
@@ -253,7 +253,7 @@ static int synchronize_to_clock_tick_rtc(void)
 
 	rtc_fd = open_rtc();
 	if (rtc_fd == -1) {
-		warn(_("open() of %s failed"), rtc_dev_name);
+		warn(_("cannot open %s"), rtc_dev_name);
 		ret = 1;
 	} else {
 		int rc;		/* Return code from ioctl */
@@ -417,7 +417,7 @@ struct clock_ops *probe_for_rtc_clock(void)
 	if (rtc_fd >= 0)
 		return &rtc;
 	if (debug)
-		warn(_("Open of %s failed"), rtc_dev_name);
+		warn(_("cannot open %s"), rtc_dev_name);
 	return NULL;
 }
 
@@ -438,7 +438,7 @@ int get_epoch_rtc(unsigned long *epoch_p, int silent)
 				       "file %s.  This file does not exist on this system."),
 				      rtc_dev_name);
 			else
-				warn(_("Unable to open %s"), rtc_dev_name);
+				warn(_("cannot open %s"), rtc_dev_name);
 		}
 		return 1;
 	}
@@ -485,7 +485,7 @@ int set_epoch_rtc(unsigned long epoch)
 			       "file %s.  This file does not exist on this system."),
 			      rtc_dev_name);
 		else
-			warn(_("Unable to open %s"), rtc_dev_name);
+			warn(_("cannot open %s"), rtc_dev_name);
 		return 1;
 	}
 

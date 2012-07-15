@@ -55,7 +55,7 @@ path_vfopen(const char *mode, int exit_on_error, const char *path, va_list ap)
 
 	f = fopen(p, mode);
 	if (!f && exit_on_error)
-		err(EXIT_FAILURE, _("error: cannot open %s"), p);
+		err(EXIT_FAILURE, _("cannot open %s"), p);
 	return f;
 }
 
@@ -67,7 +67,7 @@ path_vopen(int flags, const char *path, va_list ap)
 
 	fd = open(p, flags);
 	if (fd == -1)
-		err(EXIT_FAILURE, _("error: cannot open %s"), p);
+		err(EXIT_FAILURE, _("cannot open %s"), p);
 	return fd;
 }
 

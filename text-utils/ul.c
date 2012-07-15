@@ -228,7 +228,7 @@ int main(int argc, char **argv)
 		for (; optind < argc; optind++) {
 			f = fopen(argv[optind],"r");
 			if (!f)
-				err(EXIT_FAILURE, _("%s: open failed"),
+				err(EXIT_FAILURE, _("cannot open %s"),
 				    argv[optind]);
 			filter(f);
 			fclose(f);

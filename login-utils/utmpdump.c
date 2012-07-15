@@ -115,7 +115,7 @@ static void roll_file(const char *filename, off_t *size)
 	off_t pos;
 
 	if (!(fp = fopen(filename, "r")))
-		err(EXIT_FAILURE, _("%s: open failed"), filename);
+		err(EXIT_FAILURE, _("cannot open %s"), filename);
 
 	if (fstat(fileno(fp), &st) == -1)
 		err(EXIT_FAILURE, _("%s: stat failed"), filename);
@@ -340,7 +340,7 @@ int main(int argc, char **argv)
 		filename = argv[optind];
 		fp = fopen(filename, "r");
 		if (!fp)
-			err(EXIT_FAILURE, _("%s: open failed"), filename);
+			err(EXIT_FAILURE, _("cannot open %s"), filename);
 	} else {
 		if (follow)
 			errx(EXIT_FAILURE, _("following standard input is unsupported"));
