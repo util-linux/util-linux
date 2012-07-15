@@ -2080,26 +2080,25 @@ int main(int argc, char **argv)
 		exit(EXIT_SUCCESS);
 	}
 
-	if (argc-optind == 1) {
-		cxt = fdisk_new_context_from_filename(argv[optind], 0);
-		if (!cxt)
-			err(EXIT_FAILURE, _("unable to open %s"), argv[optind]);
-		if (sector_size) /* passed -b option, override autodiscovery */
-			cxt->phy_sector_size = cxt->sector_size = sector_size;
-		/* passed CHS option(s), override autodiscovery */
-		if (user_cylinders)
-			cxt->geom.cylinders = user_cylinders;
-		if (user_heads) {
-			cxt->geom.heads = user_heads;
-			fdisk_geom_set_cyls(cxt);
-		}
-		if (user_sectors) {
-			cxt->geom.sectors = user_sectors;
-			fdisk_geom_set_cyls(cxt);
-		}
-	}
-	else
+	if (argc-optind != 1)
 		usage(stderr);
+
+	cxt = fdisk_new_context_from_filename(argv[optind], 0);
+	if (!cxt)
+		err(EXIT_FAILURE, _("unable to open %s"), argv[optind]);
+	if (sector_size)	/* passed -b option, override autodiscovery */
+		cxt->phy_sector_size = cxt->sector_size = sector_size;
+	/* passed CHS option(s), override autodiscovery */
+	if (user_cylinders)
+		cxt->geom.cylinders = user_cylinders;
+	if (user_heads) {
+		cxt->geom.heads = user_heads;
+		fdisk_geom_set_cyls(cxt);
+	}
+	if (user_sectors) {
+		cxt->geom.sectors = user_sectors;
+		fdisk_geom_set_cyls(cxt);
+	}
 
 	print_welcome();
 
