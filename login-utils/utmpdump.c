@@ -286,10 +286,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		_(" %s [options] [filename]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -f, --follow           output appended data as the file grows\n"
-		" -r, --reverse          write back dumped data into utmp file\n"
-		" -h, --help             display this help and exit\n"
-		" -V, --version          output version information and exit\n"), out);
+	fputs(_(" -f, --follow   output appended data as the file grows\n"
+		" -r, --reverse  write back dumped data into utmp file\n"), out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 
 	fprintf(out, USAGE_MAN_TAIL("utmpdump(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
