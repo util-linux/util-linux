@@ -7,6 +7,8 @@
 
 #include <string.h>
 
+#include "match.h"
+
 /*
  * match_fstype:
  * @type: filesystem type
