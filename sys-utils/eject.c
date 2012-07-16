@@ -907,7 +907,7 @@ done:
 
 
 /* handle -x option */
-void set_device_speed(char *name)
+static void set_device_speed(char *name)
 {
 	int fd;
 
