@@ -1,11 +1,10 @@
-# warnings.m4 serial 5
 dnl Copyright (C) 2008-2011 Free Software Foundation, Inc.
 dnl This file is free software; the Free Software Foundation
 dnl gives unlimited permission to copy and/or distribute it,
 dnl with or without modifications, as long as this notice is preserved.
 
 dnl From Simon Josefsson
-dnl -- derivated from coreutils
+dnl -- derivated from coreutils m4/warnings.m4
 
 # UL_AS_VAR_APPEND(VAR, VALUE)
 # ----------------------------
@@ -35,4 +34,29 @@ AS_VAR_IF(ul_Warn, [yes],
   [UL_AS_VAR_APPEND(m4_if([$2], [], [[WARN_CFLAGS]], [[$2]]), [" $1"])])
 AS_VAR_POPDEF([ul_Warn])dnl
 m4_ifval([$2], [AS_LITERAL_IF([$2], [AC_SUBST([$2])], [])])dnl
+])
+
+
+# UL_PROG_CLANG
+# -------------
+# Checks if compiler is clang, defines compiler_clang=yes if yes
+AC_DEFUN([UL_PROG_CLANG], [
+  AC_REQUIRE([AC_PROG_CC])
+  AC_CACHE_CHECK([whether clang is in use], [ul_cv_clang], [
+    case ${CC} in #(
+      *gcc*)   ul_cv_clang=no ;;
+      *clang*) ul_cv_clang=yes ;;
+      *) AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() {
+           #ifdef __clang__
+               return 0;
+             #else
+               #error The __clang__ was not defined
+             #endif
+           }])],
+           [ul_cv_clang=yes],
+           [ul_cv_clang=no]
+         ) ;;
+    esac
+  ])
+  compiler_clang=$ul_cv_clang
 ])

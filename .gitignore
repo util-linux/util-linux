@@ -53,7 +53,7 @@ config/ltmain.sh
 
 # util-linux specific macros
 !m4/ul.m4
-!m4/warnings.m4
+!m4/compiler.m4
 
 #
 # binaries
