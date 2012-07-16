@@ -14,32 +14,53 @@ m4_ifdef([AS_VAR_APPEND],
 [m4_define([UL_AS_VAR_APPEND],
 [AS_VAR_SET([$1], [AS_VAR_GET([$1])$2])])])
 
-# UL_WARN_ADD(PARAMETER, [VARIABLE = WARN_CFLAGS])
-# ------------------------------------------------
-# Adds parameter to WARN_CFLAGS if the compiler supports it.  For example,
-# UL_WARN_ADD([-Wparentheses]).
-AC_DEFUN([UL_WARN_ADD],
-dnl FIXME: ul_Warn must be used unquoted until we can assume
-dnl autoconf 2.64 or newer.
-[AS_VAR_PUSHDEF([ul_Warn], [ul_cv_warn_$1])dnl
-AC_CACHE_CHECK([whether compiler handles $1], m4_defn([ul_Warn]), [
-  ul_save_CPPFLAGS="$CPPFLAGS"
-  CPPFLAGS="${CPPFLAGS} $1"
-  AC_PREPROC_IFELSE([AC_LANG_PROGRAM([])],
-                    [AS_VAR_SET(ul_Warn, [yes])],
-                    [AS_VAR_SET(ul_Warn, [no])])
-  CPPFLAGS="$ul_save_CPPFLAGS"
+#
+# Adds parameter to WARN_CFLAGS if the compiler supports it.
+#
+AC_DEFUN([UL_ADD_WARN_CFLAG], [
+  AS_VAR_PUSHDEF([ul_Warn], [ul_cv_warn_$1])dnl
+  AC_CACHE_CHECK([whether compiler handles $1], m4_defn([ul_Warn]), [
+    ul_save_CPPFLAGS="$CPPFLAGS"
+    CPPFLAGS="${CPPFLAGS} $1"
+    AC_PREPROC_IFELSE([AC_LANG_PROGRAM([])],
+                      [AS_VAR_SET(ul_Warn, [yes])],
+                      [AS_VAR_SET(ul_Warn, [no])])
+    CPPFLAGS="$ul_save_CPPFLAGS"
+  ])
+  AS_VAR_IF(ul_Warn, [yes], [UL_AS_VAR_APPEND([WARN_CFLAGS], [" $1"])])
 ])
-AS_VAR_IF(ul_Warn, [yes],
-  [UL_AS_VAR_APPEND(m4_if([$2], [], [[WARN_CFLAGS]], [[$2]]), [" $1"])])
-AS_VAR_POPDEF([ul_Warn])dnl
-m4_ifval([$2], [AS_LITERAL_IF([$2], [AC_SUBST([$2])], [])])dnl
+
+# UL_WARN_ADD(PARAMETER, [EXCLUDE_CC_LIST])
+# -----------------------------------------
+# Adds parameter to WARN_CFLAGS if the compiler supports it. Ignore the
+# parameter if compiler is in exclude list.
+AC_DEFUN([UL_WARN_ADD], [
+m4_ifval([$2], [
+  warn_exclude="$2"
+  case $compiler_clang in
+    yes) warn_cc=clang ;;
+      *) warn_cc=$CC ;;
+  esac
+  case ${warn_exclude} in
+    *${warn_cc}*)
+      AC_MSG_CHECKING([whether compiler handles $1])
+      AC_MSG_RESULT([excluded])
+      ;;
+    *)
+      UL_ADD_WARN_CFLAG([$1])
+      ;;
+  esac],
+  [UL_ADD_WARN_CFLAG([$1])])
 ])
 
 
 # UL_PROG_CLANG
 # -------------
-# Checks if compiler is clang, defines compiler_clang=yes if yes
+# Checks if compiler is clang, defines compiler_clang=yes if yes.
+#
+# Note that generic CC variable is not modified by this function.  It's
+# possible that CC is set to 'cc' and the file /usr/bin/cc is a symlink to
+# /usr/bin/clang, then compiler_clang is also set ot 'yes'.
 AC_DEFUN([UL_PROG_CLANG], [
   AC_REQUIRE([AC_PROG_CC])
   AC_CACHE_CHECK([whether clang is in use], [ul_cv_clang], [
