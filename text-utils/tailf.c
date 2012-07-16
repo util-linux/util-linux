@@ -210,7 +210,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 }
 
 /* parses -N option */
-long old_style_option(int *argc, char **argv)
+static long old_style_option(int *argc, char **argv)
 {
 	int i = 1, nargs = *argc;
 	long lines = -1;
