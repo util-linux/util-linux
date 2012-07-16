@@ -135,7 +135,8 @@ show_version(void)
   exit(EXIT_SUCCESS);
 }
 
-int set_arch(const char *pers, unsigned long options)
+static int
+set_arch(const char *pers, unsigned long options)
 {
   struct utsname un;
   int i;
