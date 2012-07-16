@@ -34,7 +34,7 @@
 
 #define SCRIPT_MIN_DELAY 0.0001		/* from original sripreplay.pl */
 
-void __attribute__((__noreturn__))
+static void __attribute__((__noreturn__))
 usage(FILE *out)
 {
 	fputs(_("\nUsage:\n"), out);
