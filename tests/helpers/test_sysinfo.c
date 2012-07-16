@@ -25,15 +25,13 @@ typedef struct {
 	int		(*fnc)(void);
 } mntHlpfnc;
 
-int
-hlp_wordsize(void)
+static int hlp_wordsize(void)
 {
 	printf("%lu\n", CHAR_BIT * sizeof(void*));
 	return 0;
 }
 
-int
-hlp_endianness(void)
+static int hlp_endianness(void)
 {
 #if !defined(WORDS_BIGENDIAN)
 	printf("LE\n");
@@ -44,43 +42,37 @@ hlp_endianness(void)
 }
 
 
-int
-hlp_pagesize(void)
+static int hlp_pagesize(void)
 {
 	printf("%d\n", getpagesize());
 	return 0;
 }
 
-int
-hlp_int_max(void)
+static int hlp_int_max(void)
 {
 	printf("%d\n", INT_MAX);
 	return 0;
 }
 
-int
-hlp_uint_max(void)
+static int hlp_uint_max(void)
 {
 	printf("%u\n", UINT_MAX);
 	return 0;
 }
 
-int
-hlp_long_max(void)
+static int hlp_long_max(void)
 {
 	printf("%ld\n", LONG_MAX);
 	return 0;
 }
 
-int
-hlp_ulong_max(void)
+static int hlp_ulong_max(void)
 {
 	printf("%lu\n", ULONG_MAX);
 	return 0;
 }
 
-int
-hlp_ulong_max32(void)
+static int hlp_ulong_max32(void)
 {
 #if __WORDSIZE == 64
 	printf("%lu\n", ULONG_MAX >> 32);
@@ -90,7 +82,7 @@ hlp_ulong_max32(void)
 	return 0;
 }
 
-mntHlpfnc hlps[] =
+static mntHlpfnc hlps[] =
 {
 	{ "WORDSIZE",	hlp_wordsize	},
 	{ "pagesize",	hlp_pagesize	},
@@ -103,8 +95,7 @@ mntHlpfnc hlps[] =
 	{ NULL, NULL }
 };
 
-int
-main(int argc, char **argv)
+int main(int argc, char **argv)
 {
 	int re = 0;
 	mntHlpfnc *fn;
