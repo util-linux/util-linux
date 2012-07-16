@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
 	do {
 		if (*argv) {
 			if ((fp = fopen(*argv, "r")) == NULL) {
-				warn(_("%s: open failed"), *argv );
+				warn(_("cannot open %s"), *argv );
 				rval = EXIT_FAILURE;
 				++argv;
 				continue;

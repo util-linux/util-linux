@@ -1820,7 +1820,7 @@ print_raw_table(void) {
 	    if ((fp = fopen(fname, "w")) == NULL) {
 		char errstr[LINE_LENGTH];
 		snprintf(errstr, sizeof(errstr),
-			 _("Cannot open file '%s'"), fname);
+			 _("cannot open %s"), fname);
 		print_warning(errstr);
 		return;
 	    }
@@ -1938,7 +1938,7 @@ print_p_info(void) {
 	if (to_file) {
 	    if ((fp = fopen(fname, "w")) == NULL) {
 		char errstr[LINE_LENGTH];
-		snprintf(errstr, LINE_LENGTH, _("Cannot open file '%s'"), fname);
+		snprintf(errstr, LINE_LENGTH, _("cannot open %s"), fname);
 		print_warning(errstr);
 		return;
 	    }
@@ -2022,7 +2022,7 @@ print_part_table(void) {
 	if (to_file) {
 	    if ((fp = fopen(fname, "w")) == NULL) {
 		char errstr[LINE_LENGTH];
-		snprintf(errstr, LINE_LENGTH, _("Cannot open file '%s'"), fname);
+		snprintf(errstr, LINE_LENGTH, _("cannot open %s"), fname);
 		print_warning(errstr);
 		return;
 	    }

@@ -121,7 +121,7 @@ int main(int argc, char *argv[])
 		err(MESG_EXIT_FAILURE, _("ttyname failed"));
 
 	if (stat(tty, &sb) < 0)
-		err(MESG_EXIT_FAILURE, _("stat %s failed"), tty);
+		err(MESG_EXIT_FAILURE, _("stat failed %s"), tty);
 
 	if (!*argv) {
 		if (sb.st_mode & (S_IWGRP | S_IWOTH)) {

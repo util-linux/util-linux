@@ -264,7 +264,7 @@ static void edit_file(int is_shadow)
 
 	passwd_file = open(orig_file, O_RDONLY, 0);
 	if (passwd_file < 0)
-		err(EXIT_FAILURE, "%s: %s", _("cannot open file"), orig_file);
+		err(EXIT_FAILURE, _("cannot open %s"), orig_file);
 	tmp_fd = pw_tmpfile(passwd_file);
 
 	if (fstat(fileno(tmp_fd), &begin))

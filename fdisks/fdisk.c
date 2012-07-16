@@ -1762,7 +1762,7 @@ static void print_partition_table_from_option(char *device, unsigned long sector
 
 	struct fdisk_context *cxt = fdisk_new_context_from_filename(device, 1);	/* read-only */
 	if (!cxt)
-		err(EXIT_FAILURE, _("unable to open %s"), device);
+		err(EXIT_FAILURE, _("cannot open %s"), device);
 	if (sector_size)  /* passed -b option, override autodiscovery */
 		cxt->phy_sector_size = cxt->sector_size = sector_size;
 	/* passed CHS option(s), override autodiscovery */
@@ -1949,7 +1949,7 @@ static sector_t get_dev_blocks(char *dev)
 	sector_t size;
 
 	if ((fd = open(dev, O_RDONLY)) < 0)
-		err(EXIT_FAILURE, _("unable to open %s"), dev);
+		err(EXIT_FAILURE, _("cannot open %s"), dev);
 	if (blkdev_get_sectors(fd, &size) == -1) {
 		close(fd);
 		err(EXIT_FAILURE, _("BLKGETSIZE ioctl failed on %s"), dev);
@@ -2059,26 +2059,25 @@ int main(int argc, char **argv)
 		exit(EXIT_SUCCESS);
 	}
 
-	if (argc-optind == 1) {
-		cxt = fdisk_new_context_from_filename(argv[optind], 0);
-		if (!cxt)
-			err(EXIT_FAILURE, _("unable to open %s"), argv[optind]);
-		if (sector_size) /* passed -b option, override autodiscovery */
-			cxt->phy_sector_size = cxt->sector_size = sector_size;
-		/* passed CHS option(s), override autodiscovery */
-		if (user_cylinders)
-			cxt->geom.cylinders = user_cylinders;
-		if (user_heads) {
-			cxt->geom.heads = user_heads;
-			fdisk_geom_set_cyls(cxt);
-		}
-		if (user_sectors) {
-			cxt->geom.sectors = user_sectors;
-			fdisk_geom_set_cyls(cxt);
-		}
-	}
-	else
+	if (argc-optind != 1)
 		usage(stderr);
+
+	cxt = fdisk_new_context_from_filename(argv[optind], 0);
+	if (!cxt)
+		err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
+	if (sector_size)	/* passed -b option, override autodiscovery */
+		cxt->phy_sector_size = cxt->sector_size = sector_size;
+	/* passed CHS option(s), override autodiscovery */
+	if (user_cylinders)
+		cxt->geom.cylinders = user_cylinders;
+	if (user_heads) {
+		cxt->geom.heads = user_heads;
+		fdisk_geom_set_cyls(cxt);
+	}
+	if (user_sectors) {
+		cxt->geom.sectors = user_sectors;
+		fdisk_geom_set_cyls(cxt);
+	}
 
 	print_welcome();
 

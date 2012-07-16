@@ -102,11 +102,6 @@ static bool _pam_cred_established;
 static sig_atomic_t volatile caught_signal = false;
 static pam_handle_t *pamh = NULL;
 
-enum {
-  VERSION_OPTION = CHAR_MAX + 1,
-  HELP_OPTION
-};
-
 static struct option const longopts[] =
 {
   {"command", required_argument, NULL, 'c'},
@@ -115,8 +110,8 @@ static struct option const longopts[] =
   {"login", no_argument, NULL, 'l'},
   {"preserve-environment", no_argument, NULL, 'p'},
   {"shell", required_argument, NULL, 's'},
-  {"help", no_argument, 0, HELP_OPTION},
-  {"version", no_argument, 0, VERSION_OPTION},
+  {"help", no_argument, 0, 'h'},
+  {"version", no_argument, 0, 'V'},
   {NULL, 0, NULL, 0}
 };
 
@@ -647,7 +642,7 @@ restricted_shell (const char *shell)
   return true;
 }
 
-void
+static void __attribute__((__noreturn__))
 usage (int status)
 {
   if (status != EXIT_SUCCESS)
@@ -655,23 +650,27 @@ usage (int status)
 	     program_invocation_short_name);
   else
     {
-      printf (_("Usage: %s [OPTION]... [-] [USER [ARG]...]\n"), program_invocation_short_name);
+      fputs(USAGE_HEADER, stdout);
+      printf (_(" %s [options] [-] [USER [arg]...]\n"), program_invocation_short_name);
+      fputs (_("\n\
+ Change the effective user id and group id to that of USER.\n\
+ A mere - implies -l.   If USER not given, assume root.\n"), stdout);
+      fputs(USAGE_OPTIONS, stdout);
       fputs (_("\
-Change the effective user id and group id to that of USER.\n\
-\n\
-  -, -l, --login               make the shell a login shell\n\
-  -c, --command=COMMAND        pass a single COMMAND to the shell with -c\n\
-  --session-command=COMMAND    pass a single COMMAND to the shell with -c\n\
-                               and do not create a new session\n\
-  -f, --fast                   pass -f to the shell (for csh or tcsh)\n\
-  -m, --preserve-environment   do not reset environment variables\n\
-  -p                           same as -m\n\
-  -s, --shell=SHELL            run SHELL if /etc/shells allows it\n\
-      --help     display this help and exit\n\
-      --version  output version information and exit\n\
-\n\
-A mere - implies -l.   If USER not given, assume root.\n\
+ -, -l, --login               make the shell a login shell\n\
+ -c, --command <command>      pass a single command to the shell with -c\n\
+ --session-command <command>  pass a single command to the shell with -c\n\
+                              and do not create a new session\n\
+ -f, --fast                   pass -f to the shell (for csh or tcsh)\n\
+ -m, --preserve-environment   do not reset environment variables\n\
+ -p                           same as -m\n\
+ -s, --shell <shell>          run shell if /etc/shells allows it\n\
 "), stdout);
+
+      fputs(USAGE_SEPARATOR, stdout);
+      fputs(USAGE_HELP, stdout);
+      fputs(USAGE_VERSION, stdout);
+      printf(USAGE_MAN_TAIL("su(1)"));
     }
   exit (status);
 }
@@ -701,7 +700,7 @@ main (int argc, char **argv)
   simulate_login = false;
   change_environment = true;
 
-  while ((optc = getopt_long (argc, argv, "c:flmps:", longopts, NULL)) != -1)
+  while ((optc = getopt_long (argc, argv, "c:flmps:hV", longopts, NULL)) != -1)
     {
       switch (optc)
 	{
@@ -731,10 +730,10 @@ main (int argc, char **argv)
 	  shell = optarg;
 	  break;
 
-	case HELP_OPTION:
+	case 'h':
 	  usage(0);
 
-	case VERSION_OPTION:
+	case 'V':
 	  printf(UTIL_LINUX_VERSION);
 	  exit(EXIT_SUCCESS);
 

@@ -59,7 +59,7 @@ static void verify_disk(char *name)
 	printf(_("Verifying ... "));
 	fflush(stdout);
 	if ((fd = open(name, O_RDONLY)) < 0)
-		err(EXIT_FAILURE, _("cannot open file %s"), name);
+		err(EXIT_FAILURE, _("cannot open %s"), name);
 	for (cyl = 0; cyl < param.track; cyl++) {
 		int read_bytes;
 
@@ -143,7 +143,7 @@ int main(int argc, char **argv)
 	if (argc < 1)
 		usage(stderr);
 	if (stat(argv[0], &st) < 0)
-		err(EXIT_FAILURE, _("cannot stat file %s"), argv[0]);
+		err(EXIT_FAILURE, _("stat failed %s"), argv[0]);
 	if (!S_ISBLK(st.st_mode))
 		/* do not test major - perhaps this was an USB floppy */
 		errx(EXIT_FAILURE, _("%s: not a block device"), argv[0]);
@@ -152,7 +152,7 @@ int main(int argc, char **argv)
 
 	ctrl = open(argv[0], O_WRONLY);
 	if (ctrl < 0)
-		err(EXIT_FAILURE, _("cannot open file %s"), argv[0]);
+		err(EXIT_FAILURE, _("cannot open %s"), argv[0]);
 	if (ioctl(ctrl, FDGETPRM, (long)&param) < 0)
 		err(EXIT_FAILURE, _("Could not determine current format type"));
 

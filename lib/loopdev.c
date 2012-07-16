@@ -1450,7 +1450,7 @@ static void test_loop_info(const char *device, int flags, int debug)
 	uint64_t u64;
 
 	if (loopcxt_init(&lc, flags))
-		return
+		return;
 	loopcxt_enable_debug(&lc, debug);
 
 	if (loopcxt_set_device(&lc, device))

@@ -133,13 +133,13 @@ int main(int argc, char **argv)
 	}
 
 	if (stat(path, &sb) == -1)
-		err(EXIT_FAILURE, _("%s: stat failed"), path);
+		err(EXIT_FAILURE, _("stat failed %s"), path);
 	if (!S_ISDIR(sb.st_mode))
 		errx(EXIT_FAILURE, _("%s: not a directory"), path);
 
 	fd = open(path, O_RDONLY);
 	if (fd < 0)
-		err(EXIT_FAILURE, _("%s: open failed"), path);
+		err(EXIT_FAILURE, _("cannot open %s"), path);
 
 	if (ioctl(fd, FITRIM, &range))
 		err(EXIT_FAILURE, _("%s: FITRIM ioctl failed"), path);

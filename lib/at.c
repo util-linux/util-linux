@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 
 	dir = opendir(dirname);
 	if (!dir)
-		err(EXIT_FAILURE, "%s: open failed", dirname);
+		err(EXIT_FAILURE, "cannot open %s", dirname);
 
 	while ((d = readdir(dir))) {
 		struct stat st;

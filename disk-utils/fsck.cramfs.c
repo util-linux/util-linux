@@ -139,11 +139,11 @@ static void test_super(int *start, size_t * length)
 
 	/* find the physical size of the file or block device */
 	if (stat(filename, &st) < 0)
-		err(FSCK_EX_ERROR, _("stat failed: %s"), filename);
+		err(FSCK_EX_ERROR, _("stat failed %s"), filename);
 
 	fd = open(filename, O_RDONLY);
 	if (fd < 0)
-		err(FSCK_EX_ERROR, _("open failed: %s"), filename);
+		err(FSCK_EX_ERROR, _("cannot open %s"), filename);
 
 	if (S_ISBLK(st.st_mode)) {
 		unsigned long long bytes;
@@ -495,7 +495,7 @@ static void do_file(char *path, struct cramfs_inode *i)
 	if (opt_extract) {
 		fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, i->mode);
 		if (fd < 0)
-			err(FSCK_EX_ERROR, _("open failed: %s"), path);
+			err(FSCK_EX_ERROR, _("cannot open %s"), path);
 	}
 	if (i->size)
 		do_uncompress(path, fd, offset, i->size);

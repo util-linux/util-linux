@@ -766,7 +766,7 @@ int main(int argc, char **argv)
 		device = argv[optind];
 
 		if (stat(device, &sb))
-			err(EXIT_FAILURE, _("%s: stat failed"), device);
+			err(EXIT_FAILURE, _("stat failed %s"), device);
 
 		part_devno = sb.st_rdev;
 
@@ -827,7 +827,7 @@ int main(int argc, char **argv)
 			errx(EXIT_FAILURE, _("%s: not a block device"), wholedisk);
 	}
 	if ((fd = open(wholedisk, O_RDONLY)) == -1)
-		err(EXIT_FAILURE, _("%s: open failed"), wholedisk);
+		err(EXIT_FAILURE, _("cannot open %s"), wholedisk);
 
 	if (what == ACT_DELETE)
 		rc = del_parts(fd, wholedisk, disk_devno, lower, upper);

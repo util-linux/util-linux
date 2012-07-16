@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 
 
 	if ((fd = open(argv[1], O_RDONLY)) < 0)
-		err(EXIT_FAILURE, _("%s: open failed"), argv[1]);
+		err(EXIT_FAILURE, _("cannot open %s"), argv[1]);
 
 	if (partx_del_partition(fd,
 			strtou32_or_err(argv[2], _("invalid partition number argument"))))

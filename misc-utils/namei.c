@@ -228,7 +228,7 @@ dotdot_stat(const char *dirname, struct stat *st)
 	memcpy(path + len, DOTDOTDIR, sizeof(DOTDOTDIR));
 
 	if (stat(path, st))
-		err(EXIT_FAILURE, _("could not stat '%s'"), path);
+		err(EXIT_FAILURE, _("stat failed %s"), path);
 	free(path);
 	return st;
 }

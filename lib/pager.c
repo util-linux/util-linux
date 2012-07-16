@@ -17,7 +17,8 @@
 #include "xalloc.h"
 #include "nls.h"
 
-static struct child_process pager_process;
+void setup_pager(void);
+
 static const char *pager_argv[] = { "sh", "-c", NULL, NULL };
 
 struct child_process {
@@ -29,6 +30,7 @@ struct child_process {
 	unsigned no_stdin:1;
 	void (*preexec_cb)(void);
 };
+static struct child_process pager_process;
 
 static inline void close_pair(int fd[2])
 {

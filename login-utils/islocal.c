@@ -84,8 +84,7 @@ int is_local(const char *user)
 	int rv;
 	if ((rv = is_local_in_file(user, _PATH_PASSWD)) < 0) {
 		perror(_PATH_PASSWD);
-		fprintf(stderr, _("Failed to open %s for reading, exiting."),
-			_PATH_PASSWD);
+		fprintf(stderr, _("cannot open %s"), _PATH_PASSWD);
 		exit(1);
 	} else {
 		return rv;

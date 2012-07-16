@@ -116,7 +116,7 @@ static int is_wakeup_enabled(const char *devname)
 	snprintf(buf, sizeof buf, RTC_PATH, devname + strlen("/dev/"));
 	f = fopen(buf, "r");
 	if (!f) {
-		warn(_("open failed: %s"), buf);
+		warn(_("cannot open %s"), buf);
 		return 0;
 	}
 	s = fgets(buf, sizeof buf, f);
@@ -276,7 +276,7 @@ static void suspend_system(const char *suspend)
 	FILE	*f = fopen(SYS_POWER_STATE_PATH, "w");
 
 	if (!f) {
-		warn(_("open failed: %s"), SYS_POWER_STATE_PATH);
+		warn(_("cannot open %s"), SYS_POWER_STATE_PATH);
 		return;
 	}
 
@@ -514,7 +514,7 @@ int main(int argc, char **argv)
 	fd = open(devname, O_RDONLY);
 #endif
 	if (fd < 0)
-		err(EXIT_FAILURE, _("open failed: %s"), devname);
+		err(EXIT_FAILURE, _("cannot open %s"), devname);
 
 	/* relative or absolute alarm time, normalized to time_t */
 	if (get_basetimes(fd) < 0)

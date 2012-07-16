@@ -307,7 +307,7 @@ static int swap_rewrite_signature(const char *devname, unsigned int pagesize)
 
 	fd = open(devname, O_WRONLY);
 	if (fd == -1) {
-		warn(_("%s: open failed"), devname);
+		warn(_("cannot open %s"), devname);
 		return -1;
 	}
 
@@ -443,7 +443,7 @@ static int swapon_checks(const char *special)
 	unsigned long long devsize = 0;
 
 	if (stat(special, &st) < 0) {
-		warn(_("%s: stat failed"), special);
+		warn(_("stat failed %s"), special);
 		goto err;
 	}
 
@@ -474,7 +474,7 @@ static int swapon_checks(const char *special)
 
 	fd = open(special, O_RDONLY);
 	if (fd == -1) {
-		warn(_("%s: open failed"), special);
+		warn(_("cannot open %s"), special);
 		goto err;
 	}
 

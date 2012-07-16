@@ -123,7 +123,7 @@ static void isosize(char *filenamep, int xflag, long divisor)
 	struct iso_primary_descriptor ipd;
 
 	if ((fd = open(filenamep, O_RDONLY)) < 0)
-		err(EXIT_FAILURE, _("failed to open %s"), filenamep);
+		err(EXIT_FAILURE, _("cannot open %s"), filenamep);
 
 	if (lseek(fd, 16 << 11, 0) == (off_t) - 1)
 		err(EXIT_FAILURE, _("seek error on %s"), filenamep);
