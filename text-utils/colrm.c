@@ -70,7 +70,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-int process_input(unsigned long first, unsigned long last)
+static int process_input(unsigned long first, unsigned long last)
 {
 	unsigned long ct = 0;
 	wint_t c;
