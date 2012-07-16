@@ -98,8 +98,6 @@ AC_C_CONST
 AC_C_VOLATILE
 AC_C_BIGENDIAN
 
-UL_PROG_CLANG
-
 dnl Compiler warnings
 UL_WARN_ADD([-Wextra])
 UL_WARN_ADD([-Wno-missing-field-initializers])
@@ -112,9 +110,9 @@ UL_WARN_ADD([-fno-common])
 UL_WARN_ADD([-Wunused-result])
 UL_WARN_ADD([-Wmissing-prototypes])
 UL_WARN_ADD([-Wunused-variable])
-UL_WARN_ADD([-Wmissing-parameter-type], [clang])
-UL_WARN_ADD([-Wunused-but-set-parameter], [clang])
-UL_WARN_ADD([-Wunused-but-set-variable], [clang])
+UL_WARN_ADD([-Wmissing-parameter-type])
+UL_WARN_ADD([-Wunused-but-set-parameter])
+UL_WARN_ADD([-Wunused-but-set-variable])
 UL_WARN_ADD([-Wredundant-decls])
 AC_SUBST([WARN_CFLAGS])
 
