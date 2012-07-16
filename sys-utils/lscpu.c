@@ -246,7 +246,8 @@ static struct lscpu_coldesc coldescs[] =
 	[COL_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU") }
 };
 
-static int column_name_to_id(const char *name, size_t namesz)
+static int
+column_name_to_id(const char *name, size_t namesz)
 {
 	size_t i;
 
@@ -265,7 +266,8 @@ static int column_name_to_id(const char *name, size_t namesz)
  *
  *	"<pattern>   : <key>"
  */
-int lookup(char *line, char *pattern, char **value)
+static int
+lookup(char *line, char *pattern, char **value)
 {
 	char *p, *v;
 	int len = strlen(pattern);
