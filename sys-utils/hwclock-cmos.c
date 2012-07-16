@@ -82,12 +82,12 @@ int inb(int c __attribute__ ((__unused__)))
 extern unsigned int inb(unsigned long port);
 extern void outb(unsigned char b, unsigned long port);
 #else
-void outb(int a __attribute__ ((__unused__)),
+static void outb(int a __attribute__ ((__unused__)),
 	  int b __attribute__ ((__unused__)))
 {
 }
 
-int inb(int c __attribute__ ((__unused__)))
+static int inb(int c __attribute__ ((__unused__)))
 {
 	return 0;
 }

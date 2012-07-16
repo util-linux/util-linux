@@ -2,6 +2,7 @@
  * kd.c - KDGHWCLK stuff, possibly m68k only, likely to be deprecated
  */
 
+# include "hwclock.h"
 
 #ifdef __m68k__
 
@@ -12,8 +13,6 @@
 
 # include "nls.h"
 # include "usleep.h"
-
-# include "hwclock.h"
 
 /* Get defines for KDGHWCLK and KDSHWCLK (m68k) */
 # include <linux/kd.h>
