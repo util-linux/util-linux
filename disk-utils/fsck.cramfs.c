@@ -120,7 +120,7 @@ static void __attribute__((__noreturn__)) usage(int status)
 	exit(status);
 }
 
-int get_superblock_endianness(uint32_t magic)
+static int get_superblock_endianness(uint32_t magic)
 {
 	if (magic == CRAMFS_MAGIC) {
 		cramfs_is_big_endian = HOST_IS_BIG_ENDIAN;
