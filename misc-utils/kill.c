@@ -140,13 +140,13 @@ struct signv {
 };
 
 extern char *mybasename(char *);
-int signame_to_signum (char *sig);
-int arg_to_signum (char *arg, int mask);
-void nosig (char *name);
-void printsig (int sig);
-void printsignals (FILE *fp);
-int usage (int status);
-int kill_verbose (char *procname, int pid, int sig);
+
+static int arg_to_signum (char *arg, int mask);
+static void nosig (char *name);
+static void printsig (int sig);
+static void printsignals (FILE *fp);
+static int usage (int status);
+static int kill_verbose (char *procname, int pid, int sig);
 
 static char *progname;
 
@@ -295,7 +295,7 @@ int main (int argc, char *argv[])
 }
 
 #ifdef SIGRTMIN
-int rtsig_to_signum(char *sig)
+static int rtsig_to_signum(char *sig)
 {
 	int num, maxi = 0;
 	char *ep = NULL;
@@ -324,7 +324,7 @@ int rtsig_to_signum(char *sig)
 }
 #endif
 
-int signame_to_signum (char *sig)
+static int signame_to_signum (char *sig)
 {
     size_t n;
 
@@ -344,7 +344,7 @@ int signame_to_signum (char *sig)
     return (-1);
 }
 
-int arg_to_signum (char *arg, int maskbit)
+static int arg_to_signum (char *arg, int maskbit)
 {
     int numsig;
     char *ep;
@@ -357,16 +357,16 @@ int arg_to_signum (char *arg, int maskbit)
 	    return (-1);
 	return (numsig);
     }
-    return (signame_to_signum (arg));
+    return signame_to_signum (arg);
 }
 
-void nosig (char *name)
+static void nosig (char *name)
 {
     fprintf (stderr, _("%s: unknown signal %s; valid signals:\n"), progname, name);
     printsignals (stderr);
 }
 
-void printsig (int sig)
+static void printsig (int sig)
 {
     size_t n;
 
@@ -385,7 +385,7 @@ void printsig (int sig)
     printf("%d\n", sig);
 }
 
-void printsignals (FILE *fp)
+static void printsignals (FILE *fp)
 {
     size_t n, lth, lpos = 0;
 
@@ -405,7 +405,7 @@ void printsignals (FILE *fp)
     fputc ('\n', fp);
 }
 
-int usage (int status)
+static int usage (int status)
 {
     FILE *fp;
 
@@ -415,7 +415,7 @@ int usage (int status)
     return status;
 }
 
-int kill_verbose (char *procname, int pid, int sig)
+static int kill_verbose (char *procname, int pid, int sig)
 {
     int rc;
 
