@@ -39,7 +39,7 @@ void super_toggle_endianness(int big_endian, struct cramfs_super *super)
 	}
 }
 
-void inode_toggle_endianness(int input_big_endian, int output_big_endian,
+static void inode_toggle_endianness(int input_big_endian, int output_big_endian,
 			     struct cramfs_inode *inode_in,
 			     struct cramfs_inode *inode_out)
 {
