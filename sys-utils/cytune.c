@@ -149,7 +149,7 @@ static void summary(int sig)
 	cc->timeout_value = 0;
 }
 
-void query_tty_stats(int argc, char **argv, int interval, int numfiles,
+static void query_tty_stats(int argc, char **argv, int interval, int numfiles,
 		     unsigned long *threshold_value,
 		     unsigned long *timeout_value)
 {
