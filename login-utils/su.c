@@ -675,6 +675,7 @@ usage (int status)
   exit (status);
 }
 
+static
 void load_config(void)
 {
   logindefs_load_file("/etc/default/su");
