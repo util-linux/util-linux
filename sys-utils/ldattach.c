@@ -94,7 +94,7 @@ static const struct ld_table ld_iflags[] =
 	{ NULL,		0 }
 };
 
-void dbg(char *fmt, ...)
+static void dbg(char *fmt, ...)
 {
 	va_list args;
 
