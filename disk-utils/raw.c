@@ -63,7 +63,7 @@ static void __attribute__ ((__noreturn__)) usage(int err)
 	exit(err);
 }
 
-long strtol_octal_or_err(const char *str, const char *errmesg)
+static long strtol_octal_or_err(const char *str, const char *errmesg)
 {
 	long num;
 	char *end = NULL;
