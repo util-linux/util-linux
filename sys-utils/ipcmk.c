@@ -35,7 +35,7 @@
 #include "strutils.h"
 #include "closestream.h"
 
-key_t create_key(void)
+static key_t create_key(void)
 {
 	struct timeval now;
 	gettimeofday(&now, NULL);
@@ -43,19 +43,19 @@ key_t create_key(void)
 	return random();
 }
 
-int create_shm(size_t size, int permission)
+static int create_shm(size_t size, int permission)
 {
 	key_t key = create_key();
 	return shmget(key, size, permission | IPC_CREAT);
 }
 
-int create_msg(int permission)
+static int create_msg(int permission)
 {
 	key_t key = create_key();
 	return msgget(key, permission | IPC_CREAT);
 }
 
-int create_sem(int nsems, int permission)
+static int create_sem(int nsems, int permission)
 {
 	key_t key = create_key();
 	return semget(key, nsems, permission | IPC_CREAT);
