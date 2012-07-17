@@ -8,7 +8,7 @@ lscpu
 
 losetup
 -------
-  - add new option --pretty and --output <columns> to print details about
+  - add new option --list and --output <columns> to print details about
     one or all (-a) devices by lib/tt.c output. For example people hate
     the hex devno in the default output.
 
@@ -147,30 +147,18 @@ login-utils:
 -----------
 
  - (!) merge newgrp from shadow-utils
- - (!) enable login utils by default
 
 libblkid
 --------
 
+ - improve DBG() debug macro, see new imeplemntation in libmount/src/mountP.h
+
  - (!) don't use internally blkid_loff_t, rather use off_t, size_t, ssize_t,
        stdint.h types and so on...
-
- - add -<BE|LE> suffix to test images for native-endian filesystems (e.g. swap)
-   and add support for such functionality to tests/ts/blkid/low-probe
 
  - add FSSIZE value  -- filesystem size (klibc requirement)
 
  - (!) add support for dasd PT (used for example on s390)
-
- - (!!!) support PARTUUID= tag
-
-   * the partitions probing is already supported by low-level part of the
-     library, but it's necessary add support for this tag also to high-level
-     blkid_cache and blkid_evaluate_* APIs
-
-   * add blkid -P <PARTUUID>
-
-   * add PARTUUID to wipefs output
 
 fdisk(s)
 --------
