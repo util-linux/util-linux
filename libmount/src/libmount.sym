@@ -244,4 +244,6 @@ global:
 	mnt_fs_get_swaptype;
 	mnt_fs_get_tid;
 	mnt_fs_get_usedsize;
+	mnt_context_is_swapmatch;
+	mnt_context_disable_swapmatch;
 } MOUNT_2.21;

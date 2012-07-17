@@ -64,7 +64,7 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 
 try_loopdev:
 	fs = mnt_table_find_target(mtab, tgt, MNT_ITER_BACKWARD);
-	if (!fs) {
+	if (!fs && mnt_context_is_swapmatch(cxt)) {
 		/* maybe the option is source rather than target (mountpoint) */
 		fs = mnt_table_find_source(mtab, tgt, MNT_ITER_BACKWARD);
 

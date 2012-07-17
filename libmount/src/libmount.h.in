@@ -428,6 +428,7 @@ extern int mnt_context_enable_force(struct libmnt_context *cxt, int enable);
 extern int mnt_context_enable_verbose(struct libmnt_context *cxt, int enable);
 extern int mnt_context_enable_loopdel(struct libmnt_context *cxt, int enable);
 extern int mnt_context_enable_fork(struct libmnt_context *cxt, int enable);
+extern int mnt_context_disable_swapmatch(struct libmnt_context *cxt, int disable);
 
 extern int mnt_context_get_optsmode(struct libmnt_context *cxt);
 extern int mnt_context_is_lazy(struct libmnt_context *cxt);
@@ -440,6 +441,7 @@ extern int mnt_context_is_verbose(struct libmnt_context *cxt);
 extern int mnt_context_is_loopdel(struct libmnt_context *cxt);
 extern int mnt_context_is_nohelpers(struct libmnt_context *cxt);
 extern int mnt_context_is_nocanonicalize(struct libmnt_context *cxt);
+extern int mnt_context_is_swapmatch(struct libmnt_context *cxt);
 
 extern int mnt_context_is_fork(struct libmnt_context *cxt);
 extern int mnt_context_is_parent(struct libmnt_context *cxt);

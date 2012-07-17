@@ -335,6 +335,7 @@ struct libmnt_context
 #define MNT_FL_NOCANONICALIZE	(1 << 9)
 #define MNT_FL_RDONLY_UMOUNT	(1 << 11)	/* remount,ro after EBUSY umount(2) */
 #define MNT_FL_FORK		(1 << 12)
+#define MNT_FL_NOSWAPMATCH	(1 << 13)
 
 #define MNT_FL_EXTERN_FS	(1 << 15)	/* cxt->fs is not private */
 #define MNT_FL_EXTERN_FSTAB	(1 << 16)	/* cxt->fstab is not private */

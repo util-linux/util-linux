@@ -24,6 +24,7 @@ mnt_context_apply_fstab
 mnt_context_disable_canonicalize
 mnt_context_disable_helpers
 mnt_context_disable_mtab
+mnt_context_disable_swapmatch
 mnt_context_enable_fake
 mnt_context_enable_force
 mnt_context_enable_fork
@@ -32,7 +33,6 @@ mnt_context_enable_loopdel
 mnt_context_enable_rdonly_umount
 mnt_context_enable_sloppy
 mnt_context_enable_verbose
-mnt_context_tab_applied
 mnt_context_get_cache
 mnt_context_get_fs
 mnt_context_get_fstab
@@ -66,6 +66,7 @@ mnt_context_is_parent
 mnt_context_is_rdonly_umount
 mnt_context_is_restricted
 mnt_context_is_sloppy
+mnt_context_is_swapmatch
 mnt_context_is_verbose
 mnt_context_reset_status
 mnt_context_set_cache
@@ -86,6 +87,7 @@ mnt_context_set_target
 mnt_context_set_user_mflags
 mnt_context_strerror
 mnt_context_syscall_called
+mnt_context_tab_applied
 mnt_context_wait_for_children
 </SECTION>
 
