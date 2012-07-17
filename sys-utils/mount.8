@@ -99,7 +99,19 @@ If only directory or device is given, for example:
 
 .RE
 then mount looks for a mountpoint and if not found then for a device in the
-/etc/fstab file.
+/etc/fstab file. It's possible to use
+.B --target 
+or
+.B --source
+options to avoid ambivalent interpretation of the given argument. For example
+.RS
+
+.br
+.BI "mount --target /mountpoint"
+.br
+
+.RE
+
 
 .B The listing and help.
 .RS
@@ -557,6 +569,10 @@ Tolerate sloppy mount options rather than failing. This will ignore
 mount options not supported by a filesystem type. Not all filesystems
 support this option. This option exists for support of the Linux
 autofs\-based automounter.
+.IP "\fB\-\-source \fIsrc\fP"
+If only one argument for the mount command is given then the argument might be
+interpreted as target (mountpoint) or source (device). This option allows to
+explicitly define that the argument is mount source.
 .IP "\fB\-r, \-\-read\-only\fP"
 Mount the filesystem read-only. A synonym is
 .BR "\-o ro" .
@@ -733,6 +749,10 @@ mounts all filesystems except those of type
 and
 .IR ext .
 .RE
+.IP "\fB\-\-target \fIdir\fP"
+If only one argument for the mount command is given then the argument might be
+interpreted as target (mountpoint) or source (device). This option allows to
+explicitly define that the argument is mount target.
 .IP "\fB\-O, \-\-test-opts \fIopts\fP"
 Used in conjunction with
 .BR \-a ,
