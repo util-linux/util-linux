@@ -177,6 +177,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -l, --level <list>          restrict output to defined levels\n"
 		" -n, --console-level <level> set level of messages printed to console\n"
 		" -r, --raw                   print the raw message buffer\n"
+		" -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"
 		" -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"
 		" -T, --ctime                 show human readable timestamp (could be \n"
 		"                             inaccurate if you have used SUSPEND/RESUME)\n"
@@ -716,7 +717,7 @@ int main(int argc, char *argv[])
 	static struct dmesg_control ctl = {
 		.filename = NULL,
 		.action = SYSLOG_ACTION_READ_ALL,
-		.method = DMESG_METHOD_SYSLOG,
+		.method = DMESG_METHOD_KMSG,
 		.kmsg = -1,
 	};
 
@@ -742,6 +743,7 @@ int main(int argc, char *argv[])
 		{ "help",          no_argument,	      NULL, 'h' },
 		{ "kernel",        no_argument,       NULL, 'k' },
 		{ "level",         required_argument, NULL, 'l' },
+		{ "syslog",        no_argument,       NULL, 'S' },
 		{ "raw",           no_argument,       NULL, 'r' },
 		{ "read-clear",    no_argument,	      NULL, 'c' },
 		{ "show-delta",    no_argument,	      NULL, 'd' },
@@ -757,7 +759,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "CcDdEF:f:hkl:n:rs:TtuVx",
+	while ((c = getopt_long(argc, argv, "CcDdEF:f:hkl:n:rSs:TtuVx",
 				longopts, NULL)) != -1) {
 		switch (c) {
 		case 'C':
@@ -809,6 +811,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'r':
 			ctl.raw = 1;
+			break;
+		case 'S':
+			ctl.method = DMESG_METHOD_SYSLOG;
 			break;
 		case 's':
 			ctl.bufsize = strtou32_or_err(optarg,
