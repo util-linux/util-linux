@@ -118,6 +118,7 @@ struct dmesg_control {
 	 * printed) pages are always unmapped. The result is that we have in
 	 * memory only the currently used page(s).
 	 */
+	char		*filename;
 	char		*mmap_buff;
 	size_t		pagesize;
 
@@ -352,20 +353,23 @@ static time_t get_boot_time(void)
 /*
  * mmap file with the log
  */
-static ssize_t read_file_buffer(struct dmesg_control *ctl,
-				char **buf, const char *filename)
+static ssize_t read_file_buffer(struct dmesg_control *ctl, char **buf)
 {
 	struct stat st;
-	int fd = open(filename, O_RDONLY);
+	int fd;
 
+	if (!ctl->filename)
+		return -1;
+
+	fd = open(ctl->filename, O_RDONLY);
 	if (fd < 0)
-		err(EXIT_FAILURE, _("cannot open %s"), filename);
+		err(EXIT_FAILURE, _("cannot open %s"), ctl->filename);
 	if (fstat(fd, &st))
-		err(EXIT_FAILURE, _("stat failed %s"), filename);
+		err(EXIT_FAILURE, _("stat failed %s"), ctl->filename);
 
 	*buf = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
 	if (*buf == MAP_FAILED)
-		err(EXIT_FAILURE, _("cannot mmap: %s"), filename);
+		err(EXIT_FAILURE, _("cannot mmap: %s"), ctl->filename);
 	ctl->mmap_buff = *buf;
 	ctl->pagesize = getpagesize();
 	close(fd);
@@ -659,13 +663,14 @@ static void print_buffer(const char *buf, size_t size,
 int main(int argc, char *argv[])
 {
 	char *buf = NULL;
-	const char *filename = NULL;
 	int  bufsize = 0;
 	ssize_t  n;
 	int  c;
 	int  console_level = 0;
 	int  cmd = -1;
-	static struct dmesg_control ctl;
+	static struct dmesg_control ctl = {
+		.filename = NULL
+	};
 
 	enum {
 		EXCL_NONE,
@@ -727,7 +732,7 @@ int main(int argc, char *argv[])
 			cmd = SYSLOG_ACTION_CONSOLE_ON;
 			break;
 		case 'F':
-			filename = optarg;
+			ctl.filename = optarg;
 			break;
 		case 'f':
 			ctl.fltr_fac = 1;
@@ -807,8 +812,8 @@ int main(int argc, char *argv[])
 	switch (cmd) {
 	case SYSLOG_ACTION_READ_ALL:
 	case SYSLOG_ACTION_READ_CLEAR:
-		if (filename)
-			n = read_file_buffer(&ctl, &buf, filename);
+		if (ctl.filename)
+			n = read_file_buffer(&ctl, &buf);
 		else  {
 			if (!bufsize)
 				bufsize = get_buffer_size();
@@ -817,7 +822,7 @@ int main(int argc, char *argv[])
 		}
 		if (n > 0)
 			print_buffer(buf, n, &ctl);
-		if (!filename)
+		if (!ctl.filename)
 			free(buf);
 		break;
 	case SYSLOG_ACTION_CLEAR:
@@ -833,7 +838,7 @@ int main(int argc, char *argv[])
 		break;
 	}
 
-	if (n < 0 && !filename)
+	if (n < 0 && !ctl.filename)
 		err(EXIT_FAILURE, _("klogctl failed"));
 
 	return EXIT_SUCCESS;
