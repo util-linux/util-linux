@@ -105,6 +105,13 @@ static const struct dmesg_name facility_names[] =
 	[FAC_BASE(LOG_FTP)]      = { "ftp",      N_("ftp daemon") },
 };
 
+/* supported methods to read message buffer
+ */
+enum {
+	DMESG_METHOD_SYSLOG,	/* klogctl() buffer */
+	DMESG_METHOD_MMAP	/* mmap file with records (see --file) */
+};
+
 struct dmesg_control {
 	/* bit arrays -- see include/bitops.h */
 	char levels[ARRAY_SIZE(level_names) / NBBY + 1];
@@ -112,6 +119,10 @@ struct dmesg_control {
 
 	struct timeval	lasttime;	/* last printed timestamp */
 	time_t		boot_time;	/* system boot time */
+
+	int		action;		/* SYSLOG_ACTION_* */
+	int		method;		/* DMESG_METHOD_* */
+	size_t		bufsize;	/* size of buffer created by read_buffer() */
 
 	/*
 	 * For the --file option we mmap whole file. The unnecessary (already
@@ -380,17 +391,15 @@ static ssize_t read_file_buffer(struct dmesg_control *ctl, char **buf)
 /*
  * Reads messages from kernel ring buffer
  */
-static int read_kernel_buffer(char **buf, size_t bufsize, int clear)
+static ssize_t read_kernel_buffer(struct dmesg_control *ctl, char **buf)
 {
 	size_t sz;
 	int rc = -1;
-	int cmd = clear ? SYSLOG_ACTION_READ_CLEAR :
-			  SYSLOG_ACTION_READ_ALL;
 
-	if (bufsize) {
-		sz = bufsize + 8;
+	if (ctl->bufsize) {
+		sz = ctl->bufsize + 8;
 		*buf = xmalloc(sz * sizeof(char));
-		rc = klogctl(cmd, *buf, sz);
+		rc = klogctl(ctl->action, *buf, sz);
 	} else {
 		sz = 16392;
 		while (1) {
@@ -405,11 +414,31 @@ static int read_kernel_buffer(char **buf, size_t bufsize, int clear)
 			sz *= 4;
 		}
 
-		if (rc > 0 && clear)
+		if (rc > 0 && ctl->action == SYSLOG_ACTION_READ_CLEAR)
 			rc = klogctl(SYSLOG_ACTION_READ_CLEAR, *buf, sz);
 	}
 
 	return rc;
+}
+
+
+static ssize_t read_buffer(struct dmesg_control *ctl, char **buf)
+{
+	ssize_t n = -1;
+
+	switch (ctl->method) {
+	case DMESG_METHOD_MMAP:
+		n = read_file_buffer(ctl, buf);
+		break;
+	case DMESG_METHOD_SYSLOG:
+		if (!ctl->bufsize)
+			ctl->bufsize = get_buffer_size();
+
+		n = read_kernel_buffer(ctl, buf);
+		break;
+	}
+
+	return n;
 }
 
 static int fwrite_hex(const char *buf, size_t size, FILE *out)
@@ -663,13 +692,12 @@ static void print_buffer(const char *buf, size_t size,
 int main(int argc, char *argv[])
 {
 	char *buf = NULL;
-	int  bufsize = 0;
 	ssize_t  n;
 	int  c;
 	int  console_level = 0;
-	int  cmd = -1;
 	static struct dmesg_control ctl = {
-		.filename = NULL
+		.filename = NULL,
+		.action = SYSLOG_ACTION_READ_ALL
 	};
 
 	enum {
@@ -714,25 +742,26 @@ int main(int argc, char *argv[])
 		switch (c) {
 		case 'C':
 			exclusive_option(&excl_any, EXCL_CLEAR, EXCL_ERROR);
-			cmd = SYSLOG_ACTION_CLEAR;
+			ctl.action = SYSLOG_ACTION_CLEAR;
 			break;
 		case 'c':
 			exclusive_option(&excl_any, EXCL_READ_CLEAR, EXCL_ERROR);
-			cmd = SYSLOG_ACTION_READ_CLEAR;
+			ctl.action = SYSLOG_ACTION_READ_CLEAR;
 			break;
 		case 'D':
 			exclusive_option(&excl_any, EXCL_CONSOLE_OFF, EXCL_ERROR);
-			cmd = SYSLOG_ACTION_CONSOLE_OFF;
+			ctl.action = SYSLOG_ACTION_CONSOLE_OFF;
 			break;
 		case 'd':
 			ctl.delta = 1;
 			break;
 		case 'E':
 			exclusive_option(&excl_any, EXCL_CONSOLE_ON, EXCL_ERROR);
-			cmd = SYSLOG_ACTION_CONSOLE_ON;
+			ctl.action = SYSLOG_ACTION_CONSOLE_ON;
 			break;
 		case 'F':
 			ctl.filename = optarg;
+			ctl.method = DMESG_METHOD_MMAP;
 			break;
 		case 'f':
 			ctl.fltr_fac = 1;
@@ -755,16 +784,17 @@ int main(int argc, char *argv[])
 			break;
 		case 'n':
 			exclusive_option(&excl_any, EXCL_CONSOLE_LEVEL, EXCL_ERROR);
-			cmd = SYSLOG_ACTION_CONSOLE_LEVEL;
+			ctl.action = SYSLOG_ACTION_CONSOLE_LEVEL;
 			console_level = parse_level(optarg, 0);
 			break;
 		case 'r':
 			ctl.raw = 1;
 			break;
 		case 's':
-			bufsize = strtou32_or_err(optarg, _("invalid buffer size argument"));
-			if (bufsize < 4096)
-				bufsize = 4096;
+			ctl.bufsize = strtou32_or_err(optarg,
+					_("invalid buffer size argument"));
+			if (ctl.bufsize < 4096)
+				ctl.bufsize = 4096;
 			break;
 		case 'T':
 			ctl.boot_time = get_boot_time();
@@ -798,9 +828,6 @@ int main(int argc, char *argv[])
 	if (argc > 1)
 		usage(stderr);
 
-	if (cmd == -1)
-		cmd = SYSLOG_ACTION_READ_ALL;	/* default */
-
 	if (ctl.raw && (ctl.fltr_lev || ctl.fltr_fac || ctl.delta ||
 			ctl.notime || ctl.ctime || ctl.decode))
 		errx(EXIT_FAILURE, _("--raw can't be used together with level, "
@@ -809,29 +836,23 @@ int main(int argc, char *argv[])
 	if (ctl.notime && ctl.ctime)
 		errx(EXIT_FAILURE, _("--notime can't be used together with ctime "));
 
-	switch (cmd) {
+	switch (ctl.action) {
 	case SYSLOG_ACTION_READ_ALL:
 	case SYSLOG_ACTION_READ_CLEAR:
-		if (ctl.filename)
-			n = read_file_buffer(&ctl, &buf);
-		else  {
-			if (!bufsize)
-				bufsize = get_buffer_size();
-			n = read_kernel_buffer(&buf, bufsize,
-					cmd == SYSLOG_ACTION_READ_CLEAR);
-		}
+		n = read_buffer(&ctl, &buf);
 		if (n > 0)
 			print_buffer(buf, n, &ctl);
-		if (!ctl.filename)
+
+		if (ctl.mmap_buff != buf)
 			free(buf);
 		break;
 	case SYSLOG_ACTION_CLEAR:
 	case SYSLOG_ACTION_CONSOLE_OFF:
 	case SYSLOG_ACTION_CONSOLE_ON:
-		n = klogctl(cmd, NULL, 0);
+		n = klogctl(ctl.action, NULL, 0);
 		break;
 	case SYSLOG_ACTION_CONSOLE_LEVEL:
-		n = klogctl(cmd, NULL, console_level);
+		n = klogctl(ctl.action, NULL, console_level);
 		break;
 	default:
 		errx(EXIT_FAILURE, _("unsupported command"));
