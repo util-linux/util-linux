@@ -108,6 +108,7 @@ static const struct dmesg_name facility_names[] =
 /* supported methods to read message buffer
  */
 enum {
+	DMESG_METHOD_KMSG,	/* read messages from /dev/kmsg (default) */
 	DMESG_METHOD_SYSLOG,	/* klogctl() buffer */
 	DMESG_METHOD_MMAP	/* mmap file with records (see --file) */
 };
@@ -123,6 +124,7 @@ struct dmesg_control {
 	int		action;		/* SYSLOG_ACTION_* */
 	int		method;		/* DMESG_METHOD_* */
 	size_t		bufsize;	/* size of buffer created by read_buffer() */
+	int		kmsg;		/* /dev/kmsg file descriptor */
 
 	/*
 	 * For the --file option we mmap whole file. The unnecessary (already
@@ -498,10 +500,15 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 	}
 }
 
-static int get_next_record(struct dmesg_control *ctl, struct dmesg_record *rec)
+static int get_next_syslog_record(struct dmesg_control *ctl,
+				  struct dmesg_record *rec)
 {
 	size_t i;
 	const char *begin = NULL;
+
+	if (ctl->method != DMESG_METHOD_MMAP &&
+	    ctl->method != DMESG_METHOD_SYSLOG)
+		return -1;
 
 	if (!rec->next || !rec->next_size)
 		return 1;
@@ -628,6 +635,54 @@ static void raw_print(struct dmesg_control *ctl, const char *buf, size_t size)
 		putchar('\n');
 }
 
+static void print_record(struct dmesg_control *ctl, struct dmesg_record *rec)
+{
+	char tbuf[256];
+
+	if (!accept_record(ctl, rec))
+		return;
+
+	if (!rec->mesg_size) {
+		putchar('\n');
+		return;
+	}
+
+	if (ctl->decode && rec->level >= 0 && rec->facility >= 0)
+		printf("%-6s:%-6s: ", facility_names[rec->facility].name,
+				      level_names[rec->level].name);
+
+	*tbuf = '\0';
+	if (ctl->ctime) {
+		time_t t = ctl->boot_time + rec->tv.tv_sec;
+		if (strftime(tbuf, sizeof(tbuf), "%a %b %e %H:%M:%S %Y",
+			     localtime(&t)) == 0)
+			*tbuf = '\0';
+	}
+	if (ctl->delta) {
+		double delta = 0;
+
+		if (timerisset(&ctl->lasttime))
+			delta = time_diff(&rec->tv, &ctl->lasttime);
+		ctl->lasttime = rec->tv;
+
+		if (ctl->ctime && *tbuf)
+			printf("[%s ", tbuf);
+		else if (ctl->notime)
+			putchar('[');
+		else
+			printf("[%5d.%06d ", (int) rec->tv.tv_sec,
+					     (int) rec->tv.tv_usec);
+		printf("<%12.06f>] ", delta);
+	} else if (ctl->ctime && *tbuf) {
+		printf("[%s] ", tbuf);
+	}
+
+	safe_fwrite(rec->mesg, rec->mesg_size, stdout);
+
+	if (*(rec->mesg + rec->mesg_size - 1) != '\n')
+		putchar('\n');
+}
+
 /*
  * Prints the 'buf' kernel ring buffer; the messages are filtered out according
  * to 'levels' and 'facilities' bitarrays.
@@ -636,58 +691,20 @@ static void print_buffer(struct dmesg_control *ctl,
 			const char *buf, size_t size)
 {
 	struct dmesg_record rec = { .next = buf, .next_size = size };
-	char tbuf[256];
 
 	if (ctl->raw) {
 		raw_print(ctl, buf, size);
 		return;
 	}
 
-	while (get_next_record(ctl, &rec) == 0) {
+	while (get_next_syslog_record(ctl, &rec) == 0)
+		print_record(ctl, &rec);
+}
 
-		if (!accept_record(ctl, &rec))
-			continue;
-
-		if (!rec.mesg_size) {
-			putchar('\n');
-			continue;
-		}
-
-		if (ctl->decode && rec.level >= 0 && rec.facility >= 0)
-			printf("%-6s:%-6s: ", facility_names[rec.facility].name,
-					      level_names[rec.level].name);
-
-		*tbuf = '\0';
-		if (ctl->ctime) {
-			time_t t = ctl->boot_time + rec.tv.tv_sec;
-			if (strftime(tbuf, sizeof(tbuf), "%a %b %e %H:%M:%S %Y",
-				     localtime(&t)) == 0)
-				*tbuf = '\0';
-		}
-		if (ctl->delta) {
-			double delta = 0;
-
-			if (timerisset(&ctl->lasttime))
-				delta = time_diff(&rec.tv, &ctl->lasttime);
-			ctl->lasttime = rec.tv;
-
-			if (ctl->ctime && *tbuf)
-				printf("[%s ", tbuf);
-			else if (ctl->notime)
-				putchar('[');
-			else
-				printf("[%5d.%06d ", (int) rec.tv.tv_sec,
-						     (int) rec.tv.tv_usec);
-			printf("<%12.06f>] ", delta);
-		} else if (ctl->ctime && *tbuf) {
-			printf("[%s] ", tbuf);
-		}
-
-		safe_fwrite(rec.mesg, rec.mesg_size, stdout);
-
-		if (*(rec.mesg + rec.mesg_size - 1) != '\n')
-			putchar('\n');
-	}
+static int init_kmsg(struct dmesg_control *ctl)
+{
+	ctl->kmsg = open("/dev/kmsg", O_RDONLY|O_NONBLOCK);
+	return ctl->kmsg < 0 ? -1 : 0;
 }
 
 int main(int argc, char *argv[])
@@ -699,7 +716,8 @@ int main(int argc, char *argv[])
 	static struct dmesg_control ctl = {
 		.filename = NULL,
 		.action = SYSLOG_ACTION_READ_ALL,
-		.method = DMESG_METHOD_SYSLOG
+		.method = DMESG_METHOD_SYSLOG,
+		.kmsg = -1,
 	};
 
 	enum {
@@ -841,10 +859,12 @@ int main(int argc, char *argv[])
 	switch (ctl.action) {
 	case SYSLOG_ACTION_READ_ALL:
 	case SYSLOG_ACTION_READ_CLEAR:
+		if (ctl.method == DMESG_METHOD_KMSG && init_kmsg(&ctl) != 0)
+			ctl.method = DMESG_METHOD_SYSLOG;
+
 		n = read_buffer(&ctl, &buf);
 		if (n > 0)
 			print_buffer(&ctl, buf, n);
-
 		if (!ctl.mmap_buff)
 			free(buf);
 		break;
@@ -860,6 +880,9 @@ int main(int argc, char *argv[])
 		errx(EXIT_FAILURE, _("unsupported command"));
 		break;
 	}
+
+	if (ctl.kmsg >= 0)
+		close(ctl.kmsg);
 
 	if (n < 0 && ctl.method == DMESG_METHOD_SYSLOG)
 		err(EXIT_FAILURE, _("klogctl failed"));
