@@ -340,7 +340,7 @@ static double time_diff(struct timeval *a, struct timeval *b)
 	return (a->tv_sec - b->tv_sec) + (a->tv_usec - b->tv_usec) / 1E6;
 }
 
-static int get_buffer_size(void)
+static int get_syslog_buffer_size(void)
 {
 	int n = klogctl(SYSLOG_ACTION_SIZE_BUFFER, NULL, 0);
 
@@ -362,9 +362,9 @@ static time_t get_boot_time(void)
 }
 
 /*
- * mmap file with the log
+ * Reads messages from regular file by mmap
  */
-static ssize_t read_file_buffer(struct dmesg_control *ctl, char **buf)
+static ssize_t mmap_file_buffer(struct dmesg_control *ctl, char **buf)
 {
 	struct stat st;
 	int fd;
@@ -389,9 +389,9 @@ static ssize_t read_file_buffer(struct dmesg_control *ctl, char **buf)
 }
 
 /*
- * Reads messages from kernel ring buffer
+ * Reads messages from kernel ring buffer by klogctl()
  */
-static ssize_t read_kernel_buffer(struct dmesg_control *ctl, char **buf)
+static ssize_t read_syslog_buffer(struct dmesg_control *ctl, char **buf)
 {
 	size_t sz;
 	int rc = -1;
@@ -421,20 +421,22 @@ static ssize_t read_kernel_buffer(struct dmesg_control *ctl, char **buf)
 	return rc;
 }
 
-
+/*
+ * Top level function to read messages
+ */
 static ssize_t read_buffer(struct dmesg_control *ctl, char **buf)
 {
 	ssize_t n = -1;
 
 	switch (ctl->method) {
 	case DMESG_METHOD_MMAP:
-		n = read_file_buffer(ctl, buf);
+		n = mmap_file_buffer(ctl, buf);
 		break;
 	case DMESG_METHOD_SYSLOG:
 		if (!ctl->bufsize)
-			ctl->bufsize = get_buffer_size();
+			ctl->bufsize = get_syslog_buffer_size();
 
-		n = read_kernel_buffer(ctl, buf);
+		n = read_syslog_buffer(ctl, buf);
 		break;
 	}
 
@@ -596,8 +598,7 @@ static int accept_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 	return 1;
 }
 
-static void raw_print(const char *buf, size_t size,
-		      struct dmesg_control *ctl)
+static void raw_print(struct dmesg_control *ctl, const char *buf, size_t size)
 {
 	int lastc = '\n';
 
@@ -631,14 +632,14 @@ static void raw_print(const char *buf, size_t size,
  * Prints the 'buf' kernel ring buffer; the messages are filtered out according
  * to 'levels' and 'facilities' bitarrays.
  */
-static void print_buffer(const char *buf, size_t size,
-			 struct dmesg_control *ctl)
+static void print_buffer(struct dmesg_control *ctl,
+			const char *buf, size_t size)
 {
 	struct dmesg_record rec = { .next = buf, .next_size = size };
 	char tbuf[256];
 
 	if (ctl->raw) {
-		raw_print(buf, size, ctl);
+		raw_print(ctl, buf, size);
 		return;
 	}
 
@@ -697,7 +698,8 @@ int main(int argc, char *argv[])
 	int  console_level = 0;
 	static struct dmesg_control ctl = {
 		.filename = NULL,
-		.action = SYSLOG_ACTION_READ_ALL
+		.action = SYSLOG_ACTION_READ_ALL,
+		.method = DMESG_METHOD_SYSLOG
 	};
 
 	enum {
@@ -841,9 +843,9 @@ int main(int argc, char *argv[])
 	case SYSLOG_ACTION_READ_CLEAR:
 		n = read_buffer(&ctl, &buf);
 		if (n > 0)
-			print_buffer(buf, n, &ctl);
+			print_buffer(&ctl, buf, n);
 
-		if (ctl.mmap_buff != buf)
+		if (!ctl.mmap_buff)
 			free(buf);
 		break;
 	case SYSLOG_ACTION_CLEAR:
@@ -859,7 +861,7 @@ int main(int argc, char *argv[])
 		break;
 	}
 
-	if (n < 0 && !ctl.filename)
+	if (n < 0 && ctl.method == DMESG_METHOD_SYSLOG)
 		err(EXIT_FAILURE, _("klogctl failed"));
 
 	return EXIT_SUCCESS;
