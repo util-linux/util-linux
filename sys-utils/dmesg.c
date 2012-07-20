@@ -31,6 +31,7 @@
 #include "bitops.h"
 #include "closestream.h"
 #include "optutils.h"
+#include "mangle.h"
 
 /* Close the log.  Currently a NOP. */
 #define SYSLOG_ACTION_CLOSE          0
@@ -155,6 +156,18 @@ struct dmesg_record {
 	const char	*next;		/* buffer with next unparsed record */
 	size_t		next_size;	/* size of the next buffer */
 };
+
+#define INIT_DMESG_RECORD(_r)  do { \
+		(_r)->mesg = NULL; \
+		(_r)->mesg_size = 0; \
+		(_r)->facility = -1; \
+		(_r)->level = -1; \
+		(_r)->tv.tv_sec = 0; \
+		(_r)->tv.tv_usec = 0; \
+	} while (0)
+
+static int read_kmsg(struct dmesg_control *ctl);
+
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -288,7 +301,7 @@ static int parse_facility(const char *str, size_t len)
  * bottom 3 bits are the priority (0-7) and the top 28 bits are the facility
  * (0-big number).
  *
- * Note that the number has to end with '>' char.
+ * Note that the number has to end with '>' or ',' char.
  */
 static const char *parse_faclev(const char *str, int *fac, int *lev)
 {
@@ -309,13 +322,20 @@ static const char *parse_faclev(const char *str, int *fac, int *lev)
 			*lev = -1;
 		if (*fac < 0 || (size_t) *fac > ARRAY_SIZE(facility_names))
 			*fac = -1;
-		return end + 1;		/* skip '<' */
+		return end + 1;		/* skip '<' or ',' */
 	}
 
 	return str;
 }
 
-static const char *parse_timestamp(const char *str0, struct timeval *tv)
+/*
+ * Parses timestamp from syslog message prefix, expected format:
+ *
+ *	seconds.microseconds]
+ *
+ * the ']' is the timestamp field terminator.
+ */
+static const char *parse_syslog_timestamp(const char *str0, struct timeval *tv)
 {
 	const char *str = str0;
 	char *end = NULL;
@@ -335,6 +355,35 @@ static const char *parse_timestamp(const char *str0, struct timeval *tv)
 		return str0;
 
 	return end + 1;	/* skip ']' */
+}
+
+/*
+ * Parses timestamp from /dev/kmsg, expected formats:
+ *
+ *	microseconds,
+ *	microseconds;
+ *
+ * the ',' is fields separators and ';' items terminator (for the last item)
+ */
+static const char *parse_kmsg_timestamp(const char *str0, struct timeval *tv)
+{
+	const char *str = str0;
+	char *end = NULL;
+	uint64_t usec;
+
+	if (!str0)
+		return str0;
+
+	errno = 0;
+	usec = strtoumax(str, &end, 10);
+
+	if (!errno && end && (*end == ';' || *end == ',')) {
+		tv->tv_usec = usec % 1000000;
+		tv->tv_sec = usec / 1000000;
+	} else
+		return str0;
+
+	return end + 1;	/* skip separator */
 }
 
 
@@ -441,6 +490,12 @@ static ssize_t read_buffer(struct dmesg_control *ctl, char **buf)
 
 		n = read_syslog_buffer(ctl, buf);
 		break;
+	case DMESG_METHOD_KMSG:
+		/*
+		 * Since kernel 3.5.0
+		 */
+		n = read_kmsg(ctl);
+		break;
 	}
 
 	return n;
@@ -471,7 +526,7 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 	for (i = 0; i < size; i++) {
 		const char *p = buf + i;
 		int rc, hex = 0;
-        size_t len = 1;
+	        size_t len = 1;
 
 #ifdef HAVE_WIDECHAR
 		wchar_t wc;
@@ -501,6 +556,18 @@ static void safe_fwrite(const char *buf, size_t size, FILE *out)
 	}
 }
 
+static const char *skip_item(const char *begin, const char *end, const char *sep)
+{
+	while (begin < end) {
+		int c = *begin++;
+
+		if (c == '\0' || strchr(sep, c))
+			break;
+	}
+
+	return begin;
+}
+
 static int get_next_syslog_record(struct dmesg_control *ctl,
 				  struct dmesg_record *rec)
 {
@@ -514,12 +581,7 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 	if (!rec->next || !rec->next_size)
 		return 1;
 
-	rec->mesg = NULL;
-	rec->mesg_size = 0;
-	rec->facility = -1;
-	rec->level = -1;
-	rec->tv.tv_sec = 0;
-	rec->tv.tv_usec = 0;
+	INIT_DMESG_RECORD(rec);
 
 	/*
 	 * Unmap already printed file data from memory
@@ -551,30 +613,20 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 			continue;	/* error or empty line? */
 
 		if (*begin == '<') {
-			if (ctl->fltr_lev || ctl->fltr_fac || ctl->decode) {
+			if (ctl->fltr_lev || ctl->fltr_fac || ctl->decode)
 				begin = parse_faclev(begin + 1, &rec->facility,
 						     &rec->level);
-			} else {
-				/* ignore facility and level */
-				while (begin < end) {
-					begin++;
-					if (*(begin - 1) == '>')
-						break;
-				}
-			}
+			else
+				begin = skip_item(begin, end, ">");
 		}
 
 		if (*begin == '[' && (*(begin + 1) == ' ' ||
 				      isdigit(*(begin + 1)))) {
-			if (ctl->delta || ctl->ctime) {
-				begin = parse_timestamp(begin + 1, &rec->tv);
-			} else if (ctl->notime) {
-				while (begin < end) {
-					begin++;
-					if (*(begin - 1) == ']')
-						break;
-				}
-			}
+			if (ctl->delta || ctl->ctime)
+				begin = parse_syslog_timestamp(begin + 1, &rec->tv);
+			else if (ctl->notime)
+				begin = skip_item(begin, end, "]");
+
 			if (begin < end && *begin == ' ')
 				begin++;
 		}
@@ -678,6 +730,18 @@ static void print_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 		printf("[%s] ", tbuf);
 	}
 
+	/*
+	 * In syslog output the timestamp is part of the message and we don't
+	 * parse the timestamp by default. We parse the timestamp only if
+	 * --show-delta or --ctime is specified.
+	 *
+	 * In kmsg output we always parse the timesptamp, so we have to compose
+	 * the [sec.usec] string.
+	 */
+	if (ctl->method == DMESG_METHOD_KMSG &&
+	    !ctl->notime && !ctl->delta && !ctl->ctime)
+		printf("[%5d.%06d] ", (int) rec->tv.tv_sec, (int) rec->tv.tv_usec);
+
 	safe_fwrite(rec->mesg, rec->mesg_size, stdout);
 
 	if (*(rec->mesg + rec->mesg_size - 1) != '\n')
@@ -706,6 +770,116 @@ static int init_kmsg(struct dmesg_control *ctl)
 {
 	ctl->kmsg = open("/dev/kmsg", O_RDONLY|O_NONBLOCK);
 	return ctl->kmsg < 0 ? -1 : 0;
+}
+
+/*
+ * /dev/kmsg record format:
+ *
+ *     faclev,seqnum,timestamp[optional, ...];messgage\n
+ *      TAGNAME=value
+ *      ...
+ *
+ * - fields are separated by ','
+ * - last field is terminated by ';'
+ *
+ */
+#define LAST_KMSG_FIELD(s)	(!s || !*s || *(s - 1) == ';')
+
+static int parse_kmsg_record(struct dmesg_control *ctl,
+			     struct dmesg_record *rec,
+			     char *buf,
+			     size_t sz)
+{
+	const char *p = buf, *end;
+
+	if (sz == 0 || !buf || !*buf)
+		return -1;
+
+	end = buf + (sz - 1);
+	INIT_DMESG_RECORD(rec);
+
+	while (p < end && isspace(*p))
+		p++;
+
+	/* A) priority and facility */
+	if (ctl->fltr_lev || ctl->fltr_fac || ctl->decode || ctl->raw)
+		p = parse_faclev(p, &rec->facility, &rec->level);
+	else
+		p = skip_item(p, end, ",");
+	if (LAST_KMSG_FIELD(p))
+		goto mesg;
+
+	/* B) sequence number */
+	p = skip_item(p, end, ",;");
+	if (LAST_KMSG_FIELD(p))
+		goto mesg;
+
+	/* C) timestamp */
+	if (ctl->notime)
+		p = skip_item(p, end, ",;");
+	else
+		p = parse_kmsg_timestamp(p, &rec->tv);
+	if (LAST_KMSG_FIELD(p))
+		goto mesg;
+
+	/* D) optional fields (ignore) */
+	p = skip_item(p, end, ";");
+	if (LAST_KMSG_FIELD(p))
+		goto mesg;
+
+mesg:
+	/* E) message text */
+	rec->mesg = p;
+	p = skip_item(p, end, "\n");
+
+	if (!p)
+		return -1;
+
+	rec->mesg_size = p - rec->mesg;
+
+	/*
+	 * Kernel escapes non-printable characters, unfortuately kernel
+	 * definition of "non-printable" is too strict. On UTF8 console we can
+	 * print many chars, so let's decode from kernel.
+	 */
+	unhexmangle_to_buffer(rec->mesg, (char *) rec->mesg, rec->mesg_size + 1);
+
+	/* F) message tags (ignore) */
+
+	return 0;
+}
+
+/*
+ * Note that each read() call for /dev/kmsg returns always one record. It means
+ * that we don't have to read whole message buffer before the records parsing.
+ *
+ * So this function does not compose one huge buffer (like read_syslog_buffer())
+ * and print_buffer() is unnecessary. All is done in this function.
+ *
+ * Returns 0 on success, -1 on error.
+ */
+static int read_kmsg(struct dmesg_control *ctl)
+{
+	char buf[BUFSIZ];
+	struct dmesg_record rec;
+
+	if (ctl->method != DMESG_METHOD_KMSG || ctl->kmsg < 0)
+		return -1;
+
+	do {
+		ssize_t sz = read(ctl->kmsg, buf, sizeof(buf) - 1);
+
+		if (sz <= 0)
+			break;
+
+		*(buf + sz) = '\0';	/* for debug messages */
+
+		if (parse_kmsg_record(ctl, &rec, buf, (size_t) sz) != 0)
+			continue;
+		print_record(ctl, &rec);
+	} while (1);
+
+	return 0;
 }
 
 int main(int argc, char *argv[])
