@@ -98,12 +98,23 @@ will
 print or clear the kernel ring buffer.
 .IP "\fB\-r\fR, \fB\-\-raw\fR"
 Print the raw message buffer, i.e., do not strip the log level prefixes.
+
+Note that the real raw format depends on method how
+.BR dmesg (1)
+reads kernel messages. The /dev/kmsg uses different format than
+.BR syslog (2) .
+For backward compatibility
+.BR dmesg (1)
+returns data always in
+.BR syslog (2)
+format. The real raw data from /dev/kmsg is possible to read for example by
+command 'dd if=/dev/kmsg iflag=nonblock'.
 .IP "\fB\-S\fR, \fB\-\-syslog\fR"
 Force to use
-.BR syslog(2)
+.BR syslog (2)
 kernel interface to read kernel messages. The default is to use /dev/kmsg rather
 than
-.BR syslog(2)
+.BR syslog (2)
 since kernel 3.5.0.
 .IP "\fB\-s\fR, \fB\-\-buffer-size \fIsize\fR
 Use a buffer of

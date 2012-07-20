@@ -702,6 +702,16 @@ static void print_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 		return;
 	}
 
+	if (ctl->raw) {
+		/* compose syslog(2) compatible output */
+		printf("<%d>[%5d.%06d] ",
+			LOG_MAKEPRI(rec->facility, rec->level),
+			(int) rec->tv.tv_sec,
+			(int) rec->tv.tv_usec);
+
+		goto mesg;
+	}
+
 	if (ctl->decode && rec->level >= 0 && rec->facility >= 0)
 		printf("%-6s:%-6s: ", facility_names[rec->facility].name,
 				      level_names[rec->level].name);
@@ -744,6 +754,7 @@ static void print_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 	    !ctl->notime && !ctl->delta && !ctl->ctime)
 		printf("[%5d.%06d] ", (int) rec->tv.tv_sec, (int) rec->tv.tv_usec);
 
+mesg:
 	safe_fwrite(rec->mesg, rec->mesg_size, stdout);
 
 	if (*(rec->mesg + rec->mesg_size - 1) != '\n')
@@ -893,6 +904,7 @@ static int read_kmsg(struct dmesg_control *ctl)
 
 		if (parse_kmsg_record(ctl, &rec, buf, (size_t) sz) != 0)
 			continue;
+
 		print_record(ctl, &rec);
 	} while (1);
 
