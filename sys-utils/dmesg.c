@@ -136,7 +136,8 @@ struct dmesg_control {
 	char		*mmap_buff;
 	size_t		pagesize;
 
-	unsigned int	raw:1,		/* raw mode */
+	unsigned int	follow:1,	/* wait for new messages */
+			raw:1,		/* raw mode */
 			fltr_lev:1,	/* filter out by levels[] */
 			fltr_fac:1,	/* filter out by facilities[] */
 			decode:1,	/* use "facility: level: " prefix */
@@ -197,6 +198,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -t, --notime                don't print messages timestamp\n"
 		" -u, --userspace             display userspace messages\n"
 		" -V, --version               output version information and exit\n"
+		" -w, --follow                wait for new messages\n"
 		" -x, --decode                decode facility and level to readable string\n"), out);
 
 	fputs(_("\nSupported log facilities:\n"), out);
@@ -770,7 +772,12 @@ static void print_buffer(struct dmesg_control *ctl,
 
 static int init_kmsg(struct dmesg_control *ctl)
 {
-	ctl->kmsg = open("/dev/kmsg", O_RDONLY|O_NONBLOCK);
+	int mode = O_RDONLY;
+
+	if (!ctl->follow)
+		mode |= O_NONBLOCK;
+
+	ctl->kmsg = open("/dev/kmsg", mode);
 	if (ctl->kmsg < 0)
 		return -1;
 
@@ -913,9 +920,11 @@ int main(int argc, char *argv[])
 		EXCL_READ_CLEAR,
 		EXCL_CONSOLE_LEVEL,
 		EXCL_CONSOLE_ON,
-		EXCL_CONSOLE_OFF
+		EXCL_CONSOLE_OFF,
+		EXCL_FOLLOW,
+		EXCL_SYSLOG
 	};
-	int excl_any = EXCL_NONE;
+	int excl_any = EXCL_NONE, excl_sys = EXCL_NONE;
 
 	static const struct option longopts[] = {
 		{ "buffer-size",   required_argument, NULL, 's' },
@@ -926,6 +935,7 @@ int main(int argc, char *argv[])
 		{ "decode",        no_argument,	      NULL, 'x' },
 		{ "file",          required_argument, NULL, 'F' },
 		{ "facility",      required_argument, NULL, 'f' },
+		{ "follow",        no_argument,       NULL, 'w' },
 		{ "help",          no_argument,	      NULL, 'h' },
 		{ "kernel",        no_argument,       NULL, 'k' },
 		{ "level",         required_argument, NULL, 'l' },
@@ -945,7 +955,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "CcDdEF:f:hkl:n:rSs:TtuVx",
+	while ((c = getopt_long(argc, argv, "CcDdEF:f:hkl:n:rSs:TtuVwx",
 				longopts, NULL)) != -1) {
 		switch (c) {
 		case 'C':
@@ -999,6 +1009,7 @@ int main(int argc, char *argv[])
 			ctl.raw = 1;
 			break;
 		case 'S':
+			exclusive_option(&excl_sys, EXCL_SYSLOG, "--{syslog,follow}");
 			ctl.method = DMESG_METHOD_SYSLOG;
 			break;
 		case 's':
@@ -1024,6 +1035,10 @@ int main(int argc, char *argv[])
 			printf(_("%s from %s\n"), program_invocation_short_name,
 						  PACKAGE_STRING);
 			return EXIT_SUCCESS;
+		case 'w':
+			exclusive_option(&excl_sys, EXCL_FOLLOW, "--{syslog,follow}");
+			ctl.follow = 1;
+			break;
 		case 'x':
 			ctl.decode = 1;
 			break;
