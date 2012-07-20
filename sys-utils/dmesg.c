@@ -690,9 +690,24 @@ static void raw_print(struct dmesg_control *ctl, const char *buf, size_t size)
 		putchar('\n');
 }
 
+static char *record_ctime(struct dmesg_control *ctl,
+			  struct dmesg_record *rec,
+			  char *buf, size_t bufsiz)
+{
+	time_t t = ctl->boot_time + rec->tv.tv_sec;
+	const struct tm *tm;
+
+	tm = localtime(&t);
+	*buf = '\0';
+
+	if (strftime(buf, bufsiz, "%a %b %e %H:%M:%S %Y", tm) == 0)
+		*buf = '\0';
+	return buf;
+}
+
 static void print_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 {
-	char tbuf[256];
+	char buf[256];
 
 	if (!accept_record(ctl, rec))
 		return;
@@ -702,8 +717,11 @@ static void print_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 		return;
 	}
 
+	/*
+	 * compose syslog(2) compatible raw output -- used for /dev/kmsg for
+	 * backward compatibility with syslog(2) buffers only
+	 */
 	if (ctl->raw) {
-		/* compose syslog(2) compatible output */
 		printf("<%d>[%5d.%06d] ",
 			LOG_MAKEPRI(rec->facility, rec->level),
 			(int) rec->tv.tv_sec,
@@ -712,17 +730,16 @@ static void print_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 		goto mesg;
 	}
 
+	/*
+	 * facility : priority :
+	 */
 	if (ctl->decode && rec->level >= 0 && rec->facility >= 0)
 		printf("%-6s:%-6s: ", facility_names[rec->facility].name,
 				      level_names[rec->level].name);
 
-	*tbuf = '\0';
-	if (ctl->ctime) {
-		time_t t = ctl->boot_time + rec->tv.tv_sec;
-		if (strftime(tbuf, sizeof(tbuf), "%a %b %e %H:%M:%S %Y",
-			     localtime(&t)) == 0)
-			*tbuf = '\0';
-	}
+	/*
+	 * [sec.usec <delta>] or [ctime <delta>]
+	 */
 	if (ctl->delta) {
 		double delta = 0;
 
@@ -730,17 +747,21 @@ static void print_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 			delta = time_diff(&rec->tv, &ctl->lasttime);
 		ctl->lasttime = rec->tv;
 
-		if (ctl->ctime && *tbuf)
-			printf("[%s ", tbuf);
+		if (ctl->ctime)
+			printf("[%s ", record_ctime(ctl, rec, buf, sizeof(buf)));
 		else if (ctl->notime)
 			putchar('[');
 		else
 			printf("[%5d.%06d ", (int) rec->tv.tv_sec,
 					     (int) rec->tv.tv_usec);
 		printf("<%12.06f>] ", delta);
-	} else if (ctl->ctime && *tbuf) {
-		printf("[%s] ", tbuf);
-	}
+
+	/*
+	 * [ctime]
+	 */
+	} else if (ctl->ctime)
+		printf("[%s] ", record_ctime(ctl, rec, buf, sizeof(buf)));
+
 
 	/*
 	 * In syslog output the timestamp is part of the message and we don't
