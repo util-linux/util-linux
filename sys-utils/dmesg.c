@@ -495,6 +495,8 @@ static ssize_t read_buffer(struct dmesg_control *ctl, char **buf)
 		 * Since kernel 3.5.0
 		 */
 		n = read_kmsg(ctl);
+		if (n == 0 && ctl->action == SYSLOG_ACTION_READ_CLEAR)
+			n = klogctl(SYSLOG_ACTION_CLEAR, NULL, 0);
 		break;
 	}
 
@@ -769,7 +771,17 @@ static void print_buffer(struct dmesg_control *ctl,
 static int init_kmsg(struct dmesg_control *ctl)
 {
 	ctl->kmsg = open("/dev/kmsg", O_RDONLY|O_NONBLOCK);
-	return ctl->kmsg < 0 ? -1 : 0;
+	if (ctl->kmsg < 0)
+		return -1;
+
+	/*
+	 * Seek after the last record available at the time
+	 * the last SYSLOG_ACTION_CLEAR was issued.
+	 *
+	 * ... otherwise SYSLOG_ACTION_CLEAR will have no effect for kmsg.
+	 */
+	lseek(ctl->kmsg, 0, SEEK_DATA);
+	return 0;
 }
 
 /*
