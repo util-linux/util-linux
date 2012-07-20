@@ -56,8 +56,6 @@
 /* Return size of the log buffer */
 #define SYSLOG_ACTION_SIZE_BUFFER   10
 
-#define EXCL_ERROR "--{clear,read-clear,console-level,console-on,console-off}"
-
 /*
  * Priority and facility names
  */
@@ -901,6 +899,9 @@ static int read_kmsg(struct dmesg_control *ctl)
 	return 0;
 }
 
+#define EXCL_ACT_ERR "--{clear,read-clear,console-level,console-on,console-off}"
+#define EXCL_SYS_ERR "--{syslog,follow}"
+
 int main(int argc, char *argv[])
 {
 	char *buf = NULL;
@@ -924,7 +925,8 @@ int main(int argc, char *argv[])
 		EXCL_FOLLOW,
 		EXCL_SYSLOG
 	};
-	int excl_any = EXCL_NONE, excl_sys = EXCL_NONE;
+
+	int excl_act = EXCL_NONE, excl_sys = EXCL_NONE;
 
 	static const struct option longopts[] = {
 		{ "buffer-size",   required_argument, NULL, 's' },
@@ -959,22 +961,22 @@ int main(int argc, char *argv[])
 				longopts, NULL)) != -1) {
 		switch (c) {
 		case 'C':
-			exclusive_option(&excl_any, EXCL_CLEAR, EXCL_ERROR);
+			exclusive_option(&excl_act, EXCL_CLEAR, EXCL_ACT_ERR);
 			ctl.action = SYSLOG_ACTION_CLEAR;
 			break;
 		case 'c':
-			exclusive_option(&excl_any, EXCL_READ_CLEAR, EXCL_ERROR);
+			exclusive_option(&excl_act, EXCL_READ_CLEAR, EXCL_ACT_ERR);
 			ctl.action = SYSLOG_ACTION_READ_CLEAR;
 			break;
 		case 'D':
-			exclusive_option(&excl_any, EXCL_CONSOLE_OFF, EXCL_ERROR);
+			exclusive_option(&excl_act, EXCL_CONSOLE_OFF, EXCL_ACT_ERR);
 			ctl.action = SYSLOG_ACTION_CONSOLE_OFF;
 			break;
 		case 'd':
 			ctl.delta = 1;
 			break;
 		case 'E':
-			exclusive_option(&excl_any, EXCL_CONSOLE_ON, EXCL_ERROR);
+			exclusive_option(&excl_act, EXCL_CONSOLE_ON, EXCL_ACT_ERR);
 			ctl.action = SYSLOG_ACTION_CONSOLE_ON;
 			break;
 		case 'F':
@@ -1001,7 +1003,7 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 			break;
 		case 'n':
-			exclusive_option(&excl_any, EXCL_CONSOLE_LEVEL, EXCL_ERROR);
+			exclusive_option(&excl_act, EXCL_CONSOLE_LEVEL, EXCL_ACT_ERR);
 			ctl.action = SYSLOG_ACTION_CONSOLE_LEVEL;
 			console_level = parse_level(optarg, 0);
 			break;
@@ -1009,7 +1011,7 @@ int main(int argc, char *argv[])
 			ctl.raw = 1;
 			break;
 		case 'S':
-			exclusive_option(&excl_sys, EXCL_SYSLOG, "--{syslog,follow}");
+			exclusive_option(&excl_sys, EXCL_SYSLOG, EXCL_SYS_ERR);
 			ctl.method = DMESG_METHOD_SYSLOG;
 			break;
 		case 's':
@@ -1036,7 +1038,7 @@ int main(int argc, char *argv[])
 						  PACKAGE_STRING);
 			return EXIT_SUCCESS;
 		case 'w':
-			exclusive_option(&excl_sys, EXCL_FOLLOW, "--{syslog,follow}");
+			exclusive_option(&excl_sys, EXCL_FOLLOW, EXCL_SYS_ERR);
 			ctl.follow = 1;
 			break;
 		case 'x':
