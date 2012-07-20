@@ -118,6 +118,7 @@ struct dmesg_control {
 	char facilities[ARRAY_SIZE(facility_names) / NBBY + 1];
 
 	struct timeval	lasttime;	/* last printed timestamp */
+	struct tm	lasttm;		/* last localtime */
 	time_t		boot_time;	/* system boot time */
 
 	int		action;		/* SYSLOG_ACTION_* */
@@ -141,6 +142,7 @@ struct dmesg_control {
 			decode:1,	/* use "facility: level: " prefix */
 			notime:1,	/* don't print timestamp */
 			delta:1,	/* show time deltas */
+			reltime:1,	/* show human readable relative times */
 			ctime:1;	/* show human readable time */
 };
 
@@ -181,6 +183,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -c, --read-clear            read and clear all messages\n"
 		" -D, --console-off           disable printing messages to console\n"
 		" -d, --show-delta            show time delta between printed messages\n"
+		" -e, --reltime               show time delta in human readable format\n"
 		" -E, --console-on            enable printing messages to console\n"
 		" -F, --file <file>           use the file instead of the kernel log buffer\n"
 		" -f, --facility <list>       restrict output to defined facilities\n"
@@ -570,6 +573,9 @@ static const char *skip_item(const char *begin, const char *end, const char *sep
 	return begin;
 }
 
+/*
+ * Parses one record from syslog(2) buffer
+ */
 static int get_next_syslog_record(struct dmesg_control *ctl,
 				  struct dmesg_record *rec)
 {
@@ -624,7 +630,7 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 
 		if (*begin == '[' && (*(begin + 1) == ' ' ||
 				      isdigit(*(begin + 1)))) {
-			if (ctl->delta || ctl->ctime)
+			if (ctl->delta || ctl->ctime || ctl->reltime)
 				begin = parse_syslog_timestamp(begin + 1, &rec->tv);
 			else if (ctl->notime)
 				begin = skip_item(begin, end, "]");
@@ -690,22 +696,48 @@ static void raw_print(struct dmesg_control *ctl, const char *buf, size_t size)
 		putchar('\n');
 }
 
+static struct tm *record_localtime(struct dmesg_control *ctl,
+				   struct dmesg_record *rec,
+				   struct tm *tm)
+{
+	time_t t = ctl->boot_time + rec->tv.tv_sec;
+	return localtime_r(&t, tm);
+}
+
 static char *record_ctime(struct dmesg_control *ctl,
 			  struct dmesg_record *rec,
 			  char *buf, size_t bufsiz)
 {
-	time_t t = ctl->boot_time + rec->tv.tv_sec;
-	const struct tm *tm;
+	struct tm tm;
 
-	tm = localtime(&t);
-	*buf = '\0';
+	record_localtime(ctl, rec, &tm);
 
-	if (strftime(buf, bufsiz, "%a %b %e %H:%M:%S %Y", tm) == 0)
+	if (strftime(buf, bufsiz, "%a %b %e %H:%M:%S %Y", &tm) == 0)
 		*buf = '\0';
 	return buf;
 }
 
-static void print_record(struct dmesg_control *ctl, struct dmesg_record *rec)
+static char *short_ctime(struct tm *tm, char *buf, size_t bufsiz)
+{
+	if (strftime(buf, bufsiz, "%b%e %H:%M", tm) == 0)
+		*buf = '\0';
+	return buf;
+}
+
+static double record_count_delta(struct dmesg_control *ctl,
+				 struct dmesg_record *rec)
+{
+	double delta = 0;
+
+	if (timerisset(&ctl->lasttime))
+		delta = time_diff(&rec->tv, &ctl->lasttime);
+
+	ctl->lasttime = rec->tv;
+	return delta;
+}
+
+static void print_record(struct dmesg_control *ctl,
+			 struct dmesg_record *rec)
 {
 	char buf[256];
 
@@ -741,12 +773,6 @@ static void print_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 	 * [sec.usec <delta>] or [ctime <delta>]
 	 */
 	if (ctl->delta) {
-		double delta = 0;
-
-		if (timerisset(&ctl->lasttime))
-			delta = time_diff(&rec->tv, &ctl->lasttime);
-		ctl->lasttime = rec->tv;
-
 		if (ctl->ctime)
 			printf("[%s ", record_ctime(ctl, rec, buf, sizeof(buf)));
 		else if (ctl->notime)
@@ -754,7 +780,7 @@ static void print_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 		else
 			printf("[%5d.%06d ", (int) rec->tv.tv_sec,
 					     (int) rec->tv.tv_usec);
-		printf("<%12.06f>] ", delta);
+		printf("<%12.06f>] ", record_count_delta(ctl, rec));
 
 	/*
 	 * [ctime]
@@ -762,6 +788,27 @@ static void print_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 	} else if (ctl->ctime)
 		printf("[%s] ", record_ctime(ctl, rec, buf, sizeof(buf)));
 
+	/*
+	 * [reltime]
+	 */
+	else if (ctl->reltime) {
+		double delta;
+		struct tm cur;
+
+		record_localtime(ctl, rec, &cur);
+		delta = record_count_delta(ctl, rec);
+
+		if (cur.tm_min  != ctl->lasttm.tm_min ||
+		    cur.tm_hour != ctl->lasttm.tm_hour ||
+		    cur.tm_yday != ctl->lasttm.tm_yday)
+			printf("[%s] ", short_ctime(&cur, buf, sizeof(buf)));
+		else if (delta < 10)
+			printf("[  %+8.06f] ", delta);
+		else
+			printf("[ %+9.06f] ", delta);
+
+		ctl->lasttm = cur;
+	}
 
 	/*
 	 * In syslog output the timestamp is part of the message and we don't
@@ -772,7 +819,7 @@ static void print_record(struct dmesg_control *ctl, struct dmesg_record *rec)
 	 * the [sec.usec] string.
 	 */
 	if (ctl->method == DMESG_METHOD_KMSG &&
-	    !ctl->notime && !ctl->delta && !ctl->ctime)
+	    !ctl->notime && !ctl->delta && !ctl->ctime && !ctl->reltime)
 		printf("[%5d.%06d] ", (int) rec->tv.tv_sec, (int) rec->tv.tv_usec);
 
 mesg:
@@ -977,6 +1024,7 @@ int main(int argc, char *argv[])
 		{ "syslog",        no_argument,       NULL, 'S' },
 		{ "raw",           no_argument,       NULL, 'r' },
 		{ "read-clear",    no_argument,	      NULL, 'c' },
+		{ "reltime",       no_argument,       NULL, 'e' },
 		{ "show-delta",    no_argument,	      NULL, 'd' },
 		{ "ctime",         no_argument,       NULL, 'T' },
 		{ "notime",        no_argument,       NULL, 't' },
@@ -990,7 +1038,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "CcDdEF:f:hkl:n:rSs:TtuVwx",
+	while ((c = getopt_long(argc, argv, "CcDdEeF:f:hkl:n:rSs:TtuVwx",
 				longopts, NULL)) != -1) {
 		switch (c) {
 		case 'C':
@@ -1011,6 +1059,11 @@ int main(int argc, char *argv[])
 		case 'E':
 			exclusive_option(&excl_act, EXCL_CONSOLE_ON, EXCL_ACT_ERR);
 			ctl.action = SYSLOG_ACTION_CONSOLE_ON;
+			break;
+		case 'e':
+			ctl.boot_time = get_boot_time();
+			if (ctl.boot_time)
+				ctl.reltime = 1;
 			break;
 		case 'F':
 			ctl.filename = optarg;
@@ -1094,8 +1147,10 @@ int main(int argc, char *argv[])
 		errx(EXIT_FAILURE, _("--raw can't be used together with level, "
 		     "facility, decode, delta, ctime or notime options"));
 
-	if (ctl.notime && ctl.ctime)
-		errx(EXIT_FAILURE, _("--notime can't be used together with ctime "));
+	if (ctl.notime && (ctl.ctime || ctl.reltime))
+		errx(EXIT_FAILURE, _("--notime can't be used together with --ctime or --reltime"));
+	if (ctl.reltime && ctl.ctime)
+		errx(EXIT_FAILURE, _("--reltime can't be used together with --ctime "));
 
 	switch (ctl.action) {
 	case SYSLOG_ACTION_READ_ALL:
