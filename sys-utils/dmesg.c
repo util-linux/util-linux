@@ -183,7 +183,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -c, --read-clear            read and clear all messages\n"
 		" -D, --console-off           disable printing messages to console\n"
 		" -d, --show-delta            show time delta between printed messages\n"
-		" -e, --reltime               show time delta in human readable format\n"
+		" -e, --reltime               show local time and time delta in readable format\n"
 		" -E, --console-on            enable printing messages to console\n"
 		" -F, --file <file>           use the file instead of the kernel log buffer\n"
 		" -f, --facility <list>       restrict output to defined facilities\n"
