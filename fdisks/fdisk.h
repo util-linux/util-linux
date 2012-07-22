@@ -124,6 +124,9 @@ struct fdisk_context {
 	/* geometry */
 	sector_t total_sectors; /* in logical sectors */
 	struct fdisk_geometry geom;
+
+	/* label operations and description */
+	const struct fdisk_label *label;
 };
 
 /*
@@ -131,6 +134,8 @@ struct fdisk_context {
  */
 struct fdisk_label {
 	const char *name;
+
+	/* probe disk label */
 	int (*probe)(struct fdisk_context *cxt);
 };
 
@@ -199,17 +204,20 @@ extern const char * str_units(int);
 
 extern sector_t get_nr_sects(struct partition *p);
 
-enum labeltype {
+/*
+ * Supported partition table types (labels)
+ */
+enum fdisk_labeltype {
+	ANY_LABEL = -1,
 	DOS_LABEL = 1,
-	SUN_LABEL = 2,
-	SGI_LABEL = 4,
-	AIX_LABEL = 8,
-	OSF_LABEL = 16,
-	MAC_LABEL = 32,
-	ANY_LABEL = -1
+	SUN_LABEL,
+	SGI_LABEL,
+	AIX_LABEL,
+	OSF_LABEL,
+	MAC_LABEL,
 };
 
-extern enum labeltype disklabel;
+extern enum fdisk_labeltype disklabel;
 extern int MBRbuffer_changed;
 extern unsigned long grain;
 

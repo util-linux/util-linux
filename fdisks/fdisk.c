@@ -68,7 +68,7 @@ int MBRbuffer_changed;
 struct menulist_descr {
 	char command;				/* command key */
 	char *description;			/* command description */
-	enum labeltype label[2];		/* disklabel types associated with main and expert menu */
+	enum fdisk_labeltype label[2];		/* disklabel types associated with main and expert menu */
 };
 
 static const struct menulist_descr menulist[] = {
@@ -133,7 +133,7 @@ unsigned int	user_cylinders, user_heads, user_sectors;
 sector_t sector_offset = 1;
 unsigned int units_per_sector = 1, display_in_cyl_units = 0;
 unsigned long grain = DEFAULT_SECTOR_SIZE;
-enum labeltype disklabel;	/* Current disklabel */
+enum fdisk_labeltype disklabel;	/* Current disklabel */
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {

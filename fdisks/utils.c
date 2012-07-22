@@ -39,32 +39,32 @@ int fdisk_debug_mask;
  */
 static const struct fdisk_label *labels[] =
 {
-	&bsd_label,
 	&dos_label,
-	&sgi_label,
 	&sun_label,
+	&sgi_label,
 	&aix_label,
+	&bsd_label,
 	&mac_label,
 };
 
 static int __probe_labels(struct fdisk_context *cxt)
 {
-	int i, rc = 0;
+	int i;
 
 	disklabel = ANY_LABEL;
 	update_units(cxt);
 
 	for (i = 0; i < ARRAY_SIZE(labels); i++) {
-		rc = labels[i]->probe(cxt);
-		if (rc) {
-			DBG(LABEL, dbgprint("detected a %s label\n",
-					    labels[i]->name));
-			goto done;
-		}
+		if (labels[i]->probe(cxt) != 1)
+			continue;
+
+		cxt->label = labels[i];
+
+		DBG(LABEL, dbgprint("detected a %s label\n", cxt->label->name));
+		return 0;
 	}
 
-done:
-	return rc;
+	return 1; /* not found */
 }
 
 static int __init_firstsector_buffer(struct fdisk_context *cxt)
