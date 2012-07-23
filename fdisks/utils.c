@@ -76,8 +76,11 @@ static int __init_mbr_buffer(struct fdisk_context *cxt)
 		goto fail;
 
 	/* read MBR */
-	if (512 != read(cxt->dev_fd, cxt->mbr, 512))
+	if (512 != read(cxt->dev_fd, cxt->mbr, 512)) {
+		if (errno == 0)
+			errno = EINVAL;	/* probably too small file/device */
 		goto fail;
+	}
 
 	return 0;
 fail:
