@@ -513,20 +513,6 @@ update_sector_offset(struct fdisk_context *cxt)
 	}
 }
 
-/*
- * Read MBR.  Returns:
- *   -1: no 0xaa55 flag present (possibly entire disk BSD)
- *    0: found or created label
- *    1: I/O error
- */
-static int get_boot(struct fdisk_context *cxt, int try_only) {
-	if (disklabel == ANY_LABEL) {
-		if (try_only)
-			return -1;
-	}
-	return 0;
-}
-
 static int is_partition_table_changed(void)
 {
 	int i;
@@ -1763,14 +1749,18 @@ static void print_partition_table_from_option(char *device, unsigned long sector
 	fdisk_context_set_user_geometry(cxt, user_cylinders,
 					user_heads, user_sectors);
 	gpt_warning(device);
-	gb = get_boot(cxt, 1);
-	if (gb < 0) { /* no DOS signature */
+
+	if (!fdisk_dev_has_disklabel(cxt)) {
+		/*
+		 * Try BSD -- TODO: move to list_table() too
+		 */
 		list_disk_geometry(cxt);
 		if (disklabel != AIX_LABEL && disklabel != MAC_LABEL)
 			btrydev(cxt);
 	}
-	else if (!gb)
+	else
 		list_table(cxt, 0);
+
 	fdisk_free_context(cxt);
 	cxt = NULL;
 }
