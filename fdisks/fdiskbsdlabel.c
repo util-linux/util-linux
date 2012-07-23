@@ -63,7 +63,6 @@
 
 static void xbsd_delete_part (struct fdisk_context *cxt, int partnum);
 static void xbsd_new_part (struct fdisk_context *cxt);
-static void xbsd_write_disklabel (struct fdisk_context *cxt);
 static int xbsd_create_disklabel (struct fdisk_context *cxt);
 static void xbsd_edit_disklabel (void);
 static void xbsd_write_bootstrap (struct fdisk_context *cxt);
@@ -139,6 +138,21 @@ is_bsd_partition_type(int type) {
 		type == hidden(NETBSD_PARTITION));
 }
 #endif
+
+static int xbsd_write_disklabel (struct fdisk_context *cxt)
+{
+#if defined (__alpha__)
+	printf (_("Writing disklabel to %s.\n"), cxt->dev_path);
+	xbsd_writelabel (cxt, NULL, &xbsd_dlabel);
+#else
+	printf (_("Writing disklabel to %s.\n"),
+		partname(cxt->dev_path, xbsd_part_index+1, 0));
+	xbsd_writelabel (cxt, xbsd_part, &xbsd_dlabel);
+#endif
+	reread_partition_table(cxt, 0);	/* no exit yet */
+
+	return 0;
+}
 
 void
 bsd_command_prompt (struct fdisk_context *cxt)
@@ -374,19 +388,6 @@ xbsd_print_disklabel (struct fdisk_context *cxt, int show_all) {
       fprintf(f, "\n");
     }
   }
-}
-
-static void
-xbsd_write_disklabel (struct fdisk_context *cxt) {
-#if defined (__alpha__)
-	printf (_("Writing disklabel to %s.\n"), cxt->dev_path);
-	xbsd_writelabel (cxt, NULL, &xbsd_dlabel);
-#else
-	printf (_("Writing disklabel to %s.\n"),
-		partname(cxt->dev_path, xbsd_part_index+1, 0));
-	xbsd_writelabel (cxt, xbsd_part, &xbsd_dlabel);
-#endif
-	reread_partition_table(cxt, 0);	/* no exit yet */
 }
 
 static int
@@ -846,5 +847,6 @@ const struct fdisk_label bsd_label =
 {
 	.name = "bsd",
 	.probe = osf_probe_label,
+	.write = xbsd_write_disklabel,
 	.part_delete = xbsd_delete_part,
 };

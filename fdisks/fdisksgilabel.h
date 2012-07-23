@@ -120,7 +120,6 @@ extern void	sgi_add_partition( struct fdisk_context *cxt, int n, int sys );
 extern void	create_sgilabel( struct fdisk_context *cxt );
 extern void	create_sgiinfo(struct fdisk_context *cxt);
 extern int	verify_sgi(struct fdisk_context *cxt, int verbose );
-extern void	sgi_write_table( struct fdisk_context *cxt );
 extern void	sgi_set_ilfact( void );
 extern void	sgi_set_rspeed( void );
 extern void	sgi_set_pcylcount( void );

@@ -1420,24 +1420,13 @@ static void new_partition(struct fdisk_context *cxt)
 	dos_new_partition(cxt);
 }
 
-static void
-write_table(struct fdisk_context *cxt) {
-	int i;
+static void write_table(struct fdisk_context *cxt)
+{
+	int rc;
 
-	if (disklabel == DOS_LABEL)
-		dos_write_table(cxt);
-	else if (disklabel == SGI_LABEL)
-		/* no test on change? the printf below might be mistaken */
-		sgi_write_table(cxt);
-	else if (disklabel == SUN_LABEL) {
-		int needw = 0;
-
-		for (i=0; i<8; i++)
-			if (ptes[i].changed)
-				needw = 1;
-		if (needw)
-			sun_write_table(cxt);
-	}
+	rc = fdisk_write_disklabel(cxt);
+	if (rc)
+		err(EXIT_FAILURE, _("cannot write disk label"));
 
 	printf(_("The partition table has been altered!\n\n"));
 	reread_partition_table(cxt, 1);

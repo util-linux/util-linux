@@ -626,7 +626,7 @@ void sun_set_pcylcount(struct fdisk_context *cxt)
 				 _("Number of physical cylinders")));
 }
 
-void sun_write_table(struct fdisk_context *cxt)
+static int sun_write_disklabel(struct fdisk_context *cxt)
 {
 	unsigned short *ush = (unsigned short *)sunlabel;
 	unsigned short csum = 0;
@@ -635,9 +635,11 @@ void sun_write_table(struct fdisk_context *cxt)
 		csum ^= *ush++;
 	sunlabel->cksum = csum;
 	if (lseek(cxt->dev_fd, 0, SEEK_SET) < 0)
-		fatal(cxt, unable_to_seek);
+		return -errno;
 	if (write(cxt->dev_fd, sunlabel, SECTOR_SIZE) != SECTOR_SIZE)
-		fatal(cxt, unable_to_write);
+		return -errno;
+
+	return 0;
 }
 
 int sun_get_sysid(struct fdisk_context *cxt, int i)
@@ -649,5 +651,6 @@ const struct fdisk_label sun_label =
 {
 	.name = "sun",
 	.probe = sun_probe_label,
+	.write = sun_write_disklabel,
 	.part_delete = sun_delete_partition,
 };

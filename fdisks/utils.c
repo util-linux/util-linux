@@ -48,6 +48,22 @@ static const struct fdisk_label *labels[] =
 };
 
 /**
+ * fdisk_write_disklabel
+ * @cxt: fdisk context
+ *
+ * Write in-memory changes to disk
+ *
+ * Returns 0 on success, otherwise, a corresponding error.
+ */
+int fdisk_write_disklabel(struct fdisk_context *cxt)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	return cxt->label->write(cxt);
+}
+
+/**
  * fdisk_delete_partition:
  * @cxt: fdisk context
  * @partnum: partition number to delete

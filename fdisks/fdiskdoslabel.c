@@ -706,9 +706,18 @@ void dos_new_partition(struct fdisk_context *cxt)
 	}
 }
 
-void dos_write_table(struct fdisk_context *cxt)
+static int write_sector(struct fdisk_context *cxt, sector_t secno,
+			       unsigned char *buf)
 {
-	int i;
+	seek_sector(cxt, secno);
+	if (write(cxt->dev_fd, buf, cxt->sector_size) != (ssize_t) cxt->sector_size)
+		return -errno;
+	return 0;
+}
+
+static int dos_write_disklabel(struct fdisk_context *cxt)
+{
+	int i, rc = 0;
 
 	/* MBR (primary partitions) */
 	if (!MBRbuffer_changed) {
@@ -718,7 +727,9 @@ void dos_write_table(struct fdisk_context *cxt)
 	}
 	if (MBRbuffer_changed) {
 		mbr_set_magic(cxt->firstsector);
-		write_sector(cxt, 0, cxt->firstsector);
+		rc = write_sector(cxt, 0, cxt->firstsector);
+		if (rc)
+			goto done;
 	}
 	/* EBR (logical partitions) */
 	for (i = 4; i < partitions; i++) {
@@ -726,14 +737,20 @@ void dos_write_table(struct fdisk_context *cxt)
 
 		if (pe->changed) {
 			mbr_set_magic(pe->sectorbuffer);
-			write_sector(cxt, pe->offset, pe->sectorbuffer);
+			rc = write_sector(cxt, pe->offset, pe->sectorbuffer);
+			if (rc)
+				goto done;
 		}
 	}
+
+done:
+	return rc;
 }
 
 const struct fdisk_label dos_label =
 {
 	.name = "dos",
 	.probe = dos_probe_label,
+	.write = dos_write_disklabel,
 	.part_delete = dos_delete_partition,
 };

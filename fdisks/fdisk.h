@@ -137,6 +137,8 @@ struct fdisk_label {
 
 	/* probe disk label */
 	int (*probe)(struct fdisk_context *cxt);
+	/* write in-memory changes to disk */
+	int (*write)(struct fdisk_context *cxt);
 	/* delete partition */
 	void (*part_delete)(struct fdisk_context *cxt, int partnum);
 };
@@ -163,6 +165,7 @@ extern int fdisk_context_set_user_geometry(struct fdisk_context *cxt,
 			    unsigned int sectors);
 extern int fdisk_create_default_disklabel(struct fdisk_context *cxt);
 extern int fdisk_delete_partition(struct fdisk_context *cxt, int partnum);
+extern int fdisk_write_disklabel(struct fdisk_context *cxt);
 
 /* prototypes for fdisk.c */
 extern char *disk_device, *line_ptr;
@@ -263,13 +266,6 @@ static inline void read_sector(struct fdisk_context *cxt, sector_t secno, unsign
 	seek_sector(cxt, secno);
 	if (read(cxt->dev_fd, buf, cxt->sector_size) != (ssize_t) cxt->sector_size)
 		fatal(cxt, unable_to_read);
-}
-
-static inline void write_sector(struct fdisk_context *cxt, sector_t secno, unsigned char *buf)
-{
-	seek_sector(cxt, secno);
-	if (write(cxt->dev_fd, buf, cxt->sector_size) != (ssize_t) cxt->sector_size)
-		fatal(cxt, unable_to_write);
 }
 
 static inline sector_t get_start_sect(struct partition *p)

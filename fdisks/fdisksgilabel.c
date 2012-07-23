@@ -39,6 +39,8 @@ static	int     other_endian = 0;
 static	int     debug = 0;
 static  short volumes=1;
 
+static sgiinfo *fill_sgiinfo(void);
+
 /*
  * only dealing with free blocks here
  */
@@ -328,10 +330,11 @@ create_sgiinfo(struct fdisk_context *cxt) {
 	strncpy((char *) sgilabel->directory[0].vol_file_name, "sgilabel", 8);
 }
 
-sgiinfo *fill_sgiinfo(void);
 
-void
-sgi_write_table(struct fdisk_context *cxt) {
+static int sgi_write_disklabel(struct fdisk_context *cxt)
+{
+	sgiinfo *info = NULL;
+
 	sgilabel->csum = 0;
 	sgilabel->csum = SSWAP32(two_s_complement_32bit_sum(
 		(unsigned int*)sgilabel,
@@ -339,23 +342,34 @@ sgi_write_table(struct fdisk_context *cxt) {
 	assert(two_s_complement_32bit_sum(
 		(unsigned int*)sgilabel, sizeof(*sgilabel)) == 0);
 	if (lseek(cxt->dev_fd, 0, SEEK_SET) < 0)
-		fatal(cxt, unable_to_seek);
+		goto err;
 	if (write(cxt->dev_fd, sgilabel, SECTOR_SIZE) != SECTOR_SIZE)
-		fatal(cxt, unable_to_write);
-	if (! strncmp((char *) sgilabel->directory[0].vol_file_name, "sgilabel", 8)) {
+		goto err;
+	if (!strncmp((char *) sgilabel->directory[0].vol_file_name, "sgilabel", 8)) {
 		/*
 		 * keep this habit of first writing the "sgilabel".
 		 * I never tested whether it works without (AN 981002).
 		 */
-		sgiinfo *info = fill_sgiinfo();
-		int infostartblock = SSWAP32(sgilabel->directory[0].vol_file_start);
-		if (lseek(cxt->dev_fd, (off_t) infostartblock*
-				SECTOR_SIZE, SEEK_SET) < 0)
-			fatal(cxt, unable_to_seek);
+		int infostartblock
+			= SSWAP32(sgilabel->directory[0].vol_file_start);
+
+		if (lseek(cxt->dev_fd, (off_t) infostartblock *
+						SECTOR_SIZE, SEEK_SET) < 0)
+			goto err;
+
+		info = fill_sgiinfo();
+		if (!info)
+			goto err;
+
 		if (write(cxt->dev_fd, info, SECTOR_SIZE) != SECTOR_SIZE)
-			fatal(cxt, unable_to_write);
-		free(info);
+			goto err;
 	}
+
+	free(info);
+	return 0;
+err:
+	free(info);
+	return -errno;
 }
 
 static int
@@ -865,10 +879,13 @@ sgi_set_ncyl(void)
 /* _____________________________________________________________
  */
 
-sgiinfo *
-fill_sgiinfo(void)
+static sgiinfo *fill_sgiinfo(void)
 {
-	sgiinfo *info=xcalloc(1, sizeof(sgiinfo));
+	sgiinfo *info = calloc(1, sizeof(sgiinfo));
+
+	if (!info)
+		return NULL;
+
 	info->magic=SSWAP32(SGI_INFO_MAGIC);
 	info->b1=SSWAP32(-1);
 	info->b2=SSWAP16(-1);
@@ -885,5 +902,6 @@ const struct fdisk_label sgi_label =
 {
 	.name = "sgi",
 	.probe = sgi_probe_label,
+	.write = sgi_write_disklabel,
 	.part_delete = sgi_delete_partition,
 };

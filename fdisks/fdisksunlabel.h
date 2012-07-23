@@ -82,7 +82,6 @@ extern int sun_change_sysid(struct fdisk_context *cxt, int i, uint16_t sys);
 extern void sun_list_table(struct fdisk_context *cxt, int xtra);
 extern void verify_sun(struct fdisk_context *cxt);
 extern void add_sun_partition(struct fdisk_context *cxt, int n, int sys);
-extern void sun_write_table(struct fdisk_context *cxt);
 extern void sun_set_alt_cyl(struct fdisk_context *cxt);
 extern void sun_set_ncyl(struct fdisk_context *cxt, int cyl);
 extern void sun_set_xcyl(struct fdisk_context *cxt);
