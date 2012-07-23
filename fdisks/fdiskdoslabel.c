@@ -81,6 +81,11 @@ static void mbr_set_magic(unsigned char *b)
 	b[511] = 0xaa;
 }
 
+int mbr_is_valid_magic(unsigned char *b)
+{
+	return (b[510] == 0x55 && b[511] == 0xaa);
+}
+
 static unsigned int mbr_get_id(const unsigned char *b)
 {
 	return read4_little_endian(&b[440]);
@@ -359,7 +364,7 @@ static int dos_probe_label(struct fdisk_context *cxt)
 	int i;
 	unsigned int h = 0, s = 0;
 
-	if (!valid_part_table_flag(cxt->mbr))
+	if (!mbr_is_valid_magic(cxt->mbr))
 		return 0;
 
 	dos_init(cxt);
@@ -385,7 +390,7 @@ static int dos_probe_label(struct fdisk_context *cxt)
 	for (i = 3; i < partitions; i++) {
 		struct pte *pe = &ptes[i];
 
-		if (!valid_part_table_flag(pe->sectorbuffer)) {
+		if (!mbr_is_valid_magic(pe->sectorbuffer)) {
 			fprintf(stderr,
 				_("Warning: invalid flag 0x%04x of partition "
 				"table %d will be corrected by w(rite)\n"),

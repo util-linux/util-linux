@@ -47,4 +47,6 @@ extern void dos_add_partition(struct fdisk_context *cxt, int n, int sys);
 extern void dos_new_partition(struct fdisk_context *cxt);
 extern void dos_write_table(struct fdisk_context *cxt);
 
+extern int mbr_is_valid_magic(unsigned char *b);
+
 #endif

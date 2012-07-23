@@ -33,6 +33,7 @@
 #include "common.h"
 #include "fdisk.h"
 #include "fdisksgilabel.h"
+#include "fdiskdoslabel.h"
 
 static	int     other_endian = 0;
 static	int     debug = 0;
@@ -759,9 +760,13 @@ create_sgilabel(struct fdisk_context *cxt)
 			  " > 33.8 GB.\n"), cxt->dev_path, cxt->geom.cylinders);
 	}
 #endif
+	/*
+	 * Convert old MBR to SGI label, make it DEPRECATED, this feature
+	 * has to be handled in by any top-level fdisk command.
+	 */
 	for (i = 0; i < 4; i++) {
 		old[i].sysid = 0;
-		if (valid_part_table_flag(cxt->mbr)) {
+		if (mbr_is_valid_magic(cxt->mbr)) {
 			if (get_part_table(i)->sys_ind) {
 				old[i].sysid = get_part_table(i)->sys_ind;
 				old[i].start = get_start_sect(get_part_table(i));

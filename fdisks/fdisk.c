@@ -117,11 +117,6 @@ static const struct menulist_descr menulist[] = {
 	{'y', N_("change number of physical cylinders"), {0, SUN_LABEL}},
 };
 
-int
-valid_part_table_flag(unsigned char *b) {
-	return (b[510] == 0x55 && b[511] == 0xaa);
-}
-
 sector_t get_nr_sects(struct partition *p) {
 	return read4_little_endian(p->size4);
 }

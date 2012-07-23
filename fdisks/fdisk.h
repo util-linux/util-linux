@@ -169,7 +169,6 @@ extern char read_char(char *mesg);
 extern int read_hex(struct systypes *sys);
 extern void reread_partition_table(struct fdisk_context *cxt, int leave);
 extern struct partition *get_part_table(int);
-extern int valid_part_table_flag(unsigned char *b);
 extern unsigned int read_int(struct fdisk_context *cxt,
 			     unsigned int low, unsigned int dflt,
 			     unsigned int high, unsigned int base, char *mesg);
