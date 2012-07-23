@@ -569,6 +569,19 @@ static int
 lba_is_aligned(unsigned long long lba)
 {
 	unsigned int granularity = max(phy_sector_size, min_io_size);
+	unsigned long long offset;
+
+	if (grain > granularity)
+		granularity = grain;
+	offset = (lba * sector_size) & (granularity - 1);
+
+	return !((granularity + alignment_offset - offset) & (granularity - 1));
+}
+
+static int
+lba_is_phy_aligned(unsigned long long lba)
+{
+	unsigned int granularity = max(phy_sector_size, min_io_size);
 	unsigned long long offset = (lba * sector_size) & (granularity - 1);
 
 	return !((granularity + alignment_offset - offset) & (granularity - 1));
@@ -1808,7 +1821,7 @@ static void check_consistency(struct partition *p, int partition) {
 static void
 check_alignment(unsigned long long lba, int partition)
 {
-	if (!lba_is_aligned(lba))
+	if (!lba_is_phy_aligned(lba))
 		printf(_("Partition %i does not start on physical sector boundary.\n"),
 			partition + 1);
 }
