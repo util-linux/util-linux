@@ -1759,24 +1759,17 @@ gpt_warning(char *dev)
 static void print_partition_table_from_option(char *device, unsigned long sector_size)
 {
 	int gb;
+	struct fdisk_context *cxt;
 
-	struct fdisk_context *cxt = fdisk_new_context_from_filename(device, 1);	/* read-only */
+	cxt = fdisk_new_context_from_filename(device, 1);	/* read-only */
 	if (!cxt)
 		err(EXIT_FAILURE, _("cannot open %s"), device);
-	if (sector_size)  /* passed -b option, override autodiscovery */
-		cxt->phy_sector_size = cxt->sector_size = sector_size;
-	/* passed CHS option(s), override autodiscovery */
-	if (user_cylinders)
-		cxt->geom.cylinders = user_cylinders;
-	if (user_heads) {
-		cxt->geom.heads = user_heads;
-		fdisk_geom_set_cyls(cxt);
-	}
-	if (user_sectors) {
-		cxt->geom.sectors = user_sectors;
-		fdisk_geom_set_cyls(cxt);
-	}
 
+	if (sector_size) /* passed -b option, override autodiscovery */
+		fdisk_context_force_sector_size(cxt, sector_size);
+
+	fdisk_context_set_user_geometry(cxt, user_cylinders,
+					user_heads, user_sectors);
 	gpt_warning(device);
 	gb = get_boot(cxt, 1);
 	if (gb < 0) { /* no DOS signature */
@@ -2065,19 +2058,12 @@ int main(int argc, char **argv)
 	cxt = fdisk_new_context_from_filename(argv[optind], 0);
 	if (!cxt)
 		err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
+
 	if (sector_size)	/* passed -b option, override autodiscovery */
-		cxt->phy_sector_size = cxt->sector_size = sector_size;
-	/* passed CHS option(s), override autodiscovery */
-	if (user_cylinders)
-		cxt->geom.cylinders = user_cylinders;
-	if (user_heads) {
-		cxt->geom.heads = user_heads;
-		fdisk_geom_set_cyls(cxt);
-	}
-	if (user_sectors) {
-		cxt->geom.sectors = user_sectors;
-		fdisk_geom_set_cyls(cxt);
-	}
+		fdisk_context_force_sector_size(cxt, sector_size);
+
+	fdisk_context_set_user_geometry(cxt, user_cylinders,
+					user_heads, user_sectors);
 
 	print_welcome();
 

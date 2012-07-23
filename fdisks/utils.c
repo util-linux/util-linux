@@ -91,16 +91,64 @@ static unsigned long __get_sector_size(int fd)
 }
 
 /**
- * fdisk_geom_set_cyls
+ * fdisk_context_force_sector_size:
  * @cxt: fdisk context
+ * @s: required sector size
  *
- * Sets the cylinders based on sectors and heads
+ * Overwrites logical and physical sector size. Note that the default sector
+ * size is discovered by fdisk_new_context_from_device() from device topology.
+ *
+ * Don't use this function, rely on the default behavioer is more safe.
+ *
+ * Returns: 0 on success, < 0 on error.
  */
-void fdisk_geom_set_cyls(struct fdisk_context *cxt)
+int fdisk_context_force_sector_size(struct fdisk_context *cxt, sector_t s)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	cxt->phy_sector_size = cxt->sector_size = s;
+	return 0;
+}
+
+static void recount_geometry(struct fdisk_context *cxt)
 {
 	cxt->geom.cylinders = cxt->total_sectors /
 		(cxt->geom.heads * cxt->geom.sectors);
 }
+
+/**
+ * fdisk_context_set_user_geometry:
+ * @cxt: fdisk context
+ * @cylinders: user specified cylinders
+ * @heads: user specified heads
+ * @sectors: user specified sectors
+ *
+ * Overrides autodiscovery and apply user specified geometry.
+ *
+ * Returns: 0 on success, < 0 on error.
+ */
+int fdisk_context_set_user_geometry(struct fdisk_context *cxt,
+				    unsigned int cylinders,
+				    unsigned int heads,
+				    unsigned int sectors)
+{
+	if (!cxt)
+		return -EINVAL;
+	if (heads)
+		cxt->geom.heads = heads;
+	if (sectors)
+		cxt->geom.sectors = sectors;
+
+	recount_geometry(cxt);
+
+	if (!cxt->geom.cylinders)
+		/* use the user defined cylinders only as fillback */
+		cxt->geom.cylinders = cylinders;
+
+	return 0;
+}
+
 
 static int __discover_geometry(struct fdisk_context *cxt)
 {
@@ -127,13 +175,13 @@ static int __discover_geometry(struct fdisk_context *cxt)
 hs_ok: /* obtained heads and sectors */
 	cxt->geom.heads = h;
 	cxt->geom.sectors = s;
-	fdisk_geom_set_cyls(cxt);
+	recount_geometry(cxt);
+
 	update_sector_offset(cxt);
 
 	DBG(GEOMETRY, dbgprint("geometry discovered for %s: C/H/S: %lld/%d/%lld",
 			       cxt->dev_path, cxt->geom.cylinders,
 			       cxt->geom.heads, cxt->geom.sectors));
-
 	return 0;
 }
 
