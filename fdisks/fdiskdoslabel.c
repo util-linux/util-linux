@@ -131,6 +131,61 @@ void dos_init(struct fdisk_context *cxt)
 	warn_alignment(cxt);
 }
 
+static void dos_delete_partition(struct fdisk_context *cxt, int partnum)
+{
+	struct pte *pe = &ptes[partnum];
+	struct partition *p = pe->part_table;
+	struct partition *q = pe->ext_pointer;
+
+	/* Note that for the fifth partition (partnum == 4) we don't actually
+	   decrement partitions. */
+
+	if (partnum < 4) {
+		if (IS_EXTENDED (p->sys_ind) && partnum == ext_index) {
+			partitions = 4;
+			ptes[ext_index].ext_pointer = NULL;
+			extended_offset = 0;
+		}
+		clear_partition(p);
+	} else if (!q->sys_ind && partnum > 4) {
+		/* the last one in the chain - just delete */
+		--partitions;
+		--partnum;
+		clear_partition(ptes[partnum].ext_pointer);
+		ptes[partnum].changed = 1;
+	} else {
+		/* not the last one - further ones will be moved down */
+		if (partnum > 4) {
+			/* delete this link in the chain */
+			p = ptes[partnum-1].ext_pointer;
+			*p = *q;
+			set_start_sect(p, get_start_sect(q));
+			set_nr_sects(p, get_nr_sects(q));
+			ptes[partnum-1].changed = 1;
+		} else if (partitions > 5) {    /* 5 will be moved to 4 */
+			/* the first logical in a longer chain */
+			struct pte *pe = &ptes[5];
+
+			if (pe->part_table) /* prevent SEGFAULT */
+				set_start_sect(pe->part_table,
+					       get_partition_start(pe) -
+					       extended_offset);
+			pe->offset = extended_offset;
+			pe->changed = 1;
+		}
+
+		if (partitions > 5) {
+			partitions--;
+			while (partnum < partitions) {
+				ptes[partnum] = ptes[partnum+1];
+				partnum++;
+			}
+		} else
+			/* the only logical: clear only */
+			clear_partition(ptes[partnum].part_table);
+	}
+}
+
 static void read_extended(struct fdisk_context *cxt, int ext)
 {
 	int i;
@@ -219,7 +274,7 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 		if (!get_nr_sects(pe->part_table) &&
 		    (partitions > 5 || ptes[4].part_table->sys_ind)) {
 			printf(_("omitting empty partition (%d)\n"), i+1);
-			dos_delete_partition(i);
+			dos_delete_partition(cxt, i);
 			goto remove; 	/* numbering changed */
 		}
 	}
@@ -271,61 +326,6 @@ void dos_set_mbr_id(struct fdisk_context *cxt)
 	mbr_set_id(cxt->firstsector, new_id);
 	MBRbuffer_changed = 1;
 	dos_print_mbr_id(cxt);
-}
-
-void dos_delete_partition(int i)
-{
-	struct pte *pe = &ptes[i];
-	struct partition *p = pe->part_table;
-	struct partition *q = pe->ext_pointer;
-
-	/* Note that for the fifth partition (i == 4) we don't actually
-	   decrement partitions. */
-
-	if (i < 4) {
-		if (IS_EXTENDED (p->sys_ind) && i == ext_index) {
-			partitions = 4;
-			ptes[ext_index].ext_pointer = NULL;
-			extended_offset = 0;
-		}
-		clear_partition(p);
-	} else if (!q->sys_ind && i > 4) {
-		/* the last one in the chain - just delete */
-		--partitions;
-		--i;
-		clear_partition(ptes[i].ext_pointer);
-		ptes[i].changed = 1;
-	} else {
-		/* not the last one - further ones will be moved down */
-		if (i > 4) {
-			/* delete this link in the chain */
-			p = ptes[i-1].ext_pointer;
-			*p = *q;
-			set_start_sect(p, get_start_sect(q));
-			set_nr_sects(p, get_nr_sects(q));
-			ptes[i-1].changed = 1;
-		} else if (partitions > 5) {    /* 5 will be moved to 4 */
-			/* the first logical in a longer chain */
-			struct pte *pe = &ptes[5];
-
-			if (pe->part_table) /* prevent SEGFAULT */
-				set_start_sect(pe->part_table,
-					       get_partition_start(pe) -
-					       extended_offset);
-			pe->offset = extended_offset;
-			pe->changed = 1;
-		}
-
-		if (partitions > 5) {
-			partitions--;
-			while (i < partitions) {
-				ptes[i] = ptes[i+1];
-				i++;
-			}
-		} else
-			/* the only logical: clear only */
-			clear_partition(ptes[i].part_table);
-	}
 }
 
 static void get_partition_table_geometry(struct fdisk_context *cxt,
@@ -735,4 +735,5 @@ const struct fdisk_label dos_label =
 {
 	.name = "dos",
 	.probe = dos_probe_label,
+	.part_delete = dos_delete_partition,
 };

@@ -84,4 +84,5 @@ const struct fdisk_label mac_label =
 {
 	.name = "mac",
 	.probe = mac_probe_label,
+	.part_delete = NULL,
 };

@@ -61,7 +61,7 @@
 #define DKTYPENAMES
 #include "fdiskbsdlabel.h"
 
-static void xbsd_delete_part (void);
+static void xbsd_delete_part (struct fdisk_context *cxt, int partnum);
 static void xbsd_new_part (struct fdisk_context *cxt);
 static void xbsd_write_disklabel (struct fdisk_context *cxt);
 static int xbsd_create_disklabel (struct fdisk_context *cxt);
@@ -184,8 +184,8 @@ bsd_command_prompt (struct fdisk_context *cxt)
     putchar ('\n');
     switch (tolower (read_char (_("BSD disklabel command (m for help): ")))) {
       case 'd':
-	xbsd_delete_part ();
-	break;
+	      xbsd_delete_part(cxt, xbsd_get_part_index(xbsd_dlabel.d_npartitions));
+	      break;
       case 'e':
 	xbsd_edit_disklabel ();
 	break;
@@ -230,18 +230,14 @@ bsd_command_prompt (struct fdisk_context *cxt)
   }
 }
 
-static void
-xbsd_delete_part (void)
+static void xbsd_delete_part(struct fdisk_context *cxt, int partnum)
 {
-  int i;
-
-  i = xbsd_get_part_index (xbsd_dlabel.d_npartitions);
-  xbsd_dlabel.d_partitions[i].p_size   = 0;
-  xbsd_dlabel.d_partitions[i].p_offset = 0;
-  xbsd_dlabel.d_partitions[i].p_fstype = BSD_FS_UNUSED;
-  if (xbsd_dlabel.d_npartitions == i + 1)
-    while (xbsd_dlabel.d_partitions[xbsd_dlabel.d_npartitions-1].p_size == 0)
-      xbsd_dlabel.d_npartitions--;
+	xbsd_dlabel.d_partitions[partnum].p_size   = 0;
+	xbsd_dlabel.d_partitions[partnum].p_offset = 0;
+	xbsd_dlabel.d_partitions[partnum].p_fstype = BSD_FS_UNUSED;
+	if (xbsd_dlabel.d_npartitions == partnum + 1)
+		while (!xbsd_dlabel.d_partitions[xbsd_dlabel.d_npartitions-1].p_size)
+			xbsd_dlabel.d_npartitions--;
 }
 
 static void
@@ -850,4 +846,5 @@ const struct fdisk_label bsd_label =
 {
 	.name = "bsd",
 	.probe = osf_probe_label,
+	.part_delete = xbsd_delete_part,
 };

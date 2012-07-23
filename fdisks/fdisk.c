@@ -818,25 +818,14 @@ toggle_dos_compatibility_flag(struct fdisk_context *cxt) {
 	update_sector_offset(cxt);
 }
 
-static void
-delete_partition(struct fdisk_context *cxt, int i)
+static void delete_partition(struct fdisk_context *cxt, int partnum)
 {
-	if (i < 0)
+	if (partnum < 0 || warn_geometry(cxt))
 		return;
 
-	if (warn_geometry(cxt))
-		return;		/* C/H/S not set */
-
-	ptes[i].changed = 1;
-
-	if (disklabel == DOS_LABEL)
-		dos_delete_partition(i);
-	else if (disklabel == SUN_LABEL)
-		sun_delete_partition(cxt, i);
-	else if (disklabel == SGI_LABEL)
-		sgi_delete_partition(cxt, i);
-
-	printf(_("Partition %d is deleted\n"), i + 1);
+	ptes[partnum].changed = 1;
+	fdisk_delete_partition(cxt, partnum);
+	printf(_("Partition %d is deleted\n"), partnum + 1);
 }
 
 static void change_sysid(struct fdisk_context *cxt)

@@ -137,6 +137,8 @@ struct fdisk_label {
 
 	/* probe disk label */
 	int (*probe)(struct fdisk_context *cxt);
+	/* delete partition */
+	void (*part_delete)(struct fdisk_context *cxt, int partnum);
 };
 
 /*
@@ -160,6 +162,7 @@ extern int fdisk_context_set_user_geometry(struct fdisk_context *cxt,
 			    unsigned int cylinders, unsigned int heads,
 			    unsigned int sectors);
 extern int fdisk_create_default_disklabel(struct fdisk_context *cxt);
+extern int fdisk_delete_partition(struct fdisk_context *cxt, int partnum);
 
 /* prototypes for fdisk.c */
 extern char *disk_device, *line_ptr;

@@ -483,13 +483,13 @@ and is of type `Whole disk'\n"));
 	set_sun_partition(cxt, n, first, last, sys);
 }
 
-void sun_delete_partition(struct fdisk_context *cxt, int i)
+static void sun_delete_partition(struct fdisk_context *cxt, int partnum)
 {
-	struct sun_partition *part = &sunlabel->partitions[i];
-	struct sun_tag_flag *tag = &sunlabel->part_tags[i];
+	struct sun_partition *part = &sunlabel->partitions[partnum];
+	struct sun_tag_flag *tag = &sunlabel->part_tags[partnum];
 	unsigned int nsec;
 
-	if (i == 2 &&
+	if (partnum == 2 &&
 	    tag->tag == SSWAP16(SUN_TAG_BACKUP) &&
 	    !part->start_cylinder &&
 	    (nsec = SSWAP32(part->num_sectors))
@@ -649,4 +649,5 @@ const struct fdisk_label sun_label =
 {
 	.name = "sun",
 	.probe = sun_probe_label,
+	.part_delete = sun_delete_partition,
 };

@@ -47,6 +47,26 @@ static const struct fdisk_label *labels[] =
 	&mac_label,
 };
 
+/**
+ * fdisk_delete_partition:
+ * @cxt: fdisk context
+ * @partnum: partition number to delete
+ *
+ * Deletes a @partnum partition.
+ *
+ * Returns 0 on success, otherwise, a corresponding error.
+ */
+int fdisk_delete_partition(struct fdisk_context *cxt, int partnum)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	DBG(LABEL, dbgprint("deleting %s partition number %d",
+				cxt->label->name, partnum));
+	cxt->label->part_delete(cxt, partnum);
+	return 0;
+}
+
 static int __probe_labels(struct fdisk_context *cxt)
 {
 	int i;
@@ -60,7 +80,7 @@ static int __probe_labels(struct fdisk_context *cxt)
 
 		cxt->label = labels[i];
 
-		DBG(LABEL, dbgprint("detected a %s label\n", cxt->label->name));
+		DBG(LABEL, dbgprint("detected a %s label", cxt->label->name));
 		return 0;
 	}
 

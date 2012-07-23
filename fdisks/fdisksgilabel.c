@@ -638,10 +638,9 @@ sgi_set_volhdr(struct fdisk_context *cxt)
 	}
 }
 
-void
-sgi_delete_partition(struct fdisk_context *cxt, int i)
+static void sgi_delete_partition(struct fdisk_context *cxt, int partnum)
 {
-	sgi_set_partition(cxt, i, 0, 0, 0);
+	sgi_set_partition(cxt, partnum, 0, 0, 0);
 }
 
 void
@@ -886,4 +885,5 @@ const struct fdisk_label sgi_label =
 {
 	.name = "sgi",
 	.probe = sgi_probe_label,
+	.part_delete = sgi_delete_partition,
 };

@@ -69,4 +69,5 @@ const struct fdisk_label aix_label =
 {
 	.name = "aix",
 	.probe = aix_probe_label,
+	.part_delete = NULL,
 };
