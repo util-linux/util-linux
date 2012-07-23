@@ -303,9 +303,14 @@ int fdisk_create_default_disklabel(struct fdisk_context *cxt)
 {
 	if (!cxt)
 		return -EINVAL;
+
+	/* TODO: use fdisk_create_disklabel() */
 #ifdef __sparc__
+	cxt->label = &sun_label;
 	return create_sunlabel(cxt);
+
 #else
+	cxt->label = &dos_label;
 	return create_doslabel(cxt);
 #endif
 }
