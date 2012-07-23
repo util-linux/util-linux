@@ -323,14 +323,52 @@ void dos_delete_partition(int i)
 	}
 }
 
+static void get_partition_table_geometry(struct fdisk_context *cxt,
+			unsigned int *ph, unsigned int *ps)
+{
+	unsigned char *bufp = cxt->mbr;
+	struct partition *p;
+	int i, h, s, hh, ss;
+	int first = 1;
+	int bad = 0;
+
+	hh = ss = 0;
+	for (i=0; i<4; i++) {
+		p = pt_offset(bufp, i);
+		if (p->sys_ind != 0) {
+			h = p->end_head + 1;
+			s = (p->end_sector & 077);
+			if (first) {
+				hh = h;
+				ss = s;
+				first = 0;
+			} else if (hh != h || ss != s)
+				bad = 1;
+		}
+	}
+
+	if (!first && !bad) {
+		*ph = hh;
+		*ps = ss;
+	}
+}
+
+
 static int dos_probe_label(struct fdisk_context *cxt)
 {
 	int i;
+	unsigned int h = 0, s = 0;
 
 	if (!valid_part_table_flag(cxt->mbr))
 		return 0;
 
 	dos_init(cxt);
+
+	get_partition_table_geometry(cxt, &h, &s);
+	if (h && s) {
+		cxt->geom.heads = h;
+	        cxt->geom.sectors = s;
+	}
 
 	for (i = 0; i < 4; i++) {
 		struct pte *pe = &ptes[i];

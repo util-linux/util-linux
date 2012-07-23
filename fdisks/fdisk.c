@@ -431,38 +431,6 @@ void warn_alignment(struct fdisk_context *cxt)
 
 }
 
-void
-get_partition_table_geometry(struct fdisk_context *cxt, unsigned int *ph, unsigned int *ps) {
-	unsigned char *bufp = cxt->mbr;
-	struct partition *p;
-	int i, h, s, hh, ss;
-	int first = 1;
-	int bad = 0;
-
-	if (!(valid_part_table_flag(bufp)))
-		return;
-
-	hh = ss = 0;
-	for (i=0; i<4; i++) {
-		p = pt_offset(bufp, i);
-		if (p->sys_ind != 0) {
-			h = p->end_head + 1;
-			s = (p->end_sector & 077);
-			if (first) {
-				hh = h;
-				ss = s;
-				first = 0;
-			} else if (hh != h || ss != s)
-				bad = 1;
-		}
-	}
-
-	if (!first && !bad) {
-		*ph = hh;
-		*ps = ss;
-	}
-}
-
 /*
  * Sets LBA of the first partition
  */
@@ -1746,7 +1714,8 @@ static void print_partition_table_from_option(char *device, unsigned long sector
 	if (sector_size) /* passed -b option, override autodiscovery */
 		fdisk_context_force_sector_size(cxt, sector_size);
 
-	fdisk_context_set_user_geometry(cxt, user_cylinders,
+	if (user_cylinders || user_heads || user_sectors)
+		fdisk_context_set_user_geometry(cxt, user_cylinders,
 					user_heads, user_sectors);
 	gpt_warning(device);
 
@@ -2044,8 +2013,9 @@ int main(int argc, char **argv)
 	if (sector_size)	/* passed -b option, override autodiscovery */
 		fdisk_context_force_sector_size(cxt, sector_size);
 
-	fdisk_context_set_user_geometry(cxt, user_cylinders,
-					user_heads, user_sectors);
+	if (user_cylinders || user_heads || user_sectors)
+		fdisk_context_set_user_geometry(cxt, user_cylinders,
+						user_heads, user_sectors);
 
 	print_welcome();
 

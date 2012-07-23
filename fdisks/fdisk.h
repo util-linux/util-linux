@@ -193,8 +193,6 @@ extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
 extern sector_t align_lba(struct fdisk_context *cxt, sector_t lba, int direction);
 extern int get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt);
 extern void update_sector_offset(struct fdisk_context *cxt);
-extern void get_partition_table_geometry(struct fdisk_context *cxt,
-					 unsigned int *ph, unsigned int *ps);
 
 #define PLURAL	0
 #define SINGULAR 1

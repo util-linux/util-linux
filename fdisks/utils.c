@@ -114,6 +114,9 @@ int fdisk_context_force_sector_size(struct fdisk_context *cxt, sector_t s)
 		return -EINVAL;
 
 	cxt->phy_sector_size = cxt->sector_size = s;
+	cxt->min_io_size = cxt->io_size = s;
+
+	update_sector_offset(cxt);
 	return 0;
 }
 
@@ -146,17 +149,19 @@ int fdisk_context_set_user_geometry(struct fdisk_context *cxt,
 	if (sectors)
 		cxt->geom.sectors = sectors;
 
-	recount_geometry(cxt);
-
-	if (!cxt->geom.cylinders)
-		/* use the user defined cylinders only as fillback */
+	if (cylinders)
 		cxt->geom.cylinders = cylinders;
+	else
+		recount_geometry(cxt);
 
+	update_sector_offset(cxt);
 	return 0;
 }
 
-
-static int __discover_geometry(struct fdisk_context *cxt)
+/*
+ * Generic (label independent) geometry
+ */
+static int __discover_system_geometry(struct fdisk_context *cxt)
 {
 	sector_t nsects;
 	unsigned int h = 0, s = 0;
@@ -165,25 +170,18 @@ static int __discover_geometry(struct fdisk_context *cxt)
 	if (!blkdev_get_sectors(cxt->dev_fd, &nsects))
 		cxt->total_sectors = (nsects / (cxt->sector_size >> 9));
 
-	get_partition_table_geometry(cxt, &h, &s);
-	if (h && s)
-		goto hs_ok;
-
 	/* what the kernel/bios thinks the geometry is */
 	blkdev_get_geometry(cxt->dev_fd, &h, &s);
-	if (h && s)
-		goto hs_ok;
+	if (!h && !s) {
+		/* unable to discover geometry, use default values */
+		s = 63;
+		h = 255;
+	}
 
-	/* unable to discover geometry, use default values */
-	s = 63;
-	h = 255;
-
-hs_ok: /* obtained heads and sectors */
+	/* obtained heads and sectors */
 	cxt->geom.heads = h;
 	cxt->geom.sectors = s;
 	recount_geometry(cxt);
-
-	update_sector_offset(cxt);
 
 	DBG(GEOMETRY, dbgprint("geometry discovered for %s: C/H/S: %lld/%d/%lld",
 			       cxt->dev_path, cxt->geom.cylinders,
@@ -376,9 +374,13 @@ struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int rea
 		goto fail;
 
 	__discover_topology(cxt);
-	__discover_geometry(cxt);
+	__discover_system_geometry(cxt);
 
+	/* detect labels and apply labes specific stuff (e.g geomery)
+	 * to the context */
 	__probe_labels(cxt);
+
+	update_sector_offset(cxt);
 
 	DBG(CONTEXT, dbgprint("context initialized for %s [%s]",
 			      fname, readonly ? "READ-ONLY" : "READ-WRITE"));
