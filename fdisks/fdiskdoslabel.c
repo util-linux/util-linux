@@ -219,7 +219,7 @@ void dos_print_mbr_id(struct fdisk_context *cxt)
 	printf(_("Disk identifier: 0x%08x\n"), dos_read_mbr_id(cxt->mbr));
 }
 
-void create_doslabel(struct fdisk_context *cxt)
+int create_doslabel(struct fdisk_context *cxt)
 {
 	unsigned int id;
 
@@ -238,6 +238,7 @@ void create_doslabel(struct fdisk_context *cxt)
 
 	/* Put MBR signature */
 	write_part_table_flag(cxt->mbr);
+	return 0;
 }
 
 void dos_set_mbr_id(struct fdisk_context *cxt)

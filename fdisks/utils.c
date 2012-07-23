@@ -29,6 +29,9 @@
 #include "common.h"
 #include "fdisk.h"
 
+#include "fdiskdoslabel.h"
+#include "fdisksunlabel.h"
+
 int fdisk_debug_mask;
 
 /*
@@ -272,6 +275,38 @@ int fdisk_dev_has_topology(struct fdisk_context *cxt)
 	    !is_power_of_2(cxt->min_io_size))
 		return 1;
 	return 0;
+}
+
+/**
+ * fdisk_dev_has_disklabel:
+ * @cxt: fdisk context
+ *
+ * Returns: return 1 if there is label on the device.
+ */
+int fdisk_dev_has_disklabel(struct fdisk_context *cxt)
+{
+	return cxt && disklabel != ANY_LABEL;
+}
+
+/**
+ * fdisk_create_default_disklabel:
+ * @cxt: fdisk context
+ *
+ * Creates (in memory) disk label which is usual default for the system. For
+ * example sun label on sparcs, gpt on UEFI machines (TODO), DOS on another
+ * machines, ...etc.
+ *
+ * Returns: 0 on sucess, < 0 on error.
+ */
+int fdisk_create_default_disklabel(struct fdisk_context *cxt)
+{
+	if (!cxt)
+		return -EINVAL;
+#ifdef __sparc__
+	return create_sunlabel(cxt);
+#else
+	return create_doslabel(cxt);
+#endif
 }
 
 /**

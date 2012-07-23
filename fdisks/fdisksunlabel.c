@@ -144,7 +144,7 @@ static int sun_probe_label(struct fdisk_context *cxt)
 	return 1;
 }
 
-void create_sunlabel(struct fdisk_context *cxt)
+int create_sunlabel(struct fdisk_context *cxt)
 {
 	struct hd_geometry geometry;
 	sector_t llsectors, llcyls;
@@ -234,6 +234,8 @@ void create_sunlabel(struct fdisk_context *cxt)
 
 	set_all_unchanged();
 	set_changed(0);
+
+	return 0;
 }
 
 void toggle_sunflags(struct fdisk_context *cxt, int i, uint16_t mask)

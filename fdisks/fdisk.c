@@ -523,14 +523,6 @@ static int get_boot(struct fdisk_context *cxt, int try_only) {
 	if (disklabel == ANY_LABEL) {
 		if (try_only)
 			return -1;
-
-		fprintf(stderr,
-			_("Device does not contain a recognized partition table\n"));
-#ifdef __sparc__
-		create_sunlabel(cxt);
-#else
-		create_doslabel(cxt);
-#endif
 	}
 	return 0;
 }
@@ -2072,7 +2064,12 @@ int main(int argc, char **argv)
 		       cxt->sector_size, DEFAULT_SECTOR_SIZE);
 
 	gpt_warning(cxt->dev_path);
-	get_boot(cxt, 0);
+
+	if (!fdisk_dev_has_disklabel(cxt)) {
+		fprintf(stderr,
+			_("Device does not contain a recognized partition table\n"));
+		fdisk_create_default_disklabel(cxt);
+	}
 
 	command_prompt(cxt);
 
