@@ -43,7 +43,7 @@ mac_nolabel(struct fdisk_context *cxt)
 {
     maclabel->magic = 0;
     partitions = 4;
-    fdisk_mbr_zeroize(cxt);
+    fdisk_zeroize_firstsector(cxt);
     return;
 }
 

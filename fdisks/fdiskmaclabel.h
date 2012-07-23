@@ -28,7 +28,7 @@ typedef struct {
 #define	MAC_LABEL_MAGIC_3_SWAPPED	0x0000d405
 
 /* fdisk.c */
-#define maclabel ((mac_partition *)cxt->mbr)
+#define maclabel ((mac_partition *)cxt->firstsector)
 
 /* fdiskmaclabel.c */
 extern struct	systypes mac_sys_types[];

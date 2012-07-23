@@ -766,7 +766,7 @@ create_sgilabel(struct fdisk_context *cxt)
 	 */
 	for (i = 0; i < 4; i++) {
 		old[i].sysid = 0;
-		if (mbr_is_valid_magic(cxt->mbr)) {
+		if (mbr_is_valid_magic(cxt->firstsector)) {
 			if (get_part_table(i)->sys_ind) {
 				old[i].sysid = get_part_table(i)->sys_ind;
 				old[i].start = get_start_sect(get_part_table(i));
@@ -784,7 +784,7 @@ create_sgilabel(struct fdisk_context *cxt)
 			break;
 		}
 
-	fdisk_mbr_zeroize(cxt);
+	fdisk_zeroize_firstsector(cxt);
 	sgilabel->magic = SSWAP32(SGI_LABEL_MAGIC);
 	sgilabel->boot_part = SSWAP16(0);
 	sgilabel->swap_part = SSWAP16(1);

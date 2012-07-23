@@ -106,7 +106,7 @@ typedef struct {
 #define SSWAP32(x) (other_endian ? swab32(x) : (uint32_t)(x))
 
 /* fdisk.c */
-#define sgilabel ((sgi_partition *)cxt->mbr)
+#define sgilabel ((sgi_partition *)cxt->firstsector)
 #define sgiparam (sgilabel->devparam)
 
 /* fdisksgilabel.c */

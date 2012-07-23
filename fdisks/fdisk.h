@@ -111,7 +111,7 @@ struct fdisk_geometry {
 struct fdisk_context {
 	int dev_fd;         /* device descriptor */
 	char *dev_path;     /* device path */
-	unsigned char *mbr; /* buffer with master boot record */
+	unsigned char *firstsector; /* buffer with master boot record */
 
 	/* topology */
 	unsigned long io_size;		/* I/O size used by fdisk */
@@ -149,7 +149,7 @@ extern int fdisk_dev_has_topology(struct fdisk_context *cxt);
 extern int fdisk_dev_has_disklabel(struct fdisk_context *cxt);
 extern int fdisk_dev_sectsz_is_default(struct fdisk_context *cxt);
 extern void fdisk_free_context(struct fdisk_context *cxt);
-extern void fdisk_mbr_zeroize(struct fdisk_context *cxt);
+extern void fdisk_zeroize_firstsector(struct fdisk_context *cxt);
 extern int fdisk_context_force_sector_size(struct fdisk_context *cxt, sector_t s);
 extern int fdisk_context_set_user_geometry(struct fdisk_context *cxt,
 			    unsigned int cylinders, unsigned int heads,

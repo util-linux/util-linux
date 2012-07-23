@@ -1521,7 +1521,7 @@ static void print_raw(struct fdisk_context *cxt)
 
 	printf(_("Device: %s\n"), cxt->dev_path);
 	if (disklabel == SUN_LABEL || disklabel == SGI_LABEL)
-		print_buffer(cxt, cxt->mbr);
+		print_buffer(cxt, cxt->firstsector);
 	else for (i = 3; i < partitions; i++)
 		     print_buffer(cxt, ptes[i].sectorbuffer);
 }

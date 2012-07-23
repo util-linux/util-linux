@@ -14,7 +14,7 @@
 #include "fdiskaixlabel.h"
 #include "nls.h"
 
-#define aixlabel ((aix_partition *)cxt->mbr)
+#define aixlabel ((aix_partition *)cxt->firstsector)
 
 static	int     other_endian = 0;
 static  short	volumes=1;
@@ -45,7 +45,7 @@ aix_nolabel(struct fdisk_context *cxt)
 {
     aixlabel->magic = 0;
     partitions = 4;
-    fdisk_mbr_zeroize(cxt);
+    fdisk_zeroize_firstsector(cxt);
     return;
 }
 

@@ -67,16 +67,16 @@ done:
 	return rc;
 }
 
-static int __init_mbr_buffer(struct fdisk_context *cxt)
+static int __init_firstsector_buffer(struct fdisk_context *cxt)
 {
-	DBG(TOPOLOGY, dbgprint("initialize MBR buffer"));
+	DBG(TOPOLOGY, dbgprint("initialize first sector buffer"));
 
-	cxt->mbr = calloc(1, MAX_SECTOR_SIZE);
-	if (!cxt->mbr)
+	cxt->firstsector = calloc(1, MAX_SECTOR_SIZE);
+	if (!cxt->firstsector)
 		goto fail;
 
 	/* read MBR */
-	if (512 != read(cxt->dev_fd, cxt->mbr, 512)) {
+	if (512 != read(cxt->dev_fd, cxt->firstsector, 512)) {
 		if (errno == 0)
 			errno = EINVAL;	/* probably too small file/device */
 		goto fail;
@@ -235,16 +235,16 @@ static int __discover_topology(struct fdisk_context *cxt)
 }
 
 /**
- * fdisk_mbr_zeroize:
+ * fdisk_zeroize_firstsector:
  * @cxt: fdisk context
  *
  * Zero's MBR buffer
  */
-void fdisk_mbr_zeroize(struct fdisk_context *cxt)
+void fdisk_zeroize_firstsector(struct fdisk_context *cxt)
 {
-	if (cxt->mbr) {
-		DBG(CONTEXT, dbgprint("zeroize in-memory MBR"));
-		memset(cxt->mbr, 0, MAX_SECTOR_SIZE);
+	if (cxt->firstsector) {
+		DBG(CONTEXT, dbgprint("zeroize in-memory first sector buffer"));
+		memset(cxt->firstsector, 0, MAX_SECTOR_SIZE);
 	}
 }
 
@@ -370,7 +370,7 @@ struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int rea
 	if (!cxt->dev_path)
 		goto fail;
 
-	if (__init_mbr_buffer(cxt) < 0)
+	if (__init_firstsector_buffer(cxt) < 0)
 		goto fail;
 
 	__discover_topology(cxt);
@@ -408,6 +408,6 @@ void fdisk_free_context(struct fdisk_context *cxt)
 	DBG(CONTEXT, dbgprint("freeing context for %s", cxt->dev_path));
 	close(cxt->dev_fd);
 	free(cxt->dev_path);
-	free(cxt->mbr);
+	free(cxt->firstsector);
 	free(cxt);
 }

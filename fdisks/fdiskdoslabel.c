@@ -119,10 +119,10 @@ void dos_init(struct fdisk_context *cxt)
 	for (i = 0; i < 4; i++) {
 		struct pte *pe = &ptes[i];
 
-		pe->part_table = pt_offset(cxt->mbr, i);
+		pe->part_table = pt_offset(cxt->firstsector, i);
 		pe->ext_pointer = NULL;
 		pe->offset = 0;
-		pe->sectorbuffer = cxt->mbr;
+		pe->sectorbuffer = cxt->firstsector;
 		pe->changed = 0;
 	}
 
@@ -227,7 +227,7 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 
 void dos_print_mbr_id(struct fdisk_context *cxt)
 {
-	printf(_("Disk identifier: 0x%08x\n"), mbr_get_id(cxt->mbr));
+	printf(_("Disk identifier: 0x%08x\n"), mbr_get_id(cxt->firstsector));
 }
 
 int create_doslabel(struct fdisk_context *cxt)
@@ -240,15 +240,15 @@ int create_doslabel(struct fdisk_context *cxt)
 	fprintf(stderr, _("Building a new DOS disklabel with disk identifier 0x%08x.\n"), id);
 
 	dos_init(cxt);
-	fdisk_mbr_zeroize(cxt);
+	fdisk_zeroize_firstsector(cxt);
 	set_all_unchanged();
 	set_changed(0);
 
 	/* Generate an MBR ID for this disk */
-	mbr_set_id(cxt->mbr, id);
+	mbr_set_id(cxt->firstsector, id);
 
 	/* Put MBR signature */
-	mbr_set_magic(cxt->mbr);
+	mbr_set_magic(cxt->firstsector);
 	return 0;
 }
 
@@ -259,7 +259,7 @@ void dos_set_mbr_id(struct fdisk_context *cxt)
 	char ps[64];
 
 	snprintf(ps, sizeof ps, _("New disk identifier (current 0x%08x): "),
-		 mbr_get_id(cxt->mbr));
+		 mbr_get_id(cxt->firstsector));
 
 	if (read_chars(ps) == '\n')
 		return;
@@ -268,7 +268,7 @@ void dos_set_mbr_id(struct fdisk_context *cxt)
 	if (*ep != '\n')
 		return;
 
-	mbr_set_id(cxt->mbr, new_id);
+	mbr_set_id(cxt->firstsector, new_id);
 	MBRbuffer_changed = 1;
 	dos_print_mbr_id(cxt);
 }
@@ -331,7 +331,7 @@ void dos_delete_partition(int i)
 static void get_partition_table_geometry(struct fdisk_context *cxt,
 			unsigned int *ph, unsigned int *ps)
 {
-	unsigned char *bufp = cxt->mbr;
+	unsigned char *bufp = cxt->firstsector;
 	struct partition *p;
 	int i, h, s, hh, ss;
 	int first = 1;
@@ -364,7 +364,7 @@ static int dos_probe_label(struct fdisk_context *cxt)
 	int i;
 	unsigned int h = 0, s = 0;
 
-	if (!mbr_is_valid_magic(cxt->mbr))
+	if (!mbr_is_valid_magic(cxt->firstsector))
 		return 0;
 
 	dos_init(cxt);
@@ -717,8 +717,8 @@ void dos_write_table(struct fdisk_context *cxt)
 				MBRbuffer_changed = 1;
 	}
 	if (MBRbuffer_changed) {
-		mbr_set_magic(cxt->mbr);
-		write_sector(cxt, 0, cxt->mbr);
+		mbr_set_magic(cxt->firstsector);
+		write_sector(cxt, 0, cxt->firstsector);
 	}
 	/* EBR (logical partitions) */
 	for (i = 4; i < partitions; i++) {

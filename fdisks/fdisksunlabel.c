@@ -160,7 +160,7 @@ int create_sunlabel(struct fdisk_context *cxt)
 #endif
 
 	init();
-	fdisk_mbr_zeroize(cxt);
+	fdisk_zeroize_firstsector(cxt);
 
 	sunlabel->magic = SSWAP16(SUN_LABEL_MAGIC);
 	sunlabel->sanity = SSWAP32(SUN_LABEL_SANE);

@@ -73,7 +73,7 @@ struct sun_disk_label {
 
 #define SUN_LABEL_MAGIC		0xDABE
 #define SUN_LABEL_MAGIC_SWAPPED	0xBEDA
-#define sunlabel ((struct sun_disk_label *)cxt->mbr)
+#define sunlabel ((struct sun_disk_label *)cxt->firstsector)
 
 /* fdisksunlabel.c */
 extern struct systypes sun_sys_types[];
