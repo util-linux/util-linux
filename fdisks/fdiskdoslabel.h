@@ -26,12 +26,6 @@ extern int dos_compatible_flag;
 extern int ext_index; /* the prime extended partition */
 extern sector_t extended_offset, sector_offset;
 
-static inline void write_part_table_flag(unsigned char *b)
-{
-	b[510] = 0x55;
-	b[511] = 0xaa;
-}
-
 /* A valid partition table sector ends in 0x55 0xaa */
 static inline unsigned int part_table_flag(unsigned char *b)
 {

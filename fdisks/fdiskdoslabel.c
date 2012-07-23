@@ -70,12 +70,18 @@ static void read_pte(struct fdisk_context *cxt, int pno, sector_t offset)
 	pe->part_table = pe->ext_pointer = NULL;
 }
 
-static void dos_write_mbr_id(unsigned char *b, unsigned int id)
+static void mbr_set_id(unsigned char *b, unsigned int id)
 {
 	store4_little_endian(&b[440], id);
 }
 
-static unsigned int dos_read_mbr_id(const unsigned char *b)
+static void mbr_set_magic(unsigned char *b)
+{
+	b[510] = 0x55;
+	b[511] = 0xaa;
+}
+
+static unsigned int mbr_get_id(const unsigned char *b)
 {
 	return read4_little_endian(&b[440]);
 }
@@ -216,7 +222,7 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 
 void dos_print_mbr_id(struct fdisk_context *cxt)
 {
-	printf(_("Disk identifier: 0x%08x\n"), dos_read_mbr_id(cxt->mbr));
+	printf(_("Disk identifier: 0x%08x\n"), mbr_get_id(cxt->mbr));
 }
 
 int create_doslabel(struct fdisk_context *cxt)
@@ -234,10 +240,10 @@ int create_doslabel(struct fdisk_context *cxt)
 	set_changed(0);
 
 	/* Generate an MBR ID for this disk */
-	dos_write_mbr_id(cxt->mbr, id);
+	mbr_set_id(cxt->mbr, id);
 
 	/* Put MBR signature */
-	write_part_table_flag(cxt->mbr);
+	mbr_set_magic(cxt->mbr);
 	return 0;
 }
 
@@ -248,7 +254,7 @@ void dos_set_mbr_id(struct fdisk_context *cxt)
 	char ps[64];
 
 	snprintf(ps, sizeof ps, _("New disk identifier (current 0x%08x): "),
-		 dos_read_mbr_id(cxt->mbr));
+		 mbr_get_id(cxt->mbr));
 
 	if (read_chars(ps) == '\n')
 		return;
@@ -257,7 +263,7 @@ void dos_set_mbr_id(struct fdisk_context *cxt)
 	if (*ep != '\n')
 		return;
 
-	dos_write_mbr_id(cxt->mbr, new_id);
+	mbr_set_id(cxt->mbr, new_id);
 	MBRbuffer_changed = 1;
 	dos_print_mbr_id(cxt);
 }
@@ -668,7 +674,7 @@ void dos_write_table(struct fdisk_context *cxt)
 				MBRbuffer_changed = 1;
 	}
 	if (MBRbuffer_changed) {
-		write_part_table_flag(cxt->mbr);
+		mbr_set_magic(cxt->mbr);
 		write_sector(cxt, 0, cxt->mbr);
 	}
 	/* EBR (logical partitions) */
@@ -676,7 +682,7 @@ void dos_write_table(struct fdisk_context *cxt)
 		struct pte *pe = &ptes[i];
 
 		if (pe->changed) {
-			write_part_table_flag(pe->sectorbuffer);
+			mbr_set_magic(pe->sectorbuffer);
 			write_sector(cxt, pe->offset, pe->sectorbuffer);
 		}
 	}
