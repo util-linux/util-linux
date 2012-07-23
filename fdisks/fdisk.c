@@ -297,7 +297,20 @@ static int
 lba_is_aligned(struct fdisk_context *cxt, sector_t lba)
 {
 	unsigned int granularity = max(cxt->phy_sector_size, cxt->min_io_size);
-	sector_t offset = (lba * cxt->sector_size) & (granularity - 1);
+	unsigned long long offset;
+
+	if (grain > granularity)
+		granularity = grain;
+	offset = (lba * cxt->sector_size) & (granularity - 1);
+
+	return !((granularity + cxt->alignment_offset - offset) & (granularity - 1));
+}
+
+static int
+lba_is_phy_aligned(struct fdisk_context *cxt, unsigned long long lba)
+{
+	unsigned int granularity = max(cxt->phy_sector_size, cxt->min_io_size);
+	unsigned long long offset = (lba * cxt->sector_size) & (granularity - 1);
 
 	return !((granularity + cxt->alignment_offset - offset) & (granularity - 1));
 }
@@ -973,7 +986,7 @@ void check_consistency(struct fdisk_context *cxt, struct partition *p, int parti
 
 void check_alignment(struct fdisk_context *cxt, sector_t lba, int partition)
 {
-	if (!lba_is_aligned(cxt, lba))
+	if (!lba_is_phy_aligned(cxt, lba))
 		printf(_("Partition %i does not start on physical sector boundary.\n"),
 			partition + 1);
 }
