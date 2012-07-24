@@ -919,7 +919,8 @@ long2chs(struct fdisk_context *cxt, unsigned long ls,
 	*s = ls % cxt->geom.sectors + 1;	/* sectors count from 1 */
 }
 
-static void check_consistency(struct fdisk_context *cxt, struct partition *p, int partition) {
+void check_consistency(struct fdisk_context *cxt, struct partition *p, int partition)
+{
 	unsigned int pbc, pbh, pbs;	/* physical beginning c, h, s */
 	unsigned int pec, peh, pes;	/* physical ending c, h, s */
 	unsigned int lbc, lbh, lbs;	/* logical beginning c, h, s */
@@ -970,8 +971,7 @@ static void check_consistency(struct fdisk_context *cxt, struct partition *p, in
 	}
 }
 
-static void
-check_alignment(struct fdisk_context *cxt, sector_t lba, int partition)
+void check_alignment(struct fdisk_context *cxt, sector_t lba, int partition)
 {
 	if (!lba_is_aligned(cxt, lba))
 		printf(_("Partition %i does not start on physical sector boundary.\n"),
@@ -1273,9 +1273,10 @@ void fill_bounds(sector_t *first, sector_t *last)
 	}
 }
 
-static void
-check(struct fdisk_context *cxt, int n, unsigned int h, unsigned int s, unsigned int c,
-      unsigned int start) {
+void check(struct fdisk_context *cxt, int n, 
+	   unsigned int h, unsigned int s, unsigned int c,
+	   unsigned int start)
+{
 	unsigned int total, real_s, real_c;
 
 	real_s = sector(s) - 1;
@@ -1299,79 +1300,12 @@ check(struct fdisk_context *cxt, int n, unsigned int h, unsigned int s, unsigned
 			"total %d\n"), n, start, total);
 }
 
-static void
-verify(struct fdisk_context *cxt) {
-	int i, j;
-	sector_t total = 1, n_sectors = cxt->total_sectors;
-	unsigned long long first[partitions], last[partitions];
-	struct partition *p;
-
+static void verify(struct fdisk_context *cxt)
+{
 	if (warn_geometry(cxt))
 		return;
 
-	if (disklabel == SUN_LABEL) {
-		verify_sun(cxt);
-		return;
-	}
-
-	if (disklabel == SGI_LABEL) {
-		verify_sgi(cxt, 1);
-		return;
-	}
-
-	fill_bounds(first, last);
-	for (i = 0; i < partitions; i++) {
-		struct pte *pe = &ptes[i];
-
-		p = pe->part_table;
-		if (p->sys_ind && !IS_EXTENDED (p->sys_ind)) {
-			check_consistency(cxt, p, i);
-			check_alignment(cxt, get_partition_start(pe), i);
-			if (get_partition_start(pe) < first[i])
-				printf(_("Warning: bad start-of-data in "
-					"partition %d\n"), i + 1);
-			check(cxt, i + 1, p->end_head, p->end_sector, p->end_cyl,
-			      last[i]);
-			total += last[i] + 1 - first[i];
-			for (j = 0; j < i; j++)
-			if ((first[i] >= first[j] && first[i] <= last[j])
-			 || ((last[i] <= last[j] && last[i] >= first[j]))) {
-				printf(_("Warning: partition %d overlaps "
-					"partition %d.\n"), j + 1, i + 1);
-				total += first[i] >= first[j] ?
-					first[i] : first[j];
-				total -= last[i] <= last[j] ?
-					last[i] : last[j];
-			}
-		}
-	}
-
-	if (extended_offset) {
-		struct pte *pex = &ptes[ext_index];
-		sector_t e_last = get_start_sect(pex->part_table) +
-			get_nr_sects(pex->part_table) - 1;
-
-		for (i = 4; i < partitions; i++) {
-			total++;
-			p = ptes[i].part_table;
-			if (!p->sys_ind) {
-				if (i != 4 || i + 1 < partitions)
-					printf(_("Warning: partition %d "
-						"is empty\n"), i + 1);
-			}
-			else if (first[i] < extended_offset ||
-					last[i] > e_last)
-				printf(_("Logical partition %d not entirely in "
-					"partition %d\n"), i + 1, ext_index + 1);
-		}
-	}
-
-	if (total > n_sectors)
-		printf(_("Total allocated sectors %llu greater than the maximum"
-			" %llu\n"), total, n_sectors);
-	else if (total < n_sectors)
-		printf(_("Remaining %lld unallocated %ld-byte sectors\n"),
-		       n_sectors - total, cxt->sector_size);
+	fdisk_verify_disklabel(cxt);
 }
 
 void print_partition_size(struct fdisk_context *cxt,

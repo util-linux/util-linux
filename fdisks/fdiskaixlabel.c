@@ -79,6 +79,7 @@ const struct fdisk_label aix_label =
 	.name = "aix",
 	.probe = aix_probe_label,
 	.write = NULL,
+	.verify = NULL,
 	.part_add = aix_add_partition,
 	.part_delete = NULL,
 };

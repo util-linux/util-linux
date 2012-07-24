@@ -643,6 +643,70 @@ static void add_logical(struct fdisk_context *cxt)
 	add_partition(cxt, partitions - 1, LINUX_NATIVE);
 }
 
+static int dos_verify_disklabel(struct fdisk_context *cxt)
+{
+	int i, j;
+	sector_t total = 1, n_sectors = cxt->total_sectors;
+	unsigned long long first[partitions], last[partitions];
+	struct partition *p;
+
+	fill_bounds(first, last);
+	for (i = 0; i < partitions; i++) {
+		struct pte *pe = &ptes[i];
+
+		p = pe->part_table;
+		if (p->sys_ind && !IS_EXTENDED (p->sys_ind)) {
+			check_consistency(cxt, p, i);
+			check_alignment(cxt, get_partition_start(pe), i);
+			if (get_partition_start(pe) < first[i])
+				printf(_("Warning: bad start-of-data in "
+					 "partition %d\n"), i + 1);
+			check(cxt, i + 1, p->end_head, p->end_sector, p->end_cyl,
+			      last[i]);
+			total += last[i] + 1 - first[i];
+			for (j = 0; j < i; j++)
+				if ((first[i] >= first[j] && first[i] <= last[j])
+				    || ((last[i] <= last[j] && last[i] >= first[j]))) {
+					printf(_("Warning: partition %d overlaps "
+						 "partition %d.\n"), j + 1, i + 1);
+					total += first[i] >= first[j] ?
+						first[i] : first[j];
+					total -= last[i] <= last[j] ?
+						last[i] : last[j];
+				}
+		}
+	}
+
+	if (extended_offset) {
+		struct pte *pex = &ptes[ext_index];
+		sector_t e_last = get_start_sect(pex->part_table) +
+			get_nr_sects(pex->part_table) - 1;
+
+		for (i = 4; i < partitions; i++) {
+			total++;
+			p = ptes[i].part_table;
+			if (!p->sys_ind) {
+				if (i != 4 || i + 1 < partitions)
+					printf(_("Warning: partition %d "
+						 "is empty\n"), i + 1);
+			}
+			else if (first[i] < extended_offset ||
+					last[i] > e_last)
+				printf(_("Logical partition %d not entirely in "
+					"partition %d\n"), i + 1, ext_index + 1);
+		}
+	}
+
+	if (total > n_sectors)
+		printf(_("Total allocated sectors %llu greater than the maximum"
+			 " %llu\n"), total, n_sectors);
+	else if (total < n_sectors)
+		printf(_("Remaining %lld unallocated %ld-byte sectors\n"),
+		       n_sectors - total, cxt->sector_size);
+
+	return 0;
+}
+
 /*
  * Ask the user for new partition type information (logical, extended).
  * This function calls the actual partition adding logic - add_partition.
@@ -757,6 +821,7 @@ const struct fdisk_label dos_label =
 	.name = "dos",
 	.probe = dos_probe_label,
 	.write = dos_write_disklabel,
+	.verify = dos_verify_disklabel,
 	.part_add = dos_add_partition,
 	.part_delete = dos_delete_partition,
 };

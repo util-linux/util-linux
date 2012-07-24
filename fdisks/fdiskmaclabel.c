@@ -94,6 +94,7 @@ const struct fdisk_label mac_label =
 	.name = "mac",
 	.probe = mac_probe_label,
 	.write = NULL,
+	.verify = NULL,
 	.part_add = mac_add_partition,
 	.part_delete = NULL,
 };

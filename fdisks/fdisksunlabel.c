@@ -295,7 +295,7 @@ static int verify_sun_cmp(int *a, int *b)
     return -1;
 }
 
-void verify_sun(struct fdisk_context *cxt)
+static int sun_verify_disklabel(struct fdisk_context *cxt)
 {
     uint32_t starts[SUN_NUM_PARTITIONS], lens[SUN_NUM_PARTITIONS], start, stop;
     uint32_t i,j,k,starto,endo;
@@ -347,7 +347,7 @@ void verify_sun(struct fdisk_context *cxt)
 
     if (array[0] == -1) {
 	printf(_("No partitions defined\n"));
-	return;
+	return 0;
     }
     stop = cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors;
     if (starts[array[0]])
@@ -360,6 +360,8 @@ void verify_sun(struct fdisk_context *cxt)
     start = (starts[array[i]] + lens[array[i]]);
     if (start < stop)
         printf(_("Unused gap - sectors %d-%d\n"), start, stop);
+    
+    return 0;
 }
 
 static void sun_add_partition(struct fdisk_context *cxt, int n, int sys)
@@ -652,6 +654,7 @@ const struct fdisk_label sun_label =
 	.name = "sun",
 	.probe = sun_probe_label,
 	.write = sun_write_disklabel,
+	.verify = sun_verify_disklabel,
 	.part_add = sun_add_partition,
 	.part_delete = sun_delete_partition,
 };

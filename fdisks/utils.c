@@ -63,6 +63,22 @@ int fdisk_write_disklabel(struct fdisk_context *cxt)
 	return cxt->label->write(cxt);
 }
 
+/**
+ * fdisk_verify_disklabel:
+ * @cxt: fdisk context
+ *
+ * Verifies the partition tabe.
+ *
+ * Returns 0.
+ */
+int fdisk_verify_disklabel(struct fdisk_context *cxt)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	return cxt->label->verify(cxt);
+}
+
 /*
  * fdisk_add_partition:
  * @cxt: fdisk context

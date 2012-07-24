@@ -139,6 +139,8 @@ struct fdisk_label {
 	int (*probe)(struct fdisk_context *cxt);
 	/* write in-memory changes to disk */
 	int (*write)(struct fdisk_context *cxt);
+	/* verify the partition table */
+	int (*verify)(struct fdisk_context *cxt);
 	/* new partition */
 	void (*part_add)(struct fdisk_context *cxt, int partnum, int parttype);
 	/* delete partition */
@@ -169,11 +171,17 @@ extern int fdisk_create_default_disklabel(struct fdisk_context *cxt);
 extern int fdisk_delete_partition(struct fdisk_context *cxt, int partnum);
 extern int fdisk_add_partition(struct fdisk_context *cxt, int partnum, int parttype);
 extern int fdisk_write_disklabel(struct fdisk_context *cxt);
+extern int fdisk_verify_disklabel(struct fdisk_context *cxt);
 
 /* prototypes for fdisk.c */
 extern char *disk_device, *line_ptr;
 extern int fd, partitions;
 extern unsigned int display_in_cyl_units, units_per_sector;
+
+extern void check_consistency(struct fdisk_context *cxt, struct partition *p, int partition);
+extern void check_alignment(struct fdisk_context *cxt, sector_t lba, int partition);
+extern void check(struct fdisk_context *cxt, int n, unsigned int h, unsigned int s, unsigned int c, unsigned int start);
+
 extern void change_units(struct fdisk_context *cxt);
 extern void fatal(struct fdisk_context *cxt, enum failure why);
 extern int  get_partition(struct fdisk_context *cxt, int warn, int max);

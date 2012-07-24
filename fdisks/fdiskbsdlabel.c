@@ -846,6 +846,7 @@ const struct fdisk_label bsd_label =
 	.name = "bsd",
 	.probe = osf_probe_label,
 	.write = xbsd_write_disklabel,
-	.part_add= xbsd_add_part,
+	.verify = NULL,
+	.part_add = xbsd_add_part,
 	.part_delete = xbsd_delete_part,
 };

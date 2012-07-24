@@ -391,17 +391,6 @@ compare_start(struct fdisk_context *cxt, const void *x, const void *y) {
 	return (a > b) ? 1 : -1;
 }
 
-static int
-sgi_gaps(struct fdisk_context *cxt) {
-	/*
-	 * returned value is:
-	 *  = 0 : disk is properly filled to the rim
-	 *  < 0 : there is an overlap
-	 *  > 0 : there is still some vacant space
-	 */
-	return verify_sgi(cxt, 0);
-}
-
 static void generic_swap(void *a, void *b, int size)
 {
 	char t;
@@ -450,13 +439,11 @@ static void sort(void *base, size_t num, size_t size, struct fdisk_context *cxt,
 	}
 }
 
-
-int
-verify_sgi(struct fdisk_context *cxt, int verbose)
+static int sgi_verify_disklabel(struct fdisk_context *cxt)
 {
 	int Index[16];		/* list of valid partitions */
 	int sortcount = 0;	/* number of used partitions, i.e. non-zero lengths */
-	int entire = 0, i = 0;
+	int entire = 0, i = 0, verbose = 1;
 	unsigned int start = 0;
 	long long gap = 0;	/* count unused blocks */
 	unsigned int lastblock = sgi_get_lastblock(cxt);
@@ -573,6 +560,17 @@ verify_sgi(struct fdisk_context *cxt, int verbose)
 			printf(_("\tYou have chosen an unusual boot file name.\n"));
 	}
 	return (gap > 0) ? 1 : (gap == 0) ? 0 : -1;
+}
+
+static int
+sgi_gaps(struct fdisk_context *cxt) {
+	/*
+	 * returned value is:
+	 *  = 0 : disk is properly filled to the rim
+	 *  < 0 : there is an overlap
+	 *  > 0 : there is still some vacant space
+	 */
+	return sgi_verify_disklabel(cxt);
 }
 
 int
@@ -902,6 +900,7 @@ const struct fdisk_label sgi_label =
 	.name = "sgi",
 	.probe = sgi_probe_label,
 	.write = sgi_write_disklabel,
+	.verify = sgi_verify_disklabel,
 	.part_add = sgi_add_partition,
 	.part_delete = sgi_delete_partition,
 };
