@@ -1604,7 +1604,6 @@ gpt_warning(char *dev)
 /* Print disk geometry and partition table of a specified device (-l option) */
 static void print_partition_table_from_option(char *device, unsigned long sector_size)
 {
-	int gb;
 	struct fdisk_context *cxt;
 
 	cxt = fdisk_new_context_from_filename(device, 1);	/* read-only */
