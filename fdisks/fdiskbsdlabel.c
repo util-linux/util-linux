@@ -62,7 +62,6 @@
 #include "fdiskbsdlabel.h"
 
 static void xbsd_delete_part (struct fdisk_context *cxt, int partnum);
-static int xbsd_create_disklabel (struct fdisk_context *cxt);
 static void xbsd_edit_disklabel (void);
 static void xbsd_write_bootstrap (struct fdisk_context *cxt);
 static void xbsd_change_fstype (void);
@@ -188,6 +187,37 @@ static void xbsd_add_part (struct fdisk_context *cxt, int partnum, int parttype)
 	xbsd_dlabel.d_partitions[i].p_size   = end - begin + 1;
 	xbsd_dlabel.d_partitions[i].p_offset = begin;
 	xbsd_dlabel.d_partitions[i].p_fstype = BSD_FS_UNUSED;
+}
+
+static int xbsd_create_disklabel (struct fdisk_context *cxt)
+{
+	char c;
+
+#if defined (__alpha__)
+	fprintf (stderr, _("%s contains no disklabel.\n"), cxt->dev_path);
+#else
+	fprintf (stderr, _("%s contains no disklabel.\n"),
+		 partname(cxt->dev_path, xbsd_part_index+1, 0));
+#endif
+
+	while (1) {
+		c = read_char (_("Do you want to create a disklabel? (y/n) "));
+		if (tolower(c) == 'y') {
+			if (xbsd_initlabel (cxt,
+#if defined (__alpha__) || defined (__powerpc__) || defined (__hppa__) || \
+    defined (__s390__) || defined (__s390x__)
+				NULL, &xbsd_dlabel, 0
+#else
+				xbsd_part, &xbsd_dlabel, xbsd_part_index
+#endif
+				) == 1) {
+				xbsd_print_disklabel (cxt, 1);
+				return 1;
+			} else
+				return 0;
+		} else if (c == 'n')
+			return 0;
+	}
 }
 
 void
@@ -386,37 +416,6 @@ xbsd_print_disklabel (struct fdisk_context *cxt, int show_all) {
       fprintf(f, "\n");
     }
   }
-}
-
-static int
-xbsd_create_disklabel (struct fdisk_context *cxt) {
-	char c;
-
-#if defined (__alpha__)
-	fprintf (stderr, _("%s contains no disklabel.\n"), cxt->dev_path);
-#else
-	fprintf (stderr, _("%s contains no disklabel.\n"),
-		 partname(cxt->dev_path, xbsd_part_index+1, 0));
-#endif
-
-	while (1) {
-		c = read_char (_("Do you want to create a disklabel? (y/n) "));
-		if (tolower(c) == 'y') {
-			if (xbsd_initlabel (cxt,
-#if defined (__alpha__) || defined (__powerpc__) || defined (__hppa__) || \
-    defined (__s390__) || defined (__s390x__)
-				NULL, &xbsd_dlabel, 0
-#else
-				xbsd_part, &xbsd_dlabel, xbsd_part_index
-#endif
-				) == 1) {
-				xbsd_print_disklabel (cxt, 1);
-				return 1;
-			} else
-				return 0;
-		} else if (c == 'n')
-			return 0;
-	}
 }
 
 static int
@@ -847,6 +846,7 @@ const struct fdisk_label bsd_label =
 	.probe = osf_probe_label,
 	.write = xbsd_write_disklabel,
 	.verify = NULL,
+	.create = xbsd_create_disklabel,
 	.part_add = xbsd_add_part,
 	.part_delete = xbsd_delete_part,
 };

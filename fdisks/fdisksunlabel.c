@@ -144,7 +144,7 @@ static int sun_probe_label(struct fdisk_context *cxt)
 	return 1;
 }
 
-int create_sunlabel(struct fdisk_context *cxt)
+static int sun_create_disklabel(struct fdisk_context *cxt)
 {
 	struct hd_geometry geometry;
 	sector_t llsectors, llcyls;
@@ -655,6 +655,7 @@ const struct fdisk_label sun_label =
 	.probe = sun_probe_label,
 	.write = sun_write_disklabel,
 	.verify = sun_verify_disklabel,
+	.create = sun_create_disklabel,
 	.part_add = sun_add_partition,
 	.part_delete = sun_delete_partition,
 };

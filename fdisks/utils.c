@@ -361,29 +361,45 @@ int fdisk_dev_has_disklabel(struct fdisk_context *cxt)
 }
 
 /**
- * fdisk_create_default_disklabel:
+ * fdisk_create_disklabel:
  * @cxt: fdisk context
+ * @name: label name
  *
- * Creates (in memory) disk label which is usual default for the system. For
- * example sun label on sparcs, gpt on UEFI machines (TODO), DOS on another
- * machines, ...etc.
+ * Creates a new disk label of type @name. If @name is NULL, then it
+ * will create a default system label type, either SUN or DOS.
  *
- * Returns: 0 on sucess, < 0 on error.
+ * Returns 0 on success, otherwise, a corresponding error.
  */
-int fdisk_create_default_disklabel(struct fdisk_context *cxt)
+int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 {
 	if (!cxt)
 		return -EINVAL;
 
-	/* TODO: use fdisk_create_disklabel() */
-#ifdef __sparc__
-	cxt->label = &sun_label;
-	return create_sunlabel(cxt);
+	cxt->label = NULL;
 
+	if (!name) { /* use default label creation */
+#ifdef __sparc__
+		cxt->label = &sun_label;
 #else
-	cxt->label = &dos_label;
-	return create_doslabel(cxt);
+		cxt->label = &dos_label;
 #endif
+	} else {
+		size_t i;
+
+		for (i = 0; i < ARRAY_SIZE(labels); i++) {
+			if (strcmp(name, labels[i]->name) != 0)
+				continue;
+
+			cxt->label = labels[i];
+			DBG(LABEL, dbgprint("changing to %s label\n", cxt->label->name));
+			break;
+		}
+	}
+
+	if (!cxt->label)
+		return -EINVAL;
+
+	return cxt->label->create(cxt);
 }
 
 /**

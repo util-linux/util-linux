@@ -37,7 +37,6 @@ static inline sector_t get_partition_start(struct pte *pe)
 	return pe->offset + get_start_sect(pe->part_table);
 }
 
-extern int create_doslabel(struct fdisk_context *cxt);
 extern void dos_print_mbr_id(struct fdisk_context *cxt);
 extern void dos_set_mbr_id(struct fdisk_context *cxt);
 extern int is_dos_partition(int t);

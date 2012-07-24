@@ -141,6 +141,8 @@ struct fdisk_label {
 	int (*write)(struct fdisk_context *cxt);
 	/* verify the partition table */
 	int (*verify)(struct fdisk_context *cxt);
+	/* create new disk label */
+	int (*create)(struct fdisk_context *cxt);
 	/* new partition */
 	void (*part_add)(struct fdisk_context *cxt, int partnum, int parttype);
 	/* delete partition */
@@ -167,11 +169,11 @@ extern int fdisk_context_force_sector_size(struct fdisk_context *cxt, sector_t s
 extern int fdisk_context_set_user_geometry(struct fdisk_context *cxt,
 			    unsigned int cylinders, unsigned int heads,
 			    unsigned int sectors);
-extern int fdisk_create_default_disklabel(struct fdisk_context *cxt);
 extern int fdisk_delete_partition(struct fdisk_context *cxt, int partnum);
 extern int fdisk_add_partition(struct fdisk_context *cxt, int partnum, int parttype);
 extern int fdisk_write_disklabel(struct fdisk_context *cxt);
 extern int fdisk_verify_disklabel(struct fdisk_context *cxt);
+extern int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name);
 
 /* prototypes for fdisk.c */
 extern char *disk_device, *line_ptr;

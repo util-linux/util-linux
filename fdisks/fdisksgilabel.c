@@ -724,8 +724,7 @@ static void sgi_add_partition(struct fdisk_context *cxt, int n, int sys)
 	sgi_set_partition(cxt, n, first, last-first, sys);
 }
 
-void
-create_sgilabel(struct fdisk_context *cxt)
+static int sgi_create_disklabel(struct fdisk_context *cxt)
 {
 	struct hd_geometry geometry;
 	struct {
@@ -901,6 +900,7 @@ const struct fdisk_label sgi_label =
 	.probe = sgi_probe_label,
 	.write = sgi_write_disklabel,
 	.verify = sgi_verify_disklabel,
+	.create = sgi_create_disklabel,
 	.part_add = sgi_add_partition,
 	.part_delete = sgi_delete_partition,
 };

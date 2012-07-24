@@ -285,7 +285,7 @@ void dos_print_mbr_id(struct fdisk_context *cxt)
 	printf(_("Disk identifier: 0x%08x\n"), mbr_get_id(cxt->firstsector));
 }
 
-int create_doslabel(struct fdisk_context *cxt)
+static int dos_create_disklabel(struct fdisk_context *cxt)
 {
 	unsigned int id;
 
@@ -822,6 +822,7 @@ const struct fdisk_label dos_label =
 	.probe = dos_probe_label,
 	.write = dos_write_disklabel,
 	.verify = dos_verify_disklabel,
+	.create = dos_create_disklabel,
 	.part_add = dos_add_partition,
 	.part_delete = dos_delete_partition,
 };

@@ -1515,7 +1515,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 				fix_partition_table_order();
 			break;
 		case 'g':
-			create_sgilabel(cxt);
+			fdisk_create_disklabel(cxt, "sgi");
 			break;
 		case 'h':
 			user_heads = cxt->geom.heads = read_int(cxt, 1, cxt->geom.heads, 256, 0,
@@ -1742,7 +1742,7 @@ static void command_prompt(struct fdisk_context *cxt)
 			new_partition(cxt);
 			break;
 		case 'o':
-			create_doslabel(cxt);
+			fdisk_create_disklabel(cxt, "dos");
 			break;
 		case 'p':
 			list_table(cxt, 0);
@@ -1750,7 +1750,7 @@ static void command_prompt(struct fdisk_context *cxt)
 		case 'q':
 			handle_quit(cxt);
 		case 's':
-			create_sunlabel(cxt);
+			fdisk_create_disklabel(cxt, "sun");
 			break;
 		case 't':
 			change_sysid(cxt);
@@ -1915,7 +1915,7 @@ int main(int argc, char **argv)
 	if (!fdisk_dev_has_disklabel(cxt)) {
 		fprintf(stderr,
 			_("Device does not contain a recognized partition table\n"));
-		fdisk_create_default_disklabel(cxt);
+		fdisk_create_disklabel(cxt, NULL);
 	}
 
 	command_prompt(cxt);
