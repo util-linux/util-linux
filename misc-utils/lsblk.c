@@ -73,6 +73,7 @@ enum {
 	COL_UUID,
 	COL_PARTLABEL,
 	COL_PARTUUID,
+	COL_RA,
 	COL_RO,
 	COL_RM,
 	COL_MODEL,
@@ -117,6 +118,7 @@ static struct colinfo infos[] = {
 	[COL_PARTLABEL] = { "PARTLABEL", 0.1, 0, N_("partition LABEL") },
 	[COL_PARTUUID]  = { "PARTUUID",  36,  0, N_("partition UUID") },
 
+	[COL_RA]     = { "RA",      4, TT_FL_RIGHT, N_("read-ahead of the device") },
 	[COL_RO]     = { "RO",      1, TT_FL_RIGHT, N_("read-only device") },
 	[COL_RM]     = { "RM",      1, TT_FL_RIGHT, N_("removable device") },
 	[COL_ROTA]   = { "ROTA",    1, TT_FL_RIGHT, N_("rotational device") },
@@ -642,6 +644,11 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		probe_device(cxt);
 		if (cxt->uuid)
 			tt_line_set_data(ln, col, xstrdup(cxt->partuuid));
+		break;
+	case COL_RA:
+		p = sysfs_strdup(&cxt->sysfs, "queue/read_ahead_kb");
+		if (p)
+			tt_line_set_data(ln, col, p);
 		break;
 	case COL_RO:
 		tt_line_set_data(ln, col, is_readonly_device(cxt) ?
@@ -1326,6 +1333,7 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_ROTA;
 			columns[ncolumns++] = COL_SCHED;
 			columns[ncolumns++] = COL_RQ_SIZE;
+			columns[ncolumns++] = COL_RA;
 			break;
 		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,
