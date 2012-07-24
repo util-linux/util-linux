@@ -9,6 +9,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
@@ -253,6 +254,16 @@ static inline int dirfd(DIR *d)
 #define UL_SCNsA	"%ms"
 #elif defined(HAVE_SCANF_AS_MODIFIER)
 #define UL_SCNsA	"%as"
+#endif
+
+/*
+ * seek stuff
+ */
+#ifndef SEEK_DATA
+# define SEEK_DATA	3
+#endif
+#ifndef SEEK_HOLE
+# define SEEK_HOLE	4
 #endif
 
 #endif /* UTIL_LINUX_C_H */
