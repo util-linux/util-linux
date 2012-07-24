@@ -35,7 +35,9 @@
 int fdisk_debug_mask;
 
 /*
- * label probing functions
+ * Label probing functions.
+ * Must have the same order as fdisk_labeltype as the index
+ * depends on it.
  */
 static const struct fdisk_label *labels[] =
 {
