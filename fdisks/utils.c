@@ -83,7 +83,7 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
 	return cxt->label->verify(cxt);
 }
 
-/*
+/**
  * fdisk_add_partition:
  * @cxt: fdisk context
  * @partnum: partition number to create
