@@ -65,10 +65,20 @@ static int aix_probe_label(struct fdisk_context *cxt)
     return 1;
 }
 
+static void aix_add_partition(struct fdisk_context *cxt, int partnum, int parttype)
+{
+	printf(_("\tSorry - this fdisk cannot handle AIX disk labels."
+		 "\n\tIf you want to add DOS-type partitions, create"
+		 "\n\ta new empty DOS partition table first. (Use o.)"
+		 "\n\tWARNING: "
+		 "This will destroy the present disk contents.\n"));
+}
+
 const struct fdisk_label aix_label =
 {
 	.name = "aix",
 	.probe = aix_probe_label,
 	.write = NULL,
+	.part_add = aix_add_partition,
 	.part_delete = NULL,
 };

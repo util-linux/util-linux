@@ -63,6 +63,25 @@ int fdisk_write_disklabel(struct fdisk_context *cxt)
 	return cxt->label->write(cxt);
 }
 
+/*
+ * fdisk_add_partition:
+ * @cxt: fdisk context
+ * @partnum: partition number to create
+ * @parttype: partition type to create
+ *
+ * Creates a new partition, with number @partnum and type @parttype.
+ *
+ * Returns 0.
+ */
+int fdisk_add_partition(struct fdisk_context *cxt, int partnum, int parttype)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	cxt->label->part_add(cxt, partnum, parttype);
+	return 0;
+}
+
 /**
  * fdisk_delete_partition:
  * @cxt: fdisk context

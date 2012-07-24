@@ -362,7 +362,7 @@ void verify_sun(struct fdisk_context *cxt)
         printf(_("Unused gap - sectors %d-%d\n"), start, stop);
 }
 
-void add_sun_partition(struct fdisk_context *cxt, int n, int sys)
+static void sun_add_partition(struct fdisk_context *cxt, int n, int sys)
 {
 	uint32_t starts[SUN_NUM_PARTITIONS], lens[SUN_NUM_PARTITIONS];
 	struct sun_partition *part = &sunlabel->partitions[n];
@@ -652,5 +652,6 @@ const struct fdisk_label sun_label =
 	.name = "sun",
 	.probe = sun_probe_label,
 	.write = sun_write_disklabel,
+	.part_add = sun_add_partition,
 	.part_delete = sun_delete_partition,
 };

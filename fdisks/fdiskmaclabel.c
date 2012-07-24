@@ -80,10 +80,20 @@ IS_MAC:
     return 1;
 }
 
+static void mac_add_partition(struct fdisk_context *cxt, int partnum, int parttype)
+{
+	printf(_("\tSorry - this fdisk cannot handle Mac disk labels."
+		 "\n\tIf you want to add DOS-type partitions, create"
+		 "\n\ta new empty DOS partition table first. (Use o.)"
+		 "\n\tWARNING: "
+		 "This will destroy the present disk contents.\n"));
+}
+
 const struct fdisk_label mac_label =
 {
 	.name = "mac",
 	.probe = mac_probe_label,
 	.write = NULL,
+	.part_add = mac_add_partition,
 	.part_delete = NULL,
 };

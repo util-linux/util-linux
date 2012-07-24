@@ -42,8 +42,6 @@ extern void dos_print_mbr_id(struct fdisk_context *cxt);
 extern void dos_set_mbr_id(struct fdisk_context *cxt);
 extern int is_dos_partition(int t);
 extern void dos_init(struct fdisk_context *cxt);
-extern void dos_add_partition(struct fdisk_context *cxt, int n, int sys);
-extern void dos_new_partition(struct fdisk_context *cxt);
 
 extern int mbr_is_valid_magic(unsigned char *b);
 

@@ -481,7 +481,7 @@ static sector_t align_lba_in_range(struct fdisk_context *cxt,
 	return lba;
 }
 
-void dos_add_partition(struct fdisk_context *cxt, int n, int sys)
+static void add_partition(struct fdisk_context *cxt, int n, int sys)
 {
 	char mesg[256];		/* 48 does not suffice in Japanese */
 	int i, read = 0;
@@ -640,16 +640,21 @@ static void add_logical(struct fdisk_context *cxt)
 		partitions++;
 	}
 	printf(_("Adding logical partition %d\n"), partitions);
-	dos_add_partition(cxt, partitions - 1, LINUX_NATIVE);
+	add_partition(cxt, partitions - 1, LINUX_NATIVE);
 }
 
 /*
  * Ask the user for new partition type information (logical, extended).
- * This function calls the actual partition adding logic - dos_add_partition.
+ * This function calls the actual partition adding logic - add_partition.
+ *
+ * API callback.
  */
-void dos_new_partition(struct fdisk_context *cxt)
+static void dos_add_partition(struct fdisk_context *cxt, int partnum, int parttype)
 {
 	int i, free_primary = 0;
+
+	/* default */
+	parttype = LINUX_NATIVE;
 
 	for (i = 0; i < 4; i++)
 		free_primary += !ptes[i].part_table->sys_ind;
@@ -669,7 +674,7 @@ void dos_new_partition(struct fdisk_context *cxt)
 	} else if (partitions >= MAXIMUM_PARTS) {
 		printf(_("All logical partitions are in use\n"));
 		printf(_("Adding a primary partition\n"));
-		dos_add_partition(cxt, get_partition(cxt, 0, 4), LINUX_NATIVE);
+		add_partition(cxt, get_partition(cxt, 0, 4), parttype);
 	} else {
 		char c, dflt, line[LINE_LENGTH];
 
@@ -691,7 +696,7 @@ void dos_new_partition(struct fdisk_context *cxt)
 		if (c == 'p') {
 			int i = get_nonexisting_partition(cxt, 0, 4);
 			if (i >= 0)
-				dos_add_partition(cxt, i, LINUX_NATIVE);
+				add_partition(cxt, i, parttype);
 			return;
 		} else if (c == 'l' && extended_offset) {
 			add_logical(cxt);
@@ -699,7 +704,7 @@ void dos_new_partition(struct fdisk_context *cxt)
 		} else if (c == 'e' && !extended_offset) {
 			int i = get_nonexisting_partition(cxt, 0, 4);
 			if (i >= 0)
-				dos_add_partition(cxt, i, EXTENDED);
+				add_partition(cxt, i, EXTENDED);
 			return;
 		} else
 			printf(_("Invalid partition type `%c'\n"), c);
@@ -752,5 +757,6 @@ const struct fdisk_label dos_label =
 	.name = "dos",
 	.probe = dos_probe_label,
 	.write = dos_write_disklabel,
+	.part_add = dos_add_partition,
 	.part_delete = dos_delete_partition,
 };

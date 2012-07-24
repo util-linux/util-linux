@@ -139,6 +139,8 @@ struct fdisk_label {
 	int (*probe)(struct fdisk_context *cxt);
 	/* write in-memory changes to disk */
 	int (*write)(struct fdisk_context *cxt);
+	/* new partition */
+	void (*part_add)(struct fdisk_context *cxt, int partnum, int parttype);
 	/* delete partition */
 	void (*part_delete)(struct fdisk_context *cxt, int partnum);
 };
@@ -165,6 +167,7 @@ extern int fdisk_context_set_user_geometry(struct fdisk_context *cxt,
 			    unsigned int sectors);
 extern int fdisk_create_default_disklabel(struct fdisk_context *cxt);
 extern int fdisk_delete_partition(struct fdisk_context *cxt, int partnum);
+extern int fdisk_add_partition(struct fdisk_context *cxt, int partnum, int parttype);
 extern int fdisk_write_disklabel(struct fdisk_context *cxt);
 
 /* prototypes for fdisk.c */

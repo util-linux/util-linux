@@ -1385,39 +1385,19 @@ void print_partition_size(struct fdisk_context *cxt,
 
 static void new_partition(struct fdisk_context *cxt)
 {
+	int partnum = 0;
+
 	if (warn_geometry(cxt))
 		return;
 
-	if (disklabel == SUN_LABEL) {
-		add_sun_partition(cxt, get_partition(cxt, 0, partitions), LINUX_NATIVE);
-		return;
-	}
+	if (disklabel == SUN_LABEL || disklabel == SGI_LABEL)
+		partnum = get_partition(cxt, 0, partitions);
 
-	if (disklabel == SGI_LABEL) {
-		sgi_add_partition(cxt, get_partition(cxt, 0, partitions), LINUX_NATIVE);
-		return;
-	}
-
-	if (disklabel == AIX_LABEL) {
-		printf(_("\tSorry - this fdisk cannot handle AIX disk labels."
-			 "\n\tIf you want to add DOS-type partitions, create"
-			 "\n\ta new empty DOS partition table first. (Use o.)"
-			 "\n\tWARNING: "
-			 "This will destroy the present disk contents.\n"));
-		return;
-	}
-
-	if (disklabel == MAC_LABEL) {
-		printf(_("\tSorry - this fdisk cannot handle Mac disk labels."
-		         "\n\tIf you want to add DOS-type partitions, create"
-		         "\n\ta new empty DOS partition table first. (Use o.)"
-		         "\n\tWARNING: "
-		         "This will destroy the present disk contents.\n"));
-		 return;
-	}
-
-	/* default to DOS/BSD */
-	dos_new_partition(cxt);
+	/*
+	 * Use default LINUX_NATIVE partition type, DOS labels
+	 * may override this internally.
+	 */
+	fdisk_add_partition(cxt, partnum, LINUX_NATIVE);
 }
 
 static void write_table(struct fdisk_context *cxt)

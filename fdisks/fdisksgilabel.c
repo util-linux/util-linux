@@ -657,8 +657,7 @@ static void sgi_delete_partition(struct fdisk_context *cxt, int partnum)
 	sgi_set_partition(cxt, partnum, 0, 0, 0);
 }
 
-void
-sgi_add_partition(struct fdisk_context *cxt, int n, int sys)
+static void sgi_add_partition(struct fdisk_context *cxt, int n, int sys)
 {
 	char mesg[256];
 	unsigned int first=0, last=0;
@@ -903,5 +902,6 @@ const struct fdisk_label sgi_label =
 	.name = "sgi",
 	.probe = sgi_probe_label,
 	.write = sgi_write_disklabel,
+	.part_add = sgi_add_partition,
 	.part_delete = sgi_delete_partition,
 };

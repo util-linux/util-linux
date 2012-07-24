@@ -62,7 +62,6 @@
 #include "fdiskbsdlabel.h"
 
 static void xbsd_delete_part (struct fdisk_context *cxt, int partnum);
-static void xbsd_new_part (struct fdisk_context *cxt);
 static int xbsd_create_disklabel (struct fdisk_context *cxt);
 static void xbsd_edit_disklabel (void);
 static void xbsd_write_bootstrap (struct fdisk_context *cxt);
@@ -154,6 +153,43 @@ static int xbsd_write_disklabel (struct fdisk_context *cxt)
 	return 0;
 }
 
+static void xbsd_add_part (struct fdisk_context *cxt, int partnum, int parttype)
+{
+	unsigned int begin, end;
+	char mesg[256];
+	int i;
+
+	if (!xbsd_check_new_partition (&i))
+		return;
+
+#if !defined (__alpha__) && !defined (__powerpc__) && !defined (__hppa__)
+	begin = get_start_sect(xbsd_part);
+	end = begin + get_nr_sects(xbsd_part) - 1;
+#else
+	begin = 0;
+	end = xbsd_dlabel.d_secperunit - 1;
+#endif
+
+	snprintf (mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
+	begin = read_int (cxt, bsd_cround (begin), bsd_cround (begin), bsd_cround (end),
+			  0, mesg);
+
+	if (display_in_cyl_units)
+		begin = (begin - 1) * xbsd_dlabel.d_secpercyl;
+
+	snprintf (mesg, sizeof(mesg), _("Last %s or +size or +sizeM or +sizeK"),
+		  str_units(SINGULAR));
+	end = read_int (cxt, bsd_cround (begin), bsd_cround (end), bsd_cround (end),
+			bsd_cround (begin), mesg);
+
+	if (display_in_cyl_units)
+		end = end * xbsd_dlabel.d_secpercyl - 1;
+
+	xbsd_dlabel.d_partitions[i].p_size   = end - begin + 1;
+	xbsd_dlabel.d_partitions[i].p_offset = begin;
+	xbsd_dlabel.d_partitions[i].p_fstype = BSD_FS_UNUSED;
+}
+
 void
 bsd_command_prompt (struct fdisk_context *cxt)
 {
@@ -210,8 +246,8 @@ bsd_command_prompt (struct fdisk_context *cxt)
 	xbsd_list_types ();
 	break;
       case 'n':
-	xbsd_new_part (cxt);
-	break;
+	      xbsd_add_part (cxt, 0, 0);
+	      break;
       case 'p':
 	      xbsd_print_disklabel (cxt, 0);
 	break;
@@ -252,44 +288,6 @@ static void xbsd_delete_part(struct fdisk_context *cxt, int partnum)
 	if (xbsd_dlabel.d_npartitions == partnum + 1)
 		while (!xbsd_dlabel.d_partitions[xbsd_dlabel.d_npartitions-1].p_size)
 			xbsd_dlabel.d_npartitions--;
-}
-
-static void
-xbsd_new_part (struct fdisk_context *cxt)
-{
-  unsigned int begin, end;
-  char mesg[256];
-  int i;
-
-  if (!xbsd_check_new_partition (&i))
-    return;
-
-#if !defined (__alpha__) && !defined (__powerpc__) && !defined (__hppa__)
-  begin = get_start_sect(xbsd_part);
-  end = begin + get_nr_sects(xbsd_part) - 1;
-#else
-  begin = 0;
-  end = xbsd_dlabel.d_secperunit - 1;
-#endif
-
-  snprintf (mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
-  begin = read_int (cxt, bsd_cround (begin), bsd_cround (begin), bsd_cround (end),
-		    0, mesg);
-
-  if (display_in_cyl_units)
-    begin = (begin - 1) * xbsd_dlabel.d_secpercyl;
-
-  snprintf (mesg, sizeof(mesg), _("Last %s or +size or +sizeM or +sizeK"),
-	   str_units(SINGULAR));
-  end = read_int (cxt, bsd_cround (begin), bsd_cround (end), bsd_cround (end),
-		  bsd_cround (begin), mesg);
-
-  if (display_in_cyl_units)
-    end = end * xbsd_dlabel.d_secpercyl - 1;
-
-  xbsd_dlabel.d_partitions[i].p_size   = end - begin + 1;
-  xbsd_dlabel.d_partitions[i].p_offset = begin;
-  xbsd_dlabel.d_partitions[i].p_fstype = BSD_FS_UNUSED;
 }
 
 void
@@ -848,5 +846,6 @@ const struct fdisk_label bsd_label =
 	.name = "bsd",
 	.probe = osf_probe_label,
 	.write = xbsd_write_disklabel,
+	.part_add= xbsd_add_part,
 	.part_delete = xbsd_delete_part,
 };
