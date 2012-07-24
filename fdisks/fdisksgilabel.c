@@ -840,6 +840,7 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 			sgi_set_partition(cxt, i, old[i].start, old[i].nsect, old[i].sysid);
 		}
 	}
+	return 0;
 }
 
 void
