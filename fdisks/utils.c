@@ -57,8 +57,10 @@ static const struct fdisk_label *labels[] =
  */
 int fdisk_write_disklabel(struct fdisk_context *cxt)
 {
-	if (!cxt)
+	if (!cxt || !cxt->label)
 		return -EINVAL;
+	if (!cxt->label->write)
+		return -ENOSYS;
 
 	return cxt->label->write(cxt);
 }
@@ -73,8 +75,10 @@ int fdisk_write_disklabel(struct fdisk_context *cxt)
  */
 int fdisk_verify_disklabel(struct fdisk_context *cxt)
 {
-	if (!cxt)
+	if (!cxt || !cxt->label)
 		return -EINVAL;
+	if (!cxt->label->verify)
+		return -ENOSYS;
 
 	return cxt->label->verify(cxt);
 }
@@ -91,8 +95,10 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
  */
 int fdisk_add_partition(struct fdisk_context *cxt, int partnum, int parttype)
 {
-	if (!cxt)
+	if (!cxt || !cxt->label)
 		return -EINVAL;
+	if (!cxt->label->part_add)
+		return -ENOSYS;
 
 	cxt->label->part_add(cxt, partnum, parttype);
 	return 0;
@@ -109,8 +115,10 @@ int fdisk_add_partition(struct fdisk_context *cxt, int partnum, int parttype)
  */
 int fdisk_delete_partition(struct fdisk_context *cxt, int partnum)
 {
-	if (!cxt)
+	if (!cxt || !cxt->label)
 		return -EINVAL;
+	if (!cxt->label->part_delete)
+		return -ENOSYS;
 
 	DBG(LABEL, dbgprint("deleting %s partition number %d",
 				cxt->label->name, partnum));
@@ -126,7 +134,7 @@ static int __probe_labels(struct fdisk_context *cxt)
 	update_units(cxt);
 
 	for (i = 0; i < ARRAY_SIZE(labels); i++) {
-		if (labels[i]->probe(cxt) != 1)
+		if (!labels[i]->probe || labels[i]->probe(cxt) != 1)
 			continue;
 
 		cxt->label = labels[i];
@@ -155,7 +163,7 @@ static int __init_firstsector_buffer(struct fdisk_context *cxt)
 
 	return 0;
 fail:
-	return -1;
+	return -errno;
 }
 
 static unsigned long __get_sector_size(int fd)
@@ -309,10 +317,13 @@ static int __discover_topology(struct fdisk_context *cxt)
  * fdisk_zeroize_firstsector:
  * @cxt: fdisk context
  *
- * Zero's MBR buffer
+ * Zero's in-memory firts sector buffer
  */
 void fdisk_zeroize_firstsector(struct fdisk_context *cxt)
 {
+	if (!cxt)
+		return;
+
 	if (cxt->firstsector) {
 		DBG(CONTEXT, dbgprint("zeroize in-memory first sector buffer"));
 		memset(cxt->firstsector, 0, MAX_SECTOR_SIZE);
@@ -327,6 +338,9 @@ void fdisk_zeroize_firstsector(struct fdisk_context *cxt)
  */
 int fdisk_dev_sectsz_is_default(struct fdisk_context *cxt)
 {
+	if (!cxt)
+		return -EINVAL;
+
 	return cxt->sector_size == DEFAULT_SECTOR_SIZE;
 }
 
@@ -343,8 +357,10 @@ int fdisk_dev_has_topology(struct fdisk_context *cxt)
 	 * optimal_io_size is set or alignment_offset is set or
 	 * minimum_io_size is not power of 2.
 	 */
-	if (cxt->optimal_io_size || cxt->alignment_offset ||
-	    !is_power_of_2(cxt->min_io_size))
+	if (cxt &&
+	    (cxt->optimal_io_size ||
+	     cxt->alignment_offset ||
+	     !is_power_of_2(cxt->min_io_size)))
 		return 1;
 	return 0;
 }
@@ -398,6 +414,8 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 
 	if (!cxt->label)
 		return -EINVAL;
+	if (!cxt->label->create)
+		return -ENOSYS;
 
 	return cxt->label->create(cxt);
 }
