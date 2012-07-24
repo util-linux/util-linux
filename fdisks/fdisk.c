@@ -1528,7 +1528,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 				fix_partition_table_order();
 			break;
 		case 'g':
-			fdisk_create_disklabel(cxt, sgi_label.name);
+			fdisk_create_disklabel(cxt, "sgi");
 			break;
 		case 'h':
 			user_heads = cxt->geom.heads = read_int(cxt, 1, cxt->geom.heads, 256, 0,
@@ -1754,7 +1754,7 @@ static void command_prompt(struct fdisk_context *cxt)
 			new_partition(cxt);
 			break;
 		case 'o':
-			fdisk_create_disklabel(cxt, dos_label.name);
+			fdisk_create_disklabel(cxt, "dos");
 			break;
 		case 'p':
 			list_table(cxt, 0);
@@ -1762,7 +1762,7 @@ static void command_prompt(struct fdisk_context *cxt)
 		case 'q':
 			handle_quit(cxt);
 		case 's':
-			fdisk_create_disklabel(cxt, sun_label.name);
+			fdisk_create_disklabel(cxt, "sun");
 			break;
 		case 't':
 			change_sysid(cxt);
