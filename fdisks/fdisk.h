@@ -176,8 +176,8 @@ extern int fdisk_verify_disklabel(struct fdisk_context *cxt);
 extern int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name);
 
 /* prototypes for fdisk.c */
-extern char *disk_device, *line_ptr;
-extern int fd, partitions;
+extern char *line_ptr;
+extern int partitions;
 extern unsigned int display_in_cyl_units, units_per_sector;
 
 extern void check_consistency(struct fdisk_context *cxt, struct partition *p, int partition);
@@ -200,8 +200,7 @@ extern void print_menu(enum menutype);
 extern void print_partition_size(struct fdisk_context *cxt, int num, sector_t start, sector_t stop, int sysid);
 
 extern void fill_bounds(sector_t *first, sector_t *last);
-extern unsigned int heads, cylinders;
-extern sector_t sectors;
+
 extern char *partition_type(unsigned char type);
 extern void update_units(struct fdisk_context *cxt);
 extern char read_chars(char *mesg);
