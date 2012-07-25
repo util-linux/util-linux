@@ -589,7 +589,7 @@ void clean_lock(void)
 	mnt_free_lock(lock);
 }
 
-void sig_handler(int sig)
+void __attribute__((__noreturn__)) sig_handler(int sig)
 {
 	errx(EXIT_FAILURE, "\n%d: catch signal: %s\n", getpid(), strsignal(sig));
 }
