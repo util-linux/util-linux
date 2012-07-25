@@ -334,7 +334,7 @@ static void sushell(struct passwd *pwd)
 	char shell[PATH_MAX];
 	char home[PATH_MAX];
 	char *p;
-	char *sushell;
+	char *su_shell;
 
 	/*
 	 * Set directory and shell.
@@ -348,17 +348,17 @@ static void sushell(struct passwd *pwd)
 	}
 
 	if ((p = getenv("SUSHELL")) != NULL)
-		sushell = p;
+		su_shell = p;
 	else if ((p = getenv("sushell")) != NULL)
-		sushell = p;
+		su_shell = p;
 	else {
 		if (pwd->pw_shell[0])
-			sushell = pwd->pw_shell;
+			su_shell = pwd->pw_shell;
 		else
-			sushell = "/bin/sh";
+			su_shell = "/bin/sh";
 	}
-	if ((p = strrchr(sushell, '/')) == NULL)
-		p = sushell;
+	if ((p = strrchr(su_shell, '/')) == NULL)
+		p = su_shell;
 	else
 		p++;
 
@@ -378,7 +378,7 @@ static void sushell(struct passwd *pwd)
 	/*
 	 * Try to execute a shell.
 	 */
-	setenv("SHELL", sushell, 1);
+	setenv("SHELL", su_shell, 1);
 	unmask_signal(SIGINT, &saved_sigint);
 	unmask_signal(SIGTSTP, &saved_sigtstp);
 	unmask_signal(SIGQUIT, &saved_sigquit);
@@ -399,8 +399,8 @@ static void sushell(struct passwd *pwd)
 		free(level);
 	}
 #endif
-	execl(sushell, shell, NULL);
-	warn(_("%s: exec failed"), sushell);
+	execl(su_shell, shell, NULL);
+	warn(_("%s: exec failed"), su_shell);
 
 	setenv("SHELL", "/bin/sh", 1);
 	execl("/bin/sh", profile ? "-sh" : "sh", NULL);
