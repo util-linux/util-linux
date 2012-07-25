@@ -63,7 +63,8 @@ static inline char *xstrdup(const char *str)
         return ret;
 }
 
-static inline int xasprintf(char **strp, char *fmt, ...)
+static inline int __attribute__ ((__format__(printf, 2, 3)))
+    xasprintf(char **strp, const char *fmt, ...)
 {
 	int ret;
 	va_list args;
