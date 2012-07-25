@@ -131,7 +131,7 @@ static char *srcdirs[] = {
 };
 
 static char sflag = 1, bflag = 1, mflag = 1, uflag;
-static char **Sflag, **Bflag, **Mflag, **dirp, **pathdir;
+static char **Sflag, **Bflag, **Mflag, **pathdir, **pathdir_p;
 static int Scnt, Bcnt, Mcnt, count, print;
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
@@ -283,7 +283,7 @@ static void fillpath(void)
 	pathdir = xrealloc(pathdir, (i + 1) * sizeof(char *));
 	pathdir[i] = NULL;
 
-	dirp = pathdir;
+	pathdir_p = pathdir;
 	free(pathcp);
 }
 
@@ -314,8 +314,8 @@ lookbin(char *cp)
 {
 	if (Bflag == 0) {
 		findv(bindirs, ARRAY_SIZE(bindirs)-1, cp);
-		while (*dirp)
-			findin(*dirp++, cp);		/* look $PATH */
+		while (*pathdir_p)
+			findin(*pathdir_p++, cp);		/* look $PATH */
 	 } else
 		findv(Bflag, Bcnt, cp);
 }
