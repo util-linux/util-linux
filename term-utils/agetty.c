@@ -873,8 +873,6 @@ static void open_tty(char *tty, struct termios *tp, struct options *op)
 
 	/* Set up new standard input, unless we are given an already opened port. */
 
-sleep(10);
-
 	if (strcmp(tty, "-") != 0) {
 		char buf[PATH_MAX+1];
 		struct group *gr = NULL;
