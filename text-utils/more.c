@@ -1120,10 +1120,10 @@ void prbuf (register char *s, register int n)
 	    {
 		wchar_t wc;
 		size_t mblength;
-		mbstate_t state;
-		memset (&state, '\0', sizeof (mbstate_t));
+		mbstate_t mbstate;
+		memset (&mbstate, '\0', sizeof (mbstate_t));
 		s--; n++;
-		mblength = mbrtowc (&wc, s, n, &state);
+		mblength = mbrtowc (&wc, s, n, &mbstate);
 		if (mblength == (size_t) -2 || mblength == (size_t) -1)
 			mblength = 1;
 		while (mblength--)
