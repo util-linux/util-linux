@@ -34,8 +34,6 @@ TS_DESC="separator"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-[ -f "/usr/share/dict/words" ] || ts_skip "/usr/share/dict/words not such file"
-
-$TS_CMD_LOOK apple-pie >> $TS_OUTPUT
+$TS_CMD_LOOK apple-pie $TS_TOPDIR/ts/look/words >> $TS_OUTPUT
 ts_finalize
 
