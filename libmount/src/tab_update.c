@@ -200,7 +200,7 @@ int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 
 	} else if (fs) {
 		if (upd->userspace_only && !(mountflags & MS_MOVE)) {
-			int rc = utab_new_entry(upd, fs, mountflags);
+			rc = utab_new_entry(upd, fs, mountflags);
 			if (rc)
 				return rc;
 		} else {
