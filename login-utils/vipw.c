@@ -236,7 +236,8 @@ static void pw_edit(int notsetuid)
 	free(editor);
 }
 
-void pw_error(char *name, int err, int eval)
+void __attribute__((__noreturn__))
+pw_error(char *name, int err, int eval)
 {
 	if (err) {
 		if (name)
