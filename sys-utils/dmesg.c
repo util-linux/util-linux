@@ -985,7 +985,7 @@ static int read_kmsg(struct dmesg_control *ctl)
 int main(int argc, char *argv[])
 {
 	char *buf = NULL;
-	ssize_t  n;
+	ssize_t  n, r;
 	int  c;
 	int  console_level = 0;
 	static struct dmesg_control ctl = {
@@ -1128,6 +1128,7 @@ int main(int argc, char *argv[])
 	argc -= optind;
 	argv += optind;
 	n = 0;
+	r = 0;
 
 	if (argc > 1)
 		usage(stderr);
@@ -1148,9 +1149,9 @@ int main(int argc, char *argv[])
 		if (ctl.method == DMESG_METHOD_KMSG && init_kmsg(&ctl) != 0)
 			ctl.method = DMESG_METHOD_SYSLOG;
 
-		n = read_buffer(&ctl, &buf);
-		if (n > 0)
-			print_buffer(&ctl, buf, n);
+		r = read_buffer(&ctl, &buf);
+		if (r > 0)
+			print_buffer(&ctl, buf, r);
 		if (!ctl.mmap_buff)
 			free(buf);
 		break;
@@ -1170,8 +1171,10 @@ int main(int argc, char *argv[])
 	if (ctl.kmsg >= 0)
 		close(ctl.kmsg);
 
-	if (n < 0 && ctl.method == DMESG_METHOD_SYSLOG)
+	if (n < 0)
 		err(EXIT_FAILURE, _("klogctl failed"));
+	if (r < 0)
+		err(EXIT_FAILURE, _("read_buffer failed"));
 
 	return EXIT_SUCCESS;
 }
