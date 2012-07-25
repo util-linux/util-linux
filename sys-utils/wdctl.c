@@ -18,13 +18,13 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-#include <linux/watchdog.h>
 #include <sys/ioctl.h>
 #include <getopt.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <signal.h>
 #include <assert.h>
+#include <linux/watchdog.h>
 
 #include "nls.h"
 #include "c.h"
