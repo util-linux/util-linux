@@ -154,7 +154,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-void fatal(struct fdisk_context *cxt, enum failure why)
+void __attribute__((__noreturn__))
+fatal(struct fdisk_context *cxt, enum failure why)
 {
 	close(cxt->dev_fd);
 	switch (why) {
