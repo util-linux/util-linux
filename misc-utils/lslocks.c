@@ -104,12 +104,12 @@ static void disable_columns_truncate(void)
 /*
  * Return a PID's command name
  */
-static char *get_cmdname(pid_t pid)
+static char *get_cmdname(pid_t id)
 {
 	FILE *fp;
 	char path[PATH_MAX], *ret = NULL;
 
-	sprintf(path, "/proc/%d/comm", pid);
+	sprintf(path, "/proc/%d/comm", id);
 	if (!(fp = fopen(path, "r")))
 		return NULL;
 
