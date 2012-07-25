@@ -363,7 +363,7 @@ new_prober(int fd)
 #endif
 
 static void
-wipe_device(int fd, const char *devname, int force, int is_blkdev)
+wipe_device(int fd, const char *devname, int force, int is_blkdevice)
 {
 	char *type = NULL;
 	int whole = 0;
@@ -375,7 +375,7 @@ wipe_device(int fd, const char *devname, int force, int is_blkdev)
 		if (lseek(fd, 0, SEEK_SET) != 0)
 			errx(EXIT_FAILURE, _("unable to rewind swap-device"));
 
-		if (is_blkdev && is_whole_disk_fd(fd, devname)) {
+		if (is_blkdevice && is_whole_disk_fd(fd, devname)) {
 			/* don't zap bootbits on whole disk -- we know nothing
 			 * about bootloaders on the device */
 			whole = 1;
