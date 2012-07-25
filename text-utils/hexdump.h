@@ -81,7 +81,7 @@ extern off_t skip;                      /* bytes to skip */
 enum _vflag { ALL, DUP, FIRST, WAIT };	/* -v values */
 extern enum _vflag vflag;
 
-int size(FS *);
+int block_size(FS *);
 void add(const char *);
 void rewrite(FS *);
 void addfile(char *);

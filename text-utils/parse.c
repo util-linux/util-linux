@@ -150,7 +150,7 @@ void add(const char *fmt)
 
 static const char *spec = ".#-+ 0123456789";
 
-int size(FS *fs)
+int block_size(FS *fs)
 {
 	FU *fu;
 	int bcnt, cursize;

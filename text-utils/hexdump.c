@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 
 	/* figure out the data block size */
 	for (blocksize = 0, tfs = fshead; tfs; tfs = tfs->nextfs) {
-		tfs->bcnt = size(tfs);
+		tfs->bcnt = block_size(tfs);
 		if (blocksize < tfs->bcnt)
 			blocksize = tfs->bcnt;
 	}
