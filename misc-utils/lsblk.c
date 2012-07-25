@@ -566,7 +566,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 	case COL_NAME:
 		if (cxt->dm_name) {
 			if (is_parsable(lsblk))
-				tt_line_set_data(ln, col, cxt->dm_name);
+				tt_line_set_data(ln, col, xstrdup(cxt->dm_name));
 			else {
 				snprintf(buf, sizeof(buf), "%s (%s)",
 					cxt->dm_name, cxt->name);
