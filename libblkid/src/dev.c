@@ -206,7 +206,7 @@ extern char *optarg;
 extern int optind;
 #endif
 
-void usage(char *prog)
+void __attribute__((__noreturn__)) usage(char *prog)
 {
 	fprintf(stderr, "Usage: %s [-f blkid_file] [-m debug_mask]\n", prog);
 	fprintf(stderr, "\tList all devices and exit\n");
