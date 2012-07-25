@@ -638,11 +638,11 @@ static void setcol(int newcol) {
 		needcol(col);
 }
 
-static void needcol(int col) {
-	maxcol = col;
+static void needcol(int acol) {
+	maxcol = acol;
 
 	/* If col >= obuflen, expand obuf until obuflen > col. */
-	while (col >= obuflen) {
+	while (acol >= obuflen) {
 		/* Paranoid check for obuflen == INT_MAX. */
 		if (obuflen == INT_MAX)
 			errx(EXIT_FAILURE, _("Input line too long."));
