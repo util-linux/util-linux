@@ -116,3 +116,13 @@ Various notes
 	* When you use if shortshort hand make sure it is not wrapped to
 	  multiple lines. In case the shorthand does not look good on one
 	  line use normal "if () else" syntax.
+
+IRC channel
+
+	* We have a new #util-linux IRC channel at freenode.net.
+
+	  irc://chat.freenode.net/util-linux
+
+	  the channel is for developers or upstream maintainers.  User
+	  support is recommended to go to distribution channels or
+	  forums.
