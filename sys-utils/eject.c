@@ -526,7 +526,6 @@ static int read_speed(const char *devname)
 		} else {
 			if (strncmp(line, "drive speed:", 12) == 0) {
 				int i;
-				char *str;
 
 				str = strtok(&line[12], "\t ");
 				for (i = 1; i < drive_number; i++)
