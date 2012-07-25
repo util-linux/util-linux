@@ -755,7 +755,8 @@ void chgwinsz(int dummy __attribute__ ((__unused__)))
 ** Clean up terminal state and exit. Also come here if interrupt signal received
 */
 
-void end_it (int dummy __attribute__ ((__unused__)))
+void __attribute__((__noreturn__))
+end_it (int dummy __attribute__ ((__unused__)))
 {
     reset_tty ();
     if (clreol) {
