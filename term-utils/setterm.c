@@ -218,11 +218,11 @@ static void screendump(int vcnum, FILE *F);
  */
 
 static void
-parse_term(int argc, char **argv, int *option, char **opt_term, int *bad_arg) {
+parse_term(int argc, char **argv, int *option, char **ttyname, int *bad_arg) {
 	/* argc: Number of arguments for this option. */
 	/* argv: Arguments for this option. */
 	/* option: Term flag to set. */
-	/* opt_term: Terminal name to set. */
+	/* ttyname: Terminal name to set. */
 	/* bad_arg: Set to true if an error is detected. */
 
 /* Parse a -term specification. */
@@ -231,7 +231,7 @@ parse_term(int argc, char **argv, int *option, char **opt_term, int *bad_arg) {
 		*bad_arg = TRUE;
 	*option = TRUE;
 	if (argc == 1)
-		*opt_term = argv[0];
+		*ttyname = argv[0];
 }
 
 static void
