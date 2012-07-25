@@ -1081,7 +1081,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	print_s(_("Architecture:"), desc->arch);
 
 	if (desc->mode) {
-		char buf[64], *p = buf;
+		char mbuf[64], *p = mbuf;
 
 		if (desc->mode & MODE_32BIT) {
 			strcpy(p, "32-bit, ");
@@ -1092,7 +1092,7 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 			p += 8;
 		}
 		*(p - 2) = '\0';
-		print_s(_("CPU op-mode(s):"), buf);
+		print_s(_("CPU op-mode(s):"), mbuf);
 	}
 #if !defined(WORDS_BIGENDIAN)
 	print_s(_("Byte Order:"), "Little Endian");
@@ -1141,11 +1141,11 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		 */
 		if (path_exist(_PATH_PROC_SYSINFO)) {
 			FILE *fd = path_fopen("r", 0, _PATH_PROC_SYSINFO);
-			char buf[BUFSIZ];
+			char pbuf[BUFSIZ];
 			int t0, t1, t2;
 
-			while (fd && fgets(buf, sizeof(buf), fd) != NULL) {
-				if (sscanf(buf, "CPU Topology SW:%d%d%d%d%d%d",
+			while (fd && fgets(pbuf, sizeof(pbuf), fd) != NULL) {
+				if (sscanf(pbuf, "CPU Topology SW:%d%d%d%d%d%d",
 					   &t0, &t1, &t2, &books, &sockets_per_book,
 					   &cores_per_socket) == 6)
 					break;
@@ -1193,13 +1193,12 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	if (desc->dispatching >= 0)
 		print_s(_("Dispatching mode:"), _(disp_modes[desc->dispatching]));
 	if (desc->ncaches) {
-		char buf[512];
-		int i;
+		char cbuf[512];
 
 		for (i = desc->ncaches - 1; i >= 0; i--) {
-			snprintf(buf, sizeof(buf),
+			snprintf(cbuf, sizeof(cbuf),
 					_("%s cache:"), desc->caches[i].name);
-			print_s(buf, desc->caches[i].size);
+			print_s(cbuf, desc->caches[i].size);
 		}
 	}
 
