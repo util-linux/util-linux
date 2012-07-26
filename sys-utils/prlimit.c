@@ -579,7 +579,7 @@ int main(int argc, char **argv)
 
 		case 'p':
 			if (pid)
-				errx(EXIT_FAILURE, _("only one --pid option may be specified."));
+				errx(EXIT_FAILURE, _("option --pid may be specified only once"));
 			pid = strtos32_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'h':
@@ -610,7 +610,7 @@ int main(int argc, char **argv)
 		}
 	}
 	if (argc > optind && pid)
-		errx(EXIT_FAILURE, _("options --pid and COMMAND are mutually exclusive."));
+		errx(EXIT_FAILURE, _("options --pid and COMMAND are mutually exclusive"));
 	if (!ncolumns) {
 		/* default columns */
 		columns[ncolumns++] = COL_RES;
