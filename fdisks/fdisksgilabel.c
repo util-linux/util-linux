@@ -878,7 +878,7 @@ sgi_set_ncyl(void)
 
 static sgiinfo *fill_sgiinfo(void)
 {
-	sgiinfo *info = calloc(1, sizeof(sgiinfo));
+	sgiinfo *info = xcalloc(1, sizeof(sgiinfo));
 
 	if (!info)
 		return NULL;
