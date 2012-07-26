@@ -382,13 +382,6 @@ int main(int argc, char *argv[])
 	char noflags = 0, noident = 0, notimeouts = 0, oneline = 0;
 	uint32_t wanted = 0;
 
-	enum {
-		EXCL_NONE,
-		EXCL_FLAGS,
-		EXCL_NOFLAGS
-	};
-	int excl_flag = EXCL_NONE;
-
 	static const struct option long_opts[] = {
 		{ "flags",      required_argument, NULL, 'f' },
 		{ "flags-only", no_argument,       NULL, 'x' },
@@ -404,6 +397,12 @@ int main(int argc, char *argv[])
 		{ NULL, 0, NULL, 0 }
 	};
 
+	static const ul_excl_t excl[] = {       /* rows and cols in in ASCII order */
+		{ 'F','f' },			/* noflags,flags*/
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -411,6 +410,9 @@ int main(int argc, char *argv[])
 
 	while ((c = getopt_long(argc, argv,
 				"d:f:hFnITo:OrVx", long_opts, NULL)) != -1) {
+
+		err_exclusive_options(c, long_opts, excl, excl_st);
+
 		switch(c) {
 		case 'o':
 			ncolumns = string_to_idarray(optarg,
@@ -420,7 +422,6 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 			break;
 		case 'f':
-			exclusive_option(&excl_flag, EXCL_FLAGS, "--{flags,noflags}");
 			if (string_to_bitmask(optarg, (unsigned long *) &wanted, name2bit) != 0)
 				return EXIT_FAILURE;
 			break;
@@ -430,7 +431,6 @@ int main(int argc, char *argv[])
 		case 'h':
 			usage(stdout);
 		case 'F':
-			exclusive_option(&excl_flag, EXCL_NOFLAGS, "--{flags,noflags}");
 			noflags = 1;
 			break;
 		case 'I':
