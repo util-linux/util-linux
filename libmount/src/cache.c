@@ -633,7 +633,7 @@ int test_read_tags(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char line[BUFSIZ];
 	struct libmnt_cache *cache;
-	int i;
+	size_t i;
 
 	cache = mnt_new_cache();
 	if (!cache)
