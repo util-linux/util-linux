@@ -41,6 +41,8 @@ mac_info( void ) {
 void
 mac_nolabel(struct fdisk_context *cxt)
 {
+    struct mac_partition *maclabel = (struct mac_partition *) cxt->firstsector;
+
     maclabel->magic = 0;
     partitions = 4;
     fdisk_zeroize_firstsector(cxt);
@@ -50,6 +52,8 @@ mac_nolabel(struct fdisk_context *cxt)
 static int
 mac_probe_label(struct fdisk_context *cxt)
 {
+	struct mac_partition *maclabel = (struct mac_partition *) cxt->firstsector;
+
 	/*
 	Conversion: only 16 bit should compared
 	e.g.: HFS Label is only 16bit long
@@ -80,7 +84,10 @@ IS_MAC:
     return 1;
 }
 
-static void mac_add_partition(struct fdisk_context *cxt, int partnum, int parttype)
+static void mac_add_partition(
+			struct fdisk_context *cxt __attribute__ ((__unused__)),
+			int partnum __attribute__ ((__unused__)),
+			int parttype __attribute__ ((__unused__)))
 {
 	printf(_("\tSorry - this fdisk cannot handle Mac disk labels."
 		 "\n\tIf you want to add DOS-type partitions, create"
