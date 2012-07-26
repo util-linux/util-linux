@@ -128,7 +128,7 @@ int fdisk_delete_partition(struct fdisk_context *cxt, int partnum)
 
 static int __probe_labels(struct fdisk_context *cxt)
 {
-	int i;
+	size_t i;
 
 	disklabel = ANY_LABEL;
 	update_units(cxt);

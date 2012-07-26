@@ -270,7 +270,7 @@ static void undump(FILE *fp)
 		ut.ut_addr = inet_addr(s_addr);
 		ut.ut_time = strtotime(s_time);
 
-		fwrite(&ut, sizeof(ut), 1, stdout);
+		ignore_result( fwrite(&ut, sizeof(ut), 1, stdout) );
 
 		++count;
 	}
