@@ -152,7 +152,9 @@ static int xbsd_write_disklabel (struct fdisk_context *cxt)
 	return 0;
 }
 
-static void xbsd_add_part (struct fdisk_context *cxt, int partnum, int parttype)
+static void xbsd_add_part (struct fdisk_context *cxt,
+		int partnum __attribute__((__unused__)),
+		int parttype __attribute__((__unused__)))
 {
 	unsigned int begin, end;
 	char mesg[256];
@@ -310,7 +312,8 @@ bsd_command_prompt (struct fdisk_context *cxt)
   }
 }
 
-static void xbsd_delete_part(struct fdisk_context *cxt, int partnum)
+static void xbsd_delete_part(struct fdisk_context *cxt __attribute__((__unused__)),
+			     int partnum)
 {
 	xbsd_dlabel.d_partitions[partnum].p_size   = 0;
 	xbsd_dlabel.d_partitions[partnum].p_offset = 0;
