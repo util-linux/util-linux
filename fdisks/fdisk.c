@@ -1005,9 +1005,9 @@ list_disk_geometry(struct fdisk_context *cxt) {
 		       cxt->dev_path, hectomega / 10, hectomega % 10, bytes);
 	}
 	printf(_(", %llu sectors\n"), cxt->total_sectors);
-	printf(_("%d heads, %llu sectors/track, %llu cylinders"),
-	       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
-	printf("\n");
+	if (dos_compatible_flag)
+		printf(_("%d heads, %llu sectors/track, %llu cylinders\n"),
+		       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
 	printf(_("Units = %s of %d * %ld = %ld bytes\n"),
 	       str_units(PLURAL),
 	       units_per_sector, cxt->sector_size, units_per_sector * cxt->sector_size);
