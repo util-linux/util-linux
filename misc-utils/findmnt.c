@@ -1042,23 +1042,6 @@ int main(int argc, char *argv[])
 	int i, c, rc = -1, timeout = -1;
 	int ntabfiles = 0, tabtype = 0;
 
-	enum {
-		EXCL_NONE,
-
-		EXCL_FSTAB,
-		EXCL_KERNEL,
-		EXCL_MTAB,
-		EXCL_TASK,
-
-		EXCL_RAW,
-		EXCL_LIST,
-		EXCL_PAIRS
-	};
-	int excl_fmk = EXCL_NONE;
-	int excl_fmN = EXCL_NONE;
-	int excl_rlP = EXCL_NONE;
-
-	/* table.h */
 	struct tt *tt = NULL;
 
 	static const struct option longopts[] = {
@@ -1095,6 +1078,14 @@ int main(int argc, char *argv[])
 	    { NULL,           0, 0, 0 }
 	};
 
+	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
+		{ 'N','k','m','s' },		/* task,kernel,mtab,fstab */
+		{ 'P','l','r' },		/* pairs,list,raw */
+		{ 'm','p','s' },		/* mtab,poll,fstab */
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	assert(ARRAY_SIZE(columns) == FINDMNT_NCOLUMNS);
 
 	setlocale(LC_ALL, "");
@@ -1108,6 +1099,9 @@ int main(int argc, char *argv[])
 	while ((c = getopt_long(argc, argv,
 				"AacDd:ehifF:o:O:p::PklmnN:rst:uvRS:T:w:V",
 				longopts, NULL)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch(c) {
 		case 'A':
 			flags |= FL_ALL;
@@ -1171,43 +1165,34 @@ int main(int argc, char *argv[])
 			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 'P':
-			exclusive_option(&excl_rlP, EXCL_PAIRS, "--{raw,list,pairs}");
 			tt_flags |= TT_FL_EXPORT;
 			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 'm':		/* mtab */
-			exclusive_option(&excl_fmk, EXCL_MTAB, "--{fstab,mtab,kernel}");
-			exclusive_option(&excl_fmN, EXCL_MTAB, "--{fstab,mtab,task}");
 			tabtype = TABTYPE_MTAB;
 			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 's':		/* fstab */
-			exclusive_option(&excl_fmk, EXCL_FSTAB, "--{fstab,mtab,kernel}");
-			exclusive_option(&excl_fmN, EXCL_FSTAB, "--{fstab,mtab,task}");
 			tabtype = TABTYPE_FSTAB;
 			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 'k':		/* kernel (mountinfo) */
-			exclusive_option(&excl_fmk, EXCL_KERNEL, "--{fstab,mtab,kernel}");
 			tabtype = TABTYPE_KERNEL;
 			break;
 		case 't':
 			set_match(COL_FSTYPE, optarg);
 			break;
 		case 'r':
-			exclusive_option(&excl_rlP, EXCL_RAW, "--{raw,list,pairs}");
 			tt_flags &= ~TT_FL_TREE;	/* disable the default */
 			tt_flags |= TT_FL_RAW;		/* enable raw */
 			break;
 		case 'l':
-			exclusive_option(&excl_rlP, EXCL_LIST, "--{raw,list,pairs}");
 			tt_flags &= ~TT_FL_TREE; /* disable the default */
 			break;
 		case 'n':
 			tt_flags |= TT_FL_NOHEADINGS;
 			break;
 		case 'N':
-			exclusive_option(&excl_fmN, EXCL_KERNEL, "--{fstab,mtab,task}");
 			tabtype = TABTYPE_KERNEL;
 			tabfiles = append_pid_tabfile(tabfiles, &ntabfiles,
 					strtou32_or_err(optarg,
@@ -1263,12 +1248,8 @@ int main(int argc, char *argv[])
 	if (!tabtype)
 		tabtype = TABTYPE_KERNEL;
 
-	if (flags & FL_POLL) {
-		if (tabtype != TABTYPE_KERNEL)
-			exclusive_option(&tabtype, tabtype + 1, "--{poll,fstab,mtab}");
-		if (ntabfiles > 1)
-			errx(EXIT_FAILURE, _("--poll accepts only one file, but more specified by --tab-file"));
-	}
+	if ((flags & FL_POLL) && ntabfiles > 1)
+		errx(EXIT_FAILURE, _("--poll accepts only one file, but more specified by --tab-file"));
 
 	if (optind < argc && (get_match(COL_SOURCE) || get_match(COL_TARGET)))
 		errx(EXIT_FAILURE, _(
