@@ -86,8 +86,6 @@ static int hwaudit_fd = -1;
 static int hwaudit_on;
 #endif
 
-#define EXCL_ERROR "--{adjust,getepoch,hctosys,predict,set,setepoch,show,systohc,systz}"
-
 /* The struct that holds our hardware access routines */
 struct clock_ops *ur;
 
@@ -121,23 +119,6 @@ struct adjtime {
 	 * To which time zone, local or UTC, we most recently set the
 	 * hardware clock.
 	 */
-};
-
-/* Long only options. */
-enum {
-	OPT_SET = CHAR_MAX + 1,
-	OPT_GETEPOCH,
-	OPT_SETEPOCH,
-	OPT_NOADJFILE,
-	OPT_LOCALTIME,
-	OPT_BADYEAR,
-	OPT_DIRECTISA,
-	OPT_TEST,
-	OPT_DATE,
-	OPT_EPOCH,
-	OPT_ADJFILE,
-	OPT_SYSTZ,
-	OPT_PREDICT_HC
 };
 
 /*
@@ -1454,29 +1435,6 @@ int main(int argc, char **argv)
 	bool permitted;		/* User is permitted to do the function */
 	int rc, c;
 
-	enum {
-		EXCL_NONE,
-
-		EXCL_ADJFILE,
-		EXCL_NO_AJDFILE,
-
-		EXCL_LOCALTIME,
-		EXCL_UTC,
-
-		EXCL_ADJUST,
-		EXCL_GETEPOCH,
-		EXCL_HCTOSYS,
-		EXCL_PREDICT,
-		EXCL_SET,
-		EXCL_SETEPOCH,
-		EXCL_SHOW,
-		EXCL_SYSTOHC,
-		EXCL_SYSTZ
-	};
-	int excl_adj = EXCL_NONE;
-	int excl_utc_local = EXCL_NONE;
-	int excl_action = EXCL_NONE;
-
 	/* Variables set by various options; show may also be set later */
 	/* The options debug, badyear and epoch_option are global */
 	bool show, set, systohc, hctosys, systz, adjust, getepoch, setepoch,
@@ -1486,6 +1444,22 @@ int main(int argc, char **argv)
 #ifdef __alpha__
 	bool ARCconsole, Jensen, SRM, funky_toy;
 #endif
+	/* Long only options. */
+	enum {
+		OPT_ADJFILE = CHAR_MAX + 1,
+		OPT_BADYEAR,
+		OPT_DATE,
+		OPT_DIRECTISA,
+		OPT_EPOCH,
+		OPT_GETEPOCH,
+		OPT_LOCALTIME,
+		OPT_NOADJFILE,
+		OPT_PREDICT_HC,
+		OPT_SET,
+		OPT_SETEPOCH,
+		OPT_SYSTZ,
+		OPT_TEST
+	};
 
 	static const struct option longopts[] = {
 		{"adjust",	0, 0, 'a'},
@@ -1526,6 +1500,16 @@ int main(int argc, char **argv)
 		{NULL,		0, NULL, 0}
 	};
 
+	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
+		{ 'a','r','s','w',
+		  OPT_GETEPOCH,	OPT_PREDICT_HC, OPT_SET,
+		  OPT_SETEPOCH, OPT_SYSTZ },
+		{ 'u', OPT_LOCALTIME},
+		{ OPT_ADJFILE, OPT_NOADJFILE },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	/* Remember what time we were invoked */
 	gettimeofday(&startup_time, NULL);
 
@@ -1563,31 +1547,29 @@ int main(int argc, char **argv)
 #endif
 	date_opt = NULL;
 
-	while ((c = getopt_long(argc, argv, "?hvVDarsuwAJSFf:", longopts, NULL))
-	       != -1) {
+	while ((c = getopt_long(argc, argv,
+				"?hvVDarsuwAJSFf:", longopts, NULL)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch (c) {
 		case 'D':
 			debug = TRUE;
 			break;
 		case 'a':
 			adjust = TRUE;
-			exclusive_option(&excl_action, EXCL_ADJUST, EXCL_ERROR);
 			break;
 		case 'r':
 			show = TRUE;
-			exclusive_option(&excl_action, EXCL_SHOW, EXCL_ERROR);
 			break;
 		case 's':
 			hctosys = TRUE;
-			exclusive_option(&excl_action, EXCL_HCTOSYS, EXCL_ERROR);
 			break;
 		case 'u':
 			utc = TRUE;
-			exclusive_option(&excl_utc_local, EXCL_UTC, "--{utc,localtime}");
 			break;
 		case 'w':
 			systohc = TRUE;
-			exclusive_option(&excl_action, EXCL_SYSTOHC, EXCL_ERROR);
 			break;
 #ifdef __alpha__
 		case 'A':
@@ -1605,25 +1587,20 @@ int main(int argc, char **argv)
 #endif
 		case OPT_SET:
 			set = TRUE;
-			exclusive_option(&excl_action, EXCL_SET, EXCL_ERROR);
 			break;
 #ifdef __linux__
 		case OPT_GETEPOCH:
 			getepoch = TRUE;
-			exclusive_option(&excl_action, EXCL_GETEPOCH, EXCL_ERROR);
 			break;
 		case OPT_SETEPOCH:
 			setepoch = TRUE;
-			exclusive_option(&excl_action, EXCL_SETEPOCH, EXCL_ERROR);
 			break;
 #endif
 		case OPT_NOADJFILE:
 			noadjfile = TRUE;
-			exclusive_option(&excl_adj, EXCL_NO_AJDFILE, "--{adjfile,noadjfile}");
 			break;
 		case OPT_LOCALTIME:
 			local_opt = TRUE;	/* --localtime */
-			exclusive_option(&excl_utc_local, EXCL_LOCALTIME, "--{utc,localtime}");
 			break;
 		case OPT_BADYEAR:
 			badyear = TRUE;
@@ -1643,15 +1620,12 @@ int main(int argc, char **argv)
 			break;
 		case OPT_ADJFILE:
 			adj_file_name = optarg;	/* --adjfile */
-			exclusive_option(&excl_adj, EXCL_ADJFILE, "--{adjfile,noadjfile}");
 			break;
 		case OPT_SYSTZ:
 			systz = TRUE;		/* --systz */
-			exclusive_option(&excl_action, EXCL_SYSTZ, EXCL_ERROR);
 			break;
 		case OPT_PREDICT_HC:
 			predict = TRUE;		/* --predict-hc */
-			exclusive_option(&excl_action, EXCL_PREDICT, EXCL_ERROR);
 			break;
 #ifdef __linux__
 		case 'f':
@@ -1689,7 +1663,7 @@ int main(int argc, char **argv)
 	if (!adj_file_name)
 		adj_file_name = _PATH_ADJPATH;
 
-	if (noadjfile && !excl_utc_local) {
+	if (noadjfile && !utc && !local_opt) {
 		warnx(_("With --noadjfile, you must specify "
 			"either --utc or --localtime"));
 		hwclock_exit(EX_USAGE);
