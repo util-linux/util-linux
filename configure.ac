@@ -99,6 +99,7 @@ AC_C_VOLATILE
 AC_C_BIGENDIAN
 
 dnl Compiler warnings
+UL_WARN_ADD([-Wall])
 UL_WARN_ADD([-Wextra])
 UL_WARN_ADD([-Wno-missing-field-initializers])
 UL_WARN_ADD([-Wsign-compare])
