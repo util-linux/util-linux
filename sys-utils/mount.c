@@ -43,11 +43,7 @@
 #define OPTUTILS_EXIT_CODE MOUNT_EX_USAGE
 #include "optutils.h"
 
-#define EXCL_ERROR "--{bind,make-*}"
-
 /*** TODO: DOCS:
- *
- *  --guess-fstype	is unsupported
  *
  *  --options-mode={ignore,append,prepend,replace}	MNT_OMODE_{IGNORE, ...}
  *  --options-source={fstab,mtab,disable}		MNT_OMODE_{FSTAB,MTAB,NOTAB}
@@ -698,23 +694,6 @@ int main(int argc, char **argv)
 		MOUNT_OPT_SOURCE
 	};
 
-	enum {
-	        EXCL_NONE,
-	        EXCL_BIND,
-	        EXCL_MAKE_SHARED,
-	        EXCL_MAKE_SLAVE,
-	        EXCL_MAKE_PRIVATE,
-	        EXCL_MAKE_UNBINDABLE,
-	        EXCL_MAKE_RSHARED,
-	        EXCL_MAKE_RSLAVE,
-	        EXCL_MAKE_RPRIVATE,
-	        EXCL_MAKE_RUNBINDABLE,
-		EXCL_SOURCE,
-		EXCL_UUID,
-		EXCL_LABEL
-	};
-	int excl_any = EXCL_NONE, excl_src = EXCL_NONE;
-
 	static const struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
 		{ "fake", 0, 0, 'f' },
@@ -753,6 +732,18 @@ int main(int argc, char **argv)
 		{ NULL, 0, 0, 0 }
 	};
 
+	static const ul_excl_t excl[] = {       /* rows and cols in in ASCII order */
+		{ 'B','M','R',			/* bind,move,rbind */
+		   MOUNT_OPT_SHARED,   MOUNT_OPT_SLAVE,
+		   MOUNT_OPT_PRIVATE,  MOUNT_OPT_UNBINDABLE,
+		   MOUNT_OPT_RSHARED,  MOUNT_OPT_RSLAVE,
+		   MOUNT_OPT_RPRIVATE, MOUNT_OPT_RUNBINDABLE },
+
+		{ 'L','U', MOUNT_OPT_SOURCE },	/* label,uuid,source */
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	sanitize_env();
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -775,6 +766,8 @@ int main(int argc, char **argv)
 		    c != MOUNT_OPT_TARGET &&
 		    c != MOUNT_OPT_SOURCE)
 			exit_non_root(option_to_longopt(c, longopts));
+
+		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch(c) {
 		case 'a':
@@ -827,14 +820,12 @@ int main(int argc, char **argv)
 					_("invalid passphrase file descriptor"));
 			break;
 		case 'L':
-			exclusive_option(&excl_src, EXCL_LABEL, _("-L, -U and --source"));
 			xasprintf(&srcbuf, "LABEL=\"%s\"", optarg);
 			mnt_context_disable_swapmatch(cxt, 1);
 			mnt_context_set_source(cxt, srcbuf);
 			free(srcbuf);
 			break;
 		case 'U':
-			exclusive_option(&excl_src, EXCL_UUID, _("-L, -U and --source"));
 			xasprintf(&srcbuf, "UUID=\"%s\"", optarg);
 			mnt_context_disable_swapmatch(cxt, 1);
 			mnt_context_set_source(cxt, srcbuf);
@@ -853,7 +844,6 @@ int main(int argc, char **argv)
 			mnt_context_enable_sloppy(cxt, TRUE);
 			break;
 		case 'B':
-			exclusive_option(&excl_any, EXCL_BIND, EXCL_ERROR);
 			oper |= MS_BIND;
 			break;
 		case 'M':
@@ -863,35 +853,27 @@ int main(int argc, char **argv)
 			oper |= (MS_BIND | MS_REC);
 			break;
 		case MOUNT_OPT_SHARED:
-			exclusive_option(&excl_any, EXCL_MAKE_SHARED, EXCL_ERROR);
 			oper |= MS_SHARED;
 			break;
 		case MOUNT_OPT_SLAVE:
-			exclusive_option(&excl_any, EXCL_MAKE_SLAVE, EXCL_ERROR);
 			oper |= MS_SLAVE;
 			break;
 		case MOUNT_OPT_PRIVATE:
-			exclusive_option(&excl_any, EXCL_MAKE_PRIVATE, EXCL_ERROR);
 			oper |= MS_PRIVATE;
 			break;
 		case MOUNT_OPT_UNBINDABLE:
-			exclusive_option(&excl_any, EXCL_MAKE_UNBINDABLE, EXCL_ERROR);
 			oper |= MS_UNBINDABLE;
 			break;
 		case MOUNT_OPT_RSHARED:
-			exclusive_option(&excl_any, EXCL_MAKE_RSHARED, EXCL_ERROR);
 			oper |= (MS_SHARED | MS_REC);
 			break;
 		case MOUNT_OPT_RSLAVE:
-			exclusive_option(&excl_any, EXCL_MAKE_RSLAVE, EXCL_ERROR);
 			oper |= (MS_SLAVE | MS_REC);
 			break;
 		case MOUNT_OPT_RPRIVATE:
-			exclusive_option(&excl_any, EXCL_MAKE_RPRIVATE, EXCL_ERROR);
 			oper |= (MS_PRIVATE | MS_REC);
 			break;
 		case MOUNT_OPT_RUNBINDABLE:
-			exclusive_option(&excl_any, EXCL_MAKE_RUNBINDABLE, EXCL_ERROR);
 			oper |= (MS_UNBINDABLE | MS_REC);
 			break;
 		case MOUNT_OPT_TARGET:
@@ -899,7 +881,6 @@ int main(int argc, char **argv)
 			mnt_context_set_target(cxt, optarg);
 			break;
 		case MOUNT_OPT_SOURCE:
-			exclusive_option(&excl_src, EXCL_SOURCE, _("-L, -U and --source"));
 			mnt_context_disable_swapmatch(cxt, 1);
 			mnt_context_set_source(cxt, optarg);
 			break;
