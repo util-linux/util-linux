@@ -14,8 +14,6 @@
 #include "fdiskaixlabel.h"
 #include "nls.h"
 
-#define aixlabel ((aix_partition *)cxt->firstsector)
-
 static	int     other_endian = 0;
 static  short	volumes=1;
 
@@ -43,6 +41,8 @@ aix_info( void ) {
 void
 aix_nolabel(struct fdisk_context *cxt)
 {
+    struct aix_partition *aixlabel = (struct aix_partition *) cxt->firstsector;
+
     aixlabel->magic = 0;
     partitions = 4;
     fdisk_zeroize_firstsector(cxt);
@@ -51,6 +51,8 @@ aix_nolabel(struct fdisk_context *cxt)
 
 static int aix_probe_label(struct fdisk_context *cxt)
 {
+    struct aix_partition *aixlabel = (struct aix_partition *) cxt->firstsector;
+
     if (aixlabel->magic != AIX_LABEL_MAGIC &&
 	aixlabel->magic != AIX_LABEL_MAGIC_SWAPPED) {
 	other_endian = 0;
@@ -65,7 +67,10 @@ static int aix_probe_label(struct fdisk_context *cxt)
     return 1;
 }
 
-static void aix_add_partition(struct fdisk_context *cxt, int partnum, int parttype)
+static void aix_add_partition(
+		struct fdisk_context *cxt __attribute__((__unused__)),
+		int partnum __attribute__((__unused__)),
+		int parttype __attribute__((__unused__)))
 {
 	printf(_("\tSorry - this fdisk cannot handle AIX disk labels."
 		 "\n\tIf you want to add DOS-type partitions, create"
