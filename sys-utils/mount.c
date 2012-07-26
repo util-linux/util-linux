@@ -969,7 +969,6 @@ int main(int argc, char **argv)
 	rc = mk_exit_code(cxt, rc);
 
 done:
-	free(srcbuf);
 	mnt_free_context(cxt);
 	mnt_free_table(fstab);
 	return rc;
