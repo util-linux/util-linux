@@ -8,6 +8,7 @@ SUBDIRS += libmount/docs
 endif
 
 pkgconfig_DATA += libmount/mount.pc
-EXTRA_DIST     += libmount/mount.pc.in
+EXTRA_DIST     += libmount/mount.pc.in libmount/COPYING
+
 
 endif # BUILD_LIBMOUNT

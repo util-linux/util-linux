@@ -4,6 +4,6 @@ include libuuid/man/Makemodule.am
 include libuuid/src/Makemodule.am
 
 pkgconfig_DATA += libuuid/uuid.pc
-EXTRA_DIST     += libuuid/uuid.pc.in
+EXTRA_DIST     += libuuid/uuid.pc.in libuuid/COPYING
 
 endif # BUILD_LIBUUID

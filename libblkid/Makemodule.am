@@ -10,6 +10,6 @@ endif
 
 pkgconfig_DATA += libblkid/blkid.pc
 dist_man_MANS  += libblkid/libblkid.3
-EXTRA_DIST     += libblkid/blkid.pc.in libblkid/libblkid.3
+EXTRA_DIST     += libblkid/blkid.pc.in libblkid/libblkid.3 libblkid/COPYING
 
 endif # BUILD_LIBBLKID
