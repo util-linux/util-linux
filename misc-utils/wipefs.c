@@ -383,13 +383,6 @@ main(int argc, char **argv)
 	int c, all = 0, has_offset = 0, noact = 0, quiet = 0;
 	int mode = WP_MODE_PRETTY;
 
-	enum {
-		EXCL_NONE,
-		EXCL_ALL,
-		EXCL_OFFSET
-	};
-	int excl_any = EXCL_NONE;
-
 	static const struct option longopts[] = {
 	    { "all",       0, 0, 'a' },
 	    { "help",      0, 0, 'h' },
@@ -402,15 +395,23 @@ main(int argc, char **argv)
 	    { NULL,        0, 0, 0 }
 	};
 
+	static const ul_excl_t excl[] = {       /* rows and cols in in ASCII order */
+		{ 'a','o' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "ahno:pqt:V", longopts, NULL)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch(c) {
 		case 'a':
-			exclusive_option(&excl_any, EXCL_ALL, "--{all,offset}");
 			all++;
 			break;
 		case 'h':
@@ -420,7 +421,6 @@ main(int argc, char **argv)
 			noact++;
 			break;
 		case 'o':
-			exclusive_option(&excl_any, EXCL_OFFSET, "--{all,offset}");
 			wp0 = add_offset(wp0, strtosize_or_err(optarg,
 					 _("invalid offset argument")), 1);
 			has_offset++;
