@@ -997,17 +997,16 @@ list_disk_geometry(struct fdisk_context *cxt) {
 	long megabytes = bytes/1000000;
 
 	if (megabytes < 10000)
-		printf(_("\nDisk %s: %ld MB, %lld bytes\n"),
+		printf(_("\nDisk %s: %ld MB, %lld bytes"),
 		       cxt->dev_path, megabytes, bytes);
 	else {
 		long hectomega = (megabytes + 50) / 100;
-		printf(_("\nDisk %s: %ld.%ld GB, %llu bytes\n"),
+		printf(_("\nDisk %s: %ld.%ld GB, %llu bytes"),
 		       cxt->dev_path, hectomega / 10, hectomega % 10, bytes);
 	}
+	printf(_(", %llu sectors\n"), cxt->total_sectors);
 	printf(_("%d heads, %llu sectors/track, %llu cylinders"),
 	       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
-	if (units_per_sector == 1)
-		printf(_(", total %llu sectors"), cxt->total_sectors);
 	printf("\n");
 	printf(_("Units = %s of %d * %ld = %ld bytes\n"),
 	       str_units(PLURAL),
