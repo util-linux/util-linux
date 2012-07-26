@@ -131,7 +131,9 @@ void dos_init(struct fdisk_context *cxt)
 	warn_alignment(cxt);
 }
 
-static void dos_delete_partition(struct fdisk_context *cxt, int partnum)
+static void dos_delete_partition(
+		struct fdisk_context *cxt __attribute__ ((__unused__)),
+		int partnum)
 {
 	struct pte *pe = &ptes[partnum];
 	struct partition *p = pe->part_table;
@@ -713,7 +715,10 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
  *
  * API callback.
  */
-static void dos_add_partition(struct fdisk_context *cxt, int partnum, int parttype)
+static void dos_add_partition(
+			struct fdisk_context *cxt,
+			int partnum __attribute__ ((__unused__)),
+			int parttype)
 {
 	int i, free_primary = 0;
 
