@@ -985,9 +985,10 @@ static int read_kmsg(struct dmesg_control *ctl)
 int main(int argc, char *argv[])
 {
 	char *buf = NULL;
-	ssize_t  n, r;
 	int  c;
 	int  console_level = 0;
+	int  klog_rc = 0;
+	ssize_t n;
 	static struct dmesg_control ctl = {
 		.filename = NULL,
 		.action = SYSLOG_ACTION_READ_ALL,
@@ -1127,8 +1128,6 @@ int main(int argc, char *argv[])
 	}
 	argc -= optind;
 	argv += optind;
-	n = 0;
-	r = 0;
 
 	if (argc > 1)
 		usage(stderr);
@@ -1149,32 +1148,32 @@ int main(int argc, char *argv[])
 		if (ctl.method == DMESG_METHOD_KMSG && init_kmsg(&ctl) != 0)
 			ctl.method = DMESG_METHOD_SYSLOG;
 
-		r = read_buffer(&ctl, &buf);
-		if (r > 0)
-			print_buffer(&ctl, buf, r);
+		n = read_buffer(&ctl, &buf);
+		if (n > 0)
+			print_buffer(&ctl, buf, n);
 		if (!ctl.mmap_buff)
 			free(buf);
+		if (n < 0)
+			err(EXIT_FAILURE, _("read kernel buffer failed"));
+		if (ctl.kmsg >= 0)
+			close(ctl.kmsg);
 		break;
 	case SYSLOG_ACTION_CLEAR:
 	case SYSLOG_ACTION_CONSOLE_OFF:
 	case SYSLOG_ACTION_CONSOLE_ON:
-		n = klogctl(ctl.action, NULL, 0);
+		klog_rc = klogctl(ctl.action, NULL, 0);
 		break;
 	case SYSLOG_ACTION_CONSOLE_LEVEL:
-		n = klogctl(ctl.action, NULL, console_level);
+		klog_rc = klogctl(ctl.action, NULL, console_level);
 		break;
 	default:
 		errx(EXIT_FAILURE, _("unsupported command"));
 		break;
 	}
 
-	if (ctl.kmsg >= 0)
-		close(ctl.kmsg);
 
-	if (n < 0)
+	if (klog_rc)
 		err(EXIT_FAILURE, _("klogctl failed"));
-	if (r < 0)
-		err(EXIT_FAILURE, _("read_buffer failed"));
 
 	return EXIT_SUCCESS;
 }
