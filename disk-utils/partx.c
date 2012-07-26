@@ -663,6 +663,12 @@ int main(int argc, char **argv)
 		{ NULL, 0, NULL, 0 }
 	};
 
+	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
+		{ 'P','a','d','l','r','s' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -670,21 +676,24 @@ int main(int argc, char **argv)
 
 	while ((c = getopt_long(argc, argv,
 				"abdglrsvn:t:o:PhV", long_opts, NULL)) != -1) {
+
+		err_exclusive_options(c, long_opts, excl, excl_st);
+
 		switch(c) {
 		case 'a':
-			exclusive_option(&what, ACT_ADD, ACT_ERROR);
+			what = ACT_ADD;
 			break;
 		case 'b':
 			partx_flags |= FL_BYTES;
 			break;
 		case 'd':
-			exclusive_option(&what, ACT_DELETE, ACT_ERROR);
+			what = ACT_DELETE;
 			break;
 		case 'g':
 			tt_flags |= TT_FL_NOHEADINGS;
 			break;
 		case 'l':
-			exclusive_option(&what, ACT_LIST, ACT_ERROR);
+			what = ACT_LIST;
 			break;
 		case 'n':
 			if (parse_range(optarg, &lower, &upper, 0))
@@ -696,18 +705,17 @@ int main(int argc, char **argv)
 						column_name_to_id);
 			if (ncolumns < 0)
 				return EXIT_FAILURE;
-			exclusive_option(&what, ACT_SHOW, ACT_ERROR);
 			break;
 		case 'P':
 			tt_flags |= TT_FL_EXPORT;
-			exclusive_option(&what, ACT_SHOW, ACT_ERROR);
+			what = ACT_SHOW;
 			break;
 		case 'r':
 			tt_flags |= TT_FL_RAW;
-			exclusive_option(&what, ACT_SHOW, ACT_ERROR);
+			what = ACT_SHOW;
 			break;
 		case 's':
-			exclusive_option(&what, ACT_SHOW, ACT_ERROR);
+			what = ACT_SHOW;
 			break;
 		case 't':
 			type = optarg;
