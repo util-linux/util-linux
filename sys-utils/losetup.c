@@ -22,8 +22,6 @@
 #include "closestream.h"
 #include "optutils.h"
 
-#define EXCL_ERROR "--{all,associated,set-capacity,detach,detach-all,find}"
-
 enum {
 	A_CREATE = 1,		/* setup a new device */
 	A_DELETE,		/* delete given device(s) */
@@ -215,17 +213,6 @@ int main(int argc, char **argv)
 	int res = 0, showdev = 0, lo_flags = 0;
 
 	enum {
-		EXCL_NONE,
-		EXCL_ALL,
-		EXCL_ASSOCIATED,
-		EXCL_SET_CAPACITY,
-		EXCL_DETACH,
-		EXCL_DETACH_ALL,
-		EXCL_FIND
-	};
-	int excl_any = EXCL_NONE;
-
-	enum {
 		OPT_SIZELIMIT = CHAR_MAX + 1,
 		OPT_SHOW
 	};
@@ -249,6 +236,12 @@ int main(int argc, char **argv)
 		{ NULL, 0, 0, 0 }
 	};
 
+	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
+		{ 'D','a','c','d','f','j' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -261,13 +254,14 @@ int main(int argc, char **argv)
 
 	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:o:p:PrvV",
 				longopts, NULL)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch (c) {
 		case 'a':
-			exclusive_option(&excl_any, EXCL_ALL, EXCL_ERROR);
 			act = A_SHOW;
 			break;
 		case 'c':
-			exclusive_option(&excl_any, EXCL_SET_CAPACITY, EXCL_ERROR);
 			act = A_SET_CAPACITY;
 			if (loopcxt_set_device(&lc, optarg))
 				err(EXIT_FAILURE, _("%s: failed to use device"),
@@ -277,14 +271,12 @@ int main(int argc, char **argv)
 			lo_flags |= LO_FLAGS_READ_ONLY;
 			break;
 		case 'd':
-			exclusive_option(&excl_any, EXCL_DETACH, EXCL_ERROR);
 			act = A_DELETE;
 			if (loopcxt_set_device(&lc, optarg))
 				err(EXIT_FAILURE, _("%s: failed to use device"),
 						optarg);
 			break;
 		case 'D':
-			exclusive_option(&excl_any, EXCL_DETACH_ALL, EXCL_ERROR);
 			act = A_DELETE_ALL;
 			break;
 		case 'E':
@@ -292,14 +284,12 @@ int main(int argc, char **argv)
 			encryption = optarg;
 			break;
 		case 'f':
-			exclusive_option(&excl_any, EXCL_FIND, EXCL_ERROR);
 			act = A_FIND_FREE;
 			break;
 		case 'h':
 			usage(stdout);
 			break;
 		case 'j':
-			exclusive_option(&excl_any, EXCL_ASSOCIATED, EXCL_ERROR);
 			act = A_SHOW;
 			file = optarg;
 			break;
