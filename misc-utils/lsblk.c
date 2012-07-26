@@ -1213,6 +1213,7 @@ int main(int argc, char *argv[])
 	struct lsblk _ls;
 	int tt_flags = TT_FL_TREE;
 	int i, c, status = EXIT_FAILURE;
+	char *outarg = NULL;
 
 	static const struct option longopts[] = {
 		{ "all",	0, 0, 'a' },
@@ -1286,11 +1287,7 @@ int main(int argc, char *argv[])
 			tt_flags |= TT_FL_NOHEADINGS;
 			break;
 		case 'o':
-			ncolumns = string_to_idarray(optarg,
-						columns, ARRAY_SIZE(columns),
-						column_name_to_id);
-			if (ncolumns < 0)
-				return EXIT_FAILURE;
+			outarg = optarg;
 			break;
 		case 'P':
 			tt_flags |= TT_FL_EXPORT;
@@ -1355,6 +1352,10 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_TYPE;
 		columns[ncolumns++] = COL_TARGET;
 	}
+
+	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
+					 &ncolumns, column_name_to_id) < 0)
+		return EXIT_FAILURE;
 
 	if (nexcludes == 0 && nincludes == 0)
 		excludes[nexcludes++] = 1;	/* default: ignore RAM disks */
