@@ -22,7 +22,7 @@
 		s |= (sector >> 2) & 0xc0;				\
 	}
 
-#define alignment_required	(grain != cxt->sector_size)
+#define alignment_required	(cxt->grain != cxt->sector_size)
 
 struct pte ptes[MAXIMUM_PARTS];
 sector_t extended_offset;

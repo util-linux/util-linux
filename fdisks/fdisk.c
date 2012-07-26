@@ -132,7 +132,6 @@ int	nowarn = 0,			/* no warnings for fdisk -l/-s */
 unsigned int	user_cylinders, user_heads, user_sectors;
 sector_t sector_offset = 1;
 unsigned int units_per_sector = 1, display_in_cyl_units = 0;
-unsigned long grain = DEFAULT_SECTOR_SIZE;
 enum fdisk_labeltype disklabel;	/* Current disklabel */
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
@@ -300,8 +299,8 @@ lba_is_aligned(struct fdisk_context *cxt, sector_t lba)
 	unsigned int granularity = max(cxt->phy_sector_size, cxt->min_io_size);
 	unsigned long long offset;
 
-	if (grain > granularity)
-		granularity = grain;
+	if (cxt->grain > granularity)
+		granularity = cxt->grain;
 	offset = (lba * cxt->sector_size) & (granularity - 1);
 
 	return !((granularity + cxt->alignment_offset - offset) & (granularity - 1));
@@ -323,7 +322,7 @@ sector_t align_lba(struct fdisk_context *cxt, sector_t lba, int direction)
 	if (lba_is_aligned(cxt, lba))
 		res = lba;
 	else {
-		sector_t sects_in_phy = grain / cxt->sector_size;
+		sector_t sects_in_phy = cxt->grain / cxt->sector_size;
 
 		if (lba < sector_offset)
 			res = sector_offset;
@@ -446,7 +445,7 @@ void warn_alignment(struct fdisk_context *cxt)
 void
 update_sector_offset(struct fdisk_context *cxt)
 {
-	grain = cxt->io_size;
+	cxt->grain = cxt->io_size;
 
 	if (dos_compatible_flag)
 		sector_offset = cxt->geom.sectors;	/* usually 63 sectors */
@@ -481,12 +480,12 @@ update_sector_offset(struct fdisk_context *cxt)
 			sector_offset = cxt->phy_sector_size / cxt->sector_size;
 
 		/* use 1MiB grain always when possible */
-		if (grain < 2048 * 512)
-			grain = 2048 * 512;
+		if (cxt->grain < 2048 * 512)
+			cxt->grain = 2048 * 512;
 
 		/* don't use huge grain on small devices */
-		if (cxt->total_sectors <= (grain * 4 / cxt->sector_size))
-			grain = cxt->phy_sector_size;
+		if (cxt->total_sectors <= (cxt->grain * 4 / cxt->sector_size))
+			cxt->grain = cxt->phy_sector_size;
 	}
 }
 
