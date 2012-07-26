@@ -228,13 +228,13 @@ extern sector_t get_nr_sects(struct partition *p);
  * Supported partition table types (labels)
  */
 enum fdisk_labeltype {
-	ANY_LABEL = -1,
 	DOS_LABEL = 1,
-	SUN_LABEL,
-	SGI_LABEL,
-	AIX_LABEL,
-	OSF_LABEL,
-	MAC_LABEL,
+	SUN_LABEL = 2,
+	SGI_LABEL = 4,
+	AIX_LABEL = 8,
+	OSF_LABEL = 16,
+	MAC_LABEL = 32,
+	ANY_LABEL = -1
 };
 
 extern enum fdisk_labeltype disklabel;
