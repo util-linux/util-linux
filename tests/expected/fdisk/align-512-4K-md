@@ -25,8 +25,7 @@ Last sector, +sectors or +size{K,M,G} (43008-102399, default 102399): Using defa
 Partition 2 of type Linux and of size 29 MiB is set
 
 Command (m for help): 
-Disk /dev/...: 52 MB, 52428800 bytes
-32 heads, 32 sectors/track, 100 cylinders, total 102400 sectors
+Disk /dev/...: 52 MB, 52428800 bytes, 102400 sectors
 Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 4096 bytes
 I/O size (minimum/optimal): 4096 bytes / 32768 bytes
@@ -69,8 +68,7 @@ Select (default p): Partition number (1-4, default 2): First sector (22528-10009
 Last sector, +sectors or +size{K,M,G} (22528-100095, default 100095): Partition 2 of type Linux and of size 10 MiB is set
 
 Command (m for help): 
-Disk /dev/md8: 51 MB, 51249152 bytes
-2 heads, 4 sectors/track, 12512 cylinders, total 100096 sectors
+Disk /dev/md8: 51 MB, 51249152 bytes, 100096 sectors
 Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 4096 bytes
 I/O size (minimum/optimal): 65536 bytes / 131072 bytes

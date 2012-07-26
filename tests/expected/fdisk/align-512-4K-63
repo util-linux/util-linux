@@ -54,8 +54,7 @@ Last sector, +sectors or +size{K,M,G} (88063-102399, default 102399): Using defa
 Partition 7 of type Linux and of size 7 MiB is set
 
 Command (m for help): 
-Disk /dev/...: 52 MB, 52428800 bytes
-32 heads, 32 sectors/track, 100 cylinders, total 102400 sectors
+Disk /dev/...: 52 MB, 52428800 bytes, 102400 sectors
 Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 4096 bytes
 I/O size (minimum/optimal): 4096 bytes / 32768 bytes
