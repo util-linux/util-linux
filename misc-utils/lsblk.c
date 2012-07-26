@@ -1207,19 +1207,6 @@ int main(int argc, char *argv[])
 	int tt_flags = TT_FL_TREE;
 	int i, c, status = EXIT_FAILURE;
 
-	enum {
-		EXCL_NONE,
-
-		EXCL_RAW,
-		EXCL_LIST,
-		EXCL_PAIRS,
-
-		EXCL_EXCLUDE,
-		EXCL_INCLUDE,
-	};
-	int excl_rlP = EXCL_NONE;
-	int excl_aeI = EXCL_NONE;
-
 	static const struct option longopts[] = {
 		{ "all",	0, 0, 'a' },
 		{ "bytes",      0, 0, 'b' },
@@ -1242,6 +1229,13 @@ int main(int argc, char *argv[])
 		{ NULL, 0, 0, 0 },
 	};
 
+	static const ul_excl_t excl[] = {       /* rows and cols in in ASCII order */
+		{ 'I','e' },
+		{ 'P','l','r' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -1250,7 +1244,11 @@ int main(int argc, char *argv[])
 	lsblk = &_ls;
 	memset(lsblk, 0, sizeof(*lsblk));
 
-	while((c = getopt_long(argc, argv, "abdDe:fhlnmo:PiI:rstV", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv,
+			       "abdDe:fhlnmo:PiI:rstV", longopts, NULL)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch(c) {
 		case 'a':
 			lsblk->all_devices = 1;
@@ -1269,14 +1267,12 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_DZERO;
 			break;
 		case 'e':
-			exclusive_option(&excl_aeI, EXCL_EXCLUDE, "--{exclude,include}");
 			parse_excludes(optarg);
 			break;
 		case 'h':
 			help(stdout);
 			break;
 		case 'l':
-			exclusive_option(&excl_rlP, EXCL_LIST, "--{raw,list,pairs}");
 			tt_flags &= ~TT_FL_TREE; /* disable the default */
 			break;
 		case 'n':
@@ -1290,7 +1286,6 @@ int main(int argc, char *argv[])
 				return EXIT_FAILURE;
 			break;
 		case 'P':
-			exclusive_option(&excl_rlP, EXCL_PAIRS, "--{raw,list,pairs}");
 			tt_flags |= TT_FL_EXPORT;
 			tt_flags &= ~TT_FL_TREE;	/* disable the default */
 			break;
@@ -1298,11 +1293,9 @@ int main(int argc, char *argv[])
 			tt_flags |= TT_FL_ASCII;
 			break;
 		case 'I':
-			exclusive_option(&excl_aeI, EXCL_INCLUDE, "--{exclude,include}");
 			parse_includes(optarg);
 			break;
 		case 'r':
-			exclusive_option(&excl_rlP, EXCL_RAW, "--{raw,list,pairs}");
 			tt_flags &= ~TT_FL_TREE;	/* disable the default */
 			tt_flags |= TT_FL_RAW;		/* enable raw */
 			break;
