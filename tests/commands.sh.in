@@ -28,7 +28,7 @@ TS_HELPER_ISLOCAL="$top_builddir/test_islocal"
 TS_HELPER_LOGINDEFS="$top_builddir/test_logindefs"
 
 # TODO: use partx
-TS_HELPER_PARTITIONS="$top_builddir/samples-partitions"
+TS_HELPER_PARTITIONS="$top_builddir/sample-partitions"
 
 # paths to commands
 TS_CMD_MOUNT=${TS_CMD_MOUNT:-"$top_builddir/mount"}

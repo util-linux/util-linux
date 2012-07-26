@@ -23,8 +23,7 @@ Last sector, +sectors or +size{K,M,G} (22528-204543, default 204543): Using defa
 Partition 2 of type Linux and of size 88.9 MiB is set
 
 Command (m for help): 
-Disk /dev/md8: 104 MB, 104726528 bytes
-2 heads, 4 sectors/track, 25568 cylinders, total 204544 sectors
+Disk /dev/md8: 104 MB, 104726528 bytes, 204544 sectors
 Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 65536 bytes / 131072 bytes

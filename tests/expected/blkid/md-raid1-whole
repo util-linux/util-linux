@@ -22,8 +22,7 @@ Select (default p): Partition number (1-4, default 2): First sector (22528-10227
 Last sector, +sectors or +size{K,M,G} (22528-102271, default 102271): Partition 2 of type Linux and of size 10 MiB is set
 
 Command (m for help): 
-Disk /dev/md8: 52 MB, 52363264 bytes
-2 heads, 4 sectors/track, 12784 cylinders, total 102272 sectors
+Disk /dev/md8: 52 MB, 52363264 bytes, 102272 sectors
 Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
