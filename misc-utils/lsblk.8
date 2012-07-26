@@ -21,6 +21,13 @@ The command prints all block devices (except RAM disks) in a tree-like format
 by default.  Use
 .B "lsblk --help"
 to get a list of all available columns.
+.PP
+The default output as well as default output from options like --topology and
+--fs is subject to change, so whenever possible you should avoid using default
+outputs in your scripts. Always explicitly define expected columns by
+.B \-\-output
+.IR columns
+in environment where a stable output is required.
 .SH OPTIONS
 .IP "\fB\-a, \-\-all\fP"
 .B lsblk
