@@ -1041,6 +1041,7 @@ int main(int argc, char *argv[])
 	int direction = MNT_ITER_FORWARD;
 	int i, c, rc = -1, timeout = -1;
 	int ntabfiles = 0, tabtype = 0;
+	char *outarg = NULL;
 
 	struct tt *tt = NULL;
 
@@ -1144,11 +1145,7 @@ int main(int argc, char *argv[])
 			disable_columns_truncate();
 			break;
 		case 'o':
-			ncolumns = string_to_idarray(optarg,
-						columns, ARRAY_SIZE(columns),
-						column_name_to_id);
-			if (ncolumns < 0)
-				exit(EXIT_FAILURE);
+			outarg = optarg;
 			break;
 		case 'O':
 			set_match(COL_OPTIONS, optarg);
@@ -1244,6 +1241,10 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_FSTYPE;
 		columns[ncolumns++] = COL_OPTIONS;
 	}
+
+	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
+					 &ncolumns, column_name_to_id) < 0)
+		return EXIT_FAILURE;
 
 	if (!tabtype)
 		tabtype = TABTYPE_KERNEL;
