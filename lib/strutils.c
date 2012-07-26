@@ -479,6 +479,33 @@ int string_to_idarray(const char *list, int ary[], size_t arysz,
 }
 
 /*
+ * Parses the array like string_to_idarray but if format is "+aaa,bbb"
+ * it adds fields to array instead of replacing them.
+ */
+int string_add_to_idarray(const char *list, int ary[], size_t arysz,
+			int *ary_pos, int (name2id)(const char *, size_t))
+{
+	const char *list_add;
+	int r;
+
+	if (!list || !*list || !ary_pos ||
+	    *ary_pos < 0 || (size_t) *ary_pos > arysz)
+		return -1;
+
+	if (list[0] == '+')
+		list_add = &list[1];
+	else {
+		list_add = list;
+		*ary_pos = 0;
+	}
+
+	r = string_to_idarray(list_add, &ary[*ary_pos], arysz - *ary_pos, name2id);
+	if (r > 0)
+		*ary_pos += r;
+	return r;
+}
+
+/*
  * LIST ::= <item> [, <item>]
  *
  * The <item> is translated to 'id' by name2id() function and the 'id' is used
