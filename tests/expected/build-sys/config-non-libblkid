@@ -1,88 +1,88 @@
-mkswap:  libuuid 
-blockdev:  
-fdformat:  
-fsck.cramfs:  libz 
-fsck.minix:  
-isosize:  
-mkfs:  
-mkfs.bfs:  
-mkfs.cramfs:  libz 
-mkfs.minix:  
-raw:  
-cfdisk:  libncursesw libtinfo 
-fdisk:  
-sfdisk:  
-getopt:  
-hwclock:  
-test_at:  
-test_blkdev:  
-test_canonicalize:  
-test_cpuset:  
-test_ismounted:  
-test_loopdev:  
-test_mangle:  
-test_procutils:  
-test_strutils:  
-test_sysfs:  
-test_tt:  
-test_wholedisk:  
 libuuid.so.1.3.0:  ld-linux-x86-64 
-tst_uuid:  libuuid 
-test_islocal:  
-test_logindefs:  
+mkswap:  libuuid 
+test_uuid:  libuuid 
 uuidd:  libuuid 
-uuidgen:  libuuid 
+agetty:  
+blockdev:  
 cal:  libncursesw libtinfo 
-logger:  
-look:  
-lslocks:  
-mcookie:  
-namei:  
-rename:  
-whereis:  
-chrt:  
-ionice:  
-taskset:  
+cfdisk:  libncursesw libtinfo 
 chcpu:  
+chrt:  
+col:  
+colcrt:  
 ctrlaltdel:  
 cytune:  
 dmesg:  
 fallocate:  
-flock:  
+fdformat:  
+fdisk:  ld-linux-x86-64 
+fsck.cramfs:  libz 
+fsck.minix:  
 fsfreeze:  
 fstrim:  
-ipcmk:  
-ipcrm:  
+getopt:  
+hwclock:  
+ionice:  
 ipcs:  
+isosize:  
+kill:  
 ldattach:  
+logger:  
+login:  libpam libpam_misc 
+look:  
 losetup:  
 lscpu:  
+lslocks:  
+mcookie:  
+mkfs:  
+mkfs.bfs:  
+mkfs.cramfs:  libz 
+mkfs.minix:  
+more:  libtinfo 
+namei:  
+pg:  libncursesw libtinfo 
 pivot_root:  
 prlimit:  
+raw:  
 readprofile:  
+rename:  
 renice:  
+rev:  
 rtcwake:  
-setarch:  
-setsid:  
-switch_root:  
-tunelp:  
-unshare:  
-agetty:  
 script:  libutil 
 scriptreplay:  
+setarch:  
+setsid:  
 setterm:  libtinfo 
-wall:  
+sfdisk:  
+su:  libpam libpam_misc 
+sulogin:  rypt 
+switch_root:  
+taskset:  
+test_at:  
+test_blkdev:  
 test_byteswap:  
+test_canonicalize:  
+test_cpuset:  
+test_fileutils:  
+test_islocal:  
+test_ismounted:  
+test_logindefs:  
+test_loopdev:  
+test_mangle:  
 test_md5:  
+test_pager:  
 test_pathnames:  
+test_procutils:  
+test_randutils:  
+test_strutils:  
+test_sysfs:  
 test_sysinfo:  
-col:  
-colcrt:  
-colrm:  
-column:  
-hexdump:  
-more:  libtinfo 
-pg:  libncursesw libtinfo 
-rev:  
-tailf:  
+test_tt:  
+test_wholedisk:  
+tunelp:  
 ul:  libtinfo 
+unshare:  
+utmpdump:  
+wdctl:  
+whereis:  
