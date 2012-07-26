@@ -449,9 +449,7 @@ clearsbin (const char *const path)
   if (!path || *path == 0)
     return NULL;
 
-  tmp = strdup (path);
-  if (!tmp)
-    return NULL;
+  tmp = xstrdup (path);
 
   ret = xmalloc (strlen (path) + 1);
   *ret = 0;
