@@ -18,20 +18,6 @@ static inline const char *option_to_longopt(int c, const struct option *opts)
 # define OPTUTILS_EXIT_CODE EXIT_FAILURE
 #endif
 
-/* deprecated */
-static inline void exclusive_option(int *what, const int how,
-				    const char *errmesg)
-{
-	if (*what == 0) {
-		*what = how;
-		return;
-	}
-	if (*what == how)
-		return;
-	errx(OPTUTILS_EXIT_CODE,
-	     _("options %s are mutually exclusive"), errmesg);
-}
-
 /*
  * Check collisions between options.
  *
