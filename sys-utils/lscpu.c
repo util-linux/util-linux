@@ -1245,19 +1245,6 @@ int main(int argc, char *argv[])
 	int c, i;
 	int columns[ARRAY_SIZE(coldescs)], ncolumns = 0;
 
-	enum {
-		EXCL_NONE,
-
-		EXCL_ALL,
-		EXCL_ONLINE,
-		EXCL_OFFLINE,
-
-		EXCL_EXTENDED,
-		EXCL_PARSE
-	};
-	int excl_ep = EXCL_NONE;
-	int excl_abc = EXCL_NONE;
-
 	static const struct option longopts[] = {
 		{ "all",        no_argument,       0, 'a' },
 		{ "online",     no_argument,       0, 'b' },
@@ -1271,32 +1258,37 @@ int main(int argc, char *argv[])
 		{ NULL,		0, 0, 0 }
 	};
 
+	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
+		{ 'a','b','c' },
+		{ 'e','p' },
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "abce::hp::s:xV", longopts, NULL)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch (c) {
 		case 'a':
-			exclusive_option(&excl_abc, EXCL_ALL, "--{all,online,offline}");
 			mod->online = mod->offline = 1;
 			break;
 		case 'b':
-			exclusive_option(&excl_abc, EXCL_ONLINE, "--{all,online,offline}");
 			mod->online = 1;
 			break;
 		case 'c':
-			exclusive_option(&excl_abc, EXCL_OFFLINE, "--{all,online,offline}");
 			mod->offline = 1;
 			break;
 		case 'h':
 			usage(stdout);
 		case 'p':
-			exclusive_option(&excl_ep, EXCL_PARSE, "--{extended,parse}");
 			goto hop_over;
 		case 'e':
-			exclusive_option(&excl_ep, EXCL_EXTENDED, "--{extended,parse}");
 			hop_over:
 			if (optarg) {
 				if (*optarg == '=')
