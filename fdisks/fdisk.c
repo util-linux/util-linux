@@ -1561,7 +1561,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 			if (dos_compatible_flag)
 				fprintf(stderr, _("Warning: setting "
 					"sector offset for DOS "
-					"compatiblity\n"));
+					"compatibility\n"));
 			update_sector_offset(cxt);
 			update_units(cxt);
 			break;
