@@ -8,6 +8,11 @@ Util-linux 2.22 Release Notes
 Release highlights
 ------------------
 
+partx(8):
+  - the default output has been changed, the legacy output was deprecated for
+    more than 1 year. Users who depend on the old output format have to use
+    --list command line option.
+
 mount(8), umount(8), swapon(8), blkid(8) and findmnt(8):
   - supports PARTUUID= and PARTLABEL= tags to specify block devices by partition
     UUID or LABEL (for example for UEFI GPT). These tags are filesystem
