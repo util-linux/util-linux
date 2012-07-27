@@ -894,6 +894,7 @@ AC_ARG_ENABLE([eject],
 )
 UL_BUILD_INIT([eject])
 UL_REQUIRES_LINUX([eject])
+UL_REQUIRES_BUILD([eject], [libmount])
 AM_CONDITIONAL(BUILD_EJECT, test "x$build_eject" = xyes)
 
 
@@ -924,6 +925,7 @@ AM_CONDITIONAL(BUILD_HWCLOCK, test "x$build_hwclock" = xyes)
 UL_BUILD_INIT([swapon], [check])
 UL_REQUIRES_LINUX([swapon])
 UL_REQUIRES_BUILD([swapon], [libblkid])
+UL_REQUIRES_BUILD([swapon], [libmount])
 AM_CONDITIONAL(BUILD_SWAPON, test "x$build_swapon" = xyes)
 
 

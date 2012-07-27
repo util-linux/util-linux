@@ -107,14 +107,16 @@ endif
 nodist_libblkid_la_SOURCES = libblkid/src/blkid.h
 libblkid_la_LIBADD = libcommon.la
 
-if BUILD_LIBUUID
-libblkid_la_LIBADD += libuuid.la
-endif
 
 libblkid_la_CFLAGS = \
 	-I$(ul_libblkid_incdir) \
-	-I$(ul_libuuid_incdir) \
 	-I$(top_srcdir)/libblkid/src
+
+if BUILD_LIBUUID
+libblkid_la_LIBADD += libuuid.la
+libblkid_la_CFLAGS += -I$(ul_libuuid_incdir)
+endif
+
 
 libblkid_la_DEPENDENCIES = \
 	$(libblkid_la_LIBADD) \
@@ -143,8 +145,15 @@ noinst_PROGRAMS += \
 	test_blkid_verify
 
 blkid_tests_cflags  = -DTEST_PROGRAM $(libblkid_la_CFLAGS)
-blkid_tests_ldflags = libuuid.la -static
-blkid_tests_ldadd   = libblkid.la $(UUID_LIBS)
+blkid_tests_ldflags =
+blkid_tests_ldadd   = libblkid.la
+
+if BUILD_LIBUUID
+blkid_tests_ldflags += libuuid.la
+blkid_tests_ldadd   += $(UUID_LIBS)
+endif
+
+blkid_tests_ldflags += -static
 
 test_blkid_cache_SOURCES = libblkid/src/cache.c
 test_blkid_cache_CFLAGS = $(blkid_tests_cflags)
