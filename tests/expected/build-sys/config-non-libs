@@ -1,15 +1,28 @@
 agetty:  
+blockdev:  
 cal:  libncursesw libtinfo 
+cfdisk:  libncursesw libtinfo 
+chcpu:  
+chrt:  
+col:  
 colcrt:  
+colrm:  
+column:  
 ctrlaltdel:  
 cytune:  
 dmesg:  
 fallocate:  
 fdformat:  
+fdisk:  ld-linux-x86-64 
 flock:  
+fsck.cramfs:  libz 
+fsck.minix:  
 fsfreeze:  
 fstrim:  
 getopt:  
+hexdump:  
+hwclock:  
+ionice:  
 ipcmk:  
 ipcrm:  
 ipcs:  
@@ -19,10 +32,15 @@ ldattach:
 logger:  
 login:  libpam libpam_misc 
 look:  
+losetup:  
 lscpu:  
 lslocks:  
 mcookie:  
 mkfs:  
+mkfs.bfs:  
+mkfs.cramfs:  libz 
+mkfs.minix:  
+mkswap:  
 more:  libtinfo 
 namei:  
 pg:  libncursesw libtinfo 
@@ -39,9 +57,12 @@ scriptreplay:
 setarch:  
 setsid:  
 setterm:  libtinfo 
+sfdisk:  
 su:  libpam libpam_misc 
 sulogin:  rypt 
 switch_root:  
+tailf:  
+taskset:  
 test_at:  
 test_blkdev:  
 test_byteswap:  

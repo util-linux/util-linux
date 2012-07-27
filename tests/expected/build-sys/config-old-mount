@@ -1,17 +1,27 @@
 blkid:  libblkid libuuid 
 cfdisk:  libblkid libncursesw libtinfo libuuid 
+eject:  libblkid libmount libuuid 
 fdisk:  ld-linux-x86-64 libblkid libuuid 
 findfs:  libblkid libuuid 
+findmnt:  libblkid libmount libuuid 
+fsck:  libblkid libmount libuuid 
 libblkid.so.1.1.0:  ld-linux-x86-64 libuuid 
+libmount.so.1.1.0:  ld-linux-x86-64 libblkid libuuid 
 libuuid.so.1.3.0:  ld-linux-x86-64 
+lsblk:  libblkid libmount libudev libuuid 
 mkswap:  libblkid libuuid 
+mount:  libblkid libuuid 
+mountpoint:  libblkid libmount libuuid 
 partx:  libblkid libuuid 
 sample-mkfs:  libblkid libuuid 
 sample-partitions:  libblkid libuuid 
 sample-superblocks:  libblkid libuuid 
 sample-topology:  libblkid libuuid 
 swaplabel:  libblkid libuuid 
+swapoff:  libblkid libmount libuuid 
+swapon:  libblkid libmount libuuid 
 test_uuid:  libuuid 
+umount:  libblkid libuuid 
 uuidd:  libuuid 
 uuidgen:  libuuid 
 wipefs:  libblkid libuuid 
@@ -102,6 +112,15 @@ test_logindefs:
 test_loopdev:  
 test_mangle:  
 test_md5:  
+test_mount_cache:  
+test_mount_context:  
+test_mount_lock:  
+test_mount_optstr:  
+test_mount_tab:  
+test_mount_tab_diff:  
+test_mount_tab_update:  
+test_mount_utils:  
+test_mount_version:  
 test_pager:  
 test_pathnames:  
 test_procutils:  

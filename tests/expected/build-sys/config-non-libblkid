@@ -2,6 +2,7 @@ libuuid.so.1.3.0:  ld-linux-x86-64
 mkswap:  libuuid 
 test_uuid:  libuuid 
 uuidd:  libuuid 
+uuidgen:  libuuid 
 agetty:  
 blockdev:  
 cal:  libncursesw libtinfo 
@@ -10,19 +11,25 @@ chcpu:
 chrt:  
 col:  
 colcrt:  
+colrm:  
+column:  
 ctrlaltdel:  
 cytune:  
 dmesg:  
 fallocate:  
 fdformat:  
 fdisk:  ld-linux-x86-64 
+flock:  
 fsck.cramfs:  libz 
 fsck.minix:  
 fsfreeze:  
 fstrim:  
 getopt:  
+hexdump:  
 hwclock:  
 ionice:  
+ipcmk:  
+ipcrm:  
 ipcs:  
 isosize:  
 kill:  
@@ -58,6 +65,7 @@ sfdisk:
 su:  libpam libpam_misc 
 sulogin:  rypt 
 switch_root:  
+tailf:  
 taskset:  
 test_at:  
 test_blkdev:  
@@ -84,5 +92,6 @@ tunelp:
 ul:  libtinfo 
 unshare:  
 utmpdump:  
+wall:  
 wdctl:  
 whereis:  
