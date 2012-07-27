@@ -377,7 +377,10 @@ function ts_device_has_uuid {
 }
 
 function ts_is_mounted {
-	local DEV=$1
+	local DEV=$( readlink -f $1 )
+	if [ ".$DEV" = '.' ]; then
+	  DEV=$1
+	fi
 
 	grep -q $DEV /proc/mounts && return 0
 
