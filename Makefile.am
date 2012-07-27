@@ -61,7 +61,8 @@ EXTRA_DIST += \
 	autogen.sh \
 	Documentation \
 	po/update-potfiles \
-	README.licensing
+	README.licensing \
+	tools/git-version-gen
 
 
 include include/Makemodule.am
