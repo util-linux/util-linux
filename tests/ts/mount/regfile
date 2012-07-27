@@ -21,7 +21,7 @@ $TS_CMD_MOUNT $IMAGE $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
 
 DEVICE=$(awk '/regfile/ { print $1 }' /proc/mounts)
 
-grep -q "$TS_MOUNTPOINT" /proc/mounts || ts_die "Cannot find $TS_MOUNTPOINT in /proc/mounts"
+ts_is_mounted "$TS_MOUNTPOINT" || ts_die "Cannot find $TS_MOUNTPOINT in /proc/mounts"
 
 if [ -f "/sys/block/$(basename $DEVICE)/loop/backing_file" ]; then
 	$TS_CMD_UMOUNT $IMAGE || ts_die "Cannot umount $IMAGE"
@@ -30,7 +30,7 @@ else
 	ts_skip "too old kernel"
 fi
 
-grep -q "$TS_MOUNTPOINT" /proc/mounts && ts_die "$TS_MOUNTPOINT still in /proc/mounts"
+ts_is_mounted "$TS_MOUNTPOINT" && ts_die "$TS_MOUNTPOINT still in /proc/mounts"
 
 ts_log "Success"
 ts_finalize
