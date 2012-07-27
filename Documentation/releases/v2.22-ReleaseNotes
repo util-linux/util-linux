@@ -25,7 +25,7 @@ su(1):
 sulogin(8):
   - has been merged from sysvinit into util-linux
 
-utmpdumpa(1):
+utmpdump(1):
   - has been merged from sysvinit into util-linux
 
 eject(1):
