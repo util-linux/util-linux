@@ -10,4 +10,5 @@ EXTRA_DIST += \
 clean-local-tests:
 	rm -rf output diff
 
+TESTS += tests/run-nonroot.sh
 CLEAN_LOCALS += clean-local-tests

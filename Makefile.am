@@ -41,6 +41,7 @@ dist_usrbin_exec_SCRIPTS =
 systemdsystemunit_DATA =
 ruman1_DATA =
 check_PROGRAMS =
+TESTS =
 
 INSTALL_EXEC_HOOKS =
 UNINSTALL_HOOKS =
