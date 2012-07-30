@@ -122,7 +122,7 @@ INSTALL_EXEC_HOOKS += install-exec-hook-vipw
 endif # BUILD_VIPW
 
 
-noinst_PROGRAMS += \
+check_PROGRAMS += \
 	test_islocal \
 	test_logindefs
 

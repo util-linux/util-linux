@@ -5,6 +5,9 @@
  It's expected that for each invasive change or important bugfix you will
  include a test to your patch.
 
+ Compile tests:
+
+	make check
 
  Run all tests:
 

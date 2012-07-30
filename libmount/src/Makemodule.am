@@ -50,7 +50,7 @@ EXTRA_DIST += \
 	libmount/src/libmount.sym \
 	libmount/src/libmount.h.in
 
-noinst_PROGRAMS += \
+check_PROGRAMS += \
 	test_mount_cache \
 	test_mount_context \
 	test_mount_lock \

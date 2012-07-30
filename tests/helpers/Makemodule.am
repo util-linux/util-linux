@@ -1,12 +1,12 @@
 
-noinst_PROGRAMS += test_byteswap
+check_PROGRAMS += test_byteswap
 test_byteswap_SOURCES = tests/helpers/test_byteswap.c
 
-noinst_PROGRAMS += test_md5
+check_PROGRAMS += test_md5
 test_md5_SOURCES = tests/helpers/test_md5.c lib/md5.c
 
-noinst_PROGRAMS += test_pathnames
+check_PROGRAMS += test_pathnames
 test_pathnames_SOURCES = tests/helpers/test_pathnames.c
 
-noinst_PROGRAMS += test_sysinfo
+check_PROGRAMS += test_sysinfo
 test_sysinfo_SOURCES = tests/helpers/test_sysinfo.c

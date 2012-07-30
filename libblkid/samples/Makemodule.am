@@ -1,5 +1,5 @@
 
-noinst_PROGRAMS += \
+check_PROGRAMS += \
 	sample-mkfs \
 	sample-partitions \
 	sample-superblocks \

@@ -40,6 +40,7 @@ sbin_PROGRAMS =
 dist_usrbin_exec_SCRIPTS =
 systemdsystemunit_DATA =
 ruman1_DATA =
+check_PROGRAMS =
 
 INSTALL_EXEC_HOOKS =
 UNINSTALL_HOOKS =

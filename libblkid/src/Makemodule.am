@@ -131,7 +131,7 @@ EXTRA_DIST += \
 	libblkid/src/blkid.sym \
 	libblkid/src/blkid.h.in
 
-noinst_PROGRAMS += \
+check_PROGRAMS += \
 	test_blkid_cache \
 	test_blkid_config \
 	test_blkid_dev \
