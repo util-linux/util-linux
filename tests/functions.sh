@@ -20,6 +20,17 @@ function ts_abspath {
 	pwd
 }
 
+function ts_canonicalize {
+	P="$1"
+	C=$(readlink -f $P)
+
+	if [ -n "$C" ]; then
+		echo "$C"
+	else
+		echo "$P"
+	fi
+}
+
 function ts_skip_subtest {
 	echo " IGNORE ($1)"
 }
@@ -106,6 +117,8 @@ function ts_init_env {
 	LANGUAGE="POSIX"
 	LC_ALL="POSIX"
 	CHARSET="UTF-8"
+
+	mydir=$(ts_canonicalize "$mydir")
 
 	export LANG LANGUAGE LC_ALL CHARSET
 
@@ -377,7 +390,7 @@ function ts_device_has_uuid {
 }
 
 function ts_is_mounted {
-	local DEV=$( readlink -f $1 )
+	local DEV=$(ts_canonicalize "$1")
 	if [ ".$DEV" = '.' ]; then
 	  DEV=$1
 	fi
