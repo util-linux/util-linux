@@ -235,6 +235,9 @@ function ts_gen_diff {
 
 	if [ -s "$TS_OUTPUT" ]; then
 
+		# remove libtool lt- prefixes
+		sed --in-place 's/^lt\-\(.*\: \)/\1/g' $TS_OUTPUT
+
 		[ -d "$TS_DIFFDIR" ] || mkdir -p "$TS_DIFFDIR"
 		diff -u $TS_EXPECTED $TS_OUTPUT > $TS_DIFF
 
