@@ -57,8 +57,18 @@ if [ -n "$SUBTESTS" ]; then
 	done
 else
 	# all tests
+	if [ ! -f "$TS_TOPDIR/../test_tt" ]; then
+		echo "Tests not compiled! Run 'make check' to fix the problem."
+		exit 1
+	fi
+	if [ ! -f "$TS_TOPDIR/commands.sh" ]; then
+		echo "Not ready to run tests! Run './configure' or './config.status' to fix the problem."
+		exit 1
+	fi
+
 	comps=$(find $TS_TOPDIR/ts/ -type f -perm /a+x -regex ".*/[^\.~]*" |  sort)
 fi
+
 
 echo
 echo "-------------------- util-linux regression tests --------------------"
