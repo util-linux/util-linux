@@ -86,6 +86,7 @@ losetup(8):
 build-system changes:
   - login(1) enabled by default (see --disable-login)
   - partx(8) enabled by default (see --disable-partx)
+  - kill(1) enabled by default (see --disable-kill)
   - new non-recursive build-system
   
 
