@@ -1744,6 +1744,11 @@ flag.  A version string and a list of filesystem parameters will be
 printed (these data are also printed if the parameters appear to be
 inconsistent).
 .TP
+.B discard
+If set, causes discard/TRIM commands to be issued to the block device
+when blocks are freed. This is useful for SSD devices and
+sparse/thinly-provisoned LUNs.
+.TP
 .BR fat= {12 | 16 | 32 }
 Specify a 12, 16 or 32 bit fat.  This overrides
 the automatic FAT type detection routine.  Use with caution!
@@ -1752,6 +1757,11 @@ the automatic FAT type detection routine.  Use with caution!
 Character set to use for converting between 8 bit characters
 and 16 bit Unicode characters. The default is iso8859-1.
 Long filenames are stored on disk in Unicode format.
+.TP
+.B nfs
+If set, enables in-memory indexing of directory inodes to reduce the
+frequency of ESTALE errors in NFS client operations. Useful only when
+the filesystem is exported via NFS.
 .TP
 .BI tz=UTC
 This option disables the conversion of timestamps
