@@ -5,26 +5,27 @@
  It's expected that for each invasive change or important bugfix you will
  include a test to your patch.
 
- Compile tests:
+ Compile tests & run basic tests:
 
-	make check
+	$ make check
 
- Run all tests:
+ Run all tests including tests that require root permissions:
 
-	./run.sh [--verbose]
+	# cd tests
+	# ./run.sh [--verbose] [--memcheck]
 
  Run subset of tests:
 
-	./run.sh <test_directory-name>
+	$ ./run.sh <test_directory-name>
 
         for example:
 
-              ./run.sh blkid
-              ./run.sh fdisk
+              $ ./run.sh blkid
+              $ ./run.sh libmount
 
 
 
- *** WARNING ***
+ *** WARNING for root users ***
 
  The tests touch your /etc/fstab. Please, be careful and use
  these tests only for development and never on production system.
