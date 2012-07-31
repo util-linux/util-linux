@@ -15,7 +15,7 @@
 #
 
 TS_TOPDIR="$(dirname $0)/../.."
-TS_DESC="doslabel tests"
+TS_DESC="MBR - id"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"

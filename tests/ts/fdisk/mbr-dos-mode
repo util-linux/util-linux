@@ -13,9 +13,11 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
+#
+#
 
 TS_TOPDIR="$(dirname $0)/../.."
-TS_DESC="doslabel tests"
+TS_DESC="MBR - dos mode"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
