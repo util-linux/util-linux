@@ -1,0 +1,135 @@
+#!/bin/bash
+
+#
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="MBR - non-dos mode"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+
+# cmd to changes system id to 0x1
+FDISK_CMD_INIT="x\ni\n0x1\nr\n"
+FDISK_CMD_WRITE_CLOSE="w\nq\n"
+FDISK_CMD_CREATE_DOSLABEL="o\n" #create dos label
+FDISK_CMD_CREATE_1PRIMARY="n\np\n\n\n+3M\n" # create primary partition of size 3MiB
+FDISK_CMD_CREATE_2PRIMARY="n\np\n\n\n+2M\n" # create primary partition of size 2MiB
+FDISK_CMD_SET_ACTIVE="a\n1\n" # set first partition active
+FDISK_CMD_CREATE_EXTENDED="n\ne\n\n\n\n" # create extended partition 
+FDISK_CMD_CREATE_LOGICAL="n\nl\n\n+2M\n" # create next logical partition of size 10 sectors
+FDISK_CMD_DELETE_LOGICALS="d\n6\nd\n5\nd\n6\d5\n" # delete middle, head, tail, last partitions
+FDISK_CMD_DELETE_1PRIMARY="d\n1\n" # delete first primary
+FDISK_CMD_DELETE_2PRIMARY="d\n2\n" # delete first primary
+FDISK_CMD_DELETE_EXTENDED="d\n3\n" # delete second primary
+
+function print_layout {
+	echo -ne "\n---layout----------" >> $TS_OUTPUT
+	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} | sed 's/^.*\.img/__ts_dev__/g' >> $TS_OUTPUT 2>&1
+	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
+}
+
+#set -x 
+
+ts_log "Initialize empty image"
+TEST_IMAGE_NAME=$(ts_image_init 20)	# 20 MiB
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+# need to run init twice, to change system ID after new label, otherwise system
+# ID will be random and will screw up md5's
+ts_log "Create new DOS partition table"
+echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CREATE_DOSLABEL}${FDISK_CMD_INIT}${FDISK_CMD_WRITE_CLOSE}" \
+	 | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_log "Create 1st primary partition"
+echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CREATE_1PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_log "Set primary partition active"
+echo -e "${FDISK_CMD_INIT}${FDISK_CMD_SET_ACTIVE}${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_log "Re-create 1st primary partition"
+echo -e "${FDISK_CMD_INIT}d\n${FDISK_CMD_CREATE_1PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_log "Create 2nd primary partition"
+echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CREATE_2PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_log "Create extended partition"
+echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CREATE_EXTENDED}${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK  ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_log "Create logical partitions"
+echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_WRITE_CLOSE}" \
+	| $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_log "Delete logical partitions"
+echo -e "${FDISK_CMD_INIT}${FDISK_CMD_DELETE_LOGICALS}${FDISK_CMD_WRITE_CLOSE}" \
+	| $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_log "Create another logical partition"
+echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CREATE_LOGICAL}${FDISK_CMD_WRITE_CLOSE}" \
+	| $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_log "Delete primary partition"
+echo -e "${FDISK_CMD_INIT}${FDISK_CMD_DELETE_1PRIMARY}${FDISK_CMD_WRITE_CLOSE}" \
+	| $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_log "Delete primary partition"
+echo -e "${FDISK_CMD_INIT}${FDISK_CMD_DELETE_2PRIMARY}${FDISK_CMD_WRITE_CLOSE}" \
+	| $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_log "Delete extended partition"
+echo -e "${FDISK_CMD_INIT}${FDISK_CMD_DELETE_EXTENDED}${FDISK_CMD_WRITE_CLOSE}" \
+	| $TS_CMD_FDISK -c=dos -u=cylinders ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_finalize
