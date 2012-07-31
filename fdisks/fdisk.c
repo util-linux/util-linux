@@ -1324,7 +1324,7 @@ void print_partition_size(struct fdisk_context *cxt,
 			  int num, sector_t start, sector_t stop, int sysid)
 {
 	char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
-				     (stop - start + 1) * cxt->sector_size);
+				     (uint64_t)(stop - start + 1) * cxt->sector_size);
 	printf(_("Partition %d of type %s and of size %s is set\n"), num, partition_type(sysid), str);
 	free(str);
 }
