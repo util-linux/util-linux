@@ -146,15 +146,16 @@ static void usage(FILE *out)
 
 	fputs(USAGE_OPTIONS, out);
 
-	fputs(_(" -f, --flags <list>    print selected flags only\n"
-		" -F, --noflags         don't print information about flags\n"
-		" -I, --noident         don't print watchdog identity information\n"
-		" -n, --noheadings      don't print headings for flags table\n"
-		" -O, --oneline         print all information on one line\n"
-		" -o, --output <list>   output columns of the flags\n"
-		" -r, --raw             use raw output format for flags table\n"
-		" -T, --notimeouts      don't print watchdog timeouts\n"
-		" -x, --flags-only      print only flags table (same as -I -T)\n"), out);
+	fputs(_(" -f, --flags <list>     print selected flags only\n"
+		" -F, --noflags          don't print information about flags\n"
+		" -I, --noident          don't print watchdog identity information\n"
+		" -n, --noheadings       don't print headings for flags table\n"
+		" -O, --oneline          print all information on one line\n"
+		" -o, --output <list>    output columns of the flags\n"
+		" -r, --raw              use raw output format for flags table\n"
+		" -T, --notimeouts       don't print watchdog timeouts\n"
+		" -s, --settimeout <sec> set watchdog timeout\n"
+		" -x, --flags-only       print only flags table (same as -I -T)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -256,6 +257,60 @@ static int show_flags(struct wdinfo *wd, int tt_flags, uint32_t wanted)
 	rc = 0;
 done:
 	tt_free_table(tt);
+	return rc;
+}
+/*
+ * Warning: successfully opened watchdog has to be properly closed with magic
+ * close character otherwise the machine will be rebooted!
+ *
+ * Don't use err() or exit() here!
+ */
+static int set_watchdog(struct wdinfo *wd, int timeout)
+{
+	int fd;
+	sigset_t sigs, oldsigs;
+	int rc = 0;
+
+	assert(wd->device);
+
+	sigemptyset(&oldsigs);
+	sigfillset(&sigs);
+	sigprocmask(SIG_BLOCK, &sigs, &oldsigs);
+
+	fd = open(wd->device, O_WRONLY|O_CLOEXEC);
+
+	if (fd < 0) {
+		if (errno == EBUSY)
+			warnx(_("%s: watchdog already in use, terminating."),
+					wd->device);
+		warn(_("cannot open %s"), wd->device);
+		return -1;
+	}
+
+	for (;;) {
+		/* We just opened this to query the state, not to arm
+		 * it hence use the magic close character */
+		static const char v = 'V';
+
+		if (write(fd, &v, 1) >= 0)
+			break;
+		if (errno != EINTR) {
+			warn(_("%s: failed to disarm watchdog"), wd->device);
+			break;
+		}
+		/* Let's try hard, since if we don't get this right
+		 * the machine might end up rebooting. */
+	}
+
+	if (ioctl(fd, WDIOC_SETTIMEOUT, &timeout) != 0) {
+		rc = errno;
+		warn(_("cannot set timeout for %s"), wd->device);
+	}
+
+	close(fd);
+	sigprocmask(SIG_SETMASK, &oldsigs, NULL);
+	printf("Set timeout to %d seconds\n", timeout);
+
 	return rc;
 }
 
@@ -381,6 +436,7 @@ int main(int argc, char *argv[])
 	int c, tt_flags = 0, res = EXIT_SUCCESS, count = 0;
 	char noflags = 0, noident = 0, notimeouts = 0, oneline = 0;
 	uint32_t wanted = 0;
+	int timeout = 0;
 
 	static const struct option long_opts[] = {
 		{ "flags",      required_argument, NULL, 'f' },
@@ -390,6 +446,7 @@ int main(int argc, char *argv[])
 		{ "noheadings", no_argument,       NULL, 'n' },
 		{ "noident",	no_argument,       NULL, 'I' },
 		{ "notimeouts", no_argument,       NULL, 'T' },
+		{ "settimeout", required_argument, NULL, 's' },
 		{ "output",     required_argument, NULL, 'o' },
 		{ "oneline",    no_argument,       NULL, 'O' },
 		{ "raw",        no_argument,       NULL, 'r' },
@@ -409,7 +466,7 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv,
-				"d:f:hFnITo:OrVx", long_opts, NULL)) != -1) {
+				"d:f:hFnITo:s:OrVx", long_opts, NULL)) != -1) {
 
 		err_exclusive_options(c, long_opts, excl, excl_st);
 
@@ -420,6 +477,9 @@ int main(int argc, char *argv[])
 						     column2id);
 			if (ncolumns < 0)
 				return EXIT_FAILURE;
+			break;
+		case 's':
+			timeout = strtos32_or_err(optarg, _("invalid timeout argument"));
 			break;
 		case 'f':
 			if (string_to_bitmask(optarg, (unsigned long *) &wanted, name2bit) != 0)
@@ -480,6 +540,13 @@ int main(int argc, char *argv[])
 		if (count)
 			fputc('\n', stdout);
 		count++;
+
+		if (timeout) {
+			rc = set_watchdog(&wd, timeout);
+			if (rc) {
+				res = EXIT_FAILURE;
+			}
+		}
 
 		rc = read_watchdog(&wd);
 		if (rc) {
