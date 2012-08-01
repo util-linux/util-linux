@@ -59,8 +59,6 @@ sleep 3
 MD_DEVNAME=md8
 MD_DEVICE=/dev/${MD_DEVNAME}
 
-###exit 1
-
 ts_log "Create RAID1 device"
 /sbin/mdadm -q -S ${MD_DEVICE} &> /dev/null
 /sbin/mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 --level=1 \
@@ -83,7 +81,11 @@ sleep 3
 rmmod scsi_debug
 
 ts_fdisk_clean
-# remove generated UUIDs
-sed -i -e 's/ID_FS_UUID.*//g' $TS_OUTPUT
+# substitue UUIDs and major/minor number before comparison
+sed -i \
+  -e         's/^\(ID_FS_UUID\)=.*/\1=__ts_uuid__/' \
+  -e     's/^\(ID_FS_UUID_ENC\)=.*/\1=__ts_uuid_enc__/' \
+  -e 's/^\(ID_PART_ENTRY_DISK\)=.*/\1=__ts_majorminor__/' \
+  $TS_OUTPUT
 
 ts_finalize
