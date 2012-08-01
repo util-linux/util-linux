@@ -183,6 +183,7 @@ extern int mnt_optstr_get_option(const char *optstr, const char *name,
 extern int mnt_optstr_set_option(char **optstr, const char *name,
 				const char *value);
 extern int mnt_optstr_remove_option(char **optstr, const char *name);
+extern int mnt_optstr_deduplicate_option(char **optstr, const char *name);
 
 extern int mnt_split_optstr(const char *optstr,
 			    char **user, char **vfs, char **fs,
@@ -195,6 +196,7 @@ extern int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 				const struct libmnt_optmap *map);
 extern int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
                                 const struct libmnt_optmap *map);
+
 
 /* iter.c */
 enum {

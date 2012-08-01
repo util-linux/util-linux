@@ -250,6 +250,7 @@ MNT_NOHLPS
 <FILE>optstr</FILE>
 mnt_optstr_append_option
 mnt_optstr_apply_flags
+mnt_optstr_deduplicate_option
 mnt_optstr_get_flags
 mnt_optstr_get_option
 mnt_optstr_get_options

@@ -290,6 +290,48 @@ int mnt_optstr_get_option(const char *optstr, const char *name,
 	return rc;
 }
 
+/**
+ * mnt_optstr_deduplicate_option:
+ * @optstr: string with comma separated list of options
+ * @name: requested option name
+ *
+ * Removes all instances of @name except the last one.
+ *
+ * Returns: 0 on success, 1 when not found the @name or negative number in case
+ * of error.
+ */
+int mnt_optstr_deduplicate_option(char **optstr, const char *name)
+{
+	int rc;
+	char *begin = NULL, *end = NULL, *opt = *optstr;
+
+	do {
+		struct libmnt_optloc ol;
+
+		mnt_init_optloc(&ol);
+
+		rc = mnt_optstr_locate_option(opt, name, &ol);
+		if (!rc) {
+			if (begin) {
+				/* remove previous instance */
+				size_t shift = strlen(*optstr);
+
+				mnt_optstr_remove_option_at(optstr, begin, end);
+
+				/* now all offset are not valied anymore - recount */
+				shift -= strlen(*optstr);
+				ol.begin -= shift;
+				ol.end -= shift;
+			}
+			begin = ol.begin;
+			end = ol.end;
+			opt = end && *end ? end + 1 : NULL;
+		}
+	} while (rc == 0 && opt && *opt);
+
+	return rc < 0 ? rc : begin ? 0 : 1;
+}
+
 /*
  * The result never starts or ends with comma or contains two commas
  *    (e.g. ",aaa,bbb" or "aaa,,bbb" or "aaa,")
@@ -1187,6 +1229,24 @@ int test_remove(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
+int test_dedup(struct libmnt_test *ts, int argc, char *argv[])
+{
+	const char *name;
+	char *optstr;
+	int rc;
+
+	if (argc < 3)
+		return -EINVAL;
+	optstr = strdup(argv[1]);
+	name = argv[2];
+
+	rc = mnt_optstr_deduplicate_option(&optstr, name);
+	if (!rc)
+		printf("result: >%s<\n", optstr);
+	free(optstr);
+	return rc;
+}
+
 int test_fix(struct libmnt_test *ts, int argc, char *argv[])
 {
 	char *optstr;
@@ -1230,6 +1290,7 @@ int main(int argc, char *argv[])
 		{ "--set",    test_set,    "<optstr> <name> [<value>]  (un)set value" },
 		{ "--get",    test_get,    "<optstr> <name>            search name in optstr" },
 		{ "--remove", test_remove, "<optstr> <name>            remove name in optstr" },
+		{ "--dedup",  test_dedup,  "<optstr> <name>            deduplicate name in optstr" },
 		{ "--split",  test_split,  "<optstr>                   split into FS, VFS and userspace" },
 		{ "--flags",  test_flags,  "<optstr>                   convert options to MS_* flags" },
 		{ "--apply",  test_apply,  "--{linux,user} <optstr> <mask>    apply mask to optstr" },

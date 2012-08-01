@@ -228,22 +228,23 @@ global:
 
 MOUNT_2.22 {
 global:
-	mnt_fs_streq_target;
-	mnt_fs_streq_srcpath;
-	mnt_context_tab_applied;
+	mnt_context_disable_swapmatch;
 	mnt_context_get_options;
 	mnt_context_is_loopdel;
 	mnt_context_is_nocanonicalize;
 	mnt_context_is_nohelpers;
-	mnt_table_find_devno;
-	mnt_table_parse_swaps;
-	mnt_get_mountpoint;
-	mnt_get_swaps_path;
+	mnt_context_is_swapmatch;
+	mnt_context_tab_applied;
 	mnt_fs_get_priority;
 	mnt_fs_get_size;
 	mnt_fs_get_swaptype;
 	mnt_fs_get_tid;
 	mnt_fs_get_usedsize;
-	mnt_context_is_swapmatch;
-	mnt_context_disable_swapmatch;
+	mnt_fs_streq_srcpath;
+	mnt_fs_streq_target;
+	mnt_get_mountpoint;
+	mnt_get_swaps_path;
+	mnt_optstr_deduplicate_option;
+	mnt_table_find_devno;
+	mnt_table_parse_swaps;
 } MOUNT_2.21;
