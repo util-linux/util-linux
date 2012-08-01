@@ -88,4 +88,8 @@ ts_init_subtest "fix"
 ts_valgrind $TESTPROG --fix "uid=root,gid=root" &> $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "deduplicate"
+ts_valgrind $TESTPROG --dedup bbb,ccc,AAA,xxx,AAA=a,AAA=bbb,ddd,AAA=ccc,fff=eee AAA &> $TS_OUTPUT
+ts_finalize_subtest
+
 ts_finalize
