@@ -117,6 +117,15 @@ static int fix_optstr(struct libmnt_context *cxt)
 	else
 		/* For normal mount we have translate the contexts */
 		se_fix = 1;
+
+	if (!se_rem) {
+		/* de-duplicate SELinux options */
+		mnt_optstr_deduplicate_option(&fs->fs_optstr, "context");
+		mnt_optstr_deduplicate_option(&fs->fs_optstr, "fscontext");
+		mnt_optstr_deduplicate_option(&fs->fs_optstr, "defcontext");
+		mnt_optstr_deduplicate_option(&fs->fs_optstr, "rootcontext");
+		mnt_optstr_deduplicate_option(&fs->fs_optstr, "seclabel");
+	}
 #endif
 	while (!mnt_optstr_next_option(&next, &name, &namesz, &val, &valsz)) {
 
