@@ -39,9 +39,10 @@ FDISK_CMD_DELETE_EXTENDED="d\n2\n" # delete second primary
 
 function print_layout {
 	echo -ne "\n---layout----------" >> $TS_OUTPUT
-	$TS_CMD_FDISK -c=dos -u=cylinders -l ${TEST_IMAGE_NAME} | sed 's/^.*\.img/__ts_dev__/g' >> $TS_OUTPUT 2>&1
+	$TS_CMD_FDISK -c=dos -u=cylinders -l ${TEST_IMAGE_NAME} | \
+		sed 's/^.*\.img/__ts_dev__/g;
+		     s/^[[:blank:]]*Device Boot/     Device Boot/g' >> $TS_OUTPUT 2>&1
 	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
-	return 1
 }
 
 #

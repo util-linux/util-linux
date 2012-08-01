@@ -10,7 +10,7 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk identifier: 0x00000001
 
-                                                                      Device Boot      Start         End      Blocks   Id  System
+     Device Boot      Start         End      Blocks   Id  System
 -------------------
 
 Create 1st primary partition
@@ -23,7 +23,7 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk identifier: 0x00000001
 
-                                                                      Device Boot      Start         End      Blocks   Id  System
+     Device Boot      Start         End      Blocks   Id  System
 __ts_dev__1            2048        8191        3072   83  Linux
 -------------------
 
@@ -37,7 +37,7 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk identifier: 0x00000001
 
-                                                                      Device Boot      Start         End      Blocks   Id  System
+     Device Boot      Start         End      Blocks   Id  System
 __ts_dev__1   *        2048        8191        3072   83  Linux
 -------------------
 
@@ -51,7 +51,7 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk identifier: 0x00000001
 
-                                                                      Device Boot      Start         End      Blocks   Id  System
+     Device Boot      Start         End      Blocks   Id  System
 __ts_dev__1            2048        8191        3072   83  Linux
 -------------------
 
@@ -65,7 +65,7 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk identifier: 0x00000001
 
-                                                                      Device Boot      Start         End      Blocks   Id  System
+     Device Boot      Start         End      Blocks   Id  System
 __ts_dev__1            2048        8191        3072   83  Linux
 __ts_dev__2            8192       12287        2048   83  Linux
 -------------------
@@ -80,7 +80,7 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk identifier: 0x00000001
 
-                                                                      Device Boot      Start         End      Blocks   Id  System
+     Device Boot      Start         End      Blocks   Id  System
 __ts_dev__1            2048        8191        3072   83  Linux
 __ts_dev__2            8192       12287        2048   83  Linux
 __ts_dev__3           12288       40959       14336    5  Extended
@@ -96,7 +96,7 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk identifier: 0x00000001
 
-                                                                      Device Boot      Start         End      Blocks   Id  System
+     Device Boot      Start         End      Blocks   Id  System
 __ts_dev__1            2048        8191        3072   83  Linux
 __ts_dev__2            8192       12287        2048   83  Linux
 __ts_dev__3           12288       40959       14336    5  Extended
@@ -116,7 +116,7 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk identifier: 0x00000001
 
-                                                                      Device Boot      Start         End      Blocks   Id  System
+     Device Boot      Start         End      Blocks   Id  System
 __ts_dev__1            2048        8191        3072   83  Linux
 __ts_dev__2            8192       12287        2048   83  Linux
 __ts_dev__3           12288       40959       14336    5  Extended
@@ -133,7 +133,7 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk identifier: 0x00000001
 
-                                                                      Device Boot      Start         End      Blocks   Id  System
+     Device Boot      Start         End      Blocks   Id  System
 __ts_dev__1            2048        8191        3072   83  Linux
 __ts_dev__2            8192       12287        2048   83  Linux
 __ts_dev__3           12288       40959       14336    5  Extended
@@ -153,7 +153,7 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk identifier: 0x00000001
 
-                                                                      Device Boot      Start         End      Blocks   Id  System
+     Device Boot      Start         End      Blocks   Id  System
 __ts_dev__2            8192       12287        2048   83  Linux
 __ts_dev__3           12288       40959       14336    5  Extended
 __ts_dev__5           26624       30719        2048   83  Linux
@@ -172,7 +172,7 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk identifier: 0x00000001
 
-                                                                      Device Boot      Start         End      Blocks   Id  System
+     Device Boot      Start         End      Blocks   Id  System
 __ts_dev__3           12288       40959       14336    5  Extended
 __ts_dev__5           26624       30719        2048   83  Linux
 __ts_dev__6           14336       18431        2048   83  Linux
@@ -190,6 +190,6 @@ Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
 Disk identifier: 0x00000001
 
-                                                                      Device Boot      Start         End      Blocks   Id  System
+     Device Boot      Start         End      Blocks   Id  System
 -------------------
 
