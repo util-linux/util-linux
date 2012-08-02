@@ -123,8 +123,12 @@ struct dmesg_control {
 
 	int		action;		/* SYSLOG_ACTION_* */
 	int		method;		/* DMESG_METHOD_* */
-	size_t		bufsize;	/* size of buffer created by read_buffer() */
+
+	size_t		bufsize;	/* size of syslog buffer */
+
 	int		kmsg;		/* /dev/kmsg file descriptor */
+	ssize_t		kmsg_first_read;/* initial read() return code */
+	char		kmsg_buf[BUFSIZ];/* buffer to read kmsg data */
 
 	/*
 	 * For the --file option we mmap whole file. The unnecessary (already
@@ -865,6 +869,22 @@ static int init_kmsg(struct dmesg_control *ctl)
 	 * ... otherwise SYSLOG_ACTION_CLEAR will have no effect for kmsg.
 	 */
 	lseek(ctl->kmsg, 0, SEEK_DATA);
+
+	/*
+	 * Old kernels (<3.5) allow to successfully open /dev/kmsg for
+	 * read-only, but read() returns -EINVAL :-(((
+	 *
+	 * Let's try to read the first record. The record is later processed in
+	 * read_kmsg().
+	 */
+	ctl->kmsg_first_read = read(ctl->kmsg, ctl->kmsg_buf,
+				  sizeof(ctl->kmsg_buf) - 1);
+	if (ctl->kmsg_first_read < 0) {
+		close(ctl->kmsg);
+		ctl->kmsg = -1;
+		return -1;
+	}
+
 	return 0;
 }
 
@@ -956,25 +976,28 @@ mesg:
  */
 static int read_kmsg(struct dmesg_control *ctl)
 {
-	char buf[BUFSIZ];
 	struct dmesg_record rec;
+	ssize_t sz;
 
 	if (ctl->method != DMESG_METHOD_KMSG || ctl->kmsg < 0)
 		return -1;
 
-	do {
-		ssize_t sz = read(ctl->kmsg, buf, sizeof(buf) - 1);
+	/*
+	 * The very first read() call is done in kmsg_init() where we test
+	 * /dev/kmsg usability. The return code from the initial read() is
+	 * stored in ctl->kmsg_first_read;
+	 */
+	sz = ctl->kmsg_first_read;
 
-		if (sz <= 0)
-			break;
+	while (sz > 0) {
+		*(ctl->kmsg_buf + sz) = '\0';	/* for debug messages */
 
-		*(buf + sz) = '\0';	/* for debug messages */
+		if (parse_kmsg_record(ctl, &rec,
+				      ctl->kmsg_buf, (size_t) sz) == 0)
+			print_record(ctl, &rec);
 
-		if (parse_kmsg_record(ctl, &rec, buf, (size_t) sz) != 0)
-			continue;
-
-		print_record(ctl, &rec);
-	} while (1);
+		sz = read(ctl->kmsg, ctl->kmsg_buf, sizeof(ctl->kmsg_buf) - 1);
+	}
 
 	return 0;
 }
