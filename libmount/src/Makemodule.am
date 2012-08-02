@@ -50,6 +50,7 @@ EXTRA_DIST += \
 	libmount/src/libmount.sym \
 	libmount/src/libmount.h.in
 
+if BUILD_LIBMOUNT_TESTS
 check_PROGRAMS += \
 	test_mount_cache \
 	test_mount_context \
@@ -113,6 +114,8 @@ test_mount_version_SOURCES = libmount/src/version.c
 test_mount_version_CFLAGS = $(libmount_tests_cflags)
 test_mount_version_LDFLAGS = $(libmount_tests_ldflags)
 test_mount_version_LDADD = $(libmount_tests_ldadd)
+
+endif # BUILD_LIBMOUNT_TESTS
 
 
 # move lib from $(usrlib_execdir) to $(libdir) if needed

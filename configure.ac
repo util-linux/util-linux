@@ -725,6 +725,7 @@ if test "x$build_libblkid" = xyes; then
   AC_DEFINE(HAVE_LIBBLKID, 1, [Define to 1 if you have the -lblkid.])
 fi
 AM_CONDITIONAL(BUILD_LIBBLKID, test "x$build_libblkid" = xyes)
+AM_CONDITIONAL(BUILD_LIBBLKID_TESTS, test "x$build_libblkid" = xyes -a "x$enable_static" = xyes)
 
 dnl
 dnl libmount
@@ -738,6 +739,7 @@ UL_REQUIRES_LINUX([libmount])
 UL_REQUIRES_BUILD([libmount], [libblkid])
 UL_REQUIRES_HAVE([libmount], [scanf_alloc_modifier], [scanf string alloc modifier])
 AM_CONDITIONAL(BUILD_LIBMOUNT, test "x$build_libmount" = xyes)
+AM_CONDITIONAL(BUILD_LIBMOUNT_TESTS, test "x$build_libmount" = xyes -a "x$enable_static" = xyes)
 
 AC_SUBST([LIBMOUNT_VERSION])
 AC_SUBST([LIBMOUNT_VERSION_INFO])

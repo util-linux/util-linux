@@ -131,6 +131,7 @@ EXTRA_DIST += \
 	libblkid/src/blkid.sym \
 	libblkid/src/blkid.h.in
 
+if BUILD_LIBBLKID_TESTS
 check_PROGRAMS += \
 	test_blkid_cache \
 	test_blkid_config \
@@ -209,6 +210,9 @@ test_blkid_verify_SOURCES = libblkid/src/verify.c
 test_blkid_verify_CFLAGS = $(blkid_tests_cflags)
 test_blkid_verify_LDFLAGS = $(blkid_tests_ldflags)
 test_blkid_verify_LDADD = $(blkid_tests_ldadd)
+
+endif # BUILD_LIBBLKID_TESTS
+
 
 # move lib from $(usrlib_execdir) to $(libdir) if needed
 install-exec-hook-libblkid:

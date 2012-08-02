@@ -9,6 +9,9 @@
 
 	$ make check
 
+ Note that the configure option --disable-static disables many of libmount and
+ libblkid unit tests.
+
  Run all tests including tests that require root permissions:
 
 	# cd tests
