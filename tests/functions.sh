@@ -86,6 +86,12 @@ function ts_has_option {
 	echo -n $ALL | sed 's/ //g' | awk 'BEGIN { FS="="; RS="--" } /('$NAME'$|'$NAME'=)/ { print "yes" }'
 }
 
+function ts_option_argument {
+	NAME="$1"
+	ALL="$2"
+	echo -n $ALL | sed 's/ //g' | awk 'BEGIN { FS="="; RS="--" } /'$NAME'=/ { print $2 }'
+}
+
 function ts_init_core_env {
 	TS_NS="$TS_COMPONENT/$TS_TESTNAME"
 	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME"
@@ -118,11 +124,28 @@ function ts_init_env {
 	LC_ALL="POSIX"
 	CHARSET="UTF-8"
 
-	mydir=$(ts_canonicalize "$mydir")
-
 	export LANG LANGUAGE LC_ALL CHARSET
 
+	mydir=$(ts_canonicalize "$mydir")
+
+	# automake directories
+	top_srcdir=$(ts_option_argument "srcdir" "$*")
+	top_builddir=$(ts_option_argument "builddir" "$*")
+
+	# where is this script
 	TS_TOPDIR=$(ts_abspath $mydir/../../)
+
+	# default
+	if [ -z "$top_srcdir" ]; then
+		top_srcdir="$TS_TOPDIR/.."
+	fi
+	if [ -z "$top_builddir" ]; then
+		top_builddir="$TS_TOPDIR/.."
+	fi
+
+	top_srcdir=$(ts_abspath $top_srcdir)
+	top_builddir=$(ts_abspath $top_builddir)
+
 	TS_SCRIPT="$mydir/$(basename $0)"
 	TS_SUBDIR=$(dirname $TS_SCRIPT)
 	TS_TESTNAME=$(basename $TS_SCRIPT)
@@ -133,15 +156,14 @@ function ts_init_env {
 
 	TS_SELF="$TS_SUBDIR"
 
-	TS_OUTDIR="$TS_TOPDIR/output/$TS_COMPONENT"
-	TS_DIFFDIR="$TS_TOPDIR/diff/$TS_COMPONENT"
+	TS_OUTDIR="$top_builddir/tests/output/$TS_COMPONENT"
+	TS_DIFFDIR="$top_builddir/tests/diff/$TS_COMPONENT"
 
 	ts_init_core_env
 
 	TS_VERBOSE=$(ts_has_option "verbose" "$*")
 
 	BLKID_FILE="$TS_OUTDIR/${TS_TESTNAME}.blkidtab"
-
 
 	declare -a TS_SUID_PROGS
 	declare -a TS_SUID_USER

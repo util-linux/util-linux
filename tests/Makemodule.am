@@ -4,12 +4,17 @@ include tests/helpers/Makemodule.am
 EXTRA_DIST += \
 	tests/expected \
 	tests/functions.sh \
+	tests/commands.sh \
 	tests/run.sh \
-	tests/run-nonroot.sh \
 	tests/ts
 
 clean-local-tests:
-	rm -rf output diff
+	rm -rf $(top_builddir)/tests/output $(top_builddir)/tests/diff
 
-TESTS += tests/run-nonroot.sh
 CLEAN_LOCALS += clean-local-tests
+
+
+check-local-tests: $(check_PROGRAMS)
+	$(top_srcdir)/tests/run.sh --srcdir=$(abs_top_srcdir) --builddir=$(abs_top_builddir) --nonroot
+
+CHECK_LOCALS += check-local-tests

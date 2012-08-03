@@ -1,7 +1,3 @@
-
-top_builddir=@abs_top_builddir@
-top_srcdir=@abs_top_srcdir@
-
 # Misc settings
 TS_TESTUSER=${TS_TESTUSER:-"test"}
 

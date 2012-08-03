@@ -1341,7 +1341,6 @@ misc-utils/uuidd.rc
 misc-utils/uuidd.service
 misc-utils/uuidd.socket
 po/Makefile.in
-tests/commands.sh
 ])
 
 

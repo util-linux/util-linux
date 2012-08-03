@@ -20,6 +20,9 @@ TS_TOPDIR=$(cd $(dirname $0) && pwd)
 SUBTESTS=
 OPTS=
 
+top_srcdir=
+top_builddir=
+
 while [ -n "$1" ]; do
 	case "$1" in
 	--force)
@@ -31,9 +34,34 @@ while [ -n "$1" ]; do
 	--memcheck)
 		OPTS="$OPTS --memcheck"
 		;;
+	--verbose)
+		OPTS="$OPTS --verbose"
+		;;
+	--nonroot)
+		if [ $(id -ru) -eq 0 ]; then
+			echo "Ignore utils-linux test suite [non-root UID expected]."
+			exit 0
+		fi
+		;;
+	--srcdir=*)
+		top_srcdir="${1##--srcdir=}"
+		;;
+	--builddir=*)
+		top_builddir="${1##--builddir=}"
+		;;
 	--*)
 		echo "Unknown option $1"
-		echo "Usage: run [--fake] [--force] [<component> ...]"
+		echo "Usage: "
+		echo "  $(basename $0) [options] [<component> ...]"
+		echo "Options:"
+		echo "  --force           execute demanding tests"
+		echo "  --fake            do not run, setup tests only"
+		echo "  --memcheck        run with valgrind"
+		echo "  --verbose         verbose mode"
+		echo "  --nonroot         ignore test suite if user is root"
+		echo "  --srcdir=<path>   autotools top source directory"
+		echo "  --builddir=<path> autotools top build directory"
+		echo
 		exit 1
 		;;
 
@@ -44,11 +72,26 @@ while [ -n "$1" ]; do
 	shift
 done
 
+# For compatibility with autotools is necessary to differentiate between source
+# (with test scripts) and build (with temporary files) directories when
+# executed by our build-system.
+#
+# The default is the source tree with this script.
+#
+if [ -z "$top_srcdir" ]; then
+	top_srcdir="$TS_TOPDIR/.."
+fi
+if [ -z "$top_builddir" ]; then
+	top_builddir="$TS_TOPDIR/.."
+fi
+
+OPTS="$OPTS --srcdir=$top_srcdir --builddir=$top_builddir"
+
 if [ -n "$SUBTESTS" ]; then
 	# selected tests only
 	for s in $SUBTESTS; do
-		if [ -d "$TS_TOPDIR/ts/$s" ]; then
-			co=$(find $TS_TOPDIR/ts/$s -type f -perm /a+x -regex ".*/[^\.~]*" |  sort)
+		if [ -d "$top_srcdir/tests/ts/$s" ]; then
+			co=$(find $top_srcdir/tests/ts/$s -type f -perm /a+x -regex ".*/[^\.~]*" |  sort)
 			comps="$comps $co"
 		else
 			echo "Unknown test component '$s'"
@@ -56,17 +99,12 @@ if [ -n "$SUBTESTS" ]; then
 		fi
 	done
 else
-	# all tests
-	if [ ! -f "$TS_TOPDIR/../test_tt" ]; then
+	if [ ! -f "$top_builddir/test_tt" ]; then
 		echo "Tests not compiled! Run 'make check' to fix the problem."
 		exit 1
 	fi
-	if [ ! -f "$TS_TOPDIR/commands.sh" ]; then
-		echo "Not ready to run tests! Run './configure' or './config.status' to fix the problem."
-		exit 1
-	fi
 
-	comps=$(find $TS_TOPDIR/ts/ -type f -perm /a+x -regex ".*/[^\.~]*" |  sort)
+	comps=$(find $top_srcdir/tests/ts/ -type f -perm /a+x -regex ".*/[^\.~]*" |  sort)
 fi
 
 

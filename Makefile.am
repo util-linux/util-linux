@@ -47,6 +47,7 @@ INSTALL_EXEC_HOOKS =
 UNINSTALL_HOOKS =
 INSTALL_DATA_HOOKS =
 CLEAN_LOCALS =
+CHECK_LOCALS =
 
 EXTRA_DIST = man/ru/ddate.1
 CLEANFILES =
@@ -153,3 +154,5 @@ uninstall-hook: $(UNINSTALL_HOOKS)
 install-data-hook: $(INSTALL_DATA_HOOKS)
 
 clean-local: $(CLEAN_LOCALS)
+
+check-local: $(CHECK_LOCALS)
