@@ -275,6 +275,18 @@ static void edit_file(int is_shadow)
 
 	if (fstat(fileno(tmp_fd), &end))
 		pw_error(tmp_file, 1, 1);
+	/* Some editors, such as Vim with 'writebackup' mode enabled,
+	 * use "atomic save" in which the old file is deleted and a new
+	 * one with the same name created in its place.  */
+	if (end.st_nlink == 0) {
+		if (close_stream(tmp_fd) != 0)
+			err(EXIT_FAILURE, _("write error"));
+		tmp_fd = fopen(tmp_file, "r");
+		if (!tmp_file)
+			err(EXIT_FAILURE, _("cannot open %s"), tmp_file);
+		if (fstat(fileno(tmp_fd), &end))
+			pw_error(tmp_file, 1, 1);
+	}
 	if (begin.st_mtime == end.st_mtime) {
 		warnx(_("no changes made"));
 		pw_error((char *)NULL, 0, 0);
