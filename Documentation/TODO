@@ -15,9 +15,6 @@ losetup
 dmesg
 -----
 
- - add --follow option
-   http://www.spinics.net/lists/util-linux-ng/msg04453.html
-
  - add --color to colorize err and panic messages
 
 hwclock
@@ -116,12 +113,6 @@ docs
 
  - (!) add API documentation to libuuid
 
-
-build-sys
---------
-
- - use non-recursive build-sys, see
-   http://thread.gmane.org/gmane.linux.utilities.util-linux-ng/3297
 
 lib/tt.c
 --------
