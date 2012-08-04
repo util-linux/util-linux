@@ -168,7 +168,7 @@ bin_PROGRAMS += mount umount
 dist_man_MANS += \
 	sys-utils/mount.8 \
 	sys-utils/fstab.5 \
-	mount-deprecated/umount.8
+	sys-utils/umount.8
 mount_SOURCES = sys-utils/mount.c
 mount_LDADD = $(LDADD) libcommon.la libmount.la $(SELINUX_LIBS)
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS) -I$(ul_libmount_incdir)
