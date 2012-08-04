@@ -20,7 +20,7 @@ libmount:
     fstab, mtab and mountinfo parser, routines for work with parsed 
     data and mount options, mtab locking, etc. The high-level API for 
     mount(2) is planned for the next major release. For more details see:
-    http://thread.gmane.org/gmane.linux.utilities.util-linux-ng/3239
+    http://thread.gmane.org/gmane.linux.utilities.util-linux/3239
 
   - the utils like mount(8) or umount(8) are not linked with the library
     yet. This change is planned for util-linux-ng-2.19.
@@ -73,20 +73,20 @@ Stable maintenance releases between v2.17 and v2.18
 
 util-linux-ng 2.17.1 [22-Feb-2010]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.17/v2.17.1-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.17/v2.17.1-ChangeLog
+ * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.17/v2.17.1-ReleaseNotes
+   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.17/v2.17.1-ChangeLog
 
 util-linux-ng 2.17.2 [22-Mar-2010]
 
- * ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.17/v2.17.2-ReleaseNotes
-   ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.17/v2.17.2-ChangeLog
+ * ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.17/v2.17.2-ReleaseNotes
+   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.17/v2.17.2-ChangeLog
 
 
 Changes between v2.17 and v2.18
 -------------------------------
 
  For more details see ChangeLog files at:
- ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.18/
+ ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.18/
 
 addpart:
    - use atoll() for parsing command line arguments  [Thomas Fehr]
