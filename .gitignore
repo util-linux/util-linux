@@ -44,6 +44,10 @@ tags
 .version
 .dirstamp
 config/ltmain.sh
+config/test-driver
+test-suite.log
+tests/run.sh.log
+tests/run.sh.trs
 
 # libuuid depends on AX_TLS macro
 !m4/tls.m4
