@@ -37,8 +37,6 @@ static const struct tt_symbols ascii_tt_symbols = {
 };
 
 #ifdef HAVE_WIDECHAR
-#define	mbs_width(_s)	mbstowcs(NULL, _s, 0)
-
 #define UTF_V	"\342\224\202"	/* U+2502, Vertical line drawing char */
 #define UTF_VR	"\342\224\234"	/* U+251C, Vertical and right */
 #define UTF_H	"\342\224\200"	/* U+2500, Horizontal */
@@ -49,13 +47,131 @@ static const struct tt_symbols utf8_tt_symbols = {
 	.vert   = UTF_V " ",
 	.right	= UTF_UR UTF_H,
 };
-
-#else /* !HAVE_WIDECHAR */
-# define mbs_width(_s)       strlen(_s)
 #endif /* !HAVE_WIDECHAR */
 
 #define is_last_column(_tb, _cl) \
 		list_last_entry(&(_cl)->cl_columns, &(_tb)->tb_columns)
+
+/*
+ * Counts number of cells in multibyte string. For all control and 
+ * non-printable chars is the result width enlarged to store \x?? hex
+ * sequence. See mbs_safe_encode().
+ */
+static size_t mbs_safe_width(const char *s)
+{
+	mbstate_t st;
+	const char *p = s;
+	size_t width = 0;
+
+	memset(&st, 0, sizeof(st));
+
+	while (p && *p) {
+		if (iscntrl((unsigned char) *p)) {
+			width += 4;			/* *p encoded to \x?? */
+			p++;
+		}
+#ifdef HAVE_WIDECHAR
+		else {
+			wchar_t wc;
+			size_t len = mbrtowc(&wc, p, MB_CUR_MAX, &st);
+
+			if (len == 0)
+				break;
+			if (len == (size_t) -1 || len == (size_t) -2)
+				return (size_t) -1;
+
+			if (!iswprint(wc))
+				width += len * 4;	/* hex encode whole sequence */
+			else
+				width += wcwidth(wc);	/* number of cells */
+			p += len;
+		}
+#else
+		else if (!isprint((unsigned char) *p)) {
+			width += 4;			/* *p encoded to \x?? */
+			p++;
+		} else {
+			width++;
+			p++;
+		}
+#endif
+	}
+
+	return width;
+}
+
+/*
+ * Returns allocated string where all control and non-printable chars are
+ * replaced with \x?? hex sequence.
+ */
+static char *mbs_safe_encode(const char *s, size_t *width)
+{
+	mbstate_t st;
+	const char *p = s;
+	char *res, *r;
+	size_t sz = s ? strlen(s) : 0;
+
+
+	if (!sz)
+		return NULL;
+
+	memset(&st, 0, sizeof(st));
+
+	res = malloc((sz * 4) + 1);
+	if (!res)
+		return NULL;
+
+	r = res;
+	*width = 0;
+
+	while (p && *p) {
+		if (iscntrl((unsigned char) *p)) {
+			sprintf(r, "\\x%02x", (unsigned char) *p);
+			r += 4;
+			*width += 4;
+			p++;
+		}
+#ifdef HAVE_WIDECHAR
+		else {
+			wchar_t wc;
+			size_t len = mbrtowc(&wc, p, MB_CUR_MAX, &st);
+
+			if (len == 0)
+				break;
+			if (len == (size_t) -1 || len == (size_t) -2)
+				return NULL;
+
+			if (!iswprint(wc)) {
+				size_t i;
+				for (i = 0; i < len; i++) {
+					sprintf(r, "\\x%02x", (unsigned char) *p);
+					r += 4;
+					*width += 4;
+				}
+			} else {
+				memcpy(r, p, len);
+				r += len;
+				*width += wcwidth(wc);
+			}
+			p += len;
+		}
+#else
+		else if (!isprint((unsigned char) *p)) {
+			sprintf(r, "\\x%02x", (unsigned char) *p);
+			p++;
+			r += 4;
+			*width += 4;
+		} else {
+			*r++ = *p++;
+			*width++;
+		}
+#endif
+	}
+
+	*r = '\0';
+
+	return res;
+}
 
 /*
  * @flags: TT_FL_* flags (usually TT_FL_{ASCII,RAW})
@@ -344,7 +460,10 @@ static void count_column_width(struct tt *tb, struct tt_column *cl,
 	list_for_each(lp, &tb->tb_lines) {
 		struct tt_line *ln = list_entry(lp, struct tt_line, ln_lines);
 		char *data = line_get_data(ln, cl, buf, bufsz);
-		size_t len = data ? mbs_width(data) : 0;
+		size_t len = data ? mbs_safe_width(data) : 0;
+
+		if (len == (size_t) -1)		/* ignore broken multibyte strings */
+			len = 0;
 
 		if (len > cl->width_max)
 			cl->width_max = len;
@@ -368,7 +487,7 @@ static void count_column_width(struct tt *tb, struct tt_column *cl,
 
 	/* check and set minimal column width */
 	if (cl->name)
-		cl->width_min = mbs_width(cl->name);
+		cl->width_min = mbs_safe_width(cl->name);
 
 	/* enlarge to minimal width */
 	if (cl->width < cl->width_min && !(cl->flags & TT_FL_STRICTWIDTH))
@@ -533,9 +652,19 @@ void tt_fputs_quoted(const char *data, FILE *out)
 
 	fputc('"', out);
 	for (p = data; p && *p; p++) {
-		if ((unsigned char) *p == 0x22 || !isprint((unsigned char) *p))
+		if ((unsigned char) *p == 0x22 ||
+		    !isprint((unsigned char) *p) ||
+		    iscntrl((unsigned char) *p)) {
+
 			fprintf(out, "\\x%02x", *p);
-		else
+
+		} else if (*p == '\\' &&
+			 *(p + 1) == 'x' &&
+		         isxdigit((unsigned char) *(p + 2)) &&
+			 isxdigit((unsigned char) *(p + 3))) {
+
+			fprintf(out, "\\x%02x", *p);
+		} else
 			fputc(*p, out);
 	}
 	fputc('"', out);
@@ -546,18 +675,31 @@ void tt_fputs_nonblank(const char *data, FILE *out)
 	const char *p;
 
 	for (p = data; p && *p; p++) {
-		if (isblank((unsigned char) *p) || !isprint((unsigned char) *p))
+		if (isblank((unsigned char) *p) ||
+		    !isprint((unsigned char) *p) ||
+		    iscntrl((unsigned char) *p)) {
+
 			fprintf(out, "\\x%02x", *p);
-		else
+
+		} else if (*p == '\\' &&
+			 *(p + 1) == 'x' &&
+		         isxdigit((unsigned char) *(p + 2)) &&
+			 isxdigit((unsigned char) *(p + 3))) {
+
+			fprintf(out, "\\x%02x", *p);
+		} else
 			fputc(*p, out);
 	}
 }
 
-/* note that this function modifies @data
+/*
+ * Prints data, data maybe be printed in more formats (raw, NAME=xxx pairs) and
+ * control and non-printable chars maybe encoded in \x?? hex encoding.
  */
 static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 {
-	size_t len, i, width;
+	size_t len = 0, i, width;
+	char *buf;
 
 	if (!data)
 		data = "";
@@ -580,7 +722,10 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 	}
 
 	/* note that 'len' and 'width' are number of cells, not bytes */
-	len = mbs_width(data);
+	buf = mbs_safe_encode(data, &len);
+	data = buf;
+	if (!data)
+		data = "";
 
 	if (!len || len == (size_t) -1) {
 		len = 0;
@@ -623,6 +768,8 @@ static void print_data(struct tt *tb, struct tt_column *cl, char *data)
 		} else
 			fputc(' ', stdout);	/* columns separator */
 	}
+
+	free(buf);
 }
 
 static void print_line(struct tt_line *ln, char *buf, size_t bufsz)
