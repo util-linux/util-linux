@@ -30,6 +30,7 @@
 #include <sys/stat.h>
 #include <stdarg.h>
 #include <libmount.h>
+#include <ctype.h>
 
 #include "nls.h"
 #include "c.h"
@@ -130,6 +131,22 @@ static void encrypt_pass_release(struct libmnt_context *cxt
 	munlockall();
 }
 
+/*
+ * Replace control chars with '?' to be compatible with coreutils. For more
+ * robust solution use findmnt(1) where we use \x?? hex encoding.
+ */
+static void safe_fputs(const char *data)
+{
+	const char *p;
+
+	for (p = data; p && *p; p++) {
+		if (iscntrl((unsigned char) *p))
+			fputc('?', stdout);
+		else
+			fputc(*p, stdout);
+	}
+}
+
 static void print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 {
 	struct libmnt_table *tb;
@@ -157,7 +174,9 @@ static void print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 
 		if (!mnt_fs_is_pseudofs(fs))
 			xsrc = mnt_pretty_path(src, cache);
-		printf ("%s on %s", xsrc ? xsrc : src, mnt_fs_get_target(fs));
+		printf ("%s on ", xsrc ? xsrc : src);
+		safe_fputs(mnt_fs_get_target(fs));
+
 		if (type)
 			printf (" type %s", type);
 		if (optstr)

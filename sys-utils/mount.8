@@ -115,13 +115,13 @@ options to avoid ambivalent interpretation of the given argument. For example
 
 .B The listing and help.
 .RS
-Three forms of invocation do not actually mount anything:
-.TP
-.B "mount \-h"
-prints a help message
-.TP
-.B "mount \-V"
-prints a version string
+The listing mode is maintained for backward compatibility only.
+
+For more robust and definable output use
+.BR findmnt (8),
+\fBespecially in your scripts\fP. Note that control characters in the
+mountpoint name are replaced with '?'.
+
 .TP
 .BR "mount " [ -l "] [" "-t \fItype\fP" ]
 lists all mounted filesystems (of type
