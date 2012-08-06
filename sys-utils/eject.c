@@ -398,13 +398,13 @@ static void close_tray(int fd)
 static int eject_cdrom(int fd)
 {
 #if defined(CDROMEJECT)
-	return ioctl(fd, CDROMEJECT);
+	return ioctl(fd, CDROMEJECT) >= 0;
 #elif defined(CDIOCEJECT)
-	return ioctl(fd, CDIOCEJECT);
+	return ioctl(fd, CDIOCEJECT) >= 0;
 #else
 	warnx(_("CD-ROM eject unsupported"));
 	errno = ENOSYS;
-	return -1;
+	return 0;
 #endif
 }
 
@@ -432,7 +432,7 @@ static void toggle_tray(int fd)
 
 	case CDS_NO_DISC:
 	case CDS_DISC_OK:
-		if (eject_cdrom(fd))
+		if (!eject_cdrom(fd))
 			err(EXIT_FAILURE, _("CD-ROM eject command failed"));
 		return;
 	case CDS_NO_INFO:
@@ -453,7 +453,7 @@ static void toggle_tray(int fd)
 	gettimeofday(&time_start, NULL);
 
 	/* Send the CDROMEJECT command to the device. */
-	if (eject_cdrom(fd) < 0)
+	if (!eject_cdrom(fd))
 		err(EXIT_FAILURE, _("CD-ROM eject command failed"));
 
 	/* Get the second timestamp, to measure the time needed to open
