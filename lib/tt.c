@@ -53,7 +53,7 @@ static const struct tt_symbols utf8_tt_symbols = {
 		list_last_entry(&(_cl)->cl_columns, &(_tb)->tb_columns)
 
 /*
- * Counts number of cells in multibyte string. For all control and 
+ * Counts number of cells in multibyte string. For all control and
  * non-printable chars is the result width enlarged to store \x?? hex
  * sequence. See mbs_safe_encode().
  */
@@ -77,10 +77,12 @@ static size_t mbs_safe_width(const char *s)
 
 			if (len == 0)
 				break;
-			if (len == (size_t) -1 || len == (size_t) -2)
-				return (size_t) -1;
 
-			if (!iswprint(wc))
+			if (len == (size_t) -1 || len == (size_t) -2) {
+				len = 1;
+				width += (isprint((unsigned char) *p) ? 1 : 4);
+
+			} if (!iswprint(wc))
 				width += len * 4;	/* hex encode whole sequence */
 			else
 				width += wcwidth(wc);	/* number of cells */
@@ -137,11 +139,23 @@ static char *mbs_safe_encode(const char *s, size_t *width)
 			size_t len = mbrtowc(&wc, p, MB_CUR_MAX, &st);
 
 			if (len == 0)
-				break;
-			if (len == (size_t) -1 || len == (size_t) -2)
-				return NULL;
+				break;		/* end of string */
 
-			if (!iswprint(wc)) {
+			if (len == (size_t) -1 || len == (size_t) -2) {
+				len = 1;
+				/*
+				 * Not valid multibyte sequence -- maybe it's
+				 * printable char according to the current locales.
+				 */
+				if (!isprint((unsigned char) *p)) {
+					sprintf(r, "\\x%02x", (unsigned char) *p);
+					r += 4;
+					*width += 4;
+				} else {
+					width++;
+					*r++ = *p;
+				}
+			} else if (!iswprint(wc)) {
 				size_t i;
 				for (i = 0; i < len; i++) {
 					sprintf(r, "\\x%02x", (unsigned char) *p);
