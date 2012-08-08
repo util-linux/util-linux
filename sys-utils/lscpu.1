@@ -81,13 +81,16 @@ and hypervisor support CPU polarization.
 .SH OPTIONS
 .TP
 .BR \-a , " \-\-all"
-Include online and offline CPUs in the output (default for -e).
+Include lines for online and offline CPUs in the output (default for -e). This
+option may only specified together with option -e or -p.
 .TP
 .BR \-b , " \-\-online"
-Limit the output to online CPUs (default for -p).
+Limit the output to online CPUs (default for -p). This option may only
+be specified together with option -e or -p.
 .TP
 .BR \-c , " \-\-offline"
-Limit the output to offline CPUs.
+Limit the output to offline CPUs. This option may only be specified together
+with option -e or -p.
 .TP
 .BR \-e , " \-\-extended " \fI[=list]\fP
 Display the CPU information in human readable format.

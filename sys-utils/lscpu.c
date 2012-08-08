@@ -1243,6 +1243,7 @@ int main(int argc, char *argv[])
 	struct lscpu_desc _desc = { .flags = 0 }, *desc = &_desc;
 	int c, i;
 	int columns[ARRAY_SIZE(coldescs)], ncolumns = 0;
+	int cpu_modifier_specified = 0;
 
 	static const struct option longopts[] = {
 		{ "all",        no_argument,       0, 'a' },
@@ -1276,12 +1277,15 @@ int main(int argc, char *argv[])
 		switch (c) {
 		case 'a':
 			mod->online = mod->offline = 1;
+			cpu_modifier_specified = 1;
 			break;
 		case 'b':
 			mod->online = 1;
+			cpu_modifier_specified = 1;
 			break;
 		case 'c':
 			mod->offline = 1;
+			cpu_modifier_specified = 1;
 			break;
 		case 'h':
 			usage(stdout);
@@ -1314,6 +1318,14 @@ int main(int argc, char *argv[])
 		default:
 			usage(stderr);
 		}
+	}
+
+	if (cpu_modifier_specified && mod->mode == OUTPUT_SUMMARY) {
+		fprintf(stderr,
+			_("%s: options --all, --online and --offline may only "
+			  "be used with options --extended or --parsable.\n"),
+			program_invocation_short_name);
+		return EXIT_FAILURE;
 	}
 
 	if (argc != optind)
