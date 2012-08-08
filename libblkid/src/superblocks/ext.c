@@ -257,6 +257,15 @@ static int system_supports_ext4dev(void)
 	ret = (fs_proc_check("ext4dev") || check_for_modules("ext4dev"));
 	return ret;
 }
+
+static int system_supports_ext4_ext2(void)
+{
+#ifdef __linux__
+	return get_linux_version() >= EXT4_SUPPORTS_EXT2;
+#else
+	return 0;
+#endif
+}
 /*
  * reads superblock and returns:
  *	fc = feature_compat
@@ -352,7 +361,7 @@ static int probe_ext2(blkid_probe pr,
 	 */
 	if (!system_supports_ext2() &&
 	    (system_supports_ext4() || system_supports_ext4dev()) &&
-	    get_linux_version() >= EXT4_SUPPORTS_EXT2)
+	    system_supports_ext4_ext2())
 		return -BLKID_ERR_PARAM;
 
 	ext_get_info(pr, 2, es);
@@ -405,7 +414,7 @@ static int probe_ext4dev(blkid_probe pr,
 	if (!(fc & EXT3_FEATURE_COMPAT_HAS_JOURNAL) &&
 	    !system_supports_ext2() && !system_supports_ext4() &&
 	    system_supports_ext4dev() &&
-	    get_linux_version() >= EXT4_SUPPORTS_EXT2)
+	    system_supports_ext4_ext2())
 		goto force_ext4dev;
 
 	/*
@@ -450,7 +459,7 @@ static int probe_ext4(blkid_probe pr,
 	 */
 	if (!(fc & EXT3_FEATURE_COMPAT_HAS_JOURNAL) &&
 	    !system_supports_ext2() && system_supports_ext4() &&
-	    get_linux_version() >= EXT4_SUPPORTS_EXT2)
+	    system_supports_ext4_ext2())
 		goto force_ext4;
 
 	/* Ext4 has at least one feature which ext3 doesn't understand */

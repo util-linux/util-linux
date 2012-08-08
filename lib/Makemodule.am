@@ -10,7 +10,6 @@ libcommon_la_SOURCES = \
 	lib/env.c \
 	lib/fileutils.c \
 	lib/ismounted.c \
-	lib/loopdev.c \
 	lib/mangle.c \
 	lib/match.c \
 	lib/mbsalign.c \
@@ -27,7 +26,9 @@ libcommon_la_SOURCES = \
 	lib/xgetpass.c
 
 if LINUX
-libcommon_la_SOURCES += lib/linux_version.c
+libcommon_la_SOURCES += \
+	lib/linux_version.c \
+	lib/loopdev.c
 endif
 
 if !HAVE_LANGINFO
@@ -41,7 +42,6 @@ check_PROGRAMS += \
 	test_fileutils \
 	test_ismounted \
 	test_mangle \
-	test_pager \
 	test_procutils \
 	test_randutils \
 	test_strutils \
@@ -54,7 +54,8 @@ check_PROGRAMS += test_cpuset
 endif
 check_PROGRAMS += \
 	test_sysfs \
-	test_loopdev
+	test_loopdev \
+	test_pager
 endif
 
 test_blkdev_SOURCES = lib/blkdev.c

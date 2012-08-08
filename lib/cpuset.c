@@ -59,6 +59,7 @@ static const char *nexttoken(const char *q,  int sep)
  */
 int get_max_number_of_cpus(void)
 {
+#ifdef SYS_sched_getaffinity
 	int n, cpus = 2048;
 	size_t setsize;
 	cpu_set_t *set = cpuset_alloc(cpus, &setsize, NULL);
@@ -83,6 +84,7 @@ int get_max_number_of_cpus(void)
 		cpuset_free(set);
 		return n * 8;
 	}
+#endif
 	return -1;
 }
 
