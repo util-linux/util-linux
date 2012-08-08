@@ -670,14 +670,14 @@ void tt_fputs_quoted(const char *data, FILE *out)
 		    !isprint((unsigned char) *p) ||
 		    iscntrl((unsigned char) *p)) {
 
-			fprintf(out, "\\x%02x", *p);
+			fprintf(out, "\\x%02x", (unsigned char) *p);
 
 		} else if (*p == '\\' &&
 			 *(p + 1) == 'x' &&
 		         isxdigit((unsigned char) *(p + 2)) &&
 			 isxdigit((unsigned char) *(p + 3))) {
 
-			fprintf(out, "\\x%02x", *p);
+			fprintf(out, "\\x%02x", (unsigned char) *p);
 		} else
 			fputc(*p, out);
 	}
@@ -693,14 +693,14 @@ void tt_fputs_nonblank(const char *data, FILE *out)
 		    !isprint((unsigned char) *p) ||
 		    iscntrl((unsigned char) *p)) {
 
-			fprintf(out, "\\x%02x", *p);
+			fprintf(out, "\\x%02x", (unsigned char) *p);
 
 		} else if (*p == '\\' &&
 			 *(p + 1) == 'x' &&
 		         isxdigit((unsigned char) *(p + 2)) &&
 			 isxdigit((unsigned char) *(p + 3))) {
 
-			fprintf(out, "\\x%02x", *p);
+			fprintf(out, "\\x%02x", (unsigned char) *p);
 		} else
 			fputc(*p, out);
 	}
