@@ -38,8 +38,7 @@ aix_info( void ) {
     );
 }
 
-void
-aix_nolabel(struct fdisk_context *cxt)
+static void aix_nolabel(struct fdisk_context *cxt)
 {
     struct aix_partition *aixlabel = (struct aix_partition *) cxt->firstsector;
 
