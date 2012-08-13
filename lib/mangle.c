@@ -51,12 +51,13 @@ char *mangle(const char *s)
 void unmangle_to_buffer(const char *s, char *buf, size_t len)
 {
 	size_t sz = 0;
+	char *x = buf;
 
 	if (!s)
 		return;
 
 	while(*s && sz < len - 1) {
-		if (*s == '\\' && sz + 4 < len - 1 && isoctal(s[1]) &&
+		if (*s == '\\' && sz + 3 < len - 1 && isoctal(s[1]) &&
 		    isoctal(s[2]) && isoctal(s[3])) {
 
 			*buf++ = 64*(s[1] & 7) + 8*(s[2] & 7) + (s[3] & 7);
@@ -78,7 +79,7 @@ void unhexmangle_to_buffer(const char *s, char *buf, size_t len)
 		return;
 
 	while(*s && sz < len - 1) {
-		if (*s == '\\' && sz + 4 < len - 1 && s[1] == 'x' &&
+		if (*s == '\\' && sz + 3 < len - 1 && s[1] == 'x' &&
 		    isxdigit(s[2]) && isxdigit(s[3])) {
 
 			*buf++ = from_hex(s[2]) << 4 | from_hex(s[3]);
