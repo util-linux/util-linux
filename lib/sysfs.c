@@ -306,9 +306,12 @@ int sysfs_is_partition_dirent(DIR *dir, struct dirent *d, const char *parent_nam
 		if (strlen(d->d_name) <= len)
 			return 0;
 
-		/* partitions subdir name is "<parent>[:digit:]" */
-		return strncmp(p, d->d_name, len) == 0
-		       && isdigit(*(d->d_name + len));
+		/* partitions subdir name is
+		 *	"<parent>[:digit:]" or "<parent>p[:digit:]"
+		 */
+		return strncmp(p, d->d_name, len) == 0 &&
+		       ((*(d->d_name + len) == 'p' && isdigit(*(d->d_name + len + 1)))
+			|| isdigit(*(d->d_name + len)));
 	}
 
 	/* Cannot use /partition file, not supported on old sysfs */
