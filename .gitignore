@@ -135,6 +135,7 @@ tests/run.sh.trs
 /readprofile
 /rename
 /renice
+/resizepart
 /rev
 /rtcwake
 /sample-mkfs

@@ -1,0 +1,38 @@
+.\" resizepart.8 --
+.\" Copyright 2012 Vivek Goyal <vgoyal@redhat.com>
+.\" Copyright 2012 Red Hat, Inc.
+.\" May be distributed under the GNU General Public License
+.TH RESIZEPART 8 "February 2012" "util-linux" "System Administration"
+.SH NAME
+resizepart \-
+simple wrapper around the "resize partition" ioctl
+.SH SYNOPSIS
+.B resizepart
+.I device partition length
+.SH DESCRIPTION
+.B resizepart
+is a program that informs the Linux kernel of new partition size.
+
+This command doesn't manipulate partitions on hard drive.
+
+.SH PARAMETERS
+.TP
+.I device
+Specify the disk device.
+.TP
+.I partition
+Specify the partition number.
+.TP
+.I length
+Specify the length of the partition (in 512-byte sectors).
+
+.SH SEE ALSO
+.BR addpart (8),
+.BR delpart (8),
+.BR fdisk (8),
+.BR parted (8),
+.BR partprobe (8),
+.BR partx (8)
+.SH AVAILABILITY
+The resizepart command is part of the util-linux package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux/.

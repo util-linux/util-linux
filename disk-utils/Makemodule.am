@@ -113,12 +113,12 @@ endif # LINUX
 
 
 if BUILD_PARTX
-usrsbin_exec_PROGRAMS += partx addpart delpart
+usrsbin_exec_PROGRAMS += partx addpart delpart resizepart
 dist_man_MANS += \
 	disk-utils/addpart.8 \
 	disk-utils/delpart.8 \
+	disk-utils/resizepart.8 \
 	disk-utils/partx.8
-
 
 addpart_SOURCES = \
 	disk-utils/addpart.c \
@@ -129,6 +129,11 @@ delpart_SOURCES = \
 	disk-utils/delpart.c \
 	disk-utils/partx.h
 delpart_LDADD = $(LDADD) libcommon.la
+
+resizepart_SOURCES = \
+	disk-utils/resizepart.c \
+	disk-utils/partx.h
+resizepart_LDADD = $(LDADD) libcommon.la
 
 partx_SOURCES = \
 	disk-utils/partx.c \
