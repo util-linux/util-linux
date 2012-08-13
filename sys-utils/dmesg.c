@@ -851,6 +851,19 @@ static void print_buffer(struct dmesg_control *ctl,
 		print_record(ctl, &rec);
 }
 
+static ssize_t read_kmsg_one(struct dmesg_control *ctl)
+{
+	ssize_t size;
+
+	/* kmsg returns EPIPE if record was modified while reading */
+	do {
+		size = read(ctl->kmsg, ctl->kmsg_buf,
+			    sizeof(ctl->kmsg_buf) - 1);
+	} while (size < 0 && errno == EPIPE);
+
+	return size;
+}
+
 static int init_kmsg(struct dmesg_control *ctl)
 {
 	int mode = O_RDONLY;
@@ -877,8 +890,7 @@ static int init_kmsg(struct dmesg_control *ctl)
 	 * Let's try to read the first record. The record is later processed in
 	 * read_kmsg().
 	 */
-	ctl->kmsg_first_read = read(ctl->kmsg, ctl->kmsg_buf,
-				  sizeof(ctl->kmsg_buf) - 1);
+	ctl->kmsg_first_read = read_kmsg_one(ctl);
 	if (ctl->kmsg_first_read < 0) {
 		close(ctl->kmsg);
 		ctl->kmsg = -1;
@@ -996,7 +1008,7 @@ static int read_kmsg(struct dmesg_control *ctl)
 				      ctl->kmsg_buf, (size_t) sz) == 0)
 			print_record(ctl, &rec);
 
-		sz = read(ctl->kmsg, ctl->kmsg_buf, sizeof(ctl->kmsg_buf) - 1);
+		sz = read_kmsg_one(ctl);
 	}
 
 	return 0;
