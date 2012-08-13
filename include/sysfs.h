@@ -57,6 +57,7 @@ extern char *sysfs_strdup(struct sysfs_cxt *cxt, const char *attr);
 
 extern int sysfs_count_dirents(struct sysfs_cxt *cxt, const char *attr);
 extern int sysfs_count_partitions(struct sysfs_cxt *cxt, const char *devname);
+extern dev_t sysfs_partno_to_devno(struct sysfs_cxt *cxt, int partno);
 extern char *sysfs_get_slave(struct sysfs_cxt *cxt);
 
 extern int sysfs_is_partition_dirent(DIR *dir, struct dirent *d,
