@@ -51,7 +51,6 @@ char *mangle(const char *s)
 void unmangle_to_buffer(const char *s, char *buf, size_t len)
 {
 	size_t sz = 0;
-	char *x = buf;
 
 	if (!s)
 		return;
