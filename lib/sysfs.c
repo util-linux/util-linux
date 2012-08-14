@@ -321,8 +321,8 @@ int sysfs_is_partition_dirent(DIR *dir, struct dirent *d, const char *parent_nam
 }
 
 /*
- * Copnverts @partno (partition number) to devno of the partition. The @cxt
- * handles wholedisk device.
+ * Converts @partno (partition number) to devno of the partition.
+ * The @cxt handles wholedisk device.
  *
  * Note that this code does not expect any special format of the
  * partitions devnames.
@@ -345,13 +345,15 @@ dev_t sysfs_partno_to_devno(struct sysfs_cxt *cxt, int partno)
 			continue;
 
 		snprintf(path, sizeof(path), "%s/partition", d->d_name);
-		if (sysfs_read_int(cxt, path, &n) || n != partno)
+		if (sysfs_read_int(cxt, path, &n))
 			continue;
 
-		snprintf(path, sizeof(path), "%s/dev", d->d_name);
-		if (sysfs_scanf(cxt, path, "%d:%d", &maj, &min) == 2)
-			devno = makedev(maj, min);
-		break;
+		if (n == partno) {
+			snprintf(path, sizeof(path), "%s/dev", d->d_name);
+			if (sysfs_scanf(cxt, path, "%d:%d", &maj, &min) == 2)
+				devno = makedev(maj, min);
+			break;
+		}
 	}
 
 	closedir(dir);
