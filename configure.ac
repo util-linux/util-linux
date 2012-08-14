@@ -1324,22 +1324,18 @@ LIBS=""
 
 AC_CONFIG_HEADERS(config.h)
 
-
+#
+# Don't use configure.ac to replace install paths! See Makefile PATHFILES for
+# more details.
+#
 AC_CONFIG_FILES([
 Makefile
-libblkid/blkid.pc
 libblkid/docs/Makefile
 libblkid/docs/version.xml
 libblkid/src/blkid.h
 libmount/docs/Makefile
 libmount/docs/version.xml
-libmount/mount.pc
 libmount/src/libmount.h
-libuuid/uuid.pc
-misc-utils/uuidd.8
-misc-utils/uuidd.rc
-misc-utils/uuidd.service
-misc-utils/uuidd.socket
 po/Makefile.in
 ])
 

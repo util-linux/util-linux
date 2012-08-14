@@ -43,6 +43,8 @@ ruman1_DATA =
 check_PROGRAMS =
 TESTS =
 
+PATHFILES =
+
 INSTALL_EXEC_HOOKS =
 UNINSTALL_HOOKS =
 INSTALL_DATA_HOOKS =
@@ -85,6 +87,41 @@ include disk-utils/Makemodule.am
 include fdisks/Makemodule.am
 
 include tests/Makemodule.am
+
+#
+# Don't rely on configure.ac AC_CONFIG_FILES for install paths.
+#
+# The paths should be expanded at make time rather than configure:
+#  - to support 'make install prefix=/foo DESTDIR=/foo'
+#  - to recursively expands the paths (e.g. AC_CONFIG_FILES expands
+#    '@usrsbin_execdir@' to ${exec_prefix}/sbin')
+#
+edit_cmd = sed \
+	 -e 's|@prefix[@]|$(prefix)|g' \
+	 -e 's|@exec_prefix[@]|$(exec_prefix)|g' \
+	 -e 's|@sysconfdir[@]|$(sysconfdir)|g' \
+	 -e 's|@datadir[@]|$(datadir)|g' \
+	 -e 's|@sbindir[@]|$(sbindir)|g' \
+	 -e 's|@bindir[@]|$(bindir)|g' \
+	 -e 's|@includedir[@]|$(includedir)|g' \
+	 -e 's|@localstatedir[@]|$(localstatedir)|g' \
+	 -e 's|@usrlib_execdir[@]|$(usrlib_execdir)|g' \
+	 -e 's|@usrbin_execdir[@]|$(usrbin_execdir)|g' \
+	 -e 's|@usrsbin_execdir[@]|$(usrsbin_execdir)|g' \
+	 -e 's|@VERSION[@]|$(VERSION)|g' \
+	 -e 's|@LIBUUID_VERSION[@]|$(LIBUUID_VERSION)|g' \
+	 -e 's|@LIBMOUNT_VERSION[@]|$(LIBMOUNT_VERSION)|g' \
+	 -e 's|@LIBBLKID_VERSION[@]|$(LIBBLKID_VERSION)|g'
+
+CLEANFILES += $(PATHFILES)
+EXTRA_DIST += $(PATHFILES:=.in)
+
+$(PATHFILES): Makefile
+	@ rm -f $@ $@.tmp
+	$(AM_V_GEN) srcdir=''; \
+		test -f ./$@.in || srcdir=$(srcdir)/; \
+		$(edit_cmd) $${srcdir}$@.in >$@.tmp
+	@ mv $@.tmp $@
 
 # Arrange so that .tarball-version appears only in the distribution
 # tarball, and never in a checked-out repository.

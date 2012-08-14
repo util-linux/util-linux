@@ -106,12 +106,7 @@ systemdsystemunit_DATA += \
 endif
 endif # BUILD_UUIDD
 
-EXTRA_DIST += \
-	misc-utils/uuidd.8.in \
-	misc-utils/uuidd.rc.in \
-	misc-utils/uuidd.service.in \
-	misc-utils/uuidd.socket.in
-CLEANFILES += \
+PATHFILES += \
 	misc-utils/uuidd.8 \
 	misc-utils/uuidd.rc \
 	misc-utils/uuidd.service \
