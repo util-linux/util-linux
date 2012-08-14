@@ -98,9 +98,6 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("%s: failed to get start of the partition number %s"),
 				wholedisk, argv[2]);
 
-	fprintf(stderr, "KZAK: %d, start=%jd\n", partno, start);
-	exit(1);
-
 	if (partx_resize_partition(fd, partno, start,
 			strtou64_or_err(argv[3], _("invalid length argument"))))
 		err(EXIT_FAILURE, _("failed to resize partition"));
