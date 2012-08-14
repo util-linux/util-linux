@@ -95,6 +95,7 @@ enum {
 	COL_DGRAN,
 	COL_DMAX,
 	COL_DZERO,
+	COL_WWN,
 };
 
 /* column names */
@@ -140,6 +141,8 @@ static struct colinfo infos[] = {
 	[COL_DGRAN]  = { "DISC-GRAN", 6, TT_FL_RIGHT, N_("discard granularity") },
 	[COL_DMAX]   = { "DISC-MAX", 6, TT_FL_RIGHT, N_("discard max bytes") },
 	[COL_DZERO]  = { "DISC-ZERO", 1, TT_FL_RIGHT, N_("discard zeroes data") },
+	[COL_WWN]    = { "WWN",     18, 0, N_("unique storage identifier") },
+
 };
 
 struct lsblk {
@@ -186,6 +189,7 @@ struct blkdev_cxt {
 	char *label;		/* filesystem label */
 	char *partuuid;		/* partition UUID */
 	char *partlabel;	/* partiton label */
+	char *wwn;		/* storage WWN */
 
 	int npartitions;	/* # of partitions this device has */
 	int nholders;		/* # of devices mapped directly to this device
@@ -267,6 +271,7 @@ static void reset_blkdev_cxt(struct blkdev_cxt *cxt)
 	free(cxt->label);
 	free(cxt->partuuid);
 	free(cxt->partlabel);
+	free(cxt->wwn);
 
 	sysfs_deinit(&cxt->sysfs);
 
@@ -373,16 +378,19 @@ static char *get_device_mountpoint(struct blkdev_cxt *cxt)
 }
 
 #ifndef HAVE_LIBUDEV
-static int probe_device_by_udev(struct blkdev_cxt *cxt
+static int get_udev_properties(struct blkdev_cxt *cxt
 				__attribute__((__unused__)))
 {
 	return -1;
 }
 #else
-static int probe_device_by_udev(struct blkdev_cxt *cxt)
+static int get_udev_properties(struct blkdev_cxt *cxt)
 {
 	struct udev *udev;
 	struct udev_device *dev;
+
+	if (cxt->probed)
+		return 0;		/* already done */
 
 	udev = udev_new();
 	if (!udev)
@@ -392,25 +400,33 @@ static int probe_device_by_udev(struct blkdev_cxt *cxt)
 	if (dev) {
 		const char *data;
 
-		if ((data = udev_device_get_property_value(dev, "ID_FS_LABEL"))) {
+		if ((data = udev_device_get_property_value(dev, "ID_FS_LABEL_ENC"))) {
 			cxt->label = xstrdup(data);
 			unhexmangle_string(cxt->label);
 		}
-		if ((data = udev_device_get_property_value(dev, "ID_FS_TYPE")))
-			cxt->fstype = xstrdup(data);
-		if ((data = udev_device_get_property_value(dev, "ID_FS_UUID")))
+		if ((data = udev_device_get_property_value(dev, "ID_FS_UUID_ENC"))) {
 			cxt->uuid = xstrdup(data);
-		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_UUID")))
-			cxt->partuuid = xstrdup(data);
+			unhexmangle_string(cxt->uuid);
+		}
 		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_NAME"))) {
 			cxt->partlabel = xstrdup(data);
 			unhexmangle_string(cxt->partlabel);
 		}
+		if ((data = udev_device_get_property_value(dev, "ID_FS_TYPE")))
+			cxt->fstype = xstrdup(data);
+		if ((data = udev_device_get_property_value(dev, "ID_PART_ENTRY_UUID")))
+			cxt->partuuid = xstrdup(data);
+		if ((data = udev_device_get_property_value(dev, "ID_WWN")))
+			cxt->wwn = xstrdup(data);
+
 		udev_device_unref(dev);
+		cxt->probed = 1;
 	}
 
 	udev_unref(udev);
-        return 0;
+
+	return cxt->probed == 1 ? 0 : -1;
+
 }
 #endif /* HAVE_LIBUDEV */
 
@@ -421,16 +437,19 @@ static void probe_device(struct blkdev_cxt *cxt)
 	if (cxt->probed)
 		return;
 
-	cxt->probed = 1;
-
 	if (!cxt->size)
 		return;
 
 	/* try udev DB */
-	if (getuid() != 0 && probe_device_by_udev(cxt) == 0)
+	if (get_udev_properties(cxt) == 0)
 		return;				/* success */
 
-	/* try libblkid */
+	cxt->probed = 1;
+
+	/* try libblkid (fallback) */
+	if (getuid() != 0)
+		return;				/* no permissions to read from the device */
+
 	pr = blkid_new_probe_from_filename(cxt->filename);
 	if (!pr)
 		return;
@@ -644,6 +663,11 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		probe_device(cxt);
 		if (cxt->uuid)
 			tt_line_set_data(ln, col, xstrdup(cxt->partuuid));
+		break;
+	case COL_WWN:
+		get_udev_properties(cxt);
+		if (cxt->wwn)
+			tt_line_set_data(ln, col, xstrdup(cxt->wwn));
 		break;
 	case COL_RA:
 		p = sysfs_strdup(&cxt->sysfs, "queue/read_ahead_kb");
