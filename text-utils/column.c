@@ -121,9 +121,9 @@ int main(int argc, char **argv)
 	{
 		{ "help",	0, 0, 'h' },
 		{ "version",    0, 0, 'V' },
-		{ "columns",	0, 0, 'c' },
+		{ "columns",	1, 0, 'c' },
 		{ "table",	0, 0, 't' },
-		{ "separator",	0, 0, 's' },
+		{ "separator",	1, 0, 's' },
 		{ "fillrows",	0, 0, 'x' },
 		{ NULL,		0, 0, 0 },
 	};
