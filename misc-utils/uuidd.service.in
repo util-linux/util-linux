@@ -3,7 +3,10 @@ Description=Daemon for generating UUIDs
 Requires=uuidd.socket
 
 [Service]
-ExecStart=@sbindir@/uuidd -S -T 60
+ExecStart=@usrsbin_execdir@/uuidd --socket-activation --timeout 60
 Restart=no
 User=uuidd
 Group=uuidd
+
+[Install]
+Also=uuidd.socket
