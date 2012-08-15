@@ -1,6 +1,10 @@
+util-linux 2.22-rc2: Aug 15 2012
+* see Documentation/releases/v2.22-ReleaseNotes or complete changelog at
+  ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.22/v2.22-rc2-ChangeLog
+
 util-linux 2.22-rc1: Jul 27 2012
 * see Documentation/releases/v2.22-ReleaseNotes or complete changelog at
-  ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.22/v2.22-rc-1-ChangeLog
+  ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.22/v2.22-rc1-ChangeLog
 
 util-linux 2.21: Feb 24 2012
 * see Documentation/releases/v2.21-ReleaseNotes or complete changelog at
