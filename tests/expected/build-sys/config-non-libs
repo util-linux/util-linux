@@ -63,27 +63,6 @@ sulogin:  rypt
 switch_root:  
 tailf:  
 taskset:  
-test_at:  
-test_blkdev:  
-test_byteswap:  
-test_canonicalize:  
-test_cpuset:  
-test_fileutils:  
-test_islocal:  
-test_ismounted:  
-test_logindefs:  
-test_loopdev:  
-test_mangle:  
-test_md5:  
-test_pager:  
-test_pathnames:  
-test_procutils:  
-test_randutils:  
-test_strutils:  
-test_sysfs:  
-test_sysinfo:  
-test_tt:  
-test_wholedisk:  
 tunelp:  
 ul:  libtinfo 
 unshare:  

@@ -13,14 +13,9 @@ mkswap:  libblkid libselinux libuuid
 mount:  libblkid libmount libselinux libsepol libuuid 
 mountpoint:  libblkid libmount libselinux libsepol libuuid 
 partx:  libblkid libuuid 
-sample-mkfs:  libblkid libuuid 
-sample-partitions:  libblkid libuuid 
-sample-superblocks:  libblkid libuuid 
-sample-topology:  libblkid libuuid 
 swaplabel:  libblkid libuuid 
 swapoff:  libblkid libmount libselinux libsepol libuuid 
 swapon:  libblkid libmount libselinux libsepol libuuid 
-test_uuid:  libuuid 
 umount:  libblkid libmount libselinux libsepol libuuid 
 uuidd:  libuuid 
 uuidgen:  libuuid 
@@ -76,6 +71,7 @@ raw:
 readprofile:  
 rename:  
 renice:  
+resizepart:  
 rev:  
 rtcwake:  
 script:  libutil 
@@ -89,47 +85,6 @@ sulogin:  libselinux rypt
 switch_root:  
 tailf:  
 taskset:  
-test_at:  
-test_blkdev:  
-test_blkid_cache:  
-test_blkid_config:  
-test_blkid_dev:  
-test_blkid_devname:  
-test_blkid_devno:  
-test_blkid_evaluate:  
-test_blkid_read:  
-test_blkid_resolve:  
-test_blkid_save:  
-test_blkid_tag:  
-test_blkid_verify:  
-test_byteswap:  
-test_canonicalize:  
-test_cpuset:  
-test_fileutils:  
-test_islocal:  
-test_ismounted:  
-test_logindefs:  
-test_loopdev:  
-test_mangle:  
-test_md5:  
-test_mount_cache:  libselinux libsepol 
-test_mount_context:  libselinux libsepol 
-test_mount_lock:  libselinux libsepol 
-test_mount_optstr:  libselinux libsepol 
-test_mount_tab:  libselinux libsepol 
-test_mount_tab_diff:  libselinux libsepol 
-test_mount_tab_update:  libselinux libsepol 
-test_mount_utils:  libselinux libsepol 
-test_mount_version:  libselinux libsepol 
-test_pager:  
-test_pathnames:  
-test_procutils:  
-test_randutils:  
-test_strutils:  
-test_sysfs:  
-test_sysinfo:  
-test_tt:  
-test_wholedisk:  
 tunelp:  
 ul:  libtinfo 
 unshare:  

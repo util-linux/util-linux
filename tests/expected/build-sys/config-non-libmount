@@ -6,12 +6,7 @@ libblkid.so.1.1.0:  ld-linux-x86-64 libuuid
 libuuid.so.1.3.0:  ld-linux-x86-64 
 mkswap:  libblkid libuuid 
 partx:  libblkid libuuid 
-sample-mkfs:  libblkid libuuid 
-sample-partitions:  libblkid libuuid 
-sample-superblocks:  libblkid libuuid 
-sample-topology:  libblkid libuuid 
 swaplabel:  libblkid libuuid 
-test_uuid:  libuuid 
 uuidd:  libuuid 
 uuidgen:  libuuid 
 wipefs:  libblkid libuuid 
@@ -66,6 +61,7 @@ raw:
 readprofile:  
 rename:  
 renice:  
+resizepart:  
 rev:  
 rtcwake:  
 script:  libutil 
@@ -79,38 +75,6 @@ sulogin:  rypt
 switch_root:  
 tailf:  
 taskset:  
-test_at:  
-test_blkdev:  
-test_blkid_cache:  
-test_blkid_config:  
-test_blkid_dev:  
-test_blkid_devname:  
-test_blkid_devno:  
-test_blkid_evaluate:  
-test_blkid_read:  
-test_blkid_resolve:  
-test_blkid_save:  
-test_blkid_tag:  
-test_blkid_verify:  
-test_byteswap:  
-test_canonicalize:  
-test_cpuset:  
-test_fileutils:  
-test_islocal:  
-test_ismounted:  
-test_logindefs:  
-test_loopdev:  
-test_mangle:  
-test_md5:  
-test_pager:  
-test_pathnames:  
-test_procutils:  
-test_randutils:  
-test_strutils:  
-test_sysfs:  
-test_sysinfo:  
-test_tt:  
-test_wholedisk:  
 tunelp:  
 ul:  libtinfo 
 unshare:  

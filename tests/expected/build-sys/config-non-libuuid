@@ -12,10 +12,6 @@ mkswap:  libblkid
 mount:  libblkid libmount 
 mountpoint:  libblkid libmount 
 partx:  libblkid 
-sample-mkfs:  libblkid 
-sample-partitions:  libblkid 
-sample-superblocks:  libblkid 
-sample-topology:  libblkid 
 swaplabel:  libblkid 
 swapoff:  libblkid libmount 
 swapon:  libblkid libmount 
@@ -72,6 +68,7 @@ raw:
 readprofile:  
 rename:  
 renice:  
+resizepart:  
 rev:  
 rtcwake:  
 script:  libutil 
@@ -85,47 +82,6 @@ sulogin:  rypt
 switch_root:  
 tailf:  
 taskset:  
-test_at:  
-test_blkdev:  
-test_blkid_cache:  
-test_blkid_config:  
-test_blkid_dev:  
-test_blkid_devname:  
-test_blkid_devno:  
-test_blkid_evaluate:  
-test_blkid_read:  
-test_blkid_resolve:  
-test_blkid_save:  
-test_blkid_tag:  
-test_blkid_verify:  
-test_byteswap:  
-test_canonicalize:  
-test_cpuset:  
-test_fileutils:  
-test_islocal:  
-test_ismounted:  
-test_logindefs:  
-test_loopdev:  
-test_mangle:  
-test_md5:  
-test_mount_cache:  
-test_mount_context:  
-test_mount_lock:  
-test_mount_optstr:  
-test_mount_tab:  
-test_mount_tab_diff:  
-test_mount_tab_update:  
-test_mount_utils:  
-test_mount_version:  
-test_pager:  
-test_pathnames:  
-test_procutils:  
-test_randutils:  
-test_strutils:  
-test_sysfs:  
-test_sysinfo:  
-test_tt:  
-test_wholedisk:  
 tunelp:  
 ul:  libtinfo 
 unshare:  
