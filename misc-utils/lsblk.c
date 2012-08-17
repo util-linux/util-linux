@@ -96,6 +96,7 @@ enum {
 	COL_DMAX,
 	COL_DZERO,
 	COL_WWN,
+	COL_RAND,
 };
 
 /* column names */
@@ -123,6 +124,7 @@ static struct colinfo infos[] = {
 	[COL_RO]     = { "RO",      1, TT_FL_RIGHT, N_("read-only device") },
 	[COL_RM]     = { "RM",      1, TT_FL_RIGHT, N_("removable device") },
 	[COL_ROTA]   = { "ROTA",    1, TT_FL_RIGHT, N_("rotational device") },
+	[COL_RAND]   = { "RAND",    1, TT_FL_RIGHT, N_("adds randomness") },
 	[COL_MODEL]  = { "MODEL",   0.1, TT_FL_TRUNC, N_("device identifier") },
 	[COL_SIZE]   = { "SIZE",    5, TT_FL_RIGHT, N_("size of the device") },
 	[COL_STATE]  = { "STATE",   7, TT_FL_TRUNC, N_("state of the device") },
@@ -687,6 +689,11 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		break;
 	case COL_ROTA:
 		p = sysfs_strdup(&cxt->sysfs, "queue/rotational");
+		if (p)
+			tt_line_set_data(ln, col, p);
+		break;
+	case COL_RAND:
+		p = sysfs_strdup(&cxt->sysfs, "queue/add_random");
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
