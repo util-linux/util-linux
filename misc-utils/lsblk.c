@@ -1213,7 +1213,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 		" -h, --help           usage information (this)\n"
 		" -i, --ascii          use ascii characters only\n"
 		" -m, --perms          output info about permissions\n"
-		" -l, --list           use list format ouput\n"
+		" -l, --list           use list format output\n"
 		" -n, --noheadings     don't print headings\n"
 		" -o, --output <list>  output columns\n"
 		" -P, --pairs          use key=\"value\" output format\n"

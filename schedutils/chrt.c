@@ -302,7 +302,7 @@ int main(int argc, char **argv)
 	/* sanity check */
 	if ((policy_flag & SCHED_RESET_ON_FORK) &&
 	    !(policy == SCHED_FIFO || policy == SCHED_RR))
-		errx(EXIT_FAILURE, _("SCHED_RESET_ON_FORK flag is suppoted for "
+		errx(EXIT_FAILURE, _("SCHED_RESET_ON_FORK flag is supported for "
 				     "SCHED_FIFO and SCHED_RR policies only"));
 #endif
 
