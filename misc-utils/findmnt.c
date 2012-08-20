@@ -374,7 +374,7 @@ static const char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 		vfs_attr = buf.f_frsize * buf.f_blocks;
 		break;
 	case COL_AVAIL:
-		vfs_attr = buf.f_frsize * buf.f_bfree;
+		vfs_attr = buf.f_frsize * buf.f_bavail;
 		break;
 	case COL_USED:
 		vfs_attr = buf.f_frsize * (buf.f_blocks - buf.f_bfree);
