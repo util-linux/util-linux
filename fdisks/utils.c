@@ -317,7 +317,7 @@ static int __discover_topology(struct fdisk_context *cxt)
  * fdisk_zeroize_firstsector:
  * @cxt: fdisk context
  *
- * Zero's in-memory firts sector buffer
+ * Zeros in-memory first sector buffer
  */
 void fdisk_zeroize_firstsector(struct fdisk_context *cxt)
 {
