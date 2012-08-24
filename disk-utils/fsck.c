@@ -170,23 +170,27 @@ static int string_to_int(const char *s)
 static int is_mounted(struct libmnt_fs *fs)
 {
 	int rc;
+	const char *src;
 
+	src = mnt_fs_get_source(fs);
+	if (!src)
+		return 0;
+	if (!mntcache)
+		mntcache = mnt_new_cache();
 	if (!mtab) {
 		mtab = mnt_new_table();
 		if (!mtab)
 			err(FSCK_EX_ERROR, ("failed to initialize libmount table"));
-		if (!mntcache)
-			mntcache = mnt_new_cache();
 		mnt_table_set_cache(mtab, mntcache);
 		mnt_table_parse_mtab(mtab, NULL);
 	}
 
-	rc = mnt_table_is_fs_mounted(mtab, fs);
+	rc = mnt_table_find_source(mtab, src, MNT_ITER_BACKWARD) ? 1 : 0;
 	if (verbose) {
 		if (rc)
-			printf(_("%s is mounted\n"), mnt_fs_get_target(fs));
+			printf(_("%s is mounted\n"), src);
 		else
-			printf(_("%s is not mounted\n"), mnt_fs_get_target(fs));
+			printf(_("%s is not mounted\n"), src);
 	}
 	return rc;
 }
@@ -452,9 +456,22 @@ static struct libmnt_fs *lookup(char *path)
 		return NULL;
 
 	fs = mnt_table_find_srcpath(fstab, path, MNT_ITER_FORWARD);
-	if (!fs)
+	if (!fs) {
+		/*
+		 * Maybe mountpoint has been specified on fsck command line.
+		 * Yeah, crazy feature...
+		 *
+		 * Note that mnt_table_find_target() may canonicalize paths in
+		 * the fstab to support symlinks. This is really unwanted,
+		 * because readlink() on mountpoints may trigger automounts.
+		 *
+		 * So, disable the cache and compare the paths as strings
+		 * without care about symlinks...
+		 */
+		mnt_table_set_cache(fstab, NULL);
 		fs = mnt_table_find_target(fstab, path, MNT_ITER_FORWARD);
-
+		mnt_table_set_cache(fstab, mntcache);
+	}
 	return fs;
 }
 
