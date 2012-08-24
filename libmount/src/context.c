@@ -1963,6 +1963,8 @@ int mnt_context_helper_setopt(struct libmnt_context *cxt, int c, char *arg)
  * @fs: filesystem
  * @mounted: returns 1 for mounted and 0 for non-mounted filesystems
  *
+ * Please, read mnt_table_is_fs_mounted() description!
+ *
  * Returns: 0 on success and negative number in case of error.
  */
 int mnt_context_is_fs_mounted(struct libmnt_context *cxt,

@@ -876,8 +876,18 @@ static int is_mountinfo(struct libmnt_table *tb)
  * @tb: /proc/self/mountinfo file
  * @fstab_fs: /etc/fstab entry
  *
- * Checks if the @fstab_fs entry is already in the @tb table. The "swap"
- * is ignored.
+ * Checks if the @fstab_fs entry is already in the @tb table. The "swap" is
+ * ignored. This function explicitly compares source, target and root of the
+ * filesystems.
+ *
+ * Note that source and target are canonicalized only if a cache for @tb is
+ * defined (see mnt_table_set_cache()). The target canonicalization may
+ * triggers automount on autofs mountpoints!
+ *
+ * Don't use it if you want to know if a device is mounted, just use
+ * mnt_table_find_source() for the device.
+ *
+ * This function is designed mostly for "mount -a".
  *
  * TODO: check for loopdev (see mount/mount.c is_fstab_entry_mounted().
  *
@@ -886,8 +896,8 @@ static int is_mountinfo(struct libmnt_table *tb)
 int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 {
 	char *root = NULL;
-	const char *src = NULL;
-	char *xsrc = NULL, *tgt;
+	const char *src = NULL, *tgt = NULL;
+	char *xtgt = NULL;
 	int rc = 0;
 
 	assert(tb);
@@ -909,15 +919,13 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 			src = mnt_fs_get_srcpath(fs);
 	}
 
-	if (src)
-		src = xsrc = mnt_resolve_spec(src, tb->cache);
-	else if (mnt_fs_is_pseudofs(fstab_fs))
+	if (!src)
 		src = mnt_fs_get_source(fstab_fs);
-	else
-		src = xsrc = mnt_resolve_spec(mnt_fs_get_source(fstab_fs),
-					      tb->cache);
 
-	tgt = mnt_resolve_path(mnt_fs_get_target(fstab_fs), tb->cache);
+	if (src && tb->cache && !mnt_fs_is_pseudofs(fstab_fs))
+		src = mnt_resolve_spec(src, tb->cache);
+
+	tgt = mnt_fs_get_target(fstab_fs);
 
 	if (tgt && src) {
 		struct libmnt_iter itr;
@@ -925,30 +933,35 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 
 		mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
-		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
+		while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
+
+			if (!mnt_fs_streq_srcpath(fs, src))
+				continue;
 
 			if (root) {
-				/* mountinfo: compare root, source and target */
 				const char *r = mnt_fs_get_root(fs);
-
-				if (r && strcmp(r, root) == 0 &&
-				    mnt_fs_streq_srcpath(fs, src) &&
-				    mnt_fs_streq_target(fs, tgt))
-					break;
+				if (!r || strcmp(r, root) != 0)
+					continue;
 			}
-			/* mtab: compare source and target */
-			else if (mnt_fs_streq_srcpath(fs, src) &&
-				 mnt_fs_streq_target(fs, tgt))
+
+			/*
+			 * Compare target, try to minimize number of situations
+			 * when we need to canonicalize the path to avoid
+			 * readlink() on mountpoints.
+			 */
+			if (!xtgt) {
+				if (mnt_fs_streq_target(fs, tgt))
+					break;
+				if (tb->cache)
+					xtgt = mnt_resolve_path(tgt, tb->cache);
+			}
+			if (xtgt && mnt_fs_streq_target(fs, xtgt))
 				break;
+
 		}
 		if (fs)
 			rc = 1;		/* success */
 	}
-
-	if (xsrc && !tb->cache)
-		free(xsrc);
-	if (!tb->cache)
-		free(tgt);
 
 	free(root);
 	return rc;
@@ -1094,11 +1107,16 @@ int test_find_pair(struct libmnt_test *ts, int argc, char *argv[])
 {
 	struct libmnt_table *tb;
 	struct libmnt_fs *fs;
+	struct libmnt_cache *mpc = NULL;
 	int rc = -1;
 
 	tb = create_table(argv[1]);
 	if (!tb)
 		return -1;
+	mpc = mnt_new_cache();
+	if (!mpc)
+		goto done;
+	mnt_table_set_cache(tb, mpc);
 
 	fs = mnt_table_find_pair(tb, argv[2], argv[3], MNT_ITER_FORWARD);
 	if (!fs)
@@ -1108,6 +1126,7 @@ int test_find_pair(struct libmnt_test *ts, int argc, char *argv[])
 	rc = 0;
 done:
 	mnt_free_table(tb);
+	mnt_free_cache(mpc);
 	return rc;
 }
 
@@ -1116,6 +1135,7 @@ static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
 	struct libmnt_table *tb = NULL, *fstab = NULL;
 	struct libmnt_fs *fs;
 	struct libmnt_iter *itr = NULL;
+	struct libmnt_cache *mpc = NULL;
 	int rc;
 
 	tb = mnt_new_table_from_file("/proc/self/mountinfo");
@@ -1132,6 +1152,11 @@ static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
 	if (!itr)
 		goto done;
 
+	mpc = mnt_new_cache();
+	if (!mpc)
+		goto done;
+	mnt_table_set_cache(tb, mpc);
+
 	while(mnt_table_next_fs(fstab, itr, &fs) == 0) {
 		if (mnt_table_is_fs_mounted(tb, fs))
 			printf("%s already mounted on %s\n",
@@ -1147,6 +1172,7 @@ static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
 done:
 	mnt_free_table(tb);
 	mnt_free_table(fstab);
+	mnt_free_cache(mpc);
 	mnt_free_iter(itr);
 	return rc;
 }
