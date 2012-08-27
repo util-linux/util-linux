@@ -64,14 +64,10 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct ntfs_super_block *ns;
 	struct master_file_table_record *mft;
-	struct file_attribute *attr;
-	int		bytes_per_sector, sectors_per_cluster;
-	int		mft_record_size, attr_off, attr_len;
-	unsigned int	attr_type, val_len;
-	int		val_off;
-	uint64_t		nr_clusters;
-	blkid_loff_t off;
-	unsigned char *buf_mft, *val;
+
+	unsigned int bytes_per_sector, sectors_per_cluster, mft_record_size, attr_off;
+	uint64_t nr_clusters, off;
+	unsigned char *buf_mft;
 
 	ns = blkid_probe_get_sb(pr, mag, struct ntfs_super_block);
 	if (!ns)
@@ -105,6 +101,7 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (memcmp(buf_mft, "FILE", 4))
 		return 1;
 
+
 	off = le64_to_cpu(ns->mft_cluster_location) * bytes_per_sector *
 		sectors_per_cluster;
 
@@ -125,29 +122,35 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 		return 1;
 
 	mft = (struct master_file_table_record *) buf_mft;
-
 	attr_off = le16_to_cpu(mft->attrs_offset);
 
-	while (1) {
+	while (attr_off < mft_record_size) {
+
+		unsigned int attr_len;
+		unsigned int attr_type;
+		struct file_attribute *attr;
+
 		attr = (struct file_attribute *) (buf_mft + attr_off);
 		attr_len = le32_to_cpu(attr->len);
-		attr_type = le32_to_cpu(attr->type);
-		val_off = le16_to_cpu(attr->value_offset);
-		val_len = le32_to_cpu(attr->value_len);
-
-		attr_off += attr_len;
-
-		if ((attr_off > mft_record_size) ||
-		    (attr_len == 0))
+		if (!attr_len)
 			break;
 
+		attr_type = le32_to_cpu(attr->type);
 		if (attr_type == MFT_RECORD_ATTR_END)
 			break;
 
 		if (attr_type == MFT_RECORD_ATTR_VOLUME_NAME) {
-			val = ((uint8_t *) attr) + val_off;
+			unsigned int val_off = le16_to_cpu(attr->value_offset);
+			unsigned int val_len = le32_to_cpu(attr->value_len);
+			unsigned char *val = ((uint8_t *) attr) + val_off;
+
 			blkid_probe_set_utf8label(pr, val, val_len, BLKID_ENC_UTF16LE);
+			break;
 		}
+
+		if (UINT_MAX - attr_len < attr_off)
+			break;
+		attr_off += attr_len;
 	}
 
 	blkid_probe_sprintf_uuid(pr,
