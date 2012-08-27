@@ -13,20 +13,37 @@
 
 #include "superblocks.h"
 
+struct ntfs_bios_parameters {
+	uint16_t	sector_size;	/* Size of a sector in bytes. */
+	uint8_t		sectors_per_cluster;	/* Size of a cluster in sectors. */
+	uint16_t	reserved_sectors;	/* zero */
+	uint8_t		fats;			/* zero */
+	uint16_t	root_entries;		/* zero */
+	uint16_t	sectors;		/* zero */
+	uint8_t		media_type;		/* 0xf8 = hard disk */
+	uint16_t	sectors_per_fat;	/* zero */
+	uint16_t	sectors_per_track;	/* irrelevant */
+	uint16_t	heads;			/* irrelevant */
+	uint32_t	hidden_sectors;		/* zero */
+	uint32_t	large_sectors;		/* zero */
+} __attribute__ ((__packed__));
+
 struct ntfs_super_block {
 	uint8_t		jump[3];
-	uint8_t		oem_id[8];
-	uint8_t		bios_parameter_block[25];
+	uint8_t		oem_id[8];	/* magic string */
+
+	struct ntfs_bios_parameters	bpb;
+
 	uint16_t	unused[2];
 	uint64_t	number_of_sectors;
 	uint64_t	mft_cluster_location;
 	uint64_t	mft_mirror_cluster_location;
-	int8_t		cluster_per_mft_record;
+	int8_t		clusters_per_mft_record;
 	uint8_t		reserved1[3];
 	int8_t		cluster_per_index_record;
 	uint8_t		reserved2[3];
 	uint64_t	volume_serial;
-	uint16_t	checksum;
+	uint32_t	checksum;
 } __attribute__((packed));
 
 struct master_file_table_record {
@@ -54,18 +71,21 @@ struct file_attribute {
 	uint16_t	value_offset;
 } __attribute__((__packed__));
 
-#define MFT_RECORD_VOLUME			3
-#define MFT_RECORD_ATTR_VOLUME_NAME		0x60
-#define MFT_RECORD_ATTR_VOLUME_INFO		0x70
-#define MFT_RECORD_ATTR_OBJECT_ID		0x40
-#define MFT_RECORD_ATTR_END			0xffffffffu
+#define MFT_RECORD_VOLUME	3
+#define NTFS_MAX_CLUSTER_SIZE	(64 * 1024)
+
+enum {
+	MFT_RECORD_ATTR_VOLUME_NAME		= cpu_to_le32(0x60),
+	MFT_RECORD_ATTR_END			= cpu_to_le32(0xffffffff)
+};
 
 static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct ntfs_super_block *ns;
 	struct master_file_table_record *mft;
 
-	unsigned int bytes_per_sector, sectors_per_cluster, mft_record_size, attr_off;
+	uint32_t sectors_per_cluster, mft_record_size, attr_off;
+	uint16_t sector_size;
 	uint64_t nr_clusters, off;
 	unsigned char *buf_mft;
 
@@ -73,37 +93,68 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!ns)
 		return -1;
 
-	bytes_per_sector = ns->bios_parameter_block[0] +
-		(ns->bios_parameter_block[1]  << 8);
-	sectors_per_cluster = ns->bios_parameter_block[2];
+	/*
+	 * Check bios parameters block
+	 */
+	sector_size = le16_to_cpu(ns->bpb.sector_size);
+	sectors_per_cluster = ns->bpb.sectors_per_cluster;
 
-	if ((bytes_per_sector < 256) || (sectors_per_cluster == 0))
+	if (sector_size < 256 || sector_size > 4096)
 		return 1;
 
-	if (ns->cluster_per_mft_record < 0)
-		mft_record_size = 1 << (0 - ns->cluster_per_mft_record);
+	switch (sectors_per_cluster) {
+	case 1: case 2: case 4: case 8: case 16: case 32: case 64: case 128:
+		break;
+	default:
+		return 1;
+	}
+
+	if ((uint16_t) le16_to_cpu(ns->bpb.sector_size) *
+			ns->bpb.sectors_per_cluster > NTFS_MAX_CLUSTER_SIZE)
+		return 1;
+
+	/* Unused fields must be zero */
+	if (le16_to_cpu(ns->bpb.reserved_sectors)
+	    || le16_to_cpu(ns->bpb.root_entries)
+	    || le16_to_cpu(ns->bpb.sectors)
+	    || le16_to_cpu(ns->bpb.sectors_per_fat)
+	    || le32_to_cpu(ns->bpb.large_sectors)
+	    || ns->bpb.fats)
+		return 1;
+
+	if ((uint8_t) ns->clusters_per_mft_record < 0xe1
+	    || (uint8_t) ns->clusters_per_mft_record > 0xf7) {
+
+		switch (ns->clusters_per_mft_record) {
+		case 1: case 2: case 4: case 8: case 16: case 32: case 64:
+			break;
+		default:
+			return 1;
+		}
+	}
+
+	if (ns->clusters_per_mft_record > 0)
+		mft_record_size = ns->clusters_per_mft_record *
+				  sectors_per_cluster * sector_size;
 	else
-		mft_record_size = ns->cluster_per_mft_record *
-			sectors_per_cluster * bytes_per_sector;
+		mft_record_size = 1 << (0 - ns->clusters_per_mft_record);
+
 	nr_clusters = le64_to_cpu(ns->number_of_sectors) / sectors_per_cluster;
 
 	if ((le64_to_cpu(ns->mft_cluster_location) > nr_clusters) ||
 	    (le64_to_cpu(ns->mft_mirror_cluster_location) > nr_clusters))
 		return 1;
 
-	off = le64_to_cpu(ns->mft_mirror_cluster_location) *
-		bytes_per_sector * sectors_per_cluster;
 
-	buf_mft = blkid_probe_get_buffer(pr, off, mft_record_size);
-	if (!buf_mft)
-		return 1;
-
-	if (memcmp(buf_mft, "FILE", 4))
-		return 1;
-
-
-	off = le64_to_cpu(ns->mft_cluster_location) * bytes_per_sector *
+	off = le64_to_cpu(ns->mft_cluster_location) * sector_size *
 		sectors_per_cluster;
+
+	DBG(DEBUG_LOWPROBE, printf("NTFS: sector_size=%d, mft_record_size=%d, "
+			"sectors_per_cluster=%d, nr_clusters=%ju "
+			"cluster_offset=%jd\n",
+			(int) sector_size, mft_record_size,
+			sectors_per_cluster, nr_clusters,
+			off));
 
 	buf_mft = blkid_probe_get_buffer(pr, off, mft_record_size);
 	if (!buf_mft)
@@ -124,10 +175,10 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 	mft = (struct master_file_table_record *) buf_mft;
 	attr_off = le16_to_cpu(mft->attrs_offset);
 
-	while (attr_off < mft_record_size) {
+	while (attr_off < mft_record_size &&
+	       attr_off <= le32_to_cpu(mft->bytes_allocated)) {
 
-		unsigned int attr_len;
-		unsigned int attr_type;
+		uint32_t attr_len;
 		struct file_attribute *attr;
 
 		attr = (struct file_attribute *) (buf_mft + attr_off);
@@ -135,11 +186,9 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 		if (!attr_len)
 			break;
 
-		attr_type = le32_to_cpu(attr->type);
-		if (attr_type == MFT_RECORD_ATTR_END)
+		if (attr->type == MFT_RECORD_ATTR_END)
 			break;
-
-		if (attr_type == MFT_RECORD_ATTR_VOLUME_NAME) {
+		if (attr->type == MFT_RECORD_ATTR_VOLUME_NAME) {
 			unsigned int val_off = le16_to_cpu(attr->value_offset);
 			unsigned int val_len = le32_to_cpu(attr->value_len);
 			unsigned char *val = ((uint8_t *) attr) + val_off;
