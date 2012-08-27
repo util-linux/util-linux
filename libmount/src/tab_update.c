@@ -562,6 +562,17 @@ leave:
 	return rc;
 }
 
+static int add_file_entry(struct libmnt_table *tb, struct libmnt_update *upd)
+{
+	struct libmnt_fs *fs = mnt_copy_fs(NULL, upd->fs);
+
+	if (!fs)
+		return -ENOMEM;
+
+	mnt_table_add_fs(tb, fs);
+	return update_table(upd, tb);
+}
+
 static int update_add_entry(struct libmnt_update *upd, struct libmnt_lock *lc)
 {
 	struct libmnt_table *tb;
@@ -579,16 +590,8 @@ static int update_add_entry(struct libmnt_update *upd, struct libmnt_lock *lc)
 
 	tb = __mnt_new_table_from_file(upd->filename,
 			upd->userspace_only ? MNT_FMT_UTAB : MNT_FMT_MTAB);
-	if (tb) {
-		struct libmnt_fs *fs = mnt_copy_fs(NULL, upd->fs);
-		if (!fs)
-			rc = -ENOMEM;
-		else {
-			mnt_table_add_fs(tb, fs);
-			rc = update_table(upd, tb);
-		}
-	}
-
+	if (tb)
+		rc = add_file_entry(tb, upd);
 	if (lc)
 		mnt_unlock_file(lc);
 
@@ -621,7 +624,6 @@ static int update_remove_entry(struct libmnt_update *upd, struct libmnt_lock *lc
 			mnt_free_fs(rem);
 		}
 	}
-
 	if (lc)
 		mnt_unlock_file(lc);
 
@@ -691,7 +693,8 @@ static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *
 				rc = mnt_fs_set_options(cur, mnt_fs_get_options(fs));
 			if (!rc)
 				rc = update_table(upd, tb);
-		}
+		} else
+			rc = add_file_entry(tb, upd);	/* not found, add new */
 	}
 
 	if (lc)
