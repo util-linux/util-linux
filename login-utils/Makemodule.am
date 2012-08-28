@@ -82,6 +82,8 @@ if BUILD_SU
 bin_PROGRAMS += su
 su_SOURCES = \
 	login-utils/su.c \
+	login-utils/su-common.c \
+	login-utils/su-common.h \
 	login-utils/logindefs.c \
 	login-utils/logindefs.h
 su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
