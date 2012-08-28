@@ -110,6 +110,8 @@ static struct option const longopts[] =
   {"login", no_argument, NULL, 'l'},
   {"preserve-environment", no_argument, NULL, 'p'},
   {"shell", required_argument, NULL, 's'},
+  {"group", required_argument, NULL, 'g'},
+  {"supp-group", required_argument, NULL, 'G'},
   {"help", no_argument, 0, 'h'},
   {"version", no_argument, 0, 'V'},
   {NULL, 0, NULL, 0}
@@ -548,11 +550,18 @@ modify_environment (const struct passwd *pw, const char *shell)
 /* Become the user and group(s) specified by PW.  */
 
 static void
-init_groups (const struct passwd *pw)
+init_groups (const struct passwd *pw, gid_t *groups, int num_groups)
 {
   int retval;
+
   errno = 0;
-  if (initgroups (pw->pw_name, pw->pw_gid) == -1)
+
+  if (num_groups)
+    retval = setgroups (num_groups, groups);
+  else
+    retval = initgroups (pw->pw_name, pw->pw_gid);
+
+  if (retval == -1)
     {
       cleanup_pam (PAM_ABORT);
       err (EXIT_FAILURE, _("cannot set groups"));
@@ -659,6 +668,8 @@ usage (int status)
  -c, --command <command>      pass a single command to the shell with -c\n\
  --session-command <command>  pass a single command to the shell with -c\n\
                               and do not create a new session\n\
+ -g --group=group             specify the primary group\n\
+ -G --supp-group=group        specify a supplemental group\n\
  -f, --fast                   pass -f to the shell (for csh or tcsh)\n\
  -m, --preserve-environment   do not reset environment variables\n\
  -p                           same as -m\n\
@@ -680,6 +691,19 @@ void load_config(void)
   logindefs_load_file(_PATH_LOGINDEFS);
 }
 
+/*
+ * Returns 1 if the current user is not root
+ */
+static int
+evaluate_uid(void)
+{
+  uid_t ruid = getuid();
+  uid_t euid = geteuid();
+
+  /* if we're really root and aren't running setuid */
+  return (uid_t) 0 == ruid && ruid == euid ? 0 : 1;
+}
+
 int
 main (int argc, char **argv)
 {
@@ -690,6 +714,11 @@ main (int argc, char **argv)
   char *shell = NULL;
   struct passwd *pw;
   struct passwd pw_copy;
+  struct group *gr;
+  gid_t groups[NGROUPS_MAX];
+  int num_supp_groups = 0;
+  int use_gid = 0;
+  int restricted;
 
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
@@ -699,7 +728,7 @@ main (int argc, char **argv)
   simulate_login = false;
   change_environment = true;
 
-  while ((optc = getopt_long (argc, argv, "c:flmps:hV", longopts, NULL)) != -1)
+  while ((optc = getopt_long (argc, argv, "c:fg:G:lmps:hV", longopts, NULL)) != -1)
     {
       switch (optc)
 	{
@@ -714,6 +743,26 @@ main (int argc, char **argv)
 
 	case 'f':
 	  fast_startup = true;
+	  break;
+
+	case 'g':
+	  gr = getgrnam(optarg);
+	  if (!gr)
+	    errx(EXIT_FAILURE, _("group %s does not exist"), optarg);
+	  use_gid = 1;
+	  groups[0] = gr->gr_gid;
+	  break;
+
+	case 'G':
+	  num_supp_groups++;
+	  if (num_supp_groups >= NGROUPS_MAX)
+	     errx(EXIT_FAILURE,
+		  _("can't specify more than %d supplemental groups"),
+		  NGROUPS_MAX - 1);
+	  gr = getgrnam(optarg);
+	  if (!gr)
+	    errx(EXIT_FAILURE, _("group %s does not exist"), optarg);
+	  groups[num_supp_groups] = gr->gr_gid;
 	  break;
 
 	case 'l':
@@ -741,6 +790,8 @@ main (int argc, char **argv)
 	}
     }
 
+  restricted = evaluate_uid ();
+
   if (optind < argc && !strcmp (argv[optind], "-"))
     {
       simulate_login = true;
@@ -748,6 +799,9 @@ main (int argc, char **argv)
     }
   if (optind < argc)
     new_user = argv[optind++];
+
+  if ((num_supp_groups || use_gid) && restricted)
+    errx(EXIT_FAILURE, _("only root can specify alternative groups"));
 
   logindefs_load_defaults = load_config;
 
@@ -772,6 +826,17 @@ main (int argc, char **argv)
 			  : DEFAULT_SHELL);
   endpwent ();
 
+  if (num_supp_groups && !use_gid)
+  {
+    pw->pw_gid = groups[1];
+    memmove (groups, groups + 1, sizeof(gid_t) * num_supp_groups);
+  }
+  else if (use_gid)
+  {
+    pw->pw_gid = groups[0];
+    num_supp_groups++;
+  }
+
   authenticate (pw);
 
   if (request_same_session || !command || !pw->pw_uid)
@@ -790,7 +855,7 @@ main (int argc, char **argv)
     }
   shell = xstrdup (shell ? shell : pw->pw_shell);
 
-  init_groups (pw);
+  init_groups (pw, groups, num_supp_groups);
 
   create_watching_parent ();
   /* Now we're in the child.  */
