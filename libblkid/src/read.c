@@ -398,7 +398,7 @@ void blkid_read_cache(blkid_cache cache)
 	 * If the file doesn't exist, then we just return an empty
 	 * struct so that the cache can be populated.
 	 */
-	if ((fd = open(cache->bic_filename, O_RDONLY)) < 0)
+	if ((fd = open(cache->bic_filename, O_RDONLY|O_CLOEXEC)) < 0)
 		return;
 	if (fstat(fd, &st) < 0)
 		goto errout;

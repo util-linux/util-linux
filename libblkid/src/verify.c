@@ -120,7 +120,7 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 		}
 	}
 
-	fd = open(dev->bid_name, O_RDONLY);
+	fd = open(dev->bid_name, O_RDONLY|O_CLOEXEC);
 	if (fd < 0) {
 		DBG(DEBUG_PROBE, printf("blkid_verify: error %m (%d) while "
 					"opening %s\n", errno,

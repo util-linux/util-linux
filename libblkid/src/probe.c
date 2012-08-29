@@ -209,7 +209,7 @@ blkid_probe blkid_new_probe_from_filename(const char *filename)
 	if (!filename)
 		return NULL;
 
-	fd = open(filename, O_RDONLY);
+	fd = open(filename, O_RDONLY|O_CLOEXEC);
 	if (fd < 0)
 		return NULL;
 
@@ -934,7 +934,7 @@ int blkid_do_probe(blkid_probe pr)
  *  <example>
  *  <title>wipe all filesystems or raids from the device</title>
  *   <programlisting>
- *      fd = open(devname, O_RDWR);
+ *      fd = open(devname, O_RDWR|O_CLOEXEC);
  *      blkid_probe_set_device(pr, fd, 0, 0);
  *
  *      blkid_probe_enable_superblocks(pr, 1);

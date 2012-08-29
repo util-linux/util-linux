@@ -69,7 +69,7 @@ static int verify_tag(const char *devname, const char *name, const char *value)
 	blkid_probe_enable_partitions(pr, TRUE);
 	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_ENTRY_DETAILS);
 
-	fd = open(devname, O_RDONLY);
+	fd = open(devname, O_RDONLY|O_CLOEXEC);
 	if (fd < 0) {
 		errsv = errno;
 		goto done;

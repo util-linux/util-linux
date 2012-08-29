@@ -97,7 +97,7 @@ static int probe_md_tp(blkid_probe pr,
 		if (!diskpath)
 			goto nothing;
 
-		fd = open(diskpath, O_RDONLY);
+		fd = open(diskpath, O_RDONLY|O_CLOEXEC);
 		free(diskpath);
 
                 if (fd == -1)
