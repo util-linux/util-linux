@@ -1344,5 +1344,31 @@ libmount/src/libmount.h
 po/Makefile.in
 ])
 
-
 AC_OUTPUT
+
+AC_MSG_RESULT([
+	${PACKAGE}  ${VERSION}
+
+	prefix:            ${prefix}
+	exec prefix:       ${exec_prefix}
+
+        localstatedir:     ${localstatedir}
+	bindir:	           ${bindir}
+	sbindir:           ${sbindir}
+	libdir:            ${libdir}
+	includedir:        ${includedir}
+        libdirname:        ${libdirname}
+        usrbin_execdir:    ${usrbin_execdir}
+        usrsbin_execdir:   ${usrsbin_execdir}
+        usrlib_execdir:    ${usrlib_execdir}
+
+	compiler:          ${CC}
+	cflags:            ${CFLAGS}
+	suid cflags:       ${SUID_CFLAGS}
+	ldflags:           ${LDFLAGS}
+	suid ldflags:      ${SUID_LDFLAGS}
+
+	warnings:
+
+${WARN_CFLAGS}
+])
