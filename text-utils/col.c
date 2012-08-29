@@ -139,7 +139,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static void __attribute__((__noreturn__)) wrerr()
+static void __attribute__((__noreturn__)) wrerr(void)
 {
 	errx(EXIT_FAILURE, _("write error."));
 }
