@@ -228,9 +228,9 @@ static void test_crc(int start)
 		}
 	}
 	if (buf != MAP_FAILED) {
-		((struct cramfs_super *)(buf + start))->fsid.crc =
+		((struct cramfs_super *)((unsigned char *) buf + start))->fsid.crc =
 		    crc32(0L, Z_NULL, 0);
-		crc = crc32(crc, buf + start, super.size - start);
+		crc = crc32(crc, (unsigned char *) buf + start, super.size - start);
 		munmap(buf, super.size);
 	} else {
 		int retval;
