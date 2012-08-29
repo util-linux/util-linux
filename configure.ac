@@ -116,6 +116,10 @@ UL_WARN_ADD([-Wunused-but-set-variable])
 UL_WARN_ADD([-Wunused-parameter])
 UL_WARN_ADD([-Wunused-result])
 UL_WARN_ADD([-Wunused-variable])
+UL_WARN_ADD([-Wnested-externs])
+UL_WARN_ADD([-Wpointer-arith])
+UL_WARN_ADD([-Wstrict-prototypes])
+UL_WARN_ADD([-Wformat-security])
 AC_SUBST([WARN_CFLAGS])
 
 dnl libtool-2
