@@ -13,7 +13,7 @@ When called without arguments
 defaults to running an interactive shell as
 .IR root .
 .PP
-For backward compatibilty
+For backward compatibility
 .B su
 defaults to not change the current directory and to only set the
 environment variables
@@ -204,18 +204,20 @@ default PAM configuration file
 PAM configuration file if \-\-login is specified
 .TP
 /etc/default/su
+command specific logindef config file
 .TP
 /etc/login.defs
+global logindef config file
 .PD 1
 .SH "SEE ALSO"
 .BR pam (8),
 .BR shells (5),
-.BR login.defs (5),
+.BR login.defs (5)
 .SH AUTHOR
-Derived from coreutils' su which was based on an implemenation from
+Derived from coreutils' su which was based on an implementation from
 David MacKenzie.
 .SH AVAILABILITY
-The example command is part of the util-linux package and is
+The su command is part of the util-linux package and is
 available from
 .UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
 Linux Kernel Archive
