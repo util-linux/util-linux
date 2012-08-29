@@ -65,8 +65,14 @@ enum
 #include "env.h"
 
 /* name of the pam configuration files. separate configs for su and su -  */
-#define PAM_SERVICE_NAME "su"
-#define PAM_SERVICE_NAME_L "su-l"
+#define PAM_SRVNAME_SU "su"
+#define PAM_SRVNAME_SU_L "su-l"
+
+#define PAM_SRVNAME_RUNUSER "runuser"
+#define PAM_SRVNAME_RUNUSER_L "runuser-l"
+
+#define _PATH_LOGINDEFS_SU	"/etc/defaults/su"
+#define _PATH_LOGINDEFS_RUNUSER "/etc/defaults/runuser"
 
 #define is_pam_failure(_rc)	((_rc) != PAM_SUCCESS)
 
@@ -105,6 +111,8 @@ static bool _pam_session_opened;
 static bool _pam_cred_established;
 static sig_atomic_t volatile caught_signal = false;
 static pam_handle_t *pamh = NULL;
+
+static int restricted = 1;	/* zero for root user */
 
 static struct option const longopts[] =
 {
@@ -146,7 +154,8 @@ log_su (struct passwd const *pw, bool successful)
 
   openlog (program_invocation_short_name, 0 , LOG_AUTH);
   syslog (LOG_NOTICE, "%s(to %s) %s on %s",
-	  successful ? "" : "FAILED SU ",
+	  successful ? "" :
+	  su_mode == RUNUSER_MODE ? "FAILED RUNUSER " : "FAILED SU ",
 	  new_user, old_user, tty);
   closelog ();
 }
@@ -315,11 +324,19 @@ static void
 authenticate (const struct passwd *pw)
 {
   const struct passwd *lpw;
-  const char *cp;
+  const char *cp, *srvname = NULL;
   int retval;
 
-  retval = pam_start (simulate_login ? PAM_SERVICE_NAME_L : PAM_SERVICE_NAME,
-		      pw->pw_name, &conv, &pamh);
+  switch (su_mode) {
+  case SU_MODE:
+    srvname = simulate_login ? PAM_SRVNAME_SU_L : PAM_SRVNAME_SU;
+    break;
+  case RUNUSER_MODE:
+    srvname = simulate_login ? PAM_SRVNAME_RUNUSER_L : PAM_SRVNAME_RUNUSER;
+    break;
+  }
+
+  retval = pam_start (srvname, pw->pw_name, &conv, &pamh);
   if (is_pam_failure(retval))
     goto done;
 
@@ -342,6 +359,17 @@ authenticate (const struct passwd *pw)
       retval = pam_set_item (pamh, PAM_RUSER, (const void *) lpw->pw_name);
       if (is_pam_failure(retval))
 	goto done;
+    }
+
+  if (su_mode == RUNUSER_MODE)
+    {
+      /*
+       * This is the only difference between runuser(1) and su(1). The command
+       * runuser(1) does not required authentication, because user is root.
+       */
+      if (restricted)
+	errx(EXIT_FAILURE, _("may not be used by non-root users"));
+      return;
     }
 
   retval = pam_authenticate (pamh, 0);
@@ -691,7 +719,15 @@ usage (int status)
 static
 void load_config(void)
 {
-  logindefs_load_file("/etc/default/su");
+  switch (su_mode) {
+  case SU_MODE:
+    logindefs_load_file(_PATH_LOGINDEFS_SU);
+    break;
+  case RUNUSER_MODE:
+    logindefs_load_file(_PATH_LOGINDEFS_RUNUSER);
+    break;
+  }
+
   logindefs_load_file(_PATH_LOGINDEFS);
 }
 
@@ -722,7 +758,6 @@ su_main (int argc, char **argv, int mode)
   gid_t groups[NGROUPS_MAX];
   int num_supp_groups = 0;
   int use_gid = 0;
-  int restricted;
 
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);

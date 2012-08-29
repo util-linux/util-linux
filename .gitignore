@@ -138,6 +138,7 @@ tests/run.sh.trs
 /resizepart
 /rev
 /rtcwake
+/runuser
 /sample-mkfs
 /sample-partitions
 /sample-superblocks

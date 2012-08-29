@@ -1154,6 +1154,15 @@ UL_REQUIRES_HAVE([su], [security_pam_misc_h], [PAM header file])
 AM_CONDITIONAL(BUILD_SU, test "x$build_su" = xyes)
 
 
+AC_ARG_ENABLE([runuser],
+  AS_HELP_STRING([--disable-runuser], [do not build runuser]),
+  [], enable_runuser=yes
+)
+UL_BUILD_INIT([runuser])
+UL_REQUIRES_HAVE([runuser], [security_pam_misc_h], [PAM header file])
+AM_CONDITIONAL(BUILD_RUNUSER, test "x$build_runuser" = xyes)
+
+
 AC_ARG_ENABLE([schedutils],
   AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, teskset]),
   [], enable_schedutils=yes
