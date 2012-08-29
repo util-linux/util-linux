@@ -610,8 +610,8 @@ static int try_write(const char *filename)
 	if (!filename)
 		return -EINVAL;
 
-	fd = open(filename, O_RDWR|O_CREAT, S_IWUSR| \
-					    S_IRUSR|S_IRGRP|S_IROTH);
+	fd = open(filename, O_RDWR|O_CREAT|O_CLOEXEC,
+			    S_IWUSR|S_IRUSR|S_IRGRP|S_IROTH);
 	if (fd >= 0) {
 		close(fd);
 		return 0;

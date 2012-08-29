@@ -396,7 +396,7 @@ static int lock_mtab(struct libmnt_lock *ml)
 		sigprocmask(SIG_BLOCK, &sigs, &ml->oldsigmask);
 	}
 
-	i = open(linkfile, O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR);
+	i = open(linkfile, O_WRONLY|O_CREAT|O_CLOEXEC, S_IRUSR|S_IWUSR);
 	if (i < 0) {
 		/* linkfile does not exist (as a file) and we cannot create it.
 		 * Read-only or full filesystem? Too many files open in the system?
@@ -428,7 +428,7 @@ static int lock_mtab(struct libmnt_lock *ml)
 				rc = -errno;
 			goto failed;
 		}
-		ml->lockfile_fd = open(lockfile, O_WRONLY);
+		ml->lockfile_fd = open(lockfile, O_WRONLY|O_CLOEXEC);
 
 		if (ml->lockfile_fd < 0) {
 			/* Strange... Maybe the file was just deleted? */
