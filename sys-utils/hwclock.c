@@ -1337,6 +1337,66 @@ manipulate_epoch(const bool getepoch,
 # endif		/* __alpha__ */
 #endif		/* __linux__ */
 
+/*
+ * Compare the system and CMOS time and output the drift
+ * in 10 second intervals.
+ */
+static int compare_clock (const bool utc, const bool local_opt)
+{
+	struct tm tm;
+	struct timeval tv;
+	struct adjtime adjtime;
+	double time1_sys, time2_sys;
+	time_t time1_hw, time2_hw;
+	bool hclock_valid = FALSE, universal, first_pass = TRUE;
+	int rc;
+
+	/* dummy call for increased precision */
+	gettimeofday(&tv, NULL);
+
+	rc = read_adjtime(&adjtime);
+	if (rc)
+		return rc;
+
+	universal = hw_clock_is_utc(utc, local_opt, adjtime);
+
+	synchronize_to_clock_tick();
+	ur->read_hardware_clock(&tm);
+
+	gettimeofday(&tv, NULL);
+	time1_sys = tv.tv_sec + tv.tv_usec / 1000000.0;
+
+	mktime_tz(tm, universal, &hclock_valid, &time1_hw);
+
+	while (1) {
+		double res;
+
+		synchronize_to_clock_tick();
+		ur->read_hardware_clock(&tm);
+
+		gettimeofday(&tv, NULL);
+		time2_sys = tv.tv_sec + tv.tv_usec / 1000000.0;
+
+		mktime_tz(tm, universal, &hclock_valid, &time2_hw);
+
+		res = (((double) time1_hw - time1_sys) -
+		       ((double) time2_hw - time2_sys))
+		      / (double) (time2_hw - time1_hw);
+
+		if (!first_pass)
+			printf("%10.0f   %10.6f   %15.0f   %4.0f\n",
+				(double) time2_hw, time2_sys, res * 1e6, res *1e4);
+		else {
+			first_pass = FALSE;
+			printf("hw-time      system-time         freq-offset-ppm   tick\n");
+			printf("%10.0f   %10.6f\n", (double) time1_hw, time1_sys);
+		}
+		sleep(10);
+	}
+
+	return 0;
+}
+
 static void out_version(void)
 {
 	printf(_("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING);
@@ -1370,7 +1430,8 @@ static void usage(const char *fmt, ...)
 		" -w, --systohc        set the hardware clock from the current system time\n"
 		"     --systz          set the system time based on the current timezone\n"
 		"     --adjust         adjust the RTC to account for systematic drift since\n"
-		"                        the clock was last set or adjusted\n"), usageto);
+		"                        the clock was last set or adjusted\n"
+		" -c  --compare        periodically compare the system clock with the CMOS clock\n"), usageto);
 #ifdef __linux__
 	fputs(_("     --getepoch       print out the kernel's hardware clock epoch value\n"
 		"     --setepoch       set the kernel's hardware clock epoch value to the \n"
@@ -1438,7 +1499,7 @@ int main(int argc, char **argv)
 	/* Variables set by various options; show may also be set later */
 	/* The options debug, badyear and epoch_option are global */
 	bool show, set, systohc, hctosys, systz, adjust, getepoch, setepoch,
-	    predict;
+	    predict, compare;
 	bool utc, testing, local_opt, noadjfile, directisa;
 	char *date_opt;
 #ifdef __alpha__
@@ -1463,6 +1524,7 @@ int main(int argc, char **argv)
 
 	static const struct option longopts[] = {
 		{"adjust",	0, 0, 'a'},
+		{"compare",	0, 0, 'c'},
 		{"help",	0, 0, 'h'},
 		{"show",	0, 0, 'r'},
 		{"hctosys",	0, 0, 's'},
@@ -1540,7 +1602,7 @@ int main(int argc, char **argv)
 
 	/* Set option defaults */
 	show = set = systohc = hctosys = systz = adjust = noadjfile = predict =
-	    FALSE;
+	    compare = FALSE;
 	getepoch = setepoch = utc = local_opt = directisa = testing = debug = FALSE;
 #ifdef __alpha__
 	ARCconsole = Jensen = SRM = funky_toy = badyear = FALSE;
@@ -1548,7 +1610,7 @@ int main(int argc, char **argv)
 	date_opt = NULL;
 
 	while ((c = getopt_long(argc, argv,
-				"?hvVDarsuwAJSFf:", longopts, NULL)) != -1) {
+				"?hvVDacrsuwAJSFf:", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1558,6 +1620,9 @@ int main(int argc, char **argv)
 			break;
 		case 'a':
 			adjust = TRUE;
+			break;
+		case 'c':
+			compare = TRUE;
 			break;
 		case 'r':
 			show = TRUE;
@@ -1733,9 +1798,16 @@ int main(int argc, char **argv)
 		}
 	}
 
-	rc = manipulate_clock(show, adjust, noadjfile, set, set_time,
+	if (compare) {
+		if (compare_clock(utc, local_opt))
+			hwclock_exit(EX_NOPERM);
+
+		rc = EX_OK;
+	} else
+		rc = manipulate_clock(show, adjust, noadjfile, set, set_time,
 			      hctosys, systohc, systz, startup_time, utc,
 			      local_opt, testing, predict);
+
 	hwclock_exit(rc);
 	return rc;		/* Not reached */
 }
