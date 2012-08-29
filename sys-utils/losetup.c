@@ -351,7 +351,7 @@ int main(int argc, char **argv)
 		if (optind >= argc)
 			errx(EXIT_FAILURE, _("no loop device specified"));
 		if (loopcxt_set_device(&lc, argv[optind]))
-			err(EXIT_FAILURE, _("%s failed to use device"),
+			err(EXIT_FAILURE, _("%s: failed to use device"),
 					argv[optind]);
 		optind++;
 

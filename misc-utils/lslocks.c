@@ -481,7 +481,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -p, --pid <pid>        process id\n"
 		" -o, --output <list>    define which output columns to use\n"
 		" -n, --noheadings       don't print headings\n"
-		" -r  --raw              use the raw output format\n"
+		" -r, --raw              use the raw output format\n"
 		" -u, --notruncate       don't truncate text in columns\n"
 		" -h, --help             display this help and exit\n"
 		" -V, --version          output version information and exit\n"), out);
