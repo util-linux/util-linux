@@ -562,9 +562,10 @@ int main(int argc, char *argv[])
 		/* pretty output */
 		if (!noident) {
 			printf("%-15s%s\n", _("Device:"), wd.device);
-			printf(_("%-15s%s [version %x]\n"),
+			printf("%-15s%s [%s %x]\n",
 					_("Identity:"),
 					wd.ident.identity,
+					_("version"),
 					wd.ident.firmware_version);
 		}
 		if (!notimeouts)
