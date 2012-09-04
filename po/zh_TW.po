@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.18-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2012-08-15 17:10+0200\n"
+"POT-Creation-Date: 2012-09-04 13:54+0200\n"
 "PO-Revision-Date: 2010-08-22 00:14+0800\n"
 "Last-Translator: Wei-Lun Chao <chaoweilun@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -24,7 +24,7 @@ msgstr ""
 
 #: disk-utils/addpart.c:52 disk-utils/blockdev.c:276 disk-utils/blockdev.c:420
 #: disk-utils/blockdev.c:445 disk-utils/delpart.c:53 disk-utils/fdformat.c:62
-#: disk-utils/fdformat.c:155 disk-utils/fsck.c:1347
+#: disk-utils/fdformat.c:155 disk-utils/fsck.c:1364
 #: disk-utils/fsck.cramfs.c:146 disk-utils/fsck.cramfs.c:498
 #: disk-utils/isosize.c:126 disk-utils/mkfs.bfs.c:184
 #: disk-utils/mkfs.cramfs.c:660 disk-utils/mkfs.cramfs.c:786
@@ -300,7 +300,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: disk-utils/fdformat.c:131 disk-utils/fsck.c:1490 disk-utils/mkfs.bfs.c:89
+#: disk-utils/fdformat.c:131 disk-utils/fsck.c:1507 disk-utils/mkfs.bfs.c:89
 #: disk-utils/mkfs.cramfs.c:763 fdisks/sfdisk.c:2633 include/c.h:248
 #: misc-utils/cal.c:353 misc-utils/getopt.c:431 misc-utils/kill.c:193
 #: misc-utils/logger.c:264 misc-utils/look.c:126 misc-utils/lsblk.c:1360
@@ -357,109 +357,109 @@ msgstr "雙"
 msgid "Single"
 msgstr "單"
 
-#: disk-utils/fsck.c:187
+#: disk-utils/fsck.c:191
 #, fuzzy, c-format
 msgid "%s is mounted\n"
 msgstr "%s 已掛載。\t"
 
-#: disk-utils/fsck.c:189
+#: disk-utils/fsck.c:193
 #, fuzzy, c-format
 msgid "%s is not mounted\n"
 msgstr "fsck：%s：找不到\n"
 
-#: disk-utils/fsck.c:303 lib/path.c:98 lib/path.c:119 lib/path.c:165
+#: disk-utils/fsck.c:307 lib/path.c:98 lib/path.c:119 lib/path.c:165
 #, c-format
 msgid "failed to read: %s"
 msgstr "讀取時失敗：%s"
 
-#: disk-utils/fsck.c:305 lib/path.c:121
+#: disk-utils/fsck.c:309 lib/path.c:121
 #, c-format
 msgid "parse error: %s"
 msgstr "剖析錯誤：%s"
 
-#: disk-utils/fsck.c:325
+#: disk-utils/fsck.c:329
 #, fuzzy, c-format
 msgid "Locking disk %s ... "
 msgstr "同步磁碟。\n"
 
-#: disk-utils/fsck.c:335
+#: disk-utils/fsck.c:339
 #, c-format
 msgid "(waiting) "
 msgstr ""
 
 #. TRANSLATORS: These are followups to "Locking disk...".
-#: disk-utils/fsck.c:345
+#: disk-utils/fsck.c:349
 #, fuzzy
 msgid "succeeded"
 msgstr "%s 成功。\n"
 
-#: disk-utils/fsck.c:345
+#: disk-utils/fsck.c:349
 #, fuzzy
 msgid "failed"
 msgstr "%s 失敗。\n"
 
-#: disk-utils/fsck.c:382
+#: disk-utils/fsck.c:386
 #, fuzzy, c-format
 msgid "failed to setup description for %s"
 msgstr "讀取 typescript 檔案 %s 時失敗"
 
-#: disk-utils/fsck.c:408
+#: disk-utils/fsck.c:412
 #, fuzzy, c-format
 msgid "%s: parse error at line %d -- ignore"
 msgstr "剖析錯誤發生於列號："
 
-#: disk-utils/fsck.c:437 disk-utils/fsck.c:439
+#: disk-utils/fsck.c:441 disk-utils/fsck.c:443
 #, fuzzy, c-format
 msgid "%s: failed to parse fstab"
 msgstr "%s：無法開啟"
 
-#: disk-utils/fsck.c:567 sys-utils/umount.c:217
+#: disk-utils/fsck.c:584 sys-utils/umount.c:217
 #, fuzzy, c-format
 msgid "%s: not found"
 msgstr "fsck：%s：找不到\n"
 
-#: disk-utils/fsck.c:593 login-utils/login.c:1085 login-utils/vipw.c:212
+#: disk-utils/fsck.c:610 login-utils/login.c:1085 login-utils/vipw.c:212
 #: sys-utils/flock.c:314 sys-utils/swapon.c:267 term-utils/script.c:264
 #: term-utils/script.c:274
 msgid "fork failed"
 msgstr "衍生執行時失敗"
 
-#: disk-utils/fsck.c:600
+#: disk-utils/fsck.c:617
 #, fuzzy, c-format
 msgid "%s: execute failed"
 msgstr "%s：凍結時失敗"
 
-#: disk-utils/fsck.c:688
+#: disk-utils/fsck.c:705
 #, fuzzy
 msgid "wait: no more child process?!?"
 msgstr "%s：等待：沒有更多子進程 ?!?\n"
 
-#: disk-utils/fsck.c:691
+#: disk-utils/fsck.c:708
 #, fuzzy
 msgid "waidpid failed"
 msgstr "waitpid 失敗"
 
-#: disk-utils/fsck.c:709
+#: disk-utils/fsck.c:726
 #, fuzzy, c-format
 msgid "Warning... %s for device %s exited with signal %d."
 msgstr "警告…%s 用於裝置 %s 已用信號 %d 離開。\n"
 
-#: disk-utils/fsck.c:715
+#: disk-utils/fsck.c:732
 #, fuzzy, c-format
 msgid "%s %s: status is %x, should never happen."
 msgstr "%s %s：狀態是 %x，應該永遠不會發生。\n"
 
-#: disk-utils/fsck.c:761
+#: disk-utils/fsck.c:778
 #, c-format
 msgid "Finished with %s (exit status %d)\n"
 msgstr "以 %s 完成 (離開狀態 %d)\n"
 
-#: disk-utils/fsck.c:823
+#: disk-utils/fsck.c:840
 #, fuzzy, c-format
 msgid "error %d while executing fsck.%s for %s"
 msgstr "%s：錯誤 %d 當執行 fsck.%s 用於 %s\n"
 
-#: disk-utils/fsck.c:892
+#: disk-utils/fsck.c:909
 #, fuzzy
 msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
@@ -468,49 +468,49 @@ msgstr ""
 "當檔案系統類型傳遞給 -t 時必須全部或是沒有任何一項\n"
 "加上前綴「no」或「!」。\n"
 
-#: disk-utils/fsck.c:1009
+#: disk-utils/fsck.c:1026
 #, fuzzy, c-format
 msgid ""
 "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number"
 msgstr "%s：跳過 /etc/fstab 中不當的列：以非零值 fsck 通過數字連結掛載\n"
 
-#: disk-utils/fsck.c:1021
+#: disk-utils/fsck.c:1038
 #, c-format
 msgid "%s: skipping nonexistent device\n"
 msgstr "%s：跳過不存在的裝置\n"
 
-#: disk-utils/fsck.c:1026
+#: disk-utils/fsck.c:1043
 #, c-format
 msgid ""
 "%s: nonexistent device (\"nofail\" fstab option may be used to skip this "
 "device)\n"
 msgstr ""
 
-#: disk-utils/fsck.c:1043
+#: disk-utils/fsck.c:1060
 #, fuzzy, c-format
 msgid "%s: skipping unknown filesystem type\n"
 msgstr "mount：不明的檔案系統類型「%s」"
 
-#: disk-utils/fsck.c:1062
+#: disk-utils/fsck.c:1079
 #, fuzzy, c-format
 msgid "cannot check %s: fsck.%s not found"
 msgstr "fsck：無法檢查 %s：找不到 fsck.%s\n"
 
-#: disk-utils/fsck.c:1151
+#: disk-utils/fsck.c:1168
 #, fuzzy
 msgid "failed to allocate iterator"
 msgstr "配置輸出緩衝區時失敗"
 
-#: disk-utils/fsck.c:1166
+#: disk-utils/fsck.c:1183
 msgid "Checking all file systems.\n"
 msgstr "檢查所有檔案系統。\n"
 
-#: disk-utils/fsck.c:1257
+#: disk-utils/fsck.c:1274
 #, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr "--等待-- (通過 %d)\n"
 
-#: disk-utils/fsck.c:1281
+#: disk-utils/fsck.c:1298
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -518,7 +518,7 @@ msgid ""
 " %s [fsck-options] [fs-options] [filesys ...]\n"
 msgstr "用法：%s [選項] 裝置…\n"
 
-#: disk-utils/fsck.c:1285
+#: disk-utils/fsck.c:1302
 msgid ""
 "\n"
 "Options:\n"
@@ -540,32 +540,32 @@ msgid ""
 "See fsck.* commands for fs-options."
 msgstr ""
 
-#: disk-utils/fsck.c:1337
+#: disk-utils/fsck.c:1354
 #, fuzzy
 msgid "too many devices"
 msgstr "%s：太多裝置\n"
 
-#: disk-utils/fsck.c:1349
+#: disk-utils/fsck.c:1366
 #, fuzzy
 msgid "Is /proc mounted?"
 msgstr "/proc 已經掛載？\n"
 
-#: disk-utils/fsck.c:1357
+#: disk-utils/fsck.c:1374
 #, fuzzy, c-format
 msgid "must be root to scan for matching filesystems: %s"
 msgstr "必須是 root 才能掃描符合的檔案系統：%s\n"
 
-#: disk-utils/fsck.c:1361
+#: disk-utils/fsck.c:1378
 #, fuzzy, c-format
 msgid "couldn't find matching filesystem: %s"
 msgstr "找不到符合的檔案系統：%s\n"
 
-#: disk-utils/fsck.c:1369 disk-utils/fsck.c:1457 sys-utils/eject.c:285
+#: disk-utils/fsck.c:1386 disk-utils/fsck.c:1474 sys-utils/eject.c:285
 #, fuzzy
 msgid "too many arguments"
 msgstr "%s：太多引數\n"
 
-#: disk-utils/fsck.c:1509
+#: disk-utils/fsck.c:1526
 msgid "the -l option can be used with one device only -- ignore"
 msgstr ""
 
