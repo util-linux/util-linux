@@ -1,5 +1,5 @@
-Util-linux 2.22 Release Notes
-=============================
+Util-linux 2.22 Release Notes [Sep 4, 2012]
+===========================================
 
  The cryptoloop support in the commands mount(8) and losetup(8) is DEPRECATED.
  This is the last release where encryption= mount option and -e,-E,--encryption
@@ -219,6 +219,7 @@ build-sys:
    - move tests to check_PROGRAMS  [Karel Zak]
    - note sulogin in configure help  [Karel Zak]
    - release++ (v2.22-rc1)  [Karel Zak]
+   - release++ (v2.22-rc2)  [Karel Zak]
    - remove -DUSE_PAM=1 for su(1)  [Karel Zak]
    - remove include-Makefile.am  [Karel Zak]
    - remove unused function and header checks  [Sami Kerola]
@@ -320,6 +321,7 @@ docs:
    - update TODO file  [Karel Zak]
    - update howto-tests.txt  [Karel Zak]
    - update tests docs  [Karel Zak]
+   - update v2.22-ReleaseNotes  [Karel Zak]
 eject:
    - add --force option  [Karel Zak]
    - add --manualeject from fedora  [Karel Zak]
@@ -411,6 +413,7 @@ fdisk:
    - create DOS specific write table function  [Davidlohr Bueso]
    - de-duplicate disk label strings  [Bernhard Voelker]
    - do not call sgi and sun code when creating a new dos label  [Davidlohr Bueso]
+   - document FDISK_DEBUG  [Davidlohr Bueso]
    - don't call update_units() in label probes if not necessary  [Petr Uzel]
    - don't ignore 1MiB granularity on 512-byte sector devices  [Karel Zak]
    - don't print CHS geometry unless DOS compatible mode is set  [Petr Uzel]
@@ -430,6 +433,7 @@ fdisk:
    - fix segfault on bsd label  [Davidlohr Bueso]
    - fix to build for IA32  [Christian Wiese]
    - fix typo  [Petr Uzel]
+   - fix typo in comment  [Bernhard Voelker]
    - get_boot() has to die (step I.)  [Karel Zak]
    - get_boot() has to die (step II.)  [Karel Zak]
    - introduce fdisk context  [Davidlohr Bueso]
@@ -510,6 +514,7 @@ findmnt:
    - support -o +<attr> for adding attribute to output fields.  [Milan Broz]
    - use err_exclusive_options()  [Karel Zak]
    - use exclusive_option()  [Sami Kerola]
+   - use st.st_bavail for available column  [Dave Reisner]
    - use xasprintf()  [Karel Zak]
 flock:
    - user-configurable exit code  [Jan \"Yenya\" Kasprzak]
@@ -527,6 +532,7 @@ fsck:
    - replace fsprobe with libmount utils  [Karel Zak]
    - tiny coding style fix  [Karel Zak]
    - use gettimeofday() for real elapsed time statistic  [Karel Zak]
+   - use less aggressive method to detect mounted devices  [Karel Zak]
    - use libmount for filesystem list  [Karel Zak]
    - use libmount to check for mounted filesystems  [Karel Zak]
 fsck.cramfs:
@@ -664,9 +670,11 @@ libblkid:
    - generate pseudo-UUID for ISO9660 image file  [Andreas Vogel]
    - properly reset chain in probe_do_wipe()  [Karel Zak]
    - remove duplicate entries in symbols  [Sami Kerola]
+   - rewrite ntfs prober  [Karel Zak]
    - support UFS UUID  [Vladimir 'φ-coder/phcoder' Serbinenko]
    - trust in udev symlinks, don't verify  [Karel Zak]
    - update dm-verity scan  [Milan Broz]
+   - use unsigned ints in ntfs prober  [Karel Zak]
 libmount:
    - Use binary search to compare pseudofs  [Dave Reisner]
    - add MNT_ERR_LOOPDEV  [Karel Zak]
@@ -711,7 +719,9 @@ libmount:
    - make some string operations more robust  [Karel Zak]
    - optimize for paths with tailing slash  [Karel Zak]
    - plug a memory leak in exec_helper()  [Petr Uzel]
+   - remount does not add entry to mtab file  [Karel Zak]
    - rename mnt_context_fstab_applied to mnt_context_tab_applied  [Karel Zak]
+   - rewrite mnt_table_is_fs_mounted() to be less aggressive  [Karel Zak]
    - save task ID for mountinfo tiles  [Karel Zak]
    - trim leading commas from each options string  [Dave Reisner]
    - use mount.<type> -s for NFS only  [Karel Zak]
@@ -880,9 +890,14 @@ pg:
 po:
    - add *.h stuff to POTFILES  [Karel Zak]
    - merge changes  [Karel Zak]
+   - update cs.po (from translationproject.org)  [Petr Písař]
+   - update da.po (from translationproject.org)  [Joe Hansen]
    - update de.po (from translationproject.org)  [Arun Persaud]
    - update fr.po (from translationproject.org)  [David Prévot]
+   - update ja.po (from translationproject.org)  [Takeshi Hamasaki]
    - update nl.po (from translationproject.org)  [Benno Schulenberg]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
+   - update uk.po (from translationproject.org)  [Yuri Chornoivan]
    - update vi.po (from translationproject.org)  [Trần Ngọc Quân]
    - update zh_CN.po (from translationproject.org)  [Wylmer Wang]
 prlimit:
@@ -947,6 +962,7 @@ su:
    - Don't include the unused <sys/fsuid.h>  [Thomas Schwinge]
    - Mention SUID_* feature.  [Thomas Schwinge]
    - align with howto-usage-function  [Sami Kerola]
+   - cleanup man page  [Karel Zak]
    - don't use custom MAX macro  [Ludwig Nussel]
    - fix compiler warning [-Wmissing-prototypes]  [Karel Zak]
    - fix compiler warning [-Wunused-parameter]  [Karel Zak]
