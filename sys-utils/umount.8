@@ -160,6 +160,13 @@ The helper= mount option redirects all umount requests to the
 .SH FILES
 .I /etc/mtab
 table of mounted file systems
+.SH ENVIRONMENT
+.IP LIBMOUNT_FSTAB=<path>
+overrides the default location of the fstab file
+.IP LIBMOUNT_MTAB=<path>
+overrides the default location of the mtab file
+.IP LIBMOUNT_DEBUG=0xffff
+enables debug output
 .SH "SEE ALSO"
 .BR umount (2),
 .BR mount (8),

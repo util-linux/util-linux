@@ -217,6 +217,10 @@ log as "swapon: swapfile has holes." One possible workaround is to map the
 file to a loopback device. This will allow the file system to determine the
 mapping properly but may come with a performance impact.
 
+.SH ENVIRONMENT
+.IP LIBMOUNT_DEBUG=0xffff
+enables debug output.
+
 .SH SEE ALSO
 .BR swapon (2),
 .BR swapoff (2),

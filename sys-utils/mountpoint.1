@@ -29,12 +29,16 @@ Zero if the directory is a mountpoint, non-zero if not.
 .SH AUTHOR
 .PP
 Karel Zak <kzak@redhat.com>
+.SH ENVIRONMENT
+.IP LIBMOUNT_DEBUG=0xffff
+enables debug output.
 .SH NOTES
 .PP
 The util-linux
 .B mountpoint
 implementation was written from scratch for libmount. The original version
 for sysvinit suite was written by Miquel van Smoorenburg.
+
 .SH SEE ALSO
 .BR mount (8)
 .SH AVAILABILITY
