@@ -294,7 +294,7 @@ int main(int argc, char **argv)
 	int id = -1;
 	int iskey;
 	int rm_all = 0;
-	type_id what_all;
+	type_id what_all = ALL;
 
 	static const struct option longopts[] = {
 		{"shmem-id", required_argument, NULL, 'm'},
