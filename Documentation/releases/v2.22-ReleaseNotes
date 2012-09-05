@@ -26,6 +26,8 @@ dmesg(1):
 
 su(1):
   - has been merged from coreutils into util-linux
+  - utils-linux version uses /etc/pam.d/su-l PAM config file for --login 
+    (e.g. "su -") session.
 
 sulogin(8):
   - has been merged from sysvinit into util-linux
