@@ -80,6 +80,7 @@ endif # BUILD_CHFN_CHSH
 
 if BUILD_SU
 bin_PROGRAMS += su
+dist_man_MANS += login-utils/su.1
 su_SOURCES = \
 	login-utils/su.c \
 	login-utils/su-common.c \
