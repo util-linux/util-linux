@@ -63,6 +63,7 @@ enum
 #include "nls.h"
 #include "pathnames.h"
 #include "env.h"
+#include "closestream.h"
 
 /* name of the pam configuration files. separate configs for su and su -  */
 #define PAM_SRVNAME_SU "su"
@@ -782,6 +783,7 @@ su_main (int argc, char **argv, int mode)
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
   textdomain (PACKAGE);
+  atexit(close_stdout);
 
   su_mode = mode;
   fast_startup = false;
