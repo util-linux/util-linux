@@ -115,21 +115,6 @@ static pam_handle_t *pamh = NULL;
 
 static int restricted = 1;	/* zero for root user */
 
-static struct option const longopts[] =
-{
-  {"command", required_argument, NULL, 'c'},
-  {"session-command", required_argument, NULL, 'C'},
-  {"fast", no_argument, NULL, 'f'},
-  {"login", no_argument, NULL, 'l'},
-  {"preserve-environment", no_argument, NULL, 'p'},
-  {"shell", required_argument, NULL, 's'},
-  {"group", required_argument, NULL, 'g'},
-  {"supp-group", required_argument, NULL, 'G'},
-  {"help", no_argument, 0, 'h'},
-  {"version", no_argument, 0, 'V'},
-  {NULL, 0, NULL, 0}
-};
-
 
 static struct passwd *
 current_getpwuid(void)
@@ -779,6 +764,20 @@ su_main (int argc, char **argv, int mode)
   gid_t groups[NGROUPS_MAX];
   int num_supp_groups = 0;
   int use_gid = 0;
+
+  static const struct option longopts[] = {
+    {"command", required_argument, NULL, 'c'},
+    {"session-command", required_argument, NULL, 'C'},
+    {"fast", no_argument, NULL, 'f'},
+    {"login", no_argument, NULL, 'l'},
+    {"preserve-environment", no_argument, NULL, 'p'},
+    {"shell", required_argument, NULL, 's'},
+    {"group", required_argument, NULL, 'g'},
+    {"supp-group", required_argument, NULL, 'G'},
+    {"help", no_argument, 0, 'h'},
+    {"version", no_argument, 0, 'V'},
+    {NULL, 0, NULL, 0}
+  };
 
   setlocale (LC_ALL, "");
   bindtextdomain (PACKAGE, LOCALEDIR);
