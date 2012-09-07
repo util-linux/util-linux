@@ -233,11 +233,12 @@ ssize_t sysfs_readlink(struct sysfs_cxt *cxt, const char *attr,
 DIR *sysfs_opendir(struct sysfs_cxt *cxt, const char *attr)
 {
 	DIR *dir;
-	int fd;
+	int fd = -1;
 
 	if (attr)
 		fd = sysfs_open(cxt, attr);
-	else
+
+	else if (cxt->dir_fd >= 0)
 		/* request to open root of device in sysfs (/sys/block/<dev>)
 		 * -- we cannot use cxt->sysfs_fd directly, because closedir()
 		 * will close this our persistent file descriptor.
