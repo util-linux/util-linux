@@ -251,7 +251,7 @@ static void add_longopt(const char *name, int has_arg)
 	long_options[long_options_nr].flag = NULL;
 	long_options[long_options_nr].val = 0;
 
-	if (long_options_nr) {
+	if (long_options_nr && name) {
 		/* Not for init! */
 		long_options[long_options_nr - 1].has_arg = has_arg;
 		long_options[long_options_nr - 1].flag = NULL;
