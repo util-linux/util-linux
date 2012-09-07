@@ -877,6 +877,7 @@ unitsize(int format) {
     case F_CYLINDER:
 	if (B.cylindersize)
 	    return B.cylindersize;
+	/* fallthrough */
     case F_SECTOR:
 	return 1;
     case F_BLOCK:
@@ -911,6 +912,7 @@ out_partition_header(char *dev, int format, struct geometry G) {
     default:
 	warnx(_("unimplemented format - using %s\n"),
 		G.cylindersize ? _("cylinders") : _("sectors"));
+	/* fallthrough */
     case F_CYLINDER:
 	if (G.cylindersize) {
 	    printf(_("Units: cylinders of %lu bytes, blocks of 1024 bytes"

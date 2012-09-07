@@ -197,6 +197,7 @@ void colcrt(FILE *f) {
 			outcol &= ~7;
 			outcol--;
 			c = ' ';
+			/* fallthrough */
 		default:
 			w = wcwidth(c);
 			if (outcol + w > 132) {
