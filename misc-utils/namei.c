@@ -189,7 +189,7 @@ readlink_to_namei(struct namei *nm, const char *path)
 
 		if (p) {
 			isrel = 1;
-			nm->relstart = p ? p - path : 0;
+			nm->relstart = p - path;
 			sz += nm->relstart + 1;
 		}
 	}
