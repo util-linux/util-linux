@@ -154,6 +154,10 @@ static int switchroot(const char *newroot)
 	}
 
 	cfd = open("/", O_RDONLY);
+	if (cfd < 0) {
+		warn(_("cannot open %s"), "/");
+		return -1;
+	}
 
 	if (mount(newroot, "/", NULL, MS_MOVE, NULL) < 0) {
 		close(cfd);
