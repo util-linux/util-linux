@@ -951,7 +951,11 @@ UL_REQUIRES_HAVE([chcpu], [cpu_set_t], [cpu_set_t type])
 AM_CONDITIONAL(BUILD_CHCPU, test "x$build_chcpu" = xyes)
 
 
-UL_BUILD_INIT([wdctl], [check])
+AC_ARG_ENABLE([wdctl],
+  AS_HELP_STRING([--disable-wdctl], [do not build wdctl]),
+  [], enable_wdctl=check
+)
+UL_BUILD_INIT([wdctl])
 UL_REQUIRES_LINUX([wdctl])
 UL_REQUIRES_HAVE([wdctl], [linux_watchdog_h], [linux/watchdog.h header file])
 AM_CONDITIONAL(BUILD_WDCTL, test "x$build_wdctl" = xyes)
