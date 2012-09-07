@@ -198,6 +198,7 @@ int main(int argc, char **argv)
 			} else {
 				show_irq = 0;
 			}
+			break;
 #ifdef LPGETSTATUS
 		case 'o':
 			cmds->op = LPABORTOPEN;
