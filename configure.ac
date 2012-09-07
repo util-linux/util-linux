@@ -76,7 +76,30 @@ case $prefix:$localstatedir in
 esac
 AC_SUBST([localstatedir])
 
-libdirname=`basename "$libdir"`
+# sed_quote separator string
+# Prefixes occurences of sed special characters and separator with \ in string.
+# Suggested separators: , / (space) .
+# Note that the character is prefixed with \ so characters that get special meaning
+# will not work as separator. eg: n \ ? ( { ) }
+sed_quote()
+{
+        echo -n "$2" | sed -e 's/\n/\\n/' -e 's|\([][*.$|'"$1"']\)|\\\1|g'
+}
+
+# remove_dir_prefix prefix path
+# Remove leading path prefix.
+# Return directory name without leading slash (basename drop-in).
+# Handle prefix trailing slash.
+# // (double slash) is not handled.
+remove_dir_prefix(){
+    local prefix="$(sed_quote "," "$1")"
+    echo "$1" | grep -q '/$' || prefix="${prefix}/"
+    local re="^$(sed_quote "," "$prefix")"
+    echo "$2" | grep -q "$re" || re=/
+    echo "$2" | sed -e "s,${re},,"
+}
+
+libdirname=`remove_dir_prefix '${exec_prefix}' "$libdir"`
 AC_SUBST([libdirname])
 
 # The original default values of {bin,sbin,lib}dir
