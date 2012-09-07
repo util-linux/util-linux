@@ -17,6 +17,8 @@
 #include "xalloc.h"
 #include "nls.h"
 
+#define NULL_DEVICE	"/dev/null"
+
 void setup_pager(void);
 
 static const char *pager_argv[] = { "sh", "-c", NULL, NULL };
@@ -40,7 +42,10 @@ static inline void close_pair(int fd[2])
 
 static inline void dup_devnull(int to)
 {
-	int fd = open("/dev/null", O_RDWR);
+	int fd = open(NULL_DEVICE, O_RDWR);
+
+	if (fd < 0)
+		err(EXIT_FAILURE, _("cannot open %s"), NULL_DEVICE);
 	dup2(fd, to);
 	close(fd);
 }
@@ -70,7 +75,7 @@ static int start_command(struct child_process *cmd)
 		if (need_in) {
 			dup2(fdin[0], 0);
 			close_pair(fdin);
-		} else if (cmd->in) {
+		} else if (cmd->in > 0) {
 			dup2(cmd->in, 0);
 			close(cmd->in);
 		}
