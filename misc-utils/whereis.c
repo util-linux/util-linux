@@ -216,7 +216,8 @@ findin(char *dir, char *cp)
 		/* refuse excessively long names */
 		strcpy(dirbuf, dir);
 		d = strchr(dirbuf, '*');
-		*d = 0;
+		if (d)
+			*d = 0;
 		dirp = opendir(dirbuf);
 		if (dirp == NULL)
 			return;
