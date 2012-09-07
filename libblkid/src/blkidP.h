@@ -343,7 +343,7 @@ extern void blkid_init_debug(int mask);
 extern void blkid_debug_dump_dev(blkid_dev dev);
 extern void blkid_debug_dump_tag(blkid_tag tag);
 
-#define DBG(m,x)	if ((m) & blkid_debug_mask) x;
+#define DBG(m,x)	do { if ((m) & blkid_debug_mask) x; } while (0)
 
 #else /* !CONFIG_BLKID_DEBUG */
 #define DBG(m,x)
