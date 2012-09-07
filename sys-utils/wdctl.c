@@ -34,6 +34,28 @@
 #include "strutils.h"
 #include "tt.h"
 
+/*
+ * since 2.6.18
+ */
+#ifndef WDIOC_SETPRETIMEOUT
+# define WDIOC_SETPRETIMEOUT    _IOWR(WATCHDOG_IOCTL_BASE, 8, int)
+# define WDIOC_GETPRETIMEOUT	_IOR(WATCHDOG_IOCTL_BASE, 9, int)
+# define WDIOC_GETTIMELEFT	_IOR(WATCHDOG_IOCTL_BASE, 10, int)
+# define WDIOF_POWEROVER	0x0040	/* Power over voltage */
+# define WDIOF_SETTIMEOUT	0x0080  /* Set timeout (in seconds) */
+# define WDIOF_MAGICCLOSE	0x0100	/* Supports magic close char */
+# define WDIOF_PRETIMEOUT	0x0200  /* Pretimeout (in seconds), get/set */
+# define WDIOF_KEEPALIVEPING	0x8000	/* Keep alive ping reply */
+#endif
+
+/*
+ * since 3.5
+ */
+#ifndef WDIOF_ALARMONLY
+# define WDIOF_ALARMONLY	0x0400	/* Watchdog triggers a management or
+					   other external alarm not a reboot */
+#endif
+
 struct wdflag {
 	uint32_t	flag;
 	const char	*name;
@@ -51,7 +73,8 @@ static const struct wdflag wdflags[] = {
 	{ WDIOF_POWEROVER,     "POWEROVER",  N_("Power over voltage") },
 	{ WDIOF_POWERUNDER,    "POWERUNDER", N_("Power bad/power fault") },
 	{ WDIOF_PRETIMEOUT,    "PRETIMEOUT", N_("Pretimeout (in seconds)") },
-	{ WDIOF_SETTIMEOUT,    "SETTIMEOUT", N_("Set timeout (in seconds)") }
+	{ WDIOF_SETTIMEOUT,    "SETTIMEOUT", N_("Set timeout (in seconds)") },
+	{ WDIOF_ALARMONLY,     "ALARMONLY",  N_("Not trigger reboot") }
 };
 
 
