@@ -501,7 +501,7 @@ static int read_speed(const char *devname)
 
 	name = rindex(devname, '/') + 1;
 
-	while (!feof(f)) {
+	while (name && !feof(f)) {
 		char line[512];
 		char *str;
 
@@ -513,7 +513,7 @@ static int read_speed(const char *devname)
 			if (strncmp(line, "drive name:", 11) == 0) {
 				str = strtok(&line[11], "\t ");
 				drive_number = 0;
-				while (strncmp(name, str, strlen(name)) != 0) {
+				while (str && strncmp(name, str, strlen(name)) != 0) {
 					drive_number++;
 					str = strtok(NULL, "\t ");
 					if (!str)
