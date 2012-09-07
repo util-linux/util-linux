@@ -433,7 +433,7 @@ static void fixtty(void)
 
 	reset_virtual_console(&tp, fl);
 
-	if (tcsetattr(0, TCSADRAIN, &tp))
+	if (tcsetattr(STDIN_FILENO, TCSADRAIN, &tp))
 		warn(_("tcsetattr failed"));
 }
 
@@ -522,10 +522,12 @@ int main(int argc, char **argv)
 
 		if ((fd = open(tty, O_RDWR)) < 0) {
 			warn(_("cannot open %s"), tty);
-			fd = dup(0);
+			fd = dup(STDIN_FILENO);
 		}
 
-		if (!isatty(fd)) {
+		if (fd < 0) {
+			warn(_("cannot duplicate stdin file descriptor"));
+		} else if (!isatty(fd)) {
 			warn(_("%s: not a tty"), tty);
 			close(fd);
 		} else {
@@ -550,30 +552,31 @@ int main(int argc, char **argv)
 				if (ttypgrp > 0)
 					ioctl(0, TIOCNOTTY, (char *)1);
 				sigaction(SIGHUP, &saved_sighup, NULL);
-				close(0);
-				close(1);
-				close(2);
+				close(STDIN_FILENO);
+				close(STDOUT_FILENO);
+				close(STDERR_FILENO);
 				if (fd > 2)
 					close(fd);
 				if ((fd = open(tty, O_RDWR|O_NOCTTY)) < 0)
 					warn(_("cannot open %s"), tty);
 				else {
-					ioctl(0, TIOCSCTTY, (char *)1);
+					ioctl(STDIN_FILENO, TIOCSCTTY, (char *)1);
 					tcsetpgrp(fd, ppgrp);
-					dup2(fd, 0);
-					dup2(fd, 1);
-					dup2(fd, 2);
-					if (fd > 2)
+					dup2(fd, STDIN_FILENO);
+					dup2(fd, STDOUT_FILENO);
+					dup2(fd, STDERR_FILENO);
+
+					if (fd > STDERR_FILENO)
 						close(fd);
 				}
 			} else
-				if (fd > 2)
+				if (fd > STDERR_FILENO)
 					close(fd);
 		}
 	} else if (getpid() == 1) {
 		/* We are init. We hence need to set a session anyway */
 		setsid();
-		if (ioctl(0, TIOCSCTTY, (char *)1))
+		if (ioctl(STDIN_FILENO, TIOCSCTTY, (char *)1))
 			warn(_("TIOCSCTTY: ioctl failed"));
 	}
 
