@@ -110,10 +110,13 @@ int blkid_flush_cache(blkid_cache cache)
 			sprintf(tmp, "%s-XXXXXX", filename);
 			fd = mkstemp(tmp);
 			if (fd >= 0) {
-				file = fdopen(fd, "w");
-				opened = tmp;
+				if (fchmod(fd, 0644) != 0)
+					DBG(DEBUG_SAVE,	printf("%s: fchmod failed\n", filename));
+				else if ((file = fdopen(fd, "w")))
+					opened = tmp;
+				if (!file)
+					close(fd);
 			}
-			fchmod(fd, 0644);
 		}
 	}
 
