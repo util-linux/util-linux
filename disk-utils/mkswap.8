@@ -54,7 +54,7 @@ like many others mkfs-like utils,
 However,
 .B mkswap
 refuses to erase the first block on a device with a disk
-label (SUN, BSD, ...) and on a whole disk (e.g. /dev/sda).
+label (SUN, BSD, ...).
 
 .SH OPTIONS
 .TP
@@ -70,8 +70,7 @@ or partition it resides on.
 
 Also, without this option,
 .B mkswap
-will refuse to erase the first block on a device with a partition table and on
-a whole disk (e.g. /dev/sda).
+will refuse to erase the first block on a device with a partition table.
 .TP
 .BR \-L , " \-\-label " \fIlabel\fR
 Specify a \fIlabel\fR for the device, to allow
