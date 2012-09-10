@@ -210,7 +210,18 @@ int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
  * @tb: mountinfo file (/proc/self/mountinfo)
  * @root: returns pointer to the root filesystem (/)
  *
- * Returns: 0 on success or -1 case of error.
+ * The function uses parent ID from mountinfo file to determine root filesystem
+ * (the filesystem with the smallest ID). The function is designed mostly for
+ * applications where is necessary to sort mountpoints by IDs to get the tree
+ * of the mountpoints (e.g. findmnt default output).
+ *
+ * If you're not sure than use
+ *
+ *	mnt_table_find_target(tb, "/", MNT_ITER_BACKWARD);
+ *
+ * this is more robust and usable for arbitrary tab file (including fstab).
+ *
+ * Returns: 0 on success or less then zero case of error.
  */
 int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
 {
