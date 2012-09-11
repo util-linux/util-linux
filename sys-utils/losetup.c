@@ -18,7 +18,6 @@
 #include "nls.h"
 #include "strutils.h"
 #include "loopdev.h"
-#include "xgetpass.h"
 #include "closestream.h"
 #include "optutils.h"
 
@@ -166,10 +165,8 @@ static void usage(FILE *out)
 		" -j, --associated <file>       list all devices associated with <file>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 
-	fputs(_(" -e, --encryption <type>       enable encryption with specified <name/num>\n"
-		" -o, --offset <num>            start at offset <num> into file\n"
+	fputs(_(" -o, --offset <num>            start at offset <num> into file\n"
 		"     --sizelimit <num>         device limited to <num> bytes of the file\n"
-		" -p, --pass-fd <num>           read passphrase from file descriptor <num>\n"
 		" -P, --partscan                create partitioned loop device\n"
 		" -r, --read-only               setup read-only loop device\n"
 		"     --show                    print device name after setup (with -f)\n"
@@ -207,8 +204,8 @@ static void warn_size(const char *filename, uint64_t size)
 int main(int argc, char **argv)
 {
 	struct loopdev_cxt lc;
-	int act = 0, flags = 0, passfd = -1, c;
-	char *file = NULL, *encryption = NULL;
+	int act = 0, flags = 0, c;
+	char *file = NULL;
 	uint64_t offset = 0, sizelimit = 0;
 	int res = 0, showdev = 0, lo_flags = 0;
 
@@ -281,7 +278,7 @@ int main(int argc, char **argv)
 			break;
 		case 'E':
 		case 'e':
-			encryption = optarg;
+			errx(EXIT_FAILURE, _("encryption not supported, use cryptsetup(8) instead"));
 			break;
 		case 'f':
 			act = A_FIND_FREE;
@@ -298,8 +295,7 @@ int main(int argc, char **argv)
 			flags |= LOOPDEV_FL_OFFSET;
 			break;
 		case 'p':
-			passfd = strtou32_or_err(optarg,
-					_("invalid passphrase file descriptor"));
+                        warn(_("--pass-fd is no longer supported"));
 			break;
 		case 'P':
 			lo_flags |= LO_FLAGS_PARTSCAN;
@@ -361,10 +357,10 @@ int main(int argc, char **argv)
 	}
 
 	if (act != A_CREATE &&
-	    (encryption || sizelimit || passfd != -1 || lo_flags || showdev))
+	    (sizelimit || lo_flags || showdev))
 		errx(EXIT_FAILURE,
 			_("the options %s are allowed to loop device setup only"),
-			"--{encryption,sizelimit,pass-fd,read-only,show}");
+			"--{sizelimit,read-only,show}");
 
 	if ((flags & LOOPDEV_FL_OFFSET) &&
 	    act != A_CREATE && (act != A_SHOW || !file))
@@ -373,16 +369,8 @@ int main(int argc, char **argv)
 	switch (act) {
 	case A_CREATE:
 	{
-		char *pass = NULL;
 		int hasdev = loopcxt_has_device(&lc);
 
-		if (encryption) {
-#ifdef MCL_FUTURE
-			if(mlockall(MCL_CURRENT | MCL_FUTURE))
-				err(EXIT_FAILURE, _("couldn't lock into memory"));
-#endif
-			pass = xgetpass(passfd, _("Password: "));
-		}
 		do {
 			/* Note that loopcxt_{find_unused,set_device}() resets
 			 * loopcxt struct.
@@ -391,8 +379,6 @@ int main(int argc, char **argv)
 				warnx(_("not found unused device"));
 				break;
 			}
-			if (encryption && pass)
-				loopcxt_set_encryption(&lc, encryption, pass);
 			if (flags & LOOPDEV_FL_OFFSET)
 				loopcxt_set_offset(&lc, offset);
 			if (flags & LOOPDEV_FL_SIZELIMIT)
@@ -414,8 +400,6 @@ int main(int argc, char **argv)
 				break;
 			}
 		} while (hasdev == 0);
-
-		free(pass);
 
 		if (res == 0) {
 			if (showdev)

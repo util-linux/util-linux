@@ -1049,62 +1049,6 @@ int loopcxt_set_backing_file(struct loopdev_cxt *lc, const char *filename)
 	return 0;
 }
 
-static int digits_only(const char *s)
-{
-	while (*s)
-		if (!isdigit(*s++))
-			return 0;
-	return 1;
-}
-
-/*
- * @lc: context
- * @encryption: encryption name / type (see lopsetup man page)
- * @password
- *
- * Note that the encryption functionality is deprecated an unmaintained. Use
- * cryptsetup (it also supports AES-loops).
- *
- * The setting is removed by loopcxt_set_device() loopcxt_next()!
- *
- * Returns: 0 on success, <0 on error.
- */
-int loopcxt_set_encryption(struct loopdev_cxt *lc,
-			   const char *encryption,
-			   const char *password)
-{
-	if (!lc)
-		return -EINVAL;
-
-	DBG(lc, loopdev_debug("setting encryption '%s'", encryption));
-
-	if (encryption && *encryption) {
-		if (digits_only(encryption)) {
-			lc->info.lo_encrypt_type = atoi(encryption);
-		} else {
-			lc->info.lo_encrypt_type = LO_CRYPT_CRYPTOAPI;
-			snprintf((char *)lc->info.lo_crypt_name, LO_NAME_SIZE,
-				 "%s", encryption);
-		}
-	}
-
-	switch (lc->info.lo_encrypt_type) {
-	case LO_CRYPT_NONE:
-		lc->info.lo_encrypt_key_size = 0;
-		break;
-	default:
-		DBG(lc, loopdev_debug("setting encryption key"));
-		memset(lc->info.lo_encrypt_key, 0, LO_KEY_SIZE);
-		strncpy((char *)lc->info.lo_encrypt_key, password, LO_KEY_SIZE);
-		lc->info.lo_encrypt_key[LO_KEY_SIZE - 1] = '\0';
-		lc->info.lo_encrypt_key_size = LO_KEY_SIZE;
-		break;
-	}
-
-	DBG(lc, loopdev_debug("encryption successfully set"));
-	return 0;
-}
-
 /*
  * @cl: context
  *

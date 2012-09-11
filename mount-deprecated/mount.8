@@ -534,11 +534,6 @@ Don't canonicalize paths. The mount command canonicalizes all paths
 file. This option can be used together with the
 .B \-f
 flag for already canonicalized absolut paths.
-.IP "\fB\-p, \-\-pass\-fd \fInum\fP"
-In case of a loop mount with encryption, read the passphrase from
-file descriptor
-.I num
-instead of from the terminal.
 .IP "\fB\-s\fP"
 Tolerate sloppy mount options rather than failing. This will ignore
 mount options not supported by a filesystem type. Not all filesystems
@@ -2707,8 +2702,8 @@ not specified or the filesystem is known for libblkid, for example:
 .B "mount -t ext3 /tmp/disk.img /mnt"
 .sp
 .RE
-This type of mount knows about four options, namely
-.BR loop ", " offset ", " sizelimit " and " encryption ,
+This type of mount knows about three options, namely
+.BR loop ", " offset ", " sizelimit " ,
 that are really options to
 .BR \%losetup (8).
 (These options can be used in addition to those specific

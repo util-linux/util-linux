@@ -40,8 +40,6 @@ Setup loop device:
 .sp
 .in +5
 .B losetup
-.RB [{ \-e | \-E }
-.IR encryption ]
 .RB [ \-o
 .IR offset ]
 .RB [ \-\-sizelimit
@@ -83,8 +81,6 @@ force loop driver to reread size of the file associated with the specified loop 
 detach the file or device associated with the specified loop device(s)
 .IP "\fB\-D, \-\-detach-all\fP"
 detach all associated loop devices
-.IP "\fB\-e, \-E, \-\-encryption \fIencryption_type\fP"
-enable data encryption with specified name or number
 .IP "\fB\-f, \-\-find\fP"
 find the first unused loop device. If a
 .I file
@@ -99,10 +95,6 @@ the data start is moved \fIoffset\fP bytes into the specified file or
 device
 .IP "\fB\-\-sizelimit \fIsize\fP"
 the data end is set to no more than \fIsize\fP bytes after the data start
-.IP "\fB\-p, \-\-pass-fd \fInum\fP"
-read the passphrase from file descriptor with number
-.I num
-instead of from the terminal
 .IP "\fB\-P, \-\-partscan\fP"
 force kernel to scan partition table on newly created loop device
 .IP "\fB\-r, \-\-read-only\fP"
@@ -117,25 +109,8 @@ argument are present.
 verbose mode
 
 .SH ENCRYPTION
-.B Cryptoloop is deprecated in favor of dm-crypt. For more details see
-.B cryptsetup (8). It is possible that all bug reports regarding to -E/-e
-.B options will be ignored.
-
-
-It is possible to specify transfer functions (for encryption/decryption
-or other purposes) using one of the
-.B \-E
-and
-.B \-e
-options.
-There are two mechanisms to specify the desired encryption: by number
-and by name. If an encryption is specified by number then one
-has to make sure that the Linux kernel knows about the encryption with that
-number, probably by patching the kernel. Standard numbers that are
-always present are 0 (no encryption) and 1 (XOR encryption).
-When the cryptoloop module is loaded (or compiled in), it uses number 18.
-This cryptoloop module will take the name of an arbitrary encryption type
-and find the module that knows how to perform that encryption.
+.B Cryptoloop is no longer supported in favor of dm-crypt. For more details see
+.B cryptsetup (8).
 
 .SH RETURN VALUE
 .B losetup

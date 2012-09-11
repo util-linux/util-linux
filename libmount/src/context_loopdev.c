@@ -7,7 +7,6 @@
 
 /*
  * DOCS: - "lo@" prefix for fstype is unsupported
- *	 - encyption= mount option for loop device is unssuported
  */
 
 #include <blkid.h>
@@ -35,8 +34,7 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 
 	if (cxt->user_mountflags & (MNT_MS_LOOP |
 				    MNT_MS_OFFSET |
-				    MNT_MS_SIZELIMIT |
-				    MNT_MS_ENCRYPTION)) {
+				    MNT_MS_SIZELIMIT)) {
 
 		DBG(CXT, mnt_debug_h(cxt, "loopdev specific options detected"));
 		return 1;
@@ -134,7 +132,7 @@ static int is_mounted_same_loopfile(struct libmnt_context *cxt,
 int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 {
 	const char *backing_file, *optstr, *loopdev = NULL;
-	char *val = NULL, *enc = NULL, *pwd = NULL;
+	char *val = NULL;
 	size_t len;
 	struct loopdev_cxt lc;
 	int rc = 0, lo_flags = 0;
@@ -206,13 +204,8 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 	 */
 	if (rc == 0 && (cxt->user_mountflags & MNT_MS_ENCRYPTION) &&
 	    mnt_optstr_get_option(optstr, "encryption", &val, &len) == 0) {
-		enc = strndup(val, len);
-		if (val && !enc)
-			rc = -ENOMEM;
-		if (enc && cxt->pwd_get_cb) {
-			DBG(CXT, mnt_debug_h(cxt, "asking for pass"));
-			pwd = cxt->pwd_get_cb(cxt);
-		}
+		DBG(CXT, mnt_debug_h(cxt, "encryption no longer supported"));
+		rc = -MNT_ERR_MOUNTOPT;
 	}
 
 	if (rc == 0 && is_mounted_same_loopfile(cxt,
@@ -251,8 +244,6 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 			rc = loopcxt_set_offset(&lc, offset);
 		if (!rc && sizelimit)
 			rc = loopcxt_set_sizelimit(&lc, sizelimit);
-		if (!rc && enc && pwd)
-			loopcxt_set_encryption(&lc, enc, pwd);
 		if (!rc)
 			loopcxt_set_flags(&lc, lo_flags);
 		if (rc) {
@@ -305,11 +296,6 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 		loopcxt_set_fd(&lc, -1, 0);
 	}
 done:
-	free(enc);
-	if (pwd && cxt->pwd_release_cb) {
-		DBG(CXT, mnt_debug_h(cxt, "release pass"));
-		cxt->pwd_release_cb(cxt, pwd);
-	}
 	loopcxt_deinit(&lc);
 	return rc;
 }
