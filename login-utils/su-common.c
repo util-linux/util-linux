@@ -300,7 +300,12 @@ create_watching_parent (void)
 	}
       if (pid != (pid_t)-1)
 	if (WIFSIGNALED (status))
-	  status = WTERMSIG (status) + 128;
+	  {
+	    status = WTERMSIG (status) + 128;
+	    if (WCOREDUMP (status))
+	      fprintf (stderr, _("%s (core dumped)\n"),
+                 strsignal (WTERMSIG (status)));
+	  }
 	else
 	  status = WEXITSTATUS (status);
       else
