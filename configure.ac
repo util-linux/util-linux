@@ -61,17 +61,9 @@ NONE:NONE | NONE:/usr | /usr:*)
 esac
 
 case $prefix:$localstatedir in
-  NONE:'${prefix}/var')
+  NONE:'${prefix}/var' | /usr:'${prefix}/var')
     localstatedir=/run
     AC_MSG_NOTICE([  --localstatedir defaults to /run])
-    ;;
-  *:'${prefix}/var')
-    localstatedir=${prefix}/run
-    ;;
-  NONE:*)
-    ;;
-  *:*)
-    localstatedir=${prefix}/${localstatedir}
     ;;
 esac
 AC_SUBST([localstatedir])
