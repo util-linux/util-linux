@@ -68,31 +68,6 @@ case $prefix:$localstatedir in
 esac
 AC_SUBST([localstatedir])
 
-# sed_quote separator string
-# Prefixes occurences of sed special characters and separator with \ in string.
-# Suggested separators: , / (space) .
-# Note that the character is prefixed with \ so characters that get special meaning
-# will not work as separator. eg: n \ ? ( { ) }
-sed_quote()
-{
-        echo -n "$2" | sed -e 's/\n/\\n/' -e 's|\([][*.$|'"$1"']\)|\\\1|g'
-}
-
-# remove_dir_prefix prefix path
-# Remove leading path prefix.
-# Return directory name without leading slash (basename drop-in).
-# Handle prefix trailing slash.
-# // (double slash) is not handled.
-remove_dir_prefix(){
-    local prefix="$(sed_quote "," "$1")"
-    echo "$1" | grep -q '/$' || prefix="${prefix}/"
-    local re="^$(sed_quote "," "$prefix")"
-    echo "$2" | grep -q "$re" || re=/
-    echo "$2" | sed -e "s,${re},,"
-}
-
-libdirname=`remove_dir_prefix '${exec_prefix}' "$libdir"`
-AC_SUBST([libdirname])
 
 # The original default values of {bin,sbin,lib}dir
 usrbin_execdir='${exec_prefix}/bin'
@@ -101,7 +76,12 @@ AC_SUBST([usrbin_execdir])
 usrsbin_execdir='${exec_prefix}/sbin'
 AC_SUBST([usrsbin_execdir])
 
-usrlib_execdir='${exec_prefix}/'$libdirname
+case $libdir in
+ '${exec_prefix}/'* | '${prefix}/'* | /usr/*)
+    usrlib_execdir=$libdir ;;
+ *)
+    usrlib_execdir='${exec_prefix}'$libdir ;;
+esac
 AC_SUBST([usrlib_execdir])
 
 
@@ -1385,7 +1365,6 @@ AC_MSG_RESULT([
 	sbindir:           ${sbindir}
 	libdir:            ${libdir}
 	includedir:        ${includedir}
-        libdirname:        ${libdirname}
         usrbin_execdir:    ${usrbin_execdir}
         usrsbin_execdir:   ${usrsbin_execdir}
         usrlib_execdir:    ${usrlib_execdir}
