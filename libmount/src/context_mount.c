@@ -587,6 +587,9 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 	if (rc)
 		return rc;
 
+	if (filesystems == NULL)
+		return -MNT_ERR_NOFSTYPE;
+
 	for (fp = filesystems; *fp; fp++) {
 		rc = do_mount(cxt, *fp);
 		if (mnt_context_get_status(cxt))
