@@ -58,12 +58,10 @@ static int fix_optstr(struct libmnt_context *cxt)
 	 * but exception is command line for /sbin/mount.<type> helpers. Let's
 	 * save the original user=<name> to call the helpers with unchanged
 	 * "user" setting.
-	 *
-	 * Don't check for MNT_MS_USER in cxt->user_mountflags, the flag maybe
-	 * removed by evaluate_permissions().
 	 */
-	if (!mnt_optstr_get_option(fs->user_optstr, "user", &val, &valsz)) {
-		if (val) {
+	if (cxt->user_mountflags & MNT_MS_USER) {
+		if (!mnt_optstr_get_option(fs->user_optstr,
+					"user", &val, &valsz) && val) {
 			cxt->orig_user = strndup(val, valsz);
 			if (!cxt->orig_user) {
 				rc = -ENOMEM;
@@ -157,7 +155,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 			goto done;
 	}
 
-	if (!rc && cxt->user_mountflags & MNT_MS_USER)
+	if (!rc && cxt->restricted && (cxt->user_mountflags & MNT_MS_USER))
 		rc = mnt_optstr_fix_user(&fs->user_optstr);
 
 	/* refresh merged optstr */
@@ -256,8 +254,6 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		 */
 		cxt->user_mountflags &= ~MNT_MS_OWNER;
 		cxt->user_mountflags &= ~MNT_MS_GROUP;
-		cxt->user_mountflags &= ~MNT_MS_USER;
-		cxt->user_mountflags &= ~MNT_MS_USERS;
 	} else {
 		/*
 		 * user mount
