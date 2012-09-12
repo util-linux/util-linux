@@ -473,6 +473,10 @@ static int get_filesystems(const char *filename, char ***filesystems, const char
 	return rc;
 }
 
+/*
+ * Returns zero also if not found any matching filesystem. Always check
+ * @filesystems pointer!
+ */
 int mnt_get_filesystems(char ***filesystems, const char *pattern)
 {
 	int rc;
