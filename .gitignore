@@ -96,6 +96,7 @@ tests/run.sh.trs
 /fsck.minix
 /fsfreeze
 /fstrim
+/blkdiscard
 /getopt
 /hexdump
 /hwclock

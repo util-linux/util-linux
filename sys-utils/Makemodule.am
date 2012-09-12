@@ -54,6 +54,11 @@ dist_man_MANS += sys-utils/fstrim.8
 fstrim_SOURCES = sys-utils/fstrim.c
 fstrim_LDADD = $(LDADD) libcommon.la
 
+sbin_PROGRAMS += blkdiscard
+dist_man_MANS += sys-utils/blkdiscard.8
+blkdiscard_SOURCES = sys-utils/blkdiscard.c
+blkdiscard_LDADD = $(LDADD) libcommon.la
+
 usrbin_exec_PROGRAMS += cytune
 dist_man_MANS += sys-utils/cytune.8
 cytune_SOURCES = sys-utils/cytune.c sys-utils/cyclades.h
