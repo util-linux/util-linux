@@ -99,7 +99,15 @@ remove_dir_prefix(){
     echo "$2" | sed -e "s,${re},,"
 }
 
-libdirname=`remove_dir_prefix '${exec_prefix}' "$libdir"`
+libdirname1=`remove_dir_prefix '${exec_prefix}' "$libdir"`
+libdirname2=`remove_dir_prefix "${exec_prefix}" "$libdir"`
+# pick the shorter - a prefix was removed there
+if [ $(echo "$libdirname1" | wc -c) -lt $(echo "$libdirname2" | wc -c) ] ; then
+    libdirname=libdirname1
+else
+    libdirname=libdirname2
+fi
+
 AC_SUBST([libdirname])
 
 # The original default values of {bin,sbin,lib}dir
