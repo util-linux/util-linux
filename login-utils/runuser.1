@@ -3,10 +3,21 @@
 runuser \- run a command with substitute user and group ID
 .SH SYNOPSIS
 .B runuser
-[options...] [\-] [user [args...]]
+[options] -u
+.IR user
+.IR "command " [ argument ...]
+.LP
+.B runuser
+[options] [-]
+[
+.IR "user " [ argument ...]
+]
 .SH DESCRIPTION
 .B runuser
 allows to run commands with substitute user and group ID.
+If the option \fB\-u\fR not given, fallback to
+.B su
+compatible semantic and shell is executed.
 The difference between the commands
 .B runuser
 and
@@ -37,12 +48,7 @@ and
 .B LOGNAME
 if the target
 .I user
-is not root).  It is recommended to always use the
-.B \-\-login
-option (instead it's shortcut
-.BR \- )
-to avoid side effects caused by mixing environments.
-.PP
+is not root).
 This version of
 .B runuser
 uses PAM for session management.

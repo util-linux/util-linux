@@ -439,7 +439,8 @@ modify_environment (const struct passwd *pw, const char *shell)
       if (term)
 	xsetenv ("TERM", term, 1);
       xsetenv ("HOME", pw->pw_dir, 1);
-      xsetenv ("SHELL", shell, 1);
+      if (shell)
+	xsetenv ("SHELL", shell, 1);
       xsetenv ("USER", pw->pw_name, 1);
       xsetenv ("LOGNAME", pw->pw_name, 1);
       set_path(pw);
@@ -451,7 +452,8 @@ modify_environment (const struct passwd *pw, const char *shell)
       if (change_environment)
         {
           xsetenv ("HOME", pw->pw_dir, 1);
-          xsetenv ("SHELL", shell, 1);
+	  if (shell)
+            xsetenv ("SHELL", shell, 1);
 	  if (getlogindefs_bool ("ALWAYS_SET_PATH", 0))
 	    set_path(pw);
 
@@ -571,35 +573,47 @@ restricted_shell (const char *shell)
 static void __attribute__((__noreturn__))
 usage (int status)
 {
-  if (status != EXIT_SUCCESS)
-    fprintf (stderr, _("Try `%s --help' for more information.\n"),
-	     program_invocation_short_name);
-  else
-    {
-      fputs(USAGE_HEADER, stdout);
-      printf (_(" %s [options] [-] [USER [arg]...]\n"), program_invocation_short_name);
-      fputs (_("\n\
- Change the effective user id and group id to that of USER.\n\
- A mere - implies -l.   If USER not given, assume root.\n"), stdout);
-      fputs(USAGE_OPTIONS, stdout);
-      fputs (_("\
- -, -l, --login               make the shell a login shell\n\
- -c, --command <command>      pass a single command to the shell with -c\n\
- --session-command <command>  pass a single command to the shell with -c\n\
-                              and do not create a new session\n\
- -g --group=group             specify the primary group\n\
- -G --supp-group=group        specify a supplemental group\n\
- -f, --fast                   pass -f to the shell (for csh or tcsh)\n\
- -m, --preserve-environment   do not reset environment variables\n\
- -p                           same as -m\n\
- -s, --shell <shell>          run shell if /etc/shells allows it\n\
-"), stdout);
+  if (su_mode == RUNUSER_MODE) {
+    fputs(USAGE_HEADER, stdout);
+    printf (_(" %s [options] -u <USER> COMMAND\n"), program_invocation_short_name);
+    printf (_(" %s [options] [-] [USER [arg]...]\n"), program_invocation_short_name);
+    fputs (_("\n"
+    "Run COMMAND with the effective <user> id and group id. If -u not\n"
+    "given, fallback to su(1) compatible semantic and shell is executed.\n"
+    "The options -l, -c, -f, -s are mutually exclusive to -u.\n"), stdout);
 
-      fputs(USAGE_SEPARATOR, stdout);
-      fputs(USAGE_HELP, stdout);
-      fputs(USAGE_VERSION, stdout);
-      printf(USAGE_MAN_TAIL("su(1)"));
-    }
+    fputs(USAGE_OPTIONS, stdout);
+
+    fputs (_(
+    " -u, --user <user>               username\n"), stdout);
+
+  } else {
+    fputs(USAGE_HEADER, stdout);
+    printf (_(" %s [options] [-] [USER [arg]...]\n"), program_invocation_short_name);
+    fputs (_("\n"
+    "Change the effective user id and group id to that of USER.\n"
+    "A mere - implies -l.   If USER not given, assume root.\n"), stdout);
+
+    fputs(USAGE_OPTIONS, stdout);
+  }
+
+  fputs (_(
+    " -m, -p, --preserve-environment  do not reset environment variables\n"
+    " -g, --group <group>             specify the primary group\n"
+    " -G, --supp-group <group>        specify a supplemental group\n\n"), stdout);
+
+  fputs (_(
+    " -, -l, --login                  make the shell a login shell\n"
+    " -c, --command <command>         pass a single command to the shell with -c\n"
+    " --session-command <command>     pass a single command to the shell with -c\n"
+    "                                 and do not create a new session\n"
+    " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
+    " -s, --shell <shell>             run shell if /etc/shells allows it\n"), stdout);
+
+  fputs(USAGE_SEPARATOR, stdout);
+  fputs(USAGE_HELP, stdout);
+  fputs(USAGE_VERSION, stdout);
+  printf(USAGE_MAN_TAIL(su_mode == SU_MODE ? "su(1)" : "runuser(1)"));
   exit (status);
 }
 
@@ -635,7 +649,7 @@ int
 su_main (int argc, char **argv, int mode)
 {
   int optc;
-  const char *new_user = DEFAULT_USER;
+  const char *new_user = DEFAULT_USER, *runuser_user = NULL;
   char *command = NULL;
   int request_same_session = 0;
   char *shell = NULL;
@@ -655,6 +669,7 @@ su_main (int argc, char **argv, int mode)
     {"shell", required_argument, NULL, 's'},
     {"group", required_argument, NULL, 'g'},
     {"supp-group", required_argument, NULL, 'G'},
+    {"user", required_argument, NULL, 'u'},		/* runuser only */
     {"help", no_argument, 0, 'h'},
     {"version", no_argument, 0, 'V'},
     {NULL, 0, NULL, 0}
@@ -670,7 +685,7 @@ su_main (int argc, char **argv, int mode)
   simulate_login = false;
   change_environment = true;
 
-  while ((optc = getopt_long (argc, argv, "c:fg:G:lmps:hV", longopts, NULL)) != -1)
+  while ((optc = getopt_long (argc, argv, "+c:fg:G:lmps:u:hV", longopts, NULL)) != -1)
     {
       switch (optc)
 	{
@@ -720,6 +735,12 @@ su_main (int argc, char **argv, int mode)
 	  shell = optarg;
 	  break;
 
+	case 'u':
+	  if (su_mode != RUNUSER_MODE)
+	    usage (EXIT_FAILURE);
+	  runuser_user = optarg;
+	  break;
+
 	case 'h':
 	  usage(0);
 
@@ -739,8 +760,21 @@ su_main (int argc, char **argv, int mode)
       simulate_login = true;
       ++optind;
     }
-  if (optind < argc)
+
+  /* if not "-u <user>" specified then fallback to classic su(1) */
+  if (!runuser_user && optind < argc)
     new_user = argv[optind++];
+  else {
+      /* runuser -u <command> */
+    new_user = runuser_user;
+    if (shell || fast_startup || command || simulate_login) {
+      errx(EXIT_FAILURE,
+	   _("options --{shell,fast,command,session-command,login} and "
+	     "--user are mutually exclusive."));
+    }
+    if (optind == argc)
+      errx(EXIT_FAILURE, _("COMMAND not specified."));
+  }
 
   if ((num_supp_groups || use_gid) && restricted)
     errx(EXIT_FAILURE, _("only root can specify alternative groups"));
@@ -784,18 +818,23 @@ su_main (int argc, char **argv, int mode)
   if (request_same_session || !command || !pw->pw_uid)
     same_session = 1;
 
-  if (!shell && !change_environment)
-    shell = getenv ("SHELL");
-  if (shell && getuid () != 0 && restricted_shell (pw->pw_shell))
-    {
-      /* The user being su'd to has a nonstandard shell, and so is
-	 probably a uucp account or has restricted access.  Don't
-	 compromise the account by allowing access with a standard
-	 shell.  */
-      warnx (_("using restricted shell %s"), pw->pw_shell);
-      shell = NULL;
-    }
-  shell = xstrdup (shell ? shell : pw->pw_shell);
+  /* initialize shell variable only if "-u <user>" not specified */
+  if (runuser_user) {
+    shell = NULL;
+  } else {
+    if (!shell && !change_environment)
+      shell = getenv ("SHELL");
+    if (shell && getuid () != 0 && restricted_shell (pw->pw_shell))
+      {
+	/* The user being su'd to has a nonstandard shell, and so is
+	   probably a uucp account or has restricted access.  Don't
+	   compromise the account by allowing access with a standard
+	   shell.  */
+	warnx (_("using restricted shell %s"), pw->pw_shell);
+	shell = NULL;
+      }
+    shell = xstrdup (shell ? shell : pw->pw_shell);
+  }
 
   init_groups (pw, groups, num_supp_groups);
 
@@ -814,7 +853,12 @@ su_main (int argc, char **argv, int mode)
   if (simulate_login && chdir (pw->pw_dir) != 0)
     warn (_("warning: cannot change directory to %s"), pw->pw_dir);
 
-  run_shell (shell, command, argv + optind, max (0, argc - optind));
+  if (shell)
+    run_shell (shell, command, argv + optind, max (0, argc - optind));
+  else {
+    execvp(argv[optind], &argv[optind]);
+    err(EXIT_FAILURE, _("executing %s failed"), argv[optind]);
+  }
 }
 
 // vim: sw=2 cinoptions=>4,n-2,{2,^-2,\:2,=2,g0,h2,p5,t0,+2,(0,u0,w1,m1
