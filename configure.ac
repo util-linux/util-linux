@@ -83,7 +83,7 @@ AC_SUBST([localstatedir])
 # will not work as separator. eg: n \ ? ( { ) }
 sed_quote()
 {
-        echo -n "$2" | sed -e 's/\n/\\n/' -e 's|\([][*.$|'"$1"']\)|\\\1|g'
+        echo -n "$2" | sed -e 's/\n/\\n/' -e 's|\(@<:@@:>@@<:@*.$|'"$1"'@:>@\)|\\\1|g'
 }
 
 # remove_dir_prefix prefix path
