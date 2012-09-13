@@ -31,6 +31,9 @@
 #include <netdb.h>
 #include <langinfo.h>
 #include <grp.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+#include <ifaddrs.h>
 
 #include "strutils.h"
 #include "all-io.h"
@@ -242,7 +245,8 @@ static void open_tty(char *tty, struct termios *tp, struct options *op);
 static void termio_init(struct options *op, struct termios *tp);
 static void reset_vc (const struct options *op, struct termios *tp);
 static void auto_baud(struct termios *tp);
-static void output_special_char (unsigned char c, struct options *op, struct termios *tp);
+static void output_special_char (unsigned char c, struct options *op,
+		struct termios *tp, FILE *fp);
 static void do_prompt(struct options *op, struct termios *tp);
 static void next_speed(struct options *op, struct termios *tp);
 static char *get_logname(struct options *op,
@@ -1240,7 +1244,7 @@ static void do_prompt(struct options *op, struct termios *tp)
 
 		while ((c = getc(fd)) != EOF) {
 			if (c == '\\')
-				output_special_char(getc(fd), op, tp);
+				output_special_char(getc(fd), op, tp, fd);
 			else
 				putchar(c);
 		}
@@ -1696,8 +1700,97 @@ static void log_warn(const char *fmt, ...)
 	va_end(ap);
 }
 
+static void output_iface_ip(struct ifaddrs *addrs, const char *iface, sa_family_t family)
+{
+	if (!iface)
+		return;
+
+	if (addrs->ifa_name
+	    && strcmp(addrs->ifa_name, iface) == 0
+	    && addrs->ifa_addr
+	    && addrs->ifa_addr->sa_family == family) {
+
+		void *addr = NULL;
+		char buff[INET6_ADDRSTRLEN + 1];
+
+		switch (addrs->ifa_addr->sa_family) {
+		case AF_INET:
+			addr = &((struct sockaddr_in *)	addrs->ifa_addr)->sin_addr;
+			break;
+		case AF_INET6:
+			addr = &((struct sockaddr_in6 *) addrs->ifa_addr)->sin6_addr;
+			break;
+		}
+		if (addr) {
+			inet_ntop(addrs->ifa_addr->sa_family, addr, buff, sizeof(buff));
+			printf("%s", buff);
+		}
+
+	} else if (addrs->ifa_next)
+		output_iface_ip(addrs->ifa_next, iface, family);
+}
+
+static void output_ip(sa_family_t family)
+{
+	char host[MAXHOSTNAMELEN + 1];
+	struct addrinfo hints, *info = NULL;
+
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = family;
+	if (family == AF_INET6)
+		hints.ai_flags = AI_V4MAPPED;
+
+	if (gethostname(host, sizeof(host)) == 0
+	    && getaddrinfo(host, NULL, &hints, &info) == 0
+	    && info) {
+
+		void *addr = NULL;
+		char buff[INET6_ADDRSTRLEN + 1];
+
+		switch (info->ai_family) {
+		case AF_INET:
+			addr = &((struct sockaddr_in *) info->ai_addr)->sin_addr;
+			break;
+		case AF_INET6:
+			addr = &((struct sockaddr_in6 *) info->ai_addr)->sin6_addr;
+			break;
+		}
+		inet_ntop(info->ai_family, (void *) addr, buff, sizeof(buff));
+		printf("%s", buff);
+
+		freeaddrinfo(info);
+	}
+}
+
+/*
+ * parses \x{argument}, if not argument specified then returns NULL, the @fd
+ * has to point to one char after the sequence (it means '{').
+ */
+static char *get_escape_argument(FILE *fd, char *buf, size_t bufsz)
+{
+	size_t i = 0;
+	int c = fgetc(fd);
+
+	if (c == EOF || (unsigned char) c != '{') {
+		ungetc(c, fd);
+		return NULL;
+	}
+
+	do {
+		c = fgetc(fd);
+		if (c == EOF)
+			return NULL;
+		if ((unsigned char) c != '}' && i < bufsz - 1)
+			buf[i++] = (unsigned char) c;
+
+	} while ((unsigned char) c != '}');
+
+	buf[i] = '\0';
+	return buf;
+}
+
 static void output_special_char(unsigned char c, struct options *op,
-				struct termios *tp)
+				struct termios *tp, FILE *fp)
 {
 	struct utsname uts;
 
@@ -1806,6 +1899,23 @@ static void output_special_char(unsigned char c, struct options *op,
 		printf ("%d ", users);
 		if (c == 'U')
 			printf((users == 1) ? _("user") : _("users"));
+		break;
+	}
+	case '4':
+	case '6':
+	{
+		sa_family_t family = c == '4' ? AF_INET : AF_INET6;
+		char iface[128];
+
+		if (get_escape_argument(fp, iface, sizeof(iface))) {	/* interface IP */
+			struct ifaddrs *addrs;
+			int status = getifaddrs(&addrs);
+			if (status != 0)
+				break;
+			output_iface_ip(addrs, iface, family);
+			freeifaddrs(addrs);
+		} else							/* host IP */
+			output_ip(family);
 		break;
 	}
 	default:
