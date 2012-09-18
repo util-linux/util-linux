@@ -60,8 +60,12 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 		struct stat st;
 
 		if (stat(src, &st) == 0 && S_ISREG(st.st_mode) &&
-		    st.st_size > 1024)
+		    st.st_size > 1024) {
+			DBG(CXT, mnt_debug_h(cxt, "automatically enabling loop= option"));
+			cxt->user_mountflags |= MNT_MS_LOOP;
+			mnt_optstr_append_option(&cxt->fs->user_optstr, "loop", NULL);
 			return 1;
+		}
 	}
 
 	return 0;
