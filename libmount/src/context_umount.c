@@ -616,6 +616,10 @@ int mnt_context_prepare_umount(struct libmnt_context *cxt)
 			rc = mnt_context_prepare_helper(cxt, "umount", NULL);
 	}
 
+	if (!rc && (cxt->user_mountflags & MNT_MS_LOOP))
+		/* loop option explicitly specified in mtab, detach this loop */
+		mnt_context_enable_loopdel(cxt, TRUE);
+
 	if (!rc && mnt_context_is_loopdel(cxt) && cxt->fs) {
 		const char *src = mnt_fs_get_srcpath(cxt->fs);
 
