@@ -58,7 +58,7 @@ dev_t sysfs_devname_to_devno(const char *name, const char *parent)
 			name += 5;	/* unaccesible, or not node in /dev */
 	}
 
-	if (!dev && parent) {
+	if (!dev && parent && strncmp("dm-", name, 3)) {
 		/*
 		 * Create path to /sys/block/<parent>/<name>/dev
 		 */
