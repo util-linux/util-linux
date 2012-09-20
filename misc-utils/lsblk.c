@@ -1072,52 +1072,68 @@ static int iterate_block_devices(void)
 	return EXIT_SUCCESS;
 }
 
+static char *devno_to_sysfs_name(dev_t devno, char *devname, char *buf, size_t buf_size)
+{
+	char path[PATH_MAX];
+	ssize_t len;
+
+	if (!sysfs_devno_path(devno, path, sizeof(path))) {
+		warn(_("%s: failed to compose sysfs path"), devname);
+		return NULL;
+	}
+
+	len = readlink(path, buf, buf_size);
+	if (len < 0) {
+		warn(_("%s: failed to read link"), path);
+		return NULL;
+	}
+	buf[len] = '\0';
+
+	return xstrdup(strrchr(buf, '/') + 1);
+}
+
 static int process_one_device(char *devname)
 {
 	struct blkdev_cxt parent = {}, cxt = {};
 	struct stat st;
-	char buf[PATH_MAX + 1], *diskname = NULL;
+	char buf[PATH_MAX + 1], *name, *diskname = NULL;
 	dev_t disk = 0;
+	int real_part = 0;
 	int status = EXIT_FAILURE;
 
 	if (stat(devname, &st) || !S_ISBLK(st.st_mode)) {
 		warnx(_("%s: not a block device"), devname);
 		return EXIT_FAILURE;
 	}
-	if (blkid_devno_to_wholedisk(st.st_rdev, buf, sizeof(buf), &disk)) {
-		warn(_("%s: failed to get whole-disk device number"), devname);
+
+	if (!(name = devno_to_sysfs_name(st.st_rdev, devname, buf, PATH_MAX))) {
+		warn(_("%s: failed to get sysfs name"), devname);
 		return EXIT_FAILURE;
 	}
-	if (st.st_rdev == disk) {
+
+	if (!strncmp(name, "dm-", 3)) {
+		/* dm mapping is never a real partition! */
+		real_part = 0;
+	} else {
+		if (blkid_devno_to_wholedisk(st.st_rdev, buf, sizeof(buf), &disk)) {
+			warn(_("%s: failed to get whole-disk device number"), devname);
+			return EXIT_FAILURE;
+		}
+		diskname = buf;
+		real_part = st.st_rdev != disk;
+	}
+
+	if (!real_part) {
 		/*
 		 * Device is not a partition.
 		 */
-		if (set_cxt(&cxt, NULL, NULL, buf))
+		if (set_cxt(&cxt, NULL, NULL, name))
 			goto leave;
 		process_blkdev(&cxt, NULL, !lsblk->inverse, NULL);
 	} else {
 		/*
 		 * Partition, read sysfs name of the device.
 		 */
-		ssize_t len;
-		char path[PATH_MAX], *name;
-
-		if (!sysfs_devno_path(st.st_rdev, path, sizeof(path))) {
-			warn(_("failed to compose sysfs path for %s"), devname);
-			goto leave;
-		}
-
-		diskname = xstrdup(buf);
-		len = readlink(path, buf, PATH_MAX);
-		if (len < 0) {
-			warn(_("%s: failed to read link"), path);
-			goto leave;
-		}
-		buf[len] = '\0';
-
-		/* sysfs device name */
-		name = strrchr(buf, '/') + 1;
-
 		if (set_cxt(&parent, NULL, NULL, diskname))
 			goto leave;
 		if (set_cxt(&cxt, &parent, &parent, name))
@@ -1131,10 +1147,10 @@ static int process_one_device(char *devname)
 
 	status = EXIT_SUCCESS;
 leave:
-	free(diskname);
+	free(name);
 	reset_blkdev_cxt(&cxt);
 
-	if (st.st_rdev != disk)
+	if (real_part)
 		reset_blkdev_cxt(&parent);
 
 	return status;
