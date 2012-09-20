@@ -1208,9 +1208,13 @@ screendump(int vcnum, FILE * F)
 	close(fd);
 	return;
 
-      read_error:
-	warnx(_("Couldn't read %s"), infile);
-      error:
+read_error:
+	if (vcnum != 0)
+		warnx(_("Couldn't read %s"), infile);
+	else
+		warnx(_("Couldn't read neither /dev/vcsa0 nor /dev/vcsa"));
+
+error:
 	if (fd >= 0)
 		close(fd);
 	exit(EXIT_FAILURE);
