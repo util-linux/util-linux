@@ -772,7 +772,6 @@ static int set_system_clock_timezone(const bool universal, const bool testing)
 	struct timeval tv;
 	struct tm *broken;
 	int minuteswest;
-	int rc;
 
 	gettimeofday(&tv, NULL);
 	if (debug) {
@@ -818,10 +817,24 @@ static int set_system_clock_timezone(const bool universal, const bool testing)
 		       ("Not setting system clock because running in test mode.\n"));
 		retcode = 0;
 	} else {
+		const struct timezone tz_utc = { 0, 0 };
 		const struct timezone tz = { minuteswest, 0 };
 		const struct timeval *tv_null = NULL;
+		int rc = 0;
 
-		rc = settimeofday(tv_null, &tz);
+		/* The first call to settimeofday after boot will assume the systemtime
+		 * is in localtime, and adjust it according to the given timezone to
+		 * compensate. If the systemtime is in fact in UTC, then this is wrong
+		 * so we first do a dummy call to make sure the time is not shifted.
+		 */
+		if (universal)
+			rc = settimeofday(tv_null, &tz_utc);
+
+		/* Now we set the real timezone. Due to the above dummy call, this will
+		 * only warp the systemtime if the RTC is not in UTC. */
+		if (!rc)
+			rc = settimeofday(tv_null, &tz);
+
 		if (rc) {
 			if (errno == EPERM) {
 				warnx(_
