@@ -303,12 +303,12 @@ static int synchronize_to_clock_tick_rtc(void)
 			struct timeval tv;
 
 			/*
-			 * Wait up to five seconds for the next update
+			 * Wait up to ten seconds for the next update
 			 * interrupt
 			 */
 			FD_ZERO(&rfds);
 			FD_SET(rtc_fd, &rfds);
-			tv.tv_sec = 5;
+			tv.tv_sec = 10;
 			tv.tv_usec = 0;
 			rc = select(rtc_fd + 1, &rfds, NULL, NULL, &tv);
 			ret = 1;
