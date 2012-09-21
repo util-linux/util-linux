@@ -141,7 +141,7 @@ void logindefs_load_file(const char *filename)
 	fclose(f);
 }
 
-static void load_defaults()
+static void load_defaults(void)
 {
 	if (logindefs_load_defaults)
 		logindefs_load_defaults();
