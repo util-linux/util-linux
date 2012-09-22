@@ -113,7 +113,7 @@ static int fix_optstr(struct libmnt_context *cxt)
 		 */
 		se_rem = get_linux_version() < KERNEL_VERSION(2, 6, 39);
 	else
-		/* For normal mount we have translate the contexts */
+		/* For normal mount, contexts are translated */
 		se_fix = 1;
 
 	if (!se_rem) {
