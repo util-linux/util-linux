@@ -153,7 +153,7 @@ try_loopdev:
 			} else if (count > 1)
 				DBG(CXT, mnt_debug_h(cxt,
 					"umount: warning: %s is associated "
-					"with more than one loodev", tgt));
+					"with more than one loopdev", tgt));
 		}
 	}
 
@@ -538,7 +538,7 @@ static int do_umount(struct libmnt_context *cxt)
 
 	if (cxt->restricted && !mnt_context_is_fake(cxt)) {
 		/*
-		 * extra paranoa for non-root users
+		 * extra paranoia for non-root users
 		 * -- chdir to the parent of the mountpoint and use NOFOLLOW
 		 *    flag to avoid races and symlink attacks.
 		 */
