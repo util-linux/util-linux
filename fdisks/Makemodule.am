@@ -2,8 +2,7 @@
 fdisk_common_sources = \
 	fdisks/common.h \
 	fdisks/gpt.c \
-	fdisks/gpt.h \
-	fdisks/i386_sys_types.c
+	fdisks/gpt.h
 
 if !ARCH_M68K
 

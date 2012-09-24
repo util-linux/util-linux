@@ -57,6 +57,15 @@
 #include "closestream.h"
 #include "strutils.h"
 
+struct systypes {
+	unsigned char type;
+	char *name;
+};
+
+static struct systypes i386_sys_types[] = {
+	#include "dos_part_types.h"
+};
+
 /*
  * Table of contents:
  *  A. About seeking
@@ -597,7 +606,7 @@ chs_ok(chs a, char *v, char *w) {
 #define BSD_PARTITION		0xa5
 #define NETBSD_PARTITION	0xa9
 
-/* List of partition types now in i386_sys_types.c */
+/* List of partition types */
 
 static const char *
 sysname(unsigned char type) {

@@ -13,6 +13,10 @@
 #include "fdisk.h"
 #include "fdiskdoslabel.h"
 
+static struct fdisk_parttype dos_parttypes[] = {
+	#include "dos_part_types.h"
+};
+
 #define set_hsc(h,s,c,sector) { \
 		s = sector % cxt->geom.sectors + 1;			\
 		sector /= cxt->geom.sectors;				\
@@ -824,6 +828,7 @@ done:
 const struct fdisk_label dos_label =
 {
 	.name = "dos",
+	.parttypes = dos_parttypes,
 	.probe = dos_probe_label,
 	.write = dos_write_disklabel,
 	.verify = dos_verify_disklabel,

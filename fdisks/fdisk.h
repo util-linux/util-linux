@@ -100,6 +100,14 @@ enum failure {
 typedef unsigned long long sector_t;
 
 /*
+ * Partition types
+ */
+struct fdisk_parttype {
+	unsigned int	type;		/* type as number or zero */
+	char	*name;			/* description */
+};
+
+/*
  * Legacy CHS based geometry
  */
 struct fdisk_geometry {
@@ -136,6 +144,9 @@ struct fdisk_context {
  */
 struct fdisk_label {
 	const char *name;
+
+	/* array with partition types */
+	struct fdisk_parttype	*parttypes;
 
 	/* probe disk label */
 	int (*probe)(struct fdisk_context *cxt);
@@ -189,10 +200,10 @@ extern void check(struct fdisk_context *cxt, int n, unsigned int h, unsigned int
 extern void change_units(struct fdisk_context *cxt);
 extern void fatal(struct fdisk_context *cxt, enum failure why);
 extern int  get_partition(struct fdisk_context *cxt, int warn, int max);
-extern void list_types(struct systypes *sys);
+extern void list_types(struct fdisk_context *cxt);
 extern int read_line (int *asked);
 extern char read_char(char *mesg);
-extern int read_hex(struct systypes *sys);
+extern int read_hex(struct fdisk_context *cxt);
 extern void reread_partition_table(struct fdisk_context *cxt, int leave);
 extern struct partition *get_part_table(int);
 extern unsigned int read_int(struct fdisk_context *cxt,
@@ -203,7 +214,7 @@ extern void print_partition_size(struct fdisk_context *cxt, int num, sector_t st
 
 extern void fill_bounds(sector_t *first, sector_t *last);
 
-extern char *partition_type(unsigned char type);
+extern char *partition_type(struct fdisk_context *cxt, unsigned char type);
 extern void update_units(struct fdisk_context *cxt);
 extern char read_chars(char *mesg);
 extern void set_changed(int);

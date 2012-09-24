@@ -1,8 +1,3 @@
-/* DOS partition types */
-#include "common.h"
-#include "nls.h"
-
-struct systypes i386_sys_types[] = {
 	{0x00, N_("Empty")},
 	{0x01, N_("FAT12")},
 	{0x02, N_("XENIX root")},
@@ -106,5 +101,5 @@ struct systypes i386_sys_types[] = {
 					       superblock */
 	{0xfe, N_("LANstep")},		/* SpeedStor >1024 cyl. or LANstep */
 	{0xff, N_("BBT")},		/* Xenix Bad Block Table */
+
 	{ 0, 0 }
-};

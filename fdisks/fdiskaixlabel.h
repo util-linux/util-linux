@@ -20,6 +20,4 @@ struct aix_partition {
 #define	AIX_INFO_MAGIC		0x00072959
 #define	AIX_INFO_MAGIC_SWAPPED	0x59290700
 
-/* fdiskaixlabel.c */
-extern struct	systypes aix_sys_types[];
 #endif /* FDISK_AIX_LABEL_H */

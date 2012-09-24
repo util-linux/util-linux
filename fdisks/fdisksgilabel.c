@@ -87,7 +87,7 @@ isinfreelist(unsigned int b) {
 /*
  * end of free blocks section
  */
-struct systypes sgi_sys_types[] = {
+static struct fdisk_parttype sgi_parttypes[] = {
 	{SGI_VOLHDR,	N_("SGI volhdr")},
 	{0x01,		N_("SGI trkrepl")},
 	{0x02,		N_("SGI secrepl")},
@@ -206,7 +206,7 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 /* end */                 (long) scround(start+len)-1,
 /* no odd flag on end */  (long) len,
 /* type id */             sgi_get_sysid(cxt, i),
-/* type name */           (type = partition_type(sgi_get_sysid(cxt, i)))
+/* type name */           (type = partition_type(cxt, sgi_get_sysid(cxt, i)))
 				? type : _("Unknown"));
 		}
 	}
@@ -898,6 +898,8 @@ static sgiinfo *fill_sgiinfo(void)
 const struct fdisk_label sgi_label =
 {
 	.name = "sgi",
+	.parttypes = sgi_parttypes,
+
 	.probe = sgi_probe_label,
 	.write = sgi_write_disklabel,
 	.verify = sgi_verify_disklabel,

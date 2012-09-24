@@ -27,7 +27,7 @@
 
 static int     other_endian = 0;
 
-struct systypes sun_sys_types[] = {
+static struct fdisk_parttype sun_parttypes[] = {
 	{SUN_TAG_UNASSIGNED, N_("Unassigned")},
 	{SUN_TAG_BOOT, N_("Boot")},
 	{SUN_TAG_ROOT, N_("SunOS root")},
@@ -582,7 +582,7 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 /* end */		  (unsigned long) scround(start+len),
 /* odd flag on end */	  (unsigned long) len / 2, len & 1 ? '+' : ' ',
 /* type id */		  SSWAP16(tag->tag),
-/* type name */		  (type = partition_type(SSWAP16(tag->tag)))
+/* type name */		  (type = partition_type(cxt, SSWAP16(tag->tag)))
 			        ? type : _("Unknown"));
 		}
 	}
@@ -652,6 +652,8 @@ int sun_get_sysid(struct fdisk_context *cxt, int i)
 const struct fdisk_label sun_label =
 {
 	.name = "sun",
+	.parttypes = sun_parttypes,
+
 	.probe = sun_probe_label,
 	.write = sun_write_disklabel,
 	.verify = sun_verify_disklabel,

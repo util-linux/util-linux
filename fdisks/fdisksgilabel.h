@@ -110,7 +110,6 @@ typedef struct {
 #define sgiparam (sgilabel->devparam)
 
 /* fdisksgilabel.c */
-extern struct	systypes sgi_sys_types[];
 extern void	sgi_list_table( struct fdisk_context *cxt, int xtra );
 extern int  sgi_change_sysid(struct fdisk_context *cxt, int i, int sys);
 extern unsigned int	sgi_get_start_sector(struct fdisk_context *cxt, int i );

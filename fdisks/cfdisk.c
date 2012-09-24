@@ -107,6 +107,15 @@
 #include "mbsalign.h"
 #include "widechar.h"
 
+struct systypes {
+	unsigned char type;
+	char *name;
+};
+
+static struct systypes i386_sys_types[] = {
+	#include "dos_part_types.h"
+};
+
 #ifdef __GNU__
 #define DEFAULT_DEVICE "/dev/hd0"
 #define ALTERNATE_DEVICE "/dev/sd0"

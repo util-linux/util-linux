@@ -28,7 +28,6 @@ struct mac_partition {
 #define	MAC_LABEL_MAGIC_3_SWAPPED	0x0000d405
 
 /* fdiskmaclabel.c */
-extern struct	systypes mac_sys_types[];
 extern void	mac_nolabel(struct fdisk_context *cxt);
 
 #endif /* FDISK_MAC_LABEL_H */

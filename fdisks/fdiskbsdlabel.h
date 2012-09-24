@@ -200,7 +200,7 @@ static char *xbsd_dktypenames[] = {
 #endif
 
 #ifdef	DKTYPENAMES
-static struct systypes xbsd_fstypes[] = {
+static struct fdisk_parttype xbsd_fstypes[] = {
         {BSD_FS_UNUSED, "unused"},
 	{BSD_FS_SWAP,   "swap"},
 	{BSD_FS_V6,     "Version 6"},
