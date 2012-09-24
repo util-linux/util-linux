@@ -104,7 +104,8 @@ typedef unsigned long long sector_t;
  */
 struct fdisk_parttype {
 	unsigned int	type;		/* type as number or zero */
-	char	*name;			/* description */
+	char		*name;		/* description */
+	char		*typestr;	/* type as string or NULL */
 };
 
 /*
@@ -200,7 +201,7 @@ extern void check(struct fdisk_context *cxt, int n, unsigned int h, unsigned int
 extern void change_units(struct fdisk_context *cxt);
 extern void fatal(struct fdisk_context *cxt, enum failure why);
 extern int  get_partition(struct fdisk_context *cxt, int warn, int max);
-extern void list_types(struct fdisk_context *cxt);
+extern void list_partition_types(struct fdisk_context *cxt);
 extern int read_line (int *asked);
 extern char read_char(char *mesg);
 extern int read_hex(struct fdisk_context *cxt);

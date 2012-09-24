@@ -241,38 +241,61 @@ char *partition_type(struct fdisk_context *cxt, unsigned char type)
 	return NULL;
 }
 
-void list_types(struct fdisk_context *cxt)
+void list_partition_types(struct fdisk_context *cxt)
 {
-	struct fdisk_parttype *sys = cxt->label->parttypes;
-	unsigned int last[4], done = 0, next = 0, size;
+	struct fdisk_parttype *types;
 	int i;
 
-	for (i = 0; sys[i].name; i++);
-	size = i;
+	if (!cxt || !cxt->label || !cxt->label->parttypes)
+		return;
 
-	for (i = 3; i >= 0; i--)
-		last[3 - i] = done += (size + i - done) / (i + 1);
-	i = done = 0;
+	types = cxt->label->parttypes;
 
-	do {
-		#define NAME_WIDTH 15
-		char name[NAME_WIDTH * MB_LEN_MAX];
-		size_t width = NAME_WIDTH;
+	if (types[0].typestr == NULL) {
+		/*
+		 * Prints in 4 columns in format <hex> <name>
+		 */
+		unsigned int last[4], done = 0, next = 0, size;
 
-		printf("%c%2x  ", i ? ' ' : '\n', sys[next].type);
-		size_t ret = mbsalign(_(sys[next].name), name, sizeof(name),
-				      &width, MBS_ALIGN_LEFT, 0);
-		if (ret == (size_t)-1 || ret >= sizeof(name))
-			printf("%-15.15s", _(sys[next].name));
-		else
-			fputs(name, stdout);
+		for (i = 0; types[i].name; i++);
+		size = i;
 
-		next = last[i++] + done;
-		if (i > 3 || next >= last[i]) {
-			i = 0;
-			next = ++done;
-		}
-	} while (done < last[0]);
+		for (i = 3; i >= 0; i--)
+			last[3 - i] = done += (size + i - done) / (i + 1);
+		i = done = 0;
+
+		do {
+			#define NAME_WIDTH 15
+			char name[NAME_WIDTH * MB_LEN_MAX];
+			size_t width = NAME_WIDTH;
+			struct fdisk_parttype *t = &types[next];
+			size_t ret;
+
+			printf("%c%2x  ", i ? ' ' : '\n', t->type);
+			ret = mbsalign(_(t->name), name, sizeof(name),
+					      &width, MBS_ALIGN_LEFT, 0);
+
+			if (ret == (size_t)-1 || ret >= sizeof(name))
+				printf("%-15.15s", _(t->name));
+			else
+				fputs(name, stdout);
+
+			next = last[i++] + done;
+			if (i > 3 || next >= last[i]) {
+				i = 0;
+				next = ++done;
+			}
+		} while (done < last[0]);
+
+	} else {
+		/*
+		 * Prints 1 column in format <idx> <name> <typestr>
+		 */
+		struct fdisk_parttype *t;
+
+		for (i = 0, t = types; t->name; t++, i++)
+			printf("%3d %-30s %s\n", i + 1, t->name, t->typestr);
+	}
 	putchar('\n');
 }
 
@@ -567,7 +590,7 @@ read_hex(struct fdisk_context *cxt)
         {
            read_char(_("Hex code (type L to list codes): "));
            if (tolower(*line_ptr) == 'l')
-               list_types(cxt);
+               list_partition_types(cxt);
 	   else if (isxdigit (*line_ptr))
 	   {
 	      hex = 0;
@@ -1740,7 +1763,7 @@ static void command_prompt(struct fdisk_context *cxt)
 				unknown_command(c);
 			break;
 		case 'l':
-			list_types(cxt);
+			list_partition_types(cxt);
 			break;
 		case 'm':
 			print_menu(MAIN_MENU);

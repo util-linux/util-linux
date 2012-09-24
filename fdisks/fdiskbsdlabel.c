@@ -274,7 +274,7 @@ bsd_command_prompt (struct fdisk_context *cxt)
 	xbsd_write_bootstrap (cxt);
 	break;
       case 'l':
-	list_types (cxt);
+	list_partition_types (cxt);
 	break;
       case 'n':
 	      xbsd_add_part (cxt, 0, 0);
