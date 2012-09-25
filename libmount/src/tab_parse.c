@@ -770,7 +770,7 @@ int mnt_table_set_parser_fltrcb(struct libmnt_table *tb,
 {
 	assert(tb);
 
-	DBG(TAB, mnt_debug_h(tb, "set table parser filter"));
+	DBG(TAB, mnt_debug_h(tb, "%s table parser filter", cb ? "set" : "unset"));
 	tb->fltrcb = cb;
 	tb->fltrcb_data = data;
 	return 0;
