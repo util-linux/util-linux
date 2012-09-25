@@ -148,6 +148,10 @@ extern int mnt_get_filesystems(char ***filesystems, const char *pattern);
 extern void mnt_free_filesystems(char **filesystems);
 
 /* tab.c */
+extern int mnt_table_set_parser_fltrcb(	struct libmnt_table *tb,
+					int (*cb)(struct libmnt_fs *, void *),
+					void *data);
+
 extern struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
                                         struct libmnt_fs *fs,
                                         unsigned long mountflags,
@@ -248,6 +252,10 @@ struct libmnt_table {
         int		(*errcb)(struct libmnt_table *tb,
 				 const char *filename, int line);
 
+	int		(*fltrcb)(struct libmnt_fs *fs, void *data);
+	void		*fltrcb_data;
+
+
 	struct list_head	ents;	/* list of entries (libmnt_fs) */
 };
 
@@ -284,6 +292,9 @@ struct libmnt_context
 
 	int	(*table_errcb)(struct libmnt_table *tb,	/* callback for libmnt_table structs */
 			 const char *filename, int line);
+
+	int	(*table_fltrcb)(struct libmnt_fs *fs, void *data);	/* callback for libmnt_table structs */
+	void	*table_fltrcb_data;
 
 	char	*(*pwd_get_cb)(struct libmnt_context *);		/* get encryption password */
 	void	(*pwd_release_cb)(struct libmnt_context *, char *);	/* release password */
@@ -394,6 +405,10 @@ extern int mnt_context_delete_loopdev(struct libmnt_context *cxt);
 extern int mnt_context_clear_loopdev(struct libmnt_context *cxt);
 
 extern int mnt_fork_context(struct libmnt_context *cxt);
+
+extern int mnt_context_set_tabfilter(struct libmnt_context *cxt,
+			int (*fltr)(struct libmnt_fs *, void *),
+			void *data);
 
 /* tab_update.c */
 extern int mnt_update_set_filename(struct libmnt_update *upd,

@@ -487,6 +487,10 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 			goto err;
 
 		rc = mnt_table_parse_next(tb, f, fs, filename, &nlines);
+
+		if (!rc && tb->fltrcb && tb->fltrcb(fs, tb->fltrcb_data))
+			rc = 1;	/* filtered out by callback... */
+
 		if (!rc) {
 			rc = mnt_table_add_fs(tb, fs);
 			fs->flags |= flags;
@@ -756,6 +760,22 @@ int mnt_table_set_parser_errcb(struct libmnt_table *tb,
 	return 0;
 }
 
+/*
+ * Filter out entries during tab file parsing. If @cb returns 1 then the entry
+ * is ignored.
+ */
+int mnt_table_set_parser_fltrcb(struct libmnt_table *tb,
+		int (*cb)(struct libmnt_fs *, void *),
+		void *data)
+{
+	assert(tb);
+
+	DBG(TAB, mnt_debug_h(tb, "set table parser filter"));
+	tb->fltrcb = cb;
+	tb->fltrcb_data = data;
+	return 0;
+}
+
 /**
  * mnt_table_parse_swaps:
  * @tb: table
@@ -925,7 +945,16 @@ int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename)
 	 */
 	utab = mnt_get_utab_path();
 	if (utab) {
-		struct libmnt_table *u_tb = __mnt_new_table_from_file(utab, MNT_FMT_UTAB);
+		struct libmnt_table *u_tb = mnt_new_table();
+		if (u_tb) {
+			u_tb->fmt = MNT_FMT_UTAB;
+			mnt_table_set_parser_fltrcb(u_tb, tb->fltrcb, tb->fltrcb_data);
+
+			if (mnt_table_parse_file(u_tb, utab) != 0) {
+				mnt_free_table(u_tb);
+				u_tb = NULL;
+			}
+		}
 
 		if (u_tb) {
 			struct libmnt_fs *u_fs;

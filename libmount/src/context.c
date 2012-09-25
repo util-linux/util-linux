@@ -923,6 +923,10 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 
 		if (cxt->table_errcb)
 			mnt_table_set_parser_errcb(cxt->mtab, cxt->table_errcb);
+		if (cxt->table_fltrcb)
+			mnt_table_set_parser_fltrcb(cxt->mtab,
+					cxt->table_fltrcb,
+					cxt->table_fltrcb_data);
 
 		rc = mnt_table_parse_mtab(cxt->mtab, cxt->mtab_path);
 		if (rc)
@@ -934,6 +938,28 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 
 	if (tb)
 		*tb = cxt->mtab;
+	return 0;
+}
+
+/*
+ * Allows to specify filter for tab file entries. The filter is called by
+ * table parser. Currently used for mtab and utab only.
+ */
+int mnt_context_set_tabfilter(struct libmnt_context *cxt,
+			      int (*fltr)(struct libmnt_fs *, void *),
+			      void *data)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	cxt->table_fltrcb = fltr;
+	cxt->table_fltrcb_data = data;
+
+	if (cxt->mtab)
+		mnt_table_set_parser_fltrcb(cxt->mtab,
+				cxt->table_fltrcb,
+				cxt->table_fltrcb_data);
+
 	return 0;
 }
 
