@@ -174,6 +174,9 @@ struct fdisk_label {
 	void (*part_add)(struct fdisk_context *cxt, int partnum, int parttype);
 	/* delete partition */
 	void (*part_delete)(struct fdisk_context *cxt, int partnum);
+	/* get partition type */
+	struct fdisk_parttype *(*part_get_type)(struct fdisk_context *cxt, int partnum);
+
 };
 
 /*
@@ -201,6 +204,7 @@ extern int fdisk_add_partition(struct fdisk_context *cxt, int partnum, int partt
 extern int fdisk_write_disklabel(struct fdisk_context *cxt);
 extern int fdisk_verify_disklabel(struct fdisk_context *cxt);
 extern int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name);
+extern struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int partnum);
 
 extern size_t fdisk_get_nparttypes(struct fdisk_context *cxt);
 extern struct fdisk_parttype *fdisk_get_parttype_from_code(struct fdisk_context *cxt,
@@ -209,6 +213,7 @@ extern struct fdisk_parttype *fdisk_get_parttype_from_string(struct fdisk_contex
                                 const char *str);
 extern struct fdisk_parttype *fdisk_parse_parttype(struct fdisk_context *cxt, const char *str);
 
+extern struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int type, const char *typestr);
 extern void fdisk_free_parttype(struct fdisk_parttype *type);
 
 /* prototypes for fdisk.c */

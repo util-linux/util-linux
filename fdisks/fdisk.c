@@ -220,14 +220,6 @@ void print_menu(enum menutype menu)
 			printf("   %c   %s\n", menulist[i].command, menulist[i].description);
 }
 
-static int
-get_sysid(struct fdisk_context *cxt, int i) {
-	return (
-		disklabel == SUN_LABEL ? sun_get_sysid(cxt, i) :
-		disklabel == SGI_LABEL ? sgi_get_sysid(cxt, i) :
-		ptes[i].part_table->sys_ind);
-}
-
 void list_partition_types(struct fdisk_context *cxt)
 {
 	struct fdisk_parttype *types;
@@ -858,21 +850,15 @@ static void change_sysid(struct fdisk_context *cxt)
 {
 	int i;
 	struct fdisk_parttype *t, *org_t;
-	struct partition *p;
 
 	i = get_existing_partition(cxt, 0, partitions);
-
 	if (i == -1)
 		return;
-	p = ptes[i].part_table;
 
-	/* TODO: add get_partition_type(xt, partn) to API */
-	org_t = t = fdisk_get_parttype_from_code(cxt, get_sysid(cxt, i));
-
-	/* if changing types T to 0 is allowed, then
-	   the reverse change must be allowed, too */
-	if (!t && disklabel != SGI_LABEL && disklabel != SUN_LABEL && !get_nr_sects(p))
+	org_t = t = fdisk_get_partition_type(cxt, i);
+	if (!t)
                 printf(_("Partition %d does not exist yet!\n"), i + 1);
+
         else while (1) {
 		t = read_partition_type(cxt);
 
@@ -888,7 +874,7 @@ static void change_sysid(struct fdisk_context *cxt)
 			continue;
 
 		if (disklabel != SGI_LABEL && disklabel != SUN_LABEL) {
-			if (IS_EXTENDED (t->type) != IS_EXTENDED (p->sys_ind)) {
+			if (IS_EXTENDED (t->type) != IS_EXTENDED (t->type)) {
 				printf(_("You cannot change a partition into"
 				       " an extended one or vice versa\n"
 				       "Delete it first.\n"));
@@ -918,7 +904,7 @@ static void change_sysid(struct fdisk_context *cxt)
 			if (disklabel == SGI_LABEL) {
 				ptes[i].changed = sgi_change_sysid(cxt, i, t->type);
 			} else {
-				p->sys_ind = t->type;
+				ptes[i].part_table->sys_ind = t->type;
 				ptes[i].changed = 1;
 			}
 

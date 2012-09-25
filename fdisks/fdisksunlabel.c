@@ -572,7 +572,7 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 		if (part->num_sectors) {
 			uint32_t start = SSWAP32(part->start_cylinder) * cxt->geom.heads * cxt->geom.sectors;
 			uint32_t len = SSWAP32(part->num_sectors);
-			struct fdisk_parttype *t = fdisk_get_parttype_from_code(cxt, SSWAP16(tag->tag));
+			struct fdisk_parttype *t = fdisk_get_partition_type(cxt, i);
 
 			printf(
 			    "%s %c%c %9lu %9lu %9lu%c  %2x  %s\n",
@@ -582,8 +582,10 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 /* start */		  (unsigned long) scround(start),
 /* end */		  (unsigned long) scround(start+len),
 /* odd flag on end */	  (unsigned long) len / 2, len & 1 ? '+' : ' ',
-/* type id */		  SSWAP16(tag->tag),
-/* type name */		  t ? t->name : _("Unknown"));
+/* type id */		  t->type,
+/* type name */		  t->name);
+
+			fdisk_free_parttype(t);
 		}
 	}
 }
@@ -644,9 +646,17 @@ static int sun_write_disklabel(struct fdisk_context *cxt)
 	return 0;
 }
 
-int sun_get_sysid(struct fdisk_context *cxt, int i)
+static struct fdisk_parttype *sun_get_parttype(struct fdisk_context *cxt, int n)
 {
-	return SSWAP16(sunlabel->part_tags[i].tag);
+	struct fdisk_parttype *t;
+
+	if (n >= partitions)
+		return NULL;
+
+	t = fdisk_get_parttype_from_code(cxt, SSWAP16(sunlabel->part_tags[n].tag));
+	if (!t)
+		t = fdisk_new_unknown_parttype(SSWAP16(sunlabel->part_tags[n].tag), NULL);
+	return t;
 }
 
 const struct fdisk_label sun_label =
@@ -661,4 +671,5 @@ const struct fdisk_label sun_label =
 	.create = sun_create_disklabel,
 	.part_add = sun_add_partition,
 	.part_delete = sun_delete_partition,
+	.part_get_type = sun_get_parttype,
 };

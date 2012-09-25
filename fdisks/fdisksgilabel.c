@@ -194,8 +194,7 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 		if (sgi_get_num_sectors(cxt, i) || debug) {
 			uint32_t start = sgi_get_start_sector(cxt, i);
 			uint32_t len = sgi_get_num_sectors(cxt, i);
-			struct fdisk_parttype *t =
-					fdisk_get_parttype_from_code(cxt, sgi_get_sysid(cxt, i));
+			struct fdisk_parttype *t = fdisk_get_partition_type(cxt, i);
 
 			kpi++;		/* only count nonempty partitions */
 			printf(
@@ -207,8 +206,10 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 /* start */               (long) scround(start),
 /* end */                 (long) scround(start+len)-1,
 /* no odd flag on end */  (long) len,
-/* type id */             t ? t->type : sgi_get_sysid(cxt, i),
-/* type name */           t ? t->name : _("Unknown"));
+/* type id */             t->type,
+/* type name */           t->name);
+
+			fdisk_free_parttype(t);
 		}
 	}
 	printf(_("----- Bootinfo -----\nBootfile: %s\n"
@@ -236,7 +237,7 @@ sgi_get_num_sectors(struct fdisk_context *cxt, int i) {
 	return SSWAP32(sgilabel->partitions[i].num_sectors);
 }
 
-int
+static int
 sgi_get_sysid(struct fdisk_context *cxt, int i)
 {
 	return SSWAP32(sgilabel->partitions[i].id);
@@ -896,6 +897,19 @@ static sgiinfo *fill_sgiinfo(void)
 	return info;
 }
 
+static struct fdisk_parttype *sgi_get_parttype(struct fdisk_context *cxt, int n)
+{
+	struct fdisk_parttype *t;
+
+	if (n >= partitions)
+		return NULL;
+
+	t = fdisk_get_parttype_from_code(cxt, sgi_get_sysid(cxt, n));
+	if (!t)
+		t = fdisk_new_unknown_parttype(sgi_get_sysid(cxt, n), NULL);
+	return t;
+}
+
 const struct fdisk_label sgi_label =
 {
 	.name = "sgi",
@@ -908,4 +922,5 @@ const struct fdisk_label sgi_label =
 	.create = sgi_create_disklabel,
 	.part_add = sgi_add_partition,
 	.part_delete = sgi_delete_partition,
+	.part_get_type = sgi_get_parttype,
 };

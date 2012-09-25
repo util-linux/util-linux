@@ -85,6 +85,5 @@ extern void sun_set_ilfact(struct fdisk_context *cxt);
 extern void sun_set_rspeed(struct fdisk_context *cxt);
 extern void sun_set_pcylcount(struct fdisk_context *cxt);
 extern void toggle_sunflags(struct fdisk_context *cxt, int i, uint16_t mask);
-extern int sun_get_sysid(struct fdisk_context *cxt, int i);
 
 #endif /* FDISK_SUN_LABEL_H */

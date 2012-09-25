@@ -843,6 +843,19 @@ alpha_bootblock_checksum (char *boot)
 }
 #endif /* __alpha__ */
 
+static struct fdisk_parttype *xbsd_get_parttype(struct fdisk_context *cxt, int n)
+{
+	struct fdisk_parttype *t;
+
+	if (n >= xbsd_dlabel.d_npartitions)
+		return NULL;
+
+	t = fdisk_get_parttype_from_code(cxt, xbsd_dlabel.d_partitions[n].p_fstype);
+	if (!t)
+		t = fdisk_new_unknown_parttype(xbsd_dlabel.d_partitions[n].p_fstype, NULL);
+	return t;
+}
+
 const struct fdisk_label bsd_label =
 {
 	.name = "bsd",
@@ -855,4 +868,5 @@ const struct fdisk_label bsd_label =
 	.create = xbsd_create_disklabel,
 	.part_add = xbsd_add_part,
 	.part_delete = xbsd_delete_part,
+	.part_get_type = xbsd_get_parttype,
 };

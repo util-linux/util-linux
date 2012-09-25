@@ -114,7 +114,6 @@ extern void	sgi_list_table( struct fdisk_context *cxt, int xtra );
 extern int  sgi_change_sysid(struct fdisk_context *cxt, int i, int sys);
 extern unsigned int	sgi_get_start_sector(struct fdisk_context *cxt, int i );
 extern unsigned int	sgi_get_num_sectors(struct fdisk_context *cxt, int i );
-extern int	sgi_get_sysid(struct fdisk_context *cxt, int i );
 extern void	create_sgiinfo(struct fdisk_context *cxt);
 extern void	sgi_set_ilfact( void );
 extern void	sgi_set_rspeed( void );

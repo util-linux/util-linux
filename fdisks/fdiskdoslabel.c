@@ -825,6 +825,21 @@ done:
 	return rc;
 }
 
+static struct fdisk_parttype *dos_get_parttype(struct fdisk_context *cxt, int partnum)
+{
+	struct fdisk_parttype *t;
+	struct partition *p;
+
+	if (partnum >= partitions)
+		return NULL;
+
+	p = ptes[partnum].part_table;
+	t = fdisk_get_parttype_from_code(cxt, p->sys_ind);
+	if (!t)
+		t = fdisk_new_unknown_parttype(p->sys_ind, NULL);
+	return t;
+}
+
 const struct fdisk_label dos_label =
 {
 	.name = "dos",
@@ -837,4 +852,5 @@ const struct fdisk_label dos_label =
 	.create = dos_create_disklabel,
 	.part_add = dos_add_partition,
 	.part_delete = dos_delete_partition,
+	.part_get_type = dos_get_parttype,
 };

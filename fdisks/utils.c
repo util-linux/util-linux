@@ -568,7 +568,7 @@ struct fdisk_parttype *fdisk_get_parttype_from_string(
 	return NULL;
 }
 
-static struct fdisk_parttype *mk_unknown_partype(unsigned int type, const char *typestr)
+struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int type, const char *typestr)
 {
 	struct fdisk_parttype *t;
 
@@ -638,7 +638,7 @@ struct fdisk_parttype *fdisk_parse_parttype(
 			return &types[i];
 	}
 
-	return mk_unknown_partype(code, typestr);
+	return fdisk_new_unknown_parttype(code, typestr);
 }
 
 /*
@@ -652,4 +652,19 @@ void fdisk_free_parttype(struct fdisk_parttype *t)
 		free(t->typestr);
 		free(t);
 	}
+}
+
+/**
+ * fdisk_get_partition_type:
+ * @cxt: fdisk context
+ * @partnum: partition number
+ *
+ * Returns partition type
+ */
+struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int partnum)
+{
+	if (!cxt || !cxt->label || !cxt->label->part_get_type)
+		return NULL;
+
+	return cxt->label->part_get_type(cxt, partnum);
 }
