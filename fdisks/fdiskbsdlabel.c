@@ -562,9 +562,15 @@ static void
 xbsd_change_fstype (struct fdisk_context *cxt)
 {
   int i;
+  struct fdisk_parttype *t;
 
   i = xbsd_get_part_index (xbsd_dlabel.d_npartitions);
-  xbsd_dlabel.d_partitions[i].p_fstype = read_hex (cxt);
+  t = read_partition_type(cxt);
+
+  if (t) {
+    xbsd_dlabel.d_partitions[i].p_fstype = t->type;
+    fdisk_free_parttype(t);
+  }
 }
 
 static int
@@ -841,6 +847,7 @@ const struct fdisk_label bsd_label =
 {
 	.name = "bsd",
 	.parttypes = xbsd_fstypes,
+	.nparttypes = ARRAY_SIZE(xbsd_fstypes),
 
 	.probe = osf_probe_label,
 	.write = xbsd_write_disklabel,

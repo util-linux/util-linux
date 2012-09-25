@@ -104,9 +104,21 @@ typedef unsigned long long sector_t;
  */
 struct fdisk_parttype {
 	unsigned int	type;		/* type as number or zero */
-	char		*name;		/* description */
+	const char	*name;		/* description */
 	char		*typestr;	/* type as string or NULL */
+
+	unsigned int	flags;		/* FDISK_PARTTYPE_* flags */
 };
+
+enum {
+	FDISK_PARTTYPE_UNKNOWN		= (1 << 1),
+	FDISK_PARTTYPE_INVISIBLE	= (1 << 2),
+	FDISK_PARTTYPE_ALLOCATED	= (1 << 3)
+};
+
+#define fdisk_parttype_is_unknown(_x)	((_x) && ((_x)->flags & FDISK_PARTTYPE_UNKNONW))
+#define fdisk_parttype_is_invisible(_x)	((_x) && ((_x)->flags & FDISK_PARTTYPE_INVISIBLE))
+#define fdisk_parttype_is_allocated(_x)	((_x) && ((_x)->flags & FDISK_PARTTYPE_ALLOCATED))
 
 /*
  * Legacy CHS based geometry
@@ -148,6 +160,7 @@ struct fdisk_label {
 
 	/* array with partition types */
 	struct fdisk_parttype	*parttypes;
+	size_t			nparttypes;	/* number of items in parttypes[] */
 
 	/* probe disk label */
 	int (*probe)(struct fdisk_context *cxt);
@@ -189,6 +202,15 @@ extern int fdisk_write_disklabel(struct fdisk_context *cxt);
 extern int fdisk_verify_disklabel(struct fdisk_context *cxt);
 extern int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name);
 
+extern size_t fdisk_get_nparttypes(struct fdisk_context *cxt);
+extern struct fdisk_parttype *fdisk_get_parttype_from_code(struct fdisk_context *cxt,
+                                unsigned int code);
+extern struct fdisk_parttype *fdisk_get_parttype_from_string(struct fdisk_context *cxt,
+                                const char *str);
+extern struct fdisk_parttype *fdisk_parse_parttype(struct fdisk_context *cxt, const char *str);
+
+extern void fdisk_free_parttype(struct fdisk_parttype *type);
+
 /* prototypes for fdisk.c */
 extern char *line_ptr;
 extern int partitions;
@@ -204,7 +226,7 @@ extern int  get_partition(struct fdisk_context *cxt, int warn, int max);
 extern void list_partition_types(struct fdisk_context *cxt);
 extern int read_line (int *asked);
 extern char read_char(char *mesg);
-extern int read_hex(struct fdisk_context *cxt);
+extern struct fdisk_parttype *read_partition_type(struct fdisk_context *cxt);
 extern void reread_partition_table(struct fdisk_context *cxt, int leave);
 extern struct partition *get_part_table(int);
 extern unsigned int read_int(struct fdisk_context *cxt,

@@ -538,7 +538,6 @@ int sun_change_sysid(struct fdisk_context *cxt, int i, uint16_t sys)
 void sun_list_table(struct fdisk_context *cxt, int xtra)
 {
 	int i, w;
-	char *type;
 
 	w = strlen(cxt->dev_path);
 	if (xtra)
@@ -573,6 +572,8 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 		if (part->num_sectors) {
 			uint32_t start = SSWAP32(part->start_cylinder) * cxt->geom.heads * cxt->geom.sectors;
 			uint32_t len = SSWAP32(part->num_sectors);
+			struct fdisk_parttype *t = fdisk_get_parttype_from_code(cxt, SSWAP16(tag->tag));
+
 			printf(
 			    "%s %c%c %9lu %9lu %9lu%c  %2x  %s\n",
 /* device */		  partname(cxt->dev_path, i+1, w),
@@ -582,8 +583,7 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 /* end */		  (unsigned long) scround(start+len),
 /* odd flag on end */	  (unsigned long) len / 2, len & 1 ? '+' : ' ',
 /* type id */		  SSWAP16(tag->tag),
-/* type name */		  (type = partition_type(cxt, SSWAP16(tag->tag)))
-			        ? type : _("Unknown"));
+/* type name */		  t ? t->name : _("Unknown"));
 		}
 	}
 }
@@ -653,6 +653,7 @@ const struct fdisk_label sun_label =
 {
 	.name = "sun",
 	.parttypes = sun_parttypes,
+	.nparttypes = ARRAY_SIZE(sun_parttypes),
 
 	.probe = sun_probe_label,
 	.write = sun_write_disklabel,

@@ -829,6 +829,8 @@ const struct fdisk_label dos_label =
 {
 	.name = "dos",
 	.parttypes = dos_parttypes,
+	.nparttypes = ARRAY_SIZE(dos_parttypes),
+
 	.probe = dos_probe_label,
 	.write = dos_write_disklabel,
 	.verify = dos_verify_disklabel,

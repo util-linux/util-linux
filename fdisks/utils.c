@@ -20,6 +20,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <ctype.h>
 #ifdef HAVE_LIBBLKID
 #include <blkid.h>
 #endif
@@ -520,4 +521,135 @@ void fdisk_free_context(struct fdisk_context *cxt)
 	free(cxt->dev_path);
 	free(cxt->firstsector);
 	free(cxt);
+}
+
+/*
+ * fdisk_get_nparttypes:
+ *
+ * Returns: number of partition types supported by the current label
+ */
+size_t fdisk_get_nparttypes(struct fdisk_context *cxt)
+{
+	if (!cxt || !cxt->label)
+		return 0;
+
+	return cxt->label->nparttypes;
+}
+struct fdisk_parttype *fdisk_get_parttype_from_code(
+				struct fdisk_context *cxt,
+				unsigned int code)
+{
+	size_t i;
+
+	if (!fdisk_get_nparttypes(cxt))
+		return NULL;
+
+	for (i = 0; i < cxt->label->nparttypes; i++)
+		if (cxt->label->parttypes[i].type == code)
+			return &cxt->label->parttypes[i];
+
+	return NULL;
+}
+
+struct fdisk_parttype *fdisk_get_parttype_from_string(
+				struct fdisk_context *cxt,
+				const char *str)
+{
+	size_t i;
+
+	if (!fdisk_get_nparttypes(cxt))
+		return NULL;
+
+	for (i = 0; i < cxt->label->nparttypes; i++)
+		if (cxt->label->parttypes[i].typestr
+		    &&strcasecmp(cxt->label->parttypes[i].typestr, str) == 0)
+			return &cxt->label->parttypes[i];
+
+	return NULL;
+}
+
+static struct fdisk_parttype *mk_unknown_partype(unsigned int type, const char *typestr)
+{
+	struct fdisk_parttype *t;
+
+	t = calloc(1, sizeof(*t));
+	if (!t)
+		return NULL;
+
+	if (typestr) {
+		t->typestr = strdup(typestr);
+		if (!t->typestr) {
+			free(t);
+			return NULL;
+		}
+	}
+	t->name = _("unknown");
+	t->type = type;
+	t->flags |= FDISK_PARTTYPE_UNKNOWN | FDISK_PARTTYPE_ALLOCATED;
+
+	return t;
+}
+
+/*
+ * fdisk_parse_parttype
+ * @cxt: fdisk context
+ * @str: string
+ *
+ * Returns pointer to static table of the partition types, or newly allocated
+ * partition type if @unknown is not NULL and partition type in @str is
+ * unknown, or NULL in case of error.
+ */
+struct fdisk_parttype *fdisk_parse_parttype(
+				struct fdisk_context *cxt,
+				const char *str)
+{
+	struct fdisk_parttype *types, *ret;
+	unsigned int code = 0;
+	char *typestr = NULL, *end = NULL;
+
+	if (!fdisk_get_nparttypes(cxt))
+		return NULL;
+
+	types = cxt->label->parttypes;
+
+	if (types[0].typestr == NULL && isxdigit(*str)) {
+
+		errno = 0;
+		code = strtol(str, &end, 16);
+
+		if (errno || *end != '\0')
+			return NULL;
+
+		ret = fdisk_get_parttype_from_code(cxt, code);
+		if (ret)
+			return ret;
+	} else {
+		int i;
+
+		/* maybe specified by type string (e.g. UUID) */
+		ret = fdisk_get_parttype_from_string(cxt, str);
+		if (ret)
+			return ret;
+
+		/* maybe specified by order number */
+		errno = 0;
+		i = strtol(str, &end, 0);
+		if (errno == 0 && *end == '\0' && i < (int) fdisk_get_nparttypes(cxt))
+			return &types[i];
+	}
+
+	return mk_unknown_partype(code, typestr);
+}
+
+/*
+ * fdisk_free_parttype:
+ *
+ * Free the @type.
+ */
+void fdisk_free_parttype(struct fdisk_parttype *t)
+{
+	if (t && (t->flags & FDISK_PARTTYPE_ALLOCATED)) {
+		free(t->typestr);
+		free(t);
+	}
 }

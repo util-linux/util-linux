@@ -228,19 +228,6 @@ get_sysid(struct fdisk_context *cxt, int i) {
 		ptes[i].part_table->sys_ind);
 }
 
-
-char *partition_type(struct fdisk_context *cxt, unsigned char type)
-{
-	int i;
-	struct fdisk_parttype *types = cxt->label->parttypes;
-
-	for (i=0; types[i].name; i++)
-		if (types[i].type == type)
-			return _(types[i].name);
-
-	return NULL;
-}
-
 void list_partition_types(struct fdisk_context *cxt)
 {
 	struct fdisk_parttype *types;
@@ -581,26 +568,33 @@ read_chars(char *mesg)
 	return *line_ptr;
 }
 
-int
-read_hex(struct fdisk_context *cxt)
+struct fdisk_parttype *read_partition_type(struct fdisk_context *cxt)
 {
-        int hex;
+	if (!cxt || !cxt->label || !cxt->label->nparttypes)
+		return NULL;
 
-        while (1)
-        {
-           read_char(_("Hex code (type L to list codes): "));
-           if (tolower(*line_ptr) == 'l')
-               list_partition_types(cxt);
-	   else if (isxdigit (*line_ptr))
-	   {
-	      hex = 0;
-	      do
-		 hex = hex << 4 | hex_val(*line_ptr++);
-	      while (isxdigit(*line_ptr));
-	      return hex;
-	   }
-        }
+        do {
+		size_t sz;
+
+		if (cxt->label->parttypes[0].typestr)
+			read_chars(_("Partition type (type L to list all types): "));
+		else
+			read_chars(_("Hex code (type L to list all codes): "));
+
+		sz = strlen(line_ptr);
+		if (!sz || line_ptr[sz - 1] != '\n' || sz == 1)
+			continue;
+		line_ptr[sz - 1] = '\0';
+
+		if (tolower(*line_ptr) == 'l')
+			list_partition_types(cxt);
+		else
+			return fdisk_parse_parttype(cxt, line_ptr);
+        } while (1);
+
+	return NULL;
 }
+
 
 unsigned int
 read_int_with_suffix(struct fdisk_context *cxt,
@@ -862,8 +856,8 @@ static void delete_partition(struct fdisk_context *cxt, int partnum)
 
 static void change_sysid(struct fdisk_context *cxt)
 {
-	const char *temp;
-	int i, sys, origsys;
+	int i;
+	struct fdisk_parttype *t, *org_t;
 	struct partition *p;
 
 	i = get_existing_partition(cxt, 0, partitions);
@@ -871,16 +865,18 @@ static void change_sysid(struct fdisk_context *cxt)
 	if (i == -1)
 		return;
 	p = ptes[i].part_table;
-	origsys = sys = get_sysid(cxt, i);
+
+	/* TODO: add get_partition_type(xt, partn) to API */
+	org_t = t = fdisk_get_parttype_from_code(cxt, get_sysid(cxt, i));
 
 	/* if changing types T to 0 is allowed, then
 	   the reverse change must be allowed, too */
-	if (!sys && disklabel != SGI_LABEL && disklabel != SUN_LABEL && !get_nr_sects(p))
+	if (!t && disklabel != SGI_LABEL && disklabel != SUN_LABEL && !get_nr_sects(p))
                 printf(_("Partition %d does not exist yet!\n"), i + 1);
         else while (1) {
-		sys = read_hex (cxt);
+		t = read_partition_type(cxt);
 
-		if (!sys && disklabel != SGI_LABEL && disklabel != SUN_LABEL) {
+		if (!t && disklabel != SGI_LABEL && disklabel != SUN_LABEL) {
 			printf(_("Type 0 means free space to many systems\n"
 			       "(but not to Linux). Having partitions of\n"
 			       "type 0 is probably unwise. You can delete\n"
@@ -888,8 +884,11 @@ static void change_sysid(struct fdisk_context *cxt)
 			/* break; */
 		}
 
+		if (!t)
+			continue;
+
 		if (disklabel != SGI_LABEL && disklabel != SUN_LABEL) {
-			if (IS_EXTENDED (sys) != IS_EXTENDED (p->sys_ind)) {
+			if (IS_EXTENDED (t->type) != IS_EXTENDED (p->sys_ind)) {
 				printf(_("You cannot change a partition into"
 				       " an extended one or vice versa\n"
 				       "Delete it first.\n"));
@@ -897,42 +896,51 @@ static void change_sysid(struct fdisk_context *cxt)
 			}
 		}
 
-                if (sys < 256) {
-			if (disklabel == SUN_LABEL && i == 2 && sys != SUN_TAG_BACKUP)
+		/* TODO: add set_partition_type(cxt, npart, type) API */
+                if (t->type < 256) {
+			if (disklabel == SUN_LABEL && i == 2 && t->type != SUN_TAG_BACKUP)
 				printf(_("Consider leaving partition 3 "
 				       "as Whole disk (5),\n"
 				       "as SunOS/Solaris expects it and "
 				       "even Linux likes it.\n\n"));
-			if (disklabel == SGI_LABEL && ((i == 10 && sys != ENTIRE_DISK)
-					  || (i == 8 && sys != 0)))
+			if (disklabel == SGI_LABEL && ((i == 10 && t->type != ENTIRE_DISK)
+					  || (i == 8 && t->type != 0)))
 				printf(_("Consider leaving partition 9 "
 				       "as volume header (0),\nand "
 				       "partition 11 as entire volume (6), "
 				       "as IRIX expects it.\n\n"));
-                        if (sys == origsys)
-				break;
+                        if (t == org_t)
+				goto nochange;
+
 			if (disklabel == SUN_LABEL) {
-				ptes[i].changed = sun_change_sysid(cxt, i, sys);
+				ptes[i].changed = sun_change_sysid(cxt, i, t->type);
 			} else
 			if (disklabel == SGI_LABEL) {
-				ptes[i].changed = sgi_change_sysid(cxt, i, sys);
+				ptes[i].changed = sgi_change_sysid(cxt, i, t->type);
 			} else {
-				p->sys_ind = sys;
+				p->sys_ind = t->type;
 				ptes[i].changed = 1;
 			}
-			temp = partition_type(cxt, sys) ? : _("Unknown");
+
 			if (ptes[i].changed)
-				printf (_("Changed system type of partition %d "
-				        "to %x (%s)\n"), i + 1, sys, temp);
-			else
-				printf (_("System type of partition %d is unchanged: "
-				        "%x (%s)\n"), i + 1, sys, temp);
-			if (is_dos_partition(origsys) ||
-			    is_dos_partition(sys))
+				printf (_("Changed type of partition '%s' to '%s'\n"),
+					org_t ? org_t->name : _("Unknown"),
+					    t ?     t->name : _("Unknown"));
+			else {
+nochange:
+				printf (_("Type of partition %d is unchanged: %s\n"),
+					i + 1,
+					org_t ? org_t->name : _("Unknown"));
+			}
+
+			if (is_dos_partition(t->type) || is_dos_partition(t->type))
 				dos_changed = 1;
                         break;
                 }
         }
+
+	fdisk_free_parttype(t);
+	fdisk_free_parttype(org_t);
 }
 
 /* check_consistency() and long2chs() added Sat Mar 6 12:28:16 1993,
@@ -1180,7 +1188,6 @@ fix_partition_table_order(void) {
 static void
 list_table(struct fdisk_context *cxt, int xtra) {
 	struct partition *p;
-	char *type;
 	int i, w;
 
 	if (disklabel == SUN_LABEL) {
@@ -1225,6 +1232,8 @@ list_table(struct fdisk_context *cxt, int xtra) {
 			unsigned int psects = get_nr_sects(p);
 			unsigned int pblocks = psects;
 			unsigned int podd = 0;
+			struct fdisk_parttype *type =
+					fdisk_get_parttype_from_code(cxt, p->sys_ind);
 
 			if (cxt->sector_size < 1024) {
 				pblocks /= (1024 / cxt->sector_size);
@@ -1242,8 +1251,7 @@ list_table(struct fdisk_context *cxt, int xtra) {
 				- (psects ? 1 : 0)),
 /* odd flag on end */	(unsigned long) pblocks, podd ? '+' : ' ',
 /* type id */		p->sys_ind,
-/* type name */		(type = partition_type(cxt, p->sys_ind)) ?
-			type : _("Unknown"));
+/* type name */		type ? type->name : _("Unknown"));
 			check_consistency(cxt, p, i);
 			check_alignment(cxt, get_partition_start(pe), i);
 		}
@@ -1344,7 +1352,10 @@ void print_partition_size(struct fdisk_context *cxt,
 {
 	char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
 				     (uint64_t)(stop - start + 1) * cxt->sector_size);
-	printf(_("Partition %d of type %s and of size %s is set\n"), num, partition_type(cxt, sysid), str);
+	struct fdisk_parttype *t = fdisk_get_parttype_from_code(cxt, sysid);
+
+	printf(_("Partition %d of type %s and of size %s is set\n"),
+			num, t ? t->name : _("Unknown"), str);
 	free(str);
 }
 
