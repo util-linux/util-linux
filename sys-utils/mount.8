@@ -190,7 +190,7 @@ The file
 may contain lines describing what devices are usually
 mounted where, using which options. The default location of the
 .BR fstab (5)
-file could be overrided by --fstab <path> command line option (see below for
+file could be overridden by --fstab <path> command line option (see below for
 more details).
 .LP
 The command
@@ -558,7 +558,7 @@ Don't canonicalize paths. The mount command canonicalizes all paths
 .IR /etc/mtab
 file. This option can be used together with the
 .B \-f
-flag for already canonicalized absolut paths.
+flag for already canonicalized absolute paths.
 .IP "\fB\-p, \-\-pass\-fd \fInum\fP"
 In case of a loop mount with encryption, read the passphrase from
 file descriptor
@@ -1318,7 +1318,7 @@ to the options given in
 No checking is done at mount time. This is the default. This is fast.
 It is wise to invoke
 .BR e2fsck (8)
-every now and then, e.g. at boot time. The non-default behavior is unssuported
+every now and then, e.g. at boot time. The non-default behavior is unsupported
 (check=normal and check=strict options have been removed). Note that these mount options
 don't have to be supported if ext4 kernel driver is used for ext2 and ext3 filesystems.
 .TP
@@ -1387,7 +1387,7 @@ Support "user." extended attributes (or not).
 
 .SH "Mount options for ext3"
 The ext3 filesystem is a version of the ext2 filesystem which has been
-enhanced with journalling.  It supports the same options as ext2 as
+enhanced with journaling.  It supports the same options as ext2 as
 well as the following additions:
 .\" .TP
 .\" .BR abort
@@ -1418,7 +1418,7 @@ filesystem containing inconsistencies that can
 lead to any number of problems.
 .TP
 .BR data= { journal | ordered | writeback }
-Specifies the journalling mode for file data.  Metadata is always journaled.
+Specifies the journaling mode for file data.  Metadata is always journaled.
 To use modes other than
 .B ordered
 on the root filesystem, pass the mode to the kernel as boot parameter, e.g.
@@ -1549,7 +1549,7 @@ may improve the throughput of multi-threaded, synchronous workloads on very
 fast disks, at the cost of increasing latency.
 .TP
 .BI journal_ioprio= prio
-The I/O priority (from 0 to 7, where 0 is the highest priorty) which should be
+The I/O priority (from 0 to 7, where 0 is the highest priority) which should be
 used for I/O operations submitted by kjournald2 during a commit operation.
 This defaults to 3, which is a slightly higher priority than the default I/O
 priority.
@@ -1668,7 +1668,7 @@ Normally
 .B utime(2)
 checks current process is owner of the file, or it has
 CAP_FOWNER capability.  But FAT filesystem doesn't have uid/gid on disk, so
-normal check is too unflexible. With this option you can relax it.
+normal check is too inflexible. With this option you can relax it.
 .RE
 .TP
 .BI check= value
@@ -1747,7 +1747,7 @@ inconsistent).
 .B discard
 If set, causes discard/TRIM commands to be issued to the block device
 when blocks are freed. This is useful for SSD devices and
-sparse/thinly-provisoned LUNs.
+sparse/thinly-provisioned LUNs.
 .TP
 .BR fat= {12 | 16 | 32 }
 Specify a 12, 16 or 32 bit fat.  This overrides
@@ -1985,7 +1985,7 @@ keyword with no value will grow the volume to the full size of the partition.
 .B nointegrity
 Do not write to the journal.  The primary use of this option is to allow
 for higher performance when restoring a volume from backup media. The
-integrity of the volume is not guaranteed if the system abnormally abends.
+integrity of the volume is not guaranteed if the system abnormally ends.
 .TP
 .B integrity
 Default.  Commit metadata changes to the journal.  Use this option to remount
@@ -2132,10 +2132,10 @@ Disable the border allocator algorithm invented by Yury Yu. Rupasov.
 This may provide performance improvements in some situations.
 .TP
 .BR nolog
-Disable journalling. This will provide slight performance improvements in
+Disable journaling. This will provide slight performance improvements in
 some situations at the cost of losing reiserfs's fast recovery from crashes.
-Even with this option turned on, reiserfs still performs all journalling
-operations, save for actual writes into its journalling area.  Implementation
+Even with this option turned on, reiserfs still performs all journaling
+operations, save for actual writes into its journaling area.  Implementation
 of
 .IR nolog
 is a work in progress.
