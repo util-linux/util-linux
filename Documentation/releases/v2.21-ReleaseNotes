@@ -933,7 +933,7 @@ tests:
    - make minix tests more robust  [Karel Zak]
    - remove obsolete checktty test  [Karel Zak]
    - remove unexpected set -x  [Karel Zak]
-   - remove unssuported losetup -s  [Karel Zak]
+   - remove unsupported losetup -s  [Karel Zak]
    - update fdisk and blkid MD tests  [Francesco Cosoleto]
    - update fdisk tests  [Francesco Cosoleto]
    - update tests with fdisk output  [Karel Zak]
