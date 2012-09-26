@@ -97,7 +97,7 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	" -V, --version            output version information and exit\n"
 	" -c, --columns <width>    width of output in number of characters\n"
 	" -t, --table              create a table\n"
-	" -s, --separator <string> table delimiter\n"
+	" -s, --separator <string> possible table delimiters\n"
 	" -x, --fillrows           fill rows before columns\n"));
 
 	fprintf(out, _("\nFor more information see column(1).\n"));
