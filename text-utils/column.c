@@ -75,7 +75,8 @@ static char *mtsafe_strtok(char *, const char *, char **);
 static int input(FILE *fp, int *maxlength, wchar_t ***list, int *entries);
 static void c_columnate(int maxlength, long termwidth, wchar_t **list, int entries);
 static void r_columnate(int maxlength, long termwidth, wchar_t **list, int entries);
-static void maketbl(wchar_t **list, int entries, wchar_t *separator);
+static wchar_t *local_wcstok(wchar_t *p, const wchar_t *separator, int greedy, wchar_t **wcstok_state);
+static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy);
 static void print(wchar_t **list, int entries);
 
 typedef struct _tbl {
@@ -112,6 +113,7 @@ int main(int argc, char **argv)
 	unsigned int eval = 0;		/* exit value */
 	int maxlength = 0;		/* longest record */
 	wchar_t **list = NULL;		/* array of pointers to records */
+	int greedy = 1;
 
 	/* field separator for table option */
 	wchar_t default_separator[] = { '\t', ' ', 0 };
@@ -151,6 +153,7 @@ int main(int argc, char **argv)
 			break;
 		case 's':
 			separator = mbs_to_wcs(optarg);
+			greedy = 0;
 			break;
 		case 't':
 			tflag = 1;
@@ -183,7 +186,7 @@ int main(int argc, char **argv)
 		exit(eval);
 
 	if (tflag)
-		maketbl(list, entries, separator);
+		maketbl(list, entries, separator, greedy);
 	else if (maxlength >= termwidth)
 		print(list, entries);
 	else if (xflag)
@@ -270,7 +273,31 @@ static void print(wchar_t **list, int entries)
 	}
 }
 
-static void maketbl(wchar_t **list, int entries, wchar_t *separator)
+wchar_t *local_wcstok(wchar_t * p, const wchar_t * separator, int greedy,
+		      wchar_t ** wcstok_state)
+{
+	wchar_t *result;
+	if (greedy)
+		return wcstok(p, separator, wcstok_state);
+
+	if (p == NULL) {
+		if (*wcstok_state == NULL)
+			return NULL;
+		else
+			p = *wcstok_state;
+	}
+	result = p;
+	p = wcspbrk(result, separator);
+	if (p == NULL)
+		*wcstok_state = NULL;
+	else {
+		*p = '\0';
+		*wcstok_state = p + 1;
+	}
+	return result;
+}
+
+static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy)
 {
 	TBL *t;
 	int cnt, i;
@@ -279,7 +306,7 @@ static void maketbl(wchar_t **list, int entries, wchar_t *separator)
 	ssize_t maxcols = DEFCOLS, coloff;
 	TBL *tbl;
 	wchar_t **cols;
-	wchar_t *wcstok_state;
+	wchar_t *wcstok_state = NULL;
 
 	t = tbl = xcalloc(entries, sizeof(TBL));
 	cols = xcalloc(maxcols, sizeof(wchar_t *));
@@ -288,7 +315,7 @@ static void maketbl(wchar_t **list, int entries, wchar_t *separator)
 	for (lp = list, cnt = 0; cnt < entries; ++cnt, ++lp, ++t) {
 		coloff = 0;
 		p = *lp;
-		while ((cols[coloff] = wcstok(p, separator, &wcstok_state)) != NULL) {
+		while ((cols[coloff] = local_wcstok(p, separator, greedy, &wcstok_state)) != NULL) {
 			if (++coloff == maxcols) {
 				maxcols += DEFCOLS;
 				cols = xrealloc(cols, maxcols * sizeof(wchar_t *));
