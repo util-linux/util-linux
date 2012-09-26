@@ -414,7 +414,7 @@ static int dos_probe_label(struct fdisk_context *cxt)
  * We might also do the opposite and warn in all cases except
  * for "is probably nondos partition".
  */
-int is_dos_partition(int t)
+static int is_dos_partition(int t)
 {
 	return (t == 1 || t == 4 || t == 6 ||
 		t == 0x0b || t == 0x0c || t == 0x0e ||
@@ -840,6 +840,34 @@ static struct fdisk_parttype *dos_get_parttype(struct fdisk_context *cxt, int pa
 	return t;
 }
 
+static int dos_set_parttype(struct fdisk_context *cxt, int partnum,
+			    struct fdisk_parttype *t)
+{
+	struct partition *p;
+
+	if (partnum >= partitions || !t || t->type > UINT8_MAX)
+		return -EINVAL;
+
+	p = ptes[partnum].part_table;
+	if (t->type == p->sys_ind)
+		return 0;
+
+	if (IS_EXTENDED(p->sys_ind) || IS_EXTENDED(t->type)) {
+		printf(_("\nYou cannot change a partition into an extended one "
+			 "or vice versa.\nDelete it first.\n\n"));
+		return -EINVAL;
+	}
+
+	if (is_dos_partition(t->type) || is_dos_partition(p->sys_ind))
+	    printf(
+		_("\nWARNING: If you have created or modified any DOS 6.x"
+		"partitions, please see the fdisk manual page for additional"
+		"information.\n\n"));
+
+	p->sys_ind = t->type;
+	return 0;
+}
+
 const struct fdisk_label dos_label =
 {
 	.name = "dos",
@@ -853,4 +881,5 @@ const struct fdisk_label dos_label =
 	.part_add = dos_add_partition,
 	.part_delete = dos_delete_partition,
 	.part_get_type = dos_get_parttype,
+	.part_set_type = dos_set_parttype,
 };

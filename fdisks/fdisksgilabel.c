@@ -575,27 +575,6 @@ sgi_gaps(struct fdisk_context *cxt) {
 	return sgi_verify_disklabel(cxt);
 }
 
-int
-sgi_change_sysid(struct fdisk_context *cxt, int i, int sys)
-{
-	if (sgi_get_num_sectors(cxt, i) == 0) /* caught already before, ... */ {
-		printf(_("Sorry, only for non-empty partitions you can change the tag.\n"));
-		return 0;
-	}
-	if (((sys != ENTIRE_DISK) && (sys != SGI_VOLHDR))
-	    && (sgi_get_start_sector(cxt, i)<1)) {
-		read_chars(
-			_("It is highly recommended that the partition at offset 0\n"
-			  "is of type \"SGI volhdr\", the IRIX system will rely on it to\n"
-			  "retrieve from its directory standalone tools like sash and fx.\n"
-			  "Only the \"SGI volume\" entire disk section may violate this.\n"
-			  "Type YES if you are sure about tagging this partition differently.\n"));
-		if (strcmp (line_ptr, _("YES\n")))
-			return 0;
-	}
-	sgilabel->partitions[i].id = SSWAP32(sys);
-	return 1;
-}
 
 /* returns partition index of first entry marked as entire disk */
 static int
@@ -910,6 +889,37 @@ static struct fdisk_parttype *sgi_get_parttype(struct fdisk_context *cxt, int n)
 	return t;
 }
 
+static int sgi_set_parttype(struct fdisk_context *cxt, int i,
+			    struct fdisk_parttype *t)
+{
+	if (i >= partitions || !t || t->type > UINT32_MAX)
+		return -EINVAL;
+
+	if (sgi_get_num_sectors(cxt, i) == 0)	/* caught already before, ... */ {
+		printf(_("Sorry, only for non-empty partitions you can change the tag.\n"));
+		return -EINVAL;
+	}
+
+	if ((i == 10 && t->type != ENTIRE_DISK) || (i == 8 && t->type != 0))
+		printf(_("Consider leaving partition 9 as volume header (0), "
+			 "and partition 11 as entire volume (6), as IRIX "
+			 "expects it.\n\n"));
+
+	if (((t->type != ENTIRE_DISK) && (t->type != SGI_VOLHDR))
+	    && (sgi_get_start_sector(cxt, i) < 1)) {
+		read_chars(
+			_("It is highly recommended that the partition at offset 0\n"
+			  "is of type \"SGI volhdr\", the IRIX system will rely on it to\n"
+			  "retrieve from its directory standalone tools like sash and fx.\n"
+			  "Only the \"SGI volume\" entire disk section may violate this.\n"
+			  "Type YES if you are sure about tagging this partition differently.\n"));
+		if (strcmp (line_ptr, _("YES\n")))
+			return 1;
+	}
+	sgilabel->partitions[i].id = SSWAP32(t->type);
+	return 0;
+}
+
 const struct fdisk_label sgi_label =
 {
 	.name = "sgi",
@@ -923,4 +933,5 @@ const struct fdisk_label sgi_label =
 	.part_add = sgi_add_partition,
 	.part_delete = sgi_delete_partition,
 	.part_get_type = sgi_get_parttype,
+	.part_set_type = sgi_set_parttype,
 };

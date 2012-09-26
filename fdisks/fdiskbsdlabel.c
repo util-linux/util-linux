@@ -558,6 +558,7 @@ xbsd_write_bootstrap (struct fdisk_context *cxt)
   sync_disks ();
 }
 
+/* TODO: remove this, use regular change_partition_type() in fdisk.c */
 static void
 xbsd_change_fstype (struct fdisk_context *cxt)
 {
@@ -856,6 +857,22 @@ static struct fdisk_parttype *xbsd_get_parttype(struct fdisk_context *cxt, int n
 	return t;
 }
 
+static int xbsd_set_parttype(struct fdisk_context *cxt, int partnum,
+			    struct fdisk_parttype *t)
+{
+	struct xbsd_partition *p;
+
+	if (partnum >= xbsd_dlabel.d_npartitions || !t || t->type > UINT8_MAX)
+		return -EINVAL;
+
+	p = &xbsd_dlabel.d_partitions[partnum];
+	if (t->type == p->p_fstype)
+		return 0;
+
+	p->p_fstype = t->type;
+	return 0;
+}
+
 const struct fdisk_label bsd_label =
 {
 	.name = "bsd",
@@ -869,4 +886,5 @@ const struct fdisk_label bsd_label =
 	.part_add = xbsd_add_part,
 	.part_delete = xbsd_delete_part,
 	.part_get_type = xbsd_get_parttype,
+	.part_set_type = xbsd_set_parttype,
 };

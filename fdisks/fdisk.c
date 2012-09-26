@@ -128,7 +128,6 @@ char	*line_ptr,			/* interactive input */
 
 int	nowarn = 0,			/* no warnings for fdisk -l/-s */
 	dos_compatible_flag = 0,	/* disabled by default */
-	dos_changed = 0,
 	partitions = 4;			/* maximum partition + 1 */
 
 unsigned int	user_cylinders, user_heads, user_sectors;
@@ -846,7 +845,7 @@ static void delete_partition(struct fdisk_context *cxt, int partnum)
 	printf(_("Partition %d is deleted\n"), partnum + 1);
 }
 
-static void change_sysid(struct fdisk_context *cxt)
+static void change_partition_type(struct fdisk_context *cxt)
 {
 	int i;
 	struct fdisk_parttype *t, *org_t;
@@ -859,71 +858,23 @@ static void change_sysid(struct fdisk_context *cxt)
 	if (!t)
                 printf(_("Partition %d does not exist yet!\n"), i + 1);
 
-        else while (1) {
+        else do {
 		t = read_partition_type(cxt);
-
-		if (!t && disklabel != SGI_LABEL && disklabel != SUN_LABEL) {
-			printf(_("Type 0 means free space to many systems\n"
-			       "(but not to Linux). Having partitions of\n"
-			       "type 0 is probably unwise. You can delete\n"
-			       "a partition using the `d' command.\n"));
-			/* break; */
-		}
-
 		if (!t)
 			continue;
 
-		if (disklabel != SGI_LABEL && disklabel != SUN_LABEL) {
-			if (IS_EXTENDED (t->type) != IS_EXTENDED (t->type)) {
-				printf(_("You cannot change a partition into"
-				       " an extended one or vice versa\n"
-				       "Delete it first.\n"));
-				break;
-			}
+		if (fdisk_set_partition_type(cxt, i, t) == 0) {
+			ptes[i].changed = 1;
+			printf (_("Changed type of partition '%s' to '%s'\n"),
+				org_t ? org_t->name : _("Unknown"),
+				    t ?     t->name : _("Unknown"));
+		} else {
+			printf (_("Type of partition %d is unchanged: %s\n"),
+				i + 1,
+				org_t ? org_t->name : _("Unknown"));
 		}
-
-		/* TODO: add set_partition_type(cxt, npart, type) API */
-                if (t->type < 256) {
-			if (disklabel == SUN_LABEL && i == 2 && t->type != SUN_TAG_BACKUP)
-				printf(_("Consider leaving partition 3 "
-				       "as Whole disk (5),\n"
-				       "as SunOS/Solaris expects it and "
-				       "even Linux likes it.\n\n"));
-			if (disklabel == SGI_LABEL && ((i == 10 && t->type != ENTIRE_DISK)
-					  || (i == 8 && t->type != 0)))
-				printf(_("Consider leaving partition 9 "
-				       "as volume header (0),\nand "
-				       "partition 11 as entire volume (6), "
-				       "as IRIX expects it.\n\n"));
-                        if (t == org_t)
-				goto nochange;
-
-			if (disklabel == SUN_LABEL) {
-				ptes[i].changed = sun_change_sysid(cxt, i, t->type);
-			} else
-			if (disklabel == SGI_LABEL) {
-				ptes[i].changed = sgi_change_sysid(cxt, i, t->type);
-			} else {
-				ptes[i].part_table->sys_ind = t->type;
-				ptes[i].changed = 1;
-			}
-
-			if (ptes[i].changed)
-				printf (_("Changed type of partition '%s' to '%s'\n"),
-					org_t ? org_t->name : _("Unknown"),
-					    t ?     t->name : _("Unknown"));
-			else {
-nochange:
-				printf (_("Type of partition %d is unchanged: %s\n"),
-					i + 1,
-					org_t ? org_t->name : _("Unknown"));
-			}
-
-			if (is_dos_partition(t->type) || is_dos_partition(t->type))
-				dos_changed = 1;
-                        break;
-                }
-        }
+		break;
+        } while (1);
 
 	fdisk_free_parttype(t);
 	fdisk_free_parttype(org_t);
@@ -1398,12 +1349,6 @@ reread_partition_table(struct fdisk_context *cxt, int leave) {
 			errno);
 	}
 
-	if (dos_changed)
-	    printf(
-		_("\nWARNING: If you have created or modified any DOS 6.x\n"
-		"partitions, please see the fdisk manual page for additional\n"
-		"information.\n"));
-
 	if (leave) {
 		if (fsync(cxt->dev_fd) || close(cxt->dev_fd)) {
 			fprintf(stderr, _("\nError closing file\n"));
@@ -1780,7 +1725,7 @@ static void command_prompt(struct fdisk_context *cxt)
 			fdisk_create_disklabel(cxt, "sun");
 			break;
 		case 't':
-			change_sysid(cxt);
+			change_partition_type(cxt);
 			break;
 		case 'u':
 			change_units(cxt);

@@ -668,3 +668,20 @@ struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int p
 
 	return cxt->label->part_get_type(cxt, partnum);
 }
+
+/**
+ * fdisk_set_partition_type:
+ * @cxt: fdisk context
+ * @partnum: partition number
+ * @t: new type
+ *
+ * Returns partition type
+ */
+int fdisk_set_partition_type(struct fdisk_context *cxt, int partnum,
+			     struct fdisk_parttype *t)
+{
+	if (!cxt || !cxt->label || !cxt->label->part_set_type)
+		return -EINVAL;
+
+	return cxt->label->part_set_type(cxt, partnum, t);
+}

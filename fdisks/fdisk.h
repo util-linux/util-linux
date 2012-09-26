@@ -176,7 +176,8 @@ struct fdisk_label {
 	void (*part_delete)(struct fdisk_context *cxt, int partnum);
 	/* get partition type */
 	struct fdisk_parttype *(*part_get_type)(struct fdisk_context *cxt, int partnum);
-
+	/* set partition type */
+	int (*part_set_type)(struct fdisk_context *cxt, int partnum, struct fdisk_parttype *t);
 };
 
 /*
@@ -205,6 +206,8 @@ extern int fdisk_write_disklabel(struct fdisk_context *cxt);
 extern int fdisk_verify_disklabel(struct fdisk_context *cxt);
 extern int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name);
 extern struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int partnum);
+extern int fdisk_set_partition_type(struct fdisk_context *cxt, int partnum,
+			     struct fdisk_parttype *t);
 
 extern size_t fdisk_get_nparttypes(struct fdisk_context *cxt);
 extern struct fdisk_parttype *fdisk_get_parttype_from_code(struct fdisk_context *cxt,
