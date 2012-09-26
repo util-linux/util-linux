@@ -1342,9 +1342,9 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 	if (!path)
 		path = src;
 
-	if ((cxt->mountflags & (MS_BIND | MS_MOVE | MS_PROPAGATION)) ||
+	if ((cxt->mountflags & (MS_BIND | MS_MOVE | MS_PROPAGATION | MS_REMOUNT)) ||
 	    mnt_fs_is_pseudofs(cxt->fs)) {
-		DBG(CXT, mnt_debug_h(cxt, "BIND/MOVE/pseudo FS source: %s", path));
+		DBG(CXT, mnt_debug_h(cxt, "REMOUNT/BIND/MOVE/pseudo FS source: %s", path));
 		return rc;
 	}
 
