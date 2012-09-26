@@ -1306,11 +1306,7 @@ static void new_partition(struct fdisk_context *cxt)
 	if (disklabel == SUN_LABEL || disklabel == SGI_LABEL)
 		partnum = get_partition(cxt, 0, partitions);
 
-	/*
-	 * Use default LINUX_NATIVE partition type, DOS labels
-	 * may override this internally.
-	 */
-	fdisk_add_partition(cxt, partnum, LINUX_NATIVE);
+	fdisk_add_partition(cxt, partnum, NULL);
 }
 
 static void write_table(struct fdisk_context *cxt)

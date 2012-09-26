@@ -364,13 +364,14 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
     return 0;
 }
 
-static void sun_add_partition(struct fdisk_context *cxt, int n, int sys)
+static void sun_add_partition(struct fdisk_context *cxt, int n,
+			      struct fdisk_parttype *t)
 {
 	uint32_t starts[SUN_NUM_PARTITIONS], lens[SUN_NUM_PARTITIONS];
 	struct sun_partition *part = &sunlabel->partitions[n];
 	struct sun_tag_flag *tag = &sunlabel->part_tags[n];
 	uint32_t start, stop, stop2;
-	int whole_disk = 0;
+	int whole_disk = 0, sys = t ? t->type : SUN_TAG_LINUX_NATIVE;
 
 	char mesg[256];
 	int i;

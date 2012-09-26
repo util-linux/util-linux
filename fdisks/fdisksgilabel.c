@@ -636,16 +636,18 @@ static void sgi_delete_partition(struct fdisk_context *cxt, int partnum)
 	sgi_set_partition(cxt, partnum, 0, 0, 0);
 }
 
-static void sgi_add_partition(struct fdisk_context *cxt, int n, int sys)
+static void sgi_add_partition(struct fdisk_context *cxt, int n,
+			      struct fdisk_parttype *t)
 {
 	char mesg[256];
 	unsigned int first=0, last=0;
+	int sys = t ? t->type : SGI_XFS;
 
-	if (n == 10) {
+	if (n == 10)
 		sys = SGI_VOLUME;
-	} else if (n == 8) {
+	else if (n == 8)
 		sys = 0;
-	}
+
 	if (sgi_get_num_sectors(cxt, n)) {
 		printf(_("Partition %d is already defined.  Delete "
 			 "it before re-adding it.\n"), n + 1);

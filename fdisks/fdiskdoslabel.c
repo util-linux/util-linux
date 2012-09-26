@@ -487,14 +487,16 @@ static sector_t align_lba_in_range(struct fdisk_context *cxt,
 	return lba;
 }
 
-static void add_partition(struct fdisk_context *cxt, int n, int sys)
+static void add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype *t)
 {
 	char mesg[256];		/* 48 does not suffice in Japanese */
-	int i, read = 0;
+	int i, sys, read = 0;
 	struct partition *p = ptes[n].part_table;
 	struct partition *q = ptes[ext_index].part_table;
 	sector_t start, stop = 0, limit, temp,
 		first[partitions], last[partitions];
+
+	sys = t ? t->type : LINUX_NATIVE;
 
 	if (p && p->sys_ind) {
 		printf(_("Partition %d is already defined.  Delete "
@@ -646,7 +648,7 @@ static void add_logical(struct fdisk_context *cxt)
 		partitions++;
 	}
 	printf(_("Adding logical partition %d\n"), partitions);
-	add_partition(cxt, partitions - 1, LINUX_NATIVE);
+	add_partition(cxt, partitions - 1, NULL);
 }
 
 static int dos_verify_disklabel(struct fdisk_context *cxt)
@@ -722,12 +724,9 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 static void dos_add_partition(
 			struct fdisk_context *cxt,
 			int partnum __attribute__ ((__unused__)),
-			int parttype)
+			struct fdisk_parttype *t)
 {
 	int i, free_primary = 0;
-
-	/* default */
-	parttype = LINUX_NATIVE;
 
 	for (i = 0; i < 4; i++)
 		free_primary += !ptes[i].part_table->sys_ind;
@@ -747,7 +746,7 @@ static void dos_add_partition(
 	} else if (partitions >= MAXIMUM_PARTS) {
 		printf(_("All logical partitions are in use\n"));
 		printf(_("Adding a primary partition\n"));
-		add_partition(cxt, get_partition(cxt, 0, 4), parttype);
+		add_partition(cxt, get_partition(cxt, 0, 4), t);
 	} else {
 		char c, dflt, line[LINE_LENGTH];
 
@@ -769,15 +768,17 @@ static void dos_add_partition(
 		if (c == 'p') {
 			int i = get_nonexisting_partition(cxt, 0, 4);
 			if (i >= 0)
-				add_partition(cxt, i, parttype);
+				add_partition(cxt, i, t);
 			return;
 		} else if (c == 'l' && extended_offset) {
 			add_logical(cxt);
 			return;
 		} else if (c == 'e' && !extended_offset) {
 			int i = get_nonexisting_partition(cxt, 0, 4);
-			if (i >= 0)
-				add_partition(cxt, i, EXTENDED);
+			if (i >= 0) {
+				t = fdisk_get_parttype_from_code(cxt, EXTENDED);
+				add_partition(cxt, i, t);
+			}
 			return;
 		} else
 			printf(_("Invalid partition type `%c'\n"), c);

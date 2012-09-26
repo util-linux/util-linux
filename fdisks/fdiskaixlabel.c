@@ -69,7 +69,7 @@ static int aix_probe_label(struct fdisk_context *cxt)
 static void aix_add_partition(
 		struct fdisk_context *cxt __attribute__((__unused__)),
 		int partnum __attribute__((__unused__)),
-		int parttype __attribute__((__unused__)))
+		struct fdisk_parttype *t __attribute__((__unused__)))
 {
 	printf(_("\tSorry - this fdisk cannot handle AIX disk labels."
 		 "\n\tIf you want to add DOS-type partitions, create"

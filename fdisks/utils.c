@@ -88,20 +88,21 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
  * fdisk_add_partition:
  * @cxt: fdisk context
  * @partnum: partition number to create
- * @parttype: partition type to create
+ * @t: partition type to create or NULL for label-specific default
  *
  * Creates a new partition, with number @partnum and type @parttype.
  *
  * Returns 0.
  */
-int fdisk_add_partition(struct fdisk_context *cxt, int partnum, int parttype)
+int fdisk_add_partition(struct fdisk_context *cxt, int partnum,
+			struct fdisk_parttype *t)
 {
 	if (!cxt || !cxt->label)
 		return -EINVAL;
 	if (!cxt->label->part_add)
 		return -ENOSYS;
 
-	cxt->label->part_add(cxt, partnum, parttype);
+	cxt->label->part_add(cxt, partnum, t);
 	return 0;
 }
 

@@ -153,7 +153,7 @@ static int xbsd_write_disklabel (struct fdisk_context *cxt)
 
 static void xbsd_add_part (struct fdisk_context *cxt,
 		int partnum __attribute__((__unused__)),
-		int parttype __attribute__((__unused__)))
+		struct fdisk_parttype *t __attribute__((__unused__)))
 {
 	unsigned int begin, end;
 	char mesg[256];
