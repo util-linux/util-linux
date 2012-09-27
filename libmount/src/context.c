@@ -714,15 +714,14 @@ const char *mnt_context_get_target(struct libmnt_context *cxt)
  * @cxt: mount context
  * @fstype: filesystem type
  *
- * Note that the @fstype has to be the real FS type. For comma-separated list of
- * filesystems or for "nofs" notation use mnt_context_set_fstype_pattern().
+ * Note that the @fstype has to be the real FS type. For patterns with
+ * comma-separated list of filesystems or for "nofs" notation use
+ * mnt_context_set_fstype_pattern().
  *
  * Returns: 0 on success, negative number in case of error.
  */
 int mnt_context_set_fstype(struct libmnt_context *cxt, const char *fstype)
 {
-	if (fstype && strchr(fstype, ','))
-		return -EINVAL;
 	return mnt_fs_set_fstype(mnt_context_get_fs(cxt), fstype);
 }
 
@@ -1481,6 +1480,9 @@ int mnt_context_prepare_helper(struct libmnt_context *cxt, const char *name,
 
 	if (!type)
 		type = mnt_fs_get_fstype(cxt->fs);
+
+	if (type && strchr(type, ','))
+		return 0;			/* type is fstype pattern */
 
 	if (mnt_context_is_nohelpers(cxt)
 	    || !type
