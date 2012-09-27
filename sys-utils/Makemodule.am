@@ -51,8 +51,16 @@ fsfreeze_SOURCES = sys-utils/fsfreeze.c
 
 sbin_PROGRAMS += fstrim
 dist_man_MANS += sys-utils/fstrim.8
-fstrim_SOURCES = sys-utils/fstrim.c
+fstrim_SOURCES = sys-utils/fstrim.c lib/blkdev.c
 fstrim_LDADD = $(LDADD) libcommon.la
+
+install-exec-hook-blkdiscard:
+	cd $(DESTDIR)$(sbindir) && ln -sf fstrim blkdiscard
+uninstall-hook-blkdiscard:
+	rm -f $(DESTDIR)$(sbindir)/blkdiscard
+
+INSTALL_EXEC_HOOKS += install-exec-hook-blkdiscard
+UNINSTALL_HOOKS += uninstall-hook-blkdiscard
 
 usrbin_exec_PROGRAMS += cytune
 dist_man_MANS += sys-utils/cytune.8
