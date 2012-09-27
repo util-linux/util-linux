@@ -1,7 +1,6 @@
 #ifndef FDISK_GPT_H
 #define FDISK_GPT_H
 
-extern int gpt_probe_signature_fd(int fd);
-extern int gpt_probe_signature_devname(char *devname);
+extern void gpt_list_table(struct fdisk_context *cxt, int xtra);
 
 #endif /* FDISK_GPT_H */

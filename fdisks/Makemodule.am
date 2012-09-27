@@ -1,9 +1,4 @@
 
-fdisk_common_sources = \
-	fdisks/common.h \
-	fdisks/gpt.c \
-	fdisks/gpt.h
-
 if !ARCH_M68K
 
 sbin_PROGRAMS += fdisk
@@ -24,14 +19,22 @@ fdisk_SOURCES = \
 	fdisks/fdisksunlabel.h \
 	fdisks/fdiskdoslabel.c \
 	fdisks/fdiskdoslabel.h \
+	fdisks/gpt.c \
+	fdisks/gpt.h \
 	fdisks/partname.c \
-	$(fdisk_common_sources)
+	fdisks/common.h
 
 fdisk_LDADD = $(LDADD) libcommon.la
+fdisk_CFLAGS = $(AM_CFLAGS)
 
 if BUILD_LIBBLKID
-fdisk_CFLAGS = -I$(ul_libblkid_incdir)
+fdisk_CFLAGS += -I$(ul_libblkid_incdir)
 fdisk_LDADD += libblkid.la
+endif
+
+if BUILD_LIBUUID
+fdisk_CFLAGS += -I$(ul_libuuid_incdir)
+fdisk_LDADD += libuuid.la
 endif
 
 if HAVE_STATIC_FDISK
@@ -50,7 +53,7 @@ dist_man_MANS += fdisks/sfdisk.8
 sfdisk_SOURCES = \
 	fdisks/partname.c \
 	fdisks/sfdisk.c \
-	$(fdisk_common_sources)
+	fdisks/common.h
 sfdisk_LDADD = $(LDADD) libcommon.la
 
 if HAVE_STATIC_SFDISK
@@ -64,7 +67,7 @@ endif
 if BUILD_CFDISK
 sbin_PROGRAMS += cfdisk
 dist_man_MANS += fdisks/cfdisk.8
-cfdisk_SOURCES = fdisks/cfdisk.c $(fdisk_common_sources)
+cfdisk_SOURCES = fdisks/cfdisk.c fdisks/common.h
 cfdisk_CFLAGS =
 cfdisk_LDADD = $(LDADD) libcommon.la
 

@@ -83,7 +83,7 @@ static const struct menulist_descr menulist[] = {
 	{'c', N_("toggle the mountable flag"), {SUN_LABEL, 0}},
 	{'c', N_("select sgi swap partition"), {SGI_LABEL, 0}},
 	{'c', N_("change number of cylinders"), {0, DOS_LABEL | SUN_LABEL}},
-	{'d', N_("delete a partition"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL, 0}},
+	{'d', N_("delete a partition"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL | GPT_LABEL, 0}},
 	{'d', N_("print the raw data in the partition table"), {0, ANY_LABEL}},
 	{'e', N_("change number of extra sectors per cylinder"), {0, SUN_LABEL}},
 	{'e', N_("list extended partitions"), {0, DOS_LABEL}},
@@ -94,9 +94,9 @@ static const struct menulist_descr menulist[] = {
 	{'i', N_("change interleave factor"), {0, SUN_LABEL}},
 	{'i', N_("change the disk identifier"), {0, DOS_LABEL}},
 	{'i', N_("install bootstrap"), {OSF_LABEL, 0}},
-	{'l', N_("list known partition types"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL, 0}},
+	{'l', N_("list known partition types"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL  | GPT_LABEL, 0}},
 	{'m', N_("print this menu"), {ANY_LABEL, ANY_LABEL}},
-	{'n', N_("add a new partition"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL, 0}},
+	{'n', N_("add a new partition"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL | GPT_LABEL, 0}},
 	{'o', N_("create a new empty DOS partition table"), {~OSF_LABEL, 0}},
 	{'o', N_("change rotation speed (rpm)"), {0, SUN_LABEL}},
 	{'p', N_("print the partition table"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL, DOS_LABEL | SUN_LABEL}},
@@ -108,7 +108,7 @@ static const struct menulist_descr menulist[] = {
 	{'t', N_("change a partition's system id"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL, 0}},
 	{'u', N_("change display/entry units"), {DOS_LABEL | SUN_LABEL | SGI_LABEL | OSF_LABEL, 0}},
 	{'v', N_("verify the partition table"), {DOS_LABEL | SUN_LABEL | SGI_LABEL, DOS_LABEL | SUN_LABEL | SGI_LABEL}},
-	{'w', N_("write table to disk and exit"), {DOS_LABEL | SUN_LABEL | SGI_LABEL, DOS_LABEL | SUN_LABEL | SGI_LABEL}},
+	{'w', N_("write table to disk and exit"), {DOS_LABEL | SUN_LABEL | SGI_LABEL  | GPT_LABEL, DOS_LABEL | SUN_LABEL | SGI_LABEL}},
 	{'w', N_("write disklabel to disk"), {OSF_LABEL, 0}},
 	{'x', N_("extra functionality (experts only)"), {DOS_LABEL | SUN_LABEL | SGI_LABEL, 0}},
 #if !defined (__alpha__)
@@ -740,7 +740,7 @@ get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt) {
 	i = read_int(cxt, 1, dflt, max, 0, _("Partition number")) - 1;
 	pe = &ptes[i];
 
-	if (warn) {
+	if (warn && disklabel != GPT_LABEL) {
 		if ((disklabel != SUN_LABEL && disklabel != SGI_LABEL && !pe->part_table->sys_ind)
 		    || (disklabel == SUN_LABEL &&
 			(!sunlabel->partitions[i].num_sectors ||
@@ -1122,8 +1122,8 @@ fix_partition_table_order(void) {
 
 }
 
-static void
-list_table(struct fdisk_context *cxt, int xtra) {
+static void list_table(struct fdisk_context *cxt, int xtra)
+{
 	struct partition *p;
 	int i, w;
 
@@ -1138,6 +1138,11 @@ list_table(struct fdisk_context *cxt, int xtra) {
 	}
 
 	list_disk_geometry(cxt);
+
+	if (disklabel == GPT_LABEL) {
+		gpt_list_table(cxt, xtra);
+		return;
+	}
 
 	if (disklabel == OSF_LABEL) {
 		xbsd_print_disklabel(cxt, xtra);
@@ -1303,7 +1308,8 @@ static void new_partition(struct fdisk_context *cxt)
 	if (warn_geometry(cxt))
 		return;
 
-	if (disklabel == SUN_LABEL || disklabel == SGI_LABEL)
+	if (disklabel == SUN_LABEL || disklabel == SGI_LABEL
+		|| disklabel == GPT_LABEL)
 		partnum = get_partition(cxt, 0, partitions);
 
 	fdisk_add_partition(cxt, partnum, NULL);
@@ -1549,14 +1555,6 @@ static int is_ide_cdrom_or_tape(char *device)
 	return ret;
 }
 
-static void
-gpt_warning(char *dev)
-{
-	if (dev && gpt_probe_signature_devname(dev))
-		fprintf(stderr, _("\nWARNING: GPT (GUID Partition Table) detected on '%s'! "
-			"The util fdisk doesn't support GPT. Use GNU Parted.\n\n"), dev);
-}
-
 /* Print disk geometry and partition table of a specified device (-l option) */
 static void print_partition_table_from_option(char *device, unsigned long sector_size)
 {
@@ -1572,7 +1570,6 @@ static void print_partition_table_from_option(char *device, unsigned long sector
 	if (user_cylinders || user_heads || user_sectors)
 		fdisk_context_set_user_geometry(cxt, user_cylinders,
 					user_heads, user_sectors);
-	gpt_warning(device);
 
 	if (!fdisk_dev_has_disklabel(cxt)) {
 		/*
@@ -1877,8 +1874,6 @@ int main(int argc, char **argv)
 	if (!fdisk_dev_sectsz_is_default(cxt))
 		printf(_("Note: sector size is %ld (not %d)\n"),
 		       cxt->sector_size, DEFAULT_SECTOR_SIZE);
-
-	gpt_warning(cxt->dev_path);
 
 	if (!fdisk_dev_has_disklabel(cxt)) {
 		fprintf(stderr,

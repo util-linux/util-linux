@@ -189,6 +189,7 @@ extern const struct fdisk_label bsd_label;
 extern const struct fdisk_label mac_label;
 extern const struct fdisk_label sun_label;
 extern const struct fdisk_label sgi_label;
+extern const struct fdisk_label gpt_label;
 
 extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int readonly);
 extern int fdisk_dev_has_topology(struct fdisk_context *cxt);
@@ -276,6 +277,7 @@ enum fdisk_labeltype {
 	AIX_LABEL = 8,
 	OSF_LABEL = 16,
 	MAC_LABEL = 32,
+	GPT_LABEL = 64,
 	ANY_LABEL = -1
 };
 

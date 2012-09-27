@@ -40,6 +40,7 @@ int fdisk_debug_mask;
  */
 static const struct fdisk_label *labels[] =
 {
+	&gpt_label,
 	&dos_label,
 	&sun_label,
 	&sgi_label,
@@ -653,8 +654,9 @@ struct fdisk_parttype *fdisk_parse_parttype(
 		/* maybe specified by order number */
 		errno = 0;
 		i = strtol(str, &end, 0);
-		if (errno == 0 && *end == '\0' && i < (int) fdisk_get_nparttypes(cxt)) {
-			ret = &types[i];
+		if (errno == 0 && *end == '\0' && i > 0
+		    && i - 1 < (int) fdisk_get_nparttypes(cxt)) {
+			ret = &types[i - 1];
 			goto done;
 		}
 	}
