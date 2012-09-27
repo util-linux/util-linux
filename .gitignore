@@ -65,7 +65,6 @@ tests/run.sh.trs
 /addpart
 /agetty
 /arch
-/blkdiscard
 /blkid
 /blockdev
 /cal
