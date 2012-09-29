@@ -65,6 +65,26 @@ the screen if no other information is available.
 .nf
 sed 's/#.*//' /etc/fstab | column -t
 .nf
+.SH BUGS
+The util-linux version 2.23 changed
+.B \-s
+option to be non-greedy, for example:
+.PP
+.EX
+$ printf "a:b:c\n1::3\n" | column  -t -s ':'
+.EE
+.PP
+old output:
+.EX
+a  b  c
+1  3
+.EE
+.PP
+new output (since util-linux 2.23)
+.EX
+a  b  c
+1     3
+.EE
 .SH "SEE ALSO"
 .BR colrm (1),
 .BR ls (1),
