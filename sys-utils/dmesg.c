@@ -227,24 +227,36 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 /*
  * LEVEL     ::= <number> | <name>
- *  <number> ::= number in range <0..N>, where N < ARRAY_SIZE(level_names)
+ *  <number> ::= @len is set:  number in range <0..N>, where N < ARRAY_SIZE(level_names)
+ *           ::= @len not set: number in range <1..N>, where N <= ARRAY_SIZE(level_names)
  *  <name>   ::= case-insensitive text
+ *
+ *  Note that @len argument is not set when parsing "-n <level>" command line
+ *  option. The console_level is intepreted as "log level less than the value".
+ *
+ *  For example "dmesg -n 8" or "dmesg -n debug" enables debug console log
+ *  level by klogctl(SYSLOG_ACTION_CONSOLE_LEVEL, NULL, 8). The @str argument
+ *  has to be parsed to number in range <1..8>.
  */
 static int parse_level(const char *str, size_t len)
 {
+	int offset = 0;
+
 	if (!str)
 		return -1;
-	if (!len)
+	if (!len) {
 		len = strlen(str);
+		offset = 1;
+	}
 	errno = 0;
 
 	if (isdigit(*str)) {
 		char *end = NULL;
-		long x = strtol(str, &end, 10);
+		long x = strtol(str, &end, 10) - offset;
 
 		if (!errno && end && end > str && (size_t) (end - str) == len &&
 		    x >= 0 && (size_t) x < ARRAY_SIZE(level_names))
-			return x;
+			return x + offset;
 	} else {
 		size_t i;
 
@@ -252,7 +264,7 @@ static int parse_level(const char *str, size_t len)
 			const char *n = level_names[i].name;
 
 			if (strncasecmp(str, n, len) == 0 && *(n + len) == '\0')
-				return i;
+				return i + offset;
 		}
 	}
 
