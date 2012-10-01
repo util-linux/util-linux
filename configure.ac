@@ -68,8 +68,6 @@ case $prefix:$localstatedir in
 esac
 AC_SUBST([localstatedir])
 
-libdirname=`basename "$libdir"`
-AC_SUBST([libdirname])
 
 # The original default values of {bin,sbin,lib}dir
 usrbin_execdir='${exec_prefix}/bin'
@@ -78,7 +76,12 @@ AC_SUBST([usrbin_execdir])
 usrsbin_execdir='${exec_prefix}/sbin'
 AC_SUBST([usrsbin_execdir])
 
-usrlib_execdir='${exec_prefix}/'$libdirname
+case $libdir in
+ '${exec_prefix}/'* | '${prefix}/'* | /usr/*)
+    usrlib_execdir=$libdir ;;
+ *)
+    usrlib_execdir='${exec_prefix}'$libdir ;;
+esac
 AC_SUBST([usrlib_execdir])
 
 
