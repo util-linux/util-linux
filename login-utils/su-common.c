@@ -223,7 +223,7 @@ create_watching_parent (void)
   if (is_pam_failure(retval))
     {
       cleanup_pam (retval);
-      errx (EXIT_FAILURE, _("cannot not open session: %s"),
+      errx (EXIT_FAILURE, _("cannot open session: %s"),
 	     pam_strerror (pamh, retval));
     }
   else
