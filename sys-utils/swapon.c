@@ -730,7 +730,8 @@ int main(int argc, char *argv[])
 			usage(stdout);
 			break;
 		case 'p':		/* priority */
-			priority = atoi(optarg);
+			priority = strtos16_or_err(optarg,
+					   _("failed to parse priority"));
 			break;
 		case 'L':
 			add_label(optarg);
