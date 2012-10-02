@@ -362,115 +362,6 @@ done:
     }
 }
 
-/* Add or clear /sbin and /usr/sbin for the su command
-   used without `-'.  */
-
-/* Set if /sbin is found in path.  */
-#define SBIN_MASK	0x01
-/* Set if /usr/sbin is found in path.  */
-#define USBIN_MASK	0x02
-
-static char *
-addsbin (const char *const path)
-{
-  unsigned char smask = 0;
-  char *ptr, *tmp, *cur, *ret = NULL;
-  size_t len;
-
-  if (!path || *path == 0)
-    return NULL;
-
-  tmp = xstrdup (path);
-  cur = tmp;
-  for (ptr = strsep (&cur, ":"); ptr != NULL; ptr = strsep (&cur, ":"))
-    {
-      if (!strcmp (ptr, "/sbin"))
-	smask |= SBIN_MASK;
-      if (!strcmp (ptr, "/usr/sbin"))
-	smask |= USBIN_MASK;
-    }
-
-  if ((smask & (USBIN_MASK|SBIN_MASK)) == (USBIN_MASK|SBIN_MASK))
-    {
-      free (tmp);
-      return NULL;
-    }
-
-  len = strlen (path);
-  if (!(smask & USBIN_MASK))
-    len += strlen ("/usr/sbin:");
-
-  if (!(smask & SBIN_MASK))
-    len += strlen (":/sbin");
-
-  ret = xmalloc (len + 1);
-  strcpy (tmp, path);
-
-  *ret = 0;
-  cur = tmp;
-  for (ptr = strsep (&cur, ":"); ptr; ptr = strsep (&cur, ":"))
-    {
-      if (!strcmp (ptr, "."))
-	continue;
-      if (*ret)
-	strcat (ret, ":");
-      if (!(smask & USBIN_MASK) && !strcmp (ptr, "/bin"))
-	{
-	  strcat (ret, "/usr/sbin:");
-	  strcat (ret, ptr);
-	  smask |= USBIN_MASK;
-	  continue;
-	}
-      if (!(smask & SBIN_MASK) && !strcmp (ptr, "/usr/bin"))
-	{
-	  strcat (ret, ptr);
-	  strcat (ret, ":/sbin");
-	  smask |= SBIN_MASK;
-	  continue;
-	}
-      strcat (ret, ptr);
-    }
-  free (tmp);
-
-  if (!(smask & USBIN_MASK))
-    strcat (ret, ":/usr/sbin");
-
-  if (!(smask & SBIN_MASK))
-    strcat (ret, ":/sbin");
-
-  return ret;
-}
-
-static char *
-clearsbin (const char *const path)
-{
-  char *ptr, *tmp, *cur, *ret = NULL;
-
-  if (!path || *path == 0)
-    return NULL;
-
-  tmp = xstrdup (path);
-
-  ret = xmalloc (strlen (path) + 1);
-  *ret = 0;
-  cur = tmp;
-  for (ptr = strsep (&cur, ":"); ptr; ptr = strsep (&cur, ":"))
-    {
-      if (!strcmp (ptr, "/sbin"))
-	continue;
-      if (!strcmp (ptr, "/usr/sbin"))
-	continue;
-      if (!strcmp (ptr, "/usr/local/sbin"))
-	continue;
-      if (*ret)
-	strcat (ret, ":");
-      strcat (ret, ptr);
-    }
-  free (tmp);
-
-  return ret;
-}
-
 static void
 set_path(const struct passwd* pw)
 {
@@ -518,22 +409,7 @@ modify_environment (const struct passwd *pw, const char *shell)
           xsetenv ("SHELL", shell, 1);
 	  if (getlogindefs_bool ("ALWAYS_SET_PATH", 0))
 	    set_path(pw);
-	  else
-	    {
-	      char const *path = getenv ("PATH");
-	      char *new = NULL;
 
-	      if (pw->pw_uid)
-		new = clearsbin (path);
-	      else
-		new = addsbin (path);
-
-	      if (new)
-		{
-		  xsetenv ("PATH", new, 1);
-		  free (new);
-		}
-	    }
           if (pw->pw_uid)
             {
               xsetenv ("USER", pw->pw_name, 1);
