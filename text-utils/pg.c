@@ -64,6 +64,7 @@
 #include "widechar.h"
 #include "all-io.h"
 #include "closestream.h"
+#include "strutils.h"
 
 #define	READBUF		LINE_MAX	/* size of input buffer */
 #define CMDBUF		255		/* size of command buffer */
@@ -1623,7 +1624,8 @@ main(int argc, char **argv)
 				goto endargs;
 			case '1': case '2': case '3': case '4': case '5':
 			case '6': case '7': case '8': case '9': case '0':
-				pagelen = atoi(argv[arg] + i);
+				pagelen = strtol_or_err(argv[arg] + 1,
+						_("failed to parse number of lines per page"));
 				havepagelen = 1;
 				goto nextarg;
 			case 'c':
@@ -1687,7 +1689,8 @@ endargs:
 			/*NOTREACHED*/
 		case '1': case '2': case '3': case '4': case '5':
 		case '6': case '7': case '8': case '9': case '0':
-			startline = atoi(argv[arg] + 1);
+			startline = strtol_or_err(argv[arg] + 1,
+					_("failed to parse number of lines per page"));
 			break;
 		case '/':
 			searchfor = argv[arg] + 2;

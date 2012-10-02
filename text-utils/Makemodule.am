@@ -59,11 +59,11 @@ pg_SOURCES = text-utils/pg.c
 
 if HAVE_TINFO
 more_LDADD = $(LDADD) -ltinfo
-pg_LDADD = $(LDADD) -ltinfo @NCURSES_LIBS@
+pg_LDADD = $(LDADD) libcommon.la -ltinfo @NCURSES_LIBS@
 ul_LDADD = $(LDADD) -ltinfo
 else
 more_LDADD = $(LDADD) @NCURSES_LIBS@
-pg_LDADD = $(LDADD) @NCURSES_LIBS@
+pg_LDADD = $(LDADD) libcommon.la @NCURSES_LIBS@
 ul_LDADD = $(LDADD) @NCURSES_LIBS@
 endif
 
