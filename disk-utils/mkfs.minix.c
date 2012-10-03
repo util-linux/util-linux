@@ -680,14 +680,14 @@ int main(int argc, char ** argv) {
 		case 'c':
 			check=1; break;
 		case 'i':
-			req_nr_inodes = (unsigned long) atol(optarg);
+			req_nr_inodes = strtoul_or_err(optarg,
+					_("failed to parse number of inodes"));
 			break;
 		case 'l':
 			listfile = optarg; break;
 		case 'n':
-			i = strtoul(optarg,&tmp,0);
-			if (*tmp)
-				usage();
+			i = strtoul_or_err(optarg,
+					_("failed to parse maximum length of filenames"));
 			if (i == 14)
 				magic = MINIX_SUPER_MAGIC;
 			else if (i == 30)
@@ -719,13 +719,8 @@ int main(int argc, char ** argv) {
 		argc--;
 		argv++;
 	}
-	if (argc > 0) {
-		BLOCKS = strtol(argv[0],&tmp,0);
-		if (*tmp) {
-			printf(_("strtol error: number of blocks not specified"));
-			usage();
-		}
-	}
+	if (argc > 0)
+		BLOCKS = strtoul_or_err(argv[0], _("failed to parse number of blocks"));
 
 	if (!device_name) {
 		usage();
