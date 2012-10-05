@@ -31,7 +31,7 @@ process will have independent IPv4 and IPv6 stacks, IP routing tables, firewall
 rules, the \fI/proc/net\fP and \fI/sys/class/net\fP directory trees, sockets
 etc. (\fBCLONE_NEWNET\fP flag).
 .TP
-See the clone(2) for exact semantics of the flags.
+See the \fBclone\fR(2) for exact semantics of the flags.
 .SH OPTIONS
 .TP
 .BR \-h , " \-\-help"
@@ -52,7 +52,8 @@ Unshare the network namespace.
 The unshare command drops potential privileges before executing the
 target program. This allows to setuid unshare.
 .SH SEE ALSO
-unshare(2), clone(2)
+.BR unshare (2),
+.BR clone (2)
 .SH BUGS
 None known so far.
 .SH AUTHOR

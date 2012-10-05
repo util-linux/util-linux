@@ -97,7 +97,7 @@ Lock the whole-disk device by an exclusive
 .BR flock (2).
 This option can be used with one device only (this means that \fB-A\fR and
 \fB-l\fR are mutually exclusive).  This option is recommended when more
-.B fsck (8)
+.BR fsck (8)
 instances are executed in the same time.  The option is ignored when used for
 multiple devices or for non-rotating disks.  \fBfsck\fR does not lock underlying
 devices when executed to check stacked devices (e.g. MD or DM) -- this feature is
