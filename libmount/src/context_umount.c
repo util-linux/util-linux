@@ -83,12 +83,16 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 	 * where LABEL, UUID or symlinks are to canonicalized. It means that
 	 * it's usable only for canonicalized stuff (e.g. kernel mountinfo).
 	 */
-	if (!cxt->mtab_writable && *tgt == '/') {
-		/* we'll canonicalized /proc/self/mountinfo */
-		cache = mnt_context_get_cache(cxt);
-		cn_tgt = mnt_resolve_path(tgt, cache);
-		if (cn_tgt)
-			mnt_context_set_tabfilter(cxt, mtab_filter, cn_tgt);
+	if (!cxt->mtab_writable	&& *tgt == '/') {
+		struct stat st;
+
+		if (stat(tgt, &st) == 0 && S_ISDIR(st.st_mode)) {
+			/* we'll canonicalized /proc/self/mountinfo */
+			cache = mnt_context_get_cache(cxt);
+			cn_tgt = mnt_resolve_path(tgt, cache);
+			if (cn_tgt)
+				mnt_context_set_tabfilter(cxt, mtab_filter, cn_tgt);
+		}
 	}
 	rc = mnt_context_get_mtab(cxt, &mtab);
 
