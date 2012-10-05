@@ -584,12 +584,20 @@ static void log_utmp(struct login_context *cxt)
 	/* If we can't find a pre-existing entry by pid, try by line.
 	 * BSD network daemons may rely on this.
 	 */
-	if (utp == NULL) {
+	if (utp == NULL && cxt->tty_name) {
 		setutent();
 		ut.ut_type = LOGIN_PROCESS;
-		if (cxt->tty_name)
-			strncpy(ut.ut_line, cxt->tty_name, sizeof(ut.ut_line));
+		strncpy(ut.ut_line, cxt->tty_name, sizeof(ut.ut_line));
 		utp = getutline(&ut);
+	}
+
+	/* If we can't find a pre-existing entry by pid and line, try it by id.
+	 * Very stupid telnetd deamons don't set up utmp at all (kzak) */
+	if (utp == NULL && cxt->tty_number) {
+	     setutent();
+	     ut.ut_type = DEAD_PROCESS;
+	     strncpy(ut.ut_id, cxt->tty_number, sizeof(ut.ut_id));
+	     utp = getutid(&ut);
 	}
 
 	if (utp)
