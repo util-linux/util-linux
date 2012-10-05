@@ -22,9 +22,19 @@ TS_DESC="move"
 ts_init "$*"
 ts_skip_nonroot
 
-DIR_SRC="$TS_OUTDIR/mnt-move-src"
-DIR_A="$TS_OUTDIR/mnt-move-A"
-DIR_B="$TS_OUTDIR/mnt-move-B"
+DIR_PRIVATE2="$TS_OUTDIR/mnt-move-private2"
+DIR_PRIVATE="$TS_OUTDIR/mnt-move-private"
+
+DIR_SRC="$DIR_PRIVATE/mnt-move-src"
+DIR_A="$DIR_PRIVATE/mnt-move-A"
+DIR_B="$DIR_PRIVATE/mnt-move-B"
+
+# create bind mount and make it private to be sure
+# (kernel cannot move mount with shared parent)
+[ -d $DIR_PRIVATE2 ] || mkdir $DIR_PRIVATE2
+[ -d $DIR_PRIVATE ] || mkdir $DIR_PRIVATE
+$TS_CMD_MOUNT --bind $DIR_PRIVATE2 $DIR_PRIVATE
+$TS_CMD_MOUNT --make-private $DIR_PRIVATE
 
 [ -d $DIR_SRC ] || mkdir $DIR_SRC
 [ -d $DIR_A ] || mkdir $DIR_A
@@ -47,6 +57,9 @@ $TS_CMD_FINDMNT --kernel --target "$DIR_B" &> /dev/null
 # clean up
 $TS_CMD_UMOUNT $DIR_B
 rmdir $DIR_SRC $DIR_A $DIR_B
+
+$TS_CMD_UMOUNT $DIR_PRIVATE
+rmdir $DIR_PRIVATE $DIR_PRIVATE2
 
 ts_log "Success"
 ts_finalize
