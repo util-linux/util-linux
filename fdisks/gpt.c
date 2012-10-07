@@ -1295,17 +1295,7 @@ static int gpt_create_new_partition(int partnum, uint64_t fsect, uint64_t lsect,
 	 * to have a unique GUID.
 	 */
 	uuid_generate_random((unsigned char *) &e->unique_partition_guid);
-
-	/*
-	 * UUID is traditionally 16 byte big-endian array, except Intel EFI
-	 * specs where the UUID is a structure of little-endian fields, convert.
-	 */
-	e->unique_partition_guid.time_low =
-		cpu_to_le32(e->unique_partition_guid.time_low);
-	e->unique_partition_guid.time_mid =
-		cpu_to_le16(e->unique_partition_guid.time_mid);
-	e->unique_partition_guid.time_hi_and_version =
-		cpu_to_le16(e->unique_partition_guid.time_hi_and_version);
+	swap_efi_guid(&e->unique_partition_guid);
 
 	memcpy(&entries[partnum] , e, sizeof(*e));
 
