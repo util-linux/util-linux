@@ -61,7 +61,7 @@
 #define DKTYPENAMES
 #include "fdiskbsdlabel.h"
 
-static void xbsd_delete_part (struct fdisk_context *cxt, int partnum);
+static int xbsd_delete_part (struct fdisk_context *cxt, int partnum);
 static void xbsd_edit_disklabel (void);
 static void xbsd_write_bootstrap (struct fdisk_context *cxt);
 static void xbsd_change_fstype (struct fdisk_context *cxt);
@@ -311,7 +311,7 @@ bsd_command_prompt (struct fdisk_context *cxt)
   }
 }
 
-static void xbsd_delete_part(struct fdisk_context *cxt __attribute__((__unused__)),
+static int xbsd_delete_part(struct fdisk_context *cxt __attribute__((__unused__)),
 			     int partnum)
 {
 	xbsd_dlabel.d_partitions[partnum].p_size   = 0;
@@ -320,6 +320,8 @@ static void xbsd_delete_part(struct fdisk_context *cxt __attribute__((__unused__
 	if (xbsd_dlabel.d_npartitions == partnum + 1)
 		while (!xbsd_dlabel.d_partitions[xbsd_dlabel.d_npartitions-1].p_size)
 			xbsd_dlabel.d_npartitions--;
+
+	return 0;
 }
 
 void

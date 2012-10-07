@@ -1223,19 +1223,21 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 }
 
 /* Delete a single GPT partition, specified by partnum. */
-static void gpt_delete_partition(struct fdisk_context *cxt, int partnum)
+static int gpt_delete_partition(struct fdisk_context *cxt, int partnum)
 {
 	if (!cxt || partition_unused(ents[partnum]) || partnum < 0)
-		return;
+		return -EINVAL;
 
 	/* hasta la vista, baby! */
 	memset(&ents[partnum], 0, sizeof(ents[partnum]));
 	if (!partition_unused(ents[partnum]))
-		printf(_("Could not delete partition %d\n"), partnum + 1);
+		return -EINVAL;
 	else {
 		gpt_recompute_crc(pheader, ents);
 		gpt_recompute_crc(bheader, ents);
 	}
+
+	return 0;
 }
 
 static void gpt_entry_set_type(struct gpt_entry *e, struct gpt_guid *type)

@@ -587,17 +587,20 @@ sgi_entire(struct fdisk_context *cxt) {
 	return -1;
 }
 
-static void
-sgi_set_partition(struct fdisk_context *cxt,
-		  int i, unsigned int start, unsigned int length, int sys) {
+static int sgi_set_partition(struct fdisk_context *cxt, int i,
+			     unsigned int start, unsigned int length, int sys)
+{
 	sgilabel->partitions[i].id = SSWAP32(sys);
 	sgilabel->partitions[i].num_sectors = SSWAP32(length);
 	sgilabel->partitions[i].start_sector = SSWAP32(start);
 	set_changed(i);
+
 	if (sgi_gaps(cxt) < 0)	/* rebuild freelist */
 		printf(_("Partition overlap on the disk.\n"));
 	if (length)
 		print_partition_size(cxt, i + 1, start, start + length, sys);
+
+	return 0;
 }
 
 static void
@@ -631,9 +634,9 @@ sgi_set_volhdr(struct fdisk_context *cxt)
 	}
 }
 
-static void sgi_delete_partition(struct fdisk_context *cxt, int partnum)
+static int sgi_delete_partition(struct fdisk_context *cxt, int partnum)
 {
-	sgi_set_partition(cxt, partnum, 0, 0, 0);
+	return sgi_set_partition(cxt, partnum, 0, 0, 0);
 }
 
 static void sgi_add_partition(struct fdisk_context *cxt, int n,

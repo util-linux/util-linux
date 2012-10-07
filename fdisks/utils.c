@@ -126,8 +126,7 @@ int fdisk_delete_partition(struct fdisk_context *cxt, int partnum)
 
 	DBG(LABEL, dbgprint("deleting %s partition number %d",
 				cxt->label->name, partnum));
-	cxt->label->part_delete(cxt, partnum);
-	return 0;
+	return cxt->label->part_delete(cxt, partnum);
 }
 
 static int __probe_labels(struct fdisk_context *cxt)

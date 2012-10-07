@@ -486,7 +486,7 @@ and is of type `Whole disk'\n"));
 	set_sun_partition(cxt, n, first, last, sys);
 }
 
-static void sun_delete_partition(struct fdisk_context *cxt, int partnum)
+static int sun_delete_partition(struct fdisk_context *cxt, int partnum)
 {
 	struct sun_partition *part = &sunlabel->partitions[partnum];
 	struct sun_tag_flag *tag = &sunlabel->part_tags[partnum];
@@ -496,13 +496,15 @@ static void sun_delete_partition(struct fdisk_context *cxt, int partnum)
 	    tag->tag == SSWAP16(SUN_TAG_BACKUP) &&
 	    !part->start_cylinder &&
 	    (nsec = SSWAP32(part->num_sectors))
-	      == cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders)
+	    == cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders)
 		printf(_("If you want to maintain SunOS/Solaris compatibility, "
-		       "consider leaving this\n"
-		       "partition as Whole disk (5), starting at 0, with %u "
-		       "sectors\n"), nsec);
+			 "consider leaving this\n"
+			 "partition as Whole disk (5), starting at 0, with %u "
+			 "sectors\n"), nsec);
 	tag->tag = SSWAP16(SUN_TAG_UNASSIGNED);
 	part->num_sectors = 0;
+
+	return 0;
 }
 
 

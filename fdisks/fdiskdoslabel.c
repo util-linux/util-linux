@@ -135,7 +135,7 @@ void dos_init(struct fdisk_context *cxt)
 	warn_alignment(cxt);
 }
 
-static void dos_delete_partition(
+static int dos_delete_partition(
 		struct fdisk_context *cxt __attribute__ ((__unused__)),
 		int partnum)
 {
@@ -190,6 +190,8 @@ static void dos_delete_partition(
 			/* the only logical: clear only */
 			clear_partition(ptes[partnum].part_table);
 	}
+
+	return 0;
 }
 
 static void read_extended(struct fdisk_context *cxt, int ext)
