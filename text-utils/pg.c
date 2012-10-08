@@ -70,11 +70,6 @@
 #define CMDBUF		255		/* size of command buffer */
 #define	TABSIZE		8		/* spaces consumed by tab character */
 
-/*
- * Avoid the message "`var' might be clobbered by `longjmp' or `vfork'"
- */
-#define	CLOBBGRD(a)	(void)(&(a));
-
 #define	cuc(c)		((c) & 0377)
 
 enum { FORWARD = 1, BACKWARD = 2 };	/* search direction */
@@ -985,22 +980,6 @@ pgfile(FILE *f, const char *name)
 	 * save		for the s command, to save to a file
 	 */
 	FILE *fbuf, *find, *save;
-
-	/* silence compiler - it may warn about longjmp() */
-	CLOBBGRD(line);
-	CLOBBGRD(fline);
-	CLOBBGRD(bline);
-	CLOBBGRD(oldline);
-	CLOBBGRD(eofline);
-	CLOBBGRD(dline);
-	CLOBBGRD(ttycols);
-	CLOBBGRD(search);
-	CLOBBGRD(searchcount);
-	CLOBBGRD(seekeof);
-	CLOBBGRD(eof);
-	CLOBBGRD(fpos);
-	CLOBBGRD(nobuf);
-	CLOBBGRD(fbuf);
 
 	if (ontty == 0) {
 		/*
