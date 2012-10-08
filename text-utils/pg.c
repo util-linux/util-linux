@@ -1581,12 +1581,91 @@ found_bw:
 		fclose(fbuf);
 }
 
+static int
+parse_arguments(int arg, int argc, char **argv)
+{
+	FILE *input;
+
+	files.first = arg;
+	files.last = arg + argc - 1;
+	for (; argv[arg]; arg += nextfile) {
+		nextfile = 1;
+		files.current = arg;
+		if (argc > 2) {
+			static int firsttime;
+			firsttime++;
+			if (firsttime > 1) {
+				mesg(_("(Next file: "));
+				mesg(argv[arg]);
+				mesg(")");
+ newfile:
+				if (ontty) {
+					prompt(-1);
+					switch (cmd.key) {
+					case 'n':
+						/*
+						 * Next file.
+						 */
+						if (cmd.count == 0)
+							cmd.count = 1;
+						nextfile = cmd.count;
+						if (checkf()) {
+							nextfile = 1;
+							mesg(":");
+							goto newfile;
+						}
+						continue;
+					case 'p':
+						/*
+						 * Previous file.
+						 */
+						if (cmd.count == 0)
+							cmd.count = 1;
+						nextfile = 0 - cmd.count;
+						if (checkf()) {
+							nextfile = 1;
+							mesg(":");
+							goto newfile;
+						}
+						continue;
+					case 'q':
+					case 'Q':
+						quit(exitstatus);
+					}
+				} else
+					mesg("\n");
+			}
+		}
+		if (strcmp(argv[arg], "-") == 0)
+			input = stdin;
+		else {
+			input = fopen(argv[arg], "r");
+			if (input == NULL) {
+				pgerror(errno, argv[arg]);
+				exitstatus++;
+				continue;
+			}
+		}
+		if (ontty == 0 && argc > 2) {
+			/*
+			 * Use the prefix as specified by SUSv2.
+			 */
+			write_all(1, "::::::::::::::\n", 15);
+			write_all(1, argv[arg], strlen(argv[arg]));
+			write_all(1, "\n::::::::::::::\n", 16);
+		}
+		pgfile(input, argv[arg]);
+		if (input != stdin)
+			fclose(input);
+	}
+	return exitstatus;
+}
+
 int
 main(int argc, char **argv)
 {
 	int arg, i;
 	char *p;
-	FILE *input;
 
 	progname = basename(argv[0]);
 	xasprintf(&copyright,
@@ -1705,81 +1784,11 @@ endargs:
 			invopt(argv[arg]);
 		}
 	}
-	if (argc == 1) {
+	if (argc == 1)
 		pgfile(stdin, "stdin");
-	} else {
-		files.first = arg;
-		files.last = arg + argc - 1;
-		for ( ; argv[arg]; arg += nextfile) {
-			nextfile = 1;
-			files.current = arg;
-			if (argc > 2) {
-				static int firsttime;
-				firsttime++;
-				if (firsttime > 1) {
-					mesg(_("(Next file: "));
-					mesg(argv[arg]);
-					mesg(")");
-newfile:
-					if (ontty) {
-					prompt(-1);
-					switch(cmd.key) {
-					case 'n':
-						/*
-					 	* Next file.
-					 	*/
-						if (cmd.count == 0)
-							cmd.count = 1;
-						nextfile = cmd.count;
-						if (checkf()) {
-							nextfile = 1;
-							mesg(":");
-							goto newfile;
-						}
-						continue;
-					case 'p':
-						/*
-					 	* Previous file.
-					 	*/
-						if (cmd.count == 0)
-							cmd.count = 1;
-						nextfile = 0 - cmd.count;
-						if (checkf()) {
-							nextfile = 1;
-							mesg(":");
-							goto newfile;
-						}
-						continue;
-					case 'q':
-					case 'Q':
-						quit(exitstatus);
-				}
-				} else mesg("\n");
-				}
-			}
-			if (strcmp(argv[arg], "-") == 0)
-				input = stdin;
-			else {
-				input = fopen(argv[arg], "r");
-				if (input == NULL) {
-					pgerror(errno, argv[arg]);
-					exitstatus++;
-					continue;
-				}
-			}
-			if (ontty == 0 && argc > 2) {
-				/*
-				 * Use the prefix as specified by SUSv2.
-				 */
-				write_all(1, "::::::::::::::\n", 15);
-				write_all(1, argv[arg], strlen(argv[arg]));
-				write_all(1, "\n::::::::::::::\n", 16);
-			}
-			pgfile(input, argv[arg]);
-			if (input != stdin)
-				fclose(input);
-		}
-	}
+	else
+		exitstatus = parse_arguments(arg, argc, argv);
+
 	quit(exitstatus);
 	/*NOTREACHED*/
 	return 0;
