@@ -52,13 +52,6 @@ CLEANFILES += misc-utils/chkdupexe
 dist_man_MANS += misc-utils/chkdupexe.1
 endif
 
-if BUILD_DDATE
-usrbin_exec_PROGRAMS += ddate
-dist_man_MANS += misc-utils/ddate.1
-ddate_SOURCES = misc-utils/ddate.c
-ruman1_DATA += man/ru/ddate.1
-endif
-
 if BUILD_LSLOCKS
 usrbin_exec_PROGRAMS += lslocks
 dist_man_MANS += misc-utils/lslocks.8

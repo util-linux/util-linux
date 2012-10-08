@@ -39,7 +39,7 @@ trap "rm -f ${ERROR_FILE}" 0
 
 for I in $(
 	find $(git rev-parse --show-toplevel) -name '*.[1-8]' |
-	egrep -v '(Documentation|.git|/.libs/|autom4te.cache|ru/ddate)'
+	egrep -v '(Documentation|.git|/.libs/|autom4te.cache)'
 ); do
 	# FIXME: the determination whether a manual does include
 	# should probably be somewhat smarter.

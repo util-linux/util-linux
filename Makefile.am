@@ -39,7 +39,6 @@ bin_PROGRAMS =
 sbin_PROGRAMS =
 dist_usrbin_exec_SCRIPTS =
 systemdsystemunit_DATA =
-ruman1_DATA =
 check_PROGRAMS =
 TESTS =
 
@@ -51,7 +50,7 @@ INSTALL_DATA_HOOKS =
 CLEAN_LOCALS =
 CHECK_LOCALS =
 
-EXTRA_DIST = man/ru/ddate.1
+EXTRA_DIST =
 CLEANFILES =
 
 SUBDIRS = po

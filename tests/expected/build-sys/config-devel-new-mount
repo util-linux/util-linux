@@ -56,7 +56,6 @@ uuidgen:  libuuid
 wipefs:  libblkid libuuid 
 blkid.static: STATIC
 cal:  libncursesw libtinfo 
-ddate:  
 kill:  
 logger:  
 look:  

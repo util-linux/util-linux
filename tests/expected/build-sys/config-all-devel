@@ -54,7 +54,6 @@ uuidd:  libuuid
 uuidgen:  libuuid 
 wipefs:  libblkid libuuid 
 cal:  libncursesw libtinfo 
-ddate:  
 kill:  
 logger:  
 look:  

@@ -678,7 +678,6 @@ AC_ARG_ENABLE([most-builds],
 )
 if test "x$enable_most_builds" = xyes; then
   enable_arch=check
-  enable_ddate=yes
   enable_elvtune=check
   enable_last=yes
   enable_line=yes
@@ -878,16 +877,6 @@ AC_ARG_ENABLE([arch],
 UL_BUILD_INIT([arch])
 UL_REQUIRES_LINUX([arch])
 AM_CONDITIONAL(BUILD_ARCH, test "x$build_arch" = xyes)
-
-
-AC_ARG_ENABLE([ddate],
-  AS_HELP_STRING([--enable-ddate], [do build ddate]),
-  [], enable_ddate=no
-)
-UL_BUILD_INIT([ddate])
-AM_CONDITIONAL(BUILD_DDATE, test "x$build_ddate" = xyes)
-ruman1dir='${mandir}/ru/man1'
-AC_SUBST([ruman1dir])
 
 
 AC_ARG_ENABLE([eject],

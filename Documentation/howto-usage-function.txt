@@ -134,7 +134,7 @@ Some commands use peculiar options and arguments. These are supported,
 but such will not be accepted in future. See list bellow for a hint what
 are meant this.
 
-- Other than `-' used to define an option. See `+' for `more' or `ddate'
+- Other than `-' used to define an option. See `+' for `more'
   commands.
 - Option string used as an option argument. See `more' command and `-num'.
 - Short long option. See `setterm'.
