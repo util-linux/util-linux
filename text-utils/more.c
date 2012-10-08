@@ -432,6 +432,7 @@ int main(int argc, char **argv)
 				}
 			}
 			if (srchopt) {
+				free(previousre);
 				previousre = xstrdup(initbuf);
 				search(initbuf, stdin, 1);
 				if (noscroll)
@@ -454,6 +455,7 @@ int main(int argc, char **argv)
 			if (firstf) {
 				firstf = 0;
 				if (srchopt) {
+					free(previousre);
 					previousre = xstrdup(initbuf);
 					search(initbuf, f, 1);
 					if (noscroll)
@@ -509,6 +511,7 @@ int main(int argc, char **argv)
 	}
 	free(previousre);
 	free(initbuf);
+	free(Line);
 	reset_tty();
 	exit(EXIT_SUCCESS);
 }
@@ -766,6 +769,8 @@ void __attribute__((__noreturn__)) end_it(int dummy __attribute__((__unused__)))
 		fflush(stdout);
 	} else
 		putcerr('\n');
+	free(previousre);
+	free(Line);
 	_exit(EXIT_SUCCESS);
 }
 
@@ -1624,6 +1629,7 @@ void search(char buf[], FILE *file, register int n)
 			}
 		}
 	}
+	regfree(&re);
 	if (feof(file)) {
 		if (!no_intty) {
 			Currline = saveln;
@@ -1632,9 +1638,9 @@ void search(char buf[], FILE *file, register int n)
 			putsout(_("\nPattern not found\n"));
 			end_it(0);
 		}
-		more_error(_("Pattern not found"));
 		free(previousre);
 		previousre = NULL;
+		more_error(_("Pattern not found"));
 	}
 }
 
