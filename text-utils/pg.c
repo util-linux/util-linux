@@ -208,7 +208,7 @@ static my_sighandler_t my_sigset(int sig, my_sighandler_t disp) {
 /*
  * Quit pg.
  */
-static void
+static void __attribute__((__noreturn__))
 quit(int status)
 {
 	exit(status < 0100 ? status : 077);
@@ -217,7 +217,7 @@ quit(int status)
 /*
  * Usage message and similar routines.
  */
-static void usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
@@ -240,14 +240,14 @@ static void usage(FILE * out)
 	quit(out == stderr ? 2 : 0);
 }
 
-static void
+static void __attribute__((__noreturn__))
 needarg(const char *s)
 {
 	warnx(_("option requires an argument -- %s"), s);
 	usage(stderr);
 }
 
-static void
+static void __attribute__((__noreturn__))
 invopt(const char *s)
 {
 	warnx(_("illegal option -- %s"), s);
@@ -926,7 +926,7 @@ makepat(void)
 /*
  * Process errors that occurred in temporary file operations.
  */
-static void
+static void __attribute__((__noreturn__))
 tmperr(FILE *f, const char *ftype)
 {
 	if (ferror(f))
