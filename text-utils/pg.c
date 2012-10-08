@@ -134,7 +134,7 @@ int		fflag;			/* do not split lines */
 int		nflag;			/* no newline for commands required */
 int		rflag;			/* "restricted" pg */
 int		sflag;			/* use standout mode */
-char		*pstring = ":";		/* prompt string */
+const char	*pstring = ":";		/* prompt string */
 char		*searchfor;		/* search pattern from argv[] */
 int		havepagelen;		/* page length is manually defined */
 long		startline;		/* start line from argv[] */
@@ -241,14 +241,14 @@ static void usage(FILE * out)
 }
 
 static void
-needarg(char *s)
+needarg(const char *s)
 {
 	warnx(_("option requires an argument -- %s"), s);
 	usage(stderr);
 }
 
 static void
-invopt(char *s)
+invopt(const char *s)
 {
 	warnx(_("illegal option -- %s"), s);
 	usage(stderr);
@@ -295,7 +295,7 @@ outcap(int i)
  * Write messages to terminal.
  */
 static void
-mesg(char *message)
+mesg(const char *message)
 {
 	if (ontty == 0)
 		return;
@@ -927,7 +927,7 @@ makepat(void)
  * Process errors that occurred in temporary file operations.
  */
 static void
-tmperr(FILE *f, char *ftype)
+tmperr(FILE *f, const char *ftype)
 {
 	if (ferror(f))
 		warn(_("Read error from %s file"), ftype);
@@ -946,7 +946,7 @@ tmperr(FILE *f, char *ftype)
  * Beware: long and ugly.
  */
 static void
-pgfile(FILE *f, char *name)
+pgfile(FILE *f, const char *name)
 {
 	off_t pos, oldpos, fpos;
 	off_t line = 0, fline = 0, bline = 0, oldline = 0, eofline = 0;
@@ -1464,8 +1464,10 @@ found_bw:
 					my_sigset(SIGQUIT, SIG_IGN);
 					switch (cpid = fork()) {
 					case 0:
-						p = getenv("SHELL");
-						if (p == NULL) p = "/bin/sh";
+					{
+						const char *sh = getenv("SHELL");
+						if (!sh)
+							sh = "/bin/sh";
 						if (!nobuf)
 							fclose(fbuf);
 						fclose(find);
@@ -1478,11 +1480,12 @@ found_bw:
 						my_sigset(SIGINT, oldint);
 						my_sigset(SIGQUIT, oldquit);
 						my_sigset(SIGTERM, oldterm);
-						execl(p, p, "-c",
+						execl(sh, sh, "-c",
 							cmd.cmdline + 1, NULL);
-						warn("%s", p);
+						warn("%s", sh);
 						_exit(0177);
 						/*NOTREACHED*/
+					}
 					case -1:
 						mesg(_("fork() failed, "
 						       "try again later\n"));
