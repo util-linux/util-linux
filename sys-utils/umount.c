@@ -120,6 +120,25 @@ static void __attribute__((__noreturn__)) exit_non_root(const char *option)
 	errx(MOUNT_EX_USAGE, _("only root can do that"));
 }
 
+static void success_message(struct libmnt_context *cxt)
+{
+	const char *tgt, *src;
+
+	if (mnt_context_helper_executed(cxt)
+	    || mnt_context_get_status(cxt) != 1)
+		return;
+
+	tgt = mnt_context_get_target(cxt);
+	if (!tgt)
+		return;
+
+	src = mnt_context_get_source(cxt);
+	if (src)
+		warnx(_("%s (%s) unmounted"), tgt, src);
+	else
+		warnx(_("%s unmounted"), tgt);
+}
+
 /*
  * Handles generic errors like ENOMEM, ...
  *
@@ -273,6 +292,9 @@ static int umount_one(struct libmnt_context *cxt, const char *spec)
 
 	rc = mnt_context_umount(cxt);
 	rc = mk_exit_code(cxt, rc);
+
+	if (rc == MOUNT_EX_SUCCESS && mnt_context_is_verbose(cxt))
+		success_message(cxt);
 
 	mnt_reset_context(cxt);
 	return rc;

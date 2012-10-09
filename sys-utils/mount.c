@@ -230,6 +230,29 @@ static int mount_all(struct libmnt_context *cxt)
 	return rc;
 }
 
+static void success_message(struct libmnt_context *cxt)
+{
+	unsigned long mflags = 0;
+	const char *tgt, *src;
+
+	if (mnt_context_helper_executed(cxt)
+	    || mnt_context_get_status(cxt) != 1)
+		return;
+
+	mnt_context_get_mflags(cxt, &mflags);
+	tgt = mnt_context_get_target(cxt);
+	src = mnt_context_get_source(cxt);
+
+	if (mflags & MS_MOVE)
+		warnx(_("%s moved to %s"), src, tgt);
+	else if (mflags & MS_BIND)
+		warnx(_("%s binded on %s"), src, tgt);
+	else if (mflags & MS_PROPAGATION)
+		warnx(_("%s propagation flags changed"), tgt);
+	else
+		warnx(_("%s mounted on %s"), src, tgt);
+}
+
 /*
  * Handles generic errors like ENOMEM, ...
  *
@@ -293,7 +316,6 @@ static void selinux_warning(struct libmnt_context *cxt, const char *tgt)
 #else
 # define selinux_warning(_x, _y)
 #endif
-
 
 /*
  * rc = 0 success
@@ -949,6 +971,8 @@ int main(int argc, char **argv)
 	rc = mnt_context_mount(cxt);
 	rc = mk_exit_code(cxt, rc);
 
+	if (rc == MOUNT_EX_SUCCESS && mnt_context_is_verbose(cxt))
+		success_message(cxt);
 done:
 	mnt_free_context(cxt);
 	mnt_free_table(fstab);
