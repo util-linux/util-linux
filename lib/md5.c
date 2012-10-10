@@ -138,9 +138,12 @@ void MD5Final(unsigned char digest[MD5LENGTH], struct MD5Context *ctx)
     }
     byteReverse(ctx->in, 14);
 
-    /* Append length in bits and transform */
-    ((uint32_t *) ctx->in)[14] = ctx->bits[0];
-    ((uint32_t *) ctx->in)[15] = ctx->bits[1];
+    /* Append length in bits and transform.
+     * Use memcpy to avoid aliasing problems.  On most systems,
+     * this will be optimized away to the same code.
+     */
+    memcpy(&ctx->in[14 * sizeof(uint32_t)], &ctx->bits[0], 4);
+    memcpy(&ctx->in[15 * sizeof(uint32_t)], &ctx->bits[1], 4);
 
     MD5Transform(ctx->buf, (uint32_t *) ctx->in);
     byteReverse((unsigned char *) ctx->buf, 4);
