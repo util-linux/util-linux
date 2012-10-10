@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.18-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2012-09-04 13:54+0200\n"
+"POT-Creation-Date: 2012-10-10 14:41+0200\n"
 "PO-Revision-Date: 2010-08-22 00:14+0800\n"
 "Last-Translator: Wei-Lun Chao <chaoweilun@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -31,26 +31,26 @@ msgstr ""
 #: disk-utils/mkfs.minix.c:762 disk-utils/partx.c:840
 #: disk-utils/resizepart.c:95 disk-utils/swaplabel.c:105 fdisks/cfdisk.c:1823
 #: fdisks/cfdisk.c:1941 fdisks/cfdisk.c:2025 fdisks/fdisk.c:1610
-#: fdisks/fdisk.c:1794 fdisks/fdisk.c:1909 lib/path.c:58 lib/path.c:70
-#: login-utils/islocal.c:87 login-utils/last.c:245 login-utils/sulogin.c:216
-#: login-utils/sulogin.c:254 login-utils/sulogin.c:524
-#: login-utils/sulogin.c:559 login-utils/utmpdump.c:118
-#: login-utils/utmpdump.c:343 login-utils/vipw.c:268 login-utils/vipw.c:286
-#: misc-utils/findmnt.c:896 misc-utils/mcookie.c:147 misc-utils/mcookie.c:181
-#: sys-utils/cytune.c:178 sys-utils/cytune.c:404 sys-utils/cytune.c:418
-#: sys-utils/cytune.c:434 sys-utils/dmesg.c:436 sys-utils/eject.c:500
-#: sys-utils/eject.c:691 sys-utils/fallocate.c:153 sys-utils/fsfreeze.c:104
-#: sys-utils/fstrim.c:142 sys-utils/hwclock-cmos.c:637
-#: sys-utils/hwclock-rtc.c:162 sys-utils/hwclock-rtc.c:256
-#: sys-utils/hwclock-rtc.c:420 sys-utils/hwclock-rtc.c:441
-#: sys-utils/hwclock-rtc.c:488 sys-utils/ldattach.c:293
-#: sys-utils/losetup.c:118 sys-utils/rtcwake.c:119 sys-utils/rtcwake.c:279
-#: sys-utils/rtcwake.c:517 sys-utils/swapon.c:310 sys-utils/swapon.c:477
-#: sys-utils/wdctl.c:286 sys-utils/wdctl.c:340 term-utils/script.c:208
-#: term-utils/script.c:233 term-utils/script.c:560
-#: term-utils/scriptreplay.c:197 term-utils/scriptreplay.c:200
-#: term-utils/wall.c:247 text-utils/rev.c:131 text-utils/tailf.c:62
-#: text-utils/tailf.c:99 text-utils/ul.c:231
+#: fdisks/fdisk.c:1794 fdisks/fdisk.c:1909 lib/pager.c:48 lib/path.c:58
+#: lib/path.c:70 login-utils/islocal.c:87 login-utils/last.c:245
+#: login-utils/sulogin.c:216 login-utils/sulogin.c:254
+#: login-utils/sulogin.c:524 login-utils/sulogin.c:559
+#: login-utils/utmpdump.c:118 login-utils/utmpdump.c:343
+#: login-utils/vipw.c:268 login-utils/vipw.c:286 misc-utils/findmnt.c:896
+#: misc-utils/mcookie.c:147 misc-utils/mcookie.c:181 sys-utils/cytune.c:178
+#: sys-utils/cytune.c:404 sys-utils/cytune.c:418 sys-utils/cytune.c:434
+#: sys-utils/dmesg.c:448 sys-utils/eject.c:500 sys-utils/eject.c:691
+#: sys-utils/fallocate.c:153 sys-utils/fsfreeze.c:104 sys-utils/fstrim.c:142
+#: sys-utils/hwclock-cmos.c:637 sys-utils/hwclock-rtc.c:162
+#: sys-utils/hwclock-rtc.c:256 sys-utils/hwclock-rtc.c:420
+#: sys-utils/hwclock-rtc.c:441 sys-utils/hwclock-rtc.c:488
+#: sys-utils/ldattach.c:293 sys-utils/losetup.c:118 sys-utils/rtcwake.c:118
+#: sys-utils/rtcwake.c:277 sys-utils/rtcwake.c:515 sys-utils/swapon.c:310
+#: sys-utils/swapon.c:477 sys-utils/switch_root.c:158 sys-utils/wdctl.c:309
+#: sys-utils/wdctl.c:363 term-utils/script.c:208 term-utils/script.c:233
+#: term-utils/script.c:560 term-utils/scriptreplay.c:197
+#: term-utils/scriptreplay.c:200 term-utils/wall.c:247 text-utils/rev.c:131
+#: text-utils/tailf.c:62 text-utils/tailf.c:99 text-utils/ul.c:231
 #, c-format
 msgid "cannot open %s"
 msgstr "無法開啟 %s"
@@ -301,13 +301,13 @@ msgid ""
 msgstr ""
 
 #: disk-utils/fdformat.c:131 disk-utils/fsck.c:1507 disk-utils/mkfs.bfs.c:89
-#: disk-utils/mkfs.cramfs.c:763 fdisks/sfdisk.c:2633 include/c.h:248
+#: disk-utils/mkfs.cramfs.c:763 fdisks/sfdisk.c:2637 include/c.h:248
 #: misc-utils/cal.c:353 misc-utils/getopt.c:431 misc-utils/kill.c:193
-#: misc-utils/logger.c:264 misc-utils/look.c:126 misc-utils/lsblk.c:1360
+#: misc-utils/logger.c:264 misc-utils/look.c:126 misc-utils/lsblk.c:1376
 #: misc-utils/mcookie.c:119 misc-utils/namei.c:466 misc-utils/rename.c:101
-#: misc-utils/uuidd.c:580 misc-utils/uuidgen.c:77 misc-utils/whereis.c:466
+#: misc-utils/uuidd.c:580 misc-utils/uuidgen.c:77 misc-utils/whereis.c:467
 #: misc-utils/wipefs.c:438 schedutils/ionice.c:171 sys-utils/chcpu.c:307
-#: sys-utils/cytune.c:378 sys-utils/dmesg.c:1150 sys-utils/hwclock.c:1342
+#: sys-utils/cytune.c:378 sys-utils/dmesg.c:1162 sys-utils/hwclock.c:1355
 #: sys-utils/lscpu.c:1315 term-utils/agetty.c:672 term-utils/mesg.c:108
 #: term-utils/script.c:212 term-utils/scriptreplay.c:172
 #: term-utils/setterm.c:812 term-utils/wall.c:133 term-utils/write.c:112
@@ -321,7 +321,7 @@ msgstr "%s 來自 %s\n"
 #: disk-utils/fdformat.c:146 disk-utils/fsck.cramfs.c:142
 #: disk-utils/mkfs.bfs.c:177 disk-utils/mkfs.cramfs.c:748
 #: disk-utils/mkfs.cramfs.c:783 disk-utils/mkfs.minix.c:755
-#: disk-utils/partx.c:779 misc-utils/namei.c:231 sys-utils/dmesg.c:438
+#: disk-utils/partx.c:779 misc-utils/namei.c:231 sys-utils/dmesg.c:450
 #: sys-utils/fsfreeze.c:107 sys-utils/fstrim.c:136 sys-utils/swapon.c:446
 #: sys-utils/switch_root.c:88 sys-utils/switch_root.c:128
 #: term-utils/mesg.c:124 text-utils/tailf.c:102 text-utils/tailf.c:280
@@ -329,7 +329,7 @@ msgstr "%s 來自 %s\n"
 msgid "stat failed %s"
 msgstr "狀態取得失敗：%s"
 
-#: disk-utils/fdformat.c:149 disk-utils/partx.c:837 misc-utils/lsblk.c:1077
+#: disk-utils/fdformat.c:149 disk-utils/partx.c:837 misc-utils/lsblk.c:1098
 #: sys-utils/mountpoint.c:107
 #, fuzzy, c-format
 msgid "%s: not a block device"
@@ -413,12 +413,12 @@ msgstr "剖析錯誤發生於列號："
 msgid "%s: failed to parse fstab"
 msgstr "%s：無法開啟"
 
-#: disk-utils/fsck.c:584 sys-utils/umount.c:217
+#: disk-utils/fsck.c:584 sys-utils/umount.c:236
 #, fuzzy, c-format
 msgid "%s: not found"
 msgstr "fsck：%s：找不到\n"
 
-#: disk-utils/fsck.c:610 login-utils/login.c:1085 login-utils/vipw.c:212
+#: disk-utils/fsck.c:610 login-utils/login.c:1093 login-utils/vipw.c:212
 #: sys-utils/flock.c:314 sys-utils/swapon.c:267 term-utils/script.c:264
 #: term-utils/script.c:274
 msgid "fork failed"
@@ -800,7 +800,7 @@ msgstr "無效的檔案資料偏移值"
 msgid "compiled without -x support"
 msgstr "編譯時不具 -x 支援"
 
-#: disk-utils/fsck.cramfs.c:689 fdisks/sfdisk.c:2859
+#: disk-utils/fsck.cramfs.c:689 fdisks/sfdisk.c:2863
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s：確定\n"
@@ -1882,129 +1882,129 @@ msgstr "無法配置新的 libblkid 探針"
 msgid "unable to assign device to libblkid probe"
 msgstr "無法指派裝置給 libblkid 探針"
 
-#: disk-utils/mkswap.c:376 disk-utils/mkswap.c:410 disk-utils/mkswap.c:625
+#: disk-utils/mkswap.c:375 disk-utils/mkswap.c:402 disk-utils/mkswap.c:618
 msgid "unable to rewind swap-device"
 msgstr "無法倒轉交換裝置"
 
-#: disk-utils/mkswap.c:414
+#: disk-utils/mkswap.c:406
 msgid "unable to erase bootbits sectors"
 msgstr "無法清除開機磁區"
 
-#: disk-utils/mkswap.c:430
+#: disk-utils/mkswap.c:420
+#, c-format
+msgid "%s: warning: wiping old %s signature."
+msgstr ""
+
+#: disk-utils/mkswap.c:425
 #, fuzzy, c-format
 msgid "%s: warning: don't erase bootbits sectors"
 msgstr "%s：%s：警告：不清除開機磁區\n"
 
-#: disk-utils/mkswap.c:433
+#: disk-utils/mkswap.c:428
 #, c-format
 msgid "        (%s partition table detected). "
 msgstr "        (偵測到 %s 分割表)。"
 
-#: disk-utils/mkswap.c:435
-#, c-format
-msgid "        on whole disk. "
-msgstr "        於整個磁碟。"
-
-#: disk-utils/mkswap.c:437
+#: disk-utils/mkswap.c:430
 #, c-format
 msgid "        (compiled without libblkid). "
 msgstr "        (編譯時未支援 libblkid)。"
 
-#: disk-utils/mkswap.c:489
+#: disk-utils/mkswap.c:482
 #, fuzzy
 msgid "parse page size failed"
 msgstr "%s：取得大小時失敗"
 
-#: disk-utils/mkswap.c:495
+#: disk-utils/mkswap.c:488
 #, fuzzy
 msgid "parse version number failed"
 msgstr "建立號誌時失敗"
 
-#: disk-utils/mkswap.c:501
+#: disk-utils/mkswap.c:494
 #, fuzzy, c-format
 msgid "warning: ignore -U (UUIDs are unsupported by %s)"
 msgstr "%1$s: 警告：忽略 -U (UUIDs 未被 %1$s 支援)\n"
 
-#: disk-utils/mkswap.c:525
+#: disk-utils/mkswap.c:518
 #, fuzzy, c-format
 msgid "does not support swapspace version %d."
 msgstr "%s：不支援 swapspace 版本 %d。\n"
 
-#: disk-utils/mkswap.c:530
+#: disk-utils/mkswap.c:523
 msgid "error: UUID parsing failed"
 msgstr "錯誤：UUID 剖析失敗"
 
-#: disk-utils/mkswap.c:539
+#: disk-utils/mkswap.c:532
 #, fuzzy
 msgid "error: Nowhere to set up swap on?"
 msgstr "%s：錯誤：無處可設置開啟交換？\n"
 
-#: disk-utils/mkswap.c:545
+#: disk-utils/mkswap.c:538
 #, fuzzy
 msgid "invalid block count argument"
 msgstr "無效的選項"
 
-#: disk-utils/mkswap.c:553
+#: disk-utils/mkswap.c:546
 #, fuzzy, c-format
 msgid "error: size %llu KiB is larger than device size %llu KiB"
 msgstr "%s：錯誤：大小 %llu KiB 大於裝置大小 %llu KiB\n"
 
-#: disk-utils/mkswap.c:559
+#: disk-utils/mkswap.c:552
 #, fuzzy, c-format
 msgid "error: swap area needs to be at least %ld KiB"
 msgstr "%s：錯誤：交換區需要至少 %ld KiB\n"
 
-#: disk-utils/mkswap.c:575
+#: disk-utils/mkswap.c:568
 #, fuzzy, c-format
 msgid "warning: truncating swap area to %llu KiB"
 msgstr "%s：警告：將交換區截斷為 %llu KiB\n"
 
-#: disk-utils/mkswap.c:580
+#: disk-utils/mkswap.c:573
 #, fuzzy, c-format
 msgid "error: %s is mounted; will not make swapspace."
 msgstr "%s：錯誤：%s 已掛載；將不會製作交換空間。\n"
 
-#: disk-utils/mkswap.c:601
+#: disk-utils/mkswap.c:594
 #, fuzzy, c-format
 msgid "warning: %s is misaligned"
 msgstr "警告：%s 並非區塊裝置\n"
 
-#: disk-utils/mkswap.c:614
+#: disk-utils/mkswap.c:607
 msgid "Unable to set up swap-space: unreadable"
 msgstr "無法設置交換空間：無法讀取"
 
-#: disk-utils/mkswap.c:617
+#: disk-utils/mkswap.c:610
 #, c-format
 msgid "Setting up swapspace version 1, size = %llu KiB\n"
 msgstr "設定 swapspace 版本 1, 大小 = %llu KiB\n"
 
-#: disk-utils/mkswap.c:629
+#: disk-utils/mkswap.c:622
 #, fuzzy, c-format
 msgid "%s: unable to write signature page"
 msgstr "%s：%s：無法寫入簽章頁面：%s"
 
-#: disk-utils/mkswap.c:638
+#: disk-utils/mkswap.c:631
 msgid "fsync failed"
 msgstr "fsync 失敗"
 
-#: disk-utils/mkswap.c:650
+#: disk-utils/mkswap.c:643
 #, fuzzy, c-format
 msgid "%s: unable to obtain selinux file label"
 msgstr "%s: %s: 無法得到 selinux 檔案標籤：%s\n"
 
-#: disk-utils/mkswap.c:653
+#: disk-utils/mkswap.c:646
 msgid "unable to matchpathcon()"
 msgstr "無法 matchpathcon()"
 
-#: disk-utils/mkswap.c:656
+#: disk-utils/mkswap.c:649
 msgid "unable to create new selinux context"
 msgstr "無法建立新的 selinux 相關項目"
 
-#: disk-utils/mkswap.c:658
+#: disk-utils/mkswap.c:651
 msgid "couldn't compute selinux context"
 msgstr "無法計算 selinux 相關項目"
 
-#: disk-utils/mkswap.c:664
+#: disk-utils/mkswap.c:657
 #, fuzzy, c-format
 msgid "unable to relabel %s to %s"
 msgstr "%s：無法重新標籤 %s 為 %s: %s\n"
@@ -2082,14 +2082,14 @@ msgstr "mount：即將使用環路裝置 %s\n"
 msgid "%s: failed to set backing file"
 msgstr "%s：無法尋指到交換標籤 "
 
-#: disk-utils/partx.c:123 sys-utils/losetup.c:411 sys-utils/mount.c:413
+#: disk-utils/partx.c:123 sys-utils/losetup.c:411 sys-utils/mount.c:435
 #, fuzzy, c-format
 msgid "%s: failed to setup loop device"
 msgstr "%s：無法探查裝置"
 
 #: disk-utils/partx.c:153 misc-utils/findmnt.c:341 misc-utils/lsblk.c:258
 #: misc-utils/lslocks.c:342 sys-utils/lscpu.c:260 sys-utils/prlimit.c:271
-#: sys-utils/swapon.c:110 sys-utils/wdctl.c:121
+#: sys-utils/swapon.c:110 sys-utils/wdctl.c:144
 #, c-format
 msgid "unknown column: %s"
 msgstr "不明直欄：%s"
@@ -2156,19 +2156,19 @@ msgstr ""
 
 #: disk-utils/partx.c:443 misc-utils/findmnt.c:548 misc-utils/findmnt.c:565
 #: misc-utils/lslocks.c:391 sys-utils/prlimit.c:222 sys-utils/swapon.c:138
-#: sys-utils/wdctl.c:184
+#: sys-utils/wdctl.c:207
 msgid "failed to add line to output"
 msgstr "加入輸出列時失敗"
 
-#: disk-utils/partx.c:531 misc-utils/findmnt.c:1318 misc-utils/lsblk.c:1393
+#: disk-utils/partx.c:531 misc-utils/findmnt.c:1318 misc-utils/lsblk.c:1409
 #: misc-utils/lslocks.c:444 sys-utils/lscpu.c:1022 sys-utils/prlimit.c:283
-#: sys-utils/swapon.c:230 sys-utils/wdctl.c:226
+#: sys-utils/swapon.c:230 sys-utils/wdctl.c:249
 msgid "failed to initialize output table"
 msgstr "初始化輸出表格時失敗"
 
-#: disk-utils/partx.c:539 misc-utils/findmnt.c:1336 misc-utils/lsblk.c:1403
+#: disk-utils/partx.c:539 misc-utils/findmnt.c:1336 misc-utils/lsblk.c:1419
 #: misc-utils/lslocks.c:452 sys-utils/prlimit.c:291 sys-utils/swapon.c:238
-#: sys-utils/wdctl.c:235
+#: sys-utils/wdctl.c:258
 msgid "failed to initialize output column"
 msgstr "初始化輸出欄時失敗"
 
@@ -3475,7 +3475,7 @@ msgstr "磁區/磁軌"
 msgid "tracks/cylinder"
 msgstr "磁軌/磁柱"
 
-#: fdisks/fdiskbsdlabel.c:448 fdisks/fdisk.c:381 fdisks/sfdisk.c:913
+#: fdisks/fdiskbsdlabel.c:448 fdisks/fdisk.c:381 fdisks/sfdisk.c:914
 msgid "cylinders"
 msgstr "磁柱"
 
@@ -3834,7 +3834,7 @@ msgstr "您必須設定"
 msgid "heads"
 msgstr "磁頭"
 
-#: fdisks/fdisk.c:379 fdisks/sfdisk.c:913
+#: fdisks/fdisk.c:379 fdisks/sfdisk.c:914
 msgid "sectors"
 msgstr "磁區"
 
@@ -4330,7 +4330,7 @@ msgstr ""
 "GNU Parted。\n"
 "\n"
 
-#: fdisks/fdisk.c:1649 fdisks/sfdisk.c:2732
+#: fdisks/fdisk.c:1649 fdisks/sfdisk.c:2736
 #, c-format
 msgid "cannot open %s\n"
 msgstr "無法開啟 %s\n"
@@ -4368,17 +4368,17 @@ msgstr "命令 (m 以獲得說明)："
 msgid "invalid sector size argument"
 msgstr "無效的選項"
 
-#: fdisks/fdisk.c:1828 fdisks/sfdisk.c:2647
+#: fdisks/fdisk.c:1828 fdisks/sfdisk.c:2651
 #, fuzzy
 msgid "invalid cylinders argument"
 msgstr "無效的選項"
 
-#: fdisks/fdisk.c:1839 fdisks/sfdisk.c:2656
+#: fdisks/fdisk.c:1839 fdisks/sfdisk.c:2660
 #, fuzzy
 msgid "invalid heads argument"
 msgstr "無效的選項"
 
-#: fdisks/fdisk.c:1844 fdisks/sfdisk.c:2674
+#: fdisks/fdisk.c:1844 fdisks/sfdisk.c:2678
 #, fuzzy
 msgid "invalid sectors argument"
 msgstr "無效的選項"
@@ -5764,12 +5764,12 @@ msgstr "%s：無此類分割區\n"
 msgid "unrecognized format - using sectors\n"
 msgstr "無法辨識的格式 - 使用磁區數\n"
 
-#: fdisks/sfdisk.c:912
+#: fdisks/sfdisk.c:913
 #, c-format
 msgid "unimplemented format - using %s\n"
 msgstr "尚未實作的格式 - 使用 %s\n"
 
-#: fdisks/sfdisk.c:916
+#: fdisks/sfdisk.c:918
 #, fuzzy, c-format
 msgid ""
 "Units: cylinders of %lu bytes, blocks of 1024 bytes, counting from %d\n"
@@ -5778,12 +5778,12 @@ msgstr ""
 "單位 = %lu 位元組的磁柱，1024 位元組的區塊，從 %d 起計數\n"
 "\n"
 
-#: fdisks/sfdisk.c:918
+#: fdisks/sfdisk.c:920
 #, c-format
 msgid "   Device Boot Start     End   #cyls    #blocks   Id  System\n"
 msgstr "   裝置開機起始     結束   磁柱數    區塊數   識別號  系統\n"
 
-#: fdisks/sfdisk.c:923
+#: fdisks/sfdisk.c:925
 #, fuzzy, c-format
 msgid ""
 "Units: sectors of 512 bytes, counting from %d\n"
@@ -5792,12 +5792,12 @@ msgstr ""
 "單位 = 512 位元組的磁區，從 %d 起計數\n"
 "\n"
 
-#: fdisks/sfdisk.c:925
+#: fdisks/sfdisk.c:927
 #, c-format
 msgid "   Device Boot    Start       End   #sectors  Id  System\n"
 msgstr "   裝置開機    起始       結束   磁區數  識別號  系統\n"
 
-#: fdisks/sfdisk.c:928
+#: fdisks/sfdisk.c:930
 #, fuzzy, c-format
 msgid ""
 "Units: blocks of 1024 bytes, counting from %d\n"
@@ -5806,12 +5806,12 @@ msgstr ""
 "單位 = 1024 位元組的區塊，從 %d 起計數\n"
 "\n"
 
-#: fdisks/sfdisk.c:930
+#: fdisks/sfdisk.c:932
 #, c-format
 msgid "   Device Boot   Start       End    #blocks   Id  System\n"
 msgstr "   裝置開機   起始       結束    區塊數   識別號  系統\n"
 
-#: fdisks/sfdisk.c:933
+#: fdisks/sfdisk.c:935
 #, fuzzy, c-format
 msgid ""
 "Units: 1MiB = 1024*1024 bytes, blocks of 1024 bytes, counting from %d\n"
@@ -5820,31 +5820,31 @@ msgstr ""
 "單位 = 1048576 位元組的 mebibytes，1024 位元組的區塊，從 %d 起計數\n"
 "\n"
 
-#: fdisks/sfdisk.c:935
+#: fdisks/sfdisk.c:937
 #, c-format
 msgid "   Device Boot Start   End    MiB    #blocks   Id  System\n"
 msgstr "   裝置開機起始   結束    MiB    區塊數   識別號  系統\n"
 
-#: fdisks/sfdisk.c:1094
+#: fdisks/sfdisk.c:1096
 #, c-format
 msgid "\t\tstart: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr "\t\t起始：(c,h,s) 預期為 (%ld,%ld,%ld) 辨認為 (%ld,%ld,%ld)\n"
 
-#: fdisks/sfdisk.c:1101
+#: fdisks/sfdisk.c:1103
 #, c-format
 msgid "\t\tend: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr "\t\t結束：(c,h,s) 預期為 (%ld,%ld,%ld) 辨認為 (%ld,%ld,%ld)\n"
 
-#: fdisks/sfdisk.c:1104
+#: fdisks/sfdisk.c:1106
 #, c-format
 msgid "partition ends on cylinder %ld, beyond the end of the disk\n"
 msgstr "分割區結束於磁柱 %ld，位於磁碟末端之後\n"
 
-#: fdisks/sfdisk.c:1115
+#: fdisks/sfdisk.c:1117
 msgid "No partitions found\n"
 msgstr "找不到分割區\n"
 
-#: fdisks/sfdisk.c:1118
+#: fdisks/sfdisk.c:1120
 #, c-format
 msgid ""
 "Warning: The partition table looks like it was made\n"
@@ -5855,42 +5855,42 @@ msgstr ""
 "用於 C/H/S=*/%ld/%ld (而非 %ld/%ld/%ld)。\n"
 "我將會假設該結構參數以用於此列表。\n"
 
-#: fdisks/sfdisk.c:1166
+#: fdisks/sfdisk.c:1168
 #, fuzzy
 msgid "no partition table present."
 msgstr "分割表不存在。\n"
 
-#: fdisks/sfdisk.c:1168
+#: fdisks/sfdisk.c:1170
 #, fuzzy, c-format
 msgid "strange, only %d partitions defined."
 msgstr "奇怪，只有定義 %d 個分割區。\n"
 
-#: fdisks/sfdisk.c:1177
+#: fdisks/sfdisk.c:1179
 #, c-format
 msgid "Warning: partition %s has size 0 but is not marked Empty\n"
 msgstr "警告：分割區 %s 大小為 0 但是並未標記為空\n"
 
-#: fdisks/sfdisk.c:1180
+#: fdisks/sfdisk.c:1182
 #, c-format
 msgid "Warning: partition %s has size 0 and is bootable\n"
 msgstr "警告：分割區 %s 大小為 0 且為可開機\n"
 
-#: fdisks/sfdisk.c:1183
+#: fdisks/sfdisk.c:1185
 #, c-format
 msgid "Warning: partition %s has size 0 and nonzero start\n"
 msgstr "警告：分割區 %s 大小為 0 且以非零值開始\n"
 
-#: fdisks/sfdisk.c:1195
+#: fdisks/sfdisk.c:1197
 #, fuzzy, c-format
 msgid "Warning: partition %s is not contained in partition %s\n"
 msgstr "並未包含於分割區 %s 中\n"
 
-#: fdisks/sfdisk.c:1207
+#: fdisks/sfdisk.c:1209
 #, fuzzy, c-format
 msgid "Warning: partitions %s and %s overlap\n"
 msgstr "警告：分割區 %d 是空的\n"
 
-#: fdisks/sfdisk.c:1219
+#: fdisks/sfdisk.c:1221
 #, fuzzy, c-format
 msgid ""
 "Warning: partition %s contains part of the partition table (sector %llu),\n"
@@ -5899,17 +5899,17 @@ msgstr ""
 "警告：分割區 %s 含有部分的分割表 (磁區 %lu)，\n"
 "當它填滿後將會被損毀\n"
 
-#: fdisks/sfdisk.c:1232
+#: fdisks/sfdisk.c:1234
 #, c-format
 msgid "Warning: partition %s starts at sector 0\n"
 msgstr "警告：分割區 %s 開始於磁區 0\n"
 
-#: fdisks/sfdisk.c:1237
+#: fdisks/sfdisk.c:1239
 #, c-format
 msgid "Warning: partition %s extends past end of disk\n"
 msgstr "警告：分割區 %s 延伸超過磁碟末端\n"
 
-#: fdisks/sfdisk.c:1254
+#: fdisks/sfdisk.c:1256
 #, c-format
 msgid ""
 "Warning: partition %s has size %d.%d TB (%llu bytes),\n"
@@ -5917,14 +5917,14 @@ msgid ""
 "by the DOS partition table for %d-byte sectors\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:1270
+#: fdisks/sfdisk.c:1272
 #, c-format
 msgid ""
 "Warning: partition %s starts at sector %llu (%d.%d TB for %d-byte sectors),\n"
 "which exceeds the DOS partition table limit of %llu sectors\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:1290
+#: fdisks/sfdisk.c:1292
 msgid ""
 "Among the primary partitions, at most one can be extended\n"
 " (although this is not a problem under Linux)\n"
@@ -5932,17 +5932,17 @@ msgstr ""
 "在主要分割區之中，最多只能有一個是擴充分割區\n"
 "(雖然這在 Linux 之下並不是個問題)\n"
 
-#: fdisks/sfdisk.c:1310
+#: fdisks/sfdisk.c:1312
 #, c-format
 msgid "Warning: partition %s does not start at a cylinder boundary\n"
 msgstr "警告：分割區 %s 並非啟始於磁柱邊界\n"
 
-#: fdisks/sfdisk.c:1316
+#: fdisks/sfdisk.c:1318
 #, c-format
 msgid "Warning: partition %s does not end at a cylinder boundary\n"
 msgstr "警告：分割區 %s 並非結束於磁柱邊界\n"
 
-#: fdisks/sfdisk.c:1335
+#: fdisks/sfdisk.c:1337
 msgid ""
 "Warning: more than one primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
@@ -5950,7 +5950,7 @@ msgstr ""
 "警告：超過一個的主要分割區被標記為可開機的 (作用中)\n"
 "這個對 LILO 而言不成問題，但是 DOS MBR 將無法以這個磁碟開機。\n"
 
-#: fdisks/sfdisk.c:1342
+#: fdisks/sfdisk.c:1344
 msgid ""
 "Warning: usually one can boot from primary partitions only\n"
 "LILO disregards the `bootable' flag.\n"
@@ -5958,7 +5958,7 @@ msgstr ""
 "警告：通常只可以從主要分割區開機\n"
 "LILO 並不理會「可開機的」旗標。\n"
 
-#: fdisks/sfdisk.c:1348
+#: fdisks/sfdisk.c:1350
 msgid ""
 "Warning: no primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
@@ -5966,32 +5966,32 @@ msgstr ""
 "警告：沒有主要分割區被標記為可開機的 (作用中)\n"
 "這個對 LILO 而言不成問題，但是 DOS MBR 將無法以這個磁碟開機。\n"
 
-#: fdisks/sfdisk.c:1362
+#: fdisks/sfdisk.c:1364
 msgid "start"
 msgstr "啟始"
 
-#: fdisks/sfdisk.c:1365
+#: fdisks/sfdisk.c:1367
 #, c-format
 msgid ""
 "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 "分割區 %s：啟始：(c,h,s) 預期為 (%ld ,%ld ,%ld) 但找到 (%ld ,%ld ,%ld)\n"
 
-#: fdisks/sfdisk.c:1371
+#: fdisks/sfdisk.c:1373
 msgid "end"
 msgstr "結束"
 
-#: fdisks/sfdisk.c:1374
+#: fdisks/sfdisk.c:1376
 #, c-format
 msgid "partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr "分割區 %s：結束：(c,h,s) 預期為 (%ld ,%ld ,%ld) 找到 (%ld ,%ld ,%ld)\n"
 
-#: fdisks/sfdisk.c:1377
+#: fdisks/sfdisk.c:1379
 #, c-format
 msgid "partition %s ends on cylinder %ld, beyond the end of the disk\n"
 msgstr "分割區 %s 結束於磁柱 %ld，位於磁碟的末端之後\n"
 
-#: fdisks/sfdisk.c:1402
+#: fdisks/sfdisk.c:1404
 #, fuzzy, c-format
 msgid ""
 "Warning: shifted start of the extd partition from %lld to %lld\n"
@@ -6000,7 +6000,7 @@ msgstr ""
 "警告：擴充分割區的啟始從 %ld 位移到 %ld\n"
 "(只用於列表目的。請不要變更它的內容。)\n"
 
-#: fdisks/sfdisk.c:1407
+#: fdisks/sfdisk.c:1409
 msgid ""
 "Warning: extended partition does not start at a cylinder boundary.\n"
 "DOS and Linux will interpret the contents differently.\n"
@@ -6008,138 +6008,138 @@ msgstr ""
 "警告：擴充分割區非啟始於磁柱邊界。\n"
 "DOS 和 Linux 將對內容有不同解譯。\n"
 
-#: fdisks/sfdisk.c:1420
+#: fdisks/sfdisk.c:1422
 #, c-format
 msgid "ERROR: sector %lu does not have an msdos signature\n"
 msgstr "錯誤：磁區 %lu 沒有 msdos 簽章\n"
 
-#: fdisks/sfdisk.c:1427 fdisks/sfdisk.c:1504
+#: fdisks/sfdisk.c:1429 fdisks/sfdisk.c:1506
 #, fuzzy, c-format
-msgid "too many partitions - ignoring those past nr (%ld)\n"
+msgid "too many partitions - ignoring those past nr (%zu)\n"
 msgstr "太多分割區 - 忽略那些過去的 nr (%d)\n"
 
-#: fdisks/sfdisk.c:1442
+#: fdisks/sfdisk.c:1444
 msgid "tree of partitions?\n"
 msgstr "分割區的樹狀圖？\n"
 
-#: fdisks/sfdisk.c:1550
+#: fdisks/sfdisk.c:1552
 msgid "detected Disk Manager - unable to handle that\n"
 msgstr "偵測到磁碟管理員 - 無法處理它\n"
 
-#: fdisks/sfdisk.c:1558
+#: fdisks/sfdisk.c:1561
 msgid "DM6 signature found - giving up\n"
 msgstr "找到 DM6 簽章 - 放棄\n"
 
-#: fdisks/sfdisk.c:1577
+#: fdisks/sfdisk.c:1581
 msgid "strange..., an extended partition of size 0?\n"
 msgstr "很奇怪…，大小為 0 的擴充分割區？\n"
 
-#: fdisks/sfdisk.c:1584 fdisks/sfdisk.c:1595
+#: fdisks/sfdisk.c:1588 fdisks/sfdisk.c:1599
 msgid "strange..., a BSD partition of size 0?\n"
 msgstr "很奇怪…，大小為 0 的 BSD 分割區？\n"
 
-#: fdisks/sfdisk.c:1639
+#: fdisks/sfdisk.c:1643
 #, c-format
 msgid " %s: unrecognized partition table type\n"
 msgstr " %s: 無法辨識的分割表類型\n"
 
-#: fdisks/sfdisk.c:1651
+#: fdisks/sfdisk.c:1655
 msgid "-n flag was given: Nothing changed\n"
 msgstr "-n 旗標已給定：沒有改變任何東西\n"
 
-#: fdisks/sfdisk.c:1668
+#: fdisks/sfdisk.c:1672
 msgid "Failed saving the old sectors - aborting\n"
 msgstr "儲存舊的磁區時失敗 - 放棄\n"
 
-#: fdisks/sfdisk.c:1673 fdisks/sfdisk.c:1678
+#: fdisks/sfdisk.c:1677 fdisks/sfdisk.c:1682
 #, c-format
 msgid "Failed writing the partition on %s\n"
 msgstr "寫入分割區於 %s 時失敗\n"
 
-#: fdisks/sfdisk.c:1756
+#: fdisks/sfdisk.c:1760
 #, fuzzy
 msgid "long or incomplete input line - quitting"
 msgstr "太長或不完整的輸入列 - 離開\n"
 
-#: fdisks/sfdisk.c:1792
+#: fdisks/sfdisk.c:1796
 #, fuzzy, c-format
 msgid "input error: `=' expected after %s field"
 msgstr "輸入錯誤：預期「=」位於 %s 欄位之後\n"
 
-#: fdisks/sfdisk.c:1799
+#: fdisks/sfdisk.c:1803
 #, fuzzy, c-format
 msgid "input error: unexpected character %c after %s field"
 msgstr "輸入錯誤：未預期的字元 %c 位於 %s 欄位之後\n"
 
-#: fdisks/sfdisk.c:1805
+#: fdisks/sfdisk.c:1809
 #, fuzzy, c-format
 msgid "unrecognized input: %s"
 msgstr "無法辨識的輸入：%s\n"
 
-#: fdisks/sfdisk.c:1846 fdisks/sfdisk.c:1883
+#: fdisks/sfdisk.c:1850 fdisks/sfdisk.c:1887
 msgid "number too big\n"
 msgstr "數字太大\n"
 
-#: fdisks/sfdisk.c:1850 fdisks/sfdisk.c:1887
+#: fdisks/sfdisk.c:1854 fdisks/sfdisk.c:1891
 msgid "trailing junk after number\n"
 msgstr "數字之後尾隨無用物\n"
 
-#: fdisks/sfdisk.c:2012
+#: fdisks/sfdisk.c:2016
 msgid "no room for partition descriptor\n"
 msgstr "沒有空間可用於分割區描述\n"
 
-#: fdisks/sfdisk.c:2045
+#: fdisks/sfdisk.c:2049
 msgid "cannot build surrounding extended partition\n"
 msgstr "無法圍繞擴充分割區建立\n"
 
-#: fdisks/sfdisk.c:2096
+#: fdisks/sfdisk.c:2100
 msgid "too many input fields\n"
 msgstr "太多輸入欄位\n"
 
-#: fdisks/sfdisk.c:2130
+#: fdisks/sfdisk.c:2134
 msgid "No room for more\n"
 msgstr "沒有空間可容納更多\n"
 
-#: fdisks/sfdisk.c:2149
+#: fdisks/sfdisk.c:2153
 msgid "Illegal type\n"
 msgstr "不合法的類型\n"
 
-#: fdisks/sfdisk.c:2183
+#: fdisks/sfdisk.c:2187
 #, c-format
 msgid "Warning: given size (%lu) exceeds max allowable size (%lu)\n"
 msgstr "警告：給定的大小 (%lu) 超出所允許的最大值 (%lu)\n"
 
-#: fdisks/sfdisk.c:2189
+#: fdisks/sfdisk.c:2193
 msgid "Warning: empty partition\n"
 msgstr "警告：空的分割區\n"
 
-#: fdisks/sfdisk.c:2203
+#: fdisks/sfdisk.c:2207
 #, c-format
 msgid "Warning: bad partition start (earliest %lu)\n"
 msgstr "警告：不當的分割區啟始 (最先 %lu)\n"
 
-#: fdisks/sfdisk.c:2216
+#: fdisks/sfdisk.c:2220
 msgid "unrecognized bootable flag - choose - or *\n"
 msgstr "無法辨識的可開機旗標 - 選擇 - 或 *\n"
 
-#: fdisks/sfdisk.c:2233 fdisks/sfdisk.c:2247
+#: fdisks/sfdisk.c:2237 fdisks/sfdisk.c:2251
 msgid "partial c,h,s specification?\n"
 msgstr "部份 c,h,s 規格？\n"
 
-#: fdisks/sfdisk.c:2258
+#: fdisks/sfdisk.c:2262
 msgid "Extended partition not where expected\n"
 msgstr "擴充分割區不在預期的位置\n"
 
-#: fdisks/sfdisk.c:2290
+#: fdisks/sfdisk.c:2294
 #, fuzzy
 msgid "bad input"
 msgstr "不當的輸入\n"
 
-#: fdisks/sfdisk.c:2313
+#: fdisks/sfdisk.c:2317
 msgid "too many partitions\n"
 msgstr "太多分割區\n"
 
-#: fdisks/sfdisk.c:2346
+#: fdisks/sfdisk.c:2350
 msgid ""
 "Input in the following format; absent fields get a default value.\n"
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
@@ -6149,12 +6149,12 @@ msgstr ""
 "<啟始> <大小> <類型 [E,S,L,X, 十六進位]> <可開機 [-,*]> <c,h,s> <c,h,s>\n"
 "常常您只有需要指定 <啟始> 和 <大小> (也許還有 <類型>)。\n"
 
-#: fdisks/sfdisk.c:2366 include/c.h:241 misc-utils/cal.c:784
+#: fdisks/sfdisk.c:2370 include/c.h:241 misc-utils/cal.c:784
 #: misc-utils/getopt.c:314 misc-utils/logger.c:172 misc-utils/look.c:368
 #: misc-utils/mcookie.c:68 misc-utils/namei.c:418 misc-utils/rename.c:65
 #: misc-utils/uuidd.c:69 misc-utils/uuidgen.c:34 misc-utils/whereis.c:139
 #: misc-utils/wipefs.c:359 sys-utils/dmesg.c:181 sys-utils/fsfreeze.c:41
-#: sys-utils/hwclock.c:1362 sys-utils/renice.c:55 term-utils/mesg.c:70
+#: sys-utils/hwclock.c:1375 sys-utils/renice.c:55 term-utils/mesg.c:70
 #: term-utils/script.c:130 term-utils/scriptreplay.c:40
 #: term-utils/setterm.c:676 term-utils/wall.c:81 term-utils/write.c:79
 #, fuzzy
@@ -6163,17 +6163,17 @@ msgid ""
 "Usage:\n"
 msgstr "用法:\n"
 
-#: fdisks/sfdisk.c:2368
+#: fdisks/sfdisk.c:2372
 #, fuzzy, c-format
 msgid " %s [options] <device> [...]\n"
 msgstr "用法：%s [選項] 裝置…\n"
 
-#: fdisks/sfdisk.c:2370 include/c.h:242 misc-utils/cal.c:789
+#: fdisks/sfdisk.c:2374 include/c.h:242 misc-utils/cal.c:789
 #: misc-utils/getopt.c:322 misc-utils/logger.c:176 misc-utils/look.c:372
 #: misc-utils/mcookie.c:72 misc-utils/namei.c:422 misc-utils/rename.c:70
 #: misc-utils/uuidd.c:73 misc-utils/uuidgen.c:38 misc-utils/whereis.c:143
 #: misc-utils/wipefs.c:363 sys-utils/dmesg.c:185 sys-utils/fsfreeze.c:45
-#: sys-utils/hwclock.c:1382 sys-utils/renice.c:62 term-utils/mesg.c:76
+#: sys-utils/hwclock.c:1395 sys-utils/renice.c:62 term-utils/mesg.c:76
 #: term-utils/script.c:134 term-utils/scriptreplay.c:45
 #: term-utils/setterm.c:680 term-utils/wall.c:85 term-utils/write.c:84
 #: text-utils/column.c:92
@@ -6185,7 +6185,7 @@ msgstr ""
 "\n"
 "選項：\n"
 
-#: fdisks/sfdisk.c:2371
+#: fdisks/sfdisk.c:2375
 msgid ""
 " -s, --show-size           list size of a partition\n"
 " -c, --id                  change or print partition Id\n"
@@ -6193,7 +6193,7 @@ msgid ""
 "     --print-id            print Id\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2375
+#: fdisks/sfdisk.c:2379
 msgid ""
 " -l, --list                list partitions of each device\n"
 " -d, --dump                idem, but in a format suitable for later input\n"
@@ -6203,7 +6203,7 @@ msgid ""
 "(MB)\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2380
+#: fdisks/sfdisk.c:2384
 msgid ""
 " -1, --one-only            reserved option that does nothing currently\n"
 " -T, --list-types          list the known partition types\n"
@@ -6212,7 +6212,7 @@ msgid ""
 " -R, --re-read             make the kernel reread the partition table\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2385
+#: fdisks/sfdisk.c:2389
 msgid ""
 " -N <number>               change only the partition with this <number>\n"
 " -n                        do not actually write to disk\n"
@@ -6221,21 +6221,21 @@ msgid ""
 " -I <file>                 restore sectors from <file>\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2389
+#: fdisks/sfdisk.c:2393
 msgid ""
 " -V, --verify              check that the listed partitions are reasonable\n"
 " -v, --version             display version information and exit\n"
 " -h, --help                display this help text and exit\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2393
+#: fdisks/sfdisk.c:2397
 #, fuzzy
 msgid ""
 "\n"
 "Dangerous options:\n"
 msgstr "危險選項："
 
-#: fdisks/sfdisk.c:2394
+#: fdisks/sfdisk.c:2398
 msgid ""
 " -f, --force               disable all consistency checking\n"
 "     --no-reread           do not check whether the partition is in use\n"
@@ -6244,14 +6244,14 @@ msgid ""
 "Linux\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2398
+#: fdisks/sfdisk.c:2402
 #, fuzzy
 msgid ""
 " -g, --show-geometry       print the kernel's idea of the geometry\n"
 " -G, --show-pt-geometry    print geometry guessed from the partition table\n"
 msgstr "    -G [或 --show-pt-geometry]：印出根據分割表所猜測的硬碟結構參數"
 
-#: fdisks/sfdisk.c:2400
+#: fdisks/sfdisk.c:2404
 #, fuzzy
 msgid ""
 " -A, --activate[=<device>] activate bootable flag\n"
@@ -6262,13 +6262,13 @@ msgstr ""
 "    -x [或 --show-extended]：於輸出時也列出擴充分割區\n"
 "                            或預期輸入時有對於它們的描述"
 
-#: fdisks/sfdisk.c:2404
+#: fdisks/sfdisk.c:2408
 msgid ""
 "     --leave-last          do not allocate the last cylinder\n"
 "     --IBM                 same as --leave-last\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2406
+#: fdisks/sfdisk.c:2410
 msgid ""
 "     --in-order            partitions are in order\n"
 "     --not-in-order        partitions are not in order\n"
@@ -6276,7 +6276,7 @@ msgid ""
 "     --not-inside-outer    not all logicals inside outermost extended\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2410
+#: fdisks/sfdisk.c:2414
 msgid ""
 "     --nested              every partition is disjoint from all others\n"
 "     --chained             like nested, but extended partitions may lie "
@@ -6284,7 +6284,7 @@ msgid ""
 "     --onesector           partitions are mutually disjoint\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2414
+#: fdisks/sfdisk.c:2418
 msgid ""
 "\n"
 "Override the detected geometry using:\n"
@@ -6294,26 +6294,26 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2424
+#: fdisks/sfdisk.c:2428
 msgid "Usage:"
 msgstr "用法："
 
-#: fdisks/sfdisk.c:2425
+#: fdisks/sfdisk.c:2429
 #, c-format
 msgid "%s device\t\t list active partitions on device\n"
 msgstr "%s 裝置\t\t 列出裝置上的作用中分割區\n"
 
-#: fdisks/sfdisk.c:2426
+#: fdisks/sfdisk.c:2430
 #, c-format
 msgid "%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"
 msgstr "%s 裝置 n1 n2…啟用分割區 n1..., 停用其餘的\n"
 
-#: fdisks/sfdisk.c:2428
+#: fdisks/sfdisk.c:2432
 #, c-format
 msgid "%s -An device\t activate partition n, inactivate the other ones\n"
 msgstr "%s -An 裝置\t 啟用分割區 n, 停用另外一個\n"
 
-#: fdisks/sfdisk.c:2537
+#: fdisks/sfdisk.c:2541
 #, c-format
 msgid ""
 "\n"
@@ -6326,72 +6326,72 @@ msgstr ""
 "Parted。\n"
 "\n"
 
-#: fdisks/sfdisk.c:2542
+#: fdisks/sfdisk.c:2546
 #, c-format
 msgid "Use the --force flag to overrule this check.\n"
 msgstr "使用 --force 旗標以駁回這個檢查。\n"
 
-#: fdisks/sfdisk.c:2582
+#: fdisks/sfdisk.c:2586
 #, fuzzy
 msgid "no command?"
 msgstr "沒有命令？\n"
 
-#: fdisks/sfdisk.c:2662
+#: fdisks/sfdisk.c:2666
 #, fuzzy
 msgid "invalid number of partitions argument"
 msgstr "無效的列數"
 
-#: fdisks/sfdisk.c:2752
+#: fdisks/sfdisk.c:2756
 #, c-format
 msgid "total: %llu blocks\n"
 msgstr "總計：%llu 區塊\n"
 
-#: fdisks/sfdisk.c:2795
+#: fdisks/sfdisk.c:2799
 #, fuzzy
 msgid "usage: sfdisk --print-id device partition-number"
 msgstr "用法：sfdisk --print-id 裝置 分割區編號\n"
 
-#: fdisks/sfdisk.c:2797
+#: fdisks/sfdisk.c:2801
 #, fuzzy
 msgid "usage: sfdisk --change-id device partition-number Id"
 msgstr "用法：sfdisk --change-id 裝置 分割區編號 識別號\n"
 
-#: fdisks/sfdisk.c:2799
+#: fdisks/sfdisk.c:2803
 #, fuzzy
 msgid "usage: sfdisk --id device partition-number [Id]"
 msgstr "用法：sfdisk --id 裝置 分割區編號 [識別號]\n"
 
-#: fdisks/sfdisk.c:2806
+#: fdisks/sfdisk.c:2810
 #, fuzzy
 msgid "can specify only one device (except with -l or -s)"
 msgstr "只可以指定一個裝置 (除了配合 -l 或 -s)\n"
 
-#: fdisks/sfdisk.c:2832
+#: fdisks/sfdisk.c:2836
 #, fuzzy, c-format
 msgid "cannot open %s read-write"
 msgstr "無法開啟 %s 的可讀可寫\n"
 
-#: fdisks/sfdisk.c:2834
+#: fdisks/sfdisk.c:2838
 #, fuzzy, c-format
 msgid "cannot open %s for reading"
 msgstr "無法開啟 %s 用於讀取\n"
 
-#: fdisks/sfdisk.c:2878 fdisks/sfdisk.c:2910
+#: fdisks/sfdisk.c:2882 fdisks/sfdisk.c:2914
 #, c-format
 msgid "%s: %ld cylinders, %ld heads, %ld sectors/track\n"
 msgstr "%s：%ld 磁柱，%ld 磁頭，%ld 磁區/磁軌\n"
 
-#: fdisks/sfdisk.c:2929
+#: fdisks/sfdisk.c:2933
 #, fuzzy, c-format
 msgid "Cannot get size of %s"
 msgstr "無法取得 %s 的大小\n"
 
-#: fdisks/sfdisk.c:3010
+#: fdisks/sfdisk.c:3014
 #, c-format
 msgid "bad active byte: 0x%x instead of 0x80\n"
 msgstr "不當的作用中位元組：0x%x 而非 0x80\n"
 
-#: fdisks/sfdisk.c:3029 fdisks/sfdisk.c:3086 fdisks/sfdisk.c:3119
+#: fdisks/sfdisk.c:3033 fdisks/sfdisk.c:3090 fdisks/sfdisk.c:3123
 msgid ""
 "Done\n"
 "\n"
@@ -6399,7 +6399,7 @@ msgstr ""
 "完成\n"
 "\n"
 
-#: fdisks/sfdisk.c:3038
+#: fdisks/sfdisk.c:3042
 #, c-format
 msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
@@ -6408,35 +6408,35 @@ msgstr ""
 "您有 %d 塊作用中的主要分割區。這個不會影響到 LILO，\n"
 "但是 DOS MBR 只能將具有一塊作用中分割區的磁碟開機。\n"
 
-#: fdisks/sfdisk.c:3055
+#: fdisks/sfdisk.c:3059
 #, fuzzy, c-format
 msgid "partition %s has id %x and is not hidden"
 msgstr "分割區 %s 具有識別號 %x 而且並未隱藏\n"
 
-#: fdisks/sfdisk.c:3115
+#: fdisks/sfdisk.c:3119
 #, fuzzy, c-format
 msgid "Bad Id %lx"
 msgstr "不當的識別號 %lx\n"
 
-#: fdisks/sfdisk.c:3133
+#: fdisks/sfdisk.c:3137
 msgid "This disk is currently in use.\n"
 msgstr "這個磁碟為目前在使用中。\n"
 
-#: fdisks/sfdisk.c:3154
+#: fdisks/sfdisk.c:3158
 #, fuzzy, c-format
 msgid "Fatal error: cannot find %s"
 msgstr "嚴重錯誤：找不到 %s\n"
 
-#: fdisks/sfdisk.c:3157
+#: fdisks/sfdisk.c:3161
 #, c-format
 msgid "Warning: %s is not a block device\n"
 msgstr "警告：%s 並非區塊裝置\n"
 
-#: fdisks/sfdisk.c:3163
+#: fdisks/sfdisk.c:3167
 msgid "Checking that no-one is using this disk right now ...\n"
 msgstr "檢查是否沒有人現在正使用這個磁碟…\n"
 
-#: fdisks/sfdisk.c:3165
+#: fdisks/sfdisk.c:3169
 msgid ""
 "\n"
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
@@ -6448,30 +6448,30 @@ msgstr ""
 "卸載所有檔案系統，並關閉這個磁碟上的所有交換分割區。\n"
 "使用 --no-reread 旗標以抑制這個檢查。\n"
 
-#: fdisks/sfdisk.c:3169
+#: fdisks/sfdisk.c:3173
 msgid "Use the --force flag to overrule all checks.\n"
 msgstr "使用 --force 旗標以駁回所有檢查。\n"
 
-#: fdisks/sfdisk.c:3173
+#: fdisks/sfdisk.c:3177
 msgid "OK\n"
 msgstr "確定\n"
 
-#: fdisks/sfdisk.c:3182
+#: fdisks/sfdisk.c:3186
 #, c-format
 msgid "Old situation:\n"
 msgstr "舊的情況：\n"
 
-#: fdisks/sfdisk.c:3186
+#: fdisks/sfdisk.c:3190
 #, fuzzy, c-format
 msgid "Partition %d does not exist, cannot change it"
 msgstr "分割區 %d 不存在，無法變更它\n"
 
-#: fdisks/sfdisk.c:3194
+#: fdisks/sfdisk.c:3198
 #, c-format
 msgid "New situation:\n"
 msgstr "新的情況：\n"
 
-#: fdisks/sfdisk.c:3199
+#: fdisks/sfdisk.c:3203
 #, fuzzy
 msgid ""
 "I don't like these partitions - nothing changed.\n"
@@ -6480,33 +6480,33 @@ msgstr ""
 "我不喜歡這些分割 - 沒有變更任何東西。\n"
 "(如果您真的想要如此，請使用 --force 選項。)\n"
 
-#: fdisks/sfdisk.c:3202
+#: fdisks/sfdisk.c:3206
 msgid "I don't like this - probably you should answer No\n"
 msgstr "我不喜歡這個 - 您也許應該回答 No\n"
 
 #. TRANSLATORS: sfdisk uses rpmatch which means the answers y and n
 #. * should be translated, but that is not the case with q answer.
-#: fdisks/sfdisk.c:3209
+#: fdisks/sfdisk.c:3213
 #, c-format
 msgid "Are you satisfied with this? [ynq] "
 msgstr "您滿意這個嗎？[ynq] "
 
-#: fdisks/sfdisk.c:3211
+#: fdisks/sfdisk.c:3215
 #, c-format
 msgid "Do you want to write this to disk? [ynq] "
 msgstr "您要將這個寫入磁碟嗎？[ynq] "
 
-#: fdisks/sfdisk.c:3214
+#: fdisks/sfdisk.c:3218
 #, fuzzy
 msgid "Quitting - nothing changed"
 msgstr "離開中 - 沒有變更任何東西\n"
 
-#: fdisks/sfdisk.c:3220
+#: fdisks/sfdisk.c:3224
 #, c-format
 msgid "Please answer one of y,n,q\n"
 msgstr "請以 y,n,q 之一回答\n"
 
-#: fdisks/sfdisk.c:3228
+#: fdisks/sfdisk.c:3232
 #, c-format
 msgid ""
 "Successfully wrote the new partition table\n"
@@ -6515,7 +6515,7 @@ msgstr ""
 "成功寫入新的分割表\n"
 "\n"
 
-#: fdisks/sfdisk.c:3236
+#: fdisks/sfdisk.c:3240
 msgid ""
 "If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
@@ -6549,7 +6549,7 @@ msgstr ""
 
 #: include/closestream.h:41 include/closestream.h:43 login-utils/vipw.c:283
 #: login-utils/vipw.c:302 mount-deprecated/mount_mntent.c:58
-#: sys-utils/rtcwake.c:290 term-utils/script.c:288 term-utils/script.c:298
+#: sys-utils/rtcwake.c:288 term-utils/script.c:288 term-utils/script.c:298
 #: term-utils/script.c:411 term-utils/script.c:422 term-utils/script.c:484
 #: term-utils/setterm.c:1118 term-utils/wall.c:278
 #, fuzzy, c-format
@@ -6566,7 +6566,7 @@ msgstr "用法：%s [選項]\n"
 msgid "are mutually exclusive."
 msgstr "選項彼此互斥"
 
-#: lib/pager.c:107
+#: lib/pager.c:112
 #, fuzzy, c-format
 msgid "waitpid failed (%s)"
 msgstr "waitpid 失敗"
@@ -6897,51 +6897,51 @@ msgstr "於 %.*s\n"
 msgid "write lastlog failed"
 msgstr "寫入標準輸出時失敗"
 
-#: login-utils/login.c:643
+#: login-utils/login.c:651
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "由 %2$s 於 %1$s 撥號進入"
 
-#: login-utils/login.c:648
+#: login-utils/login.c:656
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "從 %2$s 於 %1$s 登入為系統管理員"
 
-#: login-utils/login.c:651
+#: login-utils/login.c:659
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "系統管理員於 %s 登入"
 
-#: login-utils/login.c:654
+#: login-utils/login.c:662
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "由 %2$s 從 %3$s 於 %1$s 登入"
 
-#: login-utils/login.c:657
+#: login-utils/login.c:665
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "由 %2$s 於 %1$s 登入"
 
-#: login-utils/login.c:718
+#: login-utils/login.c:726
 msgid "login: "
 msgstr "登入："
 
-#: login-utils/login.c:744
+#: login-utils/login.c:752
 #, fuzzy, c-format
 msgid "PAM failure, aborting: %s"
 msgstr "%s：PAM 失敗，放棄：%s\n"
 
-#: login-utils/login.c:745
+#: login-utils/login.c:753
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "無法初始化 PAM：%s"
 
-#: login-utils/login.c:817
+#: login-utils/login.c:825
 #, fuzzy, c-format
 msgid "FAILED LOGIN %u FROM %s FOR %s, %s"
 msgstr "失敗的登入 %d 自 %s 用於 %s, %s"
 
-#: login-utils/login.c:825 login-utils/sulogin.c:602
+#: login-utils/login.c:833 login-utils/sulogin.c:602
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -6950,17 +6950,17 @@ msgstr ""
 "登入不正確\n"
 "\n"
 
-#: login-utils/login.c:840
+#: login-utils/login.c:848
 #, fuzzy, c-format
 msgid "TOO MANY LOGIN TRIES (%u) FROM %s FOR %s, %s"
 msgstr "太多登入嘗試 (%d) 自 %s 用於 %s, %s"
 
-#: login-utils/login.c:846
+#: login-utils/login.c:854
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "失敗的登入執行階段自 %s 用於 %s, %s"
 
-#: login-utils/login.c:854
+#: login-utils/login.c:862
 #, c-format
 msgid ""
 "\n"
@@ -6969,7 +6969,7 @@ msgstr ""
 "\n"
 "登入錯誤\n"
 
-#: login-utils/login.c:882 login-utils/login.c:1334 login-utils/login.c:1358
+#: login-utils/login.c:890 login-utils/login.c:1342 login-utils/login.c:1366
 #, fuzzy
 msgid ""
 "\n"
@@ -6978,71 +6978,71 @@ msgstr ""
 "\n"
 "執行階段設定發生問題，放棄。\n"
 
-#: login-utils/login.c:883
+#: login-utils/login.c:891
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "在 %s:%d 中包含空使用者名稱，放棄。"
 
-#: login-utils/login.c:1137
+#: login-utils/login.c:1145
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "TIOCSCTTY 失敗：%m"
 
-#: login-utils/login.c:1278
+#: login-utils/login.c:1286
 #, c-format
 msgid "login: -h for super-user only.\n"
 msgstr "login：-h 只提供系統管理者使用。\n"
 
-#: login-utils/login.c:1293
+#: login-utils/login.c:1301
 #, fuzzy, c-format
 msgid "usage: login [ -p ] [ -h host ] [ -H ] [ -f username | username ]\n"
 msgstr "用法：last [-#] [-f file] [-t tty] [-h hostname] [user...]\n"
 
-#: login-utils/login.c:1335
+#: login-utils/login.c:1343
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "無效的使用者名稱「%s」於 %s:%d，放棄。"
 
-#: login-utils/login.c:1357
+#: login-utils/login.c:1365
 #, fuzzy, c-format
 msgid "groups initialization failed: %m"
 msgstr "錯誤：%s：試探初始化時失敗"
 
-#: login-utils/login.c:1382
+#: login-utils/login.c:1390
 #, fuzzy
 msgid "setgid() failed"
 msgstr "setuid() 失敗"
 
-#: login-utils/login.c:1412
+#: login-utils/login.c:1420
 #, c-format
 msgid "You have new mail.\n"
 msgstr "您有新郵件。\n"
 
-#: login-utils/login.c:1414
+#: login-utils/login.c:1422
 #, c-format
 msgid "You have mail.\n"
 msgstr "您有郵件。\n"
 
-#: login-utils/login.c:1428
+#: login-utils/login.c:1436
 msgid "setuid() failed"
 msgstr "setuid() 失敗"
 
-#: login-utils/login.c:1434 login-utils/sulogin.c:343
+#: login-utils/login.c:1442 login-utils/sulogin.c:343
 #, fuzzy, c-format
 msgid "%s: change directory failed"
 msgstr "%s：取得大小時失敗"
 
-#: login-utils/login.c:1441 login-utils/sulogin.c:344
+#: login-utils/login.c:1449 login-utils/sulogin.c:344
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "登入時個人資料夾=「/」。\n"
 
-#: login-utils/login.c:1470
+#: login-utils/login.c:1478
 #, fuzzy
 msgid "couldn't exec shell script"
 msgstr "login：無法執行命令稿：%s。\n"
 
-#: login-utils/login.c:1472
+#: login-utils/login.c:1480
 #, fuzzy
 msgid "no shell"
 msgstr "無命令殼"
@@ -7077,7 +7077,7 @@ msgstr "setuid() 失敗"
 msgid "no such group"
 msgstr "newgrp：無此群組。"
 
-#: login-utils/newgrp.c:171 sys-utils/mount.c:445
+#: login-utils/newgrp.c:171 sys-utils/mount.c:467
 #, fuzzy
 msgid "permission denied"
 msgstr "mount：權限被拒"
@@ -7135,44 +7135,44 @@ msgstr "%s 失敗。\n"
 msgid "incorrect password"
 msgstr "錯誤的密碼。"
 
-#: login-utils/su.c:485
+#: login-utils/su.c:376
 #, fuzzy
 msgid "failed to set PATH"
 msgstr "顯示狀態時失敗：%s"
 
-#: login-utils/su.c:558
+#: login-utils/su.c:434
 #, fuzzy
 msgid "cannot set groups"
 msgstr "無法設定群組識別號"
 
-#: login-utils/su.c:573 sys-utils/eject.c:655 sys-utils/unshare.c:129
+#: login-utils/su.c:449 sys-utils/eject.c:655 sys-utils/unshare.c:129
 msgid "cannot set group id"
 msgstr "無法設定群組識別號"
 
-#: login-utils/su.c:575 sys-utils/unshare.c:132
+#: login-utils/su.c:451 sys-utils/unshare.c:132
 msgid "cannot set user id"
 msgstr "無法設定使用者識別號"
 
-#: login-utils/su.c:647 misc-utils/getopt.c:219
+#: login-utils/su.c:523 misc-utils/getopt.c:219
 #, fuzzy, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr ""
 "%s: %s\n"
 "嘗試「%s --help」以獲得更多資訊。\n"
 
-#: login-utils/su.c:652
+#: login-utils/su.c:528
 #, fuzzy, c-format
 msgid " %s [options] [-] [USER [arg]...]\n"
 msgstr "用法：%s [選項] <程式> [引數...]\n"
 
-#: login-utils/su.c:653
+#: login-utils/su.c:529
 msgid ""
 "\n"
 " Change the effective user id and group id to that of USER.\n"
 " A mere - implies -l.   If USER not given, assume root.\n"
 msgstr ""
 
-#: login-utils/su.c:657
+#: login-utils/su.c:533
 msgid ""
 " -, -l, --login               make the shell a login shell\n"
 " -c, --command <command>      pass a single command to the shell with -c\n"
@@ -7184,17 +7184,17 @@ msgid ""
 " -s, --shell <shell>          run shell if /etc/shells allows it\n"
 msgstr ""
 
-#: login-utils/su.c:757
+#: login-utils/su.c:633
 #, fuzzy, c-format
 msgid "user %s does not exist"
 msgstr "%s：使用者「%s」不存在。\n"
 
-#: login-utils/su.c:788
+#: login-utils/su.c:664
 #, c-format
 msgid "using restricted shell %s"
 msgstr ""
 
-#: login-utils/su.c:808
+#: login-utils/su.c:684
 #, fuzzy, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "設定身分為 %s 時失敗"
@@ -7268,7 +7268,7 @@ msgid ""
 "fails\n"
 msgstr ""
 
-#: login-utils/sulogin.c:488 misc-utils/findmnt.c:1213 sys-utils/wdctl.c:482
+#: login-utils/sulogin.c:488 misc-utils/findmnt.c:1213 sys-utils/wdctl.c:505
 #: term-utils/wall.c:128
 #, fuzzy
 msgid "invalid timeout argument"
@@ -7579,7 +7579,7 @@ msgid "%s: parse error at line %d"
 msgstr "剖析錯誤發生於列號："
 
 #: misc-utils/findmnt.c:659 misc-utils/findmnt.c:874 sys-utils/eject.c:709
-#: sys-utils/mount.c:606
+#: sys-utils/mount.c:628
 #, fuzzy
 msgid "failed to initialize libmount table"
 msgstr "初始化 libmount 頁標時失敗"
@@ -7591,7 +7591,7 @@ msgstr "無法讀取：%s"
 
 #: misc-utils/findmnt.c:814 misc-utils/findmnt.c:880 sys-utils/mount.c:162
 #: sys-utils/mount.c:210 sys-utils/swapoff.c:98 sys-utils/swapon.c:194
-#: sys-utils/swapon.c:226 sys-utils/swapon.c:611 sys-utils/umount.c:241
+#: sys-utils/swapon.c:226 sys-utils/swapon.c:611 sys-utils/umount.c:260
 msgid "failed to initialize libmount iterator"
 msgstr "初始化 libmount 迭代器時失敗"
 
@@ -8073,40 +8073,45 @@ msgstr "%s：無法開啟"
 msgid "failed to open device directory in sysfs"
 msgstr ""
 
-#: misc-utils/lsblk.c:1081
+#: misc-utils/lsblk.c:1074
 #, fuzzy, c-format
-msgid "%s: failed to get whole-disk device number"
-msgstr "%s：無法尋指到交換標籤 "
-
-#: misc-utils/lsblk.c:1099
-#, fuzzy, c-format
-msgid "failed to compose sysfs path for %s"
+msgid "%s: failed to compose sysfs path"
 msgstr "剖析 %s %s 時失敗"
 
-#: misc-utils/lsblk.c:1106
+#: misc-utils/lsblk.c:1080
 #, fuzzy, c-format
 msgid "%s: failed to read link"
 msgstr "%s：無法開啟"
 
-#: misc-utils/lsblk.c:1148 misc-utils/lsblk.c:1150 misc-utils/lsblk.c:1175
-#: misc-utils/lsblk.c:1177
+#: misc-utils/lsblk.c:1103
+#, fuzzy, c-format
+msgid "%s: failed to get sysfs name"
+msgstr "%s：無法開啟"
+
+#: misc-utils/lsblk.c:1112
+#, fuzzy, c-format
+msgid "%s: failed to get whole-disk device number"
+msgstr "%s：無法尋指到交換標籤 "
+
+#: misc-utils/lsblk.c:1164 misc-utils/lsblk.c:1166 misc-utils/lsblk.c:1191
+#: misc-utils/lsblk.c:1193
 #, fuzzy, c-format
 msgid "failed to parse list '%s'"
 msgstr "剖析 %s %s 時失敗"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1155
+#: misc-utils/lsblk.c:1171
 #, c-format
 msgid "the list of excluded devices is too large (limit is %d devices)"
 msgstr ""
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1182
+#: misc-utils/lsblk.c:1198
 #, c-format
 msgid "the list of included devices is too large (limit is %d devices)"
 msgstr ""
 
-#: misc-utils/lsblk.c:1194
+#: misc-utils/lsblk.c:1210
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8114,7 +8119,7 @@ msgid ""
 " %s [options] [<device> ...]\n"
 msgstr "用法：%s [選項] 裝置…\n"
 
-#: misc-utils/lsblk.c:1198
+#: misc-utils/lsblk.c:1214
 #, c-format
 msgid ""
 "\n"
@@ -8140,14 +8145,14 @@ msgid ""
 " -V, --version        output version information and exit\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1218 misc-utils/lslocks.c:489 sys-utils/prlimit.c:188
+#: misc-utils/lsblk.c:1234 misc-utils/lslocks.c:489 sys-utils/prlimit.c:188
 #, fuzzy, c-format
 msgid ""
 "\n"
 "Available columns (for --output):\n"
 msgstr "可用命令：\n"
 
-#: misc-utils/lsblk.c:1231
+#: misc-utils/lsblk.c:1247
 #, fuzzy, c-format
 msgid "failed to access sysfs directory: %s"
 msgstr "剖析 %s %s 時失敗"
@@ -8213,7 +8218,7 @@ msgstr "剖析 pid 時失敗"
 #: misc-utils/lslocks.c:478 misc-utils/mcookie.c:70 misc-utils/uuidd.c:71
 #: misc-utils/uuidgen.c:36 sys-utils/arch.c:44 sys-utils/dmesg.c:183
 #: sys-utils/ipcmk.c:67 sys-utils/lscpu.c:1217 sys-utils/readprofile.c:104
-#: sys-utils/rtcwake.c:89 term-utils/setterm.c:678
+#: sys-utils/rtcwake.c:88 term-utils/setterm.c:678
 #, fuzzy, c-format
 msgid " %s [options]\n"
 msgstr "用法：%s [選項]\n"
@@ -8993,7 +8998,7 @@ msgstr ""
 "       在某些狀況下，syslog 中可以找到有用的資訊 - 嘗試\n"
 "      dmesg | tail 之類命令\n"
 
-#: mount-deprecated/mount.c:1792 sys-utils/mount.c:529
+#: mount-deprecated/mount.c:1792 sys-utils/mount.c:551
 msgid "mount table full"
 msgstr "掛載表已滿"
 
@@ -9088,7 +9093,7 @@ msgstr "mount：%s%s 為防寫，即將以唯讀方式掛載"
 msgid "mount: no medium found on %s"
 msgstr "mount：%s 中找不到任何媒體"
 
-#: mount-deprecated/mount.c:1901 sys-utils/mount.c:310
+#: mount-deprecated/mount.c:1901 sys-utils/mount.c:333
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9584,7 +9589,7 @@ msgstr "設定 pid %d 的策略時失敗"
 msgid "failed to set pid %d's policy"
 msgstr "設定 pid %d 的策略時失敗"
 
-#: schedutils/chrt.c:335 sys-utils/switch_root.c:223 term-utils/script.c:451
+#: schedutils/chrt.c:335 sys-utils/switch_root.c:227 term-utils/script.c:451
 #, c-format
 msgid "failed to execute %s"
 msgstr "執行 %s 時失敗"
@@ -10012,7 +10017,7 @@ msgstr ""
 "檔案 %s, 用於臨界值 %lu 和 逾時值 %lu，fifo 中最大字元值為 %d,\n"
 "而轉送速率最大值(字元/秒)是 %f\n"
 
-#: sys-utils/cytune.c:172 sys-utils/cytune.c:196 sys-utils/dmesg.c:417
+#: sys-utils/cytune.c:172 sys-utils/cytune.c:196 sys-utils/dmesg.c:429
 msgid "gettimeofday failed"
 msgstr "gettimeofday 失敗"
 
@@ -10253,71 +10258,71 @@ msgid ""
 "Supported log levels (priorities):\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:260
+#: sys-utils/dmesg.c:272
 #, fuzzy, c-format
 msgid "failed to parse level '%s'"
 msgstr "剖析 %s %s 時失敗"
 
-#: sys-utils/dmesg.c:262
+#: sys-utils/dmesg.c:274
 #, fuzzy, c-format
 msgid "unknown level '%s'"
 msgstr "不明直欄：%s"
 
-#: sys-utils/dmesg.c:298
+#: sys-utils/dmesg.c:310
 #, fuzzy, c-format
 msgid "failed to parse facility '%s'"
 msgstr "剖析 %s %s 時失敗"
 
-#: sys-utils/dmesg.c:300
+#: sys-utils/dmesg.c:312
 #, fuzzy, c-format
 msgid "unknown facility '%s'"
 msgstr "不明方向「%s」"
 
-#: sys-utils/dmesg.c:415
+#: sys-utils/dmesg.c:427
 #, fuzzy
 msgid "sysinfo failed"
 msgstr "fsync 失敗"
 
-#: sys-utils/dmesg.c:442
+#: sys-utils/dmesg.c:454
 #, fuzzy, c-format
 msgid "cannot mmap: %s"
 msgstr "無法開啟 %s"
 
-#: sys-utils/dmesg.c:564 term-utils/script.c:304 term-utils/script.c:396
+#: sys-utils/dmesg.c:576 term-utils/script.c:304 term-utils/script.c:396
 #, fuzzy
 msgid "write failed"
 msgstr "寫入失敗：%s"
 
-#: sys-utils/dmesg.c:1132
+#: sys-utils/dmesg.c:1144
 #, fuzzy
 msgid "invalid buffer size argument"
 msgstr "無效的選項"
 
-#: sys-utils/dmesg.c:1172
+#: sys-utils/dmesg.c:1184
 msgid ""
 "--raw can't be used together with level, facility, decode, delta, ctime or "
 "notime options"
 msgstr ""
 
-#: sys-utils/dmesg.c:1176
+#: sys-utils/dmesg.c:1188
 msgid "--notime can't be used together with --ctime or --reltime"
 msgstr ""
 
-#: sys-utils/dmesg.c:1178
+#: sys-utils/dmesg.c:1190
 msgid "--reltime can't be used together with --ctime "
 msgstr ""
 
-#: sys-utils/dmesg.c:1192
+#: sys-utils/dmesg.c:1204
 #, fuzzy
 msgid "read kernel buffer failed"
 msgstr "讀取 rtc 時間"
 
-#: sys-utils/dmesg.c:1205
+#: sys-utils/dmesg.c:1217
 #, fuzzy
 msgid "unsupported command"
 msgstr "沒有命令？\n"
 
-#: sys-utils/dmesg.c:1211
+#: sys-utils/dmesg.c:1223
 #, fuzzy
 msgid "klogctl failed"
 msgstr "msgctl 失敗"
@@ -10536,7 +10541,7 @@ msgstr "%s：無法探查裝置"
 msgid "device name is `%s'"
 msgstr "環路裝置是 %s\n"
 
-#: sys-utils/eject.c:979 sys-utils/umount.c:205
+#: sys-utils/eject.c:979 sys-utils/umount.c:224
 #, fuzzy, c-format
 msgid "%s: not mounted"
 msgstr "fsck：%s：找不到\n"
@@ -11053,53 +11058,53 @@ msgid ""
 "System Time from it."
 msgstr "硬體時鐘不具有效時間，因而我們無法依其設定系統時間。\n"
 
-#: sys-utils/hwclock.c:729 sys-utils/hwclock.c:810
+#: sys-utils/hwclock.c:729 sys-utils/hwclock.c:809
 #, c-format
 msgid "Calling settimeofday:\n"
 msgstr "呼叫 settimeofday：\n"
 
-#: sys-utils/hwclock.c:730 sys-utils/hwclock.c:812
+#: sys-utils/hwclock.c:730 sys-utils/hwclock.c:811
 #, c-format
 msgid "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 msgstr "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 
-#: sys-utils/hwclock.c:732 sys-utils/hwclock.c:814
+#: sys-utils/hwclock.c:732 sys-utils/hwclock.c:813
 #, c-format
 msgid "\ttz.tz_minuteswest = %d\n"
 msgstr "\ttz.tz_minuteswest = %d\n"
 
-#: sys-utils/hwclock.c:736 sys-utils/hwclock.c:818
+#: sys-utils/hwclock.c:736 sys-utils/hwclock.c:817
 #, c-format
 msgid "Not setting system clock because running in test mode.\n"
 msgstr "未設定系統時鐘，因為在測試模式中執行。\n"
 
-#: sys-utils/hwclock.c:745 sys-utils/hwclock.c:828
+#: sys-utils/hwclock.c:745 sys-utils/hwclock.c:841
 #, fuzzy
 msgid "Must be superuser to set system clock."
 msgstr "必須是系統管理者才能設定系統時鐘。\n"
 
-#: sys-utils/hwclock.c:748 sys-utils/hwclock.c:831
+#: sys-utils/hwclock.c:748 sys-utils/hwclock.c:844
 msgid "settimeofday() failed"
 msgstr "settimeofday() 失敗"
 
-#: sys-utils/hwclock.c:785
+#: sys-utils/hwclock.c:784
 #, c-format
 msgid "Current system time: %ld = %s\n"
 msgstr "目前的系統時間：%ld = %s\n"
 
-#: sys-utils/hwclock.c:811
+#: sys-utils/hwclock.c:810
 #, c-format
 msgid "\tUTC: %s\n"
 msgstr "\tUTC：%s\n"
 
-#: sys-utils/hwclock.c:860
+#: sys-utils/hwclock.c:873
 #, c-format
 msgid ""
 "Not adjusting drift factor because the Hardware Clock previously contained "
 "garbage.\n"
 msgstr "無法調整偏差係數，因為之前的硬體時鐘包含了無用資料。\n"
 
-#: sys-utils/hwclock.c:865
+#: sys-utils/hwclock.c:878
 #, c-format
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
@@ -11108,14 +11113,14 @@ msgstr ""
 "無法調整偏差係數，因為最後一次校測時間為零，\n"
 "因而不當的歷史記錄使得啟始校測為必要的。\n"
 
-#: sys-utils/hwclock.c:871
+#: sys-utils/hwclock.c:884
 #, c-format
 msgid ""
 "Not adjusting drift factor because it has been less than a day since the "
 "last calibration.\n"
 msgstr "無法調整偏差係數，因為它從最後一次校測起已經慢過於一天。\n"
 
-#: sys-utils/hwclock.c:919
+#: sys-utils/hwclock.c:932
 #, c-format
 msgid ""
 "Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
@@ -11125,22 +11130,22 @@ msgstr ""
 "時鐘偏差為 %.1f 秒發生於過去 %d 秒內，而不管 %f 秒/天的偏差係數。\n"
 "以 %f 秒/天來調整偏差係數\n"
 
-#: sys-utils/hwclock.c:965
+#: sys-utils/hwclock.c:978
 #, c-format
 msgid "Time since last adjustment is %d seconds\n"
 msgstr "從最後一次調整後經過的時間為 %d 秒\n"
 
-#: sys-utils/hwclock.c:967
+#: sys-utils/hwclock.c:980
 #, c-format
 msgid "Need to insert %d seconds and refer time back %.6f seconds ago\n"
 msgstr "需要插入 %d 秒並回溯參考 %.6f 秒之前的時間\n"
 
-#: sys-utils/hwclock.c:997
+#: sys-utils/hwclock.c:1010
 #, c-format
 msgid "Not updating adjtime file because of testing mode.\n"
 msgstr "無法更新 adjtime 檔案，因為處於測試模式。\n"
 
-#: sys-utils/hwclock.c:998
+#: sys-utils/hwclock.c:1011
 #, c-format
 msgid ""
 "Would have written the following to %s:\n"
@@ -11149,62 +11154,62 @@ msgstr ""
 "將會寫入下列資料到 %s:\n"
 "%s"
 
-#: sys-utils/hwclock.c:1007
+#: sys-utils/hwclock.c:1020
 #, c-format
 msgid ""
 "Could not open file with the clock adjustment parameters in it (%s) for "
 "writing"
 msgstr "無法以其中的時鐘調整參數 (%s) 開啟檔案用於寫入"
 
-#: sys-utils/hwclock.c:1013 sys-utils/hwclock.c:1020
+#: sys-utils/hwclock.c:1026 sys-utils/hwclock.c:1033
 #, c-format
 msgid "Could not update file with the clock adjustment parameters (%s) in it"
 msgstr "無法以其中的時鐘調整參數 (%s) 更新檔案"
 
-#: sys-utils/hwclock.c:1028
+#: sys-utils/hwclock.c:1041
 #, fuzzy
 msgid "Drift adjustment parameters not updated."
 msgstr "偏差調整參數未更新。\n"
 
-#: sys-utils/hwclock.c:1067
+#: sys-utils/hwclock.c:1080
 #, fuzzy
 msgid ""
 "The Hardware Clock does not contain a valid time, so we cannot adjust it."
 msgstr "硬體時鐘不包含有效時間，因而我們無法調整它。\n"
 
-#: sys-utils/hwclock.c:1076
+#: sys-utils/hwclock.c:1089
 #, c-format
 msgid ""
 "Not setting clock because last adjustment time is zero, so history is bad."
 msgstr "無法設定時鐘因為最後一次調整時間為零，因而歷史記錄是不當的。"
 
-#: sys-utils/hwclock.c:1098
+#: sys-utils/hwclock.c:1111
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr "所需的調整少於一秒鐘，因而無法設定時鐘。\n"
 
-#: sys-utils/hwclock.c:1123
+#: sys-utils/hwclock.c:1136
 #, c-format
 msgid "Using %s.\n"
 msgstr "正在使用 %s。\n"
 
-#: sys-utils/hwclock.c:1125
+#: sys-utils/hwclock.c:1138
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "找不到可用的時鐘介面。\n"
 
-#: sys-utils/hwclock.c:1254 sys-utils/hwclock.c:1260
+#: sys-utils/hwclock.c:1267 sys-utils/hwclock.c:1273
 #, c-format
 msgid "Unable to set system clock.\n"
 msgstr "無法設定系統時鐘。\n"
 
-#: sys-utils/hwclock.c:1273
+#: sys-utils/hwclock.c:1286
 #, c-format
 msgid ""
 "At %ld seconds after 1969, RTC is predicted to read %ld seconds after 1969.\n"
 msgstr "1969 年之後 %ld 秒, RTC 預計會讀取 1969 之後 %ld 秒。\n"
 
-#: sys-utils/hwclock.c:1302
+#: sys-utils/hwclock.c:1315
 #, fuzzy
 msgid ""
 "The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
@@ -11216,38 +11221,38 @@ msgstr ""
 "此一 hwclock 的複本是為了 Alpha 之外的機器所組建\n"
 "(因而推測目前無法於 Alpha 機器中執行)。未採行任何動作。\n"
 
-#: sys-utils/hwclock.c:1319
+#: sys-utils/hwclock.c:1332
 #, fuzzy
 msgid "Unable to get the epoch value from the kernel."
 msgstr "無法從內核取得時期值。\n"
 
-#: sys-utils/hwclock.c:1321
+#: sys-utils/hwclock.c:1334
 #, c-format
 msgid "Kernel is assuming an epoch value of %lu\n"
 msgstr "內核假設時期值為 %lu\n"
 
-#: sys-utils/hwclock.c:1326
+#: sys-utils/hwclock.c:1339
 #, fuzzy
 msgid ""
 "To set the epoch value, you must use the 'epoch' option to tell to what "
 "value to set it."
 msgstr "要設定時期值，您必須使用「epoch」選項以告訴它要設定為何值。\n"
 
-#: sys-utils/hwclock.c:1330
+#: sys-utils/hwclock.c:1343
 #, c-format
 msgid "Not setting the epoch to %d - testing only.\n"
 msgstr "不將時期設定為 %d - 只限於測試。\n"
 
-#: sys-utils/hwclock.c:1334
+#: sys-utils/hwclock.c:1347
 #, c-format
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "無法在內核中設定時期值。\n"
 
-#: sys-utils/hwclock.c:1363
+#: sys-utils/hwclock.c:1376
 msgid " hwclock [function] [option...]\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1365
+#: sys-utils/hwclock.c:1378
 #, fuzzy
 msgid ""
 "\n"
@@ -11256,14 +11261,14 @@ msgstr ""
 "\n"
 "選項：\n"
 
-#: sys-utils/hwclock.c:1366
+#: sys-utils/hwclock.c:1379
 msgid ""
 " -h, --help           show this help text and exit\n"
 " -r, --show           read hardware clock and print result\n"
 "     --set            set the RTC to the time given with --date\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1369
+#: sys-utils/hwclock.c:1382
 msgid ""
 " -s, --hctosys        set the system time from the hardware clock\n"
 " -w, --systohc        set the hardware clock from the current system time\n"
@@ -11272,30 +11277,30 @@ msgid ""
 "                        the clock was last set or adjusted\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1375
+#: sys-utils/hwclock.c:1388
 msgid ""
 "     --getepoch       print out the kernel's hardware clock epoch value\n"
 "     --setepoch       set the kernel's hardware clock epoch value to the \n"
 "                        value given with --epoch\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1379
+#: sys-utils/hwclock.c:1392
 msgid ""
 "     --predict        predict RTC reading at time given with --date\n"
 " -V, --version        display version information and exit\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1383
+#: sys-utils/hwclock.c:1396
 msgid ""
 " -u, --utc            the hardware clock is kept in UTC\n"
 "     --localtime      the hardware clock is kept in local time\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1386
+#: sys-utils/hwclock.c:1399
 msgid " -f, --rtc <file>     special /dev/... file to use instead of default\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1389
+#: sys-utils/hwclock.c:1402
 #, c-format
 msgid ""
 "     --directisa      access the ISA bus directly instead of %s\n"
@@ -11305,7 +11310,7 @@ msgid ""
 "                        hardware clock's epoch value\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1395
+#: sys-utils/hwclock.c:1408
 #, c-format
 msgid ""
 "     --noadjfile      do not access %s; this requires the use of\n"
@@ -11314,14 +11319,14 @@ msgid ""
 "                        the default is %s\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1399
+#: sys-utils/hwclock.c:1412
 msgid ""
 "     --test           do not update anything, just show what would happen\n"
 " -D, --debug          debugging mode\n"
 "\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1402
+#: sys-utils/hwclock.c:1415
 #, fuzzy
 msgid ""
 " -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
@@ -11331,53 +11336,53 @@ msgstr ""
 "  -J|--jensen，-A|--arc，-S|--srm，-F|--funky-toy\n"
 "               告訴 hwclock 您所具有的 alpha 類型 (參看 hwclock (8))\n"
 
-#: sys-utils/hwclock.c:1524
+#: sys-utils/hwclock.c:1537
 #, fuzzy
 msgid "Unable to connect to audit system"
 msgstr "%s：無法與稽核系統連接\n"
 
-#: sys-utils/hwclock.c:1619
+#: sys-utils/hwclock.c:1632
 #, fuzzy
 msgid "invalid epoch argument"
 msgstr "無效的選項"
 
-#: sys-utils/hwclock.c:1658
+#: sys-utils/hwclock.c:1671
 #, c-format
 msgid "%s takes no non-option arguments.  You supplied %d.\n"
 msgstr "%s 無需非選項引數。 您卻已給定 %d。\n"
 
-#: sys-utils/hwclock.c:1667
+#: sys-utils/hwclock.c:1680
 #, fuzzy
 msgid "With --noadjfile, you must specify either --utc or --localtime"
 msgstr "%s：配合 --noadjfile 使用，您必須指定 --utc 或 --localtime 兩者之一\n"
 
-#: sys-utils/hwclock.c:1680
+#: sys-utils/hwclock.c:1693
 #, fuzzy
 msgid "No usable set-to time.  Cannot set clock."
 msgstr "無可用的 set-to 時間。 無法設定時鐘。\n"
 
-#: sys-utils/hwclock.c:1695
+#: sys-utils/hwclock.c:1708
 #, fuzzy
 msgid "Sorry, only the superuser can change the Hardware Clock."
 msgstr "抱歉，只有系統管理者可以變更硬體時鐘。\n"
 
-#: sys-utils/hwclock.c:1699
+#: sys-utils/hwclock.c:1712
 #, fuzzy
 msgid "Sorry, only the superuser can change the System Clock."
 msgstr "抱歉，只有系統管理者可以變更系統時鐘。\n"
 
-#: sys-utils/hwclock.c:1703
+#: sys-utils/hwclock.c:1716
 #, fuzzy
 msgid ""
 "Sorry, only the superuser can change the Hardware Clock epoch in the kernel."
 msgstr "抱歉，只有系統管理者可以變更內核中的硬體時鐘時期。\n"
 
-#: sys-utils/hwclock.c:1726
+#: sys-utils/hwclock.c:1739
 #, fuzzy
 msgid "Cannot access the Hardware Clock via any known method."
 msgstr "無法透過任何已知方法去存取硬體時鐘。\n"
 
-#: sys-utils/hwclock.c:1729
+#: sys-utils/hwclock.c:1742
 #, fuzzy
 msgid ""
 "Use the --debug option to see the details of our search for an access method."
@@ -12467,7 +12472,7 @@ msgstr ""
 msgid "%s: failed to use device"
 msgstr "%s：無法探查裝置"
 
-#: sys-utils/losetup.c:302 sys-utils/mount.c:839
+#: sys-utils/losetup.c:302 sys-utils/mount.c:861
 msgid "invalid passphrase file descriptor"
 msgstr ""
 
@@ -12515,7 +12520,7 @@ msgstr "重新讀取分割表"
 msgid "find unused loop device failed"
 msgstr "tunelp：ioctl 失敗"
 
-#: sys-utils/losetup.c:452 sys-utils/umount.c:227
+#: sys-utils/losetup.c:452 sys-utils/umount.c:246
 #, c-format
 msgid "%s"
 msgstr ""
@@ -12791,7 +12796,7 @@ msgstr "剖析錯誤發生於列號："
 msgid "failed to read mtab"
 msgstr "讀取時失敗：%s"
 
-#: sys-utils/mount.c:220 sys-utils/umount.c:251
+#: sys-utils/mount.c:220 sys-utils/umount.c:270
 #, c-format
 msgid "%-25s: ignored\n"
 msgstr ""
@@ -12801,134 +12806,154 @@ msgstr ""
 msgid "%-25s: already mounted\n"
 msgstr "mount：%s 已經掛載到 %s\n"
 
-#: sys-utils/mount.c:367
+#: sys-utils/mount.c:275
+#, fuzzy, c-format
+msgid "%s moved to %s"
+msgstr "%s：無法開啟"
+
+#: sys-utils/mount.c:277
+#, fuzzy, c-format
+msgid "%s binded on %s"
+msgstr "fsck：%s：找不到\n"
+
+#: sys-utils/mount.c:279
+#, c-format
+msgid "%s propagation flags changed"
+msgstr ""
+
+#: sys-utils/mount.c:281
+#, fuzzy, c-format
+msgid "%s mounted on %s"
+msgstr "fsck：%s：找不到\n"
+
+#: sys-utils/mount.c:389
 #, fuzzy, c-format
 msgid "only root can mount %s on %s"
 msgstr "mount：只有 root 可以將 %s 掛載到 %s"
 
-#: sys-utils/mount.c:370
+#: sys-utils/mount.c:392
 #, fuzzy, c-format
 msgid "%s is already mounted"
 msgstr "mount：%s 已經掛載到 %s\n"
 
-#: sys-utils/mount.c:374
+#: sys-utils/mount.c:396
 #, fuzzy, c-format
 msgid "can't find %s in %s"
 msgstr "mount：無法在 %2$s 或 %3$s 中找到 %1$s"
 
-#: sys-utils/mount.c:381
+#: sys-utils/mount.c:403
 #, fuzzy, c-format
 msgid "can't find mountpoint %s in %s"
 msgstr "mount：無法在 %2$s 或 %3$s 中找到 %1$s"
 
-#: sys-utils/mount.c:384
+#: sys-utils/mount.c:406
 #, fuzzy, c-format
 msgid "can't find mount source %s in %s"
 msgstr "mount：無法在 %2$s 或 %3$s 中找到 %1$s"
 
-#: sys-utils/mount.c:389
+#: sys-utils/mount.c:411
 #, fuzzy
 msgid "I could not determine the filesystem type, and none was specified"
 msgstr "mount：我無法決定檔案系統類型，而它並未被指定"
 
-#: sys-utils/mount.c:392
+#: sys-utils/mount.c:414
 #, fuzzy
 msgid "you must specify the filesystem type"
 msgstr "mount：您必須指定檔案系統類型"
 
-#: sys-utils/mount.c:396
+#: sys-utils/mount.c:418
 #, fuzzy, c-format
 msgid "can't find %s"
 msgstr "%s：無法鏈結 %s: %s\n"
 
-#: sys-utils/mount.c:398
+#: sys-utils/mount.c:420
 #, fuzzy
 msgid "mount source not defined"
 msgstr "mount：掛載時失敗"
 
-#: sys-utils/mount.c:402 sys-utils/mount.c:404
+#: sys-utils/mount.c:424 sys-utils/mount.c:426
 #, fuzzy
 msgid "failed to parse mount options"
 msgstr "剖析 %s %s 時失敗"
 
-#: sys-utils/mount.c:410
+#: sys-utils/mount.c:432
 #, fuzzy, c-format
 msgid "%s: failed to setup loop device (probably unknown encryption type)"
 msgstr "%s：無法探查裝置"
 
-#: sys-utils/mount.c:416
+#: sys-utils/mount.c:438
 #, fuzzy, c-format
 msgid "%s: mount failed"
 msgstr "掛載失敗"
 
-#: sys-utils/mount.c:426
+#: sys-utils/mount.c:448
 #, fuzzy, c-format
 msgid "%s: filesystem mounted, but mount(8) failed"
 msgstr "mount：掛載時失敗"
 
-#: sys-utils/mount.c:443 sys-utils/mount.c:495
+#: sys-utils/mount.c:465 sys-utils/mount.c:517
 #, fuzzy, c-format
 msgid "mount point %s is not a directory"
 msgstr "mount：掛載點 %s 並非目錄"
 
-#: sys-utils/mount.c:447
+#: sys-utils/mount.c:469
 #, fuzzy
 msgid "must be superuser to use mount"
 msgstr "mount：必須是系統管理者才能使用掛載"
 
-#: sys-utils/mount.c:455
+#: sys-utils/mount.c:477
 #, fuzzy, c-format
 msgid "%s is busy"
 msgstr "mount：%s 忙碌中"
 
-#: sys-utils/mount.c:459
+#: sys-utils/mount.c:481
 #, fuzzy, c-format
 msgid "%s is already mounted or %s busy"
 msgstr "mount：%s 已被掛載或者 %s 忙碌中"
 
-#: sys-utils/mount.c:471
+#: sys-utils/mount.c:493
 #, fuzzy, c-format
 msgid "       %s is already mounted on %s\n"
 msgstr "mount：%s 已經掛載到 %s\n"
 
-#: sys-utils/mount.c:479
+#: sys-utils/mount.c:501
 #, fuzzy, c-format
 msgid "mount point %s does not exist"
 msgstr "mount：掛載點 %s 不存在"
 
-#: sys-utils/mount.c:481
+#: sys-utils/mount.c:503
 #, fuzzy, c-format
 msgid "mount point %s is a symbolic link to nowhere"
 msgstr "mount：掛載點 %s 是不明位置的符號連結"
 
-#: sys-utils/mount.c:486
+#: sys-utils/mount.c:508
 #, fuzzy, c-format
 msgid "special device %s does not exist"
 msgstr "mount：特殊裝置 %s 不存在"
 
-#: sys-utils/mount.c:489 sys-utils/mount.c:504
+#: sys-utils/mount.c:511 sys-utils/mount.c:526
 #, fuzzy
 msgid "mount(2) failed"
 msgstr "掛載失敗"
 
-#: sys-utils/mount.c:500
+#: sys-utils/mount.c:522
 #, fuzzy, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr ""
 "mount：特殊裝置 %s 不存在\n"
 "      (路徑前綴並非目錄)\n"
 
-#: sys-utils/mount.c:510
+#: sys-utils/mount.c:532
 #, fuzzy, c-format
 msgid "%s not mounted or bad option"
 msgstr "mount：%s 未被掛載，或是不當的選項"
 
-#: sys-utils/mount.c:512
+#: sys-utils/mount.c:534
 #, fuzzy, c-format
 msgid "%s is not mountpoint or bad option"
 msgstr "mount：%s 未被掛載，或是不當的選項"
 
-#: sys-utils/mount.c:514
+#: sys-utils/mount.c:536
 #, fuzzy, c-format
 msgid ""
 "wrong fs type, bad option, bad superblock on %s,\n"
@@ -12937,7 +12962,7 @@ msgstr ""
 "mount：錯誤檔案系統類型、不當的選項、不當的超區塊於 %s,\n"
 "      缺少編碼頁或輔助程式，或其他錯誤"
 
-#: sys-utils/mount.c:520
+#: sys-utils/mount.c:542
 #, fuzzy, c-format
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
@@ -12946,7 +12971,7 @@ msgstr ""
 "       (對於許多檔案系統 (例如 nfs，cifs) 您也許\n"
 "       需要 /sbin/mount.<type> 輔助程式)"
 
-#: sys-utils/mount.c:524
+#: sys-utils/mount.c:546
 #, fuzzy, c-format
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
@@ -12955,22 +12980,22 @@ msgstr ""
 "       在某些狀況下，syslog 中可以找到有用的資訊 - 嘗試\n"
 "      dmesg | tail 之類命令\n"
 
-#: sys-utils/mount.c:533
+#: sys-utils/mount.c:555
 #, fuzzy, c-format
 msgid "%s: can't read superblock"
 msgstr "mount：%s: 無法讀取超區塊"
 
-#: sys-utils/mount.c:537
+#: sys-utils/mount.c:559
 #, fuzzy, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "mount：不明的檔案系統類型「%s」"
 
-#: sys-utils/mount.c:545
+#: sys-utils/mount.c:567
 #, fuzzy, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "mount：%s 並非一個區塊裝置，而且取得狀態時失敗？"
 
-#: sys-utils/mount.c:547
+#: sys-utils/mount.c:569
 #, fuzzy, c-format
 msgid ""
 "the kernel does not recognize %s as a block device\n"
@@ -12979,57 +13004,57 @@ msgstr ""
 "mount：內核無法識別 %s 為一個區塊裝置\n"
 "      (也許要用「modprobe driver」?)"
 
-#: sys-utils/mount.c:550
+#: sys-utils/mount.c:572
 #, fuzzy, c-format
 msgid "%s is not a block device (maybe try `-o loop'?)"
 msgstr "mount：%s 並非一個區塊裝置 (也許試試「-o loop」?)"
 
-#: sys-utils/mount.c:552
+#: sys-utils/mount.c:574
 #, fuzzy, c-format
 msgid " %s is not a block device"
 msgstr "%s：不是區塊裝置\n"
 
-#: sys-utils/mount.c:559
+#: sys-utils/mount.c:581
 #, fuzzy, c-format
 msgid "%s is not a valid block device"
 msgstr "mount：%s 並非有效的區塊裝置"
 
-#: sys-utils/mount.c:565
+#: sys-utils/mount.c:587
 #, fuzzy, c-format
 msgid "cannot mount %s read-only"
 msgstr "mount：無法以唯讀方式掛載 %s%s"
 
-#: sys-utils/mount.c:568
+#: sys-utils/mount.c:590
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit `-w' flag given"
 msgstr "mount：%s%s 為防寫，但卻明確給定了「-w」旗標"
 
-#: sys-utils/mount.c:571
+#: sys-utils/mount.c:593
 #, fuzzy, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "mount：無法重新將 %s%s 掛載成可讀可寫，其為防寫的"
 
-#: sys-utils/mount.c:574
+#: sys-utils/mount.c:596
 #, fuzzy, c-format
 msgid "%s is write-protected, mounting read-only"
 msgstr "mount：%s%s 為防寫，即將以唯讀方式掛載"
 
-#: sys-utils/mount.c:587
+#: sys-utils/mount.c:609
 #, fuzzy, c-format
 msgid "no medium found on %s"
 msgstr "mount：%s 中找不到任何媒體"
 
-#: sys-utils/mount.c:591
+#: sys-utils/mount.c:613
 #, fuzzy, c-format
 msgid "mount %s on %s failed"
 msgstr "%s：重新命名 %s 為 %s 時失敗：%s\n"
 
-#: sys-utils/mount.c:613
+#: sys-utils/mount.c:635
 #, fuzzy, c-format
 msgid "%s: failed to parse"
 msgstr "%s：無法開啟"
 
-#: sys-utils/mount.c:622
+#: sys-utils/mount.c:644
 #, fuzzy, c-format
 msgid ""
 " %1$s [-lhV]\n"
@@ -13045,7 +13070,7 @@ msgstr ""
 " %1$s [選項] <裝置> <掛載點>\n"
 " %1$s [選項] [--source <裝置>] [--target <掛載點>]\n"
 
-#: sys-utils/mount.c:631
+#: sys-utils/mount.c:653
 #, c-format
 msgid ""
 " -a, --all               mount all filesystems mentioned in fstab\n"
@@ -13055,7 +13080,7 @@ msgid ""
 " -T, --fstab <path>      alternative file to /etc/fstab\n"
 msgstr ""
 
-#: sys-utils/mount.c:637
+#: sys-utils/mount.c:659
 #, c-format
 msgid ""
 " -h, --help              display this help text and exit\n"
@@ -13064,7 +13089,7 @@ msgid ""
 " -n, --no-mtab           don't write to /etc/mtab\n"
 msgstr ""
 
-#: sys-utils/mount.c:642
+#: sys-utils/mount.c:664
 #, c-format
 msgid ""
 " -o, --options <list>    comma-separated list of mount options\n"
@@ -13074,14 +13099,14 @@ msgid ""
 " -t, --types <list>      limit the set of filesystem types\n"
 msgstr ""
 
-#: sys-utils/mount.c:648
+#: sys-utils/mount.c:670
 #, c-format
 msgid ""
 "     --source <src>      explicitly specifies source (path, label, uuid)\n"
 "     --target <target>   explicitly specifies mountpoint\n"
 msgstr ""
 
-#: sys-utils/mount.c:651
+#: sys-utils/mount.c:673
 #, c-format
 msgid ""
 " -v, --verbose           say what is being done\n"
@@ -13089,7 +13114,7 @@ msgid ""
 " -w, --read-write        mount the filesystem read-write (default)\n"
 msgstr ""
 
-#: sys-utils/mount.c:660
+#: sys-utils/mount.c:682
 #, c-format
 msgid ""
 "\n"
@@ -13102,7 +13127,7 @@ msgid ""
 " PARTUUID=<uuid>         specifies device by partition UUID\n"
 msgstr ""
 
-#: sys-utils/mount.c:669
+#: sys-utils/mount.c:691
 #, c-format
 msgid ""
 " <device>                specifies device by path\n"
@@ -13110,7 +13135,7 @@ msgid ""
 " <file>                  regular file for loopdev setup\n"
 msgstr ""
 
-#: sys-utils/mount.c:674
+#: sys-utils/mount.c:696
 #, c-format
 msgid ""
 "\n"
@@ -13120,7 +13145,7 @@ msgid ""
 " -R, --rbind             mount a subtree and all submounts somewhere else\n"
 msgstr ""
 
-#: sys-utils/mount.c:679
+#: sys-utils/mount.c:701
 #, c-format
 msgid ""
 " --make-shared           mark a subtree as shared\n"
@@ -13129,7 +13154,7 @@ msgid ""
 " --make-unbindable       mark a subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:684
+#: sys-utils/mount.c:706
 #, c-format
 msgid ""
 " --make-rshared          recursively mark a whole subtree as shared\n"
@@ -13138,17 +13163,17 @@ msgid ""
 " --make-runbindable      recursively mark a whole subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:775 sys-utils/umount.c:318
+#: sys-utils/mount.c:797 sys-utils/umount.c:340
 #, fuzzy
 msgid "libmount context allocation failed"
 msgstr "mount：掛載時失敗"
 
-#: sys-utils/mount.c:815 sys-utils/mount.c:826 sys-utils/mount.c:831
+#: sys-utils/mount.c:837 sys-utils/mount.c:848 sys-utils/mount.c:853
 #, fuzzy
 msgid "failed to append options"
 msgstr "剖析 pid 時失敗"
 
-#: sys-utils/mount.c:835 sys-utils/umount.c:363
+#: sys-utils/mount.c:857 sys-utils/umount.c:385
 #, fuzzy
 msgid "failed to set options pattern"
 msgstr "取得 pid %d 的屬性時失敗"
@@ -13571,7 +13596,7 @@ msgstr "設定身分為 %s 時失敗"
 msgid "%d (%s) old priority %d, new priority %d\n"
 msgstr "%d: 舊的優先權 %d, 新的優先權 %d\n"
 
-#: sys-utils/rtcwake.c:92
+#: sys-utils/rtcwake.c:91
 #, fuzzy
 msgid ""
 " -d, --device <device>    select rtc device (rtc0|rtc1|...)\n"
@@ -13594,162 +13619,162 @@ msgstr ""
 "    -v | --verbose            詳細的訊息\n"
 "    -V | --version            顯示版本\n"
 
-#: sys-utils/rtcwake.c:156
+#: sys-utils/rtcwake.c:155
 #, fuzzy
 msgid "read rtc time failed"
 msgstr "讀取 rtc 時間"
 
-#: sys-utils/rtcwake.c:161
+#: sys-utils/rtcwake.c:160
 #, fuzzy
 msgid "read system time failed"
 msgstr "讀取系統時間"
 
-#: sys-utils/rtcwake.c:179
+#: sys-utils/rtcwake.c:178
 #, fuzzy
 msgid "convert rtc time failed"
 msgstr "轉換 rtc 時間"
 
-#: sys-utils/rtcwake.c:239
+#: sys-utils/rtcwake.c:238
 #, fuzzy
 msgid "set rtc alarm failed"
 msgstr "設定 rtc 警示"
 
-#: sys-utils/rtcwake.c:243
+#: sys-utils/rtcwake.c:242
 #, fuzzy
 msgid "enable rtc alarm failed"
 msgstr "啟用 rtc 警示"
 
-#: sys-utils/rtcwake.c:248
+#: sys-utils/rtcwake.c:246
 #, fuzzy
 msgid "set rtc wake alarm failed"
 msgstr "設定 rtc 喚醒警示"
 
-#: sys-utils/rtcwake.c:351
+#: sys-utils/rtcwake.c:349
 #, fuzzy
 msgid "read rtc alarm failed"
 msgstr "啟用 rtc 警示"
 
-#: sys-utils/rtcwake.c:357
+#: sys-utils/rtcwake.c:355
 #, c-format
 msgid "alarm: off\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:374
+#: sys-utils/rtcwake.c:372
 #, fuzzy
 msgid "convert time failed"
 msgstr "轉換 rtc 時間"
 
-#: sys-utils/rtcwake.c:381
+#: sys-utils/rtcwake.c:379
 #, c-format
 msgid "alarm: on  %s"
 msgstr ""
 
-#: sys-utils/rtcwake.c:438
+#: sys-utils/rtcwake.c:436
 #, fuzzy, c-format
 msgid "unrecognized suspend state '%s'"
 msgstr "%s：無法辨識的懸置狀態「%s」\n"
 
-#: sys-utils/rtcwake.c:448
+#: sys-utils/rtcwake.c:446
 #, fuzzy
 msgid "invalid seconds argument"
 msgstr "無效的選項"
 
-#: sys-utils/rtcwake.c:455
+#: sys-utils/rtcwake.c:453
 #, fuzzy
 msgid "invalid time argument"
 msgstr "無效的選項"
 
-#: sys-utils/rtcwake.c:479
+#: sys-utils/rtcwake.c:477
 #, c-format
 msgid "%s: assuming RTC uses UTC ...\n"
 msgstr "%s：假設 RTC 使用 UTC ...\n"
 
-#: sys-utils/rtcwake.c:485
+#: sys-utils/rtcwake.c:483
 #, c-format
 msgid "Using UTC time.\n"
 msgstr "使用 UTC 時間。\n"
 
-#: sys-utils/rtcwake.c:486
+#: sys-utils/rtcwake.c:484
 #, c-format
 msgid "Using local time.\n"
 msgstr "使用當地時間。\n"
 
-#: sys-utils/rtcwake.c:491
+#: sys-utils/rtcwake.c:489
 #, fuzzy
 msgid "must provide wake time (see -t and -s options)"
 msgstr "%s：必須提供喚醒時間\n"
 
-#: sys-utils/rtcwake.c:508
+#: sys-utils/rtcwake.c:506
 #, fuzzy, c-format
 msgid "%s not enabled for wakeup events"
 msgstr "%s: %s 未啟用喚醒事件\n"
 
-#: sys-utils/rtcwake.c:523
+#: sys-utils/rtcwake.c:521
 #, c-format
 msgid "alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"
 msgstr "警示 %ld，系統時間 %ld，rtc 時間 %ld，秒數 %u\n"
 
-#: sys-utils/rtcwake.c:529
+#: sys-utils/rtcwake.c:527
 #, c-format
 msgid "suspend to \"%s\" unavailable"
 msgstr ""
 
-#: sys-utils/rtcwake.c:537
+#: sys-utils/rtcwake.c:535
 #, fuzzy, c-format
 msgid "time doesn't go backward to %s"
 msgstr "%s：時間無法後退到 %s\n"
 
-#: sys-utils/rtcwake.c:547
+#: sys-utils/rtcwake.c:545
 #, fuzzy, c-format
 msgid "%s: wakeup using %s at %s"
 msgstr "%1$s：使用 %3$s 於 %4$s 自「%2$s」喚醒\n"
 
-#: sys-utils/rtcwake.c:551
+#: sys-utils/rtcwake.c:549
 #, fuzzy, c-format
 msgid "%s: wakeup from \"%s\" using %s at %s"
 msgstr "%1$s：使用 %3$s 於 %4$s 自「%2$s」喚醒\n"
 
-#: sys-utils/rtcwake.c:560
+#: sys-utils/rtcwake.c:558
 #, c-format
 msgid "suspend mode: no; leaving\n"
 msgstr "懸置模式：無；離開\n"
 
-#: sys-utils/rtcwake.c:568
+#: sys-utils/rtcwake.c:566
 #, c-format
 msgid "suspend mode: off; executing %s\n"
 msgstr "懸置模式：關閉；執行 %s\n"
 
-#: sys-utils/rtcwake.c:578
+#: sys-utils/rtcwake.c:576
 #, fuzzy, c-format
 msgid "unable to execute %s"
 msgstr "執行 %s 時失敗"
 
-#: sys-utils/rtcwake.c:586
+#: sys-utils/rtcwake.c:584
 #, c-format
 msgid "suspend mode: on; reading rtc\n"
 msgstr "懸置模式：開啟；讀取 rtc\n"
 
-#: sys-utils/rtcwake.c:592
+#: sys-utils/rtcwake.c:590
 #, fuzzy
 msgid "rtc read failed"
 msgstr "讀取失敗：%s"
 
-#: sys-utils/rtcwake.c:603
+#: sys-utils/rtcwake.c:601
 #, c-format
 msgid "suspend mode: disable; disabling alarm\n"
 msgstr "懸置模式：停用；停用警示\n"
 
-#: sys-utils/rtcwake.c:607
+#: sys-utils/rtcwake.c:605
 #, fuzzy, c-format
 msgid "suspend mode: show; printing alarm info\n"
 msgstr "懸置模式：停用；停用警示\n"
 
-#: sys-utils/rtcwake.c:614
+#: sys-utils/rtcwake.c:612
 #, c-format
 msgid "suspend mode: %s; suspending system\n"
 msgstr "懸置模式：%s；懸置系統\n"
 
-#: sys-utils/rtcwake.c:620
+#: sys-utils/rtcwake.c:625 sys-utils/rtcwake.c:631
 #, fuzzy
 msgid "disable rtc alarm interrupt failed"
 msgstr "停用 rtc 警示插斷"
@@ -14118,17 +14143,17 @@ msgstr "嘗試卸載 %s\n"
 msgid "failed to change directory to %s"
 msgstr "設定身分為 %s 時失敗"
 
-#: sys-utils/switch_root.c:160
+#: sys-utils/switch_root.c:164
 #, fuzzy, c-format
 msgid "failed to mount moving %s to /"
 msgstr "%s：開啟失敗：%s\n"
 
-#: sys-utils/switch_root.c:166
+#: sys-utils/switch_root.c:170
 #, fuzzy
 msgid "failed to change root"
 msgstr "剖析優先權時失敗"
 
-#: sys-utils/switch_root.c:185
+#: sys-utils/switch_root.c:189
 #, fuzzy, c-format
 msgid " %s [options] <newrootdir> <init> <args to init>\n"
 msgstr ""
@@ -14136,12 +14161,12 @@ msgstr ""
 "\n"
 "選項：\n"
 
-#: sys-utils/switch_root.c:217
+#: sys-utils/switch_root.c:221
 #, fuzzy
 msgid "failed. Sorry."
 msgstr "%s 失敗。\n"
 
-#: sys-utils/switch_root.c:220
+#: sys-utils/switch_root.c:224
 #, fuzzy, c-format
 msgid "cannot access %s"
 msgstr "無法開啟檔案 '%s'"
@@ -14201,60 +14226,60 @@ msgstr ""
 msgid "bad value"
 msgstr "不當的逾時設定值：%s"
 
-#: sys-utils/tunelp.c:271
+#: sys-utils/tunelp.c:272
 #, fuzzy, c-format
 msgid "%s not an lp device"
 msgstr "%s: %s 不是 lp 裝置。\n"
 
-#: sys-utils/tunelp.c:291
+#: sys-utils/tunelp.c:292
 msgid "LPGETSTATUS error"
 msgstr "LPGETSTATUS 錯誤"
 
-#: sys-utils/tunelp.c:296
+#: sys-utils/tunelp.c:297
 #, c-format
 msgid "%s status is %d"
 msgstr "%s 狀態為 %d"
 
-#: sys-utils/tunelp.c:298
+#: sys-utils/tunelp.c:299
 #, c-format
 msgid ", busy"
 msgstr "，忙碌中"
 
-#: sys-utils/tunelp.c:300
+#: sys-utils/tunelp.c:301
 #, c-format
 msgid ", ready"
 msgstr "，就緒"
 
-#: sys-utils/tunelp.c:302
+#: sys-utils/tunelp.c:303
 #, c-format
 msgid ", out of paper"
 msgstr "，紙張耗盡"
 
-#: sys-utils/tunelp.c:304
+#: sys-utils/tunelp.c:305
 #, c-format
 msgid ", on-line"
 msgstr "，上線"
 
-#: sys-utils/tunelp.c:306
+#: sys-utils/tunelp.c:307
 #, c-format
 msgid ", error"
 msgstr "，錯誤"
 
-#: sys-utils/tunelp.c:312
+#: sys-utils/tunelp.c:313
 #, fuzzy
 msgid "ioctl failed"
 msgstr "msgctl 失敗"
 
-#: sys-utils/tunelp.c:322
+#: sys-utils/tunelp.c:323
 msgid "LPGETIRQ error"
 msgstr "LPGETIRQ 錯誤"
 
-#: sys-utils/tunelp.c:327
+#: sys-utils/tunelp.c:328
 #, c-format
 msgid "%s using IRQ %d\n"
 msgstr "%s 正在使用 IRQ %d\n"
 
-#: sys-utils/tunelp.c:329
+#: sys-utils/tunelp.c:330
 #, c-format
 msgid "%s using polling\n"
 msgstr "%s 正在使用輪詢\n"
@@ -14301,27 +14326,37 @@ msgid ""
 " -v, --verbose           say what is being done\n"
 msgstr ""
 
-#: sys-utils/umount.c:179
+#: sys-utils/umount.c:137
+#, fuzzy, c-format
+msgid "%s (%s) unmounted"
+msgstr "%s 已掛載。\t"
+
+#: sys-utils/umount.c:139
+#, fuzzy, c-format
+msgid "%s unmounted"
+msgstr "fsck：%s：找不到\n"
+
+#: sys-utils/umount.c:198
 #, fuzzy, c-format
 msgid "%s: umount failed"
 msgstr "掛載失敗"
 
-#: sys-utils/umount.c:188
+#: sys-utils/umount.c:207
 #, fuzzy, c-format
 msgid "%s: filesystem umounted, but mount(8) failed"
 msgstr "mount：掛載時失敗"
 
-#: sys-utils/umount.c:202
+#: sys-utils/umount.c:221
 #, fuzzy, c-format
 msgid "%s: invalid block device"
 msgstr "umount：%s: 無效的區塊裝置"
 
-#: sys-utils/umount.c:208
+#: sys-utils/umount.c:227
 #, fuzzy, c-format
 msgid "%s: can't write superblock"
 msgstr "mount：%s: 無法讀取超區塊"
 
-#: sys-utils/umount.c:211
+#: sys-utils/umount.c:230
 #, fuzzy, c-format
 msgid ""
 "%s: target is busy.\n"
@@ -14332,17 +14367,17 @@ msgstr ""
 "        (在某些情況下關於使用該裝置之進程的\n"
 "         有用資訊，可以藉由 lsof(8) 或 fuser(1) 找到)"
 
-#: sys-utils/umount.c:220
+#: sys-utils/umount.c:239
 #, fuzzy, c-format
 msgid "%s: must be superuser to umount"
 msgstr "umount：%s: 必須是系統管理者才能 umount"
 
-#: sys-utils/umount.c:223
+#: sys-utils/umount.c:242
 #, fuzzy, c-format
 msgid "%s: block devices not permitted on fs"
 msgstr "umount：%s: 區塊裝置在檔案系統中不被允許"
 
-#: sys-utils/umount.c:272
+#: sys-utils/umount.c:291
 #, fuzzy
 msgid "failed to set umount target"
 msgstr "剖析 pid 時失敗"
@@ -14372,88 +14407,92 @@ msgstr ""
 msgid "unshare failed"
 msgstr "unshare 失敗"
 
-#: sys-utils/wdctl.c:44
+#: sys-utils/wdctl.c:66
 msgid "Card previously reset the CPU"
 msgstr ""
 
-#: sys-utils/wdctl.c:45
+#: sys-utils/wdctl.c:67
 msgid "External relay 1"
 msgstr ""
 
-#: sys-utils/wdctl.c:46
+#: sys-utils/wdctl.c:68
 msgid "External relay 2"
 msgstr ""
 
-#: sys-utils/wdctl.c:47
+#: sys-utils/wdctl.c:69
 #, fuzzy
 msgid "Fan failed"
 msgstr "%s 失敗。\n"
 
-#: sys-utils/wdctl.c:48
+#: sys-utils/wdctl.c:70
 msgid "Keep alive ping reply"
 msgstr ""
 
-#: sys-utils/wdctl.c:49
+#: sys-utils/wdctl.c:71
 msgid "Supports magic close char"
 msgstr ""
 
-#: sys-utils/wdctl.c:50
+#: sys-utils/wdctl.c:72
 msgid "Reset due to CPU overheat"
 msgstr ""
 
-#: sys-utils/wdctl.c:51
+#: sys-utils/wdctl.c:73
 msgid "Power over voltage"
 msgstr ""
 
-#: sys-utils/wdctl.c:52
+#: sys-utils/wdctl.c:74
 msgid "Power bad/power fault"
 msgstr ""
 
-#: sys-utils/wdctl.c:53
+#: sys-utils/wdctl.c:75
 #, fuzzy
 msgid "Pretimeout (in seconds)"
 msgstr "%d 秒之後登入將逾時\n"
 
-#: sys-utils/wdctl.c:54
+#: sys-utils/wdctl.c:76
 #, fuzzy
 msgid "Set timeout (in seconds)"
 msgstr "%d 秒之後登入將逾時\n"
 
-#: sys-utils/wdctl.c:70
+#: sys-utils/wdctl.c:77
+msgid "Not trigger reboot"
+msgstr ""
+
+#: sys-utils/wdctl.c:93
 msgid "flag name"
 msgstr ""
 
-#: sys-utils/wdctl.c:71
+#: sys-utils/wdctl.c:94
 #, fuzzy
 msgid "flag description"
 msgstr "區塊裝置 "
 
-#: sys-utils/wdctl.c:72
+#: sys-utils/wdctl.c:95
 #, fuzzy
 msgid "flag status"
 msgstr "狀態"
 
-#: sys-utils/wdctl.c:73
+#: sys-utils/wdctl.c:96
 #, fuzzy
 msgid "flag boot status"
 msgstr "顯示狀態時失敗：%s"
 
-#: sys-utils/wdctl.c:74
+#: sys-utils/wdctl.c:97
 #, fuzzy
 msgid "watchdog device name"
 msgstr "mount：%s: 不明的裝置"
 
-#: sys-utils/wdctl.c:108
+#: sys-utils/wdctl.c:131
 #, fuzzy, c-format
 msgid "unknown flag: %s"
 msgstr "%s：不明的引數：%s\n"
 
-#: sys-utils/wdctl.c:145
+#: sys-utils/wdctl.c:168
 #, fuzzy, c-format
 msgid " %s [options] [<device> ...]\n"
 msgstr "用法：%s [選項] 裝置…\n"
 
-#: sys-utils/wdctl.c:149
+#: sys-utils/wdctl.c:172
 msgid ""
 " -f, --flags <list>     print selected flags only\n"
 " -F, --noflags          don't print information about flags\n"
@@ -14467,65 +14506,65 @@ msgid ""
 " -x, --flags-only       print only flags table (same as -I -T)\n"
 msgstr ""
 
-#: sys-utils/wdctl.c:165
+#: sys-utils/wdctl.c:188
 #, fuzzy, c-format
 msgid "The default device is %s.\n"
 msgstr "環路裝置是 %s\n"
 
-#: sys-utils/wdctl.c:168
+#: sys-utils/wdctl.c:191
 #, fuzzy
 msgid "Available columns:\n"
 msgstr "可用命令：\n"
 
-#: sys-utils/wdctl.c:254
+#: sys-utils/wdctl.c:277
 #, fuzzy, c-format
 msgid "%s: unknown flags 0x%x\n"
 msgstr "%s：不明信號 %s\n"
 
-#: sys-utils/wdctl.c:284 sys-utils/wdctl.c:338
+#: sys-utils/wdctl.c:307 sys-utils/wdctl.c:361
 #, c-format
 msgid "%s: watchdog already in use, terminating."
 msgstr ""
 
-#: sys-utils/wdctl.c:298 sys-utils/wdctl.c:366
+#: sys-utils/wdctl.c:321 sys-utils/wdctl.c:389
 #, fuzzy, c-format
 msgid "%s: failed to disarm watchdog"
 msgstr "%s：無法探查裝置"
 
-#: sys-utils/wdctl.c:307
+#: sys-utils/wdctl.c:330
 #, fuzzy, c-format
 msgid "cannot set timeout for %s"
 msgstr "無法取得逾時值用於 %s: %s\n"
 
-#: sys-utils/wdctl.c:345
+#: sys-utils/wdctl.c:368
 #, fuzzy, c-format
 msgid "%s: failed to get information about watchdog"
 msgstr "%s：無法寫入標籤"
 
-#: sys-utils/wdctl.c:426 sys-utils/wdctl.c:428 sys-utils/wdctl.c:430
+#: sys-utils/wdctl.c:449 sys-utils/wdctl.c:451 sys-utils/wdctl.c:453
 #, fuzzy, c-format
 msgid "%-15s%2i seconds\n"
 msgstr "%s  %.6f 秒\n"
 
-#: sys-utils/wdctl.c:426
+#: sys-utils/wdctl.c:449
 msgid "Timeout:"
 msgstr ""
 
-#: sys-utils/wdctl.c:428
+#: sys-utils/wdctl.c:451
 #, fuzzy
 msgid "Pre-timeout:"
 msgstr "已逾時"
 
-#: sys-utils/wdctl.c:430
+#: sys-utils/wdctl.c:453
 msgid "Timeleft:"
 msgstr ""
 
-#: sys-utils/wdctl.c:564
+#: sys-utils/wdctl.c:587
 #, fuzzy
 msgid "Device:"
 msgstr "所用裝置"
 
-#: sys-utils/wdctl.c:565
+#: sys-utils/wdctl.c:588
 #, fuzzy, c-format
 msgid "%-15s%s [version %x]\n"
 msgstr "%s：版本 %s\n"
@@ -14929,26 +14968,31 @@ msgstr "klogctl 錯誤：%s\n"
 msgid "Error writing screendump"
 msgstr "寫入螢幕傾印時發生錯誤\n"
 
-#: term-utils/setterm.c:1212
+#: term-utils/setterm.c:1213
 #, fuzzy, c-format
 msgid "Couldn't read %s"
 msgstr "無法讀取 %s\n"
 
-#: term-utils/setterm.c:1266
+#: term-utils/setterm.c:1215
+#, fuzzy
+msgid "Couldn't read neither /dev/vcsa0 nor /dev/vcsa"
+msgstr "無法開啟 /dev/tty1 或 /dev/vc/1"
+
+#: term-utils/setterm.c:1270
 #, fuzzy
 msgid "$TERM is not defined."
 msgstr "%s：$TERM 並未定義。\n"
 
-#: term-utils/setterm.c:1274
+#: term-utils/setterm.c:1278
 msgid "terminfo database cannot be found"
 msgstr ""
 
-#: term-utils/setterm.c:1276
+#: term-utils/setterm.c:1280
 #, fuzzy, c-format
 msgid "%s: unknown terminal type"
 msgstr "%s：不明信號 %s\n"
 
-#: term-utils/setterm.c:1278
+#: term-utils/setterm.c:1282
 msgid "terminal is hardcopy"
 msgstr ""
 
@@ -15139,7 +15183,7 @@ msgstr "略過第一列"
 msgid "-- line already flushed"
 msgstr "-- 列已經清理"
 
-#: text-utils/colcrt.c:314
+#: text-utils/colcrt.c:315
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -15147,7 +15191,7 @@ msgid ""
 " %s [options] [file ...]\n"
 msgstr "用法：%s [選項] 裝置…\n"
 
-#: text-utils/colcrt.c:318
+#: text-utils/colcrt.c:319
 #, c-format
 msgid ""
 " -,  --no-underlining  suppress all underlining\n"
@@ -15815,6 +15859,9 @@ msgstr "不明的退出序列於輸入：%o, %o\n"
 #, fuzzy
 msgid "Input line too long."
 msgstr "輸入列太長。\n"
+
+#~ msgid "        on whole disk. "
+#~ msgstr "        於整個磁碟。"
 
 #~ msgid "%s: open failed"
 #~ msgstr "%s：開啟失敗"

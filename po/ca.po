@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2012-09-04 13:54+0200\n"
+"POT-Creation-Date: 2012-10-10 14:41+0200\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -36,26 +36,26 @@ msgstr ""
 #: disk-utils/mkfs.minix.c:762 disk-utils/partx.c:840
 #: disk-utils/resizepart.c:95 disk-utils/swaplabel.c:105 fdisks/cfdisk.c:1823
 #: fdisks/cfdisk.c:1941 fdisks/cfdisk.c:2025 fdisks/fdisk.c:1610
-#: fdisks/fdisk.c:1794 fdisks/fdisk.c:1909 lib/path.c:58 lib/path.c:70
-#: login-utils/islocal.c:87 login-utils/last.c:245 login-utils/sulogin.c:216
-#: login-utils/sulogin.c:254 login-utils/sulogin.c:524
-#: login-utils/sulogin.c:559 login-utils/utmpdump.c:118
-#: login-utils/utmpdump.c:343 login-utils/vipw.c:268 login-utils/vipw.c:286
-#: misc-utils/findmnt.c:896 misc-utils/mcookie.c:147 misc-utils/mcookie.c:181
-#: sys-utils/cytune.c:178 sys-utils/cytune.c:404 sys-utils/cytune.c:418
-#: sys-utils/cytune.c:434 sys-utils/dmesg.c:436 sys-utils/eject.c:500
-#: sys-utils/eject.c:691 sys-utils/fallocate.c:153 sys-utils/fsfreeze.c:104
-#: sys-utils/fstrim.c:142 sys-utils/hwclock-cmos.c:637
-#: sys-utils/hwclock-rtc.c:162 sys-utils/hwclock-rtc.c:256
-#: sys-utils/hwclock-rtc.c:420 sys-utils/hwclock-rtc.c:441
-#: sys-utils/hwclock-rtc.c:488 sys-utils/ldattach.c:293
-#: sys-utils/losetup.c:118 sys-utils/rtcwake.c:119 sys-utils/rtcwake.c:279
-#: sys-utils/rtcwake.c:517 sys-utils/swapon.c:310 sys-utils/swapon.c:477
-#: sys-utils/wdctl.c:286 sys-utils/wdctl.c:340 term-utils/script.c:208
-#: term-utils/script.c:233 term-utils/script.c:560
-#: term-utils/scriptreplay.c:197 term-utils/scriptreplay.c:200
-#: term-utils/wall.c:247 text-utils/rev.c:131 text-utils/tailf.c:62
-#: text-utils/tailf.c:99 text-utils/ul.c:231
+#: fdisks/fdisk.c:1794 fdisks/fdisk.c:1909 lib/pager.c:48 lib/path.c:58
+#: lib/path.c:70 login-utils/islocal.c:87 login-utils/last.c:245
+#: login-utils/sulogin.c:216 login-utils/sulogin.c:254
+#: login-utils/sulogin.c:524 login-utils/sulogin.c:559
+#: login-utils/utmpdump.c:118 login-utils/utmpdump.c:343
+#: login-utils/vipw.c:268 login-utils/vipw.c:286 misc-utils/findmnt.c:896
+#: misc-utils/mcookie.c:147 misc-utils/mcookie.c:181 sys-utils/cytune.c:178
+#: sys-utils/cytune.c:404 sys-utils/cytune.c:418 sys-utils/cytune.c:434
+#: sys-utils/dmesg.c:448 sys-utils/eject.c:500 sys-utils/eject.c:691
+#: sys-utils/fallocate.c:153 sys-utils/fsfreeze.c:104 sys-utils/fstrim.c:142
+#: sys-utils/hwclock-cmos.c:637 sys-utils/hwclock-rtc.c:162
+#: sys-utils/hwclock-rtc.c:256 sys-utils/hwclock-rtc.c:420
+#: sys-utils/hwclock-rtc.c:441 sys-utils/hwclock-rtc.c:488
+#: sys-utils/ldattach.c:293 sys-utils/losetup.c:118 sys-utils/rtcwake.c:118
+#: sys-utils/rtcwake.c:277 sys-utils/rtcwake.c:515 sys-utils/swapon.c:310
+#: sys-utils/swapon.c:477 sys-utils/switch_root.c:158 sys-utils/wdctl.c:309
+#: sys-utils/wdctl.c:363 term-utils/script.c:208 term-utils/script.c:233
+#: term-utils/script.c:560 term-utils/scriptreplay.c:197
+#: term-utils/scriptreplay.c:200 term-utils/wall.c:247 text-utils/rev.c:131
+#: text-utils/tailf.c:62 text-utils/tailf.c:99 text-utils/ul.c:231
 #, c-format
 msgid "cannot open %s"
 msgstr "%s no es pot obrir"
@@ -309,13 +309,13 @@ msgid ""
 msgstr ""
 
 #: disk-utils/fdformat.c:131 disk-utils/fsck.c:1507 disk-utils/mkfs.bfs.c:89
-#: disk-utils/mkfs.cramfs.c:763 fdisks/sfdisk.c:2633 include/c.h:248
+#: disk-utils/mkfs.cramfs.c:763 fdisks/sfdisk.c:2637 include/c.h:248
 #: misc-utils/cal.c:353 misc-utils/getopt.c:431 misc-utils/kill.c:193
-#: misc-utils/logger.c:264 misc-utils/look.c:126 misc-utils/lsblk.c:1360
+#: misc-utils/logger.c:264 misc-utils/look.c:126 misc-utils/lsblk.c:1376
 #: misc-utils/mcookie.c:119 misc-utils/namei.c:466 misc-utils/rename.c:101
-#: misc-utils/uuidd.c:580 misc-utils/uuidgen.c:77 misc-utils/whereis.c:466
+#: misc-utils/uuidd.c:580 misc-utils/uuidgen.c:77 misc-utils/whereis.c:467
 #: misc-utils/wipefs.c:438 schedutils/ionice.c:171 sys-utils/chcpu.c:307
-#: sys-utils/cytune.c:378 sys-utils/dmesg.c:1150 sys-utils/hwclock.c:1342
+#: sys-utils/cytune.c:378 sys-utils/dmesg.c:1162 sys-utils/hwclock.c:1355
 #: sys-utils/lscpu.c:1315 term-utils/agetty.c:672 term-utils/mesg.c:108
 #: term-utils/script.c:212 term-utils/scriptreplay.c:172
 #: term-utils/setterm.c:812 term-utils/wall.c:133 term-utils/write.c:112
@@ -329,7 +329,7 @@ msgstr "%s de %s\n"
 #: disk-utils/fdformat.c:146 disk-utils/fsck.cramfs.c:142
 #: disk-utils/mkfs.bfs.c:177 disk-utils/mkfs.cramfs.c:748
 #: disk-utils/mkfs.cramfs.c:783 disk-utils/mkfs.minix.c:755
-#: disk-utils/partx.c:779 misc-utils/namei.c:231 sys-utils/dmesg.c:438
+#: disk-utils/partx.c:779 misc-utils/namei.c:231 sys-utils/dmesg.c:450
 #: sys-utils/fsfreeze.c:107 sys-utils/fstrim.c:136 sys-utils/swapon.c:446
 #: sys-utils/switch_root.c:88 sys-utils/switch_root.c:128
 #: term-utils/mesg.c:124 text-utils/tailf.c:102 text-utils/tailf.c:280
@@ -337,7 +337,7 @@ msgstr "%s de %s\n"
 msgid "stat failed %s"
 msgstr "(Fitxer següent: %s)"
 
-#: disk-utils/fdformat.c:149 disk-utils/partx.c:837 misc-utils/lsblk.c:1077
+#: disk-utils/fdformat.c:149 disk-utils/partx.c:837 misc-utils/lsblk.c:1098
 #: sys-utils/mountpoint.c:107
 #, fuzzy, c-format
 msgid "%s: not a block device"
@@ -421,12 +421,12 @@ msgstr "s'ha produït un error en cercar"
 msgid "%s: failed to parse fstab"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: disk-utils/fsck.c:584 sys-utils/umount.c:217
+#: disk-utils/fsck.c:584 sys-utils/umount.c:236
 #, fuzzy, c-format
 msgid "%s: not found"
 msgstr "umount: %s: no s'ha trobat"
 
-#: disk-utils/fsck.c:610 login-utils/login.c:1085 login-utils/vipw.c:212
+#: disk-utils/fsck.c:610 login-utils/login.c:1093 login-utils/vipw.c:212
 #: sys-utils/flock.c:314 sys-utils/swapon.c:267 term-utils/script.c:264
 #: term-utils/script.c:274
 #, fuzzy
@@ -818,7 +818,7 @@ msgstr ""
 msgid "compiled without -x support"
 msgstr "%s: compilat sense implementar -x\n"
 
-#: disk-utils/fsck.cramfs.c:689 fdisks/sfdisk.c:2859
+#: disk-utils/fsck.cramfs.c:689 fdisks/sfdisk.c:2863
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: Correcte\n"
@@ -1932,135 +1932,135 @@ msgid "unable to assign device to libblkid probe"
 msgstr ""
 "no s'ha pogut assignar memòria intermèdia per als nodes d'identificació"
 
-#: disk-utils/mkswap.c:376 disk-utils/mkswap.c:410 disk-utils/mkswap.c:625
+#: disk-utils/mkswap.c:375 disk-utils/mkswap.c:402 disk-utils/mkswap.c:618
 msgid "unable to rewind swap-device"
 msgstr "no s'ha pogut rebobinar el dispositiu d'intercanvi"
 
-#: disk-utils/mkswap.c:414
+#: disk-utils/mkswap.c:406
 #, fuzzy
 msgid "unable to erase bootbits sectors"
 msgstr "no s'ha pogut netejar el sector d'arrencada"
 
-#: disk-utils/mkswap.c:430
+#: disk-utils/mkswap.c:420
+#, c-format
+msgid "%s: warning: wiping old %s signature."
+msgstr ""
+
+#: disk-utils/mkswap.c:425
 #, fuzzy, c-format
 msgid "%s: warning: don't erase bootbits sectors"
 msgstr "no s'ha pogut netejar el sector d'arrencada"
 
-#: disk-utils/mkswap.c:433
+#: disk-utils/mkswap.c:428
 #, fuzzy, c-format
 msgid "        (%s partition table detected). "
 msgstr "   p   imprimeix la taula de particions BSD"
 
-#: disk-utils/mkswap.c:435
-#, fuzzy, c-format
-msgid "        on whole disk. "
-msgstr "   s   mostra totes les etiquetes del disc"
-
-#: disk-utils/mkswap.c:437
+#: disk-utils/mkswap.c:430
 #, fuzzy, c-format
 msgid "        (compiled without libblkid). "
 msgstr "   s   mostra totes les etiquetes del disc"
 
-#: disk-utils/mkswap.c:489
+#: disk-utils/mkswap.c:482
 #, fuzzy
 msgid "parse page size failed"
 msgstr "la cerca ha fallat"
 
-#: disk-utils/mkswap.c:495
+#: disk-utils/mkswap.c:488
 #, fuzzy
 msgid "parse version number failed"
 msgstr "semàfors assignats = %d\n"
 
-#: disk-utils/mkswap.c:501
+#: disk-utils/mkswap.c:494
 #, c-format
 msgid "warning: ignore -U (UUIDs are unsupported by %s)"
 msgstr ""
 
-#: disk-utils/mkswap.c:525
+#: disk-utils/mkswap.c:518
 #, fuzzy, c-format
 msgid "does not support swapspace version %d."
 msgstr "%s: error: versió desconeguda %d\n"
 
-#: disk-utils/mkswap.c:530
+#: disk-utils/mkswap.c:523
 #, fuzzy
 msgid "error: UUID parsing failed"
 msgstr ""
 "\n"
 "S'ha produït un error en tancar el fitxer\n"
 
-#: disk-utils/mkswap.c:539
+#: disk-utils/mkswap.c:532
 #, fuzzy
 msgid "error: Nowhere to set up swap on?"
 msgstr "%s: error: no es pot especificar l'espai d'intercanvi enlloc?\n"
 
-#: disk-utils/mkswap.c:545
+#: disk-utils/mkswap.c:538
 #, fuzzy
 msgid "invalid block count argument"
 msgstr "identificador invàlid"
 
-#: disk-utils/mkswap.c:553
+#: disk-utils/mkswap.c:546
 #, fuzzy, c-format
 msgid "error: size %llu KiB is larger than device size %llu KiB"
 msgstr "%s: error: la mida %lu es més gran que a la mida del dispositiu %lu\n"
 
-#: disk-utils/mkswap.c:559
+#: disk-utils/mkswap.c:552
 #, fuzzy, c-format
 msgid "error: swap area needs to be at least %ld KiB"
 msgstr "%s: error: l'espai d'intercanvi ha de tenir com a mínim %ldkB\n"
 
-#: disk-utils/mkswap.c:575
+#: disk-utils/mkswap.c:568
 #, fuzzy, c-format
 msgid "warning: truncating swap area to %llu KiB"
 msgstr "%s: avís: l'espai d'intercanvi s'ha truncat a %ldkB\n"
 
-#: disk-utils/mkswap.c:580
+#: disk-utils/mkswap.c:573
 #, fuzzy, c-format
 msgid "error: %s is mounted; will not make swapspace."
 msgstr "%s ja està muntat; no s'hi crearà cap sistema de fitxers."
 
-#: disk-utils/mkswap.c:601
+#: disk-utils/mkswap.c:594
 #, fuzzy, c-format
 msgid "warning: %s is misaligned"
 msgstr "Avís: %s no és un dispositiu de blocs\n"
 
-#: disk-utils/mkswap.c:614
+#: disk-utils/mkswap.c:607
 msgid "Unable to set up swap-space: unreadable"
 msgstr "No s'ha pogut configurar l'espai d'intercanvi: no es pot llegir"
 
-#: disk-utils/mkswap.c:617
+#: disk-utils/mkswap.c:610
 #, fuzzy, c-format
 msgid "Setting up swapspace version 1, size = %llu KiB\n"
 msgstr "S'està configurant l'espai d'intercanvi versió %d, mida = %llu kB\n"
 
-#: disk-utils/mkswap.c:629
+#: disk-utils/mkswap.c:622
 #, fuzzy, c-format
 msgid "%s: unable to write signature page"
 msgstr "no s'ha pogut escriure la pàgina de la signatura"
 
-#: disk-utils/mkswap.c:638
+#: disk-utils/mkswap.c:631
 msgid "fsync failed"
 msgstr "no s'ha pogut fer fsync"
 
-#: disk-utils/mkswap.c:650
+#: disk-utils/mkswap.c:643
 #, fuzzy, c-format
 msgid "%s: unable to obtain selinux file label"
 msgstr "no s'ha pogut rebobinar el dispositiu d'intercanvi"
 
-#: disk-utils/mkswap.c:653
+#: disk-utils/mkswap.c:646
 #, fuzzy
 msgid "unable to matchpathcon()"
 msgstr "no es pot fer stat per a %s"
 
-#: disk-utils/mkswap.c:656
+#: disk-utils/mkswap.c:649
 #, fuzzy
 msgid "unable to create new selinux context"
 msgstr "no s'ha pogut escriure els nodes d'identificació"
 
-#: disk-utils/mkswap.c:658
+#: disk-utils/mkswap.c:651
 msgid "couldn't compute selinux context"
 msgstr ""
 
-#: disk-utils/mkswap.c:664
+#: disk-utils/mkswap.c:657
 #, fuzzy, c-format
 msgid "unable to relabel %s to %s"
 msgstr "no s'ha pogut tornar a nomenar %s per %s: %s\n"
@@ -2138,14 +2138,14 @@ msgstr "mount: s'usarà el dispositiu loop %s\n"
 msgid "%s: failed to set backing file"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: disk-utils/partx.c:123 sys-utils/losetup.c:411 sys-utils/mount.c:413
+#: disk-utils/partx.c:123 sys-utils/losetup.c:411 sys-utils/mount.c:435
 #, fuzzy, c-format
 msgid "%s: failed to setup loop device"
 msgstr "no s'ha pogut rebobinar el dispositiu d'intercanvi"
 
 #: disk-utils/partx.c:153 misc-utils/findmnt.c:341 misc-utils/lsblk.c:258
 #: misc-utils/lslocks.c:342 sys-utils/lscpu.c:260 sys-utils/prlimit.c:271
-#: sys-utils/swapon.c:110 sys-utils/wdctl.c:121
+#: sys-utils/swapon.c:110 sys-utils/wdctl.c:144
 #, fuzzy, c-format
 msgid "unknown column: %s"
 msgstr "%s: Ordre desconeguda: %s\n"
@@ -2212,21 +2212,21 @@ msgstr ""
 
 #: disk-utils/partx.c:443 misc-utils/findmnt.c:548 misc-utils/findmnt.c:565
 #: misc-utils/lslocks.c:391 sys-utils/prlimit.c:222 sys-utils/swapon.c:138
-#: sys-utils/wdctl.c:184
+#: sys-utils/wdctl.c:207
 #, fuzzy
 msgid "failed to add line to output"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
 
-#: disk-utils/partx.c:531 misc-utils/findmnt.c:1318 misc-utils/lsblk.c:1393
+#: disk-utils/partx.c:531 misc-utils/findmnt.c:1318 misc-utils/lsblk.c:1409
 #: misc-utils/lslocks.c:444 sys-utils/lscpu.c:1022 sys-utils/prlimit.c:283
-#: sys-utils/swapon.c:230 sys-utils/wdctl.c:226
+#: sys-utils/swapon.c:230 sys-utils/wdctl.c:249
 #, fuzzy
 msgid "failed to initialize output table"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
 
-#: disk-utils/partx.c:539 misc-utils/findmnt.c:1336 misc-utils/lsblk.c:1403
+#: disk-utils/partx.c:539 misc-utils/findmnt.c:1336 misc-utils/lsblk.c:1419
 #: misc-utils/lslocks.c:452 sys-utils/prlimit.c:291 sys-utils/swapon.c:238
-#: sys-utils/wdctl.c:235
+#: sys-utils/wdctl.c:258
 #, fuzzy
 msgid "failed to initialize output column"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
@@ -3557,7 +3557,7 @@ msgstr "sectors/pista"
 msgid "tracks/cylinder"
 msgstr "pistes/cilindre"
 
-#: fdisks/fdiskbsdlabel.c:448 fdisks/fdisk.c:381 fdisks/sfdisk.c:913
+#: fdisks/fdiskbsdlabel.c:448 fdisks/fdisk.c:381 fdisks/sfdisk.c:914
 msgid "cylinders"
 msgstr "cilindres"
 
@@ -3905,7 +3905,7 @@ msgstr "Heu de definir els"
 msgid "heads"
 msgstr "capçals"
 
-#: fdisks/fdisk.c:379 fdisks/sfdisk.c:913
+#: fdisks/fdisk.c:379 fdisks/sfdisk.c:914
 msgid "sectors"
 msgstr "sectors"
 
@@ -4389,7 +4389,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisks/fdisk.c:1649 fdisks/sfdisk.c:2732
+#: fdisks/fdisk.c:1649 fdisks/sfdisk.c:2736
 #, c-format
 msgid "cannot open %s\n"
 msgstr "no es pot obrir %s\n"
@@ -4429,17 +4429,17 @@ msgstr "Ordre (m per a obtenir ajuda): "
 msgid "invalid sector size argument"
 msgstr "identificador invàlid"
 
-#: fdisks/fdisk.c:1828 fdisks/sfdisk.c:2647
+#: fdisks/fdisk.c:1828 fdisks/sfdisk.c:2651
 #, fuzzy
 msgid "invalid cylinders argument"
 msgstr "identificador invàlid"
 
-#: fdisks/fdisk.c:1839 fdisks/sfdisk.c:2656
+#: fdisks/fdisk.c:1839 fdisks/sfdisk.c:2660
 #, fuzzy
 msgid "invalid heads argument"
 msgstr "identificador invàlid"
 
-#: fdisks/fdisk.c:1844 fdisks/sfdisk.c:2674
+#: fdisks/fdisk.c:1844 fdisks/sfdisk.c:2678
 #, fuzzy
 msgid "invalid sectors argument"
 msgstr "identificador invàlid"
@@ -5871,12 +5871,12 @@ msgstr "%s: aquesta partició no existeix\n"
 msgid "unrecognized format - using sectors\n"
 msgstr "format no reconegut; s'està usant els sectors\n"
 
-#: fdisks/sfdisk.c:912
+#: fdisks/sfdisk.c:913
 #, c-format
 msgid "unimplemented format - using %s\n"
 msgstr "format no implementat; s'està usant %s\n"
 
-#: fdisks/sfdisk.c:916
+#: fdisks/sfdisk.c:918
 #, fuzzy, c-format
 msgid ""
 "Units: cylinders of %lu bytes, blocks of 1024 bytes, counting from %d\n"
@@ -5885,12 +5885,12 @@ msgstr ""
 "Unitats = cilindres de %lu octets, blocs de 1024 octets, contant des de %d\n"
 "\n"
 
-#: fdisks/sfdisk.c:918
+#: fdisks/sfdisk.c:920
 #, c-format
 msgid "   Device Boot Start     End   #cyls    #blocks   Id  System\n"
 msgstr "   Disp. Arr.  Inici     Final #cil.    #blocs    Id  Sistema\n"
 
-#: fdisks/sfdisk.c:923
+#: fdisks/sfdisk.c:925
 #, fuzzy, c-format
 msgid ""
 "Units: sectors of 512 bytes, counting from %d\n"
@@ -5899,12 +5899,12 @@ msgstr ""
 "Unitats = sectors de 512 octets, contant des de %d\n"
 "\n"
 
-#: fdisks/sfdisk.c:925
+#: fdisks/sfdisk.c:927
 #, c-format
 msgid "   Device Boot    Start       End   #sectors  Id  System\n"
 msgstr "   Disp. Arr      Inici       Final #sectors  Id  Sistema\n"
 
-#: fdisks/sfdisk.c:928
+#: fdisks/sfdisk.c:930
 #, fuzzy, c-format
 msgid ""
 "Units: blocks of 1024 bytes, counting from %d\n"
@@ -5913,12 +5913,12 @@ msgstr ""
 "Unitats = blocs de 1024 octets, contant des de %d\n"
 "\n"
 
-#: fdisks/sfdisk.c:930
+#: fdisks/sfdisk.c:932
 #, c-format
 msgid "   Device Boot   Start       End    #blocks   Id  System\n"
 msgstr "   Disp. Arr.    Inici       Final   #blocs   Id  Sistema\n"
 
-#: fdisks/sfdisk.c:933
+#: fdisks/sfdisk.c:935
 #, fuzzy, c-format
 msgid ""
 "Units: 1MiB = 1024*1024 bytes, blocks of 1024 bytes, counting from %d\n"
@@ -5928,33 +5928,33 @@ msgstr ""
 "%d\n"
 "\n"
 
-#: fdisks/sfdisk.c:935
+#: fdisks/sfdisk.c:937
 #, c-format
 msgid "   Device Boot Start   End    MiB    #blocks   Id  System\n"
 msgstr "   Disp. Arr.  Inici   Final  MiB    #blocs    Id. sistema\n"
 
-#: fdisks/sfdisk.c:1094
+#: fdisks/sfdisk.c:1096
 #, c-format
 msgid "\t\tstart: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 "\t\tcomença: (cil.,capç.,sect.) esperat (%ld,%ld,%ld) trobat (%ld,%ld,%ld)\n"
 
-#: fdisks/sfdisk.c:1101
+#: fdisks/sfdisk.c:1103
 #, c-format
 msgid "\t\tend: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 "\t\tfinal: (cil.,capç.,sect.) esperat (%ld,%ld,%ld) trobat (%ld,%ld,%ld)\n"
 
-#: fdisks/sfdisk.c:1104
+#: fdisks/sfdisk.c:1106
 #, c-format
 msgid "partition ends on cylinder %ld, beyond the end of the disk\n"
 msgstr "la partició acaba en el cilindre %ld, més enllà del final del disc\n"
 
-#: fdisks/sfdisk.c:1115
+#: fdisks/sfdisk.c:1117
 msgid "No partitions found\n"
 msgstr "No s'han trobat particions\n"
 
-#: fdisks/sfdisk.c:1118
+#: fdisks/sfdisk.c:1120
 #, c-format
 msgid ""
 "Warning: The partition table looks like it was made\n"
@@ -5965,42 +5965,42 @@ msgstr ""
 "  per a C/H/S=*/%ld/%ld (en comptes de %ld/%ld/%ld).\n"
 "Per a aquest llistat s'assumirà aquesta geometria.\n"
 
-#: fdisks/sfdisk.c:1166
+#: fdisks/sfdisk.c:1168
 #, fuzzy
 msgid "no partition table present."
 msgstr "no hi ha cap taula de particions.\n"
 
-#: fdisks/sfdisk.c:1168
+#: fdisks/sfdisk.c:1170
 #, fuzzy, c-format
 msgid "strange, only %d partitions defined."
 msgstr "és estrany, només hi ha definides %d particions.\n"
 
-#: fdisks/sfdisk.c:1177
+#: fdisks/sfdisk.c:1179
 #, c-format
 msgid "Warning: partition %s has size 0 but is not marked Empty\n"
 msgstr "Avís: la partició %s té una mida 0 però no està marcada com a buida\n"
 
-#: fdisks/sfdisk.c:1180
+#: fdisks/sfdisk.c:1182
 #, c-format
 msgid "Warning: partition %s has size 0 and is bootable\n"
 msgstr "Avís: la partició %s té una mida 0 i és arrencable\n"
 
-#: fdisks/sfdisk.c:1183
+#: fdisks/sfdisk.c:1185
 #, c-format
 msgid "Warning: partition %s has size 0 and nonzero start\n"
 msgstr "Avís: la partició %s té una mida 0 i no comença en zero\n"
 
-#: fdisks/sfdisk.c:1195
+#: fdisks/sfdisk.c:1197
 #, fuzzy, c-format
 msgid "Warning: partition %s is not contained in partition %s\n"
 msgstr "no està contingut a dins de la partició %s\n"
 
-#: fdisks/sfdisk.c:1207
+#: fdisks/sfdisk.c:1209
 #, fuzzy, c-format
 msgid "Warning: partitions %s and %s overlap\n"
 msgstr "Avís: la partició %d està buida\n"
 
-#: fdisks/sfdisk.c:1219
+#: fdisks/sfdisk.c:1221
 #, fuzzy, c-format
 msgid ""
 "Warning: partition %s contains part of the partition table (sector %llu),\n"
@@ -6009,17 +6009,17 @@ msgstr ""
 "Avís: la partició %s conté part de la taula de particions\n"
 "(sector %lu) i la destruirà quan s'ompli\n"
 
-#: fdisks/sfdisk.c:1232
+#: fdisks/sfdisk.c:1234
 #, c-format
 msgid "Warning: partition %s starts at sector 0\n"
 msgstr "Avís: la partició %s comença en el sector 0\n"
 
-#: fdisks/sfdisk.c:1237
+#: fdisks/sfdisk.c:1239
 #, c-format
 msgid "Warning: partition %s extends past end of disk\n"
 msgstr "Avís: la partició %s s'extén més enllà del final del disc\n"
 
-#: fdisks/sfdisk.c:1254
+#: fdisks/sfdisk.c:1256
 #, c-format
 msgid ""
 "Warning: partition %s has size %d.%d TB (%llu bytes),\n"
@@ -6027,14 +6027,14 @@ msgid ""
 "by the DOS partition table for %d-byte sectors\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:1270
+#: fdisks/sfdisk.c:1272
 #, c-format
 msgid ""
 "Warning: partition %s starts at sector %llu (%d.%d TB for %d-byte sectors),\n"
 "which exceeds the DOS partition table limit of %llu sectors\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:1290
+#: fdisks/sfdisk.c:1292
 msgid ""
 "Among the primary partitions, at most one can be extended\n"
 " (although this is not a problem under Linux)\n"
@@ -6042,17 +6042,17 @@ msgstr ""
 "Entre les particions primàries, almenys una pot ser estesa\n"
 " (encara que això no és un problema en Linux)\n"
 
-#: fdisks/sfdisk.c:1310
+#: fdisks/sfdisk.c:1312
 #, c-format
 msgid "Warning: partition %s does not start at a cylinder boundary\n"
 msgstr "Avís: la partició %s no comença al límit d'un cilindre\n"
 
-#: fdisks/sfdisk.c:1316
+#: fdisks/sfdisk.c:1318
 #, c-format
 msgid "Warning: partition %s does not end at a cylinder boundary\n"
 msgstr "Avís: la partició %s no acaba al límit d'un cilindre\n"
 
-#: fdisks/sfdisk.c:1335
+#: fdisks/sfdisk.c:1337
 msgid ""
 "Warning: more than one primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
@@ -6061,7 +6061,7 @@ msgstr ""
 "Això no és problema per al LILO, però l'MBR del DOS no arrencarà aquest "
 "disc.\n"
 
-#: fdisks/sfdisk.c:1342
+#: fdisks/sfdisk.c:1344
 msgid ""
 "Warning: usually one can boot from primary partitions only\n"
 "LILO disregards the `bootable' flag.\n"
@@ -6069,7 +6069,7 @@ msgstr ""
 "Avís: normalment només es pot arrencar des de particions primàries.\n"
 "El LILO no tindrà en compte el senyalador d'«arrencada».\n"
 
-#: fdisks/sfdisk.c:1348
+#: fdisks/sfdisk.c:1350
 msgid ""
 "Warning: no primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
@@ -6078,11 +6078,11 @@ msgstr ""
 "Això no és problema per al LILO, però el MBR de DOS no arrencarà aquest "
 "disc.\n"
 
-#: fdisks/sfdisk.c:1362
+#: fdisks/sfdisk.c:1364
 msgid "start"
 msgstr "inici"
 
-#: fdisks/sfdisk.c:1365
+#: fdisks/sfdisk.c:1367
 #, c-format
 msgid ""
 "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
@@ -6090,24 +6090,24 @@ msgstr ""
 "partició %s: inici: (cil.,capç.,sect.) s'esperava (%ld,%ld,%ld) s'ha trobat "
 "(%ld,%ld,%ld)\n"
 
-#: fdisks/sfdisk.c:1371
+#: fdisks/sfdisk.c:1373
 msgid "end"
 msgstr "final"
 
-#: fdisks/sfdisk.c:1374
+#: fdisks/sfdisk.c:1376
 #, c-format
 msgid "partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 "partició %s: final: (cil.,capç.,sect.) s'esperava (%ld,%ld,%ld) s'ha trobat "
 "(%ld,%ld,%ld)\n"
 
-#: fdisks/sfdisk.c:1377
+#: fdisks/sfdisk.c:1379
 #, c-format
 msgid "partition %s ends on cylinder %ld, beyond the end of the disk\n"
 msgstr ""
 "La partició %s acaba en el cilindre %ld, més enllà del final del disc\n"
 
-#: fdisks/sfdisk.c:1402
+#: fdisks/sfdisk.c:1404
 #, fuzzy, c-format
 msgid ""
 "Warning: shifted start of the extd partition from %lld to %lld\n"
@@ -6116,7 +6116,7 @@ msgstr ""
 "Avís: s'ha desplaçat l'inici de la partició estesa de %ld a %ld\n"
 "(Només per al llistat, no en canvia el contingut.)\n"
 
-#: fdisks/sfdisk.c:1407
+#: fdisks/sfdisk.c:1409
 msgid ""
 "Warning: extended partition does not start at a cylinder boundary.\n"
 "DOS and Linux will interpret the contents differently.\n"
@@ -6124,142 +6124,142 @@ msgstr ""
 "Avís: la partició estesa no comença al límit d'un cilindre.\n"
 "El DOS i Linux interpretaran el contingut de manera diferent.\n"
 
-#: fdisks/sfdisk.c:1420
+#: fdisks/sfdisk.c:1422
 #, c-format
 msgid "ERROR: sector %lu does not have an msdos signature\n"
 msgstr "ERROR: el sector %lu no té cap signatura msdos\n"
 
-#: fdisks/sfdisk.c:1427 fdisks/sfdisk.c:1504
+#: fdisks/sfdisk.c:1429 fdisks/sfdisk.c:1506
 #, fuzzy, c-format
-msgid "too many partitions - ignoring those past nr (%ld)\n"
+msgid "too many partitions - ignoring those past nr (%zu)\n"
 msgstr "hi ha massa particions - s'ignoraran les posteriors a la: (%d)\n"
 
-#: fdisks/sfdisk.c:1442
+#: fdisks/sfdisk.c:1444
 msgid "tree of partitions?\n"
 msgstr "l'arbre de particions?\n"
 
-#: fdisks/sfdisk.c:1550
+#: fdisks/sfdisk.c:1552
 msgid "detected Disk Manager - unable to handle that\n"
 msgstr "s'ha detectat el gestor de disc - no s'ha pogut gestionar\n"
 
-#: fdisks/sfdisk.c:1558
+#: fdisks/sfdisk.c:1561
 msgid "DM6 signature found - giving up\n"
 msgstr "s'ha trobat una signatura DM6 - s'està deixant còrrer\n"
 
-#: fdisks/sfdisk.c:1577
+#: fdisks/sfdisk.c:1581
 msgid "strange..., an extended partition of size 0?\n"
 msgstr "estrany..., una partició estesa de mida 0?\n"
 
-#: fdisks/sfdisk.c:1584 fdisks/sfdisk.c:1595
+#: fdisks/sfdisk.c:1588 fdisks/sfdisk.c:1599
 msgid "strange..., a BSD partition of size 0?\n"
 msgstr "estrany..., una partició BSD de mida 0?\n"
 
-#: fdisks/sfdisk.c:1639
+#: fdisks/sfdisk.c:1643
 #, c-format
 msgid " %s: unrecognized partition table type\n"
 msgstr " %s: no s'ha pogut reconèixer el tipus de la taula de particions\n"
 
-#: fdisks/sfdisk.c:1651
+#: fdisks/sfdisk.c:1655
 msgid "-n flag was given: Nothing changed\n"
 msgstr "s'ha especificat el senyalador -n: No s'ha canviat res\n"
 
-#: fdisks/sfdisk.c:1668
+#: fdisks/sfdisk.c:1672
 msgid "Failed saving the old sectors - aborting\n"
 msgstr "No s'ha pogut desar els sector antics - s'està avortant\n"
 
-#: fdisks/sfdisk.c:1673 fdisks/sfdisk.c:1678
+#: fdisks/sfdisk.c:1677 fdisks/sfdisk.c:1682
 #, c-format
 msgid "Failed writing the partition on %s\n"
 msgstr "No s'ha pogut escriure la partició a %s\n"
 
-#: fdisks/sfdisk.c:1756
+#: fdisks/sfdisk.c:1760
 #, fuzzy
 msgid "long or incomplete input line - quitting"
 msgstr "línia d'entrada llarga o incompleta - s'està sortint\n"
 
-#: fdisks/sfdisk.c:1792
+#: fdisks/sfdisk.c:1796
 #, fuzzy, c-format
 msgid "input error: `=' expected after %s field"
 msgstr ""
 "s'ha produït un error en l'entrada: s'esperava `=' després del camp %s\n"
 
-#: fdisks/sfdisk.c:1799
+#: fdisks/sfdisk.c:1803
 #, fuzzy, c-format
 msgid "input error: unexpected character %c after %s field"
 msgstr ""
 "s'ha produït un error en l'entrada: no s'esperava el caràcter %c després del "
 "camp %s\n"
 
-#: fdisks/sfdisk.c:1805
+#: fdisks/sfdisk.c:1809
 #, fuzzy, c-format
 msgid "unrecognized input: %s"
 msgstr "no s'ha pogut reconèixer l'entrada: %s\n"
 
-#: fdisks/sfdisk.c:1846 fdisks/sfdisk.c:1883
+#: fdisks/sfdisk.c:1850 fdisks/sfdisk.c:1887
 msgid "number too big\n"
 msgstr "el nombre és massa gran\n"
 
-#: fdisks/sfdisk.c:1850 fdisks/sfdisk.c:1887
+#: fdisks/sfdisk.c:1854 fdisks/sfdisk.c:1891
 msgid "trailing junk after number\n"
 msgstr "dades estranyes després del nombre\n"
 
-#: fdisks/sfdisk.c:2012
+#: fdisks/sfdisk.c:2016
 msgid "no room for partition descriptor\n"
 msgstr "no hi ha espai per al descriptor de partició\n"
 
-#: fdisks/sfdisk.c:2045
+#: fdisks/sfdisk.c:2049
 msgid "cannot build surrounding extended partition\n"
 msgstr "no s'ha pogut crear una partició estesa adjunta\n"
 
-#: fdisks/sfdisk.c:2096
+#: fdisks/sfdisk.c:2100
 msgid "too many input fields\n"
 msgstr "hi ha massa camps a l'entrada\n"
 
-#: fdisks/sfdisk.c:2130
+#: fdisks/sfdisk.c:2134
 msgid "No room for more\n"
 msgstr "No queda més espai\n"
 
-#: fdisks/sfdisk.c:2149
+#: fdisks/sfdisk.c:2153
 msgid "Illegal type\n"
 msgstr "Tipus no permès\n"
 
-#: fdisks/sfdisk.c:2183
+#: fdisks/sfdisk.c:2187
 #, c-format
 msgid "Warning: given size (%lu) exceeds max allowable size (%lu)\n"
 msgstr "Avís: la mida indicada (%lu) excedeix la màxima acceptable (%lu)\n"
 
-#: fdisks/sfdisk.c:2189
+#: fdisks/sfdisk.c:2193
 msgid "Warning: empty partition\n"
 msgstr "Avís: partició buida\n"
 
 # DUBTE
-#: fdisks/sfdisk.c:2203
+#: fdisks/sfdisk.c:2207
 #, c-format
 msgid "Warning: bad partition start (earliest %lu)\n"
 msgstr "Avís: l'inici de la partició no és correcte (mínim %lu)\n"
 
-#: fdisks/sfdisk.c:2216
+#: fdisks/sfdisk.c:2220
 msgid "unrecognized bootable flag - choose - or *\n"
 msgstr "no s'ha pogut reconèixer el senyalador d'arrencada - escolliu - o *\n"
 
-#: fdisks/sfdisk.c:2233 fdisks/sfdisk.c:2247
+#: fdisks/sfdisk.c:2237 fdisks/sfdisk.c:2251
 msgid "partial c,h,s specification?\n"
 msgstr "especificació parcial de c,h,s?\n"
 
-#: fdisks/sfdisk.c:2258
+#: fdisks/sfdisk.c:2262
 msgid "Extended partition not where expected\n"
 msgstr "La partició estesa no és on s'esperava\n"
 
-#: fdisks/sfdisk.c:2290
+#: fdisks/sfdisk.c:2294
 #, fuzzy
 msgid "bad input"
 msgstr "entrada dolenta\n"
 
-#: fdisks/sfdisk.c:2313
+#: fdisks/sfdisk.c:2317
 msgid "too many partitions\n"
 msgstr "hi ha massa particions\n"
 
-#: fdisks/sfdisk.c:2346
+#: fdisks/sfdisk.c:2350
 msgid ""
 "Input in the following format; absent fields get a default value.\n"
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
@@ -6270,12 +6270,12 @@ msgstr ""
 "<inici> <mida> <tipus [E,S,L,X,hex]> <arrencable [-,*]> <c,h,s> <c,h,s>\n"
 "Normalment només cal especificar <inici> i <mida> (i potser <tipus>).\n"
 
-#: fdisks/sfdisk.c:2366 include/c.h:241 misc-utils/cal.c:784
+#: fdisks/sfdisk.c:2370 include/c.h:241 misc-utils/cal.c:784
 #: misc-utils/getopt.c:314 misc-utils/logger.c:172 misc-utils/look.c:368
 #: misc-utils/mcookie.c:68 misc-utils/namei.c:418 misc-utils/rename.c:65
 #: misc-utils/uuidd.c:69 misc-utils/uuidgen.c:34 misc-utils/whereis.c:139
 #: misc-utils/wipefs.c:359 sys-utils/dmesg.c:181 sys-utils/fsfreeze.c:41
-#: sys-utils/hwclock.c:1362 sys-utils/renice.c:55 term-utils/mesg.c:70
+#: sys-utils/hwclock.c:1375 sys-utils/renice.c:55 term-utils/mesg.c:70
 #: term-utils/script.c:130 term-utils/scriptreplay.c:40
 #: term-utils/setterm.c:676 term-utils/wall.c:81 term-utils/write.c:79
 #, fuzzy
@@ -6284,17 +6284,17 @@ msgid ""
 "Usage:\n"
 msgstr "Forma d'ús:\n"
 
-#: fdisks/sfdisk.c:2368
+#: fdisks/sfdisk.c:2372
 #, fuzzy, c-format
 msgid " %s [options] <device> [...]\n"
 msgstr "Forma d'ús: %s [opcions] dispositiu ...\n"
 
-#: fdisks/sfdisk.c:2370 include/c.h:242 misc-utils/cal.c:789
+#: fdisks/sfdisk.c:2374 include/c.h:242 misc-utils/cal.c:789
 #: misc-utils/getopt.c:322 misc-utils/logger.c:176 misc-utils/look.c:372
 #: misc-utils/mcookie.c:72 misc-utils/namei.c:422 misc-utils/rename.c:70
 #: misc-utils/uuidd.c:73 misc-utils/uuidgen.c:38 misc-utils/whereis.c:143
 #: misc-utils/wipefs.c:363 sys-utils/dmesg.c:185 sys-utils/fsfreeze.c:45
-#: sys-utils/hwclock.c:1382 sys-utils/renice.c:62 term-utils/mesg.c:76
+#: sys-utils/hwclock.c:1395 sys-utils/renice.c:62 term-utils/mesg.c:76
 #: term-utils/script.c:134 term-utils/scriptreplay.c:45
 #: term-utils/setterm.c:680 term-utils/wall.c:85 term-utils/write.c:84
 #: text-utils/column.c:92
@@ -6306,7 +6306,7 @@ msgstr ""
 "\n"
 "%d particions:\n"
 
-#: fdisks/sfdisk.c:2371
+#: fdisks/sfdisk.c:2375
 msgid ""
 " -s, --show-size           list size of a partition\n"
 " -c, --id                  change or print partition Id\n"
@@ -6314,7 +6314,7 @@ msgid ""
 "     --print-id            print Id\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2375
+#: fdisks/sfdisk.c:2379
 msgid ""
 " -l, --list                list partitions of each device\n"
 " -d, --dump                idem, but in a format suitable for later input\n"
@@ -6324,7 +6324,7 @@ msgid ""
 "(MB)\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2380
+#: fdisks/sfdisk.c:2384
 msgid ""
 " -1, --one-only            reserved option that does nothing currently\n"
 " -T, --list-types          list the known partition types\n"
@@ -6333,7 +6333,7 @@ msgid ""
 " -R, --re-read             make the kernel reread the partition table\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2385
+#: fdisks/sfdisk.c:2389
 msgid ""
 " -N <number>               change only the partition with this <number>\n"
 " -n                        do not actually write to disk\n"
@@ -6342,21 +6342,21 @@ msgid ""
 " -I <file>                 restore sectors from <file>\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2389
+#: fdisks/sfdisk.c:2393
 msgid ""
 " -V, --verify              check that the listed partitions are reasonable\n"
 " -v, --version             display version information and exit\n"
 " -h, --help                display this help text and exit\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2393
+#: fdisks/sfdisk.c:2397
 #, fuzzy
 msgid ""
 "\n"
 "Dangerous options:\n"
 msgstr "opcions perilloses:"
 
-#: fdisks/sfdisk.c:2394
+#: fdisks/sfdisk.c:2398
 msgid ""
 " -f, --force               disable all consistency checking\n"
 "     --no-reread           do not check whether the partition is in use\n"
@@ -6365,7 +6365,7 @@ msgid ""
 "Linux\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2398
+#: fdisks/sfdisk.c:2402
 #, fuzzy
 msgid ""
 " -g, --show-geometry       print the kernel's idea of the geometry\n"
@@ -6374,7 +6374,7 @@ msgstr ""
 "    -G [o --show-pt-geometry]: Imprimeix la geometria que s'ha endevinat\n"
 "                               partir de la taula de particions"
 
-#: fdisks/sfdisk.c:2400
+#: fdisks/sfdisk.c:2404
 #, fuzzy
 msgid ""
 " -A, --activate[=<device>] activate bootable flag\n"
@@ -6386,13 +6386,13 @@ msgstr ""
 "sortida\n"
 "                             o els descriptors esperats en l'entrada"
 
-#: fdisks/sfdisk.c:2404
+#: fdisks/sfdisk.c:2408
 msgid ""
 "     --leave-last          do not allocate the last cylinder\n"
 "     --IBM                 same as --leave-last\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2406
+#: fdisks/sfdisk.c:2410
 msgid ""
 "     --in-order            partitions are in order\n"
 "     --not-in-order        partitions are not in order\n"
@@ -6400,7 +6400,7 @@ msgid ""
 "     --not-inside-outer    not all logicals inside outermost extended\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2410
+#: fdisks/sfdisk.c:2414
 msgid ""
 "     --nested              every partition is disjoint from all others\n"
 "     --chained             like nested, but extended partitions may lie "
@@ -6408,7 +6408,7 @@ msgid ""
 "     --onesector           partitions are mutually disjoint\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2414
+#: fdisks/sfdisk.c:2418
 msgid ""
 "\n"
 "Override the detected geometry using:\n"
@@ -6418,26 +6418,26 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2424
+#: fdisks/sfdisk.c:2428
 msgid "Usage:"
 msgstr "Forma d'ús:"
 
-#: fdisks/sfdisk.c:2425
+#: fdisks/sfdisk.c:2429
 #, c-format
 msgid "%s device\t\t list active partitions on device\n"
 msgstr "%s dispositiu\t\t enumera les particions actives del dispositiu\n"
 
-#: fdisks/sfdisk.c:2426
+#: fdisks/sfdisk.c:2430
 #, c-format
 msgid "%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"
 msgstr "%s dispositiu n1 n2 ... activa particions n1 ..., desactiva la resta\n"
 
-#: fdisks/sfdisk.c:2428
+#: fdisks/sfdisk.c:2432
 #, c-format
 msgid "%s -An device\t activate partition n, inactivate the other ones\n"
 msgstr "%s -Un perifèric\t activa la partició n, desactiva la resta\n"
 
-#: fdisks/sfdisk.c:2537
+#: fdisks/sfdisk.c:2541
 #, c-format
 msgid ""
 "\n"
@@ -6446,72 +6446,72 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisks/sfdisk.c:2542
+#: fdisks/sfdisk.c:2546
 #, fuzzy, c-format
 msgid "Use the --force flag to overrule this check.\n"
 msgstr "Useu el senyalador --force per a obviar totes les comprovacions.\n"
 
-#: fdisks/sfdisk.c:2582
+#: fdisks/sfdisk.c:2586
 #, fuzzy
 msgid "no command?"
 msgstr "cap ordre?\n"
 
-#: fdisks/sfdisk.c:2662
+#: fdisks/sfdisk.c:2666
 #, fuzzy
 msgid "invalid number of partitions argument"
 msgstr "Nombre invàlid: %s\n"
 
-#: fdisks/sfdisk.c:2752
+#: fdisks/sfdisk.c:2756
 #, c-format
 msgid "total: %llu blocks\n"
 msgstr "total: %llu blocs\n"
 
-#: fdisks/sfdisk.c:2795
+#: fdisks/sfdisk.c:2799
 #, fuzzy
 msgid "usage: sfdisk --print-id device partition-number"
 msgstr "forma d'ús: sfdisk --print-id dispositiu número_partició\n"
 
-#: fdisks/sfdisk.c:2797
+#: fdisks/sfdisk.c:2801
 #, fuzzy
 msgid "usage: sfdisk --change-id device partition-number Id"
 msgstr "forma d'ús: sfdisk --change-id dispositiu número_partició Id\n"
 
-#: fdisks/sfdisk.c:2799
+#: fdisks/sfdisk.c:2803
 #, fuzzy
 msgid "usage: sfdisk --id device partition-number [Id]"
 msgstr "forma d'ús: sfdisk --id dispositiu partició_número [Id]\n"
 
-#: fdisks/sfdisk.c:2806
+#: fdisks/sfdisk.c:2810
 #, fuzzy
 msgid "can specify only one device (except with -l or -s)"
 msgstr "només podeu especificar un dispositiu (excepte amb -l o -s)\n"
 
-#: fdisks/sfdisk.c:2832
+#: fdisks/sfdisk.c:2836
 #, fuzzy, c-format
 msgid "cannot open %s read-write"
 msgstr "no es pot obrir %s per a lectura-escriptura\n"
 
-#: fdisks/sfdisk.c:2834
+#: fdisks/sfdisk.c:2838
 #, fuzzy, c-format
 msgid "cannot open %s for reading"
 msgstr "no es pot obrir %s per a lectura\n"
 
-#: fdisks/sfdisk.c:2878 fdisks/sfdisk.c:2910
+#: fdisks/sfdisk.c:2882 fdisks/sfdisk.c:2914
 #, c-format
 msgid "%s: %ld cylinders, %ld heads, %ld sectors/track\n"
 msgstr "%s : %ld cilindres, %ld capçals, %ld sectors/pista\n"
 
-#: fdisks/sfdisk.c:2929
+#: fdisks/sfdisk.c:2933
 #, fuzzy, c-format
 msgid "Cannot get size of %s"
 msgstr "No s'ha pogut obtenir la mida de %s\n"
 
-#: fdisks/sfdisk.c:3010
+#: fdisks/sfdisk.c:3014
 #, c-format
 msgid "bad active byte: 0x%x instead of 0x80\n"
 msgstr "octet actiu incorrecte: 0x%x en comptes de 0x80\n"
 
-#: fdisks/sfdisk.c:3029 fdisks/sfdisk.c:3086 fdisks/sfdisk.c:3119
+#: fdisks/sfdisk.c:3033 fdisks/sfdisk.c:3090 fdisks/sfdisk.c:3123
 msgid ""
 "Done\n"
 "\n"
@@ -6519,7 +6519,7 @@ msgstr ""
 "Fet\n"
 "\n"
 
-#: fdisks/sfdisk.c:3038
+#: fdisks/sfdisk.c:3042
 #, c-format
 msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
@@ -6528,36 +6528,36 @@ msgstr ""
 "Teniu %d particions primàries actives. Això no és important per al LILO,\n"
 "però l'MBR del DOS només pot arrencar discs amb una partició activa.\n"
 
-#: fdisks/sfdisk.c:3055
+#: fdisks/sfdisk.c:3059
 #, fuzzy, c-format
 msgid "partition %s has id %x and is not hidden"
 msgstr "la partició %s té l'identificador %x i no està oculta\n"
 
-#: fdisks/sfdisk.c:3115
+#: fdisks/sfdisk.c:3119
 #, fuzzy, c-format
 msgid "Bad Id %lx"
 msgstr "Identificador dolent %lx\n"
 
-#: fdisks/sfdisk.c:3133
+#: fdisks/sfdisk.c:3137
 msgid "This disk is currently in use.\n"
 msgstr "Aquest disc està actualment en ús.\n"
 
-#: fdisks/sfdisk.c:3154
+#: fdisks/sfdisk.c:3158
 #, fuzzy, c-format
 msgid "Fatal error: cannot find %s"
 msgstr "S'ha produït un error fatal: no s'ha pogut trobar %s\n"
 
-#: fdisks/sfdisk.c:3157
+#: fdisks/sfdisk.c:3161
 #, c-format
 msgid "Warning: %s is not a block device\n"
 msgstr "Avís: %s no és un dispositiu de blocs\n"
 
-#: fdisks/sfdisk.c:3163
+#: fdisks/sfdisk.c:3167
 msgid "Checking that no-one is using this disk right now ...\n"
 msgstr ""
 "S'està comprovant que en aquest moment ningú estigui usant aquest disc...\n"
 
-#: fdisks/sfdisk.c:3165
+#: fdisks/sfdisk.c:3169
 msgid ""
 "\n"
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
@@ -6570,30 +6570,30 @@ msgstr ""
 "swapoff en totes les particions d'intercanvi del disc.\n"
 "Useu el senyalador --no-reread per a suprimir aquesta comprovació.\n"
 
-#: fdisks/sfdisk.c:3169
+#: fdisks/sfdisk.c:3173
 msgid "Use the --force flag to overrule all checks.\n"
 msgstr "Useu el senyalador --force per a obviar totes les comprovacions.\n"
 
-#: fdisks/sfdisk.c:3173
+#: fdisks/sfdisk.c:3177
 msgid "OK\n"
 msgstr "Correcte\n"
 
-#: fdisks/sfdisk.c:3182
+#: fdisks/sfdisk.c:3186
 #, c-format
 msgid "Old situation:\n"
 msgstr "Antiga situació:\n"
 
-#: fdisks/sfdisk.c:3186
+#: fdisks/sfdisk.c:3190
 #, fuzzy, c-format
 msgid "Partition %d does not exist, cannot change it"
 msgstr "La partició %d no existeix; no s'ha pogut canviar\n"
 
-#: fdisks/sfdisk.c:3194
+#: fdisks/sfdisk.c:3198
 #, c-format
 msgid "New situation:\n"
 msgstr "Nova situació:\n"
 
-#: fdisks/sfdisk.c:3199
+#: fdisks/sfdisk.c:3203
 #, fuzzy
 msgid ""
 "I don't like these partitions - nothing changed.\n"
@@ -6602,34 +6602,34 @@ msgstr ""
 "Aquestes particions no em semblen bé - no s'ha canviat res.\n"
 "(Si realment desitgeu fer això, useu l'opció --force).\n"
 
-#: fdisks/sfdisk.c:3202
+#: fdisks/sfdisk.c:3206
 msgid "I don't like this - probably you should answer No\n"
 msgstr "No em sembla bé - probablement hagueu de respondre No\n"
 
 #. TRANSLATORS: sfdisk uses rpmatch which means the answers y and n
 #. * should be translated, but that is not the case with q answer.
-#: fdisks/sfdisk.c:3209
+#: fdisks/sfdisk.c:3213
 #, c-format
 msgid "Are you satisfied with this? [ynq] "
 msgstr "Esteu satisfet amb això? [ynq] "
 
-#: fdisks/sfdisk.c:3211
+#: fdisks/sfdisk.c:3215
 #, c-format
 msgid "Do you want to write this to disk? [ynq] "
 msgstr "Desitgeu escriure això al disc? [ynq] "
 
-#: fdisks/sfdisk.c:3214
+#: fdisks/sfdisk.c:3218
 #, fuzzy
 msgid "Quitting - nothing changed"
 msgstr "S'està sortint - no s'ha canviat res\n"
 
 # FIXME: 'y', 'n', 'q'. Are they translatable?
-#: fdisks/sfdisk.c:3220
+#: fdisks/sfdisk.c:3224
 #, c-format
 msgid "Please answer one of y,n,q\n"
 msgstr "Respongueu amb una: y,n,q\n"
 
-#: fdisks/sfdisk.c:3228
+#: fdisks/sfdisk.c:3232
 #, c-format
 msgid ""
 "Successfully wrote the new partition table\n"
@@ -6638,7 +6638,7 @@ msgstr ""
 "S'ha escrit correctament la nova taula de particions\n"
 "\n"
 
-#: fdisks/sfdisk.c:3236
+#: fdisks/sfdisk.c:3240
 msgid ""
 "If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
@@ -6671,7 +6671,7 @@ msgstr "S'ha canviat la informació del finger.\n"
 
 #: include/closestream.h:41 include/closestream.h:43 login-utils/vipw.c:283
 #: login-utils/vipw.c:302 mount-deprecated/mount_mntent.c:58
-#: sys-utils/rtcwake.c:290 term-utils/script.c:288 term-utils/script.c:298
+#: sys-utils/rtcwake.c:288 term-utils/script.c:288 term-utils/script.c:298
 #: term-utils/script.c:411 term-utils/script.c:422 term-utils/script.c:484
 #: term-utils/setterm.c:1118 term-utils/wall.c:278
 #, fuzzy, c-format
@@ -6690,7 +6690,7 @@ msgstr ""
 "%s: Les opcions --adjust i --noadjfile s'exclouen mútuament. Les heu "
 "especificat totes dues.\n"
 
-#: lib/pager.c:107
+#: lib/pager.c:112
 #, fuzzy, c-format
 msgid "waitpid failed (%s)"
 msgstr "setuid() ha fallat"
@@ -7033,52 +7033,52 @@ msgstr "a %.*s\n"
 msgid "write lastlog failed"
 msgstr "S'ha produït un error en obrir %s"
 
-#: login-utils/login.c:643
+#: login-utils/login.c:651
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "MARCATGE DIRECTE A %s PER %s"
 
-#: login-utils/login.c:648
+#: login-utils/login.c:656
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "ENTRADA DEL ROOT A %s DES DE %s"
 
-#: login-utils/login.c:651
+#: login-utils/login.c:659
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "ENTRADA DEL ROOT A %s"
 
-#: login-utils/login.c:654
+#: login-utils/login.c:662
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "ENTRADA A %s PER %s DES DE %s"
 
-#: login-utils/login.c:657
+#: login-utils/login.c:665
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "ENTRADA A %s PER %s"
 
-#: login-utils/login.c:718
+#: login-utils/login.c:726
 msgid "login: "
 msgstr "entrada: "
 
-#: login-utils/login.c:744
+#: login-utils/login.c:752
 #, fuzzy, c-format
 msgid "PAM failure, aborting: %s"
 msgstr "login: PAM ha fallat; s'està avortant: %s\n"
 
-#: login-utils/login.c:745
+#: login-utils/login.c:753
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "No s'ha pogut inicialitzar PAM: %s"
 
 # FIXME, please describe parameters
-#: login-utils/login.c:817
+#: login-utils/login.c:825
 #, fuzzy, c-format
 msgid "FAILED LOGIN %u FROM %s FOR %s, %s"
 msgstr "S'HA INTENTAT ACCEDIR SENSE ÈXIT %d VEGADES DES DE %s PER A %s, %s"
 
-#: login-utils/login.c:825 login-utils/sulogin.c:602
+#: login-utils/login.c:833 login-utils/sulogin.c:602
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -7087,17 +7087,17 @@ msgstr ""
 "L'entrada no és correcta\n"
 "\n"
 
-#: login-utils/login.c:840
+#: login-utils/login.c:848
 #, fuzzy, c-format
 msgid "TOO MANY LOGIN TRIES (%u) FROM %s FOR %s, %s"
 msgstr "S'HA INTENTAT ENTRAR MASSA VEGADES (%d) DES DE %s PER A %s, %s"
 
-#: login-utils/login.c:846
+#: login-utils/login.c:854
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "NO S'HA POGUT INICIAR LA SESSIÓ DES DE %s PER A %s, %s"
 
-#: login-utils/login.c:854
+#: login-utils/login.c:862
 #, c-format
 msgid ""
 "\n"
@@ -7106,7 +7106,7 @@ msgstr ""
 "\n"
 "Entrada incorrecta\n"
 
-#: login-utils/login.c:882 login-utils/login.c:1334 login-utils/login.c:1358
+#: login-utils/login.c:890 login-utils/login.c:1342 login-utils/login.c:1366
 #, fuzzy
 msgid ""
 "\n"
@@ -7115,75 +7115,75 @@ msgstr ""
 "\n"
 "S'ha produït un problema en iniciar la sessió, s'avortarà.\n"
 
-#: login-utils/login.c:883
+#: login-utils/login.c:891
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "Nom d'usuari NUL a %s:%d. S'avortarà."
 
-#: login-utils/login.c:1137
+#: login-utils/login.c:1145
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "TIOCSCTTY ha fallat: %m"
 
-#: login-utils/login.c:1278
+#: login-utils/login.c:1286
 #, c-format
 msgid "login: -h for super-user only.\n"
 msgstr "login: només el superusuari pot fer servir -h.\n"
 
-#: login-utils/login.c:1293
+#: login-utils/login.c:1301
 #, fuzzy, c-format
 msgid "usage: login [ -p ] [ -h host ] [ -H ] [ -f username | username ]\n"
 msgstr ""
 "forma d'ús: last [-#] [-f fitxer] [-t tty] [-h nom_ordinador] [usuari ...]\n"
 
-#: login-utils/login.c:1335
+#: login-utils/login.c:1343
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Nom d'usuari invàlid \"%s\" a %s:%d. S'avortarà."
 
-#: login-utils/login.c:1357
+#: login-utils/login.c:1365
 #, fuzzy, c-format
 msgid "groups initialization failed: %m"
 msgstr ""
 "\n"
 "S'ha produït un error en tancar el fitxer\n"
 
-#: login-utils/login.c:1382
+#: login-utils/login.c:1390
 #, fuzzy
 msgid "setgid() failed"
 msgstr "setuid() ha fallat"
 
-#: login-utils/login.c:1412
+#: login-utils/login.c:1420
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Teniu correu nou.\n"
 
-#: login-utils/login.c:1414
+#: login-utils/login.c:1422
 #, c-format
 msgid "You have mail.\n"
 msgstr "Teniu correu.\n"
 
-#: login-utils/login.c:1428
+#: login-utils/login.c:1436
 msgid "setuid() failed"
 msgstr "setuid() ha fallat"
 
-#: login-utils/login.c:1434 login-utils/sulogin.c:343
+#: login-utils/login.c:1442 login-utils/sulogin.c:343
 #, fuzzy, c-format
 msgid "%s: change directory failed"
 msgstr "la cerca ha fallat"
 
-#: login-utils/login.c:1441 login-utils/sulogin.c:344
+#: login-utils/login.c:1449 login-utils/sulogin.c:344
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "S'està entrant amb el directori inicial = «/».\n"
 
-#: login-utils/login.c:1470
+#: login-utils/login.c:1478
 #, fuzzy
 msgid "couldn't exec shell script"
 msgstr ""
 "login: no s'ha pogut executar la seqüènca de l'intèrpret d'ordres: %s.\n"
 
-#: login-utils/login.c:1472
+#: login-utils/login.c:1480
 #, fuzzy
 msgid "no shell"
 msgstr "No hi ha intèrpret d'ordres"
@@ -7218,7 +7218,7 @@ msgstr "setuid() ha fallat"
 msgid "no such group"
 msgstr "newgrp: Aquest grup no existeix."
 
-#: login-utils/newgrp.c:171 sys-utils/mount.c:445
+#: login-utils/newgrp.c:171 sys-utils/mount.c:467
 #, fuzzy
 msgid "permission denied"
 msgstr "mount: s'ha denegat el permís"
@@ -7276,44 +7276,44 @@ msgstr "la cerca ha fallat"
 msgid "incorrect password"
 msgstr "La contrasenya no és correcta."
 
-#: login-utils/su.c:485
+#: login-utils/su.c:376
 #, fuzzy
 msgid "failed to set PATH"
 msgstr "no es pot fer stat per a %s"
 
-#: login-utils/su.c:558
+#: login-utils/su.c:434
 #, fuzzy
 msgid "cannot set groups"
 msgstr "mount : no s'ha pogut establir la velocitat de: %s"
 
-#: login-utils/su.c:573 sys-utils/eject.c:655 sys-utils/unshare.c:129
+#: login-utils/su.c:449 sys-utils/eject.c:655 sys-utils/unshare.c:129
 #, fuzzy
 msgid "cannot set group id"
 msgstr "mount : no s'ha pogut establir la velocitat de: %s"
 
-#: login-utils/su.c:575 sys-utils/unshare.c:132
+#: login-utils/su.c:451 sys-utils/unshare.c:132
 #, fuzzy
 msgid "cannot set user id"
 msgstr "mount : no s'ha pogut establir la velocitat de: %s"
 
-#: login-utils/su.c:647 misc-utils/getopt.c:219
+#: login-utils/su.c:523 misc-utils/getopt.c:219
 #, fuzzy, c-format
 msgid "Try `%s --help' for more information.\n"
 msgstr "Escolliu `getopt --help' per obtenir més informació.\n"
 
-#: login-utils/su.c:652
+#: login-utils/su.c:528
 #, fuzzy, c-format
 msgid " %s [options] [-] [USER [arg]...]\n"
 msgstr "forma d'ús: %s programa [arg ...]\n"
 
-#: login-utils/su.c:653
+#: login-utils/su.c:529
 msgid ""
 "\n"
 " Change the effective user id and group id to that of USER.\n"
 " A mere - implies -l.   If USER not given, assume root.\n"
 msgstr ""
 
-#: login-utils/su.c:657
+#: login-utils/su.c:533
 msgid ""
 " -, -l, --login               make the shell a login shell\n"
 " -c, --command <command>      pass a single command to the shell with -c\n"
@@ -7325,17 +7325,17 @@ msgid ""
 " -s, --shell <shell>          run shell if /etc/shells allows it\n"
 msgstr ""
 
-#: login-utils/su.c:757
+#: login-utils/su.c:633
 #, fuzzy, c-format
 msgid "user %s does not exist"
 msgstr "%s: l'usuari \"%s\" no existeix.\n"
 
-#: login-utils/su.c:788
+#: login-utils/su.c:664
 #, c-format
 msgid "using restricted shell %s"
 msgstr ""
 
-#: login-utils/su.c:808
+#: login-utils/su.c:684
 #, fuzzy, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "namei: no s'ha pogut obtenir el directori actual - %s\n"
@@ -7409,7 +7409,7 @@ msgid ""
 "fails\n"
 msgstr ""
 
-#: login-utils/sulogin.c:488 misc-utils/findmnt.c:1213 sys-utils/wdctl.c:482
+#: login-utils/sulogin.c:488 misc-utils/findmnt.c:1213 sys-utils/wdctl.c:505
 #: term-utils/wall.c:128
 #, fuzzy
 msgid "invalid timeout argument"
@@ -7722,7 +7722,7 @@ msgid "%s: parse error at line %d"
 msgstr "s'ha produït un error en cercar"
 
 #: misc-utils/findmnt.c:659 misc-utils/findmnt.c:874 sys-utils/eject.c:709
-#: sys-utils/mount.c:606
+#: sys-utils/mount.c:628
 #, fuzzy
 msgid "failed to initialize libmount table"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
@@ -7734,7 +7734,7 @@ msgstr "%s: no s'ha pogut llegir %s.\n"
 
 #: misc-utils/findmnt.c:814 misc-utils/findmnt.c:880 sys-utils/mount.c:162
 #: sys-utils/mount.c:210 sys-utils/swapoff.c:98 sys-utils/swapon.c:194
-#: sys-utils/swapon.c:226 sys-utils/swapon.c:611 sys-utils/umount.c:241
+#: sys-utils/swapon.c:226 sys-utils/swapon.c:611 sys-utils/umount.c:260
 #, fuzzy
 msgid "failed to initialize libmount iterator"
 msgstr "No s'ha pogut assignar la memòria temporal.\n"
@@ -8215,40 +8215,45 @@ msgstr "%s: s'ha produït un error en obrir: %s\n"
 msgid "failed to open device directory in sysfs"
 msgstr ""
 
-#: misc-utils/lsblk.c:1081
+#: misc-utils/lsblk.c:1074
 #, fuzzy, c-format
-msgid "%s: failed to get whole-disk device number"
+msgid "%s: failed to compose sysfs path"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: misc-utils/lsblk.c:1099
-#, fuzzy, c-format
-msgid "failed to compose sysfs path for %s"
-msgstr "%s: s'ha produït un error en obrir: %s\n"
-
-#: misc-utils/lsblk.c:1106
+#: misc-utils/lsblk.c:1080
 #, fuzzy, c-format
 msgid "%s: failed to read link"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: misc-utils/lsblk.c:1148 misc-utils/lsblk.c:1150 misc-utils/lsblk.c:1175
-#: misc-utils/lsblk.c:1177
+#: misc-utils/lsblk.c:1103
+#, fuzzy, c-format
+msgid "%s: failed to get sysfs name"
+msgstr "%s: s'ha produït un error en obrir: %s\n"
+
+#: misc-utils/lsblk.c:1112
+#, fuzzy, c-format
+msgid "%s: failed to get whole-disk device number"
+msgstr "%s: s'ha produït un error en obrir: %s\n"
+
+#: misc-utils/lsblk.c:1164 misc-utils/lsblk.c:1166 misc-utils/lsblk.c:1191
+#: misc-utils/lsblk.c:1193
 #, fuzzy, c-format
 msgid "failed to parse list '%s'"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1155
+#: misc-utils/lsblk.c:1171
 #, c-format
 msgid "the list of excluded devices is too large (limit is %d devices)"
 msgstr ""
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1182
+#: misc-utils/lsblk.c:1198
 #, c-format
 msgid "the list of included devices is too large (limit is %d devices)"
 msgstr ""
 
-#: misc-utils/lsblk.c:1194
+#: misc-utils/lsblk.c:1210
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8256,7 +8261,7 @@ msgid ""
 " %s [options] [<device> ...]\n"
 msgstr "Forma d'ús: %s [opcions] dispositiu ...\n"
 
-#: misc-utils/lsblk.c:1198
+#: misc-utils/lsblk.c:1214
 #, c-format
 msgid ""
 "\n"
@@ -8282,14 +8287,14 @@ msgid ""
 " -V, --version        output version information and exit\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1218 misc-utils/lslocks.c:489 sys-utils/prlimit.c:188
+#: misc-utils/lsblk.c:1234 misc-utils/lslocks.c:489 sys-utils/prlimit.c:188
 #, fuzzy, c-format
 msgid ""
 "\n"
 "Available columns (for --output):\n"
 msgstr "Ordres disponibles:\n"
 
-#: misc-utils/lsblk.c:1231
+#: misc-utils/lsblk.c:1247
 #, fuzzy, c-format
 msgid "failed to access sysfs directory: %s"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
@@ -8356,7 +8361,7 @@ msgstr "%s: s'ha produït un error en obrir: %s\n"
 #: misc-utils/lslocks.c:478 misc-utils/mcookie.c:70 misc-utils/uuidd.c:71
 #: misc-utils/uuidgen.c:36 sys-utils/arch.c:44 sys-utils/dmesg.c:183
 #: sys-utils/ipcmk.c:67 sys-utils/lscpu.c:1217 sys-utils/readprofile.c:104
-#: sys-utils/rtcwake.c:89 term-utils/setterm.c:678
+#: sys-utils/rtcwake.c:88 term-utils/setterm.c:678
 #, fuzzy, c-format
 msgid " %s [options]\n"
 msgstr "Forma d'ús: %s [opcions] dispositiu ...\n"
@@ -9123,7 +9128,7 @@ msgstr ""
 "        En alguns casos, es pot trobar informació útil a syslog,\n"
 "        proveu dmesg | tail o així\n"
 
-#: mount-deprecated/mount.c:1792 sys-utils/mount.c:529
+#: mount-deprecated/mount.c:1792 sys-utils/mount.c:551
 msgid "mount table full"
 msgstr "la taula de dispositius muntats està plena"
 
@@ -9223,7 +9228,7 @@ msgstr ""
 msgid "mount: no medium found on %s"
 msgstr "mount: %s ja està muntat a %s\n"
 
-#: mount-deprecated/mount.c:1901 sys-utils/mount.c:310
+#: mount-deprecated/mount.c:1901 sys-utils/mount.c:333
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9680,7 +9685,7 @@ msgstr "No s'ha pogut escriure la partició a %s\n"
 msgid "failed to set pid %d's policy"
 msgstr "No s'ha pogut escriure la partició a %s\n"
 
-#: schedutils/chrt.c:335 sys-utils/switch_root.c:223 term-utils/script.c:451
+#: schedutils/chrt.c:335 sys-utils/switch_root.c:227 term-utils/script.c:451
 #, fuzzy, c-format
 msgid "failed to execute %s"
 msgstr "no ha estat possible executar ioctl() per llegir l'hora de %s"
@@ -10094,7 +10099,7 @@ msgstr ""
 "el màxim de caràcters en fifo fou de %d\n"
 "i la velocitat de transferència màxima en caracteres per segon fou de %f\n"
 
-#: sys-utils/cytune.c:172 sys-utils/cytune.c:196 sys-utils/dmesg.c:417
+#: sys-utils/cytune.c:172 sys-utils/cytune.c:196 sys-utils/dmesg.c:429
 msgid "gettimeofday failed"
 msgstr "no ha estat possible executar gettimeofday"
 
@@ -10335,71 +10340,71 @@ msgid ""
 "Supported log levels (priorities):\n"
 msgstr ""
 
-#: sys-utils/dmesg.c:260
+#: sys-utils/dmesg.c:272
 #, fuzzy, c-format
 msgid "failed to parse level '%s'"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: sys-utils/dmesg.c:262
+#: sys-utils/dmesg.c:274
 #, fuzzy, c-format
 msgid "unknown level '%s'"
 msgstr "%s: Ordre desconeguda: %s\n"
 
-#: sys-utils/dmesg.c:298
+#: sys-utils/dmesg.c:310
 #, fuzzy, c-format
 msgid "failed to parse facility '%s'"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: sys-utils/dmesg.c:300
+#: sys-utils/dmesg.c:312
 #, fuzzy, c-format
 msgid "unknown facility '%s'"
 msgstr "No hi ha cap directori %s\n"
 
-#: sys-utils/dmesg.c:415
+#: sys-utils/dmesg.c:427
 #, fuzzy
 msgid "sysinfo failed"
 msgstr "no s'ha pogut fer fsync"
 
-#: sys-utils/dmesg.c:442
+#: sys-utils/dmesg.c:454
 #, fuzzy, c-format
 msgid "cannot mmap: %s"
 msgstr "%s no es pot obrir"
 
-#: sys-utils/dmesg.c:564 term-utils/script.c:304 term-utils/script.c:396
+#: sys-utils/dmesg.c:576 term-utils/script.c:304 term-utils/script.c:396
 #, fuzzy
 msgid "write failed"
 msgstr "(Fitxer següent: %s)"
 
-#: sys-utils/dmesg.c:1132
+#: sys-utils/dmesg.c:1144
 #, fuzzy
 msgid "invalid buffer size argument"
 msgstr "identificador invàlid"
 
-#: sys-utils/dmesg.c:1172
+#: sys-utils/dmesg.c:1184
 msgid ""
 "--raw can't be used together with level, facility, decode, delta, ctime or "
 "notime options"
 msgstr ""
 
-#: sys-utils/dmesg.c:1176
+#: sys-utils/dmesg.c:1188
 msgid "--notime can't be used together with --ctime or --reltime"
 msgstr ""
 
-#: sys-utils/dmesg.c:1178
+#: sys-utils/dmesg.c:1190
 msgid "--reltime can't be used together with --ctime "
 msgstr ""
 
-#: sys-utils/dmesg.c:1192
+#: sys-utils/dmesg.c:1204
 #, fuzzy
 msgid "read kernel buffer failed"
 msgstr "no ha estat possible executar gettimeofday"
 
-#: sys-utils/dmesg.c:1205
+#: sys-utils/dmesg.c:1217
 #, fuzzy
 msgid "unsupported command"
 msgstr "cap ordre?\n"
 
-#: sys-utils/dmesg.c:1211
+#: sys-utils/dmesg.c:1223
 #, fuzzy
 msgid "klogctl failed"
 msgstr "no s'ha pogut fer fsync"
@@ -10616,7 +10621,7 @@ msgstr "no s'ha pogut rebobinar el dispositiu d'intercanvi"
 msgid "device name is `%s'"
 msgstr "loop: no s'ha pogut obrir el dispositiu %s: %s\n"
 
-#: sys-utils/eject.c:979 sys-utils/umount.c:205
+#: sys-utils/eject.c:979 sys-utils/umount.c:224
 #, fuzzy, c-format
 msgid "%s: not mounted"
 msgstr "umount: %s: no s'ha trobat"
@@ -11140,48 +11145,48 @@ msgstr ""
 "El rellotge de maquinari no conté una hora vàlida, pel que no es pot "
 "establir l'hora del sistema a partir d'aquest valor.\n"
 
-#: sys-utils/hwclock.c:729 sys-utils/hwclock.c:810
+#: sys-utils/hwclock.c:729 sys-utils/hwclock.c:809
 #, c-format
 msgid "Calling settimeofday:\n"
 msgstr "Cridant a settimeofday:\n"
 
-#: sys-utils/hwclock.c:730 sys-utils/hwclock.c:812
+#: sys-utils/hwclock.c:730 sys-utils/hwclock.c:811
 #, c-format
 msgid "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 msgstr "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 
-#: sys-utils/hwclock.c:732 sys-utils/hwclock.c:814
+#: sys-utils/hwclock.c:732 sys-utils/hwclock.c:813
 #, c-format
 msgid "\ttz.tz_minuteswest = %d\n"
 msgstr "\ttz.tz_minuteswest = %d\n"
 
-#: sys-utils/hwclock.c:736 sys-utils/hwclock.c:818
+#: sys-utils/hwclock.c:736 sys-utils/hwclock.c:817
 #, c-format
 msgid "Not setting system clock because running in test mode.\n"
 msgstr ""
 "No s'està configurant el rellotge del sistema perquè s'està executant en "
 "mode de prova.\n"
 
-#: sys-utils/hwclock.c:745 sys-utils/hwclock.c:828
+#: sys-utils/hwclock.c:745 sys-utils/hwclock.c:841
 #, fuzzy
 msgid "Must be superuser to set system clock."
 msgstr "Heu de ser el superusuari per configurar rellotge del sistema.\n"
 
-#: sys-utils/hwclock.c:748 sys-utils/hwclock.c:831
+#: sys-utils/hwclock.c:748 sys-utils/hwclock.c:844
 msgid "settimeofday() failed"
 msgstr "settimeofday() ha fallat"
 
-#: sys-utils/hwclock.c:785
+#: sys-utils/hwclock.c:784
 #, c-format
 msgid "Current system time: %ld = %s\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:811
+#: sys-utils/hwclock.c:810
 #, c-format
 msgid "\tUTC: %s\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:860
+#: sys-utils/hwclock.c:873
 #, c-format
 msgid ""
 "Not adjusting drift factor because the Hardware Clock previously contained "
@@ -11190,7 +11195,7 @@ msgstr ""
 "No s'ha ajustat el factor de desfasament perquè el rellotge del maquinari "
 "contenia valors despreciables.\n"
 
-#: sys-utils/hwclock.c:865
+#: sys-utils/hwclock.c:878
 #, c-format
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
@@ -11200,7 +11205,7 @@ msgstr ""
 "calibració és zero, així que l'historial és dolent, i és necessària\n"
 "una calibració des del començament.\n"
 
-#: sys-utils/hwclock.c:871
+#: sys-utils/hwclock.c:884
 #, c-format
 msgid ""
 "Not adjusting drift factor because it has been less than a day since the "
@@ -11209,7 +11214,7 @@ msgstr ""
 "No s'ajusta el factor de desfasament perquè fa menys d'un dia de l'última "
 "calibració.\n"
 
-#: sys-utils/hwclock.c:919
+#: sys-utils/hwclock.c:932
 #, c-format
 msgid ""
 "Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
@@ -11220,24 +11225,24 @@ msgstr ""
 "un factor de desfasament de %f segons diaris.\n"
 "S'està ajustant el factor de desfasament a %f segons diaris\n"
 
-#: sys-utils/hwclock.c:965
+#: sys-utils/hwclock.c:978
 #, c-format
 msgid "Time since last adjustment is %d seconds\n"
 msgstr "Han transcorregut %d segons des de l'últim ajust\n"
 
-#: sys-utils/hwclock.c:967
+#: sys-utils/hwclock.c:980
 #, c-format
 msgid "Need to insert %d seconds and refer time back %.6f seconds ago\n"
 msgstr ""
 "S'han d'inserir %d segons i referir el temps anterior a fa %.6f segons\n"
 
-#: sys-utils/hwclock.c:997
+#: sys-utils/hwclock.c:1010
 #, c-format
 msgid "Not updating adjtime file because of testing mode.\n"
 msgstr ""
 "No s'actualitzarà el fitxer adjtime perquè s'executa en mode de prova.\n"
 
-#: sys-utils/hwclock.c:998
+#: sys-utils/hwclock.c:1011
 #, c-format
 msgid ""
 "Would have written the following to %s:\n"
@@ -11246,31 +11251,31 @@ msgstr ""
 "S'hauria escrit el següent a %s:\n"
 "%s"
 
-#: sys-utils/hwclock.c:1007
+#: sys-utils/hwclock.c:1020
 #, c-format
 msgid ""
 "Could not open file with the clock adjustment parameters in it (%s) for "
 "writing"
 msgstr ""
 
-#: sys-utils/hwclock.c:1013 sys-utils/hwclock.c:1020
+#: sys-utils/hwclock.c:1026 sys-utils/hwclock.c:1033
 #, c-format
 msgid "Could not update file with the clock adjustment parameters (%s) in it"
 msgstr ""
 
-#: sys-utils/hwclock.c:1028
+#: sys-utils/hwclock.c:1041
 #, fuzzy
 msgid "Drift adjustment parameters not updated."
 msgstr "No s'han actualitzat els paràmetres d'ajustament del desfasament.\n"
 
-#: sys-utils/hwclock.c:1067
+#: sys-utils/hwclock.c:1080
 #, fuzzy
 msgid ""
 "The Hardware Clock does not contain a valid time, so we cannot adjust it."
 msgstr ""
 "El rellotje de maquinari no conté una hora vàlida, i no es pot ajustar.\n"
 
-#: sys-utils/hwclock.c:1076
+#: sys-utils/hwclock.c:1089
 #, fuzzy, c-format
 msgid ""
 "Not setting clock because last adjustment time is zero, so history is bad."
@@ -11279,34 +11284,34 @@ msgstr ""
 "calibració és zero, així que l'historial és dolent, i és necessària\n"
 "una calibració des del començament.\n"
 
-#: sys-utils/hwclock.c:1098
+#: sys-utils/hwclock.c:1111
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr ""
 "L'ajustament necessari és inferior a un segon, no s'ajustarà el rellotge.\n"
 
-#: sys-utils/hwclock.c:1123
+#: sys-utils/hwclock.c:1136
 #, c-format
 msgid "Using %s.\n"
 msgstr "Usant %s.\n"
 
-#: sys-utils/hwclock.c:1125
+#: sys-utils/hwclock.c:1138
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "No s'ha trobat cap interfície de rellotge usable.\n"
 
-#: sys-utils/hwclock.c:1254 sys-utils/hwclock.c:1260
+#: sys-utils/hwclock.c:1267 sys-utils/hwclock.c:1273
 #, c-format
 msgid "Unable to set system clock.\n"
 msgstr "No es pot establir el rellotge del sistema.\n"
 
-#: sys-utils/hwclock.c:1273
+#: sys-utils/hwclock.c:1286
 #, c-format
 msgid ""
 "At %ld seconds after 1969, RTC is predicted to read %ld seconds after 1969.\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1302
+#: sys-utils/hwclock.c:1315
 #, fuzzy
 msgid ""
 "The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
@@ -11320,17 +11325,17 @@ msgstr ""
 "possiblement ara no s'executi en cap màquina Alpha). No s'ha executat cap "
 "acció.\n"
 
-#: sys-utils/hwclock.c:1319
+#: sys-utils/hwclock.c:1332
 #, fuzzy
 msgid "Unable to get the epoch value from the kernel."
 msgstr "No es pot obtenir el valor d'època del nucli.\n"
 
-#: sys-utils/hwclock.c:1321
+#: sys-utils/hwclock.c:1334
 #, c-format
 msgid "Kernel is assuming an epoch value of %lu\n"
 msgstr "El nucli assumeix un valor d'època de %lu\n"
 
-#: sys-utils/hwclock.c:1326
+#: sys-utils/hwclock.c:1339
 #, fuzzy
 msgid ""
 "To set the epoch value, you must use the 'epoch' option to tell to what "
@@ -11339,21 +11344,21 @@ msgstr ""
 "Per establir el valor d'època, haureu d'usar l'opció 'epoch' per a indicar a "
 "quin valor s'ha d'establir.\n"
 
-#: sys-utils/hwclock.c:1330
+#: sys-utils/hwclock.c:1343
 #, c-format
 msgid "Not setting the epoch to %d - testing only.\n"
 msgstr "No s'establirà el valor de l'època a  %d - només s'està provant.\n"
 
-#: sys-utils/hwclock.c:1334
+#: sys-utils/hwclock.c:1347
 #, c-format
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "No es pot establir el valor d'època en el nucli.\n"
 
-#: sys-utils/hwclock.c:1363
+#: sys-utils/hwclock.c:1376
 msgid " hwclock [function] [option...]\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1365
+#: sys-utils/hwclock.c:1378
 #, fuzzy
 msgid ""
 "\n"
@@ -11362,14 +11367,14 @@ msgstr ""
 "\n"
 "%d particions:\n"
 
-#: sys-utils/hwclock.c:1366
+#: sys-utils/hwclock.c:1379
 msgid ""
 " -h, --help           show this help text and exit\n"
 " -r, --show           read hardware clock and print result\n"
 "     --set            set the RTC to the time given with --date\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1369
+#: sys-utils/hwclock.c:1382
 msgid ""
 " -s, --hctosys        set the system time from the hardware clock\n"
 " -w, --systohc        set the hardware clock from the current system time\n"
@@ -11378,30 +11383,30 @@ msgid ""
 "                        the clock was last set or adjusted\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1375
+#: sys-utils/hwclock.c:1388
 msgid ""
 "     --getepoch       print out the kernel's hardware clock epoch value\n"
 "     --setepoch       set the kernel's hardware clock epoch value to the \n"
 "                        value given with --epoch\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1379
+#: sys-utils/hwclock.c:1392
 msgid ""
 "     --predict        predict RTC reading at time given with --date\n"
 " -V, --version        display version information and exit\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1383
+#: sys-utils/hwclock.c:1396
 msgid ""
 " -u, --utc            the hardware clock is kept in UTC\n"
 "     --localtime      the hardware clock is kept in local time\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1386
+#: sys-utils/hwclock.c:1399
 msgid " -f, --rtc <file>     special /dev/... file to use instead of default\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1389
+#: sys-utils/hwclock.c:1402
 #, c-format
 msgid ""
 "     --directisa      access the ISA bus directly instead of %s\n"
@@ -11411,7 +11416,7 @@ msgid ""
 "                        hardware clock's epoch value\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1395
+#: sys-utils/hwclock.c:1408
 #, c-format
 msgid ""
 "     --noadjfile      do not access %s; this requires the use of\n"
@@ -11420,14 +11425,14 @@ msgid ""
 "                        the default is %s\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1399
+#: sys-utils/hwclock.c:1412
 msgid ""
 "     --test           do not update anything, just show what would happen\n"
 " -D, --debug          debugging mode\n"
 "\n"
 msgstr ""
 
-#: sys-utils/hwclock.c:1402
+#: sys-utils/hwclock.c:1415
 #, fuzzy
 msgid ""
 " -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
@@ -11437,43 +11442,43 @@ msgstr ""
 "  --jensen, --arc, --srm, --funky-toy\n"
 "                Indica al RTC el tipus d'Alpha que teniu (vegeu hwclock(8))\n"
 
-#: sys-utils/hwclock.c:1524
+#: sys-utils/hwclock.c:1537
 #, fuzzy
 msgid "Unable to connect to audit system"
 msgstr "No es pot establir el rellotge del sistema.\n"
 
-#: sys-utils/hwclock.c:1619
+#: sys-utils/hwclock.c:1632
 #, fuzzy
 msgid "invalid epoch argument"
 msgstr "identificador invàlid"
 
-#: sys-utils/hwclock.c:1658
+#: sys-utils/hwclock.c:1671
 #, c-format
 msgid "%s takes no non-option arguments.  You supplied %d.\n"
 msgstr "%s no admet arguments que no siguin opcions. Heu especificat %d.\n"
 
-#: sys-utils/hwclock.c:1667
+#: sys-utils/hwclock.c:1680
 #, fuzzy
 msgid "With --noadjfile, you must specify either --utc or --localtime"
 msgstr "%s: Amb --noadjfile, haureu d'especificar --utc o --localtime\n"
 
-#: sys-utils/hwclock.c:1680
+#: sys-utils/hwclock.c:1693
 #, fuzzy
 msgid "No usable set-to time.  Cannot set clock."
 msgstr ""
 "L'hora indicada per establir no és usable. No s'ha tocat el rellotge.\n"
 
-#: sys-utils/hwclock.c:1695
+#: sys-utils/hwclock.c:1708
 #, fuzzy
 msgid "Sorry, only the superuser can change the Hardware Clock."
 msgstr "Només el superusuari pot canviar el rellotge del maquinari.\n"
 
-#: sys-utils/hwclock.c:1699
+#: sys-utils/hwclock.c:1712
 #, fuzzy
 msgid "Sorry, only the superuser can change the System Clock."
 msgstr "Només el superusuari port canviar el rellotge del sistema.\n"
 
-#: sys-utils/hwclock.c:1703
+#: sys-utils/hwclock.c:1716
 #, fuzzy
 msgid ""
 "Sorry, only the superuser can change the Hardware Clock epoch in the kernel."
@@ -11481,14 +11486,14 @@ msgstr ""
 "Només el superusuari pot canviar el valor de l'època del rellotge del "
 "maquinari en el nucli.\n"
 
-#: sys-utils/hwclock.c:1726
+#: sys-utils/hwclock.c:1739
 #, fuzzy
 msgid "Cannot access the Hardware Clock via any known method."
 msgstr ""
 "No s'ha pogut accedir al rellotge del maquinari mitjançant cap dels mètodes "
 "coneguts.\n"
 
-#: sys-utils/hwclock.c:1729
+#: sys-utils/hwclock.c:1742
 #, fuzzy
 msgid ""
 "Use the --debug option to see the details of our search for an access method."
@@ -12591,7 +12596,7 @@ msgstr ""
 msgid "%s: failed to use device"
 msgstr "no s'ha pogut rebobinar el dispositiu d'intercanvi"
 
-#: sys-utils/losetup.c:302 sys-utils/mount.c:839
+#: sys-utils/losetup.c:302 sys-utils/mount.c:861
 msgid "invalid passphrase file descriptor"
 msgstr ""
 
@@ -12639,7 +12644,7 @@ msgstr "torna a llegir la taula de particions"
 msgid "find unused loop device failed"
 msgstr "mount: no ha estat possible muntar"
 
-#: sys-utils/losetup.c:452 sys-utils/umount.c:227
+#: sys-utils/losetup.c:452 sys-utils/umount.c:246
 #, c-format
 msgid "%s"
 msgstr ""
@@ -12911,7 +12916,7 @@ msgstr "s'ha produït un error en cercar"
 msgid "failed to read mtab"
 msgstr "no es pot fer stat per a %s"
 
-#: sys-utils/mount.c:220 sys-utils/umount.c:251
+#: sys-utils/mount.c:220 sys-utils/umount.c:270
 #, c-format
 msgid "%-25s: ignored\n"
 msgstr ""
@@ -12921,136 +12926,156 @@ msgstr ""
 msgid "%-25s: already mounted\n"
 msgstr "mount: %s ja està muntat a %s\n"
 
-#: sys-utils/mount.c:367
+#: sys-utils/mount.c:275
+#, fuzzy, c-format
+msgid "%s moved to %s"
+msgstr "%s: s'ha produït un error en obrir: %s\n"
+
+#: sys-utils/mount.c:277
+#, fuzzy, c-format
+msgid "%s binded on %s"
+msgstr "umount: %s: no s'ha trobat"
+
+#: sys-utils/mount.c:279
+#, c-format
+msgid "%s propagation flags changed"
+msgstr ""
+
+#: sys-utils/mount.c:281
+#, fuzzy, c-format
+msgid "%s mounted on %s"
+msgstr "umount: %s: no s'ha trobat"
+
+#: sys-utils/mount.c:389
 #, fuzzy, c-format
 msgid "only root can mount %s on %s"
 msgstr "mount: només l'usuari root pot muntar %s a %s"
 
-#: sys-utils/mount.c:370
+#: sys-utils/mount.c:392
 #, fuzzy, c-format
 msgid "%s is already mounted"
 msgstr "mount: %s ja està muntat a %s\n"
 
-#: sys-utils/mount.c:374
+#: sys-utils/mount.c:396
 #, fuzzy, c-format
 msgid "can't find %s in %s"
 msgstr "mount: no s'ha pogut trobar %s a %s"
 
-#: sys-utils/mount.c:381
+#: sys-utils/mount.c:403
 #, fuzzy, c-format
 msgid "can't find mountpoint %s in %s"
 msgstr "mount: no s'ha pogut trobar %s a %s"
 
-#: sys-utils/mount.c:384
+#: sys-utils/mount.c:406
 #, fuzzy, c-format
 msgid "can't find mount source %s in %s"
 msgstr "mount: no s'ha pogut trobar %s a %s"
 
-#: sys-utils/mount.c:389
+#: sys-utils/mount.c:411
 #, fuzzy
 msgid "I could not determine the filesystem type, and none was specified"
 msgstr ""
 "mount: no s'ha pogut determinar el tipus de sistema de fitxers i no n'heu "
 "especificat cap"
 
-#: sys-utils/mount.c:392
+#: sys-utils/mount.c:414
 #, fuzzy
 msgid "you must specify the filesystem type"
 msgstr "mount: haureu d'especificar el tipus del sistema de fitxers"
 
-#: sys-utils/mount.c:396
+#: sys-utils/mount.c:418
 #, fuzzy, c-format
 msgid "can't find %s"
 msgstr "%s: no s'ha pogut enllaçar %s: %s\n"
 
-#: sys-utils/mount.c:398
+#: sys-utils/mount.c:420
 #, fuzzy
 msgid "mount source not defined"
 msgstr "mount: no ha estat possible muntar"
 
-#: sys-utils/mount.c:402 sys-utils/mount.c:404
+#: sys-utils/mount.c:424 sys-utils/mount.c:426
 #, fuzzy
 msgid "failed to parse mount options"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: sys-utils/mount.c:410
+#: sys-utils/mount.c:432
 #, fuzzy, c-format
 msgid "%s: failed to setup loop device (probably unknown encryption type)"
 msgstr "no s'ha pogut rebobinar el dispositiu d'intercanvi"
 
-#: sys-utils/mount.c:416
+#: sys-utils/mount.c:438
 #, fuzzy, c-format
 msgid "%s: mount failed"
 msgstr "no s'ha estat possible muntar"
 
-#: sys-utils/mount.c:426
+#: sys-utils/mount.c:448
 #, fuzzy, c-format
 msgid "%s: filesystem mounted, but mount(8) failed"
 msgstr "mount: no ha estat possible muntar"
 
-#: sys-utils/mount.c:443 sys-utils/mount.c:495
+#: sys-utils/mount.c:465 sys-utils/mount.c:517
 #, fuzzy, c-format
 msgid "mount point %s is not a directory"
 msgstr "mount: el punt de muntatge %s no és un directori"
 
-#: sys-utils/mount.c:447
+#: sys-utils/mount.c:469
 #, fuzzy
 msgid "must be superuser to use mount"
 msgstr "mount: haureu de ser un superusuari per a usar mount"
 
-#: sys-utils/mount.c:455
+#: sys-utils/mount.c:477
 #, fuzzy, c-format
 msgid "%s is busy"
 msgstr "mount: %s està ocupat"
 
-#: sys-utils/mount.c:459
+#: sys-utils/mount.c:481
 #, fuzzy, c-format
 msgid "%s is already mounted or %s busy"
 msgstr "mount: %s ja està muntat o %s està ocupat"
 
-#: sys-utils/mount.c:471
+#: sys-utils/mount.c:493
 #, fuzzy, c-format
 msgid "       %s is already mounted on %s\n"
 msgstr "mount: %s ja està muntat a %s\n"
 
-#: sys-utils/mount.c:479
+#: sys-utils/mount.c:501
 #, fuzzy, c-format
 msgid "mount point %s does not exist"
 msgstr "mount: el punt de muntatge %s no existeix"
 
-#: sys-utils/mount.c:481
+#: sys-utils/mount.c:503
 #, fuzzy, c-format
 msgid "mount point %s is a symbolic link to nowhere"
 msgstr "mount: el punt de muntatge %s és un enllaç simbòlic sense destí"
 
-#: sys-utils/mount.c:486
+#: sys-utils/mount.c:508
 #, fuzzy, c-format
 msgid "special device %s does not exist"
 msgstr "mount: el dispositiu especial %s no existeix"
 
-#: sys-utils/mount.c:489 sys-utils/mount.c:504
+#: sys-utils/mount.c:511 sys-utils/mount.c:526
 #, fuzzy
 msgid "mount(2) failed"
 msgstr "no s'ha estat possible muntar"
 
-#: sys-utils/mount.c:500
+#: sys-utils/mount.c:522
 #, fuzzy, c-format
 msgid "special device %s does not exist (a path prefix is not a directory)"
 msgstr ""
 "mount: el dispositiu especial %s no existeix\n"
 "       (un prefix de camí no és un directori)\n"
 
-#: sys-utils/mount.c:510
+#: sys-utils/mount.c:532
 #, fuzzy, c-format
 msgid "%s not mounted or bad option"
 msgstr "mount: %s encara no està muntat o una opció és incorrecta"
 
-#: sys-utils/mount.c:512
+#: sys-utils/mount.c:534
 #, fuzzy, c-format
 msgid "%s is not mountpoint or bad option"
 msgstr "mount: %s encara no està muntat o una opció és incorrecta"
 
-#: sys-utils/mount.c:514
+#: sys-utils/mount.c:536
 #, fuzzy, c-format
 msgid ""
 "wrong fs type, bad option, bad superblock on %s,\n"
@@ -13061,14 +13086,14 @@ msgstr ""
 "       superbloc incorrecte a %s, manca la pàgina de codis o algun altre "
 "error"
 
-#: sys-utils/mount.c:520
+#: sys-utils/mount.c:542
 #, c-format
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)\n"
 msgstr ""
 
-#: sys-utils/mount.c:524
+#: sys-utils/mount.c:546
 #, fuzzy, c-format
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
@@ -13077,22 +13102,22 @@ msgstr ""
 "        En alguns casos, es pot trobar informació útil a syslog,\n"
 "        proveu dmesg | tail o així\n"
 
-#: sys-utils/mount.c:533
+#: sys-utils/mount.c:555
 #, fuzzy, c-format
 msgid "%s: can't read superblock"
 msgstr "mount: %s: no s'ha pogut llegir el superbloc"
 
-#: sys-utils/mount.c:537
+#: sys-utils/mount.c:559
 #, fuzzy, c-format
 msgid "unknown filesystem type '%s'"
 msgstr "mount: no es reconeix el sitema de fitxers «%s»"
 
-#: sys-utils/mount.c:545
+#: sys-utils/mount.c:567
 #, fuzzy, c-format
 msgid "%s is not a block device, and stat(2) fails?"
 msgstr "mount: %s no és cap dispositiu de blocs, i stat falla?"
 
-#: sys-utils/mount.c:547
+#: sys-utils/mount.c:569
 #, fuzzy, c-format
 msgid ""
 "the kernel does not recognize %s as a block device\n"
@@ -13101,60 +13126,60 @@ msgstr ""
 "mount: el nucli no reconeix %s com a dispositiu de blocs\n"
 "       (potser fent «insmod controlador»?)"
 
-#: sys-utils/mount.c:550
+#: sys-utils/mount.c:572
 #, fuzzy, c-format
 msgid "%s is not a block device (maybe try `-o loop'?)"
 msgstr "mount: %s no és un dispositiu de blocs (proveu amb `-o loop')"
 
-#: sys-utils/mount.c:552
+#: sys-utils/mount.c:574
 #, fuzzy, c-format
 msgid " %s is not a block device"
 msgstr "%s: no és un dispositiu de bloc\n"
 
-#: sys-utils/mount.c:559
+#: sys-utils/mount.c:581
 #, fuzzy, c-format
 msgid "%s is not a valid block device"
 msgstr "mount: %s no és un dispositiu de blocs vàlid"
 
-#: sys-utils/mount.c:565
+#: sys-utils/mount.c:587
 #, fuzzy, c-format
 msgid "cannot mount %s read-only"
 msgstr "mount : no s'ha pogut muntar %s%s com a només de lectura"
 
-#: sys-utils/mount.c:568
+#: sys-utils/mount.c:590
 #, fuzzy, c-format
 msgid "%s is write-protected but explicit `-w' flag given"
 msgstr ""
 "mount : %s%s està protegit contra escriptura però se li ha donat el "
 "senyalador explícit «-w»"
 
-#: sys-utils/mount.c:571
+#: sys-utils/mount.c:593
 #, fuzzy, c-format
 msgid "cannot remount %s read-write, is write-protected"
 msgstr "mount : no s'ha pogut muntar %s%s com a només de lectura"
 
-#: sys-utils/mount.c:574
+#: sys-utils/mount.c:596
 #, fuzzy, c-format
 msgid "%s is write-protected, mounting read-only"
 msgstr ""
 "mount: %s%s està protegit contra escriptura; es muntarà en només lectura"
 
-#: sys-utils/mount.c:587
+#: sys-utils/mount.c:609
 #, fuzzy, c-format
 msgid "no medium found on %s"
 msgstr "mount: %s ja està muntat a %s\n"
 
-#: sys-utils/mount.c:591
+#: sys-utils/mount.c:613
 #, fuzzy, c-format
 msgid "mount %s on %s failed"
 msgstr "%s: no s'ha pogut reanomenar %s a %s: %s\n"
 
-#: sys-utils/mount.c:613
+#: sys-utils/mount.c:635
 #, fuzzy, c-format
 msgid "%s: failed to parse"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: sys-utils/mount.c:622
+#: sys-utils/mount.c:644
 #, c-format
 msgid ""
 " %1$s [-lhV]\n"
@@ -13164,7 +13189,7 @@ msgid ""
 " %1$s <operation> <mountpoint> [<target>]\n"
 msgstr ""
 
-#: sys-utils/mount.c:631
+#: sys-utils/mount.c:653
 #, c-format
 msgid ""
 " -a, --all               mount all filesystems mentioned in fstab\n"
@@ -13174,7 +13199,7 @@ msgid ""
 " -T, --fstab <path>      alternative file to /etc/fstab\n"
 msgstr ""
 
-#: sys-utils/mount.c:637
+#: sys-utils/mount.c:659
 #, c-format
 msgid ""
 " -h, --help              display this help text and exit\n"
@@ -13183,7 +13208,7 @@ msgid ""
 " -n, --no-mtab           don't write to /etc/mtab\n"
 msgstr ""
 
-#: sys-utils/mount.c:642
+#: sys-utils/mount.c:664
 #, c-format
 msgid ""
 " -o, --options <list>    comma-separated list of mount options\n"
@@ -13193,14 +13218,14 @@ msgid ""
 " -t, --types <list>      limit the set of filesystem types\n"
 msgstr ""
 
-#: sys-utils/mount.c:648
+#: sys-utils/mount.c:670
 #, c-format
 msgid ""
 "     --source <src>      explicitly specifies source (path, label, uuid)\n"
 "     --target <target>   explicitly specifies mountpoint\n"
 msgstr ""
 
-#: sys-utils/mount.c:651
+#: sys-utils/mount.c:673
 #, c-format
 msgid ""
 " -v, --verbose           say what is being done\n"
@@ -13208,7 +13233,7 @@ msgid ""
 " -w, --read-write        mount the filesystem read-write (default)\n"
 msgstr ""
 
-#: sys-utils/mount.c:660
+#: sys-utils/mount.c:682
 #, c-format
 msgid ""
 "\n"
@@ -13221,7 +13246,7 @@ msgid ""
 " PARTUUID=<uuid>         specifies device by partition UUID\n"
 msgstr ""
 
-#: sys-utils/mount.c:669
+#: sys-utils/mount.c:691
 #, c-format
 msgid ""
 " <device>                specifies device by path\n"
@@ -13229,7 +13254,7 @@ msgid ""
 " <file>                  regular file for loopdev setup\n"
 msgstr ""
 
-#: sys-utils/mount.c:674
+#: sys-utils/mount.c:696
 #, c-format
 msgid ""
 "\n"
@@ -13239,7 +13264,7 @@ msgid ""
 " -R, --rbind             mount a subtree and all submounts somewhere else\n"
 msgstr ""
 
-#: sys-utils/mount.c:679
+#: sys-utils/mount.c:701
 #, c-format
 msgid ""
 " --make-shared           mark a subtree as shared\n"
@@ -13248,7 +13273,7 @@ msgid ""
 " --make-unbindable       mark a subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:684
+#: sys-utils/mount.c:706
 #, c-format
 msgid ""
 " --make-rshared          recursively mark a whole subtree as shared\n"
@@ -13257,17 +13282,17 @@ msgid ""
 " --make-runbindable      recursively mark a whole subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:775 sys-utils/umount.c:318
+#: sys-utils/mount.c:797 sys-utils/umount.c:340
 #, fuzzy
 msgid "libmount context allocation failed"
 msgstr "mount: no ha estat possible muntar"
 
-#: sys-utils/mount.c:815 sys-utils/mount.c:826 sys-utils/mount.c:831
+#: sys-utils/mount.c:837 sys-utils/mount.c:848 sys-utils/mount.c:853
 #, fuzzy
 msgid "failed to append options"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: sys-utils/mount.c:835 sys-utils/umount.c:363
+#: sys-utils/mount.c:857 sys-utils/umount.c:385
 #, fuzzy
 msgid "failed to set options pattern"
 msgstr "No s'ha pogut escriure la partició a %s\n"
@@ -13674,7 +13699,7 @@ msgstr "No s'ha pogut escriure la partició a %s\n"
 msgid "%d (%s) old priority %d, new priority %d\n"
 msgstr "%d: prioritat antiga %d, nova prioritat %d\n"
 
-#: sys-utils/rtcwake.c:92
+#: sys-utils/rtcwake.c:91
 msgid ""
 " -d, --device <device>    select rtc device (rtc0|rtc1|...)\n"
 " -n, --dry-run            does everything, but suspend\n"
@@ -13686,161 +13711,161 @@ msgid ""
 " -v, --verbose            verbose messages\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:156
+#: sys-utils/rtcwake.c:155
 #, fuzzy
 msgid "read rtc time failed"
 msgstr "no ha estat possible executar gettimeofday"
 
-#: sys-utils/rtcwake.c:161
+#: sys-utils/rtcwake.c:160
 #, fuzzy
 msgid "read system time failed"
 msgstr "semàfors assignats = %d\n"
 
-#: sys-utils/rtcwake.c:179
+#: sys-utils/rtcwake.c:178
 #, fuzzy
 msgid "convert rtc time failed"
 msgstr ""
 "\n"
 "S'ha produït un error en tancar el fitxer\n"
 
-#: sys-utils/rtcwake.c:239
+#: sys-utils/rtcwake.c:238
 #, fuzzy
 msgid "set rtc alarm failed"
 msgstr "la cerca ha fallat"
 
-#: sys-utils/rtcwake.c:243
+#: sys-utils/rtcwake.c:242
 msgid "enable rtc alarm failed"
 msgstr ""
 
-#: sys-utils/rtcwake.c:248
+#: sys-utils/rtcwake.c:246
 msgid "set rtc wake alarm failed"
 msgstr ""
 
-#: sys-utils/rtcwake.c:351
+#: sys-utils/rtcwake.c:349
 #, fuzzy
 msgid "read rtc alarm failed"
 msgstr "semàfors assignats = %d\n"
 
-#: sys-utils/rtcwake.c:357
+#: sys-utils/rtcwake.c:355
 #, c-format
 msgid "alarm: off\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:374
+#: sys-utils/rtcwake.c:372
 #, fuzzy
 msgid "convert time failed"
 msgstr "no ha estat possible executar gettimeofday"
 
-#: sys-utils/rtcwake.c:381
+#: sys-utils/rtcwake.c:379
 #, c-format
 msgid "alarm: on  %s"
 msgstr ""
 
-#: sys-utils/rtcwake.c:438
+#: sys-utils/rtcwake.c:436
 #, fuzzy, c-format
 msgid "unrecognized suspend state '%s'"
 msgstr " %s: no s'ha pogut reconèixer el tipus de la taula de particions\n"
 
-#: sys-utils/rtcwake.c:448
+#: sys-utils/rtcwake.c:446
 #, fuzzy
 msgid "invalid seconds argument"
 msgstr "identificador invàlid"
 
-#: sys-utils/rtcwake.c:455
+#: sys-utils/rtcwake.c:453
 #, fuzzy
 msgid "invalid time argument"
 msgstr "identificador invàlid"
 
-#: sys-utils/rtcwake.c:479
+#: sys-utils/rtcwake.c:477
 #, c-format
 msgid "%s: assuming RTC uses UTC ...\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:485
+#: sys-utils/rtcwake.c:483
 #, fuzzy, c-format
 msgid "Using UTC time.\n"
 msgstr "Usant %s.\n"
 
-#: sys-utils/rtcwake.c:486
+#: sys-utils/rtcwake.c:484
 #, fuzzy, c-format
 msgid "Using local time.\n"
 msgstr "Usant %s.\n"
 
-#: sys-utils/rtcwake.c:491
+#: sys-utils/rtcwake.c:489
 msgid "must provide wake time (see -t and -s options)"
 msgstr ""
 
-#: sys-utils/rtcwake.c:508
+#: sys-utils/rtcwake.c:506
 #, fuzzy, c-format
 msgid "%s not enabled for wakeup events"
 msgstr "%s: %s no és un dispositiu lp.\n"
 
-#: sys-utils/rtcwake.c:523
+#: sys-utils/rtcwake.c:521
 #, c-format
 msgid "alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:529
+#: sys-utils/rtcwake.c:527
 #, c-format
 msgid "suspend to \"%s\" unavailable"
 msgstr ""
 
-#: sys-utils/rtcwake.c:537
+#: sys-utils/rtcwake.c:535
 #, c-format
 msgid "time doesn't go backward to %s"
 msgstr ""
 
-#: sys-utils/rtcwake.c:547
+#: sys-utils/rtcwake.c:545
 #, fuzzy, c-format
 msgid "%s: wakeup using %s at %s"
 msgstr "Missatge de %s@%s el %s a les %s ..."
 
-#: sys-utils/rtcwake.c:551
+#: sys-utils/rtcwake.c:549
 #, fuzzy, c-format
 msgid "%s: wakeup from \"%s\" using %s at %s"
 msgstr "Missatge de %s@%s el %s a les %s ..."
 
-#: sys-utils/rtcwake.c:560
+#: sys-utils/rtcwake.c:558
 #, c-format
 msgid "suspend mode: no; leaving\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:568
+#: sys-utils/rtcwake.c:566
 #, c-format
 msgid "suspend mode: off; executing %s\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:578
+#: sys-utils/rtcwake.c:576
 #, fuzzy, c-format
 msgid "unable to execute %s"
 msgstr "no ha estat possible executar ioctl() per llegir l'hora de %s"
 
-#: sys-utils/rtcwake.c:586
+#: sys-utils/rtcwake.c:584
 #, c-format
 msgid "suspend mode: on; reading rtc\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:592
+#: sys-utils/rtcwake.c:590
 #, fuzzy
 msgid "rtc read failed"
 msgstr "(Fitxer següent: %s)"
 
-#: sys-utils/rtcwake.c:603
+#: sys-utils/rtcwake.c:601
 #, c-format
 msgid "suspend mode: disable; disabling alarm\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:607
+#: sys-utils/rtcwake.c:605
 #, c-format
 msgid "suspend mode: show; printing alarm info\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:614
+#: sys-utils/rtcwake.c:612
 #, c-format
 msgid "suspend mode: %s; suspending system\n"
 msgstr ""
 
-#: sys-utils/rtcwake.c:620
+#: sys-utils/rtcwake.c:625 sys-utils/rtcwake.c:631
 msgid "disable rtc alarm interrupt failed"
 msgstr ""
 
@@ -14180,27 +14205,27 @@ msgstr "S'està intentant desmuntar %s\n"
 msgid "failed to change directory to %s"
 msgstr "namei: no s'ha pogut obtenir el directori actual - %s\n"
 
-#: sys-utils/switch_root.c:160
+#: sys-utils/switch_root.c:164
 #, fuzzy, c-format
 msgid "failed to mount moving %s to /"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: sys-utils/switch_root.c:166
+#: sys-utils/switch_root.c:170
 #, fuzzy
 msgid "failed to change root"
 msgstr "No s'ha pogut escriure la partició a %s\n"
 
-#: sys-utils/switch_root.c:185
+#: sys-utils/switch_root.c:189
 #, fuzzy, c-format
 msgid " %s [options] <newrootdir> <init> <args to init>\n"
 msgstr "Forma d'ús: %s [opcions] dispositiu ...\n"
 
-#: sys-utils/switch_root.c:217
+#: sys-utils/switch_root.c:221
 #, fuzzy
 msgid "failed. Sorry."
 msgstr "la cerca ha fallat"
 
-#: sys-utils/switch_root.c:220
+#: sys-utils/switch_root.c:224
 #, fuzzy, c-format
 msgid "cannot access %s"
 msgstr "No s'ha pogut obrir el fitxer '%s'"
@@ -14260,61 +14285,61 @@ msgstr ""
 msgid "bad value"
 msgstr "valor d'expiració erroni: %s"
 
-#: sys-utils/tunelp.c:271
+#: sys-utils/tunelp.c:272
 #, fuzzy, c-format
 msgid "%s not an lp device"
 msgstr "%s: %s no és un dispositiu lp.\n"
 
-#: sys-utils/tunelp.c:291
+#: sys-utils/tunelp.c:292
 #, fuzzy
 msgid "LPGETSTATUS error"
 msgstr "error de LPGETIRQ"
 
-#: sys-utils/tunelp.c:296
+#: sys-utils/tunelp.c:297
 #, c-format
 msgid "%s status is %d"
 msgstr "l'estat de %s és %d"
 
-#: sys-utils/tunelp.c:298
+#: sys-utils/tunelp.c:299
 #, c-format
 msgid ", busy"
 msgstr ", ocupat"
 
-#: sys-utils/tunelp.c:300
+#: sys-utils/tunelp.c:301
 #, c-format
 msgid ", ready"
 msgstr ", a punt"
 
-#: sys-utils/tunelp.c:302
+#: sys-utils/tunelp.c:303
 #, c-format
 msgid ", out of paper"
 msgstr ", falta paper"
 
-#: sys-utils/tunelp.c:304
+#: sys-utils/tunelp.c:305
 #, c-format
 msgid ", on-line"
 msgstr ", en línia"
 
-#: sys-utils/tunelp.c:306
+#: sys-utils/tunelp.c:307
 #, c-format
 msgid ", error"
 msgstr ", error"
 
-#: sys-utils/tunelp.c:312
+#: sys-utils/tunelp.c:313
 #, fuzzy
 msgid "ioctl failed"
 msgstr "no s'ha pogut fer fsync"
 
-#: sys-utils/tunelp.c:322
+#: sys-utils/tunelp.c:323
 msgid "LPGETIRQ error"
 msgstr "error de LPGETIRQ"
 
-#: sys-utils/tunelp.c:327
+#: sys-utils/tunelp.c:328
 #, c-format
 msgid "%s using IRQ %d\n"
 msgstr "%s està usant la IRQ %d\n"
 
-#: sys-utils/tunelp.c:329
+#: sys-utils/tunelp.c:330
 #, c-format
 msgid "%s using polling\n"
 msgstr "%s està usant escrutini\n"
@@ -14355,27 +14380,37 @@ msgid ""
 " -v, --verbose           say what is being done\n"
 msgstr ""
 
-#: sys-utils/umount.c:179
+#: sys-utils/umount.c:137
+#, fuzzy, c-format
+msgid "%s (%s) unmounted"
+msgstr "%s està muntat.\t "
+
+#: sys-utils/umount.c:139
+#, fuzzy, c-format
+msgid "%s unmounted"
+msgstr "umount: %s: no s'ha trobat"
+
+#: sys-utils/umount.c:198
 #, fuzzy, c-format
 msgid "%s: umount failed"
 msgstr "no s'ha estat possible muntar"
 
-#: sys-utils/umount.c:188
+#: sys-utils/umount.c:207
 #, fuzzy, c-format
 msgid "%s: filesystem umounted, but mount(8) failed"
 msgstr "mount: no ha estat possible muntar"
 
-#: sys-utils/umount.c:202
+#: sys-utils/umount.c:221
 #, fuzzy, c-format
 msgid "%s: invalid block device"
 msgstr "umount: %s: dispositiu de blocs no vàlid"
 
-#: sys-utils/umount.c:208
+#: sys-utils/umount.c:227
 #, fuzzy, c-format
 msgid "%s: can't write superblock"
 msgstr "mount: %s: no s'ha pogut llegir el superbloc"
 
-#: sys-utils/umount.c:211
+#: sys-utils/umount.c:230
 #, c-format
 msgid ""
 "%s: target is busy.\n"
@@ -14383,17 +14418,17 @@ msgid ""
 "         the device is found by lsof(8) or fuser(1))"
 msgstr ""
 
-#: sys-utils/umount.c:220
+#: sys-utils/umount.c:239
 #, fuzzy, c-format
 msgid "%s: must be superuser to umount"
 msgstr "umount: %s: haureu de ser superusuari per poder usar umount"
 
-#: sys-utils/umount.c:223
+#: sys-utils/umount.c:242
 #, fuzzy, c-format
 msgid "%s: block devices not permitted on fs"
 msgstr "umount: %s: dispositius de blocs no permesos en el sistema de fitxers"
 
-#: sys-utils/umount.c:272
+#: sys-utils/umount.c:291
 #, fuzzy
 msgid "failed to set umount target"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
@@ -14416,88 +14451,92 @@ msgstr ""
 msgid "unshare failed"
 msgstr "la cerca ha fallat"
 
-#: sys-utils/wdctl.c:44
+#: sys-utils/wdctl.c:66
 msgid "Card previously reset the CPU"
 msgstr ""
 
-#: sys-utils/wdctl.c:45
+#: sys-utils/wdctl.c:67
 msgid "External relay 1"
 msgstr ""
 
-#: sys-utils/wdctl.c:46
+#: sys-utils/wdctl.c:68
 msgid "External relay 2"
 msgstr ""
 
-#: sys-utils/wdctl.c:47
+#: sys-utils/wdctl.c:69
 #, fuzzy
 msgid "Fan failed"
 msgstr "la cerca ha fallat"
 
-#: sys-utils/wdctl.c:48
+#: sys-utils/wdctl.c:70
 msgid "Keep alive ping reply"
 msgstr ""
 
-#: sys-utils/wdctl.c:49
+#: sys-utils/wdctl.c:71
 msgid "Supports magic close char"
 msgstr ""
 
-#: sys-utils/wdctl.c:50
+#: sys-utils/wdctl.c:72
 msgid "Reset due to CPU overheat"
 msgstr ""
 
-#: sys-utils/wdctl.c:51
+#: sys-utils/wdctl.c:73
 msgid "Power over voltage"
 msgstr ""
 
-#: sys-utils/wdctl.c:52
+#: sys-utils/wdctl.c:74
 msgid "Power bad/power fault"
 msgstr ""
 
-#: sys-utils/wdctl.c:53
+#: sys-utils/wdctl.c:75
 #, fuzzy
 msgid "Pretimeout (in seconds)"
 msgstr "S'ha excedit el temps d'espera per a l'entrada al cap de %d segons.\n"
 
-#: sys-utils/wdctl.c:54
+#: sys-utils/wdctl.c:76
 #, fuzzy
 msgid "Set timeout (in seconds)"
 msgstr "S'ha excedit el temps d'espera per a l'entrada al cap de %d segons.\n"
 
-#: sys-utils/wdctl.c:70
+#: sys-utils/wdctl.c:77
+msgid "Not trigger reboot"
+msgstr ""
+
+#: sys-utils/wdctl.c:93
 msgid "flag name"
 msgstr ""
 
-#: sys-utils/wdctl.c:71
+#: sys-utils/wdctl.c:94
 #, fuzzy
 msgid "flag description"
 msgstr "dispositiu de blocs "
 
-#: sys-utils/wdctl.c:72
+#: sys-utils/wdctl.c:95
 #, fuzzy
 msgid "flag status"
 msgstr "estat"
 
-#: sys-utils/wdctl.c:73
+#: sys-utils/wdctl.c:96
 #, fuzzy
 msgid "flag boot status"
 msgstr "no es pot fer stat per a %s"
 
-#: sys-utils/wdctl.c:74
+#: sys-utils/wdctl.c:97
 #, fuzzy
 msgid "watchdog device name"
 msgstr "umount: %s: dispositiu desconegut"
 
-#: sys-utils/wdctl.c:108
+#: sys-utils/wdctl.c:131
 #, fuzzy, c-format
 msgid "unknown flag: %s"
 msgstr "%s: argument desconegut: %s\n"
 
-#: sys-utils/wdctl.c:145
+#: sys-utils/wdctl.c:168
 #, fuzzy, c-format
 msgid " %s [options] [<device> ...]\n"
 msgstr "Forma d'ús: %s [opcions] dispositiu ...\n"
 
-#: sys-utils/wdctl.c:149
+#: sys-utils/wdctl.c:172
 msgid ""
 " -f, --flags <list>     print selected flags only\n"
 " -F, --noflags          don't print information about flags\n"
@@ -14511,65 +14550,65 @@ msgid ""
 " -x, --flags-only       print only flags table (same as -I -T)\n"
 msgstr ""
 
-#: sys-utils/wdctl.c:165
+#: sys-utils/wdctl.c:188
 #, fuzzy, c-format
 msgid "The default device is %s.\n"
 msgstr "loop: no s'ha pogut obrir el dispositiu %s: %s\n"
 
-#: sys-utils/wdctl.c:168
+#: sys-utils/wdctl.c:191
 #, fuzzy
 msgid "Available columns:\n"
 msgstr "Ordres disponibles:\n"
 
-#: sys-utils/wdctl.c:254
+#: sys-utils/wdctl.c:277
 #, fuzzy, c-format
 msgid "%s: unknown flags 0x%x\n"
 msgstr "%s: senyal desconegut %s\n"
 
-#: sys-utils/wdctl.c:284 sys-utils/wdctl.c:338
+#: sys-utils/wdctl.c:307 sys-utils/wdctl.c:361
 #, c-format
 msgid "%s: watchdog already in use, terminating."
 msgstr ""
 
-#: sys-utils/wdctl.c:298 sys-utils/wdctl.c:366
+#: sys-utils/wdctl.c:321 sys-utils/wdctl.c:389
 #, fuzzy, c-format
 msgid "%s: failed to disarm watchdog"
 msgstr "no s'ha pogut rebobinar el dispositiu d'intercanvi"
 
-#: sys-utils/wdctl.c:307
+#: sys-utils/wdctl.c:330
 #, fuzzy, c-format
 msgid "cannot set timeout for %s"
 msgstr "No s'ha pogut obtenir el temps d'espera per a %s: %s\n"
 
-#: sys-utils/wdctl.c:345
+#: sys-utils/wdctl.c:368
 #, fuzzy, c-format
 msgid "%s: failed to get information about watchdog"
 msgstr "s'ha produït un error en cercar a write_tables"
 
-#: sys-utils/wdctl.c:426 sys-utils/wdctl.c:428 sys-utils/wdctl.c:430
+#: sys-utils/wdctl.c:449 sys-utils/wdctl.c:451 sys-utils/wdctl.c:453
 #, fuzzy, c-format
 msgid "%-15s%2i seconds\n"
 msgstr "%s  %.6f segons\n"
 
-#: sys-utils/wdctl.c:426
+#: sys-utils/wdctl.c:449
 msgid "Timeout:"
 msgstr ""
 
-#: sys-utils/wdctl.c:428
+#: sys-utils/wdctl.c:451
 #, fuzzy
 msgid "Pre-timeout:"
 msgstr "s'ha exhaurit el temps d'espera"
 
-#: sys-utils/wdctl.c:430
+#: sys-utils/wdctl.c:453
 msgid "Timeleft:"
 msgstr ""
 
-#: sys-utils/wdctl.c:564
+#: sys-utils/wdctl.c:587
 #, fuzzy
 msgid "Device:"
 msgstr "Dispositiu"
 
-#: sys-utils/wdctl.c:565
+#: sys-utils/wdctl.c:588
 #, fuzzy, c-format
 msgid "%-15s%s [version %x]\n"
 msgstr "%s versió %s\n"
@@ -14973,26 +15012,31 @@ msgstr "s'ha produït un error a klogctl: %s\n"
 msgid "Error writing screendump"
 msgstr "S'ha produït un error en escriure un bolcat de pantalla\n"
 
-#: term-utils/setterm.c:1212
+#: term-utils/setterm.c:1213
 #, fuzzy, c-format
 msgid "Couldn't read %s"
 msgstr "No s'ha pogut obrir %s\n"
 
-#: term-utils/setterm.c:1266
+#: term-utils/setterm.c:1215
+#, fuzzy
+msgid "Couldn't read neither /dev/vcsa0 nor /dev/vcsa"
+msgstr "No s'ha pogut obrir /dev/tty1 o /dev/vc/1"
+
+#: term-utils/setterm.c:1270
 #, fuzzy
 msgid "$TERM is not defined."
 msgstr "%s: $TERM no està definit.\n"
 
-#: term-utils/setterm.c:1274
+#: term-utils/setterm.c:1278
 msgid "terminfo database cannot be found"
 msgstr ""
 
-#: term-utils/setterm.c:1276
+#: term-utils/setterm.c:1280
 #, fuzzy, c-format
 msgid "%s: unknown terminal type"
 msgstr "%s: senyal desconegut %s\n"
 
-#: term-utils/setterm.c:1278
+#: term-utils/setterm.c:1282
 msgid "terminal is hardcopy"
 msgstr ""
 
@@ -15181,7 +15225,7 @@ msgstr "més enllà de la primera línia"
 msgid "-- line already flushed"
 msgstr "-- línia ja està buida"
 
-#: text-utils/colcrt.c:314
+#: text-utils/colcrt.c:315
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -15189,7 +15233,7 @@ msgid ""
 " %s [options] [file ...]\n"
 msgstr "Forma d'ús: %s [opcions] dispositiu ...\n"
 
-#: text-utils/colcrt.c:318
+#: text-utils/colcrt.c:319
 #, c-format
 msgid ""
 " -,  --no-underlining  suppress all underlining\n"
@@ -15833,6 +15877,10 @@ msgstr "Seqüència d'escapament desconeguda en l'entrada: %o, %o\n"
 #, fuzzy
 msgid "Input line too long."
 msgstr "Línia d'entrada massa llarga.\n"
+
+#, fuzzy
+#~ msgid "        on whole disk. "
+#~ msgstr "   s   mostra totes les etiquetes del disc"
 
 #, fuzzy
 #~ msgid "%s: open failed"
