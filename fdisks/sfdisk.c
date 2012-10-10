@@ -1553,12 +1553,14 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
 	return 0;
     }
 
-    unsigned int sig = *(unsigned short *)(s->data + 2);
-    if (sig <= 0x1ae
-	&& *(unsigned short *)(s->data + sig) == 0x55aa
-	&& (1 & *(unsigned char *)(s->data + sig + 2))) {
+    unsigned short sig, magic;
+    memcpy(&sig, s->data + 2, sizeof(sig));
+    if (sig <= 0x1ae) {
+	memcpy(&magic, s->data + sig, sizeof(magic));
+	if (magic == 0x55aa && (1 & *(unsigned char *)(s->data + sig + 2))) {
 	    warnx(_("DM6 signature found - giving up\n"));
 	    return 0;
+	}
     }
 
     for (pno = 0; pno < 4; pno++, cp += sizeof(struct partition)) {
