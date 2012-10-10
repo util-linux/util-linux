@@ -14,6 +14,5 @@
 
 find -name "*.c" -or -name "*.h" | \
   sort | \
-  sed ':/samples/:d' | \
-  gawk '! /^\.\/tests\// { print gensub(/^\.\//, "", 1) }' \
+  sed '/samples/d; /config\.h/d; /util-linux-.*/d; /\.\/tests/d; s/^\.\///' \
   > po/POTFILES.in
