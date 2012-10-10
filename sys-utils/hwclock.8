@@ -111,6 +111,11 @@ option based on the adjtime file. This is useful for example if you
 need to set an RTC wakeup time to distant future and want to account
 for the RTC drift.
 .TP
+.BR \-c , \ \-\-compare
+Periodically compare the Hardware Clock to the System Time and output
+the difference every 10 seconds.  This will also print the frequency
+offset and tick.
+.TP
 .BR \-h , \ \-\-help
 Display a help text and exit.
 .TP
