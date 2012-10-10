@@ -1,0 +1,98 @@
+
+util-linux 2.22.1 Release Notes
+===============================
+
+Changes since v2.22
+-------------------
+
+ For more details see ChangeLog files at:
+ ftp://ftp.infradead.org/pub/util-linux/v2.22/
+
+
+blkid:
+   - document LIBBLKID_DEBUG users  [Davidlohr Bueso]
+build-sys:
+   - add --disable-wdctl  [Karel Zak]
+   - clean update-potfiles script  [Karel Zak]
+   - fix --localstatedir heuristics  [Karel Zak]
+   - install su.1 if building su  [Dave Reisner]
+   - remove --enable-gtk-doc from make check  [Karel Zak]
+   - simplify usrlib_execdir initialization  [Karel Zak]
+dmesg:
+   - fix console-level off-by-one  [Bjørn Mork]
+docs:
+   - AUTHORS, NEWS  UTF-8 fixes.  [Ville Skyttä]
+   - umount.8 syntax fix.  [Ville Skyttä]
+   - update AUTHORS file  [Karel Zak]
+eject:
+   - robust strings usage [coverity scan]  [Karel Zak]
+fdisk:
+   - add AArch64 support  [Marcin Juszkiewicz]
+hwclock:
+   - don't warp the systemtime if the RTC is in UTC  [Tom Gundersen]
+   - wait time in hwclock is not long enough for some ARM devices  [Karel Zak]
+ipcrm:
+   - avoid 'uninitialized' warning  [Bernhard Voelker]
+lib/pager:
+   - robust work with file descriptors [coverity scan]  [Karel Zak]
+lib/sysfs:
+   - fix sysfs_devname_to_devno for dm partitions  [Peter Rajnoha]
+   - more robust sysfs_opendir() [coverity scan]  [Karel Zak]
+libblkid:
+   - check fchmod() return value [coverity scan]  [Karel Zak]
+   - fix copyright noticed to be consistent (so all are LGPL)  [Karel Zak]
+   - improve DBG() macro  [Karel Zak]
+libmount:
+   - append loop option when automatically create loopdev  [Karel Zak]
+   - detach loopdev on umount if loop option in mtab  [Karel Zak]
+   - document LIBMOUNT_DEBUG users  [Davidlohr Bueso]
+   - don't remove user= when executed by root  [Karel Zak]
+   - don't setup new loopdev on remount with regular mtab  [Karel Zak]
+   - fix umount file.img  [Karel Zak]
+   - improve mnt_table_get_root_fs() docs  [Karel Zak]
+   - optimize mtab and utab parsing in umount  [Karel Zak]
+   - segfaults if neither /etc/filesystems nor/proc/filesystems exists  [Karel Zak]
+   - user-mounted loopback fs cannot be unmounted by user  [Karel Zak]
+login:
+   - reuse DEAD_PROCESS utmp entries  [Karel Zak]
+lsblk:
+   - fix processing of dm partition mappings  [Peter Rajnoha]
+   - fix reporting of 'part' type  [Peter Rajnoha]
+md5:
+   - fix strict aliasing warnings  [Mike Frysinger]
+mkswap:
+   - wipe old signature if there is no part table by default  [Milan Broz]
+mount:
+   - add verbose messages  [Karel Zak]
+   - fix a few typos  [Mike Frysinger]
+   - fix man pahe typo in quota mount option names  [Björn Jacke]
+namei:
+   - remove dead code [coverity scan]  [Karel Zak]
+po:
+   - add hr.po (from translationproject.org)  [Tomislav Krznar]
+   - merge changes  [Karel Zak]
+   - update vi.po (from translationproject.org)  [Trần Ngọc Quân]
+rtcwake:
+   - doesn't reset wakealarm  [Giacomo]
+setterm:
+   - make error message more informative  [Petr Uzel]
+sfdisk:
+   - Fix format specifiers for size_t  [Thierry Reding]
+   - fix aliasing warnings  [Mike Frysinger]
+su:
+   - don't modify PATH if -l not specified  [Karel Zak]
+switch_root:
+   - check open() return value [coverity scan]  [Karel Zak]
+tests:
+   - fix mount move test to work with shared mount  [Milan Broz]
+   - fix timezone for cramfs  [Milan Broz]
+   - ignore test if kernel doesn't support minix fs  [Milan Broz]
+   - remove libgcc from config test results  [Karel Zak]
+textual:
+   - typo fixes  [Gilles Espinasse]
+tunelp:
+   - add missing break [coverity scan]  [Karel Zak]
+wdctl:
+   - add fallbacks for old kernel headers  [Karel Zak]
+whereis:
+   - improve readability for analysers  [Karel Zak]
