@@ -1331,18 +1331,30 @@ static void do_prompt(struct options *op, struct termios *tp)
 		char *hn = xgethostname();
 
 		if (hn) {
-			struct hostent *ht;
 			char *dot = strchr(hn, '.');
+			char *cn = hn;
+			struct addrinfo *res = NULL;
 
 			if ((op->flags & F_LONGHNAME) == 0) {
 				if (dot)
 					*dot = '\0';
-				write_all(STDOUT_FILENO, hn, strlen(hn));
-			} else if (dot == NULL && (ht = gethostbyname(hn)))
-				write_all(STDOUT_FILENO, ht->h_name, strlen(ht->h_name));
-			else
-				write_all(STDOUT_FILENO, hn, strlen(hn));
+
+			} else if (dot == NULL) {
+				struct addrinfo hints;
+
+				memset(&hints, 0, sizeof(hints));
+				hints.ai_flags = AI_CANONNAME;
+
+				if (!getaddrinfo(hn, NULL, &hints, &res)
+				    && res && res->ai_canonname)
+					cn = res->ai_canonname;
+			}
+
+			write_all(STDOUT_FILENO, cn, strlen(cn));
 			write_all(STDOUT_FILENO, " ", 1);
+
+			if (res)
+				freeaddrinfo(res);
 			free(hn);
 		}
 	}
