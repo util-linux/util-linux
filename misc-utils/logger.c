@@ -59,7 +59,6 @@
 #include <syslog.h>
 
 static int optd = 0;
-static uint16_t udpport = 514;
 
 static int decode(char *name, CODE *codetab)
 {
@@ -119,24 +118,25 @@ myopenlog(const char *sock) {
 }
 
 static int
-udpopenlog(const char *servername, uint16_t port) {
-	int fd;
-	struct sockaddr_in s_addr;
-	struct hostent *serverhost;
+udpopenlog(const char *servername, const char *port) {
+	int fd, errcode;
+	struct addrinfo hints, *res;
 
-	if ((serverhost = gethostbyname(servername)) == NULL )
-		errx(EXIT_FAILURE, _("unable to resolve '%s'"), servername);
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_socktype = SOCK_DGRAM;
+	hints.ai_family = AF_UNSPEC;
 
-	if ((fd = socket(AF_INET, SOCK_DGRAM , 0)) == -1)
+	errcode = getaddrinfo(servername, port, &hints, &res);
+	if (errcode != 0)
+		errx(EXIT_FAILURE, _("getaddrinfo %s:%s: %s"), servername, port,
+		     gai_strerror(errcode));
+	if ((fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1)
 		err(EXIT_FAILURE, _("socket"));
 
-	memcpy(&s_addr.sin_addr, serverhost->h_addr, serverhost->h_length);
-        s_addr.sin_family=AF_INET;
-        s_addr.sin_port=htons(port);
-
-        if (connect(fd, (struct sockaddr *) &s_addr, sizeof(s_addr)) == -1)
+	if (connect(fd, res->ai_addr, res->ai_addrlen) == -1)
 		err(EXIT_FAILURE, _("connect"));
 
+	freeaddrinfo(res);
 	return fd;
 }
 static void
@@ -201,6 +201,7 @@ main(int argc, char **argv) {
 	char *tag, buf[1024];
 	char *usock = NULL;
 	char *udpserver = NULL;
+	char *udpport = NULL;
 	int LogSock = -1;
 
 	static const struct option longopts[] = {
@@ -257,8 +258,7 @@ main(int argc, char **argv) {
 			udpserver = optarg;
 			break;
 		case 'P':		/* change udp port */
-			udpport = strtou16_or_err(optarg,
-						_("invalid port number argument"));
+			udpport = optarg;
 			break;
 		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,
