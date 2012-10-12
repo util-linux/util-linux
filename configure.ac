@@ -341,10 +341,6 @@ AC_CHECK_MEMBER(struct sockaddr.sa_len,
 	 #include <sys/socket.h>])
 
 SOCKET_LIBS=
-AC_SEARCH_LIBS([gethostbyname], [nsl],
-	[if test x"$ac_cv_search_gethostbyname" != x"none required"; then
-		SOCKET_LIBS="$SOCKET_LIBS -lnsl";
-	 fi])
 AC_SEARCH_LIBS([socket], [socket],
 	[if test x"$ac_cv_search_socket" != x"none required"; then
 		SOCKET_LIBS="$SOCKET_LIBS -lsocket";
