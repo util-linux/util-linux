@@ -362,14 +362,14 @@ next_line:
 		if (fgets(buf, sizeof(buf), f) == NULL)
 			return -EINVAL;
 		++*nlines;
-		s = index (buf, '\n');
+		s = strchr (buf, '\n');
 		if (!s) {
 			/* Missing final newline?  Otherwise extremely */
 			/* long line - assume file was corrupted */
 			if (feof(f)) {
 				DBG(TAB, mnt_debug_h(tb,
 					"%s: no final newline",	filename));
-				s = index (buf, '\0');
+				s = strchr (buf, '\0');
 			} else {
 				DBG(TAB, mnt_debug_h(tb,
 					"%s:%d: missing newline at line",

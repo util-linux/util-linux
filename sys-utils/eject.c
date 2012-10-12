@@ -499,7 +499,7 @@ static int read_speed(const char *devname)
 	if (!f)
 		err(EXIT_FAILURE, _("cannot open %s"), _PATH_PROC_CDROMINFO);
 
-	name = rindex(devname, '/') + 1;
+	name = strrchr(devname, '/') + 1;
 
 	while (name && !feof(f)) {
 		char line[512];
