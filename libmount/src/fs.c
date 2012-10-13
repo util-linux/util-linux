@@ -303,7 +303,7 @@ const char *mnt_fs_get_source(struct libmnt_fs *fs)
 }
 
 /*
- * Used by parser ONLY (@source has to be allocated on error)
+ * Used by parser ONLY (@source has to be freed on error)
  */
 int __mnt_fs_set_source_ptr(struct libmnt_fs *fs, char *source)
 {
