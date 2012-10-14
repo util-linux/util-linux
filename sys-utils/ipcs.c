@@ -25,14 +25,14 @@
 
 #include "ipcutils.h"
 
-
 #define LIMITS 1
 #define STATUS 2
 #define CREATOR 3
 #define TIME 4
 #define PID 5
 
-void do_shm (char format);
+static void do_shm (char format);
+
 void do_sem (char format);
 void do_msg (char format);
 void print_shm (int id);
@@ -190,14 +190,13 @@ static void print_perms (int id, struct ipc_perm *ipcp)
 		printf(" %-10u\n", ipcp->gid);
 }
 
-void do_shm (char format)
+static void do_shm (char format)
 {
-	int maxid, shmid, id;
-	struct shmid_ds shmseg;
+	int maxid;
 	struct shm_info shm_info;
-	struct ipc_perm *ipcp = &shmseg.shm_perm;
 	struct passwd *pw;
 	struct ipc_limits lim;
+	struct shm_data *shmds, *shmdsp;
 
 	maxid = shmctl (0, SHM_INFO, (struct shmid_ds *) (void *) &shm_info);
 	if (maxid < 0) {
@@ -269,60 +268,56 @@ void do_shm (char format)
 		break;
 	}
 
-	for (id = 0; id <= maxid; id++) {
-		shmid = shmctl (id, SHM_STAT, &shmseg);
-		if (shmid < 0)
-			continue;
+	if (ipc_shm_get_info(maxid, -1, &shmds) < 1)
+		return;
+	shmdsp = shmds;
+
+	for (shmdsp = shmds; shmdsp->next != NULL; shmdsp = shmdsp->next) {
 		if (format == CREATOR)  {
-			print_perms (shmid, ipcp);
+			ipc_print_perms(stdout, &shmdsp->shm_perm);
 			continue;
 		}
-		pw = getpwuid(ipcp->uid);
+		pw = getpwuid(shmdsp->shm_perm.uid);
 		switch (format) {
 		case TIME:
 			if (pw)
-				printf ("%-10d %-10.10s", shmid, pw->pw_name);
+				printf ("%-10d %-10.10s", shmdsp->shm_perm.id, pw->pw_name);
 			else
-				printf ("%-10d %-10u", shmid, ipcp->uid);
+				printf ("%-10d %-10u", shmdsp->shm_perm.id, shmdsp->shm_perm.uid);
 			/* ctime uses static buffer: use separate calls */
-			printf(" %-20.16s", shmseg.shm_atime
-			       ? ctime(&shmseg.shm_atime) + 4 : _("Not set"));
-			printf(" %-20.16s", shmseg.shm_dtime
-			       ? ctime(&shmseg.shm_dtime) + 4 : _("Not set"));
-			printf(" %-20.16s\n", shmseg.shm_ctime
-			       ? ctime(&shmseg.shm_ctime) + 4 : _("Not set"));
+			printf(" %-20.16s", shmdsp->shm_atim
+			       ? ctime(&shmdsp->shm_atim) + 4 : _("Not set"));
+			printf(" %-20.16s", shmdsp->shm_dtim
+			       ? ctime(&shmdsp->shm_dtim) + 4 : _("Not set"));
+			printf(" %-20.16s\n", shmdsp->shm_ctim
+			       ? ctime(&shmdsp->shm_ctim) + 4 : _("Not set"));
 			break;
 		case PID:
 			if (pw)
-				printf ("%-10d %-10.10s", shmid, pw->pw_name);
+				printf ("%-10d %-10.10s", shmdsp->shm_perm.id, pw->pw_name);
 			else
-				printf ("%-10d %-10u", shmid, ipcp->uid);
-			printf (" %-10d %-10d\n",
-				shmseg.shm_cpid, shmseg.shm_lpid);
+				printf ("%-10d %-10u", shmdsp->shm_perm.id, shmdsp->shm_perm.uid);
+			printf (" %-10u %-10u\n",
+				shmdsp->shm_cprid, shmdsp->shm_lprid);
 			break;
 
 		default:
-			printf("0x%08x ",ipcp->KEY );
+			printf("0x%08x ", shmdsp->shm_perm.key);
 			if (pw)
-				printf ("%-10d %-10.10s", shmid, pw->pw_name);
+				printf ("%-10d %-10.10s", shmdsp->shm_perm.id, pw->pw_name);
 			else
-				printf ("%-10d %-10u", shmid, ipcp->uid);
+				printf ("%-10d %-10u", shmdsp->shm_perm.id, shmdsp->shm_perm.uid);
 			printf (" %-10o %-10lu %-10ld %-6s %-6s\n",
-				ipcp->mode & 0777,
-				/*
-				 * earlier: int, Austin has size_t
-				 */
-				(unsigned long) shmseg.shm_segsz,
-				/*
-				 * glibc-2.1.3 and earlier has unsigned short;
-				 * Austin has shmatt_t
-				 */
-				(long) shmseg.shm_nattch,
-				ipcp->mode & SHM_DEST ? _("dest") : " ",
-				ipcp->mode & SHM_LOCKED ? _("locked") : " ");
+				shmdsp->shm_perm.mode & 0777,
+				shmdsp->shm_segsz,
+				shmdsp->shm_nattch,
+				shmdsp->shm_perm.mode & SHM_DEST ? _("dest") : " ",
+				shmdsp->shm_perm.mode & SHM_LOCKED ? _("locked") : " ");
 			break;
 		}
 	}
+
+	ipc_shm_free_info(shmds);
 	return;
 }
 

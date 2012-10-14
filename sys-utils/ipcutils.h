@@ -99,4 +99,37 @@ extern int ipc_msg_get_limits(struct ipc_limits *lim);
 extern int ipc_sem_get_limits(struct ipc_limits *lim);
 extern int ipc_shm_get_limits(struct ipc_limits *lim);
 
+struct ipc_stat {
+	int		id;
+	key_t		key;
+	uid_t		uid;    /* current uid */
+	gid_t		gid;    /* current gid */
+	uid_t		cuid;    /* creator uid */
+	gid_t		cgid;    /* creator gid */
+	unsigned int	mode;
+};
+
+extern void ipc_print_perms(FILE *f, struct ipc_stat *is);
+
+/* See 'struct shmid_kernel' in kernel sources
+ */
+struct shm_data {
+	struct ipc_stat	shm_perm;
+
+	uint64_t	shm_nattch;
+	uint64_t	shm_segsz;
+	time_t		shm_atim;
+	time_t		shm_dtim;
+	time_t		shm_ctim;
+	pid_t		shm_cprid;
+	pid_t		shm_lprid;
+	uint64_t	shm_rss;
+	uint64_t	shm_swp;
+
+	struct shm_data  *next;
+};
+
+extern int ipc_shm_get_info(int maxid, int id, struct shm_data **shmds);
+extern void ipc_shm_free_info(struct shm_data *shmds);
+
 #endif /* UTIL_LINUX_IPCUTILS_H */

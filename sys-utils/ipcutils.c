@@ -1,5 +1,8 @@
 
+#include <inttypes.h>
+
 #include "c.h"
+#include "xalloc.h"
 #include "path.h"
 #include "pathnames.h"
 #include "ipcutils.h"
@@ -86,4 +89,139 @@ int ipc_shm_get_limits(struct ipc_limits *lim)
 	}
 
 	return 0;
+}
+
+int ipc_shm_get_info(int maxid, int id, struct shm_data **shmds)
+{
+	FILE *f;
+	int i;
+	struct shm_data *p;
+
+	p = *shmds = xmalloc(sizeof(struct shm_data));
+	p->next = NULL;
+
+	f = path_fopen("r", 0, _PATH_PROC_SYSV_SHM);
+	if (!f)
+		goto fallback;
+
+	while (fgetc(f) != '\n');		/* skip header */
+
+	for (i = 0; !feof(f); i++) {
+		if (fscanf(f,
+			  "%d %d  %o %"SCNu64 " %u %u  "
+			  "%"SCNu64 " %u %u %u %u %"SCNu64 " %"SCNu64 " %"SCNu64
+			  " %"SCNu64 " %"SCNu64 "\n",
+			   &p->shm_perm.key,
+			   &p->shm_perm.id,
+			   &p->shm_perm.mode,
+			   &p->shm_segsz,
+			   &p->shm_cprid,
+			   &p->shm_lprid,
+			   &p->shm_nattch,
+			   &p->shm_perm.uid,
+			   &p->shm_perm.gid,
+			   &p->shm_perm.cuid,
+			   &p->shm_perm.cgid,
+			   &p->shm_atim,
+			   &p->shm_dtim,
+			   &p->shm_ctim,
+			   &p->shm_rss,
+			   &p->shm_swp) != 16)
+			continue;
+
+		if (id < 0) {
+			p->next = xmalloc(sizeof(struct shm_data));
+			p = p->next;
+			p->next = NULL;
+		}
+	}
+
+	if (i == 0)
+		free(*shmds);
+	fclose(f);
+	return i;
+
+	/* Fallback; /proc or /sys file(s) missing. */
+fallback:
+	i = id < 0 ? 0 : id;
+
+	while (i <= maxid) {
+		int shmid;
+		struct shmid_ds shmseg;
+		struct ipc_perm *ipcp = &shmseg.shm_perm;
+
+		shmid = shmctl(i, SHM_STAT, &shmseg);
+		if (shmid < 0) {
+			if (-1 < id) {
+				free(*shmds);
+				return 0;
+			}
+			i++;
+			continue;
+		}
+
+		p->shm_perm.key = ipcp->KEY;
+		p->shm_perm.id = shmid;
+		p->shm_perm.mode = ipcp->mode;
+		p->shm_segsz = shmseg.shm_segsz;
+		p->shm_cprid = shmseg.shm_cpid;
+		p->shm_lprid = shmseg.shm_lpid;
+		p->shm_nattch = shmseg.shm_nattch;
+		p->shm_perm.uid = ipcp->uid;
+		p->shm_perm.gid = ipcp->gid;
+		p->shm_perm.cuid = ipcp->cuid;
+		p->shm_perm.cgid = ipcp->cuid;
+		p->shm_atim = shmseg.shm_atime;
+		p->shm_dtim = shmseg.shm_dtime;
+		p->shm_ctim = shmseg.shm_ctime;
+		p->shm_rss = 0xdead;
+		p->shm_swp = 0xdead;
+
+		if (id < 0) {
+			p->next = xmalloc(sizeof(struct shm_data));
+			p = p->next;
+			p->next = NULL;
+			i++;
+		} else
+			return 1;
+	}
+
+	return i;
+}
+
+void ipc_shm_free_info(struct shm_data *shmds)
+{
+	while (shmds) {
+		struct shm_data *next = shmds->next;
+		free(shmds);
+		shmds = next;
+	}
+}
+
+void ipc_print_perms(FILE *f, struct ipc_stat *is)
+{
+	struct passwd *pw;
+	struct group *gr;
+
+	fprintf(f, "%-10d %-10o", is->id, is->mode & 0777);
+
+	if ((pw = getpwuid(is->cuid)))
+		fprintf(f, " %-10s", pw->pw_name);
+	else
+		fprintf(f, " %-10u", is->cuid);
+
+	if ((gr = getgrgid(is->cgid)))
+		fprintf(f, " %-10s", gr->gr_name);
+	else
+		fprintf(f, " %-10u", is->cgid);
+
+	if ((pw = getpwuid(is->uid)))
+		fprintf(f, " %-10s", pw->pw_name);
+	else
+		fprintf(f, " %-10u", is->uid);
+
+	if ((gr = getgrgid(is->gid)))
+		fprintf(f, " %-10s\n", gr->gr_name);
+	else
+		fprintf(f, " %-10u\n", is->gid);
 }
