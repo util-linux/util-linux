@@ -21,6 +21,7 @@ TS_DESC="basic limits"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+type bc >/dev/null 2>&1 || ts_skip "cannot find bc command"
 
 . $TS_SELF/functions.sh
 
