@@ -348,9 +348,11 @@ static int get_uuid(blkid_probe pr, const struct befs_super_block *bs,
 			&& FS16_TO_CPU(sd->name_size, fs_le) == strlen(KEY_NAME)
 			&& FS16_TO_CPU(sd->data_size, fs_le) == KEY_SIZE
 			&& strcmp(sd->name, KEY_NAME) == 0) {
-			*uuid = *(uint64_t *) ((uint8_t *) sd->name
-					+ FS16_TO_CPU(sd->name_size, fs_le)
-					+ 3);
+
+			memcpy(uuid,
+			       sd->name + FS16_TO_CPU(sd->name_size, fs_le) + 3,
+			       sizeof(uint64_t));
+
 			break;
 		} else if (FS32_TO_CPU(sd->type, fs_le) == 0
 				&& FS16_TO_CPU(sd->name_size, fs_le) == 0
