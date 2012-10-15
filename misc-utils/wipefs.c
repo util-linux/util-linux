@@ -309,7 +309,7 @@ static void do_wipe_real(blkid_probe pr, const char *devname, struct wipe_desc *
 static struct wipe_desc *
 do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet)
 {
-	blkid_probe pr = new_probe(devname, O_RDWR);
+	blkid_probe pr = new_probe(devname, O_RDWR | O_EXCL);
 	struct wipe_desc *w, *wp0 = clone_offset(wp);
 	int zap = all ? 1 : wp->zap;
 
