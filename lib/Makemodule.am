@@ -5,6 +5,7 @@ libcommon_la_SOURCES = \
 	lib/at.c \
 	lib/blkdev.c \
 	lib/canonicalize.c \
+	lib/colors.c \
 	lib/cpuset.c \
 	lib/crc32.c \
 	lib/env.c \
