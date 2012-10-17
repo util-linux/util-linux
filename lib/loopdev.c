@@ -167,6 +167,12 @@ int loopcxt_init(struct loopdev_cxt *lc, int flags)
 	if (rc)
 		return rc;
 
+	if (stat(_PATH_SYS_BLOCK, &st) || !S_ISDIR(st.st_mode)) {
+		lc->flags |= LOOPDEV_FL_NOSYSFS;
+		lc->flags &= ~LOOPDEV_FL_NOIOCTL;
+		DBG(lc, loopdev_debug("init: disable /sys usage"));
+	}
+
 	if (!(lc->flags & LOOPDEV_FL_NOSYSFS) &&
 	    get_linux_version() >= KERNEL_VERSION(2,6,37)) {
 		/*
