@@ -235,6 +235,24 @@ static inline int dirfd(DIR *d)
 #endif
 
 /*
+ * MAXHOSTNAMELEN replacement
+ */
+static inline size_t get_hostname_max(void)
+{
+	long len = sysconf(_SC_HOST_NAME_MAX);
+
+	if (0 < len)
+		return len;
+
+#ifdef MAXHOSTNAMELEN
+	return MAXHOSTNAMELEN;
+#elif HOST_NAME_MAX
+	return HOST_NAME_MAX;
+#endif
+	return 64;
+}
+
+/*
  * Constant strings for usage() functions. For more info see
  * Documentation/howto-usage-function.txt and sys-utils/arch.c
  */
