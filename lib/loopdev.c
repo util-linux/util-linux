@@ -87,8 +87,10 @@ int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 	if (!lc)
 		return -EINVAL;
 
-	if (lc->fd >= 0)
+	if (lc->fd >= 0) {
 		close(lc->fd);
+		DBG(lc, loopdev_debug("closing old open fd"));
+	}
 	lc->fd = -1;
 	lc->mode = 0;
 	lc->has_info = 0;
@@ -158,19 +160,26 @@ int loopcxt_init(struct loopdev_cxt *lc, int flags)
 	memcpy(lc, &dummy, sizeof(dummy));
 	lc->flags = flags;
 
+	if (getenv("LOOPDEV_DEBUG"))
+		loopcxt_enable_debug(lc, TRUE);
+
 	rc = loopcxt_set_device(lc, NULL);
 	if (rc)
 		return rc;
 
 	if (!(lc->flags & LOOPDEV_FL_NOSYSFS) &&
-	    get_linux_version() >= KERNEL_VERSION(2,6,37))
+	    get_linux_version() >= KERNEL_VERSION(2,6,37)) {
 		/*
 		 * Use only sysfs for basic information about loop devices
 		 */
 		lc->flags |= LOOPDEV_FL_NOIOCTL;
+		DBG(lc, loopdev_debug("init: ignore ioctls"));
+	}
 
-	if (!(lc->flags & LOOPDEV_FL_CONTROL) && !stat(_PATH_DEV_LOOPCTL, &st))
+	if (!(lc->flags & LOOPDEV_FL_CONTROL) && !stat(_PATH_DEV_LOOPCTL, &st)) {
 		lc->flags |= LOOPDEV_FL_CONTROL;
+		DBG(lc, loopdev_debug("init: loop-control detected "));
+	}
 
 	return 0;
 }
@@ -272,7 +281,9 @@ int loopcxt_get_fd(struct loopdev_cxt *lc)
 	if (lc->fd < 0) {
 		lc->mode = lc->flags & LOOPDEV_FL_RDWR ? O_RDWR : O_RDONLY;
 		lc->fd = open(lc->device, lc->mode);
-		DBG(lc, loopdev_debug("open %s", lc->fd < 0 ? "failed" : "ok"));
+		DBG(lc, loopdev_debug("open %s [%s]: %s", lc->device,
+				lc->flags & LOOPDEV_FL_RDWR ? "rw" : "ro",
+				lc->fd < 0 ? "failed" : "ok"));
 	}
 	return lc->fd;
 }
@@ -576,6 +587,7 @@ int loopcxt_next(struct loopdev_cxt *lc)
 	 *    of loop devices). This is enough for 99% of all cases.
 	 */
 	if (iter->default_check) {
+		DBG(lc, loopdev_debug("iter: next: default check"));
 		for (++iter->ncur; iter->ncur < LOOPDEV_DEFAULT_NNODES;
 							iter->ncur++) {
 			char name[16];
@@ -590,6 +602,7 @@ int loopcxt_next(struct loopdev_cxt *lc)
 	/* C) the worst possibility, scan whole /dev or /dev/loop/<N>
 	 */
 	if (!iter->minors) {
+		DBG(lc, loopdev_debug("iter: next: scan /dev"));
 		iter->nminors = (lc->flags & LOOPDEV_FL_DEVSUBDIR) ?
 			loop_scandir(_PATH_DEV_LOOP, &iter->minors, 0) :
 			loop_scandir(_PATH_DEV, &iter->minors, 1);
@@ -1094,6 +1107,7 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	DBG(lc, loopdev_debug("setup: backing file open: OK"));
 
 	if (lc->fd != -1 && lc->mode != mode) {
+		DBG(lc, loopdev_debug("closing already open device (mode mismatch)"));
 		close(lc->fd);
 		lc->fd = -1;
 		lc->mode = 0;
