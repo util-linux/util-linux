@@ -24,11 +24,6 @@ Why:	the option -s is in collision with the Loop-AES losetup dialect that is use
 
 --------------------------
 
-What:	cryptoloop support in mount/losetup
-Why:	depreciated in favor of dm-crypt.
-
----------------------------
-
 What:	elvtune
 Why:	useless for kernel >= 2.6.9
 
@@ -39,16 +34,6 @@ Why:	deprecated in favor of uname(1) or arch(1) from coreutils
 
 	The arch(1) has been added (during 2.13 development cycle) to coreutils
 	where it will be maintained as an alias for uname(1) command.
-
-----------------------------
-
-What:	newgrp(1)
-Why:	deprecated in favor of newgrp from shadow-utils
-
-----------------------------
-
-What:	vipw/vigr(8)
-Why:	deprecated in favor of vipw/vigr(8) from shadow-utils
 
 ----------------------------
 
