@@ -109,7 +109,7 @@ struct login_context {
 	char		vcsan[VCS_PATH_MAX];
 #endif
 
-	char		thishost[MAXHOSTNAMELEN + 1];	/* this machine */
+	char		*thishost;			/* this machine */
 	char		*thisdomain;			/* this machine domain */
 	char		*hostname;			/* remote machine */
 	char		hostaddress[16];		/* remote address */
@@ -209,13 +209,13 @@ static void __attribute__ ((__noreturn__)) sleepexit(int eval)
 
 static const char *get_thishost(struct login_context *cxt, const char **domain)
 {
-	if (!*cxt->thishost) {
-		if (gethostname(cxt->thishost, sizeof(cxt->thishost))) {
+	if (!cxt->thishost) {
+		cxt->thishost = xgethostname();
+		if (!cxt->thishost) {
 			if (domain)
 				*domain = NULL;
 			return NULL;
 		}
-		cxt->thishost[sizeof(cxt->thishost) -1] = '\0';
 		cxt->thisdomain = strchr(cxt->thishost, '.');
 		if (cxt->thisdomain)
 			*cxt->thisdomain++ = '\0';
