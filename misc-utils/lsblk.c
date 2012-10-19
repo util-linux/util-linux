@@ -98,6 +98,7 @@ enum {
 	COL_WWN,
 	COL_RAND,
 	COL_PKNAME,
+	COL_HCTL,
 };
 
 /* column names */
@@ -146,6 +147,7 @@ static struct colinfo infos[] = {
 	[COL_DMAX]   = { "DISC-MAX", 6, TT_FL_RIGHT, N_("discard max bytes") },
 	[COL_DZERO]  = { "DISC-ZERO", 1, TT_FL_RIGHT, N_("discard zeroes data") },
 	[COL_WWN]    = { "WWN",     18, 0, N_("unique storage identifier") },
+	[COL_HCTL]   = { "HCTL", 10, 0, N_("Host:Channel:Target:Lun for SCSI") },
 };
 
 struct lsblk {
@@ -573,6 +575,27 @@ static char *get_type(struct blkdev_cxt *cxt)
 	return res;
 }
 
+/* H:C:T:L - Host:Channel:Target:LUN */
+static int get_hctl(struct blkdev_cxt *cxt, int *h, int *c, int *t, int *l)
+{
+	char buf[PATH_MAX], *hctl;
+	ssize_t len;
+
+	len = sysfs_readlink(&cxt->sysfs, "device", buf, sizeof(buf));
+	if (len < 0)
+		return 0;
+
+	buf[len] = '\0';
+	hctl = strrchr(buf, '/') + 1;
+	if (!hctl)
+		return 0;
+
+	if (sscanf(hctl, "%d:%d:%d:%d", h, c, t, l) != 4)
+		return 0;
+
+	return 1;
+}
+
 #define is_parsable(_l)	(((_l)->tt->flags & TT_FL_RAW) || \
 			 ((_l)->tt->flags & TT_FL_EXPORT))
 
@@ -771,6 +794,15 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		if (p)
 			tt_line_set_data(ln, col, p);
 		break;
+	case COL_HCTL:
+	{
+		int h, c, t, l;
+		if (get_hctl(cxt, &h, &c, &t, &l)) {
+			snprintf(buf, sizeof(buf), "%d:%d:%d:%d", h, c, t, l);
+			tt_line_set_data(ln, col, xstrdup(buf));
+		}
+		break;
+	}
 	case COL_DALIGN:
 		p = sysfs_strdup(&cxt->sysfs, "discard_alignment");
 		if (cxt->discard && p)
