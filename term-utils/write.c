@@ -63,6 +63,7 @@
 #include "carefulputc.h"
 #include "closestream.h"
 #include "nls.h"
+#include "xalloc.h"
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out);
 void search_utmp(char *, char *, char *, uid_t);
@@ -312,7 +313,7 @@ void do_write(char *tty, char *mytty, uid_t myuid)
 	char *login, *pwuid, *nows;
 	struct passwd *pwd;
 	time_t now;
-	char path[PATH_MAX], host[MAXHOSTNAMELEN], line[512];
+	char path[PATH_MAX], *host, line[512];
 
 	/* Determine our login name(s) before the we reopen() stdout */
 	if ((pwd = getpwuid(myuid)) != NULL)
@@ -332,8 +333,10 @@ void do_write(char *tty, char *mytty, uid_t myuid)
 	signal(SIGHUP, done);
 
 	/* print greeting */
-	if (gethostname(host, sizeof(host)) < 0)
-		strcpy(host, "???");
+	host = xgethostname();
+	if (!host)
+		host = xstrdup("???");
+
 	now = time((time_t *) NULL);
 	nows = ctime(&now);
 	nows[16] = '\0';
@@ -344,6 +347,7 @@ void do_write(char *tty, char *mytty, uid_t myuid)
 	else
 		printf(_("Message from %s@%s on %s at %s ..."),
 		       login, host, mytty, nows + 11);
+	free(host);
 	printf("\r\n");
 
 	while (fgets(line, sizeof(line), stdin) != NULL)
