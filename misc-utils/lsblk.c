@@ -97,6 +97,7 @@ enum {
 	COL_DZERO,
 	COL_WWN,
 	COL_RAND,
+	COL_PKNAME,
 };
 
 /* column names */
@@ -111,6 +112,7 @@ struct colinfo {
 static struct colinfo infos[] = {
 	[COL_NAME]   = { "NAME",    0.25, TT_FL_TREE | TT_FL_NOEXTREMES, N_("device name") },
 	[COL_KNAME]  = { "KNAME",   0.3, 0, N_("internal kernel device name") },
+	[COL_PKNAME] = { "PKNAME",   0.3, 0, N_("internal parent kernel device name") },
 	[COL_MAJMIN] = { "MAJ:MIN", 6, 0, N_("major:minor device number") },
 	[COL_FSTYPE] = { "FSTYPE",  0.1, TT_FL_TRUNC, N_("filesystem type") },
 	[COL_TARGET] = { "MOUNTPOINT", 0.10, TT_FL_TRUNC, N_("where the device is mounted") },
@@ -144,7 +146,6 @@ static struct colinfo infos[] = {
 	[COL_DMAX]   = { "DISC-MAX", 6, TT_FL_RIGHT, N_("discard max bytes") },
 	[COL_DZERO]  = { "DISC-ZERO", 1, TT_FL_RIGHT, N_("discard zeroes data") },
 	[COL_WWN]    = { "WWN",     18, 0, N_("unique storage identifier") },
-
 };
 
 struct lsblk {
@@ -599,6 +600,10 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		}
 	case COL_KNAME:
 		tt_line_set_data(ln, col, xstrdup(cxt->name));
+		break;
+	case COL_PKNAME:
+		if (cxt->parent)
+			tt_line_set_data(ln, col, xstrdup(cxt->parent->name));
 		break;
 	case COL_OWNER:
 	{
