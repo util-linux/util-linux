@@ -419,15 +419,17 @@ addtty(char *ttyname) {
 static void
 hostconv(char *arg) {
 	static int	first = 1;
-	static char	*hostdot,
-			name[MAXHOSTNAMELEN];
+	static char	*hostdot, *name;
+
 	char	*argdot;
 
 	if (!(argdot = strchr(arg, '.')))
 		return;
+
 	if (first) {
 		first = 0;
-		if (gethostname(name, sizeof(name)))
+		name = xgethostname();
+		if (!name)
 			err(EXIT_FAILURE, _("gethostname failed"));
 
 		hostdot = strchr(name, '.');
