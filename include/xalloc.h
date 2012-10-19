@@ -75,4 +75,19 @@ static inline int __attribute__ ((__format__(printf, 2, 3)))
 		err(XALLOC_EXIT_CODE, "cannot allocate string");
 	return ret;
 }
+
+
+static inline char *xgethostname(void)
+{
+	char *name;
+	size_t sz = get_hostname_max() + 1;
+
+	name = xmalloc(sizeof(char) * sz);
+	if (gethostname(name, sz) != 0)
+		return NULL;
+
+	name[sz - 1] = '\0';
+	return name;
+}
+
 #endif
