@@ -152,6 +152,17 @@
 /* wdctl path */
 #define _PATH_WATCHDOG_DEV	"/dev/watchdog"
 
+/* ipc paths */
+#define _PATH_PROC_SYSV_MSG	"/proc/sysvipc/msg"
+#define _PATH_PROC_SYSV_SEM	"/proc/sysvipc/sem"
+#define _PATH_PROC_SYSV_SHM	"/proc/sysvipc/shm"
+#define _PATH_PROC_IPC_MSGMAX	"/proc/sys/kernel/msgmax"
+#define _PATH_PROC_IPC_MSGMNB	"/proc/sys/kernel/msgmnb"
+#define _PATH_PROC_IPC_MSGMNI	"/proc/sys/kernel/msgmni"
+#define _PATH_PROC_IPC_SEM	"/proc/sys/kernel/sem"
+#define _PATH_PROC_IPC_SHMALL	"/proc/sys/kernel/shmall"
+#define _PATH_PROC_IPC_SHMMNI	"/proc/sys/kernel/shmmni"
+
 /* kernel command line */
 #define _PATH_PROC_CMDLINE	"/proc/cmdline"
 
