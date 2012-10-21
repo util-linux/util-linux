@@ -161,6 +161,7 @@
 #define _PATH_PROC_IPC_MSGMNI	"/proc/sys/kernel/msgmni"
 #define _PATH_PROC_IPC_SEM	"/proc/sys/kernel/sem"
 #define _PATH_PROC_IPC_SHMALL	"/proc/sys/kernel/shmall"
+#define _PATH_PROC_IPC_SHMMAX	"/proc/sys/kernel/shmmax"
 #define _PATH_PROC_IPC_SHMMNI	"/proc/sys/kernel/shmmni"
 
 /* kernel command line */

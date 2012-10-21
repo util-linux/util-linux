@@ -16,7 +16,11 @@ ipcrm_LDADD = $(LDADD) libcommon.la
 
 usrbin_exec_PROGRAMS += ipcs
 dist_man_MANS += sys-utils/ipcs.1
-ipcs_SOURCES = sys-utils/ipcs.c
+ipcs_SOURCES =	sys-utils/ipcs.c \
+		sys-utils/ipcutils.c \
+		sys-utils/ipcutils.h
+ipcs_LDADD = $(LDADD) libcommon.la
+
 
 usrbin_exec_PROGRAMS += renice
 dist_man_MANS += sys-utils/renice.1

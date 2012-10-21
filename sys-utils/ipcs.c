@@ -18,87 +18,13 @@
 #include <errno.h>
 #include <features.h>
 #include <getopt.h>
-#include <grp.h>
-#include <pwd.h>
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/ipc.h>
-#include <sys/msg.h>
-#include <sys/sem.h>
-#include <sys/shm.h>
-#include <sys/types.h>
-#include <time.h>
-#include <unistd.h>
 
 #include "c.h"
 #include "nls.h"
 #include "closestream.h"
 
-/*
- * SHM_DEST and SHM_LOCKED are defined in kernel headers, but inside
- * #ifdef __KERNEL__ ... #endif
- */
-#ifndef SHM_DEST
-  /* shm_mode upper byte flags */
-# define SHM_DEST	01000	/* segment will be destroyed on last detach */
-# define SHM_LOCKED	02000	/* segment will not be swapped */
-#endif
+#include "ipcutils.h"
 
-/* For older kernels the same holds for the defines below */
-#ifndef MSG_STAT
-# define MSG_STAT	11
-# define MSG_INFO	12
-#endif
-
-#ifndef SHM_STAT
-# define SHM_STAT	13
-# define SHM_INFO	14
-struct shm_info {
-	int used_ids;
-	ulong shm_tot;		/* total allocated shm */
-	ulong shm_rss;		/* total resident shm */
-	ulong shm_swp;		/* total swapped shm */
-	ulong swap_attempts;
-	ulong swap_successes;
-};
-#endif
-
-#ifndef SEM_STAT
-# define SEM_STAT	18
-# define SEM_INFO	19
-#endif
-
-/* Some versions of libc only define IPC_INFO when __USE_GNU is defined. */
-#ifndef IPC_INFO
-# define IPC_INFO	3
-#endif
-
-/*
- * The last arg of semctl is a union semun, but where is it defined? X/OPEN
- * tells us to define it ourselves, but until recently Linux include files
- * would also define it.
- */
-#ifndef HAVE_UNION_SEMUN
-/* according to X/OPEN we have to define it ourselves */
-union semun {
-	int val;
-	struct semid_ds *buf;
-	unsigned short int *array;
-	struct seminfo *__buf;
-};
-#endif
-
-/*
- * X/OPEN (Jan 1987) does not define fields key, seq in struct ipc_perm;
- *	glibc-1.09 has no support for sysv ipc.
- *	glibc 2 uses __key, __seq
- */
-#if defined (__GLIBC__) && __GLIBC__ >= 2
-# define KEY __key
-#else
-# define KEY key
-#endif
 
 #define LIMITS 1
 #define STATUS 2
@@ -269,9 +195,9 @@ void do_shm (char format)
 	int maxid, shmid, id;
 	struct shmid_ds shmseg;
 	struct shm_info shm_info;
-	struct shminfo shminfo;
 	struct ipc_perm *ipcp = &shmseg.shm_perm;
 	struct passwd *pw;
+	struct ipc_limits lim;
 
 	maxid = shmctl (0, SHM_INFO, (struct shmid_ds *) (void *) &shm_info);
 	if (maxid < 0) {
@@ -282,20 +208,13 @@ void do_shm (char format)
 	switch (format) {
 	case LIMITS:
 		printf (_("------ Shared Memory Limits --------\n"));
-		if ((shmctl (0, IPC_INFO, (struct shmid_ds *) (void *) &shminfo)) < 0 )
+		if (ipc_shm_get_limits(&lim))
 			return;
-		/*
-		 * glibc 2.1.3 and all earlier libc's have ints as fields of
-		 * struct shminfo; glibc 2.1.91 has unsigned long; ach
-		 */
-		printf (_("max number of segments = %lu\n"),
-			(unsigned long) shminfo.shmmni);
-		printf (_("max seg size (kbytes) = %lu\n"),
-			(unsigned long) (shminfo.shmmax >> 10));
-		printf (_("max total shared memory (kbytes) = %llu\n"),
-			getpagesize() / 1024 * (unsigned long long) shminfo.shmall);
-		printf (_("min seg size (bytes) = %lu\n"),
-			(unsigned long) shminfo.shmmin);
+		printf (_("max number of segments = %ju\n"), lim.shmmni);
+		printf (_("max seg size (kbytes) = %ju\n"), lim.shmmax / 1024);
+		printf (_("max total shared memory (kbytes) = %ju\n"),
+					(lim.shmall / 1024) * getpagesize());
+		printf (_("min seg size (bytes) = %ju\n"), lim.shmmin);
 		return;
 
 	case STATUS:
@@ -415,6 +334,7 @@ void do_sem (char format)
 	struct ipc_perm *ipcp = &semary.sem_perm;
 	struct passwd *pw;
 	union semun arg;
+	struct ipc_limits lim;
 
 	arg.array = (ushort *)  (void *) &seminfo;
 	maxid = semctl (0, 0, SEM_INFO, arg);
@@ -426,14 +346,13 @@ void do_sem (char format)
 	switch (format) {
 	case LIMITS:
 		printf (_("------ Semaphore Limits --------\n"));
-		arg.array = (ushort *) (void *) &seminfo; /* damn union */
-		if ((semctl (0, 0, IPC_INFO, arg)) < 0 )
+		if (ipc_sem_get_limits(&lim))
 			return;
-		printf (_("max number of arrays = %d\n"), seminfo.semmni);
-		printf (_("max semaphores per array = %d\n"), seminfo.semmsl);
-		printf (_("max semaphores system wide = %d\n"), seminfo.semmns);
-		printf (_("max ops per semop call = %d\n"), seminfo.semopm);
-		printf (_("semaphore max value = %d\n"), seminfo.semvmx);
+		printf (_("max number of arrays = %d\n"), lim.semmni);
+		printf (_("max semaphores per array = %d\n"), lim.semmsl);
+		printf (_("max semaphores system wide = %d\n"), lim.semmns);
+		printf (_("max ops per semop call = %d\n"), lim.semopm);
+		printf (_("semaphore max value = %d\n"), lim.semvmx);
 		return;
 
 	case STATUS:
@@ -515,6 +434,7 @@ void do_msg (char format)
 	struct msginfo msginfo;
 	struct ipc_perm *ipcp = &msgque.msg_perm;
 	struct passwd *pw;
+	struct ipc_limits lim;
 
 	maxid = msgctl (0, MSG_INFO, (struct msqid_ds *) (void *) &msginfo);
 	if (maxid < 0) {
@@ -524,12 +444,12 @@ void do_msg (char format)
 
 	switch (format) {
 	case LIMITS:
-		if ((msgctl (0, IPC_INFO, (struct msqid_ds *) (void *) &msginfo)) < 0 )
+		if (ipc_msg_get_limits(&lim))
 			return;
 		printf (_("------ Messages Limits --------\n"));
-		printf (_("max queues system wide = %d\n"), msginfo.msgmni);
-		printf (_("max size of message (bytes) = %d\n"), msginfo.msgmax);
-		printf (_("default max size of queue (bytes) = %d\n"), msginfo.msgmnb);
+		printf (_("max queues system wide = %d\n"), lim.msgmni);
+		printf (_("max size of message (bytes) = %zu\n"), lim.msgmax);
+		printf (_("default max size of queue (bytes) = %d\n"), lim.msgmnb);
 		return;
 
 	case STATUS:
