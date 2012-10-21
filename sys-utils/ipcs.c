@@ -32,10 +32,10 @@
 #define PID 5
 
 static void do_shm (char format);
+static void print_shm (int id);
 
 void do_sem (char format);
 void do_msg (char format);
-void print_shm (int id);
 void print_msg (int id);
 void print_sem (int id);
 
@@ -544,29 +544,32 @@ void do_msg (char format)
 	return;
 }
 
-void print_shm (int shmid)
+static void print_shm(int shmid)
 {
-	struct shmid_ds shmds;
-	struct ipc_perm *ipcp = &shmds.shm_perm;
+	struct shm_data *shmdata;
 
-	if (shmctl (shmid, IPC_STAT, &shmds) == -1)
-		err(EXIT_FAILURE, _("shmctl failed"));
+	if (ipc_shm_get_info(shmid, &shmdata) < 1) {
+		warnx(_("id %d not found"), shmid);
+		return;
+	}
 
-	printf (_("\nShared memory Segment shmid=%d\n"), shmid);
-	printf (_("uid=%u\tgid=%u\tcuid=%u\tcgid=%u\n"),
-		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid);
-	printf (_("mode=%#o\taccess_perms=%#o\n"),
-		ipcp->mode, ipcp->mode & 0777);
-	printf (_("bytes=%lu\tlpid=%d\tcpid=%d\tnattch=%ld\n"),
-		(unsigned long) shmds.shm_segsz, shmds.shm_lpid, shmds.shm_cpid,
-		(long) shmds.shm_nattch);
-	printf (_("att_time=%-26.24s\n"),
-		shmds.shm_atime ? ctime (&shmds.shm_atime) : _("Not set"));
-	printf (_("det_time=%-26.24s\n"),
-		shmds.shm_dtime ? ctime (&shmds.shm_dtime) : _("Not set"));
-	printf (_("change_time=%-26.24s\n"), ctime (&shmds.shm_ctime));
-	printf ("\n");
-	return;
+	printf(_("\nShared memory Segment shmid=%d\n"), shmid);
+	printf(_("uid=%u\tgid=%u\tcuid=%u\tcgid=%u\n"),
+	       shmdata->shm_perm.uid, shmdata->shm_perm.uid,
+	       shmdata->shm_perm.cuid, shmdata->shm_perm.cgid);
+	printf(_("mode=%#o\taccess_perms=%#o\n"), shmdata->shm_perm.mode,
+	       shmdata->shm_perm.mode & 0777);
+	printf(_("bytes=%ju\tlpid=%u\tcpid=%u\tnattch=%jd\n"),
+	       shmdata->shm_segsz, shmdata->shm_lprid, shmdata->shm_cprid,
+	       shmdata->shm_nattch);
+	printf(_("att_time=%-26.24s\n"),
+	       shmdata->shm_atim ? ctime(&(shmdata->shm_atim)) : _("Not set"));
+	printf(_("det_time=%-26.24s\n"),
+	       shmdata->shm_dtim ? ctime(&shmdata->shm_dtim) : _("Not set"));
+	printf(_("change_time=%-26.24s\n"), ctime(&shmdata->shm_ctim));
+	printf("\n");
+
+	ipc_shm_free_info(shmdata);
 }
 
 
