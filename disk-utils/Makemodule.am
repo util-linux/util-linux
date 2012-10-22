@@ -97,6 +97,11 @@ fsck_cramfs_LDADD = $(LDADD) -lz libcommon.la
 sbin_PROGRAMS += mkfs.cramfs
 mkfs_cramfs_SOURCES = disk-utils/mkfs.cramfs.c $(cramfs_common_sources)
 mkfs_cramfs_LDADD = $(LDADD) -lz libcommon.la
+
+check_PROGRAMS += test_fsck.cramfs
+test_fsck_cramfs_SOURCES = $(fsck_cramfs_SOURCES)
+test_fsck_cramfs_LDADD = $(fsck_cramfs_LDADD)
+test_fsck_cramfs_CFLAGS = $(AM_CFLAGS) -DINCLUDE_FS_TESTS
 endif
 
 
