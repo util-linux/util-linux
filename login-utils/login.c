@@ -1031,13 +1031,17 @@ static int get_hushlogin_status(struct passwd *pwd)
 			gid_t egid = getegid();
 
 			sprintf(buf, "%s/%s", pwd->pw_dir, file);
-			setregid(-1, pwd->pw_gid);
-			setreuid(0, pwd->pw_uid);
-			ok = effective_access(buf, O_RDONLY) == 0;
-			setuid(0);	/* setreuid doesn't do it alone! */
-			setreuid(ruid, 0);
-			setregid(-1, egid);
 
+			if (setregid(-1, pwd->pw_gid) == 0 &&
+			    setreuid(0, pwd->pw_uid) == 0)
+				ok = effective_access(buf, O_RDONLY) == 0;
+
+			if (setuid(0) != 0 ||
+			    setreuid(ruid, 0) != 0 ||
+			    setregid(-1, egid) != 0) {
+				syslog(LOG_ALERT, _("hush login status: restore original IDs failed"));
+				exit(EXIT_FAILURE);
+			}
 			if (ok)
 				return 1;	/* enabled by user */
 		}
