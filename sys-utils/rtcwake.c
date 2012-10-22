@@ -38,7 +38,6 @@
 #include "nls.h"
 #include "xalloc.h"
 #include "pathnames.h"
-#include "usleep.h"
 #include "strutils.h"
 #include "c.h"
 #include "closestream.h"

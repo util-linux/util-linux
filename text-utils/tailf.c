@@ -42,7 +42,6 @@
 
 #include "nls.h"
 #include "xalloc.h"
-#include "usleep.h"
 #include "strutils.h"
 #include "c.h"
 #include "closestream.h"

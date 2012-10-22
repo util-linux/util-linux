@@ -19,8 +19,8 @@
 #include "fsprobe.h"
 #include "pathnames.h"
 #include "nls.h"
-#include "usleep.h"
 #include "strutils.h"
+#include "c.h"
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
