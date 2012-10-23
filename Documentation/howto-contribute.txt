@@ -117,6 +117,35 @@ Various notes
 	  multiple lines. In case the shorthand does not look good on one
 	  line use normal "if () else" syntax.
 
+Standards compliancy
+
+	Some of the commands maintained in this package have Open Group
+	requirements. These commands are;
+
+		cal
+		col
+		ipcrm
+		ipcs
+		kill
+		line
+		logger
+		mesg
+		more
+		newgrp
+		pg
+		renice
+
+	If you change these tools please make sure a change does not
+	conflict with the latest standard.  For example it is
+	recommendable not to add short command line options before they
+	are part of standard.  Introducing new long options is
+	acceptable.
+
+		The Single UNIX(TM) Specification, Version 2
+		Copyright (C) 1997 The Open Group
+
+		http://pubs.opengroup.org/onlinepubs/7908799/xcuix.html
+
 IRC channel
 
 	* We have a new #util-linux IRC channel at freenode.net.
