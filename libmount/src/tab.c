@@ -906,6 +906,9 @@ static int is_mountinfo(struct libmnt_table *tb)
  */
 int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 {
+	struct libmnt_iter itr;
+	struct libmnt_fs *fs;
+
 	char *root = NULL;
 	const char *src = NULL, *tgt = NULL;
 	char *xtgt = NULL;
@@ -938,42 +941,39 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 
 	tgt = mnt_fs_get_target(fstab_fs);
 
-	if (tgt && src) {
-		struct libmnt_iter itr;
-		struct libmnt_fs *fs;
+	if (!tgt || !src)
+		goto done;
 
-		mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
-		while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
+	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
 
-			if (!mnt_fs_streq_srcpath(fs, src))
+		if (!mnt_fs_streq_srcpath(fs, src))
+			continue;
+		if (root) {
+			const char *r = mnt_fs_get_root(fs);
+			if (!r || strcmp(r, root) != 0)
 				continue;
-
-			if (root) {
-				const char *r = mnt_fs_get_root(fs);
-				if (!r || strcmp(r, root) != 0)
-					continue;
-			}
-
-			/*
-			 * Compare target, try to minimize number of situations
-			 * when we need to canonicalize the path to avoid
-			 * readlink() on mountpoints.
-			 */
-			if (!xtgt) {
-				if (mnt_fs_streq_target(fs, tgt))
-					break;
-				if (tb->cache)
-					xtgt = mnt_resolve_path(tgt, tb->cache);
-			}
-			if (xtgt && mnt_fs_streq_target(fs, xtgt))
-				break;
-
 		}
-		if (fs)
-			rc = 1;		/* success */
+
+		/*
+		 * Compare target, try to minimize number of situations when we
+		 * need to canonicalize the path to avoid readlink() on
+		 * mountpoints.
+		 */
+		if (!xtgt) {
+			if (mnt_fs_streq_target(fs, tgt))
+				break;
+			if (tb->cache)
+				xtgt = mnt_resolve_path(tgt, tb->cache);
+		}
+		if (xtgt && mnt_fs_streq_target(fs, xtgt))
+			break;
 	}
 
+	if (fs)
+		rc = 1;		/* success */
+done:
 	free(root);
 	return rc;
 }
