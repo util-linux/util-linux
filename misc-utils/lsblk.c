@@ -577,97 +577,57 @@ static char *get_type(struct blkdev_cxt *cxt)
 	return res;
 }
 
-static int _sysfs_scsi_attr_exists(const char *attr, int h, int c, int t, int l)
-{
-	char buf[PATH_MAX];
-	struct stat st;
-
-	if (snprintf(buf, sizeof(buf), "/sys/bus/scsi/devices/%d:%d:%d:%d/%s",
-		     h, c, t, l, attr) < 0)
-		return 0;
-
-	if (!stat(buf, &st))
-		return 1;
-
-	return 0;
-}
-
-static int _sysfs_scsi_path_contains(const char *pattern, int h, int c, int t, int l)
-{
-	char buf[PATH_MAX], linkc[PATH_MAX];
-	struct stat st;
-
-	if (snprintf(buf, sizeof(buf), "/sys/bus/scsi/devices/%d:%d:%d:%d",
-		     h, c, t, l) < 0)
-		return 0;
-
-	if (stat(buf, &st) || readlink(buf, linkc, sizeof(linkc)) <= 0)
-		return 0;
-
-	if (strstr(linkc, pattern))
-		return 1;
-
-	return 0;
-}
-
 /* Thanks to lsscsi code for idea of detection logic used here */
 static char *get_transport(struct blkdev_cxt *cxt)
 {
 	struct sysfs_cxt *sysfs = &cxt->sysfs;
-	int host, channel, target, lun;
-	char *attr;
-
-	if (sysfs_scsi_get_hctl(sysfs, &host, &channel, &target, &lun) != 0)
-		return NULL;
+	char *attr = NULL;
+	const char *trans = NULL;
 
 	/* SPI - Serial Peripheral Interface */
 	if (sysfs_scsi_host_is(sysfs, "spi"))
-		return xstrdup("spi");
+		trans = "spi";
 
 	/* FC/FCoE - Fibre Channel / Fibre Channel over Ethernet */
-	if (sysfs_scsi_host_is(sysfs, "fc")) {
+	else if (sysfs_scsi_host_is(sysfs, "fc")) {
 		attr = sysfs_scsi_host_strdup_attribute(sysfs, "fc", "symbolic_name");
 		if (!attr)
 			return NULL;
-		if (strstr(attr, " over "))
-			return xstrdup("fcoe");
-		return xstrdup("fc");
+		trans = strstr(attr, " over ") ? "fcoe" : "fc";
+		free(attr);
 	}
 
 	/* SAS - Serial Attached SCSI */
-	if (sysfs_scsi_host_is(sysfs, "sas"))
-		return xstrdup("sas");
+	else if (sysfs_scsi_host_is(sysfs, "sas") ||
+		 sysfs_scsi_has_attribute(sysfs, "sas_device"))
+		trans = "sas";
 
-	if (_sysfs_scsi_attr_exists("sas_device", host, channel, target, lun))
-		return xstrdup("sas");
 
 	/* SBP - Serial Bus Protocol (FireWire) */
-	if (_sysfs_scsi_attr_exists("ieee1394_id", host, channel, target, lun))
-		return xstrdup("sbp");
+	else if (sysfs_scsi_has_attribute(sysfs, "ieee1394_id"))
+		trans = "sbp";
 
 	/* iSCSI */
-	if (sysfs_scsi_host_is(sysfs, "iscsi"))
-		return xstrdup("iscsi");
+	else if (sysfs_scsi_host_is(sysfs, "iscsi"))
+		trans ="iscsi";
 
 	/* USB - Universal Serial Bus */
-	if (_sysfs_scsi_path_contains("usb", host, channel, target, lun))
-		return xstrdup("usb");
+	else if (sysfs_scsi_path_contains(sysfs, "usb"))
+		trans = "usb";
 
 	/* ATA, SATA */
-	if (sysfs_scsi_host_is(sysfs, "scsi")) {
+	else if (sysfs_scsi_host_is(sysfs, "scsi")) {
 		attr = sysfs_scsi_host_strdup_attribute(sysfs, "scsi", "proc_name");
 		if (!attr)
 			return NULL;
-		if (!strncmp(attr, "ahci", 4) ||
-		    !strncmp(attr, "sata", 4))
-			return xstrdup("sata");
-
-		if (strstr(attr, "ata"))
-			return xstrdup("ata");
-		return NULL;
+		if (!strncmp(attr, "ahci", 4) || !strncmp(attr, "sata", 4))
+			trans = "sata";
+		else if (strstr(attr, "ata"))
+			trans = "ata";
+		free(attr);
 	}
 
-	return NULL;
+	return trans ? xstrdup(trans) : NULL;
 }
 
 #define is_parsable(_l)	(((_l)->tt->flags & TT_FL_RAW) || \
