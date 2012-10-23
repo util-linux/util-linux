@@ -196,7 +196,7 @@ static char *get_filename_sz(ino_t inode, pid_t pid, size_t *size)
 			continue;
 
 		if ((len = readlink_at(fd, path, dp->d_name,
-				       sym, sizeof(path))) < 1)
+				       sym, sizeof(sym) - 1)) < 1)
 			goto out;
 
 		*size = sb.st_size;

@@ -837,7 +837,7 @@ static char *get_subsystem(char *chain, char *buf, size_t bufsz)
 		memcpy(chain + len, SUBSYSTEM_LINKNAME, sizeof(SUBSYSTEM_LINKNAME));
 
 		/* try if subsystem symlink exists */
-		sz = readlink(chain, buf, bufsz);
+		sz = readlink(chain, buf, bufsz - 1);
 
 		/* remove last subsystem from chain */
 		chain[len] = '\0';

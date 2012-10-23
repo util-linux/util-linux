@@ -1045,7 +1045,7 @@ static int get_wholedisk_from_partition_dirent(DIR *dir, const char *dirname,
 	int len;
 
 	if ((len = readlink_at(dirfd(dir), dirname,
-			       d->d_name, path, sizeof(path))) < 0)
+			       d->d_name, path, sizeof(path) - 1)) < 0)
 		return 0;
 
 	path[len] = '\0';
@@ -1158,7 +1158,7 @@ static char *devno_to_sysfs_name(dev_t devno, char *devname, char *buf, size_t b
 		return NULL;
 	}
 
-	len = readlink(path, buf, buf_size);
+	len = readlink(path, buf, buf_size - 1);
 	if (len < 0) {
 		warn(_("%s: failed to read link"), path);
 		return NULL;

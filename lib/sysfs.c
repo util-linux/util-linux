@@ -646,7 +646,7 @@ int sysfs_scsi_get_hctl(struct sysfs_cxt *cxt, int *h, int *c, int *t, int *l)
 	if (cxt->has_hctl)
 		goto done;
 
-	len = sysfs_readlink(cxt, "device", buf, sizeof(buf));
+	len = sysfs_readlink(cxt, "device", buf, sizeof(buf) - 1);
 	if (len < 0)
 		return len;
 
