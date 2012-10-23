@@ -672,6 +672,58 @@ done:
 	return 0;
 }
 
+
+static char *sysfs_scsi_host_attribute_path(struct sysfs_cxt *cxt,
+		const char *type, char *buf, size_t bufsz, const char *attr)
+{
+	int len;
+	int host;
+
+	if (sysfs_scsi_get_hctl(cxt, &host, NULL, NULL, NULL))
+		return NULL;
+
+	if (attr)
+		len = snprintf(buf, bufsz, "/sys/class/%s_host/host%d/%s",
+				type, host, attr);
+	else
+		len = snprintf(buf, bufsz, "/sys/class/%s_host/host%d",
+				type, host);
+
+	return (len < 0 || (size_t) len + 1 > bufsz) ? NULL : buf;
+}
+
+char *sysfs_scsi_host_strdup_attribute(struct sysfs_cxt *cxt,
+		const char *type, const char *attr)
+{
+	char buf[1024];
+	int rc;
+	FILE *f;
+
+	if (!attr || !type ||
+	    !sysfs_scsi_host_attribute_path(cxt, type, buf, sizeof(buf), attr))
+		return NULL;
+
+	if (!(f = fopen(buf, "r")))
+                return NULL;
+
+	rc = fscanf(f, "%1023[^\n]", buf);
+	fclose(f);
+
+	return rc == 1 ? strdup(buf) : NULL;
+}
+
+int sysfs_scsi_host_is(struct sysfs_cxt *cxt, const char *type)
+{
+	char buf[PATH_MAX];
+	struct stat st;
+
+	if (!type || !sysfs_scsi_host_attribute_path(cxt, type,
+				buf, sizeof(buf), NULL))
+		return 0;
+
+	return stat(buf, &st) == 0 && S_ISDIR(st.st_mode);
+}
+
 #ifdef TEST_PROGRAM_SYSFS
 #include <errno.h>
 #include <err.h>

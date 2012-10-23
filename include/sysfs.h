@@ -75,5 +75,8 @@ extern int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
 
 extern int sysfs_scsi_get_hctl(struct sysfs_cxt *cxt, int *h,
 			       int *c, int *t, int *l);
+extern char *sysfs_scsi_host_strdup_attribute(struct sysfs_cxt *cxt,
+                const char *type, const char *attr);
+extern int sysfs_scsi_host_is(struct sysfs_cxt *cxt, const char *type);
 
 #endif /* UTIL_LINUX_SYSFS_H */
