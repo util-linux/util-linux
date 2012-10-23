@@ -21,6 +21,13 @@ struct sysfs_cxt {
 	int	dir_fd;		/* /sys/block/<name> */
 	char	*dir_path;
 	struct sysfs_cxt *parent;
+
+	unsigned int	scsi_host,
+			scsi_channel,
+			scsi_target,
+			scsi_lun;
+
+	unsigned int	has_hctl : 1;
 };
 
 #define UL_SYSFSCXT_EMPTY { 0, -1, NULL, NULL }
@@ -65,4 +72,8 @@ extern int sysfs_is_partition_dirent(DIR *dir, struct dirent *d,
 
 extern int sysfs_devno_to_wholedisk(dev_t dev, char *diskname,
             size_t len, dev_t *diskdevno);
+
+extern int sysfs_scsi_get_hctl(struct sysfs_cxt *cxt, int *h,
+			       int *c, int *t, int *l);
+
 #endif /* UTIL_LINUX_SYSFS_H */

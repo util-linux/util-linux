@@ -577,27 +577,6 @@ static char *get_type(struct blkdev_cxt *cxt)
 	return res;
 }
 
-/* H:C:T:L - Host:Channel:Target:LUN */
-static int get_hctl(struct blkdev_cxt *cxt, int *h, int *c, int *t, int *l)
-{
-	char buf[PATH_MAX], *hctl;
-	ssize_t len;
-
-	len = sysfs_readlink(&cxt->sysfs, "device", buf, sizeof(buf));
-	if (len < 0)
-		return 0;
-
-	buf[len] = '\0';
-	hctl = strrchr(buf, '/') + 1;
-	if (!hctl)
-		return 0;
-
-	if (sscanf(hctl, "%d:%d:%d:%d", h, c, t, l) != 4)
-		return 0;
-
-	return 1;
-}
-
 static char *_sysfs_host_string(const char *type, int host, const char *attr)
 {
 	char path[PATH_MAX], tmp[64] = {0};
@@ -671,7 +650,7 @@ static char *get_transport(struct blkdev_cxt *cxt)
 	int host, channel, target, lun;
 	char *attr;
 
-	if (!get_hctl(cxt, &host, &channel, &target, &lun))
+	if (sysfs_scsi_get_hctl(&cxt->sysfs, &host, &channel, &target, &lun) != 0)
 		return NULL;
 
 	/* SPI - Serial Peripheral Interface */
@@ -923,7 +902,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 	case COL_HCTL:
 	{
 		int h, c, t, l;
-		if (get_hctl(cxt, &h, &c, &t, &l)) {
+		if (sysfs_scsi_get_hctl(&cxt->sysfs, &h, &c, &t, &l) == 0) {
 			snprintf(buf, sizeof(buf), "%d:%d:%d:%d", h, c, t, l);
 			tt_line_set_data(ln, col, xstrdup(buf));
 		}

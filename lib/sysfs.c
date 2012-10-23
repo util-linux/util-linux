@@ -173,10 +173,9 @@ void sysfs_deinit(struct sysfs_cxt *cxt)
 	       close(cxt->dir_fd);
 	free(cxt->dir_path);
 
-	cxt->devno = 0;
+	memset(cxt, 0, sizeof(*cxt));
+
 	cxt->dir_fd = -1;
-	cxt->parent = NULL;
-	cxt->dir_path = NULL;
 }
 
 int sysfs_stat(struct sysfs_cxt *cxt, const char *attr, struct stat *st)
@@ -634,6 +633,43 @@ done:
 err:
     sysfs_deinit(&cxt);
     return -1;
+}
+
+
+int sysfs_scsi_get_hctl(struct sysfs_cxt *cxt, int *h, int *c, int *t, int *l)
+{
+	char buf[PATH_MAX], *hctl;
+	ssize_t len;
+
+	if (!cxt)
+		return -EINVAL;
+	if (cxt->has_hctl)
+		goto done;
+
+	len = sysfs_readlink(cxt, "device", buf, sizeof(buf));
+	if (len < 0)
+		return len;
+
+	buf[len] = '\0';
+	hctl = strrchr(buf, '/') + 1;
+	if (!hctl)
+		return -1;
+
+	if (sscanf(hctl, "%d:%d:%d:%d", &cxt->scsi_host, &cxt->scsi_channel,
+				&cxt->scsi_target, &cxt->scsi_lun) != 4)
+		return -1;
+
+	cxt->has_hctl = 1;
+done:
+	if (h)
+		*h = cxt->scsi_host;
+	if (c)
+		*c = cxt->scsi_channel;
+	if (t)
+		*t = cxt->scsi_target;
+	if (l)
+		*l = cxt->scsi_lun;
+	return 0;
 }
 
 #ifdef TEST_PROGRAM_SYSFS
