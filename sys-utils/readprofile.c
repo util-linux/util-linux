@@ -229,7 +229,7 @@ int main(int argc, char **argv)
 			to_write = 1;
 		}
 		/* try to become root, just in case */
-		setuid(0);
+		ignore_result( setuid(0) );
 		fd = open(defaultpro, O_WRONLY);
 		if (fd < 0)
 			err(EXIT_FAILURE, "%s", defaultpro);

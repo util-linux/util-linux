@@ -393,25 +393,26 @@ compare_start(struct fdisk_context *cxt, const void *x, const void *y) {
 	return (a > b) ? 1 : -1;
 }
 
-static void generic_swap(void *a, void *b, int size)
+static void generic_swap(void *a0, void *b0, int size)
 {
-	char t;
+	char *a = a0, *b = b0;
 
-	do {
-		t = *(char *)a;
-		*(char *)a++ = *(char *)b;
-		*(char *)b++ = t;
-	} while (--size > 0);
+	for (; size > 0; --size, a++, b++) {
+		char t = *a;
+		*a = *b;
+		*b = t;
+	}
 }
 
 
 /* heap sort, based on Matt Mackall's linux kernel version */
-static void sort(void *base, size_t num, size_t size, struct fdisk_context *cxt,
+static void sort(void *base0, size_t num, size_t size, struct fdisk_context *cxt,
 		 int (*cmp_func)(struct fdisk_context *, const void *, const void *))
 {
 	/* pre-scale counters for performance */
 	int i = (num/2 - 1) * size;
 	size_t n = num * size, c, r;
+	char *base = base0;
 
 	/* heapify */
 	for ( ; i >= 0; i -= size) {
@@ -493,13 +494,14 @@ static int sgi_verify_disklabel(struct fdisk_context *cxt)
 	}
 	for (i=1, start=0; i<sortcount; i++) {
 		int cylsize = sgi_get_nsect(cxt) * sgi_get_ntrks(cxt);
-		if ((sgi_get_start_sector(cxt, Index[i]) % cylsize) != 0) {
+
+		if (cylsize && (sgi_get_start_sector(cxt, Index[i]) % cylsize) != 0) {
 			if (debug)	/* I do not understand how some disks fulfil it */
 				if (verbose)
 					printf(_("Partition %d does not start on cylinder boundary.\n"),
 					       Index[i]+1);
 		}
-		if (sgi_get_num_sectors(cxt, Index[i]) % cylsize != 0) {
+		if (cylsize && sgi_get_num_sectors(cxt, Index[i]) % cylsize != 0) {
 			if (debug)	/* I do not understand how some disks fulfil it */
 				if (verbose)
 					printf(_("Partition %d does not end on cylinder boundary.\n"),
@@ -526,7 +528,7 @@ static int sgi_verify_disklabel(struct fdisk_context *cxt)
 		start = sgi_get_start_sector(cxt, Index[i])
 			+ sgi_get_num_sectors(cxt, Index[i]);
 		/* Align free space on cylinder boundary */
-		if (start % cylsize)
+		if (cylsize && start % cylsize)
 			start += cylsize - (start % cylsize);
 		if (debug > 1) {
 			if (verbose)
