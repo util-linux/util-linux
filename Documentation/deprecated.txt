@@ -58,3 +58,15 @@ Why:	deprecated in favor of uname(1) or arch(1) from coreutils
 What:	last(1)
 Why:	nobody uses this implementation
 
+----------------------------
+
+The Single UNIX(TM) Specification, Version 2
+Copyright (C) 1997 The Open Group
+
+  Legacy utilities which are part util-linux package are:
+
+	col
+	line
+	pg
+
+  http://pubs.opengroup.org/onlinepubs/7908799/xcu/intro.html#tag_001_003_003
