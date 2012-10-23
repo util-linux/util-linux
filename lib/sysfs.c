@@ -683,10 +683,10 @@ static char *sysfs_scsi_host_attribute_path(struct sysfs_cxt *cxt,
 		return NULL;
 
 	if (attr)
-		len = snprintf(buf, bufsz, "/sys/class/%s_host/host%d/%s",
+		len = snprintf(buf, bufsz, _PATH_SYS_CLASS "/%s_host/host%d/%s",
 				type, host, attr);
 	else
-		len = snprintf(buf, bufsz, "/sys/class/%s_host/host%d",
+		len = snprintf(buf, bufsz, _PATH_SYS_CLASS "/%s_host/host%d",
 				type, host);
 
 	return (len < 0 || (size_t) len + 1 > bufsz) ? NULL : buf;
@@ -722,6 +722,54 @@ int sysfs_scsi_host_is(struct sysfs_cxt *cxt, const char *type)
 		return 0;
 
 	return stat(buf, &st) == 0 && S_ISDIR(st.st_mode);
+}
+
+static char *sysfs_scsi_attribute_path(struct sysfs_cxt *cxt,
+		char *buf, size_t bufsz, const char *attr)
+{
+	int len, h, c, t, l;
+
+	if (sysfs_scsi_get_hctl(cxt, &h, &c, &t, &l) != 0)
+		return NULL;
+
+	if (attr)
+		len = snprintf(buf, bufsz, _PATH_SYS_SCSI "/devices/%d:%d:%d:%d/%s",
+				h,c,t,l, attr);
+	else
+		len = snprintf(buf, bufsz, _PATH_SYS_SCSI "/devices/%d:%d:%d:%d",
+				h,c,t,l);
+	return (len < 0 || (size_t) len + 1 > bufsz) ? NULL : buf;
+}
+
+int sysfs_scsi_has_attribute(struct sysfs_cxt *cxt, const char *attr)
+{
+	char path[PATH_MAX];
+	struct stat st;
+
+	if (!sysfs_scsi_attribute_path(cxt, path, sizeof(path), attr))
+		return 0;
+
+	return stat(path, &st) == 0;
+}
+
+int sysfs_scsi_path_contains(struct sysfs_cxt *cxt, const char *pattern)
+{
+	char path[PATH_MAX], linkc[PATH_MAX];
+	struct stat st;
+	ssize_t len;
+
+	if (!sysfs_scsi_attribute_path(cxt, path, sizeof(path), NULL))
+		return 0;
+
+	if (stat(path, &st) != 0)
+		return 0;
+
+	len = readlink(path, linkc, sizeof(linkc) - 1);
+	if (len < 0)
+		return 0;
+
+	linkc[len] = '\0';
+	return strstr(linkc, pattern) != NULL;
 }
 
 #ifdef TEST_PROGRAM_SYSFS

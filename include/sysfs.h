@@ -78,5 +78,7 @@ extern int sysfs_scsi_get_hctl(struct sysfs_cxt *cxt, int *h,
 extern char *sysfs_scsi_host_strdup_attribute(struct sysfs_cxt *cxt,
                 const char *type, const char *attr);
 extern int sysfs_scsi_host_is(struct sysfs_cxt *cxt, const char *type);
+extern int sysfs_scsi_has_attribute(struct sysfs_cxt *cxt, const char *attr);
+extern int sysfs_scsi_path_contains(struct sysfs_cxt *cxt, const char *pattern);
 
 #endif /* UTIL_LINUX_SYSFS_H */
