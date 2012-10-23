@@ -568,10 +568,11 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 				if (!cl->is_extreme)
 					continue;
 
+				/* this column is tooo large, ignore?
 				if (cl->width_max - cl->width >
 						(tb->termwidth - width))
-					/* this column is tooo large, ignore */
 					continue;
+				*/
 
 				add = tb->termwidth - width;
 				if (add && cl->width + add > cl->width_max)
