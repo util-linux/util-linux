@@ -898,6 +898,16 @@ int main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
+	if (fstab && !mnt_context_is_nocanonicalize(cxt)) {
+		/*
+		 * We have external (context independent) fstab instance, let's
+		 * make a connection between the fstab and the canonicalization
+		 * cache.
+		 */
+		struct libmnt_cache *cache = mnt_context_get_cache(cxt);
+		mnt_table_set_cache(fstab, cache);
+	}
+
 	if (!mnt_context_get_source(cxt) &&
 	    !mnt_context_get_target(cxt) &&
 	    !argc &&
