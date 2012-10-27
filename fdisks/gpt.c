@@ -44,6 +44,7 @@
 #include "blkdev.h"
 #include "bitops.h"
 #include "strutils.h"
+#include "all-io.h"
 
 #define GPT_HEADER_SIGNATURE 0x5452415020494645LL /* EFI PART */
 #define GPT_HEADER_REVISION_V1_02 0x00010200
@@ -1057,8 +1058,10 @@ static int gpt_write_pmbr(struct fdisk_context *cxt)
 	if (offset != lseek(cxt->dev_fd, offset, SEEK_SET))
 		goto fail;
 
-	if (1 == write(cxt->dev_fd, pmbr, 1))
-		return 0;
+	/* pMBR covers the first sector (LBA) of the disk */
+	if (write_all(cxt->dev_fd, pmbr, cxt->sector_size))
+		goto fail;
+	return 0;
 fail:
 	return -errno;
 }
