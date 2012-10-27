@@ -90,6 +90,7 @@ static const struct menulist_descr menulist[] = {
 	{'e', N_("edit drive data"), {OSF_LABEL, 0}},
 	{'f', N_("fix partition order"), {0, DOS_LABEL}},
 	{'g', N_("create an IRIX (SGI) partition table"), {0, ANY_LABEL}},
+	{'g', N_("create a new empty GPT partition table"), {ANY_LABEL, 0}},
 	{'h', N_("change number of heads"), {0, DOS_LABEL | SUN_LABEL}},
 	{'i', N_("change interleave factor"), {0, SUN_LABEL}},
 	{'i', N_("change the disk identifier"), {0, DOS_LABEL}},
@@ -1693,6 +1694,9 @@ static void command_prompt(struct fdisk_context *cxt)
 			break;
 		case 'd':
 			delete_partition(cxt, get_existing_partition(cxt, 1, partitions));
+			break;
+		case 'g':
+			fdisk_create_disklabel(cxt, "gpt");
 			break;
 		case 'i':
 			if (disklabel == SGI_LABEL)
