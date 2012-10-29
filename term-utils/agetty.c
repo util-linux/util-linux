@@ -279,7 +279,6 @@ int main(int argc, char **argv)
 		.flags  =  F_ISSUE,		/* show /etc/issue (SYSV_STYLE) */
 		.login  =  _PATH_LOGIN,		/* default login program */
 		.tty    = "tty1",		/* default tty line */
-		.term   =  DEFAULT_VCTERM,	/* terminal type */
 		.issue  =  ISSUE		/* default issue file */
 	};
 	char *login_argv[LOGIN_ARGV_MAX + 1];
