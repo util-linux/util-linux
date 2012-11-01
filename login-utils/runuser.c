@@ -1,7 +1,7 @@
 
 #include "su-common.h"
 
-int main(int argv, char **argc)
+int main(int argc, char **argv)
 {
-	return su_main(argv, argc, RUNUSER_MODE);
+	return su_main(argc, argv, RUNUSER_MODE);
 }
