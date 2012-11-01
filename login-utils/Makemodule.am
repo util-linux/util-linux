@@ -94,7 +94,7 @@ endif
 
 
 if BUILD_RUNUSER
-bin_PROGRAMS += runuser
+sbin_PROGRAMS += runuser
 dist_man_MANS += login-utils/runuser.1
 runuser_SOURCES = \
 	login-utils/runuser.c \
