@@ -100,6 +100,7 @@ enum {
 	COL_PKNAME,
 	COL_HCTL,
 	COL_TRANSPORT,
+	COL_REV,
 };
 
 /* column names */
@@ -150,6 +151,7 @@ static struct colinfo infos[] = {
 	[COL_WWN]    = { "WWN",     18, 0, N_("unique storage identifier") },
 	[COL_HCTL]   = { "HCTL", 10, 0, N_("Host:Channel:Target:Lun for SCSI") },
 	[COL_TRANSPORT] = { "TRAN", 6, 0, N_("device transport type") },
+	[COL_REV]    = { "REV",   4, TT_FL_RIGHT, N_("device revision") },
 };
 
 struct lsblk {
@@ -762,6 +764,13 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 	case COL_MODEL:
 		if (!cxt->partition && cxt->nslaves == 0) {
 			p = sysfs_strdup(&cxt->sysfs, "device/model");
+			if (p)
+				tt_line_set_data(ln, col, p);
+		}
+		break;
+	case COL_REV:
+		if (!cxt->partition && cxt->nslaves == 0) {
+			p = sysfs_strdup(&cxt->sysfs, "device/rev");
 			if (p)
 				tt_line_set_data(ln, col, p);
 		}
