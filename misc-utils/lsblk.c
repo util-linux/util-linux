@@ -101,6 +101,7 @@ enum {
 	COL_HCTL,
 	COL_TRANSPORT,
 	COL_REV,
+	COL_VENDOR,
 };
 
 /* column names */
@@ -152,6 +153,7 @@ static struct colinfo infos[] = {
 	[COL_HCTL]   = { "HCTL", 10, 0, N_("Host:Channel:Target:Lun for SCSI") },
 	[COL_TRANSPORT] = { "TRAN", 6, 0, N_("device transport type") },
 	[COL_REV]    = { "REV",   4, TT_FL_RIGHT, N_("device revision") },
+	[COL_VENDOR] = { "VENDOR", 0.1, TT_FL_TRUNC, N_("device vendor") },
 };
 
 struct lsblk {
@@ -771,6 +773,13 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 	case COL_REV:
 		if (!cxt->partition && cxt->nslaves == 0) {
 			p = sysfs_strdup(&cxt->sysfs, "device/rev");
+			if (p)
+				tt_line_set_data(ln, col, p);
+		}
+		break;
+	case COL_VENDOR:
+		if (!cxt->partition && cxt->nslaves == 0) {
+			p = sysfs_strdup(&cxt->sysfs, "device/vendor");
 			if (p)
 				tt_line_set_data(ln, col, p);
 		}
