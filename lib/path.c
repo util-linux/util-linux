@@ -28,7 +28,6 @@
 #include <errno.h>
 
 #include "all-io.h"
-#include "cpuset.h"
 #include "path.h"
 #include "nls.h"
 #include "c.h"
@@ -151,6 +150,8 @@ path_exist(const char *path, ...)
 	return access(p, F_OK) == 0;
 }
 
+#ifdef HAVE_CPU_SET_T
+
 static cpu_set_t *
 path_cpuparse(int maxcpus, int islist, const char *path, va_list ap)
 {
@@ -208,6 +209,8 @@ path_cpulist(int maxcpus, const char *path, ...)
 
 	return set;
 }
+
+#endif /* HAVE_CPU_SET_T */
 
 void
 path_setprefix(const char *prefix)

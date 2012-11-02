@@ -1184,6 +1184,7 @@ AM_CONDITIONAL(BUILD_IONICE, test "x$build_ionice" = xyes)
 
 UL_BUILD_INIT([taskset], [check])
 UL_REQUIRES_BUILD([taskset], [schedutils])
+UL_REQUIRES_HAVE([taskset], [cpu_set_t], [cpu_set_t type])
 UL_REQUIRES_SYSCALL_CHECK([taskset],
 	[UL_CHECK_SYSCALL([sched_getaffinity])],
 	[sched_getaffinity])

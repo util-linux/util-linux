@@ -1,3 +1,6 @@
+#ifndef UTIL_LINUX_PATH_H
+#define UTIL_LINUX_PATH_H
+
 #include <stdio.h>
 
 extern FILE *path_fopen(const char *mode, int exit_on_err, const char *path, ...)
@@ -10,8 +13,15 @@ extern int path_getnum(const char *path, ...)
 		       __attribute__ ((__format__ (__printf__, 1, 2)));
 extern int path_exist(const char *path, ...)
 		      __attribute__ ((__format__ (__printf__, 1, 2)));
+
+#ifdef HAVE_CPU_SET_T
+# include "cpuset.h"
+
 extern cpu_set_t *path_cpuset(int, const char *path, ...)
 			      __attribute__ ((__format__ (__printf__, 2, 3)));
 extern cpu_set_t *path_cpulist(int, const char *path, ...)
 			       __attribute__ ((__format__ (__printf__, 2, 3)));
 extern void path_setprefix(const char *);
+#endif /* HAVE_CPU_SET_T */
+
+#endif /* UTIL_LINUX_PATH_H */

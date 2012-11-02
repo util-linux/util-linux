@@ -6,7 +6,6 @@ libcommon_la_SOURCES = \
 	lib/blkdev.c \
 	lib/canonicalize.c \
 	lib/colors.c \
-	lib/cpuset.c \
 	lib/crc32.c \
 	lib/env.c \
 	lib/fileutils.c \
@@ -34,6 +33,10 @@ endif
 
 if !HAVE_LANGINFO
 libcommon_la_SOURCES += lib/langinfo.c
+endif
+
+if HAVE_CPU_SET_T
+libcommon_la_SOURCES += lib/cpuset.c
 endif
 
 check_PROGRAMS += \
