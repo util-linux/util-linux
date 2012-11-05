@@ -27,6 +27,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <inttypes.h>
 #include <errno.h>
 
 #include "all-io.h"
@@ -116,6 +117,27 @@ path_read_s32(const char *path, ...)
 	va_end(ap);
 
 	if (fscanf(fd, "%d", &result) != 1) {
+		if (ferror(fd))
+			err(EXIT_FAILURE, _("failed to read: %s"), pathbuf);
+		else
+			errx(EXIT_FAILURE, _("parse error: %s"), pathbuf);
+	}
+	fclose(fd);
+	return result;
+}
+
+uint64_t
+path_read_u64(const char *path, ...)
+{
+	FILE *fd;
+	va_list ap;
+	uint64_t result;
+
+	va_start(ap, path);
+	fd = path_vfopen("r", 1, path, ap);
+	va_end(ap);
+
+	if (fscanf(fd, "%"SCNu64, &result) != 1) {
 		if (ferror(fd))
 			err(EXIT_FAILURE, _("failed to read: %s"), pathbuf);
 		else
