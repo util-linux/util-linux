@@ -98,7 +98,7 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 	struct shm_data *p;
 	struct shm_info dummy;
 
-	p = *shmds = xmalloc(sizeof(struct shm_data));
+	p = *shmds = xcalloc(1, sizeof(struct shm_data));
 	p->next = NULL;
 
 	f = path_fopen("r", 0, _PATH_PROC_SYSV_SHM);
@@ -107,7 +107,7 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 
 	while (fgetc(f) != '\n');		/* skip header */
 
-	for (i = 0; !feof(f); i++) {
+	while (feof(f) == 0) {
 		if (fscanf(f,
 			  "%d %d  %o %"SCNu64 " %u %u  "
 			  "%"SCNu64 " %u %u %u %u %"SCNu64 " %"SCNu64 " %"SCNu64
@@ -130,15 +130,19 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 			   &p->shm_swp) != 16)
 			continue;
 
-		if (id > -1 && id != p->shm_perm.id) {
-			i--;
-			continue;	/* id specified, but does not match */
+		if (id > -1) {
+			/* ID specified */
+			if (id == p->shm_perm.id) {
+				i = 1;
+				break;
+			} else
+				continue;
 		}
-		if (id < 0) {
-			p->next = xmalloc(sizeof(struct shm_data));
-			p = p->next;
-			p->next = NULL;
-		}
+
+		p->next = xcalloc(1, sizeof(struct shm_data));
+		p = p->next;
+		p->next = NULL;
+		i++;
 	}
 
 	if (i == 0)
@@ -187,7 +191,7 @@ fallback:
 		p->shm_swp = 0xdead;
 
 		if (id < 0) {
-			p->next = xmalloc(sizeof(struct shm_data));
+			p->next = xcalloc(1, sizeof(struct shm_data));
 			p = p->next;
 			p->next = NULL;
 			i++;
