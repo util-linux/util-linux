@@ -83,7 +83,7 @@ static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 			printf(_("CPU %d is not hot pluggable\n"), cpu);
 			continue;
 		}
-		online = path_getnum(_PATH_SYS_CPU "/cpu%d/online", cpu);
+		online = path_read_s32(_PATH_SYS_CPU "/cpu%d/online", cpu);
 		if ((online == 1) && (enable == 1)) {
 			printf(_("CPU %d is already enabled\n"), cpu);
 			continue;
@@ -93,9 +93,9 @@ static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 			continue;
 		}
 		if (path_exist(_PATH_SYS_CPU "/cpu%d/configure", cpu))
-			configured = path_getnum(_PATH_SYS_CPU "/cpu%d/configure", cpu);
+			configured = path_read_s32(_PATH_SYS_CPU "/cpu%d/configure", cpu);
 		if (enable) {
-			rc = path_writestr("1", _PATH_SYS_CPU "/cpu%d/online", cpu);
+			rc = path_write_str("1", _PATH_SYS_CPU "/cpu%d/online", cpu);
 			if ((rc == -1) && (configured == 0))
 				printf(_("CPU %d enable failed "
 					 "(CPU is deconfigured)\n"), cpu);
@@ -109,7 +109,7 @@ static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 					 "(last enabled CPU)\n"), cpu);
 				continue;
 			}
-			rc = path_writestr("0", _PATH_SYS_CPU "/cpu%d/online", cpu);
+			rc = path_write_str("0", _PATH_SYS_CPU "/cpu%d/online", cpu);
 			if (rc == -1)
 				printf(_("CPU %d disable failed (%m)\n"), cpu);
 			else {
@@ -126,7 +126,7 @@ static int cpu_rescan(void)
 {
 	if (!path_exist(_PATH_SYS_CPU_RESCAN))
 		errx(EXIT_FAILURE, _("This system does not support rescanning of CPUs"));
-	if (path_writestr("1", _PATH_SYS_CPU_RESCAN) == -1)
+	if (path_write_str("1", _PATH_SYS_CPU_RESCAN) == -1)
 		err(EXIT_FAILURE, _("Failed to trigger rescan of CPUs"));
 	printf(_("Triggered rescan of CPUs\n"));
 	return EXIT_SUCCESS;
@@ -138,11 +138,11 @@ static int cpu_set_dispatch(int mode)
 		errx(EXIT_FAILURE, _("This system does not support setting "
 				     "the dispatching mode of CPUs"));
 	if (mode == 0) {
-		if (path_writestr("0", _PATH_SYS_CPU_DISPATCH) == -1)
+		if (path_write_str("0", _PATH_SYS_CPU_DISPATCH) == -1)
 			err(EXIT_FAILURE, _("Failed to set horizontal dispatch mode"));
 		printf(_("Successfully set horizontal dispatching mode\n"));
 	} else {
-		if (path_writestr("1", _PATH_SYS_CPU_DISPATCH) == -1)
+		if (path_write_str("1", _PATH_SYS_CPU_DISPATCH) == -1)
 			err(EXIT_FAILURE, _("Failed to set vertical dispatch mode"));
 		printf(_("Successfully set vertical dispatching mode\n"));
 	}
@@ -165,7 +165,7 @@ static int cpu_configure(cpu_set_t *cpu_set, size_t setsize, int configure)
 			printf(_("CPU %d is not configurable\n"), cpu);
 			continue;
 		}
-		current = path_getnum(_PATH_SYS_CPU "/cpu%d/configure", cpu);
+		current = path_read_s32(_PATH_SYS_CPU "/cpu%d/configure", cpu);
 		if ((current == 1) && (configure == 1)) {
 			printf(_("CPU %d is already configured\n"), cpu);
 			continue;
@@ -181,13 +181,13 @@ static int cpu_configure(cpu_set_t *cpu_set, size_t setsize, int configure)
 			continue;
 		}
 		if (configure) {
-			rc = path_writestr("1", _PATH_SYS_CPU "/cpu%d/configure", cpu);
+			rc = path_write_str("1", _PATH_SYS_CPU "/cpu%d/configure", cpu);
 			if (rc == -1)
 				printf(_("CPU %d configure failed (%m)\n"), cpu);
 			else
 				printf(_("CPU %d configured\n"), cpu);
 		} else {
-			rc = path_writestr("0", _PATH_SYS_CPU "/cpu%d/configure", cpu);
+			rc = path_write_str("0", _PATH_SYS_CPU "/cpu%d/configure", cpu);
 			if (rc == -1)
 				printf(_("CPU %d deconfigure failed (%m)\n"), cpu);
 			else
@@ -262,7 +262,7 @@ int main(int argc, char *argv[])
 	if (maxcpus < 1)
 		errx(EXIT_FAILURE, _("cannot determine NR_CPUS; aborting"));
 	if (path_exist(_PATH_SYS_CPU_ONLINE))
-		onlinecpus = path_cpulist(maxcpus, _PATH_SYS_CPU_ONLINE);
+		onlinecpus = path_read_cpulist(maxcpus, _PATH_SYS_CPU_ONLINE);
 	setsize = CPU_ALLOC_SIZE(maxcpus);
 	cpu_set = CPU_ALLOC(maxcpus);
 	if (!cpu_set)

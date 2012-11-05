@@ -1,10 +1,12 @@
 /*
- * Simple functions to access files.
+ * Simple functions to access files, paths maybe be globally prefixed by a
+ * global prefix to read data from alternative destination (e.g. /proc dump for
+ * regression tests).
  *
  * Taken from lscpu.c
  *
  * Copyright (C) 2008 Cai Qian <qcai@redhat.com>
- * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2008-2012 Karel Zak <kzak@redhat.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -84,7 +86,7 @@ path_fopen(const char *mode, int exit_on_error, const char *path, ...)
 }
 
 void
-path_getstr(char *result, size_t len, const char *path, ...)
+path_read_str(char *result, size_t len, const char *path, ...)
 {
 	FILE *fd;
 	va_list ap;
@@ -103,7 +105,7 @@ path_getstr(char *result, size_t len, const char *path, ...)
 }
 
 int
-path_getnum(const char *path, ...)
+path_read_s32(const char *path, ...)
 {
 	FILE *fd;
 	va_list ap;
@@ -124,7 +126,7 @@ path_getnum(const char *path, ...)
 }
 
 int
-path_writestr(const char *str, const char *path, ...)
+path_write_str(const char *str, const char *path, ...)
 {
 	int fd, result;
 	va_list ap;
@@ -185,7 +187,7 @@ path_cpuparse(int maxcpus, int islist, const char *path, va_list ap)
 }
 
 cpu_set_t *
-path_cpuset(int maxcpus, const char *path, ...)
+path_read_cpuset(int maxcpus, const char *path, ...)
 {
 	va_list ap;
 	cpu_set_t *set;
@@ -198,7 +200,7 @@ path_cpuset(int maxcpus, const char *path, ...)
 }
 
 cpu_set_t *
-path_cpulist(int maxcpus, const char *path, ...)
+path_read_cpulist(int maxcpus, const char *path, ...)
 {
 	va_list ap;
 	cpu_set_t *set;
@@ -213,7 +215,7 @@ path_cpulist(int maxcpus, const char *path, ...)
 #endif /* HAVE_CPU_SET_T */
 
 void
-path_setprefix(const char *prefix)
+path_set_prefix(const char *prefix)
 {
 	prefixlen = strlen(prefix);
 	strncpy(pathbuf, prefix, sizeof(pathbuf));

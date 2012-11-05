@@ -384,7 +384,7 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	if (path_exist(_PATH_SYS_SYSTEM "/cpu/kernel_max"))
 		/* note that kernel_max is maximum index [NR_CPUS-1] */
-		maxcpus = path_getnum(_PATH_SYS_SYSTEM "/cpu/kernel_max") + 1;
+		maxcpus = path_read_s32(_PATH_SYS_SYSTEM "/cpu/kernel_max") + 1;
 
 	else if (mod->system == SYSTEM_LIVE)
 		/* the root is '/' so we are working with data from the current kernel */
@@ -398,7 +398,7 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 	setsize = CPU_ALLOC_SIZE(maxcpus);
 
 	if (path_exist(_PATH_SYS_SYSTEM "/cpu/possible")) {
-		cpu_set_t *tmp = path_cpulist(maxcpus, _PATH_SYS_SYSTEM "/cpu/possible");
+		cpu_set_t *tmp = path_read_cpulist(maxcpus, _PATH_SYS_SYSTEM "/cpu/possible");
 		desc->ncpuspos = CPU_COUNT_S(setsize, tmp);
 		cpuset_free(tmp);
 	} else
@@ -408,19 +408,20 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	/* get mask for present CPUs */
 	if (path_exist(_PATH_SYS_SYSTEM "/cpu/present")) {
-		desc->present = path_cpulist(maxcpus, _PATH_SYS_SYSTEM "/cpu/present");
+		desc->present = path_read_cpulist(maxcpus, _PATH_SYS_SYSTEM "/cpu/present");
 		desc->ncpus = CPU_COUNT_S(setsize, desc->present);
 	}
 
 	/* get mask for online CPUs */
 	if (path_exist(_PATH_SYS_SYSTEM "/cpu/online")) {
-		desc->online = path_cpulist(maxcpus, _PATH_SYS_SYSTEM "/cpu/online");
+		size_t setsize = CPU_ALLOC_SIZE(maxcpus);
+		desc->online = path_read_cpulist(maxcpus, _PATH_SYS_SYSTEM "/cpu/online");
 		desc->nthreads = CPU_COUNT_S(setsize, desc->online);
 	}
 
 	/* get dispatching mode */
 	if (path_exist(_PATH_SYS_SYSTEM "/cpu/dispatching"))
-		desc->dispatching = path_getnum(_PATH_SYS_SYSTEM "/cpu/dispatching");
+		desc->dispatching = path_read_s32(_PATH_SYS_SYSTEM "/cpu/dispatching");
 	else
 		desc->dispatching = -1;
 }
@@ -611,13 +612,13 @@ read_topology(struct lscpu_desc *desc, int num)
 	if (!path_exist(_PATH_SYS_CPU "/cpu%d/topology/thread_siblings", num))
 		return;
 
-	thread_siblings = path_cpuset(maxcpus, _PATH_SYS_CPU
+	thread_siblings = path_read_cpuset(maxcpus, _PATH_SYS_CPU
 					"/cpu%d/topology/thread_siblings", num);
-	core_siblings = path_cpuset(maxcpus, _PATH_SYS_CPU
+	core_siblings = path_read_cpuset(maxcpus, _PATH_SYS_CPU
 					"/cpu%d/topology/core_siblings", num);
 	book_siblings = NULL;
 	if (path_exist(_PATH_SYS_CPU "/cpu%d/topology/book_siblings", num)) {
-		book_siblings = path_cpuset(maxcpus, _PATH_SYS_CPU
+		book_siblings = path_read_cpuset(maxcpus, _PATH_SYS_CPU
 					    "/cpu%d/topology/book_siblings", num);
 	}
 
@@ -683,7 +684,7 @@ read_polarization(struct lscpu_desc *desc, int num)
 		return;
 	if (!desc->polarization)
 		desc->polarization = xcalloc(desc->ncpuspos, sizeof(int));
-	path_getstr(mode, sizeof(mode), _PATH_SYS_CPU "/cpu%d/polarization", num);
+	path_read_str(mode, sizeof(mode), _PATH_SYS_CPU "/cpu%d/polarization", num);
 	if (strncmp(mode, "vertical:low", sizeof(mode)) == 0)
 		desc->polarization[num] = POLAR_VLOW;
 	else if (strncmp(mode, "vertical:medium", sizeof(mode)) == 0)
@@ -703,7 +704,7 @@ read_address(struct lscpu_desc *desc, int num)
 		return;
 	if (!desc->addresses)
 		desc->addresses = xcalloc(desc->ncpuspos, sizeof(int));
-	desc->addresses[num] = path_getnum(_PATH_SYS_CPU "/cpu%d/address", num);
+	desc->addresses[num] = path_read_s32(_PATH_SYS_CPU "/cpu%d/address", num);
 }
 
 static void
@@ -713,7 +714,7 @@ read_configured(struct lscpu_desc *desc, int num)
 		return;
 	if (!desc->configured)
 		desc->configured = xcalloc(desc->ncpuspos, sizeof(int));
-	desc->configured[num] = path_getnum(_PATH_SYS_CPU "/cpu%d/configure", num);
+	desc->configured[num] = path_read_s32(_PATH_SYS_CPU "/cpu%d/configure", num);
 }
 
 static int
@@ -752,7 +753,7 @@ read_cache(struct lscpu_desc *desc, int num)
 			int type, level;
 
 			/* cache type */
-			path_getstr(buf, sizeof(buf),
+			path_read_str(buf, sizeof(buf),
 					_PATH_SYS_CPU "/cpu%d/cache/index%d/type",
 					num, i);
 			if (!strcmp(buf, "Data"))
@@ -763,7 +764,7 @@ read_cache(struct lscpu_desc *desc, int num)
 				type = 0;
 
 			/* cache level */
-			level = path_getnum(_PATH_SYS_CPU "/cpu%d/cache/index%d/level",
+			level = path_read_s32(_PATH_SYS_CPU "/cpu%d/cache/index%d/level",
 					num, i);
 			if (type)
 				snprintf(buf, sizeof(buf), "L%d%c", level, type);
@@ -773,14 +774,14 @@ read_cache(struct lscpu_desc *desc, int num)
 			ca->name = xstrdup(buf);
 
 			/* cache size */
-			path_getstr(buf, sizeof(buf),
+			path_read_str(buf, sizeof(buf),
 					_PATH_SYS_CPU "/cpu%d/cache/index%d/size",
 					num, i);
 			ca->size = xstrdup(buf);
 		}
 
 		/* information about how CPUs share different caches */
-		map = path_cpuset(maxcpus,
+		map = path_read_cpuset(maxcpus,
 				  _PATH_SYS_CPU "/cpu%d/cache/index%d/shared_cpu_map",
 				  num, i);
 
@@ -806,7 +807,7 @@ read_nodes(struct lscpu_desc *desc)
 
 	/* information about how nodes share different CPUs */
 	for (i = 0; i < desc->nnodes; i++)
-		desc->nodemaps[i] = path_cpuset(maxcpus,
+		desc->nodemaps[i] = path_read_cpuset(maxcpus,
 					_PATH_SYS_SYSTEM "/node/node%d/cpumap",
 					i);
 }
@@ -1338,7 +1339,7 @@ int main(int argc, char *argv[])
 			mod->mode = c == 'p' ? OUTPUT_PARSABLE : OUTPUT_READABLE;
 			break;
 		case 's':
-			path_setprefix(optarg);
+			path_set_prefix(optarg);
 			mod->system = SYSTEM_SNAPSHOT;
 			break;
 		case 'x':
