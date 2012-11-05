@@ -192,20 +192,14 @@ static void print_perms (int id, struct ipc_perm *ipcp)
 
 static void do_shm (char format)
 {
-	int maxid;
-	struct shm_info shm_info;
 	struct passwd *pw;
-	struct ipc_limits lim;
 	struct shm_data *shmds, *shmdsp;
-
-	maxid = shmctl (0, SHM_INFO, (struct shmid_ds *) (void *) &shm_info);
-	if (maxid < 0) {
-		printf (_("kernel not configured for shared memory\n"));
-		return;
-	}
 
 	switch (format) {
 	case LIMITS:
+	{
+		struct ipc_limits lim;
+
 		printf (_("------ Shared Memory Limits --------\n"));
 		if (ipc_shm_get_limits(&lim))
 			return;
@@ -215,8 +209,18 @@ static void do_shm (char format)
 					(lim.shmall / 1024) * getpagesize());
 		printf (_("min seg size (bytes) = %ju\n"), lim.shmmin);
 		return;
-
+	}
 	case STATUS:
+	{
+		int maxid;
+		struct shm_info shm_info;
+
+		maxid = shmctl (0, SHM_INFO, (struct shmid_ds *) &shm_info);
+		if (maxid < 0) {
+			printf (_("kernel not configured for shared memory\n"));
+			return;
+		}
+
 		printf (_("------ Shared Memory Status --------\n"));
 		/*
 		 * TRANSLATORS: This output format is maintained for backward
@@ -240,7 +244,11 @@ static void do_shm (char format)
 			shm_info.shm_swp,
 			shm_info.swap_attempts, shm_info.swap_successes);
 		return;
+	}
 
+	/*
+	 * Headers only
+	 */
 	case CREATOR:
 		printf (_("------ Shared Memory Segment Creators/Owners --------\n"));
 		printf ("%-10s %-10s %-10s %-10s %-10s %-10s\n",
@@ -268,7 +276,10 @@ static void do_shm (char format)
 		break;
 	}
 
-	if (ipc_shm_get_info(maxid, -1, &shmds) < 1)
+	/*
+	 * Print data
+	 */
+	if (ipc_shm_get_info(-1, &shmds) < 1)
 		return;
 	shmdsp = shmds;
 

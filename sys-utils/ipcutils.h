@@ -129,7 +129,7 @@ struct shm_data {
 	struct shm_data  *next;
 };
 
-extern int ipc_shm_get_info(int maxid, int id, struct shm_data **shmds);
+extern int ipc_shm_get_info(int id, struct shm_data **shmds);
 extern void ipc_shm_free_info(struct shm_data *shmds);
 
 #endif /* UTIL_LINUX_IPCUTILS_H */

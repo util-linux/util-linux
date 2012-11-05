@@ -91,11 +91,12 @@ int ipc_shm_get_limits(struct ipc_limits *lim)
 	return 0;
 }
 
-int ipc_shm_get_info(int maxid, int id, struct shm_data **shmds)
+int ipc_shm_get_info(int id, struct shm_data **shmds)
 {
 	FILE *f;
-	int i;
+	int i, maxid;
 	struct shm_data *p;
+	struct shm_info dummy;
 
 	p = *shmds = xmalloc(sizeof(struct shm_data));
 	p->next = NULL;
@@ -129,6 +130,10 @@ int ipc_shm_get_info(int maxid, int id, struct shm_data **shmds)
 			   &p->shm_swp) != 16)
 			continue;
 
+		if (id > -1 && id != p->shm_perm.id) {
+			i--;
+			continue;	/* id specified, but does not match */
+		}
 		if (id < 0) {
 			p->next = xmalloc(sizeof(struct shm_data));
 			p = p->next;
@@ -144,6 +149,10 @@ int ipc_shm_get_info(int maxid, int id, struct shm_data **shmds)
 	/* Fallback; /proc or /sys file(s) missing. */
 fallback:
 	i = id < 0 ? 0 : id;
+
+	maxid = shmctl(0, SHM_INFO, (struct shmid_ds *) &dummy);
+	if (maxid < 0)
+		return 0;
 
 	while (i <= maxid) {
 		int shmid;
