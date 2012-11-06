@@ -159,7 +159,7 @@ main(int argc, char **argv) {
 	sigset_t block_mask, unblock_mask;
 	struct sigaction sa;
 	int ch;
-	FILE *timingfd = stderr;
+	FILE *timingfd = NULL;
 
 	enum { FORCE_OPTION = CHAR_MAX + 1 };
 
@@ -274,9 +274,11 @@ main(int argc, char **argv) {
 			warn(_("fork failed"));
 			fail();
 		}
-		if (child)
+		if (child) {
+			if (!timingfd)
+				timingfd = fdopen(STDERR_FILENO, "w");
 			dooutput(timingfd);
-		else
+		} else
 			doshell();
 	} else {
 		sa.sa_handler = resize;
