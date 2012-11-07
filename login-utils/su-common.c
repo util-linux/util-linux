@@ -761,19 +761,28 @@ su_main (int argc, char **argv, int mode)
       ++optind;
     }
 
-  /* if not "-u <user>" specified then fallback to classic su(1) */
-  if (!runuser_user && optind < argc)
-    new_user = argv[optind++];
-  else {
-      /* runuser -u <command> */
-    new_user = runuser_user;
-    if (shell || fast_startup || command || simulate_login) {
-      errx(EXIT_FAILURE,
+  switch (su_mode) {
+  case RUNUSER_MODE:
+    if (runuser_user) {
+      /* runuser -u <user> <command> */
+      new_user = runuser_user;
+      if (shell || fast_startup || command || simulate_login) {
+        errx(EXIT_FAILURE,
 	   _("options --{shell,fast,command,session-command,login} and "
 	     "--user are mutually exclusive."));
+      }
+      if (optind == argc)
+        errx(EXIT_FAILURE, _("COMMAND not specified."));
+
+      break;
     }
-    if (optind == argc)
-      errx(EXIT_FAILURE, _("COMMAND not specified."));
+    /* fallthrough if -u <user> is not specified, then follow
+     * traditional su(1) behavior
+     */
+  case SU_MODE:
+    if (optind < argc)
+      new_user = argv[optind++];
+    break;
   }
 
   if ((num_supp_groups || use_gid) && restricted)
