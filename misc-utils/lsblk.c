@@ -1489,6 +1489,7 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_VENDOR;
 			columns[ncolumns++] = COL_MODEL;
 			columns[ncolumns++] = COL_REV;
+			columns[ncolumns++] = COL_TRANSPORT;
 			break;
 		case 'V':
 			printf(_("%s from %s\n"), program_invocation_short_name,
