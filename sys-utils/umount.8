@@ -109,6 +109,10 @@ Each option can be prefixed with
 .B no
 to specify options for which no action should be taken.
 .TP
+\fB\-R\fR, \fB\-\-recursive\fR
+Recursively unmount each directory specified. Recursion for each directory will
+stop if any unmount operation in the chain fails for any reason.
+.TP
 \fB\-r\fR, \fB\-\-read\-only\fR
 In case unmounting fails, try to remount read-only.
 .TP
