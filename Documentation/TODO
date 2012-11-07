@@ -72,11 +72,6 @@ libmount (mount/umount)
 
    to create a new hierarchy of filesystems at sandbox
 
- - umount by label:
-	# mount LABEL=mylabel
-	# umount LABEL=mylabel
-
-
 libblkd and libmount
 --------------------
 
