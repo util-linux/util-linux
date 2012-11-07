@@ -1043,12 +1043,12 @@ static int list_partitions(struct blkdev_cxt *wholedisk_cxt, struct blkdev_cxt *
 			 *   `-<part_cxt>
 			 *    `-...
 			 */
-			if (set_cxt(&part_cxt, wholedisk_cxt, wholedisk_cxt, d->d_name))
-				goto next;
+			int ps = set_cxt(&part_cxt, wholedisk_cxt, wholedisk_cxt, d->d_name);
+
 			/* Print whole disk only once */
 			if (r)
 				print_device(wholedisk_cxt, parent_cxt ? parent_cxt->tt_line : NULL);
-			if (!lsblk->nodeps)
+			if (ps == 0 && !lsblk->nodeps)
 				process_blkdev(&part_cxt, wholedisk_cxt, 0, NULL);
 		}
 	next:
