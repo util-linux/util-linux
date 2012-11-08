@@ -2,12 +2,13 @@
  * consoles.c	    Routines to detect the system consoles
  *
  * Copyright (c) 2011 SuSE LINUX Products GmbH, All rights reserved.
+ * Copyright (C) 2012 Karel Zak <kzak@redhat.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2, or (at your option)
  * any later version.
- *  
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -36,6 +37,9 @@
 #include <fcntl.h>
 #include <dirent.h>
 #include <unistd.h>
+
+#include "c.h"
+#include "canonicalize.h"
 #include "consoles.h"
 
 #ifdef __linux__
@@ -59,27 +63,25 @@ struct console *consoles;
  * Read and allocate one line from file,
  * the caller has to free the result
  */
-static
-#ifdef __GNUC__
-__attribute__((__nonnull__))
-#endif
+static __attribute__((__nonnull__))
 char *oneline(const char *file)
 {
 	FILE *fp;
-	char *ret = (char*)0, *nl;
+	char *ret = NULL;
 	size_t len = 0;
 
-	if ((fp = fopen(file, "re")) == (FILE*)0)
-		goto err;
-	if (getline(&ret, &len, fp) < 0)
-		goto out;
-	if (len)
-		ret[len-1] = '\0';
-	if ((nl = strchr(ret, '\n')))
-		*nl = '\0';
-out:
+	if (!(fp = fopen(file, "re")))
+		return NULL;
+	if (getline(&ret, &len, fp) >= 0) {
+		char *nl;
+
+		if (len)
+			ret[len-1] = '\0';
+		if ((nl = strchr(ret, '\n')))
+			*nl = '\0';
+	}
+
 	fclose(fp);
-err:
 	return ret;
 }
 
@@ -88,24 +90,18 @@ err:
  *  Read and determine active attribute for tty below
  *  /sys/class/tty, the caller has to free the result.
  */
-static
-__attribute__((__malloc__))
+static __attribute__((__malloc__))
 char *actattr(const char *tty)
 {
-	char *ret = (char*)0;
-	char *path;
+	char *ret, *path;
 
-	if (!tty || *tty == '\0')
-		goto err;
-
+	if (!tty || !*tty)
+		return NULL;
 	if (asprintf(&path, "/sys/class/tty/%s/active", tty) < 0)
-		goto err;
+		return NULL;
 
-	if ((ret = oneline(path)) == (char*)0)
-		goto out;
-out:
+	ret = oneline(path);
 	free(path);
-err:
 	return ret;
 }
 
@@ -116,25 +112,24 @@ err:
 static
 dev_t devattr(const char *tty)
 {
-	unsigned int maj, min;
 	dev_t dev = 0;
 	char *path, *value;
 
-	if (!tty || *tty == '\0')
-		goto err;
-
+	if (!tty || !*tty)
+		return 0;
 	if (asprintf(&path, "/sys/class/tty/%s/dev", tty) < 0)
-		goto err;
+		return 0;
 
-	if ((value = oneline(path)) == (char*)0)
-		goto out;
+	value = oneline(path);
+	if (value) {
+		unsigned int maj, min;
 
-	if (sscanf(value, "%u:%u", &maj, &min) == 2)
-		dev = makedev(maj, min);
-	free(value);
-out:
+		if (sscanf(value, "%u:%u", &maj, &min) == 2)
+			dev = makedev(maj, min);
+		free(value);
+	}
+
 	free(path);
-err:
 	return dev;
 }
 #endif /* __linux__ */
@@ -150,7 +145,7 @@ __attribute__((__nonnull__,__malloc__,__hot__))
 #endif
 char* scandev(DIR *dir)
 {
-	char *name = (char*)0;
+	char *name = NULL;
 	struct dirent *dent;
 	int fd;
 
@@ -167,9 +162,10 @@ char* scandev(DIR *dir)
 			continue;
 		if ((size_t)snprintf(path, sizeof(path), "/dev/%s", dent->d_name) >= sizeof(path))
 			continue;
-		name = realpath(path, NULL);
+		name = canonicalize_path(path);
 		break;
 	}
+
 	return name;
 }
 
@@ -203,7 +199,7 @@ void consalloc(char * name)
 	if (posix_memalign((void*)&tail, sizeof(void*), alignof(typeof(struct console))) != 0)
 		perror("memory allocation");
 
-	tail->next = (struct console*)0;
+	tail->next = NULL;
 	tail->tty = name;
 
 	tail->file = (FILE*)0;
@@ -236,7 +232,7 @@ int detect_consoles(const char *device, int fallback)
 	char *attrib, *cmdline;
 	FILE *fc;
 #endif
-	if (!device || *device == '\0')
+	if (!device || !*device)
 		fd = dup(fallback);
 	else {
 		fd = open(device, O_RDWR|O_NONBLOCK|O_NOCTTY|O_CLOEXEC);
@@ -491,7 +487,7 @@ console:
 fallback:
 	if (fallback >= 0) {
 		const char *name;
-		
+
 		if (device && *device != '\0')
 			name = device;
 		else	name = ttyname(fallback);
