@@ -27,6 +27,7 @@ libcommon_la_SOURCES = \
 
 if LINUX
 libcommon_la_SOURCES += \
+	lib/consoles.c \
 	lib/linux_version.c \
 	lib/loopdev.c
 endif

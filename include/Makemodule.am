@@ -8,6 +8,7 @@ dist_noinst_HEADERS += \
 	include/canonicalize.h \
 	include/carefulputc.h \
 	include/closestream.h \
+	include/consoles.h \
 	include/cpuset.h \
 	include/crc32.h \
 	include/env.h \
