@@ -135,15 +135,13 @@ dev_t devattr(const char *tty)
 #endif /* __linux__ */
 
 /*
- * Search below /dev for the characer device in
- * the local `dev_t comparedev' variable.
+ * Search below /dev for the characer device in `dev_t comparedev' variable.
  */
-static dev_t comparedev;
 static
 #ifdef __GNUC__
 __attribute__((__nonnull__,__malloc__,__hot__))
 #endif
-char* scandev(DIR *dir)
+char* scandev(DIR *dir, dev_t comparedev)
 {
 	char *name = NULL;
 	struct dirent *dent;
@@ -228,6 +226,7 @@ void consalloc(char * name)
 int detect_consoles(const char *device, int fallback)
 {
 	int fd, ret = 0;
+	dev_t comparedev = 0;
 #ifdef __linux__
 	char *attrib, *cmdline;
 	FILE *fc;
@@ -293,7 +292,7 @@ int detect_consoles(const char *device, int fallback)
 		dir = opendir("/dev");
 		if (!dir)
 			goto fallback;
-		name = scandev(dir);
+		name = scandev(dir, comparedev);
 		if (name)
 			consalloc(name);
 		closedir(dir);
@@ -323,7 +322,7 @@ console:
 				continue;
 			comparedev = makedev(maj, min);
 
-			name = scandev(dir);
+			name = scandev(dir, comparedev);
 			if (!name)
 				continue;
 			consalloc(name);
@@ -359,7 +358,7 @@ console:
 				free(tmp);
 			}
 
-			name = scandev(dir);
+			name = scandev(dir, comparedev);
 			if (!name)
 				continue;
 			consalloc(name);
@@ -435,7 +434,7 @@ console:
 #endif
 			close(fd);
 
-			name = scandev(dir);
+			name = scandev(dir, comparedev);
 			if (!name)
 				continue;
 			consalloc(name);
