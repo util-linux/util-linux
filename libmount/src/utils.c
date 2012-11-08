@@ -881,6 +881,78 @@ char *mnt_get_fs_root(const char *path, const char *mnt)
 	return res;
 }
 
+/*
+ * Search for @name kernel command parametr.
+ *
+ * Returns newly allocated string with parameter argument if the @name is
+ * specified as "name=" or returns pointer to @name or returns NULL if not
+ * found.
+ *
+ * For example cmdline: "aaa bbb=BBB ccc"
+ *
+ *	@name is "aaa"	--returns--> "aaa" (pointer to @name)
+ *	@name is "bbb=" --returns--> "BBB" (allocated)
+ *	@name is "foo"  --returns--> NULL
+ */
+char *mnt_get_kernel_cmdline_option(const char *name)
+{
+	FILE *f;
+	size_t len;
+	int val = 0;
+	char *p, *res = NULL;
+	char buf[BUFSIZ];	/* see kernel include/asm-generic/setup.h: COMMAND_LINE_SIZE */
+	const char *path = _PATH_PROC_CMDLINE;
+
+	assert(name);
+	assert(*name);
+
+#ifdef TEST_PROGRAM
+	path = safe_getenv("LIBMOUNT_KERNEL_CMDLINE");
+	if (!path)
+		path = _PATH_PROC_CMDLINE;
+#endif
+	f = fopen(path, "r");
+	if (!f)
+		return NULL;
+
+	p = fgets(buf, sizeof(buf), f);
+	fclose(f);
+
+	if (!p || !*p || *p == '\n')
+		return NULL;
+
+	len = strlen(buf);
+	*(buf + len - 1) = '\0';	/* remove last '\n' */
+
+	len = strlen(name);
+	if (len && *(name + len - 1) == '=')
+		val = 1;
+
+	while (p && *p) {
+		if (p != buf)
+			p++;
+		if (!(p = strstr(p, name)))
+			break;			/* not found the option */
+		if (p != buf && !isblank(*(p - 1)))
+			continue;		/* no space before the option */
+		if (!val && *(p + len) != '\0' && !isblank(*(p + len)))
+			continue;		/* no space behind the option */
+		if (val) {
+			char *v = p + len;
+
+			while (*p && !isblank(*p))	/* jump to the end of the argument */
+				p++;
+			*p = '\0';
+			res = strdup(v);
+			break;
+		} else
+			res = (char *) name;	/* option without '=' */
+		break;
+	}
+
+	return res;
+}
+
 #ifdef TEST_PROGRAM
 int test_match_fstype(struct libmnt_test *ts, int argc, char *argv[])
 {
@@ -974,6 +1046,24 @@ int test_chdir(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
+int test_kernel_cmdline(struct libmnt_test *ts, int argc, char *argv[])
+{
+	char *name = argv[1];
+	char *res;
+
+	res = mnt_get_kernel_cmdline_option(name);
+	if (!res)
+		printf("'%s' not found\n", name);
+	else if (res == name)
+		printf("'%s' found\n", name);
+	else {
+		printf("'%s' found, argument: '%s'\n", name, res);
+		free(res);
+	}
+
+	return 0;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -986,6 +1076,7 @@ int main(int argc, char *argv[])
 	{ "--mountpoint",    test_mountpoint,      "<path>" },
 	{ "--fs-root",       test_fsroot,          "<path>" },
 	{ "--cd-parent",     test_chdir,           "<path>" },
+	{ "--kernel-cmdline",test_kernel_cmdline,  "<option> | <option>=" },
 	{ NULL }
 	};
 

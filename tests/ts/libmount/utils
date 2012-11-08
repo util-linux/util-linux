@@ -76,4 +76,13 @@ ts_init_subtest "fs-root-subdir2"
 ts_valgrind $TESTPROG --fs-root /etc &> $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "kernel-cmdline"
+export LIBMOUNT_KERNEL_CMDLINE="$TS_SELF/files/kernel_cmdline"
+ts_valgrind $TESTPROG --kernel-cmdline selinux= &>> $TS_OUTPUT
+ts_valgrind $TESTPROG --kernel-cmdline selinux &>> $TS_OUTPUT
+ts_valgrind $TESTPROG --kernel-cmdline ro &>> $TS_OUTPUT
+ts_valgrind $TESTPROG --kernel-cmdline ro= &>> $TS_OUTPUT
+ts_valgrind $TESTPROG --kernel-cmdline root= &>> $TS_OUTPUT
+ts_finalize_subtest
+
 ts_finalize

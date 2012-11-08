@@ -152,5 +152,8 @@
 /* wdctl path */
 #define _PATH_WATCHDOG_DEV	"/dev/watchdog"
 
+/* kernel command line */
+#define _PATH_PROC_CMDLINE	"/proc/cmdline"
+
 #endif /* PATHNAMES_H */
 
