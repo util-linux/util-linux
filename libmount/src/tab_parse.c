@@ -452,6 +452,43 @@ done:
 	return tid;
 }
 
+static int kernel_fs_postparse(struct libmnt_table *tb,
+			       struct libmnt_fs *fs, pid_t *tid,
+			       const char *filename)
+{
+	int rc = 0;
+	const char *src = mnt_fs_get_srcpath(fs);
+
+	/* This is filesystem description from /proc, so we're in some process
+	 * namespace. Let's remember the process PID.
+	 */
+	if (filename && *tid == -1)
+		*tid = path_to_tid(filename);
+
+	fs->tid = *tid;
+
+	/*
+	 * Convert obscure /dev/root to something more usable
+	 */
+	if (src && strcmp(src, "/dev/root") == 0) {
+		char *spec = mnt_get_kernel_cmdline_option("root=");
+		char *real = NULL;
+
+		DBG(TAB, mnt_debug_h(tb, "root FS: %s", spec));
+		if (spec)
+			real = mnt_resolve_spec(spec, tb->cache);
+		if (real) {
+			DBG(TAB, mnt_debug_h(tb, "canonical root FS: %s", real));
+			rc = mnt_fs_set_source(fs, real);
+			if (!tb->cache)
+				free(real);
+		}
+		free(spec);
+	}
+
+	return rc;
+}
+
 /**
  * mnt_table_parse_stream:
  * @tb: tab pointer
@@ -494,11 +531,9 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 		if (!rc) {
 			rc = mnt_table_add_fs(tb, fs);
 			fs->flags |= flags;
-			if (tb->fmt == MNT_FMT_MOUNTINFO && filename) {
-				if (tid == -1)
-					tid = path_to_tid(filename);
-				fs->tid = tid;
-			}
+
+			if (rc == 0 && tb->fmt == MNT_FMT_MOUNTINFO)
+				rc = kernel_fs_postparse(tb, fs, &tid, filename);
 		}
 		if (rc) {
 			mnt_free_fs(fs);
