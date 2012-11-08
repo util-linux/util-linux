@@ -170,13 +170,6 @@ char* scandev(DIR *dir, dev_t comparedev)
 /*
  * Default control characters for an unknown terminal line.
  */
-static
-struct chardata initcp = {
-	CERASE,
-	CKILL,
-	CTRL('r'),
-	0
-};
 
 /*
  * Allocate an aligned `struct console' memory area,
@@ -192,7 +185,14 @@ __attribute__((__nonnull__,__hot__))
 #endif
 void consalloc(char * name)
 {
+	static const struct chardata initcp = {
+		.erase	= CERASE,
+		.kill	= CKILL,
+		.eol	= CTRL('r'),
+		.parity = 0
+	};
 	struct console *restrict tail;
+
 
 	if (posix_memalign((void*)&tail, sizeof(void*), alignof(typeof(struct console))) != 0)
 		perror("memory allocation");
