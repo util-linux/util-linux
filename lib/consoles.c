@@ -397,6 +397,60 @@ done:
 	return rc;
 }
 
+static int detect_consoles_from_tiocgdev(struct console **consoles,
+					int fallback,
+					const char *device)
+{
+#ifdef TIOCGDEV
+	unsigned int devnum;
+	char *name;
+	int rc = 1, fd = -1;
+	dev_t comparedev;
+	DIR *dir = NULL;
+
+	if (!device || !*device)
+		fd = dup(fallback);
+	else
+		fd = open(device, O_RDWR|O_NONBLOCK|O_NOCTTY|O_CLOEXEC);
+
+	if (fd < 0)
+		goto done;
+	if (ioctl (fd, TIOCGDEV, &devnum) < 0)
+		goto done;
+
+	comparedev = (dev_t) devnum;
+	dir = opendir("/dev");
+	if (!dir)
+		goto done;
+
+	name = scandev(dir, comparedev);
+	closedir(dir);
+
+	if (!name) {
+		name = (char *) (device && *device ? device : ttyname(fallback));
+		if (!name)
+			name = "/dev/tty1";
+
+		name = strdup(name);
+		if (!name) {
+			rc = -ENOMEM;
+			goto done;
+		}
+	}
+	rc = append_console(consoles, name);
+	if (rc < 0)
+		goto done;
+	if (*consoles &&  (!device || !*device))
+		(*consoles)->fd = fallback;
+
+	rc = *consoles ? 0 : 1;
+done:
+	if (fd >= 0)
+		close(fd);
+	return rc;
+#endif
+	return 2;
+}
 #endif /* __linux__ */
 
 /*
@@ -524,50 +578,21 @@ console:
 	if (rc == 1)
 		goto fallback;		/* detection error */
 
-		/*
-		 * Detection of the device used for Linux system console using
-		 * the ioctl TIOCGDEV if available (e.g. official 2.6.38).
-		 */
-		if (!*consoles) {
-#ifdef TIOCGDEV
-			unsigned int devnum;
-			const char *name;
+	/*
+	 * Detection of the device used for Linux system console using
+	 * the ioctl TIOCGDEV if available (e.g. official 2.6.38).
+	 */
+	rc = detect_consoles_from_tiocgdev(consoles, fallback, device);
+	if (rc == 0)
+		return reconnect;	/* success */
+	if (rc < 0)
+		return rc;		/* fatal error */
+	if (rc == 1)
+		goto fallback;		/* detection error */
 
-			if (!device || *device == '\0')
-				fd = dup(fallback);
-			else	fd = open(device, O_RDWR|O_NONBLOCK|O_NOCTTY|O_CLOEXEC);
-
-			if (fd < 0)
-				goto fallback;
-
-			if (ioctl (fd, TIOCGDEV, &devnum) < 0) {
-				close(fd);
-				goto fallback;
-			}
-			comparedev = (dev_t)devnum;
-			close(fd);
-
-			if (device && *device != '\0')
-				name = device;
-			else	name = ttyname(fallback);
-
-			if (!name)
-				name = "/dev/tty1";
-
-			rc = append_console(consoles, strdup(name));
-			if (rc < 0)
-				return rc;
-			if (*consoles) {
-				if (!device || *device == '\0')
-					(*consoles)->fd = fallback;
-				return reconnect;
-			}
-#endif
-			goto fallback;
-		}
-		return reconnect;
-
+	return reconnect;
 #endif /* __linux __ */
+
 fallback:
 	if (fallback >= 0) {
 		const char *name;
