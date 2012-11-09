@@ -315,6 +315,88 @@ done:
 	return rc;
 }
 
+
+static int detect_consoles_from_cmdline(struct console **consoles)
+{
+	char *cmdline, *words, *token;
+	dev_t comparedev;
+	DIR *dir;
+	int rc = 1, fd;
+
+	cmdline = oneline("/proc/cmdline");
+	if (!cmdline)
+		return 2;
+
+	words= cmdline;
+	dir = opendir("/dev");
+	if (!dir)
+		goto done;
+
+	while ((token = strsep(&words, " \t\r\n"))) {
+#ifdef TIOCGDEV
+		unsigned int devnum;
+#else
+		struct vt_stat vt;
+		struct stat st;
+#endif
+		char *colon, *name;
+
+		if (*token != 'c')
+			continue;
+		if (strncmp(token, "console=", 8) != 0)
+			continue;
+		token += 8;
+
+		if (strcmp(token, "brl") == 0)
+			token += 4;
+		if ((colon = strchr(token, ',')))
+			*colon = '\0';
+
+		if (asprintf(&name, "/dev/%s", token) < 0)
+			continue;
+		if ((fd = open(name, O_RDWR|O_NONBLOCK|O_NOCTTY|O_CLOEXEC)) < 0) {
+			free(name);
+			continue;
+		}
+		free(name);
+#ifdef TIOCGDEV
+		if (ioctl (fd, TIOCGDEV, &devnum) < 0) {
+			close(fd);
+			continue;
+		}
+		comparedev = (dev_t) devnum;
+#else
+		if (fstat(fd, &st) < 0) {
+			close(fd);
+			continue;
+		}
+		comparedev = st.st_rdev;
+		if (comparedev == makedev(TTY_MAJOR, 0)) {
+			if (ioctl(fd, VT_GETSTATE, &vt) < 0) {
+				close(fd);
+				continue;
+			}
+			comparedev = makedev(TTY_MAJOR, (int)vt.v_active);
+		}
+#endif
+		close(fd);
+
+		name = scandev(dir, comparedev);
+		if (!name)
+			continue;
+		rc = append_console(consoles, name);
+		if (rc < 0)
+			goto done;
+	}
+
+	rc = *consoles ? 0 : 1;
+done:
+	if (dir)
+		closedir(dir);
+	free(cmdline);
+	return rc;
+}
+
 #endif /* __linux__ */
 
 /*
@@ -330,9 +412,7 @@ int detect_consoles(const char *device, int fallback, struct console **consoles)
 {
 	int fd, reconnect = 0, rc;
 	dev_t comparedev = 0;
-#ifdef __linux__
-	char *cmdline;
-#endif
+
 	if (!device || !*device)
 		fd = dup(fallback);
 	else {
@@ -436,75 +516,14 @@ console:
 	 * Detection of devices used for Linux system console using
 	 * kernel parameter on the kernels command line.
 	 */
-	if ((cmdline = oneline("/proc/cmdline"))) {
-		char *words= cmdline, *token;
-		DIR *dir;
+	rc = detect_consoles_from_cmdline(consoles);
+	if (rc == 0)
+		return reconnect;	/* success */
+	if (rc < 0)
+		return rc;		/* fatal error */
+	if (rc == 1)
+		goto fallback;		/* detection error */
 
-		dir = opendir("/dev");
-		if (!dir) {
-			free(cmdline);
-			goto fallback;
-		}
-		while ((token = strsep(&words, " \t\r\n"))) {
-#ifdef TIOCGDEV
-			unsigned int devnum;
-#else
-			struct vt_stat vt;
-			struct stat st;
-#endif
-			char *colon, *name;
-
-			if (*token != 'c')
-				continue;
-
-			if (strncmp(token, "console=", 8) != 0)
-				continue;
-			token += 8;
-
-			if (strcmp(token, "brl") == 0)
-				token += 4;
-			if ((colon = strchr(token, ',')))
-				*colon = '\0';
-
-			if (asprintf(&name, "/dev/%s", token) < 0)
-				continue;
-
-			if ((fd = open(name, O_RDWR|O_NONBLOCK|O_NOCTTY|O_CLOEXEC)) < 0) {
-				free(name);
-				continue;
-			}
-			free(name);
-#ifdef TIOCGDEV
-			if (ioctl (fd, TIOCGDEV, &devnum) < 0) {
-				close(fd);
-				continue;
-			}
-			comparedev = (dev_t)devnum;
-#else
-			if (fstat(fd, &st) < 0) {
-				close(fd);
-				continue;
-			}
-			comparedev = st.st_rdev;
-			if (comparedev == makedev(TTY_MAJOR, 0)) {
-				if (ioctl(fd, VT_GETSTATE, &vt) < 0) {
-					close(fd);
-					continue;
-				}
-				comparedev = makedev(TTY_MAJOR, (int)vt.v_active);
-			}
-#endif
-			close(fd);
-
-			name = scandev(dir, comparedev);
-			if (!name)
-				continue;
-			rc = append_console(consoles, name);
-			if (rc < 0)
-				return rc;
-		}
-		closedir(dir);
-		free(cmdline);
 		/*
 		 * Detection of the device used for Linux system console using
 		 * the ioctl TIOCGDEV if available (e.g. official 2.6.38).
@@ -547,7 +566,7 @@ console:
 			goto fallback;
 		}
 		return reconnect;
-	}
+
 #endif /* __linux __ */
 fallback:
 	if (fallback >= 0) {
