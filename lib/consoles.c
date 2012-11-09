@@ -598,8 +598,6 @@ console:
 		return reconnect;	/* success */
 	if (rc < 0)
 		return rc;		/* fatal error */
-	if (rc == 1)
-		goto fallback;		/* detection error */
 
 	/*
 	 * Detection of devices used for Linux system console using
@@ -610,8 +608,6 @@ console:
 		return reconnect;	/* success */
 	if (rc < 0)
 		return rc;		/* fatal error */
-	if (rc == 1)
-		goto fallback;		/* detection error */
 
 	/*
 	 * Detection of devices used for Linux system console using
@@ -622,8 +618,6 @@ console:
 		return reconnect;	/* success */
 	if (rc < 0)
 		return rc;		/* fatal error */
-	if (rc == 1)
-		goto fallback;		/* detection error */
 
 	/*
 	 * Detection of the device used for Linux system console using
@@ -634,11 +628,11 @@ console:
 		return reconnect;	/* success */
 	if (rc < 0)
 		return rc;		/* fatal error */
-	if (rc == 1)
-		goto fallback;		/* detection error */
 
-	DBG(dbgprint("detection success [rc=%d]", reconnect));
-	return reconnect;
+	if (*consoles) {
+		DBG(dbgprint("detection success [rc=%d]", reconnect));
+		return reconnect;
+	}
 
 #endif /* __linux __ */
 
