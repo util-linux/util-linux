@@ -259,6 +259,62 @@ done:
 		fclose(fc);
 	return rc;
 }
+
+/*
+ * return codes:
+ *	< 0	- fatal error (no mem or so... )
+ *	  0	- success
+ *	  1	- recoverable error
+ *	  2	- detection not available
+ */
+static int detect_consoles_from_sysfs(struct console **consoles)
+{
+	char *attrib = NULL, *words, *token;
+	DIR *dir = NULL;
+	int rc = 1;
+
+	attrib = actattr("console");
+	if (!attrib)
+		return 2;
+
+	words = attrib;
+
+	dir = opendir("/dev");
+	if (!dir)
+		goto done;
+
+	while ((token = strsep(&words, " \t\r\n"))) {
+		char *name;
+		dev_t comparedev;
+
+		if (*token == '\0')
+			continue;
+
+		comparedev = devattr(token);
+		if (comparedev == makedev(TTY_MAJOR, 0)) {
+			char *tmp = actattr(token);
+			if (!tmp)
+				continue;
+			comparedev = devattr(tmp);
+			free(tmp);
+		}
+
+		name = scandev(dir, comparedev);
+		if (!name)
+			continue;
+		rc = append_console(consoles, name);
+		if (rc < 0)
+			goto done;
+	}
+
+	rc = *consoles ? 0 : 1;
+done:
+	free(attrib);
+	if (dir)
+		closedir(dir);
+	return rc;
+}
+
 #endif /* __linux__ */
 
 /*
@@ -275,7 +331,7 @@ int detect_consoles(const char *device, int fallback, struct console **consoles)
 	int fd, reconnect = 0, rc;
 	dev_t comparedev = 0;
 #ifdef __linux__
-	char *attrib, *cmdline;
+	char *cmdline;
 #endif
 	if (!device || !*device)
 		fd = dup(fallback);
@@ -368,43 +424,14 @@ console:
 	 * Detection of devices used for Linux system console using
 	 * the sysfs /sys/class/tty/ API with kernel 2.6.37 and higher.
 	 */
-	if ((attrib = actattr("console"))) {
-		char *words = attrib, *token;
-		DIR *dir;
+	rc = detect_consoles_from_sysfs(consoles);
+	if (rc == 0)
+		return reconnect;	/* success */
+	if (rc < 0)
+		return rc;		/* fatal error */
+	if (rc == 1)
+		goto fallback;		/* detection error */
 
-		dir = opendir("/dev");
-		if (!dir) {
-			free(attrib);
-			goto fallback;
-		}
-		while ((token = strsep(&words, " \t\r\n"))) {
-			char * name;
-
-			if (*token == '\0')
-				continue;
-			comparedev = devattr(token);
-			if (comparedev == makedev(TTY_MAJOR, 0)) {
-				char *tmp = actattr(token);
-				if (!tmp)
-					continue;
-				comparedev = devattr(tmp);
-				free(tmp);
-			}
-
-			name = scandev(dir, comparedev);
-			if (!name)
-				continue;
-			rc = append_console(consoles, name);
-			if (rc < 0)
-				return rc;
-		}
-		closedir(dir);
-		free(attrib);
-		if (!*consoles)
-			goto fallback;
-		return reconnect;
-
-	}
 	/*
 	 * Detection of devices used for Linux system console using
 	 * kernel parameter on the kernels command line.
