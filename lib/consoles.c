@@ -178,7 +178,7 @@ static
 #ifdef __GNUC__
 __attribute__((__nonnull__,__hot__))
 #endif
-void append_console(struct console **list, char * name)
+int append_console(struct console **list, char * name)
 {
 	static const struct chardata initcp = {
 		.erase	= CERASE,
@@ -190,7 +190,7 @@ void append_console(struct console **list, char * name)
 	struct console *last;
 
 	if (posix_memalign((void*)&tail, sizeof(void*), alignof(typeof(struct console))) != 0)
-		perror("memory allocation");
+		return -ENOMEM;
 
 	for (last = *list; last && last->next; last = last->next);
 
@@ -209,6 +209,8 @@ void append_console(struct console **list, char * name)
 		*list = tail;
 	else
 		last->next = tail;
+
+	return 0;
 }
 
 /*
@@ -218,11 +220,11 @@ void append_console(struct console **list, char * name)
  * as a virtual console as well as a simple printer.
  *
  * Returns 1 if stdout and stderr should be reconnected and 0
- * otherwise.
+ * otherwise or less than zero on error.
  */
 int detect_consoles(const char *device, int fallback, struct console **consoles)
 {
-	int fd, ret = 0;
+	int fd, ret = 0, rc;
 	dev_t comparedev = 0;
 #ifdef __linux__
 	char *attrib, *cmdline;
@@ -290,8 +292,11 @@ int detect_consoles(const char *device, int fallback, struct console **consoles)
 		if (!dir)
 			goto fallback;
 		name = scandev(dir, comparedev);
-		if (name)
-			append_console(consoles, name);
+		if (name) {
+			rc = append_console(consoles, name);
+			if (rc < 0)
+				return rc;
+		}
 		closedir(dir);
 		if (!*consoles)
 			goto fallback;
@@ -322,7 +327,9 @@ console:
 			name = scandev(dir, comparedev);
 			if (!name)
 				continue;
-			append_console(consoles, name);
+			rc = append_console(consoles, name);
+			if (rc < 0)
+				return rc;
 		}
 		closedir(dir);
 		fclose(fc);
@@ -358,7 +365,9 @@ console:
 			name = scandev(dir, comparedev);
 			if (!name)
 				continue;
-			append_console(consoles, name);
+			rc = append_console(consoles, name);
+			if (rc < 0)
+				return rc;
 		}
 		closedir(dir);
 		free(attrib);
@@ -434,7 +443,9 @@ console:
 			name = scandev(dir, comparedev);
 			if (!name)
 				continue;
-			append_console(consoles, name);
+			rc = append_console(consoles, name);
+			if (rc < 0)
+				return rc;
 		}
 		closedir(dir);
 		free(cmdline);
@@ -468,7 +479,9 @@ console:
 			if (!name)
 				name = "/dev/tty1";
 
-			append_console(consoles, strdup(name));
+			rc = append_console(consoles, strdup(name));
+			if (rc < 0)
+				return rc;
 			if (*consoles) {
 				if (!device || *device == '\0')
 					(*consoles)->fd = fallback;
@@ -491,7 +504,9 @@ fallback:
 		if (!name)
 			name = "/dev/tty";
 
-		append_console(consoles, strdup(name));
+		rc = append_console(consoles, strdup(name));
+		if (rc < 0)
+			return rc;
 		if (*consoles)
 			(*consoles)->fd = fallback;
 	}
