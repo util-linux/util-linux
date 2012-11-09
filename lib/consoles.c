@@ -224,7 +224,7 @@ int append_console(struct console **list, char * name)
  */
 int detect_consoles(const char *device, int fallback, struct console **consoles)
 {
-	int fd, ret = 0, rc;
+	int fd, reconnect = 0, rc;
 	dev_t comparedev = 0;
 #ifdef __linux__
 	char *attrib, *cmdline;
@@ -234,7 +234,7 @@ int detect_consoles(const char *device, int fallback, struct console **consoles)
 		fd = dup(fallback);
 	else {
 		fd = open(device, O_RDWR|O_NONBLOCK|O_NOCTTY|O_CLOEXEC);
-		ret = 1;
+		reconnect = 1;
 	}
 
 	if (fd >= 0) {
@@ -251,7 +251,8 @@ int detect_consoles(const char *device, int fallback, struct console **consoles)
 		}
 		comparedev = st.st_rdev;
 
-		if (ret && (fstat(fallback, &st) < 0 || comparedev != st.st_rdev))
+		if (reconnect &&
+		    (fstat(fallback, &st) < 0 || comparedev != st.st_rdev))
 			dup2(fd, fallback);
 #ifdef __linux__
 		/*
@@ -300,7 +301,7 @@ int detect_consoles(const char *device, int fallback, struct console **consoles)
 		closedir(dir);
 		if (!*consoles)
 			goto fallback;
-		return ret;
+		return reconnect;
 	}
 #ifdef __linux__
 console:
@@ -333,7 +334,7 @@ console:
 		}
 		closedir(dir);
 		fclose(fc);
-		return ret;
+		return reconnect;
 	}
 	/*
 	 * Detection of devices used for Linux system console using
@@ -373,7 +374,7 @@ console:
 		free(attrib);
 		if (!*consoles)
 			goto fallback;
-		return ret;
+		return reconnect;
 
 	}
 	/*
@@ -485,12 +486,12 @@ console:
 			if (*consoles) {
 				if (!device || *device == '\0')
 					(*consoles)->fd = fallback;
-				return ret;
+				return reconnect;
 			}
 #endif
 			goto fallback;
 		}
-		return ret;
+		return reconnect;
 	}
 #endif /* __linux __ */
 fallback:
@@ -510,7 +511,7 @@ fallback:
 		if (*consoles)
 			(*consoles)->fd = fallback;
 	}
-	return ret;
+	return reconnect;
 }
 
 
