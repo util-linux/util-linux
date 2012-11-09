@@ -498,3 +498,30 @@ fallback:
 	return ret;
 }
 
+
+#ifdef TEST_PROGRAM
+int main(int argc, char *argv[])
+{
+	char *name = NULL;
+	int fd, re;
+	struct console *p, *consoles = NULL;
+
+	if (argc == 2) {
+		name = argv[1];
+		fd = open(name, O_RDWR);
+	} else {
+		name = ttyname(STDIN_FILENO);
+		fd = STDIN_FILENO;
+	}
+
+	if (!name)
+		errx(EXIT_FAILURE, "usage: %s [<tty>]\n", program_invocation_short_name);
+
+	re = detect_consoles(name, fd, &consoles);
+
+	for (p = consoles; p; p = p->next)
+		printf("%s: id=%d %s\n", p->tty, p->id, re ? "(reconnect) " : "");
+
+	return 0;
+}
+#endif
