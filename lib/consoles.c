@@ -176,9 +176,6 @@ char* scandev(DIR *dir, dev_t comparedev)
  * initialize its default values, and append it to
  * the global linked list.
  */
-
-static int concount;		/* Counter for console IDs */
-
 static
 #ifdef __GNUC__
 __attribute__((__nonnull__,__hot__))
@@ -192,10 +189,12 @@ void consalloc(char * name)
 		.parity = 0
 	};
 	struct console *restrict tail;
-
+	struct console *last;
 
 	if (posix_memalign((void*)&tail, sizeof(void*), alignof(typeof(struct console))) != 0)
 		perror("memory allocation");
+
+	for (last = consoles; last && last->next; last = last->next);
 
 	tail->next = NULL;
 	tail->tty = name;
@@ -203,15 +202,15 @@ void consalloc(char * name)
 	tail->file = (FILE*)0;
 	tail->flags = 0;
 	tail->fd = -1;
-	tail->id = concount++;
+	tail->id = last ? last->id + 1 : 0;
 	tail->pid = 0;
 	memset(&tail->tio, 0, sizeof(tail->tio));
 	memcpy(&tail->cp, &initcp, sizeof(struct chardata));
 
-	if (!consoles)
+	if (!last)
 		consoles = tail;
 	else
-		consoles->next = tail;
+		last->next = tail;
 }
 
 /*
