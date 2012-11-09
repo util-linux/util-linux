@@ -57,6 +57,24 @@
 
 #define alignof(type)		((sizeof(type)+(sizeof(void*)-1)) & ~(sizeof(void*)-1))
 
+static int consoles_debug;
+#define DBG(x)	do { \
+			if (consoles_debug) { \
+				fputs("consoles debug: ", stderr); \
+				x;			     \
+			} \
+		} while (0)
+
+static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
+dbgprint(const char *mesg, ...)
+{
+	va_list ap;
+	va_start(ap, mesg);
+	vfprintf(stderr, mesg, ap);
+	va_end(ap);
+	fputc('\n', stderr);
+}
+
 /*
  * Read and allocate one line from file,
  * the caller has to free the result
@@ -67,6 +85,8 @@ char *oneline(const char *file)
 	FILE *fp;
 	char *ret = NULL;
 	size_t len = 0;
+
+	DBG(dbgprint("reading %s", file));
 
 	if (!(fp = fopen(file, "re")))
 		return NULL;
@@ -145,6 +165,8 @@ char* scandev(DIR *dir, dev_t comparedev)
 	struct dirent *dent;
 	int fd;
 
+	DBG(dbgprint("scanning /dev for %u:%u", major(comparedev), minor(comparedev)));
+
 	fd = dirfd(dir);
 	rewinddir(dir);
 	while ((dent = readdir(dir))) {
@@ -189,6 +211,8 @@ int append_console(struct console **list, char * name)
 	struct console *restrict tail;
 	struct console *last;
 
+	DBG(dbgprint("appenging %s", name));
+
 	if (posix_memalign((void*)&tail, sizeof(void*), alignof(typeof(struct console))) != 0)
 		return -ENOMEM;
 
@@ -228,10 +252,13 @@ static int detect_consoles_from_proc(struct console **consoles)
 	FILE *fc = NULL;
 	int maj, min, rc = 1;
 
-	fc = fopen("/proc/consoles", "re");
-	if (!fc)
-		return 2;
+	DBG(dbgprint("trying /proc"));
 
+	fc = fopen("/proc/consoles", "re");
+	if (!fc) {
+		rc = 2;
+		goto done;
+	}
 	dir = opendir("/dev");
 	if (!dir)
 		goto done;
@@ -257,6 +284,7 @@ done:
 		closedir(dir);
 	if (fc)
 		fclose(fc);
+	DBG(dbgprint("[/proc rc=%d]", rc));
 	return rc;
 }
 
@@ -273,9 +301,13 @@ static int detect_consoles_from_sysfs(struct console **consoles)
 	DIR *dir = NULL;
 	int rc = 1;
 
+	DBG(dbgprint("trying /sys"));
+
 	attrib = actattr("console");
-	if (!attrib)
-		return 2;
+	if (!attrib) {
+		rc = 2;
+		goto done;
+	}
 
 	words = attrib;
 
@@ -312,6 +344,7 @@ done:
 	free(attrib);
 	if (dir)
 		closedir(dir);
+	DBG(dbgprint("[/sys rc=%d]", rc));
 	return rc;
 }
 
@@ -320,12 +353,16 @@ static int detect_consoles_from_cmdline(struct console **consoles)
 {
 	char *cmdline, *words, *token;
 	dev_t comparedev;
-	DIR *dir;
+	DIR *dir = NULL;
 	int rc = 1, fd;
 
+	DBG(dbgprint("trying kernel cmdline"));
+
 	cmdline = oneline("/proc/cmdline");
-	if (!cmdline)
-		return 2;
+	if (!cmdline) {
+		rc = 2;
+		goto done;
+	}
 
 	words= cmdline;
 	dir = opendir("/dev");
@@ -394,6 +431,7 @@ done:
 	if (dir)
 		closedir(dir);
 	free(cmdline);
+	DBG(dbgprint("[kernel cmdline rc=%d]", rc));
 	return rc;
 }
 
@@ -407,6 +445,8 @@ static int detect_consoles_from_tiocgdev(struct console **consoles,
 	int rc = 1, fd = -1;
 	dev_t comparedev;
 	DIR *dir = NULL;
+
+	DBG(dbgprint("trying tiocgdev"));
 
 	if (!device || !*device)
 		fd = dup(fallback);
@@ -447,6 +487,7 @@ static int detect_consoles_from_tiocgdev(struct console **consoles,
 done:
 	if (fd >= 0)
 		close(fd);
+	DBG(dbgprint("[tiocgdev rc=%d]", rc));
 	return rc;
 #endif
 	return 2;
@@ -467,12 +508,17 @@ int detect_consoles(const char *device, int fallback, struct console **consoles)
 	int fd, reconnect = 0, rc;
 	dev_t comparedev = 0;
 
+	consoles_debug = getenv("CONSOLES_DEBUG") ? 1 : 0;
+
 	if (!device || !*device)
 		fd = dup(fallback);
 	else {
 		fd = open(device, O_RDWR|O_NONBLOCK|O_NOCTTY|O_CLOEXEC);
 		reconnect = 1;
 	}
+
+	DBG(dbgprint("detection started [device=%s, fallback=%d]",
+				device, fallback));
 
 	if (fd >= 0) {
 		DIR *dir;
@@ -481,6 +527,7 @@ int detect_consoles(const char *device, int fallback, struct console **consoles)
 #ifdef TIOCGDEV
 		unsigned int devnum;
 #endif
+		DBG(dbgprint("trying device/fallback file descriptor"));
 
 		if (fstat(fd, &st) < 0) {
 			close(fd);
@@ -590,7 +637,9 @@ console:
 	if (rc == 1)
 		goto fallback;		/* detection error */
 
+	DBG(dbgprint("detection success [rc=%d]", reconnect));
 	return reconnect;
+
 #endif /* __linux __ */
 
 fallback:
@@ -610,6 +659,8 @@ fallback:
 		if (*consoles)
 			(*consoles)->fd = fallback;
 	}
+
+	DBG(dbgprint("detection done by fallback [rc=%d]", reconnect));
 	return reconnect;
 }
 
