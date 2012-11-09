@@ -44,5 +44,6 @@ struct console {
 	struct termios tio;
 	struct console *next;
 };
-extern struct console *consoles;
-extern int detect_consoles(const char *, int);
+
+extern int detect_consoles(const char *device, int fallback,
+			   struct console **consoles);

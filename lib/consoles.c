@@ -57,8 +57,6 @@
 
 #define alignof(type)		((sizeof(type)+(sizeof(void*)-1)) & ~(sizeof(void*)-1))
 
-struct console *consoles;
-
 /*
  * Read and allocate one line from file,
  * the caller has to free the result
@@ -180,7 +178,7 @@ static
 #ifdef __GNUC__
 __attribute__((__nonnull__,__hot__))
 #endif
-void consalloc(char * name)
+void append_console(struct console **list, char * name)
 {
 	static const struct chardata initcp = {
 		.erase	= CERASE,
@@ -194,7 +192,7 @@ void consalloc(char * name)
 	if (posix_memalign((void*)&tail, sizeof(void*), alignof(typeof(struct console))) != 0)
 		perror("memory allocation");
 
-	for (last = consoles; last && last->next; last = last->next);
+	for (last = *list; last && last->next; last = last->next);
 
 	tail->next = NULL;
 	tail->tty = name;
@@ -208,7 +206,7 @@ void consalloc(char * name)
 	memcpy(&tail->cp, &initcp, sizeof(struct chardata));
 
 	if (!last)
-		consoles = tail;
+		*list = tail;
 	else
 		last->next = tail;
 }
@@ -222,7 +220,7 @@ void consalloc(char * name)
  * Returns 1 if stdout and stderr should be reconnected and 0
  * otherwise.
  */
-int detect_consoles(const char *device, int fallback)
+int detect_consoles(const char *device, int fallback, struct console **consoles)
 {
 	int fd, ret = 0;
 	dev_t comparedev = 0;
@@ -293,9 +291,9 @@ int detect_consoles(const char *device, int fallback)
 			goto fallback;
 		name = scandev(dir, comparedev);
 		if (name)
-			consalloc(name);
+			append_console(consoles, name);
 		closedir(dir);
-		if (!consoles)
+		if (!*consoles)
 			goto fallback;
 		return ret;
 	}
@@ -324,7 +322,7 @@ console:
 			name = scandev(dir, comparedev);
 			if (!name)
 				continue;
-			consalloc(name);
+			append_console(consoles, name);
 		}
 		closedir(dir);
 		fclose(fc);
@@ -360,11 +358,11 @@ console:
 			name = scandev(dir, comparedev);
 			if (!name)
 				continue;
-			consalloc(name);
+			append_console(consoles, name);
 		}
 		closedir(dir);
 		free(attrib);
-		if (!consoles)
+		if (!*consoles)
 			goto fallback;
 		return ret;
 
@@ -436,7 +434,7 @@ console:
 			name = scandev(dir, comparedev);
 			if (!name)
 				continue;
-			consalloc(name);
+			append_console(consoles, name);
 		}
 		closedir(dir);
 		free(cmdline);
@@ -444,7 +442,7 @@ console:
 		 * Detection of the device used for Linux system console using
 		 * the ioctl TIOCGDEV if available (e.g. official 2.6.38).
 		 */
-		if (!consoles) {
+		if (!*consoles) {
 #ifdef TIOCGDEV
 			unsigned int devnum;
 			const char *name;
@@ -470,10 +468,10 @@ console:
 			if (!name)
 				name = "/dev/tty1";
 
-			consalloc(strdup(name));
-			if (consoles) {
+			append_console(consoles, strdup(name));
+			if (*consoles) {
 				if (!device || *device == '\0')
-					consoles->fd = fallback;
+					(*consoles)->fd = fallback;
 				return ret;
 			}
 #endif
@@ -493,9 +491,9 @@ fallback:
 		if (!name)
 			name = "/dev/tty";
 
-		consalloc(strdup(name));
-		if (consoles)
-			consoles->fd = fallback;
+		append_console(consoles, strdup(name));
+		if (*consoles)
+			(*consoles)->fd = fallback;
 	}
 	return ret;
 }
