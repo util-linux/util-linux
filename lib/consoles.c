@@ -213,6 +213,54 @@ int append_console(struct console **list, char * name)
 	return 0;
 }
 
+#ifdef __linux__
+/*
+ * return codes:
+ *	< 0	- fatal error (no mem or so... )
+ *	  0	- success
+ *	  1	- recoverable error
+ *	  2	- detection not available
+ */
+static int detect_consoles_from_proc(struct console **consoles)
+{
+	char fbuf[16 + 1];
+	DIR *dir = NULL;
+	FILE *fc = NULL;
+	int maj, min, rc = 1;
+
+	fc = fopen("/proc/consoles", "re");
+	if (!fc)
+		return 2;
+
+	dir = opendir("/dev");
+	if (!dir)
+		goto done;
+
+	while (fscanf(fc, "%*s %*s (%16[^)]) %d:%d", fbuf, &maj, &min) == 3) {
+		char *name;
+		dev_t comparedev;
+
+		if (!strchr(fbuf, 'E'))
+			continue;
+		comparedev = makedev(maj, min);
+		name = scandev(dir, comparedev);
+		if (!name)
+			continue;
+		rc = append_console(consoles, name);
+		if (rc < 0)
+			goto done;
+	}
+
+	rc = *consoles ? 0 : 1;
+done:
+	if (dir)
+		closedir(dir);
+	if (fc)
+		fclose(fc);
+	return rc;
+}
+#endif /* __linux__ */
+
 /*
  * Try to detect the real device(s) used for the system console
  * /dev/console if but only if /dev/console is used.  On Linux
@@ -228,7 +276,6 @@ int detect_consoles(const char *device, int fallback, struct console **consoles)
 	dev_t comparedev = 0;
 #ifdef __linux__
 	char *attrib, *cmdline;
-	FILE *fc;
 #endif
 	if (!device || !*device)
 		fd = dup(fallback);
@@ -309,33 +356,14 @@ console:
 	 * Detection of devices used for Linux system consolei using
 	 * the /proc/consoles API with kernel 2.6.38 and higher.
 	 */
-	if ((fc = fopen("/proc/consoles", "re"))) {
-		char fbuf[16];
-		int maj, min;
-		DIR *dir;
-		dir = opendir("/dev");
-		if (!dir) {
-			fclose(fc);
-			goto fallback;
-		}
-		while ((fscanf(fc, "%*s %*s (%[^)]) %d:%d", &fbuf[0], &maj, &min) == 3)) {
-			char * name;
+	rc = detect_consoles_from_proc(consoles);
+	if (rc == 0)
+		return reconnect;	/* success */
+	if (rc < 0)
+		return rc;		/* fatal error */
+	if (rc == 1)
+		goto fallback;		/* detection error */
 
-			if (!strchr(fbuf, 'E'))
-				continue;
-			comparedev = makedev(maj, min);
-
-			name = scandev(dir, comparedev);
-			if (!name)
-				continue;
-			rc = append_console(consoles, name);
-			if (rc < 0)
-				return rc;
-		}
-		closedir(dir);
-		fclose(fc);
-		return reconnect;
-	}
 	/*
 	 * Detection of devices used for Linux system console using
 	 * the sysfs /sys/class/tty/ API with kernel 2.6.37 and higher.
