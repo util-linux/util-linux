@@ -577,14 +577,17 @@ int detect_consoles(const char *device, int fallback, struct console **consoles)
 		if (!dir)
 			goto fallback;
 		name = scandev(dir, comparedev);
+		closedir(dir);
+
 		if (name) {
 			rc = append_console(consoles, name);
 			if (rc < 0)
 				return rc;
 		}
-		closedir(dir);
 		if (!*consoles)
 			goto fallback;
+
+		DBG(dbgprint("detection success [rc=%d]", reconnect));
 		return reconnect;
 	}
 #ifdef __linux__
