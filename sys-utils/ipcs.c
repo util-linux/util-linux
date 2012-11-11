@@ -572,33 +572,32 @@ static void print_shm(int shmid)
 }
 
 
-void print_msg (int msqid)
+void print_msg(int msgid)
 {
-	struct msqid_ds buf;
-	struct ipc_perm *ipcp = &buf.msg_perm;
+	struct msg_data *msgdata;
 
-	if (msgctl (msqid, IPC_STAT, &buf) == -1)
-		err(EXIT_FAILURE, _("msgctl failed"));
+	if (ipc_msg_get_info(msgid, &msgdata) < 1) {
+		warnx(_("id %d not found"), msgid);
+		return;
+	}
 
-	printf (_("\nMessage Queue msqid=%d\n"), msqid);
-	printf (_("uid=%u\tgid=%u\tcuid=%u\tcgid=%u\tmode=%#o\n"),
-		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid, ipcp->mode);
-	printf (_("cbytes=%ld\tqbytes=%ld\tqnum=%ld\tlspid=%d\tlrpid=%d\n"),
-		/*
-		 * glibc-2.1.3 and earlier has unsigned short. glibc-2.1.91
-		 * has variation between unsigned short, unsigned long.
-		 * Austin has msgqnum_t (for msg_qbytes)
-		 */
-		(long) buf.msg_cbytes, (long) buf.msg_qbytes,
-		(long) buf.msg_qnum, buf.msg_lspid, buf.msg_lrpid);
-	printf (_("send_time=%-26.24s\n"),
-		buf.msg_stime ? ctime (&buf.msg_stime) : _("Not set"));
-	printf (_("rcv_time=%-26.24s\n"),
-		buf.msg_rtime ? ctime (&buf.msg_rtime) : _("Not set"));
-	printf (_("change_time=%-26.24s\n"),
-		buf.msg_ctime ? ctime (&buf.msg_ctime) : _("Not set"));
-	printf ("\n");
-	return;
+	printf(_("\nMessage Queue msqid=%d\n"), msgid);
+	printf(_("uid=%u\tgid=%u\tcuid=%u\tcgid=%u\tmode=%#o\n"),
+	       msgdata->msg_perm.uid, msgdata->msg_perm.uid,
+	       msgdata->msg_perm.cuid, msgdata->msg_perm.cgid,
+	       msgdata->msg_perm.mode);
+	printf(_("cbytes=%jd\tqbytes=%jd\tqnum=%jd\tlspid=%d\tlrpid=%d\n"),
+	       msgdata->q_cbytes, msgdata->q_qbytes, msgdata->q_qnum,
+	       msgdata->q_lspid, msgdata->q_lrpid);
+	printf(_("send_time=%-26.24s\n"),
+	       msgdata->q_stime ? ctime(&msgdata->q_stime) : _("Not set"));
+	printf(_("rcv_time=%-26.24s\n"),
+	       msgdata->q_rtime ? ctime(&msgdata->q_rtime) : _("Not set"));
+	printf(_("change_time=%-26.24s\n"),
+	       msgdata->q_ctime ? ctime(&msgdata->q_ctime) : _("Not set"));
+	printf("\n");
+
+	ipc_msg_free_info(msgdata);
 }
 
 static void print_sem(int semid)

@@ -362,6 +362,7 @@ int ipc_msg_get_info(int id, struct msg_data **msgds)
 	int i, maxid;
 	struct msg_data *p;
 	struct msqid_ds dummy;
+	struct msqid_ds msgseg;
 
 	p = *msgds = xcalloc(1, sizeof(struct msg_data));
 	p->next = NULL;
@@ -394,6 +395,12 @@ int ipc_msg_get_info(int id, struct msg_data **msgds)
 		if (id > -1) {
 			/* ID specified */
 			if (id == p->msg_perm.id) {
+				/*
+				 * FIXME: q_qbytes are not in /proc
+				 *
+				 */
+				if (msgctl(id, IPC_STAT, &msgseg) != -1)
+					p->q_qbytes = msgseg.msg_qbytes;
 				i = 1;
 				break;
 			} else
@@ -421,10 +428,9 @@ int ipc_msg_get_info(int id, struct msg_data **msgds)
 
 	while (i <= maxid) {
 		int msgid;
-		struct msqid_ds msgseg;
 		struct ipc_perm *ipcp = &msgseg.msg_perm;
 
-		msgid = msgctl(id, MSG_STAT, &msgseg);
+		msgid = msgctl(i, MSG_STAT, &msgseg);
 		if (msgid < 0) {
 			if (-1 < id) {
 				free(*msgds);
@@ -448,6 +454,7 @@ int ipc_msg_get_info(int id, struct msg_data **msgds)
 		p->q_stime = msgseg.msg_stime;
 		p->q_rtime = msgseg.msg_rtime;
 		p->q_ctime = msgseg.msg_ctime;
+		p->q_qbytes = msgseg.msg_qbytes;
 
 		if (id < 0) {
 			p->next = xcalloc(1, sizeof(struct msg_data));
