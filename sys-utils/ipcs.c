@@ -34,10 +34,10 @@
 static void do_shm (char format);
 static void print_shm (int id);
 static void do_sem (char format);
+static void print_sem (int id);
 
 void do_msg (char format);
 void print_msg (int id);
-void print_sem (int id);
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
@@ -602,42 +602,35 @@ void print_msg (int msqid)
 	return;
 }
 
-void print_sem (int semid)
+static void print_sem(int semid)
 {
-	struct semid_ds semds;
-	struct ipc_perm *ipcp = &semds.sem_perm;
-	union semun arg;
+	struct sem_data *semdata;
 	size_t i;
 
-	arg.buf = &semds;
-	if (semctl (semid, 0, IPC_STAT, arg) < 0)
-		err(EXIT_FAILURE, _("semctl failed"));
-
-	printf (_("\nSemaphore Array semid=%d\n"), semid);
-	printf (_("uid=%u\t gid=%u\t cuid=%u\t cgid=%u\n"),
-		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid);
-	printf (_("mode=%#o, access_perms=%#o\n"),
-		ipcp->mode, ipcp->mode & 0777);
-	printf (_("nsems = %ld\n"), (long) semds.sem_nsems);
-	printf (_("otime = %-26.24s\n"),
-		semds.sem_otime ? ctime (&semds.sem_otime) : _("Not set"));
-	printf (_("ctime = %-26.24s\n"), ctime (&semds.sem_ctime));
-
-	printf ("%-10s %-10s %-10s %-10s %-10s\n",
-		_("semnum"),_("value"),_("ncount"),_("zcount"),_("pid"));
-	arg.val = 0;
-	for (i=0; i< semds.sem_nsems; i++) {
-		int val, ncnt, zcnt, pid;
-		val = semctl (semid, i, GETVAL, arg);
-		ncnt = semctl (semid, i, GETNCNT, arg);
-		zcnt = semctl (semid, i, GETZCNT, arg);
-		pid = semctl (semid, i, GETPID, arg);
-		if (val < 0 || ncnt < 0 || zcnt < 0 || pid < 0)
-			err(EXIT_FAILURE, _("semctl failed"));
-
-		printf ("%-10zd %-10d %-10d %-10d %-10d\n",
-			i, val, ncnt, zcnt, pid);
+	if (ipc_sem_get_info(semid, &semdata) < 1) {
+		warnx(_("id %d not found"), semid);
+		return;
 	}
-	printf ("\n");
-	return;
+
+	printf(_("\nSemaphore Array semid=%d\n"), semid);
+	printf(_("uid=%u\t gid=%u\t cuid=%u\t cgid=%u\n"),
+	       semdata->sem_perm.uid, semdata->sem_perm.uid,
+	       semdata->sem_perm.cuid, semdata->sem_perm.cgid);
+	printf(_("mode=%#o, access_perms=%#o\n"),
+	       semdata->sem_perm.mode, semdata->sem_perm.mode & 0777);
+	printf(_("nsems = %ld\n"), semdata->sem_nsems);
+	printf(_("otime = %-26.24s\n"),
+	       semdata->sem_otime ? ctime(&semdata->sem_otime) : _("Not set"));
+	printf(_("ctime = %-26.24s\n"), ctime(&semdata->sem_ctime));
+
+	printf("%-10s %-10s %-10s %-10s %-10s\n",
+	       _("semnum"), _("value"), _("ncount"), _("zcount"), _("pid"));
+
+	for (i = 0; i < semdata->sem_nsems; i++) {
+		struct sem_elem *e = &semdata->elements[i];
+		printf("%-10zd %-10d %-10d %-10d %-10d\n",
+		       i, e->semval, e->ncount, e->zcount, e->pid);
+	}
+	printf("\n");
+	ipc_sem_free_info(semdata);
 }

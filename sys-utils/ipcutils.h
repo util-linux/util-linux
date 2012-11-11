@@ -134,6 +134,12 @@ extern void ipc_shm_free_info(struct shm_data *shmds);
 
 /* See 'struct sem_array' in kernel sources
  */
+struct sem_elem {
+	int	semval;
+	int	ncount;		/* processes waiting on increase semval */
+	int	zcount;		/* processes waiting on semval set to zero */
+	pid_t	pid;		/* process last executed semop(2) call */
+};
 struct sem_data {
 	struct ipc_stat sem_perm;
 
@@ -141,6 +147,7 @@ struct sem_data {
 	time_t		sem_otime;
 	uint64_t	sem_nsems;
 
+	struct sem_elem	*elements;
 	struct sem_data *next;
 };
 
