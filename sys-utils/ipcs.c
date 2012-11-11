@@ -164,32 +164,6 @@ int main (int argc, char **argv)
 	return EXIT_SUCCESS;
 }
 
-static void print_perms (int id, struct ipc_perm *ipcp)
-{
-	struct passwd *pw;
-	struct group *gr;
-
-	printf ("%-10d %-10o", id, ipcp->mode & 0777);
-
-	if ((pw = getpwuid(ipcp->cuid)))
-		printf(" %-10s", pw->pw_name);
-	else
-		printf(" %-10u", ipcp->cuid);
-	if ((gr = getgrgid(ipcp->cgid)))
-		printf(" %-10s", gr->gr_name);
-	else
-		printf(" %-10u", ipcp->cgid);
-
-	if ((pw = getpwuid(ipcp->uid)))
-		printf(" %-10s", pw->pw_name);
-	else
-		printf(" %-10u", ipcp->uid);
-	if ((gr = getgrgid(ipcp->gid)))
-		printf(" %-10s\n", gr->gr_name);
-	else
-		printf(" %-10u\n", ipcp->gid);
-}
-
 static void do_shm (char format)
 {
 	struct passwd *pw;
