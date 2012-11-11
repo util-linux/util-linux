@@ -356,6 +356,120 @@ void ipc_sem_free_info(struct sem_data *semds)
 	}
 }
 
+int ipc_msg_get_info(int id, struct msg_data **msgds)
+{
+	FILE *f;
+	int i, maxid;
+	struct msg_data *p;
+	struct msqid_ds dummy;
+
+	p = *msgds = xcalloc(1, sizeof(struct msg_data));
+	p->next = NULL;
+
+	f = path_fopen("r", 0, _PATH_PROC_SYSV_MSG);
+	if (!f)
+		goto msg_fallback;
+
+	while (fgetc(f) != '\n') ;	/* skip header */
+
+	while (feof(f) == 0) {
+		if (fscanf(f,
+			   "%d %d  %o  %" SCNu64 " %" SCNu64 " %u %u %u %u %u %u %" SCNu64 " %" SCNu64 " %" SCNu64 "\n",
+			   &p->msg_perm.key,
+			   &p->msg_perm.id,
+			   &p->msg_perm.mode,
+			   &p->q_cbytes,
+			   &p->q_qnum,
+			   &p->q_lspid,
+			   &p->q_lrpid,
+			   &p->msg_perm.uid,
+			   &p->msg_perm.gid,
+			   &p->msg_perm.cuid,
+			   &p->msg_perm.cgid,
+			   &p->q_stime,
+			   &p->q_rtime,
+			   &p->q_ctime) != 14)
+			continue;
+
+		if (id > -1) {
+			/* ID specified */
+			if (id == p->msg_perm.id) {
+				i = 1;
+				break;
+			} else
+				continue;
+		}
+
+		p->next = xcalloc(1, sizeof(struct msg_data));
+		p = p->next;
+		p->next = NULL;
+		i++;
+	}
+
+	if (i == 0)
+		free(*msgds);
+	fclose(f);
+	return i;
+
+	/* Fallback; /proc or /sys file(s) missing. */
+ msg_fallback:
+	i = id < 0 ? 0 : id;
+
+	maxid = msgctl(id, MSG_STAT, &dummy);
+	if (maxid < 0)
+		return 0;
+
+	while (i <= maxid) {
+		int msgid;
+		struct msqid_ds msgseg;
+		struct ipc_perm *ipcp = &msgseg.msg_perm;
+
+		msgid = msgctl(id, MSG_STAT, &msgseg);
+		if (msgid < 0) {
+			if (-1 < id) {
+				free(*msgds);
+				return 0;
+			}
+			i++;
+			continue;
+		}
+
+		p->msg_perm.key = ipcp->KEY;
+		p->msg_perm.id = msgid;
+		p->msg_perm.mode = ipcp->mode;
+		p->q_cbytes = msgseg.msg_cbytes;
+		p->q_qnum = msgseg.msg_qnum;
+		p->q_lspid = msgseg.msg_lspid;
+		p->q_lrpid = msgseg.msg_lrpid;
+		p->msg_perm.uid = ipcp->uid;
+		p->msg_perm.gid = ipcp->gid;
+		p->msg_perm.cuid = ipcp->cuid;
+		p->msg_perm.cgid = ipcp->cgid;
+		p->q_stime = msgseg.msg_stime;
+		p->q_rtime = msgseg.msg_rtime;
+		p->q_ctime = msgseg.msg_ctime;
+
+		if (id < 0) {
+			p->next = xcalloc(1, sizeof(struct msg_data));
+			p = p->next;
+			p->next = NULL;
+			i++;
+		} else
+			return 1;
+	}
+
+	return i;
+}
+
+void ipc_msg_free_info(struct msg_data *msgds)
+{
+	while (msgds) {
+		struct msg_data *next = msgds->next;
+		free(msgds);
+		msgds = next;
+	}
+}
+
 void ipc_print_perms(FILE *f, struct ipc_stat *is)
 {
 	struct passwd *pw;

@@ -154,4 +154,24 @@ struct sem_data {
 extern int ipc_sem_get_info(int id, struct sem_data **semds);
 extern void ipc_sem_free_info(struct sem_data *semds);
 
+/* See 'struct msg_queue' in kernel sources
+ */
+struct msg_data {
+	struct ipc_stat msg_perm;
+
+	time_t		q_stime;
+	time_t		q_rtime;
+	time_t		q_ctime;
+	uint64_t	q_cbytes;
+	uint64_t	q_qnum;
+	uint64_t	q_qbytes;
+	pid_t		q_lspid;
+	pid_t		q_lrpid;
+
+	struct msg_data *next;
+};
+
+extern int ipc_msg_get_info(int id, struct msg_data **msgds);
+extern void ipc_msg_free_info(struct msg_data *msgds);
+
 #endif /* UTIL_LINUX_IPCUTILS_H */

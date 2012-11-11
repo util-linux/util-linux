@@ -35,8 +35,8 @@ static void do_shm (char format);
 static void print_shm (int id);
 static void do_sem (char format);
 static void print_sem (int id);
+static void do_msg (char format);
 
-void do_msg (char format);
 void print_msg (int id);
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
@@ -433,23 +433,16 @@ static void do_sem (char format)
 	return;
 }
 
-void do_msg (char format)
+static void do_msg (char format)
 {
-	int maxid, msqid, id;
-	struct msqid_ds msgque;
-	struct msginfo msginfo;
-	struct ipc_perm *ipcp = &msgque.msg_perm;
 	struct passwd *pw;
-	struct ipc_limits lim;
-
-	maxid = msgctl (0, MSG_INFO, (struct msqid_ds *) (void *) &msginfo);
-	if (maxid < 0) {
-		printf (_("kernel not configured for message queues\n"));
-		return;
-	}
+	struct msg_data *msgds, *msgdsp;
 
 	switch (format) {
 	case LIMITS:
+	{
+		struct ipc_limits lim;
+
 		if (ipc_msg_get_limits(&lim))
 			return;
 		printf (_("------ Messages Limits --------\n"));
@@ -457,14 +450,20 @@ void do_msg (char format)
 		printf (_("max size of message (bytes) = %zu\n"), lim.msgmax);
 		printf (_("default max size of queue (bytes) = %d\n"), lim.msgmnb);
 		return;
-
+	}
 	case STATUS:
+	{
+		struct msginfo msginfo;
+		if (msgctl (0, MSG_INFO, (struct msqid_ds *) (void *) &msginfo) < 0) {
+			printf (_("kernel not configured for message queues\n"));
+			return;
+		}
 		printf (_("------ Messages Status --------\n"));
 		printf (_("allocated queues = %d\n"), msginfo.msgpool);
 		printf (_("used headers = %d\n"), msginfo.msgmap);
 		printf (_("used space = %d bytes\n"), msginfo.msgtql);
 		return;
-
+	}
 	case CREATOR:
 		printf (_("------ Message Queues Creators/Owners --------\n"));
 		printf ("%-10s %-10s %-10s %-10s %-10s %-10s\n",
@@ -491,56 +490,56 @@ void do_msg (char format)
 		break;
 	}
 
-	for (id = 0; id <= maxid; id++) {
-		msqid = msgctl (id, MSG_STAT, &msgque);
-		if (msqid < 0)
-			continue;
-		if (format == CREATOR)  {
-			print_perms (msqid, ipcp);
+	/*
+	 * Print data
+	 */
+	if (ipc_msg_get_info(-1, &msgds) < 1)
+		return;
+	msgdsp = msgds;
+
+	for (msgdsp = msgds; msgdsp->next != NULL; msgdsp = msgdsp->next) {
+		if (format == CREATOR) {
+			ipc_print_perms(stdout, &msgdsp->msg_perm);
 			continue;
 		}
-		pw = getpwuid(ipcp->uid);
+		pw = getpwuid(msgdsp->msg_perm.uid);
 		switch (format) {
 		case TIME:
 			if (pw)
-				printf ("%-8d %-10.10s", msqid, pw->pw_name);
+				printf ("%-8d %-10.10s", msgdsp->msg_perm.id, pw->pw_name);
 			else
-				printf ("%-8d %-10u", msqid, ipcp->uid);
-			printf (" %-20.16s", msgque.msg_stime
-				? ctime(&msgque.msg_stime) + 4 : _("Not set"));
-			printf (" %-20.16s", msgque.msg_rtime
-				? ctime(&msgque.msg_rtime) + 4 : _("Not set"));
-			printf (" %-20.16s\n", msgque.msg_ctime
-				? ctime(&msgque.msg_ctime) + 4 : _("Not set"));
+				printf ("%-8d %-10u", msgdsp->msg_perm.id, msgdsp->msg_perm.uid);
+			printf (" %-20.16s", msgdsp->q_stime
+				? ctime(&msgdsp->q_stime) + 4 : _("Not set"));
+			printf (" %-20.16s", msgdsp->q_rtime
+				? ctime(&msgdsp->q_rtime) + 4 : _("Not set"));
+			printf (" %-20.16s\n", msgdsp->q_ctime
+				? ctime(&msgdsp->q_ctime) + 4 : _("Not set"));
 			break;
 		case PID:
 			if (pw)
-				printf ("%-8d %-10.10s", msqid, pw->pw_name);
+				printf ("%-8d %-10.10s", msgdsp->msg_perm.id, pw->pw_name);
 			else
-				printf ("%-8d %-10u", msqid, ipcp->uid);
+				printf ("%-8d %-10u", msgdsp->msg_perm.id, msgdsp->msg_perm.uid);
 			printf ("  %5d     %5d\n",
-				msgque.msg_lspid, msgque.msg_lrpid);
+				msgdsp->q_lspid, msgdsp->q_lrpid);
 			break;
 
 		default:
-			printf( "0x%08x ",ipcp->KEY );
+			printf( "0x%08x ",msgdsp->msg_perm.key );
 			if (pw)
-				printf ("%-10d %-10.10s", msqid, pw->pw_name);
+				printf ("%-10d %-10.10s", msgdsp->msg_perm.id, pw->pw_name);
 			else
-				printf ("%-10d %-10u", msqid, ipcp->uid);
+				printf ("%-10d %-10u", msgdsp->msg_perm.id, msgdsp->msg_perm.uid);
 			printf (" %-10o %-12ld %-12ld\n",
-				ipcp->mode & 0777,
-				/*
-				 * glibc-2.1.3 and earlier has unsigned
-				 * short. glibc-2.1.91 has variation between
-				 * unsigned short, unsigned long. Austin has
-				 * msgqnum_t
-				 */
-				(long) msgque.msg_cbytes,
-				(long) msgque.msg_qnum);
+				msgdsp->msg_perm.mode & 0777,
+				msgdsp->q_cbytes,
+				msgdsp->q_qnum);
 			break;
 		}
 	}
+
+	ipc_msg_free_info(msgds);
 	return;
 }
 
