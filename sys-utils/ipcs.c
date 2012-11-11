@@ -33,8 +33,8 @@
 
 static void do_shm (char format);
 static void print_shm (int id);
+static void do_sem (char format);
 
-void do_sem (char format);
 void do_msg (char format);
 void print_msg (int id);
 void print_sem (int id);
@@ -332,25 +332,16 @@ static void do_shm (char format)
 	return;
 }
 
-void do_sem (char format)
+static void do_sem (char format)
 {
-	int maxid, semid, id;
-	struct semid_ds semary;
-	struct seminfo seminfo;
-	struct ipc_perm *ipcp = &semary.sem_perm;
 	struct passwd *pw;
-	union semun arg;
-	struct ipc_limits lim;
-
-	arg.array = (ushort *)  (void *) &seminfo;
-	maxid = semctl (0, 0, SEM_INFO, arg);
-	if (maxid < 0) {
-		printf (_("kernel not configured for semaphores\n"));
-		return;
-	}
+	struct sem_data *semds, *semdsp;
 
 	switch (format) {
 	case LIMITS:
+	{
+		struct ipc_limits lim;
+
 		printf (_("------ Semaphore Limits --------\n"));
 		if (ipc_sem_get_limits(&lim))
 			return;
@@ -360,12 +351,21 @@ void do_sem (char format)
 		printf (_("max ops per semop call = %d\n"), lim.semopm);
 		printf (_("semaphore max value = %d\n"), lim.semvmx);
 		return;
-
+	}
 	case STATUS:
+	{
+		struct seminfo seminfo;
+		union semun arg;
+		arg.array = (ushort *)  (void *) &seminfo;
+		if (semctl (0, 0, SEM_INFO, arg) < 0) {
+			printf (_("kernel not configured for semaphores\n"));
+			return;
+		}
 		printf (_("------ Semaphore Status --------\n"));
 		printf (_("used arrays = %d\n"), seminfo.semusz);
 		printf (_("allocated semaphores = %d\n"), seminfo.semaem);
 		return;
+	}
 
 	case CREATOR:
 		printf (_("------ Semaphore Arrays Creators/Owners --------\n"));
@@ -389,48 +389,48 @@ void do_sem (char format)
 		break;
 	}
 
-	for (id = 0; id <= maxid; id++) {
-		arg.buf = (struct semid_ds *) &semary;
-		semid = semctl (id, 0, SEM_STAT, arg);
-		if (semid < 0)
-			continue;
+	/*
+	 * Print data
+	 */
+	if (ipc_sem_get_info(-1, &semds) < 1)
+		return;
+	semdsp = semds;
+
+	for (semdsp = semds; semdsp->next != NULL; semdsp = semdsp->next) {
 		if (format == CREATOR)  {
-			print_perms (semid, ipcp);
+			ipc_print_perms(stdout, &semdsp->sem_perm);
 			continue;
 		}
-		pw = getpwuid(ipcp->uid);
+		pw = getpwuid(semdsp->sem_perm.uid);
 		switch (format) {
 		case TIME:
 			if (pw)
-				printf ("%-8d %-10.10s", semid, pw->pw_name);
+				printf ("%-8d %-10.10s", semdsp->sem_perm.id, pw->pw_name);
 			else
-				printf ("%-8d %-10u", semid, ipcp->uid);
-			printf ("  %-26.24s", semary.sem_otime
-				? ctime(&semary.sem_otime) : _("Not set"));
-			printf (" %-26.24s\n", semary.sem_ctime
-				? ctime(&semary.sem_ctime) : _("Not set"));
+				printf ("%-8d %-10u", semdsp->sem_perm.id, semdsp->sem_perm.uid);
+			printf ("  %-26.24s", semdsp->sem_otime
+				? ctime(&semdsp->sem_otime) : _("Not set"));
+			printf (" %-26.24s\n", semdsp->sem_ctime
+				? ctime(&semdsp->sem_ctime) : _("Not set"));
 			break;
 		case PID:
 			break;
 
 		default:
-			printf("0x%08x ", ipcp->KEY);
+			printf("0x%08x ", semdsp->sem_perm.key);
 			if (pw)
-				printf ("%-10d %-10.10s", semid, pw->pw_name);
+				printf ("%-10d %-10.10s", semdsp->sem_perm.id, pw->pw_name);
 			else
-				printf ("%-10d %-10u", semid, ipcp->uid);
+				printf ("%-10d %-10u", semdsp->sem_perm.id, semdsp->sem_perm.uid);
 			printf (" %-10o %-10ld\n",
-				ipcp->mode & 0777,
-				/*
-				 * glibc-2.1.3 and earlier has unsigned
-				 * short. glibc-2.1.91 has variation between
-				 * unsigned short and unsigned long. Austin
-				 * prescribes unsigned short.
-				 */
-				(long) semary.sem_nsems);
+				semdsp->sem_perm.mode & 0777,
+				semdsp->sem_nsems);
 			break;
 		}
 	}
+
+	ipc_sem_free_info(semds);
+	return;
 }
 
 void do_msg (char format)

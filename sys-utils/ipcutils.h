@@ -132,4 +132,19 @@ struct shm_data {
 extern int ipc_shm_get_info(int id, struct shm_data **shmds);
 extern void ipc_shm_free_info(struct shm_data *shmds);
 
+/* See 'struct sem_array' in kernel sources
+ */
+struct sem_data {
+	struct ipc_stat sem_perm;
+
+	time_t		sem_ctime;
+	time_t		sem_otime;
+	uint64_t	sem_nsems;
+
+	struct sem_data *next;
+};
+
+extern int ipc_sem_get_info(int id, struct sem_data **semds);
+extern void ipc_sem_free_info(struct sem_data *semds);
+
 #endif /* UTIL_LINUX_IPCUTILS_H */
