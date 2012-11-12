@@ -12,12 +12,6 @@ lscpu
   - detect more hypervisors, see 'virt-what' shell script
     http://people.redhat.com/~rjones/virt-what/
 
-losetup
--------
-  - add new option --list and --output <columns> to print details about
-    one or all (-a) devices by lib/tt.c output. For example people hate
-    the hex devno in the default output.
-
 dmesg
 -----
 

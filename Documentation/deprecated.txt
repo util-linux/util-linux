@@ -24,6 +24,24 @@ Why:	the option -s is in collision with the Loop-AES losetup dialect that is use
 
 --------------------------
 
+What:   losetup output format without --list
+
+        deprecated format"
+
+          # losetup -a
+          /dev/loop0: []: (/home/fs-images/swap.img)
+          /dev/loop1: []: (/home/fs-images/disk.img), offset 100
+
+	new format:
+
+          # losetup
+          NAME       SIZELIMIT OFFSET AUTOCLEAR RO BACK-FILE
+          /dev/loop0         0      0         0  0 /home/fs-images/swap.img
+          /dev/loop1         0    100         0  0 /home/fs-images/disk.img
+
+--------------------------
+
+
 What:	elvtune
 Why:	useless for kernel >= 2.6.9
 

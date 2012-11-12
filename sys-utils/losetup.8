@@ -67,6 +67,8 @@ to detach loop devices and to query the status of a loop device. If only the
 \fIloopdev\fP argument is given, the status of the corresponding loop
 device is shown.
 
+Note that the old output format (e.g. losetup -a) with comma delimited strings is
+deprecated in favour of the --list output format (e.g. losetup -a -l).
 .SH OPTIONS
 +The \fIsize\fR and \fIoffset\fR arguments may be followed by the multiplicative
 +suffixes KiB=1024, MiB=1024*1024, and so on for GiB, TiB, PiB, EiB, ZiB and YiB
@@ -75,7 +77,8 @@ device is shown.
 
 .IP "\fB\-a, \-\-all\fP"
 show status of all loop devices. Note that not all information are accessible
-for non-root users. See also \fB\-\-list\fP.
+for non-root users. See also \fB\-\-list\fP. The old output format (as printed
+without --list) is deprecated.
 .IP "\fB\-c, \-\-set-capacity\fP \fIloopdev\fP
 force loop driver to reread size of the file associated with the specified loop device
 .IP "\fB\-d, \-\-detach\fP \fIloopdev\fP..."
