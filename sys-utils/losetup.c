@@ -438,6 +438,7 @@ int main(int argc, char **argv)
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'D','a','c','d','f','j' },
 		{ 'D','c','d','f','l' },
+		{ 'D','c','d','f','O' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -500,6 +501,7 @@ int main(int argc, char **argv)
 			break;
 		case 'O':
 			outarg = optarg;
+			list = 1;
 			break;
 		case 'p':
                         warn(_("--pass-fd is no longer supported"));
