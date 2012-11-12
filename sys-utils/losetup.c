@@ -4,6 +4,7 @@
  *
  * losetup.c - setup and control loop devices
  */
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -15,11 +16,13 @@
 #include <getopt.h>
 
 #include "c.h"
+#include "tt.h"
 #include "nls.h"
 #include "strutils.h"
 #include "loopdev.h"
 #include "closestream.h"
 #include "optutils.h"
+#include "xalloc.h"
 
 enum {
 	A_CREATE = 1,		/* setup a new device */
@@ -31,8 +34,73 @@ enum {
 	A_SET_CAPACITY,		/* set device capacity */
 };
 
+enum {
+	COL_NAME = 0,
+	COL_AUTOCLR,
+	COL_BACK_FILE,
+	COL_BACK_INO,
+	COL_BACK_MAJMIN,
+	COL_MAJMIN,
+	COL_OFFSET,
+	COL_PARTSCAN,
+	COL_RO,
+	COL_SIZE,
+};
+
+struct tt *tt;
+
+struct colinfo {
+	const char *name;
+	double whint;
+	int flags;
+	const char *help;
+};
+
+static struct colinfo infos[] = {
+	[COL_AUTOCLR]     = { "AUTOCLEAR",    1, TT_FL_RIGHT, N_("autoclear flag set")},
+	[COL_BACK_FILE]   = { "BACK-FILE",  0.3, 0, N_("device backing file")},
+	[COL_BACK_INO]    = { "BACK-INO",     4, TT_FL_RIGHT, N_("backing file inode number")},
+	[COL_BACK_MAJMIN] = { "BACK-MAJ:MIN", 6, 0, N_("backing file major:minor device number")},
+	[COL_NAME]        = { "NAME",      0.25, 0, N_("loop device name")},
+	[COL_OFFSET]      = { "OFFSET",       5, TT_FL_RIGHT, N_("offset from the beginning")},
+	[COL_PARTSCAN]    = { "PARTSCAN",     1, TT_FL_RIGHT, N_("partscan flag set")},
+	[COL_RO]          = { "RO",           1, TT_FL_RIGHT, N_("read-only device")},
+	[COL_SIZE]        = { "SIZE",         5, TT_FL_RIGHT, N_("size limit of the file in bytes")},
+	[COL_MAJMIN]      = { "MAJ:MIN",      3, 0, N_("loop device major:minor number")},
+};
+
+#define NCOLS ARRAY_SIZE(infos)
+
+static int columns[NCOLS] = {-1};
+static int ncolumns;
 static int verbose;
 
+static int get_column_id(int num)
+{
+	assert(ARRAY_SIZE(columns) == NCOLS);
+	assert(num < ncolumns);
+	assert(columns[num] < (int) NCOLS);
+	return columns[num];
+}
+
+static struct colinfo *get_column_info(int num)
+{
+	return &infos[ get_column_id(num) ];
+}
+
+static int column_name_to_id(const char *name, size_t namesz)
+{
+	size_t i;
+
+	for (i = 0; i < NCOLS; i++) {
+		const char *cn = infos[i].name;
+
+		if (!strncasecmp(name, cn, namesz) && !*(cn + namesz))
+			return i;
+	}
+	warnx(_("unknown column: %s"), name);
+	return -1;
+}
 
 static int printf_loopdev(struct loopdev_cxt *lc)
 {
@@ -102,7 +170,6 @@ static int show_all_loops(struct loopdev_cxt *lc, const char *file,
 
 		if (file && !loopcxt_is_used(lc, st, file, offset, flags))
 			continue;
-
 		printf_loopdev(lc);
 	}
 	loopcxt_deinit_iterator(lc);
@@ -147,6 +214,131 @@ static int delete_all_loops(struct loopdev_cxt *lc)
 	return res;
 }
 
+static int set_tt_data(struct loopdev_cxt *lc, struct tt_line *ln)
+{
+	int i;
+
+	for (i = 0; i < ncolumns; i++) {
+		const char *p = NULL;
+		char *np = NULL;
+		uint64_t x = 0;
+
+		switch(get_column_id(i)) {
+		case COL_NAME:
+			p = loopcxt_get_device(lc);
+			if (p)
+				tt_line_set_data(ln, i, xstrdup(p));
+			break;
+		case COL_BACK_FILE:
+			p = loopcxt_get_backing_file(lc);
+			if (p)
+				tt_line_set_data(ln, i, xstrdup(p));
+			break;
+		case COL_OFFSET:
+			if (loopcxt_get_offset(lc, &x) == 0)
+				xasprintf(&np, "%jd", x);
+			if (np)
+				tt_line_set_data(ln, i, np);
+			break;
+		case COL_SIZE:
+			if (loopcxt_get_sizelimit(lc, &x) == 0)
+				xasprintf(&np, "%jd", x);
+			if (np)
+				tt_line_set_data(ln, i, np);
+			break;
+		case COL_BACK_MAJMIN:
+		{
+			dev_t dev = 0;
+			if (loopcxt_get_backing_devno(lc, &dev) == 0 && dev)
+				xasprintf(&np, "%8u:%-3u", major(dev), minor(dev));
+			if (np)
+				tt_line_set_data(ln, i, np);
+			break;
+		}
+		case COL_MAJMIN:
+		{
+			struct stat st;
+
+			if (loopcxt_get_device(lc)
+			    && stat(loopcxt_get_device(lc), &st) == 0
+			    && S_ISBLK(st.st_mode)
+			    && major(st.st_rdev) == LOOPDEV_MAJOR)
+				xasprintf(&np, "%3u:%-3u", major(st.st_rdev),
+						           minor(st.st_rdev));
+			if (np)
+				tt_line_set_data(ln, i, np);
+			break;
+		}
+		case COL_BACK_INO:
+		{
+			ino_t ino = 0;
+			if (loopcxt_get_backing_inode(lc, &ino) == 0 && ino)
+				xasprintf(&np, "%ju", ino);
+			if (np)
+				tt_line_set_data(ln, i, np);
+			break;
+		}
+		case COL_AUTOCLR:
+			tt_line_set_data(ln, i,
+				xstrdup(loopcxt_is_autoclear(lc) ? "1" : "0"));
+			break;
+		case COL_RO:
+			tt_line_set_data(ln, i,
+				xstrdup(loopcxt_is_readonly(lc) ? "1" : "0"));
+			break;
+		case COL_PARTSCAN:
+			tt_line_set_data(ln, i,
+				xstrdup(loopcxt_is_partscan(lc) ? "1" : "0"));
+			break;
+		default:
+			return -EINVAL;
+		}
+	}
+	return 0;
+}
+
+static int make_table(struct loopdev_cxt *lc, const char *file,
+		uint64_t offset, int flags)
+{
+	struct stat sbuf, *st = &sbuf;
+	struct tt_line *ln;
+
+	if (!(tt = tt_new_table(0)))
+		errx(EXIT_FAILURE, _("failed to initialize output table"));
+
+	for (int i = 0; i < ncolumns; i++) {
+		struct colinfo *ci = get_column_info(i);
+
+		if (!tt_define_column(tt, ci->name, ci->whint, ci->flags))
+			warn(_("failed to initialize output column"));
+	}
+
+	if (loopcxt_get_device(lc)) {
+		ln = tt_add_line(tt, NULL);
+		if (set_tt_data(lc, ln))
+			return -EINVAL;
+		return 0;
+	}
+
+	if (loopcxt_init_iterator(lc, LOOPITER_FL_USED))
+		return -1;
+	if (!file || stat(file, st))
+		st = NULL;
+
+	while (loopcxt_next(lc) == 0) {
+		if (file && !loopcxt_is_used(lc, st, file, offset, flags))
+			continue;
+
+
+		ln = tt_add_line(tt, NULL);
+		if (set_tt_data(lc, ln))
+			return -EINVAL;
+	}
+
+	loopcxt_deinit_iterator(lc);
+	return 0;
+}
+
 static void usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
@@ -165,7 +357,9 @@ static void usage(FILE *out)
 		" -j, --associated <file>       list all devices associated with <file>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 
-	fputs(_(" -o, --offset <num>            start at offset <num> into file\n"
+	fputs(_(" -l, --list                    list info about all or specified\n"
+		" -o, --offset <num>            start at offset <num> into file\n"
+		" -O, --output <cols>           specify columns to output for --list\n"
 		"     --sizelimit <num>         device limited to <num> bytes of the file\n"
 		" -P, --partscan                create partitioned loop device\n"
 		" -r, --read-only               setup read-only loop device\n"
@@ -175,6 +369,10 @@ static void usage(FILE *out)
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
+
+	fputs(_("\nAvailable --list columns:\n"), out);
+	for (size_t i = 0; i < NCOLS; i++)
+		fprintf(out, " %12s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("losetup(8)"));
 
@@ -208,6 +406,8 @@ int main(int argc, char **argv)
 	char *file = NULL;
 	uint64_t offset = 0, sizelimit = 0;
 	int res = 0, showdev = 0, lo_flags = 0;
+	char *outarg = NULL;
+	int list = 0;
 
 	enum {
 		OPT_SIZELIMIT = CHAR_MAX + 1,
@@ -222,12 +422,14 @@ int main(int argc, char **argv)
 		{ "find", 0, 0, 'f' },
 		{ "help", 0, 0, 'h' },
 		{ "associated", 1, 0, 'j' },
+		{ "list", 0, 0, 'l' },
 		{ "offset", 1, 0, 'o' },
+		{ "output", 1, 0, 'O' },
 		{ "sizelimit", 1, 0, OPT_SIZELIMIT },
 		{ "pass-fd", 1, 0, 'p' },
 		{ "partscan", 0, 0, 'P' },
 		{ "read-only", 0, 0, 'r' },
-	        { "show", 0, 0, OPT_SHOW },
+		{ "show", 0, 0, OPT_SHOW },
 		{ "verbose", 0, 0, 'v' },
 		{ "version", 0, 0, 'V' },
 		{ NULL, 0, 0, 0 }
@@ -235,6 +437,7 @@ int main(int argc, char **argv)
 
 	static const ul_excl_t excl[] = {	/* rows and cols in ASCII order */
 		{ 'D','a','c','d','f','j' },
+		{ 'D','c','d','f','l' },
 		{ 0 }
 	};
 	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
@@ -247,7 +450,7 @@ int main(int argc, char **argv)
 	if (loopcxt_init(&lc, 0))
 		err(EXIT_FAILURE, _("failed to initialize loopcxt"));
 
-	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:o:p:PrvV",
+	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:lo:O:p:PrvV",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -288,9 +491,15 @@ int main(int argc, char **argv)
 			act = A_SHOW;
 			file = optarg;
 			break;
+		case 'l':
+			list = 1;
+			break;
 		case 'o':
 			offset = strtosize_or_err(optarg, _("failed to parse offset"));
 			flags |= LOOPDEV_FL_OFFSET;
+			break;
+		case 'O':
+			outarg = optarg;
 			break;
 		case 'p':
                         warn(_("--pass-fd is no longer supported"));
@@ -316,8 +525,21 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (argc == 1)
-		usage(stderr);
+	/* default is --list --all */
+	if (argc == 1) {
+		act = A_SHOW;
+		list = 1;
+	}
+
+	/* default --list output columns */
+	if (list && !ncolumns) {
+		columns[ncolumns++] = COL_NAME;
+		columns[ncolumns++] = COL_SIZE;
+		columns[ncolumns++] = COL_OFFSET;
+		columns[ncolumns++] = COL_AUTOCLR;
+		columns[ncolumns++] = COL_RO;
+		columns[ncolumns++] = COL_BACK_FILE;
+	}
 
 	if (act == A_FIND_FREE && optind < argc) {
 		/*
@@ -326,9 +548,16 @@ int main(int argc, char **argv)
 		act = A_CREATE;
 		file = argv[optind++];
 	}
+
+	if (list && !act && optind == argc)
+		/*
+		 * losetup --list	defaults to --all
+		 */
+		act = A_SHOW;
+
 	if (!act && optind + 1 == argc) {
 		/*
-		 * losetup <device>
+		 * losetup [--list] <device>
 		 */
 		act = A_SHOW_ONE;
 		if (loopcxt_set_device(&lc, argv[optind]))
@@ -363,6 +592,10 @@ int main(int argc, char **argv)
 	if ((flags & LOOPDEV_FL_OFFSET) &&
 	    act != A_CREATE && (act != A_SHOW || !file))
 		errx(EXIT_FAILURE, _("the option --offset is not allowed in this context."));
+
+	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
+					 &ncolumns, column_name_to_id) < 0)
+		return EXIT_FAILURE;
 
 	switch (act) {
 	case A_CREATE:
@@ -426,10 +659,16 @@ int main(int argc, char **argv)
 			printf("%s\n", loopcxt_get_device(&lc));
 		break;
 	case A_SHOW:
-		res = show_all_loops(&lc, file, offset, flags);
+		if (list)
+			res = make_table(&lc, file, offset, flags);
+		else
+			res = show_all_loops(&lc, file, offset, flags);
 		break;
 	case A_SHOW_ONE:
-		res = printf_loopdev(&lc);
+		if (list)
+			res = make_table( &lc, NULL, 0, 0);
+		else
+			res = printf_loopdev(&lc);
 		if (res)
 			warn(_("%s"), loopcxt_get_device(&lc));
 		break;
@@ -439,6 +678,11 @@ int main(int argc, char **argv)
 	default:
 		usage(stderr);
 		break;
+	}
+	if (tt) {
+		if (!res)
+			tt_print_table(tt);
+		tt_free_table(tt);
 	}
 
 	loopcxt_deinit(&lc);
