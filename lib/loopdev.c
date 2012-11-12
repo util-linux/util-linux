@@ -232,7 +232,7 @@ void loopcxt_enable_debug(struct loopdev_cxt *lc, int enable)
  */
 char *loopcxt_strdup_device(struct loopdev_cxt *lc)
 {
-	if (!lc || !*lc->device)
+	if (!lc || !lc->device || !*lc->device)
 		return NULL;
 	return strdup(lc->device);
 }
@@ -244,7 +244,7 @@ char *loopcxt_strdup_device(struct loopdev_cxt *lc)
  */
 const char *loopcxt_get_device(struct loopdev_cxt *lc)
 {
-	return lc ? lc->device : NULL;
+	return lc && lc->device && *lc->device ? lc->device : NULL;
 }
 
 /*
