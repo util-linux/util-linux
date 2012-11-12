@@ -44,7 +44,7 @@ enum {
 	COL_OFFSET,
 	COL_PARTSCAN,
 	COL_RO,
-	COL_SIZE,
+	COL_SIZELIMIT,
 };
 
 struct tt *tt;
@@ -65,7 +65,7 @@ static struct colinfo infos[] = {
 	[COL_OFFSET]      = { "OFFSET",       5, TT_FL_RIGHT, N_("offset from the beginning")},
 	[COL_PARTSCAN]    = { "PARTSCAN",     1, TT_FL_RIGHT, N_("partscan flag set")},
 	[COL_RO]          = { "RO",           1, TT_FL_RIGHT, N_("read-only device")},
-	[COL_SIZE]        = { "SIZE",         5, TT_FL_RIGHT, N_("size limit of the file in bytes")},
+	[COL_SIZELIMIT]   = { "SIZELIMIT",    5, TT_FL_RIGHT, N_("size limit of the file in bytes")},
 	[COL_MAJMIN]      = { "MAJ:MIN",      3, 0, N_("loop device major:minor number")},
 };
 
@@ -240,7 +240,7 @@ static int set_tt_data(struct loopdev_cxt *lc, struct tt_line *ln)
 			if (np)
 				tt_line_set_data(ln, i, np);
 			break;
-		case COL_SIZE:
+		case COL_SIZELIMIT:
 			if (loopcxt_get_sizelimit(lc, &x) == 0)
 				xasprintf(&np, "%jd", x);
 			if (np)
@@ -534,7 +534,7 @@ int main(int argc, char **argv)
 	/* default --list output columns */
 	if (list && !ncolumns) {
 		columns[ncolumns++] = COL_NAME;
-		columns[ncolumns++] = COL_SIZE;
+		columns[ncolumns++] = COL_SIZELIMIT;
 		columns[ncolumns++] = COL_OFFSET;
 		columns[ncolumns++] = COL_AUTOCLR;
 		columns[ncolumns++] = COL_RO;
