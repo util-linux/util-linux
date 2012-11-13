@@ -260,7 +260,7 @@ static int umount_all(struct libmnt_context *cxt)
 	itr = mnt_new_iter(MNT_ITER_BACKWARD);
 	if (!itr) {
 		warn(_("failed to initialize libmount iterator"));
-		return -ENOMEM;
+		return MOUNT_EX_SYSERR;
 	}
 
 	while (mnt_context_next_umount(cxt, itr, &fs, &mntrc, &ignored) == 0) {
@@ -287,7 +287,7 @@ static int umount_one(struct libmnt_context *cxt, const char *spec)
 	int rc;
 
 	if (!spec)
-		return -EINVAL;
+		return MOUNT_EX_SOFTWARE;
 
 	if (mnt_context_set_target(cxt, spec))
 		err(MOUNT_EX_SYSERR, _("failed to set umount target"));
