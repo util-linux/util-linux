@@ -136,7 +136,7 @@ int blkid_set_tag(blkid_dev dev, const char *name,
 	if (!dev || !name)
 		return -BLKID_ERR_PARAM;
 
-	if (!(val = blkid_strndup(value, vlength)) && value)
+	if (value && !(val = blkid_strndup(value, vlength)))
 		return -BLKID_ERR_MEM;
 
 	/*

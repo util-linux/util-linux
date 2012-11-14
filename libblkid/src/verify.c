@@ -43,6 +43,26 @@ static void blkid_probe_to_tags(blkid_probe pr, blkid_dev dev)
 			blkid_set_tag(dev, name, data, len);
 		}
 	}
+
+	/*
+	 * remove obsolete tags
+	 */
+	if (!nvals || !blkid_probe_has_value(pr, "LABEL"))
+		blkid_set_tag(dev, "LABEL", NULL, 0);
+	if (!nvals || !blkid_probe_has_value(pr, "UUID"))
+		blkid_set_tag(dev, "UUID", NULL, 0);
+	if (!nvals || !blkid_probe_has_value(pr, "PART_ENTRY_UUID"))
+		blkid_set_tag(dev, "PARTUUID", NULL, 0);
+	if (!nvals || !blkid_probe_has_value(pr, "PART_ENTRY_NAME"))
+		blkid_set_tag(dev, "PARTLABEL", NULL, 0);
+	if (!nvals || !blkid_probe_has_value(pr, "TYPE"))
+		blkid_set_tag(dev, "TYPE", NULL, 0);
+	if (!nvals || !blkid_probe_has_value(pr, "SEC_TYPE"))
+		blkid_set_tag(dev, "SEC_TYPE", NULL, 0);
+	if (!nvals || !blkid_probe_has_value(pr, "EXT_JOURNAL"))	/* extN */
+		blkid_set_tag(dev, "EXT_JOURNAL", NULL, 0);
+	if (!nvals || !blkid_probe_has_value(pr, "MOUNT"))		/* ocfs */
+		blkid_set_tag(dev, "MOUNT", NULL, 0);
 }
 
 /*
