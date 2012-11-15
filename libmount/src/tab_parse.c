@@ -471,8 +471,9 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 	assert(f);
 	assert(filename);
 
-	DBG(TAB, mnt_debug_h(tb, "%s: start parsing (%d entries)",
-				filename, mnt_table_get_nents(tb)));
+	DBG(TAB, mnt_debug_h(tb, "%s: start parsing [entries=%d, filter=%s]",
+				filename, mnt_table_get_nents(tb),
+				tb->fltrcb ? "yes" : "not"));
 
 	/* necessary for /proc/mounts only, the /proc/self/mountinfo
 	 * parser sets the flag properly
