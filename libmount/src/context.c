@@ -169,6 +169,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->flags |= (fl & MNT_FL_FORCE);
 	cxt->flags |= (fl & MNT_FL_NOCANONICALIZE);
 	cxt->flags |= (fl & MNT_FL_RDONLY_UMOUNT);
+	cxt->flags |= (fl & MNT_FL_NOSWAPMATCH);
 	return 0;
 }
 
