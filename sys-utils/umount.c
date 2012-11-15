@@ -289,6 +289,11 @@ static int umount_one(struct libmnt_context *cxt, const char *spec)
 	if (!spec)
 		return MOUNT_EX_SOFTWARE;
 
+	/* We have to reset the context to make this function and the
+	 * context re-usable more than once (for example in --recursive)
+	 */
+	mnt_reset_context(cxt);
+
 	if (mnt_context_set_target(cxt, spec))
 		err(MOUNT_EX_SYSERR, _("failed to set umount target"));
 
@@ -343,6 +348,8 @@ static int umount_recursive(struct libmnt_context *cxt, const char *spec)
 	tb = mnt_new_table();
 	if (!tb)
 		err(MOUNT_EX_SYSERR, _("libmount table allocation failed"));
+	mnt_table_set_parser_errcb(tb, table_parser_errcb);
+
 	/*
 	 * Don't use mtab here. The recursive umount depends on child-parent
 	 * relationship defined by mountinfo file.
@@ -397,6 +404,14 @@ int main(int argc, char **argv)
 		{ NULL, 0, 0, 0 }
 	};
 
+	static const ul_excl_t excl[] = {       /* rows and cols in in ASCII order */
+		{ 'R','a' },			/* recursive,all */
+		{ 'O','R','t'},			/* options,recursive,types */
+		{ 'R','r' },			/* recursive,read-only */
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	sanitize_env();
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -417,6 +432,8 @@ int main(int argc, char **argv)
 		/* only few options are allowed for non-root users */
 		if (mnt_context_is_restricted(cxt) && !strchr("hdilVv", c))
 			exit_non_root(option_to_longopt(c, longopts));
+
+		err_exclusive_options(c, longopts, excl, excl_st);
 
 		switch(c) {
 		case 'a':
