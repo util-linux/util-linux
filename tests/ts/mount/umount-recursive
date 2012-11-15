@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# Copyright (C) 2012 Karel Zak <kzak@redhat.com>
+
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="umount-recursive"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+ts_skip_nonroot
+
+modprobe --dry-run --quiet scsi_debug
+[ "$?" == 0 ] || ts_skip "missing scsi_debug module"
+
+ts_log "Init device"
+$TS_CMD_UMOUNT --recursive $MOUNTPOINT &> /dev/null
+rmmod scsi_debug &> /dev/null
+modprobe scsi_debug dev_size_mb=50
+[ "$?" == 0 ] || ts_die "Cannot init device"
+
+sleep 3
+
+DEVNAME=$(grep scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
+[ "x${DEVNAME}" == "x" ] && ts_die "Cannot find device"
+
+DEVICE="/dev/${DEVNAME}"
+
+ts_log "Create partitions"
+$TS_CMD_FDISK ${DEVICE} &> /dev/null <<EOF
+n
+p
+1
+
++10M
+n
+p
+2
+
++10M
+n
+p
+3
+
++10M
+n
+p
+
++10M
+w
+q
+EOF
+
+ts_log "Create filesystem A"
+mkfs.ext2 ${DEVICE}1 &> /dev/null
+ts_log "Create filesystem B"
+mkfs.ext2 ${DEVICE}2 &> /dev/null
+ts_log "Create filesystem C"
+mkfs.ext2 ${DEVICE}3 &> /dev/null
+ts_log "Create filesystem D"
+mkfs.ext2 ${DEVICE}4 &> /dev/null
+
+
+ts_log "Do tests..."
+
+[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
+
+ts_log "A) Mount root"
+$TS_CMD_MOUNT ${DEVICE}1 $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
+
+ts_log "B) Mount child"
+mkdir -p $TS_MOUNTPOINT/mntB
+$TS_CMD_MOUNT ${DEVICE}2 $TS_MOUNTPOINT/mntB >> $TS_OUTPUT 2>&1
+
+ts_log "C) Mount child/child"
+mkdir -p $TS_MOUNTPOINT/mntB/mnt{C,D}
+$TS_CMD_MOUNT ${DEVICE}3 $TS_MOUNTPOINT/mntB/mntC >> $TS_OUTPUT 2>&1
+
+ts_log "D) Mount child/child"
+$TS_CMD_MOUNT ${DEVICE}3 $TS_MOUNTPOINT/mntB/mntD >> $TS_OUTPUT 2>&1
+
+$TS_CMD_UMOUNT --recursive $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
+[ $? == 0 ] || ts_die "umount failed"
+
+sleep 3
+rmmod scsi_debug >> $TS_OUTPUT 2>&1
+[ $? == 0 ] || ts_die "device busy (umount failed?)"
+
+ts_log "Success"
+ts_finalize
+
