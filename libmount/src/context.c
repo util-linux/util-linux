@@ -153,6 +153,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	cxt->flags = MNT_FL_DEFAULT;
 
 	mnt_context_reset_status(cxt);
+	mnt_context_set_tabfilter(cxt, NULL, NULL);
 
 	/* restore non-resetable flags */
 	cxt->flags |= (fl & MNT_FL_EXTERN_FSTAB);
@@ -938,6 +939,9 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 
 	if (tb)
 		*tb = cxt->mtab;
+
+	DBG(CXT, mnt_debug_h(cxt, "mtab requested [nents=%d]",
+				mnt_table_get_nents(cxt->mtab)));
 	return 0;
 }
 
@@ -960,6 +964,7 @@ int mnt_context_set_tabfilter(struct libmnt_context *cxt,
 				cxt->table_fltrcb,
 				cxt->table_fltrcb_data);
 
+	DBG(CXT, mnt_debug_h(cxt, "tabfiler %s", fltr ? "ENABLED!" : "disabled"));
 	return 0;
 }
 
