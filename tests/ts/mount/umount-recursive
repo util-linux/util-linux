@@ -66,17 +66,26 @@ ts_log "Do tests..."
 
 ts_log "A) Mount root"
 $TS_CMD_MOUNT ${DEVICE}1 $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
+$TS_CMD_MOUNT --make-shared $TS_MOUNTPOINT
 
 ts_log "B) Mount child"
 mkdir -p $TS_MOUNTPOINT/mntB
 $TS_CMD_MOUNT ${DEVICE}2 $TS_MOUNTPOINT/mntB >> $TS_OUTPUT 2>&1
+
+ts_log "B2) Mount child-bind"
+mkdir -p $TS_MOUNTPOINT/bindB
+$TS_CMD_MOUNT --bind $TS_MOUNTPOINT/mntB $TS_MOUNTPOINT/bindB >> $TS_OUTPUT 2>&1
 
 ts_log "C) Mount child/child"
 mkdir -p $TS_MOUNTPOINT/mntB/mnt{C,D}
 $TS_CMD_MOUNT ${DEVICE}3 $TS_MOUNTPOINT/mntB/mntC >> $TS_OUTPUT 2>&1
 
 ts_log "D) Mount child/child"
-$TS_CMD_MOUNT ${DEVICE}3 $TS_MOUNTPOINT/mntB/mntD >> $TS_OUTPUT 2>&1
+$TS_CMD_MOUNT ${DEVICE}4 $TS_MOUNTPOINT/mntB/mntD >> $TS_OUTPUT 2>&1
+
+ts_log "E) Mount child-bind"
+mkdir -p $TS_MOUNTPOINT/bindC
+$TS_CMD_MOUNT --bind $TS_MOUNTPOINT/mntB/mntC $TS_MOUNTPOINT/bindC
 
 $TS_CMD_UMOUNT --recursive $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 [ $? == 0 ] || ts_die "umount failed"
