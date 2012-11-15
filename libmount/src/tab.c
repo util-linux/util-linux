@@ -901,8 +901,6 @@ static int is_mountinfo(struct libmnt_table *tb)
  *
  * This function is designed mostly for "mount -a".
  *
- * TODO: check for loopdev (see mount/mount.c is_fstab_entry_mounted().
- *
  * Returns: 0 or 1
  */
 int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
@@ -918,8 +916,13 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	assert(tb);
 	assert(fstab_fs);
 
-	if (mnt_fs_is_swaparea(fstab_fs) || mnt_table_get_nents(tb) == 0)
+	DBG(FS, mnt_debug_h(fstab_fs, "is FS mounted? [target=%s]",
+				mnt_fs_get_target(fstab_fs)));
+
+	if (mnt_fs_is_swaparea(fstab_fs) || mnt_table_get_nents(tb) == 0) {
+		DBG(FS, mnt_debug_h(fstab_fs, "- ignore (swap or no data)"));
 		return 0;
+	}
 
 	if (is_mountinfo(tb)) {
 		/* @tb is mountinfo, so we can try to use fs-roots */
@@ -942,9 +945,10 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 
 	tgt = mnt_fs_get_target(fstab_fs);
 
-	if (!tgt || !src)
+	if (!tgt || !src) {
+		DBG(FS, mnt_debug_h(fstab_fs, "- ignore (no source/target)"));
 		goto done;
-
+	}
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
 	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {

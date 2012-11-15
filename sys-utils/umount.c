@@ -289,11 +289,6 @@ static int umount_one(struct libmnt_context *cxt, const char *spec)
 	if (!spec)
 		return MOUNT_EX_SOFTWARE;
 
-	/* We have to reset the context to make this function and the
-	 * context re-usable more than once (for example in --recursive)
-	 */
-	mnt_reset_context(cxt);
-
 	if (mnt_context_set_target(cxt, spec))
 		err(MOUNT_EX_SYSERR, _("failed to set umount target"));
 
@@ -310,7 +305,7 @@ static int umount_one(struct libmnt_context *cxt, const char *spec)
 static int umount_do_recurse(struct libmnt_context *cxt,
 		struct libmnt_table *tb, struct libmnt_fs *parent)
 {
-	int rc;
+	int rc, mounted = 0;
 	struct libmnt_fs *child;
 	const char *target = mnt_fs_get_target(parent);
 	struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_BACKWARD);
@@ -334,7 +329,33 @@ static int umount_do_recurse(struct libmnt_context *cxt,
 			goto done;
 	}
 
-	rc = umount_one(cxt, target);
+
+	/*
+	 * Let's check if the pointpoint is still mounted -- for example with
+	 * shared subtrees maybe the mountpoint already unmounted by any
+	 * previous umount(2) call.
+	 *
+	 * Note that here we a little duplicate code from umount_one() and
+	 * mnt_context_umount(). It's no problem to call
+	 * mnt_context_prepare_umount() more than once. This solution is better
+	 * than directly call mnt_context_is_fs_mounted(), because libmount is
+	 * able to optimize mtab usage by mnt_context_set_tabfilte().
+	 */
+	if (mnt_context_set_target(cxt, mnt_fs_get_target(parent)))
+		err(MOUNT_EX_SYSERR, _("failed to set umount target"));
+
+	rc = mnt_context_prepare_umount(cxt);
+	if (!rc)
+		rc = mnt_context_is_fs_mounted(cxt, parent, &mounted);
+	if (mounted)
+		rc = umount_one(cxt, target);
+	else {
+		if (rc)
+			rc = mk_exit_code(cxt, rc);	/* error */
+		else
+			rc = MOUNT_EX_SUCCESS;		/* alredy unmounted */
+		mnt_reset_context(cxt);
+	}
 done:
 	mnt_free_iter(itr);
 	return rc;
@@ -344,6 +365,9 @@ static int umount_recursive(struct libmnt_context *cxt, const char *spec)
 {
 	struct libmnt_table *tb;
 	int rc;
+
+	/* it's always real mountpoint, don't assume that the target maybe a device */
+	mnt_context_disable_swapmatch(cxt, 1);
 
 	tb = mnt_new_table();
 	if (!tb)
