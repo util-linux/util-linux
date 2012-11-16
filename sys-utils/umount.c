@@ -374,6 +374,8 @@ static int umount_recursive(struct libmnt_context *cxt, const char *spec)
 		err(MOUNT_EX_SYSERR, _("libmount table allocation failed"));
 	mnt_table_set_parser_errcb(tb, table_parser_errcb);
 
+	mnt_table_set_cache(tb, mnt_context_get_cache(cxt));
+
 	/*
 	 * Don't use mtab here. The recursive umount depends on child-parent
 	 * relationship defined by mountinfo file.
