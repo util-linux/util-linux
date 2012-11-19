@@ -307,12 +307,17 @@ static void do_wipe_real(blkid_probe pr, const char *devname, struct wipe_desc *
 }
 
 static struct wipe_desc *
-do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet)
+do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet, int force)
 {
-	blkid_probe pr = new_probe(devname, O_RDWR | O_EXCL);
+	int flags;
+	blkid_probe pr;
 	struct wipe_desc *w, *wp0 = clone_offset(wp);
 	int zap = all ? 1 : wp->zap;
 
+	flags = O_RDWR;
+	if (!force)
+		flags |= O_EXCL;
+	pr = new_probe(devname, flags);
 	if (!pr)
 		return NULL;
 
@@ -362,6 +367,7 @@ usage(FILE *out)
 
 	fputs(_("\nOptions:\n"), out);
 	fputs(_(" -a, --all           wipe all magic strings (BE CAREFUL!)\n"
+		" -f, --force         force erasure\n"
 		" -h, --help          show this help text\n"
 		" -n, --no-act        do everything except the actual write() call\n"
 		" -o, --offset <num>  offset to erase, in bytes\n"
@@ -380,11 +386,12 @@ int
 main(int argc, char **argv)
 {
 	struct wipe_desc *wp0 = NULL, *wp;
-	int c, all = 0, has_offset = 0, noact = 0, quiet = 0;
+	int c, all = 0, force = 0, has_offset = 0, noact = 0, quiet = 0;
 	int mode = WP_MODE_PRETTY;
 
 	static const struct option longopts[] = {
 	    { "all",       0, 0, 'a' },
+	    { "force",     0, 0, 'f' },
 	    { "help",      0, 0, 'h' },
 	    { "no-act",    0, 0, 'n' },
 	    { "offset",    1, 0, 'o' },
@@ -413,6 +420,9 @@ main(int argc, char **argv)
 		switch(c) {
 		case 'a':
 			all++;
+			break;
+		case 'f':
+			force++;
 			break;
 		case 'h':
 			usage(stdout);
@@ -463,7 +473,8 @@ main(int argc, char **argv)
 		 */
 		while (optind < argc) {
 			wp = clone_offset(wp0);
-			wp = do_wipe(wp, argv[optind++], noact, all, quiet);
+			wp = do_wipe(wp, argv[optind++], noact, all, quiet,
+				     force);
 			free_wipe(wp);
 		}
 	}
