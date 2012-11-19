@@ -375,13 +375,17 @@ int main(int argc, char **argv)
 	}
 
 	chardata = init_chardata;
+
+	if (options.autolog) {
+		debug("doing auto login\n");
+		username = options.autolog;
+	}
+
 	if ((options.flags & F_NOPROMPT) == 0) {
 		if (options.autolog) {
-			/* Do the auto login. */
-			debug("doing auto login\n");
+			/* Autologin prompt */
 			do_prompt(&options, &termios);
 			printf("%s%s (automatic login)\n", LOGIN, options.autolog);
-			username = options.autolog;
 		} else {
 			/* Read the login name. */
 			debug("reading login name\n");
@@ -1357,7 +1361,7 @@ static void do_prompt(struct options *op, struct termios *tp)
 			free(hn);
 		}
 	}
-	if (op->autolog == (char*)0) {
+	if (!op->autolog) {
 		/* Always show login prompt. */
 		write_all(STDOUT_FILENO, LOGIN, sizeof(LOGIN) - 1);
 	}
