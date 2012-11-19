@@ -53,7 +53,7 @@ main (int argc, char *argv[])
 	uuid_t uu;
 
 	static const struct option longopts[] = {
-		{"random", required_argument, NULL, 'r'},
+		{"random", no_argument, NULL, 'r'},
 		{"time", no_argument, NULL, 't'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
