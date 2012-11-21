@@ -226,15 +226,15 @@ static struct gpt_header *get_gpt_header(
 		return NULL;
 
 	/* Header has to be verified when header_crc32 is zero */
-	orgcrc = le32_to_cpu(h->header_crc32);
+	orgcrc = h->header_crc32;
 	h->header_crc32 = 0;
-
 	crc = count_crc32((unsigned char *) h, hsz);
-	if (crc != orgcrc) {
+	h->header_crc32 = orgcrc;
+
+	if (crc != le32_to_cpu(orgcrc)) {
 		DBG(DEBUG_LOWPROBE, printf("GPT header corrupted\n"));
 		return NULL;
 	}
-	h->header_crc32 = cpu_to_le32(orgcrc);
 
 	/* Valid header has to be at MyLBA */
 	if (le64_to_cpu(h->my_lba) != lba) {
@@ -300,7 +300,7 @@ static int probe_gpt_pt(blkid_probe pr,
 	blkid_partlist ls;
 	uint64_t fu, lu;
 	uint32_t ssf, i;
-
+	efi_guid_t guid;
 
 	if (last_lba(pr, &lastlba))
 		goto nothing;
@@ -369,14 +369,13 @@ static int probe_gpt_pt(blkid_probe pr,
 			(unsigned char *) e->partition_name,
 			sizeof(e->partition_name), BLKID_ENC_UTF16LE);
 
-		swap_efi_guid(&e->unique_partition_guid);
-		swap_efi_guid(&e->partition_type_guid);
+		guid = e->unique_partition_guid;
+		swap_efi_guid(&guid);
+		blkid_partition_set_uuid(par, (const unsigned char *) &guid);
 
-		blkid_partition_set_uuid(par,
-			(const unsigned char *) &e->unique_partition_guid);
-
-		blkid_partition_set_type_uuid(par,
-			(const unsigned char *) &e->partition_type_guid);
+		guid = e->partition_type_guid;
+		swap_efi_guid(&guid);
+		blkid_partition_set_type_uuid(par, (const unsigned char *) &guid);
 
 		blkid_partition_set_flags(par, e->attributes);
 	}
