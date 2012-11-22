@@ -139,7 +139,7 @@ current_getpwuid(void)
    if SUCCESSFUL is true, they gave the correct password, etc.  */
 
 static void
-log_su (struct passwd const *pw, bool successful)
+log_syslog(struct passwd const *pw, bool successful)
 {
   const char *new_user, *old_user, *tty;
 
@@ -396,7 +396,7 @@ authenticate (const struct passwd *pw)
 
 done:
 
-  log_su (pw, !is_pam_failure(retval));
+  log_syslog(pw, !is_pam_failure(retval));
 
   if (is_pam_failure(retval))
     {
