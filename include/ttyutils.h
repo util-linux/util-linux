@@ -8,6 +8,9 @@
 #include <sys/ioctl.h>
 #endif
 
+extern int get_terminal_width(void);
+
+
 #define UL_TTY_KEEPCFLAGS	(1 << 1)
 #define UL_TTY_UTF8		(1 << 2)
 
@@ -79,38 +82,6 @@ static inline void reset_virtual_console(struct termios *tp, int flags)
 	tp->c_cc[VEOL2]    = _POSIX_VDISABLE;
 }
 
-static inline int get_terminal_width(void)
-{
-#ifdef TIOCGSIZE
-	struct ttysize	t_win;
-#endif
-#ifdef TIOCGWINSZ
-	struct winsize	w_win;
-#endif
-        const char	*cp;
-
-#ifdef TIOCGSIZE
-	if (ioctl (0, TIOCGSIZE, &t_win) == 0)
-		return t_win.ts_cols;
-#endif
-#ifdef TIOCGWINSZ
-	if (ioctl (0, TIOCGWINSZ, &w_win) == 0)
-		return w_win.ws_col;
-#endif
-        cp = getenv("COLUMNS");
-	if (cp) {
-		char *end = NULL;
-		long c;
-
-		errno = 0;
-		c = strtol(cp, &end, 10);
-
-		if (errno == 0 && end && *end == '\0' && end > cp &&
-		    c > 0 && c <= INT_MAX)
-			return c;
-	}
-	return 0;
-}
 
 
 #endif /* UTIL_LINUX_TTYUTILS_H */

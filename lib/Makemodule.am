@@ -23,6 +23,7 @@ libcommon_la_SOURCES = \
 	lib/sysfs.c \
 	lib/tt.c \
 	lib/wholedisk.c \
+	lib/ttyutils.c \
 	lib/xgetpass.c
 
 if LINUX
