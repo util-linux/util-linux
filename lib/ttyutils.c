@@ -37,3 +37,12 @@ int get_terminal_width(void)
 	return 0;
 }
 
+#ifdef TEST_PROGRAM
+# include <stdlib.h>
+
+int main(void)
+{
+	fprintf(stderr, "tty width: %d\n", get_terminal_width());
+	return EXIT_SUCCESS;
+}
+#endif
