@@ -37,12 +37,53 @@ int get_terminal_width(void)
 	return 0;
 }
 
+int get_terminal_name(const char **path,
+		      const char **name,
+		      const char **number)
+{
+	const char *tty;
+	const char *p;
+
+	if (name)
+		*name = NULL;
+	if (path)
+		*path = NULL;
+	if (number)
+		*number = NULL;
+
+	tty = ttyname(STDERR_FILENO);
+	if (!tty)
+		return -1;
+	if (path)
+		*path = tty;
+	tty = strncmp(tty, "/dev/", 5) == 0 ? tty + 5 : tty;
+	if (name)
+		*name = tty;
+	if (number) {
+		for (p = tty; p && *p; p++) {
+			if (isdigit(*p)) {
+				*number = p;
+				break;
+			}
+		}
+	}
+	return 0;
+}
+
+
 #ifdef TEST_PROGRAM
 # include <stdlib.h>
-
 int main(void)
 {
-	fprintf(stderr, "tty width: %d\n", get_terminal_width());
+	const char *path, *name, *num;
+
+	if (get_terminal_name(&path, &name, &num) == 0) {
+		fprintf(stderr, "tty path:   %s\n", path);
+		fprintf(stderr, "tty name:   %s\n", name);
+		fprintf(stderr, "tty number: %s\n", num);
+	}
+	fprintf(stderr,         "tty width:  %d\n", get_terminal_width());
+
 	return EXIT_SUCCESS;
 }
 #endif

@@ -9,7 +9,7 @@
 #endif
 
 extern int get_terminal_width(void);
-
+extern int get_terminal_name(const char **path, const char **name, const char **number);
 
 #define UL_TTY_KEEPCFLAGS	(1 << 1)
 #define UL_TTY_UTF8		(1 << 2)
