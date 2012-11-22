@@ -55,12 +55,8 @@ endif
 if BUILD_LSLOCKS
 usrbin_exec_PROGRAMS += lslocks
 dist_man_MANS += misc-utils/lslocks.8
-lslocks_SOURCES = \
-	misc-utils/lslocks.c \
-	lib/at.c \
-	lib/strutils.c \
-	lib/tt.c \
-	lib/mbsalign.c
+lslocks_LDADD = $(LDADD) libcommon.la
+lslocks_SOURCES = misc-utils/lslocks.c
 endif
 
 if BUILD_LSBLK
