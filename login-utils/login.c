@@ -70,6 +70,7 @@
 #include "xalloc.h"
 #include "all-io.h"
 #include "fileutils.h"
+#include "ttyutils.h"
 
 #include "logindefs.h"
 
@@ -350,13 +351,12 @@ static void chown_tty(struct login_context *cxt)
  */
 static void init_tty(struct login_context *cxt)
 {
-	const char *p;
 	struct stat st;
 	struct termios tt, ttt;
 
 	cxt->tty_mode = (mode_t) getlogindefs_num("TTYPERM", TTY_MODE);
 
-	cxt->tty_path = ttyname(0);		/* libc calls istty() here */
+	get_terminal_name(&cxt->tty_path, &cxt->tty_name, &cxt->tty_number);
 
 	/*
 	 * In case login is suid it was possible to use a hardlink as stdin
@@ -373,18 +373,6 @@ static void init_tty(struct login_context *cxt)
 
 		syslog(LOG_ERR, _("FATAL: bad tty"));
 		sleepexit(EXIT_FAILURE);
-	}
-
-	if (strncmp(cxt->tty_path, "/dev/", 5) == 0)
-		cxt->tty_name = cxt->tty_path + 5;
-	else
-		cxt->tty_name = cxt->tty_path;
-
-	for (p = cxt->tty_name; p && *p; p++) {
-		if (isdigit(*p)) {
-			cxt->tty_number = p;
-			break;
-		}
 	}
 
 #ifdef LOGIN_CHOWN_VCS
