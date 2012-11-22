@@ -27,7 +27,7 @@ Adapts the tty settings to parity bits and to erase, kill,
 end-of-line and uppercase characters when it reads a login name.
 The program can handle 7-bit characters with even, odd, none or space
 parity, and 8-bit characters with no parity. The following special
-characters are recognized: @ and Control-U (kill); #, DEL and
+characters are recognized: Control-U (kill); DEL and
 back space (erase); carriage return and line feed (end of line).
 See also \fB\-\-erase-chars\fP and \fB\-\-kill-chars\fP options.
 .IP o
@@ -220,13 +220,15 @@ or if not found by getaddrinfo() is shown.
 .TP
 \-\-erase\-chars \fIstring\fP
 This option specifies additional chars that should be interpreted as a
-backspace (ignore previous char) when user specifies login name. The default is
-\'#\', specify empty string to disable the default.
+backspace (ignore previous char) when user specifies login name. The original
+default has been \'#\', since util-linux 2.23 no additional erase chars are
+enabled by default.
 .TP
 \-\-kill\-chars \fIstring\fP
 This option specifies additional chars that should be interpreted as a
-kill (ignore all previous chars) when user specifies login name. 
-The default is \'@\', specify empty string to disable the default.
+kill (ignore all previous chars) when user specifies login name. The original
+default has been \'@\', since util-linux 2.23 no additional erase chars are
+enabled by default.
 .TP
 \-\-version
 Output version information and exit.

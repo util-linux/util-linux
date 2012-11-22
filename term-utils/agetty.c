@@ -285,9 +285,7 @@ int main(int argc, char **argv)
 		.flags  =  F_ISSUE,		/* show /etc/issue (SYSV_STYLE) */
 		.login  =  _PATH_LOGIN,		/* default login program */
 		.tty    = "tty1",		/* default tty line */
-		.issue  =  ISSUE,		/* default issue file */
-		.erasechars = "#",		/* default additional erase char */
-		.killchars  = "@"		/* default additional kill char */
+		.issue  =  ISSUE		/* default issue file */
 	};
 	char *login_argv[LOGIN_ARGV_MAX + 1];
 	int login_argc = 0;
