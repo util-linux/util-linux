@@ -64,6 +64,7 @@ enum
 #include "pathnames.h"
 #include "env.h"
 #include "closestream.h"
+#include "ttyutils.h"
 
 /* name of the pam configuration files. separate configs for su and su -  */
 #define PAM_SRVNAME_SU "su"
@@ -154,8 +155,8 @@ log_syslog(struct passwd const *pw, bool successful)
       struct passwd *pwd = current_getpwuid();
       old_user = pwd ? pwd->pw_name : "";
     }
-  tty = ttyname (STDERR_FILENO);
-  if (!tty)
+
+  if (get_terminal_name(NULL, &tty, NULL) == 0 && tty)
     tty = "none";
 
   openlog (program_invocation_short_name, 0 , LOG_AUTH);

@@ -89,7 +89,7 @@ su_SOURCES = \
 	login-utils/logindefs.h
 su_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 su_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
-su_LDADD = $(LDADD) -lpam -lpam_misc
+su_LDADD = $(LDADD) libcommon.la -lpam -lpam_misc
 endif
 
 
@@ -102,7 +102,7 @@ runuser_SOURCES = \
 	login-utils/su-common.h \
 	login-utils/logindefs.c \
 	login-utils/logindefs.h
-runuser_LDADD = $(LDADD) -lpam -lpam_misc
+runuser_LDADD = $(LDADD) libcommon.la -lpam -lpam_misc
 endif
 
 
