@@ -29,6 +29,7 @@ The program can handle 7-bit characters with even, odd, none or space
 parity, and 8-bit characters with no parity. The following special
 characters are recognized: @ and Control-U (kill); #, DEL and
 back space (erase); carriage return and line feed (end of line).
+See also \fB\-\-erase-chars\fP and \fB\-\-kill-chars\fP options.
 .IP o
 Optionally deduces the baud rate from the CONNECT messages produced by
 Hayes(tm)-compatible modems.
@@ -216,6 +217,16 @@ no hostname at all will be shown.
 By default the hostname is only printed until the first dot.  With
 this option enabled, the full qualified hostname by gethostname()
 or if not found by getaddrinfo() is shown.
+.TP
+\-\-erase\-chars \fIstring\fP
+This option specifies additional chars that should be interpreted as a
+backspace (ignore previous char) when user specifies login name. The default is
+\'#\', specify empty string to disable the default.
+.TP
+\-\-kill\-chars \fIstring\fP
+This option specifies additional chars that should be interpreted as a
+kill (ignore all previous chars) when user specifies login name. 
+The default is \'@\', specify empty string to disable the default.
 .TP
 \-\-version
 Output version information and exit.
