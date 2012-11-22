@@ -3,7 +3,7 @@
 
 su
 --
- - log failed attempts to btmp and all attempts to lastlog if authentication by
+ - log all attempts to lastlog if authentication by
    password is required (pam_authenticate()).  See login.c for more details.
    https://bugzilla.redhat.com/show_bug.cgi?id=866682
 

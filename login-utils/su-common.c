@@ -54,6 +54,7 @@ enum
 #include <signal.h>
 #include <sys/wait.h>
 #include <syslog.h>
+#include <utmp.h>
 
 #include "err.h"
 
@@ -64,6 +65,7 @@ enum
 #include "pathnames.h"
 #include "env.h"
 #include "closestream.h"
+#include "strutils.h"
 #include "ttyutils.h"
 
 /* name of the pam configuration files. separate configs for su and su -  */
@@ -165,6 +167,45 @@ log_syslog(struct passwd const *pw, bool successful)
 	  su_mode == RUNUSER_MODE ? "FAILED RUNUSER " : "FAILED SU ",
 	  new_user, old_user, tty);
   closelog ();
+}
+
+
+/*
+ * Log failed login attempts in _PATH_BTMP if that exists.
+ */
+static void log_btmp(struct passwd const *pw)
+{
+	struct utmp ut;
+	struct timeval tv;
+	const char *tty_name, *tty_num;
+
+	memset(&ut, 0, sizeof(ut));
+
+	strncpy(ut.ut_user,
+		pw && pw->pw_name ? pw->pw_name : "(unknown)",
+		sizeof(ut.ut_user));
+
+	get_terminal_name(NULL, &tty_name, &tty_num);
+	if (tty_num)
+		xstrncpy(ut.ut_id, tty_num, sizeof(ut.ut_id));
+	if (tty_name)
+		xstrncpy(ut.ut_line, tty_name, sizeof(ut.ut_line));
+
+#if defined(_HAVE_UT_TV)	/* in <utmpbits.h> included by <utmp.h> */
+	gettimeofday(&tv, NULL);
+	ut.ut_tv.tv_sec = tv.tv_sec;
+	ut.ut_tv.tv_usec = tv.tv_usec;
+#else
+	{
+		time_t t;
+		time(&t);
+		ut.ut_time = t;	/* ut_time is not always a time_t */
+	}
+#endif
+	ut.ut_type = LOGIN_PROCESS;	/* XXX doesn't matter */
+	ut.ut_pid = getpid();
+
+	updwtmp(_PATH_BTMP, &ut);
 }
 
 static struct pam_conv conv =
@@ -335,7 +376,7 @@ create_watching_parent (void)
 static void
 authenticate (const struct passwd *pw)
 {
-  const struct passwd *lpw;
+  const struct passwd *lpw = NULL;
   const char *cp, *srvname = NULL;
   int retval;
 
@@ -397,11 +438,18 @@ authenticate (const struct passwd *pw)
 
 done:
 
+  if (lpw && lpw->pw_name)
+     pw = lpw;
+
   log_syslog(pw, !is_pam_failure(retval));
 
   if (is_pam_failure(retval))
     {
-      const char *msg = pam_strerror(pamh, retval);
+      const char *msg;
+
+      log_btmp(pw);
+
+      msg  = pam_strerror(pamh, retval);
       pam_end(pamh, retval);
       sleep (getlogindefs_num ("FAIL_DELAY", 1));
       errx (EXIT_FAILURE, "%s", msg?msg:_("incorrect password"));
