@@ -414,7 +414,6 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	/* get mask for online CPUs */
 	if (path_exist(_PATH_SYS_SYSTEM "/cpu/online")) {
-		size_t setsize = CPU_ALLOC_SIZE(maxcpus);
 		desc->online = path_read_cpulist(maxcpus, _PATH_SYS_SYSTEM "/cpu/online");
 		desc->nthreads = CPU_COUNT_S(setsize, desc->online);
 	}
