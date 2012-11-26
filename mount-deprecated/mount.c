@@ -2208,7 +2208,6 @@ static struct option longopts[] = {
 	{ "types", 1, 0, 't' },
 	{ "bind", 0, 0, 'B' },
 	{ "move", 0, 0, 'M' },
-	{ "guess-fstype", 1, 0, 134 },
 	{ "rbind", 0, 0, 'R' },
 	{ "make-shared", 0, 0, 136 },
 	{ "make-slave", 0, 0, 137 },
@@ -2469,18 +2468,6 @@ main(int argc, char *argv[]) {
 			break;
 		case 0:
 			break;
-
-		case 134:
-			/* undocumented, may go away again:
-			   call: mount --guess-fstype device
-			   use only for testing purposes -
-			   the guessing is not reliable at all */
-		    {
-			const char *fstype;
-			fstype = fsprobe_get_fstype_by_devname(optarg);
-			printf("%s\n", fstype ? fstype : "unknown");
-			exit(fstype ? 0 : EX_FAIL);
-		    }
 
 		case 136:
 			mounttype = MS_SHARED;
