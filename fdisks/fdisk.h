@@ -187,7 +187,7 @@ struct fdisk_label {
 	/* create new disk label */
 	int (*create)(struct fdisk_context *cxt);
 	/* new partition */
-	void (*part_add)(struct fdisk_context *cxt, int partnum, struct fdisk_parttype *t);
+	int (*part_add)(struct fdisk_context *cxt, int partnum, struct fdisk_parttype *t);
 	/* delete partition */
 	int (*part_delete)(struct fdisk_context *cxt, int partnum);
 	/* get partition type */

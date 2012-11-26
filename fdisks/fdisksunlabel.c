@@ -364,8 +364,8 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
     return 0;
 }
 
-static void sun_add_partition(struct fdisk_context *cxt, int n,
-			      struct fdisk_parttype *t)
+static int sun_add_partition(struct fdisk_context *cxt, int n,
+			     struct fdisk_parttype *t)
 {
 	uint32_t starts[SUN_NUM_PARTITIONS], lens[SUN_NUM_PARTITIONS];
 	struct sun_partition *part = &sunlabel->partitions[n];
@@ -380,7 +380,7 @@ static void sun_add_partition(struct fdisk_context *cxt, int n,
 	if (part->num_sectors && tag->tag != SSWAP16(SUN_TAG_UNASSIGNED)) {
 		printf(_("Partition %d is already defined.  Delete "
 			"it before re-adding it.\n"), n + 1);
-		return;
+		return -EINVAL;
 	}
 
 	fetch_sun(cxt, starts, lens, &start, &stop);
@@ -391,7 +391,7 @@ static void sun_add_partition(struct fdisk_context *cxt, int n,
 		else {
 			printf(_("Other partitions already cover the whole disk.\nDelete "
 			       "some/shrink them before retry.\n"));
-			return;
+			return -EINVAL;
 		}
 	}
 	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
@@ -484,6 +484,7 @@ and is of type `Whole disk'\n"));
 		sys = SUN_TAG_BACKUP;
 
 	set_sun_partition(cxt, n, first, last, sys);
+	return 0;
 }
 
 static int sun_delete_partition(struct fdisk_context *cxt, int partnum)

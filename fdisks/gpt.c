@@ -1453,7 +1453,7 @@ static int gpt_create_new_partition(int partnum, uint64_t fsect, uint64_t lsect,
 }
 
 /* Performs logical checks to add a new partition entry */
-static void gpt_add_partition(struct fdisk_context *cxt, int partnum,
+static int gpt_add_partition(struct fdisk_context *cxt, int partnum,
 			     struct fdisk_parttype *t)
 {
 	char msg[256];
@@ -1464,20 +1464,20 @@ static void gpt_add_partition(struct fdisk_context *cxt, int partnum,
 
 	/* check basic tests before even considering adding a new partition */
 	if (!cxt || partnum < 0)
-		return;
+		return -EINVAL;
 	if (!partition_unused(ents[partnum])) {
 		printf(_("Partition %d is already defined. "
 			 "Delete it before re-adding it.\n"), partnum +1);
-		return;
+		return -EINVAL;
 	}
 	if (le32_to_cpu(pheader->npartition_entries) == partitions_in_use(pheader, ents)) {
 		printf(_("All partitions are already in use.\n"));
-		return;
+		return -EINVAL;
 	}
 
 	if (!get_free_sectors(cxt, pheader, ents, &tmp, &f0)) {
 		printf(_("No free sectors available.\n"));
-		return;
+		return -ENOSPC;
 	}
 
 	first_sect = find_first_available(pheader, ents, 0);
@@ -1504,6 +1504,8 @@ static void gpt_add_partition(struct fdisk_context *cxt, int partnum,
 		printf(_("Could not create partition %d\n"), partnum + 1);
 	else
 		printf(_("Created partition %d\n"), partnum + 1);
+
+	return 0;
 }
 
 /*

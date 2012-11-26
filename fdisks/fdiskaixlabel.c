@@ -66,7 +66,7 @@ static int aix_probe_label(struct fdisk_context *cxt)
     return 1;
 }
 
-static void aix_add_partition(
+static int aix_add_partition(
 		struct fdisk_context *cxt __attribute__((__unused__)),
 		int partnum __attribute__((__unused__)),
 		struct fdisk_parttype *t __attribute__((__unused__)))
@@ -76,6 +76,8 @@ static void aix_add_partition(
 		 "\n\ta new empty DOS partition table first. (Use o.)"
 		 "\n\tWARNING: "
 		 "This will destroy the present disk contents.\n"));
+
+	return -ENOSYS;
 }
 
 const struct fdisk_label aix_label =

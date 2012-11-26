@@ -492,7 +492,7 @@ static sector_t align_lba_in_range(struct fdisk_context *cxt,
 	return lba;
 }
 
-static void add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype *t)
+static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype *t)
 {
 	char mesg[256];		/* 48 does not suffice in Japanese */
 	int i, sys, read = 0;
@@ -506,7 +506,7 @@ static void add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttyp
 	if (p && p->sys_ind) {
 		printf(_("Partition %d is already defined.  Delete "
 			 "it before re-adding it.\n"), n + 1);
-		return;
+		return -EINVAL;
 	}
 	fill_bounds(first, last);
 	if (n < 4) {
@@ -589,7 +589,7 @@ static void add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttyp
 		printf(_("No free sectors available\n"));
 		if (n > 4)
 			partitions--;
-		return;
+		return -ENOSPC;
 	}
 	if (cround(start) == cround(limit)) {
 		stop = limit;
@@ -638,9 +638,11 @@ static void add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttyp
 		pe4->changed = 1;
 		partitions = 5;
 	}
+
+	return 0;
 }
 
-static void add_logical(struct fdisk_context *cxt)
+static int add_logical(struct fdisk_context *cxt)
 {
 	if (partitions > 5 || ptes[4].part_table->sys_ind) {
 		struct pte *pe = &ptes[partitions];
@@ -653,7 +655,7 @@ static void add_logical(struct fdisk_context *cxt)
 		partitions++;
 	}
 	printf(_("Adding logical partition %d\n"), partitions);
-	add_partition(cxt, partitions - 1, NULL);
+	return add_partition(cxt, partitions - 1, NULL);
 }
 
 static int dos_verify_disklabel(struct fdisk_context *cxt)
@@ -726,32 +728,32 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
  *
  * API callback.
  */
-static void dos_add_partition(
+static int dos_add_partition(
 			struct fdisk_context *cxt,
 			int partnum __attribute__ ((__unused__)),
 			struct fdisk_parttype *t)
 {
-	int i, free_primary = 0;
+	int i, free_primary = 0, rc = 0;
 
 	for (i = 0; i < 4; i++)
 		free_primary += !ptes[i].part_table->sys_ind;
 
 	if (!free_primary && partitions >= MAXIMUM_PARTS) {
 		printf(_("The maximum number of partitions has been created\n"));
-		return;
+		return -EINVAL;
 	}
 
 	if (!free_primary) {
 		if (extended_offset) {
 			printf(_("All primary partitions are in use\n"));
-			add_logical(cxt);
+			rc = add_logical(cxt);
 		} else
 			printf(_("If you want to create more than four partitions, you must replace a\n"
 				 "primary partition with an extended partition first.\n"));
 	} else if (partitions >= MAXIMUM_PARTS) {
 		printf(_("All logical partitions are in use\n"));
 		printf(_("Adding a primary partition\n"));
-		add_partition(cxt, get_partition(cxt, 0, 4), t);
+		rc = add_partition(cxt, get_partition(cxt, 0, 4), t);
 	} else {
 		char c, dflt, line[LINE_LENGTH];
 
@@ -773,21 +775,23 @@ static void dos_add_partition(
 		if (c == 'p') {
 			int i = get_nonexisting_partition(cxt, 0, 4);
 			if (i >= 0)
-				add_partition(cxt, i, t);
-			return;
+				rc = add_partition(cxt, i, t);
+			goto done;
 		} else if (c == 'l' && extended_offset) {
-			add_logical(cxt);
-			return;
+			rc = add_logical(cxt);
+			goto done;
 		} else if (c == 'e' && !extended_offset) {
 			int i = get_nonexisting_partition(cxt, 0, 4);
 			if (i >= 0) {
 				t = fdisk_get_parttype_from_code(cxt, EXTENDED);
-				add_partition(cxt, i, t);
+				rc = add_partition(cxt, i, t);
 			}
-			return;
+			goto done;
 		} else
 			printf(_("Invalid partition type `%c'\n"), c);
 	}
+done:
+	return rc;
 }
 
 static int write_sector(struct fdisk_context *cxt, sector_t secno,

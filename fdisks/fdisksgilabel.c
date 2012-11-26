@@ -641,8 +641,8 @@ static int sgi_delete_partition(struct fdisk_context *cxt, int partnum)
 	return sgi_set_partition(cxt, partnum, 0, 0, 0);
 }
 
-static void sgi_add_partition(struct fdisk_context *cxt, int n,
-			      struct fdisk_parttype *t)
+static int sgi_add_partition(struct fdisk_context *cxt, int n,
+			     struct fdisk_parttype *t)
 {
 	char mesg[256];
 	unsigned int first=0, last=0;
@@ -656,7 +656,7 @@ static void sgi_add_partition(struct fdisk_context *cxt, int n,
 	if (sgi_get_num_sectors(cxt, n)) {
 		printf(_("Partition %d is already defined.  Delete "
 			 "it before re-adding it.\n"), n + 1);
-		return;
+		return -EINVAL;
 	}
 	if ((sgi_entire(cxt) == -1)
 	    &&  (sys != SGI_VOLUME)) {
@@ -666,11 +666,11 @@ static void sgi_add_partition(struct fdisk_context *cxt, int n,
 	}
 	if ((sgi_gaps(cxt) == 0) &&  (sys != SGI_VOLUME)) {
 		printf(_("The entire disk is already covered with partitions.\n"));
-		return;
+		return -EINVAL;
 	}
 	if (sgi_gaps(cxt) < 0) {
 		printf(_("You got a partition overlap on the disk. Fix it first!\n"));
-		return;
+		return -EINVAL;
 	}
 	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
 	for (;;) {
@@ -710,6 +710,8 @@ static void sgi_add_partition(struct fdisk_context *cxt, int n,
 		printf(_("It is highly recommended that eleventh partition\n"
 			 "covers the entire disk and is of type `SGI volume'\n"));
 	sgi_set_partition(cxt, n, first, last-first, sys);
+
+	return 0;
 }
 
 static int sgi_create_disklabel(struct fdisk_context *cxt)
