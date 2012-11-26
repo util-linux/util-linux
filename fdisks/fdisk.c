@@ -352,15 +352,6 @@ sector_t align_lba(struct fdisk_context *cxt, sector_t lba, int direction)
 		}
 	}
 
-	/***
-	 fprintf(stderr, "LBA %llu (%s) --align-(%s)--> %llu (%s)\n",
-				lba,
-				lba_is_aligned(lba) ? "OK" : "FALSE",
-				direction == ALIGN_UP ?   "UP     " :
-				direction == ALIGN_DOWN ? "DOWN   " : "NEAREST",
-				res,
-				lba_is_aligned(res) ? "OK" : "FALSE");
-	***/
 	return res;
 }
 
