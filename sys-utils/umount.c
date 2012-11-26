@@ -36,6 +36,7 @@
 #include "exitcodes.h"
 #include "closestream.h"
 #include "pathnames.h"
+#include "canonicalize.h"
 
 static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)),
 			const char *filename, int line)
@@ -401,6 +402,24 @@ static int umount_recursive(struct libmnt_context *cxt, const char *spec)
 	return rc;
 }
 
+/*
+ * Check path -- non-root user should not be able to resolve path which is
+ * unreadable for him.
+ */
+static char *sanitize_path(const char *path)
+{
+	char *p;
+
+	if (!path)
+		return NULL;
+
+	p = canonicalize_path_restricted(path);
+	if (!p)
+		err(MOUNT_EX_USAGE, "%s", path);
+
+	return p;
+}
+
 int main(int argc, char **argv)
 {
 	int c, rc = 0, all = 0, recursive = 0;
@@ -531,8 +550,17 @@ int main(int argc, char **argv)
 		while (argc--)
 			rc += umount_recursive(cxt, *argv++);
 	} else {
-		while (argc--)
-			rc += umount_one(cxt, *argv++);
+		while (argc--) {
+			char *path = *argv++;
+
+			if (mnt_context_is_restricted(cxt))
+				path = sanitize_path(path);
+
+			rc += umount_one(cxt, path);
+
+			if (mnt_context_is_restricted(cxt))
+				free(path);
+		}
 	}
 
 	mnt_free_context(cxt);
