@@ -89,7 +89,8 @@ mnt_debug_h(void *handler, const char *mesg, ...)
 {
 	va_list ap;
 
-	fprintf(stderr, "[%p]: ", handler);
+	if (handler)
+		fprintf(stderr, "[%p]: ", handler);
 	va_start(ap, mesg);
 	vfprintf(stderr, mesg, ap);
 	va_end(ap);
