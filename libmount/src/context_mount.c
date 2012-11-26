@@ -590,7 +590,8 @@ static int do_mount_by_pattern(struct libmnt_context *cxt, const char *pattern)
 		rc = do_mount(cxt, *fp);
 		if (mnt_context_get_status(cxt))
 			break;
-		if (mnt_context_get_syscall_errno(cxt) != EINVAL)
+		if (mnt_context_get_syscall_errno(cxt) != EINVAL &&
+		    mnt_context_get_syscall_errno(cxt) != ENODEV)
 			break;
 	}
 	mnt_free_filesystems(filesystems);
