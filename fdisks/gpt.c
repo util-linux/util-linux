@@ -970,16 +970,16 @@ done:
 /*
  * Initialize fdisk-specific variables - call once probing passes!
  */
-static void gpt_init(void)
+static void gpt_init(struct fdisk_context *cxt)
 {
-	disklabel = GPT_LABEL;
+	cxt->disklabel = FDISK_DISKLABEL_GPT;
 	partitions = le32_to_cpu(pheader->npartition_entries);
 }
 
 /*
  * Deinitialize fdisk-specific variables
  */
-static void gpt_deinit(void)
+static void gpt_deinit(struct fdisk_context *cxt)
 {
 	free(ents);
 	free(pheader);
@@ -988,7 +988,7 @@ static void gpt_deinit(void)
 	pheader = NULL;
 	bheader = NULL;
 
-	disklabel = ANY_LABEL;
+	cxt->disklabel = FDISK_DISKLABEL_ANY;
 	partitions = 0;
 }
 
@@ -1022,7 +1022,7 @@ static int gpt_probe_label(struct fdisk_context *cxt)
 
 	/* OK, probing passed, now initialize backup header and fdisk variables. */
 	bheader = gpt_get_bheader(cxt);
-	gpt_init();
+	gpt_init(cxt);
 
 	printf(_("\nWARNING: fdisk GPT support is currently new, and therefore "
 		 "in an experimental phase. Use at your own discretion.\n\n"));
@@ -1523,7 +1523,7 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 	 * dealing with a new, empty disk - so always allocate memory
 	 * to deal with the data structures whatever the case is.
 	 */
-	gpt_deinit();
+	gpt_deinit(cxt);
 
 	rc = gpt_mknew_pmbr(cxt);
 	if (rc < 0)
@@ -1546,7 +1546,7 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 	gpt_recompute_crc(pheader, ents);
 	gpt_recompute_crc(bheader, ents);
 
-	gpt_init();
+	gpt_init(cxt);
 	DBG(LABEL, dbgprint("created new empty GPT disklabel "
 			    "(GUID: %08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X)",
 			    pheader->disk_guid.time_low, pheader->disk_guid.time_mid,

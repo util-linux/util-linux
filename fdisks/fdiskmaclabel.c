@@ -76,7 +76,7 @@ mac_probe_label(struct fdisk_context *cxt)
 
 IS_MAC:
     other_endian = (maclabel->magic == MAC_LABEL_MAGIC_SWAPPED); // =?
-    disklabel = MAC_LABEL;
+    cxt->disklabel = FDISK_DISKLABEL_MAC;
     partitions= 1016; // =?
     volumes = 15;	// =?
     mac_info();

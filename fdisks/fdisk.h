@@ -100,6 +100,20 @@ enum failure {
 typedef unsigned long long sector_t;
 
 /*
+ * Supported partition table types (labels)
+ */
+enum fdisk_labeltype {
+	FDISK_DISKLABEL_DOS = 1,
+	FDISK_DISKLABEL_SUN = 2,
+	FDISK_DISKLABEL_SGI = 4,
+	FDISK_DISKLABEL_AIX = 8,
+	FDISK_DISKLABEL_OSF = 16,
+	FDISK_DISKLABEL_MAC = 32,
+	FDISK_DISKLABEL_GPT = 64,
+	FDISK_DISKLABEL_ANY = -1
+};
+
+/*
  * Partition types
  */
 struct fdisk_parttype {
@@ -141,6 +155,8 @@ struct fdisk_context {
 	unsigned long phy_sector_size;	/* physical size */
 	unsigned long sector_size;	/* logical size */
 	unsigned long alignment_offset;
+
+	enum fdisk_labeltype disklabel;	/* current disklabel */
 
 	unsigned long grain;		/* alignment unit */
 
@@ -194,6 +210,7 @@ extern const struct fdisk_label gpt_label;
 extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int readonly);
 extern int fdisk_dev_has_topology(struct fdisk_context *cxt);
 extern int fdisk_dev_has_disklabel(struct fdisk_context *cxt);
+extern int fdisk_dev_is_disklabel(struct fdisk_context *cxt, enum fdisk_labeltype l);
 extern int fdisk_dev_sectsz_is_default(struct fdisk_context *cxt);
 extern void fdisk_free_context(struct fdisk_context *cxt);
 extern void fdisk_zeroize_firstsector(struct fdisk_context *cxt);
@@ -241,7 +258,7 @@ extern struct partition *get_part_table(int);
 extern unsigned int read_int(struct fdisk_context *cxt,
 			     unsigned int low, unsigned int dflt,
 			     unsigned int high, unsigned int base, char *mesg);
-extern void print_menu(enum menutype);
+extern void print_menu(struct fdisk_context *cxt, enum menutype menu);
 extern void print_partition_size(struct fdisk_context *cxt, int num, sector_t start, sector_t stop, int sysid);
 
 extern void fill_bounds(sector_t *first, sector_t *last);
@@ -267,21 +284,6 @@ extern const char * str_units(int);
 
 extern sector_t get_nr_sects(struct partition *p);
 
-/*
- * Supported partition table types (labels)
- */
-enum fdisk_labeltype {
-	DOS_LABEL = 1,
-	SUN_LABEL = 2,
-	SGI_LABEL = 4,
-	AIX_LABEL = 8,
-	OSF_LABEL = 16,
-	MAC_LABEL = 32,
-	GPT_LABEL = 64,
-	ANY_LABEL = -1
-};
-
-extern enum fdisk_labeltype disklabel;
 extern int MBRbuffer_changed;
 
 /* start_sect and nr_sects are stored little endian on all machines */

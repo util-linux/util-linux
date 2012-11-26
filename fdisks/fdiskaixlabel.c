@@ -58,7 +58,7 @@ static int aix_probe_label(struct fdisk_context *cxt)
 	return 0;
     }
     other_endian = (aixlabel->magic == AIX_LABEL_MAGIC_SWAPPED);
-    disklabel = AIX_LABEL;
+    cxt->disklabel = FDISK_DISKLABEL_AIX;
     partitions= 1016;
     volumes = 15;
     aix_info();

@@ -305,7 +305,7 @@ bsd_command_prompt (struct fdisk_context *cxt)
 	break;
 #endif
       default:
-	print_menu(MAIN_MENU);
+	print_menu(cxt, MAIN_MENU);
 	break;
     }
   }

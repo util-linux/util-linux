@@ -133,7 +133,7 @@ static int __probe_labels(struct fdisk_context *cxt)
 {
 	size_t i;
 
-	disklabel = ANY_LABEL;
+	cxt->disklabel = FDISK_DISKLABEL_ANY;
 	update_units(cxt);
 
 	for (i = 0; i < ARRAY_SIZE(labels); i++) {
@@ -376,7 +376,19 @@ int fdisk_dev_has_topology(struct fdisk_context *cxt)
  */
 int fdisk_dev_has_disklabel(struct fdisk_context *cxt)
 {
-	return cxt && disklabel != ANY_LABEL;
+	return cxt && cxt->disklabel != FDISK_DISKLABEL_ANY;
+}
+
+/**
+ * fdisk_dev_is_disklabel:
+ * @cxt: fdisk context
+ * @l: disklabel type
+ *
+ * Returns: return 1 if there is @l disklabel on the device.
+ */
+int fdisk_dev_is_disklabel(struct fdisk_context *cxt, enum fdisk_labeltype l)
+{
+	return cxt && cxt->disklabel == l;
 }
 
 /**

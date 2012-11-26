@@ -72,9 +72,9 @@ static void set_sun_partition(struct fdisk_context *cxt,
 	print_partition_size(cxt, i + 1, start, stop, sysid);
 }
 
-static void init(void)
+static void init(struct fdisk_context *cxt)
 {
-	disklabel = SUN_LABEL;
+	cxt->disklabel = FDISK_DISKLABEL_SUN;
 	partitions = SUN_NUM_PARTITIONS;
 }
 
@@ -89,7 +89,7 @@ static int sun_probe_label(struct fdisk_context *cxt)
 		return 0;
 	}
 
-	init();
+	init(cxt);
 	other_endian = (sunlabel->magic == SUN_LABEL_MAGIC_SWAPPED);
 
 	ush = ((unsigned short *) (sunlabel + 1)) - 1;
@@ -159,7 +159,7 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	other_endian = 0;
 #endif
 
-	init();
+	init(cxt);
 	fdisk_zeroize_firstsector(cxt);
 
 	sunlabel->magic = SSWAP16(SUN_LABEL_MAGIC);

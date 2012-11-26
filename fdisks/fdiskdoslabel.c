@@ -118,7 +118,7 @@ void dos_init(struct fdisk_context *cxt)
 {
 	int i;
 
-	disklabel = DOS_LABEL;
+	cxt->disklabel = FDISK_DISKLABEL_DOS;
 	partitions = 4;
 	ext_index = 0;
 	extended_offset = 0;
