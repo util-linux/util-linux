@@ -188,6 +188,48 @@ canonicalize_path(const char *path)
 	return strdup(canonical);
 }
 
+char *
+canonicalize_path_restricted(const char *path)
+{
+	char canonical[PATH_MAX+2];
+	char *p = NULL;
+	int errsv;
+	uid_t euid;
+	gid_t egid;
+
+	if (path == NULL)
+		return NULL;
+
+	euid = geteuid();
+	egid = getegid();
+
+	/* drop permissions */
+	if (setegid(getgid()) < 0 || seteuid(getuid()) < 0)
+		return NULL;
+
+	errsv = errno = 0;
+
+	if (myrealpath(path, canonical, PATH_MAX+1)) {
+		p = strrchr(canonical, '/');
+		if (p && strncmp(p, "/dm-", 4) == 0 && isdigit(*(p + 4)))
+			p = canonicalize_dm_name(p+1);
+		else
+			p = NULL;
+		if (!p)
+			p = strdup(canonical);
+	} else
+		errsv = errno;
+
+	/* restore */
+	if (setegid(egid) < 0 || seteuid(euid) < 0) {
+		free(p);
+		return NULL;
+	}
+
+	errno = errsv;
+	return p;
+}
+
 
 #ifdef TEST_PROGRAM_CANONICALIZE
 int main(int argc, char **argv)
