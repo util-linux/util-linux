@@ -453,7 +453,9 @@ static int get_filesystems(const char *filename, char ***filesystems, const char
 
 	f = fopen(filename, "r");
 	if (!f)
-		return 0;
+		return 1;
+
+	DBG(UTILS, mnt_debug("reading filesystems list from: %s", filename));
 
 	while (fgets(line, sizeof(line), f)) {
 		char name[sizeof(line)];
@@ -462,6 +464,10 @@ static int get_filesystems(const char *filename, char ***filesystems, const char
 			continue;
 		if (sscanf(line, " %128[^\n ]\n", name) != 1)
 			continue;
+		if (strcmp(name, "*") == 0) {
+			rc = 1;
+			break;		/* end of the /etc/filesystems */
+		}
 		if (pattern && !mnt_match_fstype(name, pattern))
 			continue;
 		rc = add_filesystem(filesystems, name);
@@ -474,8 +480,15 @@ static int get_filesystems(const char *filename, char ***filesystems, const char
 }
 
 /*
- * Returns zero also if not found any matching filesystem. Always check
- * @filesystems pointer!
+ * Always check @filesystems pointer!
+ *
+ * man mount:
+ *
+ * ...mount will try to read the file /etc/filesystems, or, if that does not
+ * exist, /proc/filesystems. All of the filesystem  types  listed  there  will
+ * be tried,  except  for  those  that  are  labeled  "nodev"  (e.g.,  devpts,
+ * proc  and  nfs).  If /etc/filesystems ends in a line with a single * only,
+ * mount will read /proc/filesystems after‐ wards.
  */
 int mnt_get_filesystems(char ***filesystems, const char *pattern)
 {
@@ -483,12 +496,18 @@ int mnt_get_filesystems(char ***filesystems, const char *pattern)
 
 	if (!filesystems)
 		return -EINVAL;
+
 	*filesystems = NULL;
 
 	rc = get_filesystems(_PATH_FILESYSTEMS, filesystems, pattern);
-	if (rc)
+	if (rc != 1)
 		return rc;
-	return get_filesystems(_PATH_PROC_FILESYSTEMS, filesystems, pattern);
+
+	rc = get_filesystems(_PATH_PROC_FILESYSTEMS, filesystems, pattern);
+	if (rc == 1 && *filesystems)
+		rc = 0;			/* not found /proc/filesystems */
+
+	return rc;
 }
 
 static size_t get_pw_record_size(void)
