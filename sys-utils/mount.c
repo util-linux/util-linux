@@ -39,6 +39,7 @@
 #include "exitcodes.h"
 #include "xalloc.h"
 #include "closestream.h"
+#include "canonicalize.h"
 
 #define OPTUTILS_EXIT_CODE MOUNT_EX_USAGE
 #include "optutils.h"
@@ -603,6 +604,37 @@ static struct libmnt_table *append_fstab(struct libmnt_context *cxt,
 	return fstab;
 }
 
+/*
+ * Check source and target paths -- non-root user should not be able to
+ * resolve paths which are unreadable for him.
+ */
+static void sanitize_paths(struct libmnt_context *cxt)
+{
+	const char *p;
+	struct libmnt_fs *fs = mnt_context_get_fs(cxt);
+
+	if (!fs)
+		return;
+
+	p = mnt_fs_get_target(fs);
+	if (p) {
+		char *np = canonicalize_path_restricted(p);
+		if (!np)
+			err(MOUNT_EX_USAGE, "%s", p);
+		mnt_fs_set_target(fs, np);
+		free(np);
+	}
+
+	p = mnt_fs_get_srcpath(fs);
+	if (p) {
+		char *np = canonicalize_path_restricted(p);
+		if (!np)
+			err(MOUNT_EX_USAGE, "%s", p);
+		mnt_fs_set_source(fs, np);
+		free(np);
+	}
+}
+
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
@@ -969,6 +1001,9 @@ int main(int argc, char **argv)
 
 	} else
 		usage(stderr);
+
+	if (mnt_context_is_restricted(cxt))
+		sanitize_paths(cxt);
 
 	if (oper) {
 		/* MS_PROPAGATION operations, let's set the mount flags */
