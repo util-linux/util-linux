@@ -661,7 +661,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		break;
 	case COL_PARTUUID:
 		probe_device(cxt);
-		if (cxt->uuid)
+		if (cxt->partuuid)
 			tt_line_set_data(ln, col, xstrdup(cxt->partuuid));
 		break;
 	case COL_WWN:
