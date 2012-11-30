@@ -286,9 +286,6 @@ struct blkid_struct_cache
 #define BLKID_BIC_FL_PROBED	0x0002	/* We probed /proc/partition devices */
 #define BLKID_BIC_FL_CHANGED	0x0004	/* Cache has changed from disk */
 
-extern char *blkid_strconcat(const char *a, const char *b, const char *c)
-			__attribute__((warn_unused_result));
-
 /* config file */
 #define BLKID_CONFIG_FILE	"/etc/blkid.conf"
 

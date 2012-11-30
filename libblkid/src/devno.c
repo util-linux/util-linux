@@ -37,7 +37,7 @@
 #include "at.h"
 #include "sysfs.h"
 
-char *blkid_strconcat(const char *a, const char *b, const char *c)
+static char *blkid_strconcat(const char *a, const char *b, const char *c)
 {
 	char *res, *p;
 	size_t len, al, bl, cl;
