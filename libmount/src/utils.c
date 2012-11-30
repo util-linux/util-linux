@@ -947,9 +947,7 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 	if (len && *(name + len - 1) == '=')
 		val = 1;
 
-	while (p && *p) {
-		if (p != buf)
-			p++;
+	for ( ; p && *p; p++) {
 		if (!(p = strstr(p, name)))
 			break;			/* not found the option */
 		if (p != buf && !isblank(*(p - 1)))
