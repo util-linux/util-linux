@@ -311,18 +311,22 @@ static inline void set_start_sect(struct partition *p, unsigned int start_sect)
 	store4_little_endian(p->start4, start_sect);
 }
 
-static inline void seek_sector(struct fdisk_context *cxt, sector_t secno)
+static inline int seek_sector(struct fdisk_context *cxt, sector_t secno)
 {
 	off_t offset = (off_t) secno * cxt->sector_size;
-	if (lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1)
-		fatal(cxt, unable_to_seek);
+
+	return lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1 ? -errno : 0;
 }
 
-static inline void read_sector(struct fdisk_context *cxt, sector_t secno, unsigned char *buf)
+static inline int read_sector(struct fdisk_context *cxt, sector_t secno, unsigned char *buf)
 {
-	seek_sector(cxt, secno);
-	if (read(cxt->dev_fd, buf, cxt->sector_size) != (ssize_t) cxt->sector_size)
-		fatal(cxt, unable_to_read);
+	int rc = seek_sector(cxt, secno);
+
+	if (rc < 0)
+		return rc;
+
+	return read(cxt->dev_fd, buf, cxt->sector_size) !=
+			(ssize_t) cxt->sector_size ? -errno : 0;
 }
 
 static inline sector_t get_start_sect(struct partition *p)
