@@ -342,7 +342,7 @@ int mnt_cache_device_has_tag(struct libmnt_cache *cache, const char *devname,
 {
 	const char *path = cache_find_tag(cache, token, value);
 
-	if (path && strcmp(path, devname) == 0)
+	if (path && devname && strcmp(path, devname) == 0)
 		return 1;
 	return 0;
 }

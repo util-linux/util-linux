@@ -1094,7 +1094,8 @@ struct libmnt_cache *mnt_context_get_cache(struct libmnt_context *cxt)
  * @get: callback to get password
  * @release: callback to release (delallocate) password
  *
- * Sets callbacks for encryption password (e.g encrypted loopdev)
+ * Sets callbacks for encryption password (e.g encrypted loopdev). This
+ * function is deprecated (encrypted loops are no ore supported).
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -1795,7 +1796,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
 		"trying to apply fstab (src=%s, target=%s)", src, tgt));
 
 	/* let's initialize cxt->fs */
-	mnt_context_get_fs(cxt);
+	ignore_result( mnt_context_get_fs(cxt) );
 
 	/* try fstab */
 	if (cxt->optsmode & MNT_OMODE_FSTAB) {
