@@ -248,7 +248,8 @@ struct blkid_config {
 	char *cachefile;		/* CACHE_FILE=<path> option */
 };
 
-extern struct blkid_config *blkid_read_config(const char *filename);
+extern struct blkid_config *blkid_read_config(const char *filename)
+			__ul_attribute__((warn_unused_result));
 extern void blkid_free_config(struct blkid_config *conf);
 
 /*
@@ -285,9 +286,12 @@ struct blkid_struct_cache
 #define BLKID_BIC_FL_PROBED	0x0002	/* We probed /proc/partition devices */
 #define BLKID_BIC_FL_CHANGED	0x0004	/* Cache has changed from disk */
 
-extern char *blkid_strdup(const char *s);
-extern char *blkid_strndup(const char *s, const int length);
-extern char *blkid_strconcat(const char *a, const char *b, const char *c);
+extern char *blkid_strdup(const char *s)
+			__attribute__((warn_unused_result));
+extern char *blkid_strndup(const char *s, const int length)
+			__attribute__((warn_unused_result));
+extern char *blkid_strconcat(const char *a, const char *b, const char *c)
+			__attribute__((warn_unused_result));
 
 /* config file */
 #define BLKID_CONFIG_FILE	"/etc/blkid.conf"
@@ -355,101 +359,168 @@ struct dir_list {
 	char	*name;
 	struct dir_list *next;
 };
-extern void blkid__scan_dir(char *, dev_t, struct dir_list **, char **);
-extern int blkid_driver_has_major(const char *drvname, int major);
+extern void blkid__scan_dir(char *, dev_t, struct dir_list **, char **)
+			__attribute__((nonnull(1,4)));
+extern int blkid_driver_has_major(const char *drvname, int major)
+			__attribute__((warn_unused_result));
 
 /* lseek.c */
 extern blkid_loff_t blkid_llseek(int fd, blkid_loff_t offset, int whence);
 
 /* read.c */
-extern void blkid_read_cache(blkid_cache cache);
+extern void blkid_read_cache(blkid_cache cache)
+			__attribute__((nonnull));
 
 /* save.c */
-extern int blkid_flush_cache(blkid_cache cache);
+extern int blkid_flush_cache(blkid_cache cache)
+			__attribute__((nonnull));
 
 /* cache */
-extern char *blkid_safe_getenv(const char *arg);
-extern char *blkid_get_cache_filename(struct blkid_config *conf);
+extern char *blkid_safe_getenv(const char *arg)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
 
+extern char *blkid_get_cache_filename(struct blkid_config *conf)
+			__attribute__((warn_unused_result));
 /*
  * Functions to create and find a specific tag type: tag.c
  */
 extern void blkid_free_tag(blkid_tag tag);
-extern blkid_tag blkid_find_tag_dev(blkid_dev dev, const char *type);
+extern blkid_tag blkid_find_tag_dev(blkid_dev dev, const char *type)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
+
 extern int blkid_set_tag(blkid_dev dev, const char *name,
-			 const char *value, const int vlength);
+			 const char *value, const int vlength)
+			__attribute__((nonnull(1,2)));
 
 /*
  * Functions to create and find a specific tag type: dev.c
  */
-extern blkid_dev blkid_new_dev(void);
+extern blkid_dev blkid_new_dev(void)
+			__attribute__((warn_unused_result));
 extern void blkid_free_dev(blkid_dev dev);
 
 /* probe.c */
-extern int blkid_probe_is_tiny(blkid_probe pr);
-extern int blkid_probe_is_cdrom(blkid_probe pr);
-extern unsigned char *blkid_probe_get_buffer(blkid_probe pr,
-                                blkid_loff_t off, blkid_loff_t len);
+extern int blkid_probe_is_tiny(blkid_probe pr)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
+extern int blkid_probe_is_cdrom(blkid_probe pr)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
 
-extern unsigned char *blkid_probe_get_sector(blkid_probe pr, unsigned int sector);
+extern unsigned char *blkid_probe_get_buffer(blkid_probe pr,
+                                blkid_loff_t off, blkid_loff_t len)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
+
+extern unsigned char *blkid_probe_get_sector(blkid_probe pr, unsigned int sector)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
 
 extern int blkid_probe_get_dimension(blkid_probe pr,
-	                blkid_loff_t *off, blkid_loff_t *size);
+	                blkid_loff_t *off, blkid_loff_t *size)
+			__attribute__((nonnull));
 
 extern int blkid_probe_set_dimension(blkid_probe pr,
-	                blkid_loff_t off, blkid_loff_t size);
+	                blkid_loff_t off, blkid_loff_t size)
+			__attribute__((nonnull));
 
 extern int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
-			blkid_loff_t *offset, const struct blkid_idmag **res);
+			blkid_loff_t *offset, const struct blkid_idmag **res)
+			__attribute__((nonnull(1)));
 
 /* returns superblok according to 'struct blkid_idmag' */
 #define blkid_probe_get_sb(_pr, _mag, type) \
 			((type *) blkid_probe_get_buffer((_pr),\
 					(_mag)->kboff << 10, sizeof(type)))
 
-extern blkid_partlist blkid_probe_get_partlist(blkid_probe pr);
+extern blkid_partlist blkid_probe_get_partlist(blkid_probe pr)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
 
 extern int blkid_probe_is_covered_by_pt(blkid_probe pr,
-					blkid_loff_t offset, blkid_loff_t size);
+					blkid_loff_t offset, blkid_loff_t size)
+			__attribute__((warn_unused_result));
 
-extern void blkid_probe_chain_reset_vals(blkid_probe pr, struct blkid_chain *chn);
-extern int blkid_probe_chain_copy_vals(blkid_probe pr, struct blkid_chain *chn,
-			                struct blkid_prval *vals, int nvals);
-extern struct blkid_prval *blkid_probe_assign_value(blkid_probe pr, const char *name);
-extern int blkid_probe_reset_last_value(blkid_probe pr);
-extern void blkid_probe_append_vals(blkid_probe pr, struct blkid_prval *vals, int nvals);
+extern void blkid_probe_chain_reset_vals(blkid_probe pr, struct blkid_chain *chn)
+			__attribute__((nonnull));
+extern int blkid_probe_chain_copy_vals(blkid_probe pr,
+				       struct blkid_chain *chn,
+			               struct blkid_prval *vals,
+				       int nvals)
+			__attribute__((nonnull));
 
-extern struct blkid_chain *blkid_probe_get_chain(blkid_probe pr);
+extern struct blkid_prval *blkid_probe_assign_value(blkid_probe pr,
+					const char *name)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
 
-extern struct blkid_prval *__blkid_probe_get_value(blkid_probe pr, int num);
-extern struct blkid_prval *__blkid_probe_lookup_value(blkid_probe pr, const char *name);
+extern int blkid_probe_reset_last_value(blkid_probe pr)
+			__attribute__((nonnull));
+extern void blkid_probe_append_vals(blkid_probe pr,
+				    struct blkid_prval *vals,
+				    int nvals)
+			__attribute__((nonnull));
 
-extern unsigned long *blkid_probe_get_filter(blkid_probe pr, int chain, int create);
-extern int __blkid_probe_invert_filter(blkid_probe pr, int chain);
-extern int __blkid_probe_reset_filter(blkid_probe pr, int chain);
-extern int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[]);
+extern struct blkid_chain *blkid_probe_get_chain(blkid_probe pr)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
 
-extern void *blkid_probe_get_binary_data(blkid_probe pr, struct blkid_chain *chn);
+extern struct blkid_prval *__blkid_probe_get_value(blkid_probe pr, int num)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
+
+extern struct blkid_prval *__blkid_probe_lookup_value(blkid_probe pr, const char *name)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
+
+extern unsigned long *blkid_probe_get_filter(blkid_probe pr, int chain, int create)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
+
+extern int __blkid_probe_invert_filter(blkid_probe pr, int chain)
+			__attribute__((nonnull));
+extern int __blkid_probe_reset_filter(blkid_probe pr, int chain)
+			__attribute__((nonnull));
+extern int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[])
+			__attribute__((nonnull));
+
+extern void *blkid_probe_get_binary_data(blkid_probe pr, struct blkid_chain *chn)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
 
 extern int blkid_probe_set_value(blkid_probe pr, const char *name,
-                unsigned char *data, size_t len);
+				unsigned char *data, size_t len)
+			__attribute__((nonnull));
+
 extern int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
-                const char *fmt, va_list ap);
+				const char *fmt, va_list ap)
+			__attribute__((nonnull));
 
 extern int blkid_probe_sprintf_value(blkid_probe pr, const char *name,
-                const char *fmt, ...) __attribute__ ((__format__ (__printf__, 3, 4)));
+				const char *fmt, ...)
+			__attribute__((nonnull))
+			__attribute__ ((__format__ (__printf__, 3, 4)));
 
 extern int blkid_probe_set_magic(blkid_probe pr, blkid_loff_t offset,
-		size_t len, unsigned char *magic);
+				size_t len, unsigned char *magic)
+			__attribute__((nonnull));
 
-extern void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len);
-extern size_t blkid_rtrim_whitespace(unsigned char *str);
+extern void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len)
+			__attribute__((nonnull));
+extern size_t blkid_rtrim_whitespace(unsigned char *str)
+			__attribute__((nonnull));
 
 extern void blkid_probe_set_wiper(blkid_probe pr, blkid_loff_t off,
-				  blkid_loff_t size);
+				  blkid_loff_t size)
+			__attribute__((nonnull));
 extern int blkid_probe_is_wiped(blkid_probe pr, struct blkid_chain **chn,
-		                blkid_loff_t off, blkid_loff_t size);
-extern void blkid_probe_use_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size);
+		                blkid_loff_t off, blkid_loff_t size)
+			__attribute__((nonnull))
+			__attribute__((warn_unused_result));
+extern void blkid_probe_use_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
+			__attribute__((nonnull));
 
 /* filter bitmap macros */
 #define blkid_bmp_wordsize		(8 * sizeof(unsigned long))
@@ -473,7 +544,8 @@ extern void blkid_probe_use_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t
 
 /* encode.c */
 extern size_t blkid_encode_to_utf8(int enc, unsigned char *dest, size_t len,
-			const unsigned char *src, size_t count);
+				const unsigned char *src, size_t count)
+			__attribute__((nonnull));
 
 #define BLKID_ENC_UTF16BE	0
 #define BLKID_ENC_UTF16LE	1
