@@ -10,6 +10,7 @@ libfdisk_la_SOURCES = \
 	\
 	libfdisk/src/init.c
 
+
 nodist_libfdisk_la_SOURCES = libfdisk/src/fdiskP.h
 
 libfdisk_la_LIBADD = libcommon.la
