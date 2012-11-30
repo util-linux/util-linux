@@ -25,8 +25,22 @@
 extern "C" {
 #endif
 
+struct fdisk_context;
+struct fdisk_parttype;
+
 /* init.c */
 extern void fdisk_init_debug(int mask);
+
+/* parttype.c */
+extern struct fdisk_parttype *fdisk_get_parttype_from_code(struct fdisk_context *cxt,
+                                unsigned int code);
+extern struct fdisk_parttype *fdisk_get_parttype_from_string(struct fdisk_context *cxt,
+                                const char *str);
+extern struct fdisk_parttype *fdisk_parse_parttype(struct fdisk_context *cxt, const char *str);
+
+extern struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int type, const char *typestr);
+extern void fdisk_free_parttype(struct fdisk_parttype *type);
+extern size_t fdisk_get_nparttypes(struct fdisk_context *cxt);
 
 #ifdef __cplusplus
 }

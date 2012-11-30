@@ -8,7 +8,8 @@ noinst_LTLIBRARIES += libfdisk.la
 libfdisk_la_SOURCES = \
 	libfdisk/src/libfdisk.h \
 	\
-	libfdisk/src/init.c
+	libfdisk/src/init.c \
+	libfdisk/src/parttype.c
 
 
 nodist_libfdisk_la_SOURCES = libfdisk/src/fdiskP.h

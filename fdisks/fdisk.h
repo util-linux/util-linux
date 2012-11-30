@@ -95,16 +95,6 @@ extern struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt
 extern int fdisk_set_partition_type(struct fdisk_context *cxt, int partnum,
 			     struct fdisk_parttype *t);
 
-extern size_t fdisk_get_nparttypes(struct fdisk_context *cxt);
-extern struct fdisk_parttype *fdisk_get_parttype_from_code(struct fdisk_context *cxt,
-                                unsigned int code);
-extern struct fdisk_parttype *fdisk_get_parttype_from_string(struct fdisk_context *cxt,
-                                const char *str);
-extern struct fdisk_parttype *fdisk_parse_parttype(struct fdisk_context *cxt, const char *str);
-
-extern struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int type, const char *typestr);
-extern void fdisk_free_parttype(struct fdisk_parttype *type);
-
 extern sector_t fdisk_topology_get_first_lba(struct fdisk_context *cxt);
 extern unsigned long fdisk_topology_get_grain(struct fdisk_context *cxt);
 
