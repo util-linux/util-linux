@@ -68,7 +68,7 @@ static void read_pte(struct fdisk_context *cxt, int pno, sector_t offset)
 	struct pte *pe = &ptes[pno];
 
 	pe->offset = offset;
-	pe->sectorbuffer = xmalloc(cxt->sector_size);
+	pe->sectorbuffer = xcalloc(1, cxt->sector_size);
 
 	if (read_sector(cxt, offset, pe->sectorbuffer) != 0)
 		fprintf(stderr, _("Failed to read extended partition table (offset=%jd)\n"),
