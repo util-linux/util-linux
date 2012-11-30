@@ -25,8 +25,8 @@ fdisk_SOURCES = \
 	fdisks/utils.c \
 	fdisks/common.h
 
-fdisk_LDADD = $(LDADD) libcommon.la
-fdisk_CFLAGS = $(AM_CFLAGS)
+fdisk_LDADD = $(LDADD) libcommon.la libfdisk.la
+fdisk_CFLAGS = $(AM_CFLAGS) -I$(ul_libfdisk_incdir)
 
 if BUILD_LIBBLKID
 fdisk_CFLAGS += -I$(ul_libblkid_incdir)

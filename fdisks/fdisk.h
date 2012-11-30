@@ -4,6 +4,12 @@
 
 #include "c.h"
 
+/* Let's temporary include private libfdisk header file. The final libfdisk.h
+ * maybe included when fdisk.c and libfdisk code will be completely spit.
+ */
+#include "fdiskP.h"
+
+
 #define DEFAULT_SECTOR_SIZE	512
 #define MAX_SECTOR_SIZE	2048
 #define SECTOR_SIZE	512	/* still used in BSD code */
@@ -31,46 +37,6 @@
 
 #define cround(n)	(display_in_cyl_units ? ((n)/units_per_sector)+1 : (n))
 #define scround(x)	(((x)+units_per_sector-1)/units_per_sector)
-
-/* fdisk debugging flags/options */
-#define FDISK_DEBUG_INIT	(1 << 1)
-#define FDISK_DEBUG_CONTEXT	(1 << 2)
-#define FDISK_DEBUG_TOPOLOGY    (1 << 3)
-#define FDISK_DEBUG_GEOMETRY    (1 << 4)
-#define FDISK_DEBUG_LABEL       (1 << 5)
-#define FDISK_DEBUG_ALL		0xFFFF
-
-# define ON_DBG(m, x)	do { \
-				if ((FDISK_DEBUG_ ## m) & fdisk_debug_mask) { \
-					x; \
-				}	   \
-			} while (0)
-
-# define DBG(m, x)	do { \
-				if ((FDISK_DEBUG_ ## m) & fdisk_debug_mask) { \
-					fprintf(stderr, "%d: fdisk: %8s: ", getpid(), # m); \
-					x;				\
-				} \
-			} while (0)
-
-# define DBG_FLUSH	do { \
-				if (fdisk_debug_mask && \
-				    fdisk_debug_mask != FDISK_DEBUG_INIT) \
-					fflush(stderr);			\
-			} while(0)
-
-static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
-dbgprint(const char *mesg, ...)
-{
-	va_list ap;
-	va_start(ap, mesg);
-	vfprintf(stderr, mesg, ap);
-	va_end(ap);
-	fputc('\n', stderr);
-}
-
-extern int fdisk_debug_mask;
-extern void fdisk_init_debug(int mask);
 
 struct partition {
 	unsigned char boot_ind;         /* 0x80 - active */
