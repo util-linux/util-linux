@@ -23,6 +23,7 @@ dist_noinst_DATA = $(dist_man_MANS)
 ul_libblkid_incdir = $(top_builddir)/libblkid/src
 ul_libmount_incdir = $(top_builddir)/libmount/src
 ul_libuuid_incdir  = $(top_srcdir)/libuuid/src
+ul_libfdisk_incdir  = $(top_srcdir)/libfdisk/src
 
 pkgconfigdir = $(usrlib_execdir)/pkgconfig
 
@@ -74,6 +75,7 @@ include lib/Makemodule.am
 include libuuid/Makemodule.am
 include libblkid/Makemodule.am
 include libmount/Makemodule.am
+include libfdisk/Makemodule.am
 
 include schedutils/Makemodule.am
 include text-utils/Makemodule.am
