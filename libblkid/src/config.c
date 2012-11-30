@@ -96,7 +96,7 @@ static int parse_next(FILE *fd, struct blkid_config *conf)
 	} else if (!strncmp(s, "CACHE_FILE=", 11)) {
 		s += 11;
 		if (*s)
-			conf->cachefile = blkid_strdup(s);
+			conf->cachefile = strdup(s);
 	} else if (!strncmp(s, "EVALUATE=", 9)) {
 		s += 9;
 		if (*s && parse_evaluate(conf, s) == -1)
@@ -148,7 +148,7 @@ dflt:
 		conf->nevals = 2;
 	}
 	if (!conf->cachefile)
-		conf->cachefile = blkid_strdup(BLKID_CACHE_FILE);
+		conf->cachefile = strdup(BLKID_CACHE_FILE);
 	if (conf->uevent == -1)
 		conf->uevent = TRUE;
 	if (f)

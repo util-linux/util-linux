@@ -112,13 +112,13 @@ char *blkid_get_cache_filename(struct blkid_config *conf)
 
 	filename = safe_getenv("BLKID_FILE");
 	if (filename)
-		filename = blkid_strdup(filename);
+		filename = strdup(filename);
 	else if (conf)
-		filename = blkid_strdup(conf->cachefile);
+		filename = conf->cachefile ? strdup(conf->cachefile) : NULL;
 	else {
 		struct blkid_config *c = blkid_read_config(NULL);
 		if (!c)
-			filename = blkid_strdup(get_default_cache_filename());
+			filename = strdup(get_default_cache_filename());
 		else {
 			filename = c->cachefile;  /* already allocated */
 			c->cachefile = NULL;
@@ -155,7 +155,7 @@ int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
 	if (filename && !*filename)
 		filename = NULL;
 	if (filename)
-		cache->bic_filename = blkid_strdup(filename);
+		cache->bic_filename = strdup(filename);
 	else
 		cache->bic_filename = blkid_get_cache_filename(NULL);
 

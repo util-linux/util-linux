@@ -208,7 +208,7 @@ int main(int argc, char **argv)
 		fprintf(stderr, "error (%d) probing devices\n", ret);
 		exit(1);
 	}
-	cache->bic_filename = blkid_strdup(argv[1]);
+	cache->bic_filename = strdup(argv[1]);
 
 	if ((ret = blkid_flush_cache(cache)) < 0) {
 		fprintf(stderr, "error (%d) saving cache\n", ret);

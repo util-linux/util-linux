@@ -240,7 +240,7 @@ char *blkid_evaluate_tag(const char *token, const char *value, blkid_cache *cach
 
 	if (!value) {
 		if (!strchr(token, '=')) {
-			ret = blkid_strdup(token);
+			ret = strdup(token);
 			goto out;
 		}
 		blkid_parse_tag_string(token, &t, &v);

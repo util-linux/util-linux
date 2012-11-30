@@ -136,7 +136,7 @@ int blkid_set_tag(blkid_dev dev, const char *name,
 	if (!dev || !name)
 		return -BLKID_ERR_PARAM;
 
-	if (value && !(val = blkid_strndup(value, vlength)))
+	if (value && !(val = strndup(value, vlength)))
 		return -BLKID_ERR_MEM;
 
 	/*
@@ -167,7 +167,7 @@ int blkid_set_tag(blkid_dev dev, const char *name,
 		/* Existing tag not present, add to device */
 		if (!(t = blkid_new_tag()))
 			goto errout;
-		t->bit_name = blkid_strdup(name);
+		t->bit_name = name ? strdup(name) : NULL;
 		t->bit_val = val;
 		t->bit_dev = dev;
 
@@ -183,7 +183,7 @@ int blkid_set_tag(blkid_dev dev, const char *name,
 
 				DBG(DEBUG_TAG,
 				    printf("    creating new cache tag head %s\n", name));
-				head->bit_name = blkid_strdup(name);
+				head->bit_name = name ? strdup(name) : NULL;
 				if (!head->bit_name)
 					goto errout;
 				list_add_tail(&head->bit_tags,
@@ -231,7 +231,7 @@ int blkid_parse_tag_string(const char *token, char **ret_type, char **ret_val)
 	if (!token || !(cp = strchr(token, '=')))
 		return -1;
 
-	name = blkid_strdup(token);
+	name = strdup(token);
 	if (!name)
 		return -1;
 	value = name + (cp - token);
@@ -242,7 +242,7 @@ int blkid_parse_tag_string(const char *token, char **ret_type, char **ret_val)
 			goto errout; /* missing closing quote */
 		*cp = '\0';
 	}
-	value = blkid_strdup(value);
+	value = strdup(value);
 	if (!value)
 		goto errout;
 

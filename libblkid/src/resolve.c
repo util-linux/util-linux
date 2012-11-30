@@ -44,7 +44,7 @@ char *blkid_get_tag_value(blkid_cache cache, const char *tagname,
 
 	if ((dev = blkid_get_dev(c, devname, BLKID_DEV_NORMAL)) &&
 	    (found = blkid_find_tag_dev(dev, tagname)))
-		ret = blkid_strdup(found->bit_val);
+		ret = found->bit_val ? strdup(found->bit_val) : NULL;
 
 	if (!cache)
 		blkid_put_cache(c);
@@ -80,7 +80,7 @@ char *blkid_get_devname(blkid_cache cache, const char *token,
 
 	if (!value) {
 		if (!strchr(token, '=')) {
-			ret = blkid_strdup(token);
+			ret = strdup(token);
 			goto out;
 		}
 		blkid_parse_tag_string(token, &t, &v);
@@ -94,15 +94,13 @@ char *blkid_get_devname(blkid_cache cache, const char *token,
 	if (!dev)
 		goto out;
 
-	ret = blkid_strdup(blkid_dev_devname(dev));
-
+	ret = dev->bid_name ? strdup(dev->bid_name) : NULL;
 out:
 	free(t);
 	free(v);
-	if (!cache) {
+	if (!cache)
 		blkid_put_cache(c);
-	}
-	return (ret);
+	return ret;
 }
 
 #ifdef TEST_PROGRAM

@@ -73,7 +73,7 @@ blkid_dev blkid_get_dev(blkid_cache cache, const char *devname, int flags)
 		if (!dev)
 			return NULL;
 		dev->bid_time = INT_MIN;
-		dev->bid_name = blkid_strdup(devname);
+		dev->bid_name = strdup(devname);
 		dev->bid_cache = cache;
 		list_add_tail(&dev->bid_devs, &cache->bic_devs);
 		cache->bic_flags |= BLKID_BIC_FL_CHANGED;
@@ -208,7 +208,7 @@ static void probe_one(blkid_cache cache, const char *ptname,
 		    (S_ISBLK(st.st_mode) ||
 		     (S_ISCHR(st.st_mode) && !strncmp(ptname, "ubi", 3))) &&
 		    st.st_rdev == devno) {
-			devname = blkid_strdup(device);
+			devname = strdup(device);
 			goto get_dev;
 		}
 	}

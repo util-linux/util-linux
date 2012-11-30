@@ -221,7 +221,7 @@ static int parse_dev(blkid_cache cache, blkid_dev *dev, char **cp)
 		return -BLKID_ERR_CACHE;
 	}
 
-	name = blkid_strndup(start, end-start);
+	name = strndup(start, end - start);
 	if (name == NULL)
 		return -BLKID_ERR_MEM;
 

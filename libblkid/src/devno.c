@@ -37,29 +37,6 @@
 #include "at.h"
 #include "sysfs.h"
 
-char *blkid_strndup(const char *s, int length)
-{
-	char *ret;
-
-	if (!s)
-		return NULL;
-
-	if (!length)
-		length = strlen(s);
-
-	ret = malloc(length + 1);
-	if (ret) {
-		strncpy(ret, s, length);
-		ret[length] = '\0';
-	}
-	return ret;
-}
-
-char *blkid_strdup(const char *s)
-{
-	return blkid_strndup(s, 0);
-}
-
 char *blkid_strconcat(const char *a, const char *b, const char *c)
 {
 	char *res, *p;
@@ -103,7 +80,8 @@ static void add_to_dirlist(const char *dir, const char *subdir,
 	if (!dp)
 		return;
 	dp->name = subdir ? blkid_strconcat(dir, "/", subdir) :
-			    blkid_strdup(dir);
+		   dir ? strdup(dir) : NULL;
+
 	if (!dp->name) {
 		free(dp);
 		return;
