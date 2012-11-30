@@ -543,20 +543,16 @@ AC_ARG_WITH([selinux],
 if test "x$with_selinux" = xno; then
   AM_CONDITIONAL(HAVE_SELINUX, false)
 else
-  UL_CHECK_LIB(selinux, getprevcon)
-  case "$with_selinux:$have_selinux" in
-  yes:no) AC_MSG_ERROR([SELinux selected but libselinux not found]);;
-  esac
-fi
+  PKG_CHECK_MODULES([SELINUX], [libselinux >= 2.0],
+	[AC_DEFINE(HAVE_SELINUX, 1, [Define if SELinux is available])
+	 UL_PKG_STATIC([SELINUX_LIBS_STATIC], [libselinux])
+	 AM_CONDITIONAL(HAVE_SELINUX, true)
+	 have_selinux=yes],
+	[have_selinux=no])
 
-if test "x$have_selinux" = xyes; then
-  SELINUX_LIBS="-lselinux -lsepol"
-  SELINUX_LIBS_STATIC="-lselinux -lsepol"
-  old_LDFLAGS="$LDFLAGS"
-  LDFLAGS="$LDFLAGS $SELINUX_LIBS"
-  # This function is missing in old libselinux 1.xx versions
-  AC_CHECK_FUNCS([security_get_initial_context])
-  LDFLAGS="$old_LDFLAGS"
+  case "$with_selinux:$have_selinux" in
+  yes:no) AC_MSG_ERROR([SELinux selected but libselinux not found or too old]);;
+  esac
 fi
 AC_SUBST([SELINUX_LIBS])
 AC_SUBST([SELINUX_LIBS_STATIC])
