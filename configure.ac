@@ -544,7 +544,7 @@ if test "x$with_selinux" = xno; then
   AM_CONDITIONAL(HAVE_SELINUX, false)
 else
   PKG_CHECK_MODULES([SELINUX], [libselinux >= 2.0],
-	[AC_DEFINE(HAVE_SELINUX, 1, [Define if SELinux is available])
+	[AC_DEFINE(HAVE_LIBSELINUX, 1, [Define if SELinux is available])
 	 UL_PKG_STATIC([SELINUX_LIBS_STATIC], [libselinux])
 	 AM_CONDITIONAL(HAVE_SELINUX, true)
 	 have_selinux=yes],
