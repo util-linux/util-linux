@@ -298,15 +298,15 @@ static int __discover_topology(struct fdisk_context *cxt)
 	blkid_free_probe(pr);
 #endif
 
-	/* no blkid or error, use default values */
-	if (!cxt->min_io_size)
-		cxt->min_io_size = DEFAULT_SECTOR_SIZE;
-	if (!cxt->io_size)
-		cxt->io_size = DEFAULT_SECTOR_SIZE;
-
 	cxt->sector_size = __get_sector_size(cxt->dev_fd);
 	if (!cxt->phy_sector_size) /* could not discover physical size */
 		cxt->phy_sector_size = cxt->sector_size;
+
+	/* no blkid or error, use default values */
+	if (!cxt->min_io_size)
+		cxt->min_io_size = cxt->sector_size;
+	if (!cxt->io_size)
+		cxt->io_size = cxt->sector_size;
 
 	DBG(TOPOLOGY, dbgprint("topology discovered for %s:\n"
 			       "\tlogical/physical sector sizes: %ld/%ld\n"
