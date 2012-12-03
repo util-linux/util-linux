@@ -62,7 +62,6 @@ int MBRbuffer_changed;
 
 #define sector(s)	((s) & 0x3f)
 #define cylinder(s, c)	((c) | (((s) & 0xc0) << 2))
-#define fdisk_is_disklabel(c, x) fdisk_dev_is_disklabel(c, FDISK_DISKLABEL_ ## x)
 
 /* menu list description */
 
@@ -133,7 +132,6 @@ int	nowarn = 0,			/* no warnings for fdisk -l/-s */
 	partitions = 4;			/* maximum partition + 1 */
 
 unsigned int	user_cylinders, user_heads, user_sectors;
-sector_t sector_offset = 1;
 unsigned int units_per_sector = 1, display_in_cyl_units = 0;
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
@@ -322,8 +320,8 @@ sector_t align_lba(struct fdisk_context *cxt, sector_t lba, int direction)
 	else {
 		sector_t sects_in_phy = cxt->grain / cxt->sector_size;
 
-		if (lba < sector_offset)
-			res = sector_offset;
+		if (lba < cxt->first_lba)
+			res = cxt->first_lba;
 
 		else if (direction == ALIGN_UP)
 			res = ((lba + sects_in_phy) / sects_in_phy) * sects_in_phy;
@@ -426,56 +424,6 @@ void warn_alignment(struct fdisk_context *cxt)
 "WARNING: cylinders as display units are deprecated. Use command 'u' to\n"
 "         change units to sectors.\n"));
 
-}
-
-/*
- * Sets LBA of the first partition
- */
-void
-update_sector_offset(struct fdisk_context *cxt)
-{
-	cxt->grain = cxt->io_size;
-
-	if (dos_compatible_flag)
-		sector_offset = cxt->geom.sectors;	/* usually 63 sectors */
-	else {
-		/*
-		 * Align the begin of partitions to:
-		 *
-		 * a) topology
-		 *  a2) alignment offset
-		 *  a1) or physical sector (minimal_io_size, aka "grain")
-		 *
-		 * b) or default to 1MiB (2048 sectrors, Windows Vista default)
-		 *
-		 * c) or for very small devices use 1 phy.sector
-		 */
-		sector_t x = 0;
-
-		if (fdisk_dev_has_topology(cxt)) {
-			if (cxt->alignment_offset)
-				x = cxt->alignment_offset;
-			else if (cxt->io_size > 2048 * 512)
-				x = cxt->io_size;
-		}
-		/* default to 1MiB */
-		if (!x)
-			x = 2048 * 512;
-
-		sector_offset = x / cxt->sector_size;
-
-		/* don't use huge offset on small devices */
-		if (cxt->total_sectors <= sector_offset * 4)
-			sector_offset = cxt->phy_sector_size / cxt->sector_size;
-
-		/* use 1MiB grain always when possible */
-		if (cxt->grain < 2048 * 512)
-			cxt->grain = 2048 * 512;
-
-		/* don't use huge grain on small devices */
-		if (cxt->total_sectors <= (cxt->grain * 4 / cxt->sector_size))
-			cxt->grain = cxt->phy_sector_size;
-	}
 }
 
 static int is_partition_table_changed(void)
@@ -825,7 +773,7 @@ toggle_dos_compatibility_flag(struct fdisk_context *cxt) {
 	else
 		printf(_("DOS Compatibility flag is not set\n"));
 
-	update_sector_offset(cxt);
+	fdisk_reset_alignment(cxt);
 }
 
 static void delete_partition(struct fdisk_context *cxt, int partnum)
@@ -1465,9 +1413,9 @@ expert_command_prompt(struct fdisk_context *cxt)
 				move_begin(cxt, get_partition(cxt, 0, partitions));
 			break;
 		case 'c':
-			user_cylinders = cxt->geom.cylinders =
-				read_int(cxt, 1, cxt->geom.cylinders, 1048576, 0,
+			user_cylinders = read_int(cxt, 1, cxt->geom.cylinders, 1048576, 0,
 					 _("Number of cylinders"));
+			fdisk_context_set_user_geometry(cxt, user_cylinders, user_heads, user_sectors);
 			if (fdisk_is_disklabel(cxt, SUN))
 				sun_set_ncyl(cxt, cxt->geom.cylinders);
 			break;
@@ -1491,8 +1439,9 @@ expert_command_prompt(struct fdisk_context *cxt)
 			fdisk_create_disklabel(cxt, "sgi");
 			break;
 		case 'h':
-			user_heads = cxt->geom.heads = read_int(cxt, 1, cxt->geom.heads, 256, 0,
+			user_heads = read_int(cxt, 1, cxt->geom.heads, 256, 0,
 					 _("Number of heads"));
+			fdisk_context_set_user_geometry(cxt, user_cylinders, user_heads, user_sectors);
 			update_units(cxt);
 			break;
 		case 'i':
@@ -1516,13 +1465,13 @@ expert_command_prompt(struct fdisk_context *cxt)
 		case 'r':
 			return;
 		case 's':
-			user_sectors = cxt->geom.sectors = read_int(cxt, 1, cxt->geom.sectors, 63, 0,
+			user_sectors = read_int(cxt, 1, cxt->geom.sectors, 63, 0,
 					   _("Number of sectors"));
 			if (dos_compatible_flag)
 				fprintf(stderr, _("Warning: setting "
 					"sector offset for DOS "
 					"compatibility\n"));
-			update_sector_offset(cxt);
+			fdisk_context_set_user_geometry(cxt, user_cylinders, user_heads, user_sectors);
 			update_units(cxt);
 			break;
 		case 'v':
@@ -1777,7 +1726,6 @@ int main(int argc, char **argv)
 			if (sector_size != 512 && sector_size != 1024 &&
 			    sector_size != 2048 && sector_size != 4096)
 				usage(stderr);
-			sector_offset = 2;
 			break;
 		case 'C':
 			user_cylinders =  strtou32_or_err(optarg, _("invalid cylinders argument"));

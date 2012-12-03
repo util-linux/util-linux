@@ -158,7 +158,9 @@ struct fdisk_context {
 
 	enum fdisk_labeltype disklabel;	/* current disklabel */
 
+	/* alignment */
 	unsigned long grain;		/* alignment unit */
+	sector_t first_lba;		/* recommended begin of the first partition */
 
 	/* geometry */
 	sector_t total_sectors; /* in logical sectors */
@@ -167,6 +169,8 @@ struct fdisk_context {
 	/* label operations and description */
 	const struct fdisk_label *label;
 };
+
+#define fdisk_is_disklabel(c, x) fdisk_dev_is_disklabel(c, FDISK_DISKLABEL_ ## x)
 
 /*
  * Label specific operations
@@ -194,6 +198,8 @@ struct fdisk_label {
 	struct fdisk_parttype *(*part_get_type)(struct fdisk_context *cxt, int partnum);
 	/* set partition type */
 	int (*part_set_type)(struct fdisk_context *cxt, int partnum, struct fdisk_parttype *t);
+	/* refresh alignment setting */
+	int (*reset_alignment)(struct fdisk_context *cxt);
 };
 
 /*
@@ -223,6 +229,7 @@ extern int fdisk_add_partition(struct fdisk_context *cxt, int partnum, struct fd
 extern int fdisk_write_disklabel(struct fdisk_context *cxt);
 extern int fdisk_verify_disklabel(struct fdisk_context *cxt);
 extern int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name);
+extern int fdisk_reset_alignment(struct fdisk_context *cxt);
 extern struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int partnum);
 extern int fdisk_set_partition_type(struct fdisk_context *cxt, int partnum,
 			     struct fdisk_parttype *t);
@@ -236,6 +243,9 @@ extern struct fdisk_parttype *fdisk_parse_parttype(struct fdisk_context *cxt, co
 
 extern struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int type, const char *typestr);
 extern void fdisk_free_parttype(struct fdisk_parttype *type);
+
+extern sector_t fdisk_topology_get_first_lba(struct fdisk_context *cxt);
+extern unsigned long fdisk_topology_get_grain(struct fdisk_context *cxt);
 
 /* prototypes for fdisk.c */
 extern char *line_ptr;
@@ -276,7 +286,6 @@ extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
 				  unsigned int base, char *mesg, int *is_suffix_used);
 extern sector_t align_lba(struct fdisk_context *cxt, sector_t lba, int direction);
 extern int get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt);
-extern void update_sector_offset(struct fdisk_context *cxt);
 
 #define PLURAL	0
 #define SINGULAR 1

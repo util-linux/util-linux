@@ -26,7 +26,7 @@ static struct fdisk_parttype dos_parttypes[] = {
 		s |= (sector >> 2) & 0xc0;				\
 	}
 
-#define alignment_required	(cxt->grain != cxt->sector_size)
+#define alignment_required(_x)	((_x)->grain != (_x)->sector_size)
 
 struct pte ptes[MAXIMUM_PARTS];
 sector_t extended_offset;
@@ -367,8 +367,24 @@ static void get_partition_table_geometry(struct fdisk_context *cxt,
 		*ph = hh;
 		*ps = ss;
 	}
+
+	DBG(CONTEXT, dbgprint("DOS PT geometry: heads=%u, sectors=%u", *ph, *ps));
 }
 
+static int dos_reset_alignment(struct fdisk_context *cxt)
+{
+	/* overwrite necessary stuff by DOS deprecated stuff */
+	if (dos_compatible_flag) {
+		if (cxt->geom.sectors)
+			cxt->first_lba = cxt->geom.sectors;	/* usually 63 */
+
+		cxt->grain = cxt->sector_size;			/* usually 512 */
+	}
+	/* units_per_sector has impact to deprecated DOS stuff */
+	update_units(cxt);
+
+	return 0;
+}
 
 static int dos_probe_label(struct fdisk_context *cxt)
 {
@@ -459,7 +475,8 @@ static void set_partition(struct fdisk_context *cxt,
 	ptes[i].changed = 1;
 }
 
-static sector_t get_unused_start(int part_n, sector_t start,
+static sector_t get_unused_start(struct fdisk_context *cxt,
+				 int part_n, sector_t start,
 				 sector_t first[], sector_t last[])
 {
 	int i;
@@ -468,8 +485,8 @@ static sector_t get_unused_start(int part_n, sector_t start,
 		sector_t lastplusoff;
 
 		if (start == ptes[i].offset)
-			start += sector_offset;
-		lastplusoff = last[i] + ((part_n < 4) ? 0 : sector_offset);
+			start += cxt->first_lba;
+		lastplusoff = last[i] + ((part_n < 4) ? 0 : cxt->first_lba);
 		if (start >= first[i] && start <= lastplusoff)
 			start = lastplusoff + 1;
 	}
@@ -510,7 +527,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 	}
 	fill_bounds(first, last);
 	if (n < 4) {
-		start = sector_offset;
+		start = cxt->first_lba;
 		if (display_in_cyl_units || !cxt->total_sectors)
 			limit = cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders - 1;
 		else
@@ -525,7 +542,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 				get_nr_sects(q) - 1;
 		}
 	} else {
-		start = extended_offset + sector_offset;
+		start = extended_offset + cxt->first_lba;
 		limit = get_start_sect(q) + get_nr_sects(q) - 1;
 	}
 	if (display_in_cyl_units)
@@ -537,12 +554,12 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 		sector_t dflt, aligned;
 
 		temp = start;
-		dflt = start = get_unused_start(n, start, first, last);
+		dflt = start = get_unused_start(cxt, n, start, first, last);
 
 		/* the default sector should be aligned and unused */
 		do {
 			aligned = align_lba_in_range(cxt, dflt, dflt, limit);
-			dflt = get_unused_start(n, aligned, first, last);
+			dflt = get_unused_start(cxt, n, aligned, first, last);
 		} while (dflt != aligned && dflt > aligned && dflt < limit);
 
 		if (dflt >= limit)
@@ -569,10 +586,10 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 	if (n > 4) {			/* NOT for fifth partition */
 		struct pte *pe = &ptes[n];
 
-		pe->offset = start - sector_offset;
+		pe->offset = start - cxt->first_lba;
 		if (pe->offset == extended_offset) { /* must be corrected */
 			pe->offset++;
-			if (sector_offset == 1)
+			if (cxt->first_lba == 1)
 				start++;
 		}
 	}
@@ -609,7 +626,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 				stop = limit;
 		}
 
-		if (is_suffix_used && alignment_required) {
+		if (is_suffix_used && alignment_required(cxt)) {
 			/* the last sector has not been exactly requested (but
 			 * defined by +size{K,M,G} convention), so be smart
 			 * and align the end of the partition. The next
@@ -899,4 +916,5 @@ const struct fdisk_label dos_label =
 	.part_delete = dos_delete_partition,
 	.part_get_type = dos_get_parttype,
 	.part_set_type = dos_set_parttype,
+	.reset_alignment = dos_reset_alignment,
 };

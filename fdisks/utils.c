@@ -198,7 +198,7 @@ int fdisk_context_force_sector_size(struct fdisk_context *cxt, sector_t s)
 	cxt->phy_sector_size = cxt->sector_size = s;
 	cxt->min_io_size = cxt->io_size = s;
 
-	update_sector_offset(cxt);
+	fdisk_reset_alignment(cxt);
 	return 0;
 }
 
@@ -236,7 +236,7 @@ int fdisk_context_set_user_geometry(struct fdisk_context *cxt,
 	else
 		recount_geometry(cxt);
 
-	update_sector_offset(cxt);
+	fdisk_reset_alignment(cxt);
 	return 0;
 }
 
@@ -316,6 +316,7 @@ static int __discover_topology(struct fdisk_context *cxt)
 	return 0;
 }
 
+
 /**
  * fdisk_zeroize_firstsector:
  * @cxt: fdisk context
@@ -366,6 +367,112 @@ int fdisk_dev_has_topology(struct fdisk_context *cxt)
 	     !is_power_of_2(cxt->min_io_size)))
 		return 1;
 	return 0;
+}
+
+/*
+ * The LBA of the first partition is based on the device geometry and topology.
+ * This offset is generic (and recommended) for all labels.
+ *
+ * Returns: 0 on error or number of logical sectors.
+ */
+sector_t fdisk_topology_get_first_lba(struct fdisk_context *cxt)
+{
+	sector_t x = 0, res;
+
+	if (!cxt)
+		return 0;
+
+	if (!cxt->io_size)
+		__discover_topology(cxt);
+
+	/*
+	 * Align the begin of partitions to:
+	 *
+	 * a) topology
+	 *  a2) alignment offset
+	 *  a1) or physical sector (minimal_io_size, aka "grain")
+	 *
+	 * b) or default to 1MiB (2048 sectrors, Windows Vista default)
+	 *
+	 * c) or for very small devices use 1 phy.sector
+	 */
+	if (fdisk_dev_has_topology(cxt)) {
+		if (cxt->alignment_offset)
+			x = cxt->alignment_offset;
+		else if (cxt->io_size > 2048 * 512)
+			x = cxt->io_size;
+	}
+	/* default to 1MiB */
+	if (!x)
+		x = 2048 * 512;
+
+	res = x / cxt->sector_size;
+
+	/* don't use huge offset on small devices */
+	if (cxt->total_sectors <= res * 4)
+		res = cxt->phy_sector_size / cxt->sector_size;
+
+	return res;
+}
+
+/*
+ * The LBA of the first partition is based on the device geometry and topology.
+ * This offset is generic generic (and recommended) for all labels.
+ *
+ * Returns: 0 on error or number of bytes.
+ */
+unsigned long fdisk_topology_get_grain(struct fdisk_context *cxt)
+{
+	unsigned long res;
+
+	if (!cxt)
+		return 0;
+
+	if (!cxt->io_size)
+		__discover_topology(cxt);
+
+	res = cxt->io_size;
+
+	/* use 1MiB grain always when possible */
+	if (res < 2048 * 512)
+		res = 2048 * 512;
+
+	/* don't use huge grain on small devices */
+	if (cxt->total_sectors <= (res * 4 / cxt->sector_size))
+		res = cxt->phy_sector_size;
+
+	return res;
+}
+
+/**
+ * fdisk_reset_alignment:
+ * @cxt: fdisk context
+ *
+ * Resets alignment setting to the default or label specific values.
+ *
+ * Returns: 0 on success, < 0 in case of error.
+ */
+int fdisk_reset_alignment(struct fdisk_context *cxt)
+{
+	int rc = 0;
+
+	if (!cxt)
+		return -EINVAL;
+
+	/* default */
+	cxt->grain = fdisk_topology_get_grain(cxt);
+	cxt->first_lba = fdisk_topology_get_first_lba(cxt);
+
+	/* overwrite default by label stuff */
+	if (cxt->label && cxt->label->reset_alignment)
+		rc = cxt->label->reset_alignment(cxt);
+
+	DBG(LABEL, dbgprint("%s alignment reseted to: "
+			    "first LBA=%ju, grain=%lu [rc=%d]",
+			    cxt->label ? cxt->label->name : NULL,
+			    (uintmax_t) cxt->first_lba,
+			    cxt->grain,	rc));
+	return rc;
 }
 
 /**
@@ -431,6 +538,8 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 		return -EINVAL;
 	if (!cxt->label->create)
 		return -ENOSYS;
+
+	fdisk_reset_alignment(cxt);
 
 	return cxt->label->create(cxt);
 }
@@ -505,7 +614,7 @@ struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int rea
 	 * to the context */
 	__probe_labels(cxt);
 
-	update_sector_offset(cxt);
+	fdisk_reset_alignment(cxt);
 
 	DBG(CONTEXT, dbgprint("context %p initialized for %s [%s]",
 			      cxt, fname,
