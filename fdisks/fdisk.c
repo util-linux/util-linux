@@ -132,7 +132,6 @@ int	nowarn = 0,			/* no warnings for fdisk -l/-s */
 	partitions = 4;			/* maximum partition + 1 */
 
 unsigned int	user_cylinders, user_heads, user_sectors;
-unsigned int units_per_sector = 1, display_in_cyl_units = 0;
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
@@ -374,16 +373,6 @@ int warn_geometry(struct fdisk_context *cxt)
 	return 1;
 }
 
-void update_units(struct fdisk_context *cxt)
-{
-	int cyl_units = cxt->geom.heads * cxt->geom.sectors;
-
-	if (display_in_cyl_units && cyl_units)
-		units_per_sector = cyl_units;
-	else
-		units_per_sector = 1;	/* in sectors */
-}
-
 void warn_limits(struct fdisk_context *cxt)
 {
 	if (cxt->total_sectors > UINT_MAX && !nowarn) {
@@ -401,29 +390,6 @@ void warn_limits(struct fdisk_context *cxt)
 			(sector_t ) UINT_MAX * cxt->sector_size,
 			cxt->sector_size);
 	}
-}
-
-void warn_alignment(struct fdisk_context *cxt)
-{
-	if (nowarn)
-		return;
-
-	if (cxt->sector_size != cxt->phy_sector_size)
-		fprintf(stderr, _("\n"
-"The device presents a logical sector size that is smaller than\n"
-"the physical sector size. Aligning to a physical sector (or optimal\n"
-"I/O) size boundary is recommended, or performance may be impacted.\n"));
-
-	if (dos_compatible_flag)
-		fprintf(stderr, _("\n"
-"WARNING: DOS-compatible mode is deprecated. It's strongly recommended to\n"
-"         switch off the mode (with command 'c')."));
-
-	if (display_in_cyl_units)
-		fprintf(stderr, _("\n"
-"WARNING: cylinders as display units are deprecated. Use command 'u' to\n"
-"         change units to sectors.\n"));
-
 }
 
 static int is_partition_table_changed(void)
@@ -739,17 +705,6 @@ str_units(int n)
 	if (display_in_cyl_units)
 		return P_("cylinder", "cylinders", n);
 	return P_("sector", "sectors", n);
-}
-
-void change_units(struct fdisk_context *cxt)
-{
-	display_in_cyl_units = !display_in_cyl_units;
-	update_units(cxt);
-
-	if (display_in_cyl_units)
-		printf(_("Changing display/entry units to cylinders (DEPRECATED!)\n"));
-	else
-		printf(_("Changing display/entry units to sectors\n"));
 }
 
 static void
@@ -1442,7 +1397,6 @@ expert_command_prompt(struct fdisk_context *cxt)
 			user_heads = read_int(cxt, 1, cxt->geom.heads, 256, 0,
 					 _("Number of heads"));
 			fdisk_context_set_user_geometry(cxt, user_cylinders, user_heads, user_sectors);
-			update_units(cxt);
 			break;
 		case 'i':
 			if (fdisk_is_disklabel(cxt, SUN))
@@ -1472,7 +1426,6 @@ expert_command_prompt(struct fdisk_context *cxt)
 					"sector offset for DOS "
 					"compatibility\n"));
 			fdisk_context_set_user_geometry(cxt, user_cylinders, user_heads, user_sectors);
-			update_units(cxt);
 			break;
 		case 'v':
 			verify(cxt);
@@ -1522,6 +1475,7 @@ static void print_partition_table_from_option(char *device, unsigned long sector
 		/*
 		 * Try BSD -- TODO: move to list_table() too
 		 */
+		update_units(cxt);
 		list_disk_geometry(cxt);
 		if (!fdisk_is_disklabel(cxt, AIX) &&
 		    !fdisk_is_disklabel(cxt, MAC))
@@ -1825,6 +1779,7 @@ int main(int argc, char **argv)
 		       cxt->sector_size, DEFAULT_SECTOR_SIZE);
 
 	if (!fdisk_dev_has_disklabel(cxt)) {
+		update_units(cxt);	/* to provide compatible 'p'rint output */
 		fprintf(stderr,
 			_("Device does not contain a recognized partition table\n"));
 		fdisk_create_disklabel(cxt, NULL);

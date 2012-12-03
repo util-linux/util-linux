@@ -60,6 +60,7 @@
 #define NETBSD_PARTITION	0xa9
 #define DKTYPENAMES
 #include "fdiskbsdlabel.h"
+#include "fdiskdoslabel.h"
 
 static int xbsd_delete_part (struct fdisk_context *cxt, int partnum);
 static void xbsd_edit_disklabel (void);

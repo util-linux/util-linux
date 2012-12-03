@@ -43,4 +43,7 @@ extern void dos_init(struct fdisk_context *cxt);
 
 extern int mbr_is_valid_magic(unsigned char *b);
 
+extern void change_units(struct fdisk_context *cxt);
+extern void update_units(struct fdisk_context *cxt);	/* called from sunlabel too */
+
 #endif

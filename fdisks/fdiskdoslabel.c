@@ -32,6 +32,53 @@ struct pte ptes[MAXIMUM_PARTS];
 sector_t extended_offset;
 int ext_index;
 
+unsigned int units_per_sector = 1, display_in_cyl_units = 0;
+
+void update_units(struct fdisk_context *cxt)
+{
+	int cyl_units = cxt->geom.heads * cxt->geom.sectors;
+
+	if (display_in_cyl_units && cyl_units)
+		units_per_sector = cyl_units;
+	else
+		units_per_sector = 1;	/* in sectors */
+}
+
+void change_units(struct fdisk_context *cxt)
+{
+	display_in_cyl_units = !display_in_cyl_units;
+	update_units(cxt);
+
+	if (display_in_cyl_units)
+		printf(_("Changing display/entry units to cylinders (DEPRECATED!)\n"));
+	else
+		printf(_("Changing display/entry units to sectors\n"));
+}
+
+
+static void warn_alignment(struct fdisk_context *cxt)
+{
+	if (nowarn)
+		return;
+
+	if (cxt->sector_size != cxt->phy_sector_size)
+		fprintf(stderr, _("\n"
+"The device presents a logical sector size that is smaller than\n"
+"the physical sector size. Aligning to a physical sector (or optimal\n"
+"I/O) size boundary is recommended, or performance may be impacted.\n"));
+
+	if (dos_compatible_flag)
+		fprintf(stderr, _("\n"
+"WARNING: DOS-compatible mode is deprecated. It's strongly recommended to\n"
+"         switch off the mode (with command 'c')."));
+
+	if (display_in_cyl_units)
+		fprintf(stderr, _("\n"
+"WARNING: cylinders as display units are deprecated. Use command 'u' to\n"
+"         change units to sectors.\n"));
+
+}
+
 static int get_nonexisting_partition(struct fdisk_context *cxt, int warn, int max)
 {
 	int pno = -1;

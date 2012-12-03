@@ -134,7 +134,6 @@ static int __probe_labels(struct fdisk_context *cxt)
 	size_t i;
 
 	cxt->disklabel = FDISK_DISKLABEL_ANY;
-	update_units(cxt);
 
 	for (i = 0; i < ARRAY_SIZE(labels); i++) {
 		if (!labels[i]->probe || labels[i]->probe(cxt) != 1)

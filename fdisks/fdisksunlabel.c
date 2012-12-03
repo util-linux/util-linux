@@ -24,6 +24,7 @@
 #include "common.h"
 #include "fdisk.h"
 #include "fdisksunlabel.h"
+#include "fdiskdoslabel.h"
 
 static int     other_endian = 0;
 
@@ -140,7 +141,6 @@ static int sun_probe_label(struct fdisk_context *cxt)
 			set_changed(0);
 		}
 	}
-	update_units(cxt);
 	return 1;
 }
 
@@ -676,6 +676,14 @@ static int sun_set_parttype(struct fdisk_context *cxt, int i,
 	return 0;
 }
 
+
+static int sun_reset_alignment(struct fdisk_context *cxt)
+{
+	/* this is shared with DOS ... */
+	update_units(cxt);
+	return 0;
+}
+
 const struct fdisk_label sun_label =
 {
 	.name = "sun",
@@ -690,5 +698,5 @@ const struct fdisk_label sun_label =
 	.part_delete = sun_delete_partition,
 	.part_get_type = sun_get_parttype,
 	.part_set_type = sun_set_parttype,
-
+	.reset_alignment = sun_reset_alignment,
 };
