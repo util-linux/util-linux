@@ -1530,7 +1530,12 @@ static int gpt_add_partition(struct fdisk_context *cxt, int partnum,
 					0, _("First sector"));
 
 		if (user_f < disk_f || user_f > disk_l)
+			continue;	/* bug in read_int() dialog? */
+
+		if (user_f != find_first_available(pheader, ents, user_f)) {
+			printf(_("Sector %ju already used\n"), user_f);
 			continue;
+		}
 
 		/* Last sector */
 		dflt_l = find_last_free(pheader, ents, user_f);
