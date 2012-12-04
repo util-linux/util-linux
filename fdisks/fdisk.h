@@ -282,6 +282,7 @@ extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
 					 unsigned int low, unsigned int dflt, unsigned int high,
 				  unsigned int base, char *mesg, int *is_suffix_used);
 extern sector_t align_lba(struct fdisk_context *cxt, sector_t lba, int direction);
+extern sector_t align_lba_in_range(struct fdisk_context *cxt, sector_t lba, sector_t start, sector_t stop);
 extern int get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt);
 
 #define PLURAL	0

@@ -352,6 +352,22 @@ sector_t align_lba(struct fdisk_context *cxt, sector_t lba, int direction)
 	return res;
 }
 
+
+sector_t align_lba_in_range(struct fdisk_context *cxt,
+			    sector_t lba, sector_t start, sector_t stop)
+{
+	start = align_lba(cxt, start, ALIGN_UP);
+	stop = align_lba(cxt, stop, ALIGN_DOWN);
+
+	lba = align_lba(cxt, lba, ALIGN_NEAREST);
+
+	if (lba < start)
+		return start;
+	else if (lba > stop)
+		return stop;
+	return lba;
+}
+
 int warn_geometry(struct fdisk_context *cxt)
 {
 	char *m = NULL;

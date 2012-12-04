@@ -984,8 +984,10 @@ static uint64_t get_free_sectors(struct fdisk_context *cxt, struct gpt_header *h
 	} while (first_sect);
 
 done:
-	*nsegments = num;
-	*largest_segment = largest_seg;
+	if (nsegments)
+		*nsegments = num;
+	if (largest_segment)
+		*largest_segment = largest_seg;
 
 	return totfound;
 }
@@ -1481,10 +1483,9 @@ static int gpt_create_new_partition(int partnum, uint64_t fsect, uint64_t lsect,
 static int gpt_add_partition(struct fdisk_context *cxt, int partnum,
 			     struct fdisk_parttype *t)
 {
-	char msg[256];
-	uint32_t tmp;
-	uint64_t f0, f1; /* user input ranges for first and last sectors */
-	uint64_t def_sect, first_sect, last_sect; /* first and last available sector ranges */
+	uint64_t user_f, user_l;	/* user input ranges for first and last sectors */
+	uint64_t disk_f, disk_l;	/* first and last available sector ranges on device*/
+	uint64_t dflt_f, dflt_l;	/* largest segment (default) */
 	struct gpt_guid uuid = GPT_DEFAULT_ENTRY_GUID;
 
 	/* check basic tests before even considering adding a new partition */
@@ -1500,32 +1501,55 @@ static int gpt_add_partition(struct fdisk_context *cxt, int partnum,
 		return -EINVAL;
 	}
 
-	if (!get_free_sectors(cxt, pheader, ents, &tmp, &f0)) {
+	if (!get_free_sectors(cxt, pheader, ents, NULL, NULL)) {
 		printf(_("No free sectors available.\n"));
 		return -ENOSPC;
 	}
 
-	first_sect = find_first_available(pheader, ents, 0);
-	last_sect  = find_last_free_sector(pheader, ents);
-	def_sect   = find_first_in_largest(pheader, ents);
+	disk_f = find_first_available(pheader, ents, 0);
+	disk_l = find_last_free_sector(pheader, ents);
+
+	/* the default is the largest free space */
+	dflt_f = find_first_in_largest(pheader, ents);
+	dflt_l = find_last_free(pheader, ents, dflt_f);
+
+	/* align the default in range <dflt_f,dflt_l>*/
+	dflt_f = align_lba_in_range(cxt, dflt_f, dflt_f, dflt_l);
 
 	if (t && t->typestr)
 		string_to_uuid(t->typestr, &uuid);
 
 	/* get user input for first and last sectors of the new partition */
-	snprintf(msg, sizeof(msg), _("First %s"), str_units(SINGULAR));
 	for (;;) {
-		f0 = read_int(cxt, first_sect, def_sect, last_sect, 0, msg);
-		if (f0 >= first_sect && f0 <= last_sect) {
-			last_sect  = find_last_free(pheader, ents, f0);
-			snprintf(msg, sizeof(msg), _("Last %s"), str_units(SINGULAR));
-			f1 = read_int(cxt, f0, last_sect, last_sect, 0, msg);
-			if (f1 >= f0 && f1 <= last_sect)
-				break;
-		}
+		int is_suffix_used = 0;
+
+		/* first sector */
+		user_f = read_int(cxt,	disk_f,	/* minimal */
+					dflt_f, /* default */
+					disk_l, /* maximal */
+					0, _("First sector"));
+
+		if (user_f < disk_f || user_f > disk_l)
+			continue;
+
+		/* Last sector */
+		dflt_l = find_last_free(pheader, ents, user_f);
+		user_l = read_int_with_suffix(cxt,
+					user_f, /* minimal */
+					dflt_l, /* default */
+					dflt_l, /* maximal */
+					user_f, /* base for relative input */
+					_("Last sector, +sectors or +size{K,M,G}"),
+					&is_suffix_used);
+
+		if (is_suffix_used)
+			user_l = align_lba_in_range(cxt, user_l, user_f, dflt_l) - 1;
+
+		if (user_l > user_f && user_l <= disk_l)
+			break;
 	}
 
-	if (gpt_create_new_partition(partnum, f0, f1, &uuid, ents) != 0)
+	if (gpt_create_new_partition(partnum, user_f, user_l, &uuid, ents) != 0)
 		printf(_("Could not create partition %d\n"), partnum + 1);
 	else
 		printf(_("Created partition %d\n"), partnum + 1);

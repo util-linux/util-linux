@@ -541,21 +541,6 @@ static sector_t get_unused_start(struct fdisk_context *cxt,
 	return start;
 }
 
-static sector_t align_lba_in_range(struct fdisk_context *cxt,
-				   sector_t lba, sector_t start, sector_t stop)
-{
-	start = align_lba(cxt, start, ALIGN_UP);
-	stop = align_lba(cxt, stop, ALIGN_DOWN);
-
-	lba = align_lba(cxt, lba, ALIGN_NEAREST);
-
-	if (lba < start)
-		return start;
-	else if (lba > stop)
-		return stop;
-	return lba;
-}
-
 static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype *t)
 {
 	char mesg[256];		/* 48 does not suffice in Japanese */
