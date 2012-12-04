@@ -1119,13 +1119,15 @@ void gpt_list_table(struct fdisk_context *cxt,
 
 		t = fdisk_get_partition_type(cxt, i);
 
-		printf("%2d %12ld %12ld  %6s  %-15.15s %s\n",
+		printf("%2d %12ju %12ju  %6s  %-15.15s %s\n",
 		       i+1,
-		       ents[i].lba_start,
-		       ents[i].lba_end,
+		       start,
+		       le64_to_cpu(ents[i].lba_end),
 		       sizestr,
 		       t->name,
 		       name);
+
+		check_alignment(cxt, start, i);
 
 		free(name);
 		free(sizestr);
