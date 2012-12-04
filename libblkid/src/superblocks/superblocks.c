@@ -255,9 +255,6 @@ int blkid_probe_filter_superblocks_usage(blkid_probe pr, int flag, int usage)
 	struct blkid_chain *chn;
 	size_t i;
 
-	if (!pr)
-		return -1;
-
 	fltr = blkid_probe_get_filter(pr, BLKID_CHAIN_SUBLKS, TRUE);
 	if (!fltr)
 		return -1;

@@ -461,6 +461,9 @@ int __blkid_probe_invert_filter(blkid_probe pr, int chain)
 	size_t i;
 	struct blkid_chain *chn;
 
+	if (!pr)
+		return -1;
+
 	chn = &pr->chains[chain];
 
 	if (!chn->driver->has_fltr || !chn->fltr)
@@ -1397,7 +1400,7 @@ blkid_loff_t blkid_probe_get_offset(blkid_probe pr)
  * blkid_probe_get_fd:
  * @pr: probe
  *
- * Returns: file descriptor for assigned device/file.
+ * Returns: file descriptor for assigned device/file or -1 in case of error.
  */
 int blkid_probe_get_fd(blkid_probe pr)
 {
@@ -1523,7 +1526,7 @@ int blkid_probe_has_value(blkid_probe pr, const char *name)
 
 struct blkid_prval *__blkid_probe_get_value(blkid_probe pr, int num)
 {
-	if (pr == NULL || num < 0 || num >= pr->nvals)
+	if (!pr || num < 0 || num >= pr->nvals)
 		return NULL;
 
 	return &pr->vals[num];
@@ -1533,7 +1536,7 @@ struct blkid_prval *__blkid_probe_lookup_value(blkid_probe pr, const char *name)
 {
 	int i;
 
-	if (pr == NULL || pr->nvals == 0 || name == NULL)
+	if (!pr || !pr->nvals || !name)
 		return NULL;
 
 	for (i = 0; i < pr->nvals; i++) {

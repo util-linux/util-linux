@@ -69,7 +69,7 @@ void blkid_free_dev(blkid_dev dev)
  */
 extern const char *blkid_dev_devname(blkid_dev dev)
 {
-	return dev->bid_name;
+	return dev ? dev->bid_name : NULL;
 }
 
 #ifdef CONFIG_BLKID_DEBUG
@@ -127,7 +127,7 @@ struct blkid_struct_dev_iterate {
 
 extern blkid_dev_iterate blkid_dev_iterate_begin(blkid_cache cache)
 {
-	blkid_dev_iterate	iter;
+	blkid_dev_iterate iter;
 
 	iter = malloc(sizeof(struct blkid_struct_dev_iterate));
 	if (iter) {
@@ -137,7 +137,7 @@ extern blkid_dev_iterate blkid_dev_iterate_begin(blkid_cache cache)
 		iter->search_type = 0;
 		iter->search_value = 0;
 	}
-	return (iter);
+	return iter;
 }
 
 extern int blkid_dev_set_search(blkid_dev_iterate iter,
@@ -172,9 +172,9 @@ extern int blkid_dev_next(blkid_dev_iterate iter,
 {
 	blkid_dev		dev;
 
-	*ret_dev = 0;
-	if (!iter || iter->magic != DEV_ITERATE_MAGIC)
+	if  (!ret_dev || !iter || iter->magic != DEV_ITERATE_MAGIC)
 		return -1;
+	*ret_dev = 0;
 	while (iter->p != &iter->cache->bic_devs) {
 		dev = list_entry(iter->p, struct blkid_struct_dev, bid_devs);
 		iter->p = iter->p->next;

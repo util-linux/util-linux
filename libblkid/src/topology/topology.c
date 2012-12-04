@@ -317,7 +317,7 @@ int blkid_topology_set_physical_sector_size(blkid_probe pr, unsigned long val)
  */
 unsigned long blkid_topology_get_alignment_offset(blkid_topology tp)
 {
-	return tp ? tp->alignment_offset : 0;
+	return tp->alignment_offset;
 }
 
 /**
@@ -328,7 +328,7 @@ unsigned long blkid_topology_get_alignment_offset(blkid_topology tp)
  */
 unsigned long blkid_topology_get_minimum_io_size(blkid_topology tp)
 {
-	return tp ? tp->minimum_io_size : 0;
+	return tp->minimum_io_size;
 }
 
 /**
@@ -339,7 +339,7 @@ unsigned long blkid_topology_get_minimum_io_size(blkid_topology tp)
  */
 unsigned long blkid_topology_get_optimal_io_size(blkid_topology tp)
 {
-	return tp ? tp->optimal_io_size : 0;
+	return tp->optimal_io_size;
 }
 
 /**
@@ -350,7 +350,7 @@ unsigned long blkid_topology_get_optimal_io_size(blkid_topology tp)
  */
 unsigned long blkid_topology_get_logical_sector_size(blkid_topology tp)
 {
-	return tp ? tp->logical_sector_size : 0;
+	return tp->logical_sector_size;
 }
 
 /**
@@ -361,6 +361,6 @@ unsigned long blkid_topology_get_logical_sector_size(blkid_topology tp)
  */
 unsigned long blkid_topology_get_physical_sector_size(blkid_topology tp)
 {
-	return tp ? tp->physical_sector_size : 0;
+	return tp->physical_sector_size;
 }
 

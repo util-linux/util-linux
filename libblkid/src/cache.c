@@ -141,6 +141,9 @@ int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
 {
 	blkid_cache cache;
 
+	if (!ret_cache)
+		return -BLKID_ERR_PARAM;
+
 	blkid_init_debug(0);
 
 	DBG(DEBUG_CACHE, printf("creating blkid cache (using %s)\n",

@@ -228,7 +228,6 @@ int blkid_probe_set_partitions_flags(blkid_probe pr, int flags)
 {
 	if (!pr)
 		return -1;
-
 	pr->chains[BLKID_CHAIN_PARTS].flags = flags;
 	return 0;
 }
@@ -921,6 +920,9 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 	uint64_t start, size;
 	int i, rc, partno = 0;
 
+	if (!ls)
+		return NULL;
+
 	DBG(DEBUG_LOWPROBE,
 		printf("triyng to convert devno 0x%llx to partition\n",
 			(long long) devno));
@@ -1289,7 +1291,7 @@ blkid_loff_t blkid_partition_get_size(blkid_partition par)
  */
 int blkid_partition_get_type(blkid_partition par)
 {
-	return par ? par->type : 0;
+	return par->type;
 }
 
 /* Sets partition 'type' for PT where the type is defined by string rather
@@ -1350,6 +1352,6 @@ int blkid_partition_set_flags(blkid_partition par, unsigned long long flags)
  */
 unsigned long long blkid_partition_get_flags(blkid_partition par)
 {
-	return par ? par->flags : 0;
+	return par->flags;
 }
 

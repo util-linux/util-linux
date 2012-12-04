@@ -284,7 +284,7 @@ int blkid_encode_string(const char *str, char *str_enc, size_t len)
 {
 	size_t i, j;
 
-	if (str == NULL || str_enc == NULL)
+	if (!str || !str_enc || !len)
 		return -1;
 
 	for (i = 0, j = 0; str[i] != '\0'; i++) {
@@ -332,6 +332,8 @@ err:
  */
 int blkid_safe_string(const char *str, char *str_safe, size_t len)
 {
+	if (!str || !str_safe || !len)
+		return -1;
 	replace_whitespace(str, str_safe, len);
 	replace_chars(str_safe, UDEV_ALLOWED_CHARS_INPUT);
 	return 0;

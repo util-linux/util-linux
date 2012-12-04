@@ -36,11 +36,8 @@ char *blkid_get_tag_value(blkid_cache cache, const char *tagname,
 
 	if (!devname)
 		return NULL;
-
-	if (!cache) {
-		if (blkid_get_cache(&c, NULL) < 0)
-			return NULL;
-	}
+	if (!cache && blkid_get_cache(&c, NULL) < 0)
+		return NULL;
 
 	if ((dev = blkid_get_dev(c, devname, BLKID_DEV_NORMAL)) &&
 	    (found = blkid_find_tag_dev(dev, tagname)))
@@ -68,11 +65,8 @@ char *blkid_get_devname(blkid_cache cache, const char *token,
 
 	if (!token)
 		return NULL;
-
-	if (!cache) {
-		if (blkid_get_cache(&c, NULL) < 0)
-			return NULL;
-	}
+	if (!cache && blkid_get_cache(&c, NULL) < 0)
+		return NULL;
 
 	DBG(DEBUG_RESOLVE,
 	    printf("looking for %s%s%s %s\n", token, value ? "=" : "",

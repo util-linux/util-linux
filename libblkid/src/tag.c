@@ -86,9 +86,6 @@ extern int blkid_dev_has_tag(blkid_dev dev, const char *type,
 {
 	blkid_tag		tag;
 
-	if (!dev || !type)
-		return -1;
-
 	tag = blkid_find_tag_dev(dev, type);
 	if (!value)
 		return (tag != NULL);
@@ -242,12 +239,15 @@ int blkid_parse_tag_string(const char *token, char **ret_type, char **ret_val)
 			goto errout; /* missing closing quote */
 		*cp = '\0';
 	}
-	value = strdup(value);
+	if (value && *value)
+		value = strdup(value);
 	if (!value)
 		goto errout;
 
-	*ret_type = name;
-	*ret_val = value;
+	if (ret_type)
+		*ret_type = name;
+	if (ret_val)
+		*ret_val = value;
 
 	return 0;
 
@@ -300,11 +300,13 @@ extern int blkid_tag_next(blkid_tag_iterate iter,
 {
 	blkid_tag tag;
 
-	*type = 0;
-	*value = 0;
-	if (!iter || iter->magic != TAG_ITERATE_MAGIC ||
+	if (!type || !value ||
+	    !iter || iter->magic != TAG_ITERATE_MAGIC ||
 	    iter->p == &iter->dev->bid_tags)
 		return -1;
+
+	*type = 0;
+	*value = 0;
 	tag = list_entry(iter->p, struct blkid_struct_tag, bit_tags);
 	*type = tag->bit_name;
 	*value = tag->bit_val;

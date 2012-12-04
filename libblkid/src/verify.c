@@ -81,7 +81,7 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 	char *fltr[2];
 	int fd;
 
-	if (!dev)
+	if (!dev || !cache)
 		return NULL;
 
 	now = time(0);

@@ -199,7 +199,7 @@ static void probe_one(blkid_cache cache, const char *ptname,
 		struct stat st;
 		char device[256];
 
-		sprintf(device, "%s/%s", *dir, ptname);
+		snprintf(device, sizeof(device), "%s/%s", *dir, ptname);
 		if ((dev = blkid_get_dev(cache, device, BLKID_DEV_FIND)) &&
 		    dev->bid_devno == devno)
 			goto set_pri;
@@ -595,9 +595,11 @@ int blkid_probe_all(blkid_cache cache)
 
 	DBG(DEBUG_PROBE, printf("Begin blkid_probe_all()\n"));
 	ret = probe_all(cache, 0);
-	cache->bic_time = time(0);
-	cache->bic_flags |= BLKID_BIC_FL_PROBED;
-	DBG(DEBUG_PROBE, printf("End blkid_probe_all()\n"));
+	if (ret == 0) {
+		cache->bic_time = time(0);
+		cache->bic_flags |= BLKID_BIC_FL_PROBED;
+	}
+	DBG(DEBUG_PROBE, printf("End blkid_probe_all() [rc=%d]\n", ret));
 	return ret;
 }
 
@@ -615,7 +617,7 @@ int blkid_probe_all_new(blkid_cache cache)
 
 	DBG(DEBUG_PROBE, printf("Begin blkid_probe_all_new()\n"));
 	ret = probe_all(cache, 1);
-	DBG(DEBUG_PROBE, printf("End blkid_probe_all_new()\n"));
+	DBG(DEBUG_PROBE, printf("End blkid_probe_all_new() [rc=%d]\n", ret));
 	return ret;
 }
 
@@ -643,7 +645,7 @@ int blkid_probe_all_removable(blkid_cache cache)
 
 	DBG(DEBUG_PROBE, printf("Begin blkid_probe_all_removable()\n"));
 	ret = probe_all_removable(cache);
-	DBG(DEBUG_PROBE, printf("End blkid_probe_all_removable()\n"));
+	DBG(DEBUG_PROBE, printf("End blkid_probe_all_removable() [rc=%d]\n", ret));
 	return ret;
 }
 
