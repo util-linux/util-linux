@@ -123,8 +123,7 @@ struct libmnt_test {
 };
 
 /* test.c */
-extern int mnt_run_test(struct libmnt_test *tests, int argc, char *argv[])
-			__attribute__((nonnull));
+extern int mnt_run_test(struct libmnt_test *tests, int argc, char *argv[]);
 #endif
 
 /* utils.c */
@@ -134,45 +133,36 @@ extern int startswith(const char *s, const char *sx)
 			__attribute__((nonnull));
 extern int mnt_is_readonly(const char *path)
 			__attribute__((nonnull));
-extern int mnt_parse_offset(const char *str, size_t len, uintmax_t *res)
-			__attribute__((nonnull(1,3)));
 
-extern int mnt_chdir_to_parent(const char *target, char **filename)
-			__attribute__((nonnull));
+extern int mnt_parse_offset(const char *str, size_t len, uintmax_t *res);
+
+extern int mnt_chdir_to_parent(const char *target, char **filename);
 
 extern char *mnt_get_username(const uid_t uid);
-extern int mnt_get_uid(const char *username, uid_t *uid)
-			__attribute__((nonnull));
-extern int mnt_get_gid(const char *groupname, gid_t *gid)
-			__attribute__((nonnull));
+extern int mnt_get_uid(const char *username, uid_t *uid);
+extern int mnt_get_gid(const char *groupname, gid_t *gid);
 extern int mnt_in_group(gid_t gid);
 
-extern char *mnt_get_fs_root(const char *path, const char *mountpoint)
-			__attribute__((nonnull(1)));
-extern int mnt_open_uniq_filename(const char *filename, char **name)
-			__attribute__((nonnull(1)));
+extern char *mnt_get_fs_root(const char *path, const char *mountpoint);
+extern int mnt_open_uniq_filename(const char *filename, char **name);
 
 extern int mnt_has_regular_utab(const char **utab, int *writable);
 extern const char *mnt_get_utab_path(void);
 
-extern int mnt_get_filesystems(char ***filesystems, const char *pattern)
-			__attribute__((nonnull(1)));
+extern int mnt_get_filesystems(char ***filesystems, const char *pattern);
 extern void mnt_free_filesystems(char **filesystems);
 
-extern char *mnt_get_kernel_cmdline_option(const char *name)
-			__attribute__((nonnull));
+extern char *mnt_get_kernel_cmdline_option(const char *name);
 
 /* tab.c */
 extern int mnt_table_set_parser_fltrcb(	struct libmnt_table *tb,
 					int (*cb)(struct libmnt_fs *, void *),
-					void *data)
-			__attribute__((nonnull(1)));
+					void *data);
 
 extern struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
                                         struct libmnt_fs *fs,
                                         unsigned long mountflags,
-                                        char **fsroot)
-			__attribute__((nonnull(2, 4)));
+                                        char **fsroot);
 /*
  * Generic iterator
  */
@@ -275,8 +265,7 @@ struct libmnt_table {
 	struct list_head	ents;	/* list of entries (libmnt_fs) */
 };
 
-extern struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt)
-			__attribute__((nonnull(1)));
+extern struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt);
 
 /*
  * Tab file format
@@ -382,8 +371,7 @@ struct libmnt_context
 #define MNT_FL_DEFAULT		0
 
 /* lock.c */
-extern int mnt_lock_use_simplelock(struct libmnt_lock *ml, int enable)
-			__attribute__((nonnull(1)));
+extern int mnt_lock_use_simplelock(struct libmnt_lock *ml, int enable);
 
 /* optmap.c */
 extern const struct libmnt_optmap *mnt_optmap_get_entry(
@@ -391,20 +379,14 @@ extern const struct libmnt_optmap *mnt_optmap_get_entry(
                              int nmaps,
 			     const char *name,
                              size_t namelen,
-			     const struct libmnt_optmap **mapent)
-			__attribute__((nonnull(1, 3)));
+			     const struct libmnt_optmap **mapent);
 
 /* optstr.c */
-extern int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end)
-			__attribute__((nonnull));
-extern int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next)
-			__attribute__((nonnull));
-extern int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next)
-			__attribute__((nonnull));
-extern int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, char **next)
-			__attribute__((nonnull));
-extern int mnt_optstr_fix_user(char **optstr)
-			__attribute__((nonnull));
+extern int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end);
+extern int mnt_optstr_fix_gid(char **optstr, char *value, size_t valsz, char **next);
+extern int mnt_optstr_fix_uid(char **optstr, char *value, size_t valsz, char **next);
+extern int mnt_optstr_fix_secontext(char **optstr, char *value, size_t valsz, char **next);
+extern int mnt_optstr_fix_user(char **optstr);
 
 /* fs.c */
 extern struct libmnt_fs *mnt_copy_mtab_fs(const struct libmnt_fs *fs)
@@ -415,46 +397,33 @@ extern int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype)
 			__attribute__((nonnull(1)));
 
 /* context.c */
-extern int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
-			__attribute__((nonnull));
-extern int mnt_context_prepare_target(struct libmnt_context *cxt)
-			__attribute__((nonnull));
-extern int mnt_context_guess_fstype(struct libmnt_context *cxt)
-			__attribute__((nonnull));
+extern int mnt_context_prepare_srcpath(struct libmnt_context *cxt);
+extern int mnt_context_prepare_target(struct libmnt_context *cxt);
+extern int mnt_context_guess_fstype(struct libmnt_context *cxt);
 extern int mnt_context_prepare_helper(struct libmnt_context *cxt,
-				      const char *name, const char *type)
-			__attribute__((nonnull(1,2)));
-extern int mnt_context_prepare_update(struct libmnt_context *cxt)
-			__attribute__((nonnull));
-extern int mnt_context_merge_mflags(struct libmnt_context *cxt)
-			__attribute__((nonnull));
-extern int mnt_context_update_tabs(struct libmnt_context *cxt)
-			__attribute__((nonnull));
+				      const char *name, const char *type);
+extern int mnt_context_prepare_update(struct libmnt_context *cxt);
+extern int mnt_context_merge_mflags(struct libmnt_context *cxt);
+extern int mnt_context_update_tabs(struct libmnt_context *cxt);
 
-extern int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg)
-			__attribute__((nonnull(1)));
-extern int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg)
-			__attribute__((nonnull(1)));
+extern int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg);
+extern int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg);
 
 extern int mnt_context_is_loopdev(struct libmnt_context *cxt)
 			__attribute__((nonnull));
-extern int mnt_context_setup_loopdev(struct libmnt_context *cxt)
-			__attribute__((nonnull));
-extern int mnt_context_delete_loopdev(struct libmnt_context *cxt)
-			__attribute__((nonnull));
-extern int mnt_context_clear_loopdev(struct libmnt_context *cxt)
-			__attribute__((nonnull));
+
+extern int mnt_context_setup_loopdev(struct libmnt_context *cxt);
+extern int mnt_context_delete_loopdev(struct libmnt_context *cxt);
+extern int mnt_context_clear_loopdev(struct libmnt_context *cxt);
 
 extern int mnt_fork_context(struct libmnt_context *cxt);
 
 extern int mnt_context_set_tabfilter(struct libmnt_context *cxt,
 				     int (*fltr)(struct libmnt_fs *, void *),
-				     void *data)
-			__attribute__((nonnull(1)));
+				     void *data);
 
 /* tab_update.c */
 extern int mnt_update_set_filename(struct libmnt_update *upd,
-				   const char *filename, int userspace_only)
-			__attribute__((nonnull(1)));
+				   const char *filename, int userspace_only);
 
 #endif /* _LIBMOUNT_PRIVATE_H */

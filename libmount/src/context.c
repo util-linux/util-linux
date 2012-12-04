@@ -276,7 +276,7 @@ int mnt_context_set_optsmode(struct libmnt_context *cxt, int mode)
 
 int mnt_context_get_optsmode(struct libmnt_context *cxt)
 {
-	return cxt ? cxt->optsmode : 0;
+	return cxt->optsmode;
 }
 
 /**
@@ -333,7 +333,7 @@ int mnt_context_enable_lazy(struct libmnt_context *cxt, int enable)
  */
 int mnt_context_is_lazy(struct libmnt_context *cxt)
 {
-	return cxt && (cxt->flags & MNT_FL_LAZY) ? 1 : 0;
+	return cxt->flags & MNT_FL_LAZY ? 1 : 0;
 }
 
 /**
@@ -359,7 +359,7 @@ int mnt_context_enable_fork(struct libmnt_context *cxt, int enable)
  */
 int mnt_context_is_fork(struct libmnt_context *cxt)
 {
-	return cxt && (cxt->flags & MNT_FL_FORK) ? 1 : 0;
+	return cxt->flags & MNT_FL_FORK ? 1 : 0;
 }
 
 /**
@@ -410,7 +410,7 @@ int mnt_context_enable_rdonly_umount(struct libmnt_context *cxt, int enable)
  */
 int mnt_context_is_rdonly_umount(struct libmnt_context *cxt)
 {
-	return cxt && (cxt->flags & MNT_FL_RDONLY_UMOUNT) ? 1 : 0;
+	return cxt->flags & MNT_FL_RDONLY_UMOUNT ? 1 : 0;
 }
 
 /**
@@ -435,7 +435,7 @@ int mnt_context_disable_helpers(struct libmnt_context *cxt, int disable)
  */
 int mnt_context_is_nohelpers(struct libmnt_context *cxt)
 {
-	return cxt && (cxt->flags & MNT_FL_NOHELPERS) ? 1 : 0;
+	return cxt->flags & MNT_FL_NOHELPERS ? 1 : 0;
 }
 
 
@@ -461,7 +461,7 @@ int mnt_context_enable_sloppy(struct libmnt_context *cxt, int enable)
  */
 int mnt_context_is_sloppy(struct libmnt_context *cxt)
 {
-	return cxt && (cxt->flags & MNT_FL_SLOPPY) ? 1 : 0;
+	return cxt->flags & MNT_FL_SLOPPY ? 1 : 0;
 }
 
 /**
@@ -486,7 +486,7 @@ int mnt_context_enable_fake(struct libmnt_context *cxt, int enable)
  */
 int mnt_context_is_fake(struct libmnt_context *cxt)
 {
-	return cxt && (cxt->flags & MNT_FL_FAKE) ? 1 : 0;
+	return cxt->flags & MNT_FL_FAKE ? 1 : 0;
 }
 
 /**
@@ -511,7 +511,7 @@ int mnt_context_disable_mtab(struct libmnt_context *cxt, int disable)
  */
 int mnt_context_is_nomtab(struct libmnt_context *cxt)
 {
-	return cxt && (cxt->flags & MNT_FL_NOMTAB) ? 1 : 0;
+	return cxt->flags & MNT_FL_NOMTAB ? 1 : 0;
 }
 
 /**
@@ -537,7 +537,7 @@ int mnt_context_disable_swapmatch(struct libmnt_context *cxt, int disable)
  */
 int mnt_context_is_swapmatch(struct libmnt_context *cxt)
 {
-	return cxt && (cxt->flags & MNT_FL_NOSWAPMATCH) ? 0 : 1;
+	return cxt->flags & MNT_FL_NOSWAPMATCH ? 0 : 1;
 }
 
 /**
@@ -562,7 +562,7 @@ int mnt_context_enable_force(struct libmnt_context *cxt, int enable)
  */
 int mnt_context_is_force(struct libmnt_context *cxt)
 {
-	return cxt && (cxt->flags & MNT_FL_FORCE) ? 1 : 0;
+	return cxt->flags & MNT_FL_FORCE ? 1 : 0;
 }
 
 /**
@@ -587,7 +587,7 @@ int mnt_context_enable_verbose(struct libmnt_context *cxt, int enable)
  */
 int mnt_context_is_verbose(struct libmnt_context *cxt)
 {
-	return cxt && (cxt->flags & MNT_FL_VERBOSE) ? 1 : 0;
+	return cxt->flags & MNT_FL_VERBOSE ? 1 : 0;
 }
 
 /**
@@ -612,7 +612,7 @@ int mnt_context_enable_loopdel(struct libmnt_context *cxt, int enable)
  */
 int mnt_context_is_loopdel(struct libmnt_context *cxt)
 {
-	return cxt && (cxt->flags & MNT_FL_LOOPDEL) ? 1 : 0;
+	return cxt->flags & MNT_FL_LOOPDEL ? 1 : 0;
 }
 
 /**
@@ -1825,7 +1825,7 @@ int mnt_context_apply_fstab(struct libmnt_context *cxt)
  */
 int mnt_context_tab_applied(struct libmnt_context *cxt)
 {
-	return cxt && (cxt->flags & MNT_FL_TAB_APPLIED);
+	return cxt->flags & MNT_FL_TAB_APPLIED;
 }
 
 /**
@@ -1842,7 +1842,7 @@ int mnt_context_tab_applied(struct libmnt_context *cxt)
  */
 int mnt_context_get_status(struct libmnt_context *cxt)
 {
-	return cxt && (!cxt->syscall_status || !cxt->helper_exec_status);
+	return !cxt->syscall_status || !cxt->helper_exec_status;
 }
 
 /**

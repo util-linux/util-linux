@@ -142,12 +142,14 @@ int mnt_chdir_to_parent(const char *target, char **filename)
 		"current directory moved to %s [last_component='%s']",
 		parent, last));
 
-	*filename = buf;
+	if (filename) {
+		*filename = buf;
 
-	if (!last || !*last)
-		memcpy(*filename, ".", 2);
-	else
-		memcpy(*filename, last, strlen(last) + 1);
+		if (!last || !*last)
+			memcpy(*filename, ".", 2);
+		else
+			memcpy(*filename, last, strlen(last) + 1);
+	}
 	return 0;
 err:
 	free(buf);
@@ -268,8 +270,6 @@ int mnt_fstype_is_pseudofs(const char *type)
  */
 int mnt_fstype_is_netfs(const char *type)
 {
-	if (!type)
-		return 0;
 	if (strcmp(type, "cifs")   == 0 ||
 	    strcmp(type, "smbfs")  == 0 ||
 	    strncmp(type,"nfs", 3) == 0 ||
@@ -811,8 +811,8 @@ int mnt_open_uniq_filename(const char *filename, char **name)
 	int rc, fd;
 	char *n;
 
-	assert(filename);
-
+	if (!filename)
+		return -EINVAL;
 	if (name)
 		*name = NULL;
 
@@ -922,8 +922,8 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 	char buf[BUFSIZ];	/* see kernel include/asm-generic/setup.h: COMMAND_LINE_SIZE */
 	const char *path = _PATH_PROC_CMDLINE;
 
-	assert(name);
-	assert(*name);
+	if (!name)
+		return NULL;
 
 #ifdef TEST_PROGRAM
 	path = safe_getenv("LIBMOUNT_KERNEL_CMDLINE");

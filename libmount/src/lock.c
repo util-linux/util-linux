@@ -53,9 +53,6 @@ struct libmnt_lock *mnt_new_lock(const char *datafile, pid_t id)
 	char *lo = NULL, *ln = NULL;
 	size_t losz;
 
-	if (!datafile)
-		return NULL;
-
 	/* for flock we use "foo.lock, for mtab "foo~"
 	 */
 	losz = strlen(datafile) + sizeof(".lock");

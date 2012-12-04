@@ -791,7 +791,8 @@ struct libmnt_table *mnt_new_table_from_dir(const char *dirname)
 int mnt_table_set_parser_errcb(struct libmnt_table *tb,
 		int (*cb)(struct libmnt_table *tb, const char *filename, int line))
 {
-	assert(tb);
+	if (!tb)
+		return -EINVAL;
 	tb->errcb = cb;
 	return 0;
 }
@@ -804,7 +805,8 @@ int mnt_table_set_parser_fltrcb(struct libmnt_table *tb,
 		int (*cb)(struct libmnt_fs *, void *),
 		void *data)
 {
-	assert(tb);
+	if (!tb)
+		return -EINVAL;
 
 	DBG(TAB, mnt_debug_h(tb, "%s table parser filter", cb ? "set" : "unset"));
 	tb->fltrcb = cb;

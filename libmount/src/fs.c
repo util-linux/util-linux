@@ -1184,6 +1184,8 @@ int mnt_fs_get_option(struct libmnt_fs *fs, const char *name,
 {
 	char rc = 1;
 
+	if (!fs)
+		return -EINVAL;
 	if (fs->fs_optstr)
 		rc = mnt_optstr_get_option(fs->fs_optstr, name, value, valsz);
 	if (rc == 1 && fs->vfs_optstr)

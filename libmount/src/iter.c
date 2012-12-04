@@ -54,25 +54,20 @@ void mnt_free_iter(struct libmnt_iter *itr)
  */
 void mnt_reset_iter(struct libmnt_iter *itr, int direction)
 {
-	assert(itr);
-
-	if (direction == -1 && itr)
+	if (direction == -1)
 		direction = itr->direction;
 
-	if (itr) {
-		memset(itr, 0, sizeof(*itr));
-		itr->direction = direction;
-	}
+	memset(itr, 0, sizeof(*itr));
+	itr->direction = direction;
 }
 
 /**
  * mnt_iter_get_direction:
  * @itr: iterator pointer
  *
- * Returns: MNT_INTER_{FOR,BACK}WARD or negative number in case of error.
+ * Returns: MNT_INTER_{FOR,BACK}WARD
  */
 int mnt_iter_get_direction(struct libmnt_iter *itr)
 {
-	assert(itr);
-	return itr ? itr->direction : -EINVAL;
+	return itr->direction;
 }

@@ -87,6 +87,8 @@ int mnt_update_set_filename(struct libmnt_update *upd, const char *filename,
 	int rw = 0;
 
 	assert(upd);
+	if (!upd)
+		return -EINVAL;
 
 	/* filename explicitly defined */
 	if (filename) {

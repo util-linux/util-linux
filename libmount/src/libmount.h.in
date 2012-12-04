@@ -154,22 +154,21 @@ extern int mnt_parse_version_string(const char *ver_string)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
 extern int mnt_get_library_version(const char **ver_string);
-extern int mnt_get_library_features(const char ***features)
-			__ul_attribute__((nonnull));
+extern int mnt_get_library_features(const char ***features);
 
 /* utils.c */
 extern char *mnt_mangle(const char *str)
-			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
 extern char *mnt_unmangle(const char *str)
-			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
+
 extern int mnt_fstype_is_netfs(const char *type)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
 extern int mnt_fstype_is_pseudofs(const char *type)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
+
 extern int mnt_match_fstype(const char *type, const char *pattern)
 			__ul_attribute__((warn_unused_result));
 extern int mnt_match_options(const char *optstr, const char *pattern)
@@ -190,8 +189,8 @@ extern struct libmnt_cache *mnt_new_cache(void)
 			__ul_attribute__((warn_unused_result));
 extern void mnt_free_cache(struct libmnt_cache *cache);
 
-extern int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
-			__ul_attribute__((nonnull));
+extern int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname);
+
 extern int mnt_cache_device_has_tag(struct libmnt_cache *cache,
 				const char *devname,
                                 const char *token,
@@ -200,26 +199,19 @@ extern int mnt_cache_device_has_tag(struct libmnt_cache *cache,
 
 extern char *mnt_cache_find_tag_value(struct libmnt_cache *cache,
 				const char *devname, const char *token)
-			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
 
 extern char *mnt_get_fstype(const char *devname, int *ambi,
 			    struct libmnt_cache *cache)
-			__ul_attribute__((nonnull(1)))
 			__ul_attribute__((warn_unused_result));
 extern char *mnt_resolve_path(const char *path, struct libmnt_cache *cache)
-			__ul_attribute__((nonnull(1)))
 			__ul_attribute__((warn_unused_result));
 extern char *mnt_resolve_tag(const char *token, const char *value,
 			     struct libmnt_cache *cache)
-			__ul_attribute__((nonnull(1, 2)))
 			__ul_attribute__((warn_unused_result));
 extern char *mnt_resolve_spec(const char *spec, struct libmnt_cache *cache)
-			__ul_attribute__((nonnull(1)))
 			__ul_attribute__((warn_unused_result));
-
 extern char *mnt_pretty_path(const char *path, struct libmnt_cache *cache)
-			__ul_attribute__((nonnull(1)))
 			__ul_attribute__((warn_unused_result));
 
 /* optstr.c */
@@ -232,9 +224,9 @@ extern int mnt_optstr_append_option(char **optstr, const char *name,
 extern int mnt_optstr_prepend_option(char **optstr, const char *name,
 				const char *value)
 			__ul_attribute__((nonnull(1, 2)));
+
 extern int mnt_optstr_get_option(const char *optstr, const char *name,
-				char **value, size_t *valsz)
-			__ul_attribute__((nonnull(1, 2)));
+				char **value, size_t *valsz);
 extern int mnt_optstr_set_option(char **optstr, const char *name,
 				const char *value)
 			__ul_attribute__((nonnull(1, 2)));
@@ -245,20 +237,16 @@ extern int mnt_optstr_deduplicate_option(char **optstr, const char *name)
 
 extern int mnt_split_optstr(const char *optstr,
 			    char **user, char **vfs, char **fs,
-			    int ignore_user, int ignore_vfs)
-			__ul_attribute__((nonnull(1)));
+			    int ignore_user, int ignore_vfs);
 
 extern int mnt_optstr_get_options(const char *optstr, char **subset,
-                            const struct libmnt_optmap *map, int ignore)
-			__ul_attribute__((nonnull));
+                            const struct libmnt_optmap *map, int ignore);
 
 extern int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
-				const struct libmnt_optmap *map)
-			__ul_attribute__((nonnull));
-extern int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
-                                const struct libmnt_optmap *map)
-			__ul_attribute__((nonnull));
+				const struct libmnt_optmap *map);
 
+extern int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
+                                const struct libmnt_optmap *map);
 
 /* iter.c */
 enum {
@@ -292,10 +280,8 @@ extern void mnt_free_lock(struct libmnt_lock *ml);
 
 extern void mnt_unlock_file(struct libmnt_lock *ml)
 			__ul_attribute__((nonnull));
-extern int mnt_lock_file(struct libmnt_lock *ml)
-			__ul_attribute__((nonnull));
-extern int mnt_lock_block_signals(struct libmnt_lock *ml, int enable)
-			__ul_attribute__((nonnull));
+extern int mnt_lock_file(struct libmnt_lock *ml);
+extern int mnt_lock_block_signals(struct libmnt_lock *ml, int enable);
 
 /* fs.c */
 extern struct libmnt_fs *mnt_new_fs(void)
@@ -311,15 +297,12 @@ extern struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 extern void *mnt_fs_get_userdata(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_fs_set_userdata(struct libmnt_fs *fs, void *data)
-			__ul_attribute__((nonnull(1)));
+extern int mnt_fs_set_userdata(struct libmnt_fs *fs, void *data);
 extern const char *mnt_fs_get_source(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_fs_set_source(struct libmnt_fs *fs, const char *source)
-			__ul_attribute__((nonnull(1)));
+extern int mnt_fs_set_source(struct libmnt_fs *fs, const char *source);
 extern const char *mnt_fs_get_srcpath(struct libmnt_fs *fs)
-			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
 extern int mnt_fs_get_tag(struct libmnt_fs *fs, const char **name,
 			  const char **value)
@@ -327,19 +310,15 @@ extern int mnt_fs_get_tag(struct libmnt_fs *fs, const char **name,
 extern const char *mnt_fs_get_target(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_fs_set_target(struct libmnt_fs *fs, const char *target)
-			__ul_attribute__((nonnull(1)));
+extern int mnt_fs_set_target(struct libmnt_fs *fs, const char *target);
 extern const char *mnt_fs_get_fstype(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_fs_set_fstype(struct libmnt_fs *fs, const char *fstype)
-			__ul_attribute__((nonnull(1)));
+extern int mnt_fs_set_fstype(struct libmnt_fs *fs, const char *fstype);
 
 extern int mnt_fs_streq_srcpath(struct libmnt_fs *fs, const char *path)
-			__ul_attribute__((nonnull(1)))
 			__ul_attribute__((warn_unused_result));
 extern int mnt_fs_streq_target(struct libmnt_fs *fs, const char *path)
-			__ul_attribute__((nonnull(1)))
 			__ul_attribute__((warn_unused_result));
 
 extern char *mnt_fs_strdup_options(struct libmnt_fs *fs)
@@ -348,17 +327,12 @@ extern char *mnt_fs_strdup_options(struct libmnt_fs *fs)
 extern const char *mnt_fs_get_options(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr)
-			__ul_attribute__((nonnull(1)));
-extern int mnt_fs_append_options(struct libmnt_fs *fs, const char *optstr)
-			__ul_attribute__((nonnull));
-extern int mnt_fs_prepend_options(struct libmnt_fs *fs, const char *optstr)
-			__ul_attribute__((nonnull));
+extern int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr);
+extern int mnt_fs_append_options(struct libmnt_fs *fs, const char *optstr);
+extern int mnt_fs_prepend_options(struct libmnt_fs *fs, const char *optstr);
 
 extern int mnt_fs_get_option(struct libmnt_fs *fs, const char *name,
-				char **value, size_t *valsz)
-			__ul_attribute__((nonnull(1,2)));
-
+				char **value, size_t *valsz);
 
 extern const char *mnt_fs_get_fs_options(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull))
@@ -373,36 +347,28 @@ extern const char *mnt_fs_get_user_options(struct libmnt_fs *fs)
 extern const char *mnt_fs_get_attributes(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_fs_set_attributes(struct libmnt_fs *fs, const char *optstr)
-			__ul_attribute__((nonnull(1)));
+extern int mnt_fs_set_attributes(struct libmnt_fs *fs, const char *optstr);
 extern int mnt_fs_get_attribute(struct libmnt_fs *fs, const char *name,
-				char **value, size_t *valsz)
-			__ul_attribute__((nonnull(1,2)));
-extern int mnt_fs_append_attributes(struct libmnt_fs *fs, const char *optstr)
-			__ul_attribute__((nonnull));
-extern int mnt_fs_prepend_attributes(struct libmnt_fs *fs, const char *optstr)
-			__ul_attribute__((nonnull));
+				char **value, size_t *valsz);
+extern int mnt_fs_append_attributes(struct libmnt_fs *fs, const char *optstr);
+extern int mnt_fs_prepend_attributes(struct libmnt_fs *fs, const char *optstr);
 
 extern int mnt_fs_get_freq(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_fs_set_freq(struct libmnt_fs *fs, int freq)
-			__ul_attribute__((nonnull(1)));
+extern int mnt_fs_set_freq(struct libmnt_fs *fs, int freq);
 extern int mnt_fs_get_passno(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_fs_set_passno(struct libmnt_fs *fs, int passno)
-			__ul_attribute__((nonnull(1)));
+extern int mnt_fs_set_passno(struct libmnt_fs *fs, int passno);
 extern const char *mnt_fs_get_root(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_fs_set_root(struct libmnt_fs *fs, const char *root)
-			__ul_attribute__((nonnull(1)));
+extern int mnt_fs_set_root(struct libmnt_fs *fs, const char *root);
 extern const char *mnt_fs_get_bindsrc(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_fs_set_bindsrc(struct libmnt_fs *fs, const char *src)
-			__ul_attribute__((nonnull(1)));
+extern int mnt_fs_set_bindsrc(struct libmnt_fs *fs, const char *src);
 extern int mnt_fs_get_id(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
@@ -460,8 +426,7 @@ extern int mnt_fs_is_pseudofs(struct libmnt_fs *fs)
 			__ul_attribute__((warn_unused_result));
 
 extern void mnt_free_mntent(struct mntent *mnt);
-extern int mnt_fs_to_mntent(struct libmnt_fs *fs, struct mntent **mnt)
-			__ul_attribute__((nonnull));
+extern int mnt_fs_to_mntent(struct libmnt_fs *fs, struct mntent **mnt);
 
 /* tab-parse.c */
 extern struct libmnt_table *mnt_new_table_from_file(const char *filename)
@@ -471,53 +436,38 @@ extern struct libmnt_table *mnt_new_table_from_dir(const char *dirname)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
 extern int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f,
-				  const char *filename)
-			__ul_attribute__((nonnull(1,2)));
-extern int mnt_table_parse_file(struct libmnt_table *tb, const char *filename)
-			__ul_attribute__((nonnull));
-extern int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
-			__ul_attribute__((nonnull));
+				  const char *filename);
+extern int mnt_table_parse_file(struct libmnt_table *tb, const char *filename);
+extern int mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname);
 
-extern int mnt_table_parse_fstab(struct libmnt_table *tb, const char *filename)
-			__ul_attribute__((nonnull(1)));
-extern int mnt_table_parse_swaps(struct libmnt_table *tb, const char *filename)
-			__ul_attribute__((nonnull(1)));
-extern int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename)
-			__ul_attribute__((nonnull(1)));
+extern int mnt_table_parse_fstab(struct libmnt_table *tb, const char *filename);
+extern int mnt_table_parse_swaps(struct libmnt_table *tb, const char *filename);
+extern int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename);
 extern int mnt_table_set_parser_errcb(struct libmnt_table *tb,
-                int (*cb)(struct libmnt_table *tb, const char *filename, int line))
-			__ul_attribute__((nonnull(1)));
+                int (*cb)(struct libmnt_table *tb, const char *filename, int line));
 
 /* tab.c */
 extern struct libmnt_table *mnt_new_table(void)
 			__ul_attribute__((warn_unused_result));
 extern void mnt_free_table(struct libmnt_table *tb);
 
-extern int mnt_reset_table(struct libmnt_table *tb)
-			__ul_attribute__((nonnull));
+extern int mnt_reset_table(struct libmnt_table *tb);
 extern int mnt_table_get_nents(struct libmnt_table *tb)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_table_set_cache(struct libmnt_table *tb, struct libmnt_cache *mpc)
-			__ul_attribute__((nonnull(1)));
+extern int mnt_table_set_cache(struct libmnt_table *tb, struct libmnt_cache *mpc);
 extern struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
-			__ul_attribute__((nonnull));
-extern int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
-			__ul_attribute__((nonnull));
+extern int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs);
+extern int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs);
 extern int mnt_table_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
-			     struct libmnt_fs **fs)
-			__ul_attribute__((nonnull));
+			     struct libmnt_fs **fs);
 extern int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
-	                        struct libmnt_fs *parent, struct libmnt_fs **chld)
-			__ul_attribute__((nonnull));
-extern int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
-			__ul_attribute__((nonnull));
+	                        struct libmnt_fs *parent, struct libmnt_fs **chld);
+extern int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root);
 extern int mnt_table_set_iter(struct libmnt_table *tb, struct libmnt_iter *itr,
-			      struct libmnt_fs *fs)
-			__ul_attribute__((nonnull));
+			      struct libmnt_fs *fs);
 
 extern struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb,
 				const char *path, int direction)
@@ -549,8 +499,7 @@ extern int mnt_table_find_next_fs(struct libmnt_table *tb,
 			struct libmnt_iter *itr,
 			int (*match_func)(struct libmnt_fs *, void *),
 			void *userdata,
-		        struct libmnt_fs **fs)
-			__ul_attribute__((nonnull(1,2,3,5)));
+		        struct libmnt_fs **fs);
 
 extern int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 			__ul_attribute__((nonnull));
@@ -565,15 +514,12 @@ extern int mnt_update_is_ready(struct libmnt_update *upd)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
 extern int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
-	                      const char *target, struct libmnt_fs *fs)
-			__ul_attribute__((nonnull(1)));
-extern int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
-			__ul_attribute__((nonnull(1)));
+	                      const char *target, struct libmnt_fs *fs);
+extern int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc);
 extern unsigned long mnt_update_get_mflags(struct libmnt_update *upd)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_update_force_rdonly(struct libmnt_update *upd, int rdonly)
-			__ul_attribute__((nonnull));
+extern int mnt_update_force_rdonly(struct libmnt_update *upd, int rdonly);
 extern const char *mnt_update_get_filename(struct libmnt_update *upd)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
@@ -596,15 +542,13 @@ extern void mnt_free_tabdiff(struct libmnt_tabdiff *df);
 
 extern int mnt_diff_tables(struct libmnt_tabdiff *df,
 			   struct libmnt_table *old_tab,
-			   struct libmnt_table *new_tab)
-			__ul_attribute__((nonnull));
+			   struct libmnt_table *new_tab);
 
 extern int mnt_tabdiff_next_change(struct libmnt_tabdiff *df,
 				   struct libmnt_iter *itr,
 				   struct libmnt_fs **old_fs,
 				   struct libmnt_fs **new_fs,
-				   int *oper)
-			__ul_attribute__((nonnull(1, 2)));
+				   int *oper);
 
 /* context.c */
 
@@ -633,44 +577,28 @@ extern struct libmnt_context *mnt_new_context(void)
 			__ul_attribute__((warn_unused_result));
 extern void mnt_free_context(struct libmnt_context *cxt);
 
-extern int mnt_reset_context(struct libmnt_context *cxt)
-			__ul_attribute__((nonnull));
+extern int mnt_reset_context(struct libmnt_context *cxt);
 extern int mnt_context_is_restricted(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
 
 extern int mnt_context_init_helper(struct libmnt_context *cxt,
-				   int action, int flags)
-			__ul_attribute__((nonnull));
-extern int mnt_context_helper_setopt(struct libmnt_context *cxt, int c, char *arg)
-			__ul_attribute__((nonnull));
+				   int action, int flags);
+extern int mnt_context_helper_setopt(struct libmnt_context *cxt, int c, char *arg);
 
-extern int mnt_context_set_optsmode(struct libmnt_context *cxt, int mode)
-			__ul_attribute__((nonnull));
-extern int mnt_context_disable_canonicalize(struct libmnt_context *cxt, int disable)
-			__ul_attribute__((nonnull));
-extern int mnt_context_enable_lazy(struct libmnt_context *cxt, int enable)
-			__ul_attribute__((nonnull));
-extern int mnt_context_enable_rdonly_umount(struct libmnt_context *cxt, int enable)
-			__ul_attribute__((nonnull));
-extern int mnt_context_disable_helpers(struct libmnt_context *cxt, int disable)
-			__ul_attribute__((nonnull));
-extern int mnt_context_enable_sloppy(struct libmnt_context *cxt, int enable)
-			__ul_attribute__((nonnull));
-extern int mnt_context_enable_fake(struct libmnt_context *cxt, int enable)
-			__ul_attribute__((nonnull));
-extern int mnt_context_disable_mtab(struct libmnt_context *cxt, int disable)
-			__ul_attribute__((nonnull));
-extern int mnt_context_enable_force(struct libmnt_context *cxt, int enable)
-			__ul_attribute__((nonnull));
-extern int mnt_context_enable_verbose(struct libmnt_context *cxt, int enable)
-			__ul_attribute__((nonnull));
-extern int mnt_context_enable_loopdel(struct libmnt_context *cxt, int enable)
-			__ul_attribute__((nonnull));
-extern int mnt_context_enable_fork(struct libmnt_context *cxt, int enable)
-			__ul_attribute__((nonnull));
-extern int mnt_context_disable_swapmatch(struct libmnt_context *cxt, int disable)
-			__ul_attribute__((nonnull));
+extern int mnt_context_set_optsmode(struct libmnt_context *cxt, int mode);
+extern int mnt_context_disable_canonicalize(struct libmnt_context *cxt, int disable);
+extern int mnt_context_enable_lazy(struct libmnt_context *cxt, int enable);
+extern int mnt_context_enable_rdonly_umount(struct libmnt_context *cxt, int enable);
+extern int mnt_context_disable_helpers(struct libmnt_context *cxt, int disable);
+extern int mnt_context_enable_sloppy(struct libmnt_context *cxt, int enable);
+extern int mnt_context_enable_fake(struct libmnt_context *cxt, int enable);
+extern int mnt_context_disable_mtab(struct libmnt_context *cxt, int disable);
+extern int mnt_context_enable_force(struct libmnt_context *cxt, int enable);
+extern int mnt_context_enable_verbose(struct libmnt_context *cxt, int enable);
+extern int mnt_context_enable_loopdel(struct libmnt_context *cxt, int enable);
+extern int mnt_context_enable_fork(struct libmnt_context *cxt, int enable);
+extern int mnt_context_disable_swapmatch(struct libmnt_context *cxt, int disable);
 
 extern int mnt_context_get_optsmode(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull))
@@ -720,24 +648,21 @@ extern int mnt_context_is_child(struct libmnt_context *cxt)
 			__ul_attribute__((warn_unused_result));
 
 extern int mnt_context_wait_for_children(struct libmnt_context *cxt,
-                                  int *nchildren, int *nerrs)
-			__ul_attribute__((nonnull(1)));
+                                  int *nchildren, int *nerrs);
 
 extern int mnt_context_is_fs_mounted(struct libmnt_context *cxt,
                               struct libmnt_fs *fs, int *mounted)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_context_set_fs(struct libmnt_context *cxt, struct libmnt_fs *fs)
-			__ul_attribute__((nonnull(1)));
+extern int mnt_context_set_fs(struct libmnt_context *cxt, struct libmnt_fs *fs);
 extern struct libmnt_fs *mnt_context_get_fs(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_context_set_source(struct libmnt_context *cxt, const char *source)
-			__ul_attribute__((nonnull(1)));
-extern int mnt_context_set_target(struct libmnt_context *cxt, const char *target)
-			__ul_attribute__((nonnull(1)));
-extern int mnt_context_set_fstype(struct libmnt_context *cxt, const char *fstype)
-			__ul_attribute__((nonnull(1)));
+
+extern int mnt_context_set_source(struct libmnt_context *cxt, const char *source);
+extern int mnt_context_set_target(struct libmnt_context *cxt, const char *target);
+extern int mnt_context_set_fstype(struct libmnt_context *cxt, const char *fstype);
+
 extern const char *mnt_context_get_source(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
@@ -748,48 +673,36 @@ extern const char *mnt_context_get_fstype(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
 
-extern int mnt_context_set_options(struct libmnt_context *cxt, const char *optstr)
-			__ul_attribute__((nonnull(1)));
-extern int mnt_context_append_options(struct libmnt_context *cxt,
-				      const char *optstr)
-			__ul_attribute__((nonnull));
+extern int mnt_context_set_options(struct libmnt_context *cxt, const char *optstr);
+extern int mnt_context_append_options(struct libmnt_context *cxt, const char *optstr);
+
 extern const char *mnt_context_get_options(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
 
-extern int mnt_context_set_fstype_pattern(struct libmnt_context *cxt,
-				      const char *pattern)
-			__ul_attribute__((nonnull(1)));
-extern int mnt_context_set_options_pattern(struct libmnt_context *cxt,
-				      const char *pattern)
-			__ul_attribute__((nonnull(1)));
+extern int mnt_context_set_fstype_pattern(struct libmnt_context *cxt, const char *pattern);
+extern int mnt_context_set_options_pattern(struct libmnt_context *cxt, const char *pattern);
 
 extern int mnt_context_set_passwd_cb(struct libmnt_context *cxt,
 			      char *(*get)(struct libmnt_context *),
 			      void (*release)(struct libmnt_context *, char *))
-			__ul_attribute__((nonnull(1)))
 			__ul_attribute__((deprecated));
 
 extern int mnt_context_set_tables_errcb(struct libmnt_context *cxt,
-        int (*cb)(struct libmnt_table *tb, const char *filename, int line))
-			__ul_attribute__((nonnull(1)));
+        int (*cb)(struct libmnt_table *tb, const char *filename, int line));
 extern int mnt_context_set_fstab(struct libmnt_context *cxt,
-				 struct libmnt_table *tb)
-			__ul_attribute__((nonnull(1)));
+				 struct libmnt_table *tb);
 extern int mnt_context_get_fstab(struct libmnt_context *cxt,
 				 struct libmnt_table **tb)
-			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
+
 extern int mnt_context_get_mtab(struct libmnt_context *cxt,
-				struct libmnt_table **tb)
-			__ul_attribute__((nonnull));
+				struct libmnt_table **tb);
 extern int mnt_context_get_table(struct libmnt_context *cxt,
 				const char *filename,
-				struct libmnt_table **tb)
-			__ul_attribute__((nonnull));
+				struct libmnt_table **tb);
 extern int mnt_context_set_cache(struct libmnt_context *cxt,
-				 struct libmnt_cache *cache)
-			__ul_attribute__((nonnull(1)));
+				 struct libmnt_cache *cache);
 extern struct libmnt_cache *mnt_context_get_cache(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
@@ -797,25 +710,18 @@ extern struct libmnt_lock *mnt_context_get_lock(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
 extern int mnt_context_set_mflags(struct libmnt_context *cxt,
-				      unsigned long flags)
-			__ul_attribute__((nonnull));
+				      unsigned long flags);
 extern int mnt_context_get_mflags(struct libmnt_context *cxt,
-				      unsigned long *flags)
-			__ul_attribute__((nonnull));
+				      unsigned long *flags);
 extern int mnt_context_set_user_mflags(struct libmnt_context *cxt,
-						unsigned long flags)
-			__ul_attribute__((nonnull));
+						unsigned long flags);
 extern int mnt_context_get_user_mflags(struct libmnt_context *cxt,
-						unsigned long *flags)
-			__ul_attribute__((nonnull));
+						unsigned long *flags);
 
-extern int mnt_context_set_mountdata(struct libmnt_context *cxt, void *data)
-			__ul_attribute__((nonnull(1)));
-extern int mnt_context_apply_fstab(struct libmnt_context *cxt)
-			__ul_attribute__((nonnull));
+extern int mnt_context_set_mountdata(struct libmnt_context *cxt, void *data);
+extern int mnt_context_apply_fstab(struct libmnt_context *cxt);
 
-extern int mnt_context_reset_status(struct libmnt_context *cxt)
-			__ul_attribute__((nonnull));
+extern int mnt_context_reset_status(struct libmnt_context *cxt);
 extern int mnt_context_get_status(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
@@ -836,49 +742,36 @@ extern int mnt_context_get_syscall_errno(struct libmnt_context *cxt)
 			__ul_attribute__((warn_unused_result));
 
 extern int mnt_context_strerror(struct libmnt_context *cxt, char *buf,
-				size_t bufsiz)
-			__ul_attribute__((nonnull));
+				size_t bufsiz);
 
 /* context_mount.c */
-extern int mnt_context_mount(struct libmnt_context *cxt)
-			__ul_attribute__((nonnull));
-extern int mnt_context_umount(struct libmnt_context *cxt)
-			__ul_attribute__((nonnull));
+extern int mnt_context_mount(struct libmnt_context *cxt);
+extern int mnt_context_umount(struct libmnt_context *cxt);
 extern int mnt_context_next_mount(struct libmnt_context *cxt,
 				struct libmnt_iter *itr,
 				struct libmnt_fs **fs,
-				int *mntrc, int *ignored)
-			__ul_attribute__((nonnull(1, 2, 3)));
+				int *mntrc, int *ignored);
 
 extern int mnt_context_prepare_mount(struct libmnt_context *cxt)
-			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_context_do_mount(struct libmnt_context *cxt)
-			__ul_attribute__((nonnull));
-extern int mnt_context_finalize_mount(struct libmnt_context *cxt)
-			__ul_attribute__((nonnull));
+extern int mnt_context_do_mount(struct libmnt_context *cxt);
+extern int mnt_context_finalize_mount(struct libmnt_context *cxt);
 
 /* context_umount.c */
 extern int mnt_context_next_umount(struct libmnt_context *cxt,
 				struct libmnt_iter *itr,
 				struct libmnt_fs **fs,
-				int *mntrc, int *ignored)
-			__ul_attribute__((nonnull(1, 2, 3)));
+				int *mntrc, int *ignored);
 
 extern int mnt_context_prepare_umount(struct libmnt_context *cxt)
-			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_context_do_umount(struct libmnt_context *cxt)
-			__ul_attribute__((nonnull));
-extern int mnt_context_finalize_umount(struct libmnt_context *cxt)
-			__ul_attribute__((nonnull));
-
+extern int mnt_context_do_umount(struct libmnt_context *cxt);
+extern int mnt_context_finalize_umount(struct libmnt_context *cxt);
 
 extern int mnt_context_tab_applied(struct libmnt_context *cxt)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
-extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status)
-			__ul_attribute__((nonnull));
+extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status);
 
 /*
  * mount(8) userspace options masks (MNT_MAP_USERSPACE map)

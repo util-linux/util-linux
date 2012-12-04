@@ -166,7 +166,8 @@ int mnt_optstr_next_option(char **optstr, char **name, size_t *namesz,
 	return mnt_optstr_parse_next(optstr, name, namesz, value, valuesz);
 }
 
-static int __mnt_optstr_append_option(char **optstr,
+static int __attribute__((nonnull))
+__mnt_optstr_append_option(char **optstr,
 			const char *name, size_t nsz,
 			const char *value, size_t vsz)
 {
@@ -356,7 +357,8 @@ int mnt_optstr_remove_option_at(char **optstr, char *begin, char *end)
 }
 
 /* insert 'substr' or '=substr' to @str on position @pos */
-static int insert_value(char **str, char *pos, const char *substr, char **next)
+static int __attribute__((nonnull(1,2,3)))
+insert_value(char **str, char *pos, const char *substr, char **next)
 {
 	size_t subsz = strlen(substr);			/* substring size */
 	size_t strsz = strlen(*str);
