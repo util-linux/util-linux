@@ -192,7 +192,7 @@ static void pw_write(void)
 	free(tmp_file);
 }
 
-static void pw_edit(int notsetuid)
+static void pw_edit(void)
 {
 	int pstat;
 	pid_t pid;
@@ -212,10 +212,6 @@ static void pw_edit(int notsetuid)
 		err(EXIT_FAILURE, _("fork failed"));
 
 	if (!pid) {
-		if (notsetuid) {
-			(void)setgid(getgid());
-			(void)setuid(getuid());
-		}
 		execlp(editor, p, tmp_file, NULL);
 		/* Shouldn't get here */
 		_exit(EXIT_FAILURE);
@@ -271,7 +267,7 @@ static void edit_file(int is_shadow)
 	if (fstat(fileno(tmp_fd), &begin))
 		pw_error(tmp_file, 1, 1);
 
-	pw_edit(0);
+	pw_edit();
 
 	if (fstat(fileno(tmp_fd), &end))
 		pw_error(tmp_file, 1, 1);
