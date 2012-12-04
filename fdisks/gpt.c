@@ -390,7 +390,7 @@ static int gpt_mknew_header_from_bkp(struct fdisk_context *cxt,
 static int gpt_mknew_header(struct fdisk_context *cxt,
 			    struct gpt_header *header, uint64_t lba)
 {
-	uint64_t esz = 0;
+	uint64_t esz = 0, first, last;
 
 	if (!cxt || !header)
 		return -ENOSYS;
@@ -407,8 +407,16 @@ static int gpt_mknew_header(struct fdisk_context *cxt,
 	 */
 	header->npartition_entries     = cpu_to_le32(GPT_NPARTITIONS);
 	header->sizeof_partition_entry = cpu_to_le32(sizeof(struct gpt_entry));
-	header->first_usable_lba       = cpu_to_le64(esz + 2);
-	header->last_usable_lba        = cpu_to_le64(cxt->total_sectors - 2 - esz);
+
+	last = cxt->total_sectors - 2 - esz;
+	first = esz + 2;
+
+	if (first < cxt->first_lba && cxt->first_lba < last)
+		/* Align according to topology */
+		first = cxt->first_lba;
+
+	header->first_usable_lba = cpu_to_le64(first);
+	header->last_usable_lba  = cpu_to_le64(last);
 
 	gpt_mknew_header_common(cxt, header, lba);
 	uuid_generate_random((unsigned char *) &header->disk_guid);
