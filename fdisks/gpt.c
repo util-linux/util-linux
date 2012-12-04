@@ -247,6 +247,20 @@ static struct gpt_header *bheader = NULL;
 /* partition entry array */
 static struct gpt_entry *ents = NULL;
 
+#define gpt_partition_start(_e)		le64_to_cpu((_e)->lba_start)
+#define gpt_partition_end(_e)		le64_to_cpu((_e)->lba_end)
+
+/*
+ * Returns the partition length, or 0 if end is before beginning.
+ */
+static uint64_t gpt_partition_size(const struct gpt_entry *e)
+{
+	uint64_t start = gpt_partition_start(e);
+	uint64_t end = gpt_partition_end(e);
+
+	return start > end ? 0 : end - start + 1ULL;
+}
+
 /*
  * UUID is traditionally 16 byte big-endian array, except Intel EFI
  * specification where the UUID is a structure of little-endian fields.
@@ -292,9 +306,9 @@ unknown:
 	return "unknown";
 }
 
-static inline int partition_unused(struct gpt_entry e)
+static inline int partition_unused(const struct gpt_entry *e)
 {
-	return !memcmp(&e.partition_type_guid, &GPT_UNUSED_ENTRY_GUID,
+	return !memcmp(&e->partition_type_guid, &GPT_UNUSED_ENTRY_GUID,
 			sizeof(struct gpt_guid));
 }
 
@@ -732,21 +746,11 @@ static uint32_t partitions_in_use(struct gpt_header *header, struct gpt_entry *e
 		return 0;
 
 	for (i = 0; i < le32_to_cpu(header->npartition_entries); i++)
-		if (!partition_unused(e[i]))
+		if (!partition_unused(&e[i]))
 			used++;
 	return used;
 }
 
-/*
- * Returns the partition length, or 0 if end is before beginning.
- */
-static uint64_t partition_size(struct gpt_entry e)
-{
-	uint64_t start = le64_to_cpu(e.lba_start);
-	uint64_t end = le64_to_cpu(e.lba_end);
-
-	return start > end ? 0 : end - start + 1ULL;
-}
 
 /*
  * Check if a partition is too big for the disk (sectors).
@@ -758,9 +762,9 @@ static int partition_check_too_big(struct gpt_header *header,
 	uint32_t i;
 
 	for (i = 0; i < le32_to_cpu(header->npartition_entries); i++) {
-		if (partition_unused(e[i]))
+		if (partition_unused(&e[i]))
 			continue;
-		if (e[i].lba_end >= sectors)
+		if (gpt_partition_end(&e[i]) >= sectors)
 			return i + 1;
 	}
 
@@ -776,9 +780,9 @@ static int partition_start_after_end(struct gpt_header *header, struct gpt_entry
 	uint32_t i;
 
 	for (i = 0; i < le32_to_cpu(header->npartition_entries); i++) {
-		if (partition_unused(e[i]))
+		if (partition_unused(&e[i]))
 			continue;
-		if (e[i].lba_start > e[i].lba_end)
+		if (gpt_partition_start(&e[i]) > gpt_partition_end(&e[i]))
 			return i + 1;
 	}
 
@@ -788,10 +792,14 @@ static int partition_start_after_end(struct gpt_header *header, struct gpt_entry
 /*
  * Check if partition e1 overlaps with partition e2
  */
-static inline int partition_overlap(struct gpt_entry e1, struct gpt_entry e2)
+static inline int partition_overlap(struct gpt_entry *e1, struct gpt_entry *e2)
 {
-	return (e1.lba_start && e2.lba_start &&
-		(e1.lba_start <= e2.lba_end) != (e1.lba_end < e2.lba_start));
+	uint64_t start1 = gpt_partition_start(e1);
+	uint64_t end1   = gpt_partition_end(e1);
+	uint64_t start2 = gpt_partition_start(e2);
+	uint64_t end2   = gpt_partition_end(e2);
+
+	return (start1 && start2 && (start1 <= end2) != (end1 < start2));
 }
 
 /*
@@ -803,10 +811,10 @@ static int partition_check_overlaps(struct gpt_header *header, struct gpt_entry 
 
 	for (i = 0; i < le32_to_cpu(header->npartition_entries); i++)
 		for (j = 0; j < i; j++) {
-			if (partition_unused(e[i]) ||
-			    partition_unused(e[j]))
+			if (partition_unused(&e[i]) ||
+			    partition_unused(&e[j]))
 				continue;
-			if (partition_overlap(e[i], e[j]))
+			if (partition_overlap(&e[i], &e[j]))
 				/* two overlaping partitions is enough! */
 				return i + 1;
 		}
@@ -843,12 +851,12 @@ static uint64_t find_first_available(struct gpt_header *header,
 	do {
 		first_moved = 0;
 		for (i = 0; i < le32_to_cpu(header->npartition_entries); i++) {
-			if (partition_unused(e[i]))
+			if (partition_unused(&e[i]))
 				continue;
-			if (first < e[i].lba_start)
+			if (first < gpt_partition_start(&e[i]))
 				continue;
-			if (first <= e[i].lba_end) {
-				first = e[i].lba_end + 1;
+			if (first <= gpt_partition_end(&e[i])) {
+				first = gpt_partition_end(&e[i]) + 1;
 				first_moved = 1;
 			}
 		}
@@ -873,9 +881,9 @@ static uint64_t find_last_free(struct gpt_header *header,
 
 	nearest_start = header->last_usable_lba;
 	for (i = 0; i < le32_to_cpu(header->npartition_entries); i++) {
-		if (nearest_start > e[i].lba_start &&
-		    e[i].lba_start > start)
-			nearest_start = e[i].lba_start - 1;
+		if (nearest_start > gpt_partition_start(&e[i]) &&
+		    gpt_partition_start(&e[i]) > start)
+			nearest_start = gpt_partition_start(&e[i]) - 1;
 	}
 
 	return nearest_start;
@@ -896,9 +904,9 @@ static uint64_t find_last_free_sector(struct gpt_header *header,
 	do {
 		last_moved = 0;
 		for (i = 0; i < le32_to_cpu(header->npartition_entries); i++) {
-			if ((last >= e[i].lba_start) &&
-			    (last <= e[i].lba_end)) {
-				last = e[i].lba_start - 1;
+			if ((last >= gpt_partition_start(&e[i])) &&
+			    (last <= gpt_partition_end(&e[i]))) {
+				last = gpt_partition_start(&e[i]) - 1;
 				last_moved = 1;
 			}
 		}
@@ -1097,11 +1105,11 @@ void gpt_list_table(struct fdisk_context *cxt,
 
 	for (i = 0; i < le32_to_cpu(pheader->npartition_entries); i++) {
 		char *name = NULL, *sizestr = NULL;
-		uint64_t start = le64_to_cpu(ents[i].lba_start);
-		uint64_t size = partition_size(ents[i]);
+		uint64_t start = gpt_partition_start(&ents[i]);
+		uint64_t size = gpt_partition_size(&ents[i]);
 		struct fdisk_parttype *t;
 
-		if (partition_unused(ents[i]) || !size)
+		if (partition_unused(&ents[i]) || !size)
 			continue;
 
 		/* the partition has to inside usable range */
@@ -1122,7 +1130,7 @@ void gpt_list_table(struct fdisk_context *cxt,
 		printf("%2d %12ju %12ju  %6s  %-15.15s %s\n",
 		       i+1,
 		       start,
-		       le64_to_cpu(ents[i].lba_end),
+		       gpt_partition_end(&ents[i]),
 		       sizestr,
 		       t->name,
 		       name);
@@ -1381,12 +1389,12 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 /* Delete a single GPT partition, specified by partnum. */
 static int gpt_delete_partition(struct fdisk_context *cxt, int partnum)
 {
-	if (!cxt || partition_unused(ents[partnum]) || partnum < 0)
+	if (!cxt || partition_unused(&ents[partnum]) || partnum < 0)
 		return -EINVAL;
 
 	/* hasta la vista, baby! */
 	memset(&ents[partnum], 0, sizeof(ents[partnum]));
-	if (!partition_unused(ents[partnum]))
+	if (!partition_unused(&ents[partnum]))
 		return -EINVAL;
 	else {
 		gpt_recompute_crc(pheader, ents);
@@ -1475,7 +1483,7 @@ static int gpt_add_partition(struct fdisk_context *cxt, int partnum,
 	/* check basic tests before even considering adding a new partition */
 	if (!cxt || partnum < 0)
 		return -EINVAL;
-	if (!partition_unused(ents[partnum])) {
+	if (!partition_unused(&ents[partnum])) {
 		printf(_("Partition %d is already defined. "
 			 "Delete it before re-adding it.\n"), partnum +1);
 		return -EINVAL;
