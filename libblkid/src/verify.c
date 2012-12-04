@@ -161,9 +161,6 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 		BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID |
 		BLKID_SUBLKS_TYPE | BLKID_SUBLKS_SECTYPE);
 
-	blkid_probe_enable_partitions(cache->probe, TRUE);
-	blkid_probe_set_partitions_flags(cache->probe, BLKID_PARTS_ENTRY_DETAILS);
-
 	/*
 	 * If we already know the type, then try that first.
 	 */
@@ -177,8 +174,18 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 		blkid_probe_filter_superblocks_type(cache->probe,
 				BLKID_FLTR_ONLYIN, fltr);
 
-		if (!blkid_do_probe(cache->probe))
-			goto found_type;
+		if (blkid_do_probe(cache->probe) == 0) {
+			/*
+			 * Cool, we found FS type, let's also read PART{UUID,LABEL}
+			 */
+			blkid_probe_enable_superblocks(cache->probe, FALSE);
+			blkid_probe_enable_partitions(cache->probe, TRUE);
+			blkid_probe_set_partitions_flags(cache->probe, BLKID_PARTS_ENTRY_DETAILS);
+			if (blkid_do_probe(cache->probe) == 0)
+				goto found_type;
+		}
+
+		blkid_probe_enable_superblocks(cache->probe, TRUE);
 		blkid_probe_invert_superblocks_filter(cache->probe);
 
 		/*
@@ -192,6 +199,9 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 			blkid_set_tag(dev, type, 0, 0);
 		blkid_tag_iterate_end(iter);
 	}
+
+	blkid_probe_enable_partitions(cache->probe, TRUE);
+	blkid_probe_set_partitions_flags(cache->probe, BLKID_PARTS_ENTRY_DETAILS);
 
 	/*
 	 * Probe for all types.
