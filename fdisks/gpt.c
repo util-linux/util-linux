@@ -832,14 +832,19 @@ static uint64_t find_first_available(struct gpt_header *header,
 	uint64_t first;
 	uint32_t i, first_moved = 0;
 
+	uint64_t fu, lu;
+
 	if (!header || !e)
 		return 0;
+
+	fu = le64_to_cpu(header->first_usable_lba);
+	lu = le64_to_cpu(header->last_usable_lba);
 
 	/*
 	 * Begin from the specified starting point or from the first usable
 	 * LBA, whichever is greater...
 	 */
-	first = start < header->first_usable_lba ? header->first_usable_lba : start;
+	first = start < fu ? fu : start;
 
 	/*
 	 * Now search through all partitions; if first is within an
@@ -862,7 +867,7 @@ static uint64_t find_first_available(struct gpt_header *header,
 		}
 	} while (first_moved == 1);
 
-	if (first > header->last_usable_lba)
+	if (first > lu)
 		first = 0;
 
 	return first;
@@ -879,11 +884,13 @@ static uint64_t find_last_free(struct gpt_header *header,
 	if (!header || !e)
 		return 0;
 
-	nearest_start = header->last_usable_lba;
+	nearest_start = le64_to_cpu(header->last_usable_lba);
+
 	for (i = 0; i < le32_to_cpu(header->npartition_entries); i++) {
-		if (nearest_start > gpt_partition_start(&e[i]) &&
-		    gpt_partition_start(&e[i]) > start)
-			nearest_start = gpt_partition_start(&e[i]) - 1;
+		uint64_t ps = gpt_partition_start(&e[i]);
+
+		if (nearest_start > ps && ps > start)
+			nearest_start = ps - 1;
 	}
 
 	return nearest_start;
@@ -900,7 +907,7 @@ static uint64_t find_last_free_sector(struct gpt_header *header,
 		goto done;
 
 	/* start by assuming the last usable LBA is available */
-	last = header->last_usable_lba;
+	last = le64_to_cpu(header->last_usable_lba);
 	do {
 		last_moved = 0;
 		for (i = 0; i < le32_to_cpu(header->npartition_entries); i++) {
