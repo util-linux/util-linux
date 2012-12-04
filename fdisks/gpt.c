@@ -1557,15 +1557,15 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 	gpt_recompute_crc(bheader, ents);
 
 	gpt_init(cxt);
-	DBG(LABEL, dbgprint("created new empty GPT disklabel "
-			    "(GUID: %08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X)",
+	fprintf(stderr, ("Building a new GPT disklabel "
+			    "(GUID: %08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X)\n"),
 			    pheader->disk_guid.time_low, pheader->disk_guid.time_mid,
 			    pheader->disk_guid.time_hi_and_version,
 			    pheader->disk_guid.clock_seq_hi,
 			    pheader->disk_guid.clock_seq_low,
 			    pheader->disk_guid.node[0], pheader->disk_guid.node[1],
 			    pheader->disk_guid.node[2], pheader->disk_guid.node[3],
-			    pheader->disk_guid.node[4], pheader->disk_guid.node[5]));
+			    pheader->disk_guid.node[4], pheader->disk_guid.node[5]);
 done:
 	return rc;
 }
