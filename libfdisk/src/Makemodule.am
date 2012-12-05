@@ -9,6 +9,7 @@ libfdisk_la_SOURCES = \
 	libfdisk/src/libfdisk.h \
 	\
 	libfdisk/src/init.c \
+	libfdisk/src/alignment.c \
 	libfdisk/src/parttype.c
 
 

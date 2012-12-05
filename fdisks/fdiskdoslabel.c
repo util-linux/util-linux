@@ -590,7 +590,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 
 		/* the default sector should be aligned and unused */
 		do {
-			aligned = align_lba_in_range(cxt, dflt, dflt, limit);
+			aligned = fdisk_align_lba_in_range(cxt, dflt, dflt, limit);
 			dflt = get_unused_start(cxt, n, aligned, first, last);
 		} while (dflt != aligned && dflt > aligned && dflt < limit);
 
@@ -664,7 +664,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 			 * and align the end of the partition. The next
 			 * partition will start at phy.block boundary.
 			 */
-			stop = align_lba_in_range(cxt, stop, start, limit) - 1;
+			stop = fdisk_align_lba_in_range(cxt, stop, start, limit) - 1;
 			if (stop > limit)
 				stop = limit;
 		}
@@ -721,7 +721,7 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 		p = pe->part_table;
 		if (p->sys_ind && !IS_EXTENDED (p->sys_ind)) {
 			check_consistency(cxt, p, i);
-			check_alignment(cxt, get_partition_start(pe), i);
+			fdisk_warn_alignment(cxt, get_partition_start(pe), i);
 			if (get_partition_start(pe) < first[i])
 				printf(_("Warning: bad start-of-data in "
 					 "partition %d\n"), i + 1);

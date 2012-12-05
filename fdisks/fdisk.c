@@ -288,86 +288,6 @@ test_c(char **m, char *mesg) {
 	return val;
 }
 
-static int
-lba_is_aligned(struct fdisk_context *cxt, sector_t lba)
-{
-	unsigned int granularity = max(cxt->phy_sector_size, cxt->min_io_size);
-	unsigned long long offset;
-
-	if (cxt->grain > granularity)
-		granularity = cxt->grain;
-	offset = (lba * cxt->sector_size) & (granularity - 1);
-
-	return !((granularity + cxt->alignment_offset - offset) & (granularity - 1));
-}
-
-static int
-lba_is_phy_aligned(struct fdisk_context *cxt, unsigned long long lba)
-{
-	unsigned int granularity = max(cxt->phy_sector_size, cxt->min_io_size);
-	unsigned long long offset = (lba * cxt->sector_size) & (granularity - 1);
-
-	return !((granularity + cxt->alignment_offset - offset) & (granularity - 1));
-}
-
-sector_t align_lba(struct fdisk_context *cxt, sector_t lba, int direction)
-{
-	sector_t res;
-
-	if (lba_is_aligned(cxt, lba))
-		res = lba;
-	else {
-		sector_t sects_in_phy = cxt->grain / cxt->sector_size;
-
-		if (lba < cxt->first_lba)
-			res = cxt->first_lba;
-
-		else if (direction == ALIGN_UP)
-			res = ((lba + sects_in_phy) / sects_in_phy) * sects_in_phy;
-
-		else if (direction == ALIGN_DOWN)
-			res = (lba / sects_in_phy) * sects_in_phy;
-
-		else /* ALIGN_NEAREST */
-			res = ((lba + sects_in_phy / 2) / sects_in_phy) * sects_in_phy;
-
-		if (cxt->alignment_offset && !lba_is_aligned(cxt, res) &&
-		    res > cxt->alignment_offset / cxt->sector_size) {
-			/*
-			 * apply alignment_offset
-			 *
-			 * On disk with alignment compensation physical blocks starts
-			 * at LBA < 0 (usually LBA -1). It means we have to move LBA
-			 * according the offset to be on the physical boundary.
-			 */
-			/* fprintf(stderr, "LBA: %llu apply alignment_offset\n", res); */
-			res -= (max(cxt->phy_sector_size, cxt->min_io_size) -
-					cxt->alignment_offset) / cxt->sector_size;
-
-			if (direction == ALIGN_UP && res < lba)
-				res += sects_in_phy;
-		}
-	}
-
-	return res;
-}
-
-
-sector_t align_lba_in_range(struct fdisk_context *cxt,
-			    sector_t lba, sector_t start, sector_t stop)
-{
-	start = align_lba(cxt, start, ALIGN_UP);
-	stop = align_lba(cxt, stop, ALIGN_DOWN);
-
-	lba = align_lba(cxt, lba, ALIGN_NEAREST);
-
-	if (lba < start)
-		return start;
-	else if (lba > stop)
-		return stop;
-	return lba;
-}
-
 int warn_geometry(struct fdisk_context *cxt)
 {
 	char *m = NULL;
@@ -862,13 +782,6 @@ void check_consistency(struct fdisk_context *cxt, struct partition *p, int parti
 	}
 }
 
-void check_alignment(struct fdisk_context *cxt, sector_t lba, int partition)
-{
-	if (!lba_is_phy_aligned(cxt, lba))
-		printf(_("Partition %i does not start on physical sector boundary.\n"),
-			partition + 1);
-}
-
 static void
 list_disk_geometry(struct fdisk_context *cxt) {
 	unsigned long long bytes = cxt->total_sectors * cxt->sector_size;
@@ -1111,7 +1024,7 @@ static void list_table(struct fdisk_context *cxt, int xtra)
 /* type id */		p->sys_ind,
 /* type name */		type ? type->name : _("Unknown"));
 			check_consistency(cxt, p, i);
-			check_alignment(cxt, get_partition_start(pe), i);
+			fdisk_warn_alignment(cxt, get_partition_start(pe), i);
 		}
 	}
 
@@ -1146,7 +1059,7 @@ x_list_table(struct fdisk_context *cxt, int extend) {
 				(unsigned long) get_nr_sects(p), p->sys_ind);
 			if (p->sys_ind) {
 				check_consistency(cxt, p, i);
-				check_alignment(cxt, get_partition_start(pe), i);
+				fdisk_warn_alignment(cxt, get_partition_start(pe), i);
 			}
 		}
 	}

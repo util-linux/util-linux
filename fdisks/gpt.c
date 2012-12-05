@@ -1144,7 +1144,7 @@ void gpt_list_table(struct fdisk_context *cxt,
 		       t->name,
 		       name);
 
-		check_alignment(cxt, start, i);
+		fdisk_warn_alignment(cxt, start, i);
 
 		free(name);
 		free(sizestr);
@@ -1516,7 +1516,7 @@ static int gpt_add_partition(struct fdisk_context *cxt, int partnum,
 	dflt_l = find_last_free(pheader, ents, dflt_f);
 
 	/* align the default in range <dflt_f,dflt_l>*/
-	dflt_f = align_lba_in_range(cxt, dflt_f, dflt_f, dflt_l);
+	dflt_f = fdisk_align_lba_in_range(cxt, dflt_f, dflt_f, dflt_l);
 
 	if (t && t->typestr)
 		string_to_uuid(t->typestr, &uuid);
@@ -1550,7 +1550,7 @@ static int gpt_add_partition(struct fdisk_context *cxt, int partnum,
 					&is_suffix_used);
 
 		if (is_suffix_used)
-			user_l = align_lba_in_range(cxt, user_l, user_f, dflt_l) - 1;
+			user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l) - 1;
 
 		if (user_l > user_f && user_l <= disk_l)
 			break;

@@ -20,6 +20,8 @@
 #include "c.h"
 #include "libfdisk.h"
 
+#include "nls.h"		/* temporary before dialog API will be implamented */
+
 /* features */
 #define CONFIG_LIBFDISK_ASSERT
 #define CONFIG_LIBFDISK_DEBUG
@@ -188,5 +190,21 @@ struct fdisk_label {
 	/* refresh alignment setting */
 	int (*reset_alignment)(struct fdisk_context *cxt);
 };
+
+/* alignment.c */
+extern sector_t fdisk_topology_get_first_lba(struct fdisk_context *cxt);
+extern unsigned long fdisk_topology_get_grain(struct fdisk_context *cxt);
+
+extern void fdisk_warn_alignment(struct fdisk_context *cxt,
+				 sector_t lba, int partition);
+
+
+#define FDISK_ALIGN_UP		1
+#define FDISK_ALIGN_DOWN	2
+#define FDISK_ALIGN_NEAREST	3
+
+extern sector_t fdisk_align_lba(struct fdisk_context *cxt, sector_t lba, int direction);
+extern sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt, sector_t lba,
+					 sector_t start, sector_t stop);
 
 #endif /* _LIBFDISK_PRIVATE_H */

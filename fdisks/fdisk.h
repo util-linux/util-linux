@@ -26,9 +26,6 @@
 #define LINUX_LVM       0x8e
 #define LINUX_RAID      0xfd
 
-#define ALIGN_UP	1
-#define ALIGN_DOWN	2
-#define ALIGN_NEAREST	3
 
 #define LINE_LENGTH	800
 
@@ -95,16 +92,12 @@ extern struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt
 extern int fdisk_set_partition_type(struct fdisk_context *cxt, int partnum,
 			     struct fdisk_parttype *t);
 
-extern sector_t fdisk_topology_get_first_lba(struct fdisk_context *cxt);
-extern unsigned long fdisk_topology_get_grain(struct fdisk_context *cxt);
-
 /* prototypes for fdisk.c */
 extern char *line_ptr;
 extern int partitions;
 extern unsigned int display_in_cyl_units, units_per_sector;
 
 extern void check_consistency(struct fdisk_context *cxt, struct partition *p, int partition);
-extern void check_alignment(struct fdisk_context *cxt, sector_t lba, int partition);
 extern void check(struct fdisk_context *cxt, int n, unsigned int h, unsigned int s, unsigned int c, unsigned int start);
 
 extern void fatal(struct fdisk_context *cxt, enum failure why);
@@ -132,8 +125,6 @@ extern void warn_limits(struct fdisk_context *cxt);
 extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
 					 unsigned int low, unsigned int dflt, unsigned int high,
 				  unsigned int base, char *mesg, int *is_suffix_used);
-extern sector_t align_lba(struct fdisk_context *cxt, sector_t lba, int direction);
-extern sector_t align_lba_in_range(struct fdisk_context *cxt, sector_t lba, sector_t start, sector_t stop);
 extern int get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt);
 
 #define PLURAL	0
