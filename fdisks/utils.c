@@ -443,33 +443,6 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 }
 
 /**
- * fdisk_init_debug:
- * @mask: debug mask (0xffff to enable full debuging)
- *
- * If the @mask is not specified then this function reads
- * FDISK_DEBUG environment variable to get the mask.
- *
- * Already initialized debugging stuff cannot be changed. It does not
- * have effect to call this function twice.
- */
-void fdisk_init_debug(int mask)
-{
-	if (fdisk_debug_mask & FDISK_DEBUG_INIT)
-		return;
-	if (!mask) {
-		char *str = getenv("FDISK_DEBUG");
-		if (str)
-			fdisk_debug_mask = strtoul(str, 0, 0);
-	} else
-		fdisk_debug_mask = mask;
-
-	if (fdisk_debug_mask)
-		fprintf(stderr, "fdisk: debug mask set to 0x%04x.\n",
-		       fdisk_debug_mask);
-	fdisk_debug_mask |= FDISK_DEBUG_INIT;
-}
-
-/**
  * fdisk_new_context:
  * @fname: path to the device to be handled
  * @readonly: how to open the device
