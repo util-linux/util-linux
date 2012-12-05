@@ -89,20 +89,6 @@ extern int fdisk_debug_mask;
 typedef unsigned long long sector_t;
 
 /*
- * Supported partition table types (labels)
- */
-enum fdisk_labeltype {
-	FDISK_DISKLABEL_DOS = 1,
-	FDISK_DISKLABEL_SUN = 2,
-	FDISK_DISKLABEL_SGI = 4,
-	FDISK_DISKLABEL_AIX = 8,
-	FDISK_DISKLABEL_OSF = 16,
-	FDISK_DISKLABEL_MAC = 32,
-	FDISK_DISKLABEL_GPT = 64,
-	FDISK_DISKLABEL_ANY = -1
-};
-
-/*
  * Partition types
  */
 struct fdisk_parttype {
@@ -158,8 +144,6 @@ struct fdisk_context {
 	/* label operations and description */
 	const struct fdisk_label *label;
 };
-
-#define fdisk_is_disklabel(c, x) fdisk_dev_is_disklabel(c, FDISK_DISKLABEL_ ## x)
 
 /*
  * Label specific operations

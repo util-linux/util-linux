@@ -73,8 +73,6 @@ extern const struct fdisk_label gpt_label;
 
 extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int readonly);
 extern int fdisk_dev_has_topology(struct fdisk_context *cxt);
-extern int fdisk_dev_has_disklabel(struct fdisk_context *cxt);
-extern int fdisk_dev_is_disklabel(struct fdisk_context *cxt, enum fdisk_labeltype l);
 extern int fdisk_dev_sectsz_is_default(struct fdisk_context *cxt);
 extern void fdisk_free_context(struct fdisk_context *cxt);
 extern void fdisk_zeroize_firstsector(struct fdisk_context *cxt);
@@ -82,10 +80,6 @@ extern int fdisk_context_force_sector_size(struct fdisk_context *cxt, sector_t s
 extern int fdisk_context_set_user_geometry(struct fdisk_context *cxt,
 			    unsigned int cylinders, unsigned int heads,
 			    unsigned int sectors);
-extern int fdisk_delete_partition(struct fdisk_context *cxt, int partnum);
-extern int fdisk_add_partition(struct fdisk_context *cxt, int partnum, struct fdisk_parttype *t);
-extern int fdisk_write_disklabel(struct fdisk_context *cxt);
-extern int fdisk_verify_disklabel(struct fdisk_context *cxt);
 extern int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name);
 extern int fdisk_reset_alignment(struct fdisk_context *cxt);
 extern struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int partnum);

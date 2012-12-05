@@ -28,6 +28,20 @@ extern "C" {
 struct fdisk_context;
 struct fdisk_parttype;
 
+/*
+ * Supported partition table types (labels)
+ */
+enum fdisk_labeltype {
+	FDISK_DISKLABEL_DOS = 1,
+	FDISK_DISKLABEL_SUN = 2,
+	FDISK_DISKLABEL_SGI = 4,
+	FDISK_DISKLABEL_AIX = 8,
+	FDISK_DISKLABEL_OSF = 16,
+	FDISK_DISKLABEL_MAC = 32,
+	FDISK_DISKLABEL_GPT = 64,
+	FDISK_DISKLABEL_ANY = -1
+};
+
 /* init.c */
 extern void fdisk_init_debug(int mask);
 
@@ -41,6 +55,18 @@ extern struct fdisk_parttype *fdisk_parse_parttype(struct fdisk_context *cxt, co
 extern struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int type, const char *typestr);
 extern void fdisk_free_parttype(struct fdisk_parttype *type);
 extern size_t fdisk_get_nparttypes(struct fdisk_context *cxt);
+
+/* label.c */
+extern int fdisk_dev_has_disklabel(struct fdisk_context *cxt);
+
+extern int fdisk_dev_is_disklabel(struct fdisk_context *cxt, enum fdisk_labeltype l);
+#define fdisk_is_disklabel(c, x) fdisk_dev_is_disklabel(c, FDISK_DISKLABEL_ ## x)
+
+extern int fdisk_write_disklabel(struct fdisk_context *cxt);
+extern int fdisk_verify_disklabel(struct fdisk_context *cxt);
+
+extern int fdisk_add_partition(struct fdisk_context *cxt, int partnum, struct fdisk_parttype *t);
+extern int fdisk_delete_partition(struct fdisk_context *cxt, int partnum);
 
 #ifdef __cplusplus
 }
