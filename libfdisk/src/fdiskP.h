@@ -191,4 +191,9 @@ extern sector_t fdisk_align_lba(struct fdisk_context *cxt, sector_t lba, int dir
 extern sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt, sector_t lba,
 					 sector_t start, sector_t stop);
 
+
+/* utils.c */
+extern void fdisk_zeroize_firstsector(struct fdisk_context *cxt);
+extern int fdisk_read_firstsector(struct fdisk_context *cxt);
+
 #endif /* _LIBFDISK_PRIVATE_H */

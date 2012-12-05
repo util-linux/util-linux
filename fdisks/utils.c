@@ -69,26 +69,6 @@ static int __probe_labels(struct fdisk_context *cxt)
 	return 1; /* not found */
 }
 
-static int __init_firstsector_buffer(struct fdisk_context *cxt)
-{
-	DBG(TOPOLOGY, dbgprint("initialize first sector buffer"));
-
-	cxt->firstsector = calloc(1, MAX_SECTOR_SIZE);
-	if (!cxt->firstsector)
-		goto fail;
-
-	/* read MBR */
-	if (512 != read(cxt->dev_fd, cxt->firstsector, 512)) {
-		if (errno == 0)
-			errno = EINVAL;	/* probably too small file/device */
-		goto fail;
-	}
-
-	return 0;
-fail:
-	return -errno;
-}
-
 static unsigned long __get_sector_size(int fd)
 {
 	int sect_sz;
@@ -234,24 +214,6 @@ static int __discover_topology(struct fdisk_context *cxt)
 			       cxt->dev_path, cxt->sector_size, cxt->phy_sector_size,
 			       cxt->io_size, cxt->optimal_io_size, cxt->min_io_size));
 	return 0;
-}
-
-
-/**
- * fdisk_zeroize_firstsector:
- * @cxt: fdisk context
- *
- * Zeros in-memory first sector buffer
- */
-void fdisk_zeroize_firstsector(struct fdisk_context *cxt)
-{
-	if (!cxt)
-		return;
-
-	if (cxt->firstsector) {
-		DBG(CONTEXT, dbgprint("zeroize in-memory first sector buffer"));
-		memset(cxt->firstsector, 0, MAX_SECTOR_SIZE);
-	}
 }
 
 /**
@@ -475,11 +437,11 @@ struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int rea
 	if (!cxt->dev_path)
 		goto fail;
 
-	if (__init_firstsector_buffer(cxt) < 0)
-		goto fail;
-
 	__discover_topology(cxt);
 	__discover_system_geometry(cxt);
+
+	if (fdisk_read_firstsector(cxt) < 0)
+		goto fail;
 
 	/* detect labels and apply labes specific stuff (e.g geomery)
 	 * to the context */

@@ -11,6 +11,7 @@ libfdisk_la_SOURCES = \
 	libfdisk/src/init.c \
 	libfdisk/src/alignment.c \
 	libfdisk/src/label.c \
+	libfdisk/src/utils.c \
 	libfdisk/src/parttype.c
 
 

@@ -75,7 +75,6 @@ extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname, 
 extern int fdisk_dev_has_topology(struct fdisk_context *cxt);
 extern int fdisk_dev_sectsz_is_default(struct fdisk_context *cxt);
 extern void fdisk_free_context(struct fdisk_context *cxt);
-extern void fdisk_zeroize_firstsector(struct fdisk_context *cxt);
 extern int fdisk_context_force_sector_size(struct fdisk_context *cxt, sector_t s);
 extern int fdisk_context_set_user_geometry(struct fdisk_context *cxt,
 			    unsigned int cylinders, unsigned int heads,
