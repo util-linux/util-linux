@@ -60,13 +60,6 @@ enum failure {
 	unable_to_write
 };
 
-/*
- * labels
- */
-extern struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int partnum);
-extern int fdisk_set_partition_type(struct fdisk_context *cxt, int partnum,
-			     struct fdisk_parttype *t);
-
 /* prototypes for fdisk.c */
 extern char *line_ptr;
 extern int partitions;
