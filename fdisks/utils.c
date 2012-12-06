@@ -69,39 +69,6 @@ static int __probe_labels(struct fdisk_context *cxt)
 	return 1; /* not found */
 }
 
-
-/**
- * fdisk_reset_alignment:
- * @cxt: fdisk context
- *
- * Resets alignment setting to the default or label specific values.
- *
- * Returns: 0 on success, < 0 in case of error.
- */
-int fdisk_reset_alignment(struct fdisk_context *cxt)
-{
-	int rc = 0;
-
-	if (!cxt)
-		return -EINVAL;
-
-	/* default */
-	cxt->grain = fdisk_topology_get_grain(cxt);
-	cxt->first_lba = fdisk_topology_get_first_lba(cxt);
-
-	/* overwrite default by label stuff */
-	if (cxt->label && cxt->label->reset_alignment)
-		rc = cxt->label->reset_alignment(cxt);
-
-	DBG(LABEL, dbgprint("%s alignment reseted to: "
-			    "first LBA=%ju, grain=%lu [rc=%d]",
-			    cxt->label ? cxt->label->name : NULL,
-			    (uintmax_t) cxt->first_lba,
-			    cxt->grain,	rc));
-	return rc;
-}
-
-
 /**
  * fdisk_create_disklabel:
  * @cxt: fdisk context

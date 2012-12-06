@@ -68,6 +68,9 @@ extern int fdisk_verify_disklabel(struct fdisk_context *cxt);
 extern int fdisk_add_partition(struct fdisk_context *cxt, int partnum, struct fdisk_parttype *t);
 extern int fdisk_delete_partition(struct fdisk_context *cxt, int partnum);
 
+/* alignment.c */
+extern int fdisk_reset_alignment(struct fdisk_context *cxt);
+
 #ifdef __cplusplus
 }
 #endif
