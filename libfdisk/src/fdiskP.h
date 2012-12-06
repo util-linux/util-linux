@@ -204,4 +204,7 @@ extern int fdisk_discover_topology(struct fdisk_context *cxt);
 extern void fdisk_zeroize_firstsector(struct fdisk_context *cxt);
 extern int fdisk_read_firstsector(struct fdisk_context *cxt);
 
+/* label.c */
+extern int fdisk_probe_labels(struct fdisk_context *cxt);
+
 #endif /* _LIBFDISK_PRIVATE_H */

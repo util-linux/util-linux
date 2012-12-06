@@ -63,17 +63,8 @@ enum failure {
 /*
  * labels
  */
-extern const struct fdisk_label aix_label;
-extern const struct fdisk_label dos_label;
-extern const struct fdisk_label bsd_label;
-extern const struct fdisk_label mac_label;
-extern const struct fdisk_label sun_label;
-extern const struct fdisk_label sgi_label;
-extern const struct fdisk_label gpt_label;
-
 extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int readonly);
 extern void fdisk_free_context(struct fdisk_context *cxt);
-extern int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name);
 extern struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int partnum);
 extern int fdisk_set_partition_type(struct fdisk_context *cxt, int partnum,
 			     struct fdisk_parttype *t);
