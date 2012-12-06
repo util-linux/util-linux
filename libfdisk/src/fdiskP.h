@@ -192,6 +192,14 @@ extern sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt, sector_t lba
 					 sector_t start, sector_t stop);
 
 
+extern int fdisk_override_sector_size(struct fdisk_context *cxt, sector_t s);
+extern int fdisk_override_geometry(struct fdisk_context *cxt,
+		            unsigned int cylinders, unsigned int heads,
+                            unsigned int sectors);
+
+extern int fdisk_discover_geometry(struct fdisk_context *cxt);
+extern int fdisk_discover_topology(struct fdisk_context *cxt);
+
 /* utils.c */
 extern void fdisk_zeroize_firstsector(struct fdisk_context *cxt);
 extern int fdisk_read_firstsector(struct fdisk_context *cxt);

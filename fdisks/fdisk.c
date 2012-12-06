@@ -1301,7 +1301,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 		case 'c':
 			user_cylinders = read_int(cxt, 1, cxt->geom.cylinders, 1048576, 0,
 					 _("Number of cylinders"));
-			fdisk_context_set_user_geometry(cxt, user_cylinders, user_heads, user_sectors);
+			fdisk_override_geometry(cxt, user_cylinders, user_heads, user_sectors);
 			if (fdisk_is_disklabel(cxt, SUN))
 				sun_set_ncyl(cxt, cxt->geom.cylinders);
 			break;
@@ -1327,7 +1327,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 		case 'h':
 			user_heads = read_int(cxt, 1, cxt->geom.heads, 256, 0,
 					 _("Number of heads"));
-			fdisk_context_set_user_geometry(cxt, user_cylinders, user_heads, user_sectors);
+			fdisk_override_geometry(cxt, user_cylinders, user_heads, user_sectors);
 			break;
 		case 'i':
 			if (fdisk_is_disklabel(cxt, SUN))
@@ -1356,7 +1356,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 				fprintf(stderr, _("Warning: setting "
 					"sector offset for DOS "
 					"compatibility\n"));
-			fdisk_context_set_user_geometry(cxt, user_cylinders, user_heads, user_sectors);
+			fdisk_override_geometry(cxt, user_cylinders, user_heads, user_sectors);
 			break;
 		case 'v':
 			verify(cxt);
@@ -1396,10 +1396,10 @@ static void print_partition_table_from_option(char *device, unsigned long sector
 		err(EXIT_FAILURE, _("cannot open %s"), device);
 
 	if (sector_size) /* passed -b option, override autodiscovery */
-		fdisk_context_force_sector_size(cxt, sector_size);
+		fdisk_override_sector_size(cxt, sector_size);
 
 	if (user_cylinders || user_heads || user_sectors)
-		fdisk_context_set_user_geometry(cxt, user_cylinders,
+		fdisk_override_geometry(cxt, user_cylinders,
 					user_heads, user_sectors);
 
 	if (!fdisk_dev_has_disklabel(cxt)) {
@@ -1697,17 +1697,13 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
 
 	if (sector_size)	/* passed -b option, override autodiscovery */
-		fdisk_context_force_sector_size(cxt, sector_size);
+		fdisk_override_sector_size(cxt, sector_size);
 
 	if (user_cylinders || user_heads || user_sectors)
-		fdisk_context_set_user_geometry(cxt, user_cylinders,
+		fdisk_override_geometry(cxt, user_cylinders,
 						user_heads, user_sectors);
 
 	print_welcome();
-
-	if (!fdisk_dev_sectsz_is_default(cxt))
-		printf(_("Note: sector size is %ld (not %d)\n"),
-		       cxt->sector_size, DEFAULT_SECTOR_SIZE);
 
 	if (!fdisk_dev_has_disklabel(cxt)) {
 		update_units(cxt);	/* to provide compatible 'p'rint output */

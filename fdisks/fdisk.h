@@ -72,13 +72,7 @@ extern const struct fdisk_label sgi_label;
 extern const struct fdisk_label gpt_label;
 
 extern struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int readonly);
-extern int fdisk_dev_has_topology(struct fdisk_context *cxt);
-extern int fdisk_dev_sectsz_is_default(struct fdisk_context *cxt);
 extern void fdisk_free_context(struct fdisk_context *cxt);
-extern int fdisk_context_force_sector_size(struct fdisk_context *cxt, sector_t s);
-extern int fdisk_context_set_user_geometry(struct fdisk_context *cxt,
-			    unsigned int cylinders, unsigned int heads,
-			    unsigned int sectors);
 extern int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name);
 extern int fdisk_reset_alignment(struct fdisk_context *cxt);
 extern struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int partnum);
