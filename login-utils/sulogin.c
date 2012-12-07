@@ -8,6 +8,7 @@
  *
  * Copyright (C) 1998-2003 Miquel van Smoorenburg.
  * Copyright (C) 2012 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2012 Werner Fink <werner@suse.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,12 +61,15 @@ struct sigaction saved_sigint;
 struct sigaction saved_sigtstp;
 struct sigaction saved_sigquit;
 
+static volatile sig_atomic_t alarm_rised;
+
 /*
  * Called at timeout.
  */
 static void alrm_handler(int sig __attribute__((unused)))
 {
-	return;
+	/* Timeout expired */
+	alarm_rised++;
 }
 
 static void mask_signal(int signal, void (*handler)(int),
@@ -594,16 +598,26 @@ int main(int argc, char **argv)
 	 * Ask for the password.
 	 */
 	while (pwd) {
+		int failed = 0;
 		if ((p = getpasswd(pwd->pw_passwd)) == NULL)
 			break;
 		if (pwd->pw_passwd[0] == 0 ||
-		    strcmp(crypt(p, pwd->pw_passwd), pwd->pw_passwd) == 0)
+		    strcmp(crypt(p, pwd->pw_passwd), pwd->pw_passwd) == 0) {
 			sushell(pwd);
+			failed++;
+		}
 		mask_signal(SIGQUIT, SIG_IGN, &saved_sigquit);
 		mask_signal(SIGTSTP, SIG_IGN, &saved_sigtstp);
 		mask_signal(SIGINT,  SIG_IGN, &saved_sigint);
-		fprintf(stderr, _("Login incorrect\n\n"));
+		if (failed) {
+		    fprintf(stderr, _("Can not execute su shell\n\n"));
+		    break;
+		} else
+		    fprintf(stderr, _("Login incorrect\n\n"));
 	}
+
+	if (alarm_rised)
+		fprintf(stderr, _("Timed out\n\n"));
 
 	/*
 	 * User pressed Control-D.
