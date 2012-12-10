@@ -926,7 +926,7 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 		return NULL;
 
 #ifdef TEST_PROGRAM
-	path = safe_getenv("LIBMOUNT_KERNEL_CMDLINE");
+	path = getenv("LIBMOUNT_KERNEL_CMDLINE");
 	if (!path)
 		path = _PATH_PROC_CMDLINE;
 #endif
