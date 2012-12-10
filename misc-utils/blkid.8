@@ -99,12 +99,7 @@ Display I/O Limits (aka I/O topology) information.  The 'export' output format i
 automatically enabled.  This option can be used together with the \fB-p\fR option.
 .TP
 .B \-l
-Look up only one device that matches the search parameter specified with \fB-t\fR.
-.TP
-.B \-k
-List all known filesystems and RAIDs and exit.
-.TP
-.B \-t
+Look up only one device that matches the search parameter specified with \fB-t\fR
 option.  If there are multiple devices that match the specified search
 parameter, then the device with the highest priority is returned, and/or
 the first device found at a given priority.  Device types in order of
@@ -112,6 +107,9 @@ decreasing priority are Device Mapper, EVMS, LVM, MD, and finally regular
 block devices.  If this option is not specified,
 .B blkid
 will print all of the devices that match the search parameter.
+.TP
+.B \-k
+List all known filesystems and RAIDs and exit.
 .TP
 .BI \-L " label"
 Look up the device that uses this filesystem \fIlabel\fR (equal to: -l -o device -t
