@@ -39,6 +39,16 @@
 #include <dirent.h>
 #include <unistd.h>
 
+#ifdef USE_SULOGIN_EMERGENCY_MOUNT
+# include <sys/mount.h>
+# include <linux/fs.h>
+# include <linux/magic.h>
+# include <linux/major.h>
+# ifndef MNT_DETACH
+#  define MNT_DETACH   2
+# endif
+#endif
+
 #include "c.h"
 #include "canonicalize.h"
 #include "consoles.h"
@@ -76,6 +86,64 @@ dbgprint(const char *mesg, ...)
 	va_end(ap);
 	fputc('\n', stderr);
 }
+
+#ifdef USE_SULOGIN_EMERGENCY_MOUNT
+/*
+ * Make C library standard calls such like ttyname(3) work
+ * even if the system does not show any of the standard
+ * directories.
+ */
+
+static uint32_t emergency_flags;
+# define MNT_PROCFS    0x0001
+# define MNT_DEVTMPFS  0x0002
+
+static __attribute__((__destructor__))
+void emergency_do_umounts(void)
+{
+	if (emergency_flags & MNT_DEVTMPFS)
+		umount2("/dev", MNT_DETACH);
+	if (emergency_flags & MNT_PROCFS)
+		umount2("/proc", MNT_DETACH);
+}
+
+static __attribute__((__constructor__))
+void emergency_do_mounts(void)
+{
+	struct stat rt, xt;
+
+	if (emergency_flags) {
+		emergency_flags = 0;
+		return;
+	}
+
+	if (stat("/", &rt) != 0) {
+		warn("can not get file status of root file system\n");
+		return;
+	}
+
+	if (stat("/proc", &xt) == 0
+	    && rt.st_dev == xt.st_dev
+	    && mount("proc", "/proc", "proc", MS_RELATIME, NULL) == 0)
+		emergency_flags |= MNT_PROCFS;
+
+	if (stat("/dev", &xt) == 0
+	    && rt.st_dev == xt.st_dev
+	    && mount("devtmpfs", "/dev", "devtmpfs",
+		     MS_RELATIME, "mode=0755,nr_inodes=0") == 0) {
+
+		emergency_flags |= MNT_DEVTMPFS;
+		mknod("/dev/console", S_IFCHR|S_IRUSR|S_IWUSR,
+					makedev(TTYAUX_MAJOR, 1));
+
+		if (symlink("/proc/self/fd", "/dev/fd") == 0) {
+			ignore_result( symlink("fd/0", "/dev/stdin") );
+			ignore_result( symlink("fd/1", "/dev/stdout") );
+			ignore_result( symlink("fd/2", "/dev/stderr") );
+		}
+	}
+}
+#endif /* USE_SULOGIN_EMERGENCY_MOUNT */
 
 /*
  * Read and allocate one line from file,
@@ -182,6 +250,11 @@ char* scandev(DIR *dir, dev_t comparedev)
 			continue;
 		if ((size_t)snprintf(path, sizeof(path), "/dev/%s", dent->d_name) >= sizeof(path))
 			continue;
+#ifdef USE_SULOGIN_EMERGENCY_MOUNT
+		if (emergency_flags & MNT_DEVTMPFS)
+			mknod(path, S_IFCHR|S_IRUSR|S_IWUSR, comparedev);
+#endif
+
 		name = canonicalize_path(path);
 		break;
 	}

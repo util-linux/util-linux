@@ -1296,6 +1296,19 @@ if test "x$enable_use_tty_group" = xyes; then
   AC_DEFINE(USE_TTY_GROUP, 1, [Should wall and write be installed setgid tty?])
 fi
 
+
+AC_ARG_ENABLE([sulogin-emergency-mount],
+  AS_HELP_STRING([--disable-sulogin-emergency-mount],
+		 [do not use emergency mount of /dev and /proc for sulogin]),
+  [], enable_sulogin_emergency_mount=yes
+)
+
+if test "x$enable_sulogin_emergency_mount" = xyes; then
+  AC_DEFINE(USE_SULOGIN_EMERGENCY_MOUNT, 1,
+	    [Should sulogin use a emergency mount of /dev and /proc?])
+fi
+
+
 AC_ARG_ENABLE([makeinstall-chown],
   AS_HELP_STRING([--disable-makeinstall-chown], [do not do chown-like operations during "make install"]),
   [], enable_makeinstall_chown=yes
