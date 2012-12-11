@@ -151,14 +151,14 @@ struct fdisk_label_operations {
  * Generic label
  */
 struct fdisk_label {
-	const char *name;
-
+	/* persistent information */
+	const char		*name;
 	struct fdisk_parttype	*parttypes;
 	size_t			nparttypes;	/* number of items in parttypes[] */
+	struct fdisk_context	*cxt;
 
 	const struct fdisk_label_operations *op;
 
-	struct fdisk_context	*cxt;
 };
 
 /* label allocators */
@@ -233,6 +233,6 @@ extern int fdisk_read_firstsector(struct fdisk_context *cxt);
 
 /* label.c */
 extern int fdisk_probe_labels(struct fdisk_context *cxt);
-extern void fdisk_deinit_label(struct fdisk_context *cxt);
+extern void fdisk_deinit_label(struct fdisk_label *lb);
 
 #endif /* _LIBFDISK_PRIVATE_H */

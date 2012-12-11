@@ -159,7 +159,8 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 #endif
 	}
 
-	fdisk_deinit_label(cxt);		/* deinitialize the current label */
+	if (cxt->label)
+		fdisk_deinit_label(cxt->label);
 
 	cxt->label = fdisk_context_get_label(cxt, name);
 	if (!cxt->label)
@@ -224,12 +225,11 @@ size_t fdisk_get_nparttypes(struct fdisk_context *cxt)
 /*
  * Resets the current used label driver to initial state
  */
-void fdisk_deinit_label(struct fdisk_context *cxt)
+void fdisk_deinit_label(struct fdisk_label *lb)
 {
-	assert(cxt);
+	assert(lb);
 
-	if (!cxt->label || !cxt->label->op->deinit)
-		return;
-
-	cxt->label->op->deinit(cxt->label);
+	/* private label information */
+	if (lb->op->deinit)
+		lb->op->deinit(lb);
 }

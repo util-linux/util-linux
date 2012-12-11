@@ -58,11 +58,14 @@ struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt, const cha
 
 static void reset_context(struct fdisk_context *cxt)
 {
-	size_t nlbs;
+	size_t nlbs, i;
 	struct fdisk_label *lbs[ ARRAY_SIZE(cxt->labels) ];
 
 	DBG(CONTEXT, dbgprint("\n-----\nresetting context %p", cxt));
-	fdisk_deinit_label(cxt);	/* reset the current label */
+
+	/* reset drives' private data */
+	for (i = 0; i < cxt->nlabels; i++)
+		fdisk_deinit_label(cxt->labels[i]);
 
 	/* remember permanent setting */
 	memcpy(lbs, cxt->labels, sizeof(lbs));
