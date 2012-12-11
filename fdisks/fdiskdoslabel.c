@@ -178,7 +178,6 @@ void dos_init(struct fdisk_context *cxt)
 {
 	int i;
 
-	cxt->disklabel = FDISK_DISKLABEL_DOS;
 	partitions = 4;
 	ext_index = 0;
 	extended_offset = 0;
@@ -990,6 +989,7 @@ struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt)
 	/* initialize generic part of the driver */
 	lb = (struct fdisk_label *) dos;
 	lb->name = "dos";
+	lb->id = FDISK_DISKLABEL_DOS;
 	lb->op = &dos_operations;
 	lb->parttypes = dos_parttypes;
 	lb->nparttypes = ARRAY_SIZE(dos_parttypes);

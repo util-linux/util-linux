@@ -932,6 +932,7 @@ struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt)
 	/* initialize generic part of the driver */
 	lb = (struct fdisk_label *) bsd;
 	lb->name = "bsd";
+	lb->id = FDISK_DISKLABEL_OSF;
 	lb->op = &bsd_operations;
 	lb->parttypes = xbsd_fstypes;
 	lb->nparttypes = ARRAY_SIZE(xbsd_fstypes);

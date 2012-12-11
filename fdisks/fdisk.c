@@ -208,11 +208,14 @@ is_garbage_table(void) {
 void print_menu(struct fdisk_context *cxt, enum menutype menu)
 {
 	size_t i;
+	int id;
 
 	puts(_("Command action"));
 
+	id = cxt && cxt->label ?  cxt->label->id : FDISK_DISKLABEL_ANY;
+
 	for (i = 0; i < ARRAY_SIZE(menulist); i++)
-		if (menulist[i].label[menu] & cxt->disklabel)
+		if (menulist[i].label[menu] & id)
 			printf("   %c   %s\n", menulist[i].command, menulist[i].description);
 }
 
@@ -1483,8 +1486,9 @@ static void command_prompt(struct fdisk_context *cxt)
 			 "disklabel mode.\n"),
 		       cxt->dev_path);
 		bsd_command_prompt(cxt);
+
 		/* If we return we may want to make an empty DOS label? */
-		cxt->disklabel = FDISK_DISKLABEL_DOS;
+		fdisk_context_switch_label(cxt, "dos");
 	}
 
 	while (1) {
@@ -1504,12 +1508,15 @@ static void command_prompt(struct fdisk_context *cxt)
 				unknown_command(c);
 			break;
 		case 'b':
+			/*
+			 * TODO: create child context for nexted partition tables
+			 */
 			if (fdisk_is_disklabel(cxt, SGI))
 				sgi_set_bootfile(cxt);
 			else if (fdisk_is_disklabel(cxt, DOS)) {
-				cxt->disklabel = FDISK_DISKLABEL_OSF;
+				fdisk_context_switch_label(cxt, "bsd");
 				bsd_command_prompt(cxt);
-				cxt->disklabel = FDISK_DISKLABEL_DOS;
+				fdisk_context_switch_label(cxt, "dos");
 			} else
 				unknown_command(c);
 			break;

@@ -1005,9 +1005,8 @@ done:
 /*
  * Initialize fdisk-specific variables - call once probing passes!
  */
-static void gpt_init(struct fdisk_context *cxt)
+static void gpt_init(struct fdisk_context *cxt __attribute__((__unused__)))
 {
-	cxt->disklabel = FDISK_DISKLABEL_GPT;
 	partitions = le32_to_cpu(pheader->npartition_entries);
 }
 
@@ -1709,6 +1708,7 @@ struct fdisk_label *fdisk_new_gpt_label(struct fdisk_context *cxt)
 	/* initialize generic part of the driver */
 	lb = (struct fdisk_label *) gpt;
 	lb->name = "gpt";
+	lb->id = FDISK_DISKLABEL_GPT;
 	lb->op = &gpt_operations;
 	lb->parttypes = gpt_parttypes;
 	lb->nparttypes = ARRAY_SIZE(gpt_parttypes);

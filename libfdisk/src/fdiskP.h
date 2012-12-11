@@ -161,6 +161,7 @@ struct fdisk_label_operations {
 struct fdisk_label {
 	/* persistent information */
 	const char		*name;
+	enum fdisk_labeltype	id;		/* FDISK_DISKLABEL_* */
 	struct fdisk_parttype	*parttypes;
 	size_t			nparttypes;	/* number of items in parttypes[] */
 
@@ -190,8 +191,6 @@ struct fdisk_context {
 	unsigned long sector_size;	/* logical size */
 	unsigned long alignment_offset;
 
-	enum fdisk_labeltype disklabel;	/* current disklabel */
-
 	/* alignment */
 	unsigned long grain;		/* alignment unit */
 	sector_t first_lba;		/* recommended begin of the first partition */
@@ -207,7 +206,9 @@ struct fdisk_context {
 					 * FIXME: use any enum rather than hardcoded number */
 };
 
-
+/* context.c */
+extern int __fdisk_context_switch_label(struct fdisk_context *cxt,
+				    struct fdisk_label *lb);
 
 /* alignment.c */
 extern sector_t fdisk_topology_get_first_lba(struct fdisk_context *cxt);

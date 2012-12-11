@@ -8,7 +8,6 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
 {
 	size_t i;
 
-	cxt->disklabel = FDISK_DISKLABEL_ANY;
 	cxt->label = NULL;
 
 	for (i = 0; i < cxt->nlabels; i++) {
@@ -24,8 +23,7 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
 			continue;
 		}
 
-		cxt->label = lb;
-		DBG(LABEL, dbgprint("detected a %s label", lb->name));
+		__fdisk_context_switch_label(cxt, lb);
 		return 0;
 	}
 
@@ -41,7 +39,7 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
  */
 int fdisk_dev_has_disklabel(struct fdisk_context *cxt)
 {
-	return cxt && cxt->disklabel != FDISK_DISKLABEL_ANY;
+	return cxt && cxt->label;
 }
 
 /**
@@ -53,7 +51,7 @@ int fdisk_dev_has_disklabel(struct fdisk_context *cxt)
  */
 int fdisk_dev_is_disklabel(struct fdisk_context *cxt, enum fdisk_labeltype l)
 {
-	return cxt && cxt->disklabel == l;
+	return cxt && cxt->label && cxt->label->id == l;
 }
 
 /**

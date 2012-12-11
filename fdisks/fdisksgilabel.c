@@ -165,7 +165,6 @@ sgi_probe_label(struct fdisk_context *cxt,
 		fprintf(stderr,
 			_("Detected sgi disklabel with wrong checksum.\n"));
 	}
-	cxt->disklabel = FDISK_DISKLABEL_SGI;
 	partitions= 16;
 	volumes = 15;
 	return 1;
@@ -838,7 +837,6 @@ static int sgi_create_disklabel(struct fdisk_context *cxt,
 	sgilabel->devparam.xylogics_writecont	= SSWAP16(0);
 	memset(&(sgilabel->directory), 0, sizeof(struct volume_directory)*15);
 	memset(&(sgilabel->partitions), 0, sizeof(struct sgi_partition)*16);
-	cxt->disklabel  = FDISK_DISKLABEL_SGI;
 	partitions = 16;
 	volumes    = 15;
 	sgi_set_entire(cxt);
@@ -980,6 +978,7 @@ struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt)
 	/* initialize generic part of the driver */
 	lb = (struct fdisk_label *) sgi;
 	lb->name = "sgi";
+	lb->id = FDISK_DISKLABEL_SGI;
 	lb->op = &sgi_operations;
 	lb->parttypes = sgi_parttypes;
 	lb->nparttypes = ARRAY_SIZE(sgi_parttypes);

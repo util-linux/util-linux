@@ -49,6 +49,23 @@ struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt, const cha
 	return NULL;
 }
 
+int __fdisk_context_switch_label(struct fdisk_context *cxt,
+				 struct fdisk_label *lb)
+{
+	if (!lb)
+		return -EINVAL;
+	cxt->label = lb;
+	DBG(LABEL, dbgprint("--> switching context to %s!", lb->name));
+	return 0;
+}
+
+int fdisk_context_switch_label(struct fdisk_context *cxt, const char *name)
+{
+	return __fdisk_context_switch_label(cxt,
+			fdisk_context_get_label(cxt, name));
+}
+
+
 static void reset_context(struct fdisk_context *cxt)
 {
 	size_t nlbs, i;

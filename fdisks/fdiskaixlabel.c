@@ -68,7 +68,6 @@ static int aix_probe_label(
 	return 0;
     }
     other_endian = (aixlabel->magic == AIX_LABEL_MAGIC_SWAPPED);
-    cxt->disklabel = FDISK_DISKLABEL_AIX;
     partitions= 1016;
     volumes = 15;
     aix_info();
@@ -115,6 +114,7 @@ struct fdisk_label *fdisk_new_aix_label(struct fdisk_context *cxt)
 	/* initialize generic part of the driver */
 	lb = (struct fdisk_label *) aix;
 	lb->name = "aix";
+	lb->id = FDISK_DISKLABEL_AIX;
 	lb->op = &aix_operations;
 
 	return lb;

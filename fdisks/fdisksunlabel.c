@@ -81,9 +81,8 @@ static void set_sun_partition(struct fdisk_context *cxt,
 	print_partition_size(cxt, i + 1, start, stop, sysid);
 }
 
-static void init(struct fdisk_context *cxt)
+static void init(struct fdisk_context *cxt __attribute__((__unused__)))
 {
-	cxt->disklabel = FDISK_DISKLABEL_SUN;
 	partitions = SUN_NUM_PARTITIONS;
 }
 
@@ -738,6 +737,7 @@ struct fdisk_label *fdisk_new_sun_label(struct fdisk_context *cxt)
 	/* initialize generic part of the driver */
 	lb = (struct fdisk_label *) sun;
 	lb->name = "sun";
+	lb->id = FDISK_DISKLABEL_SUN;
 	lb->op = &sun_operations;
 	lb->parttypes = sun_parttypes;
 	lb->nparttypes = ARRAY_SIZE(sun_parttypes);

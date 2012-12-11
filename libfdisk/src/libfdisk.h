@@ -56,6 +56,9 @@ extern int fdisk_context_assign_device(struct fdisk_context *cxt,
 extern struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt,
 				const char *name);
 
+extern int fdisk_context_switch_label(struct fdisk_context *cxt,
+				const char *name);
+
 /* parttype.c */
 extern struct fdisk_parttype *fdisk_get_parttype_from_code(struct fdisk_context *cxt,
                                 unsigned int code);

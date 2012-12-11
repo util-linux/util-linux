@@ -84,7 +84,6 @@ mac_probe_label(struct fdisk_context *cxt,
 
 IS_MAC:
     other_endian = (maclabel->magic == MAC_LABEL_MAGIC_SWAPPED); // =?
-    cxt->disklabel = FDISK_DISKLABEL_MAC;
     partitions= 1016; // =?
     volumes = 15;	// =?
     mac_info();
@@ -131,6 +130,7 @@ struct fdisk_label *fdisk_new_mac_label(struct fdisk_context *cxt)
 	/* initialize generic part of the driver */
 	lb = (struct fdisk_label *) mac;
 	lb->name = "mac";
+	lb->id = FDISK_DISKLABEL_MAC;
 	lb->op = &mac_operations;
 
 	return lb;
