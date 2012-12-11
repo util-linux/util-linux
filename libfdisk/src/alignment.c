@@ -185,7 +185,7 @@ int fdisk_discover_geometry(struct fdisk_context *cxt)
 	unsigned int h = 0, s = 0;
 
 	assert(cxt);
-	assert(!cxt->geom.heads);
+	assert(cxt->geom.heads == 0);
 
 	/* get number of 512-byte sectors, and convert it the real sectors */
 	if (!blkdev_get_sectors(cxt->dev_fd, &nsects))

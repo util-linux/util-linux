@@ -47,9 +47,11 @@ enum fdisk_labeltype {
 extern void fdisk_init_debug(int mask);
 
 /* context.h */
-extern struct fdisk_context *fdisk_new_context_from_filename(
-				const char *fname, int readonly);
+extern struct fdisk_context *fdisk_new_context(void);
 extern void fdisk_free_context(struct fdisk_context *cxt);
+
+extern int fdisk_context_assign_device(struct fdisk_context *cxt,
+				const char *fname, int readonly);
 
 extern struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt,
 				const char *name);

@@ -1,7 +1,7 @@
 
 #include "fdiskP.h"
 
-static struct fdisk_context *fdisk_new_context(void)
+struct fdisk_context *fdisk_new_context(void)
 {
 	struct fdisk_context *cxt;
 	size_t i;
@@ -9,6 +9,9 @@ static struct fdisk_context *fdisk_new_context(void)
 	cxt = calloc(1, sizeof(*cxt));
 	if (!cxt)
 		return NULL;
+
+	DBG(LABEL, dbgprint("new context %p allocated", cxt));
+	cxt->dev_fd = -1;
 
 	/*
 	 * Allocate label specific structs.
@@ -47,8 +50,37 @@ struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt, const cha
 	return NULL;
 }
 
+static void reset_context(struct fdisk_context *cxt)
+{
+	size_t nlbs;
+	struct fdisk_label *lbs[ ARRAY_SIZE(cxt->labels) ];
+
+	DBG(CONTEXT, dbgprint("\n-----\nresetting context %p", cxt));
+	fdisk_deinit_label(cxt);	/* reset the current label */
+
+	/* remember permanent setting */
+	memcpy(lbs, cxt->labels, sizeof(lbs));
+	nlbs = cxt->nlabels;
+
+	/* free device specific stuff */
+	if (cxt->dev_fd > -1)
+		close(cxt->dev_fd);
+	free(cxt->dev_path);
+	free(cxt->firstsector);
+
+	/* the reset */
+	memset(cxt, 0, sizeof(*cxt));
+
+	/* initialize */
+	cxt->dev_fd = -1;
+
+	/* set permanent setting */
+	memcpy(cxt->labels, lbs, sizeof(lbs));
+	cxt->nlabels = nlbs;
+}
+
 /**
- * fdisk_new_context_from_filename:
+ * fdisk_context_assign_device:
  * @fname: path to the device to be handled
  * @readonly: how to open the device
  *
@@ -56,24 +88,23 @@ struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt, const cha
  * the device with read-write mode and will fallback to read-only if
  * unsuccessful.
  *
- * Returns: newly allocated fdisk context or NULL upon failure.
+ * Returns: 0 on sucess, < 0 on error.
  */
-struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int readonly)
+int fdisk_context_assign_device(struct fdisk_context *cxt,
+				const char *fname, int readonly)
 {
-	int fd, errsv = 0;
-	struct fdisk_context *cxt = NULL;
+	int fd;
 
-	DBG(CONTEXT, dbgprint("initializing context for %s", fname));
+	DBG(CONTEXT, dbgprint("assigning device %s", fname));
+	assert(cxt);
+
+	reset_context(cxt);
 
 	if (readonly == 1 || (fd = open(fname, O_RDWR)) < 0) {
 		if ((fd = open(fname, O_RDONLY)) < 0)
-			return NULL;
+			return -errno;
 		readonly = 1;
 	}
-
-	cxt = fdisk_new_context();
-	if (!cxt)
-		goto fail;
 
 	cxt->dev_fd = fd;
 	cxt->dev_path = strdup(fname);
@@ -89,20 +120,15 @@ struct fdisk_context *fdisk_new_context_from_filename(const char *fname, int rea
 	/* detect labels and apply labes specific stuff (e.g geomery)
 	 * to the context */
 	fdisk_probe_labels(cxt);
-
 	fdisk_reset_alignment(cxt);
 
 	DBG(CONTEXT, dbgprint("context %p initialized for %s [%s]",
 			      cxt, fname,
 			      readonly ? "READ-ONLY" : "READ-WRITE"));
-	return cxt;
+	return 0;
 fail:
-	errsv = errno;
-	fdisk_free_context(cxt);
-	errno = errsv;
-
-	DBG(CONTEXT, dbgprint("failed to initialize context for %s: %m", fname));
-	return NULL;
+	DBG(CONTEXT, dbgprint("failed to assign device"));
+	return -errno;
 }
 
 /**
@@ -119,10 +145,7 @@ void fdisk_free_context(struct fdisk_context *cxt)
 		return;
 
 	DBG(CONTEXT, dbgprint("freeing context %p for %s", cxt, cxt->dev_path));
-	if (cxt->dev_fd > -1)
-		close(cxt->dev_fd);
-	free(cxt->dev_path);
-	free(cxt->firstsector);
+	reset_context(cxt);
 
 	/* deallocate label's private stuff */
 	for (i = 0; i < cxt->nlabels; i++) {

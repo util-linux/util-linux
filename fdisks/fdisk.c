@@ -1387,12 +1387,10 @@ static int is_ide_cdrom_or_tape(char *device)
 }
 
 /* Print disk geometry and partition table of a specified device (-l option) */
-static void print_partition_table_from_option(char *device, unsigned long sector_size)
+static void print_partition_table_from_option(struct fdisk_context *cxt,
+				char *device, unsigned long sector_size)
 {
-	struct fdisk_context *cxt;
-
-	cxt = fdisk_new_context_from_filename(device, 1);	/* read-only */
-	if (!cxt)
+	if (fdisk_context_assign_device(cxt, device, 1) != 0)	/* read-only */
 		err(EXIT_FAILURE, _("cannot open %s"), device);
 
 	if (sector_size) /* passed -b option, override autodiscovery */
@@ -1413,9 +1411,6 @@ static void print_partition_table_from_option(char *device, unsigned long sector
 			btrydev(cxt);
 	} else
 		list_table(cxt, 0);
-
-	fdisk_free_context(cxt);
-	cxt = NULL;
 }
 
 /*
@@ -1423,7 +1418,8 @@ static void print_partition_table_from_option(char *device, unsigned long sector
  * try all things in /proc/partitions that look like a full disk
  */
 static void
-print_all_partition_table_from_option(unsigned long sector_size)
+print_all_partition_table_from_option(struct fdisk_context *cxt,
+				      unsigned long sector_size)
 {
 	FILE *procpt;
 	char line[128 + 1], ptname[128 + 1], devname[256];
@@ -1445,7 +1441,7 @@ print_all_partition_table_from_option(unsigned long sector_size)
 			char *cn = canonicalize_path(devname);
 			if (cn) {
 				if (!is_ide_cdrom_or_tape(cn))
-					print_partition_table_from_option(cn, sector_size);
+					print_partition_table_from_option(cxt, cn, sector_size);
 				free(cn);
 			}
 		}
@@ -1593,12 +1589,17 @@ int main(int argc, char **argv)
 {
 	int c, optl = 0, opts = 0;
 	unsigned long sector_size = 0;
-	struct fdisk_context *cxt = NULL;
+	struct fdisk_context *cxt;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
+
+	fdisk_init_debug(0);
+	cxt = fdisk_new_context();
+	if (!cxt)
+		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));
 
 	while ((c = getopt(argc, argv, "b:c::C:hH:lsS:u::vV")) != -1) {
 		switch (c) {
@@ -1657,7 +1658,6 @@ int main(int argc, char **argv)
 		}
 	}
 
-	fdisk_init_debug(0);
 
 	if (sector_size && argc-optind != 1)
 		printf(_("Warning: the -b (set sector size) option should"
@@ -1668,9 +1668,9 @@ int main(int argc, char **argv)
 		if (argc > optind) {
 			int k;
 			for (k = optind; k < argc; k++)
-				print_partition_table_from_option(argv[k], sector_size);
+				print_partition_table_from_option(cxt, argv[k], sector_size);
 		} else
-			print_all_partition_table_from_option(sector_size);
+			print_all_partition_table_from_option(cxt, sector_size);
 		exit(EXIT_SUCCESS);
 	}
 
@@ -1692,8 +1692,7 @@ int main(int argc, char **argv)
 	if (argc-optind != 1)
 		usage(stderr);
 
-	cxt = fdisk_new_context_from_filename(argv[optind], 0);
-	if (!cxt)
+	if (fdisk_context_assign_device(cxt, argv[optind], 0) != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
 
 	if (sector_size)	/* passed -b option, override autodiscovery */
@@ -1714,5 +1713,6 @@ int main(int argc, char **argv)
 
 	command_prompt(cxt);
 
+	fdisk_free_context(cxt);
 	return 0;
 }

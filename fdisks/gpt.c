@@ -248,6 +248,8 @@ static struct fdisk_parttype gpt_parttypes[] =
 	DEF_GUID("85D5E45C-237C-11E1-B4B3-E89A8F7FC3A7", N_("MidnightBSD Vinum")),
 };
 
+/* FIXME: move these global variables to fdisk_gpt_label */
+
 /* primary GPT header */
 static struct gpt_header *pheader = NULL;
 /* backup GPT header */
@@ -1009,21 +1011,6 @@ static void gpt_init(struct fdisk_context *cxt)
 	partitions = le32_to_cpu(pheader->npartition_entries);
 }
 
-/*
- * Deinitialize fdisk-specific variables
- */
-static void gpt_deinit(struct fdisk_context *cxt)
-{
-	free(ents);
-	free(pheader);
-	free(bheader);
-	ents = NULL;
-	pheader = NULL;
-	bheader = NULL;
-
-	cxt->disklabel = FDISK_DISKLABEL_ANY;
-	partitions = 0;
-}
 
 static int gpt_probe_label(struct fdisk_context *cxt)
 {
@@ -1062,6 +1049,7 @@ static int gpt_probe_label(struct fdisk_context *cxt)
 
 	return 1;
 failed:
+	DBG(LABEL, dbgprint("GPT probe failed"));
 	return 0;
 }
 
@@ -1580,17 +1568,15 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 	int rc = 0;
 	ssize_t entry_sz = 0;
 
+	/* labe private stuff has to be empty, see gpt_deinit() */
+	assert(pheader == NULL);
+	assert(bheader == NULL);
+
 	/*
-	 * Reset space or clear data from headers, pt entries and
-	 * protective MBR. Big fat warning: any previous content is
-	 * overwritten, so ask users to be sure!.
-	 *
 	 * When no header, entries or pmbr is set, we're probably
 	 * dealing with a new, empty disk - so always allocate memory
 	 * to deal with the data structures whatever the case is.
 	 */
-	gpt_deinit(cxt);
-
 	rc = gpt_mknew_pmbr(cxt);
 	if (rc < 0)
 		goto done;
@@ -1663,6 +1649,25 @@ static int gpt_set_partition_type(struct fdisk_context *cxt, int i,
 	return 0;
 }
 
+/*
+ * Deinitialize fdisk-specific variables
+ */
+static void gpt_deinit(struct fdisk_label *lb)
+{
+	free(ents);
+	free(pheader);
+	free(bheader);
+
+	ents = NULL;
+	pheader = NULL;
+	bheader = NULL;
+
+	if (lb->cxt && lb->cxt->disklabel == FDISK_DISKLABEL_GPT)
+		lb->cxt->disklabel = FDISK_DISKLABEL_ANY;
+
+	partitions = 0;
+}
+
 static const struct fdisk_label_operations gpt_operations =
 {
 	.probe		= gpt_probe_label,
@@ -1672,7 +1677,9 @@ static const struct fdisk_label_operations gpt_operations =
 	.part_add	= gpt_add_partition,
 	.part_delete	= gpt_delete_partition,
 	.part_get_type	= gpt_get_partition_type,
-	.part_set_type	= gpt_set_partition_type
+	.part_set_type	= gpt_set_partition_type,
+
+	.deinit		= gpt_deinit
 };
 
 /*

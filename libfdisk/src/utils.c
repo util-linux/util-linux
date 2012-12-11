@@ -35,6 +35,7 @@ int fdisk_read_firstsector(struct fdisk_context *cxt)
 	if (r != cxt->sector_size) {
 		if (!errno)
 			errno = EINVAL;	/* probably too small file/device */
+		DBG(TOPOLOGY, dbgprint("failed to read first sector %m"));
 		return -errno;
 	}
 

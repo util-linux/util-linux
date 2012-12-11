@@ -143,6 +143,8 @@ struct fdisk_label_operations {
 
 	/* free in-memory label stuff */
 	void (*free)(struct fdisk_label *lb);
+	/* deinit in-memory label stuff */
+	void (*deinit)(struct fdisk_label *lb);
 };
 
 /*
@@ -231,5 +233,6 @@ extern int fdisk_read_firstsector(struct fdisk_context *cxt);
 
 /* label.c */
 extern int fdisk_probe_labels(struct fdisk_context *cxt);
+extern void fdisk_deinit_label(struct fdisk_context *cxt);
 
 #endif /* _LIBFDISK_PRIVATE_H */

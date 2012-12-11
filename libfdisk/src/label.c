@@ -9,15 +9,23 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
 	size_t i;
 
 	cxt->disklabel = FDISK_DISKLABEL_ANY;
+	cxt->label = NULL;
 
 	for (i = 0; i < cxt->nlabels; i++) {
-		if (!cxt->labels[i]->op->probe ||
-		     cxt->labels[i]->op->probe(cxt) != 1)
+		struct fdisk_label *lb = cxt->labels[i];
+
+		if (!lb->op->probe)
 			continue;
 
-		cxt->label = cxt->labels[i];
+		DBG(LABEL, dbgprint("probing for %s", lb->name));
+		if (lb->op->probe(cxt) != 1) {
+			if (lb->op->deinit)
+				lb->op->deinit(lb);	/* for sure */
+			continue;
+		}
 
-		DBG(LABEL, dbgprint("detected a %s label", cxt->label->name));
+		cxt->label = lb;
+		DBG(LABEL, dbgprint("detected a %s label", lb->name));
 		return 0;
 	}
 
@@ -151,6 +159,8 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 #endif
 	}
 
+	fdisk_deinit_label(cxt);		/* deinitialize the current label */
+
 	cxt->label = fdisk_context_get_label(cxt, name);
 	if (!cxt->label)
 		return -EINVAL;
@@ -209,4 +219,17 @@ size_t fdisk_get_nparttypes(struct fdisk_context *cxt)
 		return 0;
 
 	return cxt->label->nparttypes;
+}
+
+/*
+ * Resets the current used label driver to initial state
+ */
+void fdisk_deinit_label(struct fdisk_context *cxt)
+{
+	assert(cxt);
+
+	if (!cxt->label || !cxt->label->op->deinit)
+		return;
+
+	cxt->label->op->deinit(cxt->label);
 }
