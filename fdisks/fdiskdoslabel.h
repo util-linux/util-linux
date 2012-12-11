@@ -18,7 +18,6 @@ struct pte {
 };
 
 extern struct pte ptes[MAXIMUM_PARTS];
-extern int dos_compatible_flag;
 
 #define pt_offset(b, n)	((struct partition *)((b) + 0x1be + \
 					      (n) * sizeof(struct partition)))
@@ -45,5 +44,9 @@ extern int mbr_is_valid_magic(unsigned char *b);
 
 extern void change_units(struct fdisk_context *cxt);
 extern void update_units(struct fdisk_context *cxt);	/* called from sunlabel too */
+
+#define is_dos_compatible(_x) \
+		   (fdisk_is_disklabel(_x, DOS) && \
+                    fdisk_dos_is_compatible(fdisk_context_get_label(_x, NULL)))
 
 #endif

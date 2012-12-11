@@ -36,11 +36,17 @@ struct fdisk_context *fdisk_new_context(void)
 	return cxt;
 }
 
+/*
+ * Returns the current label if no name specified.
+ */
 struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt, const char *name)
 {
 	size_t i;
 
 	assert(cxt);
+
+	if (!name)
+		return cxt->label;
 
 	for (i = 0; i < cxt->nlabels; i++)
 		if (strcmp(cxt->labels[i]->name, name) == 0)

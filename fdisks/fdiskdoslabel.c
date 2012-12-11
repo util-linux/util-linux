@@ -19,6 +19,8 @@
  */
 struct fdisk_dos_label {
 	struct fdisk_label	head;		/* generic part */
+
+	unsigned int	compatible : 1;		/* is DOS compatible? */
 };
 
 /*
@@ -78,7 +80,7 @@ static void warn_alignment(struct fdisk_context *cxt)
 "the physical sector size. Aligning to a physical sector (or optimal\n"
 "I/O) size boundary is recommended, or performance may be impacted.\n"));
 
-	if (dos_compatible_flag)
+	if (is_dos_compatible(cxt))
 		fprintf(stderr, _("\n"
 "WARNING: DOS-compatible mode is deprecated. It's strongly recommended to\n"
 "         switch off the mode (with command 'c')."));
@@ -432,7 +434,7 @@ static void get_partition_table_geometry(struct fdisk_context *cxt,
 static int dos_reset_alignment(struct fdisk_context *cxt)
 {
 	/* overwrite necessary stuff by DOS deprecated stuff */
-	if (dos_compatible_flag) {
+	if (is_dos_compatible(cxt)) {
 		if (cxt->geom.sectors)
 			cxt->first_lba = cxt->geom.sectors;	/* usually 63 */
 
@@ -524,10 +526,10 @@ static void set_partition(struct fdisk_context *cxt,
 	if (!doext)
 		print_partition_size(cxt, i + 1, start, stop, sysid);
 
-	if (dos_compatible_flag && (start/(cxt->geom.sectors*cxt->geom.heads) > 1023))
+	if (is_dos_compatible(cxt) && (start/(cxt->geom.sectors*cxt->geom.heads) > 1023))
 		start = cxt->geom.heads*cxt->geom.sectors*1024 - 1;
 	set_hsc(p->head, p->sector, p->cyl, start);
-	if (dos_compatible_flag && (stop/(cxt->geom.sectors*cxt->geom.heads) > 1023))
+	if (is_dos_compatible(cxt) && (stop/(cxt->geom.sectors*cxt->geom.heads) > 1023))
 		stop = cxt->geom.heads*cxt->geom.sectors*1024 - 1;
 	set_hsc(p->end_head, p->end_sector, p->end_cyl, stop);
 	ptes[i].changed = 1;
@@ -980,4 +982,24 @@ struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt)
 	lb->nparttypes = ARRAY_SIZE(dos_parttypes);
 
 	return lb;
+}
+
+/*
+ * Public label specific functions
+ */
+
+int fdisk_dos_enable_compatible(struct fdisk_label *lb, int enable)
+{
+	struct fdisk_dos_label *dos = (struct fdisk_dos_label *) lb;
+
+	if (!lb)
+		return -EINVAL;
+
+	dos->compatible = enable;
+	return 0;
+}
+
+int fdisk_dos_is_compatible(struct fdisk_label *lb)
+{
+	return ((struct fdisk_dos_label *) lb)->compatible;
 }

@@ -128,7 +128,6 @@ char	*line_ptr,			/* interactive input */
 	line_buffer[LINE_LENGTH];
 
 int	nowarn = 0,			/* no warnings for fdisk -l/-s */
-	dos_compatible_flag = 0,	/* disabled by default */
 	partitions = 4;			/* maximum partition + 1 */
 
 unsigned int	user_cylinders, user_heads, user_sectors;
@@ -656,15 +655,25 @@ toggle_active(int i) {
 	pe->changed = 1;
 }
 
-static void
-toggle_dos_compatibility_flag(struct fdisk_context *cxt) {
-	dos_compatible_flag = ~dos_compatible_flag;
-	if (dos_compatible_flag)
+static void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
+{
+	struct fdisk_label *lb = fdisk_context_get_label(cxt, "dos");
+	int flag;
+
+	if (!lb)
+		return;
+
+	flag = !fdisk_dos_is_compatible(lb);
+
+	if (flag)
 		printf(_("DOS Compatibility flag is set (DEPRECATED!)\n"));
 	else
 		printf(_("DOS Compatibility flag is not set\n"));
 
-	fdisk_reset_alignment(cxt);
+	fdisk_dos_enable_compatible(lb, flag);
+
+	if (fdisk_is_disklabel(cxt, DOS))
+		fdisk_reset_alignment(cxt);
 }
 
 static void delete_partition(struct fdisk_context *cxt, int partnum)
@@ -737,7 +746,7 @@ void check_consistency(struct fdisk_context *cxt, struct partition *p, int parti
 	unsigned int lbc, lbh, lbs;	/* logical beginning c, h, s */
 	unsigned int lec, leh, les;	/* logical ending c, h, s */
 
-	if (!dos_compatible_flag)
+	if (!is_dos_compatible(cxt))
 		return;
 
 	if (!cxt->geom.heads || !cxt->geom.sectors || (partition >= 4))
@@ -796,7 +805,7 @@ list_disk_geometry(struct fdisk_context *cxt) {
 		       cxt->dev_path, hectomega / 10, hectomega % 10, bytes);
 	}
 	printf(_(", %llu sectors\n"), cxt->total_sectors);
-	if (dos_compatible_flag)
+	if (is_dos_compatible(cxt))
 		printf(_("%d heads, %llu sectors/track, %llu cylinders\n"),
 		       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
 	printf(_("Units = %s of %d * %ld = %ld bytes\n"),
@@ -1352,7 +1361,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 		case 's':
 			user_sectors = read_int(cxt, 1, cxt->geom.sectors, 63, 0,
 					   _("Number of sectors"));
-			if (dos_compatible_flag)
+			if (is_dos_compatible(cxt))
 				fprintf(stderr, _("Warning: setting "
 					"sector offset for DOS "
 					"compatibility\n"));
@@ -1590,6 +1599,7 @@ int main(int argc, char **argv)
 	int c, optl = 0, opts = 0;
 	unsigned long sector_size = 0;
 	struct fdisk_context *cxt;
+	struct fdisk_label *lb;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -1617,12 +1627,18 @@ int main(int argc, char **argv)
 			user_cylinders =  strtou32_or_err(optarg, _("invalid cylinders argument"));
 			break;
 		case 'c':
-			dos_compatible_flag = 0;	/* default */
-
-			if (optarg && !strcmp(optarg, "=dos"))
-				dos_compatible_flag = ~0;
-			else if (optarg && strcmp(optarg, "=nondos"))
-				usage(stderr);
+			if (optarg) {
+				lb = fdisk_context_get_label(cxt, "dos");
+				if (!lb)
+					err(EXIT_FAILURE, _("not found DOS label driver"));
+				if (strcmp(optarg, "=dos") == 0)
+					fdisk_dos_enable_compatible(lb, TRUE);
+				else if (strcmp(optarg, "=nondos") == 0)
+					fdisk_dos_enable_compatible(lb, FALSE);
+				else
+					usage(stderr);
+			}
+			/* use default if no optarg specified */
 			break;
 		case 'H':
 			user_heads = strtou32_or_err(optarg, _("invalid heads argument"));

@@ -87,6 +87,11 @@ extern int fdisk_set_partition_type(struct fdisk_context *cxt, int partnum,
 /* alignment.c */
 extern int fdisk_reset_alignment(struct fdisk_context *cxt);
 
+
+/* dos.c */
+extern int fdisk_dos_enable_compatible(struct fdisk_label *lb, int enable);
+extern int fdisk_dos_is_compatible(struct fdisk_label *lb);
+
 #ifdef __cplusplus
 }
 #endif
