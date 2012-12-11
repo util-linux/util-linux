@@ -4,7 +4,6 @@
 struct fdisk_context *fdisk_new_context(void)
 {
 	struct fdisk_context *cxt;
-	size_t i;
 
 	cxt = calloc(1, sizeof(*cxt));
 	if (!cxt)
@@ -26,12 +25,6 @@ struct fdisk_context *fdisk_new_context(void)
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_mac_label(cxt);
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_sgi_label(cxt);
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_sun_label(cxt);
-
-	DBG(CONTEXT, dbgprint("supported labels:"));
-	for (i = 0; i < cxt->nlabels; i++) {
-		DBG(CONTEXT, dbgprint(" %s", cxt->labels[i]->name));
-		cxt->labels[i]->cxt = cxt;
-	}
 
 	return cxt;
 }

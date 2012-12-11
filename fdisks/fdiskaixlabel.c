@@ -56,7 +56,9 @@ static void aix_nolabel(struct fdisk_context *cxt)
     return;
 }
 
-static int aix_probe_label(struct fdisk_context *cxt)
+static int aix_probe_label(
+		struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
     struct aix_partition *aixlabel = (struct aix_partition *) cxt->firstsector;
 
@@ -76,6 +78,7 @@ static int aix_probe_label(struct fdisk_context *cxt)
 
 static int aix_add_partition(
 		struct fdisk_context *cxt __attribute__((__unused__)),
+		struct fdisk_label *lb __attribute__((__unused__)),
 		int partnum __attribute__((__unused__)),
 		struct fdisk_parttype *t __attribute__((__unused__)))
 {

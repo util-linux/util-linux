@@ -57,7 +57,8 @@ mac_nolabel(struct fdisk_context *cxt)
 }
 
 static int
-mac_probe_label(struct fdisk_context *cxt)
+mac_probe_label(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
 	struct mac_partition *maclabel = (struct mac_partition *) cxt->firstsector;
 
@@ -92,9 +93,10 @@ IS_MAC:
 }
 
 static int mac_add_partition(
-			struct fdisk_context *cxt __attribute__ ((__unused__)),
-			int partnum __attribute__ ((__unused__)),
-			struct fdisk_parttype *t __attribute__ ((__unused__)))
+		struct fdisk_context *cxt __attribute__ ((__unused__)),
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int partnum __attribute__ ((__unused__)),
+		struct fdisk_parttype *t __attribute__ ((__unused__)))
 {
 	printf(_("\tSorry - this fdisk cannot handle Mac disk labels."
 		 "\n\tIf you want to add DOS-type partitions, create"

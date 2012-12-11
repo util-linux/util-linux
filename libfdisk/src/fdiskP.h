@@ -123,23 +123,31 @@ struct fdisk_geometry {
  */
 struct fdisk_label_operations {
 	/* probe disk label */
-	int (*probe)(struct fdisk_context *cxt);
+	int (*probe)(struct fdisk_context *cxt, struct fdisk_label *lb);
 	/* write in-memory changes to disk */
-	int (*write)(struct fdisk_context *cxt);
+	int (*write)(struct fdisk_context *cxt, struct fdisk_label *lb);
 	/* verify the partition table */
-	int (*verify)(struct fdisk_context *cxt);
+	int (*verify)(struct fdisk_context *cxt, struct fdisk_label *lb);
 	/* create new disk label */
-	int (*create)(struct fdisk_context *cxt);
+	int (*create)(struct fdisk_context *cxt, struct fdisk_label *lb);
 	/* new partition */
-	int (*part_add)(struct fdisk_context *cxt, int partnum, struct fdisk_parttype *t);
+	int (*part_add)(struct fdisk_context *cxt, struct fdisk_label *lb,
+						int partnum,
+						struct fdisk_parttype *t);
 	/* delete partition */
-	int (*part_delete)(struct fdisk_context *cxt, int partnum);
+	int (*part_delete)(struct fdisk_context *cxt, struct fdisk_label *lb,
+						int partnum);
 	/* get partition type */
-	struct fdisk_parttype *(*part_get_type)(struct fdisk_context *cxt, int partnum);
+	struct fdisk_parttype *(*part_get_type)(struct fdisk_context *cxt,
+						struct fdisk_label *lb,
+						int partnum);
 	/* set partition type */
-	int (*part_set_type)(struct fdisk_context *cxt, int partnum, struct fdisk_parttype *t);
+	int (*part_set_type)(struct fdisk_context *cxt, struct fdisk_label *lb,
+						int partnum,
+						struct fdisk_parttype *t);
 	/* refresh alignment setting */
-	int (*reset_alignment)(struct fdisk_context *cxt);
+	int (*reset_alignment)(struct fdisk_context *cxt,
+						struct fdisk_label *lb);
 
 	/* free in-memory label stuff */
 	void (*free)(struct fdisk_label *lb);
@@ -155,7 +163,6 @@ struct fdisk_label {
 	const char		*name;
 	struct fdisk_parttype	*parttypes;
 	size_t			nparttypes;	/* number of items in parttypes[] */
-	struct fdisk_context	*cxt;
 
 	const struct fdisk_label_operations *op;
 

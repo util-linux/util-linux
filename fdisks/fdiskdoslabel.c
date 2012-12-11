@@ -200,6 +200,7 @@ void dos_init(struct fdisk_context *cxt)
 
 static int dos_delete_partition(
 		struct fdisk_context *cxt __attribute__ ((__unused__)),
+		struct fdisk_label *lb __attribute__ ((__unused__)),
 		int partnum)
 {
 	struct pte *pe = &ptes[partnum];
@@ -345,7 +346,7 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 		if (!get_nr_sects(pe->part_table) &&
 		    (partitions > 5 || ptes[4].part_table->sys_ind)) {
 			printf(_("omitting empty partition (%d)\n"), i+1);
-			dos_delete_partition(cxt, i);
+			dos_delete_partition(cxt, cxt->label, i);
 			goto remove; 	/* numbering changed */
 		}
 	}
@@ -356,7 +357,8 @@ void dos_print_mbr_id(struct fdisk_context *cxt)
 	printf(_("Disk identifier: 0x%08x\n"), mbr_get_id(cxt->firstsector));
 }
 
-static int dos_create_disklabel(struct fdisk_context *cxt)
+static int dos_create_disklabel(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
 	unsigned int id;
 
@@ -431,7 +433,8 @@ static void get_partition_table_geometry(struct fdisk_context *cxt,
 	DBG(CONTEXT, dbgprint("DOS PT geometry: heads=%u, sectors=%u", *ph, *ps));
 }
 
-static int dos_reset_alignment(struct fdisk_context *cxt)
+static int dos_reset_alignment(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
 	/* overwrite necessary stuff by DOS deprecated stuff */
 	if (is_dos_compatible(cxt)) {
@@ -446,7 +449,8 @@ static int dos_reset_alignment(struct fdisk_context *cxt)
 	return 0;
 }
 
-static int dos_probe_label(struct fdisk_context *cxt)
+static int dos_probe_label(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
 	int i;
 	unsigned int h = 0, s = 0;
@@ -720,7 +724,8 @@ static int add_logical(struct fdisk_context *cxt)
 	return add_partition(cxt, partitions - 1, NULL);
 }
 
-static int dos_verify_disklabel(struct fdisk_context *cxt)
+static int dos_verify_disklabel(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
 	int i, j;
 	sector_t total = 1, n_sectors = cxt->total_sectors;
@@ -792,6 +797,7 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
  */
 static int dos_add_partition(
 			struct fdisk_context *cxt,
+			struct fdisk_label *lb __attribute__((__unused__)),
 			int partnum __attribute__ ((__unused__)),
 			struct fdisk_parttype *t)
 {
@@ -872,7 +878,8 @@ static int write_sector(struct fdisk_context *cxt, sector_t secno,
 	return 0;
 }
 
-static int dos_write_disklabel(struct fdisk_context *cxt)
+static int dos_write_disklabel(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
 	int i, rc = 0;
 
@@ -904,7 +911,10 @@ done:
 	return rc;
 }
 
-static struct fdisk_parttype *dos_get_parttype(struct fdisk_context *cxt, int partnum)
+static struct fdisk_parttype *dos_get_parttype(
+		struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int partnum)
 {
 	struct fdisk_parttype *t;
 	struct partition *p;
@@ -919,8 +929,11 @@ static struct fdisk_parttype *dos_get_parttype(struct fdisk_context *cxt, int pa
 	return t;
 }
 
-static int dos_set_parttype(struct fdisk_context *cxt, int partnum,
-			    struct fdisk_parttype *t)
+static int dos_set_parttype(
+		struct fdisk_context *cxt __attribute__((__unused__)),
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int partnum,
+		struct fdisk_parttype *t)
 {
 	struct partition *p;
 

@@ -18,7 +18,7 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
 			continue;
 
 		DBG(LABEL, dbgprint("probing for %s", lb->name));
-		if (lb->op->probe(cxt) != 1) {
+		if (lb->op->probe(cxt, lb) != 1) {
 			if (lb->op->deinit)
 				lb->op->deinit(lb);	/* for sure */
 			continue;
@@ -71,7 +71,7 @@ int fdisk_write_disklabel(struct fdisk_context *cxt)
 	if (!cxt->label->op->write)
 		return -ENOSYS;
 
-	return cxt->label->op->write(cxt);
+	return cxt->label->op->write(cxt, cxt->label);
 }
 
 /**
@@ -89,7 +89,7 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
 	if (!cxt->label->op->verify)
 		return -ENOSYS;
 
-	return cxt->label->op->verify(cxt);
+	return cxt->label->op->verify(cxt, cxt->label);
 }
 
 /**
@@ -111,7 +111,7 @@ int fdisk_add_partition(struct fdisk_context *cxt, int partnum,
 		return -ENOSYS;
 
 	DBG(LABEL, dbgprint("adding new partition number %d", partnum));
-	cxt->label->op->part_add(cxt, partnum, t);
+	cxt->label->op->part_add(cxt, cxt->label, partnum, t);
 	return 0;
 }
 
@@ -133,7 +133,7 @@ int fdisk_delete_partition(struct fdisk_context *cxt, int partnum)
 
 	DBG(LABEL, dbgprint("deleting %s partition number %d",
 				cxt->label->name, partnum));
-	return cxt->label->op->part_delete(cxt, partnum);
+	return cxt->label->op->part_delete(cxt, cxt->label, partnum);
 }
 
 /**
@@ -171,7 +171,7 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 		return -ENOSYS;
 
 	fdisk_reset_alignment(cxt);
-	return cxt->label->op->create(cxt);
+	return cxt->label->op->create(cxt, cxt->label);
 }
 
 /**
@@ -187,7 +187,7 @@ struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int p
 		return NULL;
 
 	DBG(LABEL, dbgprint("partition: %d: get type", partnum));
-	return cxt->label->op->part_get_type(cxt, partnum);
+	return cxt->label->op->part_get_type(cxt, cxt->label, partnum);
 }
 
 /**
@@ -205,7 +205,7 @@ int fdisk_set_partition_type(struct fdisk_context *cxt, int partnum,
 		return -EINVAL;
 
 	DBG(LABEL, dbgprint("partition: %d: set type", partnum));
-	return cxt->label->op->part_set_type(cxt, partnum, t);
+	return cxt->label->op->part_set_type(cxt, cxt->label, partnum, t);
 }
 
 /**

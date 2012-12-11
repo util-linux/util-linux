@@ -87,7 +87,8 @@ static void init(struct fdisk_context *cxt)
 	partitions = SUN_NUM_PARTITIONS;
 }
 
-static int sun_probe_label(struct fdisk_context *cxt)
+static int sun_probe_label(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
 	unsigned short *ush;
 	int csum;
@@ -152,7 +153,8 @@ static int sun_probe_label(struct fdisk_context *cxt)
 	return 1;
 }
 
-static int sun_create_disklabel(struct fdisk_context *cxt)
+static int sun_create_disklabel(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
 	struct hd_geometry geometry;
 	sector_t llsectors, llcyls;
@@ -303,7 +305,8 @@ static int verify_sun_cmp(int *a, int *b)
     return -1;
 }
 
-static int sun_verify_disklabel(struct fdisk_context *cxt)
+static int sun_verify_disklabel(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
     uint32_t starts[SUN_NUM_PARTITIONS], lens[SUN_NUM_PARTITIONS], start, stop;
     uint32_t i,j,k,starto,endo;
@@ -372,8 +375,11 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
     return 0;
 }
 
-static int sun_add_partition(struct fdisk_context *cxt, int n,
-			     struct fdisk_parttype *t)
+static int sun_add_partition(
+		struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int n,
+		struct fdisk_parttype *t)
 {
 	uint32_t starts[SUN_NUM_PARTITIONS], lens[SUN_NUM_PARTITIONS];
 	struct sun_partition *part = &sunlabel->partitions[n];
@@ -495,7 +501,9 @@ and is of type `Whole disk'\n"));
 	return 0;
 }
 
-static int sun_delete_partition(struct fdisk_context *cxt, int partnum)
+static int sun_delete_partition(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int partnum)
 {
 	struct sun_partition *part = &sunlabel->partitions[partnum];
 	struct sun_tag_flag *tag = &sunlabel->part_tags[partnum];
@@ -612,7 +620,8 @@ void sun_set_pcylcount(struct fdisk_context *cxt)
 				 _("Number of physical cylinders")));
 }
 
-static int sun_write_disklabel(struct fdisk_context *cxt)
+static int sun_write_disklabel(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
 	unsigned short *ush = (unsigned short *)sunlabel;
 	unsigned short csum = 0;
@@ -628,7 +637,10 @@ static int sun_write_disklabel(struct fdisk_context *cxt)
 	return 0;
 }
 
-static struct fdisk_parttype *sun_get_parttype(struct fdisk_context *cxt, int n)
+static struct fdisk_parttype *sun_get_parttype(
+		struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int n)
 {
 	struct fdisk_parttype *t;
 
@@ -641,8 +653,11 @@ static struct fdisk_parttype *sun_get_parttype(struct fdisk_context *cxt, int n)
 	return t;
 }
 
-static int sun_set_parttype(struct fdisk_context *cxt, int i,
-			    struct fdisk_parttype *t)
+static int sun_set_parttype(
+		struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int i,
+		struct fdisk_parttype *t)
 {
 	struct sun_partition *part;
 	struct sun_tag_flag *tag;
@@ -685,7 +700,8 @@ static int sun_set_parttype(struct fdisk_context *cxt, int i,
 }
 
 
-static int sun_reset_alignment(struct fdisk_context *cxt)
+static int sun_reset_alignment(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
 	/* this is shared with DOS ... */
 	update_units(cxt);

@@ -140,7 +140,9 @@ two_s_complement_32bit_sum(unsigned int *base, int size /* in bytes */) {
 }
 
 static int
-sgi_probe_label(struct fdisk_context *cxt) {
+sgi_probe_label(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
+{
 	if (sizeof(sgilabel) > 512) {
 		fprintf(stderr,
 			_("According to MIPS Computer Systems, Inc the "
@@ -342,7 +344,8 @@ create_sgiinfo(struct fdisk_context *cxt) {
 }
 
 
-static int sgi_write_disklabel(struct fdisk_context *cxt)
+static int sgi_write_disklabel(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
 	sgiinfo *info = NULL;
 
@@ -451,7 +454,8 @@ static void sort(void *base0, size_t num, size_t size, struct fdisk_context *cxt
 	}
 }
 
-static int sgi_verify_disklabel(struct fdisk_context *cxt)
+static int sgi_verify_disklabel(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
 	int Index[16];		/* list of valid partitions */
 	int sortcount = 0;	/* number of used partitions, i.e. non-zero lengths */
@@ -583,7 +587,7 @@ sgi_gaps(struct fdisk_context *cxt) {
 	 *  < 0 : there is an overlap
 	 *  > 0 : there is still some vacant space
 	 */
-	return sgi_verify_disklabel(cxt);
+	return sgi_verify_disklabel(cxt, cxt->label);
 }
 
 
@@ -645,13 +649,17 @@ sgi_set_volhdr(struct fdisk_context *cxt)
 	}
 }
 
-static int sgi_delete_partition(struct fdisk_context *cxt, int partnum)
+static int sgi_delete_partition(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int partnum)
 {
 	return sgi_set_partition(cxt, partnum, 0, 0, 0);
 }
 
-static int sgi_add_partition(struct fdisk_context *cxt, int n,
-			     struct fdisk_parttype *t)
+static int sgi_add_partition(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int n,
+		struct fdisk_parttype *t)
 {
 	char mesg[256];
 	unsigned int first=0, last=0;
@@ -723,7 +731,8 @@ static int sgi_add_partition(struct fdisk_context *cxt, int n,
 	return 0;
 }
 
-static int sgi_create_disklabel(struct fdisk_context *cxt)
+static int sgi_create_disklabel(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)))
 {
 	struct hd_geometry geometry;
 	struct {
@@ -894,7 +903,9 @@ static sgiinfo *fill_sgiinfo(void)
 	return info;
 }
 
-static struct fdisk_parttype *sgi_get_parttype(struct fdisk_context *cxt, int n)
+static struct fdisk_parttype *sgi_get_parttype(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int n)
 {
 	struct fdisk_parttype *t;
 
@@ -907,8 +918,10 @@ static struct fdisk_parttype *sgi_get_parttype(struct fdisk_context *cxt, int n)
 	return t;
 }
 
-static int sgi_set_parttype(struct fdisk_context *cxt, int i,
-			    struct fdisk_parttype *t)
+static int sgi_set_parttype(struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int i,
+		struct fdisk_parttype *t)
 {
 	if (i >= partitions || !t || t->type > UINT32_MAX)
 		return -EINVAL;
