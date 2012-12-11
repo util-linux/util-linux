@@ -35,6 +35,15 @@
 #include "fdisksgilabel.h"
 #include "fdiskdoslabel.h"
 
+
+/*
+ * in-memory fdisk SGI stuff
+ */
+struct fdisk_sgi_label {
+	struct fdisk_label	head;		/* generic part */
+};
+
+
 static	int     other_endian = 0;
 static	int     debug = 0;
 static  short volumes=1;
@@ -929,18 +938,38 @@ static int sgi_set_parttype(struct fdisk_context *cxt, int i,
 	return 0;
 }
 
-const struct fdisk_label sgi_label =
+static const struct fdisk_label_operations sgi_operations =
 {
-	.name = "sgi",
-	.parttypes = sgi_parttypes,
-	.nparttypes = ARRAY_SIZE(sgi_parttypes),
-
-	.probe = sgi_probe_label,
-	.write = sgi_write_disklabel,
-	.verify = sgi_verify_disklabel,
-	.create = sgi_create_disklabel,
-	.part_add = sgi_add_partition,
-	.part_delete = sgi_delete_partition,
-	.part_get_type = sgi_get_parttype,
-	.part_set_type = sgi_set_parttype,
+	.probe		= sgi_probe_label,
+	.write		= sgi_write_disklabel,
+	.verify		= sgi_verify_disklabel,
+	.create		= sgi_create_disklabel,
+	.part_add	= sgi_add_partition,
+	.part_delete	= sgi_delete_partition,
+	.part_get_type	= sgi_get_parttype,
+	.part_set_type	= sgi_set_parttype
 };
+
+/*
+ * allocates SGI label driver
+ */
+struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt)
+{
+	struct fdisk_label *lb;
+	struct fdisk_sgi_label *sgi;
+
+	assert(cxt);
+
+	sgi = calloc(1, sizeof(*sgi));
+	if (!sgi)
+		return NULL;
+
+	/* initialize generic part of the driver */
+	lb = (struct fdisk_label *) sgi;
+	lb->name = "sgi";
+	lb->op = &sgi_operations;
+	lb->parttypes = sgi_parttypes;
+	lb->nparttypes = ARRAY_SIZE(sgi_parttypes);
+
+	return lb;
+}

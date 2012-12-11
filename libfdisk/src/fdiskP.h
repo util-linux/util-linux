@@ -118,6 +118,56 @@ struct fdisk_geometry {
 	sector_t cylinders;
 };
 
+/*
+ * Label specific operations
+ */
+struct fdisk_label_operations {
+	/* probe disk label */
+	int (*probe)(struct fdisk_context *cxt);
+	/* write in-memory changes to disk */
+	int (*write)(struct fdisk_context *cxt);
+	/* verify the partition table */
+	int (*verify)(struct fdisk_context *cxt);
+	/* create new disk label */
+	int (*create)(struct fdisk_context *cxt);
+	/* new partition */
+	int (*part_add)(struct fdisk_context *cxt, int partnum, struct fdisk_parttype *t);
+	/* delete partition */
+	int (*part_delete)(struct fdisk_context *cxt, int partnum);
+	/* get partition type */
+	struct fdisk_parttype *(*part_get_type)(struct fdisk_context *cxt, int partnum);
+	/* set partition type */
+	int (*part_set_type)(struct fdisk_context *cxt, int partnum, struct fdisk_parttype *t);
+	/* refresh alignment setting */
+	int (*reset_alignment)(struct fdisk_context *cxt);
+
+	/* free in-memory label stuff */
+	void (*free)(struct fdisk_label *lb);
+};
+
+/*
+ * Generic label
+ */
+struct fdisk_label {
+	const char *name;
+
+	struct fdisk_parttype	*parttypes;
+	size_t			nparttypes;	/* number of items in parttypes[] */
+
+	const struct fdisk_label_operations *op;
+
+	struct fdisk_context	*cxt;
+};
+
+/* label allocators */
+extern struct fdisk_label *fdisk_new_gpt_label(struct fdisk_context *cxt);
+extern struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt);
+extern struct fdisk_label *fdisk_new_aix_label(struct fdisk_context *cxt);
+extern struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt);
+extern struct fdisk_label *fdisk_new_mac_label(struct fdisk_context *cxt);
+extern struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt);
+extern struct fdisk_label *fdisk_new_sun_label(struct fdisk_context *cxt);
+
 struct fdisk_context {
 	int dev_fd;         /* device descriptor */
 	char *dev_path;     /* device path */
@@ -141,39 +191,14 @@ struct fdisk_context {
 	sector_t total_sectors; /* in logical sectors */
 	struct fdisk_geometry geom;
 
-	/* label operations and description */
-	const struct fdisk_label *label;
+	struct fdisk_label *label;	/* current label, pointer to labels[] */
+
+	size_t nlabels;			/* number of initialized label drivers */
+	struct fdisk_label *labels[8];	/* all supported labels,
+					 * FIXME: use any enum rather than hardcoded number */
 };
 
-/*
- * Label specific operations
- */
-struct fdisk_label {
-	const char *name;
 
-	/* array with partition types */
-	struct fdisk_parttype	*parttypes;
-	size_t			nparttypes;	/* number of items in parttypes[] */
-
-	/* probe disk label */
-	int (*probe)(struct fdisk_context *cxt);
-	/* write in-memory changes to disk */
-	int (*write)(struct fdisk_context *cxt);
-	/* verify the partition table */
-	int (*verify)(struct fdisk_context *cxt);
-	/* create new disk label */
-	int (*create)(struct fdisk_context *cxt);
-	/* new partition */
-	int (*part_add)(struct fdisk_context *cxt, int partnum, struct fdisk_parttype *t);
-	/* delete partition */
-	int (*part_delete)(struct fdisk_context *cxt, int partnum);
-	/* get partition type */
-	struct fdisk_parttype *(*part_get_type)(struct fdisk_context *cxt, int partnum);
-	/* set partition type */
-	int (*part_set_type)(struct fdisk_context *cxt, int partnum, struct fdisk_parttype *t);
-	/* refresh alignment setting */
-	int (*reset_alignment)(struct fdisk_context *cxt);
-};
 
 /* alignment.c */
 extern sector_t fdisk_topology_get_first_lba(struct fdisk_context *cxt);

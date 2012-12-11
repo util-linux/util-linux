@@ -13,6 +13,17 @@
 #include "fdisk.h"
 #include "fdiskdoslabel.h"
 
+
+/*
+ * in-memory fdisk GPT stuff
+ */
+struct fdisk_dos_label {
+	struct fdisk_label	head;		/* generic part */
+};
+
+/*
+ * Partition types
+ */
 static struct fdisk_parttype dos_parttypes[] = {
 	#include "dos_part_types.h"
 };
@@ -934,19 +945,39 @@ static int dos_set_parttype(struct fdisk_context *cxt, int partnum,
 	return 0;
 }
 
-const struct fdisk_label dos_label =
+static const struct fdisk_label_operations dos_operations =
 {
-	.name = "dos",
-	.parttypes = dos_parttypes,
-	.nparttypes = ARRAY_SIZE(dos_parttypes),
-
-	.probe = dos_probe_label,
-	.write = dos_write_disklabel,
-	.verify = dos_verify_disklabel,
-	.create = dos_create_disklabel,
-	.part_add = dos_add_partition,
-	.part_delete = dos_delete_partition,
-	.part_get_type = dos_get_parttype,
-	.part_set_type = dos_set_parttype,
+	.probe		= dos_probe_label,
+	.write		= dos_write_disklabel,
+	.verify		= dos_verify_disklabel,
+	.create		= dos_create_disklabel,
+	.part_add	= dos_add_partition,
+	.part_delete	= dos_delete_partition,
+	.part_get_type	= dos_get_parttype,
+	.part_set_type	= dos_set_parttype,
 	.reset_alignment = dos_reset_alignment,
 };
+
+/*
+ * allocates DOS in-memory stuff
+ */
+struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt)
+{
+	struct fdisk_label *lb;
+	struct fdisk_dos_label *dos;
+
+	assert(cxt);
+
+	dos = calloc(1, sizeof(*dos));
+	if (!dos)
+		return NULL;
+
+	/* initialize generic part of the driver */
+	lb = (struct fdisk_label *) dos;
+	lb->name = "dos";
+	lb->op = &dos_operations;
+	lb->parttypes = dos_parttypes;
+	lb->nparttypes = ARRAY_SIZE(dos_parttypes);
+
+	return lb;
+}

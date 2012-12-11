@@ -26,6 +26,7 @@ extern "C" {
 #endif
 
 struct fdisk_context;
+struct fdisk_label;
 struct fdisk_parttype;
 
 /*
@@ -49,6 +50,9 @@ extern void fdisk_init_debug(int mask);
 extern struct fdisk_context *fdisk_new_context_from_filename(
 				const char *fname, int readonly);
 extern void fdisk_free_context(struct fdisk_context *cxt);
+
+extern struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt,
+				const char *name);
 
 /* parttype.c */
 extern struct fdisk_parttype *fdisk_get_parttype_from_code(struct fdisk_context *cxt,

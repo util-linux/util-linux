@@ -28,6 +28,14 @@
 
 static int     other_endian = 0;
 
+/*
+ * in-memory fdisk SUN stuff
+ */
+struct fdisk_sun_label {
+	struct fdisk_label	head;		/* generic part */
+};
+
+
 static struct fdisk_parttype sun_parttypes[] = {
 	{SUN_TAG_UNASSIGNED, N_("Unassigned")},
 	{SUN_TAG_BOOT, N_("Boot")},
@@ -684,19 +692,39 @@ static int sun_reset_alignment(struct fdisk_context *cxt)
 	return 0;
 }
 
-const struct fdisk_label sun_label =
+const struct fdisk_label_operations sun_operations =
 {
-	.name = "sun",
-	.parttypes = sun_parttypes,
-	.nparttypes = ARRAY_SIZE(sun_parttypes),
-
-	.probe = sun_probe_label,
-	.write = sun_write_disklabel,
-	.verify = sun_verify_disklabel,
-	.create = sun_create_disklabel,
-	.part_add = sun_add_partition,
-	.part_delete = sun_delete_partition,
-	.part_get_type = sun_get_parttype,
-	.part_set_type = sun_set_parttype,
-	.reset_alignment = sun_reset_alignment,
+	.probe		= sun_probe_label,
+	.write		= sun_write_disklabel,
+	.verify		= sun_verify_disklabel,
+	.create		= sun_create_disklabel,
+	.part_add	= sun_add_partition,
+	.part_delete	= sun_delete_partition,
+	.part_get_type	= sun_get_parttype,
+	.part_set_type	= sun_set_parttype,
+	.reset_alignment = sun_reset_alignment
 };
+
+/*
+ * allocates SUN label driver
+ */
+struct fdisk_label *fdisk_new_sun_label(struct fdisk_context *cxt)
+{
+	struct fdisk_label *lb;
+	struct fdisk_sun_label *sun;
+
+	assert(cxt);
+
+	sun = calloc(1, sizeof(*sun));
+	if (!sun)
+		return NULL;
+
+	/* initialize generic part of the driver */
+	lb = (struct fdisk_label *) sun;
+	lb->name = "sun";
+	lb->op = &sun_operations;
+	lb->parttypes = sun_parttypes;
+	lb->nparttypes = ARRAY_SIZE(sun_parttypes);
+
+	return lb;
+}

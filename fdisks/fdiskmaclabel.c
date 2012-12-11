@@ -16,6 +16,13 @@
 
 #define MAC_BITMASK 0xffff0000
 
+/*
+ * in-memory fdisk mac stuff
+ */
+struct fdisk_mac_label {
+	struct fdisk_label	head;		/* generic part */
+};
+
 
 static	int     other_endian = 0;
 static  short	volumes=1;
@@ -98,13 +105,31 @@ static int mac_add_partition(
 	return -ENOSYS;
 }
 
-const struct fdisk_label mac_label =
+static const struct fdisk_label_operations mac_operations =
 {
-	.name = "mac",
-	.probe = mac_probe_label,
-	.write = NULL,
-	.verify = NULL,
-	.create = NULL,
-	.part_add = mac_add_partition,
-	.part_delete = NULL,
+	.probe		= mac_probe_label,
+	.part_add	= mac_add_partition
 };
+
+
+/*
+ * allocates MAC label driver
+ */
+struct fdisk_label *fdisk_new_mac_label(struct fdisk_context *cxt)
+{
+	struct fdisk_label *lb;
+	struct fdisk_mac_label *mac;
+
+	assert(cxt);
+
+	mac = calloc(1, sizeof(*mac));
+	if (!mac)
+		return NULL;
+
+	/* initialize generic part of the driver */
+	lb = (struct fdisk_label *) mac;
+	lb->name = "mac";
+	lb->op = &mac_operations;
+
+	return lb;
+}

@@ -2,28 +2,6 @@
 #include "fdiskP.h"
 
 /*
- * Label probing functions.
- */
-extern const struct fdisk_label aix_label;
-extern const struct fdisk_label dos_label;
-extern const struct fdisk_label bsd_label;
-extern const struct fdisk_label mac_label;
-extern const struct fdisk_label sun_label;
-extern const struct fdisk_label sgi_label;
-extern const struct fdisk_label gpt_label;
-
-static const struct fdisk_label *labels[] =
-{
-	&gpt_label,
-	&dos_label,
-	&sun_label,
-	&sgi_label,
-	&aix_label,
-	&bsd_label,
-	&mac_label,
-};
-
-/*
  * Don't use this function derectly, use fdisk_new_context_from_filename()
  */
 int fdisk_probe_labels(struct fdisk_context *cxt)
@@ -32,11 +10,12 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
 
 	cxt->disklabel = FDISK_DISKLABEL_ANY;
 
-	for (i = 0; i < ARRAY_SIZE(labels); i++) {
-		if (!labels[i]->probe || labels[i]->probe(cxt) != 1)
+	for (i = 0; i < cxt->nlabels; i++) {
+		if (!cxt->labels[i]->op->probe ||
+		     cxt->labels[i]->op->probe(cxt) != 1)
 			continue;
 
-		cxt->label = labels[i];
+		cxt->label = cxt->labels[i];
 
 		DBG(LABEL, dbgprint("detected a %s label", cxt->label->name));
 		return 0;
@@ -81,10 +60,10 @@ int fdisk_write_disklabel(struct fdisk_context *cxt)
 {
 	if (!cxt || !cxt->label)
 		return -EINVAL;
-	if (!cxt->label->write)
+	if (!cxt->label->op->write)
 		return -ENOSYS;
 
-	return cxt->label->write(cxt);
+	return cxt->label->op->write(cxt);
 }
 
 /**
@@ -99,10 +78,10 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
 {
 	if (!cxt || !cxt->label)
 		return -EINVAL;
-	if (!cxt->label->verify)
+	if (!cxt->label->op->verify)
 		return -ENOSYS;
 
-	return cxt->label->verify(cxt);
+	return cxt->label->op->verify(cxt);
 }
 
 /**
@@ -120,11 +99,11 @@ int fdisk_add_partition(struct fdisk_context *cxt, int partnum,
 {
 	if (!cxt || !cxt->label)
 		return -EINVAL;
-	if (!cxt->label->part_add)
+	if (!cxt->label->op->part_add)
 		return -ENOSYS;
 
 	DBG(LABEL, dbgprint("adding new partition number %d", partnum));
-	cxt->label->part_add(cxt, partnum, t);
+	cxt->label->op->part_add(cxt, partnum, t);
 	return 0;
 }
 
@@ -141,12 +120,12 @@ int fdisk_delete_partition(struct fdisk_context *cxt, int partnum)
 {
 	if (!cxt || !cxt->label)
 		return -EINVAL;
-	if (!cxt->label->part_delete)
+	if (!cxt->label->op->part_delete)
 		return -ENOSYS;
 
 	DBG(LABEL, dbgprint("deleting %s partition number %d",
 				cxt->label->name, partnum));
-	return cxt->label->part_delete(cxt, partnum);
+	return cxt->label->op->part_delete(cxt, partnum);
 }
 
 /**
@@ -164,35 +143,24 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 	if (!cxt)
 		return -EINVAL;
 
-	cxt->label = NULL;
-
 	if (!name) { /* use default label creation */
 #ifdef __sparc__
-		cxt->label = &sun_label;
+		name = "sun";
 #else
-		cxt->label = &dos_label;
+		name = "dos";
 #endif
-	} else {
-		size_t i;
-
-		for (i = 0; i < ARRAY_SIZE(labels); i++) {
-			if (strcmp(name, labels[i]->name) != 0)
-				continue;
-
-			cxt->label = labels[i];
-			DBG(LABEL, dbgprint("changing to %s label\n", cxt->label->name));
-			break;
-		}
 	}
 
+	cxt->label = fdisk_context_get_label(cxt, name);
 	if (!cxt->label)
 		return -EINVAL;
-	if (!cxt->label->create)
+
+	DBG(LABEL, dbgprint("changing to %s label\n", cxt->label->name));
+	if (!cxt->label->op->create)
 		return -ENOSYS;
 
 	fdisk_reset_alignment(cxt);
-
-	return cxt->label->create(cxt);
+	return cxt->label->op->create(cxt);
 }
 
 /**
@@ -204,11 +172,11 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
  */
 struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int partnum)
 {
-	if (!cxt || !cxt->label || !cxt->label->part_get_type)
+	if (!cxt || !cxt->label || !cxt->label->op->part_get_type)
 		return NULL;
 
 	DBG(LABEL, dbgprint("partition: %d: get type", partnum));
-	return cxt->label->part_get_type(cxt, partnum);
+	return cxt->label->op->part_get_type(cxt, partnum);
 }
 
 /**
@@ -222,11 +190,11 @@ struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int p
 int fdisk_set_partition_type(struct fdisk_context *cxt, int partnum,
 			     struct fdisk_parttype *t)
 {
-	if (!cxt || !cxt->label || !cxt->label->part_set_type)
+	if (!cxt || !cxt->label || !cxt->label->op->part_set_type)
 		return -EINVAL;
 
 	DBG(LABEL, dbgprint("partition: %d: set type", partnum));
-	return cxt->label->part_set_type(cxt, partnum, t);
+	return cxt->label->op->part_set_type(cxt, partnum, t);
 }
 
 /**

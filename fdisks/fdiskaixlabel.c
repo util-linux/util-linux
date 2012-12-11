@@ -18,6 +18,14 @@ static	int     other_endian = 0;
 static  short	volumes=1;
 
 /*
+ * in-memory fdisk AIX stuff
+ */
+struct fdisk_aix_label {
+	struct fdisk_label	head;		/* generic part */
+};
+
+
+/*
  * only dealing with free blocks here
  */
 
@@ -80,13 +88,31 @@ static int aix_add_partition(
 	return -ENOSYS;
 }
 
-const struct fdisk_label aix_label =
+static const struct fdisk_label_operations aix_operations =
 {
-	.name = "aix",
-	.probe = aix_probe_label,
-	.write = NULL,
-	.verify = NULL,
-	.create = NULL,
-	.part_add = aix_add_partition,
-	.part_delete = NULL,
+	.probe		= aix_probe_label,
+	.part_add	= aix_add_partition
 };
+
+
+/*
+ * allocates AIX label driver
+ */
+struct fdisk_label *fdisk_new_aix_label(struct fdisk_context *cxt)
+{
+	struct fdisk_label *lb;
+	struct fdisk_aix_label *aix;
+
+	assert(cxt);
+
+	aix = calloc(1, sizeof(*aix));
+	if (!aix)
+		return NULL;
+
+	/* initialize generic part of the driver */
+	lb = (struct fdisk_label *) aix;
+	lb->name = "aix";
+	lb->op = &aix_operations;
+
+	return lb;
+}

@@ -62,6 +62,14 @@
 #include "fdiskbsdlabel.h"
 #include "fdiskdoslabel.h"
 
+/*
+ * in-memory fdisk BSD stuff
+ */
+struct fdisk_bsd_label {
+	struct fdisk_label	head;		/* generic part */
+};
+
+
 static int xbsd_delete_part (struct fdisk_context *cxt, int partnum);
 static void xbsd_edit_disklabel (void);
 static void xbsd_write_bootstrap (struct fdisk_context *cxt);
@@ -879,18 +887,38 @@ static int xbsd_set_parttype(struct fdisk_context *cxt, int partnum,
 	return 0;
 }
 
-const struct fdisk_label bsd_label =
+static const struct fdisk_label_operations bsd_operations =
 {
-	.name = "bsd",
-	.parttypes = xbsd_fstypes,
-	.nparttypes = ARRAY_SIZE(xbsd_fstypes),
-
-	.probe = osf_probe_label,
-	.write = xbsd_write_disklabel,
-	.verify = NULL,
-	.create = xbsd_create_disklabel,
-	.part_add = xbsd_add_part,
-	.part_delete = xbsd_delete_part,
-	.part_get_type = xbsd_get_parttype,
-	.part_set_type = xbsd_set_parttype,
+	.probe		= osf_probe_label,
+	.write		= xbsd_write_disklabel,
+	.create		= xbsd_create_disklabel,
+	.part_add	= xbsd_add_part,
+	.part_delete	= xbsd_delete_part,
+	.part_get_type	= xbsd_get_parttype,
+	.part_set_type	= xbsd_set_parttype
 };
+
+
+/*
+ * allocates BSD label driver
+ */
+struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt)
+{
+	struct fdisk_label *lb;
+	struct fdisk_bsd_label *bsd;
+
+	assert(cxt);
+
+	bsd = calloc(1, sizeof(*bsd));
+	if (!bsd)
+		return NULL;
+
+	/* initialize generic part of the driver */
+	lb = (struct fdisk_label *) bsd;
+	lb->name = "bsd";
+	lb->op = &bsd_operations;
+	lb->parttypes = xbsd_fstypes;
+	lb->nparttypes = ARRAY_SIZE(xbsd_fstypes);
+
+	return lb;
+}

@@ -45,6 +45,14 @@
 #include "strutils.h"
 #include "all-io.h"
 
+/*
+ * in-memory fdisk GPT stuff
+ */
+struct fdisk_gpt_label {
+	struct fdisk_label	head;		/* generic part */
+};
+
+
 #define GPT_HEADER_SIGNATURE 0x5452415020494645LL /* EFI PART */
 #define GPT_HEADER_REVISION_V1_02 0x00010200
 #define GPT_HEADER_REVISION_V1_00 0x00010000
@@ -1655,18 +1663,38 @@ static int gpt_set_partition_type(struct fdisk_context *cxt, int i,
 	return 0;
 }
 
-const struct fdisk_label gpt_label =
+static const struct fdisk_label_operations gpt_operations =
 {
-	.name = "gpt",
-	.parttypes = gpt_parttypes,
-	.nparttypes = ARRAY_SIZE(gpt_parttypes),
-
-	.probe = gpt_probe_label,
-	.write = gpt_write_disklabel,
-	.verify = gpt_verify_disklabel,
-	.create = gpt_create_disklabel,
-	.part_add = gpt_add_partition,
-	.part_delete = gpt_delete_partition,
-	.part_get_type = gpt_get_partition_type,
-	.part_set_type = gpt_set_partition_type
+	.probe		= gpt_probe_label,
+	.write		= gpt_write_disklabel,
+	.verify		= gpt_verify_disklabel,
+	.create		= gpt_create_disklabel,
+	.part_add	= gpt_add_partition,
+	.part_delete	= gpt_delete_partition,
+	.part_get_type	= gpt_get_partition_type,
+	.part_set_type	= gpt_set_partition_type
 };
+
+/*
+ * allocates GPT in-memory stuff
+ */
+struct fdisk_label *fdisk_new_gpt_label(struct fdisk_context *cxt)
+{
+	struct fdisk_label *lb;
+	struct fdisk_gpt_label *gpt;
+
+	assert(cxt);
+
+	gpt = calloc(1, sizeof(*gpt));
+	if (!gpt)
+		return NULL;
+
+	/* initialize generic part of the driver */
+	lb = (struct fdisk_label *) gpt;
+	lb->name = "gpt";
+	lb->op = &gpt_operations;
+	lb->parttypes = gpt_parttypes;
+	lb->nparttypes = ARRAY_SIZE(gpt_parttypes);
+
+	return lb;
+}

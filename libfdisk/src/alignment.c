@@ -368,8 +368,8 @@ int fdisk_reset_alignment(struct fdisk_context *cxt)
 	cxt->first_lba = fdisk_topology_get_first_lba(cxt);
 
 	/* overwrite default by label stuff */
-	if (cxt->label && cxt->label->reset_alignment)
-		rc = cxt->label->reset_alignment(cxt);
+	if (cxt->label && cxt->label->op->reset_alignment)
+		rc = cxt->label->op->reset_alignment(cxt);
 
 	DBG(LABEL, dbgprint("%s alignment reseted to: "
 			    "first LBA=%ju, grain=%lu [rc=%d]",
