@@ -370,6 +370,7 @@ static int append_str(char **res, size_t *sz, const char *a, const char *b)
 	str = realloc(str, len + 1);
 	if (!str) {
 		free(*res);
+		*res = NULL;
 		return -1;
 	}
 
