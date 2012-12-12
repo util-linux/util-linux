@@ -810,6 +810,7 @@ int mnt_open_uniq_filename(const char *filename, char **name)
 {
 	int rc, fd;
 	char *n;
+	mode_t oldmode;
 
 	assert(filename);
 
@@ -820,7 +821,14 @@ int mnt_open_uniq_filename(const char *filename, char **name)
 	if (rc <= 0)
 		return -errno;
 
+	/* This is for very old glibc and for compatibility with Posix where is
+	 * nothing about mkstemp() mode. All sane glibc use secure mode (0600).
+	 */
+	oldmode = umask(S_IRGRP|S_IWGRP|S_IXGRP
+			S_IROTH|S_IWOTH|S_IXOTH)
 	fd = mkstemp(n);
+	umask(oldmask);
+
 	if (fd >= 0 && name)
 		*name = n;
 	else
