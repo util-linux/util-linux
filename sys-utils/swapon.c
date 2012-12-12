@@ -141,21 +141,20 @@ static void add_tt_line(struct tt *tt, struct libmnt_fs *fs, int bytes)
 
 	for (i = 0; i < ncolumns; i++) {
 		char *str = NULL;
-		int rc = 0;
 		off_t size;
 
 		switch (get_column_id(i)) {
 		case COL_PATH:
-			rc = xasprintf(&str, "%s", mnt_fs_get_source(fs));
+			xasprintf(&str, "%s", mnt_fs_get_source(fs));
 			break;
 		case COL_TYPE:
-			rc = xasprintf(&str, "%s", mnt_fs_get_swaptype(fs));
+			xasprintf(&str, "%s", mnt_fs_get_swaptype(fs));
 			break;
 		case COL_SIZE:
 			size = mnt_fs_get_size(fs);
 			size *= 1024;	/* convert to bytes */
 			if (bytes)
-				rc = xasprintf(&str, "%jd", size);
+				xasprintf(&str, "%jd", size);
 			else
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER, size);
 			break;
@@ -163,18 +162,18 @@ static void add_tt_line(struct tt *tt, struct libmnt_fs *fs, int bytes)
 			size = mnt_fs_get_usedsize(fs);
 			size *= 1024;	/* convert to bytes */
 			if (bytes)
-				rc = xasprintf(&str, "%jd", size);
+				xasprintf(&str, "%jd", size);
 			else
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER, size);
 			break;
 		case COL_PRIO:
-			rc = xasprintf(&str, "%d", mnt_fs_get_priority(fs));
+			xasprintf(&str, "%d", mnt_fs_get_priority(fs));
 			break;
 		default:
 			break;
 		}
 
-		if (rc || str)
+		if (str)
 			tt_line_set_data(line, i, str);
 	}
 	return;
