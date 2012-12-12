@@ -212,11 +212,11 @@ static int display_summary(void)
 static int show_table(int tt_flags, int bytes)
 {
 	struct libmnt_table *st = get_swaps();
-	struct libmnt_iter *itr;
+	struct libmnt_iter *itr = NULL;
 	struct libmnt_fs *fs;
 
 	int i, rc = 0;
-	struct tt *tt;
+	struct tt *tt = NULL;
 
 	if (!st)
 		return -1;
@@ -228,7 +228,7 @@ static int show_table(int tt_flags, int bytes)
 	tt = tt_new_table(tt_flags);
 	if (!tt) {
 		warn(_("failed to initialize output table"));
-		return -1;
+		goto done;
 	}
 
 	for (i = 0; i < ncolumns; i++) {
@@ -244,9 +244,9 @@ static int show_table(int tt_flags, int bytes)
 	while (mnt_table_next_fs(st, itr, &fs) == 0)
 		add_tt_line(tt, fs, bytes);
 
-	mnt_free_iter(itr);
 	tt_print_table(tt);
  done:
+	mnt_free_iter(itr);
 	tt_free_table(tt);
 	return rc;
 }
