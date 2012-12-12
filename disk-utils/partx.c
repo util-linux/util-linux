@@ -446,29 +446,25 @@ static void add_tt_line(struct tt *tt, blkid_partition par)
 
 	for (i = 0; i < ncolumns; i++) {
 		char *str = NULL;
-		int rc = 0;
 
 		switch (get_column_id(i)) {
 		case COL_PARTNO:
-			rc = xasprintf(&str, "%d",
-					blkid_partition_get_partno(par));
+			xasprintf(&str, "%d", blkid_partition_get_partno(par));
 			break;
 		case COL_START:
-			rc = xasprintf(&str, "%ju",
-					blkid_partition_get_start(par));
+			xasprintf(&str, "%ju", blkid_partition_get_start(par));
 			break;
 		case COL_END:
-			rc = xasprintf(&str, "%ju",
+			xasprintf(&str, "%ju",
 					blkid_partition_get_start(par) +
 					blkid_partition_get_size(par) - 1);
 			break;
 		case COL_SECTORS:
-			rc = xasprintf(&str, "%ju",
-					blkid_partition_get_size(par));
+			xasprintf(&str, "%ju", blkid_partition_get_size(par));
 			break;
 		case COL_SIZE:
 			if (partx_flags & FL_BYTES)
-				rc = xasprintf(&str, "%ju", (uintmax_t)
+				xasprintf(&str, "%ju", (uintmax_t)
 					blkid_partition_get_size(par) << 9);
 			else
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER,
@@ -489,11 +485,11 @@ static void add_tt_line(struct tt *tt, blkid_partition par)
 			if (str)
 				str = xstrdup(str);
 			else
-				rc = xasprintf(&str, "0x%x",
+				xasprintf(&str, "0x%x",
 					blkid_partition_get_type(par));
 			break;
 		case COL_FLAGS:
-			rc = xasprintf(&str, "0x%llx", blkid_partition_get_flags(par));
+			xasprintf(&str, "0x%llx", blkid_partition_get_flags(par));
 			break;
 		case COL_SCHEME:
 		{
@@ -509,7 +505,7 @@ static void add_tt_line(struct tt *tt, blkid_partition par)
 			break;
 		}
 
-		if (rc || str)
+		if (str)
 			tt_line_set_data(line, i, str);
 	}
 }
