@@ -518,7 +518,8 @@ static void log_lastlog(struct login_context *cxt)
 	if (fd < 0)
 		return;
 
-	lseek(fd, (off_t) cxt->pwd->pw_uid * sizeof(ll), SEEK_SET);
+	if (lseek(fd, (off_t) cxt->pwd->pw_uid * sizeof(ll), SEEK_SET) == -1)
+		return;
 
 	/*
 	 * Print last log message
