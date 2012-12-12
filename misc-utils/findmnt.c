@@ -398,6 +398,7 @@ static const char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 static const char *get_data(struct libmnt_fs *fs, int num)
 {
 	const char *str = NULL;
+	char *tmp;
 	int col_id = get_column_id(num);
 
 	switch (col_id) {
@@ -417,9 +418,8 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 		}
 		if (root && str && !(flags & FL_NOFSROOT) && strcmp(root, "/")) {
 			char *tmp;
-
-			if (xasprintf(&tmp, "%s[%s]", str, root) > 0)
-				str = tmp;
+			xasprintf(&tmp, "%s[%s]", str, root);
+			str = tmp;
 		}
 		break;
 	}
@@ -454,18 +454,14 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 	case COL_MAJMIN:
 	{
 		dev_t devno = mnt_fs_get_devno(fs);
-		if (devno) {
-			char *tmp;
-			int rc = 0;
-			if ((tt_flags & TT_FL_RAW) || (tt_flags & TT_FL_EXPORT))
-				rc = xasprintf(&tmp, "%u:%u",
-					      major(devno), minor(devno));
-			else
-				rc = xasprintf(&tmp, "%3u:%-3u",
-					      major(devno), minor(devno));
-			if (rc)
-				str = tmp;
-		}
+		if (!devno)
+			break;
+
+		if ((tt_flags & TT_FL_RAW) || (tt_flags & TT_FL_EXPORT))
+			xasprintf(&tmp, "%u:%u", major(devno), minor(devno));
+		else
+			xasprintf(&tmp, "%3u:%-3u", major(devno), minor(devno));
+		str = tmp;
 		break;
 	}
 	case COL_SIZE:
@@ -479,9 +475,8 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 		break;
 	case COL_TID:
 		if (mnt_fs_get_tid(fs)) {
-			char *tmp;
-			if (xasprintf(&tmp, "%d", mnt_fs_get_tid(fs)) > 0)
-				str = tmp;
+			xasprintf(&tmp, "%d", mnt_fs_get_tid(fs));
+			str = tmp;
 		}
 		break;
 	default:
