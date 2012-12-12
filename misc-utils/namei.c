@@ -123,8 +123,8 @@ add_id(struct idcache **ic, char *name, unsigned long int id, int *width)
 	/* note, we ignore names with non-printable widechars */
 	if (w > 0)
 		nc->name = xstrdup(name);
-	else if (xasprintf(&nc->name, "%lu", id) == -1)
-		nc->name = NULL;
+	else
+		xasprintf(&nc->name, "%lu", id);
 
 	for (x = *ic; x && x->next; x = x->next);
 
