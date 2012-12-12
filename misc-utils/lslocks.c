@@ -394,41 +394,40 @@ static void add_tt_line(struct tt *tt, struct lock *l)
 
 	for (i = 0; i < ncolumns; i++) {
 		char *str = NULL;
-		int rc = 0;
 
 		switch (get_column_id(i)) {
 		case COL_SRC:
-			rc = xasprintf(&str, "%s", l->cmdname ? l->cmdname : notfnd);
+			xasprintf(&str, "%s", l->cmdname ? l->cmdname : notfnd);
 			break;
 		case COL_PID:
-			rc = xasprintf(&str, "%d", l->pid);
+			xasprintf(&str, "%d", l->pid);
 			break;
 		case COL_TYPE:
-			rc = xasprintf(&str, "%s", l->type);
+			xasprintf(&str, "%s", l->type);
 			break;
 		case COL_SIZE:
-			rc = xasprintf(&str, "%s", l->size);
+			xasprintf(&str, "%s", l->size);
 			break;
 		case COL_MODE:
-			rc = xasprintf(&str, "%s", l->mode);
+			xasprintf(&str, "%s", l->mode);
 			break;
 		case COL_M:
-			rc = xasprintf(&str, "%d", l->mandatory);
+			xasprintf(&str, "%d", l->mandatory);
 			break;
 		case COL_START:
-			rc = xasprintf(&str, "%ld", l->start);
+			xasprintf(&str, "%ld", l->start);
 			break;
 		case COL_END:
-			rc = xasprintf(&str, "%ld", l->end);
+			xasprintf(&str, "%ld", l->end);
 			break;
 		case COL_PATH:
-			rc = xasprintf(&str, "%s", l->path ? l->path : notfnd);
+			xasprintf(&str, "%s", l->path ? l->path : notfnd);
 			break;
 		default:
 			break;
 		}
 
-		if (rc || str)
+		if (str)
 			tt_line_set_data(line, i, str);
 	}
 }
