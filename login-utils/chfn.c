@@ -165,22 +165,22 @@ int main(int argc, char **argv)
 
 		retcode = pam_start("chfn", oldf.username, &conv, &pamh);
 		if (pam_fail_check(pamh, retcode))
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 
 		retcode = pam_authenticate(pamh, 0);
 		if (pam_fail_check(pamh, retcode))
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 
 		retcode = pam_acct_mgmt(pamh, 0);
 		if (retcode == PAM_NEW_AUTHTOK_REQD)
 			retcode =
 			    pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
 		if (pam_fail_check(pamh, retcode))
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 
 		retcode = pam_setcred(pamh, 0);
 		if (pam_fail_check(pamh, retcode))
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 
 		pam_end(pamh, 0);
 		/* no need to establish a session; this isn't a
