@@ -225,23 +225,24 @@ static void add_tt_line(struct tt *tt, struct prlimit *l)
 
 	for (i = 0; i < ncolumns; i++) {
 		char *str = NULL;
-		int rc = 0;
 
 		switch (get_column_id(i)) {
 		case COL_RES:
-			rc = xasprintf(&str, "%s", l->desc->name);
+			xasprintf(&str, "%s", l->desc->name);
 			break;
 		case COL_HELP:
-			rc = xasprintf(&str, "%s", l->desc->help);
+			xasprintf(&str, "%s", l->desc->help);
 			break;
 		case COL_SOFT:
-			rc = l->rlim.rlim_cur == RLIM_INFINITY ?
-				xasprintf(&str, "%s", "unlimited") :
+			if (l->rlim.rlim_cur == RLIM_INFINITY)
+				xasprintf(&str, "%s", "unlimited");
+			else
 				xasprintf(&str, "%llu", (unsigned long long) l->rlim.rlim_cur);
 			break;
 		case COL_HARD:
-			rc = l->rlim.rlim_max == RLIM_INFINITY ?
-				xasprintf(&str, "%s", "unlimited") :
+			if (l->rlim.rlim_max == RLIM_INFINITY)
+				xasprintf(&str, "%s", "unlimited");
+			else
 				xasprintf(&str, "%llu", (unsigned long long) l->rlim.rlim_max);
 			break;
 		case COL_UNITS:
@@ -251,7 +252,7 @@ static void add_tt_line(struct tt *tt, struct prlimit *l)
 			break;
 		}
 
-		if (rc || str)
+		if (str)
 			tt_line_set_data(line, i, str);
 	}
 }
