@@ -155,22 +155,22 @@ int main(int argc, char **argv)
 
 		retcode = pam_start("chsh", pw->pw_name, &conv, &pamh);
 		if (pam_fail_check(pamh, retcode))
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 
 		retcode = pam_authenticate(pamh, 0);
 		if (pam_fail_check(pamh, retcode))
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 
 		retcode = pam_acct_mgmt(pamh, 0);
 		if (retcode == PAM_NEW_AUTHTOK_REQD)
 			retcode =
 			    pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
 		if (pam_fail_check(pamh, retcode))
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 
 		retcode = pam_setcred(pamh, 0);
 		if (pam_fail_check(pamh, retcode))
-			exit(EXIT_FAILURE);
+			return EXIT_FAILURE;
 
 		pam_end(pamh, 0);
 		/* no need to establish a session; this isn't a
@@ -190,11 +190,10 @@ int main(int argc, char **argv)
 	if (strcmp(oldshell, shell) == 0)
 		errx(EXIT_SUCCESS, _("Shell not changed."));
 	pw->pw_shell = shell;
-	if (setpwnam(pw) < 0) {
-		warn(_("setpwnam failed\n"
-		       "Shell *NOT* changed.  Try again later."));
-		return EXIT_FAILURE;
-	}
+	if (setpwnam(pw) < 0)
+		err(EXIT_FAILURE, _("setpwnam failed\n"
+			"Shell *NOT* changed.  Try again later."));
+
 	printf(_("Shell changed.\n"));
 	return EXIT_SUCCESS;
 }
