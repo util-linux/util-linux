@@ -14,32 +14,50 @@ PAST MAINTAINERS:
 
 AUTHORS (merged projects & commands):
 
+      blkdiscard:      Lukas Czerner <lczerner@redhat.com>
       fallocate:       Eric Sandeen <sandeen@redhat.com>
                        Karel Zak <kzak@redhat.com>
                        Matěj Cepl <mcepl@redhat.com>
       findmnt:         Karel Zak <kzak@redhat.com>
       flock:           H. Peter Anvin <hpa@zytor.com>
+      fsck:            [merged from e2fsprogs]
+                       Theodore Ts'o <tytso@mit.edu>
       fstrim:          Lukas Czerner <lczerner@redhat.com>
       fsfreeze:        Hajime Taira <htaira@redhat.com>
       getopt:          Frodo Looijaard <frodol@dds.nl>
       hwclock:         Bryan Henderson <bryanh@giraffe-data.com>
       ipcmk:           Hayden James <hayden.james@gmail.com>
       ldattach:        Tilman Schmidt <tilman@imap.cc>
-      libblkid:        Theodore Ts'o <tytso@mit.edu>
+      libblkid:        [merged from e2fsprogs]
+                       Theodore Ts'o <tytso@mit.edu>
       libmount:        Karel Zak <kzak@redhat.com>
       libuuid:         Theodore Ts'o <tytso@mit.edu>
       lscpu:           Cai Qian <qcai@redhat.com>
       lsblk:           Milan Broz <mbroz@redhat.com>
                        Karel Zak <kzak@redhat.com>
+      lsloscks:        Davidlohr Bueso <dave@gnu.org>
+      mountpoint:      Karel Zak <kzak@redhat.com>
+      pslimit:         Davidlohr Bueso <dave@gnu.org>
+      runuser:         [derivated from coreutils su(1)]
+                       Karel Zak <kzak@redhat.com>
+      resizepart:      Vivek Goyal <vgoyal@redhat.com>
       rtcwake:         David Brownell <david-b@pacbell.net>
                        Bernhard Walle <bwalle@suse.de>
       schedutils:      Robert Love <rlove@rlove.org>
       setarch:         Elliot Lee <sopwith@redhat.com>
                        Jindrich Novy <jnovy@redhat.com>
       simpleinit:      Richard Gooch <rgooch@atnf.csiro.au>
+      su:              [merged from coreutils]
+                       Free Software Foundation, Inc.
+                       SUSE Linux Products GmbH
+      sulogin:         [merged from sysvinit]
+                       Miquel van Smoorenburg
       switch_root:     Peter Jones <pjones@redhat.com>
                        Jeremy Katz <katzj@redhat.com>
       unshare:         Mikhail Gusarov <dottedmag@dottedmag.net>
+      utmpdump:        [merged from sysvinit]
+                       Danek Duvall <duvall@alumni.princeton.edu>
+                       Miquel van Smoorenburg <miquels@cistron.nl>
       wipefs:          Karel Zak <kzak@redhat.com>
       swaplabel:       Jason Borden <jborden@bluehost.com>
                        Karel Zak <kzak@redhat.com>
