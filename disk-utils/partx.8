@@ -8,9 +8,9 @@
 partx \- tell the Linux kernel about the presence and numbering of
 on-disk partitions
 .SH SYNOPSIS
-partx [\-a|\-d|\-s] [\-t TYPE] [\-n M:N] [\-] disk
+partx [\-a|\-d|\-s|\-u] [\-t TYPE] [\-n M:N] [\-] disk
 .br
-partx [\-a|\-d|\-s] [\-t TYPE] partition [disk]
+partx [\-a|\-d|\-s|\-u] [\-t TYPE] partition [disk]
 .SH DESCRIPTION
 Given a device or disk-image,
 .B partx
@@ -43,6 +43,8 @@ Add the specified partitions, or read the disk and add all partitions.
 Print the SIZE column in bytes rather than in human-readable format.
 .IP "\fB\-d\fR, \fB\-\-delete\fP"
 Delete the specified partitions or all partitions.
+.IP "\fB\-u\fR, \fB\-\-update\fP"
+Update the specified partitions.
 .IP "\fB\-g\fR, \fB\-\-noheadings\fP"
 Do not print a header line.
 .IP "\fB\-h\fR, \fB\-\-help\fP"
