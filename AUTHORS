@@ -35,7 +35,7 @@ AUTHORS (merged projects & commands):
       lscpu:           Cai Qian <qcai@redhat.com>
       lsblk:           Milan Broz <mbroz@redhat.com>
                        Karel Zak <kzak@redhat.com>
-      lsloscks:        Davidlohr Bueso <dave@gnu.org>
+      lslocks:         Davidlohr Bueso <dave@gnu.org>
       mountpoint:      Karel Zak <kzak@redhat.com>
       pslimit:         Davidlohr Bueso <dave@gnu.org>
       runuser:         [derivated from coreutils su(1)]
