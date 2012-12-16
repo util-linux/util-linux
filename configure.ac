@@ -671,6 +671,7 @@ AC_ARG_ENABLE([most-builds],
 if test "x$enable_most_builds" = xyes; then
   enable_arch=check
   enable_elvtune=check
+  enable_tunelp=yes
   enable_last=yes
   enable_line=yes
   enable_mesg=yes
@@ -987,6 +988,15 @@ AC_ARG_ENABLE([elvtune],
 UL_BUILD_INIT([elvtune])
 UL_REQUIRES_LINUX([elvtune])
 AM_CONDITIONAL(BUILD_ELVTUNE, test "x$build_elvtune" = xyes)
+
+
+AC_ARG_ENABLE([tunelp],
+  AS_HELP_STRING([--enable-tunelp], [build tunelp]),
+  [], enable_tunelp=no
+)
+UL_BUILD_INIT([tunelp])
+UL_REQUIRES_LINUX([tunelp])
+AM_CONDITIONAL(BUILD_TUNELP, test "x$build_tunelp" = xyes)
 
 
 AC_ARG_ENABLE([kill],
