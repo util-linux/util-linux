@@ -25,11 +25,14 @@
 
 #include "ipcutils.h"
 
-#define LIMITS 1
-#define STATUS 2
-#define CREATOR 3
-#define TIME 4
-#define PID 5
+enum output_formats {
+	NOTSPECIFIED,
+	LIMITS,
+	STATUS,
+	CREATOR,
+	TIME,
+	PID
+};
 
 static void do_shm (char format);
 static void print_shm (int id);
@@ -68,7 +71,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 int main (int argc, char **argv)
 {
 	int opt, msg = 0, sem = 0, shm = 0, id=0, print=0;
-	char format = 0;
+	char format = NOTSPECIFIED;
 	static const struct option longopts[] = {
 		{"id", required_argument, NULL, 'i'},
 		{"shmems", no_argument, NULL, 'm'},
