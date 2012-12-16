@@ -79,14 +79,10 @@ Force a filesystem check even if the filesystem was marked as valid (this
 marking is done by the kernel when the filesystem is unmounted).
 .SH "SEE ALSO"
 .BR fsck (8),
-.BR fsck.ext (8),
 .BR fsck.ext2 (8),
-.BR fsck.xiafs (8),
 .BR mkfs (8),
 .BR mkfs.minix (8),
-.BR mkfs.ext (8),
 .BR mkfs.ext2 (8),
-.BR mkfs.xiafs (8),
 .BR reboot (8)
 .SH DIAGNOSTICS
 There are numerous diagnostic messages.  The ones mentioned here are the
@@ -109,6 +105,8 @@ Filesystem errors corrected, system should be rebooted if filesystem was
 mounted
 .IP 4
 Filesystem errors left uncorrected
+.IP 7
+Combination of exit codes 3 and 4
 .IP 8
 Operational error
 .IP 16
