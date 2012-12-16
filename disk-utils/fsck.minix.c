@@ -168,7 +168,7 @@ static char *zone_map;
 static void
 reset(void) {
 	if (termios_set)
-		tcsetattr(0, TCSANOW, &termios);
+		tcsetattr(STDIN_FILENO, TCSANOW, &termios);
 }
 
 static void
@@ -294,7 +294,7 @@ check_mount(void) {
 		return;
 
 	printf(_("%s is mounted.	 "), device_name);
-	if (isatty(0) && isatty(1))
+	if (isatty(STDIN_FILENO) && isatty(STDOUT_FILENO))
 		cont = ask(_("Do you really want to continue"), 0);
 	else
 		cont = 0;
@@ -1238,7 +1238,7 @@ int
 main(int argc, char **argv) {
 	struct termios tmp;
 	int count;
-	int retcode = 0;
+	int retcode = FSCK_EX_OK;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -1297,7 +1297,7 @@ main(int argc, char **argv) {
 		usage();
 	check_mount();		/* trying to check a mounted filesystem? */
 	if (repair && !automatic) {
-		if (!isatty(0) || !isatty(1))
+		if (!isatty(STDIN_FILENO) || !isatty(STDOUT_FILENO))
 			die(_("need terminal for interactive repairs"));
 	}
 	IN = open(device_name, repair ? O_RDWR : O_RDONLY);
@@ -1330,10 +1330,10 @@ main(int argc, char **argv) {
 	signal(SIGTERM, fatalsig);
 
 	if (repair && !automatic) {
-		tcgetattr(0, &termios);
+		tcgetattr(STDIN_FILENO, &termios);
 		tmp = termios;
 		tmp.c_lflag &= ~(ICANON | ECHO);
-		tcsetattr(0, TCSANOW, &tmp);
+		tcsetattr(STDIN_FILENO, TCSANOW, &tmp);
 		termios_set = 1;
 	}
 
@@ -1381,7 +1381,7 @@ main(int argc, char **argv) {
 		write_super_block();
 
 	if (repair && !automatic)
-		tcsetattr(0, TCSANOW, &termios);
+		tcsetattr(STDIN_FILENO, TCSANOW, &termios);
 
 	if (changed)
 		retcode += 3;

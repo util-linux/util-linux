@@ -666,7 +666,7 @@ int main(int argc, char ** argv) {
 	if (argc == 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
 		printf(_("%s (%s)\n"), program_name, PACKAGE_STRING);
-		exit(0);
+		exit(MKFS_EX_OK);
 	}
 
 	if (INODE_SIZE * MINIX_INODES_PER_BLOCK != MINIX_BLOCK_SIZE)
@@ -806,5 +806,5 @@ int main(int argc, char ** argv) {
 	write_tables();
 	close(DEV);
 
-	return 0;
+	return MKFS_EX_OK;
 }
