@@ -188,7 +188,7 @@ static void super_set_state(void)
 static void write_tables(void) {
 	unsigned long imaps = get_nimaps();
 	unsigned long zmaps = get_nzmaps();
-	unsigned long buffsz = get_inode_buffer_size();
+	size_t buffsz = get_inode_buffer_size();
 
 	/* Mark the super block valid. */
 	super_set_state();
@@ -552,8 +552,8 @@ static void setup_tables(void) {
  * Perform a test of a block; return the number of
  * blocks readable/writeable.
  */
-static long do_check(char * buffer, int try, unsigned int current_block) {
-	long got;
+static size_t do_check(char * buffer, int try, unsigned int current_block) {
+	ssize_t got;
 	
 	/* Seek to the correct loc. */
 	if (lseek(DEV, current_block * MINIX_BLOCK_SIZE, SEEK_SET) !=
@@ -587,7 +587,7 @@ static void alarm_intr(int alnum __attribute__ ((__unused__))) {
 }
 
 static void check_blocks(void) {
-	int try,got;
+	size_t try, got;
 	static char buffer[MINIX_BLOCK_SIZE * TEST_BUFFER_BLOCKS];
 	unsigned long zones = get_nzones();
 	unsigned long first_zone = get_first_zone();

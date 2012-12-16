@@ -584,9 +584,9 @@ read_superblock(void) {
 static void
 read_tables(void) {
 	unsigned long inodes = get_ninodes();
-	unsigned long buffsz = get_inode_buffer_size();
-	unsigned long norm_first_zone = first_zone_data();
-	unsigned long first_zone = get_first_zone();
+	size_t buffsz = get_inode_buffer_size();
+	off_t norm_first_zone = first_zone_data();
+	off_t first_zone = get_first_zone();
 	unsigned long zones = get_nzones();
 	unsigned long imaps = get_nimaps();
 	unsigned long zmaps = get_nzmaps();
@@ -999,7 +999,7 @@ static void
 check_file2(struct minix2_inode *dir, unsigned int offset) {
 	static char blk[MINIX_BLOCK_SIZE];
 	struct minix2_inode *inode;
-	unsigned long ino;
+	ino_t ino;
 	char *name;
 	int block;
 
@@ -1064,7 +1064,7 @@ check_file2(struct minix2_inode *dir, unsigned int offset) {
 static void
 recursive_check(unsigned int ino) {
 	struct minix_inode *dir;
-	unsigned int offset;
+	off_t offset;
 
 	dir = Inode + ino;
 	if (!S_ISDIR(dir->i_mode))
@@ -1081,7 +1081,7 @@ recursive_check(unsigned int ino) {
 static void
 recursive_check2(unsigned int ino) {
 	struct minix2_inode *dir;
-	unsigned int offset;
+	off_t offset;
 
 	dir = Inode2 + ino;
 	if (!S_ISDIR(dir->i_mode))
