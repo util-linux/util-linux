@@ -32,6 +32,14 @@
 
 #define ISODCL(from, to) (to - from + 1)
 
+static int is_iso(int fd)
+{
+	char label[8];
+	if (pread(fd, &label, 8, 0x8000) == -1)
+		return 1;
+	return memcmp(&label, &"\1CD001\1", 8);
+}
+
 static int isonum_721(unsigned char *p)
 {
 	return ((p[0] & 0xff)
@@ -124,6 +132,8 @@ static void isosize(char *filenamep, int xflag, long divisor)
 
 	if ((fd = open(filenamep, O_RDONLY)) < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), filenamep);
+	if (is_iso(fd))
+		warnx(_("%s: might not be iso file system"), filenamep);
 
 	if (lseek(fd, 16 << 11, 0) == (off_t) - 1)
 		err(EXIT_FAILURE, _("seek error on %s"), filenamep);
