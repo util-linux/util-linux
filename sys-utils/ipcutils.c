@@ -7,6 +7,7 @@
 #include "path.h"
 #include "pathnames.h"
 #include "ipcutils.h"
+#include "strutils.h"
 
 #ifndef SEMVMX
 # define SEMVMX  32767	/* <= 32767 semaphore maximum value */
@@ -503,4 +504,43 @@ void ipc_print_perms(FILE *f, struct ipc_stat *is)
 		fprintf(f, " %-10s\n", gr->gr_name);
 	else
 		fprintf(f, " %-10u\n", is->gid);
+}
+
+void ipc_print_size(int unit, char *msg, size_t size, const char *end,
+		    int width)
+{
+	char format[16];
+
+	if (!msg)
+		/* NULL */ ;
+	else if (msg[strlen(msg) - 1] == '=')
+		printf("%s", msg);
+	else if (unit == IPC_UNIT_BYTES)
+		printf(_("%s (bytes) = "), msg);
+	else if (unit == IPC_UNIT_KB)
+		printf(_("%s (kbytes) = "), msg);
+	else
+		printf("%s = ", msg);
+
+	switch (unit) {
+	case IPC_UNIT_DEFAULT:
+	case IPC_UNIT_BYTES:
+		sprintf(format, "%%%dzu", width);
+		printf(format, size);
+		break;
+	case IPC_UNIT_KB:
+		sprintf(format, "%%%dzu", width);
+		printf(format, size / 1024);
+		break;
+	case IPC_UNIT_HUMAN:
+		sprintf(format, "%%%ds", width);
+		printf(format, size_to_human_string(SIZE_SUFFIX_1LETTER, size));
+		break;
+	default:
+		/* impossible occurred */
+		abort();
+	}
+
+	if (end)
+		printf("%s", end);
 }

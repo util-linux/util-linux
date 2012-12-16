@@ -78,6 +78,14 @@ union semun {
 # define KEY key
 #endif
 
+/* Size printing in ipcs is using these. */
+enum {
+	IPC_UNIT_DEFAULT,
+	IPC_UNIT_BYTES,
+	IPC_UNIT_KB,
+	IPC_UNIT_HUMAN
+};
+
 struct ipc_limits {
 	uint64_t	shmmni;		/* max number of segments */
 	uint64_t	shmmax;		/* max segment size */
@@ -110,6 +118,7 @@ struct ipc_stat {
 };
 
 extern void ipc_print_perms(FILE *f, struct ipc_stat *is);
+extern void ipc_print_size(int unit, char *msg, size_t size, const char *end, int width);
 
 /* See 'struct shmid_kernel' in kernel sources
  */
