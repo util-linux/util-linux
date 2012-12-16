@@ -1578,7 +1578,7 @@ void search(char buf[], FILE *file, register int n)
 	register long line2 = startline;
 	register long line3 = startline;
 	register int lncount;
-	int saveln, rv, rc;
+	int saveln, rc;
 	regex_t re;
 
 	context.line = saveln = Currline;
@@ -1595,7 +1595,7 @@ void search(char buf[], FILE *file, register int n)
 		line1 = Ftell(file);
 		rdline(file);
 		lncount++;
-		if ((rv = regexec(&re, Line, 0, NULL, 0)) == 0) {
+		if (regexec(&re, Line, 0, NULL, 0) == 0) {
 			if (--n == 0) {
 				if (lncount > 3 || (lncount > 1 && no_intty)) {
 					putchar('\n');
