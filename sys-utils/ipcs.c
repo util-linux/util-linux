@@ -67,6 +67,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -l, --limits      show resource limits\n"), out);
 	fputs(_(" -u, --summary     show status summary\n"), out);
 	fputs(_("     --human       show sizes in human readable format\n"), out);
+	fputs(_(" -b, --bytes       show sizes in bytes\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("ipcs(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -88,11 +89,12 @@ int main (int argc, char **argv)
 		{"limits", no_argument, NULL, 'l'},
 		{"summary", no_argument, NULL, 'u'},
 		{"human", no_argument, NULL, OPT_HUMAN},
+		{"bytes", no_argument, NULL, 'b'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
 	};
-	char options[] = "i:mqsatpcluVh";
+	char options[] = "i:mqsatpclubVh";
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -134,6 +136,9 @@ int main (int argc, char **argv)
 			break;
 		case OPT_HUMAN:
 			unit = IPC_UNIT_HUMAN;
+			break;
+		case 'b':
+			unit = IPC_UNIT_BYTES;
 			break;
 		case 'h':
 			usage(stdout);
