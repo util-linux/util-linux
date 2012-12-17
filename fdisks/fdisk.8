@@ -235,42 +235,6 @@ by a space, the correct form is for example '-u=cylinders'.
 Print version number of
 .B fdisk
 program and exit.
-.SH BUGS
-There are several *fdisk programs around.
-Each has its problems and strengths.
-Try them in the order
-.BR cfdisk ,
-.BR fdisk ,
-.BR sfdisk .
-(Indeed,
-.B cfdisk
-is a beautiful program that has strict requirements on
-the partition tables it accepts, and produces high quality partition
-tables.  Use it if you can.
-.B fdisk
-is a buggy program that does fuzzy things - usually it happens to
-produce reasonable results.  Its single advantage is that it has
-some support for BSD disk labels and other non-DOS partition tables.
-Avoid it if you can.
-.B sfdisk
-is for hackers only -- the user interface is terrible, but it is
-more correct than fdisk and more powerful than both fdisk and cfdisk.
-Moreover, it can be used noninteractively.)
-.PP
-There also is
-.BR parted
-which supports many types of different partition table formats.
-.PP
-The IRIX/SGI-type disklabel is currently not supported by the kernel.
-Moreover, IRIX/SGI header directories are not fully supported yet.
-.PP
-The option `dump partition table to file' is missing.
-.\" .SH AUTHORS
-.\" A. V. Le Blanc (LeBlanc@mcc.ac.uk)
-.\" Bernhard Fastenrath (fasten@informatik.uni-bonn.de)
-.\" Jakub Jelinek (jj@sunsite.mff.cuni.cz)
-.\" Andreas Neuper (ANeuper@GUUG.de)
-.\" and many others.
 
 .SH ENVIRONMENT
 .IP FDISK_DEBUG=0xffff
