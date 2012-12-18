@@ -2,6 +2,7 @@
  * consoles.h	    Header file for routines to detect the system consoles
  *
  * Copyright (c) 2011 SuSE LINUX Products GmbH, All rights reserved.
+ * Copyright (c) 2012 Werner Fink <werner@suse.de>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,6 +26,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <termios.h>
+#include <list.h>
 
 struct chardata {
 	uint8_t	erase;
@@ -33,6 +35,7 @@ struct chardata {
 	uint8_t parity;
 };
 struct console {
+	struct list_head entry;
 	char *tty;
 	FILE *file;
 	uint32_t flags;
@@ -42,8 +45,7 @@ struct console {
 	pid_t pid;
 	struct chardata cp;
 	struct termios tio;
-	struct console *next;
 };
 
 extern int detect_consoles(const char *device, int fallback,
-			   struct console **consoles);
+			   struct list_head *consoles);
