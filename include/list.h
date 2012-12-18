@@ -127,11 +127,11 @@ _INLINE_ int list_empty(struct list_head *head)
 }
 
 /**
- * list_last_entry - tests whether is entry last in the list
+ * list_entry_is_last - tests whether is entry last in the list
  * @entry:	the entry to test.
  * @head:	the list to test.
  */
-_INLINE_ int list_last_entry(struct list_head *entry, struct list_head *head)
+_INLINE_ int list_entry_is_last(struct list_head *entry, struct list_head *head)
 {
 	return head->prev == entry;
 }
@@ -170,6 +170,9 @@ _INLINE_ void list_splice(struct list_head *list, struct list_head *head)
 
 #define list_first_entry(head, type, member) \
 	((head) && (head)->next != (head) ? list_entry((head)->next, type, member) : NULL)
+
+#define list_last_entry(head, type, member) \
+	((head) && (head)->prev != (head) ? list_entry((head)->prev, type, member) : NULL)
 
 /**
  * list_for_each - iterate over elements in a list

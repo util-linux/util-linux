@@ -50,7 +50,7 @@ static const struct tt_symbols utf8_tt_symbols = {
 #endif /* !HAVE_WIDECHAR */
 
 #define is_last_column(_tb, _cl) \
-		list_last_entry(&(_cl)->cl_columns, &(_tb)->tb_columns)
+		list_entry_is_last(&(_cl)->cl_columns, &(_tb)->tb_columns)
 
 /*
  * Counts number of cells in multibyte string. For all control and
@@ -401,7 +401,7 @@ static char *line_get_ascii_art(struct tt_line *ln, char *buf, size_t *bufsz)
 	if (!buf)
 		return NULL;
 
-	if (list_last_entry(&ln->ln_children, &ln->parent->ln_branch))
+	if (list_entry_is_last(&ln->ln_children, &ln->parent->ln_branch))
 		art = "  ";
 	else
 		art = ln->table->symbols->vert;
@@ -445,7 +445,7 @@ static char *line_get_data(struct tt_line *ln, struct tt_column *cl,
 
 	if (!ln->parent)
 		snprintf(p, bufsz, "%s", data);			/* root node */
-	else if (list_last_entry(&ln->ln_children, &ln->parent->ln_branch))
+	else if (list_entry_is_last(&ln->ln_children, &ln->parent->ln_branch))
 		snprintf(p, bufsz, "%s%s", sym->right, data);	/* last chaild */
 	else
 		snprintf(p, bufsz, "%s%s", sym->branch, data);	/* any child */
