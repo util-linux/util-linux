@@ -106,7 +106,7 @@ static void tcinit(struct console *con)
 		con->flags |= CON_SERIAL;
 
 		/* Flush input and output queues on modem lines */
-		(void) tcflush(fd, TCIOFLUSH);
+		tcflush(fd, TCIOFLUSH);
 
 		ispeed = cfgetispeed(tio);
 		ospeed = cfgetospeed(tio);
@@ -135,7 +135,7 @@ static void tcinit(struct console *con)
 				set++;
 			}
 			if (set)
-				(void)ioctl(fd, TIOCSWINSZ, &ws);
+				ignore_result( ioctl(fd, TIOCSWINSZ, &ws) );
 		}
 
 		setlocale(LC_CTYPE, "POSIX");
@@ -167,7 +167,7 @@ setattr:
 
 	/* Enable blocking mode for read and write */
 	if ((flags = fcntl(fd, F_GETFL, 0)) != -1)
-		(void)fcntl(fd, F_SETFL, flags & ~O_NONBLOCK);
+		ignore_result( fcntl(fd, F_SETFL, flags & ~O_NONBLOCK) );
 }
 
 /*
@@ -235,7 +235,7 @@ static void tcfinal(struct console *con)
 	}
 
 	/* Set line attributes */
-	(void)tcsetattr(fd, TCSANOW, tio);
+	tcsetattr(fd, TCSANOW, tio);
 }
 
 /*
@@ -474,7 +474,7 @@ static void doprompt(const char *crypted, struct console *con)
 		 * otherwise we may see stairs in the output.
 		 */
 		tty.c_oflag |= (ONLCR | OPOST);
-		(void) tcsetattr(con->fd, TCSADRAIN, &tty);
+		tcsetattr(con->fd, TCSADRAIN, &tty);
 	}
 	if (con->file == (FILE*)0) {
 		if  ((con->file = fdopen(con->fd, "r+")) == (FILE*)0)
@@ -495,7 +495,7 @@ static void doprompt(const char *crypted, struct console *con)
 	fflush(con->file);
 err:
 	if (con->flags & CON_SERIAL)
-		(void) tcsetattr(con->fd, TCSADRAIN, &con->tio);
+		tcsetattr(con->fd, TCSADRAIN, &con->tio);
 }
 
 /*
@@ -579,7 +579,9 @@ static char *getpasswd(struct console *con)
 	sa.sa_handler = alrm_handler;
 	sa.sa_flags = 0;
 	sigaction(SIGALRM, &sa, NULL);
-	if (timeout) alarm(timeout);
+
+	if (timeout)
+		alarm(timeout);
 
 	ptr = &pass[0];
 	cp->eol = *ptr = '\0';
@@ -652,7 +654,7 @@ static char *getpasswd(struct console *con)
 quit:
 	alarm(0);
 	if (tc)
-		(void)tcsetattr(fd, TCSAFLUSH, &con->tio);
+		tcsetattr(fd, TCSAFLUSH, &con->tio);
 	if (ret && *ret != '\0')
 		tcfinal(con);
 	printf("\r\n");
@@ -763,7 +765,8 @@ static void usage(FILE *out)
 
 int main(int argc, char **argv)
 {
-	struct list_head consoles = {&consoles, &consoles}, *ptr;
+	LIST_HEAD(consoles);
+	struct list_head *ptr;
 	struct console *con;
 	char *tty = NULL;
 	struct passwd *pwd;
@@ -786,7 +789,7 @@ int main(int argc, char **argv)
 	 */
 	if ((pid = getpid()) == 1) {
 		setsid();
-		(void)ioctl(STDIN_FILENO, TIOCSCTTY, (char *)1);
+		ignore_result( ioctl(STDIN_FILENO, TIOCSCTTY, (char *) 1) );
 	}
 
 	setlocale(LC_ALL, "");
@@ -880,17 +883,19 @@ int main(int argc, char **argv)
 		if (con->id >= CONMAX)
 			break;
 		if (con->fd >= 0) {
-			openfd |= (1<<con->fd);
+			openfd |= (1 << con->fd);
 			tcinit(con);
 			continue;
 		}
 		if ((con->fd = open(con->tty, O_RDWR | O_NOCTTY | O_NONBLOCK)) < 0)
 			continue;
-		openfd |= (1<<con->fd);
+		openfd |= (1 << con->fd);
 		tcinit(con);
 	}
 	ptr = (&consoles)->next;
-	usemask = (uint32_t*)mmap(NULL, sizeof(uint32_t), PROT_READ|PROT_WRITE, MAP_ANONYMOUS|MAP_SHARED, -1, 0);
+	usemask = (uint32_t*) mmap(NULL, sizeof(uint32_t),
+					PROT_READ|PROT_WRITE,
+					MAP_ANONYMOUS|MAP_SHARED, -1, 0);
 
 	if (ptr->next == &consoles) {
 		con = list_entry(ptr, struct console, entry);
