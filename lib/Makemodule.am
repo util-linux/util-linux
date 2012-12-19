@@ -76,6 +76,7 @@ test_blkdev_LDADD = libcommon.la
 
 test_ismounted_SOURCES = lib/ismounted.c
 test_ismounted_CFLAGS = -DTEST_PROGRAM
+test_ismounted_LDADD = libcommon.la
 
 test_wholedisk_SOURCES = lib/wholedisk.c
 test_wholedisk_CFLAGS = -DTEST_PROGRAM

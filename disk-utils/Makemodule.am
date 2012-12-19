@@ -3,8 +3,7 @@ sbin_PROGRAMS += fsck.minix
 dist_man_MANS += disk-utils/fsck.minix.8
 fsck_minix_SOURCES = \
 	disk-utils/fsck.minix.c \
-	disk-utils/minix_programs.h \
-	lib/ismounted.c
+	disk-utils/minix_programs.h
 fsck_minix_LDADD = $(LDADD) libcommon.la
 
 sbin_PROGRAMS += mkfs.minix

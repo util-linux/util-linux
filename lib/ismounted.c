@@ -26,6 +26,11 @@
 #include "pathnames.h"
 #include "ismounted.h"
 #include "c.h"
+#ifdef __linux__
+# include "loopdev.h"
+#endif
+
+
 
 #ifdef HAVE_MNTENT_H
 /*
@@ -39,7 +44,7 @@ static int check_mntent_file(const char *mtab_file, const char *file,
 	struct mntent	*mnt;
 	struct stat	st_buf;
 	int		retval = 0;
-	dev_t		file_dev=0, file_rdev=0;
+	dev_t		file_dev=0, file_rdev=0, lodev_dev=0;
 	ino_t		file_ino=0;
 	FILE		*f;
 	int		fd;
@@ -47,32 +52,51 @@ static int check_mntent_file(const char *mtab_file, const char *file,
 	*mount_flags = 0;
 	if ((f = setmntent (mtab_file, "r")) == NULL)
 		return errno;
+
 	if (stat(file, &st_buf) == 0) {
 		if (S_ISBLK(st_buf.st_mode)) {
 #ifndef __GNU__ /* The GNU hurd is broken with respect to stat devices */
 			file_rdev = st_buf.st_rdev;
 #endif	/* __GNU__ */
 		} else {
+#ifdef __linux__
+			/*
+			 * Maybe the file is backing file for a loop device.
+			 *
+			 * For is_mounted() we complete ignore the fact that
+			 * the same backing file maybe mapped into more loop
+			 * devices by sizelimit and offset loop options. If you
+			 * want really robust code than use libmount...
+			 */
+			char *name = loopdev_find_by_backing_file(file, 0, 0);
+			if (name && stat(name, &st_buf) == 0)
+				lodev_dev = st_buf.st_rdev;
+			free(name);
+#endif
 			file_dev = st_buf.st_dev;
 			file_ino = st_buf.st_ino;
 		}
 	}
+
 	while ((mnt = getmntent (f)) != NULL) {
 		if (mnt->mnt_fsname[0] != '/')
 			continue;
 		if (strcmp(file, mnt->mnt_fsname) == 0)
 			break;
-		if (stat(mnt->mnt_fsname, &st_buf) == 0) {
-			if (S_ISBLK(st_buf.st_mode)) {
+		if (stat(mnt->mnt_fsname, &st_buf) != 0)
+			continue;
+
+		if (S_ISBLK(st_buf.st_mode)) {
 #ifndef __GNU__
-				if (file_rdev && (file_rdev == st_buf.st_rdev))
-					break;
-#endif	/* __GNU__ */
-			} else {
-				if (file_dev && ((file_dev == st_buf.st_dev) &&
-						 (file_ino == st_buf.st_ino)))
-					break;
+			if ((file_rdev && file_rdev == st_buf.st_rdev) ||
+			    (lodev_dev && lodev_dev == st_buf.st_rdev)) {
+				break;
 			}
+#endif	/* __GNU__ */
+		} else {
+			if (file_dev && ((file_dev == st_buf.st_dev) &&
+					 (file_ino == st_buf.st_ino)))
+				break;
 		}
 	}
 
