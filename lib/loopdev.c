@@ -1353,7 +1353,7 @@ char *loopdev_find_by_backing_file(const char *filename, uint64_t offset, int fl
 
 	if (loopcxt_init(&lc, 0))
 		return NULL;
-	if (loopcxt_find_by_backing_file(&lc, filename, offset, flags))
+	if (loopcxt_find_by_backing_file(&lc, filename, offset, flags) == 0)
 		res = loopcxt_strdup_device(&lc);
 	loopcxt_deinit(&lc);
 
