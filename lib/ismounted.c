@@ -44,7 +44,7 @@ static int check_mntent_file(const char *mtab_file, const char *file,
 	struct mntent	*mnt;
 	struct stat	st_buf;
 	int		retval = 0;
-	dev_t		file_dev=0, file_rdev=0, lodev_dev=0;
+	dev_t		file_dev=0, file_rdev=0;
 	ino_t		file_ino=0;
 	FILE		*f;
 	int		fd;
@@ -59,20 +59,6 @@ static int check_mntent_file(const char *mtab_file, const char *file,
 			file_rdev = st_buf.st_rdev;
 #endif	/* __GNU__ */
 		} else {
-#ifdef __linux__
-			/*
-			 * Maybe the file is backing file for a loop device.
-			 *
-			 * For is_mounted() we complete ignore the fact that
-			 * the same backing file maybe mapped into more loop
-			 * devices by sizelimit and offset loop options. If you
-			 * want really robust code than use libmount...
-			 */
-			char *name = loopdev_find_by_backing_file(file, 0, 0);
-			if (name && stat(name, &st_buf) == 0)
-				lodev_dev = st_buf.st_rdev;
-			free(name);
-#endif
 			file_dev = st_buf.st_dev;
 			file_ino = st_buf.st_ino;
 		}
@@ -88,10 +74,15 @@ static int check_mntent_file(const char *mtab_file, const char *file,
 
 		if (S_ISBLK(st_buf.st_mode)) {
 #ifndef __GNU__
-			if ((file_rdev && file_rdev == st_buf.st_rdev) ||
-			    (lodev_dev && lodev_dev == st_buf.st_rdev)) {
+			if (file_rdev && file_rdev == st_buf.st_rdev)
 				break;
-			}
+#ifdef __linux__
+			/* maybe the file is loopdev backing file */
+			if (file_dev
+			    && major(st_buf.st_rdev) == LOOPDEV_MAJOR
+			    && loopdev_is_used(mnt->mnt_fsname, file, 0, 0))
+				break;
+#endif /* __linux__ */
 #endif	/* __GNU__ */
 		} else {
 			if (file_dev && ((file_dev == st_buf.st_dev) &&
