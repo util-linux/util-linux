@@ -370,7 +370,9 @@ int main(int argc, char** argv)
 	free(devname);
 
 	printf("Looking for whole-device for 0x%04llx\n", (long long)devno);
-	blkid_devno_to_wholedisk(devno, diskname, sizeof(diskname), &disk_devno);
+	if (blkid_devno_to_wholedisk(devno, diskname,
+				sizeof(diskname), &disk_devno) == 0)
+		printf("found devno 0x%04llx as /dev/%s\n", (long long) disk_devno, diskname);
 
 	return 0;
 }
