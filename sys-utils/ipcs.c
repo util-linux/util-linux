@@ -313,7 +313,12 @@ static void do_shm (char format, int unit)
 			else
 				printf ("%-10d %-10u", shmdsp->shm_perm.id, shmdsp->shm_perm.uid);
 			printf (" %-10o ", shmdsp->shm_perm.mode & 0777);
-			ipc_print_size(unit, NULL, shmdsp->shm_segsz, NULL, -10);
+
+			if (unit == IPC_UNIT_HUMAN)
+				ipc_print_size(unit, NULL, shmdsp->shm_segsz, "    ", 6);
+			else
+				ipc_print_size(unit, NULL, shmdsp->shm_segsz, NULL, -10);
+
 			printf (" %-10ld %-6s %-6s\n",
 				shmdsp->shm_nattch,
 				shmdsp->shm_perm.mode & SHM_DEST ? _("dest") : " ",
@@ -530,7 +535,12 @@ static void do_msg (char format, int unit)
 			else
 				printf ("%-10d %-10u", msgdsp->msg_perm.id, msgdsp->msg_perm.uid);
 			printf (" %-10o ", msgdsp->msg_perm.mode & 0777);
-			ipc_print_size(unit, NULL, msgdsp->q_cbytes, NULL, -12);
+
+			if (unit == IPC_UNIT_HUMAN)
+				ipc_print_size(unit, NULL, msgdsp->q_cbytes, "      ", 6);
+			else
+				ipc_print_size(unit, NULL, msgdsp->q_cbytes, NULL, -12);
+
 			printf (" %-12ld\n", msgdsp->q_qnum);
 			break;
 		}
