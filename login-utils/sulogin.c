@@ -114,8 +114,10 @@ static void tcinit(struct console *con)
 		if (!ispeed) ispeed = TTYDEF_SPEED;
 		if (!ospeed) ospeed = TTYDEF_SPEED;
 
-		tio->c_iflag = tio->c_lflag = tio->c_oflag = 0;
 		tio->c_cflag = CREAD | CS8 | HUPCL | (tio->c_cflag & CLOCAL);
+		tio->c_iflag = 0;
+		tio->c_lflag = 0;
+		tio->c_oflag &= OPOST | ONLCR;
 
 		cfsetispeed(tio, ispeed);
 		cfsetospeed(tio, ospeed);
