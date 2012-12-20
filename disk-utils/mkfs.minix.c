@@ -543,9 +543,9 @@ static void setup_tables(void) {
 	memset(inode_buffer,0, get_inode_buffer_size());
 	printf(_("%lu inodes\n"), inodes);
 	printf(_("%lu blocks\n"), zones);
-	printf(_("Firstdatazone=%ld (%ld)\n"), get_first_zone(), first_zone_data());
-	printf(_("Zonesize=%d\n"),MINIX_BLOCK_SIZE<<get_zone_size());
-	printf(_("Maxsize=%ld\n\n"),get_max_size());
+	printf(_("Firstdatazone=%jd (%jd)\n"), get_first_zone(), first_zone_data());
+	printf(_("Zonesize=%zu\n"),MINIX_BLOCK_SIZE<<get_zone_size());
+	printf(_("Maxsize=%zu\n\n"),get_max_size());
 }
 
 /*

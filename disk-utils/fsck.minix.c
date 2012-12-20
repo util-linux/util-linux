@@ -627,9 +627,9 @@ read_tables(void) {
 	if (show) {
 		printf(_("%ld inodes\n"), inodes);
 		printf(_("%ld blocks\n"), zones);
-		printf(_("Firstdatazone=%ld (%ld)\n"), first_zone, norm_first_zone);
+		printf(_("Firstdatazone=%jd (%jd)\n"), first_zone, norm_first_zone);
 		printf(_("Zonesize=%d\n"), MINIX_BLOCK_SIZE << get_zone_size());
-		printf(_("Maxsize=%ld\n"), get_max_size());
+		printf(_("Maxsize=%zu\n"), get_max_size());
 		printf(_("Filesystem state=%d\n"), Super.s_state);
 		printf(_("namelen=%zd\n\n"), namelen);
 	}
@@ -1045,7 +1045,7 @@ check_file2(struct minix2_inode *dir, unsigned int offset) {
 	name_depth++;
 	if (list) {
 		if (verbose)
-			printf("%6zd %07o %3d ", ino, inode->i_mode,
+			printf("%6ju %07o %3d ", ino, inode->i_mode,
 			       inode->i_nlinks);
 		get_current_name();
 		printf("%s", current_name);
