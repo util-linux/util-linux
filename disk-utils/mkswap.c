@@ -316,10 +316,16 @@ check_blocks(void)
 	buffer = xmalloc(pagesize);
 	current_page = 0;
 	while (current_page < PAGES) {
+
+		ssize_t rc;
+
 		if (do_seek && lseek(DEV,current_page*pagesize,SEEK_SET) !=
 		    current_page*pagesize)
 			errx(EXIT_FAILURE, _("seek failed in check_blocks"));
-		if ((do_seek = (pagesize != read(DEV, buffer, pagesize))))
+
+		rc = read(DEV, buffer, pagesize);
+		do_seek = (rc < 0 || (size_t) rc != pagesize);
+		if (do_seek)
 			page_bad(current_page);
 		current_page++;
 	}
