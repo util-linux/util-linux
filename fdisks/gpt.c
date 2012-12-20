@@ -738,7 +738,7 @@ static struct gpt_header *gpt_get_pheader(struct fdisk_context *cxt)
 /*
  * Returns the number of partitions that are in use.
  */
-static uint32_t partitions_in_use(struct gpt_header *header, struct gpt_entry *e)
+static unsigned partitions_in_use(struct gpt_header *header, struct gpt_entry *e)
 {
 	uint32_t i, used = 0;
 
@@ -756,7 +756,7 @@ static uint32_t partitions_in_use(struct gpt_header *header, struct gpt_entry *e
  * Check if a partition is too big for the disk (sectors).
  * Returns the faulting partition number, otherwise 0.
  */
-static int partition_check_too_big(struct gpt_header *header,
+static unsigned partition_check_too_big(struct gpt_header *header,
 				   struct gpt_entry *e, uint64_t sectors)
 {
 	uint32_t i;
@@ -775,7 +775,7 @@ static int partition_check_too_big(struct gpt_header *header,
  * Check if a partition ends before it begins
  * Returns the faulting partition number, otherwise 0.
  */
-static int partition_start_after_end(struct gpt_header *header, struct gpt_entry *e)
+static unsigned partition_start_after_end(struct gpt_header *header, struct gpt_entry *e)
 {
 	uint32_t i;
 
@@ -805,7 +805,7 @@ static inline int partition_overlap(struct gpt_entry *e1, struct gpt_entry *e2)
 /*
  * Find any paritions that overlap.
  */
-static int partition_check_overlaps(struct gpt_header *header, struct gpt_entry *e)
+static unsigned partition_check_overlaps(struct gpt_header *header, struct gpt_entry *e)
 {
 	uint32_t i, j;
 
@@ -1162,10 +1162,12 @@ static int gpt_write_partitions(struct fdisk_context *cxt,
 	off_t offset = le64_to_cpu(header->partition_entry_lba) * cxt->sector_size;
 	uint32_t nparts = le32_to_cpu(header->npartition_entries);
 	uint32_t totwrite = nparts * le32_to_cpu(header->sizeof_partition_entry);
+	ssize_t rc;
 
 	if (offset != lseek(cxt->dev_fd, offset, SEEK_SET))
 		goto fail;
-	if (totwrite == write(cxt->dev_fd, e, totwrite))
+	rc = write(cxt->dev_fd, e, totwrite);
+	if (rc > 0 && totwrite == (uint32_t) rc)
 		return 0;
 fail:
 	return -errno;
@@ -1301,8 +1303,7 @@ err1:
  */
 static int gpt_verify_disklabel(struct fdisk_context *cxt)
 {
-	int nerror = 0;
-	uint64_t ptnum;
+	int nerror = 0, ptnum;
 
 	if (!bheader) {
 		nerror++;
@@ -1359,19 +1360,20 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 	ptnum = partition_check_overlaps(pheader, ents);
 	if (ptnum) {
 		nerror++;
-		printf(_("Partition %ld overlaps with partition %ld.\n"), ptnum, ptnum+1);
+		printf(_("Partition %d overlaps with partition %d.\n"),
+				ptnum, ptnum + 1);
 	}
 
 	ptnum = partition_check_too_big(pheader, ents, cxt->total_sectors);
 	if (ptnum) {
 		nerror++;
-		printf(_("Partition %ld is too big for the disk.\n"), ptnum);
+		printf(_("Partition %u is too big for the disk.\n"), ptnum);
 	}
 
 	ptnum = partition_start_after_end(pheader, ents);
 	if (ptnum) {
 		nerror++;
-		printf(_("Partition %ld ends before it starts.\n"), ptnum);
+		printf(_("Partition %u ends before it starts.\n"), ptnum);
 	}
 
 	if (!nerror) { /* yay :-) */
@@ -1386,8 +1388,8 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 
 		free_sectors = get_free_sectors(cxt, pheader, ents,
 						&nsegments, &largest_segment);
-		printf(_("A total of %ld free sectors available in %d segment(s) "
-			 "(largest %ld).\n"),
+		printf(_("A total of %ju free sectors available in %u segment(s) "
+			 "(largest %ju).\n"),
 		       free_sectors, nsegments, largest_segment);
 	} else
 		printf(_("Detected %d error(s).\n"), nerror);
