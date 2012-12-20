@@ -112,7 +112,7 @@ int ipc_shm_get_info(int id, struct shm_data **shmds)
 	while (feof(f) == 0) {
 		if (fscanf(f,
 			  "%d %d  %o %"SCNu64 " %u %u  "
-			  "%"SCNu64 " %u %u %u %u %"SCNu64 " %"SCNu64 " %"SCNu64
+			  "%"SCNu64 " %u %u %u %u %"SCNi64 " %"SCNi64 " %"SCNi64
 			  " %"SCNu64 " %"SCNu64 "\n",
 			   &p->shm_perm.key,
 			   &p->shm_perm.id,
@@ -263,7 +263,8 @@ int ipc_sem_get_info(int id, struct sem_data **semds)
 
 	while (feof(f) == 0) {
 		if (fscanf(f,
-			   "%d %d  %o %" SCNu64 " %u %u %u %u %" SCNu64 " %" SCNu64 "\n",
+			   "%d %d  %o %" SCNu64 " %u %u %u %u %"
+			    SCNi64 " %" SCNi64 "\n",
 			   &p->sem_perm.key,
 			   &p->sem_perm.id,
 			   &p->sem_perm.mode,
@@ -376,7 +377,8 @@ int ipc_msg_get_info(int id, struct msg_data **msgds)
 
 	while (feof(f) == 0) {
 		if (fscanf(f,
-			   "%d %d  %o  %" SCNu64 " %" SCNu64 " %u %u %u %u %u %u %" SCNu64 " %" SCNu64 " %" SCNu64 "\n",
+			   "%d %d  %o  %" SCNu64 " %" SCNu64
+			   " %u %u %u %u %u %u %" SCNi64 " %" SCNi64 " %" SCNi64 "\n",
 			   &p->msg_perm.key,
 			   &p->msg_perm.id,
 			   &p->msg_perm.mode,

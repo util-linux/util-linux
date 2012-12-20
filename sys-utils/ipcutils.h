@@ -127,9 +127,9 @@ struct shm_data {
 
 	uint64_t	shm_nattch;
 	uint64_t	shm_segsz;
-	time_t		shm_atim;
-	time_t		shm_dtim;
-	time_t		shm_ctim;
+	int64_t		shm_atim;	/* __kernel_time_t is signed long */
+	int64_t		shm_dtim;
+	int64_t		shm_ctim;
 	pid_t		shm_cprid;
 	pid_t		shm_lprid;
 	uint64_t	shm_rss;
@@ -152,8 +152,8 @@ struct sem_elem {
 struct sem_data {
 	struct ipc_stat sem_perm;
 
-	time_t		sem_ctime;
-	time_t		sem_otime;
+	int64_t		sem_ctime;
+	int64_t		sem_otime;
 	uint64_t	sem_nsems;
 
 	struct sem_elem	*elements;
@@ -168,9 +168,9 @@ extern void ipc_sem_free_info(struct sem_data *semds);
 struct msg_data {
 	struct ipc_stat msg_perm;
 
-	time_t		q_stime;
-	time_t		q_rtime;
-	time_t		q_ctime;
+	int64_t		q_stime;
+	int64_t		q_rtime;
+	int64_t		q_ctime;
 	uint64_t	q_cbytes;
 	uint64_t	q_qnum;
 	uint64_t	q_qbytes;

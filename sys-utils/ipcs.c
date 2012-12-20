@@ -44,6 +44,9 @@ static void print_sem (int id);
 static void do_msg (char format, int unit);
 static void print_msg (int id, int unit);
 
+/* we read time as int64_t from /proc, so cast... */
+#define xctime(_x)	ctime((time_t *) (_x))
+
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fprintf(out, USAGE_HEADER);
@@ -291,11 +294,11 @@ static void do_shm (char format, int unit)
 				printf ("%-10d %-10u", shmdsp->shm_perm.id, shmdsp->shm_perm.uid);
 			/* ctime uses static buffer: use separate calls */
 			printf(" %-20.16s", shmdsp->shm_atim
-			       ? ctime(&shmdsp->shm_atim) + 4 : _("Not set"));
+			       ? xctime(&shmdsp->shm_atim) + 4 : _("Not set"));
 			printf(" %-20.16s", shmdsp->shm_dtim
-			       ? ctime(&shmdsp->shm_dtim) + 4 : _("Not set"));
+			       ? xctime(&shmdsp->shm_dtim) + 4 : _("Not set"));
 			printf(" %-20.16s\n", shmdsp->shm_ctim
-			       ? ctime(&shmdsp->shm_ctim) + 4 : _("Not set"));
+			       ? xctime(&shmdsp->shm_ctim) + 4 : _("Not set"));
 			break;
 		case PID:
 			if (pw)
@@ -319,7 +322,7 @@ static void do_shm (char format, int unit)
 			else
 				ipc_print_size(unit, NULL, shmdsp->shm_segsz, NULL, -10);
 
-			printf (" %-10ld %-6s %-6s\n",
+			printf (" %-10ju %-6s %-6s\n",
 				shmdsp->shm_nattch,
 				shmdsp->shm_perm.mode & SHM_DEST ? _("dest") : " ",
 				shmdsp->shm_perm.mode & SHM_LOCKED ? _("locked") : " ");
@@ -408,9 +411,9 @@ static void do_sem (char format)
 			else
 				printf ("%-8d %-10u", semdsp->sem_perm.id, semdsp->sem_perm.uid);
 			printf ("  %-26.24s", semdsp->sem_otime
-				? ctime(&semdsp->sem_otime) : _("Not set"));
+				? xctime(&semdsp->sem_otime) : _("Not set"));
 			printf (" %-26.24s\n", semdsp->sem_ctime
-				? ctime(&semdsp->sem_ctime) : _("Not set"));
+				? xctime( &semdsp->sem_ctime) : _("Not set"));
 			break;
 		case PID:
 			break;
@@ -421,7 +424,7 @@ static void do_sem (char format)
 				printf ("%-10d %-10.10s", semdsp->sem_perm.id, pw->pw_name);
 			else
 				printf ("%-10d %-10u", semdsp->sem_perm.id, semdsp->sem_perm.uid);
-			printf (" %-10o %-10ld\n",
+			printf (" %-10o %-10ju\n",
 				semdsp->sem_perm.mode & 0777,
 				semdsp->sem_nsems);
 			break;
@@ -513,11 +516,11 @@ static void do_msg (char format, int unit)
 			else
 				printf ("%-8d %-10u", msgdsp->msg_perm.id, msgdsp->msg_perm.uid);
 			printf (" %-20.16s", msgdsp->q_stime
-				? ctime(&msgdsp->q_stime) + 4 : _("Not set"));
+				? xctime(&msgdsp->q_stime) + 4 : _("Not set"));
 			printf (" %-20.16s", msgdsp->q_rtime
-				? ctime(&msgdsp->q_rtime) + 4 : _("Not set"));
+				? xctime(&msgdsp->q_rtime) + 4 : _("Not set"));
 			printf (" %-20.16s\n", msgdsp->q_ctime
-				? ctime(&msgdsp->q_ctime) + 4 : _("Not set"));
+				? xctime(&msgdsp->q_ctime) + 4 : _("Not set"));
 			break;
 		case PID:
 			if (pw)
@@ -541,7 +544,7 @@ static void do_msg (char format, int unit)
 			else
 				ipc_print_size(unit, NULL, msgdsp->q_cbytes, NULL, -12);
 
-			printf (" %-12ld\n", msgdsp->q_qnum);
+			printf (" %-12ju\n", msgdsp->q_qnum);
 			break;
 		}
 	}
@@ -571,10 +574,10 @@ static void print_shm(int shmid, int unit)
 	       shmdata->shm_lprid, shmdata->shm_cprid,
 	       shmdata->shm_nattch);
 	printf(_("att_time=%-26.24s\n"),
-	       shmdata->shm_atim ? ctime(&(shmdata->shm_atim)) : _("Not set"));
+	       shmdata->shm_atim ? xctime(&(shmdata->shm_atim)) : _("Not set"));
 	printf(_("det_time=%-26.24s\n"),
-	       shmdata->shm_dtim ? ctime(&shmdata->shm_dtim) : _("Not set"));
-	printf(_("change_time=%-26.24s\n"), ctime(&shmdata->shm_ctim));
+	       shmdata->shm_dtim ? xctime(&shmdata->shm_dtim) : _("Not set"));
+	printf(_("change_time=%-26.24s\n"), xctime(&shmdata->shm_ctim));
 	printf("\n");
 
 	ipc_shm_free_info(shmdata);
@@ -602,11 +605,11 @@ void print_msg(int msgid, int unit)
 	       msgdata->q_qnum,
 	       msgdata->q_lspid, msgdata->q_lrpid);
 	printf(_("send_time=%-26.24s\n"),
-	       msgdata->q_stime ? ctime(&msgdata->q_stime) : _("Not set"));
+	       msgdata->q_stime ? xctime(&msgdata->q_stime) : _("Not set"));
 	printf(_("rcv_time=%-26.24s\n"),
-	       msgdata->q_rtime ? ctime(&msgdata->q_rtime) : _("Not set"));
+	       msgdata->q_rtime ? xctime(&msgdata->q_rtime) : _("Not set"));
 	printf(_("change_time=%-26.24s\n"),
-	       msgdata->q_ctime ? ctime(&msgdata->q_ctime) : _("Not set"));
+	       msgdata->q_ctime ? xctime(&msgdata->q_ctime) : _("Not set"));
 	printf("\n");
 
 	ipc_msg_free_info(msgdata);
@@ -628,10 +631,10 @@ static void print_sem(int semid)
 	       semdata->sem_perm.cuid, semdata->sem_perm.cgid);
 	printf(_("mode=%#o, access_perms=%#o\n"),
 	       semdata->sem_perm.mode, semdata->sem_perm.mode & 0777);
-	printf(_("nsems = %ld\n"), semdata->sem_nsems);
+	printf(_("nsems = %ju\n"), semdata->sem_nsems);
 	printf(_("otime = %-26.24s\n"),
-	       semdata->sem_otime ? ctime(&semdata->sem_otime) : _("Not set"));
-	printf(_("ctime = %-26.24s\n"), ctime(&semdata->sem_ctime));
+	       semdata->sem_otime ? xctime(&semdata->sem_otime) : _("Not set"));
+	printf(_("ctime = %-26.24s\n"), xctime(&semdata->sem_ctime));
 
 	printf("%-10s %-10s %-10s %-10s %-10s\n",
 	       _("semnum"), _("value"), _("ncount"), _("zcount"), _("pid"));
