@@ -611,7 +611,6 @@ static int set_hardware_clock_cmos(const struct tm *new_broken_time)
 # if defined(HAVE_IOPL)
 static int i386_iopl(const int level)
 {
-	extern int iopl(const int lvl);
 	return iopl(level);
 }
 # else
