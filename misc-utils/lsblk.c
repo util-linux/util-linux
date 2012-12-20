@@ -95,6 +95,7 @@ enum {
 	COL_DGRAN,
 	COL_DMAX,
 	COL_DZERO,
+	COL_WSAME,
 	COL_WWN,
 	COL_RAND,
 	COL_PKNAME,
@@ -126,7 +127,7 @@ static struct colinfo infos[] = {
 	[COL_PARTLABEL] = { "PARTLABEL", 0.1, 0, N_("partition LABEL") },
 	[COL_PARTUUID]  = { "PARTUUID",  36,  0, N_("partition UUID") },
 
-	[COL_RA]     = { "RA",      4, TT_FL_RIGHT, N_("read-ahead of the device") },
+	[COL_RA]     = { "RA",      3, TT_FL_RIGHT, N_("read-ahead of the device") },
 	[COL_RO]     = { "RO",      1, TT_FL_RIGHT, N_("read-only device") },
 	[COL_RM]     = { "RM",      1, TT_FL_RIGHT, N_("removable device") },
 	[COL_ROTA]   = { "ROTA",    1, TT_FL_RIGHT, N_("rotational device") },
@@ -149,6 +150,7 @@ static struct colinfo infos[] = {
 	[COL_DGRAN]  = { "DISC-GRAN", 6, TT_FL_RIGHT, N_("discard granularity") },
 	[COL_DMAX]   = { "DISC-MAX", 6, TT_FL_RIGHT, N_("discard max bytes") },
 	[COL_DZERO]  = { "DISC-ZERO", 1, TT_FL_RIGHT, N_("discard zeroes data") },
+	[COL_WSAME]  = { "WSAME",   6, TT_FL_RIGHT, N_("write same max bytes") },
 	[COL_WWN]    = { "WWN",     18, 0, N_("unique storage identifier") },
 	[COL_HCTL]   = { "HCTL", 10, 0, N_("Host:Channel:Target:Lun for SCSI") },
 	[COL_TRANSPORT] = { "TRAN", 6, 0, N_("device transport type") },
@@ -900,6 +902,18 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 		else
 			tt_line_set_data(ln, col, "0");
 		break;
+	case COL_WSAME:
+		if (lsblk->bytes)
+			p = sysfs_strdup(&cxt->sysfs, "queue/write_same_max_bytes");
+		else {
+			uint64_t x;
+
+			if (sysfs_read_u64(&cxt->sysfs,
+					   "queue/write_same_max_bytes", &x) == 0)
+				p = size_to_human_string(SIZE_SUFFIX_1LETTER, x);
+		}
+		tt_line_set_data(ln, col, p ? p : "0");
+		break;
 	};
 }
 
@@ -1478,6 +1492,7 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_SCHED;
 			columns[ncolumns++] = COL_RQ_SIZE;
 			columns[ncolumns++] = COL_RA;
+			columns[ncolumns++] = COL_WSAME;
 			break;
 		case 'S':
 			lsblk->nodeps = 1;
