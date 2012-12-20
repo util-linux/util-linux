@@ -1159,6 +1159,7 @@ screendump(int vcnum, FILE * F)
 	unsigned int rows, cols;
 	int fd;
 	size_t i, j;
+	ssize_t rc;
 	char *inbuf, *outbuf, *p, *q;
 
 	sprintf(infile, "/dev/vcsa%d", vcnum);
@@ -1188,7 +1189,8 @@ screendump(int vcnum, FILE * F)
 	inbuf = xmalloc(rows * cols * 2);
 	outbuf = xmalloc(rows * (cols + 1));
 
-	if (read(fd, inbuf, rows * cols * 2) != rows * cols * 2)
+	rc = read(fd, inbuf, rows * cols * 2);
+	if (rc < 0 || (size_t) rc != rows * cols * 2)
 		goto read_error;
 	p = inbuf;
 	q = outbuf;
