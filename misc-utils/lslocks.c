@@ -218,7 +218,7 @@ static ino_t get_dev_inode(char *str, dev_t *dev)
 	int maj = 0, min = 0;
 	ino_t inum = 0;
 
-	sscanf(str, "%02x:%02x:%lu", &maj, &min, &inum);
+	sscanf(str, "%02x:%02x:%ju", &maj, &min, &inum);
 
 	*dev = (dev_t) makedev(maj, min);
 	return inum;
@@ -415,10 +415,10 @@ static void add_tt_line(struct tt *tt, struct lock *l)
 			xasprintf(&str, "%d", l->mandatory);
 			break;
 		case COL_START:
-			xasprintf(&str, "%ld", l->start);
+			xasprintf(&str, "%jd", l->start);
 			break;
 		case COL_END:
-			xasprintf(&str, "%ld", l->end);
+			xasprintf(&str, "%jd", l->end);
 			break;
 		case COL_PATH:
 			xasprintf(&str, "%s", l->path ? l->path : notfnd);
