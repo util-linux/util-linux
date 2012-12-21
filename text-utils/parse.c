@@ -421,13 +421,15 @@ isint2:					switch(fu->bcnt) {
 		    !(fu->flags&F_SETREP) && fu->bcnt)
 			fu->reps += (blocksize - fs->bcnt) / fu->bcnt;
 		if (fu->reps > 1) {
-			for (pr = fu->nextpr;; pr = pr->nextpr)
-				if (!pr->nextpr)
-					break;
-			for (p1 = pr->fmt, p2 = NULL; *p1; ++p1)
-				p2 = isspace((unsigned char)*p1) ? p1 : NULL;
-			if (p2)
-				pr->nospace = p2;
+			if (fu->nextpr) {
+				for (pr = fu->nextpr; ; pr = pr->nextpr)
+					if (!pr->nextpr)
+						break;
+				for (p1 = pr->fmt, p2 = NULL; *p1; ++p1)
+					p2 = isspace((unsigned char)*p1) ? p1 : NULL;
+				if (p2)
+					pr->nospace = p2;
+			}
 		}
 	}
 }
