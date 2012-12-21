@@ -62,3 +62,4 @@ TS_CMD_FINDMNT=${TS_CMD_FINDMNT-"$top_builddir/findmnt"}
 
 TS_CMD_FDISK=${TS_CMD_FDISK-"$top_builddir/fdisk"}
 
+TS_CMD_HEXDUMP=${TS_CMD_HEXDUMP-"$top_builddir/hexdump"}
