@@ -1368,6 +1368,47 @@ int mnt_context_prepare_srcpath(struct libmnt_context *cxt)
 	return 0;
 }
 
+/* create a mountpoint if x-mount.mkdir[=<mode>] specified */
+static int mkdir_target(const char *tgt, struct libmnt_fs *fs)
+{
+	char *mstr = NULL;
+	size_t mstr_sz = 0;
+	mode_t mode = 0;
+	struct stat st;
+	int rc;
+
+	assert(tgt);
+	assert(fs);
+
+	if (mnt_optstr_get_option(fs->user_optstr, "x-mount.mkdir", &mstr, &mstr_sz) != 0)
+		return 0;
+	if (stat(tgt, &st) == 0)
+		return 0;
+
+	if (mstr && mstr_sz) {
+		char *end = NULL;
+
+		errno = 0;
+		mode = strtol(mstr, &end, 8);
+
+		if (errno || !end || mstr + mstr_sz != end) {
+			DBG(CXT, mnt_debug("failed to parse mkdir mode '%s'", mstr));
+			return -MNT_ERR_MOUNTOPT;
+		}
+	}
+
+	if (!mode)
+		mode = S_IRWXU |			/* 0755 */
+		       S_IRGRP | S_IXGRP |
+		       S_IROTH | S_IXOTH;
+
+	rc = mkdir_p(tgt, mode);
+	if (rc)
+		DBG(CXT, mnt_debug("mkdir %s failed: %m", tgt));
+
+	return rc;
+}
+
 int mnt_context_prepare_target(struct libmnt_context *cxt)
 {
 	const char *tgt;
@@ -1387,6 +1428,17 @@ int mnt_context_prepare_target(struct libmnt_context *cxt)
 	if (!tgt)
 		return 0;
 
+	/* mkdir target */
+	if (cxt->action == MNT_ACT_MOUNT
+	    && !mnt_context_is_restricted(cxt)
+	    && cxt->user_mountflags & MNT_MS_XCOMMENT) {
+
+		rc = mkdir_target(tgt, cxt->fs);
+		if (rc)
+			return rc;	/* mkdir or parse error */
+	}
+
+	/* canonicalize the path */
 	cache = mnt_context_get_cache(cxt);
 	if (cache) {
 		char *path = mnt_resolve_path(tgt, cache);

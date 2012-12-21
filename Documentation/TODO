@@ -26,8 +26,6 @@ libmount (mount/umount)
 
    (all this already supported by libmount)
 
- - add x-mount-mkdir mount option to libmount to allow "mkdir /mountpoint"
-
  - support MS_PROPAGATION flags in fstab -- note that kernel assumes that
    these flags are not mixed with another mount flags, it means that:
 

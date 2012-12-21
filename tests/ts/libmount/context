@@ -13,6 +13,8 @@ TESTPROG="$TS_HELPER_LIBMOUNT_CONTEXT"
 LABEL=libmount-test
 UUID=$(uuidgen)
 MOUNTPOINT="$TS_MOUNTPOINT"
+TS_NOEXIST="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-noex"
+[ -d $TS_NOEXIST ] && rmdir $TS_NOEXIST
 
 #set -x
 
@@ -127,6 +129,14 @@ ts_valgrind $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
 grep -q $MOUNTPOINT $LIBMOUNT_MTAB &&
 	echo "umount failed: found $MOUNTPOINT in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
+
+ts_init_subtest "x-mount.mkdir"
+$TS_CMD_MOUNT -o x-mount.mkdir --bind $MOUNTPOINT $TS_NOEXIST >> $TS_OUTPUT 2>&1 &&
+  echo "successfully mounted" >> $TS_OUTPUT
+ts_finalize_subtest
+
+$TS_CMD_UMOUNT $TS_NOEXIST
+rmdir $TS_NOEXIST
 
 ts_log "...done."
 rmmod scsi_debug
