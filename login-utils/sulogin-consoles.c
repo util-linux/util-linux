@@ -98,7 +98,6 @@ static uint32_t emergency_flags;
 # define MNT_PROCFS    0x0001
 # define MNT_DEVTMPFS  0x0002
 
-static __attribute__((__destructor__))
 void emergency_do_umounts(void)
 {
 	if (emergency_flags & MNT_DEVTMPFS)
@@ -107,7 +106,6 @@ void emergency_do_umounts(void)
 		umount2("/proc", MNT_DETACH);
 }
 
-static __attribute__((__constructor__))
 void emergency_do_mounts(void)
 {
 	struct stat rt, xt;
@@ -143,6 +141,12 @@ void emergency_do_mounts(void)
 		}
 	}
 }
+
+#else /* !USE_SULOGIN_EMERGENCY_MOUNT */
+
+void emergency_do_umounts(void) { }
+void emergency_do_mounts(void) { }
+
 #endif /* USE_SULOGIN_EMERGENCY_MOUNT */
 
 /*

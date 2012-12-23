@@ -834,6 +834,10 @@ int main(int argc, char **argv)
 	mask_signal(SIGINT,  SIG_IGN, &saved_sigint);
 	mask_signal(SIGHUP,  SIG_IGN, &saved_sighup);
 
+
+	emergency_do_mounts();
+	atexit( emergency_do_umounts );
+
 	/*
 	 * See if we need to open an other tty device.
 	 */

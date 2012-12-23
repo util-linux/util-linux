@@ -21,6 +21,8 @@
  *
  * Author: Werner Fink <werner@suse.de>
  */
+#ifndef UTIL_LINUX_SULOGIN_CONSOLES_H
+#define UTIL_LINUX_SULOGIN_CONSOLES_H
 
 #include <sys/types.h>
 #include <stdint.h>
@@ -45,3 +47,8 @@ struct console {
 
 extern int detect_consoles(const char *device, int fallback,
 			   struct list_head *consoles);
+
+extern void emergency_do_umounts(void);
+extern void emergency_do_mounts(void);
+
+#endif /* UTIL_LINUX_SULOGIN_CONSOLES_H */
