@@ -178,22 +178,11 @@ struct options {
 #define serial_tty_option(opt, flag)	\
 	(((opt)->flags & (F_VCONSOLE|(flag))) == (flag))
 
-/* Storage for things detected while the login name was read. */
-struct chardata {
-	int erase;		/* erase character */
-	int kill;		/* kill character */
-	int eol;		/* end-of-line character */
-	int parity;		/* what parity did we see */
-	int capslock;		/* upper case without lower case */
-};
-
 /* Initial values for the above. */
 static const struct chardata init_chardata = {
-	DEF_ERASE,		/* default erase character */
-	DEF_KILL,		/* default kill character */
-	13,			/* default eol char */
-	0,			/* space parity */
-	0,			/* no capslock */
+	.erase = DEF_ERASE,		/* default erase character */
+	.kill  = DEF_KILL,		/* default kill character */
+	.eol   = 13			/* default eol char */
 };
 
 struct Speedtab {

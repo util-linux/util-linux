@@ -5,18 +5,27 @@ dist_man_MANS += login-utils/last.1
 last_SOURCES = login-utils/last.c
 endif
 
+
 if BUILD_SULOGIN
 sbin_PROGRAMS += sulogin
 dist_man_MANS += login-utils/sulogin.8
 sulogin_SOURCES = \
-	login-utils/sulogin.c
+	login-utils/sulogin.c \
+	login-utils/sulogin-consoles.c \
+	login-utils/sulogin-consoles.h
 sulogin_LDADD = $(LDADD) libcommon.la
+
 if HAVE_LIBCRYPT
 sulogin_LDADD += -lcrypt
 endif
 if HAVE_SELINUX
 sulogin_LDADD += -lselinux
 endif
+
+check_PROGRAMS += test_consoles
+test_consoles_SOURCES = login-utils/sulogin-consoles.c
+test_consoles_CFLAGS = -DTEST_PROGRAM
+test_consoles_LDADD = libcommon.la
 endif # BUILD_SULOGIN
 
 

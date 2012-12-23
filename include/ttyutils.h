@@ -8,6 +8,15 @@
 #include <sys/ioctl.h>
 #endif
 
+/* Storage for things detected while the login name was read. */
+struct chardata {
+	int erase;		/* erase character */
+	int kill;		/* kill character */
+	int eol;		/* end-of-line character */
+	int parity;		/* what parity did we see */
+	int capslock;		/* upper case without lower case */
+};
+
 extern int get_terminal_width(void);
 extern int get_terminal_name(const char **path, const char **name, const char **number);
 

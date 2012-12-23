@@ -51,7 +51,7 @@
 
 #include "c.h"
 #include "canonicalize.h"
-#include "consoles.h"
+#include "sulogin-consoles.h"
 
 #ifdef __linux__
 # include <linux/major.h>

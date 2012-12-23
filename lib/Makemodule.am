@@ -28,7 +28,6 @@ libcommon_la_SOURCES = \
 
 if LINUX
 libcommon_la_SOURCES += \
-	lib/consoles.c \
 	lib/linux_version.c \
 	lib/loopdev.c
 endif
@@ -62,7 +61,6 @@ endif
 check_PROGRAMS += \
 	test_sysfs \
 	test_loopdev \
-	test_consoles \
 	test_pager
 endif
 
@@ -110,10 +108,6 @@ test_pager_CFLAGS = -DTEST_PROGRAM
 test_loopdev_SOURCES = lib/loopdev.c
 test_loopdev_CFLAGS = -DTEST_PROGRAM_LOOPDEV
 test_loopdev_LDADD = libcommon.la
-
-test_consoles_SOURCES = lib/consoles.c
-test_consoles_CFLAGS = -DTEST_PROGRAM
-test_consoles_LDADD = libcommon.la
 endif
 
 test_fileutils_SOURCES = lib/fileutils.c

@@ -28,12 +28,8 @@
 #include <termios.h>
 #include <list.h>
 
-struct chardata {
-	uint8_t	erase;
-	uint8_t kill;
-	uint8_t eol;
-	uint8_t parity;
-};
+#include "ttyutils.h"
+
 struct console {
 	struct list_head entry;
 	char *tty;

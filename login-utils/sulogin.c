@@ -55,7 +55,7 @@
 #include "pathnames.h"
 #include "strutils.h"
 #include "ttyutils.h"
-#include "consoles.h"
+#include "sulogin-consoles.h"
 #define CONMAX		16
 
 #define BS		CTRL('h')
