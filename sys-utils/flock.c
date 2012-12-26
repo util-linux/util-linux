@@ -48,9 +48,9 @@ static void __attribute__((__noreturn__)) usage(int ex)
 {
 	fprintf(stderr, USAGE_HEADER);
 	fprintf(stderr,
-		_(" %1$s [options] <file descriptor number>\n"
-		  " %1$s [options] <file> -c <command>\n"
-		  " %1$s [options] <directory> -c <command>\n"),
+		_(" %1$s [options] <file|directory> <command> [command args]\n"
+		  " %1$s [options] <file|directory> -c <command>\n"
+		  " %1$s [options] <file descriptor number>\n"),
 		program_invocation_short_name);
 	fputs(USAGE_OPTIONS, stderr);
 	fputs(_(  " -s  --shared             get a shared lock\n"), stderr);
