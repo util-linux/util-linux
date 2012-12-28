@@ -302,11 +302,12 @@ static int make_table(struct loopdev_cxt *lc, const char *file,
 {
 	struct stat sbuf, *st = &sbuf;
 	struct tt_line *ln;
+	int i;
 
 	if (!(tt = tt_new_table(0)))
 		errx(EXIT_FAILURE, _("failed to initialize output table"));
 
-	for (int i = 0; i < ncolumns; i++) {
+	for (i = 0; i < ncolumns; i++) {
 		struct colinfo *ci = get_column_info(i);
 
 		if (!tt_define_column(tt, ci->name, ci->whint, ci->flags))
@@ -341,6 +342,8 @@ static int make_table(struct loopdev_cxt *lc, const char *file,
 
 static void usage(FILE *out)
 {
+	size_t i;
+
 	fputs(USAGE_HEADER, out);
 
 	fprintf(out,
@@ -371,7 +374,7 @@ static void usage(FILE *out)
 	fputs(USAGE_VERSION, out);
 
 	fputs(_("\nAvailable --list columns:\n"), out);
-	for (size_t i = 0; i < NCOLS; i++)
+	for (i = 0; i < NCOLS; i++)
 		fprintf(out, " %12s  %s\n", infos[i].name, _(infos[i].help));
 
 	fprintf(out, USAGE_MAN_TAIL("losetup(8)"));
