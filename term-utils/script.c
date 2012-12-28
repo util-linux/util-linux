@@ -445,11 +445,17 @@ doshell(void) {
 	 */
 	signal(SIGTERM, SIG_DFL);
 
-	if (cflg)
-		execl(shell, shname, "-c", cflg, NULL);
-	else
-		execl(shell, shname, "-i", NULL);
-
+	if (access(shell, X_OK) == 0) {
+		if (cflg)
+			execl(shell, shname, "-c", cflg, NULL);
+		else
+			execl(shell, shname, "-i", NULL);
+	} else {
+		if (cflg)
+			execlp(shname, "-c", cflg, NULL);
+		else
+			execlp(shname, "-i", NULL);
+	}
 	warn(_("failed to execute %s"), shell);
 	fail();
 }
