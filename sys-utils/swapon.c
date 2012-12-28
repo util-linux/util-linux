@@ -782,7 +782,7 @@ int main(int argc, char *argv[])
 	}
 	argv += optind;
 
-	if (show) {
+	if (show || (!all && !numof_labels() && !numof_uuids() && *argv == NULL)) {
 		if (!ncolumns) {
 			/* default columns */
 			columns[ncolumns++] = COL_PATH;
@@ -794,9 +794,6 @@ int main(int argc, char *argv[])
 		status = show_table(tt_flags, bytes);
 		return status;
 	}
-
-	if (!all && !numof_labels() && !numof_uuids() && *argv == NULL)
-		usage(stderr);
 
 	if (ifexists && !all)
 		usage(stderr);
