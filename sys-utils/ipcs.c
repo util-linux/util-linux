@@ -465,7 +465,7 @@ static void do_msg (char format, int unit)
 		printf (_("------ Messages Status --------\n"));
 		printf (_("allocated queues = %d\n"), msginfo.msgpool);
 		printf (_("used headers = %d\n"), msginfo.msgmap);
-		ipc_print_size(unit, _("used space ="), msginfo.msgtql,
+		ipc_print_size(unit, _("used space"), msginfo.msgtql,
 			       unit == IPC_UNIT_DEFAULT ? _(" bytes\n") : "\n", 0);
 		return;
 	}
