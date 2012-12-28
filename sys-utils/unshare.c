@@ -24,10 +24,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <getopt.h>
 
 #include "nls.h"
 #include "c.h"
 #include "closestream.h"
+#include "strutils.h"
 
 #ifndef CLONE_NEWSNS
 # define CLONE_NEWNS 0x00020000
@@ -60,10 +62,10 @@ static void usage(int status)
 	      _(" %s [options] <program> [args...]\n"),	program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -m, --mount       unshare mounts namespace\n"
-		" -u, --uts         unshare UTS namespace (hostname etc)\n"
-		" -i, --ipc         unshare System V IPC namespace\n"
-		" -n, --net         unshare network namespace\n"), out);
+	fputs(_(" -m, --mount [=<pid>]   unshare or migrate mounts namespace\n"
+		" -u, --uts [=<pid>]     unshare or migrate UTS namespace (hostname etc)\n"
+		" -i, --ipc [=<pid>]     unshare or migrate System V IPC namespace\n"
+		" -n, --net [=<pid>]     unshare or migrate network namespace\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -76,17 +78,18 @@ static void usage(int status)
 int main(int argc, char *argv[])
 {
 	static const struct option longopts[] = {
-		{ "help", no_argument, 0, 'h' },
+		{ "help",    no_argument, 0, 'h' },
 		{ "version", no_argument, 0, 'V'},
-		{ "mount", no_argument, 0, 'm' },
-		{ "uts", no_argument, 0, 'u' },
-		{ "ipc", no_argument, 0, 'i' },
-		{ "net", no_argument, 0, 'n' },
+		{ "mount",   optional_argument, 0, 'm' },
+		{ "uts",     optional_argument, 0, 'u' },
+		{ "ipc",     optional_argument, 0, 'i' },
+		{ "net",     optional_argument, 0, 'n' },
 		{ NULL, 0, 0, 0 }
 	};
 
+	int namespaces[128];		/* /proc/#/ns/<name> file descriptors */
+	size_t i, nscount = 0;		/* number of used namespaces[] */
 	int unshare_flags = 0;
-
 	int c;
 
 	setlocale(LC_MESSAGES, "");
@@ -94,7 +97,13 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while((c = getopt_long(argc, argv, "hVmuin", longopts, NULL)) != -1) {
+	memset(namespaces, 0, sizeof(namespaces));
+
+	while((c = getopt_long(argc, argv,
+			"hVm::u::i::n::", longopts, NULL)) != -1) {
+
+		const char *ns = NULL;
+
 		switch(c) {
 		case 'h':
 			usage(EXIT_SUCCESS);
@@ -102,26 +111,58 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'm':
-			unshare_flags |= CLONE_NEWNS;
+			ns = "mnt";
+			if (!optarg)
+				unshare_flags |= CLONE_NEWNS;
 			break;
 		case 'u':
-			unshare_flags |= CLONE_NEWUTS;
+			ns = "uts";
+			if (!optarg)
+				unshare_flags |= CLONE_NEWUTS;
 			break;
 		case 'i':
-			unshare_flags |= CLONE_NEWIPC;
+			ns = "ipc";
+			if (!optarg)
+				unshare_flags |= CLONE_NEWIPC;
 			break;
 		case 'n':
-			unshare_flags |= CLONE_NEWNET;
+			ns = "net";
+			if (!optarg)
+				unshare_flags |= CLONE_NEWNET;
 			break;
 		default:
 			usage(EXIT_FAILURE);
 		}
+
+		if (ns && optarg) {
+			pid_t pid;
+			char path[512];
+
+			if (nscount >= ARRAY_SIZE(namespaces))
+				err(EXIT_FAILURE, _("too many new namespaces specified"));
+
+			if (*optarg == '=')
+				optarg++;
+
+			pid = strtoul_or_err(optarg, _("failed to parse pid argument"));
+
+			sprintf(path, "/proc/%lu/ns/%s", (unsigned long) pid, ns);
+			namespaces[nscount] = open(path, O_RDONLY | O_CLOEXEC);
+			if (namespaces[nscount] < 0)
+				err(EXIT_FAILURE, _("cannot open %s"), path);
+			nscount++;
+		}
 	}
 
-	if(optind >= argc)
+	if (optind >= argc)
 		usage(EXIT_FAILURE);
 
-	if(-1 == unshare(unshare_flags))
+	for (i = 0; i < nscount; i++) {
+		if (setns(namespaces[i], 0) != 0)
+			err(EXIT_FAILURE, _("setns failed"));
+	}
+
+	if (unshare_flags && unshare(unshare_flags) != 0)
 		err(EXIT_FAILURE, _("unshare failed"));
 
 	/* drop potential root euid/egid if we had been setuid'd */
