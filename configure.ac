@@ -1311,9 +1311,9 @@ fi
 
 
 AC_ARG_ENABLE([sulogin-emergency-mount],
-  AS_HELP_STRING([--disable-sulogin-emergency-mount],
-		 [do not use emergency mount of /dev and /proc for sulogin]),
-  [], enable_sulogin_emergency_mount=yes
+  AS_HELP_STRING([--enable-sulogin-emergency-mount],
+		 [use emergency mount of /dev and /proc for sulogin]),
+  [], enable_sulogin_emergency_mount=no
 )
 
 if test "x$enable_sulogin_emergency_mount" = xyes; then
