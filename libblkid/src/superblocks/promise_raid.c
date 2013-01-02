@@ -29,7 +29,7 @@ static int probe_pdcraid(blkid_probe pr,
 {
 	unsigned int i;
 	static unsigned int sectors[] = {
-		63, 255, 256, 16, 399, 0
+	  63, 255, 256, 16, 399, 591, 675, 735, 911, 974, 991, 951, 3087, 0
 	};
 
 	if (pr->size < 0x40000)
