@@ -184,7 +184,10 @@ login failure.  The default value is
 (string)
 .RS 4
 The terminal permissions.  The default value is
-.IR 0600 .
+.IR 0600
+or
+.IR 0620
+if tty group is used.
 .RE
 .PP
 .B TTYGROUP
