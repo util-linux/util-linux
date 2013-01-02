@@ -1183,8 +1183,13 @@ The debugfs filesystem is a pseudo filesystem, traditionally mounted on
 .IR /sys/kernel/debug .
 .\" or just /debug
 .\" present since 2.6.11
-There are no mount options.
-
+As of kernel version 3.4, debugfs has the following options:
+.TP
+.BI uid= n ", gid=" n
+Set the owner and group of the mountpoint.
+.TP
+.BI mode= value
+Sets the mode of the mountpoint.
 .SH "Mount options for devpts"
 The devpts filesystem is a pseudo filesystem, traditionally mounted on
 .IR /dev/pts .
