@@ -800,7 +800,7 @@ int main(int argc, char **argv)
 
 		/* only few options are allowed for non-root users */
 		if (mnt_context_is_restricted(cxt) &&
-		    !strchr("hlLUVvpris", c) &&
+		    !strchr("hlLUVvprist", c) &&
 		    c != MOUNT_OPT_TARGET &&
 		    c != MOUNT_OPT_SOURCE)
 			exit_non_root(option_to_longopt(c, longopts));
@@ -949,6 +949,11 @@ int main(int argc, char **argv)
 		print_all(cxt, types, show_labels);
 		goto done;
 	}
+
+	/* Non-root users are allowed to use -t to print_all(),
+	   but not to mount */
+	if (mnt_context_is_restricted(cxt) && types)
+		exit_non_root("types");
 
 	if (oper && (types || all || mnt_context_get_source(cxt)))
 		usage(stderr);
