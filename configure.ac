@@ -191,6 +191,9 @@ AC_CHECK_HEADERS([ \
 	stdint.h \
 	stdio_ext.h \
 	stdlib.h \
+	endian.h \
+	byteswap.h \
+	sys/endian.h \
 	sys/disk.h \
 	sys/disklabel.h \
 	sys/file.h \
