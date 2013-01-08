@@ -28,8 +28,8 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <termios.h>
-#include <list.h>
 
+#include "list.h"
 #include "ttyutils.h"
 
 struct console {

@@ -14,6 +14,22 @@
 #include <sys/ioctl.h>
 #endif
 
+/* Some shorthands for control characters. */
+#define CTL(x)		((x) ^ 0100)	/* Assumes ASCII dialect */
+#define CR		CTL('M')	/* carriage return */
+#define NL		CTL('J')	/* line feed */
+#define BS		CTL('H')	/* back space */
+#define DEL		CTL('?')	/* delete */
+
+/* Defaults for line-editing etc. characters; you may want to change these. */
+#define DEF_ERASE	DEL		/* default erase character */
+#define DEF_INTR	CTL('C')	/* default interrupt character */
+#define DEF_QUIT	CTL('\\')	/* default quit char */
+#define DEF_KILL	CTL('U')	/* default kill char */
+#define DEF_EOF		CTL('D')	/* default EOF char */
+#define DEF_EOL		0
+#define DEF_SWITCH	0		/* default switch char */
+
 /* Storage for things detected while the login name was read. */
 struct chardata {
 	int erase;		/* erase character */
@@ -22,6 +38,14 @@ struct chardata {
 	int parity;		/* what parity did we see */
 	int capslock;		/* upper case without lower case */
 };
+
+#define INIT_CHARDATA(ptr) do {              \
+		(ptr)->erase    = DEF_ERASE; \
+		(ptr)->kill     = DEF_KILL;  \
+		(ptr)->eol      = CTRL('r'); \
+	        (ptr)->parity   = 0;         \
+	        (ptr)->capslock = 0;         \
+	} while (0)
 
 extern int get_terminal_width(void);
 extern int get_terminal_name(const char **path, const char **name, const char **number);

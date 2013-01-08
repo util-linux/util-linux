@@ -281,12 +281,6 @@ __attribute__((__nonnull__,__hot__))
 #endif
 int append_console(struct list_head *consoles, const char *name)
 {
-	static const struct chardata initcp = {
-		.erase	= CERASE,
-		.kill	= CKILL,
-		.eol	= CTRL('r'),
-		.parity = 0
-	};
 	struct console *restrict tail;
 	struct console *last = NULL;
 
@@ -300,6 +294,7 @@ int append_console(struct list_head *consoles, const char *name)
 		return -ENOMEM;
 
 	INIT_LIST_HEAD(&tail->entry);
+	INIT_CHARDATA(&tail->cp);
 
 	list_add_tail(&tail->entry, consoles);
 	tail->tty = ((char *) tail) + alignof(struct console);
@@ -311,7 +306,6 @@ int append_console(struct list_head *consoles, const char *name)
 	tail->id = last ? last->id + 1 : 0;
 	tail->pid = 0;
 	memset(&tail->tio, 0, sizeof(tail->tio));
-	memcpy(&tail->cp, &initcp, sizeof(struct chardata));
 
 	return 0;
 }

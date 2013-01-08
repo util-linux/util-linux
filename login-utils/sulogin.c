@@ -58,10 +58,6 @@
 #include "sulogin-consoles.h"
 #define CONMAX		16
 
-#define BS		CTRL('h')
-#define NL		CTRL('j')
-#define CR		CTRL('m')
-
 static unsigned int timeout;
 static int profile;
 static volatile uint32_t openfd;		/* Remember higher file descriptors */
