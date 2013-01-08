@@ -1,7 +1,11 @@
 /*
  * General purpose random utilities
+ *
+ * Based on libuuid code.
+ *
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
  */
-
 #include <stdio.h>
 #include <unistd.h>
 #include <fcntl.h>

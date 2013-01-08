@@ -1,3 +1,9 @@
+/*
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ *
+ * Written by Karel Zak <kzak@redhat.com>
+ */
 #ifndef BLKDEV_H
 #define BLKDEV_H
 

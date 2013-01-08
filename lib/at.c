@@ -1,7 +1,10 @@
 /*
  * Portable xxxat() functions.
  *
- * Copyright (C) 2010 Karel Zak <kzak@redhat.com>
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ *
+ * Written by Karel Zak <kzak@redhat.com>
  */
 #include <stdio.h>
 #include <stdlib.h>

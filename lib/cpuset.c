@@ -7,6 +7,9 @@
  *
  * Based on code from taskset.c and Linux kernel.
  *
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
+ *
  * Copyright (C) 2010 Karel Zak <kzak@redhat.com>
  */
 

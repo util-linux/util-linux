@@ -1,3 +1,7 @@
+/*
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
+ */
 #ifndef UTIL_LINUX_CPUSET_H
 #define UTIL_LINUX_CPUSET_H
 

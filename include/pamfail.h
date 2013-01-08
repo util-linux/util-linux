@@ -1,3 +1,9 @@
+/*
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ *
+ * Written by Karel Zak <kzak@redhat.com>
+ */
 #ifndef UTIL_LINUX_PAMFAIL_H
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>

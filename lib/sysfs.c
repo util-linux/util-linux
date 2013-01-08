@@ -1,7 +1,9 @@
 /*
- * Copyright (C) 2011 Karel Zak <kzak@redhat.com>
+ * No copyright is claimed.  This code is in the public domain; do with
+ * it what you wish.
+ *
+ * Written by Karel Zak <kzak@redhat.com>
  */
-
 #include <ctype.h>
 
 #include "c.h"
