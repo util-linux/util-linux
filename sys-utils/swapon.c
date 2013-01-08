@@ -440,26 +440,22 @@ static int swapon_checks(const char *special)
 	char *hdr = NULL;
 	unsigned int pagesize;
 	unsigned long long devsize = 0;
+	int permMask;
 
 	if (stat(special, &st) < 0) {
 		warn(_("stat failed %s"), special);
 		goto err;
 	}
 
-	/* people generally dislike this warning - now it is printed
-	   only when `verbose' is set */
-	if (verbose) {
-		int permMask = (S_ISBLK(st.st_mode) ? 07007 : 07077);
-
-		if ((st.st_mode & permMask) != 0)
-			warnx(_("%s: insecure permissions %04o, %04o suggested."),
+	permMask = S_ISBLK(st.st_mode) ? 07007 : 07077;
+	if ((st.st_mode & permMask) != 0)
+		warnx(_("%s: insecure permissions %04o, %04o suggested."),
 				special, st.st_mode & 07777,
 				~permMask & 0666);
 
-		if (S_ISREG(st.st_mode) && st.st_uid != 0)
-			warnx(_("%s: insecure file owner %d, 0 (root) suggested."),
+	if (S_ISREG(st.st_mode) && st.st_uid != 0)
+		warnx(_("%s: insecure file owner %d, 0 (root) suggested."),
 				special, st.st_uid);
-	}
 
 	/* test for holes by LBT */
 	if (S_ISREG(st.st_mode)) {
