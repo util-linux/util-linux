@@ -544,7 +544,7 @@ static void setup_tables(void) {
 	printf(_("%lu inodes\n"), inodes);
 	printf(_("%lu blocks\n"), zones);
 	printf(_("Firstdatazone=%jd (%jd)\n"), get_first_zone(), first_zone_data());
-	printf(_("Zonesize=%zu\n"),MINIX_BLOCK_SIZE<<get_zone_size());
+	printf(_("Zonesize=%zu\n"), (size_t) MINIX_BLOCK_SIZE << get_zone_size());
 	printf(_("Maxsize=%zu\n\n"),get_max_size());
 }
 
