@@ -673,15 +673,17 @@ AC_ARG_ENABLE([most-builds],
 )
 if test "x$enable_most_builds" = xyes; then
   enable_arch=check
+  enable_chfn_chsh=yes
+  enable_chkdupexe=yes
   enable_elvtune=check
-  enable_tunelp=yes
   enable_last=yes
   enable_line=yes
   enable_mesg=yes
-  enable_reset=yes
-  enable_vipw=yes
-  enable_chfn_chsh=yes
   enable_newgrp=yes
+  enable_reset=yes
+  enable_socket_activation=yes
+  enable_tunelp=yes
+  enable_vipw=yes
   enable_write=yes
 fi
 
