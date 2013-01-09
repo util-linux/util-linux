@@ -30,7 +30,7 @@ struct sysfs_cxt {
 	unsigned int	has_hctl : 1;
 };
 
-#define UL_SYSFSCXT_EMPTY { 0, -1, NULL, NULL }
+#define UL_SYSFSCXT_EMPTY { 0, -1, NULL, NULL, 0, 0, 0, 0, 0 }
 
 extern char *sysfs_devno_attribute_path(dev_t devno, char *buf,
                                  size_t bufsiz, const char *attr);
