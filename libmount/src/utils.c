@@ -978,6 +978,43 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 	return res;
 }
 
+int mkdir_p(const char *path, mode_t mode)
+{
+	char *p, *dir;
+	int rc = 0;
+
+	if (!path || !*path)
+		return -EINVAL;
+
+	dir = p = strdup(path);
+	if (!dir)
+		return -ENOMEM;
+
+	if (*p == '/')
+		p++;
+
+	while (p && *p) {
+		char *e = strchr(p, '/');
+		if (e)
+			*e = '\0';
+		if (*p) {
+			rc = mkdir(dir, mode);
+			if (rc && errno != EEXIST)
+				break;
+			rc = 0;
+		}
+		if (!e)
+			break;
+		*e = '/';
+		p = e + 1;
+	}
+
+	DBG(UTILS, mnt_debug("%s mkdir %s", path, rc ? "FAILED" : "SUCCESS"));
+
+	free(dir);
+	return rc;
+}
+
 #ifdef TEST_PROGRAM
 int test_match_fstype(struct libmnt_test *ts, int argc, char *argv[])
 {
@@ -1089,6 +1126,18 @@ int test_kernel_cmdline(struct libmnt_test *ts, int argc, char *argv[])
 	return 0;
 }
 
+int test_mkdir(struct libmnt_test *ts, int argc, char *argv[])
+{
+	int rc;
+
+	rc = mkdir_p(argv[1], S_IRWXU |
+			 S_IRGRP | S_IXGRP |
+			 S_IROTH | S_IXOTH);
+	if (rc)
+		printf("mkdir %s failed\n", argv[1]);
+	return rc;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -1102,6 +1151,8 @@ int main(int argc, char *argv[])
 	{ "--fs-root",       test_fsroot,          "<path>" },
 	{ "--cd-parent",     test_chdir,           "<path>" },
 	{ "--kernel-cmdline",test_kernel_cmdline,  "<option> | <option>=" },
+	{ "--mkdir",         test_mkdir,           "<path>" },
+
 	{ NULL }
 	};
 

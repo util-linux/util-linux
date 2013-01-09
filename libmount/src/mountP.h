@@ -131,6 +131,9 @@ extern int endswith(const char *s, const char *sx)
 			__attribute__((nonnull));
 extern int startswith(const char *s, const char *sx)
 			__attribute__((nonnull));
+
+extern int mkdir_p(const char *path, mode_t mode);
+
 extern int mnt_is_readonly(const char *path)
 			__attribute__((nonnull));
 
