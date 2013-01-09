@@ -1098,6 +1098,13 @@ This option implies the options
 .BR noexec ", " nosuid ", and " nodev
 (unless overridden by subsequent options, as in the option line
 .BR users,exec,dev,suid ).
+.TP
+.B x-*
+All options prefixed with "x-" are interpreted as comments or userspace
+applications specific options. These options are not stored to mtab file, send
+to mount.<type> helpers or
+.B mount(2)
+system call. The suggested format is x-<appname>.<option> (e.g. x-systemd.automount).
 
 .SH "FILESYSTEM SPECIFIC MOUNT OPTIONS"
 The following options apply only to certain filesystems.
