@@ -4,24 +4,25 @@ if !ARCH_M68K
 sbin_PROGRAMS += fdisk
 dist_man_MANS += fdisks/fdisk.8
 fdisk_SOURCES = \
-	fdisks/utils.c \
+	fdisks/dos_part_types.h \
 	fdisks/fdisk.c \
 	fdisks/fdisk.h \
 	fdisks/fdiskaixlabel.c \
 	fdisks/fdiskaixlabel.h \
 	fdisks/fdiskbsdlabel.c \
 	fdisks/fdiskbsdlabel.h \
+	fdisks/fdiskdoslabel.c \
+	fdisks/fdiskdoslabel.h \
 	fdisks/fdiskmaclabel.c \
 	fdisks/fdiskmaclabel.h \
 	fdisks/fdisksgilabel.c \
 	fdisks/fdisksgilabel.h \
 	fdisks/fdisksunlabel.c \
 	fdisks/fdisksunlabel.h \
-	fdisks/fdiskdoslabel.c \
-	fdisks/fdiskdoslabel.h \
 	fdisks/gpt.c \
 	fdisks/gpt.h \
 	fdisks/partname.c \
+	fdisks/utils.c \
 	fdisks/common.h
 
 fdisk_LDADD = $(LDADD) libcommon.la
