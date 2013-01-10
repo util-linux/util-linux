@@ -80,6 +80,7 @@ enum {
 	COL_USEPERC,
 	COL_FSROOT,
 	COL_TID,
+	COL_ID,
 	COL_OPT_FIELDS,
 
 	FINDMNT_NCOLUMNS
@@ -123,6 +124,7 @@ static struct colinfo infos[FINDMNT_NCOLUMNS] = {
 	[COL_USEPERC]      = { "USE%",            3, TT_FL_RIGHT, N_("filesystem use percentage") },
 	[COL_FSROOT]       = { "FSROOT",       0.25, TT_FL_NOEXTREMES, N_("filesystem root") },
 	[COL_TID]          = { "TID",             4, TT_FL_RIGHT, N_("task ID") },
+	[COL_ID]           = { "ID",              2, TT_FL_RIGHT, N_("mount ID") },
 	[COL_OPT_FIELDS]   = { "OPT-FIELDS",   0.10, TT_FL_TRUNC, N_("optional mount fields") },
 };
 
@@ -481,6 +483,12 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 	case COL_TID:
 		if (mnt_fs_get_tid(fs)) {
 			xasprintf(&tmp, "%d", mnt_fs_get_tid(fs));
+			str = tmp;
+		}
+		break;
+	case COL_ID:
+		if (mnt_fs_get_id(fs)) {
+			xasprintf(&tmp, "%d", mnt_fs_get_id(fs));
 			str = tmp;
 		}
 		break;
