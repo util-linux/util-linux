@@ -82,6 +82,7 @@ enum {
 	COL_TID,
 	COL_ID,
 	COL_OPT_FIELDS,
+	COL_PROPAGATION,
 
 	FINDMNT_NCOLUMNS
 };
@@ -126,6 +127,7 @@ static struct colinfo infos[FINDMNT_NCOLUMNS] = {
 	[COL_TID]          = { "TID",             4, TT_FL_RIGHT, N_("task ID") },
 	[COL_ID]           = { "ID",              2, TT_FL_RIGHT, N_("mount ID") },
 	[COL_OPT_FIELDS]   = { "OPT-FIELDS",   0.10, TT_FL_TRUNC, N_("optional mount fields") },
+	[COL_PROPAGATION]  = { "PROPAGATION",  0.10, 0, N_("VFS propagation flags") }
 };
 
 /* global flags */
@@ -490,6 +492,29 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 		if (mnt_fs_get_id(fs)) {
 			xasprintf(&tmp, "%d", mnt_fs_get_id(fs));
 			str = tmp;
+		}
+		break;
+	case COL_PROPAGATION:
+		if (mnt_fs_is_kernel(fs)) {
+			unsigned long fl = 0;
+			char *n = NULL;
+
+			if (mnt_fs_get_propagation(fs, &fl) != 0)
+				break;
+
+			n = xstrdup((fl & MS_SHARED) ? "shared" : "private");
+
+			if (fl & MS_SLAVE) {
+				xasprintf(&tmp, "%s,slave", n);
+				free(n);
+				n = tmp;
+			}
+			if (fl & MS_UNBINDABLE) {
+				xasprintf(&tmp, "%s,unbindable", n);
+				free(n);
+				n = tmp;
+			}
+			str = n;
 		}
 		break;
 	default:
