@@ -327,6 +327,9 @@ extern char *mnt_fs_strdup_options(struct libmnt_fs *fs)
 extern const char *mnt_fs_get_options(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull))
 			__ul_attribute__((warn_unused_result));
+extern const char *mnt_fs_get_optional_fields(struct libmnt_fs *fs)
+			__ul_attribute__((nonnull))
+			__ul_attribute__((warn_unused_result));
 extern int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr);
 extern int mnt_fs_append_options(struct libmnt_fs *fs, const char *optstr);
 extern int mnt_fs_prepend_options(struct libmnt_fs *fs, const char *optstr);

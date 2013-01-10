@@ -217,6 +217,7 @@ struct libmnt_fs {
 
 	char		*optstr;	/* fstab[4], merged options */
 	char		*vfs_optstr;	/* mountinfo[6]: fs-independent (VFS) options */
+	char		*opt_fields;	/* mountinfo[7]: optional fields */
 	char		*fs_optstr;	/* mountinfo[11]: fs-dependent options */
 	char		*user_optstr;	/* userspace mount options */
 	char		*attrs;		/* mount attributes */

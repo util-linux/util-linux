@@ -248,3 +248,8 @@ global:
 	mnt_table_find_devno;
 	mnt_table_parse_swaps;
 } MOUNT_2.21;
+
+MOUNT_2.23 {
+global:
+	mnt_fs_get_optional_fields;
+} MOUNT_2.22;

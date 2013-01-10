@@ -169,6 +169,7 @@ mnt_fs_get_fs_options
 mnt_fs_get_fstype
 mnt_fs_get_id
 mnt_fs_get_option
+mnt_fs_get_optional_fields
 mnt_fs_get_options
 mnt_fs_get_parent_id
 mnt_fs_get_passno
