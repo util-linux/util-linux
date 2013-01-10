@@ -2334,11 +2334,11 @@ int test_mountall(struct libmnt_test *ts, int argc, char *argv[])
 		return -ENOMEM;
 
 	if (argc > 2) {
-		if (!strcmp(argv[idx], "-O")) {
+		if (argv[idx] && !strcmp(argv[idx], "-O")) {
 			mnt_context_set_options_pattern(cxt, argv[idx + 1]);
 			idx += 2;
 		}
-		if (!strcmp(argv[idx], "-t")) {
+		if (argv[idx] && !strcmp(argv[idx], "-t")) {
 			mnt_context_set_fstype_pattern(cxt, argv[idx + 1]);
 			idx += 2;
 		}
