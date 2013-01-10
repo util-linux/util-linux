@@ -86,16 +86,10 @@ const struct blkid_idinfo btrfs_idinfo =
 	.minsz		= 1024 * 1024,
 	.magics		=
 	{
-		{ .magic = "_BHRfS_M", .len = 8, .kboff = 64, .sboff = 0x40 },
-		{ .magic = "_BHRfS_M",
-		  .len = 8,
-		  .kboff = 64 * 1024,
-		  .sboff = 0x40 },
-		{ .magic = "_BHRfS_M",
-		  .len = 8,
-		  .kboff = 256 * 1024 * 1024,
-		  .sboff = 0x40 },
-		{ NULL }
+	  { .magic = "_BHRfS_M", .len = 8, .sboff = 0x40, .kboff = 64 },
+	  { .magic = "_BHRfS_M", .len = 8, .sboff = 0x40, .kboff = 64 * 1024 },
+	  { .magic = "_BHRfS_M", .len = 8, .sboff = 0x40, .kboff = 256 * 1024 * 1024 },
+	  { NULL }
 	}
 };
 
