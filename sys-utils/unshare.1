@@ -1,7 +1,7 @@
 .\" Process this file with
 .\" groff -man -Tascii lscpu.1
 .\"
-.TH UNSHARE 1 "October 2008" "util-linux" "User Commands"
+.TH UNSHARE 1 "January 2013" "util-linux" "User Commands"
 .SH NAME
 unshare \- run program with some namespaces unshared from parent
 .SH SYNOPSIS
@@ -31,6 +31,13 @@ process will have independent IPv4 and IPv6 stacks, IP routing tables, firewall
 rules, the \fI/proc/net\fP and \fI/sys/class/net\fP directory trees, sockets
 etc. (\fBCLONE_NEWNET\fP flag).
 .TP
+.BR "pid namespace"
+children will have a distinct set of pid to process mappings than their parent.
+(\fBCLONE_NEWPID\fP flag).
+.TP
+.BR "user namespace"
+process will have distinct set of uids, gids and capabilities. (\fBCLONE_NEWUSER\fP flag).
+.TP
 See the \fBclone\fR(2) for exact semantics of the flags.
 .SH OPTIONS
 .TP
@@ -41,16 +48,20 @@ Print a help message,
 Unshare the mount namespace,
 .TP
 .BR \-u , " \-\-uts"
-Unshare the UTC namespace,
+Unshare the UTS namespace,
 .TP
 .BR \-i , " \-\-ipc"
 Unshare the IPC namespace,
 .TP
 .BR \-n , " \-\-net"
 Unshare the network namespace.
+.TP
+.BR \-p , " \-\-pid"
+Unshare the pid namespace.
+.TP
+.BR \-U , " \-\-user"
+Unshare the user namespace.
 .SH NOTES
-The unshare command drops potential privileges before executing the
-target program. This allows to setuid unshare.
 .SH SEE ALSO
 .BR unshare (2),
 .BR clone (2)
