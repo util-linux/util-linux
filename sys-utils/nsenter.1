@@ -1,0 +1,101 @@
+.TH NSENTER 1 "January 2013" "util-linux" "User Commands"
+.SH NAME
+nsenter \- run program with namespaces of other processes
+.SH SYNOPSIS
+.B nsenter
+.RI [ options ]
+program
+.RI [ arguments ]
+.SH DESCRIPTION
+Enters the contexts of one or more other processes and then executes specified
+program. Enterable namespaces are:
+.TP
+.BR "mount namespace"
+mounting and unmounting filesystems will not affect rest of the system
+(\fBCLONE_NEWNS\fP flag), except for filesystems which are explicitly marked as
+shared (by mount --make-shared). See /proc/self/mountinfo for the shared flags.
+.TP
+.BR "UTS namespace"
+setting hostname, domainname will not affect rest of the system
+(\fBCLONE_NEWUTS\fP flag).
+.TP
+.BR "IPC namespace"
+process will have independent namespace for System V message queues, semaphore
+sets and shared memory segments (\fBCLONE_NEWIPC\fP flag).
+.TP
+.BR "network namespace"
+process will have independent IPv4 and IPv6 stacks, IP routing tables, firewall
+rules, the \fI/proc/net\fP and \fI/sys/class/net\fP directory trees, sockets
+etc. (\fBCLONE_NEWNET\fP flag).
+.TP
+.BR "pid namespace"
+children will have a distinct set of pid to process mappings thantheir parent.
+(\fBCLONE_NEWPID\fP flag).
+.TP
+.BR "user namespace"
+process will have distinct set of uids, gids and capabilities. (\fBCLONE_NEWUSER\fP flag).
+.TP
+See the \fBclone\fR(2) for exact semantics of the flags.
+.SH OPTIONS
+.TP
+.BR \-h , " \-\-help"
+Print a help message,
+.TP
+.BR \-t , " \-\-target " \fIpid\fP
+Specify a target process to get contexts from.  The paths to the contexts specified by pid are: /proc/[pid]/ns/mnt, /proc/[pid]/ns/uts, /proc/[pid]/ns/ipc, /proc/[pid]/ns/net, /proc/[pid]/ns/pid, /proc/[pid]/ns/user, /proc/[pid]/root, /proc/[pid]/cwd for the mount namespace, the uts namespace, the ipc namespace, the net namespace, the pid namespace, the user namespace, the root directory and the working directory respectively.
+.TP
+.BR \-m , " \-\-mount"=[\fIfile\fP]
+Enter the mount namespace.
+If no file is specified enter the mount namespace of the target process.
+If file is specified enter the mount namespace specified by file.
+.TP
+.BR \-u , " \-\-uts"=[\fIfile\fP]
+Enter the uts namespace.
+If no file is specified enter the uts namespace of the target process.
+If file is specified enter the uts namespace specified by file.
+.TP
+.BR \-i , " \-\-ipc "=[\fIfile\fP]
+Enter the IPC namespace.
+If no file is specified enter the IPC namespace of the target process.
+If file is specified enter the uts namespace specified by file.
+.TP
+.BR \-n , " \-\-net"=[\fIfile\fP]
+Enter the network namespace.
+If no file is specified enter the network namespace of the target process.
+If file is specified enter the network namespace specified by file.
+.TP
+.BR \-p , " \-\-pid"=[\fIfile\fP]
+Enter the pid namespace.
+If no file is specified enter the pid namespace of the target process.
+If file is specified enter the pid namespace specified by file.
+.TP
+.BR \-U , " \-\-user"=[\fIfile\fP]
+Enter the user namespace.
+If no file is specified enter the user namespace of the target process.
+If file is specified enter the user namespace specified by file.
+.TP
+.BR \-r , " \-\-root"=[\fIdirectory\fP]
+Set the root directory.
+If no directory is specified set the root directory to the root directory of the target process.
+If directory is specified set the root directory to the specified directory.
+.TP
+.BR \-w , " \-\-wd"=[\fIdirectory\fP]
+Set the working directory.
+If no directory is specified set the working directory to the working directory of the target process.
+If directory is specified set the working directory to the specified directory.
+.TP
+.BR \-e , " \-\-exec"
+Don't fork before exec'ing the specified program.  By default when entering
+a pid namespace enter calls fork before calling exec so that the children will
+be in the newly entered pid namespace.
+.SH NOTES
+.SH SEE ALSO
+.BR setns (2),
+.BR clone (2)
+.SH BUGS
+None known so far.
+.SH AUTHOR
+Eric Biederman <ebiederm@xmission.com>
+.SH AVAILABILITY
+The nsenter command is part of the util-linux package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux/.

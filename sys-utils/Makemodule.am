@@ -289,6 +289,13 @@ dist_man_MANS += sys-utils/unshare.1
 unshare_SOURCES = sys-utils/unshare.c
 endif
 
+if BUILD_NSENTER
+usrbin_exec_PROGRAMS += nsenter
+dist_man_MANS += sys-utils/nsenter.1
+nsenter_SOURCES = sys-utils/nsenter.c
+nsenter_LDADD = $(LDADD) libcommon.la
+endif
+
 if BUILD_ARCH
 bin_PROGRAMS += arch
 dist_man_MANS += sys-utils/arch.1

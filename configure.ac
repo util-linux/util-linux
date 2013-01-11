@@ -867,6 +867,17 @@ if test "x$build_unshare" = xyes; then
   AC_CHECK_FUNCS([unshare])
 fi
 
+AC_ARG_ENABLE([nsenter],
+  AS_HELP_STRING([--disable-nsenter], [do not build nsenter]),
+  [], enable_nsenter=check
+)
+UL_BUILD_INIT([nsenter])
+UL_REQUIRES_LINUX([nsenter])
+UL_REQUIRES_SYSCALL_CHECK([setns], [UL_CHECK_SYSCALL([setns])])
+AM_CONDITIONAL(BUILD_NSENTER, test "x$build_nsenter" = xyes)
+if test "x$build_nsenter" = xyes; then
+  AC_CHECK_FUNCS([setns])
+fi
 
 AC_ARG_ENABLE([arch],
   AS_HELP_STRING([--enable-arch], [do build arch]),
