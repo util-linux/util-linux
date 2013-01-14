@@ -879,6 +879,20 @@ if test "x$build_nsenter" = xyes; then
   AC_CHECK_FUNCS([setns])
 fi
 
+dnl setpriv depends on libcap-ng.  It would be possible to build
+dnl a version of setpriv with limited functionality without libcap-ng,
+dnl but this isn't currently supported.
+UL_CHECK_LIB([cap-ng], [capng_apply], [cap_ng])
+AC_ARG_ENABLE([setpriv],
+  AS_HELP_STRING([--disable-setpriv], [do not build setpriv]),
+  [], enable_setpriv=check
+)
+UL_BUILD_INIT([setpriv])
+UL_REQUIRES_LINUX([setpriv])
+UL_REQUIRES_HAVE([setpriv], [cap_ng], [libcap-ng])
+AM_CONDITIONAL(BUILD_SETPRIV, test "x$build_setpriv" = xyes)
+
+
 AC_ARG_ENABLE([arch],
   AS_HELP_STRING([--enable-arch], [do build arch]),
   [], enable_arch=no

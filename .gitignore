@@ -150,6 +150,7 @@ tests/run.sh.trs
 /script
 /scriptreplay
 /setarch
+/setpriv
 /setsid
 /setterm
 /sfdisk

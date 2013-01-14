@@ -318,3 +318,10 @@ if HAVE_AUDIT
 hwclock_LDADD += -laudit
 endif
 endif # BUILD_HWCLOCK
+
+if BUILD_SETPRIV
+usrbin_exec_PROGRAMS += setpriv
+dist_man_MANS += sys-utils/setpriv.1
+setpriv_SOURCES = sys-utils/setpriv.c
+setpriv_LDADD = $(LDADD) -lcap-ng libcommon.la
+endif
