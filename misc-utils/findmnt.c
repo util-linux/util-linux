@@ -1335,13 +1335,6 @@ int main(int argc, char *argv[])
 	}
 	mnt_table_set_cache(tb, cache);
 
-	if (tabtype == TABTYPE_KERNEL
-	    && (flags & FL_NOSWAPMATCH)
-	    && get_match(COL_TARGET))
-		/*
-		 * enable extra functionality for target match
-		 */
-		enable_extra_target_match();
 
 	/*
 	 * initialize output formatting (tt.h)
@@ -1381,9 +1374,23 @@ int main(int argc, char *argv[])
 	} else if ((tt_flags & TT_FL_TREE) && is_listall_mode())
 		/* whole tree */
 		rc = create_treenode(tt, tb, NULL, NULL);
-	else
+	else {
 		/* whole lits of sub-tree */
 		rc = add_matching_lines(tb, tt, direction);
+
+		if (rc != 0
+		    && tabtype == TABTYPE_KERNEL
+		    && (flags & FL_NOSWAPMATCH)
+		    && get_match(COL_TARGET)) {
+			/*
+			 * Found nothing, maybe the --target is regular file,
+			 * try it again with extra functionality for target
+			 * match
+			 */
+			enable_extra_target_match();
+			rc = add_matching_lines(tb, tt, direction);
+		}
+	}
 
 	/*
 	 * Print the output table for non-poll modes
