@@ -97,6 +97,26 @@ signal.  If the receiving process has installed a handler for this signal using
 the SA_SIGINFO flag to
 .BR sigaction (2),
 then it can obtain this data via the si_value field of the siginfo_t structure.
+.SH NOTES
+It's not possible to send a signal to explicitly selected thread in a
+multithreaded process by
+.BR kill (2)
+syscall. If
+.BR kill(2)
+is used to send a signal to a thread group,  then
+kernel selects arbitrary member of the thread group that has not blocked
+the signal. For more details see
+.BR clone (2)
+CLONE_THREAD description.
+
+The command
+.BR kill (1)
+as well as syscall
+.BR kill (2)
+accepts TID (thread ID, see
+.BR gettid (2))
+as argument. In this case the kill behavior is not changed and the signal is
+also delivered to the thread group rather than to the specified thread.
 .SH "SEE ALSO"
 .BR bash (1),
 .BR tcsh (1),
