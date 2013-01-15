@@ -248,9 +248,12 @@ static void success_message(struct libmnt_context *cxt)
 		printf(_("%s: %s moved to %s.\n"), pr, src, tgt);
 	else if (mflags & MS_BIND)
 		printf(_("%s: %s binded on %s.\n"), pr, src, tgt);
-	else if (mflags & MS_PROPAGATION)
+	else if (mflags & MS_PROPAGATION) {
+		if (src && strcmp(src, "none") != 0 && tgt)
+			printf(_("%s: %s mounted on %s.\n"), pr, src, tgt);
+
 		printf(_("%s: %s propagation flags changed.\n"), pr, tgt);
-	else
+	} else
 		printf(_("%s: %s mounted on %s.\n"), pr, src, tgt);
 }
 
