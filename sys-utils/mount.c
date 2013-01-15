@@ -234,7 +234,7 @@ static int mount_all(struct libmnt_context *cxt)
 static void success_message(struct libmnt_context *cxt)
 {
 	unsigned long mflags = 0;
-	const char *tgt, *src;
+	const char *tgt, *src, *pr = program_invocation_short_name;
 
 	if (mnt_context_helper_executed(cxt)
 	    || mnt_context_get_status(cxt) != 1)
@@ -245,13 +245,13 @@ static void success_message(struct libmnt_context *cxt)
 	src = mnt_context_get_source(cxt);
 
 	if (mflags & MS_MOVE)
-		warnx(_("%s moved to %s"), src, tgt);
+		printf(_("%s: %s moved to %s.\n"), pr, src, tgt);
 	else if (mflags & MS_BIND)
-		warnx(_("%s binded on %s"), src, tgt);
+		printf(_("%s: %s binded on %s.\n"), pr, src, tgt);
 	else if (mflags & MS_PROPAGATION)
-		warnx(_("%s propagation flags changed"), tgt);
+		printf(_("%s: %s propagation flags changed.\n"), pr, tgt);
 	else
-		warnx(_("%s mounted on %s"), src, tgt);
+		printf(_("%s: %s mounted on %s.\n"), pr, src, tgt);
 }
 
 /*
