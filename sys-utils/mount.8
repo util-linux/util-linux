@@ -458,14 +458,11 @@ of that mount such that mounts and umounts within any of the mirrors propagate
 to the other mirror. A slave mount receives propagation from its master, but
 any not vice-versa.  A private mount carries no propagation abilities.  A
 unbindable mount is a private mount which cannot be cloned through a bind
-operation. Detailed semantics is documented in Documentation/filesystems/sharedsubtree.txt
+operation. Detailed semantics is documented in
+.B Documentation/filesystems/sharedsubtree.txt
 file in the kernel source tree.
 
-Note that Linux kernel does not allow to change more propagation flags by one
-.BR mount (2)
-syscall and the flags cannot be mixed with another mount options. It means that
-more --make-* options cannot be used together or with another mount options.
-
+Supported operations:
 .RS
 .nf
 .BI "mount --make-shared " mountpoint
@@ -484,6 +481,41 @@ mounts under a given mountpoint.
 .BI "mount --make-rslave " mountpoint
 .BI "mount --make-rprivate " mountpoint
 .BI "mount --make-runbindable " mountpoint
+.fi
+.RE
+
+.BR mount (8)
+.B does not read
+.BR fstab (5)
+when --make-* operation is requested. All necessary information has to be
+specified on command line.
+
+Note that Linux kernel does not allow to change more propagation flags by one
+.BR mount (2)
+syscall and the flags cannot be mixed with another mount options.
+
+Since util-linux 2.23 mount command allows to use more propagation flags
+together and with another mount operations. This feature is EXPERIMENTAL. In
+this case the propagation flags are applied by additional mount(2) syscalls
+after previous successful mount operation. Note that this use case is not
+atomic. The propagation flags is possible to specified in
+.BR fstab (5)
+as mount options
+(private,slave,shared,unbindable,rprivate,rslave,rshared,runbindable).
+
+For example
+.RS
+.nf
+.BI "mount --make-private --make-unbindable /dev/sda1 /A"
+.fi
+.RE
+
+is the same as
+.RS
+.nf
+.BI "mount /dev/sda1 /A"
+.BI "mount --make-private /A"
+.BI "mount --make-unbindable /A"
 .fi
 .RE
 .RE
