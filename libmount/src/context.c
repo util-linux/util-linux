@@ -1212,6 +1212,8 @@ int mnt_context_set_mflags(struct libmnt_context *cxt, unsigned long flags)
 int mnt_context_get_mflags(struct libmnt_context *cxt, unsigned long *flags)
 {
 	int rc = 0;
+	struct list_head *p;
+
 	if (!cxt || !flags)
 		return -EINVAL;
 
@@ -1222,6 +1224,14 @@ int mnt_context_get_mflags(struct libmnt_context *cxt, unsigned long *flags)
 			rc = mnt_optstr_get_flags(o, flags,
 				    mnt_get_builtin_optmap(MNT_LINUX_MAP));
 	}
+
+	list_for_each(p, &cxt->addmounts) {
+		struct libmnt_addmount *ad =
+				list_entry(p, struct libmnt_addmount, mounts);
+
+		*flags |= ad->mountflags;
+	}
+
 	if (!rc)
 		*flags |= cxt->mountflags;
 	return rc;
