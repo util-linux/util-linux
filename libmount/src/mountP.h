@@ -283,6 +283,14 @@ enum {
 	MNT_FMT_SWAPS			/* /proc/swaps */
 };
 
+/*
+ * Additional mounts
+ */
+struct libmnt_addmount {
+	unsigned long mountflags;
+
+	struct list_head	mounts;
+};
 
 /*
  * Mount context -- high-level API
@@ -316,6 +324,8 @@ struct libmnt_context
 	const void	*mountdata;	/* final mount(2) data, string or binary data */
 
 	unsigned long	user_mountflags;	/* MNT_MS_* (loop=, user=, ...) */
+
+	struct list_head	addmounts;	/* additional mounts */
 
 	struct libmnt_cache	*cache;	/* paths cache */
 	struct libmnt_lock	*lock;	/* mtab lock */
@@ -415,6 +425,12 @@ extern int mnt_context_mount_setopt(struct libmnt_context *cxt, int c, char *arg
 
 extern int mnt_context_is_loopdev(struct libmnt_context *cxt)
 			__attribute__((nonnull));
+
+extern int mnt_context_propagation_only(struct libmnt_context *cxt)
+			__attribute__((nonnull));
+
+extern struct libmnt_addmount *mnt_new_addmount(void);
+extern void mnt_free_addmount(struct libmnt_addmount *ad);
 
 extern int mnt_context_setup_loopdev(struct libmnt_context *cxt);
 extern int mnt_context_delete_loopdev(struct libmnt_context *cxt);

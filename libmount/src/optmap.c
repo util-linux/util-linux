@@ -112,6 +112,16 @@ static const struct libmnt_optmap linux_flags_map[] =
    { "strictatime", MS_STRICTATIME },         /* Strict atime semantics */
    { "nostrictatime", MS_STRICTATIME, MNT_INVERT }, /* kernel default atime */
 #endif
+#ifdef MS_PROPAGATION
+   { "unbindable",  MS_UNBINDABLE,          MNT_NOHLPS | MNT_NOMTAB }, /* Unbindable */
+   { "runbindable", MS_UNBINDABLE | MS_REC, MNT_NOHLPS | MNT_NOMTAB },
+   { "private",     MS_PRIVATE,             MNT_NOHLPS | MNT_NOMTAB }, /* Private */
+   { "rprivate",    MS_PRIVATE | MS_REC,    MNT_NOHLPS | MNT_NOMTAB },
+   { "slave",       MS_SLAVE,               MNT_NOHLPS | MNT_NOMTAB }, /* Slave */
+   { "rslave",      MS_SLAVE | MS_REC,      MNT_NOHLPS | MNT_NOMTAB },
+   { "shared",      MS_SHARED,              MNT_NOHLPS | MNT_NOMTAB }, /* Shared */
+   { "rshared",     MS_SHARED | MS_REC,     MNT_NOHLPS | MNT_NOMTAB },
+#endif
    { NULL, 0, 0 }
 };
 

@@ -40,7 +40,8 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 		return 1;
 	}
 
-	if (cxt->mountflags & (MS_BIND | MS_MOVE | MS_PROPAGATION))
+	if ((cxt->mountflags & (MS_BIND | MS_MOVE))
+	    || mnt_context_propagation_only(cxt))
 		return 0;
 
 	/* Automatically create a loop device from a regular file if a
