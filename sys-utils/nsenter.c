@@ -60,7 +60,7 @@ static int setns(int fd, int nstype)
 
 static struct namespace_file{
 	int nstype;
-	char *name;
+	const char *name;
 	int fd;
 } namespace_files[] = {
 	/* Careful the order is significant in this array.
@@ -109,7 +109,7 @@ static pid_t namespace_target_pid = 0;
 static int root_fd = -1;
 static int wd_fd = -1;
 
-static void open_target_fd(int *fd, const char *type, char *path)
+static void open_target_fd(int *fd, const char *type, const char *path)
 {
 	char pathbuf[PATH_MAX];
 
@@ -130,7 +130,7 @@ static void open_target_fd(int *fd, const char *type, char *path)
 		err(EXIT_FAILURE, _("open of '%s' failed"), path);
 }
 
-static void open_namespace_fd(int nstype, char *path)
+static void open_namespace_fd(int nstype, const char *path)
 {
 	struct namespace_file *nsfile;
 
