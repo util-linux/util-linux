@@ -63,7 +63,7 @@ static struct namespace_file{
 	char *name;
 	int fd;
 } namespace_files[] = {
-	/* Careful the order is signifcant in this array.
+	/* Careful the order is significant in this array.
 	 *
 	 * The user namespace comes first, so that it is entered
 	 * first.  This gives an unprivileged user the potential to
