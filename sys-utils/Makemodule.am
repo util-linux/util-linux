@@ -287,7 +287,6 @@ if BUILD_UNSHARE
 usrbin_exec_PROGRAMS += unshare
 dist_man_MANS += sys-utils/unshare.1
 unshare_SOURCES = sys-utils/unshare.c
-unshare_LDADD = $(LDADD) libcommon.la
 endif
 
 if BUILD_ARCH

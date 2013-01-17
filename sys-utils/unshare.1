@@ -3,15 +3,15 @@
 .\"
 .TH UNSHARE 1 "October 2008" "util-linux" "User Commands"
 .SH NAME
-unshare \- run program with some namespaces unshared or changed from parent
+unshare \- run program with some namespaces unshared from parent
 .SH SYNOPSIS
 .B unshare
 .RI [ options ]
 program
 .RI [ arguments ]
 .SH DESCRIPTION
-Unshares or migrates specified namespaces from parent process and then executes specified
-program. Available namespaces are:
+Unshares specified namespaces from parent process and then executes specified
+program. Unshareable namespaces are:
 .TP
 .BR "mount namespace"
 mounting and unmounting filesystems will not affect rest of the system
@@ -33,43 +33,31 @@ etc. (\fBCLONE_NEWNET\fP flag).
 .TP
 See the \fBclone\fR(2) for exact semantics of the flags.
 .SH OPTIONS
-Note when specifying the optional \fB<pid>\fP argument, the string of option,
-equal sign (=),  and the pid must not contain any blanks or other white space.
-The correct form is for example --ipc=123 or -i=123.
 .TP
 .BR \-h , " \-\-help"
 Print a help message,
 .TP
-.BR \-m , " \-\-mount " \fI[=pid]\fP
-Unshare the mount namespace, or, when a pid is specified, migrate the mount
-namespace to the one attached to the specified pid.
+.BR \-m , " \-\-mount"
+Unshare the mount namespace,
 .TP
-.BR \-u , " \-\-uts " \fI[=pid]\fP
-Unshare the UTC namespace, or, when a pid is specified, migrate the uts
-namespace to the one attached to the specified pid
+.BR \-u , " \-\-uts"
+Unshare the UTC namespace,
 .TP
-.BR \-i , " \-\-ipc " \fI[=pid]\fP
-Unshare the IPC namespace, or, when a pid is specified, migrate the ipc
-namespace to the one attached to the specified pid
+.BR \-i , " \-\-ipc"
+Unshare the IPC namespace,
 .TP
-.BR \-n , " \-\-net " \fI[=pid]\fP
-Unshare the network namespace, or, when a pid is specified, migrate the net
-namespace to the one attached to the specified pid
+.BR \-n , " \-\-net"
+Unshare the network namespace.
 .SH NOTES
 The unshare command drops potential privileges before executing the
 target program. This allows to setuid unshare.
-.P
-Support for migrating processes between mount and pid namespace is available in
-kernels 3.8 and later
 .SH SEE ALSO
 .BR unshare (2),
-.BR setns (2),
 .BR clone (2)
 .SH BUGS
 None known so far.
-.SH AUTHORS
+.SH AUTHOR
 Mikhail Gusarov <dottedmag@dottedmag.net>
-Neil Horman <nhorman@tuxdriver.com>
 .SH AVAILABILITY
 The unshare command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
