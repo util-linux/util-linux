@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "strutils.h"
 #include "nls.h"
 #include "c.h"
 #include "closestream.h"
@@ -198,7 +199,6 @@ int main(int argc, char *argv[])
 
 	struct namespace_file *nsfile;
 	int do_fork = 0;
-	char *end;
 	int c;
 
 	setlocale(LC_MESSAGES, "");
@@ -214,13 +214,7 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 't':
-			errno = 0;
-			namespace_target_pid = strtoul(optarg, &end, 10);
-			if (!*optarg || (*optarg && *end) || errno != 0) {
-				err(EXIT_FAILURE,
-				    _("Pid '%s' is not a valid number"),
-				    optarg);
-			}
+			namespace_target_pid = strtoul_or_err(optarg, _("failed to parse pid"));
 			break;
 		case 'm':
 			open_namespace_fd(CLONE_NEWNS, optarg);
