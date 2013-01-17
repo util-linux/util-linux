@@ -145,6 +145,39 @@ static void open_namespace_fd(int nstype, char *path)
 	err(EXIT_FAILURE, "Unrecognized namespace type");
 }
 
+static void continue_as_child(void)
+{
+	pid_t child = fork();
+	int status;
+	pid_t ret;
+
+	if (child < 0)
+		err(EXIT_FAILURE, _("fork failed"));
+
+	/* Only the child returns */
+	if (child == 0)
+		return;
+
+	for (;;) {
+		ret = waitpid(child, &status, WUNTRACED);
+		if ((ret == child) && (WIFSTOPPED(status))) {
+			/* The child suspended so suspend us as well */
+			kill(getpid(), SIGSTOP);
+			kill(child, SIGCONT);
+		} else {
+			break;
+		}
+	}
+	/* Return the child's exit code if possible */
+	if (WIFEXITED(status)) {
+		exit(WEXITSTATUS(status));
+	}
+	else if (WIFSIGNALED(status)) {
+		kill(getpid(), WTERMSIG(status));
+	}
+	exit(EXIT_FAILURE);
+}
+
 int main(int argc, char *argv[])
 {
 	static const struct option longopts[] = {
@@ -266,19 +299,8 @@ int main(int argc, char *argv[])
 		wd_fd = -1;
 	}
 
-	if (do_fork) {
-		pid_t child = fork();
-		if (child < 0)
-			err(EXIT_FAILURE, _("fork failed"));
-		if (child != 0) {
-			int status;
-			if ((waitpid(child, &status, 0) == child) &&
-			     WIFEXITED(status)) {
-				exit(WEXITSTATUS(status));
-			}
-			exit(EXIT_FAILURE);
-		}
-	}
+	if (do_fork)
+		continue_as_child();
 
 	execvp(argv[optind], argv + optind);
 
