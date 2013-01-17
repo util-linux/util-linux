@@ -146,6 +146,9 @@ static int nactions;
 /* libmount cache */
 static struct libmnt_cache *cache;
 
+static int match_func(struct libmnt_fs *fs, void *data __attribute__ ((__unused__)));
+
+
 static int get_column_id(int num)
 {
 	assert(num < ncolumns);
@@ -639,9 +642,12 @@ static int create_treenode(struct tt *tt, struct libmnt_table *tb,
 	if (!itr)
 		goto leave;
 
-	line = add_line(tt, fs, parent_line);
-	if (!line)
-		goto leave;
+	if ((flags & FL_SUBMOUNTS) || match_func(fs, NULL)) {
+		line = add_line(tt, fs, parent_line);
+		if (!line)
+			goto leave;
+	} else
+		line = parent_line;
 
 	/*
 	 * add all children to the output table
@@ -835,6 +841,10 @@ again:
 	return fs;
 }
 
+/*
+ * Filter out unwanted lines for --list output or top level lines for
+ * --submounts tree output.
+ */
 static int add_matching_lines(struct libmnt_table *tb,
 			      struct tt *tt, int direction)
 {
@@ -1299,8 +1309,10 @@ int main(int argc, char *argv[])
 		/* don't care about submounts if list all mounts */
 		flags &= ~FL_SUBMOUNTS;
 
-	if (!(flags & FL_SUBMOUNTS) &&
-	    (!is_listall_mode() || (flags & FL_FIRSTONLY)))
+	if (!(flags & FL_SUBMOUNTS) && ((flags & FL_FIRSTONLY)
+	    || get_match(COL_TARGET)
+	    || get_match(COL_SOURCE)
+	    || get_match(COL_MAJMIN)))
 		tt_flags &= ~TT_FL_TREE;
 
 	if (!(flags & FL_NOSWAPMATCH) &&
@@ -1371,10 +1383,10 @@ int main(int argc, char *argv[])
 		/* poll mode (accept the first tabfile only) */
 		rc = poll_table(tb, tabfiles ? *tabfiles : _PATH_PROC_MOUNTINFO, timeout, tt, direction);
 
-	} else if ((tt_flags & TT_FL_TREE) && is_listall_mode())
+	} else if ((tt_flags & TT_FL_TREE) && !(flags & FL_SUBMOUNTS)) {
 		/* whole tree */
 		rc = create_treenode(tt, tb, NULL, NULL);
-	else {
+	} else {
 		/* whole lits of sub-tree */
 		rc = add_matching_lines(tb, tt, direction);
 
