@@ -498,7 +498,7 @@ monthly(int day, int month, int year) {
 	do_monthly(day, month, year, &out);
 	for (i = 0; i < FMT_ST_LINES; i++) {
 		my_putstring(out.s[i]);
-		putchar('\n');
+		my_putstring("\n");
 	}
 }
 
@@ -533,8 +533,11 @@ monthly3(int day, int month, int year) {
 	do_monthly(day, next_month, next_year, &out_next);
 
 	width = (julian ? J_WEEK_LEN : WEEK_LEN) -1;
-	for (i = 0; i < 2; i++)
-		printf("%s  %s  %s\n", out_prev.s[i], out_curm.s[i], out_next.s[i]);
+	for (i = 0; i < 2; i++) {
+		snprintf(lineout, sizeof(lineout),
+			"%s  %s  %s\n", out_prev.s[i], out_curm.s[i], out_next.s[i]);
+		my_putstring(lineout);
+	}
 	for (i = 2; i < FMT_ST_LINES; i++) {
 		int w1, w2, w3;
 		w1 = w2 = w3 = width;
@@ -562,7 +565,7 @@ j_yearly(int day, int year) {
 
 	snprintf(lineout, sizeof(lineout), "%d", year);
 	center(lineout, J_WEEK_LEN*2 + J_HEAD_SEP - 1, 0);
-	printf("\n\n");
+	my_putstring("\n\n");
 
 	for (i = 0; i < 12; i++)
 		day_array(day, i + 1, year, days[i]);
@@ -571,8 +574,10 @@ j_yearly(int day, int year) {
 	for (month = 0; month < 12; month += 2) {
 		center(full_month[month], J_WEEK_LEN-1, J_HEAD_SEP+1);
 		center(full_month[month + 1], J_WEEK_LEN-1, 0);
-		printf("\n%s%*s %s\n", j_day_headings, J_HEAD_SEP, "",
-		    j_day_headings);
+		snprintf(lineout, sizeof(lineout),
+			    "\n%s%*s %s\n", j_day_headings, J_HEAD_SEP, "",
+			    j_day_headings);
+		my_putstring(lineout);
 		for (row = 0; row < 6; row++) {
 			p = lineout;
 			for (which_cal = 0; which_cal < 2; which_cal++) {
@@ -584,10 +589,10 @@ j_yearly(int day, int year) {
 			*p = '\0';
 			trim_trailing_spaces(lineout);
 			my_putstring(lineout);
-			putchar('\n');
+			my_putstring("\n");
 		}
 	}
-	printf("\n");
+	my_putstring("\n");
 }
 
 void
@@ -598,7 +603,7 @@ yearly(int day, int year) {
 
 	snprintf(lineout, sizeof(lineout), "%d", year);
 	center(lineout, WEEK_LEN*3 + HEAD_SEP*2 - 1, 0);
-	printf("\n\n");
+	my_putstring("\n\n");
 
 	for (i = 0; i < 12; i++)
 		day_array(day, i + 1, year, days[i]);
@@ -608,8 +613,10 @@ yearly(int day, int year) {
 		center(full_month[month], WEEK_LEN-1, HEAD_SEP+1);
 		center(full_month[month + 1], WEEK_LEN-1, HEAD_SEP+1);
 		center(full_month[month + 2], WEEK_LEN-1, 0);
-		printf("\n%s%*s %s%*s %s\n", day_headings, HEAD_SEP,
-		    "", day_headings, HEAD_SEP, "", day_headings);
+		snprintf(lineout, sizeof(lineout),
+			"\n%s%*s %s%*s %s\n", day_headings, HEAD_SEP,
+			"", day_headings, HEAD_SEP, "", day_headings);
+		my_putstring(lineout);
 		for (row = 0; row < 6; row++) {
 			p = lineout;
 			for (which_cal = 0; which_cal < 3; which_cal++) {
@@ -621,10 +628,10 @@ yearly(int day, int year) {
 			*p = '\0';
 			trim_trailing_spaces(lineout);
 			my_putstring(lineout);
-			putchar('\n');
+			my_putstring("\n");
 		}
 	}
-	putchar('\n');
+	my_putstring("\n");
 }
 
 /*
@@ -773,10 +780,14 @@ void
 center(const char *str, size_t len, int separate)
 {
 	char lineout[FMT_ST_CHARS];
+
 	center_str(str, lineout, ARRAY_SIZE(lineout), len);
-	fputs(lineout, stdout);
-	if (separate)
-		printf("%*s", separate, "");
+	my_putstring(lineout);
+
+	if (separate) {
+		snprintf(lineout, sizeof(lineout), "%*s", separate, "");
+		my_putstring(lineout);
+	}
 }
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
