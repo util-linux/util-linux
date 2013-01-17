@@ -540,7 +540,7 @@ static ssize_t read_lba(struct fdisk_context *cxt, uint64_t lba,
 
 
 /* Returns the GPT entry array */
-static struct gpt_entry *gpt_get_entries(struct fdisk_context *cxt,
+static struct gpt_entry *gpt_read_entries(struct fdisk_context *cxt,
 					 struct gpt_header *header, const ssize_t sz)
 {
 	struct gpt_entry *ret = xcalloc(1, sizeof(*ents) * sz);
@@ -637,7 +637,7 @@ static int gpt_check_entryarr_crc(struct fdisk_context *cxt, struct gpt_header *
 
 	/* read header entries */
 	if (!ents)
-		ents = gpt_get_entries(cxt, header, entry_sz);
+		ents = gpt_read_entries(cxt, header, entry_sz);
 	if (!ents)
 		goto done;
 
@@ -690,7 +690,7 @@ static int gpt_check_signature(struct gpt_header *header)
  * Note that all tests must pass to ensure a valid header,
  * we do not rely on only testing the signature for a valid probe.
  */
-static struct gpt_header *gpt_get_header(struct fdisk_context *cxt, uint64_t lba)
+static struct gpt_header *gpt_read_header(struct fdisk_context *cxt, uint64_t lba)
 {
 	struct gpt_header *header = NULL;
 	uint32_t hsz;
@@ -732,17 +732,17 @@ invalid:
 /*
  * Return the Backup GPT Header, or NULL upon failure/invalid.
  */
-static struct gpt_header *gpt_get_bheader(struct fdisk_context *cxt)
+static struct gpt_header *gpt_read_bheader(struct fdisk_context *cxt)
 {
-	return gpt_get_header(cxt, last_lba(cxt));
+	return gpt_read_header(cxt, last_lba(cxt));
 }
 
 /*
  * Return the Primary GPT Header, or NULL upon failure/invalid.
  */
-static struct gpt_header *gpt_get_pheader(struct fdisk_context *cxt)
+static struct gpt_header *gpt_read_pheader(struct fdisk_context *cxt)
 {
-	return gpt_get_header(cxt, GPT_PRIMARY_PARTITION_TABLE_LBA);
+	return gpt_read_header(cxt, GPT_PRIMARY_PARTITION_TABLE_LBA);
 }
 
 /*
@@ -1026,7 +1026,7 @@ static int gpt_probe_label(struct fdisk_context *cxt,
 	DBG(LABEL, dbgprint("found a %s MBR", mbr_type == GPT_MBR_PROTECTIVE ?
 			    "protective" : "hybrid"));
 
-	pheader = gpt_get_pheader(cxt);
+	pheader = gpt_read_pheader(cxt);
 
 	/*
 	 * TODO: If the primary GPT is corrupt, we must check the last LBA of the
@@ -1041,7 +1041,7 @@ static int gpt_probe_label(struct fdisk_context *cxt,
 		goto failed;
 
 	/* OK, probing passed, now initialize backup header and fdisk variables. */
-	bheader = gpt_get_bheader(cxt);
+	bheader = gpt_read_bheader(cxt);
 	gpt_init(cxt);
 
 	printf(_("\nWARNING: fdisk GPT support is currently new, and therefore "
