@@ -12,12 +12,19 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
 
 	for (i = 0; i < cxt->nlabels; i++) {
 		struct fdisk_label *lb = cxt->labels[i];
+		struct fdisk_label *org = cxt->label;
+		int rc;
 
 		if (!lb->op->probe)
 			continue;
 
 		DBG(LABEL, dbgprint("probing for %s", lb->name));
-		if (lb->op->probe(cxt, lb) != 1) {
+
+		cxt->label = lb;
+		rc = lb->op->probe(cxt, lb);
+		cxt->label = org;
+
+		if (rc != 1) {
 			if (lb->op->deinit)
 				lb->op->deinit(lb);	/* for sure */
 			continue;
