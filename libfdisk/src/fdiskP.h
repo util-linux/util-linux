@@ -167,6 +167,8 @@ struct fdisk_label {
 	size_t			nparts_max;	/* maximal number of partitions */
 	size_t			nparts_cur;	/* number of currently used partitions */
 
+	unsigned int		changed:1;	/* label has been modified */
+
 	const struct fdisk_label_operations *op;
 };
 

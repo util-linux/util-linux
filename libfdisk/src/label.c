@@ -238,3 +238,16 @@ void fdisk_deinit_label(struct fdisk_label *lb)
 	if (lb->op->deinit)
 		lb->op->deinit(lb);
 }
+
+void fdisk_label_set_changed(struct fdisk_label *lb, int changed)
+{
+	assert(lb);
+
+	lb->changed = changed ? 1 : 0;
+}
+
+int fdisk_label_is_changed(struct fdisk_label *lb)
+{
+	assert(lb);
+	return lb ? lb->changed : 0;
+}

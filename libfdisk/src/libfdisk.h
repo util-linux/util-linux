@@ -87,6 +87,10 @@ extern struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt
 extern int fdisk_set_partition_type(struct fdisk_context *cxt, int partnum,
 			     struct fdisk_parttype *t);
 
+extern void fdisk_label_set_changed(struct fdisk_label *lb, int changed);
+extern int fdisk_label_is_changed(struct fdisk_label *lb);
+
+
 /* alignment.c */
 extern int fdisk_reset_alignment(struct fdisk_context *cxt);
 
