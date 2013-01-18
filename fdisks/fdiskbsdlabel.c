@@ -165,7 +165,7 @@ static int xbsd_write_disklabel (struct fdisk_context *cxt,
 }
 
 static int xbsd_add_part (struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)),
+		struct fdisk_label *lb,
 		int partnum __attribute__((__unused__)),
 		struct fdisk_parttype *t __attribute__((__unused__)))
 {
@@ -204,11 +204,13 @@ static int xbsd_add_part (struct fdisk_context *cxt,
 	xbsd_dlabel.d_partitions[i].p_offset = begin;
 	xbsd_dlabel.d_partitions[i].p_fstype = BSD_FS_UNUSED;
 
+	lb->nparts_cur = xbsd_dlabel.d_npartitions;
+
 	return 0;
 }
 
-static int xbsd_create_disklabel (struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)))
+static int xbsd_create_disklabel(struct fdisk_context *cxt,
+				 struct fdisk_label *lb)
 {
 	char c;
 
@@ -231,6 +233,8 @@ static int xbsd_create_disklabel (struct fdisk_context *cxt,
 #endif
 				) == 1) {
 				xbsd_print_disklabel (cxt, 1);
+				lb->nparts_cur = xbsd_dlabel.d_npartitions;
+				lb->nparts_max = BSD_MAXPARTITIONS;
 				return 1;
 			} else
 				return 0;
@@ -331,7 +335,7 @@ bsd_command_prompt (struct fdisk_context *cxt)
 
 static int xbsd_delete_part(
 		struct fdisk_context *cxt __attribute__((__unused__)),
-		struct fdisk_label *lb __attribute__((__unused__)),
+		struct fdisk_label *lb,
 		int partnum)
 {
 	xbsd_dlabel.d_partitions[partnum].p_size   = 0;
@@ -341,6 +345,7 @@ static int xbsd_delete_part(
 		while (!xbsd_dlabel.d_partitions[xbsd_dlabel.d_npartitions-1].p_size)
 			xbsd_dlabel.d_npartitions--;
 
+	lb->nparts_cur = xbsd_dlabel.d_npartitions;
 	return 0;
 }
 
@@ -730,6 +735,9 @@ xbsd_readlabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disk
 {
 	int t, sector;
 
+	assert(cxt);
+	assert(cxt->label);
+
 	/* p is used only to get the starting sector */
 #if !defined (__alpha__)
 	sector = (p ? get_start_sect(p) : 0);
@@ -759,6 +767,10 @@ xbsd_readlabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disk
 		fprintf (stderr, _("Warning: too many partitions "
 				   "(%d, maximum is %d).\n"),
 			 d -> d_npartitions, BSD_MAXPARTITIONS);
+
+	cxt->label->nparts_cur = d->d_npartitions;
+	cxt->label->nparts_max = BSD_MAXPARTITIONS;
+
 	return 1;
 }
 
