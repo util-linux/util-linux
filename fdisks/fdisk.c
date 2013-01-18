@@ -588,8 +588,7 @@ get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt) {
 		if ((!fdisk_is_disklabel(cxt, SUN) &&
 		     !fdisk_is_disklabel(cxt, SGI) && !pe->part_table->sys_ind)
 		    || (fdisk_is_disklabel(cxt, SUN) &&
-			(!sunlabel->partitions[i].num_sectors ||
-			 !sunlabel->part_tags[i].tag))
+			 sun_is_empty_type(cxt, i))
 		    || (fdisk_is_disklabel(cxt, SGI) &&
 			(!sgi_get_num_sectors(cxt, i))))
 			fprintf(stderr,
