@@ -35,6 +35,7 @@ struct fdisk_sun_label {
 	struct fdisk_label	head;		/* generic part */
 };
 
+#define is_sun_label(_l)	((_l)->id == FDISK_DISKLABEL_SUN)
 
 static struct fdisk_parttype sun_parttypes[] = {
 	{SUN_TAG_UNASSIGNED, N_("Unassigned")},
@@ -71,6 +72,8 @@ static inline uint32_t __swap32(uint32_t x) {
 static void set_sun_partition(struct fdisk_context *cxt,
 			      int i, uint32_t start, uint32_t stop, uint16_t sysid)
 {
+	assert(cxt);
+
 	sunlabel->part_tags[i].tag = SSWAP16(sysid);
 	sunlabel->part_tags[i].flag = SSWAP16(0);
 	sunlabel->partitions[i].start_cylinder =
@@ -81,16 +84,28 @@ static void set_sun_partition(struct fdisk_context *cxt,
 	print_partition_size(cxt, i + 1, start, stop, sysid);
 }
 
-static void init(struct fdisk_context *cxt __attribute__((__unused__)))
+static size_t partitions_in_use(struct fdisk_context *cxt, struct fdisk_label *lb)
 {
-	partitions = SUN_NUM_PARTITIONS;
+	size_t ct = 0, i;
+
+	assert(is_sun_label(lb));
+
+	for (i = 0; i < lb->nparts_max; i++) {
+		if (sunlabel->partitions[i].num_sectors)
+			ct++;
+	}
+	return ct;
 }
 
-static int sun_probe_label(struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)))
+
+static int sun_probe_label(struct fdisk_context *cxt, struct fdisk_label *lb)
 {
 	unsigned short *ush;
 	int csum;
+
+	assert(cxt);
+	assert(lb);
+	assert(is_sun_label(lb));
 
 	if (sunlabel->magic != SUN_LABEL_MAGIC &&
 	    sunlabel->magic != SUN_LABEL_MAGIC_SWAPPED) {
@@ -98,7 +113,6 @@ static int sun_probe_label(struct fdisk_context *cxt,
 		return 0;
 	}
 
-	init(cxt);
 	other_endian = (sunlabel->magic == SUN_LABEL_MAGIC_SWAPPED);
 
 	ush = ((unsigned short *) (sunlabel + 1)) - 1;
@@ -113,6 +127,7 @@ static int sun_probe_label(struct fdisk_context *cxt,
 	} else {
 		int need_fixing = 0;
 
+		lb->nparts_max = SUN_NUM_PARTITIONS;
 		cxt->geom.heads = SSWAP16(sunlabel->nhead);
 		cxt->geom.cylinders = SSWAP16(sunlabel->ncyl);
 		cxt->geom.sectors = SSWAP16(sunlabel->nsect);
@@ -148,27 +163,31 @@ static int sun_probe_label(struct fdisk_context *cxt,
 
 			set_changed(0);
 		}
+
+		lb->nparts_cur = partitions_in_use(cxt, lb);
 	}
 	return 1;
 }
 
-static int sun_create_disklabel(struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)))
+static int sun_create_disklabel(struct fdisk_context *cxt, struct fdisk_label *lb)
 {
 	struct hd_geometry geometry;
 	sector_t llsectors, llcyls;
 	unsigned int ndiv, sec_fac;
 	int res;
 
-	fprintf(stderr,
-	_("Building a new Sun disklabel.\n"));
+	assert(cxt);
+	assert(lb);
+	assert(is_sun_label(lb));
+
+	fprintf(stderr,	_("Building a new Sun disklabel.\n"));
+
 #if BYTE_ORDER == LITTLE_ENDIAN
 	other_endian = 1;
 #else
 	other_endian = 0;
 #endif
-
-	init(cxt);
+	lb->nparts_max = SUN_NUM_PARTITIONS;
 	fdisk_zeroize_firstsector(cxt);
 
 	sunlabel->magic = SSWAP16(SUN_LABEL_MAGIC);
@@ -243,6 +262,7 @@ static int sun_create_disklabel(struct fdisk_context *cxt,
 
 	set_all_unchanged();
 	set_changed(0);
+	lb->nparts_cur = partitions_in_use(cxt, lb);
 
 	return 0;
 }
@@ -256,15 +276,24 @@ void toggle_sunflags(struct fdisk_context *cxt, int i, uint16_t mask)
 	set_changed(i);
 }
 
-static void fetch_sun(struct fdisk_context *cxt, uint32_t *starts,
-		      uint32_t *lens, uint32_t *start, uint32_t *stop)
+static void fetch_sun(struct fdisk_context *cxt,
+		      struct fdisk_label *lb,
+		      uint32_t *starts,
+		      uint32_t *lens,
+		      uint32_t *start,
+		      uint32_t *stop)
 {
-	int i, continuous = 1;
+	int continuous = 1;
+	size_t i;
+
+	assert(cxt);
+	assert(lb);
+	assert(is_sun_label(lb));
 
 	*start = 0;
 	*stop = cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors;
 
-	for (i = 0; i < partitions; i++) {
+	for (i = 0; i < lb->nparts_max; i++) {
 		struct sun_partition *part = &sunlabel->partitions[i];
 		struct sun_tag_flag *tag = &sunlabel->part_tags[i];
 
@@ -305,15 +334,19 @@ static int verify_sun_cmp(int *a, int *b)
 }
 
 static int sun_verify_disklabel(struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)))
+				struct fdisk_label *lb)
 {
     uint32_t starts[SUN_NUM_PARTITIONS], lens[SUN_NUM_PARTITIONS], start, stop;
     uint32_t i,j,k,starto,endo;
     int array[SUN_NUM_PARTITIONS];
 
+    assert(cxt);
+    assert(lb);
+    assert(is_sun_label(lb));
+
     verify_sun_starts = starts;
 
-    fetch_sun(cxt, starts, lens, &start, &stop);
+    fetch_sun(cxt, lb, starts, lens, &start, &stop);
 
     for (k = 0; k < 7; k++) {
 	for (i = 0; i < SUN_NUM_PARTITIONS; i++) {
@@ -370,13 +403,13 @@ static int sun_verify_disklabel(struct fdisk_context *cxt,
     start = (starts[array[i]] + lens[array[i]]);
     if (start < stop)
         printf(_("Unused gap - sectors %d-%d\n"), start, stop);
-    
+
     return 0;
 }
 
 static int sun_add_partition(
 		struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)),
+		struct fdisk_label *lb,
 		int n,
 		struct fdisk_parttype *t)
 {
@@ -387,8 +420,12 @@ static int sun_add_partition(
 	int whole_disk = 0, sys = t ? t->type : SUN_TAG_LINUX_NATIVE;
 
 	char mesg[256];
-	int i;
+	size_t i;
 	unsigned int first, last;
+
+	assert(cxt);
+	assert(lb);
+	assert(is_sun_label(lb));
 
 	if (part->num_sectors && tag->tag != SSWAP16(SUN_TAG_UNASSIGNED)) {
 		printf(_("Partition %d is already defined.  Delete "
@@ -396,7 +433,7 @@ static int sun_add_partition(
 		return -EINVAL;
 	}
 
-	fetch_sun(cxt, starts, lens, &start, &stop);
+	fetch_sun(cxt, lb, starts, lens, &start, &stop);
 
 	if (stop <= start) {
 		if (n == 2)
@@ -444,11 +481,11 @@ and is of type `Whole disk'\n"));
 		/* On the other hand, one should not use partitions
 		   starting at block 0 in an md, or the label will
 		   be trashed. */
-		for (i = 0; i < partitions; i++)
+		for (i = 0; i < lb->nparts_max; i++)
 			if (lens[i] && starts[i] <= first
 			            && starts[i] + lens[i] > first)
 				break;
-		if (i < partitions && !whole_disk) {
+		if (i < lb->nparts_max && !whole_disk) {
 			if (n == 2 && !first) {
 			    whole_disk = 1;
 			    break;
@@ -459,7 +496,7 @@ and is of type `Whole disk'\n"));
 	}
 	stop = cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors;	/* ancient */
 	stop2 = stop;
-	for (i = 0; i < partitions; i++) {
+	for (i = 0; i < lb->nparts_max; i++) {
 		if (starts[i] > first && starts[i] < stop)
 			stop = starts[i];
 	}
@@ -497,16 +534,21 @@ and is of type `Whole disk'\n"));
 		sys = SUN_TAG_BACKUP;
 
 	set_sun_partition(cxt, n, first, last, sys);
+	lb->nparts_cur = partitions_in_use(cxt, lb);
 	return 0;
 }
 
 static int sun_delete_partition(struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)),
+		struct fdisk_label *lb,
 		int partnum)
 {
 	struct sun_partition *part = &sunlabel->partitions[partnum];
 	struct sun_tag_flag *tag = &sunlabel->part_tags[partnum];
 	unsigned int nsec;
+
+	assert(cxt);
+	assert(lb);
+	assert(is_sun_label(lb));
 
 	if (partnum == 2 &&
 	    tag->tag == SSWAP16(SUN_TAG_BACKUP) &&
@@ -519,14 +561,19 @@ static int sun_delete_partition(struct fdisk_context *cxt,
 			 "sectors\n"), nsec);
 	tag->tag = SSWAP16(SUN_TAG_UNASSIGNED);
 	part->num_sectors = 0;
-
+	lb->nparts_cur = partitions_in_use(cxt, lb);
 	return 0;
 }
 
 
 void sun_list_table(struct fdisk_context *cxt, int xtra)
 {
-	int i, w;
+	size_t i;
+	int w;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, SUN));
 
 	w = strlen(cxt->dev_path);
 	if (xtra)
@@ -554,7 +601,7 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 
 	printf(_("%*s Flag    Start       End    Blocks   Id  System\n"),
 	       w + 1, _("Device"));
-	for (i = 0 ; i < partitions; i++) {
+	for (i = 0 ; i < cxt->label->nparts_max; i++) {
 		struct sun_partition *part = &sunlabel->partitions[i];
 		struct sun_tag_flag *tag = &sunlabel->part_tags[i];
 
@@ -625,6 +672,8 @@ static int sun_write_disklabel(struct fdisk_context *cxt,
 	unsigned short *ush = (unsigned short *)sunlabel;
 	unsigned short csum = 0;
 
+	assert(cxt);
+
 	while(ush < (unsigned short *)(&sunlabel->cksum))
 		csum ^= *ush++;
 	sunlabel->cksum = csum;
@@ -638,12 +687,16 @@ static int sun_write_disklabel(struct fdisk_context *cxt,
 
 static struct fdisk_parttype *sun_get_parttype(
 		struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)),
+		struct fdisk_label *lb,
 		int n)
 {
 	struct fdisk_parttype *t;
 
-	if (n >= partitions)
+	assert(cxt);
+	assert(lb);
+	assert(is_sun_label(lb));
+
+	if (n < 0 || (size_t) n >= lb->nparts_max)
 		return NULL;
 
 	t = fdisk_get_parttype_from_code(cxt, SSWAP16(sunlabel->part_tags[n].tag));
@@ -654,14 +707,18 @@ static struct fdisk_parttype *sun_get_parttype(
 
 static int sun_set_parttype(
 		struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)),
+		struct fdisk_label *lb,
 		int i,
 		struct fdisk_parttype *t)
 {
 	struct sun_partition *part;
 	struct sun_tag_flag *tag;
 
-	if (i >= partitions || !t || t->type > UINT16_MAX)
+	assert(cxt);
+	assert(lb);
+	assert(is_sun_label(lb));
+
+	if (i < 0 || (size_t) i >= lb->nparts_max || !t || t->type > UINT16_MAX)
 		return -EINVAL;
 
 	if (i == 2 && t->type != SUN_TAG_BACKUP)
