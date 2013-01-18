@@ -1146,14 +1146,27 @@ static void new_partition(struct fdisk_context *cxt)
 {
 	int partnum = 0;
 
+	assert(cxt);
+	assert(cxt->label);
+
 	if (warn_geometry(cxt))
 		return;
 
 	if (fdisk_is_disklabel(cxt, SUN) ||
 	    fdisk_is_disklabel(cxt, SGI) ||
-	    fdisk_is_disklabel(cxt, GPT))
-		partnum = get_partition(cxt, 0, partitions);
+	    fdisk_is_disklabel(cxt, GPT)) {
 
+		size_t dflt = 0;
+
+		/*
+		 * TODO: always use label->nparts_cur + 1
+		 * (currenly only few drivers maintain label->nparts_* counters)
+		 */
+		if (cxt->label->nparts_max)
+			dflt = cxt->label->nparts_cur + 1;
+
+		partnum = get_partition_dflt(cxt, 0, partitions, dflt);
+	}
 	fdisk_add_partition(cxt, partnum, NULL);
 }
 

@@ -1024,17 +1024,6 @@ done:
 	return totfound;
 }
 
-/*
- * Initialize fdisk-specific variables - call once probing passes!
- */
-static void gpt_init(struct fdisk_context *cxt)
-{
-	struct fdisk_gpt_label *gpt = gpt_label(cxt);
-
-	partitions = le32_to_cpu(gpt->pheader->npartition_entries);
-}
-
-
 static int gpt_probe_label(struct fdisk_context *cxt, struct fdisk_label *lb)
 {
 	int mbr_type;
@@ -1069,7 +1058,10 @@ static int gpt_probe_label(struct fdisk_context *cxt, struct fdisk_label *lb)
 	/* OK, probing passed, now initialize backup header and fdisk variables. */
 	gpt->bheader = gpt_read_header(cxt, last_lba(cxt), NULL);
 
-	gpt_init(cxt);
+	lb->nparts_max = le32_to_cpu(gpt->pheader->npartition_entries);
+	lb->nparts_cur = partitions_in_use(gpt->pheader, gpt->ents);
+
+	partitions = lb->nparts_max;	/* TODO: deprecated */
 
 	printf(_("\nWARNING: fdisk GPT support is currently new, and therefore "
 		 "in an experimental phase. Use at your own discretion.\n\n"));
@@ -1428,8 +1420,8 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt, struct fdisk_label *l
 
 /* Delete a single GPT partition, specified by partnum. */
 static int gpt_delete_partition(struct fdisk_context *cxt,
-		struct fdisk_label *lb,
-		int partnum)
+				struct fdisk_label *lb,
+				int partnum)
 {
 	struct fdisk_gpt_label *gpt = (struct fdisk_gpt_label *) lb;
 
@@ -1446,6 +1438,7 @@ static int gpt_delete_partition(struct fdisk_context *cxt,
 	else {
 		gpt_recompute_crc(gpt->pheader, gpt->ents);
 		gpt_recompute_crc(gpt->bheader, gpt->ents);
+		lb->nparts_cur--;
 	}
 
 	return 0;
@@ -1610,8 +1603,10 @@ static int gpt_add_partition(
 	if (gpt_create_new_partition(cxt, partnum,
 				     user_f, user_l, &uuid, ents) != 0)
 		printf(_("Could not create partition %d\n"), partnum + 1);
-	else
+	else {
 		printf(_("Created partition %d\n"), partnum + 1);
+		lb->nparts_cur++;
+	}
 
 	return 0;
 }
@@ -1619,8 +1614,7 @@ static int gpt_add_partition(
 /*
  * Create a new GPT disklabel - destroys any previous data.
  */
-static int gpt_create_disklabel(struct fdisk_context *cxt,
-		struct fdisk_label *lb)
+static int gpt_create_disklabel(struct fdisk_context *cxt, struct fdisk_label *lb)
 {
 	int rc = 0;
 	ssize_t entry_sz = 0;
@@ -1661,7 +1655,10 @@ static int gpt_create_disklabel(struct fdisk_context *cxt,
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
 
-	gpt_init(cxt);
+	lb->nparts_max = le32_to_cpu(gpt->pheader->npartition_entries);
+	lb->nparts_cur = 0;
+
+	partitions = lb->nparts_max;	/* TODO: deprecated */
 
 	uid = &gpt->pheader->disk_guid;
 	fprintf(stderr, ("Building a new GPT disklabel "

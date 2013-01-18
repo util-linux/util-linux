@@ -159,14 +159,15 @@ struct fdisk_label_operations {
  * Generic label
  */
 struct fdisk_label {
-	/* persistent information */
-	const char		*name;
+	const char		*name;		/* label name */
 	enum fdisk_labeltype	id;		/* FDISK_DISKLABEL_* */
-	struct fdisk_parttype	*parttypes;
+	struct fdisk_parttype	*parttypes;	/* supported partitions types */
 	size_t			nparttypes;	/* number of items in parttypes[] */
 
-	const struct fdisk_label_operations *op;
+	size_t			nparts_max;	/* maximal number of partitions */
+	size_t			nparts_cur;	/* number of currently used partitions */
 
+	const struct fdisk_label_operations *op;
 };
 
 /* label allocators */
