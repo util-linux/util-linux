@@ -71,8 +71,8 @@ extern void check(struct fdisk_context *cxt, int n, unsigned int h, unsigned int
 extern void fatal(struct fdisk_context *cxt, enum failure why);
 extern int  get_partition(struct fdisk_context *cxt, int warn, int max);
 extern void list_partition_types(struct fdisk_context *cxt);
-extern int read_line (int *asked);
-extern char read_char(char *mesg);
+extern int read_line(struct fdisk_context *cxt, int *asked);
+extern char read_char(struct fdisk_context *cxt, char *mesg);
 extern struct fdisk_parttype *read_partition_type(struct fdisk_context *cxt);
 extern void reread_partition_table(struct fdisk_context *cxt, int leave);
 extern struct partition *get_part_table(int);
@@ -85,9 +85,7 @@ extern void print_partition_size(struct fdisk_context *cxt, int num, sector_t st
 extern void fill_bounds(sector_t *first, sector_t *last);
 
 extern char *partition_type(struct fdisk_context *cxt, unsigned char type);
-extern char read_chars(char *mesg);
-extern void set_changed(int);
-extern void set_all_unchanged(void);
+extern char read_chars(struct fdisk_context *cxt, char *mesg);
 extern int warn_geometry(struct fdisk_context *cxt);
 extern void warn_limits(struct fdisk_context *cxt);
 extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
@@ -102,7 +100,6 @@ extern const char * str_units(int);
 extern sector_t get_nr_sects(struct partition *p);
 
 extern int nowarn;
-extern int MBRbuffer_changed;
 
 /* start_sect and nr_sects are stored little endian on all machines */
 /* moreover, they are not aligned correctly */

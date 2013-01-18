@@ -100,7 +100,7 @@ static void set_sun_partition(struct fdisk_context *cxt,
 		SSWAP32(start / (cxt->geom.heads * cxt->geom.sectors));
 	sunlabel->partitions[i].num_sectors =
 		SSWAP32(stop - start);
-	set_changed(i);
+	fdisk_label_set_changed(cxt->label, 1);
 	print_partition_size(cxt, i + 1, start, stop, sysid);
 }
 
@@ -190,7 +190,7 @@ static int sun_probe_label(struct fdisk_context *cxt, struct fdisk_label *lb)
 			csum ^= *ush++;
 		sunlabel->cksum = csum;
 
-		set_changed(0);
+		fdisk_label_set_changed(lb, 1);
 	}
 
 	lb->nparts_cur = partitions_in_use(lb);
@@ -301,8 +301,7 @@ static int sun_create_disklabel(struct fdisk_context *cxt, struct fdisk_label *l
 		sunlabel->cksum = csum;
 	}
 
-	set_all_unchanged();
-	set_changed(0);
+	fdisk_label_set_changed(lb, 1);
 	lb->nparts_cur = partitions_in_use(lb);
 
 	return 0;
@@ -315,7 +314,7 @@ void toggle_sunflags(struct fdisk_context *cxt, int i, uint16_t mask)
 
 	p->flag ^= SSWAP16(mask);
 
-	set_changed(i);
+	fdisk_label_set_changed(cxt->label, 1);
 }
 
 static void fetch_sun(struct fdisk_context *cxt,
@@ -609,6 +608,7 @@ static int sun_delete_partition(struct fdisk_context *cxt,
 	tag->tag = SSWAP16(SUN_TAG_UNASSIGNED);
 	part->num_sectors = 0;
 	lb->nparts_cur = partitions_in_use(lb);
+	fdisk_label_set_changed(lb, 1);
 	return 0;
 }
 
@@ -794,7 +794,7 @@ static int sun_set_parttype(
 	tag = &sunlabel->part_tags[i];
 
 	if (t->type == SUN_TAG_LINUX_SWAP && !part->start_cylinder) {
-	    read_chars(
+	    read_chars(cxt,
 	      _("It is highly recommended that the partition at offset 0\n"
 	      "is UFS, EXT2FS filesystem or SunOS swap. Putting Linux swap\n"
 	      "there may destroy your partition table and bootblock.\n"

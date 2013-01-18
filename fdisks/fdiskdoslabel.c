@@ -47,6 +47,8 @@ int ext_index;
 
 unsigned int units_per_sector = 1, display_in_cyl_units = 0;
 
+static int MBRbuffer_changed;
+
 void update_units(struct fdisk_context *cxt)
 {
 	int cyl_units = cxt->geom.heads * cxt->geom.sectors;
@@ -199,7 +201,7 @@ void dos_init(struct fdisk_context *cxt)
 
 static int dos_delete_partition(
 		struct fdisk_context *cxt __attribute__ ((__unused__)),
-		struct fdisk_label *lb __attribute__ ((__unused__)),
+		struct fdisk_label *lb,
 		int partnum)
 {
 	struct pte *pe = &ptes[partnum];
@@ -254,6 +256,7 @@ static int dos_delete_partition(
 			clear_partition(ptes[partnum].part_table);
 	}
 
+	fdisk_label_set_changed(lb, 1);
 	return 0;
 }
 
@@ -368,8 +371,7 @@ static int dos_create_disklabel(struct fdisk_context *cxt,
 
 	dos_init(cxt);
 	fdisk_zeroize_firstsector(cxt);
-	set_all_unchanged();
-	set_changed(0);
+	fdisk_label_set_changed(cxt->label, 1);
 
 	/* Generate an MBR ID for this disk */
 	mbr_set_id(cxt->firstsector, id);
@@ -388,7 +390,7 @@ void dos_set_mbr_id(struct fdisk_context *cxt)
 	snprintf(ps, sizeof ps, _("New disk identifier (current 0x%08x): "),
 		 mbr_get_id(cxt->firstsector));
 
-	if (read_chars(ps) == '\n')
+	if (read_chars(cxt, ps) == '\n')
 		return;
 
 	new_id = strtoul(line_ptr, &ep, 0);
@@ -397,6 +399,7 @@ void dos_set_mbr_id(struct fdisk_context *cxt)
 
 	mbr_set_id(cxt->firstsector, new_id);
 	MBRbuffer_changed = 1;
+	fdisk_label_set_changed(cxt->label, 1);
 	dos_print_mbr_id(cxt);
 }
 
@@ -704,6 +707,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 		partitions = 5;
 	}
 
+	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
 }
 
@@ -834,7 +838,7 @@ static int dos_add_partition(
 			 extended_offset ? _("   l   logical (numbered from 5)") : _("   e   extended"),
 			 dflt);
 
-		c = tolower(read_chars(line));
+		c = tolower(read_chars(cxt, line));
 		if (c == '\n') {
 			c = dflt;
 			printf(_("Using default response %c\n"), c);
@@ -930,7 +934,7 @@ static struct fdisk_parttype *dos_get_parttype(
 
 static int dos_set_parttype(
 		struct fdisk_context *cxt __attribute__((__unused__)),
-		struct fdisk_label *lb __attribute__((__unused__)),
+		struct fdisk_label *lb,
 		int partnum,
 		struct fdisk_parttype *t)
 {
@@ -956,6 +960,7 @@ static int dos_set_parttype(
 		"information.\n\n"));
 
 	p->sys_ind = t->type;
+	fdisk_label_set_changed(lb, 1);
 	return 0;
 }
 

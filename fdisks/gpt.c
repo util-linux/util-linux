@@ -1439,6 +1439,7 @@ static int gpt_delete_partition(struct fdisk_context *cxt,
 		gpt_recompute_crc(gpt->pheader, gpt->ents);
 		gpt_recompute_crc(gpt->bheader, gpt->ents);
 		lb->nparts_cur--;
+		fdisk_label_set_changed(lb, 1);
 	}
 
 	return 0;
@@ -1606,6 +1607,7 @@ static int gpt_add_partition(
 	else {
 		printf(_("Created partition %d\n"), partnum + 1);
 		lb->nparts_cur++;
+		fdisk_label_set_changed(lb, 1);
 	}
 
 	return 0;
@@ -1670,6 +1672,7 @@ static int gpt_create_disklabel(struct fdisk_context *cxt, struct fdisk_label *l
 			    uid->node[0], uid->node[1],
 			    uid->node[2], uid->node[3],
 			    uid->node[4], uid->node[5]);
+	fdisk_label_set_changed(lb, 1);
 done:
 	return rc;
 }
@@ -1721,6 +1724,8 @@ static int gpt_set_partition_type(
 	gpt_entry_set_type(&gpt->ents[i], &uuid);
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
+
+	fdisk_label_set_changed(lb, 1);
 	return 0;
 }
 

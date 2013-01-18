@@ -314,7 +314,7 @@ void
 sgi_set_bootfile(struct fdisk_context *cxt)
 {
 	printf(_("\nThe current boot file is: %s\n"), sgilabel->boot_file);
-	if (read_chars(_("Please enter the name of the new boot file: ")) == '\n') {
+	if (read_chars(cxt, _("Please enter the name of the new boot file: ")) == '\n') {
 		printf(_("Boot file unchanged\n"));
 		return;
 	}
@@ -607,7 +607,8 @@ static int sgi_set_partition(struct fdisk_context *cxt, int i,
 	sgilabel->partitions[i].id = SSWAP32(sys);
 	sgilabel->partitions[i].num_sectors = SSWAP32(length);
 	sgilabel->partitions[i].start_sector = SSWAP32(start);
-	set_changed(i);
+
+	fdisk_label_set_changed(cxt->label, 1);
 
 	if (sgi_gaps(cxt) < 0)	/* rebuild freelist */
 		printf(_("Partition overlap on the disk.\n"));
@@ -936,7 +937,7 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 
 	if (((t->type != ENTIRE_DISK) && (t->type != SGI_VOLHDR))
 	    && (sgi_get_start_sector(cxt, i) < 1)) {
-		read_chars(
+		read_chars(cxt,
 			_("It is highly recommended that the partition at offset 0\n"
 			  "is of type \"SGI volhdr\", the IRIX system will rely on it to\n"
 			  "retrieve from its directory standalone tools like sash and fx.\n"

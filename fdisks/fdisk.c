@@ -51,8 +51,6 @@
 
 #include "gpt.h"
 
-int MBRbuffer_changed;
-
 #define hex_val(c)	({ \
 				char _c = (c); \
 				isdigit(_c) ? _c - '0' : \
@@ -176,19 +174,6 @@ fatal(struct fdisk_context *cxt, enum failure why)
 struct partition *
 get_part_table(int i) {
 	return ptes[i].part_table;
-}
-
-void
-set_all_unchanged(void) {
-	int i;
-
-	for (i = 0; i < MAXIMUM_PARTS; i++)
-		ptes[i].changed = 0;
-}
-
-void
-set_changed(int i) {
-	ptes[i].changed = 1;
 }
 
 static int
@@ -330,42 +315,37 @@ void warn_limits(struct fdisk_context *cxt)
 	}
 }
 
-static int is_partition_table_changed(void)
-{
-	int i;
-
-	for (i = 0; i < partitions; i++)
-		if (ptes[i].changed)
-			return 1;
-	return 0;
-}
-
-static void maybe_exit(int rc, int *asked)
+static void maybe_exit(struct fdisk_context *cxt, int rc, int *asked)
 {
 	char line[LINE_LENGTH];
+
+	assert(cxt);
+	assert(cxt->label);
 
 	putchar('\n');
 	if (asked)
 		*asked = 0;
 
-	if (is_partition_table_changed() || MBRbuffer_changed) {
+	if (fdisk_label_is_changed(cxt->label)) {
 		fprintf(stderr, _("Do you really want to quit? "));
 
 		if (!fgets(line, LINE_LENGTH, stdin) || rpmatch(line) == 1)
-			exit(rc);
+			goto leave;
 		if (asked)
 			*asked = 1;
-	} else
-		exit(rc);
+		return;
+	}
+leave:
+	fdisk_free_context(cxt);
+	exit(rc);
 }
 
 /* read line; return 0 or first char */
-int
-read_line(int *asked)
+int read_line(struct fdisk_context *cxt, int *asked)
 {
 	line_ptr = line_buffer;
 	if (!fgets(line_buffer, LINE_LENGTH, stdin)) {
-		maybe_exit(1, asked);
+		maybe_exit(cxt, 1, asked);
 		return 0;
 	}
 	if (asked)
@@ -375,25 +355,25 @@ read_line(int *asked)
 	return *line_ptr;
 }
 
-char
-read_char(char *mesg)
+char read_char(struct fdisk_context *cxt, char *mesg)
 {
 	do {
 		fputs(mesg, stdout);
 		fflush (stdout);	 /* requested by niles@scyld.com */
-	} while (!read_line(NULL));
+
+	} while (!read_line(cxt, NULL));
+
 	return *line_ptr;
 }
 
-char
-read_chars(char *mesg)
+char read_chars(struct fdisk_context *cxt, char *mesg)
 {
 	int rc, asked = 0;
 
 	do {
 	        fputs(mesg, stdout);
 		fflush (stdout);	/* niles@scyld.com */
-		rc = read_line(&asked);
+		rc = read_line(cxt, &asked);
 	} while (asked);
 
 	if (!rc) {
@@ -412,9 +392,9 @@ struct fdisk_parttype *read_partition_type(struct fdisk_context *cxt)
 		size_t sz;
 
 		if (cxt->label->parttypes[0].typestr)
-			read_chars(_("Partition type (type L to list all types): "));
+			read_chars(cxt, _("Partition type (type L to list all types): "));
 		else
-			read_chars(_("Hex code (type L to list all codes): "));
+			read_chars(cxt, _("Hex code (type L to list all codes): "));
 
 		sz = strlen(line_ptr);
 		if (!sz || line_ptr[sz - 1] != '\n' || sz == 1)
@@ -461,7 +441,7 @@ read_int_with_suffix(struct fdisk_context *cxt,
 		int use_default = default_ok;
 
 		/* ask question and read answer */
-		while (read_chars(ms) != '\n' && !isdigit(*line_ptr)
+		while (read_chars(cxt, ms) != '\n' && !isdigit(*line_ptr)
 		       && *line_ptr != '-' && *line_ptr != '+')
 			continue;
 
@@ -645,7 +625,7 @@ str_units(int n)
 }
 
 static void
-toggle_active(int i) {
+toggle_active(struct fdisk_context *cxt, int i) {
 	struct pte *pe = &ptes[i];
 	struct partition *p = pe->part_table;
 
@@ -655,6 +635,7 @@ toggle_active(int i) {
 			i + 1);
 	p->boot_ind = (p->boot_ind ? 0 : ACTIVE_FLAG);
 	pe->changed = 1;
+	fdisk_label_set_changed(cxt->label, 1);
 }
 
 static void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
@@ -1312,7 +1293,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 
 	while(1) {
 		putchar('\n');
-		c = tolower(read_char(_("Expert command (m for help): ")));
+		c = tolower(read_char(cxt, _("Expert command (m for help): ")));
 		switch (c) {
 		case 'a':
 			if (fdisk_is_disklabel(cxt, SUN))
@@ -1505,11 +1486,11 @@ static void command_prompt(struct fdisk_context *cxt)
 
 	while (1) {
 		putchar('\n');
-		c = tolower(read_char(_("Command (m for help): ")));
+		c = tolower(read_char(cxt, _("Command (m for help): ")));
 		switch (c) {
 		case 'a':
 			if (fdisk_is_disklabel(cxt, DOS))
-				toggle_active(get_partition(cxt, 1, partitions));
+				toggle_active(cxt, get_partition(cxt, 1, partitions));
 			else if (fdisk_is_disklabel(cxt, SUN))
 				toggle_sunflags(cxt, get_partition(cxt, 1, partitions),
 						SUN_FLAG_UNMNT);

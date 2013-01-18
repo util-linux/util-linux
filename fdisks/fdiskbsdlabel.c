@@ -72,11 +72,11 @@ struct fdisk_bsd_label {
 
 static int xbsd_delete_part (struct fdisk_context *cxt,
 			     struct fdisk_label *lb, int partnum);
-static void xbsd_edit_disklabel (void);
+static void xbsd_edit_disklabel (struct fdisk_context *cxt);
 static void xbsd_write_bootstrap (struct fdisk_context *cxt);
 static void xbsd_change_fstype (struct fdisk_context *cxt, struct fdisk_label *lb);
-static int xbsd_get_part_index (int max);
-static int xbsd_check_new_partition (int *i);
+static int xbsd_get_part_index (struct fdisk_context *cxt, int max);
+static int xbsd_check_new_partition (struct fdisk_context *cxt, int *i);
 static unsigned short xbsd_dkcksum (struct xbsd_disklabel *lp);
 static int xbsd_initlabel  (struct fdisk_context *cxt,
 			    struct partition *p, struct xbsd_disklabel *d,
@@ -173,7 +173,7 @@ static int xbsd_add_part (struct fdisk_context *cxt,
 	char mesg[256];
 	int i, rc;
 
-	rc = xbsd_check_new_partition(&i);
+	rc = xbsd_check_new_partition(cxt, &i);
 	if (rc)
 		return rc;
 
@@ -186,7 +186,7 @@ static int xbsd_add_part (struct fdisk_context *cxt,
 #endif
 
 	snprintf (mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
-	begin = read_int (cxt, bsd_cround (begin), bsd_cround (begin), bsd_cround (end),
+	begin = read_int(cxt, bsd_cround (begin), bsd_cround (begin), bsd_cround (end),
 			  0, mesg);
 
 	if (display_in_cyl_units)
@@ -205,6 +205,7 @@ static int xbsd_add_part (struct fdisk_context *cxt,
 	xbsd_dlabel.d_partitions[i].p_fstype = BSD_FS_UNUSED;
 
 	lb->nparts_cur = xbsd_dlabel.d_npartitions;
+	fdisk_label_set_changed(lb, 1);
 
 	return 0;
 }
@@ -222,7 +223,7 @@ static int xbsd_create_disklabel(struct fdisk_context *cxt,
 #endif
 
 	while (1) {
-		c = read_char (_("Do you want to create a disklabel? (y/n) "));
+		c = read_char(cxt, _("Do you want to create a disklabel? (y/n) "));
 		if (tolower(c) == 'y') {
 			if (xbsd_initlabel (cxt,
 #if defined (__alpha__) || defined (__powerpc__) || defined (__hppa__) || \
@@ -285,12 +286,13 @@ bsd_command_prompt (struct fdisk_context *cxt)
 
   while (1) {
     putchar ('\n');
-    switch (tolower (read_char (_("BSD disklabel command (m for help): ")))) {
+    switch (tolower (read_char(cxt, _("BSD disklabel command (m for help): ")))) {
       case 'd':
-	      xbsd_delete_part(cxt, cxt->label, xbsd_get_part_index(xbsd_dlabel.d_npartitions));
+	      xbsd_delete_part(cxt, cxt->label,
+			      xbsd_get_part_index(cxt, xbsd_dlabel.d_npartitions));
 	      break;
       case 'e':
-	xbsd_edit_disklabel ();
+	xbsd_edit_disklabel (cxt);
 	break;
       case 'i':
 	xbsd_write_bootstrap (cxt);
@@ -346,6 +348,7 @@ static int xbsd_delete_part(
 			xbsd_dlabel.d_npartitions--;
 
 	lb->nparts_cur = xbsd_dlabel.d_npartitions;
+	fdisk_label_set_changed(lb, 1);
 	return 0;
 }
 
@@ -447,49 +450,49 @@ xbsd_print_disklabel (struct fdisk_context *cxt, int show_all) {
   }
 }
 
-static int
-edit_int (int def, char *mesg)
+static unsigned long
+edit_int(struct fdisk_context *cxt, unsigned long def, char *mesg)
 {
   do {
     fputs (mesg, stdout);
-    printf (" (%d): ", def);
-    if (!read_line (NULL))
+    printf (" (%lu): ", def);
+    if (!read_line(cxt, NULL))
       return def;
-  }
-  while (!isdigit (*line_ptr));
-  return atoi (line_ptr);
+  } while (!isdigit (*line_ptr));
+
+  return strtoul(line_ptr, NULL, 10);	/* TODO check it! */
 }
 
 static void
-xbsd_edit_disklabel (void)
+xbsd_edit_disklabel(struct fdisk_context *cxt)
 {
   struct xbsd_disklabel *d;
 
   d = &xbsd_dlabel;
 
 #if defined (__alpha__) || defined (__ia64__)
-  d -> d_secsize    = (unsigned long) edit_int ((unsigned long) d -> d_secsize     ,_("bytes/sector"));
-  d -> d_nsectors   = (unsigned long) edit_int ((unsigned long) d -> d_nsectors    ,_("sectors/track"));
-  d -> d_ntracks    = (unsigned long) edit_int ((unsigned long) d -> d_ntracks     ,_("tracks/cylinder"));
-  d -> d_ncylinders = (unsigned long) edit_int ((unsigned long) d -> d_ncylinders  ,_("cylinders"));
+  d -> d_secsize    = edit_int(cxt, d->d_secsize     ,_("bytes/sector"));
+  d -> d_nsectors   = edit_int(cxt, d->d_nsectors    ,_("sectors/track"));
+  d -> d_ntracks    = edit_int(cxt, d->d_ntracks     ,_("tracks/cylinder"));
+  d -> d_ncylinders = edit_int(cxt, d->d_ncylinders  ,_("cylinders"));
 #endif
 
   /* d -> d_secpercyl can be != d -> d_nsectors * d -> d_ntracks */
   while (1)
   {
-    d -> d_secpercyl = (unsigned long) edit_int ((unsigned long) d -> d_nsectors * d -> d_ntracks,
+    d -> d_secpercyl = edit_int(cxt, (unsigned long) d->d_nsectors * d -> d_ntracks,
 					  _("sectors/cylinder"));
     if (d -> d_secpercyl <= d -> d_nsectors * d -> d_ntracks)
       break;
 
     printf (_("Must be <= sectors/track * tracks/cylinder (default).\n"));
   }
-  d -> d_rpm        = (unsigned short) edit_int ((unsigned short) d -> d_rpm       ,_("rpm"));
-  d -> d_interleave = (unsigned short) edit_int ((unsigned short) d -> d_interleave,_("interleave"));
-  d -> d_trackskew  = (unsigned short) edit_int ((unsigned short) d -> d_trackskew ,_("trackskew"));
-  d -> d_cylskew    = (unsigned short) edit_int ((unsigned short) d -> d_cylskew   ,_("cylinderskew"));
-  d -> d_headswitch = (unsigned long) edit_int ((unsigned long) d -> d_headswitch  ,_("headswitch"));
-  d -> d_trkseek    = (unsigned long) edit_int ((unsigned long) d -> d_trkseek     ,_("track-to-track seek"));
+  d -> d_rpm        = (unsigned short) edit_int(cxt, d->d_rpm       ,_("rpm"));
+  d -> d_interleave = (unsigned short) edit_int(cxt, d->d_interleave,_("interleave"));
+  d -> d_trackskew  = (unsigned short) edit_int(cxt, d->d_trackskew ,_("trackskew"));
+  d -> d_cylskew    = (unsigned short) edit_int(cxt, d->d_cylskew   ,_("cylinderskew"));
+  d -> d_headswitch = edit_int(cxt, d->d_headswitch  ,_("headswitch"));
+  d -> d_trkseek    = edit_int(cxt, d->d_trkseek     ,_("track-to-track seek"));
 
   d -> d_secperunit = d -> d_secpercyl * d -> d_ncylinders;
 }
@@ -532,7 +535,7 @@ xbsd_write_bootstrap (struct fdisk_context *cxt)
 
   printf (_("Bootstrap: %sboot -> boot%s (%s): "),
 	  dkbasename, dkbasename, dkbasename);
-  if (read_line (NULL)) {
+  if (read_line(cxt, NULL)) {
     line_ptr[strlen (line_ptr)-1] = '\0';
     dkbasename = line_ptr;
   }
@@ -589,35 +592,36 @@ xbsd_write_bootstrap (struct fdisk_context *cxt)
 static void
 xbsd_change_fstype (
 		struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)))
+		struct fdisk_label *lb)
 {
   int i;
   struct fdisk_parttype *t;
 
-  i = xbsd_get_part_index (xbsd_dlabel.d_npartitions);
+  i = xbsd_get_part_index (cxt, xbsd_dlabel.d_npartitions);
   t = read_partition_type(cxt);
 
   if (t) {
     xbsd_dlabel.d_partitions[i].p_fstype = t->type;
     fdisk_free_parttype(t);
+    fdisk_label_set_changed(lb, 1);
   }
 }
 
 static int
-xbsd_get_part_index (int max)
+xbsd_get_part_index(struct fdisk_context *cxt, int max)
 {
   char prompt[256];
   char l;
 
   snprintf (prompt, sizeof(prompt), _("Partition (a-%c): "), 'a' + max - 1);
   do
-     l = tolower (read_char (prompt));
+     l = tolower(read_char(cxt, prompt));
   while (l < 'a' || l > 'a' + max - 1);
   return l - 'a';
 }
 
 static int
-xbsd_check_new_partition (int *i) {
+xbsd_check_new_partition(struct fdisk_context *cxt, int *i) {
 
 	/* room for more? various BSD flavours have different maxima */
 	if (xbsd_dlabel.d_npartitions == BSD_MAXPARTITIONS) {
@@ -634,7 +638,7 @@ xbsd_check_new_partition (int *i) {
 		}
 	}
 
-	*i = xbsd_get_part_index (BSD_MAXPARTITIONS);
+	*i = xbsd_get_part_index(cxt, BSD_MAXPARTITIONS);
 
 	if (*i >= xbsd_dlabel.d_npartitions)
 		xbsd_dlabel.d_npartitions = (*i) + 1;
@@ -746,9 +750,9 @@ xbsd_readlabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disk
 #endif
 
 	if (lseek (cxt->dev_fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
-		fatal (cxt, unable_to_seek);
+		return 0;
 	if (BSD_BBSIZE != read (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE))
-		fatal (cxt, unable_to_read);
+		return 0;
 
 	memmove (d,
 	         &disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE + BSD_LABELOFFSET],
@@ -849,7 +853,7 @@ xbsd_link_part (struct fdisk_context *cxt)
 
   k = get_partition (cxt, 1, partitions);
 
-  if (xbsd_check_new_partition (&i))
+  if (xbsd_check_new_partition(cxt, &i))
     return;
 
   p = get_part_table(k);
@@ -898,7 +902,7 @@ static struct fdisk_parttype *xbsd_get_parttype(
 
 static int xbsd_set_parttype(
 		struct fdisk_context *cxt __attribute__((__unused__)),
-		struct fdisk_label *lb __attribute__((__unused__)),
+		struct fdisk_label *lb,
 		int partnum,
 		struct fdisk_parttype *t)
 {
@@ -912,6 +916,7 @@ static int xbsd_set_parttype(
 		return 0;
 
 	p->p_fstype = t->type;
+	fdisk_label_set_changed(lb, 1);
 	return 0;
 }
 
