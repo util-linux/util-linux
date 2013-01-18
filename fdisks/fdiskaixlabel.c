@@ -51,7 +51,6 @@ static void aix_nolabel(struct fdisk_context *cxt)
     struct aix_partition *aixlabel = (struct aix_partition *) cxt->firstsector;
 
     aixlabel->magic = 0;
-    partitions = 4;
     fdisk_zeroize_firstsector(cxt);
     return;
 }
@@ -68,7 +67,6 @@ static int aix_probe_label(
 	return 0;
     }
     other_endian = (aixlabel->magic == AIX_LABEL_MAGIC_SWAPPED);
-    partitions= 1016;
     volumes = 15;
     aix_info();
     aix_nolabel(cxt);		/* %% */
