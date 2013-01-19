@@ -80,3 +80,4 @@ TS_CMD_SETSID=${TS_CMD_SETSID-"$top_builddir/setsid"}
 TS_CMD_SETARCH=${TS_CMD_SETARCH-"$top_builddir/setarch"}
 TS_CMD_FALLOCATE=${TS_CMD_FALLOCATE-"$top_builddir/fallocate"}
 TS_CMD_ISOSIZE=${TS_CMD_ISOSIZE-"$top_builddir/isosize"}
+TS_CMD_WHEREIS=${TS_CMD_WHEREIS-"$top_builddir/whereis"}
