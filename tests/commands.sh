@@ -73,3 +73,5 @@ TS_CMD_MCOOKIE=${TS_CMD_MCOOKIE-"$top_builddir/mcookie"}
 TS_CMD_TAILF=${TS_CMD_TAILF-"$top_builddir/tailf"}
 TS_CMD_UL=${TS_CMD_UL-"$top_builddir/ul"}
 TS_CMD_IONICE=${TS_CMD_IONICE-"$top_builddir/ionice"}
+
+TS_CMD_LINE=${TS_CMD_LINE-"$top_builddir/line"}
