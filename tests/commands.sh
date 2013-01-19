@@ -45,6 +45,7 @@ TS_CMD_IPCS=${TS_CMD_IPCS:-"$top_builddir/ipcs"}
 TS_CMD_COL=${TS_CMD_COL:-"$top_builddir/col"}
 TS_CMD_COLUMN=${TS_CMD_COLUMN:-"$top_builddir/column"}
 TS_CMD_COLRM=${TS_CMD_COLRM:-"$top_builddir/colrm"}
+TS_CMD_REV=${TS_CMD_REV:-"$top_builddir/rev"}
 
 TS_CMD_NAMEI=${TS_CMD_NAMEI-"$top_builddir/namei"}
 TS_CMD_LOOK=${TS_CMD_LOOK-"$top_builddir/look"}
