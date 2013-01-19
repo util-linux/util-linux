@@ -1,0 +1,46 @@
+#!/bin/bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# This test script is modified version of 'getopt-parse.bash' example
+# file in misc/ directory.
+
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="getopt"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+
+TEMP=$($TS_CMD_GETOPT -o ab:c:: --long a-long,b-long:,c-long:: -n 'example.bash' -- -a -b 1 -c2  --a-long --b-long 3 --c-long foo bar)
+
+if [ $? != 0 ] ; then echo "Terminating..." >&2 ; exit 1 ; fi
+
+eval set -- "$TEMP"
+
+while true ; do
+	case "$1" in
+		-a|--a-long) echo "Option a" >> $TS_OUTPUT 2>&1; shift ;;
+		-b|--b-long) echo "Option b, argument \`$2'" >> $TS_OUTPUT 2>&1; shift 2 ;;
+		-c|--c-long)
+			case "$2" in
+				"") echo "Option c, no argument" >> $TS_OUTPUT 2>&1; shift 2 ;;
+				*)  echo "Option c, argument \`$2'" >> $TS_OUTPUT 2>&1; shift 2 ;;
+			esac ;;
+		--) shift ; break ;;
+		*) echo "Internal error!" >> $TS_OUTPUT 2>&1; exit 1 ;;
+	esac
+done
+echo "Remaining arguments:" >> $TS_OUTPUT 2>&1
+for arg do echo '--> '"\`$arg'" >> $TS_OUTPUT 2>&1; done
+
+ts_finalize
