@@ -9,6 +9,9 @@
 *.la
 *.so.*
 *.pc
+*.gcda
+*.gcno
+*.gcov
 Makefile
 aclocal.m4
 autom4te.cache
