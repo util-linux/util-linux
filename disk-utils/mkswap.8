@@ -130,7 +130,7 @@ e.g. using a command like
 
 .nf
 .RS
-# dd if=/dev/zero of=swapfile bs=1024 count=65536
+# fallocate --length 8GiB swapfile
 .RE
 .fi
 
