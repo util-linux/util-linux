@@ -75,3 +75,4 @@ TS_CMD_UL=${TS_CMD_UL-"$top_builddir/ul"}
 TS_CMD_IONICE=${TS_CMD_IONICE-"$top_builddir/ionice"}
 
 TS_CMD_LINE=${TS_CMD_LINE-"$top_builddir/line"}
+TS_CMD_DMESG=${TS_CMD_DMESG-"$top_builddir/dmesg"}
