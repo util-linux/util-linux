@@ -69,3 +69,4 @@ TS_CMD_UTMPDUMP=${TS_CMD_UTMPDUMP-"$top_builddir/utmpdump"}
 TS_CMD_GETOPT=${TS_CMD_GETOPT-"$top_builddir/getopt"}
 TS_CMD_MCOOKIE=${TS_CMD_MCOOKIE-"$top_builddir/mcookie"}
 TS_CMD_TAILF=${TS_CMD_TAILF-"$top_builddir/tailf"}
+TS_CMD_UL=${TS_CMD_UL-"$top_builddir/ul"}
