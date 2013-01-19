@@ -803,7 +803,9 @@ static void print_record(struct dmesg_control *ctl,
 	/*
 	 * facility : priority :
 	 */
-	if (ctl->decode && rec->level >= 0 && rec->facility >= 0)
+	if (ctl->decode &&
+	    -1 < rec->level    && rec->level     < (int) ARRAY_SIZE(level_names) &&
+	    -1 < rec->facility && rec->facility  < (int) ARRAY_SIZE(facility_names))
 		printf("%-6s:%-6s: ", facility_names[rec->facility].name,
 				      level_names[rec->level].name);
 
