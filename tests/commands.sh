@@ -23,6 +23,8 @@ TS_HELPER_LIBMOUNT_TABDIFF="$top_builddir/test_mount_tab_diff"
 TS_HELPER_ISLOCAL="$top_builddir/test_islocal"
 TS_HELPER_LOGINDEFS="$top_builddir/test_logindefs"
 
+TS_HELPER_MORE=${TS_HELPER_MORE-"$top_builddir/test_more"}
+
 # TODO: use partx
 TS_HELPER_PARTITIONS="$top_builddir/sample-partitions"
 
