@@ -81,3 +81,20 @@ function ipcs_limits_check {
 	done
 }
 
+# Read 'ipcmk' output, such as 'Shared memory id: 22839299' and
+# write the message to two files: (1) something what one can
+# compare as test output, and (2) id which ipcrm later will use
+# for deletion.
+ipcmk_output_handler() {
+	awk -v text=$1 -v num=$2 '
+	function isnum(x) {
+		return(x == x + 0)
+	}
+	{
+		if (isnum($NF)) {
+			print $NF >> num
+			$NF="<was_number>"
+		}
+		print $0 >> text
+	}'
+}

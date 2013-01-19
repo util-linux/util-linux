@@ -81,3 +81,5 @@ TS_CMD_SETARCH=${TS_CMD_SETARCH-"$top_builddir/setarch"}
 TS_CMD_FALLOCATE=${TS_CMD_FALLOCATE-"$top_builddir/fallocate"}
 TS_CMD_ISOSIZE=${TS_CMD_ISOSIZE-"$top_builddir/isosize"}
 TS_CMD_WHEREIS=${TS_CMD_WHEREIS-"$top_builddir/whereis"}
+TS_CMD_IPCMK=${TS_CMD_IPCMK-"$top_builddir/ipcmk"}
+TS_CMD_IPCRM=${TS_CMD_IPCRM-"$top_builddir/ipcrm"}
