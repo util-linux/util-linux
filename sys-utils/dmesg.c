@@ -658,7 +658,7 @@ static int get_next_syslog_record(struct dmesg_control *ctl,
 			continue;	/* error or empty line? */
 
 		if (*begin == '<') {
-			if (ctl->fltr_lev || ctl->fltr_fac || ctl->decode)
+			if (ctl->fltr_lev || ctl->fltr_fac || ctl->decode || ctl->color)
 				begin = parse_faclev(begin + 1, &rec->facility,
 						     &rec->level);
 			else
