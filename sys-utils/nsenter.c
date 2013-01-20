@@ -51,7 +51,7 @@ static struct namespace_file{
 	{ .nstype = CLONE_NEWNET,  .name = "ns/net",  .fd = -1 },
 	{ .nstype = CLONE_NEWPID,  .name = "ns/pid",  .fd = -1 },
 	{ .nstype = CLONE_NEWNS,   .name = "ns/mnt",  .fd = -1 },
-	{}
+	{ .nstype = 0, .name = NULL, .fd = -1 }
 };
 
 static void usage(int status)
