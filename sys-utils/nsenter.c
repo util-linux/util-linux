@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <assert.h>
 
 #include "strutils.h"
 #include "nls.h"
@@ -118,7 +119,7 @@ static void open_namespace_fd(int nstype, const char *path)
 		return;
 	}
 	/* This should never happen */
-	err(EXIT_FAILURE, "Unrecognized namespace type");
+	assert(nsfile->nstype);
 }
 
 static void continue_as_child(void)
