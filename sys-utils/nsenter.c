@@ -95,7 +95,7 @@ static void open_target_fd(int *fd, const char *type, const char *path)
 		path = pathbuf;
 	}
 	if (!path)
-		err(EXIT_FAILURE, _("No filename and no target pid supplied for %s"),
+		errx(EXIT_FAILURE, _("neither filename nor target pid supplied for %s"),
 		    type);
 
 	if (*fd >= 0)
@@ -103,7 +103,7 @@ static void open_target_fd(int *fd, const char *type, const char *path)
 
 	*fd = open(path, O_RDONLY);
 	if (*fd < 0)
-		err(EXIT_FAILURE, _("open of '%s' failed"), path);
+		err(EXIT_FAILURE, _("cannot open %s"), path);
 }
 
 static void open_namespace_fd(int nstype, const char *path)
@@ -271,7 +271,7 @@ int main(int argc, char *argv[])
 		if (nsfile->fd < 0)
 			continue;
 		if (setns(nsfile->fd, nsfile->nstype))
-			err(EXIT_FAILURE, _("setns of '%s' failed"),
+			err(EXIT_FAILURE, _("reassociate to namespace '%s' failed"),
 			    nsfile->name);
 		close(nsfile->fd);
 		nsfile->fd = -1;
@@ -281,13 +281,13 @@ int main(int argc, char *argv[])
 	if (root_fd >= 0 && wd_fd < 0) {
 		wd_fd = open(".", O_RDONLY);
 		if (wd_fd < 0)
-			err(EXIT_FAILURE, _("open of . failed"));
+			err(EXIT_FAILURE, _("cannot open current working directory"));
 	}
 
 	/* Change the root directory */
 	if (root_fd >= 0) {
 		if (fchdir(root_fd) < 0)
-			err(EXIT_FAILURE, _("fchdir to root_fd failed"));
+			err(EXIT_FAILURE, _("change directory by root file descriptor failed"));
 
 		if (chroot(".") < 0)
 			err(EXIT_FAILURE, _("chroot failed"));
@@ -299,7 +299,7 @@ int main(int argc, char *argv[])
 	/* Change the working directory */
 	if (wd_fd >= 0) {
 		if (fchdir(wd_fd) < 0)
-			err(EXIT_FAILURE, _("fchdir to wd_fd failed"));
+			err(EXIT_FAILURE, _("change directory by working directory file descriptor failed"));
 
 		close(wd_fd);
 		wd_fd = -1;
