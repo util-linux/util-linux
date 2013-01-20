@@ -35,7 +35,7 @@
 #include "closestream.h"
 #include "namespace.h"
 
-static struct namespace_file{
+static struct namespace_file {
 	int nstype;
 	const char *name;
 	int fd;
@@ -92,12 +92,13 @@ static void open_target_fd(int *fd, const char *type, const char *path)
 
 	if (!path && namespace_target_pid) {
 		snprintf(pathbuf, sizeof(pathbuf), "/proc/%u/%s",
-			namespace_target_pid, type);
+			 namespace_target_pid, type);
 		path = pathbuf;
 	}
 	if (!path)
-		errx(EXIT_FAILURE, _("neither filename nor target pid supplied for %s"),
-		    type);
+		errx(EXIT_FAILURE,
+		     _("neither filename nor target pid supplied for %s"),
+		     type);
 
 	if (*fd >= 0)
 		close(*fd);
@@ -148,8 +149,7 @@ static void continue_as_child(void)
 	/* Return the child's exit code if possible */
 	if (WIFEXITED(status)) {
 		exit(WEXITSTATUS(status));
-	}
-	else if (WIFSIGNALED(status)) {
+	} else if (WIFSIGNALED(status)) {
 		kill(getpid(), WTERMSIG(status));
 	}
 	exit(EXIT_FAILURE);
@@ -192,7 +192,8 @@ int main(int argc, char *argv[])
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 't':
-			namespace_target_pid = strtoul_or_err(optarg, _("failed to parse pid"));
+			namespace_target_pid =
+			    strtoul_or_err(optarg, _("failed to parse pid"));
 			break;
 		case 'm':
 			if (optarg)
@@ -251,7 +252,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if(optind >= argc)
+	if (optind >= argc)
 		usage(EXIT_FAILURE);
 
 	/*
@@ -272,7 +273,8 @@ int main(int argc, char *argv[])
 		if (nsfile->fd < 0)
 			continue;
 		if (setns(nsfile->fd, nsfile->nstype))
-			err(EXIT_FAILURE, _("reassociate to namespace '%s' failed"),
+			err(EXIT_FAILURE,
+			    _("reassociate to namespace '%s' failed"),
 			    nsfile->name);
 		close(nsfile->fd);
 		nsfile->fd = -1;
@@ -282,13 +284,15 @@ int main(int argc, char *argv[])
 	if (root_fd >= 0 && wd_fd < 0) {
 		wd_fd = open(".", O_RDONLY);
 		if (wd_fd < 0)
-			err(EXIT_FAILURE, _("cannot open current working directory"));
+			err(EXIT_FAILURE,
+			    _("cannot open current working directory"));
 	}
 
 	/* Change the root directory */
 	if (root_fd >= 0) {
 		if (fchdir(root_fd) < 0)
-			err(EXIT_FAILURE, _("change directory by root file descriptor failed"));
+			err(EXIT_FAILURE,
+			    _("change directory by root file descriptor failed"));
 
 		if (chroot(".") < 0)
 			err(EXIT_FAILURE, _("chroot failed"));
@@ -300,7 +304,8 @@ int main(int argc, char *argv[])
 	/* Change the working directory */
 	if (wd_fd >= 0) {
 		if (fchdir(wd_fd) < 0)
-			err(EXIT_FAILURE, _("change directory by working directory file descriptor failed"));
+			err(EXIT_FAILURE,
+			    _("change directory by working directory file descriptor failed"));
 
 		close(wd_fd);
 		wd_fd = -1;
