@@ -130,6 +130,7 @@ tests/run.sh.trs
 /mountpoint
 /namei
 /newgrp
+/nsenter
 /partx
 /pg
 /pivot_root
