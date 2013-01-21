@@ -87,7 +87,7 @@ Set the working directory.
 If no directory is specified set the working directory to the working directory of the target process.
 If directory is specified set the working directory to the specified directory.
 .TP
-.BR \-e , " \-\-exec"
+.BR \-F , " \-\-no-fork"
 Don't fork before exec'ing the specified program.  By default when entering
 a pid namespace enter calls fork before calling exec so that the children will
 be in the newly entered pid namespace.

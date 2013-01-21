@@ -70,9 +70,9 @@ static void usage(int status)
 		" -n, --net   [=<file>]  enter network namespace\n"
 		" -p, --pid   [=<file>]  enter pid namespace\n"
 		" -U, --user  [=<file>]  enter user namespace\n"
-		" -e, --exec             don't fork before exec'ing <program>\n"
 		" -r, --root  [=<dir>]   set the root directory\n"
-		" -w, --wd    [=<dir>]   set the working directory\n"), out);
+		" -w, --wd    [=<dir>]   set the working directory\n"
+		" -F, --no-fork          don't fork before exec'ing <program>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -166,24 +166,25 @@ int main(int argc, char *argv[])
 		{ "net", optional_argument, NULL, 'n' },
 		{ "pid", optional_argument, NULL, 'p' },
 		{ "user", optional_argument, NULL, 'U' },
-		{ "exec", no_argument, NULL, 'e' },
 		{ "root", optional_argument, NULL, 'r' },
 		{ "wd", optional_argument, NULL, 'w' },
+		{ "no-fork", no_argument, NULL, 'F' },
 		{ NULL, 0, NULL, 0 }
 	};
 
 	struct namespace_file *nsfile;
-	int do_fork = 0;
 	int c, namespaces = 0;
-	bool do_rd = false, do_wd = false;
+	bool do_rd = false, do_wd = false, do_fork = false;
 
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while((c = getopt_long(argc, argv, "hVt:m::u::i::n::p::U::er::w::", longopts, NULL)) != -1) {
-		switch(c) {
+	while ((c =
+		getopt_long(argc, argv, "hVt:m::u::i::n::p::U::r::w::F",
+			    longopts, NULL)) != -1) {
+		switch (c) {
 		case 'h':
 			usage(EXIT_SUCCESS);
 		case 'V':
@@ -217,7 +218,7 @@ int main(int argc, char *argv[])
 				namespaces |= CLONE_NEWNET;
 			break;
 		case 'p':
-			do_fork = 1;
+			do_fork = true;
 			if (optarg)
 				open_namespace_fd(CLONE_NEWPID, optarg);
 			else
@@ -229,8 +230,8 @@ int main(int argc, char *argv[])
 			else
 				namespaces |= CLONE_NEWUSER;
 			break;
-		case 'e':
-			do_fork = 0;
+		case 'F':
+			do_fork = false;
 			break;
 		case 'r':
 			if (optarg)
