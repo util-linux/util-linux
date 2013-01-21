@@ -30,109 +30,108 @@
 .\" SUCH DAMAGE.
 .\"
 .\" @(#)whereis.1 from UCB 4.2
-.TH WHEREIS 1 "June 2012" "util-linux" "User Commands"
+.TH WHEREIS 1 "January 2013" "util-linux" "User Commands"
 .SH NAME
 whereis \- locate the binary, source, and manual page files for a command
 .SH SYNOPSIS
 .B whereis
 .RB [ options ]
 .RB [ \-BMS
-.IR directory ...
-.BR \-f ]
-.IR filename ...
+.IR directory "... " \fB\-f\fR ]
+.IR name ...
 .SH DESCRIPTION
 .B whereis
-locates source/binary and manuals sections for specified files.
+locates the binary, source and manual files for the specified command names.
 The supplied names are first stripped of leading pathname components
 and any (single) trailing extension of the form
-.BI . ext\fR,\fP
-for example,
-.BR .c .
+.BI . ext
+(for example:
+.BR .c )
 Prefixes of
 .B s.
 resulting from use of source code control are also dealt with.
 .B whereis
 then attempts to locate the desired program in
-a list of standard Linux places.
+the standard Linux places, and in the places specified by
+.BR $PATH .
+
 .SH OPTIONS
 .TP
 .IP "\fB\-b\fP"
 Search only for binaries.
 .IP "\fB\-m\fP"
-Search only for manual sections.
+Search only for manuals.
 .IP "\fB\-s\fP"
 Search only for sources.
 .IP "\fB\-u\fP"
-Search for unusual entries.  A file is said to be unusual if it does
-not have one entry of each requested type. Thus
+Only show the command names that have unusual entries.  A command
+is said to be unusual if it does
+not have just one entry of each explicitly requested type.  Thus
 .RB ` "whereis\ \ \-m\ \ \-u\ \ *" '
 asks for those files in the current
-directory which have no documentation.
+directory which have no documentation file, or more than one.
 .IP "\fB\-B \fIlist\fP"
-Change or otherwise limit the places where
+Limit the places where
 .B whereis
-searches for binaries by white-space separated list of directories.
+searches for binaries, by a whitespace-separated list of directories.
 .IP "\fB\-M \fIlist\fP"
-Change or otherwise limit the places where
+Limit the places where
 .B whereis
-searches for manual sections by white-space separated list of directories.
+searches for manuals, by a whitespace-separated list of directories.
 .IP "\fB\-S \fIlist\fP"
-.B \-S
-Change or otherwise limit the places where
+Limit the places where
 .B whereis
-searches for sources white-space separated list of directories.
+searches for sources, by a whitespace-separated list of directories.
 .IP "\fB\-f\fP"
-Terminate the last directory list and signals the start of file names,
-and
+Terminates the directory list and signals the start of filenames.  It
 .I must
 be used when any of the
 .BR \-B ,
 .BR \-M ,
 or
 .BR \-S
-options are used.
+options is used.
+
 .SH EXAMPLE
-Find all files in
+To find all files in
 .B /usr/bin
 which are not documented
 in
 .B /usr/man/man1
-with source in
+or have no source in
 .BR /usr/src :
 .IP
-.nf
-.ft B
-$ cd /usr/bin
-$ whereis \-u \-M /usr/man/man1 \-S /usr/src \-f *
-.fi
-.ft R
+.B $ cd /usr/bin
+.br
+.B $ whereis \-u \-ms \-M /usr/man/man1 \-S /usr/src \-f *
+
 .SH FILES
 .B whereis
-has basic set of hard-coded paths (see below). If the option
+contains a basic set of hard-coded paths (see below), but if the
 .B \-B
-is not specified then also follows
+option is not specified, it also follows the
 .B $PATH
 environment variable (since version 2.21).
-
-.TP 20
+.IP
+.br
 /{bin,sbin,etc}
-.TP
+.br
 /usr/{lib,\:bin,\:old,\:new,\:local,\:games,\:include,\:etc,\:src,\:man,\:sbin,\:X386,\:TeX,\:g++-include}
-.TP
+.br
 /usr/local/{X386,\:TeX,\:X11,\:include,\:lib,\:man,\:etc,\:bin,\:games,\:emacs}
 .SH "SEE ALSO"
-.BR chdir (2V)
+.BR chdir (2)
 .SH BUGS
 Since
 .B whereis
 uses
-.BR chdir (2V)
+.BR chdir (2)
 to run faster, pathnames given with the
+.BR \-B ,
 .BR \-M ,
-.BR \-S ,
 or
-.B \-B
-must be full; that is, they must begin with a
+.BR \-S
+options must be full; that is, they must begin with a
 .RB ` / '.
 .PP
 .SH AVAILABILITY
