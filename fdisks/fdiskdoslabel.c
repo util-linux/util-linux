@@ -564,6 +564,24 @@ static sector_t get_unused_start(struct fdisk_context *cxt,
 	return start;
 }
 
+static void fill_bounds(sector_t *first, sector_t *last)
+{
+	int i;
+	struct pte *pe = &ptes[0];
+	struct partition *p;
+
+	for (i = 0; i < partitions; pe++,i++) {
+		p = pe->part_table;
+		if (!p->sys_ind || IS_EXTENDED (p->sys_ind)) {
+			first[i] = 0xffffffff;
+			last[i] = 0;
+		} else {
+			first[i] = get_partition_start(pe);
+			last[i] = first[i] + get_nr_sects(p) - 1;
+		}
+	}
+}
+
 static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype *t)
 {
 	char mesg[256];		/* 48 does not suffice in Japanese */

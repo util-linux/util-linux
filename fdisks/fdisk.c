@@ -745,24 +745,6 @@ static void list_table(struct fdisk_context *cxt, int xtra)
 		dos_list_table(cxt, xtra);
 }
 
-void fill_bounds(sector_t *first, sector_t *last)
-{
-	int i;
-	struct pte *pe = &ptes[0];
-	struct partition *p;
-
-	for (i = 0; i < partitions; pe++,i++) {
-		p = pe->part_table;
-		if (!p->sys_ind || IS_EXTENDED (p->sys_ind)) {
-			first[i] = 0xffffffff;
-			last[i] = 0;
-		} else {
-			first[i] = get_partition_start(pe);
-			last[i] = first[i] + get_nr_sects(p) - 1;
-		}
-	}
-}
-
 static void verify(struct fdisk_context *cxt)
 {
 	if (warn_geometry(cxt))

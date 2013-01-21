@@ -79,8 +79,6 @@ extern unsigned int read_int(struct fdisk_context *cxt,
 extern void print_menu(struct fdisk_context *cxt, enum menutype menu);
 extern void print_partition_size(struct fdisk_context *cxt, int num, sector_t start, sector_t stop, int sysid);
 
-extern void fill_bounds(sector_t *first, sector_t *last);
-
 extern char *partition_type(struct fdisk_context *cxt, unsigned char type);
 extern char read_chars(struct fdisk_context *cxt, char *mesg);
 extern int warn_geometry(struct fdisk_context *cxt);
