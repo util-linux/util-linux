@@ -206,8 +206,10 @@ struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int p
 int fdisk_set_partition_type(struct fdisk_context *cxt, int partnum,
 			     struct fdisk_parttype *t)
 {
-	if (!cxt || !cxt->label || !cxt->label->op->part_set_type)
+	if (!cxt || !cxt->label)
 		return -EINVAL;
+	if (!cxt->label->op->part_set_type)
+		return -ENOSYS;
 
 	DBG(LABEL, dbgprint("partition: %d: set type", partnum));
 	return cxt->label->op->part_set_type(cxt, cxt->label, partnum, t);
