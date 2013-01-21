@@ -93,8 +93,6 @@ extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
 				  unsigned int base, char *mesg, int *is_suffix_used);
 extern int get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt);
 
-extern int wrong_p_order(int *prev);
-
 #define PLURAL	0
 #define SINGULAR 1
 extern const char * str_units(int);
