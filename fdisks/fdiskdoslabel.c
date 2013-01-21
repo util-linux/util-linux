@@ -1181,6 +1181,57 @@ void dos_fix_partition_table_order(void)
 
 }
 
+void dos_move_begin(struct fdisk_context *cxt, int i)
+{
+	struct pte *pe = &ptes[i];
+	struct partition *p = pe->part_table;
+	unsigned int new, free_start, curr_start, last;
+	int x;
+
+	assert(cxt);
+	assert(fdisk_is_disklabel(cxt, DOS));
+
+	if (warn_geometry(cxt))
+		return;
+	if (!p->sys_ind || !get_nr_sects(p) || IS_EXTENDED (p->sys_ind)) {
+		printf(_("Partition %d has no data area\n"), i + 1);
+		return;
+	}
+
+	/* the default start is at the second sector of the disk or at the
+	 * second sector of the extended partition
+	 */
+	free_start = pe->offset ? pe->offset + 1 : 1;
+
+	curr_start = get_partition_start(pe);
+
+	/* look for a free space before the current start of the partition */
+	for (x = 0; x < partitions; x++) {
+		unsigned int end;
+		struct pte *prev_pe = &ptes[x];
+		struct partition *prev_p = prev_pe->part_table;
+
+		if (!prev_p)
+			continue;
+		end = get_partition_start(prev_pe) + get_nr_sects(prev_p);
+
+		if (!is_cleared_partition(prev_p) &&
+		    end > free_start && end <= curr_start)
+			free_start = end;
+	}
+
+	last = get_partition_start(pe) + get_nr_sects(p) - 1;
+
+	new = read_int(cxt, free_start, curr_start, last, free_start,
+		       _("New beginning of data")) - pe->offset;
+
+	if (new != get_nr_sects(p)) {
+		unsigned int sects = get_nr_sects(p) + get_start_sect(p) - new;
+		set_nr_sects(p, sects);
+		set_start_sect(p, new);
+		pe->changed = 1;
+	}
+}
 
 static const struct fdisk_label_operations dos_operations =
 {

@@ -1024,55 +1024,6 @@ static void print_raw(struct fdisk_context *cxt)
 		     print_buffer(cxt, ptes[i].sectorbuffer);
 }
 
-static void
-move_begin(struct fdisk_context *cxt, int i) {
-	struct pte *pe = &ptes[i];
-	struct partition *p = pe->part_table;
-	unsigned int new, free_start, curr_start, last;
-	int x;
-
-	if (warn_geometry(cxt))
-		return;
-	if (!p->sys_ind || !get_nr_sects(p) || IS_EXTENDED (p->sys_ind)) {
-		printf(_("Partition %d has no data area\n"), i + 1);
-		return;
-	}
-
-	/* the default start is at the second sector of the disk or at the
-	 * second sector of the extended partition
-	 */
-	free_start = pe->offset ? pe->offset + 1 : 1;
-
-	curr_start = get_partition_start(pe);
-
-	/* look for a free space before the current start of the partition */
-	for (x = 0; x < partitions; x++) {
-		unsigned int end;
-		struct pte *prev_pe = &ptes[x];
-		struct partition *prev_p = prev_pe->part_table;
-
-		if (!prev_p)
-			continue;
-		end = get_partition_start(prev_pe) + get_nr_sects(prev_p);
-
-		if (!is_cleared_partition(prev_p) &&
-		    end > free_start && end <= curr_start)
-			free_start = end;
-	}
-
-	last = get_partition_start(pe) + get_nr_sects(p) - 1;
-
-	new = read_int(cxt, free_start, curr_start, last, free_start,
-		       _("New beginning of data")) - pe->offset;
-
-	if (new != get_nr_sects(p)) {
-		unsigned int sects = get_nr_sects(p) + get_start_sect(p) - new;
-		set_nr_sects(p, sects);
-		set_start_sect(p, new);
-		pe->changed = 1;
-	}
-}
-
 static void __attribute__ ((__noreturn__)) handle_quit(struct fdisk_context *cxt)
 {
 	fdisk_free_context(cxt);
@@ -1095,7 +1046,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 			break;
 		case 'b':
 			if (fdisk_is_disklabel(cxt, DOS))
-				move_begin(cxt, get_partition(cxt, 0, partitions));
+				dos_move_begin(cxt, get_partition(cxt, 0, partitions));
 			break;
 		case 'c':
 			user_cylinders = read_int(cxt, 1, cxt->geom.cylinders, 1048576, 0,

@@ -43,6 +43,7 @@ extern void dos_init(struct fdisk_context *cxt);
 extern int dos_list_table(struct fdisk_context *cxt, int xtra);
 
 extern void dos_fix_partition_table_order(void);
+extern void dos_move_begin(struct fdisk_context *cxt, int i);
 
 extern int mbr_is_valid_magic(unsigned char *b);
 
