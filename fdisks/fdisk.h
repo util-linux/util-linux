@@ -146,9 +146,3 @@ static inline sector_t get_start_sect(struct partition *p)
 	return read4_little_endian(p->start4);
 }
 
-static inline int is_cleared_partition(struct partition *p)
-{
-	return !(!p || p->boot_ind || p->head || p->sector || p->cyl ||
-		 p->sys_ind || p->end_head || p->end_sector || p->end_cyl ||
-		 get_start_sect(p) || get_nr_sects(p));
-}

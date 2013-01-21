@@ -36,6 +36,13 @@ static inline sector_t get_partition_start(struct pte *pe)
 	return pe->offset + get_start_sect(pe->part_table);
 }
 
+static inline int is_cleared_partition(struct partition *p)
+{
+	return !(!p || p->boot_ind || p->head || p->sector || p->cyl ||
+		 p->sys_ind || p->end_head || p->end_sector || p->end_cyl ||
+		 get_start_sect(p) || get_nr_sects(p));
+}
+
 extern void dos_print_mbr_id(struct fdisk_context *cxt);
 extern void dos_set_mbr_id(struct fdisk_context *cxt);
 extern void dos_init(struct fdisk_context *cxt);
