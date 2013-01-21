@@ -176,20 +176,6 @@ get_part_table(int i) {
 	return ptes[i].part_table;
 }
 
-static int
-is_garbage_table(void) {
-	int i;
-
-	for (i = 0; i < 4; i++) {
-		struct pte *pe = &ptes[i];
-		struct partition *p = pe->part_table;
-
-		if (p->boot_ind != 0 && p->boot_ind != 0x80)
-			return 1;
-	}
-	return 0;
-}
-
 void print_menu(struct fdisk_context *cxt, enum menutype menu)
 {
 	size_t i;
@@ -813,7 +799,7 @@ list_disk_geometry(struct fdisk_context *cxt) {
  * Return 0 if OK. Return i if partition i should have been earlier.
  * Two separate checks: primary and logical partitions.
  */
-static int
+int
 wrong_p_order(int *prev) {
 	struct pte *pe;
 	struct partition *p;
@@ -945,9 +931,6 @@ fix_partition_table_order(void) {
 
 static void list_table(struct fdisk_context *cxt, int xtra)
 {
-	struct partition *p;
-	int i, w;
-
 	if (fdisk_is_disklabel(cxt, SUN)) {
 		sun_list_table(cxt, xtra);
 		return;
@@ -970,62 +953,8 @@ static void list_table(struct fdisk_context *cxt, int xtra)
 		return;
 	}
 
-	if (is_garbage_table()) {
-		printf(_("This doesn't look like a partition table\n"
-			 "Probably you selected the wrong device.\n\n"));
-	}
-
-	/* Heuristic: we list partition 3 of /dev/foo as /dev/foo3,
-	   but if the device name ends in a digit, say /dev/foo1,
-	   then the partition is called /dev/foo1p3. */
-	w = strlen(cxt->dev_path);
-	if (w && isdigit(cxt->dev_path[w-1]))
-		w++;
-	if (w < 5)
-		w = 5;
-
-	printf(_("%*s Boot      Start         End      Blocks   Id  System\n"),
-	       w+1, _("Device"));
-
-	for (i = 0; i < partitions; i++) {
-		struct pte *pe = &ptes[i];
-
-		p = pe->part_table;
-		if (p && !is_cleared_partition(p)) {
-			unsigned int psects = get_nr_sects(p);
-			unsigned int pblocks = psects;
-			unsigned int podd = 0;
-			struct fdisk_parttype *type =
-					fdisk_get_parttype_from_code(cxt, p->sys_ind);
-
-			if (cxt->sector_size < 1024) {
-				pblocks /= (1024 / cxt->sector_size);
-				podd = psects % (1024 / cxt->sector_size);
-			}
-			if (cxt->sector_size > 1024)
-				pblocks *= (cxt->sector_size / 1024);
-                        printf(
-			    "%s  %c %11lu %11lu %11lu%c  %2x  %s\n",
-			partname(cxt->dev_path, i+1, w+2),
-/* boot flag */		!p->boot_ind ? ' ' : p->boot_ind == ACTIVE_FLAG
-			? '*' : '?',
-/* start */		(unsigned long) cround(get_partition_start(pe)),
-/* end */		(unsigned long) cround(get_partition_start(pe) + psects
-				- (psects ? 1 : 0)),
-/* odd flag on end */	(unsigned long) pblocks, podd ? '+' : ' ',
-/* type id */		p->sys_ind,
-/* type name */		type ? type->name : _("Unknown"));
-			check_consistency(cxt, p, i);
-			fdisk_warn_alignment(cxt, get_partition_start(pe), i);
-		}
-	}
-
-	/* Is partition table in disk order? It need not be, but... */
-	/* partition table entries are not checked for correct order if this
-	   is a sgi, sun or aix labeled disk... */
-	if (fdisk_is_disklabel(cxt, DOS) && wrong_p_order(NULL)) {
-		printf(_("\nPartition table entries are not in disk order\n"));
-	}
+	if (fdisk_is_disklabel(cxt, DOS))
+		dos_list_table(cxt, xtra);
 }
 
 static void
