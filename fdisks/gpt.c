@@ -1729,6 +1729,29 @@ static int gpt_set_partition_type(
 	return 0;
 }
 
+static int gpt_get_partition_status(
+		struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int i,
+		int *status)
+{
+	struct fdisk_gpt_label *gpt = gpt_label(cxt);
+	struct gpt_entry *e;
+
+	if (!cxt || !gpt || i < 0 || !status
+	     || (uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries))
+		return -EINVAL;
+
+	e = &gpt->ents[i];
+	*status = FDISK_PARTSTAT_NONE;
+
+	if (!partition_unused(&gpt->ents[i]) || gpt_partition_size(e))
+		*status = FDISK_PARTSTAT_USED;
+
+	return 0;
+}
+
+
 /*
  * Deinitialize fdisk-specific variables
  */
@@ -1760,6 +1783,8 @@ static const struct fdisk_label_operations gpt_operations =
 	.part_delete	= gpt_delete_partition,
 	.part_get_type	= gpt_get_partition_type,
 	.part_set_type	= gpt_set_partition_type,
+
+	.part_get_status = gpt_get_partition_status,
 
 	.deinit		= gpt_deinit
 };

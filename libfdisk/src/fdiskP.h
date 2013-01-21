@@ -145,6 +145,11 @@ struct fdisk_label_operations {
 	int (*part_set_type)(struct fdisk_context *cxt, struct fdisk_label *lb,
 						int partnum,
 						struct fdisk_parttype *t);
+
+	/* returns FDISK_PARTSTAT_* flags */
+	int (*part_get_status)(struct fdisk_context *cxt, struct fdisk_label *lb,
+						int partnum, int *status);
+
 	/* refresh alignment setting */
 	int (*reset_alignment)(struct fdisk_context *cxt,
 						struct fdisk_label *lb);

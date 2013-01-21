@@ -229,6 +229,25 @@ size_t fdisk_get_nparttypes(struct fdisk_context *cxt)
 	return cxt->label->nparttypes;
 }
 
+/**
+ * fdisk_partition_is_used:
+ * @cxt: fdisk context
+ * @partnum: partition number
+ * @status: returns FDISK_PARTSTAT_* flags
+ *
+ * Returns 0 on success, otherwise, a corresponding error.
+ */
+int fdisk_partition_get_status(struct fdisk_context *cxt, int partnum, int *status)
+{
+	if (!cxt || !cxt->label)
+		return -EINVAL;
+	if (!cxt->label->op->part_get_status)
+		return -ENOSYS;
+
+	return cxt->label->op->part_get_status(cxt, cxt->label, partnum, status);
+}
+
+
 /*
  * Resets the current used label driver to initial state
  */

@@ -1396,6 +1396,32 @@ void dos_toggle_active(struct fdisk_context *cxt, int i)
 	fdisk_label_set_changed(cxt->label, 1);
 }
 
+
+static int dos_get_partition_status(
+		struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int i,
+		int *status)
+{
+	struct pte *pe;
+	struct partition *p;
+
+	assert(cxt);
+	assert(fdisk_is_disklabel(cxt, DOS));
+
+	if (!status || i < 0 || i >= partitions)
+		return -EINVAL;
+
+	*status = FDISK_PARTSTAT_NONE;
+	pe = &ptes[i];
+	p = pe->part_table;
+
+	if (p && !is_cleared_partition(p))
+		*status = FDISK_PARTSTAT_USED;
+
+	return 0;
+}
+
 static const struct fdisk_label_operations dos_operations =
 {
 	.probe		= dos_probe_label,
@@ -1406,6 +1432,9 @@ static const struct fdisk_label_operations dos_operations =
 	.part_delete	= dos_delete_partition,
 	.part_get_type	= dos_get_parttype,
 	.part_set_type	= dos_set_parttype,
+
+	.part_get_status = dos_get_partition_status,
+
 	.reset_alignment = dos_reset_alignment,
 };
 

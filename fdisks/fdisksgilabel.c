@@ -950,6 +950,29 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 	return 0;
 }
 
+
+static int sgi_get_partition_status(
+		struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int i,
+		int *status)
+{
+
+	assert(cxt);
+	assert(fdisk_is_disklabel(cxt, SGI));
+
+	if (!status || i < 0 || i >= partitions)
+		return -EINVAL;
+
+	*status = FDISK_PARTSTAT_NONE;
+
+	if (sgilabel->partitions[i].num_sectors &&
+	    sgilabel->partitions[i].num_sectors)
+		*status = FDISK_PARTSTAT_USED;
+
+	return 0;
+}
+
 static const struct fdisk_label_operations sgi_operations =
 {
 	.probe		= sgi_probe_label,
@@ -959,7 +982,9 @@ static const struct fdisk_label_operations sgi_operations =
 	.part_add	= sgi_add_partition,
 	.part_delete	= sgi_delete_partition,
 	.part_get_type	= sgi_get_parttype,
-	.part_set_type	= sgi_set_parttype
+	.part_set_type	= sgi_set_parttype,
+
+	.part_get_status = sgi_get_partition_status
 };
 
 /*

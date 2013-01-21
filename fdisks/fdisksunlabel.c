@@ -829,6 +829,27 @@ static int sun_reset_alignment(struct fdisk_context *cxt,
 	return 0;
 }
 
+
+static int sun_get_partition_status(
+		struct fdisk_context *cxt,
+		struct fdisk_label *lb __attribute__((__unused__)),
+		int i,
+		int *status)
+{
+	struct sun_disk_label *sunlabel = context_get_sun_disklabel(cxt);
+
+	if (!status || i < 0 || (size_t) i >= lb->nparts_max)
+		return -EINVAL;
+
+	*status = FDISK_PARTSTAT_NONE;
+
+	if (sunlabel->partitions[i].num_sectors)
+		*status = FDISK_PARTSTAT_USED;
+
+	return 0;
+}
+
+
 const struct fdisk_label_operations sun_operations =
 {
 	.probe		= sun_probe_label,
@@ -839,7 +860,10 @@ const struct fdisk_label_operations sun_operations =
 	.part_delete	= sun_delete_partition,
 	.part_get_type	= sun_get_parttype,
 	.part_set_type	= sun_set_parttype,
-	.reset_alignment = sun_reset_alignment
+
+	.part_get_status = sun_get_partition_status,
+
+	.reset_alignment = sun_reset_alignment,
 };
 
 /*
