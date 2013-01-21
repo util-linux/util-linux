@@ -41,6 +41,7 @@ extern void dos_set_mbr_id(struct fdisk_context *cxt);
 extern void dos_init(struct fdisk_context *cxt);
 
 extern int dos_list_table(struct fdisk_context *cxt, int xtra);
+extern void dos_list_table_expert(struct fdisk_context *cxt, int extend);
 
 extern void dos_fix_partition_table_order(void);
 extern void dos_move_begin(struct fdisk_context *cxt, int i);

@@ -39,6 +39,10 @@ static struct fdisk_parttype dos_parttypes[] = {
 		s |= (sector >> 2) & 0xc0;				\
 	}
 
+
+#define sector(s)	((s) & 0x3f)
+#define cylinder(s, c)	((c) | (((s) & 0xc0) << 2))
+
 #define alignment_required(_x)	((_x)->grain != (_x)->sector_size)
 
 struct pte ptes[MAXIMUM_PARTS];
@@ -727,6 +731,101 @@ static int add_logical(struct fdisk_context *cxt)
 	return add_partition(cxt, partitions - 1, NULL);
 }
 
+static void check(struct fdisk_context *cxt, int n,
+	   unsigned int h, unsigned int s, unsigned int c,
+	   unsigned int start)
+{
+	unsigned int total, real_s, real_c;
+
+	real_s = sector(s) - 1;
+	real_c = cylinder(s, c);
+	total = (real_c * cxt->geom.sectors + real_s) * cxt->geom.heads + h;
+	if (!total)
+		fprintf(stderr, _("Warning: partition %d contains sector 0\n"), n);
+	if (h >= cxt->geom.heads)
+		fprintf(stderr,
+			_("Partition %d: head %d greater than maximum %d\n"),
+			n, h + 1, cxt->geom.heads);
+	if (real_s >= cxt->geom.sectors)
+		fprintf(stderr, _("Partition %d: sector %d greater than "
+			"maximum %llu\n"), n, s, cxt->geom.sectors);
+	if (real_c >= cxt->geom.cylinders)
+		fprintf(stderr, _("Partitions %d: cylinder %d greater than "
+			"maximum %llu\n"), n, real_c + 1, cxt->geom.cylinders);
+	if (cxt->geom.cylinders <= 1024 && start != total)
+		fprintf(stderr,
+			_("Partition %d: previous sectors %d disagrees with "
+			"total %d\n"), n, start, total);
+}
+
+/* check_consistency() and long2chs() added Sat Mar 6 12:28:16 1993,
+ * faith@cs.unc.edu, based on code fragments from pfdisk by Gordon W. Ross,
+ * Jan.  1990 (version 1.2.1 by Gordon W. Ross Aug. 1990; Modified by S.
+ * Lubkin Oct.  1991). */
+
+static void
+long2chs(struct fdisk_context *cxt, unsigned long ls,
+	 unsigned int *c, unsigned int *h, unsigned int *s) {
+	int spc = cxt->geom.heads * cxt->geom.sectors;
+
+	*c = ls / spc;
+	ls = ls % spc;
+	*h = ls / cxt->geom.sectors;
+	*s = ls % cxt->geom.sectors + 1;	/* sectors count from 1 */
+}
+
+static void check_consistency(struct fdisk_context *cxt, struct partition *p, int partition)
+{
+	unsigned int pbc, pbh, pbs;	/* physical beginning c, h, s */
+	unsigned int pec, peh, pes;	/* physical ending c, h, s */
+	unsigned int lbc, lbh, lbs;	/* logical beginning c, h, s */
+	unsigned int lec, leh, les;	/* logical ending c, h, s */
+
+	if (!is_dos_compatible(cxt))
+		return;
+
+	if (!cxt->geom.heads || !cxt->geom.sectors || (partition >= 4))
+		return;		/* do not check extended partitions */
+
+/* physical beginning c, h, s */
+	pbc = (p->cyl & 0xff) | ((p->sector << 2) & 0x300);
+	pbh = p->head;
+	pbs = p->sector & 0x3f;
+
+/* physical ending c, h, s */
+	pec = (p->end_cyl & 0xff) | ((p->end_sector << 2) & 0x300);
+	peh = p->end_head;
+	pes = p->end_sector & 0x3f;
+
+/* compute logical beginning (c, h, s) */
+	long2chs(cxt, get_start_sect(p), &lbc, &lbh, &lbs);
+
+/* compute logical ending (c, h, s) */
+	long2chs(cxt, get_start_sect(p) + get_nr_sects(p) - 1, &lec, &leh, &les);
+
+/* Same physical / logical beginning? */
+	if (cxt->geom.cylinders <= 1024 && (pbc != lbc || pbh != lbh || pbs != lbs)) {
+		printf(_("Partition %d has different physical/logical "
+			"beginnings (non-Linux?):\n"), partition + 1);
+		printf(_("     phys=(%d, %d, %d) "), pbc, pbh, pbs);
+		printf(_("logical=(%d, %d, %d)\n"),lbc, lbh, lbs);
+	}
+
+/* Same physical / logical ending? */
+	if (cxt->geom.cylinders <= 1024 && (pec != lec || peh != leh || pes != les)) {
+		printf(_("Partition %d has different physical/logical "
+			"endings:\n"), partition + 1);
+		printf(_("     phys=(%d, %d, %d) "), pec, peh, pes);
+		printf(_("logical=(%d, %d, %d)\n"),lec, leh, les);
+	}
+
+/* Ending on cylinder boundary? */
+	if (peh != (cxt->geom.heads - 1) || pes != cxt->geom.sectors) {
+		printf(_("Partition %i does not end on cylinder boundary.\n"),
+			partition + 1);
+	}
+}
+
 static int dos_verify_disklabel(struct fdisk_context *cxt,
 		struct fdisk_label *lb __attribute__((__unused__)))
 {
@@ -1078,6 +1177,38 @@ int dos_list_table(struct fdisk_context *cxt,
 		printf(_("\nPartition table entries are not in disk order\n"));
 
 	return 0;
+}
+
+/*
+ * TODO: merge into dos_list_table
+ */
+void dos_list_table_expert(struct fdisk_context *cxt, int extend)
+{
+	struct pte *pe;
+	struct partition *p;
+	int i;
+
+	printf(_("\nDisk %s: %d heads, %llu sectors, %llu cylinders\n\n"),
+		cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
+        printf(_("Nr AF  Hd Sec  Cyl  Hd Sec  Cyl     Start      Size ID\n"));
+	for (i = 0 ; i < partitions; i++) {
+		pe = &ptes[i];
+		p = (extend ? pe->ext_pointer : pe->part_table);
+		if (p != NULL) {
+                        printf("%2d %02x%4d%4d%5d%4d%4d%5d%11lu%11lu %02x\n",
+				i + 1, p->boot_ind, p->head,
+				sector(p->sector),
+				cylinder(p->sector, p->cyl), p->end_head,
+				sector(p->end_sector),
+				cylinder(p->end_sector, p->end_cyl),
+				(unsigned long) get_start_sect(p),
+				(unsigned long) get_nr_sects(p), p->sys_ind);
+			if (p->sys_ind) {
+				check_consistency(cxt, p, i);
+				fdisk_warn_alignment(cxt, get_partition_start(pe), i);
+			}
+		}
+	}
 }
 
 /*

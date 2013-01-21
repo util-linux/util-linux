@@ -65,9 +65,6 @@ extern char *line_ptr;
 extern int partitions;
 extern unsigned int display_in_cyl_units, units_per_sector;
 
-extern void check_consistency(struct fdisk_context *cxt, struct partition *p, int partition);
-extern void check(struct fdisk_context *cxt, int n, unsigned int h, unsigned int s, unsigned int c, unsigned int start);
-
 extern void fatal(struct fdisk_context *cxt, enum failure why);
 extern int  get_partition(struct fdisk_context *cxt, int warn, int max);
 extern void list_partition_types(struct fdisk_context *cxt);

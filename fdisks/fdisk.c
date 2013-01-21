@@ -58,9 +58,6 @@
 			})
 
 
-#define sector(s)	((s) & 0x3f)
-#define cylinder(s, c)	((c) | (((s) & 0xc0) << 2))
-
 /* menu list description */
 
 struct menulist_descr {
@@ -692,74 +689,6 @@ static void change_partition_type(struct fdisk_context *cxt)
 	fdisk_free_parttype(org_t);
 }
 
-/* check_consistency() and long2chs() added Sat Mar 6 12:28:16 1993,
- * faith@cs.unc.edu, based on code fragments from pfdisk by Gordon W. Ross,
- * Jan.  1990 (version 1.2.1 by Gordon W. Ross Aug. 1990; Modified by S.
- * Lubkin Oct.  1991). */
-
-static void
-long2chs(struct fdisk_context *cxt, unsigned long ls,
-	 unsigned int *c, unsigned int *h, unsigned int *s) {
-	int spc = cxt->geom.heads * cxt->geom.sectors;
-
-	*c = ls / spc;
-	ls = ls % spc;
-	*h = ls / cxt->geom.sectors;
-	*s = ls % cxt->geom.sectors + 1;	/* sectors count from 1 */
-}
-
-void check_consistency(struct fdisk_context *cxt, struct partition *p, int partition)
-{
-	unsigned int pbc, pbh, pbs;	/* physical beginning c, h, s */
-	unsigned int pec, peh, pes;	/* physical ending c, h, s */
-	unsigned int lbc, lbh, lbs;	/* logical beginning c, h, s */
-	unsigned int lec, leh, les;	/* logical ending c, h, s */
-
-	if (!is_dos_compatible(cxt))
-		return;
-
-	if (!cxt->geom.heads || !cxt->geom.sectors || (partition >= 4))
-		return;		/* do not check extended partitions */
-
-/* physical beginning c, h, s */
-	pbc = (p->cyl & 0xff) | ((p->sector << 2) & 0x300);
-	pbh = p->head;
-	pbs = p->sector & 0x3f;
-
-/* physical ending c, h, s */
-	pec = (p->end_cyl & 0xff) | ((p->end_sector << 2) & 0x300);
-	peh = p->end_head;
-	pes = p->end_sector & 0x3f;
-
-/* compute logical beginning (c, h, s) */
-	long2chs(cxt, get_start_sect(p), &lbc, &lbh, &lbs);
-
-/* compute logical ending (c, h, s) */
-	long2chs(cxt, get_start_sect(p) + get_nr_sects(p) - 1, &lec, &leh, &les);
-
-/* Same physical / logical beginning? */
-	if (cxt->geom.cylinders <= 1024 && (pbc != lbc || pbh != lbh || pbs != lbs)) {
-		printf(_("Partition %d has different physical/logical "
-			"beginnings (non-Linux?):\n"), partition + 1);
-		printf(_("     phys=(%d, %d, %d) "), pbc, pbh, pbs);
-		printf(_("logical=(%d, %d, %d)\n"),lbc, lbh, lbs);
-	}
-
-/* Same physical / logical ending? */
-	if (cxt->geom.cylinders <= 1024 && (pec != lec || peh != leh || pes != les)) {
-		printf(_("Partition %d has different physical/logical "
-			"endings:\n"), partition + 1);
-		printf(_("     phys=(%d, %d, %d) "), pec, peh, pes);
-		printf(_("logical=(%d, %d, %d)\n"),lec, leh, les);
-	}
-
-/* Ending on cylinder boundary? */
-	if (peh != (cxt->geom.heads - 1) || pes != cxt->geom.sectors) {
-		printf(_("Partition %i does not end on cylinder boundary.\n"),
-			partition + 1);
-	}
-}
-
 static void
 list_disk_geometry(struct fdisk_context *cxt) {
 	unsigned long long bytes = cxt->total_sectors * cxt->sector_size;
@@ -822,35 +751,6 @@ static void list_table(struct fdisk_context *cxt, int xtra)
 		dos_list_table(cxt, xtra);
 }
 
-static void
-x_list_table(struct fdisk_context *cxt, int extend) {
-	struct pte *pe;
-	struct partition *p;
-	int i;
-
-	printf(_("\nDisk %s: %d heads, %llu sectors, %llu cylinders\n\n"),
-		cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
-        printf(_("Nr AF  Hd Sec  Cyl  Hd Sec  Cyl     Start      Size ID\n"));
-	for (i = 0 ; i < partitions; i++) {
-		pe = &ptes[i];
-		p = (extend ? pe->ext_pointer : pe->part_table);
-		if (p != NULL) {
-                        printf("%2d %02x%4d%4d%5d%4d%4d%5d%11lu%11lu %02x\n",
-				i + 1, p->boot_ind, p->head,
-				sector(p->sector),
-				cylinder(p->sector, p->cyl), p->end_head,
-				sector(p->end_sector),
-				cylinder(p->end_sector, p->end_cyl),
-				(unsigned long) get_start_sect(p),
-				(unsigned long) get_nr_sects(p), p->sys_ind);
-			if (p->sys_ind) {
-				check_consistency(cxt, p, i);
-				fdisk_warn_alignment(cxt, get_partition_start(pe), i);
-			}
-		}
-	}
-}
-
 void fill_bounds(sector_t *first, sector_t *last)
 {
 	int i;
@@ -867,33 +767,6 @@ void fill_bounds(sector_t *first, sector_t *last)
 			last[i] = first[i] + get_nr_sects(p) - 1;
 		}
 	}
-}
-
-void check(struct fdisk_context *cxt, int n, 
-	   unsigned int h, unsigned int s, unsigned int c,
-	   unsigned int start)
-{
-	unsigned int total, real_s, real_c;
-
-	real_s = sector(s) - 1;
-	real_c = cylinder(s, c);
-	total = (real_c * cxt->geom.sectors + real_s) * cxt->geom.heads + h;
-	if (!total)
-		fprintf(stderr, _("Warning: partition %d contains sector 0\n"), n);
-	if (h >= cxt->geom.heads)
-		fprintf(stderr,
-			_("Partition %d: head %d greater than maximum %d\n"),
-			n, h + 1, cxt->geom.heads);
-	if (real_s >= cxt->geom.sectors)
-		fprintf(stderr, _("Partition %d: sector %d greater than "
-			"maximum %llu\n"), n, s, cxt->geom.sectors);
-	if (real_c >= cxt->geom.cylinders)
-		fprintf(stderr, _("Partitions %d: cylinder %d greater than "
-			"maximum %llu\n"), n, real_c + 1, cxt->geom.cylinders);
-	if (cxt->geom.cylinders <= 1024 && start != total)
-		fprintf(stderr,
-			_("Partition %d: previous sectors %d disagrees with "
-			"total %d\n"), n, start, total);
 }
 
 static void verify(struct fdisk_context *cxt)
@@ -1065,7 +938,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 				sun_set_xcyl(cxt);
 			else
 				if (fdisk_is_disklabel(cxt, DOS))
-					x_list_table(cxt, 1);
+					dos_list_table_expert(cxt, 1);
 			break;
 		case 'f':
 			if (fdisk_is_disklabel(cxt, DOS))
@@ -1093,7 +966,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 			if (fdisk_is_disklabel(cxt, SUN))
 				list_table(cxt, 1);
 			else
-				x_list_table(cxt, 0);
+				dos_list_table_expert(cxt, 0);
 			break;
 		case 'q':
 			handle_quit(cxt);
