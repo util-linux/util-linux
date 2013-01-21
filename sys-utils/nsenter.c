@@ -25,6 +25,7 @@
 #include <sched.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <unistd.h>
 
 #include "strutils.h"
@@ -173,7 +174,8 @@ int main(int argc, char *argv[])
 
 	struct namespace_file *nsfile;
 	int do_fork = 0;
-	int c;
+	int c, namespaces = 0;
+	bool do_rd = false, do_wd = false;
 
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -191,32 +193,56 @@ int main(int argc, char *argv[])
 			namespace_target_pid = strtoul_or_err(optarg, _("failed to parse pid"));
 			break;
 		case 'm':
-			open_namespace_fd(CLONE_NEWNS, optarg);
+			if (optarg)
+				open_namespace_fd(CLONE_NEWNS, optarg);
+			else
+				namespaces |= CLONE_NEWNS;
 			break;
 		case 'u':
-			open_namespace_fd(CLONE_NEWUTS, optarg);
+			if (optarg)
+				open_namespace_fd(CLONE_NEWUTS, optarg);
+			else
+				namespaces |= CLONE_NEWUTS;
 			break;
 		case 'i':
-			open_namespace_fd(CLONE_NEWIPC, optarg);
+			if (optarg)
+				open_namespace_fd(CLONE_NEWIPC, optarg);
+			else
+				namespaces |= CLONE_NEWIPC;
 			break;
 		case 'n':
-			open_namespace_fd(CLONE_NEWNET, optarg);
+			if (optarg)
+				open_namespace_fd(CLONE_NEWNET, optarg);
+			else
+				namespaces |= CLONE_NEWNET;
 			break;
 		case 'p':
 			do_fork = 1;
-			open_namespace_fd(CLONE_NEWPID, optarg);
+			if (optarg)
+				open_namespace_fd(CLONE_NEWPID, optarg);
+			else
+				namespaces |= CLONE_NEWPID;
 			break;
 		case 'U':
-			open_namespace_fd(CLONE_NEWUSER, optarg);
+			if (optarg)
+				open_namespace_fd(CLONE_NEWUSER, optarg);
+			else
+				namespaces |= CLONE_NEWUSER;
 			break;
 		case 'e':
 			do_fork = 0;
 			break;
 		case 'r':
-			open_target_fd(&root_fd, "root", optarg);
+			if (optarg)
+				open_target_fd(&root_fd, "root", optarg);
+			else
+				do_rd = true;
 			break;
 		case 'w':
-			open_target_fd(&wd_fd, "cwd", optarg);
+			if (optarg)
+				open_target_fd(&wd_fd, "cwd", optarg);
+			else
+				do_wd = true;
 			break;
 		default:
 			usage(EXIT_FAILURE);
@@ -225,6 +251,17 @@ int main(int argc, char *argv[])
 
 	if(optind >= argc)
 		usage(EXIT_FAILURE);
+
+	/*
+	 * Open remaining namespace and directory descriptors.
+	 */
+	for (nsfile = namespace_files; nsfile->nstype; nsfile++)
+		if (nsfile->nstype & namespaces)
+			open_namespace_fd(nsfile->nstype, NULL);
+	if (do_rd)
+		open_target_fd(&root_fd, "root", NULL);
+	if (do_wd)
+		open_target_fd(&wd_fd, "cwd", NULL);
 
 	/*
 	 * Now that we know which namespaces we want to enter, enter them.
