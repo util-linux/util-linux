@@ -51,12 +51,6 @@
 
 #include "gpt.h"
 
-#define hex_val(c)	({ \
-				char _c = (c); \
-				isdigit(_c) ? _c - '0' : \
-				tolower(_c) + 10 - 'a'; \
-			})
-
 
 /* menu list description */
 
