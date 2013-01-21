@@ -1382,6 +1382,20 @@ void dos_move_begin(struct fdisk_context *cxt, int i)
 	}
 }
 
+void dos_toggle_active(struct fdisk_context *cxt, int i)
+{
+	struct pte *pe = &ptes[i];
+	struct partition *p = pe->part_table;
+
+	if (IS_EXTENDED (p->sys_ind) && !p->boot_ind)
+		fprintf(stderr,
+			_("WARNING: Partition %d is an extended partition\n"),
+			i + 1);
+	p->boot_ind = (p->boot_ind ? 0 : ACTIVE_FLAG);
+	pe->changed = 1;
+	fdisk_label_set_changed(cxt->label, 1);
+}
+
 static const struct fdisk_label_operations dos_operations =
 {
 	.probe		= dos_probe_label,

@@ -601,20 +601,6 @@ str_units(int n)
 	return P_("sector", "sectors", n);
 }
 
-static void
-toggle_active(struct fdisk_context *cxt, int i) {
-	struct pte *pe = &ptes[i];
-	struct partition *p = pe->part_table;
-
-	if (IS_EXTENDED (p->sys_ind) && !p->boot_ind)
-		fprintf(stderr,
-			_("WARNING: Partition %d is an extended partition\n"),
-			i + 1);
-	p->boot_ind = (p->boot_ind ? 0 : ACTIVE_FLAG);
-	pe->changed = 1;
-	fdisk_label_set_changed(cxt->label, 1);
-}
-
 static void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 {
 	struct fdisk_label *lb = fdisk_context_get_label(cxt, "dos");
@@ -1084,7 +1070,7 @@ static void command_prompt(struct fdisk_context *cxt)
 		switch (c) {
 		case 'a':
 			if (fdisk_is_disklabel(cxt, DOS))
-				toggle_active(cxt, get_partition(cxt, 1, partitions));
+				dos_toggle_active(cxt, get_partition(cxt, 1, partitions));
 			else if (fdisk_is_disklabel(cxt, SUN))
 				toggle_sunflags(cxt, get_partition(cxt, 1, partitions),
 						SUN_FLAG_UNMNT);
