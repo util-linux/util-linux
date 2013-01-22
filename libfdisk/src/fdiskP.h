@@ -172,9 +172,16 @@ struct fdisk_label {
 	size_t			nparts_max;	/* maximal number of partitions */
 	size_t			nparts_cur;	/* number of currently used partitions */
 
+	int			flags;		/* FDISK_LABEL_FL_* flags */
+
 	unsigned int		changed:1;	/* label has been modified */
 
 	const struct fdisk_label_operations *op;
+};
+
+/* label driver flags */
+enum {
+	FDISK_LABEL_FL_ADDPART_NOPARTNO = (1 << 1)
 };
 
 /* label allocators */

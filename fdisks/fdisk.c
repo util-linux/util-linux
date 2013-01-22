@@ -760,10 +760,7 @@ static void new_partition(struct fdisk_context *cxt)
 	if (warn_geometry(cxt))
 		return;
 
-	if (fdisk_is_disklabel(cxt, SUN) ||
-	    fdisk_is_disklabel(cxt, SGI) ||
-	    fdisk_is_disklabel(cxt, GPT))
-
+	if (!(cxt->label->flags & FDISK_LABEL_FL_ADDPART_NOPARTNO))
 		partnum = get_partition_dflt(cxt, 0, cxt->label->nparts_max,
 				cxt->label->nparts_cur + 1);
 

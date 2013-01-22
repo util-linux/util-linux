@@ -1501,6 +1501,9 @@ struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt)
 	lb->parttypes = dos_parttypes;
 	lb->nparttypes = ARRAY_SIZE(dos_parttypes);
 
+	/* don't ask for partition number for op->part_add() */
+	lb->flags = FDISK_LABEL_FL_ADDPART_NOPARTNO;
+
 	return lb;
 }
 
