@@ -1254,10 +1254,10 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -b, --online            print online CPUs only (default for -p)\n"
 		" -c, --offline           print offline CPUs only\n"
 		" -e, --extended[=<list>] print out an extended readable format\n"
-		" -h, --help              print this help\n"
+		" -h, --help              display this help text and exit\n"
 		" -p, --parse[=<list>]    print out a parsable format\n"
-		" -s, --sysroot <dir>     use directory DIR as system root\n"
-		" -V, --version           print version information and exit\n"
+		" -s, --sysroot <dir>     use specified directory as system root\n"
+		" -V, --version           display version information and exit\n"
 		" -x, --hex               print hexadecimal masks rather than lists of CPUs\n"), out);
 
 	fprintf(out, _("\nAvailable columns:\n"));
