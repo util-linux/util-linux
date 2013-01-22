@@ -105,9 +105,19 @@ bellow what that means.
 	fprintf(out, _(" -x[=<foo>]  default foo is %s"), x);
 	fputs(       _(" -y          some text"), out);
 
-The usage output should be split to manageable chunks, in practice one or
-few lines.
+Be nice to translators. One gettext entry should be one option, no more,
+no less. For example:
 
+	fputs(_(" --you-there  be nice\n"), out);
+	fputs(_(" -2 <whom>    translators\n"), out);
+	fputs(_(" -t, --hey    are doing job that we probably cannot,"
+		"                or how is your klingon?\n"), out);
+
+When existing usage output is changed, and it happens to be one big
+output, split it to chunks size of an option.  The extra work for
+translators will pay off at the time of the next change when they do not
+need to search from fuzzy markup what has changed, where, how, and was it
+the only change.
 
 Synopsis
 --------
