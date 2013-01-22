@@ -12,7 +12,7 @@ fsck \- check and repair a Linux filesystem
 .RI [ fd ]]
 .RB [ \-t
 .IR fstype ]
-.RI [ filesys ...]
+.RI [ filesystem ...]
 .RB [ \-\- ]
 .RI [ fs-specific-options ]
 .SH DESCRIPTION
@@ -66,7 +66,7 @@ Operational error
 Usage or syntax error
 .TP
 .B 32
-Fsck canceled by user request
+Checking canceled by user request
 .TP
 .B 128
 Shared-library error
@@ -225,7 +225,8 @@ with filesystems with the lowest
 .I fs_passno
 number being checked first.
 If there are multiple filesystems with the same pass number,
-fsck will attempt to check them in parallel, although it will avoid running
+.B fsck
+will attempt to check them in parallel, although it will avoid running
 multiple filesystem checks on the same physical disk.
 .sp
 .B fsck
@@ -264,9 +265,9 @@ skip non-existing devices.
 also skips non-existing devices that have the special filesystem type
 .BR auto .
 .TP
-.B \-C\fR [ \fI "fd" \fR ]
+.BR \-C \ [ \fIfd\fR ]
 Display completion/progress bars for those filesystem checkers (currently
-only for ext2 and ext3) which support them.   Fsck will manage the
+only for ext2 and ext3) which support them.  \fBfsck\fR will manage the
 filesystem checkers so that only one of them will display
 a progress bar at a time.  GUI front-ends may specify a file descriptor
 .IR fd ,
@@ -306,7 +307,7 @@ that are executed.
 .B fs-specific-options
 Options which are not understood by
 .B fsck
-are passed to the filesystem-specific checker.  These arguments
+are passed to the filesystem-specific checker.  These options
 .B must
 not take arguments, as there is no
 way for
@@ -319,7 +320,7 @@ Options and arguments which follow the
 are treated as filesystem-specific options to be passed to the
 filesystem-specific checker.
 .IP
-Please note that fsck is not
+Please note that \fBfsck\fR is not
 designed to pass arbitrarily complicated options to filesystem-specific
 checkers.  If you're doing something complicated, please just
 execute the filesystem-specific checker directly.  If you pass

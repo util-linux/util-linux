@@ -1296,7 +1296,7 @@ static int check_all(void)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	printf(_("\nUsage:\n"
-		 " %s [fsck-options] [fs-options] [filesys ...]\n"),
+		 " %s [options] [fs-options] [<filesystem>...]\n"),
 		program_invocation_short_name);
 
 	puts(_(	"\nOptions:\n"
@@ -1311,7 +1311,7 @@ static void __attribute__((__noreturn__)) usage(void)
 		" -l         lock the device using flock()\n"
 		" -N         do not execute, just show what would be done\n"
 		" -T         do not show the title on startup\n"
-		" -C <fd>    display progress bar; file descriptor is for GUIs\n"
+		" -C [<fd>]  display progress bar; file descriptor is for GUIs\n"
 		" -V         explain what is being done\n"
 		" -?         display this help and exit\n\n"
 		"See fsck.* commands for fs-options."));
