@@ -64,16 +64,17 @@ static void usage(int status)
 		program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -t, --target <pid>     target process to get namespaces from\n"
-		" -m, --mount [=<file>]  enter mount namespace\n"
-		" -u, --uts   [=<file>]  enter UTS namespace (hostname etc)\n"
-		" -i, --ipc   [=<file>]  enter System V IPC namespace\n"
-		" -n, --net   [=<file>]  enter network namespace\n"
-		" -p, --pid   [=<file>]  enter pid namespace\n"
-		" -U, --user  [=<file>]  enter user namespace\n"
-		" -r, --root  [=<dir>]   set the root directory\n"
-		" -w, --wd    [=<dir>]   set the working directory\n"
-		" -F, --no-fork          don't fork before exec'ing <program>\n"), out);
+	fputs(_(" -t, --target <pid>     target process to get namespaces from\n"), out);
+	fputs(_(" -m, --mount [=<file>]  enter mount namespace\n"), out);
+	fputs(_(" -u, --uts   [=<file>]  enter UTS namespace (hostname etc)\n"), out);
+	fputs(_(" -i, --ipc   [=<file>]  enter System V IPC namespace\n"), out);
+	fputs(_(" -n, --net   [=<file>]  enter network namespace\n"), out);
+	fputs(_(" -p, --pid   [=<file>]  enter pid namespace\n"), out);
+	fputs(_(" -U, --user  [=<file>]  enter user namespace\n"), out);
+	fputs(_(" -r, --root  [=<dir>]   set the root directory\n"), out);
+	fputs(_(" -w, --wd    [=<dir>]   set the working directory\n"), out);
+	fputs(_(" -F, --no-fork          do not fork before exec'ing <program>\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
