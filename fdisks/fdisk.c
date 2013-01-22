@@ -49,9 +49,6 @@
 #include <linux/blkpg.h>
 #endif
 
-#include "gpt.h"
-
-
 /* menu list description */
 
 struct menulist_descr {

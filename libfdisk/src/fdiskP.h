@@ -251,4 +251,8 @@ extern int fdisk_read_firstsector(struct fdisk_context *cxt);
 extern int fdisk_probe_labels(struct fdisk_context *cxt);
 extern void fdisk_deinit_label(struct fdisk_label *lb);
 
+
+/* gpt.c -- temporary bypass library API... */
+extern void gpt_list_table(struct fdisk_context *cxt, int xtra);
+
 #endif /* _LIBFDISK_PRIVATE_H */

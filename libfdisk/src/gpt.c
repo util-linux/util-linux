@@ -34,16 +34,26 @@
 #include <ctype.h>
 #include <uuid.h>
 
+#include "fdiskP.h"
+
 #include "nls.h"
 #include "xalloc.h"
-#include "common.h"
-#include "fdisk.h"
 #include "crc32.h"
-#include "gpt.h"
 #include "blkdev.h"
 #include "bitops.h"
 #include "strutils.h"
 #include "all-io.h"
+
+/* temporary -- exported from fdisk/sfdisk.c
+ * TODO: use fdisk_dialog API
+ */
+extern unsigned int read_int(struct fdisk_context *cxt,
+			unsigned int low, unsigned int dflt,
+			unsigned int high, unsigned int base, char *mesg);
+
+extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
+			unsigned int low, unsigned int dflt, unsigned int high,
+			unsigned int base, char *mesg, int *is_suffix_used);
 
 #define GPT_HEADER_SIGNATURE 0x5452415020494645LL /* EFI PART */
 #define GPT_HEADER_REVISION_V1_02 0x00010200
