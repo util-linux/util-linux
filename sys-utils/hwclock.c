@@ -1443,8 +1443,8 @@ static void usage(const char *fmt, ...)
 		" -w, --systohc        set the hardware clock from the current system time\n"
 		"     --systz          set the system time based on the current timezone\n"
 		"     --adjust         adjust the RTC to account for systematic drift since\n"
-		"                        the clock was last set or adjusted\n"
-		" -c, --compare        periodically compare the system clock with the CMOS clock\n"), usageto);
+		"                        the clock was last set or adjusted\n"), usageto);
+	fputs(_(" -c, --compare        periodically compare the system clock with the CMOS clock\n"), usageto);
 #ifdef __linux__
 	fputs(_("     --getepoch       print out the kernel's hardware clock epoch value\n"
 		"     --setepoch       set the kernel's hardware clock epoch value to the \n"
