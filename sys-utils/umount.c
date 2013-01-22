@@ -78,22 +78,19 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fprintf(out, _(
-	" -a, --all               umount all filesystems\n"
-	" -c, --no-canonicalize   don't canonicalize paths\n"
-	" -d, --detach-loop       if mounted loop device, also free this loop device\n"
-	"     --fake              dry run; skip the umount(2) syscall\n"
-	" -f, --force             force unmount (in case of an unreachable NFS system)\n"));
-	fprintf(out, _(
-	" -i, --internal-only     don't call the umount.<type> helpers\n"
-	" -n, --no-mtab           don't write to /etc/mtab\n"
-	" -l, --lazy              detach the filesystem now, and cleanup all later\n"));
-	fprintf(out, _(
-	" -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"
-	" -R, --recursive         recursively unmount a target with all its children\n"
-	" -r, --read-only         In case unmounting fails, try to remount read-only\n"
-	" -t, --types <list>      limit the set of filesystem types\n"
-	" -v, --verbose           say what is being done\n"));
+	fputs(_(" -a, --all               umount all filesystems\n"), out);
+	fputs(_(" -c, --no-canonicalize   don't canonicalize paths\n"), out);
+	fputs(_(" -d, --detach-loop       if mounted loop device, also free this loop device\n"), out);
+	fputs(_("     --fake              dry run; skip the umount(2) syscall\n"), out);
+	fputs(_(" -f, --force             force unmount (in case of an unreachable NFS system)\n"), out);
+	fputs(_(" -i, --internal-only     don't call the umount.<type> helpers\n"), out);
+	fputs(_(" -n, --no-mtab           don't write to /etc/mtab\n"), out);
+	fputs(_(" -l, --lazy              detach the filesystem now, and cleanup all later\n"), out);
+	fputs(_(" -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"), out);
+	fputs(_(" -R, --recursive         recursively unmount a target with all its children\n"), out);
+	fputs(_(" -r, --read-only         In case unmounting fails, try to remount read-only\n"), out);
+	fputs(_(" -t, --types <list>      limit the set of filesystem types\n"), out);
+	fputs(_(" -v, --verbose           say what is being done\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
