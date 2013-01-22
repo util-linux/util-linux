@@ -35,20 +35,20 @@
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fprintf(out,
-		_("Usage: %s [options] [-t type fs-options] device [size]\n"),
-		program_invocation_short_name);
+	fprintf(out, _("Usage:\n"));
+	fprintf(out, _(" %s [options] [-t <type>] [fs-options] <device> [<size>]\n"),
+		     program_invocation_short_name);
 
-	fprintf(out, _("\nOptions:\n"
-		       " -t, --type=TYPE  file system type, when undefined ext2 is used\n"
-		       "     fs-options   parameters to real file system builder\n"
-		       "     device       path to a device\n"
-		       "     size         number of blocks on the device\n"
-		       " -V, --verbose    explain what is done\n"
-		       "                  defining -V more than once will cause a dry-run\n"
-		       " -V, --version    output version information and exit\n"
-		       "                  -V as version must be only option\n"
-		       " -h, --help       display this help and exit\n"));
+	fprintf(out, _("\nOptions:\n"));
+	fprintf(out, _(" -t, --type=<type>  filesystem type; when unspecified, ext2 is used\n"));
+	fprintf(out, _("     fs-options     parameters for the real filesystem builder\n"));
+	fprintf(out, _("     <device>       path to the device to be used\n"));
+	fprintf(out, _("     <size>         number of blocks to be used on the device\n"));
+	fprintf(out, _(" -V, --verbose      explain what is being done;\n"
+		       "                      specifying -V more than once will cause a dry-run\n"));
+	fprintf(out, _(" -V, --version      display version information and exit;\n"
+		       "                      -V as --version must be the only option\n"));
+	fprintf(out, _(" -h, --help         display this help text and exit\n"));
 
 	fprintf(out, _("\nFor more information see mkfs(8).\n"));
 
