@@ -1930,9 +1930,10 @@ static void output_special_char(unsigned char c, struct options *op,
 			if (ut->ut_type == USER_PROCESS)
 				users++;
 		endutent();
-		printf ("%d ", users);
 		if (c == 'U')
-			printf((users == 1) ? _("user") : _("users"));
+			printf(P_("%d user", "%d users", users), users);
+		else
+			printf ("%d ", users);
 		break;
 	}
 	case '4':
