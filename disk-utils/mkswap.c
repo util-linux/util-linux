@@ -494,7 +494,7 @@ main(int argc, char **argv) {
 #ifdef HAVE_LIBUUID
 			opt_uuid = optarg;
 #else
-			warnx(_("warning: ignore -U (UUIDs are unsupported by %s)"),
+			warnx(_("warning: ignoring -U (UUIDs are unsupported by %s)"),
 				program_invocation_short_name);
 #endif
 			break;
@@ -518,7 +518,7 @@ main(int argc, char **argv) {
 
 	if (version != 1)
 		errx(EXIT_FAILURE,
-			_("does not support swapspace version %d."), version);
+			_("swapspace version %d is not supported"), version);
 
 #ifdef HAVE_LIBUUID
 	if(opt_uuid) {
@@ -574,7 +574,7 @@ main(int argc, char **argv) {
 
 	if (is_mounted(device_name))
 		errx(EXIT_FAILURE, _("error: "
-			"%s is mounted; will not make swapspace."),
+			"%s is mounted; will not make swapspace"),
 			device_name);
 
 	if (stat(device_name, &statbuf) < 0) {
