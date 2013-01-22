@@ -1325,31 +1325,30 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 {
 	size_t i;
 
-	fprintf(out, _(
-		"\nUsage:\n"
-		" %s [options] [<device> ...]\n"), program_invocation_short_name);
-
-	fprintf(out, _(
-		"\nOptions:\n"
-		" -a, --all            print all devices\n"
-		" -b, --bytes          print SIZE in bytes rather than in human readable format\n"
-		" -d, --nodeps         don't print slaves or holders\n"
-		" -D, --discard        print discard capabilities\n"
-		" -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
-		" -I, --include <list> show only devices with specified major numbers\n"
-		" -f, --fs             output info about filesystems\n"
-		" -h, --help           usage information (this)\n"
-		" -i, --ascii          use ascii characters only\n"
-		" -m, --perms          output info about permissions\n"
-		" -l, --list           use list format output\n"
-		" -n, --noheadings     don't print headings\n"
-		" -o, --output <list>  output columns\n"
-		" -P, --pairs          use key=\"value\" output format\n"
-		" -r, --raw            use raw output format\n"
-		" -s, --inverse        inverse dependencies\n"
-		" -t, --topology       output info about topology\n"
-		" -S, --scsi           output info about SCSI devices\n"
-		" -V, --version        output version information and exit\n"));
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] [<device> ...]\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -a, --all            print all devices\n"), out);
+	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);
+	fputs(_(" -d, --nodeps         don't print slaves or holders\n"), out);
+	fputs(_(" -D, --discard        print discard capabilities\n"), out);
+	fputs(_(" -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"), out);
+	fputs(_(" -I, --include <list> show only devices with specified major numbers\n"), out);
+	fputs(_(" -f, --fs             output info about filesystems\n"), out);
+	fputs(_(" -h, --help           usage information (this)\n"), out);
+	fputs(_(" -i, --ascii          use ascii characters only\n"), out);
+	fputs(_(" -m, --perms          output info about permissions\n"), out);
+	fputs(_(" -l, --list           use list format output\n"), out);
+	fputs(_(" -n, --noheadings     don't print headings\n"), out);
+	fputs(_(" -o, --output <list>  output columns\n"), out);
+	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
+	fputs(_(" -r, --raw            use raw output format\n"), out);
+	fputs(_(" -s, --inverse        inverse dependencies\n"), out);
+	fputs(_(" -t, --topology       output info about topology\n"), out);
+	fputs(_(" -S, --scsi           output info about SCSI devices\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 
 	fprintf(out, _("\nAvailable columns (for --output):\n"));
 
