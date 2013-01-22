@@ -62,7 +62,6 @@ enum failure {
 
 /* prototypes for fdisk.c */
 extern char *line_ptr;
-extern int partitions;
 extern unsigned int display_in_cyl_units, units_per_sector;
 
 extern void fatal(struct fdisk_context *cxt, enum failure why);

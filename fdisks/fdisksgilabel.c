@@ -139,6 +139,16 @@ two_s_complement_32bit_sum(unsigned int *base, int size /* in bytes */) {
 	return sum;
 }
 
+static size_t count_used_partitions(struct fdisk_context *cxt)
+{
+	size_t i, ct = 0;
+
+	for (i = 0; i < cxt->label->nparts_max; i++)
+		ct += sgi_get_num_sectors(cxt, i) > 0;
+
+	return ct;
+}
+
 static int
 sgi_probe_label(struct fdisk_context *cxt,
 		struct fdisk_label *lb __attribute__((__unused__)))
@@ -165,14 +175,15 @@ sgi_probe_label(struct fdisk_context *cxt,
 		fprintf(stderr,
 			_("Detected sgi disklabel with wrong checksum.\n"));
 	}
-	partitions= 16;
+	cxt->label->nparts_max = 16;
+	cxt->label->nparts_cur = count_used_partitions(cxt);
 	volumes = 15;
 	return 1;
 }
 
 void
 sgi_list_table(struct fdisk_context *cxt, int xtra) {
-	int i, w;
+	size_t i, w;
 	int kpi = 0;		/* kernel partition ID */
 
 	w = strlen(cxt->dev_path);
@@ -199,8 +210,8 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 	}
 	printf(_("----- partitions -----\n"
 		 "Pt# %*s  Info     Start       End   Sectors  Id  System\n"),
-	       w + 1, _("Device"));
-	for (i = 0 ; i < partitions; i++) {
+	       (int) w + 1, _("Device"));
+	for (i = 0 ; i < cxt->label->nparts_max; i++) {
 		if (sgi_get_num_sectors(cxt, i) || debug) {
 			uint32_t start = sgi_get_start_sector(cxt, i);
 			uint32_t len = sgi_get_num_sectors(cxt, i);
@@ -208,11 +219,11 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 
 			kpi++;		/* only count nonempty partitions */
 			printf(
-				"%2d: %s %4s %9ld %9ld %9ld  %2x  %s\n",
+				"%2zd: %s %4s %9ld %9ld %9ld  %2x  %s\n",
 /* fdisk part number */   i+1,
 /* device */              partname(cxt->dev_path, kpi, w+2),
-/* flags */               (sgi_get_swappartition(cxt) == i) ? "swap" :
-/* flags */               (sgi_get_bootpartition(cxt) == i) ? "boot" : "    ",
+/* flags */               (sgi_get_swappartition(cxt) == (int) i) ? "swap" :
+/* flags */               (sgi_get_bootpartition(cxt) == (int) i) ? "boot" : "    ",
 /* start */               (long) scround(start),
 /* end */                 (long) scround(start+len)-1,
 /* no odd flag on end */  (long) len,
@@ -225,12 +236,12 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 	printf(_("----- Bootinfo -----\nBootfile: %s\n"
 		 "----- Directory Entries -----\n"),
 	       sgilabel->boot_file);
-	for (i = 0 ; i < volumes; i++) {
+	for (i = 0 ; i < (size_t) volumes; i++) {
 		if (sgilabel->directory[i].vol_file_size) {
 			uint32_t start = SSWAP32(sgilabel->directory[i].vol_file_start);
 			uint32_t len = SSWAP32(sgilabel->directory[i].vol_file_size);
 			unsigned char *name = sgilabel->directory[i].vol_file_name;
-			printf(_("%2d: %-10s sector%5u size%8u\n"),
+			printf(_("%2zd: %-10s sector%5u size%8u\n"),
 			       i, name, (unsigned int) start,
 			       (unsigned int) len);
 		}
@@ -620,9 +631,9 @@ static int sgi_set_partition(struct fdisk_context *cxt, int i,
 
 static void
 sgi_set_entire(struct fdisk_context *cxt) {
-	int n;
+	size_t n;
 
-	for (n=10; n<partitions; n++) {
+	for (n = 10; n < cxt->label->nparts_max; n++) {
 		if (!sgi_get_num_sectors(cxt, n)) {
 			sgi_set_partition(cxt, n, 0, sgi_get_lastblock(cxt), SGI_VOLUME);
 			break;
@@ -634,9 +645,9 @@ static
 void
 sgi_set_volhdr(struct fdisk_context *cxt)
 {
-	int n;
+	size_t n;
 
-	for (n=8; n<partitions; n++) {
+	for (n = 8; n < cxt->label->nparts_max; n++) {
 		if (!sgi_get_num_sectors(cxt, n)) {
 			/*
 			 * Choose same default volume header size
@@ -653,7 +664,19 @@ static int sgi_delete_partition(struct fdisk_context *cxt,
 		struct fdisk_label *lb __attribute__((__unused__)),
 		int partnum)
 {
-	return sgi_set_partition(cxt, partnum, 0, 0, 0);
+	int rc;
+
+	assert(cxt);
+	assert(cxt->label);
+
+	if (partnum < 0 || (size_t) partnum > cxt->label->nparts_max)
+		return -EINVAL;
+
+	rc = sgi_set_partition(cxt, partnum, 0, 0, 0);
+
+	cxt->label->nparts_cur = count_used_partitions(cxt);
+
+	return rc;
 }
 
 static int sgi_add_partition(struct fdisk_context *cxt,
@@ -727,6 +750,8 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		printf(_("It is highly recommended that eleventh partition\n"
 			 "covers the entire disk and is of type `SGI volume'\n"));
 	sgi_set_partition(cxt, n, first, last-first, sys);
+
+	cxt->label->nparts_cur = count_used_partitions(cxt);
 
 	return 0;
 }
@@ -838,7 +863,7 @@ static int sgi_create_disklabel(struct fdisk_context *cxt,
 	sgilabel->devparam.xylogics_writecont	= SSWAP16(0);
 	memset(&(sgilabel->directory), 0, sizeof(struct volume_directory)*15);
 	memset(&(sgilabel->partitions), 0, sizeof(struct sgi_partition)*16);
-	partitions = 16;
+	cxt->label->nparts_max = 16;
 	volumes    = 15;
 	sgi_set_entire(cxt);
 	sgi_set_volhdr(cxt);
@@ -847,6 +872,8 @@ static int sgi_create_disklabel(struct fdisk_context *cxt,
 			sgi_set_partition(cxt, i, old[i].start, old[i].nsect, old[i].sysid);
 		}
 	}
+
+	cxt->label->nparts_cur = count_used_partitions(cxt);
 	return 0;
 }
 
@@ -908,7 +935,7 @@ static struct fdisk_parttype *sgi_get_parttype(struct fdisk_context *cxt,
 {
 	struct fdisk_parttype *t;
 
-	if (n >= partitions)
+	if (n < 0 || (size_t) n >= cxt->label->nparts_max)
 		return NULL;
 
 	t = fdisk_get_parttype_from_code(cxt, sgi_get_sysid(cxt, n));
@@ -922,7 +949,8 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 		int i,
 		struct fdisk_parttype *t)
 {
-	if (i >= partitions || !t || t->type > UINT32_MAX)
+	if (i < 0 || (size_t) i >= cxt->label->nparts_max
+	    || !t || t->type > UINT32_MAX)
 		return -EINVAL;
 
 	if (sgi_get_num_sectors(cxt, i) == 0)	/* caught already before, ... */ {
@@ -961,13 +989,12 @@ static int sgi_get_partition_status(
 	assert(cxt);
 	assert(fdisk_is_disklabel(cxt, SGI));
 
-	if (!status || i < 0 || i >= partitions)
+	if (!status || i < 0 || (size_t) i >= cxt->label->nparts_max)
 		return -EINVAL;
 
 	*status = FDISK_PARTSTAT_NONE;
 
-	if (sgilabel->partitions[i].num_sectors &&
-	    sgilabel->partitions[i].num_sectors)
+	if (sgi_get_num_sectors(cxt, i))
 		*status = FDISK_PARTSTAT_USED;
 
 	return 0;

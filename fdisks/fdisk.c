@@ -116,8 +116,7 @@ sector_t get_nr_sects(struct partition *p) {
 char	*line_ptr,			/* interactive input */
 	line_buffer[LINE_LENGTH];
 
-int	nowarn = 0,			/* no warnings for fdisk -l/-s */
-	partitions = 4;			/* maximum partition + 1 */
+int	nowarn = 0;			/* no warnings for fdisk -l/-s */
 
 unsigned int	user_cylinders, user_heads, user_sectors;
 
@@ -639,7 +638,10 @@ static void change_partition_type(struct fdisk_context *cxt)
 	int i;
 	struct fdisk_parttype *t, *org_t;
 
-	i = get_existing_partition(cxt, 0, partitions);
+	assert(cxt);
+	assert(cxt->label);
+
+	i = get_existing_partition(cxt, 0, cxt->label->nparts_max);
 	if (i == -1)
 		return;
 
@@ -763,19 +765,11 @@ static void new_partition(struct fdisk_context *cxt)
 
 	if (fdisk_is_disklabel(cxt, SUN) ||
 	    fdisk_is_disklabel(cxt, SGI) ||
-	    fdisk_is_disklabel(cxt, GPT)) {
+	    fdisk_is_disklabel(cxt, GPT))
 
-		size_t dflt = 0;
+		partnum = get_partition_dflt(cxt, 0, cxt->label->nparts_max,
+				cxt->label->nparts_cur + 1);
 
-		/*
-		 * TODO: always use label->nparts_cur + 1
-		 * (currenly only few drivers maintain label->nparts_* counters)
-		 */
-		if (cxt->label->nparts_max)
-			dflt = cxt->label->nparts_cur + 1;
-
-		partnum = get_partition_dflt(cxt, 0, partitions, dflt);
-	}
 	fdisk_add_partition(cxt, partnum, NULL);
 }
 
@@ -848,14 +842,18 @@ print_buffer(struct fdisk_context *cxt, unsigned char pbuffer[]) {
 
 static void print_raw(struct fdisk_context *cxt)
 {
-	int i;
+	size_t i;
+
+	assert(cxt);
+	assert(cxt->label);
 
 	printf(_("Device: %s\n"), cxt->dev_path);
 	if (fdisk_is_disklabel(cxt, SUN) ||
 	    fdisk_is_disklabel(cxt, SGI) ||
 	    fdisk_is_disklabel(cxt, GPT))
 		print_buffer(cxt, cxt->firstsector);
-	else for (i = 3; i < partitions; i++)
+
+	else for (i = 3; i < cxt->label->nparts_max; i++)
 		     print_buffer(cxt, ptes[i].sectorbuffer);
 }
 
@@ -871,7 +869,11 @@ expert_command_prompt(struct fdisk_context *cxt)
 {
 	char c;
 
+	assert(cxt);
+
 	while(1) {
+		assert(cxt->label);
+
 		putchar('\n');
 		c = tolower(read_char(cxt, _("Expert command (m for help): ")));
 		switch (c) {
@@ -881,7 +883,8 @@ expert_command_prompt(struct fdisk_context *cxt)
 			break;
 		case 'b':
 			if (fdisk_is_disklabel(cxt, DOS))
-				dos_move_begin(cxt, get_partition(cxt, 0, partitions));
+				dos_move_begin(cxt, get_partition(cxt, 0,
+							cxt->label->nparts_max));
 			break;
 		case 'c':
 			user_cylinders = read_int(cxt, 1, cxt->geom.cylinders, 1048576, 0,
@@ -904,7 +907,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 			break;
 		case 'f':
 			if (fdisk_is_disklabel(cxt, DOS))
-				dos_fix_partition_table_order();
+				dos_fix_partition_table_order(cxt);
 			break;
 		case 'g':
 			fdisk_create_disklabel(cxt, "sgi");
@@ -1052,6 +1055,8 @@ static void command_prompt(struct fdisk_context *cxt)
 {
 	int c;
 
+	assert(cxt);
+
 	if (fdisk_is_disklabel(cxt, OSF)) {
 		putchar('\n');
 		/* OSF label, and no DOS label */
@@ -1065,18 +1070,23 @@ static void command_prompt(struct fdisk_context *cxt)
 	}
 
 	while (1) {
+
+		assert(cxt->label);
+
 		putchar('\n');
 		c = tolower(read_char(cxt, _("Command (m for help): ")));
 		switch (c) {
 		case 'a':
 			if (fdisk_is_disklabel(cxt, DOS))
-				dos_toggle_active(cxt, get_partition(cxt, 1, partitions));
+				dos_toggle_active(cxt,
+					get_partition(cxt, 1, cxt->label->nparts_max));
 			else if (fdisk_is_disklabel(cxt, SUN))
-				toggle_sunflags(cxt, get_partition(cxt, 1, partitions),
-						SUN_FLAG_UNMNT);
+				toggle_sunflags(cxt,
+					get_partition(cxt, 1, cxt->label->nparts_max),
+					SUN_FLAG_UNMNT);
 			else if (fdisk_is_disklabel(cxt, SGI))
 				sgi_set_bootpartition(cxt,
-					get_partition(cxt, 1, partitions));
+					get_partition(cxt, 1, cxt->label->nparts_max));
 			else
 				unknown_command(c);
 			break;
@@ -1097,16 +1107,18 @@ static void command_prompt(struct fdisk_context *cxt)
 			if (fdisk_is_disklabel(cxt, DOS))
 				toggle_dos_compatibility_flag(cxt);
 			else if (fdisk_is_disklabel(cxt, SUN))
-				toggle_sunflags(cxt, get_partition(cxt, 1, partitions),
-						SUN_FLAG_RONLY);
+				toggle_sunflags(cxt,
+					get_partition(cxt, 1, cxt->label->nparts_max),
+					SUN_FLAG_RONLY);
 			else if (fdisk_is_disklabel(cxt, SGI))
 				sgi_set_swappartition(cxt,
-					get_partition(cxt, 1, partitions));
+					get_partition(cxt, 1, cxt->label->nparts_max));
 			else
 				unknown_command(c);
 			break;
 		case 'd':
-			delete_partition(cxt, get_existing_partition(cxt, 1, partitions));
+			delete_partition(cxt,
+					get_existing_partition(cxt, 1, cxt->label->nparts_max));
 			break;
 		case 'g':
 			fdisk_create_disklabel(cxt, "gpt");

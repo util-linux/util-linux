@@ -47,7 +47,8 @@ static struct fdisk_parttype dos_parttypes[] = {
 
 struct pte ptes[MAXIMUM_PARTS];
 sector_t extended_offset;
-int ext_index;
+
+static size_t ext_index;
 
 unsigned int units_per_sector = 1, display_in_cyl_units = 0;
 
@@ -98,10 +99,10 @@ static void warn_alignment(struct fdisk_context *cxt)
 
 }
 
-static int get_nonexisting_partition(struct fdisk_context *cxt, int warn, int max)
+static int get_nonexisting_partition(struct fdisk_context *cxt, int warn, size_t max)
 {
 	int pno = -1;
-	int i;
+	size_t i;
 	int dflt = 0;
 
 	for (i = 0; i < max; i++) {
@@ -182,9 +183,9 @@ static void clear_partition(struct partition *p)
 
 void dos_init(struct fdisk_context *cxt)
 {
-	int i;
+	size_t i;
 
-	partitions = 4;
+	cxt->label->nparts_max = 4;	/* default, unlimited number of logical */
 	ext_index = 0;
 	extended_offset = 0;
 
@@ -206,8 +207,9 @@ void dos_init(struct fdisk_context *cxt)
 static int dos_delete_partition(
 		struct fdisk_context *cxt __attribute__ ((__unused__)),
 		struct fdisk_label *lb,
-		int partnum)
+		int n)
 {
+	size_t partnum = (size_t) n;			/* TODO: use size_t in API */
 	struct pte *pe = &ptes[partnum];
 	struct partition *p = pe->part_table;
 	struct partition *q = pe->ext_pointer;
@@ -216,15 +218,15 @@ static int dos_delete_partition(
 	   decrement partitions. */
 
 	if (partnum < 4) {
-		if (IS_EXTENDED (p->sys_ind) && partnum == ext_index) {
-			partitions = 4;
+		if (IS_EXTENDED(p->sys_ind) && partnum == ext_index) {
+			cxt->label->nparts_max = 4;
 			ptes[ext_index].ext_pointer = NULL;
 			extended_offset = 0;
 		}
 		clear_partition(p);
 	} else if (!q->sys_ind && partnum > 4) {
 		/* the last one in the chain - just delete */
-		--partitions;
+		--cxt->label->nparts_max;
 		--partnum;
 		clear_partition(ptes[partnum].ext_pointer);
 		ptes[partnum].changed = 1;
@@ -237,7 +239,7 @@ static int dos_delete_partition(
 			set_start_sect(p, get_start_sect(q));
 			set_nr_sects(p, get_nr_sects(q));
 			ptes[partnum-1].changed = 1;
-		} else if (partitions > 5) {    /* 5 will be moved to 4 */
+		} else if (cxt->label->nparts_max > 5) {    /* 5 will be moved to 4 */
 			/* the first logical in a longer chain */
 			struct pte *pe = &ptes[5];
 
@@ -249,9 +251,9 @@ static int dos_delete_partition(
 			pe->changed = 1;
 		}
 
-		if (partitions > 5) {
-			partitions--;
-			while (partnum < partitions) {
+		if (cxt->label->nparts_max > 5) {
+			cxt->label->nparts_max--;
+			while (partnum < cxt->label->nparts_max) {
 				ptes[partnum] = ptes[partnum+1];
 				partnum++;
 			}
@@ -266,7 +268,7 @@ static int dos_delete_partition(
 
 static void read_extended(struct fdisk_context *cxt, int ext)
 {
-	int i;
+	size_t i;
 	struct pte *pex;
 	struct partition *p, *q;
 
@@ -282,25 +284,25 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 	}
 
 	while (IS_EXTENDED (p->sys_ind)) {
-		struct pte *pe = &ptes[partitions];
+		struct pte *pe = &ptes[cxt->label->nparts_max];
 
-		if (partitions >= MAXIMUM_PARTS) {
+		if (cxt->label->nparts_max >= MAXIMUM_PARTS) {
 			/* This is not a Linux restriction, but
 			   this program uses arrays of size MAXIMUM_PARTS.
 			   Do not try to `improve' this test. */
-			struct pte *pre = &ptes[partitions-1];
+			struct pte *pre = &ptes[cxt->label->nparts_max - 1];
 
 			fprintf(stderr,
-				_("Warning: omitting partitions after #%d.\n"
+				_("Warning: omitting partitions after #%zd.\n"
 				  "They will be deleted "
 				  "if you save this partition table.\n"),
-				partitions);
+				cxt->label->nparts_max);
 			clear_partition(pre->ext_pointer);
 			pre->changed = 1;
 			return;
 		}
 
-		read_pte(cxt, partitions, extended_offset + get_start_sect(p));
+		read_pte(cxt, cxt->label->nparts_max, extended_offset + get_start_sect(p));
 
 		if (!extended_offset)
 			extended_offset = get_start_sect(p);
@@ -312,7 +314,7 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 					fprintf(stderr,
 						_("Warning: extra link "
 						  "pointer in partition table"
-						  " %d\n"), partitions + 1);
+						  " %zd\n"), cxt->label->nparts_max + 1);
 				else
 					pe->ext_pointer = p;
 			} else if (p->sys_ind) {
@@ -320,7 +322,7 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 					fprintf(stderr,
 						_("Warning: ignoring extra "
 						  "data in partition table"
-						  " %d\n"), partitions + 1);
+						  " %zd\n"), cxt->label->nparts_max + 1);
 				else
 					pe->part_table = p;
 			}
@@ -341,17 +343,17 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 		}
 
 		p = pe->ext_pointer;
-		partitions++;
+		cxt->label->nparts_cur = ++cxt->label->nparts_max;
 	}
 
 	/* remove empty links */
  remove:
-	for (i = 4; i < partitions; i++) {
+	for (i = 4; i < cxt->label->nparts_max; i++) {
 		struct pte *pe = &ptes[i];
 
 		if (!get_nr_sects(pe->part_table) &&
-		    (partitions > 5 || ptes[4].part_table->sys_ind)) {
-			printf(_("omitting empty partition (%d)\n"), i+1);
+		    (cxt->label->nparts_max > 5 || ptes[4].part_table->sys_ind)) {
+			printf(_("omitting empty partition (%zd)\n"), i+1);
 			dos_delete_partition(cxt, cxt->label, i);
 			goto remove; 	/* numbering changed */
 		}
@@ -455,11 +457,13 @@ static int dos_reset_alignment(struct fdisk_context *cxt,
 	return 0;
 }
 
-static int dos_probe_label(struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)))
+static int dos_probe_label(struct fdisk_context *cxt, struct fdisk_label *lb)
 {
-	int i;
+	size_t i;
 	unsigned int h = 0, s = 0;
+
+	assert(cxt);
+	assert(cxt->label);
 
 	if (!mbr_is_valid_magic(cxt->firstsector))
 		return 0;
@@ -475,24 +479,28 @@ static int dos_probe_label(struct fdisk_context *cxt,
 	for (i = 0; i < 4; i++) {
 		struct pte *pe = &ptes[i];
 
+		if (!is_cleared_partition(pe->part_table))
+			cxt->label->nparts_cur++;
+
 		if (IS_EXTENDED (pe->part_table->sys_ind)) {
-			if (partitions != 4)
+			if (cxt->label->nparts_max != 4)
 				fprintf(stderr, _("Ignoring extra extended "
-					"partition %d\n"), i + 1);
+					"partition %zd\n"), i + 1);
 			else
 				read_extended(cxt, i);
 		}
 	}
 
-	for (i = 3; i < partitions; i++) {
+	for (i = 3; i < cxt->label->nparts_max; i++) {
 		struct pte *pe = &ptes[i];
 
 		if (!mbr_is_valid_magic(pe->sectorbuffer)) {
 			fprintf(stderr,
 				_("Warning: invalid flag 0x%04x of partition "
-				"table %d will be corrected by w(rite)\n"),
+				"table %zd will be corrected by w(rite)\n"),
 				part_table_flag(pe->sectorbuffer), i + 1);
 			pe->changed = 1;
+			fdisk_label_set_changed(lb, 1);
 		}
 	}
 
@@ -549,9 +557,9 @@ static sector_t get_unused_start(struct fdisk_context *cxt,
 				 int part_n, sector_t start,
 				 sector_t first[], sector_t last[])
 {
-	int i;
+	size_t i;
 
-	for (i = 0; i < partitions; i++) {
+	for (i = 0; i < cxt->label->nparts_max; i++) {
 		sector_t lastplusoff;
 
 		if (start == ptes[i].offset)
@@ -564,13 +572,14 @@ static sector_t get_unused_start(struct fdisk_context *cxt,
 	return start;
 }
 
-static void fill_bounds(sector_t *first, sector_t *last)
+static void fill_bounds(struct fdisk_context *cxt,
+			sector_t *first, sector_t *last)
 {
-	int i;
+	size_t i;
 	struct pte *pe = &ptes[0];
 	struct partition *p;
 
-	for (i = 0; i < partitions; pe++,i++) {
+	for (i = 0; i < cxt->label->nparts_max; pe++,i++) {
 		p = pe->part_table;
 		if (!p->sys_ind || IS_EXTENDED (p->sys_ind)) {
 			first[i] = 0xffffffff;
@@ -585,11 +594,13 @@ static void fill_bounds(sector_t *first, sector_t *last)
 static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype *t)
 {
 	char mesg[256];		/* 48 does not suffice in Japanese */
-	int i, sys, read = 0;
+	int sys, read = 0;
+	size_t i;
 	struct partition *p = ptes[n].part_table;
 	struct partition *q = ptes[ext_index].part_table;
 	sector_t start, stop = 0, limit, temp,
-		first[partitions], last[partitions];
+		first[cxt->label->nparts_max],
+		last[cxt->label->nparts_max];
 
 	sys = t ? t->type : LINUX_NATIVE;
 
@@ -598,7 +609,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 			 "it before re-adding it.\n"), n + 1);
 		return -EINVAL;
 	}
-	fill_bounds(first, last);
+	fill_bounds(cxt, first, last);
 	if (n < 4) {
 		start = cxt->first_lba;
 		if (display_in_cyl_units || !cxt->total_sectors)
@@ -619,7 +630,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 		limit = get_start_sect(q) + get_nr_sects(q) - 1;
 	}
 	if (display_in_cyl_units)
-		for (i = 0; i < partitions; i++)
+		for (i = 0; i < cxt->label->nparts_max; i++)
 			first[i] = (cround(first[i]) - 1) * units_per_sector;
 
 	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
@@ -667,7 +678,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 		}
 	}
 
-	for (i = 0; i < partitions; i++) {
+	for (i = 0; i < cxt->label->nparts_max; i++) {
 		struct pte *pe = &ptes[i];
 
 		if (start < pe->offset && limit >= pe->offset)
@@ -678,7 +689,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 	if (start > limit) {
 		printf(_("No free sectors available\n"));
 		if (n > 4)
-			partitions--;
+			cxt->label->nparts_max--;
 		return -ENOSPC;
 	}
 	if (cround(start) == cround(limit)) {
@@ -726,7 +737,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 		pe4->part_table = pt_offset(pe4->sectorbuffer, 0);
 		pe4->ext_pointer = pe4->part_table + 1;
 		pe4->changed = 1;
-		partitions = 5;
+		cxt->label->nparts_max = 5;
 	}
 
 	fdisk_label_set_changed(cxt->label, 1);
@@ -735,21 +746,24 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 
 static int add_logical(struct fdisk_context *cxt)
 {
-	if (partitions > 5 || ptes[4].part_table->sys_ind) {
-		struct pte *pe = &ptes[partitions];
+	assert(cxt);
+	assert(cxt->label);
+
+	if (cxt->label->nparts_max > 5 || ptes[4].part_table->sys_ind) {
+		struct pte *pe = &ptes[cxt->label->nparts_max];
 
 		pe->sectorbuffer = xcalloc(1, cxt->sector_size);
 		pe->part_table = pt_offset(pe->sectorbuffer, 0);
 		pe->ext_pointer = pe->part_table + 1;
 		pe->offset = 0;
 		pe->changed = 1;
-		partitions++;
+		cxt->label->nparts_max++;
 	}
-	printf(_("Adding logical partition %d\n"), partitions);
-	return add_partition(cxt, partitions - 1, NULL);
+	printf(_("Adding logical partition %zd\n"), cxt->label->nparts_max);
+	return add_partition(cxt, cxt->label->nparts_max - 1, NULL);
 }
 
-static void check(struct fdisk_context *cxt, int n,
+static void check(struct fdisk_context *cxt, size_t n,
 	   unsigned int h, unsigned int s, unsigned int c,
 	   unsigned int start)
 {
@@ -759,20 +773,20 @@ static void check(struct fdisk_context *cxt, int n,
 	real_c = cylinder(s, c);
 	total = (real_c * cxt->geom.sectors + real_s) * cxt->geom.heads + h;
 	if (!total)
-		fprintf(stderr, _("Warning: partition %d contains sector 0\n"), n);
+		fprintf(stderr, _("Warning: partition %zd contains sector 0\n"), n);
 	if (h >= cxt->geom.heads)
 		fprintf(stderr,
-			_("Partition %d: head %d greater than maximum %d\n"),
+			_("Partition %zd: head %d greater than maximum %d\n"),
 			n, h + 1, cxt->geom.heads);
 	if (real_s >= cxt->geom.sectors)
-		fprintf(stderr, _("Partition %d: sector %d greater than "
+		fprintf(stderr, _("Partition %zd: sector %d greater than "
 			"maximum %llu\n"), n, s, cxt->geom.sectors);
 	if (real_c >= cxt->geom.cylinders)
-		fprintf(stderr, _("Partitions %d: cylinder %d greater than "
+		fprintf(stderr, _("Partitions %zd: cylinder %d greater than "
 			"maximum %llu\n"), n, real_c + 1, cxt->geom.cylinders);
 	if (cxt->geom.cylinders <= 1024 && start != total)
 		fprintf(stderr,
-			_("Partition %d: previous sectors %d disagrees with "
+			_("Partition %zd: previous sectors %d disagrees with "
 			"total %d\n"), n, start, total);
 }
 
@@ -792,7 +806,8 @@ long2chs(struct fdisk_context *cxt, unsigned long ls,
 	*s = ls % cxt->geom.sectors + 1;	/* sectors count from 1 */
 }
 
-static void check_consistency(struct fdisk_context *cxt, struct partition *p, int partition)
+static void check_consistency(struct fdisk_context *cxt, struct partition *p,
+			      size_t partition)
 {
 	unsigned int pbc, pbh, pbs;	/* physical beginning c, h, s */
 	unsigned int pec, peh, pes;	/* physical ending c, h, s */
@@ -823,7 +838,7 @@ static void check_consistency(struct fdisk_context *cxt, struct partition *p, in
 
 /* Same physical / logical beginning? */
 	if (cxt->geom.cylinders <= 1024 && (pbc != lbc || pbh != lbh || pbs != lbs)) {
-		printf(_("Partition %d has different physical/logical "
+		printf(_("Partition %zd has different physical/logical "
 			"beginnings (non-Linux?):\n"), partition + 1);
 		printf(_("     phys=(%d, %d, %d) "), pbc, pbh, pbs);
 		printf(_("logical=(%d, %d, %d)\n"),lbc, lbh, lbs);
@@ -831,7 +846,7 @@ static void check_consistency(struct fdisk_context *cxt, struct partition *p, in
 
 /* Same physical / logical ending? */
 	if (cxt->geom.cylinders <= 1024 && (pec != lec || peh != leh || pes != les)) {
-		printf(_("Partition %d has different physical/logical "
+		printf(_("Partition %zd has different physical/logical "
 			"endings:\n"), partition + 1);
 		printf(_("     phys=(%d, %d, %d) "), pec, peh, pes);
 		printf(_("logical=(%d, %d, %d)\n"),lec, leh, les);
@@ -839,7 +854,7 @@ static void check_consistency(struct fdisk_context *cxt, struct partition *p, in
 
 /* Ending on cylinder boundary? */
 	if (peh != (cxt->geom.heads - 1) || pes != cxt->geom.sectors) {
-		printf(_("Partition %i does not end on cylinder boundary.\n"),
+		printf(_("Partition %zd does not end on cylinder boundary.\n"),
 			partition + 1);
 	}
 }
@@ -847,13 +862,14 @@ static void check_consistency(struct fdisk_context *cxt, struct partition *p, in
 static int dos_verify_disklabel(struct fdisk_context *cxt,
 		struct fdisk_label *lb __attribute__((__unused__)))
 {
-	int i, j;
+	size_t i, j;
 	sector_t total = 1, n_sectors = cxt->total_sectors;
-	unsigned long long first[partitions], last[partitions];
+	unsigned long long first[cxt->label->nparts_max],
+			   last[cxt->label->nparts_max];
 	struct partition *p;
 
-	fill_bounds(first, last);
-	for (i = 0; i < partitions; i++) {
+	fill_bounds(cxt, first, last);
+	for (i = 0; i < cxt->label->nparts_max; i++) {
 		struct pte *pe = &ptes[i];
 
 		p = pe->part_table;
@@ -862,15 +878,15 @@ static int dos_verify_disklabel(struct fdisk_context *cxt,
 			fdisk_warn_alignment(cxt, get_partition_start(pe), i);
 			if (get_partition_start(pe) < first[i])
 				printf(_("Warning: bad start-of-data in "
-					 "partition %d\n"), i + 1);
+					 "partition %zd\n"), i + 1);
 			check(cxt, i + 1, p->end_head, p->end_sector, p->end_cyl,
 			      last[i]);
 			total += last[i] + 1 - first[i];
 			for (j = 0; j < i; j++)
 				if ((first[i] >= first[j] && first[i] <= last[j])
 				    || ((last[i] <= last[j] && last[i] >= first[j]))) {
-					printf(_("Warning: partition %d overlaps "
-						 "partition %d.\n"), j + 1, i + 1);
+					printf(_("Warning: partition %zd overlaps "
+						 "partition %zd.\n"), j + 1, i + 1);
 					total += first[i] >= first[j] ?
 						first[i] : first[j];
 					total -= last[i] <= last[j] ?
@@ -884,18 +900,18 @@ static int dos_verify_disklabel(struct fdisk_context *cxt,
 		sector_t e_last = get_start_sect(pex->part_table) +
 			get_nr_sects(pex->part_table) - 1;
 
-		for (i = 4; i < partitions; i++) {
+		for (i = 4; i < cxt->label->nparts_max; i++) {
 			total++;
 			p = ptes[i].part_table;
 			if (!p->sys_ind) {
-				if (i != 4 || i + 1 < partitions)
-					printf(_("Warning: partition %d "
+				if (i != 4 || i + 1 < cxt->label->nparts_max)
+					printf(_("Warning: partition %zd "
 						 "is empty\n"), i + 1);
 			}
 			else if (first[i] < extended_offset ||
 					last[i] > e_last)
-				printf(_("Logical partition %d not entirely in "
-					"partition %d\n"), i + 1, ext_index + 1);
+				printf(_("Logical partition %zd not entirely in "
+					"partition %zd\n"), i + 1, ext_index + 1);
 		}
 	}
 
@@ -921,12 +937,13 @@ static int dos_add_partition(
 			int partnum __attribute__ ((__unused__)),
 			struct fdisk_parttype *t)
 {
-	int i, free_primary = 0, rc = 0;
+	size_t i, free_primary = 0;
+	int rc = 0;
 
 	for (i = 0; i < 4; i++)
 		free_primary += !ptes[i].part_table->sys_ind;
 
-	if (!free_primary && partitions >= MAXIMUM_PARTS) {
+	if (!free_primary && cxt->label->nparts_max >= MAXIMUM_PARTS) {
 		printf(_("The maximum number of partitions has been created\n"));
 		return -EINVAL;
 	}
@@ -938,20 +955,22 @@ static int dos_add_partition(
 		} else
 			printf(_("If you want to create more than four partitions, you must replace a\n"
 				 "primary partition with an extended partition first.\n"));
-	} else if (partitions >= MAXIMUM_PARTS) {
+	} else if (cxt->label->nparts_max >= MAXIMUM_PARTS) {
 		printf(_("All logical partitions are in use\n"));
 		printf(_("Adding a primary partition\n"));
 		rc = add_partition(cxt, get_partition(cxt, 0, 4), t);
 	} else {
-		char c, dflt, line[LINE_LENGTH];
+		char c, line[LINE_LENGTH];
+		int dflt;
 
 		dflt = (free_primary == 1 && !extended_offset) ? 'e' : 'p';
 		snprintf(line, sizeof(line),
 			 _("Partition type:\n"
-			   "   p   primary (%d primary, %d extended, %d free)\n"
+			   "   p   primary (%zd primary, %d extended, %zd free)\n"
 			   "%s\n"
 			   "Select (default %c): "),
-			 4 - (extended_offset ? 1 : 0) - free_primary, extended_offset ? 1 : 0, free_primary,
+			 4 - (extended_offset ? 1 : 0) - free_primary,
+			 extended_offset ? 1 : 0, free_primary,
 			 extended_offset ? _("   l   logical (numbered from 5)") : _("   e   extended"),
 			 dflt);
 
@@ -979,6 +998,8 @@ static int dos_add_partition(
 			printf(_("Invalid partition type `%c'\n"), c);
 	}
 done:
+	if (rc == 0)
+		cxt->label->nparts_cur++;
 	return rc;
 }
 
@@ -1001,7 +1022,8 @@ static int write_sector(struct fdisk_context *cxt, sector_t secno,
 static int dos_write_disklabel(struct fdisk_context *cxt,
 		struct fdisk_label *lb __attribute__((__unused__)))
 {
-	int i, rc = 0;
+	size_t i;
+	int rc = 0;
 
 	/* MBR (primary partitions) */
 	if (!MBRbuffer_changed) {
@@ -1016,7 +1038,7 @@ static int dos_write_disklabel(struct fdisk_context *cxt,
 			goto done;
 	}
 	/* EBR (logical partitions) */
-	for (i = 4; i < partitions; i++) {
+	for (i = 4; i < cxt->label->nparts_max; i++) {
 		struct pte *pe = &ptes[i];
 
 		if (pe->changed) {
@@ -1039,7 +1061,7 @@ static struct fdisk_parttype *dos_get_parttype(
 	struct fdisk_parttype *t;
 	struct partition *p;
 
-	if (partnum >= partitions)
+	if (partnum < 0 || (size_t) partnum >= cxt->label->nparts_max)
 		return NULL;
 
 	p = ptes[partnum].part_table;
@@ -1050,14 +1072,15 @@ static struct fdisk_parttype *dos_get_parttype(
 }
 
 static int dos_set_parttype(
-		struct fdisk_context *cxt __attribute__((__unused__)),
+		struct fdisk_context *cxt,
 		struct fdisk_label *lb,
 		int partnum,
 		struct fdisk_parttype *t)
 {
 	struct partition *p;
 
-	if (partnum >= partitions || !t || t->type > UINT8_MAX)
+	if (partnum < 0 || (size_t) partnum >= cxt->label->nparts_max
+	    || !t || t->type > UINT8_MAX)
 		return -EINVAL;
 
 	p = ptes[partnum].part_table;
@@ -1086,14 +1109,14 @@ static int dos_set_parttype(
  * Return 0 if OK. Return i if partition i should have been earlier.
  * Two separate checks: primary and logical partitions.
  */
-static int wrong_p_order(int *prev)
+static int wrong_p_order(struct fdisk_context *cxt, size_t *prev)
 {
 	struct pte *pe;
 	struct partition *p;
-	unsigned int last_p_start_pos = 0, p_start_pos;
-	int i, last_i = 0;
+	size_t last_p_start_pos = 0, p_start_pos;
+	size_t i, last_i = 0;
 
-	for (i = 0 ; i < partitions; i++) {
+	for (i = 0 ; i < cxt->label->nparts_max; i++) {
 		if (i == 4) {
 			last_i = 4;
 			last_p_start_pos = 0;
@@ -1117,7 +1140,7 @@ static int wrong_p_order(int *prev)
 
 static int is_garbage_table(void)
 {
-	int i;
+	size_t i;
 
 	for (i = 0; i < 4; i++) {
 		struct pte *pe = &ptes[i];
@@ -1133,7 +1156,7 @@ int dos_list_table(struct fdisk_context *cxt,
 		    int xtra  __attribute__ ((__unused__)))
 {
 	struct partition *p;
-	int i, w;
+	size_t i, w;
 
 	assert(cxt);
 	assert(fdisk_is_disklabel(cxt, DOS));
@@ -1153,9 +1176,9 @@ int dos_list_table(struct fdisk_context *cxt,
 		w = 5;
 
 	printf(_("%*s Boot      Start         End      Blocks   Id  System\n"),
-	       w+1, _("Device"));
+	       (int) w + 1, _("Device"));
 
-	for (i = 0; i < partitions; i++) {
+	for (i = 0; i < cxt->label->nparts_max; i++) {
 		struct pte *pe = &ptes[i];
 
 		p = pe->part_table;
@@ -1191,7 +1214,7 @@ int dos_list_table(struct fdisk_context *cxt,
 	/* Is partition table in disk order? It need not be, but... */
 	/* partition table entries are not checked for correct order if this
 	   is a sgi, sun or aix labeled disk... */
-	if (wrong_p_order(NULL))
+	if (wrong_p_order(cxt, NULL))
 		printf(_("\nPartition table entries are not in disk order\n"));
 
 	return 0;
@@ -1204,16 +1227,16 @@ void dos_list_table_expert(struct fdisk_context *cxt, int extend)
 {
 	struct pte *pe;
 	struct partition *p;
-	int i;
+	size_t i;
 
 	printf(_("\nDisk %s: %d heads, %llu sectors, %llu cylinders\n\n"),
 		cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
         printf(_("Nr AF  Hd Sec  Cyl  Hd Sec  Cyl     Start      Size ID\n"));
-	for (i = 0 ; i < partitions; i++) {
+	for (i = 0 ; i < cxt->label->nparts_max; i++) {
 		pe = &ptes[i];
 		p = (extend ? pe->ext_pointer : pe->part_table);
 		if (p != NULL) {
-                        printf("%2d %02x%4d%4d%5d%4d%4d%5d%11lu%11lu %02x\n",
+                        printf("%2zd %02x%4d%4d%5d%4d%4d%5d%11lu%11lu %02x\n",
 				i + 1, p->boot_ind, p->head,
 				sector(p->sector),
 				cylinder(p->sector, p->cyl), p->end_head,
@@ -1242,15 +1265,15 @@ void dos_list_table_expert(struct fdisk_context *cxt, int extend)
  *   sfdisk /dev/hda > ohda; sfdisk /dev/hda < ohda
  * may help.
  */
-static void fix_chain_of_logicals(void)
+static void fix_chain_of_logicals(struct fdisk_context *cxt)
 {
-	int j, oj, ojj, sj, sjj;
+	size_t j, oj, ojj, sj, sjj;
 	struct partition *pj,*pjj,tmp;
 
 	/* Stage 1: sort sectors but leave sector of part 4 */
 	/* (Its sector is the global extended_offset.) */
  stage1:
-	for (j = 5; j < partitions-1; j++) {
+	for (j = 5; j < cxt->label->nparts_max - 1; j++) {
 		oj = ptes[j].offset;
 		ojj = ptes[j+1].offset;
 		if (oj > ojj) {
@@ -1270,7 +1293,7 @@ static void fix_chain_of_logicals(void)
 
 	/* Stage 2: sort starting sectors */
  stage2:
-	for (j = 4; j < partitions-1; j++) {
+	for (j = 4; j < cxt->label->nparts_max - 1; j++) {
 		pj = ptes[j].part_table;
 		pjj = ptes[j+1].part_table;
 		sj = get_start_sect(pj);
@@ -1288,21 +1311,21 @@ static void fix_chain_of_logicals(void)
 	}
 
 	/* Probably something was changed */
-	for (j = 4; j < partitions; j++)
+	for (j = 4; j < cxt->label->nparts_max; j++)
 		ptes[j].changed = 1;
 }
 
-void dos_fix_partition_table_order(void)
+void dos_fix_partition_table_order(struct fdisk_context *cxt)
 {
 	struct pte *pei, *pek;
-	int i,k;
+	size_t i,k;
 
-	if (!wrong_p_order(NULL)) {
+	if (!wrong_p_order(cxt, NULL)) {
 		printf(_("Nothing to do. Ordering is correct already.\n\n"));
 		return;
 	}
 
-	while ((i = wrong_p_order(&k)) != 0 && i < 4) {
+	while ((i = wrong_p_order(cxt, &k)) != 0 && i < 4) {
 		/* partition i should have come earlier, move it */
 		/* We have to move data in the MBR */
 		struct partition *pi, *pk, *pe, pbuf;
@@ -1324,7 +1347,7 @@ void dos_fix_partition_table_order(void)
 	}
 
 	if (i)
-		fix_chain_of_logicals();
+		fix_chain_of_logicals(cxt);
 
 	printf(_("Done.\n"));
 
@@ -1335,7 +1358,7 @@ void dos_move_begin(struct fdisk_context *cxt, int i)
 	struct pte *pe = &ptes[i];
 	struct partition *p = pe->part_table;
 	unsigned int new, free_start, curr_start, last;
-	int x;
+	size_t x;
 
 	assert(cxt);
 	assert(fdisk_is_disklabel(cxt, DOS));
@@ -1355,7 +1378,7 @@ void dos_move_begin(struct fdisk_context *cxt, int i)
 	curr_start = get_partition_start(pe);
 
 	/* look for a free space before the current start of the partition */
-	for (x = 0; x < partitions; x++) {
+	for (x = 0; x < cxt->label->nparts_max; x++) {
 		unsigned int end;
 		struct pte *prev_pe = &ptes[x];
 		struct partition *prev_p = prev_pe->part_table;
@@ -1409,7 +1432,7 @@ static int dos_get_partition_status(
 	assert(cxt);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
-	if (!status || i < 0 || i >= partitions)
+	if (!status || i < 0 || (size_t) i >= cxt->label->nparts_max)
 		return -EINVAL;
 
 	*status = FDISK_PARTSTAT_NONE;

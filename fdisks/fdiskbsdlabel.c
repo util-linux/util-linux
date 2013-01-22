@@ -851,7 +851,7 @@ xbsd_link_part (struct fdisk_context *cxt)
   int k, i;
   struct partition *p;
 
-  k = get_partition (cxt, 1, partitions);
+  k = get_partition (cxt, 1, cxt->label->nparts_max);
 
   if (xbsd_check_new_partition(cxt, &i))
     return;

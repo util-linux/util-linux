@@ -1061,8 +1061,6 @@ static int gpt_probe_label(struct fdisk_context *cxt, struct fdisk_label *lb)
 	lb->nparts_max = le32_to_cpu(gpt->pheader->npartition_entries);
 	lb->nparts_cur = partitions_in_use(gpt->pheader, gpt->ents);
 
-	partitions = lb->nparts_max;	/* TODO: deprecated */
-
 	printf(_("\nWARNING: fdisk GPT support is currently new, and therefore "
 		 "in an experimental phase. Use at your own discretion.\n\n"));
 
@@ -1660,8 +1658,6 @@ static int gpt_create_disklabel(struct fdisk_context *cxt, struct fdisk_label *l
 	lb->nparts_max = le32_to_cpu(gpt->pheader->npartition_entries);
 	lb->nparts_cur = 0;
 
-	partitions = lb->nparts_max;	/* TODO: deprecated */
-
 	uid = &gpt->pheader->disk_guid;
 	fprintf(stderr, ("Building a new GPT disklabel "
 			    "(GUID: %08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X)\n"),
@@ -1769,8 +1765,6 @@ static void gpt_deinit(struct fdisk_label *lb)
 	gpt->ents = NULL;
 	gpt->pheader = NULL;
 	gpt->bheader = NULL;
-
-	partitions = 0;
 }
 
 static const struct fdisk_label_operations gpt_operations =

@@ -51,7 +51,6 @@ mac_nolabel(struct fdisk_context *cxt)
     struct mac_partition *maclabel = (struct mac_partition *) cxt->firstsector;
 
     maclabel->magic = 0;
-    partitions = 4;
     fdisk_zeroize_firstsector(cxt);
     return;
 }
@@ -84,7 +83,6 @@ mac_probe_label(struct fdisk_context *cxt,
 
 IS_MAC:
     other_endian = (maclabel->magic == MAC_LABEL_MAGIC_SWAPPED); // =?
-    partitions= 1016; // =?
     volumes = 15;	// =?
     mac_info();
     mac_nolabel(cxt);		/* %% */

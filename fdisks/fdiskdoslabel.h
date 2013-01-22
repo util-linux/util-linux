@@ -22,7 +22,6 @@ extern struct pte ptes[MAXIMUM_PARTS];
 #define pt_offset(b, n)	((struct partition *)((b) + 0x1be + \
 					      (n) * sizeof(struct partition)))
 
-extern int ext_index; /* the prime extended partition */
 extern sector_t extended_offset;
 
 /* A valid partition table sector ends in 0x55 0xaa */
@@ -50,7 +49,7 @@ extern void dos_init(struct fdisk_context *cxt);
 extern int dos_list_table(struct fdisk_context *cxt, int xtra);
 extern void dos_list_table_expert(struct fdisk_context *cxt, int extend);
 
-extern void dos_fix_partition_table_order(void);
+extern void dos_fix_partition_table_order(struct fdisk_context *cxt);
 extern void dos_move_begin(struct fdisk_context *cxt, int i);
 extern void dos_toggle_active(struct fdisk_context *cxt, int i);
 
