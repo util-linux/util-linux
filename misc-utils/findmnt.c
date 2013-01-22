@@ -1050,12 +1050,11 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
 	" -n, --noheadings       don't print column headings\n"
 	" -u, --notruncate       don't truncate text in columns\n"));
-	fprintf(out, _(
-	" -O, --options <list>   limit the set of filesystems by mount options\n"
-	" -o, --output <list>    the output columns to be shown\n"
-	" -P, --pairs            use key=\"value\" output format\n"
-	" -r, --raw              use raw output format\n"
-	" -t, --types <list>     limit the set of filesystems by FS types\n"));
+fputs (_(" -O, --options <list>   limit the set of filesystems by mount options\n"), out);
+fputs (_(" -o, --output <list>    the output columns to be shown\n"), out);
+fputs (_(" -P, --pairs            use key=\"value\" output format\n"), out);
+fputs (_(" -r, --raw              use raw output format\n"), out);
+fputs (_(" -t, --types <list>     limit the set of filesystems by FS types\n"), out);
 	fprintf(out, _(
 	" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 	" -R, --submounts        print all submounts for the matching filesystems\n"
