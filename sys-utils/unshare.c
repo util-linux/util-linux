@@ -39,12 +39,12 @@ static void usage(int status)
 	      _(" %s [options] <program> [args...]\n"),	program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -m, --mount       unshare mounts namespace\n"
-		" -u, --uts         unshare UTS namespace (hostname etc)\n"
-		" -i, --ipc         unshare System V IPC namespace\n"
-		" -n, --net         unshare network namespace\n"
-		" -p, --pid         unshare pid namespace\n"
-		" -U, --user        unshare user namespace\n"), out);
+	fputs(_(" -m, --mount       unshare mounts namespace\n"), out);
+	fputs(_(" -u, --uts         unshare UTS namespace (hostname etc)\n"), out);
+	fputs(_(" -i, --ipc         unshare System V IPC namespace\n"), out);
+	fputs(_(" -n, --net         unshare network namespace\n"), out);
+	fputs(_(" -p, --pid         unshare pid namespace\n"), out);
+	fputs(_(" -U, --user        unshare user namespace\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
