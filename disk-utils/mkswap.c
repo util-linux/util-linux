@@ -329,10 +329,7 @@ check_blocks(void)
 			page_bad(current_page);
 		current_page++;
 	}
-	if (badpages == 1)
-		printf(_("one bad page\n"));
-	else if (badpages > 1)
-		printf(_("%lu bad pages\n"), badpages);
+	printf(P_("%lu bad page\n", "%lu bad pages\n", badpages), badpages);
 	free(buffer);
 }
 
