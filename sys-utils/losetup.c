@@ -360,14 +360,14 @@ static void usage(FILE *out)
 		" -j, --associated <file>       list all devices associated with <file>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 
-	fputs(_(" -l, --list                    list info about all or specified\n"
-		" -o, --offset <num>            start at offset <num> into file\n"
-		" -O, --output <cols>           specify columns to output for --list\n"
-		"     --sizelimit <num>         device limited to <num> bytes of the file\n"
-		" -P, --partscan                create partitioned loop device\n"
-		" -r, --read-only               setup read-only loop device\n"
-		"     --show                    print device name after setup (with -f)\n"
-		" -v, --verbose                 verbose mode\n"), out);
+	fputs(_(" -l, --list                    list info about all or specified\n"), out);
+	fputs(_(" -o, --offset <num>            start at offset <num> into file\n"), out);
+	fputs(_(" -O, --output <cols>           specify columns to output for --list\n"), out);
+	fputs(_("     --sizelimit <num>         device limited to <num> bytes of the file\n"), out);
+	fputs(_(" -P, --partscan                create partitioned loop device\n"), out);
+	fputs(_(" -r, --read-only               setup read-only loop device\n"), out);
+	fputs(_("     --show                    print device name after setup (with -f)\n"), out);
+	fputs(_(" -v, --verbose                 verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
