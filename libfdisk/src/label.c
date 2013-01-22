@@ -21,7 +21,7 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
 		DBG(LABEL, dbgprint("probing for %s", lb->name));
 
 		cxt->label = lb;
-		rc = lb->op->probe(cxt, lb);
+		rc = lb->op->probe(cxt);
 		cxt->label = org;
 
 		if (rc != 1) {
@@ -76,7 +76,7 @@ int fdisk_write_disklabel(struct fdisk_context *cxt)
 	if (!cxt->label->op->write)
 		return -ENOSYS;
 
-	return cxt->label->op->write(cxt, cxt->label);
+	return cxt->label->op->write(cxt);
 }
 
 /**
@@ -94,7 +94,7 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
 	if (!cxt->label->op->verify)
 		return -ENOSYS;
 
-	return cxt->label->op->verify(cxt, cxt->label);
+	return cxt->label->op->verify(cxt);
 }
 
 /**
@@ -107,7 +107,7 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
  *
  * Returns 0.
  */
-int fdisk_add_partition(struct fdisk_context *cxt, int partnum,
+int fdisk_add_partition(struct fdisk_context *cxt, size_t partnum,
 			struct fdisk_parttype *t)
 {
 	if (!cxt || !cxt->label)
@@ -115,8 +115,8 @@ int fdisk_add_partition(struct fdisk_context *cxt, int partnum,
 	if (!cxt->label->op->part_add)
 		return -ENOSYS;
 
-	DBG(LABEL, dbgprint("adding new partition number %d", partnum));
-	cxt->label->op->part_add(cxt, cxt->label, partnum, t);
+	DBG(LABEL, dbgprint("adding new partition number %zd", partnum));
+	cxt->label->op->part_add(cxt, partnum, t);
 	return 0;
 }
 
@@ -129,16 +129,16 @@ int fdisk_add_partition(struct fdisk_context *cxt, int partnum,
  *
  * Returns 0 on success, otherwise, a corresponding error.
  */
-int fdisk_delete_partition(struct fdisk_context *cxt, int partnum)
+int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum)
 {
 	if (!cxt || !cxt->label)
 		return -EINVAL;
 	if (!cxt->label->op->part_delete)
 		return -ENOSYS;
 
-	DBG(LABEL, dbgprint("deleting %s partition number %d",
+	DBG(LABEL, dbgprint("deleting %s partition number %zd",
 				cxt->label->name, partnum));
-	return cxt->label->op->part_delete(cxt, cxt->label, partnum);
+	return cxt->label->op->part_delete(cxt, partnum);
 }
 
 /**
@@ -176,7 +176,7 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 		return -ENOSYS;
 
 	fdisk_reset_alignment(cxt);
-	return cxt->label->op->create(cxt, cxt->label);
+	return cxt->label->op->create(cxt);
 }
 
 /**
@@ -186,13 +186,14 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
  *
  * Returns partition type or NULL upon failure.
  */
-struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int partnum)
+struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt,
+						size_t partnum)
 {
 	if (!cxt || !cxt->label || !cxt->label->op->part_get_type)
 		return NULL;
 
-	DBG(LABEL, dbgprint("partition: %d: get type", partnum));
-	return cxt->label->op->part_get_type(cxt, cxt->label, partnum);
+	DBG(LABEL, dbgprint("partition: %zd: get type", partnum));
+	return cxt->label->op->part_get_type(cxt, partnum);
 }
 
 /**
@@ -203,7 +204,8 @@ struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, int p
  *
  * Returns 0 on success, < 0 on error.
  */
-int fdisk_set_partition_type(struct fdisk_context *cxt, int partnum,
+int fdisk_set_partition_type(struct fdisk_context *cxt,
+			     size_t partnum,
 			     struct fdisk_parttype *t)
 {
 	if (!cxt || !cxt->label)
@@ -211,8 +213,8 @@ int fdisk_set_partition_type(struct fdisk_context *cxt, int partnum,
 	if (!cxt->label->op->part_set_type)
 		return -ENOSYS;
 
-	DBG(LABEL, dbgprint("partition: %d: set type", partnum));
-	return cxt->label->op->part_set_type(cxt, cxt->label, partnum, t);
+	DBG(LABEL, dbgprint("partition: %zd: set type", partnum));
+	return cxt->label->op->part_set_type(cxt, partnum, t);
 }
 
 /**
@@ -237,14 +239,16 @@ size_t fdisk_get_nparttypes(struct fdisk_context *cxt)
  *
  * Returns 0 on success, otherwise, a corresponding error.
  */
-int fdisk_partition_get_status(struct fdisk_context *cxt, int partnum, int *status)
+int fdisk_partition_get_status(struct fdisk_context *cxt,
+			       size_t partnum,
+			       int *status)
 {
 	if (!cxt || !cxt->label)
 		return -EINVAL;
 	if (!cxt->label->op->part_get_status)
 		return -ENOSYS;
 
-	return cxt->label->op->part_get_status(cxt, cxt->label, partnum, status);
+	return cxt->label->op->part_get_status(cxt, partnum, status);
 }
 
 
@@ -263,7 +267,6 @@ void fdisk_deinit_label(struct fdisk_label *lb)
 void fdisk_label_set_changed(struct fdisk_label *lb, int changed)
 {
 	assert(lb);
-
 	lb->changed = changed ? 1 : 0;
 }
 

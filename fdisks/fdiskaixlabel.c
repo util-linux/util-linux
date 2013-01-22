@@ -55,11 +55,15 @@ static void aix_nolabel(struct fdisk_context *cxt)
     return;
 }
 
-static int aix_probe_label(
-		struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)))
+static int aix_probe_label(struct fdisk_context *cxt)
 {
-    struct aix_partition *aixlabel = (struct aix_partition *) cxt->firstsector;
+    struct aix_partition *aixlabel;
+
+    assert(cxt);
+    assert(cxt->label);
+    assert(fdisk_is_disklabel(cxt, GPT));
+
+    aixlabel = (struct aix_partition *) cxt->firstsector;
 
     if (aixlabel->magic != AIX_LABEL_MAGIC &&
 	aixlabel->magic != AIX_LABEL_MAGIC_SWAPPED) {
@@ -73,10 +77,10 @@ static int aix_probe_label(
     return 1;
 }
 
+/* TODO: remove this, libfdisk has to return ENOSYS */
 static int aix_add_partition(
 		struct fdisk_context *cxt __attribute__((__unused__)),
-		struct fdisk_label *lb __attribute__((__unused__)),
-		int partnum __attribute__((__unused__)),
+		size_t partnum __attribute__((__unused__)),
 		struct fdisk_parttype *t __attribute__((__unused__)))
 {
 	printf(_("\tSorry - this fdisk cannot handle AIX disk labels."

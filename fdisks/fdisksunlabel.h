@@ -75,7 +75,7 @@ struct sun_disk_label {
 #define SUN_LABEL_MAGIC_SWAPPED	0xBEDA
 
 /* fdisksunlabel.c */
-extern int sun_change_sysid(struct fdisk_context *cxt, int i, uint16_t sys);
+extern int sun_change_sysid(struct fdisk_context *cxt, size_t i, uint16_t sys);
 extern void sun_list_table(struct fdisk_context *cxt, int xtra);
 extern void sun_set_alt_cyl(struct fdisk_context *cxt);
 extern void sun_set_ncyl(struct fdisk_context *cxt, int cyl);
@@ -83,8 +83,9 @@ extern void sun_set_xcyl(struct fdisk_context *cxt);
 extern void sun_set_ilfact(struct fdisk_context *cxt);
 extern void sun_set_rspeed(struct fdisk_context *cxt);
 extern void sun_set_pcylcount(struct fdisk_context *cxt);
-extern void toggle_sunflags(struct fdisk_context *cxt, int i, uint16_t mask);
 
-extern int sun_is_empty_type(struct fdisk_context *cxt, int i);
+extern void toggle_sunflags(struct fdisk_context *cxt, size_t i, uint16_t mask);
+
+extern int sun_is_empty_type(struct fdisk_context *cxt, size_t i);
 
 #endif /* FDISK_SUN_LABEL_H */

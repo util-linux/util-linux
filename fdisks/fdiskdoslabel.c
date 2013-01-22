@@ -204,12 +204,8 @@ void dos_init(struct fdisk_context *cxt)
 	warn_alignment(cxt);
 }
 
-static int dos_delete_partition(
-		struct fdisk_context *cxt __attribute__ ((__unused__)),
-		struct fdisk_label *lb,
-		int n)
+static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 {
-	size_t partnum = (size_t) n;			/* TODO: use size_t in API */
 	struct pte *pe = &ptes[partnum];
 	struct partition *p = pe->part_table;
 	struct partition *q = pe->ext_pointer;
@@ -262,7 +258,7 @@ static int dos_delete_partition(
 			clear_partition(ptes[partnum].part_table);
 	}
 
-	fdisk_label_set_changed(lb, 1);
+	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
 }
 
@@ -354,7 +350,7 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 		if (!get_nr_sects(pe->part_table) &&
 		    (cxt->label->nparts_max > 5 || ptes[4].part_table->sys_ind)) {
 			printf(_("omitting empty partition (%zd)\n"), i+1);
-			dos_delete_partition(cxt, cxt->label, i);
+			dos_delete_partition(cxt, i);
 			goto remove; 	/* numbering changed */
 		}
 	}
@@ -365,10 +361,13 @@ void dos_print_mbr_id(struct fdisk_context *cxt)
 	printf(_("Disk identifier: 0x%08x\n"), mbr_get_id(cxt->firstsector));
 }
 
-static int dos_create_disklabel(struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)))
+static int dos_create_disklabel(struct fdisk_context *cxt)
 {
 	unsigned int id;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, DOS));
 
 	/* random disk signature */
 	random_get_bytes(&id, sizeof(id));
@@ -441,9 +440,12 @@ static void get_partition_table_geometry(struct fdisk_context *cxt,
 	DBG(CONTEXT, dbgprint("DOS PT geometry: heads=%u, sectors=%u", *ph, *ps));
 }
 
-static int dos_reset_alignment(struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)))
+static int dos_reset_alignment(struct fdisk_context *cxt)
 {
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, DOS));
+
 	/* overwrite necessary stuff by DOS deprecated stuff */
 	if (is_dos_compatible(cxt)) {
 		if (cxt->geom.sectors)
@@ -457,13 +459,14 @@ static int dos_reset_alignment(struct fdisk_context *cxt,
 	return 0;
 }
 
-static int dos_probe_label(struct fdisk_context *cxt, struct fdisk_label *lb)
+static int dos_probe_label(struct fdisk_context *cxt)
 {
 	size_t i;
 	unsigned int h = 0, s = 0;
 
 	assert(cxt);
 	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, DOS));
 
 	if (!mbr_is_valid_magic(cxt->firstsector))
 		return 0;
@@ -500,7 +503,7 @@ static int dos_probe_label(struct fdisk_context *cxt, struct fdisk_label *lb)
 				"table %zd will be corrected by w(rite)\n"),
 				part_table_flag(pe->sectorbuffer), i + 1);
 			pe->changed = 1;
-			fdisk_label_set_changed(lb, 1);
+			fdisk_label_set_changed(cxt->label, 1);
 		}
 	}
 
@@ -859,14 +862,17 @@ static void check_consistency(struct fdisk_context *cxt, struct partition *p,
 	}
 }
 
-static int dos_verify_disklabel(struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)))
+static int dos_verify_disklabel(struct fdisk_context *cxt)
 {
 	size_t i, j;
 	sector_t total = 1, n_sectors = cxt->total_sectors;
 	unsigned long long first[cxt->label->nparts_max],
 			   last[cxt->label->nparts_max];
 	struct partition *p;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, DOS));
 
 	fill_bounds(cxt, first, last);
 	for (i = 0; i < cxt->label->nparts_max; i++) {
@@ -933,12 +939,15 @@ static int dos_verify_disklabel(struct fdisk_context *cxt,
  */
 static int dos_add_partition(
 			struct fdisk_context *cxt,
-			struct fdisk_label *lb __attribute__((__unused__)),
-			int partnum __attribute__ ((__unused__)),
+			size_t partnum __attribute__ ((__unused__)),
 			struct fdisk_parttype *t)
 {
 	size_t i, free_primary = 0;
 	int rc = 0;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, DOS));
 
 	for (i = 0; i < 4; i++)
 		free_primary += !ptes[i].part_table->sys_ind;
@@ -1019,11 +1028,14 @@ static int write_sector(struct fdisk_context *cxt, sector_t secno,
 	return 0;
 }
 
-static int dos_write_disklabel(struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)))
+static int dos_write_disklabel(struct fdisk_context *cxt)
 {
 	size_t i;
 	int rc = 0;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, DOS));
 
 	/* MBR (primary partitions) */
 	if (!MBRbuffer_changed) {
@@ -1055,13 +1067,16 @@ done:
 
 static struct fdisk_parttype *dos_get_parttype(
 		struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)),
-		int partnum)
+		size_t partnum)
 {
 	struct fdisk_parttype *t;
 	struct partition *p;
 
-	if (partnum < 0 || (size_t) partnum >= cxt->label->nparts_max)
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, OSF));
+
+	if (partnum >= cxt->label->nparts_max)
 		return NULL;
 
 	p = ptes[partnum].part_table;
@@ -1073,14 +1088,16 @@ static struct fdisk_parttype *dos_get_parttype(
 
 static int dos_set_parttype(
 		struct fdisk_context *cxt,
-		struct fdisk_label *lb,
-		int partnum,
+		size_t partnum,
 		struct fdisk_parttype *t)
 {
 	struct partition *p;
 
-	if (partnum < 0 || (size_t) partnum >= cxt->label->nparts_max
-	    || !t || t->type > UINT8_MAX)
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, OSF));
+
+	if (partnum >= cxt->label->nparts_max || !t || t->type > UINT8_MAX)
 		return -EINVAL;
 
 	p = ptes[partnum].part_table;
@@ -1100,7 +1117,7 @@ static int dos_set_parttype(
 		"information.\n\n"));
 
 	p->sys_ind = t->type;
-	fdisk_label_set_changed(lb, 1);
+	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
 }
 
@@ -1159,6 +1176,7 @@ int dos_list_table(struct fdisk_context *cxt,
 	size_t i, w;
 
 	assert(cxt);
+	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
 	if (is_garbage_table()) {
@@ -1422,17 +1440,17 @@ void dos_toggle_active(struct fdisk_context *cxt, int i)
 
 static int dos_get_partition_status(
 		struct fdisk_context *cxt,
-		struct fdisk_label *lb __attribute__((__unused__)),
-		int i,
+		size_t i,
 		int *status)
 {
 	struct pte *pe;
 	struct partition *p;
 
 	assert(cxt);
+	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
-	if (!status || i < 0 || (size_t) i >= cxt->label->nparts_max)
+	if (!status || i >= cxt->label->nparts_max)
 		return -EINVAL;
 
 	*status = FDISK_PARTSTAT_NONE;
