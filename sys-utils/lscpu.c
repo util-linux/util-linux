@@ -1246,19 +1246,19 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	size_t i;
 
 	fputs(USAGE_HEADER, out);
-	fprintf(out,
-	      _(" %s [options]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all               print online and offline CPUs (default for -e)\n"
-		" -b, --online            print online CPUs only (default for -p)\n"
-		" -c, --offline           print offline CPUs only\n"
-		" -e, --extended[=<list>] print out an extended readable format\n"
-		" -h, --help              display this help text and exit\n"
-		" -p, --parse[=<list>]    print out a parsable format\n"
-		" -s, --sysroot <dir>     use specified directory as system root\n"
-		" -V, --version           display version information and exit\n"
-		" -x, --hex               print hexadecimal masks rather than lists of CPUs\n"), out);
+	fputs(_(" -a, --all               print both online and offline CPUs (default for -e)\n"), out);
+	fputs(_(" -b, --online            print online CPUs only (default for -p)\n"), out);
+	fputs(_(" -c, --offline           print offline CPUs only\n"), out);
+	fputs(_(" -e, --extended[=<list>] print out an extended readable format\n"), out);
+	fputs(_(" -p, --parse[=<list>]    print out a parsable format\n"), out);
+	fputs(_(" -s, --sysroot <dir>     use specified directory as system root\n"), out);
+	fputs(_(" -x, --hex               print hexadecimal masks rather than lists of CPUs\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
 
 	fprintf(out, _("\nAvailable columns:\n"));
 
