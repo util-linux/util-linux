@@ -1295,26 +1295,26 @@ static int check_all(void)
 
 static void __attribute__((__noreturn__)) usage(void)
 {
-	printf(_("\nUsage:\n"
-		 " %s [options] [fs-options] [<filesystem>...]\n"),
-		program_invocation_short_name);
+	printf(_("\nUsage:\n"));
+	printf(_(" %s [options] [fs-options] [<filesystem>...]\n"),
+		 program_invocation_short_name);
 
-	puts(_(	"\nOptions:\n"
-		" -A         check all filesystems\n"
-		" -R         skip root filesystem; useful only with `-A'\n"
-		" -M         do not check mounted filesystems\n"
-		" -t <type>  specify filesystem types to be checked;\n"
-		"              type is allowed to be comma-separated list\n"
-		" -P         check filesystems in parallel, including root\n"
-		" -r         report statistics for each device fsck\n"
-		" -s         serialize fsck operations\n"
-		" -l         lock the device using flock()\n"
-		" -N         do not execute, just show what would be done\n"
-		" -T         do not show the title on startup\n"
-		" -C [<fd>]  display progress bar; file descriptor is for GUIs\n"
-		" -V         explain what is being done\n"
-		" -?         display this help and exit\n\n"
-		"See fsck.* commands for fs-options."));
+	puts(_(	"\nOptions:\n"));
+	puts(_(	" -A         check all filesystems\n"));
+	puts(_(	" -C [<fd>]  display progress bar; file descriptor is for GUIs\n"));
+	puts(_(	" -l         lock the device to guarantee exclusive access\n"));
+	puts(_(	" -M         do not check mounted filesystems\n"));
+	puts(_(	" -N         do not execute, just show what would be done\n"));
+	puts(_(	" -P         check filesystems in parallel, including root\n"));
+	puts(_(	" -R         skip root filesystem; useful only with '-A'\n"));
+	puts(_(	" -r         report statistics for each device checked\n"));
+	puts(_(	" -s         serialize the checking operations\n"));
+	puts(_(	" -T         do not show the title on startup\n"));
+	puts(_(	" -t <type>  specify filesystem types to be checked;\n"
+		"              <type> is allowed to be a comma-separated list\n"));
+	puts(_(	" -V         explain what is being done\n"));
+	puts(_(	" -?         display this help and exit\n\n"));
+	puts(_(	"See the specific fsck.* commands for available fs-options."));
 
 	exit(FSCK_EX_USAGE);
 }
