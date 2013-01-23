@@ -213,7 +213,7 @@ static void
 die(const char *fmt, ...) {
 	va_list ap;
 
-	fprintf(stderr, "%s: ", program_invocation_short_name);
+	fprintf(stderr, UTIL_LINUX_VERSION);
 	va_start(ap, fmt);
 	vfprintf(stderr, fmt, ap);
 	va_end(ap);
