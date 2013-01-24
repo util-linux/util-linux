@@ -68,6 +68,10 @@
 
 #include <regex.h>
 
+#ifdef TEST_PROGRAM
+# define NON_INTERACTIVE_MORE 1
+#endif
+
 #ifndef XTABS
 # define XTABS	TAB3
 #endif
@@ -1759,7 +1763,10 @@ void initterm(void)
 #ifdef do_SIGTTOU
  retry:
 #endif
+
+#ifndef NON_INTERACTIVE_MORE
 	no_tty = tcgetattr(fileno(stdout), &otty);
+#endif
 	if (!no_tty) {
 		docrterase = (otty.c_cc[VERASE] != 255);
 		docrtkill = (otty.c_cc[VKILL] != 255);
