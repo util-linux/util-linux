@@ -1057,7 +1057,7 @@ AM_CONDITIONAL(BUILD_MESG, test "x$build_mesg" = xyes)
 
 
 AC_ARG_ENABLE([raw],
-  AS_HELP_STRING([--enable-raw], [build raw]),
+	      AS_HELP_STRING([--disable-raw], [do not build raw]),
   [], enable_raw=check
 )
 UL_BUILD_INIT([raw])
@@ -1167,6 +1167,33 @@ AC_ARG_ENABLE([runuser],
 UL_BUILD_INIT([runuser])
 UL_REQUIRES_HAVE([runuser], [security_pam_misc_h], [PAM header file])
 AM_CONDITIONAL(BUILD_RUNUSER, test "x$build_runuser" = xyes)
+
+
+AC_ARG_ENABLE([ul],
+  AS_HELP_STRING([--disable-ul], [do not build ul]),
+  [], enable_ul=check
+)
+UL_BUILD_INIT([ul])
+UL_REQUIRES_HAVE([ul], [ncurses, tinfo], [ncurses or tinfo libraries])
+AM_CONDITIONAL(BUILD_UL, test "x$build_ul" = xyes)
+
+
+AC_ARG_ENABLE([more],
+  AS_HELP_STRING([--disable-more], [do not build more]),
+  [], enable_more=check
+)
+UL_BUILD_INIT([more])
+UL_REQUIRES_HAVE([more], [ncurses, tinfo, termcap], [ncurses, tinfo or termcap libraries])
+AM_CONDITIONAL(BUILD_MORE, test "x$build_more" = xyes)
+
+
+AC_ARG_ENABLE([pg],
+  AS_HELP_STRING([--disable-pg], [do not build pg]),
+  [], enable_pg=check
+)
+UL_BUILD_INIT([pg])
+UL_REQUIRES_HAVE([pg], [ncurses], [ncurses or ncursesw library])
+AM_CONDITIONAL(BUILD_PG, test "x$build_pg" = xyes)
 
 
 AC_ARG_ENABLE([schedutils],
