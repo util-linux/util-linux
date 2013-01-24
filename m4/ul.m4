@@ -160,13 +160,24 @@ dnl Modifies $build_<name> variable according to $enable_<name> and
 dnl $have_<havename>.  The <havedesc> is description used ifor warning/error
 dnl message (e.g. "function").
 dnl
+dnl The <havename> maybe a list, then at least one of the items in the list
+dnl have to exist, for example: [ncurses, tinfo] means that have_ncurser=yes
+dnl *or* have_tinfo=yes must be defined.
+dnl
 dnl The default <name> for $build_ and $enable_ could be overwrited by option $3.
 dnl
 AC_DEFUN([UL_REQUIRES_HAVE], [
   m4_define([suffix], m4_default([$4],$1))
 
   if test "x$[build_]suffix" != xno; then
-    case $[enable_]suffix:$[have_]$2 in #(
+
+    m4_foreach([onehave], [$2],  [
+      if test "x$[have_]onehave" = xyes; then
+        [ul_haveone_]suffix=yes
+      fi
+    ])dnl
+
+    case $[enable_]suffix:$[ul_haveone_]suffix in #(
     no:*)
       [build_]suffix=no ;;
     yes:yes)
