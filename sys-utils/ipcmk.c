@@ -32,32 +32,31 @@
 
 #include "c.h"
 #include "nls.h"
+#include "randutils.h"
 #include "strutils.h"
 #include "closestream.h"
 
-static key_t create_key(void)
-{
-	struct timeval now;
-	gettimeofday(&now, NULL);
-	srandom(now.tv_usec);
-	return random();
-}
-
 static int create_shm(size_t size, int permission)
 {
-	key_t key = create_key();
+	key_t key;
+
+	random_get_bytes(&key, sizeof(key));
 	return shmget(key, size, permission | IPC_CREAT);
 }
 
 static int create_msg(int permission)
 {
-	key_t key = create_key();
+	key_t key;
+
+	random_get_bytes(&key, sizeof(key));
 	return msgget(key, permission | IPC_CREAT);
 }
 
 static int create_sem(int nsems, int permission)
 {
-	key_t key = create_key();
+	key_t key;
+
+	random_get_bytes(&key, sizeof(key));
 	return semget(key, nsems, permission | IPC_CREAT);
 }
 
