@@ -1573,7 +1573,7 @@ static int gpt_add_partition(
 	ents = gpt->ents;
 
 	if (!partition_unused(&ents[partnum])) {
-		printf(_("Partition %d is already defined. "
+		printf(_("Partition %zd is already defined. "
 			 "Delete it before re-adding it.\n"), partnum +1);
 		return -EINVAL;
 	}
@@ -1638,9 +1638,9 @@ static int gpt_add_partition(
 
 	if (gpt_create_new_partition(cxt, partnum,
 				     user_f, user_l, &uuid, ents) != 0)
-		printf(_("Could not create partition %d\n"), partnum + 1);
+		printf(_("Could not create partition %zd\n"), partnum + 1);
 	else {
-		printf(_("Created partition %d\n"), partnum + 1);
+		printf(_("Created partition %zd\n"), partnum + 1);
 		cxt->label->nparts_cur++;
 		fdisk_label_set_changed(cxt->label, 1);
 	}
