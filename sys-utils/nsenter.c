@@ -175,7 +175,8 @@ int main(int argc, char *argv[])
 
 	struct namespace_file *nsfile;
 	int c, namespaces = 0;
-	bool do_rd = false, do_wd = false, do_fork = false;
+	bool do_rd = false, do_wd = false;
+	int do_fork = -1; /* unknown yet */
 
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -220,7 +221,6 @@ int main(int argc, char *argv[])
 				namespaces |= CLONE_NEWNET;
 			break;
 		case 'p':
-			do_fork = true;
 			if (optarg)
 				open_namespace_fd(CLONE_NEWPID, optarg);
 			else
@@ -233,7 +233,7 @@ int main(int argc, char *argv[])
 				namespaces |= CLONE_NEWUSER;
 			break;
 		case 'F':
-			do_fork = false;
+			do_fork = 0;
 			break;
 		case 'r':
 			if (optarg)
@@ -272,6 +272,8 @@ int main(int argc, char *argv[])
 	for (nsfile = namespace_files; nsfile->nstype; nsfile++) {
 		if (nsfile->fd < 0)
 			continue;
+		if (nsfile->nstype == CLONE_NEWPID && do_fork == -1)
+			do_fork = 1;
 		if (setns(nsfile->fd, nsfile->nstype))
 			err(EXIT_FAILURE,
 			    _("reassociate to namespace '%s' failed"),
@@ -311,7 +313,7 @@ int main(int argc, char *argv[])
 		wd_fd = -1;
 	}
 
-	if (do_fork)
+	if (do_fork == 1)
 		continue_as_child();
 
 	execvp(argv[optind], argv + optind);
