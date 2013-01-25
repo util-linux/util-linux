@@ -57,8 +57,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 static void __attribute__ ((__noreturn__)) print_version(void)
 {
-	printf(_("%s from %s\n"),
-	       program_invocation_short_name, PACKAGE_STRING);
+	printf(UTIL_LINUX_VERSION);
 	exit(EXIT_SUCCESS);
 }
 
@@ -128,8 +127,7 @@ int main(int argc, char **argv)
 	argv[--optind] = progname;
 
 	if (verbose) {
-		printf(_("%s from %s\n"),
-		       program_invocation_short_name, PACKAGE_STRING);
+		printf(UTIL_LINUX_VERSION);
 		i = optind;
 		while (argv[i])
 			printf("%s ", argv[i++]);

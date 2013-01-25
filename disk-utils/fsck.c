@@ -1504,7 +1504,7 @@ int main(int argc, char *argv[])
 	parse_argv(argc, argv);
 
 	if (!notitle)
-		printf(_("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING);
+		printf(UTIL_LINUX_VERSION);
 
 	load_fs_info();
 

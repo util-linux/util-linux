@@ -2623,8 +2623,7 @@ main(int argc, char **argv) {
 	    set_format(*optarg);
 	    break;
 	case 'v':
-	    printf(_("%s from %s\n"), program_invocation_short_name,
-		   PACKAGE_STRING);
+	    printf(UTIL_LINUX_VERSION);
 	    return EXIT_SUCCESS;
 	case 'h':
 	    usage(stdout);

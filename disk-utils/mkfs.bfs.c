@@ -86,7 +86,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 static void __attribute__ ((__noreturn__)) print_version(void)
 {
-	printf(_("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING);
+	printf(UTIL_LINUX_VERSION);
 	exit(EXIT_SUCCESS);
 }
 

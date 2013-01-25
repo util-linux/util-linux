@@ -811,8 +811,7 @@ main (int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf(_("%s from %s\n"),
-			       program_invocation_short_name, PACKAGE_STRING);
+			printf(UTIL_LINUX_VERSION);
 			exit (0);
 		case 't':		/* specify file system type */
 			types = optarg;

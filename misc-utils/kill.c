@@ -190,7 +190,7 @@ int main (int argc, char *argv[])
 	}
 	if (! strcmp (arg, "-v") || ! strcmp (arg, "-V") ||
 	    ! strcmp (arg, "--version")) {
-	    printf(_("%s from %s\n"), progname, PACKAGE_STRING);
+	    printf(UTIL_LINUX_VERSION);
 	    return 0;
 	}
 	if (! strcmp (arg, "-a")) {

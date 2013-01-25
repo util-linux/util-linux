@@ -760,8 +760,7 @@ int main(int argc, char **argv)
 			/* old option, ignored */
 			break;
 		case 'V':
-			printf(_("%s from %s\n"),
-			       program_invocation_short_name, PACKAGE_STRING);
+			printf(UTIL_LINUX_VERSION);
 			exit(MKFS_EX_OK);
 		case 'v':
 			verbose = 1;

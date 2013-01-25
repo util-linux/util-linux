@@ -64,8 +64,7 @@ usage(void) {
 
 static void
 version(void) {
-	fprintf(stderr, _("%s from %s\n"),
-			program_invocation_short_name, PACKAGE_STRING);
+	fprintf(stderr, UTIL_LINUX_VERSION);
 }
 
 int

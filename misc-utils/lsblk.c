@@ -1506,8 +1506,7 @@ int main(int argc, char *argv[])
 			columns[ncolumns++] = COL_TRANSPORT;
 			break;
 		case 'V':
-			printf(_("%s from %s\n"), program_invocation_short_name,
-				PACKAGE_STRING);
+			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		default:
 			help(stderr);
