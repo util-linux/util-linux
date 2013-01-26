@@ -133,7 +133,7 @@ static void isosize(char *filenamep, int xflag, long divisor)
 	if ((fd = open(filenamep, O_RDONLY)) < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), filenamep);
 	if (is_iso(fd))
-		warnx(_("%s: might not be iso file system"), filenamep);
+		warnx(_("%s: might not be an ISO filesystem"), filenamep);
 
 	if (lseek(fd, 16 << 11, 0) == (off_t) - 1)
 		err(EXIT_FAILURE, _("seek error on %s"), filenamep);
@@ -165,11 +165,11 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		_(" %s [options] iso9660_image_file\n"),
+		_(" %s [options] <iso9660_image_file>\n"),
 		program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -d, --divisor=NUM      divide bytes NUM\n"), out);
-	fputs(_(" -x, --sectors          show sector count and size\n"), out);
+	fputs(_(" -d, --divisor=<number>  divide the amount of bytes by <number>\n"), out);
+	fputs(_(" -x, --sectors           show sector count and size\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
