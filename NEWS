@@ -141,7 +141,7 @@ util-linux-ng 2.13-rc1
 util-linux 2.13-pre7
 
 * mount: default to cifs instead of smbfs for sources
-         starting with // Lars Mueller()
+         starting with // (Lars Mueller)
 * flock: documentation updates (H. Peter Anvin)
 * new translation: id
 * updated translations: de, it, sl, uk
@@ -347,13 +347,13 @@ util-linux 2.12
 
 util-linux 2.12pre
 
-* Catalan messages (Antoni Bella Perez)
+* Catalan messages (Antoni Bella Pérez)
 * Danish messages (Claus Hindsgaul)
 * Dutch messages (Taco Witte)
 * Finnish messages (Lauri Nurmi)
 * French messages (Michel Robitaille)
 * German messages (Michael Piefel)
-* Slovenian messages (Primoz Peterlin)
+* Slovenian messages (Primož Peterlin)
 * Spanish messages (Santiago Vila Doncel)
 * Swedish messages (Christian Rose)
 * Turkish messages (Nilgün Belma Bugüner)
@@ -383,13 +383,13 @@ util-linux 2.12pre
 
 util-linux 2.11z
 
-* Catalan messages (Antoni Bella Perez)
+* Catalan messages (Antoni Bella Pérez)
 * Danish messages (Claus Hindsgaul)
 * Dutch messages (Taco Witte)
 * Finnish messages (Lauri Nurmi)
 * French messages (Michel Robitaille) - HURRAY!
 * German messages (Michael Piefel)
-* Slovenian messages (Primoz Peterlin)
+* Slovenian messages (Primož Peterlin)
 * Spanish messages (Santiago Vila Doncel)
 * Swedish messages (Christian Rose)
 * Turkish messages (Nilgün Belma Bugüner)
@@ -414,10 +414,10 @@ util-linux 2.11y
 * ipcs: compilation fix
 * more: kill external help file (Joachim Henke)
 * mount: fix LABEL= handling for user umount
-* mount: don't abort on read error on photocds (Gyorgy Kovesdi)
+* mount: don't abort on read error on photocds (György Kövesdi)
 * mount.8: add dmask and fmask vfat mount options
 * pg: compilation fix (Joachim Henke)
-* script: localized time strings (Goeran Uddeborg)
+* script: localized time strings (Göran Uddeborg)
 * setterm: accept devfs name (Joachim Henke)
 * simpleinit: security: refuse initctl_fd if setting FD_CLOEXEC fails
 * umount: allow user umount after mount by label or uuid
@@ -452,15 +452,15 @@ util-linux 2.11w
 * fdisk: allow to use the last partial cylinder, change display format
 * fdisk: do not ask partition number in case there is only one choice
 * fdisk: new sunlabel fix
-* login: fix possible local root exploit (Wojciech Purczynski)
+* login: fix possible local root exploit (Wojciech Purczyński)
 * more: bigendian fix
 
 util-linux 2.11v
 
-* Catalan messages (Antoni Bella Perez)
+* Catalan messages (Antoni Bella Pérez)
 * Finnish messages (Lauri Nurmi)
 * Very few Russian messages (panivan@yandex.ru)
-* Slovenian messages (Primoz Peterlin)
+* Slovenian messages (Primož Peterlin)
 * Spanish messages (Santiago Vila Doncel)
 * Swedish messages (Christian Rose)
 * Turkish messages (Nilgün Belma Bugüner)
@@ -727,8 +727,8 @@ util-linux 2.11e
 * fdisk: SuperH fix (ISHIKAWA Mutsumi)
 * hwclock: accept alpha options in both upper and lower case
   (so as to make the man page correct)
-* hwclock: add option --noadjtime (Henrique M Holschuh)
-* login: child must have controlling tty (Michal Moskal)
+* hwclock: add option --noadjtime (Henrique M. Holschuh)
+* login: child must have controlling tty (Michał Moskal)
 * more: don't seek unseekable input (David Whedon)
 * mount: upon request by Richard Gooch: if the mount point is specified
   as symlink, put symlink, not actual mount point in mtab.
@@ -898,7 +898,7 @@ util-linux 2.10n:
 * script: added -f (flush) option (Ivan Schreter)
 * script: added -q (quiet) option (Per Andreas Buer)
 * getopt: updated to version 1.1.0 (Frodo Looijaard)
-* Czech messages (Jiri Pavlovsky)
+* Czech messages (Jiří Pavlovský)
 
 util-linux 2.10m:
 
@@ -956,7 +956,7 @@ util-linux 2.10g:
 * Update of raw (Stephen Tweedie):
   Control file was /dev/raw, now /dev/rawctl
   Access files were /dev/raw*, now /dev/raw/raw*
-* Czech messages (Jiri Pavlovsky)
+* Czech messages (Jiří Pavlovský)
 * German messages (Daniel Egger)
 * losetup locks memory (Frank v Waveren)
 
@@ -1016,7 +1016,7 @@ util-linux 2.10:
 util-linux 2.9z:
 
 * Japanese messages (Daisuke Yamashita)
-* Czech messages (Jiri Pavlovsky)
+* Czech messages (Jiří Pavlovský)
 * Added some udf stuff to mount.8
 * Added ioctl for fdisk on bsdlabels
 
