@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 {
 	atexit(close_stdout);
 	if (argc <= 2) {
-		fprintf(stderr, "usage: %s <passwdfile> <username> [...]\n",
+		fprintf(stderr, _("Usage: %s <passwordfile> <username>...\n"),
 			argv[0]);
 		return 1;
 	} else {
