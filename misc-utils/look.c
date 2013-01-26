@@ -34,7 +34,7 @@
  * SUCH DAMAGE.
  */
 
- /* 1999-02-22 Arkadiusz Mi∂kiewicz <misiek@pld.ORG.PL>
+ /* 1999-02-22 Arkadiusz Mi≈õkiewicz <misiek@pld.ORG.PL>
   * - added Native Language Support
   */
 

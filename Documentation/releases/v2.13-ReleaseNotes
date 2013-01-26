@@ -100,7 +100,7 @@ build-sys:
    - fix directories in EXTRA_DIST  [Karel Zak]
    - fix HAVE_NCURSES  [Karel Zak]
    - fix ifdef ENABLE_WIDECHAR usage  [Karel Zak]
-   - fix linking when ncurses is built with --with-termlib=tinfo  [Arkadiusz Miskiewicz]
+   - fix linking when ncurses is built with --with-termlib=tinfo  [Arkadiusz Miśkiewicz]
    - fix README filenames and add missing files to EXTRA_DISTs  [Karel Zak]
    - fix the example configure call in README  [Stepan Kasal]
    - fix the final message of autogen.sh  [Stepan Kasal]

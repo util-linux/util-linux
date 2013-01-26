@@ -1,6 +1,6 @@
 /*
  * islocal.c - returns true if user is registered in the local
- * /etc/passwd file. Written by Alvaro Martinez Echevarria,
+ * /etc/passwd file. Written by Álvaro Martínez Echevarria,
  * alvaro@enano.etsit.upm.es, to allow peaceful coexistence with yp. Nov 94.
  *
  * Hacked a bit by poe@daimi.aau.dk
@@ -10,7 +10,7 @@
  *   to distinguish user names where one is a prefix of the other,
  *   and to use "pathnames.h". Oct 5, 96.
  *
- * 1999-02-22 Arkadiusz Mi�kiewicz <misiek@pld.ORG.PL>
+ * 1999-02-22 Arkadiusz Miśkiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  * 2008-04-06 James Youngman, jay@gnu.org

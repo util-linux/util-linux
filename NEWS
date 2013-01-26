@@ -769,7 +769,7 @@ util-linux 2.11c
   corruption by pam_authenticate via pam_ldap (Andreas Damm)
 * login: removed the REDHAT_IGNORED_MAILSIZE hack
 * login: unconditionally do vhangup
-* login: zero PAM_USER when no username was given (Arkadiusz Miskiewicz)
+* login: zero PAM_USER when no username was given (Arkadiusz Miśkiewicz)
 * look: dictionary now under /usr/share (Erik Troan)
 * mount: add sanitize_env() (Solar Designer)
 * mount: another heuristic for vfat (Michal Svec)

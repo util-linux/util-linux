@@ -27,7 +27,7 @@
  *	to be more posix and so compile on linux/axp.
  * modified by Kars de Jong <jongk@cs.utwente.nl>
  *	to use terminfo instead of termcap.
- * 1999-02-22 Arkadiusz Mi∂kiewicz <misiek@pld.ORG.PL>
+ * 1999-02-22 Arkadiusz Mi≈õkiewicz <misiek@pld.ORG.PL>
  *	added Native Language Support
  * 1999-03-19 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
  *	more nls translatable strings

@@ -39,7 +39,7 @@
  * Modified Mon Jul  1 18:14:10 1996, janl@ifi.uio.no, writing to stdout
  *	as suggested by Michael Meskes <meskes@Informatik.RWTH-Aachen.DE>
  *
- * 1999-02-22 Arkadiusz Mi∂kiewicz <misiek@pld.ORG.PL>
+ * 1999-02-22 Arkadiusz Mi≈õkiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  * 2010-12-01 Marek Polacek <mmpolacek@gmail.com>

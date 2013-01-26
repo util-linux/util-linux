@@ -19,7 +19,7 @@
  */
 
 /*
- * 1999-02-22 Arkadiusz Mi∂kiewicz <misiek@pld.ORG.PL>
+ * 1999-02-22 Arkadiusz Mi≈õkiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  * 1999-09-01 Stephane Eranian <eranian@cello.hpl.hp.com>
  * - 64bit clean patch

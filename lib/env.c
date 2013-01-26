@@ -1,7 +1,7 @@
 /*
  * Security checks of environment
  * Added from shadow-utils package
- * by Arkadiusz Mi∂kiewicz <misiek@pld.ORG.PL>
+ * by Arkadiusz Mi≈õkiewicz <misiek@pld.ORG.PL>
  *
  */
 

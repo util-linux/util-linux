@@ -35,7 +35,7 @@
  *  modifications (c) salvatore valente <svalente@mit.edu>
  *  may be used / modified / distributed under the same terms as the original.
  *
- *  1999-02-22 Arkadiusz Mi∂kiewicz <misiek@pld.ORG.PL>
+ *  1999-02-22 Arkadiusz Mi≈õkiewicz <misiek@pld.ORG.PL>
  *  - added Native Language Support
  *
  *  1999-11-13 aeb Accept signal numers 128+s.

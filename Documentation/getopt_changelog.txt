@@ -13,7 +13,7 @@
 20010311: Fixed stupid compilation error if NLS not selected
 20000630: Bumped up version number to 1.1.0
 20000630: Ported the Native Language Support patches from util-linux
-          They are written by Arkadiusz Mi∂kiewicz <misiek@pld.org.pl>
+          They are written by Arkadiusz Mi≈õkiewicz <misiek@pld.org.pl>
 20000627: Bumped up version number to 1.0.6
 20000627: A few manpage tweaks
 20000616: Introduced DESTDIR and directory creation in the Makefile.

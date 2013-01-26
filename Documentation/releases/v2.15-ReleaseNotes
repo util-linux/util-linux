@@ -302,7 +302,7 @@ build-sys:
    - release++ (v2.15-rc1)  [Karel Zak]
    - release++ (v2.15-rc2)  [Karel Zak]
    - remove use of devmapper library  [Karel Zak]
-   - tgets is not in ncurses but in tinfo  [Arkadiusz Miskiewicz]
+   - tgets is not in ncurses but in tinfo  [Arkadiusz Miśkiewicz]
    - use pkg-config for blkid and volume_id  [Karel Zak]
 cal:
    - determine the first day of week from the locale  [Pádraig Brady]

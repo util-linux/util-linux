@@ -13,10 +13,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
  *
- * The original namei(1) was writtent by:
+ * The original namei(1) was written by:
  *	Roger S. Southwick (May 2, 1990)
  *	Steve Tell (March 28, 1991)
- *	Arkadiusz Mikiewicz (1999-02-22)
+ *	Arkadiusz Miśkiewicz (1999-02-22)
  *	Li Zefan (2007-09-10).
  */
 

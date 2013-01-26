@@ -8,7 +8,7 @@
  *
  * Mon Jul  1 18:52:58 1996: janl@math.uio.no (Nicolai Langfeldt):
  *	Incorporated fix by Jonathan Kamens <jik@annex-1-slip-jik.cam.ov.com>
- * 1999-02-22 Arkadiusz Mi∂kiewicz <misiek@pld.ORG.PL>
+ * 1999-02-22 Arkadiusz Mi≈õkiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *	
  */

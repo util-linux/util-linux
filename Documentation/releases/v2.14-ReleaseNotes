@@ -363,7 +363,7 @@ setarch:
    - add fallback for linux/personality  [Karel Zak]
    - add long options to setarch and update manpage  [Karel Zak, Li Zefan]
    - add missing alpha subarchs  [Oliver Falk]
-   - adding groff symlinks to setarch manual page  [Arkadiusz Miskiewicz]
+   - adding groff symlinks to setarch manual page  [Arkadiusz Miśkiewicz]
    - fix compiler warning  [LaMont Jones]
    - generate groff links in a better way  [Karel Zak]
    - provide backwards compatibility  [Dmitry V. Levin]

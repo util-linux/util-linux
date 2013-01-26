@@ -3,7 +3,7 @@
  * Rick Sladkey <jrs@world.std.com>
  * In the public domain.
  *
- * 1999-02-22 Arkadiusz Mi∂kiewicz <misiek@pld.ORG.PL>
+ * 1999-02-22 Arkadiusz Mi≈õkiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  * 2001-01-18 John Fremlin <vii@penguinpowered.com>
