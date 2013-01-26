@@ -488,7 +488,7 @@ static int get_filesystems(const char *filename, char ***filesystems, const char
  * exist, /proc/filesystems. All of the filesystem  types  listed  there  will
  * be tried,  except  for  those  that  are  labeled  "nodev"  (e.g.,  devpts,
  * proc  and  nfs).  If /etc/filesystems ends in a line with a single * only,
- * mount will read /proc/filesystems after‐ wards.
+ * mount will read /proc/filesystems afterwards.
  */
 int mnt_get_filesystems(char ***filesystems, const char *pattern)
 {

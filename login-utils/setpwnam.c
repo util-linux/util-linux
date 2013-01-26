@@ -9,8 +9,8 @@
  *
  *  Edited 11/10/96 (DD/MM/YY ;-) by Nicolai Langfeldt (janl@math.uio.no)
  *  to read /etc/passwd directly so that passwd, chsh and chfn can work on
- *  machines that run NIS (né YP).  Changes will not be made to usernames
- *  starting with +.
+ *  machines that run NIS (previously YP).  Changes will not be made to
+ *  usernames starting with +.
  *
  *  This file is distributed with no warranty.
  *
