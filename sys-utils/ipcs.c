@@ -77,13 +77,13 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 int main (int argc, char **argv)
 {
-	int opt, msg = 0, sem = 0, shm = 0, id=0, print=0;
+	int opt, msg = 0, shm = 0, sem = 0, id = 0, specific = 0;
 	char format = NOTSPECIFIED;
 	int unit = IPC_UNIT_DEFAULT;
 	static const struct option longopts[] = {
 		{"id", required_argument, NULL, 'i'},
-		{"shmems", no_argument, NULL, 'm'},
 		{"queues", no_argument, NULL, 'q'},
+		{"shmems", no_argument, NULL, 'm'},
 		{"semaphores", no_argument, NULL, 's'},
 		{"all", no_argument, NULL, 'a'},
 		{"time", no_argument, NULL, 't'},
@@ -97,7 +97,7 @@ int main (int argc, char **argv)
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
 	};
-	char options[] = "i:mqsatpclubVh";
+	char options[] = "i:qmsatpclubVh";
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -108,7 +108,7 @@ int main (int argc, char **argv)
 		switch (opt) {
 		case 'i':
 			id = atoi (optarg);
-			print = 1;
+			specific = 1;
 			break;
 		case 'a':
 			msg = shm = sem = 1;
@@ -116,11 +116,11 @@ int main (int argc, char **argv)
 		case 'q':
 			msg = 1;
 			break;
-		case 's':
-			sem = 1;
-			break;
 		case 'm':
 			shm = 1;
+			break;
+		case 's':
+			sem = 1;
 			break;
 		case 't':
 			format = TIME;
@@ -153,30 +153,30 @@ int main (int argc, char **argv)
 		}
 	}
 
-	if  (print) {
+	if (specific && (msg + shm + sem != 1))
+		errx (EXIT_FAILURE,
+		      _("when using an ID, a single resource must be specified"));
+	if (specific) {
+		if (msg)
+			print_msg (id, unit);
 		if (shm)
 			print_shm (id, unit);
 		if (sem)
 			print_sem (id);
-		if (msg)
-			print_msg (id, unit);
-		if (!shm && !sem && !msg )
-			usage (stderr);
 	} else {
-		if ( !shm && !msg && !sem)
-			msg = sem = shm = 1;
+		if (!msg && !shm && !sem)
+			msg = shm = sem = 1;
 		printf ("\n");
-
+		if (msg) {
+			do_msg (format, unit);
+			printf ("\n");
+		}
 		if (shm) {
 			do_shm (format, unit);
 			printf ("\n");
 		}
 		if (sem) {
 			do_sem (format);
-			printf ("\n");
-		}
-		if (msg) {
-			do_msg (format, unit);
 			printf ("\n");
 		}
 	}
