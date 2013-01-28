@@ -144,10 +144,16 @@ int main(int argc, char **argv)
 	if (ioctl(fd, FITRIM, &range))
 		err(EXIT_FAILURE, _("%s: FITRIM ioctl failed"), path);
 
-	if (verbose)
+	if (verbose) {
+		char *str = size_to_human_string(SIZE_SUFFIX_3LETTER |
+						 SIZE_SUFFIX_SPACE,
+						 (uint64_t) range.len);
 		/* TRANSLATORS: The standard value here is a very large number. */
-		printf(_("%s: %" PRIu64 " bytes were trimmed\n"),
-						path, (uint64_t) range.len);
+		printf(_("%s: %s (%" PRIu64 " bytes) were trimmed\n"),
+						path, str,
+						(uint64_t) range.len);
+		free(str);
+	}
 	close(fd);
 	return EXIT_SUCCESS;
 }
