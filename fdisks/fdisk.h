@@ -60,6 +60,10 @@ enum failure {
 	unable_to_write
 };
 
+
+extern int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
+		    void *data __attribute__((__unused__)));
+
 /* prototypes for fdisk.c */
 extern char *line_ptr;
 extern unsigned int display_in_cyl_units, units_per_sector;

@@ -132,6 +132,16 @@ err:
 	return -1;
 }
 
+int isdigit_string(const char *str)
+{
+	const char *p;
+
+	for (p = str; p && *p && isdigit((unsigned char) *p); p++);
+
+	return p && p > str && !*p;
+}
+
+
 #ifndef HAVE_MEMPCPY
 void *mempcpy(void *restrict dest, const void *restrict src, size_t n)
 {

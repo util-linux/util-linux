@@ -7,6 +7,7 @@ fdisk_SOURCES = \
 	fdisks/dos_part_types.h \
 	fdisks/fdisk.c \
 	fdisks/fdisk.h \
+	fdisks/fdisk-ask.c \
 	fdisks/fdiskaixlabel.c \
 	fdisks/fdiskaixlabel.h \
 	fdisks/fdiskbsdlabel.c \

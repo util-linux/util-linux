@@ -752,19 +752,13 @@ void print_partition_size(struct fdisk_context *cxt,
 
 static void new_partition(struct fdisk_context *cxt)
 {
-	int partnum = 0;
-
 	assert(cxt);
 	assert(cxt->label);
 
 	if (warn_geometry(cxt))
 		return;
 
-	if (!(cxt->label->flags & FDISK_LABEL_FL_ADDPART_NOPARTNO))
-		partnum = get_partition_dflt(cxt, 0, cxt->label->nparts_max,
-				cxt->label->nparts_cur + 1);
-
-	fdisk_add_partition(cxt, partnum, NULL);
+	fdisk_add_partition(cxt, NULL);
 }
 
 static void write_table(struct fdisk_context *cxt)
@@ -1196,6 +1190,8 @@ int main(int argc, char **argv)
 	cxt = fdisk_new_context();
 	if (!cxt)
 		err(EXIT_FAILURE, _("failed to allocate libfdisk context"));
+
+	fdisk_context_set_ask(cxt, ask_callback, NULL);
 
 	while ((c = getopt(argc, argv, "b:c::C:hH:lsS:u::vV")) != -1) {
 		switch (c) {

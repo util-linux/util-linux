@@ -28,6 +28,8 @@ extern double strtod_or_err(const char *str, const char *errmesg);
 extern long strtol_or_err(const char *str, const char *errmesg);
 extern unsigned long strtoul_or_err(const char *str, const char *errmesg);
 
+extern int isdigit_string(const char *str);
+
 #ifndef HAVE_MEMPCPY
 extern void *mempcpy(void *restrict dest, const void *restrict src, size_t n);
 #endif
