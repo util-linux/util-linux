@@ -304,9 +304,10 @@ static int string_to_uuid(const char *in, struct gpt_guid *uuid)
 	return 0;
 }
 
-static void uuid_to_string(struct gpt_guid *uuid, char *out)
+static char *uuid_to_string(struct gpt_guid *uuid, char *out)
 {
 	uuid_unparse_upper((unsigned char *) uuid, out);
+	return out;
 }
 
 static const char *gpt_get_header_revstr(struct gpt_header *header)
@@ -566,7 +567,7 @@ static struct gpt_entry *gpt_read_entries(struct fdisk_context *cxt,
 	sz = le32_to_cpu(header->npartition_entries) *
 	     le32_to_cpu(header->sizeof_partition_entry);
 
-	ret = calloc(1, sizeof(*ret) * sz);
+	ret = calloc(1, sz);
 	if (!ret)
 		return NULL;
 	offset = le64_to_cpu(header->partition_entry_lba) *
@@ -729,7 +730,9 @@ static struct gpt_header *gpt_read_header(struct fdisk_context *cxt,
 	if (!cxt)
 		return NULL;
 
-	header = xcalloc(1, sizeof(*header));
+	header = calloc(1, sizeof(*header));
+	if (!header)
+		return NULL;
 
 	/* read and verify header */
 	if (!read_lba(cxt, lba, header, sizeof(struct gpt_header)))
@@ -1150,7 +1153,7 @@ void gpt_list_table(struct fdisk_context *cxt,
 		uint64_t size = gpt_partition_size(&gpt->ents[i]);
 		struct fdisk_parttype *t;
 
-		if (partition_unused(&gpt->ents[i]) || !size)
+		if (partition_unused(&gpt->ents[i]) || start == 0)
 			continue;
 
 		/* the partition has to inside usable range */
@@ -1517,7 +1520,9 @@ static int gpt_create_new_partition(struct fdisk_context *cxt,
 	if (fsect > lsect || partnum >= cxt->label->nparts_max)
 		return -EINVAL;
 
-	e = xcalloc(1, sizeof(*e));
+	e = calloc(1, sizeof(*e));
+	if (!e)
+		return -ENOMEM;
 	e->lba_end = cpu_to_le64(lsect);
 	e->lba_start = cpu_to_le64(fsect);
 
@@ -1654,7 +1659,7 @@ static int gpt_add_partition(
 static int gpt_create_disklabel(struct fdisk_context *cxt)
 {
 	int rc = 0;
-	ssize_t entry_sz = 0;
+	ssize_t esz = 0;
 	struct gpt_guid *uid;
 	struct fdisk_gpt_label *gpt;
 
@@ -1678,22 +1683,33 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 		goto done;
 
 	/* primary */
-	gpt->pheader = xcalloc(1, sizeof(*gpt->pheader));
+	gpt->pheader = calloc(1, sizeof(*gpt->pheader));
+	if (!gpt->pheader) {
+		rc = -ENOMEM;
+		goto done;
+	}
 	rc = gpt_mknew_header(cxt, gpt->pheader, GPT_PRIMARY_PARTITION_TABLE_LBA);
 	if (rc < 0)
 		goto done;
 
 	/* backup ("copy" primary) */
-	gpt->bheader = xcalloc(1, sizeof(*gpt->bheader));
+	gpt->bheader = calloc(1, sizeof(*gpt->bheader));
+	if (!gpt->bheader) {
+		rc = -ENOMEM;
+		goto done;
+	}
 	rc = gpt_mknew_header_from_bkp(cxt, gpt->bheader,
 			last_lba(cxt), gpt->pheader);
 	if (rc < 0)
 		goto done;
 
-	entry_sz = le32_to_cpu(gpt->pheader->npartition_entries) *
-		le32_to_cpu(gpt->pheader->sizeof_partition_entry);
-	gpt->ents = xcalloc(1, sizeof(*gpt->ents) * entry_sz);
-
+	esz = le32_to_cpu(gpt->pheader->npartition_entries) *
+	      le32_to_cpu(gpt->pheader->sizeof_partition_entry);
+	gpt->ents = calloc(1, esz);
+	if (!gpt->ents) {
+		rc = -ENOMEM;
+		goto done;
+	}
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
 
@@ -1790,7 +1806,7 @@ static int gpt_get_partition_status(
 	e = &gpt->ents[i];
 	*status = FDISK_PARTSTAT_NONE;
 
-	if (!partition_unused(e) || gpt_partition_size(e))
+	if (!partition_unused(e) || gpt_partition_start(e))
 		*status = FDISK_PARTSTAT_USED;
 
 	return 0;
