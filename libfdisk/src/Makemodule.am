@@ -7,8 +7,10 @@
 noinst_LTLIBRARIES += libfdisk.la
 libfdisk_la_SOURCES = \
 	libfdisk/src/libfdisk.h \
+	libfdisk/src/fdiskP.h \
 	\
 	libfdisk/src/init.c \
+	libfdisk/src/test.c \
 	libfdisk/src/alignment.c \
 	libfdisk/src/label.c \
 	libfdisk/src/utils.c \
@@ -35,5 +37,16 @@ libfdisk_la_LIBADD += libuuid.la
 libfdisk_la_CFLAGS += -I$(ul_libuuid_incdir)
 endif
 
-
 libfdisk_la_DEPENDENCIES = $(libfdisk_la_LIBADD)
+
+libfdisk_tests_cflags  = -DTEST_PROGRAM $(libfdisk_la_CFLAGS)
+libfdisk_tests_ldflags = -static
+libfdisk_tests_ldadd   = libfdisk.la
+
+if BUILD_LIBBLKID
+libfdisk_tests_ldflags += libblkid.la
+endif
+
+if BUILD_LIBUUID
+libfdisk_tests_ldflags += libuuid.la
+endif

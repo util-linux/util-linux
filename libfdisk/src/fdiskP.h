@@ -86,6 +86,19 @@ extern int fdisk_debug_mask;
 # define DBG_FLUSH do { ; } while(0)
 #endif
 
+
+#ifdef TEST_PROGRAM
+struct fdisk_test {
+	const char	*name;
+	int		(*body)(struct fdisk_test *ts, int argc, char *argv[]);
+	const char	*usage;
+};
+
+/* test.c */
+extern int fdisk_run_test(struct fdisk_test *tests, int argc, char *argv[]);
+#endif
+
+
 typedef unsigned long long sector_t;
 
 /*
@@ -220,6 +233,7 @@ struct fdisk_context {
 	struct fdisk_label *labels[8];	/* all supported labels,
 					 * FIXME: use any enum rather than hardcoded number */
 };
+
 
 /* context.c */
 extern int __fdisk_context_switch_label(struct fdisk_context *cxt,
