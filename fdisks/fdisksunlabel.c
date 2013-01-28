@@ -137,11 +137,15 @@ static int sun_probe_label(struct fdisk_context *cxt)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SUN));
 
-	sunlabel = self_disklabel(cxt);
+	/* map first sector to header */
+	sun = (struct fdisk_sun_label *) cxt->label;
+	sun->header = (struct sun_disk_label *) cxt->firstsector;
+	sunlabel = sun->header;
 
 	if (sunlabel->magic != SUN_LABEL_MAGIC &&
 	    sunlabel->magic != SUN_LABEL_MAGIC_SWAPPED) {
 		other_endian = 0;
+		sun->header = NULL;
 		return 0;		/* failed */
 	}
 
