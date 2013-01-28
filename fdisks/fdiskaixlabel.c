@@ -61,7 +61,7 @@ static int aix_probe_label(struct fdisk_context *cxt)
 
     assert(cxt);
     assert(cxt->label);
-    assert(fdisk_is_disklabel(cxt, GPT));
+    assert(fdisk_is_disklabel(cxt, AIX));
 
     aixlabel = (struct aix_partition *) cxt->firstsector;
 
