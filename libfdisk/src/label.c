@@ -34,6 +34,7 @@ int fdisk_probe_labels(struct fdisk_context *cxt)
 		return 0;
 	}
 
+	DBG(LABEL, dbgprint("no label found"));
 	return 1; /* not found */
 }
 
@@ -100,20 +101,30 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
 /**
  * fdisk_add_partition:
  * @cxt: fdisk context
- * @partnum: partition number to create
  * @t: partition type to create or NULL for label-specific default
  *
  * Creates a new partition, with number @partnum and type @parttype.
  *
  * Returns 0.
  */
-int fdisk_add_partition(struct fdisk_context *cxt, size_t partnum,
+int fdisk_add_partition(struct fdisk_context *cxt,
 			struct fdisk_parttype *t)
 {
+	size_t partnum = 0;
+
+	assert(cxt);
+	assert(cxt->label);
+
 	if (!cxt || !cxt->label)
 		return -EINVAL;
 	if (!cxt->label->op->part_add)
 		return -ENOSYS;
+
+	if (!(cxt->label->flags & FDISK_LABEL_FL_ADDPART_NOPARTNO)) {
+		int rc = fdisk_ask_partnum(cxt, &partnum, 1);
+		if (rc)
+			return rc;
+	}
 
 	DBG(LABEL, dbgprint("adding new partition number %zd", partnum));
 	cxt->label->op->part_add(cxt, partnum, t);
@@ -243,12 +254,17 @@ int fdisk_partition_get_status(struct fdisk_context *cxt,
 			       size_t partnum,
 			       int *status)
 {
+	int rc;
+
 	if (!cxt || !cxt->label)
 		return -EINVAL;
 	if (!cxt->label->op->part_get_status)
 		return -ENOSYS;
 
-	return cxt->label->op->part_get_status(cxt, partnum, status);
+	rc = cxt->label->op->part_get_status(cxt, partnum, status);
+
+	/* DBG(LABEL, dbgprint("partition: %zd: status: 0x%04x [rc=%d]", partnum, *status, rc)); */
+	return rc;
 }
 
 

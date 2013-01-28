@@ -28,6 +28,7 @@ extern "C" {
 struct fdisk_context;
 struct fdisk_label;
 struct fdisk_parttype;
+struct fdisk_ask;
 
 /*
  * Supported partition table types (labels)
@@ -44,7 +45,7 @@ enum fdisk_labeltype {
 };
 
 enum {
-	FDISK_PARTSTAT_NONE,
+	FDISK_PARTSTAT_NONE = 0,
 	FDISK_PARTSTAT_USED	/* partition used */
 };
 
@@ -54,6 +55,10 @@ extern void fdisk_init_debug(int mask);
 /* context.h */
 extern struct fdisk_context *fdisk_new_context(void);
 extern void fdisk_free_context(struct fdisk_context *cxt);
+
+extern int fdisk_context_set_ask(struct fdisk_context *cxt,
+			int (*ask_cb)(struct fdisk_context *, struct fdisk_ask *, void *),
+			void *data);
 
 extern int fdisk_context_assign_device(struct fdisk_context *cxt,
 				const char *fname, int readonly);
@@ -85,7 +90,7 @@ extern int fdisk_write_disklabel(struct fdisk_context *cxt);
 extern int fdisk_verify_disklabel(struct fdisk_context *cxt);
 extern int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name);
 
-extern int fdisk_add_partition(struct fdisk_context *cxt, size_t partnum, struct fdisk_parttype *t);
+extern int fdisk_add_partition(struct fdisk_context *cxt, struct fdisk_parttype *t);
 extern int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum);
 
 extern struct fdisk_parttype *fdisk_get_partition_type(struct fdisk_context *cxt, size_t partnum);
@@ -104,6 +109,15 @@ extern int fdisk_reset_alignment(struct fdisk_context *cxt);
 /* dos.c */
 extern int fdisk_dos_enable_compatible(struct fdisk_label *lb, int enable);
 extern int fdisk_dos_is_compatible(struct fdisk_label *lb);
+
+/* ask.c */
+extern const char *fdisk_ask_get_question(struct fdisk_ask *ask);
+extern int fdisk_ask_get_type(struct fdisk_ask *ask);
+extern const char *fdisk_ask_number_get_range(struct fdisk_ask *ask);
+extern uint64_t fdisk_ask_number_get_default(struct fdisk_ask *ask);
+extern uint64_t fdisk_ask_number_get_low(struct fdisk_ask *ask);
+extern uint64_t fdisk_ask_number_get_high(struct fdisk_ask *ask);
+extern int fdisk_ask_number_set_result(struct fdisk_ask *ask, uint64_t result);
 
 #ifdef __cplusplus
 }

@@ -68,8 +68,7 @@ int fdisk_context_switch_label(struct fdisk_context *cxt, const char *name)
 
 static void reset_context(struct fdisk_context *cxt)
 {
-	size_t nlbs, i;
-	struct fdisk_label *lbs[ ARRAY_SIZE(cxt->labels) ];
+	size_t i;
 
 	DBG(CONTEXT, dbgprint("\n-----\nresetting context %p", cxt));
 
@@ -77,25 +76,30 @@ static void reset_context(struct fdisk_context *cxt)
 	for (i = 0; i < cxt->nlabels; i++)
 		fdisk_deinit_label(cxt->labels[i]);
 
-	/* remember permanent setting */
-	memcpy(lbs, cxt->labels, sizeof(lbs));
-	nlbs = cxt->nlabels;
-
 	/* free device specific stuff */
 	if (cxt->dev_fd > -1)
 		close(cxt->dev_fd);
 	free(cxt->dev_path);
 	free(cxt->firstsector);
 
-	/* the reset */
-	memset(cxt, 0, sizeof(*cxt));
-
 	/* initialize */
 	cxt->dev_fd = -1;
+	cxt->dev_path = NULL;
+	cxt->firstsector = NULL;
 
-	/* set permanent setting */
-	memcpy(cxt->labels, lbs, sizeof(lbs));
-	cxt->nlabels = nlbs;
+	cxt->io_size = 0;
+	cxt->optimal_io_size = 0;
+	cxt->min_io_size = 0;
+	cxt->phy_sector_size = 0;
+	cxt->sector_size = 0;
+	cxt->alignment_offset = 0;
+	cxt->grain = 0;
+	cxt->first_lba = 0;
+	cxt->total_sectors = 0;
+
+	memset(&cxt->geom, 0, sizeof(struct fdisk_geometry));
+
+	cxt->label = NULL;
 }
 
 /**
@@ -177,4 +181,23 @@ void fdisk_free_context(struct fdisk_context *cxt)
 	}
 
 	free(cxt);
+}
+
+/**
+ * fdisk_context_set_ask:
+ * @cxt: context
+ * @ask_cb: callback
+ * @data: callback data
+ *
+ * Returns: 0 on sucess, < 0 on error.
+ */
+int fdisk_context_set_ask(struct fdisk_context *cxt,
+		int (*ask_cb)(struct fdisk_context *, struct fdisk_ask *, void *),
+		void *data)
+{
+	assert(cxt);
+
+	cxt->ask_cb = ask_cb;
+	cxt->ask_data = data;
+	return 0;
 }

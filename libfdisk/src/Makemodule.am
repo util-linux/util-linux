@@ -11,6 +11,7 @@ libfdisk_la_SOURCES = \
 	\
 	libfdisk/src/init.c \
 	libfdisk/src/test.c \
+	libfdisk/src/ask.c \
 	libfdisk/src/alignment.c \
 	libfdisk/src/label.c \
 	libfdisk/src/utils.c \
@@ -39,6 +40,10 @@ endif
 
 libfdisk_la_DEPENDENCIES = $(libfdisk_la_LIBADD)
 
+
+check_PROGRAMS += \
+	test_fdisk_ask
+
 libfdisk_tests_cflags  = -DTEST_PROGRAM $(libfdisk_la_CFLAGS)
 libfdisk_tests_ldflags = -static
 libfdisk_tests_ldadd   = libfdisk.la
@@ -50,3 +55,8 @@ endif
 if BUILD_LIBUUID
 libfdisk_tests_ldflags += libuuid.la
 endif
+
+test_fdisk_ask_SOURCES = libfdisk/src/ask.c
+test_fdisk_ask_CFLAGS = $(libfdisk_tests_cflags)
+test_fdisk_ask_LDFLAGS = $(libfdisk_tests_ldflags)
+test_fdisk_ask_LDADD = $(libfdisk_tests_ldadd)

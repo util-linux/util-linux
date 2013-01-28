@@ -47,6 +47,7 @@
 #define FDISK_DEBUG_TOPOLOGY    (1 << 3)
 #define FDISK_DEBUG_GEOMETRY    (1 << 4)
 #define FDISK_DEBUG_LABEL       (1 << 5)
+#define FDISK_DEBUG_ASK         (1 << 6)
 #define FDISK_DEBUG_ALL		0xFFFF
 
 # define ON_DBG(m, x)	do { \
@@ -206,6 +207,33 @@ extern struct fdisk_label *fdisk_new_mac_label(struct fdisk_context *cxt);
 extern struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt);
 extern struct fdisk_label *fdisk_new_sun_label(struct fdisk_context *cxt);
 
+
+/* fdisk dialog -- note that nothing from this stuff will be directly exported,
+ * we will have get/set() function for everything.
+ */
+struct fdisk_ask {
+	const char	*name;
+	int		type;		/* FDISK_ASKTYPE_* */
+
+	char		*query;
+	char		*hint;
+
+	union {
+		struct ask_number {
+			uint64_t	hig;		/* high limit */
+			uint64_t	low;		/* low limit */
+			uint64_t	dfl;		/* default */
+			uint64_t	result;
+			const char	*range;		/* by library generated list */
+		} num;
+	} data;
+};
+
+enum {
+	FDISK_ASKTYPE_NONE,
+	FDISK_ASKTYPE_NUMBER
+};
+
 struct fdisk_context {
 	int dev_fd;         /* device descriptor */
 	char *dev_path;     /* device path */
@@ -232,8 +260,10 @@ struct fdisk_context {
 	size_t nlabels;			/* number of initialized label drivers */
 	struct fdisk_label *labels[8];	/* all supported labels,
 					 * FIXME: use any enum rather than hardcoded number */
-};
 
+	int	(*ask_cb)(struct fdisk_context *, struct fdisk_ask *, void *);	/* fdisk dialogs callback */
+	void	*ask_data;		/* ask_cb() data */
+};
 
 /* context.c */
 extern int __fdisk_context_switch_label(struct fdisk_context *cxt,
@@ -275,5 +305,8 @@ extern void fdisk_deinit_label(struct fdisk_label *lb);
 
 /* gpt.c -- temporary bypass library API... */
 extern void gpt_list_table(struct fdisk_context *cxt, int xtra);
+
+/* ask.c */
+extern int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew);
 
 #endif /* _LIBFDISK_PRIVATE_H */
