@@ -49,6 +49,12 @@ enum {
 	FDISK_PARTSTAT_USED	/* partition used */
 };
 
+enum {
+	FDISK_ASKTYPE_NONE = 0,
+	FDISK_ASKTYPE_NUMBER,
+	FDISK_ASKTYPE_OFFSET,
+};
+
 /* init.c */
 extern void fdisk_init_debug(int mask);
 
@@ -111,13 +117,31 @@ extern int fdisk_dos_enable_compatible(struct fdisk_label *lb, int enable);
 extern int fdisk_dos_is_compatible(struct fdisk_label *lb);
 
 /* ask.c */
-extern const char *fdisk_ask_get_question(struct fdisk_ask *ask);
+extern struct fdisk_ask *fdisk_new_ask(void);
+extern void fdisk_reset_ask(struct fdisk_ask *ask);
+extern void fdisk_free_ask(struct fdisk_ask *ask);
+extern const char *fdisk_ask_get_query(struct fdisk_ask *ask);
+extern int fdisk_ask_set_query(struct fdisk_ask *ask, const char *str);
 extern int fdisk_ask_get_type(struct fdisk_ask *ask);
+extern int fdisk_ask_set_type(struct fdisk_ask *ask, int type);
+extern int fdisk_do_ask(struct fdisk_context *cxt, struct fdisk_ask *ask);
+
 extern const char *fdisk_ask_number_get_range(struct fdisk_ask *ask);
+extern int fdisk_ask_number_set_range(struct fdisk_ask *ask, const char *range);
 extern uint64_t fdisk_ask_number_get_default(struct fdisk_ask *ask);
+extern int fdisk_ask_number_set_default(struct fdisk_ask *ask, uint64_t dflt);
 extern uint64_t fdisk_ask_number_get_low(struct fdisk_ask *ask);
+extern int fdisk_ask_number_set_low(struct fdisk_ask *ask, uint64_t low);
 extern uint64_t fdisk_ask_number_get_high(struct fdisk_ask *ask);
+extern int fdisk_ask_number_set_high(struct fdisk_ask *ask, uint64_t high);
+extern uint64_t fdisk_ask_number_get_base(struct fdisk_ask *ask);
+extern int fdisk_ask_number_set_base(struct fdisk_ask *ask, uint64_t base);
+extern uint64_t fdisk_ask_number_get_unit(struct fdisk_ask *ask);
+extern int fdisk_ask_number_set_unit(struct fdisk_ask *ask, uint64_t unit);
+extern uint64_t fdisk_ask_number_get_result(struct fdisk_ask *ask);
 extern int fdisk_ask_number_set_result(struct fdisk_ask *ask, uint64_t result);
+extern int fdisk_ask_number_set_relative(struct fdisk_ask *ask, int relative);
+extern int fdisk_ask_number_is_relative(struct fdisk_ask *ask);
 
 #ifdef __cplusplus
 }

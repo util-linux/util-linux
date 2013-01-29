@@ -44,17 +44,6 @@
 #include "strutils.h"
 #include "all-io.h"
 
-/* temporary -- exported from fdisk/sfdisk.c
- * TODO: use fdisk_dialog API
- */
-extern unsigned int read_int(struct fdisk_context *cxt,
-			unsigned int low, unsigned int dflt,
-			unsigned int high, unsigned int base, char *mesg);
-
-extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
-			unsigned int low, unsigned int dflt, unsigned int high,
-			unsigned int base, char *mesg, int *is_suffix_used);
-
 #define GPT_HEADER_SIGNATURE 0x5452415020494645LL /* EFI PART */
 #define GPT_HEADER_REVISION_V1_02 0x00010200
 #define GPT_HEADER_REVISION_V1_00 0x00010000
@@ -1564,6 +1553,8 @@ static int gpt_add_partition(
 	struct fdisk_gpt_label *gpt;
 	struct gpt_header *pheader;
 	struct gpt_entry *ents;
+	struct fdisk_ask *ask = NULL;
+	int rc;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -1608,35 +1599,48 @@ static int gpt_add_partition(
 
 	/* get user input for first and last sectors of the new partition */
 	for (;;) {
-		int is_suffix_used = 0;
+		if (!ask)
+			ask = fdisk_new_ask();
+		else
+			fdisk_reset_ask(ask);
 
-		/* first sector */
-		user_f = read_int(cxt,	disk_f,	/* minimal */
-					dflt_f, /* default */
-					disk_l, /* maximal */
-					0, _("First sector"));
+		/* First sector */
+		fdisk_ask_set_query(ask, _("First sector"));
+		fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
+		fdisk_ask_number_set_low(ask,     disk_f);	/* minimal */
+		fdisk_ask_number_set_default(ask, dflt_f);	/* default */
+		fdisk_ask_number_set_high(ask,    disk_l);	/* maximal */
 
-		if (user_f < disk_f || user_f > disk_l)
-			continue;	/* bug in read_int() dialog? */
+		rc = fdisk_do_ask(cxt, ask);
+		if (rc)
+			goto done;
 
+		user_f = fdisk_ask_number_get_result(ask);
 		if (user_f != find_first_available(pheader, ents, user_f)) {
 			printf(_("Sector %ju already used\n"), user_f);
 			continue;
 		}
 
+		fdisk_reset_ask(ask);
+
 		/* Last sector */
 		dflt_l = find_last_free(pheader, ents, user_f);
-		user_l = read_int_with_suffix(cxt,
-					user_f, /* minimal */
-					dflt_l, /* default */
-					dflt_l, /* maximal */
-					user_f, /* base for relative input */
-					_("Last sector, +sectors or +size{K,M,G}"),
-					&is_suffix_used);
 
-		if (is_suffix_used)
+		fdisk_ask_set_query(ask, _("Last sector, +sectors or +size{K,M,G,T,P}"));
+		fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
+		fdisk_ask_number_set_low(ask,     user_f);	/* minimal */
+		fdisk_ask_number_set_default(ask, dflt_l);	/* default */
+		fdisk_ask_number_set_high(ask,    dflt_l);	/* maximal */
+		fdisk_ask_number_set_base(ask,    user_f);	/* base for relative input */
+		fdisk_ask_number_set_unit(ask,    cxt->sector_size);
+
+		rc = fdisk_do_ask(cxt, ask);
+		if (rc)
+			goto done;
+
+		user_l = fdisk_ask_number_get_result(ask);
+		if (fdisk_ask_number_is_relative(ask))
 			user_l = fdisk_align_lba_in_range(cxt, user_l, user_f, dflt_l) - 1;
-
 		if (user_l > user_f && user_l <= disk_l)
 			break;
 	}
@@ -1650,7 +1654,10 @@ static int gpt_add_partition(
 		fdisk_label_set_changed(cxt->label, 1);
 	}
 
-	return 0;
+	rc = 0;
+done:
+	fdisk_free_ask(ask);
+	return rc;
 }
 
 /*

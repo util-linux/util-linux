@@ -212,26 +212,22 @@ extern struct fdisk_label *fdisk_new_sun_label(struct fdisk_context *cxt);
  * we will have get/set() function for everything.
  */
 struct fdisk_ask {
-	const char	*name;
 	int		type;		/* FDISK_ASKTYPE_* */
-
 	char		*query;
-	char		*hint;
 
 	union {
+		/* FDISK_ASKTYPE_{NUMBER,OFFSET} */
 		struct ask_number {
 			uint64_t	hig;		/* high limit */
 			uint64_t	low;		/* low limit */
 			uint64_t	dfl;		/* default */
 			uint64_t	result;
-			const char	*range;		/* by library generated list */
+			uint64_t	base;		/* for relative results */
+			uint64_t	unit;		/* unit for offsets */
+			char		*range;		/* by library generated list */
+			unsigned int	relative:1;
 		} num;
 	} data;
-};
-
-enum {
-	FDISK_ASKTYPE_NONE,
-	FDISK_ASKTYPE_NUMBER
 };
 
 struct fdisk_context {
