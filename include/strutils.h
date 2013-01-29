@@ -1,6 +1,7 @@
 #ifndef UTIL_LINUX_STRUTILS
 #define UTIL_LINUX_STRUTILS
 
+#include <stdlib.h>
 #include <inttypes.h>
 #include <string.h>
 #include <sys/types.h>
@@ -11,6 +12,7 @@
 #endif
 
 
+extern int parse_size(const char *str, uintmax_t *res, int *power);
 extern int strtosize(const char *str, uintmax_t *res);
 extern uintmax_t strtosize_or_err(const char *str, const char *errmesg);
 
@@ -49,6 +51,25 @@ static inline void xstrncpy(char *dest, const char *src, size_t n)
 	strncpy(dest, src, n-1);
 	dest[n-1] = 0;
 }
+
+static inline char *strdup_to_offset(void *stru, size_t offset, const char *str)
+{
+	char *n = NULL;
+	char **o = (char **) ((char *) stru + offset);
+
+	if (str) {
+		n = strdup(str);
+		if (!n)
+			return NULL;
+	}
+
+	free(*o);
+	*o = n;
+	return n;
+}
+
+#define strdup_to_struct_member(_s, _m, _str) \
+		strdup_to_offset((void *) _s, offsetof(__typeof__(*(_s)), _m), _str)
 
 extern void strmode(mode_t mode, char *str);
 
