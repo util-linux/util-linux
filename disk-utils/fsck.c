@@ -1296,7 +1296,7 @@ static int check_all(void)
 static void __attribute__((__noreturn__)) usage(void)
 {
 	printf(_("\nUsage:\n"));
-	printf(_(" %s [options] [fs-options] [<filesystem>...]\n"),
+	printf(_(" %s [options] -- [fs-options] [<filesystem>...]\n"),
 		 program_invocation_short_name);
 
 	puts(_(	"\nOptions:\n"));
