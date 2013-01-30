@@ -1668,7 +1668,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 
   /* Mount failed, complain, but don't die.  */
 
-  if (types == 0) {
+  if (types == NULL) {
     if (restricted)
       error (_("mount: I could not determine the filesystem type, "
 	       "and none was specified"));

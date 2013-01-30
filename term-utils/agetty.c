@@ -358,7 +358,7 @@ int main(int argc, char **argv)
 			/* Read the login name. */
 			debug("reading login name\n");
 			while ((username =
-				get_logname(&options, &termios, &chardata)) == 0)
+				get_logname(&options, &termios, &chardata)) == NULL)
 				if ((options.flags & F_VCONSOLE) == 0)
 					next_speed(&options, &termios);
 		}
@@ -747,7 +747,7 @@ static void parse_speeds(struct options *op, char *arg)
 	char *cp;
 
 	debug("entered parse_speeds\n");
-	for (cp = strtok(arg, ","); cp != 0; cp = strtok((char *)0, ",")) {
+	for (cp = strtok(arg, ","); cp != NULL; cp = strtok((char *)0, ",")) {
 		if ((op->speeds[op->numspeed++] = bcode(cp)) <= 0)
 			log_err(_("bad speed: %s"), cp);
 		if (op->numspeed >= MAX_SPEED)

@@ -1785,7 +1785,7 @@ void initterm(void)
 			}
 		}
 #endif	/* do_SIGTTOU */
-		if ((term = getenv("TERM")) == 0) {
+		if ((term = getenv("TERM")) == NULL) {
 			dumb++;
 			ul_opt = 0;
 		}
@@ -1856,7 +1856,7 @@ void initterm(void)
 			if ((padstr = my_tgetstr(TERM_PAD_CHAR)) != NULL)
 				PC = *padstr;
 			Home = my_tgetstr(TERM_HOME);
-			if (Home == 0 || *Home == '\0') {
+			if (Home == NULL || *Home == '\0') {
 				if ((cursorm =
 				     my_tgetstr(TERM_CURSOR_ADDRESS)) != NULL) {
 					const char *t =

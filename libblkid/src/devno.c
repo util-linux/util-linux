@@ -115,7 +115,7 @@ void blkid__scan_dir(char *dirname, dev_t devno, struct dir_list **list,
 	if ((dir = opendir(dirname)) == NULL)
 		return;
 
-	while ((dp = readdir(dir)) != 0) {
+	while ((dp = readdir(dir)) != NULL) {
 #ifdef _DIRENT_HAVE_D_TYPE
 		if (dp->d_type != DT_UNKNOWN && dp->d_type != DT_BLK &&
 		    dp->d_type != DT_LNK && dp->d_type != DT_DIR)

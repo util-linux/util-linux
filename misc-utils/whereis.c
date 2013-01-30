@@ -304,7 +304,7 @@ findv(char **dirv, int dirc, char *cp)
 static void
 looksrc(char *cp)
 {
-	if (Sflag == 0)
+	if (Sflag == NULL)
 		findv(srcdirs, ARRAY_SIZE(srcdirs)-1, cp);
 	else
 		findv(Sflag, Scnt, cp);
@@ -313,7 +313,7 @@ looksrc(char *cp)
 static void
 lookbin(char *cp)
 {
-	if (Bflag == 0) {
+	if (Bflag == NULL) {
 		findv(bindirs, ARRAY_SIZE(bindirs)-1, cp);
 		while (*pathdir_p)
 			findin(*pathdir_p++, cp);		/* look $PATH */
@@ -324,7 +324,7 @@ lookbin(char *cp)
 static void
 lookman(char *cp)
 {
-	if (Mflag == 0)
+	if (Mflag == NULL)
 		findv(mandirs, ARRAY_SIZE(mandirs)-1, cp);
 	else
 		findv(Mflag, Mcnt, cp);

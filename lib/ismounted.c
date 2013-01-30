@@ -91,7 +91,7 @@ static int check_mntent_file(const char *mtab_file, const char *file,
 		}
 	}
 
-	if (mnt == 0) {
+	if (mnt == NULL) {
 #ifndef __GNU__ /* The GNU hurd is broken with respect to stat devices */
 		/*
 		 * Do an extra check to see if this is the root device.  We
