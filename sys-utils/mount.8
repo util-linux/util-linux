@@ -1540,9 +1540,6 @@ Commit block can be written to disk without waiting for descriptor blocks. If
 enabled older kernels cannot mount the device.
 This will enable 'journal_checksum' internally.
 .TP
-.BR journal=update
-Update the ext4 filesystem's journal to the current format.
-.TP
 .BR barrier=0 " / "  barrier=1 " / " barrier " / " nobarrier
 This enables/disables the use of write barriers in the jbd code.  barrier=0
 disables, barrier=1 enables.  This also requires an IO stack which can support
