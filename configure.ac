@@ -313,6 +313,7 @@ AC_CHECK_FUNCS([ \
 	lchown \
 	llseek \
 	lseek64 \
+	mempcpy \
 	nanosleep \
 	personality \
 	posix_fadvise \
