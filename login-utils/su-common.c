@@ -593,7 +593,7 @@ run_shell (char const *shell, char const *command, char **additional_args,
 
   {
     int exit_status = (errno == ENOENT ? EXIT_ENOENT : EXIT_CANNOT_INVOKE);
-    warn ("%s", shell);
+    warn (_("failed to execute %s"), shell);
     exit (exit_status);
   }
 }
@@ -913,7 +913,7 @@ su_main (int argc, char **argv, int mode)
     run_shell (shell, command, argv + optind, max (0, argc - optind));
   else {
     execvp(argv[optind], &argv[optind]);
-    err(EXIT_FAILURE, _("executing %s failed"), argv[optind]);
+    err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
   }
 }
 

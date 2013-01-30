@@ -573,7 +573,7 @@ int main(int argc, char **argv)
 		if (!dryrun) {
 			execv(arg[0], arg);
 
-			warn(_("unable to execute %s"),	_PATH_SHUTDOWN);
+			warn(_("failed to execute %s"), _PATH_SHUTDOWN);
 			rc = EXIT_FAILURE;
 		}
 

@@ -279,7 +279,7 @@ int main(int argc, char *argv[])
        if (set_arch(p, 0L))
            err(EXIT_FAILURE, _("Failed to set personality to %s"), p);
        execl("/bin/bash", NULL);
-       err(EXIT_FAILURE, "/bin/bash");
+       err(EXIT_FAILURE, _("failed to execute %s"), "/bin/bash");
    }
   #endif
 
@@ -342,7 +342,7 @@ int main(int argc, char *argv[])
 
   if (!argc) {
     execl("/bin/sh", "-sh", NULL);
-    err(EXIT_FAILURE, "/bin/sh");
+    err(EXIT_FAILURE, _("failed to execute %s"), "/bin/sh");
   }
 
   execvp(argv[0], argv);

@@ -331,7 +331,6 @@ int main(int argc, char **argv)
 	if (!pid) {
 		argv += optind + 1;
 		execvp(argv[0], argv);
-		perror("execvp");
 		err(EXIT_FAILURE, _("failed to execute %s"), argv[0]);
 	}
 

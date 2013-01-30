@@ -637,7 +637,7 @@ int main(int argc, char **argv)
 	if (argc > optind) {
 		/* prlimit [options] COMMAND */
 		execvp(argv[optind], &argv[optind]);
-		err(EXIT_FAILURE, _("executing %s failed"), argv[optind]);
+		err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
 	}
 
 	return EXIT_SUCCESS;

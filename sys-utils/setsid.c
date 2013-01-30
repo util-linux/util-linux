@@ -94,5 +94,5 @@ int main(int argc, char **argv)
 			warn(_("failed to set the controlling terminal"));
 	}
 	execvp(argv[optind], argv + optind);
-	err(EXIT_FAILURE, _("execvp failed"));
+	err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
 }

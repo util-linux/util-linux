@@ -182,7 +182,7 @@ int main(int argc, char *argv[])
 	fflush(stdout);
 	fflush(stderr);
 	execl(shell, shell, (char *)0);
-	warn(_("exec %s failed"), shell);
+	warn(_("failed to execute %s"), shell);
 	fflush(stderr);
 
 	return EXIT_FAILURE;

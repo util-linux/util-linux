@@ -1348,7 +1348,7 @@ static void pgfile(FILE *f, const char *name)
 						my_sigset(SIGTERM, oldterm);
 						execl(sh, sh, "-c",
 						      cmd.cmdline + 1, NULL);
-						warn("%s", sh);
+						warn(_("failed to execute %s"), sh);
 						_exit(0177);
 						/* NOTREACHED */
 					}

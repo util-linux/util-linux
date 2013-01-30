@@ -279,7 +279,7 @@ static int swap_reinitialize(const char *device,
 		cmd[idx++] = (char *) device;
 		cmd[idx++] = NULL;
 		execv(cmd[0], cmd);
-		err(EXIT_FAILURE, _("execv failed"));
+		err(EXIT_FAILURE, _("failed to execute %s"), cmd[0]);
 
 	default: /* parent */
 		do {

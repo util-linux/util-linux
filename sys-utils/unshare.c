@@ -115,5 +115,5 @@ int main(int argc, char *argv[])
 
 	execvp(argv[optind], argv + optind);
 
-	err(EXIT_FAILURE, _("exec %s failed"), argv[optind]);
+	err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
 }

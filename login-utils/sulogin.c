@@ -736,11 +736,11 @@ static void sushell(struct passwd *pwd)
 	}
 #endif
 	execl(su_shell, shell, NULL);
-	warn(_("%s: exec failed"), su_shell);
+	warn(_("failed to execute %s"), su_shell);
 
 	setenv("SHELL", "/bin/sh", 1);
 	execl("/bin/sh", profile ? "-sh" : "sh", NULL);
-	warn(_("%s: exec failed"), "/bin/sh");
+	warn(_("failed to execute %s"), "/bin/sh");
 }
 
 static void usage(FILE *out)
