@@ -236,7 +236,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		fprintf(stderr, " %7s - %s\n",
 			level_names[i].name,
 			_(level_names[i].help));
-	fputc(USAGE_SEPARATOR, out);
+	fputs(USAGE_SEPARATOR, out);
 	fprintf(out, USAGE_MAN_TAIL("dmesg(q)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
