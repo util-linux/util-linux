@@ -11,8 +11,22 @@ struct fdisk_ask *fdisk_new_ask(void)
 void fdisk_reset_ask(struct fdisk_ask *ask)
 {
 	assert(ask);
-	free(ask->data.num.range);
 	free(ask->query);
+
+	switch (ask->type) {
+	case FDISK_ASKTYPE_OFFSET:
+	case FDISK_ASKTYPE_NUMBER:
+		free(ask->data.num.range);
+		break;
+	case FDISK_ASKTYPE_WARNX:
+	case FDISK_ASKTYPE_WARN:
+		if (ask->data.print.has_va)
+			va_end(ask->data.print.va);
+		break;
+	default:
+		break;
+	}
+
 	memset(ask, 0, sizeof(*ask));
 }
 
@@ -69,10 +83,12 @@ int fdisk_do_ask(struct fdisk_context *cxt, struct fdisk_ask *ask)
 	return rc;
 }
 
+#define is_number_ask(a)  (fdisk_is_ask(a, NUMBER) || fdisk_is_ask(a, OFFSET))
 
 const char *fdisk_ask_number_get_range(struct fdisk_ask *ask)
 {
 	assert(ask);
+	assert(is_number_ask(ask));
 	return ask->data.num.range;
 }
 
@@ -85,6 +101,7 @@ int fdisk_ask_number_set_range(struct fdisk_ask *ask, const char *range)
 uint64_t fdisk_ask_number_get_default(struct fdisk_ask *ask)
 {
 	assert(ask);
+	assert(is_number_ask(ask));
 	return ask->data.num.dfl;
 }
 
@@ -98,6 +115,7 @@ int fdisk_ask_number_set_default(struct fdisk_ask *ask, uint64_t dflt)
 uint64_t fdisk_ask_number_get_low(struct fdisk_ask *ask)
 {
 	assert(ask);
+	assert(is_number_ask(ask));
 	return ask->data.num.low;
 }
 
@@ -111,6 +129,7 @@ int fdisk_ask_number_set_low(struct fdisk_ask *ask, uint64_t low)
 uint64_t fdisk_ask_number_get_high(struct fdisk_ask *ask)
 {
 	assert(ask);
+	assert(is_number_ask(ask));
 	return ask->data.num.hig;
 }
 
@@ -124,6 +143,7 @@ int fdisk_ask_number_set_high(struct fdisk_ask *ask, uint64_t high)
 uint64_t fdisk_ask_number_get_result(struct fdisk_ask *ask)
 {
 	assert(ask);
+	assert(is_number_ask(ask));
 	return ask->data.num.result;
 }
 
@@ -137,6 +157,7 @@ int fdisk_ask_number_set_result(struct fdisk_ask *ask, uint64_t result)
 uint64_t fdisk_ask_number_get_base(struct fdisk_ask *ask)
 {
 	assert(ask);
+	assert(is_number_ask(ask));
 	return ask->data.num.base;
 }
 
@@ -151,6 +172,7 @@ int fdisk_ask_number_set_base(struct fdisk_ask *ask, uint64_t base)
 uint64_t fdisk_ask_number_get_unit(struct fdisk_ask *ask)
 {
 	assert(ask);
+	assert(is_number_ask(ask));
 	return ask->data.num.unit;
 }
 
@@ -164,6 +186,7 @@ int fdisk_ask_number_set_unit(struct fdisk_ask *ask, uint64_t unit)
 int fdisk_ask_number_is_relative(struct fdisk_ask *ask)
 {
 	assert(ask);
+	assert(is_number_ask(ask));
 	return ask->data.num.relative;
 }
 
@@ -298,6 +321,113 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 	return rc;
 }
 
+#define is_print_ask(a) (fdisk_is_ask(a, WARN) || fdisk_is_ask(a, WARNX) || fdisk_is_ask(a, INFO))
+
+int fdisk_ask_print_get_errno(struct fdisk_ask *ask)
+{
+	assert(ask);
+	assert(is_print_ask(ask));
+	return ask->data.print.errnum;
+}
+
+int fdisk_ask_print_set_errno(struct fdisk_ask *ask, int errnum)
+{
+	assert(ask);
+	ask->data.print.errnum = errnum;
+	return 0;
+}
+
+const char *fdisk_ask_print_get_mesg(struct fdisk_ask *ask)
+{
+	assert(ask);
+	assert(is_print_ask(ask));
+	return ask->data.print.mesg;
+}
+
+/* does not reallocate the message! */
+int fdisk_ask_print_set_mesg(struct fdisk_ask *ask, const char *mesg)
+{
+	assert(ask);
+	ask->data.print.mesg = mesg;
+	return 0;
+}
+
+/* caller has to call va_end(ap) */
+int fdisk_ask_print_get_va(struct fdisk_ask *ask, va_list ap)
+{
+	assert(ask);
+	assert(is_print_ask(ask));
+	va_copy(ap, ask->data.print.va);
+	return 0;
+}
+
+/* note that fdisk_free_ask() calls va_end() to free the private va list. */
+int fdisk_ask_print_set_va(struct fdisk_ask *ask, va_list ap)
+{
+	assert(ask);
+	va_copy(ask->data.print.va, ap);
+	ask->data.print.has_va = 1;
+	return 0;
+}
+
+static int do_vprint(struct fdisk_context *cxt, int errnum, int type,
+		 const char *fmt, va_list va)
+{
+	struct fdisk_ask *ask;
+	int rc;
+
+	assert(cxt);
+
+	ask = fdisk_new_ask();
+	if (!ask)
+		return -ENOMEM;
+
+	fdisk_ask_set_type(ask, type);
+	fdisk_ask_print_set_mesg(ask, fmt);
+	fdisk_ask_print_set_va(ask, va);
+	if (errnum >= 0)
+		fdisk_ask_print_set_errno(ask, errnum);
+	rc = fdisk_do_ask(cxt, ask);
+
+	fdisk_free_ask(ask);
+	return rc;
+}
+
+int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...)
+{
+	int rc;
+	va_list ap;
+
+	assert(cxt);
+	va_start(ap, fmt);
+	rc = do_vprint(cxt, -1, FDISK_ASKTYPE_INFO, fmt, ap);
+	va_end(ap);
+	return rc;
+}
+
+int fdisk_warn(struct fdisk_context *cxt, const char *fmt, ...)
+{
+	int rc;
+	va_list ap;
+
+	assert(cxt);
+	va_start(ap, fmt);
+	rc = do_vprint(cxt, errno, FDISK_ASKTYPE_WARN, fmt, ap);
+	va_end(ap);
+	return rc;
+}
+
+int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...)
+{
+	int rc;
+	va_list ap;
+
+	assert(cxt);
+	va_start(ap, fmt);
+	rc = do_vprint(cxt, -1, FDISK_ASKTYPE_WARNX, fmt, ap);
+	va_end(ap);
+	return rc;
+}
 
 #ifdef TEST_PROGRAM
 struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt) { return NULL; }

@@ -25,6 +25,9 @@
 extern "C" {
 #endif
 
+#include <stdarg.h>
+#include <stdint.h>
+
 struct fdisk_context;
 struct fdisk_label;
 struct fdisk_parttype;
@@ -53,6 +56,9 @@ enum {
 	FDISK_ASKTYPE_NONE = 0,
 	FDISK_ASKTYPE_NUMBER,
 	FDISK_ASKTYPE_OFFSET,
+	FDISK_ASKTYPE_WARN,
+	FDISK_ASKTYPE_WARNX,
+	FDISK_ASKTYPE_INFO
 };
 
 /* init.c */
@@ -117,6 +123,8 @@ extern int fdisk_dos_enable_compatible(struct fdisk_label *lb, int enable);
 extern int fdisk_dos_is_compatible(struct fdisk_label *lb);
 
 /* ask.c */
+#define fdisk_is_ask(a, x) (fdisk_ask_get_type(a) == FDISK_ASKTYPE_ ## x)
+
 extern struct fdisk_ask *fdisk_new_ask(void);
 extern void fdisk_reset_ask(struct fdisk_ask *ask);
 extern void fdisk_free_ask(struct fdisk_ask *ask);
@@ -142,6 +150,17 @@ extern uint64_t fdisk_ask_number_get_result(struct fdisk_ask *ask);
 extern int fdisk_ask_number_set_result(struct fdisk_ask *ask, uint64_t result);
 extern int fdisk_ask_number_set_relative(struct fdisk_ask *ask, int relative);
 extern int fdisk_ask_number_is_relative(struct fdisk_ask *ask);
+
+extern int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...);
+extern int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...);
+extern int fdisk_warn(struct fdisk_context *cxt, const char *fmt, ...);
+
+extern int fdisk_ask_print_get_errno(struct fdisk_ask *ask);
+extern int fdisk_ask_print_set_errno(struct fdisk_ask *ask, int errnum);
+extern const char *fdisk_ask_print_get_mesg(struct fdisk_ask *ask);
+extern int fdisk_ask_print_set_mesg(struct fdisk_ask *ask, const char *mesg);
+extern int fdisk_ask_print_get_va(struct fdisk_ask *ask, va_list ap);
+extern int fdisk_ask_print_set_va(struct fdisk_ask *ask, va_list ap);
 
 #ifdef __cplusplus
 }

@@ -227,6 +227,13 @@ struct fdisk_ask {
 			char		*range;		/* by library generated list */
 			unsigned int	relative:1;
 		} num;
+		/* FDISK_ASKTYPE_{WARN,WARNX,..} */
+		struct ask_print {
+			const char	*mesg;
+			va_list		va;
+			unsigned int	has_va:1;
+			int		errnum;		/* errno */
+		} print;
 	} data;
 };
 
