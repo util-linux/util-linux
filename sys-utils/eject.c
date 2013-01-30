@@ -655,7 +655,7 @@ static void umount_one(const char *name)
 			err(EXIT_FAILURE, _("cannot set group id"));
 
 		if (setuid(getuid()) < 0)
-			err(EXIT_FAILURE, _("eject: cannot set user id"));
+			err(EXIT_FAILURE, _("cannot set user id"));
 
 		if (p_option)
 			execl("/bin/umount", "/bin/umount", name, "-n", NULL);
