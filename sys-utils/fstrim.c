@@ -149,7 +149,7 @@ int main(int argc, char **argv)
 						 SIZE_SUFFIX_SPACE,
 						 (uint64_t) range.len);
 		/* TRANSLATORS: The standard value here is a very large number. */
-		printf(_("%s: %s (%" PRIu64 " bytes) were trimmed\n"),
+		printf(_("%s: %s (%" PRIu64 " bytes) trimmed\n"),
 						path, str,
 						(uint64_t) range.len);
 		free(str);
