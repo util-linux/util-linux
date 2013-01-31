@@ -15,9 +15,12 @@
  * - added Native Language Support
  */
 
+#define __STDC_FORMAT_MACROS
+
 #include <errno.h>
 #include <features.h>
 #include <getopt.h>
+#include <inttypes.h>
 
 #include "c.h"
 #include "nls.h"
@@ -570,7 +573,7 @@ static void print_shm(int shmid, int unit)
 	       shmdata->shm_perm.mode & 0777);
 	ipc_print_size(unit, unit == IPC_UNIT_HUMAN ? _("size=") : _("bytes="),
 		       shmdata->shm_segsz, "\t", 0);
-	printf(_("lpid=%u\tcpid=%u\tnattch=%jd\n"),
+	printf(_("lpid=%u\tcpid=%u\tnattch=%" PRIu64 "\n"),
 	       shmdata->shm_lprid, shmdata->shm_cprid,
 	       shmdata->shm_nattch);
 	printf(_("att_time=%-26.24s\n"),
@@ -601,7 +604,7 @@ void print_msg(int msgid, int unit)
 		       msgdata->q_cbytes, "\t", 0);
 	ipc_print_size(unit, unit == IPC_UNIT_HUMAN ? _("qsize=") : _("qbytes="),
 		       msgdata->q_qbytes, "\t", 0);
-	printf("qnum=%jd\tlspid=%d\tlrpid=%d\n",
+	printf("qnum=%" PRIu64 "\tlspid=%d\tlrpid=%d\n",
 	       msgdata->q_qnum,
 	       msgdata->q_lspid, msgdata->q_lrpid);
 	printf(_("send_time=%-26.24s\n"),

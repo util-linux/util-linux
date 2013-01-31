@@ -84,6 +84,8 @@
  * The probing result is set of NAME=value pairs (the NAME is always unique).
  */
 
+#define __STDC_FORMAT_MACROS
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -551,7 +553,7 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 
 		if (x->off <= off && off + len <= x->off + x->len) {
 			DBG(DEBUG_LOWPROBE,
-				printf("\treuse buffer: off=%jd len=%jd pr=%p\n",
+				printf("\treuse buffer: off=%" PRId64 " len=%" PRId64 " pr=%p\n",
 							x->off, x->len, pr));
 			bf = x;
 			break;
@@ -574,7 +576,7 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 		INIT_LIST_HEAD(&bf->bufs);
 
 		DBG(DEBUG_LOWPROBE,
-			printf("\tbuffer read: off=%jd len=%jd pr=%p\n",
+			printf("\tbuffer read: off=%" PRId64 " len=%" PRId64 " pr=%p\n",
 				off, len, pr));
 
 		ret = read(pr->fd, bf->data, len);
@@ -719,7 +721,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		pr->flags |= BLKID_FL_CDROM_DEV;
 #endif
 
-	DBG(DEBUG_LOWPROBE, printf("ready for low-probing, offset=%jd, size=%jd\n",
+	DBG(DEBUG_LOWPROBE, printf("ready for low-probing, offset=%" PRId64 ", size=%" PRId64 "\n",
 				pr->off, pr->size));
 	DBG(DEBUG_LOWPROBE, printf("whole-disk: %s, regfile: %s\n",
 		blkid_probe_is_wholedisk(pr) ?"YES" : "NO",
@@ -1642,7 +1644,7 @@ void blkid_probe_set_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
 	pr->wipe_chain = chn;
 
 	DBG(DEBUG_LOWPROBE,
-		printf("wiper set to %s::%s off=%jd size=%jd\n",
+		printf("wiper set to %s::%s off=%" PRId64 " size=%" PRId64 "\n",
 			chn->driver->name,
 			chn->driver->idinfos[chn->idx]->name,
 			pr->wipe_off, pr->wipe_size));

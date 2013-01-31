@@ -7,6 +7,9 @@
  * GNU Lesser General Public License.
  *
  */
+
+#define __STDC_FORMAT_MACROS
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -759,9 +762,9 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 		blkid_probe_sprintf_value(pr, "PART_ENTRY_NUMBER",
 				"%d", blkid_partition_get_partno(par));
 
-		blkid_probe_sprintf_value(pr, "PART_ENTRY_OFFSET", "%jd",
+		blkid_probe_sprintf_value(pr, "PART_ENTRY_OFFSET", "%" PRId64,
 				blkid_partition_get_start(par));
-		blkid_probe_sprintf_value(pr, "PART_ENTRY_SIZE", "%jd",
+		blkid_probe_sprintf_value(pr, "PART_ENTRY_SIZE", "%" PRId64,
 				blkid_partition_get_size(par));
 
 		blkid_probe_sprintf_value(pr, "PART_ENTRY_DISK", "%u:%u",
@@ -785,7 +788,7 @@ int blkid_probe_is_covered_by_pt(blkid_probe pr,
 	int nparts, i, rc = 0;
 
 	DBG(DEBUG_LOWPROBE, printf(
-		"=> checking if off=%jd size=%jd covered by PT\n",
+		"=> checking if off=%" PRId64 " size=%" PRId64 " covered by PT\n",
 		offset, size));
 
 	prc = blkid_clone_probe(pr);

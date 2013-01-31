@@ -24,6 +24,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 #include <getopt.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -415,10 +416,10 @@ static void add_tt_line(struct tt *tt, struct lock *l)
 			xasprintf(&str, "%d", l->mandatory);
 			break;
 		case COL_START:
-			xasprintf(&str, "%jd", l->start);
+			xasprintf(&str, "%jd", (intmax_t)l->start);
 			break;
 		case COL_END:
-			xasprintf(&str, "%jd", l->end);
+			xasprintf(&str, "%jd", (intmax_t)l->end);
 			break;
 		case COL_PATH:
 			xasprintf(&str, "%s", l->path ? l->path : notfnd);

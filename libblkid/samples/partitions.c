@@ -5,8 +5,11 @@
  * GNU Lesser General Public License.
  */
 
+#define __STDC_FORMAT_MACROS
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -48,7 +51,7 @@ int main(int argc, char *argv[])
 		errx(EXIT_FAILURE, "%s: does not contains any "
 				 "known partition table\n", devname);
 
-	printf("size: %jd, sector size: %u, PT: %s, offset: %jd\n---\n",
+	printf("size: %" PRId64 ", sector size: %u, PT: %s, offset: %" PRId64 "\n---\n",
 		blkid_probe_get_size(pr),
 		blkid_probe_get_sectorsize(pr),
 		blkid_parttable_get_type(root_tab),

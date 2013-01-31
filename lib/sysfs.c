@@ -4,6 +4,10 @@
  *
  * Written by Karel Zak <kzak@redhat.com>
  */
+
+#define __STDC_FORMAT_MACROS
+
+#include <inttypes.h>
 #include <ctype.h>
 
 #include "c.h"
@@ -829,7 +833,7 @@ int main(int argc, char *argv[])
 	if (sysfs_read_u64(&cxt, "size", &u64))
 		printf("read SIZE failed\n");
 	else
-		printf("SIZE: %jd\n", u64);
+		printf("SIZE: %" PRIu64 "\n", u64);
 
 	if (sysfs_read_int(&cxt, "queue/hw_sector_size", &i))
 		printf("read SECTOR failed\n");

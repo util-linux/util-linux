@@ -19,9 +19,13 @@
  *  - old LOOP_{SET,GET}_STATUS (32bit) ioctls are unsupported
  *  - extendible
  */
+
+#define __STDC_FORMAT_MACROS
+
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
+#include <inttypes.h>
 #include <ctype.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -1012,7 +1016,7 @@ int loopcxt_set_offset(struct loopdev_cxt *lc, uint64_t offset)
 		return -EINVAL;
 	lc->info.lo_offset = offset;
 
-	DBG(lc, loopdev_debug("set offset=%jd", offset));
+	DBG(lc, loopdev_debug("set offset=%" PRIu64, offset));
 	return 0;
 }
 
@@ -1025,7 +1029,7 @@ int loopcxt_set_sizelimit(struct loopdev_cxt *lc, uint64_t sizelimit)
 		return -EINVAL;
 	lc->info.lo_sizelimit = sizelimit;
 
-	DBG(lc, loopdev_debug("set sizelimit=%jd", sizelimit));
+	DBG(lc, loopdev_debug("set sizelimit=%" PRIu64, sizelimit));
 	return 0;
 }
 
@@ -1428,10 +1432,10 @@ static void test_loop_info(const char *device, int flags, int debug)
 	free(p);
 
 	if (loopcxt_get_offset(&lc, &u64) == 0)
-		printf("\tOFFSET: %jd\n", u64);
+		printf("\tOFFSET: %" PRIu64 "\n", u64);
 
 	if (loopcxt_get_sizelimit(&lc, &u64) == 0)
-		printf("\tSIZE LIMIT: %jd\n", u64);
+		printf("\tSIZE LIMIT: %" PRIu64 "\n", u64);
 
 	printf("\tAUTOCLEAR: %s\n", loopcxt_is_autoclear(&lc) ? "YES" : "NOT");
 

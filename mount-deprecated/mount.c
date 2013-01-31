@@ -1211,7 +1211,7 @@ parse_offset(const char **opt, uintmax_t *val)
 		return -1;
 
 	tmp = xmalloc(32);
-	snprintf(tmp, 32, "%jd", *val);
+	snprintf(tmp, 32, "%ju", *val);
 	my_free(*opt);
 	*opt = tmp;
 	return 0;
