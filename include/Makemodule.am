@@ -24,6 +24,7 @@ dist_noinst_HEADERS += \
 	include/mbsalign.h \
 	include/md5.h \
 	include/minix.h \
+	include/namespace.h \
 	include/nls.h \
 	include/optutils.h \
 	include/pager.h \
