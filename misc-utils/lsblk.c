@@ -20,6 +20,8 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#define __STDC_FORMAT_MACROS
+
 #include <stdio.h>
 #include <errno.h>
 #include <getopt.h>
@@ -790,7 +792,7 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 	case COL_SIZE:
 		if (cxt->size) {
 			if (lsblk->bytes)
-				xasprintf(&p, "%jd", cxt->size);
+				xasprintf(&p, "%" PRIu64, cxt->size);
 			else
 				p = size_to_human_string(SIZE_SUFFIX_1LETTER, cxt->size);
 			if (p)

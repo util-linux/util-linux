@@ -154,7 +154,7 @@ static void add_tt_line(struct tt *tt, struct libmnt_fs *fs, int bytes)
 			size = mnt_fs_get_size(fs);
 			size *= 1024;	/* convert to bytes */
 			if (bytes)
-				xasprintf(&str, "%jd", size);
+				xasprintf(&str, "%jd", (intmax_t)size);
 			else
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER, size);
 			break;
@@ -162,7 +162,7 @@ static void add_tt_line(struct tt *tt, struct libmnt_fs *fs, int bytes)
 			size = mnt_fs_get_usedsize(fs);
 			size *= 1024;	/* convert to bytes */
 			if (bytes)
-				xasprintf(&str, "%jd", size);
+				xasprintf(&str, "%jd", (intmax_t)size);
 			else
 				str = size_to_human_string(SIZE_SUFFIX_1LETTER, size);
 			break;

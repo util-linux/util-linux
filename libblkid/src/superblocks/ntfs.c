@@ -7,6 +7,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <unistd.h>
 #include <string.h>
 #include <inttypes.h>
@@ -154,7 +155,7 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 			"cluster_offset=%jd\n",
 			(int) sector_size, mft_record_size,
 			sectors_per_cluster, nr_clusters,
-			off));
+			(intmax_t)off));
 
 	buf_mft = blkid_probe_get_buffer(pr, off, mft_record_size);
 	if (!buf_mft)

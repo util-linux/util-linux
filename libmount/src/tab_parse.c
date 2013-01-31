@@ -281,8 +281,8 @@ static int mnt_parse_swaps_line(struct libmnt_fs *fs, char *s)
 
 	rc = sscanf(s,	UL_SCNsA" "	/* (1) source */
 			UL_SCNsA" "	/* (2) type */
-			"%jd"		/* (3) size */
-			"%jd"		/* (4) used */
+			"%ju"		/* (3) size */
+			"%ju"		/* (4) used */
 			"%d",		/* priority */
 
 			&src,

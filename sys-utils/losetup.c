@@ -4,6 +4,9 @@
  *
  * losetup.c - setup and control loop devices
  */
+
+#define __STDC_FORMAT_MACROS
+
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -236,13 +239,13 @@ static int set_tt_data(struct loopdev_cxt *lc, struct tt_line *ln)
 			break;
 		case COL_OFFSET:
 			if (loopcxt_get_offset(lc, &x) == 0)
-				xasprintf(&np, "%jd", x);
+				xasprintf(&np, "%" PRIu64, x);
 			if (np)
 				tt_line_set_data(ln, i, np);
 			break;
 		case COL_SIZELIMIT:
 			if (loopcxt_get_sizelimit(lc, &x) == 0)
-				xasprintf(&np, "%jd", x);
+				xasprintf(&np, "%" PRIu64, x);
 			if (np)
 				tt_line_set_data(ln, i, np);
 			break;

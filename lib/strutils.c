@@ -3,6 +3,8 @@
  * Copyright (C) 2010 Davidlohr Bueso <dave@gnu.org>
  */
 
+#define __STDC_FORMAT_MACROS
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
@@ -404,7 +406,7 @@ char *size_to_human_string(int options, uint64_t bytes)
 
 	*psuf = '\0';
 
-	/* fprintf(stderr, "exp: %d, unit: %c, dec: %d, frac: %jd\n",
+	/* fprintf(stderr, "exp: %d, unit: %c, dec: %d, frac: %" PRIu64 "\n",
 	 *                 exp, suffix[0], dec, frac);
 	 */
 
@@ -421,7 +423,7 @@ char *size_to_human_string(int options, uint64_t bytes)
 
 		if (!dp || !*dp)
 			dp = ".";
-		snprintf(buf, sizeof(buf), "%d%s%jd%s", dec, dp, frac, suffix);
+		snprintf(buf, sizeof(buf), "%d%s%" PRIu64 "%s", dec, dp, frac, suffix);
 	} else
 		snprintf(buf, sizeof(buf), "%d%s", dec, suffix);
 

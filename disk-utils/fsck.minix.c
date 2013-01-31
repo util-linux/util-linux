@@ -91,6 +91,7 @@
 
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdint.h>
 #include <errno.h>
 #include <unistd.h>
 #include <string.h>
@@ -627,7 +628,7 @@ read_tables(void) {
 	if (show) {
 		printf(_("%ld inodes\n"), inodes);
 		printf(_("%ld blocks\n"), zones);
-		printf(_("Firstdatazone=%jd (%jd)\n"), first_zone, norm_first_zone);
+		printf(_("Firstdatazone=%jd (%jd)\n"), (intmax_t)first_zone, (intmax_t)norm_first_zone);
 		printf(_("Zonesize=%d\n"), MINIX_BLOCK_SIZE << get_zone_size());
 		printf(_("Maxsize=%zu\n"), get_max_size());
 		printf(_("Filesystem state=%d\n"), Super.s_state);

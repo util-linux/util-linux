@@ -118,7 +118,7 @@ static void read_pte(struct fdisk_context *cxt, int pno, sector_t offset)
 	pe->sectorbuffer = xcalloc(1, cxt->sector_size);
 
 	if (read_sector(cxt, offset, pe->sectorbuffer) != 0)
-		fprintf(stderr, _("Failed to read extended partition table (offset=%jd)\n"),
+		fprintf(stderr, _("Failed to read extended partition table (offset=%ju)\n"),
 					(uintmax_t) offset);
 	pe->changed = 0;
 	pe->part_table = pe->ext_pointer = NULL;
@@ -850,7 +850,7 @@ static int write_sector(struct fdisk_context *cxt, sector_t secno,
 
 	rc = seek_sector(cxt, secno);
 	if (rc != 0) {
-		fprintf(stderr, _("write sector %jd failed: seek failed"),
+		fprintf(stderr, _("write sector %ju failed: seek failed"),
 				(uintmax_t) secno);
 		return rc;
 	}

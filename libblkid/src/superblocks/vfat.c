@@ -8,8 +8,12 @@
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  */
+
+#define __STDC_FORMAT_MACROS
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
@@ -125,7 +129,7 @@ static unsigned char *search_fat_label(blkid_probe pr,
 
 	DBG(DEBUG_LOWPROBE,
 		printf("\tlook for label in root-dir "
-			"(entries: %d, offset: %jd)\n", entries, offset));
+			"(entries: %d, offset: %" PRIu64 ")\n", entries, offset));
 
 	if (!blkid_probe_is_tiny(pr)) {
 		/* large disk, read whole root directory */

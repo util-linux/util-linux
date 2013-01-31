@@ -14,6 +14,7 @@
 #include <ctype.h>
 #include <blkid.h>
 #include <stddef.h>
+#include <stdint.h>
 
 #include "mountP.h"
 #include "strutils.h"
@@ -1452,9 +1453,9 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 	if (mnt_fs_get_swaptype(fs))
 		fprintf(file, "swaptype: %s\n", mnt_fs_get_swaptype(fs));
 	if (mnt_fs_get_size(fs))
-		fprintf(file, "size: %jd\n", mnt_fs_get_size(fs));
+		fprintf(file, "size: %jd\n", (intmax_t)mnt_fs_get_size(fs));
 	if (mnt_fs_get_usedsize(fs))
-		fprintf(file, "usedsize: %jd\n", mnt_fs_get_usedsize(fs));
+		fprintf(file, "usedsize: %jd\n", (intmax_t)mnt_fs_get_usedsize(fs));
 	if (mnt_fs_get_priority(fs))
 		fprintf(file, "priority: %d\n", mnt_fs_get_priority(fs));
 
