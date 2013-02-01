@@ -98,10 +98,14 @@ static int allow_setgid(struct passwd *pe, struct group *ge)
 	if (!(pwd = get_gshadow_pwd(ge->gr_name)))
 		pwd = ge->gr_passwd;
 
-	if (pwd && *pwd && (xpwd = getpass(_("Password: "))))
-		if (strcmp(pwd, crypt(xpwd, pwd)) == 0)
-			/* password accepted */
+	if (pwd && *pwd && (xpwd = getpass(_("Password: ")))) {
+		char *cbuf = crypt(xpwd, pwd);
+
+		if (!cbuf)
+			warn(_("crypt() failed"));
+		else if (strcmp(pwd, cbuf) == 0)
 			return TRUE;
+	}
 
 	/* default to denial */
 	return FALSE;
