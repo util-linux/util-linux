@@ -64,6 +64,17 @@ library.  It can determine the type of content (e.g. filesystem or swap)
 that a block device holds, and also attributes (tokens, NAME=value pairs)
 from the content metadata (e.g. LABEL or UUID fields).
 .PP
+Note that
+.B blkid
+reads information directly from devices and for non-root users
+it returns cached unverified information. It's better to use
+.B lsblk --fs
+to get user-friendly overview about filesystems and devices. 
+.BR lsblk (8)
+is also easy to use in scripts.
+.B blkid
+is mostly designed for system services and to test libblkid functionality.
+.PP
 .B blkid
 has two main forms of operation: either searching for a device with a
 specific NAME=value pair, or displaying NAME=value pairs for one or
