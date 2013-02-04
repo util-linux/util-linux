@@ -6,11 +6,7 @@
 /* Supported VTOC setting */
 #define SUN_VTOC_SANITY		0x600DDEEE	/* magic number */
 #define SUN_VTOC_VERSION	1
-
 #define SUN_MAXPARTITIONS	8
-
-/* Partition IDs */
-#define SUN_TAG_WHOLEDISK          0x05
 
 struct sun_disklabel {
 	unsigned char info[128];   /* Informative text string */
@@ -20,9 +16,9 @@ struct sun_disklabel {
 		char	 volume[8];   /* volume name */
 		uint16_t nparts;      /* num of partitions */
 
-		struct sun_info {     /* partition information */
-			uint16_t id;  /* tag */
-			uint16_t flags;
+		struct sun_info {        /* partition information */
+			uint16_t id;     /* SUN_TAG_*  */
+			uint16_t flags;  /* SUN_FLAG_* */
 		} __attribute__ ((packed)) infos[8];
 
 		uint16_t padding;      /* padding */
@@ -57,6 +53,26 @@ struct sun_disklabel {
 	uint16_t csum;                 /* label xor'd checksum */
 } __attribute__ ((packed));
 
+
+#define SUN_TAG_UNASSIGNED	0x00	/* Unassigned partition */
+#define SUN_TAG_BOOT		0x01	/* Boot partition	*/
+#define SUN_TAG_ROOT		0x02	/* Root filesystem	*/
+#define SUN_TAG_SWAP		0x03	/* Swap partition	*/
+#define SUN_TAG_USR		0x04	/* /usr filesystem	*/
+#define SUN_TAG_WHOLEDISK	0x05	/* Full-disk slice	*/
+#define SUN_TAG_STAND		0x06	/* Stand partition	*/
+#define SUN_TAG_VAR		0x07	/* /var filesystem	*/
+#define SUN_TAG_HOME		0x08	/* /home filesystem	*/
+#define SUN_TAG_ALTSCTR		0x09	/* Alt sector partition	*/
+#define SUN_TAG_CACHE		0x0a	/* Cachefs partition	*/
+#define SUN_TAG_RESERVED	0x0b	/* SMI reserved data	*/
+#define SUN_TAG_LINUX_SWAP	0x82	/* Linux SWAP		*/
+#define SUN_TAG_LINUX_NATIVE	0x83	/* Linux filesystem	*/
+#define SUN_TAG_LINUX_LVM	0x8e	/* Linux LVM		*/
+#define SUN_TAG_LINUX_RAID	0xfd	/* LInux RAID		*/
+
+#define SUN_FLAG_UNMNT		0x01	/* Unmountable partition*/
+#define SUN_FLAG_RONLY		0x10	/* Read only		*/
 
 static inline uint16_t sun_pt_checksum(struct sun_disklabel *label)
 {

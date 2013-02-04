@@ -32,7 +32,6 @@ struct sun_tag_flag {
 #define SUN_FLAG_RONLY		0x10	/* Read only		*/
 };
 
-#define SUN_LABEL_SIZE		512
 
 #define SUN_LABEL_ID_SIZE	128
 #define SUN_VOLUME_ID_SIZE	8
