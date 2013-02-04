@@ -37,8 +37,8 @@ struct sun_tag_flag {
 #define SUN_LABEL_ID_SIZE	128
 #define SUN_VOLUME_ID_SIZE	8
 
-#define SUN_LABEL_VERSION	0x00000001
-#define SUN_LABEL_SANE		0x600ddeee
+#define SUN_LABEL_VERSION	1
+#define SUN_LABEL_SANE		0x600DDEEE
 #define SUN_NUM_PARTITIONS	8
 
 struct sun_disk_label {
@@ -72,7 +72,6 @@ struct sun_disk_label {
 };
 
 #define SUN_LABEL_MAGIC		0xDABE
-#define SUN_LABEL_MAGIC_SWAPPED	0xBEDA
 
 /* fdisksunlabel.c */
 extern int sun_change_sysid(struct fdisk_context *cxt, size_t i, uint16_t sys);
