@@ -414,6 +414,7 @@ extern int blkid_probe_has_value(blkid_probe pr, const char *name)
 			__ul_attribute__((warn_unused_result));
 
 extern int blkid_do_wipe(blkid_probe pr, int dryrun);
+extern int blkid_probe_step_back(blkid_probe pr);
 
 /*
  * Deprecated functions/macros

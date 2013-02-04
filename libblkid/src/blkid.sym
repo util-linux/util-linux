@@ -146,3 +146,10 @@ global:
 	blkid_do_wipe;
 } BLKID_2.20;
 
+/*
+ * symbols since util-linux 2.23
+ */
+BLKID_2.23 {
+global:
+	blkid_probe_step_back;
+} BLKID_2.21;
