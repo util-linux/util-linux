@@ -49,7 +49,7 @@ static int probe_sun_pt(blkid_probe pr,
 		goto err;
 
 	/* sectors per cylinder (partition offset is in cylinders...) */
-	spc = be16_to_cpu(l->ntrks) * be16_to_cpu(l->nsect);
+	spc = be16_to_cpu(l->nhead) * be16_to_cpu(l->nsect);
 
 	DBG(DEBUG_LOWPROBE,
 		printf("Sun VTOC sanity=%u version=%u nparts=%u\n",

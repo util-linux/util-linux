@@ -3,17 +3,19 @@
 
 #include <stdint.h>
 
+#define SUN_LABEL_MAGIC		0xDABE
+
 /* Supported VTOC setting */
 #define SUN_VTOC_SANITY		0x600DDEEE	/* magic number */
 #define SUN_VTOC_VERSION	1
 #define SUN_MAXPARTITIONS	8
 
 struct sun_disklabel {
-	unsigned char info[128];   /* Informative text string */
+	unsigned char label_id[128];   /* Informative text string */
 
 	struct sun_vtoc {
 		uint32_t version;     /* version */
-		char	 volume[8];   /* volume name */
+		char	 volume_id[8];/* volume name */
 		uint16_t nparts;      /* num of partitions */
 
 		struct sun_info {        /* partition information */
@@ -31,15 +33,15 @@ struct sun_disklabel {
 	uint32_t write_reinstruct;     /* sectors to skip, writes */
 	uint32_t read_reinstruct;      /* sectors to skip, reads */
 	unsigned char spare[148];      /* padding */
-	uint16_t rspeed;               /* disk rotational speed */
-	uint16_t pcylcount;            /* physical cylinder count */
-	uint16_t sparecyl;             /* extra sects per cylinder */
+	uint16_t rpm;                  /* disk rotational speed */
+	uint16_t pcyl;                 /* physical cylinder count */
+	uint16_t apc;                  /* extra sects per cylinder */
 	uint16_t obs1;
 	uint16_t obs2;
-	uint16_t ilfact;               /* interleave factor */
+	uint16_t intrlv;               /* interleave factor */
 	uint16_t ncyl;                 /* data cylinder count */
-	uint16_t nacyl;                /* alt. cylinder count */
-	uint16_t ntrks;                /* tracks per cylinder   <---- */
+	uint16_t acyl;                 /* alt. cylinder count */
+	uint16_t nhead;                /* tracks per cylinder   <---- */
 	uint16_t nsect;                /* sectors per track     <---- */
 	uint16_t obs3;
 	uint16_t obs4;
