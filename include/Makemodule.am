@@ -44,4 +44,5 @@ dist_noinst_HEADERS += \
 	include/wholedisk.h \
 	include/widechar.h \
 	include/xalloc.h \
-	include/xgetpass.h
+	include/xgetpass.h \
+	include/pt-sun.h
