@@ -100,8 +100,9 @@ char *safe_getenv(const char *arg)
 		return NULL;
 #endif
 #endif
-
-#ifdef HAVE___SECURE_GETENV
+#ifdef HAVE_SECURE_GETENV
+return secure_getenv(arg);
+#elif HAVE___SECURE_GETENV
 	return __secure_getenv(arg);
 #else
 	return getenv(arg);

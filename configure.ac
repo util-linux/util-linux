@@ -298,6 +298,7 @@ AC_CHECK_DECL([strsignal],
 
 AC_CHECK_FUNCS([ \
 	__fpending \
+	secure_getenv \
 	__secure_getenv \
 	err \
 	errx \
