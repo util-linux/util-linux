@@ -29,13 +29,13 @@
 #include <sys/prctl.h>
 #include <unistd.h>
 
-#include "bitops.h"
 #include "c.h"
 #include "closestream.h"
 #include "nls.h"
 #include "optutils.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "pathnames.h"
 
 #ifndef PR_SET_NO_NEW_PRIVS
 # define PR_SET_NO_NEW_PRIVS 38
@@ -54,7 +54,6 @@
  */
 
 struct privctx {
-	/* bit arrays -- see include/bitops.h */
 	unsigned int
 		nnp:1,			/* no_new_privs */
 		have_ruid:1,		/* real uid */
@@ -127,7 +126,7 @@ static int real_cap_last_cap(void)
 	if (ret != -1)
 		return ret;
 
-	f = fopen("/proc/sys/kernel/cap_last_cap", "r");
+	f = fopen(_PATH_PROC_CAPLASTCAP, "r");
 	if (!f) {
 		ret = CAP_LAST_CAP;	/* guess */
 		return ret;
@@ -218,9 +217,9 @@ static void dump_label(const char *name)
 	ssize_t len;
 	int fd, e;
 
-	fd = open("/proc/self/attr/current", O_RDONLY);
+	fd = open(_PATH_PROC_ATTR_CURRENT, O_RDONLY);
 	if (fd == -1) {
-		warnx(_("cannot open %s"), "/proc/self/attr/current");
+		warn(_("cannot open %s"), _PATH_PROC_ATTR_CURRENT);
 		return;
 	}
 
@@ -229,7 +228,7 @@ static void dump_label(const char *name)
 	close(fd);
 	if (len < 0) {
 		errno = e;
-		warnx(_("read failed: %s"), name);
+		warn(_("read failed: %s"), name);
 		return;
 	}
 	if (sizeof(buf) - 1 <= (size_t)len) {
@@ -247,6 +246,7 @@ static void dump_groups(void)
 {
 	int n = getgroups(0, 0);
 	gid_t *groups;
+
 	if (n < 0) {
 		warn("getgroups failed");
 		return;
@@ -329,10 +329,10 @@ static void dump(int dumplevel)
 
 	dump_securebits();
 
-	if (access("/sys/fs/selinux", F_OK) == 0)
+	if (access(_PATH_SYS_SELINUX, F_OK) == 0)
 		dump_label(_("SELinux label"));
 
-	if (access("/sys/kernel/security/apparmor", F_OK) == 0) {
+	if (access(_PATH_SYS_APPARMOR, F_OK) == 0) {
 		dump_label(_("AppArmor profile"));
 	}
 }
@@ -369,7 +369,7 @@ static void parse_groups(struct privctx *opts, const char *str)
 	opts->groups = xcalloc(opts->num_groups, sizeof(gid_t));
 	while ((c = strsep(&groups, ",")))
 		opts->groups[i++] = (gid_t) strtol_or_err(c,
-							  _("Invalid supplementary group id"));
+						  _("Invalid supplementary group id"));
 
 	free(groups);
 }
@@ -510,19 +510,19 @@ static void do_selinux_label(const char *label)
 	int fd;
 	size_t len;
 
-	if (access("/sys/fs/selinux", F_OK) != 0)
+	if (access(_PATH_SYS_SELINUX, F_OK) != 0)
 		errx(SETPRIV_EXIT_PRIVERR, _("SELinux is not running"));
 
-	fd = open("/proc/self/attr/exec", O_RDWR);
+	fd = open(_PATH_PROC_ATTR_EXEC, O_RDWR);
 	if (fd == -1)
 		err(SETPRIV_EXIT_PRIVERR,
-		    _("cannot open %s"), "/proc/self/attr/exec");
+		    _("cannot open %s"), _PATH_PROC_ATTR_EXEC);
 
 	len = strlen(label);
 	errno = 0;
 	if (write(fd, label, len) != (ssize_t) len)
 		err(SETPRIV_EXIT_PRIVERR,
-		    _("write failed: %s"), "/proc/self/attr/exec");
+		    _("write failed: %s"), _PATH_PROC_ATTR_EXEC);
 
 	close(fd);
 }
@@ -531,18 +531,18 @@ static void do_apparmor_profile(const char *label)
 {
 	FILE *f;
 
-	if (access("/sys/kernel/security/apparmor", F_OK) != 0)
+	if (access(_PATH_SYS_APPARMOR, F_OK) != 0)
 		errx(SETPRIV_EXIT_PRIVERR, _("AppArmor is not running"));
 
-	f = fopen("/proc/self/attr/exec", "wx");
+	f = fopen(_PATH_PROC_ATTR_EXEC, "wx");
 	if (!f)
 		err(SETPRIV_EXIT_PRIVERR,
-		    _("cannot open %s"), "/proc/self/attr/exec");
+		    _("cannot open %s"), _PATH_PROC_ATTR_EXEC);
 
 	if (fprintf(f, "changeprofile %s", label) < 0 || fflush(f) != 0
 	    || fclose(f) != 0)
 		err(SETPRIV_EXIT_PRIVERR,
-		    _("write failed: %s"), "/proc/self/attr/exec");
+		    _("write failed: %s"), _PATH_PROC_ATTR_EXEC);
 }
 
 int main(int argc, char **argv)

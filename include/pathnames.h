@@ -84,10 +84,18 @@
 #define _PATH_PROC_LOCKS        "/proc/locks"
 #define _PATH_PROC_CDROMINFO	"/proc/sys/dev/cdrom/info"
 
+#define _PATH_PROC_ATTR_CURRENT	"/proc/self/attr/current"
+#define _PATH_PROC_ATTR_EXEC	"/proc/self/attr/exec"
+#define _PATH_PROC_CAPLASTCAP	"/proc/sys/kernel/cap_last_cap"
+
+
 #define _PATH_SYS_BLOCK		"/sys/block"
 #define _PATH_SYS_DEVBLOCK	"/sys/dev/block"
 #define _PATH_SYS_CLASS		"/sys/class"
 #define _PATH_SYS_SCSI		"/sys/bus/scsi"
+
+#define _PATH_SYS_SELINUX	"/sys/fs/selinux"
+#define _PATH_SYS_APPARMOR	"/sys/kernel/security/apparmor"
 
 #ifndef _PATH_MOUNTED
 # ifdef MOUNTED					/* deprecated */
