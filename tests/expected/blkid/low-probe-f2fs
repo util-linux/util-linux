@@ -1,0 +1,7 @@
+ID_FS_LABEL=test-f2fs
+ID_FS_LABEL_ENC=test-f2fs
+ID_FS_TYPE=f2fs
+ID_FS_USAGE=filesystem
+ID_FS_UUID=f6aee5b9-8cc2-4da7-9f8d-c95aac90e17d
+ID_FS_UUID_ENC=f6aee5b9-8cc2-4da7-9f8d-c95aac90e17d
+ID_FS_VERSION=1.1
