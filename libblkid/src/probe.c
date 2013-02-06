@@ -183,6 +183,8 @@ blkid_probe blkid_clone_probe(blkid_probe parent)
 	pr->flags = parent->flags;
 	pr->parent = parent;
 
+	pr->flags &= ~BLKID_FL_PRIVATE_FD;
+
 	return pr;
 }
 
