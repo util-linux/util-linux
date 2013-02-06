@@ -689,7 +689,7 @@ int main(int argc, char **argv)
 		case INHCAPS:
 			if (opts.caps_to_inherit)
 				errx(EXIT_FAILURE,
-				     _("duplicate --caps option"));
+				     _("duplicate --inh-caps option"));
 			opts.caps_to_inherit = optarg;
 			break;
 		case CAPBSET:
