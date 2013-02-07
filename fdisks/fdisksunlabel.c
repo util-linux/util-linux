@@ -352,10 +352,10 @@ static void fetch_sun(struct fdisk_context *cxt,
 	}
 }
 
-static unsigned int *verify_sun_starts;
-
-static int verify_sun_cmp(int *a, int *b)
+static int verify_sun_cmp(int *a, int *b, void *data)
 {
+    unsigned int *verify_sun_starts = (unsigned int *) data;
+
     if (*a == -1)
 	    return 1;
     if (*b == -1)
@@ -370,6 +370,7 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
     uint32_t starts[SUN_MAXPARTITIONS], lens[SUN_MAXPARTITIONS], start, stop;
     uint32_t i,j,k,starto,endo;
     int array[SUN_MAXPARTITIONS];
+    unsigned int *verify_sun_starts;
 
     assert(cxt);
     assert(cxt->label);
@@ -410,14 +411,16 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
 	    }
 	}
     }
+
     for (i = 0; i < SUN_MAXPARTITIONS; i++) {
         if (lens[i])
             array[i] = i;
         else
             array[i] = -1;
     }
-    qsort(array,ARRAY_SIZE(array),sizeof(array[0]),
-	  (int (*)(const void *,const void *)) verify_sun_cmp);
+    qsort_r(array,ARRAY_SIZE(array),sizeof(array[0]),
+	  (int (*)(const void *,const void *,void *)) verify_sun_cmp,
+	  verify_sun_starts);
 
     if (array[0] == -1) {
 	printf(_("No partitions defined\n"));
@@ -434,7 +437,6 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
     start = (starts[array[i]] + lens[array[i]]);
     if (start < stop)
         printf(_("Unused gap - sectors %d-%d\n"), start, stop);
-
     return 0;
 }
 
@@ -661,12 +663,18 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 	}
 }
 
+
 void sun_set_alt_cyl(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
-	sunlabel->acyl =
-		cpu_to_be16(read_int(cxt, 0, be16_to_cpu(sunlabel->acyl), 65535, 0,
-				 _("Number of alternate cylinders")));
+	uintmax_t res;
+	int rc = fdisk_ask_number(cxt, 0,			/* low */
+			be16_to_cpu(sunlabel->acyl),		/* default */
+			65535,					/* high */
+			_("Number of alternate cylinders"),	/* query */
+			&res);					/* result */
+	if (!rc)
+		sunlabel->acyl = cpu_to_be16(res);
 }
 
 void sun_set_ncyl(struct fdisk_context *cxt, int cyl)
@@ -678,33 +686,54 @@ void sun_set_ncyl(struct fdisk_context *cxt, int cyl)
 void sun_set_xcyl(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
-	sunlabel->apc =
-		cpu_to_be16(read_int(cxt, 0, be16_to_cpu(sunlabel->apc), cxt->geom.sectors, 0,
-				 _("Extra sectors per cylinder")));
+	uintmax_t res;
+	int rc = fdisk_ask_number(cxt, 0,			/* low */
+			be16_to_cpu(sunlabel->apc),		/* default */
+			cxt->geom.sectors,			/* high */
+			_("Extra sectors per cylinder"),	/* query */
+			&res);					/* result */
+	if (!rc)
+		sunlabel->apc = cpu_to_be16(res);
 }
 
 void sun_set_ilfact(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
-	sunlabel->intrlv =
-		cpu_to_be16(read_int(cxt, 1, be16_to_cpu(sunlabel->intrlv), 32, 0,
-				 _("Interleave factor")));
+	uintmax_t res;
+	int rc = fdisk_ask_number(cxt, 1,			/* low */
+			be16_to_cpu(sunlabel->intrlv),		/* default */
+			32,					/* high */
+			_("Interleave factor"),	/* query */
+			&res);					/* result */
+	if (!rc)
+		sunlabel->intrlv = cpu_to_be16(res);
 }
 
 void sun_set_rspeed(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
-	sunlabel->rpm =
-		cpu_to_be16(read_int(cxt, 1, be16_to_cpu(sunlabel->rpm), 100000, 0,
-				 _("Rotation speed (rpm)")));
+	uintmax_t res;
+	int rc = fdisk_ask_number(cxt, 1,			/* low */
+			be16_to_cpu(sunlabel->rpm),		/* default */
+			USHRT_MAX,				/* high */
+			_("Rotation speed (rpm)"),		/* query */
+			&res);					/* result */
+	if (!rc)
+		sunlabel->rpm = cpu_to_be16(res);
+
 }
 
 void sun_set_pcylcount(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
-	sunlabel->pcyl =
-		cpu_to_be16(read_int(cxt, 0, be16_to_cpu(sunlabel->pcyl), 65535, 0,
-				 _("Number of physical cylinders")));
+	uintmax_t res;
+	int rc = fdisk_ask_number(cxt, 0,			/* low */
+			be16_to_cpu(sunlabel->pcyl),		/* default */
+			USHRT_MAX,				/* high */
+			_("Number of physical cylinders"),	/* query */
+			&res);					/* result */
+	if (!rc)
+		sunlabel->pcyl = cpu_to_be16(res);
 }
 
 static int sun_write_disklabel(struct fdisk_context *cxt)
