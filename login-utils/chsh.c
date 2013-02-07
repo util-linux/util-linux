@@ -1,6 +1,7 @@
 /*
  *   chsh.c -- change your login shell
  *   (c) 1994 by salvatore valente <svalente@athena.mit.edu>
+ *   (c) 2012 by Cody Maloney <cmaloney@theoreticalchaos.com>
  *
  *   this program is free software.  you can redistribute it and
  *   modify it under the terms of the gnu general public license.
@@ -32,7 +33,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "auth.h"
 #include "c.h"
 #include "env.h"
 #include "closestream.h"
@@ -46,6 +46,14 @@
 # include <selinux/selinux.h>
 # include <selinux/av_permissions.h>
 # include "selinux_utils.h"
+#endif
+
+
+#ifdef HAVE_LIBUSER
+# include <libuser/user.h>
+# include "libuser.h"
+#else
+# include "auth.h"
 #endif
 
 struct sinfo {
@@ -131,7 +139,12 @@ int main(int argc, char **argv)
 		oldshell = _PATH_BSHELL;	/* default */
 
 	/* reality check */
+#ifdef HAVE_LIBUSER
+	/* If we're setuid and not really root, disallow the password change. */
+	if (geteuid() != getuid() && uid != pw->pw_uid) {
+#else
 	if (uid != 0 && uid != pw->pw_uid) {
+#endif
 		errno = EACCES;
 		err(EXIT_FAILURE,
 		    _("running UID doesn't match UID of user we're "
@@ -147,9 +160,11 @@ int main(int argc, char **argv)
 
 	printf(_("Changing shell for %s.\n"), pw->pw_name);
 
+#ifndef HAVE_LIBUSER
 	if(!auth_pam("chsh", uid, pw->pw_name)) {
 		return EXIT_FAILURE;
 	}
+#endif
 
 	if (!shell) {
 		shell = prompt(_("New shell"), oldshell);
@@ -162,10 +177,15 @@ int main(int argc, char **argv)
 
 	if (strcmp(oldshell, shell) == 0)
 		errx(EXIT_SUCCESS, _("Shell not changed."));
+
+#ifdef HAVE_LIBUSER
+	set_value_libuser("chsh", pw->pw_name, uid, LU_LOGINSHELL, shell);
+#else
 	pw->pw_shell = shell;
 	if (setpwnam(pw) < 0)
 		err(EXIT_FAILURE, _("setpwnam failed\n"
 			"Shell *NOT* changed.  Try again later."));
+#endif
 
 	printf(_("Shell changed.\n"));
 	return EXIT_SUCCESS;

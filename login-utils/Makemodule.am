@@ -73,6 +73,9 @@ chfn_chsh_ldadd = libcommon.la -lpam -lpam_misc
 if HAVE_USER
 chfn_chsh_ldflags += $(LIBUSER_LIBS)
 chfn_chsh_cflags += $(LIBUSER_CFLAGS)
+chfn_chsh_sources+= \
+	login-utils/libuser.c \
+	login-utils/libuser.h
 endif
 
 if HAVE_SELINUX
