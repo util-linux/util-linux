@@ -4,7 +4,6 @@
 #include "pt-sun.h"
 
 /* fdisksunlabel.c */
-extern int sun_change_sysid(struct fdisk_context *cxt, size_t i, uint16_t sys);
 extern void sun_list_table(struct fdisk_context *cxt, int xtra);
 extern void sun_set_alt_cyl(struct fdisk_context *cxt);
 extern void sun_set_ncyl(struct fdisk_context *cxt, int cyl);
