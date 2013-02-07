@@ -22,24 +22,62 @@
 struct silicon_metadata {
 	uint8_t		unknown0[0x2E];
 	uint8_t		ascii_version[0x36 - 0x2E];
-	uint8_t		diskname[0x56 - 0x36];
-	uint8_t		unknown1[0x60 - 0x56];
+	int8_t		diskname[0x56 - 0x36];
+	int8_t		unknown1[0x60 - 0x56];
 	uint32_t	magic;
-	uint32_t	unknown1a[0x6C - 0x64];
+	int8_t		unknown1a[0x6C - 0x64];
 	uint32_t	array_sectors_low;
 	uint32_t	array_sectors_high;
-	uint8_t		unknown2[0x78 - 0x74];
+	int8_t		unknown2[0x78 - 0x74];
 	uint32_t	thisdisk_sectors;
-	uint8_t		unknown3[0x100 - 0x7C];
-	uint8_t		unknown4[0x104 - 0x100];
+	int8_t		unknown3[0x100 - 0x7C];
+	int8_t		unknown4[0x104 - 0x100];
 	uint16_t	product_id;
 	uint16_t	vendor_id;
 	uint16_t	minor_ver;
 	uint16_t	major_ver;
+	uint8_t		seconds;
+	uint8_t		minutes;
+	uint8_t		hour;
+	uint8_t		day;
+	uint8_t		month;
+	uint8_t		year;
+	uint16_t	raid0_stride;
+	int8_t		unknown6[0x116 - 0x114];
+	uint8_t		disk_number;
+	uint8_t		type;			/* SILICON_TYPE_* */
+	int8_t		drives_per_striped_set;
+	int8_t		striped_set_number;
+	int8_t		drives_per_mirrored_set;
+	int8_t		mirrored_set_number;
+	uint32_t	rebuild_ptr_low;
+	uint32_t	rebuild_ptr_high;
+	uint32_t	incarnation_no;
+	uint8_t		member_status;
+	uint8_t		mirrored_set_state;	/* SILICON_MIRROR_* */
+	uint8_t		reported_device_location;
+	uint8_t		idechannel;
+	uint8_t		auto_rebuild;
+	uint8_t		unknown8;
+	uint8_t		text_type[0x13E - 0x12E];
+	uint16_t	checksum1;
+	int8_t		assumed_zeros[0x1FE - 0x140];
+	uint16_t	checksum2;
 } __attribute__((packed));
 
 #define SILICON_MAGIC		0x2F000000
 
+static int checksum(struct silicon_metadata *sil)
+{
+	int sum = 0;
+	unsigned short count = offsetof(struct silicon_metadata, checksum1) / 2;
+	uint16_t *p = (uint16_t *) sil;
+
+	while (count--)
+		sum += *p++;
+
+	return (-sum & 0xFFFF) == sil->checksum1;
+}
 
 static int probe_silraid(blkid_probe pr,
 		const struct blkid_idmag *mag __attribute__((__unused__)))
@@ -62,11 +100,18 @@ static int probe_silraid(blkid_probe pr,
 
 	if (le32_to_cpu(sil->magic) != SILICON_MAGIC)
 		return -1;
+	if (sil->disk_number >= 8)
+		return -1;
+	if (!checksum(sil)) {
+		DBG(DEBUG_LOWPROBE, printf("silicon raid: incorrect checksum\n"));
+		return -1;
+	}
 
 	if (blkid_probe_sprintf_version(pr, "%u.%u",
 				le16_to_cpu(sil->major_ver),
 				le16_to_cpu(sil->minor_ver)) != 0)
 		return -1;
+
 	if (blkid_probe_set_magic(pr,
 			off + offsetof(struct silicon_metadata, magic),
 			sizeof(sil->magic),

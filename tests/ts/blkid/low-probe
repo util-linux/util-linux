@@ -37,7 +37,6 @@ for img in $(ls $TS_SELF/images-fs/*.img.bz2 | sort); do
 
 	bunzip2 < $img > $outimg
 
-	#/lib/udev/vol_id $outimg  | egrep -v '[[:alnum:]_]*=$' | sort > $TS_OUTPUT 2>&1
 	$TS_CMD_BLKID -p -o udev $outimg 2>&1 | sort > $TS_OUTPUT
 	ts_finalize_subtest
 done
