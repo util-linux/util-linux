@@ -76,7 +76,7 @@ static int checksum(struct silicon_metadata *sil)
 	while (count--)
 		sum += *p++;
 
-	return (-sum & 0xFFFF) == sil->checksum1;
+	return (-sum & 0xFFFF) == le16_to_cpu(sil->checksum1);
 }
 
 static int probe_silraid(blkid_probe pr,
