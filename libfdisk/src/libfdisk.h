@@ -151,6 +151,14 @@ extern int fdisk_ask_number_set_result(struct fdisk_ask *ask, uint64_t result);
 extern int fdisk_ask_number_set_relative(struct fdisk_ask *ask, int relative);
 extern int fdisk_ask_number_is_relative(struct fdisk_ask *ask);
 
+
+extern int fdisk_ask_number(struct fdisk_context *cxt,
+		     uintmax_t low,
+		     uintmax_t dflt,
+		     uintmax_t high,
+		     const char *query,
+		     uintmax_t *result);
+
 extern int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...);
 extern int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...);
 extern int fdisk_warn(struct fdisk_context *cxt, const char *fmt, ...);

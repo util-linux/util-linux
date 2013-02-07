@@ -321,6 +321,42 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 	return rc;
 }
 
+/* very basic wraper to ask numbers */
+int fdisk_ask_number(struct fdisk_context *cxt,
+		     uintmax_t low,
+		     uintmax_t dflt,
+		     uintmax_t high,
+		     const char *query,
+		     uintmax_t *result)
+{
+	struct fdisk_ask *ask;
+	int rc;
+
+	assert(cxt);
+
+	ask = fdisk_new_ask();
+	if (!ask)
+		return -ENOMEM;
+
+	rc = fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
+	if (!rc)
+		fdisk_ask_number_set_low(ask, low);
+	if (!rc)
+		fdisk_ask_number_set_default(ask, dflt);
+	if (!rc)
+		fdisk_ask_number_set_high(ask, high);
+	if (!rc)
+		fdisk_ask_set_query(ask, query);
+	if (!rc)
+		rc = fdisk_do_ask(cxt, ask);
+	if (!rc)
+		*result = fdisk_ask_number_get_result(ask);
+
+	fdisk_free_ask(ask);
+	DBG(ASK, dbgprint("result: %zd [rc=%d]\n", *result, rc));
+	return rc;
+}
+
 #define is_print_ask(a) (fdisk_is_ask(a, WARN) || fdisk_is_ask(a, WARNX) || fdisk_is_ask(a, INFO))
 
 int fdisk_ask_print_get_errno(struct fdisk_ask *ask)
