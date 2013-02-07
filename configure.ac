@@ -1126,6 +1126,23 @@ AS_HELP_STRING([--disable-chsh-only-listed], [chsh: allow shells not in /etc/she
 [], enable_chsh_only_listed=yes
 )
 
+AC_ARG_WITH([libuser], AS_HELP_STRING([--without-libuser], [compile without libuser (remote chsh)]),
+  [], with_user=auto
+)
+
+if test "x$with_user" = xno; then
+  AM_CONDITIONAL(HAVE_USER, false)
+else
+  PKG_CHECK_MODULES(LIBUSER,[libuser >= 0.58])
+  UL_CHECK_LIB(user, lu_start)
+  case "$with_user:$have_user" in
+  yes:no)
+   AC_MSG_ERROR([user selected but libuser not found])
+   ;;
+  esac
+fi
+
+
 if test "x$enable_chsh_only_listed" = xyes; then
 AC_DEFINE(ONLY_LISTED_SHELLS, 1, [Should chsh allow only shells in /etc/shells?])
 fi
