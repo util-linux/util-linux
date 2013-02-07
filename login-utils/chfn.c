@@ -31,12 +31,12 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include "auth.h"
 #include "c.h"
 #include "env.h"
 #include "closestream.h"
 #include "islocal.h"
 #include "nls.h"
-#include "pamfail.h"
 #include "setpwnam.h"
 #include "strutils.h"
 #include "xalloc.h"
@@ -157,36 +157,9 @@ int main(int argc, char **argv)
 
 	printf(_("Changing finger information for %s.\n"), oldf.username);
 
-#ifdef REQUIRE_PASSWORD
-	if (uid != 0) {
-		pam_handle_t *pamh = NULL;
-		struct pam_conv conv = { misc_conv, NULL };
-		int retcode;
-
-		retcode = pam_start("chfn", oldf.username, &conv, &pamh);
-		if (pam_fail_check(pamh, retcode))
-			return EXIT_FAILURE;
-
-		retcode = pam_authenticate(pamh, 0);
-		if (pam_fail_check(pamh, retcode))
-			return EXIT_FAILURE;
-
-		retcode = pam_acct_mgmt(pamh, 0);
-		if (retcode == PAM_NEW_AUTHTOK_REQD)
-			retcode =
-			    pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
-		if (pam_fail_check(pamh, retcode))
-			return EXIT_FAILURE;
-
-		retcode = pam_setcred(pamh, 0);
-		if (pam_fail_check(pamh, retcode))
-			return EXIT_FAILURE;
-
-		pam_end(pamh, 0);
-		/* no need to establish a session; this isn't a
-		 * session-oriented activity...  */
+	if(!auth_pam("chfn", uid, oldf.username)) {
+		return EXIT_FAILURE;
 	}
-#endif	/* REQUIRE_PASSWORD */
 
 	if (interactive)
 		ask_info(&oldf, &newf);

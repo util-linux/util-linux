@@ -62,6 +62,8 @@ dist_man_MANS += \
 chfn_chsh_sources = \
 	login-utils/islocal.c \
 	login-utils/islocal.h \
+	login-utils/auth.c \
+	login-utils/auth.h \
 	login-utils/setpwnam.c \
 	login-utils/setpwnam.h
 chfn_chsh_cflags = $(SUID_CFLAGS) $(AM_CFLAGS)
