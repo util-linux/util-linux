@@ -136,10 +136,10 @@ static int sun_probe_label(struct fdisk_context *cxt)
 		csum ^= *ush--;
 
 	if (csum) {
-		fprintf(stderr,_("Detected sun disklabel with wrong checsum.\n"
-				"Probably you'll have to set all the values,\n"
-				"e.g. heads, sectors, cylinders and partitions\n"
-				"or force a fresh label (s command in main menu)\n"));
+		fdisk_warnx(cxt, _("Detected sun disklabel with wrong checsum.\n"
+			      "Probably you'll have to set all the values,\n"
+			      "e.g. heads, sectors, cylinders and partitions\n"
+			      "or force a fresh label (s command in main menu)"));
 		return 1;
 	}
 
@@ -153,24 +153,23 @@ static int sun_probe_label(struct fdisk_context *cxt)
 	cxt->geom.sectors = be16_to_cpu(sunlabel->nsect);
 
 	if (be32_to_cpu(sunlabel->vtoc.version) != SUN_VTOC_VERSION) {
-		fprintf(stderr,_("Detected sun disklabel with wrong version [%d].\n"),
+		fdisk_warnx(cxt, _("Detected sun disklabel with wrong version [%d]."),
 			be32_to_cpu(sunlabel->vtoc.version));
 		need_fixing = 1;
 	}
 	if (be32_to_cpu(sunlabel->vtoc.sanity) != SUN_VTOC_SANITY) {
-		fprintf(stderr,_("Detected sun disklabel with wrong vtoc.sanity [0x%08x].\n"),
+		fdisk_warnx(cxt, _("Detected sun disklabel with wrong vtoc.sanity [0x%08x]."),
 			be32_to_cpu(sunlabel->vtoc.sanity));
 		need_fixing = 1;
 	}
 	if (be16_to_cpu(sunlabel->vtoc.nparts) != SUN_MAXPARTITIONS) {
-		fprintf(stderr,_("Detected sun disklabel with wrong vtoc.nparts [%u].\n"),
+		fdisk_warnx(cxt, _("Detected sun disklabel with wrong vtoc.nparts [%u]."),
 			be16_to_cpu(sunlabel->vtoc.nparts));
 		need_fixing = 1;
 	}
 	if (need_fixing) {
-		fprintf(stderr, _("Warning: Wrong values need to be "
-				  "fixed up and will be corrected "
-				  "by w(rite)\n"));
+		fdisk_warnx(cxt, _("Warning: Wrong values need to be fixed up and "
+			           "will be corrected by w(rite)"));
 
 		sunlabel->vtoc.version = cpu_to_be32(SUN_VTOC_VERSION);
 		sunlabel->vtoc.sanity = cpu_to_be32(SUN_VTOC_SANITY);
@@ -190,6 +189,20 @@ static int sun_probe_label(struct fdisk_context *cxt)
 	return 1;
 }
 
+static void ask_geom(struct fdisk_context *cxt)
+{
+	uintmax_t res;
+
+	assert(cxt);
+
+	if (fdisk_ask_number(cxt, 1, 1, 1024, _("Heads"), &res) == 0)
+		cxt->geom.heads = res;
+	if (fdisk_ask_number(cxt, 1, 1, 1024, _("Sectors/track"), &res) == 0)
+		cxt->geom.sectors = res;
+	if (fdisk_ask_number(cxt, 1, 1, USHRT_MAX, _("Cylinders"), &res) == 0)
+		cxt->geom.cylinders = res;
+}
+
 static int sun_create_disklabel(struct fdisk_context *cxt)
 {
 	struct hd_geometry geometry;
@@ -204,7 +217,7 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SUN));
 
-	fprintf(stderr,	_("Building a new Sun disklabel.\n"));
+	fdisk_info(cxt, _("Building a new Sun disklabel."));
 
 	/* map first sector to header */
 	fdisk_zeroize_firstsector(cxt);
@@ -235,19 +248,16 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 				cxt->geom.cylinders = ~0;
 		} else {
 			cxt->geom.cylinders = geometry.cylinders;
-			fprintf(stderr,
+			fdisk_warnx(cxt,
 				_("Warning:  BLKGETSIZE ioctl failed on %s.  "
 				  "Using geometry cylinder value of %llu.\n"
 				  "This value may be truncated for devices"
-				  " > 33.8 GB.\n"), cxt->dev_path, cxt->geom.cylinders);
+				  " > 33.8 GB."),
+				cxt->dev_path, cxt->geom.cylinders);
 		}
 	} else
 #endif
-	{
-	        cxt->geom.heads = read_int(cxt, 1,1,1024,0,_("Heads"));
-		cxt->geom.sectors = read_int(cxt, 1,1,1024,0,_("Sectors/track"));
-		cxt->geom.cylinders = read_int(cxt, 1,1,65535,0,_("Cylinders"));
-	}
+		ask_geom(cxt);
 
 	sunlabel->acyl   = cpu_to_be16(2);
 	sunlabel->pcyl   = cpu_to_be16(cxt->geom.cylinders);
@@ -383,7 +393,7 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
     for (k = 0; k < 7; k++) {
 	for (i = 0; i < SUN_MAXPARTITIONS; i++) {
 	    if (k && (lens[i] % (cxt->geom.heads * cxt->geom.sectors))) {
-	        printf(_("Partition %d doesn't end on cylinder boundary\n"), i+1);
+	        fdisk_warnx(cxt, _("Partition %d doesn't end on cylinder boundary"), i+1);
 	    }
 	    if (lens[i]) {
 	        for (j = 0; j < i; j++)
@@ -403,8 +413,8 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
 	                        endo = starts[i]+lens[i];
 	                        if (starts[j]+lens[j] < endo)
 					endo = starts[j]+lens[j];
-	                        printf(_("Partition %d overlaps with others in "
-				       "sectors %d-%d\n"), i+1, starto, endo);
+	                        fdisk_warnx(cxt, _("Partition %d overlaps with others in "
+				       "sectors %d-%d"), i+1, starto, endo);
 	                    }
 	                }
 	            }
@@ -423,20 +433,20 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
 	  verify_sun_starts);
 
     if (array[0] == -1) {
-	printf(_("No partitions defined\n"));
+	fdisk_info(cxt, _("No partitions defined"));
 	return 0;
     }
     stop = cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors;
     if (starts[array[0]])
-        printf(_("Unused gap - sectors 0-%d\n"), starts[array[0]]);
+        fdisk_warnx(cxt, _("Unused gap - sectors 0-%d"), starts[array[0]]);
     for (i = 0; i < 7 && array[i+1] != -1; i++) {
-        printf(_("Unused gap - sectors %d-%d\n"),
+        fdisk_warnx(cxt, _("Unused gap - sectors %d-%d"),
 	       (starts[array[i]] + lens[array[i]]),
 	       starts[array[i+1]]);
     }
     start = (starts[array[i]] + lens[array[i]]);
     if (start < stop)
-        printf(_("Unused gap - sectors %d-%d\n"), start, stop);
+        fdisk_warnx(cxt, _("Unused gap - sectors %d-%d"), start, stop);
     return 0;
 }
 
@@ -457,8 +467,8 @@ static int sun_add_partition(
 	unsigned int first, last;
 
 	if (part->num_sectors && be16_to_cpu(info->id) != SUN_TAG_UNASSIGNED) {
-		printf(_("Partition %zd is already defined.  Delete "
-			"it before re-adding it.\n"), n + 1);
+		fdisk_info(cxt, _("Partition %zd is already defined.  Delete "
+			"it before re-adding it."), n + 1);
 		return -EINVAL;
 	}
 
@@ -468,8 +478,8 @@ static int sun_add_partition(
 		if (n == 2)
 			whole_disk = 1;
 		else {
-			printf(_("Other partitions already cover the whole disk.\nDelete "
-			       "some/shrink them before retry.\n"));
+			fdisk_info(cxt, _("Other partitions already cover the "
+				"whole disk. Delete some/shrink them before retry."));
 			return -EINVAL;
 		}
 	}
@@ -491,9 +501,9 @@ static int sun_add_partition(
 				first += cs - x;
 		}
 		if (n == 2 && first != 0)
-			printf (_("\
+			fdisk_warnx(cxt, _("\
 It is highly recommended that the third partition covers the whole disk\n\
-and is of type `Whole disk'\n"));
+and is of type `Whole disk'"));
 		/* ewt asks to add: "don't start a partition at cyl 0"
 		   However, edmundo@rano.demon.co.uk writes:
 		   "In addition to having a Sun partition table, to be able to
@@ -519,7 +529,7 @@ and is of type `Whole disk'\n"));
 			    whole_disk = 1;
 			    break;
 			}
-			printf(_("Sector %d is already allocated\n"), first);
+			fdisk_warnx(cxt, _("Sector %d is already allocated"), first);
 		} else
 			break;
 	}
@@ -548,10 +558,10 @@ and is of type `Whole disk'\n"));
 		    whole_disk = 1;
 		    last = stop2;
 		} else if (last > stop) {
-		    printf (
+		    fdisk_warnx(cxt,
    _("You haven't covered the whole disk with the 3rd partition, but your value\n"
      "%d %s covers some other partition. Your entry has been changed\n"
-     "to %d %s\n"),
+     "to %d %s"),
 			scround(last), str_units(SINGULAR),
 			scround(stop), str_units(SINGULAR));
 		    last = stop;
@@ -588,10 +598,10 @@ static int sun_delete_partition(struct fdisk_context *cxt,
 	    !part->start_cylinder &&
 	    (nsec = be32_to_cpu(part->num_sectors))
 	    == cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders)
-		printf(_("If you want to maintain SunOS/Solaris compatibility, "
-			 "consider leaving this\n"
+		fdisk_info(cxt, _("If you want to maintain SunOS/Solaris compatibility, "
+			 "consider leaving this "
 			 "partition as Whole disk (5), starting at 0, with %u "
-			 "sectors\n"), nsec);
+			 "sectors"), nsec);
 	info->id = cpu_to_be16(SUN_TAG_UNASSIGNED);
 	part->num_sectors = 0;
 	cxt->label->nparts_cur = count_used_partitions(cxt);
@@ -799,8 +809,8 @@ static int sun_set_parttype(
 		return -EINVAL;
 
 	if (i == 2 && t->type != SUN_TAG_WHOLEDISK)
-		printf(_("Consider leaving partition 3 as Whole disk (5),\n"
-		         "as SunOS/Solaris expects it and even Linux likes it.\n\n"));
+		fdisk_info(cxt, _("Consider leaving partition 3 as Whole disk (5),\n"
+		         "as SunOS/Solaris expects it and even Linux likes it.\n"));
 
 	part = &sunlabel->partitions[i];
 	info = &sunlabel->vtoc.infos[i];
