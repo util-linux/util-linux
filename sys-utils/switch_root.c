@@ -174,7 +174,13 @@ static int switchroot(const char *newroot)
 	if (cfd >= 0) {
 		pid = fork();
 		if (pid <= 0) {
-			recursiveRemove(cfd);
+			if (fstat(cfd, &sb) == 0) {
+				if (sb.st_dev == makedev(0, 1))
+					recursiveRemove(cfd);
+				else
+					warn(_("old root filesystem is not an initramfs"));
+			}
+
 			if (pid == 0)
 				exit(EXIT_SUCCESS);
 		}
