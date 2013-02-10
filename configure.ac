@@ -6,6 +6,9 @@ AC_PREREQ(2.60)
 
 AC_CONFIG_AUX_DIR(config)
 AC_CONFIG_MACRO_DIR([m4])
+dnl AC_USE_SYSTEM_EXTENSIONS must be called before any macros that run
+dnl the compiler (like AC_PROG_LIBTOOL) to avoid autoconf errors.
+AC_USE_SYSTEM_EXTENSIONS
 AM_INIT_AUTOMAKE([-Wall foreign 1.10 tar-pax dist-bzip2 no-dist-gzip dist-xz -Wno-portability subdir-objects])
 
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])],
@@ -87,7 +90,6 @@ AC_SUBST([usrlib_execdir])
 
 AM_PROG_CC_C_O
 AC_PROG_CC_STDC
-AC_GNU_SOURCE
 AC_CANONICAL_HOST
 AC_C_CONST
 AC_C_VOLATILE
