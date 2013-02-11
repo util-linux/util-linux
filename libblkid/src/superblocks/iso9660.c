@@ -167,8 +167,10 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 
 		if (iso == NULL || iso->vd_type == ISO_VD_END)
 			break;
-		if (iso->vd_type != ISO_VD_SUPPLEMENTARY)
+		if (iso->vd_type != ISO_VD_SUPPLEMENTARY) {
+			off += ISO_SECTOR_SIZE;
 			continue;
+      }
 
 		if (memcmp(iso->escape_sequences, "%/@", 3) == 0 ||
 		    memcmp(iso->escape_sequences, "%/C", 3) == 0 ||
