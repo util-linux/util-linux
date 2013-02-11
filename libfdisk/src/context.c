@@ -201,3 +201,58 @@ int fdisk_context_set_ask(struct fdisk_context *cxt,
 	cxt->ask_data = data;
 	return 0;
 }
+
+
+/*
+ * @str: "cylinder" or "sector".
+ *
+ * This is pure shit, unfortunately for example Sun addresses begin of the
+ * partition by cylinders...
+ */
+int fdisk_context_set_unit(struct fdisk_context *cxt, const char *str)
+{
+	assert(cxt);
+
+	cxt->display_in_cyl_units = 0;
+
+	if (!str)
+		return 0;
+
+	if (strcmp(str, "cylinder") == 0 || strcmp(str, "cylinders") == 0)
+		cxt->display_in_cyl_units = 1;
+
+	else if (strcmp(str, "sector") == 0 || strcmp(str, "sectors") == 0)
+		cxt->display_in_cyl_units = 0;
+
+	DBG(CONTEXT, dbgprint("display unit: %s", fdisk_context_get_unit(cxt, 0)));
+	return 0;
+}
+
+const char *fdisk_context_get_unit(struct fdisk_context *cxt, int n)
+{
+	assert(cxt);
+
+	if (fdisk_context_use_cylinders(cxt))
+		return P_("cylinder", "cylinders", n);
+	return P_("sector", "sectors", n);
+}
+
+/* Returns 1 if user wants to display in cylinders. */
+int fdisk_context_use_cylinders(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->display_in_cyl_units == 1;
+}
+
+/* Returns number of "units" per sector, default is 1 if display unit is sector.
+ */
+unsigned int fdisk_context_get_units_per_sector(struct fdisk_context *cxt)
+{
+	assert(cxt);
+
+	if (fdisk_context_use_cylinders(cxt)) {
+		assert(cxt->geom.heads);
+		return cxt->geom.heads * cxt->geom.sectors;
+	}
+	return 1;
+}

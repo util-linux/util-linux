@@ -254,6 +254,8 @@ struct fdisk_context {
 	unsigned long sector_size;	/* logical size */
 	unsigned long alignment_offset;
 
+	int display_in_cyl_units;	/* for obscure labels */
+
 	/* alignment */
 	unsigned long grain;		/* alignment unit */
 	sector_t first_lba;		/* recommended begin of the first partition */
