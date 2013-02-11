@@ -461,6 +461,8 @@ static int sun_add_partition(
 	struct sun_info *info = &sunlabel->vtoc.infos[n];
 	uint32_t start, stop, stop2;
 	int whole_disk = 0, sys = t ? t->type : SUN_TAG_LINUX_NATIVE;
+	struct fdisk_ask *ask;
+	int rc;
 
 	char mesg[256];
 	size_t i;
@@ -485,11 +487,29 @@ static int sun_add_partition(
 	}
 	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
 	for (;;) {
-		if (whole_disk)
-			first = read_int(cxt, 0, 0, 0, 0, mesg);
-		else
-			first = read_int(cxt, scround(start), scround(stop)+1,
-					 scround(stop), 0, mesg);
+		ask = fdisk_new_ask();
+		if (!ask)
+			return -ENOMEM;
+
+		fdisk_ask_set_query(ask, mesg);
+		fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
+
+		if (whole_disk) {
+			fdisk_ask_number_set_low(ask,     0);	/* minimal */
+			fdisk_ask_number_set_default(ask, 0);	/* default */
+			fdisk_ask_number_set_high(ask,    0);	/* maximal */
+		} else {
+			fdisk_ask_number_set_low(ask,     scround(start));	/* minimal */
+			fdisk_ask_number_set_default(ask, scround(start));	/* default */
+			fdisk_ask_number_set_high(ask,    scround(stop));	/* maximal */
+		}
+		rc = fdisk_do_ask(cxt, ask);
+		first = fdisk_ask_number_get_result(ask);
+		fdisk_free_ask(ask);
+
+		if (rc)
+			return rc;
+
 		if (display_in_cyl_units)
 			first *= units_per_sector;
 		else {
@@ -540,19 +560,46 @@ and is of type `Whole disk'"));
 			stop = starts[i];
 	}
 	snprintf(mesg, sizeof(mesg),
-		 _("Last %s or +size or +sizeM or +sizeK"),
-		 str_units(SINGULAR));
-	if (whole_disk)
-		last = read_int(cxt, scround(stop2), scround(stop2), scround(stop2),
-				0, mesg);
-	else if (n == 2 && !first)
-		last = read_int(cxt, scround(first), scround(stop2), scround(stop2),
-				scround(first), mesg);
-	else
-		last = read_int(cxt, scround(first), scround(stop), scround(stop),
-				scround(first), mesg);
+		 _("Last %s or +%s or +size{K,M,G,T,P}"),
+		 str_units(SINGULAR), str_units(PLURAL));
+
+	ask = fdisk_new_ask();
+	if (!ask)
+		return -ENOMEM;
+
+	fdisk_ask_set_query(ask, mesg);
+	fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
+
+	if (whole_disk) {
+		fdisk_ask_number_set_low(ask,     scround(stop2));	/* minimal */
+		fdisk_ask_number_set_default(ask, scround(stop2));	/* default */
+		fdisk_ask_number_set_high(ask,    scround(stop2));	/* maximal */
+		fdisk_ask_number_set_base(ask,    0);
+	} else if (n == 2 && !first) {
+		fdisk_ask_number_set_low(ask,     scround(first));	/* minimal */
+		fdisk_ask_number_set_default(ask, scround(stop2));	/* default */
+		fdisk_ask_number_set_high(ask,    scround(stop2));	/* maximal */
+		fdisk_ask_number_set_base(ask,	  scround(first));
+	} else {
+		fdisk_ask_number_set_low(ask,     scround(first));	/* minimal */
+		fdisk_ask_number_set_default(ask, scround(stop));	/* default */
+		fdisk_ask_number_set_high(ask,    scround(stop));	/* maximal */
+		fdisk_ask_number_set_base(ask,    scround(first));
+	}
+
 	if (display_in_cyl_units)
-		last *= units_per_sector;
+		fdisk_ask_number_set_unit(ask,
+			     cxt->sector_size * units_per_sector);
+	else
+		fdisk_ask_number_set_unit(ask,	cxt->sector_size);
+
+	rc = fdisk_do_ask(cxt, ask);
+	last = fdisk_ask_number_get_result(ask);
+
+	fdisk_free_ask(ask);
+	if (rc)
+		return rc;
+
 	if (n == 2 && !first) {
 		if (last >= stop2) {
 		    whole_disk = 1;
