@@ -234,6 +234,10 @@ struct fdisk_ask {
 			unsigned int	has_va:1;
 			int		errnum;		/* errno */
 		} print;
+		/* FDISK_ASKTYPE_YESNO */
+		struct ask_yesno {
+			int		result;		/* TRUE or FALSE */
+		} yesno;
 	} data;
 };
 

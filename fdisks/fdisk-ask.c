@@ -168,6 +168,7 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		    void *data __attribute__((__unused__)))
 {
 	va_list ap;
+	int rc = 0;
 	char buf[BUFSIZ];
 
 	assert(cxt);
@@ -197,9 +198,17 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		fprintf(stderr, ": %m\n");
 		va_end(ap);
 		break;
+	case FDISK_ASKTYPE_YESNO:
+		fputc('\n', stdout);
+		fputs(fdisk_ask_get_query(ask), stdout);
+		rc = get_user_reply(cxt, _(" [Y]es/[N]o: "), buf, sizeof(buf));
+		if (rc == 0)
+			ask->data.yesno.result = rpmatch(buf);
+		DBG(ASK, dbgprint("yes-no ask: reply '%s' [rc=%d]", buf, rc));
+		break;
 	default:
 		warnx(_("internal error: unssuported dialog type %d"), fdisk_ask_get_type(ask));
 		return -EINVAL;
 	}
-	return 0;
+	return rc;
 }

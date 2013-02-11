@@ -58,7 +58,8 @@ enum {
 	FDISK_ASKTYPE_OFFSET,
 	FDISK_ASKTYPE_WARN,
 	FDISK_ASKTYPE_WARNX,
-	FDISK_ASKTYPE_INFO
+	FDISK_ASKTYPE_INFO,
+	FDISK_ASKTYPE_YESNO
 };
 
 /* init.c */
@@ -158,6 +159,10 @@ extern int fdisk_ask_number(struct fdisk_context *cxt,
 		     uintmax_t high,
 		     const char *query,
 		     uintmax_t *result);
+
+extern int fdisk_ask_yesno(struct fdisk_context *cxt, const char *query, int *result);
+extern uint64_t fdisk_ask_yesno_get_result(struct fdisk_ask *ask);
+extern int fdisk_ask_yesno_set_result(struct fdisk_ask *ask, uint64_t result);
 
 extern int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...);
 extern int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...);

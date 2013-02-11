@@ -357,6 +357,47 @@ int fdisk_ask_number(struct fdisk_context *cxt,
 	return rc;
 }
 
+int fdisk_ask_yesno(struct fdisk_context *cxt,
+		     const char *query,
+		     int *result)
+{
+	struct fdisk_ask *ask;
+	int rc;
+
+	assert(cxt);
+
+	ask = fdisk_new_ask();
+	if (!ask)
+		return -ENOMEM;
+
+	rc = fdisk_ask_set_type(ask, FDISK_ASKTYPE_YESNO);
+	if (!rc)
+		fdisk_ask_set_query(ask, query);
+	if (!rc)
+		rc = fdisk_do_ask(cxt, ask);
+	if (!rc)
+		*result = fdisk_ask_yesno_get_result(ask);
+
+	fdisk_free_ask(ask);
+	DBG(ASK, dbgprint("result: %d [rc=%d]\n", *result, rc));
+	return rc;
+}
+
+uint64_t fdisk_ask_yesno_get_result(struct fdisk_ask *ask)
+{
+	assert(ask);
+	assert(fdisk_is_ask(ask, YESNO));
+	return ask->data.yesno.result;
+}
+
+int fdisk_ask_yesno_set_result(struct fdisk_ask *ask, uint64_t result)
+{
+	assert(ask);
+	ask->data.yesno.result = result;
+	return 0;
+}
+
+
 #define is_print_ask(a) (fdisk_is_ask(a, WARN) || fdisk_is_ask(a, WARNX) || fdisk_is_ask(a, INFO))
 
 int fdisk_ask_print_get_errno(struct fdisk_ask *ask)
