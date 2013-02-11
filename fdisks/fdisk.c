@@ -118,6 +118,18 @@ int	nowarn = 0;			/* no warnings for fdisk -l/-s */
 
 unsigned int	user_cylinders, user_heads, user_sectors;
 
+void toggle_units(struct fdisk_context *cxt)
+{
+	fdisk_context_set_unit(cxt,
+		fdisk_context_use_cylinders(cxt) ? "sectors" :
+						   "cylinders");
+	if (fdisk_context_use_cylinders(cxt))
+		fdisk_info(cxt, _("Changing display/entry units to cylinders (DEPRECATED!)."));
+	else
+		fdisk_info(cxt, _("Changing display/entry units to sectors."));
+}
+
+
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
 	fprintf(out, _("Usage:\n"
@@ -442,7 +454,7 @@ read_int_with_suffix(struct fdisk_context *cxt,
 				/*
 				 * Cylinders
 				 */
-				if (!display_in_cyl_units)
+				if (fdisk_context_use_cylinders(cxt))
 					res *= cxt->geom.heads * cxt->geom.sectors;
 			} else if (*line_ptr &&
 				   *(line_ptr + 1) == 'B' &&
@@ -486,7 +498,7 @@ read_int_with_suffix(struct fdisk_context *cxt,
 				unsigned long unit;
 
 				bytes = (unsigned long long) res * absolute;
-				unit = cxt->sector_size * units_per_sector;
+				unit = cxt->sector_size * fdisk_context_get_units_per_sector(cxt);
 				bytes += unit/2;	/* round */
 				bytes /= unit;
 				res = bytes;
@@ -590,14 +602,6 @@ not_unique:
 	return get_partition(cxt, warn, max);
 }
 
-const char *
-str_units(int n)
-{
-	if (display_in_cyl_units)
-		return P_("cylinder", "cylinders", n);
-	return P_("sector", "sectors", n);
-}
-
 static void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 {
 	struct fdisk_label *lb = fdisk_context_get_label(cxt, "dos");
@@ -687,8 +691,10 @@ list_disk_geometry(struct fdisk_context *cxt) {
 		printf(_("%d heads, %llu sectors/track, %llu cylinders\n"),
 		       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
 	printf(_("Units = %s of %d * %ld = %ld bytes\n"),
-	       str_units(PLURAL),
-	       units_per_sector, cxt->sector_size, units_per_sector * cxt->sector_size);
+	       fdisk_context_get_unit(cxt, PLURAL),
+	       fdisk_context_get_units_per_sector(cxt),
+	       cxt->sector_size,
+	       fdisk_context_get_units_per_sector(cxt) * cxt->sector_size);
 
 	printf(_("Sector size (logical/physical): %lu bytes / %lu bytes\n"),
 				cxt->sector_size, cxt->phy_sector_size);
@@ -981,7 +987,6 @@ static void print_partition_table_from_option(struct fdisk_context *cxt,
 		/*
 		 * Try BSD -- TODO: move to list_table() too
 		 */
-		update_units(cxt);
 		list_disk_geometry(cxt);
 		if (!fdisk_is_disklabel(cxt, AIX) &&
 		    !fdisk_is_disklabel(cxt, MAC))
@@ -1145,7 +1150,7 @@ static void command_prompt(struct fdisk_context *cxt)
 			change_partition_type(cxt);
 			break;
 		case 'u':
-			change_units(cxt);
+			toggle_units(cxt);
 			break;
 		case 'v':
 			verify(cxt);
@@ -1243,10 +1248,9 @@ int main(int argc, char **argv)
 			opts = 1;
 			break;
 		case 'u':
-			display_in_cyl_units = 0;		/* default */
-			if (optarg && strcmp(optarg, "=cylinders") == 0)
-				display_in_cyl_units = !display_in_cyl_units;
-			else if (optarg && strcmp(optarg, "=sectors"))
+			if (optarg && *optarg == '=')
+				optarg++;
+			if (fdisk_context_set_unit(cxt, optarg) != 0)
 				usage(stderr);
 			break;
 		case 'V':
@@ -1307,7 +1311,6 @@ int main(int argc, char **argv)
 	print_welcome();
 
 	if (!fdisk_dev_has_disklabel(cxt)) {
-		update_units(cxt);	/* to provide compatible 'p'rint output */
 		fprintf(stderr,
 			_("Device does not contain a recognized partition table\n"));
 		fdisk_create_disklabel(cxt, NULL);

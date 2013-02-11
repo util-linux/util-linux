@@ -201,14 +201,16 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 		       SSWAP16(sgiparam.pcylcount),
 		       (int) sgiparam.sparecyl, SSWAP16(sgiparam.ilfact),
 		       (char *)sgilabel,
-		       str_units(PLURAL), units_per_sector,
+		       fdisk_context_get_unit(cxt, PLURAL),
+		       fdisk_context_get_units_per_sector(cxt),
                        cxt->sector_size);
 	} else {
 		printf(_("\nDisk %s (SGI disk label): "
 			 "%d heads, %llu sectors, %llu cylinders\n"
 			 "Units = %s of %d * %ld bytes\n\n"),
 		       cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders,
-		       str_units(PLURAL), units_per_sector,
+		       fdisk_context_get_unit(cxt, PLURAL),
+		       fdisk_context_get_units_per_sector(cxt),
                        cxt->sector_size);
 	}
 	printf(_("----- partitions -----\n"
@@ -227,8 +229,8 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 /* device */              partname(cxt->dev_path, kpi, w+2),
 /* flags */               (sgi_get_swappartition(cxt) == (int) i) ? "swap" :
 /* flags */               (sgi_get_bootpartition(cxt) == (int) i) ? "boot" : "    ",
-/* start */               (long) scround(start),
-/* end */                 (long) scround(start+len)-1,
+/* start */               (long) scround(cxt, start),
+/* end */                 (long) scround(cxt, start+len)-1,
 /* no odd flag on end */  (long) len,
 /* type id */             t->type,
 /* type name */           t->name);
@@ -728,7 +730,8 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		printf(_("You got a partition overlap on the disk. Fix it first!\n"));
 		return -EINVAL;
 	}
-	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
+	snprintf(mesg, sizeof(mesg), _("First %s"),
+			fdisk_context_get_unit(cxt, SINGULAR));
 	for (;;) {
 		if (sys == SGI_VOLUME) {
 			last = sgi_get_lastblock(cxt);
@@ -740,11 +743,13 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		} else {
 			first = freelist[0].first;
 			last  = freelist[0].last;
-			first = read_int(cxt, scround(first), scround(first), scround(last)-1,
+			first = read_int(cxt, scround(cxt, first),
+					      scround(cxt, first),
+					      scround(cxt, last) - 1,
 					 0, mesg);
 		}
-		if (display_in_cyl_units)
-			first *= units_per_sector;
+		if (fdisk_context_use_cylinders(cxt))
+			first *= fdisk_context_get_units_per_sector(cxt);
 		/*else
 			first = first; * align to cylinder if you know how ... */
 		if (!last)
@@ -755,11 +760,14 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		} else
 			break;
 	}
-	snprintf(mesg, sizeof(mesg), _(" Last %s"), str_units(SINGULAR));
-	last = read_int(cxt, scround(first), scround(last)-1, scround(last)-1,
-			scround(first), mesg)+1;
-	if (display_in_cyl_units)
-		last *= units_per_sector;
+	snprintf(mesg, sizeof(mesg), _(" Last %s"),
+			fdisk_context_get_unit(cxt, SINGULAR));
+	last = read_int(cxt, scround(cxt, first),
+			scround(cxt, last)-1,
+			scround(cxt, last)-1,
+			scround(cxt, first), mesg)+1;
+	if (fdisk_context_use_cylinders(cxt))
+		last *= fdisk_context_get_units_per_sector(cxt);
 	/*else
 		last = last; * align to cylinder if You know how ... */
 	if ((sys == SGI_VOLUME) && (first != 0 || last != sgi_get_lastblock(cxt)))

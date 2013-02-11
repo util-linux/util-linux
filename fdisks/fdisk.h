@@ -32,8 +32,14 @@
 #define IS_EXTENDED(i) \
 	((i) == EXTENDED || (i) == WIN98_EXTENDED || (i) == LINUX_EXTENDED)
 
-#define cround(n)	(display_in_cyl_units ? ((n)/units_per_sector)+1 : (n))
-#define scround(x)	(((x)+units_per_sector-1)/units_per_sector)
+extern void toggle_units(struct fdisk_context *cxt);
+
+static inline unsigned long
+scround(struct fdisk_context *cxt, unsigned long num)
+{
+	unsigned long un = fdisk_context_get_units_per_sector(cxt);
+	return (num + un - 1) / un;
+}
 
 struct partition {
 	unsigned char boot_ind;         /* 0x80 - active */
@@ -66,7 +72,6 @@ extern int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 
 /* prototypes for fdisk.c */
 extern char *line_ptr;
-extern unsigned int display_in_cyl_units, units_per_sector;
 
 extern void fatal(struct fdisk_context *cxt, enum failure why);
 extern int  get_partition(struct fdisk_context *cxt, int warn, int max);
@@ -93,7 +98,6 @@ extern int get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int 
 
 #define PLURAL	0
 #define SINGULAR 1
-extern const char * str_units(int);
 
 extern sector_t get_nr_sects(struct partition *p);
 

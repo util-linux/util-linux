@@ -55,9 +55,6 @@ extern void dos_toggle_active(struct fdisk_context *cxt, int i);
 
 extern int mbr_is_valid_magic(unsigned char *b);
 
-extern void change_units(struct fdisk_context *cxt);
-extern void update_units(struct fdisk_context *cxt);	/* called from sunlabel too */
-
 #define is_dos_compatible(_x) \
 		   (fdisk_is_disklabel(_x, DOS) && \
                     fdisk_dos_is_compatible(fdisk_context_get_label(_x, NULL)))

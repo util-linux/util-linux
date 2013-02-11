@@ -485,7 +485,8 @@ static int sun_add_partition(
 			return -EINVAL;
 		}
 	}
-	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
+	snprintf(mesg, sizeof(mesg), _("First %s"),
+			fdisk_context_get_unit(cxt, SINGULAR));
 	for (;;) {
 		ask = fdisk_new_ask();
 		if (!ask)
@@ -499,9 +500,9 @@ static int sun_add_partition(
 			fdisk_ask_number_set_default(ask, 0);	/* default */
 			fdisk_ask_number_set_high(ask,    0);	/* maximal */
 		} else {
-			fdisk_ask_number_set_low(ask,     scround(start));	/* minimal */
-			fdisk_ask_number_set_default(ask, scround(start));	/* default */
-			fdisk_ask_number_set_high(ask,    scround(stop));	/* maximal */
+			fdisk_ask_number_set_low(ask,     scround(cxt, start));	/* minimal */
+			fdisk_ask_number_set_default(ask, scround(cxt, start));	/* default */
+			fdisk_ask_number_set_high(ask,    scround(cxt, stop));	/* maximal */
 		}
 		rc = fdisk_do_ask(cxt, ask);
 		first = fdisk_ask_number_get_result(ask);
@@ -510,8 +511,8 @@ static int sun_add_partition(
 		if (rc)
 			return rc;
 
-		if (display_in_cyl_units)
-			first *= units_per_sector;
+		if (fdisk_context_use_cylinders(cxt))
+			first *= fdisk_context_get_units_per_sector(cxt);
 		else {
 			/* Starting sector has to be properly aligned */
 			int cs = cxt->geom.heads * cxt->geom.sectors;
@@ -561,7 +562,8 @@ and is of type `Whole disk'"));
 	}
 	snprintf(mesg, sizeof(mesg),
 		 _("Last %s or +%s or +size{K,M,G,T,P}"),
-		 str_units(SINGULAR), str_units(PLURAL));
+		 fdisk_context_get_unit(cxt, SINGULAR),
+		 fdisk_context_get_unit(cxt, PLURAL));
 
 	ask = fdisk_new_ask();
 	if (!ask)
@@ -571,25 +573,26 @@ and is of type `Whole disk'"));
 	fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 
 	if (whole_disk) {
-		fdisk_ask_number_set_low(ask,     scround(stop2));	/* minimal */
-		fdisk_ask_number_set_default(ask, scround(stop2));	/* default */
-		fdisk_ask_number_set_high(ask,    scround(stop2));	/* maximal */
+		fdisk_ask_number_set_low(ask,     scround(cxt, stop2));	/* minimal */
+		fdisk_ask_number_set_default(ask, scround(cxt, stop2));	/* default */
+		fdisk_ask_number_set_high(ask,    scround(cxt, stop2));	/* maximal */
 		fdisk_ask_number_set_base(ask,    0);
 	} else if (n == 2 && !first) {
-		fdisk_ask_number_set_low(ask,     scround(first));	/* minimal */
-		fdisk_ask_number_set_default(ask, scround(stop2));	/* default */
-		fdisk_ask_number_set_high(ask,    scround(stop2));	/* maximal */
-		fdisk_ask_number_set_base(ask,	  scround(first));
+		fdisk_ask_number_set_low(ask,     scround(cxt, first));	/* minimal */
+		fdisk_ask_number_set_default(ask, scround(cxt, stop2));	/* default */
+		fdisk_ask_number_set_high(ask,    scround(cxt, stop2));	/* maximal */
+		fdisk_ask_number_set_base(ask,	  scround(cxt, first));
 	} else {
-		fdisk_ask_number_set_low(ask,     scround(first));	/* minimal */
-		fdisk_ask_number_set_default(ask, scround(stop));	/* default */
-		fdisk_ask_number_set_high(ask,    scround(stop));	/* maximal */
-		fdisk_ask_number_set_base(ask,    scround(first));
+		fdisk_ask_number_set_low(ask,     scround(cxt, first));	/* minimal */
+		fdisk_ask_number_set_default(ask, scround(cxt, stop));	/* default */
+		fdisk_ask_number_set_high(ask,    scround(cxt, stop));	/* maximal */
+		fdisk_ask_number_set_base(ask,    scround(cxt, first));
 	}
 
-	if (display_in_cyl_units)
+	if (fdisk_context_use_cylinders(cxt))
 		fdisk_ask_number_set_unit(ask,
-			     cxt->sector_size * units_per_sector);
+			     cxt->sector_size *
+			     fdisk_context_get_units_per_sector(cxt));
 	else
 		fdisk_ask_number_set_unit(ask,	cxt->sector_size);
 
@@ -609,8 +612,8 @@ and is of type `Whole disk'"));
    _("You haven't covered the whole disk with the 3rd partition, but your value\n"
      "%d %s covers some other partition. Your entry has been changed\n"
      "to %d %s"),
-			scround(last), str_units(SINGULAR),
-			scround(stop), str_units(SINGULAR));
+			scround(cxt, last), fdisk_context_get_unit(cxt, SINGULAR),
+			scround(cxt, stop), fdisk_context_get_unit(cxt, SINGULAR));
 		    last = stop;
 		}
 	} else if (!whole_disk && last > stop)
@@ -685,13 +688,15 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 		       be16_to_cpu(sunlabel->intrlv),
 		       sunlabel->label_id,
 		       sunlabel->vtoc.volume_id,
-		       str_units(PLURAL), units_per_sector);
+		       fdisk_context_get_unit(cxt, PLURAL),
+		       fdisk_context_get_units_per_sector(cxt));
 	else
 		printf(
 	_("\nDisk %s (Sun disk label): %u heads, %llu sectors, %llu cylinders\n"
 	"Units = %s of %d * 512 bytes\n\n"),
 		       cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders,
-		       str_units(PLURAL), units_per_sector);
+		       fdisk_context_get_unit(cxt, PLURAL),
+		       fdisk_context_get_units_per_sector(cxt));
 
 	printf(_("%*s Flag    Start       End    Blocks   Id  System\n"),
 	       w + 1, _("Device"));
@@ -709,8 +714,8 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 /* device */		  partname(cxt->dev_path, i+1, w),
 /* flags */		  be16_to_cpu(info->flags) & SUN_FLAG_UNMNT ? 'u' : ' ',
 			  be16_to_cpu(info->flags) & SUN_FLAG_RONLY ? 'r' : ' ',
-/* start */		  (unsigned long) scround(start),
-/* end */		  (unsigned long) scround(start+len),
+/* start */		  (unsigned long) scround(cxt, start),
+/* end */		  (unsigned long) scround(cxt, start+len),
 /* odd flag on end */	  (unsigned long) len / 2, len & 1 ? '+' : ' ',
 /* type id */		  t->type,
 /* type name */		  t->name);
@@ -892,10 +897,8 @@ static int sun_set_parttype(
 }
 
 
-static int sun_reset_alignment(struct fdisk_context *cxt)
+static int sun_reset_alignment(struct fdisk_context *cxt __attribute__((__unused__)))
 {
-	/* this is shared with DOS ... */
-	update_units(cxt);
 	return 0;
 }
 

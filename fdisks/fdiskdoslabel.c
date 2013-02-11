@@ -50,31 +50,10 @@ sector_t extended_offset;
 
 static size_t ext_index;
 
-unsigned int units_per_sector = 1, display_in_cyl_units = 0;
-
 static int MBRbuffer_changed;
 
-void update_units(struct fdisk_context *cxt)
-{
-	int cyl_units = cxt->geom.heads * cxt->geom.sectors;
-
-	if (display_in_cyl_units && cyl_units)
-		units_per_sector = cyl_units;
-	else
-		units_per_sector = 1;	/* in sectors */
-}
-
-void change_units(struct fdisk_context *cxt)
-{
-	display_in_cyl_units = !display_in_cyl_units;
-	update_units(cxt);
-
-	if (display_in_cyl_units)
-		printf(_("Changing display/entry units to cylinders (DEPRECATED!)\n"));
-	else
-		printf(_("Changing display/entry units to sectors\n"));
-}
-
+#define cround(c, n)	(fdisk_context_use_cylinders(c) ? \
+				((n) / fdisk_context_get_units_per_sector(c)) + 1 : (n))
 
 static void warn_alignment(struct fdisk_context *cxt)
 {
@@ -92,7 +71,7 @@ static void warn_alignment(struct fdisk_context *cxt)
 "WARNING: DOS-compatible mode is deprecated. It's strongly recommended to\n"
 "         switch off the mode (with command 'c')."));
 
-	if (display_in_cyl_units)
+	if (fdisk_context_use_cylinders(cxt))
 		fprintf(stderr, _("\n"
 "WARNING: cylinders as display units are deprecated. Use command 'u' to\n"
 "         change units to sectors.\n"));
@@ -453,8 +432,6 @@ static int dos_reset_alignment(struct fdisk_context *cxt)
 
 		cxt->grain = cxt->sector_size;			/* usually 512 */
 	}
-	/* units_per_sector has impact to deprecated DOS stuff */
-	update_units(cxt);
 
 	return 0;
 }
@@ -615,7 +592,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 	fill_bounds(cxt, first, last);
 	if (n < 4) {
 		start = cxt->first_lba;
-		if (display_in_cyl_units || !cxt->total_sectors)
+		if (fdisk_context_use_cylinders(cxt) || !cxt->total_sectors)
 			limit = cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders - 1;
 		else
 			limit = cxt->total_sectors - 1;
@@ -632,11 +609,11 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 		start = extended_offset + cxt->first_lba;
 		limit = get_start_sect(q) + get_nr_sects(q) - 1;
 	}
-	if (display_in_cyl_units)
+	if (fdisk_context_use_cylinders(cxt))
 		for (i = 0; i < cxt->label->nparts_max; i++)
-			first[i] = (cround(first[i]) - 1) * units_per_sector;
+			first[i] = (cround(cxt, first[i]) - 1) * fdisk_context_get_units_per_sector(cxt);
 
-	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
+	snprintf(mesg, sizeof(mesg), _("First %s"), fdisk_context_get_unit(cxt, SINGULAR));
 	do {
 		sector_t dflt, aligned;
 
@@ -653,7 +630,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 			dflt = start;
 		if (start > limit)
 			break;
-		if (start >= temp+units_per_sector && read) {
+		if (start >= temp+fdisk_context_get_units_per_sector(cxt) && read) {
 			printf(_("Sector %llu is already allocated\n"), temp);
 			temp = start;
 			read = 0;
@@ -661,10 +638,11 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 		if (!read && start == temp) {
 			sector_t i = start;
 
-			start = read_int(cxt, cround(i), cround(dflt), cround(limit),
+			start = read_int(cxt, cround(cxt, i), cround(cxt, dflt),
+					cround(cxt, limit),
 					 0, mesg);
-			if (display_in_cyl_units) {
-				start = (start - 1) * units_per_sector;
+			if (fdisk_context_use_cylinders(cxt)) {
+				start = (start - 1) * fdisk_context_get_units_per_sector(cxt);
 				if (start < i) start = i;
 			}
 			read = 1;
@@ -695,20 +673,21 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 			cxt->label->nparts_max--;
 		return -ENOSPC;
 	}
-	if (cround(start) == cround(limit)) {
+	if (cround(cxt, start) == cround(cxt, limit)) {
 		stop = limit;
 	} else {
 		int is_suffix_used = 0;
 
 		snprintf(mesg, sizeof(mesg),
 			_("Last %1$s, +%2$s or +size{K,M,G}"),
-			 str_units(SINGULAR), str_units(PLURAL));
+			 fdisk_context_get_unit(cxt, SINGULAR), fdisk_context_get_unit(cxt, PLURAL));
 
 		stop = read_int_with_suffix(cxt,
-					    cround(start), cround(limit), cround(limit),
-					    cround(start), mesg, &is_suffix_used);
-		if (display_in_cyl_units) {
-			stop = stop * units_per_sector - 1;
+					    cround(cxt, start), cround(cxt, limit),
+					    cround(cxt, limit),
+					    cround(cxt, start), mesg, &is_suffix_used);
+		if (fdisk_context_use_cylinders(cxt)) {
+			stop = stop * fdisk_context_get_units_per_sector(cxt) - 1;
 			if (stop >limit)
 				stop = limit;
 		}
@@ -1218,8 +1197,8 @@ int dos_list_table(struct fdisk_context *cxt,
 			partname(cxt->dev_path, i+1, w+2),
 /* boot flag */		!p->boot_ind ? ' ' : p->boot_ind == ACTIVE_FLAG
 			? '*' : '?',
-/* start */		(unsigned long) cround(get_partition_start(pe)),
-/* end */		(unsigned long) cround(get_partition_start(pe) + psects
+/* start */		(unsigned long) cround(cxt, get_partition_start(pe)),
+/* end */		(unsigned long) cround(cxt, get_partition_start(pe) + psects
 				- (psects ? 1 : 0)),
 /* odd flag on end */	(unsigned long) pblocks, podd ? '+' : ' ',
 /* type id */		p->sys_ind,

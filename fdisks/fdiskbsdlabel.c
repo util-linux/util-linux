@@ -105,8 +105,8 @@ static char disklabelbuffer[BSD_BBSIZE];
 
 static struct xbsd_disklabel xbsd_dlabel;
 
-#define bsd_cround(n) \
-	(display_in_cyl_units ? ((n)/xbsd_dlabel.d_secpercyl) + 1 : (n))
+#define bsd_cround(c, n) \
+	(fdisk_context_use_cylinders(c) ? ((n)/xbsd_dlabel.d_secpercyl) + 1 : (n))
 
 /*
  * Test whether the whole disk has BSD disk label magic.
@@ -190,19 +190,24 @@ static int xbsd_add_part (struct fdisk_context *cxt,
 	end = xbsd_dlabel.d_secperunit - 1;
 #endif
 
-	snprintf (mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
-	begin = read_int(cxt, bsd_cround (begin), bsd_cround (begin), bsd_cround (end),
+	snprintf (mesg, sizeof(mesg), _("First %s"),
+			fdisk_context_get_unit(cxt, SINGULAR));
+	begin = read_int(cxt, bsd_cround (cxt, begin),
+			      bsd_cround (cxt, begin),
+			      bsd_cround (cxt, end),
 			  0, mesg);
 
-	if (display_in_cyl_units)
+	if (fdisk_context_use_cylinders(cxt))
 		begin = (begin - 1) * xbsd_dlabel.d_secpercyl;
 
 	snprintf (mesg, sizeof(mesg), _("Last %s or +size or +sizeM or +sizeK"),
-		  str_units(SINGULAR));
-	end = read_int (cxt, bsd_cround (begin), bsd_cround (end), bsd_cround (end),
-			bsd_cround (begin), mesg);
+		  fdisk_context_get_unit(cxt, SINGULAR));
+	end = read_int (cxt, bsd_cround (cxt, begin),
+			bsd_cround (cxt, end),
+			bsd_cround (cxt, end),
+			bsd_cround (cxt, begin), mesg);
 
-	if (display_in_cyl_units)
+	if (fdisk_context_use_cylinders(cxt))
 		end = end * xbsd_dlabel.d_secpercyl - 1;
 
 	xbsd_dlabel.d_partitions[i].p_size   = end - begin + 1;
@@ -325,7 +330,7 @@ bsd_command_prompt (struct fdisk_context *cxt)
 	xbsd_change_fstype (cxt);
 	break;
       case 'u':
-	change_units(cxt);
+	toggle_units(cxt);
 	break;
       case 'w':
 	xbsd_write_disklabel (cxt);
@@ -419,7 +424,7 @@ xbsd_print_disklabel (struct fdisk_context *cxt, int show_all)
   pp = lp->d_partitions;
   for (i = 0; i < lp->d_npartitions; i++, pp++) {
     if (pp->p_size) {
-      if (display_in_cyl_units && lp->d_secpercyl) {
+      if (fdisk_context_use_cylinders(cxt) && lp->d_secpercyl) {
 	fprintf(f, "  %c: %8ld%c %8ld%c %8ld%c  ",
 		'a' + i,
 		(long) pp->p_offset / lp->d_secpercyl + 1,
