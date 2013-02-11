@@ -62,9 +62,9 @@ static int ask_number(struct fdisk_context *cxt,
 
 	DBG(ASK, dbgprint("asking for number ['%s', <%jd,%jd>, default=%jd, range: %s]",
 				q, low, high, dflt, range));
-	if (range && dflt)
+	if (range && dflt >= low && dflt <= high)
 		snprintf(prompt, sizeof(prompt), _("%s (%s, default %jd): "), q, range, dflt);
-	else if (dflt)
+	else if (dflt >= low && dflt <= high)
 		snprintf(prompt, sizeof(prompt), _("%s (%jd-%jd, default %jd): "), q, low, high, dflt);
 	else
 		snprintf(prompt, sizeof(prompt), _("%s (%jd-%jd): "), q, low, high);
@@ -74,7 +74,7 @@ static int ask_number(struct fdisk_context *cxt,
 
 		if (rc)
 			return rc;
-		if (!*buf && dflt)
+		if (!*buf && dflt >= low && dflt <= high)
 			return fdisk_ask_number_set_result(ask, dflt);
 		else if (isdigit_string(buf)) {
 			char *end;
@@ -111,9 +111,9 @@ static int ask_offset(struct fdisk_context *cxt,
 	DBG(ASK, dbgprint("asking for offset ['%s', <%jd,%jd>, base=%jd, default=%jd, range: %s]",
 				q, low, high, base, dflt, range));
 
-	if (range && dflt)
+	if (range && dflt >= low && dflt <= high)
 		snprintf(prompt, sizeof(prompt), _("%s (%s, default %jd): "), q, range, dflt);
-	else if (dflt)
+	else if (dflt >= low && dflt <= high)
 		snprintf(prompt, sizeof(prompt), _("%s (%jd-%jd, default %jd): "), q, low, high, dflt);
 	else
 		snprintf(prompt, sizeof(prompt), _("%s (%jd-%jd): "), q, low, high);
@@ -126,7 +126,7 @@ static int ask_offset(struct fdisk_context *cxt,
 		int rc = get_user_reply(cxt, prompt, buf, bufsz);
 		if (rc)
 			return rc;
-		if (!*buf && dflt)
+		if (!*buf && dflt >= low && dflt <= high)
 			return fdisk_ask_number_set_result(ask, dflt);
 
 		p = buf;
