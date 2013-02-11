@@ -38,8 +38,10 @@ static void blkid_probe_to_tags(blkid_probe pr, blkid_dev dev)
 				blkid_set_tag(dev, "PARTUUID", data, len);
 			else if (strcmp(name, "PART_ENTRY_NAME") == 0)
 				blkid_set_tag(dev, "PARTLABEL", data, len);
-		} else {
-			/* superblock UUID, LABEL, ... */
+
+		} else if (!strstr(name, "_ID")) {
+			/* superblock UUID, LABEL, ...
+			 * but not {SYSTEM,APPLICATION,..._ID} */
 			blkid_set_tag(dev, name, data, len);
 		}
 	}

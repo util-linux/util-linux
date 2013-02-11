@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdint.h>
+#include <ctype.h>
 
 #include "superblocks.h"
 
@@ -41,14 +42,29 @@ struct iso_volume_descriptor {
 	unsigned char	unused[8];
 	unsigned char	space_size[8];
 	unsigned char	escape_sequences[8];
-	unsigned char   unused1[717];
+	unsigned char  unused1[222];
+	unsigned char  publisher_id[128];
+	unsigned char  unused2[128];
+	unsigned char  application_id[128];
+	unsigned char  unused3[111];
 	struct iso9660_date created;
 	struct iso9660_date modified;
+} __attribute__((packed));
+
+/* Boot Record */
+struct boot_record {
+	unsigned char	vd_type;
+	unsigned char	vd_id[5];
+	unsigned char	vd_version;
+	unsigned char	boot_system_id[32];
+	unsigned char	boot_id[32];
+	unsigned char	unused[1];
 } __attribute__((packed));
 
 #define ISO_SUPERBLOCK_OFFSET		0x8000
 #define ISO_SECTOR_SIZE			0x800
 #define ISO_VD_OFFSET			(ISO_SUPERBLOCK_OFFSET + ISO_SECTOR_SIZE)
+#define ISO_VD_BOOT_RECORD		0x0
 #define ISO_VD_SUPPLEMENTARY		0x2
 #define ISO_VD_END			0xff
 #define ISO_VD_MAX			16
@@ -136,6 +152,19 @@ static int probe_iso9660_set_uuid (blkid_probe pr, const struct iso9660_date *da
 	return 1;
 }
 
+static int is_str_empty(const unsigned char *str, size_t len)
+{
+	size_t i;
+
+	if (!str || !*str)
+		return 1;
+
+	for (i = 0; i < len; i++)
+		if (!isspace(str[i]))
+			return 0;
+	return 1;
+}
+
 /* iso9660 [+ Microsoft Joliet Extension] */
 static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 {
@@ -153,20 +182,46 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 
 	memcpy(label, iso->volume_id, sizeof(label));
 
+	if (!is_str_empty(iso->system_id, sizeof(iso->system_id)))
+		blkid_probe_set_id_label(pr, "SYSTEM_ID",
+				iso->system_id, sizeof(iso->system_id));
+
+	if (!is_str_empty(iso->publisher_id, sizeof(iso->publisher_id)))
+		blkid_probe_set_id_label(pr, "PUBLISHER_ID",
+				iso->publisher_id, sizeof(iso->publisher_id));
+
+	if (!is_str_empty(iso->application_id, sizeof(iso->application_id)))
+		blkid_probe_set_id_label(pr, "APPLICATION_ID",
+				iso->application_id, sizeof(iso->application_id));
+
 	/* create an UUID using the modified/created date */
 	if (! probe_iso9660_set_uuid(pr, &iso->modified))
 		probe_iso9660_set_uuid(pr, &iso->created);
 
-	/* Joliet Extension */
+	/* Joliet Extension and Boot Record */
 	off = ISO_VD_OFFSET;
 	for (i = 0; i < ISO_VD_MAX; i++) {
-		iso = (struct iso_volume_descriptor *)
+		struct boot_record *boot= (struct boot_record *)
 			blkid_probe_get_buffer(pr,
 					off,
-					sizeof(struct iso_volume_descriptor));
+					sizeof(struct boot_record));
 
-		if (iso == NULL || iso->vd_type == ISO_VD_END)
+		if (boot == NULL || boot->vd_type == ISO_VD_END)
 			break;
+
+		if (boot->vd_type == ISO_VD_BOOT_RECORD) {
+			if (!is_str_empty(boot->boot_system_id,
+					  sizeof(boot->boot_system_id)))
+				blkid_probe_set_id_label(pr, "BOOT_SYSTEM_ID",
+							boot->boot_system_id,
+							sizeof(boot->boot_system_id));
+			off += ISO_SECTOR_SIZE;
+			continue;
+		}
+
+		/* Not a Boot record, lets see if its supplemntary volume descriptor */
+		iso = (struct iso_volume_descriptor *) boot;
+
 		if (iso->vd_type != ISO_VD_SUPPLEMENTARY) {
 			off += ISO_SECTOR_SIZE;
 			continue;

@@ -64,6 +64,14 @@
  * @SBMAGIC_OFFSET: offset of SBMAGIC
  *
  * @FSSIZE: size of filessystem [not-implemented yet]
+ *
+ * @SYSTEM_ID: ISO9660 system identifier
+ *
+ * @PUBLISHER_ID: ISO9660 publisher identifier
+ *
+ * @APPLICATION_ID: ISO9660 application identifier
+ *
+ * @BOOT_SYSTEM_ID: ISO9660 boot system identifier
  */
 
 static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn);
@@ -495,6 +503,7 @@ int blkid_probe_set_version(blkid_probe pr, const char *version)
 	return 0;
 }
 
+
 int blkid_probe_sprintf_version(blkid_probe pr, const char *fmt, ...)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
@@ -530,6 +539,35 @@ static int blkid_probe_set_usage(blkid_probe pr, int usage)
 		u = "unknown";
 
 	return blkid_probe_set_value(pr, "USAGE", (unsigned char *) u, strlen(u) + 1);
+}
+
+int blkid_probe_set_id_label(blkid_probe pr, const char *name,
+			     unsigned char *data, size_t len)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+	struct blkid_prval *v;
+
+	if (!(chn->flags & BLKID_SUBLKS_LABEL))
+		return 0;
+
+	v = blkid_probe_assign_value(pr, name);
+	if (!v)
+		return -1;
+
+	if (len >= BLKID_PROBVAL_BUFSIZ)
+		len = BLKID_PROBVAL_BUFSIZ - 1;			/* make a space for \0 */
+
+	memcpy(v->data, data, len);
+	v->data[len] = '\0';
+
+	/* remove white spaces */
+	v->len = blkid_rtrim_whitespace(v->data) + 1;
+	if (v->len > 1)
+		v->len = blkid_ltrim_whitespace(v->data) + 1;
+
+	if (v->len <= 1)
+		blkid_probe_reset_last_value(pr);		/* ignore empty */
+	return 0;
 }
 
 int blkid_probe_set_label(blkid_probe pr, unsigned char *label, size_t len)

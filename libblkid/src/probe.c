@@ -1659,6 +1659,24 @@ size_t blkid_rtrim_whitespace(unsigned char *str)
 	return i;
 }
 
+/* Removes whitespace from the left-hand side of a string.
+ *
+ * Returns size of the new string (without \0).
+ */
+size_t blkid_ltrim_whitespace(unsigned char *str)
+{
+	size_t len;
+	unsigned char *p;
+
+	for (p = str; p && isspace(*p); p++);
+
+	len = strlen((char *) p);
+
+	if (len && p > str)
+		memmove(str, p, len + 1);
+
+	return len;
+}
 /*
  * Some mkfs-like utils wipe some parts (usually begin) of the device.
  * For example LVM (pvcreate) or mkswap(8). This information could be used

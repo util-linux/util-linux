@@ -120,9 +120,9 @@ struct blkid_chaindrv {
 /*
  * Low-level probe result
  */
-#define BLKID_PROBVAL_BUFSIZ	64
+#define BLKID_PROBVAL_BUFSIZ	128
 
-#define BLKID_NVALS_SUBLKS	14
+#define BLKID_NVALS_SUBLKS	18
 #define BLKID_NVALS_TOPLGY	5
 #define BLKID_NVALS_PARTS	13
 
@@ -503,6 +503,8 @@ extern int blkid_probe_set_magic(blkid_probe pr, blkid_loff_t offset,
 extern void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len)
 			__attribute__((nonnull));
 extern size_t blkid_rtrim_whitespace(unsigned char *str)
+			__attribute__((nonnull));
+extern size_t blkid_ltrim_whitespace(unsigned char *str)
 			__attribute__((nonnull));
 
 extern void blkid_probe_set_wiper(blkid_probe pr, blkid_loff_t off,
