@@ -863,13 +863,15 @@ static int sun_set_parttype(
 	info = &sunlabel->vtoc.infos[i];
 
 	if (t->type == SUN_TAG_LINUX_SWAP && !part->start_cylinder) {
-	    read_chars(cxt,
+	    int yes, rc;
+	    rc = fdisk_ask_yesno(cxt,
 	      _("It is highly recommended that the partition at offset 0\n"
 	      "is UFS, EXT2FS filesystem or SunOS swap. Putting Linux swap\n"
 	      "there may destroy your partition table and bootblock.\n"
-	      "Type YES if you're very sure you would like that partition\n"
-	      "tagged with 82 (Linux swap): "));
-	    if (strcmp (line_ptr, _("YES\n")))
+	      "Are you sure you want to tag the partition as Linux swap?"), &yes);
+	    if (rc)
+		    return rc;
+	    if (!yes)
 		    return 1;
 	}
 
