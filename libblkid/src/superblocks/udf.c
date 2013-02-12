@@ -17,6 +17,7 @@
 #include <stdint.h>
 
 #include "superblocks.h"
+#include "iso9660.h"
 
 struct volume_descriptor {
 	struct descriptor_tag {
@@ -115,7 +116,7 @@ anchor:
 	count = le32_to_cpu(vd->type.anchor.length) / bs;
 	loc = le32_to_cpu(vd->type.anchor.location);
 
-	/* pick the primary descriptor from the list */
+	/* check if the list is usable */
 	for (b = 0; b < count; b++) {
 		vd = (struct volume_descriptor *)
 			blkid_probe_get_buffer(pr,
@@ -123,6 +124,21 @@ anchor:
 					sizeof(*vd));
 		if (!vd)
 			return -1;
+	}
+
+	/* Try extract all possible ISO9660 information -- if there is
+	 * usable LABEL in ISO header then use it, otherwise read UDF
+	 * specific LABEL */
+	if (probe_iso9660(pr, mag) == 0 &&
+	    __blkid_probe_lookup_value(pr, "LABEL") != NULL)
+		return 0;
+
+	/* Read UDF label */
+	for (b = 0; b < count; b++) {
+		vd = (struct volume_descriptor *)
+			blkid_probe_get_buffer(pr,
+					(blkid_loff_t) (loc + b) * bs,
+					sizeof(*vd));
 
 		type = le16_to_cpu(vd->tag.id);
 		if (type == 0)
