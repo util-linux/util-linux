@@ -338,7 +338,6 @@ struct libmnt_context
 	int		utab_writable; /* is utab writable */
 
 	int	flags;		/* private context flags */
-	int	ambi;		/* libblkid returns ambivalent result */
 
 	char	*helper;	/* name of the used /sbin/[u]mount.<type> helper */
 	int	helper_status;	/* helper wait(2) status */

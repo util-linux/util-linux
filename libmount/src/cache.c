@@ -258,6 +258,7 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 {
 	blkid_probe pr;
 	size_t i, ntags = 0;
+	int rc;
 	const char *tags[] = { "LABEL", "UUID", "TYPE", "PARTUUID", "PARTLABEL" };
 	const char *blktags[] = { "LABEL", "UUID", "TYPE", "PART_ENTRY_UUID", "PART_ENTRY_NAME" };
 
@@ -291,7 +292,8 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 	blkid_probe_enable_partitions(pr, 1);
 	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_ENTRY_DETAILS);
 
-	if (blkid_do_safeprobe(pr))
+	rc = blkid_do_safeprobe(pr);
+	if (rc)
 		goto error;
 
 	DBG(CACHE, mnt_debug_h(cache, "reading tags for: %s", devname));
@@ -323,7 +325,7 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 	return ntags ? 0 : 1;
 error:
 	blkid_free_probe(pr);
-	return -1;
+	return rc < 0 ? rc : -1;
 }
 
 /**
@@ -347,6 +349,22 @@ int mnt_cache_device_has_tag(struct libmnt_cache *cache, const char *devname,
 	return 0;
 }
 
+static int __mnt_cache_find_tag_value(struct libmnt_cache *cache,
+		const char *devname, const char *token, char **data)
+{
+	int rc = 0;
+
+	if (!cache || !devname || !token || !data)
+		return -EINVAL;
+
+	rc = mnt_cache_read_tags(cache, devname);
+	if (rc)
+		return rc;
+
+	*data = cache_find_tag_value(cache, devname, token);
+	return data ? 0 : -1;
+}
+
 /**
  * mnt_cache_find_tag_value:
  * @cache: cache for results
@@ -358,13 +376,11 @@ int mnt_cache_device_has_tag(struct libmnt_cache *cache, const char *devname,
 char *mnt_cache_find_tag_value(struct libmnt_cache *cache,
 		const char *devname, const char *token)
 {
-	if (!cache || !devname || !token)
-		return NULL;
+	char *data = NULL;
 
-	if (mnt_cache_read_tags(cache, devname) != 0)
-		return NULL;
-
-	return cache_find_tag_value(cache, devname, token);
+	if (__mnt_cache_find_tag_value(cache, devname, token, &data) == 0)
+		return data;
+	return NULL;
 }
 
 /**
@@ -385,8 +401,13 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 
 	DBG(CACHE, mnt_debug_h(cache, "get %s FS type", devname));
 
-	if (cache)
-		return mnt_cache_find_tag_value(cache, devname, "TYPE");
+	if (cache) {
+		char *val = NULL;
+		rc = __mnt_cache_find_tag_value(cache, devname, "TYPE", &val);
+		if (ambi)
+			*ambi = rc == -2 ? TRUE : FALSE;
+		return rc ? NULL : val;
+	}
 
 	/*
 	 * no cache, probe directly
@@ -396,10 +417,11 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 		return NULL;
 
 	blkid_probe_enable_superblocks(pr, 1);
-
 	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_TYPE);
 
 	rc = blkid_do_safeprobe(pr);
+
+	DBG(CACHE, mnt_debug_h(cache, "liblkid rc=%d", rc));
 
 	if (!rc && !blkid_probe_lookup_value(pr, "TYPE", &data, NULL))
 		type = strdup(data);

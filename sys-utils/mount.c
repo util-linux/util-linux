@@ -385,6 +385,11 @@ try_readonly:
 				warnx(_("can't find mount source %s in %s"),
 						src, mnt_get_fstab_path());
 			return MOUNT_EX_USAGE;
+		case -MNT_ERR_AMBIFS:
+			warnx(_("%s: more filesystems detected. This should not happen,\n"
+			  "       use -t <type> to explicitly specify the filesystem type or\n"
+			  "       use wipefs(8) to clean up the device."), src);
+			return MOUNT_EX_USAGE;
 		case -MNT_ERR_NOFSTYPE:
 			if (restricted)
 				warnx(_("I could not determine the filesystem type, "
