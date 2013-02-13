@@ -1113,23 +1113,9 @@ UL_BUILD_INIT([newgrp])
 AM_CONDITIONAL(BUILD_NEWGRP, test "x$build_newgrp" = xyes)
 
 
-AC_ARG_ENABLE([chfn-chsh],
-  AS_HELP_STRING([--enable-chfn-chsh], [build chfn and chsh]),
-  [], enable_chfn_chsh=no
-)
-UL_BUILD_INIT([chfn_chsh])
-UL_REQUIRES_HAVE([chfn_chsh], [security_pam_misc_h], [PAM header file])
-AM_CONDITIONAL(BUILD_CHFN_CHSH, test "x$build_chfn_chsh" = xyes)
-
-AC_ARG_ENABLE([chsh-only-listed],
-AS_HELP_STRING([--disable-chsh-only-listed], [chsh: allow shells not in /etc/shells]),
-[], enable_chsh_only_listed=yes
-)
-
-AC_ARG_WITH([libuser], AS_HELP_STRING([--without-libuser], [compile without libuser (remote chsh)]),
+AC_ARG_WITH([user], AS_HELP_STRING([--without-user], [compile without libuser (remote chsh)]),
   [], with_user=auto
 )
-
 if test "x$with_user" = xno; then
   AM_CONDITIONAL(HAVE_USER, false)
 else
@@ -1142,6 +1128,28 @@ else
   esac
 fi
 
+AC_ARG_ENABLE([chfn-chsh-password],
+  AS_HELP_STRING([--disable-chfn-chsh-password], [do not require the user to enter the password in chfn and chsh]),
+  [], enable_chfn_chsh_password=yes
+)
+
+AC_ARG_ENABLE([chfn-chsh],
+  AS_HELP_STRING([--enable-chfn-chsh], [build chfn and chsh]),
+  [], enable_chfn_chsh=no
+)
+UL_BUILD_INIT([chfn_chsh])
+
+if test "x$enable_chfn_chsh_password" = xyes -o "x$have_user" = xyes; then
+  UL_REQUIRES_HAVE([chfn_chsh], [security_pam_misc_h], [PAM header file])
+  AC_DEFINE(CHFN_CHSH_PASSWORD, 1, [Should chfn and chsh require the user to enter the password?])
+fi
+AM_CONDITIONAL(BUILD_CHFN_CHSH, test "x$build_chfn_chsh" = xyes)
+AM_CONDITIONAL(CHFN_CHSH_PASSWORD, test "x$enable_chfn_chsh_password" = xyes)
+
+AC_ARG_ENABLE([chsh-only-listed],
+AS_HELP_STRING([--disable-chsh-only-listed], [chsh: allow shells not in /etc/shells]),
+[], enable_chsh_only_listed=yes
+)
 
 if test "x$enable_chsh_only_listed" = xyes; then
 AC_DEFINE(ONLY_LISTED_SHELLS, 1, [Should chsh allow only shells in /etc/shells?])
@@ -1330,16 +1338,6 @@ AC_ARG_ENABLE([pg-bell],
 
 if test "x$enable_pg_bell" = xyes; then
   AC_DEFINE(PG_BELL, 1, [Should pg ring the bell on invalid keys?])
-fi
-
-
-AC_ARG_ENABLE([require-password],
-  AS_HELP_STRING([--disable-require-password], [do not require the user to enter the password in chfn and chsh]),
-  [], enable_require_password=yes
-)
-
-if test "x$enable_require_password" = xyes; then
-  AC_DEFINE(REQUIRE_PASSWORD, 1, [Should chfn and chsh require the user to enter the password?])
 fi
 
 

@@ -52,7 +52,7 @@
 #ifdef HAVE_LIBUSER
 # include <libuser/user.h>
 # include "libuser.h"
-#else
+#elif CHFN_CHSH_PASSWORD
 # include "auth.h"
 #endif
 
@@ -110,8 +110,10 @@ int main(int argc, char **argv)
 			     info.username);
 	}
 
+#ifndef HAVE_LIBUSER
 	if (!(is_local(pw->pw_name)))
 		errx(EXIT_FAILURE, _("can only change local entries."));
+#endif
 
 #ifdef HAVE_LIBSELINUX
 	if (is_selinux_enabled() > 0) {
@@ -160,12 +162,11 @@ int main(int argc, char **argv)
 
 	printf(_("Changing shell for %s.\n"), pw->pw_name);
 
-#ifndef HAVE_LIBUSER
+#if !defined(HAVE_LIBUSER) && defined(CHFN_CHSH_PASSWORD)
 	if(!auth_pam("chsh", uid, pw->pw_name)) {
 		return EXIT_FAILURE;
 	}
 #endif
-
 	if (!shell) {
 		shell = prompt(_("New shell"), oldshell);
 		if (!shell)
@@ -179,7 +180,9 @@ int main(int argc, char **argv)
 		errx(EXIT_SUCCESS, _("Shell not changed."));
 
 #ifdef HAVE_LIBUSER
-	set_value_libuser("chsh", pw->pw_name, uid, LU_LOGINSHELL, shell);
+	if (set_value_libuser("chsh", pw->pw_name, uid,
+	    LU_LOGINSHELL, shell) < 0)
+		errx(EXIT_FAILURE, _("Shell *NOT* changed.  Try again later."));
 #else
 	pw->pw_shell = shell;
 	if (setpwnam(pw) < 0)

@@ -50,7 +50,7 @@
 #ifdef HAVE_LIBUSER
 # include <libuser/user.h>
 # include "libuser.h"
-#else
+#elif CHFN_CHSH_PASSWORD
 # include "auth.h"
 #endif
 
@@ -133,8 +133,10 @@ int main(int argc, char **argv)
 			     newf.username);
 	}
 
+#ifndef HAVE_LIBUSER
 	if (!(is_local(oldf.username)))
 		errx(EXIT_FAILURE, _("can only change local entries"));
+#endif
 
 #ifdef HAVE_LIBSELINUX
 	if (is_selinux_enabled() > 0) {
@@ -158,18 +160,18 @@ int main(int argc, char **argv)
 
 #ifdef HAVE_LIBUSER
 	/* If we're setuid and not really root, disallow the password change. */
-	if (geteuid() != getuid() && uid != pw->pw_uid) {
+	if (geteuid() != getuid() && uid != oldf.pw->pw_uid) {
 #else
-	if (uid != 0 && uid != pw->pw_uid) {
+	if (uid != 0 && uid != oldf.pw->pw_uid) {
 #endif
 		errno = EACCES;
 		err(EXIT_FAILURE, _("running UID doesn't match UID of user we're "
-		      "altering, change denied")););
+		      "altering, change denied"));
 	}
 
 	printf(_("Changing finger information for %s.\n"), oldf.username);
 
-#ifndef HAVE_LIBUSER
+#if !defined(HAVE_LIBUSER) && defined(CHFN_CHSH_PASSWORD)
 	if(!auth_pam("chfn", uid, oldf.username)) {
 		return EXIT_FAILURE;
 	}
@@ -460,14 +462,14 @@ static int save_new_data(struct finfo *pinfo)
 	}
 
 #ifdef HAVE_LIBUSER
-	if(set_value_libuser("chfn", pinfo->pw->pw_name, pinfo->pw->pw_uid,
-			LU_GECOS, gecos)) {
+	if (set_value_libuser("chfn", pinfo->pw->pw_name, pinfo->pw->pw_uid,
+			LU_GECOS, gecos) < 0) {
 #else /* HAVE_LIBUSER */
 	/* write the new struct passwd to the passwd file. */
 	pinfo->pw->pw_gecos = gecos;
 	if (setpwnam(pinfo->pw) < 0) {
+		warn("setpwnam failed");
 #endif
-		warn("setpwnam");
 		printf(_
 		       ("Finger information *NOT* changed.  Try again later.\n"));
 		return -1;

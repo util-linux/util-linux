@@ -23,7 +23,7 @@ static int auth_lu(const char *service_name, struct lu_context *ctx, uid_t uid,
 
 static int auth_lu(const char *service_name, struct lu_context *ctx, uid_t uid,
 			const char *username) {
-	if(!lu_uses_elevated_privileges(ctx)) {
+	if (!lu_uses_elevated_privileges(ctx)) {
 		/* Drop privileges */
 		if (setegid(getgid()) == -1)
 			err(EXIT_FAILURE, _("Couldn't drop group privileges"));
@@ -47,7 +47,7 @@ int set_value_libuser(const char *service_name, const char *username, uid_t uid,
 		errx(EXIT_FAILURE, _("libuser initialization failed: %s."),
 			lu_strerror(error));
 
-	if(!auth_lu(service_name, ctx, uid, username)) {
+	if (!auth_lu(service_name, ctx, uid, username)) {
 		errno = EACCES;
 		err(EXIT_FAILURE, _("changing user attribute failed"));
 	}
@@ -67,5 +67,6 @@ int set_value_libuser(const char *service_name, const char *username, uid_t uid,
 	}
 	lu_ent_free(ent);
 	lu_end(ctx);
-	return TRUE;
+
+	return 0;
 }

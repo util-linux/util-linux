@@ -9,11 +9,10 @@
  */
 
 #include "auth.h"
-
 #include "pamfail.h"
 
-int auth_pam(const char *service_name, uid_t uid, const char *username) {
-#ifdef REQUIRE_PASSWORD
+int auth_pam(const char *service_name, uid_t uid, const char *username)
+{
 	if (uid != 0) {
 		pam_handle_t *pamh = NULL;
 		struct pam_conv conv = { misc_conv, NULL };
@@ -43,5 +42,4 @@ int auth_pam(const char *service_name, uid_t uid, const char *username) {
 		 * session-oriented activity...  */
 	}
 	return TRUE;
-#endif	/* REQUIRE_PASSWORD */
 }
