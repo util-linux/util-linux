@@ -518,9 +518,10 @@ read_hypervisor_cpuid(struct lscpu_desc *desc)
 #endif
 
 static void
-read_hypervisor(struct lscpu_desc *desc)
+read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 {
-	read_hypervisor_cpuid(desc);
+	if (mod->system != SYSTEM_SNAPSHOT)
+		read_hypervisor_cpuid(desc);
 
 	if (desc->hyper)
 		/* hvm */
@@ -1385,7 +1386,7 @@ int main(int argc, char *argv[])
 				sizeof(struct cpu_cache), cachecmp);
 
 	read_nodes(desc);
-	read_hypervisor(desc);
+	read_hypervisor(desc, mod);
 
 	switch(mod->mode) {
 	case OUTPUT_SUMMARY:
