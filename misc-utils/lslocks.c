@@ -32,6 +32,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#include <libmount.h>
+
 #include "pathnames.h"
 #include "canonicalize.h"
 #include "nls.h"
@@ -78,6 +80,8 @@ static struct colinfo infos[] = {
 #define NCOLS ARRAY_SIZE(infos)
 static int columns[NCOLS], ncolumns;
 static pid_t pid = 0;
+
+static struct libmnt_table *tab;		/* /proc/self/mountinfo */
 
 struct lock {
 	struct list_head locks;
@@ -128,26 +132,19 @@ out:
  */
 static char *get_fallback_filename(dev_t dev)
 {
-	char buf[BUFSIZ], target[PATH_MAX], *ret = NULL;
-	int maj, min;
-	FILE *fp;
+	struct libmnt_fs *fs;
 
-	if (!(fp = fopen(_PATH_PROC_MOUNTINFO, "r")))
+	if (!tab) {
+		tab = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
+		if (!tab)
+			return NULL;
+	}
+
+	fs = mnt_table_find_devno(tab, dev, MNT_ITER_BACKWARD);
+	if (!fs)
 		return NULL;
 
-	while (fgets(buf, sizeof(buf), fp)) {
-		sscanf(buf, "%*u %*u %u:%u %*s %s",
-			    &maj, &min, target);
-
-		if (dev == makedev(maj, min)) {
-			ret = xstrdup(target);
-			goto out;
-
-		}
-	}
-out:
-	fclose(fp);
-	return ret;
+	return xstrdup(mnt_fs_get_target(fs));
 }
 
 /*
@@ -569,5 +566,6 @@ int main(int argc, char *argv[])
 	if (!rc && !list_empty(&locks))
 		rc = show_locks(&locks, tt_flags);
 
+	mnt_free_table(tab);
 	return rc;
 }
