@@ -24,7 +24,8 @@ libcommon_la_SOURCES = \
 	lib/tt.c \
 	lib/wholedisk.c \
 	lib/ttyutils.c \
-	lib/xgetpass.c
+	lib/xgetpass.c \
+	lib/exec_shell.c
 
 if LINUX
 libcommon_la_SOURCES += \

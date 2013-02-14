@@ -4,7 +4,7 @@ nsenter \- run program with namespaces of other processes
 .SH SYNOPSIS
 .B nsenter
 .RI [ options ]
-program
+.RI [ program ]
 .RI [ arguments ]
 .SH DESCRIPTION
 Enters the contexts of one or more other processes and then executes specified
@@ -50,6 +50,9 @@ flag).
 See the
 .BR clone (2)
 for exact semantics of the flags.
+.TP
+If program is not given, run ``${SHELL}'' (default: /bin\:/sh).
+
 .SH OPTIONS
 Argument with square brakets, such as [\fIfile\fR], means optional argument.
 Command line syntax to specify optional argument \-\-mount=/path\:/to\:/file.

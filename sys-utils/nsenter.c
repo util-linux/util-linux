@@ -17,8 +17,6 @@
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <dirent.h>
 #include <errno.h>
 #include <getopt.h>
@@ -28,12 +26,15 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #include "strutils.h"
 #include "nls.h"
 #include "c.h"
 #include "closestream.h"
 #include "namespace.h"
+#include "exec_shell.h"
 
 static struct namespace_file {
 	int nstype;
@@ -253,9 +254,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if (optind >= argc)
-		usage(EXIT_FAILURE);
-
 	/*
 	 * Open remaining namespace and directory descriptors.
 	 */
@@ -317,7 +315,9 @@ int main(int argc, char *argv[])
 	if (do_fork == 1)
 		continue_as_child();
 
-	execvp(argv[optind], argv + optind);
-
-	err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
+	if (optind < argc) {
+		execvp(argv[optind], argv + optind);
+		err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
+	}
+	exec_shell();
 }

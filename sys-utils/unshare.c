@@ -29,6 +29,7 @@
 #include "c.h"
 #include "closestream.h"
 #include "namespace.h"
+#include "exec_shell.h"
 
 static void usage(int status)
 {
@@ -107,13 +108,12 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if(optind >= argc)
-		usage(EXIT_FAILURE);
-
 	if(-1 == unshare(unshare_flags))
 		err(EXIT_FAILURE, _("unshare failed"));
 
-	execvp(argv[optind], argv + optind);
-
-	err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
+	if (optind < argc) {
+		execvp(argv[optind], argv + optind);
+		err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
+	}
+	exec_shell();
 }
