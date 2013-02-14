@@ -44,8 +44,8 @@ Type of lock, can be FLOCK (created with flock(2)) or POSIX (created with fcntl(
 Size of the locked file.
 
 .IP "MODE"
-Lock access permissions (read, write).
-
+Lock access permissions (read, write). If the process is blocked and waiting for the lock
+than the '*' (asterisk) postfix is used for the mode.
 .IP "M"
 Mandatory state of the lock: 0 if none; 1 if set.  (See chmod(1)).
 

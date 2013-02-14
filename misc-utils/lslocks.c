@@ -93,7 +93,8 @@ struct lock {
 	char *mode;
 	off_t start;
 	off_t end;
-	int mandatory;
+	unsigned int mandatory :1,
+		     blocked   :1;
 	char *size;
 };
 
@@ -250,11 +251,15 @@ static int get_local_locks(struct list_head *locks)
 			case 0: /* ignore */
 				break;
 			case 1: /* posix, flock, etc */
-				l->type = xstrdup(tok);
+				if (strcmp(tok, "->") == 0) {	/* optional field */
+					l->blocked = 1;
+					i--;
+				} else
+					l->type = xstrdup(tok);
 				break;
 
 			case 2: /* is this a mandatory lock? other values are advisory or noinode */
-				l->mandatory = *tok == 'M' ? TRUE : FALSE;
+				l->mandatory = *tok == 'M' ? 1 : 0;
 				break;
 			case 3: /* lock mode */
 				l->mode = xstrdup(tok);
@@ -406,10 +411,10 @@ static void add_tt_line(struct tt *tt, struct lock *l)
 			xasprintf(&str, "%s", l->size);
 			break;
 		case COL_MODE:
-			xasprintf(&str, "%s", l->mode);
+			xasprintf(&str, "%s%s", l->mode, l->blocked ? "*" : "");
 			break;
 		case COL_M:
-			xasprintf(&str, "%d", l->mandatory);
+			xasprintf(&str, "%d", l->mandatory ? 1 : 0);
 			break;
 		case COL_START:
 			xasprintf(&str, "%jd", l->start);
