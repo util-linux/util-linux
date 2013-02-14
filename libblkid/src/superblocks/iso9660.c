@@ -204,7 +204,8 @@ int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 		struct boot_record *boot= (struct boot_record *)
 			blkid_probe_get_buffer(pr,
 					off,
-					sizeof(struct boot_record));
+					max(sizeof(struct boot_record),
+					    sizeof(struct iso_volume_descriptor)));
 
 		if (boot == NULL || boot->vd_type == ISO_VD_END)
 			break;
@@ -225,7 +226,7 @@ int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 		if (iso->vd_type != ISO_VD_SUPPLEMENTARY) {
 			off += ISO_SECTOR_SIZE;
 			continue;
-      }
+		}
 
 		if (memcmp(iso->escape_sequences, "%/@", 3) == 0 ||
 		    memcmp(iso->escape_sequences, "%/C", 3) == 0 ||
