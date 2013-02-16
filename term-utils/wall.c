@@ -182,10 +182,9 @@ makemsg(char *fname, size_t *mbufsize, int print_banner)
 	struct stat sbuf;
 	time_t now;
 	FILE *fp;
-	char *p, *whom, *where, *hostname, *lbuf, *tmpname, *mbuf;
+	char *p, *whom, *where, *lbuf, *tmpname, *mbuf;
 	long line_max;
 
-	hostname = xmalloc(sysconf(_SC_HOST_NAME_MAX) + 1);
 	line_max = sysconf(_SC_LINE_MAX);
 	lbuf = xmalloc(line_max);
 
@@ -195,6 +194,7 @@ makemsg(char *fname, size_t *mbufsize, int print_banner)
 	free(tmpname);
 
 	if (print_banner == TRUE) {
+		char *hostname = xgethostname();
 		if (!(whom = getlogin()) || !*whom)
 			whom = (pw = getpwuid(getuid())) ? pw->pw_name : "???";
 		if (!whom) {
@@ -206,7 +206,6 @@ makemsg(char *fname, size_t *mbufsize, int print_banner)
 			where = "somewhere";
 			warn(_("cannot get tty name"));
 		}
-		gethostname(hostname, sizeof(hostname));
 		time(&now);
 		lt = localtime(&now);
 
@@ -222,6 +221,7 @@ makemsg(char *fname, size_t *mbufsize, int print_banner)
 		fprintf(fp, "\r%79s\r\n", " ");
 		sprintf(lbuf, _("Broadcast Message from %s@%s"),
 			      whom, hostname);
+		free(hostname);
 		fprintf(fp, "%-79.79s\007\007\r\n", lbuf);
 		sprintf(lbuf, "        (%s) at %d:%02d ...",
 			      where, lt->tm_hour, lt->tm_min);
@@ -229,7 +229,6 @@ makemsg(char *fname, size_t *mbufsize, int print_banner)
 	}
 	fprintf(fp, "%79s\r\n", " ");
 
-	free(hostname);
 
 	if (fname) {
 		/*
