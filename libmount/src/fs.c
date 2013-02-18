@@ -61,6 +61,7 @@ void mnt_free_fs(struct libmnt_fs *fs)
 	free(fs->fs_optstr);
 	free(fs->user_optstr);
 	free(fs->attrs);
+	free(fs->opt_fields);
 
 	free(fs);
 }
