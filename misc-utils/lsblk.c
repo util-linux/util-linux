@@ -182,6 +182,10 @@ static size_t nincludes;
 static struct libmnt_table *mtab, *swaps;
 static struct libmnt_cache *mntcache;
 
+#ifdef HAVE_LIBUDEV
+struct udev *udev;
+#endif
+
 struct blkdev_cxt {
 	struct blkdev_cxt *parent;
 
@@ -400,13 +404,13 @@ static int get_udev_properties(struct blkdev_cxt *cxt
 #else
 static int get_udev_properties(struct blkdev_cxt *cxt)
 {
-	struct udev *udev;
 	struct udev_device *dev;
 
 	if (cxt->probed)
 		return 0;		/* already done */
 
-	udev = udev_new();
+	if (!udev)
+		udev = udev_new();
 	if (!udev)
 		return -1;
 
@@ -436,8 +440,6 @@ static int get_udev_properties(struct blkdev_cxt *cxt)
 		udev_device_unref(dev);
 		cxt->probed = 1;
 	}
-
-	udev_unref(udev);
 
 	return cxt->probed == 1 ? 0 : -1;
 
@@ -1564,5 +1566,8 @@ leave:
 	mnt_free_table(mtab);
 	mnt_free_table(swaps);
 	mnt_free_cache(mntcache);
+#ifdef HAVE_LIBUDEV
+	udev_unref(udev);
+#endif
 	return status;
 }
