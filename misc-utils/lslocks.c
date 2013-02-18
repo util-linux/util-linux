@@ -521,6 +521,7 @@ int main(int argc, char *argv[])
 {
 	int c, tt_flags = 0, rc = 0;
 	struct list_head locks;
+	char *outarg = NULL;
 	static const struct option long_opts[] = {
 		{ "pid",	required_argument, NULL, 'p' },
 		{ "help",	no_argument,       NULL, 'h' },
@@ -545,11 +546,7 @@ int main(int argc, char *argv[])
 			pid = strtos32_or_err(optarg, _("invalid PID argument"));
 			break;
 		case 'o':
-			ncolumns = string_to_idarray(optarg,
-						     columns, ARRAY_SIZE(columns),
-						     column_name_to_id);
-			if (ncolumns < 0)
-				return EXIT_FAILURE;
+			outarg = optarg;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -585,6 +582,10 @@ int main(int argc, char *argv[])
 		columns[ncolumns++] = COL_END;
 		columns[ncolumns++] = COL_PATH;
 	}
+
+	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
+					 &ncolumns, column_name_to_id) < 0)
+		return EXIT_FAILURE;
 
 	rc = get_local_locks(&locks);
 
