@@ -26,13 +26,15 @@
 #include <string.h>
 #include <termios.h>
 #ifdef HAVE_SYS_IOCTL_H
-#include <sys/ioctl.h>
+# include <sys/ioctl.h>
 #endif
 #include <assert.h>
 #include <poll.h>
 #include <sys/statvfs.h>
 #include <sys/types.h>
-
+#ifdef HAVE_LIBUDEV
+# include <libudev.h>
+#endif
 #include <libmount.h>
 
 #include "pathnames.h"
@@ -43,6 +45,7 @@
 #include "strutils.h"
 #include "xalloc.h"
 #include "optutils.h"
+#include "mangle.h"
 
 /* flags */
 enum {
@@ -145,6 +148,10 @@ static int nactions;
 
 /* libmount cache */
 static struct libmnt_cache *cache;
+
+#ifdef HAVE_LIBUDEV
+struct udev *udev;
+#endif
 
 static int match_func(struct libmnt_fs *fs, void *data __attribute__ ((__unused__)));
 
@@ -351,19 +358,71 @@ static int column_name_to_id(const char *name, size_t namesz)
 	return -1;
 }
 
-/* Returns LABEL or UUID */
-static const char *get_tag(struct libmnt_fs *fs, const char *tagname)
+
+#ifdef HAVE_LIBUDEV
+static char *get_tag_from_udev(const char *devname, int col)
 {
-	const char *t, *v, *res;
+	struct udev_device *dev;
+	const char *data = NULL;
+	char *res = NULL;
+
+	if (!udev)
+		udev = udev_new();
+	if (!udev)
+		return NULL;
+
+	if (strncmp(devname, "/dev/", 5) == 0)
+		devname += 5;
+
+	dev = udev_device_new_from_subsystem_sysname(udev, "block", devname);
+	if (!dev)
+		return NULL;
+
+	switch(col) {
+	case COL_LABEL:
+		data = udev_device_get_property_value(dev, "ID_FS_LABEL_ENC");
+		break;
+	case COL_UUID:
+		data = udev_device_get_property_value(dev, "ID_FS_UUID_ENC");
+		break;
+	case COL_PARTUUID:
+		data = udev_device_get_property_value(dev, "ID_PART_ENTRY_UUID");
+		break;
+	case COL_PARTLABEL:
+		data = udev_device_get_property_value(dev, "ID_PART_ENTRY_NAME");
+		break;
+	default:
+		break;
+	}
+
+	if (data) {
+		res = xstrdup(data);
+		unhexmangle_string(res);
+	}
+
+	udev_device_unref(dev);
+	return res;
+}
+#endif /* HAVE_LIBUDEV */
+
+/* Returns LABEL or UUID */
+static const char *get_tag(struct libmnt_fs *fs, const char *tagname, int col)
+{
+	const char *t, *v, *res = NULL;
 
 	if (!mnt_fs_get_tag(fs, &t, &v) && !strcmp(t, tagname))
 		res = v;
 	else {
-		res = mnt_fs_get_source(fs);
-		if (res)
-			res = mnt_resolve_spec(res, cache);
-		if (res)
-			res = mnt_cache_find_tag_value(cache, res, tagname);
+		const char *dev = mnt_fs_get_source(fs);
+
+		if (dev)
+			dev = mnt_resolve_spec(dev, cache);
+#ifdef HAVE_LIBUDEV
+		if (dev)
+			res = get_tag_from_udev(dev, col);
+#endif
+		if (!res)
+			res = mnt_cache_find_tag_value(cache, dev, tagname);
 	}
 
 	return res;
@@ -451,16 +510,16 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 		str = mnt_fs_get_optional_fields(fs);
 		break;
 	case COL_UUID:
-		str = get_tag(fs, "UUID");
+		str = get_tag(fs, "UUID", col_id);
 		break;
 	case COL_PARTUUID:
-		str = get_tag(fs, "PARTUUID");
+		str = get_tag(fs, "PARTUUID", col_id);
 		break;
 	case COL_LABEL:
-		str = get_tag(fs, "LABEL");
+		str = get_tag(fs, "LABEL", col_id);
 		break;
 	case COL_PARTLABEL:
-		str = get_tag(fs, "PARTLABEL");
+		str = get_tag(fs, "PARTLABEL", col_id);
 		break;
 
 	case COL_MAJMIN:
@@ -1414,6 +1473,8 @@ leave:
 	mnt_free_table(tb);
 	mnt_free_cache(cache);
 	free(tabfiles);
-
+#ifdef HAVE_LIBUDEV
+	udev_unref(udev);
+#endif
 	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
 }
