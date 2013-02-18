@@ -113,10 +113,14 @@ static void __attribute__((__noreturn__)) usage(int status)
 	fprintf(stream,
 		_(" %s [options] file\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, stream);
-	fputs(_(" -x, --destination <dir>  extract into directory\n"), stream);
+	fputs(_(" -a                       for compatibility only, ignored\n"), stream);
 	fputs(_(" -v, --verbose            be more verbose\n"), stream);
+	fputs(_(" -x, --destination <dir>  extract into directory\n"), stream);
+	fputs(_(" -y                       for compatibility only, ignored\n"), stream);
+	fputs(USAGE_SEPARATOR, stream);
 	fputs(USAGE_HELP, stream);
 	fputs(USAGE_VERSION, stream);
+	fputs(USAGE_SEPARATOR, stream);
 	exit(status);
 }
 
@@ -652,8 +656,11 @@ int main(int argc, char **argv)
 	outbuffer = xmalloc(page_size * 2);
 
 	/* command line options */
-	while ((c = getopt_long(argc, argv, "x:vVh", longopts, NULL)) != EOF)
+	while ((c = getopt_long(argc, argv, "ayx:vVh", longopts, NULL)) != EOF)
 		switch (c) {
+		case 'a':		/* ignore */
+		case 'y':
+			break;
 		case 'h':
 			usage(FSCK_EX_OK);
 			break;
