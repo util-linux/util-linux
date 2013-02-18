@@ -55,6 +55,7 @@ enum {
 	COL_START,
 	COL_END,
 	COL_PATH,
+	COL_BLOCKER
 };
 
 /* column names */
@@ -76,6 +77,7 @@ static struct colinfo infos[] = {
 	[COL_START] = { "START", 10, TT_FL_RIGHT, N_("relative byte offset of the lock")},
 	[COL_END]  = { "END",    10, TT_FL_RIGHT, N_("ending offset of the lock")},
 	[COL_PATH] = { "PATH",    0, TT_FL_TRUNC, N_("path of the locked file")},
+	[COL_BLOCKER] = { "BLOCKER", 0, TT_FL_RIGHT, N_("PID of the process blocking the lock") }
 };
 #define NCOLS ARRAY_SIZE(infos)
 static int columns[NCOLS], ncolumns;
@@ -96,6 +98,7 @@ struct lock {
 	unsigned int mandatory :1,
 		     blocked   :1;
 	char *size;
+	int id;
 };
 
 static void disable_columns_truncate(void)
@@ -248,7 +251,9 @@ static int get_local_locks(struct list_head *locks)
 			 * separated by ' ' - check <kernel>/fs/locks.c
 			 */
 			switch (i) {
-			case 0: /* ignore */
+			case 0: /* ID: */
+				tok[strlen(tok) - 1] = '\0';
+				l->id = strtos32_or_err(tok, _("failed to parse ID"));
 				break;
 			case 1: /* posix, flock, etc */
 				if (strcmp(tok, "->") == 0) {	/* optional field */
@@ -306,22 +311,6 @@ static int get_local_locks(struct list_head *locks)
 			free(szstr);
 		}
 
-		if (pid && pid != l->pid) {
-			/*
-			 * It's easier to just parse the file then decide if
-			 * it should be added to the list - otherwise just
-			 * get rid of stored data
-			 */
-			free(l->path);
-			free(l->size);
-			free(l->mode);
-			free(l->cmdname);
-			free(l->type);
-			free(l);
-
-			continue;
-		}
-
 		list_add(&l->locks, locks);
 	}
 
@@ -374,7 +363,21 @@ static void rem_lock(struct lock *lock)
 	free(lock);
 }
 
-static void add_tt_line(struct tt *tt, struct lock *l)
+static pid_t get_blocker(int id, struct list_head *locks)
+{
+	struct list_head *p;
+
+	list_for_each(p, locks) {
+		struct lock *l = list_entry(p, struct lock, locks);
+
+		if (l->id == id && !l->blocked)
+			return l->pid;
+	}
+
+	return 0;
+}
+
+static void add_tt_line(struct tt *tt, struct lock *l, struct list_head *locks)
 {
 	int i;
 	struct tt_line *line;
@@ -425,6 +428,13 @@ static void add_tt_line(struct tt *tt, struct lock *l)
 		case COL_PATH:
 			xasprintf(&str, "%s", l->path ? l->path : notfnd);
 			break;
+		case COL_BLOCKER:
+		{
+			pid_t bl = l->blocked && l->id ?
+						get_blocker(l->id, locks) : 0;
+			if (bl)
+				xasprintf(&str, "%d", (int) bl);
+		}
 		default:
 			break;
 		}
@@ -456,10 +466,20 @@ static int show_locks(struct list_head *locks, int tt_flags)
 		}
 	}
 
+	/* prepare data for output */
+	list_for_each(p, locks) {
+		struct lock *l = list_entry(p, struct lock, locks);
+
+		if (pid && pid != l->pid)
+			continue;
+
+		add_tt_line(tt, l, locks);
+	}
+
+	/* destroy the list */
 	list_for_each_safe(p, pnext, locks) {
-		struct lock *lock = list_entry(p, struct lock, locks);
-		add_tt_line(tt, lock);
-		rem_lock(lock);
+		struct lock *l = list_entry(p, struct lock, locks);
+		rem_lock(l);
 	}
 
 	tt_print_table(tt);
