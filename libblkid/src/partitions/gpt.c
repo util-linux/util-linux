@@ -334,6 +334,10 @@ static int probe_gpt_pt(blkid_probe pr,
 	if (!tab)
 		goto err;
 
+	guid = h->disk_guid;
+	swap_efi_guid(&guid);
+	blkid_parttable_set_id(tab, (const unsigned char *) &guid);
+
 	ssf = blkid_probe_get_sectorsize(pr) / 512;
 
 	fu = le64_to_cpu(h->first_usable_lba);

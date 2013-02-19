@@ -137,7 +137,7 @@ static int probe_dos_pt(blkid_probe pr,
 	blkid_partlist ls;
 	struct dos_partition *p0, *p;
 	unsigned char *data;
-	uint32_t start, size;
+	uint32_t start, size, id;
 
 	data = blkid_probe_get_sector(pr, 0);
 	if (!data)
@@ -199,6 +199,15 @@ static int probe_dos_pt(blkid_probe pr,
 	tab = blkid_partlist_new_parttable(ls, "dos", BLKID_MSDOS_PT_OFFSET);
 	if (!tab)
 		goto err;
+
+	id = dos_parttable_id(data);
+	if (id) {
+		char buf[37];
+
+		snprintf(buf, sizeof(buf), "0x%08x", id);
+		blkid_parttable_set_id(tab, (unsigned char *) buf);
+	}
+
 
 	/* Parse primary partitions */
 	for (p = p0, i = 0; i < 4; i++, p++) {

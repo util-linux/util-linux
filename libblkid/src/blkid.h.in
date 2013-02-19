@@ -391,6 +391,9 @@ extern int blkid_partition_is_primary(blkid_partition par)
 extern const char *blkid_parttable_get_type(blkid_parttable tab)
 			__ul_attribute__((warn_unused_result));
 
+extern const char *blkid_parttable_get_id(blkid_parttable tab)
+			__ul_attribute__((warn_unused_result));
+
 extern blkid_loff_t blkid_parttable_get_offset(blkid_parttable tab)
 			__ul_attribute__((warn_unused_result));
 extern blkid_partition blkid_parttable_get_parent(blkid_parttable tab)

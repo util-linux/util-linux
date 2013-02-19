@@ -9,6 +9,8 @@ extern int blkid_partitions_get_flags(blkid_probe pr);
 extern blkid_parttable blkid_partlist_new_parttable(blkid_partlist ls,
 				const char *type, blkid_loff_t offset);
 
+extern int blkid_parttable_set_id(blkid_parttable tab, const unsigned char *id);
+
 extern blkid_partition blkid_partlist_add_partition(blkid_partlist ls,
 				blkid_parttable tab,
 				blkid_loff_t start, blkid_loff_t size);

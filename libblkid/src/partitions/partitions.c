@@ -163,6 +163,7 @@ struct blkid_struct_parttable {
 	blkid_loff_t	offset;		/* begin of the partition table */
 	int		nparts;		/* number of partitions */
 	blkid_partition	parent;		/* parent of nested partition table */
+	char		id[37];		/* PT identifier (e.g. UUID for GPT) */
 
 	struct list_head t_tabs;	/* all tables */
 };
@@ -1001,6 +1002,33 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 	DBG(DEBUG_LOWPROBE, printf("not found partition for device\n"));
 	return NULL;
 }
+
+int blkid_parttable_set_id(blkid_parttable tab, const unsigned char *id)
+{
+	if (!tab)
+		return -1;
+
+	if (strcmp(tab->type, "gpt") == 0)
+		blkid_unparse_uuid(id, tab->id, sizeof(tab->id));
+	else if (strcmp(tab->type, "dos") == 0)
+		strncpy(tab->id, (const char *) id, sizeof(tab->id));
+
+	return 0;
+}
+
+/**
+ * blkid_parttable_get_id:
+ * @tab: partition table
+ *
+ * The ID is GPT disk UUID or DOS disk ID (in hex format).
+ *
+ * Returns: partition table ID (for example GPT disk UUID) or NULL
+ */
+const char *blkid_parttable_get_id(blkid_parttable tab)
+{
+	return tab && tab->id && *tab->id ? tab->id : NULL;
+}
+
 
 int blkid_partition_set_type(blkid_partition par, int type)
 {

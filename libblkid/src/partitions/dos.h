@@ -13,7 +13,7 @@ struct dos_partition {
 #define BLKID_MSDOS_PT_OFFSET		0x1be
 
 /* assemble badly aligned little endian integer */
-static inline unsigned int assemble4le(unsigned char *p)
+static inline unsigned int assemble4le(const unsigned char *p)
 {
 	return p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
 }
@@ -31,6 +31,11 @@ static inline unsigned int dos_partition_size(struct dos_partition *p)
 static inline int is_valid_mbr_signature(const unsigned char *mbr)
 {
 	return mbr[510] == 0x55 && mbr[511] == 0xaa ? 1 : 0;
+}
+
+static inline unsigned int dos_parttable_id(const unsigned char *mbr)
+{
+	return assemble4le(&mbr[440]);
 }
 
 #endif /* BLKID_PARTITIONS_DOS_H */

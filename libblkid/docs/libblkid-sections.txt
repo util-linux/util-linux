@@ -98,6 +98,7 @@ blkid_partlist_numof_partitions
 blkid_partlist_devno_to_partition
 blkid_partlist_get_table
 <SUBSECTION>
+blkid_parttable_get_id
 blkid_parttable_get_offset
 blkid_parttable_get_parent
 blkid_parttable_get_type
