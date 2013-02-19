@@ -44,13 +44,14 @@ blkid_new_probe
 blkid_new_probe_from_filename
 blkid_probe_get_devno
 blkid_probe_get_fd
-blkid_probe_get_sectorsize
-blkid_probe_get_sectors
-blkid_probe_get_size
 blkid_probe_get_offset
+blkid_probe_get_sectors
+blkid_probe_get_sectorsize
+blkid_probe_get_size
 blkid_probe_get_wholedisk_devno
-blkid_probe_set_device
 blkid_probe_is_wholedisk
+blkid_probe_set_device
+blkid_probe_step_back
 blkid_reset_probe
 </SECTION>
 
