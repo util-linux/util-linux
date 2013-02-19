@@ -33,6 +33,7 @@ enum {
 struct tt {
 	size_t	ncols;		/* number of columns */
 	size_t	termwidth;	/* terminal width */
+	int	is_term;	/* is a tty? */
 	int	flags;
 	int	first_run;
 

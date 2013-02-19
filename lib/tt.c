@@ -535,6 +535,9 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 		extremes += cl->is_extreme;
 	}
 
+	if (!tb->is_term)
+		return;
+
 	/* reduce columns with extreme fields
 	 */
 	if (width > tb->termwidth && extremes) {
@@ -874,8 +877,11 @@ int tt_print_table(struct tt *tb)
 	if (!tb)
 		return -1;
 
-	if (tb->first_run && !tb->termwidth) {
-		tb->termwidth = get_terminal_width();
+	if (tb->first_run) {
+		tb->is_term = isatty(STDOUT_FILENO);
+
+		if (tb->is_term && !tb->termwidth)
+			tb->termwidth = get_terminal_width();
 		if (tb->termwidth <= 0)
 			tb->termwidth = 80;
 	}
