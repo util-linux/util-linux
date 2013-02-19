@@ -1129,6 +1129,8 @@ int blkid_do_safeprobe(blkid_probe pr)
 
 	blkid_probe_start(pr);
 
+	pr->prob_flags |= BLKID_PROBE_FL_IGNORE_BACKUP;
+
 	for (i = 0; i < BLKID_NCHAINS; i++) {
 		struct blkid_chain *chn;
 
@@ -1769,3 +1771,7 @@ void blkid_probe_use_wiper(blkid_probe pr, blkid_loff_t off, blkid_loff_t size)
 	}
 }
 
+int blkid_probe_ignore_backup(blkid_probe pr)
+{
+	return pr && (pr->prob_flags & BLKID_PROBE_FL_IGNORE_BACKUP);
+}
