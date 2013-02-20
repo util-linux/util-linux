@@ -58,6 +58,7 @@
 #include "closestream.h"
 #include "nls.h"
 #include "c.h"
+#include "rpmatch.h"
 
 /* exit codes */
 

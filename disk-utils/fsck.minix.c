@@ -111,6 +111,7 @@
 #include "ismounted.h"
 #include "all-io.h"
 #include "closestream.h"
+#include "rpmatch.h"
 
 #define ROOT_INO 1
 #define YESNO_LENGTH 64

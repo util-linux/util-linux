@@ -78,6 +78,7 @@
 #include "setpwnam.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "rpmatch.h"
 
 #ifdef HAVE_LIBSELINUX
 # include <selinux/selinux.h>
