@@ -132,6 +132,13 @@ err:
 	return -1;
 }
 
+#ifndef HAVE_MEMPCPY
+void *mempcpy(void *restrict dest, const void *restrict src, size_t n)
+{
+    return ((char *)memcpy(dest, src, n)) + n;
+}
+#endif
+
 #ifndef HAVE_STRNLEN
 size_t strnlen(const char *s, size_t maxlen)
 {
