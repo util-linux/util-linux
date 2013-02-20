@@ -63,8 +63,10 @@ static int probe_btrfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct btrfs_super_block *bfs;
 
-	if (mag->kboff > 64 && blkid_probe_ignore_backup(pr))
+	if (mag->kboff > 64 && blkid_probe_ignore_backup(pr)) {
+		DBG(DEBUG_LOWPROBE, printf("btrfs: found backup superblock, ignore\n"));
 		return 1;
+	}
 
 	bfs = blkid_probe_get_sb(pr, mag, struct btrfs_super_block);
 	if (!bfs)

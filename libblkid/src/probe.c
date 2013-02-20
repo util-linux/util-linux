@@ -815,6 +815,7 @@ int blkid_probe_get_idmag(blkid_probe pr, const struct blkid_idinfo *id,
 static inline void blkid_probe_start(blkid_probe pr)
 {
 	if (pr) {
+		DBG(DEBUG_LOWPROBE, printf("%p: start probe\n", pr));
 		pr->cur_chain = NULL;
 		pr->prob_flags = 0;
 		blkid_probe_set_wiper(pr, 0, 0);
@@ -824,6 +825,7 @@ static inline void blkid_probe_start(blkid_probe pr)
 static inline void blkid_probe_end(blkid_probe pr)
 {
 	if (pr) {
+		DBG(DEBUG_LOWPROBE, printf("%p: end probe\n", pr));
 		pr->cur_chain = NULL;
 		pr->prob_flags = 0;
 		blkid_probe_set_wiper(pr, 0, 0);
