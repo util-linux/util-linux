@@ -874,7 +874,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 		switch (c) {
 		case 'a':
 			if (fdisk_is_disklabel(cxt, SUN))
-				sun_set_alt_cyl(cxt);
+				fdisk_sun_set_alt_cyl(cxt);
 			break;
 		case 'b':
 			if (fdisk_is_disklabel(cxt, DOS))
@@ -886,7 +886,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 					 _("Number of cylinders"));
 			fdisk_override_geometry(cxt, user_cylinders, user_heads, user_sectors);
 			if (fdisk_is_disklabel(cxt, SUN))
-				sun_set_ncyl(cxt, cxt->geom.cylinders);
+				fdisk_sun_set_ncyl(cxt, cxt->geom.cylinders);
 			break;
 		case 'd':
 			print_raw(cxt);
@@ -895,7 +895,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 			if (fdisk_is_disklabel(cxt, SGI))
 				sgi_set_xcyl();
 			else if (fdisk_is_disklabel(cxt, SUN))
-				sun_set_xcyl(cxt);
+				fdisk_sun_set_xcyl(cxt);
 			else
 				if (fdisk_is_disklabel(cxt, DOS))
 					dos_list_table_expert(cxt, 1);
@@ -914,13 +914,13 @@ expert_command_prompt(struct fdisk_context *cxt)
 			break;
 		case 'i':
 			if (fdisk_is_disklabel(cxt, SUN))
-				sun_set_ilfact(cxt);
+				fdisk_sun_set_ilfact(cxt);
 			else if (fdisk_is_disklabel(cxt, DOS))
 				dos_set_mbr_id(cxt);
 			break;
 		case 'o':
 			if (fdisk_is_disklabel(cxt, SUN))
-				sun_set_rspeed(cxt);
+				fdisk_sun_set_rspeed(cxt);
 			break;
 		case 'p':
 			if (fdisk_is_disklabel(cxt, SUN))
@@ -949,7 +949,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 			break;
 		case 'y':
 			if (fdisk_is_disklabel(cxt, SUN))
-				sun_set_pcylcount(cxt);
+				fdisk_sun_set_pcylcount(cxt);
 			break;
 		default:
 			print_menu(cxt, EXPERT_MENU);
@@ -1219,6 +1219,8 @@ int main(int argc, char **argv)
 			break;
 		case 'c':
 			if (optarg) {
+				/* this setting is independent on the current
+				 * actively used label */
 				lb = fdisk_context_get_label(cxt, "dos");
 				if (!lb)
 					err(EXIT_FAILURE, _("not found DOS label driver"));

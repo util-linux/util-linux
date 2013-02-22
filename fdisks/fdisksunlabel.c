@@ -726,7 +726,7 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 }
 
 
-void sun_set_alt_cyl(struct fdisk_context *cxt)
+void fdisk_sun_set_alt_cyl(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
 	uintmax_t res;
@@ -739,13 +739,13 @@ void sun_set_alt_cyl(struct fdisk_context *cxt)
 		sunlabel->acyl = cpu_to_be16(res);
 }
 
-void sun_set_ncyl(struct fdisk_context *cxt, int cyl)
+void fdisk_sun_set_ncyl(struct fdisk_context *cxt, int cyl)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
 	sunlabel->ncyl = cpu_to_be16(cyl);
 }
 
-void sun_set_xcyl(struct fdisk_context *cxt)
+void fdisk_sun_set_xcyl(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
 	uintmax_t res;
@@ -758,7 +758,7 @@ void sun_set_xcyl(struct fdisk_context *cxt)
 		sunlabel->apc = cpu_to_be16(res);
 }
 
-void sun_set_ilfact(struct fdisk_context *cxt)
+void fdisk_sun_set_ilfact(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
 	uintmax_t res;
@@ -771,7 +771,7 @@ void sun_set_ilfact(struct fdisk_context *cxt)
 		sunlabel->intrlv = cpu_to_be16(res);
 }
 
-void sun_set_rspeed(struct fdisk_context *cxt)
+void fdisk_sun_set_rspeed(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
 	uintmax_t res;
@@ -785,7 +785,7 @@ void sun_set_rspeed(struct fdisk_context *cxt)
 
 }
 
-void sun_set_pcylcount(struct fdisk_context *cxt)
+void fdisk_sun_set_pcylcount(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
 	uintmax_t res;
