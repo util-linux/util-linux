@@ -305,14 +305,35 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	return 0;
 }
 
-void toggle_sunflags(struct fdisk_context *cxt, size_t i, uint16_t mask)
+static int sun_toggle_partition_flag(struct fdisk_context *cxt, size_t i, unsigned long flag)
 {
-	struct sun_disklabel *sunlabel = self_disklabel(cxt);
-	struct sun_info *p = &sunlabel->vtoc.infos[i];
+	struct sun_disklabel *sunlabel;
+	struct sun_info *p;
 
-	p->flags ^= cpu_to_be16(mask);
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, SUN));
 
-	fdisk_label_set_changed(cxt->label, 1);
+	if (!i >= cxt->label->nparts_max)
+		return -EINVAL;
+
+	sunlabel = self_disklabel(cxt);
+	p = &sunlabel->vtoc.infos[i];
+
+	switch (flag) {
+	case SUN_FLAG_UNMNT:
+		p->flags ^= cpu_to_be16(SUN_FLAG_UNMNT);
+		fdisk_label_set_changed(cxt->label, 1);
+		break;
+	case SUN_FLAG_RONLY:
+		p->flags ^= cpu_to_be16(SUN_FLAG_RONLY);
+		fdisk_label_set_changed(cxt->label, 1);
+		break;
+	default:
+		return 1;
+	}
+
+	return 0;
 }
 
 static void fetch_sun(struct fdisk_context *cxt,
@@ -939,6 +960,7 @@ const struct fdisk_label_operations sun_operations =
 	.part_set_type	= sun_set_parttype,
 
 	.part_get_status = sun_get_partition_status,
+	.part_toggle_flag = sun_toggle_partition_flag,
 
 	.reset_alignment = sun_reset_alignment,
 };

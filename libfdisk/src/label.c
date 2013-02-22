@@ -263,7 +263,32 @@ int fdisk_partition_get_status(struct fdisk_context *cxt,
 
 	rc = cxt->label->op->part_get_status(cxt, partnum, status);
 
-	/* DBG(LABEL, dbgprint("partition: %zd: status: 0x%04x [rc=%d]", partnum, *status, rc)); */
+	DBG(LABEL, dbgprint("partition: %zd: status: 0x%04x [rc=%d]", partnum, *status, rc));
+	return rc;
+}
+
+/**
+ * fdisk_partition_taggle_flag:
+ * @cxt: fdisk context
+ * @partnum: partition number
+ * @status: flags
+ *
+ * Returns 0 on success, otherwise, a corresponding error.
+ */
+int fdisk_partition_toggle_flag(struct fdisk_context *cxt,
+			       size_t partnum,
+			       unsigned long flag)
+{
+	int rc;
+
+	if (!cxt || !cxt->label)
+		return -EINVAL;
+	if (!cxt->label->op->part_toggle_flag)
+		return -ENOSYS;
+
+	rc = cxt->label->op->part_toggle_flag(cxt, partnum, flag);
+
+	DBG(LABEL, dbgprint("partition: %zd: toggle: 0x%04lx [rc=%d]", partnum, flag, rc));
 	return rc;
 }
 

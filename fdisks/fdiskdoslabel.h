@@ -59,4 +59,7 @@ extern int mbr_is_valid_magic(unsigned char *b);
 		   (fdisk_is_disklabel(_x, DOS) && \
                     fdisk_dos_is_compatible(fdisk_context_get_label(_x, NULL)))
 
+/* toggle flags */
+#define DOS_FLAG_ACTIVE	1
+
 #endif

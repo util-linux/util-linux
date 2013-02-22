@@ -1402,21 +1402,6 @@ void dos_move_begin(struct fdisk_context *cxt, int i)
 	}
 }
 
-void dos_toggle_active(struct fdisk_context *cxt, int i)
-{
-	struct pte *pe = &ptes[i];
-	struct partition *p = pe->part_table;
-
-	if (IS_EXTENDED (p->sys_ind) && !p->boot_ind)
-		fprintf(stderr,
-			_("WARNING: Partition %d is an extended partition\n"),
-			i + 1);
-	p->boot_ind = (p->boot_ind ? 0 : ACTIVE_FLAG);
-	pe->changed = 1;
-	fdisk_label_set_changed(cxt->label, 1);
-}
-
-
 static int dos_get_partition_status(
 		struct fdisk_context *cxt,
 		size_t i,
@@ -1442,6 +1427,40 @@ static int dos_get_partition_status(
 	return 0;
 }
 
+static int dos_toggle_partition_flag(
+		struct fdisk_context *cxt,
+		size_t i,
+		unsigned long flag)
+{
+	struct pte *pe;
+	struct partition *p;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, DOS));
+
+	if (i >= cxt->label->nparts_max)
+		return -EINVAL;
+
+	pe = &ptes[i];
+	p = pe->part_table;
+
+	switch (flag) {
+	case DOS_FLAG_ACTIVE:
+		if (IS_EXTENDED(p->sys_ind) && !p->boot_ind)
+			fdisk_warnx(cxt, _("WARNING: Partition %d is an extended partition"), i + 1);
+
+		p->boot_ind = (p->boot_ind ? 0 : ACTIVE_FLAG);
+		pe->changed = 1;
+		fdisk_label_set_changed(cxt->label, 1);
+		break;
+	default:
+		return 1;
+	}
+
+	return 0;
+}
+
 static const struct fdisk_label_operations dos_operations =
 {
 	.probe		= dos_probe_label,
@@ -1453,6 +1472,7 @@ static const struct fdisk_label_operations dos_operations =
 	.part_get_type	= dos_get_parttype,
 	.part_set_type	= dos_set_parttype,
 
+	.part_toggle_flag = dos_toggle_partition_flag,
 	.part_get_status = dos_get_partition_status,
 
 	.reset_alignment = dos_reset_alignment,

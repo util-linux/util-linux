@@ -62,6 +62,8 @@ enum {
 	FDISK_ASKTYPE_YESNO
 };
 
+
+
 /* init.c */
 extern void fdisk_init_debug(int mask);
 
@@ -119,6 +121,7 @@ extern void fdisk_label_set_changed(struct fdisk_label *lb, int changed);
 extern int fdisk_label_is_changed(struct fdisk_label *lb);
 
 extern int fdisk_partition_get_status(struct fdisk_context *cxt, size_t partnum, int *status);
+extern int fdisk_partition_toggle_flag(struct fdisk_context *cxt, size_t partnum, unsigned long flag);
 
 /* alignment.c */
 extern int fdisk_reset_alignment(struct fdisk_context *cxt);

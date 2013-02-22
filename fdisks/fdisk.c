@@ -1072,15 +1072,17 @@ static void command_prompt(struct fdisk_context *cxt)
 		switch (c) {
 		case 'a':
 			if (fdisk_is_disklabel(cxt, DOS))
-				dos_toggle_active(cxt,
-					get_partition(cxt, 1, cxt->label->nparts_max));
+				fdisk_partition_toggle_flag(cxt,
+					get_partition(cxt, 1, cxt->label->nparts_max),
+					DOS_FLAG_ACTIVE);
 			else if (fdisk_is_disklabel(cxt, SUN))
-				toggle_sunflags(cxt,
+				fdisk_partition_toggle_flag(cxt,
 					get_partition(cxt, 1, cxt->label->nparts_max),
 					SUN_FLAG_UNMNT);
 			else if (fdisk_is_disklabel(cxt, SGI))
-				sgi_set_bootpartition(cxt,
-					get_partition(cxt, 1, cxt->label->nparts_max));
+				fdisk_partition_toggle_flag(cxt,
+					get_partition(cxt, 1, cxt->label->nparts_max),
+					SGI_FLAG_BOOT);
 			else
 				unknown_command(c);
 			break;
@@ -1101,12 +1103,13 @@ static void command_prompt(struct fdisk_context *cxt)
 			if (fdisk_is_disklabel(cxt, DOS))
 				toggle_dos_compatibility_flag(cxt);
 			else if (fdisk_is_disklabel(cxt, SUN))
-				toggle_sunflags(cxt,
+				fdisk_partition_toggle_flag(cxt,
 					get_partition(cxt, 1, cxt->label->nparts_max),
 					SUN_FLAG_RONLY);
 			else if (fdisk_is_disklabel(cxt, SGI))
-				sgi_set_swappartition(cxt,
-					get_partition(cxt, 1, cxt->label->nparts_max));
+				fdisk_partition_toggle_flag(cxt,
+					get_partition(cxt, 1, cxt->label->nparts_max),
+					SGI_FLAG_SWAP);
 			else
 				unknown_command(c);
 			break;

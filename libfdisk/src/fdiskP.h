@@ -164,6 +164,8 @@ struct fdisk_label_operations {
 						size_t partnum,
 						int *status);
 
+	int (*part_toggle_flag)(struct fdisk_context *cxt, size_t i, unsigned long flag);
+
 	/* refresh alignment setting */
 	int (*reset_alignment)(struct fdisk_context *cxt);
 

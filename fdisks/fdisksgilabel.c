@@ -281,20 +281,9 @@ sgi_get_swappartition(struct fdisk_context *cxt)
 	return (short) SSWAP16(sgilabel->swap_part);
 }
 
-void
-sgi_set_bootpartition(struct fdisk_context *cxt, int i)
-{
-	sgilabel->boot_part = SSWAP16(((short)i));
-}
-
 static unsigned int
 sgi_get_lastblock(struct fdisk_context *cxt) {
 	return cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders;
-}
-
-void
-sgi_set_swappartition(struct fdisk_context *cxt, int i) {
-	sgilabel->swap_part = SSWAP16(((short)i));
 }
 
 static int
@@ -1022,6 +1011,29 @@ static int sgi_get_partition_status(
 	return 0;
 }
 
+static int sgi_toggle_partition_flag(struct fdisk_context *cxt, size_t i, unsigned long flag)
+{
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, SGI));
+
+	if (i >= cxt->label->nparts_max)
+		return -EINVAL;
+
+	switch (flag) {
+	case SGI_FLAG_BOOT:
+		sgilabel->boot_part = sgilabel->boot_part == SSWAP16(i) ? 0 : SSWAP16(i);
+		break;
+	case SGI_FLAG_SWAP:
+		sgilabel->swap_part = sgilabel->swap_part == SSWAP16(i) ? 0 : SSWAP16(i);
+		break;
+	default:
+		return 1;
+	}
+
+	return 0;
+}
+
 static const struct fdisk_label_operations sgi_operations =
 {
 	.probe		= sgi_probe_label,
@@ -1033,7 +1045,8 @@ static const struct fdisk_label_operations sgi_operations =
 	.part_get_type	= sgi_get_parttype,
 	.part_set_type	= sgi_set_parttype,
 
-	.part_get_status = sgi_get_partition_status
+	.part_get_status = sgi_get_partition_status,
+	.part_toggle_flag = sgi_toggle_partition_flag
 };
 
 /*
