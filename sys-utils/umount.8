@@ -111,7 +111,10 @@ to specify options for which no action should be taken.
 .TP
 \fB\-R\fR, \fB\-\-recursive\fR
 Recursively unmount each directory specified. Recursion for each directory will
-stop if any unmount operation in the chain fails for any reason.
+stop if any unmount operation in the chain fails for any reason. The relationship
+between mountpoints is determined by /proc/self/mountinfo entries. The filesystem
+must be specified by mountpoint path, recursive unmount by device name (or UUID)
+is unsupported.
 .TP
 \fB\-r\fR, \fB\-\-read\-only\fR
 In case unmounting fails, try to remount read-only.
