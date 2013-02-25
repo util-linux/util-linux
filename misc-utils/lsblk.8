@@ -1,17 +1,14 @@
 .\" -*- nroff -*-
-.TH LSBLK 8 "April 2010" "util-linux" "System Administration"
+.TH LSBLK 8 "February 2013" "util-linux" "System Administration"
 .SH NAME
 lsblk \- list block devices
 .SH SYNOPSIS
 .B lsblk
 .RB [ options ]
-.sp
-.B lsblk
-.RB [ options ]
-.IR device...
+.RI [ device ...]
 .SH DESCRIPTION
 .B lsblk
-lists information about all or the specified block devices.  The
+lists information about all available or the specified block devices.  The
 .B lsblk
 command reads the
 .I sysfs
@@ -22,87 +19,110 @@ by default.  Use
 .B "lsblk --help"
 to get a list of all available columns.
 .PP
-The default output as well as default output from options like --topology and
---fs is subject to change, so whenever possible you should avoid using default
-outputs in your scripts. Always explicitly define expected columns by
+The default output, as well as the default output from options like
+.BR \-\-fs
+and
+.BR \-\-topology ,
+is subject to change.  So whenever possible, you should avoid using default
+outputs in your scripts.  Always explicitly define expected columns by using
 .B \-\-output
-.IR columns
-in environment where a stable output is required.
+.I columns-list
+in environments where a stable output is required.
 .SH OPTIONS
-.IP "\fB\-a, \-\-all\fP"
-.B lsblk
-does not list empty devices by default. This option disables this restriction.
-.IP "\fB\-b, \-\-bytes\fP"
-Print the SIZE column in bytes rather than in human-readable format.
-.IP "\fB\-d, \-\-nodeps\fP"
-Don't print device holders or slaves.  For example "lsblk --nodeps /dev/sda" prints
+.TP
+.BR \-a , " \-\-all"
+Also list empty devices.  (By default they are skipped.)
+.TP
+.BR \-b , " \-\-bytes"
+Print the SIZE column in bytes rather than in a human-readable format.
+.TP
+.BR \-D , " \-\-discard"
+Print information about the discarding capabilities (TRIM, UNMAP) for each device.
+.TP
+.BR \-d , " \-\-nodeps"
+Do not print holder devices or slaves.  For example, \fBlsblk --nodeps /dev/sda\fR prints
 information about the sda device only.
-.IP "\fB\-D, \-\-discard\fP"
-Print information about the discard (TRIM, UNMAP) capabilities for each device.
-.IP "\fB\-e, \-\-exclude \fIlist\fP
-Exclude the devices specified by a comma-separated \fIlist\fR of major device numbers.
-Note that RAM disks (major=1) are excluded by default. The filter is applied to the top-level
-devices only.
-.IP "\fB\-I, \-\-include \fIlist\fP
-Include devices specified by a comma-separated \fIlist\fR of major device numbers only.
-The filter is applied to the top-level devices.
-.IP "\fB\-f, \-\-fs\fP
-Output info about filesystems.  This option is equivalent to "-o NAME,FSTYPE,LABEL,MOUNTPOINT".
+.TP
+.BR \-e , " \-\-exclude " \fIlist\fP
+Exclude the devices specified by the comma-separated \fIlist\fR of major device numbers.
+Note that RAM disks (major=1) are excluded by default.  The filter is applied to the
+top-level devices only.
+.TP
+.BR \-f , " \-\-fs"
+Output info about filesystems.  This option is equivalent to
+.BR -o\ NAME,FSTYPE,LABEL,MOUNTPOINT .
 The authoritative information about filesystems and raids is provided by the
 .BR blkid (8)
 command.
-.IP "\fB\-h, \-\-help\fP"
+.TP
+.BR \-h , " \-\-help"
 Print a help text and exit.
-.IP "\fB\-i, \-\-ascii\fP"
+.TP
+.BR \-I , " \-\-include " \fIlist\fP
+Include devices specified by the comma-separated \fIlist\fR of major device numbers.
+The filter is applied to the top-level devices only.
+.TP
+.BR \-i , " \-\-ascii"
 Use ASCII characters for tree formatting.
-.IP "\fB\-m, \-\-perms\fP
-Output info about device owner, group and mode.  This option is equivalent to "-o NAME,SIZE,OWNER,GROUP,MODE".
-.IP "\fB\-l, \-\-list\fP"
-Use the list output format.
-.IP "\fB\-n, \-\-noheadings\fP"
+.TP
+.BR \-l , " \-\-list"
+Produce output in the form of a list.
+.TP
+.BR \-m , " \-\-perms"
+Output info about device owner, group and mode.  This option is equivalent to
+.BR -o\ NAME,SIZE,OWNER,GROUP,MODE .
+.TP
+.BR \-n , " \-\-noheadings"
 Do not print a header line.
-.IP "\fB\-o, \-\-output \fIlist\fP"
+.TP
+.BR \-o , " \-\-output " \fIlist\fP
 Specify which output columns to print.  Use
-.B "--help"
+.B \-\-help
 to get a list of all supported columns.
 
 The default list of columns may be extended if \fIlist\fP is
 specified in the format \fI+list\fP (e.g. \fBlsblk -o +UUID\fP).
-.IP "\fB\-P, \-\-pairs\fP"
-Use key="value" output format. All potentially unsafe characters are hex-escaped (\\x<code>).
-.IP "\fB\-r, \-\-raw\fP"
-Use the raw output format. All potentially unsafe characters are hex-escaped
-(\\x<code>) in NAME, KNAME, LABEL, PARTLABEL and MOUNTPOINT columns.
-.IP "\fB\-s, \-\-inverse\fP"
+.TP
+.BR \-P , " \-\-pairs"
+Produce output in the form of key="value" pairs.
+All potentially unsafe characters are hex-escaped (\\x<code>).
+.TP
+.BR \-r , " \-\-raw"
+Produce output in raw format.  All potentially unsafe characters are hex-escaped
+(\\x<code>) in the NAME, KNAME, LABEL, PARTLABEL and MOUNTPOINT columns.
+.TP
+.BR \-S , " \-\-scsi"
+Output info about SCSI devices only.  All partitions, slaves and holder devices are ignored.
+.TP
+.BR \-s , " \-\-inverse"
 Print dependencies in inverse order.
-.IP "\fB\-t, \-\-topology\fP"
-Output info about block device topology.
-This option is equivalent to "-o NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED,RQ-SIZE,WSAME".
-.IP "\fB\-S, \-\-scsi\fP"
-Output info about SCSI devices only. All partitions, slaves and holders devices are ignored.
-.IP "\fB\-V, \-\-version\fP"
+.TP
+.BR \-t , " \-\-topology"
+Output info about block-device topology.
+This option is equivalent to
+.BR -o\ NAME,ALIGNMENT,MIN-IO,OPT-IO,PHY-SEC,LOG-SEC,ROTA,SCHED,RQ-SIZE,WSAME .
+.TP
+.BR \-V , " \-\-version"
 Output version information and exit.
 .SH NOTES
 For partitions, some information (e.g. queue attributes) is inherited from the
 parent device.
-
 .PP
 The
 .B lsblk
-needs to be able to lookup sysfs path by major:minor, which is done
-done by using
+command needs to be able to look up each block device by major:minor numbers,
+which is done by using
 .BR /sys/dev/block .
-The block sysfs appeared in kernel 2.6.27 (October 2008).  In case of
-problem with new enough kernel check that CONFIG_SYSFS was enabled at
-the time of kernel build.
+This sysfs block directory appeared in kernel 2.6.27 (October 2008).
+In case of problems with a new enough kernel, check that CONFIG_SYSFS
+was enabled at the time of the kernel build.
 .SH AUTHORS
 .nf
 Milan Broz <mbroz@redhat.com>
 Karel Zak <kzak@redhat.com>
 .fi
 .SH ENVIRONMENT
-.IP LIBMOUNT_DEBUG=0xffff
-enables debug output.
+.IP "Setting LIBMOUNT_DEBUG=0xffff enables debug output."
 .SH SEE ALSO
 .BR findmnt (8),
 .BR blkid (8),
