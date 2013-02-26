@@ -132,6 +132,8 @@ extern int endswith(const char *s, const char *sx)
 extern int startswith(const char *s, const char *sx)
 			__attribute__((nonnull));
 
+extern int is_file_empty(const char *name);
+
 extern int mkdir_p(const char *path, mode_t mode);
 
 extern int mnt_is_readonly(const char *path)

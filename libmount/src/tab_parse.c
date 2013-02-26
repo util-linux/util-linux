@@ -957,6 +957,7 @@ int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename)
 {
 	int rc;
 	const char *utab = NULL;
+	struct libmnt_table *u_tb;
 
 	if (mnt_has_regular_mtab(&filename, NULL)) {
 
@@ -980,34 +981,33 @@ int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename)
 		return mnt_table_parse_file(tb, _PATH_PROC_MOUNTS);
 	}
 
+	if (mnt_table_get_nents(tb) == 0)
+		return 0;			/* empty, ignore utab */
 	/*
 	 * try to read user specific information from /run/mount/utabs
 	 */
 	utab = mnt_get_utab_path();
-	if (utab) {
-		struct libmnt_table *u_tb = mnt_new_table();
-		if (u_tb) {
-			u_tb->fmt = MNT_FMT_UTAB;
-			mnt_table_set_parser_fltrcb(u_tb, tb->fltrcb, tb->fltrcb_data);
+	if (!utab || is_file_empty(utab))
+		return 0;
 
-			if (mnt_table_parse_file(u_tb, utab) != 0) {
-				mnt_free_table(u_tb);
-				u_tb = NULL;
-			}
-		}
+	u_tb = mnt_new_table();
+	if (!u_tb)
+		return -ENOMEM;
 
-		if (u_tb) {
-			struct libmnt_fs *u_fs;
-			struct libmnt_iter itr;
+	u_tb->fmt = MNT_FMT_UTAB;
+	mnt_table_set_parser_fltrcb(u_tb, tb->fltrcb, tb->fltrcb_data);
 
-			mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
+	if (mnt_table_parse_file(u_tb, utab) == 0) {
+		struct libmnt_fs *u_fs;
+		struct libmnt_iter itr;
 
-			/*  merge user options into mountinfo from kernel */
-			while(mnt_table_next_fs(u_tb, &itr, &u_fs) == 0)
-				mnt_table_merge_user_fs(tb, u_fs);
+		mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
 
-			mnt_free_table(u_tb);
-		}
+		/*  merge user options into mountinfo from kernel */
+		while(mnt_table_next_fs(u_tb, &itr, &u_fs) == 0)
+			mnt_table_merge_user_fs(tb, u_fs);
 	}
+
+	mnt_free_table(u_tb);
 	return 0;
 }

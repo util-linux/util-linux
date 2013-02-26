@@ -54,6 +54,17 @@ int startswith(const char *s, const char *sx)
         return !strncmp(s, sx, off);
 }
 
+/*
+ * Return 1 if the file does not accessible of empty
+ */
+int is_file_empty(const char *name)
+{
+	struct stat st;
+	assert(name);
+
+	return (stat(name, &st) != 0 || st.st_size == 0);
+}
+
 int mnt_parse_offset(const char *str, size_t len, uintmax_t *res)
 {
 	char *p;
