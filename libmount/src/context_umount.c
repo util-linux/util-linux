@@ -53,25 +53,28 @@ static int mtab_filter(struct libmnt_fs *fs, void *data)
 	return 1;
 }
 
-static int lookup_umount_fs(struct libmnt_context *cxt)
+/**
+ * mnt_context_find_umount_fs:
+ * @cxt: mount context
+ * @tgt: mountpoint, device, ...
+ * @pfs: returns point to filesystem
+ *
+ * Returns: 0 on success, <0 on error, 1 if target filesystem not found
+ */
+int mnt_context_find_umount_fs(struct libmnt_context *cxt,
+			       const char *tgt,
+			       struct libmnt_fs **pfs)
 {
-	int rc, loopdev = 0;
-	const char *tgt;
+	int rc;
 	struct libmnt_table *mtab = NULL;
 	struct libmnt_fs *fs;
 	struct libmnt_cache *cache = NULL;
-	char *cn_tgt = NULL;
+	char *cn_tgt = NULL, *loopdev = NULL;
 
-	assert(cxt);
-	assert(cxt->fs);
-
-	DBG(CXT, mnt_debug_h(cxt, "umount: lookup FS"));
-
-	tgt = mnt_fs_get_target(cxt->fs);
-	if (!tgt) {
-		DBG(CXT, mnt_debug_h(cxt, "umount: undefined target"));
+	if (!cxt || !tgt || !pfs)
 		return -EINVAL;
-	}
+
+	DBG(CXT, mnt_debug_h(cxt, "umount: lookup FS for '%s'", tgt));
 
 	/*
 	 * The mtab file maybe huge and on systems with utab we have to merge
@@ -109,6 +112,11 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 		return rc;
 	}
 
+	if (mnt_table_get_nents(mtab) == 0) {
+		DBG(CXT, mnt_debug_h(cxt, "umount: mtab empty"));
+		return 1;
+	}
+
 try_loopdev:
 	fs = mnt_table_find_target(mtab, tgt, MNT_ITER_BACKWARD);
 	if (!fs && mnt_context_is_swapmatch(cxt)) {
@@ -124,7 +132,8 @@ try_loopdev:
 							MNT_ITER_BACKWARD);
 			if (!fs1) {
 				DBG(CXT, mnt_debug_h(cxt, "mtab is broken?!?!"));
-				return -EINVAL;
+				rc = -EINVAL;
+				goto err;
 			}
 			if (fs != fs1) {
 				/* Something was stacked over `file' on the
@@ -133,7 +142,8 @@ try_loopdev:
 						"umount: %s: %s is mounted "
 						"over it on the same point",
 						tgt, mnt_fs_get_source(fs1)));
-				return -EINVAL;
+				rc = -EINVAL;
+				goto err;
 			}
 		}
 	}
@@ -145,18 +155,11 @@ try_loopdev:
 		struct stat st;
 
 		if (stat(tgt, &st) == 0 && S_ISREG(st.st_mode)) {
-			char *dev = NULL;
-			int count = loopdev_count_by_backing_file(tgt, &dev);
-
+			int count = loopdev_count_by_backing_file(tgt, &loopdev);
 			if (count == 1) {
 				DBG(CXT, mnt_debug_h(cxt,
-					"umount: %s --> %s (retry)", tgt, dev));
-				mnt_fs_set_source(cxt->fs, tgt);
-				mnt_fs_set_target(cxt->fs, dev);
-				free(dev);
-				tgt = mnt_fs_get_target(cxt->fs);
-
-				loopdev = 1;		/* to avoid endless loop */
+					"umount: %s --> %s (retry)", tgt, loopdev));
+				tgt = loopdev;
 				goto try_loopdev;
 
 			} else if (count > 1)
@@ -166,6 +169,35 @@ try_loopdev:
 		}
 	}
 
+	*pfs = fs;
+	if (loopdev)
+		free(loopdev);
+
+	return fs ? 0 : 1;
+err:
+	if (loopdev)
+		free(loopdev);
+	return rc;
+}
+
+static int lookup_umount_fs(struct libmnt_context *cxt)
+{
+	const char *tgt;
+	struct libmnt_fs *fs;
+	int rc;
+
+	assert(cxt);
+	assert(cxt->fs);
+
+	tgt = mnt_fs_get_target(cxt->fs);
+	if (!tgt) {
+		DBG(CXT, mnt_debug_h(cxt, "umount: undefined target"));
+		return -EINVAL;
+	}
+
+	rc = mnt_context_find_umount_fs(cxt, tgt, &fs);
+	if (rc < 0)
+		return rc;
 	if (!fs) {
 		DBG(CXT, mnt_debug_h(cxt, "umount: cannot find %s in mtab", tgt));
 		return 0;

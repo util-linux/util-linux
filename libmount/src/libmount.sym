@@ -253,4 +253,5 @@ MOUNT_2.23 {
 global:
 	mnt_fs_get_optional_fields;
 	mnt_fs_get_propagation;
+	mnt_context_find_umount_fs;
 } MOUNT_2.22;

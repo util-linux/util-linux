@@ -765,6 +765,9 @@ extern int mnt_context_do_mount(struct libmnt_context *cxt);
 extern int mnt_context_finalize_mount(struct libmnt_context *cxt);
 
 /* context_umount.c */
+extern int mnt_context_find_umount_fs(struct libmnt_context *cxt,
+			       const char *tgt,
+			       struct libmnt_fs **pfs);
 extern int mnt_context_next_umount(struct libmnt_context *cxt,
 				struct libmnt_iter *itr,
 				struct libmnt_fs **fs,
