@@ -18,6 +18,17 @@ Why:    useless, nobody uses this command, head(1) is better
 
 --------------------------
 
+What:   pg(1) command
+Why:    use less(1) or more(1)
+
+--------------------------
+
+What:   CHS stuff in fdisk (except SUN where are partitions addresses by cylinders only)
+Why:    use addresssing by sectors, CHS does not work with modern disks,
+        confusing for users...
+
+--------------------------
+
 What:	losetup -s
 Why:	the option -s is in collision with the Loop-AES losetup dialect that is used
         in some distributions. Use the long version (--show) only.
