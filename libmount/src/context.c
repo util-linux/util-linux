@@ -1676,14 +1676,21 @@ int mnt_context_prepare_update(struct libmnt_context *cxt)
 				cxt->syscall_status));
 		return 0;
 	}
+
 	if (!cxt->update) {
+		const char *name = cxt->mtab_writable ? cxt->mtab_path : cxt->utab_path;
+
+		if (cxt->action == MNT_ACT_UMOUNT && is_file_empty(name)) {
+			DBG(CXT, mnt_debug_h(cxt,
+				"skip update: umount, no table"));
+			return 0;
+		}
+
 		cxt->update = mnt_new_update();
 		if (!cxt->update)
 			return -ENOMEM;
 
-		mnt_update_set_filename(cxt->update,
-				cxt->mtab_writable ? cxt->mtab_path : cxt->utab_path,
-				!cxt->mtab_writable);
+		mnt_update_set_filename(cxt->update, name, !cxt->mtab_writable);
 	}
 
 	if (cxt->action == MNT_ACT_UMOUNT)
