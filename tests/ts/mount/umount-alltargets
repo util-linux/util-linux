@@ -1,0 +1,121 @@
+#!/bin/bash
+
+# Copyright (C) 2013 Karel Zak <kzak@redhat.com>
+
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="umount-all-targets"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+ts_skip_nonroot
+
+modprobe --dry-run --quiet scsi_debug
+[ "$?" == 0 ] || ts_skip "missing scsi_debug module"
+
+ts_log "Init device"
+$TS_CMD_UMOUNT --recursive $MOUNTPOINT &> /dev/null
+rmmod scsi_debug &> /dev/null
+modprobe scsi_debug dev_size_mb=50
+[ "$?" == 0 ] || ts_die "Cannot init device"
+
+sleep 3
+
+DEVNAME=$(grep scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
+[ "x${DEVNAME}" == "x" ] && ts_die "Cannot find device"
+
+DEVICE="/dev/${DEVNAME}"
+
+ts_log "Create partitions"
+$TS_CMD_FDISK ${DEVICE} &> /dev/null <<EOF
+n
+p
+1
+
++10M
+n
+p
+2
+
++10M
+n
+p
+3
+
++10M
+n
+p
+
++10M
+w
+q
+EOF
+
+ts_log "Create filesystem A"
+mkfs.ext2 ${DEVICE}1 &> /dev/null
+ts_log "Create filesystem B"
+mkfs.ext2 ${DEVICE}2 &> /dev/null
+ts_log "Create filesystem C"
+mkfs.ext2 ${DEVICE}3 &> /dev/null
+ts_log "Create filesystem D"
+mkfs.ext2 ${DEVICE}4 &> /dev/null
+
+function multi_mount() {
+	local DEV=$1
+	local MNT=$2
+
+	ts_log "prepare: Mount dev to mnt1"
+	[ -d "${MNT}1" ] || mkdir -p ${MNT}1
+	$TS_CMD_MOUNT $DEV ${MNT}1 >> $TS_OUTPUT 2>&1
+
+	ts_log "prepare: Mount dev to mnt2"
+	[ -d "${MNT}2" ] || mkdir -p ${MNT}2
+	$TS_CMD_MOUNT $DEV ${MNT}2 >> $TS_OUTPUT 2>&1
+
+	ts_log "prepare: Mount /dev/xxx1 to mnt3"
+	[ -d "${MNT}3" ] || mkdir -p ${MNT}3
+	$TS_CMD_MOUNT $DEV ${MNT}3 >> $TS_OUTPUT 2>&1
+}
+
+# use the same top-level mountpoint for all sub-tests
+MOUNTPOINT=$TS_MOUNTPOINT
+
+#
+# The same device mounted on more places, umount all by mountpoint name
+#
+ts_init_subtest "all-targets-mnt"
+multi_mount ${DEVICE}1 $MOUNTPOINT
+$TS_CMD_UMOUNT --all-targets ${MOUNTPOINT}1 >> $TS_OUTPUT 2>&1
+[ $? == 0 ] || ts_log "umount failed"
+ts_finalize_subtest
+
+#
+# The same device mounted on more places, umount all by device name
+#
+ts_init_subtest "all-targets-dev"
+multi_mount ${DEVICE}1 $MOUNTPOINT
+$TS_CMD_UMOUNT --all-targets ${DEVICE}1 >> $TS_OUTPUT 2>&1
+[ $? == 0 ] || ts_log "umount failed"
+ts_finalize_subtest
+
+#
+# The same device mounted on more places, one of the mountpoints also contains
+# sub-mounts. Umount all by one umount all by top-level device name.
+#
+ts_init_subtest "all-targets-recursive"
+multi_mount ${DEVICE}1 $MOUNTPOINT
+[ -d "${MOUNTPOINT}1/subA" ] || mkdir -p ${MOUNTPOINT}1/subA
+$TS_CMD_MOUNT ${DEVICE}2 ${MOUNTPOINT}1/subA
+[ -d "${MOUNTPOINT}1/subA/subAB" ] || mkdir -p ${MOUNTPOINT}1/subA/subAB
+$TS_CMD_MOUNT ${DEVICE}3 ${MOUNTPOINT}1/subA/subAB
+[ -d "${MOUNTPOINT}1/subB" ] || mkdir -p ${MOUNTPOINT}1/subB
+$TS_CMD_MOUNT ${DEVICE}4 ${MOUNTPOINT}1/subB
+$TS_CMD_UMOUNT --recursive --all-targets ${DEVICE}1 >> $TS_OUTPUT 2>&1
+[ $? == 0 ] || ts_log "umount failed"
+ts_finalize_subtest
+
+sleep 3
+rmmod scsi_debug >> $TS_OUTPUT 2>&1
+[ $? == 0 ] || ts_die "device busy (umount failed?)"
+
+ts_log "Success"
+ts_finalize
