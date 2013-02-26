@@ -37,6 +37,7 @@
 #include "closestream.h"
 #include "pathnames.h"
 #include "canonicalize.h"
+#include "xalloc.h"
 
 static int table_parser_errcb(struct libmnt_table *tb __attribute__((__unused__)),
 			const char *filename, int line)
@@ -78,7 +79,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all               umount all filesystems\n"), out);
+	fputs(_(" -a, --all               unmount all filesystems\n"), out);
+	fputs(_(" -A, --all-targets       unmount all mountoins for the given device\n"), out);
 	fputs(_(" -c, --no-canonicalize   don't canonicalize paths\n"), out);
 	fputs(_(" -d, --detach-loop       if mounted loop device, also free this loop device\n"), out);
 	fputs(_("     --fake              dry run; skip the umount(2) syscall\n"), out);
@@ -300,23 +302,61 @@ static int umount_one(struct libmnt_context *cxt, const char *spec)
 	return rc;
 }
 
-static int umount_do_recurse(struct libmnt_context *cxt,
-		struct libmnt_table *tb, struct libmnt_fs *parent)
+static struct libmnt_table *new_mountinfo(struct libmnt_context *cxt)
 {
-	int rc, mounted = 0;
+	struct libmnt_table *tb = mnt_new_table();
+	if (!tb)
+		err(MOUNT_EX_SYSERR, _("libmount table allocation failed"));
+
+	mnt_table_set_parser_errcb(tb, table_parser_errcb);
+	mnt_table_set_cache(tb, mnt_context_get_cache(cxt));
+
+	if (mnt_table_parse_file(tb, _PATH_PROC_MOUNTINFO)) {
+		warn(_("failed to parse %s"), _PATH_PROC_MOUNTINFO);
+		mnt_free_table(tb);
+		tb = NULL;
+	}
+
+	return tb;
+}
+
+/*
+ * like umount_one() but does not return error is @spec not mounted
+ */
+static int umount_one_if_mounted(struct libmnt_context *cxt, const char *spec)
+{
+	int rc;
+	struct libmnt_fs *fs;
+
+	rc = mnt_context_find_umount_fs(cxt, spec, &fs);
+	if (rc == 1) {
+		rc = MOUNT_EX_SUCCESS;		/* alredy unmounted */
+		mnt_reset_context(cxt);
+	} else if (rc < 0) {
+		rc = mk_exit_code(cxt, rc);	/* error */
+		mnt_reset_context(cxt);
+	} else
+		rc = umount_one(cxt, mnt_fs_get_target(fs));
+
+	return rc;
+}
+
+static int umount_do_recurse(struct libmnt_context *cxt,
+		struct libmnt_table *tb, struct libmnt_fs *fs)
+{
 	struct libmnt_fs *child;
-	const char *target = mnt_fs_get_target(parent);
 	struct libmnt_iter *itr = mnt_new_iter(MNT_ITER_BACKWARD);
+	int rc;
 
 	if (!itr)
 		err(MOUNT_EX_SYSERR, _("libmount iterator allocation failed"));
-	/*
-	 * umount all childern
-	 */
+
+	/* umount all childern */
 	for (;;) {
-		rc = mnt_table_next_child_fs(tb, itr, parent, &child);
+		rc = mnt_table_next_child_fs(tb, itr, fs, &child);
 		if (rc < 0) {
-			warnx(_("failed to get child fs of %s"), target);
+			warnx(_("failed to get child fs of %s"),
+					mnt_fs_get_target(fs));
 			rc = MOUNT_EX_SOFTWARE;
 			goto done;
 		} else if (rc == 1)
@@ -327,33 +367,7 @@ static int umount_do_recurse(struct libmnt_context *cxt,
 			goto done;
 	}
 
-
-	/*
-	 * Let's check if the pointpoint is still mounted -- for example with
-	 * shared subtrees maybe the mountpoint already unmounted by any
-	 * previous umount(2) call.
-	 *
-	 * Note that here we a little duplicate code from umount_one() and
-	 * mnt_context_umount(). It's no problem to call
-	 * mnt_context_prepare_umount() more than once. This solution is better
-	 * than directly call mnt_context_is_fs_mounted(), because libmount is
-	 * able to optimize mtab usage by mnt_context_set_tabfilte().
-	 */
-	if (mnt_context_set_target(cxt, mnt_fs_get_target(parent)))
-		err(MOUNT_EX_SYSERR, _("failed to set umount target"));
-
-	rc = mnt_context_prepare_umount(cxt);
-	if (!rc)
-		rc = mnt_context_is_fs_mounted(cxt, parent, &mounted);
-	if (mounted)
-		rc = umount_one(cxt, target);
-	else {
-		if (rc)
-			rc = mk_exit_code(cxt, rc);	/* error */
-		else
-			rc = MOUNT_EX_SUCCESS;		/* alredy unmounted */
-		mnt_reset_context(cxt);
-	}
+	rc = umount_one_if_mounted(cxt, mnt_fs_get_target(fs));
 done:
 	mnt_free_iter(itr);
 	return rc;
@@ -362,40 +376,88 @@ done:
 static int umount_recursive(struct libmnt_context *cxt, const char *spec)
 {
 	struct libmnt_table *tb;
+	struct libmnt_fs *fs;
 	int rc;
+
+	tb = new_mountinfo(cxt);
+	if (!tb)
+		return MOUNT_EX_SOFTWARE;
 
 	/* it's always real mountpoint, don't assume that the target maybe a device */
 	mnt_context_disable_swapmatch(cxt, 1);
 
-	tb = mnt_new_table();
-	if (!tb)
-		err(MOUNT_EX_SYSERR, _("libmount table allocation failed"));
-	mnt_table_set_parser_errcb(tb, table_parser_errcb);
-
-	mnt_table_set_cache(tb, mnt_context_get_cache(cxt));
-
-	/*
-	 * Don't use mtab here. The recursive umount depends on child-parent
-	 * relationship defined by mountinfo file.
-	 */
-	if (mnt_table_parse_file(tb, _PATH_PROC_MOUNTINFO)) {
-		warn(_("failed to parse %s"), _PATH_PROC_MOUNTINFO);
-		rc = MOUNT_EX_SOFTWARE;
-	} else {
-		struct libmnt_fs *fs;
-
-		fs = mnt_table_find_target(tb, spec, MNT_ITER_BACKWARD);
-		if (fs)
-			rc = umount_do_recurse(cxt, tb, fs);
-		else {
-			rc = MOUNT_EX_USAGE;
-			warnx(access(spec, F_OK) == 0 ?
-					_("%s: not mounted") :
-					_("%s: not found"), spec);
-		}
+	fs = mnt_table_find_target(tb, spec, MNT_ITER_BACKWARD);
+	if (fs)
+		rc = umount_do_recurse(cxt, tb, fs);
+	else {
+		rc = MOUNT_EX_USAGE;
+		warnx(access(spec, F_OK) == 0 ?
+				_("%s: not mounted") :
+				_("%s: not found"), spec);
 	}
 
 	mnt_free_table(tb);
+	return rc;
+}
+
+static int umount_alltargets(struct libmnt_context *cxt, const char *spec, int rec)
+{
+	struct libmnt_fs *fs;
+	struct libmnt_table *tb;
+	struct libmnt_iter *itr = NULL;
+	char *src = NULL;
+	int rc;
+
+	/* Convert @spec to device name, Use the same logic like regular
+	 * "umount <spec>".
+	 */
+	rc = mnt_context_find_umount_fs(cxt, spec, &fs);
+	if (rc == 1) {
+		rc = MOUNT_EX_USAGE;
+		warnx(access(spec, F_OK) == 0 ?
+				_("%s: not mounted") :
+				_("%s: not found"), spec);
+		return rc;
+	}
+	if (rc < 0)
+		return mk_exit_code(cxt, rc);		/* error */
+
+	if (!mnt_fs_get_srcpath(fs))
+		err(MOUNT_EX_USAGE, _("%s: failed to determine source"), spec);
+
+	itr = mnt_new_iter(MNT_ITER_BACKWARD);
+	if (!itr)
+		err(MOUNT_EX_SYSERR, _("libmount iterator allocation failed"));
+
+	/* get on @cxt independent mountinfo */
+	tb = new_mountinfo(cxt);
+	if (!tb)
+		return MOUNT_EX_SOFTWARE;
+
+	/* Note that @fs is from mount context and the context will be reseted
+	 * after each umount() call */
+	src = xstrdup(mnt_fs_get_srcpath(fs));
+	fs = NULL;
+
+	mnt_reset_context(cxt);
+
+	while (mnt_table_next_fs(tb, itr, &fs) == 0) {
+		if (!mnt_fs_streq_srcpath(fs, src))
+			continue;
+		mnt_context_disable_swapmatch(cxt, 1);
+		if (rec)
+			rc = umount_do_recurse(cxt, tb, fs);
+		else
+			rc = umount_one_if_mounted(cxt, mnt_fs_get_target(fs));
+
+		if (rc != MOUNT_EX_SUCCESS)
+			break;
+	}
+
+	mnt_free_iter(itr);
+	mnt_free_table(tb);
+	free(src);
+
 	return rc;
 }
 
@@ -419,7 +481,7 @@ static char *sanitize_path(const char *path)
 
 int main(int argc, char **argv)
 {
-	int c, rc = 0, all = 0, recursive = 0;
+	int c, rc = 0, all = 0, recursive = 0, alltargets = 0;
 	struct libmnt_context *cxt;
 	char *types = NULL;
 
@@ -429,6 +491,7 @@ int main(int argc, char **argv)
 
 	static const struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
+		{ "all-targets", 0, 0, 'A' },
 		{ "detach-loop", 0, 0, 'd' },
 		{ "fake", 0, 0, UMOUNT_OPT_FAKE },
 		{ "force", 0, 0, 'f' },
@@ -447,6 +510,7 @@ int main(int argc, char **argv)
 	};
 
 	static const ul_excl_t excl[] = {       /* rows and cols in in ASCII order */
+		{ 'A','a' },			/* all-targets,all */
 		{ 'R','a' },			/* recursive,all */
 		{ 'O','R','t'},			/* options,recursive,types */
 		{ 'R','r' },			/* recursive,read-only */
@@ -467,7 +531,7 @@ int main(int argc, char **argv)
 
 	mnt_context_set_tables_errcb(cxt, table_parser_errcb);
 
-	while ((c = getopt_long(argc, argv, "acdfhilnRrO:t:vV",
+	while ((c = getopt_long(argc, argv, "aAcdfhilnRrO:t:vV",
 					longopts, NULL)) != -1) {
 
 
@@ -480,6 +544,9 @@ int main(int argc, char **argv)
 		switch(c) {
 		case 'a':
 			all = 1;
+			break;
+		case 'A':
+			alltargets = 1;
 			break;
 		case 'c':
 			mnt_context_disable_canonicalize(cxt, TRUE);
@@ -543,6 +610,9 @@ int main(int argc, char **argv)
 	} else if (argc < 1) {
 		usage(stderr);
 
+	} else if (alltargets) {
+		while (argc--)
+			rc += umount_alltargets(cxt, *argv++, recursive);
 	} else if (recursive) {
 		while (argc--)
 			rc += umount_recursive(cxt, *argv++);

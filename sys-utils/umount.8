@@ -66,6 +66,13 @@ version 2.7 and later: the
 .I proc
 filesystem is not unmounted.)
 .TP
+\fB\-A\fR, \fB\-\-all-targets\fR
+Unmount all mountpoints for the specified filesystem if the filesystem is
+mounted on more places. The filesystem could be specified by one of the
+mountpoints or device name (or UUID, etc.). This option could be used together
+with \fB\-\-recursive\fR then all nested mounts within the filesystem are
+recursively unmounted.
+.TP
 \fB\-c\fR, \fB\-\-no\-canonicalize\fR
 Do not canonicalize paths.  For more details about this option see the
 .BR mount (8)
