@@ -80,7 +80,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all               unmount all filesystems\n"), out);
-	fputs(_(" -A, --all-targets       unmount all mountoins for the given device\n"), out);
+	fputs(_(" -A, --all-targets       unmount all mountpoins for the given device\n"
+	        "                         in the current namespace\n"), out);
 	fputs(_(" -c, --no-canonicalize   don't canonicalize paths\n"), out);
 	fputs(_(" -d, --detach-loop       if mounted loop device, also free this loop device\n"), out);
 	fputs(_("     --fake              dry run; skip the umount(2) syscall\n"), out);
