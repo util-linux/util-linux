@@ -35,6 +35,9 @@ struct libmnt_optloc {
 
 #define mnt_init_optloc(_ol)	(memset((_ol), 0, sizeof(struct libmnt_optloc)))
 
+#define mnt_optmap_entry_novalue(e) \
+		(e && (e)->name && !strchr((e)->name, '=') && !((e)->mask & MNT_PREFIX))
+
 /*
  * Parses the first option from @optstr. The @optstr pointer is set to begin of
  * the next option.
@@ -526,6 +529,10 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs,
 		if (ent && !ent->id)
 			continue;	/* ignore undefined options (comments) */
 
+		/* ignore name=<value> if options map expects <name> only */
+		if (valsz && mnt_optmap_entry_novalue(ent))
+			m = NULL;
+
 		if (ent && m && m == maps[0] && vfs) {
 			if (ignore_vfs && (ent->mask & ignore_vfs))
 				continue;
@@ -595,6 +602,11 @@ int mnt_optstr_get_options(const char *optstr, char **subset,
 
 		if (ignore && (ent->mask & ignore))
 			continue;
+
+		/* ignore name=<value> if options map expects <name> only */
+		if (valsz && mnt_optmap_entry_novalue(ent))
+			continue;
+
 		rc = __mnt_optstr_append_option(subset, name, namesz, val, valsz);
 		if (rc) {
 			free(*subset);
@@ -653,6 +665,10 @@ int mnt_optstr_get_flags(const char *optstr, unsigned long *flags,
 
 		m = mnt_optmap_get_entry(maps, nmaps, name, namesz, &ent);
 		if (!m || !ent || !ent->id)
+			continue;
+
+		/* ignore name=<value> if options map expects <name> only */
+		if (valsz && mnt_optmap_entry_novalue(ent))
 			continue;
 
 		if (m == map) {				/* requested map */
@@ -748,8 +764,12 @@ int mnt_optstr_apply_flags(char **optstr, unsigned long flags,
 				/*
 				 * remove unwanted option (rw/ro is already set)
 				 */
-				if (!ent->id)
+				if (!ent || !ent->id)
 					continue;
+				/* ignore name=<value> if options map expects <name> only */
+				if (valsz && mnt_optmap_entry_novalue(ent))
+					continue;
+
 				if (ent->id == MS_RDONLY ||
 				    (ent->mask & MNT_INVERT) ||
 				    (fl & ent->id) != (unsigned long) ent->id) {
