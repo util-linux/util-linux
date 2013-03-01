@@ -88,7 +88,7 @@ static void usage(int error)
 		" -l          look up only first device with token specified by -t\n"
 		" -L <label>  convert LABEL to device name\n"
 		" -U <uuid>   convert UUID to device name\n"
-		" -v          print version and exit\n"
+		" -V          print version and exit\n"
 		" <dev>       specify device(s) to probe (default: all devices)\n\n"
 		"Low-level probing options:\n"
 		" -p          low-level superblocks probing (bypass cache)\n"
@@ -687,7 +687,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	while ((c = getopt (argc, argv,
-			    "c:df:ghilL:n:ko:O:ps:S:t:u:U:w:v")) != EOF) {
+			    "c:df:ghilL:n:ko:O:ps:S:t:u:U:w:Vv")) != EOF) {
 
 		err_exclusive_options(c, NULL, excl, excl_st);
 
@@ -785,6 +785,7 @@ int main(int argc, char **argv)
 				usage(err);
 			}
 			break;
+		case 'V':
 		case 'v':
 			version = 1;
 			break;
