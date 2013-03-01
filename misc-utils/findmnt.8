@@ -31,28 +31,13 @@ or
 .IR mountpoint
 is not given, all filesystems are shown.
 .PP
-The device may be specified by device name, maj:min, filesystem LABEL or UUID
-or partition PARTUUID or PARTLABEL.  Note that device name may be interpreted
-as mountpoint (and vice versa) if --target or --source options are not
-specified.
+The device may be specified by device name, maj:min, filesystem LABEL or UUID,
+or partition PARTUUID or PARTLABEL.  Note that a device name may be interpreted
+as a mountpoint (and vice versa) if the \fB--target\fR or \fB--source\fR options
+are not specified.
 .PP
 The command prints all mounted filesystems in the tree-like format by default.
 .SH OPTIONS
-.IP "\fB\-h, \-\-help\fP"
-Print help and exit.
-.IP "\fB\-s, \-\-fstab\fP"
-Search in
-.IR /etc/fstab .
-The output is in the list format (see --list).
-.IP "\fB\-m, \-\-mtab\fP"
-Search in
-.IR /etc/mtab .
-The output is in the list format (see \fB\-\-list\fP).
-.IP "\fB\-k, \-\-kernel\fP"
-Search in
-.IR /proc/self/mountinfo .
-The output is in the tree-like format.  This is the default.
-
 .IP "\fB\-A, \-\-all\fP"
 Disable all built-in filters and print all filesystems.
 .IP "\fB\-a, \-\-ascii\fP"
@@ -60,48 +45,50 @@ Use ascii characters for tree formatting.
 .IP "\fB\-c, \-\-canonicalize\fP"
 Canonicalize all printed paths.
 .IP "\fB\-D, \-\-df\fP"
-Imitate the output of df(1). This option is equivalent to
-"-o SOURCE,FSTYPE,SIZE,USED,AVAIL,USE%,TARGET", but excludes all
-pseudo filesystem. Use \fB\-\-all\fP to print all filesystems.
+Imitate the output of
+.BR df (1).
+This option is equivalent to
+.B -o SOURCE,FSTYPE,SIZE,USED,AVAIL,USE%,TARGET
+but excludes all pseudo filesystems.
+Use \fB\-\-all\fP to print all filesystems.
 .IP "\fB\-d, \-\-direction \fIword\fP"
-The search direction -
+The search direction, either
 .IR forward
 or
 .IR backward .
 .IP "\fB\-e, \-\-evaluate\fP"
 Convert all tags (LABEL, UUID, PARTUUID or PARTLABEL) to the device names.
 .IP "\fB\-F, \-\-tab\-file \fIpath\fP"
-Search in an alternative file, if used with \fB\-\-fstab\fP, \fB\-\-mtab\fP
-or \fB\-\-kernel\fP then overwrites the default paths, if specified more than
-once, then tree-like output is disabled (see the \fB\-\-list\fP option).
+Search in an alternative file.  If used with \fB\-\-fstab\fP, \fB\-\-mtab\fP
+or \fB\-\-kernel\fP, then it overrides the default paths.  If specified more
+than once, then tree-like output is disabled (see the \fB\-\-list\fP option).
 .IP "\fB\-f, \-\-first\-only\fP"
 Print the first matching filesystem only.
+.IP "\fB\-h, \-\-help\fP"
+Print help and exit.
 .IP "\fB\-i, \-\-invert\fP"
 Invert the sense of matching.
+.IP "\fB\-k, \-\-kernel\fP"
+Search in
+.IR /proc/self/mountinfo .
+The output is in the tree-like format.  This is the default.
 .IP "\fB\-l, \-\-list\fP"
-Use the list output format. This output format is automatically enabled if the
-output is restricted by \fB\-t\fP, \fB\-O\fP, \fB\-S\fP or \fB\-T\fP
+Use the list output format.  This output format is automatically enabled if the
+output is restricted by the \fB\-t\fP, \fB\-O\fP, \fB\-S\fP or \fB\-T\fP
 option and the option \fB\-\-submounts\fP is not used or if more that one
 source file (the option \fB\-F\fP) is specified.
-.IP "\fB\-v, \-\-nofsroot\fP"
-Do not print a [/dir] in the SOURCE column for bind-mounts or btrfs subvolumes.
+.IP "\fB\-m, \-\-mtab\fP"
+Search in
+.IR /etc/mtab .
+The output is in the list format (see \fB\-\-list\fP).
 .IP "\fB\-N, \-\-task \fItid\fP"
 Use alternative namespace /proc/<tid>/mountinfo rather than the default
-/proc/self/mountinfo. If the option is specified more than once, then
-tree-like output is disabled (see the \fB\-\-list\fP option). See also
+/proc/self/mountinfo.  If the option is specified more than once, then
+tree-like output is disabled (see the \fB\-\-list\fP option).  See also the
 .BR unshare (1)
 command.
 .IP "\fB\-n, \-\-noheadings\fP"
 Do not print a header line.
-.IP "\fB\-u, \-\-notruncate\fP"
-Do not truncate text in columns.  The default is to not truncate the
-.BR TARGET ,
-.BR SOURCE ,
-.BR UUID ,
-.BR LABEL ,
-.BR PARTUUID ,
-.BR PARTLABEL
-columns.  This option disables text truncation also in all other columns.
 .IP "\fB\-O, \-\-options \fIlist\fP"
 Limit the set of printed filesystems.  More than one option
 may be specified in a comma-separated list.  The
@@ -112,12 +99,12 @@ options are cumulative in effect.  It is different from
 .B \-t
 in that each option is matched exactly; a leading
 .I no
-at the beginning does not have global meaning. The "no" could used for
-individual items in the list. The "no" prefix interpratation could be disabled
+at the beginning does not have global meaning.  The "no" can used for
+individual items in the list.  The "no" prefix interpretation can be disabled
 by "+" prefix.
 .IP "\fB\-o, \-\-output \fIlist\fP"
-Define output columns. See the \fB\-\-help\fP output to get list of the
-currently supported columns. The
+Define output columns.  See the \fB\-\-help\fP output to get a list of the
+currently supported columns.  The
 .BR TARGET
 column contains tree formatting if the
 .B \-\-list
@@ -127,10 +114,12 @@ options are not specified.
 
 The default list of columns may be extended if \fIlist\fP is
 specified in the format \fI+list\fP (e.g. \fBfindmnt -o +PROPAGATION\fP).
+.IP "\fB\-P, \-\-pairs\fP"
+Use key="value" output format.  All potentially unsafe characters are hex-escaped (\\x<code>).
 .IP "\fB\-p, \-\-poll\fR[\fI=list\fR]\fP"
-Monitor changes in the /proc/self/mountinfo file. Supported actions are: mount,
-umount, remount and move. More than one action may be specified in a
-comma-separated list. All actions are monitored by default.
+Monitor changes in the /proc/self/mountinfo file.  Supported actions are: mount,
+umount, remount and move.  More than one action may be specified in a
+comma-separated list.  All actions are monitored by default.
 
 The time for which \fB--poll\fR will block can be restricted with the \fB\-\-timeout\fP
 or \fB\-\-first-only\fP options.
@@ -151,10 +140,23 @@ available for umount and move actions
 .B OLD-OPTIONS
 available for umount and remount actions
 .RE
-.IP "\fB\-P, \-\-pairs\fP"
-Use key="value" output format. All potentially unsafe characters are hex-escaped (\\x<code>).
+.IP "\fB\-R, \-\-submounts\fP"
+Print recursively all submounts for the selected filesystems.  The restrictions
+defined by options \fB\-t\fP, \fB\-O\fP, \fB\-S\fP, \fB\-T\fP and
+\fB\--direction\fP are not applied to submounts.  All submounts are always
+printed in tree-like order.  The option enables the tree-like output format by
+default.  This option has no effect for \fB\-\-mtab\fP or \fB\-\-fstab\fP.
 .IP "\fB\-r, \-\-raw\fP"
-Use raw output format. All potentially unsafe characters are hex-escaped (\\x<code>).
+Use raw output format.  All potentially unsafe characters are hex-escaped (\\x<code>).
+.IP "\fB\-S, \-\-source \fIspec\fP"
+Explicitly define the mount source.  Supported are \fIdevice\fR, \fImaj:min\fR,
+\fILABEL=\fR, \fIUUID=\fR, \fIPARTLABEL=\fR or \fIPARTUUID=\fR.
+.IP "\fB\-s, \-\-fstab\fP"
+Search in
+.IR /etc/fstab .
+The output is in the list format (see \fB--list\fR).
+.IP "\fB\-T, \-\-target \fIdir\fP"
+Explicitly define the mount target (mountpoint directory).
 .IP "\fB\-t, \-\-types \fIlist\fP"
 Limit the set of printed filesystems.  More than one type may be
 specified in a comma-separated list.  The list of filesystem types can be
@@ -163,22 +165,22 @@ prefixed with
 to specify the filesystem types on which no action should be taken.  For
 more details see
 .BR mount (8).
-.IP "\fB\-R, \-\-submounts\fP"
-Print recursively all submounts for the selected filesystems.  The restrictions
-defined by options \fB\-t\fP, \fB\-O\fP, \fB\-S\fP, \fB\-T\fP and
-\fB\--direction\fP are not applied to submounts.  All submounts are always
-printed in tree-like order.  The option enables the tree-like output format by
-default.  This option has no effect for \fB\-\-mtab\fP or \fB\-\-fstab\fP.
-.IP "\fB\-S, \-\-source \fIspec\fP"
-Explicitly define the mount source.  Supported are \fIdevice\fR, \fImaj:min\fR,
-\fILABEL=\fR, \fIUUID=\fR, \fIPARTLABEL=\fR or \fIPARTUUID=\fR.
-.IP "\fB\-T, \-\-target \fIdir\fP"
-Explicitly define the mount target (mountpoint directory).
+.IP "\fB\-u, \-\-notruncate\fP"
+Do not truncate text in columns.  The default is to not truncate the
+.BR TARGET ,
+.BR SOURCE ,
+.BR UUID ,
+.BR LABEL ,
+.BR PARTUUID ,
+.BR PARTLABEL
+columns.  This option disables text truncation also in all other columns.
+.IP "\fB\-v, \-\-nofsroot\fP"
+Do not print a [/dir] in the SOURCE column for bind-mounts or btrfs subvolumes.
 .IP "\fB\-w, \-\-timeout \fImilliseconds\fP"
 Specify an upper limit on the time for which \fB--poll\fR will block, in milliseconds.
 .SH EXAMPLES
 .IP "\fBfindmnt \-\-fstab \-t nfs\fP"
-Prints all nfs filesystems defined in
+Prints all NFS filesystems defined in
 .IR /etc/fstab .
 .IP "\fBfindmnt \-\-fstab /mnt/foo\fP"
 Prints all
@@ -196,9 +198,9 @@ filesystems and converts LABEL= and UUID= tags to the real device names.
 .IP "\fBfindmnt -n --raw --evaluate --output=target LABEL=/boot\fP"
 Prints only the mountpoint where the filesystem with label "/boot" is mounted.
 .IP "\fBfindmnt --poll --target /mnt/foo\fP"
-Monitors mount, umount, remount and move on /mnt/foo.
+Monitors mount, unmount, remount and move on /mnt/foo.
 .IP "\fBfindmnt --poll=umount --first-only --target /mnt/foo\fP"
-Waits for /mnt/foo umount.
+Waits for /mnt/foo unmount.
 .IP "\fBfindmnt --poll=remount -t ext3 -O ro\fP"
 Monitors remounts to read-only mode on all ext3 filesystems.
 .SH ENVIRONMENT
