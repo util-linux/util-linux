@@ -78,8 +78,8 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while((c = getopt_long(argc, argv, "hVmuinpU", longopts, NULL)) != -1) {
-		switch(c) {
+	while ((c = getopt_long(argc, argv, "hVmuinpU", longopts, NULL)) != -1) {
+		switch (c) {
 		case 'h':
 			usage(EXIT_SUCCESS);
 		case 'V':
@@ -108,7 +108,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	if(-1 == unshare(unshare_flags))
+	if (-1 == unshare(unshare_flags))
 		err(EXIT_FAILURE, _("unshare failed"));
 
 	if (optind < argc) {
