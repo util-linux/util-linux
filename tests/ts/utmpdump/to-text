@@ -18,6 +18,8 @@ TS_DESC="to-text"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+export LANG=C
+export TZ=GMT
 $TS_CMD_UTMPDUMP $TS_SELF/binary >| $TS_OUTPUT 2>/dev/null
 
 ts_finalize
