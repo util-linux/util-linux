@@ -1,4 +1,4 @@
-size: 8388608, sector size: 512, PT: dos, offset: 446
+size: 8388608, sector size: 512, PT: dos, offset: 446, id=0x8f8378c0
 ---
 #1:         32       7648  0x83
 #2:       7680       8704  0xa5
