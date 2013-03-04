@@ -155,7 +155,7 @@ int main(int argc, char **argv)
 		{"all", no_argument, NULL, 'a'},
 		{"histbin", no_argument, NULL, 'b'},
 		{"counters", no_argument, NULL, 's'},
-		{"reest", no_argument, NULL, 'r'},
+		{"reset", no_argument, NULL, 'r'},
 		{"no-auto", no_argument, NULL, 'n'},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
