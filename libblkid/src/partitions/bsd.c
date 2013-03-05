@@ -174,6 +174,13 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		start = le32_to_cpu(p->p_offset);
 		size = le32_to_cpu(p->p_size);
 
+		if (parent && blkid_partition_get_start(parent) == start
+			   && blkid_partition_get_size(parent) == size) {
+			DBG(DEBUG_LOWPROBE, printf(
+				"WARNING: BSD partition (%d) same like parent, "
+				"ignore\n", i));
+			continue;
+		}
 		if (parent && !blkid_is_nested_dimension(parent, start, size)) {
 			DBG(DEBUG_LOWPROBE, printf(
 				"WARNING: BSD partition (%d) overflow "
