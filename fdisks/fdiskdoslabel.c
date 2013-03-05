@@ -1050,7 +1050,7 @@ static struct fdisk_parttype *dos_get_parttype(
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, OSF));
+	assert(fdisk_is_disklabel(cxt, DOS));
 
 	if (partnum >= cxt->label->nparts_max)
 		return NULL;
@@ -1071,7 +1071,7 @@ static int dos_set_parttype(
 
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, OSF));
+	assert(fdisk_is_disklabel(cxt, DOS));
 
 	if (partnum >= cxt->label->nparts_max || !t || t->type > UINT8_MAX)
 		return -EINVAL;

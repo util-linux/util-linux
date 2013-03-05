@@ -153,12 +153,10 @@ static int is_bsd_partition_type(int type)
 
 static int xbsd_write_disklabel (struct fdisk_context *cxt)
 {
-#if defined (__alpha__)
 	printf (_("Writing disklabel to %s.\n"), cxt->dev_path);
+#if defined (__alpha__)
 	xbsd_writelabel (cxt, NULL, &xbsd_dlabel);
 #else
-	printf (_("Writing disklabel to %s.\n"),
-		partname(cxt->dev_path, xbsd_part_index+1, 0));
 	xbsd_writelabel (cxt, xbsd_part, &xbsd_dlabel);
 #endif
 	reread_partition_table(cxt, 0);	/* no exit yet */
@@ -228,12 +226,7 @@ static int xbsd_create_disklabel(struct fdisk_context *cxt)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, OSF));
 
-#if defined (__alpha__)
 	fprintf (stderr, _("%s contains no disklabel.\n"), cxt->dev_path);
-#else
-	fprintf (stderr, _("%s contains no disklabel.\n"),
-		 partname(cxt->dev_path, xbsd_part_index+1, 0));
-#endif
 
 	while (1) {
 		c = read_char(cxt, _("Do you want to create a disklabel? (y/n) "));
@@ -264,19 +257,28 @@ bsd_command_prompt (struct fdisk_context *cxt)
   int t, ss;
   struct partition *p;
 
+  assert(cxt);
+  assert(cxt->parent);
+
   for (t=0; t<4; t++) {
     p = get_part_table(t);
     if (p && is_bsd_partition_type(p->sys_ind)) {
       xbsd_part = p;
       xbsd_part_index = t;
       ss = get_start_sect(xbsd_part);
+
+      /* TODO - partname uses static buffer!!! */
+      cxt->dev_path = partname(cxt->parent->dev_path, t+1, 0);
+      if (cxt->dev_path)
+	      cxt->dev_path = strdup(cxt->dev_path);
+
       if (ss == 0) {
 	fprintf (stderr, _("Partition %s has invalid starting sector 0.\n"),
-		 partname(cxt->dev_path, t+1, 0));
+		 cxt->dev_path);
 	return;
       }
       printf (_("Reading disklabel of %s at sector %d.\n"),
-	      partname(cxt->dev_path, t+1, 0), ss + BSD_LABELSECTOR);
+		   cxt->dev_path, ss + BSD_LABELSECTOR);
       if (xbsd_readlabel (cxt, xbsd_part, &xbsd_dlabel) == 0)
 	if (xbsd_create_disklabel (cxt) == 0)
 	  return;
@@ -376,11 +378,7 @@ xbsd_print_disklabel (struct fdisk_context *cxt, int show_all)
   int i, j;
 
   if (show_all) {
-#if defined (__alpha__)
     fprintf(f, "# %s:\n", cxt->dev_path);
-#else
-    fprintf(f, "# %s:\n", partname(cxt->dev_path, xbsd_part_index+1, 0));
-#endif
     if ((unsigned) lp->d_type < BSD_DKMAXTYPES)
       fprintf(f, _("type: %s\n"), xbsd_dktypenames[lp->d_type]);
     else
@@ -594,12 +592,7 @@ xbsd_write_bootstrap (struct fdisk_context *cxt)
   if (BSD_BBSIZE != write (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE))
 	  fatal (cxt, unable_to_write);
 
-#if defined (__alpha__)
   printf (_("Bootstrap installed on %s.\n"), cxt->dev_path);
-#else
-  printf (_("Bootstrap installed on %s.\n"),
-    partname (cxt->dev_path, xbsd_part_index+1, 0));
-#endif
 
   sync_disks ();
 }
@@ -791,7 +784,6 @@ xbsd_readlabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disk
 
 	cxt->label->nparts_cur = d->d_npartitions;
 	cxt->label->nparts_max = BSD_MAXPARTITIONS;
-
 	return 1;
 }
 
@@ -862,22 +854,27 @@ xbsd_translate_fstype (int linux_type)
   }
 }
 
+/*
+ * link partition from parent (DOS) to nested BSD partition table
+ */
 static void
 xbsd_link_part (struct fdisk_context *cxt)
 {
-  int k, i;
-  struct partition *p;
+	size_t k;
+	int i;
+	struct partition *p;
 
-  k = get_partition (cxt, 1, cxt->label->nparts_max);
+	if (fdisk_ask_partnum(cxt->parent, &k, FALSE))
+		return;
 
-  if (xbsd_check_new_partition(cxt, &i))
-    return;
+	if (xbsd_check_new_partition(cxt, &i))
+		return;
 
-  p = get_part_table(k);
+	p = get_part_table(k);
 
-  xbsd_dlabel.d_partitions[i].p_size   = get_nr_sects(p);
-  xbsd_dlabel.d_partitions[i].p_offset = get_start_sect(p);
-  xbsd_dlabel.d_partitions[i].p_fstype = xbsd_translate_fstype(p->sys_ind);
+	xbsd_dlabel.d_partitions[i].p_size   = get_nr_sects(p);
+	xbsd_dlabel.d_partitions[i].p_offset = get_start_sect(p);
+	xbsd_dlabel.d_partitions[i].p_fstype = xbsd_translate_fstype(p->sys_ind);
 }
 #endif
 

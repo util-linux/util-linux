@@ -1084,9 +1084,13 @@ static void command_prompt(struct fdisk_context *cxt)
 			if (fdisk_is_disklabel(cxt, SGI))
 				sgi_set_bootfile(cxt);
 			else if (fdisk_is_disklabel(cxt, DOS)) {
-				fdisk_context_switch_label(cxt, "bsd");
-				bsd_command_prompt(cxt);
-				fdisk_context_switch_label(cxt, "dos");
+
+				struct fdisk_context *bsd;
+
+				bsd = fdisk_new_nested_context(cxt, "bsd");
+				if (bsd)
+					bsd_command_prompt(bsd);
+				fdisk_free_context(bsd);
 			} else
 				unknown_command(c);
 			break;
