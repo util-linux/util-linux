@@ -74,7 +74,6 @@ extern int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 extern char *line_ptr;
 
 extern void fatal(struct fdisk_context *cxt, enum failure why);
-extern int  get_partition(struct fdisk_context *cxt, int warn, int max);
 extern void list_partition_types(struct fdisk_context *cxt);
 extern int read_line(struct fdisk_context *cxt, int *asked);
 extern char read_char(struct fdisk_context *cxt, char *mesg);
@@ -94,7 +93,6 @@ extern void warn_limits(struct fdisk_context *cxt);
 extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
 					 unsigned int low, unsigned int dflt, unsigned int high,
 				  unsigned int base, char *mesg, int *is_suffix_used);
-extern int get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt);
 
 #define PLURAL	0
 #define SINGULAR 1

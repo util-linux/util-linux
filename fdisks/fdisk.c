@@ -542,57 +542,6 @@ read_int(struct fdisk_context *cxt,
 	return read_int_with_suffix(cxt, low, dflt, high, base, mesg, NULL);
 }
 
-int
-get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt)
-{
-	int i;
-
-	i = read_int(cxt, 1, dflt, max, 0, _("Partition number")) - 1;
-
-	if (warn && !fdisk_partition_is_used(cxt, i))
-		fdisk_warnx(cxt, _("Warning: partition %d is unused"), i + 1);
-
-	return i;
-}
-
-int
-get_partition(struct fdisk_context *cxt, int warn, int max) {
-	return get_partition_dflt(cxt, warn, max, 0);
-}
-
-/* User partition selection unless one partition only is available */
-
-static int
-get_existing_partition(struct fdisk_context *cxt, int warn, int max) {
-	int pno = -1;
-	int i;
-
-	if (!fdisk_is_disklabel(cxt, DOS))
-		goto not_implemented;
-
-	for (i = 0; i < max; i++) {
-		struct pte *pe = &ptes[i];
-		struct partition *p = pe->part_table;
-
-		if (p && !is_cleared_partition(p)) {
-			if (pno >= 0)
-				goto not_unique;
-			pno = i;
-		}
-	}
-
-	if (pno >= 0) {
-		printf(_("Selected partition %d\n"), pno+1);
-		return pno;
-	}
-	printf(_("No partition is defined yet!\n"));
-	return -1;
-
-not_implemented:
-not_unique:
-	return get_partition(cxt, warn, max);
-}
-
 static void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 {
 	struct fdisk_label *lb = fdisk_context_get_label(cxt, "dos");
@@ -628,19 +577,18 @@ static void delete_partition(struct fdisk_context *cxt, int partnum)
 
 static void change_partition_type(struct fdisk_context *cxt)
 {
-	int i;
+	size_t i;
 	struct fdisk_parttype *t, *org_t;
 
 	assert(cxt);
 	assert(cxt->label);
 
-	i = get_existing_partition(cxt, 0, cxt->label->nparts_max);
-	if (i == -1)
+	if (fdisk_ask_partnum(cxt, &i, FALSE))
 		return;
 
 	org_t = t = fdisk_get_partition_type(cxt, i);
 	if (!t)
-                printf(_("Partition %d does not exist yet!\n"), i + 1);
+                printf(_("Partition %zu does not exist yet!\n"), i + 1);
 
         else do {
 		t = read_partition_type(cxt);
@@ -653,7 +601,7 @@ static void change_partition_type(struct fdisk_context *cxt)
 				org_t ? org_t->name : _("Unknown"),
 				    t ?     t->name : _("Unknown"));
 		} else {
-			printf (_("Type of partition %d is unchanged: %s\n"),
+			printf (_("Type of partition %zu is unchanged: %s\n"),
 				i + 1,
 				org_t ? org_t->name : _("Unknown"));
 		}
@@ -854,6 +802,7 @@ static void
 expert_command_prompt(struct fdisk_context *cxt)
 {
 	char c;
+	size_t n;
 
 	assert(cxt);
 
@@ -868,9 +817,9 @@ expert_command_prompt(struct fdisk_context *cxt)
 				fdisk_sun_set_alt_cyl(cxt);
 			break;
 		case 'b':
-			if (fdisk_is_disklabel(cxt, DOS))
-				dos_move_begin(cxt, get_partition(cxt, 0,
-							cxt->label->nparts_max));
+			if (fdisk_is_disklabel(cxt, DOS) &&
+			    fdisk_ask_partnum(cxt, &n, FALSE) == 0)
+				dos_move_begin(cxt, n);
 			break;
 		case 'c':
 			user_cylinders = read_int(cxt, 1, cxt->geom.cylinders, 1048576, 0,
@@ -1039,6 +988,7 @@ static void print_welcome(void)
 static void command_prompt(struct fdisk_context *cxt)
 {
 	int c;
+	size_t n;
 
 	assert(cxt);
 
@@ -1062,25 +1012,21 @@ static void command_prompt(struct fdisk_context *cxt)
 		c = tolower(read_char(cxt, _("Command (m for help): ")));
 		switch (c) {
 		case 'a':
-			if (fdisk_is_disklabel(cxt, DOS))
-				fdisk_partition_toggle_flag(cxt,
-					get_partition(cxt, 1, cxt->label->nparts_max),
-					DOS_FLAG_ACTIVE);
-			else if (fdisk_is_disklabel(cxt, SUN))
-				fdisk_partition_toggle_flag(cxt,
-					get_partition(cxt, 1, cxt->label->nparts_max),
-					SUN_FLAG_UNMNT);
-			else if (fdisk_is_disklabel(cxt, SGI))
-				fdisk_partition_toggle_flag(cxt,
-					get_partition(cxt, 1, cxt->label->nparts_max),
-					SGI_FLAG_BOOT);
+			if (fdisk_is_disklabel(cxt, DOS) &&
+			    fdisk_ask_partnum(cxt, &n, FALSE) == 0)
+				fdisk_partition_toggle_flag(cxt, n, DOS_FLAG_ACTIVE);
+
+			else if (fdisk_is_disklabel(cxt, SUN) &&
+				 fdisk_ask_partnum(cxt, &n, FALSE) == 0)
+				fdisk_partition_toggle_flag(cxt, n, SUN_FLAG_UNMNT);
+
+			else if (fdisk_is_disklabel(cxt, SGI) &&
+				 fdisk_ask_partnum(cxt, &n, FALSE) == 0)
+				fdisk_partition_toggle_flag(cxt, n, SGI_FLAG_BOOT);
 			else
 				unknown_command(c);
 			break;
 		case 'b':
-			/*
-			 * TODO: create child context for nexted partition tables
-			 */
 			if (fdisk_is_disklabel(cxt, SGI))
 				sgi_set_bootfile(cxt);
 			else if (fdisk_is_disklabel(cxt, DOS)) {
@@ -1097,20 +1043,19 @@ static void command_prompt(struct fdisk_context *cxt)
 		case 'c':
 			if (fdisk_is_disklabel(cxt, DOS))
 				toggle_dos_compatibility_flag(cxt);
-			else if (fdisk_is_disklabel(cxt, SUN))
-				fdisk_partition_toggle_flag(cxt,
-					get_partition(cxt, 1, cxt->label->nparts_max),
-					SUN_FLAG_RONLY);
-			else if (fdisk_is_disklabel(cxt, SGI))
-				fdisk_partition_toggle_flag(cxt,
-					get_partition(cxt, 1, cxt->label->nparts_max),
-					SGI_FLAG_SWAP);
+			else if (fdisk_is_disklabel(cxt, SUN) &&
+				 fdisk_ask_partnum(cxt, &n, FALSE) == 0)
+				fdisk_partition_toggle_flag(cxt, n, SUN_FLAG_RONLY);
+
+			else if (fdisk_is_disklabel(cxt, SGI) &&
+				 fdisk_ask_partnum(cxt, &n, FALSE) == 0)
+				fdisk_partition_toggle_flag(cxt, n, SGI_FLAG_SWAP);
 			else
 				unknown_command(c);
 			break;
 		case 'd':
-			delete_partition(cxt,
-					get_existing_partition(cxt, 1, cxt->label->nparts_max));
+			if (fdisk_ask_partnum(cxt, &n, FALSE) == 0)
+				delete_partition(cxt, n);
 			break;
 		case 'g':
 			fdisk_create_disklabel(cxt, "gpt");
