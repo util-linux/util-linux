@@ -268,6 +268,23 @@ int fdisk_partition_get_status(struct fdisk_context *cxt,
 }
 
 /**
+ * @cxt: fdisk context
+ * @partnum: partition number
+ *
+ * Returns: 1 on success if partition used otherwise 0.
+ */
+int fdisk_partition_is_used(struct fdisk_context *cxt, size_t partnum)
+{
+	int status, rc;
+
+	rc = fdisk_partition_get_status(cxt, partnum, &status);
+	if (rc)
+		return 0;
+
+	return status & FDISK_PARTSTAT_USED;
+}
+
+/**
  * fdisk_partition_taggle_flag:
  * @cxt: fdisk context
  * @partnum: partition number

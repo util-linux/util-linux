@@ -543,24 +543,15 @@ read_int(struct fdisk_context *cxt,
 }
 
 int
-get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt) {
-	struct pte *pe;
+get_partition_dflt(struct fdisk_context *cxt, int warn, int max, int dflt)
+{
 	int i;
 
 	i = read_int(cxt, 1, dflt, max, 0, _("Partition number")) - 1;
-	pe = &ptes[i];
 
-	if (warn && !fdisk_is_disklabel(cxt, GPT)) {
-		if ((!fdisk_is_disklabel(cxt, SUN) &&
-		     !fdisk_is_disklabel(cxt, SGI) && !pe->part_table->sys_ind)
-		    || (fdisk_is_disklabel(cxt, SUN) &&
-			 sun_is_empty_type(cxt, i))
-		    || (fdisk_is_disklabel(cxt, SGI) &&
-			(!sgi_get_num_sectors(cxt, i))))
-			fprintf(stderr,
-				_("Warning: partition %d has empty type\n"),
-				i+1);
-	}
+	if (warn && !fdisk_partition_is_used(cxt, i))
+		fdisk_warnx(cxt, _("Warning: partition %d is unused"), i + 1);
+
 	return i;
 }
 
