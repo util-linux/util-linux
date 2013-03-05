@@ -21,13 +21,48 @@ struct fdisk_context *fdisk_new_context(void)
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_gpt_label(cxt);
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_dos_label(cxt);
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_aix_label(cxt);
-	cxt->labels[ cxt->nlabels++ ] = fdisk_new_bsd_label(cxt);
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_mac_label(cxt);
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_sgi_label(cxt);
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_sun_label(cxt);
 
 	return cxt;
 }
+
+/* only BSD is supported now */
+struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
+				const char *name)
+{
+	struct fdisk_context *cxt;
+
+	assert(parent);
+	assert(name);
+
+	cxt = calloc(1, sizeof(*cxt));
+	if (!cxt)
+		return NULL;
+
+	DBG(LABEL, dbgprint("new context %p allocated", cxt));
+	cxt->dev_fd = parent->dev_fd;
+	cxt->parent = parent;
+
+	cxt->io_size =          parent->io_size;
+	cxt->optimal_io_size =  parent->optimal_io_size;
+	cxt->min_io_size =      parent->min_io_size;
+	cxt->phy_sector_size =  parent->phy_sector_size;
+	cxt->sector_size =      parent->sector_size;
+	cxt->alignment_offset = parent->alignment_offset;
+	cxt->grain =            parent->grain;
+	cxt->first_lba =        parent->first_lba;
+	cxt->total_sectors =    parent->total_sectors;
+
+	cxt->geom = parent->geom;
+
+	if (strcmp(name, "bsd") == 0)
+		cxt->label = cxt->labels[ cxt->nlabels++ ] = fdisk_new_bsd_label(cxt);
+
+	return cxt;
+}
+
 
 /*
  * Returns the current label if no name specified.
@@ -77,7 +112,7 @@ static void reset_context(struct fdisk_context *cxt)
 		fdisk_deinit_label(cxt->labels[i]);
 
 	/* free device specific stuff */
-	if (cxt->dev_fd > -1)
+	if (!cxt->parent && cxt->dev_fd > -1)
 		close(cxt->dev_fd);
 	free(cxt->dev_path);
 	free(cxt->firstsector);

@@ -274,6 +274,8 @@ struct fdisk_context {
 
 	int	(*ask_cb)(struct fdisk_context *, struct fdisk_ask *, void *);	/* fdisk dialogs callback */
 	void	*ask_data;		/* ask_cb() data */
+
+	struct fdisk_context	*parent;	/* for nested PT */
 };
 
 /* context.c */

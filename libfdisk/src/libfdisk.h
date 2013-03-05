@@ -69,6 +69,8 @@ extern void fdisk_init_debug(int mask);
 
 /* context.h */
 extern struct fdisk_context *fdisk_new_context(void);
+extern struct fdisk_context *fdisk_new_nested_context(
+			struct fdisk_context *parent, const char *name);
 extern void fdisk_free_context(struct fdisk_context *cxt);
 
 extern int fdisk_context_set_ask(struct fdisk_context *cxt,
