@@ -250,7 +250,7 @@ static char *mk_string_list(char *ptr, size_t *len, size_t *begin,
 	return ptr;
 }
 
-/* returns: 1=0 on success, < 0 on error, 1 if no free partition */
+/* returns: 1=0 on success, < 0 on error, 1 if no free/used partition */
 int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 {
 	int rc = 0;
@@ -271,6 +271,7 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 	if (!ask)
 		return -ENOMEM;
 
+	fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
 	num = &ask->data.num;
 
 	for (i = 0; i < cxt->label->nparts_max; i++) {
@@ -296,28 +297,50 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 		}
 	}
 
+	DBG(ASK, dbgprint("ask limits: low: %zd, high: %zd, default: %zd",
+				num->low, num->hig, num->dfl));
+
+	if (!rc && !wantnew && num->low == num->hig) {
+		if (num->low > 0) {
+			/* only one existing partiton, don't ask, return the number */
+			fdisk_ask_number_set_result(ask, num->low);
+			fdisk_info(cxt, _("Selected partition %d"), num->low);
+
+		} else if (num->low == 0) {
+			fdisk_info(cxt, _("No partition is defined yet!"));
+			rc = 1;
+		}
+		goto dont_ask;
+	}
+	if (!rc && wantnew && num->low == num->hig) {
+		if (num->low > 0) {
+			/* only one free partition, don't ask, return the number */
+			fdisk_ask_number_set_result(ask, num->low);
+			fdisk_info(cxt, _("Selected partition %d"), num->low);
+		}
+		if (num->low == 0) {
+			fdisk_info(cxt, _("No free partition available!"));
+			rc = 1;
+		}
+		goto dont_ask;
+	}
 	if (!rc) {
 		mk_string_list(ptr, &len, &begin, &run, -1);	/* terminate the list */
 		rc = fdisk_ask_number_set_range(ask, range);
 	}
-	if (!rc && wantnew && num->low == 0 && num->hig == 0) {
-		DBG(ASK, dbgprint("no free partition"));
-		rc = 1;
-	}
 	if (!rc)
 		rc = fdisk_ask_set_query(ask, _("Partition number"));
 	if (!rc)
-		rc = fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
-	if (!rc)
 		rc = fdisk_do_ask(cxt, ask);
+
+dont_ask:
 	if (!rc) {
 		*partnum = fdisk_ask_number_get_result(ask);
 		if (*partnum)
 			*partnum -= 1;
 	}
-
+	DBG(ASK, dbgprint("result: %zd [rc=%d]\n", fdisk_ask_number_get_result(ask), rc));
 	fdisk_free_ask(ask);
-	DBG(ASK, dbgprint("result: %zd [rc=%d]\n", *partnum, rc));
 	return rc;
 }
 
