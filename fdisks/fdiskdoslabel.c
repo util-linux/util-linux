@@ -78,33 +78,25 @@ static void warn_alignment(struct fdisk_context *cxt)
 
 }
 
-static int get_nonexisting_partition(struct fdisk_context *cxt, int warn, size_t max)
+static int get_partition_unused_primary(struct fdisk_context *cxt)
 {
-	int pno = -1;
-	size_t i;
-	int dflt = 0;
+	size_t orgmax = cxt->label->nparts_max;
+	size_t n;
+	int rc;
 
-	for (i = 0; i < max; i++) {
-		struct pte *pe = &ptes[i];
-		struct partition *p = pe->part_table;
+	cxt->label->nparts_max = 4;
+	rc = fdisk_ask_partnum(cxt, &n, TRUE);
+	cxt->label->nparts_max = orgmax;
 
-		if (p && is_cleared_partition(p)) {
-			if (pno >= 0) {
-				dflt = pno + 1;
-				goto not_unique;
-			}
-			pno = i;
-		}
+	switch (rc) {
+	case 1:
+		fdisk_info(cxt, _("All primary partitions have been defined already"));
+		return -1;
+	case 0:
+		return n;
+	default:
+		return rc;
 	}
-	if (pno >= 0) {
-		printf(_("Selected partition %d\n"), pno+1);
-		return pno;
-	}
-	printf(_("All primary partitions have been defined already!\n"));
-	return -1;
-
- not_unique:
-	return get_partition_dflt(cxt, warn, max, dflt);
 }
 
 
@@ -935,7 +927,7 @@ static int dos_add_partition(
 		printf(_("The maximum number of partitions has been created\n"));
 		return -EINVAL;
 	}
-
+	rc = 1;
 	if (!free_primary) {
 		if (extended_offset) {
 			printf(_("All primary partitions are in use\n"));
@@ -944,9 +936,14 @@ static int dos_add_partition(
 			printf(_("If you want to create more than four partitions, you must replace a\n"
 				 "primary partition with an extended partition first.\n"));
 	} else if (cxt->label->nparts_max >= MAXIMUM_PARTS) {
+		int i;
+
 		printf(_("All logical partitions are in use\n"));
 		printf(_("Adding a primary partition\n"));
-		rc = add_partition(cxt, get_partition(cxt, 0, 4), t);
+
+		i = get_partition_unused_primary(cxt);
+		if (i >= 0)
+			rc = add_partition(cxt, i, t);
 	} else {
 		char c, line[LINE_LENGTH];
 		int dflt;
@@ -968,7 +965,7 @@ static int dos_add_partition(
 			printf(_("Using default response %c\n"), c);
 		}
 		if (c == 'p') {
-			int i = get_nonexisting_partition(cxt, 0, 4);
+			int i = get_partition_unused_primary(cxt);
 			if (i >= 0)
 				rc = add_partition(cxt, i, t);
 			goto done;
@@ -976,7 +973,7 @@ static int dos_add_partition(
 			rc = add_logical(cxt);
 			goto done;
 		} else if (c == 'e' && !extended_offset) {
-			int i = get_nonexisting_partition(cxt, 0, 4);
+			int i = get_partition_unused_primary(cxt);
 			if (i >= 0) {
 				t = fdisk_get_parttype_from_code(cxt, EXTENDED);
 				rc = add_partition(cxt, i, t);
