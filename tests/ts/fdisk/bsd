@@ -1,0 +1,106 @@
+#!/bin/bash
+#
+# This file is part of util-linux.
+#
+# Copyright (C) 2013 Karel Zak <kzak@redhat.com>
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+#
+
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="nested BSD"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+
+FDISK_CMD_CREATE_DOSLABEL="o\n"              # create dos label
+FDISK_CMD_SETID="x\ni\n0x1\nr\n"             # set non-random ID
+FDISK_CMD_WRITE_CLOSE="w\nq\n"               # write to image
+FDISK_CMD_CREATE_PRIMARY1="n\np\n1\n\n+1M\n" # 1st primary partition of size 1MiB
+FDISK_CMD_CREATE_PRIMARY2="n\np\n2\n\n\n"    # 2nd primary partition for whole of the disk
+FDISK_CMD_CHANGE_PART2TYPE="t\n2\na5\n"      # change partition type FreeBSD
+
+FDISK_CMD_BSD_CREATE="b\ny\n"                # create nested BSD PT
+FDISK_CMD_BSD_LIST="b\np\nr\nq\n"            # list nested BSD PT and quit
+FDISK_CMD_BSD_CREATE_PART="b\nn\na\n\n+1M\n" # add BSD partition 'a', size 1MiB
+FDISK_CMD_BSD_PARTTYPE="b\nt\na\n7\n"        # set partition 'a' to type 4.2BSD
+FDISK_CMD_BSD_LIST_TYPES="b\nl\nq\n"         # list supported PT types and quit
+
+#set -x 
+
+function print_layout {
+	echo -ne "\n---layout----------" >> $TS_OUTPUT
+	$TS_CMD_FDISK -l ${TEST_IMAGE_NAME} | \
+		sed 's/^.*\.img/__ts_dev__/g;
+		     s/^[[:blank:]]*Device Boot/     Device Boot/g' >> $TS_OUTPUT 2>&1
+	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
+}
+
+function print_bsd_layout {
+	echo -ne "\n---layout----------" >> $TS_OUTPUT
+	echo -e "${FDISK_CMD_BSD_LIST}" | $TS_CMD_FDISK ${TEST_IMAGE_NAME} | \
+		sed 's/Reading .*//g;
+	             s/Welcome to fdisk .*//' >> $TS_OUTPUT 2>&1
+	echo -ne   "-------------------\n\n" >> $TS_OUTPUT
+}
+
+ts_log "Initialize empty image"
+TEST_IMAGE_NAME=$(ts_image_init 10)
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+ts_log "Create new DOS partition table"
+echo -e "${FDISK_CMD_CREATE_DOSLABEL}${FDISK_CMD_SETID}${FDISK_CMD_WRITE_CLOSE}" \
+	 | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_log "Create 1st primary partition"
+echo -e "${FDISK_CMD_CREATE_PRIMARY1}${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_log "Create 2st primary partition"
+echo -e "${FDISK_CMD_CREATE_PRIMARY2}${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+ts_log "Set 2nd partition type"
+echo -e "${FDISK_CMD_CHANGE_PART2TYPE}${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_layout
+
+ts_log "Create default BSD"
+echo -e "${FDISK_CMD_BSD_CREATE}${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_bsd_layout
+
+echo -e "${FDISK_CMD_BSD_CREATE_PART}${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+
+echo -e "${FDISK_CMD_BSD_PARTTYPE}${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum >> $TS_OUTPUT 2>&1
+
+print_bsd_layout
+
+echo -e "${FDISK_CMD_BSD_LIST_TYPES}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} | \
+	sed 's/Reading .*//g; s/Welcome to fdisk .*//' >> $TS_OUTPUT 2>&1
+
+ts_finalize
