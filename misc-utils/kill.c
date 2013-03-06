@@ -193,6 +193,9 @@ int main (int argc, char *argv[])
 	    printf(UTIL_LINUX_VERSION);
 	    return 0;
 	}
+	if (! strcmp (arg, "-h") || ! strcmp (arg, "--help"))
+	    return usage(0);
+
 	if (! strcmp (arg, "-a") || ! strcmp (arg, "--all")) {
 	    check_all++;
 	    continue;
@@ -405,14 +408,25 @@ static void printsignals (FILE *fp)
     fputc ('\n', fp);
 }
 
-static int usage (int status)
+static int usage(int status)
 {
-    FILE *fp;
+	FILE *out = (status == 0 ? stdout : stderr);
 
-    fp = (status == 0 ? stdout : stderr);
-    fprintf (fp, _("usage: %s [ -s signal | -p ] [ -a ] pid ...\n"), progname);
-    fprintf (fp, _("       %s -l [ signal ]\n"), progname);
-    return status;
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] <pid|name> [...]\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -a, --all           do not restrict the name-to-pid conversion to processes\n"
+		"                     with the same uid as the present process\n"), out);
+	fputs(_(" -s, --signal <sig>  send specified signal\n"), out);
+	fputs(_(" -q, --queue <sig>   use sigqueue(2) rather than kill(2)\n"), out);
+	fputs(_(" -p, --pid           print pids without signaling them\n"), out);
+	fputs(_(" -l, --list <name>   list signal names\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("kill(1)"));
+
+	return status;
 }
 
 static int kill_verbose (char *procname, int pid, int sig)
