@@ -41,7 +41,7 @@ get_pids (char *process_name, int get_all) {
 
     dir = opendir ("/proc");
     if (! dir) {
-	perror ("opendir /proc");
+	warn ("opendir /proc");
 	return NULL;
     }
     uid = getuid ();
