@@ -193,11 +193,11 @@ int main (int argc, char *argv[])
 	    printf(UTIL_LINUX_VERSION);
 	    return 0;
 	}
-	if (! strcmp (arg, "-a")) {
+	if (! strcmp (arg, "-a") || ! strcmp (arg, "--all")) {
 	    check_all++;
 	    continue;
 	}
-	if (! strcmp (arg, "-l")) {
+	if (! strcmp (arg, "-l") || ! strcmp (arg, "--list")) {
 	    if (argc < 2) {
 		printsignals (stdout);
 		return 0;
@@ -214,13 +214,13 @@ int main (int argc, char *argv[])
 	    printsig (numsig);
 	    return 0;
 	}
-	if (! strcmp (arg, "-p")) {
+	if (! strcmp (arg, "-p") || ! strcmp (arg, "--pid")) {
 	    do_pid++;
 	    if (do_kill)
 		return usage (1);
 	    continue;
 	}
-	if (! strcmp (arg, "-s")) {
+	if (! strcmp (arg, "-s") || ! strcmp (arg, "--signal")) {
 	    if (argc < 2) {
 		return usage (1);
 	    }
@@ -235,7 +235,7 @@ int main (int argc, char *argv[])
 	    }
 	    continue;
 	}
-	if (! strcmp (arg, "-q")) {
+	if (! strcmp (arg, "-q") || ! strcmp (arg, "--queue")) {
 	    if (argc < 2)
 		return usage (1);
 	    argc--, argv++;
