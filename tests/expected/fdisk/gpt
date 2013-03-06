@@ -1,0 +1,113 @@
+Initialize empty image
+Create new GPT partition table
+
+---layout----------
+WARNING: fdisk GPT support is currently new, and therefore in an experimental phase. Use at your own discretion.
+
+
+__ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: gpt
+
+
+#         Start          End    Size  Type            Name
+-------------------
+
+Create partitions
+Change partition type by number
+
+---layout----------
+WARNING: fdisk GPT support is currently new, and therefore in an experimental phase. Use at your own discretion.
+
+
+__ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: gpt
+
+
+#         Start          End    Size  Type            Name
+ 1         2048         4095      1M  EFI System      
+ 2         4096         6143      1M  Linux filesyste 
+ 3         6144         8191      1M  Linux filesyste 
+ 4         8192        10239      1M  Linux filesyste 
+ 5        10240        12287      1M  Linux filesyste 
+ 6        12288        14335      1M  Linux filesyste 
+ 7        14336        16383      1M  Linux filesyste 
+ 8        16384        18431      1M  Linux filesyste 
+-------------------
+
+Change partition type by UUID
+
+---layout----------
+WARNING: fdisk GPT support is currently new, and therefore in an experimental phase. Use at your own discretion.
+
+
+__ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: gpt
+
+
+#         Start          End    Size  Type            Name
+ 1         2048         4095      1M  EFI System      
+ 2         4096         6143      1M  Linux filesyste 
+ 3         6144         8191      1M  Linux filesyste 
+ 4         8192        10239      1M  Linux filesyste 
+ 5        10240        12287      1M  Linux swap      
+ 6        12288        14335      1M  Linux filesyste 
+ 7        14336        16383      1M  Linux filesyste 
+ 8        16384        18431      1M  Linux filesyste 
+-------------------
+
+Delete partition
+
+---layout----------
+WARNING: fdisk GPT support is currently new, and therefore in an experimental phase. Use at your own discretion.
+
+
+__ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: gpt
+
+
+#         Start          End    Size  Type            Name
+ 1         2048         4095      1M  EFI System      
+ 3         6144         8191      1M  Linux filesyste 
+ 4         8192        10239      1M  Linux filesyste 
+ 5        10240        12287      1M  Linux swap      
+ 6        12288        14335      1M  Linux filesyste 
+ 7        14336        16383      1M  Linux filesyste 
+ 8        16384        18431      1M  Linux filesyste 
+-------------------
+
+Create again partition
+
+---layout----------
+WARNING: fdisk GPT support is currently new, and therefore in an experimental phase. Use at your own discretion.
+
+
+__ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 512 bytes
+I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: gpt
+
+
+#         Start          End    Size  Type            Name
+ 1         2048         4095      1M  EFI System      
+ 2         4096         6143      1M  Linux filesyste 
+ 3         6144         8191      1M  Linux filesyste 
+ 4         8192        10239      1M  Linux filesyste 
+ 5        10240        12287      1M  Linux swap      
+ 6        12288        14335      1M  Linux filesyste 
+ 7        14336        16383      1M  Linux filesyste 
+ 8        16384        18431      1M  Linux filesyste 
+-------------------
+
