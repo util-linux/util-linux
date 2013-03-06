@@ -9,6 +9,7 @@ __ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
 Units = cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
 Disk identifier: 0x00000001
 
      Device Boot      Start         End      Blocks   Id  System
@@ -23,6 +24,7 @@ __ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
 Units = cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
 Disk identifier: 0x00000001
 
      Device Boot      Start         End      Blocks   Id  System
@@ -38,6 +40,7 @@ __ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
 Units = cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
 Disk identifier: 0x00000001
 
      Device Boot      Start         End      Blocks   Id  System
@@ -53,6 +56,7 @@ __ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
 Units = cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
 Disk identifier: 0x00000001
 
      Device Boot      Start         End      Blocks   Id  System
@@ -68,6 +72,7 @@ __ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
 Units = cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
 Disk identifier: 0x00000001
 
      Device Boot      Start         End      Blocks   Id  System
@@ -83,6 +88,7 @@ __ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
 Units = cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
 Disk identifier: 0x00000001
 
      Device Boot      Start         End      Blocks   Id  System
@@ -99,6 +105,7 @@ __ts_dev__: 57 MB, 57577472 bytes, 112456 sectors
 Units = cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
 Disk identifier: 0x00000001
 
      Device Boot      Start         End      Blocks   Id  System
@@ -119,6 +126,7 @@ __ts_dev__: 57 MB, 57577472 bytes, 112456 sectors
 Units = cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
 Disk identifier: 0x00000001
 
      Device Boot      Start         End      Blocks   Id  System
@@ -136,6 +144,7 @@ __ts_dev__: 57 MB, 57577472 bytes, 112456 sectors
 Units = cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
 Disk identifier: 0x00000001
 
      Device Boot      Start         End      Blocks   Id  System
@@ -156,6 +165,7 @@ __ts_dev__: 57 MB, 57577472 bytes, 112456 sectors
 Units = cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
 Disk identifier: 0x00000001
 
      Device Boot      Start         End      Blocks   Id  System
@@ -175,6 +185,7 @@ __ts_dev__: 57 MB, 57577472 bytes, 112456 sectors
 Units = cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
+Disk label type: dos
 Disk identifier: 0x00000001
 
      Device Boot      Start         End      Blocks   Id  System
