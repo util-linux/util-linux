@@ -28,16 +28,16 @@
 extern char *mybasename (char *);
 static char *parse_parens (char *buf);
 
-int *
+pid_t *
 get_pids (char *process_name, int get_all) {
     DIR *dir;
     struct dirent *ent;
     int status;
-    char *dname, fname[100], *cp, buf[256];
+    char fname[100], *cp, buf[256], *end;
     struct stat st;
     uid_t uid;
     FILE *fp;
-    int pid, *pids, num_pids, pids_size;
+    pid_t pid, *pids, num_pids, pids_size;
 
     dir = opendir ("/proc");
     if (! dir) {
@@ -49,10 +49,10 @@ get_pids (char *process_name, int get_all) {
     num_pids = pids_size = 0;
 
     while ((ent = readdir (dir)) != NULL) {
-	dname = ent->d_name;
-	if (! isdigit (*dname)) continue;
-	pid = atoi (dname);
-	sprintf (fname, "/proc/%d/cmdline", pid);
+	pid = strtol(ent->d_name, &end, 10);
+	if (errno || ent->d_name == end || (end && *end))
+		continue;
+	sprintf (fname, "/proc/%ld/cmdline", (long)pid);
 	/* get the process owner */
 	status = stat (fname, &st);
 	if (status != 0) continue;
@@ -65,7 +65,7 @@ get_pids (char *process_name, int get_all) {
 	/* an empty command line means the process is swapped out */
 	if (! cp || ! *cp) {
 	    /* get the process name from the statfile */
-	    sprintf (fname, "/proc/%d/stat", pid);
+	    sprintf (fname, "/proc/%ld/stat", (long)pid);
 	    fp = fopen (fname, "r");
 	    if (! fp) continue;
 	    cp = fgets (buf, sizeof (buf), fp);
@@ -78,7 +78,7 @@ get_pids (char *process_name, int get_all) {
 	if (strcmp (process_name, mybasename (cp))) continue;
 	while (pids_size < num_pids + 2) {
 	    pids_size += 5;
-	    pids = (int *) xrealloc (pids, sizeof (int) * pids_size);
+	    pids = xrealloc (pids, sizeof(pid_t) * pids_size);
 	}
 	if (pids) {
 		pids[num_pids++] = pid;

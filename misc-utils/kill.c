@@ -158,7 +158,7 @@ int main (int argc, char *argv[])
     int errors, numsig, pid;
     char *ep, *arg;
     int do_pid, do_kill, check_all;
-    int *pids, *ip;
+    pid_t *pids, *ip;
 
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
@@ -422,12 +422,12 @@ static int usage(int status)
 	return status;
 }
 
-static int kill_verbose (char *procname, int pid, int sig)
+static int kill_verbose (char *procname, pid_t pid, int sig)
 {
     int rc;
 
     if (sig < 0) {
-	printf ("%d\n", pid);
+	printf ("%ld\n", (long)pid);
 	return 0;
     }
 #ifdef HAVE_SIGQUEUE
