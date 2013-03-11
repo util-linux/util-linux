@@ -126,16 +126,6 @@ osf_probe_label(struct fdisk_context *cxt)
 	return 1;
 }
 
-int
-btrydev (struct fdisk_context *cxt)
-{
-	if (xbsd_readlabel (cxt, NULL, &xbsd_dlabel) == 0)
-		return -1;
-	printf(_("\nBSD label for device: %s\n"), cxt->dev_path);
-	xbsd_print_disklabel (cxt, 0);
-	return 0;
-}
-
 #if !defined (__alpha__)
 static int hidden(int type)
 {
@@ -863,6 +853,9 @@ xbsd_link_part (struct fdisk_context *cxt)
 	size_t k;
 	int i;
 	struct partition *p;
+
+	if (!cxt->parent)
+		return;		/* not nested PT */
 
 	if (fdisk_ask_partnum(cxt->parent, &k, FALSE))
 		return;

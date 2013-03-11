@@ -923,16 +923,10 @@ static void print_partition_table_from_option(struct fdisk_context *cxt,
 		fdisk_override_geometry(cxt, user_cylinders,
 					user_heads, user_sectors);
 
-	if (!fdisk_dev_has_disklabel(cxt)) {
-		/*
-		 * Try BSD -- TODO: move to list_table() too
-		 */
-		list_disk_geometry(cxt);
-		if (!fdisk_is_disklabel(cxt, AIX) &&
-		    !fdisk_is_disklabel(cxt, MAC))
-			btrydev(cxt);
-	} else
+	if (fdisk_dev_has_disklabel(cxt))
 		list_table(cxt, 0);
+	else
+		list_disk_geometry(cxt);
 }
 
 /*
