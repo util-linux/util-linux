@@ -26,6 +26,10 @@ ts_log "Initialize empty image"
 TEST_IMAGE_NAME=$(ts_image_init 10)
 ts_image_md5sum >> $TS_OUTPUT 2>&1
 
+#
+# Note that since 2.23 the DOS-mode has effect only if there is a MBR on the device.
+#
+
 ts_log "Empty image listing" # this should report empty partition table
 # TEST_IMAGE_NAME has absolute path, and is by definition different on each computer, we need to sed it away
 $TS_CMD_FDISK -c=dos -u=cylinders -l ${TEST_IMAGE_NAME} 2>&1 | sed -e "s/${TEST_IMAGE_NAME//\//\\/}/testimage/" >> $TS_OUTPUT

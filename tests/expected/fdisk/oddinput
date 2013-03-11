@@ -3,7 +3,6 @@ f1c9645dbc14efddc7d8a322685f26eb oddinput.img
 Empty image listing
 
 Disk testimage: 10 MB, 10485760 bytes, 20480 sectors
-255 heads, 63 sectors/track, 1 cylinders
 Units = cylinders of 16065 * 512 = 8225280 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
 I/O size (minimum/optimal): 512 bytes / 512 bytes
@@ -11,4 +10,4 @@ I/O size (minimum/optimal): 512 bytes / 512 bytes
 Nonexistant file
 fdisk: cannot open _a_file_that_does_not_exist_: No such file or directory
 Too small file
-fdisk: cannot open oddinput.toosmall: Invalid argument
+fdisk: cannot open oddinput.toosmall: Inappropriate ioctl for device
