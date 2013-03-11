@@ -2,9 +2,6 @@ Initialize empty image
 Create new GPT partition table
 
 ---layout----------
-WARNING: fdisk GPT support is currently new, and therefore in an experimental phase. Use at your own discretion.
-
-
 __ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
 Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
@@ -19,9 +16,6 @@ Create partitions
 Change partition type by number
 
 ---layout----------
-WARNING: fdisk GPT support is currently new, and therefore in an experimental phase. Use at your own discretion.
-
-
 __ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
 Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
@@ -43,9 +37,6 @@ Disk label type: gpt
 Change partition type by UUID
 
 ---layout----------
-WARNING: fdisk GPT support is currently new, and therefore in an experimental phase. Use at your own discretion.
-
-
 __ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
 Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
@@ -67,9 +58,6 @@ Disk label type: gpt
 Delete partition
 
 ---layout----------
-WARNING: fdisk GPT support is currently new, and therefore in an experimental phase. Use at your own discretion.
-
-
 __ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
 Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
@@ -90,9 +78,6 @@ Disk label type: gpt
 Create again partition
 
 ---layout----------
-WARNING: fdisk GPT support is currently new, and therefore in an experimental phase. Use at your own discretion.
-
-
 __ts_dev__: 10 MB, 10485760 bytes, 20480 sectors
 Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 512 bytes
