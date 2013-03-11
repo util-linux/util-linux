@@ -27,7 +27,7 @@ FDISK_CMD_DELETEALL="d\n1\nd\n2\nd\n3\nd\n4\nd\n5\nd\n6\nd\n7\nd\n8\n" # delete 
 FDISK_CMD_CREATE_PRIMARY="n\n1\n0\n128\n" # create first partition, cylinders 0 through 128
 FDISK_CMD_TOGGLE_READONLY="a\n1\n" # sets first partition as read-only
 FDISK_CMD_TOGGLE_MOUNTABLE="c\n1\n" # sets first partition as mountable
-FDISK_CMD_CHANGE_SYSID="t\n1\n4\n" # changes sysid to 4 (SunOS usr)
+FDISK_CMD_CHANGE_SYSID="t\n4\n" # changes sysid to 4 (SunOS usr)
 FDISK_CMD_CREATE_SECONDARY="n\n2\n128\n\n" # create secondary partition cylinders 128 to the end of disk
 
 #set -x
