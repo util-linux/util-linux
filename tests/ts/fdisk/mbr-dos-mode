@@ -31,7 +31,7 @@ FDISK_CMD_CHANGE_PARTTYPE="t\nbf\n" # change partition type to "bf - solaris", t
 FDISK_CMD_SET_ACTIVE="a\n1\n" # set first partition active
 FDISK_CMD_CREATE_EXTENDED="n\ne\n2\n\n+10\n" # create extended partition 2 of size 11 cylinders
 FDISK_CMD_CREATE_LOGICAL="n\nl\n\n+1\n" # create next logical partition of size 2 cyl
-FDISK_CMD_DELETE_LOGICALS="d\n6\nd\n5\nd\n6\d5\n" # delete middle, head, tail, last partitions
+FDISK_CMD_DELETE_LOGICALS="d\n6\nd\n5\nd\n6\n" # delete middle, head, tail, last partitions
 FDISK_CMD_DELETE_PRIMARY="d\n1\n" # delete first primary
 FDISK_CMD_DELETE_EXTENDED="d\n2\n" # delete second primary
 
