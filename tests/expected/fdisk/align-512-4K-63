@@ -20,13 +20,13 @@ Last sector, +sectors or +size{K,M,G} (7-102399, default 102399): Partition 1 of
 Command (m for help): Partition type:
    p   primary (1 primary, 0 extended, 3 free)
    e   extended
-Select (default p): Partition number (1-4, default 2): First sector (20487-102399, default 20487): Using default value 20487
+Select (default p): Partition number (2-4, default 2): First sector (20487-102399, default 20487): Using default value 20487
 Last sector, +sectors or +size{K,M,G} (20487-102399, default 102399): Partition 2 of type Linux and of size 10 MiB is set
 
 Command (m for help): Partition type:
    p   primary (2 primary, 0 extended, 2 free)
    e   extended
-Select (default p): Partition number (1-4, default 3): First sector (40967-102399, default 40967): Using default value 40967
+Select (default p): Partition number (3,4, default 3): First sector (40967-102399, default 40967): Using default value 40967
 Last sector, +sectors or +size{K,M,G} (40967-102399, default 102399): Partition 3 of type Linux and of size 10 MiB is set
 
 Command (m for help): Partition type:
@@ -59,6 +59,7 @@ Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 4096 bytes
 I/O size (minimum/optimal): 4096 bytes / 32768 bytes
 Alignment offset: 3584 bytes
+Disk label type: dos
 
 
    Device Boot      Start         End      Blocks   Id  System
