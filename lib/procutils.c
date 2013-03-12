@@ -23,6 +23,7 @@
 #include <ctype.h>
 
 #include "procutils.h"
+#include "at.h"
 #include "c.h"
 
 /*
@@ -73,7 +74,7 @@ int proc_next_tid(struct proc_tasks *tasks, pid_t *tid)
 	char *end;
 
 	if (!tasks || !tid)
-		return -1;
+		return -EINVAL;
 
 	*tid = 0;
 	errno = 0;
@@ -91,6 +92,103 @@ int proc_next_tid(struct proc_tasks *tasks, pid_t *tid)
 			return -1;
 
 	} while (!*tid);
+
+	return 0;
+}
+
+struct proc_processes *proc_open_processes(void)
+{
+	struct proc_processes *ps;
+
+	ps = calloc(1, sizeof(struct proc_processes));
+	if (ps) {
+		ps->dir = opendir("/proc");
+		if (ps->dir)
+			return ps;
+	}
+
+	free(ps);
+	return NULL;
+}
+
+void proc_close_processes(struct proc_processes *ps)
+{
+	if (ps && ps->dir)
+		closedir(ps->dir);
+	free(ps);
+}
+
+void proc_processes_filter_by_name(struct proc_processes *ps, const char *name)
+{
+	ps->fltr_name = name;
+	ps->has_fltr_name = name ? 1 : 0;
+}
+
+void proc_processes_filter_by_uid(struct proc_processes *ps, uid_t uid)
+{
+	ps->fltr_uid = uid;
+	ps->has_fltr_uid = 1;
+}
+
+int proc_next_pid(struct proc_processes *ps, pid_t *pid)
+{
+	struct dirent *d;
+
+	if (!ps || !pid)
+		return -EINVAL;
+
+	*pid = 0;
+	errno = 0;
+
+	do {
+		char buf[BUFSIZ], *p;
+
+		d = readdir(ps->dir);
+		if (!d)
+			return errno ? -1 : 1;		/* error or end-of-dir */
+
+
+		if (!isdigit((unsigned char) *d->d_name))
+			continue;
+
+		snprintf(buf, sizeof(buf), "%s/stat", d->d_name);
+
+		/* filter out by UID */
+		if (ps->has_fltr_uid) {
+			struct stat st;
+
+			if (fstat_at(dirfd(ps->dir), "/proc", buf, &st, 0))
+				continue;
+			if (ps->fltr_uid != st.st_uid)
+				continue;
+		}
+
+		/* filter out by NAME */
+		if (ps->has_fltr_name) {
+			char procname[256];
+			FILE *f = fopen_at(dirfd(ps->dir), "/proc", buf,
+						O_CLOEXEC|O_RDONLY, "r");
+			if (!f)
+				continue;
+
+			p = fgets(buf, sizeof(buf), f);
+			fclose(f);
+
+			if (sscanf(buf, "%*d (%255[^)])", procname) != 1)
+				continue;
+
+			/* ok, we got the process name. */
+			if (strcmp(procname, ps->fltr_name) != 0)
+				continue;
+		}
+
+		p = NULL;
+		*pid = (pid_t) strtol(d->d_name, &p, 10);
+		if (errno || d->d_name == p || (p && *p))
+			return errno ? -errno : -1;
+
+		return 0;
+	} while (1);
 
 	return 0;
 }
@@ -120,16 +218,42 @@ static int test_tasks(int argc, char *argv[])
 	return EXIT_SUCCESS;
 }
 
+static int test_processes(int argc, char *argv[])
+{
+	pid_t pid;
+	struct proc_processes *ps;
+
+	ps = proc_open_processes();
+	if (!ps)
+		err(EXIT_FAILURE, "open list of processes failed");
+
+	if (argc >= 3 && strcmp(argv[1], "--name") == 0)
+		proc_processes_filter_by_name(ps, argv[2]);
+
+	if (argc >= 3 && strcmp(argv[1], "--uid") == 0)
+		proc_processes_filter_by_uid(ps, (uid_t) atol(argv[2]));
+
+	while (proc_next_pid(ps, &pid) == 0)
+		printf(" %d", pid);
+
+	printf("\n");
+        proc_close_processes(ps);
+	return EXIT_SUCCESS;
+}
+
 int main(int argc, char *argv[])
 {
 	if (argc < 2) {
-		fprintf(stderr, "usage: %s --tasks <pid>\n",
-					program_invocation_short_name);
+		fprintf(stderr, "usage: %1$s --tasks <pid>\n"
+				"       %1$s --processes [---name <name>] [--uid <uid>]\n",
+				program_invocation_short_name);
 		return EXIT_FAILURE;
 	}
 
 	if (strcmp(argv[1], "--tasks") == 0)
 		return test_tasks(argc - 1, argv + 1);
+	if (strcmp(argv[1], "--processes") == 0)
+		return test_processes(argc - 1, argv + 1);
 
 	return EXIT_FAILURE;
 }

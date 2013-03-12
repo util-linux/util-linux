@@ -92,7 +92,7 @@ test_strutils_CFLAGS = -DTEST_PROGRAM
 test_randutils_SOURCES = lib/randutils.c
 test_randutils_CFLAGS = -DTEST_PROGRAM
 
-test_procutils_SOURCES = lib/procutils.c
+test_procutils_SOURCES = lib/procutils.c lib/at.c
 test_procutils_CFLAGS = -DTEST_PROGRAM
 
 if LINUX
