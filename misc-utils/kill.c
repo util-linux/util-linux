@@ -50,9 +50,9 @@
 #include <signal.h>
 
 #include "c.h"
-#include "kill.h"
 #include "nls.h"
 #include "closestream.h"
+#include "procutils.h"
 #include "strutils.h"
 
 struct signv {
@@ -139,8 +139,6 @@ struct signv {
 #endif
 };
 
-extern char *mybasename(char *);
-
 static int arg_to_signum (char *arg, int mask);
 static void nosig (char *name);
 static void printsig (int sig);
@@ -158,7 +156,6 @@ int main (int argc, char *argv[])
     int errors, numsig, pid;
     char *ep, *arg;
     int do_pid, do_kill, check_all;
-    pid_t *pids, *ip;
 
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
@@ -269,23 +266,35 @@ int main (int argc, char *argv[])
     /*  we're done with the options.
 	the rest of the arguments should be process ids and names.
 	kill them.  */
-    for (errors = EXIT_SUCCESS; (arg = *argv) != NULL; argv++) {
+    for (errors = 0; (arg = *argv) != NULL; argv++) {
 	pid = strtol (arg, &ep, 10);
 	if (! *ep)
 	    errors += kill_verbose (arg, pid, numsig);
-	else {
-	    pids = get_pids (arg, check_all);
-	    if (! pids) {
+	else  {
+	    struct proc_processes *ps = proc_open_processes();
+	    int ct = 0;
+
+	    if (!ps)
+	        continue;
+
+	    if (!check_all)
+		proc_processes_filter_by_uid(ps, getuid());
+
+	    proc_processes_filter_by_name(ps, arg);
+
+	    while (proc_next_pid(ps, &pid) == 0) {
+		errors += kill_verbose(arg, pid, numsig);
+		ct++;
+	    }
+
+	    if (!ct) {
 		errors++;
 		warnx (_("cannot find process \"%s\""), arg);
-		continue;
 	    }
-	    for (ip = pids; *ip >= 0; ip++)
-		errors += kill_verbose (arg, *ip, numsig);
-	    free (pids);
+	    proc_close_processes(ps);
 	}
     }
-    if (errors != EXIT_SUCCESS)
+    if (errors != 0)
 	errors = EXIT_FAILURE;
     return errors;
 }
@@ -424,7 +433,7 @@ static int usage(int status)
 
 static int kill_verbose (char *procname, pid_t pid, int sig)
 {
-    int rc;
+    int rc = 0;
 
     if (sig < 0) {
 	printf ("%ld\n", (long)pid);

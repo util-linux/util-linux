@@ -145,10 +145,7 @@ endif # BUILD_LIBMOUNT
 
 if BUILD_KILL
 bin_PROGRAMS += kill
-kill_SOURCES = \
-	misc-utils/kill.c \
-	misc-utils/kill.h \
-	misc-utils/procs.c
+kill_SOURCES = misc-utils/kill.c
 kill_LDADD = $(LDADD) libcommon.la
 dist_man_MANS += misc-utils/kill.1
 endif
