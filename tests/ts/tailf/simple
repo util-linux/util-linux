@@ -18,12 +18,17 @@ TS_DESC="simple"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-rm -f $TS_SELF/input
-echo {a..z}  > $TS_SELF/input
-$TS_CMD_TAILF  $TS_SELF/input > $TS_OUTPUT 2>&1 &
+INPUT=$TS_OUTDIR/$TS_TESTNAME.input
+
+rm -f $INPUT
+echo {a..z} > $INPUT
+
+$TS_CMD_TAILF $INPUT > $TS_OUTPUT 2>&1 &
+
 sleep 0.1
-echo {0..9} >> $TS_SELF/input
+echo {0..9} >> $INPUT
 sleep 0.1
-rm -f $TS_SELF/input
+
+rm -f $INPUT
 
 ts_finalize
