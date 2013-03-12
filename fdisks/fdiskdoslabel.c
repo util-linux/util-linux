@@ -428,6 +428,10 @@ static int dos_reset_alignment(struct fdisk_context *cxt)
 	return 0;
 }
 
+/* TODO: move to include/pt-dos.h and share with libblkid */
+#define AIX_MAGIC_STRING	"\xC9\xC2\xD4\xC1"
+#define AIX_MAGIC_STRLEN	(sizeof(AIX_MAGIC_STRING) - 1)
+
 static int dos_probe_label(struct fdisk_context *cxt)
 {
 	size_t i;
@@ -436,6 +440,10 @@ static int dos_probe_label(struct fdisk_context *cxt)
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
+
+	/* ignore disks with AIX magic number */
+	if (memcmp(cxt->firstsector, AIX_MAGIC_STRING, AIX_MAGIC_STRLEN) == 0)
+		return 0;
 
 	if (!mbr_is_valid_magic(cxt->firstsector))
 		return 0;
