@@ -97,15 +97,13 @@ int proc_next_tid(struct proc_tasks *tasks, pid_t *tid)
 
 #ifdef TEST_PROGRAM
 
-int main(int argc, char *argv[])
+static int test_tasks(int argc, char *argv[])
 {
 	pid_t tid, pid;
 	struct proc_tasks *ts;
 
-	if (argc != 2) {
-		fprintf(stderr, "usage: %s <pid>\n", argv[0]);
+	if (argc != 2)
 		return EXIT_FAILURE;
-	}
 
 	pid = strtol(argv[1], (char **) NULL, 10);
 	printf("PID=%d, TIDs:", pid);
@@ -120,5 +118,19 @@ int main(int argc, char *argv[])
 	printf("\n");
         proc_close_tasks(ts);
 	return EXIT_SUCCESS;
+}
+
+int main(int argc, char *argv[])
+{
+	if (argc < 2) {
+		fprintf(stderr, "usage: %s --tasks <pid>\n",
+					program_invocation_short_name);
+		return EXIT_FAILURE;
+	}
+
+	if (strcmp(argv[1], "--tasks") == 0)
+		return test_tasks(argc - 1, argv + 1);
+
+	return EXIT_FAILURE;
 }
 #endif /* TEST_PROGRAM */
