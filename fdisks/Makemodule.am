@@ -8,8 +8,6 @@ fdisk_SOURCES = \
 	fdisks/fdisk.c \
 	fdisks/fdisk.h \
 	fdisks/fdisk-ask.c \
-	fdisks/fdiskaixlabel.c \
-	fdisks/fdiskaixlabel.h \
 	fdisks/fdiskbsdlabel.c \
 	fdisks/fdiskbsdlabel.h \
 	fdisks/fdiskdoslabel.c \

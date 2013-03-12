@@ -37,7 +37,6 @@
 
 #include "fdisksunlabel.h"
 #include "fdisksgilabel.h"
-#include "fdiskaixlabel.h"
 #include "fdiskmaclabel.h"
 #include "fdiskdoslabel.h"
 #include "fdiskbsdlabel.h"

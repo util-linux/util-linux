@@ -531,7 +531,6 @@ int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...)
 
 #ifdef TEST_PROGRAM
 struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt) { return NULL; }
-struct fdisk_label *fdisk_new_aix_label(struct fdisk_context *cxt) { return NULL; }
 struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt) { return NULL; }
 struct fdisk_label *fdisk_new_mac_label(struct fdisk_context *cxt) { return NULL; }
 struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt) { return NULL; }

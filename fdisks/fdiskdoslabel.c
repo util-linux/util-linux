@@ -1207,7 +1207,7 @@ int dos_list_table(struct fdisk_context *cxt,
 
 	/* Is partition table in disk order? It need not be, but... */
 	/* partition table entries are not checked for correct order if this
-	   is a sgi, sun or aix labeled disk... */
+	   is a sgi, sun labeled disk... */
 	if (wrong_p_order(cxt, NULL))
 		printf(_("\nPartition table entries are not in disk order\n"));
 

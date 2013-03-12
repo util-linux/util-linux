@@ -20,7 +20,6 @@ struct fdisk_context *fdisk_new_context(void)
 	 */
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_gpt_label(cxt);
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_dos_label(cxt);
-	cxt->labels[ cxt->nlabels++ ] = fdisk_new_aix_label(cxt);
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_bsd_label(cxt);
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_mac_label(cxt);
 	cxt->labels[ cxt->nlabels++ ] = fdisk_new_sgi_label(cxt);
