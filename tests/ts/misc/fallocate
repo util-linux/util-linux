@@ -18,8 +18,12 @@ TS_DESC="fallocate"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-$TS_CMD_FALLOCATE -o 128 -l 256 $TS_SELF/fallocate_test > $TS_OUTPUT 2>&1
-stat -c "%s" $TS_SELF/fallocate_test > $TS_OUTPUT 2>&1
-rm -f $TS_SELF/fallocate_test
+IMAGE=${TS_OUTDIR}/${TS_TESTNAME}.file
+rm -f $IMAGE
+
+$TS_CMD_FALLOCATE -o 128 -l 256 $IMAGE > $TS_OUTPUT 2>&1
+stat -c "%s" $IMAGE > $TS_OUTPUT 2>&1
+
+rm -f $IMAGE
 
 ts_finalize
