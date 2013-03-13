@@ -29,16 +29,14 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- */
-
-/* *:aeb */
-
-/* 1999-02-22 Arkadiusz Miśkiewicz <misiek@pld.ORG.PL>
+ *
+ * 1999-02-22 Arkadiusz Miśkiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
- */
-
-/* 2011-08-12 Davidlohr Bueso <dave@gnu.org>
+ * 2011-08-12 Davidlohr Bueso <dave@gnu.org>
  * - added $PATH lookup
+ *
+ * Copyright (C) 2013 Karel Zak <kzak@redhat.com>
+ *               2013 Sami Kerola <kerolasa@iki.fi>
  */
 
 #include <sys/param.h>
@@ -49,13 +47,37 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <assert.h>
 
 #include "xalloc.h"
 #include "nls.h"
 #include "c.h"
 #include "closestream.h"
 
-static char *bindirs[] = {
+/*#define DEBUG*/
+
+static char uflag = 0;
+
+/* supported types */
+enum {
+	BIN_DIR = (1 << 1),
+	MAN_DIR = (1 << 2),
+	SRC_DIR = (1 << 3),
+
+	ALL_DIRS = BIN_DIR | MAN_DIR | SRC_DIR
+};
+
+/* directories */
+struct wh_dirlist {
+	int	type;
+	dev_t	st_dev;
+	ino_t	st_ino;
+	char	*path;
+
+	struct wh_dirlist *next;
+};
+
+static const char *bindirs[] = {
 	"/bin",
 	"/usr/bin",
 	"/sbin",
@@ -106,35 +128,40 @@ static char *bindirs[] = {
 	"/usr/share",
 
 	"/opt/*/bin",
-
-	0
+	NULL
 };
 
-static char *mandirs[] = {
+static const char *mandirs[] = {
 	"/usr/man/*",
 	"/usr/share/man/*",
 	"/usr/X386/man/*",
 	"/usr/X11/man/*",
 	"/usr/TeX/man/*",
 	"/usr/interviews/man/mann",
-	0
+	NULL
 };
 
-static char *srcdirs[] = {
+static const char *srcdirs[] = {
 	"/usr/src/*",
 	"/usr/src/lib/libc/*",
 	"/usr/src/lib/libc/net/*",
 	"/usr/src/ucb/pascal",
 	"/usr/src/ucb/pascal/utilities",
 	"/usr/src/undoc",
-	0
+	NULL
 };
 
-static char sflag = 1, bflag = 1, mflag = 1, uflag;
-static char **Sflag, **Bflag, **Mflag, **pathdir, **pathdir_p;
-static int Scnt, Bcnt, Mcnt, count, print;
+#ifdef DEBUG
+# define DBG(_x)	do { \
+				printf("DEBUG: "); \
+				_x; \
+				fputc('\n', stdout); \
+			} while (0)
+#else
+# define DBG(_x)
+#endif
 
-static void __attribute__ ((__noreturn__)) usage(FILE * out)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
 	fputs(_("\nUsage:\n"), out);
 	fprintf(out,
@@ -156,16 +183,177 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-static int
-itsit(char *cp, char *dp)
+static void dirlist_add_dir(struct wh_dirlist **ls0, int type, const char *dir)
+{
+	struct stat st;
+	struct wh_dirlist *prev = NULL, *ls = *ls0;
+
+	DBG(printf("add dir: '%s'", dir));
+
+	if (access(dir, R_OK) != 0)
+		return;
+	if (stat(dir, &st) != 0 || !S_ISDIR(st.st_mode))
+		return;
+	while (ls) {
+		if (ls->st_ino == st.st_ino &&
+		    ls->st_dev == st.st_dev &&
+		    ls->type == type) {
+			DBG(printf("  already in the list, ignore"));
+			return;
+		}
+		prev = ls;
+		ls = ls->next;
+	}
+
+	DBG(printf("  adding new directory"));
+
+	ls = xcalloc(1, sizeof(*ls));
+	ls->st_ino = st.st_ino;
+	ls->st_dev = st.st_dev;
+	ls->type = type;
+	ls->path = xstrdup(dir);
+
+	if (!*ls0)
+		*ls0 = ls;		/* first in the list */
+	else {
+		assert(prev);
+		prev->next = ls;	/* add to the end of the list */
+	}
+	return;
+}
+
+/* special case for '*' in the paths */
+static void dirlist_add_subdir(struct wh_dirlist **ls, int type, const char *dir)
+{
+	char buf[PATH_MAX], *d;
+	DIR *dirp;
+	struct dirent *dp;
+
+	strncpy(buf, dir, PATH_MAX);
+	buf[PATH_MAX - 1] = '\0';
+
+	DBG(printf("add subdir: %s", buf));
+
+	d = strchr(buf, '*');
+	if (!d)
+		return;
+	*d = 0;
+
+	dirp = opendir(buf);
+	if (!dirp)
+		return;
+
+	DBG(printf("  scan: %s", buf));
+
+	while ((dp = readdir(dirp)) != NULL) {
+		if (!strcmp(dp->d_name, ".") || !strcmp(dp->d_name, ".."))
+			continue;
+		snprintf(d, PATH_MAX - (d - buf), "%s", dp->d_name);
+		/* a dir definition can have a star in middle of path */
+		strcat(buf, strchr(dir, '*') + 1);
+		dirlist_add_dir(ls, type, buf);
+	}
+	closedir(dirp);
+	return;
+}
+
+static void construct_dirlist_from_env(const char *env,
+				       struct wh_dirlist **ls,
+				       int type)
+{
+	char *key = NULL, *tok = NULL, *pathcp, *path = getenv(env);
+
+	if (!path)
+		return;
+	pathcp = xstrdup(path);
+
+	DBG(printf("construct from env: %s", path));
+
+	for (tok = strtok_r(pathcp, ":", &key); tok;
+	     tok = strtok_r(NULL, ":", &key))
+		dirlist_add_dir(ls, type, tok);
+
+	free(pathcp);
+	return;
+}
+
+static void construct_dirlist_from_argv(struct wh_dirlist **ls,
+					int *idx,
+					int argc,
+					char *argv[],
+					int type)
+{
+	DBG(printf("construct argv[%d..]", *idx));
+
+	for (; *idx < argc; (*idx)++) {
+		if (*argv[*idx] == '-')			/* end of the list */
+			return;
+		dirlist_add_dir(ls, type, argv[*idx]);
+	}
+	return;
+}
+
+static void construct_dirlist(struct wh_dirlist **ls,
+			      int type,
+			      const char **paths)
+{
+	size_t i;
+
+	DBG(printf("construct from dirs"));
+
+	for (i = 0; paths[i]; i++) {
+		if (!strchr(paths[i], '*'))
+			dirlist_add_dir(ls, type, paths[i]);
+		else
+			dirlist_add_subdir(ls, type, paths[i]);
+	}
+	return;
+}
+
+static void free_dirlist(struct wh_dirlist **ls0, int type)
+{
+	struct wh_dirlist *prev = NULL, *next, *ls = *ls0;
+
+	*ls0 = NULL;
+
+	DBG(printf("freeing dirlist"));
+
+	while (ls) {
+		if (ls->type & type) {
+			next = ls->next;
+
+			DBG(printf("freeing dir: %s", ls->path));
+
+			free(ls->path);
+			free(ls);
+			ls = next;
+			if (prev)
+				prev->next = ls;
+		} else {
+			if (!prev)
+				*ls0 = ls;	/* first unremoved */
+			prev = ls;
+			ls = ls->next;
+		}
+	}
+
+	return;
+}
+
+
+static int filename_equal(const char *cp, const char *dp)
 {
 	int i = strlen(dp);
 
-	if (dp[0] == 's' && dp[1] == '.' && itsit(cp, dp + 2))
+	/*DBG(printf("compare '%s' and '%s'", cp, dp));*/
+
+	if (dp[0] == 's' && dp[1] == '.' && filename_equal(cp, dp + 2))
 		return 1;
 	if (!strcmp(dp + i - 2, ".Z"))
 		i -= 2;
 	else if (!strcmp(dp + i - 3, ".gz"))
+		i -= 3;
+	else if (!strcmp(dp + i - 3, ".xz"))
 		i -= 3;
 	else if (!strcmp(dp + i - 4, ".bz2"))
 		i -= 4;
@@ -185,284 +373,148 @@ itsit(char *cp, char *dp)
 	return 0;
 }
 
-static void
-findin(char *dir, char *cp)
+static void findin(const char *dir, const char *pattern, int *count, char **wait)
 {
 	DIR *dirp;
 	struct dirent *dp;
-	char *d, *dd;
-	size_t l;
-	char dirbuf[1024];
-	struct stat statbuf;
 
-	dd = strchr(dir, '*');
-	if (!dd) {
-		dirp = opendir(dir);
-		if (dirp == NULL)
-			return;
-		while ((dp = readdir(dirp)) != NULL) {
-			if (itsit(cp, dp->d_name)) {
-				count++;
-				if (print)
-					printf(" %s/%s", dir, dp->d_name);
-			}
-		}
-		closedir(dirp);
+	dirp = opendir(dir);
+	if (dirp == NULL)
 		return;
-	}
 
-	l = strlen(dir);
-	if (l < sizeof(dirbuf)) {
-		/* refuse excessively long names */
-		strcpy(dirbuf, dir);
-		d = strchr(dirbuf, '*');
-		if (d)
-			*d = 0;
-		dirp = opendir(dirbuf);
-		if (dirp == NULL)
-			return;
-		while ((dp = readdir(dirp)) != NULL) {
-			if (!strcmp(dp->d_name, ".") ||
-			    !strcmp(dp->d_name, ".."))
-				continue;
-			if (strlen(dp->d_name) + l > sizeof(dirbuf))
-				continue;
-			sprintf(d, "%s", dp->d_name);
-			if (stat(dirbuf, &statbuf))
-				continue;
-			if (!S_ISDIR(statbuf.st_mode))
-				continue;
-			strcat(d, dd + 1);
-			findin(dirbuf, cp);
-		}
-		closedir(dirp);
-	}
-	return;
+	DBG(printf("find '%s' in '%s'", pattern, dir));
 
-}
-
-static int inpath(const char *str)
-{
-	size_t i;
-
-	for (i = 0; i < ARRAY_SIZE(bindirs) - 1 ; i++)
-		if (!strcmp(bindirs[i], str))
-			return 1;
-
-	for (i = 0; i < ARRAY_SIZE(mandirs) - 1; i++)
-		if (!strcmp(mandirs[i], str))
-			return 1;
-
-	for (i = 0; i < ARRAY_SIZE(srcdirs) - 1; i++)
-		if (!strcmp(srcdirs[i], str))
-			return 1;
-
-	return 0;
-}
-
-static void fillpath(void)
-{
-	char *key=NULL, *tok=NULL, *pathcp, *path = getenv("PATH");
-	int i = 0;
-
-
-	if (!path)
-		return;
-	pathcp = xstrdup(path);
-
-	for (tok = strtok_r(pathcp, ":", &key); tok;
-	     tok = strtok_r(NULL, ":", &key)) {
-
-		/* make sure we don't repeat the search path */
-		if (inpath(tok))
+	while ((dp = readdir(dirp)) != NULL) {
+		if (!filename_equal(pattern, dp->d_name))
 			continue;
 
-		pathdir = xrealloc(pathdir, (i + 1) * sizeof(char *));
-		pathdir[i++] = xstrdup(tok);
+		if (uflag && *count == 0)
+			xasprintf(wait, "%s/%s", dir, dp->d_name);
+
+		else if (uflag && *count == 1 && *wait) {
+			printf("%s: %s %s/%s", pattern, *wait, dir,  dp->d_name);
+			free(*wait);
+			*wait = NULL;
+		} else
+			printf(" %s/%s", dir, dp->d_name);
+		++(*count);
+	}
+	closedir(dirp);
+	return;
+}
+
+static void lookup(const char *pattern, struct wh_dirlist *ls, int want)
+{
+	char patbuf[PATH_MAX];
+	int count = 0;
+	char *wait = NULL, *p;
+
+	DBG(printf("lookup dirs for '%s' (%s)", patbuf, pattern));
+
+	/* canonicalize pattern -- remove path suffix etc. */
+	p = strrchr(pattern, '/');
+	p = p ? p + 1 : (char *) pattern;
+	strncpy(patbuf, p, PATH_MAX);
+	patbuf[PATH_MAX - 1] = '\0';
+	p = strrchr(patbuf, '.');
+	if (p)
+		*p = '\0';
+
+	if (!uflag)
+		/* if -u not specified then we always print the pattern */
+		printf("%s:", patbuf);
+
+	for (; ls; ls = ls->next) {
+		if ((ls->type & want) && ls->path)
+			findin(ls->path, patbuf, &count, &wait);
 	}
 
-	pathdir = xrealloc(pathdir, (i + 1) * sizeof(char *));
-	pathdir[i] = NULL;
+	free(wait);
 
-	pathdir_p = pathdir;
-	free(pathcp);
+	if ((count && !uflag) || (uflag && count > 1))
+		putchar('\n');
+	return;
 }
 
-static void freepath(void)
+int main(int argc, char **argv)
 {
-	free(pathdir);
-}
+	struct wh_dirlist *ls = NULL;
+	int want = ALL_DIRS;
+	int i;
 
-static void
-findv(char **dirv, int dirc, char *cp)
-{
-
-	while (dirc > 0)
-		findin(*dirv++, cp), dirc--;
-}
-
-static void
-looksrc(char *cp)
-{
-	if (Sflag == NULL)
-		findv(srcdirs, ARRAY_SIZE(srcdirs)-1, cp);
-	else
-		findv(Sflag, Scnt, cp);
-}
-
-static void
-lookbin(char *cp)
-{
-	if (Bflag == NULL) {
-		findv(bindirs, ARRAY_SIZE(bindirs)-1, cp);
-		while (*pathdir_p)
-			findin(*pathdir_p++, cp);		/* look $PATH */
-	 } else
-		findv(Bflag, Bcnt, cp);
-}
-
-static void
-lookman(char *cp)
-{
-	if (Mflag == NULL)
-		findv(mandirs, ARRAY_SIZE(mandirs)-1, cp);
-	else
-		findv(Mflag, Mcnt, cp);
-}
-
-static void
-getlist(int *argcp, char ***argvp, char ***flagp, int *cntp)
-{
-	(*argvp)++;
-	*flagp = *argvp;
-	*cntp = 0;
-	for ((*argcp)--; *argcp > 0 && (*argvp)[0][0] != '-'; (*argcp)--)
-		(*cntp)++, (*argvp)++;
-	(*argcp)++;
-	(*argvp)--;
-}
-
-static void
-zerof(void)
-{
-	if (sflag && bflag && mflag)
-		sflag = bflag = mflag = 0;
-}
-
-static int
-print_again(char *cp)
-{
-	if (print)
-		printf("%s:", cp);
-	if (sflag) {
-		looksrc(cp);
-		if (uflag && print == 0 && count != 1) {
-			print = 1;
-			return 1;
-		}
-	}
-	count = 0;
-	if (bflag) {
-		lookbin(cp);
-		if (uflag && print == 0 && count != 1) {
-			print = 1;
-			return 1;
-		}
-	}
-	count = 0;
-	if (mflag) {
-		lookman(cp);
-		if (uflag && print == 0 && count != 1) {
-			print = 1;
-			return 1;
-		}
-	}
-	return 0;
-}
-
-static void
-lookup(char *cp)
-{
-	register char *dp;
-
-	for (dp = cp; *dp; dp++)
-		continue;
-	for (; dp > cp; dp--) {
-		if (*dp == '.') {
-			*dp = 0;
-			break;
-		}
-	}
-	for (dp = cp; *dp; dp++)
-		if (*dp == '/')
-			cp = dp + 1;
-	if (uflag) {
-		print = 0;
-		count = 0;
-	} else
-		print = 1;
-
-	while (print_again(cp))
-		/* all in print_again() */ ;
-
-	if (print)
-		printf("\n");
-}
-
-/*
- * whereis name
- * look for source, documentation and binaries
- */
-int
-main(int argc, char **argv)
-{
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	argc--, argv++;
-	if (argc == 0)
+	if (argc == 1)
 		usage(stderr);
 
-	do
-		if (argv[0][0] == '-') {
-			register char *cp = argv[0] + 1;
-			while (*cp) switch (*cp++) {
+	construct_dirlist(&ls, BIN_DIR, bindirs);
+	construct_dirlist_from_env("PATH", &ls, BIN_DIR);
 
+	construct_dirlist(&ls, MAN_DIR, mandirs);
+	construct_dirlist(&ls, SRC_DIR, srcdirs);
+
+	for (i = 1; i < argc; i++) {
+		const char *arg = argv[i];
+
+		if (*arg != '-') {
+			lookup(arg, ls, want);
+			continue;
+		}
+
+		if (i > 1 && *argv[i - 1] != '-')
+			/* the list of search patterns has been interupted by
+			 * any non-pattern option, then reset the mask for
+			 * wanted directories. For example:
+			 *
+			 *    whereis -m ls -b tr
+			 *
+			 * search for "ls" in mandirs and "tr" in bindirs
+			 */
+			want = ALL_DIRS;
+
+		for (++arg; arg && *arg; arg++) {
+			switch (*arg) {
 			case 'f':
 				break;
-
-			case 'S':
-				getlist(&argc, &argv, &Sflag, &Scnt);
-				break;
-
-			case 'B':
-				getlist(&argc, &argv, &Bflag, &Bcnt);
-				break;
-
-			case 'M':
-				getlist(&argc, &argv, &Mflag, &Mcnt);
-				break;
-
-			case 's':
-				zerof();
-				sflag++;
-				continue;
-
 			case 'u':
-				uflag++;
-				continue;
-
+				uflag = 1;
+				break;
+			case 'B':
+				if (*(arg + 1))
+					usage(stderr);
+				i++;
+				free_dirlist(&ls, BIN_DIR);
+				construct_dirlist_from_argv(
+					&ls, &i, argc, argv, BIN_DIR);
+				break;
+			case 'M':
+				if (*(arg + 1))
+					usage(stderr);
+				i++;
+				free_dirlist(&ls, MAN_DIR);
+				construct_dirlist_from_argv(
+					&ls, &i, argc, argv, MAN_DIR);
+				break;
+			case 'S':
+				if (*(arg + 1))
+					usage(stderr);
+				i++;
+				free_dirlist(&ls, SRC_DIR);
+				construct_dirlist_from_argv(
+					&ls, &i, argc, argv, SRC_DIR);
+				break;
 			case 'b':
-				zerof();
-				bflag++;
-				continue;
-
+				want = want == ALL_DIRS ? BIN_DIR : want | BIN_DIR;
+				break;
 			case 'm':
-				zerof();
-				mflag++;
-				continue;
+				want = want == ALL_DIRS ? MAN_DIR : want | MAN_DIR;
+				break;
+			case 's':
+				want = want == ALL_DIRS ? SRC_DIR : want | SRC_DIR;
+				break;
 			case 'V':
 				printf(UTIL_LINUX_VERSION);
 				return EXIT_SUCCESS;
@@ -471,14 +523,9 @@ main(int argc, char **argv)
 			default:
 				usage(stderr);
 			}
-			argv++;
-		} else {
-			if (Bcnt == 0 && pathdir == NULL)
-				fillpath();
-			lookup(*argv++);
 		}
-	while (--argc > 0);
+	}
 
-	freepath();
+	free_dirlist(&ls, ALL_DIRS);
 	return EXIT_SUCCESS;
 }
