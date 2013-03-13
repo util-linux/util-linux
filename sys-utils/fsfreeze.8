@@ -3,11 +3,9 @@
 .SH NAME
 fsfreeze \- suspend access to a filesystem (Linux Ext3/4, ReiserFS, JFS, XFS)
 .SH SYNOPSIS
-.B fsfreeze \-f
-.I mountpoint
-
-.B fsfreeze \-u
-.I mountpoint
+.B fsfreeze
+.BR \--freeze | \--unfreeze
+.IR mountpoint
 
 .SH DESCRIPTION
 .B fsfreeze
@@ -53,6 +51,8 @@ or a clean mount of the snapshot is complete.
 This option is used to un-freeze the filesystem and allow operations to
 continue.  Any filesystem modifications that were blocked by the freeze are
 unblocked and allowed to complete.
+.IP "\fB\-V, \-\-version\fP"
+Show version number and exit.
 .SH AUTHOR
 .PP
 Written by Hajime Taira.

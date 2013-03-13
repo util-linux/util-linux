@@ -38,16 +38,16 @@ static int unfreeze_f(int fd)
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fputs(_("\nUsage:\n"), out);
+	fprintf(out, USAGE_HEADER);
 	fprintf(out,
-	      _(" %s [options] <mount point>\n"), program_invocation_short_name);
-
-	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -h, --help        this help\n"
-		" -f, --freeze      freeze the filesystem\n"
-		" -u, --unfreeze    unfreeze the filesystem\n"), out);
-
-	fputs(_("\nFor more information see fsfreeze(8).\n"), out);
+	      _(" %s [options] <mountpoint>\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -f, --freeze      freeze the filesystem\n"), out);
+	fputs(_(" -u, --unfreeze    unfreeze the filesystem\n"), out);
+	fprintf(out, USAGE_SEPARATOR);
+	fprintf(out, USAGE_HELP);
+	fprintf(out, USAGE_VERSION);
+	fprintf(out, USAGE_MAN_TAIL("fsfreeze(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -63,6 +63,7 @@ int main(int argc, char **argv)
 	    { "help",      0, 0, 'h' },
 	    { "freeze",    0, 0, 'f' },
 	    { "unfreeze",  0, 0, 'u' },
+	    { "version",   0, 0, 'V' },
 	    { NULL,        0, 0, 0 }
 	};
 
@@ -71,7 +72,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "hfu", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "hfuV", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 			usage(stdout);
@@ -82,6 +83,9 @@ int main(int argc, char **argv)
 		case 'u':
 			freeze = FALSE;
 			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			exit(EXIT_SUCCESS);
 		default:
 			usage(stderr);
 			break;
@@ -89,7 +93,7 @@ int main(int argc, char **argv)
 	}
 
 	if (freeze == -1)
-		errx(EXIT_FAILURE, _("no action specified"));
+		usage(stderr);
 	if (optind == argc)
 		errx(EXIT_FAILURE, _("no filename specified"));
 	path = argv[optind++];
