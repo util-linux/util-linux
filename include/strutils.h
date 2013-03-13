@@ -30,6 +30,9 @@ extern double strtod_or_err(const char *str, const char *errmesg);
 extern long strtol_or_err(const char *str, const char *errmesg);
 extern unsigned long strtoul_or_err(const char *str, const char *errmesg);
 
+extern void strtotimeval_or_err(const char *str, struct timeval *tv,
+		const char *errmesg);
+
 extern int isdigit_string(const char *str);
 
 #ifndef HAVE_MEMPCPY

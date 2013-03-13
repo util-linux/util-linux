@@ -333,6 +333,16 @@ uintmax_t strtosize_or_err(const char *str, const char *errmesg)
 	errx(STRTOXX_EXIT_CODE, "%s: '%s'", errmesg, str);
 }
 
+
+void strtotimeval_or_err(const char *str, struct timeval *tv, const char *errmesg)
+{
+	double user_input;
+
+	user_input = strtod_or_err(str, errmesg);
+	tv->tv_sec = (time_t) user_input;
+	tv->tv_usec = (long)((user_input - tv->tv_sec) * 1000000);
+}
+
 /*
  * Converts stat->st_mode to ls(1)-like mode string. The size of "str" must
  * be 10 bytes.
