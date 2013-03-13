@@ -48,6 +48,9 @@ static inline const char *option_to_longopt(int c, const struct option *opts)
  * Note that the options in the group have to be in ASCII order (ABC..abc..) and
  * groups have to be also in ASCII order.
  *
+ * The maximal number of the options in the group is 15 (size of the array is
+ * 16, last is zero).
+ *
  * The current status of options is stored in excl_st array. The size of the array
  * must be the same as number of the groups in the ul_excl_t array.
  *
@@ -73,12 +76,17 @@ static inline void err_exclusive_options(
 			if (status[e] == 0)
 				status[e] = c;
 			else if (status[e] != c) {
+				size_t ct = 0;
+
 				fprintf(stderr, _("%s: options "),
 						program_invocation_short_name);
-				for (op = excl[e]; *op; op++) {
-					if (opts)
-						fprintf(stderr, "--%s ",
-							option_to_longopt(*op, opts));
+
+				for (op = excl[e];
+				     ct + 1 < ARRAY_SIZE(excl[0]) && *op;
+				     op++, ct++) {
+					const char *n = option_to_longopt(*op, opts);
+					if (n)
+						fprintf(stderr, "--%s ", n);
 					else
 						fprintf(stderr, "-%c ", *op);
 				}
