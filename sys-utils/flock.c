@@ -75,17 +75,6 @@ static void timeout_handler(int sig __attribute__((__unused__)))
 	timeout_expired = 1;
 }
 
-static void strtotimeval(const char *str, struct timeval *tv)
-{
-	double user_input;
-
-	user_input = strtod_or_err(str, "bad number");
-	tv->tv_sec = (time_t) user_input;
-	tv->tv_usec = (long)((user_input - tv->tv_sec) * 1000000);
-	if ((tv->tv_sec + tv->tv_usec) == 0)
-		errx(EX_USAGE, _("timeout cannot be zero"));
-}
-
 static void setup_timer(struct itimerval *timer, struct itimerval *old_timer,
 			struct sigaction *sa, struct sigaction *old_sa)
 {
@@ -199,7 +188,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'w':
 			have_timeout = 1;
-			strtotimeval(optarg, &timeout.it_value);
+			strtotimeval_or_err(optarg, &timeout.it_value,
+				_("invalid timeout value"));
+			if (timeout.it_value.tv_sec + timeout.it_value.tv_usec == 0)
+				errx(EX_USAGE, _("timeout cannot be zero"));
 			break;
 		case 'E':
 			conflict_exit_code = strtos32_or_err(optarg,
