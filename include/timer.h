@@ -4,7 +4,7 @@
 #include <signal.h>
 #include <sys/time.h>
 
-static inline void setup_timer(
+static inline int setup_timer(
 			struct itimerval *timer,
 			struct itimerval *old_timer,
 			struct sigaction *old_sa,
@@ -17,7 +17,7 @@ static inline void setup_timer(
 	sa.sa_flags = SA_RESETHAND;
 	sigaction(SIGALRM, &sa, old_sa);
 
-	setitimer(ITIMER_REAL, timer, old_timer);
+	return setitimer(ITIMER_REAL, timer, old_timer);
 }
 
 static inline void cancel_timer(
