@@ -21,10 +21,11 @@
 #include <sys/stat.h>
 #include <getopt.h>
 
+#include "c.h"
 #include "blkdev.h"
 #include "nls.h"
 #include "closestream.h"
-#include "c.h"
+#include "optutils.h"
 
 static int freeze_f(int fd)
 {
@@ -67,12 +68,21 @@ int main(int argc, char **argv)
 	    { NULL,        0, 0, 0 }
 	};
 
+	static const ul_excl_t excl[] = {       /* rows and cols in in ASCII order */
+		{ 'f','u' },			/* freeze, unfreeze */
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "hfuV", longopts, NULL)) != -1) {
+
+		err_exclusive_options(c, longopts, excl, excl_st);
+
 		switch(c) {
 		case 'h':
 			usage(stdout);
