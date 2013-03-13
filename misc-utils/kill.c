@@ -197,15 +197,22 @@ int main (int argc, char *argv[])
 		printsignals (stdout, 0);
 		return EXIT_SUCCESS;
 	    }
-	    if (argc > 2) {
+	    if (argc > 2)
 		return usage (EXIT_FAILURE);
-	    }
 	    /* argc == 2, accept "kill -l $?" */
 	    arg = argv[1];
 	    if ((numsig = arg_to_signum (arg, 1)) < 0)
 		errx(EXIT_FAILURE, _("unknown signal: %s"), arg);
 	    printsig (numsig);
 	    return EXIT_SUCCESS;
+	}
+	/* for compatibility with procps kill(1) */
+	if (! strncmp (arg, "--list=", 7) || ! strncmp (arg, "-l=", 3)) {
+		char *p = strchr(arg, '=') + 1;
+		if ((numsig = arg_to_signum(p, 1)) < 0)
+			errx(EXIT_FAILURE, _("unknown signal: %s"), p);
+		printsig (numsig);
+		return EXIT_SUCCESS;
 	}
 	if (! strcmp (arg, "-L") || ! strcmp (arg, "--table")) {
 	    printsignals (stdout, 1);
@@ -453,13 +460,13 @@ static int usage(int status)
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] <pid|name> [...]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all           do not restrict the name-to-pid conversion to processes\n"
-		"                     with the same uid as the present process\n"), out);
-	fputs(_(" -s, --signal <sig>  send specified signal\n"), out);
-	fputs(_(" -q, --queue <sig>   use sigqueue(2) rather than kill(2)\n"), out);
-	fputs(_(" -p, --pid           print pids without signaling them\n"), out);
-	fputs(_(" -l, --list <name>   list signal names\n"), out);
-	fputs(_(" -L, --table         list signal names and numbers\n"), out);
+	fputs(_(" -a, --all              do not restrict the name-to-pid conversion to processes\n"
+		"                        with the same uid as the present process\n"), out);
+	fputs(_(" -s, --signal <sig>     send specified signal\n"), out);
+	fputs(_(" -q, --queue <sig>      use sigqueue(2) rather than kill(2)\n"), out);
+	fputs(_(" -p, --pid              print pids without signaling them\n"), out);
+	fputs(_(" -l, --list [=<signal>] list signal names, or convert one to a name\n"), out);
+	fputs(_(" -L, --table            list signal names and numbers\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
