@@ -43,6 +43,7 @@
 #include "nls.h"
 #include "strutils.h"
 #include "closestream.h"
+#include "timer.h"
 
 static void __attribute__((__noreturn__)) usage(int ex)
 {
@@ -73,22 +74,6 @@ static sig_atomic_t timeout_expired = 0;
 static void timeout_handler(int sig __attribute__((__unused__)))
 {
 	timeout_expired = 1;
-}
-
-static void setup_timer(struct itimerval *timer, struct itimerval *old_timer,
-			struct sigaction *sa, struct sigaction *old_sa)
-{
-	memset(sa, 0, sizeof *sa);
-	sa->sa_handler = timeout_handler;
-	sa->sa_flags = SA_RESETHAND;
-	sigaction(SIGALRM, sa, old_sa);
-	setitimer(ITIMER_REAL, timer, old_timer);
-}
-
-static void cancel_timer(struct itimerval *old_timer, struct sigaction *old_sa)
-{
-	setitimer(ITIMER_REAL, old_timer, NULL);
-	sigaction(SIGALRM, old_sa, NULL);
 }
 
 static int open_file(const char *filename, int *flags)
@@ -138,7 +123,7 @@ int main(int argc, char *argv[])
 	int conflict_exit_code = 1;
 	char **cmd_argv = NULL, *sh_c_argv[4];
 	const char *filename = NULL;
-	struct sigaction sa, old_sa;
+	struct sigaction old_sa;
 
 	static const struct option long_options[] = {
 		{"shared", no_argument, NULL, 's'},
@@ -249,7 +234,7 @@ int main(int argc, char *argv[])
 			have_timeout = 0;
 			block = LOCK_NB;
 		} else
-			setup_timer(&timeout, &old_timer, &sa, &old_sa);
+			setup_timer(&timeout, &old_timer, &old_sa, timeout_handler);
 	}
 
 	while (flock(fd, type | block)) {
