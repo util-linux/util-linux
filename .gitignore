@@ -67,14 +67,12 @@ tests/run.sh.trs
 #
 /addpart
 /agetty
-/arch
 /blkid
 /blockdev
 /cal
 /cfdisk
 /chcpu
 /chfn
-/chkdupexe
 /chrt
 /chsh
 /col

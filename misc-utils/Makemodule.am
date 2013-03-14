@@ -45,13 +45,6 @@ usrbin_exec_PROGRAMS += whereis
 dist_man_MANS += misc-utils/whereis.1
 whereis_SOURCES = misc-utils/whereis.c
 
-
-if BUILD_CHKDUPEXE
-dist_usrbin_exec_SCRIPTS += misc-utils/chkdupexe
-CLEANFILES += misc-utils/chkdupexe
-dist_man_MANS += misc-utils/chkdupexe.1
-endif
-
 if BUILD_LSLOCKS
 usrbin_exec_PROGRAMS += lslocks
 dist_man_MANS += misc-utils/lslocks.8

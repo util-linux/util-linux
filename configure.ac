@@ -684,7 +684,6 @@ AC_ARG_ENABLE([most-builds],
 )
 if test "x$enable_most_builds" = xyes; then
   enable_chfn_chsh=yes
-  enable_chkdupexe=yes
   enable_elvtune=check
   enable_last=yes
   enable_line=yes
@@ -1294,19 +1293,6 @@ AC_ARG_ENABLE([write],
 )
 UL_BUILD_INIT([write])
 AM_CONDITIONAL(BUILD_WRITE, test "x$build_write" = xyes)
-
-
-AC_ARG_ENABLE([chkdupexe],
-  AS_HELP_STRING([--enable-chkdupexe], [build deprecated chkdupexe]),
-  [], enable_chkdupexe=no
-)
-UL_BUILD_INIT([chkdupexe])
-AM_CONDITIONAL(BUILD_CHKDUPEXE, test "x$build_chkdupexe" = xyes)
-
-if test "x$build_chkdupexe" = xyes; then
-	AC_PATH_PROG(PERL, perl)
-	AC_CONFIG_FILES([misc-utils/chkdupexe:misc-utils/chkdupexe.pl])
-fi
 
 
 AC_ARG_ENABLE([socket-activation],
