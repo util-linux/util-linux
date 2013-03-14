@@ -297,12 +297,6 @@ nsenter_SOURCES = sys-utils/nsenter.c
 nsenter_LDADD = $(LDADD) libcommon.la
 endif
 
-if BUILD_ARCH
-bin_PROGRAMS += arch
-dist_man_MANS += sys-utils/arch.1
-arch_SOURCES = sys-utils/arch.c
-endif
-
 if BUILD_HWCLOCK
 sbin_PROGRAMS += hwclock
 dist_man_MANS += sys-utils/hwclock.8

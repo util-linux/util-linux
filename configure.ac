@@ -683,7 +683,6 @@ AC_ARG_ENABLE([most-builds],
   [], enable_most_builds=no
 )
 if test "x$enable_most_builds" = xyes; then
-  enable_arch=check
   enable_chfn_chsh=yes
   enable_chkdupexe=yes
   enable_elvtune=check
@@ -902,15 +901,6 @@ UL_BUILD_INIT([setpriv])
 UL_REQUIRES_LINUX([setpriv])
 UL_REQUIRES_HAVE([setpriv], [cap_ng], [libcap-ng])
 AM_CONDITIONAL(BUILD_SETPRIV, test "x$build_setpriv" = xyes)
-
-
-AC_ARG_ENABLE([arch],
-  AS_HELP_STRING([--enable-arch], [do build arch]),
-  [], enable_arch=no
-)
-UL_BUILD_INIT([arch])
-UL_REQUIRES_LINUX([arch])
-AM_CONDITIONAL(BUILD_ARCH, test "x$build_arch" = xyes)
 
 
 AC_ARG_ENABLE([eject],
