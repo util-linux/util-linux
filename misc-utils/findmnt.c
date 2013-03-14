@@ -86,6 +86,8 @@ enum {
 	COL_ID,
 	COL_OPT_FIELDS,
 	COL_PROPAGATION,
+	COL_FREQ,
+	COL_PASSNO,
 
 	FINDMNT_NCOLUMNS
 };
@@ -130,7 +132,9 @@ static struct colinfo infos[FINDMNT_NCOLUMNS] = {
 	[COL_TID]          = { "TID",             4, TT_FL_RIGHT, N_("task ID") },
 	[COL_ID]           = { "ID",              2, TT_FL_RIGHT, N_("mount ID") },
 	[COL_OPT_FIELDS]   = { "OPT-FIELDS",   0.10, TT_FL_TRUNC, N_("optional mount fields") },
-	[COL_PROPAGATION]  = { "PROPAGATION",  0.10, 0, N_("VFS propagation flags") }
+	[COL_PROPAGATION]  = { "PROPAGATION",  0.10, 0, N_("VFS propagation flags") },
+	[COL_FREQ]         = { "FREQ",            1, TT_FL_RIGHT, N_("dump(8) frequency in days [fstab only]") },
+	[COL_PASSNO]       = { "PASSNO",          1, TT_FL_RIGHT, N_("pass number on parallel fsck(8) [fstab only]") }
 };
 
 /* global flags */
@@ -577,6 +581,18 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 				n = tmp;
 			}
 			str = n;
+		}
+		break;
+	case COL_FREQ:
+		if (!mnt_fs_is_kernel(fs)) {
+			xasprintf(&tmp, "%d", mnt_fs_get_freq(fs));
+			str = tmp;
+		}
+		break;
+	case COL_PASSNO:
+		if (!mnt_fs_is_kernel(fs)) {
+			xasprintf(&tmp, "%d", mnt_fs_get_passno(fs));
+			str = tmp;
 		}
 		break;
 	default:
