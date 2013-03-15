@@ -102,6 +102,7 @@ scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB) $(srcdir)/$(DOC_MODULE)-*.txt $(co
 	$(AM_V_GEN)gtkdoc-scan --module=$(DOC_MODULE) \
 	            --source-dir=$(srcdir)/$(DOC_SOURCE_DIR) \
 	            --source-dir=$(builddir)/$(DOC_SOURCE_DIR) \
+                    --ignore-decorators="__ul_attribute__\(.*\)" \
 	            --ignore-headers="$(IGNORE_HFILES)" \
 	            --output-dir=$(builddir) \
 	            $(SCAN_OPTIONS) $(EXTRA_HFILES)
