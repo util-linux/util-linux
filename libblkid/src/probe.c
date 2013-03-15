@@ -1020,7 +1020,7 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
 }
 
 /**
- * blkid_probe_step_back():
+ * blkid_probe_step_back:
  * @pr: prober
  *
  * This function move pointer to the probing chain one step back -- it means
