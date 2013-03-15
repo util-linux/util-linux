@@ -1208,7 +1208,7 @@ dev_t mnt_fs_get_devno(struct libmnt_fs *fs)
 
 /**
  * mnt_fs_get_tid:
- * @fs: /proc/<tid>/mountinfo entry
+ * @fs: /proc/tid/mountinfo entry
  *
  * Returns: TID (task ID) for filesystems read from mountinfo file
  */

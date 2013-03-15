@@ -89,6 +89,14 @@ mnt_context_strerror
 mnt_context_syscall_called
 mnt_context_tab_applied
 mnt_context_wait_for_children
+<SUBSECTION>
+MNT_ERR_AMBIFS
+MNT_ERR_APPLYFLAGS
+MNT_ERR_LOOPDEV
+MNT_ERR_MOUNTOPT
+MNT_ERR_NOFSTAB
+MNT_ERR_NOFSTYPE
+MNT_ERR_NOSOURCE
 </SECTION>
 
 <SECTION>
@@ -145,6 +153,7 @@ MS_UNBINDABLE
 
 <SECTION>
 <FILE>context-umount</FILE>
+mnt_context_find_umount_fs
 mnt_context_do_umount
 mnt_context_finalize_umount
 mnt_context_next_umount
@@ -182,6 +191,7 @@ mnt_fs_get_srcpath
 mnt_fs_get_swaptype
 mnt_fs_get_tag
 mnt_fs_get_target
+mnt_fs_get_tid
 mnt_fs_get_usedsize
 mnt_fs_get_userdata
 mnt_fs_get_user_options
@@ -325,6 +335,7 @@ mnt_update_table
 mnt_fstype_is_netfs
 mnt_fstype_is_pseudofs
 mnt_get_fstab_path
+mnt_get_mountpoint
 mnt_get_mtab_path
 mnt_get_swaps_path
 mnt_has_regular_mtab
