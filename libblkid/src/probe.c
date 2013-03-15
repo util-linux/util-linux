@@ -1038,6 +1038,9 @@ int blkid_do_wipe(blkid_probe pr, int dryrun)
  *      blkid_probe_enable_superblocks(pr, 1);
  *      blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_MAGIC);
  *
+ *      blkid_probe_enable_partitions(pr, 1);
+ *      blkid_probe_set_partitions_flags(pr, BLKID_PARTS_MAGIC);
+ *
  *	while (blkid_do_probe(pr) == 0) {
  *		const char *ostr = NULL;
  *		size_t len = 0;

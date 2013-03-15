@@ -129,6 +129,11 @@ extern blkid_dev_iterate blkid_dev_iterate_begin(blkid_cache cache)
 {
 	blkid_dev_iterate iter;
 
+	if (!cache) {
+		errno = EINVAL;
+		return NULL;
+	}
+
 	iter = malloc(sizeof(struct blkid_struct_dev_iterate));
 	if (iter) {
 		iter->magic = DEV_ITERATE_MAGIC;
