@@ -291,9 +291,14 @@ static void *romfs_read(unsigned long offset)
 {
 	unsigned int block = offset >> ROMBUFFER_BITS;
 	if (block != read_buffer_block) {
+		ssize_t x;
+
 		read_buffer_block = block;
 		lseek(fd, block << ROMBUFFER_BITS, SEEK_SET);
-		read(fd, read_buffer, ROMBUFFERSIZE * 2);
+
+		x = read(fd, read_buffer, ROMBUFFERSIZE * 2);
+		if (x < 0)
+			warn(_("read romfs failed"));
 	}
 	return read_buffer + (offset & ROMBUFFERMASK);
 }
@@ -334,7 +339,7 @@ static struct cramfs_inode *read_super(void)
 	return root;
 }
 
-static int uncompress_block(void *src, int len)
+static int uncompress_block(void *src, size_t len)
 {
 	int err;
 
@@ -351,8 +356,8 @@ static int uncompress_block(void *src, int len)
 
 	err = inflate(&stream, Z_FINISH);
 	if (err != Z_STREAM_END)
-		errx(FSCK_EX_UNCORRECTED, _("decompression error %p(%d): %s"),
-		     zError(err), src, len);
+		errx(FSCK_EX_UNCORRECTED, _("decompression error: %s"),
+		     zError(err));
 	return stream.total_out;
 }
 
