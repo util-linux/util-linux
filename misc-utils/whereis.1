@@ -30,7 +30,7 @@
 .\" SUCH DAMAGE.
 .\"
 .\" @(#)whereis.1 from UCB 4.2
-.TH WHEREIS 1 "January 2013" "util-linux" "User Commands"
+.TH WHEREIS 1 "March 2013" "util-linux" "User Commands"
 .SH NAME
 whereis \- locate the binary, source, and manual page files for a command
 .SH SYNOPSIS
@@ -113,21 +113,24 @@ or have no source in
 .B $ cd /usr/bin
 .br
 .B $ whereis \-u \-ms \-M /usr/man/man1 \-S /usr/src \-f *
-
-.SH FILES
+.SH "FILE SEARCH PATHS"
+By default
 .B whereis
-contains a basic set of hard-coded paths (see below), but if the
-.B \-B
-option is not specified, it also follows the
+tries to find files from hard-coded paths, which are defined with glob
+patterns. The command attempst to use contents of
 .B $PATH
-environment variable (since version 2.21).
-.IP
-.br
-/{bin,sbin,etc}
-.br
-/usr/{lib,\:bin,\:old,\:new,\:local,\:games,\:include,\:etc,\:src,\:man,\:sbin,\:X386,\:TeX,\:g++-include}
-.br
-/usr/local/{X386,\:TeX,\:X11,\:include,\:lib,\:man,\:etc,\:bin,\:games,\:emacs}
+and
+.B $MANPATH
+environment variables as default search path.  The easiest way to know
+what paths are in use is to add
+.B \-l
+listing option.  Effects of the
+.BR \-B ,
+.BR \-M ,
+and
+.BR \-S
+are display with
+.BR \-l .
 .SH "SEE ALSO"
 .BR chdir (2)
 .SH BUGS

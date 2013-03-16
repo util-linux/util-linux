@@ -475,6 +475,8 @@ int main(int argc, char **argv)
 	construct_dirlist_from_env("PATH", &ls, BIN_DIR);
 
 	construct_dirlist(&ls, MAN_DIR, mandirs);
+	construct_dirlist_from_env("MANPATH", &ls, MAN_DIR);
+
 	construct_dirlist(&ls, SRC_DIR, srcdirs);
 
 	for (i = 1; i < argc; i++) {
