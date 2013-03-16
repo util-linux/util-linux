@@ -163,24 +163,21 @@ static const char *srcdirs[] = {
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fputs(_("\nUsage:\n"), out);
-	fprintf(out,
-	      _(" %s [options] file\n"), program_invocation_short_name);
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] file\n"), program_invocation_short_name);
 
-	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -f <file>  define search scope\n"
-		" -b         search only for binaries\n"
-		" -B <dirs>  define binaries lookup path\n"
-		" -m         search only for manuals\n"
-		" -M <dirs>  define man lookup path\n"
-		" -s         search only for sources\n"
-		" -S <dirs>  define sources lookup path\n"
-		" -u         search for unusual entries\n"
-		" -l         output effective lookup paths\n"
-		" -V         output version information and exit\n"
-		" -h         display this help and exit\n\n"), out);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -b         search only for binaries\n"), out);
+	fputs(_(" -B <dirs>  define binaries lookup path\n"), out);
+	fputs(_(" -m         search only for manuals\n"), out);
+	fputs(_(" -M <dirs>  define man lookup path\n"), out);
+	fputs(_(" -s         search only for sources\n"), out);
+	fputs(_(" -S <dirs>  define sources lookup path\n"), out);
+	fputs(_(" -f         terminate <dirs> argument list\n"), out);
+	fputs(_(" -u         search for unusual entries\n"), out);
+	fputs(_(" -l         output effective lookup paths\n"), out);
+	fprintf(out, USAGE_MAN_TAIL("whereis(1)"));
 
-	fputs(_("See how to use file and dirs arguments from whereis(1) manual.\n"), out);
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
