@@ -176,6 +176,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		" -s         search only for sources\n"
 		" -S <dirs>  define sources lookup path\n"
 		" -u         search for unusual entries\n"
+		" -l         output effective lookup paths\n"
 		" -V         output version information and exit\n"
 		" -h         display this help and exit\n\n"), out);
 
@@ -436,6 +437,29 @@ static void lookup(const char *pattern, struct wh_dirlist *ls, int want)
 	return;
 }
 
+static void list_dirlist(struct wh_dirlist *ls)
+{
+	while (ls) {
+		if (ls->path) {
+			switch (ls->type) {
+			case BIN_DIR:
+				printf("bin: ");
+				break;
+			case MAN_DIR:
+				printf("man: ");
+				break;
+			case SRC_DIR:
+				printf("src: ");
+				break;
+			default:
+				abort();
+			}
+			printf("%s\n", ls->path);
+		}
+		ls = ls->next;
+	}
+}
+
 int main(int argc, char **argv)
 {
 	struct wh_dirlist *ls = NULL;
@@ -515,6 +539,9 @@ int main(int argc, char **argv)
 			case 's':
 				want = want == ALL_DIRS ? SRC_DIR : want | SRC_DIR;
 				break;
+			case 'l':
+				list_dirlist(ls);
+				break;
 			case 'V':
 				printf(UTIL_LINUX_VERSION);
 				return EXIT_SUCCESS;
@@ -526,6 +553,8 @@ int main(int argc, char **argv)
 		}
 	}
 
+
+	DBG(printf("DONE"));
 	free_dirlist(&ls, ALL_DIRS);
 	return EXIT_SUCCESS;
 }
