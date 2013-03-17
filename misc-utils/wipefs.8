@@ -7,16 +7,16 @@
 wipefs \- wipe a signature from a device
 .SH SYNOPSIS
 .B wipefs
-.RB [ \-ahnptV ]
+.RB [ \-ahnpqtV ]
 .RB [ \-o
 .IR offset ]
-.I device...
+.IR device ...
 .SH DESCRIPTION
 .B wipefs
-can erase filesystem, raid or partition table signatures (magic strings) from
+can erase filesystem, raid or partition-table signatures (magic strings) from
 the specified
 .I device
-to make the signature invisible for libblkid.
+to make the signatures invisible for libblkid.
 
 .B wipefs
 does not erase the filesystem itself nor any other data from the device.
@@ -24,53 +24,61 @@ When used without options \fB-a\fR or \fB-o\fR, it lists all visible filesystems
 and the offsets of their basic signatures.
 
 Note that some filesystems or some partition tables store more magic strings on
-the devices. The
+the devices.  The
 .B wipefs
-lists the first offset where a magic string has been detected. The device is
-not scanned for additional magic strings for the same filesystem. It's possible
-that after \fBwipefs -o <offset>\fR will be the same filesystem or partition
-table visible by another magic string on another offset.
+command lists only the first offset where a magic string has been detected.  The device
+is not scanned for additional magic strings for the same filesystem.  It is possible
+that after \fBwipefs -o \fIoffset\fR the same filesystem or partition
+table will still be visible by another magic string on another offset.
 
-When used with option \fB-a\fR then all for libblkid visible magic strings are
+When used with option \fB-a\fR, all magic strings that are visible for libblkid are
 erased.
 
 .SH OPTIONS
-.IP "\fB\-a, \-\-all\fP"
-Erase all available signatures. This set of erased signatures could be
-restricted by \fB\-t <list>\fP option.
-.IP "\fB\-f, \-\-force\fP"
+.TP
+.BR \-a , " \-\-all"
+Erase all available signatures.  The set of erased signatures can be
+restricted with the \fB\-t\fP \fIlist\fP option.
+.TP
+.BR \-f , " \-\-force"
 Force erasure, even if the filesystem is mounted.  This is required in
 order to erase the partition table on a block device.
-.IP "\fB\-h, \-\-help\fP"
+.TP
+.BR \-h , " \-\-help"
 Print help and exit.
-.IP "\fB\-n, \-\-no\-act\fP"
+.TP
+.BR -n , " \-\-no\-act"
 Causes everything to be done except for the write() call.
-.IP "\fB\-o, \-\-offset\fP \fIoffset\fP
+.TP
+.BR \-o , " \-\-offset " \fIoffset\fP
 Specify the location (in bytes) of the signature which should be erased from the
 device.  The \fIoffset\fR number may include a "0x" prefix; then the number will be
 interpreted as a hex value.  It is possible to specify multiple \fB-o\fR options.
 
 The \fIoffset\fR argument may be followed by the multiplicative
-suffixes KiB=1024, MiB=1024*1024, and so on for GiB, TiB, PiB, EiB, ZiB and YiB
-(the "iB" is optional, e.g. "K" has the same meaning as "KiB") or the suffixes
-KB=1000, MB=1000*1000, and so on for GB, TB, PB, EB, ZB and YB.
-.IP "\fB\-p, \-\-parsable\fP"
+suffixes KiB (=1024), MiB (=1024*1024), and so on for GiB, TiB, PiB, EiB, ZiB and YiB
+(the "iB" is optional, e.g. "K" has the same meaning as "KiB"), or the suffixes
+KB (=1000), MB (=1000*1000), and so on for GB, TB, PB, EB, ZB and YB.
+.TP
+.BR \-p , " \-\-parsable"
 Print out in parsable instead of printable format.  Encode all potentially unsafe
 characters of a string to the corresponding hex value prefixed by '\\x'.
-.IP "\fB\-q, \-\-quiet\fP"
+.TP
+.BR \-q , " \-\-quiet"
 Suppress output messages after successful signature wipe.
-.IP "\fB\-t, \-\-types\fP \fIlist\fP
-Used to limit the set of printed or erased signatures. More than one type may
-be specified in a comma-separated list.  The list of types or individual types
+.TP
+.BR \-t , " \-\-types " \fIlist\fP
+Limit the set of printed or erased signatures.  More than one type may
+be specified in a comma-separated list.  The list or individual types
 can be prefixed with 'no' to specify the types on which no action should be
-taken. For more details see mount(8).
-.IP "\fB\-V, \-\-version\fP"
+taken.  For more details see mount(8).
+.TP
+.BR -V , " \-\-version"
 Output version information and exit.
 .SH AUTHOR
-Karel Zak <kzak@redhat.com>.
+Karel Zak <kzak@redhat.com>
 .SH ENVIRONMENT
-.IP LIBBLKID_DEBUG=0xffff
-enables debug output.
+.IP "Setting LIBBLKID_DEBUG=0xffff enables debug output."
 .SH AVAILABILITY
 The wipefs command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
