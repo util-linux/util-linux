@@ -1,56 +1,63 @@
-.\" lslocks.8 --
+.\" -*- nroff -*-
+.\" Man page for the lslocks command.
 .\" Copyright 2012 Davidlohr Bueso <dave@gnu.org>
 .\" May be distributed under the GNU General Public License
 
 .TH LSLOCKS 8 "February 2012" "util-linux" "System Administration"
 .SH NAME
-lslocks \-
-list local system locks
+lslocks \- list local system locks
 .SH SYNOPSIS
-.B lslocks
-.RB [options]
+.BR lslocks " [" options ]
 
 .SH DESCRIPTION
 .B lslocks
-lists information about all the file held locks in a Linux system.
+lists information about all the currently held file locks in a Linux system.
 
 .SH OPTIONS
-.IP "\fB\-p, \-\-pid\fP"
-Specify the process id, if none is given, it will display all locks
-.IP "\fB\-h, \-\-help\fP"
+.TP
+.BR \-h , " \-\-help"
 Print a help text and exit.
-.IP "\fB\-o, \-\-output \fIlist\fP"
-Specify which output columns to print. Use
+.TP
+.BR \-n , " \-\-noheadings"
+Do not print a header line.
+.TP
+.BR \-o , " \-\-output " \fIlist\fP
+Specify which output columns to print.  Use
 .B "--help"
 to get a list of all supported columns.
 
 The default list of columns may be extended if \fIlist\fP is
 specified in the format \fI+list\fP (e.g. \fBlslocks -o +BLOCKER\fP).
-.IP "\fB\-n, \-\-noheadings\fP"
-Do not print a header line.
-.IP "\fB\-u, \-\-notruncate\fP"
-Do not truncate text in columns.
-.IP "\fB\-r, \-\-raw\fP"
+.TP
+.BR \-p , " \-\-pid " \fIpid\fP
+Display only the locks held by the process with this \fIpid\fR.
+.TP
+.BR \-r , " \-\-raw"
 Use the raw output format.
+.TP
+.BR \-u , " \-\-notruncate"
+Do not truncate text in columns.
 
 .SH OUTPUT
 .IP "COMMAND"
 The command name of the process holding the lock.
 
 .IP "PID"
-Process ID which holds the lock.
+The process ID of the process which holds the lock.
 
 .IP "TYPE"
-Type of lock, can be FLOCK (created with flock(2)) or POSIX (created with fcntl(2) and lockf(2))
+The type of lock; can be FLOCK (created with flock(2)) or POSIX (created with fcntl(2) and lockf(3)).
 
 .IP "SIZE"
 Size of the locked file.
 
 .IP "MODE"
-Lock access permissions (read, write). If the process is blocked and waiting for the lock
-than the '*' (asterisk) postfix is used for the mode.
+The lock's access permissions (read, write).  If the process is blocked and waiting for the lock,
+then the mode is postfixed with an '*' (asterisk).
+
 .IP "M"
-Mandatory state of the lock: 0 if none; 1 if set.  (See chmod(1)).
+Whether the lock is mandatory; 0 means no (meaning the lock is only advisory), 1 means yes.
+(See fcntl(2)).
 
 .IP "START"
 Relative byte offset of the lock.
@@ -59,13 +66,13 @@ Relative byte offset of the lock.
 Ending offset of the lock.
 
 .IP "PATH"
-Full path of the lock - if none is found or no permissions to read the path it
-will fallback to the device's mountpoint. The path might be truncated, use
+Full path of the lock.  If none is found, or there are no permissions to read the path,
+it will fall back to the device's mountpoint.  The path might be truncated; use
 .B "--notruncate"
 to get the full path.
 
 .IP "BLOCKER"
-Process ID which blocks the lock.
+The PID of the process which blocks the lock.
 
 .SH NOTES
 .nf
