@@ -5,12 +5,11 @@ isosize \- output the length of an iso9660 filesystem
 .B isosize
 .RI [ options ] " iso9660_image_file"
 .SH DESCRIPTION
-.\" Add any additional description here
 .PP
-This command outputs the length of an iso9660 file system that
-is contained in the given file.  That file may be a normal file or
+This command outputs the length of an iso9660 filesystem that
+is contained in the specified file.  This file may be a normal file or
 a block device (e.g. /dev/hdd or /dev/sr0).  In the absence of
-any switches (and errors) it will output the size of the iso9660
+any options (and errors), it will output the size of the iso9660
 filesystem in bytes.  This can now be a large number (>> 4 GB).
 .SH OPTIONS
 .TP
@@ -33,3 +32,8 @@ filesystem can be marginally larger than the actual size of the
 iso9660 filesystem.  One reason for this is that cd writers
 are allowed to add "run out" sectors at the end of an iso9660
 image.
+.SH AVAILABILITY
+The isosize command is part of the util-linux package and is available from
+.UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .
