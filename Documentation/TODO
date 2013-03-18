@@ -1,6 +1,12 @@
 
  Note that items with (!) have high priority.
 
+bash completion
+---------------
+ - file per command in shel-completion/bash/
+ - use $(pkg-config --variable=completionsdir bash-completion)/util-linux/
+   as a destination install directory
+
 lscpu
 -----
   - detect more hypervisors, see 'virt-what' shell script
@@ -26,18 +32,6 @@ libmount (mount/umount)
 
    (all this already supported by libmount)
 
- - support MS_PROPAGATION flags in fstab -- note that kernel assumes that
-   these flags are not mixed with another mount flags, it means that:
-
-	/dev/sda1	/mnt/foo	auto 	ro,shared
-
-   has be implemented by two syscalls:
-
-	mount("/dev/sda1", "/mnt/foo", "ext4", MS_RDONLY, NULL);
-	mount(NULL, "/mnt/foo", "none", MS_REMOUNT|MS_SHARED, NULL);
-
-   yeah, there is race ;-(
-
  - (!) on systems with regular mtab file it is impossible to umount by "umount
    /dev/loop0" if the loop device has been created by "mount -o loop", because
    there is backing file in the mtab (instead of the device name). 
@@ -45,12 +39,6 @@ libmount (mount/umount)
    Now we have all necessary information in /sysfs so it should be possible to
    translate the device name to backing file and then search in mtab for the 
    filename. See loopdev_get_loopfile().
-
-libblkd and libmount
---------------------
-
- - use __attribute__((notnull)) and __attribute__((warn_unused_result))
-   Note that the code has to be useful for non-gcc compilers too.
 
 partx
 -----
@@ -76,7 +64,15 @@ lib/tt.c
 login-utils:
 -----------
 
- - (!) merge newgrp from shadow-utils
+  - consolidate newgrp(1)
+    * we have "su --group/--supp-group" to switch between groups, newgrp(1) in
+      util-linux and shadow-utils (and sg(1) alias in shadow-utils)
+    * the unique functionality provided by newgpr(1) is support for group
+      passwords [/etc/gshadow] -- do we really need this functionality?
+    * maybe we can mark group-passwords as deprecated, and replace sg(1) and
+      newgpr(1) with su(1) code. The another way is to ask fro group password in
+      su --group too.
+    * note that shadow-utils newgpr(1) provides support for syslog and audit log.
 
 libblkid
 --------
@@ -120,10 +116,6 @@ fdisk(s)
    partition).  The tool tries too hard to keep asking you for valid input.  You
    can't provide a blank or invalid input to get it to break out of the current
    dialog sequence and get back to the main menu.
-
- - fdisk/* refactoring (probably implement libfdisk ???)
-
- - add GPT support (probably implement libfdisk ???)
 
 misc
 ----
