@@ -33,6 +33,7 @@
 #include "closestream.h"
 #include "optutils.h"
 #include "mangle.h"
+#include "pager.h"
 
 /* Close the log.  Currently a NOP. */
 #define SYSLOG_ACTION_CLOSE          0
@@ -161,6 +162,7 @@ struct dmesg_control {
 			delta:1,	/* show time deltas */
 			reltime:1,	/* show human readable relative times */
 			ctime:1,	/* show human readable time */
+			pager:1,	/* pipe output into a pager */
 			color:1;	/* colorize messages */
 };
 
@@ -237,6 +239,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -L, --color                 colorize messages\n"), out);
 	fputs(_(" -l, --level <list>          restrict output to defined levels\n"), out);
 	fputs(_(" -n, --console-level <level> set level of messages printed to console\n"), out);
+	fputs(_(" -P, --nopager               do not pipe output into a pager\n"), out);
 	fputs(_(" -r, --raw                   print the raw message buffer\n"), out);
 	fputs(_(" -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"), out);
 	fputs(_(" -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"), out);
@@ -1139,7 +1142,7 @@ static int read_kmsg(struct dmesg_control *ctl)
 int main(int argc, char *argv[])
 {
 	char *buf = NULL;
-	int  c;
+	int  c, nopager = 0;
 	int  console_level = 0;
 	int  klog_rc = 0;
 	ssize_t n;
@@ -1172,6 +1175,7 @@ int main(int argc, char *argv[])
 		{ "show-delta",    no_argument,	      NULL, 'd' },
 		{ "ctime",         no_argument,       NULL, 'T' },
 		{ "notime",        no_argument,       NULL, 't' },
+		{ "nopager",       no_argument,       NULL, 'P' },
 		{ "userspace",     no_argument,       NULL, 'u' },
 		{ "version",       no_argument,	      NULL, 'V' },
 		{ NULL,	           0, NULL, 0 }
@@ -1191,7 +1195,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "CcDdEeF:f:HhkLl:n:rSs:TtuVwx",
+	while ((c = getopt_long(argc, argv, "CcDdEeF:f:HhkLl:n:iPrSs:TtuVwx",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1228,6 +1232,7 @@ int main(int argc, char *argv[])
 		case 'H':
 			ctl.reltime = 1;
 			ctl.color = 1;
+			ctl.pager = 1;
 			break;
 		case 'h':
 			usage(stdout);
@@ -1248,6 +1253,9 @@ int main(int argc, char *argv[])
 		case 'n':
 			ctl.action = SYSLOG_ACTION_CONSOLE_LEVEL;
 			console_level = parse_level(optarg, 0);
+			break;
+		case 'P':
+			nopager = 1;
 			break;
 		case 'r':
 			ctl.raw = 1;
@@ -1310,16 +1318,20 @@ int main(int argc, char *argv[])
 		if (!ctl.boot_time)
 			ctl.reltime = 0;
 	}
-
 	if (ctl.color)
 		ctl.color = colors_init() ? 1 : 0;
+
+	ctl.pager = nopager ? 0 : ctl.pager;
+	if (ctl.pager)
+		setup_pager();
 
 	switch (ctl.action) {
 	case SYSLOG_ACTION_READ_ALL:
 	case SYSLOG_ACTION_READ_CLEAR:
 		if (ctl.method == DMESG_METHOD_KMSG && init_kmsg(&ctl) != 0)
 			ctl.method = DMESG_METHOD_SYSLOG;
-
+		if (ctl.pager)
+			setup_pager();
 		n = read_buffer(&ctl, &buf);
 		if (n > 0)
 			print_buffer(&ctl, buf, n);
