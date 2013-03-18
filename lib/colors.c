@@ -17,7 +17,7 @@ int colors_init(void)
 
 void color_enable(const char *color_scheme)
 {
-	if (ul_color_term_ok)
+	if (ul_color_term_ok && color_scheme)
 		fputs(color_scheme, stdout);
 }
 

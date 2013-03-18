@@ -21,7 +21,7 @@
 #define UL_COLOR_BLACK		"\033[30m"
 #define UL_COLOR_RED		"\033[31m"
 #define UL_COLOR_GREEN		"\033[32m"
-#define UL_COLOR_YELLOW		"\033[33m"
+#define UL_COLOR_BROWN		"\033[33m"	/* well, brown */
 #define UL_COLOR_BLUE		"\033[34m"
 #define UL_COLOR_MAGENTA	"\033[35m"
 #define UL_COLOR_CYAN		"\033[36m"
