@@ -232,6 +232,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -E, --console-on            enable printing messages to console\n"), out);
 	fputs(_(" -F, --file <file>           use the file instead of the kernel log buffer\n"), out);
 	fputs(_(" -f, --facility <list>       restrict output to defined facilities\n"), out);
+	fputs(_(" -H, --human                 human readable output\n"), out);
 	fputs(_(" -k, --kernel                display kernel messages\n"), out);
 	fputs(_(" -L, --color                 colorize messages\n"), out);
 	fputs(_(" -l, --level <list>          restrict output to defined levels\n"), out);
@@ -1160,6 +1161,7 @@ int main(int argc, char *argv[])
 		{ "file",          required_argument, NULL, 'F' },
 		{ "facility",      required_argument, NULL, 'f' },
 		{ "follow",        no_argument,       NULL, 'w' },
+		{ "human",         no_argument,       NULL, 'H' },
 		{ "help",          no_argument,	      NULL, 'h' },
 		{ "kernel",        no_argument,       NULL, 'k' },
 		{ "level",         required_argument, NULL, 'l' },
@@ -1177,6 +1179,7 @@ int main(int argc, char *argv[])
 
 	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
 		{ 'C','D','E','c','n' },	/* clear,off,on,read-clear,level*/
+		{ 'H','r' },			/* human, raw */
 		{ 'L','r' },			/* color, raw */
 		{ 'S','w' },			/* syslog,follow */
 		{ 0 }
@@ -1188,7 +1191,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "CcDdEeF:f:hkLl:n:rSs:TtuVwx",
+	while ((c = getopt_long(argc, argv, "CcDdEeF:f:HhkLl:n:rSs:TtuVwx",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1210,9 +1213,7 @@ int main(int argc, char *argv[])
 			ctl.action = SYSLOG_ACTION_CONSOLE_ON;
 			break;
 		case 'e':
-			ctl.boot_time = get_boot_time();
-			if (ctl.boot_time)
-				ctl.reltime = 1;
+			ctl.reltime = 1;
 			break;
 		case 'F':
 			ctl.filename = optarg;
@@ -1224,6 +1225,10 @@ int main(int argc, char *argv[])
 					     ctl.facilities, parse_facility) < 0)
 				return EXIT_FAILURE;
 			break;
+		case 'H':
+			ctl.reltime = 1;
+			ctl.color = 1;
+			break;
 		case 'h':
 			usage(stdout);
 			break;
@@ -1232,8 +1237,7 @@ int main(int argc, char *argv[])
 			setbit(ctl.facilities, FAC_BASE(LOG_KERN));
 			break;
 		case 'L':
-			if (colors_init())
-				ctl.color = 1;
+			ctl.color = 1;
 			break;
 		case 'l':
 			ctl.fltr_lev= 1;
@@ -1300,6 +1304,15 @@ int main(int argc, char *argv[])
 		errx(EXIT_FAILURE, _("--notime can't be used together with --ctime or --reltime"));
 	if (ctl.reltime && ctl.ctime)
 		errx(EXIT_FAILURE, _("--reltime can't be used together with --ctime "));
+
+	if (ctl.reltime) {
+		ctl.boot_time = get_boot_time();
+		if (!ctl.boot_time)
+			ctl.reltime = 0;
+	}
+
+	if (ctl.color)
+		ctl.color = colors_init() ? 1 : 0;
 
 	switch (ctl.action) {
 	case SYSLOG_ACTION_READ_ALL:
