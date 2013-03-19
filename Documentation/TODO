@@ -7,6 +7,11 @@ bash completion
  - use $(pkg-config --variable=completionsdir bash-completion)/util-linux/
    as a destination install directory
 
+wipefs
+------
+ - generate /root/wipefs-<devname>-<offset>.bak with wiped bytes, so after 
+   mistake user can use dd(1) to restore erased stuff
+
 lscpu
 -----
   - detect more hypervisors, see 'virt-what' shell script
