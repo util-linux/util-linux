@@ -31,9 +31,10 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #ifdef __linux__
-#  include <sys/vt.h>
-#  include <sys/kd.h>
-#  include <linux/serial.h>
+# include <sys/vt.h>
+# include <sys/kd.h>
+# include <linux/serial.h>
+# include <linux/major.h>
 #endif
 #include <fcntl.h>
 #include <dirent.h>
@@ -43,7 +44,6 @@
 # include <sys/mount.h>
 # include <linux/fs.h>
 # include <linux/magic.h>
-# include <linux/major.h>
 # ifndef MNT_DETACH
 #  define MNT_DETACH   2
 # endif
@@ -52,10 +52,6 @@
 #include "c.h"
 #include "canonicalize.h"
 #include "sulogin-consoles.h"
-
-#ifdef __linux__
-# include <linux/major.h>
-#endif
 
 #if !defined(__STDC_VERSION__) || (__STDC_VERSION__ < 199901L)
 # ifndef  typeof

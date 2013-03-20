@@ -23,8 +23,11 @@
 #  define CLONE_NEWPID 0x20000000
 # endif
 
-# ifndef HAVE_UNSHARE
+# if !defined(HAVE_UNSHARE) || !defined(HAVE_SETNS)
 #  include <sys/syscall.h>
+# endif
+
+# ifndef HAVE_UNSHARE
 static inline int unshare(int flags)
 {
 	return syscall(SYS_unshare, flags);
@@ -32,7 +35,6 @@ static inline int unshare(int flags)
 # endif
 
 # ifndef HAVE_SETNS
-#  include <sys/syscall.h>
 static inline int setns(int fd, int nstype)
 {
 	return syscall(SYS_setns, fd, nstype);

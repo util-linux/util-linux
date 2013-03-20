@@ -28,7 +28,6 @@
 #include <time.h>
 #include <sys/file.h>
 #include <sys/socket.h>
-#include <netdb.h>
 #include <langinfo.h>
 #include <grp.h>
 #include <arpa/inet.h>
