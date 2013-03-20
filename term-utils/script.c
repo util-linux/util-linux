@@ -291,7 +291,7 @@ main(int argc, char **argv) {
 	return EXIT_SUCCESS;
 }
 
-void __attribute__((__noreturn__))
+void
 doinput(void) {
 	ssize_t cc;
 	char ibuf[BUFSIZ];
@@ -347,7 +347,7 @@ my_strftime(char *buf, size_t len, const char *fmt, const struct tm *tm) {
 	strftime(buf, len, fmt, tm);
 }
 
-void __attribute__((__noreturn__))
+void
 dooutput(FILE *timingfd) {
 	ssize_t cc;
 	time_t tvec;
@@ -414,7 +414,7 @@ dooutput(FILE *timingfd) {
 	done();
 }
 
-void __attribute__((__noreturn__))
+void
 doshell(void) {
 	char *shname;
 
@@ -470,7 +470,7 @@ fixtty(void) {
 	tcsetattr(STDIN_FILENO, TCSANOW, &rtt);
 }
 
-void __attribute__((__noreturn__))
+void
 fail(void) {
 
 	kill(0, SIGTERM);
