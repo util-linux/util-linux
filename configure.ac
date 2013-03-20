@@ -567,6 +567,13 @@ else
   case "$with_selinux:$have_selinux" in
   yes:no) AC_MSG_ERROR([SELinux selected but libselinux not found or too old]);;
   esac
+
+  if test "x$have_selinux" = xyes; then
+    UL_SET_FLAGS([], [], [$SELINUX_LIBS])
+    # This function is missing in old libselinux 1.xx versions
+    AC_CHECK_FUNCS([security_get_initial_context])
+    UL_RESTORE_FLAGS
+  fi
 fi
 AC_SUBST([SELINUX_LIBS])
 AC_SUBST([SELINUX_LIBS_STATIC])
