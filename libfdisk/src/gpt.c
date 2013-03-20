@@ -37,7 +37,6 @@
 #include "fdiskP.h"
 
 #include "nls.h"
-#include "xalloc.h"
 #include "crc32.h"
 #include "blkdev.h"
 #include "bitops.h"
@@ -1076,10 +1075,12 @@ failed:
 static char *encode_to_utf8(unsigned char *src, size_t count)
 {
 	uint16_t c;
-	char *dest = xmalloc(count * sizeof(char));
+	char *dest;
 	size_t i, j, len = count;
 
-	memset(dest, 0, sizeof(char) * count);
+	dest = calloc(1, count);
+	if (!dest)
+		return NULL;
 
 	for (j = i = 0; i + 2 <= count; i += 2) {
 		/* always little endian */
