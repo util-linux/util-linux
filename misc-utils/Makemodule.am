@@ -44,6 +44,7 @@ namei_SOURCES = misc-utils/namei.c lib/strutils.c
 usrbin_exec_PROGRAMS += whereis
 dist_man_MANS += misc-utils/whereis.1
 whereis_SOURCES = misc-utils/whereis.c
+whereis_LDADD = $(LDADD) libcommon.la
 
 if BUILD_LSLOCKS
 usrbin_exec_PROGRAMS += lslocks

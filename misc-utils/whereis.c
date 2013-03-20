@@ -53,6 +53,7 @@
 #include "nls.h"
 #include "c.h"
 #include "closestream.h"
+#include "canonicalize.h"
 
 /*#define DEBUG*/
 
@@ -78,16 +79,16 @@ struct wh_dirlist {
 };
 
 static const char *bindirs[] = {
-	"/bin",
 	"/usr/bin",
-	"/sbin",
 	"/usr/sbin",
+	"/usr/lib",
+	"/usr/lib64",
+	"/bin",
+	"/sbin",
 	"/etc",
 	"/usr/etc",
 	"/lib",
-	"/usr/lib",
 	"/lib64",
-	"/usr/lib64",
 	"/usr/games",
 	"/usr/games/bin",
 	"/usr/games/lib",
@@ -209,7 +210,7 @@ static void dirlist_add_dir(struct wh_dirlist **ls0, int type, const char *dir)
 	ls->st_ino = st.st_ino;
 	ls->st_dev = st.st_dev;
 	ls->type = type;
-	ls->path = xstrdup(dir);
+	ls->path = canonicalize_path(dir);
 
 	if (!*ls0)
 		*ls0 = ls;		/* first in the list */
