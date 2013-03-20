@@ -96,7 +96,7 @@ int ipc_shm_get_limits(struct ipc_limits *lim)
 int ipc_shm_get_info(int id, struct shm_data **shmds)
 {
 	FILE *f;
-	int i, maxid;
+	int i = 0, maxid;
 	struct shm_data *p;
 	struct shm_info dummy;
 
@@ -247,7 +247,7 @@ static void get_sem_elements(struct sem_data *p)
 int ipc_sem_get_info(int id, struct sem_data **semds)
 {
 	FILE *f;
-	int i, maxid;
+	int i = 0, maxid;
 	struct sem_data *p;
 	struct seminfo dummy;
 	union semun arg;
@@ -361,7 +361,7 @@ void ipc_sem_free_info(struct sem_data *semds)
 int ipc_msg_get_info(int id, struct msg_data **msgds)
 {
 	FILE *f;
-	int i, maxid;
+	int i = 0, maxid;
 	struct msg_data *p;
 	struct msqid_ds dummy;
 	struct msqid_ds msgseg;
