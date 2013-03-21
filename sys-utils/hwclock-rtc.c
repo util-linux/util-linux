@@ -276,8 +276,7 @@ static int synchronize_to_clock_tick_rtc(void)
 			 * system clock, so aren't at the user's disposal.
 			 */
 			if (debug)
-				printf(_
-				       ("%s does not have interrupt functions. "),
+				printf(_("%s does not have interrupt functions. "),
 				       rtc_dev_name);
 			ret = busywait_for_rtc_clock_tick(rtc_fd);
 		} else if (rc == 0) {
@@ -288,8 +287,7 @@ static int synchronize_to_clock_tick_rtc(void)
 			rc = read(rtc_fd, &dummy, sizeof(dummy));
 			ret = 1;
 			if (rc == -1)
-				warn(_
-				     ("read() to %s to wait for clock tick failed"),
+				warn(_("read() to %s to wait for clock tick failed"),
 				     rtc_dev_name);
 			else
 				ret = 0;
@@ -313,8 +311,7 @@ static int synchronize_to_clock_tick_rtc(void)
 			rc = select(rtc_fd + 1, &rfds, NULL, NULL, &tv);
 			ret = 1;
 			if (rc == -1)
-				warn(_
-				     ("select() to %s to wait for clock tick failed"),
+				warn(_("select() to %s to wait for clock tick failed"),
 				     rtc_dev_name);
 			else if (rc == 0 && debug)
 				printf(_("select() to %s to wait for clock tick timed out"),
@@ -326,12 +323,10 @@ static int synchronize_to_clock_tick_rtc(void)
 			/* Turn off update interrupts */
 			rc = ioctl(rtc_fd, RTC_UIE_OFF, 0);
 			if (rc == -1)
-				warn(_
-				     ("ioctl() to %s to turn off update interrupts failed"),
+				warn(_("ioctl() to %s to turn off update interrupts failed"),
 				     rtc_dev_name);
 		} else {
-			warn(_
-			     ("ioctl() to %s to turn on update interrupts "
+			warn(_("ioctl() to %s to turn on update interrupts "
 			      "failed unexpectedly"), rtc_dev_name);
 			ret = 1;
 		}
