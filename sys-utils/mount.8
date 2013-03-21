@@ -495,10 +495,10 @@ Note that Linux kernel does not allow to change more propagation flags by one
 syscall and the flags cannot be mixed with another mount options.
 
 Since util-linux 2.23 mount command allows to use more propagation flags
-together and with another mount operations. This feature is EXPERIMENTAL. In
-this case the propagation flags are applied by additional mount(2) syscalls
+together and with another mount operations. This feature is EXPERIMENTAL.
+The propagation flags are applied by additional mount(2) syscalls
 after previous successful mount operation. Note that this use case is not
-atomic. The propagation flags is possible to specified in
+atomic. The propagation flags is possible to specify in
 .BR fstab (5)
 as mount options
 (private,slave,shared,unbindable,rprivate,rslave,rshared,runbindable).
