@@ -153,5 +153,5 @@ are meant this.
 Example
 -------
 
-Command sys-utils/arch.c is a minimal example how to do write usage
+Command disk-utils/delpart.c is a minimal example how to do write usage
 function, setup option parsing, version printing and so on.

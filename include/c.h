@@ -262,7 +262,7 @@ static inline int usleep(useconds_t usec)
 
 /*
  * Constant strings for usage() functions. For more info see
- * Documentation/howto-usage-function.txt and sys-utils/arch.c
+ * Documentation/howto-usage-function.txt and disk-utils/delpart.c
  */
 #define USAGE_HEADER     _("\nUsage:\n")
 #define USAGE_OPTIONS    _("\nOptions:\n")
