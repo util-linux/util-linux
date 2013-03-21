@@ -49,6 +49,7 @@ extern int optind;
 
 #include "closestream.h"
 #include "ttyutils.h"
+#include "xalloc.h"
 
 const char *progname = "blkid";
 
@@ -703,8 +704,8 @@ int main(int argc, char **argv)
 			break;
 		case 'L':
 			eval++;
-			search_value = strdup(optarg);
-			search_type = strdup("LABEL");
+			search_value = xstrdup(optarg);
+			search_type = xstrdup("LABEL");
 			break;
 		case 'n':
 			fltr_type = list_to_types(optarg, &fltr_flag);
@@ -714,8 +715,8 @@ int main(int argc, char **argv)
 			break;
 		case 'U':
 			eval++;
-			search_value = strdup(optarg);
-			search_type = strdup("UUID");
+			search_value = xstrdup(optarg);
+			search_type = xstrdup("UUID");
 			break;
 		case 'i':
 			lowprobe |= LOWPROBE_TOPOLOGY;
