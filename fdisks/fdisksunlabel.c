@@ -314,7 +314,7 @@ static int sun_toggle_partition_flag(struct fdisk_context *cxt, size_t i, unsign
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SUN));
 
-	if (!i >= cxt->label->nparts_max)
+	if (i >= cxt->label->nparts_max)
 		return -EINVAL;
 
 	sunlabel = self_disklabel(cxt);
