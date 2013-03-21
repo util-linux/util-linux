@@ -1132,6 +1132,11 @@ else
    AC_MSG_ERROR([user selected but libuser not found])
    ;;
   esac
+  # temporary solution, libuser has stupid .pc where are exported all
+  # private dependencies to Requires: instead of Requires.private:
+  if test "x$have_user" = xyes; then
+    LIBUSER_LIBS=-luser
+  fi
 fi
 
 AC_ARG_ENABLE([chfn-chsh-password],
