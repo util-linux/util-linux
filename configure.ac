@@ -995,6 +995,7 @@ fi
 
 UL_BUILD_INIT([lslocks], [check])
 UL_REQUIRES_LINUX([lslocks])
+UL_REQUIRES_BUILD([lslocks], [libmount])
 AM_CONDITIONAL(BUILD_LSLOCKS, test "x$build_lslocks" = xyes)
 
 
