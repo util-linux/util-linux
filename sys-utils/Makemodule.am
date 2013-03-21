@@ -34,6 +34,12 @@ usrsbin_exec_PROGRAMS += readprofile
 dist_man_MANS += sys-utils/readprofile.8
 readprofile_SOURCES = sys-utils/readprofile.c
 
+if BUILD_TUNELP
+usrsbin_exec_PROGRAMS += tunelp
+dist_man_MANS += sys-utils/tunelp.8
+tunelp_SOURCES = sys-utils/tunelp.c sys-utils/lp.h
+endif
+
 
 if LINUX
 #
@@ -72,12 +78,6 @@ usrsbin_exec_PROGRAMS += ldattach
 dist_man_MANS += sys-utils/ldattach.8
 ldattach_SOURCES = sys-utils/ldattach.c
 ldattach_LDADD = $(LDADD) libcommon.la
-
-if BUILD_TUNELP
-usrsbin_exec_PROGRAMS += tunelp
-dist_man_MANS += sys-utils/tunelp.8
-tunelp_SOURCES = sys-utils/tunelp.c sys-utils/lp.h
-endif
 
 usrsbin_exec_PROGRAMS += rtcwake
 dist_man_MANS += sys-utils/rtcwake.8
@@ -152,6 +152,7 @@ sbin_PROGRAMS += losetup
 dist_man_MANS += sys-utils/losetup.8
 losetup_SOURCES = sys-utils/losetup.c
 losetup_LDADD = $(LDADD) libcommon.la
+
 
 if HAVE_STATIC_LOSETUP
 bin_PROGRAMS += losetup.static
