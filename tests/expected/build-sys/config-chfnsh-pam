@@ -1,0 +1,99 @@
+blkid:  libblkid libuuid 
+cfdisk:  libblkid libncursesw libtinfo libuuid 
+eject:  libblkid libmount libselinux libuuid 
+fdisk:  libblkid libuuid 
+findfs:  libblkid libuuid 
+findmnt:  libblkid libmount libselinux libudev libuuid 
+fsck:  libblkid libmount libselinux libuuid 
+libblkid.so.1.1.0:  libuuid 
+libmount.so.1.1.0:  libblkid libselinux libuuid 
+libuuid.so.1.3.0:  
+lsblk:  libblkid libmount libselinux libudev libuuid 
+lslocks:  libblkid libmount libselinux libuuid 
+mkswap:  libblkid libselinux libuuid 
+mount:  libblkid libmount libselinux libuuid 
+mountpoint:  libblkid libmount libselinux libuuid 
+partx:  libblkid libuuid 
+swaplabel:  libblkid libuuid 
+swapoff:  libblkid libmount libselinux libuuid 
+swapon:  libblkid libmount libselinux libuuid 
+umount:  libblkid libmount libselinux libuuid 
+uuidd:  libuuid 
+uuidgen:  libuuid 
+wipefs:  libblkid libuuid 
+addpart:  
+agetty:  
+blkdiscard:  
+blockdev:  
+cal:  libncursesw libtinfo 
+chcpu:  
+chfn:  libpam libpam_misc libselinux 
+chrt:  
+chsh:  libpam libpam_misc libselinux 
+col:  
+colcrt:  
+colrm:  
+column:  
+ctrlaltdel:  
+cytune:  
+delpart:  
+dmesg:  
+fallocate:  
+fdformat:  
+flock:  
+fsck.cramfs:  libz 
+fsck.minix:  
+fsfreeze:  
+fstrim:  
+getopt:  
+hexdump:  
+hwclock:  libaudit 
+ionice:  
+ipcmk:  
+ipcrm:  
+ipcs:  
+isosize:  
+kill:  
+ldattach:  
+logger:  
+login:  libaudit libpam libpam_misc libselinux 
+look:  
+losetup:  
+lscpu:  
+mcookie:  
+mkfs:  
+mkfs.bfs:  
+mkfs.cramfs:  libz 
+mkfs.minix:  
+more:  libtinfo 
+namei:  
+nsenter:  
+pg:  libncursesw libtinfo 
+pivot_root:  
+prlimit:  
+raw:  
+readprofile:  
+rename:  
+renice:  
+resizepart:  
+rev:  
+rtcwake:  
+runuser:  libpam libpam_misc 
+script:  libutil 
+scriptreplay:  
+setarch:  
+setpriv:  ap-ng 
+setsid:  
+setterm:  libtinfo 
+sfdisk:  
+su:  libpam libpam_misc 
+sulogin:  libselinux rypt 
+switch_root:  
+tailf:  
+taskset:  
+ul:  libtinfo 
+unshare:  
+utmpdump:  
+wall:  
+wdctl:  
+whereis:  
