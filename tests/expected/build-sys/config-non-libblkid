@@ -1,8 +1,10 @@
-libuuid.so.1.3.0:  ld-linux-x86-64 
+fdisk:  libuuid 
+libuuid.so.1.3.0:  
 mkswap:  libuuid 
 uuidd:  libuuid 
 uuidgen:  libuuid 
 agetty:  
+blkdiscard:  
 blockdev:  
 cal:  libncursesw libtinfo 
 cfdisk:  libncursesw libtinfo 
@@ -17,7 +19,6 @@ cytune:
 dmesg:  
 fallocate:  
 fdformat:  
-fdisk:  ld-linux-x86-64 
 flock:  
 fsck.cramfs:  libz 
 fsck.minix:  
@@ -38,7 +39,6 @@ login:  libpam libpam_misc
 look:  
 losetup:  
 lscpu:  
-lslocks:  
 mcookie:  
 mkfs:  
 mkfs.bfs:  
@@ -46,6 +46,7 @@ mkfs.cramfs:  libz
 mkfs.minix:  
 more:  libtinfo 
 namei:  
+nsenter:  
 pg:  libncursesw libtinfo 
 pivot_root:  
 prlimit:  
@@ -55,9 +56,11 @@ rename:
 renice:  
 rev:  
 rtcwake:  
+runuser:  libpam libpam_misc 
 script:  libutil 
 scriptreplay:  
 setarch:  
+setpriv:  ap-ng 
 setsid:  
 setterm:  libtinfo 
 sfdisk:  
@@ -66,7 +69,6 @@ sulogin:  rypt
 switch_root:  
 tailf:  
 taskset:  
-tunelp:  
 ul:  libtinfo 
 unshare:  
 utmpdump:  

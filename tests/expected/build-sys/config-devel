@@ -1,35 +1,35 @@
 blkid:  libblkid libuuid 
 cfdisk:  libblkid libncursesw libtinfo libuuid 
-eject:  libblkid libmount libselinux libsepol libuuid 
-fdisk:  ld-linux-x86-64 libblkid libuuid 
+eject:  libblkid libmount libselinux libuuid 
+fdisk:  libblkid libuuid 
 findfs:  libblkid libuuid 
-findmnt:  libblkid libmount libselinux libsepol libuuid 
-fsck:  libblkid libmount libselinux libsepol libuuid 
-libblkid.so.1.1.0:  ld-linux-x86-64 libuuid 
-libmount.so.1.1.0:  ld-linux-x86-64 libblkid libselinux libsepol libuuid 
-libuuid.so.1.3.0:  ld-linux-x86-64 
-lsblk:  libblkid libmount libselinux libsepol libudev libuuid 
+findmnt:  libblkid libmount libselinux libudev libuuid 
+fsck:  libblkid libmount libselinux libuuid 
+libblkid.so.1.1.0:  libuuid 
+libmount.so.1.1.0:  libblkid libselinux libuuid 
+libuuid.so.1.3.0:  
+lsblk:  libblkid libmount libselinux libudev libuuid 
+lslocks:  libblkid libmount libselinux libuuid 
 mkswap:  libblkid libselinux libuuid 
-mount:  libblkid libmount libselinux libsepol libuuid 
-mountpoint:  libblkid libmount libselinux libsepol libuuid 
+mount:  libblkid libmount libselinux libuuid 
+mountpoint:  libblkid libmount libselinux libuuid 
 partx:  libblkid libuuid 
 swaplabel:  libblkid libuuid 
-swapoff:  libblkid libmount libselinux libsepol libuuid 
-swapon:  libblkid libmount libselinux libsepol libuuid 
-umount:  libblkid libmount libselinux libsepol libuuid 
-uuidd:  libuuid 
+swapoff:  libblkid libmount libselinux libuuid 
+swapon:  libblkid libmount libselinux libuuid 
+umount:  libblkid libmount libselinux libuuid 
+uuidd:  librt libuuid 
 uuidgen:  libuuid 
 wipefs:  libblkid libuuid 
 addpart:  
 agetty:  
-arch:  
-blkid.static: STATIC
+blkdiscard:  
 blockdev:  
 cal:  libncursesw libtinfo 
 chcpu:  
-chfn:  libpam libpam_misc libselinux 
+chfn:  libpam libpam_misc libpthread libselinux libuser 
 chrt:  
-chsh:  libpam libpam_misc libselinux 
+chsh:  libpam libpam_misc libpthread libselinux libuser 
 col:  
 colcrt:  
 colrm:  
@@ -41,7 +41,6 @@ dmesg:
 elvtune:  
 fallocate:  
 fdformat:  
-fdisk.static: STATIC
 flock:  
 fsck.cramfs:  libz 
 fsck.minix:  
@@ -63,9 +62,7 @@ logger:
 login:  libaudit libpam libpam_misc libselinux 
 look:  
 losetup:  
-losetup.static: STATIC
 lscpu:  
-lslocks:  
 mcookie:  
 mesg:  
 mkfs:  
@@ -73,9 +70,9 @@ mkfs.bfs:
 mkfs.cramfs:  libz 
 mkfs.minix:  
 more:  libtinfo 
-mount.static: STATIC
 namei:  
 newgrp:  rypt 
+nsenter:  
 pg:  libncursesw libtinfo 
 pivot_root:  
 prlimit:  
@@ -86,13 +83,14 @@ renice:
 resizepart:  
 rev:  
 rtcwake:  
+runuser:  libpam libpam_misc 
 script:  libutempter libutil 
 scriptreplay:  
 setarch:  
+setpriv:  ap-ng 
 setsid:  
 setterm:  libtinfo 
 sfdisk:  
-sfdisk.static: STATIC
 su:  libpam libpam_misc 
 sulogin:  libselinux rypt 
 switch_root:  
@@ -100,7 +98,6 @@ tailf:
 taskset:  
 tunelp:  
 ul:  libtinfo 
-umount.static: STATIC
 unshare:  
 utmpdump:  
 vipw:  libselinux 

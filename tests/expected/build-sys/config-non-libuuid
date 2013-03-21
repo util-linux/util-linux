@@ -1,13 +1,13 @@
 blkid:  libblkid 
 cfdisk:  libblkid libncursesw libtinfo 
 eject:  libblkid libmount 
-fdisk:  ld-linux-x86-64 libblkid 
 findfs:  libblkid 
-findmnt:  libblkid libmount 
+findmnt:  libblkid libmount libudev 
 fsck:  libblkid libmount 
-libblkid.so.1.1.0:  ld-linux-x86-64 
-libmount.so.1.1.0:  ld-linux-x86-64 libblkid 
+libblkid.so.1.1.0:  
+libmount.so.1.1.0:  libblkid 
 lsblk:  libblkid libmount libudev 
+lslocks:  libblkid libmount 
 mkswap:  libblkid 
 mount:  libblkid libmount 
 mountpoint:  libblkid libmount 
@@ -19,6 +19,7 @@ umount:  libblkid libmount
 wipefs:  libblkid 
 addpart:  
 agetty:  
+blkdiscard:  
 blockdev:  
 cal:  libncursesw libtinfo 
 chcpu:  
@@ -53,7 +54,6 @@ login:  libpam libpam_misc
 look:  
 losetup:  
 lscpu:  
-lslocks:  
 mcookie:  
 mkfs:  
 mkfs.bfs:  
@@ -61,6 +61,7 @@ mkfs.cramfs:  libz
 mkfs.minix:  
 more:  libtinfo 
 namei:  
+nsenter:  
 pg:  libncursesw libtinfo 
 pivot_root:  
 prlimit:  
@@ -71,9 +72,11 @@ renice:
 resizepart:  
 rev:  
 rtcwake:  
+runuser:  libpam libpam_misc 
 script:  libutil 
 scriptreplay:  
 setarch:  
+setpriv:  ap-ng 
 setsid:  
 setterm:  libtinfo 
 sfdisk:  
@@ -82,7 +85,6 @@ sulogin:  rypt
 switch_root:  
 tailf:  
 taskset:  
-tunelp:  
 ul:  libtinfo 
 unshare:  
 utmpdump:  

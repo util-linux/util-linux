@@ -36,7 +36,7 @@ for conf in $config_gen_dir/config-gen.d/*.conf; do
 	for b in $bins; do
 		libs=$(readelf --dynamic $b 2> /dev/null   | \
 			awk '/NEEDED/ { print $5 }' | \
-			sed 's:\[::g; s:\..*::g; s:libc::g' | \
+			sed 's:\[::g; s:\..*::g; s:libc::g; s:ld\-.*::g' | \
 			sort -u | tr '\n' ' ')
 
 		if [ -n "$libs" ]; then
