@@ -261,7 +261,7 @@ static int bind(int minor_raw, int block_major, int block_minor)
 	rq.raw_minor = minor_raw;
 	rq.block_major = block_major;
 	rq.block_minor = block_minor;
-	if (!ioctl(master_fd, RAW_SETBIND, &rq))
+	if (ioctl(master_fd, RAW_SETBIND, &rq) < 0)
 		err(EXIT_RAW_IOCTL, _("Error setting raw device"));
 	printf(_("%sraw%d:  bound to major %d, minor %d\n"),
 	       _PATH_RAWDEVDIR, raw_minor, (int)rq.block_major,
