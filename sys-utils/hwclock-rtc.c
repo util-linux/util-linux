@@ -316,9 +316,8 @@ static int synchronize_to_clock_tick_rtc(void)
 				warn(_
 				     ("select() to %s to wait for clock tick failed"),
 				     rtc_dev_name);
-			else if (rc == 0)
-				warn(_
-				     ("select() to %s to wait for clock tick timed out"),
+			else if (rc == 0 && debug)
+				printf(_("select() to %s to wait for clock tick timed out"),
 				     rtc_dev_name);
 			else
 				ret = 0;
