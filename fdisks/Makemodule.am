@@ -1,6 +1,7 @@
 
 if !ARCH_M68K
 
+if BUILD_FDISK
 sbin_PROGRAMS += fdisk
 dist_man_MANS += fdisks/fdisk.8
 fdisk_SOURCES = \
@@ -41,6 +42,8 @@ fdisk_static_LDFLAGS = -all-static
 fdisk_static_CFLAGS = $(fdisk_CFLAGS)
 fdisk_static_LDADD = $(fdisk_LDADD)
 endif
+
+endif # BUILD_FDISK
 
 
 if !ARCH_SPARC

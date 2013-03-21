@@ -759,6 +759,18 @@ AC_SUBST([LIBMOUNT_VERSION_INFO])
 AC_DEFINE_UNQUOTED(LIBMOUNT_VERSION, "$LIBMOUNT_VERSION", [libmount version string])
 
 
+dnl
+dnl libfdisk is enabled all time if possible
+dnl
+UL_BUILD_INIT([libfdisk], [check])
+UL_REQUIRES_BUILD([libfdisk], [libuuid])
+AM_CONDITIONAL(BUILD_LIBFDISK, test "x$build_libfdisk" = xyes)
+
+UL_BUILD_INIT([fdisk], [check])
+UL_REQUIRES_BUILD([fdisk], [libfdisk])
+AM_CONDITIONAL(BUILD_FDISK, test "x$build_fdisk" = xyes)
+
+
 AC_ARG_ENABLE([deprecated-mount],
   AS_HELP_STRING([--enable-deprecated-mount], [build old mount utilities]),
   [], enable_deprecated_mount=no
