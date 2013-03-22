@@ -22,7 +22,7 @@ unshare(1):
 
 fdisk(8):
   - provides experimental support for GUID Partition Table (GPT), the
-    implementation is still not complete (some unimportant features are missing).
+    implementation is still not complete and some (unimportant) features are missing.
 
   - ~50% of fdisk code has been refactored, this task is going to be complete 
     in the next release. The goal is to have libfdisk shared between all fdisks.
@@ -44,11 +44,9 @@ mount(8):
 umount(8):
   - supports new command line option --recursive to recursively unmount
     all sub-mounts for the specified mountpoint
-  - supports new command line option --all-targets to unmount all 
-    mountpoints in the current namespace for the specified filesystem
-  - the options --recursive and --all-targets could be used together and
-    note that foreign namespaces could be modified for example by
-    "nsenter --target <pid> --mount umount ..." command.
+  - supports new command line option --all-targets to unmount all mountpoints in
+    the current namespace for the specified filesystem
+  - the options --recursive and --all-targets could be used together
 
 dmesg(1):
   - supports new command line options --color, --human and --nopager, the
@@ -80,8 +78,8 @@ lslocks(8):
   - provides new column BLOCKER and detects blocked locks
 
 lsblk(8):
-  - supports new command line option --scsi and new columns H:C:T:L, TRANSPORT,
-    VENDOR and REVISION
+  - supports new command line option --scsi and new columns HCTL, TRANsport
+    VENDOR and REVision
 
 swapon(8) and losetup(8):
   - the commands prints basic overview by default if no option specified
@@ -95,8 +93,8 @@ rename(1):
 
 hwclock(8):
   - supports new command line option --compare to periodically compare 
-    the Hardware Clock to the System Time (based on adjtimex -c
-)
+    the Hardware Clock to the System Time (based on adjtimex -c)
+
 ipcs(1):
   - supports new command line options --bytes and --human
 
