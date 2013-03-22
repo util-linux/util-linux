@@ -1138,7 +1138,7 @@ AC_ARG_WITH([user], AS_HELP_STRING([--without-user], [compile without libuser (r
 if test "x$with_user" = xno; then
   AM_CONDITIONAL(HAVE_USER, false)
 else
-  PKG_CHECK_MODULES(LIBUSER,[libuser >= 0.58])
+  PKG_CHECK_MODULES(LIBUSER,[libuser >= 0.58], [have_user=yes], [have_user=no])
   UL_CHECK_LIB(user, lu_start)
   case "$with_user:$have_user" in
   yes:no)
