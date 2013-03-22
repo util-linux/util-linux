@@ -1,0 +1,18 @@
+_fsck.cramfs_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	OPTS='-v --verbose -x --destination -h --help -V --version file'
+	case $prev in
+		'-x'|'--destination')
+			compopt -o filenames
+			COMPREPLY=( $(compgen -o dirnames -- ${cur:-"/"}) )
+			return 0
+			;;
+	esac
+	COMPREPLY=( $(compgen -W "${OPTS[*]}" -S ' ' -- $cur) )
+	return 0
+}
+complete -F _fsck.cramfs_module fsck.cramfs

@@ -1,0 +1,28 @@
+_bfs_module()
+{
+	local cur prev OPTS DEVS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-N'|'--inodes')
+			COMPREPLY=( $(compgen -W "number" -- $cur) )
+			return 0
+			;;
+		'-V'|'--vname'|'-F'|'--fname')
+			COMPREPLY=( $(compgen -W "name" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS='-N --inodes --vname --fname -v --verbose -h --help -V --version'
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	while read dev; do DEVS+="$dev " ; done < <(lsblk -pnro name)
+	COMPREPLY=( $(compgen -W "$DEVS /path/to/file" -- $cur) )
+	return 0
+}
+complete -F _bfs_module bfs

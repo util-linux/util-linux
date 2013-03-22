@@ -1,0 +1,17 @@
+_raw_module()
+{
+	local cur
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	case $cur in
+		-*)
+			local OPTS
+			OPTS="-q --query -a --all -h --help -V --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	COMPREPLY=( $(compgen -W "$(for I in /dev/raw/*; do if [ -e $I ]; then echo $I; fi; done)" -- $cur) )
+	return 0
+}
+complete -F _raw_module raw

@@ -1,0 +1,35 @@
+_mkswap_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-p'|'--pagesize')
+			COMPREPLY=( $(compgen -W "bytes" -- $cur) )
+			return 0
+			;;
+		'-L'|'--label')
+			COMPREPLY=( $(compgen -W "label" -- $cur) )
+			return 0
+			;;
+		'-v'|'--swapversion')
+			COMPREPLY=( $(compgen -W "1" -- $cur) )
+			return 0
+			;;
+		'-U'|--uuid)
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-c --check -f --force -p --pagesize -L  --label -v --swapversion -U --uuid -V --version -h --help"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	compopt -o filenames
+	COMPREPLY=( $(compgen -f -- $cur) )
+	return 0
+}
+complete -F _mkswap_module mkswap
