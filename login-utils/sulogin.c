@@ -118,7 +118,9 @@ static void tcinit(struct console *con)
 		cfsetispeed(tio, ispeed);
 		cfsetospeed(tio, ospeed);
 
+#ifdef HAVE_STRUCT_TERMIOS_C_LINE
 		tio->c_line         = 0;
+#endif
 		tio->c_cc[VTIME]    = 0;
 		tio->c_cc[VMIN]     = 1;
 
@@ -198,7 +200,7 @@ static void tcfinal(struct console *con)
 	tio->c_cc[VEOF]     = CEOF;
 #ifdef VSWTC
 	tio->c_cc[VSWTC]    = _POSIX_VDISABLE;
-#else
+#elif defined(VSWTCH)
 	tio->c_cc[VSWTCH]   = _POSIX_VDISABLE;
 #endif
 	tio->c_cc[VSTART]   = CSTART;
