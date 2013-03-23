@@ -1,0 +1,65 @@
+_lsblk_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-e'|'--exclude'|'-I'|'--include')
+			local MAJOR I J
+			MAJOR=''
+			for I in /sys/dev/block/*; do
+				J=${I##*/}
+				MAJOR="$MAJOR ${J%%:*}"
+			done
+			# FIXME: how to append to a string with compgen?
+			compopt -o nospace
+			COMPREPLY=( $(compgen -W "$MAJOR" -S ',' -- $cur) )
+			return 0
+			;;
+		'-o'|'--output')
+			# FIXME: how to append to a string with compgen?
+			OUTPUT="NAME KNAME MAJ:MIN FSTYPE MOUNTPOINT
+				LABEL UUID PARTLABEL PARTUUID RA RO RM
+				MODEL SIZE STATE OWNER GROUP MODE
+				ALIGNMENT MIN-IO OPT-IO PHY-SEC LOG-SEC
+				ROTA SCHED RQ-SIZE TYPE DISC-ALN
+				DISC-GRAN DISC-MAX DISC-ZERO WSAME WWN
+				RAND PKNAME HCTL TRAN REV VENDOR"
+			compopt -o nospace
+			COMPREPLY=( $(compgen -W "$OUTPUT" -S ',' -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-a --all
+				-b --bytes
+				-d --nodeps
+				-D --discard
+				-e --exclude
+				-I --include
+				-f --fs
+				-h --help
+				-i --ascii
+				-m --perms
+				-l --list
+				-n --noheadings
+				-o --output
+				-P --pairs
+				-r --raw
+				-s --inverse
+				-t --topology
+				-S --scsi
+				-h --help
+				-V --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	local DEVS
+	DEVS=''; while read dev; do DEVS+="$dev " ; done < <(lsblk -pnro name)
+	COMPREPLY=( $(compgen -W "$DEVS" -- $cur) )
+	return 0
+}
+complete -F _lsblk_module lsblk

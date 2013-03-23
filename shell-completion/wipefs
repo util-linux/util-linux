@@ -1,0 +1,32 @@
+_wipefs_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-o'|'--offset')
+			COMPREPLY=( $(compgen -W "offset" -- $cur) )
+			return 0
+			;;
+		'-t'|'--types')
+			local TYPES
+			TYPES="$(blkid -k)"
+			COMPREPLY=( $(compgen -W "$TYPES" -- $cur) )
+			return 0
+			;;
+
+	esac
+	case $cur in
+		-*)
+			OPTS="-a --all -f --force -h --help -n --no-actn -o --offset -p --parsable -q --quiet -t --types -V --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	local DEVS
+	DEVS=''; while read dev; do DEVS+="$dev " ; done < <(lsblk -pnro name)
+	COMPREPLY=( $(compgen -W "$DEVS" -- $cur) )
+	return 0
+}
+complete -F _wipefs_module wipefs

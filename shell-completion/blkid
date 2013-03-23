@@ -1,0 +1,64 @@
+_blkid_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-c')
+			compopt -o filenames
+			COMPREPLY=( $(compgen -f -- $cur) )
+			return 0
+			;;
+		'-o')
+			COMPREPLY=( $(compgen -W "value device export full" -- $cur) )
+			return 0
+			;;
+		'-s')
+			COMPREPLY=( $(compgen -W "tag" -- $cur) )
+			return 0
+			;;
+		'-t')
+			COMPREPLY=( $(compgen -W "token" -- $cur) )
+			return 0
+			;;
+		'-L')
+			COMPREPLY=( $(compgen -W "$(cd /dev/disk/by-label/ 2>/dev/null && echo *)" -- $cur) )
+			return 0
+			;;
+		'-U')
+			COMPREPLY=( $(compgen -W "$(cd /dev/disk/by-uuid/ 2>/dev/null && echo *)" -- $cur) )
+			return 0
+			;;
+		'-s')
+			COMPREPLY=( $(compgen -W "size" -- $cur) )
+			return 0
+			;;
+		'-O')
+			COMPREPLY=( $(compgen -W "offset" -- $cur) )
+			return 0
+			;;
+		'-u')
+			COMPREPLY=( $(compgen -W "filesystem raid crypto other nofilesystem noraid nocrypto noother" -- $cur) )
+			return 0
+			;;
+		'-n')
+			COMPREPLY=( $(compgen -W "$(awk '{print $NF}' /proc/filesystems)" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-c -d -h -g -o -k -s -t -l -L -U -V -p -i -S -O -u -n"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	local DEV TYPE DEVICES=''
+	while read DEV TYPE; do
+		[ $TYPE = 'part' ] && DEVICES+="$DEV "
+	done < <(lsblk -pnro name,type)
+	COMPREPLY=( $(compgen -W "$DEVICES" -- $cur) )
+	return 0
+}
+complete -F _blkid_module blkid
