@@ -1,0 +1,47 @@
+_fdisk_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-s')
+			local DEV TYPE DEVICES=''
+			while read DEV TYPE; do
+				[ $TYPE = 'part' ] && DEVICES+="$DEV "
+			done < <(lsblk -pnro name,type)
+			COMPREPLY=( $(compgen -W "$DEVICES" -- $cur) )
+			return 0
+			;;
+		'-b')
+			COMPREPLY=( $(compgen -W "512 1024 2048 4096" -- $cur) )
+			return 0
+			;;
+		'-c')
+			COMPREPLY=( $(compgen -W "dos nondos" -- $cur) )
+			return 0
+			;;
+		'-u')
+			COMPREPLY=( $(compgen -W "cylinders sectors" -- $cur) )
+			return 0
+			;;
+		'-C'|'-H'|'-S')
+			COMPREPLY=( $(compgen -W "number" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-l -s -b -c -h -u -v -C -H -S"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	local DEV TYPE DEVICES=''
+	while read DEV TYPE; do
+		[ $TYPE = 'disk' ] && DEVICES+="$DEV "
+	done < <(lsblk -pnro name,type)
+	COMPREPLY=( $(compgen -W "$DEVICES" -- $cur) )
+	return 0
+}
+complete -F _fdisk_module fdisk

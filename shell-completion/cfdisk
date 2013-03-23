@@ -1,0 +1,35 @@
+_cfdisk_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-c')
+			COMPREPLY=( $(compgen -W "cylinders" -- $cur) )
+			return 0
+			;;
+		'-h')
+			COMPREPLY=( $(compgen -W "heads" -- $cur) )
+			return 0
+			;;
+		'-s')
+			COMPREPLY=( $(compgen -W "sectors" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-a -z -c -h -s"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	local DEV TYPE DEVICES=''
+	while read DEV TYPE; do
+		[ $TYPE = 'disk' ] && DEVICES+="$DEV "
+	done < <(lsblk -pnro name,type)
+	COMPREPLY=( $(compgen -W "$DEVICES" -- $cur) )
+	return 0
+}
+complete -F _cfdisk_module cfdisk

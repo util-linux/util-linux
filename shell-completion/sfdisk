@@ -1,0 +1,79 @@
+_sfdisk_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-u'|'--unit')
+			COMPREPLY=( $(compgen -W "S C B M" -- $cur) )
+			return 0
+			;;
+		'-n'|'-C'|'--cylinders'|'-H'|'--heads'|'-S'|'--sectors')
+			COMPREPLY=( $(compgen -W "number" -- $cur) )
+			return 0
+			;;
+		'-O'|'-I')
+			compopt -o filenames
+			COMPREPLY=( $(compgen -f -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		'=')
+			cur=${cur#=}
+			;;
+		-*)
+			OPTS="-s --show-size
+				-c --id
+				--change-id
+				--print-id
+				-l --list
+				-d --dump
+				-i --increment
+				-u --unit
+				-1 --one-only
+				-T --list-types
+				-D --DOS
+				-E --DOS-extended
+				-R --re-read
+				-N
+				-n
+				-O
+				-I
+				-V --verify
+				-v --version
+				-h --help
+				-f --force
+				--no-reread
+				-q --quiet
+				-L --Linux
+				-g --show-geometry
+				-G --show-pt-geometry
+				-A= --activate=
+				-U= --unhide=
+				-x --show-extended
+				--leave-last
+				--IBM
+				--in-order
+				--not-in-order
+				--inside-outer
+				--not-inside-outer
+				--nested
+				--chained
+				--onesector
+				-C --cylinders
+				-H --heads
+				-S --sectors"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	local DEV TYPE DEVICES=''
+	while read DEV TYPE; do
+		[ $TYPE = 'disk' ] && DEVICES+="$DEV "
+	done < <(lsblk -pnro name,type)
+	COMPREPLY=( $(compgen -W "$DEVICES" -- $cur) )
+	return 0
+}
+complete -F _sfdisk_module sfdisk
