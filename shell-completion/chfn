@@ -1,0 +1,16 @@
+_chfn_module()
+{
+	local cur OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	case $cur in
+		-*)
+			OPTS="-f --full-name -o --office -p --office-phone -h --home-phone -u --help -v --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	COMPREPLY=( $(compgen -u -- $cur) )
+	return 0
+}
+complete -F _chfn_module chfn
