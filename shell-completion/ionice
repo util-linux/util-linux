@@ -1,0 +1,34 @@
+_ionice_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-c'|'--class')
+			COMPREPLY=( $(compgen -W "$(echo {0..3}) none realtime best-effort idle" -- $cur) )
+			return 0
+			;;
+		'-n'|'--classdata')
+			COMPREPLY=( $(compgen -W "$(echo {0..7})" -- $cur) )
+			return 0
+			;;
+		'-p'|'--pid')
+			local PIDS
+			PIDS=$(for I in /proc/[0-9]*; do echo ${I##"/proc/"}; done)
+			COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-c --class -n --classdata -p --pid -t --ignore -V --version -h --help"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	compopt -o filenames
+	COMPREPLY=( $(compgen -f -- $cur) )
+	return 0
+}
+complete -F _ionice_module ionice
