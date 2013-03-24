@@ -1,0 +1,30 @@
+_ipcs_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-i'|'--id')
+			COMPREPLY=( $(compgen -W "id" -- $cur) )
+			return 0
+			;;
+	esac
+	OPTS="-i --id
+		-h --help
+		-V --version
+		-m --shmems
+		-q --queues
+		-s --semaphores
+		-a --all
+		-t --time
+		-p --pid
+		-c --creator
+		-l --limits
+		-u --summary
+		   --human
+		-b --bytes"
+	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+	return 0
+}
+complete -F _ipcs_module ipcs

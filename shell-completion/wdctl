@@ -1,0 +1,60 @@
+_wdctl_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-f'|'--flags')
+			local FLAGS
+			FLAGS="ALARMONLY
+				CARDRESET
+				EXTERN1
+				EXTERN2
+				FANFAULT
+				KEEPALIVEPING
+				MAGICCLOSE
+				OVERHEAT
+				POWEROVER
+				POWERUNDER
+				PRETIMEOUT
+				SETTIMEOUT"
+			COMPREPLY=( $(compgen -W "$FLAGS" -- $cur) )
+			return 0
+			;;
+		'-o'|'--output')
+			# FIXME: how to append to a string with compgen?
+			local OUTPUT
+			OUTPUT="FLAG DESCRIPTION STATUS BOOT-STATUS DEVICE"
+			compopt -o nospace
+			COMPREPLY=( $(compgen -W "$OUTPUT" -S ',' -- $cur) )
+			return 0
+			;;
+		'-s'|'--settimeout')
+			COMPREPLY=( $(compgen -W "seconds" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-f --flags
+				-F --noflags
+				-I --noident
+				-n --noheadings
+				-O --oneline
+				-o --output
+				-r --raw
+				-T --notimeouts
+				-s --settimeout
+				-x --flags-only
+				-h --help
+				-V --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	compopt -o filenames
+	COMPREPLY=( $(compgen -f -- ${cur:-"/dev/"}) )
+	return 0
+}
+complete -F _wdctl_module wdctl

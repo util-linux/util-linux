@@ -1,0 +1,61 @@
+_eject_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-a'|'--auto'|'-i'|'--manualeject')
+			COMPREPLY=( $(compgen -W "off on" -- $cur) )
+			return 0
+			;;
+		'-c'|'--changerslot')
+			# FIXME: there must be way to determine slots
+			COMPREPLY=( $(compgen -W "slot" -- $cur) )
+			return 0
+			;;
+		'-x'|'--cdspeed')
+			COMPREPLY=( $(compgen -W "$(eject -X)" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-a --auto
+			-c --changerslot
+			-d --default
+			-f --floppy
+			-F --force
+			-i --manualeject
+			-m --no-unmount
+			-M --no-partitions-unmount
+			-n --noop
+			-p --proc
+			-q --tape
+			-r --cdrom
+			-s --scsi
+			-t --trayclose
+			-T --traytoggle
+			-v --verbose
+			-x --cdspeed
+			-X --listspeed
+			-h --help
+			-V --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	local DEVS
+	DEVS="$(for I in /sys/class/block/*/removable; do
+		if [ $(cat $I) -ne 0 ]; then
+			OLD_IFS=$IFS
+			IFS='/';
+			ARR=($I)
+			echo "/dev/${ARR[4]}"
+			IFS=$OLD_IFS
+		fi
+	done)"
+	COMPREPLY=( $(compgen -W "$DEVS" $cur) )
+	return 0
+}
+complete -F _eject_module eject

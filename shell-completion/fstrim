@@ -1,0 +1,25 @@
+_fstrim_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-o'|'--offset'|'-l'|'--length'|'-m'|'--minimum')
+			COMPREPLY=( $(compgen -W "num" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-o --offset -l --length -m --minimum -v --verbose -h --help -V --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	local MPOINTS
+	MPOINTS=$(findmnt -rno SOURCE | grep ^/dev)
+	COMPREPLY=( $(compgen -W "$MPOINTS" -- $cur) )
+	return 0
+}
+complete -F _fstrim_module fstrim

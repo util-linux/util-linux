@@ -1,0 +1,53 @@
+_hwclock_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-f'|'--rtc'|'--adjfile')
+			compopt -o filenames
+			COMPREPLY=( $(compgen -f -- $cur) )
+			return 0
+			;;
+		'--date')
+			COMPREPLY=( $(compgen -W "date" -- $cur) )
+			return 0
+			;;
+		'--epoch')
+			COMPREPLY=( $(compgen -W "year" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-h --help
+				-r --show
+				   --set
+				-s --hctosys
+				-w --systohc
+				   --systz
+				   --adjust
+				-c --compare
+				   --getepoch
+				   --setepoch
+				   --predict
+				-V --version
+				-u --utc
+				   --localtime
+				-f --rtc
+				   --directisa
+				   --badyear
+				   --date
+				   --epoch
+				   --noadjfile
+				   --adjfile
+				   --test
+				-D --debug"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	return 0
+}
+complete -F _hwclock_module hwclock

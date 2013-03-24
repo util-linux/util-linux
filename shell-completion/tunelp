@@ -1,0 +1,48 @@
+_tunelp_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-i'|'--irq'|'-c'|'--chars')
+			COMPREPLY=( $(compgen -W "number" -- $cur) )
+			return 0
+			;;
+		'-t'|'--time')
+			COMPREPLY=( $(compgen -W "milliseconds" -- $cur) )
+			return 0
+			;;
+		'-w'|'--wait')
+			COMPREPLY=( $(compgen -W "microseconds" -- $cur) )
+			return 0
+			;;
+		'-a'|'--abort'|'-o'|'--check-status'|'-C'|'--careful'|'-T'|'--trust-irq'|'-q'|'--print-irq')
+			COMPREPLY=( $(compgen -W "off on" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-i --irq
+				-t --time
+				-c --chars
+				-w --wait
+				-a --abort
+				-o --check-status
+				-C --careful
+				-s --status
+				-T --trust-irq
+				-r --reset
+				-q --print-irq
+				-h --help
+				-V --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	compopt -o filenames
+	COMPREPLY=( $(compgen -f -- ${cur:-"/dev/lp"}) )
+	return 0
+}
+complete -F _tunelp_module tunelp

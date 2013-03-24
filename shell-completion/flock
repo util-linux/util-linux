@@ -1,0 +1,42 @@
+_flock_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-w'|'--timeout')
+			COMPREPLY=( $(compgen -W "seconds" -- $cur) )
+			return 0
+			;;
+		'-E'|'--conflict-exit-code')
+			COMPREPLY=( $(compgen -W "$(echo {0..255})" -- $cur) )
+			return 0
+			;;
+		'-c'|'--command')
+			compopt -o bashdefault
+			COMPREPLY=( $(compgen -c -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-s --shared
+				-x --exclusive
+				-u --unlock
+				-n --nonblock
+				-w --timeout
+				-E --conflict-exit-code
+				-o --close
+				-c --command
+				-h --help
+				-V --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	compopt -o filenames
+	COMPREPLY=( $(compgen -f -- ${cur:-"/"}) )
+	return 0
+}
+complete -F _flock_module flock

@@ -1,0 +1,11 @@
+_ctrlaltdel_module()
+{
+	local cur
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	COMPREPLY=()
+	if [ $COMP_CWORD -eq 1 ]; then
+		COMPREPLY=( $(compgen -W "hard soft" -- $cur) )
+	fi
+	return 0
+}
+complete -F _ctrlaltdel_module ctrlaltdel

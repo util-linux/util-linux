@@ -1,0 +1,64 @@
+_losetup_module()
+{
+	local cur prev OPTS ARG
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-d'|'--detach')
+			ARG="$(losetup --output NAME | awk '{if (1 < NR) {print}}')"
+			COMPREPLY=( $(compgen -W "$ARG" -- $cur) )
+			return 0
+			;;
+		'-j'|'--associated')
+			ARG="$(losetup --output BACK-FILE | awk '{if (1 < NR) {print}}')"
+			COMPREPLY=( $(compgen -W "$ARG" -- $cur) )
+			return 0
+			;;
+		'-c'|'--set-capacity')
+			ARG="$(for I in /dev/loop[0-9]*; do if [ -e $I ]; then echo $I; fi; done)"
+			COMPREPLY=( $(compgen -W "$ARG" -- $cur) )
+			return 0
+			;;
+		'-o'|'--offset'|'--sizelimit')
+			COMPREPLY=( $(compgen -W "number" -- $cur) )
+			return 0
+			;;
+		'-O'|'--output')
+			# FIXME: how to append to a string with compgen?
+			local OUTPUT
+			OUTPUT="NAME AUTOCLEAR BACK-FILE BACK-INO
+				BACK-MAJ:MIN MAJ:MIN OFFSET PARTSCAN RO
+				SIZELIMIT"
+			compopt -o nospace
+			COMPREPLY=( $(compgen -W "$OUTPUT" -S ',' -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-a --all
+				-d --detach
+				-D --detach-all
+				-f --find
+				-c --set-capacity
+				-j --associated
+				-l --list
+				-o --offset
+				-O --output
+				   --sizelimit
+				-P --partscan
+				-r --read-only
+				   --show
+				-v --verbose
+				-h --help
+				-V --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	compopt -o filenames
+	COMPREPLY=( $(compgen -f -- $cur) )
+	return 0
+}
+complete -F _losetup_module losetup
