@@ -318,7 +318,7 @@ extern void mnt_reset_fs(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull));
 extern struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 				     const struct libmnt_fs *src)
-			__ul_attribute__((nonnull(2), warn_unused_result));
+			__ul_attribute__((warn_unused_result));
 extern void *mnt_fs_get_userdata(struct libmnt_fs *fs)
 			__ul_attribute__((nonnull));
 extern int mnt_fs_set_userdata(struct libmnt_fs *fs, void *data);

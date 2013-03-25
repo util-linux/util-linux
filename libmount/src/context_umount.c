@@ -183,7 +183,7 @@ err:
 static int lookup_umount_fs(struct libmnt_context *cxt)
 {
 	const char *tgt;
-	struct libmnt_fs *fs;
+	struct libmnt_fs *fs = NULL;
 	int rc;
 
 	assert(cxt);
@@ -198,7 +198,7 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 	rc = mnt_context_find_umount_fs(cxt, tgt, &fs);
 	if (rc < 0)
 		return rc;
-	if (!fs) {
+	if (rc == 1 || !fs) {
 		DBG(CXT, mnt_debug_h(cxt, "umount: cannot find %s in mtab", tgt));
 		return 0;
 	}

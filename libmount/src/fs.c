@@ -129,6 +129,9 @@ struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,
 {
 	const struct libmnt_fs *org = dest;
 
+	if (!src)
+		return NULL;
+
 	if (!dest) {
 		dest = mnt_new_fs();
 		if (!dest)
