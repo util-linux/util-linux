@@ -1,0 +1,36 @@
+_script_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-c'|'--command')
+			compopt -o bashdefault
+			COMPREPLY=( $(compgen -c -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		'=')
+			cur=${cur#=}
+			;;
+		-*)
+			OPTS="-a --append
+				-c --command
+				-e --return
+				-f --flush
+				   --force
+				-q --quiet
+				-t= --timing=
+				-V --version
+				-h --help"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	compopt -o filenames
+	COMPREPLY=( $(compgen -f -- $cur) )
+	return 0
+}
+complete -F _script_module script
