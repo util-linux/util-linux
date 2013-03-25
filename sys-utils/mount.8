@@ -448,6 +448,11 @@ accessed under newdir.  The physical location of the files is not changed.
 Note that the
 .I olddir
 has to be a mountpoint.
+
+Note that moving a mount residing under a shared mount is invalid and
+unsupported. Use
+.B findmnt -o TARGET,PROPAGATION /dir
+to see the current propagation flags.
 .RE
 
 .B The shared subtrees operations.

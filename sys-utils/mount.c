@@ -322,6 +322,37 @@ static void selinux_warning(struct libmnt_context *cxt, const char *tgt)
 #endif
 
 /*
+ * Returns 1 if @dir parent is shared
+ */
+static int is_shared_tree(struct libmnt_context *cxt, const char *dir)
+{
+	struct libmnt_table *tb = NULL;
+	struct libmnt_fs *fs;
+	unsigned long mflags = 0;
+	char *mnt = NULL, *p;
+	int rc = 0;
+
+	if (!dir)
+		return 0;
+	if (mnt_context_get_mtab(cxt, &tb) || !tb)
+		goto done;
+	mnt = xstrdup(dir);
+	p = strrchr(mnt, '/');
+	if (!p)
+		goto done;
+	if (p > mnt)
+		*p = '\0';
+	fs = mnt_table_find_mountpoint(tb, mnt, MNT_ITER_BACKWARD);
+
+	rc = fs && mnt_fs_is_kernel(fs)
+		&& mnt_fs_get_propagation(fs, &mflags) == 0
+		&& (mflags & MS_SHARED);
+done:
+	free(mnt);
+	return rc;
+}
+
+/*
  * rc = 0 success
  *     <0 error (usually -errno or -1)
  *
@@ -475,11 +506,11 @@ try_readonly:
 		break;
 	}
 	case ENOENT:
-		if (lstat(tgt, &st))
+		if (tgt && lstat(tgt, &st))
 			warnx(_("mount point %s does not exist"), tgt);
-		else if (stat(tgt, &st))
+		else if (tgt && stat(tgt, &st))
 			warnx(_("mount point %s is a symbolic link to nowhere"), tgt);
-		else if (stat(src, &st)) {
+		else if (src && stat(src, &st)) {
 			if (uflags & MNT_MS_NOFAIL)
 				return MOUNT_EX_SUCCESS;
 
@@ -493,7 +524,7 @@ try_readonly:
 	case ENOTDIR:
 		if (stat(tgt, &st) || ! S_ISDIR(st.st_mode))
 			warnx(_("mount point %s is not a directory"), tgt);
-		else if (stat(src, &st) && errno == ENOTDIR) {
+		else if (src && stat(src, &st) && errno == ENOTDIR) {
 			if (uflags & MNT_MS_NOFAIL)
 				return MOUNT_EX_SUCCESS;
 
@@ -510,6 +541,9 @@ try_readonly:
 			warnx(_("%s not mounted or bad option"), tgt);
 		else if (rc == -MNT_ERR_APPLYFLAGS)
 			warnx(_("%s is not mountpoint or bad option"), tgt);
+		else if ((mflags & MS_MOVE) && is_shared_tree(cxt, src))
+			warnx(_("bad option. Note that moving a mount residing under a shared\n"
+				"       mount is unsupported."));
 		else
 			warnx(_("wrong fs type, bad option, bad superblock on %s,\n"
 				"       missing codepage or helper program, or other error"),
@@ -520,9 +554,9 @@ try_readonly:
 				"       (for several filesystems (e.g. nfs, cifs) you might\n"
 				"       need a /sbin/mount.<type> helper program)\n"));
 
-		fprintf(stderr, _(
+		fprintf(stderr, _("\n"
 				"       In some cases useful info is found in syslog - try\n"
-				"       dmesg | tail or so\n"));
+				"       dmesg | tail or so.\n"));
 		break;
 
 	case EMFILE:
