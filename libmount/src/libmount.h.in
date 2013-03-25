@@ -449,11 +449,9 @@ extern struct libmnt_table *mnt_new_table(void)
 extern void mnt_free_table(struct libmnt_table *tb);
 
 extern int mnt_reset_table(struct libmnt_table *tb);
-extern int mnt_table_get_nents(struct libmnt_table *tb)
-			__ul_attribute__((nonnull));
+extern int mnt_table_get_nents(struct libmnt_table *tb);
 extern int mnt_table_set_cache(struct libmnt_table *tb, struct libmnt_cache *mpc);
-extern struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb)
-			__ul_attribute__((nonnull));
+extern struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb);
 extern int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs);
 extern int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs);
 extern int mnt_table_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
@@ -465,24 +463,18 @@ extern int mnt_table_set_iter(struct libmnt_table *tb, struct libmnt_iter *itr,
 			      struct libmnt_fs *fs);
 
 extern struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb,
-				const char *path, int direction)
-			__ul_attribute__((nonnull));
+				const char *path, int direction);
 extern struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb,
-				const char *path, int direction)
-			__ul_attribute__((nonnull));
+				const char *path, int direction);
 extern struct libmnt_fs *mnt_table_find_tag(struct libmnt_table *tb, const char *tag,
-				const char *val, int direction)
-			__ul_attribute__((nonnull));
+				const char *val, int direction);
 extern struct libmnt_fs *mnt_table_find_source(struct libmnt_table *tb,
-				const char *source, int direction)
-			__ul_attribute__((nonnull));
+				const char *source, int direction);
 extern struct libmnt_fs *mnt_table_find_pair(struct libmnt_table *tb,
 				const char *source,
-				const char *target, int direction)
-			__ul_attribute__((nonnull));
+				const char *target, int direction);
 extern struct libmnt_fs *mnt_table_find_devno(struct libmnt_table *tb,
-				dev_t devno, int direction)
-			__ul_attribute__((nonnull));
+				dev_t devno, int direction);
 
 extern int mnt_table_find_next_fs(struct libmnt_table *tb,
 			struct libmnt_iter *itr,
