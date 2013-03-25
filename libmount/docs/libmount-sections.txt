@@ -283,6 +283,7 @@ mnt_new_table_from_dir
 mnt_new_table_from_file
 mnt_table_add_fs
 mnt_table_find_devno
+mnt_table_find_mountpoint
 mnt_table_find_next_fs
 mnt_table_find_pair
 mnt_table_find_source

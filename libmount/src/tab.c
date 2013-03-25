@@ -426,6 +426,51 @@ int mnt_table_set_iter(struct libmnt_table *tb, struct libmnt_iter *itr, struct 
 }
 
 /**
+ * mnt_table_find_mountpoint:
+ * @tb: tab pointer
+ * @path: directory
+ * @direction: MNT_ITER_{FORWARD,BACKWARD}
+ *
+ * Same like mnt_get_mountpoint(), but this function does not rely on
+ * st_dev numbers.
+ *
+ * Returns: a tab entry or NULL.
+ */
+struct libmnt_fs *mnt_table_find_mountpoint(struct libmnt_table *tb,
+					    const char *path,
+					    int direction)
+{
+	char *mnt;
+
+	if (!tb || !path)
+		return NULL;
+
+	DBG(TAB, mnt_debug_h(tb, "lookup MOUNTPOINT: %s", path));
+
+	mnt = strdup(path);
+	if (!mnt)
+		return NULL;
+
+	do {
+		char *p;
+		struct libmnt_fs *fs;
+
+		fs = mnt_table_find_target(tb, mnt, direction);
+		if (fs) {
+			free(mnt);
+			return fs;
+		}
+
+		p = stripoff_last_component(mnt);
+		if (!p || !*p)
+			break;
+	} while (mnt && *(mnt + 1) != '\0');
+
+	free(mnt);
+	return mnt_table_find_target(tb, "/", direction);
+}
+
+/**
  * mnt_table_find_target:
  * @tb: tab pointer
  * @path: mountpoint directory
@@ -517,6 +562,8 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 	const char *p;
 
 	assert(tb);
+	if (!tb || !path)
+		return NULL;
 
 	DBG(TAB, mnt_debug_h(tb, "lookup srcpath: %s", path));
 
@@ -1009,6 +1056,7 @@ done:
 }
 
 #ifdef TEST_PROGRAM
+#include "pathnames.h"
 
 static int parser_errcb(struct libmnt_table *tb, const char *filename, int line)
 {
@@ -1171,6 +1219,33 @@ done:
 	return rc;
 }
 
+int test_find_mountpoint(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_table *tb;
+	struct libmnt_fs *fs;
+	struct libmnt_cache *mpc = NULL;
+	int rc = -1;
+
+	tb = mnt_new_table_from_file(_PATH_PROC_MOUNTINFO);
+	if (!tb)
+		return -1;
+	mpc = mnt_new_cache();
+	if (!mpc)
+		goto done;
+	mnt_table_set_cache(tb, mpc);
+
+	fs = mnt_table_find_mountpoint(tb, argv[1], MNT_ITER_BACKWARD);
+	if (!fs)
+		goto done;
+
+	mnt_fs_print_debug(fs, stdout);
+	rc = 0;
+done:
+	mnt_free_table(tb);
+	mnt_free_cache(mpc);
+	return rc;
+}
+
 static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
 {
 	struct libmnt_table *tb = NULL, *fstab = NULL;
@@ -1225,6 +1300,7 @@ int main(int argc, char *argv[])
 	{ "--find-forward",  test_find_fw, "<file> <source|target> <string>" },
 	{ "--find-backward", test_find_bw, "<file> <source|target> <string>" },
 	{ "--find-pair",     test_find_pair, "<file> <source> <target>" },
+	{ "--find-mountpoint", test_find_mountpoint, "<path>" },
 	{ "--copy-fs",       test_copy_fs, "<file>  copy root FS from the file" },
 	{ "--is-mounted",    test_is_mounted, "<fstab> check what from <file> are already mounted" },
 	{ NULL }

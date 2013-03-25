@@ -94,7 +94,7 @@ static int fstype_cmp(const void *v1, const void *v2)
 
 /* returns basename and keeps dirname in the @path, if @path is "/" (root)
  * then returns empty string */
-static char *stripoff_last_component(char *path)
+char *stripoff_last_component(char *path)
 {
 	char *p = path ? strrchr(path, '/') : NULL;
 
