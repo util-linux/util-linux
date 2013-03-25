@@ -217,7 +217,7 @@ int main(int argc, char **argv)
 		     argv[optind]);
 	}
 
-	if (all_tasks) {
+	if (all_tasks && pid) {
 		struct proc_tasks *tasks = proc_open_tasks(pid);
 		while (!proc_next_tid(tasks, &ts.pid))
 			do_taskset(&ts, new_setsize, new_set);
