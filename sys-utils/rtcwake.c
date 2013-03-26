@@ -75,14 +75,14 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out,
 	      _(" -A, --adjfile <file>     specifies the path to the adjust file\n"
 		"                            the default is %s\n"), _PATH_ADJTIME);
-	fputs(_(" -d, --device <device>    select rtc device (rtc0|rtc1|...)\n"
-		" -n, --dry-run            does everything, but suspend\n"
-		" -l, --local              RTC uses local timezone\n"
-		" -m, --mode <mode>        standby|mem|... sleep mode\n"
-		" -s, --seconds <seconds>  seconds to sleep\n"
-		" -t, --time <time_t>      time to wake\n"
-		" -u, --utc                RTC uses UTC\n"
-		" -v, --verbose            verbose messages\n"), out);
+	fputs(_(" -d, --device <device>    select rtc device (rtc0|rtc1|...)\n"), out);
+	fputs(_(" -n, --dry-run            does everything, but suspend\n"), out);
+	fputs(_(" -l, --local              RTC uses local timezone\n"), out);
+	fputs(_(" -m, --mode <mode>        standby|mem|... sleep mode\n"), out);
+	fputs(_(" -s, --seconds <seconds>  seconds to sleep\n"), out);
+	fputs(_(" -t, --time <time_t>      time to wake\n"), out);
+	fputs(_(" -u, --utc                RTC uses UTC\n"), out);
+	fputs(_(" -v, --verbose            verbose messages\n"), out);
 
 	printf(USAGE_SEPARATOR);
 	printf(USAGE_HELP);
