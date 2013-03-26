@@ -1,0 +1,23 @@
+_colrm_module()
+{
+	local cur OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	case $cur in
+		-*)
+			OPTS="-V --version -h --help"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	case $COMP_CWORD in
+		1)
+			COMPREPLY=( $(compgen -W "startcol" -- $cur) )
+			;;
+		2)
+			COMPREPLY=( $(compgen -W "endcol" -- $cur) )
+			;;
+	esac
+	return 0
+}
+complete -F _colrm_module colrm
