@@ -139,7 +139,8 @@
 #define _PATH_DEV_BYPARTUUID	"/dev/disk/by-partuuid"
 
 /* hwclock paths */
-#define _PATH_ADJPATH		"/etc/adjtime"
+# define _PATH_ADJTIME		"/etc/adjtime"
+
 #define _PATH_LASTDATE		"/var/lib/lastdate"
 #ifdef __ia64__
 # define _PATH_RTC_DEV		"/dev/efirtc"

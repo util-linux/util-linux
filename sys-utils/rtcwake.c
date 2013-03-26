@@ -60,7 +60,7 @@ enum ClockMode {
 	CM_LOCAL
 };
 
-static char		*adjfile = _PATH_ADJPATH;
+static char		*adjfile = _PATH_ADJTIME;
 static unsigned		verbose;
 static unsigned		dryrun;
 enum ClockMode		clock_mode = CM_AUTO;
@@ -74,7 +74,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_OPTIONS, out);
 	fprintf(out,
 	      _(" -A, --adjfile <file>     specifies the path to the adjust file\n"
-		"                            the default is %s\n"), _PATH_ADJPATH);
+		"                            the default is %s\n"), _PATH_ADJTIME);
 	fputs(_(" -d, --device <device>    select rtc device (rtc0|rtc1|...)\n"
 		" -n, --dry-run            does everything, but suspend\n"
 		" -l, --local              RTC uses local timezone\n"

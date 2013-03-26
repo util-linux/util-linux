@@ -1476,7 +1476,7 @@ static void usage(const char *fmt, ...)
 		"     --noadjfile      do not access %s; this requires the use of\n"
 		"                        either --utc or --localtime\n"
 		"     --adjfile <file> specifies the path to the adjust file;\n"
-		"                        the default is %s\n"), _PATH_ADJPATH, _PATH_ADJPATH);
+		"                        the default is %s\n"), _PATH_ADJTIME, _PATH_ADJTIME);
 	fputs(_("     --test           do not update anything, just show what would happen\n"
 		" -D, --debug          debugging mode\n" "\n"), usageto);
 #ifdef __alpha__
@@ -1746,7 +1746,7 @@ int main(int argc, char **argv)
 	}
 
 	if (!adj_file_name)
-		adj_file_name = _PATH_ADJPATH;
+		adj_file_name = _PATH_ADJTIME;
 
 	if (noadjfile && !utc && !local_opt) {
 		warnx(_("With --noadjfile, you must specify "
