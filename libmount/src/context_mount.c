@@ -275,6 +275,28 @@ static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 	if (!*optstr)
 		return -ENOMEM;
 
+	if (cxt->user_mountflags & MNT_MS_USER) {
+		/*
+		 * This is unnecessary for real user-mounts as mount.<type>
+		 * helpers have to always follow fstab rather than mount
+		 * options on command line.
+		 *
+		 * But if you call mount.<type> as root then the helper follows
+		 * command line. If there is (for example) "user,exec" in fstab
+		 * then we have to manually append the "exec" back to the options
+		 * string, bacause there is nothing like MS_EXEC (we have only
+		 * MS_NOEXEC in mount flags and we don't care about the original
+		 * mount string in libmount for VFS options).
+		 */
+		if (!(cxt->mountflags & MS_NOEXEC))
+			mnt_optstr_append_option(optstr, "exec", NULL);
+		if (!(cxt->mountflags & MS_NOSUID))
+			mnt_optstr_append_option(optstr, "suid", NULL);
+		if (!(cxt->mountflags & MS_NODEV))
+			mnt_optstr_append_option(optstr, "dev", NULL);
+	}
+
+
 	if (cxt->flags & MNT_FL_SAVED_USER)
 		rc = mnt_optstr_set_option(optstr, "user", cxt->orig_user);
 	if (rc)
