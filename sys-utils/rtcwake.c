@@ -51,7 +51,6 @@
 
 #define RTC_PATH		"/sys/class/rtc/%s/device/power/wakeup"
 #define SYS_POWER_STATE_PATH	"/sys/power/state"
-#define ADJTIME_PATH		"/etc/adjtime"
 #define DEFAULT_DEVICE		"/dev/rtc0"
 #define DEFAULT_MODE		"standby"
 
@@ -61,24 +60,10 @@ enum ClockMode {
 	CM_LOCAL
 };
 
+static char		*adjfile = _PATH_ADJPATH;
 static unsigned		verbose;
 static unsigned		dryrun;
 enum ClockMode		clock_mode = CM_AUTO;
-
-static struct option long_options[] = {
-	{"auto",	no_argument,		0, 'a'},
-	{"dry-run",	no_argument,		0, 'n'},
-	{"local",	no_argument,		0, 'l'},
-	{"utc",		no_argument,		0, 'u'},
-	{"verbose",	no_argument,		0, 'v'},
-	{"version",	no_argument,		0, 'V'},
-	{"help",	no_argument,		0, 'h'},
-	{"mode",	required_argument,	0, 'm'},
-	{"device",	required_argument,	0, 'd'},
-	{"seconds",	required_argument,	0, 's'},
-	{"time",	required_argument,	0, 't'},
-	{0,		0,			0, 0  }
-};
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
@@ -87,6 +72,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	      _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
+	fprintf(out,
+	      _(" -A, --adjfile <file>     specifies the path to the adjust file\n"
+		"                            the default is %s\n"), _PATH_ADJPATH);
 	fputs(_(" -d, --device <device>    select rtc device (rtc0|rtc1|...)\n"
 		" -n, --dry-run            does everything, but suspend\n"
 		" -l, --local              RTC uses local timezone\n"
@@ -293,7 +281,7 @@ static int read_clock_mode(void)
 	FILE *fp;
 	char linebuf[MAX_LINE];
 
-	fp = fopen(ADJTIME_PATH, "r");
+	fp = fopen(adjfile, "r");
 	if (!fp)
 		return -1;
 
@@ -390,14 +378,34 @@ int main(int argc, char **argv)
 	int		fd;
 	time_t		alarm = 0;
 
+	static const struct option long_options[] = {
+		{"adjfile",     required_argument,      0, 'A'},
+		{"auto",	no_argument,		0, 'a'},
+		{"dry-run",	no_argument,		0, 'n'},
+		{"local",	no_argument,		0, 'l'},
+		{"utc",		no_argument,		0, 'u'},
+		{"verbose",	no_argument,		0, 'v'},
+		{"version",	no_argument,		0, 'V'},
+		{"help",	no_argument,		0, 'h'},
+		{"mode",	required_argument,	0, 'm'},
+		{"device",	required_argument,	0, 'd'},
+		{"seconds",	required_argument,	0, 's'},
+		{"time",	required_argument,	0, 't'},
+		{0,		0,			0, 0  }
+	};
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((t = getopt_long(argc, argv, "ahd:lm:ns:t:uVv",
+	while ((t = getopt_long(argc, argv, "A:ahd:lm:ns:t:uVv",
 					long_options, NULL)) != EOF) {
 		switch (t) {
+		case 'A':
+			/* for better compatibility with hwclock */
+			adjfile = optarg;
+			break;
 		case 'a':
 			/* CM_AUTO is default */
 			break;
