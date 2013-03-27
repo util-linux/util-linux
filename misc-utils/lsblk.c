@@ -974,7 +974,9 @@ static int set_cxt(struct blkdev_cxt *cxt,
 	if (sysfs_read_u64(&cxt->sysfs, "size", &cxt->size) == 0)	/* in sectors */
 		cxt->size <<= 9;					/* in bytes */
 
-	sysfs_read_int(&cxt->sysfs, "queue/discard_granularity", &cxt->discard);
+	if (sysfs_read_int(&cxt->sysfs,
+			   "queue/discard_granularity", &cxt->discard) != 0)
+		cxt->discard = 0;
 
 	/* Ignore devices of zero size */
 	if (!lsblk->all_devices && cxt->size == 0)
