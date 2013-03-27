@@ -533,8 +533,9 @@ static ssize_t read_lba(struct fdisk_context *cxt, uint64_t lba,
 {
 	off_t offset = lba * cxt->sector_size;
 
-	lseek(cxt->dev_fd, offset, SEEK_SET);
-	return read(cxt->dev_fd, buffer, bytes);
+	if (lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1)
+		return -1;
+	return read(cxt->dev_fd, buffer, bytes) != bytes;
 }
 
 
@@ -720,7 +721,7 @@ static struct gpt_header *gpt_read_header(struct fdisk_context *cxt,
 		return NULL;
 
 	/* read and verify header */
-	if (!read_lba(cxt, lba, header, sizeof(struct gpt_header)))
+	if (read_lba(cxt, lba, header, sizeof(struct gpt_header)) != 0)
 		goto invalid;
 
 	if (!gpt_check_signature(header))
