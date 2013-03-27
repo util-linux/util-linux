@@ -216,7 +216,7 @@ get_desc_for_probe(struct wipe_desc *wp, blkid_probe pr)
 static blkid_probe
 new_probe(const char *devname, int mode)
 {
-	blkid_probe pr;
+	blkid_probe pr = NULL;
 
 	if (!devname)
 		return NULL;
@@ -227,8 +227,10 @@ new_probe(const char *devname, int mode)
 			goto error;
 
 		pr = blkid_new_probe();
-		if (pr && blkid_probe_set_device(pr, fd, 0, 0))
+		if (pr && blkid_probe_set_device(pr, fd, 0, 0)) {
+			close(fd);
 			goto error;
+		}
 	} else
 		pr = blkid_new_probe_from_filename(devname);
 
@@ -245,6 +247,7 @@ new_probe(const char *devname, int mode)
 
 	return pr;
 error:
+	blkid_free_probe(pr);
 	err(EXIT_FAILURE, _("error: %s: probing initialization failed"), devname);
 	return NULL;
 }
