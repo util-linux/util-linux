@@ -362,7 +362,7 @@ static int __mnt_cache_find_tag_value(struct libmnt_cache *cache,
 		return rc;
 
 	*data = cache_find_tag_value(cache, devname, token);
-	return data ? 0 : -1;
+	return *data ? 0 : -1;
 }
 
 /**
