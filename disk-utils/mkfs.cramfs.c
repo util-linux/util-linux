@@ -144,7 +144,7 @@ usage(int status) {
 static char *
 do_mmap(char *path, unsigned int size, unsigned int mode){
 	int fd;
-	char *start;
+	char *start = NULL;
 
 	if (!size)
 		return NULL;
@@ -152,26 +152,31 @@ do_mmap(char *path, unsigned int size, unsigned int mode){
 	if (S_ISLNK(mode)) {
 		start = xmalloc(size);
 		if (readlink(path, start, size) < 0) {
-			perror(path);
+			warn(_("readlink failed: %s"), path);
 			warn_skip = 1;
-			start = NULL;
+			goto err;
 		}
 		return start;
 	}
 
 	fd = open(path, O_RDONLY);
 	if (fd < 0) {
-		perror(path);
+		warn(_("open failed: %s"), path);
 		warn_skip = 1;
-		return NULL;
+		goto err;
 	}
 
 	start = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
-	if (-1 == (int) (long) start)
+	if (-1 == (int) (long) start) {
+		free(start);
+		close(fd);
 		err(MKFS_EX_ERROR, "mmap");
+	}
 	close(fd);
-
 	return start;
+err:
+	free(start);
+	return NULL;
 }
 
 static void
