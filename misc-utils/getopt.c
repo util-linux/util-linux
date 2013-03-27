@@ -190,7 +190,7 @@ static int generate_output(char *argv[], int argc, const char *optstr,
 				if (longopts[longindex].has_arg)
 					printf(" %s", normalize(optarg ? optarg : ""));
 			} else if (opt == NON_OPT)
-				printf(" %s", normalize(optarg));
+				printf(" %s", normalize(optarg ? optarg : ""));
 			else {
 				printf(" -%c", opt);
 				charptr = strchr(optstr, opt);
