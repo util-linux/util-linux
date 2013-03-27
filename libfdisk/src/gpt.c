@@ -1154,8 +1154,10 @@ void gpt_list_table(struct fdisk_context *cxt,
 			continue;
 		sizestr = size_to_human_string(SIZE_SUFFIX_1LETTER,
 					       size * cxt->sector_size);
-		if (!sizestr)
+		if (!sizestr) {
+			free(name);
 			continue;
+		}
 
 		t = fdisk_get_partition_type(cxt, i);
 
