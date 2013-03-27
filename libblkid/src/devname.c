@@ -568,7 +568,8 @@ static int probe_all_removable(blkid_cache cache)
 			continue;
 
 		if (sysfs_init(&sysfs, devno, NULL) == 0) {
-			sysfs_read_int(&sysfs, "removable", &removable);
+			if (sysfs_read_int(&sysfs, "removable", &removable) != 0)
+				removable = 0;
 			sysfs_deinit(&sysfs);
 		}
 
