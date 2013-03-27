@@ -169,7 +169,7 @@ int mnt_optstr_next_option(char **optstr, char **name, size_t *namesz,
 	return mnt_optstr_parse_next(optstr, name, namesz, value, valuesz);
 }
 
-static int __attribute__((nonnull))
+static int __attribute__((nonnull(1, 2)))
 __mnt_optstr_append_option(char **optstr,
 			const char *name, size_t nsz,
 			const char *value, size_t vsz)
