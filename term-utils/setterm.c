@@ -1160,7 +1160,7 @@ screendump(int vcnum, FILE * F)
 	int fd;
 	size_t i, j;
 	ssize_t rc;
-	char *inbuf, *outbuf, *p, *q;
+	char *inbuf = NULL, *outbuf = NULL, *p, *q;
 
 	sprintf(infile, "/dev/vcsa%d", vcnum);
 	fd = open(infile, O_RDONLY);
@@ -1208,6 +1208,8 @@ screendump(int vcnum, FILE * F)
 		goto error;
 	}
 	close(fd);
+	free(inbuf);
+	free(outbuf);
 	return;
 
 read_error:
@@ -1219,6 +1221,8 @@ read_error:
 error:
 	if (fd >= 0)
 		close(fd);
+	free(inbuf);
+	free(outbuf);
 	exit(EXIT_FAILURE);
 }
 
