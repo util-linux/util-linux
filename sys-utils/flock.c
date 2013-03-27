@@ -255,6 +255,7 @@ int main(int argc, char *argv[])
 			 */
 			if (!(open_flags & O_RDWR) &&
 			    type != LOCK_SH &&
+			    filename &&
 			    access(filename, R_OK | W_OK) == 0) {
 
 				close(fd);
