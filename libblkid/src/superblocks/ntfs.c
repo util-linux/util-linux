@@ -75,8 +75,8 @@ struct file_attribute {
 #define NTFS_MAX_CLUSTER_SIZE	(64 * 1024)
 
 enum {
-	MFT_RECORD_ATTR_VOLUME_NAME		= cpu_to_le32(0x60),
-	MFT_RECORD_ATTR_END			= cpu_to_le32(0xffffffff)
+	MFT_RECORD_ATTR_VOLUME_NAME		= 0x60,
+	MFT_RECORD_ATTR_END			= 0xffffffff
 };
 
 static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
@@ -186,9 +186,9 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 		if (!attr_len)
 			break;
 
-		if (attr->type == MFT_RECORD_ATTR_END)
+		if (le32_to_cpu(attr->type) == MFT_RECORD_ATTR_END)
 			break;
-		if (attr->type == MFT_RECORD_ATTR_VOLUME_NAME) {
+		if (le32_to_cpu(attr->type) == MFT_RECORD_ATTR_VOLUME_NAME) {
 			unsigned int val_off = le16_to_cpu(attr->value_offset);
 			unsigned int val_len = le32_to_cpu(attr->value_len);
 			unsigned char *val = ((uint8_t *) attr) + val_off;
