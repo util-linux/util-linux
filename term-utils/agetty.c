@@ -1781,7 +1781,6 @@ static void output_ip(sa_family_t family)
 	if (host && getaddrinfo(host, NULL, &hints, &info) == 0 && info) {
 
 		void *addr = NULL;
-		char buff[INET6_ADDRSTRLEN + 1];
 
 		switch (info->ai_family) {
 		case AF_INET:
@@ -1791,8 +1790,12 @@ static void output_ip(sa_family_t family)
 			addr = &((struct sockaddr_in6 *) info->ai_addr)->sin6_addr;
 			break;
 		}
-		inet_ntop(info->ai_family, (void *) addr, buff, sizeof(buff));
-		printf("%s", buff);
+		if (addr) {
+			char buff[INET6_ADDRSTRLEN + 1];
+
+			inet_ntop(info->ai_family, (void *) addr, buff, sizeof(buff));
+			printf("%s", buff);
+		}
 
 		freeaddrinfo(info);
 	}
