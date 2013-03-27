@@ -506,10 +506,8 @@ static void log_lastlog(struct login_context *cxt)
 	if (fd < 0)
 		return;
 
-	if (lseek(fd, (off_t) cxt->pwd->pw_uid * sizeof(ll), SEEK_SET) == -1) {
-		close(fd);
-		return;
-	}
+	if (lseek(fd, (off_t) cxt->pwd->pw_uid * sizeof(ll), SEEK_SET) == -1)
+		goto done;
 
 	/*
 	 * Print last log message
@@ -527,7 +525,8 @@ static void log_lastlog(struct login_context *cxt)
 				printf(_("on %.*s\n"),
 				       (int)sizeof(ll.ll_line), ll.ll_line);
 		}
-		lseek(fd, (off_t) cxt->pwd->pw_uid * sizeof(ll), SEEK_SET);
+		if (lseek(fd, (off_t) cxt->pwd->pw_uid * sizeof(ll), SEEK_SET) == -1)
+			goto done;
 	}
 
 	memset((char *)&ll, 0, sizeof(ll));
@@ -542,7 +541,7 @@ static void log_lastlog(struct login_context *cxt)
 
 	if (write_all(fd, (char *)&ll, sizeof(ll)))
 		warn(_("write lastlog failed"));
-
+done:
 	close(fd);
 }
 
