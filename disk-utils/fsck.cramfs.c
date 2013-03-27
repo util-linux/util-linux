@@ -170,7 +170,8 @@ static void test_super(int *start, size_t * length)
 	if (get_superblock_endianness(super.magic) != -1)
 		*start = 0;
 	else if (*length >= (PAD_SIZE + sizeof(super))) {
-		lseek(fd, PAD_SIZE, SEEK_SET);
+		if (lseek(fd, PAD_SIZE, SEEK_SET) == (off_t) -1)
+			err(FSCK_EX_ERROR, _("seek failed: %s"), filename);
 		if (read(fd, &super, sizeof(super)) != sizeof(super))
 			err(FSCK_EX_ERROR, _("read failed: %s"), filename);
 		if (get_superblock_endianness(super.magic) != -1)
@@ -226,7 +227,8 @@ static void test_crc(int start)
 		    mmap(NULL, super.size, PROT_READ | PROT_WRITE,
 			 MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 		if (buf != MAP_FAILED) {
-			lseek(fd, 0, SEEK_SET);
+			if (lseek(fd, 0, SEEK_SET) == (off_t) -1)
+				err(FSCK_EX_ERROR, _("seek failed: %s"), filename);
 			if (read(fd, buf, super.size) < 0)
 				err(FSCK_EX_ERROR, _("read failed: %s"), filename);
 		}
@@ -241,7 +243,8 @@ static void test_crc(int start)
 		size_t length = 0;
 
 		buf = xmalloc(4096);
-		lseek(fd, start, SEEK_SET);
+		if (lseek(fd, start, SEEK_SET) == (off_t) -1)
+			err(FSCK_EX_ERROR, _("seek failed: %s"), filename);
 		for (;;) {
 			retval = read(fd, buf, 4096);
 			if (retval < 0)
@@ -294,7 +297,8 @@ static void *romfs_read(unsigned long offset)
 		ssize_t x;
 
 		read_buffer_block = block;
-		lseek(fd, block << ROMBUFFER_BITS, SEEK_SET);
+		if (lseek(fd, block << ROMBUFFER_BITS, SEEK_SET) == (off_t) -1)
+			warn(_("seek failed"));
 
 		x = read(fd, read_buffer, ROMBUFFERSIZE * 2);
 		if (x < 0)
