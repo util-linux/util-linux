@@ -569,8 +569,10 @@ static int getcount(char *cmdstr)
 		} else
 			*(buf + strlen(buf) - 1) = '\0';
 	}
-	if (*buf == '\0')
+	if (*buf == '\0') {
+		free(buf);
 		return 1;
+	}
 	if (buf[0] == '-' && buf[1] == '\0') {
 		i = -1;
 	} else {
