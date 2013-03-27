@@ -551,6 +551,8 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		FILE *fd = path_fopen("r", 0, _PATH_PROC_SYSINFO);
 		char buf[BUFSIZ];
 
+		if (!fd)
+			return;
 		desc->hyper = HYPER_IBM;
 		desc->hypervisor = "PR/SM";
 		desc->virtype = VIRT_FULL;
