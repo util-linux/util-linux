@@ -444,6 +444,8 @@ struct libmnt_fs *mnt_table_find_mountpoint(struct libmnt_table *tb,
 
 	if (!tb || !path)
 		return NULL;
+	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
+		return NULL;
 
 	DBG(TAB, mnt_debug_h(tb, "lookup MOUNTPOINT: %s", path));
 
@@ -493,6 +495,8 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 	assert(path);
 
 	if (!tb || !path)
+		return NULL;
+	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
 	DBG(TAB, mnt_debug_h(tb, "lookup TARGET: %s", path));
@@ -563,6 +567,8 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 
 	assert(tb);
 	if (!tb || !path)
+		return NULL;
+	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
 	DBG(TAB, mnt_debug_h(tb, "lookup srcpath: %s", path));
@@ -668,6 +674,8 @@ struct libmnt_fs *mnt_table_find_tag(struct libmnt_table *tb, const char *tag,
 
 	if (!tb || !tag || !val)
 		return NULL;
+	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
+		return NULL;
 
 	DBG(TAB, mnt_debug_h(tb, "lookup by TAG: %s %s", tag, val));
 
@@ -709,6 +717,8 @@ struct libmnt_fs *mnt_table_find_source(struct libmnt_table *tb,
 	assert(tb);
 
 	if (!tb)
+		return NULL;
+	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
 	DBG(TAB, mnt_debug_h(tb, "lookup SOURCE: %s", source));
@@ -753,6 +763,8 @@ struct libmnt_fs *mnt_table_find_pair(struct libmnt_table *tb, const char *sourc
 
 	if (!tb || !target)
 		return NULL;
+	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
+		return NULL;
 
 	DBG(TAB, mnt_debug_h(tb, "lookup SOURCE: %s TARGET: %s", source, target));
 
@@ -787,6 +799,8 @@ struct libmnt_fs *mnt_table_find_devno(struct libmnt_table *tb,
 	assert(tb);
 
 	if (!tb)
+		return NULL;
+	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
 	DBG(TAB, mnt_debug_h(tb, "lookup DEVNO: %d", (int) devno));
