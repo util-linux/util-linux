@@ -877,6 +877,7 @@ int main(int argc, char **argv)
 	if ((pwd = getrootpwent(opt_e)) == NULL) {
 		warnx(_("cannot open password database."));
 		sleep(2);
+		return EXIT_FAILURE;
 	}
 
 	/*
