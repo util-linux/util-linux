@@ -83,9 +83,11 @@ static inline char *xgethostname(void)
 	size_t sz = get_hostname_max() + 1;
 
 	name = xmalloc(sizeof(char) * sz);
-	if (gethostname(name, sz) != 0)
-		return NULL;
 
+	if (gethostname(name, sz) != 0) {
+		free(name);
+		return NULL;
+	}
 	name[sz - 1] = '\0';
 	return name;
 }

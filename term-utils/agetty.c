@@ -1209,9 +1209,10 @@ static char *xgethostname(void)
 	if (!name)
 		log_err(_("failed to allocate memory: %m"));
 
-	if (gethostname(name, sz) != 0)
+	if (gethostname(name, sz) != 0) {
+		free(name);
 		return NULL;
-
+	}
 	name[sz - 1] = '\0';
 	return name;
 }
@@ -1226,9 +1227,10 @@ static char *xgetdomainname(void)
 	if (!name)
 		log_err(_("failed to allocate memory: %m"));
 
-	if (getdomainname(name, sz) != 0)
+	if (getdomainname(name, sz) != 0) {
+		free(name);
 		return NULL;
-
+	}
 	name[sz - 1] = '\0';
 	return name;
 #endif
