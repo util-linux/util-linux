@@ -314,7 +314,7 @@ do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet
 {
 	int flags;
 	blkid_probe pr;
-	struct wipe_desc *w, *wp0 = clone_offset(wp);
+	struct wipe_desc *w, *wp0;
 	int zap = all ? 1 : wp->zap;
 
 	flags = O_RDWR;
@@ -323,6 +323,8 @@ do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet
 	pr = new_probe(devname, flags);
 	if (!pr)
 		return NULL;
+
+	wp0 = clone_offset(wp);
 
 	while (blkid_do_probe(pr) == 0) {
 		wp = get_desc_for_probe(wp, pr);
