@@ -1324,9 +1324,7 @@ int main(int argc, char *argv[])
 		case 'h':
 			usage(stdout);
 		case 'p':
-			goto hop_over;
 		case 'e':
-			hop_over:
 			if (optarg) {
 				if (*optarg == '=')
 					optarg++;
