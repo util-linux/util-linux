@@ -154,7 +154,8 @@ real_blksz:
 			blkid_probe_get_buffer(pr,
 					(blkid_loff_t) (loc + b) * bs,
 					sizeof(*vd));
-
+		if (!vd)
+			return -1;
 		type = le16_to_cpu(vd->tag.id);
 		if (type == 0)
 			break;
