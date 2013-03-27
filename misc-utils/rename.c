@@ -29,7 +29,7 @@ for i in $@; do N=`echo "$i" | sed "s/$FROM/$TO/g"`; mv "$i" "$N"; done
 
 static int do_rename(char *from, char *to, char *s, int verbose, int symtarget)
 {
-	char *newname, *where, *p, *q, *target;
+	char *newname, *where, *p, *q, *target = NULL;
 	int flen, tlen, slen;
 	struct stat sb;
 
@@ -89,6 +89,7 @@ static int do_rename(char *from, char *to, char *s, int verbose, int symtarget)
 	}
 
 	free(newname);
+	free(target);
 	return 1;
 }
 
