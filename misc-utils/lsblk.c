@@ -165,6 +165,7 @@ struct lsblk {
 	unsigned int inverse:1;		/* print inverse dependencies */
 	unsigned int nodeps:1;		/* don't print slaves/holders */
 	unsigned int scsi:1;		/* print only device with HCTL (SCSI) */
+	unsigned int paths:1;		/* print devnames with "/dev" prefix */
 };
 
 struct lsblk *lsblk;	/* global handler */
@@ -642,9 +643,32 @@ static char *get_transport(struct blkdev_cxt *cxt)
 #define is_parsable(_l)	(((_l)->tt->flags & TT_FL_RAW) || \
 			 ((_l)->tt->flags & TT_FL_EXPORT))
 
+static char *mk_name(const char *name)
+{
+	char *p;
+	if (!name)
+		return NULL;
+	if (lsblk->paths)
+		xasprintf(&p, "/dev/%s", name);
+	else
+		p = xstrdup(name);
+	return p;
+}
+
+static char *mk_dm_name(const char *name)
+{
+	char *p;
+	if (!name)
+		return NULL;
+	if (lsblk->paths)
+		xasprintf(&p, "/dev/mapper/%s", name);
+	else
+		p = xstrdup(name);
+	return p;
+}
+
 static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line *ln)
 {
-	char buf[1024];
 	char *p = NULL;
 	int st_rc = 0;
 
@@ -654,22 +678,16 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 
 	switch(id) {
 	case COL_NAME:
-		if (cxt->dm_name) {
-			if (is_parsable(lsblk))
-				tt_line_set_data(ln, col, xstrdup(cxt->dm_name));
-			else {
-				snprintf(buf, sizeof(buf), "%s (%s)",
-					cxt->dm_name, cxt->name);
-				tt_line_set_data(ln, col, xstrdup(buf));
-			}
-			break;
-		}
+		tt_line_set_data(ln, col, cxt->dm_name ?
+				mk_dm_name(cxt->dm_name) :
+				mk_name(cxt->name));
+		break;
 	case COL_KNAME:
-		tt_line_set_data(ln, col, xstrdup(cxt->name));
+		tt_line_set_data(ln, col, mk_name(cxt->name));
 		break;
 	case COL_PKNAME:
 		if (cxt->parent)
-			tt_line_set_data(ln, col, xstrdup(cxt->parent->name));
+			tt_line_set_data(ln, col, mk_name(cxt->parent->name));
 		break;
 	case COL_OWNER:
 	{
@@ -697,10 +715,10 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 	}
 	case COL_MAJMIN:
 		if (is_parsable(lsblk))
-			snprintf(buf, sizeof(buf), "%u:%u", cxt->maj, cxt->min);
+			xasprintf(&p, "%u:%u", cxt->maj, cxt->min);
 		else
-			snprintf(buf, sizeof(buf), "%3u:%-3u", cxt->maj, cxt->min);
-		tt_line_set_data(ln, col, xstrdup(buf));
+			xasprintf(&p, "%3u:%-3u", cxt->maj, cxt->min);
+		tt_line_set_data(ln, col, p);
 		break;
 	case COL_FSTYPE:
 		probe_device(cxt);
@@ -854,8 +872,8 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 	{
 		int h, c, t, l;
 		if (sysfs_scsi_get_hctl(&cxt->sysfs, &h, &c, &t, &l) == 0) {
-			snprintf(buf, sizeof(buf), "%d:%d:%d:%d", h, c, t, l);
-			tt_line_set_data(ln, col, xstrdup(buf));
+			xasprintf(&p, "%d:%d:%d:%d", h, c, t, l);
+			tt_line_set_data(ln, col, p);
 		}
 		break;
 	}
@@ -1345,6 +1363,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 	fputs(_(" -l, --list           use list format output\n"), out);
 	fputs(_(" -n, --noheadings     don't print headings\n"), out);
 	fputs(_(" -o, --output <list>  output columns\n"), out);
+	fputs(_(" -p, --paths          print complate device path\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
 	fputs(_(" -s, --inverse        inverse dependencies\n"), out);
@@ -1395,6 +1414,7 @@ int main(int argc, char *argv[])
 		{ "exclude",    1, 0, 'e' },
 		{ "include",    1, 0, 'I' },
 		{ "topology",   0, 0, 't' },
+		{ "paths",      0, 0, 'p' },
 		{ "pairs",      0, 0, 'P' },
 		{ "scsi",       0, 0, 'S' },
 		{ "version",    0, 0, 'V' },
@@ -1417,7 +1437,7 @@ int main(int argc, char *argv[])
 	memset(lsblk, 0, sizeof(*lsblk));
 
 	while((c = getopt_long(argc, argv,
-			       "abdDe:fhlnmo:PiI:rstVS", longopts, NULL)) != -1) {
+			       "abdDe:fhlnmo:pPiI:rstVS", longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
 
@@ -1452,6 +1472,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'o':
 			outarg = optarg;
+			break;
+		case 'p':
+			lsblk->paths = 1;
 			break;
 		case 'P':
 			tt_flags |= TT_FL_EXPORT;
