@@ -58,8 +58,6 @@
 #define	SYSLOG_NAMES
 #include <syslog.h>
 
-static int optd = 0;
-
 static int decode(char *name, CODE *codetab)
 {
 	register CODE *c;
@@ -98,23 +96,33 @@ static int pencode(char *s)
 }
 
 static int
-myopenlog(const char *sock) {
-       int fd;
-       static struct sockaddr_un s_addr; /* AF_UNIX address of local logger */
+myopenlog(const char *sock, int optd)
+{
+	int fd;
+	static struct sockaddr_un s_addr;	/* AF_UNIX address of local logger */
 
-       if (strlen(sock) >= sizeof(s_addr.sun_path))
-	       errx(EXIT_FAILURE, _("openlog %s: pathname too long"), sock);
+	if (strlen(sock) >= sizeof(s_addr.sun_path))
+		errx(EXIT_FAILURE, _("openlog %s: pathname too long"), sock);
 
-       s_addr.sun_family = AF_UNIX;
-       (void)strcpy(s_addr.sun_path, sock);
+	s_addr.sun_family = AF_UNIX;
+	(void)strcpy(s_addr.sun_path, sock);
 
-       if ((fd = socket(AF_UNIX, optd ? SOCK_DGRAM : SOCK_STREAM, 0)) == -1)
-	       err(EXIT_FAILURE, _("socket %s"), sock);
+	if (optd == 0) {
+		if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
+			goto udp_socket;
+		if (connect(fd, (struct sockaddr *)&s_addr, sizeof(s_addr)) == -1) {
+			close(fd);
+			goto udp_socket;
+		}
+	} else {
+ udp_socket:
+		if ((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1)
+			err(EXIT_FAILURE, _("socket %s"), sock);
+		if (connect(fd, (struct sockaddr *)&s_addr, sizeof(s_addr)) == -1)
+			err(EXIT_FAILURE, _("connect %s"), sock);
+	}
 
-       if (connect(fd, (struct sockaddr *) &s_addr, sizeof(s_addr)) == -1)
-	       err(EXIT_FAILURE, _("connect %s"), sock);
-
-       return fd;
+	return fd;
 }
 
 static int
@@ -202,7 +210,7 @@ main(int argc, char **argv) {
 	char *usock = NULL;
 	char *udpserver = NULL;
 	char *udpport = NULL;
-	int LogSock = -1;
+	int LogSock = -1, optd = 0;
 
 	static const struct option longopts[] = {
 		{ "id",		no_argument,	    0, 'i' },
@@ -279,7 +287,7 @@ main(int argc, char **argv) {
 	else if (udpserver)
 		LogSock = udpopenlog(udpserver,udpport);
 	else
-		LogSock = myopenlog(usock);
+		LogSock = myopenlog(usock, optd);
 
 	/* log input line if appropriate */
 	if (argc > 0) {
