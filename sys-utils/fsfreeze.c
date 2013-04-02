@@ -27,6 +27,12 @@
 #include "closestream.h"
 #include "optutils.h"
 
+enum fs_operation {
+	NOOP,
+	FREEZE,
+	UNFREEZE
+};
+
 static int freeze_f(int fd)
 {
 	return ioctl(fd, FIFREEZE, 0);
@@ -56,7 +62,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 int main(int argc, char **argv)
 {
 	int fd = -1, c;
-	int freeze = -1, rc = EXIT_FAILURE;
+	int action = NOOP, rc = EXIT_FAILURE;
 	char *path;
 	struct stat sb;
 
@@ -88,10 +94,10 @@ int main(int argc, char **argv)
 			usage(stdout);
 			break;
 		case 'f':
-			freeze = TRUE;
+			action = FREEZE;
 			break;
 		case 'u':
-			freeze = FALSE;
+			action = UNFREEZE;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -102,8 +108,8 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (freeze == -1)
-		usage(stderr);
+	if (action == NOOP)
+		errx(EXIT_FAILURE, _("neither --freeze or --unfreeze specified"));
 	if (optind == argc)
 		errx(EXIT_FAILURE, _("no filename specified"));
 	path = argv[optind++];
@@ -127,16 +133,21 @@ int main(int argc, char **argv)
 		goto done;
 	}
 
-	if (freeze) {
+	switch (action) {
+	case FREEZE:
 		if (freeze_f(fd)) {
 			warn(_("%s: freeze failed"), path);
 			goto done;
 		}
-	} else {
+		break;
+	case UNFREEZE:
 		if (unfreeze_f(fd)) {
 			warn(_("%s: unfreeze failed"), path);
 			goto done;
 		}
+		break;
+	default:
+		abort();
 	}
 
 	rc = EXIT_SUCCESS;
