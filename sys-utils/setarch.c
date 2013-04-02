@@ -110,6 +110,8 @@ show_help(void)
    " -3, --3gb                limits the used address space to a maximum of 3 GB\n"
    "     --4gb                ignored (for backward compatibility only)\n"
    "     --uname-2.6          turns on UNAME26\n"));
+   printf(_(
+   "     --list               list settable architectures, and exit\n"));
 
   printf(USAGE_SEPARATOR);
   printf(USAGE_HELP);
@@ -136,7 +138,7 @@ show_version(void)
 }
 
 static int
-set_arch(const char *pers, unsigned long options)
+set_arch(const char *pers, unsigned long options, int list)
 {
   struct utsname un;
   int i;
@@ -197,6 +199,12 @@ set_arch(const char *pers, unsigned long options)
 #endif
     {-1, NULL, NULL}
   };
+
+  if (list) {
+    for(i = 0; transitions[i].target_arch != NULL; i++)
+      printf("%s\n", transitions[i].target_arch);
+    return 0;
+  }
 
   for(i = 0; transitions[i].perval >= 0; i++)
       if(!strcmp(pers, transitions[i].target_arch))
@@ -273,10 +281,14 @@ int main(int argc, char *argv[])
       show_help();
     else if (!strcmp(p, "-V") || !strcmp(p, "--version"))
       show_version();
+    else if (!strcmp(p, "--list")) {
+      set_arch(argv[0], 0L, 1);
+      return EXIT_SUCCESS;
+    }
   }
   #if defined(__sparc64__) || defined(__sparc__)
    if (!strcmp(p, "sparc32bash")) {
-       if (set_arch(p, 0L))
+       if (set_arch(p, 0L, 0))
            err(EXIT_FAILURE, _("Failed to set personality to %s"), p);
        execl("/bin/bash", NULL);
        err(EXIT_FAILURE, _("failed to execute %s"), "/bin/bash");
@@ -337,7 +349,7 @@ int main(int argc, char *argv[])
   argc -= optind;
   argv += optind;
 
-  if (set_arch(p, options))
+  if (set_arch(p, options, 0))
     err(EXIT_FAILURE, _("Failed to set personality to %s"), p);
 
   if (!argc) {
