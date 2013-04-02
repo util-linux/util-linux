@@ -32,6 +32,7 @@
 #include "closestream.h"
 #include "nls.h"
 #include "pathnames.h"
+#include "xalloc.h"
 
 /* try to read password from gshadow */
 static char *get_gshadow_pwd(char *groupname)
@@ -67,7 +68,7 @@ static char *get_gshadow_pwd(char *groupname)
 		}
 	}
 	fclose(f);
-	return pwd ? strdup(pwd) : NULL;
+	return pwd ? xstrdup(pwd) : NULL;
 }
 
 static int allow_setgid(struct passwd *pe, struct group *ge)
