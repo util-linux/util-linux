@@ -1664,9 +1664,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_("     --long-hostname        show full qualified hostname\n"), out);
 	fputs(_("     --erase-chars <string> additional backspace chars\n"), out);
 	fputs(_("     --kill-chars <string>  additional kill chars\n"), out);
-	fputs(USAGE_SEPARATOR, out);
-	fputs(USAGE_HELP, out);
-	fputs(USAGE_VERSION, out);
+	fputs(_("     --help                 display this help and exit\n"), out);
+	fputs(_("     --version              output version information and exit\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("agetty(8)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
