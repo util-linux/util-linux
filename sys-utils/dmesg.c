@@ -254,13 +254,13 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_VERSION, out);
 	fputs(_("\nSupported log facilities:\n"), out);
 	for (i = 0; i < ARRAY_SIZE(level_names); i++)
-		fprintf(stderr, " %7s - %s\n",
+		fprintf(out, " %7s - %s\n",
 			facility_names[i].name,
 			_(facility_names[i].help));
 
 	fputs(_("\nSupported log levels (priorities):\n"), out);
 	for (i = 0; i < ARRAY_SIZE(level_names); i++)
-		fprintf(stderr, " %7s - %s\n",
+		fprintf(out, " %7s - %s\n",
 			level_names[i].name,
 			_(level_names[i].help));
 	fputs(USAGE_SEPARATOR, out);
