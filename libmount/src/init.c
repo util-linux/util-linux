@@ -38,8 +38,21 @@ void mnt_init_debug(int mask)
 	} else
 		libmount_debug_mask = mask;
 
-	if (libmount_debug_mask)
-		fprintf(stderr, "libmount: debug mask set to 0x%04x.\n",
-				libmount_debug_mask);
 	libmount_debug_mask |= MNT_DEBUG_INIT;
+
+	if (libmount_debug_mask && libmount_debug_mask != MNT_DEBUG_INIT) {
+		const char *ver = NULL;
+		const char **features = NULL, **p;
+
+		DBG(INIT, mnt_debug("library debug mask: 0x%04x",
+				libmount_debug_mask));
+
+		mnt_get_library_version(&ver);
+		mnt_get_library_features(&features);
+
+		DBG(INIT, mnt_debug("library version: %s", ver));
+		p = features;
+		while (p && *p)
+			DBG(INIT, mnt_debug("    feature: %s", *p++));
+	}
 }
