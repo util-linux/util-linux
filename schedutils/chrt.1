@@ -91,8 +91,10 @@ Operate on an existing PID and do not launch a new task.
 .TP
 .B -r, --rr
 Set scheduling policy to
-.BR SCHED_RR
-(the default).
+.BR SCHED_RR .
+When policy is not defined the
+.B SCHED_RR
+is used as default.
 .TP
 .B -R, --reset-on-fork
 Add
@@ -123,7 +125,7 @@ You can also retrieve the real-time attributes of an existing task:
 .I pid
 .TP
 Or set them:
-.B chrt \-p
+.B chrt \-r \-p
 .I prio pid
 .SH PERMISSIONS
 A user must possess
@@ -138,6 +140,9 @@ and
 .BR SCHED_RR
 are part of POSIX 1003.1b Process Scheduling. The other scheduling attributes
 may be ignored on some systems.
+.P
+Linux default scheduling policy is
+.BR SCHED_OTHER .
 .SH AUTHOR
 Written by Robert M. Love.
 .SH COPYRIGHT

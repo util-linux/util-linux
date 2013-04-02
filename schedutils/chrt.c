@@ -62,9 +62,9 @@ static void __attribute__((__noreturn__)) show_usage(int rc)
 	fprintf(out, _(
 	"\nchrt - manipulate real-time attributes of a process\n"
 	"\nSet policy:\n"
-	"  chrt [options] <policy> <priority> {<pid> | <command> [<arg> ...]}\n"
+	"  chrt [options] [-policy] <priority> [-p <pid> | <command> <arg> ...]\n"
 	"\nGet policy:\n"
-	"  chrt [options] {<pid> | <command> [<arg> ...]}\n"));
+	"  chrt [options] -p <pid>\n"));
 
 	fprintf(out, _(
 	"\nScheduling policies:\n"
