@@ -706,7 +706,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --add            add specified partitions or all of them\n"), out);
 	fputs(_(" -d, --delete         delete specified partitions or all of them\n"), out);
-	fputs(_(" -l, --list           list partitions (DEPRECATED)\n"), out);
 	fputs(_(" -s, --show           list partitions\n\n"), out);
 	fputs(_(" -u, --update         update specified partitions or all of them\n"), out);
 	fputs(_(" -b, --bytes          print SIZE in bytes rather than in human readable format\n"), out);
