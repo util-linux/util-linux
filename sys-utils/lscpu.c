@@ -1357,7 +1357,7 @@ int main(int argc, char *argv[])
 	if (cpu_modifier_specified && mod->mode == OUTPUT_SUMMARY) {
 		fprintf(stderr,
 			_("%s: options --all, --online and --offline may only "
-			  "be used with options --extended or --parsable.\n"),
+			  "be used with options --extended or --parse.\n"),
 			program_invocation_short_name);
 		return EXIT_FAILURE;
 	}
