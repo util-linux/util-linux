@@ -23,6 +23,7 @@
 #include "closestream.h"
 #include "optutils.h"
 #include "xalloc.h"
+#include "canonicalize.h"
 
 enum {
 	A_CREATE = 1,		/* setup a new device */
@@ -167,9 +168,15 @@ static int show_all_loops(struct loopdev_cxt *lc, const char *file,
 		st = NULL;
 
 	while (loopcxt_next(lc) == 0) {
-
-		if (file && !loopcxt_is_used(lc, st, file, offset, flags))
-			continue;
+		if (file && !loopcxt_is_used(lc, st, file, offset, flags)) {
+			char *canonized;
+			int ret;
+			canonized = canonicalize_path(file);
+			ret = loopcxt_is_used(lc, st, canonized, offset, flags);
+			free(canonized);
+			if (!ret)
+				continue;
+		}
 		printf_loopdev(lc);
 	}
 	loopcxt_deinit_iterator(lc);
