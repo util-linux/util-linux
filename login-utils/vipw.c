@@ -302,6 +302,17 @@ static void edit_file(int is_shadow)
 	ulckpwdf();
 }
 
+static void __attribute__((__noreturn__)) usage(FILE *out)
+{
+	fputs(USAGE_HEADER, out);
+	fprintf(out, " %s\n", program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("vipw(8)"));
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
 int main(int argc, char *argv[])
 {
 	setlocale(LC_ALL, "");
@@ -317,10 +328,14 @@ int main(int argc, char *argv[])
 		xstrncpy(orig_file, PASSWD_FILE, sizeof(orig_file));
 	}
 
-	if ((argc > 1) &&
-	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-		printf(UTIL_LINUX_VERSION);
-		exit(EXIT_SUCCESS);
+	if (1 < argc) {
+		if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
+			printf(UTIL_LINUX_VERSION);
+			exit(EXIT_SUCCESS);
+		}
+		if (!strcmp(argv[1], "-h") || !strcmp(argv[1], "--help"))
+			usage(stdout);
+		usage(stderr);
 	}
 
 	edit_file(0);
