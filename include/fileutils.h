@@ -11,7 +11,7 @@ static inline FILE *xfmkstemp(char **tmpname, char *dir)
 	if (fd == -1) {
 		return NULL;
 	}
-	if (!(ret = fdopen(fd, "w+"))) {
+	if (!(ret = fdopen(fd, "w+" UL_CLOEXECSTR))) {
 		close(fd);
 		return NULL;
 	}
