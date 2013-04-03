@@ -128,7 +128,7 @@ struct blkid_config *blkid_read_config(const char *filename)
 	DBG(DEBUG_CONFIG, fprintf(stderr,
 		"reading config file: %s.\n", filename));
 
-	f = fopen(filename, "r");
+	f = fopen(filename, "r" UL_CLOEXECSTR);
 	if (!f) {
 		DBG(DEBUG_CONFIG, fprintf(stderr,
 			"%s: does not exist, using built-in default\n", filename));

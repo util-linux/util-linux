@@ -118,7 +118,7 @@ int blkid_send_uevent(const char *devname, const char *action)
 	snprintf(uevent, sizeof(uevent), "/sys/dev/block/%d:%d/uevent",
 			major(st.st_rdev), minor(st.st_rdev));
 
-	f = fopen(uevent, "w");
+	f = fopen(uevent, "w" UL_CLOEXECSTR);
 	if (f) {
 		rc = 0;
 		if (fputs(action, f) >= 0)

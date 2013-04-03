@@ -140,7 +140,7 @@ static int fs_proc_check(const char *fs_name)
 	FILE	*f;
 	char	buf[80], *cp, *t;
 
-	f = fopen("/proc/filesystems", "r");
+	f = fopen("/proc/filesystems", "r" UL_CLOEXECSTR);
 	if (!f)
 		return 0;
 	while (!feof(f)) {
@@ -184,7 +184,7 @@ static int check_for_modules(const char *fs_name)
 		return 0;
 	snprintf(buf, sizeof(buf), "/lib/modules/%s/modules.dep", uts.release);
 
-	f = fopen(buf, "r");
+	f = fopen(buf, "r" UL_CLOEXECSTR);
 	if (!f)
 		return 0;
 

@@ -412,7 +412,7 @@ void blkid_read_cache(blkid_cache cache)
 	DBG(DEBUG_CACHE, printf("reading cache file %s\n",
 				cache->bic_filename));
 
-	file = fdopen(fd, "r");
+	file = fdopen(fd, "r" UL_CLOEXECSTR);
 	if (!file)
 		goto errout;
 

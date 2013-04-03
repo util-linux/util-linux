@@ -107,7 +107,7 @@ static int probe_lvm_tp(blkid_probe pr,
 		break;
 	}
 
-	stream = fdopen(lvpipe[0], "r");
+	stream = fdopen(lvpipe[0], "r" UL_CLOEXECSTR);
 	if (!stream)
 		goto nothing;
 

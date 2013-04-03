@@ -113,11 +113,11 @@ int blkid_flush_cache(blkid_cache cache)
 		tmp = malloc(strlen(filename) + 8);
 		if (tmp) {
 			sprintf(tmp, "%s-XXXXXX", filename);
-			fd = mkstemp(tmp);
+			fd = mkostemp(tmp, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
 			if (fd >= 0) {
 				if (fchmod(fd, 0644) != 0)
 					DBG(DEBUG_SAVE,	printf("%s: fchmod failed\n", filename));
-				else if ((file = fdopen(fd, "w")))
+				else if ((file = fdopen(fd, "w" UL_CLOEXECSTR)))
 					opened = tmp;
 				if (!file)
 					close(fd);
@@ -126,7 +126,7 @@ int blkid_flush_cache(blkid_cache cache)
 	}
 
 	if (!file) {
-		file = fopen(filename, "w");
+		file = fopen(filename, "w" UL_CLOEXECSTR);
 		opened = filename;
 	}
 

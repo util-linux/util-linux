@@ -104,7 +104,7 @@ static int probe_dm_tp(blkid_probe pr,
 		break;
 	}
 
-	stream = fdopen(dmpipe[0], "r");
+	stream = fdopen(dmpipe[0], "r" UL_CLOEXECSTR);
 	if (!stream)
 		goto nothing;
 

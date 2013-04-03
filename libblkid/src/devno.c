@@ -300,7 +300,7 @@ int blkid_driver_has_major(const char *drvname, int major)
 	char buf[128];
 	int match = 0;
 
-	f = fopen(_PATH_PROC_DEVICES, "r");
+	f = fopen(_PATH_PROC_DEVICES, "r" UL_CLOEXECSTR);
 	if (!f)
 		return 0;
 
