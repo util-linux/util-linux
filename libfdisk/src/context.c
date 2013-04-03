@@ -158,8 +158,8 @@ int fdisk_context_assign_device(struct fdisk_context *cxt,
 
 	reset_context(cxt);
 
-	if (readonly == 1 || (fd = open(fname, O_RDWR)) < 0) {
-		if ((fd = open(fname, O_RDONLY)) < 0)
+	if (readonly == 1 || (fd = open(fname, O_RDWR|O_CLOEXEC)) < 0) {
+		if ((fd = open(fname, O_RDONLY|O_CLOEXEC)) < 0)
 			return -errno;
 		readonly = 1;
 	}
