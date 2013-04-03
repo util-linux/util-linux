@@ -514,7 +514,7 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 	if (fd < 0)
 		return fd;	/* error */
 
-	f = fdopen(fd, "w");
+	f = fdopen(fd, "w" UL_CLOEXECSTR);
 	if (f) {
 		struct stat st;
 		struct libmnt_iter itr;

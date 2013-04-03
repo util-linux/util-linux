@@ -579,7 +579,7 @@ int mnt_table_parse_file(struct libmnt_table *tb, const char *filename)
 	if (!filename || !tb)
 		return -EINVAL;
 
-	f = fopen(filename, "r");
+	f = fopen(filename, "r" UL_CLOEXECSTR);
 	if (f) {
 		rc = mnt_table_parse_stream(tb, f, filename);
 		fclose(f);
@@ -639,7 +639,7 @@ static int __mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 		    !S_ISREG(st.st_mode))
 			continue;
 
-		f = fopen_at(dd, ".", d->d_name, O_RDONLY, "r");
+		f = fopen_at(dd, ".", d->d_name, O_RDONLY|O_CLOEXEC, "r" UL_CLOEXECSTR);
 		if (f) {
 			mnt_table_parse_stream(tb, f, d->d_name);
 			fclose(f);
@@ -679,8 +679,8 @@ static int __mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 		    !S_ISREG(st.st_mode))
 			continue;
 
-		f = fopen_at(dirfd(dir), _PATH_MNTTAB_DIR,
-					d->d_name, O_RDONLY, "r");
+		f = fopen_at(dirfd(dir), _PATH_MNTTAB_DIR, d->d_name,
+				O_RDONLY|O_CLOEXEC, "r" UL_CLOEXECSTR);
 		if (f) {
 			mnt_table_parse_stream(tb, f, d->d_name);
 			fclose(f);

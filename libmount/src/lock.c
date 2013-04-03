@@ -558,7 +558,7 @@ void increment_data(const char *filename, int verbose, int loopno)
 	FILE *f;
 	char buf[256];
 
-	if (!(f = fopen(filename, "r")))
+	if (!(f = fopen(filename, "r" UL_CLOEXECSTR)))
 		err(EXIT_FAILURE, "%d: failed to open: %s", getpid(), filename);
 
 	if (!fgets(buf, sizeof(buf), f))
@@ -567,7 +567,7 @@ void increment_data(const char *filename, int verbose, int loopno)
 	fclose(f);
 	num = atol(buf) + 1;
 
-	if (!(f = fopen(filename, "w")))
+	if (!(f = fopen(filename, "w" UL_CLOEXECSTR)))
 		err(EXIT_FAILURE, "%d: failed to open: %s", getpid(), filename);
 
 	fprintf(f, "%ld", num);

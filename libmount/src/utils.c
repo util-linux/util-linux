@@ -462,7 +462,7 @@ static int get_filesystems(const char *filename, char ***filesystems, const char
 	FILE *f;
 	char line[128];
 
-	f = fopen(filename, "r");
+	f = fopen(filename, "r" UL_CLOEXECSTR);
 	if (!f)
 		return 1;
 
@@ -837,7 +837,7 @@ int mnt_open_uniq_filename(const char *filename, char **name)
 	 */
 	oldmode = umask(S_IRGRP|S_IWGRP|S_IXGRP|
 			S_IROTH|S_IWOTH|S_IXOTH);
-	fd = mkstemp(n);
+	fd = mkostemp(n, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
 	umask(oldmode);
 
 	if (fd >= 0 && name)
@@ -949,7 +949,7 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 	if (!path)
 		path = _PATH_PROC_CMDLINE;
 #endif
-	f = fopen(path, "r");
+	f = fopen(path, "r" UL_CLOEXECSTR);
 	if (!f)
 		return NULL;
 
