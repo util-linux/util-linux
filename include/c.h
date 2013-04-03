@@ -215,9 +215,17 @@ static inline int dirfd(DIR *d)
  * Fallback defines for old versions of glibc
  */
 #include <fcntl.h>
+
+#ifdef O_CLOEXEC
+#define UL_CLOEXECSTR	"e"
+#else
+#define UL_CLOEXECSTR	""
+#endif
+
 #ifndef O_CLOEXEC
 #define O_CLOEXEC 0
 #endif
+
 
 #ifndef AI_ADDRCONFIG
 #define AI_ADDRCONFIG 0x0020
