@@ -159,7 +159,9 @@ canonicalize_dm_name(const char *ptname)
 	if (fgets(name, sizeof(name), f) && (sz = strlen(name)) > 1) {
 		name[sz - 1] = '\0';
 		snprintf(path, sizeof(path), "/dev/mapper/%s", name);
-		res = strdup(path);
+
+		if (access(path, F_OK) == 0)
+			res = strdup(path);
 	}
 	fclose(f);
 	return res;
