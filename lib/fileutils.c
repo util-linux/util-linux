@@ -37,7 +37,7 @@ int xmkstemp(char **tmpname, char *dir)
 		xasprintf(&localtmp, "%s/%s.XXXXXX", _PATH_TMP,
 			  program_invocation_short_name);
 	old_mode = umask(077);
-	fd = mkstemp(localtmp);
+	fd = mkostemp(localtmp, O_RDWR|O_CREAT|O_EXCL|O_CLOEXEC);
 	umask(old_mode);
 	if (fd == -1) {
 		free(localtmp);

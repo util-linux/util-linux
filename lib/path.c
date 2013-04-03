@@ -93,7 +93,7 @@ path_read_str(char *result, size_t len, const char *path, ...)
 	va_list ap;
 
 	va_start(ap, path);
-	fd = path_vfopen("r", 1, path, ap);
+	fd = path_vfopen("r" UL_CLOEXECSTR, 1, path, ap);
 	va_end(ap);
 
 	if (!fgets(result, len, fd))
@@ -113,7 +113,7 @@ path_read_s32(const char *path, ...)
 	int result;
 
 	va_start(ap, path);
-	fd = path_vfopen("r", 1, path, ap);
+	fd = path_vfopen("r" UL_CLOEXECSTR, 1, path, ap);
 	va_end(ap);
 
 	if (fscanf(fd, "%d", &result) != 1) {
@@ -154,7 +154,7 @@ path_write_str(const char *str, const char *path, ...)
 	va_list ap;
 
 	va_start(ap, path);
-	fd = path_vopen(O_WRONLY, path, ap);
+	fd = path_vopen(O_WRONLY|O_CLOEXEC, path, ap);
 	va_end(ap);
 	result = write_all(fd, str, strlen(str));
 	close(fd);
@@ -184,7 +184,7 @@ path_cpuparse(int maxcpus, int islist, const char *path, va_list ap)
 	size_t setsize, len = maxcpus * 7;
 	char buf[len];
 
-	fd = path_vfopen("r", 1, path, ap);
+	fd = path_vfopen("r" UL_CLOEXECSTR, 1, path, ap);
 
 	if (!fgets(buf, len, fd))
 		err(EXIT_FAILURE, _("failed to read: %s"), pathbuf);

@@ -353,7 +353,7 @@ main(int argc, char **argv)
 		exit(EXIT_FAILURE);
 	}
 
-	if ((fd = open(argv[1], O_RDONLY)) < 0)
+	if ((fd = open(argv[1], O_RDONLY|O_CLOEXEC)) < 0)
 		err(EXIT_FAILURE, "open %s failed", argv[1]);
 
 	if (blkdev_get_size(fd, &bytes) < 0)

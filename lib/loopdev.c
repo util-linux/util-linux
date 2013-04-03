@@ -289,7 +289,7 @@ int loopcxt_get_fd(struct loopdev_cxt *lc)
 
 	if (lc->fd < 0) {
 		lc->mode = lc->flags & LOOPDEV_FL_RDWR ? O_RDWR : O_RDONLY;
-		lc->fd = open(lc->device, lc->mode);
+		lc->fd = open(lc->device, lc->mode | O_CLOEXEC);
 		DBG(lc, loopdev_debug("open %s [%s]: %s", lc->device,
 				lc->flags & LOOPDEV_FL_RDWR ? "rw" : "ro",
 				lc->fd < 0 ? "failed" : "ok"));
@@ -492,7 +492,7 @@ static int loopcxt_next_from_proc(struct loopdev_cxt *lc)
 	DBG(lc, loopdev_debug("iter: scan /proc/partitions"));
 
 	if (!iter->proc)
-		iter->proc = fopen(_PATH_PROC_PARTITIONS, "r");
+		iter->proc = fopen(_PATH_PROC_PARTITIONS, "r" UL_CLOEXECSTR);
 	if (!iter->proc)
 		return 1;
 
@@ -867,7 +867,7 @@ int loopmod_supports_partscan(void)
 	if (get_linux_version() >= KERNEL_VERSION(3,2,0))
 		return 1;
 
-	f = fopen("/sys/module/loop/parameters/max_part", "r");
+	f = fopen("/sys/module/loop/parameters/max_part", "r" UL_CLOEXECSTR);
 	if (!f)
 		return 0;
 	rc = fscanf(f, "%d", &ret);
@@ -1104,7 +1104,7 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 	if (lc->info.lo_flags & LO_FLAGS_READ_ONLY)
 		mode = O_RDONLY;
 
-	if ((file_fd = open(lc->filename, mode)) < 0) {
+	if ((file_fd = open(lc->filename, mode | O_CLOEXEC)) < 0) {
 		if (mode != O_RDONLY && (errno == EROFS || errno == EACCES))
 			file_fd = open(lc->filename, mode = O_RDONLY);
 
@@ -1205,7 +1205,7 @@ int loopcxt_find_unused(struct loopdev_cxt *lc)
 	DBG(lc, loopdev_debug("find_unused requested"));
 
 	if (lc->flags & LOOPDEV_FL_CONTROL) {
-		int ctl = open(_PATH_DEV_LOOPCTL, O_RDWR);
+		int ctl = open(_PATH_DEV_LOOPCTL, O_RDWR|O_CLOEXEC);
 
 		if (ctl >= 0)
 			rc = ioctl(ctl, LOOP_CTL_GET_FREE);

@@ -156,7 +156,7 @@ static int check_mntent_file(const char *mtab_file, const char *file,
 is_root:
 #define TEST_FILE "/.ismount-test-file"
 		*mount_flags |= MF_ISROOT;
-		fd = open(TEST_FILE, O_RDWR|O_CREAT, 0600);
+		fd = open(TEST_FILE, O_RDWR|O_CREAT|O_CLOEXEC, 0600);
 		if (fd < 0) {
 			if (errno == EROFS)
 				*mount_flags |= MF_READONLY;
@@ -261,7 +261,7 @@ static int is_swap_device(const char *file)
 		file_dev = st_buf.st_rdev;
 #endif	/* __GNU__ */
 
-	if (!(f = fopen("/proc/swaps", "r")))
+	if (!(f = fopen("/proc/swaps", "r" UL_CLOEXECSTR)))
 		return 0;
 	/* Skip the first line */
 	if (!fgets(buf, sizeof(buf), f))
@@ -339,7 +339,7 @@ int check_mount_point(const char *device, int *mount_flags,
 	if ((stat(device, &st_buf) != 0) ||
 	    !S_ISBLK(st_buf.st_mode))
 		return 0;
-	fd = open(device, O_RDONLY | O_EXCL);
+	fd = open(device, O_RDONLY|O_EXCL|O_CLOEXEC);
 	if (fd < 0) {
 		if (errno == EBUSY)
 			*mount_flags |= MF_BUSY;
