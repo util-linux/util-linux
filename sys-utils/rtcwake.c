@@ -72,6 +72,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	      _(" %s [options]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -a, --auto               reads the clock mode from adjust file (default)\n"), out);
 	fprintf(out,
 	      _(" -A, --adjfile <file>     specifies the path to the adjust file\n"
 		"                            the default is %s\n"), _PATH_ADJTIME);
