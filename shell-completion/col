@@ -1,0 +1,24 @@
+_col_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-l'|'--lines')
+			COMPREPLY=( $(compgen -W "number" -- $cur) )
+			return 0
+			;;
+	esac
+	OPTS="-b --no-backspaces
+		-f --fine
+		-p --pass
+		-h --tabs
+		-x --spaces
+		-l --lines
+		-V --version
+		-H --help"
+	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+	return 0
+}
+complete -F _col_module col

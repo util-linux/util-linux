@@ -1,0 +1,11 @@
+_fdformat_module()
+{
+	local cur OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	DEVS=$(for I in echo /dev/fd*; do if [ -e $I ]; then echo $I; fi; done)
+	OPTS="-n --no-verify -h --help -V --version $DEVS"
+	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+	return 0
+}
+complete -F _fdformat_module fdformat

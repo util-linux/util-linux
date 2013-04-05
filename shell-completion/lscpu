@@ -1,0 +1,45 @@
+_lscpu_module()
+{
+	local cur OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'--extended'|'=')
+			cur=${cur#=}
+			# FIXME: how to append to a string with compgen?
+			OPTS="CPU,
+				CORE,
+				SOCKET,
+				NODE,
+				BOOK,
+				CACHE,
+				POLARIZATION,
+				ADDRESS,
+				CONFIGURED,
+				ONLINE,"
+			compopt -o nospace
+			COMPREPLY=( $(compgen -W "$OPTS" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-a --all
+				-b --online
+				-c --offline
+				-e= --extended=
+				-p= --parse=
+				-s --sysroot
+				-x --hex
+				-h --help
+				-V --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	compopt -o filenames
+	COMPREPLY=( $(compgen -f -- $cur) )
+	return 0
+}
+complete -F _lscpu_module lscpu

@@ -1,0 +1,44 @@
+_blockdev_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	while read dev; do DEVS+="$dev " ; done < <(lsblk -pnro name)
+	OPTS="-h -V -q
+		--report
+		--getsz
+		--setro
+		--setrw
+		--getro
+		--getdiscardzeroes
+		--getss
+		--getpbsz
+		--getiomin
+		--getioopt
+		--getalignoff
+		--getmaxsect
+		--getbsz
+		--setbsz
+		--getsize64
+		--setra
+		--getra
+		--setfra
+		--getfra
+		--flushbufs
+		--rereadpt
+		$DEVS"
+	case $prev in
+		'--setbsz')
+			COMPREPLY=( $(compgen -W "bytes" -- $cur) )
+			return 0
+			;;
+		'--setbsz'|'--setfra')
+			COMPREPLY=( $(compgen -W "sectors" -- $cur) )
+			return 0
+			;;
+	esac
+	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+	return 0
+}
+complete -F _blockdev_module blockdev

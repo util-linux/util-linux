@@ -10,9 +10,10 @@ hwlock
 
 bash completion
 ---------------
- - file per command in shel-completion/bash/
- - use $(pkg-config --variable=completionsdir bash-completion)/util-linux/
-   as a destination install directory
+- Optional argument handling requires user to press backspace to get
+  argument completetion.
+- Comma separated value, e.g., --output 'value1,value2', are not
+  completed for users.
 
 wipefs
 ------

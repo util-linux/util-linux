@@ -1,0 +1,32 @@
+_chrt_module()
+{
+	local cur OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	# FIXME: -p is ambiguous, it takes either pid or priority as an
+	# argument depending on whether user wanted to get or set the
+	# values.  Perhaps the command interface should be reconsidered.
+	case $cur in
+		-*)
+			OPTS="-b --batch
+				-f --fifo
+				-i --idle
+				-o --other
+				-r --rr
+				-R --reset-on-fork
+				-a --all-tasks
+				-h --help
+				-m --max
+				-p --pid
+				-v --verbose
+				-V --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	local PIDS
+	PIDS=$(for I in /proc/[0-9]*; do echo ${I##"/proc/"}; done)
+	COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
+	return 0
+}
+complete -F _chrt_module chrt

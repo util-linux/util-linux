@@ -1,0 +1,44 @@
+_chcpu_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-e'|'--enable')
+			local CPULIST
+			# FIXME: will propose only binding to a cpu.
+			# Maybe this should add comma, and continue?
+			CPULIST=$(sed 's/^/{/; s/-/../g; s/,/} {/g; s/$/}/' /sys/devices/system/cpu/offline)
+			COMPREPLY=( $(compgen -W "$(eval echo $CPULIST)" -- $cur) )
+			return 0
+			;;
+		'-d'|'--disable')
+			local CPULIST
+			# FIXME: will propose only binding to a cpu.
+			# Maybe this should add comma, and continue?
+			CPULIST=$(sed 's/^/{/; s/-/../g; s/,/} {/g; s/$/}/' /sys/devices/system/cpu/online)
+			COMPREPLY=( $(compgen -W "$(eval echo $CPULIST)" -- $cur) )
+			return 0
+			;;
+		'-c'|'--configure'|'-g'|'--deconfigure')
+			COMPREPLY=( $(compgen -W "cpu-list" -- $cur) )
+			return 0
+			;;
+		'-p'|'--dispatch')
+			COMPREPLY=( $(compgen -W "horizontal vertical" -- $cur) )
+			return 0
+			;;
+	esac
+	OPTS="-h --help
+		-e --enable
+		-d --disable
+		-c --configure
+		-g --deconfigure
+		-p --dispatch
+		-r --rescan
+		-V --version"
+	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+	return 0
+}
+complete -F _chcpu_module chcpu

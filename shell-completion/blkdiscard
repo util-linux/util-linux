@@ -1,0 +1,25 @@
+_blkdiscard_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-o'|'--offset'|'-l'|'--length')
+			COMPREPLY=( $(compgen -W "num" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-o --offset -l --length -s --secure -v --verbose -h --help -V --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	local DEVS
+	DEVS=''; while read dev; do DEVS+="$dev " ; done < <(lsblk -pnro name)
+	COMPREPLY=( $(compgen -W "$DEVS" -- $cur) )
+	return 0
+}
+complete -F _blkdiscard_module blkdiscard

@@ -1,0 +1,33 @@
+_uuidd_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-p'|'--pid'|'-s'|'--socket')
+			compopt -o filenames
+			COMPREPLY=( $(compgen -f -- $cur) )
+			return 0
+			;;
+		'-T'|'--timeout')
+			compopt -o filenames
+			COMPREPLY=( $(compgen -W "timeout" -- $cur) )
+			return 0
+			;;
+		'-n'|'--uuids')
+			compopt -o filenames
+			COMPREPLY=( $(compgen -W "number" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-p --pid -s --socket -T --timeout -k --kill -r --random -t --time -n --uuids -P --no-pid -F --no-fork -S --socket-activation -d --debug -q --quiet -V --version -h --help"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	return 0
+}
+complete -F _uuidd_module uuidd

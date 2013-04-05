@@ -1,0 +1,38 @@
+_partx_module()
+{
+	local cur prev OPTS OUTPUT
+	COMPREPLY=()
+	OUTPUT="NR START END SECTORS SIZE NAME UUID TYPE FLAGS SCHEME"
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-n'|'--nr')
+			return 0
+			;;
+		'-o'|'--output')
+			# FIXME: how to append to a string with compgen?
+			compopt -o nospace
+			COMPREPLY=( $(compgen -W "$OUTPUT" -S ',' -- $cur) )
+			return 0
+			;;
+		'-t'|'--type')
+			# FIXME: some command should list type libblkid knows.
+			COMPREPLY=( $(compgen -W "aix bsd dos gpt mac minix sgi solaris_x86 sun ultrix unixware" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-a --add -d --delete -s --show -u --update -b --bytes -g --noheadings -n --nr -o --output -P --pairs -r --raw -t --type -v --verbose -h --help -V --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	local DEV TYPE DEVICES=''
+	while read DEV TYPE; do
+		[ $TYPE = 'disk' ] && DEVICES+="$DEV "
+	done < <(lsblk -pnro name,type)
+	COMPREPLY=( $(compgen -W "$DEVICES" -- $cur) )
+	return 0
+}
+complete -F _partx_module partx

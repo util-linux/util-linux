@@ -27,6 +27,8 @@ ul_libfdisk_incdir  = $(top_srcdir)/libfdisk/src
 
 pkgconfigdir = $(usrlib_execdir)/pkgconfig
 
+bashcompletiondir = @bashcompletiondir@
+
 dist_noinst_HEADERS =
 noinst_PROGRAMS =
 noinst_LTLIBRARIES =
@@ -86,6 +88,8 @@ include sys-utils/Makemodule.am
 include misc-utils/Makemodule.am
 include disk-utils/Makemodule.am
 include fdisks/Makemodule.am
+
+include shell-completion/Makemodule.am
 
 include tests/Makemodule.am
 
@@ -158,6 +162,7 @@ checkdecl:
 ENABLE_ALL = --enable-static-programs --enable-most-builds
 DISTCHECK_CONFIGURE_FLAGS = --disable-use-tty-group \
 			    --disable-silent-rules $(ENABLE_ALL) \
+			    --with-bashcompletiondir=$$dc_install_base/$(bashcompletiondir) \
 			    --with-systemdsystemunitdir=$$dc_install_base/$(systemdsystemunitdir)
 
 

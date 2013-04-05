@@ -1,0 +1,37 @@
+_cytune_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-s'|'--set-threshold'|'-S'|'--set-default-threshold'|'-t'|'--set-flush'|'-T'|'--set-default-flush')
+			COMPREPLY=( $(compgen -W "num" -- $cur) )
+			return 0
+			;;
+		'-i'|'--interval')
+			COMPREPLY=( $(compgen -W "seconds" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-s --set-threshold
+				-g --get-threshold
+				-S --set-default-threshold
+				-t --set-flush
+				-G --get-glush
+				-T --set-default-flush
+				-q --stats
+				-i --interval
+				-h --help
+				-V --version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	compopt -o filenames
+	COMPREPLY=( $(compgen -f -- ${cur:-"/dev/tty"}) )
+	return 0
+}
+complete -F _cytune_module cytune

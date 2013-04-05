@@ -1,0 +1,113 @@
+_setterm_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-term')
+			local TERM_LIST I
+			TERM_LIST=''
+			for I in /usr/share/terminfo/?/*; do
+				TERM_LIST+="${I##*/} "
+			done
+			COMPREPLY=( $(compgen -W "$TERM_LIST" -- $cur) )
+			return 0
+			;;
+		'-foreground'|'-background'|'-ulcolor'|'-hbcolor')
+			COMPREPLY=( $(compgen -W "default black blue cyan green magenta red white yellow" -- $cur) )
+			return 0
+			;;
+		'-cursor'|'-repeat'|'-appcursorkeys'|'-linewrap'|'-inversescreen'|'-bold'|'-half-bright'|'-blink'|'-reverse'|'-underline'|'-msg')
+			COMPREPLY=( $(compgen -W "off on" -- $cur) )
+			return 0
+			;;
+		'-clear')
+			COMPREPLY=( $(compgen -W "all rest" -- $cur) )
+			return 0
+			;;
+		'-tabs'|'-clrtabs')
+			COMPREPLY=( $(compgen -W "tab1 tab2 tab3 tab160" -- $cur) )
+			return 0
+			;;
+		'-regtabs')
+			COMPREPLY=( $(compgen -W "$(echo {1..160})" -- $cur) )
+			return 0
+			;;
+		'-blank')
+			COMPREPLY=( $(compgen -W "$(echo {0..60}) force poke" -- $cur) )
+			return 0
+			;;
+		'-dump'|'-append')
+			local NUM_CONS
+			NUM_CONS=(/sys/class/tty/*)
+			COMPREPLY=( $(compgen -W "$(echo {1..${#NUM_CONS[*]}})" -- $cur) )
+			return 0
+			;;
+		'-file')
+			compopt -o filenames
+			COMPREPLY=( $(compgen -f -- $cur) )
+			return 0
+			;;
+		'-msglevel')
+			COMPREPLY=( $(compgen -W "$(echo {1..8})" -- $cur) )
+			return 0
+			;;
+		'-powersave')
+			COMPREPLY=( $(compgen -W "on vsync hsync powerdown off" -- $cur) )
+			return 0
+			;;
+		'-powerdown')
+			COMPREPLY=( $(compgen -W "$(echo {0..60})" -- $cur) )
+			return 0
+			;;
+		'-blength')
+			COMPREPLY=( $(compgen -W "0-2000" -- $cur) )
+			return 0
+			;;
+		'-bfreq')
+			COMPREPLY=( $(compgen -W "freqnumber" -- $cur) )
+			return 0
+			;;
+	esac
+	OPTS="	-term
+		-reset
+		-initialize
+		-cursor
+		-repeat
+		-appcursorkeys
+		-linewrap
+		-default
+		-foreground
+		-background
+		-ulcolor
+		-hbcolor
+		-ulcolor
+		-hbcolor
+		-inversescreen
+		-bold
+		-half-bright
+		-blink
+		-reverse
+		-underline
+		-store
+		-clear
+		-tabs
+		-clrtabs
+		-regtabs
+		-blank
+		-dump
+		-append
+		-file
+		-msg
+		-msglevel
+		-powersave
+		-powerdown
+		-blength
+		-bfreq
+		-version
+		-help"
+	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+	return 0
+}
+complete -F _setterm_module setterm

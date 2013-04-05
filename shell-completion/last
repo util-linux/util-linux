@@ -1,0 +1,38 @@
+_last_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-f')
+			compopt -o filenames
+			COMPREPLY=( $(compgen -f -- $cur) )
+			return 0
+			;;
+		'-h')
+			COMPREPLY=( $(compgen -A hostname -- $cur) )
+			return 0
+			;;
+		'-i')
+			COMPREPLY=( $(compgen -W "ipaddr" -- $cur) )
+			return 0
+			;;
+		'-t')
+			local TTYS
+			TTYS=$(cd /sys/devices/virtual/tty && echo *)
+			COMPREPLY=( $(compgen -W "$TTYS" -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-f -h -i -l -t -y"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	COMPREPLY=( $(compgen -u -- $cur) )
+	return 0
+}
+complete -F _last_module last

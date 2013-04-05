@@ -1,0 +1,15 @@
+_cal_module()
+{
+	local cur OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	case $cur in
+		-*)
+			OPTS="-1 --one -3 --three -s --sunday -m --monday -j --julian -y --year -V --version -h --help"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	return 0
+}
+complete -F _cal_module cal

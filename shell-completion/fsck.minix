@@ -1,0 +1,11 @@
+_fsck.minix_module()
+{
+	local cur OPTS DEVS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	while read dev; do DEVS+="$dev " ; done < <(lsblk -pnro name)
+	OPTS="-l -a -r -v -s -m -f -V --version"
+	COMPREPLY=( $(compgen -W "${OPTS[*]} $DEVS" -- $cur) )
+	return 0
+}
+complete -F _fsck.minix_module fsck.minix

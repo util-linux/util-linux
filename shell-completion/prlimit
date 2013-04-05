@@ -1,0 +1,60 @@
+_prlimit_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-p'|'--pid')
+			PIDS=$(for I in /proc/[0-9]*; do echo ${I##"/proc/"}; done)
+			COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
+			return 0
+			;;
+		'-o'|'--output')
+			# FIXME: how to append to a string with compgen?
+			local OUTPUT
+			OUTPUT="DESCRIPTION RESOURCE SOFT HARD UNITS"
+			compopt -o nospace
+			COMPREPLY=( $(compgen -W "$OUTPUT" -S ',' -- $cur) )
+			return 0
+			;;
+	esac
+	case $cur in
+		'=')
+			cur=${cur#=}
+			# FIXME: is there anything what could be printed
+			# as limit value(s)
+			;;
+		-*)
+			OPTS="-p --pid
+				-o --output
+				   --noheadings
+				   --raw
+				   --verbose
+				-h --help
+				-V --version
+				-c= --core=
+				-d= --data=
+				-e= --nice=
+				-f= --fsize=
+				-i= --sigpending=
+				-l= --memlock=
+				-m= --rss=
+				-n= --nofile=
+				-q= --msgqueue=
+				-r= --rtprio=
+				-s= --stack=
+				-t= --cpu=
+				-u= --nproc=
+				-v= --as=
+				-x= --locks=
+				-y --rttime"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	compopt -o bashdefault
+	COMPREPLY=( $(compgen -c -- $cur) )
+	return 0
+}
+complete -F _prlimit_module prlimit

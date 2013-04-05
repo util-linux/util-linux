@@ -1,0 +1,33 @@
+_readprofile_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-m'|'--mapfile'|'-p'|'--profile')
+			compopt -o filenames
+			COMPREPLY=( $(compgen -f -- $cur) )
+			return 0
+			;;
+		'-M'|'--multiplier')
+			COMPREPLY=( $(compgen -W "multiplier" -- $cur) )
+			return 0
+			;;
+	esac
+	OPTS="-m --mapfile
+		-p --profile
+		-M --multiplier
+		-i --info
+		-v --verbose
+		-a --all
+		-b --histbin
+		-s --counters
+		-r --reset
+		-n --no-auto
+		-h --help
+		-V --version"
+	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+	return 0
+}
+complete -F _readprofile_module readprofile
