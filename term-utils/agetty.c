@@ -1651,6 +1651,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -n, --skip-login           do not prompt for login\n"), out);
 	fputs(_(" -o, --login-options <opts> options that are passed to login\n"), out);
 	fputs(_(" -p, --loginpause           wait for any key before the login\n"), out);
+	fputs(_(" -r, --chroot <dir>         change root to the directory\n"), out);
 	fputs(_(" -R, --hangup               do virtually hangup on the tty\n"), out);
 	fputs(_(" -s, --keep-baud            try to keep baud rate after break\n"), out);
 	fputs(_(" -t, --timeout <number>     login process timeout\n"), out);
