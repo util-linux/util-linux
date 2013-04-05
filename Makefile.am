@@ -89,7 +89,7 @@ include misc-utils/Makemodule.am
 include disk-utils/Makemodule.am
 include fdisks/Makemodule.am
 
-include shell-completion/Makemodule.am
+include bash-completion/Makemodule.am
 
 include tests/Makemodule.am
 
