@@ -329,7 +329,7 @@ static void __attribute__ ((__noreturn__)) print_help(void)
 	fputs(_(" -Q, --quiet-output           No normal output\n"), stderr);
 	fputs(_(" -s, --shell <shell>          Set shell quoting conventions\n"), stderr);
 	fputs(_(" -T, --test                   Test for getopt(1) version\n"), stderr);
-	fputs(_(" -u, --unquote                Do not quote the output\n"), stderr);
+	fputs(_(" -u, --unquoted               Do not quote the output\n"), stderr);
 	fputs(_(" -V, --version                Output version information\n"), stderr);
 	fputc('\n', stderr);
 
