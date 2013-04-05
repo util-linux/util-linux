@@ -1353,6 +1353,13 @@ AC_ARG_WITH([bashcompletiondir],
 ])
 AC_SUBST([bashcompletiondir], [$with_bashcompletiondir])
 
+AC_ARG_ENABLE([bash-completion],
+  AS_HELP_STRING([--disable-bash-completion], [do not install bash completion files]),
+  [], enable_bash_completion=yes
+)
+
+AM_CONDITIONAL(BUILD_BASH_COMPLETION, test "x$enable_bash_completion" = xyes)
+
 
 AC_ARG_ENABLE([pg-bell],
   AS_HELP_STRING([--disable-pg-bell], [let pg not ring the bell on invalid keys]),

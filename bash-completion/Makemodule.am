@@ -1,3 +1,4 @@
+if BUILD_BASH_COMPLETION
 dist_bashcompletion_DATA = \
 	bash-completion/blkid \
 	bash-completion/cal \
@@ -246,3 +247,6 @@ dist_bashcompletion_DATA += \
 	bash-completion/ul
 endif
 # ...text-utils
+
+
+endif # BUILD_BASH_COMPLETION
