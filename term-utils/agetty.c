@@ -1639,6 +1639,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -8, --8bits                assume 8-bit tty\n"), out);
 	fputs(_(" -a, --autologin <user>     login the specified user automatically\n"), out);
 	fputs(_(" -c, --noreset              do not reset control mode\n"), out);
+	fputs(_(" -E, --remote               use -r <hostname> for login(1)\n"), out);
 	fputs(_(" -f, --issue-file <file>    display issue file\n"), out);
 	fputs(_(" -h, --flow-control         enable hardware flow control\n"), out);
 	fputs(_(" -H, --host <hostname>      specify login host\n"), out);
