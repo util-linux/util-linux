@@ -132,16 +132,17 @@ int	iflag;
 static void __attribute__((__noreturn__))
 usage(FILE *out)
 {
-	fprintf(out, _(
-		"\nUsage:\n"
-		" %s [options] [file...]\n"), program_invocation_short_name);
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] [<file> ...]\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
 
-	fprintf(out, _(
-		"\nOptions:\n"
-		" -t, --terminal TERMINAL    override the TERM environment variable\n"
-		" -i, --indicated            underlining is indicated via a separate line\n"
-		" -V, --version              output version information and exit\n"
-		" -h, --help                 display this help and exit\n\n"));
+	fputs(_(" -t, -T, --terminal TERMINAL  override the TERM environment variable\n"), out);
+	fputs(_(" -i, --indicated              underlining is indicated via a separate line\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+
+	fprintf(out, USAGE_MAN_TAIL("ul(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
