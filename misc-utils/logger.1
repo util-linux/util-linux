@@ -33,7 +33,7 @@
 .\"
 .\" Section on valid facility and level strings added by
 .\" and1000@debian.org, 26 Oct 1997.
-.TH LOGGER "1" "September 2011" "util-linux" "User Commands"
+.TH LOGGER "1" "April 2013" "util-linux" "User Commands"
 .SH NAME
 logger \- a shell command interface to the syslog(3) system log module
 .SH SYNOPSIS
@@ -47,8 +47,31 @@ interface to the
 system log module.
 .SH OPTIONS
 .TP
+\fB\-n\fR, \fB\-\-server\fR \fIserver\fR
+Write to the specified remote syslog
+.I server
+instead of to the builtin syslog routines.  Unless
+.B \-\-udp
+or
+.B \-\-tcp
+is specified the logger will first try to use UDP, but if it fails a TCP
+connection is attempted.
+.TP
 \fB\-d\fR, \fB\-\-udp\fR
-Use datagram (UDP) instead of the default stream connection (TCP).
+Use datagram (UDP) only.  By default the connection is tried to
+.I syslog
+port defined in /etc/services, which is often
+.IR 514 .
+.TP
+\fB\-T\fR, \fB\-\-tcp\fR
+Use stream (TCP) only.  By default the connection is tried to
+.I syslog-conn
+port defined in /etc/services, which is often
+.IR 601 .
+.TP
+\fB\-P\fR, \fB\-\-port\fR \fIport\fR
+Use the specified
+.IR port .
 .TP
 \fB\-i\fR, \fB\-\-id\fR
 Log the process ID of the logger process with each line.
@@ -60,16 +83,6 @@ This option cannot be combined with a command-line message.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display a help text and exit.
-.TP
-\fB\-n\fR, \fB\-\-server\fR \fIserver\fR
-Write to the specified remote syslog
-.I server
-using UDP instead of to the builtin syslog routines.
-.TP
-\fB\-P\fR, \fB\-\-port\fR \fIport\fR
-Use the specified UDP
-.IR port .
-The default port number is 514.
 .TP
 \fB\-p\fR, \fB\-\-priority\fR \fIpriority\fR
 Enter the message into the log with the specified

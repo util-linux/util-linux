@@ -58,6 +58,12 @@
 #define	SYSLOG_NAMES
 #include <syslog.h>
 
+enum {
+	TYPE_UDP = (1 << 1),
+	TYPE_TCP = (1 << 2),
+	ALL_TYPES = TYPE_UDP | TYPE_TCP
+};
+
 static int decode(char *name, CODE *codetab)
 {
 	register CODE *c;
@@ -96,57 +102,85 @@ static int pencode(char *s)
 }
 
 static int
-myopenlog(const char *sock, int optd)
+unix_socket(const char *path, const int socket_type)
 {
-	int fd;
+	int fd, i;
 	static struct sockaddr_un s_addr;	/* AF_UNIX address of local logger */
 
-	if (strlen(sock) >= sizeof(s_addr.sun_path))
-		errx(EXIT_FAILURE, _("openlog %s: pathname too long"), sock);
+	if (strlen(path) >= sizeof(s_addr.sun_path))
+		errx(EXIT_FAILURE, _("openlog %s: pathname too long"), path);
 
 	s_addr.sun_family = AF_UNIX;
-	(void)strcpy(s_addr.sun_path, sock);
+	strcpy(s_addr.sun_path, path);
 
-	if (optd == 0) {
-		if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1)
-			goto udp_socket;
+	for (i = 2; i; i--) {
+		int st = -1;
+
+		if (i == 2 && socket_type & TYPE_UDP)
+			st = SOCK_DGRAM;
+		if (i == 1 && socket_type & TYPE_TCP)
+			st = SOCK_STREAM;
+		if (st == -1 || (fd = socket(AF_UNIX, st, 0)) == -1)
+			continue;
 		if (connect(fd, (struct sockaddr *)&s_addr, sizeof(s_addr)) == -1) {
 			close(fd);
-			goto udp_socket;
+			continue;
 		}
-	} else {
- udp_socket:
-		if ((fd = socket(AF_UNIX, SOCK_DGRAM, 0)) == -1)
-			err(EXIT_FAILURE, _("socket %s"), sock);
-		if (connect(fd, (struct sockaddr *)&s_addr, sizeof(s_addr)) == -1)
-			err(EXIT_FAILURE, _("connect %s"), sock);
+		break;
 	}
+
+	if (i == 0)
+		err(EXIT_FAILURE, _("socket %s"), path);
 
 	return fd;
 }
 
 static int
-udpopenlog(const char *servername, const char *port) {
-	int fd, errcode;
+inet_socket(const char *servername, const char *port, const int socket_type)
+{
+	int fd, errcode, i;
 	struct addrinfo hints, *res;
+	const char *p = port;
 
-	memset(&hints, 0, sizeof(hints));
-	hints.ai_socktype = SOCK_DGRAM;
-	hints.ai_family = AF_UNSPEC;
+	for (i = 2; i; i--) {
+		memset(&hints, 0, sizeof(hints));
+		if (i == 2 && socket_type & TYPE_UDP) {
+			hints.ai_socktype = SOCK_DGRAM;
+			if (port == NULL)
+				p = "syslog";
+		}
+		if (i == 1 && socket_type & TYPE_TCP) {
+			hints.ai_socktype = SOCK_STREAM;
+			if (port == NULL)
+				p = "syslog-conn";
+		}
+		if (hints.ai_socktype == 0)
+			continue;
+		hints.ai_family = AF_UNSPEC;
+		errcode = getaddrinfo(servername, p, &hints, &res);
+		if (errcode != 0)
+			errx(EXIT_FAILURE, _("getaddrinfo %s:%s: %s"),
+			     servername, p, gai_strerror(errcode));
+		if ((fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1) {
+			freeaddrinfo(res);
+			continue;
+		}
+		if (connect(fd, res->ai_addr, res->ai_addrlen) == -1) {
+			freeaddrinfo(res);
+			close(fd);
+			continue;
+		}
 
-	errcode = getaddrinfo(servername, port, &hints, &res);
-	if (errcode != 0)
-		errx(EXIT_FAILURE, _("getaddrinfo %s:%s: %s"), servername, port,
-		     gai_strerror(errcode));
-	if ((fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1)
-		err(EXIT_FAILURE, _("socket"));
+		freeaddrinfo(res);
+		break;
+	}
 
-	if (connect(fd, res->ai_addr, res->ai_addrlen) == -1)
-		err(EXIT_FAILURE, _("connect"));
+	if (i == 0)
+		errx(EXIT_FAILURE, _("failed to connect %s port %s"), servername, p);
 
-	freeaddrinfo(res);
 	return fd;
 }
+
 static void
 mysyslog(int fd, int logflags, int pri, char *tag, char *msg) {
        char buf[1000], pid[30], *cp, *tp;
@@ -182,7 +216,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	      _(" %s [options] [message]\n"), program_invocation_short_name);
 
 	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -d, --udp             use UDP (TCP is default)\n"
+	fputs(_(" -T, --tcp             use TCP only\n"), out);
+	fputs(_(" -d, --udp             use UDP only\n"
 		" -i, --id              log the process ID too\n"
 		" -f, --file <file>     log the contents of this file\n"
 		" -h, --help            display this help text and exit\n"), out);
@@ -208,9 +243,9 @@ main(int argc, char **argv) {
 	int ch, logflags, pri;
 	char *tag, buf[1024];
 	char *usock = NULL;
-	char *udpserver = NULL;
-	char *udpport = NULL;
-	int LogSock = -1, optd = 0;
+	char *server = NULL;
+	char *port = NULL;
+	int LogSock = -1, socket_type = ALL_TYPES;
 
 	static const struct option longopts[] = {
 		{ "id",		no_argument,	    0, 'i' },
@@ -220,6 +255,7 @@ main(int argc, char **argv) {
 		{ "tag",	required_argument,  0, 't' },
 		{ "socket",	required_argument,  0, 'u' },
 		{ "udp",	no_argument,	    0, 'd' },
+		{ "tcp",	no_argument,	    0, 'T' },
 		{ "server",	required_argument,  0, 'n' },
 		{ "port",	required_argument,  0, 'P' },
 		{ "version",	no_argument,	    0, 'V' },
@@ -235,7 +271,7 @@ main(int argc, char **argv) {
 	tag = NULL;
 	pri = LOG_NOTICE;
 	logflags = 0;
-	while ((ch = getopt_long(argc, argv, "f:ip:st:u:dn:P:Vh",
+	while ((ch = getopt_long(argc, argv, "f:ip:st:u:dTn:P:Vh",
 					    longopts, NULL)) != -1) {
 		switch((char)ch) {
 		case 'f':		/* file to log */
@@ -259,14 +295,16 @@ main(int argc, char **argv) {
 			usock = optarg;
 			break;
 		case 'd':
-			optd = 1;	/* use datagrams */
+			socket_type = TYPE_UDP;
 			break;
-		case 'n':		/* udp socket */
-			optd = 1;	/* use datagrams because udp */
-			udpserver = optarg;
+		case 'T':
+			socket_type = TYPE_TCP;
 			break;
-		case 'P':		/* change udp port */
-			udpport = optarg;
+		case 'n':
+			server = optarg;
+			break;
+		case 'P':
+			port = optarg;
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -282,12 +320,12 @@ main(int argc, char **argv) {
 	argv += optind;
 
 	/* setup for logging */
-	if (!usock && !udpserver)
+	if (!usock && !server)
 		openlog(tag ? tag : getlogin(), logflags, 0);
-	else if (udpserver)
-		LogSock = udpopenlog(udpserver,udpport);
+	else if (server)
+		LogSock = inet_socket(server, port, socket_type);
 	else
-		LogSock = myopenlog(usock, optd);
+		LogSock = unix_socket(usock, socket_type);
 
 	/* log input line if appropriate */
 	if (argc > 0) {
@@ -297,14 +335,14 @@ main(int argc, char **argv) {
 		for (p = buf, endp = buf + sizeof(buf) - 2; *argv;) {
 			len = strlen(*argv);
 			if (p + len > endp && p > buf) {
-			    if (!usock && !udpserver)
+			    if (!usock && !server)
 				syslog(pri, "%s", buf);
 			    else
 				mysyslog(LogSock, logflags, pri, tag, buf);
 				p = buf;
 			}
 			if (len > sizeof(buf) - 1) {
-			    if (!usock && !udpserver)
+			    if (!usock && !server)
 				syslog(pri, "%s", *argv++);
 			    else
 				mysyslog(LogSock, logflags, pri, tag, *argv++);
@@ -316,7 +354,7 @@ main(int argc, char **argv) {
 			}
 		}
 		if (p != buf) {
-		    if (!usock && !udpserver)
+		    if (!usock && !server)
 			syslog(pri, "%s", buf);
 		    else
 			mysyslog(LogSock, logflags, pri, tag, buf);
@@ -330,13 +368,13 @@ main(int argc, char **argv) {
 		    if (len > 0 && buf[len - 1] == '\n')
 			    buf[len - 1] = '\0';
 
-		    if (!usock && !udpserver)
+		    if (!usock && !server)
 			syslog(pri, "%s", buf);
 		    else
 			mysyslog(LogSock, logflags, pri, tag, buf);
 		}
 	}
-	if (!usock && !udpserver)
+	if (!usock && !server)
 		closelog();
 	else
 		close(LogSock);
