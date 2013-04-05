@@ -21,24 +21,12 @@ length of the procedure.  The output is filled with blanks to ease
 readability.
 .SH OPTIONS
 .TP
-\fB\-m\fR, \fB\-\-mapfile\fR \fImapfile\fR
-Specify a mapfile, which by default is
-.BR /usr/src/linux/System.map .
-You should specify the map file on cmdline if your current kernel
-isn't the last one you compiled, or if you keep System.map elsewhere.
-If the name of the map file ends with `.gz' it is decompressed on the
-fly.
+\fB\-a\fR, \fB\-\-all\fR
+Print all symbols in the mapfile.  By default the procedures with
+reported ticks are not printed.
 .TP
-\fB\-p\fR, \fB\-\-profile\fR \fIpro-file\fR
-Specify a different profiling buffer, which by default is
-.B /proc/profile.
-Using a different pro-file is useful if you want to `freeze' the
-kernel profiling at some time and read it later.  The
-.B /proc/profile
-file can be copied using `cat' or `cp'.  There is no more support for
-compressed profile buffers, like in
-.B readprofile-1.1,
-because the program needs to know the size of the buffer in advance.
+\fB\-b\fR, \fB\-\-histbin\fR
+Print individual histogram-bin counts.
 .TP
 \fB\-i\fR, \fB\-\-info\fR
 Info.  This makes
@@ -52,12 +40,32 @@ command line.  If the
 .B \-i
 only the decimal number is printed.
 .TP
-\fB\-a\fR, \fB\-\-all\fR
-Print all symbols in the mapfile.  By default the procedures with
-reported ticks are not printed.
+\fB\-m\fR, \fB\-\-mapfile\fR \fImapfile\fR
+Specify a mapfile, which by default is
+.BR /usr/src/linux/System.map .
+You should specify the map file on cmdline if your current kernel
+isn't the last one you compiled, or if you keep System.map elsewhere.
+If the name of the map file ends with `.gz' it is decompressed on the
+fly.
 .TP
-\fB\-b\fR, \fB\-\-histbin\fR
-Print individual histogram-bin counts.
+\fB\-M\fR, \fB\-\-multiplier\fR \fImultiplier\fR
+On some architectures it is possible to alter the frequency at which
+the kernel delivers profiling interrupts to each CPU.  This option
+allows you to set the frequency, as a multiplier of the system clock
+frequency, HZ.  This is supported on i386-SMP (2.2 and 2.4 kernel)
+and also on sparc-SMP and sparc64-SMP (2.4 kernel).  This option also
+resets the profiling buffer, and requires superuser privileges.
+.TP
+\fB\-p\fR, \fB\-\-profile\fR \fIpro-file\fR
+Specify a different profiling buffer, which by default is
+.B /proc/profile.
+Using a different pro-file is useful if you want to `freeze' the
+kernel profiling at some time and read it later.  The
+.B /proc/profile
+file can be copied using `cat' or `cp'.  There is no more support for
+compressed profile buffers, like in
+.B readprofile-1.1,
+because the program needs to know the size of the buffer in advance.
 .TP
 \fB\-r\fR, \fB\-\-reset\fR
 Reset the profiling buffer.  This can only be invoked by root,
@@ -67,14 +75,6 @@ is readable by everybody but writable only by the superuser.
 However, you can make
 .B readprofile
 setuid 0, in order to reset the buffer without gaining privileges.
-.TP
-\fB\-M\fR, \fB\-\-multiplier\fR \fImultiplier\fR
-On some architectures it is possible to alter the frequency at which
-the kernel delivers profiling interrupts to each CPU.  This option
-allows you to set the frequency, as a multiplier of the system clock
-frequency, HZ.  This is supported on i386-SMP (2.2 and 2.4 kernel)
-and also on sparc-SMP and sparc64-SMP (2.4 kernel).  This option also
-resets the profiling buffer, and requires superuser privileges.
 .TP
 \fB\-s, \fB\-\-counters\fR
 Print individual counters within functions.
