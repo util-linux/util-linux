@@ -1184,7 +1184,7 @@ int main(int argc, char *argv[])
 	    { "pairs",        0, 0, 'P' },
 	    { "raw",          0, 0, 'r' },
 	    { "types",        1, 0, 't' },
-	    { "fsroot",       0, 0, 'v' },
+	    { "nofsroot",     0, 0, 'v' },
 	    { "submounts",    0, 0, 'R' },
 	    { "source",       1, 0, 'S' },
 	    { "tab-file",     1, 0, 'F' },
