@@ -23,46 +23,49 @@ as machine type. It also allows to set various personality options. The default
 is /bin/sh.
 .SH OPTIONS
 .TP
-.I "\-v," "\-\-verbose"
+\fB\-v\fR, \fB\-\-verbose\fR
 Be verbose.
 .TP
-.I "\-h," "\-\-help"
+\fB\-h\fR, \fB\-\-help\fR
 Display help (it is also displayed when setarch takes no arguments).
 .TP
-.I "\-V," "\-\-version"
+\fB\-V\fR, \fB\-\-version\fR
 Output version information and exit.
 .TP
-.I "\-\-uname\-2.6"
+\fB\-\-uname\-2.6\fR
 Causes the program to see a kernel version number beginning with 2.6.
 .TP
-.I "\-3," "\-\-3gb"
+\fB\-3\fR, \fB\-\-3gb\fR
 Specifies that processes should use a maximum of 3GB of address space on systems where it is supported (ADDR_LIMIT_3GB).
 .TP
-.I "\-B," "\-\-32bit"
+\fB\-\-4gb\fR
+Ignored (for backward compatibility only).
+.TP
+\fB\-B\fR, \fB\-\-32bit\fR
 Turns on ADDR_LIMIT_32BIT.
 .TP
-.I "\-F," "\-\-fdpic-funcptrs"
+\fB\-F\fR, \fB\-\-fdpic\-funcptrs\fR
 Userspace function pointers point to descriptors (turns on FDPIC_FUNCPTRS).
 .TP
-.I "\-I," "\-\-short-inode"
+\fB\-I\fR, \fB\-\-short\-inode\fR
 Turns on SHORT_INODE.
 .TP
-.I "\-L," "\-\-addr-compat-layout"
+\fB\-L\fR, \fB\-\-addr\-compat\-layout\fR
 Changes the way virtual memory is allocated (turns on the ADDR_COMPAT_LAYOUT).
 .TP
-.I "\-R," "\-\-addr-no-randomize"
+\fB\-R\fR, \fB\-\-addr\-no\-randomize\fR
 Disables randomization of the virtual address space (turns on ADDR_NO_RANDOMIZE).
 .TP
-.I "\-S," "\-\-whole-seconds"
+\fB\-S\fR, \fB\-\-whole\-seconds\fR
 Turns on WHOLE_SECONDS.
 .TP
-.I "\-T," "\-\-sticky-timeouts"
+\fB\-T\fR, \fB\-\-sticky\-timeouts\fR
 Turns on STICKY_TIMEOUTS.
 .TP
-.I "\-X" "\-\-read-implies-exec"
+\fB\-X\fR, \fB\-\-read\-implies\-exec\fR
 Turns on READ_IMPLIES_EXEC.
 .TP
-.I "\-Z," "mmap-page-zero"
+\fB\-Z\fR, \fB\-\-mmap\-page\-zero\fR
 Turns on MMAP_PAGE_ZERO.
 .SH EXAMPLES
 setarch ppc32 rpmbuild --target=ppc --rebuild foo.src.rpm
