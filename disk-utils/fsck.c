@@ -1293,30 +1293,33 @@ static int check_all(void)
 	return status;
 }
 
-static void __attribute__((__noreturn__)) usage(void)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	printf(_("\nUsage:\n"));
-	printf(_(" %s [options] -- [fs-options] [<filesystem>...]\n"),
-		 program_invocation_short_name);
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] -- [fs-options] [<filesystem> ...]\n"),
+			 program_invocation_short_name);
 
-	puts(_(	"\nOptions:\n"));
-	puts(_(	" -A         check all filesystems\n"));
-	puts(_(	" -C [<fd>]  display progress bar; file descriptor is for GUIs\n"));
-	puts(_(	" -l         lock the device to guarantee exclusive access\n"));
-	puts(_(	" -M         do not check mounted filesystems\n"));
-	puts(_(	" -N         do not execute, just show what would be done\n"));
-	puts(_(	" -P         check filesystems in parallel, including root\n"));
-	puts(_(	" -R         skip root filesystem; useful only with '-A'\n"));
-	puts(_(	" -r         report statistics for each device checked\n"));
-	puts(_(	" -s         serialize the checking operations\n"));
-	puts(_(	" -T         do not show the title on startup\n"));
-	puts(_(	" -t <type>  specify filesystem types to be checked;\n"
-		"              <type> is allowed to be a comma-separated list\n"));
-	puts(_(	" -V         explain what is being done\n"));
-	puts(_(	" -?         display this help and exit\n\n"));
-	puts(_(	"See the specific fsck.* commands for available fs-options."));
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -A         check all filesystems\n"), out);
+	fputs(_(" -C [<fd>]  display progress bar; file descriptor is for GUIs\n"), out);
+	fputs(_(" -l         lock the device to guarantee exclusive access\n"), out);
+	fputs(_(" -M         do not check mounted filesystems\n"), out);
+	fputs(_(" -N         do not execute, just show what would be done\n"), out);
+	fputs(_(" -P         check filesystems in parallel, including root\n"), out);
+	fputs(_(" -R         skip root filesystem; useful only with '-A'\n"), out);
+	fputs(_(" -r         report statistics for each device checked\n"), out);
+	fputs(_(" -s         serialize the checking operations\n"), out);
+	fputs(_(" -T         do not show the title on startup\n"), out);
+	fputs(_(" -t <type>  specify filesystem types to be checked;\n"
+		"             <type> is allowed to be a comma-separated list\n"), out);
+	fputs(_(" -V         explain what is being done\n"), out);
+	fputs(_(" -?         display this help and exit\n"), out);
 
-	exit(FSCK_EX_USAGE);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(_("See the specific fsck.* commands for available fs-options."), out);
+	fprintf(out, USAGE_MAN_TAIL("fsck(8)"));
+
+	exit(out == stderr ? FSCK_EX_USAGE : FSCK_EX_OK);
 }
 
 static void signal_cancel(int sig __attribute__((__unused__)))
@@ -1445,13 +1448,13 @@ static void parse_argv(int argc, char *argv[])
 			case 't':
 				tmp = 0;
 				if (fstype)
-					usage();
+					usage(stderr);
 				if (arg[j+1])
 					tmp = arg+j+1;
 				else if ((i+1) < argc)
 					tmp = argv[++i];
 				else
-					usage();
+					usage(stderr);
 				fstype = xstrdup(tmp);
 				compile_fs_type(fstype, &fs_type_compiled);
 				goto next_arg;
@@ -1459,7 +1462,7 @@ static void parse_argv(int argc, char *argv[])
 				opts_for_fsck++;
 				break;
 			case '?':
-				usage();
+				usage(stdout);
 				break;
 			default:
 				options[++opt] = arg[j];
