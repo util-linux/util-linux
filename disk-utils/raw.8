@@ -60,18 +60,22 @@ in virtual memory must also be aligned to a multiple of the sector
 size.  The sector size is 512 bytes for most devices.
 .SH OPTIONS
 .TP
-.B -q
+\fB\-q\fR, \fB\-\-query\fR
 Set query mode.
 .B raw
 will query an existing binding instead of setting a new one.
 .TP
-.B -a
+\fB\-a\fR, \fB\-\-all\fR
 With
 .B -q
 , specify that all bound raw devices should be queried.
 .TP
-.B -h
-Provide a usage summary.
+\fB\-h\fR, \fB\-\-help\fR
+Display help and exit.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Display version information and exit.
+
 .SH BUGS
 The Linux
 .BR dd (1)
