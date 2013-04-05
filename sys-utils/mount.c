@@ -720,7 +720,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(
 	" -v, --verbose           say what is being done\n"
 	" -V, --version           display version information and exit\n"
-	" -w, --read-write        mount the filesystem read-write (default)\n"));
+	" -w, --rw, --read-write  mount the filesystem read-write (default)\n"));
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
