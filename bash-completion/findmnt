@@ -38,7 +38,7 @@ _findmnt_module()
 					MNT_OPTS[$I]='1'
 				done
 			done < <(findmnt -rno OPTIONS)
-			COMPREPLY=( $(compgen -W "$(echo ${!MNT_OPTS[@]})" -- $cur) )
+			COMPREPLY=( $(compgen -W "${!MNT_OPTS[@]}" -- $cur) )
 			return 0
 			;;
 		'-o'|'--output')

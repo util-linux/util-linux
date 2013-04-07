@@ -6,11 +6,11 @@ _ionice_module()
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
 		'-c'|'--class')
-			COMPREPLY=( $(compgen -W "$(echo {0..3}) none realtime best-effort idle" -- $cur) )
+			COMPREPLY=( $(compgen -W "{0..3} none realtime best-effort idle" -- $cur) )
 			return 0
 			;;
 		'-n'|'--classdata')
-			COMPREPLY=( $(compgen -W "$(echo {0..7})" -- $cur) )
+			COMPREPLY=( $(compgen -W "{0..7}" -- $cur) )
 			return 0
 			;;
 		'-p'|'--pid')

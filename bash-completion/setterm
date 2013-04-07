@@ -31,17 +31,17 @@ _setterm_module()
 			return 0
 			;;
 		'-regtabs')
-			COMPREPLY=( $(compgen -W "$(echo {1..160})" -- $cur) )
+			COMPREPLY=( $(compgen -W "{1..160}" -- $cur) )
 			return 0
 			;;
 		'-blank')
-			COMPREPLY=( $(compgen -W "$(echo {0..60}) force poke" -- $cur) )
+			COMPREPLY=( $(compgen -W "{0..60} force poke" -- $cur) )
 			return 0
 			;;
 		'-dump'|'-append')
 			local NUM_CONS
 			NUM_CONS=(/sys/class/tty/*)
-			COMPREPLY=( $(compgen -W "$(echo {1..${#NUM_CONS[*]}})" -- $cur) )
+			COMPREPLY=( $(compgen -W "{1..${#NUM_CONS[*]}}" -- $cur) )
 			return 0
 			;;
 		'-file')
@@ -50,7 +50,7 @@ _setterm_module()
 			return 0
 			;;
 		'-msglevel')
-			COMPREPLY=( $(compgen -W "$(echo {1..8})" -- $cur) )
+			COMPREPLY=( $(compgen -W "{1..8}" -- $cur) )
 			return 0
 			;;
 		'-powersave')
@@ -58,7 +58,7 @@ _setterm_module()
 			return 0
 			;;
 		'-powerdown')
-			COMPREPLY=( $(compgen -W "$(echo {0..60})" -- $cur) )
+			COMPREPLY=( $(compgen -W "{0..60}" -- $cur) )
 			return 0
 			;;
 		'-blength')

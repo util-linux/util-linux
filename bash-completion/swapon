@@ -8,7 +8,7 @@ _swapon_module()
 		'-p'|'--priority')
 			# Priority range is -1 to 32767.  Perhaps these
 			# few are enough.
-			COMPREPLY=( $(compgen -W "$(echo {-1..9} 32767)" -- $cur) )
+			COMPREPLY=( $(compgen -W "{-1..9} 32767" -- $cur) )
 			return 0
 			;;
 		'--show')

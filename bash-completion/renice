@@ -12,7 +12,7 @@ _renice_module()
 			return 0
 			;;
 		'-n'|'--priority')
-			COMPREPLY=( $(compgen -W "$(echo {-20..20})" -- $cur) )
+			COMPREPLY=( $(compgen -W "{-20..20}" -- $cur) )
 			return 0
 			;;
 		'-p'|'--pid')

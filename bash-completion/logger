@@ -19,7 +19,7 @@ _logger_module()
 			return 0
 			;;
 		'-p'|'--priority')
-			COMPREPLY=( $(compgen -W "$(echo {auth,authpriv,cron,daemon,ftp,lpr,mail,news,security}.{alert,crit,debug,emerg,err,error})" -- $cur) )
+			COMPREPLY=( $(compgen -W "{auth,authpriv,cron,daemon,ftp,lpr,mail,news,security}.{alert,crit,debug,emerg,err,error}" -- $cur) )
 			return 0
 			;;
 		'-t'|'--tag')
