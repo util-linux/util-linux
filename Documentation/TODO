@@ -11,7 +11,7 @@ hwlock
 bash completion
 ---------------
 - Optional argument handling requires user to press backspace to get
-  argument completetion.
+  argument completion.
 - Comma separated value, e.g., --output 'value1,value2', are not
   completed for users.
 

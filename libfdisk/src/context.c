@@ -146,7 +146,7 @@ static void reset_context(struct fdisk_context *cxt)
  * the device with read-write mode and will fallback to read-only if
  * unsuccessful.
  *
- * Returns: 0 on sucess, < 0 on error.
+ * Returns: 0 on success, < 0 on error.
  */
 int fdisk_context_assign_device(struct fdisk_context *cxt,
 				const char *fname, int readonly)
@@ -224,7 +224,7 @@ void fdisk_free_context(struct fdisk_context *cxt)
  * @ask_cb: callback
  * @data: callback data
  *
- * Returns: 0 on sucess, < 0 on error.
+ * Returns: 0 on success, < 0 on error.
  */
 int fdisk_context_set_ask(struct fdisk_context *cxt,
 		int (*ask_cb)(struct fdisk_context *, struct fdisk_ask *, void *),

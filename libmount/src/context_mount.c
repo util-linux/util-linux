@@ -24,7 +24,7 @@
 
 /*
  * Kernel supports only one MS_PROPAGATION flag change by one mount(2) syscall,
- * to bypass this restriction we call mount(2) per flag. It's realy not a perfect
+ * to bypass this restriction we call mount(2) per flag. It's really not a perfect
  * solution, but it's the same like to execute multiple mount(8) commands.
  *
  * We use cxt->addmounts (additional mounts) list to keep order of the requested
@@ -865,7 +865,7 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 	type = mnt_fs_get_fstype(cxt->fs);
 	if (type) {
 		if (strchr(type, ','))
-			/* this only happen if fstab countains list of filesystems */
+			/* this only happens if fstab contains list of filesystems */
 			res = do_mount_by_pattern(cxt, type);
 		else
 			res = do_mount(cxt, NULL);
