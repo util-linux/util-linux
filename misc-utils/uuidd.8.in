@@ -17,7 +17,7 @@ in a secure and guaranteed-unique fashion, even in the face of large
 numbers of threads running on different CPUs trying to grab UUIDs.
 .SH OPTIONS
 .TP
-.B \-d
+.BR \-d , " \-\-debug "
 Run uuidd in debugging mode.  This prevents uuidd from running as a daemon.
 .TP
 .BR \-h , " \-\-help "
@@ -48,7 +48,7 @@ process.  Implies --no-fork and --no-pid.  As of this writing, this option is
 supposed to be used only with systemd.  This option must be enabled with a configure
 option.
 .TP
-.B \-q
+.BR \-q , " \-\-quiet "
 Suppress some failure messages.
 .TP
 .BR \-r , " \-\-random "
