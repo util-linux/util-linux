@@ -95,10 +95,17 @@ if BUILD_NEWGRP
 dist_bashcompletion_DATA += \
 	bash-completion/newgrp
 endif
+
 if BUILD_SU
 dist_bashcompletion_DATA += \
 	bash-completion/su
+if BUILD_RUNUSER
+install-data-hook-bashcomp-runuser::
+	ln -sf su $(DESTDIR)$(bashcompletiondir)/runuser
+INSTALL_DATA_HOOKS += install-data-hook-bashcomp-runuser
 endif
+endif
+
 if BUILD_UTMPDUMP
 dist_bashcompletion_DATA += \
 	bash-completion/utmpdump
