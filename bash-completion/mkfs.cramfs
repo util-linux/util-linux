@@ -25,6 +25,9 @@ _mkfs.cramfs_module()
 			COMPREPLY=( $(compgen -W "name" -- $cur) )
 			return 0
 			;;
+		'-h'|'-V')
+			return 0
+			;;
 	esac
 	case $cur in
 		-*)

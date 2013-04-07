@@ -9,6 +9,9 @@ _mountpoint_module()
 			COMPREPLY=( $(compgen -W "fixme" -- $cur) )
 			return 0
 			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
 	esac
 	case $cur in
 		-*)

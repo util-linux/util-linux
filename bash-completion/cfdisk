@@ -17,6 +17,9 @@ _cfdisk_module()
 			COMPREPLY=( $(compgen -W "sectors" -- $cur) )
 			return 0
 			;;
+		'-v')
+			return 0
+			;;
 	esac
 	case $cur in
 		-*)

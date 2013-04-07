@@ -13,6 +13,9 @@ _bfs_module()
 			COMPREPLY=( $(compgen -W "name" -- $cur) )
 			return 0
 			;;
+		'-h'|'--help'|'--version')
+			return 0
+			;;
 	esac
 	case $cur in
 		-*)

@@ -1,8 +1,14 @@
 _ctrlaltdel_module()
 {
-	local cur
-	cur="${COMP_WORDS[COMP_CWORD]}"
+	local cur prev
 	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
+	esac
 	if [ $COMP_CWORD -eq 1 ]; then
 		COMPREPLY=( $(compgen -W "hard soft" -- $cur) )
 	fi

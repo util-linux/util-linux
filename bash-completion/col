@@ -9,6 +9,9 @@ _col_module()
 			COMPREPLY=( $(compgen -W "number" -- $cur) )
 			return 0
 			;;
+		'-H'|'--help'|'-V'|'--version')
+			return 0
+			;;
 	esac
 	OPTS="-b --no-backspaces
 		-f --fine

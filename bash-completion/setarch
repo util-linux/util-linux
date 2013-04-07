@@ -1,8 +1,14 @@
 _setarch_module()
 {
-	local cur OPTS
+	local cur prev OPTS
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
+	esac
 	if [ $COMP_CWORD -eq 1 ]; then
 		COMPREPLY=( $(compgen -W "linux32 linux64 ppc32 ppc ppc64
 					  ppc64pseries ppc64iseries i386

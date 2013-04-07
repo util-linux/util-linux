@@ -18,6 +18,9 @@ _hwclock_module()
 			COMPREPLY=( $(compgen -W "year" -- $cur) )
 			return 0
 			;;
+		'-h'|'-?'|'--help'|'-v'|'-V'|'--version')
+			return 0
+			;;
 	esac
 	case $cur in
 		-*)

@@ -14,6 +14,9 @@ _ul_module()
 			COMPREPLY=( $(compgen -W "$TERM_LIST" -- $cur) )
 			return 0
 			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
 	esac
 	case $cur in
 		-*)

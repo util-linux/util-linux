@@ -1,8 +1,14 @@
 _chrt_module()
 {
-	local cur OPTS
+	local cur prev OPTS
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
+	esac
 	# FIXME: -p is ambiguous, it takes either pid or priority as an
 	# argument depending on whether user wanted to get or set the
 	# values.  Perhaps the command interface should be reconsidered.

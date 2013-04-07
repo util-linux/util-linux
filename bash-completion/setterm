@@ -69,6 +69,9 @@ _setterm_module()
 			COMPREPLY=( $(compgen -W "freqnumber" -- $cur) )
 			return 0
 			;;
+		'-help'|'-version')
+			return 0
+			;;
 	esac
 	OPTS="	-term
 		-reset

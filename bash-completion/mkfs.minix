@@ -17,6 +17,9 @@ _mkfs.minix_module()
 			COMPREPLY=( $(compgen -W "14 30" -- $cur) )
 			return 0
 			;;
+		'-V'|'--version')
+			return 0
+			;;
 	esac
 	case $cur in
 		-*)

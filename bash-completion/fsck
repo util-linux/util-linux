@@ -21,6 +21,9 @@ _fsck_module()
 			COMPREPLY=( $(compgen -W "bad_blocks_file" -- $cur) )
 			return 0
 			;;
+		'-?')
+			return 0
+			;;
 	esac
 	case $cur in
 		-*)

@@ -17,6 +17,9 @@ _hexdump_module()
 			COMPREPLY=( $(compgen -W "offset" -- $cur) )
 			return 0
 			;;
+		'-V')
+			return 0
+			;;
 	esac
 	case $cur in
 		-*)

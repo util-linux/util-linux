@@ -3,6 +3,12 @@ _namei_module()
 	local cur prev OPTS
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
+	esac
 	case $cur in
 		-*)
 			OPTS="-h --help -V --version -x --mountpoints -m --modes -o --owners -l --long -n --nosymlinks -v --vertical"

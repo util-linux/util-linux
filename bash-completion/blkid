@@ -46,6 +46,9 @@ _blkid_module()
 			COMPREPLY=( $(compgen -W "$(awk '{print $NF}' /proc/filesystems)" -- $cur) )
 			return 0
 			;;
+		'-h'|'-V')
+			return 0
+			;;
 	esac
 	case $cur in
 		-*)

@@ -11,6 +11,9 @@ _nsenter_module()
 			COMPREPLY=( $(compgen -W "$PIDS" -- $cur) )
 			return 0
 			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
 	esac
 	case $cur in
 		'=')

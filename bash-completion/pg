@@ -9,6 +9,9 @@ _pg_module()
 			COMPREPLY=( $(compgen -W "prompt" -- $cur) )
 			return 0
 			;;
+		'-h'|'-V')
+			return 0
+			;;
 	esac
 	case $cur in
 		-*)

@@ -22,6 +22,9 @@ _dmesg_module()
 			COMPREPLY=( $(compgen -W "size" -- $cur) )
 			return 0
 			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
 	esac
 	OPTS="-C --clear
 		-c --read-clear

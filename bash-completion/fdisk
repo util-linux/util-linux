@@ -29,6 +29,9 @@ _fdisk_module()
 			COMPREPLY=( $(compgen -W "number" -- $cur) )
 			return 0
 			;;
+		'-h'|'-v')
+			return 0
+			;;
 	esac
 	case $cur in
 		-*)

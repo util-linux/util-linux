@@ -18,6 +18,9 @@ _sfdisk_module()
 			COMPREPLY=( $(compgen -f -- $cur) )
 			return 0
 			;;
+		'-h'|'--help'|'-v'|'--version')
+			return 0
+			;;
 	esac
 	case $cur in
 		'=')

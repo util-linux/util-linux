@@ -11,6 +11,9 @@ _fsck.cramfs_module()
 			COMPREPLY=( $(compgen -o dirnames -- ${cur:-"/"}) )
 			return 0
 			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
 	esac
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -S ' ' -- $cur) )
 	return 0
