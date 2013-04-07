@@ -25,19 +25,19 @@ _swapon_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-a --all
-				-d --discard
-				-e --ifexists
-				-f --fixpgsz
-				-p --priority
-				-s --summary
-				   --show
-				   --noheadings
-				   --raw
-				   --bytes
-				-v --verbose
-				-h --help
-				-V --version"
+			OPTS="--all
+				--discard
+				--ifexists
+				--fixpgsz
+				--priority
+				--summary
+				--show
+				--noheadings
+				--raw
+				--bytes
+				--verbose
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

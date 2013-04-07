@@ -33,14 +33,14 @@ _chcpu_module()
 			return 0
 			;;
 	esac
-	OPTS="-h --help
-		-e --enable
-		-d --disable
-		-c --configure
-		-g --deconfigure
-		-p --dispatch
-		-r --rescan
-		-V --version"
+	OPTS="--help
+		--enable
+		--disable
+		--configure
+		--deconfigure
+		--dispatch
+		--rescan
+		--version"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	return 0
 }

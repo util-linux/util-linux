@@ -19,16 +19,16 @@ _cytune_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-s --set-threshold
-				-g --get-threshold
-				-S --set-default-threshold
-				-t --set-flush
-				-G --get-glush
-				-T --set-default-flush
-				-q --stats
-				-i --interval
-				-h --help
-				-V --version"
+			OPTS="--set-threshold
+				--get-threshold
+				--set-default-threshold
+				--set-flush
+				--get-glush
+				--set-default-flush
+				--stats
+				--interval
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

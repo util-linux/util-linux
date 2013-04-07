@@ -40,18 +40,18 @@ _wdctl_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-f --flags
-				-F --noflags
-				-I --noident
-				-n --noheadings
-				-O --oneline
-				-o --output
-				-r --raw
-				-T --notimeouts
-				-s --settimeout
-				-x --flags-only
-				-h --help
-				-V --version"
+			OPTS="--flags
+				--noflags
+				--noident
+				--noheadings
+				--oneline
+				--output
+				--raw
+				--notimeouts
+				--settimeout
+				--flags-only
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

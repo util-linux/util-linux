@@ -24,26 +24,26 @@ _eject_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-a --auto
-			-c --changerslot
-			-d --default
-			-f --floppy
-			-F --force
-			-i --manualeject
-			-m --no-unmount
-			-M --no-partitions-unmount
-			-n --noop
-			-p --proc
-			-q --tape
-			-r --cdrom
-			-s --scsi
-			-t --trayclose
-			-T --traytoggle
-			-v --verbose
-			-x --cdspeed
-			-X --listspeed
-			-h --help
-			-V --version"
+			OPTS="--auto
+				--changerslot
+				--default
+				--floppy
+				--force
+				--manualeject
+				--no-unmount
+				--no-partitions-unmount
+				--noop
+				--proc
+				--tape
+				--cdrom
+				--scsi
+				--trayclose
+				--traytoggle
+				--verbose
+				--cdspeed
+				--listspeed
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

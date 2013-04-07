@@ -11,10 +11,10 @@ _colcrt_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="	-  --no-underlining
-				-2 --half-lines
-				-V --version
-				-h --help"
+			OPTS="	--no-underlining
+				--half-lines
+				--version
+				--help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

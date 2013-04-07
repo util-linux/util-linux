@@ -16,7 +16,7 @@ _mkfs_module()
 	esac
 	case $cur in
 		-*)
-			OPTS='-t --type --verbose -h --help -V --version'
+			OPTS='--type --verbose --help --version'
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

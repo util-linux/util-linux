@@ -25,7 +25,7 @@ _ionice_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-c --class -n --classdata -p --pid -t --ignore -V --version -h --help"
+			OPTS="--class --classdata --pid --ignore --version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

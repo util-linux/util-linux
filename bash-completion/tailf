@@ -15,7 +15,7 @@ _tailf_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-n --lines -number -V --version -h --help"
+			OPTS="--lines --version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

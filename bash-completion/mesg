@@ -11,7 +11,7 @@ _mesg_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-v --verbose -V --version -h --help"
+			OPTS="--verbose --version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

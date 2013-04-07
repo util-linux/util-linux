@@ -24,18 +24,18 @@ _nsenter_module()
 			cur=${cur#=}
 			;;
 		-*)
-			OPTS="-t --target
-				-m= --mount=
-				-u= --uts=
-				-i= --ipc=
-				-n= --net=
-				-p= --pid=
-				-U= --user=
-				-r= --root=
-				-w= --wd=
-				-F --no-fork
-				-h --help
-				-V --version"
+			OPTS="--target
+				--mount=
+				--uts=
+				--ipc=
+				--net=
+				--pid=
+				--user=
+				--root=
+				--wd=
+				--no-fork
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

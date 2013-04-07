@@ -19,13 +19,13 @@ _column_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-c --columns
-				-t --table
-				-s --separator
-				-o --output-separator
-				-x --fillrows
-				-h --help
-				-V --version"
+			OPTS="--columns
+				--table
+				--separator
+				--output-separator
+				--fillrows
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

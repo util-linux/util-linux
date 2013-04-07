@@ -11,7 +11,7 @@ _chfn_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-f --full-name -o --office -p --office-phone -h --home-phone -u --help -v --version"
+			OPTS="--full-name --office --office-phone --home-phone --help --version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

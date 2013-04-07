@@ -46,16 +46,16 @@ _ipcrm_module()
 			return 0
 			;;
 	esac
-	OPTS="	-m --shmem-id
-		-M --shmem-key
-		-q --queue-id
-		-Q --queue-key
-		-s --semaphore-id
-		-S --semaphore-key
-		-a= --all=
-		-v --verbose
-		-h --help
-		-V --version"
+	OPTS="	--shmem-id
+		--shmem-key
+		--queue-id
+		--queue-key
+		--semaphore-id
+		--semaphore-key
+		--all=
+		--verbose
+		--help
+		--version"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	return 0
 }

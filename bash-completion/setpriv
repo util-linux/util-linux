@@ -56,8 +56,8 @@ _setpriv_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-d --dump
-				--nnp --no-new-privs
+			OPTS="--dump
+				--no-new-privs
 				--inh-caps
 				--bounding-set
 				--ruid
@@ -72,8 +72,8 @@ _setpriv_module()
 				--securebits
 				--selinux-label
 				--apparmor-profile
-				-h --help
-				-V --version"
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

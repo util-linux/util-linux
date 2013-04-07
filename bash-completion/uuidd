@@ -26,7 +26,7 @@ _uuidd_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-p --pid -s --socket -T --timeout -k --kill -r --random -t --time -n --uuids -P --no-pid -F --no-fork -S --socket-activation -d --debug -q --quiet -V --version -h --help"
+			OPTS="--pid --socket --timeout --kill --random --time --uuids --no-pid --no-fork --socket-activation --debug --quiet --version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

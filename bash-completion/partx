@@ -26,7 +26,7 @@ _partx_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-a --add -d --delete -s --show -u --update -b --bytes -g --noheadings -n --nr -o --output -P --pairs -r --raw -t --type -v --verbose -h --help -V --version"
+			OPTS="--add --delete --show --update --bytes --noheadings --nr --output --pairs --raw --type --verbose --help --version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

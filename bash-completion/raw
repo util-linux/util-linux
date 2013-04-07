@@ -12,7 +12,7 @@ _raw_module()
 	case $cur in
 		-*)
 			local OPTS
-			OPTS="-q --query -a --all -h --help -V --version"
+			OPTS="--query --all --help --version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

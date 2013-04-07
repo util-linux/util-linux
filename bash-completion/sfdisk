@@ -27,35 +27,35 @@ _sfdisk_module()
 			cur=${cur#=}
 			;;
 		-*)
-			OPTS="-s --show-size
-				-c --id
+			OPTS="--show-size
+				--id
 				--change-id
 				--print-id
-				-l --list
-				-d --dump
-				-i --increment
-				-u --unit
-				-1 --one-only
-				-T --list-types
-				-D --DOS
-				-E --DOS-extended
-				-R --re-read
+				--list
+				--dump
+				--increment
+				--unit
+				--one-only
+				--list-types
+				--DOS
+				--DOS-extended
+				--re-read
 				-N
 				-n
 				-O
 				-I
-				-V --verify
-				-v --version
-				-h --help
-				-f --force
+				--verify
+				--version
+				--help
+				--force
 				--no-reread
-				-q --quiet
-				-L --Linux
-				-g --show-geometry
-				-G --show-pt-geometry
-				-A= --activate=
-				-U= --unhide=
-				-x --show-extended
+				--quiet
+				--Linux
+				--show-geometry
+				--show-pt-geometry
+				--activate=
+				--unhide=
+				--show-extended
 				--leave-last
 				--IBM
 				--in-order
@@ -65,9 +65,9 @@ _sfdisk_module()
 				--nested
 				--chained
 				--onesector
-				-C --cylinders
-				-H --heads
-				-S --sectors"
+				--cylinders
+				--heads
+				--sectors"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

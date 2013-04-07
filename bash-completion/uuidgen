@@ -11,7 +11,7 @@ _uuidgen_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-r --random -t --time -V --version -h --help"
+			OPTS="--random --time --version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

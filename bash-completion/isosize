@@ -4,7 +4,6 @@ _isosize_module()
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
-	OPTS='-d --divisor -x --sectors -h --help -V --version'
 	case $prev in
 		'-d'|'--divisor')
 			COMPREPLY=( $(compgen -W "number" -- $cur) )
@@ -14,6 +13,7 @@ _isosize_module()
 			return 0
 			;;
 	esac
+	OPTS='--divisor --sectors --help --version'
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	return 0
 }

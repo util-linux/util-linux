@@ -15,7 +15,7 @@ _fstrim_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-o --offset -l --length -m --minimum -v --verbose -h --help -V --version"
+			OPTS="--offset --length --minimum --verbose --help --version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

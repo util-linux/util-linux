@@ -11,7 +11,7 @@ _utmpdump_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-f --follow -r --reverse -V --version -h --help"
+			OPTS="--follow --reverse --version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

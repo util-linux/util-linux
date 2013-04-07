@@ -15,7 +15,7 @@ _chsh_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-s --shell -l --list-shells -V --version -u --help"
+			OPTS="--shell --list-shells --version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

@@ -15,7 +15,7 @@ _wall_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-n --nobanner -t --timeout -V --version -h --help"
+			OPTS="--nobanner --timeout --version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

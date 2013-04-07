@@ -10,7 +10,7 @@ _fdformat_module()
 			;;
 	esac
 	DEVS=$(for I in echo /dev/fd*; do if [ -e $I ]; then echo $I; fi; done)
-	OPTS="-n --no-verify -h --help -V --version $DEVS"
+	OPTS="--no-verify --help --version $DEVS"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	return 0
 }

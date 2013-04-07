@@ -27,19 +27,19 @@ _tunelp_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-i --irq
-				-t --time
-				-c --chars
-				-w --wait
-				-a --abort
-				-o --check-status
-				-C --careful
-				-s --status
-				-T --trust-irq
-				-r --reset
-				-q --print-irq
-				-h --help
-				-V --version"
+			OPTS="--irq
+				--time
+				--chars
+				--wait
+				--abort
+				--check-status
+				--careful
+				--status
+				--trust-irq
+				--reset
+				--print-irq
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

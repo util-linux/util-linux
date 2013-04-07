@@ -23,18 +23,17 @@ _su_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="	-
-				-u --user
-				-m -p --preserve-environment
-				-g --group
-				-G --supp-group
-				-l --login
-				-c --command
+			OPTS="	--user
+				--preserve-environment
+				--group
+				--supp-group
+				--login
+				--command
 				--session-command
-				-f --fast
-				-s --shell
-				-h --help
-				-V --version"
+				--fast
+				--shell
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

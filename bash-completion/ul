@@ -20,7 +20,7 @@ _ul_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-t --terminal -i --indicated -V --version -h --help"
+			OPTS="--terminal --indicated --version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

@@ -26,18 +26,18 @@ _ldattach_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-d --debug
-				-s --speed
-				-7 --sevenbits
-				-8 --eightbits
-				-n --noparity
-				-e --evenparity
-				-o --oddparity
-				-1 --onestopbit
-				-2 --twostopbits
-				-i --iflag
-				-h --help
-				-V --version"
+			OPTS="--debug
+				--speed
+				--sevenbits
+				--eightbits
+				--noparity
+				--evenparity
+				--oddparity
+				--onestopbit
+				--twostopbits
+				--iflag
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

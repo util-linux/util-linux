@@ -36,26 +36,26 @@ _lsblk_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-a --all
-				-b --bytes
-				-d --nodeps
-				-D --discard
-				-e --exclude
-				-I --include
-				-f --fs
-				-h --help
-				-i --ascii
-				-m --perms
-				-l --list
-				-n --noheadings
-				-o --output
-				-P --pairs
-				-r --raw
-				-s --inverse
-				-t --topology
-				-S --scsi
-				-h --help
-				-V --version"
+			OPTS="--all
+				--bytes
+				--nodeps
+				--discard
+				--exclude
+				--fs
+				--help
+				--include
+				--ascii
+				--list
+				--perms
+				--noheadings
+				--output
+				--pairs
+				--raw
+				--inverse
+				--topology
+				--scsi
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

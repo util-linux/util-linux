@@ -13,14 +13,14 @@ _col_module()
 			return 0
 			;;
 	esac
-	OPTS="-b --no-backspaces
-		-f --fine
-		-p --pass
-		-h --tabs
-		-x --spaces
-		-l --lines
-		-V --version
-		-H --help"
+	OPTS="--no-backspaces
+		--fine
+		--pass
+		--tabs
+		--spaces
+		--lines
+		--version
+		--help"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	return 0
 }

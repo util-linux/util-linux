@@ -7,7 +7,7 @@ _addpart_module()
 		1)
 			local DEVS=''
 			while read dev; do DEVS+="$dev " ; done < <(lsblk -pnro name)
-			OPTS="-h --help -V --version $DEVS"
+			OPTS="--help --version $DEVS"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			;;
 		2)

@@ -83,35 +83,35 @@ _findmnt_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-s --fstab
-				-m --mtab
-				-k --kernel
-				-p --poll
-				-w --timeout
-				-A --all
-				-a --ascii
-				-c --canonicalize
-				-D --df
-				-d --direction
-				-e --evaluate
-				-F --tab-file
-				-f --first-only
-				-i --invert
-				-l --list
-				-N --task
-				-n --noheadings
-				-u --notruncate
-				-O --options
-				-o --output
-				-P --pairs
-				-r --raw
-				-t --types
-				-v --nofsroot
-				-R --submounts
-				-S --source
-				-T --target
-				-h --help
-				-V --version"
+			OPTS="--fstab
+				--mtab
+				--kernel
+				--poll
+				--timeout
+				--all
+				--ascii
+				--canonicalize
+				--df
+				--direction
+				--evaluate
+				--tab-file
+				--first-only
+				--invert
+				--list
+				--task
+				--noheadings
+				--notruncate
+				--options
+				--output
+				--pairs
+				--raw
+				--types
+				--nofsroot
+				--submounts
+				--source
+				--target
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

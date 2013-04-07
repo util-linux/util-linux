@@ -15,11 +15,11 @@ _scriptreplay_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-t --timing
-				-s --typescript
-				-d --divisor
-				-V --version
-				-h --help"
+			OPTS="--timing
+				--typescript
+				--divisor
+				--version
+				--help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

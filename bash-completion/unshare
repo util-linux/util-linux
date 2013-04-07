@@ -11,14 +11,14 @@ _unshare_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-m --mount
-				-u --uts
-				-i --ipc
-				-n --net
-				-p --pid
-				-U --user
-				-h --help
-				-V --version"
+			OPTS="--mount
+				--uts
+				--ipc
+				--net
+				--pid
+				--user
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

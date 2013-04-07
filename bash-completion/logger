@@ -36,7 +36,7 @@ _logger_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-d --udp -i --id -f --file -h --help -n --server -P --port -p --priority -s --stderr -t --tag -u --socket -V --version"
+			OPTS="--udp --id --file --help --server --port --priority --stderr --tag --socket --version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

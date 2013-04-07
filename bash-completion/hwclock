@@ -24,29 +24,29 @@ _hwclock_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-h --help
-				-r --show
-				   --set
-				-s --hctosys
-				-w --systohc
-				   --systz
-				   --adjust
-				-c --compare
-				   --getepoch
-				   --setepoch
-				   --predict
-				-V --version
-				-u --utc
-				   --localtime
-				-f --rtc
-				   --directisa
-				   --badyear
-				   --date
-				   --epoch
-				   --noadjfile
-				   --adjfile
-				   --test
-				-D --debug"
+			OPTS="--help
+				--show
+				--set
+				--hctosys
+				--systohc
+				--systz
+				--adjust
+				--compare
+				--getepoch
+				--setepoch
+				--predict
+				--version
+				--utc
+				--localtime
+				--rtc
+				--directisa
+				--badyear
+				--date
+				--epoch
+				--noadjfile
+				--adjfile
+				--test
+				--debug"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

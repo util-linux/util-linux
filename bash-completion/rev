@@ -11,7 +11,7 @@ _rev_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-V --version -h --help"
+			OPTS="--version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

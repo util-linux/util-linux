@@ -24,16 +24,16 @@ _flock_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-s --shared
-				-x --exclusive
-				-u --unlock
-				-n --nonblock
-				-w --timeout
-				-E --conflict-exit-code
-				-o --close
-				-c --command
-				-h --help
-				-V --version"
+			OPTS="--shared
+				--exclusive
+				--unlock
+				--nonblock
+				--timeout
+				--conflict-exit-code
+				--close
+				--command
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

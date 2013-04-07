@@ -26,30 +26,30 @@ _dmesg_module()
 			return 0
 			;;
 	esac
-	OPTS="-C --clear
-		-c --read-clear
-		-D --console-off
-		-d --show-delta
-		-e --reltime
-		-E --console-on
-		-F --file
-		-f --facility
-		-H --human
-		-k --kernel
-		-L --color
-		-l --level
-		-n --console-level
-		-P --nopager
-		-r --raw
-		-S --syslog
-		-s --buffer-size
-		-T --ctime
-		-t --notime
-		-u --userspace
-		-w --follow
-		-x --decode
-		-h --help
-		-V --version"
+	OPTS="--clear
+		--read-clear
+		--console-off
+		--show-delta
+		--reltime
+		--console-on
+		--file
+		--facility
+		--human
+		--kernel
+		--color
+		--level
+		--console-level
+		--nopager
+		--raw
+		--syslog
+		--buffer-size
+		--ctime
+		--notime
+		--userspace
+		--follow
+		--decode
+		--help
+		--version"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	return 0
 }

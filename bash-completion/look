@@ -15,7 +15,7 @@ _look_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-a --alternative -d --alphanum -f --ignore-case -t --terminate -V --version -h --help"
+			OPTS="--alternative --alphanum --ignore-case --terminate --version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

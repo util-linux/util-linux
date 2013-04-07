@@ -19,7 +19,7 @@ _swaplabel_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-L --label -U --uuid -h --help -V --version"
+			OPTS="--label --uuid --help --version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

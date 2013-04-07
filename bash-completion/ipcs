@@ -13,20 +13,20 @@ _ipcs_module()
 			return 0
 			;;
 	esac
-	OPTS="-i --id
-		-h --help
-		-V --version
-		-m --shmems
-		-q --queues
-		-s --semaphores
-		-a --all
-		-t --time
-		-p --pid
-		-c --creator
-		-l --limits
-		-u --summary
-		   --human
-		-b --bytes"
+	OPTS="--id
+		--help
+		--version
+		--shmems
+		--queues
+		--semaphores
+		--all
+		--time
+		--pid
+		--creator
+		--limits
+		--summary
+		--human
+		--bytes"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	return 0
 }

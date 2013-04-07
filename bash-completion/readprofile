@@ -18,18 +18,18 @@ _readprofile_module()
 			return 0
 			;;
 	esac
-	OPTS="-m --mapfile
-		-p --profile
-		-M --multiplier
-		-i --info
-		-v --verbose
-		-a --all
-		-b --histbin
-		-s --counters
-		-r --reset
-		-n --no-auto
-		-h --help
-		-V --version"
+	OPTS="--mapfile
+		--profile
+		--multiplier
+		--info
+		--verbose
+		--all
+		--histbin
+		--counters
+		--reset
+		--no-auto
+		--help
+		--version"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	return 0
 }

@@ -40,22 +40,22 @@ _losetup_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-a --all
-				-d --detach
-				-D --detach-all
-				-f --find
-				-c --set-capacity
-				-j --associated
-				-l --list
-				-o --offset
-				-O --output
-				   --sizelimit
-				-P --partscan
-				-r --read-only
-				   --show
-				-v --verbose
-				-h --help
-				-V --version"
+			OPTS="--all
+				--detach
+				--detach-all
+				--find
+				--set-capacity
+				--associated
+				--list
+				--offset
+				--output
+				--sizelimit
+				--partscan
+				--read-only
+				--show
+				--verbose
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

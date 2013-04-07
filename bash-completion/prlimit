@@ -29,29 +29,29 @@ _prlimit_module()
 			# as limit value(s)
 			;;
 		-*)
-			OPTS="-p --pid
-				-o --output
-				   --noheadings
-				   --raw
-				   --verbose
-				-h --help
-				-V --version
-				-c= --core=
-				-d= --data=
-				-e= --nice=
-				-f= --fsize=
-				-i= --sigpending=
-				-l= --memlock=
-				-m= --rss=
-				-n= --nofile=
-				-q= --msgqueue=
-				-r= --rtprio=
-				-s= --stack=
-				-t= --cpu=
-				-u= --nproc=
-				-v= --as=
-				-x= --locks=
-				-y --rttime"
+			OPTS="--pid
+				--output
+				--noheadings
+				--raw
+				--verbose
+				--help
+				--version
+				--core=
+				--data=
+				--nice=
+				--fsize=
+				--sigpending=
+				--memlock=
+				--rss=
+				--nofile=
+				--msgqueue=
+				--rtprio=
+				--stack=
+				--cpu=
+				--nproc=
+				--as=
+				--locks=
+				--rttime="
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

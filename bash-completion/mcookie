@@ -16,7 +16,7 @@ _mcookie_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-f --file -v --verbose -V --version -h --help"
+			OPTS="--file --verbose --version --help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

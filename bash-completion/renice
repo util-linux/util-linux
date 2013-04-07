@@ -29,12 +29,12 @@ _renice_module()
 			return 0
 			;;
 	esac
-	OPTS="-g --pgrp
-		-n --priority
-		-p --pid
-		-u --user
-		-h --help
-		-V --version"
+	OPTS="--pgrp
+		--priority
+		--pid
+		--user
+		--help
+		--version"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	return 0
 }

@@ -19,15 +19,15 @@ _script_module()
 			cur=${cur#=}
 			;;
 		-*)
-			OPTS="-a --append
-				-c --command
-				-e --return
-				-f --flush
-				   --force
-				-q --quiet
-				-t= --timing=
-				-V --version
-				-h --help"
+			OPTS="--append
+				--command
+				--return
+				--flush
+				--force
+				--quiet
+				--timing=
+				--version
+				--help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

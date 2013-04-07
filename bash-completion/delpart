@@ -15,7 +15,7 @@ _delpart_module()
 			while read DEV TYPE; do
 				[ $TYPE = 'disk' ] && DEVICES+="$DEV "
 			done < <(lsblk -pnro name,type)
-			OPTS="-h --help -V --version $DEVICES"
+			OPTS="--help --version $DEVICES"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			;;
 		2)

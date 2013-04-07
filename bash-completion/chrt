@@ -14,18 +14,18 @@ _chrt_module()
 	# values.  Perhaps the command interface should be reconsidered.
 	case $cur in
 		-*)
-			OPTS="-b --batch
-				-f --fifo
-				-i --idle
-				-o --other
-				-r --rr
-				-R --reset-on-fork
-				-a --all-tasks
-				-h --help
-				-m --max
-				-p --pid
-				-v --verbose
-				-V --version"
+			OPTS="--batch
+				--fifo
+				--idle
+				--other
+				--rr
+				--reset-on-fork
+				--all-tasks
+				--help
+				--max
+				--pid
+				--verbose
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

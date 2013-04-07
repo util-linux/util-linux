@@ -19,7 +19,7 @@ _bfs_module()
 	esac
 	case $cur in
 		-*)
-			OPTS='-N --inodes --vname --fname -v --verbose -h --help -V --version'
+			OPTS='--inodes --vname --fname --verbose --help --version'
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

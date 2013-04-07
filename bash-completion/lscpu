@@ -28,15 +28,15 @@ _lscpu_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-a --all
-				-b --online
-				-c --offline
-				-e= --extended=
-				-p= --parse=
-				-s --sysroot
-				-x --hex
-				-h --help
-				-V --version"
+			OPTS="--all
+				--online
+				--offline
+				--extended=
+				--parse=
+				--sysroot
+				--hex
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

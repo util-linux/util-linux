@@ -10,7 +10,7 @@ _fsck.minix_module()
 			;;
 	esac
 	while read dev; do DEVS+="$dev " ; done < <(lsblk -pnro name)
-	OPTS="-l -a -r -v -s -m -f -V --version"
+	OPTS="-l -a -r -v -s -m -f --version"
 	COMPREPLY=( $(compgen -W "${OPTS[*]} $DEVS" -- $cur) )
 	return 0
 }

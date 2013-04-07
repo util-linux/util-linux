@@ -27,16 +27,16 @@ _rtcwake_module()
 			return 0
 			;;
 	esac
-	OPTS="-d --device
-		-n --dry-run
-		-l --local
-		-m --mode
-		-s --seconds
-		-t --time
-		-u --utc
-		-v --verbose
-		-h --help
-		-V --version"
+	OPTS="--device
+		--dry-run
+		--local
+		--mode
+		--seconds
+		--time
+		--utc
+		--verbose
+		--help
+		--version"
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 	return 0
 }

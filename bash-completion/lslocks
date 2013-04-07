@@ -27,13 +27,13 @@ _lslocks_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-p --pid
-				-o --output
-				-n --noheadings
-				-r --raw
-				-u --notruncate
-				-h --help
-				-V --version"
+			OPTS="--pid
+				--output
+				--noheadings
+				--raw
+				--notruncate
+				--help
+				--version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

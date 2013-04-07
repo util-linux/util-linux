@@ -29,7 +29,7 @@ _taskset_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-a --all-tasks -p --pid -c --cpu-list -h --help -V --version"
+			OPTS="--all-tasks --pid --cpu-list --help --version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

@@ -21,7 +21,7 @@ _wipefs_module()
 	esac
 	case $cur in
 		-*)
-			OPTS="-a --all -f --force -h --help -n --no-actn -o --offset -p --parsable -q --quiet -t --types -V --version"
+			OPTS="--all --force --help --no-act --offset --parsable --quiet --types --version"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;

@@ -4,7 +4,6 @@ _fsck.cramfs_module()
 	COMPREPLY=()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
-	OPTS='-v --verbose -x --destination -h --help -V --version file'
 	case $prev in
 		'-x'|'--destination')
 			compopt -o filenames
@@ -15,6 +14,7 @@ _fsck.cramfs_module()
 			return 0
 			;;
 	esac
+	OPTS='--verbose --destination --help --version file'
 	COMPREPLY=( $(compgen -W "${OPTS[*]}" -S ' ' -- $cur) )
 	return 0
 }
