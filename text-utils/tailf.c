@@ -237,17 +237,17 @@ int main(int argc, char **argv)
 	struct stat st;
 	off_t size = 0;
 
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-	atexit(close_stdout);
-
 	static const struct option longopts[] = {
 		{ "lines",   required_argument, 0, 'n' },
 		{ "version", no_argument,	0, 'V' },
 		{ "help",    no_argument,	0, 'h' },
 		{ NULL,      0, 0, 0 }
 	};
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	lines = old_style_option(&argc, argv);
 	if (lines < 0)

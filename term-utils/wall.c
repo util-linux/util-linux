@@ -103,11 +103,6 @@ main(int argc, char **argv) {
 	size_t mbufsize;
 	unsigned timeout = WRITE_TIME_OUT;
 
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-	atexit(close_stdout);
-
 	static const struct option longopts[] = {
 		{ "nobanner",	no_argument,		0, 'n' },
 		{ "timeout",	required_argument,	0, 't' },
@@ -115,6 +110,11 @@ main(int argc, char **argv) {
 		{ "help",	no_argument,		0, 'h' },
 		{ NULL,	0, 0, 0 }
 	};
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((ch = getopt_long(argc, argv, "nt:Vh", longopts, NULL)) != -1) {
 		switch (ch) {

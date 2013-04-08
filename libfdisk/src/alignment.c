@@ -212,12 +212,13 @@ int fdisk_discover_geometry(struct fdisk_context *cxt)
 
 int fdisk_discover_topology(struct fdisk_context *cxt)
 {
+#ifdef HAVE_LIBBLKID
+	blkid_probe pr;
+#endif
 	assert(cxt);
 	assert(cxt->sector_size == 0);
 
 #ifdef HAVE_LIBBLKID
-	blkid_probe pr;
-
 	DBG(TOPOLOGY, dbgprint("initialize libblkid prober"));
 
 	pr = blkid_new_probe();

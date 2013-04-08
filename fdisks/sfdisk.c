@@ -977,10 +977,10 @@ out_roundup_size(int width, unsigned long long n, unsigned long unit) {
 static struct geometry
 get_fdisk_geometry_one(struct part_desc *p) {
     struct geometry G;
-
-    memset(&G, 0, sizeof(struct geometry));
     chs b = p->p.end_chs;
     longchs bb = chs_to_longchs(b);
+
+    memset(&G, 0, sizeof(struct geometry));
     G.heads = bb.h + 1;
     G.sectors = bb.s;
     G.cylindersize = G.heads * G.sectors;
@@ -1167,6 +1167,7 @@ static int
 partitions_ok(int fd, struct disk_desc *z) {
     struct part_desc *partitions = &(z->partitions[0]), *p, *q;
     int partno = z->partno;
+    int sector_size;
 
 #define PNO(p) pnumber(p, z)
 
@@ -1251,7 +1252,6 @@ partitions_ok(int fd, struct disk_desc *z) {
 	    }
     }
 
-    int sector_size;
     if (blkdev_get_sector_size(fd, &sector_size) == -1)
 	sector_size = DEFAULT_SECTOR_SIZE;
 
@@ -1538,6 +1538,7 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
     struct part_desc *partitions = &(z->partitions[0]);
     int pno = z->partno;
     int bsd_later = 1;
+    unsigned short sig, magic;
 #ifdef __linux__
     bsd_later = (get_linux_version() >= KERNEL_VERSION(2, 3, 40));
 #endif
@@ -1561,7 +1562,6 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
 	return 0;
     }
 
-    unsigned short sig, magic;
     memcpy(&sig, s->data + 2, sizeof(sig));
     if (sig <= 0x1ae) {
 	memcpy(&magic, s->data + sig, sizeof(magic));

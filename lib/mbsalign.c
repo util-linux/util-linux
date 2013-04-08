@@ -173,7 +173,7 @@ mbsalign (const char *src, char *dest, size_t dest_size,
   const char *str_to_print = src;
   size_t n_cols = src_size - 1;
   size_t n_used_bytes = n_cols; /* Not including NUL */
-  size_t n_spaces = 0;
+  size_t n_spaces = 0, space_left;
   bool conversion = false;
   bool wc_enabled = false;
 
@@ -276,7 +276,7 @@ mbsalign_unibyte:
         }
 
       dest = mbs_align_pad (dest, dest_end, start_spaces);
-      size_t space_left = dest_end - dest;
+      space_left = dest_end - dest;
       dest = mempcpy (dest, str_to_print, min (n_used_bytes, space_left));
       mbs_align_pad (dest, dest_end, end_spaces);
     }

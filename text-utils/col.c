@@ -415,7 +415,7 @@ void flush_lines(int nflush)
  * is the number of half line feeds, otherwise it is the number of whole line
  * feeds.
  */
-void flush_blanks()
+void flush_blanks(void)
 {
 	int half, i, nb;
 
@@ -550,7 +550,7 @@ void flush_line(LINE *l)
 static LINE *line_freelist;
 
 LINE *
-alloc_line()
+alloc_line(void)
 {
 	LINE *l;
 	int i;

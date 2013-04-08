@@ -94,6 +94,12 @@ int main(int argc, char *argv[])
 	FILE *fp = stdin;
 	int ch, rval = EXIT_SUCCESS;
 
+	static const struct option longopts[] = {
+		{ "version",    no_argument,       0, 'V' },
+		{ "help",       no_argument,       0, 'h' },
+		{ NULL,         0, 0, 0 }
+	};
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -101,12 +107,6 @@ int main(int argc, char *argv[])
 
 	signal(SIGINT, sig_handler);
 	signal(SIGTERM, sig_handler);
-
-	static const struct option longopts[] = {
-		{ "version",    no_argument,       0, 'V' },
-		{ "help",       no_argument,       0, 'h' },
-		{ NULL,         0, 0, 0 }
-	};
 
 	while ((ch = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
 		switch(ch) {

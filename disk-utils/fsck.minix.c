@@ -507,10 +507,11 @@ write_super_block(void) {
 
 static void
 write_tables(void) {
-	write_super_block();
 	unsigned long buffsz = get_inode_buffer_size();
 	unsigned long imaps = get_nimaps();
 	unsigned long zmaps = get_nzmaps();
+
+	write_super_block();
 
 	if (write_all(IN, inode_map, imaps * MINIX_BLOCK_SIZE))
 		die(_("Unable to write inode map"));

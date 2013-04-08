@@ -371,11 +371,11 @@ ubi_probe_all(blkid_cache cache, int only_if_new)
 	const char **dirname;
 
 	for (dirname = dirlist; *dirname; dirname++) {
-		DBG(DEVNAME, blkid_debug("probing UBI volumes under %s",
-					  *dirname));
-
 		DIR		*dir;
 		struct dirent	*iter;
+
+		DBG(DEVNAME, blkid_debug("probing UBI volumes under %s",
+					  *dirname));
 
 		dir = opendir(*dirname);
 		if (dir == NULL)
