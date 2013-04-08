@@ -19,6 +19,18 @@ _swapon_module()
 			COMPREPLY=( $(compgen -W "$OUTPUT" -S ',' -- $cur) )
 			return 0
 			;;
+		'-U')
+			local UUIDS
+			UUIDS="$(lsblk -nrp -o FSTYPE,UUID | awk '$1 ~ /swap/ { print $2 }')"
+			COMPREPLY=( $(compgen -W "$UUIDS" -- $cur) )
+			return 0
+			;;
+		'-L')
+			local LABELS
+			LABELS="$(lsblk -nrp -o FSTYPE,LABEL | awk '$1 ~ /swap/ { print $2 }')"
+			COMPREPLY=( $(compgen -W "$LABELS" -- $cur) )
+			return 0
+			;;
 		'-h'|'--help'|'-V'|'--version')
 			return 0
 			;;
@@ -42,10 +54,9 @@ _swapon_module()
 			return 0
 			;;
 	esac
-	# FIXME: compgen will split SPEC= from '=' point.  The append
-	# comma separated value problem is very similar.
-	compopt -o filenames
-	COMPREPLY=( $(compgen -f -- $cur) )
+	local DEVS
+	DEVS="$(lsblk -nrp -o FSTYPE,NAME | awk '$1 ~ /swap/ { print $2 }')"
+	COMPREPLY=( $(compgen -W "$DEVS" -- $cur) )
 	return 0
 }
 complete -F _swapon_module swapon
