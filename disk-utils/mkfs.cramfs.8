@@ -1,0 +1,90 @@
+.TH EXAMPLE "8" "April 2013" "util-linux" "System Administration"
+.SH NAME
+mkfs.cramfs \- make compressed ROM file system
+.SH SYNOPSIS
+.B mkfs.cramfs
+[options]
+.I directory file
+.SH DESCRIPTION
+Files on cramfs file systems are zlib-compressed one page at a time to
+allow random read access.  The metadata is not compressed, but is
+expressed in a terse representation that is more space-efficient than
+conventional file systems.
+.PP
+The file system is intentionally read-only to simplify its design; random
+write access for compressed files is difficult to implement.  cramfs
+ships with a utility (mkcramfs) to pack files into new cramfs images.
+.PP
+File sizes are limited to less than 16MB.
+.PP
+Maximum file system size is a little under 272MB.  (The last file on the
+file system must begin before the 256MB block, but can extend past it.)
+.SH ARGUMENTS
+The
+.I directory
+is simply the root of the directory tree that we want to generate a
+compressed filesystem out of.
+.PP
+The
+.I file
+will contain the cram file system, which later can be mounted.
+.SH OPTIONS
+.TP
+\fB\-v\fR
+Enable verbose messaging.
+.TP
+\fB\-E\fR
+Treat all warnings as errors, which are reflected as command return value.
+.TP
+\fB\-b\fR \fIblocksize\fR
+Use defined block size, which has to be divisible by page size.
+.TP
+\fB\-e\fR \fIedition\fR
+Use defined file system edition number in superblock.
+.TP
+\fB\-N\fR \fIbig, little, host\fR
+Use defined endianness.  Value defaults to
+.IR host .
+.TP
+\fB\-i\fR \fIfile\fR
+Insert a
+.I file
+to cramfs file system.
+.TP
+\fB\-n\fR \fIname\fR
+Set name of the cramfs file system.
+.TP
+\fB\-p\fR
+Pad by 512 bytes for boot code.
+.TP
+\fB\-s\fR
+This option is ignored.  Originally the \-s turned on directory entry
+sorting.
+.TP
+\fB\-z\fR
+Make explicit holes.  Use of this option will require 2.3.39 kernel, or newer.
+.TP
+\fB\-V\fR
+Display version information and exit.
+.TP
+\fB\-h\fR
+Display help and exit.
+.SH "EXIT STATUS"
+.RS
+.PD 0
+.TP
+.B 0
+success
+.TP
+.B 8
+operation error, such as unable to allocate memory
+.PD
+.RE
+.SH "SEE ALSO"
+.BR mount (8),
+.BR fsck.cramfs (8)
+.SH AVAILABILITY
+The example command is part of the util-linux package and is available from
+.UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .
