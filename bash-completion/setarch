@@ -10,14 +10,7 @@ _setarch_module()
 			;;
 	esac
 	if [ $COMP_CWORD -eq 1 ]; then
-		COMPREPLY=( $(compgen -W "linux32 linux64 ppc32 ppc ppc64
-					  ppc64pseries ppc64iseries i386
-					  i486 i586 i686 athlon x86_64
-					  ia64 parisc32 parisc parisc64
-					  s390 s390x sparc sparc32bash
-					  sparc32 sparc64 mips32 mips
-					  mips64 alpha alphaev5 alphaev56
-					  alphaev6 alphaev67" -- $cur) )
+		COMPREPLY=( $(compgen -W "$(setarch --list)" -- $cur) )
 		return 0
 	fi
 	case $cur in
