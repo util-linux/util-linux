@@ -987,15 +987,15 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 
 	if (is_mountinfo(tb)) {
 		/* @tb is mountinfo, so we can try to use fs-roots */
-		struct libmnt_fs *fs;
+		struct libmnt_fs *rootfs;
 		int flags = 0;
 
 		if (mnt_fs_get_option(fstab_fs, "bind", NULL, NULL) == 0)
 			flags = MS_BIND;
 
-		fs = mnt_table_get_fs_root(tb, fstab_fs, flags, &root);
-		if (fs)
-			src = mnt_fs_get_srcpath(fs);
+		rootfs = mnt_table_get_fs_root(tb, fstab_fs, flags, &root);
+		if (rootfs)
+			src = mnt_fs_get_srcpath(rootfs);
 	}
 
 	if (!src)

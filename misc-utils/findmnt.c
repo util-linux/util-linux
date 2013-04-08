@@ -489,7 +489,6 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 				str = mnt_resolve_spec(str, cache);
 		}
 		if (root && str && !(flags & FL_NOFSROOT) && strcmp(root, "/")) {
-			char *tmp;
 			xasprintf(&tmp, "%s[%s]", str, root);
 			str = tmp;
 		}

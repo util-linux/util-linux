@@ -208,14 +208,14 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 			ptes[partnum-1].changed = 1;
 		} else if (cxt->label->nparts_max > 5) {    /* 5 will be moved to 4 */
 			/* the first logical in a longer chain */
-			struct pte *pe = &ptes[5];
+			struct pte *pete = &ptes[5];
 
-			if (pe->part_table) /* prevent SEGFAULT */
-				set_start_sect(pe->part_table,
-					       get_partition_start(pe) -
+			if (pete->part_table) /* prevent SEGFAULT */
+				set_start_sect(pete->part_table,
+					       get_partition_start(pete) -
 					       extended_offset);
-			pe->offset = extended_offset;
-			pe->changed = 1;
+			pete->offset = extended_offset;
+			pete->changed = 1;
 		}
 
 		if (cxt->label->nparts_max > 5) {
@@ -636,14 +636,14 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 			read = 0;
 		}
 		if (!read && start == temp) {
-			sector_t i = start;
+			sector_t j = start;
 
-			start = read_int(cxt, cround(cxt, i), cround(cxt, dflt),
+			start = read_int(cxt, cround(cxt, j), cround(cxt, dflt),
 					cround(cxt, limit),
 					 0, mesg);
 			if (fdisk_context_use_cylinders(cxt)) {
 				start = (start - 1) * fdisk_context_get_units_per_sector(cxt);
-				if (start < i) start = i;
+				if (start < j) start = j;
 			}
 			read = 1;
 		}
@@ -944,14 +944,14 @@ static int dos_add_partition(
 			printf(_("If you want to create more than four partitions, you must replace a\n"
 				 "primary partition with an extended partition first.\n"));
 	} else if (cxt->label->nparts_max >= MAXIMUM_PARTS) {
-		int i;
+		int j;
 
 		printf(_("All logical partitions are in use\n"));
 		printf(_("Adding a primary partition\n"));
 
-		i = get_partition_unused_primary(cxt);
-		if (i >= 0)
-			rc = add_partition(cxt, i, t);
+		j = get_partition_unused_primary(cxt);
+		if (j >= 0)
+			rc = add_partition(cxt, j, t);
 	} else {
 		char c, line[LINE_LENGTH];
 		int dflt;
@@ -973,18 +973,18 @@ static int dos_add_partition(
 			printf(_("Using default response %c\n"), c);
 		}
 		if (c == 'p') {
-			int i = get_partition_unused_primary(cxt);
-			if (i >= 0)
-				rc = add_partition(cxt, i, t);
+			int j = get_partition_unused_primary(cxt);
+			if (j >= 0)
+				rc = add_partition(cxt, j, t);
 			goto done;
 		} else if (c == 'l' && extended_offset) {
 			rc = add_logical(cxt);
 			goto done;
 		} else if (c == 'e' && !extended_offset) {
-			int i = get_partition_unused_primary(cxt);
-			if (i >= 0) {
+			int j = get_partition_unused_primary(cxt);
+			if (j >= 0) {
 				t = fdisk_get_parttype_from_code(cxt, EXTENDED);
-				rc = add_partition(cxt, i, t);
+				rc = add_partition(cxt, j, t);
 			}
 			goto done;
 		} else
