@@ -32,6 +32,11 @@ argument is the pathname of the directory where the filesystem
 is mounted.
 The filesystem must be mounted to be frozen (see
 .BR mount (8)).
+.PP
+Note that access time updates are also suspends if the filesystem is mounted with
+the traditional atime semantics (mount option strictatime, for more details see
+.BR mount (8)).
+
 .SH OPTIONS
 .IP "\fB\-h, \-\-help\fP"
 Print help and exit.
