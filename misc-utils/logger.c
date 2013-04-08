@@ -320,12 +320,12 @@ main(int argc, char **argv) {
 	argv += optind;
 
 	/* setup for logging */
-	if (!usock && !server)
-		openlog(tag ? tag : getlogin(), logflags, 0);
-	else if (server)
+	if (server)
 		LogSock = inet_socket(server, port, socket_type);
-	else
+	else if (usock)
 		LogSock = unix_socket(usock, socket_type);
+	else
+		openlog(tag ? tag : getlogin(), logflags, 0);
 
 	/* log input line if appropriate */
 	if (argc > 0) {
