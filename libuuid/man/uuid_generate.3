@@ -79,7 +79,7 @@ by concurrently running processes, the uuid library uses global
 clock state counter (if the process has permissions to gain exclusive access
 to this file) and/or the
 .B uuidd
-daemon, if it is running already or can be be spawned by the process (if
+daemon, if it is running already or can be spawned by the process (if
 installed and the process has enough permissions to run it).  If neither of
 these two synchronization mechanisms can be used, it is theoretically possible
 that two concurrently running processes obtain the same UUID(s).  To tell
