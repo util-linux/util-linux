@@ -73,8 +73,8 @@ static int probe_solaris_pt(blkid_probe pr,
 		goto nothing;
 
 	if (le32_to_cpu(l->v_version) != 1) {
-		DBG(DEBUG_LOWPROBE, printf(
-			"WARNING: unsupported solaris x86 version %d, ignore\n",
+		DBG(LOWPROBE, blkid_debug(
+			"WARNING: unsupported solaris x86 version %d, ignore",
 			le32_to_cpu(l->v_version)));
 		goto nothing;
 	}
@@ -112,9 +112,9 @@ static int probe_solaris_pt(blkid_probe pr,
 			start += blkid_partition_get_start(parent);
 
 		if (parent && !blkid_is_nested_dimension(parent, start, size)) {
-			DBG(DEBUG_LOWPROBE, printf(
+			DBG(LOWPROBE, blkid_debug(
 				"WARNING: solaris partition (%d) overflow "
-				"detected, ignore\n", i));
+				"detected, ignore", i));
 			continue;
 		}
 

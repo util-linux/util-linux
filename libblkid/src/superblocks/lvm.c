@@ -100,8 +100,7 @@ static int probe_lvm2(blkid_probe pr, const struct blkid_idmag *mag)
 	if (lvm2_calc_crc(&label->offset_xl, LVM2_LABEL_SIZE -
 			((char *) &label->offset_xl - (char *) label)) !=
 			le32_to_cpu(label->crc_xl)) {
-		DBG(DEBUG_PROBE,
-		    printf("LVM2: label checksum incorrect at sector %d\n",
+		DBG(PROBE, blkid_debug("LVM2: label checksum incorrect at sector %d",
 			   sector));
 		return 1;
 	}

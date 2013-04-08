@@ -147,9 +147,9 @@ static int probe_unixware_pt(blkid_probe pr,
 		size = le32_to_cpu(p->nr_sects);
 
 		if (parent && !blkid_is_nested_dimension(parent, start, size)) {
-			DBG(DEBUG_LOWPROBE, printf(
+			DBG(LOWPROBE, blkid_debug(
 				"WARNING: unixware partition (%d) overflow "
-				"detected, ignore\n", i));
+				"detected, ignore", i));
 			continue;
 		}
 

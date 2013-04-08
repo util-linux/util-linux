@@ -149,9 +149,9 @@ static int probe_ntfs(blkid_probe pr, const struct blkid_idmag *mag)
 	off = le64_to_cpu(ns->mft_cluster_location) * sector_size *
 		sectors_per_cluster;
 
-	DBG(DEBUG_LOWPROBE, printf("NTFS: sector_size=%d, mft_record_size=%d, "
+	DBG(LOWPROBE, blkid_debug("NTFS: sector_size=%d, mft_record_size=%d, "
 			"sectors_per_cluster=%d, nr_clusters=%ju "
-			"cluster_offset=%jd\n",
+			"cluster_offset=%jd",
 			(int) sector_size, mft_record_size,
 			sectors_per_cluster, nr_clusters,
 			off));

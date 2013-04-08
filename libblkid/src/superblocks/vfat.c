@@ -123,9 +123,8 @@ static unsigned char *search_fat_label(blkid_probe pr,
 	struct vfat_dir_entry *ent, *dir = NULL;
 	uint32_t i;
 
-	DBG(DEBUG_LOWPROBE,
-		printf("\tlook for label in root-dir "
-			"(entries: %d, offset: %jd)\n", entries, offset));
+	DBG(LOWPROBE, blkid_debug("\tlook for label in root-dir "
+			"(entries: %d, offset: %jd)", entries, offset));
 
 	if (!blkid_probe_is_tiny(pr)) {
 		/* large disk, read whole root directory */
@@ -163,8 +162,7 @@ static unsigned char *search_fat_label(blkid_probe pr,
 
 		if ((ent->attr & (FAT_ATTR_VOLUME_ID | FAT_ATTR_DIR)) ==
 		    FAT_ATTR_VOLUME_ID) {
-			DBG(DEBUG_LOWPROBE,
-				printf("\tfound fs LABEL at entry %d\n", i));
+			DBG(LOWPROBE, blkid_debug("\tfound fs LABEL at entry %d", i));
 			return ent->name;
 		}
 	}

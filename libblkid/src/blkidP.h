@@ -321,21 +321,21 @@ struct blkid_struct_cache
 #define CONFIG_BLKID_DEBUG
 #endif
 
-#define DEBUG_CACHE	0x0001
-#define DEBUG_DUMP	0x0002
-#define DEBUG_DEV	0x0004
-#define DEBUG_DEVNAME	0x0008
-#define DEBUG_DEVNO	0x0010
-#define DEBUG_PROBE	0x0020
-#define DEBUG_READ	0x0040
-#define DEBUG_RESOLVE	0x0080
-#define DEBUG_SAVE	0x0100
-#define DEBUG_TAG	0x0200
-#define DEBUG_LOWPROBE	0x0400
-#define DEBUG_CONFIG	0x0800
-#define DEBUG_EVALUATE	0x1000
-#define DEBUG_INIT	0x8000
-#define DEBUG_ALL	0xFFFF
+#define BLKID_DEBUG_CACHE	0x0001
+#define BLKID_DEBUG_DUMP	0x0002
+#define BLKID_DEBUG_DEV		0x0004
+#define BLKID_DEBUG_DEVNAME	0x0008
+#define BLKID_DEBUG_DEVNO	0x0010
+#define BLKID_DEBUG_PROBE	0x0020
+#define BLKID_DEBUG_READ	0x0040
+#define BLKID_DEBUG_RESOLVE	0x0080
+#define BLKID_DEBUG_SAVE	0x0100
+#define BLKID_DEBUG_TAG		0x0200
+#define BLKID_DEBUG_LOWPROBE	0x0400
+#define BLKID_DEBUG_CONFIG	0x0800
+#define BLKID_DEBUG_EVALUATE	0x1000
+#define BLKID_DEBUG_INIT	0x8000
+#define BLKID_DEBUG_ALL		0xFFFF
 
 #ifdef CONFIG_BLKID_DEBUG
 extern int blkid_debug_mask;
@@ -343,7 +343,21 @@ extern void blkid_init_debug(int mask);
 extern void blkid_debug_dump_dev(blkid_dev dev);
 extern void blkid_debug_dump_tag(blkid_tag tag);
 
-#define DBG(m,x)	do { if ((m) & blkid_debug_mask) x; } while (0)
+#define DBG(m,x)	do { \
+				if ((BLKID_DEBUG_ ## m) & blkid_debug_mask) \
+					fprintf(stderr, "%d: libblkid: %8s: ", getpid(), # m); \
+					x; \
+			} while (0)
+
+static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
+blkid_debug(const char *mesg, ...)
+{
+	va_list ap;
+	va_start(ap, mesg);
+	vfprintf(stderr, mesg, ap);
+	va_end(ap);
+	fputc('\n', stderr);
+}
 
 #else /* !CONFIG_BLKID_DEBUG */
 #define DBG(m,x)

@@ -153,7 +153,7 @@ static int probe_dos_pt(blkid_probe pr,
 	 * partition table.
 	 */
 	if (blkid_probe_is_vfat(pr)) {
-		DBG(DEBUG_LOWPROBE, printf("probably FAT -- ignore\n"));
+		DBG(LOWPROBE, blkid_debug("probably FAT -- ignore"));
 		goto nothing;
 	}
 
@@ -164,7 +164,7 @@ static int probe_dos_pt(blkid_probe pr,
 	 */
 	for (p = p0, i = 0; i < 4; i++, p++)
 		if (p->boot_ind != 0 && p->boot_ind != 0x80) {
-			DBG(DEBUG_LOWPROBE, printf("missing boot indicator -- ignore\n"));
+			DBG(LOWPROBE, blkid_debug("missing boot indicator -- ignore"));
 			goto nothing;
 		}
 
@@ -173,7 +173,7 @@ static int probe_dos_pt(blkid_probe pr,
 	 */
 	for (p = p0, i = 0; i < 4; i++, p++) {
 		if (p->sys_type == BLKID_GPT_PARTITION) {
-			DBG(DEBUG_LOWPROBE, printf("probably GPT -- ignore\n"));
+			DBG(LOWPROBE, blkid_debug("probably GPT -- ignore"));
 			goto nothing;
 		}
 	}

@@ -34,11 +34,11 @@ static blkid_tag blkid_new_tag(void)
 void blkid_debug_dump_tag(blkid_tag tag)
 {
 	if (!tag) {
-		printf("    tag: NULL\n");
+		fprintf(stderr, "    tag: NULL\n");
 		return;
 	}
 
-	printf("    tag: %s=\"%s\"\n", tag->bit_name, tag->bit_val);
+	fprintf(stderr, "    tag: %s=\"%s\"\n", tag->bit_name, tag->bit_val);
 }
 #endif
 
@@ -47,9 +47,9 @@ void blkid_free_tag(blkid_tag tag)
 	if (!tag)
 		return;
 
-	DBG(DEBUG_TAG, printf("    freeing tag %s=%s\n", tag->bit_name,
+	DBG(TAG, blkid_debug("    freeing tag %s=%s", tag->bit_name,
 		   tag->bit_val ? tag->bit_val : "(NULL)"));
-	DBG(DEBUG_TAG, blkid_debug_dump_tag(tag));
+	DBG(TAG, blkid_debug_dump_tag(tag));
 
 	list_del(&tag->bit_tags);	/* list of tags for this device */
 	list_del(&tag->bit_names);	/* list of tags with this type */
@@ -109,8 +109,7 @@ static blkid_tag blkid_find_head_cache(blkid_cache cache, const char *type)
 	list_for_each(p, &cache->bic_tags) {
 		tmp = list_entry(p, struct blkid_struct_tag, bit_tags);
 		if (!strcmp(tmp->bit_name, type)) {
-			DBG(DEBUG_TAG,
-			    printf("    found cache tag head %s\n", type));
+			DBG(TAG, blkid_debug("    found cache tag head %s", type));
 			head = tmp;
 			break;
 		}
@@ -178,8 +177,7 @@ int blkid_set_tag(blkid_dev dev, const char *name,
 				if (!head)
 					goto errout;
 
-				DBG(DEBUG_TAG,
-				    printf("    creating new cache tag head %s\n", name));
+				DBG(TAG, blkid_debug("    creating new cache tag head %s", name));
 				head->bit_name = name ? strdup(name) : NULL;
 				if (!head->bit_name)
 					goto errout;
@@ -223,7 +221,7 @@ int blkid_parse_tag_string(const char *token, char **ret_type, char **ret_val)
 {
 	char *name, *value, *cp;
 
-	DBG(DEBUG_TAG, printf("trying to parse '%s' as a tag\n", token));
+	DBG(TAG, blkid_debug("trying to parse '%s' as a tag", token));
 
 	if (!token || !(cp = strchr(token, '=')))
 		return -1;
@@ -348,7 +346,7 @@ extern blkid_dev blkid_find_dev_with_tag(blkid_cache cache,
 
 	blkid_read_cache(cache);
 
-	DBG(DEBUG_TAG, printf("looking for %s=%s in cache\n", type, value));
+	DBG(TAG, blkid_debug("looking for %s=%s in cache", type, value));
 
 try_again:
 	pri = -1;

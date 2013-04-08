@@ -64,7 +64,7 @@ struct nvlist {
 };
 
 #define nvdebug(fmt, ...)	do { } while(0)
-/*#define nvdebug(fmt, a...)	printf(fmt, ##a)*/
+/*#define nvdebug(fmt, a...)	fprintf(stderr, fmt, ##a)*/
 
 static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 {
@@ -157,7 +157,7 @@ static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
 }
 
 #define zdebug(fmt, ...)	do {} while(0)
-/*#define zdebug(fmt, a...)	printf(fmt, ##a)*/
+/*#define zdebug(fmt, a...)	fprintf(stderr, fmt, ##a)*/
 
 /* ZFS has 128x1kB host-endian root blocks, stored in 2 areas at the start
  * of the disk, and 2 areas at the end of the disk.  Check only some of them...

@@ -32,7 +32,7 @@ char *blkid_get_tag_value(blkid_cache cache, const char *tagname,
 	blkid_cache c = cache;
 	char *ret = NULL;
 
-	DBG(DEBUG_RESOLVE, printf("looking for %s on %s\n", tagname, devname));
+	DBG(RESOLVE, blkid_debug("looking for %s on %s", tagname, devname));
 
 	if (!devname)
 		return NULL;
@@ -68,8 +68,7 @@ char *blkid_get_devname(blkid_cache cache, const char *token,
 	if (!cache && blkid_get_cache(&c, NULL) < 0)
 		return NULL;
 
-	DBG(DEBUG_RESOLVE,
-	    printf("looking for %s%s%s %s\n", token, value ? "=" : "",
+	DBG(RESOLVE, blkid_debug("looking for %s%s%s %s", token, value ? "=" : "",
 		   value ? value : "", cache ? "in cache" : "from disk"));
 
 	if (!value) {
@@ -103,7 +102,7 @@ int main(int argc, char **argv)
 	char *value;
 	blkid_cache cache;
 
-	blkid_init_debug(DEBUG_ALL);
+	blkid_init_debug(BLKID_DEBUG_ALL);
 	if (argc != 2 && argc != 3) {
 		fprintf(stderr, "Usage:\t%s tagname=value\n"
 			"\t%s tagname devname\n"

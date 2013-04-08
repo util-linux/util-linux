@@ -279,7 +279,7 @@ int blkid_probe_filter_superblocks_usage(blkid_probe pr, int flag, int usage)
 		} else if (flag & BLKID_FLTR_ONLYIN)
 			blkid_bmp_set_item(chn->fltr, i);
 	}
-	DBG(DEBUG_LOWPROBE, printf("a new probing usage-filter initialized\n"));
+	DBG(LOWPROBE, blkid_debug("a new probing usage-filter initialized"));
 	return 0;
 }
 
@@ -335,8 +335,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		return -1;
 	blkid_probe_chain_reset_vals(pr, chn);
 
-	DBG(DEBUG_LOWPROBE,
-		printf("--> starting probing loop [SUBLKS idx=%d]\n",
+	DBG(LOWPROBE, blkid_debug("--> starting probing loop [SUBLKS idx=%d]",
 		chn->idx));
 
 	if (pr->size <= 0 || (pr->size <= 1024 && !S_ISCHR(pr->mode)))
@@ -357,7 +356,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		id = idinfos[i];
 
 		if (chn->fltr && blkid_bmp_get_item(chn->fltr, i)) {
-			DBG(DEBUG_LOWPROBE, printf("filter out: %s\n", id->name));
+			DBG(LOWPROBE, blkid_debug("filter out: %s", id->name));
 			continue;
 		}
 
@@ -373,14 +372,14 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		if ((id->usage & BLKID_USAGE_RAID) && blkid_probe_is_tiny(pr))
 			continue;
 
-		DBG(DEBUG_LOWPROBE, printf("[%zd] %s:\n", i, id->name));
+		DBG(LOWPROBE, blkid_debug("[%zd] %s:", i, id->name));
 
 		if (blkid_probe_get_idmag(pr, id, &off, &mag))
 			continue;
 
 		/* final check by probing function */
 		if (id->probefunc) {
-			DBG(DEBUG_LOWPROBE, printf("\tcall probefunc()\n"));
+			DBG(LOWPROBE, blkid_debug("\tcall probefunc()"));
 			if (id->probefunc(pr, mag) != 0) {
 				blkid_probe_chain_reset_vals(pr, chn);
 				continue;
@@ -401,19 +400,17 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 					(unsigned char *) mag->magic);
 		if (rc) {
 			blkid_probe_chain_reset_vals(pr, chn);
-			DBG(DEBUG_LOWPROBE, printf("failed to set result -- ingnore\n"));
+			DBG(LOWPROBE, blkid_debug("failed to set result -- ingnore"));
 			continue;
 		}
 
-		DBG(DEBUG_LOWPROBE,
-			printf("<-- leaving probing loop (type=%s) [SUBLKS idx=%d]\n",
+		DBG(LOWPROBE, blkid_debug("<-- leaving probing loop (type=%s) [SUBLKS idx=%d]",
 			id->name, chn->idx));
 		return 0;
 	}
 
 nothing:
-	DBG(DEBUG_LOWPROBE,
-		printf("<-- leaving probing loop (failed) [SUBLKS idx=%d]\n",
+	DBG(LOWPROBE, blkid_debug("<-- leaving probing loop (failed) [SUBLKS idx=%d]",
 		chn->idx));
 	return 1;
 }
@@ -466,9 +463,8 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 		return rc;		/* error */
 
 	if (count > 1 && intol) {
-		DBG(DEBUG_LOWPROBE,
-			printf("ERROR: superblocks chain: "
-			       "ambivalent result detected (%d filesystems)!\n",
+		DBG(LOWPROBE, blkid_debug("ERROR: superblocks chain: "
+			       "ambivalent result detected (%d filesystems)!",
 			       count));
 		return -2;		/* error, ambivalent result (more FS) */
 	}

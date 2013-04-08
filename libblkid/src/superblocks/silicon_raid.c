@@ -103,7 +103,7 @@ static int probe_silraid(blkid_probe pr,
 	if (sil->disk_number >= 8)
 		return -1;
 	if (!checksum(sil)) {
-		DBG(DEBUG_LOWPROBE, printf("silicon raid: incorrect checksum\n"));
+		DBG(LOWPROBE, blkid_debug("silicon raid: incorrect checksum"));
 		return -1;
 	}
 

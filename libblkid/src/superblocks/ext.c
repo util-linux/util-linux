@@ -295,7 +295,7 @@ static void ext_get_info(blkid_probe pr, int ver, struct ext2_super_block *es)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
 
-	DBG(DEBUG_PROBE, printf("ext2_sb.compat = %08X:%08X:%08X\n",
+	DBG(PROBE, blkid_debug("ext2_sb.compat = %08X:%08X:%08X",
 		   le32_to_cpu(es->s_feature_compat),
 		   le32_to_cpu(es->s_feature_incompat),
 		   le32_to_cpu(es->s_feature_ro_compat)));

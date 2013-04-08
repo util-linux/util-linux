@@ -153,7 +153,7 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 		return -1;	/* nothing, works with block devices only */
 
 	if (chn->binary) {
-		DBG(DEBUG_LOWPROBE, printf("initialize topology binary data\n"));
+		DBG(LOWPROBE, blkid_debug("initialize topology binary data"));
 
 		if (chn->data)
 			/* reset binary data */
@@ -169,8 +169,7 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 
 	blkid_probe_chain_reset_vals(pr, chn);
 
-	DBG(DEBUG_LOWPROBE,
-		printf("--> starting probing loop [TOPOLOGY idx=%d]\n",
+	DBG(LOWPROBE, blkid_debug("--> starting probing loop [TOPOLOGY idx=%d]",
 		chn->idx));
 
 	i = chn->idx < 0 ? 0 : chn->idx + 1U;
@@ -181,8 +180,7 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 		chn->idx = i;
 
 		if (id->probefunc) {
-			DBG(DEBUG_LOWPROBE, printf(
-				"%s: call probefunc()\n", id->name));
+			DBG(LOWPROBE, blkid_debug("%s: call probefunc()", id->name));
 			if (id->probefunc(pr, NULL) != 0)
 				continue;
 		}
@@ -193,14 +191,12 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 		/* generic for all probing drivers */
 		topology_set_logical_sector_size(pr);
 
-		DBG(DEBUG_LOWPROBE,
-			printf("<-- leaving probing loop (type=%s) [TOPOLOGY idx=%d]\n",
+		DBG(LOWPROBE, blkid_debug("<-- leaving probing loop (type=%s) [TOPOLOGY idx=%d]",
 			id->name, chn->idx));
 		return 0;
 	}
 
-	DBG(DEBUG_LOWPROBE,
-		printf("<-- leaving probing loop (failed) [TOPOLOGY idx=%d]\n",
+	DBG(LOWPROBE, blkid_debug("<-- leaving probing loop (failed) [TOPOLOGY idx=%d]",
 		chn->idx));
 	return 1;
 }

@@ -60,8 +60,7 @@ blkid_dev blkid_get_dev(blkid_cache cache, const char *devname, int flags)
 		if (strcmp(tmp->bid_name, devname))
 			continue;
 
-		DBG(DEBUG_DEVNAME,
-		    printf("found devname %s in cache\n", tmp->bid_name));
+		DBG(DEVNAME, blkid_debug("found devname %s in cache", tmp->bid_name));
 		dev = tmp;
 		break;
 	}
@@ -258,9 +257,9 @@ static dev_t lvm_get_devno(const char *lvm_device)
 	int ma, mi;
 	dev_t ret = 0;
 
-	DBG(DEBUG_DEVNAME, printf("opening %s\n", lvm_device));
+	DBG(DEVNAME, blkid_debug("opening %s", lvm_device));
 	if ((lvf = fopen(lvm_device, "r" UL_CLOEXECSTR)) == NULL) {
-		DBG(DEBUG_DEVNAME, printf("%s: (%d) %m\n", lvm_device, errno));
+		DBG(DEVNAME, blkid_debug("%s: (%d) %m", lvm_device, errno));
 		return 0;
 	}
 
@@ -285,7 +284,7 @@ static void lvm_probe_all(blkid_cache cache, int only_if_new)
 	if ((vg_list = opendir(VG_DIR)) == NULL)
 		return;
 
-	DBG(DEBUG_DEVNAME, printf("probing LVM devices under %s\n", VG_DIR));
+	DBG(DEVNAME, blkid_debug("probing LVM devices under %s", VG_DIR));
 
 	while ((vg_iter = readdir(vg_list)) != NULL) {
 		DIR		*lv_list;
@@ -323,7 +322,7 @@ static void lvm_probe_all(blkid_cache cache, int only_if_new)
 				lv_name);
 			dev = lvm_get_devno(lvm_device);
 			sprintf(lvm_device, "%s/%s", vg_name, lv_name);
-			DBG(DEBUG_DEVNAME, printf("LVM dev %s: devno 0x%04X\n",
+			DBG(DEVNAME, blkid_debug("LVM dev %s: devno 0x%04X",
 						  lvm_device,
 						  (unsigned int) dev));
 			probe_one(cache, lvm_device, dev, BLKID_PRI_LVM,
@@ -355,7 +354,7 @@ evms_probe_all(blkid_cache cache, int only_if_new)
 			    &ma, &mi, &sz, device) != 4)
 			continue;
 
-		DBG(DEBUG_DEVNAME, printf("Checking partition %s (%d, %d)\n",
+		DBG(DEVNAME, blkid_debug("Checking partition %s (%d, %d)",
 					  device, ma, mi));
 
 		probe_one(cache, device, makedev(ma, mi), BLKID_PRI_EVMS,
@@ -372,7 +371,7 @@ ubi_probe_all(blkid_cache cache, int only_if_new)
 	const char **dirname;
 
 	for (dirname = dirlist; *dirname; dirname++) {
-		DBG(DEBUG_DEVNAME, printf("probing UBI volumes under %s\n",
+		DBG(DEVNAME, blkid_debug("probing UBI volumes under %s",
 					  *dirname));
 
 		DIR		*dir;
@@ -405,7 +404,7 @@ ubi_probe_all(blkid_cache cache, int only_if_new)
 
 			if (!S_ISCHR(st.st_mode) || !minor(dev))
 				continue;
-			DBG(DEBUG_DEVNAME, printf("UBI vol %s/%s: devno 0x%04X\n",
+			DBG(DEVNAME, blkid_debug("UBI vol %s/%s: devno 0x%04X",
 				  *dirname, name, (int) dev));
 			probe_one(cache, name, dev, BLKID_PRI_UBI, only_if_new, 0);
 		}
@@ -460,7 +459,7 @@ static int probe_all(blkid_cache cache, int only_if_new)
 			continue;
 		devs[which] = makedev(ma, mi);
 
-		DBG(DEBUG_DEVNAME, printf("read partition name %s\n", ptname));
+		DBG(DEVNAME, blkid_debug("read partition name %s", ptname));
 
 		/* Skip whole disk devs unless they have no partitions.
 		 * If base name of device has changed, also
@@ -478,8 +477,7 @@ static int probe_all(blkid_cache cache, int only_if_new)
 
 		/* ends in a digit, clearly a partition, so check */
 		if (isdigit(ptname[lens[which] - 1])) {
-			DBG(DEBUG_DEVNAME,
-			    printf("partition dev %s, devno 0x%04X\n",
+			DBG(DEVNAME, blkid_debug("partition dev %s, devno 0x%04X",
 				   ptname, (unsigned int) devs[which]));
 
 			if (sz > 1)
@@ -501,8 +499,7 @@ static int probe_all(blkid_cache cache, int only_if_new)
 				tmp = list_entry(p, struct blkid_struct_dev,
 						 bid_devs);
 				if (tmp->bid_devno == devs[last]) {
-					DBG(DEBUG_DEVNAME,
-						printf("freeing %s\n",
+					DBG(DEVNAME, blkid_debug("freeing %s",
 						       tmp->bid_name));
 					blkid_free_dev(tmp);
 					cache->bic_flags |= BLKID_BIC_FL_CHANGED;
@@ -517,8 +514,7 @@ static int probe_all(blkid_cache cache, int only_if_new)
 		 * check last as well.
 		 */
 		if (lens[last] && strncmp(ptnames[last], ptname, lens[last])) {
-			DBG(DEBUG_DEVNAME,
-			    printf("whole dev %s, devno 0x%04X\n",
+			DBG(DEVNAME, blkid_debug("whole dev %s, devno 0x%04X",
 				   ptnames[last], (unsigned int) devs[last]));
 			probe_one(cache, ptnames[last], devs[last], 0,
 				  only_if_new, 0);
@@ -594,13 +590,13 @@ int blkid_probe_all(blkid_cache cache)
 {
 	int ret;
 
-	DBG(DEBUG_PROBE, printf("Begin blkid_probe_all()\n"));
+	DBG(PROBE, blkid_debug("Begin blkid_probe_all()"));
 	ret = probe_all(cache, 0);
 	if (ret == 0) {
 		cache->bic_time = time(0);
 		cache->bic_flags |= BLKID_BIC_FL_PROBED;
 	}
-	DBG(DEBUG_PROBE, printf("End blkid_probe_all() [rc=%d]\n", ret));
+	DBG(PROBE, blkid_debug("End blkid_probe_all() [rc=%d]", ret));
 	return ret;
 }
 
@@ -616,9 +612,9 @@ int blkid_probe_all_new(blkid_cache cache)
 {
 	int ret;
 
-	DBG(DEBUG_PROBE, printf("Begin blkid_probe_all_new()\n"));
+	DBG(PROBE, blkid_debug("Begin blkid_probe_all_new()"));
 	ret = probe_all(cache, 1);
-	DBG(DEBUG_PROBE, printf("End blkid_probe_all_new() [rc=%d]\n", ret));
+	DBG(PROBE, blkid_debug("End blkid_probe_all_new() [rc=%d]", ret));
 	return ret;
 }
 
@@ -644,9 +640,9 @@ int blkid_probe_all_removable(blkid_cache cache)
 {
 	int ret;
 
-	DBG(DEBUG_PROBE, printf("Begin blkid_probe_all_removable()\n"));
+	DBG(PROBE, blkid_debug("Begin blkid_probe_all_removable()"));
 	ret = probe_all_removable(cache);
-	DBG(DEBUG_PROBE, printf("End blkid_probe_all_removable() [rc=%d]\n", ret));
+	DBG(PROBE, blkid_debug("End blkid_probe_all_removable() [rc=%d]", ret));
 	return ret;
 }
 
@@ -656,7 +652,7 @@ int main(int argc, char **argv)
 	blkid_cache cache = NULL;
 	int ret;
 
-	blkid_init_debug(DEBUG_ALL);
+	blkid_init_debug(BLKID_DEBUG_ALL);
 	if (argc != 1) {
 		fprintf(stderr, "Usage: %s\n"
 			"Probe all devices and exit\n", argv[0]);

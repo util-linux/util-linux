@@ -130,9 +130,9 @@ static int probe_mac_pt(blkid_probe pr,
 			goto nothing;
 
 		if (be32_to_cpu(p->map_count) != nblks) {
-			DBG(DEBUG_LOWPROBE, printf(
+			DBG(LOWPROBE, blkid_debug(
 				"mac: inconsisten map_count in partition map, "
-			        "entry[0]: %d, entry[%d]: %d\n",
+			        "entry[0]: %d, entry[%d]: %d",
 				nblks, i - 1,
 				be32_to_cpu(p->map_count)));
 		}

@@ -150,7 +150,7 @@ static int parse_start(char **cp)
 		return 0;
 
 	if (!strncmp(p, "<device", 7)) {
-		DBG(DEBUG_READ, printf("found device header: %8s\n", p));
+		DBG(READ, blkid_debug("found device header: %8s", p));
 		p += 7;
 
 		*cp = p;
@@ -169,7 +169,7 @@ static int parse_end(char **cp)
 	*cp = skip_over_blank(*cp);
 
 	if (!strncmp(*cp, "</device>", 9)) {
-		DBG(DEBUG_READ, printf("found device trailer %9s\n", *cp));
+		DBG(READ, blkid_debug("found device trailer %9s", *cp));
 		*cp += 9;
 		return 0;
 	}
@@ -193,14 +193,13 @@ static int parse_dev(blkid_cache cache, blkid_dev *dev, char **cp)
 
 	start = tmp = strchr(*cp, '>');
 	if (!start) {
-		DBG(DEBUG_READ,
-		    printf("blkid: short line parsing dev: %s\n", *cp));
+		DBG(READ, blkid_debug("blkid: short line parsing dev: %s", *cp));
 		return -BLKID_ERR_CACHE;
 	}
 	start = skip_over_blank(start + 1);
 	end = skip_over_word(start);
 
-	DBG(DEBUG_READ, printf("device should be %*s\n",
+	DBG(READ, blkid_debug("device should be %*s",
 			       (int)(end - start), start));
 
 	if (**cp == '>')
@@ -211,13 +210,12 @@ static int parse_dev(blkid_cache cache, blkid_dev *dev, char **cp)
 	*tmp = '\0';
 
 	if (!(tmp = strrchr(end, '<')) || parse_end(&tmp) < 0) {
-		DBG(DEBUG_READ,
-		    printf("blkid: missing </device> ending: %s\n", end));
+		DBG(READ, blkid_debug("blkid: missing </device> ending: %s", end));
 	} else if (tmp)
 		*tmp = '\0';
 
 	if (end - start <= 1) {
-		DBG(DEBUG_READ, printf("blkid: empty device name: %s\n", *cp));
+		DBG(READ, blkid_debug("blkid: empty device name: %s", *cp));
 		return -BLKID_ERR_CACHE;
 	}
 
@@ -225,7 +223,7 @@ static int parse_dev(blkid_cache cache, blkid_dev *dev, char **cp)
 	if (name == NULL)
 		return -BLKID_ERR_MEM;
 
-	DBG(DEBUG_READ, printf("found dev %s\n", name));
+	DBG(READ, blkid_debug("found dev %s", name));
 
 	if (!(*dev = blkid_get_dev(cache, name, BLKID_DEV_CREATE))) {
 		free(name);
@@ -256,8 +254,7 @@ static int parse_token(char **name, char **value, char **cp)
 	if (**value == '"') {
 		end = strchr(*value + 1, '"');
 		if (!end) {
-			DBG(DEBUG_READ,
-			    printf("unbalanced quotes at: %s\n", *value));
+			DBG(READ, blkid_debug("unbalanced quotes at: %s", *value));
 			*cp = *value;
 			return -BLKID_ERR_CACHE;
 		}
@@ -329,7 +326,7 @@ static int parse_tag(blkid_cache cache, blkid_dev dev, char **cp)
 	} else
 		ret = blkid_set_tag(dev, name, value, strlen(value));
 
-	DBG(DEBUG_READ, printf("    tag: %s=\"%s\"\n", name, value));
+	DBG(READ, blkid_debug("    tag: %s=\"%s\"", name, value));
 
 	return ret < 0 ? ret : 1;
 }
@@ -355,7 +352,7 @@ static int blkid_parse_line(blkid_cache cache, blkid_dev *dev_p, char *cp)
 
 	*dev_p = NULL;
 
-	DBG(DEBUG_READ, printf("line: %s\n", cp));
+	DBG(READ, blkid_debug("line: %s", cp));
 
 	if ((ret = parse_dev(cache, dev_p, &cp)) <= 0)
 		return ret;
@@ -367,13 +364,12 @@ static int blkid_parse_line(blkid_cache cache, blkid_dev *dev_p, char *cp)
 	}
 
 	if (dev->bid_type == NULL) {
-		DBG(DEBUG_READ,
-		    printf("blkid: device %s has no TYPE\n",dev->bid_name));
+		DBG(READ, blkid_debug("blkid: device %s has no TYPE",dev->bid_name));
 		blkid_free_dev(dev);
 		goto done;
 	}
 
-	DBG(DEBUG_READ, blkid_debug_dump_dev(dev));
+	DBG(READ, blkid_debug_dump_dev(dev));
 
 done:
 	return ret;
@@ -404,12 +400,12 @@ void blkid_read_cache(blkid_cache cache)
 		goto errout;
 	if ((st.st_mtime == cache->bic_ftime) ||
 	    (cache->bic_flags & BLKID_BIC_FL_CHANGED)) {
-		DBG(DEBUG_CACHE, printf("skipping re-read of %s\n",
+		DBG(CACHE, blkid_debug("skipping re-read of %s",
 					cache->bic_filename));
 		goto errout;
 	}
 
-	DBG(DEBUG_CACHE, printf("reading cache file %s\n",
+	DBG(CACHE, blkid_debug("reading cache file %s",
 				cache->bic_filename));
 
 	file = fdopen(fd, "r" UL_CLOEXECSTR);
@@ -432,8 +428,7 @@ void blkid_read_cache(blkid_cache cache)
 		}
 
 		if (blkid_parse_line(cache, &dev, buf) < 0) {
-			DBG(DEBUG_READ,
-			    printf("blkid: bad format on line %d\n", lineno));
+			DBG(READ, blkid_debug("blkid: bad format on line %d", lineno));
 			continue;
 		}
 	}
@@ -483,7 +478,7 @@ int main(int argc, char**argv)
 	blkid_cache cache = NULL;
 	int ret;
 
-	blkid_init_debug(DEBUG_ALL);
+	blkid_init_debug(BLKID_DEBUG_ALL);
 	if (argc > 2) {
 		fprintf(stderr, "Usage: %s [filename]\n"
 			"Test parsing of the cache (filename)\n", argv[0]);
