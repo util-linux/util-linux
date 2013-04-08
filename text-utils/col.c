@@ -402,8 +402,7 @@ void flush_lines(int nflush)
 			flush_line(l);
 		}
 		nblank_lines++;
-		if (l->l_line)
-			free((void *)l->l_line);
+		free((void *)l->l_line);
 		free_line(l);
 	}
 	if (lines)

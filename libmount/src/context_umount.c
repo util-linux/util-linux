@@ -170,13 +170,11 @@ try_loopdev:
 	}
 
 	*pfs = fs;
-	if (loopdev)
-		free(loopdev);
+	free(loopdev);
 
 	return fs ? 0 : 1;
 err:
-	if (loopdev)
-		free(loopdev);
+	free(loopdev);
 	return rc;
 }
 
