@@ -1,0 +1,57 @@
+.TH EXAMPLE "8" "April 2013" "util-linux" "System Administration"
+.SH NAME
+fsck.cramfs \- fsck compressed ROM file system
+.SH SYNOPSIS
+.B mkfs.cramfs
+[options]
+.I file
+.SH DESCRIPTION
+.I mkfs.cramfs
+is used to check the cramfs file system.
+.SH OPTIONS
+.TP
+\fB\-v\fR, \fB\-\-verbose\fR
+Enable verbose messaging.
+.TP
+\fB\-x\fR, \fB\-\-destination\fR [\fIdirectory\fR]
+Extract contents of the
+.I file
+to
+.IR directory .
+.TP
+\fB\-a\fR
+This option is silently ignored.
+.TP
+\fB\-y\fR
+This option is silently ignored.
+.TP
+\fB\-V\fR, \fB\-\-version\fR
+Display version information and exit.
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Display help and exit.
+.SH "EXIT STATUS"
+.RS
+.PD 0
+.TP
+.B 0
+success
+.TP
+.B 4
+file system was left uncorrected
+.TP
+.B 8
+operation error, such as unable to allocate memory
+.TP
+.B 16
+usage information was printed
+.PD
+.RE
+.SH "SEE ALSO"
+.BR mount (8),
+.BR fsck.cramfs (8)
+.SH AVAILABILITY
+The example command is part of the util-linux package and is available from
+.UR ftp://\:ftp.kernel.org\:/pub\:/linux\:/utils\:/util-linux/
+Linux Kernel Archive
+.UE .
