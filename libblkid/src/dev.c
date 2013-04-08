@@ -67,7 +67,7 @@ void blkid_free_dev(blkid_dev dev)
 /*
  * Given a blkid device, return its name
  */
-extern const char *blkid_dev_devname(blkid_dev dev)
+const char *blkid_dev_devname(blkid_dev dev)
 {
 	return dev ? dev->bid_name : NULL;
 }
@@ -124,7 +124,7 @@ struct blkid_struct_dev_iterate {
 	struct list_head	*p;
 };
 
-extern blkid_dev_iterate blkid_dev_iterate_begin(blkid_cache cache)
+blkid_dev_iterate blkid_dev_iterate_begin(blkid_cache cache)
 {
 	blkid_dev_iterate iter;
 
@@ -144,7 +144,7 @@ extern blkid_dev_iterate blkid_dev_iterate_begin(blkid_cache cache)
 	return iter;
 }
 
-extern int blkid_dev_set_search(blkid_dev_iterate iter,
+int blkid_dev_set_search(blkid_dev_iterate iter,
 				 char *search_type, char *search_value)
 {
 	char *new_type, *new_value;
@@ -171,7 +171,7 @@ extern int blkid_dev_set_search(blkid_dev_iterate iter,
 /*
  * Return 0 on success, -1 on error
  */
-extern int blkid_dev_next(blkid_dev_iterate iter,
+int blkid_dev_next(blkid_dev_iterate iter,
 			  blkid_dev *ret_dev)
 {
 	blkid_dev		dev;
@@ -192,7 +192,7 @@ extern int blkid_dev_next(blkid_dev_iterate iter,
 	return -1;
 }
 
-extern void blkid_dev_iterate_end(blkid_dev_iterate iter)
+void blkid_dev_iterate_end(blkid_dev_iterate iter)
 {
 	if (!iter || iter->magic != DEV_ITERATE_MAGIC)
 		return;

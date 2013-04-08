@@ -81,7 +81,7 @@ blkid_tag blkid_find_tag_dev(blkid_dev dev, const char *type)
 	return NULL;
 }
 
-extern int blkid_dev_has_tag(blkid_dev dev, const char *type,
+int blkid_dev_has_tag(blkid_dev dev, const char *type,
 			     const char *value)
 {
 	blkid_tag		tag;
@@ -277,7 +277,7 @@ struct blkid_struct_tag_iterate {
 	struct list_head	*p;
 };
 
-extern blkid_tag_iterate blkid_tag_iterate_begin(blkid_dev dev)
+blkid_tag_iterate blkid_tag_iterate_begin(blkid_dev dev)
 {
 	blkid_tag_iterate	iter;
 
@@ -298,7 +298,7 @@ extern blkid_tag_iterate blkid_tag_iterate_begin(blkid_dev dev)
 /*
  * Return 0 on success, -1 on error
  */
-extern int blkid_tag_next(blkid_tag_iterate iter,
+int blkid_tag_next(blkid_tag_iterate iter,
 			  const char **type, const char **value)
 {
 	blkid_tag tag;
@@ -317,7 +317,7 @@ extern int blkid_tag_next(blkid_tag_iterate iter,
 	return 0;
 }
 
-extern void blkid_tag_iterate_end(blkid_tag_iterate iter)
+void blkid_tag_iterate_end(blkid_tag_iterate iter)
 {
 	if (!iter || iter->magic != TAG_ITERATE_MAGIC)
 		return;
@@ -331,7 +331,7 @@ extern void blkid_tag_iterate_end(blkid_tag_iterate iter)
  * search specification, it returns the one with the highest priority
  * value.  This allows us to give preference to EVMS or LVM devices.
  */
-extern blkid_dev blkid_find_dev_with_tag(blkid_cache cache,
+blkid_dev blkid_find_dev_with_tag(blkid_cache cache,
 					 const char *type,
 					 const char *value)
 {
