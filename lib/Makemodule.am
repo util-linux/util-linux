@@ -70,7 +70,7 @@ test_ttyutils_CFLAGS = -DTEST_PROGRAM
 test_ttyutils_LDADD = libcommon.la
 
 test_blkdev_SOURCES = lib/blkdev.c
-test_blkdev_CFLAGS = -DTEST_PROGRAM
+test_blkdev_CFLAGS = -DTEST_PROGRAM_BLKDEV
 test_blkdev_LDADD = libcommon.la
 
 test_ismounted_SOURCES = lib/ismounted.c

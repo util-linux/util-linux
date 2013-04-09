@@ -2976,6 +2976,22 @@ and
 .BR ioctl
 families of functions) may lead to inconsistent result due to the lack of
 consistency check in kernel even if noac is used.
+.PP
+The
+.B loop
+option with the
+.B offset
+or
+.B sizelimit
+options used may fail when using older kernels if the
+.B mount
+command can't confirm that the size of the block device has been configured
+as requested. This situation can be worked around by using
+the
+.B losetup
+command manually before calling
+.B mount
+with the configured loop device.
 .SH HISTORY
 A
 .B mount

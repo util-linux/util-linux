@@ -183,20 +183,6 @@ static int show_all_loops(struct loopdev_cxt *lc, const char *file,
 	return 0;
 }
 
-static int set_capacity(struct loopdev_cxt *lc)
-{
-	int fd = loopcxt_get_fd(lc);
-
-	if (fd < 0)
-		warn(_("cannot open %s"), loopcxt_get_device(lc));
-	else if (ioctl(fd, LOOP_SET_CAPACITY) != 0)
-		warnx(_("%s: set capacity failed"), loopcxt_get_device(lc));
-	else
-		return 0;
-
-	return -1;
-}
-
 static int delete_loop(struct loopdev_cxt *lc)
 {
 	if (loopcxt_delete_device(lc))
@@ -685,7 +671,10 @@ int main(int argc, char **argv)
 			warn(_("%s"), loopcxt_get_device(&lc));
 		break;
 	case A_SET_CAPACITY:
-		res = set_capacity(&lc);
+		res = loopcxt_set_capacity(&lc);
+		if (res)
+			warn(_("%s: set capacity failed"),
+			        loopcxt_get_device(&lc));
 		break;
 	default:
 		usage(stderr);

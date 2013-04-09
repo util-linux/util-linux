@@ -163,6 +163,7 @@ extern int loopcxt_next(struct loopdev_cxt *lc);
 
 extern int loopcxt_setup_device(struct loopdev_cxt *lc);
 extern int loopcxt_delete_device(struct loopdev_cxt *lc);
+extern int loopcxt_set_capacity(struct loopdev_cxt *lc);
 
 int loopcxt_set_offset(struct loopdev_cxt *lc, uint64_t offset);
 int loopcxt_set_sizelimit(struct loopdev_cxt *lc, uint64_t sizelimit);
