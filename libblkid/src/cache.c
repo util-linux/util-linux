@@ -59,9 +59,6 @@ void blkid_init_debug(int mask)
 	if (!mask)
 	{
 		char *dstr = getenv("LIBBLKID_DEBUG");
-
-		if (!dstr)
-			dstr = getenv("BLKID_DEBUG");	/* for backward compatibility */
 		if (dstr)
 			blkid_debug_mask = strtoul(dstr, 0, 0);
 	} else
