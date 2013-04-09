@@ -153,4 +153,5 @@ BLKID_2.23 {
 global:
 	blkid_probe_step_back;
 	blkid_parttable_get_id;
+	blkid_init_debug;
 } BLKID_2.21;

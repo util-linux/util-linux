@@ -5,6 +5,11 @@ blkid_evaluate_spec
 </SECTION>
 
 <SECTION>
+<FILE>init</FILE>
+blkid_init_debug
+</SECTION>
+
+<SECTION>
 <FILE>cache</FILE>
 blkid_cache
 blkid_gc_cache

@@ -138,6 +138,7 @@ typedef struct blkid_struct_dev_iterate *blkid_dev_iterate;
 #endif
 
 /* cache.c */
+extern void blkid_init_debug(int mask);
 extern void blkid_put_cache(blkid_cache cache);
 extern int blkid_get_cache(blkid_cache *cache, const char *filename);
 extern void blkid_gc_cache(blkid_cache cache);

@@ -24,8 +24,6 @@
 #include "blkidP.h"
 #include "env.h"
 
-int blkid_debug_mask = 0;
-
 /**
  * SECTION:cache
  * @title: Cache
@@ -50,27 +48,6 @@ int blkid_debug_mask = 0;
  * locate these devices without enumerating only visible devices, so the use of
  * the cache file is required in this situation.
  */
-#ifdef CONFIG_BLKID_DEBUG
-void blkid_init_debug(int mask)
-{
-	if (blkid_debug_mask & BLKID_DEBUG_INIT)
-		return;
-
-	if (!mask)
-	{
-		char *dstr = getenv("LIBBLKID_DEBUG");
-		if (dstr)
-			blkid_debug_mask = strtoul(dstr, 0, 0);
-	} else
-		blkid_debug_mask = mask;
-
-	if (blkid_debug_mask)
-		fprintf(stderr, "libblkid: debug mask set to 0x%04x.\n", blkid_debug_mask);
-
-	blkid_debug_mask |= BLKID_DEBUG_INIT;
-}
-#endif
-
 static const char *get_default_cache_filename(void)
 {
 	struct stat st;

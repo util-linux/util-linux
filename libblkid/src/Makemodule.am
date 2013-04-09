@@ -8,6 +8,7 @@ libblkid_la_SOURCES = \
 	include/list.h \
 	\
 	libblkid/src/blkidP.h \
+	libblkid/src/init.c \
 	libblkid/src/cache.c \
 	libblkid/src/config.c \
 	libblkid/src/dev.c \

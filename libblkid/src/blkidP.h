@@ -340,13 +340,12 @@ struct blkid_struct_cache
 #ifdef CONFIG_BLKID_DEBUG
 # include <stdio.h>
 # include <stdarg.h>
-extern int blkid_debug_mask;
-extern void blkid_init_debug(int mask);
+extern int libblkid_debug_mask;
 extern void blkid_debug_dump_dev(blkid_dev dev);
 extern void blkid_debug_dump_tag(blkid_tag tag);
 
 # define DBG(m,x)	do { \
-				if ((BLKID_DEBUG_ ## m) & blkid_debug_mask) { \
+				if ((BLKID_DEBUG_ ## m) & libblkid_debug_mask) { \
 					fprintf(stderr, "%d: libblkid: %8s: ", getpid(), # m); \
 					x; \
 				} \
@@ -364,7 +363,6 @@ blkid_debug(const char *mesg, ...)
 
 #else /* !CONFIG_BLKID_DEBUG */
 # define DBG(m,x) do { ; } while (0)
-# define blkid_init_debug(x)
 #endif /* CONFIG_BLKID_DEBUG */
 
 /* devno.c */
