@@ -66,3 +66,4 @@ TS_CMD_UL=${TS_CMD_UL-"$top_builddir/ul"}
 TS_CMD_UMOUNT=${TS_CMD_UMOUNT:-"$top_builddir/umount"}
 TS_CMD_UTMPDUMP=${TS_CMD_UTMPDUMP-"$top_builddir/utmpdump"}
 TS_CMD_WHEREIS=${TS_CMD_WHEREIS-"$top_builddir/whereis"}
+TS_CMD_WIPEFS=${TS_CMD_WIPEFS-"$top_builddir/wipefs"}

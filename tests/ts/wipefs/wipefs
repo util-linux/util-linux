@@ -1,0 +1,30 @@
+#!/bin/bash
+
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="wipefs"
+
+. $TS_TOPDIR/functions.sh
+ts_skip_nonroot
+ts_init "$*"
+
+DEVICE=$(ts_scsi_debug_init dev_size_mb=50 num_parts=2)
+
+# remove old backups
+rm -rf $HOME/wipefs-$(basename ${DEVICE})-*.bak
+
+#remove the magic byte, back it up
+$TS_CMD_WIPEFS --all --backup ${DEVICE} &>/dev/null || ts_die "wipefs failed"
+
+#there should be just one magic string/backup file in this case
+INFILE=$(ls $HOME/wipefs-$(basename ${DEVICE})-*.bak)
+OFFT=$(echo $INFILE | sed -E 's/^.*-(.*).bak$/\1/')
+dd if=$INFILE of=$DEVICE bs=1 conv=notrunc seek=$(($OFFT)) &>/dev/null
+
+#the bytes should be copied back, check if wipefs can recognize it
+$TS_CMD_WIPEFS -a ${DEVICE} > $TS_OUTDIR/out 2>/dev/null
+
+# check for output
+[ -s $TS_OUTDIR/out ] && echo "OK" &> $TS_OUTPUT || exit 1
+
+rmmod scsi_debug &>/dev/null
+ts_finalize

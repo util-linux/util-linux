@@ -309,13 +309,33 @@ static void do_wipe_real(blkid_probe pr, const char *devname, struct wipe_desc *
 	putchar('\n');
 }
 
+static void do_backup(struct wipe_desc *wp, const char *base)
+{
+	char *fname = NULL;
+	int fd;
+
+	xasprintf(&fname, "%s0x%08jx.bak", base, wp->offset);
+
+	fd = open(fname, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR);
+	if (fd < 0)
+		goto err;
+	if (write_all(fd, wp->magic, wp->len) != 0)
+		goto err;
+	close(fd);
+	free(fname);
+	return;
+err:
+	err(EXIT_FAILURE, _("%s: failed to create a signature backup"), fname);
+}
+
 static struct wipe_desc *
-do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet, int force)
+do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int bkp, int quiet, int force)
 {
 	int flags;
 	blkid_probe pr;
 	struct wipe_desc *w, *wp0;
 	int zap = all ? 1 : wp->zap;
+	char *fn_base = NULL;
 
 	flags = O_RDWR;
 	if (!force)
@@ -323,6 +343,13 @@ do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet
 	pr = new_probe(devname, flags);
 	if (!pr)
 		return NULL;
+
+	if (zap && bkp) {
+		const char *home = getenv ("HOME");
+		if (!home)
+			errx(EXIT_FAILURE, _("failed to create a signature backup, $HOME undefined"));
+		xasprintf (&fn_base, "%s/wipefs-%s-", home, basename(devname));
+	}
 
 	wp0 = clone_offset(wp);
 
@@ -345,8 +372,11 @@ do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet
 		if (!wp->on_disk)
 			continue;
 
-		if (zap)
+		if (zap) {
+			if (bkp)
+				do_backup(wp, fn_base);
 			do_wipe_real(pr, devname, wp, noact, quiet);
+		}
 	}
 
 	for (w = wp0; w != NULL; w = w->next) {
@@ -358,6 +388,7 @@ do_wipe(struct wipe_desc *wp, const char *devname, int noact, int all, int quiet
 	close(blkid_probe_get_fd(pr));
 	blkid_free_probe(pr);
 	free_wipe(wp0);
+	free(fn_base);
 
 	return wp;
 }
@@ -372,6 +403,7 @@ usage(FILE *out)
 
 	fputs(_("\nOptions:\n"), out);
 	fputs(_(" -a, --all           wipe all magic strings (BE CAREFUL!)\n"
+		" -b, --backup        create a signature backup in $HOME\n"
 		" -f, --force         force erasure\n"
 		" -h, --help          show this help text\n"
 		" -n, --no-act        do everything except the actual write() call\n"
@@ -391,11 +423,12 @@ int
 main(int argc, char **argv)
 {
 	struct wipe_desc *wp0 = NULL, *wp;
-	int c, all = 0, force = 0, has_offset = 0, noact = 0, quiet = 0;
+	int c, all = 0, bkp = 0,  force = 0, has_offset = 0, noact = 0, quiet = 0;
 	int mode = WP_MODE_PRETTY;
 
 	static const struct option longopts[] = {
 	    { "all",       0, 0, 'a' },
+	    { "backup",    0, 0, 'b' },
 	    { "force",     0, 0, 'f' },
 	    { "help",      0, 0, 'h' },
 	    { "no-act",    0, 0, 'n' },
@@ -425,6 +458,9 @@ main(int argc, char **argv)
 		switch(c) {
 		case 'a':
 			all++;
+			break;
+		case 'b':
+			bkp++;
 			break;
 		case 'f':
 			force++;
@@ -461,6 +497,9 @@ main(int argc, char **argv)
 	if (optind == argc)
 		usage(stderr);
 
+	if (bkp && !(all || has_offset))
+		warnx(_("The --backup option is meaningless in this context"));
+
 	if (!all && !has_offset) {
 		/*
 		 * Print only
@@ -477,7 +516,7 @@ main(int argc, char **argv)
 		 */
 		while (optind < argc) {
 			wp = clone_offset(wp0);
-			wp = do_wipe(wp, argv[optind++], noact, all, quiet,
+			wp = do_wipe(wp, argv[optind++], noact, all, bkp, quiet,
 				     force);
 			free_wipe(wp);
 		}

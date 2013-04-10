@@ -40,6 +40,10 @@ erased.
 Erase all available signatures.  The set of erased signatures can be
 restricted with the \fB\-t\fP \fIlist\fP option.
 .TP
+.BR \-b , " \-\-backup"
+Create a signature backup to the file $HOME/wipefs-<devname>-<offset>.bak.
+For more details see EXAMPLES section.
+.TP
 .BR \-f , " \-\-force"
 Force erasure, even if the filesystem is mounted.  This is required in
 order to erase the partition table on a block device.
@@ -75,6 +79,14 @@ taken.  For more details see mount(8).
 .TP
 .BR -V , " \-\-version"
 Output version information and exit.
+.SH EXAMPLES
+.TP
+.BR "wipefs --all --backup /dev/sdb"
+Erases all signatures from the device /dev/sdb and creates a signature backup
+file ~/wipefs-sdb-<offset>.bak for each signature.
+.TP
+.BR "dd if=~/wipefs-sdb-0x00000438.bak of=/dev/sdb seek=$((0x00000438)) bs=1 conv=notrunc"
+Restores ext2 signature from the backup file  ~/wipefs-sdb-0x00000438.bak.
 .SH AUTHOR
 Karel Zak <kzak@redhat.com>
 .SH ENVIRONMENT
