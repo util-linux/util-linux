@@ -62,10 +62,13 @@ if BUILD_SWAPLABEL
 dist_bashcompletion_DATA += \
 	bash-completion/swaplabel
 endif
+if BUILD_FDFORMAT
+dist_bashcompletion_DATA += \
+	bash-completion/fdformat
+endif
 if LINUX
 dist_bashcompletion_DATA += \
-	bash-completion/blockdev \
-	bash-completion/fdformat
+	bash-completion/blockdev
 endif
 # ...disk-utils
 

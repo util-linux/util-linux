@@ -107,18 +107,18 @@ test_fsck_cramfs_LDADD = $(fsck_cramfs_LDADD)
 test_fsck_cramfs_CFLAGS = $(AM_CFLAGS) -DINCLUDE_FS_TESTS
 endif
 
+if BUILD_FDFORMAT
+usrsbin_exec_PROGRAMS += fdformat
+dist_man_MANS += disk-utils/fdformat.8
+fdformat_SOURCES = disk-utils/fdformat.c
+endif
 
 if LINUX
 sbin_PROGRAMS += blockdev
 dist_man_MANS += disk-utils/blockdev.8
 blockdev_SOURCES = disk-utils/blockdev.c
 blockdev_LDADD = $(LDADD) libcommon.la
-
-usrsbin_exec_PROGRAMS += fdformat
-dist_man_MANS += disk-utils/fdformat.8
-fdformat_SOURCES = disk-utils/fdformat.c
-endif # LINUX
-
+endif
 
 if BUILD_PARTX
 usrsbin_exec_PROGRAMS += partx addpart delpart resizepart
