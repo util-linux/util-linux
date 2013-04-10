@@ -735,7 +735,7 @@ su_main (int argc, char **argv, int mode)
   simulate_login = false;
   change_environment = true;
 
-  while ((optc = getopt_long (argc, argv, "+c:fg:G:lmps:u:hV", longopts, NULL)) != -1)
+  while ((optc = getopt_long (argc, argv, "c:fg:G:lmps:u:hV", longopts, NULL)) != -1)
     {
       switch (optc)
 	{
