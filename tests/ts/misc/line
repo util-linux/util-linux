@@ -18,6 +18,10 @@ TS_DESC="line"
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
 
+if [ ! -x "$TS_CMD_LINE" ]; then
+	ts_skip "line disabled"
+fi
+
 printf "a\nb\n" |
 	$TS_CMD_LINE > $TS_OUTPUT 2>&1
 
