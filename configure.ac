@@ -971,7 +971,7 @@ AM_CONDITIONAL(BUILD_BFS, test "x$build_bfs" = xyes)
 
 AC_ARG_ENABLE([fdformat],
   AS_HELP_STRING([--disable-fdformat], [do not build fdformat]),
-  [], enable_fdformat=yes
+  [], enable_fdformat=check
 )
 UL_BUILD_INIT([fdformat])
 UL_REQUIRES_LINUX([fdformat])
