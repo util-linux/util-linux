@@ -369,14 +369,7 @@ static int append_str(char **res, size_t *sz, const char *a, const char *b)
 	if (!len)
 		return -1;
 
-	str = realloc(str, len + 1);
-	if (!str) {
-		free(*res);
-		*res = NULL;
-		return -1;
-	}
-
-	*res = str;
+	*res = str = xrealloc(str, len + 1);
 	str += *sz;
 
 	if (a) {
@@ -623,25 +616,19 @@ static char **list_to_types(const char *list, int *flag)
 	}
 	for (i = 1; p && (p = strchr(p, ',')); i++, p++);
 
-	res = calloc(i + 1, sizeof(char *));
-	if (!res)
-		goto err_mem;
+	res = xcalloc(i + 1, sizeof(char *));
 	p = *flag & BLKID_FLTR_NOTIN ? list + 2 : list;
 	i = 0;
 
 	while(p) {
 		const char *word = p;
 		p = strchr(p, ',');
-		res[i] = p ? strndup(word, p - word) : strdup(word);
-		if (!res[i++])
-			goto err_mem;
+		res[i++] = p ? xstrndup(word, p - word) : xstrdup(word);
 		if (p)
 			p++;
 	}
 	res[i] = NULL;
 	return res;
-err_mem:
-	fprintf(stderr, "out of memory\n");
 err:
 	*flag = 0;
 	free(res);
@@ -804,12 +791,7 @@ int main(int argc, char **argv)
 
 	/* The rest of the args are device names */
 	if (optind < argc) {
-		devices = calloc(argc - optind, sizeof(char *));
-		if (!devices) {
-			fprintf(stderr, "Failed to allocate device name array\n");
-			goto exit;
-		}
-
+		devices = xcalloc(argc - optind, sizeof(char *));
 		while (optind < argc)
 			devices[numdev++] = argv[optind++];
 	}
