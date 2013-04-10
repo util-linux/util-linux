@@ -168,7 +168,7 @@ static int probe_zfs(blkid_probe pr,
 	uint64_t swab_magic = swab64(UBERBLOCK_MAGIC);
 	struct zfs_uberblock *ub;
 	int swab_endian;
-	loff_t offset;
+	loff_t offset, ub_offset;
 	int tried;
 	int found;
 
@@ -187,11 +187,15 @@ static int probe_zfs(blkid_probe pr,
 		if (ub == NULL)
 			return -1;
 
-		if (ub->ub_magic == UBERBLOCK_MAGIC)
+		if (ub->ub_magic == UBERBLOCK_MAGIC) {
+			ub_offset = offset;
 			found++;
+		}
 
-		if ((swab_endian = (ub->ub_magic == swab_magic)))
+		if ((swab_endian = (ub->ub_magic == swab_magic))) {
+			ub_offset = offset;
 			found++;
+		}
 
 		zdebug("probe_zfs: found %s-endian uberblock at %llu\n",
 		       swab_endian ? "big" : "little", offset >> 10);
@@ -207,7 +211,7 @@ static int probe_zfs(blkid_probe pr,
 
 	zfs_extract_guid_name(pr, offset);
 
-	if (blkid_probe_set_magic(pr, offset,
+	if (blkid_probe_set_magic(pr, ub_offset,
 				sizeof(ub->ub_magic),
 				(unsigned char *) &ub->ub_magic))
 		return -1;
