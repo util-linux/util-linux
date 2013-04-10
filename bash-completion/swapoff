@@ -1,0 +1,54 @@
+_swapoff_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-a'|'--all')
+			return 0
+			;;
+		'-U'|'UUID=')
+			# only works for block devices, i.e., not for swap files.
+			local SWAPS
+			SWAPS="$(swapon --show=TYPE,NAME --raw --noheading | \
+				awk '$1 !~ /file/ { print $2 }')"
+			[ -z "$SWAPS" ] && return 0
+			local UUIDS
+			UUIDS="$(lsblk -nrp -o UUID "$SWAPS")"
+			COMPREPLY=( $(compgen -W "$UUIDS" -- $cur) )
+			return 0
+			;;
+		'-L'|'LABEL=')
+			# only works for block devices, i.e., not for swap files.
+			local SWAPS
+			SWAPS="$(swapon --show=TYPE,NAME --raw --noheading | \
+				awk '$1 !~ /file/ { print $2 }')"
+			[ -z "$SWAPS" ] && return 0
+			local LABELS
+			LABELS="$(lsblk -nrp -o LABEL "$SWAPS")"
+			COMPREPLY=( $(compgen -W "$LABELS" -- $cur) )
+			return 0
+			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="-L
+				-U
+				--all
+				--verbose
+				--help
+				--version"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	local DEVS
+	DEVS="$(swapon --show=NAME --raw --noheading)"
+	COMPREPLY=( $(compgen -W "$DEVS" -- $cur) )
+	return 0
+}
+complete -F _swapoff_module swapoff
