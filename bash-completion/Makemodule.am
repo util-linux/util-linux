@@ -29,7 +29,6 @@ dist_bashcompletion_DATA = \
 	bash-completion/scriptreplay \
 	bash-completion/setsid \
 	bash-completion/tailf \
-	bash-completion/wall \
 	bash-completion/whereis \
 	bash-completion/wipefs
 
