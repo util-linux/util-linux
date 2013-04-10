@@ -338,8 +338,6 @@ struct blkid_struct_cache
 #define BLKID_DEBUG_ALL		0xFFFF
 
 #ifdef CONFIG_BLKID_DEBUG
-# include <stdio.h>
-# include <stdarg.h>
 extern int libblkid_debug_mask;
 extern void blkid_debug_dump_dev(blkid_dev dev);
 extern void blkid_debug_dump_tag(blkid_tag tag);
