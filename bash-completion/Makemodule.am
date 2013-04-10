@@ -207,11 +207,14 @@ if BUILD_WDCTL
 dist_bashcompletion_DATA += \
 	bash-completion/wdctl
 endif
+if BUILD_CYTUNE
+dist_bashcompletion_DATA += \
+	bash-completion/cytune
+endif
 if LINUX
 dist_bashcompletion_DATA += \
 	bash-completion/blkdiscard \
 	bash-completion/ctrlaltdel \
-	bash-completion/cytune \
 	bash-completion/dmesg \
 	bash-completion/fsfreeze \
 	bash-completion/fstrim \
