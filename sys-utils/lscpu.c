@@ -139,6 +139,7 @@ struct lscpu_desc {
 	char	*vendor;
 	char	*family;
 	char	*model;
+	char	*modelname;
 	char	*virtflag;	/* virtualization flag (vmx, svm) */
 	char	*hypervisor;	/* hypervisor software */
 	int	hyper;		/* hypervisor vendor ID */
@@ -353,6 +354,7 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		else if (lookup(buf, "family", &desc->family)) ;
 		else if (lookup(buf, "cpu family", &desc->family)) ;
 		else if (lookup(buf, "model", &desc->model)) ;
+		else if (lookup(buf, "model name", &desc->modelname)) ;
 		else if (lookup(buf, "stepping", &desc->stepping)) ;
 		else if (lookup(buf, "cpu MHz", &desc->mhz)) ;
 		else if (lookup(buf, "flags", &desc->flags)) ;		/* x86 */
@@ -1208,6 +1210,8 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		print_s(_("CPU family:"), desc->family);
 	if (desc->model)
 		print_s(_("Model:"), desc->model);
+	if (desc->modelname)
+		print_s(_("Model name:"), desc->modelname);
 	if (desc->stepping)
 		print_s(_("Stepping:"), desc->stepping);
 	if (desc->mhz)
