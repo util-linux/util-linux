@@ -966,9 +966,14 @@ UL_BUILD_INIT([bfs])
 AM_CONDITIONAL(BUILD_BFS, test "x$build_bfs" = xyes)
 
 
-if test "x$have_io" = xyes -o "x$linux_os" = xyes; then
-  build_hwclock=yes
-fi
+AC_ARG_ENABLE([hwclock],
+  AS_HELP_STRING([--disable-hwclock], [do not build hwclock]),
+  [], enable_hwclock=check
+)
+have_linuxdummy=$linux_os
+
+UL_BUILD_INIT([hwclock])
+UL_REQUIRES_HAVE([hwclock], [io, linuxdummy], [ioperm iopl function or Linux])
 AM_CONDITIONAL(BUILD_HWCLOCK, test "x$build_hwclock" = xyes)
 
 
