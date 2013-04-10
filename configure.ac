@@ -958,6 +958,14 @@ UL_REQUIRES_HAVE([cramfs], [z], [z library])
 AM_CONDITIONAL(BUILD_CRAMFS, test "x$build_cramfs" = xyes)
 
 
+AC_ARG_ENABLE([BUILD_BFS],
+  AS_HELP_STRING([--disable-bfs], [do not build mkfs.bfs]),
+  [], enable_bfs=yes
+)
+UL_BUILD_INIT([bfs])
+AM_CONDITIONAL(BUILD_BFS, test "x$build_bfs" = xyes)
+
+
 if test "x$have_io" = xyes -o "x$linux_os" = xyes; then
   build_hwclock=yes
 fi

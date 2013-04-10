@@ -18,7 +18,6 @@ dist_bashcompletion_DATA = \
 	bash-completion/look \
 	bash-completion/mcookie \
 	bash-completion/mkfs \
-	bash-completion/mkfs.bfs \
 	bash-completion/mkfs.minix \
 	bash-completion/mkswap \
 	bash-completion/namei \
@@ -35,6 +34,10 @@ dist_bashcompletion_DATA = \
 	bash-completion/wipefs
 
 # disk-utils...
+if BUILD_BFS
+dist_bashcompletion_DATA += \
+	bash-completion/mkfs.bfs
+endif
 if BUILD_CRAMFS
 dist_bashcompletion_DATA += \
 	bash-completion/fsck.cramfs \

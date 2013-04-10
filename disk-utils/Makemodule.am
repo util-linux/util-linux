@@ -22,11 +22,13 @@ dist_man_MANS += disk-utils/isosize.8
 isosize_SOURCES = disk-utils/isosize.c
 isosize_LDADD = $(LDADD) libcommon.la
 
+if BUILD_BFS
 sbin_PROGRAMS += mkfs.bfs
 dist_man_MANS += disk-utils/mkfs.bfs.8
 mkfs_bfs_SOURCES = \
 	disk-utils/mkfs.bfs.c
 mkfs_bfs_LDADD = $(LDADD) libcommon.la
+endif
 
 sbin_PROGRAMS += mkswap
 dist_man_MANS += disk-utils/mkswap.8
