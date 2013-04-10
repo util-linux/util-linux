@@ -8,6 +8,7 @@ NUMA node(s):          1
 Vendor ID:             GenuineIntel
 CPU family:            6
 Model:                 37
+Model name:            Intel(R) Core(TM) i5 CPU       M 560  @ 2.67GHz
 Stepping:              5
 CPU MHz:               1199.000
 BogoMIPS:              5319.97

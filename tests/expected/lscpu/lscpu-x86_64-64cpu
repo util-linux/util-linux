@@ -8,6 +8,7 @@ NUMA node(s):          1
 Vendor ID:             GenuineIntel
 CPU family:            6
 Model:                 46
+Model name:            Intel(R) Xeon(R) CPU           X7550  @ 2.00GHz
 Stepping:              6
 CPU MHz:               1064.000
 BogoMIPS:              3989.44
