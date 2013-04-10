@@ -63,6 +63,21 @@ static inline char *xstrdup(const char *str)
         return ret;
 }
 
+static inline char *xstrndup(const char *str, size_t size)
+{
+        char *ret;
+
+        if (!str)
+                return NULL;
+
+        ret = strndup(str, size);
+
+        if (!ret)
+                err(XALLOC_EXIT_CODE, "cannot duplicate string");
+        return ret;
+}
+
+
 static inline int __attribute__ ((__format__(printf, 2, 3)))
     xasprintf(char **strp, const char *fmt, ...)
 {
