@@ -857,7 +857,7 @@ int mnt_context_set_options_pattern(struct libmnt_context *cxt, const char *patt
  * @cxt: mount context
  * @tb: fstab
  *
- * The mount context reads /etc/fstab to the the private struct libmnt_table by default.
+ * The mount context reads /etc/fstab to the private struct libmnt_table by default.
  * This function allows to overwrite the private fstab with an external
  * instance. Note that the external instance is not deallocated by mnt_free_context().
  *

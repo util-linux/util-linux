@@ -1774,7 +1774,7 @@ void initterm(void)
 		{
 			int tgrp;
 			/* Wait until we're in the foreground before we
-			 * save the the terminal modes. */
+			 * save the terminal modes. */
 			if ((tgrp = tcgetpgrp(fileno(stdout))) < 0) {
 				perror("tcgetpgrp");
 				exit(EXIT_FAILURE);

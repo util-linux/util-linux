@@ -793,7 +793,7 @@ int main(int argc, char **argv)
 
 	if (opts.have_securebits)
 		if (prctl(PR_SET_SECUREBITS, opts.securebits, 0, 0, 0) != 0)
-			err(SETPRIV_EXIT_PRIVERR, _("set procecess securebits failed"));
+			err(SETPRIV_EXIT_PRIVERR, _("set process securebits failed"));
 
 	if (opts.bounding_set) {
 		do_caps(CAPNG_BOUNDING_SET, opts.bounding_set);

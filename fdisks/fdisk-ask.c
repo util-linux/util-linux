@@ -207,7 +207,7 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		DBG(ASK, dbgprint("yes-no ask: reply '%s' [rc=%d]", buf, rc));
 		break;
 	default:
-		warnx(_("internal error: unssuported dialog type %d"), fdisk_ask_get_type(ask));
+		warnx(_("internal error: unsupported dialog type %d"), fdisk_ask_get_type(ask));
 		return -EINVAL;
 	}
 	return rc;

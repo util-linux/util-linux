@@ -1363,7 +1363,7 @@ static void __attribute__((__noreturn__)) help(FILE *out)
 	fputs(_(" -l, --list           use list format output\n"), out);
 	fputs(_(" -n, --noheadings     don't print headings\n"), out);
 	fputs(_(" -o, --output <list>  output columns\n"), out);
-	fputs(_(" -p, --paths          print complate device path\n"), out);
+	fputs(_(" -p, --paths          print complete device path\n"), out);
 	fputs(_(" -P, --pairs          use key=\"value\" output format\n"), out);
 	fputs(_(" -r, --raw            use raw output format\n"), out);
 	fputs(_(" -s, --inverse        inverse dependencies\n"), out);

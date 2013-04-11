@@ -136,7 +136,7 @@ static int sun_probe_label(struct fdisk_context *cxt)
 		csum ^= *ush--;
 
 	if (csum) {
-		fdisk_warnx(cxt, _("Detected sun disklabel with wrong checsum.\n"
+		fdisk_warnx(cxt, _("Detected sun disklabel with wrong checksum.\n"
 			      "Probably you'll have to set all the values,\n"
 			      "e.g. heads, sectors, cylinders and partitions\n"
 			      "or force a fresh label (s command in main menu)"));
