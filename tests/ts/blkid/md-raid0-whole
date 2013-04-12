@@ -79,6 +79,7 @@ ts_device_deinit $DEVICE1
 ts_device_deinit $DEVICE2
 
 ts_fdisk_clean
+
 # remove generated UUIDs
 sed -i -e 's/ID_FS_UUID.*//g' $TS_OUTPUT
 

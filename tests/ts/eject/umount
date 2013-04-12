@@ -12,22 +12,8 @@ ts_skip_nonroot
 # not removable device.
 #
 
-modprobe --dry-run --quiet scsi_debug
-[ "$?" == 0 ] || ts_skip "missing scsi_debug module"
-
-rmmod scsi_debug &> /dev/null
-
 function init_device {
-	modprobe scsi_debug dev_size_mb=100
-	[ "$?" == 0 ] || ts_die "Cannot init device"
-
-	sleep 3
-
-	DEVNAME=$(grep scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
-	[ "x${DEVNAME}" == "x" ] && ts_die "Cannot find device"
-
-	echo "/dev/${DEVNAME}"
-	
+	ts_scsi_debug_init dev_size_mb=100
 }
 
 function init_partitions {

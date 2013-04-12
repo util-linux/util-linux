@@ -461,10 +461,35 @@ s/# <!-- util-linux.*-->//;
 }
 
 function ts_fdisk_clean {
+	local DEVNAME=$(basename "$1")
+
 	# remove non comparable parts of fdisk output
-	[ x"${DEVNAME}" != x"" ] && sed -i -e "s/\/dev\/${DEVNAME}/\/dev\/.../g" $TS_OUTPUT
+	if [ x"${DEVNAME}" != x"" ]; then
+	       sed -i -e "s/\/dev\/${DEVNAME}/\/dev\/.../g" $TS_OUTPUT
+	fi
+
 	sed -i -e 's/Disk identifier:.*//g' \
 	       -e 's/Building a new.*//g' \
 	       -e 's/Welcome to fdisk.*//g' \
 	       $TS_OUTPUT
+}
+
+function ts_scsi_debug_init {
+
+	modprobe --dry-run --quiet scsi_debug
+	[ "$?" == 0 ] || ts_skip "missing scsi_debug module"
+
+	rmmod scsi_debug &> /dev/null
+	modprobe scsi_debug $*
+	[ "$?" == 0 ] || ts_die "Cannot init device"
+
+	DEVNAME=$(grep scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
+	[ "x${DEVNAME}" == "x" ] && ts_die "Cannot find device"
+
+	DEVICE="/dev/${DEVNAME}"
+
+	sleep 1
+	udevadm settle
+
+	echo $DEVICE
 }

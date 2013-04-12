@@ -16,29 +16,16 @@ MOUNTPOINT="$TS_MOUNTPOINT"
 TS_NOEXIST="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-noex"
 [ -d $TS_NOEXIST ] && rmdir $TS_NOEXIST
 
-#set -x
-
 [ -x $TESTPROG ] || ts_skip "test not compiled"
-
-modprobe --dry-run --quiet scsi_debug
-[ "$?" == 0 ] || ts_skip "missing scsi_debug module"
 
 ts_log "Init device"
 umount $MOUNTPOINT &> /dev/null
-rmmod scsi_debug &> /dev/null
-modprobe scsi_debug dev_size_mb=100
-[ "$?" == 0 ] || ts_die "Cannot init device"
 
-sleep 3
-
-DEVNAME=$(grep scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
-[ "x${DEVNAME}" == "x" ] && ts_die "Cannot find device"
-
-DEVICE="/dev/${DEVNAME}"
-udevadm settle
+DEVICE=$(ts_scsi_debug_init dev_size_mb=100)
+DEVNAME=$(basename $DEVICE)
 
 ts_log "Create partitions"
-$TS_CMD_FDISK ${DEVICE} >> /dev/null 2>&1 <<EOF
+$TS_CMD_FDISK ${DEVICE} &> /dev/null <<EOF
 n
 p
 1
@@ -48,8 +35,16 @@ w
 q
 EOF
 
-DEVICE="/dev/${DEVNAME}1"
+DEVICE="${DEVICE}1"
+
+sleep 1
 udevadm settle
+
+grep -q $DEVNAME /proc/partitions
+if [ $? -ne 0 ]; then
+	rmmod scsi_debug
+	ts_skip "no partition!"
+fi
 
 ts_log "Create filesystem"
 mkfs.ext4 -L "$LABEL" -U "$UUID" $DEVICE &> /dev/null
@@ -60,6 +55,7 @@ export LIBMOUNT_MTAB=$TS_OUTPUT.mtab
 > $LIBMOUNT_MTAB
 
 udevadm settle
+ts_device_has "TYPE" "ext4" $DEVICE || ts_die "Cannot find ext3 on $DEVICE" $DEVICE
 
 ts_init_subtest "mount-by-devname"
 mkdir -p $MOUNTPOINT &>  /dev/null

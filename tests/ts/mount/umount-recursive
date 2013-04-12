@@ -9,21 +9,8 @@ TS_DESC="umount-recursive"
 ts_init "$*"
 ts_skip_nonroot
 
-modprobe --dry-run --quiet scsi_debug
-[ "$?" == 0 ] || ts_skip "missing scsi_debug module"
-
 ts_log "Init device"
-$TS_CMD_UMOUNT --recursive $MOUNTPOINT &> /dev/null
-rmmod scsi_debug &> /dev/null
-modprobe scsi_debug dev_size_mb=50
-[ "$?" == 0 ] || ts_die "Cannot init device"
-
-sleep 3
-
-DEVNAME=$(grep scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
-[ "x${DEVNAME}" == "x" ] && ts_die "Cannot find device"
-
-DEVICE="/dev/${DEVNAME}"
+DEVICE=$(ts_scsi_debug_init dev_size_mb=50)
 
 ts_log "Create partitions"
 $TS_CMD_FDISK ${DEVICE} &> /dev/null <<EOF
