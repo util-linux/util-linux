@@ -1554,6 +1554,7 @@ int mnt_context_guess_fstype(struct libmnt_context *cxt)
 		if (ambi)
 			rc = -MNT_ERR_AMBIFS;
 	} else {
+		DBG(CXT, mnt_debug_h(cxt, "access(%s) failed [%m]", dev));
 		if (strchr(dev, ':') != NULL)
 			rc = mnt_fs_set_fstype(cxt->fs, "nfs");
 		else if (!strncmp(dev, "//", 2))
