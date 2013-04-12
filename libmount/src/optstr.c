@@ -169,8 +169,7 @@ int mnt_optstr_next_option(char **optstr, char **name, size_t *namesz,
 	return mnt_optstr_parse_next(optstr, name, namesz, value, valuesz);
 }
 
-static int __attribute__((nonnull(1, 2)))
-__mnt_optstr_append_option(char **optstr,
+static int __mnt_optstr_append_option(char **optstr,
 			const char *name, size_t nsz,
 			const char *value, size_t vsz)
 {
@@ -180,6 +179,7 @@ __mnt_optstr_append_option(char **optstr,
 	assert(name);
 	assert(*name);
 	assert(nsz);
+	assert(optstr);
 
 	osz = *optstr ? strlen(*optstr) : 0;
 
@@ -225,6 +225,8 @@ int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
 {
 	size_t vsz, nsz;
 
+	assert(optstr);
+
 	if (!name || !*name)
 		return 0;
 
@@ -247,6 +249,11 @@ int mnt_optstr_prepend_option(char **optstr, const char *name, const char *value
 {
 	int rc = 0;
 	char *tmp = *optstr;
+
+	assert(optstr);
+
+	if (!name || !*name)
+		return 0;
 
 	*optstr = NULL;
 
@@ -282,6 +289,9 @@ int mnt_optstr_get_option(const char *optstr, const char *name,
 	struct libmnt_optloc ol;
 	int rc;
 
+	assert(optstr);
+	assert(name);
+
 	mnt_init_optloc(&ol);
 
 	rc = mnt_optstr_locate_option((char *) optstr, name, &ol);
@@ -307,8 +317,12 @@ int mnt_optstr_get_option(const char *optstr, const char *name,
 int mnt_optstr_deduplicate_option(char **optstr, const char *name)
 {
 	int rc;
-	char *begin = NULL, *end = NULL, *opt = *optstr;
+	char *begin = NULL, *end = NULL, *opt;
 
+	assert(optstr);
+	assert(name);
+
+	opt = *optstr;
 	do {
 		struct libmnt_optloc ol;
 
@@ -421,6 +435,9 @@ int mnt_optstr_set_option(char **optstr, const char *name, const char *value)
 	char *nameend;
 	int rc = 1;
 
+	assert(optstr);
+	assert(name);
+
 	if (!optstr)
 		return -EINVAL;
 
@@ -466,6 +483,9 @@ int mnt_optstr_remove_option(char **optstr, const char *name)
 {
 	struct libmnt_optloc ol;
 	int rc;
+
+	assert(optstr);
+	assert(name);
 
 	mnt_init_optloc(&ol);
 

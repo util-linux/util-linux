@@ -720,7 +720,6 @@ struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt)
 	struct stat st;
 
 	assert(filename);
-
 	if (!filename)
 		return NULL;
 	if (stat(filename, &st))
@@ -749,6 +748,7 @@ struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt)
  */
 struct libmnt_table *mnt_new_table_from_file(const char *filename)
 {
+	assert(filename);
 	return __mnt_new_table_from_file(filename, MNT_FMT_GUESS);
 }
 
@@ -763,7 +763,6 @@ struct libmnt_table *mnt_new_table_from_dir(const char *dirname)
 	struct libmnt_table *tb;
 
 	assert(dirname);
-
 	if (!dirname)
 		return NULL;
 	tb = mnt_new_table();
@@ -793,6 +792,7 @@ struct libmnt_table *mnt_new_table_from_dir(const char *dirname)
 int mnt_table_set_parser_errcb(struct libmnt_table *tb,
 		int (*cb)(struct libmnt_table *tb, const char *filename, int line))
 {
+	assert(tb);
 	if (!tb)
 		return -EINVAL;
 	tb->errcb = cb;
@@ -807,6 +807,7 @@ int mnt_table_set_parser_fltrcb(struct libmnt_table *tb,
 		int (*cb)(struct libmnt_fs *, void *),
 		void *data)
 {
+	assert(tb);
 	if (!tb)
 		return -EINVAL;
 
@@ -862,7 +863,6 @@ int mnt_table_parse_fstab(struct libmnt_table *tb, const char *filename)
 	int rc = 0;
 
 	assert(tb);
-
 	if (!tb)
 		return -EINVAL;
 	if (!filename)
@@ -958,6 +958,8 @@ int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename)
 	int rc;
 	const char *utab = NULL;
 	struct libmnt_table *u_tb;
+
+	assert(tb);
 
 	if (mnt_has_regular_mtab(&filename, NULL)) {
 

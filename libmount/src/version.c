@@ -25,6 +25,9 @@ static const char *lib_features[] = {
 #ifdef CONFIG_LIBMOUNT_DEBUG
 	"debug",
 #endif
+#ifdef CONFIG_LIBMOUNT_ASSERT
+	"assert",
+#endif
 	NULL
 };
 
@@ -38,6 +41,8 @@ int mnt_parse_version_string(const char *ver_string)
 {
 	const char *cp;
 	int version = 0;
+
+	assert(ver_string);
 
 	for (cp = ver_string; *cp; cp++) {
 		if (*cp == '.')

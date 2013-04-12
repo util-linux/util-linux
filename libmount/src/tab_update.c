@@ -131,6 +131,7 @@ int mnt_update_set_filename(struct libmnt_update *upd, const char *filename,
  */
 const char *mnt_update_get_filename(struct libmnt_update *upd)
 {
+	assert(upd);
 	return upd ? upd->filename : NULL;
 }
 
@@ -143,6 +144,7 @@ const char *mnt_update_get_filename(struct libmnt_update *upd)
  */
 int mnt_update_is_ready(struct libmnt_update *upd)
 {
+	assert(upd);
 	return upd ? upd->ready : FALSE;
 }
 
@@ -227,6 +229,7 @@ int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
  */
 struct libmnt_fs *mnt_update_get_fs(struct libmnt_update *upd)
 {
+	assert(upd);
 	return upd ? upd->fs : NULL;
 }
 
@@ -238,6 +241,7 @@ struct libmnt_fs *mnt_update_get_fs(struct libmnt_update *upd)
  */
 unsigned long mnt_update_get_mflags(struct libmnt_update *upd)
 {
+	assert(upd);
 	return upd ? upd->mountflags : 0;
 }
 
@@ -252,6 +256,7 @@ int mnt_update_force_rdonly(struct libmnt_update *upd, int rdonly)
 {
 	int rc = 0;
 
+	assert(upd);
 	if (!upd || !upd->fs)
 		return -EINVAL;
 
@@ -505,6 +510,7 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 	int rc, fd;
 	char *uq = NULL;
 
+	assert(upd);
 	if (!tb || !upd->filename)
 		return -EINVAL;
 
@@ -566,8 +572,11 @@ leave:
 
 static int add_file_entry(struct libmnt_table *tb, struct libmnt_update *upd)
 {
-	struct libmnt_fs *fs = mnt_copy_fs(NULL, upd->fs);
+	struct libmnt_fs *fs;
 
+	assert(upd);
+
+	fs = mnt_copy_fs(NULL, upd->fs);
 	if (!fs)
 		return -ENOMEM;
 
@@ -638,6 +647,7 @@ static int update_modify_target(struct libmnt_update *upd, struct libmnt_lock *l
 	struct libmnt_table *tb = NULL;
 	int rc = 0;
 
+	assert(upd);
 	DBG(UPDATE, mnt_debug_h(upd, "%s: modify target", upd->filename));
 
 	if (lc)
@@ -726,7 +736,6 @@ int mnt_update_table(struct libmnt_update *upd, struct libmnt_lock *lc)
 	int rc = -EINVAL;
 
 	assert(upd);
-
 	if (!upd || !upd->filename)
 		return -EINVAL;
 	if (!upd->ready)

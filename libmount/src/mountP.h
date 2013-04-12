@@ -26,7 +26,9 @@
 #define CONFIG_LIBMOUNT_DEBUG
 
 #ifdef CONFIG_LIBMOUNT_ASSERT
-#include <assert.h>
+# include <assert.h>
+#else
+# define assert(x)
 #endif
 
 /*

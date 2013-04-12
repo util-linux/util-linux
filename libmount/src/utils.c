@@ -269,6 +269,8 @@ int mnt_fstype_is_pseudofs(const char *type)
 		"tmpfs"
 	};
 
+	assert(type);
+
 	return !(bsearch(&type, pseudofs, ARRAY_SIZE(pseudofs),
 				sizeof(char*), fstype_cmp) == NULL);
 }
@@ -281,6 +283,8 @@ int mnt_fstype_is_pseudofs(const char *type)
  */
 int mnt_fstype_is_netfs(const char *type)
 {
+	assert(type);
+
 	if (strcmp(type, "cifs")   == 0 ||
 	    strcmp(type, "smbfs")  == 0 ||
 	    strncmp(type,"nfs", 3) == 0 ||
@@ -859,10 +863,13 @@ int mnt_open_uniq_filename(const char *filename, char **name)
  */
 char *mnt_get_mountpoint(const char *path)
 {
-	char *mnt = strdup(path);
+	char *mnt;
 	struct stat st;
 	dev_t dir, base;
 
+	assert(path);
+
+	mnt = strdup(path);
 	if (!mnt)
 		return NULL;
 	if (*mnt == '/' && *(mnt + 1) == '\0')
