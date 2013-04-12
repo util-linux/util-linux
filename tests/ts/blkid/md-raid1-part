@@ -55,7 +55,7 @@ w
 q
 EOF
 
-sleep 3
+udevadm settle
 MD_DEVNAME=md8
 MD_DEVICE=/dev/${MD_DEVNAME}
 
@@ -63,8 +63,7 @@ ts_log "Create RAID1 device"
 /sbin/mdadm -q -S ${MD_DEVICE} &> /dev/null
 /sbin/mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 --level=1 \
 	    --raid-devices=2 ${DEVICE}1 ${DEVICE}2 >> $TS_OUTPUT 2>&1
-
-sleep 3
+udevadm settle
 
 ts_log "Probe whole-disk"
 $TS_CMD_BLKID -p -o udev ${DEVICE} 2>&1 | sort >> $TS_OUTPUT
@@ -77,7 +76,7 @@ $TS_CMD_BLKID -p -o udev ${DEVICE}2 2>&1 | sort >> $TS_OUTPUT
 
 /sbin/mdadm -q -S ${MD_DEVICE} >> $TS_OUTPUT 2>&1
 
-sleep 3
+udevadm settle
 rmmod scsi_debug
 
 ts_fdisk_clean

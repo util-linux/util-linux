@@ -30,6 +30,7 @@ DEVNAME=$(grep scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
 [ "x${DEVNAME}" == "x" ] && ts_die "Cannot find device"
 
 DEVICE="/dev/${DEVNAME}"
+udevadm settle
 
 ts_log "Create partitions"
 $TS_CMD_FDISK ${DEVICE} >> /dev/null 2>&1 <<EOF
@@ -44,7 +45,7 @@ EOF
 
 DEVICE="/dev/${DEVNAME}1"
 
-sleep 3
+udevadm settle
 
 ts_log "Create filesystem"
 mkfs.ext4 -L "$LABEL" -U "$UUID" $DEVICE &> /dev/null
@@ -59,6 +60,7 @@ export LIBMOUNT_UTAB=$TS_OUTPUT.utab
 rm -f $LIBMOUNT_UTAB
 > $LIBMOUNT_UTAB
 
+udevadm settle
 
 ts_init_subtest "mount-by-devname"
 mkdir -p $MOUNTPOINT &>  /dev/null
@@ -67,7 +69,6 @@ grep -q $DEVICE /proc/mounts || \
 	echo "(by device) cannot find $DEVICE in /proc/mounts" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
-sleep 1
 
 ts_init_subtest "umount-by-devname"
 ts_valgrind $TESTPROG --umount $DEVICE >> $TS_OUTPUT 2>&1
@@ -83,7 +84,6 @@ grep -q $DEVICE $LIBMOUNT_UTAB || \
 	echo "(by label) cannot find $DEVICE in $LIBMOUNT_UTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
-sleep 1
 
 ts_init_subtest "umount"
 ts_valgrind $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
@@ -94,11 +94,13 @@ ts_finalize_subtest
 if [ -x "/sbin/mkfs.btrfs" ]; then
 	ts_log "Create filesystem [btrfs]"
 	/sbin/mkfs.btrfs -L "$LABEL" $DEVICE &> /dev/null
+	udevadm settle
+
 	mount -t btrfs $DEVICE $MOUNTPOINT &> /dev/null
 	/sbin/btrfsctl -S sub $MOUNTPOINT &> /dev/null
 	umount $MOUNTPOINT &> /dev/null
 
-	sleep 1
+	udevadm settle
 
 	ts_init_subtest "mount-uhelper-subvol"
 	mkdir -p $MOUNTPOINT &>  /dev/null
@@ -110,8 +112,6 @@ if [ -x "/sbin/mkfs.btrfs" ]; then
 	ts_log "All mount options (btrfs subvolume + utab) ---"
 	$TS_CMD_FINDMNT --mtab $MOUNTPOINT -o OPTIONS -n >> $TS_OUTPUT 2>&1
 	ts_log "---"
-
-	sleep 1
 
 	ts_init_subtest "umount-subvol"
 	ts_valgrind $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1

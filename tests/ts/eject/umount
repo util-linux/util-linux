@@ -48,13 +48,14 @@ p
 p
 w
 EOF
-	sleep 1
+	udevadm settle
 	mkfs.ext2 -q ${dev}1 
 	mkfs.ext2 -q ${dev}2
+	udevadm settle
 }
 
 function deinit_device {
-	sleep 3
+	udevadm settle
 	rmmod scsi_debug
 }
 
@@ -68,9 +69,9 @@ ts_finalize_subtest
 ts_init_subtest "by-disk-mounted"
 DEVICE=$(init_device)
 mkfs.ext2 -q -F $DEVICE
+udevadm settle
 mkdir -p $TS_MOUNTPOINT
 mount $DEVICE $TS_MOUNTPOINT
-sleep 1
 $TS_CMD_EJECT --force $DEVICE && ts_log "Success"
 deinit_device
 ts_finalize_subtest

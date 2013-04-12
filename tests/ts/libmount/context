@@ -35,6 +35,7 @@ DEVNAME=$(grep scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
 [ "x${DEVNAME}" == "x" ] && ts_die "Cannot find device"
 
 DEVICE="/dev/${DEVNAME}"
+udevadm settle
 
 ts_log "Create partitions"
 $TS_CMD_FDISK ${DEVICE} >> /dev/null 2>&1 <<EOF
@@ -48,8 +49,7 @@ q
 EOF
 
 DEVICE="/dev/${DEVNAME}1"
-
-sleep 3
+udevadm settle
 
 ts_log "Create filesystem"
 mkfs.ext4 -L "$LABEL" -U "$UUID" $DEVICE &> /dev/null
@@ -59,6 +59,7 @@ ts_log "Do tests..."
 export LIBMOUNT_MTAB=$TS_OUTPUT.mtab
 > $LIBMOUNT_MTAB
 
+udevadm settle
 
 ts_init_subtest "mount-by-devname"
 mkdir -p $MOUNTPOINT &>  /dev/null
@@ -74,7 +75,6 @@ grep -q $DEVICE $LIBMOUNT_MTAB &&
 	echo "umount (device) failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
-#exit 1
 
 ts_init_subtest "mount-by-label"
 mkdir -p $MOUNTPOINT &>  /dev/null
@@ -122,9 +122,12 @@ ts_init_subtest "mount-loopdev"
 mkdir -p $MOUNTPOINT &> /dev/null
 img=$(ts_image_init)
 mkfs.ext3 -F $img &> /dev/null
+udevadm settle
+
 ts_valgrind $TESTPROG --mount -o loop $img $MOUNTPOINT >> $TS_OUTPUT 2>&1
 grep -q $MOUNTPOINT $LIBMOUNT_MTAB || \
 	echo "(loopdev) cannot find $MOUNTPOINT in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+udevadm settle
 ts_valgrind $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
 grep -q $MOUNTPOINT $LIBMOUNT_MTAB &&
 	echo "umount failed: found $MOUNTPOINT in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1

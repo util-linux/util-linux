@@ -50,6 +50,8 @@ w
 q
 EOF
 
+udevadm settle
+
 ts_log "Create filesystem A"
 mkfs.ext2 ${DEVICE}1 &> /dev/null
 ts_log "Create filesystem B"
@@ -58,6 +60,8 @@ ts_log "Create filesystem C"
 mkfs.ext2 ${DEVICE}3 &> /dev/null
 ts_log "Create filesystem D"
 mkfs.ext2 ${DEVICE}4 &> /dev/null
+
+udevadm settle
 
 function multi_mount() {
 	local DEV=$1
@@ -113,7 +117,7 @@ $TS_CMD_UMOUNT --recursive --all-targets ${DEVICE}1 >> $TS_OUTPUT 2>&1
 [ $? == 0 ] || ts_log "umount failed"
 ts_finalize_subtest
 
-sleep 3
+udevadm settle
 rmmod scsi_debug >> $TS_OUTPUT 2>&1
 [ $? == 0 ] || ts_die "device busy (umount failed?)"
 

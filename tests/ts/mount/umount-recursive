@@ -50,6 +50,8 @@ w
 q
 EOF
 
+udevadm settle
+
 ts_log "Create filesystem A"
 mkfs.ext2 ${DEVICE}1 &> /dev/null
 ts_log "Create filesystem B"
@@ -59,6 +61,7 @@ mkfs.ext2 ${DEVICE}3 &> /dev/null
 ts_log "Create filesystem D"
 mkfs.ext2 ${DEVICE}4 &> /dev/null
 
+udevadm settle
 
 ts_log "Do tests..."
 
@@ -90,7 +93,7 @@ $TS_CMD_MOUNT --bind $TS_MOUNTPOINT/mntB/mntC $TS_MOUNTPOINT/bindC
 $TS_CMD_UMOUNT --recursive $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 [ $? == 0 ] || ts_die "umount failed"
 
-sleep 3
+udevadm settle
 rmmod scsi_debug >> $TS_OUTPUT 2>&1
 [ $? == 0 ] || ts_die "device busy (umount failed?)"
 
