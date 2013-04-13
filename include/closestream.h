@@ -48,4 +48,23 @@ close_stdout(void)
 		_exit(EXIT_FAILURE);
 }
 
+#ifndef HAVE_FSYNC
+static inline int
+fsync(int fd __attribute__((__unused__)))
+{
+	return 0;
+}
+#endif
+
+static inline int
+close_fd(int fd)
+{
+	const int fsync_fail = (fsync(fd) != 0);
+	const int close_fail = (close(fd) != 0);
+
+	if (fsync_fail || close_fail)
+		return EOF;
+	return 0;
+}
+
 #endif /* UTIL_LINUX_CLOSESTREAM_H */
