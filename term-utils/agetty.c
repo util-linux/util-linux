@@ -235,6 +235,9 @@ static void login_options_to_argv(char *argv[], int *argc, char *str, char *user
 static char *fakehost;
 
 #ifdef DEBUGGING
+#ifndef
+# define DEBUG_OUTPUT "/dev/ttyp0"
+#endif
 #define debug(s) do { fprintf(dbf,s); fflush(dbf); } while (0)
 FILE *dbf;
 #else
@@ -270,7 +273,7 @@ int main(int argc, char **argv)
 	sigaction(SIGINT, &sa, &sa_int);
 
 #ifdef DEBUGGING
-	dbf = fopen("/dev/ttyp0", "w");
+	dbf = fopen(DEBUG_OUTPUT, "w");
 	for (int i = 1; i < argc; i++)
 		debug(argv[i]);
 #endif				/* DEBUGGING */
@@ -419,6 +422,12 @@ int main(int argc, char **argv)
 			log_warn(_("%s: can't change process priority: %m"),
 				options.tty);
 	}
+
+#ifdef DEBUGGING
+	fprintf(dbf, "read %c\n", ch);
+	if (close_stream(dbf) != 0)
+		log_err("write failed: %s", DEBUG_OUTPUT);
+#endif
 
 	/* Let the login program take care of password validation. */
 	execv(options.login, login_argv);
