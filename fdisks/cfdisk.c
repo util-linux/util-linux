@@ -406,8 +406,12 @@ static void
 fdexit(int ret) {
     if (opened) {
 	if (changed)
-		fsync(fd);
-	close(fd);
+	    if (close_fd(fd) != 0) {
+		fprintf(stderr, _("write failed\n"));
+		exit(2);
+	    }
+	else
+	    close(fd);
     }
     if (changed) {
 	fprintf(stderr, _("Disk has been changed.\n"));
