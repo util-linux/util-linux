@@ -879,12 +879,11 @@ int main(int argc, char **argv)
 			(long long) fslen_ub, offset);
 
 	written = write(fd, rom_image, offset);
-	close(fd);
-	if (written < 0)
-		err(MKFS_EX_ERROR, _("ROM image"));
 	if (offset != written)
 		errx(MKFS_EX_ERROR, _("ROM image write failed (%zd %zd)"),
 			written, offset);
+	if (close_fd(fd) != 0)
+		err(MKFS_EX_ERROR, _("ROM image"));
 
 	/*
 	 * (These warnings used to come at the start, but they scroll off
