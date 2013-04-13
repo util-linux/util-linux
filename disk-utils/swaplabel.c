@@ -145,7 +145,10 @@ static int change_info(const char *devname, const char *label, const char *uuid)
 		}
 	}
 
-	close(fd);
+	if (close_fd(fd) != 0) {
+		warn(_("write failed: %s"), devname);
+		return -1;
+	}
 	return 0;
 err:
 	if (fd >= 0)
