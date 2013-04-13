@@ -24,6 +24,7 @@
 
 #include "pathnames.h"
 #include "canonicalize.h"
+#include "closestream.h"
 
 #include "blkidP.h"
 
@@ -123,7 +124,8 @@ int blkid_send_uevent(const char *devname, const char *action)
 		rc = 0;
 		if (fputs(action, f) >= 0)
 			rc = 0;
-		fclose(f);
+		if (close_stream(f) != 0)
+			DBG(EVALUATE, blkid_debug("write failed: %s", uevent));
 	}
 	DBG(EVALUATE, blkid_debug("%s: send uevent %s",
 			uevent, rc == 0 ? "SUCCES" : "FAILED"));

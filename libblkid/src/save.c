@@ -21,6 +21,9 @@
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
+
+#include "closestream.h"
+
 #include "blkidP.h"
 
 static int save_dev(blkid_dev dev, FILE *file)
@@ -148,7 +151,9 @@ int blkid_flush_cache(blkid_cache cache)
 		ret = 1;
 	}
 
-	fclose(file);
+	if (close_stream(file) != 0)
+		DBG(SAVE, blkid_debug("write failed: %s", filename));
+
 	if (opened != filename) {
 		if (ret < 0) {
 			unlink(opened);
