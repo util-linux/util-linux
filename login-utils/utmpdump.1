@@ -19,7 +19,7 @@
 .SH NAME
 utmpdump \- dump UTMP and WTMP files in raw format
 .SH SYNOPSIS
-utmpdump [\-frh] [ filename ]
+utmpdump [\-frohV] [ filename ]
 .SH DESCRIPTION
 .B utmpdump
 is a simple program to dump UTMP and WTMP files in raw format, so they
@@ -33,6 +33,8 @@ is passed.
 Output appended data as the file grows.
 .IP "\fB\-r\fR, \fB\-\-reverse\fP
 Undump, write back edited login information into utmp or wtmp files.
+.IP "\fB\-o\fR, \fB\-\-output\fP \fIfile\fR
+Write command output to file instead of standard output.
 .IP "\fB\-h\fR, \fB\-\-help\fP"
 Print a help text and exit.
 .IP "\fB\-V\fR, \fB\-\-version\fP"
