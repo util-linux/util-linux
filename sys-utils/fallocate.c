@@ -168,6 +168,7 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("%s: fallocate failed"), fname);
 	}
 
-	close(fd);
+	if (close_fd(fd) != 0)
+		err(EXIT_FAILURE, _("write failed: %s"), fname);
 	return EXIT_SUCCESS;
 }
