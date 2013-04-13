@@ -1,0 +1,87 @@
+_mount_module()
+{
+	local cur prev OPTS
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+	prev="${COMP_WORDS[COMP_CWORD-1]}"
+	case $prev in
+		'-t'|'--types')
+			local TYPES
+			TYPES="
+adfs	  noadfs	hfsplus	  nohfsplus	smbfs	  nosmbfs
+affs	  noaffs	hpfs	  nohpfs	squashfs  nosquashfs
+autofs	  noautofs	iso9660	  noiso9660	sysv	  nosysv
+cifs	  nocifs	jfs	  nojfs		tmpfs	  notmpfs
+coda	  nocoda	minix	  nominix	ubifs	  noubifs
+coherent  nocoherent	msdos	  nomsdos	udf	  noudf
+cramfs	  nocramfs	ncpfs	  noncpfs	ufs	  noufs
+debugfs	  nodebugfs	nfs	  nonfs		umsdos	  noumsdos
+devpts	  nodevpts	nfs4	  nonfs4	usbfs	  nousbfs
+efs	  noefs		ntfs	  nontfs	vfat	  novfat
+ext	  noext		proc	  noproc	xenix	  noxenix
+ext2	  noext2	qnx4	  noqnx4	xfs	  noxfs
+ext3	  noext3	ramfs	  noramfs	xiafs	  noxiafs
+ext4	  noext4	reiserfs  noreiserfs
+hfs	  nohfs		romfs	  noromfs
+"
+			COMPREPLY=( $(compgen -W "$TYPES" -- $cur) )
+			return 0
+			;;
+		'-L'|'--label')
+			local LABELS
+			LABELS="$(lsblk -o LABEL -nr)"
+			COMPREPLY=( $(compgen -W "$LABELS" -- $cur) )
+			return 0
+			;;
+		'-U'|'--uuid')
+			local UUIDS
+			UUIDS="$(lsblk -o UUID -nr)"
+			COMPREPLY=( $(compgen -W "$UUIDS" -- $cur) )
+			return 0
+			;;
+		'-h'|'--help'|'-V'|'--version')
+			return 0
+			;;
+	esac
+	case $cur in
+		-*)
+			OPTS="	--all
+				--no-canonicalize
+				--fake
+				--fork
+				--fstab
+				--help
+				--internal-only
+				--show-labels
+				--no-mtab
+				--options
+				--test-opts
+				--read-only
+				--types
+				--source
+				--target
+				--verbose
+				--version
+				--read-write
+				--label
+				--uuid
+				--bind
+				--move
+				--rbind
+				--make-shared
+				--make-slave
+				--make-private
+				--make-unbindable
+				--make-rshared
+				--make-rslave
+				--make-rprivate
+				--make-runbindable"
+			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
+			return 0
+			;;
+	esac
+	compopt -o filenames
+	COMPREPLY=( $(compgen -f -- $cur) )
+	return 0
+}
+complete -F _mount_module mount
