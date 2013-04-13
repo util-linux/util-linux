@@ -21,6 +21,7 @@
 #include <limits.h>
 #include <sys/file.h>
 
+#include "closestream.h"
 #include "pathnames.h"
 #include "mountP.h"
 
@@ -573,7 +574,9 @@ void increment_data(const char *filename, int verbose, int loopno)
 		err(EXIT_FAILURE, "%d: failed to open: %s", getpid(), filename);
 
 	fprintf(f, "%ld", num);
-	fclose(f);
+
+	if (close_stream(f) != 0)
+		err(EXIT_FAILURE, "write failed: %s", filename);
 
 	if (verbose)
 		fprintf(stderr, "%d: %s: %ld --> %ld (loop=%d)\n", getpid(),
