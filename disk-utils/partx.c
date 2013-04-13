@@ -987,6 +987,8 @@ int main(int argc, char **argv)
 	if (loopdev)
 		loopcxt_deinit(&lc);
 
-	close(fd);
+	if (close_fd(fd) != 0)
+		err(EXIT_FAILURE, _("write failed"));
+
 	return rc ? EXIT_FAILURE : EXIT_SUCCESS;
 }
