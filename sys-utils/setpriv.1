@@ -55,7 +55,8 @@ inheritable set, you are likely to become confused.  Do not do that.
 Lists all known capabilities.  Must be specified alone.
 .TP
 \fB\-\-ruid\fR \fIuid\fR, \fB\-\-euid\fR \fIuid\fR, \fB\-\-reuid\fR \fIuid\fR
-Sets the real, effective, or both \fIuid\fRs.
+Sets the real, effective, or both \fIuid\fRs.  The uid argument can be
+given as textual login name.
 .IP
 Setting
 .I uid
@@ -68,7 +69,8 @@ something like:
 \-\-reuid=1000 \-\-\:regid=1000 \-\-\:caps=\-\:all
 .TP
 \fB\-\-rgid\fR \fIgid\fR, \fB\-\-egid\fR \fIgid\fR, \fB\-\-regid\fR \fIgid\fR
-Sets the real, effective, or both \fIgid\fRs.
+Sets the real, effective, or both \fIgid\fRs.  The gid argument can be
+given as textual group name.
 .IP
 For safety, you must specify one of \-\-\:keep\-\:groups,
 \-\-\:clear\-\:groups, or \-\-\:groups if you set any primary

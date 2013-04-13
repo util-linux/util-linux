@@ -23,10 +23,12 @@
 #include <getopt.h>
 #include <grp.h>
 #include <linux/securebits.h>
+#include <pwd.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/prctl.h>
+#include <sys/types.h>
 #include <unistd.h>
 
 #include "c.h"
@@ -545,6 +547,28 @@ static void do_apparmor_profile(const char *label)
 		    _("write failed: %s"), _PATH_PROC_ATTR_EXEC);
 }
 
+static uid_t get_user(const char *s, const char *err)
+{
+	struct passwd *pw;
+	long tmp;
+	pw = getpwnam(s);
+	if (pw)
+		return pw->pw_uid;
+	tmp = strtol_or_err(s, err);
+	return tmp;
+}
+
+static gid_t get_group(const char *s, const char *err)
+{
+	struct group *gr;
+	long tmp;
+	gr = getgrnam(s);
+	if (gr)
+		return gr->gr_gid;
+	tmp = strtol_or_err(s, err);
+	return tmp;
+}
+
 int main(int argc, char **argv)
 {
 	enum {
@@ -627,43 +651,37 @@ int main(int argc, char **argv)
 			if (opts.have_ruid)
 				errx(EXIT_FAILURE, _("duplicate ruid"));
 			opts.have_ruid = 1;
-			opts.ruid = strtol_or_err(optarg,
-						  _("failed to parse ruid"));
+			opts.ruid = get_user(optarg, _("failed to parse ruid"));
 			break;
 		case EUID:
 			if (opts.have_euid)
 				errx(EXIT_FAILURE, _("duplicate euid"));
 			opts.have_euid = 1;
-			opts.euid = strtol_or_err(optarg,
-						  _("failed to parse euid"));
+			opts.euid = get_user(optarg, _("failed to parse euid"));
 			break;
 		case REUID:
 			if (opts.have_ruid || opts.have_euid)
 				errx(EXIT_FAILURE, _("duplicate ruid or euid"));
 			opts.have_ruid = opts.have_euid = 1;
-			opts.ruid = opts.euid = strtol_or_err(optarg,
-							      _("failed to parse reuid"));
+			opts.ruid = opts.euid = get_user(optarg, _("failed to parse reuid"));
 			break;
 		case RGID:
 			if (opts.have_rgid)
 				errx(EXIT_FAILURE, _("duplicate rgid"));
 			opts.have_rgid = 1;
-			opts.rgid = strtol_or_err(optarg,
-						  _("failed to parse rgid"));
+			opts.rgid = get_group(optarg, _("failed to parse rgid"));
 			break;
 		case EGID:
 			if (opts.have_egid)
 				errx(EXIT_FAILURE, _("duplicate egid"));
 			opts.have_egid = 1;
-			opts.egid = strtol_or_err(optarg,
-						  _("failed to parse egid"));
+			opts.egid = get_group(optarg, _("failed to parse egid"));
 			break;
 		case REGID:
 			if (opts.have_rgid || opts.have_egid)
 				errx(EXIT_FAILURE, _("duplicate rgid or egid"));
 			opts.have_rgid = opts.have_egid = 1;
-			opts.rgid = opts.egid = strtol_or_err(optarg,
-							      _("failed to parse regid"));
+			opts.rgid = opts.egid = get_group(optarg, _("failed to parse regid"));
 			break;
 		case CLEAR_GROUPS:
 			if (opts.clear_groups)
