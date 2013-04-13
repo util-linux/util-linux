@@ -513,7 +513,8 @@ static void do_file(char *path, struct cramfs_inode *i)
 	if (i->size)
 		do_uncompress(path, fd, offset, i->size);
 	if (opt_extract) {
-		close(fd);
+		if (close_fd(fd) != 0)
+			err(FSCK_EX_ERROR, _("write failed: %s"), path);
 		change_file_status(path, i);
 	}
 }
