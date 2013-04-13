@@ -11,7 +11,7 @@
 .\" permission notice identical to this one.
 .\"
 .\" " for hilit mode
-.TH CFDISK 8 "July 2009" "util-linux" "System Administration"
+.TH CFDISK 8 "April 2013" "util-linux" "System Administration"
 .SH NAME
 cfdisk \- display or manipulate disk partition table
 .SH SYNOPSIS
@@ -397,18 +397,18 @@ When in a sub-menu or at a prompt to enter a filename, you can hit the
 key to return to the main command line.
 .SH OPTIONS
 .TP
-.B \-a
+\fB\-a\fR, \fB\-\-arrow\fR
 Use an arrow cursor instead of reverse video for highlighting the
 current partition.
 .TP
-.B \-g
+\fB\-g\fR, \fB\-\-guess\fR
 Do not use the geometry given by the disk driver, but try to
 guess a geometry from the partition table.
 .TP
-.B \-v
+\fB\-v\fR, \fB\-V\fR, \fB\-\-version\fR
 Print the version number and copyright.
 .TP
-.B \-z
+\fB\-z\fR, \fB\-\-zero\fR
 Start with zeroed partition table.  This option is useful when you
 want to repartition your entire disk.
 .I Note:
@@ -416,17 +416,17 @@ this option does not zero the partition table on the disk; rather, it
 simply starts the program without reading the existing partition
 table.
 .TP
-.BI \-c " cylinders"
+\fB\-c\fR, \fB\-\-cylinders\fR \fcylinders\fR
 .TP
-.BI \-h " heads"
+\fB\-h\fR, \fB\-\-heads\fR \fIheads\fR
 .TP
-.BI \-s " sectors-per-track"
+\fB\-s\fR, \fB\-\-sectors\fR \fsectors-per-track\fR
 Override the number of cylinders, heads and sectors per track read
 from the BIOS.  If your BIOS or adapter does not supply this
 information or if it supplies incorrect information, use these options
 to set the disk geometry values.
 .TP
-.BI \-P " opt"
+\fB\-P\fR, \fB\-\-print\fR \fIr|s|t\fR
 Prints the partition table in specified formats.
 .I opt
 can be one or more of "r", "s" or "t".  See the

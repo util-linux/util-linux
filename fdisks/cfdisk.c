@@ -2753,27 +2753,25 @@ copyright(void) {
     fprintf(stderr, _("Copyright (C) 1994-2002 Kevin E. Martin & aeb\n"));
 }
 
-static void
-usage(char *prog_name) {
-    /* Unfortunately, xgettext does not handle multi-line strings */
-    /* so, let's use explicit \n's instead */
-    fprintf(stderr, _("\n"
-"Usage:\n"
-"Print version:\n"
-"        %s -v\n"
-"Print partition table:\n"
-"        %s -P {r|s|t} [options] device\n"
-"Interactive use:\n"
-"        %s [options] device\n"
-"\n"
-"Options:\n"
-"-a: Use arrow instead of highlighting;\n"
-"-z: Start with a zero partition table, instead of reading the pt from disk;\n"
-"-c C -h H -s S: Override the kernel's idea of the number of cylinders,\n"
-"                the number of heads and the number of sectors/track.\n\n"),
-    prog_name, prog_name, prog_name);
 
+static void __attribute__ ((__noreturn__)) usage(FILE *out)
+{
+    fputs(USAGE_HEADER, out);
+    fprintf(out, _(" %s [options] device\n"), program_invocation_short_name);
+    fputs(USAGE_OPTIONS, out);
+    fputs(_(" -c, --cylinders <number>  set the number of cylinders to use\n"), out);
+    fputs(_(" -h, --heads <number>      set the number of heads to use\n"), out);
+    fputs(_(" -s, --sectors <number>    set the number of sectors to use\n"), out);
+    fputs(_(" -g, --guess               guess a geometry from partition table\n"), out);
+    fputs(_(" -P, --print <r|s|t>       print partition table in specified format\n"), out);
+    fputs(_(" -z, --zero                start with zeroed partition table\n"), out);
+    fputs(_(" -a, --arrow               use arrow for highlighting the current partition\n"), out);
+    fputs(USAGE_SEPARATOR, out);
+    fputs(_("     --help     display this help and exit\n"), out);
+    fputs(USAGE_VERSION, out);
+    fprintf(out, USAGE_MAN_TAIL("cfdisk(8)"));
     copyright();
+    exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 int
@@ -2782,12 +2780,29 @@ main(int argc, char **argv)
     int c;
     int i, len;
 
+    enum {
+	OPT_HELP = CHAR_MAX + 1,
+    };
+
+    static const struct option longopts[] = {
+	{"cylinders", required_argument, 0, 'c'},
+	{"heads", required_argument, 0, 'h'},
+	{"sectors", required_argument, 0, 's'},
+	{"guess", no_argument, 0, 'g'},
+	{"print", required_argument, 0, 'P'},
+	{"zero", no_argument, 0, 'z'},
+	{"arrow", no_argument, 0, 'a'},
+	{"help", no_argument, 0, OPT_HELP},
+	{"version", no_argument, 0, 'V'},
+	{NULL, no_argument, 0, '0'},
+    };
+
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
     atexit(close_stdout);
 
-    while ((c = getopt(argc, argv, "ac:gh:s:vzP:")) != -1)
+    while ((c = getopt_long(argc, argv, "ac:gh:s:vVzP:", longopts, NULL)) != -1)
 	switch (c) {
 	case 'a':
 	    arrow_cursor = TRUE;
@@ -2817,9 +2832,10 @@ main(int argc, char **argv)
 	    }
 	    break;
 	case 'v':
-	    fprintf(stderr, "cfdisk (%s)\n", PACKAGE_STRING);
+	case 'V':
+	    printf(UTIL_LINUX_VERSION);
 	    copyright();
-	    exit(0);
+	    return EXIT_SUCCESS;
 	case 'z':
 	    zero_table = TRUE;
 	    break;
@@ -2837,21 +2853,20 @@ main(int argc, char **argv)
 		    print_only |= PRINT_PARTITION_TABLE;
 		    break;
 		default:
-		    usage(argv[0]);
-		    exit(1);
+		    usage(stderr);
 		}
 	    }
 	    break;
+	case OPT_HELP:
+	    usage(stdout);
 	default:
-	    usage(argv[0]);
-	    exit(1);
+	    usage(stderr);
 	}
 
     if (argc-optind == 1)
 	disk_device = argv[optind];
     else if (argc-optind != 0) {
-	usage(argv[0]);
-	exit(1);
+	usage(stderr);
     } else if ((fd = open(DEFAULT_DEVICE, O_RDONLY)) < 0)
 	disk_device = ALTERNATE_DEVICE;
     else close(fd);
