@@ -330,7 +330,8 @@ static int set_watchdog(struct wdinfo *wd, int timeout)
 		warn(_("cannot set timeout for %s"), wd->device);
 	}
 
-	close(fd);
+	if (close_fd(fd))
+		warn(_("write failed"));
 	sigprocmask(SIG_SETMASK, &oldsigs, NULL);
 	printf("Set timeout to %d seconds\n", timeout);
 
@@ -393,7 +394,8 @@ static int read_watchdog(struct wdinfo *wd)
 		 * the machine might end up rebooting. */
 	}
 
-	close(fd);
+	if (close_fd(fd))
+		warn(_("write failed"));
 	sigprocmask(SIG_SETMASK, &oldsigs, NULL);
 
 	return 0;
