@@ -1849,7 +1849,11 @@ print_raw_table(void) {
 
     if (to_file) {
 	if (!print_only)
-	    fclose(fp);
+	    if (close_stream(fp) != 0) {
+		char errstr[LINE_LENGTH];
+		snprintf(errstr, sizeof(errstr), _("write failed: %s"), fname);
+		print_warning(errstr);
+	    }
     } else {
         menuContinue();
     }
@@ -1966,7 +1970,11 @@ print_p_info(void) {
 
     if (to_file) {
 	if (!print_only)
-	    fclose(fp);
+	    if (close_stream(fp) != 0) {
+		char errstr[LINE_LENGTH];
+		snprintf(errstr, sizeof(errstr), _("write failed: %s"), fname);
+		print_warning(errstr);
+	    }
     } else {
         menuContinue();
     }
@@ -2060,7 +2068,11 @@ print_part_table(void) {
 
     if (to_file) {
 	if (!print_only)
-	    fclose(fp);
+	    if (close_stream(fp) != 0) {
+		char errstr[LINE_LENGTH];
+		snprintf(errstr, sizeof(errstr), _("write failed: %s"), fname);
+		print_warning(errstr);
+	    }
     } else {
         menuContinue();
     }
