@@ -323,7 +323,10 @@ static int swap_rewrite_signature(const char *devname, unsigned int pagesize)
 
 	rc  = 0;
 err:
-	close(fd);
+	if (close_fd(fd) != 0) {
+		warn(_("write failed: %s"), devname);
+		rc = -1;
+	}
 	return rc;
 }
 
