@@ -11,6 +11,7 @@
 #include "partx.h"
 #include "sysfs.h"
 #include "strutils.h"
+#include "closestream.h"
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
@@ -73,6 +74,7 @@ int main(int argc, char **argv)
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv, "Vh", longopts, NULL)) != -1)
 		switch (c) {
@@ -101,6 +103,9 @@ int main(int argc, char **argv)
 	if (partx_resize_partition(fd, partno, start,
 			strtou64_or_err(argv[3], _("invalid length argument"))))
 		err(EXIT_FAILURE, _("failed to resize partition"));
+
+	if (close_fd(fd) != 0)
+		err(EXIT_FAILURE, _("write failed"));
 
 	return 0;
 }
