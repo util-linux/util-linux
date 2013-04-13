@@ -42,6 +42,7 @@
 #include <errno.h>
 #include <err.h>
 #include <limits.h>
+#include <getopt.h>
 #include "hexdump.h"
 #include "nls.h"
 #include "strutils.h"
@@ -56,8 +57,25 @@ newsyntax(int argc, char ***argvp)
 	int ch;
 	char **argv;
 
+	static const struct option longopts[] = {
+		{"one-byte-octal", no_argument, NULL, 'b'},
+		{"one-byte-char", required_argument, NULL, 'c'},
+		{"canonical", required_argument, NULL, 'C'},
+		{"two-bytes-decimal", no_argument, NULL, 'd'},
+		{"two-bytes-octal", required_argument, NULL, 'o'},
+		{"two-bytes-hex", no_argument, NULL, 'x'},
+		{"format", required_argument, NULL, 'e'},
+		{"format-file", required_argument, NULL, 'f'},
+		{"length", required_argument, NULL, 'n'},
+		{"skip", required_argument, NULL, 's'},
+		{"no-squeezing", no_argument, NULL, 'v'},
+		{"help", no_argument, NULL, 'h'},
+		{"version", no_argument, NULL, 'V'},
+		{NULL, no_argument, NULL, 0}
+	};
+
 	argv = *argvp;
-	while ((ch = getopt(argc, argv, "bcCde:f:n:os:vxV")) != -1) {
+	while ((ch = getopt_long(argc, argv, "bcCde:f:n:os:vxhV", longopts, NULL)) != -1) {
 		switch (ch) {
 		case 'b':
 			add("\"%07.7_Ax\n\"");
@@ -99,10 +117,10 @@ newsyntax(int argc, char ***argvp)
 			add("\"%07.7_Ax\n\"");
 			add("\"%07.7_ax \" 8/2 \"   %04x \" \"\\n\"");
 			break;
+		case 'h':
+			usage(stdout);
 		case 'V':
-			printf(_("%s from %s\n"),
-					program_invocation_short_name,
-					PACKAGE_STRING);
+			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
 			break;
 		default:
@@ -120,23 +138,24 @@ newsyntax(int argc, char ***argvp)
 
 void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(out, _("\nUsage:\n"
-		       " %s [options] file...\n"),
-		       program_invocation_short_name);
-	fprintf(out, _(
-		       "\nOptions:\n"
-		       " -b              one-byte octal display\n"
-		       " -c              one-byte character display\n"
-		       " -C              canonical hex+ASCII display\n"
-		       " -d              two-byte decimal display\n"
-		       " -o              two-byte octal display\n"
-		       " -x              two-byte hexadecimal display\n"
-		       " -e format       format string to be used for displaying data\n"
-		       " -f format_file  file that contains format strings\n"
-		       " -n length       interpret only length bytes of input\n"
-		       " -s offset       skip offset bytes from the beginning\n"
-		       " -v              display without squeezing similar lines\n"
-		       " -V              output version information and exit\n\n"));
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] file...\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -b, --one-byte-octal      one-byte octal display\n"), out);
+	fputs(_(" -c, --one-byte-char       one-byte character display\n"), out);
+	fputs(_(" -C, --canonical           canonical hex+ASCII display\n"), out);
+	fputs(_(" -d, --two-bytes-decimal   two-byte decimal display\n"), out);
+	fputs(_(" -o, --two-bytes-octal     two-byte octal display\n"), out);
+	fputs(_(" -x, --two-bytes-hex       two-byte hexadecimal display\n"), out);
+	fputs(_(" -e, --format format       format string to be used for displaying data\n"), out);
+	fputs(_(" -f, --format-file <file>  file that contains format strings\n"), out);
+	fputs(_(" -n, --length <length>     interpret only length bytes of input\n"), out);
+	fputs(_(" -s, --skip <offset>       skip offset bytes from the beginning\n"), out);
+	fputs(_(" -v, --no-squeezing        output identical lines\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("hexdump(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }

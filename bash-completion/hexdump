@@ -5,25 +5,37 @@ _hexdump_module()
 	cur="${COMP_WORDS[COMP_CWORD]}"
 	prev="${COMP_WORDS[COMP_CWORD-1]}"
 	case $prev in
-		'-e')
+		'-e'|'--format')
 			COMPREPLY=( $(compgen -W "format" -- $cur) )
 			return 0
 			;;
-		'-n')
+		'-n'|'--length')
 			COMPREPLY=( $(compgen -W "length" -- $cur) )
 			return 0
 			;;
-		'-s')
+		'-s'|'--skip')
 			COMPREPLY=( $(compgen -W "offset" -- $cur) )
 			return 0
 			;;
-		'-V')
+		'-V'|'--version'|'-h'|'--help')
 			return 0
 			;;
 	esac
 	case $cur in
 		-*)
-			OPTS="-b -c -C -d -o -x -e -f -n -s -v -V"
+			OPTS="	--one-byte-octal
+				--one-byte-char
+				--canonical
+				--two-bytes-decimal
+				--two-bytes-octal
+				--two-bytes-hex
+				--format
+				--format-file
+				--length
+				--skip
+				--no-squeezing
+				--version
+				--help"
 			COMPREPLY=( $(compgen -W "${OPTS[*]}" -- $cur) )
 			return 0
 			;;
