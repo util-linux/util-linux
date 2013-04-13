@@ -169,7 +169,8 @@ ttymsg(struct iovec *iov, size_t iovcnt, char *line, int tmout) {
 		 */
 		if (errno == ENODEV || errno == EIO)
 			break;
-		(void) close(fd);
+		if (close_fd(fd) != 0)
+			warn(_("write failed: %s"), device);
 		if (forked)
 			_exit(EXIT_FAILURE);
 		if (strlen(strerror(errno)) > 1000)
@@ -184,7 +185,6 @@ ttymsg(struct iovec *iov, size_t iovcnt, char *line, int tmout) {
 		return (errbuf);
 	}
 
-	(void) close(fd);
 	if (forked)
 		_exit(EXIT_SUCCESS);
 	return (NULL);
