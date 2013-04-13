@@ -625,15 +625,6 @@ main(int argc, char **argv) {
 			_("%s: unable to write signature page"),
 			device_name);
 
-	/*
-	 * A subsequent swapon() will fail if the signature
-	 * is not actually on disk. (This is a kernel bug.)
-	 */
-#ifdef HAVE_FSYNC
-	if (fsync(DEV))
-		errx(EXIT_FAILURE, _("fsync failed"));
-#endif
-
 #ifdef HAVE_LIBSELINUX
 	if (S_ISREG(statbuf.st_mode) && is_selinux_enabled() > 0) {
 		security_context_t context_string;
@@ -664,5 +655,12 @@ main(int argc, char **argv) {
 		freecon(oldcontext);
 	}
 #endif
+	/*
+	 * A subsequent swapon() will fail if the signature
+	 * is not actually on disk. (This is a kernel bug.)
+	 * The fsync() in close_fd() will take care of writing.
+	 */
+	if (close_fd(DEV) != 0)
+		err(EXIT_FAILURE, _("write failed"));
 	return EXIT_SUCCESS;
 }
