@@ -541,8 +541,9 @@ static void do_apparmor_profile(const char *label)
 		err(SETPRIV_EXIT_PRIVERR,
 		    _("cannot open %s"), _PATH_PROC_ATTR_EXEC);
 
-	if (fprintf(f, "changeprofile %s", label) < 0 || fflush(f) != 0
-	    || fclose(f) != 0)
+	fprintf(f, "changeprofile %s", label);
+
+	if (close_stream(f) != 0)
 		err(SETPRIV_EXIT_PRIVERR,
 		    _("write failed: %s"), _PATH_PROC_ATTR_EXEC);
 }
