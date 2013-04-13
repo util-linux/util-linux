@@ -91,7 +91,7 @@ int main(int argc, char **argv)
 
 	if (ctty) {
 		if (ioctl(STDIN_FILENO, TIOCSCTTY, 1))
-			warn(_("failed to set the controlling terminal"));
+			err(EXIT_FAILURE, _("failed to set the controlling terminal"));
 	}
 	execvp(argv[optind], argv + optind);
 	err(EXIT_FAILURE, _("failed to execute %s"), argv[optind]);
