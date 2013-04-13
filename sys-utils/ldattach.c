@@ -42,7 +42,6 @@
 # define TIOCSETD   0x5423
 #endif
 
-static const char *progname;
 static int debug = 0;
 
 struct ld_table {
@@ -238,8 +237,6 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	/* parse options */
-	progname = program_invocation_short_name;
-
 	if (argc == 0)
 		usage(EXIT_SUCCESS);
 	while ((optc =

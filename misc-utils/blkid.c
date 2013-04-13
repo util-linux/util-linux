@@ -51,8 +51,6 @@ extern int optind;
 #include "ttyutils.h"
 #include "xalloc.h"
 
-const char *progname = "blkid";
-
 int raw_chars;
 
 static void print_version(FILE *out)
@@ -98,7 +96,7 @@ static void usage(int error)
 		" -O <offset> probe at the given offset\n"
 		" -u <list>   filter by \"usage\" (e.g. -u filesystem,raid)\n"
 		" -n <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"
-		"\n", progname);
+		"\n", program_invocation_short_name);
 
 	exit(error);
 }

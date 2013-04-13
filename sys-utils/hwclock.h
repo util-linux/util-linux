@@ -24,7 +24,6 @@ extern struct clock_ops *probe_for_kd_clock(void);
 typedef int bool;
 
 /* hwclock.c */
-extern char *progname;
 extern int debug;
 extern unsigned long epoch_option;
 extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
