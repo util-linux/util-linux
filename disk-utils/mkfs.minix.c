@@ -804,7 +804,8 @@ int main(int argc, char ** argv) {
 
 	mark_good_blocks();
 	write_tables();
-	close(DEV);
+	if (close_fd(DEV) != 0)
+		err(MKFS_EX_ERROR, _("write failed"));
 
 	return MKFS_EX_OK;
 }
