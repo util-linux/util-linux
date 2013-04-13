@@ -1228,7 +1228,14 @@ static void pgfile(FILE *f, const char *name)
 					/* No error check for compat. */
 					fwrite_all(b, sizeof *b, sz, save);
 				}
-				fclose(save);
+				if (close_stream(save) != 0) {
+					cmd.count = errno;
+					mesg(_("write failed"));
+					mesg(": ");
+					mesg(p);
+					mesg(strerror(cmd.count));
+					goto newcmd;
+				}
 				fseeko(fbuf, (off_t)0, SEEK_END);
 				mesg(_("saved"));
 				goto newcmd;
