@@ -289,7 +289,7 @@ int main(int argc, char **argv)
 	if (write(fd, &de, sizeof(de)) != sizeof(de))
 		err(EXIT_FAILURE, _("error writing .. entry"));
 
-	if (close(fd) < 0)
+	if (close_fd(fd) != 0)
 		err(EXIT_FAILURE, _("error closing %s"), device);
 
 	return EXIT_SUCCESS;
