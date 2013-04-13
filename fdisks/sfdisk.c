@@ -284,12 +284,16 @@ save_sectors(char *dev, int fdin) {
 	    }
 	}
 
-    close(fdout);
+    if (close_fd(fdout) != 0) {
+	warn(_("write failed: %s"), save_sector_file);
+	return 0;
+    }
     return 1;
 
  err:
     if (fdout >= 0)
-	close(fdout);
+	if (close_fd(fdout) != 0)
+	    warn(_("write failed: %s"), save_sector_file);
     return 0;
 }
 
@@ -355,7 +359,10 @@ restore_sectors(char *dev) {
     if (!reread_disk_partition(dev, fdout))	/* closes fdout */
 	goto err;
     close(fdin);
-
+    if (close_fd(fdout) != 0) {
+	error(_("write failed: %s"), dev);
+	return 0;
+    }
     return 1;
 
  err:
@@ -791,7 +798,7 @@ reread_disk_partition(char *dev, int fd) {
 	return 0;
     }
 
-    if (fsync(fd) || close(fd)) {
+    if (close_fd(fd) != 0) {
 	perror(dev);
 	warnx(_("Error closing %s\n"), dev);
 	return 0;
@@ -3026,7 +3033,10 @@ do_activate(char **av, int ac, char *arg) {
 		 "but the DOS MBR will only boot a disk with 1 active partition.\n"),
 		i);
 
-    close(fd);
+    if (close_fd(fd) != 0) {
+	my_warn(_("write failed"));
+	exit_status = 1;
+    }
 }
 
 static void
@@ -3074,7 +3084,10 @@ do_unhide(char **av, int ac, char *arg) {
     else
 	exit_status = 1;
 
-    close(fd);
+    if (close_fd(fd) != 0) {
+	my_warn(_("write failed"));
+	exit_status = 1;
+    }
 }
 
 static void
@@ -3108,7 +3121,10 @@ do_change_id(char *dev, char *pnam, char *id) {
 	exit_status = 1;
 
 done:
-    close(fd);
+    if (close_fd(fd) != 0) {
+	my_warn(_("write failed"));
+	exit_status = 1;
+    }
 }
 
 static void
