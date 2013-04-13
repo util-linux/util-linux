@@ -1385,6 +1385,8 @@ main(int argc, char **argv) {
 	if (repair && !automatic)
 		tcsetattr(STDIN_FILENO, TCSANOW, &termios);
 
+	if (close_fd(IN) != 0)
+		err(FSCK_EX_ERROR, _("write failed"));
 	if (changed)
 		retcode += 3;
 	if (errors_uncorrected)
