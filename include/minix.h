@@ -73,10 +73,13 @@ struct minix3_super_block {
 #define MINIX_VALID_FS       0x0001          /* Clean fs. */
 #define MINIX_ERROR_FS       0x0002          /* fs has errors. */
 
-#define MINIX_SUPER_MAGIC    0x137F          /* original minix fs */
-#define MINIX_SUPER_MAGIC2   0x138F          /* minix fs, 30 char names */
-#define MINIX2_SUPER_MAGIC   0x2468	     /* minix V2 fs */
+
+#define MINIX_SUPER_MAGIC    0x137F          /* minix V1 fs, 14 char names */
+#define MINIX_SUPER_MAGIC2   0x138F          /* minix V1 fs, 30 char names */
+
+#define MINIX2_SUPER_MAGIC   0x2468	     /* minix V2 fs, 14 char names */
 #define MINIX2_SUPER_MAGIC2  0x2478	     /* minix V2 fs, 30 char names */
+
 #define MINIX3_SUPER_MAGIC   0x4d5a          /* minix V3 fs (60 char names) */
 
 #endif /* UTIL_LINUX_MINIX_H */
