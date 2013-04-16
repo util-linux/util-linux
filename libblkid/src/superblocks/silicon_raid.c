@@ -74,7 +74,7 @@ static int checksum(struct silicon_metadata *sil)
 	uint16_t *p = (uint16_t *) sil;
 
 	while (count--)
-		sum += *p++;
+		sum += le16_to_cpu(*p++);
 
 	return (-sum & 0xFFFF) == le16_to_cpu(sil->checksum1);
 }
