@@ -521,7 +521,7 @@ read_hypervisor_cpuid(struct lscpu_desc *desc)
 
 #else	/* ! __x86_64__ */
 static void
-read_hypervisor_cpuid(struct lscpu_desc *desc)
+read_hypervisor_cpuid(struct lscpu_desc *desc __attribute__((__unused__)))
 {
 }
 #endif

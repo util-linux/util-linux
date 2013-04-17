@@ -27,14 +27,14 @@
 #  include <sys/syscall.h>
 # endif
 
-# ifndef HAVE_UNSHARE
+# if !defined(HAVE_UNSHARE) && defined(SYS_unshare)
 static inline int unshare(int flags)
 {
 	return syscall(SYS_unshare, flags);
 }
 # endif
 
-# ifndef HAVE_SETNS
+# if !defined(HAVE_SETNS) && defined(SYS_setns)
 static inline int setns(int fd, int nstype)
 {
 	return syscall(SYS_setns, fd, nstype);
