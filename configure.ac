@@ -183,6 +183,7 @@ AC_CHECK_HEADERS([ \
 	linux/raw.h \
 	linux/tiocl.h \
 	linux/version.h \
+	linux/securebits.h \
 	locale.h \
 	mntent.h \
 	net/if.h \
@@ -225,6 +226,7 @@ AC_CHECK_HEADERS([langinfo.h],
 dnl Convert some ac_cv_header_* variables to have_*
 dnl
 have_linux_raw_h=$ac_cv_header_linux_raw_h
+have_linux_securebits_h=$ac_cv_header_linux_securebits_h
 have_linux_watchdog_h=$ac_cv_header_linux_watchdog_h
 have_security_pam_misc_h=$ac_cv_header_security_pam_misc_h
 
@@ -926,6 +928,7 @@ AC_ARG_ENABLE([setpriv],
 )
 UL_BUILD_INIT([setpriv])
 UL_REQUIRES_LINUX([setpriv])
+UL_REQUIRES_HAVE([setpriv], [linux_securebits_h], [securebits.h header file])
 UL_REQUIRES_HAVE([setpriv], [cap_ng], [libcap-ng])
 AM_CONDITIONAL(BUILD_SETPRIV, test "x$build_setpriv" = xyes)
 

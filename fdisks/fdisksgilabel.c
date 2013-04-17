@@ -1022,10 +1022,12 @@ static int sgi_toggle_partition_flag(struct fdisk_context *cxt, size_t i, unsign
 
 	switch (flag) {
 	case SGI_FLAG_BOOT:
-		sgilabel->boot_part = sgilabel->boot_part == SSWAP16(i) ? 0 : SSWAP16(i);
+		sgilabel->boot_part =
+			(uint16_t) sgilabel->boot_part == SSWAP16(i) ? 0 : SSWAP16(i);
 		break;
 	case SGI_FLAG_SWAP:
-		sgilabel->swap_part = sgilabel->swap_part == SSWAP16(i) ? 0 : SSWAP16(i);
+		sgilabel->swap_part =
+			(uint16_t) sgilabel->swap_part == SSWAP16(i) ? 0 : SSWAP16(i);
 		break;
 	default:
 		return 1;
