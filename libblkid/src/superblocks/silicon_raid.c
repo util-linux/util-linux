@@ -73,8 +73,10 @@ static int checksum(struct silicon_metadata *sil)
 	unsigned short count = offsetof(struct silicon_metadata, checksum1) / 2;
 	uint16_t *p = (uint16_t *) sil;
 
-	while (count--)
-		sum += le16_to_cpu(*p++);
+	while (count--) {
+		uint16_t x = *p++;
+		sum += le16_to_cpu(x);
+	}
 
 	return (-sum & 0xFFFF) == le16_to_cpu(sil->checksum1);
 }
