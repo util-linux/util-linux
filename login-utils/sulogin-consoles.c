@@ -507,11 +507,11 @@ done:
 	return rc;
 }
 
+#ifdef TIOCGDEV
 static int detect_consoles_from_tiocgdev(struct list_head *consoles,
 					int fallback,
 					const char *device)
 {
-#ifdef TIOCGDEV
 	unsigned int devnum;
 	char *name;
 	int rc = 1, fd = -1;
@@ -566,9 +566,8 @@ done:
 		close(fd);
 	DBG(dbgprint("[tiocgdev rc=%d]", rc));
 	return rc;
-#endif
-	return 2;
 }
+#endif /* TIOCGDEV */
 #endif /* __linux__ */
 
 /*
@@ -704,12 +703,13 @@ console:
 	 * Detection of the device used for Linux system console using
 	 * the ioctl TIOCGDEV if available (e.g. official 2.6.38).
 	 */
+#ifdef TIOCGDEV
 	rc = detect_consoles_from_tiocgdev(consoles, fallback, device);
 	if (rc == 0)
 		return reconnect;	/* success */
 	if (rc < 0)
 		return rc;		/* fatal error */
-
+#endif
 	if (!list_empty(consoles)) {
 		DBG(dbgprint("detection success [rc=%d]", reconnect));
 		return reconnect;
