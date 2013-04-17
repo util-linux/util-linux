@@ -382,6 +382,13 @@ read_basicinfo(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 			desc->mode |= MODE_32BIT | MODE_64BIT;		/* sparc64 */
 	}
 
+	if (desc->arch && mod->system != SYSTEM_SNAPSHOT) {
+		if (strcmp(desc->arch, "ppc64") == 0)
+			desc->mode |= MODE_32BIT | MODE_64BIT;
+		else if (strcmp(desc->arch, "ppc") == 0)
+			desc->mode |= MODE_32BIT;
+	}
+
 	fclose(fp);
 
 	if (path_exist(_PATH_SYS_SYSTEM "/cpu/kernel_max"))
