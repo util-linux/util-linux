@@ -1136,9 +1136,6 @@ static int read_kmsg(struct dmesg_control *ctl)
 	return 0;
 }
 
-#define EXCL_ACT_ERR "--{clear,read-clear,console-level,console-on,console-off}"
-#define EXCL_SYS_ERR "--{syslog,follow}"
-
 int main(int argc, char *argv[])
 {
 	char *buf = NULL;
