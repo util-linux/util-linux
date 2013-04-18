@@ -22,6 +22,10 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#ifdef HAVE_LIBCAP_NG
+#include <cap-ng.h>
+#endif
+
 #include "c.h"
 #include "colors.h"
 #include "nls.h"
@@ -985,6 +989,27 @@ static ssize_t read_kmsg_one(struct dmesg_control *ctl)
 	return size;
 }
 
+static void try_cap(void)
+{
+#ifdef HAVE_LIBCAP_NG
+	if (capng_get_caps_process())
+		warnx(_("failed to get capabilities"));
+
+	if (!capng_have_capability(CAPNG_EFFECTIVE, CAP_SYSLOG) &&
+	    capng_have_capability(CAPNG_PERMITTED, CAP_SYSLOG))
+	{
+		if (capng_update(CAPNG_ADD, CAPNG_EFFECTIVE, CAP_SYSLOG) ||
+		    capng_apply(CAPNG_SELECT_CAPS))
+		{
+			warnx(_("can't apply permitted capability"));
+		}
+	}
+
+	if (!capng_have_capability(CAPNG_EFFECTIVE, CAP_SYSLOG))
+		warnx(_("required capability is absent"));
+#endif
+}
+
 static int init_kmsg(struct dmesg_control *ctl)
 {
 	int mode = O_RDONLY;
@@ -992,9 +1017,14 @@ static int init_kmsg(struct dmesg_control *ctl)
 	if (!ctl->follow)
 		mode |= O_NONBLOCK;
 
+	if (ctl->follow && geteuid())
+		try_cap();
+
 	ctl->kmsg = open("/dev/kmsg", mode);
-	if (ctl->kmsg < 0)
+	if (ctl->kmsg < 0) {
+		warn(_("open"));
 		return -1;
+	}
 
 	/*
 	 * Seek after the last record available at the time
@@ -1325,8 +1355,13 @@ int main(int argc, char *argv[])
 	switch (ctl.action) {
 	case SYSLOG_ACTION_READ_ALL:
 	case SYSLOG_ACTION_READ_CLEAR:
-		if (ctl.method == DMESG_METHOD_KMSG && init_kmsg(&ctl) != 0)
-			ctl.method = DMESG_METHOD_SYSLOG;
+		if (ctl.method == DMESG_METHOD_KMSG && init_kmsg(&ctl) != 0) {
+			if (ctl.follow)
+				/* man page describes requirements */
+				errx(EXIT_FAILURE, _("--follow failed"));
+			else
+				ctl.method = DMESG_METHOD_SYSLOG;
+		}
 		if (ctl.pager)
 			setup_pager();
 		n = read_buffer(&ctl, &buf);
