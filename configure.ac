@@ -1167,17 +1167,16 @@ AM_CONDITIONAL(BUILD_NEWGRP, test "x$build_newgrp" = xyes)
 
 
 AC_ARG_WITH([user], AS_HELP_STRING([--without-user], [compile without libuser (remote chsh)]),
-  [], with_user=auto
+  [], with_user=check
 )
-if test "x$with_user" = xno; then
-  AM_CONDITIONAL(HAVE_USER, false)
-else
+have_user=no
+if test "x$with_user" != xno; then
   PKG_CHECK_MODULES(LIBUSER,[libuser >= 0.58], [have_user=yes], [have_user=no])
-  UL_CHECK_LIB(user, lu_start)
   case "$with_user:$have_user" in
   yes:no)
-   AC_MSG_ERROR([user selected but libuser not found])
-   ;;
+   AC_MSG_ERROR([user selected but libuser not found]) ;;
+  *:yes)
+   AC_DEFINE(HAVE_LIBUSER, 1, [Define if libuser is available]) ;;
   esac
   # temporary solution, libuser has stupid .pc where are exported all
   # private dependencies to Requires: instead of Requires.private:
@@ -1185,6 +1184,7 @@ else
     LIBUSER_LIBS=-luser
   fi
 fi
+AM_CONDITIONAL(HAVE_USER, test "x$have_user" = xyes)
 
 AC_ARG_ENABLE([chfn-chsh-password],
   AS_HELP_STRING([--disable-chfn-chsh-password], [do not require the user to enter the password in chfn and chsh]),
