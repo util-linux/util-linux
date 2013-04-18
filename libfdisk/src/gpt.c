@@ -77,10 +77,7 @@ struct gpt_guid {
 			     { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }})
 
 /* Linux native partition type */
-#define GPT_DEFAULT_ENTRY_GUID						\
-	((struct gpt_guid) { 0x0FC63DAF, 0x8483, 0x4772, 0x8E, 0x79,	\
-			     { 0x3D, 0x69, 0xD8, 0x47, 0x7D, 0xE4 }})
-
+#define GPT_DEFAULT_ENTRY_TYPE "0FC63DAF-8483-4772-8E79-3D69D8477DE4"
 
 /*
  * Attribute bits
@@ -272,6 +269,23 @@ static uint64_t gpt_partition_size(const struct gpt_entry *e)
 	return start > end ? 0 : end - start + 1ULL;
 }
 
+#ifdef CONFIG_LIBFDISK_DEBUG
+/* prints UUID in the real byte order! */
+static void dbgprint_uuid(const char *mesg, struct gpt_guid *guid)
+{
+	const unsigned char *uuid = (unsigned char *) guid;
+
+	fprintf(stderr, "%s: "
+		"%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x\n",
+		mesg,
+		uuid[0], uuid[1], uuid[2], uuid[3],
+		uuid[4], uuid[5],
+		uuid[6], uuid[7],
+		uuid[8], uuid[9],
+		uuid[10], uuid[11], uuid[12], uuid[13], uuid[14],uuid[15]);
+}
+#endif
+
 /*
  * UUID is traditionally 16 byte big-endian array, except Intel EFI
  * specification where the UUID is a structure of little-endian fields.
@@ -283,18 +297,21 @@ static void swap_efi_guid(struct gpt_guid *uid)
 	uid->time_hi_and_version = swab16(uid->time_hi_and_version);
 }
 
-static int string_to_uuid(const char *in, struct gpt_guid *uuid)
+static int string_to_guid(const char *in, struct gpt_guid *guid)
 {
-	if (uuid_parse(in, (unsigned char *) uuid))
+	if (uuid_parse(in, (unsigned char *) guid))	/* BE */
 		return -1;
-
-	swap_efi_guid(uuid);
+	swap_efi_guid(guid);				/* LE */
 	return 0;
 }
 
-static char *uuid_to_string(struct gpt_guid *uuid, char *out)
+static char *guid_to_string(struct gpt_guid *guid, char *out)
 {
-	uuid_unparse_upper((unsigned char *) uuid, out);
+	struct gpt_guid u = *guid;	/* LE */
+
+	swap_efi_guid(&u);		/* BE */
+	uuid_unparse_upper((unsigned char *) &u, out);
+
 	return out;
 }
 
@@ -1476,27 +1493,10 @@ static int gpt_delete_partition(struct fdisk_context *cxt,
 	return 0;
 }
 
-static void gpt_entry_set_type(struct gpt_entry *e, struct gpt_guid *type)
+static void gpt_entry_set_type(struct gpt_entry *e, struct gpt_guid *uuid)
 {
-	size_t i;
-
-	/*
-	 * Copy corresponding partition type GUID. Only the first three blocks
-	 * are endian-aware.
-	 */
-	e->partition_type_guid.time_low = cpu_to_le32(type->time_low);
-	e->partition_type_guid.time_mid = cpu_to_le16(type->time_mid);
-	e->partition_type_guid.time_hi_and_version = cpu_to_le16(type->time_hi_and_version);
-	e->partition_type_guid.clock_seq_hi = type->clock_seq_hi;
-	e->partition_type_guid.clock_seq_low = type->clock_seq_low;
-	for (i = 0; i < 6; i++)
-		e->partition_type_guid.node[i] = type->node[i];
-
-	DBG(LABEL, fprintf(stderr, "new type: %08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X\n",
-		type->time_low, type->time_mid, type->time_hi_and_version,
-		type->clock_seq_hi, type->clock_seq_low,
-		type->node[0], type->node[1], type->node[2],
-		type->node[3], type->node[4], type->node[5]));
+	e->partition_type_guid = *uuid;
+	DBG(LABEL, dbgprint_uuid("new type", &(e->partition_type_guid)));
 }
 
 /*
@@ -1561,7 +1561,7 @@ static int gpt_add_partition(
 	uint64_t user_f, user_l;	/* user input ranges for first and last sectors */
 	uint64_t disk_f, disk_l;	/* first and last available sector ranges on device*/
 	uint64_t dflt_f, dflt_l;	/* largest segment (default) */
-	struct gpt_guid uuid = GPT_DEFAULT_ENTRY_GUID;
+	struct gpt_guid typeid;
 	struct fdisk_gpt_label *gpt;
 	struct gpt_header *pheader;
 	struct gpt_entry *ents;
@@ -1606,8 +1606,7 @@ static int gpt_add_partition(
 	/* align the default in range <dflt_f,dflt_l>*/
 	dflt_f = fdisk_align_lba_in_range(cxt, dflt_f, dflt_f, dflt_l);
 
-	if (t && t->typestr)
-		string_to_uuid(t->typestr, &uuid);
+	string_to_guid(t && t->typestr ? t->typestr : GPT_DEFAULT_ENTRY_TYPE, &typeid);
 
 	/* get user input for first and last sectors of the new partition */
 	for (;;) {
@@ -1658,7 +1657,7 @@ static int gpt_add_partition(
 	}
 
 	if (gpt_create_new_partition(cxt, partnum,
-				     user_f, user_l, &uuid, ents) != 0)
+				     user_f, user_l, &typeid, ents) != 0)
 		fdisk_warnx(cxt, _("Could not create partition %zd"), partnum + 1);
 	else {
 		fdisk_info(cxt, _("Created partition %zd\n"), partnum + 1);
@@ -1755,7 +1754,6 @@ static struct fdisk_parttype *gpt_get_partition_type(
 		size_t i)
 {
 	struct fdisk_parttype *t;
-	struct gpt_guid uuid;
 	char str[37];
 	struct fdisk_gpt_label *gpt;
 
@@ -1768,10 +1766,7 @@ static struct fdisk_parttype *gpt_get_partition_type(
 	if ((uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries))
 		return NULL;
 
-	uuid = gpt->ents[i].partition_type_guid;
-	swap_efi_guid(&uuid);
-
-	uuid_to_string(&uuid, str);
+	guid_to_string(&gpt->ents[i].partition_type_guid, str);
 	t = fdisk_get_parttype_from_string(cxt, str);
 	if (!t)
 		t = fdisk_new_unknown_parttype(0, str);
@@ -1794,7 +1789,7 @@ static int gpt_set_partition_type(
 
 	gpt = self_label(cxt);
 	if ((uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries)
-	     || !t || !t->typestr || string_to_uuid(t->typestr, &uuid) != 0)
+	     || !t || !t->typestr || string_to_guid(t->typestr, &uuid) != 0)
 		return -EINVAL;
 
 	gpt_entry_set_type(&gpt->ents[i], &uuid);
