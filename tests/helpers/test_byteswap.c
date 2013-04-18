@@ -48,7 +48,7 @@ uint64_t ary64[] = {
 	0x0000000000000000, 0x0000000000000000
 	};
 
-int main()
+int main(void)
 {
 	int	i;
 	int	errors = 0;
