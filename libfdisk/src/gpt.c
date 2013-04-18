@@ -841,9 +841,10 @@ static uint32_t partition_check_overlaps(struct gpt_header *header, struct gpt_e
 			if (partition_unused(&e[i]) ||
 			    partition_unused(&e[j]))
 				continue;
-			if (partition_overlap(&e[i], &e[j]))
-				/* two overlaping partitions is enough! */
+			if (partition_overlap(&e[i], &e[j])) {
+				DBG(LABEL, dbgprint("GPT partitions overlap detected [%u vs. %u]", i, j));
 				return i + 1;
+			}
 		}
 
 	return 0;
@@ -1284,11 +1285,11 @@ static int gpt_write_disklabel(struct fdisk_context *cxt)
 		goto err0;
 
 	/* check that disk is big enough to handle the backup header */
-	if (gpt->pheader->alternative_lba > cxt->total_sectors)
+	if (le64_to_cpu(gpt->pheader->alternative_lba) > cxt->total_sectors)
 		goto err0;
 
 	/* check that the backup header is properly placed */
-	if (gpt->pheader->alternative_lba < cxt->total_sectors - 1)
+	if (le64_to_cpu(gpt->pheader->alternative_lba) < cxt->total_sectors - 1)
 		/* TODO: correct this (with user authorization) and write */
 		goto err0;
 
@@ -1311,7 +1312,8 @@ static int gpt_write_disklabel(struct fdisk_context *cxt)
 	 */
 	if (gpt_write_partitions(cxt, gpt->bheader, gpt->ents) != 0)
 		goto err1;
-	if (gpt_write_header(cxt, gpt->bheader, gpt->pheader->alternative_lba) != 0)
+	if (gpt_write_header(cxt, gpt->bheader,
+			     le64_to_cpu(gpt->pheader->alternative_lba)) != 0)
 		goto err1;
 	if (gpt_write_partitions(cxt, gpt->pheader, gpt->ents) != 0)
 		goto err1;
@@ -1320,10 +1322,14 @@ static int gpt_write_disklabel(struct fdisk_context *cxt)
 	if (gpt_write_pmbr(cxt) != 0)
 		goto err1;
 
+	DBG(LABEL, dbgprint("GPT write success"));
 	return 0;
 err0:
+	DBG(LABEL, dbgprint("GPT write failed: incorrect input"));
+	errno = EINVAL;
 	return -EINVAL;
 err1:
+	DBG(LABEL, dbgprint("GPT write failed: %m"));
 	return -errno;
 }
 
@@ -1381,7 +1387,7 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 		fdisk_warnx(cxt, _("MyLBA mismatch with real position at backup header."));
 
 	}
-	if (gpt->pheader->alternative_lba >= cxt->total_sectors) {
+	if (le64_to_cpu(gpt->pheader->alternative_lba) >= cxt->total_sectors) {
 		nerror++;
 		fdisk_warnx(cxt, _("Disk is to small to hold all data."));
 	}
@@ -1390,7 +1396,8 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 	 * if the GPT is the primary table, check the alternateLBA
 	 * to see if it is a valid GPT
 	 */
-	if (gpt->bheader && (gpt->pheader->my_lba != gpt->bheader->alternative_lba)) {
+	if (gpt->bheader && (le64_to_cpu(gpt->pheader->my_lba) !=
+			     le64_to_cpu(gpt->bheader->alternative_lba))) {
 		nerror++;
 		fdisk_warnx(cxt, _("Primary and backup header mismatch."));
 	}
