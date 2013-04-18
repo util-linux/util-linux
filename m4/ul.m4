@@ -171,6 +171,7 @@ AC_DEFUN([UL_REQUIRES_HAVE], [
 
   if test "x$[build_]suffix" != xno; then
 
+    [ul_haveone_]suffix=no
     m4_foreach([onehave], [$2],  [
       if test "x$[have_]onehave" = xyes; then
         [ul_haveone_]suffix=yes

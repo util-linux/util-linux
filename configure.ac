@@ -929,7 +929,7 @@ AC_ARG_ENABLE([setpriv],
 UL_BUILD_INIT([setpriv])
 UL_REQUIRES_LINUX([setpriv])
 UL_REQUIRES_HAVE([setpriv], [linux_securebits_h], [securebits.h header file])
-UL_REQUIRES_HAVE([setpriv], [cap_ng], [libcap-ng])
+UL_REQUIRES_HAVE([setpriv], [cap_ng], [libcap-ng library])
 AM_CONDITIONAL(BUILD_SETPRIV, test "x$build_setpriv" = xyes)
 
 
