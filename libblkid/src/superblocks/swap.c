@@ -51,6 +51,17 @@ static int swap_set_info(blkid_probe pr, const char *version)
 	    (hdr->version != 1 || hdr->lastpage == 0))
 		return -1;
 
+        if (strcmp(version, "2") == 0) {
+		if (hdr->version != 1 && swab32(hdr->version) != 1) {
+			DBG(LOWPROBE, blkid_debug("incorrect swap version"));
+			return -1;
+		}
+		if (hdr->lastpage == 0) {
+			DBG(LOWPROBE, blkid_debug("not set last swap page"));
+			return -1;
+		}
+        }
+
 	/* arbitrary sanity check.. is there any garbage down there? */
 	if (hdr->padding[32] == 0 && hdr->padding[33] == 0) {
 		if (hdr->volume[0] && blkid_probe_set_label(pr, hdr->volume,
