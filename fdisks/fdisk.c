@@ -192,21 +192,24 @@ void print_menu(struct fdisk_context *cxt, enum menutype menu)
 void list_partition_types(struct fdisk_context *cxt)
 {
 	struct fdisk_parttype *types;
-	int i;
+	size_t ntypes = 0;
 
 	if (!cxt || !cxt->label || !cxt->label->parttypes)
 		return;
 
 	types = cxt->label->parttypes;
+	ntypes = cxt->label->nparttypes;
 
 	if (types[0].typestr == NULL) {
 		/*
 		 * Prints in 4 columns in format <hex> <name>
 		 */
-		unsigned int last[4], done = 0, next = 0, size;
+		size_t last[4], done = 0, next = 0, size;
+		int i;
 
-		for (i = 0; types[i].name; i++);
-		size = i;
+		size = ntypes;
+		if (types[ntypes - 1].name == NULL)
+			size--;
 
 		for (i = 3; i >= 0; i--)
 			last[3 - i] = done += (size + i - done) / (i + 1);
@@ -219,14 +222,16 @@ void list_partition_types(struct fdisk_context *cxt)
 			struct fdisk_parttype *t = &types[next];
 			size_t ret;
 
-			printf("%c%2x  ", i ? ' ' : '\n', t->type);
-			ret = mbsalign(_(t->name), name, sizeof(name),
-					      &width, MBS_ALIGN_LEFT, 0);
+			if (t->name) {
+				printf("%c%2x  ", i ? ' ' : '\n', t->type);
+				ret = mbsalign(_(t->name), name, sizeof(name),
+						      &width, MBS_ALIGN_LEFT, 0);
 
-			if (ret == (size_t)-1 || ret >= sizeof(name))
-				printf("%-15.15s", _(t->name));
-			else
-				fputs(name, stdout);
+				if (ret == (size_t)-1 || ret >= sizeof(name))
+					printf("%-15.15s", _(t->name));
+				else
+					fputs(name, stdout);
+			}
 
 			next = last[i++] + done;
 			if (i > 3 || next >= last[i]) {
@@ -240,9 +245,13 @@ void list_partition_types(struct fdisk_context *cxt)
 		 * Prints 1 column in format <idx> <name> <typestr>
 		 */
 		struct fdisk_parttype *t;
+		size_t i;
 
-		for (i = 0, t = types; t->name; t++, i++)
-			printf("%3d %-30s %s\n", i + 1, t->name, t->typestr);
+		for (i = 0, t = types; t && i < ntypes; t++, i++) {
+			if (t->name)
+				printf("%3zu %-30s %s\n", i + 1,
+						t->name, t->typestr);
+		}
 	}
 	putchar('\n');
 }
