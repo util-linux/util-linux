@@ -47,10 +47,6 @@ static int swap_set_info(blkid_probe pr, const char *version)
 		return -1;
 
 	/* SWAPSPACE2 - check for wrong version or zeroed pagecount */
-	if (strcmp(version, "2") == 0 &&
-	    (hdr->version != 1 || hdr->lastpage == 0))
-		return -1;
-
         if (strcmp(version, "2") == 0) {
 		if (hdr->version != 1 && swab32(hdr->version) != 1) {
 			DBG(LOWPROBE, blkid_debug("incorrect swap version"));
