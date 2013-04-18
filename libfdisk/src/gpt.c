@@ -466,7 +466,7 @@ static int valid_pmbr(struct fdisk_context *cxt)
 
 	pmbr = (struct gpt_legacy_mbr *) cxt->firstsector;
 
-	if (pmbr->signature != cpu_to_le64(MSDOS_MBR_SIGNATURE))
+	if (le16_to_cpu(pmbr->signature) != MSDOS_MBR_SIGNATURE)
 		goto done;
 
 	/* LBA of the GPT partition header */
@@ -475,7 +475,7 @@ static int valid_pmbr(struct fdisk_context *cxt)
 		goto done;
 
 	/* seems like a valid MBR was found, check DOS primary partitions */
-	for (i = 0; i < 4; i++)
+	for (i = 0; i < 4; i++) {
 		if (pmbr->partition_record[i].os_type == EFI_PMBR_OSTYPE) {
 			/*
 			 * Ok, we at least know that there's a protective MBR,
@@ -485,14 +485,15 @@ static int valid_pmbr(struct fdisk_context *cxt)
 			ret = GPT_MBR_PROTECTIVE;
 			goto check_hybrid;
 		}
-
+	}
 check_hybrid:
 	if (ret != GPT_MBR_PROTECTIVE)
 		goto done;
-	for (i = 0 ; i < 4; i++)
+	for (i = 0 ; i < 4; i++) {
 		if ((pmbr->partition_record[i].os_type != EFI_PMBR_OSTYPE) &&
 		    (pmbr->partition_record[i].os_type != 0x00))
 			ret = GPT_MBR_HYBRID;
+	}
 
 	/*
 	 * Protective MBRs take up the lesser of the whole disk
@@ -500,10 +501,11 @@ check_hybrid:
 	 *
 	 * Hybrid MBRs do not necessarily comply with this.
 	 */
-	if (ret == GPT_MBR_PROTECTIVE)
-		if (pmbr->partition_record[0].size_in_lba !=
-		    cpu_to_le32(min((uint32_t) cxt->total_sectors - 1, 0xFFFFFFFF)))
+	if (ret == GPT_MBR_PROTECTIVE) {
+		if (le32_to_cpu(pmbr->partition_record[0].size_in_lba) !=
+		    min((uint32_t) cxt->total_sectors - 1, 0xFFFFFFFF))
 			ret = 0;
+	}
 done:
 	return ret;
 }
