@@ -764,7 +764,7 @@ static void check(struct fdisk_context *cxt, size_t n,
 		fprintf(stderr, _("Partition %zd: sector %d greater than "
 			"maximum %llu\n"), n, s, cxt->geom.sectors);
 	if (real_c >= cxt->geom.cylinders)
-		fprintf(stderr, _("Partitions %zd: cylinder %d greater than "
+		fprintf(stderr, _("Partition %zd: cylinder %d greater than "
 			"maximum %llu\n"), n, real_c + 1, cxt->geom.cylinders);
 	if (cxt->geom.cylinders <= 1024 && start != total)
 		fprintf(stderr,
