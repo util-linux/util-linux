@@ -43,6 +43,7 @@
 #include "path.h"
 #include "closestream.h"
 #include "optutils.h"
+#include "lscpu.h"
 
 #define CACHE_MAX 100
 
@@ -54,6 +55,10 @@
 #define _PATH_PROC_CPUINFO	"/proc/cpuinfo"
 #define _PATH_PROC_PCIDEVS	"/proc/bus/pci/devices"
 #define _PATH_PROC_SYSINFO	"/proc/sysinfo"
+#define _PATH_PROC_STATUS	"/proc/self/status"
+#define _PATH_PROC_VZ	"/proc/vz"
+#define _PATH_PROC_BC	"/proc/bc"
+#define _PATH_DEV_MEM 		"/dev/mem"
 
 /* virtualization types */
 enum {
@@ -67,22 +72,18 @@ const char *virt_types[] = {
 	[VIRT_FULL]	= N_("full")
 };
 
-/* hypervisor vendors */
-enum {
-	HYPER_NONE	= 0,
-	HYPER_XEN,
-	HYPER_KVM,
-	HYPER_MSHV,
-	HYPER_VMWARE,
-	HYPER_IBM
-};
 const char *hv_vendors[] = {
 	[HYPER_NONE]	= NULL,
 	[HYPER_XEN]	= "Xen",
 	[HYPER_KVM]	= "KVM",
 	[HYPER_MSHV]	= "Microsoft",
 	[HYPER_VMWARE]  = "VMware",
-	[HYPER_IBM]	= "IBM"
+	[HYPER_IBM]	= "IBM",
+	[HYPER_VSERVER]	= "Linux-VServer",
+	[HYPER_UML]	= "User-mode Linux",
+	[HYPER_INNOTEK]	= "Innotek GmbH",
+	[HYPER_HITACHI]	= "Hitachi",
+	[HYPER_PARALLELS]	= "Parallels"
 };
 
 /* CPU modes */
@@ -529,17 +530,21 @@ read_hypervisor_cpuid(struct lscpu_desc *desc __attribute__((__unused__)))
 static void
 read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 {
-	if (mod->system != SYSTEM_SNAPSHOT)
+	FILE *fd;
+
+	if (mod->system != SYSTEM_SNAPSHOT) {
 		read_hypervisor_cpuid(desc);
+		if (!desc->hyper)
+			desc->hyper = read_hypervisor_dmi();
+	}
 
 	if (desc->hyper)
-		/* hvm */
 		desc->virtype = VIRT_FULL;
 
+	/* Xen para-virt or dom0 */
 	else if (path_exist(_PATH_PROC_XEN)) {
-		/* Xen para-virt or dom0 */
-		FILE *fd = path_fopen("r", 0, _PATH_PROC_XENCAP);
 		int dom0 = 0;
+		fd = path_fopen("r", 0, _PATH_PROC_XENCAP);
 
 		if (fd) {
 			char buf[256];
@@ -552,10 +557,12 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		desc->virtype = dom0 ? VIRT_NONE : VIRT_PARA;
 		desc->hyper = HYPER_XEN;
 
+	/* Xen full-virt on non-x86_64 */
 	} else if (has_pci_device(0x5853, 0x0001)) {
-		/* Xen full-virt on non-x86_64 */
 		desc->hyper = HYPER_XEN;
 		desc->virtype = VIRT_FULL;
+
+	/* IBM PR/SM */
 	} else if (path_exist(_PATH_PROC_SYSINFO)) {
 		FILE *fd = path_fopen("r", 0, _PATH_PROC_SYSINFO);
 		char buf[BUFSIZ];
@@ -590,6 +597,41 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 				memmove(str, str + 1, strlen(str));
 		}
 		fclose(fd);
+	}
+
+	/* OpenVZ/Virtuozzo - /proc/vz dir should exist
+	 *		      /proc/bc should not */
+	else if (path_exist(_PATH_PROC_VZ) && !path_exist(_PATH_PROC_BC))
+		desc->hyper = HYPER_PARALLELS;
+
+	/* IBM */
+	else if (desc->vendor &&
+		 (strcmp(desc->vendor, "PowerVM Lx86") == 0 ||
+		  strcmp(desc->vendor, "IBM/S390") == 0))
+		desc->hyper = HYPER_IBM;
+
+	/* User-mode-linux */
+	else if (desc->modelname && strstr(desc->modelname, "UML"))
+		desc->hyper = HYPER_UML;
+
+	/* Linux-VServer */
+	else if (path_exist(_PATH_PROC_STATUS)) {
+		char buf[BUFSIZ];
+		char *val = NULL;
+
+		fd = path_fopen("r", 0, _PATH_PROC_STATUS);
+		while (fgets(buf, sizeof(buf), fd) != NULL) {
+			if (lookup(buf, "VxID", &val))
+				break;
+		}
+		fclose(fd);
+
+		if (val) {
+			while (isdigit(*val))
+				++val;
+			if (!*val)
+				desc->hyper = HYPER_VSERVER;
+		}
 	}
 }
 
