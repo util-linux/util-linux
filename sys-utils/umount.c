@@ -406,7 +406,7 @@ static int umount_alltargets(struct libmnt_context *cxt, const char *spec, int r
 	struct libmnt_fs *fs;
 	struct libmnt_table *tb;
 	struct libmnt_iter *itr = NULL;
-	char *src = NULL;
+	dev_t devno = 0;
 	int rc;
 
 	/* Convert @spec to device name, Use the same logic like regular
@@ -423,7 +423,7 @@ static int umount_alltargets(struct libmnt_context *cxt, const char *spec, int r
 	if (rc < 0)
 		return mk_exit_code(cxt, rc);		/* error */
 
-	if (!mnt_fs_get_srcpath(fs))
+	if (!mnt_fs_get_srcpath(fs) || !mnt_fs_get_devno(fs))
 		err(MOUNT_EX_USAGE, _("%s: failed to determine source"), spec);
 
 	itr = mnt_new_iter(MNT_ITER_BACKWARD);
@@ -437,13 +437,13 @@ static int umount_alltargets(struct libmnt_context *cxt, const char *spec, int r
 
 	/* Note that @fs is from mount context and the context will be reseted
 	 * after each umount() call */
-	src = xstrdup(mnt_fs_get_srcpath(fs));
+	devno = mnt_fs_get_devno(fs);
 	fs = NULL;
 
 	mnt_reset_context(cxt);
 
 	while (mnt_table_next_fs(tb, itr, &fs) == 0) {
-		if (!mnt_fs_streq_srcpath(fs, src))
+		if (mnt_fs_get_devno(fs) != devno)
 			continue;
 		mnt_context_disable_swapmatch(cxt, 1);
 		if (rec)
@@ -457,7 +457,6 @@ static int umount_alltargets(struct libmnt_context *cxt, const char *spec, int r
 
 	mnt_free_iter(itr);
 	mnt_free_table(tb);
-	free(src);
 
 	return rc;
 }
