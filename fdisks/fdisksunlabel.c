@@ -73,14 +73,6 @@ static inline struct fdisk_sun_label *self_label(struct fdisk_context *cxt)
 	return (struct fdisk_sun_label *) cxt->label;
 }
 
-int sun_is_empty_type(struct fdisk_context *cxt, size_t i)
-{
-	struct sun_disklabel *sunlabel = self_disklabel(cxt);
-
-	return (!sunlabel->partitions[i].num_sectors ||
-		!sunlabel->vtoc.infos[i].id);
-}
-
 static void set_sun_partition(struct fdisk_context *cxt, size_t i,
 		uint32_t start,uint32_t stop, uint16_t sysid)
 {
