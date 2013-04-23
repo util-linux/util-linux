@@ -101,6 +101,12 @@ ACPI state S3 (Suspend-to-RAM). This state offers significant power savings as
 everything in the system is put into a low-power state, except for memory,
 which is placed in self-refresh mode to retain its contents.
 .TP
+.B freeze
+The processes are frozen, all the devices are suspended and all the processors
+idles. This state is a general state that does not need any platform specific
+support, but it saves less power than susepnd to RAM, because the system is
+still in a running state. (since Linux 3.9)
+.TP
 .B disk
 ACPI state S4 (Suspend-to-disk). This state offers the greatest power savings,
 and can be used even in the absence of low-level platform support for power

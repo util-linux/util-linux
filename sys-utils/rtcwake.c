@@ -434,6 +434,7 @@ int main(int argc, char **argv)
 					|| strcmp(optarg, "on") == 0
 					|| strcmp(optarg, "no") == 0
 					|| strcmp(optarg, "off") == 0
+					|| strcmp(optarg, "freeze") == 0
 					|| strcmp(optarg, "disable") == 0
 					|| strcmp(optarg, "show") == 0
 			   ) {
