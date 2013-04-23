@@ -149,11 +149,19 @@ Print userspace messages.
 Output version information and exit.
 .IP "\fB\-w\fR, \fB\-\-follow\fR"
 Wait for new messages. This feature is supported on systems with readable
-/dev/kmsg only (since kernel 3.5.0).
+/dev/kmsg only (since kernel 3.5.0). Requires
+.B CAP_SYSLOG
+for
+.BR dmesg (1)
+if launched with ordinary user privileges.
+Besides that,
+.B nosuid
+FS flag may affect it too.
 .IP "\fB\-x\fR, \fB\-\-decode\fR"
 Decode facility and level (priority) number to human readable prefixes.
 .SH SEE ALSO
 .BR syslogd (8)
+.BR capabilities (7)
 .SH AUTHORS
 .MT kzak@redhat.com
 Karel Zak

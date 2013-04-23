@@ -921,6 +921,7 @@ fi
 dnl setpriv depends on libcap-ng.  It would be possible to build
 dnl a version of setpriv with limited functionality without libcap-ng,
 dnl but this isn't currently supported.
+dnl libcap-ng is also used in dmesg (mostly for self-diagnostics).
 UL_CHECK_LIB([cap-ng], [capng_apply], [cap_ng])
 AC_ARG_ENABLE([setpriv],
   AS_HELP_STRING([--disable-setpriv], [do not build setpriv]),
