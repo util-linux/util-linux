@@ -38,7 +38,7 @@ AUTHORS (merged projects & commands):
       lslocks:         Davidlohr Bueso <dave@gnu.org>
       mountpoint:      Karel Zak <kzak@redhat.com>
       nsenter:         Eric W. Biederman <ebiederm@xmission.com>
-      pslimit:         Davidlohr Bueso <dave@gnu.org>
+      prlimit:         Davidlohr Bueso <dave@gnu.org>
       runuser:         [derived from coreutils su(1)]
                        Karel Zak <kzak@redhat.com>
       resizepart:      Vivek Goyal <vgoyal@redhat.com>
