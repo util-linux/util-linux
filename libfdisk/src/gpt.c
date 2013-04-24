@@ -1529,12 +1529,6 @@ static int gpt_create_new_partition(struct fdisk_context *cxt,
 
 	gpt_entry_set_type(e, type);
 
-	/* deal with partition name
-	for (i = 0; i < GPT_PART_NAME_LEN; i++)
-		e->partition_name[i] =
-			cpu_to_le16((uint16_t) gpt_sys_types[sys].name[i]);
-	*/
-
 	/*
 	 * Any time a new partition entry is created a new GUID must be
 	 * generated for that partition, and every partition is guaranteed
