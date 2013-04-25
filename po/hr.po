@@ -1,28 +1,27 @@
 # Translation of util-linux to Croatian.
-# Copyright (C) 2012 Karel Zak <kzak@redhat.com>
+# Copyright © 2012 Karel Zak <kzak@redhat.com>
 # This file is distributed under the same license as the util-linux package.
+# Tomislav Krznar <tomislav.krznar@gmail.com>, 2012, 2013.
 #
-# Tomislav Krznar <tomislav.krznar@gmail.com>, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.22-rc2\n"
+"Project-Id-Version: util-linux 2.23-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
 "POT-Creation-Date: 2013-04-10 17:36+0200\n"
-"PO-Revision-Date: 2012-10-01 18:55+0200\n"
+"PO-Revision-Date: 2013-04-18 16:36+0200\n"
 "Last-Translator: Tomislav Krznar <tomislav.krznar@gmail.com>\n"
 "Language-Team: Croatian <lokalizacija@linux.hr>\n"
 "Language: hr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Lokalize 1.4\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Gtranslator 2.91.6\n"
 
 #: disk-utils/addpart.c:14
 #, c-format
 msgid " %s <disk device> <partition number> <start> <length>\n"
-msgstr ""
+msgstr " %s <uređaj diska> <broj particije> <početak> <duljina>\n"
 
 #: disk-utils/addpart.c:52 disk-utils/blockdev.c:275 disk-utils/blockdev.c:419
 #: disk-utils/blockdev.c:444 disk-utils/delpart.c:53 disk-utils/fdformat.c:62
@@ -84,35 +83,35 @@ msgstr "postavi za čitanje i pisanje"
 
 #: disk-utils/blockdev.c:75
 msgid "get read-only"
-msgstr ""
+msgstr "otkrij samo za čitanje"
 
 #: disk-utils/blockdev.c:81
 msgid "get discard zeroes support status"
-msgstr ""
+msgstr "otkrij stanje podrške za odbacivanje nula"
 
 #: disk-utils/blockdev.c:87
 msgid "get logical block (sector) size"
-msgstr ""
+msgstr "otkrij veličinu logičkog bloka (sektora)"
 
 #: disk-utils/blockdev.c:93
 msgid "get physical block (sector) size"
-msgstr ""
+msgstr "otkrij veličinu fizičkog bloka (sektora)"
 
 #: disk-utils/blockdev.c:99
 msgid "get minimum I/O size"
-msgstr ""
+msgstr "otkrij najmanju U/I veličinu"
 
 #: disk-utils/blockdev.c:105
 msgid "get optimal I/O size"
-msgstr ""
+msgstr "otkrij optimalnu U/I veličinu"
 
 #: disk-utils/blockdev.c:111
 msgid "get alignment offset in bytes"
-msgstr ""
+msgstr "otkrij pomak poravnanja u bajtovima"
 
 #: disk-utils/blockdev.c:117
 msgid "get max sectors per request"
-msgstr ""
+msgstr "otkrij najveći broj sektora po zahtjevu"
 
 #: disk-utils/blockdev.c:123
 msgid "get blocksize"
@@ -132,19 +131,19 @@ msgstr "otkrij veličinu u bajtovima"
 
 #: disk-utils/blockdev.c:149
 msgid "set readahead"
-msgstr ""
+msgstr "postavi čitanje unaprijed"
 
 #: disk-utils/blockdev.c:155
 msgid "get readahead"
-msgstr ""
+msgstr "otkrij čitanje unaprijed"
 
 #: disk-utils/blockdev.c:162
 msgid "set filesystem readahead"
-msgstr ""
+msgstr "postavi čitanje unaprijed datotečnog sustava"
 
 #: disk-utils/blockdev.c:168
 msgid "get filesystem readahead"
-msgstr ""
+msgstr "otkrij čitanje unaprijed datotečnog sustava"
 
 #: disk-utils/blockdev.c:172
 msgid "flush buffers"
@@ -208,7 +207,7 @@ msgstr ""
 #: disk-utils/delpart.c:14
 #, c-format
 msgid " %s <disk device> <partition number>\n"
-msgstr ""
+msgstr " %s <uređaj diska> <broj particije>\n"
 
 #: disk-utils/delpart.c:57
 msgid "failed to remove partition"
@@ -236,11 +235,14 @@ msgid ""
 "elvtune is only useful on older kernels;\n"
 "for 2.6 use IO scheduler sysfs tunables instead..\n"
 msgstr ""
+"\n"
+"elvtune je koristan samo na starim jezgrama,\n"
+"umjesto njega koristite IO scheduler sysfs tunables za 2.6.\n"
 
 #: disk-utils/fdformat.c:28
 #, c-format
 msgid "Formatting ... "
-msgstr "Oblikujem ... "
+msgstr "Formatiram ... "
 
 #: disk-utils/fdformat.c:48 disk-utils/fdformat.c:88
 #, c-format
@@ -254,12 +256,12 @@ msgstr "Provjeravam ... "
 
 #: disk-utils/fdformat.c:71
 msgid "Read: "
-msgstr ""
+msgstr "Čitanje:"
 
 #: disk-utils/fdformat.c:73
 #, c-format
 msgid "Problem reading cylinder %d, expected %d, read %d\n"
-msgstr "Problem u čitanju cilindra %d, očekujem %d, pročitao %d\n"
+msgstr "Problem pri čitanju cilindra %d, očekujem %d, pročitao %d\n"
 
 #: disk-utils/fdformat.c:81
 #, c-format
@@ -285,6 +287,12 @@ msgid ""
 " -h, --help       display this help and exit\n"
 "\n"
 msgstr ""
+"\n"
+"Opcije:\n"
+" -n, --no-verify  onemogući provjeru nakon formatiranja\n"
+" -V, --version    ispiši informacije o inačici i izađi\n"
+" -h, --help       prikaži ovu pomoć i izađi\n"
+"\n"
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.cramfs.c:146
 #: disk-utils/mkfs.bfs.c:177 disk-utils/mkfs.cramfs.c:755
@@ -311,7 +319,7 @@ msgstr "ne mogu pristupiti datoteci %s"
 
 #: disk-utils/fdformat.c:156
 msgid "Could not determine current format type"
-msgstr "Ne mogu odrediti trenutnu vrstu oblika"
+msgstr "Ne mogu odrediti trenutnu vrstu formatiranja"
 
 #: disk-utils/fdformat.c:158
 #, c-format
@@ -345,7 +353,7 @@ msgstr "nisam uspio čitati: %s"
 #: disk-utils/fsck.c:309 lib/path.c:123 lib/path.c:144
 #, c-format
 msgid "parse error: %s"
-msgstr ""
+msgstr "greška obrade: %s"
 
 #: disk-utils/fsck.c:329
 #, c-format
@@ -374,7 +382,7 @@ msgstr "nisam uspio postaviti opis za %s"
 #: disk-utils/fsck.c:412
 #, c-format
 msgid "%s: parse error at line %d -- ignore"
-msgstr ""
+msgstr "%s: greška obrade u retku %d -- zanemareno"
 
 #: disk-utils/fsck.c:441 disk-utils/fsck.c:443
 #, c-format
@@ -409,17 +417,17 @@ msgstr "waidpid nije uspio"
 #: disk-utils/fsck.c:726
 #, c-format
 msgid "Warning... %s for device %s exited with signal %d."
-msgstr ""
+msgstr "Upozorenje... %s za uređaj %s je izašao sa signalom %d."
 
 #: disk-utils/fsck.c:732
 #, c-format
 msgid "%s %s: status is %x, should never happen."
-msgstr ""
+msgstr "%s %s: stanje je %x, nikad se ne bi smjelo dogoditi."
 
 #: disk-utils/fsck.c:778
 #, c-format
 msgid "Finished with %s (exit status %d)\n"
-msgstr ""
+msgstr "Završeno s %s (izlazno stanje %d)\n"
 
 #: disk-utils/fsck.c:840
 #, c-format
@@ -436,8 +444,7 @@ msgstr ""
 
 #: disk-utils/fsck.c:1026
 #, c-format
-msgid ""
-"%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number"
+msgid "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number"
 msgstr ""
 
 #: disk-utils/fsck.c:1038
@@ -447,12 +454,8 @@ msgstr "%s: preskačem nepostojeći uređaj\n"
 
 #: disk-utils/fsck.c:1043
 #, c-format
-msgid ""
-"%s: nonexistent device (\"nofail\" fstab option may be used to skip this "
-"device)\n"
-msgstr ""
-"%s: nepostojeći uređaj („nofail” opcija u datoteci fstab se može koristiti "
-"za preskakanje ovog uređaja)\n"
+msgid "%s: nonexistent device (\"nofail\" fstab option may be used to skip this device)\n"
+msgstr "%s: nepostojeći uređaj („nofail” opcija u datoteci fstab se može koristiti za preskakanje ovog uređaja)\n"
 
 #: disk-utils/fsck.c:1060
 #, c-format
@@ -478,42 +481,41 @@ msgid "--waiting-- (pass %d)\n"
 msgstr "--čekam-- (prolaz %d)\n"
 
 #: disk-utils/fsck.c:1299
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] -- [fs-options] [<filesystem> ...]\n"
-msgstr " %s [opcije] datoteka\n"
+msgstr ""
 
 #: disk-utils/fsck.c:1303
-#, fuzzy
 msgid " -A         check all filesystems\n"
-msgstr "Provjeravam sve datotečne sustave.\n"
+msgstr " -A         provjeri sve datotečne sustave\n"
 
 #: disk-utils/fsck.c:1304
 msgid " -C [<fd>]  display progress bar; file descriptor is for GUIs\n"
-msgstr ""
+msgstr " -C [<od>]  prikaži traku napretka, opisnik datoteke je za grafičko sučelje\n"
 
 #: disk-utils/fsck.c:1305
 msgid " -l         lock the device to guarantee exclusive access\n"
-msgstr ""
+msgstr " -l         zaključaj uređaj za jamstvo isključivog pristupa\n"
 
 #: disk-utils/fsck.c:1306
 msgid " -M         do not check mounted filesystems\n"
-msgstr ""
+msgstr " -M         ne provjeravaj montirane datotečne sustave\n"
 
 #: disk-utils/fsck.c:1307
 msgid " -N         do not execute, just show what would be done\n"
-msgstr ""
+msgstr " -N         ne izvršavaj, samo prikaži što bi se dogodilo\n"
 
 #: disk-utils/fsck.c:1308
 msgid " -P         check filesystems in parallel, including root\n"
-msgstr ""
+msgstr " -P         paralelno provjeravaj datotečne sustave, uključujući korijenski\n"
 
 #: disk-utils/fsck.c:1309
 msgid " -R         skip root filesystem; useful only with '-A'\n"
-msgstr ""
+msgstr " -R         preskoči korijenski datotečni sustav, korisno samo uz „-A”\n"
 
 #: disk-utils/fsck.c:1310
 msgid " -r         report statistics for each device checked\n"
-msgstr ""
+msgstr " -r         izvijesti o statistikama za svaki provjereni uređaj\n"
 
 #: disk-utils/fsck.c:1311
 msgid " -s         serialize the checking operations\n"
@@ -521,25 +523,27 @@ msgstr ""
 
 #: disk-utils/fsck.c:1312
 msgid " -T         do not show the title on startup\n"
-msgstr ""
+msgstr " -T         ne prikazuj naslov pri pokretanju\n"
 
 #: disk-utils/fsck.c:1313
 msgid ""
 " -t <type>  specify filesystem types to be checked;\n"
 "             <type> is allowed to be a comma-separated list\n"
 msgstr ""
+" -t <vrsta>  navedi vrste datotečnih sustava za provjeru,\n"
+"             <vrsta> smije biti zarezima odvojen popis\n"
 
 #: disk-utils/fsck.c:1315
 msgid " -V         explain what is being done\n"
-msgstr ""
+msgstr " -V         pojasni što program radi\n"
 
 #: disk-utils/fsck.c:1316
 msgid " -?         display this help and exit\n"
-msgstr ""
+msgstr " -?         prikaži ovu pomoć i izađi\n"
 
 #: disk-utils/fsck.c:1319
 msgid "See the specific fsck.* commands for available fs-options."
-msgstr ""
+msgstr "Pogledajte pojedinačne fsck.* naredbe za dostupne ds-opcije."
 
 #: disk-utils/fsck.c:1357
 msgid "too many devices"
@@ -552,7 +556,7 @@ msgstr "Je li /proc montiran?"
 #: disk-utils/fsck.c:1377
 #, c-format
 msgid "must be root to scan for matching filesystems: %s"
-msgstr ""
+msgstr "morate biti administrator za provjeru odgovarajućih datotečnih sustava: %s"
 
 #: disk-utils/fsck.c:1381
 #, c-format
@@ -565,7 +569,7 @@ msgstr "previše argumenata"
 
 #: disk-utils/fsck.c:1529
 msgid "the -l option can be used with one device only -- ignore"
-msgstr ""
+msgstr "opcija -l se smije koristiti samo s jednim uređajem -- zanemareno"
 
 #: disk-utils/fsck.cramfs.c:114 misc-utils/whereis.c:168
 #, c-format
@@ -574,7 +578,7 @@ msgstr " %s [opcije] datoteka\n"
 
 #: disk-utils/fsck.cramfs.c:116
 msgid " -a                       for compatibility only, ignored\n"
-msgstr ""
+msgstr " -a                       samo zbog kompatibilnosti, zanemareno\n"
 
 #: disk-utils/fsck.cramfs.c:117
 msgid " -v, --verbose            be more verbose\n"
@@ -586,7 +590,7 @@ msgstr ""
 
 #: disk-utils/fsck.cramfs.c:119
 msgid " -y                       for compatibility only, ignored\n"
-msgstr ""
+msgstr " -y                       samo zbog kompatibilnosti, zanemareno\n"
 
 #: disk-utils/fsck.cramfs.c:156
 #, c-format
@@ -611,9 +615,9 @@ msgstr "čitanje nije uspjelo: %s"
 
 #: disk-utils/fsck.cramfs.c:174 disk-utils/fsck.cramfs.c:231
 #: disk-utils/fsck.cramfs.c:247
-#, fuzzy, c-format
+#, c-format
 msgid "seek failed: %s"
-msgstr "čitanje nije uspjelo: %s"
+msgstr "seek nije uspio: %s"
 
 #: disk-utils/fsck.cramfs.c:180 disk-utils/fsck.cramfs.c:182
 msgid "superblock magic not found"
@@ -639,7 +643,7 @@ msgstr "nepodržane mogućnosti datotečnog sustava"
 #: disk-utils/fsck.cramfs.c:193
 #, c-format
 msgid "superblock size (%d) too small"
-msgstr ""
+msgstr "veličina superbloka (%d) je premalena"
 
 #: disk-utils/fsck.cramfs.c:198
 msgid "zero file count"
@@ -648,7 +652,7 @@ msgstr ""
 #: disk-utils/fsck.cramfs.c:203
 #, c-format
 msgid "warning: file extends past end of filesystem\n"
-msgstr ""
+msgstr "upozorenje: datoteka se proteže preko završetka datotečnog sustava\n"
 
 #: disk-utils/fsck.cramfs.c:205
 #, c-format
@@ -665,12 +669,11 @@ msgstr "crc greška"
 
 #: disk-utils/fsck.cramfs.c:301 disk-utils/fsck.minix.c:551
 msgid "seek failed"
-msgstr ""
+msgstr "seek nije uspio"
 
 #: disk-utils/fsck.cramfs.c:305
-#, fuzzy
 msgid "read romfs failed"
-msgstr "čitanje nije uspjelo: %s"
+msgstr "čitanje romfs-a nije uspjelo"
 
 #: disk-utils/fsck.cramfs.c:337
 msgid "root inode is not directory"
@@ -686,19 +689,19 @@ msgid "data block too large"
 msgstr "podatkovni blok je prevelik"
 
 #: disk-utils/fsck.cramfs.c:363
-#, fuzzy, c-format
+#, c-format
 msgid "decompression error: %s"
-msgstr "greška dekompresije %p(%d): %s"
+msgstr "greška dekompresije: %s"
 
 #: disk-utils/fsck.cramfs.c:389
 #, c-format
 msgid "  hole at %ld (%zd)\n"
-msgstr ""
+msgstr "  rupa na %ld (%zd)\n"
 
 #: disk-utils/fsck.cramfs.c:396 disk-utils/fsck.cramfs.c:550
 #, c-format
 msgid "  uncompressing block at %ld to %ld (%ld)\n"
-msgstr ""
+msgstr "  dekomprimiram blok na %ld u %ld (%ld)\n"
 
 #: disk-utils/fsck.cramfs.c:403
 #, c-format
@@ -714,7 +717,7 @@ msgstr ""
 #: sys-utils/setpriv.c:545
 #, c-format
 msgid "write failed: %s"
-msgstr "pisanje nije uspjelo: %s"
+msgstr "write nije uspio: %s"
 
 #: disk-utils/fsck.cramfs.c:425
 #, c-format
@@ -734,7 +737,7 @@ msgstr "utime nije uspio: %s"
 #: disk-utils/fsck.cramfs.c:446
 #, c-format
 msgid "directory inode has zero offset and non-zero size: %s"
-msgstr ""
+msgstr "indeksni čvor direktorija ima pomak jednak nuli i veličinu različitu od nule: %s"
 
 #: disk-utils/fsck.cramfs.c:461
 #, c-format
@@ -743,11 +746,11 @@ msgstr "mkdir nije uspio: %s"
 
 #: disk-utils/fsck.cramfs.c:477
 msgid "filename length is zero"
-msgstr ""
+msgstr "duljina imena datoteke je nula"
 
 #: disk-utils/fsck.cramfs.c:479
 msgid "bad filename length"
-msgstr ""
+msgstr "neispravna duljina imena datoteke"
 
 #: disk-utils/fsck.cramfs.c:485
 msgid "bad inode offset"
@@ -755,24 +758,24 @@ msgstr "neispravan pomak indeksnog čvora"
 
 #: disk-utils/fsck.cramfs.c:500
 msgid "file inode has zero offset and non-zero size"
-msgstr ""
+msgstr "indeksni čvor datoteke ima pomak jednak nuli i veličinu različitu od nule"
 
 #: disk-utils/fsck.cramfs.c:503
 msgid "file inode has zero size and non-zero offset"
-msgstr ""
+msgstr "indeksni čvor datoteke ima pomak različit od nule i veličinu jednaku nuli"
 
 #: disk-utils/fsck.cramfs.c:531
 msgid "symbolic link has zero offset"
-msgstr "simbolička veza ima pomak nula"
+msgstr "simbolička veza ima pomak jednak nuli"
 
 #: disk-utils/fsck.cramfs.c:533
 msgid "symbolic link has zero size"
-msgstr "simbolička veza ima veličinu nula"
+msgstr "simbolička veza ima veličinu jednaku nuli"
 
 #: disk-utils/fsck.cramfs.c:542
 #, c-format
 msgid "size error in symlink: %s"
-msgstr ""
+msgstr "greška veličine u simboličkoj vezi: %s"
 
 #: disk-utils/fsck.cramfs.c:556
 #, c-format
@@ -782,12 +785,12 @@ msgstr "symlink nije uspio: %s"
 #: disk-utils/fsck.cramfs.c:569
 #, c-format
 msgid "special file has non-zero offset: %s"
-msgstr ""
+msgstr "posebna datoteka ima pomak različit od nule: %s"
 
 #: disk-utils/fsck.cramfs.c:579
 #, c-format
 msgid "fifo has non-zero size: %s"
-msgstr ""
+msgstr "fifo ima veličinu različitu od nule: %s"
 
 #: disk-utils/fsck.cramfs.c:585
 #, c-format
@@ -797,7 +800,7 @@ msgstr ""
 #: disk-utils/fsck.cramfs.c:588
 #, c-format
 msgid "bogus mode: %s (%o)"
-msgstr ""
+msgstr "lažni mod: %s (%o)"
 
 #: disk-utils/fsck.cramfs.c:597
 #, c-format
@@ -816,7 +819,7 @@ msgstr ""
 
 #: disk-utils/fsck.cramfs.c:638
 msgid "invalid file data offset"
-msgstr ""
+msgstr "neispravan pomak podataka datoteke"
 
 #: disk-utils/fsck.cramfs.c:685
 msgid "compiled without -x support"
@@ -851,7 +854,7 @@ msgstr " -v  budi opširan\n"
 
 #: disk-utils/fsck.minix.c:201
 msgid " -s  output super-block information\n"
-msgstr ""
+msgstr " -s  ispiši informacije o superbloku\n"
 
 #: disk-utils/fsck.minix.c:202
 msgid " -m  activate mode not cleared warnings\n"
@@ -859,7 +862,7 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:203
 msgid " -f  force check\n"
-msgstr " -f  prisili provjeru\n"
+msgstr " -f  prisilno provjeri\n"
 
 #. TRANSLATORS: these yes no questions uses rpmatch(), and should be
 #. * translated.
@@ -914,7 +917,7 @@ msgstr "Ukloni blok"
 #: disk-utils/fsck.minix.c:363
 #, c-format
 msgid "Read error: unable to seek to block in file '%s'\n"
-msgstr ""
+msgstr "Greška čitanja: ne mogu izvršiti seek na blok u datoteci „%s”\n"
 
 #: disk-utils/fsck.minix.c:369
 #, c-format
@@ -932,7 +935,7 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:387
 msgid "seek failed in write_block"
-msgstr ""
+msgstr "seek nije uspio u write_block"
 
 #: disk-utils/fsck.minix.c:390
 #, c-format
@@ -941,11 +944,11 @@ msgstr "Greška pisanja: neispravan blok u datoteci „%s”\n"
 
 #: disk-utils/fsck.minix.c:502
 msgid "seek failed in write_super_block"
-msgstr ""
+msgstr "seek nije uspio u write_super_block"
 
 #: disk-utils/fsck.minix.c:504
 msgid "unable to write super-block"
-msgstr ""
+msgstr "ne mogu zapisati superblok"
 
 #: disk-utils/fsck.minix.c:517
 msgid "Unable to write inode map"
@@ -961,11 +964,11 @@ msgstr "Ne mogu zapisati indeksne čvorove"
 
 #: disk-utils/fsck.minix.c:555
 msgid "unable to alloc buffer for superblock"
-msgstr ""
+msgstr "ne mogu alocirati međuspremnik za superblok"
 
 #: disk-utils/fsck.minix.c:558
 msgid "unable to read super block"
-msgstr ""
+msgstr "ne mogu čitati superblok"
 
 #: disk-utils/fsck.minix.c:576
 msgid "bad magic number in super-block"
@@ -973,15 +976,15 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:578
 msgid "Only 1k blocks/zones supported"
-msgstr ""
+msgstr "Podržani su samo blokovi/zone veličine 1k"
 
 #: disk-utils/fsck.minix.c:580
 msgid "bad s_imap_blocks field in super-block"
-msgstr ""
+msgstr "neispravno polje s_imap_blocks u superbloku"
 
 #: disk-utils/fsck.minix.c:583
 msgid "bad s_zmap_blocks field in super-block"
-msgstr ""
+msgstr "neispravno polje s_zmap_blocks u superbloku"
 
 #: disk-utils/fsck.minix.c:599
 msgid "Unable to allocate buffer for inode map"
@@ -997,11 +1000,11 @@ msgstr "Ne mogu alocirati međuspremnik za indeksne čvorove"
 
 #: disk-utils/fsck.minix.c:608
 msgid "Unable to allocate buffer for inode count"
-msgstr ""
+msgstr "Ne mogu alocirati međuspremnik za broj indeksnih čvorova"
 
 #: disk-utils/fsck.minix.c:611
 msgid "Unable to allocate buffer for zone count"
-msgstr ""
+msgstr "Ne mogu alocirati međuspremnik za broj zona"
 
 #: disk-utils/fsck.minix.c:615
 msgid "Unable to read inode map"
@@ -1041,9 +1044,9 @@ msgid "Zonesize=%d\n"
 msgstr "Veličina zone=%d\n"
 
 #: disk-utils/fsck.minix.c:634
-#, fuzzy, c-format
+#, c-format
 msgid "Maxsize=%zu\n"
-msgstr "Najveća veličina=%ld\n"
+msgstr "Najveća veličina=%zu\n"
 
 #: disk-utils/fsck.minix.c:635
 #, c-format
@@ -1056,12 +1059,13 @@ msgid ""
 "namelen=%zd\n"
 "\n"
 msgstr ""
+"duljinaimena=%zd\n"
+"\n"
 
 #: disk-utils/fsck.minix.c:651 disk-utils/fsck.minix.c:701
 #, c-format
 msgid "Inode %d marked unused, but used for file '%s'\n"
-msgstr ""
-"Indeksni čvor %d je označen kao nekorišten, ali se koristi za datoteku „%s”\n"
+msgstr "Indeksni čvor %d je označen kao nekorišten, ali se koristi za datoteku „%s”\n"
 
 #: disk-utils/fsck.minix.c:654 disk-utils/fsck.minix.c:704
 msgid "Mark in use"
@@ -1075,7 +1079,7 @@ msgstr "Datoteka „%s” ima mod %05o\n"
 #: disk-utils/fsck.minix.c:683 disk-utils/fsck.minix.c:730
 #, c-format
 msgid "Warning: inode count too big.\n"
-msgstr ""
+msgstr "Upozorenje: broj indeksnih čvorova je prevelik.\n"
 
 #: disk-utils/fsck.minix.c:742 disk-utils/fsck.minix.c:750
 msgid "root inode isn't a directory"
@@ -1104,7 +1108,7 @@ msgstr "Točno"
 #: disk-utils/fsck.minix.c:946 disk-utils/fsck.minix.c:1014
 #, c-format
 msgid "The directory '%s' contains a bad inode number for file '%.*s'."
-msgstr ""
+msgstr "Direktorij „%s” sadrži neispravan broj indeksnog čvora za datoteku „%.*s”."
 
 #: disk-utils/fsck.minix.c:948 disk-utils/fsck.minix.c:1016
 msgid " Remove"
@@ -1131,7 +1135,7 @@ msgstr "%s: neispravan direktorij: veličina < 32"
 
 #: disk-utils/fsck.minix.c:1105
 msgid "seek failed in bad_zone"
-msgstr ""
+msgstr "seek nije uspio u bad_zone"
 
 #: disk-utils/fsck.minix.c:1115 disk-utils/fsck.minix.c:1171
 #, c-format
@@ -1159,7 +1163,7 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:1138 disk-utils/fsck.minix.c:1194
 msgid "Set i_nlinks to count"
-msgstr ""
+msgstr "Postavi i_nlinks na broj"
 
 #: disk-utils/fsck.minix.c:1150 disk-utils/fsck.minix.c:1206
 #, c-format
@@ -1200,17 +1204,17 @@ msgstr "ne mogu otvoriti %s: %s"
 #: disk-utils/fsck.minix.c:1318
 #, c-format
 msgid "%s is clean, no check.\n"
-msgstr "%s je čist, ne treba provjeravati.\n"
+msgstr "%s je čist, provjera nepotrebna.\n"
 
 #: disk-utils/fsck.minix.c:1321
 #, c-format
 msgid "Forcing filesystem check on %s.\n"
-msgstr ""
+msgstr "Prisilno provjeravam datotečni sustav na %s.\n"
 
 #: disk-utils/fsck.minix.c:1323
 #, c-format
 msgid "Filesystem on %s is dirty, needs checking.\n"
-msgstr ""
+msgstr "Datotečni sustav na %s je nečist, potrebna je provjera.\n"
 
 #: disk-utils/fsck.minix.c:1355
 #, c-format
@@ -1218,11 +1222,13 @@ msgid ""
 "\n"
 "%6ld inodes used (%ld%%)\n"
 msgstr ""
+"\n"
+"%6ld indeksnih čvorova korišteno (%ld%%)\n"
 
 #: disk-utils/fsck.minix.c:1361
 #, c-format
 msgid "%6ld zones used (%ld%%)\n"
-msgstr ""
+msgstr "%6ld zona korišteno (%ld%%)\n"
 
 #: disk-utils/fsck.minix.c:1363
 #, c-format
@@ -1237,6 +1243,15 @@ msgid ""
 "------\n"
 "%6d files\n"
 msgstr ""
+"\n"
+"%6d običnih datoteka\n"
+"%6d direktorija\n"
+"%6d datoteka znakovnih uređaja\n"
+"%6d datoteka blokovskih uređaja\n"
+"%6d veza\n"
+"%6d simboličkih veza\n"
+"------\n"
+"%6d datoteka\n"
 
 #: disk-utils/fsck.minix.c:1377
 #, c-format
@@ -1252,12 +1267,12 @@ msgstr ""
 #: disk-utils/isosize.c:136
 #, c-format
 msgid "%s: might not be an ISO filesystem"
-msgstr ""
+msgstr "%s: možda nije ISO datotečni sustav"
 
 #: disk-utils/isosize.c:139
 #, c-format
 msgid "seek error on %s"
-msgstr ""
+msgstr "seek greška na %s"
 
 #: disk-utils/isosize.c:142
 #, c-format
@@ -1267,29 +1282,29 @@ msgstr "greška čitanja na %s"
 #: disk-utils/isosize.c:149
 #, c-format
 msgid "sector count: %d, sector size: %d\n"
-msgstr ""
+msgstr "broj sektora: %d, veličina sektora: %d\n"
 
 #: disk-utils/isosize.c:168
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] <iso9660_image_file>\n"
-msgstr " %s [opcije] datoteka\n"
+msgstr " %s [opcije] <iso9660_datoteka_slike>\n"
 
 #: disk-utils/isosize.c:171
 msgid " -d, --divisor=<number>  divide the amount of bytes by <number>\n"
-msgstr ""
+msgstr " -d, --divisor=<broj>    podijeli količinu bajtova sa <broj>\n"
 
 #: disk-utils/isosize.c:172
 msgid " -x, --sectors           show sector count and size\n"
-msgstr ""
+msgstr " -x, --sectors           prikaži broj i veličinu sektora\n"
 
 #: disk-utils/isosize.c:204
 msgid "invalid divisor argument"
-msgstr ""
+msgstr "neispravan argument djelitelja"
 
 #: disk-utils/mkfs.bfs.c:71
 #, c-format
 msgid "Usage: %s [options] device [block-count]\n"
-msgstr ""
+msgstr "Uporaba: %s [opcije] uređaj [broj-blokova]\n"
 
 #: disk-utils/mkfs.bfs.c:73
 #, c-format
@@ -1310,122 +1325,122 @@ msgstr ""
 
 #: disk-utils/mkfs.bfs.c:136
 msgid "invalid number of inodes"
-msgstr ""
+msgstr "neispravan broj indeksnih čvorova"
 
 #: disk-utils/mkfs.bfs.c:142
 msgid "volume name too long"
-msgstr ""
+msgstr "ime prostora je predugačko"
 
 #: disk-utils/mkfs.bfs.c:149
 msgid "fsname name too long"
-msgstr ""
+msgstr "ime datotečnog sustava je predugačko"
 
 #: disk-utils/mkfs.bfs.c:180
 #, c-format
 msgid "%s is not a block special device"
-msgstr ""
+msgstr "%s nije blokovski posebni uređaj"
 
 #: disk-utils/mkfs.bfs.c:188
 msgid "invalid block-count"
-msgstr ""
+msgstr "neispravan broj-blokova"
 
 #: disk-utils/mkfs.bfs.c:194
 #, c-format
 msgid "cannot get size of %s"
-msgstr ""
+msgstr "ne mogu otkriti veličinu %s"
 
 #: disk-utils/mkfs.bfs.c:199
 #, c-format
 msgid "blocks argument too large, max is %llu"
-msgstr ""
+msgstr "argument blokova je prevelik, najviše %llu"
 
 #: disk-utils/mkfs.bfs.c:214
 msgid "too many inodes - max is 512"
-msgstr ""
+msgstr "previše indeksnih čvorova - najviše 512"
 
 #: disk-utils/mkfs.bfs.c:224
 #, c-format
 msgid "not enough space, need at least %llu blocks"
-msgstr ""
+msgstr "nema dovoljno prostora, potrebno je barem %llu blokova"
 
 #: disk-utils/mkfs.bfs.c:236 fdisks/fdisk.c:783
 #, c-format
 msgid "Device: %s\n"
-msgstr ""
+msgstr "Uređaj: %s\n"
 
 #: disk-utils/mkfs.bfs.c:237
 #, c-format
 msgid "Volume: <%-6s>\n"
-msgstr ""
+msgstr "Prostor: <%-6s>\n"
 
 #: disk-utils/mkfs.bfs.c:238
 #, c-format
 msgid "FSname: <%-6s>\n"
-msgstr ""
+msgstr "Ime datotečnog sustava: <%-6s>\n"
 
 #: disk-utils/mkfs.bfs.c:239
 #, c-format
 msgid "BlockSize: %d\n"
-msgstr ""
+msgstr "Veličina bloka: %d\n"
 
 #: disk-utils/mkfs.bfs.c:241
 #, c-format
 msgid "Inodes: %lu (in 1 block)\n"
-msgstr ""
+msgstr "Indeksni čvorovi: %lu (u 1 bloku)\n"
 
 #: disk-utils/mkfs.bfs.c:244
 #, c-format
 msgid "Inodes: %lu (in %llu blocks)\n"
-msgstr ""
+msgstr "Indeksni čvorovi: %lu (u %llu blokova)\n"
 
 #: disk-utils/mkfs.bfs.c:246
 #, c-format
 msgid "Blocks: %lld\n"
-msgstr ""
+msgstr "Blokovi: %lld\n"
 
 #: disk-utils/mkfs.bfs.c:247
 #, c-format
 msgid "Inode end: %d, Data end: %d\n"
-msgstr ""
+msgstr "Završetak: indeksni čvor: %d, podaci: %d\n"
 
 #: disk-utils/mkfs.bfs.c:252
 msgid "error writing superblock"
-msgstr ""
+msgstr "greška pri pisanju superbloka"
 
 #: disk-utils/mkfs.bfs.c:272
 msgid "error writing root inode"
-msgstr ""
+msgstr "greška pri pisanju korijenskog indeksnog čvora"
 
 #: disk-utils/mkfs.bfs.c:277
 msgid "error writing inode"
-msgstr ""
+msgstr "greška pri pisanju indeksnog čvora"
 
 #: disk-utils/mkfs.bfs.c:280
 msgid "seek error"
-msgstr ""
+msgstr "seek greška"
 
 #: disk-utils/mkfs.bfs.c:286
 msgid "error writing . entry"
-msgstr ""
+msgstr "greška pri pisanju stavke ."
 
 #: disk-utils/mkfs.bfs.c:290
 msgid "error writing .. entry"
-msgstr ""
+msgstr "greška pri pisanju stavke .."
 
 #: disk-utils/mkfs.bfs.c:293
 #, c-format
 msgid "error closing %s"
-msgstr ""
+msgstr "greška pri zatvaranju %s"
 
 #: disk-utils/mkfs.c:38
-#, fuzzy, c-format
+#, c-format
 msgid "Usage:\n"
-msgstr "uporaba:\n"
+msgstr "Uporaba:\n"
 
 #: disk-utils/mkfs.c:39
 #, c-format
 msgid " %s [options] [-t <type>] [fs-options] <device> [<size>]\n"
-msgstr ""
+msgstr "%s [opcije] [-t <vrsta>] [ds-opcije] <uređaj> [<veličina>]\n"
 
 #: disk-utils/mkfs.c:42 fdisks/sfdisk.c:2382 include/c.h:276
 #: misc-utils/cal.c:799 misc-utils/getopt.c:322 misc-utils/logger.c:218
@@ -1439,26 +1454,28 @@ msgid ""
 "\n"
 "Options:\n"
 msgstr ""
+"\n"
+"Opcije:\n"
 
 #: disk-utils/mkfs.c:43
 #, c-format
 msgid " -t, --type=<type>  filesystem type; when unspecified, ext2 is used\n"
-msgstr ""
+msgstr " -t, --type=<vrsta> vrsta datotečnog sustava, ako nije navedeno, koristi se ext2\n"
 
 #: disk-utils/mkfs.c:44
 #, c-format
 msgid "     fs-options     parameters for the real filesystem builder\n"
-msgstr ""
+msgstr "     ds-opcije      parametri za stvarnog graditelja datotečnog sustava\n"
 
 #: disk-utils/mkfs.c:45
 #, c-format
 msgid "     <device>       path to the device to be used\n"
-msgstr ""
+msgstr "     <uređaj>       putanja za uređaj koji se koristi\n"
 
 #: disk-utils/mkfs.c:46
 #, c-format
 msgid "     <size>         number of blocks to be used on the device\n"
-msgstr ""
+msgstr "     <veličina>     broj blokova za korištenje na uređaju\n"
 
 #: disk-utils/mkfs.c:47
 #, c-format
@@ -1477,7 +1494,7 @@ msgstr ""
 #: disk-utils/mkfs.c:51
 #, c-format
 msgid " -h, --help         display this help text and exit\n"
-msgstr ""
+msgstr " -h, --help         prikaži ovu pomoć i izađi\n"
 
 #: disk-utils/mkfs.c:53
 #, c-format
@@ -1485,12 +1502,13 @@ msgid ""
 "\n"
 "For more information see mkfs(8).\n"
 msgstr ""
+"\n"
+"Za više informacija pogledajte mkfs(8).\n"
 
 #: disk-utils/mkfs.cramfs.c:122
 #, c-format
 msgid ""
-"usage: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n "
-"name] dirname outfile\n"
+"usage: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n name] dirname outfile\n"
 " -h         print this help\n"
 " -v         be verbose\n"
 " -E         make all warnings errors (non-zero exit status)\n"
@@ -1507,19 +1525,19 @@ msgid ""
 msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:155
-#, fuzzy, c-format
+#, c-format
 msgid "readlink failed: %s"
-msgstr "čitanje nije uspjelo: %s"
+msgstr "readlink nije uspio: %s"
 
 #: disk-utils/mkfs.cramfs.c:164
-#, fuzzy, c-format
+#, c-format
 msgid "open failed: %s"
-msgstr "chown nije uspio: %s"
+msgstr "open nije uspio: %s"
 
 #: disk-utils/mkfs.cramfs.c:302
 #, c-format
 msgid "could not read directory %s"
-msgstr ""
+msgstr "ne mogu čitati direktorij %s"
 
 #: disk-utils/mkfs.cramfs.c:327
 #, c-format
@@ -1527,33 +1545,35 @@ msgid ""
 "Very long (%zu bytes) filename `%s' found.\n"
 " Please increase MAX_INPUT_NAMELEN in mkcramfs.c and recompile.  Exiting."
 msgstr ""
+"Pronađeno je vrlo dugačko (%zu bajtova) ime datoteke „%s”.\n"
+" Molim povećajte u MAX_INPUT_NAMELEN u mkcramfs.c i ponovo kompajlirajte. Izlazim."
 
 #: disk-utils/mkfs.cramfs.c:449
 msgid "filesystem too big.  Exiting."
-msgstr ""
+msgstr "datotečni sustav je prevelik. Izlazim."
 
 #: disk-utils/mkfs.cramfs.c:608
 #, c-format
 msgid "AIEEE: block \"compressed\" to > 2*blocklength (%ld)\n"
-msgstr ""
+msgstr "AIEEE: blok „komprimiran” na > 2*veličinabloka (%ld)\n"
 
 #: disk-utils/mkfs.cramfs.c:627
 #, c-format
 msgid "%6.2f%% (%+ld bytes)\t%s\n"
-msgstr ""
+msgstr "%6.2f%% (%+ld bajtova)\t%s\n"
 
 #: disk-utils/mkfs.cramfs.c:672
 #, c-format
 msgid "cannot close file %s"
-msgstr ""
+msgstr "ne mogu zatvoriti datoteku %s"
 
 #: disk-utils/mkfs.cramfs.c:733
 msgid "invalid blocksize argument"
-msgstr ""
+msgstr "neispravan argument veličine bloka"
 
 #: disk-utils/mkfs.cramfs.c:739
 msgid "edition number argument failed"
-msgstr ""
+msgstr "neispravan argument broja izdanja"
 
 #: disk-utils/mkfs.cramfs.c:749
 msgid "invalid endianness given. Must be 'big', 'little', or 'host'"
@@ -1561,66 +1581,64 @@ msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:810
 #, c-format
-msgid ""
-"warning: guestimate of required size (upper bound) is %lldMB, but maximum "
-"image size is %uMB.  We might die prematurely."
+msgid "warning: guestimate of required size (upper bound) is %lldMB, but maximum image size is %uMB.  We might die prematurely."
 msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:834
 msgid "ROM image map"
-msgstr ""
+msgstr "Mapa ROM slike"
 
 #: disk-utils/mkfs.cramfs.c:846
 #, c-format
 msgid "Including: %s\n"
-msgstr ""
+msgstr "Uključeno: %s\n"
 
 #: disk-utils/mkfs.cramfs.c:852
 #, c-format
 msgid "Directory data: %zd bytes\n"
-msgstr ""
+msgstr "Podaci direktorija: %zd bajtova\n"
 
 #: disk-utils/mkfs.cramfs.c:860
 #, c-format
 msgid "Everything: %zd kilobytes\n"
-msgstr ""
+msgstr "Sve: %zd kilobajta\n"
 
 #: disk-utils/mkfs.cramfs.c:865
 #, c-format
 msgid "Super block: %zd bytes\n"
-msgstr ""
+msgstr "Superblok: %zd bajtova\n"
 
 #: disk-utils/mkfs.cramfs.c:872
 #, c-format
 msgid "CRC: %x\n"
-msgstr ""
+msgstr "CRC: %x\n"
 
 #: disk-utils/mkfs.cramfs.c:877
 #, c-format
 msgid "not enough space allocated for ROM image (%lld allocated, %zu used)"
-msgstr ""
+msgstr "nije alocirano dovoljno prostora za ROM sliku (alocirano %lld, korišteno %zu)"
 
 #: disk-utils/mkfs.cramfs.c:884
 msgid "ROM image"
-msgstr ""
+msgstr "ROM slika"
 
 #: disk-utils/mkfs.cramfs.c:886
 #, c-format
 msgid "ROM image write failed (%zd %zd)"
-msgstr ""
+msgstr "pisanje ROM slike nije uspjelo (%zd %zd)"
 
 #: disk-utils/mkfs.cramfs.c:896
 msgid "warning: filenames truncated to 255 bytes."
-msgstr ""
+msgstr "upozorenje: imena datoteka skraćena na 255 bajtova."
 
 #: disk-utils/mkfs.cramfs.c:898
 msgid "warning: files were skipped due to errors."
-msgstr ""
+msgstr "upozorenje: datoteke su preskočene zbog grešaka."
 
 #: disk-utils/mkfs.cramfs.c:900
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte)."
-msgstr ""
+msgstr "upozorenje: veličine datoteka skraćene na %luMB (minus 1 bajt)."
 
 #: disk-utils/mkfs.cramfs.c:904
 #, c-format
@@ -1647,7 +1665,7 @@ msgstr ""
 #: disk-utils/mkfs.minix.c:171
 #, c-format
 msgid "%s is mounted; will not make a filesystem here!"
-msgstr ""
+msgstr "%s je montiran, neću ovdje napraviti datotečni sustav!"
 
 #: disk-utils/mkfs.minix.c:197
 #, c-format
@@ -1657,135 +1675,137 @@ msgstr ""
 #: disk-utils/mkfs.minix.c:200
 #, c-format
 msgid "%s: unable to clear boot sector"
-msgstr ""
+msgstr "%s: ne mogu očistiti boot sektor"
 
 #: disk-utils/mkfs.minix.c:202
 #, c-format
 msgid "%s: seek failed in write_tables"
-msgstr ""
+msgstr "%s: seek nije uspio u write_tables"
 
 #: disk-utils/mkfs.minix.c:205
 #, c-format
 msgid "%s: unable to write super-block"
-msgstr ""
+msgstr "%s: ne mogu pisati superblok"
 
 #: disk-utils/mkfs.minix.c:208
 #, c-format
 msgid "%s: unable to write inode map"
-msgstr ""
+msgstr "%s: ne mogu pisati mapu indeksnih čvorova"
 
 #: disk-utils/mkfs.minix.c:211
 #, c-format
 msgid "%s: unable to write zone map"
-msgstr ""
+msgstr "%s: ne mogu pisati mapu zona"
 
 #: disk-utils/mkfs.minix.c:214
 #, c-format
 msgid "%s: unable to write inodes"
-msgstr ""
+msgstr "%s: ne mogu pisati indeksne čvorove"
 
 #: disk-utils/mkfs.minix.c:219
 #, c-format
 msgid "%s: seek failed in write_block"
-msgstr ""
+msgstr "%s: seek nije uspio u write_block"
 
 #: disk-utils/mkfs.minix.c:222
 #, c-format
 msgid "%s: write failed in write_block"
-msgstr ""
+msgstr "%s: write nije uspio u write_block"
 
 #: disk-utils/mkfs.minix.c:231 disk-utils/mkfs.minix.c:306
 #: disk-utils/mkfs.minix.c:355
 #, c-format
 msgid "%s: too many bad blocks"
-msgstr ""
+msgstr "%s: previše neispravnih blokova"
 
 #: disk-utils/mkfs.minix.c:239
 #, c-format
 msgid "%s: not enough good blocks"
-msgstr ""
+msgstr "%s: nedovoljno ispravnih blokova"
 
 #: disk-utils/mkfs.minix.c:485
 #, c-format
 msgid "%s: unable to alloc buffer for superblock"
-msgstr ""
+msgstr "%s: ne mogu alocirati međuspremnik za superblok"
 
 #: disk-utils/mkfs.minix.c:531
 #, c-format
 msgid "%s: unable to allocate buffers for maps"
-msgstr ""
+msgstr "%s: ne mogu alocirati međuspremnike za mape"
 
 #: disk-utils/mkfs.minix.c:541
 #, c-format
 msgid "%s: unable to allocate buffer for inodes"
-msgstr ""
+msgstr "%s: ne mogu alocirati međuspremnik za indeksne čvorove"
 
 #: disk-utils/mkfs.minix.c:544
 #, c-format
 msgid "%lu inodes\n"
-msgstr ""
+msgstr "%lu indeksnih čvorova\n"
 
 #: disk-utils/mkfs.minix.c:545
 #, c-format
 msgid "%lu blocks\n"
-msgstr ""
+msgstr "%lu blokova\n"
 
 #: disk-utils/mkfs.minix.c:547
-#, fuzzy, c-format
+#, c-format
 msgid "Zonesize=%zu\n"
-msgstr "Veličina zone=%d\n"
+msgstr "Veličina zone=%zu\n"
 
 #: disk-utils/mkfs.minix.c:548
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Maxsize=%zu\n"
 "\n"
-msgstr "Najveća veličina=%ld\n"
+msgstr ""
+"Najveća veličina=%zu\n"
+"\n"
 
 #: disk-utils/mkfs.minix.c:561
 #, c-format
 msgid "%s: seek failed during testing of blocks"
-msgstr ""
+msgstr "%s: seek nije uspio za vrijeme testiranja blokova"
 
 #: disk-utils/mkfs.minix.c:568
 #, c-format
 msgid "Weird values in do_check: probably bugs\n"
-msgstr ""
+msgstr "Čudne vrijednosti u do_check: vjerojatno bugovi\n"
 
 #: disk-utils/mkfs.minix.c:601
 #, c-format
 msgid "%s: seek failed in check_blocks"
-msgstr ""
+msgstr "%s: seek nije uspio u check_blocks"
 
 #: disk-utils/mkfs.minix.c:611
 #, c-format
 msgid "%s: bad blocks before data-area: cannot make fs"
-msgstr ""
+msgstr "%s: neispravni blokovi prija podatkovnog područja: ne mogu napraviti datotečni sustav"
 
 #: disk-utils/mkfs.minix.c:618 disk-utils/mkfs.minix.c:644
 #, c-format
 msgid "%d bad blocks\n"
-msgstr ""
+msgstr "%d neispravnih blokova\n"
 
 #: disk-utils/mkfs.minix.c:620 disk-utils/mkfs.minix.c:646
 #, c-format
 msgid "one bad block\n"
-msgstr ""
+msgstr "jedan neispravni blok\n"
 
 #: disk-utils/mkfs.minix.c:629
 #, c-format
 msgid "%s: can't open file of bad blocks"
-msgstr ""
+msgstr "%s: ne mogu otvoriti datoteku neispravnih blokova"
 
 #: disk-utils/mkfs.minix.c:634
 #, c-format
 msgid "badblock number input error on line %d\n"
-msgstr ""
+msgstr "greška unosa broja neispravnog bloka u retku %d\n"
 
 #: disk-utils/mkfs.minix.c:635
 #, c-format
 msgid "%s: cannot read badblocks file"
-msgstr ""
+msgstr "%s: ne mogu čitati datoteku neispravnih blokova"
 
 #: disk-utils/mkfs.minix.c:668
 #, c-format
@@ -1795,74 +1815,72 @@ msgstr "%s (%s)\n"
 #: disk-utils/mkfs.minix.c:673 disk-utils/mkfs.minix.c:675
 #, c-format
 msgid "%s: bad inode size"
-msgstr ""
+msgstr "%s: neispravna veličina indeksnog čvora"
 
 #: disk-utils/mkfs.minix.c:684
-#, fuzzy
 msgid "failed to parse number of inodes"
-msgstr "Ne mogu alocirati međuspremnik za indeksne čvorove"
+msgstr "nisam uspio obraditi broj indeksnih čvorova"
 
 #: disk-utils/mkfs.minix.c:690
 msgid "failed to parse maximum length of filenames"
-msgstr ""
+msgstr "nisam uspio obraditi najveću veličinu imena datoteke"
 
 #: disk-utils/mkfs.minix.c:723
-#, fuzzy
 msgid "failed to parse number of blocks"
-msgstr "%s: nisam uspio analizirati fstab"
+msgstr "nisam uspio obraditi broj blokova"
 
 #: disk-utils/mkfs.minix.c:766
 #, c-format
 msgid "%s: device is misaligned"
-msgstr ""
+msgstr "%s: uređaj je nepravilno poravnan"
 
 #: disk-utils/mkfs.minix.c:769
 #, c-format
 msgid "block size smaller than physical sector size of %s"
-msgstr ""
+msgstr "veličina bloka je manja od veličine fizičkog sektora %s"
 
 #: disk-utils/mkfs.minix.c:773
 #, c-format
 msgid "cannot determine size of %s"
-msgstr ""
+msgstr "ne mogu odrediti veličinu %s"
 
 #: disk-utils/mkfs.minix.c:782
 #, c-format
 msgid "will not try to make filesystem on '%s'"
-msgstr ""
+msgstr "neću pokušati napraviti datotečni sustav na „%s”"
 
 #: disk-utils/mkfs.minix.c:784
 #, c-format
 msgid "%s: number of blocks too small"
-msgstr ""
+msgstr "%s: broj blokova je premalen"
 
 #: disk-utils/mkswap.c:162
 #, c-format
 msgid "Bad user-specified page size %u"
-msgstr ""
+msgstr "Neispravna korisnički navedena veličina stranice %u"
 
 #: disk-utils/mkswap.c:168
 #, c-format
 msgid "Using user-specified page size %d, instead of the system value %d"
-msgstr ""
+msgstr "Koristim korisnički navedenu veličinu stranice %d umjesto vrijednosti sustava %d"
 
 #: disk-utils/mkswap.c:191
 msgid "Bad swap header size, no label written."
-msgstr ""
+msgstr "Neispravna veličina swap zaglavlja, oznaka nije zapisana."
 
 #: disk-utils/mkswap.c:201
 msgid "Label was truncated."
-msgstr ""
+msgstr "Oznaka je skraćena."
 
 #: disk-utils/mkswap.c:207
 #, c-format
 msgid "no label, "
-msgstr ""
+msgstr "nema oznake, "
 
 #: disk-utils/mkswap.c:215
 #, c-format
 msgid "no uuid\n"
-msgstr ""
+msgstr "nema uuid-a\n"
 
 #: disk-utils/mkswap.c:280
 #, c-format
@@ -1871,6 +1889,9 @@ msgid ""
 "Usage:\n"
 " %s [options] device [size]\n"
 msgstr ""
+"\n"
+"Uporaba:\n"
+" %s [opcije] uređaj [veličina]\n"
 
 #: disk-utils/mkswap.c:285
 #, c-format
@@ -1890,19 +1911,19 @@ msgstr ""
 
 #: disk-utils/mkswap.c:304
 msgid "too many bad pages"
-msgstr ""
+msgstr "previše neispravnih stranica"
 
 #: disk-utils/mkswap.c:324
 msgid "seek failed in check_blocks"
-msgstr ""
+msgstr "seek nije uspio u check_blocks"
 
 #: disk-utils/mkswap.c:332
 #, c-format
 msgid "%lu bad page\n"
 msgid_plural "%lu bad pages\n"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgstr[0] "%lu neispravna stranica\n"
+msgstr[1] "%lu neispravne stranice\n"
+msgstr[2] "%lu neispravnih stranica\n"
 
 #: disk-utils/mkswap.c:361
 msgid "unable to alloc new libblkid probe"
@@ -1914,7 +1935,7 @@ msgstr ""
 
 #: disk-utils/mkswap.c:378 disk-utils/mkswap.c:405 disk-utils/mkswap.c:621
 msgid "unable to rewind swap-device"
-msgstr ""
+msgstr "ne mogu vratiti unatrag swap-uređaj"
 
 #: disk-utils/mkswap.c:409
 msgid "unable to erase bootbits sectors"
@@ -1933,30 +1954,31 @@ msgstr ""
 #: disk-utils/mkswap.c:431
 #, c-format
 msgid "        (%s partition table detected). "
-msgstr ""
+msgstr "        (otkrivena %s particijska tablica). "
 
 #: disk-utils/mkswap.c:433
 #, c-format
 msgid "        (compiled without libblkid). "
-msgstr ""
+msgstr "        (kompajlirano bez libblkid). "
 
+# prisilno što?
 #: disk-utils/mkswap.c:434
 #, fuzzy, c-format
 msgid "Use -f to force.\n"
-msgstr " -f  prisili provjeru\n"
+msgstr "Koristite -f za prisilno"
 
 #: disk-utils/mkswap.c:485
 msgid "parsing page size failed"
-msgstr ""
+msgstr "obrada veličine stranice nije uspjela"
 
 #: disk-utils/mkswap.c:491
 msgid "parsing version number failed"
-msgstr ""
+msgstr "obrada broja inačice nije uspjela"
 
 #: disk-utils/mkswap.c:497
 #, c-format
 msgid "warning: ignoring -U (UUIDs are unsupported by %s)"
-msgstr ""
+msgstr "upozorenje: zanemarujem -U (%s ne podržava korištenje UUID-a)"
 
 #: disk-utils/mkswap.c:515
 msgid "only one device argument is currently supported"
@@ -1969,7 +1991,7 @@ msgstr ""
 
 #: disk-utils/mkswap.c:526
 msgid "error: parsing UUID failed"
-msgstr ""
+msgstr "greška: obrada UUID-a nije uspjela"
 
 #: disk-utils/mkswap.c:535
 msgid "error: Nowhere to set up swap on?"
@@ -1977,7 +1999,7 @@ msgstr ""
 
 #: disk-utils/mkswap.c:541
 msgid "invalid block count argument"
-msgstr ""
+msgstr "neispravan argument broja blokova"
 
 #: disk-utils/mkswap.c:549
 #, c-format
@@ -2257,9 +2279,7 @@ msgid " -u, --update         update specified partitions or all of them\n"
 msgstr ""
 
 #: disk-utils/partx.c:711 misc-utils/lsblk.c:1354
-msgid ""
-" -b, --bytes          print SIZE in bytes rather than in human readable "
-"format\n"
+msgid " -b, --bytes          print SIZE in bytes rather than in human readable format\n"
 msgstr ""
 
 #: disk-utils/partx.c:712
@@ -2283,8 +2303,7 @@ msgid " -r, --raw            use raw output format\n"
 msgstr ""
 
 #: disk-utils/partx.c:717
-msgid ""
-" -t, --type <type>    specify the partition type (dos, bsd, solaris, etc.)\n"
+msgid " -t, --type <type>    specify the partition type (dos, bsd, solaris, etc.)\n"
 msgstr ""
 
 #: disk-utils/partx.c:718
@@ -2344,9 +2363,7 @@ msgstr ""
 
 #: disk-utils/raw.c:161
 #, c-format
-msgid ""
-"Device '%s' is the control raw device (use raw<N> where <N> is greater than "
-"zero)"
+msgid "Device '%s' is the control raw device (use raw<N> where <N> is greater than zero)"
 msgstr ""
 
 #: disk-utils/raw.c:178
@@ -2556,13 +2573,11 @@ msgid "enlarged logical partitions overlap"
 msgstr ""
 
 #: fdisks/cfdisk.c:910
-msgid ""
-"!!!! Internal error creating logical drive with no extended partition !!!!"
+msgid "!!!! Internal error creating logical drive with no extended partition !!!!"
 msgstr ""
 
 #: fdisks/cfdisk.c:921 fdisks/cfdisk.c:933
-msgid ""
-"Cannot create logical drive here -- would create two extended partitions"
+msgid "Cannot create logical drive here -- would create two extended partitions"
 msgstr ""
 
 #: fdisks/cfdisk.c:1067
@@ -2680,8 +2695,7 @@ msgid "Warning!!  This may destroy data on your disk!"
 msgstr ""
 
 #: fdisks/cfdisk.c:1700
-msgid ""
-"Are you sure you want to write the partition table to disk? (yes or no): "
+msgid "Are you sure you want to write the partition table to disk? (yes or no): "
 msgstr ""
 
 #: fdisks/cfdisk.c:1706 sys-utils/lscpu.c:900 sys-utils/lscpu.c:910
@@ -2711,9 +2725,7 @@ msgid "Wrote partition table to disk"
 msgstr ""
 
 #: fdisks/cfdisk.c:1745
-msgid ""
-"Wrote partition table, but re-read table failed.  Run partprobe(8), kpartx"
-"(8) or reboot to update table."
+msgid "Wrote partition table, but re-read table failed.  Run partprobe(8), kpartx(8) or reboot to update table."
 msgstr ""
 
 #: fdisks/cfdisk.c:1755
@@ -2721,8 +2733,7 @@ msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
 msgstr ""
 
 #: fdisks/cfdisk.c:1757
-msgid ""
-"More than one primary partition is marked bootable. DOS MBR cannot boot this."
+msgid "More than one primary partition is marked bootable. DOS MBR cannot boot this."
 msgstr ""
 
 #: fdisks/cfdisk.c:1815 fdisks/cfdisk.c:1934 fdisks/cfdisk.c:2018
@@ -2788,15 +2799,11 @@ msgid "               First       Last\n"
 msgstr ""
 
 #: fdisks/cfdisk.c:1956
-msgid ""
-" # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) "
-"Flag\n"
+msgid " # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) Flag\n"
 msgstr ""
 
 #: fdisks/cfdisk.c:1957
-msgid ""
-"-- ------- ----------- ----------- ------ ----------- -------------------- "
-"----\n"
+msgid "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
 msgstr ""
 
 #: fdisks/cfdisk.c:2040
@@ -4438,9 +4445,7 @@ msgstr ""
 
 #: fdisks/fdisk.c:1207
 #, c-format
-msgid ""
-"Warning: the -b (set sector size) option should be used with one specified "
-"device\n"
+msgid "Warning: the -b (set sector size) option should be used with one specified device\n"
 msgstr ""
 
 #: fdisks/fdisk.c:1253
@@ -4531,9 +4536,7 @@ msgstr ""
 
 #: fdisks/fdiskdoslabel.c:479
 #, c-format
-msgid ""
-"Warning: invalid flag 0x%04x of partition table %zd will be corrected by w"
-"(rite)\n"
+msgid "Warning: invalid flag 0x%04x of partition table %zd will be corrected by w(rite)\n"
 msgstr ""
 
 #: fdisks/fdiskdoslabel.c:588
@@ -4708,8 +4711,7 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"WARNING: If you have created or modified any DOS 6.xpartitions, please see "
-"the fdisk manual page for additionalinformation.\n"
+"WARNING: If you have created or modified any DOS 6.xpartitions, please see the fdisk manual page for additionalinformation.\n"
 "\n"
 msgstr ""
 
@@ -4869,9 +4871,7 @@ msgstr ""
 
 #: fdisks/fdisksgilabel.c:161
 #, c-format
-msgid ""
-"According to MIPS Computer Systems, Inc the Label must not contain more than "
-"512 bytes\n"
+msgid "According to MIPS Computer Systems, Inc the Label must not contain more than 512 bytes\n"
 msgstr ""
 
 #: fdisks/fdisksgilabel.c:179
@@ -5109,8 +5109,7 @@ msgstr ""
 #: fdisks/fdisksgilabel.c:815
 #, c-format
 msgid ""
-"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of "
-"%llu.\n"
+"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %llu.\n"
 "This value may be truncated for devices > 33.8 GB.\n"
 msgstr ""
 
@@ -5132,8 +5131,7 @@ msgstr ""
 #: fdisks/fdisksgilabel.c:974
 #, c-format
 msgid ""
-"Consider leaving partition 9 as volume header (0), and partition 11 as "
-"entire volume (6), as IRIX expects it.\n"
+"Consider leaving partition 9 as volume header (0), and partition 11 as entire volume (6), as IRIX expects it.\n"
 "\n"
 msgstr ""
 
@@ -5218,8 +5216,7 @@ msgid "Detected sun disklabel with wrong vtoc.nparts [%u]."
 msgstr ""
 
 #: fdisks/fdisksunlabel.c:171
-msgid ""
-"Warning: Wrong values need to be fixed up and will be corrected by w(rite)"
+msgid "Warning: Wrong values need to be fixed up and will be corrected by w(rite)"
 msgstr ""
 
 #: fdisks/fdisksunlabel.c:200
@@ -5233,8 +5230,7 @@ msgstr ""
 #: fdisks/fdisksunlabel.c:252
 #, c-format
 msgid ""
-"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of "
-"%llu.\n"
+"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %llu.\n"
 "This value may be truncated for devices > 33.8 GB."
 msgstr ""
 
@@ -5268,9 +5264,7 @@ msgid "Partition %zd is already defined.  Delete it before re-adding it."
 msgstr ""
 
 #: fdisks/fdisksunlabel.c:504
-msgid ""
-"Other partitions already cover the whole disk. Delete some/shrink them "
-"before retry."
+msgid "Other partitions already cover the whole disk. Delete some/shrink them before retry."
 msgstr ""
 
 #: fdisks/fdisksunlabel.c:546
@@ -5299,9 +5293,7 @@ msgstr ""
 
 #: fdisks/fdisksunlabel.c:672
 #, c-format
-msgid ""
-"If you want to maintain SunOS/Solaris compatibility, consider leaving this "
-"partition as Whole disk (5), starting at 0, with %u sectors"
+msgid "If you want to maintain SunOS/Solaris compatibility, consider leaving this partition as Whole disk (5), starting at 0, with %u sectors"
 msgstr ""
 
 #: fdisks/fdisksunlabel.c:699
@@ -5473,22 +5465,17 @@ msgstr ""
 
 #: fdisks/sfdisk.c:574
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
+msgid "%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
 msgstr ""
 
 #: fdisks/sfdisk.c:579
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for sector: %lu (should be in 1-"
-"%lu)\n"
+msgid "%s of partition %s has impossible value for sector: %lu (should be in 1-%lu)\n"
 msgstr ""
 
 #: fdisks/sfdisk.c:584
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for cylinders: %lu (should be in 0-"
-"%lu)\n"
+msgid "%s of partition %s has impossible value for cylinders: %lu (should be in 0-%lu)\n"
 msgstr ""
 
 #: fdisks/sfdisk.c:624
@@ -5710,8 +5697,7 @@ msgstr ""
 
 #: fdisks/sfdisk.c:1375
 #, c-format
-msgid ""
-"partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
+msgid "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 
 #: fdisks/sfdisk.c:1381
@@ -5908,8 +5894,7 @@ msgid ""
 " -d, --dump                idem, but in a format suitable for later input\n"
 " -i, --increment           number cylinders etc. from 1 instead of from 0\n"
 " -u, --unit <letter>       units to be used; <letter> can be one of\n"
-"                             S (sectors), C (cylinders), B (blocks), or M "
-"(MB)\n"
+"                             S (sectors), C (cylinders), B (blocks), or M (MB)\n"
 msgstr ""
 
 #: fdisks/sfdisk.c:2392
@@ -5925,8 +5910,7 @@ msgstr ""
 msgid ""
 " -N <number>               change only the partition with this <number>\n"
 " -n                        do not actually write to disk\n"
-" -O <file>                 save the sectors that will be overwritten to "
-"<file>\n"
+" -O <file>                 save the sectors that will be overwritten to <file>\n"
 " -I <file>                 restore sectors from <file>\n"
 msgstr ""
 
@@ -5948,8 +5932,7 @@ msgid ""
 " -f, --force               disable all consistency checking\n"
 "     --no-reread           do not check whether the partition is in use\n"
 " -q, --quiet               suppress warning messages\n"
-" -L, --Linux               do not complain about things irrelevant for "
-"Linux\n"
+" -L, --Linux               do not complain about things irrelevant for Linux\n"
 msgstr ""
 
 #: fdisks/sfdisk.c:2410
@@ -5983,8 +5966,7 @@ msgstr ""
 #: fdisks/sfdisk.c:2422
 msgid ""
 "     --nested              every partition is disjoint from all others\n"
-"     --chained             like nested, but extended partitions may lie "
-"outside\n"
+"     --chained             like nested, but extended partitions may lie outside\n"
 "     --onesector           partitions are mutually disjoint\n"
 msgstr ""
 
@@ -6518,9 +6500,7 @@ msgid "gpt: cannot handle files with mode %o"
 msgstr ""
 
 #: libfdisk/src/gpt.c:1062
-msgid ""
-"WARNING: fdisk GPT support is currently new, and therefore in an "
-"experimental phase. Use at your own discretion."
+msgid "WARNING: fdisk GPT support is currently new, and therefore in an experimental phase. Use at your own discretion."
 msgstr ""
 
 #: libfdisk/src/gpt.c:1349
@@ -6641,9 +6621,7 @@ msgstr "ponovo pročitaj particijsku tablicu"
 
 #: libfdisk/src/gpt.c:1730
 #, c-format
-msgid ""
-"Building a new GPT disklabel (GUID: %08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X"
-"%02X%02X)\n"
+msgid "Building a new GPT disklabel (GUID: %08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X)\n"
 msgstr ""
 
 #: libfdisk/src/parttype.c:85 misc-utils/findmnt.c:626 schedutils/ionice.c:79
@@ -6813,8 +6791,7 @@ msgid "%s is not authorized to change the shell of %s"
 msgstr ""
 
 #: login-utils/chsh.c:152
-msgid ""
-"running UID doesn't match UID of user we're altering, shell change denied"
+msgid "running UID doesn't match UID of user we're altering, shell change denied"
 msgstr ""
 
 #: login-utils/chsh.c:157
@@ -7283,13 +7260,11 @@ msgid " -, -l, --login                  make the shell a login shell\n"
 msgstr ""
 
 #: login-utils/su-common.c:657
-msgid ""
-" -c, --command <command>         pass a single command to the shell with -c\n"
+msgid " -c, --command <command>         pass a single command to the shell with -c\n"
 msgstr ""
 
 #: login-utils/su-common.c:658
-msgid ""
-" --session-command <command>     pass a single command to the shell with -c\n"
+msgid " --session-command <command>     pass a single command to the shell with -c\n"
 msgstr ""
 
 #: login-utils/su-common.c:659
@@ -7297,8 +7272,7 @@ msgid "                                 and do not create a new session\n"
 msgstr ""
 
 #: login-utils/su-common.c:660
-msgid ""
-" -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
+msgid " -f, --fast                      pass -f to the shell (for csh or tcsh)\n"
 msgstr ""
 
 #: login-utils/su-common.c:661
@@ -7316,9 +7290,7 @@ msgid "can't specify more than %d supplemental groups"
 msgstr ""
 
 #: login-utils/su-common.c:821
-msgid ""
-"options --{shell,fast,command,session-command,login} and --user are mutually "
-"exclusive."
+msgid "options --{shell,fast,command,session-command,login} and --user are mutually exclusive."
 msgstr ""
 
 #: login-utils/su-common.c:825
@@ -7408,10 +7380,8 @@ msgstr ""
 #: login-utils/sulogin.c:755
 msgid ""
 " -p, --login-shell        start a login shell\n"
-" -t, --timeout <seconds>  max time to wait for a password (default: no "
-"limit)\n"
-" -e, --force              examine password files directly if getpwnam(3) "
-"fails\n"
+" -t, --timeout <seconds>  max time to wait for a password (default: no limit)\n"
+" -e, --force              examine password files directly if getpwnam(3) fails\n"
 msgstr ""
 
 #: login-utils/sulogin.c:806 misc-utils/findmnt.c:1329 sys-utils/wdctl.c:505
@@ -7789,8 +7759,7 @@ msgid ""
 " -d, --direction <word> direction of search, 'forward' or 'backward'\n"
 " -e, --evaluate         convert tags (LABEL,UUID,PARTUUID,PARTLABEL) \n"
 "                          to device names\n"
-" -F, --tab-file <path>  alternative file for --fstab, --mtab or --kernel "
-"options\n"
+" -F, --tab-file <path>  alternative file for --fstab, --mtab or --kernel options\n"
 " -f, --first-only       print the first found filesystem only\n"
 msgstr ""
 
@@ -7799,8 +7768,7 @@ msgstr ""
 msgid ""
 " -i, --invert           invert the sense of matching\n"
 " -l, --list             use list format output\n"
-" -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo "
-"file)\n"
+" -N, --task <tid>       use alternative namespace (/proc/<tid>/mountinfo file)\n"
 " -n, --noheadings       don't print column headings\n"
 " -u, --notruncate       don't truncate text in columns\n"
 msgstr ""
@@ -7856,9 +7824,7 @@ msgid "--poll accepts only one file, but more specified by --tab-file"
 msgstr ""
 
 #: misc-utils/findmnt.c:1373
-msgid ""
-"options --target and --source can't be used together with command line "
-"element that is not an option"
+msgid "options --target and --source can't be used together with command line element that is not an option"
 msgstr ""
 
 #: misc-utils/findmnt.c:1418
@@ -7892,8 +7858,7 @@ msgid ""
 msgstr ""
 
 #: misc-utils/getopt.c:323
-msgid ""
-" -a, --alternative            Allow long options starting with single -\n"
+msgid " -a, --alternative            Allow long options starting with single -\n"
 msgstr ""
 
 #: misc-utils/getopt.c:324
@@ -7905,8 +7870,7 @@ msgid " -l, --longoptions <longopts> Long options to be recognized\n"
 msgstr ""
 
 #: misc-utils/getopt.c:326
-msgid ""
-" -n, --name <progname>        The name under which errors are reported\n"
+msgid " -n, --name <progname>        The name under which errors are reported\n"
 msgstr ""
 
 #: misc-utils/getopt.c:327
@@ -7971,8 +7935,7 @@ msgstr " %s [opcije] <uređaj>\n"
 
 #: misc-utils/kill.c:463
 msgid ""
-" -a, --all              do not restrict the name-to-pid conversion to "
-"processes\n"
+" -a, --all              do not restrict the name-to-pid conversion to processes\n"
 "                        with the same uid as the present process\n"
 msgstr ""
 
@@ -8305,8 +8268,7 @@ msgid " -D, --discard        print discard capabilities\n"
 msgstr ""
 
 #: misc-utils/lsblk.c:1357
-msgid ""
-" -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
+msgid " -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
 msgstr ""
 
 #: misc-utils/lsblk.c:1358
@@ -9126,8 +9088,7 @@ msgid "mount: warning: %s seems to be mounted read-only.\n"
 msgstr ""
 
 #: mount-deprecated/mount.c:1673
-msgid ""
-"mount: I could not determine the filesystem type, and none was specified"
+msgid "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 
 #: mount-deprecated/mount.c:1676
@@ -9729,9 +9690,7 @@ msgid "invalid priority argument"
 msgstr ""
 
 #: schedutils/chrt.c:305
-msgid ""
-"SCHED_RESET_ON_FORK flag is supported for SCHED_FIFO and SCHED_RR policies "
-"only"
+msgid "SCHED_RESET_ON_FORK flag is supported for SCHED_FIFO and SCHED_RR policies only"
 msgstr ""
 
 #: schedutils/chrt.c:323
@@ -10143,14 +10102,12 @@ msgstr ""
 
 #: sys-utils/cytune.c:98
 #, c-format
-msgid ""
-" -G, --get-glush                    display default flush timeout value\n"
+msgid " -G, --get-glush                    display default flush timeout value\n"
 msgstr ""
 
 #: sys-utils/cytune.c:99
 #, c-format
-msgid ""
-" -T, --set-default-flush <num>      set the default flush timeout to value\n"
+msgid " -T, --set-default-flush <num>      set the default flush timeout to value\n"
 msgstr ""
 
 #: sys-utils/cytune.c:100
@@ -10160,9 +10117,7 @@ msgstr ""
 
 #: sys-utils/cytune.c:101
 #, c-format
-msgid ""
-" -i, --interval <seconds>           gather statistics every <seconds> "
-"interval\n"
+msgid " -i, --interval <seconds>           gather statistics every <seconds> interval\n"
 msgstr ""
 
 #: sys-utils/cytune.c:132
@@ -10175,8 +10130,7 @@ msgstr ""
 #: sys-utils/cytune.c:141
 #, c-format
 msgid ""
-"File %s, For threshold value %lu and timeout value %lu, Maximum characters "
-"in fifo were %d,\n"
+"File %s, For threshold value %lu and timeout value %lu, Maximum characters in fifo were %d,\n"
 "and the maximum transfer rate in characters/second was %f"
 msgstr ""
 
@@ -10201,8 +10155,7 @@ msgstr ""
 
 #: sys-utils/cytune.c:247
 #, c-format
-msgid ""
-"%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgid "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 msgstr ""
 
 #: sys-utils/cytune.c:253
@@ -10212,8 +10165,7 @@ msgstr ""
 
 #: sys-utils/cytune.c:256
 #, c-format
-msgid ""
-"%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgid "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 msgstr ""
 
 #: sys-utils/cytune.c:261
@@ -10383,9 +10335,7 @@ msgid " -d, --show-delta            show time delta between printed messages\n"
 msgstr ""
 
 #: sys-utils/dmesg.c:233
-msgid ""
-" -e, --reltime               show local time and time delta in readable "
-"format\n"
+msgid " -e, --reltime               show local time and time delta in readable format\n"
 msgstr ""
 
 #: sys-utils/dmesg.c:234
@@ -10393,8 +10343,7 @@ msgid " -E, --console-on            enable printing messages to console\n"
 msgstr ""
 
 #: sys-utils/dmesg.c:235
-msgid ""
-" -F, --file <file>           use the file instead of the kernel log buffer\n"
+msgid " -F, --file <file>           use the file instead of the kernel log buffer\n"
 msgstr ""
 
 #: sys-utils/dmesg.c:236
@@ -10430,13 +10379,11 @@ msgid " -r, --raw                   print the raw message buffer\n"
 msgstr ""
 
 #: sys-utils/dmesg.c:244
-msgid ""
-" -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"
+msgid " -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"
 msgstr ""
 
 #: sys-utils/dmesg.c:245
-msgid ""
-" -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"
+msgid " -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"
 msgstr ""
 
 #: sys-utils/dmesg.c:246
@@ -10458,8 +10405,7 @@ msgid " -w, --follow                wait for new messages\n"
 msgstr ""
 
 #: sys-utils/dmesg.c:251
-msgid ""
-" -x, --decode                decode facility and level to readable string\n"
+msgid " -x, --decode                decode facility and level to readable string\n"
 msgstr ""
 
 #: sys-utils/dmesg.c:255
@@ -10512,9 +10458,7 @@ msgid "invalid buffer size argument"
 msgstr ""
 
 #: sys-utils/dmesg.c:1308
-msgid ""
-"--raw can't be used together with level, facility, decode, delta, ctime or "
-"notime options"
+msgid "--raw can't be used together with level, facility, decode, delta, ctime or notime options"
 msgstr ""
 
 #: sys-utils/dmesg.c:1312
@@ -10925,18 +10869,15 @@ msgid " -w  --timeout <secs>     wait for a limited amount of time\n"
 msgstr ""
 
 #: sys-utils/flock.c:62
-msgid ""
-" -E  --conflict-exit-code <number>  exit code after conflict or timeout\n"
+msgid " -E  --conflict-exit-code <number>  exit code after conflict or timeout\n"
 msgstr ""
 
 #: sys-utils/flock.c:63
-msgid ""
-" -o  --close              close file descriptor before running command\n"
+msgid " -o  --close              close file descriptor before running command\n"
 msgstr ""
 
 #: sys-utils/flock.c:64
-msgid ""
-" -c  --command <command>  run a single command string through the shell\n"
+msgid " -c  --command <command>  run a single command string through the shell\n"
 msgstr ""
 
 #: sys-utils/flock.c:97
@@ -11130,9 +11071,7 @@ msgid ""
 msgstr ""
 
 #: sys-utils/hwclock.c:583
-msgid ""
-"The Hardware Clock registers contain values that are either invalid (e.g. "
-"50th day of month) or beyond the range we can handle (e.g. Year 2095)."
+msgid "The Hardware Clock registers contain values that are either invalid (e.g. 50th day of month) or beyond the range we can handle (e.g. Year 2095)."
 msgstr ""
 
 #: sys-utils/hwclock.c:593
@@ -11181,8 +11120,7 @@ msgstr ""
 #: sys-utils/hwclock.c:670
 #, c-format
 msgid ""
-"The date command issued by %s returned something other than an integer where "
-"the converted time value was expected.\n"
+"The date command issued by %s returned something other than an integer where the converted time value was expected.\n"
 "The command was:\n"
 "  %s\n"
 "The response was:\n"
@@ -11195,9 +11133,7 @@ msgid "date string %s equates to %ld seconds since 1969.\n"
 msgstr ""
 
 #: sys-utils/hwclock.c:714
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot set the "
-"System Time from it."
+msgid "The Hardware Clock does not contain a valid time, so we cannot set the System Time from it."
 msgstr ""
 
 #: sys-utils/hwclock.c:736 sys-utils/hwclock.c:816
@@ -11240,9 +11176,7 @@ msgstr ""
 
 #: sys-utils/hwclock.c:880
 #, c-format
-msgid ""
-"Not adjusting drift factor because the Hardware Clock previously contained "
-"garbage.\n"
+msgid "Not adjusting drift factor because the Hardware Clock previously contained garbage.\n"
 msgstr ""
 
 #: sys-utils/hwclock.c:885
@@ -11254,16 +11188,13 @@ msgstr ""
 
 #: sys-utils/hwclock.c:891
 #, c-format
-msgid ""
-"Not adjusting drift factor because it has been less than a day since the "
-"last calibration.\n"
+msgid "Not adjusting drift factor because it has been less than a day since the last calibration.\n"
 msgstr ""
 
 #: sys-utils/hwclock.c:939
 #, c-format
 msgid ""
-"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
-"of %f seconds/day.\n"
+"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
 
@@ -11291,9 +11222,7 @@ msgstr ""
 
 #: sys-utils/hwclock.c:1027
 #, c-format
-msgid ""
-"Could not open file with the clock adjustment parameters in it (%s) for "
-"writing"
+msgid "Could not open file with the clock adjustment parameters in it (%s) for writing"
 msgstr ""
 
 #: sys-utils/hwclock.c:1033 sys-utils/hwclock.c:1040
@@ -11306,14 +11235,12 @@ msgid "Drift adjustment parameters not updated."
 msgstr ""
 
 #: sys-utils/hwclock.c:1087
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot adjust it."
+msgid "The Hardware Clock does not contain a valid time, so we cannot adjust it."
 msgstr ""
 
 #: sys-utils/hwclock.c:1096
 #, c-format
-msgid ""
-"Not setting clock because last adjustment time is zero, so history is bad."
+msgid "Not setting clock because last adjustment time is zero, so history is bad."
 msgstr ""
 
 #: sys-utils/hwclock.c:1118
@@ -11338,14 +11265,12 @@ msgstr ""
 
 #: sys-utils/hwclock.c:1293
 #, c-format
-msgid ""
-"At %ld seconds after 1969, RTC is predicted to read %ld seconds after 1969.\n"
+msgid "At %ld seconds after 1969, RTC is predicted to read %ld seconds after 1969.\n"
 msgstr ""
 
 #: sys-utils/hwclock.c:1322
 msgid ""
-"The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
-"machine.\n"
+"The kernel keeps an epoch value for the Hardware Clock only on an Alpha machine.\n"
 "This copy of hwclock was built for a machine other than Alpha\n"
 "(and thus is presumably not running on an Alpha now).  No action taken."
 msgstr ""
@@ -11360,9 +11285,7 @@ msgid "Kernel is assuming an epoch value of %lu\n"
 msgstr ""
 
 #: sys-utils/hwclock.c:1346
-msgid ""
-"To set the epoch value, you must use the 'epoch' option to tell to what "
-"value to set it."
+msgid "To set the epoch value, you must use the 'epoch' option to tell to what value to set it."
 msgstr ""
 
 #: sys-utils/hwclock.c:1350
@@ -11402,9 +11325,7 @@ msgid ""
 msgstr ""
 
 #: sys-utils/hwclock.c:1454
-msgid ""
-" -c, --compare        periodically compare the system clock with the CMOS "
-"clock\n"
+msgid " -c, --compare        periodically compare the system clock with the CMOS clock\n"
 msgstr ""
 
 #: sys-utils/hwclock.c:1456
@@ -11493,8 +11414,7 @@ msgid "Sorry, only the superuser can change the System Clock."
 msgstr ""
 
 #: sys-utils/hwclock.c:1788
-msgid ""
-"Sorry, only the superuser can change the Hardware Clock epoch in the kernel."
+msgid "Sorry, only the superuser can change the Hardware Clock epoch in the kernel."
 msgstr ""
 
 #: sys-utils/hwclock.c:1811
@@ -11502,8 +11422,7 @@ msgid "Cannot access the Hardware Clock via any known method."
 msgstr ""
 
 #: sys-utils/hwclock.c:1814
-msgid ""
-"Use the --debug option to see the details of our search for an access method."
+msgid "Use the --debug option to see the details of our search for an access method."
 msgstr ""
 
 #: sys-utils/hwclock-cmos.c:217
@@ -11649,10 +11568,7 @@ msgstr ""
 
 #: sys-utils/hwclock-rtc.c:430 sys-utils/hwclock-rtc.c:477
 #, c-format
-msgid ""
-"To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
-"device driver via the device special file %s.  This file does not exist on "
-"this system."
+msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file %s.  This file does not exist on this system."
 msgstr ""
 
 #: sys-utils/hwclock-rtc.c:442
@@ -11690,8 +11606,7 @@ msgid " -M, --shmem <size>       create shared memory segment of size <size>\n"
 msgstr ""
 
 #: sys-utils/ipcmk.c:70
-msgid ""
-" -S, --semaphore <nsems>  create semaphore array with <nsems> elements\n"
+msgid " -S, --semaphore <nsems>  create semaphore array with <nsems> elements\n"
 msgstr ""
 
 #: sys-utils/ipcmk.c:71
@@ -11699,8 +11614,7 @@ msgid " -Q, --queue              create message queue\n"
 msgstr ""
 
 #: sys-utils/ipcmk.c:72
-msgid ""
-" -p, --mode <mode>        permission for the resource (default is 0644)\n"
+msgid " -p, --mode <mode>        permission for the resource (default is 0644)\n"
 msgstr ""
 
 #: sys-utils/ipcmk.c:106 sys-utils/losetup.c:518
@@ -12585,8 +12499,7 @@ msgid " -O, --output <cols>           specify columns to output for --list\n"
 msgstr ""
 
 #: sys-utils/losetup.c:359
-msgid ""
-"     --sizelimit <num>         device limited to <num> bytes of the file\n"
+msgid "     --sizelimit <num>         device limited to <num> bytes of the file\n"
 msgstr ""
 
 #: sys-utils/losetup.c:360
@@ -12598,8 +12511,7 @@ msgid " -r, --read-only               setup read-only loop device\n"
 msgstr ""
 
 #: sys-utils/losetup.c:362
-msgid ""
-"     --show                    print device name after setup (with -f)\n"
+msgid "     --show                    print device name after setup (with -f)\n"
 msgstr ""
 
 #: sys-utils/losetup.c:363
@@ -12614,16 +12526,12 @@ msgstr ""
 
 #: sys-utils/losetup.c:389
 #, c-format
-msgid ""
-"%s: warning: file smaller than 512 bytes, the loop device maybe be useless "
-"or invisible for system tools."
+msgid "%s: warning: file smaller than 512 bytes, the loop device maybe be useless or invisible for system tools."
 msgstr ""
 
 #: sys-utils/losetup.c:393
 #, c-format
-msgid ""
-"%s: warning: file does not fit into a 512-byte sector the end of the file "
-"will be ignored."
+msgid "%s: warning: file does not fit into a 512-byte sector the end of the file will be ignored."
 msgstr ""
 
 #: sys-utils/losetup.c:462 sys-utils/losetup.c:471 sys-utils/losetup.c:562
@@ -12874,9 +12782,7 @@ msgid "NUMA node%d CPU(s):"
 msgstr ""
 
 #: sys-utils/lscpu.c:1259
-msgid ""
-" -a, --all               print both online and offline CPUs (default for -"
-"e)\n"
+msgid " -a, --all               print both online and offline CPUs (default for -e)\n"
 msgstr ""
 
 #: sys-utils/lscpu.c:1260
@@ -12900,8 +12806,7 @@ msgid " -s, --sysroot <dir>     use specified directory as system root\n"
 msgstr ""
 
 #: sys-utils/lscpu.c:1265
-msgid ""
-" -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
+msgid " -x, --hex               print hexadecimal masks rather than lists of CPUs\n"
 msgstr ""
 
 #: sys-utils/lscpu.c:1275
@@ -12913,9 +12818,7 @@ msgstr ""
 
 #: sys-utils/lscpu.c:1363
 #, c-format
-msgid ""
-"%s: options --all, --online and --offline may only be used with options --"
-"extended or --parse.\n"
+msgid "%s: options --all, --online and --offline may only be used with options --extended or --parse.\n"
 msgstr ""
 
 #: sys-utils/mount.c:66 sys-utils/umount.c:115
@@ -13765,8 +13668,7 @@ msgid "%d (%s) old priority %d, new priority %d\n"
 msgstr ""
 
 #: sys-utils/rtcwake.c:75
-msgid ""
-" -a, --auto               reads the clock mode from adjust file (default)\n"
+msgid " -a, --auto               reads the clock mode from adjust file (default)\n"
 msgstr ""
 
 #: sys-utils/rtcwake.c:77
@@ -13965,14 +13867,11 @@ msgid " -v, --verbose            says what options are being switched on\n"
 msgstr ""
 
 #: sys-utils/setarch.c:100
-msgid ""
-" -R, --addr-no-randomize  disables randomization of the virtual address "
-"space\n"
+msgid " -R, --addr-no-randomize  disables randomization of the virtual address space\n"
 msgstr ""
 
 #: sys-utils/setarch.c:101
-msgid ""
-" -F, --fdpic-funcptrs     makes function pointers point to descriptors\n"
+msgid " -F, --fdpic-funcptrs     makes function pointers point to descriptors\n"
 msgstr ""
 
 #: sys-utils/setarch.c:102
@@ -14004,9 +13903,7 @@ msgid " -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
 msgstr ""
 
 #: sys-utils/setarch.c:109
-msgid ""
-" -3, --3gb                limits the used address space to a maximum of 3 "
-"GB\n"
+msgid " -3, --3gb                limits the used address space to a maximum of 3 GB\n"
 msgstr ""
 
 #: sys-utils/setarch.c:110
@@ -14048,8 +13945,7 @@ msgid "Failed to set personality to %s"
 msgstr ""
 
 #: sys-utils/setpriv.c:93
-msgid ""
-" -d, --dump               show current state (and do not exec anything)\n"
+msgid " -d, --dump               show current state (and do not exec anything)\n"
 msgstr ""
 
 #: sys-utils/setpriv.c:94
@@ -14105,13 +14001,11 @@ msgid " --securebits <bits>      set securebits\n"
 msgstr ""
 
 #: sys-utils/setpriv.c:107
-msgid ""
-" --selinux-label <label>  set SELinux label (requires process:transition)\n"
+msgid " --selinux-label <label>  set SELinux label (requires process:transition)\n"
 msgstr ""
 
 #: sys-utils/setpriv.c:108
-msgid ""
-" --apparmor-profile <pr>  set AppArmor profile (requires onexec permission)\n"
+msgid " --apparmor-profile <pr>  set AppArmor profile (requires onexec permission)\n"
 msgstr ""
 
 #: sys-utils/setpriv.c:113
@@ -14567,8 +14461,7 @@ msgstr ""
 
 #: sys-utils/swapon.c:516
 #, c-format
-msgid ""
-"%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
+msgid "%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
 msgstr ""
 
 #: sys-utils/swapon.c:525
@@ -14704,8 +14597,7 @@ msgid " -t, --time <ms>              driver wait time in milliseconds\n"
 msgstr ""
 
 #: sys-utils/tunelp.c:85
-msgid ""
-" -c, --chars <num>            number of output characters before sleep\n"
+msgid " -c, --chars <num>            number of output characters before sleep\n"
 msgstr ""
 
 #: sys-utils/tunelp.c:86
@@ -14827,8 +14719,7 @@ msgid " -c, --no-canonicalize   don't canonicalize paths\n"
 msgstr ""
 
 #: sys-utils/umount.c:86
-msgid ""
-" -d, --detach-loop       if mounted loop device, also free this loop device\n"
+msgid " -d, --detach-loop       if mounted loop device, also free this loop device\n"
 msgstr ""
 
 #: sys-utils/umount.c:87
@@ -14836,9 +14727,7 @@ msgid "     --fake              dry run; skip the umount(2) syscall\n"
 msgstr ""
 
 #: sys-utils/umount.c:88
-msgid ""
-" -f, --force             force unmount (in case of an unreachable NFS "
-"system)\n"
+msgid " -f, --force             force unmount (in case of an unreachable NFS system)\n"
 msgstr ""
 
 #: sys-utils/umount.c:89
@@ -14850,8 +14739,7 @@ msgid " -n, --no-mtab           don't write to /etc/mtab\n"
 msgstr ""
 
 #: sys-utils/umount.c:91
-msgid ""
-" -l, --lazy              detach the filesystem now, and cleanup all later\n"
+msgid " -l, --lazy              detach the filesystem now, and cleanup all later\n"
 msgstr ""
 
 #: sys-utils/umount.c:92
@@ -14859,13 +14747,11 @@ msgid " -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"
 msgstr ""
 
 #: sys-utils/umount.c:93
-msgid ""
-" -R, --recursive         recursively unmount a target with all its children\n"
+msgid " -R, --recursive         recursively unmount a target with all its children\n"
 msgstr ""
 
 #: sys-utils/umount.c:94
-msgid ""
-" -r, --read-only         In case unmounting fails, try to remount read-only\n"
+msgid " -r, --read-only         In case unmounting fails, try to remount read-only\n"
 msgstr ""
 
 #: sys-utils/umount.c:95
@@ -15609,13 +15495,11 @@ msgid " -background <default|black|blue|cyan|green|magenta|red|white|yellow>\n"
 msgstr ""
 
 #: term-utils/setterm.c:691 term-utils/setterm.c:692
-msgid ""
-" -ulcolor <black|blue|bright|cyan|green|grey|magenta|red|white|yellow>\n"
+msgid " -ulcolor <black|blue|bright|cyan|green|grey|magenta|red|white|yellow>\n"
 msgstr ""
 
 #: term-utils/setterm.c:693 term-utils/setterm.c:694
-msgid ""
-" -hbcolor <black|blue|bright|cyan|green|grey|magenta|red|white|yellow>\n"
+msgid " -hbcolor <black|blue|bright|cyan|green|grey|magenta|red|white|yellow>\n"
 msgstr ""
 
 #: term-utils/setterm.c:695
@@ -16006,9 +15890,7 @@ msgid " -o, --output-separator <string>\n"
 msgstr ""
 
 #: text-utils/column.c:98
-msgid ""
-"                          table output column separator, default is two "
-"spaces\n"
+msgid "                          table output column separator, default is two spaces\n"
 msgstr ""
 
 #: text-utils/column.c:99
@@ -16029,8 +15911,7 @@ msgid "all input file arguments failed"
 msgstr ""
 
 #: text-utils/hexdump.c:66
-msgid ""
-"calling hexdump as od has been deprecated in favour to GNU coreutils od."
+msgid "calling hexdump as od has been deprecated in favour to GNU coreutils od."
 msgstr ""
 
 #: text-utils/hexsyntax.c:123
@@ -16158,8 +16039,7 @@ msgstr ""
 #: text-utils/more.c:1360
 msgid ""
 "\n"
-"Most commands optionally preceded by integer argument k.  Defaults in "
-"brackets.\n"
+"Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
 
@@ -16297,8 +16177,7 @@ msgid ""
 "  n                       go to next file\n"
 "\n"
 "Many commands accept preceding numbers, for example:\n"
-"+1<newline> (next page); -1<newline> (previous page); 1<newline> (first "
-"page).\n"
+"+1<newline> (next page); -1<newline> (previous page); 1<newline> (first page).\n"
 "\n"
 "See pg(1) for more information.\n"
 "-------------------------------------------------------\n"
@@ -16513,8 +16392,7 @@ msgid " -t, -T, --terminal TERMINAL  override the TERM environment variable\n"
 msgstr ""
 
 #: text-utils/ul.c:140
-msgid ""
-" -i, --indicated              underlining is indicated via a separate line\n"
+msgid " -i, --indicated              underlining is indicated via a separate line\n"
 msgstr ""
 
 #: text-utils/ul.c:211
