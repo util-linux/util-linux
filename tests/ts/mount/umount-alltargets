@@ -9,6 +9,9 @@ TS_DESC="umount-all-targets"
 ts_init "$*"
 ts_skip_nonroot
 
+$TS_CMD_UMOUNT --help | grep -q all-targets
+[ $? -eq 1 ] && ts_skip "all-targets unsupported"
+
 DEVICE=$(ts_scsi_debug_init dev_size_mb=50)
 
 ts_log "Create partitions"
