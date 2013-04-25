@@ -34,7 +34,6 @@ void die(int err, const char *fmt, ...)
 
 int matching_type (const char *type, const char *types);
 int matching_opts (const char *options, const char *test_opts);
-char *xstrndup (const char *s, int n);
 char *xstrconcat3 (char *, const char *, const char *);
 char *xstrconcat4 (char *, const char *, const char *, const char *);
 

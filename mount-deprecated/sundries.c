@@ -22,20 +22,6 @@ int verbose;
 int nocanonicalize;
 char *progname;
 
-char *
-xstrndup (const char *s, int n) {
-     char *t;
-
-     if (s == NULL)
-	  die (EX_SOFTWARE, _("bug in xstrndup call"));
-
-     t = xmalloc(n+1);
-     strncpy(t,s,n);
-     t[n] = 0;
-
-     return t;
-}
-
 /* reallocates its first arg - typical use: s = xstrconcat3(s,t,u); */
 char *
 xstrconcat3 (char *s, const char *t, const char *u) {
