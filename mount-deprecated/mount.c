@@ -1310,11 +1310,15 @@ loop_check(const char **spec, const char **type, int *flags,
         return EX_FAIL;
       }
 
-      loopcxt_init(&lc, 0);
-      /*loopcxt_enable_debug(&lc, 1);*/
+      if (loopcxt_init(&lc, 0) < 0) {
+	error(_("mount: tailed to initialize loopdev context"));
+	return EX_FAIL;
+      }
 
-      if (*loopdev && **loopdev)
-	loopcxt_set_device(&lc, *loopdev);	/* use loop=<devname> */
+      if (*loopdev && **loopdev && loopcxt_set_device(&lc, *loopdev) < 0) {
+	error(_("mount: failed to use %s device"), *loopdev);
+	return EX_FAIL;
+      }
 
       do {
 	int rc;
