@@ -1,3 +1,7 @@
+util-linux 2.23: Apr 25 2013
+* see Documentation/releases/v2.23-ReleaseNotes or complete changelog at
+  ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.23/v2.23-ChangeLog
+
 util-linux 2.23-rc2: Apr 10 2013
 * see Documentation/releases/v2.23-ReleaseNotes or complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.23/v2.23-rc2-ChangeLog
