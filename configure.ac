@@ -1216,7 +1216,7 @@ fi
 
 AC_ARG_ENABLE([login],
   AS_HELP_STRING([--disable-login], [do not build login]),
-  [], enable_login=yes
+  [], enable_login=check
 )
 UL_BUILD_INIT([login])
 UL_REQUIRES_HAVE([login], [security_pam_misc_h], [PAM header file])
@@ -1251,7 +1251,7 @@ AM_CONDITIONAL(BUILD_SULOGIN, test "x$build_sulogin" = xyes)
 
 AC_ARG_ENABLE([su],
   AS_HELP_STRING([--disable-su], [do not build su]),
-  [], enable_su=yes
+  [], enable_su=check
 )
 UL_BUILD_INIT([su])
 UL_REQUIRES_HAVE([su], [security_pam_misc_h], [PAM header file])
@@ -1260,7 +1260,7 @@ AM_CONDITIONAL(BUILD_SU, test "x$build_su" = xyes)
 
 AC_ARG_ENABLE([runuser],
   AS_HELP_STRING([--disable-runuser], [do not build runuser]),
-  [], enable_runuser=yes
+  [], enable_runuser=check
 )
 UL_BUILD_INIT([runuser])
 UL_REQUIRES_HAVE([runuser], [security_pam_misc_h], [PAM header file])
