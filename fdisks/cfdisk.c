@@ -405,12 +405,12 @@ partition_type_text(int i) {
 static void
 fdexit(int ret) {
     if (opened) {
-	if (changed)
+	if (changed) {
 	    if (close_fd(fd) != 0) {
 		fprintf(stderr, _("write failed\n"));
 		exit(2);
 	    }
-	else
+	} else
 	    close(fd);
     }
     if (changed) {
