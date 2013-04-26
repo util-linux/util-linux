@@ -24,13 +24,10 @@ agetty_LDADD = $(LDADD) libcommon.la
 endif # BUILD_AGETTY
 
 
-# TODO: add BUILD_SETTERM to configure.am
-if HAVE_NCURSES
-if LINUX
+if BUILD_SETTERM
 usrbin_exec_PROGRAMS += setterm
 dist_man_MANS += term-utils/setterm.1
 setterm_SOURCES = term-utils/setterm.c
-endif
 if HAVE_TINFO
 setterm_LDADD = $(LDADD) -ltinfo
 else

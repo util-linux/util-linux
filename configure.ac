@@ -1294,6 +1294,16 @@ UL_REQUIRES_HAVE([pg], [ncurses], [ncurses or ncursesw library])
 AM_CONDITIONAL(BUILD_PG, test "x$build_pg" = xyes)
 
 
+AC_ARG_ENABLE([setterm],
+  AS_HELP_STRING([--disable-setterm], [do not build setterm]),
+  [], enable_setterm=check
+)
+UL_BUILD_INIT([setterm])
+UL_REQUIRES_LINUX([setterm])
+UL_REQUIRES_HAVE([setterm], [ncurses], [ncurses library])
+AM_CONDITIONAL(BUILD_SETTERM, test "x$build_setterm" = xyes)
+
+
 AC_ARG_ENABLE([schedutils],
   AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, teskset]),
   [], enable_schedutils=yes
