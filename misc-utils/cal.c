@@ -73,69 +73,66 @@
 #include "strutils.h"
 
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
+# ifdef HAVE_NCURSES_H
+#  include <ncurses.h>
+# elif defined(HAVE_NCURSES_NCURSES_H)
+#  include <ncurses/ncurses.h>
+# endif
+# include <term.h>
 
-#ifdef HAVE_NCURSES_H
-#include <ncurses.h>
-#elif defined(HAVE_NCURSES_NCURSES_H)
-#include <ncurses/ncurses.h>
-#endif
-
-#include <term.h>                       /* include after <curses.h> */
-
-static void
-my_setupterm(const char *term, int fildes, int *errret) {
-    setupterm((char*)term, fildes, errret);
+static void my_setupterm(const char *term, int fildes, int *errret)
+{
+	setupterm((char *)term, fildes, errret);
 }
 
-static void
-my_putstring(char *s) {
-     putp(s);
+static void my_putstring(char *s)
+{
+	putp(s);
 }
 
-static const char *
-my_tgetstr(char *s __attribute__ ((__unused__)), char *ss) {
-    const char* ret = tigetstr(ss);
-    if (!ret || ret==(char*)-1)
-	return "";
-    else
-	return ret;
+static const char *my_tgetstr(char *s __attribute__((__unused__)), char *ss)
+{
+	const char *ret = tigetstr(ss);
+	if (!ret || ret == (char *)-1)
+		return "";
+	else
+		return ret;
 }
 
 #elif defined(HAVE_LIBTERMCAP)
-
-#include <termcap.h>
+# include <termcap.h>
 
 char termbuffer[4096];
 char tcbuffer[4096];
 char *strbuf = termbuffer;
 
-static void
-my_setupterm(const char *term, int fildes, int *errret) {
-    *errret = tgetent(tcbuffer, term);
+static void my_setupterm(const char *term, int fildes, int *errret)
+{
+	*errret = tgetent(tcbuffer, term);
 }
 
-static void
-my_putstring(char *s) {
-     tputs (s, 1, putchar);
+static void my_putstring(char *s)
+{
+	tputs(s, 1, putchar);
 }
 
-static const char *
-my_tgetstr(char *s, char *ss __attribute__ ((__unused__))) {
-    const char* ret = tgetstr(s, &strbuf);
-    if (!ret)
-	return "";
-    else
-	return ret;
+static const char *my_tgetstr(char *s, char *ss __attribute__((__unused__)))
+{
+	const char *ret = tgetstr(s, &strbuf);
+	if (!ret)
+		return "";
+	else
+		return ret;
 }
 
-#else /* ! (HAVE_LIBTERMCAP || HAVE_LIBNCURSES || HAVE_LIBNCURSESW) */
+#else	/* ! (HAVE_LIBTERMCAP || HAVE_LIBNCURSES || HAVE_LIBNCURSESW) */
 
-static void
-my_putstring(char *s) {
-     fputs(s, stdout);
+static void my_putstring(char *s)
+{
+	fputs(s, stdout);
 }
 
-#endif
+#endif	/* end of LIBTERMCAP / NCURSES */
 
 
 const char	*term="";
