@@ -437,9 +437,6 @@ void headers_init(void)
 	int i, wd;
 	char *cur_dh = day_headings, *cur_j_dh = j_day_headings;
 
-	strcpy(day_headings, "");
-	strcpy(j_day_headings, "");
-
 	for (i = 0; i < DAYS_IN_WEEK; i++) {
 		ssize_t space_left;
 		wd = (i + weekstart) % DAYS_IN_WEEK;
@@ -584,8 +581,6 @@ j_yearly(int day, int year) {
 
 	for (i = 0; i < MONTHS_IN_YEAR; i++)
 		day_array(day, i + 1, year, days[i]);
-	memset(lineout, ' ', sizeof(lineout) - 1);
-	lineout[sizeof(lineout) - 1] = '\0';
 	for (month = 0; month < MONTHS_IN_YEAR; month += 2) {
 		center(full_month[month], J_WEEK_LEN-1, J_HEAD_SEP+1);
 		center(full_month[month + 1], J_WEEK_LEN-1, 0);
@@ -622,8 +617,6 @@ yearly(int day, int year) {
 
 	for (i = 0; i < MONTHS_IN_YEAR; i++)
 		day_array(day, i + 1, year, days[i]);
-	memset(lineout, ' ', sizeof(lineout) - 1);
-	lineout[sizeof(lineout) - 1] = '\0';
 	for (month = 0; month < MONTHS_IN_YEAR; month += 3) {
 		center(full_month[month], WEEK_LEN-1, HEAD_SEP+1);
 		center(full_month[month + 1], WEEK_LEN-1, HEAD_SEP+1);
