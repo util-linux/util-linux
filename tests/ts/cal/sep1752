@@ -1,0 +1,95 @@
+#!/bin/bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="September 1752"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+
+set -o pipefail
+
+USETERM=$( ts_has_option "useterm" "$*" )
+MYMONTH="09 1752"
+MYYEAR="1752"
+
+[ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
+ts_log ""
+
+
+ts_log "Gregorian - Monday-based month"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -1m
+fi
+$TS_CMD_CAL -1m $MYMONTH >> $TS_OUTPUT
+ts_log "Gregorian - Sunday-based month"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -1s $MYMONTH
+fi
+$TS_CMD_CAL -1s $MYMONTH >> $TS_OUTPUT
+ts_log "Julian - Monday-based month"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -1mj $MYMONTH
+fi
+$TS_CMD_CAL -1mj $MYMONTH >> $TS_OUTPUT
+ts_log "Julian - Sunday-based month"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -1sj $MYMONTH
+fi
+$TS_CMD_CAL -1sj $MYMONTH >> $TS_OUTPUT
+
+
+ts_log "Gregorian - Monday-based three months"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -3m
+fi
+$TS_CMD_CAL -3m $MYMONTH >> $TS_OUTPUT
+ts_log "Gregorian - Sunday-based three months"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -3s $MYMONTH
+fi
+$TS_CMD_CAL -3s $MYMONTH >> $TS_OUTPUT
+ts_log "Julian - Monday-based three months"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -3mj $MYMONTH
+fi
+$TS_CMD_CAL -3mj $MYMONTH >> $TS_OUTPUT
+ts_log "Julian - Sunday-based three months"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -3sj $MYMONTH
+fi
+$TS_CMD_CAL -3sj $MYMONTH >> $TS_OUTPUT
+
+
+ts_log "Gregorian - Monday-based year"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -1m $MYYEAR
+fi
+$TS_CMD_CAL -1m $MYYEAR >> $TS_OUTPUT
+ts_log "Gregorian - Sunday-based year"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -1s $MYYEAR
+fi
+$TS_CMD_CAL -1s $MYYEAR >> $TS_OUTPUT
+ts_log "Julian - Monday-based year"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -1mj $MYYEAR
+fi
+$TS_CMD_CAL -1mj $MYYEAR >> $TS_OUTPUT
+ts_log "Julian - Sunday-based year"
+if [ "$USETERM" == "yes" ]; then
+	$TS_CMD_CAL -1sj $MYYEAR
+fi
+
+ts_finalize
