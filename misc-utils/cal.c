@@ -200,27 +200,16 @@ static int days_in_month[2][13] = {
 	{0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
 };
 
-#define SEP1752_OFS		4		/* sep1752[4] is a Sunday */
-
-/* 1 Sep 1752 is represented by sep1752[6] and j_sep1752[6] */
-int sep1752[MAXDAYS+6] = {
-				SPACE,	SPACE,	SPACE,	SPACE,
+/* September 1752 is special, and has static assignments for both date
+ * and Julian representations.  */
+ int d_sep1752[MAXDAYS / 2] = {
 	SPACE,	SPACE,	1,	2,	14,	15,	16,
 	17,	18,	19,	20,	21,	22,	23,
-	24,	25,	26,	27,	28,	29,	30,
-	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE,	SPACE
-}, j_sep1752[MAXDAYS+6] = {
-				SPACE,	SPACE,	SPACE,	SPACE,
+	24,	25,	26,	27,	28,	29,	30
+}, j_sep1752[MAXDAYS / 2] = {
 	SPACE,	SPACE,	245,	246,	258,	259,	260,
 	261,	262,	263,	264,	265,	266,	267,
-	268,	269,	270,	271,	272,	273,	274,
-	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE,	SPACE
+	268,	269,	270,	271,	272,	273,	274
 }, empty[MAXDAYS] = {
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
@@ -670,18 +659,18 @@ yearly(int day, int year) {
 void
 day_array(int day, int month, int year, int *days) {
 	int julday, daynum, dw, dm;
-	int *d_sep1752;
+	int *sep1752;
 
-	if (month == REFORMATION_MONTH && year == REFORMATION_YEAR) {
-		int sep1752_ofs = (weekstart + SEP1752_OFS) % 7;
-		d_sep1752 = julian ? j_sep1752 : sep1752;
-		memcpy(days, d_sep1752 + sep1752_ofs, MAXDAYS * sizeof(int));
-		for (dm=0; dm<MAXDAYS; dm++)
-			if (j_sep1752[dm + sep1752_ofs] == day)
+	memcpy(days, empty, MAXDAYS * sizeof(int));
+	if (year == REFORMATION_YEAR && month == REFORMATION_MONTH) {
+		sep1752 = julian ? j_sep1752 : d_sep1752;
+		memcpy(days, sep1752 + weekstart,
+		       ((MAXDAYS / 2) - weekstart) * sizeof(int));
+		for (dm = 0; dm < MAXDAYS / 2; dm++)
+			if (j_sep1752[dm] == day)
 				days[dm] |= TODAY_FLAG;
 		return;
 	}
-	memcpy(days, empty, MAXDAYS * sizeof(int));
 	dm = days_in_month[leap_year(year)][month];
 	dw = (day_in_week(1, month, year) - weekstart + DAYS_IN_WEEK) % DAYS_IN_WEEK;
 	julday = day_in_year(1, month, year);
