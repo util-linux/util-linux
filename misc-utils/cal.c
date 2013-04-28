@@ -246,7 +246,6 @@ void yearly(int, int, int);
 void do_monthly(int, int, int, struct fmt_st*);
 void monthly(int, int, int);
 void monthly3(int, int, int);
-void trim_trailing_spaces(char *);
 static void __attribute__ ((__noreturn__)) usage(FILE * out);
 void headers_init(int);
 
@@ -496,7 +495,6 @@ do_monthly(int day, int month, int year, struct fmt_st *out) {
 			p = ascii_day(p, xd);
 		}
 		*p = '\0';
-		trim_trailing_spaces(lineout);
 		snprintf(out->s[row+2], FMT_ST_CHARS, "%s", lineout);
 		if (has_hl)
 			Hrow = out->s[row+2];
@@ -561,7 +559,7 @@ monthly3(int day, int month, int year) {
 		w2 += (out_curm.s[i] == Hrow ? Slen : 0);
 		w3 += (out_next.s[i] == Hrow ? Slen : 0);
 #endif
-		snprintf(lineout, sizeof(lineout), "%-*s  %-*s  %-*s\n",
+		snprintf(lineout, sizeof(lineout), "%-*s %-*s %-*s\n",
 		       w1, out_prev.s[i],
 		       w2, out_curm.s[i],
 		       w3, out_next.s[i]);
@@ -620,7 +618,6 @@ yearly(int day, int year, int julian) {
 				p += sprintf(p, "  ");
 			}
 			*p = '\0';
-			trim_trailing_spaces(lineout);
 			my_putstring(lineout);
 			my_putstring("\n");
 		}
@@ -744,20 +741,6 @@ ascii_day(char *p, int day) {
 		p += sprintf(p, "%s", Sexit);
 	*p++ = ' ';
 	return p;
-}
-
-void
-trim_trailing_spaces(char *s)
-{
-	char *p;
-
-	for (p = s; *p; ++p)
-		continue;
-	while (p > s && isspace(*--p))
-		continue;
-	if (p > s)
-		++p;
-	*p = '\0';
 }
 
 /*
