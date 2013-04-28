@@ -236,18 +236,18 @@ int julian;
 static int leap_year(int year);
 static int centuries_since_1700(int year, int centuries);
 static int leap_years_since_year_1(int year);
-char * ascii_day(char *, int);
-int center_str(const char* src, char* dest, size_t dest_size, size_t width);
-void center(const char *, size_t, int);
-void day_array(int, int, int, int *);
-int day_in_week(int, int, int);
-int day_in_year(int, int, int);
-void yearly(int, int, int);
-void do_monthly(int, int, int, struct fmt_st*);
-void monthly(int, int, int);
-void monthly3(int, int, int);
+static char * ascii_day(char *, int);
+static int center_str(const char* src, char* dest, size_t dest_size, size_t width);
+static void center(const char *, size_t, int);
+static void day_array(int, int, int, int *);
+static int day_in_week(int, int, int);
+static int day_in_year(int, int, int);
+static void yearly(int, int, int);
+static void do_monthly(int, int, int, struct fmt_st*);
+static void monthly(int, int, int);
+static void monthly3(int, int, int);
 static void __attribute__ ((__noreturn__)) usage(FILE * out);
-void headers_init(int);
+static void headers_init(int);
 
 int
 main(int argc, char **argv) {
@@ -443,7 +443,7 @@ static int leap_years_since_year_1(int year)
 		centuries_since_1700(year, 4));
 }
 
-void headers_init(int julian)
+static void headers_init(int julian)
 {
 	int i, wd, spaces = julian ? J_DAY_LEN - 1 : DAY_LEN - 1;
 	char *cur_dh = day_headings;
@@ -467,7 +467,7 @@ void headers_init(int julian)
 		full_month[i] = nl_langinfo(MON_1 + i);
 }
 
-void
+static void
 do_monthly(int day, int month, int year, struct fmt_st *out) {
 	int col, row, days[MAXDAYS];
 	char *p, lineout[FMT_ST_CHARS];
@@ -501,7 +501,7 @@ do_monthly(int day, int month, int year, struct fmt_st *out) {
 	}
 }
 
-void
+static void
 monthly(int day, int month, int year) {
 	int i;
 	struct fmt_st out;
@@ -513,7 +513,7 @@ monthly(int day, int month, int year) {
 	}
 }
 
-void
+static void
 monthly3(int day, int month, int year) {
 	char lineout[FMT_ST_CHARS];
 	int i;
@@ -568,7 +568,7 @@ monthly3(int day, int month, int year) {
 	}
 }
 
-void
+static void
 yearly(int day, int year, int julian) {
 	int col, *dp, i, month, row, which_cal;
 	int maxrow, sep_len, week_len;
@@ -632,7 +632,7 @@ yearly(int day, int year, int julian) {
  *	out end to end.  You would have 42 numbers or spaces.  This routine
  *	builds that array for any month from Jan. 1 through Dec. 9999.
  */
-void
+static void
 day_array(int day, int month, int year, int *days) {
 	int julday, daynum, dw, dm;
 	int *sep1752;
@@ -663,7 +663,7 @@ day_array(int day, int month, int year, int *days) {
  * day_in_year --
  *	return the 1 based day number within the year
  */
-int
+static int
 day_in_year(int day, int month, int year) {
 	int i, leap;
 
@@ -680,7 +680,7 @@ day_in_year(int day, int month, int year) {
  *	3 Sep. 1752 through 13 Sep. 1752.  Returns Thursday for all
  *	missing days.
  */
-int
+static int
 day_in_week(int day, int month, int year) {
 	long temp;
 
@@ -695,7 +695,7 @@ day_in_week(int day, int month, int year) {
 	return(REFORMATION_WEEKDAY);
 }
 
-char *
+static char *
 ascii_day(char *p, int day) {
 	int display, val;
 	int highlight = 0;
@@ -748,14 +748,14 @@ ascii_day(char *p, int day) {
  * In addition if the string is too large for the width it's truncated.
  * The number of trailing spaces may be 1 less than the number of leading spaces.
  */
-int
+static int
 center_str(const char* src, char* dest, size_t dest_size, size_t width)
 {
 	return mbsalign(src, dest, dest_size, &width,
 			MBS_ALIGN_CENTER, MBA_UNIBYTE_FALLBACK);
 }
 
-void
+static void
 center(const char *str, size_t len, int separate)
 {
 	char lineout[FMT_ST_CHARS];
