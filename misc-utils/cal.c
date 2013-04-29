@@ -160,11 +160,11 @@ enum {
 	THURSDAY,
 	FRIDAY,
 	SATURDAY,
-	DAYS_IN_WEEK
+	DAYS_IN_WEEK,
+	NONEDAY
 };
 
 #define	FIRST_WEEKDAY		SATURDAY	/* Jan 1st, 1 was a Saturday */
-#define	REFORMATION_WEEKDAY	THURSDAY	/* after reformation it was Thursday */
 #define REFORMATION_YEAR	1752		/* Signed-off-by: Lord Chesterfield */
 #define REFORMATION_MONTH	9		/* September */
 #define	FIRST_MISSING_DAY	639799		/* 3 Sep 1752 */
@@ -677,8 +677,8 @@ day_in_year(int day, int month, int year) {
  * day_in_week
  *	return the 0 based day number for any date from 1 Jan. 1 to
  *	31 Dec. 9999.  Assumes the Gregorian reformation eliminates
- *	3 Sep. 1752 through 13 Sep. 1752.  Returns Thursday for all
- *	missing days.
+ *	3 Sep. 1752 through 13 Sep. 1752, and returns invalid weekday
+ *	during the period of 11 days.
  */
 static int
 day_in_week(int day, int month, int year) {
@@ -689,10 +689,10 @@ day_in_week(int day, int month, int year) {
 	    leap_years_since_year_1(year - SMALLEST_YEAR)
 	    + day_in_year(day, month, year);
 	if (temp < FIRST_MISSING_DAY)
-		return ((temp - 1 + FIRST_WEEKDAY) % DAYS_IN_WEEK);
+		return ((temp + (FIRST_WEEKDAY - 1)) % DAYS_IN_WEEK);
 	if (temp >= (FIRST_MISSING_DAY + NUMBER_MISSING_DAYS))
-		return (((temp - 1 + FIRST_WEEKDAY) - NUMBER_MISSING_DAYS) % DAYS_IN_WEEK);
-	return(REFORMATION_WEEKDAY);
+		return ((temp + (FIRST_WEEKDAY - 1 - NUMBER_MISSING_DAYS)) % DAYS_IN_WEEK);
+	return (NONEDAY);
 }
 
 static char *
