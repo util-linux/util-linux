@@ -27,7 +27,9 @@ enum {
 	TT_FL_TREE        = (1 << 6),	/* use tree "ascii art" */
 	TT_FL_RIGHT	  = (1 << 7),	/* align to the right */
 	TT_FL_STRICTWIDTH = (1 << 8),	/* don't reduce width if column is empty */
-	TT_FL_NOEXTREMES  = (1 << 9)    /* ignore extreme fields when count column width*/
+	TT_FL_NOEXTREMES  = (1 << 9),   /* ignore extreme fields when count column width*/
+
+	TT_FL_FREEDATA	  = (1 << 10),	/* free() data in tt_free_table() */
 };
 
 struct tt {
@@ -61,7 +63,7 @@ struct tt_column {
 
 struct tt_line {
 	struct tt	*table;
-	char const	**data;
+	char		**data;
 	void		*userdata;
 	size_t		data_sz;		/* strlen of all data */
 
@@ -85,7 +87,7 @@ extern struct tt_column *tt_get_column(struct tt *tb, size_t colnum);
 
 extern struct tt_line *tt_add_line(struct tt *tb, struct tt_line *parent);
 
-extern int tt_line_set_data(struct tt_line *ln, int colnum, const char *data);
+extern int tt_line_set_data(struct tt_line *ln, int colnum, char *data);
 extern int tt_line_set_userdata(struct tt_line *ln, void *data);
 
 extern void tt_fputs_quoted(const char *data, FILE *out);

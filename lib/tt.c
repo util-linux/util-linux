@@ -221,9 +221,17 @@ void tt_remove_lines(struct tt *tb)
 		return;
 
 	while (!list_empty(&tb->tb_lines)) {
+		struct list_head *p;
 		struct tt_line *ln = list_entry(tb->tb_lines.next,
 						struct tt_line, ln_lines);
 		list_del(&ln->ln_lines);
+
+		list_for_each(p, &tb->tb_columns) {
+			struct tt_column *cl =
+				list_entry(p, struct tt_column, cl_columns);
+			if ((cl->flags & TT_FL_FREEDATA) || (tb->flags & TT_FL_FREEDATA))
+				free(ln->data[cl->seqnum]);
+		}
 		free(ln->data);
 		free(ln);
 	}
@@ -360,7 +368,7 @@ struct tt_column *tt_get_column(struct tt *tb, size_t colnum)
  *
  * Stores data that will be printed to the table cell.
  */
-int tt_line_set_data(struct tt_line *ln, int colnum, const char *data)
+int tt_line_set_data(struct tt_line *ln, int colnum, char *data)
 {
 	struct tt_column *cl;
 
