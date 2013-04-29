@@ -1144,6 +1144,7 @@ void gpt_list_table(struct fdisk_context *cxt,
 	struct fdisk_gpt_label *gpt;
 	uint64_t fu;
 	uint64_t lu;
+	struct tt *tb = NULL;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -1153,48 +1154,57 @@ void gpt_list_table(struct fdisk_context *cxt,
 	fu = le64_to_cpu(gpt->pheader->first_usable_lba);
 	lu = le64_to_cpu(gpt->pheader->last_usable_lba);
 
-	printf("\n#         Start          End    Size  Type            Name\n");
+	tb = tt_new_table(TT_FL_FREEDATA);
+	if (!tb)
+		return;	/* ENOMEM */
+	tt_define_column(tb, "#",      2, TT_FL_RIGHT);
+	tt_define_column(tb, "Start", 12, TT_FL_RIGHT);
+	tt_define_column(tb, "End",   12, TT_FL_RIGHT);
+	tt_define_column(tb, "Size",   6, TT_FL_RIGHT);
+	tt_define_column(tb, "Type", 0.2, TT_FL_TRUNC);
+	tt_define_column(tb, "Name", 0.2, TT_FL_TRUNC);
 
 	for (i = 0; i < le32_to_cpu(gpt->pheader->npartition_entries); i++) {
-		char *name = NULL, *sizestr = NULL;
+		char *name = NULL, *sizestr = NULL, *p;
 		uint64_t start = gpt_partition_start(&gpt->ents[i]);
 		uint64_t size = gpt_partition_size(&gpt->ents[i]);
 		struct fdisk_parttype *t;
+		struct tt_line *ln;
 
 		if (partition_unused(&gpt->ents[i]) || start == 0)
 			continue;
-
 		/* the partition has to inside usable range */
 		if (start < fu || start + size - 1 > lu)
+			continue;
+		ln = tt_add_line(tb, NULL);
+		if (!ln)
 			continue;
 
 		name = encode_to_utf8((unsigned char *)gpt->ents[i].partition_name,
 				      sizeof(gpt->ents[i].partition_name));
-		if (!name)
-			continue;
 		sizestr = size_to_human_string(SIZE_SUFFIX_1LETTER,
 					       size * cxt->sector_size);
-		if (!sizestr) {
-			free(name);
-			continue;
-		}
-
 		t = fdisk_get_partition_type(cxt, i);
 
-		printf("%2d %12ju %12ju  %6s  %-15.15s %s\n",
-		       i+1,
-		       start,
-		       gpt_partition_end(&gpt->ents[i]),
-		       sizestr,
-		       t->name,
-		       name);
+		if (asprintf(&p, "%d", i + 1) > 0)
+			tt_line_set_data(ln, 0, p);
+		if (asprintf(&p, "%ju", start) > 0)
+			tt_line_set_data(ln, 1, p);
+		if (asprintf(&p, "%ju", gpt_partition_end(&gpt->ents[i])) > 0)
+			tt_line_set_data(ln, 2, p);
+		if (sizestr)
+			tt_line_set_data(ln, 3, sizestr);
+		if (t && t->name)
+			tt_line_set_data(ln, 4, strdup(t->name));
+		if (name)
+			tt_line_set_data(ln, 5, name);
 
 		fdisk_warn_alignment(cxt, start, i);
-
-		free(name);
-		free(sizestr);
 		fdisk_free_parttype(t);
 	}
+
+	fdisk_print_table(cxt, tb);
+	tt_free_table(tb);
 }
 
 /*
