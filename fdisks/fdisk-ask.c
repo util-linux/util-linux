@@ -199,6 +199,9 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 			ask->data.yesno.result = rpmatch(buf);
 		DBG(ASK, dbgprint("yes-no ask: reply '%s' [rc=%d]", buf, rc));
 		break;
+	case FDISK_ASKTYPE_TABLE:
+		tt_print_table(fdisk_ask_get_table(ask));
+		break;
 	default:
 		warnx(_("internal error: unsupported dialog type %d"), fdisk_ask_get_type(ask));
 		return -EINVAL;

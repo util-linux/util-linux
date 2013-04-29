@@ -408,6 +408,33 @@ int fdisk_ask_yesno_set_result(struct fdisk_ask *ask, uint64_t result)
 	return 0;
 }
 
+struct tt *fdisk_ask_get_table(struct fdisk_ask *ask)
+{
+	assert(ask);
+	assert(fdisk_is_ask(ask, TABLE));
+	return ask->data.table;
+}
+
+int fdisk_print_table(struct fdisk_context *cxt, struct tt *tb)
+{
+	struct fdisk_ask *ask;
+	int rc;
+
+	assert(cxt);
+	assert(tb);
+
+	ask = fdisk_new_ask();
+	if (!ask)
+		return -ENOMEM;
+
+	fdisk_ask_set_type(ask, FDISK_ASKTYPE_TABLE);
+	ask->data.table = tb;
+
+	rc = fdisk_do_ask(cxt, ask);
+
+	fdisk_free_ask(ask);
+	return rc;
+}
 
 #define is_print_ask(a) (fdisk_is_ask(a, WARN) || fdisk_is_ask(a, WARNX) || fdisk_is_ask(a, INFO))
 

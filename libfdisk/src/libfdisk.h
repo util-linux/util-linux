@@ -32,6 +32,7 @@ struct fdisk_context;
 struct fdisk_label;
 struct fdisk_parttype;
 struct fdisk_ask;
+struct tt;
 
 /*
  * Supported partition table types (labels)
@@ -58,7 +59,8 @@ enum {
 	FDISK_ASKTYPE_WARN,
 	FDISK_ASKTYPE_WARNX,
 	FDISK_ASKTYPE_INFO,
-	FDISK_ASKTYPE_YESNO
+	FDISK_ASKTYPE_YESNO,
+	FDISK_ASKTYPE_TABLE
 };
 
 

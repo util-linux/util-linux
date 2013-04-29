@@ -21,6 +21,7 @@
 #include "libfdisk.h"
 
 #include "nls.h"		/* temporary before dialog API will be implamented */
+#include "tt.h"
 
 /* features */
 #define CONFIG_LIBFDISK_ASSERT
@@ -237,6 +238,8 @@ struct fdisk_ask {
 		struct ask_yesno {
 			int		result;		/* TRUE or FALSE */
 		} yesno;
+		/* FDISK_ASKTYPE_TABLE, see include/tt.h  */
+		struct tt *table;
 	} data;
 };
 
@@ -318,5 +321,8 @@ extern void gpt_list_table(struct fdisk_context *cxt, int xtra);
 
 /* ask.c */
 extern int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew);
+
+extern struct tt *fdisk_ask_get_table(struct fdisk_ask *ask);
+extern int fdisk_print_table(struct fdisk_context *cxt, struct tt *tb);
 
 #endif /* _LIBFDISK_PRIVATE_H */
