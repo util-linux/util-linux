@@ -1137,9 +1137,9 @@ static char *encode_to_utf8(unsigned char *src, size_t count)
  * requirements, but once partition semantics are added to the fdisk
  * API it can be removed for custom implementation (see gpt_label struct).
  */
-void gpt_list_table(struct fdisk_context *cxt,
-		    int xtra  __attribute__ ((__unused__)))
+static int gpt_list_disklabel(struct fdisk_context *cxt)
 {
+	int rc;
 	uint32_t i;
 	struct fdisk_gpt_label *gpt;
 	uint64_t fu;
@@ -1156,7 +1156,8 @@ void gpt_list_table(struct fdisk_context *cxt,
 
 	tb = tt_new_table(TT_FL_FREEDATA);
 	if (!tb)
-		return;	/* ENOMEM */
+		return -ENOMEM;
+
 	tt_define_column(tb, "#",      2, TT_FL_RIGHT);
 	tt_define_column(tb, "Start", 12, TT_FL_RIGHT);
 	tt_define_column(tb, "End",   12, TT_FL_RIGHT);
@@ -1203,8 +1204,10 @@ void gpt_list_table(struct fdisk_context *cxt,
 		fdisk_free_parttype(t);
 	}
 
-	fdisk_print_table(cxt, tb);
+	rc = fdisk_print_table(cxt, tb);
 	tt_free_table(tb);
+
+	return rc;
 }
 
 /*
@@ -1856,6 +1859,7 @@ static const struct fdisk_label_operations gpt_operations =
 	.write		= gpt_write_disklabel,
 	.verify		= gpt_verify_disklabel,
 	.create		= gpt_create_disklabel,
+	.list		= gpt_list_disklabel,
 	.part_add	= gpt_add_partition,
 	.part_delete	= gpt_delete_partition,
 	.part_get_type	= gpt_get_partition_type,

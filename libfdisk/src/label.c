@@ -99,6 +99,24 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
 }
 
 /**
+ * fdisk_list_disklabel:
+ * @cxt: fdisk context
+ *
+ * Lists in-memory partition table
+ *
+ * Returns 0 on success, otherwise, a corresponding error.
+ */
+int fdisk_list_disklabel(struct fdisk_context *cxt)
+{
+	if (!cxt || !cxt->label)
+		return -EINVAL;
+	if (!cxt->label->op->list)
+		return -ENOSYS;
+
+	return cxt->label->op->list(cxt);
+}
+
+/**
  * fdisk_add_partition:
  * @cxt: fdisk context
  * @t: partition type to create or NULL for label-specific default

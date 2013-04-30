@@ -145,6 +145,9 @@ struct fdisk_label_operations {
 	int (*verify)(struct fdisk_context *cxt);
 	/* create new disk label */
 	int (*create)(struct fdisk_context *cxt);
+	/* list partition table */
+	int (*list)(struct fdisk_context *cxt);
+
 	/* new partition */
 	int (*part_add)(struct fdisk_context *cxt,
 						size_t partnum,

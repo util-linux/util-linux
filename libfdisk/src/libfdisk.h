@@ -112,6 +112,7 @@ extern int fdisk_dev_is_disklabel(struct fdisk_context *cxt, enum fdisk_labeltyp
 extern int fdisk_write_disklabel(struct fdisk_context *cxt);
 extern int fdisk_verify_disklabel(struct fdisk_context *cxt);
 extern int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name);
+extern int fdisk_list_disklabel(struct fdisk_context *cxt);
 
 extern int fdisk_add_partition(struct fdisk_context *cxt, struct fdisk_parttype *t);
 extern int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum);

@@ -668,18 +668,14 @@ static void list_table(struct fdisk_context *cxt, int xtra)
 
 	list_disk_geometry(cxt);
 
-	if (fdisk_is_disklabel(cxt, GPT)) {
-		gpt_list_table(cxt, xtra);
-		return;
-	}
-
-	if (fdisk_is_disklabel(cxt, OSF)) {
+	if (fdisk_is_disklabel(cxt, OSF))
 		xbsd_print_disklabel(cxt, xtra);
-		return;
-	}
 
-	if (fdisk_is_disklabel(cxt, DOS))
+	else if (fdisk_is_disklabel(cxt, DOS))
 		dos_list_table(cxt, xtra);
+	else
+		fdisk_list_disklabel(cxt);
+
 }
 
 static void verify(struct fdisk_context *cxt)
