@@ -788,20 +788,19 @@ center(const char *str, size_t len, int separate)
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
-	fputs(_("\nUsage:\n"), out);
-	fprintf(out,
-	      _(" %s [options] [[[day] month] year]\n"),
-			program_invocation_short_name);
-
-	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -1, --one        show only current month (default)\n"
-	        " -3, --three      show previous, current and next month\n"
-		" -s, --sunday     Sunday as first day of week\n"
-		" -m, --monday     Monday as first day of week\n"
-		" -j, --julian     output Julian dates\n"
-		" -y, --year       show whole current year\n"
-		" -V, --version    display version information and exit\n"
-		" -h, --help       display this help text and exit\n\n"), out);
-
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] [[[day] month] year]\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -1, --one             show only current month (default)\n"), out);
+	fputs(_(" -3, --three           show previous, current and next month\n"), out);
+	fputs(_(" -s, --sunday          Sunday as first day of week\n"), out);
+	fputs(_(" -m, --monday          Monday as first day of week\n"), out);
+	fputs(_(" -j, --julian          output Julian dates\n"), out);
+	fputs(_(" -y, --year            show whole current year\n"), out);
+	fputs(_("     --color[=<when>]  colorize messages (auto, always or never)\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("cal(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
