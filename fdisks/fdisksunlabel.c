@@ -673,7 +673,7 @@ static int sun_delete_partition(struct fdisk_context *cxt,
 }
 
 
-void sun_list_table(struct fdisk_context *cxt, int xtra)
+static int sun_list_disklabel(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel;
 	size_t i;
@@ -686,30 +686,20 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 	sunlabel = self_disklabel(cxt);
 
 	w = strlen(cxt->dev_path);
-	if (xtra)
-		printf(
-		_("\nDisk %s (Sun disk label): %u heads, %llu sectors, %d rpm\n"
-		"%llu cylinders, %d alternate cylinders, %d physical cylinders\n"
-		"%d extra sects/cyl, interleave %d:1\n"
-		"Label ID: %s\n"
-		"Volume ID: %s\n"
-		"Units = %s of %d * 512 bytes\n\n"),
-		       cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, be16_to_cpu(sunlabel->rpm),
-		       cxt->geom.cylinders, be16_to_cpu(sunlabel->acyl),
+
+	if (fdisk_context_display_details(cxt))
+		fdisk_info(cxt,
+		_("Label geometry: %d rpm, %d alternate and %d physical cylinders,\n"
+		  "                %d extra sects/cyl, interleave %d:1\n"
+		  "Label ID: %s\n"
+		  "Volume ID: %s"),
+		       be16_to_cpu(sunlabel->rpm),
+		       be16_to_cpu(sunlabel->acyl),
 		       be16_to_cpu(sunlabel->pcyl),
 		       be16_to_cpu(sunlabel->apc),
 		       be16_to_cpu(sunlabel->intrlv),
 		       sunlabel->label_id,
-		       sunlabel->vtoc.volume_id,
-		       fdisk_context_get_unit(cxt, PLURAL),
-		       fdisk_context_get_units_per_sector(cxt));
-	else
-		printf(
-	_("\nDisk %s (Sun disk label): %u heads, %llu sectors, %llu cylinders\n"
-	"Units = %s of %d * 512 bytes\n\n"),
-		       cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders,
-		       fdisk_context_get_unit(cxt, PLURAL),
-		       fdisk_context_get_units_per_sector(cxt));
+		       *sunlabel->vtoc.volume_id ? sunlabel->vtoc.volume_id : _("<none>"));
 
 	printf(_("%*s Flag    Start       End    Blocks   Id  System\n"),
 	       w + 1, _("Device"));
@@ -736,6 +726,8 @@ void sun_list_table(struct fdisk_context *cxt, int xtra)
 			fdisk_free_parttype(t);
 		}
 	}
+
+	return 0;
 }
 
 
@@ -946,6 +938,7 @@ const struct fdisk_label_operations sun_operations =
 	.write		= sun_write_disklabel,
 	.verify		= sun_verify_disklabel,
 	.create		= sun_create_disklabel,
+	.list		= sun_list_disklabel,
 	.part_add	= sun_add_partition,
 	.part_delete	= sun_delete_partition,
 	.part_get_type	= sun_get_parttype,
