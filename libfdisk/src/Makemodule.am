@@ -42,7 +42,8 @@ libfdisk_la_DEPENDENCIES = $(libfdisk_la_LIBADD)
 
 
 check_PROGRAMS += \
-	test_fdisk_ask
+	test_fdisk_ask \
+	test_fdisk_utils
 
 libfdisk_tests_cflags  = -DTEST_PROGRAM $(libfdisk_la_CFLAGS)
 libfdisk_tests_ldflags = -static
@@ -60,3 +61,8 @@ test_fdisk_ask_SOURCES = libfdisk/src/ask.c
 test_fdisk_ask_CFLAGS = $(libfdisk_tests_cflags)
 test_fdisk_ask_LDFLAGS = $(libfdisk_tests_ldflags)
 test_fdisk_ask_LDADD = $(libfdisk_tests_ldadd)
+
+test_fdisk_utils_SOURCES = libfdisk/src/utils.c
+test_fdisk_utils_CFLAGS = $(libfdisk_tests_cflags)
+test_fdisk_utils_LDFLAGS = $(libfdisk_tests_ldflags)
+test_fdisk_utils_LDADD = $(libfdisk_tests_ldadd)

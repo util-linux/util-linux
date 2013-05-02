@@ -318,6 +318,7 @@ extern int fdisk_discover_topology(struct fdisk_context *cxt);
 /* utils.c */
 extern void fdisk_zeroize_firstsector(struct fdisk_context *cxt);
 extern int fdisk_read_firstsector(struct fdisk_context *cxt);
+extern char *fdisk_partname(const char *dev, size_t partno);
 
 /* label.c */
 extern int fdisk_probe_labels(struct fdisk_context *cxt);
