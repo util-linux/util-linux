@@ -1158,12 +1158,12 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 	if (!tb)
 		return -ENOMEM;
 
-	tt_define_column(tb, "#",      2, TT_FL_RIGHT);
-	tt_define_column(tb, "Start", 12, TT_FL_RIGHT);
-	tt_define_column(tb, "End",   12, TT_FL_RIGHT);
-	tt_define_column(tb, "Size",   6, TT_FL_RIGHT);
-	tt_define_column(tb, "Type", 0.2, TT_FL_TRUNC);
-	tt_define_column(tb, "Name", 0.2, TT_FL_TRUNC);
+	tt_define_column(tb, _("Device"), 0.2, 0);
+	tt_define_column(tb, _("Start"),   12, TT_FL_RIGHT);
+	tt_define_column(tb, _("End"),     12, TT_FL_RIGHT);
+	tt_define_column(tb, _("Size"),     6, TT_FL_RIGHT);
+	tt_define_column(tb, _("Type"),   0.2, TT_FL_TRUNC);
+	tt_define_column(tb, _("Name"),   0.2, TT_FL_TRUNC);
 
 	for (i = 0; i < le32_to_cpu(gpt->pheader->npartition_entries); i++) {
 		char *name = NULL, *sizestr = NULL, *p;
@@ -1187,7 +1187,8 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 					       size * cxt->sector_size);
 		t = fdisk_get_partition_type(cxt, i);
 
-		if (asprintf(&p, "%d", i + 1) > 0)
+		p = fdisk_partname(cxt->dev_path, i + 1);
+		if (p)
 			tt_line_set_data(ln, 0, p);
 		if (asprintf(&p, "%ju", start) > 0)
 			tt_line_set_data(ln, 1, p);

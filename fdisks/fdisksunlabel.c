@@ -677,7 +677,7 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel;
 	struct tt *tb = NULL;
-	size_t i, w;
+	size_t i;
 	int rc;
 
 	assert(cxt);
@@ -713,8 +713,6 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 	tt_define_column(tb, _("Id"),       2, TT_FL_RIGHT);
 	tt_define_column(tb, _("System"), 0.2, TT_FL_TRUNC);
 
-	w = strlen(cxt->dev_path);
-
 	for (i = 0 ; i < cxt->label->nparts_max; i++) {
 		struct sun_partition *part = &sunlabel->partitions[i];
 		uint16_t flags = be16_to_cpu(sunlabel->vtoc.infos[i].flags);
@@ -736,9 +734,9 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 		len = be32_to_cpu(part->num_sectors);
 		t = fdisk_get_partition_type(cxt, i);
 
-		p = partname(cxt->dev_path, i+1, w);
+		p = fdisk_partname(cxt->dev_path, i + 1);
 		if (p)
-			tt_line_set_data(ln, 0, strdup(p));	/* devname */
+			tt_line_set_data(ln, 0, p);	/* devname */
 		if ((flags & SUN_FLAG_UNMNT || flags & SUN_FLAG_RONLY)
 		    && asprintf(&p, "%c%c",
 				flags & SUN_FLAG_UNMNT ? 'u' : ' ',
