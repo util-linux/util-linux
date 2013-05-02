@@ -35,7 +35,7 @@
 #include "strutils.h"
 #include "closestream.h"
 
-#include "fdisksunlabel.h"
+#include "pt-sun.h"		/* to toggle flags */
 #include "fdisksgilabel.h"
 #include "fdiskmaclabel.h"
 #include "fdiskdoslabel.h"
@@ -681,18 +681,6 @@ static void verify(struct fdisk_context *cxt)
 		return;
 
 	fdisk_verify_disklabel(cxt);
-}
-
-void print_partition_size(struct fdisk_context *cxt,
-			  int num, sector_t start, sector_t stop, int sysid)
-{
-	char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
-				     (uint64_t)(stop - start + 1) * cxt->sector_size);
-	struct fdisk_parttype *t = fdisk_get_parttype_from_code(cxt, sysid);
-
-	printf(_("Partition %d of type %s and of size %s is set\n"),
-			num, t ? t->name : _("Unknown"), str);
-	free(str);
 }
 
 static void new_partition(struct fdisk_context *cxt)

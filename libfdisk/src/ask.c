@@ -532,6 +532,21 @@ int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...)
 	return rc;
 }
 
+int fdisk_info_new_partition(
+			struct fdisk_context *cxt,
+			int num, sector_t start, sector_t stop,
+			struct fdisk_parttype *t)
+{
+	int rc;
+	char *str = size_to_human_string(SIZE_SUFFIX_3LETTER | SIZE_SUFFIX_SPACE,
+				     (uint64_t)(stop - start + 1) * cxt->sector_size);
+
+	rc = fdisk_info(cxt, _("Partition %d of type %s and of size %s is set\n"),
+			num, t ? t->name : _("Unknown"), str);
+	free(str);
+	return rc;
+}
+
 #ifdef TEST_PROGRAM
 struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt) { return NULL; }
 struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt) { return NULL; }

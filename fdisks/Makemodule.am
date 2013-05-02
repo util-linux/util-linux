@@ -17,8 +17,6 @@ fdisk_SOURCES = \
 	fdisks/fdiskmaclabel.h \
 	fdisks/fdisksgilabel.c \
 	fdisks/fdisksgilabel.h \
-	fdisks/fdisksunlabel.c \
-	fdisks/fdisksunlabel.h \
 	fdisks/partname.c \
 	fdisks/common.h
 

@@ -522,9 +522,10 @@ static void set_partition(struct fdisk_context *cxt,
 	set_start_sect(p, start - offset);
 	set_nr_sects(p, stop - start + 1);
 
-	if (!doext)
-		print_partition_size(cxt, i + 1, start, stop, sysid);
-
+	if (!doext) {
+		struct fdisk_parttype *t = fdisk_get_parttype_from_code(cxt, sysid);
+		fdisk_info_new_partition(cxt, i + 1, start, stop, t);
+	}
 	if (is_dos_compatible(cxt) && (start/(cxt->geom.sectors*cxt->geom.heads) > 1023))
 		start = cxt->geom.heads*cxt->geom.sectors*1024 - 1;
 	set_hsc(p->head, p->sector, p->cyl, start);

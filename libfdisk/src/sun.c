@@ -1,15 +1,11 @@
 /*
- * fdisksunlabel.c
+ * Copyright (C) 2013 Karel Zak <kzak@redhat.com>
  *
- * I think this is mostly, or entirely, due to
- * 	Jakub Jelinek (jj@sunsite.mff.cuni.cz), July 1996
- *
- * Merged with fdisk for other architectures, aeb, June 1998.
- *
- * Sat Mar 20 EST 1999 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
- *      Internationalization
+ * Based on original code from fdisk:
+ *   Jakub Jelinek (jj@sunsite.mff.cuni.cz), July 1996
+ *   Merged with fdisk for other architectures, aeb, June 1998.
+ *   Arnaldo Carvalho de Melo <acme@conectiva.com.br> Mar 1999, Internationalization
  */
-
 #include <stdio.h>		/* stderr */
 #include <stdlib.h>		/* qsort */
 #include <string.h>		/* strstr */
@@ -20,10 +16,9 @@
 #include "blkdev.h"
 #include "bitops.h"
 
-#include "common.h"
-#include "fdisk.h"
-#include "fdiskdoslabel.h"
-#include "fdisksunlabel.h"
+#include "fdiskP.h"
+#include "pt-sun.h"
+#include "all-io.h"
 
 /*
  * in-memory fdisk SUN stuff
@@ -77,6 +72,7 @@ static void set_sun_partition(struct fdisk_context *cxt, size_t i,
 		uint32_t start,uint32_t stop, uint16_t sysid)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
+	struct fdisk_parttype *t = fdisk_get_parttype_from_code(cxt, sysid);
 
 	sunlabel->vtoc.infos[i].id = cpu_to_be16(sysid);
 	sunlabel->vtoc.infos[i].flags = cpu_to_be16(0);
@@ -84,7 +80,8 @@ static void set_sun_partition(struct fdisk_context *cxt, size_t i,
 		cpu_to_be32(start / (cxt->geom.heads * cxt->geom.sectors));
 	sunlabel->partitions[i].num_sectors = cpu_to_be32(stop - start);
 	fdisk_label_set_changed(cxt->label, 1);
-	print_partition_size(cxt, i + 1, start, stop, sysid);
+
+	fdisk_info_new_partition(cxt, i + 1, start, stop, t);
 }
 
 static size_t count_used_partitions(struct fdisk_context *cxt)
@@ -842,6 +839,7 @@ static int sun_write_disklabel(struct fdisk_context *cxt)
 	struct sun_disklabel *sunlabel;
 	unsigned short *ush;
 	unsigned short csum = 0;
+	const size_t sz = sizeof(struct sun_disklabel);
 
 	assert(cxt);
 	assert(cxt->label);
@@ -855,7 +853,7 @@ static int sun_write_disklabel(struct fdisk_context *cxt)
 	sunlabel->csum = csum;
 	if (lseek(cxt->dev_fd, 0, SEEK_SET) < 0)
 		return -errno;
-	if (write(cxt->dev_fd, sunlabel, SECTOR_SIZE) != SECTOR_SIZE)
+	if (write_all(cxt->dev_fd, sunlabel, sz) != 0)
 		return -errno;
 
 	return 0;

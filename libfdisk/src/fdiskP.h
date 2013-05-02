@@ -327,13 +327,24 @@ extern int fdisk_probe_labels(struct fdisk_context *cxt);
 extern void fdisk_deinit_label(struct fdisk_label *lb);
 
 
-/* gpt.c -- temporary bypass library API... */
-extern void gpt_list_table(struct fdisk_context *cxt, int xtra);
-
 /* ask.c */
 extern int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew);
 
 extern struct tt *fdisk_ask_get_table(struct fdisk_ask *ask);
 extern int fdisk_print_table(struct fdisk_context *cxt, struct tt *tb);
+
+extern int fdisk_info_new_partition(
+			struct fdisk_context *cxt,
+			int num, sector_t start, sector_t stop,
+			struct fdisk_parttype *t);
+
+/* sun.h */
+extern void fdisk_sun_set_alt_cyl(struct fdisk_context *cxt);
+extern void fdisk_sun_set_ncyl(struct fdisk_context *cxt, int cyl);
+extern void fdisk_sun_set_xcyl(struct fdisk_context *cxt);
+extern void fdisk_sun_set_ilfact(struct fdisk_context *cxt);
+extern void fdisk_sun_set_rspeed(struct fdisk_context *cxt);
+extern void fdisk_sun_set_pcylcount(struct fdisk_context *cxt);
+
 
 #endif /* _LIBFDISK_PRIVATE_H */

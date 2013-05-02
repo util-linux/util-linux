@@ -84,7 +84,6 @@ extern unsigned int read_int(struct fdisk_context *cxt,
 			     unsigned int low, unsigned int dflt,
 			     unsigned int high, unsigned int base, char *mesg);
 extern void print_menu(struct fdisk_context *cxt, enum menutype menu);
-extern void print_partition_size(struct fdisk_context *cxt, int num, sector_t start, sector_t stop, int sysid);
 
 extern char *partition_type(struct fdisk_context *cxt, unsigned char type);
 extern char read_chars(struct fdisk_context *cxt, char *mesg);
@@ -93,9 +92,6 @@ extern void warn_limits(struct fdisk_context *cxt);
 extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
 					 unsigned int low, unsigned int dflt, unsigned int high,
 				  unsigned int base, char *mesg, int *is_suffix_used);
-
-#define PLURAL	0
-#define SINGULAR 1
 
 extern sector_t get_nr_sects(struct partition *p);
 

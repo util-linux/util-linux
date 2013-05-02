@@ -88,7 +88,11 @@ extern int fdisk_context_switch_label(struct fdisk_context *cxt,
 				const char *name);
 
 extern int fdisk_context_set_unit(struct fdisk_context *cxt, const char *str);
+
+#define PLURAL	0
+#define SINGULAR 1
 extern const char *fdisk_context_get_unit(struct fdisk_context *cxt, int n);
+
 extern unsigned int fdisk_context_get_units_per_sector(struct fdisk_context *cxt);
 
 extern int fdisk_context_enable_details(struct fdisk_context *cxt, int enable);

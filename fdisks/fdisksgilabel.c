@@ -629,8 +629,10 @@ static int sgi_set_partition(struct fdisk_context *cxt, size_t i,
 
 	if (sgi_gaps(cxt) < 0)	/* rebuild freelist */
 		printf(_("Partition overlap on the disk.\n"));
-	if (length)
-		print_partition_size(cxt, i + 1, start, start + length, sys);
+	if (length) {
+		struct fdisk_parttype *t = fdisk_get_parttype_from_code(cxt, sys);
+		fdisk_info_new_partition(cxt, i + 1, start, start + length, t);
+	}
 
 	return 0;
 }
