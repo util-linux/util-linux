@@ -379,3 +379,10 @@ int fdisk_reset_alignment(struct fdisk_context *cxt)
 			    cxt->grain,	rc));
 	return rc;
 }
+
+
+sector_t fdisk_scround(struct fdisk_context *cxt, sector_t num)
+{
+	sector_t un = fdisk_context_get_units_per_sector(cxt);
+	return (num + un - 1) / un;
+}

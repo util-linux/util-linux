@@ -46,7 +46,6 @@ int fdisk_read_firstsector(struct fdisk_context *cxt)
 	return 0;
 }
 
-
 /*
  * Return allocated buffer with partition name
  */

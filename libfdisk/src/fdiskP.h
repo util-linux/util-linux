@@ -291,6 +291,8 @@ extern int fdisk_context_display_details(struct fdisk_context *cxt);
 
 
 /* alignment.c */
+extern sector_t fdisk_scround(struct fdisk_context *cxt, sector_t num);
+
 extern sector_t fdisk_topology_get_first_lba(struct fdisk_context *cxt);
 extern unsigned long fdisk_topology_get_grain(struct fdisk_context *cxt);
 

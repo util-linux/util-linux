@@ -513,9 +513,9 @@ static int sun_add_partition(
 			fdisk_ask_number_set_default(ask, 0);	/* default */
 			fdisk_ask_number_set_high(ask,    0);	/* maximal */
 		} else {
-			fdisk_ask_number_set_low(ask,     scround(cxt, start));	/* minimal */
-			fdisk_ask_number_set_default(ask, scround(cxt, start));	/* default */
-			fdisk_ask_number_set_high(ask,    scround(cxt, stop));	/* maximal */
+			fdisk_ask_number_set_low(ask,     fdisk_scround(cxt, start));	/* minimal */
+			fdisk_ask_number_set_default(ask, fdisk_scround(cxt, start));	/* default */
+			fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, stop));	/* maximal */
 		}
 		rc = fdisk_do_ask(cxt, ask);
 		first = fdisk_ask_number_get_result(ask);
@@ -586,20 +586,20 @@ and is of type `Whole disk'"));
 	fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 
 	if (whole_disk) {
-		fdisk_ask_number_set_low(ask,     scround(cxt, stop2));	/* minimal */
-		fdisk_ask_number_set_default(ask, scround(cxt, stop2));	/* default */
-		fdisk_ask_number_set_high(ask,    scround(cxt, stop2));	/* maximal */
+		fdisk_ask_number_set_low(ask,     fdisk_scround(cxt, stop2));	/* minimal */
+		fdisk_ask_number_set_default(ask, fdisk_scround(cxt, stop2));	/* default */
+		fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, stop2));	/* maximal */
 		fdisk_ask_number_set_base(ask,    0);
 	} else if (n == 2 && !first) {
-		fdisk_ask_number_set_low(ask,     scround(cxt, first));	/* minimal */
-		fdisk_ask_number_set_default(ask, scround(cxt, stop2));	/* default */
-		fdisk_ask_number_set_high(ask,    scround(cxt, stop2));	/* maximal */
-		fdisk_ask_number_set_base(ask,	  scround(cxt, first));
+		fdisk_ask_number_set_low(ask,     fdisk_scround(cxt, first));	/* minimal */
+		fdisk_ask_number_set_default(ask, fdisk_scround(cxt, stop2));	/* default */
+		fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, stop2));	/* maximal */
+		fdisk_ask_number_set_base(ask,	  fdisk_scround(cxt, first));
 	} else {
-		fdisk_ask_number_set_low(ask,     scround(cxt, first));	/* minimal */
-		fdisk_ask_number_set_default(ask, scround(cxt, stop));	/* default */
-		fdisk_ask_number_set_high(ask,    scround(cxt, stop));	/* maximal */
-		fdisk_ask_number_set_base(ask,    scround(cxt, first));
+		fdisk_ask_number_set_low(ask,     fdisk_scround(cxt, first));	/* minimal */
+		fdisk_ask_number_set_default(ask, fdisk_scround(cxt, stop));	/* default */
+		fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, stop));	/* maximal */
+		fdisk_ask_number_set_base(ask,    fdisk_scround(cxt, first));
 	}
 
 	if (fdisk_context_use_cylinders(cxt))
@@ -625,8 +625,8 @@ and is of type `Whole disk'"));
    _("You haven't covered the whole disk with the 3rd partition, but your value\n"
      "%d %s covers some other partition. Your entry has been changed\n"
      "to %d %s"),
-			scround(cxt, last), fdisk_context_get_unit(cxt, SINGULAR),
-			scround(cxt, stop), fdisk_context_get_unit(cxt, SINGULAR));
+			fdisk_scround(cxt, last), fdisk_context_get_unit(cxt, SINGULAR),
+			fdisk_scround(cxt, stop), fdisk_context_get_unit(cxt, SINGULAR));
 		    last = stop;
 		}
 	} else if (!whole_disk && last > stop)
@@ -742,9 +742,9 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 				flags & SUN_FLAG_UNMNT ? 'u' : ' ',
 				flags & SUN_FLAG_RONLY ? 'r' : ' ') > 0)
 			tt_line_set_data(ln, 1, p);	/* flags */
-		if (asprintf(&p, "%lu", scround(cxt, start)) > 0)
+		if (asprintf(&p, "%ju", (uintmax_t) fdisk_scround(cxt, start)) > 0)
 			tt_line_set_data(ln, 2, p);	/* start */
-		if (asprintf(&p, "%lu",	scround(cxt, start + len)) > 0)
+		if (asprintf(&p, "%ju",	(uintmax_t) fdisk_scround(cxt, start + len)) > 0)
 			tt_line_set_data(ln, 3, p);	/* end */
 		if (asprintf(&p, "%lu%c",
 				(unsigned long) len / 2,
