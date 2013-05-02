@@ -259,7 +259,8 @@ struct fdisk_context {
 	unsigned long sector_size;	/* logical size */
 	unsigned long alignment_offset;
 
-	int display_in_cyl_units;	/* for obscure labels */
+	unsigned int display_in_cyl_units : 1,	/* for obscure labels */
+		     display_details : 1;	/* expert display mode */
 
 	/* alignment */
 	unsigned long grain;		/* alignment unit */
@@ -284,6 +285,10 @@ struct fdisk_context {
 /* context.c */
 extern int __fdisk_context_switch_label(struct fdisk_context *cxt,
 				    struct fdisk_label *lb);
+
+extern int fdisk_context_use_cylinders(struct fdisk_context *cxt);
+extern int fdisk_context_display_details(struct fdisk_context *cxt);
+
 
 /* alignment.c */
 extern sector_t fdisk_topology_get_first_lba(struct fdisk_context *cxt);

@@ -810,6 +810,8 @@ expert_command_prompt(struct fdisk_context *cxt)
 
 	assert(cxt);
 
+	fdisk_context_enable_details(cxt, 1);
+
 	while(1) {
 		assert(cxt->label);
 
@@ -875,6 +877,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 		case 'q':
 			handle_quit(cxt);
 		case 'r':
+			fdisk_context_enable_details(cxt, 0);
 			return;
 		case 's':
 			user_sectors = read_int(cxt, 1, cxt->geom.sectors, 63, 0,

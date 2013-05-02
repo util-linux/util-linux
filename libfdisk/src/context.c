@@ -237,6 +237,27 @@ int fdisk_context_set_ask(struct fdisk_context *cxt,
 	return 0;
 }
 
+/**
+ * fdisk_context_enable_details:
+ * cxt: context
+ * enable: true/flase
+ *
+ * Enables or disables "details" display mode.
+ *
+ * Returns: 0 on success, < 0 on error.
+ */
+int fdisk_context_enable_details(struct fdisk_context *cxt, int enable)
+{
+	assert(cxt);
+	cxt->display_details = enable ? 1 : 0;
+	return 0;
+}
+
+int fdisk_context_display_details(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->display_details == 1;
+}
 
 /*
  * @str: "cylinder" or "sector".
