@@ -676,16 +676,15 @@ static int sun_delete_partition(struct fdisk_context *cxt,
 static int sun_list_disklabel(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel;
-	size_t i;
-	int w;
+	struct tt *tb = NULL;
+	size_t i, w;
+	int rc;
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SUN));
 
 	sunlabel = self_disklabel(cxt);
-
-	w = strlen(cxt->dev_path);
 
 	if (fdisk_context_display_details(cxt))
 		fdisk_info(cxt,
@@ -701,33 +700,70 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 		       sunlabel->label_id,
 		       *sunlabel->vtoc.volume_id ? sunlabel->vtoc.volume_id : _("<none>"));
 
-	printf(_("%*s Flag    Start       End    Blocks   Id  System\n"),
-	       w + 1, _("Device"));
+	tb = tt_new_table(TT_FL_FREEDATA);
+	if (!tb)
+		return -ENOMEM;
+
+	tt_define_column(tb, _("Device"), 0.2, 0);
+	tt_define_column(tb, _("Flag"),     2, TT_FL_RIGHT);
+	tt_define_column(tb, _("Start"),    9, TT_FL_RIGHT);
+	tt_define_column(tb, _("End"),      9, TT_FL_RIGHT);
+	/* TRANSLATORS: keep one blank space behind 'Blocks' */
+	tt_define_column(tb, _("Blocks "),  9, TT_FL_RIGHT);
+	tt_define_column(tb, _("Id"),       2, TT_FL_RIGHT);
+	tt_define_column(tb, _("System"), 0.2, TT_FL_TRUNC);
+
+	w = strlen(cxt->dev_path);
+
 	for (i = 0 ; i < cxt->label->nparts_max; i++) {
 		struct sun_partition *part = &sunlabel->partitions[i];
-		struct sun_info *info = &sunlabel->vtoc.infos[i];
+		uint16_t flags = be16_to_cpu(sunlabel->vtoc.infos[i].flags);
+		uint32_t start, len;
+		struct fdisk_parttype *t;
+		struct tt_line *ln;
+		char *p;
 
-		if (part->num_sectors) {
-			uint32_t start = be32_to_cpu(part->start_cylinder) * cxt->geom.heads * cxt->geom.sectors;
-			uint32_t len = be32_to_cpu(part->num_sectors);
-			struct fdisk_parttype *t = fdisk_get_partition_type(cxt, i);
+		if (!part->num_sectors)
+			continue;
+		ln = tt_add_line(tb, NULL);
+		if (!ln)
+			continue;
 
-			printf(
-			    "%s %c%c %9lu %9lu %9lu%c  %2x  %s\n",
-/* device */		  partname(cxt->dev_path, i+1, w),
-/* flags */		  be16_to_cpu(info->flags) & SUN_FLAG_UNMNT ? 'u' : ' ',
-			  be16_to_cpu(info->flags) & SUN_FLAG_RONLY ? 'r' : ' ',
-/* start */		  (unsigned long) scround(cxt, start),
-/* end */		  (unsigned long) scround(cxt, start+len),
-/* odd flag on end */	  (unsigned long) len / 2, len & 1 ? '+' : ' ',
-/* type id */		  t->type,
-/* type name */		  t->name);
+		start = be32_to_cpu(part->start_cylinder)
+				* cxt->geom.heads
+				* cxt->geom.sectors;
 
-			fdisk_free_parttype(t);
-		}
+		len = be32_to_cpu(part->num_sectors);
+		t = fdisk_get_partition_type(cxt, i);
+
+		p = partname(cxt->dev_path, i+1, w);
+		if (p)
+			tt_line_set_data(ln, 0, strdup(p));	/* devname */
+		if ((flags & SUN_FLAG_UNMNT || flags & SUN_FLAG_RONLY)
+		    && asprintf(&p, "%c%c",
+				flags & SUN_FLAG_UNMNT ? 'u' : ' ',
+				flags & SUN_FLAG_RONLY ? 'r' : ' ') > 0)
+			tt_line_set_data(ln, 1, p);	/* flags */
+		if (asprintf(&p, "%lu", scround(cxt, start)) > 0)
+			tt_line_set_data(ln, 2, p);	/* start */
+		if (asprintf(&p, "%lu",	scround(cxt, start + len)) > 0)
+			tt_line_set_data(ln, 3, p);	/* end */
+		if (asprintf(&p, "%lu%c",
+				(unsigned long) len / 2,
+				len & 1 ? '+' : ' ') > 0)
+			tt_line_set_data(ln, 4, p);	/* blocks + flag */
+		if (asprintf(&p, "%2x", t->type) > 0)
+			tt_line_set_data(ln, 5, p);	/* type ID */
+		if (t->name)
+			tt_line_set_data(ln, 6, strdup(t->name)); /* type Name */
+
+		fdisk_free_parttype(t);
 	}
 
-	return 0;
+	rc = fdisk_print_table(cxt, tb);
+	tt_free_table(tb);
+
+	return rc;
 }
 
 
