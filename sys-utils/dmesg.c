@@ -264,7 +264,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 			level_names[i].name,
 			_(level_names[i].help));
 	fputs(USAGE_SEPARATOR, out);
-	fprintf(out, USAGE_MAN_TAIL("dmesg(q)"));
+	fprintf(out, USAGE_MAN_TAIL("dmesg(1)"));
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
