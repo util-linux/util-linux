@@ -68,8 +68,7 @@ static void rfkill_event(void)
 
 static const char *get_name(__u32 idx)
 {
-	static char name[128];
-	ssize_t len;
+	static char name[128] = {};
 	char *pos, filename[64];
 	int fd;
 
@@ -81,7 +80,7 @@ static const char *get_name(__u32 idx)
 		return NULL;
 
 	memset(name, 0, sizeof(name));
-	len = read(fd, name, sizeof(name) - 1);
+	read(fd, name, sizeof(name) - 1);
 
 	pos = strchr(name, '\n');
 	if (pos)
