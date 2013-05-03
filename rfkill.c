@@ -111,6 +111,8 @@ static const char *type2string(enum rfkill_type type)
 		return "GPS";
 	case RFKILL_TYPE_FM:
 		return "FM";
+	case RFKILL_TYPE_NFC:
+		return "NFC";
 	case NUM_RFKILL_TYPES:
 		return NULL;
 	}
@@ -133,6 +135,7 @@ static const struct rfkill_type_str rfkill_type_strings[] = {
 	{	.type = RFKILL_TYPE_WWAN,		.name = "wwan"	},
 	{	.type = RFKILL_TYPE_GPS,		.name = "gps"	},
 	{	.type = RFKILL_TYPE_FM,			.name = "fm"	},
+	{	.type = RFKILL_TYPE_NFC,		.name = "nfc"	},
 	{	.name = NULL }
 };
 
