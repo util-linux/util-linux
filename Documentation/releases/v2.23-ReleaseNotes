@@ -10,6 +10,9 @@ version.
 
 The command chkdupexe has been REMOVED from util-linux.
 
+The command ddate has been REMOVED from util-linux.  You can find it here:
+https://github.com/bo0ts/ddate
+
 The library libblkid supports LIBBLKID_DEBUG=<mask> environment variable to
 print debug messages on stderr. The old BLKID_DEBUG= is no more supported.
 
