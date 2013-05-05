@@ -144,8 +144,6 @@ static int prlimit(pid_t p, int resource,
 }
 #endif
 
-static void rem_prlim(struct prlimit *lim);
-
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	size_t i;
@@ -273,6 +271,14 @@ static int column_name_to_id(const char *name, size_t namesz)
 	return -1;
 }
 
+static void rem_prlim(struct prlimit *lim)
+{
+	if (!lim)
+		return;
+	list_del(&lim->lims);
+	free(lim);
+}
+
 static int show_limits(struct list_head *lims, int tt_flags)
 {
 	int i;
@@ -372,8 +378,6 @@ static void do_prlimit(struct list_head *lims)
 	}
 }
 
-
-
 static int get_range(char *str, rlim_t *soft, rlim_t *hard, int *found)
 {
 	char *end = NULL;
@@ -464,14 +468,6 @@ static int add_prlim(char *ops, struct list_head *lims, size_t id)
 
 	list_add_tail(&lim->lims, lims);
 	return 0;
-}
-
-static void rem_prlim(struct prlimit *lim)
-{
-	if (!lim)
-		return;
-	list_del(&lim->lims);
-	free(lim);
 }
 
 int main(int argc, char **argv)
