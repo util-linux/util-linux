@@ -237,8 +237,7 @@ int blkid_parse_tag_string(const char *token, char **ret_type, char **ret_val)
 			goto errout; /* missing closing quote */
 		*cp = '\0';
 	}
-	if (value && *value)
-		value = strdup(value);
+	value = value && *value ? strdup(value) : NULL;
 	if (!value)
 		goto errout;
 
@@ -250,6 +249,7 @@ int blkid_parse_tag_string(const char *token, char **ret_type, char **ret_val)
 	return 0;
 
 errout:
+	DBG(TAG, blkid_debug("parse error: '%s'", token));
 	free(name);
 	return -1;
 }
