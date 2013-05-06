@@ -236,7 +236,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -f, --facility <list>       restrict output to defined facilities\n"), out);
 	fputs(_(" -H, --human                 human readable output\n"), out);
 	fputs(_(" -k, --kernel                display kernel messages\n"), out);
-	fputs(_(" -L, --color                 colorize messages\n"), out);
+	fputs(_(" -L, --color[=<when>]        colorize messages (auto, always or never)\n"), out);
 	fputs(_(" -l, --level <list>          restrict output to defined levels\n"), out);
 	fputs(_(" -n, --console-level <level> set level of messages printed to console\n"), out);
 	fputs(_(" -P, --nopager               do not pipe output into a pager\n"), out);
@@ -1149,11 +1149,12 @@ int main(int argc, char *argv[])
 		.method = DMESG_METHOD_KMSG,
 		.kmsg = -1,
 	};
+	int colormode = UL_COLORMODE_NEVER;
 
 	static const struct option longopts[] = {
 		{ "buffer-size",   required_argument, NULL, 's' },
 		{ "clear",         no_argument,	      NULL, 'C' },
-		{ "color",         no_argument,	      NULL, 'L' },
+		{ "color",         optional_argument, NULL, 'L' },
 		{ "console-level", required_argument, NULL, 'n' },
 		{ "console-off",   no_argument,       NULL, 'D' },
 		{ "console-on",    no_argument,       NULL, 'E' },
@@ -1192,7 +1193,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "CcDdEeF:f:HhkLl:n:iPrSs:TtuVwx",
+	while ((c = getopt_long(argc, argv, "CcDdEeF:f:HhkL::l:n:iPrSs:TtuVwx",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -1239,7 +1240,13 @@ int main(int argc, char *argv[])
 			setbit(ctl.facilities, FAC_BASE(LOG_KERN));
 			break;
 		case 'L':
-			ctl.color = 1;
+			colormode = UL_COLORMODE_AUTO;
+			if (optarg) {
+				char *p = *optarg == '=' ? optarg + 1 : optarg;
+				colormode = colormode_from_string(p);
+				if (colormode < 0)
+					errx(EXIT_FAILURE, _("unsupported color mode: '%s'"), p);
+			}
 			break;
 		case 'l':
 			ctl.fltr_lev= 1;
@@ -1315,8 +1322,8 @@ int main(int argc, char *argv[])
 		if (!ctl.boot_time)
 			ctl.reltime = 0;
 	}
-	if (ctl.color)
-		ctl.color = colors_init() ? 1 : 0;
+
+	ctl.color = colors_init(colormode) ? 1 : 0;
 
 	ctl.pager = nopager ? 0 : ctl.pager;
 	if (ctl.pager)
