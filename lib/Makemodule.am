@@ -45,6 +45,7 @@ check_PROGRAMS += \
 	test_at \
 	test_blkdev \
 	test_canonicalize \
+	test_colors \
 	test_fileutils \
 	test_ismounted \
 	test_mangle \
@@ -88,6 +89,9 @@ test_at_CFLAGS = -DTEST_PROGRAM_AT
 
 test_strutils_SOURCES = lib/strutils.c
 test_strutils_CFLAGS = -DTEST_PROGRAM
+
+test_colors_SOURCES = lib/colors.c
+test_colors_CFLAGS = -DTEST_PROGRAM
 
 test_randutils_SOURCES = lib/randutils.c
 test_randutils_CFLAGS = -DTEST_PROGRAM

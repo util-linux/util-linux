@@ -38,8 +38,19 @@
 
 #define UL_COLOR_WHITE		"\033[1;37m"
 
+/* --color[=WHEN] */
+enum colortmode {
+	UL_COLORMODE_AUTO = 0,
+	UL_COLORMODE_NEVER,
+	UL_COLORMODE_ALWAYS,
+
+	__UL_NCOLORMODES	/* last */
+};
+
+extern int colormode_from_string(const char *str);
+
 /* Initialize the global variable OUT_IS_TERM */
-extern int colors_init(void);
+extern int colors_init(int mode);
 
 /* Set the color to CLR_SCHEME */
 extern void color_enable(const char *clr_scheme);
