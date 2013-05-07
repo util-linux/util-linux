@@ -53,6 +53,7 @@ if BUILD_PG
 usrbin_exec_PROGRAMS += pg
 dist_man_MANS += text-utils/pg.1
 pg_SOURCES = text-utils/pg.c
+pg_CFLAGS = $(AM_CFLAGS) $(BSD_WARN_CFLAGS)
 pg_LDADD = $(LDADD) libcommon.la @NCURSES_LIBS@
 if HAVE_TINFO
 pg_LDADD += -ltinfo
@@ -77,6 +78,7 @@ if BUILD_MORE
 bin_PROGRAMS += more
 dist_man_MANS += text-utils/more.1
 more_SOURCES = text-utils/more.c
+more_CFLAGS = $(AM_CFLAGS) $(BSD_WARN_CFLAGS)
 more_LDADD = $(LDADD)
 if HAVE_TINFO
 more_LDADD += -ltinfo

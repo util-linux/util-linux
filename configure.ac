@@ -120,6 +120,9 @@ UL_WARN_ADD([-Wstrict-prototypes])
 UL_WARN_ADD([-Wformat-security])
 AC_SUBST([WARN_CFLAGS])
 
+UL_WARN_ADD([-Wno-clobbered], BSD_WARN_CFLAGS)
+AC_SUBST([BSD_WARN_CFLAGS])
+
 dnl libtool-2
 LT_INIT
 
