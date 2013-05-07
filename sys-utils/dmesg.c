@@ -1241,12 +1241,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'L':
 			colormode = UL_COLORMODE_AUTO;
-			if (optarg) {
-				char *p = *optarg == '=' ? optarg + 1 : optarg;
-				colormode = colormode_from_string(p);
-				if (colormode < 0)
-					errx(EXIT_FAILURE, _("unsupported color mode: '%s'"), p);
-			}
+			if (optarg)
+				colormode = colormode_or_err(optarg,
+						_("unsupported color mode"));
 			break;
 		case 'l':
 			ctl.fltr_lev= 1;

@@ -48,6 +48,7 @@ enum colortmode {
 };
 
 extern int colormode_from_string(const char *str);
+extern int colormode_or_err(const char *str, const char *errmsg);
 
 /* Initialize the global variable OUT_IS_TERM */
 extern int colors_init(int mode);

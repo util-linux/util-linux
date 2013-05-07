@@ -61,10 +61,21 @@ int colormode_from_string(const char *str)
 	return -EINVAL;
 }
 
+int colormode_or_err(const char *str, const char *errmsg)
+{
+	const char *p = str && *str == '=' ? str + 1 : str;
+	int colormode;
+
+	colormode = colormode_from_string(p);
+	if (colormode < 0)
+		errx(EXIT_FAILURE, "%s: '%s'", errmsg, p);
+
+	return colormode;
+}
+
+
 #ifdef TEST_PROGRAM
 # include <getopt.h>
-# include <err.h>
-
 int main(int argc, char *argv[])
 {
 	static const struct option longopts[] = {
@@ -77,13 +88,8 @@ int main(int argc, char *argv[])
 		switch (c) {
 		case 'c':
 			mode = UL_COLORMODE_AUTO;
-			if (optarg) {
-				char *p = *optarg == '=' ? optarg + 1 : optarg;
-
-				mode = colormode_from_string(p);
-				if (mode < 0)
-					errx(EXIT_FAILURE, "'%s' unsupported color mode", p);
-			}
+			if (optarg)
+				mode = colormode_or_err(optarg, "unsupported color mode");
 			break;
 		}
 	}
