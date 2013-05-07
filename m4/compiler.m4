@@ -14,10 +14,11 @@ m4_ifdef([AS_VAR_APPEND],
 [m4_define([UL_AS_VAR_APPEND],
 [AS_VAR_SET([$1], [AS_VAR_GET([$1])$2])])])
 
-# UL_ADD_WARN([parameter])
+# UL_ADD_WARN(COMPILER_OPTION [, VARNAME])
 # ------------------------
-# Adds parameter to WARN_CFLAGS if the compiler supports it.
+# Adds parameter to WARN_CFLAGS (or to $VARNAME) if the compiler supports it.
 AC_DEFUN([UL_WARN_ADD], [
+  m4_define([warnvarname], m4_default([$2],WARN_CFLAGS))
   AS_VAR_PUSHDEF([ul_Warn], [ul_cv_warn_$1])dnl
   AC_CACHE_CHECK([whether compiler handles $1], m4_defn([ul_Warn]), [
     ul_save_CPPFLAGS="$CPPFLAGS"
@@ -27,6 +28,6 @@ AC_DEFUN([UL_WARN_ADD], [
                       [AS_VAR_SET(ul_Warn, [no])])
     CPPFLAGS="$ul_save_CPPFLAGS"
   ])
-  AS_VAR_IF(ul_Warn, [yes], [UL_AS_VAR_APPEND([WARN_CFLAGS], [" $1"])])
+  AS_VAR_IF(ul_Warn, [yes], [UL_AS_VAR_APPEND(warnvarname, [" $1"])])
 ])
 
