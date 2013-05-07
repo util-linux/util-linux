@@ -68,6 +68,7 @@
 
 #include "c.h"
 #include "closestream.h"
+#include "colors.h"
 #include "nls.h"
 #include "mbsalign.h"
 #include "strutils.h"
@@ -255,6 +256,11 @@ main(int argc, char **argv) {
 	time_t now;
 	int ch, day = 0, month = 0, year = 0, yflag = 0;
 	int num_months = NUM_MONTHS;
+	int colormode = UL_COLORMODE_AUTO;
+
+	enum {
+		OPT_COLOR = CHAR_MAX + 1
+	};
 
 	static const struct option longopts[] = {
 		{"one", no_argument, NULL, '1'},
@@ -263,6 +269,7 @@ main(int argc, char **argv) {
 		{"monday", no_argument, NULL, 'm'},
 		{"julian", no_argument, NULL, 'j'},
 		{"year", no_argument, NULL, 'y'},
+		{"color", optional_argument, NULL, OPT_COLOR},
 		{"version", no_argument, NULL, 'V'},
 		{"help", no_argument, NULL, 'h'},
 		{NULL, 0, NULL, 0}
@@ -340,6 +347,14 @@ main(int argc, char **argv) {
 		case 'y':
 			yflag = 1;
 			break;
+		case OPT_COLOR:
+			if (optarg) {
+				char *p = *optarg == '=' ? optarg + 1 : optarg;
+				colormode = colormode_from_string(p);
+				if (colormode < 0)
+					errx(EXIT_FAILURE, _("unsupported color mode: '%s'"), p);
+			}
+			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
@@ -391,8 +406,8 @@ main(int argc, char **argv) {
 	}
 	headers_init(julian);
 
-	if (!isatty(STDOUT_FILENO))
-		day = 0; /* don't highlight */
+	if (!colors_init(colormode))
+		day = 0;
 
 	if (yflag)
 		yearly(day, year, julian);
