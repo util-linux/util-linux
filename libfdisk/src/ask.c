@@ -13,15 +13,6 @@ void fdisk_reset_ask(struct fdisk_ask *ask)
 	assert(ask);
 	free(ask->query);
 
-	switch (ask->type) {
-	case FDISK_ASKTYPE_OFFSET:
-	case FDISK_ASKTYPE_NUMBER:
-		free(ask->data.num.range);
-		break;
-	default:
-		break;
-	}
-
 	memset(ask, 0, sizeof(*ask));
 }
 
@@ -90,7 +81,9 @@ const char *fdisk_ask_number_get_range(struct fdisk_ask *ask)
 int fdisk_ask_number_set_range(struct fdisk_ask *ask, const char *range)
 {
 	assert(ask);
-	return !strdup_to_struct_member(ask, data.num.range, range) ? -ENOMEM : 0;
+	assert(is_number_ask(ask));
+	ask->data.num.range = range;
+	return 0;
 }
 
 uint64_t fdisk_ask_number_get_default(struct fdisk_ask *ask)
