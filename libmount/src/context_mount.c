@@ -609,7 +609,7 @@ static int do_mount_additional(struct libmnt_context *cxt,
 
 /*
  * The default is to use fstype from cxt->fs, this could be overwritten by
- * @try_type argument.
+ * @try_type argument. If @try_type is specified then mount with MS_SILENT.
  *
  * Returns: 0 on success,
  *         >0 in case of mount(2) error (returns syscall errno),
@@ -659,6 +659,8 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 
 	if (!(flags & MS_MGC_MSK))
 		flags |= MS_MGC_VAL;
+	if (try_type)
+		flags |= MS_SILENT;
 
 	DBG(CXT, mnt_debug_h(cxt, "%smount(2) "
 			"[source=%s, target=%s, type=%s, "
