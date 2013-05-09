@@ -182,8 +182,6 @@ extern int fdisk_ask_print_get_errno(struct fdisk_ask *ask);
 extern int fdisk_ask_print_set_errno(struct fdisk_ask *ask, int errnum);
 extern const char *fdisk_ask_print_get_mesg(struct fdisk_ask *ask);
 extern int fdisk_ask_print_set_mesg(struct fdisk_ask *ask, const char *mesg);
-extern int fdisk_ask_print_get_va(struct fdisk_ask *ask, va_list ap);
-extern int fdisk_ask_print_set_va(struct fdisk_ask *ask, va_list ap);
 
 #ifdef __cplusplus
 }
