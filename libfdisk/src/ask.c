@@ -18,11 +18,6 @@ void fdisk_reset_ask(struct fdisk_ask *ask)
 	case FDISK_ASKTYPE_NUMBER:
 		free(ask->data.num.range);
 		break;
-	case FDISK_ASKTYPE_WARNX:
-	case FDISK_ASKTYPE_WARN:
-		if (ask->data.print.has_va)
-			va_end(ask->data.print.va);
-		break;
 	default:
 		break;
 	}
@@ -452,44 +447,32 @@ int fdisk_ask_print_set_mesg(struct fdisk_ask *ask, const char *mesg)
 	return 0;
 }
 
-/* caller has to call va_end(ap) */
-int fdisk_ask_print_get_va(struct fdisk_ask *ask, va_list ap)
-{
-	assert(ask);
-	assert(is_print_ask(ask));
-	va_copy(ap, ask->data.print.va);
-	return 0;
-}
-
-/* note that fdisk_free_ask() calls va_end() to free the private va list. */
-int fdisk_ask_print_set_va(struct fdisk_ask *ask, va_list ap)
-{
-	assert(ask);
-	va_copy(ask->data.print.va, ap);
-	ask->data.print.has_va = 1;
-	return 0;
-}
-
 static int do_vprint(struct fdisk_context *cxt, int errnum, int type,
 		 const char *fmt, va_list va)
 {
 	struct fdisk_ask *ask;
 	int rc;
+	char *mesg;
 
 	assert(cxt);
 
-	ask = fdisk_new_ask();
-	if (!ask)
+	if (vasprintf(&mesg, fmt, va) < 0)
 		return -ENOMEM;
 
+	ask = fdisk_new_ask();
+	if (!ask) {
+		free(mesg);
+		return -ENOMEM;
+	}
+
 	fdisk_ask_set_type(ask, type);
-	fdisk_ask_print_set_mesg(ask, fmt);
-	fdisk_ask_print_set_va(ask, va);
+	fdisk_ask_print_set_mesg(ask, mesg);
 	if (errnum >= 0)
 		fdisk_ask_print_set_errno(ask, errnum);
 	rc = fdisk_do_ask(cxt, ask);
 
 	fdisk_free_ask(ask);
+	free(mesg);
 	return rc;
 }
 

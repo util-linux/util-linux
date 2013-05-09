@@ -167,7 +167,6 @@ static int ask_offset(struct fdisk_context *cxt,
 int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		    void *data __attribute__((__unused__)))
 {
-	va_list ap;
 	int rc = 0;
 	char buf[BUFSIZ];
 
@@ -180,23 +179,17 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 	case FDISK_ASKTYPE_OFFSET:
 		return ask_offset(cxt, ask, buf, sizeof(buf));
 	case FDISK_ASKTYPE_INFO:
-		fdisk_ask_print_get_va(ask, ap);
-		vfprintf(stdout, fdisk_ask_print_get_mesg(ask), ap);
+		fputs(fdisk_ask_print_get_mesg(ask), stdout);
 		fputc('\n', stdout);
-		va_end(ap);
 		break;
 	case FDISK_ASKTYPE_WARNX:
-		fdisk_ask_print_get_va(ask, ap);
-		vfprintf(stderr, fdisk_ask_print_get_mesg(ask), ap);
+		fputs(fdisk_ask_print_get_mesg(ask), stderr);
 		fputc('\n', stderr);
-		va_end(ap);
 		break;
 	case FDISK_ASKTYPE_WARN:
-		fdisk_ask_print_get_va(ask, ap);
-		vfprintf(stderr, fdisk_ask_print_get_mesg(ask), ap);
+		fputs(fdisk_ask_print_get_mesg(ask), stderr);
 		errno = fdisk_ask_print_get_errno(ask);
 		fprintf(stderr, ": %m\n");
-		va_end(ap);
 		break;
 	case FDISK_ASKTYPE_YESNO:
 		fputc('\n', stdout);
