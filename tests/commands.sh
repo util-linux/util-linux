@@ -47,6 +47,7 @@ TS_CMD_ISOSIZE=${TS_CMD_ISOSIZE-"$top_builddir/isosize"}
 TS_CMD_LINE=${TS_CMD_LINE-"$top_builddir/line"}
 TS_CMD_LOOK=${TS_CMD_LOOK-"$top_builddir/look"}
 TS_CMD_LOSETUP=${TS_CMD_LOSETUP:-"$top_builddir/losetup"}
+TS_CMD_LSBLK=${TS_CMD_LSBLK-"$top_builddir/lsblk"}
 TS_CMD_LSCPU=${TS_CMD_LSCPU-"$top_builddir/lscpu"}
 TS_CMD_MCOOKIE=${TS_CMD_MCOOKIE-"$top_builddir/mcookie"}
 TS_CMD_MKCRAMFS=${TS_CMD_MKCRAMFS:-"$top_builddir/mkfs.cramfs"}
