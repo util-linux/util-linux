@@ -1097,7 +1097,17 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
 	if (fstat(file_fd, &st))
 		return -errno;
 
-	expected_size = st.st_size;
+	if (S_ISBLK(st.st_mode)) {
+		if (blkdev_get_size(file_fd,
+				(unsigned long long *) &expected_size))
+			return -errno;
+	} else
+		expected_size = st.st_size;
+
+	if (expected_size == 0 || expected_size <= lc->info.lo_offset) {
+		DBG(lc, loopdev_debug("failed to determine expected size"));
+		return 0;	/* ignore this error */
+	}
 
 	if (lc->info.lo_offset > 0)
 		expected_size -= lc->info.lo_offset;
@@ -1113,6 +1123,10 @@ static int loopcxt_check_size(struct loopdev_cxt *lc, int file_fd)
 		return -errno;
 
 	if (expected_size != size) {
+		DBG(lc, loopdev_debug("warning: loopdev and expected "
+				      "size dismatch (%ju/%ju)",
+				      size, expected_size));
+
 		if (loopcxt_set_capacity(lc)) {
 			/* ioctl not available */
 			if (errno == ENOTTY || errno == EINVAL)
