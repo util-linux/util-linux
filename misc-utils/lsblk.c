@@ -77,6 +77,7 @@ enum {
 	COL_RO,
 	COL_RM,
 	COL_MODEL,
+	COL_SERIAL,
 	COL_SIZE,
 	COL_STATE,
 	COL_OWNER,
@@ -133,6 +134,7 @@ static struct colinfo infos[] = {
 	[COL_ROTA]   = { "ROTA",    1, TT_FL_RIGHT, N_("rotational device") },
 	[COL_RAND]   = { "RAND",    1, TT_FL_RIGHT, N_("adds randomness") },
 	[COL_MODEL]  = { "MODEL",   0.1, TT_FL_TRUNC, N_("device identifier") },
+	[COL_SERIAL] = { "SERIAL",  0.1, TT_FL_TRUNC, N_("disk serial number") },
 	[COL_SIZE]   = { "SIZE",    5, TT_FL_RIGHT, N_("size of the device") },
 	[COL_STATE]  = { "STATE",   7, TT_FL_TRUNC, N_("state of the device") },
 	[COL_OWNER]  = { "OWNER",   0.1, TT_FL_TRUNC, N_("user name"), },
@@ -209,6 +211,7 @@ struct blkdev_cxt {
 	char *partuuid;		/* partition UUID */
 	char *partlabel;	/* partiton label */
 	char *wwn;		/* storage WWN */
+	char *serial;		/* disk serial number */
 
 	int npartitions;	/* # of partitions this device has */
 	int nholders;		/* # of devices mapped directly to this device
@@ -291,6 +294,7 @@ static void reset_blkdev_cxt(struct blkdev_cxt *cxt)
 	free(cxt->partuuid);
 	free(cxt->partlabel);
 	free(cxt->wwn);
+	free(cxt->serial);
 
 	sysfs_deinit(&cxt->sysfs);
 
@@ -437,7 +441,8 @@ static int get_udev_properties(struct blkdev_cxt *cxt)
 			cxt->partuuid = xstrdup(data);
 		if ((data = udev_device_get_property_value(dev, "ID_WWN")))
 			cxt->wwn = xstrdup(data);
-
+		if ((data = udev_device_get_property_value(dev, "ID_SERIAL_SHORT")))
+			cxt->serial = xstrdup(data);
 		udev_device_unref(dev);
 		cxt->probed = 1;
 	}
@@ -791,6 +796,13 @@ static void set_tt_data(struct blkdev_cxt *cxt, int col, int id, struct tt_line 
 			p = sysfs_strdup(&cxt->sysfs, "device/model");
 			if (p)
 				tt_line_set_data(ln, col, p);
+		}
+		break;
+	case COL_SERIAL:
+		if (!cxt->partition && cxt->nslaves == 0) {
+			get_udev_properties(cxt);
+			if (cxt->serial)
+				tt_line_set_data(ln, col, xstrdup(cxt->serial));
 		}
 		break;
 	case COL_REV:
