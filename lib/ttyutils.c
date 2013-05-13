@@ -42,7 +42,8 @@ int get_terminal_width(void)
 	return 0;
 }
 
-int get_terminal_name(const char **path,
+int get_terminal_name(int fd,
+		      const char **path,
 		      const char **name,
 		      const char **number)
 {
@@ -56,7 +57,7 @@ int get_terminal_name(const char **path,
 	if (number)
 		*number = NULL;
 
-	tty = ttyname(STDERR_FILENO);
+	tty = ttyname(fd);
 	if (!tty)
 		return -1;
 	if (path)
