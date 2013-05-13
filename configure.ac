@@ -1304,7 +1304,7 @@ AM_CONDITIONAL(BUILD_SETTERM, test "x$build_setterm" = xyes)
 
 
 AC_ARG_ENABLE([schedutils],
-  AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, teskset]),
+  AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, taskset]),
   [], enable_schedutils=yes
 )
 UL_BUILD_INIT([schedutils])

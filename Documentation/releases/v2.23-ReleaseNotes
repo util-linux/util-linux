@@ -150,7 +150,7 @@ bash-completion:
    - Don't offer any more completions after help or version.  [Ville Skyttä]
    - Don't offer short options where corresponding long one exists.  [Ville Skyttä]
    - Symlink runuser symlink to su so it gets loaded on demand.  [Ville Skyttä]
-   - add bash completetion configure option  [Sami Kerola]
+   - add bash completion configure option  [Sami Kerola]
    - add completion files to Makefile.am  [Sami Kerola]
    - add swapoff  [Bernhard Voelker]
    - disk-utils  [Sami Kerola]
