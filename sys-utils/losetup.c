@@ -380,7 +380,7 @@ static void warn_size(const char *filename, uint64_t size)
 	struct stat st;
 
 	if (!size) {
-		if (stat(filename, &st))
+		if (stat(filename, &st) || S_ISBLK(st.st_mode))
 			return;
 		size = st.st_size;
 	}
