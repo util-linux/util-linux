@@ -95,8 +95,12 @@ print help
 show status of all loop devices associated with given
 .I file
 .IP "\fB\-l, \-\-list"
-if a loop device or the -a option is specified, print default columns for either the specified
-loop device or all loop devices, default is to print info about all devices.
+if a loop device or the -a option is specified, print default columns for
+either the specified loop device or all loop devices, default is to print info
+about all devices.  See also \fB\-\-output\fP, \fB\-\-noheadings\fP
+and \fB\-\-raw\fP.
+.IP "\fB\-n, \fB\-\-noheadings\fP"
+don't print headings for \fB\-\-list\fP output format
 .IP "\fB\-o, \-\-offset \fIoffset\fP"
 the data start is moved \fIoffset\fP bytes into the specified file or
 device
@@ -106,6 +110,8 @@ specify which columns are to be printed for the \fB\-\-list\fP output
 the data end is set to no more than \fIsize\fP bytes after the data start
 .IP "\fB\-P, \-\-partscan\fP"
 force kernel to scan partition table on newly created loop device
+.IP "\fB\-\-raw\fP"
+use raw \fB\-\-list\fP output format
 .IP "\fB\-r, \-\-read-only\fP"
 setup read-only loop device
 .IP "\fB\-\-show\fP"

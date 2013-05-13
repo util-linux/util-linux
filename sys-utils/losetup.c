@@ -290,14 +290,17 @@ static int set_tt_data(struct loopdev_cxt *lc, struct tt_line *ln)
 	return 0;
 }
 
-static int make_table(struct loopdev_cxt *lc, const char *file,
-		uint64_t offset, int flags)
+static int make_table(struct loopdev_cxt *lc,
+		      const char *file,
+		      uint64_t offset,
+		      int flags,
+		      int tt_flags)
 {
 	struct stat sbuf, *st = &sbuf;
 	struct tt_line *ln;
 	int i;
 
-	if (!(tt = tt_new_table(0)))
+	if (!(tt = tt_new_table(tt_flags)))
 		errx(EXIT_FAILURE, _("failed to initialize output table"));
 
 	for (i = 0; i < ncolumns; i++) {
@@ -307,6 +310,7 @@ static int make_table(struct loopdev_cxt *lc, const char *file,
 			warn(_("failed to initialize output column"));
 	}
 
+	/* only one loopdev requested (already assigned to loopdev_cxt) */
 	if (loopcxt_get_device(lc)) {
 		ln = tt_add_line(tt, NULL);
 		if (set_tt_data(lc, ln))
@@ -314,6 +318,7 @@ static int make_table(struct loopdev_cxt *lc, const char *file,
 		return 0;
 	}
 
+	/* list all loopdevs */
 	if (loopcxt_init_iterator(lc, LOOPITER_FL_USED))
 		return -1;
 	if (!file || stat(file, st))
@@ -353,14 +358,19 @@ static void usage(FILE *out)
 		" -j, --associated <file>       list all devices associated with <file>\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 
-	fputs(_(" -l, --list                    list info about all or specified\n"), out);
 	fputs(_(" -o, --offset <num>            start at offset <num> into file\n"), out);
-	fputs(_(" -O, --output <cols>           specify columns to output for --list\n"), out);
 	fputs(_("     --sizelimit <num>         device limited to <num> bytes of the file\n"), out);
 	fputs(_(" -P, --partscan                create partitioned loop device\n"), out);
 	fputs(_(" -r, --read-only               setup read-only loop device\n"), out);
 	fputs(_("     --show                    print device name after setup (with -f)\n"), out);
 	fputs(_(" -v, --verbose                 verbose mode\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+
+	fputs(_(" -l, --list                    list info about all or specified\n"), out);
+	fputs(_(" -O, --output <cols>           specify columns to output for --list\n"), out);
+	fputs(_(" -n, --noheadings              don't print headings for --list ouput\n"), out);
+	fputs(_("     --raw                     use raw --list output format\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -401,13 +411,14 @@ int main(int argc, char **argv)
 	int act = 0, flags = 0, c;
 	char *file = NULL;
 	uint64_t offset = 0, sizelimit = 0;
-	int res = 0, showdev = 0, lo_flags = 0;
+	int res = 0, showdev = 0, lo_flags = 0, tt_flags = 0;
 	char *outarg = NULL;
 	int list = 0;
 
 	enum {
 		OPT_SIZELIMIT = CHAR_MAX + 1,
-		OPT_SHOW
+		OPT_SHOW,
+		OPT_RAW
 	};
 	static const struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
@@ -419,12 +430,14 @@ int main(int argc, char **argv)
 		{ "help", 0, 0, 'h' },
 		{ "associated", 1, 0, 'j' },
 		{ "list", 0, 0, 'l' },
+		{ "noheadings", 0, 0, 'n' },
 		{ "offset", 1, 0, 'o' },
 		{ "output", 1, 0, 'O' },
 		{ "sizelimit", 1, 0, OPT_SIZELIMIT },
 		{ "pass-fd", 1, 0, 'p' },
 		{ "partscan", 0, 0, 'P' },
 		{ "read-only", 0, 0, 'r' },
+		{ "raw", 0, 0, OPT_RAW },
 		{ "show", 0, 0, OPT_SHOW },
 		{ "verbose", 0, 0, 'v' },
 		{ "version", 0, 0, 'V' },
@@ -447,7 +460,7 @@ int main(int argc, char **argv)
 	if (loopcxt_init(&lc, 0))
 		err(EXIT_FAILURE, _("failed to initialize loopcxt"));
 
-	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:lo:O:p:PrvV",
+	while ((c = getopt_long(argc, argv, "ac:d:De:E:fhj:lno:O:p:PrvV",
 				longopts, NULL)) != -1) {
 
 		err_exclusive_options(c, longopts, excl, excl_st);
@@ -490,6 +503,12 @@ int main(int argc, char **argv)
 			break;
 		case 'l':
 			list = 1;
+			break;
+		case 'n':
+			tt_flags |= TT_FL_NOHEADINGS;
+			break;
+		case OPT_RAW:
+			tt_flags |= TT_FL_RAW;
 			break;
 		case 'o':
 			offset = strtosize_or_err(optarg, _("failed to parse offset"));
@@ -658,13 +677,13 @@ int main(int argc, char **argv)
 		break;
 	case A_SHOW:
 		if (list)
-			res = make_table(&lc, file, offset, flags);
+			res = make_table(&lc, file, offset, flags, tt_flags);
 		else
 			res = show_all_loops(&lc, file, offset, flags);
 		break;
 	case A_SHOW_ONE:
 		if (list)
-			res = make_table( &lc, NULL, 0, 0);
+			res = make_table( &lc, NULL, 0, 0, tt_flags);
 		else
 			res = printf_loopdev(&lc);
 		if (res)
