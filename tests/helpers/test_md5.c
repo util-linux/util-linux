@@ -4,7 +4,7 @@
 
 #include "md5.h"
 
-int main()
+int main(void)
 {
 	int i, ret;
 	struct MD5Context ctx;
