@@ -602,7 +602,7 @@ static char *getpasswd(struct console *con)
 			case ENOENT:
 				break;
 			default:
-				fprintf(stderr, "sulogin: read(%s): %m\n\r", con->tty);
+				warn(_("%s: read failed"), con->tty);
 				break;
 			}
 			goto quit;
@@ -868,7 +868,7 @@ int main(int argc, char **argv)
 	if (list_empty(&consoles)) {
 		if (!errno)
 			errno = ENOENT;
-		errx(EXIT_FAILURE, _("cannot open console: %m\n"));
+		err(EXIT_FAILURE, _("cannot open console"));
 	}
 
 	/*
@@ -934,7 +934,7 @@ int main(int argc, char **argv)
 					const char *cryptbuf;
 					cryptbuf = crypt(answer, passwd);
 					if (cryptbuf == NULL)
-						warnx(_("crypt failed: %m\n"));
+						warn(_("crypt failed"));
 					else if (strcmp(cryptbuf, pwd->pw_passwd) == 0)
 						doshell++;
 				}
@@ -965,7 +965,7 @@ int main(int argc, char **argv)
 			 */
 			exit(0);
 		case -1:
-			warnx(_("Can not fork: %m\n"));
+			warn(_("fork failed"));
 			/* fall through */
 		default:
 			break;
