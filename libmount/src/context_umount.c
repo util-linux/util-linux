@@ -909,11 +909,8 @@ int mnt_context_next_umount(struct libmnt_context *cxt,
 
 	DBG(CXT, mnt_debug_h(cxt, "next-umount: trying %s", tgt));
 
-	/* ignore root filesystem */
-	if ((tgt && (strcmp(tgt, "/") == 0 || strcmp(tgt, "root") == 0)) ||
-
 	/* ignore filesystems not match with options patterns */
-	   (cxt->fstype_pattern && !mnt_fs_match_fstype(*fs,
+	if ((cxt->fstype_pattern && !mnt_fs_match_fstype(*fs,
 					cxt->fstype_pattern)) ||
 
 	/* ignore filesystems not match with type patterns */
