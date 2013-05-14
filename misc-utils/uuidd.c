@@ -36,6 +36,7 @@ extern int optind;
 #include "all-io.h"
 #include "c.h"
 #include "closestream.h"
+#include "strutils.h"
 
 #ifdef USE_SOCKET_ACTIVATION
 #include "sd-daemon.h"
@@ -217,8 +218,7 @@ static int create_pidfile(const char *pidfile_path, int quiet)
 	fd_pidfile = open(pidfile_path, O_CREAT | O_RDWR, 0664);
 	if (fd_pidfile < 0) {
 		if (!quiet)
-			fprintf(stderr, _("Failed to open/create %s: %m\n"),
-				pidfile_path);
+			warn(_("cannot open %s"), pidfile_path);
 		exit(EXIT_FAILURE);
 	}
 	cleanup_pidfile = pidfile_path;
@@ -232,7 +232,7 @@ static int create_pidfile(const char *pidfile_path, int quiet)
 		if ((errno == EAGAIN) || (errno == EINTR))
 			continue;
 		if (!quiet)
-			fprintf(stderr, _("Failed to lock %s: %m\n"), pidfile_path);
+			warn(_("cannot lock %s"), pidfile_path);
 		exit(EXIT_FAILURE);
 	}
 
@@ -256,7 +256,7 @@ static int create_socket(const char *socket_path, int will_fork, int quiet)
 
 	if ((s = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
 		if (!quiet)
-			fprintf(stderr, _("Couldn't create unix stream socket: %m"));
+			warn(_("couldn't create unix stream socket"));
 		exit(EXIT_FAILURE);
 	}
 
@@ -281,8 +281,7 @@ static int create_socket(const char *socket_path, int will_fork, int quiet)
 	if (bind(s, (const struct sockaddr *) &my_addr,
 		 sizeof(struct sockaddr_un)) < 0) {
 		if (!quiet)
-			fprintf(stderr,
-				_("Couldn't bind unix socket %s: %m\n"), socket_path);
+			warn(_("couldn't bind unix socket %s"), socket_path);
 		exit(EXIT_FAILURE);
 	}
 	umask(save_umask);
@@ -319,8 +318,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 				  sizeof(reply_buf), 0, NULL);
 		if (ret > 0) {
 			if (!uuidd_cxt->quiet)
-				fprintf(stderr,
-					_("uuidd daemon already running at pid %s\n"),
+				warnx(_("uuidd daemon already running at pid %s"),
 				       reply_buf);
 			exit(EXIT_FAILURE);
 		}
@@ -331,8 +329,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 				  uuidd_cxt->quiet);
 		if (listen(s, SOMAXCONN) < 0) {
 			if (!uuidd_cxt->quiet)
-				fprintf(stderr, _("Couldn't listen on unix "
-						  "socket %s: %m\n"), socket_path);
+				warn(_("couldn't listen on unix socket %s"), socket_path);
 			exit(EXIT_FAILURE);
 		}
 
@@ -357,10 +354,8 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 
 #ifdef USE_SOCKET_ACTIVATION
 	if (uuidd_cxt->no_sock) {
-		if (sd_listen_fds(0) != 1) {
-			fprintf(stderr, _("No or too many file descriptors received.\n"));
-			exit(EXIT_FAILURE);
-		}
+		if (sd_listen_fds(0) != 1)
+			errx(EXIT_FAILURE, _("no or too many file descriptors received."));
 
 		s = SD_LISTEN_FDS_START + 0;
 	}
@@ -381,10 +376,10 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		len = read(ns, &op, 1);
 		if (len != 1) {
 			if (len < 0)
-				perror("read");
+				warn(_("read failed"));
 			else
-				fprintf(stderr, _("Error reading from client, "
-					 "len = %d\n"), len);
+				warnx(_("rrror reading from client, len = %d"),
+						len);
 			goto shutdown_socket;
 		}
 		if ((op == UUIDD_OP_BULK_TIME_UUID) ||
@@ -487,7 +482,7 @@ int main(int argc, char **argv)
 	const char	*pidfile_path_param = NULL;
 	const char	*err_context;
 	char		buf[1024], *cp;
-	char		str[UUID_STR_LEN], *tmp;
+	char		str[UUID_STR_LEN];
 	uuid_t		uu;
 	int		i, c, ret;
 	int		do_type = 0, do_kill = 0, num = 0;
@@ -530,11 +525,8 @@ int main(int argc, char **argv)
 			do_kill++;
 			break;
 		case 'n':
-			num = strtol(optarg, &tmp, 0);
-			if ((num < 1) || *tmp) {
-				fprintf(stderr, _("Bad number: %s\n"), optarg);
-				return EXIT_FAILURE;
-			}
+			num = strtou32_or_err(optarg,
+						_("failed to parse --uuids"));
 			break;
 		case 'p':
 			pidfile_path_param = optarg;
@@ -551,9 +543,8 @@ int main(int argc, char **argv)
 			uuidd_cxt.no_fork = 1;
 			no_pid = 1;
 #else
-			fprintf(stderr,
-				_("uuidd has been built without support for socket activation.\n"));
-			return EXIT_FAILURE;
+			errx(EXIT_FAILURE, _("uuidd has been built without "
+					     "support for socket activation."));
 #endif
 			break;
 		case 'q':
@@ -570,11 +561,8 @@ int main(int argc, char **argv)
 			do_type = UUIDD_OP_TIME_UUID;
 			break;
 		case 'T':
-			uuidd_cxt.timeout = strtol(optarg, &tmp, 0);
-			if (uuidd_cxt.timeout < 0 || *tmp) {
-				fprintf(stderr, _("Bad number: %s\n"), optarg);
-				return EXIT_FAILURE;
-			}
+			uuidd_cxt.timeout = strtou32_or_err(optarg,
+						_("failed to parse --timeout"));
 			break;
 		case 'V':
 			printf(UTIL_LINUX_VERSION);
@@ -587,8 +575,7 @@ int main(int argc, char **argv)
 	}
 
 	if (no_pid && pidfile_path_param && !uuidd_cxt.quiet)
-		fprintf(stderr, _("Both --pid and --no-pid specified. "
-				  "Ignoring --no-pid.\n"));
+		warnx(_("Both --pid and --no-pid specified. Ignoring --no-pid."));
 
 	if (!no_pid && !pidfile_path_param)
 		pidfile_path = UUIDD_PIDFILE_PATH;
@@ -597,16 +584,16 @@ int main(int argc, char **argv)
 
 	/* custom socket path and socket-activation make no sense */
 	if (s_flag && uuidd_cxt.no_sock && !uuidd_cxt.quiet)
-		fprintf(stderr, _("Both --socket-activation and --socket specified. "
-				  "Ignoring --socket\n"));
+		warnx(_("Both --socket-activation and --socket specified. "
+			"Ignoring --socket"));
 
 	if (num && do_type) {
 		ret = call_daemon(socket_path, do_type + 2, buf,
 				  sizeof(buf), &num, &err_context);
-		if (ret < 0) {
-			printf(_("Error calling uuidd daemon (%s): %m\n"), err_context);
-			return EXIT_FAILURE;
-		}
+		if (ret < 0)
+			err(EXIT_FAILURE, _("error calling uuidd daemon (%s)"),
+					err_context);
+
 		if (do_type == UUIDD_OP_TIME_UUID) {
 			if (ret != sizeof(uu) + sizeof(num))
 				unexpected_size(ret);
@@ -631,10 +618,9 @@ int main(int argc, char **argv)
 	if (do_type) {
 		ret = call_daemon(socket_path, do_type, (char *) &uu,
 				  sizeof(uu), 0, &err_context);
-		if (ret < 0) {
-			printf(_("Error calling uuidd daemon (%s): %m\n"), err_context);
-			return EXIT_FAILURE;
-		}
+		if (ret < 0)
+			err(EXIT_FAILURE, _("error calling uuidd daemon (%s)"),
+					err_context);
 		if (ret != sizeof(uu))
 		        unexpected_size(ret);
 
@@ -650,9 +636,8 @@ int main(int argc, char **argv)
 			ret = kill(do_kill, SIGTERM);
 			if (ret < 0) {
 				if (!uuidd_cxt.quiet)
-					fprintf(stderr,
-						_("Couldn't kill uuidd running "
-						  "at pid %d: %m\n"), do_kill);
+					warn(_("couldn't kill uuidd running "
+						  "at pid %d"), do_kill);
 				return EXIT_FAILURE;
 			}
 			if (!uuidd_cxt.quiet)
