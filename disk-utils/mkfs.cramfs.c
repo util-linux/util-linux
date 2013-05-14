@@ -161,7 +161,7 @@ do_mmap(char *path, unsigned int size, unsigned int mode){
 
 	fd = open(path, O_RDONLY);
 	if (fd < 0) {
-		warn(_("open failed: %s"), path);
+		warn(_("cannot open %s"), path);
 		warn_skip = 1;
 		goto err;
 	}
