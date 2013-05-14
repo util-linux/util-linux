@@ -2317,7 +2317,7 @@ int test_mount(struct libmnt_test *ts, int argc, char *argv[])
 
 	rc = mnt_context_mount(cxt);
 	if (rc)
-		printf("failed to mount: %m\n");
+		warn("failed to mount");
 	else
 		printf("successfully mounted\n");
 
