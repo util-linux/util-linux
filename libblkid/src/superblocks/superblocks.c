@@ -131,6 +131,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&sysv_idinfo,
         &xenix_idinfo,
 	&ntfs_idinfo,
+	&refs_idinfo,
 	&cramfs_idinfo,
 	&romfs_idinfo,
 	&minix_idinfo,
