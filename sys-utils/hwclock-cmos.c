@@ -315,13 +315,11 @@ static inline unsigned long cmos_read(unsigned long reg)
 		unsigned char v = reg | 0x80;
 		lseek(dev_port_fd, clock_ctl_addr, 0);
 		if (write(dev_port_fd, &v, 1) == -1 && debug)
-			printf(_
-			       ("cmos_read(): write to control address %X failed: %m\n"),
+			warn(_("cmos_read(): write to control address %X failed"),
 			       clock_ctl_addr);
 		lseek(dev_port_fd, clock_data_addr, 0);
 		if (read(dev_port_fd, &v, 1) == -1 && debug)
-			printf(_
-			       ("cmos_read(): read data address %X failed: %m\n"),
+			warn(_("cmos_read(): read data address %X failed"),
 			       clock_data_addr);
 		return v;
 	} else {
@@ -358,14 +356,12 @@ static inline unsigned long cmos_write(unsigned long reg, unsigned long val)
 		unsigned char v = reg | 0x80;
 		lseek(dev_port_fd, clock_ctl_addr, 0);
 		if (write(dev_port_fd, &v, 1) == -1 && debug)
-			printf(_
-			       ("cmos_write(): write to control address %X failed: %m\n"),
+			warn(_("cmos_write(): write to control address %X failed"),
 			       clock_ctl_addr);
 		v = (val & 0xff);
 		lseek(dev_port_fd, clock_data_addr, 0);
 		if (write(dev_port_fd, &v, 1) == -1 && debug)
-			printf(_
-			       ("cmos_write(): write to data address %X failed: %m\n"),
+			warn(_("cmos_write(): write to data address %X failed"),
 			       clock_data_addr);
 	} else {
 		outb(reg, clock_ctl_addr);
