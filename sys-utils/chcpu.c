@@ -97,10 +97,10 @@ static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 		if (enable) {
 			rc = path_write_str("1", _PATH_SYS_CPU "/cpu%d/online", cpu);
 			if ((rc == -1) && (configured == 0))
-				printf(_("CPU %d enable failed "
-					 "(CPU is deconfigured)\n"), cpu);
+				warnx(_("CPU %d enable failed "
+					 "(CPU is deconfigured)"), cpu);
 			else if (rc == -1)
-				printf(_("CPU %d enable failed (%m)\n"), cpu);
+				warn(_("CPU %d enable failed"), cpu);
 			else
 				printf(_("CPU %d enabled\n"), cpu);
 		} else {
@@ -111,7 +111,7 @@ static int cpu_enable(cpu_set_t *cpu_set, size_t setsize, int enable)
 			}
 			rc = path_write_str("0", _PATH_SYS_CPU "/cpu%d/online", cpu);
 			if (rc == -1)
-				printf(_("CPU %d disable failed (%m)\n"), cpu);
+				warn(_("CPU %d disable failed"), cpu);
 			else {
 				printf(_("CPU %d disabled\n"), cpu);
 				if (onlinecpus)
@@ -183,13 +183,13 @@ static int cpu_configure(cpu_set_t *cpu_set, size_t setsize, int configure)
 		if (configure) {
 			rc = path_write_str("1", _PATH_SYS_CPU "/cpu%d/configure", cpu);
 			if (rc == -1)
-				printf(_("CPU %d configure failed (%m)\n"), cpu);
+				warn(_("CPU %d configure failed"), cpu);
 			else
 				printf(_("CPU %d configured\n"), cpu);
 		} else {
 			rc = path_write_str("0", _PATH_SYS_CPU "/cpu%d/configure", cpu);
 			if (rc == -1)
-				printf(_("CPU %d deconfigure failed (%m)\n"), cpu);
+				warn(_("CPU %d deconfigure failed"), cpu);
 			else
 				printf(_("CPU %d deconfigured\n"), cpu);
 		}
