@@ -86,7 +86,7 @@ static const struct menulist_descr menulist[] = {
 	{'n', N_("add a new partition"), {FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI | FDISK_DISKLABEL_OSF | FDISK_DISKLABEL_GPT, 0}},
 	{'o', N_("change rotation speed (rpm)"), {0, FDISK_DISKLABEL_SUN}},
 	{'o', N_("create a new empty DOS partition table"), {~FDISK_DISKLABEL_OSF, 0}},
-	{'p', N_("print the partition table"), {FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI | FDISK_DISKLABEL_OSF, FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN}},
+	{'p', N_("print the partition table"), { FDISK_DISKLABEL_ANY, FDISK_DISKLABEL_ANY }},
 	{'q', N_("quit without saving changes"), {FDISK_DISKLABEL_ANY, FDISK_DISKLABEL_ANY}},
 	{'r', N_("return to main menu"), {FDISK_DISKLABEL_OSF, FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI | FDISK_DISKLABEL_OSF}},
 	{'s', N_("change number of sectors/track"), {0, FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN}},
@@ -855,10 +855,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 				fdisk_sun_set_rspeed(cxt);
 			break;
 		case 'p':
-			if (fdisk_is_disklabel(cxt, SUN))
-				list_table(cxt, 1);
-			else if (fdisk_is_disklabel(cxt, DOS))
-				dos_list_table_expert(cxt, 0);
+			list_table(cxt, 1);
 			break;
 		case 'q':
 			handle_quit(cxt);
