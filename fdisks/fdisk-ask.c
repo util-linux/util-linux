@@ -8,6 +8,7 @@
 #include "c.h"
 #include "strutils.h"
 #include "rpmatch.h"
+#include "xalloc.h"
 
 #include "fdisk.h"
 
@@ -196,12 +197,23 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		fputs(fdisk_ask_get_query(ask), stdout);
 		rc = get_user_reply(cxt, _(" [Y]es/[N]o: "), buf, sizeof(buf));
 		if (rc == 0)
-			ask->data.yesno.result = rpmatch(buf);
+			fdisk_ask_yesno_set_result(ask, rpmatch(buf));
 		DBG(ASK, dbgprint("yes-no ask: reply '%s' [rc=%d]", buf, rc));
 		break;
 	case FDISK_ASKTYPE_TABLE:
 		tt_print_table(fdisk_ask_get_table(ask));
 		break;
+	case FDISK_ASKTYPE_STRING:
+	{
+		char prmt[BUFSIZ];
+		snprintf(prmt, sizeof(prmt), "%s: ", fdisk_ask_get_query(ask));
+		fputc('\n', stdout);
+		rc = get_user_reply(cxt, prmt, buf, sizeof(buf));
+		if (rc == 0)
+			fdisk_ask_string_set_result(ask, xstrdup(buf));
+		DBG(ASK, dbgprint("string ask: reply '%s' [rc=%d]", buf, rc));
+		break;
+	}
 	default:
 		warnx(_("internal error: unsupported dialog type %d"), fdisk_ask_get_type(ask));
 		return -EINVAL;

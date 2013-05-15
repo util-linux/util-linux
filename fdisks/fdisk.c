@@ -69,7 +69,7 @@ static const struct menulist_descr menulist[] = {
 	{'c', N_("toggle the dos compatibility flag"), {FDISK_DISKLABEL_DOS, 0}},
 	{'c', N_("toggle the mountable flag"), {FDISK_DISKLABEL_SUN, 0}},
 	{'d', N_("delete a partition"), {FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI | FDISK_DISKLABEL_OSF | FDISK_DISKLABEL_GPT, 0}},
-	{'d', N_("print the raw data in the partition table"), {0, FDISK_DISKLABEL_ANY}},
+	{'d', N_("print the raw data of the first sector"), {0, FDISK_DISKLABEL_ANY}},
 	{'e', N_("change number of extra sectors per cylinder"), {0, FDISK_DISKLABEL_SUN}},
 	{'e', N_("edit drive data"), {FDISK_DISKLABEL_OSF, 0}},
 	{'e', N_("list extended partitions"), {0, FDISK_DISKLABEL_DOS}},
@@ -94,6 +94,7 @@ static const struct menulist_descr menulist[] = {
 	{'s', N_("show complete disklabel"), {FDISK_DISKLABEL_OSF, 0}},
 	{'t', N_("change a partition's system id"), {FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI | FDISK_DISKLABEL_OSF, 0}},
 	{'u', N_("change display/entry units"), {FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI | FDISK_DISKLABEL_OSF, 0}},
+	{'u', N_("change partition UUID"), {0, FDISK_DISKLABEL_GPT}},
 	{'v', N_("verify the partition table"), {FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI, FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI}},
 	{'w', N_("write disklabel to disk"), {FDISK_DISKLABEL_OSF, 0}},
 	{'w', N_("write table to disk and exit"), {FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI  | FDISK_DISKLABEL_GPT, FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI}},
@@ -856,7 +857,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 		case 'p':
 			if (fdisk_is_disklabel(cxt, SUN))
 				list_table(cxt, 1);
-			else
+			else if (fdisk_is_disklabel(cxt, DOS))
 				dos_list_table_expert(cxt, 0);
 			break;
 		case 'q':
@@ -872,6 +873,11 @@ expert_command_prompt(struct fdisk_context *cxt)
 					"sector offset for DOS "
 					"compatibility\n"));
 			fdisk_override_geometry(cxt, user_cylinders, user_heads, user_sectors);
+			break;
+		case 'u':
+			if (fdisk_is_disklabel(cxt, GPT) &&
+			    fdisk_ask_partnum(cxt, &n, FALSE) == 0)
+				fdisk_gpt_partition_set_uuid(cxt, n);
 			break;
 		case 'v':
 			verify(cxt);
