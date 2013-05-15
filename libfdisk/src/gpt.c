@@ -1139,7 +1139,7 @@ static char *encode_to_utf8(unsigned char *src, size_t count)
  */
 static int gpt_list_disklabel(struct fdisk_context *cxt)
 {
-	int rc;
+	int rc, trunc = TT_FL_TRUNC;
 	uint32_t i;
 	struct fdisk_gpt_label *gpt;
 	uint64_t fu;
@@ -1158,19 +1158,29 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 	if (!tb)
 		return -ENOMEM;
 
-	tt_define_column(tb, _("Device"), 0.2, 0);
-	tt_define_column(tb, _("Start"),   12, TT_FL_RIGHT);
-	tt_define_column(tb, _("End"),     12, TT_FL_RIGHT);
-	tt_define_column(tb, _("Size"),     6, TT_FL_RIGHT);
-	tt_define_column(tb, _("Type"),   0.2, TT_FL_TRUNC);
-	tt_define_column(tb, _("Name"),   0.2, TT_FL_TRUNC);
+	/* don't trunc anything in expert mode */
+	if (fdisk_context_display_details(cxt))
+		trunc = 0;
+
+	tt_define_column(tb, _("Device"), 0.1, 0);
+	tt_define_column(tb, _("Start"),    9, TT_FL_RIGHT);
+	tt_define_column(tb, _("End"),      9, TT_FL_RIGHT);
+	tt_define_column(tb, _("Size"),     5, TT_FL_RIGHT);
+	tt_define_column(tb, _("Type"),   0.1, trunc);
+
+	if (fdisk_context_display_details(cxt)) {
+		tt_define_column(tb, _("UUID"),  36, 0);
+		tt_define_column(tb, _("Name"), 0.2, trunc);
+	}
 
 	for (i = 0; i < le32_to_cpu(gpt->pheader->npartition_entries); i++) {
-		char *name = NULL, *sizestr = NULL, *p;
-		uint64_t start = gpt_partition_start(&gpt->ents[i]);
-		uint64_t size = gpt_partition_size(&gpt->ents[i]);
+		struct gpt_entry *e = &gpt->ents[i];
+		char *sizestr = NULL, *p;
+		uint64_t start = gpt_partition_start(e);
+		uint64_t size = gpt_partition_size(e);
 		struct fdisk_parttype *t;
 		struct tt_line *ln;
+		char u_str[37];
 
 		if (partition_unused(&gpt->ents[i]) || start == 0)
 			continue;
@@ -1181,25 +1191,38 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 		if (!ln)
 			continue;
 
-		name = encode_to_utf8((unsigned char *)gpt->ents[i].name,
-				      sizeof(gpt->ents[i].name));
-		sizestr = size_to_human_string(SIZE_SUFFIX_1LETTER,
+		if (fdisk_context_display_details(cxt) &&
+		    asprintf(&p, "%ju", size * cxt->sector_size) > 0)
+			sizestr = p;
+		else
+			sizestr = size_to_human_string(SIZE_SUFFIX_1LETTER,
 					       size * cxt->sector_size);
 		t = fdisk_get_partition_type(cxt, i);
 
+		/* basic columns */
 		p = fdisk_partname(cxt->dev_path, i + 1);
 		if (p)
 			tt_line_set_data(ln, 0, p);
 		if (asprintf(&p, "%ju", start) > 0)
 			tt_line_set_data(ln, 1, p);
-		if (asprintf(&p, "%ju", gpt_partition_end(&gpt->ents[i])) > 0)
+		if (asprintf(&p, "%ju", gpt_partition_end(e)) > 0)
 			tt_line_set_data(ln, 2, p);
 		if (sizestr)
 			tt_line_set_data(ln, 3, sizestr);
 		if (t && t->name)
 			tt_line_set_data(ln, 4, strdup(t->name));
-		if (name)
-			tt_line_set_data(ln, 5, name);
+
+		/* expert menu column(s) */
+		if (fdisk_context_display_details(cxt)) {
+			char *name = encode_to_utf8(
+					(unsigned char *)e->name,
+					sizeof(e->name));
+
+			if (guid_to_string(&e->partition_guid, u_str))
+				tt_line_set_data(ln, 5, strdup(u_str));
+			if (name)
+				tt_line_set_data(ln, 6, name);
+		}
 
 		fdisk_warn_alignment(cxt, start, i);
 		fdisk_free_parttype(t);
