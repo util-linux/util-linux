@@ -76,7 +76,6 @@ static const struct menulist_descr menulist[] = {
 	{'f', N_("fix partition order"), {0, FDISK_DISKLABEL_DOS}},
 	{'g', N_("create a new empty GPT partition table"), {~FDISK_DISKLABEL_OSF, 0}},
 	{'g', N_("create an IRIX (SGI) partition table"), {0, FDISK_DISKLABEL_ANY}}, /* for backward compatibility only */
-	{'G', N_("create an IRIX (SGI) partition table"), {~FDISK_DISKLABEL_OSF, 0}},
 	{'h', N_("change number of heads"), {0, FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN}},
 	{'i', N_("change interleave factor"), {0, FDISK_DISKLABEL_SUN}},
 	{'i', N_("change the disk identifier"), {0, FDISK_DISKLABEL_DOS}},
@@ -1048,9 +1047,6 @@ static void command_prompt(struct fdisk_context *cxt)
 			break;
 		case 'g':
 			fdisk_create_disklabel(cxt, "gpt");
-			break;
-		case 'G':
-			fdisk_create_disklabel(cxt, "sgi");
 			break;
 		case 'i':
 			if (fdisk_is_disklabel(cxt, SGI))
