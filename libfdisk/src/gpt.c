@@ -92,12 +92,12 @@ struct gpt_attr {
 
 /* The GPT Partition entry array contains an array of GPT entries. */
 struct gpt_entry {
-	struct gpt_guid     partition_type_guid; /* purpose and type of the partition */
-	struct gpt_guid     unique_partition_guid;
+	struct gpt_guid     type; /* purpose and type of the partition */
+	struct gpt_guid     partition_guid;
 	uint64_t            lba_start;
 	uint64_t            lba_end;
 	struct gpt_attr     attr;
-	uint16_t            partition_name[GPT_PART_NAME_LEN];
+	uint16_t            name[GPT_PART_NAME_LEN];
 }  __attribute__ ((packed));
 
 /* GPT header */
@@ -337,7 +337,7 @@ unknown:
 
 static inline int partition_unused(const struct gpt_entry *e)
 {
-	return !memcmp(&e->partition_type_guid, &GPT_UNUSED_ENTRY_GUID,
+	return !memcmp(&e->type, &GPT_UNUSED_ENTRY_GUID,
 			sizeof(struct gpt_guid));
 }
 
@@ -1181,8 +1181,8 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 		if (!ln)
 			continue;
 
-		name = encode_to_utf8((unsigned char *)gpt->ents[i].partition_name,
-				      sizeof(gpt->ents[i].partition_name));
+		name = encode_to_utf8((unsigned char *)gpt->ents[i].name,
+				      sizeof(gpt->ents[i].name));
 		sizestr = size_to_human_string(SIZE_SUFFIX_1LETTER,
 					       size * cxt->sector_size);
 		t = fdisk_get_partition_type(cxt, i);
@@ -1509,8 +1509,8 @@ static int gpt_delete_partition(struct fdisk_context *cxt,
 
 static void gpt_entry_set_type(struct gpt_entry *e, struct gpt_guid *uuid)
 {
-	e->partition_type_guid = *uuid;
-	DBG(LABEL, dbgprint_uuid("new type", &(e->partition_type_guid)));
+	e->type = *uuid;
+	DBG(LABEL, dbgprint_uuid("new type", &(e->type)));
 }
 
 /*
@@ -1543,13 +1543,19 @@ static int gpt_create_new_partition(struct fdisk_context *cxt,
 
 	gpt_entry_set_type(e, type);
 
+	/* deal with partition name
+	for (i = 0; i < GPT_PART_NAME_LEN; i++)
+		e->name[i] =
+			cpu_to_le16((uint16_t) gpt_sys_types[sys].name[i]);
+	*/
+
 	/*
 	 * Any time a new partition entry is created a new GUID must be
 	 * generated for that partition, and every partition is guaranteed
 	 * to have a unique GUID.
 	 */
-	uuid_generate_random((unsigned char *) &e->unique_partition_guid);
-	swap_efi_guid(&e->unique_partition_guid);
+	uuid_generate_random((unsigned char *) &e->partition_guid);
+	swap_efi_guid(&e->partition_guid);
 
 	memcpy(&entries[partnum], e, sizeof(*e));
 
@@ -1774,7 +1780,7 @@ static struct fdisk_parttype *gpt_get_partition_type(
 	if ((uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries))
 		return NULL;
 
-	guid_to_string(&gpt->ents[i].partition_type_guid, str);
+	guid_to_string(&gpt->ents[i].type, str);
 	t = fdisk_get_parttype_from_string(cxt, str);
 	if (!t)
 		t = fdisk_new_unknown_parttype(0, str);
@@ -1865,12 +1871,12 @@ int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
 
 	e = &gpt->ents[i];
 
-	guid_to_string(&e->unique_partition_guid, old_u);
+	guid_to_string(&e->partition_guid, old_u);
 	guid_to_string(&uuid, new_u);
 	fdisk_info(cxt, _("Changing partition UUID from %s to %s"),
 			old_u, new_u);
 
-	e->unique_partition_guid = uuid;
+	e->partition_guid = uuid;
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
 
