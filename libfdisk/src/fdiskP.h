@@ -241,6 +241,10 @@ struct fdisk_ask {
 		struct ask_yesno {
 			int		result;		/* TRUE or FALSE */
 		} yesno;
+		/* FDISK_ASKTYPE_STRING */
+		struct ask_string {
+			char		*result;	/* allocated */
+		} str;
 		/* FDISK_ASKTYPE_TABLE, see include/tt.h  */
 		struct tt *table;
 	} data;

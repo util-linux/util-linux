@@ -60,7 +60,8 @@ enum {
 	FDISK_ASKTYPE_WARNX,
 	FDISK_ASKTYPE_INFO,
 	FDISK_ASKTYPE_YESNO,
-	FDISK_ASKTYPE_TABLE
+	FDISK_ASKTYPE_TABLE,
+	FDISK_ASKTYPE_STRING
 };
 
 
@@ -141,6 +142,9 @@ extern int fdisk_reset_alignment(struct fdisk_context *cxt);
 extern int fdisk_dos_enable_compatible(struct fdisk_label *lb, int enable);
 extern int fdisk_dos_is_compatible(struct fdisk_label *lb);
 
+/* gpt */
+extern int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i);
+
 /* ask.c */
 #define fdisk_is_ask(a, x) (fdisk_ask_get_type(a) == FDISK_ASKTYPE_ ## x)
 
@@ -177,6 +181,13 @@ extern int fdisk_ask_number(struct fdisk_context *cxt,
 		     uintmax_t high,
 		     const char *query,
 		     uintmax_t *result);
+
+extern int fdisk_ask_string(struct fdisk_context *cxt,
+		     const char *query,
+		     char **result);
+
+extern char *fdisk_ask_string_get_result(struct fdisk_ask *ask);
+extern int fdisk_ask_string_set_result(struct fdisk_ask *ask, char *result);
 
 extern int fdisk_ask_yesno(struct fdisk_context *cxt, const char *query, int *result);
 extern uint64_t fdisk_ask_yesno_get_result(struct fdisk_ask *ask);

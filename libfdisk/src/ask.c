@@ -368,6 +368,52 @@ int fdisk_ask_number(struct fdisk_context *cxt,
 	return rc;
 }
 
+char *fdisk_ask_string_get_result(struct fdisk_ask *ask)
+{
+	assert(ask);
+	assert(fdisk_is_ask(ask, STRING));
+	return ask->data.str.result;
+}
+
+/*
+ * The @result has to be poiter to the allocated buffer.
+ */
+int fdisk_ask_string_set_result(struct fdisk_ask *ask, char *result)
+{
+	assert(ask);
+	ask->data.str.result = result;
+	return 0;
+}
+
+/*
+ * Don't forget to deallocate @result.
+ */
+int fdisk_ask_string(struct fdisk_context *cxt,
+		     const char *query,
+		     char **result)
+{
+	struct fdisk_ask *ask;
+	int rc;
+
+	assert(cxt);
+
+	ask = fdisk_new_ask();
+	if (!ask)
+		return -ENOMEM;
+
+	rc = fdisk_ask_set_type(ask, FDISK_ASKTYPE_STRING);
+	if (!rc)
+		fdisk_ask_set_query(ask, query);
+	if (!rc)
+		rc = fdisk_do_ask(cxt, ask);
+	if (!rc)
+		*result = fdisk_ask_string_get_result(ask);
+
+	fdisk_free_ask(ask);
+	DBG(ASK, dbgprint("result: %s [rc=%d]\n", *result, rc));
+	return rc;
+}
+
 int fdisk_ask_yesno(struct fdisk_context *cxt,
 		     const char *query,
 		     int *result)

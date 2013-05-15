@@ -1834,6 +1834,49 @@ static int gpt_get_partition_status(
 	return 0;
 }
 
+int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
+{
+	struct fdisk_gpt_label *gpt;
+	struct gpt_entry *e;
+	struct gpt_guid uuid;
+	char *str, new_u[37], old_u[37];
+	int rc;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, GPT));
+
+	DBG(LABEL, dbgprint("UUID change requested parno=%zd", i));
+
+	gpt = self_label(cxt);
+
+	if ((uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries))
+		return -EINVAL;
+
+	if (fdisk_ask_string(cxt,
+			_("New UUID (in 8-4-4-4-12 format)"), &str))
+		return -EINVAL;
+
+	rc = string_to_guid(str, &uuid);
+	free(str);
+
+	if (rc)
+		return rc;
+
+	e = &gpt->ents[i];
+
+	guid_to_string(&e->unique_partition_guid, old_u);
+	guid_to_string(&uuid, new_u);
+	fdisk_info(cxt, _("Changing partition UUID from %s to %s"),
+			old_u, new_u);
+
+	e->unique_partition_guid = uuid;
+	gpt_recompute_crc(gpt->pheader, gpt->ents);
+	gpt_recompute_crc(gpt->bheader, gpt->ents);
+
+	fdisk_label_set_changed(cxt->label, 1);
+	return 0;
+}
 
 /*
  * Deinitialize fdisk-specific variables
