@@ -77,7 +77,8 @@ struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt, const cha
 		return cxt->label;
 
 	for (i = 0; i < cxt->nlabels; i++)
-		if (strcmp(cxt->labels[i]->name, name) == 0)
+		if (cxt->labels[i]
+		    && strcmp(cxt->labels[i]->name, name) == 0)
 			return cxt->labels[i];
 
 	DBG(LABEL, dbgprint("failed to found %s label driver\n", name));
