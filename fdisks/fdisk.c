@@ -730,7 +730,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 		assert(cxt->label);
 
 		putchar('\n');
-		c = tolower(read_char(cxt, _("Expert command (m for help): ")));
+		c = read_char(cxt, _("Expert command (m for help): "));
 		switch (c) {
 		case 'a':
 			if (fdisk_is_disklabel(cxt, SUN))
@@ -765,6 +765,8 @@ expert_command_prompt(struct fdisk_context *cxt)
 				dos_fix_partition_table_order(cxt);
 			break;
 		case 'g':
+			/* Deprecated, use 'G' in main menu, just for backward
+			 * compatibility only. */
 			fdisk_create_disklabel(cxt, "sgi");
 			break;
 		case 'h':
@@ -927,7 +929,7 @@ static void command_prompt(struct fdisk_context *cxt)
 		assert(cxt->label);
 
 		putchar('\n');
-		c = tolower(read_char(cxt, _("Command (m for help): ")));
+		c = read_char(cxt, _("Command (m for help): "));
 		switch (c) {
 		case 'a':
 			if (fdisk_is_disklabel(cxt, DOS) &&
@@ -977,6 +979,9 @@ static void command_prompt(struct fdisk_context *cxt)
 			break;
 		case 'g':
 			fdisk_create_disklabel(cxt, "gpt");
+			break;
+		case 'G':
+			fdisk_create_disklabel(cxt, "sgi");
 			break;
 		case 'i':
 			if (fdisk_is_disklabel(cxt, SGI))
