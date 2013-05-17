@@ -232,9 +232,9 @@ cleanup_pam (int retcode)
 
 /* Signal handler for parent process.  */
 static void
-su_catch_sig (int sig __attribute__((__unused__)))
+su_catch_sig (int sig)
 {
-  caught_signal = true;
+  caught_signal = sig;
 }
 
 /* Export env variables declared by PAM modules.  */
@@ -258,6 +258,7 @@ create_watching_parent (void)
 {
   pid_t child;
   sigset_t ourset;
+  struct sigaction oldact[3];
   int status = 0;
   int retval;
 
@@ -312,13 +313,13 @@ create_watching_parent (void)
       }
     if (!caught_signal && (sigaddset(&ourset, SIGTERM)
                     || sigaddset(&ourset, SIGALRM)
-                    || sigaction(SIGTERM, &action, NULL)
+                    || sigaction(SIGTERM, &action, &oldact[0])
                     || sigprocmask(SIG_UNBLOCK, &ourset, NULL))) {
 	  warn (_("cannot set signal handler"));
 	  caught_signal = true;
 	}
-    if (!caught_signal && !same_session && (sigaction(SIGINT, &action, NULL)
-                                     || sigaction(SIGQUIT, &action, NULL)))
+    if (!caught_signal && !same_session && (sigaction(SIGINT, &action, &oldact[1])
+                                     || sigaction(SIGQUIT, &action, &oldact[2])))
       {
         warn (_("cannot set signal handler"));
         caught_signal = true;
@@ -341,17 +342,21 @@ create_watching_parent (void)
 	    break;
 	}
       if (pid != (pid_t)-1)
-	if (WIFSIGNALED (status))
-	  {
-	    status = WTERMSIG (status) + 128;
-	    if (WCOREDUMP (status))
-	      fprintf (stderr, _("%s (core dumped)\n"),
-                 strsignal (WTERMSIG (status)));
-	  }
-	else
-	  status = WEXITSTATUS (status);
+        {
+          if (WIFSIGNALED (status))
+            {
+              status = WTERMSIG (status) + 128;
+              if (WCOREDUMP (status))
+                fprintf (stderr, _("%s (core dumped)\n"),
+                   strsignal (WTERMSIG (status)));
+            }
+          else
+            status = WEXITSTATUS (status);
+        }
+      else if (caught_signal)
+        status = caught_signal + 128;
       else
-	status = 1;
+        status = 1;
     }
   else
     status = 1;
@@ -369,6 +374,27 @@ create_watching_parent (void)
       sleep (2);
       kill (child, SIGKILL);
       fprintf (stderr, _(" ...killed.\n"));
+
+      /* Let's terminate itself with the received signal.
+       *
+       * It seems that shells use WIFSIGNALED() rather than our exit status
+       * value to detect situations when is necessary to cleanup (reset)
+       * terminal settings (kzak -- Jun 2013).
+       */
+      switch (caught_signal) {
+        case SIGTERM:
+          sigaction(SIGTERM, &oldact[0], NULL);
+          break;
+        case SIGINT:
+          sigaction(SIGINT, &oldact[1], NULL);
+          break;
+        case SIGQUIT:
+          sigaction(SIGQUIT, &oldact[2], NULL);
+          break;
+        default:
+          break;
+      }
+      kill(0, caught_signal);
     }
   exit (status);
 }

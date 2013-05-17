@@ -135,6 +135,15 @@ Display help text and exit.
 .TP
 \fB\-\-version\fR
 Display version information and exit.
+.SH SIGNALS
+Upon receiving either
+.BR SIGINT ,
+.BR SIGQUIT
+or
+.BR SIGTERM ,
+.BR su
+terminates it's child and afterwards terminates itself with
+the received signal.
 .SH CONFIG FILES
 .B su
 reads the
