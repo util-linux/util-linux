@@ -178,10 +178,60 @@ static const struct menu_entry *next_menu_entry(
 	return NULL;
 }
 
+/* returns @menu and menu entry for then @key */
+static const struct menu_entry *get_fdisk_menu_entry(
+		struct fdisk_context *cxt,
+		int key,
+		const struct menu **menu)
+{
+	struct menu_context mc = MENU_CXT_EMPTY;
+	const struct menu_entry *e;
+
+	while ((e = next_menu_entry(cxt, &mc))) {
+		if (IS_MENU_SEP(e) || e->key != key)
+			continue;
+
+		if (menu)
+			*menu = menus[mc.menu_idx];
+		return e;
+	}
+
+	return NULL;
+}
+
+static int menu_detect_collisions(struct fdisk_context *cxt)
+{
+	struct menu_context mc = MENU_CXT_EMPTY;
+	const struct menu_entry *e, *r;
+
+	while ((e = next_menu_entry(cxt, &mc))) {
+		if (IS_MENU_SEP(e))
+			continue;
+
+		r = get_fdisk_menu_entry(cxt, e->key, NULL);
+		if (!r) {
+			DBG(CONTEXT, dbgprint("warning: not found "
+					"entry for %c", e->key));
+			return -1;
+		}
+		if (r != e) {
+			DBG(CONTEXT, dbgprint("warning: duplicate key '%c'",
+						e->key));
+			DBG(CONTEXT, dbgprint("         %s", e->title));
+			DBG(CONTEXT, dbgprint("         %s", r->title));
+			abort();
+		}
+	}
+
+	return 0;
+}
+
 static int print_fdisk_menu(struct fdisk_context *cxt)
 {
 	struct menu_context mc = MENU_CXT_EMPTY;
 	const struct menu_entry *e;
+
+	ON_DBG(CONTEXT, menu_detect_collisions(cxt));
 
 	if (fdisk_context_display_details(cxt))
 		printf(_("\nExpert commands:\n"));
