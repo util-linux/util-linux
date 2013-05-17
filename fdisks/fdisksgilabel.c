@@ -823,7 +823,7 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	/*
 	 * Convert old MBR to SGI label, make it DEPRECATED, this feature
 	 * has to be handled in by any top-level fdisk command.
-	 */
+	 *
 	for (i = 0; i < 4; i++) {
 		old[i].sysid = 0;
 		if (mbr_is_valid_magic(cxt->firstsector)) {
@@ -843,6 +843,7 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 			printf(_("Trying to keep parameters of partitions already set.\n"));
 			break;
 		}
+	*/
 
 	fdisk_zeroize_firstsector(cxt);
 	sgilabel->magic = SSWAP32(SGI_LABEL_MAGIC);
