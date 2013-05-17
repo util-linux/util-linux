@@ -65,15 +65,15 @@ struct menu_context {
 struct menu menu_generic = {
 /*	.callback	= generic_menu_cb,*/
 	.entries	= {
-		MENU_XENT('d', N_("print the raw data of the first sector")),
-
-		MENU_SEP(N_("Alter partition table")),
+		MENU_BSEP(N_("Generic")),
 		MENU_ENT  ('d', N_("delete a partition")),
 		MENU_ENT  ('l', N_("list known partition types")),
 		MENU_ENT  ('n', N_("add a new partition")),
 		MENU_BENT ('p', N_("print the partition table")),
-		MENU_ENT  ('t', N_("change a partition's system id")),
+		MENU_ENT  ('t', N_("change a partition type")),
 		MENU_ENT  ('v', N_("verify the partition table")),
+
+		MENU_XENT('d', N_("print the raw data of the first sector")),
 
 		MENU_SEP(N_("Misc")),
 		MENU_BENT ('m', N_("print this menu")),
@@ -137,11 +137,61 @@ struct menu menu_sun = {
 	}
 };
 
+struct menu menu_sgi = {
+/*	.callback = sgi_menu_cb, */
+	.label = FDISK_DISKLABEL_SGI,
+	.entries = {
+		MENU_SEP(N_("SGI")),
+		MENU_ENT('a', N_("select bootable partition")),
+		MENU_ENT('b', N_("edit bootfile entry")),
+		MENU_ENT('c', N_("select sgi swap partition")),
+		{ 0, NULL }
+	}
+};
+
+struct menu menu_dos = {
+/*	.callback = dos_menu_cb, */
+	.label = FDISK_DISKLABEL_DOS,
+	.entries = {
+		MENU_BSEP(N_("DOS (MBR)")),
+		MENU_ENT('a', N_("toggle a bootable flag")),
+		MENU_ENT('b', N_("edit nested BSD disklabel")),
+		MENU_ENT('c', N_("toggle the dos compatibility flag")),
+
+		MENU_XENT('b', N_("move beginning of data in a partition")),
+		MENU_XENT('c', N_("change number of cylinders")),		MENU_XENT('e', N_("list extended partitions")),
+		MENU_XENT('f', N_("fix partition order")),
+		MENU_XENT('h', N_("change number of heads")),
+		MENU_XENT('i', N_("change the disk identifier")),
+		MENU_XENT('s', N_("change number of sectors/track")),
+		{ 0, NULL }
+	}
+};
+
+struct menu menu_bsd = {
+/*	.callback = bsd_menu_cb, */
+	.label = FDISK_DISKLABEL_OSF,
+	.entries = {
+		MENU_SEP(N_("BSD")),
+		MENU_ENT('e', N_("edit drive data")),
+		MENU_ENT('i', N_("install bootstrap")),
+		MENU_ENT('s', N_("show complete disklabel")),
+		MENU_ENT('w', N_("write disklabel to disk")),
+#if !defined (__alpha__)
+		MENU_ENT('x', N_("link BSD partition to non-BSD partition")),
+#endif
+		{ 0, NULL }
+	}
+};
+
 static const struct menu *menus[] = {
+	&menu_gpt,
+	&menu_sun,
+	&menu_sgi,
+	&menu_dos,
+	&menu_bsd,
 	&menu_generic,
 	&menu_createlabel,
-	&menu_gpt,
-	&menu_sun
 };
 
 static const struct menu_entry *next_menu_entry(
