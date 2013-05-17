@@ -80,7 +80,7 @@ struct menu menu_generic = {
 		MENU_ENT_E('u', N_("change display/entry units"), FDISK_DISKLABEL_GPT),
 		MENU_ENT  ('x', N_("extra functionality (experts only)")),
 
-		MENU_SEP(N_("Save & Exit")),
+		MENU_BSEP(N_("Save & Exit")),
 		MENU_ENT_E('w', N_("write table to disk and exit"), FDISK_DISKLABEL_OSF),
 		MENU_BENT ('q', N_("quit without saving changes")),
 		MENU_XENT ('r', N_("return to main menu")),
@@ -117,10 +117,31 @@ struct menu menu_gpt = {
 	}
 };
 
+struct menu menu_sun = {
+/*	.callback = sun_menu_cb, */
+	.label = FDISK_DISKLABEL_SUN,
+	.entries = {
+		MENU_BSEP(N_("Sun")),
+		MENU_ENT('a', N_("toggle a read only flag")),
+		MENU_ENT('c', N_("toggle the mountable flag")),
+
+		MENU_XENT('a', N_("change number of alternate cylinders")),
+		MENU_XENT('c', N_("change number of cylinders")),
+		MENU_XENT('e', N_("change number of extra sectors per cylinder")),
+		MENU_XENT('h', N_("change number of heads")),
+		MENU_XENT('i', N_("change interleave factor")),
+		MENU_XENT('o', N_("change rotation speed (rpm)")),
+		MENU_XENT('s', N_("change number of sectors/track")),
+		MENU_XENT('y', N_("change number of physical cylinders")),
+		{ 0, NULL }
+	}
+};
+
 static const struct menu *menus[] = {
 	&menu_generic,
 	&menu_createlabel,
-	&menu_gpt
+	&menu_gpt,
+	&menu_sun
 };
 
 static const struct menu_entry *next_menu_entry(
