@@ -48,63 +48,6 @@
 #include <linux/blkpg.h>
 #endif
 
-/* menu list description */
-
-struct menulist_descr {
-	char command;				/* command key */
-	char *description;			/* command description */
-	enum fdisk_labeltype label[2];		/* disklabel types associated with main and expert menu */
-};
-
-static const struct menulist_descr menulist[] = {
-	{'a', N_("change number of alternate cylinders"), {0, FDISK_DISKLABEL_SUN}},
-	{'a', N_("select bootable partition"), {FDISK_DISKLABEL_SGI, 0}},
-	{'a', N_("toggle a bootable flag"), {FDISK_DISKLABEL_DOS, 0}},
-	{'a', N_("toggle a read only flag"), {FDISK_DISKLABEL_SUN, 0}},
-	{'b', N_("edit bootfile entry"), {FDISK_DISKLABEL_SGI, 0}},
-	{'b', N_("edit bsd disklabel"), {FDISK_DISKLABEL_DOS, 0}},
-	{'b', N_("move beginning of data in a partition"), {0, FDISK_DISKLABEL_DOS}},
-	{'c', N_("change number of cylinders"), {0, FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN}},
-	{'c', N_("select sgi swap partition"), {FDISK_DISKLABEL_SGI, 0}},
-	{'c', N_("toggle the dos compatibility flag"), {FDISK_DISKLABEL_DOS, 0}},
-	{'c', N_("toggle the mountable flag"), {FDISK_DISKLABEL_SUN, 0}},
-	{'d', N_("delete a partition"), {FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI | FDISK_DISKLABEL_OSF | FDISK_DISKLABEL_GPT, 0}},
-	{'d', N_("print the raw data of the first sector"), {0, FDISK_DISKLABEL_ANY}},
-	{'e', N_("change number of extra sectors per cylinder"), {0, FDISK_DISKLABEL_SUN}},
-	{'e', N_("edit drive data"), {FDISK_DISKLABEL_OSF, 0}},
-	{'e', N_("list extended partitions"), {0, FDISK_DISKLABEL_DOS}},
-	{'f', N_("fix partition order"), {0, FDISK_DISKLABEL_DOS}},
-	{'g', N_("create a new empty GPT partition table"), {~FDISK_DISKLABEL_OSF, 0}},
-	{'g', N_("create an IRIX (SGI) partition table"), {0, FDISK_DISKLABEL_ANY}}, /* for backward compatibility only */
-	{'h', N_("change number of heads"), {0, FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN}},
-	{'i', N_("change interleave factor"), {0, FDISK_DISKLABEL_SUN}},
-	{'i', N_("change the disk identifier"), {0, FDISK_DISKLABEL_DOS}},
-	{'i', N_("install bootstrap"), {FDISK_DISKLABEL_OSF, 0}},
-	{'l', N_("list known partition types"), {FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI | FDISK_DISKLABEL_OSF  | FDISK_DISKLABEL_GPT, 0}},
-	{'m', N_("print this menu"), {FDISK_DISKLABEL_ANY, FDISK_DISKLABEL_ANY}},
-	{'n', N_("add a new partition"), {FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI | FDISK_DISKLABEL_OSF | FDISK_DISKLABEL_GPT, 0}},
-	{'o', N_("change rotation speed (rpm)"), {0, FDISK_DISKLABEL_SUN}},
-	{'o', N_("create a new empty DOS partition table"), {~FDISK_DISKLABEL_OSF, 0}},
-	{'p', N_("print the partition table"), { FDISK_DISKLABEL_ANY, FDISK_DISKLABEL_ANY }},
-	{'q', N_("quit without saving changes"), {FDISK_DISKLABEL_ANY, FDISK_DISKLABEL_ANY}},
-	{'r', N_("return to main menu"), {FDISK_DISKLABEL_OSF, FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI | FDISK_DISKLABEL_OSF}},
-	{'s', N_("change number of sectors/track"), {0, FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN}},
-	{'s', N_("create a new empty Sun disklabel"), {~FDISK_DISKLABEL_OSF, 0}},
-	{'s', N_("show complete disklabel"), {FDISK_DISKLABEL_OSF, 0}},
-	{'t', N_("change a partition's system id"), {FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI | FDISK_DISKLABEL_OSF | FDISK_DISKLABEL_GPT, 0}},
-	{'u', N_("change display/entry units"), {FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI | FDISK_DISKLABEL_OSF, 0}},
-	{'u', N_("change partition UUID"), {0, FDISK_DISKLABEL_GPT}},
-	{'v', N_("verify the partition table"), {FDISK_DISKLABEL_GPT | FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI, FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI}},
-	{'w', N_("write disklabel to disk"), {FDISK_DISKLABEL_OSF, 0}},
-	{'w', N_("write table to disk and exit"), {FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI  | FDISK_DISKLABEL_GPT, FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI}},
-	{'x', N_("extra functionality (experts only)"), {FDISK_DISKLABEL_GPT | FDISK_DISKLABEL_DOS | FDISK_DISKLABEL_SUN | FDISK_DISKLABEL_SGI, 0}},
-#if !defined (__alpha__)
-	{'x', N_("link BSD partition to non-BSD partition"), {FDISK_DISKLABEL_OSF, 0}},
-#endif
-	{'y', N_("change number of physical cylinders"), {0, FDISK_DISKLABEL_SUN}},
-};
-
-
 
 sector_t get_nr_sects(struct partition *p) {
 	return read4_little_endian(p->size4);
@@ -173,20 +116,6 @@ fatal(struct fdisk_context *cxt, enum failure why)
 struct partition *
 get_part_table(int i) {
 	return ptes[i].part_table;
-}
-
-void print_menu(struct fdisk_context *cxt, enum menutype menu)
-{
-	size_t i;
-	int id;
-
-	puts(_("Command action"));
-
-	id = cxt && cxt->label ?  cxt->label->id : FDISK_DISKLABEL_ANY;
-
-	for (i = 0; i < ARRAY_SIZE(menulist); i++)
-		if (menulist[i].label[menu] & id)
-			printf("   %c   %s\n", menulist[i].command, menulist[i].description);
 }
 
 void list_partition_types(struct fdisk_context *cxt)
@@ -886,7 +815,8 @@ expert_command_prompt(struct fdisk_context *cxt)
 				fdisk_sun_set_pcylcount(cxt);
 			break;
 		default:
-			print_menu(cxt, EXPERT_MENU);
+			print_fdisk_menu(cxt);
+			break;
 		}
 	}
 }
@@ -1058,7 +988,7 @@ static void command_prompt(struct fdisk_context *cxt)
 			list_partition_types(cxt);
 			break;
 		case 'm':
-			print_menu(cxt, MAIN_MENU);
+			print_fdisk_menu(cxt);
 			break;
 		case 'n':
 			new_partition(cxt);
@@ -1091,7 +1021,7 @@ static void command_prompt(struct fdisk_context *cxt)
 			break;
 		default:
 			unknown_command(c);
-			print_menu(cxt, MAIN_MENU);
+			print_fdisk_menu(cxt);
 		}
 	}
 }

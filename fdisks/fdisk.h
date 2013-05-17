@@ -67,6 +67,8 @@ enum failure {
 };
 
 
+extern int print_fdisk_menu(struct fdisk_context *cxt);
+
 extern int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		    void *data __attribute__((__unused__)));
 

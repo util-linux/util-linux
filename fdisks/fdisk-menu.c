@@ -276,7 +276,7 @@ static int menu_detect_collisions(struct fdisk_context *cxt)
 	return 0;
 }
 
-static int print_fdisk_menu(struct fdisk_context *cxt)
+int print_fdisk_menu(struct fdisk_context *cxt)
 {
 	struct menu_context mc = MENU_CXT_EMPTY;
 	const struct menu_entry *e;
@@ -284,9 +284,9 @@ static int print_fdisk_menu(struct fdisk_context *cxt)
 	ON_DBG(CONTEXT, menu_detect_collisions(cxt));
 
 	if (fdisk_context_display_details(cxt))
-		printf(_("\nExpert commands:\n"));
+		printf(_("\nHelp (expert commands):\n"));
 	else
-		printf(_("\nCommands:\n"));
+		printf(_("\nHelp:\n"));
 
 	while ((e = next_menu_entry(cxt, &mc))) {
 		if (IS_MENU_HID(e))
