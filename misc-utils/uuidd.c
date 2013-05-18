@@ -318,7 +318,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 				  sizeof(reply_buf), 0, NULL);
 		if (ret > 0) {
 			if (!uuidd_cxt->quiet)
-				warnx(_("uuidd daemon already running at pid %s"),
+				warnx(_("uuidd daemon is already running at pid %s"),
 				       reply_buf);
 			exit(EXIT_FAILURE);
 		}
@@ -355,7 +355,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 #ifdef USE_SOCKET_ACTIVATION
 	if (uuidd_cxt->no_sock) {
 		if (sd_listen_fds(0) != 1)
-			errx(EXIT_FAILURE, _("no or too many file descriptors received."));
+			errx(EXIT_FAILURE, _("no or too many file descriptors received"));
 
 		s = SD_LISTEN_FDS_START + 0;
 	}
@@ -378,7 +378,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			if (len < 0)
 				warn(_("read failed"));
 			else
-				warnx(_("rrror reading from client, len = %d"),
+				warnx(_("error reading from client, len = %d"),
 						len);
 			goto shutdown_socket;
 		}
@@ -544,7 +544,7 @@ int main(int argc, char **argv)
 			no_pid = 1;
 #else
 			errx(EXIT_FAILURE, _("uuidd has been built without "
-					     "support for socket activation."));
+					     "support for socket activation"));
 #endif
 			break;
 		case 'q':
@@ -585,7 +585,7 @@ int main(int argc, char **argv)
 	/* custom socket path and socket-activation make no sense */
 	if (s_flag && uuidd_cxt.no_sock && !uuidd_cxt.quiet)
 		warnx(_("Both --socket-activation and --socket specified. "
-			"Ignoring --socket"));
+			"Ignoring --socket."));
 
 	if (num && do_type) {
 		ret = call_daemon(socket_path, do_type + 2, buf,
@@ -641,7 +641,7 @@ int main(int argc, char **argv)
 				return EXIT_FAILURE;
 			}
 			if (!uuidd_cxt.quiet)
-				printf(_("Killed uuidd running at pid %d\n"),
+				printf(_("Killed uuidd running at pid %d.\n"),
 				       do_kill);
 		}
 		return EXIT_SUCCESS;
