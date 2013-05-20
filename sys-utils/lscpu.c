@@ -64,12 +64,14 @@
 enum {
 	VIRT_NONE	= 0,
 	VIRT_PARA,
-	VIRT_FULL
+	VIRT_FULL,
+	VIRT_CONT
 };
 const char *virt_types[] = {
 	[VIRT_NONE]	= N_("none"),
 	[VIRT_PARA]	= N_("para"),
-	[VIRT_FULL]	= N_("full")
+	[VIRT_FULL]	= N_("full"),
+	[VIRT_CONT]	= N_("container"),
 };
 
 const char *hv_vendors[] = {
@@ -83,7 +85,7 @@ const char *hv_vendors[] = {
 	[HYPER_UML]	= "User-mode Linux",
 	[HYPER_INNOTEK]	= "Innotek GmbH",
 	[HYPER_HITACHI]	= "Hitachi",
-	[HYPER_PARALLELS]	= "Parallels"
+	[HYPER_PARALLELS] = "Parallels"
 };
 
 /* CPU modes */
@@ -601,21 +603,24 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	/* OpenVZ/Virtuozzo - /proc/vz dir should exist
 	 *		      /proc/bc should not */
-	else if (path_exist(_PATH_PROC_VZ) && !path_exist(_PATH_PROC_BC))
+	else if (path_exist(_PATH_PROC_VZ) && !path_exist(_PATH_PROC_BC)) {
 		desc->hyper = HYPER_PARALLELS;
+		desc->virtype = VIRT_CONT;
 
 	/* IBM */
-	else if (desc->vendor &&
+	} else if (desc->vendor &&
 		 (strcmp(desc->vendor, "PowerVM Lx86") == 0 ||
-		  strcmp(desc->vendor, "IBM/S390") == 0))
+		  strcmp(desc->vendor, "IBM/S390") == 0)) {
 		desc->hyper = HYPER_IBM;
+		desc->virtype = VIRT_FULL;
 
 	/* User-mode-linux */
-	else if (desc->modelname && strstr(desc->modelname, "UML"))
+	} else if (desc->modelname && strstr(desc->modelname, "UML")) {
 		desc->hyper = HYPER_UML;
+		desc->virtype = VIRT_PARA;
 
 	/* Linux-VServer */
-	else if (path_exist(_PATH_PROC_STATUS)) {
+	} else if (path_exist(_PATH_PROC_STATUS)) {
 		char buf[BUFSIZ];
 		char *val = NULL;
 
@@ -629,8 +634,10 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		if (val) {
 			while (isdigit(*val))
 				++val;
-			if (!*val)
+			if (!*val) {
 				desc->hyper = HYPER_VSERVER;
+				desc->virtype = VIRT_CONT;
+			}
 		}
 	}
 }
