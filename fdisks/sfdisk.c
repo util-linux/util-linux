@@ -787,15 +787,17 @@ reread_ioctl(int fd) {
 /* reread after writing */
 static int
 reread_disk_partition(char *dev, int fd) {
-    printf(_("Re-reading the partition table ...\n"));
     fflush(stdout);
     sync();
 
-    if (reread_ioctl(fd) && is_blkdev(fd)) {
-	warnx(_("The command to re-read the partition table failed.\n"
+    if (is_blkdev(fd)) {
+	printf(_("Re-reading the partition table ...\n"));
+	if (reread_ioctl(fd) ) {
+	   warnx(_("The command to re-read the partition table failed.\n"
 		"Run partprobe(8), kpartx(8) or reboot your system now,\n"
 		"before using mkfs\n"));
-	return 0;
+	   return 0;
+	}
     }
 
     if (close_fd(fd) != 0) {
