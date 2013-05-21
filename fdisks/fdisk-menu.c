@@ -381,8 +381,7 @@ static int gpt_menu_cb(struct fdisk_context *cxt,
 		rc = fdisk_gpt_partition_set_uuid(cxt, n);
 		break;
 	case 'n':
-		/* not implemented yet
-		rc = fdisk_gpt_partition_set_name(cxt, n);*/
+		rc = fdisk_gpt_partition_set_name(cxt, n);
 		break;
 	}
 	return rc;

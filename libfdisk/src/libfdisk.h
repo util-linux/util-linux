@@ -144,6 +144,7 @@ extern int fdisk_dos_is_compatible(struct fdisk_label *lb);
 
 /* gpt */
 extern int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i);
+extern int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i);
 
 /* ask.c */
 #define fdisk_is_ask(a, x) (fdisk_ask_get_type(a) == FDISK_ASKTYPE_ ## x)

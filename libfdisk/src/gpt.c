@@ -1566,12 +1566,6 @@ static int gpt_create_new_partition(struct fdisk_context *cxt,
 
 	gpt_entry_set_type(e, type);
 
-	/* deal with partition name
-	for (i = 0; i < GPT_PART_NAME_LEN; i++)
-		e->name[i] =
-			cpu_to_le16((uint16_t) gpt_sys_types[sys].name[i]);
-	*/
-
 	/*
 	 * Any time a new partition entry is created a new GUID must be
 	 * generated for that partition, and every partition is guaranteed
@@ -1875,7 +1869,7 @@ int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, GPT));
 
-	DBG(LABEL, dbgprint("UUID change requested parno=%zd", i));
+	DBG(LABEL, dbgprint("UUID change requested partno=%zd", i));
 
 	gpt = self_label(cxt);
 
@@ -1906,6 +1900,52 @@ int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
 	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
 }
+
+int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i)
+{
+	struct fdisk_gpt_label *gpt;
+	struct gpt_entry *e;
+	char *str, *old, name[GPT_PART_NAME_LEN] = { 0 };
+	size_t sz;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, GPT));
+
+	DBG(LABEL, dbgprint("NAME change requested partno=%zd", i));
+
+	gpt = self_label(cxt);
+
+	if ((uint32_t) i >= le32_to_cpu(gpt->pheader->npartition_entries))
+		return -EINVAL;
+
+	if (fdisk_ask_string(cxt, _("New name"), &str))
+		return -EINVAL;
+
+	e = &gpt->ents[i];
+	old = encode_to_utf8((unsigned char *)e->name, sizeof(e->name));
+
+	fdisk_info(cxt, _("Changing partition name from '%s' to '%.*s'"),
+				old, GPT_PART_NAME_LEN, str);
+	sz = strlen(str);
+	if (sz) {
+		if (sz > GPT_PART_NAME_LEN)
+			sz = GPT_PART_NAME_LEN;
+		memcpy(name, str, sz);
+	}
+	free(str);
+	free(old);
+
+	for (i = 0; i < GPT_PART_NAME_LEN; i++)
+		e->name[i] = cpu_to_le16((uint16_t) name[i]);
+
+	gpt_recompute_crc(gpt->pheader, gpt->ents);
+	gpt_recompute_crc(gpt->bheader, gpt->ents);
+
+	fdisk_label_set_changed(cxt->label, 1);
+	return 0;
+}
+
 
 /*
  * Deinitialize fdisk-specific variables
