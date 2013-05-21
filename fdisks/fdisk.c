@@ -333,7 +333,7 @@ struct fdisk_parttype *read_partition_type(struct fdisk_context *cxt)
 	return NULL;
 }
 
-
+/* deprecated in favour of fdisk_ask_number() */
 unsigned int
 read_int_with_suffix(struct fdisk_context *cxt,
 	unsigned int low, unsigned int dflt, unsigned int high,
@@ -721,6 +721,8 @@ expert_command_prompt(struct fdisk_context *cxt)
 {
 	char c;
 	size_t n;
+	uintmax_t num;
+	int rc;
 
 	assert(cxt);
 
@@ -742,11 +744,16 @@ expert_command_prompt(struct fdisk_context *cxt)
 				dos_move_begin(cxt, n);
 			break;
 		case 'c':
-			user_cylinders = read_int(cxt, 1, cxt->geom.cylinders, 1048576, 0,
-					 _("Number of cylinders"));
-			fdisk_override_geometry(cxt, user_cylinders, user_heads, user_sectors);
-			if (fdisk_is_disklabel(cxt, SUN))
-				fdisk_sun_set_ncyl(cxt, cxt->geom.cylinders);
+			rc =  fdisk_ask_number(cxt, 1, cxt->geom.cylinders,
+					1048576, _("Number of cylinders"), &num);
+			if (rc == 0) {
+				user_cylinders = num;
+				fdisk_override_geometry(cxt, user_cylinders,
+						user_heads, user_sectors);
+				if (fdisk_is_disklabel(cxt, SUN))
+					fdisk_sun_set_ncyl(cxt,
+							cxt->geom.cylinders);
+			}
 			break;
 		case 'd':
 			print_raw(cxt);
@@ -770,9 +777,12 @@ expert_command_prompt(struct fdisk_context *cxt)
 			fdisk_create_disklabel(cxt, "sgi");
 			break;
 		case 'h':
-			user_heads = read_int(cxt, 1, cxt->geom.heads, 256, 0,
-					 _("Number of heads"));
-			fdisk_override_geometry(cxt, user_cylinders, user_heads, user_sectors);
+			rc =  fdisk_ask_number(cxt, 1, cxt->geom.heads,
+					256, _("Number of heads"), &num);
+			if (rc == 0)
+				user_heads = num;
+				fdisk_override_geometry(cxt, user_cylinders,
+							user_heads, user_sectors);
 			break;
 		case 'i':
 			if (fdisk_is_disklabel(cxt, SUN))
@@ -793,13 +803,16 @@ expert_command_prompt(struct fdisk_context *cxt)
 			fdisk_context_enable_details(cxt, 0);
 			return;
 		case 's':
-			user_sectors = read_int(cxt, 1, cxt->geom.sectors, 63, 0,
-					   _("Number of sectors"));
-			if (is_dos_compatible(cxt))
-				fprintf(stderr, _("Warning: setting "
-					"sector offset for DOS "
-					"compatibility\n"));
-			fdisk_override_geometry(cxt, user_cylinders, user_heads, user_sectors);
+			rc =  fdisk_ask_number(cxt, 1, cxt->geom.sectors,
+					63, _("Number of sectors"), &num);
+			if (rc == 0) {
+				user_sectors = num;
+				if (is_dos_compatible(cxt))
+					fdisk_warn(cxt, _("setting sector "
+						"offset for DOS compatibility"));
+				fdisk_override_geometry(cxt, user_cylinders,
+						user_heads, user_sectors);
+			}
 			break;
 		case 'u':
 			if (fdisk_is_disklabel(cxt, GPT) &&
