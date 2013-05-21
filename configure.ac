@@ -905,9 +905,7 @@ UL_BUILD_INIT([unshare])
 UL_REQUIRES_LINUX([unshare])
 UL_REQUIRES_SYSCALL_CHECK([unshare], [UL_CHECK_SYSCALL([unshare])])
 AM_CONDITIONAL(BUILD_UNSHARE, test "x$build_unshare" = xyes)
-if test "x$build_unshare" = xyes; then
-  AC_CHECK_FUNCS([unshare])
-fi
+AC_CHECK_FUNCS([unshare])
 
 AC_ARG_ENABLE([nsenter],
   AS_HELP_STRING([--disable-nsenter], [do not build nsenter]),
@@ -917,9 +915,7 @@ UL_BUILD_INIT([nsenter])
 UL_REQUIRES_LINUX([nsenter])
 UL_REQUIRES_SYSCALL_CHECK([nsenter], [UL_CHECK_SYSCALL([setns])], [setns])
 AM_CONDITIONAL(BUILD_NSENTER, test "x$build_nsenter" = xyes)
-if test "x$build_nsenter" = xyes; then
-  AC_CHECK_FUNCS([setns])
-fi
+AC_CHECK_FUNCS([setns])
 
 dnl setpriv depends on libcap-ng.  It would be possible to build
 dnl a version of setpriv with limited functionality without libcap-ng,
