@@ -731,8 +731,13 @@ expert_command_prompt(struct fdisk_context *cxt)
 	while(1) {
 		assert(cxt->label);
 
-		putchar('\n');
-		c = read_char(cxt, _("Expert command (m for help): "));
+		c = process_fdisk_menu(cxt);
+		if (c <= 0)
+			continue;
+
+		/* well, process_fdisk_menu() returns commands that
+		 * are not yet implemented by menu callbacks. Let's
+		 * perform the commands here */
 		switch (c) {
 		case 'a':
 			if (fdisk_is_disklabel(cxt, SUN))
@@ -828,9 +833,6 @@ expert_command_prompt(struct fdisk_context *cxt)
 		case 'y':
 			if (fdisk_is_disklabel(cxt, SUN))
 				fdisk_sun_set_pcylcount(cxt);
-			break;
-		default:
-			print_fdisk_menu(cxt);
 			break;
 		}
 	}
@@ -938,11 +940,15 @@ static void command_prompt(struct fdisk_context *cxt)
 	}
 
 	while (1) {
-
 		assert(cxt->label);
 
-		putchar('\n');
-		c = read_char(cxt, _("Command (m for help): "));
+		c = process_fdisk_menu(cxt);
+		if (c <= 0)
+			continue;
+
+		/* well, process_fdisk_menu() returns commands that
+		 * are not yet implemented by menu callbacks. Let's
+		 * perform the commands here */
 		switch (c) {
 		case 'a':
 			if (fdisk_is_disklabel(cxt, DOS) &&
@@ -1005,9 +1011,6 @@ static void command_prompt(struct fdisk_context *cxt)
 		case 'l':
 			list_partition_types(cxt);
 			break;
-		case 'm':
-			print_fdisk_menu(cxt);
-			break;
 		case 'n':
 			new_partition(cxt);
 			break;
@@ -1039,7 +1042,6 @@ static void command_prompt(struct fdisk_context *cxt)
 			break;
 		default:
 			unknown_command(c);
-			print_fdisk_menu(cxt);
 		}
 	}
 }

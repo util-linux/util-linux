@@ -12,7 +12,7 @@
 
 #include "fdisk.h"
 
-static int get_user_reply(struct fdisk_context *cxt, char *prompt,
+int get_user_reply(struct fdisk_context *cxt, const char *prompt,
 			  char *buf, size_t bufsz)
 {
 	char *p;
@@ -24,7 +24,7 @@ static int get_user_reply(struct fdisk_context *cxt, char *prompt,
 
 		if (!fgets(buf, bufsz, stdin)) {
 			if (fdisk_label_is_changed(cxt->label)) {
-				fprintf(stderr, _("Do you really want to quit? "));
+				fprintf(stderr, _("\nDo you really want to quit? "));
 
 				if (fgets(buf, bufsz, stdin) && !rpmatch(buf))
 					continue;

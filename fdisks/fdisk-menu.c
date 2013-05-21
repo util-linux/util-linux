@@ -25,7 +25,9 @@ struct menu {
 	enum fdisk_labeltype	label;		/* only for this label */
 	enum fdisk_labeltype	exclude;	/* all labels except this */
 
-	int (*callback)(struct fdisk_context *, struct menu *, int);
+	int (*callback)(struct fdisk_context *,
+			const struct menu *,
+			const struct menu_entry *);
 
 	struct menu_entry	entries[];	/* NULL terminated array */
 };
@@ -300,6 +302,55 @@ int print_fdisk_menu(struct fdisk_context *cxt)
 
 	return 0;
 }
+
+/* Asks for command, verify the key and perform the command or
+ * returns the command key if no callback for the command is
+ * implemented.
+ *
+ * Returns: <0 on error
+ *           0 on success (the command performed)
+ *          >0 if no callback (then returns the key)
+ */
+int process_fdisk_menu(struct fdisk_context *cxt)
+{
+	const struct menu_entry *ent;
+	const struct menu *menu;
+	int key, rc;
+	const char *prompt;
+	char buf[BUFSIZ];
+
+	if (fdisk_context_display_details(cxt))
+		prompt = _("Expert command (m for help): ");
+	else
+		prompt = _("Command (m for help): ");
+
+	fputc('\n',stdout);
+	rc = get_user_reply(cxt, prompt, buf, sizeof(buf));
+	if (rc)
+		return rc;
+
+	key = buf[0];
+	ent = get_fdisk_menu_entry(cxt, key, &menu);
+	if (!ent) {
+		fdisk_warnx(cxt, _("%c: unknown command"), key);
+		return -EINVAL;
+	}
+
+	DBG(CONTEXT, dbgprint("selected: key=%c, entry='%s'",
+				key, ent->title));
+	/* hardcoded help */
+	if (key == 'm') {
+		print_fdisk_menu(cxt);
+		return 0;
+
+	/* menu has implemented callback, use it */
+	} else if (menu->callback)
+		return menu->callback(cxt, menu, ent);
+
+	/* no callback, return the key */
+	return key;
+}
+
 
 #ifdef TEST_PROGRAM
 struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt) { return NULL; }
