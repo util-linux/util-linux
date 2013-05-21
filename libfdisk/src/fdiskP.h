@@ -49,6 +49,7 @@
 #define FDISK_DEBUG_GEOMETRY    (1 << 4)
 #define FDISK_DEBUG_LABEL       (1 << 5)
 #define FDISK_DEBUG_ASK         (1 << 6)
+#define FDISK_DEBUG_FRONTEND	(1 << 7)
 #define FDISK_DEBUG_ALL		0xFFFF
 
 # define ON_DBG(m, x)	do { \

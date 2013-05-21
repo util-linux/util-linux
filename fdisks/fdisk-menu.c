@@ -266,15 +266,15 @@ static int menu_detect_collisions(struct fdisk_context *cxt)
 
 		r = get_fdisk_menu_entry(cxt, e->key, NULL);
 		if (!r) {
-			DBG(CONTEXT, dbgprint("warning: not found "
+			DBG(FRONTEND, dbgprint("warning: not found "
 					"entry for %c", e->key));
 			return -1;
 		}
 		if (r != e) {
-			DBG(CONTEXT, dbgprint("warning: duplicate key '%c'",
+			DBG(FRONTEND, dbgprint("warning: duplicate key '%c'",
 						e->key));
-			DBG(CONTEXT, dbgprint("         %s", e->title));
-			DBG(CONTEXT, dbgprint("         %s", r->title));
+			DBG(FRONTEND, dbgprint("         %s", e->title));
+			DBG(FRONTEND, dbgprint("         %s", r->title));
 			abort();
 		}
 	}
@@ -287,7 +287,7 @@ int print_fdisk_menu(struct fdisk_context *cxt)
 	struct menu_context mc = MENU_CXT_EMPTY;
 	const struct menu_entry *e;
 
-	ON_DBG(CONTEXT, menu_detect_collisions(cxt));
+	ON_DBG(FRONTEND, menu_detect_collisions(cxt));
 
 	if (fdisk_context_display_details(cxt))
 		printf(_("\nHelp (expert commands):\n"));
@@ -340,7 +340,7 @@ int process_fdisk_menu(struct fdisk_context *cxt)
 		return -EINVAL;
 	}
 
-	DBG(CONTEXT, dbgprint("selected: key=%c, entry='%s'",
+	DBG(FRONTEND, dbgprint("selected: key=%c, entry='%s'",
 				key, ent->title));
 	/* hardcoded help */
 	if (key == 'm') {
@@ -370,7 +370,7 @@ static int gpt_menu_cb(struct fdisk_context *cxt,
 	assert(ent);
 	assert(fdisk_is_disklabel(cxt, GPT));
 
-	DBG(CONTEXT, dbgprint("enter GPT menu"));
+	DBG(FRONTEND, dbgprint("enter GPT menu"));
 
 	rc = fdisk_ask_partnum(cxt, &n, FALSE);
 	if (rc)
