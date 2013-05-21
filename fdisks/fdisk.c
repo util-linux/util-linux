@@ -819,11 +819,6 @@ expert_command_prompt(struct fdisk_context *cxt)
 						user_heads, user_sectors);
 			}
 			break;
-		case 'u':
-			if (fdisk_is_disklabel(cxt, GPT) &&
-			    fdisk_ask_partnum(cxt, &n, FALSE) == 0)
-				fdisk_gpt_partition_set_uuid(cxt, n);
-			break;
 		case 'v':
 			verify(cxt);
 			break;

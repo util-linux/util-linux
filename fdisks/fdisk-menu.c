@@ -39,6 +39,10 @@ struct menu_context {
 
 #define MENU_CXT_EMPTY	{ 0, 0 }
 
+static int gpt_menu_cb(struct fdisk_context *cxt,
+		       const struct menu *menu,
+		       const struct menu_entry *ent);
+
 /*
  * Menu entry macros:
  *	MENU_X*    expert mode only
@@ -109,7 +113,7 @@ struct menu menu_createlabel = {
 };
 
 struct menu menu_gpt = {
-/*	.callback = gpt_menu_cb, */
+	.callback = gpt_menu_cb,
 	.label = FDISK_DISKLABEL_GPT,
 	.entries = {
 		MENU_XSEP(N_("GPT")),
@@ -349,6 +353,39 @@ int process_fdisk_menu(struct fdisk_context *cxt)
 
 	/* no callback, return the key */
 	return key;
+}
+
+/*
+ * This is fdisk frontend for GPT specific libfdisk functions that
+ * are not expported by generic libfdisk API.
+ */
+static int gpt_menu_cb(struct fdisk_context *cxt,
+		       const struct menu *menu __attribute__((__unused__)),
+		       const struct menu_entry *ent)
+{
+	size_t n;
+	int rc;
+
+	assert(cxt);
+	assert(ent);
+	assert(fdisk_is_disklabel(cxt, GPT));
+
+	DBG(CONTEXT, dbgprint("enter GPT menu"));
+
+	rc = fdisk_ask_partnum(cxt, &n, FALSE);
+	if (rc)
+		return rc;
+
+	switch(ent->key) {
+	case 'u':
+		rc = fdisk_gpt_partition_set_uuid(cxt, n);
+		break;
+	case 'n':
+		/* not implemented yet
+		rc = fdisk_gpt_partition_set_name(cxt, n);*/
+		break;
+	}
+	return rc;
 }
 
 
