@@ -248,9 +248,8 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 #endif
 		ask_geom(cxt);
 
-	sunlabel->acyl   = cpu_to_be16(2);
+	sunlabel->acyl   = cpu_to_be16(0);
 	sunlabel->pcyl   = cpu_to_be16(cxt->geom.cylinders);
-	sunlabel->ncyl   = cpu_to_be16(cxt->geom.cylinders - 2);
 	sunlabel->rpm    = cpu_to_be16(5400);
 	sunlabel->intrlv = cpu_to_be16(1);
 	sunlabel->apc    = cpu_to_be16(0);
@@ -762,7 +761,7 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 }
 
 
-void fdisk_sun_set_alt_cyl(struct fdisk_context *cxt)
+int fdisk_sun_set_alt_cyl(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
 	uintmax_t res;
@@ -771,17 +770,14 @@ void fdisk_sun_set_alt_cyl(struct fdisk_context *cxt)
 			65535,					/* high */
 			_("Number of alternate cylinders"),	/* query */
 			&res);					/* result */
-	if (!rc)
-		sunlabel->acyl = cpu_to_be16(res);
+	if (rc)
+		return rc;
+
+	sunlabel->acyl = cpu_to_be16(res);
+	return 0;
 }
 
-void fdisk_sun_set_ncyl(struct fdisk_context *cxt, int cyl)
-{
-	struct sun_disklabel *sunlabel = self_disklabel(cxt);
-	sunlabel->ncyl = cpu_to_be16(cyl);
-}
-
-void fdisk_sun_set_xcyl(struct fdisk_context *cxt)
+int fdisk_sun_set_xcyl(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
 	uintmax_t res;
@@ -790,11 +786,13 @@ void fdisk_sun_set_xcyl(struct fdisk_context *cxt)
 			cxt->geom.sectors,			/* high */
 			_("Extra sectors per cylinder"),	/* query */
 			&res);					/* result */
-	if (!rc)
-		sunlabel->apc = cpu_to_be16(res);
+	if (rc)
+		return rc;
+	sunlabel->apc = cpu_to_be16(res);
+	return 0;
 }
 
-void fdisk_sun_set_ilfact(struct fdisk_context *cxt)
+int fdisk_sun_set_ilfact(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
 	uintmax_t res;
@@ -803,11 +801,13 @@ void fdisk_sun_set_ilfact(struct fdisk_context *cxt)
 			32,					/* high */
 			_("Interleave factor"),	/* query */
 			&res);					/* result */
-	if (!rc)
-		sunlabel->intrlv = cpu_to_be16(res);
+	if (rc)
+		return rc;
+	sunlabel->intrlv = cpu_to_be16(res);
+	return 0;
 }
 
-void fdisk_sun_set_rspeed(struct fdisk_context *cxt)
+int fdisk_sun_set_rspeed(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
 	uintmax_t res;
@@ -816,12 +816,13 @@ void fdisk_sun_set_rspeed(struct fdisk_context *cxt)
 			USHRT_MAX,				/* high */
 			_("Rotation speed (rpm)"),		/* query */
 			&res);					/* result */
-	if (!rc)
-		sunlabel->rpm = cpu_to_be16(res);
-
+	if (rc)
+		return rc;
+	sunlabel->rpm = cpu_to_be16(res);
+	return 0;
 }
 
-void fdisk_sun_set_pcylcount(struct fdisk_context *cxt)
+int fdisk_sun_set_pcylcount(struct fdisk_context *cxt)
 {
 	struct sun_disklabel *sunlabel = self_disklabel(cxt);
 	uintmax_t res;
@@ -831,7 +832,9 @@ void fdisk_sun_set_pcylcount(struct fdisk_context *cxt)
 			_("Number of physical cylinders"),	/* query */
 			&res);					/* result */
 	if (!rc)
-		sunlabel->pcyl = cpu_to_be16(res);
+		return rc;
+	sunlabel->pcyl = cpu_to_be16(res);
+	return 0;
 }
 
 static int sun_write_disklabel(struct fdisk_context *cxt)
@@ -846,6 +849,15 @@ static int sun_write_disklabel(struct fdisk_context *cxt)
 	assert(fdisk_is_disklabel(cxt, SUN));
 
 	sunlabel = self_disklabel(cxt);
+
+	/* Maybe geometry has been modified */
+	sunlabel->nhead = cpu_to_be16(cxt->geom.heads);
+	sunlabel->nsect = cpu_to_be16(cxt->geom.sectors);
+
+	if (cxt->geom.cylinders != be16_to_cpu(sunlabel->ncyl))
+		sunlabel->ncyl = cpu_to_be16( cxt->geom.cylinders
+				      - be16_to_cpu(sunlabel->acyl) );
+
 	ush = (unsigned short *) sunlabel;
 
 	while(ush < (unsigned short *)(&sunlabel->csum))

@@ -142,6 +142,13 @@ extern int fdisk_reset_alignment(struct fdisk_context *cxt);
 extern int fdisk_dos_enable_compatible(struct fdisk_label *lb, int enable);
 extern int fdisk_dos_is_compatible(struct fdisk_label *lb);
 
+/* sun.h */
+extern int fdisk_sun_set_alt_cyl(struct fdisk_context *cxt);
+extern int fdisk_sun_set_xcyl(struct fdisk_context *cxt);
+extern int fdisk_sun_set_ilfact(struct fdisk_context *cxt);
+extern int fdisk_sun_set_rspeed(struct fdisk_context *cxt);
+extern int fdisk_sun_set_pcylcount(struct fdisk_context *cxt);
+
 /* gpt */
 extern int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i);
 extern int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i);

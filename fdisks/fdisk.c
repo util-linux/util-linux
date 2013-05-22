@@ -755,9 +755,6 @@ expert_command_prompt(struct fdisk_context *cxt)
 				user_cylinders = num;
 				fdisk_override_geometry(cxt, user_cylinders,
 						user_heads, user_sectors);
-				if (fdisk_is_disklabel(cxt, SUN))
-					fdisk_sun_set_ncyl(cxt,
-							cxt->geom.cylinders);
 			}
 			break;
 		case 'd':
