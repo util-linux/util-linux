@@ -112,6 +112,18 @@ struct menu menu_createlabel = {
 	}
 };
 
+struct menu menu_geo = {
+/*	.callback = geo_menu_cb, */
+	.exclude = FDISK_DISKLABEL_GPT,
+	.entries = {
+		MENU_XSEP(N_("Geometry")),
+		MENU_XENT('c', N_("change number of cylinders")),
+		MENU_XENT('h', N_("change number of heads")),
+		MENU_XENT('s', N_("change number of sectors/track")),
+		{ 0, NULL }
+	}
+};
+
 struct menu menu_gpt = {
 	.callback = gpt_menu_cb,
 	.label = FDISK_DISKLABEL_GPT,
@@ -132,12 +144,9 @@ struct menu menu_sun = {
 		MENU_ENT('c', N_("toggle the mountable flag")),
 
 		MENU_XENT('a', N_("change number of alternate cylinders")),
-		MENU_XENT('c', N_("change number of cylinders")),
 		MENU_XENT('e', N_("change number of extra sectors per cylinder")),
-		MENU_XENT('h', N_("change number of heads")),
 		MENU_XENT('i', N_("change interleave factor")),
 		MENU_XENT('o', N_("change rotation speed (rpm)")),
-		MENU_XENT('s', N_("change number of sectors/track")),
 		MENU_XENT('y', N_("change number of physical cylinders")),
 		{ 0, NULL }
 	}
@@ -165,11 +174,9 @@ struct menu menu_dos = {
 		MENU_ENT('c', N_("toggle the dos compatibility flag")),
 
 		MENU_XENT('b', N_("move beginning of data in a partition")),
-		MENU_XENT('c', N_("change number of cylinders")),		MENU_XENT('e', N_("list extended partitions")),
+		MENU_XENT('e', N_("list extended partitions")),
 		MENU_XENT('f', N_("fix partition order")),
-		MENU_XENT('h', N_("change number of heads")),
 		MENU_XENT('i', N_("change the disk identifier")),
-		MENU_XENT('s', N_("change number of sectors/track")),
 		{ 0, NULL }
 	}
 };
@@ -196,6 +203,7 @@ static const struct menu *menus[] = {
 	&menu_sgi,
 	&menu_dos,
 	&menu_bsd,
+	&menu_geo,
 	&menu_generic,
 	&menu_createlabel,
 };
@@ -208,9 +216,12 @@ static const struct menu_entry *next_menu_entry(
 		const struct menu *m = menus[mc->menu_idx];
 		const struct menu_entry *e = &(m->entries[mc->entry_idx]);
 
-		/* move to the next submenu if there is no more entries */
+		/* no more entries */
 		if (e->title == NULL ||
-		    (m->label && cxt->label && !(m->label & cxt->label->id))) {
+		/* menu wanted for specified labels only */
+		    (m->label && cxt->label && !(m->label & cxt->label->id)) ||
+		/* menu excluded for specified labels */
+		    (m->exclude && cxt->label && (m->exclude & cxt->label->id))) {
 			mc->menu_idx++;
 			mc->entry_idx = 0;
 			continue;
@@ -386,7 +397,6 @@ static int gpt_menu_cb(struct fdisk_context *cxt,
 	}
 	return rc;
 }
-
 
 #ifdef TEST_PROGRAM
 struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt) { return NULL; }
