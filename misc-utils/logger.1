@@ -109,6 +109,19 @@ Write to the specified
 .I socket
 instead of to the builtin syslog routines.
 .TP
+\fB\-\-prio\-prefix\fR
+Look for a syslog prefix on every line read from standard input, a
+number contained within angle brackets that contain both the facility
+and level. The decimal prefix is constructed by multiplying the
+facility by 8 and then adding the level, thus \fIlocal0.info\fR,
+facility=16 and level=6, becomes \fI<134>\fR.
+
+If the prefix contains no facility, the facility defaults to what is
+specified by \fB\-p\fR option, similarly if no prefix is provided the
+line is logged using the \fB\-p\fR \fIpriority\fR.
+
+This option doesn't affect a command-line message.
+.TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
 .TP
