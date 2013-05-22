@@ -38,10 +38,13 @@ struct menu_context {
 };
 
 #define MENU_CXT_EMPTY	{ 0, 0 }
+#define DECLARE_MENU_CB(x) \
+	static int x(struct fdisk_context *, \
+		     const struct menu *, \
+		     const struct menu_entry *)
 
-static int gpt_menu_cb(struct fdisk_context *cxt,
-		       const struct menu *menu,
-		       const struct menu_entry *ent);
+DECLARE_MENU_CB(gpt_menu_cb);
+DECLARE_MENU_CB(geo_menu_cb);
 
 /*
  * Menu entry macros:
@@ -113,7 +116,7 @@ struct menu menu_createlabel = {
 };
 
 struct menu menu_geo = {
-/*	.callback = geo_menu_cb, */
+	.callback = geo_menu_cb,
 	.exclude = FDISK_DISKLABEL_GPT,
 	.entries = {
 		MENU_XSEP(N_("Geometry")),
@@ -366,6 +369,7 @@ int process_fdisk_menu(struct fdisk_context *cxt)
 	return key;
 }
 
+
 /*
  * This is fdisk frontend for GPT specific libfdisk functions that
  * are not expported by generic libfdisk API.
@@ -395,6 +399,37 @@ static int gpt_menu_cb(struct fdisk_context *cxt,
 		rc = fdisk_gpt_partition_set_name(cxt, n);
 		break;
 	}
+	return rc;
+}
+
+/* C/H/S commands */
+static int geo_menu_cb(struct fdisk_context *cxt,
+		       const struct menu *menu __attribute__((__unused__)),
+		       const struct menu_entry *ent)
+{
+	int rc = -EINVAL;
+	uintmax_t c = 0, h = 0, s = 0;
+
+	assert(cxt);
+	assert(ent);
+
+	switch (ent->key) {
+	case 'c':
+		rc =  fdisk_ask_number(cxt, 1, cxt->geom.cylinders,
+				1048576, _("Number of cylinders"), &c);
+		break;
+	case 'h':
+		rc =  fdisk_ask_number(cxt, 1, cxt->geom.heads,
+				256, _("Number of heads"), &h);
+		break;
+	case 's':
+		rc =  fdisk_ask_number(cxt, 1, cxt->geom.sectors,
+				63, _("Number of sectors"), &s);
+		break;
+	}
+
+	if (!rc)
+		fdisk_override_geometry(cxt, c, h, s);
 	return rc;
 }
 

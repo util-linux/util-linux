@@ -58,7 +58,8 @@ char	*line_ptr,			/* interactive input */
 
 int	nowarn = 0;			/* no warnings for fdisk -l/-s */
 
-unsigned int	user_cylinders, user_heads, user_sectors;
+/* when C/H/S specified on command line */
+static unsigned int user_cylinders, user_heads, user_sectors;
 
 void toggle_units(struct fdisk_context *cxt)
 {
@@ -721,8 +722,6 @@ expert_command_prompt(struct fdisk_context *cxt)
 {
 	char c;
 	size_t n;
-	uintmax_t num;
-	int rc;
 
 	assert(cxt);
 
@@ -748,15 +747,6 @@ expert_command_prompt(struct fdisk_context *cxt)
 			    fdisk_ask_partnum(cxt, &n, FALSE) == 0)
 				dos_move_begin(cxt, n);
 			break;
-		case 'c':
-			rc =  fdisk_ask_number(cxt, 1, cxt->geom.cylinders,
-					1048576, _("Number of cylinders"), &num);
-			if (rc == 0) {
-				user_cylinders = num;
-				fdisk_override_geometry(cxt, user_cylinders,
-						user_heads, user_sectors);
-			}
-			break;
 		case 'd':
 			print_raw(cxt);
 			break;
@@ -778,14 +768,6 @@ expert_command_prompt(struct fdisk_context *cxt)
 			 * compatibility only. */
 			fdisk_create_disklabel(cxt, "sgi");
 			break;
-		case 'h':
-			rc =  fdisk_ask_number(cxt, 1, cxt->geom.heads,
-					256, _("Number of heads"), &num);
-			if (rc == 0)
-				user_heads = num;
-				fdisk_override_geometry(cxt, user_cylinders,
-							user_heads, user_sectors);
-			break;
 		case 'i':
 			if (fdisk_is_disklabel(cxt, SUN))
 				fdisk_sun_set_ilfact(cxt);
@@ -804,18 +786,6 @@ expert_command_prompt(struct fdisk_context *cxt)
 		case 'r':
 			fdisk_context_enable_details(cxt, 0);
 			return;
-		case 's':
-			rc =  fdisk_ask_number(cxt, 1, cxt->geom.sectors,
-					63, _("Number of sectors"), &num);
-			if (rc == 0) {
-				user_sectors = num;
-				if (is_dos_compatible(cxt))
-					fdisk_warn(cxt, _("setting sector "
-						"offset for DOS compatibility"));
-				fdisk_override_geometry(cxt, user_cylinders,
-						user_heads, user_sectors);
-			}
-			break;
 		case 'v':
 			verify(cxt);
 			break;
