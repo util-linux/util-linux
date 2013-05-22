@@ -234,8 +234,6 @@ int julian;
 
 /* function prototypes */
 static int leap_year(int year);
-static int centuries_since_1700(int year, int centuries);
-static int leap_years_since_year_1(int year);
 static char * ascii_day(char *, int);
 static int center_str(const char* src, char* dest, size_t dest_size, size_t width);
 static void center(const char *, size_t, int);
@@ -425,22 +423,6 @@ static int leap_year(int year)
 		return !(year % 4);
 	else
 		return ( !(year % 4) && (year % 100) ) || !(year % 400);
-}
-
-/* number of centuries since 1700 */
-static int centuries_since_1700(int year, int n)
-{
-	if (year < REFORMATION_YEAR)
-		return 0;
-	else
-		return ((year / (100 * n)) - ((REFORMATION_YEAR / 100) / n));
-}
-
-/* number of leap years between year 1 and this year, not inclusive */
-static int leap_years_since_year_1(int year)
-{
-	return (year / 4 - centuries_since_1700(year, 1) +
-		centuries_since_1700(year, 4));
 }
 
 static void headers_init(int julian)
@@ -681,18 +663,26 @@ day_in_year(int day, int month, int year) {
  *	during the period of 11 days.
  */
 static int
-day_in_week(int day, int month, int year) {
-	long temp;
-
-	temp =
-	    (long)(year - SMALLEST_YEAR) * DAYS_IN_YEAR +
-	    leap_years_since_year_1(year - SMALLEST_YEAR)
-	    + day_in_year(day, month, year);
-	if (temp < FIRST_MISSING_DAY)
-		return ((temp + (FIRST_WEEKDAY - 1)) % DAYS_IN_WEEK);
-	if (temp >= (FIRST_MISSING_DAY + NUMBER_MISSING_DAYS))
-		return ((temp + (FIRST_WEEKDAY - 1 - NUMBER_MISSING_DAYS)) % DAYS_IN_WEEK);
-	return (NONEDAY);
+day_in_week(int d, int m, int y)
+{
+	static const int reform[] = {
+		SUNDAY, WEDNESDAY, TUESDAY, FRIDAY, SUNDAY, WEDNESDAY,
+		FRIDAY, MONDAY, THURSDAY, SATURDAY, TUESDAY, THURSDAY
+	};
+	static const int old[] = {
+		FRIDAY, MONDAY, SUNDAY, WEDNESDAY, FRIDAY, MONDAY,
+		WEDNESDAY, SATURDAY, TUESDAY, THURSDAY, SUNDAY, TUESDAY
+	};
+	if (y != 1753)
+		y -= m < 3;
+	else
+		y -= (m < 3) + 14;
+	if (1752 < y || (y == 1752 && 9 < m) || (y == 1752 && m == 9 && 13 < d))
+		return (y + (y / 4) - (y / 100) + (y / 400) + reform[m - 1] +
+			d) % 7;
+	if (y < 1752 || (y == 1752 && m < 9) || (y == 1752 && m == 9 && d < 3))
+		return (y + y / 4 + old[m - 1] + d) % 7;
+	return NONEDAY;
 }
 
 static char *
