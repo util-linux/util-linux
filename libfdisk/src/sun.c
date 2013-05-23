@@ -687,7 +687,7 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 		_("Label geometry: %d rpm, %d alternate and %d physical cylinders,\n"
 		  "                %d extra sects/cyl, interleave %d:1\n"
 		  "Label ID: %s\n"
-		  "Volume ID: %s"),
+		  "Volume ID: %s\n"),
 		       be16_to_cpu(sunlabel->rpm),
 		       be16_to_cpu(sunlabel->acyl),
 		       be16_to_cpu(sunlabel->pcyl),

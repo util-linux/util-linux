@@ -738,10 +738,6 @@ expert_command_prompt(struct fdisk_context *cxt)
 		 * are not yet implemented by menu callbacks. Let's
 		 * perform the commands here */
 		switch (c) {
-		case 'a':
-			if (fdisk_is_disklabel(cxt, SUN))
-				fdisk_sun_set_alt_cyl(cxt);
-			break;
 		case 'b':
 			if (fdisk_is_disklabel(cxt, DOS) &&
 			    fdisk_ask_partnum(cxt, &n, FALSE) == 0)
@@ -753,10 +749,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 		case 'e':
 			if (fdisk_is_disklabel(cxt, SGI))
 				sgi_set_xcyl();
-			else if (fdisk_is_disklabel(cxt, SUN))
-				fdisk_sun_set_xcyl(cxt);
-			else
-				if (fdisk_is_disklabel(cxt, DOS))
+			else if (fdisk_is_disklabel(cxt, DOS))
 					dos_list_table_expert(cxt, 1);
 			break;
 		case 'f':
@@ -769,14 +762,8 @@ expert_command_prompt(struct fdisk_context *cxt)
 			fdisk_create_disklabel(cxt, "sgi");
 			break;
 		case 'i':
-			if (fdisk_is_disklabel(cxt, SUN))
-				fdisk_sun_set_ilfact(cxt);
-			else if (fdisk_is_disklabel(cxt, DOS))
+			if (fdisk_is_disklabel(cxt, DOS))
 				dos_set_mbr_id(cxt);
-			break;
-		case 'o':
-			if (fdisk_is_disklabel(cxt, SUN))
-				fdisk_sun_set_rspeed(cxt);
 			break;
 		case 'p':
 			list_table(cxt, 1);
@@ -791,10 +778,6 @@ expert_command_prompt(struct fdisk_context *cxt)
 			break;
 		case 'w':
 			write_table(cxt);
-			break;
-		case 'y':
-			if (fdisk_is_disklabel(cxt, SUN))
-				fdisk_sun_set_pcylcount(cxt);
 			break;
 		}
 	}
@@ -917,10 +900,6 @@ static void command_prompt(struct fdisk_context *cxt)
 			    fdisk_ask_partnum(cxt, &n, FALSE) == 0)
 				fdisk_partition_toggle_flag(cxt, n, DOS_FLAG_ACTIVE);
 
-			else if (fdisk_is_disklabel(cxt, SUN) &&
-				 fdisk_ask_partnum(cxt, &n, FALSE) == 0)
-				fdisk_partition_toggle_flag(cxt, n, SUN_FLAG_UNMNT);
-
 			else if (fdisk_is_disklabel(cxt, SGI) &&
 				 fdisk_ask_partnum(cxt, &n, FALSE) == 0)
 				fdisk_partition_toggle_flag(cxt, n, SGI_FLAG_BOOT);
@@ -944,9 +923,6 @@ static void command_prompt(struct fdisk_context *cxt)
 		case 'c':
 			if (fdisk_is_disklabel(cxt, DOS))
 				toggle_dos_compatibility_flag(cxt);
-			else if (fdisk_is_disklabel(cxt, SUN) &&
-				 fdisk_ask_partnum(cxt, &n, FALSE) == 0)
-				fdisk_partition_toggle_flag(cxt, n, SUN_FLAG_RONLY);
 
 			else if (fdisk_is_disklabel(cxt, SGI) &&
 				 fdisk_ask_partnum(cxt, &n, FALSE) == 0)

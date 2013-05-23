@@ -7,6 +7,7 @@
 
 #include "c.h"
 #include "fdisk.h"
+#include "pt-sun.h"
 
 struct menu_entry {
 	const char	key;
@@ -44,6 +45,7 @@ struct menu_context {
 		     const struct menu_entry *)
 
 DECLARE_MENU_CB(gpt_menu_cb);
+DECLARE_MENU_CB(sun_menu_cb);
 DECLARE_MENU_CB(geo_menu_cb);
 
 /*
@@ -139,7 +141,7 @@ struct menu menu_gpt = {
 };
 
 struct menu menu_sun = {
-/*	.callback = sun_menu_cb, */
+	.callback = sun_menu_cb,
 	.label = FDISK_DISKLABEL_SUN,
 	.entries = {
 		MENU_BSEP(N_("Sun")),
@@ -397,6 +399,57 @@ static int gpt_menu_cb(struct fdisk_context *cxt,
 		break;
 	case 'n':
 		rc = fdisk_gpt_partition_set_name(cxt, n);
+		break;
+	}
+	return rc;
+}
+
+static int sun_menu_cb(struct fdisk_context *cxt,
+		       const struct menu *menu __attribute__((__unused__)),
+		       const struct menu_entry *ent)
+{
+	int rc = 0;
+
+	assert(cxt);
+	assert(ent);
+	assert(fdisk_is_disklabel(cxt, SUN));
+
+	DBG(FRONTEND, dbgprint("enter SUN menu"));
+
+	/* normal mode */
+	if (!ent->expert) {
+		size_t n;
+
+		rc = fdisk_ask_partnum(cxt, &n, FALSE);
+		if (rc)
+			return rc;
+		switch (ent->key) {
+		case 'a':
+			rc = fdisk_partition_toggle_flag(cxt, n, SUN_FLAG_RONLY);
+			break;
+		case 'c':
+			rc = fdisk_partition_toggle_flag(cxt, n, SUN_FLAG_UNMNT);
+			break;
+		}
+		return rc;
+	}
+
+	/* expert mode */
+	switch (ent->key) {
+	case 'a':
+		rc = fdisk_sun_set_alt_cyl(cxt);
+		break;
+	case 'e':
+		rc = fdisk_sun_set_xcyl(cxt);
+		break;
+	case 'i':
+		rc = fdisk_sun_set_ilfact(cxt);
+		break;
+	case 'o':
+		rc = fdisk_sun_set_rspeed(cxt);
+		break;
+	case 'y':
+		rc = fdisk_sun_set_pcylcount(cxt);
 		break;
 	}
 	return rc;
