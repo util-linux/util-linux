@@ -138,10 +138,20 @@ This allows the use of a non-standard login program (for example,
 one that asks for a dial-up password or that uses a different
 password file).
 .TP
-\-L, \-\-local\-line
-Force the line to be a local line with no need for carrier detect. This can
+\-L, \-\-local\-line [=\fImode\fP]
+Control CLOCAL line flag, the optional argument \fImode\fP is 'auto', 'always' or 'never'.
+If the \fImode\fP argument is omitted then the default is 'always'. If the
+\-\-local\-line option is ommitted at all then the default is 'auto'.
+
+The \fImode\fP 'always' forces the line to be a local line with no need for carrier detect. This can
 be useful when you have a locally attached terminal where the serial line
 does not set the carrier detect signal.
+
+The \fImode\fP 'never' explicitly clears CLOCAL flags from line setting and
+the carrier detect signal is expected on the line.
+
+The \fImode\fP 'auto' (agetty default) does not modify CLOCAL setting
+and follows the setting enabled by kernel.
 .TP
 \-m, \-\-extract\-baud
 Try to extract the baud rate the CONNECT status message

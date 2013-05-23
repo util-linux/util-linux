@@ -132,13 +132,20 @@ struct options {
 	int delay;			/* Sleep seconds before prompt */
 	int nice;			/* Run login with this priority */
 	int numspeed;			/* number of baud rates to try */
+	int clocal;			/* CLOCAL_MODE_* */
 	speed_t speeds[MAX_SPEED];	/* baud rates to be tried */
+};
+
+enum {
+	CLOCAL_MODE_AUTO = 0,
+	CLOCAL_MODE_ALWAYS,
+	CLOCAL_MODE_NEVER
 };
 
 #define	F_PARSE		(1<<0)	/* process modem status messages */
 #define	F_ISSUE		(1<<1)	/* display /etc/issue */
 #define	F_RTSCTS	(1<<2)	/* enable RTS/CTS flow control */
-#define F_LOCAL		(1<<3)	/* force local */
+
 #define F_INITSTRING    (1<<4)	/* initstring is set */
 #define F_WAITCRLF	(1<<5)	/* wait for CR or LF */
 #define F_CUSTISSUE	(1<<6)	/* give alternative issue file */
@@ -314,7 +321,8 @@ int main(int argc, char **argv)
 			   strlen(options.initstring));
 	}
 
-	if (!serial_tty_option(&options, F_LOCAL))
+	if ((options.flags & F_VCONSOLE) == 0 &&
+	    options.clocal == CLOCAL_MODE_ALWAYS)
 		/* Go to blocking write mode unless -L is specified. */
 		fcntl(STDOUT_FILENO, F_SETFL,
 		      fcntl(STDOUT_FILENO, F_GETFL, 0) & ~O_NONBLOCK);
@@ -541,7 +549,7 @@ static void parse_args(int argc, char **argv, struct options *op)
 		{  "init-string",    required_argument,  0,  'I'  },
 		{  "noclear",	     no_argument,	 0,  'J'  },
 		{  "login-program",  required_argument,  0,  'l'  },
-		{  "local-line",     no_argument,	 0,  'L'  },
+		{  "local-line",     optional_argument,	 0,  'L'  },
 		{  "extract-baud",   no_argument,	 0,  'm'  },
 		{  "skip-login",     no_argument,	 0,  'n'  },
 		{  "nonewline",	     no_argument,	 0,  'N'  },
@@ -610,7 +618,18 @@ static void parse_args(int argc, char **argv, struct options *op)
 			op->login = optarg;
 			break;
 		case 'L':
-			op->flags |= F_LOCAL;
+			/* -L and -L=always have the same meaning */
+			op->clocal = CLOCAL_MODE_ALWAYS;
+			if (optarg) {
+				if (strcmp(optarg, "=always") == 0)
+					op->clocal = CLOCAL_MODE_ALWAYS;
+				else if (strcmp(optarg, "=never") == 0)
+					op->clocal = CLOCAL_MODE_NEVER;
+				else if (strcmp(optarg, "=auto") == 0)
+					op->clocal = CLOCAL_MODE_AUTO;
+				else
+					log_err(_("unssuported --local-line mode argument"));
+			}
 			break;
 		case 'm':
 			op->flags |= F_PARSE;
@@ -1097,8 +1116,19 @@ static void termio_init(struct options *op, struct termios *tp)
 	cfsetispeed(tp, ispeed);
 	cfsetospeed(tp, ospeed);
 
-	if (op->flags & F_LOCAL)
-		tp->c_cflag |= CLOCAL;
+	/* The default is to follow setting from kernel, but it's possible
+	 * to explicitly remove/add CLOCAL flag by -L[=<mode>]*/
+	switch (op->clocal) {
+	case CLOCAL_MODE_ALWAYS:
+		tp->c_cflag |= CLOCAL;		/* -L or -L=always */
+		break;
+	case CLOCAL_MODE_NEVER:
+		tp->c_cflag &= ~CLOCAL;		/* -L=never */
+		break;
+	case CLOCAL_MODE_AUTO:			/* -L=auto */
+		break;
+	}
+
 #ifdef HAVE_STRUCT_TERMIOS_C_LINE
 	tp->c_line = 0;
 #endif
@@ -1655,7 +1685,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -i, --noissue              do not display issue file\n"), out);
 	fputs(_(" -I, --init-string <string> set init string\n"), out);
 	fputs(_(" -l, --login-program <file> specify login program\n"), out);
-	fputs(_(" -L, --local-line           force local line\n"), out);
+	fputs(_(" -L, --local-line[=<mode>]  cotrol local line flag\n"), out);
 	fputs(_(" -m, --extract-baud         extract baud rate during connect\n"), out);
 	fputs(_(" -n, --skip-login           do not prompt for login\n"), out);
 	fputs(_(" -o, --login-options <opts> options that are passed to login\n"), out);
