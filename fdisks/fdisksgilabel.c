@@ -154,13 +154,7 @@ sgi_probe_label(struct fdisk_context *cxt)
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SGI));
-
-	if (sizeof(sgilabel) > 512) {
-		fprintf(stderr,
-			_("According to MIPS Computer Systems, Inc the "
-			  "Label must not contain more than 512 bytes\n"));
-		exit(1);
-	}
+	assert(sizeof(sgilabel) <= 512);
 
 	if (sgilabel->magic != SGI_LABEL_MAGIC &&
 	    sgilabel->magic != SGI_LABEL_MAGIC_SWAPPED) {
@@ -173,10 +167,9 @@ sgi_probe_label(struct fdisk_context *cxt)
 	 * test for correct checksum
 	 */
 	if (two_s_complement_32bit_sum((unsigned int*)sgilabel,
-				       sizeof(*sgilabel))) {
-		fprintf(stderr,
-			_("Detected sgi disklabel with wrong checksum.\n"));
-	}
+				       sizeof(*sgilabel)))
+		fdisk_warnx(cxt, _("Detected sgi disklabel with wrong checksum."));
+
 	cxt->label->nparts_max = 16;
 	cxt->label->nparts_cur = count_used_partitions(cxt);
 	volumes = 15;
@@ -289,26 +282,27 @@ static int
 sgi_check_bootfile(struct fdisk_context *cxt, const char* aFile)
 {
 	if (strlen(aFile) < 3) /* "/a\n" is minimum */ {
-		printf(_("\nInvalid Bootfile!\n"
-			 "\tThe bootfile must be an absolute non-zero pathname,\n"
-			 "\te.g. \"/unix\" or \"/unix.save\".\n"));
+		fdisk_warnx(cxt, _("Invalid Bootfile! "
+			 "The bootfile must be an absolute non-zero pathname,"
+			 "e.g. \"/unix\" or \"/unix.save\"."));
 		return 0;
 	} else {
 		if (strlen(aFile) > 16) {
-			printf(_("\n\tName of Bootfile too long:  "
-				 "16 bytes maximum.\n"));
+			fdisk_warnx(cxt, _("Name of Bootfile too long:  "
+				 "16 bytes maximum."));
 			return 0;
 		} else {
 			if (aFile[0] != '/') {
-				printf(_("\n\tBootfile must have a "
-					 "fully qualified pathname.\n"));
+				fdisk_warnx(cxt, _("Bootfile must have a "
+					 "fully qualified pathname."));
 				return 0;
 			}
 		}
 	}
 	if (strncmp(aFile, (char *) sgilabel->boot_file, 16)) {
-		printf(_("\n\tBe aware, that the bootfile is not checked for existence.\n\t"
-			 "SGI's default is \"/unix\" and for backup \"/unix.save\".\n"));
+		fdisk_warnx(cxt, _("Be aware, that the bootfile is not checked "
+			"for existence. SGI's default is \"/unix\" and for "
+			"backup \"/unix.save\"."));
 		/* filename is correct and did change */
 		return 1;
 	}
@@ -318,9 +312,10 @@ sgi_check_bootfile(struct fdisk_context *cxt, const char* aFile)
 void
 sgi_set_bootfile(struct fdisk_context *cxt)
 {
-	printf(_("\nThe current boot file is: %s\n"), sgilabel->boot_file);
+	fdisk_info(cxt, _("The current boot file is: %s"), sgilabel->boot_file);
+
 	if (read_chars(cxt, _("Please enter the name of the new boot file: ")) == '\n') {
-		printf(_("Boot file unchanged\n"));
+		fdisk_info(cxt, _("Boot file unchanged"));
 		return;
 	}
 
@@ -334,7 +329,7 @@ sgi_set_bootfile(struct fdisk_context *cxt)
 				sgilabel->boot_file[i] = 0;
 			i++;
 		}
-		printf(_("\n\tBootfile is changed to \"%s\".\n"),
+		fdisk_info(cxt,_("Bootfile is changed to \"%s\"."),
 		       sgilabel->boot_file);
 	}
 }
@@ -634,7 +629,7 @@ static int sgi_set_partition(struct fdisk_context *cxt, size_t i,
 	fdisk_label_set_changed(cxt->label, 1);
 
 	if (sgi_gaps(cxt) < 0)	/* rebuild freelist */
-		printf(_("Partition overlap on the disk.\n"));
+		fdisk_warnx(cxt, _("Partition overlap on the disk."));
 	if (length) {
 		struct fdisk_parttype *t = fdisk_get_parttype_from_code(cxt, sys);
 		fdisk_info_new_partition(cxt, i + 1, start, start + length, t);
@@ -709,22 +704,21 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		sys = 0;
 
 	if (sgi_get_num_sectors(cxt, n)) {
-		printf(_("Partition %zd is already defined.  Delete "
-			 "it before re-adding it.\n"), n + 1);
+		fdisk_warnx(cxt, _("Partition %zd is already defined.  Delete "
+			 "it before re-adding it."), n + 1);
 		return -EINVAL;
 	}
-	if ((sgi_entire(cxt) == -1)
-	    &&  (sys != SGI_VOLUME)) {
-		printf(_("Attempting to generate entire disk entry automatically.\n"));
+	if (sgi_entire(cxt) == -1 &&  sys != SGI_VOLUME) {
+		fdisk_info(cxt, _("Attempting to generate entire disk entry automatically."));
 		sgi_set_entire(cxt);
 		sgi_set_volhdr(cxt);
 	}
-	if ((sgi_gaps(cxt) == 0) &&  (sys != SGI_VOLUME)) {
-		printf(_("The entire disk is already covered with partitions.\n"));
+	if (sgi_gaps(cxt) == 0 && sys != SGI_VOLUME) {
+		fdisk_warnx(cxt, _("The entire disk is already covered with partitions."));
 		return -EINVAL;
 	}
 	if (sgi_gaps(cxt) < 0) {
-		printf(_("You got a partition overlap on the disk. Fix it first!\n"));
+		fdisk_warnx(cxt, _("You got a partition overlap on the disk. Fix it first!"));
 		return -EINVAL;
 	}
 	snprintf(mesg, sizeof(mesg), _("First %s"),
@@ -733,10 +727,10 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		if (sys == SGI_VOLUME) {
 			last = sgi_get_lastblock(cxt);
 			first = read_int(cxt, 0, 0, last-1, 0, mesg);
-			if (first != 0) {
-				printf(_("It is highly recommended that eleventh partition\n"
-					 "covers the entire disk and is of type `SGI volume'\n"));
-			}
+			if (first != 0)
+				fdisk_info(cxt, _("It is highly recommended that "
+					"eleventh partition covers the entire "
+					"disk and is of type `SGI volume'"));
 		} else {
 			first = freelist[0].first;
 			last  = freelist[0].last;
@@ -751,10 +745,10 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 			first = first; * align to cylinder if you know how ... */
 		if (!last)
 			last = isinfreelist(first);
-		if (last == 0) {
-			printf(_("You will get a partition overlap on the disk. "
-				 "Fix it first!\n"));
-		} else
+		if (last == 0)
+			fdisk_warnx(cxt, _("You will get a partition overlap "
+				"on the disk. Fix it first!"));
+		else
 			break;
 	}
 	snprintf(mesg, sizeof(mesg), _(" Last %s"),
@@ -767,11 +761,12 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		last *= fdisk_context_get_units_per_sector(cxt);
 	/*else
 		last = last; * align to cylinder if You know how ... */
-	if ((sys == SGI_VOLUME) && (first != 0 || last != sgi_get_lastblock(cxt)))
-		printf(_("It is highly recommended that eleventh partition\n"
-			 "covers the entire disk and is of type `SGI volume'\n"));
-	sgi_set_partition(cxt, n, first, last-first, sys);
+	if (sys == SGI_VOLUME && (first != 0 || last != sgi_get_lastblock(cxt)))
+		fdisk_info(cxt, _("It is highly recommended that eleventh "
+			"partition covers the entire disk and is of type "
+			"`SGI volume'"));
 
+	sgi_set_partition(cxt, n, first, last-first, sys);
 	cxt->label->nparts_cur = count_used_partitions(cxt);
 
 	return 0;
@@ -796,17 +791,17 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 
 	sec_fac = cxt->sector_size / 512;	/* determine the sector factor */
 
-	fprintf(stderr,
-		_("Building a new SGI disklabel.\n"));
+	fdisk_info(cxt,	_("Building a new SGI disklabel."));
 
 	other_endian = (BYTE_ORDER == LITTLE_ENDIAN);
-
 	res = blkdev_get_sectors(cxt->dev_fd, &llsectors);
 
 #ifdef HDIO_GETGEO
-	if (ioctl(cxt->dev_fd, HDIO_GETGEO, &geometry) < 0)
-		err(EXIT_FAILURE, _("HDIO_GETGEO ioctl failed on %s"), cxt->dev_path);
-
+	/* TODO: it seems unnecessary, geometry is already set in the context */
+	if (ioctl(cxt->dev_fd, HDIO_GETGEO, &geometry) < 0) {
+		fdisk_warn(cxt, _("HDIO_GETGEO ioctl failed on %s"), cxt->dev_path);
+		return -1;
+	}
 	cxt->geom.heads = geometry.heads;
 	cxt->geom.sectors = geometry.sectors;
 	if (res == 0) {
@@ -819,11 +814,11 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	} else {
 		/* otherwise print error and use truncated version */
 		cxt->geom.cylinders = geometry.cylinders;
-		fprintf(stderr,
+		fdisk_warnx(cxt,
 			_("Warning:  BLKGETSIZE ioctl failed on %s.  "
-			  "Using geometry cylinder value of %llu.\n"
+			  "Using geometry cylinder value of %llu."
 			  "This value may be truncated for devices"
-			  " > 33.8 GB.\n"), cxt->dev_path, cxt->geom.cylinders);
+			  " > 33.8 GB."), cxt->dev_path, cxt->geom.cylinders);
 	}
 #endif
 	/*
@@ -975,14 +970,14 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 		return -EINVAL;
 
 	if (sgi_get_num_sectors(cxt, i) == 0)	/* caught already before, ... */ {
-		printf(_("Sorry, only for non-empty partitions you can change the tag.\n"));
+		fdisk_warnx(cxt, _("Sorry, only for non-empty partitions you can change the tag."));
 		return -EINVAL;
 	}
 
 	if ((i == 10 && t->type != ENTIRE_DISK) || (i == 8 && t->type != 0))
-		printf(_("Consider leaving partition 9 as volume header (0), "
+		fdisk_info(cxt, _("Consider leaving partition 9 as volume header (0), "
 			 "and partition 11 as entire volume (6), as IRIX "
-			 "expects it.\n\n"));
+			 "expects it."));
 
 	if (((t->type != ENTIRE_DISK) && (t->type != SGI_VOLHDR))
 	    && (sgi_get_start_sector(cxt, i) < 1)) {
