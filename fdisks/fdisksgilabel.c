@@ -45,7 +45,6 @@ struct fdisk_sgi_label {
 
 
 static	int     other_endian = 0;
-static	int     debug = 0;
 static  short volumes=1;
 
 static sgiinfo *fill_sgiinfo(void);
@@ -217,7 +216,7 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 		 "Pt# %*s  Info     Start       End   Sectors  Id  System\n"),
 	       (int) w + 1, _("Device"));
 	for (i = 0 ; i < cxt->label->nparts_max; i++) {
-		if (sgi_get_num_sectors(cxt, i) || debug) {
+		if (sgi_get_num_sectors(cxt, i)) {
 			uint32_t start = sgi_get_start_sector(cxt, i);
 			uint32_t len = sgi_get_num_sectors(cxt, i);
 			struct fdisk_parttype *t = fdisk_get_partition_type(cxt, i);
@@ -463,11 +462,11 @@ static void sort(void *base0, size_t num, size_t size, struct fdisk_context *cxt
 	}
 }
 
-static int sgi_verify_disklabel(struct fdisk_context *cxt)
+static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 {
 	int Index[16];		/* list of valid partitions */
 	int sortcount = 0;	/* number of used partitions, i.e. non-zero lengths */
-	int entire = 0, i = 0, verbose = 1;
+	int entire = 0, i = 0;
 	unsigned int start = 0;
 	long long gap = 0;	/* count unused blocks */
 	unsigned int lastblock = sgi_get_lastblock(cxt);
@@ -480,63 +479,63 @@ static int sgi_verify_disklabel(struct fdisk_context *cxt)
 	for (i=0; i<16; i++) {
 		if (sgi_get_num_sectors(cxt, i) != 0) {
 			Index[sortcount++]=i;
-			if (sgi_get_sysid(cxt, i) == ENTIRE_DISK) {
-				if (entire++ == 1) {
-					if (verbose)
-						printf(_("More than one entire disk entry present.\n"));
-				}
+			if (sgi_get_sysid(cxt, i) == ENTIRE_DISK
+			    && entire++ == 1) {
+				if (verbose)
+					fdisk_info(cxt, _("More than one entire "
+						"disk entry present."));
 			}
 		}
 	}
 	if (sortcount == 0) {
 		if (verbose)
-			printf(_("No partitions defined\n"));
+			fdisk_info(cxt, _("No partitions defined"));
 		return (lastblock > 0) ? 1 : (lastblock == 0) ? 0 : -1;
 	}
 
 	sort(Index, sortcount, sizeof(Index[0]), cxt, compare_start);
 
 	if (sgi_get_sysid(cxt, Index[0]) == ENTIRE_DISK) {
-		if ((Index[0] != 10) && verbose)
-			printf(_("IRIX likes when Partition 11 covers the entire disk.\n"));
-		if ((sgi_get_start_sector(cxt, Index[0]) != 0) && verbose)
-			printf(_("The entire disk partition should start "
-				 "at block 0,\n"
-				 "not at diskblock %d.\n"),
+		if (verbose && Index[0] != 10)
+			fdisk_info(cxt, _("IRIX likes when Partition 11 "
+					  "covers the entire disk."));
+
+		if (verbose && sgi_get_start_sector(cxt, Index[0]) != 0)
+			fdisk_info(cxt, _("The entire disk partition should "
+				"start at block 0, not at diskblock %d."),
 			       sgi_get_start_sector(cxt, Index[0]));
-		if (debug)	/* I do not understand how some disks fulfil it */
-			if ((sgi_get_num_sectors(cxt, Index[0]) != lastblock) && verbose)
-				printf(_("The entire disk partition is only %d diskblock large,\n"
-					 "but the disk is %d diskblocks long.\n"),
-				       sgi_get_num_sectors(cxt, Index[0]), lastblock);
+
+		if (verbose && sgi_get_num_sectors(cxt, Index[0]) != lastblock)
+			DBG(LABEL, dbgprint(
+				"entire disk partition=%ds, but disk=%ds",
+				sgi_get_num_sectors(cxt, Index[0]),
+				lastblock));
 		lastblock = sgi_get_num_sectors(cxt, Index[0]);
-	} else {
-		if (verbose)
-			printf(_("Partition 11 should cover the entire disk.\n"));
-		if (debug>2)
-			printf("sysid=%d\tpartition=%d\n",
-			       sgi_get_sysid(cxt, Index[0]), Index[0]+1);
+	} else if (verbose) {
+		fdisk_info(cxt, _("Partition 11 should cover the entire disk."));
+		DBG(LABEL, dbgprint("sysid=%d\tpartition=%d",
+			       sgi_get_sysid(cxt, Index[0]), Index[0]+1));
 	}
 	for (i=1, start=0; i<sortcount; i++) {
 		int cylsize = sgi_get_nsect(cxt) * sgi_get_ntrks(cxt);
 
-		if (cylsize && (sgi_get_start_sector(cxt, Index[i]) % cylsize) != 0) {
-			if (debug)	/* I do not understand how some disks fulfil it */
-				if (verbose)
-					printf(_("Partition %d does not start on cylinder boundary.\n"),
-					       Index[i]+1);
-		}
-		if (cylsize && sgi_get_num_sectors(cxt, Index[i]) % cylsize != 0) {
-			if (debug)	/* I do not understand how some disks fulfil it */
-				if (verbose)
-					printf(_("Partition %d does not end on cylinder boundary.\n"),
-					       Index[i]+1);
-		}
+		if (verbose && cylsize
+		    && (sgi_get_start_sector(cxt, Index[i]) % cylsize) != 0)
+			DBG(LABEL, dbgprint("partition %d does not start on "
+					"cylinder boundary.", Index[i]+1));
+
+		if (verbose && cylsize
+		    && sgi_get_num_sectors(cxt, Index[i]) % cylsize != 0)
+			DBG(LABEL, dbgprint("partition %d does not end on "
+					"cylinder boundary.", Index[i]+1));
+
 		/* We cannot handle several "entire disk" entries. */
-		if (sgi_get_sysid(cxt, Index[i]) == ENTIRE_DISK) continue;
+		if (sgi_get_sysid(cxt, Index[i]) == ENTIRE_DISK)
+			continue;
 		if (start > sgi_get_start_sector(cxt, Index[i])) {
 			if (verbose)
-				printf(_("The Partition %d and %d overlap by %d sectors.\n"),
+				fdisk_info(cxt, _("The Partition %d and %d overlap "
+					  "by %d sectors."),
 				       Index[i-1]+1, Index[i]+1,
 				       start - sgi_get_start_sector(cxt, Index[i]));
 			if (gap >  0) gap = -gap;
@@ -544,7 +543,8 @@ static int sgi_verify_disklabel(struct fdisk_context *cxt)
 		}
 		if (start < sgi_get_start_sector(cxt, Index[i])) {
 			if (verbose)
-				printf(_("Unused gap of %8u sectors - sectors %8u-%u\n"),
+				fdisk_info(cxt, _("Unused gap of %8u sectors "
+					    "- sectors %8u-%u"),
 				       sgi_get_start_sector(cxt, Index[i]) - start,
 				       start, sgi_get_start_sector(cxt, Index[i])-1);
 			gap += sgi_get_start_sector(cxt, Index[i]) - start;
@@ -555,40 +555,46 @@ static int sgi_verify_disklabel(struct fdisk_context *cxt)
 		/* Align free space on cylinder boundary */
 		if (cylsize && start % cylsize)
 			start += cylsize - (start % cylsize);
-		if (debug > 1) {
-			if (verbose)
-				printf("%2d:%12d\t%12d\t%12d\n", Index[i],
+
+		DBG(LABEL, dbgprint("%2d:%12d\t%12d\t%12d", Index[i],
 				       sgi_get_start_sector(cxt, Index[i]),
 				       sgi_get_num_sectors(cxt, Index[i]),
-				       sgi_get_sysid(cxt, Index[i]));
-		}
+				       sgi_get_sysid(cxt, Index[i])));
 	}
 	if (start < lastblock) {
 		if (verbose)
-			printf(_("Unused gap of %8u sectors - sectors %8u-%u\n"),
-			       lastblock - start, start, lastblock-1);
+			fdisk_info(cxt, _("Unused gap of %8u sectors - sectors %8u-%u"),
+				lastblock - start, start, lastblock-1);
 		gap += lastblock - start;
 		add2freelist(start, lastblock);
 	}
 	/*
-	 * Done with arithmetics
-	 * Go for details now
+	 * Done with arithmetics. Go for details now
 	 */
 	if (verbose) {
-		if (sgi_get_bootpartition(cxt) < 0 || !sgi_get_num_sectors(cxt, sgi_get_bootpartition(cxt))) {
-			printf(_("\nThe boot partition does not exist.\n"));
-		}
-		if (sgi_get_swappartition(cxt) < 0 || !sgi_get_num_sectors(cxt, sgi_get_swappartition(cxt))) {
-			printf(_("\nThe swap partition does not exist.\n"));
-		} else {
-			if ((sgi_get_sysid(cxt, sgi_get_swappartition(cxt)) != SGI_SWAP)
-			    &&  (sgi_get_sysid(cxt, sgi_get_swappartition(cxt)) != LINUX_SWAP))
-				printf(_("\nThe swap partition has no swap type.\n"));
-		}
+		if (sgi_get_bootpartition(cxt) < 0
+		    || !sgi_get_num_sectors(cxt, sgi_get_bootpartition(cxt)))
+			fdisk_info(cxt, _("The boot partition does not exist."));
+
+		if (sgi_get_swappartition(cxt) < 0
+		    || !sgi_get_num_sectors(cxt, sgi_get_swappartition(cxt)))
+			fdisk_info(cxt, _("The swap partition does not exist."));
+
+		else if (sgi_get_sysid(cxt, sgi_get_swappartition(cxt)) != SGI_SWAP
+		    && sgi_get_sysid(cxt, sgi_get_swappartition(cxt)) != LINUX_SWAP)
+			fdisk_info(cxt, _("The swap partition has no swap type."));
+
 		if (sgi_check_bootfile(cxt, "/unix"))
-			printf(_("\tYou have chosen an unusual boot file name.\n"));
+			fdisk_info(cxt, _("You have chosen an unusual boot "
+					  "file name."));
 	}
+
 	return (gap > 0) ? 1 : (gap == 0) ? 0 : -1;
+}
+
+static int sgi_verify_disklabel(struct fdisk_context *cxt)
+{
+	return verify_disklabel(cxt, 1);
 }
 
 static int
@@ -599,7 +605,7 @@ sgi_gaps(struct fdisk_context *cxt) {
 	 *  < 0 : there is an overlap
 	 *  > 0 : there is still some vacant space
 	 */
-	return sgi_verify_disklabel(cxt);
+	return verify_disklabel(cxt, 0);
 }
 
 
