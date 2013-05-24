@@ -182,6 +182,8 @@ int fdisk_delete_partition(struct fdisk_context *cxt, size_t partnum)
  */
 int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 {
+	int haslabel = 0;
+
 	if (!cxt)
 		return -EINVAL;
 
@@ -193,8 +195,10 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 #endif
 	}
 
-	if (cxt->label)
+	if (cxt->label) {
 		fdisk_deinit_label(cxt->label);
+		haslabel = 1;
+	}
 
 	cxt->label = fdisk_context_get_label(cxt, name);
 	if (!cxt->label)
@@ -204,7 +208,8 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 	if (!cxt->label->op->create)
 		return -ENOSYS;
 
-	fdisk_reset_alignment(cxt);
+	if (haslabel)
+		fdisk_reset_device_properties(cxt);
 	return cxt->label->op->create(cxt);
 }
 

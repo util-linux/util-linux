@@ -106,7 +106,7 @@ static void reset_context(struct fdisk_context *cxt)
 {
 	size_t i;
 
-	DBG(CONTEXT, dbgprint("\n-----\nresetting context %p", cxt));
+	DBG(CONTEXT, dbgprint("*** resetting context %p", cxt));
 
 	/* reset drives' private data */
 	for (i = 0; i < cxt->nlabels; i++)
@@ -123,17 +123,7 @@ static void reset_context(struct fdisk_context *cxt)
 	cxt->dev_path = NULL;
 	cxt->firstsector = NULL;
 
-	cxt->io_size = 0;
-	cxt->optimal_io_size = 0;
-	cxt->min_io_size = 0;
-	cxt->phy_sector_size = 0;
-	cxt->sector_size = 0;
-	cxt->alignment_offset = 0;
-	cxt->grain = 0;
-	cxt->first_lba = 0;
-	cxt->total_sectors = 0;
-
-	memset(&cxt->geom, 0, sizeof(struct fdisk_geometry));
+	fdisk_zeroize_device_properties(cxt);
 
 	cxt->label = NULL;
 }
@@ -179,7 +169,10 @@ int fdisk_context_assign_device(struct fdisk_context *cxt,
 	/* detect labels and apply labes specific stuff (e.g geomery)
 	 * to the context */
 	fdisk_probe_labels(cxt);
-	fdisk_reset_alignment(cxt);
+
+	/* let's apply user geometry *after* label prober
+	 * to make it possible to override in-label setting */
+	fdisk_apply_user_device_properties(cxt);
 
 	DBG(CONTEXT, dbgprint("context %p initialized for %s [%s]",
 			      cxt, fname,

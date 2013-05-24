@@ -272,8 +272,13 @@ struct fdisk_context {
 	sector_t first_lba;		/* recommended begin of the first partition */
 
 	/* geometry */
-	sector_t total_sectors; /* in logical sectors */
+	sector_t total_sectors;	/* in logical sectors */
 	struct fdisk_geometry geom;
+
+	/* user setting to overwrite device default */
+	struct fdisk_geometry user_geom;
+	unsigned long user_pyh_sector;
+	unsigned long user_log_sector;
 
 	struct fdisk_label *label;	/* current label, pointer to labels[] */
 
@@ -314,13 +319,15 @@ extern sector_t fdisk_align_lba_in_range(struct fdisk_context *cxt, sector_t lba
 					 sector_t start, sector_t stop);
 
 
-extern int fdisk_override_sector_size(struct fdisk_context *cxt, sector_t s);
 extern int fdisk_override_geometry(struct fdisk_context *cxt,
 		            unsigned int cylinders, unsigned int heads,
                             unsigned int sectors);
 
 extern int fdisk_discover_geometry(struct fdisk_context *cxt);
 extern int fdisk_discover_topology(struct fdisk_context *cxt);
+
+extern int fdisk_apply_user_device_properties(struct fdisk_context *cxt);
+extern void fdisk_zeroize_device_properties(struct fdisk_context *cxt);
 
 /* utils.c */
 extern void fdisk_zeroize_firstsector(struct fdisk_context *cxt);

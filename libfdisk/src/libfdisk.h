@@ -136,6 +136,16 @@ extern int fdisk_partition_toggle_flag(struct fdisk_context *cxt, size_t partnum
 
 /* alignment.c */
 extern int fdisk_reset_alignment(struct fdisk_context *cxt);
+extern int fdisk_reset_device_properties(struct fdisk_context *cxt);
+
+extern int fdisk_save_user_geometry(struct fdisk_context *cxt,
+			    unsigned int cylinders,
+			    unsigned int heads,
+			    unsigned int sectors);
+
+extern int fdisk_save_user_sector_size(struct fdisk_context *cxt,
+				unsigned int phy,
+				unsigned int log);
 
 
 /* dos.c */

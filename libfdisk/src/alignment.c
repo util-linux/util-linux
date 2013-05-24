@@ -74,6 +74,10 @@ sector_t fdisk_align_lba(struct fdisk_context *cxt, sector_t lba, int direction)
 		}
 	}
 
+	if (lba != res)
+		DBG(TOPOLOGY, dbgprint("LBA %ju -aligned-to-> %ju",
+				(uintmax_t) lba,
+				(uintmax_t) res));
 	return res;
 }
 
@@ -114,30 +118,6 @@ static unsigned long get_sector_size(int fd)
 	return DEFAULT_SECTOR_SIZE;
 }
 
-/**
- * fdisk_override_sector_size:
- * @cxt: fdisk context
- * @s: required sector size
- *
- * Overwrites logical and physical sector size. Note that the default sector
- * size is discovered by fdisk_new_context_from_device() from device topology.
- *
- * Don't use this function, rely on the default behavioer is more safe.
- *
- * Returns: 0 on success, < 0 on error.
- */
-int fdisk_override_sector_size(struct fdisk_context *cxt, sector_t s)
-{
-	if (!cxt)
-		return -EINVAL;
-
-	cxt->phy_sector_size = cxt->sector_size = s;
-	cxt->min_io_size = cxt->io_size = s;
-
-	fdisk_reset_alignment(cxt);
-	return 0;
-}
-
 static void recount_geometry(struct fdisk_context *cxt)
 {
 	cxt->geom.cylinders = cxt->total_sectors /
@@ -151,7 +131,8 @@ static void recount_geometry(struct fdisk_context *cxt)
  * @heads: user specified heads
  * @sectors: user specified sectors
  *
- * Overrides autodiscovery and apply user specified geometry.
+ * Overrides autodiscovery and apply user specified geometry. The function
+ * fdisk_reset_device_properties() restores the original setting.
  *
  * Returns: 0 on success, < 0 on error.
  */
@@ -173,6 +154,118 @@ int fdisk_override_geometry(struct fdisk_context *cxt,
 		recount_geometry(cxt);
 
 	fdisk_reset_alignment(cxt);
+
+	DBG(GEOMETRY, dbgprint("override C/H/S: %u/%u/%u",
+		(unsigned) cxt->geom.cylinders,
+		(unsigned) cxt->geom.heads,
+		(unsigned) cxt->geom.sectors));
+
+	return 0;
+}
+
+int fdisk_save_user_geometry(struct fdisk_context *cxt,
+			    unsigned int cylinders,
+			    unsigned int heads,
+			    unsigned int sectors)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	cxt->user_geom.heads = heads > 256 ? 0 : heads;
+	cxt->user_geom.sectors = sectors >= 64 ? 0 : sectors;
+	cxt->user_geom.cylinders = cylinders;
+
+	DBG(GEOMETRY, dbgprint("user C/H/S: %u/%u/%u",
+				cylinders, heads, sectors));
+
+	return 0;
+}
+
+int fdisk_save_user_sector_size(struct fdisk_context *cxt,
+				unsigned int phy,
+				unsigned int log)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	DBG(TOPOLOGY, dbgprint("user phy/log sector size: %u/%u", phy, log));
+
+	cxt->user_pyh_sector = phy;
+	cxt->user_log_sector = log;
+
+	return 0;
+}
+
+int fdisk_apply_user_device_properties(struct fdisk_context *cxt)
+{
+	if (!cxt)
+		return -EINVAL;
+
+	DBG(TOPOLOGY, dbgprint("appling user device properties"));
+
+	if (cxt->user_pyh_sector)
+		cxt->phy_sector_size = cxt->user_pyh_sector;
+	if (cxt->user_log_sector)
+		cxt->sector_size = cxt->min_io_size =
+			cxt->io_size = cxt->user_log_sector;
+
+	if (cxt->user_geom.heads)
+		cxt->geom.heads = cxt->user_geom.heads;
+	if (cxt->user_geom.sectors)
+		cxt->geom.sectors = cxt->user_geom.sectors;
+	if (cxt->user_geom.cylinders)
+		cxt->geom.cylinders = cxt->user_geom.cylinders;
+	else if (cxt->user_geom.heads || cxt->user_geom.sectors)
+		recount_geometry(cxt);
+
+	fdisk_reset_alignment(cxt);
+
+	DBG(GEOMETRY, dbgprint("new C/H/S: %u/%u/%u",
+		(unsigned) cxt->geom.cylinders,
+		(unsigned) cxt->geom.heads,
+		(unsigned) cxt->geom.sectors));
+	DBG(TOPOLOGY, dbgprint("new log/phy sector size: %u/%u",
+		(unsigned) cxt->sector_size,
+		(unsigned) cxt->phy_sector_size));
+
+	return 0;
+}
+
+void fdisk_zeroize_device_properties(struct fdisk_context *cxt)
+{
+	assert(cxt);
+
+	cxt->io_size = 0;
+	cxt->optimal_io_size = 0;
+	cxt->min_io_size = 0;
+	cxt->phy_sector_size = 0;
+	cxt->sector_size = 0;
+	cxt->alignment_offset = 0;
+	cxt->grain = 0;
+	cxt->first_lba = 0;
+	cxt->total_sectors = 0;
+
+	memset(&cxt->geom, 0, sizeof(struct fdisk_geometry));
+}
+
+int fdisk_reset_device_properties(struct fdisk_context *cxt)
+{
+	int rc;
+
+	if (!cxt)
+		return -EINVAL;
+
+	DBG(TOPOLOGY, dbgprint("*** reseting device properties"));
+
+	fdisk_zeroize_device_properties(cxt);
+	fdisk_discover_topology(cxt);
+	fdisk_discover_geometry(cxt);
+
+	rc = fdisk_read_firstsector(cxt);
+	if (rc)
+		return rc;
+
+	fdisk_apply_user_device_properties(cxt);
 	return 0;
 }
 
@@ -186,6 +279,8 @@ int fdisk_discover_geometry(struct fdisk_context *cxt)
 
 	assert(cxt);
 	assert(cxt->geom.heads == 0);
+
+	DBG(GEOMETRY, dbgprint("%s: discovering geometry...", cxt->dev_path));
 
 	/* get number of 512-byte sectors, and convert it the real sectors */
 	if (!blkdev_get_sectors(cxt->dev_fd, &nsects))
@@ -204,9 +299,10 @@ int fdisk_discover_geometry(struct fdisk_context *cxt)
 	cxt->geom.sectors = s;
 	recount_geometry(cxt);
 
-	DBG(GEOMETRY, dbgprint("geometry discovered for %s: C/H/S: %lld/%d/%lld",
-			       cxt->dev_path, cxt->geom.cylinders,
-			       cxt->geom.heads, cxt->geom.sectors));
+	DBG(GEOMETRY, dbgprint("result: C/H/S: %u/%u/%u",
+			       (unsigned) cxt->geom.cylinders,
+			       (unsigned) cxt->geom.heads,
+			       (unsigned) cxt->geom.sectors));
 	return 0;
 }
 
@@ -218,6 +314,7 @@ int fdisk_discover_topology(struct fdisk_context *cxt)
 	assert(cxt);
 	assert(cxt->sector_size == 0);
 
+	DBG(TOPOLOGY, dbgprint("%s: discovering topology...", cxt->dev_path));
 #ifdef HAVE_LIBBLKID
 	DBG(TOPOLOGY, dbgprint("initialize libblkid prober"));
 
@@ -251,11 +348,10 @@ int fdisk_discover_topology(struct fdisk_context *cxt)
 	if (!cxt->io_size)
 		cxt->io_size = cxt->sector_size;
 
-	DBG(TOPOLOGY, dbgprint("topology discovered for %s:\n"
-			       "\tlogical/physical sector sizes: %ld/%ld\n"
-			       "\tfdisk/minimal/optimal io sizes: %ld/%ld/%ld\n",
-			       cxt->dev_path, cxt->sector_size, cxt->phy_sector_size,
-			       cxt->io_size, cxt->optimal_io_size, cxt->min_io_size));
+	DBG(TOPOLOGY, dbgprint("result: log/phy sector size: %ld/%ld",
+			cxt->sector_size, cxt->phy_sector_size));
+	 DBG(TOPOLOGY, dbgprint("result: fdisk/min/optimal io: %ld/%ld/%ld",
+		       cxt->io_size, cxt->optimal_io_size, cxt->min_io_size));
 	return 0;
 }
 
@@ -363,6 +459,8 @@ int fdisk_reset_alignment(struct fdisk_context *cxt)
 
 	if (!cxt)
 		return -EINVAL;
+
+	DBG(TOPOLOGY, dbgprint("reseting alignment..."));
 
 	/* default */
 	cxt->grain = fdisk_topology_get_grain(cxt);

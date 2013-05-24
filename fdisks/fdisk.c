@@ -58,9 +58,6 @@ char	*line_ptr,			/* interactive input */
 
 int	nowarn = 0;			/* no warnings for fdisk -l/-s */
 
-/* when C/H/S specified on command line */
-static unsigned int user_cylinders, user_heads, user_sectors;
-
 void toggle_units(struct fdisk_context *cxt)
 {
 	fdisk_context_set_unit(cxt,
@@ -796,18 +793,12 @@ static int is_ide_cdrom_or_tape(char *device)
 }
 
 /* Print disk geometry and partition table of a specified device (-l option) */
-static void print_partition_table_from_option(struct fdisk_context *cxt,
-				char *device, unsigned long sector_size)
+static void print_partition_table_from_option(
+			struct fdisk_context *cxt,
+			char *device)
 {
 	if (fdisk_context_assign_device(cxt, device, 1) != 0)	/* read-only */
 		err(EXIT_FAILURE, _("cannot open %s"), device);
-
-	if (sector_size) /* passed -b option, override autodiscovery */
-		fdisk_override_sector_size(cxt, sector_size);
-
-	if (user_cylinders || user_heads || user_sectors)
-		fdisk_override_geometry(cxt, user_cylinders,
-					user_heads, user_sectors);
 
 	if (fdisk_dev_has_disklabel(cxt))
 		list_table(cxt, 0);
@@ -820,8 +811,7 @@ static void print_partition_table_from_option(struct fdisk_context *cxt,
  * try all things in /proc/partitions that look like a full disk
  */
 static void
-print_all_partition_table_from_option(struct fdisk_context *cxt,
-				      unsigned long sector_size)
+print_all_partition_table_from_option(struct fdisk_context *cxt)
 {
 	FILE *procpt;
 	char line[128 + 1], ptname[128 + 1], devname[256];
@@ -843,7 +833,7 @@ print_all_partition_table_from_option(struct fdisk_context *cxt,
 			char *cn = canonicalize_path(devname);
 			if (cn) {
 				if (!is_ide_cdrom_or_tape(cn))
-					print_partition_table_from_option(cxt, cn, sector_size);
+					print_partition_table_from_option(cxt, cn);
 				free(cn);
 			}
 		}
@@ -1029,9 +1019,13 @@ int main(int argc, char **argv)
 			if (sector_size != 512 && sector_size != 1024 &&
 			    sector_size != 2048 && sector_size != 4096)
 				usage(stderr);
+			fdisk_save_user_sector_size(cxt, sector_size, sector_size);
 			break;
 		case 'C':
-			user_cylinders =  strtou32_or_err(optarg, _("invalid cylinders argument"));
+			fdisk_save_user_geometry(cxt,
+				strtou32_or_err(optarg,
+						_("invalid cylinders argument")),
+				0, 0);
 			break;
 		case 'c':
 			if (optarg) {
@@ -1050,14 +1044,15 @@ int main(int argc, char **argv)
 			/* use default if no optarg specified */
 			break;
 		case 'H':
-			user_heads = strtou32_or_err(optarg, _("invalid heads argument"));
-			if (user_heads > 256)
-				user_heads = 0;
+			fdisk_save_user_geometry(cxt, 0,
+				strtou32_or_err(optarg,
+						_("invalid heads argument")),
+				0);
 			break;
 		case 'S':
-			user_sectors =  strtou32_or_err(optarg, _("invalid sectors argument"));
-			if (user_sectors >= 64)
-				user_sectors = 0;
+			fdisk_save_user_geometry(cxt, 0, 0,
+				strtou32_or_err(optarg,
+					_("invalid sectors argument")));
 			break;
 		case 'l':
 			optl = 1;
@@ -1092,9 +1087,9 @@ int main(int argc, char **argv)
 		if (argc > optind) {
 			int k;
 			for (k = optind; k < argc; k++)
-				print_partition_table_from_option(cxt, argv[k], sector_size);
+				print_partition_table_from_option(cxt, argv[k]);
 		} else
-			print_all_partition_table_from_option(cxt, sector_size);
+			print_all_partition_table_from_option(cxt);
 		exit(EXIT_SUCCESS);
 	}
 
@@ -1118,13 +1113,6 @@ int main(int argc, char **argv)
 
 	if (fdisk_context_assign_device(cxt, argv[optind], 0) != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
-
-	if (sector_size)	/* passed -b option, override autodiscovery */
-		fdisk_override_sector_size(cxt, sector_size);
-
-	if (user_cylinders || user_heads || user_sectors)
-		fdisk_override_geometry(cxt, user_cylinders,
-						user_heads, user_sectors);
 
 	print_welcome();
 
