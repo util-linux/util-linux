@@ -34,8 +34,19 @@
 #endif
 
 #ifndef SWAP_FLAG_DISCARD
-# define SWAP_FLAG_DISCARD	0x10000 /* discard swap cluster after use */
+# define SWAP_FLAG_DISCARD	0x10000 /* enable discard for swap */
 #endif
+
+#ifndef SWAP_FLAG_DISCARD_ONCE
+# define SWAP_FLAG_DISCARD_ONCE 0x20000 /* discard swap area at swapon-time */
+#endif
+
+#ifndef SWAP_FLAG_DISCARD_PAGES
+# define SWAP_FLAG_DISCARD_PAGES 0x40000 /* discard page-clusters after use */
+#endif
+
+#define SWAP_FLAGS_DISCARD_VALID (SWAP_FLAG_DISCARD | SWAP_FLAG_DISCARD_ONCE | \
+				  SWAP_FLAG_DISCARD_PAGES)
 
 #ifndef SWAP_FLAG_PREFER
 # define SWAP_FLAG_PREFER	0x8000	/* set if swap priority specified */
@@ -70,7 +81,7 @@ enum {
 
 static int all;
 static int priority = -1;	/* non-prioritized swap by default */
-static int discard;
+static int discard;		/* don't send swap discards by default */
 
 /* If true, don't complain if the device/file doesn't exist */
 static int ifexists;
@@ -572,8 +583,22 @@ static int do_swapon(const char *orig_special, int prio,
 			   << SWAP_FLAG_PRIO_SHIFT);
 	}
 #endif
-	if (fl_discard)
-		flags |= SWAP_FLAG_DISCARD;
+	/*
+	 * Validate the discard flags passed and set them
+	 * accordingly before calling sys_swapon.
+	 */
+	if (fl_discard && !(fl_discard & ~SWAP_FLAGS_DISCARD_VALID)) {
+		/*
+		 * If we get here with both discard policy flags set,
+		 * we just need to tell the kernel to enable discards
+		 * and it will do correctly, just as we expect.
+		 */
+		if ((fl_discard & SWAP_FLAG_DISCARD_ONCE) &&
+		    (fl_discard & SWAP_FLAG_DISCARD_PAGES))
+			flags |= SWAP_FLAG_DISCARD;
+		else
+			flags |= fl_discard;
+	}
 
 	status = swapon(special, flags);
 	if (status < 0)
@@ -613,12 +638,22 @@ static int swapon_all(void)
 	while (mnt_table_find_next_fs(tb, itr, match_swap, NULL, &fs) == 0) {
 		/* defaults */
 		int pri = priority, dsc = discard, nofail = ifexists;
-		char *p, *src;
+		char *p, *src, *dscarg;
 
 		if (mnt_fs_get_option(fs, "noauto", NULL, NULL) == 0)
 			continue;
-		if (mnt_fs_get_option(fs, "discard", NULL, NULL) == 0)
-			dsc = 1;
+		if (mnt_fs_get_option(fs, "discard", &dscarg, NULL) == 0) {
+			dsc |= SWAP_FLAG_DISCARD;
+			if (dscarg) {
+				/* only single-time discards are wanted */
+				if (strcmp(dscarg, "once") == 0)
+					dsc |= SWAP_FLAG_DISCARD_ONCE;
+
+				/* do discard for every released swap page */
+				if (strcmp(dscarg, "pages") == 0)
+					dsc |= SWAP_FLAG_DISCARD_PAGES;
+			}
+		}
 		if (mnt_fs_get_option(fs, "nofail", NULL, NULL) == 0)
 			nofail = 1;
 		if (mnt_fs_get_option(fs, "pri", &p, NULL) == 0 && p)
@@ -648,17 +683,17 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fprintf(out, _(" %s [options] [<spec>]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -a, --all              enable all swaps from /etc/fstab\n"
-		" -d, --discard          discard freed pages before they are reused\n"
-		" -e, --ifexists         silently skip devices that do not exist\n"
-		" -f, --fixpgsz          reinitialize the swap space if necessary\n"
-		" -p, --priority <prio>  specify the priority of the swap device\n"
-		" -s, --summary          display summary about used swap devices\n"
-		"     --show[=<columns>] display summary in definable table\n"
-		"     --noheadings       don't print headings, use with --show\n"
-		"     --raw              use the raw output format, use with --show\n"
-		"     --bytes            display swap size in bytes in --show output\n"
-		" -v, --verbose          verbose mode\n"), out);
+	fputs(_(" -a, --all                enable all swaps from /etc/fstab\n"
+		" -d, --discard[=<policy>] enable swap discards, if supported by device\n"
+		" -e, --ifexists           silently skip devices that do not exist\n"
+		" -f, --fixpgsz            reinitialize the swap space if necessary\n"
+		" -p, --priority <prio>    specify the priority of the swap device\n"
+		" -s, --summary            display summary about used swap devices\n"
+		"     --show[=<columns>]   display summary in definable table\n"
+		"     --noheadings         don't print headings, use with --show\n"
+		"     --raw                use the raw output format, use with --show\n"
+		"     --bytes              display swap size in bytes in --show output\n"
+		" -v, --verbose            verbose mode\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -673,6 +708,11 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 		" PARTUUID=<uuid>        specifies device by partition UUID\n"
 		" <device>               name of device to be used\n"
 		" <file>                 name of file to be used\n"), out);
+
+	fputs(_("\nAvailable discard policy types (for --discard):\n"
+		" once	  : only single-time area discards are issued. (swapon)\n"
+		" pages	  : discard freed pages before they are reused.\n"
+		" * if no policy is selected both discard types are enabled. (default)\n"), out);
 
 	fputs(_("\nAvailable columns (for --show):\n"), out);
 	for (i = 0; i < NCOLS; i++)
@@ -698,7 +738,7 @@ int main(int argc, char *argv[])
 
 	static const struct option long_opts[] = {
 		{ "priority", 1, 0, 'p' },
-		{ "discard",  0, 0, 'd' },
+		{ "discard",  2, 0, 'd' },
 		{ "ifexists", 0, 0, 'e' },
 		{ "summary",  0, 0, 's' },
 		{ "fixpgsz",  0, 0, 'f' },
@@ -721,7 +761,7 @@ int main(int argc, char *argv[])
 	mnt_init_debug(0);
 	mntcache = mnt_new_cache();
 
-	while ((c = getopt_long(argc, argv, "ahdefp:svVL:U:",
+	while ((c = getopt_long(argc, argv, "ahd::efp:svVL:U:",
 				long_opts, NULL)) != -1) {
 		switch (c) {
 		case 'a':		/* all */
@@ -741,7 +781,18 @@ int main(int argc, char *argv[])
 			add_uuid(optarg);
 			break;
 		case 'd':
-			discard = 1;
+			discard |= SWAP_FLAG_DISCARD;
+			if (optarg) {
+				if (*optarg == '=')
+					optarg++;
+
+				if (strcmp(optarg, "once") == 0)
+					discard |= SWAP_FLAG_DISCARD_ONCE;
+				else if (strcmp(optarg, "pages") == 0)
+					discard |= SWAP_FLAG_DISCARD_PAGES;
+				else
+					errx(EXIT_FAILURE, _("unsupported discard policy: %s"), optarg);
+			}
 			break;
 		case 'e':               /* ifexists */
 		        ifexists = 1;

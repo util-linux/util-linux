@@ -112,15 +112,25 @@ All devices marked as ``swap'' in
 are made available, except for those with the ``noauto'' option.
 Devices that are already being used as swap are silently skipped.
 .TP
-.B "\-d, \-\-discard"
-Discard freed swap pages before they are reused, if the swap
-device supports the discard or trim operation.  This may improve
-performance on some Solid State Devices, but often it does not.
+.B "\-d, \-\-discard\fR [=\fIpolicy\fR]"
+Enable swap discards, if the swap backing device supports the discard or
+trim operation. This may improve performance on some Solid State Devices,
+but often it does not. The option allows one to select between two
+available swap discard policies:
+.BI \-\-discard=once
+to perform a single-time discard operation for the whole swap area at swapon;
+or
+.BI \-\-discard=pages
+to discard freed swap pages before they are reused, while swapping.
+If no policy is selected, the default behavior is to enable both discard types.
 The
 .I /etc/fstab
-mount option
-.BI discard
-may be also used to enable discard flag.
+mount options
+.BI discard,
+.BI discard=once,
+or
+.BI discard=pages
+may be also used to enable discard flags.
 .TP
 .B "\-e, \-\-ifexists"
 Silently skip devices that do not exist.
