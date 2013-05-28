@@ -10,7 +10,7 @@ if !HAVE_LANGINFO
 cal_SOURCES += lib/langinfo.c
 endif
 
-cal_LDADD = $(LDADD)
+cal_LDADD = $(LDADD) libcommon.la
 
 if HAVE_TINFO
 cal_LDADD += -ltinfo @NCURSES_LIBS@
