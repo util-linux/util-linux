@@ -20,11 +20,11 @@ int get_terminal_width(void)
         const char	*cp;
 
 #ifdef TIOCGSIZE
-	if (ioctl (0, TIOCGSIZE, &t_win) == 0)
+	if (ioctl (STDIN_FILENO, TIOCGSIZE, &t_win) == 0)
 		return t_win.ts_cols;
 #endif
 #ifdef TIOCGWINSZ
-	if (ioctl (0, TIOCGWINSZ, &w_win) == 0)
+	if (ioctl (STDIN_FILENO, TIOCGWINSZ, &w_win) == 0)
 		return w_win.ws_col;
 #endif
         cp = getenv("COLUMNS");
@@ -83,7 +83,7 @@ int main(void)
 {
 	const char *path, *name, *num;
 
-	if (get_terminal_name(&path, &name, &num) == 0) {
+	if (get_terminal_name(STDERR_FILENO, &path, &name, &num) == 0) {
 		fprintf(stderr, "tty path:   %s\n", path);
 		fprintf(stderr, "tty name:   %s\n", name);
 		fprintf(stderr, "tty number: %s\n", num);
