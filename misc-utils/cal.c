@@ -96,16 +96,16 @@ static const char *my_tgetstr(char *s __attribute__((__unused__)), char *ss)
 	const char *ret = tigetstr(ss);
 	if (!ret || ret == (char *)-1)
 		return "";
-	else
-		return ret;
+
+	return ret;
 }
 
 #elif defined(HAVE_LIBTERMCAP)
 # include <termcap.h>
 
-char termbuffer[4096];
-char tcbuffer[4096];
-char *strbuf = termbuffer;
+static char termbuffer[4096];
+static char tcbuffer[4096];
+static char *strbuf = termbuffer;
 
 static void my_setupterm(const char *term, int fildes, int *errret)
 {
@@ -122,8 +122,8 @@ static const char *my_tgetstr(char *s, char *ss __attribute__((__unused__)))
 	const char *ret = tgetstr(s, &strbuf);
 	if (!ret)
 		return "";
-	else
-		return ret;
+
+	return ret;
 }
 
 #else	/* ! (HAVE_LIBTERMCAP || HAVE_LIBNCURSES || HAVE_LIBNCURSESW) */
@@ -136,20 +136,20 @@ static void my_putstring(char *s)
 #endif	/* end of LIBTERMCAP / NCURSES */
 
 
-const char	*term="";
-const char	*Senter="", *Sexit="";/* enter and exit standout mode */
-int		Slen;		/* strlen of Senter+Sexit */
-char		*Hrow;		/* pointer to highlighted row in month */
+static const char	*term="";
+static const char	*Senter="", *Sexit="";/* enter and exit standout mode */
+static int		Slen;		/* strlen of Senter+Sexit */
+static char		*Hrow;		/* pointer to highlighted row in month */
 
 #include "widechar.h"
 
 /* allow compile-time define to over-ride default */
 #ifndef NUM_MONTHS
-#define NUM_MONTHS 1
+# define NUM_MONTHS 1
 #endif
 
 #if ( NUM_MONTHS != 1 && NUM_MONTHS !=3 )
-#error NUM_MONTHS must be 1 or 3
+# error NUM_MONTHS must be 1 or 3
 #endif
 
 enum {
@@ -194,7 +194,7 @@ enum {
 #define FMT_ST_CHARS 300	/* 90 suffices in most locales */
 struct fmt_st
 {
-  char s[FMT_ST_LINES][FMT_ST_CHARS];
+	char s[FMT_ST_LINES][FMT_ST_CHARS];
 };
 
 static int days_in_month[2][13] = {
@@ -204,7 +204,7 @@ static int days_in_month[2][13] = {
 
 /* September 1752 is special, and has static assignments for both date
  * and Julian representations.  */
- int d_sep1752[MAXDAYS / 2] = {
+static int d_sep1752[MAXDAYS / 2] = {
 	SPACE,	SPACE,	1,	2,	14,	15,	16,
 	17,	18,	19,	20,	21,	22,	23,
 	24,	25,	26,	27,	28,	29,	30
@@ -223,13 +223,13 @@ static int days_in_month[2][13] = {
 
 
 /* utf-8 can have up to 6 bytes per char; and an extra byte for ending \0 */
-char day_headings[J_WEEK_LEN * 6 + 1];
+static char day_headings[J_WEEK_LEN * 6 + 1];
 /* weekstart = 1  =>   "  M  Tu   W  Th   F   S   S " */
-const char *full_month[MONTHS_IN_YEAR];
+static const char *full_month[MONTHS_IN_YEAR];
 
 /* 0 => sunday, 1 => monday */
-int weekstart = SUNDAY;
-int julian;
+static int weekstart = SUNDAY;
+static int julian;
 
 /* function prototypes */
 static int leap_year(long year);
@@ -247,8 +247,8 @@ static void monthly3(int, int, long);
 static void __attribute__ ((__noreturn__)) usage(FILE * out);
 static void headers_init(int);
 
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	struct tm *local_time;
 	time_t now;
 	int ch, day = 0, month = 0, yflag = 0;
@@ -447,8 +447,9 @@ static void headers_init(int julian)
 		full_month[i] = nl_langinfo(MON_1 + i);
 }
 
-static int
-do_monthly(int day, int month, long year, struct fmt_st *out, int header_hint) {
+static int do_monthly(int day, int month, long year,
+		      struct fmt_st *out, int header_hint)
+{
 	int col, row, days[MAXDAYS];
 	char *p, lineout[FMT_ST_CHARS];
 	size_t width = (julian ? J_WEEK_LEN : WEEK_LEN) - 1;
@@ -496,8 +497,8 @@ do_monthly(int day, int month, long year, struct fmt_st *out, int header_hint) {
 	return pos;
 }
 
-static void
-monthly(int day, int month, long year) {
+static void monthly(int day, int month, long year)
+{
 	int i, rows;
 	struct fmt_st out;
 
@@ -508,8 +509,7 @@ monthly(int day, int month, long year) {
 	}
 }
 
-static int
-two_header_lines(int month, long year)
+static int two_header_lines(int month, long year)
 {
 	char lineout[FMT_ST_CHARS];
 	size_t width = (julian ? J_WEEK_LEN : WEEK_LEN) - 1;
@@ -522,8 +522,8 @@ two_header_lines(int month, long year)
 	return 0;
 }
 
-static void
-monthly3(int day, int month, long year) {
+static void monthly3(int day, int month, long year)
+{
 	char lineout[FMT_ST_CHARS];
 	int i;
 	int width, rows, two_lines;
@@ -586,8 +586,8 @@ monthly3(int day, int month, long year) {
 	}
 }
 
-static void
-yearly(int day, long year, int julian) {
+static void yearly(int day, long year, int julian)
+{
 	int col, *dp, i, month, row, which_cal;
 	int maxrow, sep_len, week_len;
 	int days[MONTHS_IN_YEAR][MAXDAYS];
@@ -611,6 +611,7 @@ yearly(int day, long year, int julian) {
 
 	for (i = 0; i < MONTHS_IN_YEAR; i++)
 		day_array(day, i + 1, year, days[i]);
+
 	for (month = 0; month < MONTHS_IN_YEAR; month += maxrow) {
 		center(full_month[month], week_len - 1, sep_len + 1);
 		if (julian) {
@@ -650,8 +651,8 @@ yearly(int day, long year, int julian) {
  *	out end to end.  You would have 42 numbers or spaces.  This routine
  *	builds that array for any month from Jan. 1 through Dec. 9999.
  */
-static void
-day_array(int day, int month, long year, int *days) {
+static void day_array(int day, int month, long year, int *days)
+{
 	int julday, daynum, dw, dm;
 	int *sep1752;
 
@@ -681,8 +682,8 @@ day_array(int day, int month, long year, int *days) {
  * day_in_year --
  *	return the 1 based day number within the year
  */
-static int
-day_in_year(int day, int month, long year) {
+static int day_in_year(int day, int month, long year)
+{
 	int i, leap;
 
 	leap = leap_year(year);
@@ -698,8 +699,7 @@ day_in_year(int day, int month, long year) {
  *	3 Sep. 1752 through 13 Sep. 1752, and returns invalid weekday
  *	during the period of 11 days.
  */
-static int
-day_in_week(int d, int m, int y)
+static int day_in_week(int d, int m, int y)
 {
 	static const int reform[] = {
 		SUNDAY, WEDNESDAY, TUESDAY, FRIDAY, SUNDAY, WEDNESDAY,
@@ -713,16 +713,20 @@ day_in_week(int d, int m, int y)
 		y -= m < 3;
 	else
 		y -= (m < 3) + 14;
-	if (1752 < y || (y == 1752 && 9 < m) || (y == 1752 && m == 9 && 13 < d))
+	if (REFORMATION_YEAR < y
+	    || (y == REFORMATION_YEAR && 9 < m)
+	    || (y == REFORMATION_YEAR && m == 9 && 13 < d))
 		return (y + (y / 4) - (y / 100) + (y / 400) + reform[m - 1] +
 			d) % 7;
-	if (y < 1752 || (y == 1752 && m < 9) || (y == 1752 && m == 9 && d < 3))
+	if (y < REFORMATION_YEAR
+	    || (y == REFORMATION_YEAR && m < 9)
+	    || (y == REFORMATION_YEAR && m == 9 && d < 3))
 		return (y + y / 4 + old[m - 1] + d) % 7;
 	return NONEDAY;
 }
 
-static char *
-ascii_day(char *p, int day) {
+static char *ascii_day(char *p, int day)
+{
 	int display, val;
 	int highlight = 0;
 	static char *aday[] = {
@@ -774,15 +778,14 @@ ascii_day(char *p, int day) {
  * In addition if the string is too large for the width it's truncated.
  * The number of trailing spaces may be 1 less than the number of leading spaces.
  */
-static int
-center_str(const char* src, char* dest, size_t dest_size, size_t width)
+static int center_str(const char* src, char* dest,
+		      size_t dest_size, size_t width)
 {
 	return mbsalign(src, dest, dest_size, &width,
 			MBS_ALIGN_CENTER, MBA_UNIBYTE_FALLBACK);
 }
 
-static void
-center(const char *str, size_t len, int separate)
+static void center(const char *str, size_t len, int separate)
 {
 	char lineout[FMT_ST_CHARS];
 
@@ -799,6 +802,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] [[[day] month] year]\n"), program_invocation_short_name);
+
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -1, --one             show only current month (default)\n"), out);
 	fputs(_(" -3, --three           show previous, current and next month\n"), out);
@@ -807,9 +811,11 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -j, --julian          output Julian dates\n"), out);
 	fputs(_(" -y, --year            show whole current year\n"), out);
 	fputs(_("     --color[=<when>]  colorize messages (auto, always or never)\n"), out);
+
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
 	fprintf(out, USAGE_MAN_TAIL("cal(1)"));
+
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
