@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.23-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-04-25 11:26+0200\n"
+"POT-Creation-Date: 2013-05-28 10:44+0200\n"
 "PO-Revision-Date: 2013-04-20 21:26+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -314,7 +314,7 @@ msgstr ""
 msgid "stat failed %s"
 msgstr "stat nie powiodło się %s"
 
-#: disk-utils/fdformat.c:148 disk-utils/partx.c:936 misc-utils/lsblk.c:1239
+#: disk-utils/fdformat.c:148 disk-utils/partx.c:936 misc-utils/lsblk.c:1251
 #: sys-utils/blkdiscard.c:136 sys-utils/mountpoint.c:108
 #, c-format
 msgid "%s: not a block device"
@@ -403,9 +403,9 @@ msgstr "%s: nie udało się przeanalizować pliku fstab"
 msgid "%s: not found"
 msgstr "%s: nie znaleziono"
 
-#: disk-utils/fsck.c:610 login-utils/login.c:1087 login-utils/vipw.c:213
-#: sys-utils/flock.c:292 sys-utils/nsenter.c:135 sys-utils/swapon.c:266
-#: term-utils/script.c:264 term-utils/script.c:274
+#: disk-utils/fsck.c:610 login-utils/login.c:1087 login-utils/sulogin.c:968
+#: login-utils/vipw.c:213 sys-utils/flock.c:292 sys-utils/nsenter.c:135
+#: sys-utils/swapon.c:266 term-utils/script.c:264 term-utils/script.c:274
 msgid "fork failed"
 msgstr "wywołanie fork nie powiodło się"
 
@@ -847,7 +847,7 @@ msgstr "niepoprawny offset danych pliku"
 msgid "compiled without -x support"
 msgstr "skompilowano bez obsługi -x"
 
-#: disk-utils/fsck.cramfs.c:705 fdisks/sfdisk.c:2846
+#: disk-utils/fsck.cramfs.c:705 fdisks/sfdisk.c:2848
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: OK\n"
@@ -1478,7 +1478,7 @@ msgstr "Składnia:\n"
 msgid " %s [options] [-t <type>] [fs-options] <device> [<size>]\n"
 msgstr " %s [opcje] [-t <typ>] [opcje-fs] <urządzenie> [<rozmiar>]\n"
 
-#: disk-utils/mkfs.c:42 fdisks/sfdisk.c:2382 include/c.h:276
+#: disk-utils/mkfs.c:42 fdisks/sfdisk.c:2384 include/c.h:276
 #: misc-utils/cal.c:799 misc-utils/getopt.c:322 misc-utils/logger.c:218
 #: misc-utils/look.c:370 misc-utils/mcookie.c:72 misc-utils/namei.c:422
 #: misc-utils/uuidd.c:73 misc-utils/uuidgen.c:38 misc-utils/wipefs.c:373
@@ -2173,7 +2173,7 @@ msgstr "rozmiar w postaci czytelnej dla człowieka"
 msgid "partition name"
 msgstr "nazwa partycji"
 
-#: disk-utils/partx.c:86 misc-utils/findmnt.c:122 misc-utils/lsblk.c:128
+#: disk-utils/partx.c:86 misc-utils/findmnt.c:122 misc-utils/lsblk.c:129
 msgid "partition UUID"
 msgstr "UUID partycji"
 
@@ -2213,7 +2213,7 @@ msgstr "%s: nie udało ustawić powiązanego pliku"
 msgid "%s: failed to setup loop device"
 msgstr "%s: nie udało się skonfigurować urządzenia loop"
 
-#: disk-utils/partx.c:154 misc-utils/findmnt.c:361 misc-utils/lsblk.c:277
+#: disk-utils/partx.c:154 misc-utils/findmnt.c:361 misc-utils/lsblk.c:280
 #: misc-utils/lslocks.c:333 sys-utils/losetup.c:102 sys-utils/lscpu.c:266
 #: sys-utils/prlimit.c:272 sys-utils/swapon.c:110 sys-utils/wdctl.c:144
 #, c-format
@@ -2306,13 +2306,13 @@ msgstr "#%2d: %9ju-%9ju (sektorów: %9ju, %6ju MB)\n"
 msgid "failed to add line to output"
 msgstr "nie udało się dodać linii do wyjścia"
 
-#: disk-utils/partx.c:627 misc-utils/findmnt.c:1429 misc-utils/lsblk.c:1567
+#: disk-utils/partx.c:627 misc-utils/findmnt.c:1429 misc-utils/lsblk.c:1579
 #: misc-utils/lslocks.c:455 sys-utils/losetup.c:301 sys-utils/lscpu.c:1065
 #: sys-utils/prlimit.c:284 sys-utils/swapon.c:229 sys-utils/wdctl.c:249
 msgid "failed to initialize output table"
 msgstr "nie udało się zainicjować tabeli wyjściowej"
 
-#: disk-utils/partx.c:635 misc-utils/findmnt.c:1447 misc-utils/lsblk.c:1577
+#: disk-utils/partx.c:635 misc-utils/findmnt.c:1447 misc-utils/lsblk.c:1589
 #: misc-utils/lslocks.c:463 sys-utils/losetup.c:307 sys-utils/prlimit.c:292
 #: sys-utils/swapon.c:237 sys-utils/wdctl.c:258
 msgid "failed to initialize output column"
@@ -2363,7 +2363,7 @@ msgstr ""
 msgid " -u, --update         update specified partitions or all of them\n"
 msgstr " -u, --update         aktualizacja podanych partycji lub wszystkich\n"
 
-#: disk-utils/partx.c:711 misc-utils/lsblk.c:1354
+#: disk-utils/partx.c:711 misc-utils/lsblk.c:1366
 msgid ""
 " -b, --bytes          print SIZE in bytes rather than in human readable "
 "format\n"
@@ -2383,11 +2383,11 @@ msgstr " -n, --nr <n:m>       określenie przedziału partycji (np. --nr 2:4)\n"
 msgid " -o, --output <type>  define which output columns to use\n"
 msgstr " -o, --output <typ>   określenie kolumn do wypisania na wyjściu\n"
 
-#: disk-utils/partx.c:715 misc-utils/lsblk.c:1367
+#: disk-utils/partx.c:715 misc-utils/lsblk.c:1379
 msgid " -P, --pairs          use key=\"value\" output format\n"
 msgstr " -P, --pairs          wyjście w formacie klucz=\"wartość\"\n"
 
-#: disk-utils/partx.c:716 misc-utils/lsblk.c:1368
+#: disk-utils/partx.c:716 misc-utils/lsblk.c:1380
 msgid " -r, --raw            use raw output format\n"
 msgstr " -r, --raw            wyjście w formacie surowym\n"
 
@@ -3850,11 +3850,11 @@ msgstr "%s (%jd-%jd): "
 msgid "Value out of range.\n"
 msgstr "Wartość spoza zakresu.\n"
 
-#: fdisks/fdisk-ask.c:204
+#: fdisks/fdisk-ask.c:197
 msgid " [Y]es/[N]o: "
 msgstr " [T]ak/[N]ie: "
 
-#: fdisks/fdisk-ask.c:210
+#: fdisks/fdisk-ask.c:203
 #, c-format
 msgid "internal error: unssuported dialog type %d"
 msgstr "błąd wewnętrzny: nie obsługiwany rodzaj dialogu %d"
@@ -4029,7 +4029,7 @@ msgstr "sektorów/ścieżkę"
 msgid "tracks/cylinder"
 msgstr "ścieżek/cylinder"
 
-#: fdisks/fdiskbsdlabel.c:481 fdisks/fdisk.c:284 fdisks/sfdisk.c:922
+#: fdisks/fdiskbsdlabel.c:481 fdisks/fdisk.c:284 fdisks/sfdisk.c:924
 msgid "cylinders"
 msgstr "cylindrów"
 
@@ -4361,7 +4361,7 @@ msgstr "Trzeba wprowadzić liczbę"
 msgid "heads"
 msgstr "głowic"
 
-#: fdisks/fdisk.c:282 fdisks/sfdisk.c:922
+#: fdisks/fdisk.c:282 fdisks/sfdisk.c:924
 msgid "sectors"
 msgstr "sektorów"
 
@@ -4586,7 +4586,7 @@ msgstr "Liczba sektorów"
 msgid "Warning: setting sector offset for DOS compatibility\n"
 msgstr "Uwaga: ustawianie offsetu sektora dla kompatybilności z DOS-em\n"
 
-#: fdisks/fdisk.c:955 fdisks/sfdisk.c:2724
+#: fdisks/fdisk.c:955 fdisks/sfdisk.c:2726
 #, c-format
 msgid "cannot open %s\n"
 msgstr "nie można otworzyć %s\n"
@@ -4627,7 +4627,7 @@ msgstr "nie udało się przydzielić kontekstu libfdisk"
 msgid "invalid sector size argument"
 msgstr "błędna wartość rozmiaru sektora"
 
-#: fdisks/fdisk.c:1163 fdisks/sfdisk.c:2639
+#: fdisks/fdisk.c:1163 fdisks/sfdisk.c:2641
 msgid "invalid cylinders argument"
 msgstr "błędna liczba cylindrów"
 
@@ -4635,11 +4635,11 @@ msgstr "błędna liczba cylindrów"
 msgid "not found DOS label driver"
 msgstr "nie znaleziono sterownika etykiet DOS"
 
-#: fdisks/fdisk.c:1182 fdisks/sfdisk.c:2648
+#: fdisks/fdisk.c:1182 fdisks/sfdisk.c:2650
 msgid "invalid heads argument"
 msgstr "błędna liczba głowic"
 
-#: fdisks/fdisk.c:1187 fdisks/sfdisk.c:2666
+#: fdisks/fdisk.c:1187 fdisks/sfdisk.c:2668
 msgid "invalid sectors argument"
 msgstr "błędna liczba sektorów"
 
@@ -5875,12 +5875,12 @@ msgstr ""
 "Id  Nazwa\n"
 "\n"
 
-#: fdisks/sfdisk.c:783
+#: fdisks/sfdisk.c:787
 #, c-format
 msgid "Re-reading the partition table ...\n"
 msgstr "Ponowny odczyt tablicy partycji...\n"
 
-#: fdisks/sfdisk.c:788
+#: fdisks/sfdisk.c:789
 msgid ""
 "The command to re-read the partition table failed.\n"
 "Run partprobe(8), kpartx(8) or reboot your system now,\n"
@@ -5890,26 +5890,26 @@ msgstr ""
 "Przed mkfs należy uruchomić partprobe(8), kpartx(8) lub\n"
 "zrestartować system.\n"
 
-#: fdisks/sfdisk.c:796
+#: fdisks/sfdisk.c:798
 #, c-format
 msgid "Error closing %s\n"
 msgstr "Błąd zamykania %s\n"
 
-#: fdisks/sfdisk.c:837
+#: fdisks/sfdisk.c:839
 #, c-format
 msgid "%s: no such partition\n"
 msgstr "%s: nie ma takiej partycji\n"
 
-#: fdisks/sfdisk.c:860
+#: fdisks/sfdisk.c:862
 msgid "unrecognized format - using sectors\n"
 msgstr "nierozpoznany format - użycie sektorów\n"
 
-#: fdisks/sfdisk.c:921
+#: fdisks/sfdisk.c:923
 #, c-format
 msgid "unimplemented format - using %s\n"
 msgstr "format niezaimplementowany - użycie %s\n"
 
-#: fdisks/sfdisk.c:926
+#: fdisks/sfdisk.c:928
 #, c-format
 msgid ""
 "Units: cylinders of %lu bytes, blocks of 1024 bytes, counting from %d\n"
@@ -5918,12 +5918,12 @@ msgstr ""
 "Jednostka: cylindry, czyli %lu bajtów, bloki 1024-bajtowe liczone od %d\n"
 "\n"
 
-#: fdisks/sfdisk.c:928
+#: fdisks/sfdisk.c:930
 #, c-format
 msgid "   Device Boot Start     End   #cyls    #blocks   Id  System\n"
 msgstr "  Urządz.Rozr. Początek Koniec #cyl.    #bloków   Id  System\n"
 
-#: fdisks/sfdisk.c:933
+#: fdisks/sfdisk.c:935
 #, c-format
 msgid ""
 "Units: sectors of 512 bytes, counting from %d\n"
@@ -5932,12 +5932,12 @@ msgstr ""
 "Jednostka: sektory 512-bajtowe, liczone od %d\n"
 "\n"
 
-#: fdisks/sfdisk.c:935
+#: fdisks/sfdisk.c:937
 #, c-format
 msgid "   Device Boot    Start       End   #sectors  Id  System\n"
 msgstr "  Urządz. Rozruch Początek   Koniec #sektorów Id  System\n"
 
-#: fdisks/sfdisk.c:938
+#: fdisks/sfdisk.c:940
 #, c-format
 msgid ""
 "Units: blocks of 1024 bytes, counting from %d\n"
@@ -5946,12 +5946,12 @@ msgstr ""
 "Jednostka: bloki 1024-bajtowe, liczone od %d\n"
 "\n"
 
-#: fdisks/sfdisk.c:940
+#: fdisks/sfdisk.c:942
 #, c-format
 msgid "   Device Boot   Start       End    #blocks   Id  System\n"
 msgstr "  Urządz.Rozruch Początek    Koniec #bloków   Id  System\n"
 
-#: fdisks/sfdisk.c:943
+#: fdisks/sfdisk.c:945
 #, c-format
 msgid ""
 "Units: 1MiB = 1024*1024 bytes, blocks of 1024 bytes, counting from %d\n"
@@ -5960,32 +5960,32 @@ msgstr ""
 "Jednostka: 1MiB (1048576 bajtów), bloki 1024-bajtowe, liczone od %d\n"
 "\n"
 
-#: fdisks/sfdisk.c:945
+#: fdisks/sfdisk.c:947
 #, c-format
 msgid "   Device Boot Start   End    MiB    #blocks   Id  System\n"
 msgstr "  Urządz.Rozr. Pocz.   Koniec MiB    #bloków   Id  System\n"
 
-#: fdisks/sfdisk.c:1104
+#: fdisks/sfdisk.c:1106
 #, c-format
 msgid "\t\tstart: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 "\t\tpoczątek: (c,h,s) oczekiwane (%ld,%ld,%ld), otrzymano (%ld,%ld,%ld)\n"
 
-#: fdisks/sfdisk.c:1111
+#: fdisks/sfdisk.c:1113
 #, c-format
 msgid "\t\tend: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr "\t\tend: (c,h,s) oczekiwane (%ld,%ld,%ld), otrzymano (%ld,%ld,%ld)\n"
 
-#: fdisks/sfdisk.c:1114
+#: fdisks/sfdisk.c:1116
 #, c-format
 msgid "partition ends on cylinder %ld, beyond the end of the disk\n"
 msgstr "partycja kończy się na cylindrze %ld, za końcem dysku\n"
 
-#: fdisks/sfdisk.c:1125
+#: fdisks/sfdisk.c:1127
 msgid "No partitions found\n"
 msgstr "Nie znaleziono żadnej partycji\n"
 
-#: fdisks/sfdisk.c:1128
+#: fdisks/sfdisk.c:1130
 #, c-format
 msgid ""
 "Warning: The partition table looks like it was made\n"
@@ -5996,41 +5996,41 @@ msgstr ""
 "  dla C/H/S=*/%ld/%ld (zamiast %ld/%ld/%ld).\n"
 "Dla tego listingu założono tę geometrię.\n"
 
-#: fdisks/sfdisk.c:1177
+#: fdisks/sfdisk.c:1179
 msgid "no partition table present."
 msgstr "tablica partycji nie istnieje."
 
-#: fdisks/sfdisk.c:1179
+#: fdisks/sfdisk.c:1181
 #, c-format
 msgid "strange, only %d partitions defined."
 msgstr "dziwne, zdefiniowano tylko %d partycji."
 
-#: fdisks/sfdisk.c:1188
+#: fdisks/sfdisk.c:1190
 #, c-format
 msgid "Warning: partition %s has size 0 but is not marked Empty\n"
 msgstr "Uwaga: partycja %s ma rozmiar 0, ale nie jest zaznaczona jako pusta\n"
 
-#: fdisks/sfdisk.c:1191
+#: fdisks/sfdisk.c:1193
 #, c-format
 msgid "Warning: partition %s has size 0 and is bootable\n"
 msgstr "Uwaga: partycja %s ma rozmiar 0, a jest rozruchowa\n"
 
-#: fdisks/sfdisk.c:1194
+#: fdisks/sfdisk.c:1196
 #, c-format
 msgid "Warning: partition %s has size 0 and nonzero start\n"
 msgstr "Uwaga: partycja %s ma rozmiar 0 i niezerowy początek\n"
 
-#: fdisks/sfdisk.c:1206
+#: fdisks/sfdisk.c:1208
 #, c-format
 msgid "Warning: partition %s is not contained in partition %s\n"
 msgstr "Uwaga: partycja %s nie zawiera się w partycji %s\n"
 
-#: fdisks/sfdisk.c:1218
+#: fdisks/sfdisk.c:1220
 #, c-format
 msgid "Warning: partitions %s and %s overlap\n"
 msgstr "Uwaga: partycje %s i %s zachodzą na siebie\n"
 
-#: fdisks/sfdisk.c:1230
+#: fdisks/sfdisk.c:1232
 #, c-format
 msgid ""
 "Warning: partition %s contains part of the partition table (sector %llu),\n"
@@ -6039,17 +6039,17 @@ msgstr ""
 "Uwaga: partycja %s zawiera część tablicy partycji (sektor %llu)\n"
 "i zostanie zniszczona po jej wypełnieniu\n"
 
-#: fdisks/sfdisk.c:1243
+#: fdisks/sfdisk.c:1245
 #, c-format
 msgid "Warning: partition %s starts at sector 0\n"
 msgstr "Uwaga: partycja %s zaczyna się od sektora 0\n"
 
-#: fdisks/sfdisk.c:1248
+#: fdisks/sfdisk.c:1250
 #, c-format
 msgid "Warning: partition %s extends past end of disk\n"
 msgstr "Uwaga: partycja %s wystaje za koniec dysku\n"
 
-#: fdisks/sfdisk.c:1264
+#: fdisks/sfdisk.c:1266
 #, c-format
 msgid ""
 "Warning: partition %s has size %d.%d TB (%llu bytes),\n"
@@ -6060,7 +6060,7 @@ msgstr ""
 "czyli więcej, niż limit %llu bajtów będący ograniczeniem\n"
 "DOS-owej tablicy partycji dla sektorów %d-bajtowych\n"
 
-#: fdisks/sfdisk.c:1280
+#: fdisks/sfdisk.c:1282
 #, c-format
 msgid ""
 "Warning: partition %s starts at sector %llu (%d.%d TB for %d-byte sectors),\n"
@@ -6069,7 +6069,7 @@ msgstr ""
 "Uwaga: partycja %s zaczyna się od sektora %llu (%d.%d TB dla sektorów\n"
 "%d-bajtowych), co przekracza limit DOS-owej tablicy partycji %llu sektorów\n"
 
-#: fdisks/sfdisk.c:1300
+#: fdisks/sfdisk.c:1302
 msgid ""
 "Among the primary partitions, at most one can be extended\n"
 " (although this is not a problem under Linux)\n"
@@ -6077,17 +6077,17 @@ msgstr ""
 "Spośród partycji głównych najwyżej jedna może być rozszerzona\n"
 " (jednakże nie jest to problemem pod Linuksem)\n"
 
-#: fdisks/sfdisk.c:1320
+#: fdisks/sfdisk.c:1322
 #, c-format
 msgid "Warning: partition %s does not start at a cylinder boundary\n"
 msgstr "Uwaga: partycja %s nie zaczyna się na granicy cylindra\n"
 
-#: fdisks/sfdisk.c:1326
+#: fdisks/sfdisk.c:1328
 #, c-format
 msgid "Warning: partition %s does not end at a cylinder boundary\n"
 msgstr "Uwaga: partycja %s nie kończy się na granicy cylindra\n"
 
-#: fdisks/sfdisk.c:1345
+#: fdisks/sfdisk.c:1347
 msgid ""
 "Warning: more than one primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
@@ -6096,7 +6096,7 @@ msgstr ""
 "(aktywna). Dla LILO nie ma to znaczenia, ale DOS-owy MBR nie uruchomi\n"
 "systemu z tego dysku.\n"
 
-#: fdisks/sfdisk.c:1352
+#: fdisks/sfdisk.c:1354
 msgid ""
 "Warning: usually one can boot from primary partitions only\n"
 "LILO disregards the `bootable' flag.\n"
@@ -6104,7 +6104,7 @@ msgstr ""
 "Uwaga: zwykle można uruchomić system tylko z partycji głównych.\n"
 "LILO nie bierze pod uwagę flagi rozruchu.\n"
 
-#: fdisks/sfdisk.c:1358
+#: fdisks/sfdisk.c:1360
 msgid ""
 "Warning: no primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
@@ -6113,11 +6113,11 @@ msgstr ""
 "Nie ma to znaczenia dla LILO, ale DOS-owy MBR nie uruchomi systemu z tego\n"
 "dysku.\n"
 
-#: fdisks/sfdisk.c:1372
+#: fdisks/sfdisk.c:1374
 msgid "start"
 msgstr "początek"
 
-#: fdisks/sfdisk.c:1375
+#: fdisks/sfdisk.c:1377
 #, c-format
 msgid ""
 "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
@@ -6125,23 +6125,23 @@ msgstr ""
 "partycja %s: początek: (c,h,s) oczekiwane (%ld,%ld,%ld), otrzymano (%ld,%ld,"
 "%ld)\n"
 
-#: fdisks/sfdisk.c:1381
+#: fdisks/sfdisk.c:1383
 msgid "end"
 msgstr "koniec"
 
-#: fdisks/sfdisk.c:1384
+#: fdisks/sfdisk.c:1386
 #, c-format
 msgid "partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 "partycja %s: koniec: (c,h,s) oczekiwane (%ld,%ld,%ld), otrzymano (%ld,%ld,"
 "%ld)\n"
 
-#: fdisks/sfdisk.c:1387
+#: fdisks/sfdisk.c:1389
 #, c-format
 msgid "partition %s ends on cylinder %ld, beyond the end of the disk\n"
 msgstr "partycja %s kończy się na cylindrze %ld, za końcem dysku\n"
 
-#: fdisks/sfdisk.c:1412
+#: fdisks/sfdisk.c:1414
 #, c-format
 msgid ""
 "Warning: shifted start of the extd partition from %lld to %lld\n"
@@ -6150,7 +6150,7 @@ msgstr ""
 "Uwaga: przesunięto początek partycji rozszerzonej z %lld na %lld\n"
 "(tylko na potrzeby listy - bez zmiany zawartości).\n"
 
-#: fdisks/sfdisk.c:1417
+#: fdisks/sfdisk.c:1419
 msgid ""
 "Warning: extended partition does not start at a cylinder boundary.\n"
 "DOS and Linux will interpret the contents differently.\n"
@@ -6158,136 +6158,136 @@ msgstr ""
 "Uwaga: partycja rozszerzona nie zaczyna się na granicy cylindra.\n"
 "DOS i Linux inaczej zinterpretują jej zawartość.\n"
 
-#: fdisks/sfdisk.c:1430
+#: fdisks/sfdisk.c:1432
 #, c-format
 msgid "ERROR: sector %lu does not have an msdos signature\n"
 msgstr "BŁĄD: sektor %lu nie zawiera sygnatury MSDOS\n"
 
-#: fdisks/sfdisk.c:1437 fdisks/sfdisk.c:1514
+#: fdisks/sfdisk.c:1439 fdisks/sfdisk.c:1516
 #, c-format
 msgid "too many partitions - ignoring those past nr (%zu)\n"
 msgstr "zbyt dużo partycji - zignorowano przekraczające nr %zu\n"
 
-#: fdisks/sfdisk.c:1452
+#: fdisks/sfdisk.c:1454
 msgid "tree of partitions?\n"
 msgstr "drzewo partycji?\n"
 
-#: fdisks/sfdisk.c:1561
+#: fdisks/sfdisk.c:1563
 msgid "detected Disk Manager - unable to handle that\n"
 msgstr "wykryto Disk Manager - program nie może tego obsłużyć\n"
 
-#: fdisks/sfdisk.c:1569
+#: fdisks/sfdisk.c:1571
 msgid "DM6 signature found - giving up\n"
 msgstr "wykryto sygnaturę DM6 - poddaję się\n"
 
-#: fdisks/sfdisk.c:1589
+#: fdisks/sfdisk.c:1591
 msgid "strange..., an extended partition of size 0?\n"
 msgstr "dziwne... partycja rozszerzona rozmiaru 0?\n"
 
-#: fdisks/sfdisk.c:1596 fdisks/sfdisk.c:1607
+#: fdisks/sfdisk.c:1598 fdisks/sfdisk.c:1609
 msgid "strange..., a BSD partition of size 0?\n"
 msgstr "dziwne... partycja BSD rozmiaru 0?\n"
 
-#: fdisks/sfdisk.c:1651
+#: fdisks/sfdisk.c:1653
 #, c-format
 msgid " %s: unrecognized partition table type\n"
 msgstr " %s: nierozpoznany typ tablicy partycji\n"
 
-#: fdisks/sfdisk.c:1663
+#: fdisks/sfdisk.c:1665
 msgid "-n flag was given: Nothing changed\n"
 msgstr "podano flagę -n: bez zmian\n"
 
-#: fdisks/sfdisk.c:1680
+#: fdisks/sfdisk.c:1682
 msgid "Failed saving the old sectors - aborting\n"
 msgstr "Nie udało się zapisać starych sektorów - przerwano\n"
 
-#: fdisks/sfdisk.c:1685 fdisks/sfdisk.c:1690
+#: fdisks/sfdisk.c:1687 fdisks/sfdisk.c:1692
 #, c-format
 msgid "Failed writing the partition on %s\n"
 msgstr "Nie udało się zapisać partycji na %s\n"
 
-#: fdisks/sfdisk.c:1768
+#: fdisks/sfdisk.c:1770
 msgid "long or incomplete input line - quitting"
 msgstr "długa lub niekompletna linia na wejściu - zakończenie"
 
-#: fdisks/sfdisk.c:1804
+#: fdisks/sfdisk.c:1806
 #, c-format
 msgid "input error: `=' expected after %s field"
 msgstr "błąd wejścia: oczekiwano `=' po polu %s"
 
-#: fdisks/sfdisk.c:1811
+#: fdisks/sfdisk.c:1813
 #, c-format
 msgid "input error: unexpected character %c after %s field"
 msgstr "błąd wejścia: oczekiwano znaku %c po polu %s"
 
-#: fdisks/sfdisk.c:1817
+#: fdisks/sfdisk.c:1819
 #, c-format
 msgid "unrecognized input: %s"
 msgstr "nierozpoznane wejście: %s"
 
-#: fdisks/sfdisk.c:1858 fdisks/sfdisk.c:1895
+#: fdisks/sfdisk.c:1860 fdisks/sfdisk.c:1897
 msgid "number too big\n"
 msgstr "liczba zbyt duża\n"
 
-#: fdisks/sfdisk.c:1862 fdisks/sfdisk.c:1899
+#: fdisks/sfdisk.c:1864 fdisks/sfdisk.c:1901
 msgid "trailing junk after number\n"
 msgstr "końcowe śmieci po liczbie\n"
 
-#: fdisks/sfdisk.c:2024
+#: fdisks/sfdisk.c:2026
 msgid "no room for partition descriptor\n"
 msgstr "brak miejsca na deskryptor partycji\n"
 
-#: fdisks/sfdisk.c:2057
+#: fdisks/sfdisk.c:2059
 msgid "cannot build surrounding extended partition\n"
 msgstr "nie można zbudować otaczającej partycji rozszerzonej\n"
 
-#: fdisks/sfdisk.c:2108
+#: fdisks/sfdisk.c:2110
 msgid "too many input fields\n"
 msgstr "zbyt dużo pól wejściowych\n"
 
-#: fdisks/sfdisk.c:2142
+#: fdisks/sfdisk.c:2144
 msgid "No room for more\n"
 msgstr "Brak miejsca na więcej\n"
 
-#: fdisks/sfdisk.c:2161
+#: fdisks/sfdisk.c:2163
 msgid "Illegal type\n"
 msgstr "Niedozwolony typ\n"
 
-#: fdisks/sfdisk.c:2195
+#: fdisks/sfdisk.c:2197
 #, c-format
 msgid "Warning: given size (%lu) exceeds max allowable size (%lu)\n"
 msgstr "Uwaga: podany rozmiar (%lu) przekracza maksymalny dopuszczalny (%lu)\n"
 
-#: fdisks/sfdisk.c:2201
+#: fdisks/sfdisk.c:2203
 msgid "Warning: empty partition\n"
 msgstr "Uwaga: pusta partycja\n"
 
-#: fdisks/sfdisk.c:2215
+#: fdisks/sfdisk.c:2217
 #, c-format
 msgid "Warning: bad partition start (earliest %lu)\n"
 msgstr "Uwaga: błędny początek partycji (najbliższy %lu)\n"
 
-#: fdisks/sfdisk.c:2228
+#: fdisks/sfdisk.c:2230
 msgid "unrecognized bootable flag - choose - or *\n"
 msgstr "nierozpoznana flaga rozruchu - proszę wybrać - lub *\n"
 
-#: fdisks/sfdisk.c:2245 fdisks/sfdisk.c:2259
+#: fdisks/sfdisk.c:2247 fdisks/sfdisk.c:2261
 msgid "partial c,h,s specification?\n"
 msgstr "częściowa specyfikacja c,h,s?\n"
 
-#: fdisks/sfdisk.c:2270
+#: fdisks/sfdisk.c:2272
 msgid "Extended partition not where expected\n"
 msgstr "Partycja rozszerzona nie tam, gdzie jej oczekiwano\n"
 
-#: fdisks/sfdisk.c:2302
+#: fdisks/sfdisk.c:2304
 msgid "bad input"
 msgstr "błędne wejście"
 
-#: fdisks/sfdisk.c:2325
+#: fdisks/sfdisk.c:2327
 msgid "too many partitions\n"
 msgstr "zbyt dużo partycji\n"
 
-#: fdisks/sfdisk.c:2358
+#: fdisks/sfdisk.c:2360
 msgid ""
 "Input in the following format; absent fields get a default value.\n"
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
@@ -6298,7 +6298,7 @@ msgstr ""
 "<początek> <rozmiar> <typ [E,S,L,X,hex]> <rozruch [-,*> <c,h,s> <c,h,s>\n"
 "Zwykle trzeba podać tylko <początek> i <rozmiar> (oraz ewentualnie <typ>).\n"
 
-#: fdisks/sfdisk.c:2378 include/c.h:275 misc-utils/cal.c:794
+#: fdisks/sfdisk.c:2380 include/c.h:275 misc-utils/cal.c:794
 #: misc-utils/getopt.c:314 misc-utils/logger.c:214 misc-utils/look.c:366
 #: misc-utils/mcookie.c:68 misc-utils/namei.c:418 misc-utils/uuidd.c:69
 #: misc-utils/uuidgen.c:34 misc-utils/wipefs.c:369 sys-utils/hwclock.c:1442
@@ -6312,12 +6312,12 @@ msgstr ""
 "\n"
 "Składnia:\n"
 
-#: fdisks/sfdisk.c:2380
+#: fdisks/sfdisk.c:2382
 #, c-format
 msgid " %s [options] <device> [...]\n"
 msgstr " %s [opcje] <urządzenie> [...]\n"
 
-#: fdisks/sfdisk.c:2383
+#: fdisks/sfdisk.c:2385
 msgid ""
 " -s, --show-size           list size of a partition\n"
 " -c, --id                  change or print partition Id\n"
@@ -6329,7 +6329,7 @@ msgstr ""
 "     --change-id           zmiana identyfikatora\n"
 "     --print-id            wypisanie identyfikatora\n"
 
-#: fdisks/sfdisk.c:2387
+#: fdisks/sfdisk.c:2389
 msgid ""
 " -l, --list                list partitions of each device\n"
 " -d, --dump                idem, but in a format suitable for later input\n"
@@ -6345,7 +6345,7 @@ msgstr ""
 "                             S (sektory), C (cylindry), B (bloki) lub M "
 "(MB)\n"
 
-#: fdisks/sfdisk.c:2392
+#: fdisks/sfdisk.c:2394
 msgid ""
 " -1, --one-only            reserved option that does nothing currently\n"
 " -T, --list-types          list the known partition types\n"
@@ -6361,7 +6361,7 @@ msgstr ""
 " -R, --re-read             wymuszenie ponownego odczytu tabl. part. przez "
 "jądro\n"
 
-#: fdisks/sfdisk.c:2397
+#: fdisks/sfdisk.c:2399
 msgid ""
 " -N <number>               change only the partition with this <number>\n"
 " -n                        do not actually write to disk\n"
@@ -6374,7 +6374,7 @@ msgstr ""
 " -O <plik>                 zapis nadpisywanych sektorów do <pliku>\n"
 " -I <plik>                 odtworzenie sektorów z <pliku>\n"
 
-#: fdisks/sfdisk.c:2401
+#: fdisks/sfdisk.c:2403
 msgid ""
 " -V, --verify              check that the listed partitions are reasonable\n"
 " -v, --version             display version information and exit\n"
@@ -6384,7 +6384,7 @@ msgstr ""
 " -v, --version             wyświetlenie informacji o wersji i zakończenie\n"
 " -h, --help                wyświetlenie tego opisu i zakończenie\n"
 
-#: fdisks/sfdisk.c:2405
+#: fdisks/sfdisk.c:2407
 msgid ""
 "\n"
 "Dangerous options:\n"
@@ -6392,7 +6392,7 @@ msgstr ""
 "\n"
 "Opcje niebezpieczne:\n"
 
-#: fdisks/sfdisk.c:2406
+#: fdisks/sfdisk.c:2408
 msgid ""
 " -f, --force               disable all consistency checking\n"
 "     --no-reread           do not check whether the partition is in use\n"
@@ -6405,7 +6405,7 @@ msgstr ""
 " -q, --quiet               pominięcie komunikatów ostrzeżeń\n"
 " -L, --Linux               bez ostrzeżeń o faktach nieistotnych dla Linuksa\n"
 
-#: fdisks/sfdisk.c:2410
+#: fdisks/sfdisk.c:2412
 msgid ""
 " -g, --show-geometry       print the kernel's idea of the geometry\n"
 " -G, --show-pt-geometry    print geometry guessed from the partition table\n"
@@ -6413,7 +6413,7 @@ msgstr ""
 " -g, --show-geometry       wypisanie geometrii wg informacji z jądra\n"
 " -G, --show-pt-geometry    wypisanie geometrii odgadniętej z tabl. partycji\n"
 
-#: fdisks/sfdisk.c:2412
+#: fdisks/sfdisk.c:2414
 msgid ""
 " -A, --activate[=<device>] activate bootable flag\n"
 " -U, --unhide[=<dev>]      set partition unhidden\n"
@@ -6426,7 +6426,7 @@ msgstr ""
 "rozszerzonych\n"
 "                             lub oczekiwanie ich deskryptorów na wejściu\n"
 
-#: fdisks/sfdisk.c:2416
+#: fdisks/sfdisk.c:2418
 msgid ""
 "     --leave-last          do not allocate the last cylinder\n"
 "     --IBM                 same as --leave-last\n"
@@ -6434,7 +6434,7 @@ msgstr ""
 "     --leave-last          bez przydzielania ostatniego cylindra\n"
 "     --IBM                 to samo, co --leave-last\n"
 
-#: fdisks/sfdisk.c:2418
+#: fdisks/sfdisk.c:2420
 msgid ""
 "     --in-order            partitions are in order\n"
 "     --not-in-order        partitions are not in order\n"
@@ -6448,7 +6448,7 @@ msgstr ""
 "     --not-inside-outer    nie wszystkie logiczne wewnątrz zewn. "
 "rozszerzonej\n"
 
-#: fdisks/sfdisk.c:2422
+#: fdisks/sfdisk.c:2424
 msgid ""
 "     --nested              every partition is disjoint from all others\n"
 "     --chained             like nested, but extended partitions may lie "
@@ -6460,7 +6460,7 @@ msgstr ""
 "zewnątrz\n"
 "     --onesector           partycje są wzajemnie rozłączone\n"
 
-#: fdisks/sfdisk.c:2426
+#: fdisks/sfdisk.c:2428
 msgid ""
 "\n"
 "Override the detected geometry using:\n"
@@ -6476,81 +6476,81 @@ msgstr ""
 " -S, --sectors <liczba>    ustawienie liczby sektorów\n"
 "\n"
 
-#: fdisks/sfdisk.c:2436
+#: fdisks/sfdisk.c:2438
 msgid "Usage:"
 msgstr "Składnia:"
 
-#: fdisks/sfdisk.c:2437
+#: fdisks/sfdisk.c:2439
 #, c-format
 msgid "%s device\t\t list active partitions on device\n"
 msgstr "%s urządzenie\t\t wypisanie aktywnych partycji na urządzeniu\n"
 
-#: fdisks/sfdisk.c:2438
+#: fdisks/sfdisk.c:2440
 #, c-format
 msgid "%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"
 msgstr ""
 "%s urządzenie n1 n2 ... uaktywnienie partycji n1 ..., wyłączenie reszty\n"
 
-#: fdisks/sfdisk.c:2440
+#: fdisks/sfdisk.c:2442
 #, c-format
 msgid "%s -An device\t activate partition n, inactivate the other ones\n"
 msgstr "%s -An urządzenie\t uaktywnienie partycji n, wyłączenie pozostałych\n"
 
-#: fdisks/sfdisk.c:2575
+#: fdisks/sfdisk.c:2577
 msgid "no command?"
 msgstr "brak polecenia?"
 
-#: fdisks/sfdisk.c:2654
+#: fdisks/sfdisk.c:2656
 msgid "invalid number of partitions argument"
 msgstr "błędna liczba partycji"
 
-#: fdisks/sfdisk.c:2743
+#: fdisks/sfdisk.c:2745
 #, c-format
 msgid "total: %llu blocks\n"
 msgstr "razem: %llu bloków\n"
 
-#: fdisks/sfdisk.c:2782
+#: fdisks/sfdisk.c:2784
 msgid "usage: sfdisk --print-id device partition-number"
 msgstr "Składnia: sfdisk --print-id urządzenie numer-partycji"
 
-#: fdisks/sfdisk.c:2784
+#: fdisks/sfdisk.c:2786
 msgid "usage: sfdisk --change-id device partition-number Id"
 msgstr "Składnia: sfdisk --change-id urządzenie numer-partycji ID"
 
-#: fdisks/sfdisk.c:2786
+#: fdisks/sfdisk.c:2788
 msgid "usage: sfdisk --id device partition-number [Id]"
 msgstr "Składnia: sfdisk --id urządzenie numer-partycji [ID]"
 
-#: fdisks/sfdisk.c:2793
+#: fdisks/sfdisk.c:2795
 msgid "can specify only one device (except with -l or -s)"
 msgstr "można określić tylko jedno urządzenie (chyba że z -l lub -s)"
 
-#: fdisks/sfdisk.c:2819
+#: fdisks/sfdisk.c:2821
 #, c-format
 msgid "cannot open %s read-write"
 msgstr "nie można otworzyć %s do odczytu i zapisu"
 
-#: fdisks/sfdisk.c:2821
+#: fdisks/sfdisk.c:2823
 #, c-format
 msgid "cannot open %s for reading"
 msgstr "nie można otworzyć %s do odczytu"
 
-#: fdisks/sfdisk.c:2865 fdisks/sfdisk.c:2897
+#: fdisks/sfdisk.c:2867 fdisks/sfdisk.c:2899
 #, c-format
 msgid "%s: %ld cylinders, %ld heads, %ld sectors/track\n"
 msgstr "%s: cylindrów: %ld, głowic: %ld, sektorów na ścieżce: %ld\n"
 
-#: fdisks/sfdisk.c:2916
+#: fdisks/sfdisk.c:2918
 #, c-format
 msgid "Cannot get size of %s"
 msgstr "Nie można pobrać rozmiaru %s"
 
-#: fdisks/sfdisk.c:2997
+#: fdisks/sfdisk.c:2999
 #, c-format
 msgid "bad active byte: 0x%x instead of 0x80\n"
 msgstr "błędny bajt rozruchu: 0x%x zamiast 0x80\n"
 
-#: fdisks/sfdisk.c:3016 fdisks/sfdisk.c:3073 fdisks/sfdisk.c:3106
+#: fdisks/sfdisk.c:3018 fdisks/sfdisk.c:3075 fdisks/sfdisk.c:3108
 msgid ""
 "Done\n"
 "\n"
@@ -6558,7 +6558,7 @@ msgstr ""
 "Gotowe\n"
 "\n"
 
-#: fdisks/sfdisk.c:3025
+#: fdisks/sfdisk.c:3027
 #, c-format
 msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
@@ -6567,35 +6567,35 @@ msgstr ""
 "Na dysku są %d aktywne partycje główne. Nie ma to znaczenia dla LILO,\n"
 "ale DOS-owy MBR potrafi uruchomić dysk tylko z jedną aktywną partycją.\n"
 
-#: fdisks/sfdisk.c:3042
+#: fdisks/sfdisk.c:3044
 #, c-format
 msgid "partition %s has id %x and is not hidden"
 msgstr "partycja %s ma ID %x i nie jest ukryta"
 
-#: fdisks/sfdisk.c:3102
+#: fdisks/sfdisk.c:3104
 #, c-format
 msgid "Bad Id %lx"
 msgstr "Błędny ID %lx"
 
-#: fdisks/sfdisk.c:3120
+#: fdisks/sfdisk.c:3122
 msgid "This disk is currently in use.\n"
 msgstr "Ten dysk jest aktualnie używany.\n"
 
-#: fdisks/sfdisk.c:3141
+#: fdisks/sfdisk.c:3143
 #, c-format
 msgid "Fatal error: cannot find %s"
 msgstr "Błąd krytyczny: nie można odnaleźć %s"
 
-#: fdisks/sfdisk.c:3144
+#: fdisks/sfdisk.c:3146
 #, c-format
 msgid "Warning: %s is not a block device\n"
 msgstr "Uwaga: %s nie jest urządzeniem blokowym\n"
 
-#: fdisks/sfdisk.c:3150
+#: fdisks/sfdisk.c:3152
 msgid "Checking that no-one is using this disk right now ...\n"
 msgstr "Sprawdzanie czy nikt nie używa teraz tego dysku...\n"
 
-#: fdisks/sfdisk.c:3152
+#: fdisks/sfdisk.c:3154
 msgid ""
 "\n"
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
@@ -6609,30 +6609,30 @@ msgstr ""
 "z tego dysku.\n"
 "Aby pominąć ten test, można użyć flagi --no-reread.\n"
 
-#: fdisks/sfdisk.c:3156
+#: fdisks/sfdisk.c:3158
 msgid "Use the --force flag to overrule all checks.\n"
 msgstr "Można użyć flagi --force, aby pominąć wszystkie testy.\n"
 
-#: fdisks/sfdisk.c:3160
+#: fdisks/sfdisk.c:3162
 msgid "OK\n"
 msgstr "OK\n"
 
-#: fdisks/sfdisk.c:3169
+#: fdisks/sfdisk.c:3171
 #, c-format
 msgid "Old situation:\n"
 msgstr "Stara sytuacja:\n"
 
-#: fdisks/sfdisk.c:3173
+#: fdisks/sfdisk.c:3175
 #, c-format
 msgid "Partition %d does not exist, cannot change it"
 msgstr "Partycja %d nie istnieje, nie można jej zmienić"
 
-#: fdisks/sfdisk.c:3181
+#: fdisks/sfdisk.c:3183
 #, c-format
 msgid "New situation:\n"
 msgstr "Nowa sytuacja:\n"
 
-#: fdisks/sfdisk.c:3186
+#: fdisks/sfdisk.c:3188
 msgid ""
 "I don't like these partitions - nothing changed.\n"
 "(If you really want this, use the --force option.)"
@@ -6640,32 +6640,32 @@ msgstr ""
 "Nie podobają mi się te partycje - nic nie zmieniono\n"
 "(jeśli na pewno tak mają wyglądać - proszę użyć opcji --force)."
 
-#: fdisks/sfdisk.c:3189
+#: fdisks/sfdisk.c:3191
 msgid "I don't like this - probably you should answer No\n"
 msgstr "Nie podoba mi się to - prawdopodobnie należy odpowiedzieć Nie\n"
 
 #. TRANSLATORS: sfdisk uses rpmatch which means the answers y and n
 #. * should be translated, but that is not the case with q answer.
-#: fdisks/sfdisk.c:3196
+#: fdisks/sfdisk.c:3198
 #, c-format
 msgid "Are you satisfied with this? [ynq] "
 msgstr "Czy te zmiany są satysfakcjonujące? [ynq] "
 
-#: fdisks/sfdisk.c:3198
+#: fdisks/sfdisk.c:3200
 #, c-format
 msgid "Do you want to write this to disk? [ynq] "
 msgstr "Czy zapisać zmiany na dysk [ynq] "
 
-#: fdisks/sfdisk.c:3201
+#: fdisks/sfdisk.c:3203
 msgid "Quitting - nothing changed"
 msgstr "Wyjście - bez zmian"
 
-#: fdisks/sfdisk.c:3207
+#: fdisks/sfdisk.c:3209
 #, c-format
 msgid "Please answer one of y,n,q\n"
 msgstr "Proszę odpowiedzieć jednym z y,n,q\n"
 
-#: fdisks/sfdisk.c:3215
+#: fdisks/sfdisk.c:3217
 #, c-format
 msgid ""
 "Successfully wrote the new partition table\n"
@@ -6674,7 +6674,7 @@ msgstr ""
 "Zapisano nową tablicę partycji\n"
 "\n"
 
-#: fdisks/sfdisk.c:3223
+#: fdisks/sfdisk.c:3225
 msgid ""
 "If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
@@ -6756,20 +6756,20 @@ msgstr "nie udało się uruchomić %s"
 msgid "Partition %i does not start on physical sector boundary.\n"
 msgstr "Partycja %i nie zaczyna się na granicy bloku fizycznego.\n"
 
-#: libfdisk/src/ask.c:307 libfdisk/src/ask.c:319
+#: libfdisk/src/ask.c:302 libfdisk/src/ask.c:314
 #, c-format
 msgid "Selected partition %d"
 msgstr "Wybrano partycję %d"
 
-#: libfdisk/src/ask.c:310
+#: libfdisk/src/ask.c:305
 msgid "No partition is defined yet!"
 msgstr "Nie zdefiniowano jeszcze partycji!"
 
-#: libfdisk/src/ask.c:322
+#: libfdisk/src/ask.c:317
 msgid "No free partition available!"
 msgstr "Nie ma już wolnych partycji!"
 
-#: libfdisk/src/ask.c:332
+#: libfdisk/src/ask.c:327
 msgid "Partition number"
 msgstr "Numer partycji"
 
@@ -7929,6 +7929,11 @@ msgstr "Proszę nacisnąć enter w celu naprawy"
 msgid "(or type Control-D to continue): "
 msgstr "(lub nacisnąć Control-D, aby kontynuować): "
 
+#: login-utils/sulogin.c:605
+#, fuzzy, c-format
+msgid "%s: read failed"
+msgstr "%s: readlink nie powiodło się"
+
 #: login-utils/sulogin.c:683
 msgid "change directory to system root failed"
 msgstr "zmiana katalogu na główny katalog systemu nie powiodła się"
@@ -7967,8 +7972,8 @@ msgid "only root can run this program."
 msgstr "tylko root może uruchomić ten program."
 
 #: login-utils/sulogin.c:871
-#, c-format
-msgid "cannot open console: %m\n"
+#, fuzzy
+msgid "cannot open console"
 msgstr "nie można otworzyć konsoli: %m\n"
 
 #: login-utils/sulogin.c:878
@@ -7976,9 +7981,9 @@ msgid "cannot open password database."
 msgstr "nie można otworzyć bazy danych haseł."
 
 #: login-utils/sulogin.c:937
-#, c-format
-msgid "crypt failed: %m\n"
-msgstr "crypt nie powiodło się: %m\n"
+#, fuzzy
+msgid "crypt failed"
+msgstr "crypt() nie powiodło się"
 
 #: login-utils/sulogin.c:954
 #, c-format
@@ -7996,11 +8001,6 @@ msgid ""
 msgstr ""
 "Upłynął limit czasu\n"
 "\n"
-
-#: login-utils/sulogin.c:968
-#, c-format
-msgid "Can not fork: %m\n"
-msgstr "Nie można wykonać fork: %m\n"
 
 #: login-utils/utmpdump.c:121
 #, c-format
@@ -8172,7 +8172,7 @@ msgstr "urządzenie źródłowe"
 msgid "mountpoint"
 msgstr "punkt montowania"
 
-#: misc-utils/findmnt.c:115 misc-utils/lsblk.c:122
+#: misc-utils/findmnt.c:115 misc-utils/lsblk.c:123
 msgid "filesystem type"
 msgstr "typ systemu plików"
 
@@ -8192,7 +8192,7 @@ msgstr "opcje montowania specyficzne dla FS"
 msgid "filesystem label"
 msgstr "etykieta systemu plików"
 
-#: misc-utils/findmnt.c:120 misc-utils/lsblk.c:125
+#: misc-utils/findmnt.c:120 misc-utils/lsblk.c:126
 msgid "filesystem UUID"
 msgstr "UUID systemu plików"
 
@@ -8200,7 +8200,7 @@ msgstr "UUID systemu plików"
 msgid "partition label"
 msgstr "etykieta partycji"
 
-#: misc-utils/findmnt.c:123 misc-utils/lsblk.c:121
+#: misc-utils/findmnt.c:123 misc-utils/lsblk.c:122
 msgid "major:minor device number"
 msgstr "numer urządzenia główny:poboczny"
 
@@ -8720,284 +8720,288 @@ msgstr ""
 " -h, --help             wyświetlenie tego opisu i zakończenie\n"
 "\n"
 
-#: misc-utils/lsblk.c:118
+#: misc-utils/lsblk.c:119
 msgid "device name"
 msgstr "nazwa urządzenia"
 
-#: misc-utils/lsblk.c:119
+#: misc-utils/lsblk.c:120
 msgid "internal kernel device name"
 msgstr "wewnętrzna nazwa urządzenia w jądrze"
 
-#: misc-utils/lsblk.c:120
+#: misc-utils/lsblk.c:121
 msgid "internal parent kernel device name"
 msgstr "wewnętrzna nazwa urządzenia rodzica w jądrze"
 
-#: misc-utils/lsblk.c:123
+#: misc-utils/lsblk.c:124
 msgid "where the device is mounted"
 msgstr "miejsce zamontowania urządzenia"
 
-#: misc-utils/lsblk.c:124
+#: misc-utils/lsblk.c:125
 msgid "filesystem LABEL"
 msgstr "etykieta systemu plików"
 
-#: misc-utils/lsblk.c:127
+#: misc-utils/lsblk.c:128
 msgid "partition LABEL"
 msgstr "etykieta partycji"
 
-#: misc-utils/lsblk.c:130
+#: misc-utils/lsblk.c:131
 msgid "read-ahead of the device"
 msgstr "odczyt z góry dla urządzenia"
 
-#: misc-utils/lsblk.c:131 sys-utils/losetup.c:68
+#: misc-utils/lsblk.c:132 sys-utils/losetup.c:68
 msgid "read-only device"
 msgstr "urządzenie tylko do odczytu"
 
-#: misc-utils/lsblk.c:132
+#: misc-utils/lsblk.c:133
 msgid "removable device"
 msgstr "urządzenie wyjmowalne"
 
-#: misc-utils/lsblk.c:133
+#: misc-utils/lsblk.c:134
 msgid "rotational device"
 msgstr "urządzenie obrotowe"
 
-#: misc-utils/lsblk.c:134
+#: misc-utils/lsblk.c:135
 msgid "adds randomness"
 msgstr "dodanie losowości"
 
-#: misc-utils/lsblk.c:135
+#: misc-utils/lsblk.c:136
 msgid "device identifier"
 msgstr "identyfikator urządzenia"
 
-#: misc-utils/lsblk.c:136
+#: misc-utils/lsblk.c:137
+msgid "disk serial number"
+msgstr ""
+
+#: misc-utils/lsblk.c:138
 msgid "size of the device"
 msgstr "rozmiar urządzenia"
 
-#: misc-utils/lsblk.c:137
+#: misc-utils/lsblk.c:139
 msgid "state of the device"
 msgstr "stan urządzenia"
 
-#: misc-utils/lsblk.c:138
+#: misc-utils/lsblk.c:140
 msgid "user name"
 msgstr "nazwa użytkownika"
 
-#: misc-utils/lsblk.c:139
+#: misc-utils/lsblk.c:141
 msgid "group name"
 msgstr "nazwa grupy"
 
-#: misc-utils/lsblk.c:140
+#: misc-utils/lsblk.c:142
 msgid "device node permissions"
 msgstr "uprawnienia pliku urządzenia"
 
-#: misc-utils/lsblk.c:141
+#: misc-utils/lsblk.c:143
 msgid "alignment offset"
 msgstr "wyrównanie"
 
-#: misc-utils/lsblk.c:142
+#: misc-utils/lsblk.c:144
 msgid "minimum I/O size"
 msgstr "minimalny rozmiar we/wy"
 
-#: misc-utils/lsblk.c:143
+#: misc-utils/lsblk.c:145
 msgid "optimal I/O size"
 msgstr "optymalny rozmiar we/wy"
 
-#: misc-utils/lsblk.c:144
+#: misc-utils/lsblk.c:146
 msgid "physical sector size"
 msgstr "rozmiar sektora fizycznego"
 
-#: misc-utils/lsblk.c:145
+#: misc-utils/lsblk.c:147
 msgid "logical sector size"
 msgstr "rozmiar sektora logicznego"
 
-#: misc-utils/lsblk.c:146
+#: misc-utils/lsblk.c:148
 msgid "I/O scheduler name"
 msgstr "nazwa planisty we/wy"
 
-#: misc-utils/lsblk.c:147
+#: misc-utils/lsblk.c:149
 msgid "request queue size"
 msgstr "rozmiar kolejki żądań"
 
-#: misc-utils/lsblk.c:148
+#: misc-utils/lsblk.c:150
 msgid "device type"
 msgstr "typ urządzenia"
 
-#: misc-utils/lsblk.c:149
+#: misc-utils/lsblk.c:151
 msgid "discard alignment offset"
 msgstr "wyrównanie usuwania"
 
-#: misc-utils/lsblk.c:150
+#: misc-utils/lsblk.c:152
 msgid "discard granularity"
 msgstr "rozdzielczość usuwania"
 
-#: misc-utils/lsblk.c:151
+#: misc-utils/lsblk.c:153
 msgid "discard max bytes"
 msgstr "maks. bajtów usuwania"
 
-#: misc-utils/lsblk.c:152
+#: misc-utils/lsblk.c:154
 msgid "discard zeroes data"
 msgstr "dane usuwania zerami"
 
-#: misc-utils/lsblk.c:153
+#: misc-utils/lsblk.c:155
 msgid "write same max bytes"
 msgstr "zapisanie takich samych maks. bajtów"
 
-#: misc-utils/lsblk.c:154
+#: misc-utils/lsblk.c:156
 msgid "unique storage identifier"
 msgstr "unikalny identyfikator nośnika"
 
-#: misc-utils/lsblk.c:155
+#: misc-utils/lsblk.c:157
 msgid "Host:Channel:Target:Lun for SCSI"
 msgstr "Host:Kanał:Cel:Lun dla SCSI"
 
-#: misc-utils/lsblk.c:156
+#: misc-utils/lsblk.c:158
 msgid "device transport type"
 msgstr "typ transportu do urządzenia"
 
-#: misc-utils/lsblk.c:157
+#: misc-utils/lsblk.c:159
 msgid "device revision"
 msgstr "wersja urządzenia"
 
-#: misc-utils/lsblk.c:158
+#: misc-utils/lsblk.c:160
 msgid "device vendor"
 msgstr "producent urządzenia"
 
-#: misc-utils/lsblk.c:963
+#: misc-utils/lsblk.c:975
 #, c-format
 msgid "%s: failed to get device path"
 msgstr "%s: nie udało się pobrać ścieżki urządzenia"
 
-#: misc-utils/lsblk.c:970
+#: misc-utils/lsblk.c:982
 #, c-format
 msgid "%s: unknown device name"
 msgstr "%s: nieznana nazwa urządzenia"
 
-#: misc-utils/lsblk.c:976 misc-utils/lsblk.c:983
+#: misc-utils/lsblk.c:988 misc-utils/lsblk.c:995
 #, c-format
 msgid "%s: failed to initialize sysfs handler"
 msgstr "%s: nie udało się zainicjować obsługi sysfs"
 
-#: misc-utils/lsblk.c:1006
+#: misc-utils/lsblk.c:1018
 #, c-format
 msgid "%s: failed to get dm name"
 msgstr "%s: nie udało się odczytać nazwy dm"
 
-#: misc-utils/lsblk.c:1047
+#: misc-utils/lsblk.c:1059
 msgid "failed to open device directory in sysfs"
 msgstr "nie udało się otworzyć katalogu urządzenia w sysfs"
 
-#: misc-utils/lsblk.c:1215
+#: misc-utils/lsblk.c:1227
 #, c-format
 msgid "%s: failed to compose sysfs path"
 msgstr "%s: nie udało się utworzyć ścieżki sysfs"
 
-#: misc-utils/lsblk.c:1221
+#: misc-utils/lsblk.c:1233
 #, c-format
 msgid "%s: failed to read link"
 msgstr "%s: nie udało się odczytać dowiązania"
 
-#: misc-utils/lsblk.c:1244
+#: misc-utils/lsblk.c:1256
 #, c-format
 msgid "%s: failed to get sysfs name"
 msgstr "%s: nie udało się uzyskać nazwy sysfs"
 
-#: misc-utils/lsblk.c:1253
+#: misc-utils/lsblk.c:1265
 #, c-format
 msgid "%s: failed to get whole-disk device number"
 msgstr "%s: nie udało się pobrać numeru urządzenia całego dysku"
 
-#: misc-utils/lsblk.c:1305 misc-utils/lsblk.c:1307 misc-utils/lsblk.c:1332
-#: misc-utils/lsblk.c:1334
+#: misc-utils/lsblk.c:1317 misc-utils/lsblk.c:1319 misc-utils/lsblk.c:1344
+#: misc-utils/lsblk.c:1346
 #, c-format
 msgid "failed to parse list '%s'"
 msgstr "nie udało się przeanalizować listy '%s'"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1312
+#: misc-utils/lsblk.c:1324
 #, c-format
 msgid "the list of excluded devices is too large (limit is %d devices)"
 msgstr "lista wykluczonych urządzeń zbyt długa (limit liczby urządzeń to %d)"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1339
+#: misc-utils/lsblk.c:1351
 #, c-format
 msgid "the list of included devices is too large (limit is %d devices)"
 msgstr "lista dołączonych urządzeń zbyt długa (limit liczby urządzeń to %d)"
 
-#: misc-utils/lsblk.c:1351 sys-utils/wdctl.c:168
+#: misc-utils/lsblk.c:1363 sys-utils/wdctl.c:168
 #, c-format
 msgid " %s [options] [<device> ...]\n"
 msgstr " %s [opcje] [<urządzenie> ...]\n"
 
-#: misc-utils/lsblk.c:1353
+#: misc-utils/lsblk.c:1365
 msgid " -a, --all            print all devices\n"
 msgstr " -a, --all             wypisanie wszystkich urządzeń\n"
 
-#: misc-utils/lsblk.c:1355
+#: misc-utils/lsblk.c:1367
 msgid " -d, --nodeps         don't print slaves or holders\n"
 msgstr ""
 " -d, --nodeps          bez wypisywania urządzeń zależnych i nadrzędnych\n"
 
-#: misc-utils/lsblk.c:1356
+#: misc-utils/lsblk.c:1368
 msgid " -D, --discard        print discard capabilities\n"
 msgstr " -D, --discard         wypisanie możliwości usuwania sektorów\n"
 
-#: misc-utils/lsblk.c:1357
+#: misc-utils/lsblk.c:1369
 msgid ""
 " -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
 msgstr ""
 " -e, --exclude <lista> wykluczenie urządzeń wg numeru gł. (domyślnie: "
 "ramdyski)\n"
 
-#: misc-utils/lsblk.c:1358
+#: misc-utils/lsblk.c:1370
 msgid " -I, --include <list> show only devices with specified major numbers\n"
 msgstr ""
 " -I, --include <lista> pokazanie tylko urządzeń o podanych numerach "
 "głównych\n"
 
-#: misc-utils/lsblk.c:1359
+#: misc-utils/lsblk.c:1371
 msgid " -f, --fs             output info about filesystems\n"
 msgstr " -f, --fs              wypisanie informacji o systemach plików\n"
 
-#: misc-utils/lsblk.c:1360
+#: misc-utils/lsblk.c:1372
 msgid " -h, --help           usage information (this)\n"
 msgstr " -h, --help            informacja o składni (ten opis)\n"
 
-#: misc-utils/lsblk.c:1361
+#: misc-utils/lsblk.c:1373
 msgid " -i, --ascii          use ascii characters only\n"
 msgstr " -i, --ascii           używanie wyłącznie znaków ASCII\n"
 
-#: misc-utils/lsblk.c:1362
+#: misc-utils/lsblk.c:1374
 msgid " -m, --perms          output info about permissions\n"
 msgstr " -m, --perms           wypisanie informacji o uprawnieniach\n"
 
-#: misc-utils/lsblk.c:1363
+#: misc-utils/lsblk.c:1375
 msgid " -l, --list           use list format output\n"
 msgstr " -l, --list            wyjście w formacie listy\n"
 
-#: misc-utils/lsblk.c:1364
+#: misc-utils/lsblk.c:1376
 msgid " -n, --noheadings     don't print headings\n"
 msgstr " -n, --noheadings      bez wypisywania nagłówków\n"
 
-#: misc-utils/lsblk.c:1365
+#: misc-utils/lsblk.c:1377
 msgid " -o, --output <list>  output columns\n"
 msgstr " -o, --output <lista>  kolumny do wypisania\n"
 
-#: misc-utils/lsblk.c:1366
+#: misc-utils/lsblk.c:1378
 msgid " -p, --paths          print complate device path\n"
 msgstr " -p, --paths           wypisywanie pełnej ścieżki urządzeń\n"
 
-#: misc-utils/lsblk.c:1369
+#: misc-utils/lsblk.c:1381
 msgid " -s, --inverse        inverse dependencies\n"
 msgstr " -s, --inverse         odwrócenie zależności\n"
 
-#: misc-utils/lsblk.c:1370
+#: misc-utils/lsblk.c:1382
 msgid " -t, --topology       output info about topology\n"
 msgstr " -t, --topology        wypisanie informacji o topologii\n"
 
-#: misc-utils/lsblk.c:1371
+#: misc-utils/lsblk.c:1383
 msgid " -S, --scsi           output info about SCSI devices\n"
 msgstr " -S, --scsi            wypisanie informacji o urządzeniach SCSI\n"
 
-#: misc-utils/lsblk.c:1376 misc-utils/lslocks.c:510 sys-utils/prlimit.c:188
+#: misc-utils/lsblk.c:1388 misc-utils/lslocks.c:510 sys-utils/prlimit.c:188
 #, c-format
 msgid ""
 "\n"
@@ -9006,7 +9010,7 @@ msgstr ""
 "\n"
 "Dostępne kolumny (dla --output):\n"
 
-#: misc-utils/lsblk.c:1389
+#: misc-utils/lsblk.c:1401
 #, c-format
 msgid "failed to access sysfs directory: %s"
 msgstr "nie udało się dostać do katalogu sysfs: %s"
@@ -10825,13 +10829,13 @@ msgid "CPU %d is already disabled\n"
 msgstr "CPU %d jest już wyłączony\n"
 
 #: sys-utils/chcpu.c:100
-#, c-format
-msgid "CPU %d enable failed (CPU is deconfigured)\n"
+#, fuzzy, c-format
+msgid "CPU %d enable failed (CPU is deconfigured)"
 msgstr "Włączenie CPU %d nie powiodło się (jest zdekonfigurowany)\n"
 
 #: sys-utils/chcpu.c:103
-#, c-format
-msgid "CPU %d enable failed (%m)\n"
+#, fuzzy, c-format
+msgid "CPU %d enable failed"
 msgstr "Włączenie CPU %d nie powiodło się (%m)\n"
 
 #: sys-utils/chcpu.c:105
@@ -10845,8 +10849,8 @@ msgid "CPU %d disable failed (last enabled CPU)\n"
 msgstr "Wyłączenie CPU %d nie powiodło się (ostatni włączony CPU)\n"
 
 #: sys-utils/chcpu.c:114
-#, c-format
-msgid "CPU %d disable failed (%m)\n"
+#, fuzzy, c-format
+msgid "CPU %d disable failed"
 msgstr "Wyłączenie CPU %d nie powiodło się (%m)\n"
 
 #: sys-utils/chcpu.c:116
@@ -10910,8 +10914,8 @@ msgid "CPU %d deconfigure failed (CPU is enabled)\n"
 msgstr "Dekonfiguracja CPU %d nie powiodła się (jest włączony)\n"
 
 #: sys-utils/chcpu.c:186
-#, c-format
-msgid "CPU %d configure failed (%m)\n"
+#, fuzzy, c-format
+msgid "CPU %d configure failed"
 msgstr "Konfiguracja CPU %d nie powiodła się (%m)\n"
 
 #: sys-utils/chcpu.c:188
@@ -10920,8 +10924,8 @@ msgid "CPU %d configured\n"
 msgstr "CPU %d skonfigurowany\n"
 
 #: sys-utils/chcpu.c:192
-#, c-format
-msgid "CPU %d deconfigure failed (%m)\n"
+#, fuzzy, c-format
+msgid "CPU %d deconfigure failed"
 msgstr "Dekonfiguracja CPU %d nie powiodła się (%m)\n"
 
 #: sys-utils/chcpu.c:194
@@ -18067,6 +18071,12 @@ msgstr "nieznana sekwencja specjalna na wejściu: %o, %o"
 #: text-utils/ul.c:649
 msgid "Input line too long."
 msgstr "Linia wejściowa zbyt długa."
+
+#~ msgid "crypt failed: %m\n"
+#~ msgstr "crypt nie powiodło się: %m\n"
+
+#~ msgid "Can not fork: %m\n"
+#~ msgstr "Nie można wykonać fork: %m\n"
 
 #~ msgid "bug in xstrndup call"
 #~ msgstr "błąd w wywołaniu xstrndup"
