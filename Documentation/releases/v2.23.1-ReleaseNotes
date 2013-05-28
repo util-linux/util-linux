@@ -1,0 +1,41 @@
+Util-linux 2.23.1 Release Notes
+===============================
+
+blkid:
+   - fix typo in ID_FS_AMBIVALEN=  [Karel Zak]
+build-sys:
+   - add --disable-setterm  [Karel Zak]
+   - always check for setns() and unshare() libs functions  [Karel Zak]
+   - use -Wno-clobbered for some BSD crap  [Karel Zak]
+chcpu:
+   - clean up error messages  [Karel Zak]
+lib/loopdev:
+   - fix loopcxt_check_size() to work with blkdevs  [Karel Zak]
+lib/tty:
+   - don't hardcode terminal fd in get_terminal_name()  [Karel Zak]
+   - fix get_terminal_name() usage, cleanup code  [Karel Zak]
+libblkid:
+   - add ReFS magic string  [Karel Zak]
+   - fix blkid_parse_tag_string() to ignore incomplete tags  [Karel Zak]
+libfdisk:
+   - do not use va_list in the Ask API  [Karel Zak]
+libmount:
+   - don't ignore root fs on umount -a  [Karel Zak]
+   - use MS_SILENT for /{proc,etc}/filesystems  [Karel Zak]
+losetup:
+   - use warn_size() for regular files only  [Karel Zak]
+lsblk:
+   - add SERIAL column  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update nl.po (from translationproject.org)  [Benno Schulenberg]
+   - update vi.po (from translationproject.org)  [Trần Ngọc Quân]
+   - update zh_CN.po (from translationproject.org)  [Wylmer Wang]
+sfdisk:
+   - don't call BLKRRPART for non-block devices  [Karel Zak]
+sulogin:
+   - clean up error messages  [Karel Zak]
+tests:
+   - new warning fix  [Gilles Espinasse]
+
+- standard SEE ALSO section of man pages  [Mike Frysinger]
