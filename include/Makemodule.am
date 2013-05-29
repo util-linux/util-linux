@@ -48,4 +48,5 @@ dist_noinst_HEADERS += \
 	include/widechar.h \
 	include/xalloc.h \
 	include/xgetpass.h \
+	include/pt-sgi.h \
 	include/pt-sun.h
