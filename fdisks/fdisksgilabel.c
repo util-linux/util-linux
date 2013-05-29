@@ -43,8 +43,6 @@ struct fdisk_sgi_label {
 	struct fdisk_label	head;		/* generic part */
 };
 
-static  short volumes=1;
-
 static sgiinfo *fill_sgiinfo(void);
 
 /*
@@ -155,7 +153,6 @@ sgi_probe_label(struct fdisk_context *cxt)
 
 	cxt->label->nparts_max = SGI_MAXPARTITIONS;
 	cxt->label->nparts_cur = count_used_partitions(cxt);
-	volumes = 15;
 	return 1;
 }
 
@@ -216,7 +213,7 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 	printf(_("----- Bootinfo -----\nBootfile: %s\n"
 		 "----- Directory Entries -----\n"),
 	       sgilabel->boot_file);
-	for (i = 0 ; i < (size_t) volumes; i++) {
+	for (i = 0 ; i < SGI_MAXVOLUMES; i++) {
 		if (sgilabel->volume[i].num_bytes) {
 			uint32_t start = be32_to_cpu(sgilabel->volume[i].block_num);
 			uint32_t len = be32_to_cpu(sgilabel->volume[i].num_bytes);
@@ -860,10 +857,11 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	sgilabel->devparam.xylogics_readgate	= cpu_to_be16(0);
 	sgilabel->devparam.xylogics_writecont	= cpu_to_be16(0);
 
-	memset(&(sgilabel->volume), 0, sizeof(struct sgi_volume) * 15);
-	memset(&(sgilabel->partitions), 0, sizeof(struct sgi_partition)*16);
-	cxt->label->nparts_max = 16;
-	volumes    = 15;
+	memset(&(sgilabel->volume), 0,
+			sizeof(struct sgi_volume) * SGI_MAXVOLUMES);
+	memset(&(sgilabel->partitions), 0,
+			sizeof(struct sgi_partition) * SGI_MAXPARTITIONS);
+	cxt->label->nparts_max = SGI_MAXPARTITIONS;
 	sgi_set_entire(cxt);
 	sgi_set_volhdr(cxt);
 

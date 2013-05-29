@@ -4,6 +4,7 @@
 #include <stdint.h>
 
 #define SGI_MAXPARTITIONS	16
+#define SGI_MAXVOLUMES		15
 
 /* partition types */
 enum {
@@ -64,7 +65,7 @@ struct sgi_disklabel {
 		unsigned char name[8];	/* name of volume */
 		uint32_t block_num;	/* logical block number */
 		uint32_t num_bytes;	/* how big, in bytes */
-	} __attribute__((packed)) volume[15];
+	} __attribute__((packed)) volume[SGI_MAXVOLUMES];
 
 	struct sgi_partition {
 		uint32_t num_blocks;	/* size in logical blocks */
