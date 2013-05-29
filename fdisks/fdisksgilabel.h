@@ -1,55 +1,9 @@
 #ifndef FDISK_SGI_LABEL_H
 #define FDISK_SGI_LABEL_H
 
-#include <stdint.h>
-
 #include "bitops.h"
+#include "pt-sgi.h"
 
-/*
- * Copyright (C) Andreas Neuper, Sep 1998.
- *	This file may be modified and redistributed under
- *	the terms of the GNU Public License.
- */
-
-struct device_parameter { /* 48 bytes */
-	unsigned char  skew;
-	unsigned char  gap1;
-	unsigned char  gap2;
-	unsigned char  sparecyl;
-	unsigned short pcylcount;
-	unsigned short head_vol0;
-	unsigned short ntrks;	/* tracks in cyl 0 or vol 0 */
-	unsigned char  cmd_tag_queue_depth;
-	unsigned char  unused0;
-	unsigned short unused1;
-	unsigned short nsect;	/* sectors/tracks in cyl 0 or vol 0 */
-	unsigned short bytes;
-	unsigned short ilfact;
-	unsigned int   flags;		/* controller flags */
-	unsigned int   datarate;
-	unsigned int   retries_on_error;
-	unsigned int   ms_per_word;
-	unsigned short xylogics_gap1;
-	unsigned short xylogics_syncdelay;
-	unsigned short xylogics_readdelay;
-	unsigned short xylogics_gap2;
-	unsigned short xylogics_readgate;
-	unsigned short xylogics_writecont;
-};
-
-#define	SGI_VOLHDR	0x00
-/* 1 and 2 were used for drive types no longer supported by SGI */
-#define	SGI_SWAP	0x03
-/* 4 and 5 were for filesystem types SGI haven't ever supported on MIPS CPUs */
-#define	SGI_VOLUME	0x06
-#define	SGI_EFS		0x07
-#define	SGI_LVOL	0x08
-#define	SGI_RLVOL	0x09
-#define	SGI_XFS		0x0a
-#define	SGI_XFSLOG	0x0b
-#define	SGI_XLV		0x0c
-#define	SGI_XVM		0x0d
-#define	ENTIRE_DISK	SGI_VOLUME
 /*
  * controller flags
  */
@@ -60,26 +14,6 @@ struct device_parameter { /* 48 bytes */
 #define	IGNORE_ERRORS	0x10
 #define	RESEEK		0x20
 #define	CMDTAGQ_ENABLE	0x40
-
-typedef struct {
-	unsigned int   magic;		 /* expect SGI_LABEL_MAGIC */
-	short boot_part;		/* active boot partition */
-	short swap_part;		/* active swap partition */
-	unsigned char  boot_file[16];    /* name of the bootfile */
-	struct device_parameter devparam;	/*  1 * 48 bytes */
-	struct volume_directory {		/* 15 * 16 bytes */
-		unsigned char vol_file_name[8];	/* a character array */
-		unsigned int  vol_file_start;	/* number of logical block */
-		unsigned int  vol_file_size;	/* number of bytes */
-	} directory[15];
-	struct sgi_partition {			/* 16 * 12 bytes */
-		unsigned int num_sectors;	/* number of blocks */
-		unsigned int start_sector;	/* must be cylinder aligned */
-		unsigned int id;
-	} partitions[16];
-	unsigned int   csum;
-	unsigned int   fillbytes;
-} sgi_partition;
 
 typedef struct {
 	unsigned int   magic;		/* looks like a magic number */
@@ -110,7 +44,7 @@ typedef struct {
 #define SGI_FLAG_SWAP	2
 
 /* fdisk.c */
-#define sgilabel ((sgi_partition *)cxt->firstsector)
+#define sgilabel ((struct sgi_disklabel *)cxt->firstsector)
 #define sgiparam (sgilabel->devparam)
 
 /* fdisksgilabel.c */

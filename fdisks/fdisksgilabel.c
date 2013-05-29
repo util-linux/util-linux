@@ -43,7 +43,6 @@ struct fdisk_sgi_label {
 	struct fdisk_label	head;		/* generic part */
 };
 
-
 static	int     other_endian = 0;
 static  short volumes=1;
 
@@ -95,25 +94,26 @@ isinfreelist(unsigned int b) {
 /*
  * end of free blocks section
  */
-static struct fdisk_parttype sgi_parttypes[] = {
-	{SGI_VOLHDR,	N_("SGI volhdr")},
-	{0x01,		N_("SGI trkrepl")},
-	{0x02,		N_("SGI secrepl")},
-	{SGI_SWAP,	N_("SGI raw")},
-	{0x04,		N_("SGI bsd")},
-	{0x05,		N_("SGI sysv")},
-	{ENTIRE_DISK,	N_("SGI volume")},
-	{SGI_EFS,	N_("SGI efs")},
-	{0x08,		N_("SGI lvol")},
-	{0x09,		N_("SGI rlvol")},
-	{SGI_XFS,	N_("SGI xfs")},
-	{SGI_XFSLOG,	N_("SGI xfslog")},
-	{SGI_XLV,	N_("SGI xlv")},
-	{SGI_XVM,	N_("SGI xvm")},
-	{LINUX_SWAP,	N_("Linux swap")},
-	{LINUX_NATIVE,	N_("Linux native")},
-	{LINUX_LVM,	N_("Linux LVM")},
-	{LINUX_RAID,	N_("Linux RAID")},
+static struct fdisk_parttype sgi_parttypes[] =
+{
+	{SGI_TYPE_VOLHDR,	N_("SGI volhdr")},
+	{SGI_TYPE_TRKREPL,	N_("SGI trkrepl")},
+	{SGI_TYPE_SECREPL,	N_("SGI secrepl")},
+	{SGI_TYPE_SWAP,		N_("SGI raw")},
+	{SGI_TYPE_BSD,		N_("SGI bsd")},
+	{SGI_TYPE_SYSV,		N_("SGI sysv")},
+	{SGI_TYPE_ENTIRE_DISK,	N_("SGI volume")},
+	{SGI_TYPE_EFS,		N_("SGI efs")},
+	{SGI_TYPE_LVOL,		N_("SGI lvol")},
+	{SGI_TYPE_RLVOL,	N_("SGI rlvol")},
+	{SGI_TYPE_XFS,		N_("SGI xfs")},
+	{SGI_TYPE_XFSLOG,	N_("SGI xfslog")},
+	{SGI_TYPE_XLV,		N_("SGI xlv")},
+	{SGI_TYPE_XVM,		N_("SGI xvm")},
+	{LINUX_SWAP,		N_("Linux swap")},
+	{LINUX_NATIVE,		N_("Linux native")},
+	{LINUX_LVM,		N_("Linux LVM")},
+	{LINUX_RAID,		N_("Linux RAID")},
 	{0, NULL }
 };
 
@@ -234,10 +234,10 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 		 "----- Directory Entries -----\n"),
 	       sgilabel->boot_file);
 	for (i = 0 ; i < (size_t) volumes; i++) {
-		if (sgilabel->directory[i].vol_file_size) {
-			uint32_t start = SSWAP32(sgilabel->directory[i].vol_file_start);
-			uint32_t len = SSWAP32(sgilabel->directory[i].vol_file_size);
-			unsigned char *name = sgilabel->directory[i].vol_file_name;
+		if (sgilabel->volume[i].num_bytes) {
+			uint32_t start = SSWAP32(sgilabel->volume[i].block_num);
+			uint32_t len = SSWAP32(sgilabel->volume[i].num_bytes);
+			unsigned char *name = sgilabel->volume[i].name;
 			printf(_("%2zd: %-10s sector%5u size%8u\n"),
 			       i, name, (unsigned int) start,
 			       (unsigned int) len);
@@ -247,30 +247,30 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 
 unsigned int
 sgi_get_start_sector(struct fdisk_context *cxt, int i) {
-	return SSWAP32(sgilabel->partitions[i].start_sector);
+	return SSWAP32(sgilabel->partitions[i].first_block);
 }
 
 unsigned int
 sgi_get_num_sectors(struct fdisk_context *cxt, int i) {
-	return SSWAP32(sgilabel->partitions[i].num_sectors);
+	return SSWAP32(sgilabel->partitions[i].num_blocks);
 }
 
 static int
 sgi_get_sysid(struct fdisk_context *cxt, int i)
 {
-	return SSWAP32(sgilabel->partitions[i].id);
+	return SSWAP32(sgilabel->partitions[i].type);
 }
 
 int
 sgi_get_bootpartition(struct fdisk_context *cxt)
 {
-	return (short) SSWAP16(sgilabel->boot_part);
+	return (short) SSWAP16(sgilabel->root_part_num);
 }
 
 int
 sgi_get_swappartition(struct fdisk_context *cxt)
 {
-	return (short) SSWAP16(sgilabel->swap_part);
+	return (short) SSWAP16(sgilabel->swap_part_num);
 }
 
 static unsigned int
@@ -337,9 +337,9 @@ sgi_set_bootfile(struct fdisk_context *cxt)
 void
 create_sgiinfo(struct fdisk_context *cxt) {
 	/* I keep SGI's habit to write the sgilabel to the second block */
-	sgilabel->directory[0].vol_file_start = SSWAP32(2);
-	sgilabel->directory[0].vol_file_size = SSWAP32(sizeof(sgiinfo));
-	strncpy((char *) sgilabel->directory[0].vol_file_name, "sgilabel", 8);
+	sgilabel->volume[0].block_num = SSWAP32(2);
+	sgilabel->volume[0].num_bytes = SSWAP32(sizeof(sgiinfo));
+	strncpy((char *) sgilabel->volume[0].name, "sgilabel", 8);
 }
 
 
@@ -362,13 +362,13 @@ static int sgi_write_disklabel(struct fdisk_context *cxt)
 		goto err;
 	if (write(cxt->dev_fd, sgilabel, SECTOR_SIZE) != SECTOR_SIZE)
 		goto err;
-	if (!strncmp((char *) sgilabel->directory[0].vol_file_name, "sgilabel", 8)) {
+	if (!strncmp((char *) sgilabel->volume[0].name, "sgilabel", 8)) {
 		/*
 		 * keep this habit of first writing the "sgilabel".
 		 * I never tested whether it works without (AN 981002).
 		 */
 		int infostartblock
-			= SSWAP32(sgilabel->directory[0].vol_file_start);
+			= SSWAP32(sgilabel->volume[0].block_num);
 
 		if (lseek(cxt->dev_fd, (off_t) infostartblock *
 						SECTOR_SIZE, SEEK_SET) < 0)
@@ -474,7 +474,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 	for (i=0; i<16; i++) {
 		if (sgi_get_num_sectors(cxt, i) != 0) {
 			Index[sortcount++]=i;
-			if (sgi_get_sysid(cxt, i) == ENTIRE_DISK
+			if (sgi_get_sysid(cxt, i) == SGI_TYPE_ENTIRE_DISK
 			    && entire++ == 1) {
 				if (verbose)
 					fdisk_info(cxt, _("More than one entire "
@@ -490,7 +490,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 
 	sort(Index, sortcount, sizeof(Index[0]), cxt, compare_start);
 
-	if (sgi_get_sysid(cxt, Index[0]) == ENTIRE_DISK) {
+	if (sgi_get_sysid(cxt, Index[0]) == SGI_TYPE_ENTIRE_DISK) {
 		if (verbose && Index[0] != 10)
 			fdisk_info(cxt, _("IRIX likes when Partition 11 "
 					  "covers the entire disk."));
@@ -525,7 +525,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 					"cylinder boundary.", Index[i]+1));
 
 		/* We cannot handle several "entire disk" entries. */
-		if (sgi_get_sysid(cxt, Index[i]) == ENTIRE_DISK)
+		if (sgi_get_sysid(cxt, Index[i]) == SGI_TYPE_ENTIRE_DISK)
 			continue;
 		if (start > sgi_get_start_sector(cxt, Index[i])) {
 			if (verbose)
@@ -575,7 +575,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 		    || !sgi_get_num_sectors(cxt, sgi_get_swappartition(cxt)))
 			fdisk_info(cxt, _("The swap partition does not exist."));
 
-		else if (sgi_get_sysid(cxt, sgi_get_swappartition(cxt)) != SGI_SWAP
+		else if (sgi_get_sysid(cxt, sgi_get_swappartition(cxt)) != SGI_TYPE_SWAP
 		    && sgi_get_sysid(cxt, sgi_get_swappartition(cxt)) != LINUX_SWAP)
 			fdisk_info(cxt, _("The swap partition has no swap type."));
 
@@ -610,7 +610,7 @@ sgi_entire(struct fdisk_context *cxt) {
 	int i;
 
 	for (i=0; i<16; i++)
-		if (sgi_get_sysid(cxt, i) == SGI_VOLUME)
+		if (sgi_get_sysid(cxt, i) == SGI_TYPE_ENTIRE_DISK)
 			return i;
 	return -1;
 }
@@ -622,9 +622,9 @@ static int sgi_set_partition(struct fdisk_context *cxt, size_t i,
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SGI));
 
-	sgilabel->partitions[i].id = SSWAP32(sys);
-	sgilabel->partitions[i].num_sectors = SSWAP32(length);
-	sgilabel->partitions[i].start_sector = SSWAP32(start);
+	sgilabel->partitions[i].type = SSWAP32(sys);
+	sgilabel->partitions[i].num_blocks = SSWAP32(length);
+	sgilabel->partitions[i].first_block = SSWAP32(start);
 
 	fdisk_label_set_changed(cxt->label, 1);
 
@@ -644,7 +644,7 @@ sgi_set_entire(struct fdisk_context *cxt) {
 
 	for (n = 10; n < cxt->label->nparts_max; n++) {
 		if (!sgi_get_num_sectors(cxt, n)) {
-			sgi_set_partition(cxt, n, 0, sgi_get_lastblock(cxt), SGI_VOLUME);
+			sgi_set_partition(cxt, n, 0, sgi_get_lastblock(cxt), SGI_TYPE_ENTIRE_DISK);
 			break;
 		}
 	}
@@ -663,7 +663,7 @@ sgi_set_volhdr(struct fdisk_context *cxt)
 			 * as IRIX fx uses.
 			 */
 			if (4096 < sgi_get_lastblock(cxt))
-				sgi_set_partition(cxt, n, 0, 4096, SGI_VOLHDR);
+				sgi_set_partition(cxt, n, 0, 4096, SGI_TYPE_VOLHDR);
 			break;
 		}
 	}
@@ -692,14 +692,14 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 {
 	char mesg[256];
 	unsigned int first=0, last=0;
-	int sys = t ? t->type : SGI_XFS;
+	int sys = t ? t->type : SGI_TYPE_XFS;
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SGI));
 
 	if (n == 10)
-		sys = SGI_VOLUME;
+		sys = SGI_TYPE_ENTIRE_DISK;
 	else if (n == 8)
 		sys = 0;
 
@@ -708,12 +708,12 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 			 "it before re-adding it."), n + 1);
 		return -EINVAL;
 	}
-	if (sgi_entire(cxt) == -1 &&  sys != SGI_VOLUME) {
+	if (sgi_entire(cxt) == -1 &&  sys != SGI_TYPE_ENTIRE_DISK) {
 		fdisk_info(cxt, _("Attempting to generate entire disk entry automatically."));
 		sgi_set_entire(cxt);
 		sgi_set_volhdr(cxt);
 	}
-	if (sgi_gaps(cxt) == 0 && sys != SGI_VOLUME) {
+	if (sgi_gaps(cxt) == 0 && sys != SGI_TYPE_ENTIRE_DISK) {
 		fdisk_warnx(cxt, _("The entire disk is already covered with partitions."));
 		return -EINVAL;
 	}
@@ -724,7 +724,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 	snprintf(mesg, sizeof(mesg), _("First %s"),
 			fdisk_context_get_unit(cxt, SINGULAR));
 	for (;;) {
-		if (sys == SGI_VOLUME) {
+		if (sys == SGI_TYPE_ENTIRE_DISK) {
 			last = sgi_get_lastblock(cxt);
 			first = read_int(cxt, 0, 0, last-1, 0, mesg);
 			if (first != 0)
@@ -761,7 +761,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		last *= fdisk_context_get_units_per_sector(cxt);
 	/*else
 		last = last; * align to cylinder if You know how ... */
-	if (sys == SGI_VOLUME && (first != 0 || last != sgi_get_lastblock(cxt)))
+	if (sys == SGI_TYPE_ENTIRE_DISK && (first != 0 || last != sgi_get_lastblock(cxt)))
 		fdisk_info(cxt, _("It is highly recommended that eleventh "
 			"partition covers the entire disk and is of type "
 			"`SGI volume'"));
@@ -848,8 +848,8 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 
 	fdisk_zeroize_firstsector(cxt);
 	sgilabel->magic = SSWAP32(SGI_LABEL_MAGIC);
-	sgilabel->boot_part = SSWAP16(0);
-	sgilabel->swap_part = SSWAP16(1);
+	sgilabel->root_part_num = SSWAP16(0);
+	sgilabel->swap_part_num = SSWAP16(1);
 
 	/* sizeof(sgilabel->boot_file) = 16 > 6 */
 	memset(sgilabel->boot_file, 0, 16);
@@ -881,7 +881,7 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	sgilabel->devparam.xylogics_gap2		= SSWAP16(0);
 	sgilabel->devparam.xylogics_readgate	= SSWAP16(0);
 	sgilabel->devparam.xylogics_writecont	= SSWAP16(0);
-	memset(&(sgilabel->directory), 0, sizeof(struct volume_directory)*15);
+	memset(&(sgilabel->volume), 0, sizeof(struct sgi_volume) * 15);
 	memset(&(sgilabel->partitions), 0, sizeof(struct sgi_partition)*16);
 	cxt->label->nparts_max = 16;
 	volumes    = 15;
@@ -974,12 +974,13 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 		return -EINVAL;
 	}
 
-	if ((i == 10 && t->type != ENTIRE_DISK) || (i == 8 && t->type != 0))
+	if ((i == 10 && t->type != SGI_TYPE_ENTIRE_DISK)
+	    || (i == 8 && t->type != 0))
 		fdisk_info(cxt, _("Consider leaving partition 9 as volume header (0), "
 			 "and partition 11 as entire volume (6), as IRIX "
 			 "expects it."));
 
-	if (((t->type != ENTIRE_DISK) && (t->type != SGI_VOLHDR))
+	if (((t->type != SGI_TYPE_ENTIRE_DISK) && (t->type != SGI_TYPE_VOLHDR))
 	    && (sgi_get_start_sector(cxt, i) < 1)) {
 		read_chars(cxt,
 			_("It is highly recommended that the partition at offset 0\n"
@@ -990,7 +991,7 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 		if (strcmp (line_ptr, _("YES\n")))
 			return 1;
 	}
-	sgilabel->partitions[i].id = SSWAP32(t->type);
+	sgilabel->partitions[i].type = SSWAP32(t->type);
 	return 0;
 }
 
@@ -1026,12 +1027,12 @@ static int sgi_toggle_partition_flag(struct fdisk_context *cxt, size_t i, unsign
 
 	switch (flag) {
 	case SGI_FLAG_BOOT:
-		sgilabel->boot_part =
-			(uint16_t) sgilabel->boot_part == SSWAP16(i) ? 0 : SSWAP16(i);
+		sgilabel->root_part_num =
+			(uint16_t) sgilabel->root_part_num == SSWAP16(i) ? 0 : SSWAP16(i);
 		break;
 	case SGI_FLAG_SWAP:
-		sgilabel->swap_part =
-			(uint16_t) sgilabel->swap_part == SSWAP16(i) ? 0 : SSWAP16(i);
+		sgilabel->swap_part_num =
+			(uint16_t) sgilabel->swap_part_num == SSWAP16(i) ? 0 : SSWAP16(i);
 		break;
 	default:
 		return 1;
