@@ -20,10 +20,6 @@
 #define SGI_FLAG_BOOT	1
 #define SGI_FLAG_SWAP	2
 
-/* fdisk.c */
-#define sgilabel ((struct sgi_disklabel *)cxt->firstsector)
-#define sgiparam (sgilabel->devparam)
-
 /* fdisksgilabel.c */
 extern void	sgi_list_table( struct fdisk_context *cxt, int xtra );
 extern int  sgi_change_sysid(struct fdisk_context *cxt, int i, int sys);

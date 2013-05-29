@@ -40,8 +40,29 @@
  * in-memory fdisk SGI stuff
  */
 struct fdisk_sgi_label {
-	struct fdisk_label	head;		/* generic part */
+	struct fdisk_label	head;		/* generic fdisk part */
+	struct sgi_disklabel	*header;	/* on-disk data (pointer to cxt->firstsector) */
 };
+
+/* return poiter buffer with on-disk data */
+static inline struct sgi_disklabel *self_disklabel(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, SGI));
+
+	return ((struct fdisk_sgi_label *) cxt->label)->header;
+}
+
+/* return in-memory fdisk data */
+static inline struct fdisk_sgi_label *self_label(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, SGI));
+
+	return (struct fdisk_sgi_label *) cxt->label;
+}
 
 /*
  * Information within second on-disk block
@@ -92,6 +113,8 @@ static void sgi_free_info(struct sgi_info *info)
 
 int sgi_create_info(struct fdisk_context *cxt)
 {
+	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
+
 	/* I keep SGI's habit to write the sgilabel to the second block */
 	sgilabel->volume[0].block_num = cpu_to_be32(2);
 	sgilabel->volume[0].num_bytes = cpu_to_be32(sizeof(struct sgi_info));
@@ -171,11 +194,13 @@ static struct fdisk_parttype sgi_parttypes[] =
 
 static int sgi_get_nsect(struct fdisk_context *cxt)
 {
+	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 	return be16_to_cpu(sgilabel->devparam.nsect);
 }
 
 static int sgi_get_ntrks(struct fdisk_context *cxt)
 {
+	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 	return be16_to_cpu(sgilabel->devparam.ntrks);
 }
 
@@ -189,13 +214,20 @@ static size_t count_used_partitions(struct fdisk_context *cxt)
 	return ct;
 }
 
-static int
-sgi_probe_label(struct fdisk_context *cxt)
+static int sgi_probe_label(struct fdisk_context *cxt)
 {
+	struct fdisk_sgi_label *sgi;
+	struct sgi_disklabel *sgilabel;
+
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SGI));
-	assert(sizeof(sgilabel) <= 512);
+	assert(sizeof(struct sgi_disklabel) <= 512);
+
+	/* map first sector to header */
+	sgi = (struct fdisk_sgi_label *) cxt->label;
+	sgi->header = (struct sgi_disklabel *) cxt->firstsector;
+	sgilabel = sgi->header;
 
 	if (be32_to_cpu(sgilabel->magic) != SGI_LABEL_MAGIC)
 		return 0;
@@ -212,7 +244,10 @@ sgi_probe_label(struct fdisk_context *cxt)
 }
 
 void
-sgi_list_table(struct fdisk_context *cxt, int xtra) {
+sgi_list_table(struct fdisk_context *cxt, int xtra)
+{
+	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
+	struct sgi_device_parameter *sgiparam = &sgilabel->devparam;
 	size_t i, w;
 	int kpi = 0;		/* kernel partition ID */
 
@@ -224,9 +259,9 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 			 "%d extra sects/cyl, interleave %d:1\n"
 			 "%s\n"
 			 "Units = %s of %d * %ld bytes\n\n"),
-		       cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders,
-		       be16_to_cpu(sgiparam.pcylcount),
-		       (int) sgiparam.sparecyl, be16_to_cpu(sgiparam.ilfact),
+			       cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders,
+			       be16_to_cpu(sgiparam->pcylcount),
+		       (int) sgiparam->sparecyl, be16_to_cpu(sgiparam->ilfact),
 		       (char *)sgilabel,
 		       fdisk_context_get_unit(cxt, PLURAL),
 		       fdisk_context_get_units_per_sector(cxt),
@@ -282,26 +317,31 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 
 unsigned int sgi_get_start_sector(struct fdisk_context *cxt, int i)
 {
+	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 	return be32_to_cpu(sgilabel->partitions[i].first_block);
 }
 
 unsigned int sgi_get_num_sectors(struct fdisk_context *cxt, int i)
 {
+	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 	return be32_to_cpu(sgilabel->partitions[i].num_blocks);
 }
 
 static int sgi_get_sysid(struct fdisk_context *cxt, int i)
 {
+	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 	return be32_to_cpu(sgilabel->partitions[i].type);
 }
 
 int sgi_get_bootpartition(struct fdisk_context *cxt)
 {
+	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 	return be16_to_cpu(sgilabel->root_part_num);
 }
 
 int sgi_get_swappartition(struct fdisk_context *cxt)
 {
+	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 	return be16_to_cpu(sgilabel->swap_part_num);
 }
 
@@ -313,6 +353,8 @@ sgi_get_lastblock(struct fdisk_context *cxt) {
 static int
 sgi_check_bootfile(struct fdisk_context *cxt, const char* aFile)
 {
+	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
+
 	if (strlen(aFile) < 3) /* "/a\n" is minimum */ {
 		fdisk_warnx(cxt, _("Invalid Bootfile! "
 			 "The bootfile must be an absolute non-zero pathname,"
@@ -344,6 +386,8 @@ sgi_check_bootfile(struct fdisk_context *cxt, const char* aFile)
 void
 sgi_set_bootfile(struct fdisk_context *cxt)
 {
+	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
+
 	fdisk_info(cxt, _("The current boot file is: %s"), sgilabel->boot_file);
 
 	if (read_chars(cxt, _("Please enter the name of the new boot file: ")) == '\n') {
@@ -368,12 +412,14 @@ sgi_set_bootfile(struct fdisk_context *cxt)
 
 static int sgi_write_disklabel(struct fdisk_context *cxt)
 {
+	struct sgi_disklabel *sgilabel;
 	struct sgi_info *info = NULL;
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SGI));
 
+	sgilabel = self_disklabel(cxt);
 	sgilabel->csum = 0;
 	sgilabel->csum = cpu_to_be32(sgi_pt_checksum(sgilabel));
 
@@ -637,10 +683,13 @@ sgi_entire(struct fdisk_context *cxt) {
 static int sgi_set_partition(struct fdisk_context *cxt, size_t i,
 			     unsigned int start, unsigned int length, int sys)
 {
+	struct sgi_disklabel *sgilabel;
+
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SGI));
 
+	sgilabel = self_disklabel(cxt);
 	sgilabel->partitions[i].type = cpu_to_be32(sys);
 	sgilabel->partitions[i].num_blocks = cpu_to_be32(length);
 	sgilabel->partitions[i].first_block = cpu_to_be32(start);
@@ -793,6 +842,8 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 
 static int sgi_create_disklabel(struct fdisk_context *cxt)
 {
+	struct fdisk_sgi_label *sgi;
+	struct sgi_disklabel *sgilabel;
 	struct hd_geometry geometry;
 	struct {
 		unsigned int start;
@@ -865,6 +916,11 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	*/
 
 	fdisk_zeroize_firstsector(cxt);
+	sgi = (struct fdisk_sgi_label *) cxt->label;
+	sgi->header = (struct sgi_disklabel *) cxt->firstsector;
+
+	sgilabel = sgi->header;
+
 	sgilabel->magic = cpu_to_be32(SGI_LABEL_MAGIC);
 	sgilabel->root_part_num = cpu_to_be16(0);
 	sgilabel->swap_part_num = cpu_to_be16(1);
@@ -968,6 +1024,8 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 		size_t i,
 		struct fdisk_parttype *t)
 {
+	struct sgi_disklabel *sgilabel;
+
 	if (i >= cxt->label->nparts_max || !t || t->type > UINT32_MAX)
 		return -EINVAL;
 
@@ -993,6 +1051,8 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 		if (strcmp (line_ptr, _("YES\n")))
 			return 1;
 	}
+
+	sgilabel = self_disklabel(cxt);
 	sgilabel->partitions[i].type = cpu_to_be32(t->type);
 	return 0;
 }
@@ -1020,12 +1080,15 @@ static int sgi_get_partition_status(
 
 static int sgi_toggle_partition_flag(struct fdisk_context *cxt, size_t i, unsigned long flag)
 {
+	struct sgi_disklabel *sgilabel;
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SGI));
 
 	if (i >= cxt->label->nparts_max)
 		return -EINVAL;
+
+	sgilabel = self_disklabel(cxt);
 
 	switch (flag) {
 	case SGI_FLAG_BOOT:
