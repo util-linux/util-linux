@@ -36,9 +36,6 @@ typedef struct {
 #define	SGI_INFO_MAGIC		0x00072959
 #define	SGI_INFO_MAGIC_SWAPPED	0x59290700
 
-#define SSWAP16(x) (other_endian ? swab16(x) : (uint16_t)(x))
-#define SSWAP32(x) (other_endian ? swab32(x) : (uint32_t)(x))
-
 /* toggle flags */
 #define SGI_FLAG_BOOT	1
 #define SGI_FLAG_SWAP	2

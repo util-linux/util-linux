@@ -43,7 +43,6 @@ struct fdisk_sgi_label {
 	struct fdisk_label	head;		/* generic part */
 };
 
-static	int     other_endian = 0;
 static  short volumes=1;
 
 static sgiinfo *fill_sgiinfo(void);
@@ -117,25 +116,14 @@ static struct fdisk_parttype sgi_parttypes[] =
 	{0, NULL }
 };
 
-static int
-sgi_get_nsect(struct fdisk_context *cxt) {
-	return SSWAP16(sgilabel->devparam.nsect);
+static int sgi_get_nsect(struct fdisk_context *cxt)
+{
+	return be16_to_cpu(sgilabel->devparam.nsect);
 }
 
-static int
-sgi_get_ntrks(struct fdisk_context *cxt) {
-	return SSWAP16(sgilabel->devparam.ntrks);
-}
-
-static unsigned int
-two_s_complement_32bit_sum(unsigned int *base, int size /* in bytes */) {
-	int i = 0;
-	unsigned int sum = 0;
-
-	size /= sizeof(unsigned int);
-	for (i = 0; i < size; i++)
-		sum -= SSWAP32(base[i]);
-	return sum;
+static int sgi_get_ntrks(struct fdisk_context *cxt)
+{
+	return be16_to_cpu(sgilabel->devparam.ntrks);
 }
 
 static size_t count_used_partitions(struct fdisk_context *cxt)
@@ -156,21 +144,16 @@ sgi_probe_label(struct fdisk_context *cxt)
 	assert(fdisk_is_disklabel(cxt, SGI));
 	assert(sizeof(sgilabel) <= 512);
 
-	if (sgilabel->magic != SGI_LABEL_MAGIC &&
-	    sgilabel->magic != SGI_LABEL_MAGIC_SWAPPED) {
-		other_endian = 0;
+	if (be32_to_cpu(sgilabel->magic) != SGI_LABEL_MAGIC)
 		return 0;
-	}
 
-	other_endian = (sgilabel->magic == SGI_LABEL_MAGIC_SWAPPED);
 	/*
 	 * test for correct checksum
 	 */
-	if (two_s_complement_32bit_sum((unsigned int*)sgilabel,
-				       sizeof(*sgilabel)))
+	if (sgi_pt_checksum(sgilabel) != 0)
 		fdisk_warnx(cxt, _("Detected sgi disklabel with wrong checksum."));
 
-	cxt->label->nparts_max = 16;
+	cxt->label->nparts_max = SGI_MAXPARTITIONS;
 	cxt->label->nparts_cur = count_used_partitions(cxt);
 	volumes = 15;
 	return 1;
@@ -190,8 +173,8 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 			 "%s\n"
 			 "Units = %s of %d * %ld bytes\n\n"),
 		       cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders,
-		       SSWAP16(sgiparam.pcylcount),
-		       (int) sgiparam.sparecyl, SSWAP16(sgiparam.ilfact),
+		       be16_to_cpu(sgiparam.pcylcount),
+		       (int) sgiparam.sparecyl, be16_to_cpu(sgiparam.ilfact),
 		       (char *)sgilabel,
 		       fdisk_context_get_unit(cxt, PLURAL),
 		       fdisk_context_get_units_per_sector(cxt),
@@ -235,8 +218,8 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 	       sgilabel->boot_file);
 	for (i = 0 ; i < (size_t) volumes; i++) {
 		if (sgilabel->volume[i].num_bytes) {
-			uint32_t start = SSWAP32(sgilabel->volume[i].block_num);
-			uint32_t len = SSWAP32(sgilabel->volume[i].num_bytes);
+			uint32_t start = be32_to_cpu(sgilabel->volume[i].block_num);
+			uint32_t len = be32_to_cpu(sgilabel->volume[i].num_bytes);
 			unsigned char *name = sgilabel->volume[i].name;
 			printf(_("%2zd: %-10s sector%5u size%8u\n"),
 			       i, name, (unsigned int) start,
@@ -245,32 +228,29 @@ sgi_list_table(struct fdisk_context *cxt, int xtra) {
 	}
 }
 
-unsigned int
-sgi_get_start_sector(struct fdisk_context *cxt, int i) {
-	return SSWAP32(sgilabel->partitions[i].first_block);
-}
-
-unsigned int
-sgi_get_num_sectors(struct fdisk_context *cxt, int i) {
-	return SSWAP32(sgilabel->partitions[i].num_blocks);
-}
-
-static int
-sgi_get_sysid(struct fdisk_context *cxt, int i)
+unsigned int sgi_get_start_sector(struct fdisk_context *cxt, int i)
 {
-	return SSWAP32(sgilabel->partitions[i].type);
+	return be32_to_cpu(sgilabel->partitions[i].first_block);
 }
 
-int
-sgi_get_bootpartition(struct fdisk_context *cxt)
+unsigned int sgi_get_num_sectors(struct fdisk_context *cxt, int i)
 {
-	return (short) SSWAP16(sgilabel->root_part_num);
+	return be32_to_cpu(sgilabel->partitions[i].num_blocks);
 }
 
-int
-sgi_get_swappartition(struct fdisk_context *cxt)
+static int sgi_get_sysid(struct fdisk_context *cxt, int i)
 {
-	return (short) SSWAP16(sgilabel->swap_part_num);
+	return be32_to_cpu(sgilabel->partitions[i].type);
+}
+
+int sgi_get_bootpartition(struct fdisk_context *cxt)
+{
+	return be16_to_cpu(sgilabel->root_part_num);
+}
+
+int sgi_get_swappartition(struct fdisk_context *cxt)
+{
+	return be16_to_cpu(sgilabel->swap_part_num);
 }
 
 static unsigned int
@@ -334,11 +314,11 @@ sgi_set_bootfile(struct fdisk_context *cxt)
 	}
 }
 
-void
-create_sgiinfo(struct fdisk_context *cxt) {
+void create_sgiinfo(struct fdisk_context *cxt)
+{
 	/* I keep SGI's habit to write the sgilabel to the second block */
-	sgilabel->volume[0].block_num = SSWAP32(2);
-	sgilabel->volume[0].num_bytes = SSWAP32(sizeof(sgiinfo));
+	sgilabel->volume[0].block_num = cpu_to_be32(2);
+	sgilabel->volume[0].num_bytes = cpu_to_be32(sizeof(sgiinfo));
 	strncpy((char *) sgilabel->volume[0].name, "sgilabel", 8);
 }
 
@@ -353,11 +333,10 @@ static int sgi_write_disklabel(struct fdisk_context *cxt)
 	assert(fdisk_is_disklabel(cxt, SGI));
 
 	sgilabel->csum = 0;
-	sgilabel->csum = SSWAP32(two_s_complement_32bit_sum(
-		(unsigned int*)sgilabel,
-		sizeof(*sgilabel)));
-	assert(two_s_complement_32bit_sum(
-		(unsigned int*)sgilabel, sizeof(*sgilabel)) == 0);
+	sgilabel->csum = cpu_to_be32(sgi_pt_checksum(sgilabel));
+
+	assert(sgi_pt_checksum(sgilabel) == 0);
+
 	if (lseek(cxt->dev_fd, 0, SEEK_SET) < 0)
 		goto err;
 	if (write(cxt->dev_fd, sgilabel, SECTOR_SIZE) != SECTOR_SIZE)
@@ -368,7 +347,7 @@ static int sgi_write_disklabel(struct fdisk_context *cxt)
 		 * I never tested whether it works without (AN 981002).
 		 */
 		int infostartblock
-			= SSWAP32(sgilabel->volume[0].block_num);
+			= be32_to_cpu(sgilabel->volume[0].block_num);
 
 		if (lseek(cxt->dev_fd, (off_t) infostartblock *
 						SECTOR_SIZE, SEEK_SET) < 0)
@@ -622,9 +601,9 @@ static int sgi_set_partition(struct fdisk_context *cxt, size_t i,
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SGI));
 
-	sgilabel->partitions[i].type = SSWAP32(sys);
-	sgilabel->partitions[i].num_blocks = SSWAP32(length);
-	sgilabel->partitions[i].first_block = SSWAP32(start);
+	sgilabel->partitions[i].type = cpu_to_be32(sys);
+	sgilabel->partitions[i].num_blocks = cpu_to_be32(length);
+	sgilabel->partitions[i].first_block = cpu_to_be32(start);
 
 	fdisk_label_set_changed(cxt->label, 1);
 
@@ -793,7 +772,6 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 
 	fdisk_info(cxt,	_("Building a new SGI disklabel."));
 
-	other_endian = (BYTE_ORDER == LITTLE_ENDIAN);
 	res = blkdev_get_sectors(cxt->dev_fd, &llsectors);
 
 #ifdef HDIO_GETGEO
@@ -847,9 +825,9 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	*/
 
 	fdisk_zeroize_firstsector(cxt);
-	sgilabel->magic = SSWAP32(SGI_LABEL_MAGIC);
-	sgilabel->root_part_num = SSWAP16(0);
-	sgilabel->swap_part_num = SSWAP16(1);
+	sgilabel->magic = cpu_to_be32(SGI_LABEL_MAGIC);
+	sgilabel->root_part_num = cpu_to_be16(0);
+	sgilabel->swap_part_num = cpu_to_be16(1);
 
 	/* sizeof(sgilabel->boot_file) = 16 > 6 */
 	memset(sgilabel->boot_file, 0, 16);
@@ -859,34 +837,36 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	sgilabel->devparam.gap1			= (0);
 	sgilabel->devparam.gap2			= (0);
 	sgilabel->devparam.sparecyl			= (0);
-	sgilabel->devparam.pcylcount		= SSWAP16(geometry.cylinders);
-	sgilabel->devparam.head_vol0		= SSWAP16(0);
-	sgilabel->devparam.ntrks			= SSWAP16(geometry.heads);
+	sgilabel->devparam.pcylcount	= cpu_to_be16(geometry.cylinders);
+	sgilabel->devparam.head_vol0	= cpu_to_be16(0);
+	sgilabel->devparam.ntrks	= cpu_to_be16(geometry.heads);
 	/* tracks/cylinder (heads) */
 	sgilabel->devparam.cmd_tag_queue_depth	= (0);
 	sgilabel->devparam.unused0			= (0);
-	sgilabel->devparam.unused1			= SSWAP16(0);
-	sgilabel->devparam.nsect			= SSWAP16(geometry.sectors);
+	sgilabel->devparam.unused1	= cpu_to_be16(0);
+	sgilabel->devparam.nsect	= cpu_to_be16(geometry.sectors);
 	/* sectors/track */
-	sgilabel->devparam.bytes			= SSWAP16(cxt->sector_size);
-	sgilabel->devparam.ilfact			= SSWAP16(1);
-	sgilabel->devparam.flags			= SSWAP32(TRACK_FWD|\
-								  IGNORE_ERRORS|RESEEK);
-	sgilabel->devparam.datarate			= SSWAP32(0);
-	sgilabel->devparam.retries_on_error		= SSWAP32(1);
-	sgilabel->devparam.ms_per_word		= SSWAP32(0);
-	sgilabel->devparam.xylogics_gap1		= SSWAP16(0);
-	sgilabel->devparam.xylogics_syncdelay	= SSWAP16(0);
-	sgilabel->devparam.xylogics_readdelay	= SSWAP16(0);
-	sgilabel->devparam.xylogics_gap2		= SSWAP16(0);
-	sgilabel->devparam.xylogics_readgate	= SSWAP16(0);
-	sgilabel->devparam.xylogics_writecont	= SSWAP16(0);
+	sgilabel->devparam.bytes	= cpu_to_be16(cxt->sector_size);
+	sgilabel->devparam.ilfact	= cpu_to_be16(1);
+	sgilabel->devparam.flags	= cpu_to_be32(TRACK_FWD|\
+							  IGNORE_ERRORS|RESEEK);
+	sgilabel->devparam.datarate	= cpu_to_be32(0);
+	sgilabel->devparam.retries_on_error	= cpu_to_be32(1);
+	sgilabel->devparam.ms_per_word		= cpu_to_be32(0);
+	sgilabel->devparam.xylogics_gap1	= cpu_to_be16(0);
+	sgilabel->devparam.xylogics_syncdelay	= cpu_to_be16(0);
+	sgilabel->devparam.xylogics_readdelay	= cpu_to_be16(0);
+	sgilabel->devparam.xylogics_gap2	= cpu_to_be16(0);
+	sgilabel->devparam.xylogics_readgate	= cpu_to_be16(0);
+	sgilabel->devparam.xylogics_writecont	= cpu_to_be16(0);
+
 	memset(&(sgilabel->volume), 0, sizeof(struct sgi_volume) * 15);
 	memset(&(sgilabel->partitions), 0, sizeof(struct sgi_partition)*16);
 	cxt->label->nparts_max = 16;
 	volumes    = 15;
 	sgi_set_entire(cxt);
 	sgi_set_volhdr(cxt);
+
 	for (i = 0; i < 4; i++) {
 		if (old[i].sysid) {
 			sgi_set_partition(cxt, i, old[i].start, old[i].nsect, old[i].sysid);
@@ -937,14 +917,14 @@ static sgiinfo *fill_sgiinfo(void)
 	if (!info)
 		return NULL;
 
-	info->magic=SSWAP32(SGI_INFO_MAGIC);
-	info->b1=SSWAP32(-1);
-	info->b2=SSWAP16(-1);
-	info->b3=SSWAP16(1);
+	info->magic = cpu_to_be32(SGI_INFO_MAGIC);
+	info->b1 = cpu_to_be32(-1);
+	info->b2 = cpu_to_be16(-1);
+	info->b3 = cpu_to_be16(1);
 	/* You may want to replace this string !!!!!!! */
 	strcpy((char *) info->scsi_string, "IBM OEM 0662S12         3 30");
 	strcpy((char *) info->serial, "0000");
-	info->check1816 = SSWAP16(18*256 +16);
+	info->check1816 = cpu_to_be16(18 * 256 + 16);
 	strcpy((char *) info->installer, "Sfx version 5.3, Oct 18, 1994");
 	return info;
 }
@@ -991,7 +971,7 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 		if (strcmp (line_ptr, _("YES\n")))
 			return 1;
 	}
-	sgilabel->partitions[i].type = SSWAP32(t->type);
+	sgilabel->partitions[i].type = cpu_to_be32(t->type);
 	return 0;
 }
 
@@ -1028,11 +1008,15 @@ static int sgi_toggle_partition_flag(struct fdisk_context *cxt, size_t i, unsign
 	switch (flag) {
 	case SGI_FLAG_BOOT:
 		sgilabel->root_part_num =
-			(uint16_t) sgilabel->root_part_num == SSWAP16(i) ? 0 : SSWAP16(i);
+			be16_to_cpu(sgilabel->root_part_num) == i ?
+			0 : cpu_to_be16(i);
+		fdisk_label_set_changed(cxt->label, 1);
 		break;
 	case SGI_FLAG_SWAP:
 		sgilabel->swap_part_num =
-			(uint16_t) sgilabel->swap_part_num == SSWAP16(i) ? 0 : SSWAP16(i);
+			be16_to_cpu(sgilabel->swap_part_num) == i ?
+			0 : cpu_to_be16(i);
+		fdisk_label_set_changed(cxt->label, 1);
 		break;
 	default:
 		return 1;
