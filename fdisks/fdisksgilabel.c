@@ -35,13 +35,40 @@
 #include "fdisksgilabel.h"
 #include "fdiskdoslabel.h"
 
-
 /*
  * in-memory fdisk SGI stuff
  */
 struct fdisk_sgi_label {
 	struct fdisk_label	head;		/* generic fdisk part */
 	struct sgi_disklabel	*header;	/* on-disk data (pointer to cxt->firstsector) */
+
+	struct sgi_freeblocks {
+		unsigned int first;
+		unsigned int last;
+	} freelist[17];
+};
+
+static struct fdisk_parttype sgi_parttypes[] =
+{
+	{SGI_TYPE_VOLHDR,	N_("SGI volhdr")},
+	{SGI_TYPE_TRKREPL,	N_("SGI trkrepl")},
+	{SGI_TYPE_SECREPL,	N_("SGI secrepl")},
+	{SGI_TYPE_SWAP,		N_("SGI raw")},
+	{SGI_TYPE_BSD,		N_("SGI bsd")},
+	{SGI_TYPE_SYSV,		N_("SGI sysv")},
+	{SGI_TYPE_ENTIRE_DISK,	N_("SGI volume")},
+	{SGI_TYPE_EFS,		N_("SGI efs")},
+	{SGI_TYPE_LVOL,		N_("SGI lvol")},
+	{SGI_TYPE_RLVOL,	N_("SGI rlvol")},
+	{SGI_TYPE_XFS,		N_("SGI xfs")},
+	{SGI_TYPE_XFSLOG,	N_("SGI xfslog")},
+	{SGI_TYPE_XLV,		N_("SGI xlv")},
+	{SGI_TYPE_XVM,		N_("SGI xvm")},
+	{LINUX_SWAP,		N_("Linux swap")},
+	{LINUX_NATIVE,		N_("Linux native")},
+	{LINUX_LVM,		N_("Linux LVM")},
+	{LINUX_RAID,		N_("Linux RAID")},
+	{0, NULL }
 };
 
 /* return poiter buffer with on-disk data */
@@ -126,71 +153,51 @@ int sgi_create_info(struct fdisk_context *cxt)
 /*
  * only dealing with free blocks here
  */
+static void set_freelist(struct fdisk_context *cxt,
+		size_t i, unsigned int f, unsigned int l)
+{
+	struct fdisk_sgi_label *sgi = self_label(cxt);
 
-typedef struct { unsigned int first; unsigned int last; } freeblocks;
-static freeblocks freelist[17]; /* 16 partitions can produce 17 vacant slots */
-
-static void
-setfreelist(int i, unsigned int f, unsigned int l) {
-	if (i < 17) {
-		freelist[i].first = f;
-		freelist[i].last = l;
+	if (i < ARRAY_SIZE(sgi->freelist)) {
+		sgi->freelist[i].first = f;
+		sgi->freelist[i].last = l;
 	}
 }
 
-static void
-add2freelist(unsigned int f, unsigned int l) {
-	int i = 0;
-	for ( ; i < 17 ; i++)
-		if (freelist[i].last == 0)
+static void add_to_freelist(struct fdisk_context *cxt,
+		unsigned int f, unsigned int l)
+{
+	struct fdisk_sgi_label *sgi = self_label(cxt);
+	size_t i = 0;
+
+	for ( ; i < ARRAY_SIZE(sgi->freelist); i++) {
+		if (sgi->freelist[i].last == 0)
 			break;
-	setfreelist(i, f, l);
+	}
+	set_freelist(cxt, i, f, l);
 }
 
-static void
-clearfreelist(void) {
-	int i;
+static void clear_freelist(struct fdisk_context *cxt)
+{
+	struct fdisk_sgi_label *sgi = self_label(cxt);
 
-	for (i = 0; i < 17 ; i++)
-		setfreelist(i, 0, 0);
+	memset(sgi->freelist, 0, sizeof(sgi->freelist));
 }
 
-static unsigned int
-isinfreelist(unsigned int b) {
-	int i;
+static unsigned int is_in_freelist(struct fdisk_context *cxt, unsigned int b)
+{
+	struct fdisk_sgi_label *sgi = self_label(cxt);
+	size_t i;
 
-	for (i = 0; i < 17 ; i++)
-		if (freelist[i].first <= b && freelist[i].last >= b)
-			return freelist[i].last;
+	for (i = 0; i < ARRAY_SIZE(sgi->freelist); i++) {
+		if (sgi->freelist[i].first <= b
+		    && sgi->freelist[i].last >= b)
+			return sgi->freelist[i].last;
+	}
+
 	return 0;
 }
-	/* return last vacant block of this stride (never 0). */
-	/* the '>=' is not quite correct, but simplifies the code */
-/*
- * end of free blocks section
- */
-static struct fdisk_parttype sgi_parttypes[] =
-{
-	{SGI_TYPE_VOLHDR,	N_("SGI volhdr")},
-	{SGI_TYPE_TRKREPL,	N_("SGI trkrepl")},
-	{SGI_TYPE_SECREPL,	N_("SGI secrepl")},
-	{SGI_TYPE_SWAP,		N_("SGI raw")},
-	{SGI_TYPE_BSD,		N_("SGI bsd")},
-	{SGI_TYPE_SYSV,		N_("SGI sysv")},
-	{SGI_TYPE_ENTIRE_DISK,	N_("SGI volume")},
-	{SGI_TYPE_EFS,		N_("SGI efs")},
-	{SGI_TYPE_LVOL,		N_("SGI lvol")},
-	{SGI_TYPE_RLVOL,	N_("SGI rlvol")},
-	{SGI_TYPE_XFS,		N_("SGI xfs")},
-	{SGI_TYPE_XFSLOG,	N_("SGI xfslog")},
-	{SGI_TYPE_XLV,		N_("SGI xlv")},
-	{SGI_TYPE_XVM,		N_("SGI xvm")},
-	{LINUX_SWAP,		N_("Linux swap")},
-	{LINUX_NATIVE,		N_("Linux native")},
-	{LINUX_LVM,		N_("Linux LVM")},
-	{LINUX_RAID,		N_("Linux RAID")},
-	{0, NULL }
-};
+
 
 static int sgi_get_nsect(struct fdisk_context *cxt)
 {
@@ -240,6 +247,7 @@ static int sgi_probe_label(struct fdisk_context *cxt)
 	if (sgi_pt_checksum(sgilabel) != 0)
 		fdisk_warnx(cxt, _("Detected sgi disklabel with wrong checksum."));
 
+	clear_freelist(cxt);
 	cxt->label->nparts_max = SGI_MAXPARTITIONS;
 	cxt->label->nparts_cur = count_used_partitions(cxt);
 	return 1;
@@ -537,7 +545,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SGI));
 
-	clearfreelist();
+	clear_freelist(cxt);
 	for (i=0; i<16; i++) {
 		if (sgi_get_num_sectors(cxt, i) != 0) {
 			Index[sortcount++]=i;
@@ -610,7 +618,8 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 				       sgi_get_start_sector(cxt, Index[i]) - start,
 				       start, sgi_get_start_sector(cxt, Index[i])-1);
 			gap += sgi_get_start_sector(cxt, Index[i]) - start;
-			add2freelist(start, sgi_get_start_sector(cxt, Index[i]));
+			add_to_freelist(cxt, start,
+					sgi_get_start_sector(cxt, Index[i]));
 		}
 		start = sgi_get_start_sector(cxt, Index[i])
 			+ sgi_get_num_sectors(cxt, Index[i]);
@@ -628,7 +637,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 			fdisk_info(cxt, _("Unused gap of %8u sectors - sectors %8u-%u"),
 				lastblock - start, start, lastblock-1);
 		gap += lastblock - start;
-		add2freelist(start, lastblock);
+		add_to_freelist(cxt, start, lastblock);
 	}
 	/*
 	 * Done with arithmetics. Go for details now
@@ -760,6 +769,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		size_t n,
 		struct fdisk_parttype *t)
 {
+	struct fdisk_sgi_label *sgi;
 	char mesg[256];
 	unsigned int first=0, last=0;
 	int sys = t ? t->type : SGI_TYPE_XFS;
@@ -772,6 +782,8 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		sys = SGI_TYPE_ENTIRE_DISK;
 	else if (n == 8)
 		sys = 0;
+
+	sgi = self_label(cxt);
 
 	if (sgi_get_num_sectors(cxt, n)) {
 		fdisk_warnx(cxt, _("Partition %zd is already defined.  Delete "
@@ -802,8 +814,8 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 					"eleventh partition covers the entire "
 					"disk and is of type `SGI volume'"));
 		} else {
-			first = freelist[0].first;
-			last  = freelist[0].last;
+			first = sgi->freelist[0].first;
+			last  = sgi->freelist[0].last;
 			first = read_int(cxt, scround(cxt, first),
 					      scround(cxt, first),
 					      scround(cxt, last) - 1,
@@ -814,7 +826,7 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		/*else
 			first = first; * align to cylinder if you know how ... */
 		if (!last)
-			last = isinfreelist(first);
+			last = is_in_freelist(cxt, first);
 		if (last == 0)
 			fdisk_warnx(cxt, _("You will get a partition overlap "
 				"on the disk. Fix it first!"));
