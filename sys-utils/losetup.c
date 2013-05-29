@@ -603,12 +603,12 @@ int main(int argc, char **argv)
 	if (act != A_CREATE &&
 	    (sizelimit || lo_flags || showdev))
 		errx(EXIT_FAILURE,
-			_("the options %s are allowed to loop device setup only"),
+			_("the options %s are allowed during loop device setup only"),
 			"--{sizelimit,read-only,show}");
 
 	if ((flags & LOOPDEV_FL_OFFSET) &&
 	    act != A_CREATE && (act != A_SHOW || !file))
-		errx(EXIT_FAILURE, _("the option --offset is not allowed in this context."));
+		errx(EXIT_FAILURE, _("the option --offset is not allowed in this context"));
 
 	if (outarg && string_add_to_idarray(outarg, columns, ARRAY_SIZE(columns),
 					 &ncolumns, column_name_to_id) < 0)
@@ -624,7 +624,7 @@ int main(int argc, char **argv)
 			 * loopcxt struct.
 			 */
 			if (!hasdev && (res = loopcxt_find_unused(&lc))) {
-				warnx(_("not found unused device"));
+				warnx(_("cannot find an unused loop device"));
 				break;
 			}
 			if (flags & LOOPDEV_FL_OFFSET)
@@ -642,7 +642,7 @@ int main(int argc, char **argv)
 			if (res == 0)
 				break;			/* success */
 			if (errno != EBUSY) {
-				warn(_("%s: failed to setup loop device"),
+				warn(_("%s: failed to set up loop device"),
 					hasdev && loopcxt_get_fd(&lc) < 0 ?
 					    loopcxt_get_device(&lc) : file);
 				break;
@@ -671,7 +671,7 @@ int main(int argc, char **argv)
 		break;
 	case A_FIND_FREE:
 		if (loopcxt_find_unused(&lc))
-			warn(_("find unused loop device failed"));
+			warn(_("cannot find an unused loop device"));
 		else
 			printf("%s\n", loopcxt_get_device(&lc));
 		break;
@@ -687,7 +687,7 @@ int main(int argc, char **argv)
 		else
 			res = printf_loopdev(&lc);
 		if (res)
-			warn(_("%s"), loopcxt_get_device(&lc));
+			warn("%s", loopcxt_get_device(&lc));
 		break;
 	case A_SET_CAPACITY:
 		res = loopcxt_set_capacity(&lc);
