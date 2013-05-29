@@ -24,8 +24,8 @@
 #include <sys/stat.h>           /* stat */
 #include <assert.h>             /* assert */
 
-#include <endian.h>
 #include "nls.h"
+#include "all-io.h"
 #include "xalloc.h"
 
 #include "blkdev.h"
@@ -43,7 +43,62 @@ struct fdisk_sgi_label {
 	struct fdisk_label	head;		/* generic part */
 };
 
-static sgiinfo *fill_sgiinfo(void);
+/*
+ * Information within second on-disk block
+ */
+#define	SGI_INFO_MAGIC		0x00072959
+
+struct sgi_info {
+	unsigned int   magic;		/* looks like a magic number */
+	unsigned int   a2;
+	unsigned int   a3;
+	unsigned int   a4;
+	unsigned int   b1;
+	unsigned short b2;
+	unsigned short b3;
+	unsigned int   c[16];
+	unsigned short d[3];
+	unsigned char  scsi_string[50];
+	unsigned char  serial[137];
+	unsigned short check1816;
+	unsigned char  installer[225];
+};
+
+static struct sgi_info *sgi_new_info(void)
+{
+	struct sgi_info *info = calloc(1, sizeof(struct sgi_info));
+
+	if (!info)
+		return NULL;
+
+	info->magic = cpu_to_be32(SGI_INFO_MAGIC);
+	info->b1 = cpu_to_be32(-1);
+	info->b2 = cpu_to_be16(-1);
+	info->b3 = cpu_to_be16(1);
+
+	/* You may want to replace this string !!!!!!! */
+	strcpy((char *) info->scsi_string, "IBM OEM 0662S12         3 30");
+	strcpy((char *) info->serial, "0000");
+	info->check1816 = cpu_to_be16(18 * 256 + 16);
+	strcpy((char *) info->installer, "Sfx version 5.3, Oct 18, 1994");
+
+	return info;
+}
+
+static void sgi_free_info(struct sgi_info *info)
+{
+	free(info);
+}
+
+int sgi_create_info(struct fdisk_context *cxt)
+{
+	/* I keep SGI's habit to write the sgilabel to the second block */
+	sgilabel->volume[0].block_num = cpu_to_be32(2);
+	sgilabel->volume[0].num_bytes = cpu_to_be32(sizeof(struct sgi_info));
+	strncpy((char *) sgilabel->volume[0].name, "sgilabel", 8);
+	return 0;
+}
+
 
 /*
  * only dealing with free blocks here
@@ -311,19 +366,9 @@ sgi_set_bootfile(struct fdisk_context *cxt)
 	}
 }
 
-void create_sgiinfo(struct fdisk_context *cxt)
-{
-	/* I keep SGI's habit to write the sgilabel to the second block */
-	sgilabel->volume[0].block_num = cpu_to_be32(2);
-	sgilabel->volume[0].num_bytes = cpu_to_be32(sizeof(sgiinfo));
-	strncpy((char *) sgilabel->volume[0].name, "sgilabel", 8);
-}
-
-
 static int sgi_write_disklabel(struct fdisk_context *cxt)
 {
-
-	sgiinfo *info = NULL;
+	struct sgi_info *info = NULL;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -349,19 +394,17 @@ static int sgi_write_disklabel(struct fdisk_context *cxt)
 		if (lseek(cxt->dev_fd, (off_t) infostartblock *
 						SECTOR_SIZE, SEEK_SET) < 0)
 			goto err;
-
-		info = fill_sgiinfo();
+		info = sgi_new_info();
 		if (!info)
 			goto err;
-
-		if (write(cxt->dev_fd, info, SECTOR_SIZE) != SECTOR_SIZE)
+		if (write_all(cxt->dev_fd, info, sizeof(*info)))
 			goto err;
 	}
 
-	free(info);
+	sgi_free_info(info);
 	return 0;
 err:
-	free(info);
+	sgi_free_info(info);
 	return -errno;
 }
 
@@ -907,25 +950,6 @@ sgi_set_ncyl(void)
 
 /* _____________________________________________________________
  */
-
-static sgiinfo *fill_sgiinfo(void)
-{
-	sgiinfo *info = xcalloc(1, sizeof(sgiinfo));
-
-	if (!info)
-		return NULL;
-
-	info->magic = cpu_to_be32(SGI_INFO_MAGIC);
-	info->b1 = cpu_to_be32(-1);
-	info->b2 = cpu_to_be16(-1);
-	info->b3 = cpu_to_be16(1);
-	/* You may want to replace this string !!!!!!! */
-	strcpy((char *) info->scsi_string, "IBM OEM 0662S12         3 30");
-	strcpy((char *) info->serial, "0000");
-	info->check1816 = cpu_to_be16(18 * 256 + 16);
-	strcpy((char *) info->installer, "Sfx version 5.3, Oct 18, 1994");
-	return info;
-}
 
 static struct fdisk_parttype *sgi_get_parttype(struct fdisk_context *cxt, size_t n)
 {

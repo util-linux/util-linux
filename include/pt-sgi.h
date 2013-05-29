@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define	SGI_LABEL_MAGIC		0x0be5a941
+
 #define SGI_MAXPARTITIONS	16
 #define SGI_MAXVOLUMES		15
 

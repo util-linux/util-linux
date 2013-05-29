@@ -932,7 +932,7 @@ static void command_prompt(struct fdisk_context *cxt)
 			break;
 		case 'i':
 			if (fdisk_is_disklabel(cxt, SGI))
-				create_sgiinfo(cxt);
+				sgi_create_info(cxt);
 			else
 				unknown_command(c);
 			break;
