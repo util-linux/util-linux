@@ -132,10 +132,6 @@ static int sun_probe_label(struct fdisk_context *cxt)
 		return 1;
 	}
 
-	/* map first sector buffer to sun header */
-	sun = (struct fdisk_sun_label *) cxt->label;
-	sun->header = (struct sun_disklabel *) cxt->firstsector;
-
 	cxt->label->nparts_max = SUN_MAXPARTITIONS;
 	cxt->geom.heads = be16_to_cpu(sunlabel->nhead);
 	cxt->geom.cylinders = be16_to_cpu(sunlabel->ncyl);
@@ -216,7 +212,6 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	sunlabel = sun->header;
 
 	cxt->label->nparts_max = SUN_MAXPARTITIONS;
-	fdisk_zeroize_firstsector(cxt);
 
 	sunlabel->magic = cpu_to_be16(SUN_LABEL_MAGIC);
 	sunlabel->vtoc.version = cpu_to_be32(SUN_VTOC_VERSION);
