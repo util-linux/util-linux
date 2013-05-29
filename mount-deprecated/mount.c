@@ -1311,7 +1311,7 @@ loop_check(const char **spec, const char **type, int *flags,
       }
 
       if (loopcxt_init(&lc, 0) < 0) {
-	error(_("mount: tailed to initialize loopdev context"));
+	error(_("mount: failed to initialize loopdev context"));
 	return EX_FAIL;
       }
 
