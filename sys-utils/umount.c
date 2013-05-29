@@ -80,18 +80,18 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -a, --all               unmount all filesystems\n"), out);
-	fputs(_(" -A, --all-targets       unmount all mountpoins for the given device\n"
-	        "                         in the current namespace\n"), out);
+	fputs(_(" -A, --all-targets       unmount all mountpoins for the given device in the\n"
+	        "                           current namespace\n"), out);
 	fputs(_(" -c, --no-canonicalize   don't canonicalize paths\n"), out);
 	fputs(_(" -d, --detach-loop       if mounted loop device, also free this loop device\n"), out);
 	fputs(_("     --fake              dry run; skip the umount(2) syscall\n"), out);
 	fputs(_(" -f, --force             force unmount (in case of an unreachable NFS system)\n"), out);
 	fputs(_(" -i, --internal-only     don't call the umount.<type> helpers\n"), out);
 	fputs(_(" -n, --no-mtab           don't write to /etc/mtab\n"), out);
-	fputs(_(" -l, --lazy              detach the filesystem now, and cleanup all later\n"), out);
+	fputs(_(" -l, --lazy              detach the filesystem now, clean up things later\n"), out);
 	fputs(_(" -O, --test-opts <list>  limit the set of filesystems (use with -a)\n"), out);
 	fputs(_(" -R, --recursive         recursively unmount a target with all its children\n"), out);
-	fputs(_(" -r, --read-only         In case unmounting fails, try to remount read-only\n"), out);
+	fputs(_(" -r, --read-only         in case unmounting fails, try to remount read-only\n"), out);
 	fputs(_(" -t, --types <list>      limit the set of filesystem types\n"), out);
 	fputs(_(" -v, --verbose           say what is being done\n"), out);
 
@@ -207,7 +207,7 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 		 */
 		if (rc < 0)
 			return handle_generic_errors(rc,
-				_("%s: filesystem umounted, but mount(8) failed"),
+				_("%s: filesystem was unmounted, but mount(8) failed"),
 				tgt);
 
 		return MOUNT_EX_SOFTWARE;	/* internal error */
@@ -230,23 +230,23 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 		warnx(_("%s: can't write superblock"), tgt);
 		break;
 	case EBUSY:
-		warnx(_("%s: target is busy.\n"
-		       "        (In some cases useful info about processes that use\n"
-		       "         the device is found by lsof(8) or fuser(1))"),
+		warnx(_("%s: target is busy\n"
+		       "        (In some cases useful info about processes that\n"
+		       "         use the device is found by lsof(8) or fuser(1).)"),
 			tgt);
 		break;
 	case ENOENT:
 		warnx(_("%s: not found"), tgt);
 		break;
 	case EPERM:
-		warnx(_("%s: must be superuser to umount"), tgt);
+		warnx(_("%s: must be superuser to unmount"), tgt);
 		break;
 	case EACCES:
-		warnx(_("%s: block devices not permitted on fs"), tgt);
+		warnx(_("%s: block devices are not permitted on filesystem"), tgt);
 		break;
 	default:
 		errno = syserr;
-		warn(_("%s"), tgt);
+		warn("%s", tgt);
 		break;
 	}
 	return MOUNT_EX_FAIL;
@@ -275,7 +275,7 @@ static int umount_all(struct libmnt_context *cxt)
 			rc |= mk_exit_code(cxt, mntrc);
 
 			if (mnt_context_is_verbose(cxt))
-				printf("%-25s: successfully umounted\n", tgt);
+				printf("%-25s: successfully unmounted\n", tgt);
 		}
 	}
 

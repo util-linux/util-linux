@@ -182,7 +182,7 @@ static int inet_socket(const char *servername, const char *port,
 		hints.ai_family = AF_UNSPEC;
 		errcode = getaddrinfo(servername, p, &hints, &res);
 		if (errcode != 0)
-			errx(EXIT_FAILURE, _("getaddrinfo %s:%s: %s"),
+			errx(EXIT_FAILURE, _("failed to resolve name %s port %s: %s"),
 			     servername, p, gai_strerror(errcode));
 		if ((fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol)) == -1) {
 			freeaddrinfo(res);
@@ -199,7 +199,7 @@ static int inet_socket(const char *servername, const char *port,
 	}
 
 	if (i == 0)
-		errx(EXIT_FAILURE, _("failed to connect %s port %s"), servername, p);
+		errx(EXIT_FAILURE, _("failed to connect to %s port %s"), servername, p);
 
 	return fd;
 }
@@ -235,7 +235,7 @@ static void mysyslog(int fd, int logflags, int pri, char *tag, char *msg)
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] [message]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] [<message>]\n"), program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -T, --tcp             use TCP only\n"), out);

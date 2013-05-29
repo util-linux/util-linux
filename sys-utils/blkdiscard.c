@@ -121,7 +121,7 @@ int main(int argc, char **argv)
 	}
 
 	if (optind == argc)
-		errx(EXIT_FAILURE, _("no device specified."));
+		errx(EXIT_FAILURE, _("no device specified"));
 
 	path = argv[optind++];
 

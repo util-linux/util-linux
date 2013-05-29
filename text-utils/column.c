@@ -89,13 +89,13 @@ static void __attribute__((__noreturn__)) usage(int rc)
 	FILE *out = rc == EXIT_FAILURE ? stderr : stdout;
 
 	fputs(USAGE_HEADER, out);
-	fprintf(out, _(" %s [options] [file ...]\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] [<file>...]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -c, --columns <width>    width of output in number of characters\n"), out);
 	fputs(_(" -t, --table              create a table\n"), out);
 	fputs(_(" -s, --separator <string> possible table delimiters\n"), out);
-	fputs(_(" -o, --output-separator <string>\n"), out);
-	fputs(_("                          table output column separator, default is two spaces\n"), out);
+	fputs(_(" -o, --output-separator <string>\n"
+	        "                          columns separator for table output; default is two spaces\n"), out);
 	fputs(_(" -x, --fillrows           fill rows before columns\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);

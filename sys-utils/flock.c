@@ -49,7 +49,7 @@ static void __attribute__((__noreturn__)) usage(int ex)
 {
 	fprintf(stderr, USAGE_HEADER);
 	fprintf(stderr,
-		_(" %1$s [options] <file|directory> <command> [command args]\n"
+		_(" %1$s [options] <file|directory> <command> [<arguments>...]\n"
 		  " %1$s [options] <file|directory> -c <command>\n"
 		  " %1$s [options] <file descriptor number>\n"),
 		program_invocation_short_name);
