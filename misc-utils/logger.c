@@ -125,8 +125,7 @@ static int pencode(char *s)
 	return ((lev & LOG_PRIMASK) | (fac & LOG_FACMASK));
 }
 
-static int
-unix_socket(const char *path, const int socket_type)
+static int unix_socket(const char *path, const int socket_type)
 {
 	int fd, i;
 	static struct sockaddr_un s_addr;	/* AF_UNIX address of local logger */
@@ -159,8 +158,8 @@ unix_socket(const char *path, const int socket_type)
 	return fd;
 }
 
-static int
-inet_socket(const char *servername, const char *port, const int socket_type)
+static int inet_socket(const char *servername, const char *port,
+		       const int socket_type)
 {
 	int fd, errcode, i;
 	struct addrinfo hints, *res;
@@ -205,8 +204,8 @@ inet_socket(const char *servername, const char *port, const int socket_type)
 	return fd;
 }
 
-static void
-mysyslog(int fd, int logflags, int pri, char *tag, char *msg) {
+static void mysyslog(int fd, int logflags, int pri, char *tag, char *msg)
+{
        char buf[1000], pid[30], *cp, *tp;
        time_t now;
 
@@ -265,8 +264,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
  *	Reads from an input and arranges to write the result on the system
  *	log.
  */
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	int ch, logflags, pri, prio_prefix;
 	char *tag, buf[1024];
 	char *usock = NULL;
