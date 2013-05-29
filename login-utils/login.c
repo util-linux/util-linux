@@ -110,13 +110,13 @@ struct login_context {
 	char		vcsan[VCS_PATH_MAX];
 #endif
 
-	char		*thishost;			/* this machine */
-	char		*thisdomain;			/* this machine domain */
-	char		*hostname;			/* remote machine */
-	char		hostaddress[16];		/* remote address */
+	char		*thishost;		/* this machine */
+	char		*thisdomain;		/* this machine's domain */
+	char		*hostname;		/* remote machine */
+	char		hostaddress[16];	/* remote address */
 
 	pid_t		pid;
-	int		quiet;		/* 1 is hush file exists */
+	int		quiet;		/* 1 if hush file exists */
 
 	unsigned int	remote:1,	/* login -h */
 			nohost:1,	/* login -H */
@@ -125,7 +125,7 @@ struct login_context {
 };
 
 /*
- * This bounds the time given to login.  Not a define so it can
+ * This bounds the time given to login.  Not a define, so it can
  * be patched on machines where it's too small.
  */
 static unsigned int timeout = LOGIN_TIMEOUT;
@@ -154,7 +154,7 @@ static int is_consoletty(int fd)
  * soaking up pts's.  What they seem to hung up on is trying to write out the
  * message 'Login timed out after %d seconds' when the connection has already
  * been dropped.
- * What I did was add a second timeout while trying to write the message so
+ * What I did was add a second timeout while trying to write the message, so
  * the process just exits if the second timeout expires.
  */
 static void __attribute__ ((__noreturn__))
@@ -182,11 +182,11 @@ static void timedout(int sig __attribute__ ((__unused__)))
 
 /*
  * This handler allows to inform a shell about signals to login. If you have
- * (root) permissions you can kill all login childrent by one signal to login
- * process.
+ * (root) permissions, you can kill all login children by one signal to the
+ * login process.
  *
- * Also, parent who is session leader is able (before setsid() in child) to
- * inform child when controlling tty goes away (e.g. modem hangup, SIGHUP).
+ * Also, a parent who is session leader is able (before setsid() in the child)
+ * to inform the child when the controlling tty goes away (e.g. modem hangup).
  */
 static void sig_handler(int signal)
 {
@@ -199,8 +199,8 @@ static void sig_handler(int signal)
 }
 
 /*
- * Let use delay for all exit() calls when user is not authenticated or
- * session fully initialized (loginpam_session()).
+ * Let us delay all exit() calls when the user is not authenticated
+ * or the session not fully initialized (loginpam_session()).
  */
 static void __attribute__ ((__noreturn__)) sleepexit(int eval)
 {
@@ -228,12 +228,12 @@ static const char *get_thishost(struct login_context *cxt, const char **domain)
 }
 
 /*
- * Output the /etc/motd file
+ * Output the /etc/motd file.
  *
- * motd() determines the name of a login announcement file and outputs it to
- * the user's terminal at login time.  The MOTD_FILE configuration option is a
- * colon-delimited list of filenames. The empty MOTD_FILE option disables motd
- * printing at all.
+ * It determines the name of a login announcement file and outputs it to the
+ * user's terminal at login time.  The MOTD_FILE configuration option is a
+ * colon-delimited list of filenames.  An empty MOTD_FILE option disables
+ * message-of-the-day printing completely.
  */
 static void motd(void)
 {
@@ -266,15 +266,15 @@ static void motd(void)
 }
 
 /*
- * Nice and simple code provided by Linus Torvalds 16-Feb-93
- * Nonblocking stuff by Maciej W. Rozycki, macro@ds2.pg.gda.pl, 1999.
+ * Nice and simple code provided by Linus Torvalds 16-Feb-93.
+ * Non-blocking stuff by Maciej W. Rozycki, macro@ds2.pg.gda.pl, 1999.
  *
  * He writes: "Login performs open() on a tty in a blocking mode.
  * In some cases it may make login wait in open() for carrier infinitely,
  * for example if the line is a simplistic case of a three-wire serial
- * connection. I believe login should open the line in the non-blocking mode
+ * connection. I believe login should open the line in non-blocking mode,
  * leaving the decision to make a connection to getty (where it actually
- * belongs).
+ * belongs)."
  */
 static void open_tty(const char *tty)
 {
@@ -338,7 +338,7 @@ static void chown_tty(struct login_context *cxt)
 		if (chmod(cxt->vcsn, cxt->tty_mode))
 			chmod_err(cxt->vcsn, cxt->tty_mode);
 
-		if (chown(cxt->vcsan, uid, gid))			/* vcsa */
+		if (chown(cxt->vcsan, uid, gid))		/* vcsa */
 			chown_err(cxt->vcsan, uid, gid);
 		if (chmod(cxt->vcsan, cxt->tty_mode))
 			chmod_err(cxt->vcsan, cxt->tty_mode);
@@ -347,7 +347,7 @@ static void chown_tty(struct login_context *cxt)
 }
 
 /*
- * Reads the currect terminal path and initialize cxt->tty_* variables.
+ * Reads the currect terminal path and initializes cxt->tty_* variables.
  */
 static void init_tty(struct login_context *cxt)
 {
@@ -418,7 +418,7 @@ static void init_tty(struct login_context *cxt)
 
 
 /*
- * Log failed login attempts in _PATH_BTMP if that exists.
+ * Logs failed login attempts in _PATH_BTMP, if it exists.
  * Must be called only with username the name of an actual user.
  * The most common login failure is to give password instead of username.
  */
@@ -510,7 +510,7 @@ static void log_lastlog(struct login_context *cxt)
 		goto done;
 
 	/*
-	 * Print last log message
+	 * Print last log message.
 	 */
 	if (!cxt->quiet) {
 		if (read(fd, (char *)&ll, sizeof(ll)) == sizeof(ll) &&
@@ -546,7 +546,7 @@ done:
 }
 
 /*
- * Update wtmp and utmp logs
+ * Update wtmp and utmp logs.
  */
 static void log_utmp(struct login_context *cxt)
 {
@@ -562,7 +562,7 @@ static void log_utmp(struct login_context *cxt)
 	 * login sometimes overwrites the runlevel entry in /var/run/utmp,
 	 * confusing sysvinit. I added a test for the entry type, and the
 	 * problem was gone. (In a runlevel entry, st_pid is not really a pid
-	 * but some number calculated from the previous and current runlevel).
+	 * but some number calculated from the previous and current runlevel.)
 	 * -- Michael Riepe <michael@stud.uni-hannover.de>
 	 */
 	while ((utp = getutent()))
@@ -572,8 +572,7 @@ static void log_utmp(struct login_context *cxt)
 			break;
 
 	/* If we can't find a pre-existing entry by pid, try by line.
-	 * BSD network daemons may rely on this.
-	 */
+	 * BSD network daemons may rely on this. */
 	if (utp == NULL && cxt->tty_name) {
 		setutent();
 		ut.ut_type = LOGIN_PROCESS;
@@ -582,7 +581,7 @@ static void log_utmp(struct login_context *cxt)
 	}
 
 	/* If we can't find a pre-existing entry by pid and line, try it by id.
-	 * Very stupid telnetd deamons don't set up utmp at all (kzak) */
+	 * Very stupid telnetd daemons don't set up utmp at all. (kzak) */
 	if (utp == NULL && cxt->tty_number) {
 	     setutent();
 	     ut.ut_type = DEAD_PROCESS;
@@ -708,7 +707,7 @@ static void loginpam_err(pam_handle_t *pamh, int retcode)
 }
 
 /*
- * Composes "<host> login: " string; or returns "login: " is -H is given
+ * Composes "<host> login: " string; or returns "login: " if -H is given.
  */
 static const char *loginpam_get_prompt(struct login_context *cxt)
 {
@@ -734,7 +733,7 @@ static pam_handle_t *init_loginpam(struct login_context *cxt)
 
 	/*
 	 * username is initialized to NULL and if specified on the command line
-	 * it is set.  Therefore, we are safe not setting it to anything
+	 * it is set.  Therefore, we are safe not setting it to anything.
 	 */
 	rc = pam_start(cxt->remote ? "remote" : "login",
 		       cxt->username, &cxt->conv, &pamh);
@@ -746,8 +745,7 @@ static pam_handle_t *init_loginpam(struct login_context *cxt)
 	}
 
 	/* hostname & tty are either set to NULL or their correct values,
-	 * depending on how much we know
-	 */
+	 * depending on how much we know. */
 	rc = pam_set_item(pamh, PAM_RHOST, cxt->hostname);
 	if (is_pam_failure(rc))
 		loginpam_err(pamh, rc);
@@ -765,7 +763,7 @@ static pam_handle_t *init_loginpam(struct login_context *cxt)
 	if (is_pam_failure(rc))
 		loginpam_err(pamh, rc);
 
-	/* we need't the original username. We have to follow PAM. */
+	/* We don't need the original username. We have to follow PAM. */
 	free(cxt->username);
 	cxt->username = NULL;
 	cxt->pamh = pamh;
@@ -804,8 +802,8 @@ static void loginpam_auth(struct login_context *cxt)
 
 		if (rc == PAM_USER_UNKNOWN && !show_unknown)
 			/*
-			 * logging unknown usernames may be a security issue if
-			 * an user enter her password instead of her login name
+			 * Logging unknown usernames may be a security issue if
+			 * a user enters her password instead of her login name.
 			 */
 			cxt->username = NULL;
 		else
@@ -869,7 +867,7 @@ static void loginpam_acct(struct login_context *cxt)
 		loginpam_err(pamh, rc);
 
 	/*
-	 * Grab the user information out of the password file for future usage
+	 * Grab the user information out of the password file for future use.
 	 * First get the username that we are actually using, though.
 	 */
 	rc = loginpam_get_username(pamh, &cxt->username);
@@ -886,15 +884,15 @@ static void loginpam_acct(struct login_context *cxt)
 }
 
 /*
- * Note that position of the pam_setcred() call is discussable:
+ * Note that the position of the pam_setcred() call is discussable:
  *
- *  - the PAM docs recommends pam_setcred() before pam_open_session()
+ *  - the PAM docs recommend pam_setcred() before pam_open_session()
  *  - but the original RFC http://www.opengroup.org/rfc/mirror-rfc/rfc86.0.txt
  *    uses pam_setcred() after pam_open_session()
  *
  * The old login versions (before year 2011) followed the RFC. This is probably
- * not optimal, because there could be dependence between some session modules
- * and user's credentials.
+ * not optimal, because there could be a dependence between some session modules
+ * and the user's credentials.
  *
  * The best is probably to follow openssh and call pam_setcred() before and
  * after pam_open_session().                -- kzak@redhat.com (18-Nov-2011)
@@ -923,9 +921,9 @@ static void loginpam_session(struct login_context *cxt)
 }
 
 /*
- * We need to check effective UID/GID. For example $HOME could be on root
- * squashed NFS or on NFS with UID mapping and access(2) uses real UID/GID.
- * The open(2) seems as the surest solution.
+ * We need to check the effective UID/GID. For example, $HOME could be on a
+ * root-squashed NFS or on an NFS with UID mapping, and access(2) uses the
+ * real UID/GID.  Then open(2) seems as the surest solution.
  * -- kzak@redhat.com (10-Apr-2009)
  */
 static int effective_access(const char *path, int mode)
@@ -937,19 +935,19 @@ static int effective_access(const char *path, int mode)
 }
 
 /*
- * Check per accout or global hush-login setting.
+ * Check the per-account or the global hush-login setting.
  *
  * Hushed mode is enabled:
  *
- * a) if global (e.g. /etc/hushlogins) hush file exists:
+ * a) if a global (e.g. /etc/hushlogins) hush file exists:
  *     1) for ALL ACCOUNTS if the file is empty
- *     2) for the current user if the username or shell are found in the file
+ *     2) for the current user if the username or shell is found in the file
  *
- * b) if ~/.hushlogin file exists
+ * b) if a ~/.hushlogin file exists
  *
- * The ~/.hushlogin is ignored if the global hush file exists.
+ * The ~/.hushlogin file is ignored if the global hush file exists.
  *
- * The HUSHLOGIN_FILE login.def variable overwrites the default hush filename.
+ * The HUSHLOGIN_FILE login.def variable overrides the default hush filename.
  *
  * Note that shadow-utils login(1) does not support "a1)". The "a1)" is
  * necessary if you want to use PAM for "Last login" message.
@@ -957,13 +955,13 @@ static int effective_access(const char *path, int mode)
  * -- Karel Zak <kzak@redhat.com> (26-Aug-2011)
  *
  *
- * Per-account check requires some explanation: As root we may not be able to
- * read the directory of the user if it is on an NFS mounted filesystem. We
- * temporarily set our effective uid to the user-uid making sure that we keep
- * root privs. in the real uid.
+ * The per-account check requires some explanation: As root we may not be able
+ * to read the directory of the user if it is on an NFS-mounted filesystem. We
+ * temporarily set our effective uid to the user-uid, making sure that we keep
+ * root privileges in the real uid.
  *
  * A portable solution would require a fork(), but we rely on Linux having the
- * BSD setreuid()
+ * BSD setreuid().
  */
 static int get_hushlogin_status(struct passwd *pwd)
 {
@@ -986,7 +984,7 @@ static int get_hushlogin_status(struct passwd *pwd)
 
 		file = files[i];
 
-		/* Global hush-file*/
+		/* global hush-file */
 		if (*file == '/') {
 			struct stat st;
 			FILE *f;
@@ -1013,7 +1011,7 @@ static int get_hushlogin_status(struct passwd *pwd)
 			return 0;		/* ignore per-account files */
 		}
 
-		/* Per-account setting */
+		/* per-account setting */
 		if (strlen(pwd->pw_dir) + sizeof(file) + 2 > sizeof(buf))
 			continue;
 		else {
@@ -1041,8 +1039,8 @@ static int get_hushlogin_status(struct passwd *pwd)
 }
 
 /*
- * Detach the controlling terminal, fork, restore syslog stuff and create a new
- * session.
+ * Detach the controlling terminal, fork, restore syslog stuff, and create
+ * a new session.
  */
 static void fork_session(struct login_context *cxt)
 {
@@ -1059,15 +1057,15 @@ static void fork_session(struct login_context *cxt)
 	sigaction(SIGHUP, &sa, &oldsa_hup);	/* ignore when TIOCNOTTY */
 
 	/*
-	 * detach the controlling tty
-	 * -- we needn't the tty in parent who waits for child only.
-	 *    The child calls setsid() that detach from the tty as well.
+	 * Detach the controlling tty.
+	 * We don't need the tty in a parent who only waits for a child.
+	 * The child calls setsid() that detaches from the tty as well.
 	 */
 	ioctl(0, TIOCNOTTY, NULL);
 
 	/*
-	 * We have care about SIGTERM, because leave PAM session without
-	 * pam_close_session() is pretty bad thing.
+	 * We have to beware of SIGTERM, because leaving a PAM session
+	 * without pam_close_session() is a pretty bad thing.
 	 */
 	sa.sa_handler = sig_handler;
 	sigaction(SIGHUP, &sa, NULL);
@@ -1076,14 +1074,11 @@ static void fork_session(struct login_context *cxt)
 	closelog();
 
 	/*
-	 * We must fork before setuid() because we need to call
+	 * We must fork before setuid(), because we need to call
 	 * pam_close_session() as root.
 	 */
 	child_pid = fork();
 	if (child_pid < 0) {
-		/*
-		 * fork() error
-		 */
 		warn(_("fork failed"));
 
 		pam_setcred(cxt->pamh, PAM_DELETE_CRED);
@@ -1093,7 +1088,7 @@ static void fork_session(struct login_context *cxt)
 
 	if (child_pid) {
 		/*
-		 * parent - wait for child to finish, then cleanup session
+		 * parent - wait for child to finish, then clean up session
 		 */
 		close(0);
 		close(1);
@@ -1186,7 +1181,7 @@ static void init_environ(struct login_context *cxt)
 }
 
 /*
- * Called for -h option, initialize cxt->{hostname,hostaddress}
+ * This is called for the -h option, initializes cxt->{hostname,hostaddress}.
  */
 static void init_remote_info(struct login_context *cxt, char *remotehost)
 {
@@ -1302,8 +1297,8 @@ int main(int argc, char **argv)
 		char *p = *argv;
 		cxt.username = xstrdup(p);
 
-		/* wipe name - some people mistype their password here */
-		/* (of course we are too late, but perhaps this helps a little ..) */
+		/* Wipe the name - some people mistype their password here. */
+		/* (Of course we are too late, but perhaps this helps a little...) */
 		while (*p)
 			*p++ = ' ';
 	}
@@ -1327,8 +1322,8 @@ int main(int argc, char **argv)
 	/*
 	 * Authentication may be skipped (for example, during krlogin, rlogin,
 	 * etc...), but it doesn't mean that we can skip other account checks.
-	 * The account could be disabled or password expired (although
-	 * kerberos ticket is valid).         -- kzak@redhat.com (22-Feb-2006)
+	 * The account could be disabled or the password has expired (although
+	 * the kerberos ticket is valid).      -- kzak@redhat.com (22-Feb-2006)
 	 */
 	loginpam_acct(&cxt);
 
@@ -1345,10 +1340,9 @@ int main(int argc, char **argv)
 
 	/*
 	 * Initialize the supplementary group list. This should be done before
-	 * pam_setcred because the PAM modules might add groups during
-	 * pam_setcred.
+	 * pam_setcred, because PAM modules might add groups during that call.
 	 *
-         * For root we don't call initgroups, instead we call setgroups with
+	 * For root we don't call initgroups, instead we call setgroups with
 	 * group 0. This avoids the need to step through the whole group file,
 	 * which can cause problems if NIS, NIS+, LDAP or something similar
 	 * is used and the machine has network problems.
@@ -1363,7 +1357,7 @@ int main(int argc, char **argv)
 	}
 
 	/*
-	 * Open PAM session (after successful authentication and account check)
+	 * Open PAM session (after successful authentication and account check).
 	 */
 	loginpam_session(&cxt);
 
@@ -1420,12 +1414,12 @@ int main(int argc, char **argv)
 	}
 
 	/*
-	 * Detach the controlling terminal, fork() and create, new session
-	 * and reinilizalize syslog stuff.
+	 * Detach the controlling terminal, fork, and create a new session
+	 * and reinitialize syslog stuff.
 	 */
 	fork_session(&cxt);
 
-	/* discard permissions last so can't get killed and drop core */
+	/* discard permissions last so we can't get killed and drop core */
 	if (setuid(pwd->pw_uid) < 0 && pwd->pw_uid) {
 		syslog(LOG_ALERT, _("setuid() failed"));
 		exit(EXIT_FAILURE);
@@ -1475,5 +1469,3 @@ int main(int argc, char **argv)
 
 	exit(EXIT_SUCCESS);
 }
-
-
