@@ -499,7 +499,7 @@ modify_environment (const struct passwd *pw, const char *shell)
     }
   else
     {
-      /* Set HOME, SHELL, and if not becoming a super-user,
+      /* Set HOME, SHELL, and (if not becoming a superuser)
 	 USER and LOGNAME.  */
       if (change_environment)
         {

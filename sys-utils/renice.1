@@ -83,12 +83,12 @@ PIDs 987 and 32, plus all processes owned by the users daemon and root:
 .TP
 .B "       renice" +1 987 -u daemon root -p 32
 .SH NOTES
-Users other than the super-user may only alter the priority of processes they
+Users other than the superuser may only alter the priority of processes they
 own, and can only monotonically increase their ``nice value'' (for security
 reasons) within the range 0 to
 .BR PRIO_MAX \ (20),
 unless a nice resource limit is set (Linux 2.6.12 and higher).  The
-super-user may alter the priority of any process and set the priority to any
+superuser may alter the priority of any process and set the priority to any
 value in the range
 .BR PRIO_MIN \ (\-20)
 to
@@ -104,7 +104,7 @@ to map user names to user IDs
 .BR getpriority (2),
 .BR setpriority (2)
 .SH BUGS
-Non super-users can not increase scheduling priorities of their own processes,
+Non-superusers cannot increase scheduling priorities of their own processes,
 even if they were the ones that decreased the priorities in the first place.
 .PP
 The Linux kernel (at least version 2.0.0) and linux libc (at least version
