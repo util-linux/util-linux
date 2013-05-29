@@ -810,6 +810,11 @@ su_main (int argc, char **argv, int mode)
       ++optind;
     }
 
+  if (simulate_login && !change_environment) {
+    warnx(_("ignore --preserve-environment, it's mutually exclusive to --login."));
+    change_environment = true;
+  }
+
   switch (su_mode) {
   case RUNUSER_MODE:
     if (runuser_user) {
