@@ -632,7 +632,7 @@ usage (int status)
     fputs (_("\n"
     "Run <command> with the effective user ID and group ID of <user>.  If -u is\n"
     "not given, fall back to su(1)-compatible semantics and execute standard shell.\n"
-    "The options -l, -c, -f, -s are mutually exclusive to -u.\n"), stdout);
+    "The options -c, -f, -l, and -s are mutually exclusive with -u.\n"), stdout);
 
     fputs(USAGE_OPTIONS, stdout);
 
