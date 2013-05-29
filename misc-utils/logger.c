@@ -235,24 +235,26 @@ mysyslog(int fd, int logflags, int pri, char *tag, char *msg) {
 
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
-	fputs(_("\nUsage:\n"), out);
-	fprintf(out,
-	      _(" %s [options] [message]\n"), program_invocation_short_name);
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(" %s [options] [message]\n"), program_invocation_short_name);
 
-	fputs(_("\nOptions:\n"), out);
+	fputs(USAGE_OPTIONS, out);
 	fputs(_(" -T, --tcp             use TCP only\n"), out);
-	fputs(_(" -d, --udp             use UDP only\n"
-		" -i, --id              log the process ID too\n"
-		" -f, --file <file>     log the contents of this file\n"
-		" -h, --help            display this help text and exit\n"), out);
-	fputs(_(" -n, --server <name>   write to this remote syslog server\n"
-		" -P, --port <number>   use this UDP port\n"
-		" -p, --priority <prio> mark given message with this priority\n"
-		" -s, --stderr          output message to standard error as well\n"), out);
+	fputs(_(" -d, --udp             use UDP only\n"), out);
+	fputs(_(" -i, --id              log the process ID too\n"), out);
+	fputs(_(" -f, --file <file>     log the contents of this file\n"), out);
+	fputs(_(" -n, --server <name>   write to this remote syslog server\n"), out);
+	fputs(_(" -P, --port <number>   use this UDP port\n"), out);
+	fputs(_(" -p, --priority <prio> mark given message with this priority\n"), out);
 	fputs(_("     --prio-prefix     look for a prefix on every line read from stdin\n"), out);
-	fputs(_(" -t, --tag <tag>       mark every line with this tag\n"
-		" -u, --socket <socket> write to this Unix socket\n"
-		" -V, --version         output version information and exit\n\n"), out);
+	fputs(_(" -s, --stderr          output message to standard error as well\n"), out);
+	fputs(_(" -t, --tag <tag>       mark every line with this tag\n"), out);
+	fputs(_(" -u, --socket <socket> write to this Unix socket\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("logger(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
