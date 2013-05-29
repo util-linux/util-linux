@@ -1277,7 +1277,7 @@ int main(int argc, char **argv)
 		case 'h':
 			if (getuid()) {
 				fprintf(stderr,
-					_("login: -h for super-user only.\n"));
+					_("login: -h is for superuser only\n"));
 				exit(EXIT_FAILURE);
 			}
 			init_remote_info(&cxt, optarg);
@@ -1292,7 +1292,7 @@ int main(int argc, char **argv)
 			return EXIT_SUCCESS;
 		case '?':
 		default:
-			fprintf(stderr, _("usage: login [ -p ] [ -h host ] [ -H ] [ -f username | username ]\n"));
+			fprintf(stderr, _("Usage: login [-p] [-h <host>] [-H] [[-f] <username>]\n"));
 			exit(EXIT_FAILURE);
 		}
 	argc -= optind;
