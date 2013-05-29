@@ -229,8 +229,10 @@ static int sgi_probe_label(struct fdisk_context *cxt)
 	sgi->header = (struct sgi_disklabel *) cxt->firstsector;
 	sgilabel = sgi->header;
 
-	if (be32_to_cpu(sgilabel->magic) != SGI_LABEL_MAGIC)
+	if (be32_to_cpu(sgilabel->magic) != SGI_LABEL_MAGIC) {
+		sgi->header = NULL;
 		return 0;
+	}
 
 	/*
 	 * test for correct checksum
@@ -890,31 +892,6 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 			  " > 33.8 GB."), cxt->dev_path, cxt->geom.cylinders);
 	}
 #endif
-	/*
-	 * Convert old MBR to SGI label, make it DEPRECATED, this feature
-	 * has to be handled in by any top-level fdisk command.
-	 *
-	for (i = 0; i < 4; i++) {
-		old[i].sysid = 0;
-		if (mbr_is_valid_magic(cxt->firstsector)) {
-			if (get_part_table(i)->sys_ind) {
-				old[i].sysid = get_part_table(i)->sys_ind;
-				old[i].start = get_start_sect(get_part_table(i));
-				old[i].nsect = get_nr_sects(get_part_table(i));
-				if (debug)
-					printf(_("ID=%02x\tSTART=%d\tLENGTH=%d\n"),
-					       old[i].sysid, old[i].start, old[i].nsect);
-			}
-		}
-	}
-
-	for (i = 0; i < 4; i++)
-		if (old[i].sysid) {
-			printf(_("Trying to keep parameters of partitions already set.\n"));
-			break;
-		}
-	*/
-
 	fdisk_zeroize_firstsector(cxt);
 	sgi = (struct fdisk_sgi_label *) cxt->label;
 	sgi->header = (struct sgi_disklabel *) cxt->firstsector;
