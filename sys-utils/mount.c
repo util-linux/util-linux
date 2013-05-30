@@ -682,6 +682,8 @@ static void sanitize_paths(struct libmnt_context *cxt)
 
 static void append_option(struct libmnt_context *cxt, const char *opt)
 {
+	if (opt && (*opt == '=' || *opt == '\'' || *opt == '\"' || isblank(*opt)))
+		errx(MOUNT_EX_USAGE, _("unsupported option format: %s"), opt);
 	if (mnt_context_append_options(cxt, opt))
 		err(MOUNT_EX_SYSERR, _("failed to append option '%s'"), opt);
 }

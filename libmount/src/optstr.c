@@ -77,7 +77,7 @@ static int mnt_optstr_parse_next(char **optstr,	 char **name, size_t *namesz,
 			open_quote ^= 1;	/* reverse the status */
 		if (open_quote)
 			continue;		/* still in quoted block */
-		if (!sep && *p == '=')
+		if (!sep && p > start && *p == '=')
 			sep = p;		/* name and value separator */
 		if (*p == ',')
 			stop = p;		/* terminate the option item */
@@ -540,7 +540,7 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs,
 	if (user)
 		*user = NULL;
 
-	while(!mnt_optstr_next_option(&str, &name, &namesz, &val, &valsz)) {
+	while (!mnt_optstr_next_option(&str, &name, &namesz, &val, &valsz)) {
 		int rc = 0;
 		const struct libmnt_optmap *ent = NULL;
 		const struct libmnt_optmap *m =
