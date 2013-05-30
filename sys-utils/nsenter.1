@@ -1,44 +1,45 @@
-.TH NSENTER 1 "January 2013" "util-linux" "User Commands"
+.TH NSENTER 1 "May 2013" "util-linux" "User Commands"
 .SH NAME
 nsenter \- run program with namespaces of other processes
 .SH SYNOPSIS
 .B nsenter
-.RI [ options ]
-.RI [ program ]
-.RI [ arguments ]
+.RB [ options ]
+.RI [ program
+.RI [ arguments ]]
 .SH DESCRIPTION
 Enters the namespaces of one or more other processes and then executes the specified
 program.  Enterable namespaces are:
 .TP
 .B mount namespace
-mounting and unmounting filesystems will not affect rest of the system
+Mounting and unmounting filesystems will not affect the rest of the system
 .RB ( CLONE_\:NEWNS
-flag), except for filesystems which are explicitly marked as shared (by mount
---make-\:shared).  See /proc\:/self\:/mountinfo for the shared flag.
+flag), except for filesystems which are explicitly marked as shared (with
+\fBmount --make-\:shared\fP; see \fI/proc\:/self\:/mountinfo\fP for the
+\fBshared\fP flag).
 .TP
 .B UTS namespace
-setting hostname, domainname will not affect rest of the system
+Setting hostname or domainname will not affect the rest of the system.
 .RB ( CLONE_\:NEWUTS
-flag).
+flag)
 .TP
 .B IPC namespace
-process will have independent namespace for System V message queues, semaphore
-sets and shared memory segments
+The process will have an independent namespace for System V message queues,
+semaphore sets and shared memory segments.
 .RB ( CLONE_\:NEWIPC
-flag).
+flag)
 .TP
 .B network namespace
-process will have independent IPv4 and IPv6 stacks, IP routing tables, firewall
-rules, the
+The process will have independent IPv4 and IPv6 stacks, IP routing tables,
+firewall rules, the
 .I /proc\:/net
 and
 .I /sys\:/class\:/net
-directory trees, sockets etc.
+directory trees, sockets, etc.
 .RB ( CLONE_\:NEWNET
-flag).
+flag)
 .TP
 .B PID namespace
-children will have a set of PID to process mappings separate from the
+Children will have a set of PID to process mappings separate from the
 .B nsenter
 process
 .RB ( CLONE_\:NEWPID
@@ -46,23 +47,18 @@ flag).
 .B nsenter
 will fork by default if changing the PID namespace, so that the new program
 and its children share the same PID namespace and are visible to each other.
-If \-\-no\-fork is used, the new program will be exec'ed without forking.
+If \fB\-\-no\-fork\fP is used, the new program will be exec'ed without forking.
 .TP
 .B user namespace
-process will have distinct set of UIDs, GIDs and capabilities
+The process will have a distinct set of UIDs, GIDs and capabilities.
 .RB ( CLONE_\:NEWUSER
-flag).
+flag)
 .TP
-See the
-.BR clone (2)
-for exact semantics of the flags.
+See \fBclone\fP(2) for the exact semantics of the flags.
 .TP
-If program is not given, run ``${SHELL}'' (default: /bin\:/sh).
+If \fIprogram\fP is not given, then ``${SHELL}'' is run (default: /bin\:/sh).
 
 .SH OPTIONS
-Argument with square brakets, such as [\fIfile\fR], means optional argument.
-Command line syntax to specify optional argument \-\-mount=/path\:/to\:/file.
-Please notice the equals sign.
 .TP
 \fB\-t\fR, \fB\-\-target\fR \fIpid\fP
 Specify a target process to get contexts from.  The paths to the contexts
@@ -99,56 +95,56 @@ the working directory respectively
 .PD
 .RE
 .TP
-\fB\-m\fR, \fB\-\-mount\fR [\fIfile\fR]
-Enter the mount namespace.  If no file is specified enter the mount namespace
-of the target process.  If file is specified enter the mount namespace
+\fB\-m\fR, \fB\-\-mount\fR[=\fIfile\fR]
+Enter the mount namespace.  If no file is specified, enter the mount namespace
+of the target process.  If file is specified, enter the mount namespace
 specified by file.
 .TP
-\fB\-u\fR, \fB\-\-uts\fR [\fIfile\fR]
-Enter the UTS namespace.  If no file is specified enter the UTS namespace of
-the target process.  If file is specified enter the UTS namespace specified by
+\fB\-u\fR, \fB\-\-uts\fR[=\fIfile\fR]
+Enter the UTS namespace.  If no file is specified, enter the UTS namespace of
+the target process.  If file is specified, enter the UTS namespace specified by
 file.
 .TP
-\fB\-i\fR, \fB\-\-ipc\fR [\fIfile\fR]
-Enter the IPC namespace.  If no file is specified enter the IPC namespace of
-the target process.  If file is specified enter the IPC namespace specified by
+\fB\-i\fR, \fB\-\-ipc\fR[=\fIfile\fR]
+Enter the IPC namespace.  If no file is specified, enter the IPC namespace of
+the target process.  If file is specified, enter the IPC namespace specified by
 file.
 .TP
-\fB\-n\fR, \fB\-\-net\fR [\fIfile\fR]
-Enter the network namespace.  If no file is specified enter the network
-namespace of the target process.  If file is specified enter the network
+\fB\-n\fR, \fB\-\-net\fR[=\fIfile\fR]
+Enter the network namespace.  If no file is specified, enter the network
+namespace of the target process.  If file is specified, enter the network
 namespace specified by file.
 .TP
-\fB\-p\fR, \fB\-\-pid\fR [\fIfile\fR]
-Enter the PID namespace.  If no file is specified enter the PID namespace of
-the target process.  If file is specified enter the PID namespace specified by
+\fB\-p\fR, \fB\-\-pid\fR[=\fIfile\fR]
+Enter the PID namespace.  If no file is specified, enter the PID namespace of
+the target process.  If file is specified, enter the PID namespace specified by
 file.
 .TP
-\fB\-U\fR, \fB\-\-user\fR [\fIfile\fR]
-Enter the user namespace.  If no file is specified enter the user namespace of
-the target process.  If file is specified enter the user namespace specified by
+\fB\-U\fR, \fB\-\-user\fR[=\fIfile\fR]
+Enter the user namespace.  If no file is specified, enter the user namespace of
+the target process.  If file is specified, enter the user namespace specified by
 file.
 .TP
-\fB\-r\fR, \fB\-\-root\fR [\fIdirectory\fR]
-Set the root directory.  If no directory is specified set the root directory to
-the root directory of the target process.  If directory is specified set the
+\fB\-r\fR, \fB\-\-root\fR[=\fIdirectory\fR]
+Set the root directory.  If no directory is specified, set the root directory to
+the root directory of the target process.  If directory is specified, set the
 root directory to the specified directory.
 .TP
-\fB\-w\fR, \fB\-\-wd\fR [\fIdirectory\fR]
-Set the working directory.  If no directory is specified set the working
+\fB\-w\fR, \fB\-\-wd\fR[=\fIdirectory\fR]
+Set the working directory.  If no directory is specified, set the working
 directory to the working directory of the target process.  If directory is
-specified set the working directory to the specified directory.
+specified, set the working directory to the specified directory.
 .TP
 \fB\-F\fR, \fB\-\-no-fork\fR
-Do not fork before exec'ing the specified program.  By default when entering a
-pid namespace enter calls fork before calling exec so that the children will be
-in the newly entered pid namespace.
+Do not fork before exec'ing the specified program.  By default, when entering a
+PID namespace, \fBnsenter\fP calls \fBfork\fP before calling \fBexec\fP so that
+any children will also be in the newly entered PID namespace.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
-Print a help message.
+Display a help message and exit.
 .SH SEE ALSO
 .BR setns (2),
 .BR clone (2)

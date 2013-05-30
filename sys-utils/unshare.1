@@ -1,63 +1,65 @@
 .\" Process this file with
 .\" groff -man -Tascii lscpu.1
 .\"
-.TH UNSHARE 1 "January 2013" "util-linux" "User Commands"
+.TH UNSHARE 1 "May 2013" "util-linux" "User Commands"
 .SH NAME
 unshare \- run program with some namespaces unshared from parent
 .SH SYNOPSIS
 .B unshare
-.RI [ options ]
-program
+.RB [ options ]
+.I program
 .RI [ arguments ]
 .SH DESCRIPTION
-Unshares specified namespaces from parent process and then executes specified
-program. Unshareable namespaces are:
+Unshares the indicated namespaces from the parent process and then executes
+the specified program.  Unshareable namespaces are:
 .TP
 .BR "mount namespace"
-mounting and unmounting filesystems will not affect rest of the system
+Mounting and unmounting filesystems will not affect the rest of the system
 (\fBCLONE_NEWNS\fP flag), except for filesystems which are explicitly marked as
-shared (by mount --make-shared). See /proc/self/mountinfo for the shared flags.
+shared (with \fBmount --make-shared\fP; see \fI/proc/self/mountinfo\fP for the
+\fBshared\fP flags).
 .TP
 .BR "UTS namespace"
-setting hostname, domainname will not affect rest of the system
-(\fBCLONE_NEWUTS\fP flag).
+Setting hostname or domainname will not affect the rest of the system.
+(\fBCLONE_NEWUTS\fP flag)
 .TP
 .BR "IPC namespace"
-process will have independent namespace for System V message queues, semaphore
-sets and shared memory segments (\fBCLONE_NEWIPC\fP flag).
+The process will have an independent namespace for System V message queues,
+semaphore sets and shared memory segments.  (\fBCLONE_NEWIPC\fP flag)
 .TP
 .BR "network namespace"
-process will have independent IPv4 and IPv6 stacks, IP routing tables, firewall
-rules, the \fI/proc/net\fP and \fI/sys/class/net\fP directory trees, sockets
-etc. (\fBCLONE_NEWNET\fP flag).
+The process will have independent IPv4 and IPv6 stacks, IP routing tables,
+firewall rules, the \fI/proc/net\fP and \fI/sys/class/net\fP directory trees,
+sockets, etc.  (\fBCLONE_NEWNET\fP flag)
 .TP
 .BR "pid namespace"
-children will have a distinct set of pid to process mappings than their parent.
-(\fBCLONE_NEWPID\fP flag).
+Children will have a distinct set of PID to process mappings from their parent.
+(\fBCLONE_NEWPID\fP flag)
 .TP
 .BR "user namespace"
-process will have distinct set of uids, gids and capabilities. (\fBCLONE_NEWUSER\fP flag).
+The process will have a distinct set of UIDs, GIDs and capabilities.
+(\fBCLONE_NEWUSER\fP flag)
 .TP
-See the \fBclone\fR(2) for exact semantics of the flags.
+See \fBclone\fR(2) for the exact semantics of the flags.
 .SH OPTIONS
 .TP
 .BR \-h , " \-\-help"
-Print a help message,
-.TP
-.BR \-m , " \-\-mount"
-Unshare the mount namespace,
-.TP
-.BR \-u , " \-\-uts"
-Unshare the UTS namespace,
+Display a help message and exit.
 .TP
 .BR \-i , " \-\-ipc"
-Unshare the IPC namespace,
+Unshare the IPC namespace.
+.TP
+.BR \-m , " \-\-mount"
+Unshare the mount namespace.
 .TP
 .BR \-n , " \-\-net"
 Unshare the network namespace.
 .TP
 .BR \-p , " \-\-pid"
 Unshare the pid namespace.
+.TP
+.BR \-u , " \-\-uts"
+Unshare the UTS namespace.
 .TP
 .BR \-U , " \-\-user"
 Unshare the user namespace.
