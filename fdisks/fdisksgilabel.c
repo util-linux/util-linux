@@ -47,7 +47,7 @@ struct fdisk_sgi_label {
 	struct sgi_freeblocks {
 		unsigned int first;
 		unsigned int last;
-	} freelist[17];
+	} freelist[SGI_MAXPARTITIONS + 1];
 };
 
 static struct fdisk_parttype sgi_parttypes[] =
@@ -536,8 +536,8 @@ static void sort(void *base0, size_t num, size_t size, struct fdisk_context *cxt
 
 static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 {
-	int Index[16];		/* list of valid partitions */
-	int sortcount = 0;	/* number of used partitions, i.e. non-zero lengths */
+	int Index[SGI_MAXPARTITIONS];	/* list of valid partitions */
+	int sortcount = 0;		/* number of used partitions, i.e. non-zero lengths */
 	int entire = 0, i = 0;
 	unsigned int start = 0;
 	long long gap = 0;	/* count unused blocks */
@@ -548,9 +548,11 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 	assert(fdisk_is_disklabel(cxt, SGI));
 
 	clear_freelist(cxt);
-	for (i=0; i<16; i++) {
+	memset(Index, 0, sizeof(Index));
+
+	for (i=0; i < SGI_MAXPARTITIONS; i++) {
 		if (sgi_get_num_sectors(cxt, i) != 0) {
-			Index[sortcount++]=i;
+			Index[sortcount++] = i;
 			if (sgi_get_sysid(cxt, i) == SGI_TYPE_ENTIRE_DISK
 			    && entire++ == 1) {
 				if (verbose)
@@ -773,8 +775,10 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 {
 	struct fdisk_sgi_label *sgi;
 	char mesg[256];
-	unsigned int first=0, last=0;
+	unsigned int first = 0, last = 0;
+	struct fdisk_ask *ask;
 	int sys = t ? t->type : SGI_TYPE_XFS;
+	int rc;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -805,24 +809,41 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		fdisk_warnx(cxt, _("You got a partition overlap on the disk. Fix it first!"));
 		return -EINVAL;
 	}
+
 	snprintf(mesg, sizeof(mesg), _("First %s"),
 			fdisk_context_get_unit(cxt, SINGULAR));
 	for (;;) {
+		ask = fdisk_new_ask();
+		if (!ask)
+			return -ENOMEM;
+
+		fdisk_ask_set_query(ask, mesg);
+		fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
+
 		if (sys == SGI_TYPE_ENTIRE_DISK) {
 			last = sgi_get_lastblock(cxt);
-			first = read_int(cxt, 0, 0, last-1, 0, mesg);
-			if (first != 0)
-				fdisk_info(cxt, _("It is highly recommended that "
-					"eleventh partition covers the entire "
-					"disk and is of type `SGI volume'"));
+			fdisk_ask_number_set_low(ask,     0);	/* minimal */
+			fdisk_ask_number_set_default(ask, 0);	/* default */
+			fdisk_ask_number_set_high(ask, last - 1); /* maximal */
 		} else {
 			first = sgi->freelist[0].first;
 			last  = sgi->freelist[0].last;
-			first = read_int(cxt, scround(cxt, first),
-					      scround(cxt, first),
-					      scround(cxt, last) - 1,
-					 0, mesg);
+			fdisk_ask_number_set_low(ask,     fdisk_scround(cxt, first));	/* minimal */
+			fdisk_ask_number_set_default(ask, fdisk_scround(cxt, first));	/* default */
+			fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, last) - 1); /* maximal */
 		}
+		rc = fdisk_do_ask(cxt, ask);
+		first = fdisk_ask_number_get_result(ask);
+		fdisk_free_ask(ask);
+
+		if (rc)
+			return rc;
+
+		if (first && sys == SGI_TYPE_ENTIRE_DISK)
+			fdisk_info(cxt, _("It is highly recommended that "
+					"eleventh partition covers the entire "
+					"disk and is of type `SGI volume'"));
+
 		if (fdisk_context_use_cylinders(cxt))
 			first *= fdisk_context_get_units_per_sector(cxt);
 		/*else
@@ -835,22 +856,45 @@ static int sgi_add_partition(struct fdisk_context *cxt,
 		else
 			break;
 	}
-	snprintf(mesg, sizeof(mesg), _(" Last %s"),
-			fdisk_context_get_unit(cxt, SINGULAR));
-	last = read_int(cxt, scround(cxt, first),
-			scround(cxt, last)-1,
-			scround(cxt, last)-1,
-			scround(cxt, first), mesg)+1;
+
+	snprintf(mesg, sizeof(mesg),
+		 _("Last %s or +%s or +size{K,M,G,T,P}"),
+		 fdisk_context_get_unit(cxt, SINGULAR),
+		 fdisk_context_get_unit(cxt, PLURAL));
+
+	ask = fdisk_new_ask();
+	if (!ask)
+		return -ENOMEM;
+
+	fdisk_ask_set_query(ask, mesg);
+	fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
+
+	fdisk_ask_number_set_low(ask,     fdisk_scround(cxt, first));	/* minimal */
+	fdisk_ask_number_set_default(ask, fdisk_scround(cxt, last) - 1);/* default */
+	fdisk_ask_number_set_high(ask,    fdisk_scround(cxt, last) - 1);/* maximal */
+	fdisk_ask_number_set_base(ask,    fdisk_scround(cxt, first));
+
 	if (fdisk_context_use_cylinders(cxt))
-		last *= fdisk_context_get_units_per_sector(cxt);
-	/*else
-		last = last; * align to cylinder if You know how ... */
-	if (sys == SGI_TYPE_ENTIRE_DISK && (first != 0 || last != sgi_get_lastblock(cxt)))
+		fdisk_ask_number_set_unit(ask,
+			     cxt->sector_size *
+			     fdisk_context_get_units_per_sector(cxt));
+	else
+		fdisk_ask_number_set_unit(ask,cxt->sector_size);
+
+	rc = fdisk_do_ask(cxt, ask);
+	last = fdisk_ask_number_get_result(ask) + 1;
+
+	fdisk_free_ask(ask);
+	if (rc)
+		return rc;
+
+	if (sys == SGI_TYPE_ENTIRE_DISK
+	    && (first != 0 || last != sgi_get_lastblock(cxt)))
 		fdisk_info(cxt, _("It is highly recommended that eleventh "
 			"partition covers the entire disk and is of type "
 			"`SGI volume'"));
 
-	sgi_set_partition(cxt, n, first, last-first, sys);
+	sgi_set_partition(cxt, n, first, last - first, sys);
 	cxt->label->nparts_cur = count_used_partitions(cxt);
 
 	return 0;
@@ -861,12 +905,6 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	struct fdisk_sgi_label *sgi;
 	struct sgi_disklabel *sgilabel;
 	struct hd_geometry geometry;
-	struct {
-		unsigned int start;
-		unsigned int nsect;
-		int sysid;
-	} old[4];
-	int i=0;
 	sector_t llsectors;
 	int res; 		/* the result from the ioctl */
 	int sec_fac; 		/* the sector factor */
@@ -956,12 +994,6 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	cxt->label->nparts_max = SGI_MAXPARTITIONS;
 	sgi_set_entire(cxt);
 	sgi_set_volhdr(cxt);
-
-	for (i = 0; i < 4; i++) {
-		if (old[i].sysid) {
-			sgi_set_partition(cxt, i, old[i].start, old[i].nsect, old[i].sysid);
-		}
-	}
 
 	cxt->label->nparts_cur = count_used_partitions(cxt);
 	return 0;
