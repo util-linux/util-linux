@@ -36,14 +36,14 @@
 column - columnate lists
 .SH SYNOPSIS
 .B column
-.RI [ options ]
-.IR file ...
+.RB [ options ]
+.RI [ file ...]
 .SH DESCRIPTION
 The
 .B column
-utility formats its input into multiple columns.  Rows
-are filled before columns.  Input is taken from \fIfile\fR or, by
-default, from standard input.  Empty lines are ignored.
+utility formats its input into multiple columns.  By default, rows
+are filled before columns.  Input is taken from \fIfile\fR, or
+otherwise from standard input.  Empty lines are ignored.
 .PP
 .SH OPTIONS
 .IP "\fB\-c, \-\-columns\fP \fIwidth\fP"
@@ -51,15 +51,16 @@ Output is formatted to a width specified as number of characters.
 .IP "\fB\-t, \-\-table\fP"
 Determine the number of columns the input contains and create a table.
 Columns are delimited with whitespace, by default, or with the characters
-supplied using the separator. Table output is useful for pretty-printing.
+supplied using the \fB\-\-output-separator\fP option.
+Table output is useful for pretty-printing.
 .IP "\fB\-s, \-\-separator\fP \fIseparators\fP"
-Specify possible table delimiters (default is whitespace).
-.IP "\fB\-o, \-\-output-separator\fP \fIseparators\fP"
-Specify table output delimiter (default is two whitespaces).
+Specify the possible input item delimiters (default is whitespace).
+.IP "\fB\-o, \-\-output-separator\fP \fIstring\fP"
+Specify the columns delimiter for table output (default is two spaces).
 .IP "\fB\-x, \-\-fillrows\fP"
 Fill columns before filling rows.
 .IP "\fB\-h, \-\-help\fP"
-Print help and exit.
+Display a help text and exit.
 .SH ENVIRONMENT
 The environment variable COLUMNS is used to determine the size of
 the screen if no other information is available.
