@@ -43,7 +43,7 @@ struct sgi_device_parameter {
 	uint16_t nsect;		/* sectors/tracks in cyl 0 or vol 0 */
 	uint16_t bytes;
 	uint16_t ilfact;
-	uint32_t flags;		/* controller flags */
+	uint32_t flags;		/* SGI_DEVPARAM_* controller flags */
 	uint32_t datarate;
 	uint32_t retries_on_error;
 	uint32_t ms_per_word;
@@ -54,6 +54,17 @@ struct sgi_device_parameter {
 	uint16_t xylogics_readgate;
 	uint16_t xylogics_writecont;
 } __attribute__((packed));
+
+enum {
+	SGI_DEVPARAM_SECTOR_SLIP	= 0x01,
+	SGI_DEVPARAM_SECTOR_FWD		= 0x02,
+	SGI_DEVPARAM_TRACK_FWD		= 0x04,
+	SGI_DEVPARAM_TRACK_MULTIVOL	= 0x08,
+	SGI_DEVPARAM_IGNORE_ERRORS	= 0x10,
+	SGI_DEVPARAM_RESEEK		= 0x20,
+	SGI_DEVPARAM_CMDTAGQ_ENABLE	= 0x40
+};
+
 
 struct sgi_disklabel {
 	uint32_t magic;			/* magic number */

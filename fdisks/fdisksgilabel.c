@@ -933,8 +933,10 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	/* sectors/track */
 	sgilabel->devparam.bytes	= cpu_to_be16(cxt->sector_size);
 	sgilabel->devparam.ilfact	= cpu_to_be16(1);
-	sgilabel->devparam.flags	= cpu_to_be32(TRACK_FWD|\
-							  IGNORE_ERRORS|RESEEK);
+	sgilabel->devparam.flags	= cpu_to_be32(
+			SGI_DEVPARAM_TRACK_FWD
+			| SGI_DEVPARAM_IGNORE_ERRORS
+			| SGI_DEVPARAM_RESEEK);
 	sgilabel->devparam.datarate	= cpu_to_be32(0);
 	sgilabel->devparam.retries_on_error	= cpu_to_be32(1);
 	sgilabel->devparam.ms_per_word		= cpu_to_be32(0);

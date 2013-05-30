@@ -4,18 +4,7 @@
 #include "bitops.h"
 #include "pt-sgi.h"
 
-/*
- * controller flags
- */
-#define	SECTOR_SLIP	0x01
-#define	SECTOR_FWD	0x02
-#define	TRACK_FWD	0x04
-#define	TRACK_MULTIVOL	0x08
-#define	IGNORE_ERRORS	0x10
-#define	RESEEK		0x20
-#define	CMDTAGQ_ENABLE	0x40
 
-#
 /* toggle flags */
 #define SGI_FLAG_BOOT	1
 #define SGI_FLAG_SWAP	2
