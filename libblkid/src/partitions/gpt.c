@@ -176,7 +176,7 @@ static int is_pmbr_valid(blkid_probe pr)
 	p = (struct dos_partition *) (data + BLKID_MSDOS_PT_OFFSET);
 
 	for (i = 0; i < 4; i++, p++) {
-		if (p->sys_type == BLKID_GPT_PARTITION)
+		if (p->sys_type == MBR_GPT_PARTITION)
 			goto ok;
 	}
 failed:

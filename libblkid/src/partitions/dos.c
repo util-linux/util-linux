@@ -24,19 +24,19 @@ static const struct dos_subtypes {
 	unsigned char type;
 	const struct blkid_idinfo *id;
 } dos_nested[] = {
-	{ BLKID_FREEBSD_PARTITION, &bsd_pt_idinfo },
-	{ BLKID_NETBSD_PARTITION, &bsd_pt_idinfo },
-	{ BLKID_OPENBSD_PARTITION, &bsd_pt_idinfo },
-	{ BLKID_UNIXWARE_PARTITION, &unixware_pt_idinfo },
-	{ BLKID_SOLARIS_X86_PARTITION, &solaris_x86_pt_idinfo },
-	{ BLKID_MINIX_PARTITION, &minix_pt_idinfo }
+	{ MBR_FREEBSD_PARTITION, &bsd_pt_idinfo },
+	{ MBR_NETBSD_PARTITION, &bsd_pt_idinfo },
+	{ MBR_OPENBSD_PARTITION, &bsd_pt_idinfo },
+	{ MBR_UNIXWARE_PARTITION, &unixware_pt_idinfo },
+	{ MBR_SOLARIS_X86_PARTITION, &solaris_x86_pt_idinfo },
+	{ MBR_MINIX_PARTITION, &minix_pt_idinfo }
 };
 
 static inline int is_extended(struct dos_partition *p)
 {
-	return (p->sys_type == BLKID_DOS_EXTENDED_PARTITION ||
-		p->sys_type == BLKID_W95_EXTENDED_PARTITION ||
-		p->sys_type == BLKID_LINUX_EXTENDED_PARTITION);
+	return (p->sys_type == MBR_DOS_EXTENDED_PARTITION ||
+		p->sys_type == MBR_W95_EXTENDED_PARTITION ||
+		p->sys_type == MBR_LINUX_EXTENDED_PARTITION);
 }
 
 static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
@@ -175,7 +175,7 @@ static int probe_dos_pt(blkid_probe pr,
 	 * GPT uses valid MBR
 	 */
 	for (p = p0, i = 0; i < 4; i++, p++) {
-		if (p->sys_type == BLKID_GPT_PARTITION) {
+		if (p->sys_type == MBR_GPT_PARTITION) {
 			DBG(LOWPROBE, blkid_debug("probably GPT -- ignore"));
 			goto nothing;
 		}

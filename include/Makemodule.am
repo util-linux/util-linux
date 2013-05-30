@@ -49,4 +49,5 @@ dist_noinst_HEADERS += \
 	include/xalloc.h \
 	include/xgetpass.h \
 	include/pt-sgi.h \
+	include/pt-mbr.h \
 	include/pt-sun.h

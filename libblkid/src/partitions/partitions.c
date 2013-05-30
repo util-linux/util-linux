@@ -1191,9 +1191,9 @@ static int partition_get_logical_type(blkid_partition par)
 		if (par->partno > 4)
 			return 'L';	/* logical */
 
-	        if(par->type == BLKID_DOS_EXTENDED_PARTITION ||
-                   par->type == BLKID_W95_EXTENDED_PARTITION ||
-		   par->type == BLKID_LINUX_EXTENDED_PARTITION)
+	        if(par->type == MBR_DOS_EXTENDED_PARTITION ||
+                   par->type == MBR_W95_EXTENDED_PARTITION ||
+		   par->type == MBR_LINUX_EXTENDED_PARTITION)
 			return 'E';
 	}
 	return 'P';

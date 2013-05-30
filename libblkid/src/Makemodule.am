@@ -30,7 +30,6 @@ libblkid_la_SOURCES = \
 	\
 	libblkid/src/partitions/aix.c \
 	libblkid/src/partitions/aix.h \
-	libblkid/src/partitions/blkid_parttypes.h \
 	libblkid/src/partitions/bsd.c \
 	libblkid/src/partitions/dos.c \
 	libblkid/src/partitions/dos.h \

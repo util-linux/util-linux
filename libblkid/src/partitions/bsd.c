@@ -133,13 +133,13 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 	parent = blkid_partlist_get_parent(ls);
 	if (parent) {
 		switch(blkid_partition_get_type(parent)) {
-		case BLKID_FREEBSD_PARTITION:
+		case MBR_FREEBSD_PARTITION:
 			name = "freebsd";
 			break;
-		case BLKID_NETBSD_PARTITION:
+		case MBR_NETBSD_PARTITION:
 			name = "netbsd";
 			break;
-		case BLKID_OPENBSD_PARTITION:
+		case MBR_OPENBSD_PARTITION:
 			name = "openbsd";
 			break;
 		default:

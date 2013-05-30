@@ -2,7 +2,7 @@
 #define BLKID_PARTITIONS_H
 
 #include "blkidP.h"
-#include "blkid_parttypes.h"
+#include "pt-mbr.h"
 
 extern int blkid_partitions_get_flags(blkid_probe pr);
 
