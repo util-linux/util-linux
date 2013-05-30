@@ -30,10 +30,12 @@
 
 #include "blkdev.h"
 
+#include "bitops.h"
+#include "pt-sgi.h"
+#include "pt-mbr.h"
 #include "common.h"
 #include "fdisk.h"
 #include "fdisksgilabel.h"
-#include "fdiskdoslabel.h"
 
 /*
  * in-memory fdisk SGI stuff
@@ -64,10 +66,10 @@ static struct fdisk_parttype sgi_parttypes[] =
 	{SGI_TYPE_XFSLOG,	N_("SGI xfslog")},
 	{SGI_TYPE_XLV,		N_("SGI xlv")},
 	{SGI_TYPE_XVM,		N_("SGI xvm")},
-	{LINUX_SWAP,		N_("Linux swap")},
-	{LINUX_NATIVE,		N_("Linux native")},
-	{LINUX_LVM,		N_("Linux LVM")},
-	{LINUX_RAID,		N_("Linux RAID")},
+	{MBR_LINUX_SWAP_PARTITION, N_("Linux swap")},
+	{MBR_LINUX_DATA_PARTITION, N_("Linux native")},
+	{MBR_LINUX_LVM_PARTITION, N_("Linux LVM")},
+	{MBR_LINUX_RAID_PARTITION, N_("Linux RAID")},
 	{0, NULL }
 };
 
@@ -298,11 +300,11 @@ sgi_list_table(struct fdisk_context *cxt, int xtra)
 			printf(
 				"%2zd: %s %4s %9ld %9ld %9ld  %2x  %s\n",
 /* fdisk part number */   i+1,
-/* device */              partname(cxt->dev_path, kpi, w+2),
+/* device */              fdisk_partname(cxt->dev_path, kpi),
 /* flags */               (sgi_get_swappartition(cxt) == (int) i) ? "swap" :
 /* flags */               (sgi_get_bootpartition(cxt) == (int) i) ? "boot" : "    ",
-/* start */               (long) scround(cxt, start),
-/* end */                 (long) scround(cxt, start+len)-1,
+/* start */               (long) fdisk_scround(cxt, start),
+/* end */                 (long) fdisk_scround(cxt, start+len)-1,
 /* no odd flag on end */  (long) len,
 /* type id */             t->type,
 /* type name */           t->name);
@@ -437,7 +439,7 @@ static int sgi_write_disklabel(struct fdisk_context *cxt)
 
 	if (lseek(cxt->dev_fd, 0, SEEK_SET) < 0)
 		goto err;
-	if (write(cxt->dev_fd, sgilabel, SECTOR_SIZE) != SECTOR_SIZE)
+	if (write_all(cxt->dev_fd, sgilabel, DEFAULT_SECTOR_SIZE))
 		goto err;
 	if (!strncmp((char *) sgilabel->volume[0].name, "sgilabel", 8)) {
 		/*
@@ -448,7 +450,7 @@ static int sgi_write_disklabel(struct fdisk_context *cxt)
 			= be32_to_cpu(sgilabel->volume[0].block_num);
 
 		if (lseek(cxt->dev_fd, (off_t) infostartblock *
-						SECTOR_SIZE, SEEK_SET) < 0)
+					DEFAULT_SECTOR_SIZE, SEEK_SET) < 0)
 			goto err;
 		info = sgi_new_info();
 		if (!info)
@@ -652,7 +654,7 @@ static int verify_disklabel(struct fdisk_context *cxt, int verbose)
 			fdisk_info(cxt, _("The swap partition does not exist."));
 
 		else if (sgi_get_sysid(cxt, sgi_get_swappartition(cxt)) != SGI_TYPE_SWAP
-		    && sgi_get_sysid(cxt, sgi_get_swappartition(cxt)) != LINUX_SWAP)
+		    && sgi_get_sysid(cxt, sgi_get_swappartition(cxt)) != MBR_LINUX_SWAP_PARTITION)
 			fdisk_info(cxt, _("The swap partition has no swap type."));
 
 		if (sgi_check_bootfile(cxt, "/unix"))
