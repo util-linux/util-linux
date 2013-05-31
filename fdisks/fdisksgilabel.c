@@ -1074,13 +1074,14 @@ static int sgi_set_parttype(struct fdisk_context *cxt,
 
 	if (((t->type != SGI_TYPE_ENTIRE_DISK) && (t->type != SGI_TYPE_VOLHDR))
 	    && (sgi_get_start_sector(cxt, i) < 1)) {
-		read_chars(cxt,
-			_("It is highly recommended that the partition at offset 0\n"
-			  "is of type \"SGI volhdr\", the IRIX system will rely on it to\n"
-			  "retrieve from its directory standalone tools like sash and fx.\n"
-			  "Only the \"SGI volume\" entire disk section may violate this.\n"
-			  "Type YES if you are sure about tagging this partition differently.\n"));
-		if (strcmp (line_ptr, _("YES\n")))
+		int yes = 0;
+		fdisk_ask_yesno(cxt,
+			_("It is highly recommended that the partition at offset 0 "
+			  "is of type \"SGI volhdr\", the IRIX system will rely on it to "
+			  "retrieve from its directory standalone tools like sash and fx. "
+			  "Only the \"SGI volume\" entire disk section may violate this. "
+			  "Are you sure about tagging this partition differently?"), &yes);
+		if (!yes)
 			return 1;
 	}
 
