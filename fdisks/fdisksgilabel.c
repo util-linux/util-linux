@@ -240,75 +240,125 @@ static int sgi_probe_label(struct fdisk_context *cxt)
 	return 1;
 }
 
-void sgi_list_table(struct fdisk_context *cxt, int xtra)
+static int sgi_list_table(struct fdisk_context *cxt)
 {
+	struct tt *tb = NULL;
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 	struct sgi_device_parameter *sgiparam = &sgilabel->devparam;
-	size_t i, w;
-	int kpi = 0;		/* kernel partition ID */
+	size_t i, used;
+	char *p;
+	int rc;
 
-	w = strlen(cxt->dev_path);
+	if (fdisk_context_display_details(cxt))
+		fdisk_info(cxt, _(
+			"Label geometry: %d heads, %llu sectors\n"
+			"                %llu cylinders, %d physical cylinders\n"
+			"                %d extra sects/cyl, interleave %d:1\n"),
+			cxt->geom.heads, cxt->geom.sectors,
+			cxt->geom.cylinders, be16_to_cpu(sgiparam->pcylcount),
+			(int) sgiparam->sparecyl, be16_to_cpu(sgiparam->ilfact));
 
-	if (xtra) {
-		printf(_("\nDisk %s (SGI disk label): %d heads, %llu sectors\n"
-			 "%llu cylinders, %d physical cylinders\n"
-			 "%d extra sects/cyl, interleave %d:1\n"
-			 "%s\n"
-			 "Units = %s of %d * %ld bytes\n\n"),
-			       cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders,
-			       be16_to_cpu(sgiparam->pcylcount),
-		       (int) sgiparam->sparecyl, be16_to_cpu(sgiparam->ilfact),
-		       (char *)sgilabel,
-		       fdisk_context_get_unit(cxt, PLURAL),
-		       fdisk_context_get_units_per_sector(cxt),
-                       cxt->sector_size);
-	} else {
-		printf(_("\nDisk %s (SGI disk label): "
-			 "%d heads, %llu sectors, %llu cylinders\n"
-			 "Units = %s of %d * %ld bytes\n\n"),
-		       cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders,
-		       fdisk_context_get_unit(cxt, PLURAL),
-		       fdisk_context_get_units_per_sector(cxt),
-                       cxt->sector_size);
+	/*
+	 * Partitions
+	 */
+	tb = tt_new_table(TT_FL_FREEDATA);
+	if (!tb)
+		return -ENOMEM;
+
+	tt_define_column(tb, _("Pt#"),      3, TT_FL_RIGHT);
+	tt_define_column(tb, _("Device"), 0.2, 0);
+	tt_define_column(tb, _("Info"),     2, 0);
+	tt_define_column(tb, _("Start"),    9, TT_FL_RIGHT);
+	tt_define_column(tb, _("End"),      9, TT_FL_RIGHT);
+	tt_define_column(tb, _("Sectors"),  9, TT_FL_RIGHT);
+	tt_define_column(tb, _("Id"),       2, TT_FL_RIGHT);
+	tt_define_column(tb, _("System"), 0.2, TT_FL_TRUNC);
+
+	for (i = 0, used = 1; i < cxt->label->nparts_max; i++) {
+		uint32_t start, len;
+		struct fdisk_parttype *t;
+		struct tt_line *ln;
+
+		if (sgi_get_num_sectors(cxt, i) == 0)
+			continue;
+
+		ln = tt_add_line(tb, NULL);
+		if (!ln)
+			continue;
+		start = sgi_get_start_sector(cxt, i);
+		len = sgi_get_num_sectors(cxt, i);
+		t = fdisk_get_partition_type(cxt, i);
+
+		if (asprintf(&p, "%zu:", i + 1) > 0)
+			tt_line_set_data(ln, 0, p);	/* # */
+		p = fdisk_partname(cxt->dev_path, used++);
+		if (p)
+			tt_line_set_data(ln, 1, p);	/* Device */
+
+		p = sgi_get_swappartition(cxt) == (int) i ? "swap" :
+		    sgi_get_bootpartition(cxt) == (int) i ? "boot" : NULL;
+		if (p)
+			tt_line_set_data(ln, 2, strdup(p));	/* Info */
+
+		if (asprintf(&p, "%ju", (uintmax_t) fdisk_scround(cxt, start)) > 0)
+			tt_line_set_data(ln, 3, p);	/* Start */
+		if (asprintf(&p, "%ju",	(uintmax_t) fdisk_scround(cxt, start + len) - 1) > 0)
+			tt_line_set_data(ln, 4, p);	/* End */
+		if (asprintf(&p, "%ju",	(uintmax_t) len) > 0)
+			tt_line_set_data(ln, 5, p);	/* Sectors*/
+		if (asprintf(&p, "%2x", t->type) > 0)
+			tt_line_set_data(ln, 6, p);	/* type ID */
+		if (t->name)
+			tt_line_set_data(ln, 7, strdup(t->name)); /* type Name */
+		fdisk_free_parttype(t);
 	}
-	printf(_("----- partitions -----\n"
-		 "Pt# %*s  Info     Start       End   Sectors  Id  System\n"),
-	       (int) w + 1, _("Device"));
-	for (i = 0 ; i < cxt->label->nparts_max; i++) {
-		if (sgi_get_num_sectors(cxt, i)) {
-			uint32_t start = sgi_get_start_sector(cxt, i);
-			uint32_t len = sgi_get_num_sectors(cxt, i);
-			struct fdisk_parttype *t = fdisk_get_partition_type(cxt, i);
 
-			kpi++;		/* only count nonempty partitions */
-			printf(
-				"%2zd: %s %4s %9ld %9ld %9ld  %2x  %s\n",
-/* fdisk part number */   i+1,
-/* device */              fdisk_partname(cxt->dev_path, kpi),
-/* flags */               (sgi_get_swappartition(cxt) == (int) i) ? "swap" :
-/* flags */               (sgi_get_bootpartition(cxt) == (int) i) ? "boot" : "    ",
-/* start */               (long) fdisk_scround(cxt, start),
-/* end */                 (long) fdisk_scround(cxt, start+len)-1,
-/* no odd flag on end */  (long) len,
-/* type id */             t->type,
-/* type name */           t->name);
+	rc = fdisk_print_table(cxt, tb);
+	tt_free_table(tb);
+	if (rc)
+		return rc;
 
-			fdisk_free_parttype(t);
-		}
+	/*
+	 * Volumes
+	 */
+	tb = tt_new_table(TT_FL_FREEDATA);
+	if (!tb)
+		return -ENOMEM;
+
+	tt_define_column(tb, _("#"),       3, TT_FL_RIGHT);
+	tt_define_column(tb, _("Name"),  0.2, 0);
+	tt_define_column(tb, _("Sector"),  2, TT_FL_RIGHT);
+	tt_define_column(tb, _("Size"),    9, TT_FL_RIGHT);
+
+	for (i = 0, used = 0; i < SGI_MAXVOLUMES; i++) {
+		struct tt_line *ln;
+		uint32_t start = be32_to_cpu(sgilabel->volume[i].block_num),
+			 len = be32_to_cpu(sgilabel->volume[i].num_bytes);
+		if (!len)
+			continue;
+		ln = tt_add_line(tb, NULL);
+		if (!ln)
+			continue;
+		if (asprintf(&p, "%zu:", i) > 0)
+			tt_line_set_data(ln, 0, p);		/* # */
+		if (*sgilabel->volume[i].name)
+			tt_line_set_data(ln, 1,
+				strndup((char *) sgilabel->volume[i].name,
+				        sizeof(sgilabel->volume[i].name)));	/* Name */
+		if (asprintf(&p, "%ju", (uintmax_t) start) > 0)
+			tt_line_set_data(ln, 2, p);	/* Sector */
+		if (asprintf(&p, "%ju",	(uintmax_t) len) > 0)
+			tt_line_set_data(ln, 3, p);	/* Size */
+		used++;
 	}
-	printf(_("----- Bootinfo -----\nBootfile: %s\n"
-		 "----- Directory Entries -----\n"),
-	       sgilabel->boot_file);
-	for (i = 0 ; i < SGI_MAXVOLUMES; i++) {
-		if (sgilabel->volume[i].num_bytes) {
-			uint32_t start = be32_to_cpu(sgilabel->volume[i].block_num);
-			uint32_t len = be32_to_cpu(sgilabel->volume[i].num_bytes);
-			unsigned char *name = sgilabel->volume[i].name;
-			printf(_("%2zd: %-10s sector%5u size%8u\n"),
-			       i, name, (unsigned int) start,
-			       (unsigned int) len);
-		}
-	}
+
+	if (used)
+		rc = fdisk_print_table(cxt, tb);
+	tt_free_table(tb);
+
+	fdisk_info(cxt, _("Bootfile: %s"), sgilabel->boot_file);
+
+	return rc;
 }
 
 unsigned int sgi_get_start_sector(struct fdisk_context *cxt, int i)
@@ -678,7 +728,7 @@ static int sgi_gaps(struct fdisk_context *cxt)
 /* returns partition index of first entry marked as entire disk */
 static int sgi_entire(struct fdisk_context *cxt)
 {
-	size_t i
+	size_t i;
 
 	for (i = 0; i < SGI_MAXPARTITIONS; i++)
 		if (sgi_get_sysid(cxt, i) == SGI_TYPE_ENTIRE_DISK)
@@ -1126,6 +1176,7 @@ static const struct fdisk_label_operations sgi_operations =
 	.write		= sgi_write_disklabel,
 	.verify		= sgi_verify_disklabel,
 	.create		= sgi_create_disklabel,
+	.list		= sgi_list_table,
 	.part_add	= sgi_add_partition,
 	.part_delete	= sgi_delete_partition,
 	.part_get_type	= sgi_get_parttype,

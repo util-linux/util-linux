@@ -560,7 +560,9 @@ list_disk_geometry(struct fdisk_context *cxt) {
 	}
 	printf(_(", %llu sectors\n"), cxt->total_sectors);
 
-	if (is_dos_compatible(cxt) || fdisk_is_disklabel(cxt, SUN))
+	if (is_dos_compatible(cxt)
+	    || fdisk_is_disklabel(cxt, SUN)
+	    || fdisk_is_disklabel(cxt, SGI))
 		printf(_("Geometry: %d heads, %llu sectors/track, %llu cylinders\n"),
 		       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
 
@@ -585,16 +587,10 @@ list_disk_geometry(struct fdisk_context *cxt) {
 
 static void list_table(struct fdisk_context *cxt, int xtra)
 {
-	if (fdisk_is_disklabel(cxt, SGI)) {
-		sgi_list_table(cxt, xtra);
-		return;
-	}
-
 	list_disk_geometry(cxt);
 
 	if (fdisk_is_disklabel(cxt, OSF))
 		xbsd_print_disklabel(cxt, xtra);
-
 	else if (fdisk_is_disklabel(cxt, DOS))
 		dos_list_table(cxt, xtra);
 	else

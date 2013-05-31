@@ -10,7 +10,6 @@
 #define SGI_FLAG_SWAP	2
 
 /* fdisksgilabel.c */
-extern void	sgi_list_table( struct fdisk_context *cxt, int xtra );
 extern int  sgi_change_sysid(struct fdisk_context *cxt, int i, int sys);
 extern unsigned int	sgi_get_start_sector(struct fdisk_context *cxt, int i );
 extern unsigned int	sgi_get_num_sectors(struct fdisk_context *cxt, int i );
