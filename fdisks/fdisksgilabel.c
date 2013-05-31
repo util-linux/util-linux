@@ -1,39 +1,24 @@
 /*
  *
- * fdisksgilabel.c
+ * Copyright (C) 2012 Davidlohr Bueso <dave@gnu.org>
+ *               2013 Karel Zak <kzak@redhat.com>
  *
- * Copyright (C) Andreas Neuper, Sep 1998.
- *	This file may be modified and redistributed under
- *	the terms of the GNU Public License.
+ * This is re-written version for libfdisk, the original was fdisksgilabel.c
+ * from util-linux fdisk, by:
  *
- * 1999-03-20 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
- *	Internationalization
- *
- * 2003-03-20 Phillip Kesling <pkesling@sgi.com>
- *      Some fixes
- *
- * 2012-06-16 Davidlohr Bueso <dave@gnu.org>
- *      Adapt to fdisk context and add heap sort for partitions
+ *               Andreas Neuper, Sep 1998.
+ *               Arnaldo Carvalho de Melo <acme@conectiva.com.br>, Mar 1999
+ *               Phillip Kesling <pkesling@sgi.com>, Mar 2003
  */
-
-#include <stdio.h>              /* stderr */
-#include <stdlib.h>		/* exit */
-#include <string.h>             /* strstr */
-#include <unistd.h>             /* write */
-#include <sys/ioctl.h>          /* ioctl */
-#include <sys/stat.h>           /* stat */
-#include <assert.h>             /* assert */
-
+#include "c.h"
 #include "nls.h"
 #include "all-io.h"
-#include "xalloc.h"
 
 #include "blkdev.h"
 
 #include "bitops.h"
 #include "pt-sgi.h"
 #include "pt-mbr.h"
-#include "common.h"
 #include "fdisk.h"
 #include "fdisksgilabel.h"
 
@@ -170,9 +155,9 @@ static void add_to_freelist(struct fdisk_context *cxt,
 		unsigned int f, unsigned int l)
 {
 	struct fdisk_sgi_label *sgi = self_label(cxt);
-	size_t i = 0;
+	size_t i;
 
-	for ( ; i < ARRAY_SIZE(sgi->freelist); i++) {
+	for (i = 0; i < ARRAY_SIZE(sgi->freelist); i++) {
 		if (sgi->freelist[i].last == 0)
 			break;
 	}
@@ -255,8 +240,7 @@ static int sgi_probe_label(struct fdisk_context *cxt)
 	return 1;
 }
 
-void
-sgi_list_table(struct fdisk_context *cxt, int xtra)
+void sgi_list_table(struct fdisk_context *cxt, int xtra)
 {
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 	struct sgi_device_parameter *sgiparam = &sgilabel->devparam;
@@ -473,8 +457,9 @@ err:
 	return -errno;
 }
 
-static int
-compare_start(struct fdisk_context *cxt, const void *x, const void *y) {
+static int compare_start(struct fdisk_context *cxt,
+			 const void *x, const void *y)
+{
 	/*
 	 * sort according to start sectors
 	 * and prefers largest partition:
@@ -679,8 +664,8 @@ static int sgi_verify_disklabel(struct fdisk_context *cxt)
 	return verify_disklabel(cxt, 1);
 }
 
-static int
-sgi_gaps(struct fdisk_context *cxt) {
+static int sgi_gaps(struct fdisk_context *cxt)
+{
 	/*
 	 * returned value is:
 	 *  = 0 : disk is properly filled to the rim
@@ -690,13 +675,12 @@ sgi_gaps(struct fdisk_context *cxt) {
 	return verify_disklabel(cxt, 0);
 }
 
-
 /* returns partition index of first entry marked as entire disk */
-static int
-sgi_entire(struct fdisk_context *cxt) {
-	int i;
+static int sgi_entire(struct fdisk_context *cxt)
+{
+	size_t i
 
-	for (i=0; i<16; i++)
+	for (i = 0; i < SGI_MAXPARTITIONS; i++)
 		if (sgi_get_sysid(cxt, i) == SGI_TYPE_ENTIRE_DISK)
 			return i;
 	return -1;
@@ -728,8 +712,8 @@ static int sgi_set_partition(struct fdisk_context *cxt, size_t i,
 	return 0;
 }
 
-static void
-sgi_set_entire(struct fdisk_context *cxt) {
+static void sgi_set_entire(struct fdisk_context *cxt)
+{
 	size_t n;
 
 	for (n = 10; n < cxt->label->nparts_max; n++) {
@@ -740,9 +724,7 @@ sgi_set_entire(struct fdisk_context *cxt) {
 	}
 }
 
-static
-void
-sgi_set_volhdr(struct fdisk_context *cxt)
+static void sgi_set_volhdr(struct fdisk_context *cxt)
 {
 	size_t n;
 
@@ -1006,32 +988,27 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	return 0;
 }
 
-void
-sgi_set_ilfact(void)
+void sgi_set_ilfact(void)
 {
 	/* do nothing in the beginning */
 }
 
-void
-sgi_set_rspeed(void)
+void sgi_set_rspeed(void)
 {
 	/* do nothing in the beginning */
 }
 
-void
-sgi_set_pcylcount(void)
+void sgi_set_pcylcount(void)
 {
 	/* do nothing in the beginning */
 }
 
-void
-sgi_set_xcyl(void)
+void sgi_set_xcyl(void)
 {
 	/* do nothing in the beginning */
 }
 
-void
-sgi_set_ncyl(void)
+void sgi_set_ncyl(void)
 {
 	/* do nothing in the beginning */
 }
