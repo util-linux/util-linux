@@ -362,64 +362,71 @@ sgi_get_lastblock(struct fdisk_context *cxt) {
 	return cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders;
 }
 
-static int
-sgi_check_bootfile(struct fdisk_context *cxt, const char* aFile)
+static int sgi_check_bootfile(struct fdisk_context *cxt, const char *name)
 {
+	size_t sz;
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 
-	if (strlen(aFile) < 3) /* "/a\n" is minimum */ {
+	sz = strlen(name);
+
+	if (sz < 3) {
+		/* "/a\n" is minimum */
 		fdisk_warnx(cxt, _("Invalid Bootfile! "
 			 "The bootfile must be an absolute non-zero pathname,"
 			 "e.g. \"/unix\" or \"/unix.save\"."));
-		return 0;
-	} else {
-		if (strlen(aFile) > 16) {
-			fdisk_warnx(cxt, _("Name of Bootfile too long:  "
-				 "16 bytes maximum."));
-			return 0;
-		} else {
-			if (aFile[0] != '/') {
-				fdisk_warnx(cxt, _("Bootfile must have a "
-					 "fully qualified pathname."));
-				return 0;
-			}
-		}
+		return -EINVAL;
+
+	} else if (sz > sizeof(sgilabel->boot_file)) {
+		fdisk_warnx(cxt, _("Name of Bootfile too long: %zu bytes maximum."),
+				sizeof(sgilabel->boot_file));
+		return -EINVAL;
+
+	} else if (*name != '/') {
+		fdisk_warnx(cxt, _("Bootfile must have a fully qualified pathname."));
+		return -EINVAL;
 	}
-	if (strncmp(aFile, (char *) sgilabel->boot_file, 16)) {
+
+	if (strncmp(name, (char *) sgilabel->boot_file,
+				sizeof(sgilabel->boot_file))) {
 		fdisk_warnx(cxt, _("Be aware, that the bootfile is not checked "
 			"for existence. SGI's default is \"/unix\" and for "
 			"backup \"/unix.save\"."));
 		/* filename is correct and did change */
-		return 1;
+		return 0;
 	}
-	return 0;	/* filename did not change */
+
+	return 1;	/* filename did not change */
 }
 
-void
-sgi_set_bootfile(struct fdisk_context *cxt)
+int sgi_set_bootfile(struct fdisk_context *cxt)
 {
+	int rc = 0;
+	size_t sz;
+	char *name = NULL;
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 
 	fdisk_info(cxt, _("The current boot file is: %s"), sgilabel->boot_file);
 
-	if (read_chars(cxt, _("Please enter the name of the new boot file: ")) == '\n') {
-		fdisk_info(cxt, _("Boot file unchanged"));
-		return;
+	rc = fdisk_ask_string(cxt, _("Enter of the new boot file"), &name);
+	if (rc == 0)
+		rc = sgi_check_bootfile(cxt, name);
+	if (rc) {
+		if (rc == 1)
+			fdisk_info(cxt, _("Boot file unchanged"));
+		goto done;
 	}
 
-	if (sgi_check_bootfile(cxt, line_ptr)) {
-		size_t i = 0;
-		while (i < 16) {
-			if ((line_ptr[i] != '\n')	/* in principle caught again by next line */
-			    &&  (strlen(line_ptr) > i))
-				sgilabel->boot_file[i] = line_ptr[i];
-			else
-				sgilabel->boot_file[i] = 0;
-			i++;
-		}
-		fdisk_info(cxt,_("Bootfile is changed to \"%s\"."),
-		       sgilabel->boot_file);
-	}
+	memset(sgilabel->boot_file, 0, sizeof(sgilabel->boot_file));
+	sz = strlen(name);
+
+	assert(sz <= sizeof(sgilabel->boot_file));	/* see sgi_check_bootfile() */
+
+	memcpy(sgilabel->boot_file, name, sz);
+
+	fdisk_info(cxt,_("Bootfile is changed to \"%s\"."), name);
+done:
+	free(name);
+	return rc;
 }
 
 static int sgi_write_disklabel(struct fdisk_context *cxt)
