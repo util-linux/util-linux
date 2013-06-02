@@ -40,16 +40,6 @@ static inline void close_pair(int fd[2])
 	close(fd[1]);
 }
 
-static inline void dup_devnull(int to)
-{
-	int fd = open(NULL_DEVICE, O_RDWR);
-
-	if (fd < 0)
-		err(EXIT_FAILURE, _("cannot open %s"), NULL_DEVICE);
-	dup2(fd, to);
-	close(fd);
-}
-
 static int start_command(struct child_process *cmd)
 {
 	int need_in;
