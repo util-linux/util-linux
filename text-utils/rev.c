@@ -154,11 +154,10 @@ int main(int argc, char *argv[])
 				len = wcslen(buf);
 			}
 
-			t = buf + len - 1 - (*(buf+len-1)=='\r' || *(buf+len-1)=='\n');
-			for ( ; t >= buf; --t) {
-				if (*t != 0)
-					putwchar(*t);
-			}
+			if (*(t = buf + len - 1) == '\n')
+				--t;
+			for ( ; buf <= t; --t)
+				putwchar(*t);
 			if (!feof(fp))
 				putwchar('\n');
 		}
