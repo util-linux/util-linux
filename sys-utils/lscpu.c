@@ -148,6 +148,7 @@ struct lscpu_desc {
 	int	hyper;		/* hypervisor vendor ID */
 	int	virtype;	/* VIRT_PARA|FULL|NONE ? */
 	char	*mhz;
+	char	**mmhz;		/* maximum mega hertz */
 	char	*stepping;
 	char    *bogomips;
 	char	*flags;
@@ -230,6 +231,7 @@ enum {
 	COL_ADDRESS,
 	COL_CONFIGURED,
 	COL_ONLINE,
+	COL_MMHZ,
 };
 
 /* column description
@@ -252,7 +254,8 @@ static struct lscpu_coldesc coldescs[] =
 	[COL_POLARIZATION] = { "POLARIZATION", N_("CPU dispatching mode on virtual hardware") },
 	[COL_ADDRESS]      = { "ADDRESS", N_("physical address of a CPU") },
 	[COL_CONFIGURED]   = { "CONFIGURED", N_("shows if the hypervisor has allocated the CPU") },
-	[COL_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU") }
+	[COL_ONLINE]       = { "ONLINE", N_("shows if Linux currently makes use of the CPU") },
+	[COL_MMHZ]	   = { "MMHZ", N_("shows the maximum mhz of the CPU") }
 };
 
 static int
@@ -777,6 +780,18 @@ read_configured(struct lscpu_desc *desc, int num)
 	desc->configured[num] = path_read_s32(_PATH_SYS_CPU "/cpu%d/configure", num);
 }
 
+static void
+read_max_mhz(struct lscpu_desc *desc, int num)
+{
+	if (!path_exist(_PATH_SYS_CPU "/cpu%d/cpufreq/cpuinfo_max_freq", num))
+		return;
+	if (!desc->mmhz)
+		desc->mmhz = xcalloc(desc->ncpuspos, sizeof(char *));
+	xasprintf(&(desc->mmhz[num]), "%.4f",
+		  (float)path_read_s32(_PATH_SYS_CPU
+				       "/cpu%d/cpufreq/cpuinfo_max_freq", num) / 1000);
+}
+
 static int
 cachecmp(const void *a, const void *b)
 {
@@ -964,6 +979,10 @@ get_cell_data(struct lscpu_desc *desc, int cpu, int col,
 		else
 			snprintf(buf, bufsz,
 				 is_cpu_online(desc, cpu) ? _("yes") : _("no"));
+		break;
+	case COL_MMHZ:
+		if (desc->mmhz)
+			xstrncpy(buf, desc->mmhz[cpu], bufsz);
 		break;
 	}
 	return buf;
@@ -1272,6 +1291,8 @@ print_summary(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 		print_s(_("Stepping:"), desc->stepping);
 	if (desc->mhz)
 		print_s(_("CPU MHz:"), desc->mhz);
+	if (desc->mmhz)
+		print_s(_("CPU max MHz:"), desc->mmhz[0]);
 	if (desc->bogomips)
 		print_s(_("BogoMIPS:"), desc->bogomips);
 	if (desc->virtflag) {
@@ -1439,6 +1460,7 @@ int main(int argc, char *argv[])
 		read_polarization(desc, i);
 		read_address(desc, i);
 		read_configured(desc, i);
+		read_max_mhz(desc, i);
 	}
 
 	if (desc->caches)
@@ -1485,6 +1507,8 @@ int main(int argc, char *argv[])
 				columns[ncolumns++] = COL_POLARIZATION;
 			if (desc->addresses)
 				columns[ncolumns++] = COL_ADDRESS;
+			if (desc->mmhz)
+				columns[ncolumns++] = COL_MMHZ;
 		}
 		print_readable(desc, columns, ncolumns, mod);
 		break;
