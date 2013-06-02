@@ -76,6 +76,11 @@ The workload is concentrated on few CPUs.
 For vertical polarization, the column also shows the degree of concentration,
 high, medium, or low.  This column contains data only if your hardware system
 and hypervisor support CPU polarization.
+.TP
+.B MMHZ
+Maximum megaherz value for the cpu.  Useful when lscpu is used as hardware
+inventory infomation gathering tool.  Notice that the megahertz value is
+dynamic, and driven by CPU governor depending on current resource need.
 .RE
 .SH OPTIONS
 .TP

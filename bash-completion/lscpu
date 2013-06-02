@@ -17,7 +17,8 @@ _lscpu_module()
 				POLARIZATION,
 				ADDRESS,
 				CONFIGURED,
-				ONLINE,"
+				ONLINE,
+				MMHZ"
 			compopt -o nospace
 			COMPREPLY=( $(compgen -W "$OPTS" -- $cur) )
 			return 0
