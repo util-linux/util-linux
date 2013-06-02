@@ -237,7 +237,7 @@ static char * ascii_day(char *, int);
 static int center_str(const char* src, char* dest, size_t dest_size, size_t width);
 static void center(const char *, size_t, int);
 static void day_array(int, int, long, int *);
-static int day_in_week(int, int, int);
+static int day_in_week(int, int, long);
 static int day_in_year(int, int, long);
 static void yearly(int, long, int);
 static int do_monthly(int, int, long, struct fmt_st*, int);
@@ -469,11 +469,11 @@ static int do_monthly(int day, int month, long year,
 		snprintf(lineout, sizeof(lineout), _("%s"), full_month[month - 1]);
 		center_str(lineout, out->s[pos], ARRAY_SIZE(out->s[pos]), width);
 		pos++;
-		snprintf(lineout, sizeof(lineout), _("%lu"), year);
+		snprintf(lineout, sizeof(lineout), _("%ld"), year);
 		center_str(lineout, out->s[pos], ARRAY_SIZE(out->s[pos]), width);
 		pos++;
 	} else {
-		snprintf(lineout, sizeof(lineout), _("%s %lu"),
+		snprintf(lineout, sizeof(lineout), _("%s %ld"),
 			full_month[month - 1], year);
 		center_str(lineout, out->s[pos], ARRAY_SIZE(out->s[pos]), width);
 		pos++;
@@ -514,7 +514,7 @@ static int two_header_lines(int month, long year)
 	char lineout[FMT_ST_CHARS];
 	size_t width = (julian ? J_WEEK_LEN : WEEK_LEN) - 1;
 	size_t len;
-	snprintf(lineout, sizeof(lineout), "%lu", year);
+	snprintf(lineout, sizeof(lineout), "%ld", year);
 	len = strlen(lineout);
 	len += strlen(full_month[month - 1]) + 1;
 	if (width < len)
@@ -602,7 +602,7 @@ static void yearly(int day, long year, int julian)
 		sep_len = HEAD_SEP;
 		week_len = WEEK_LEN;
 	}
-	snprintf(lineout, sizeof(lineout), "%lu", year);
+	snprintf(lineout, sizeof(lineout), "%ld", year);
 	/* 2013-04-28: The -1 near sep_len makes year header to be
 	 * aligned exactly how it has been aligned for long time, but it
 	 * is unexplainable.  */
@@ -699,7 +699,7 @@ static int day_in_year(int day, int month, long year)
  *	3 Sep. 1752 through 13 Sep. 1752, and returns invalid weekday
  *	during the period of 11 days.
  */
-static int day_in_week(int d, int m, int y)
+static int day_in_week(int d, int m, long y)
 {
 	static const int reform[] = {
 		SUNDAY, WEDNESDAY, TUESDAY, FRIDAY, SUNDAY, WEDNESDAY,
