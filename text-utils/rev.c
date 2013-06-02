@@ -161,14 +161,11 @@ int main(int argc, char *argv[])
 			if (!feof(fp))
 				putwchar('\n');
 		}
-
-		fflush(fp);
 		if (ferror(fp)) {
 			warn("%s", filename);
 			rval = EXIT_FAILURE;
 		}
-		if (fclose(fp))
-			rval = EXIT_FAILURE;
+		fclose(fp);
 	} while(*argv);
 
 	free(buf);
