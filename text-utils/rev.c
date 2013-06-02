@@ -159,7 +159,8 @@ int main(int argc, char *argv[])
 				if (*t != 0)
 					putwchar(*t);
 			}
-			putwchar('\n');
+			if (!feof(fp))
+				putwchar('\n');
 		}
 
 		fflush(fp);
