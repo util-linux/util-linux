@@ -3,15 +3,10 @@
 agetty \- alternative Linux getty
 
 .SH SYNOPSIS
-.BR "agetty " [\-8chiLmnsUw]
-.RI "[\-a " user ]
-.RI "[\-f " issue_file ]
-.RI "[\-H " login_host ]
-.RI "[\-I " init ]
-.RI "[\-l " login_program ]
-.RI "[\-t " timeout ]
+.B agetty
+.RB [ options ]
 .I port
-.I baud_rate,...
+.RI [ baud_rate ...]
 .RI [ term ]
 
 .SH DESCRIPTION
@@ -74,10 +69,16 @@ the list, which is treated as if it were circular.
 .sp
 Baud rates should be specified in descending order, so that the
 null character (Ctrl\-@) can also be used for baud rate switching.
+.sp
+This argument is optional and unnecessary for virtual terminals.
+The default for serial terminals is '9600'.
 .TP
 term
 The value to be used for the TERM environment variable. This overrides
 whatever init(8) may have set, and is inherited by login and the shell.
+.sp
+The default is 'vt100', or 'linux' for Linux on virtual terminal, or 'hurd'
+for GNU Hurd on virtual terminal.
 .SH OPTIONS
 .na
 .nf
@@ -386,19 +387,19 @@ written to the console device or reported via the syslog(3) facility.
 Error messages are produced if the \fIport\fP argument does not
 specify a terminal device; if there is no utmp entry for the
 current process (System V only); and so on.
-.SH AUTHOR(S)
-.na
-.nf
-W.Z. Venema <wietse@wzv.win.tue.nl>
-Eindhoven University of Technology
-Department of Mathematics and Computer Science
-Den Dolech 2, P.O. Box 513, 5600 MB Eindhoven, The Netherlands
-
-Peter Orbaek <poe@daimi.aau.dk>
-Linux port and more options. Still maintains the code.
-
-Eric Rasmussen <ear@usfirst.org>
-Added \-f option to display custom login messages on different terminals.
+.SH AUTHORS
+.UR werner@suse.de
+Werner Fink
+.UE
+.br
+.UR kzak@redhat.com
+Karel Zak
+.UE
+.sp
+The original
+.B agetty
+for serial terminals was written by W.Z. Venema <wietse@wzv.win.tue.nl>
+and ported to Linux by Peter Orbaek <poe@daimi.aau.dk>.
 
 .SH AVAILABILITY
 The agetty command is part of the util-linux package and is available from
