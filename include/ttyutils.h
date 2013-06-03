@@ -76,8 +76,8 @@ static inline void reset_virtual_console(struct termios *tp, int flags)
 	tp->c_oflag |=  (OPOST | ONLCR | NL0 | CR0 | TAB0 | BS0 | VT0 | FF0);
 	tp->c_oflag &= ~(OLCUC | OCRNL | ONOCR | ONLRET | OFILL | \
 			    NLDLY|CRDLY|TABDLY|BSDLY|VTDLY|FFDLY);
-	tp->c_lflag |=  (ISIG | ICANON | IEXTEN | ECHO|ECHOE|ECHOK|ECHOKE);
-	tp->c_lflag &= ~(ECHONL|ECHOCTL|ECHOPRT | NOFLSH | TOSTOP);
+	tp->c_lflag |=  (ISIG | ICANON | IEXTEN | ECHO|ECHOE|ECHOK|ECHOKE|ECHOCTL);
+	tp->c_lflag &= ~(ECHONL|ECHOPRT | NOFLSH | TOSTOP);
 
 	if ((flags & UL_TTY_KEEPCFLAGS) == 0) {
 		tp->c_cflag |=  (CREAD | CS8 | HUPCL);
@@ -121,7 +121,5 @@ static inline void reset_virtual_console(struct termios *tp, int flags)
 	tp->c_cc[VLNEXT]   = CLNEXT;
 	tp->c_cc[VEOL2]    = _POSIX_VDISABLE;
 }
-
-
 
 #endif /* UTIL_LINUX_TTYUTILS_H */
