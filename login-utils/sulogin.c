@@ -484,13 +484,13 @@ static void doprompt(const char *crypted, struct console *con)
 	if (crypted[0])
 		fprintf(con->file, _("Give root password for login: "));
 	else
-		fprintf(con->file, _("Press enter for login: "));
+		fprintf(con->file, _("Press Enter for login: "));
 #else
 	if (crypted[0])
 		fprintf(con->file, _("Give root password for maintenance\n"));
 	else
-		fprintf(con->file, _("Press enter for maintenance"));
-	fprintf(con->file, _("(or type Control-D to continue): "));
+		fprintf(con->file, _("Press Enter for maintenance"));
+	fprintf(con->file, _("(or press Control-D to continue): "));
 #endif
 	fflush(con->file);
 err:

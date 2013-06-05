@@ -396,11 +396,11 @@ static void warn_size(const char *filename, uint64_t size)
 	}
 
 	if (size < 512)
-		warnx(_("%s: warning: file smaller than 512 bytes, the loop device "
-			"maybe be useless or invisible for system tools."),
+		warnx(_("%s: Warning: file is smaller than 512 bytes; the loop device "
+			"may be useless or invisible for system tools."),
 			filename);
 	else if (size % 512)
-		warnx(_("%s: warning: file does not fit into a 512-byte sector "
+		warnx(_("%s: Warning: file does not fit into a 512-byte sector; "
 		        "the end of the file will be ignored."),
 			filename);
 }

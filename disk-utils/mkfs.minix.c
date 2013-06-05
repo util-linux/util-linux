@@ -482,7 +482,7 @@ static void setup_tables(void) {
 
 	super_block_buffer = calloc(1, MINIX_BLOCK_SIZE);
 	if (!super_block_buffer)
-		err(MKFS_EX_ERROR, _("%s: unable to alloc buffer for superblock"),
+		err(MKFS_EX_ERROR, _("%s: unable to allocate buffer for superblock"),
 				device_name);
 
 	memset(boot_block_buffer,0,512);

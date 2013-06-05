@@ -736,7 +736,7 @@ int main(int argc, char **argv)
 			opt_errors = 1;
 			break;
 		case 'e':
-			opt_edition = strtou32_or_err(optarg, _("edition number argument failed"));
+			opt_edition = strtou32_or_err(optarg, _("invalid edition number argument"));
 			break;
 		case 'N':
 			if (strcmp(optarg, "big") == 0)
@@ -746,8 +746,8 @@ int main(int argc, char **argv)
 			else if (strcmp(optarg, "host") == 0)
 				/* default */ ;
 			else
-				errx(MKFS_EX_USAGE, _("invalid endianness given."
-						   " Must be 'big', 'little', or 'host'"));
+				errx(MKFS_EX_USAGE, _("invalid endianness given;"
+						   " must be 'big', 'little', or 'host'"));
 			break;
 		case 'i':
 			opt_image = optarg;
