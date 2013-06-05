@@ -395,7 +395,7 @@ static void init_tty(struct login_context *cxt)
 	}
 
 	/* Kill processes left on this tty */
-	tcsetattr(0, TCSAFLUSH, &ttt);
+	tcsetattr(0, TCSANOW, &ttt);
 
 	/*
 	 * Let's close file decriptors before vhangup
@@ -1312,10 +1312,10 @@ int main(int argc, char **argv)
 		close(cnt);
 
 	setpgrp();	 /* set pgid to pid this means that setsid() will fail */
+	init_tty(&cxt);
 
 	openlog("login", LOG_ODELAY, LOG_AUTHPRIV);
 
-	init_tty(&cxt);
 	init_loginpam(&cxt);
 
 	/* login -f, then the user has already been authenticated */
