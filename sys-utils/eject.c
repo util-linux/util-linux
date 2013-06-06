@@ -398,6 +398,9 @@ static void close_tray(int fd)
 static int eject_cdrom(int fd)
 {
 #if defined(CDROMEJECT)
+	int ret = ioctl(fd, CDROM_LOCKDOOR, 0);
+	if (ret < 0)
+		return 0;
 	return ioctl(fd, CDROMEJECT) >= 0;
 #elif defined(CDIOCEJECT)
 	return ioctl(fd, CDIOCEJECT) >= 0;
