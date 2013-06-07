@@ -49,7 +49,8 @@
 #if defined (__i386__) || defined (__sparc__) || defined (__arm__) || \
     defined (__mips__) || defined (__s390__) || defined (__sh__) || \
     defined (__aarch64__) || defined(__xtensa__) || \
-    defined(__x86_64__) || defined (__avr32__) || defined(__cris__)
+    defined (__x86_64__) || defined (__avr32__) || defined(__cris__) || \
+    defined (__microblaze__)
 #define BSD_LABELSECTOR   1
 #define BSD_LABELOFFSET   0
 #elif defined (__alpha__) || defined (__powerpc__) || defined (__ia64__) || defined (__hppa__)
