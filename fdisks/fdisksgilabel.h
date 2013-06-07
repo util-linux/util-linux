@@ -13,11 +13,6 @@
 extern int  sgi_change_sysid(struct fdisk_context *cxt, int i, int sys);
 extern unsigned int	sgi_get_start_sector(struct fdisk_context *cxt, int i );
 extern unsigned int	sgi_get_num_sectors(struct fdisk_context *cxt, int i );
-extern void	sgi_set_ilfact( void );
-extern void	sgi_set_rspeed( void );
-extern void	sgi_set_pcylcount( void );
-extern void	sgi_set_xcyl( void );
-extern void	sgi_set_ncyl( void );
 extern void	sgi_set_bootpartition(struct fdisk_context *cxt, int i );
 extern void	sgi_set_swappartition(struct fdisk_context *cxt, int i );
 extern int	sgi_get_bootpartition(struct fdisk_context *cxt);

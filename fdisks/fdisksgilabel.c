@@ -391,8 +391,8 @@ int sgi_get_swappartition(struct fdisk_context *cxt)
 	return be16_to_cpu(sgilabel->swap_part_num);
 }
 
-static unsigned int
-sgi_get_lastblock(struct fdisk_context *cxt) {
+static unsigned int sgi_get_lastblock(struct fdisk_context *cxt)
+{
 	return cxt->geom.heads * cxt->geom.sectors * cxt->geom.cylinders;
 }
 
@@ -511,9 +511,8 @@ static int compare_start(struct fdisk_context *cxt,
 			 const void *x, const void *y)
 {
 	/*
-	 * sort according to start sectors
-	 * and prefers largest partition:
-	 * entry zero is entire disk entry
+	 * sort according to start sectors and prefers largest partition: entry
+	 * zero is entire disk entry
 	 */
 	unsigned int i = *(int *) x;
 	unsigned int j = *(int *) y;
@@ -1037,34 +1036,6 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	cxt->label->nparts_cur = count_used_partitions(cxt);
 	return 0;
 }
-
-void sgi_set_ilfact(void)
-{
-	/* do nothing in the beginning */
-}
-
-void sgi_set_rspeed(void)
-{
-	/* do nothing in the beginning */
-}
-
-void sgi_set_pcylcount(void)
-{
-	/* do nothing in the beginning */
-}
-
-void sgi_set_xcyl(void)
-{
-	/* do nothing in the beginning */
-}
-
-void sgi_set_ncyl(void)
-{
-	/* do nothing in the beginning */
-}
-
-/* _____________________________________________________________
- */
 
 static struct fdisk_parttype *sgi_get_parttype(struct fdisk_context *cxt, size_t n)
 {

@@ -740,10 +740,8 @@ expert_command_prompt(struct fdisk_context *cxt)
 			print_raw(cxt);
 			break;
 		case 'e':
-			if (fdisk_is_disklabel(cxt, SGI))
-				sgi_set_xcyl();
-			else if (fdisk_is_disklabel(cxt, DOS))
-					dos_list_table_expert(cxt, 1);
+			if (fdisk_is_disklabel(cxt, DOS))
+				dos_list_table_expert(cxt, 1);
 			break;
 		case 'f':
 			if (fdisk_is_disklabel(cxt, DOS))
