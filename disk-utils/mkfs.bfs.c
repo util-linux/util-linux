@@ -1,6 +1,7 @@
 /*
  *  mkfs.bfs - Create SCO BFS filesystem - aeb, 1999-09-07
  *
+ *	Usage: mkfs.bfs [-N nr-of-inodes] [-V volume-name] [-F fsname] device
  */
 
 #include <errno.h>
@@ -20,6 +21,7 @@
 #include "nls.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "bitops.h"
 
 #define BFS_ROOT_INO		2
 #define BFS_NAMELEN		14
@@ -28,13 +30,13 @@
 
 /* superblock - 512 bytes */
 struct bfssb {
-	unsigned int s_magic;
-	unsigned int s_start;	/* byte offset of start of data */
-	unsigned int s_end;	/* sizeof(slice)-1 */
+	uint32_t s_magic;
+	uint32_t s_start;	/* byte offset of start of data */
+	uint32_t s_end;	/* sizeof(slice)-1 */
 
 	/* for recovery during compaction */
-	int s_from, s_to;	/* src and dest block of current transfer */
-	int s_backup_from, s_backup_to;
+	uint32_t s_from, s_to;	/* src and dest block of current transfer */
+	int32_t s_backup_from, s_backup_to;
 
 	/* labels - may well contain garbage */
 	char s_fsname[6];
@@ -44,16 +46,16 @@ struct bfssb {
 
 /* inode - 64 bytes */
 struct bfsi {
-	unsigned short i_ino;
+	uint16_t i_ino;
 	unsigned char i_pad1[2];
-	unsigned long i_first_block;
-	unsigned long i_last_block;
-	unsigned long i_bytes_to_end;
-	unsigned long i_type;	/* 1: file, 2: the unique dir */
-	unsigned long i_mode;
-	unsigned long i_uid, i_gid;
-	unsigned long i_nlinks;
-	unsigned long i_atime, i_mtime, i_ctime;
+	uint32_t i_first_block;
+	uint32_t i_last_block;
+	uint32_t i_bytes_to_end;
+	uint32_t i_type;	/* 1: file, 2: the unique dir */
+	uint32_t i_mode;
+	uint32_t i_uid, i_gid;
+	uint32_t i_nlinks;
+	uint32_t i_atime, i_mtime, i_ctime;
 	unsigned char i_pad2[16];
 };
 
@@ -61,7 +63,7 @@ struct bfsi {
 
 /* directory entry - 16 bytes */
 struct bfsde {
-	unsigned short d_ino;
+	uint16_t d_ino;
 	char d_name[BFS_NAMELEN];
 };
 
@@ -98,6 +100,7 @@ int main(int argc, char **argv)
 	unsigned long long user_specified_total_blocks = 0;
 	int verbose = 0;
 	int fd;
+	uint32_t first_block;
 	struct bfssb sb;
 	struct bfsi ri;
 	struct bfsde de;
@@ -225,9 +228,9 @@ int main(int argc, char **argv)
 		     ino_blocks + 33);
 
 	memset(&sb, 0, sizeof(sb));
-	sb.s_magic = BFS_SUPER_MAGIC;
-	sb.s_start = ino_bytes + sizeof(struct bfssb);
-	sb.s_end = total_blocks * BFS_BLOCKSIZE - 1;
+	sb.s_magic = cpu_to_le32(BFS_SUPER_MAGIC);
+	sb.s_start = cpu_to_le32(ino_bytes + sizeof(struct bfssb));
+	sb.s_end = cpu_to_le32(total_blocks * BFS_BLOCKSIZE - 1);
 	sb.s_from = sb.s_to = sb.s_backup_from = sb.s_backup_to = -1;
 	memcpy(sb.s_fsname, fsname, 6);
 	memcpy(sb.s_volume, volume, 6);
@@ -245,28 +248,29 @@ int main(int argc, char **argv)
 				inodes, ino_blocks);
 		fprintf(stderr, _("Blocks: %lld\n"), total_blocks);
 		fprintf(stderr, _("Inode end: %d, Data end: %d\n"),
-			sb.s_start - 1, sb.s_end);
+			le32_to_cpu(sb.s_start) - 1, le32_to_cpu(sb.s_end));
 	}
 
 	if (write(fd, &sb, sizeof(sb)) != sizeof(sb))
 		err(EXIT_FAILURE, _("error writing superblock"));
 
 	memset(&ri, 0, sizeof(ri));
-	ri.i_ino = BFS_ROOT_INO;
-	ri.i_first_block = 1 + ino_blocks;
-	ri.i_last_block = ri.i_first_block +
-	    (inodes * sizeof(de) - 1) / BFS_BLOCKSIZE;
-	ri.i_bytes_to_end = ri.i_first_block * BFS_BLOCKSIZE
-	    + 2 * sizeof(struct bfsde) - 1;
-	ri.i_type = BFS_DIR_TYPE;
-	ri.i_mode = S_IFDIR | 0755;	/* or just 0755 */
-	ri.i_uid = 0;
-	ri.i_gid = 1;			/* random */
+	ri.i_ino = cpu_to_le16(BFS_ROOT_INO);
+	first_block = 1 + ino_blocks;
+	ri.i_first_block = cpu_to_le32(first_block);
+	ri.i_last_block = cpu_to_le32(first_block +
+	    (inodes * sizeof(de) - 1) / BFS_BLOCKSIZE);
+	ri.i_bytes_to_end = cpu_to_le32(first_block * BFS_BLOCKSIZE
+	    + 2 * sizeof(struct bfsde) - 1);
+	ri.i_type = cpu_to_le32(BFS_DIR_TYPE);
+	ri.i_mode = cpu_to_le32(S_IFDIR | 0755);	/* or just 0755 */
+	ri.i_uid = cpu_to_le32(0);
+	ri.i_gid = cpu_to_le32(1);			/* random */
 	ri.i_nlinks = 2;
 	time(&now);
-	ri.i_atime = now;
-	ri.i_mtime = now;
-	ri.i_ctime = now;
+	ri.i_atime = cpu_to_le32(now);
+	ri.i_mtime = cpu_to_le32(now);
+	ri.i_ctime = cpu_to_le32(now);
 
 	if (write(fd, &ri, sizeof(ri)) != sizeof(ri))
 		err(EXIT_FAILURE, _("error writing root inode"));
@@ -280,7 +284,7 @@ int main(int argc, char **argv)
 		err(EXIT_FAILURE, _("seek error"));
 
 	memset(&de, 0, sizeof(de));
-	de.d_ino = BFS_ROOT_INO;
+	de.d_ino = cpu_to_le16(BFS_ROOT_INO);
 	memcpy(de.d_name, ".", 1);
 	if (write(fd, &de, sizeof(de)) != sizeof(de))
 		err(EXIT_FAILURE, _("error writing . entry"));
