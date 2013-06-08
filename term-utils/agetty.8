@@ -229,26 +229,26 @@ no hostname at all will be shown.
 .TP
 \-\-long\-hostname
 By default the hostname is only printed until the first dot.  With
-this option enabled, the full qualified hostname by gethostname()
-or if not found by getaddrinfo() is shown.
+this option enabled, the fully qualified hostname by gethostname()
+or (if not found) by getaddrinfo() is shown.
 .TP
 \-\-erase\-chars \fIstring\fP
-This option specifies additional chars that should be interpreted as a
-backspace (ignore previous char) when user specifies login name. The original
-default has been \'#\', since util-linux 2.23 no additional erase chars are
-enabled by default.
+This option specifies additional characters that should be interpreted as a
+backspace ("ignore the previous character") when the user types the login name.
+The default additional \'erase\' has been \'#\', but since util-linux 2.23
+no additional erase characters are enabled by default.
 .TP
 \-\-kill\-chars \fIstring\fP
-This option specifies additional chars that should be interpreted as a
-kill (ignore all previous chars) when user specifies login name. The original
-default has been \'@\', since util-linux 2.23 no additional erase chars are
-enabled by default.
+This option specifies additional characters that should be interpreted as a
+kill ("ignore all previous characters") when the user types the login name.
+The default additional \'kill\' has been \'@\', but since util-linux 2.23
+no additional kill characters are enabled by default.
 .TP
 \-\-version
-Output version information and exit.
+Display version information and exit.
 .TP
 \-\-help
-Output help screen and exit.
+Display help text and exit.
 .PP
 .SH EXAMPLES
 This section shows examples for the process field of an entry in the
