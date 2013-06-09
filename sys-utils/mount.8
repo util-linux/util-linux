@@ -946,28 +946,27 @@ filesystem that supports xattr labeling.
 The
 .BR rootcontext=
 option allows you to explicitly label the root inode of a FS being mounted
-before that FS or inode because visible to userspace. This was found to be
+before that FS or inode becomes visible to userspace.  This was found to be
 useful for things like stateless linux.
 
-Note that kernel rejects any remount request that includes the context
-option even if unchanged from the current context.
+Note that the kernel rejects any remount request that includes the context
+option, \fBeven\fP when unchanged from the current context.
 
-.B Warning that \fIcontext\fP value might contains comma
-and in this case the value has to be properly quoted otherwise
+.BR "Warning: the \fIcontext\fP value might contain commas" ,
+in which case the value has to be properly quoted, otherwise
 .BR mount (8)
-will interpret the comma as separator between mount options. Don't forget that
-shell strips off quotes and
-.BR "double quoting is required" ,
-for example:
+will interpret the comma as a separator between mount options.  Don't forget that
+the shell strips off quotes and thus
+.BR "double quoting is required" .
+For example:
 .RS
 .RS
 .sp
-mount -t tmpfs none /mnt \-o 'context="system_u:object_r:tmp_t:s0:c127,c456",noexec'
+.B mount -t tmpfs none /mnt \-o 'context="system_u:object_r:tmp_t:s0:c127,c456",noexec'
 .sp
 .RE
-
 For more details, see
-.BR selinux (8)
+.BR selinux (8).
 .RE
 
 .TP
