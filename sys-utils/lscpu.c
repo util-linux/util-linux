@@ -1127,7 +1127,7 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 {
 	int i;
 	char buf[BUFSIZ], *data;
-	struct tt *tt = tt_new_table(0);
+	struct tt *tt = tt_new_table(TT_FL_FREEDATA);
 
 	if (!tt)
 		 err(EXIT_FAILURE, _("failed to initialize output table"));
@@ -1153,11 +1153,13 @@ print_readable(struct lscpu_desc *desc, int cols[], int ncols,
 		for (c = 0; c < ncols; c++) {
 			data = get_cell_data(desc, i, cols[c], mod,
 					     buf, sizeof(buf));
-			tt_line_set_data(line, c, data && *data ? xstrdup(data) : "-");
+			tt_line_set_data(line, c,
+					xstrdup(data && *data ? data : "-"));
 		}
 	}
 
 	tt_print_table(tt);
+	tt_free_table(tt);
 }
 
 /* output formats "<key>  <value>"*/
