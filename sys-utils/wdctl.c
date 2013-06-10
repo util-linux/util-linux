@@ -28,6 +28,7 @@
 
 #include "nls.h"
 #include "c.h"
+#include "xalloc.h"
 #include "closestream.h"
 #include "optutils.h"
 #include "pathnames.h"
@@ -232,7 +233,7 @@ static void add_flag_line(struct tt *tt, struct wdinfo *wd, const struct wdflag 
 		}
 
 		if (str)
-			tt_line_set_data(line, i, str);
+			tt_line_set_data(line, i, xstrdup(str));
 	}
 }
 
@@ -244,7 +245,7 @@ static int show_flags(struct wdinfo *wd, int tt_flags, uint32_t wanted)
 	uint32_t flags;
 
 	/* create output table */
-	tt = tt_new_table(tt_flags);
+	tt = tt_new_table(tt_flags | TT_FL_FREEDATA);
 	if (!tt) {
 		warn(_("failed to initialize output table"));
 		return -1;
