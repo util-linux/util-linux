@@ -226,20 +226,20 @@ static void add_tt_line(struct tt *tt, struct prlimit *l)
 
 		switch (get_column_id(i)) {
 		case COL_RES:
-			xasprintf(&str, "%s", l->desc->name);
+			str = xstrdup(l->desc->name);
 			break;
 		case COL_HELP:
-			xasprintf(&str, "%s", l->desc->help);
+			str = xstrdup(l->desc->help);
 			break;
 		case COL_SOFT:
 			if (l->rlim.rlim_cur == RLIM_INFINITY)
-				xasprintf(&str, "%s", "unlimited");
+				str = xstrdup(_("unlimited"));
 			else
 				xasprintf(&str, "%llu", (unsigned long long) l->rlim.rlim_cur);
 			break;
 		case COL_HARD:
 			if (l->rlim.rlim_max == RLIM_INFINITY)
-				xasprintf(&str, "%s", "unlimited");
+				str = xstrdup(_("unlimited"));
 			else
 				xasprintf(&str, "%llu", (unsigned long long) l->rlim.rlim_max);
 			break;
@@ -285,7 +285,7 @@ static int show_limits(struct list_head *lims, int tt_flags)
 	struct list_head *p, *pnext;
 	struct tt *tt;
 
-	tt = tt_new_table(tt_flags);
+	tt = tt_new_table(tt_flags | TT_FL_FREEDATA);
 	if (!tt) {
 		warn(_("failed to initialize output table"));
 		return -1;
