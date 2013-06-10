@@ -417,16 +417,17 @@ static char *get_tag_from_udev(const char *devname, int col)
 #endif /* HAVE_LIBUDEV */
 
 /* Returns LABEL or UUID */
-static const char *get_tag(struct libmnt_fs *fs, const char *tagname, int col
+static char *get_tag(struct libmnt_fs *fs, const char *tagname, int col
 #ifndef HAVE_LIBUDEV
 		__attribute__((__unused__))
 #endif
 		)
 {
-	const char *t, *v, *res = NULL;
+	const char *t, *v;
+	char *res = NULL;
 
 	if (!mnt_fs_get_tag(fs, &t, &v) && !strcmp(t, tagname))
-		res = v;
+		res = xstrdup(v);
 	else {
 		const char *dev = mnt_fs_get_source(fs);
 
@@ -436,14 +437,18 @@ static const char *get_tag(struct libmnt_fs *fs, const char *tagname, int col
 		if (dev)
 			res = get_tag_from_udev(dev, col);
 #endif
-		if (!res)
+		if (!res) {
 			res = mnt_cache_find_tag_value(cache, dev, tagname);
+			if (res && cache)
+				/* don't return pointer to cache */
+				res = xstrdup(res);
+		}
 	}
 
 	return res;
 }
 
-static const char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
+static char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 {
 	struct statvfs buf;
 	uint64_t vfs_attr = 0;
@@ -472,56 +477,54 @@ static const char *get_vfs_attr(struct libmnt_fs *fs, int sizetype)
 		return sizestr;
 	}
 
-	return vfs_attr == 0 ? "0" :
+	return vfs_attr == 0 ? xstrdup("0") :
 		size_to_human_string(SIZE_SUFFIX_1LETTER, vfs_attr);
 }
 
 /* reads FS data from libmount
  */
-static const char *get_data(struct libmnt_fs *fs, int num)
+static char *get_data(struct libmnt_fs *fs, int num)
 {
-	const char *str = NULL;
-	char *tmp;
+	char *str = NULL;
 	int col_id = get_column_id(num);
 
 	switch (col_id) {
 	case COL_SOURCE:
 	{
 		const char *root = mnt_fs_get_root(fs);
+		const char *spec = mnt_fs_get_srcpath(fs);
 
-		str = mnt_fs_get_srcpath(fs);
+		if (spec && (flags & FL_CANONICALIZE))
+			spec = mnt_resolve_path(spec, cache);
+		if (!spec) {
+			spec = mnt_fs_get_source(fs);
 
-		if (str && (flags & FL_CANONICALIZE))
-			str = mnt_resolve_path(str, cache);
-		if (!str) {
-			str = mnt_fs_get_source(fs);
-
-			if (str && (flags & FL_EVALUATE))
-				str = mnt_resolve_spec(str, cache);
+			if (spec && (flags & FL_EVALUATE))
+				spec = mnt_resolve_spec(spec, cache);
 		}
-		if (root && str && !(flags & FL_NOFSROOT) && strcmp(root, "/")) {
-			xasprintf(&tmp, "%s[%s]", str, root);
-			str = tmp;
-		}
+		if (root && spec && !(flags & FL_NOFSROOT) && strcmp(root, "/"))
+			xasprintf(&str, "%s[%s]", spec, root);
+		else if (spec)
+			str = xstrdup(spec);
 		break;
 	}
 	case COL_TARGET:
-		str = mnt_fs_get_target(fs);
+		str = xstrdup(mnt_fs_get_target(fs));
 		break;
 	case COL_FSTYPE:
-		str = mnt_fs_get_fstype(fs);
+		str = xstrdup(mnt_fs_get_fstype(fs));
 		break;
 	case COL_OPTIONS:
-		str = mnt_fs_get_options(fs);
+		str = xstrdup(mnt_fs_get_options(fs));
 		break;
 	case COL_VFS_OPTIONS:
-		str = mnt_fs_get_vfs_options(fs);
+		str = xstrdup(mnt_fs_get_vfs_options(fs));
 		break;
 	case COL_FS_OPTIONS:
-		str = mnt_fs_get_fs_options(fs);
+		str = xstrdup(mnt_fs_get_fs_options(fs));
 		break;
 	case COL_OPT_FIELDS:
-		str = mnt_fs_get_optional_fields(fs);
+		str = xstrdup(mnt_fs_get_optional_fields(fs));
 		break;
 	case COL_UUID:
 		str = get_tag(fs, "UUID", col_id);
@@ -543,10 +546,9 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 			break;
 
 		if ((tt_flags & TT_FL_RAW) || (tt_flags & TT_FL_EXPORT))
-			xasprintf(&tmp, "%u:%u", major(devno), minor(devno));
+			xasprintf(&str, "%u:%u", major(devno), minor(devno));
 		else
-			xasprintf(&tmp, "%3u:%-3u", major(devno), minor(devno));
-		str = tmp;
+			xasprintf(&str, "%3u:%-3u", major(devno), minor(devno));
 		break;
 	}
 	case COL_SIZE:
@@ -556,19 +558,15 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 		str = get_vfs_attr(fs, col_id);
 		break;
 	case COL_FSROOT:
-		str = mnt_fs_get_root(fs);
+		str = xstrdup(mnt_fs_get_root(fs));
 		break;
 	case COL_TID:
-		if (mnt_fs_get_tid(fs)) {
-			xasprintf(&tmp, "%d", mnt_fs_get_tid(fs));
-			str = tmp;
-		}
+		if (mnt_fs_get_tid(fs))
+			xasprintf(&str, "%d", mnt_fs_get_tid(fs));
 		break;
 	case COL_ID:
-		if (mnt_fs_get_id(fs)) {
-			xasprintf(&tmp, "%d", mnt_fs_get_id(fs));
-			str = tmp;
-		}
+		if (mnt_fs_get_id(fs))
+			xasprintf(&str, "%d", mnt_fs_get_id(fs));
 		break;
 	case COL_PROPAGATION:
 		if (mnt_fs_is_kernel(fs)) {
@@ -581,29 +579,25 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 			n = xstrdup((fl & MS_SHARED) ? "shared" : "private");
 
 			if (fl & MS_SLAVE) {
-				xasprintf(&tmp, "%s,slave", n);
+				xasprintf(&str, "%s,slave", n);
 				free(n);
-				n = tmp;
+				n = str;
 			}
 			if (fl & MS_UNBINDABLE) {
-				xasprintf(&tmp, "%s,unbindable", n);
+				xasprintf(&str, "%s,unbindable", n);
 				free(n);
-				n = tmp;
+				n = str;
 			}
 			str = n;
 		}
 		break;
 	case COL_FREQ:
-		if (!mnt_fs_is_kernel(fs)) {
-			xasprintf(&tmp, "%d", mnt_fs_get_freq(fs));
-			str = tmp;
-		}
+		if (!mnt_fs_is_kernel(fs))
+			xasprintf(&str, "%d", mnt_fs_get_freq(fs));
 		break;
 	case COL_PASSNO:
-		if (!mnt_fs_is_kernel(fs)) {
-			xasprintf(&tmp, "%d", mnt_fs_get_passno(fs));
-			str = tmp;
-		}
+		if (!mnt_fs_is_kernel(fs))
+			xasprintf(&str, "%d", mnt_fs_get_passno(fs));
 		break;
 	default:
 		break;
@@ -611,12 +605,12 @@ static const char *get_data(struct libmnt_fs *fs, int num)
 	return str;
 }
 
-static const char *get_tabdiff_data(struct libmnt_fs *old_fs,
+static char *get_tabdiff_data(struct libmnt_fs *old_fs,
 				    struct libmnt_fs *new_fs,
 				    int change,
 				    int num)
 {
-	const char *str = NULL;
+	char *str = NULL;
 
 	switch (get_column_id(num)) {
 	case COL_ACTION:
@@ -637,16 +631,17 @@ static const char *get_tabdiff_data(struct libmnt_fs *old_fs,
 			str = _("unknown");
 			break;
 		}
+		str = xstrdup(str);
 		break;
 	case COL_OLD_OPTIONS:
 		if (old_fs && (change == MNT_TABDIFF_REMOUNT ||
 			       change == MNT_TABDIFF_UMOUNT))
-			str = mnt_fs_get_options(old_fs);
+			str = xstrdup(mnt_fs_get_options(old_fs));
 		break;
 	case COL_OLD_TARGET:
 		if (old_fs && (change == MNT_TABDIFF_MOVE ||
 			       change == MNT_TABDIFF_UMOUNT))
-			str = mnt_fs_get_target(old_fs);
+			str = xstrdup(mnt_fs_get_target(old_fs));
 		break;
 	default:
 		if (new_fs)
@@ -1435,7 +1430,7 @@ int main(int argc, char *argv[])
 	/*
 	 * initialize output formatting (tt.h)
 	 */
-	tt = tt_new_table(tt_flags);
+	tt = tt_new_table(tt_flags | TT_FL_FREEDATA);
 	if (!tt) {
 		warn(_("failed to initialize output table"));
 		goto leave;
