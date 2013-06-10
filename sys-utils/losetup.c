@@ -307,7 +307,7 @@ static int make_table(struct loopdev_cxt *lc,
 	char *cn_file = NULL;
 	int i;
 
-	if (!(tt = tt_new_table(tt_flags)))
+	if (!(tt = tt_new_table(tt_flags | TT_FL_FREEDATA)))
 		errx(EXIT_FAILURE, _("failed to initialize output table"));
 
 	for (i = 0; i < ncolumns; i++) {
