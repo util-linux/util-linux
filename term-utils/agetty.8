@@ -256,25 +256,33 @@ This section shows examples for the process field of an entry in the
 for the other fields.  See \fIinittab(5)\fP for more details.
 
 For a hard-wired line or a console tty:
-.ti +5
+
+.RS
 /sbin/agetty 9600 ttyS1
+.RE
 
 For a directly connected terminal without proper carriage detect wiring:
 (try this if your terminal just sleeps instead of giving you a password:
 prompt.)
-.ti +5
+
+.RS
 /sbin/agetty \-L 9600 ttyS1 vt100
+.RE
 
 For a old style dial-in line with a 9600/2400/1200 baud modem:
-.ti +5
+
+.RS
 /sbin/agetty \-mt60 ttyS1 9600,2400,1200
+.RE
 
 For a Hayes modem with a fixed 115200 bps interface to the machine:
 (the example init string turns off modem echo and result codes, makes
 modem/computer DCD track modem/modem DCD, makes a DTR drop cause a 
 dis-connection and turn on auto-answer after 1 ring.)
-.ti +5
+
+.RS
 /sbin/agetty \-w \-I 'ATE0Q1&D2&C1S0=1\\015' 115200 ttyS1
+.RE
 
 .SH SECURITY NOTICE
 If you use the \fB\-\-login\-program\fP and \fB\-\-login\-options\fP options,
