@@ -1579,7 +1579,7 @@ int main(int argc, char *argv[])
 	/*
 	 * initialize output columns
 	 */
-	if (!(lsblk->tt = tt_new_table(tt_flags)))
+	if (!(lsblk->tt = tt_new_table(tt_flags | TT_FL_FREEDATA)))
 		errx(EXIT_FAILURE, _("failed to initialize output table"));
 
 	for (i = 0; i < ncolumns; i++) {
