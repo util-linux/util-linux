@@ -17,7 +17,7 @@ the /bin/login command. It is normally invoked by \fIinit(8)\fP.
 
 \fBagetty\fP has several \fInon-standard\fP features that are useful
 for hard-wired and for dial-in lines:
-.IP o
+.IP \(bu
 Adapts the tty settings to parity bits and to erase, kill,
 end-of-line and uppercase characters when it reads a login name.
 The program can handle 7-bit characters with even, odd, none or space
@@ -25,24 +25,24 @@ parity, and 8-bit characters with no parity. The following special
 characters are recognized: Control-U (kill); DEL and
 back space (erase); carriage return and line feed (end of line).
 See also \fB\-\-erase-chars\fP and \fB\-\-kill-chars\fP options.
-.IP o
+.IP \(bu
 Optionally deduces the baud rate from the CONNECT messages produced by
 Hayes(tm)-compatible modems.
-.IP o
+.IP \(bu
 Optionally does not hang up when it is given an already opened line
 (useful for call-back applications).
-.IP o
+.IP \(bu
 Optionally does not display the contents of the \fI/etc/issue\fP file.
-.IP o
+.IP \(bu
 Optionally displays an alternative issue file instead of \fI/etc/issue\fP.
-.IP o
+.IP \(bu
 Optionally does not ask for a login name.
-.IP o
+.IP \(bu
 Optionally invokes a non-standard login program instead of
 \fI/bin/login\fP.
-.IP o
+.IP \(bu
 Optionally turns on hard-ware flow control
-.IP o
+.IP \(bu
 Optionally forces the line to be local with no need for carrier detect.
 .PP
 This program does not use the \fI/etc/gettydefs\fP (System V) or
