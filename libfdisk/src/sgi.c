@@ -19,8 +19,7 @@
 #include "bitops.h"
 #include "pt-sgi.h"
 #include "pt-mbr.h"
-#include "fdisk.h"
-#include "fdisksgilabel.h"
+#include "fdiskP.h"
 
 /*
  * in-memory fdisk SGI stuff

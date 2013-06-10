@@ -19,6 +19,7 @@ libfdisk_la_SOURCES = \
 	libfdisk/src/parttype.c \
 	\
 	libfdisk/src/sun.c \
+	libfdisk/src/sgi.c \
 	libfdisk/src/gpt.c
 
 
