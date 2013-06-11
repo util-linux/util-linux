@@ -724,7 +724,6 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 		fdisk_ask_number_set_default(ask, cround(cxt, limit));
 		fdisk_ask_number_set_high(ask, cround(cxt, limit));
 		fdisk_ask_number_set_base(ask, cround(cxt, start));	/* base for relative input */
-		fdisk_ask_number_set_unit(ask, cxt->sector_size);
 
 		rc = fdisk_do_ask(cxt, ask);
 		if (rc) {
