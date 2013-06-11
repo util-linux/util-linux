@@ -997,11 +997,12 @@ static int dos_add_partition(
 		if (j >= 0)
 			rc = add_partition(cxt, j, t);
 	} else {
-		char c, line[LINE_LENGTH];
+		char buf[16];
+		char c, prompt[LINE_LENGTH];
 		int dflt;
 
 		dflt = (free_primary == 1 && !extended_offset) ? 'e' : 'p';
-		snprintf(line, sizeof(line),
+		snprintf(prompt, sizeof(prompt),
 			 _("Partition type:\n"
 			   "   p   primary (%zd primary, %d extended, %zd free)\n"
 			   "%s\n"
@@ -1011,11 +1012,15 @@ static int dos_add_partition(
 			 extended_offset ? _("   l   logical (numbered from 5)") : _("   e   extended"),
 			 dflt);
 
-		c = tolower(read_chars(cxt, line));
-		if (c == '\n') {
+		rc = get_user_reply(cxt, prompt, buf, sizeof(buf));
+		if (rc)
+			return rc;
+		if (!buf[0]) {
 			c = dflt;
 			printf(_("Using default response %c\n"), c);
-		}
+		} else
+			c = tolower(buf[0]);
+
 		if (c == 'p') {
 			int j = get_partition_unused_primary(cxt);
 			if (j >= 0)
@@ -1405,6 +1410,7 @@ void dos_move_begin(struct fdisk_context *cxt, int i)
 	struct pte *pe = &ptes[i];
 	struct partition *p = pe->part_table;
 	unsigned int new, free_start, curr_start, last;
+	uintmax_t res = 0;
 	size_t x;
 
 	assert(cxt);
@@ -1441,8 +1447,10 @@ void dos_move_begin(struct fdisk_context *cxt, int i)
 
 	last = get_partition_start(pe) + get_nr_sects(p) - 1;
 
-	new = read_int(cxt, free_start, curr_start, last, free_start,
-		       _("New beginning of data")) - pe->offset;
+	if (fdisk_ask_number(cxt, free_start, curr_start, last,
+			_("New beginning of data"), &res))
+		return;
+	new = res - pe->offset;
 
 	if (new != get_nr_sects(p)) {
 		unsigned int sects = get_nr_sects(p) + get_start_sect(p) - new;
