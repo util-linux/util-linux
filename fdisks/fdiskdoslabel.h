@@ -43,7 +43,7 @@ static inline int is_cleared_partition(struct partition *p)
 }
 
 extern void dos_print_mbr_id(struct fdisk_context *cxt);
-extern void dos_set_mbr_id(struct fdisk_context *cxt);
+extern int dos_set_mbr_id(struct fdisk_context *cxt);
 extern void dos_init(struct fdisk_context *cxt);
 
 extern int dos_list_table(struct fdisk_context *cxt, int xtra);

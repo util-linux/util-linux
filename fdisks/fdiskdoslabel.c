@@ -358,26 +358,32 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 	return 0;
 }
 
-void dos_set_mbr_id(struct fdisk_context *cxt)
+int dos_set_mbr_id(struct fdisk_context *cxt)
 {
-	unsigned long new_id;
-	char *ep;
-	char ps[64];
+	char *end = NULL, *str = NULL;
+	unsigned int id, old;
+	int rc;
 
-	snprintf(ps, sizeof ps, _("New disk identifier (current 0x%08x): "),
-		 mbr_get_id(cxt->firstsector));
+	old = mbr_get_id(cxt->firstsector);
+	rc = fdisk_ask_string(cxt,
+			_("Enter of the new disk identifier"), &str);
+	if (rc)
+		return rc;
 
-	if (read_chars(cxt, ps) == '\n')
-		return;
+	errno = 0;
+	id = strtoul(str, &end, 0);
+	if (errno || str == end || (end && *end)) {
+		fdisk_warnx(cxt, _("Incorrect value."));
+		return -EINVAL;
+	}
 
-	new_id = strtoul(line_ptr, &ep, 0);
-	if (*ep != '\n')
-		return;
+	fdisk_info(cxt, _("Changing disk identifier from 0x%08x to 0x%08x."),
+			old, id);
 
-	mbr_set_id(cxt->firstsector, new_id);
+	mbr_set_id(cxt->firstsector, id);
 	MBRbuffer_changed = 1;
 	fdisk_label_set_changed(cxt->label, 1);
-	dos_print_mbr_id(cxt);
+	return 0;
 }
 
 static void get_partition_table_geometry(struct fdisk_context *cxt,
