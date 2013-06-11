@@ -36,7 +36,6 @@
 #include "closestream.h"
 
 #include "pt-sun.h"		/* to toggle flags */
-#include "fdiskmaclabel.h"
 #include "fdiskdoslabel.h"
 #include "fdiskbsdlabel.h"
 

@@ -596,8 +596,6 @@ int fdisk_info_new_partition(
 #ifdef TEST_PROGRAM
 struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt) { return NULL; }
 struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt) { return NULL; }
-struct fdisk_label *fdisk_new_mac_label(struct fdisk_context *cxt) { return NULL; }
-struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt) { return NULL; }
 
 int test_ranges(struct fdisk_test *ts, int argc, char *argv[])
 {

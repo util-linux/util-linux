@@ -13,8 +13,6 @@ fdisk_SOURCES = \
 	fdisks/fdiskbsdlabel.h \
 	fdisks/fdiskdoslabel.c \
 	fdisks/fdiskdoslabel.h \
-	fdisks/fdiskmaclabel.c \
-	fdisks/fdiskmaclabel.h \
 	fdisks/fdisk-menu.c \
 	fdisks/partname.c \
 	fdisks/common.h
