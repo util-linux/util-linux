@@ -581,8 +581,7 @@ static void fill_bounds(struct fdisk_context *cxt,
 
 static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype *t)
 {
-	char mesg[256];		/* 48 does not suffice in Japanese */
-	int sys, read = 0;
+	int sys, read = 0, rc;
 	size_t i;
 	struct partition *p = ptes[n].part_table;
 	struct partition *q = ptes[ext_index].part_table;
@@ -621,7 +620,9 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 		for (i = 0; i < cxt->label->nparts_max; i++)
 			first[i] = (cround(cxt, first[i]) - 1) * fdisk_context_get_units_per_sector(cxt);
 
-	snprintf(mesg, sizeof(mesg), _("First %s"), fdisk_context_get_unit(cxt, SINGULAR));
+	/*
+	 * Ask for first sector
+	 */
 	do {
 		sector_t dflt, aligned;
 
@@ -643,19 +644,37 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 			temp = start;
 			read = 0;
 		}
+
 		if (!read && start == temp) {
 			sector_t j = start;
+			struct fdisk_ask *ask = fdisk_new_ask();
 
-			start = read_int(cxt, cround(cxt, j), cround(cxt, dflt),
-					cround(cxt, limit),
-					 0, mesg);
+			if (fdisk_context_use_cylinders(cxt))
+				fdisk_ask_set_query(ask, _("First cylinder"));
+			else
+				fdisk_ask_set_query(ask, _("First sector"));
+
+			fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
+			fdisk_ask_number_set_low(ask, cround(cxt, j));
+			fdisk_ask_number_set_default(ask, cround(cxt, dflt));
+			fdisk_ask_number_set_high(ask, cround(cxt, limit));
+
+			rc = fdisk_do_ask(cxt, ask);
+			if (!rc)
+				start = fdisk_ask_number_get_result(ask);
+			fdisk_free_ask(ask);
+			if (rc)
+				return rc;
+
 			if (fdisk_context_use_cylinders(cxt)) {
 				start = (start - 1) * fdisk_context_get_units_per_sector(cxt);
-				if (start < j) start = j;
+				if (start < j)
+					start = j;
 			}
 			read = 1;
 		}
 	} while (start != temp || !read);
+
 	if (n > 4) {			/* NOT for fifth partition */
 		struct pte *pe = &ptes[n];
 
@@ -684,32 +703,49 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 	if (cround(cxt, start) == cround(cxt, limit)) {
 		stop = limit;
 	} else {
-		int is_suffix_used = 0;
+		/*
+		 * Ask for last sector
+		 */
+		struct fdisk_ask *ask = fdisk_new_ask();
 
-		snprintf(mesg, sizeof(mesg),
-			_("Last %1$s, +%2$s or +size{K,M,G}"),
-			 fdisk_context_get_unit(cxt, SINGULAR), fdisk_context_get_unit(cxt, PLURAL));
+		fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
 
-		stop = read_int_with_suffix(cxt,
-					    cround(cxt, start), cround(cxt, limit),
-					    cround(cxt, limit),
-					    cround(cxt, start), mesg, &is_suffix_used);
 		if (fdisk_context_use_cylinders(cxt)) {
-			stop = stop * fdisk_context_get_units_per_sector(cxt) - 1;
-			if (stop >limit)
-				stop = limit;
+			fdisk_ask_set_query(ask, _("Last cylinder, +cylinders or +size{K,M,G,T,P}"));
+			fdisk_ask_number_set_unit(ask,
+				     cxt->sector_size *
+				     fdisk_context_get_units_per_sector(cxt));
+		} else {
+			fdisk_ask_set_query(ask, _("Last sector, +sectors or +size{K,M,G,T,P}"));
+			fdisk_ask_number_set_unit(ask,cxt->sector_size);
 		}
 
-		if (is_suffix_used && alignment_required(cxt)) {
+		fdisk_ask_number_set_low(ask, cround(cxt, start));
+		fdisk_ask_number_set_default(ask, cround(cxt, limit));
+		fdisk_ask_number_set_high(ask, cround(cxt, limit));
+		fdisk_ask_number_set_base(ask, cround(cxt, start));	/* base for relative input */
+		fdisk_ask_number_set_unit(ask, cxt->sector_size);
+
+		rc = fdisk_do_ask(cxt, ask);
+		if (rc) {
+			fdisk_free_ask(ask);
+			return rc;
+		}
+
+		stop = fdisk_ask_number_get_result(ask);
+
+		if (fdisk_ask_number_is_relative(ask)
+		    && alignment_required(cxt)) {
 			/* the last sector has not been exactly requested (but
-			 * defined by +size{K,M,G} convention), so be smart
-			 * and align the end of the partition. The next
-			 * partition will start at phy.block boundary.
+			 * defined by +size{K,M,G} convention), so be smart and
+			 * align the end of the partition. The next partition
+			 * will start at phy.block boundary.
 			 */
 			stop = fdisk_align_lba_in_range(cxt, stop, start, limit) - 1;
 			if (stop > limit)
 				stop = limit;
 		}
+		fdisk_free_ask(ask);
 	}
 
 	set_partition(cxt, n, 0, start, stop, sys);
