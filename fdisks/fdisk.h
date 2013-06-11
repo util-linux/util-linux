@@ -59,14 +59,6 @@ enum menutype {
 	EXPERT_MENU,
 };
 
-enum failure {
-	ioctl_error,
-	unable_to_read,
-	unable_to_seek,
-	unable_to_write
-};
-
-
 extern int get_user_reply(struct fdisk_context *cxt,
 			  const char *prompt,
 			  char *buf, size_t bufsz);
@@ -79,7 +71,6 @@ extern int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 /* prototypes for fdisk.c */
 extern char *line_ptr;
 
-extern void fatal(struct fdisk_context *cxt, enum failure why);
 extern void list_partition_types(struct fdisk_context *cxt);
 extern int read_line(struct fdisk_context *cxt, int *asked);
 extern char read_char(struct fdisk_context *cxt, char *mesg);

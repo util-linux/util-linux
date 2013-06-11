@@ -72,7 +72,7 @@ struct fdisk_bsd_label {
 
 static int xbsd_delete_part (struct fdisk_context *cxt, size_t partnum);
 static void xbsd_edit_disklabel (struct fdisk_context *cxt);
-static void xbsd_write_bootstrap (struct fdisk_context *cxt);
+static int xbsd_write_bootstrap (struct fdisk_context *cxt);
 static void xbsd_change_fstype (struct fdisk_context *cxt);
 static int xbsd_get_part_index (struct fdisk_context *cxt, int max);
 static int xbsd_check_new_partition (struct fdisk_context *cxt, int *i);
@@ -522,7 +522,7 @@ xbsd_get_bootstrap (char *path, void *ptr, int size)
   return 1;
 }
 
-static void
+static int
 xbsd_write_bootstrap (struct fdisk_context *cxt)
 {
   char *bootdir = BSD_LINUX_BOOTDIR;
@@ -545,7 +545,7 @@ xbsd_write_bootstrap (struct fdisk_context *cxt)
   }
   snprintf (path, sizeof(path), "%s/%sboot", bootdir, dkbasename);
   if (!xbsd_get_bootstrap (path, disklabelbuffer, (int) xbsd_dlabel.d_secsize))
-    return;
+    return -1;
 
   /* We need a backup of the disklabel (xbsd_dlabel might have changed). */
   d = &disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE];
@@ -557,13 +557,13 @@ xbsd_write_bootstrap (struct fdisk_context *cxt)
   snprintf (path, sizeof(path), "%s/boot%s", bootdir, dkbasename);
   if (!xbsd_get_bootstrap (path, &disklabelbuffer[xbsd_dlabel.d_secsize],
 			  (int) xbsd_dlabel.d_bbsize - xbsd_dlabel.d_secsize))
-    return;
+    return -1;
 
   e = d + sizeof (struct xbsd_disklabel);
   for (p=d; p < e; p++)
     if (*p) {
-      fprintf (stderr, _("Bootstrap overlaps with disk label!\n"));
-      exit ( EXIT_FAILURE );
+      fdisk_warnx(cxt, _("Bootstrap overlaps with disk label!\n"));
+      return -EINVAL;
     }
 
   memmove (d, &dl, sizeof (struct xbsd_disklabel));
@@ -577,14 +577,18 @@ xbsd_write_bootstrap (struct fdisk_context *cxt)
   sector = get_start_sect(xbsd_part);
 #endif
 
-  if (lseek (cxt->dev_fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
-	  fatal (cxt, unable_to_seek);
-  if (BSD_BBSIZE != write (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE))
-	  fatal (cxt, unable_to_write);
+  if (lseek (cxt->dev_fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1) {
+	  fdisk_warn(cxt, _("seek failed: %s"), cxt->dev_path);
+	  return -errno;
+  }
+  if (BSD_BBSIZE != write (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE)) {
+	  fdisk_warn(cxt, _("write failed: %s"), cxt->dev_path);
+	  return -errno;
+  }
 
   printf (_("Bootstrap installed on %s.\n"), cxt->dev_path);
-
   sync_disks ();
+  return 0;
 }
 
 /* TODO: remove this, use regular change_partition_type() in fdisk.c */
@@ -799,21 +803,28 @@ xbsd_writelabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_dis
 
 #if defined (__alpha__) && BSD_LABELSECTOR == 0
   alpha_bootblock_checksum (disklabelbuffer);
-  if (lseek (cxt->dev_fd, (off_t) 0, SEEK_SET) == -1)
-	  fatal (cxt, unable_to_seek);
-  if (BSD_BBSIZE != write (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE))
-	  fatal (cxt, unable_to_write);
+  if (lseek (cxt->dev_fd, (off_t) 0, SEEK_SET) == -1) {
+	  fdisk_warn(cxt, _("seek failed: %d"), cxt->dev_path);
+	  return -errno;
+  }
+  if (BSD_BBSIZE != write (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE)) {
+	  fdisk_warn(cxt, _("write failed: %d"), cxt->dev_path);
+	  return -errno;
+  }
 #else
   if (lseek (cxt->dev_fd, (off_t) sector * SECTOR_SIZE + BSD_LABELOFFSET,
-		   SEEK_SET) == -1)
-	  fatal (cxt, unable_to_seek);
-  if (sizeof (struct xbsd_disklabel) != write (cxt->dev_fd, d, sizeof (struct xbsd_disklabel)))
-	  fatal (cxt, unable_to_write);
+		   SEEK_SET) == -1) {
+	  fdisk_warn(cxt, _("seek failed: %d"), cxt->dev_path);
+	  return -errno;
+  }
+  if (sizeof (struct xbsd_disklabel) != write (cxt->dev_fd, d, sizeof (struct xbsd_disklabel))) {
+	  fdisk_warn(cxt, _("write failed: %d"), cxt->dev_path);
+	  return -errno;
+  }
 #endif
 
   sync_disks ();
-
-  return 1;
+  return 0;
 }
 
 static void

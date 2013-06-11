@@ -87,28 +87,6 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-void __attribute__((__noreturn__))
-fatal(struct fdisk_context *cxt, enum failure why)
-{
-	close(cxt->dev_fd);
-	switch (why) {
-		case unable_to_read:
-			err(EXIT_FAILURE, _("unable to read %s"), cxt->dev_path);
-
-		case unable_to_seek:
-			err(EXIT_FAILURE, _("unable to seek on %s"), cxt->dev_path);
-
-		case unable_to_write:
-			err(EXIT_FAILURE, _("unable to write %s"), cxt->dev_path);
-
-		case ioctl_error:
-			err(EXIT_FAILURE, _("BLKGETSIZE ioctl failed on %s"), cxt->dev_path);
-
-		default:
-			err(EXIT_FAILURE, _("fatal error"));
-	}
-}
-
 struct partition *
 get_part_table(int i) {
 	return ptes[i].part_table;
