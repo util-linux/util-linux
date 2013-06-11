@@ -158,8 +158,8 @@ static int xbsd_add_part (struct fdisk_context *cxt,
 		size_t partnum __attribute__((__unused__)),
 		struct fdisk_parttype *t __attribute__((__unused__)))
 {
+	struct fdisk_ask *ask;
 	unsigned int begin, end;
-	char mesg[256];
 	int i, rc;
 
 	assert(cxt);
@@ -177,23 +177,58 @@ static int xbsd_add_part (struct fdisk_context *cxt,
 	begin = 0;
 	end = xbsd_dlabel.d_secperunit - 1;
 #endif
+	ask = fdisk_new_ask();
 
-	snprintf (mesg, sizeof(mesg), _("First %s"),
-			fdisk_context_get_unit(cxt, SINGULAR));
-	begin = read_int(cxt, bsd_cround (cxt, begin),
-			      bsd_cround (cxt, begin),
-			      bsd_cround (cxt, end),
-			  0, mesg);
+	/*
+	 * First sector
+	 */
+	if (fdisk_context_use_cylinders(cxt))
+		fdisk_ask_set_query(ask, _("First cylinder"));
+	else
+		fdisk_ask_set_query(ask, _("First sector"));
+
+	fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
+	fdisk_ask_number_set_low(ask, bsd_cround(cxt, begin));
+	fdisk_ask_number_set_default(ask, bsd_cround(cxt, begin));
+	fdisk_ask_number_set_high(ask, bsd_cround(cxt, end));
+
+	rc = fdisk_do_ask(cxt, ask);
+	if (rc) {
+		fdisk_free_ask(ask);
+		return rc;
+	}
+	begin = fdisk_ask_number_get_result(ask);
 
 	if (fdisk_context_use_cylinders(cxt))
 		begin = (begin - 1) * xbsd_dlabel.d_secpercyl;
 
-	snprintf (mesg, sizeof(mesg), _("Last %s or +size or +sizeM or +sizeK"),
-		  fdisk_context_get_unit(cxt, SINGULAR));
-	end = read_int (cxt, bsd_cround (cxt, begin),
-			bsd_cround (cxt, end),
-			bsd_cround (cxt, end),
-			bsd_cround (cxt, begin), mesg);
+	fdisk_reset_ask(ask);
+
+	/*
+	 * Last sector
+	 */
+	fdisk_ask_set_type(ask, FDISK_ASKTYPE_OFFSET);
+
+	if (fdisk_context_use_cylinders(cxt)) {
+		fdisk_ask_set_query(ask, _("Last cylinder, +cylinders or +size{K,M,G,T,P}"));
+		fdisk_ask_number_set_unit(ask,
+			     cxt->sector_size *
+			     fdisk_context_get_units_per_sector(cxt));
+	} else {
+		fdisk_ask_set_query(ask, _("Last sector, +sectors or +size{K,M,G,T,P}"));
+		fdisk_ask_number_set_unit(ask,cxt->sector_size);
+	}
+
+	fdisk_ask_number_set_low(ask, bsd_cround(cxt, begin));
+	fdisk_ask_number_set_default(ask, bsd_cround(cxt, end));
+	fdisk_ask_number_set_high(ask, bsd_cround(cxt, end));
+	fdisk_ask_number_set_base(ask, bsd_cround(cxt, begin));
+
+	rc = fdisk_do_ask(cxt, ask);
+	end = fdisk_ask_number_get_result(ask);
+	fdisk_free_ask(ask);
+	if (rc)
+		return rc;
 
 	if (fdisk_context_use_cylinders(cxt))
 		end = end * xbsd_dlabel.d_secpercyl - 1;
@@ -216,10 +251,10 @@ static int xbsd_create_disklabel(struct fdisk_context *cxt)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, OSF));
 
-	fprintf (stderr, _("%s contains no disklabel.\n"), cxt->dev_path);
+	fprintf (stderr, _("%s contains no BSD disklabel.\n"), cxt->dev_path);
 
 	while (1) {
-		c = read_char(cxt, _("Do you want to create a disklabel? (y/n) "));
+		c = read_char(cxt, _("Do you want to create a BSD disklabel? (y/n) "));
 		if (tolower(c) == 'y') {
 			if (xbsd_initlabel (cxt,
 #if defined (__alpha__) || defined (__powerpc__) || defined (__hppa__) || \
