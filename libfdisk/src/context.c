@@ -54,6 +54,9 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 	cxt->first_lba =        parent->first_lba;
 	cxt->total_sectors =    parent->total_sectors;
 
+	cxt->ask_cb =		parent->ask_cb;
+	cxt->ask_data =		parent->ask_data;
+
 	cxt->geom = parent->geom;
 
 	if (strcmp(name, "bsd") == 0)
