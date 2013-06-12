@@ -47,10 +47,6 @@
 #endif
 
 
-sector_t get_nr_sects(struct partition *p) {
-	return read4_little_endian(p->size4);
-}
-
 int	nowarn = 0;			/* no warnings for fdisk -l/-s */
 
 void toggle_units(struct fdisk_context *cxt)

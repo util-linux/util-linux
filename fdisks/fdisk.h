@@ -86,8 +86,6 @@ extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
 					 unsigned int low, unsigned int dflt, unsigned int high,
 				  unsigned int base, char *mesg, int *is_suffix_used);
 
-extern sector_t get_nr_sects(struct partition *p);
-
 extern int nowarn;
 
 /* start_sect and nr_sects are stored little endian on all machines */
@@ -105,6 +103,11 @@ static inline unsigned int read4_little_endian(const unsigned char *cp)
 	return (unsigned int)(cp[0]) + ((unsigned int)(cp[1]) << 8)
 		+ ((unsigned int)(cp[2]) << 16)
 		+ ((unsigned int)(cp[3]) << 24);
+}
+
+static inline sector_t get_nr_sects(struct partition *p)
+{
+	return read4_little_endian(p->size4);
 }
 
 static inline void set_nr_sects(struct partition *p, sector_t nr_sects)
