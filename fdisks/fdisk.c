@@ -576,7 +576,6 @@ static void delete_partition(struct fdisk_context *cxt, int partnum)
 	if (partnum < 0 || warn_geometry(cxt))
 		return;
 
-	ptes[partnum].changed = 1;
 	if (fdisk_delete_partition(cxt, partnum) != 0)
 		printf(_("Could not delete partition %d\n"), partnum + 1);
 	else
@@ -604,7 +603,6 @@ static void change_partition_type(struct fdisk_context *cxt)
 			continue;
 
 		if (fdisk_set_partition_type(cxt, i, t) == 0) {
-			ptes[i].changed = 1;
 			printf (_("Changed type of partition '%s' to '%s'\n"),
 				org_t ? org_t->name : _("Unknown"),
 				    t ?     t->name : _("Unknown"));
@@ -795,8 +793,10 @@ static void print_raw(struct fdisk_context *cxt)
 	    fdisk_is_disklabel(cxt, GPT))
 		print_buffer(cxt, cxt->firstsector);
 
-	else for (i = 3; i < cxt->label->nparts_max; i++)
+	else if (fdisk_is_disklabel(cxt, DOS)) {
+		for (i = 3; i < cxt->label->nparts_max; i++)
 		     print_buffer(cxt, ptes[i].sectorbuffer);
+	}
 }
 
 static void __attribute__ ((__noreturn__)) handle_quit(struct fdisk_context *cxt)

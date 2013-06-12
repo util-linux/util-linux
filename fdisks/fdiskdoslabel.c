@@ -190,6 +190,7 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 			ptes[ext_index].ext_pointer = NULL;
 			extended_offset = 0;
 		}
+		ptes[partnum].changed = 1;
 		clear_partition(p);
 	} else if (!q->sys_ind && partnum > 4) {
 		/* the last one in the chain - just delete */
@@ -1100,6 +1101,7 @@ static int dos_set_parttype(
 		"partitions, please see the fdisk manual page for additional "
 		"information.\n\n"));
 
+	ptes[partnum].changed = 1;
 	p->sys_ind = t->type;
 	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
