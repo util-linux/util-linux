@@ -61,6 +61,7 @@
 #define DKTYPENAMES
 #include "fdiskbsdlabel.h"
 #include "fdiskdoslabel.h"
+#include "all-io.h"
 
 /*
  * in-memory fdisk BSD stuff
@@ -559,94 +560,103 @@ static void xbsd_edit_disklabel(struct fdisk_context *cxt)
 	d->d_secperunit = d->d_secpercyl * d->d_ncylinders;
 }
 
-static int
-xbsd_get_bootstrap (char *path, void *ptr, int size)
+static int xbsd_get_bootstrap(struct fdisk_context *cxt,
+			char *path, void *ptr, int size)
 {
-  int fd;
+	int fd;
 
-  if ((fd = open (path, O_RDONLY)) < 0)
-  {
-    perror (path);
-    return 0;
-  }
-  if (read (fd, ptr, size) < 0)
-  {
-    perror (path);
-    close (fd);
-    return 0;
-  }
-  printf (" ... %s\n", path);
-  close (fd);
-  return 1;
+	if ((fd = open(path, O_RDONLY)) < 0) {
+		fdisk_warn(cxt, _("open failed %s"), path);
+		return -errno;
+	}
+
+	if (read_all(fd, ptr, size) != size) {
+		fdisk_warn(cxt, _("read failed %s"), path);
+		close(fd);
+		return -errno;
+	}
+
+	fdisk_info(cxt, "bootstrap file %s successfully loaded", path);
+	close (fd);
+	return 0;
 }
 
-static int
-xbsd_write_bootstrap (struct fdisk_context *cxt)
+static int xbsd_write_bootstrap (struct fdisk_context *cxt)
 {
-  char *bootdir = BSD_LINUX_BOOTDIR;
-  char path[sizeof(BSD_LINUX_BOOTDIR) + 1 + 2 + 4];  /* BSD_LINUX_BOOTDIR + / + {sd,wd} + boot */
-  char *dkbasename;
-  struct xbsd_disklabel dl;
-  char *d, *p, *e;
-  int sector;
+	char *name = xbsd_dlabel.d_type == BSD_DTYPE_SCSI ? "sd" : "wd";
+	char buf[BUFSIZ];
+	char *res, *d, *p;
+	int rc;
+	sector_t sector;
+	struct xbsd_disklabel dl;
 
-  if (xbsd_dlabel.d_type == BSD_DTYPE_SCSI)
-    dkbasename = "sd";
-  else
-    dkbasename = "wd";
+	snprintf(buf, sizeof(buf),
+		_("Bootstrap: %1$sboot -> boot%1$s (default %1$s)"),
+		name);
+	rc = fdisk_ask_string(cxt, buf, &res);
+	if (rc)
+		goto done;
+	if (res && *res)
+		name = res;
 
-  printf (_("Bootstrap: %sboot -> boot%s (%s): "),
-	  dkbasename, dkbasename, dkbasename);
-  if (read_line(cxt, NULL)) {
-    line_ptr[strlen (line_ptr)-1] = '\0';
-    dkbasename = line_ptr;
-  }
-  snprintf (path, sizeof(path), "%s/%sboot", bootdir, dkbasename);
-  if (!xbsd_get_bootstrap (path, disklabelbuffer, (int) xbsd_dlabel.d_secsize))
-    return -1;
+	snprintf(buf, sizeof(buf), "%s/%sboot", BSD_LINUX_BOOTDIR, name);
+	rc = xbsd_get_bootstrap(cxt, buf,
+			disklabelbuffer,
+			(int) xbsd_dlabel.d_secsize);
+	if (rc)
+		goto done;
 
-  /* We need a backup of the disklabel (xbsd_dlabel might have changed). */
-  d = &disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE];
-  memmove (&dl, d, sizeof (struct xbsd_disklabel));
+	/* We need a backup of the disklabel (xbsd_dlabel might have changed). */
+	d = &disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE];
+	memmove(&dl, d, sizeof(struct xbsd_disklabel));
 
-  /* The disklabel will be overwritten by 0's from bootxx anyway */
-  memset (d, 0, sizeof (struct xbsd_disklabel));
+	/* The disklabel will be overwritten by 0's from bootxx anyway */
+	memset(d, 0, sizeof(struct xbsd_disklabel));
 
-  snprintf (path, sizeof(path), "%s/boot%s", bootdir, dkbasename);
-  if (!xbsd_get_bootstrap (path, &disklabelbuffer[xbsd_dlabel.d_secsize],
-			  (int) xbsd_dlabel.d_bbsize - xbsd_dlabel.d_secsize))
-    return -1;
+	snprintf(buf, sizeof(buf), "%s/boot%s", BSD_LINUX_BOOTDIR, name);
+	rc = xbsd_get_bootstrap(cxt, buf,
+			&disklabelbuffer[xbsd_dlabel.d_secsize],
+			(int) xbsd_dlabel.d_bbsize - xbsd_dlabel.d_secsize);
+	if (rc)
+		goto done;
 
-  e = d + sizeof (struct xbsd_disklabel);
-  for (p=d; p < e; p++)
-    if (*p) {
-      fdisk_warnx(cxt, _("Bootstrap overlaps with disk label!\n"));
-      return -EINVAL;
-    }
+	/* check end of the bootstrap */
+	for (p = d; p < d + sizeof(struct xbsd_disklabel); p++) {
+		if (!*p)
+			continue;
+		fdisk_warnx(cxt, _("Bootstrap overlaps with disk label!"));
+		return -EINVAL;
+	}
 
-  memmove (d, &dl, sizeof (struct xbsd_disklabel));
+	/* move disklabel back */
+	memmove(d, &dl, sizeof(struct xbsd_disklabel));
 
 #if defined (__powerpc__) || defined (__hppa__)
-  sector = 0;
+	sector = 0;
 #elif defined (__alpha__)
-  sector = 0;
-  alpha_bootblock_checksum (disklabelbuffer);
+	sector = 0;
+	alpha_bootblock_checksum(disklabelbuffer);
 #else
-  sector = get_start_sect(xbsd_part);
+	sector = get_start_sect(xbsd_part);
 #endif
+	if (lseek(cxt->dev_fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1) {
+		fdisk_warn(cxt, _("seek failed %s"), cxt->dev_path);
+		rc = -errno;
+		goto done;
+	}
+	if (write_all(cxt->dev_fd, disklabelbuffer, BSD_BBSIZE)) {
+		fdisk_warn(cxt, _("write failed %s"), cxt->dev_path);
+		rc = -errno;
+		goto done;
+	}
 
-  if (lseek (cxt->dev_fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1) {
-	  fdisk_warn(cxt, _("seek failed: %s"), cxt->dev_path);
-	  return -errno;
-  }
-  if (BSD_BBSIZE != write (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE)) {
-	  fdisk_warn(cxt, _("write failed: %s"), cxt->dev_path);
-	  return -errno;
-  }
+	fdisk_info(cxt, _("Bootstrap installed on %s."), cxt->dev_path);
+	sync_disks ();
 
-  printf (_("Bootstrap installed on %s.\n"), cxt->dev_path);
-  sync_disks ();
-  return 0;
+	rc = 0;
+done:
+	free(res);
+	return rc;
 }
 
 /* TODO: remove this, use regular change_partition_type() in fdisk.c */
