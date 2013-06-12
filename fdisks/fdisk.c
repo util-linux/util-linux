@@ -84,11 +84,6 @@ void toggle_units(struct fdisk_context *cxt)
 		fdisk_info(cxt, _("Changing display/entry units to sectors."));
 }
 
-struct partition *
-get_part_table(int i) {
-	return ptes[i].part_table;
-}
-
 void list_partition_types(struct fdisk_context *cxt)
 {
 	struct fdisk_parttype *types;

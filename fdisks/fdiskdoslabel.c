@@ -99,6 +99,10 @@ static int get_partition_unused_primary(struct fdisk_context *cxt)
 	}
 }
 
+struct partition *get_part_table(int i)
+{
+	return ptes[i].part_table;
+}
 
 /* Allocate a buffer and read a partition table sector */
 static void read_pte(struct fdisk_context *cxt, int pno, sector_t offset)
