@@ -75,7 +75,7 @@ static int xbsd_delete_part (struct fdisk_context *cxt, size_t partnum);
 static void xbsd_edit_disklabel (struct fdisk_context *cxt);
 static int xbsd_write_bootstrap (struct fdisk_context *cxt);
 static void xbsd_change_fstype (struct fdisk_context *cxt);
-static int xbsd_get_part_index (struct fdisk_context *cxt, int max);
+static int xbsd_get_part_index (struct fdisk_context *cxt, int max, int *n);
 static int xbsd_check_new_partition (struct fdisk_context *cxt, int *i);
 static unsigned short xbsd_dkcksum (struct xbsd_disklabel *lp);
 static int xbsd_initlabel  (struct fdisk_context *cxt,
@@ -329,7 +329,7 @@ bsd_command_prompt (struct fdisk_context *cxt)
 
   while (1) {
     char buf[16];
-    int rc;
+    int rc, n;
 
     /*
      * BIG-FAT-TODO: don't use bsd_command_prompt(), just initialialize BSD
@@ -344,8 +344,11 @@ bsd_command_prompt (struct fdisk_context *cxt)
 
     switch (tolower(buf[0])) {
       case 'd':
-	      xbsd_delete_part(cxt, xbsd_get_part_index(cxt, xbsd_dlabel.d_npartitions));
-	      break;
+	rc = xbsd_get_part_index(cxt, xbsd_dlabel.d_npartitions, &n);
+	if (rc)
+		return;
+	xbsd_delete_part(cxt, n);
+	break;
       case 'e':
 	xbsd_edit_disklabel (cxt);
 	break;
@@ -669,7 +672,8 @@ static void xbsd_change_fstype (struct fdisk_context *cxt)
   assert(cxt->label);
   assert(fdisk_is_disklabel(cxt, OSF));
 
-  i = xbsd_get_part_index (cxt, xbsd_dlabel.d_npartitions);
+  if (xbsd_get_part_index(cxt, xbsd_dlabel.d_npartitions, &i))
+	  return;
   t = read_partition_type(cxt);
 
   if (t) {
@@ -679,22 +683,31 @@ static void xbsd_change_fstype (struct fdisk_context *cxt)
   }
 }
 
-static int
-xbsd_get_part_index(struct fdisk_context *cxt, int max)
+static int xbsd_get_part_index(struct fdisk_context *cxt, int max, int *n)
 {
-  char prompt[256];
-  char l;
+	int c;
+	char prompt[256];
 
-  snprintf (prompt, sizeof(prompt), _("Partition (a-%c): "), 'a' + max - 1);
-  do
-     l = tolower(read_char(cxt, prompt));
-  while (l < 'a' || l > 'a' + max - 1);
-  return l - 'a';
+	snprintf(prompt, sizeof(prompt), _("Partition (a-%c): "), 'a' + max - 1);
+	do {
+		char *res;
+		int rc = fdisk_ask_string(cxt, prompt, &res);
+
+		if (rc)
+			return rc;
+		c = tolower(*res);
+		free(res);
+	} while (c < 'a' || c > 'a' + max - 1);
+
+	*n = c - 'a';
+	return 0;
 }
 
 static int
 xbsd_check_new_partition(struct fdisk_context *cxt, int *i)
 {
+	int rc;
+
 	/* room for more? various BSD flavours have different maxima */
 	if (xbsd_dlabel.d_npartitions == BSD_MAXPARTITIONS) {
 		int t;
@@ -710,7 +723,9 @@ xbsd_check_new_partition(struct fdisk_context *cxt, int *i)
 		}
 	}
 
-	*i = xbsd_get_part_index(cxt, BSD_MAXPARTITIONS);
+	rc = xbsd_get_part_index(cxt, BSD_MAXPARTITIONS, i);
+	if (rc)
+		return rc;
 
 	if (*i >= xbsd_dlabel.d_npartitions)
 		xbsd_dlabel.d_npartitions = (*i) + 1;
