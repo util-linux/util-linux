@@ -327,8 +327,21 @@ bsd_command_prompt (struct fdisk_context *cxt)
 #endif
 
   while (1) {
+    char buf[16];
+    int rc;
+
+    /*
+     * BIG-FAT-TODO: don't use bsd_command_prompt(), just initialialize BSD
+     * stuff by label probe() libfdisk function, and use standard fdisk.c
+     * menu code.
+     */
     putchar ('\n');
-    switch (tolower (read_char(cxt, _("BSD disklabel command (m for help): ")))) {
+    rc = get_user_reply(cxt, _("BSD disklabel command (m for help): "),
+			    buf, sizeof(buf));
+    if (rc)
+      return;
+
+    switch (tolower(buf[0])) {
       case 'd':
 	      xbsd_delete_part(cxt, xbsd_get_part_index(cxt, xbsd_dlabel.d_npartitions));
 	      break;
@@ -491,51 +504,59 @@ xbsd_print_disklabel (struct fdisk_context *cxt, int show_all)
   }
 }
 
-static unsigned long
-edit_int(struct fdisk_context *cxt, unsigned long def, char *mesg)
+static uint32_t ask_uint32(struct fdisk_context *cxt,
+		uint32_t dflt, char *mesg)
 {
-  do {
-    fputs (mesg, stdout);
-    printf (" (%lu): ", def);
-    if (!read_line(cxt, NULL))
-      return def;
-  } while (!isdigit (*line_ptr));
+	uintmax_t res;
 
-  return strtoul(line_ptr, NULL, 10);	/* TODO check it! */
+	if (fdisk_ask_number(cxt, min(dflt, (uint32_t) 1), dflt,
+				UINT32_MAX, mesg, &res) == 0)
+		return res;
+	return dflt;
 }
 
-static void
-xbsd_edit_disklabel(struct fdisk_context *cxt)
+static uint16_t ask_uint16(struct fdisk_context *cxt,
+		uint16_t dflt, char *mesg)
 {
-  struct xbsd_disklabel *d;
+	uintmax_t res;
 
-  d = &xbsd_dlabel;
+	if (fdisk_ask_number(cxt, min(dflt, (uint16_t) 1),
+				dflt, UINT16_MAX, mesg, &res) == 0)
+		return res;
+	return dflt;
+}
+
+static void xbsd_edit_disklabel(struct fdisk_context *cxt)
+{
+	struct xbsd_disklabel *d;
+	uintmax_t res;
+
+	d = &xbsd_dlabel;
 
 #if defined (__alpha__) || defined (__ia64__)
-  d -> d_secsize    = edit_int(cxt, d->d_secsize     ,_("bytes/sector"));
-  d -> d_nsectors   = edit_int(cxt, d->d_nsectors    ,_("sectors/track"));
-  d -> d_ntracks    = edit_int(cxt, d->d_ntracks     ,_("tracks/cylinder"));
-  d -> d_ncylinders = edit_int(cxt, d->d_ncylinders  ,_("cylinders"));
+	if (fdisk_ask_number(cxt, DEFAULT_SECTOR_SIZE, d->d_secsize,
+			     UINT32_MAX, _("bytes/sector"), &res) == 0)
+		d->d_secsize = res;
+
+	d->d_nsectors = ask_uint32(cxt, d->d_nsectors, _("sectors/track"));
+	d->d_ntracks = ask_uint32(cxt, d->d_ntracks, _("tracks/cylinder"));
+	d->d_ncylinders = ask_uint32(cxt, d->d_ncylinders  ,_("cylinders"));
 #endif
 
-  /* d -> d_secpercyl can be != d -> d_nsectors * d -> d_ntracks */
-  while (1)
-  {
-    d -> d_secpercyl = edit_int(cxt, (unsigned long) d->d_nsectors * d -> d_ntracks,
-					  _("sectors/cylinder"));
-    if (d -> d_secpercyl <= d -> d_nsectors * d -> d_ntracks)
-      break;
+	if (fdisk_ask_number(cxt, 1, d->d_nsectors * d->d_ntracks,
+			     d->d_nsectors * d->d_ntracks,
+			     _("sectors/cylinder"), &res) == 0)
+		d->d_secpercyl = res;
 
-    printf (_("Must be <= sectors/track * tracks/cylinder (default).\n"));
-  }
-  d -> d_rpm        = (unsigned short) edit_int(cxt, d->d_rpm       ,_("rpm"));
-  d -> d_interleave = (unsigned short) edit_int(cxt, d->d_interleave,_("interleave"));
-  d -> d_trackskew  = (unsigned short) edit_int(cxt, d->d_trackskew ,_("trackskew"));
-  d -> d_cylskew    = (unsigned short) edit_int(cxt, d->d_cylskew   ,_("cylinderskew"));
-  d -> d_headswitch = edit_int(cxt, d->d_headswitch  ,_("headswitch"));
-  d -> d_trkseek    = edit_int(cxt, d->d_trkseek     ,_("track-to-track seek"));
+	d->d_rpm = ask_uint16(cxt, d->d_rpm, _("rpm"));
+	d->d_interleave = ask_uint16(cxt, d->d_interleave, _("interleave"));
+	d->d_trackskew = ask_uint16(cxt, d->d_trackskew, _("trackskew"));
+	d->d_cylskew = ask_uint16(cxt, d->d_cylskew, _("cylinderskew"));
 
-  d -> d_secperunit = d -> d_secpercyl * d -> d_ncylinders;
+	d->d_headswitch = ask_uint32(cxt, d->d_headswitch, _("headswitch"));
+	d->d_trkseek = ask_uint32(cxt, d->d_trkseek, _("track-to-track seek"));
+
+	d->d_secperunit = d->d_secpercyl * d->d_ncylinders;
 }
 
 static int
