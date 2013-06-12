@@ -1,14 +1,14 @@
-/* fdisk.c -- Partition table manipulator for Linux.
- *
+/*
  * Copyright (C) 1992  A. V. Le Blanc (LeBlanc@mcc.ac.uk)
  * Copyright (C) 2012  Davidlohr Bueso <dave@gnu.org>
+ *
+ * Copyright (C) 2007-2013 Karel Zak <kzak@redhat.com>
  *
  * This program is free software.  You can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation: either version 1 or
  * (at your option) any later version.
  */
-
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,6 +22,7 @@
 #include <time.h>
 #include <limits.h>
 
+#include "c.h"
 #include "xalloc.h"
 #include "nls.h"
 #include "rpmatch.h"
@@ -40,14 +41,37 @@
 #include "fdiskbsdlabel.h"
 
 #ifdef HAVE_LINUX_COMPILER_H
-#include <linux/compiler.h>
+# include <linux/compiler.h>
 #endif
 #ifdef HAVE_LINUX_BLKPG_H
-#include <linux/blkpg.h>
+# include <linux/blkpg.h>
 #endif
 
-
 int	nowarn = 0;			/* no warnings for fdisk -l/-s */
+
+static void __attribute__ ((__noreturn__)) usage(FILE *out)
+{
+	fputs(USAGE_HEADER, out);
+
+	fprintf(out,
+	      _(" %1$s [options] <disk>    change partition table\n"
+	        " %1$s [options] -l <disk> list partition table(s)\n"
+	        " %1$s -s <partition>      give partition size(s) in blocks\n"),
+	       program_invocation_short_name);
+
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -b <size>         sector size (512, 1024, 2048 or 4096)\n"), out);
+	fputs(_(" -c[=<mode>]       compatible mode: 'dos' or 'nondos' (default)\n"), out);
+	fputs(_(" -h                print this help text\n"), out);
+	fputs(_(" -u[=<unit>]       display units: 'cylinders' or 'sectors' (default)\n"), out);
+	fputs(_(" -v                print program version\n"), out);
+	fputs(_(" -C <number>       specify the number of cylinders\n"), out);
+	fputs(_(" -H <number>       specify the number of heads\n"), out);
+	fputs(_(" -S <number>       specify the number of sectors per track\n"), out);
+
+	fprintf(out, USAGE_MAN_TAIL("fdisk(8)"));
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
 
 void toggle_units(struct fdisk_context *cxt)
 {
@@ -58,26 +82,6 @@ void toggle_units(struct fdisk_context *cxt)
 		fdisk_info(cxt, _("Changing display/entry units to cylinders (DEPRECATED!)."));
 	else
 		fdisk_info(cxt, _("Changing display/entry units to sectors."));
-}
-
-
-static void __attribute__ ((__noreturn__)) usage(FILE *out)
-{
-	fprintf(out, _("Usage:\n"
-		       " %1$s [options] <disk>    change partition table\n"
-		       " %1$s [options] -l <disk> list partition table(s)\n"
-		       " %1$s -s <partition>      give partition size(s) in blocks\n"
-		       "\nOptions:\n"
-		       " -b <size>             sector size (512, 1024, 2048 or 4096)\n"
-		       " -c[=<mode>]           compatible mode: 'dos' or 'nondos' (default)\n"
-		       " -h                    print this help text\n"
-		       " -u[=<unit>]           display units: 'cylinders' or 'sectors' (default)\n"
-		       " -v                    print program version\n"
-		       " -C <number>           specify the number of cylinders\n"
-		       " -H <number>           specify the number of heads\n"
-		       " -S <number>           specify the number of sectors per track\n"
-		       "\n"), program_invocation_short_name);
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
 struct partition *
