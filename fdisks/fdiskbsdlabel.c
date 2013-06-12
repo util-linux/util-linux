@@ -78,8 +78,7 @@ static int xbsd_get_part_index (struct fdisk_context *cxt, int max);
 static int xbsd_check_new_partition (struct fdisk_context *cxt, int *i);
 static unsigned short xbsd_dkcksum (struct xbsd_disklabel *lp);
 static int xbsd_initlabel  (struct fdisk_context *cxt,
-			    struct partition *p, struct xbsd_disklabel *d,
-			    int pindex);
+			    struct partition *p, struct xbsd_disklabel *d);
 static int xbsd_readlabel  (struct fdisk_context *cxt,
 			    struct partition *p, struct xbsd_disklabel *d);
 static int xbsd_writelabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disklabel *d);
@@ -109,7 +108,7 @@ static struct xbsd_disklabel xbsd_dlabel;
 	(fdisk_context_use_cylinders(c) ? ((n)/xbsd_dlabel.d_secpercyl) + 1 : (n))
 
 /*
- * Test whether the whole disk has BSD disk label magic.
+ * Test whether the whole disk has BSD disk label magic. Returns 1 on success.
  *
  * Note: often reformatting with DOS-type label leaves the BSD magic,
  * so this does not mean that there is a BSD disk label.
@@ -243,36 +242,35 @@ static int xbsd_add_part (struct fdisk_context *cxt,
 	return 0;
 }
 
+/* Returns 0 on success, < 0 on error. */
 static int xbsd_create_disklabel(struct fdisk_context *cxt)
 {
-	char c;
+	int rc, yes = 0;
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, OSF));
 
-	fprintf (stderr, _("%s contains no BSD disklabel.\n"), cxt->dev_path);
+	fdisk_info(cxt, _("%s does not contain BSD disklabel."), cxt->dev_path);
+	rc = fdisk_ask_yesno(cxt,
+			_("Do you want to create a BSD disklabel?"),
+			&yes);
 
-	while (1) {
-		c = read_char(cxt, _("Do you want to create a BSD disklabel? (y/n) "));
-		if (tolower(c) == 'y') {
-			if (xbsd_initlabel (cxt,
+	if (rc == 0 && yes) {
 #if defined (__alpha__) || defined (__powerpc__) || defined (__hppa__) || \
     defined (__s390__) || defined (__s390x__)
-				NULL, &xbsd_dlabel, 0
+		rc = xbsd_initlabel(cxt, NULL, &xbsd_dlabel);
 #else
-				xbsd_part, &xbsd_dlabel, xbsd_part_index
+		rc = xbsd_initlabel(cxt, xbsd_part, &xbsd_dlabel);
 #endif
-				) == 1) {
-				xbsd_print_disklabel (cxt, 1);
-				cxt->label->nparts_cur = xbsd_dlabel.d_npartitions;
-				cxt->label->nparts_max = BSD_MAXPARTITIONS;
-				return 1;
-			} else
-				return 0;
-		} else if (c == 'n')
-			return 0;
+		if (rc == 0) {
+			xbsd_print_disklabel (cxt, 1);
+			cxt->label->nparts_cur = xbsd_dlabel.d_npartitions;
+			cxt->label->nparts_max = BSD_MAXPARTITIONS;
+		}
 	}
+
+	return rc;
 }
 
 void
@@ -304,9 +302,11 @@ bsd_command_prompt (struct fdisk_context *cxt)
       }
       printf (_("Reading disklabel of %s at sector %d.\n"),
 		   cxt->dev_path, ss + BSD_LABELSECTOR);
-      if (xbsd_readlabel (cxt, xbsd_part, &xbsd_dlabel) == 0)
-	if (xbsd_create_disklabel (cxt) == 0)
-	  return;
+      if (xbsd_readlabel (cxt, xbsd_part, &xbsd_dlabel) == 0
+		&& xbsd_create_disklabel(cxt) != 0) {
+	fdisk_warnx(cxt, _("Failed to read and create BSD disklabel"));
+	return;
+      }
       break;
     }
   }
@@ -318,9 +318,11 @@ bsd_command_prompt (struct fdisk_context *cxt)
 
 #elif defined (__alpha__)
 
-  if (xbsd_readlabel (cxt, NULL, &xbsd_dlabel) == 0)
-    if (xbsd_create_disklabel (cxt) == 0)
-      exit ( EXIT_SUCCESS );
+  if (xbsd_readlabel (cxt, NULL, &xbsd_dlabel) == 0
+	      && xbsd_create_disklabel(cxt) != 0) {
+    fdisk_warnx(cxt, _("Failed to read and create BSD disklabel"));
+    return;
+  }
 
 #endif
 
@@ -702,9 +704,10 @@ xbsd_dkcksum (struct xbsd_disklabel *lp) {
 	return sum;
 }
 
-static int
-xbsd_initlabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disklabel *d,
-		int pindex __attribute__((__unused__))) {
+static int xbsd_initlabel (struct fdisk_context *cxt,
+		struct partition *p,
+		struct xbsd_disklabel *d)
+{
 	struct xbsd_partition *pp;
 
 	memset (d, 0, sizeof (struct xbsd_disklabel));
@@ -766,7 +769,7 @@ xbsd_initlabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disk
 	pp -> p_fstype = BSD_FS_UNUSED;
 #endif
 
-	return 1;
+	return 0;
 }
 
 /*
