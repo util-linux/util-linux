@@ -220,3 +220,30 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 	}
 	return rc;
 }
+
+
+struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
+{
+	const char *q;
+
+	if (!cxt || !cxt->label || !cxt->label->nparttypes)
+		return NULL;
+
+        q = fdisk_is_parttype_string(cxt) ?
+		_("Partition type (type L to list all types): ") :
+		_("Hex code (type L to list all codes): ");
+	do {
+		char buf[256];
+		int rc = get_user_reply(cxt, q, buf, sizeof(buf));
+
+		if (rc)
+			break;
+
+		if (buf[1] == '\0' && toupper(*buf) == 'L')
+			list_partition_types(cxt);
+		else if (*buf)
+			return fdisk_parse_parttype(cxt, buf);
+        } while (1);
+
+	return NULL;
+}

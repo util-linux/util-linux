@@ -108,6 +108,8 @@ extern struct fdisk_parttype *fdisk_new_unknown_parttype(unsigned int type, cons
 extern void fdisk_free_parttype(struct fdisk_parttype *type);
 extern size_t fdisk_get_nparttypes(struct fdisk_context *cxt);
 
+extern int fdisk_is_parttype_string(struct fdisk_context *cxt);
+
 /* label.c */
 extern int fdisk_dev_has_disklabel(struct fdisk_context *cxt);
 

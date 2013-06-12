@@ -674,7 +674,7 @@ static void xbsd_change_fstype (struct fdisk_context *cxt)
 
   if (xbsd_get_part_index(cxt, xbsd_dlabel.d_npartitions, &i))
 	  return;
-  t = read_partition_type(cxt);
+  t = ask_partition_type(cxt);
 
   if (t) {
     xbsd_dlabel.d_partitions[i].p_fstype = t->type;

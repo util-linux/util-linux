@@ -280,33 +280,6 @@ char read_chars(struct fdisk_context *cxt, char *mesg)
 	return *line_ptr;
 }
 
-struct fdisk_parttype *read_partition_type(struct fdisk_context *cxt)
-{
-	if (!cxt || !cxt->label || !cxt->label->nparttypes)
-		return NULL;
-
-        do {
-		size_t sz;
-
-		if (cxt->label->parttypes[0].typestr)
-			read_chars(cxt, _("Partition type (type L to list all types): "));
-		else
-			read_chars(cxt, _("Hex code (type L to list all codes): "));
-
-		sz = strlen(line_ptr);
-		if (!sz || line_ptr[sz - 1] != '\n' || sz == 1)
-			continue;
-		line_ptr[sz - 1] = '\0';
-
-		if (tolower(*line_ptr) == 'l')
-			list_partition_types(cxt);
-		else
-			return fdisk_parse_parttype(cxt, line_ptr);
-        } while (1);
-
-	return NULL;
-}
-
 /* deprecated in favour of fdisk_ask_number() */
 unsigned int
 read_int_with_suffix(struct fdisk_context *cxt,
@@ -453,6 +426,7 @@ read_int(struct fdisk_context *cxt,
 	return read_int_with_suffix(cxt, low, dflt, high, base, mesg, NULL);
 }
 
+
 static void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 {
 	struct fdisk_label *lb = fdisk_context_get_label(cxt, "dos");
@@ -501,7 +475,7 @@ static void change_partition_type(struct fdisk_context *cxt)
                 printf(_("Partition %zu does not exist yet!\n"), i + 1);
 
         else do {
-		t = read_partition_type(cxt);
+		t = ask_partition_type(cxt);
 		if (!t)
 			continue;
 

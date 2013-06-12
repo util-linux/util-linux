@@ -165,4 +165,19 @@ void fdisk_free_parttype(struct fdisk_parttype *t)
 	}
 }
 
+/**
+ * fdisk_is_parttype_string:
+ * @cxt: context
+ *
+ * Returns: 1 if the current label uses strings as partition type
+ *          identifiers (e.g. GPT UUIDS) or 0.
+ */
+int fdisk_is_parttype_string(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	assert(cxt->label);
 
+	if (cxt->label->parttypes && cxt->label->parttypes[0].typestr)
+		return 1;
+	return 0;
+}
