@@ -103,6 +103,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 
 			blkid_partition_set_type(par, p->sys_type);
 			blkid_partition_set_flags(par, p->boot_ind);
+			blkid_partition_gen_uuid(par);
 			ct_nodata = 0;
 		}
 		/* The first nested ext.partition should be a link to the next
@@ -185,7 +186,7 @@ static int probe_dos_pt(blkid_probe pr,
 
 	id = dos_parttable_id(data);
 	if (id)
-		snprintf(idstr, sizeof(idstr), "0x%08x", id);
+		snprintf(idstr, sizeof(idstr), "%08x", id);
 
 	/*
 	 * Well, all checks pass, it's MS-DOS partiton table
@@ -232,6 +233,7 @@ static int probe_dos_pt(blkid_probe pr,
 
 		blkid_partition_set_type(par, p->sys_type);
 		blkid_partition_set_flags(par, p->boot_ind);
+		blkid_partition_gen_uuid(par);
 	}
 
 	/* Linux uses partition numbers greater than 4
