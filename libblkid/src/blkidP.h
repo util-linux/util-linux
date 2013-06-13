@@ -518,6 +518,8 @@ extern int blkid_probe_set_magic(blkid_probe pr, blkid_loff_t offset,
 
 extern void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len)
 			__attribute__((nonnull));
+extern int blkid_uuid_is_empty(const unsigned char *buf, size_t len);
+
 extern size_t blkid_rtrim_whitespace(unsigned char *str)
 			__attribute__((nonnull));
 extern size_t blkid_ltrim_whitespace(unsigned char *str)

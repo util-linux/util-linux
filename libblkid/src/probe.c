@@ -1637,6 +1637,16 @@ void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len)
 }
 #endif
 
+/* like uuid_is_null() from libuuid, but works with arbitrary size of UUID */
+int blkid_uuid_is_empty(const unsigned char *buf, size_t len)
+{
+	size_t i;
+
+	for (i = 0; i < len; i++)
+		if (buf[i])
+			return 0;
+	return 1;
+}
 
 /* Removes whitespace from the right-hand side of a string (trailing
  * whitespace).

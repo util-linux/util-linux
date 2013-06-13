@@ -617,17 +617,6 @@ int blkid_probe_set_utf8label(blkid_probe pr, unsigned char *label,
 	return 0;
 }
 
-/* like uuid_is_null() from libuuid, but works with arbitrary size of UUID */
-static int uuid_is_empty(const unsigned char *buf, size_t len)
-{
-	size_t i;
-
-	for (i = 0; i < len; i++)
-		if (buf[i])
-			return 0;
-	return 1;
-}
-
 int blkid_probe_sprintf_uuid(blkid_probe pr, unsigned char *uuid,
 				size_t len, const char *fmt, ...)
 {
@@ -638,7 +627,7 @@ int blkid_probe_sprintf_uuid(blkid_probe pr, unsigned char *uuid,
 	if (len > BLKID_PROBVAL_BUFSIZ)
 		len = BLKID_PROBVAL_BUFSIZ;
 
-	if (uuid_is_empty(uuid, len))
+	if (blkid_uuid_is_empty(uuid, len))
 		return 0;
 
 	if ((chn->flags & BLKID_SUBLKS_UUIDRAW) &&
@@ -703,7 +692,7 @@ int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const char *nam
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
 	struct blkid_prval *v;
 
-	if (uuid_is_empty(uuid, 16))
+	if (blkid_uuid_is_empty(uuid, 16))
 		return 0;
 
 	if (!name) {
