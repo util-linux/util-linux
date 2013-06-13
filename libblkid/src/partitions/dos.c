@@ -138,6 +138,8 @@ static int probe_dos_pt(blkid_probe pr,
 	struct dos_partition *p0, *p;
 	unsigned char *data;
 	uint32_t start, size, id;
+	char idstr[37];
+
 
 	data = blkid_probe_get_sector(pr, 0);
 	if (!data)
@@ -181,12 +183,20 @@ static int probe_dos_pt(blkid_probe pr,
 	blkid_probe_use_wiper(pr, BLKID_MSDOS_PT_OFFSET,
 				  512 - BLKID_MSDOS_PT_OFFSET);
 
+	id = dos_parttable_id(data);
+	if (id)
+		snprintf(idstr, sizeof(idstr), "0x%08x", id);
+
 	/*
 	 * Well, all checks pass, it's MS-DOS partiton table
 	 */
-	if (blkid_partitions_need_typeonly(pr))
-		/* caller does not ask for details about partitions */
+	if (blkid_partitions_need_typeonly(pr)) {
+		/* Non-binary interface -- caller does not ask for details
+		 * about partitions, just set generic varibles only. */
+		if (id)
+			blkid_partitions_strcpy_ptuuid(pr, idstr);
 		return 0;
+	}
 
 	ls = blkid_probe_get_partlist(pr);
 
@@ -200,14 +210,8 @@ static int probe_dos_pt(blkid_probe pr,
 	if (!tab)
 		goto err;
 
-	id = dos_parttable_id(data);
-	if (id) {
-		char buf[37];
-
-		snprintf(buf, sizeof(buf), "0x%08x", id);
-		blkid_parttable_set_id(tab, (unsigned char *) buf);
-	}
-
+	if (id)
+		blkid_parttable_set_id(tab, (unsigned char *) idstr);
 
 	/* Parse primary partitions */
 	for (p = p0, i = 0; i < 4; i++, p++) {

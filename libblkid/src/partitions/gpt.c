@@ -322,9 +322,15 @@ static int probe_gpt_pt(blkid_probe pr,
 			      (unsigned char *) GPT_HEADER_SIGNATURE_STR))
 		goto err;
 
-	if (blkid_partitions_need_typeonly(pr))
-		/* caller does not ask for details about partitions */
+	guid = h->disk_guid;
+	swap_efi_guid(&guid);
+
+	if (blkid_partitions_need_typeonly(pr)) {
+		/* Non-binary interface -- caller does not ask for details
+		 * about partitions, just set generic varibles only. */
+		blkid_partitions_set_ptuuid(pr, (unsigned char *) &guid);
 		return 0;
+	}
 
 	ls = blkid_probe_get_partlist(pr);
 	if (!ls)
@@ -334,8 +340,6 @@ static int probe_gpt_pt(blkid_probe pr,
 	if (!tab)
 		goto err;
 
-	guid = h->disk_guid;
-	swap_efi_guid(&guid);
 	blkid_parttable_set_id(tab, (const unsigned char *) &guid);
 
 	ssf = blkid_probe_get_sectorsize(pr) / 512;
