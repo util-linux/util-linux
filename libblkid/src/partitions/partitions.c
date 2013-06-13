@@ -1001,16 +1001,21 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 	return NULL;
 }
 
+int blkid_parttable_set_uuid(blkid_parttable tab, const unsigned char *id)
+{
+	if (!tab)
+		return -1;
+
+	blkid_unparse_uuid(id, tab->id, sizeof(tab->id));
+	return 0;
+}
+
 int blkid_parttable_set_id(blkid_parttable tab, const unsigned char *id)
 {
 	if (!tab)
 		return -1;
 
-	if (strcmp(tab->type, "gpt") == 0)
-		blkid_unparse_uuid(id, tab->id, sizeof(tab->id));
-	else if (strcmp(tab->type, "dos") == 0)
-		strncpy(tab->id, (const char *) id, sizeof(tab->id));
-
+	strncpy(tab->id, (const char *) id, sizeof(tab->id));
 	return 0;
 }
 

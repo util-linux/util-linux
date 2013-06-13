@@ -340,7 +340,7 @@ static int probe_gpt_pt(blkid_probe pr,
 	if (!tab)
 		goto err;
 
-	blkid_parttable_set_id(tab, (const unsigned char *) &guid);
+	blkid_parttable_set_uuid(tab, (const unsigned char *) &guid);
 
 	ssf = blkid_probe_get_sectorsize(pr) / 512;
 
