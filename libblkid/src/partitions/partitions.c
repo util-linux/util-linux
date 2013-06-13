@@ -37,6 +37,8 @@
  *
  * @PTTYPE: partition table type (dos, gpt, etc.).
  *
+ * @PTUUID: partition table id (uuid for gpt, hex for dos).
+
  * @PART_ENTRY_SCHEME: partition table type
  *
  * @PART_ENTRY_NAME: partition name (gpt and mac only)
@@ -601,11 +603,16 @@ static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 
 		name = idinfos[i]->name;
 
-		/* all checks passed */
 		if (!chn->binary)
+			/*
+			 * Non-binary interface, set generic variables. Note
+			 * that the another variables could be set in prober
+			 * functions.
+			 */
 			blkid_probe_set_value(pr, "PTTYPE",
 						(unsigned char *) name,
 						strlen(name) + 1);
+
 		DBG(LOWPROBE, blkid_debug("<-- leaving probing loop (type=%s) [PARTS idx=%d]",
 			name, chn->idx));
 		rc = 0;
@@ -1005,6 +1012,51 @@ int blkid_parttable_set_id(blkid_parttable tab, const unsigned char *id)
 		strncpy(tab->id, (const char *) id, sizeof(tab->id));
 
 	return 0;
+}
+
+/* set PTUUID variable for non-binary API */
+int blkid_partitions_set_ptuuid(blkid_probe pr, unsigned char *uuid)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+	struct blkid_prval *v;
+
+	if (chn->binary || blkid_uuid_is_empty(uuid, 16))
+		return 0;
+
+	v = blkid_probe_assign_value(pr, "PTUUID");
+
+	blkid_unparse_uuid(uuid, (char *) v->data, sizeof(v->data));
+	v->len = 37;
+
+	return 0;
+}
+
+/* set PTUUID variable for non-binary API for tables where
+ * the ID is just a string */
+int blkid_partitions_strcpy_ptuuid(blkid_probe pr, char *str)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+	struct blkid_prval *v;
+	size_t len;
+
+	if (chn->binary || !str || !*str)
+		return 0;
+
+	len = strlen((char *) str);
+	if (len > BLKID_PROBVAL_BUFSIZ)
+		len = BLKID_PROBVAL_BUFSIZ;
+
+	v = blkid_probe_assign_value(pr, "PTUUID");
+	if (v) {
+		if (len == BLKID_PROBVAL_BUFSIZ)
+			len--;		/* make a space for \0 */
+
+		memcpy((char *) v->data, str, len);
+		v->data[len] = '\0';
+		v->len = len + 1;
+		return 0;
+	}
+	return -1;
 }
 
 /**
