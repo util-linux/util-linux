@@ -253,6 +253,9 @@ static void print_udev_format(const char *name, const char *value)
 		blkid_encode_string(value, enc, sizeof(enc));
 		printf("ID_FS_%s_ENC=%s\n", name, enc);
 
+	} else if (!strcmp(name, "PTUUID")) {
+		printf("ID_PART_TABLE_UUID=%s\n", value);
+
 	} else if (!strcmp(name, "PTTYPE")) {
 		printf("ID_PART_TABLE_TYPE=%s\n", value);
 
