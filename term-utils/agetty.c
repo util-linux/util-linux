@@ -321,9 +321,10 @@ int main(int argc, char **argv)
 			   strlen(options.initstring));
 	}
 
-	if ((options.flags & F_VCONSOLE) == 0 &&
-	    options.clocal == CLOCAL_MODE_ALWAYS)
-		/* Go to blocking write mode unless -L is specified. */
+	if (options.flags & F_VCONSOLE || options.clocal != CLOCAL_MODE_ALWAYS)
+		/* Go to blocking mode unless -L is specified, this change
+		 * affects stdout, stdin and stderr as all the file descriptors
+		 * are created by dup().   */
 		fcntl(STDOUT_FILENO, F_SETFL,
 		      fcntl(STDOUT_FILENO, F_GETFL, 0) & ~O_NONBLOCK);
 
@@ -1449,9 +1450,10 @@ static char *get_logname(struct options *op, struct termios *tp, struct chardata
 
 			if (read(STDIN_FILENO, &c, 1) < 1) {
 
-				/* Do not report trivial like EINTR/EIO errors. */
+				/* The terminal could be open with O_NONBLOCK when
+				 * -L (force CLOCAL) is specified...  */
 				if (errno == EINTR || errno == EAGAIN) {
-					usleep(1000);
+					usleep(250000);
 					continue;
 				}
 				switch (errno) {
