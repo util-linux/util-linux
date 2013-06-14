@@ -62,6 +62,7 @@ void mnt_free_fs(struct libmnt_fs *fs)
 	free(fs->user_optstr);
 	free(fs->attrs);
 	free(fs->opt_fields);
+	free(fs->comment);
 
 	free(fs);
 }
@@ -1281,6 +1282,60 @@ int mnt_fs_get_attribute(struct libmnt_fs *fs, const char *name,
 }
 
 /**
+ * mnt_fs_get_comment:
+ * @fs: fstab/mtab/mountinfo entry pointer
+ *
+ * Returns: 0 on success, 1 when not found the @name or negative number in case of error.
+ */
+const char *mnt_fs_get_comment(struct libmnt_fs *fs)
+{
+	assert(fs);
+	if (!fs)
+		return NULL;
+	return fs->comment;
+}
+
+/**
+ * mnt_fs_set_comment:
+ * @fs: fstab entry pointer
+ * @comm: comment string
+ *
+ * Returns: 0 on success or <0 in case of error.
+ */
+int mnt_fs_set_comment(struct libmnt_fs *fs, const char *comm)
+{
+	char *p = NULL;
+
+	assert(fs);
+	if (!fs)
+		return -EINVAL;
+	if (comm) {
+		p = strdup(comm);
+		if (!p)
+			return -ENOMEM;
+	}
+
+	free(fs->comment);
+	fs->comment = p;
+	return 0;
+}
+
+/**
+ * mnt_fs_append_comment:
+ * @fs: fstab entry pointer
+ *
+ * Returns: 0 on success or <0 in case of error.
+ */
+int mnt_fs_append_comment(struct libmnt_fs *fs, const char *comm)
+{
+	assert(fs);
+	if (!fs)
+		return -EINVAL;
+
+	return append_string(&fs->comment, comm);
+}
+
+/**
  * mnt_fs_match_target:
  * @fs: filesystem
  * @target: mountpoint path
@@ -1496,6 +1551,8 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
 						minor(mnt_fs_get_devno(fs)));
 	if (mnt_fs_get_tid(fs))
 		fprintf(file, "tid:    %d\n", mnt_fs_get_tid(fs));
+	if (mnt_fs_get_comment(fs))
+		fprintf(file, "comment: '%s'\n", mnt_fs_get_comment(fs));
 
 	return 0;
 }

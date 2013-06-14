@@ -408,13 +408,14 @@ err:
  */
 static int fprintf_mtab_fs(FILE *f, struct libmnt_fs *fs)
 {
-	const char *o, *src, *fstype;
+	const char *o, *src, *fstype, *comm;
 	char *m1, *m2, *m3, *m4;
 	int rc;
 
 	assert(fs);
 	assert(f);
 
+	comm = mnt_fs_get_comment(fs);
 	src = mnt_fs_get_source(fs);
 	fstype = mnt_fs_get_fstype(fs);
 	o = mnt_fs_get_options(fs);
@@ -425,6 +426,8 @@ static int fprintf_mtab_fs(FILE *f, struct libmnt_fs *fs)
 	m4 = o ? mangle(o) : "rw";
 
 	if (m1 && m2 && m3 && m4) {
+		if (comm)
+			fputs(comm, f);
 		rc = fprintf(f, "%s %s %s %s %d %d\n",
 				m1, m2, m3, m4,
 				mnt_fs_get_freq(fs),
@@ -527,6 +530,10 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 		struct libmnt_fs *fs;
 
 		mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+
+		if (tb->comms && mnt_table_get_intro_comment(tb))
+			fputs(mnt_table_get_intro_comment(tb), f);
+
 		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 			if (upd->userspace_only)
 				rc = fprintf_utab_fs(f, fs);
@@ -538,6 +545,8 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 				goto leave;
 			}
 		}
+		if (tb->comms && mnt_table_get_tailing_comment(tb))
+			fputs(mnt_table_get_tailing_comment(tb), f);
 
 		if (fflush(f) != 0) {
 			rc = -errno;

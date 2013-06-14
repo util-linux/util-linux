@@ -256,3 +256,17 @@ global:
 	mnt_context_find_umount_fs;
 	mnt_table_find_mountpoint;
 } MOUNT_2.22;
+
+MOUNT_2.24 {
+global:
+	mnt_fs_append_comment;
+	mnt_fs_get_comment;
+	mnt_fs_set_comment;
+	mnt_table_append_intro_comment;
+	mnt_table_append_tailing_comment;
+	mnt_table_enable_comments;
+	mnt_table_get_intro_comment;
+	mnt_table_get_tailing_comment;
+	mnt_table_set_intro_comment;
+	mnt_table_set_tailing_comment;
+} MOUNT_2.23;

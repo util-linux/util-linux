@@ -17,6 +17,11 @@ ts_valgrind $TESTPROG --parse "$TS_SELF/files/fstab" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
+ts_init_subtest "parse-fstab-full"
+ts_valgrind $TESTPROG --parse "$TS_SELF/files/fstab.comment" --comments &> $TS_OUTPUT
+sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
+ts_finalize_subtest
+
 ts_init_subtest "parse-mtab"
 ts_valgrind $TESTPROG --parse "$TS_SELF/files/mtab" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT

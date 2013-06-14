@@ -110,6 +110,8 @@ void mnt_free_table(struct libmnt_table *tb)
 	mnt_reset_table(tb);
 
 	DBG(TAB, mnt_debug_h(tb, "free"));
+	free(tb->comm_intro);
+	free(tb->comm_tail);
 	free(tb);
 }
 
@@ -123,6 +125,148 @@ int mnt_table_get_nents(struct libmnt_table *tb)
 {
 	assert(tb);
 	return tb ? tb->nents : 0;
+}
+
+/**
+ * mnt_table_enable_comments:
+ * @tb: pointer to tab
+ *
+ * Enables parsing of comments.
+ *
+ * The initial (intro) file comment is accessible by
+ * mnt_table_get_intro_comment(). The intro and the comment of the first fstab
+ * entry has to be separated by blank line.  The filesystem comments are
+ * accessible by mnt_fs_get_comment(). The tailing fstab comment is accessible
+ * by mnt_table_get_tailing_comment().
+ *
+ * <informalexample>
+ *  <programlisting>
+ *	#
+ *	# Intro comment
+ *	#
+ *
+ *	# this comments belongs to the first fs
+ *	LABEL=foo /mnt/foo auto defaults 1 2
+ *	# this comments belongs to the second fs
+ *	LABEL=bar /mnt/bar auto defaults 1 2 
+ *	# tailing comment
+ *  </programlisting>
+ * </informalexample>
+ */
+void mnt_table_enable_comments(struct libmnt_table *tb, int enable)
+{
+	assert(tb);
+	if (tb)
+		tb->comms = enable;
+}
+
+/**
+ * mnt_table_get_intro_comment:
+ * @tb: pointer to tab
+ *
+ * Returns: initial comment in tb
+ */
+const char *mnt_table_get_intro_comment(struct libmnt_table *tb)
+{
+	assert(tb);
+	return tb ? tb->comm_intro : NULL;
+}
+
+/**
+ * mnt_table_set_into_comment:
+ * @tb: pointer to tab
+ * @comm: comment or NULL
+ *
+ * Sets initial comment in tb.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_set_intro_comment(struct libmnt_table *tb, const char *comm)
+{
+	char *p = NULL;
+
+	assert(tb);
+	if (!tb)
+		return -EINVAL;
+	if (comm) {
+		p = strdup(comm);
+		if (!p)
+			return -ENOMEM;
+	}
+	free(tb->comm_intro);
+	tb->comm_intro = p;
+	return 0;
+}
+
+/**
+ * mnt_table_append_into_comment:
+ * @tb: pointer to tab
+ * @comm: comment of NULL
+ *
+ * Appends the initial comment in tb.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_append_intro_comment(struct libmnt_table *tb, const char *comm)
+{
+	assert(tb);
+	if (!tb)
+		return -EINVAL;
+	return append_string(&tb->comm_intro, comm);
+}
+
+/**
+ * mnt_table_get_tailing_comment:
+ * @tb: pointer to tab
+ *
+ * Returns: table tailing comment
+ */
+const char *mnt_table_get_tailing_comment(struct libmnt_table *tb)
+{
+	assert(tb);
+	return tb ? tb->comm_tail : NULL;
+}
+
+/**
+ * mnt_table_set_tailing_comment
+ * @tb: pointer to tab
+ *
+ * Sets tailing comment in table.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_set_tailing_comment(struct libmnt_table *tb, const char *comm)
+{
+	char *p = NULL;
+
+	assert(tb);
+	if (!tb)
+		return -EINVAL;
+	if (comm) {
+		p = strdup(comm);
+		if (!p)
+			return -ENOMEM;
+	}
+	free(tb->comm_tail);
+	tb->comm_tail = p;
+	return 0;
+}
+
+/**
+ * mnt_table_append_tailing_comment:
+ * @tb: pointer to tab
+ * @comm: comment of NULL
+ *
+ * Appends to the tailing table comment.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_append_tailing_comment(struct libmnt_table *tb, const char *comm)
+{
+	assert(tb);
+	if (!tb)
+		return -EINVAL;
+	return append_string(&tb->comm_tail, comm);
 }
 
 /**
@@ -1079,7 +1223,7 @@ static int parser_errcb(struct libmnt_table *tb, const char *filename, int line)
 	return 1;	/* all errors are recoverable -- this is default */
 }
 
-struct libmnt_table *create_table(const char *file)
+struct libmnt_table *create_table(const char *file, int comments)
 {
 	struct libmnt_table *tb;
 
@@ -1089,6 +1233,7 @@ struct libmnt_table *create_table(const char *file)
 	if (!tb)
 		goto err;
 
+	mnt_table_enable_comments(tb, comments);
 	mnt_table_set_parser_errcb(tb, parser_errcb);
 
 	if (mnt_table_parse_file(tb, file) != 0)
@@ -1106,7 +1251,7 @@ int test_copy_fs(struct libmnt_test *ts, int argc, char *argv[])
 	struct libmnt_fs *fs;
 	int rc = -1;
 
-	tb = create_table(argv[1]);
+	tb = create_table(argv[1], FALSE);
 	if (!tb)
 		return -1;
 
@@ -1136,8 +1281,12 @@ int test_parse(struct libmnt_test *ts, int argc, char *argv[])
 	struct libmnt_iter *itr = NULL;
 	struct libmnt_fs *fs;
 	int rc = -1;
+	int parse_comments = FALSE;
 
-	tb = create_table(argv[1]);
+	if (argc == 3 && !strcmp(argv[2], "--comments"))
+		parse_comments = TRUE;
+
+	tb = create_table(argv[1], parse_comments);
 	if (!tb)
 		return -1;
 
@@ -1145,8 +1294,16 @@ int test_parse(struct libmnt_test *ts, int argc, char *argv[])
 	if (!itr)
 		goto done;
 
+	if (mnt_table_get_intro_comment(tb))
+		fprintf(stdout, "Initial comment:\n\"%s\"\n",
+				mnt_table_get_intro_comment(tb));
+
 	while(mnt_table_next_fs(tb, itr, &fs) == 0)
 		mnt_fs_print_debug(fs, stdout);
+
+	if (mnt_table_get_tailing_comment(tb))
+		fprintf(stdout, "Trailing comment:\n\"%s\"\n",
+				mnt_table_get_tailing_comment(tb));
 	rc = 0;
 done:
 	mnt_free_iter(itr);
@@ -1169,7 +1326,7 @@ int test_find(struct libmnt_test *ts, int argc, char *argv[], int dr)
 
 	file = argv[1], find = argv[2], what = argv[3];
 
-	tb = create_table(file);
+	tb = create_table(file, FALSE);
 	if (!tb)
 		goto done;
 
@@ -1213,7 +1370,7 @@ int test_find_pair(struct libmnt_test *ts, int argc, char *argv[])
 	struct libmnt_cache *mpc = NULL;
 	int rc = -1;
 
-	tb = create_table(argv[1]);
+	tb = create_table(argv[1], FALSE);
 	if (!tb)
 		return -1;
 	mpc = mnt_new_cache();
@@ -1274,7 +1431,7 @@ static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
 		return -1;
 	}
 
-	fstab = create_table(argv[1]);
+	fstab = create_table(argv[1], FALSE);
 	if (!fstab)
 		goto done;
 
@@ -1310,7 +1467,7 @@ done:
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
-	{ "--parse",    test_parse,        "<file>  parse and print tab" },
+	{ "--parse",    test_parse,        "<file> [--comments] parse and print tab" },
 	{ "--find-forward",  test_find_fw, "<file> <source|target> <string>" },
 	{ "--find-backward", test_find_bw, "<file> <source|target> <string>" },
 	{ "--find-pair",     test_find_pair, "<file> <source> <target>" },

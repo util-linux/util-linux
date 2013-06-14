@@ -243,6 +243,8 @@ struct libmnt_fs {
 	int		flags;		/* MNT_FS_* flags */
 	pid_t		tid;		/* /proc/<tid>/mountinfo otherwise zero */
 
+	char		*comment;	/* fstab comment */
+
 	void		*userdata;	/* library independent data */
 };
 
@@ -265,6 +267,9 @@ struct libmnt_fs {
 struct libmnt_table {
 	int		fmt;		/* MNT_FMT_* file format */
 	int		nents;		/* number of valid entries */
+	int		comms;		/* enable/disable comment parsing */
+	char		*comm_intro;	/* First comment in file */
+	char		*comm_tail;	/* Last comment in file */
 
 	struct libmnt_cache *cache;		/* canonicalized paths/tags cache */
 

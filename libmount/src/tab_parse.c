@@ -344,10 +344,82 @@ static int guess_table_format(char *line)
 	return MNT_FMT_FSTAB;		/* fstab, mtab or /proc/mounts */
 }
 
+static int is_comment_line(char *line)
+{
+	char *p	= skip_spaces(line);
+
+	if (p && (*p == '#' || *p == '\n'))
+		return 1;
+	return 0;
+}
+
+/* returns 1 if the last line in the @str is blank */
+static int is_terminated_by_blank(const char *str)
+{
+	size_t sz = str ? strlen(str) : 0;
+	const char *p = sz ? str + (sz - 1) : NULL;
+
+	if (!sz || !p || *p != '\n')
+		return 0;		/* empty or not terminated by '\n' */
+	if (p == str)
+		return 1;		/* only '\n' */
+	p--;
+	while (p >= str && (*p == ' ' || *p == '\t'))
+		p--;
+	return *p == '\n' ? 1 : 0;
+}
+
+/*
+ * Reads the next line from the file.
+ *
+ * Returns 0 if the line is comment
+ *         1 if the line is not comment
+ *        <0 on error
+ */
+static int next_comment_line(char *buf, size_t bufsz,
+			     FILE *f, char **last, int *nlines)
+{
+	if (fgets(buf, bufsz, f) == NULL)
+		return feof(f) ? 1 : -EINVAL;
+
+	++*nlines;
+	*last = strchr(buf, '\n');
+
+	return is_comment_line(buf) ? 0 : 1;
+}
+
+static int append_comment(struct libmnt_table *tb,
+			  struct libmnt_fs *fs,
+			  const char *comm,
+			  int eof)
+{
+	int rc, intro = mnt_table_get_nents(tb) == 0;
+
+	if (intro && is_terminated_by_blank(mnt_table_get_intro_comment(tb)))
+		intro = 0;
+
+	DBG(TAB, mnt_debug_h(tb, "appending %s comment",
+			intro ? "intro" :
+			eof ? "tailing" : "fs"));
+	if (intro)
+		rc = mnt_table_append_intro_comment(tb, comm);
+	else if (eof) {
+		rc = mnt_table_set_tailing_comment(tb,
+				mnt_fs_get_comment(fs));
+		if (!rc)
+			rc = mnt_table_append_tailing_comment(tb, comm);
+		if (!rc)
+			rc = mnt_fs_set_comment(fs, NULL);
+	} else
+		rc = mnt_fs_append_comment(fs, comm);
+	return rc;
+}
+
 /*
  * Read and parse the next line from {fs,m}tab or mountinfo
  */
-static int mnt_table_parse_next(struct libmnt_table *tb, FILE *f, struct libmnt_fs *fs,
+static int mnt_table_parse_next(struct libmnt_table *tb, FILE *f,
+				struct libmnt_fs *fs,
 				const char *filename, int *nlines)
 {
 	char buf[BUFSIZ];
@@ -379,6 +451,26 @@ next_line:
 				goto err;
 			}
 		}
+
+		/* comments parser */
+		if (tb->comms
+		    && (tb->fmt == MNT_FMT_GUESS || tb->fmt == MNT_FMT_FSTAB)
+		    && is_comment_line(buf)) {
+			do {
+				rc = append_comment(tb, fs, buf, feof(f));
+				if (!rc)
+					rc = next_comment_line(buf,
+							sizeof(buf),
+							f, &s, nlines);
+			} while (rc == 0);
+
+			if (rc == 1 && feof(f))
+				rc = append_comment(tb, fs, NULL, 1);
+			if (rc < 0)
+				return rc;
+
+		}
+
 		*s = '\0';
 		if (--s >= buf && *s == '\r')
 			*s = '\0';
