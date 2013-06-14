@@ -224,8 +224,11 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -s           print messages to stdout\n"), out);
 	fputs(_(" +number      start at the given line\n"), out);
 	fputs(_(" +/pattern/   start at the line containing pattern\n"), out);
-	fputs(_(" -h           display this help and exit\n"), out);
-	fputs(_(" -V           output version information and exit\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+
 	fprintf(out, USAGE_MAN_TAIL("pg(1)"));
 	quit(out == stderr ? 2 : 0);
 }
@@ -1542,6 +1545,16 @@ int main(int argc, char **argv)
 		if (*argv[arg] != '-' || argv[arg][1] == '\0')
 			break;
 		argc--;
+
+		if (!strcmp(argv[arg], "--help")) {
+		    usage(stdout);
+		}
+
+		if (!strcmp(argv[arg], "--version")) {
+		    printf(UTIL_LINUX_VERSION);
+		    return EXIT_SUCCESS;
+		}
+
 		for (i = 1; argv[arg][i]; i++) {
 			switch (argv[arg][i]) {
 			case '-':
