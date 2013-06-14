@@ -121,7 +121,7 @@ int fdisk_list_disklabel(struct fdisk_context *cxt)
  * @cxt: fdisk context
  * @t: partition type to create or NULL for label-specific default
  *
- * Creates a new partition, with number @partnum and type @parttype.
+ * Creates a new partition with type @parttype.
  *
  * Returns 0.
  */

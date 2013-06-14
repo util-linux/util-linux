@@ -202,7 +202,8 @@ struct fdisk_label {
 
 /* label driver flags */
 enum {
-	FDISK_LABEL_FL_ADDPART_NOPARTNO = (1 << 1)
+	FDISK_LABEL_FL_ADDPART_NOPARTNO = (1 << 1),
+	FDISK_LABEL_FL_REQUIRE_GEOMETRY = (1 << 2)
 };
 
 /* label allocators */

@@ -1178,5 +1178,7 @@ struct fdisk_label *fdisk_new_sgi_label(struct fdisk_context *cxt)
 	lb->parttypes = sgi_parttypes;
 	lb->nparttypes = ARRAY_SIZE(sgi_parttypes);
 
+	lb->flags |= FDISK_LABEL_FL_REQUIRE_GEOMETRY;
+
 	return lb;
 }

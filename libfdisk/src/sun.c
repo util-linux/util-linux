@@ -1011,5 +1011,7 @@ struct fdisk_label *fdisk_new_sun_label(struct fdisk_context *cxt)
 	lb->parttypes = sun_parttypes;
 	lb->nparttypes = ARRAY_SIZE(sun_parttypes);
 
+	lb->flags |= FDISK_LABEL_FL_REQUIRE_GEOMETRY;
+
 	return lb;
 }

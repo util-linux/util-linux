@@ -1062,8 +1062,8 @@ struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt)
 	lb->parttypes = xbsd_fstypes;
 	lb->nparttypes = ARRAY_SIZE(xbsd_fstypes);
 
-	/* don't ask for partition number for op->part_add() */
-	lb->flags = FDISK_LABEL_FL_ADDPART_NOPARTNO;
+	lb->flags |= FDISK_LABEL_FL_ADDPART_NOPARTNO;
+	lb->flags |= FDISK_LABEL_FL_REQUIRE_GEOMETRY;
 
 	return lb;
 }
