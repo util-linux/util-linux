@@ -30,6 +30,44 @@ static inline unsigned int part_table_flag(unsigned char *b)
 	return ((unsigned int) b[510]) + (((unsigned int) b[511]) << 8);
 }
 
+
+/* start_sect and nr_sects are stored little endian on all machines */
+/* moreover, they are not aligned correctly */
+static inline void store4_little_endian(unsigned char *cp, unsigned int val)
+{
+	cp[0] = (val & 0xff);
+	cp[1] = ((val >> 8) & 0xff);
+	cp[2] = ((val >> 16) & 0xff);
+	cp[3] = ((val >> 24) & 0xff);
+}
+
+static inline unsigned int read4_little_endian(const unsigned char *cp)
+{
+	return (unsigned int)(cp[0]) + ((unsigned int)(cp[1]) << 8)
+		+ ((unsigned int)(cp[2]) << 16)
+		+ ((unsigned int)(cp[3]) << 24);
+}
+
+static inline sector_t get_nr_sects(struct partition *p)
+{
+	return read4_little_endian(p->size4);
+}
+
+static inline void set_nr_sects(struct partition *p, sector_t nr_sects)
+{
+	store4_little_endian(p->size4, nr_sects);
+}
+
+static inline void set_start_sect(struct partition *p, unsigned int start_sect)
+{
+	store4_little_endian(p->start4, start_sect);
+}
+
+static inline sector_t get_start_sect(struct partition *p)
+{
+	return read4_little_endian(p->start4);
+}
+
 static inline sector_t get_partition_start(struct pte *pe)
 {
 	return pe->offset + get_start_sect(pe->part_table);
