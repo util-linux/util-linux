@@ -54,11 +54,6 @@ struct partition {
 	unsigned char size4[4];         /* nr of sectors in partition */
 } __attribute__ ((packed));
 
-enum menutype {
-	MAIN_MENU,
-	EXPERT_MENU,
-};
-
 extern int get_user_reply(struct fdisk_context *cxt,
 			  const char *prompt,
 			  char *buf, size_t bufsz);
@@ -76,7 +71,6 @@ extern struct partition *get_part_table(int);
 extern unsigned int read_int(struct fdisk_context *cxt,
 			     unsigned int low, unsigned int dflt,
 			     unsigned int high, unsigned int base, char *mesg);
-extern void print_menu(struct fdisk_context *cxt, enum menutype menu);
 
 extern char *partition_type(struct fdisk_context *cxt, unsigned char type);
 extern char read_chars(struct fdisk_context *cxt, char *mesg);
