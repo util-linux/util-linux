@@ -93,4 +93,16 @@ ts_valgrind $TESTPROG --remove /proc
 cp $LIBMOUNT_UTAB $TS_OUTPUT	# save the mtab aside
 ts_finalize_subtest		# checks the mtab
 
+#
+# fstab - replace
+#
+export LIBMOUNT_FSTAB=$TS_OUTPUT.fstab
+rm -f $LIBMOUNT_FSTAB
+cp "$TS_SELF/files/fstab.comment" $LIBMOUNT_FSTAB
+
+ts_init_subtest "fstab-replace"
+ts_valgrind $TESTPROG --replace "LABEL=foo" "/mnt/foo"
+cp $LIBMOUNT_FSTAB $TS_OUTPUT	# save the fstab aside
+ts_finalize_subtest		#checks the fstab
+
 ts_finalize

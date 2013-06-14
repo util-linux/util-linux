@@ -1300,6 +1300,10 @@ const char *mnt_fs_get_comment(struct libmnt_fs *fs)
  * @fs: fstab entry pointer
  * @comm: comment string
  *
+ * Note that the comment has to be terminated by '\n' (new line), otherwise
+ * whole filesystem entry will be written as a comment to the tabfile (e.g.
+ * fstab).
+ *
  * Returns: 0 on success or <0 in case of error.
  */
 int mnt_fs_set_comment(struct libmnt_fs *fs, const char *comm)
@@ -1323,6 +1327,8 @@ int mnt_fs_set_comment(struct libmnt_fs *fs, const char *comm)
 /**
  * mnt_fs_append_comment:
  * @fs: fstab entry pointer
+ *
+ * See also mnt_fs_set_comment().
  *
  * Returns: 0 on success or <0 in case of error.
  */

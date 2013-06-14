@@ -579,6 +579,87 @@ leave:
 	return rc;
 }
 
+/**
+ * mnt_table_write_file
+ * @tb: parsed file (e.g. fstab)
+ * @file: target
+ *
+ * This function writes @tb to @file.
+ *
+ * Returns: 0 on success, negative number on error.
+ */
+int mnt_table_write_file(struct libmnt_table *tb, FILE *file)
+{
+	int rc = 0;
+	struct libmnt_iter itr;
+	struct libmnt_fs *fs;
+
+	if (tb->comms && mnt_table_get_intro_comment(tb))
+		fputs(mnt_table_get_intro_comment(tb), file);
+
+	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
+		rc = fprintf_mtab_fs(file, fs);
+		if (rc)
+			return rc;
+	}
+	if (tb->comms && mnt_table_get_tailing_comment(tb))
+		fputs(mnt_table_get_tailing_comment(tb), file);
+
+	if (fflush(file) != 0)
+		rc = -errno;
+
+	DBG(TAB, mnt_debug_h(tb, "write file done [rc=%d]", rc));
+	return rc;
+}
+
+/**
+ * mnt_table_replace_file
+ * @tb: parsed file (e.g. fstab)
+ * @filename: target
+ *
+ * This function repaces @file by the new content from @tb.
+ *
+ * Returns: 0 on success, negative number on error.
+ */
+int mnt_table_replace_file(struct libmnt_table *tb, const char *filename)
+{
+	int fd, rc = 0;
+	FILE *f;
+	char *uq = NULL;
+
+	DBG(TAB, mnt_debug_h(tb, "%s: replacing", filename));
+
+	fd = mnt_open_uniq_filename(filename, &uq);
+	if (fd < 0)
+		return fd;	/* error */
+
+	f = fdopen(fd, "w" UL_CLOEXECSTR);
+	if (f) {
+		struct stat st;
+
+		mnt_table_write_file(tb, f);
+
+		rc = fchmod(fd, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) ? -errno : 0;
+
+		if (!rc && stat(filename, &st) == 0)
+			/* Copy uid/gid from the present file before renaming. */
+			rc = fchown(fd, st.st_uid, st.st_gid) ? -errno : 0;
+
+		fclose(f);
+		if (!rc)
+			rename(uq, filename);
+	} else {
+		rc = -errno;
+		close(fd);
+	}
+
+	unlink(uq);
+	free(uq);
+
+	DBG(TAB, mnt_debug_h(tb, "replace done [rc=%d]", rc));
+	return rc;
+}
 static int add_file_entry(struct libmnt_table *tb, struct libmnt_update *upd)
 {
 	struct libmnt_fs *fs;
@@ -866,6 +947,28 @@ static int test_remount(struct libmnt_test *ts, int argc, char *argv[])
 	return rc;
 }
 
+static int test_replace(struct libmnt_test *ts, int argc, char *argv[])
+{
+	struct libmnt_fs *fs = mnt_new_fs();
+	struct libmnt_table *tb = mnt_new_table();
+	int rc;
+
+	if (argc < 3)
+		return -1;
+
+	mnt_table_enable_comments(tb, TRUE);
+	mnt_table_parse_fstab(tb, NULL);
+
+	mnt_fs_set_source(fs, argv[1]);
+	mnt_fs_set_target(fs, argv[2]);
+	mnt_fs_append_comment(fs, "# this is new filesystem\n");
+	mnt_table_add_fs(tb, fs);
+
+	rc = mnt_table_replace_file(tb, mnt_get_fstab_path());
+	mnt_free_table(tb);
+	return rc;
+}
+
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
@@ -873,6 +976,7 @@ int main(int argc, char *argv[])
 	{ "--remove", test_remove,  "<target>                      MS_REMOUNT mtab change" },
 	{ "--move",   test_move,    "<old_target>  <target>        MS_MOVE mtab change" },
 	{ "--remount",test_remount, "<target>  <options>           MS_REMOUNT mtab change" },
+	{ "--replace",test_replace, "<src> <target>                Add a line to LIBMOUNT_FSTAB and replace the original file" },
 	{ NULL }
 	};
 

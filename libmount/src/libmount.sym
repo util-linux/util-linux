@@ -267,6 +267,8 @@ global:
 	mnt_table_enable_comments;
 	mnt_table_get_intro_comment;
 	mnt_table_get_tailing_comment;
+	mnt_table_replace_file;
 	mnt_table_set_intro_comment;
 	mnt_table_set_tailing_comment;
+	mnt_table_write_file;
 } MOUNT_2.23;
