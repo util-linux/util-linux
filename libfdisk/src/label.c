@@ -80,6 +80,24 @@ int fdisk_write_disklabel(struct fdisk_context *cxt)
 	return cxt->label->op->write(cxt);
 }
 
+int fdisk_require_geometry(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	assert(cxt->label);
+
+	return cxt->label->flags & FDISK_LABEL_FL_REQUIRE_GEOMETRY ? 1 : 0;
+}
+
+int fdisk_missing_geometry(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	assert(cxt->label);
+
+	return (fdisk_require_geometry(cxt) &&
+		    (!cxt->geom.heads || !cxt->geom.sectors
+				      || !cxt->geom.cylinders));
+}
+
 /**
  * fdisk_verify_disklabel:
  * @cxt: fdisk context
@@ -94,6 +112,8 @@ int fdisk_verify_disklabel(struct fdisk_context *cxt)
 		return -EINVAL;
 	if (!cxt->label->op->verify)
 		return -ENOSYS;
+	if (fdisk_missing_geometry(cxt))
+		return -EINVAL;
 
 	return cxt->label->op->verify(cxt);
 }
@@ -137,6 +157,8 @@ int fdisk_add_partition(struct fdisk_context *cxt,
 		return -EINVAL;
 	if (!cxt->label->op->part_add)
 		return -ENOSYS;
+	if (fdisk_missing_geometry(cxt))
+		return -EINVAL;
 
 	if (!(cxt->label->flags & FDISK_LABEL_FL_ADDPART_NOPARTNO)) {
 		int rc = fdisk_ask_partnum(cxt, &partnum, 1);

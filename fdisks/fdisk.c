@@ -151,57 +151,14 @@ void list_partition_types(struct fdisk_context *cxt)
 	putchar('\n');
 }
 
-static int
-test_c(char **m, char *mesg) {
-	int val = 0;
-	if (!*m)
-		fprintf(stderr, _("You must set"));
-	else {
-		fprintf(stderr, " %s", *m);
-		val = 1;
-	}
-	*m = mesg;
-	return val;
-}
-
 int warn_geometry(struct fdisk_context *cxt)
 {
-	char *m = NULL;
-	int prev = 0;
-
-	if (fdisk_is_disklabel(cxt, SGI)) /* cannot set cylinders etc anyway */
-		return 0;
-	if (!cxt->geom.heads)
-		prev = test_c(&m, _("heads"));
-	if (!cxt->geom.sectors)
-		prev = test_c(&m, _("sectors"));
-	if (!cxt->geom.cylinders)
-		prev = test_c(&m, _("cylinders"));
-	if (!m)
-		return 0;
-	fprintf(stderr,
-		_("%s%s.\nYou can do this from the extra functions menu.\n"),
-		prev ? _(" and ") : " ", m);
-	return 1;
-}
-
-void warn_limits(struct fdisk_context *cxt)
-{
-	if (cxt->total_sectors > UINT_MAX && !nowarn) {
-		unsigned long long bytes = cxt->total_sectors * cxt->sector_size;
-		int giga = bytes / 1000000000;
-		int hectogiga = (giga + 50) / 100;
-
-		fprintf(stderr, _("\n"
-"WARNING: The size of this disk is %d.%d TB (%llu bytes).\n"
-"DOS partition table format can not be used on drives for volumes\n"
-"larger than (%llu bytes) for %ld-byte sectors. Use parted(1) and GUID \n"
-"partition table format (GPT).\n\n"),
-			hectogiga / 10, hectogiga % 10,
-			bytes,
-			(sector_t ) UINT_MAX * cxt->sector_size,
-			cxt->sector_size);
+	if (fdisk_missing_geometry(cxt)) {
+		fdisk_warnx(cxt, _("Incomplete geometry setting. You can do "
+				   "this from the extra functions menu."));
+		return 1;
 	}
+	return 1;
 }
 
 static void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
@@ -227,7 +184,7 @@ static void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 
 static void delete_partition(struct fdisk_context *cxt, int partnum)
 {
-	if (partnum < 0 || warn_geometry(cxt))
+	if (partnum < 0)
 		return;
 
 	if (fdisk_delete_partition(cxt, partnum) != 0)
@@ -287,9 +244,7 @@ list_disk_geometry(struct fdisk_context *cxt) {
 	}
 	printf(_(", %llu sectors\n"), cxt->total_sectors);
 
-	if (is_dos_compatible(cxt)
-	    || fdisk_is_disklabel(cxt, SUN)
-	    || fdisk_is_disklabel(cxt, SGI))
+	if (fdisk_require_geometry(cxt))
 		printf(_("Geometry: %d heads, %llu sectors/track, %llu cylinders\n"),
 		       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
 
@@ -327,9 +282,6 @@ static void list_table(struct fdisk_context *cxt, int xtra)
 
 static void verify(struct fdisk_context *cxt)
 {
-	if (warn_geometry(cxt))
-		return;
-
 	fdisk_verify_disklabel(cxt);
 }
 
@@ -337,9 +289,6 @@ static void new_partition(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
-
-	if (warn_geometry(cxt))
-		return;
 
 	fdisk_add_partition(cxt, NULL);
 }

@@ -111,6 +111,9 @@ extern size_t fdisk_get_nparttypes(struct fdisk_context *cxt);
 extern int fdisk_is_parttype_string(struct fdisk_context *cxt);
 
 /* label.c */
+extern int fdisk_require_geometry(struct fdisk_context *cxt);
+extern int fdisk_missing_geometry(struct fdisk_context *cxt);
+
 extern int fdisk_dev_has_disklabel(struct fdisk_context *cxt);
 
 extern int fdisk_dev_is_disklabel(struct fdisk_context *cxt, enum fdisk_labeltype l);

@@ -175,8 +175,23 @@ void dos_init(struct fdisk_context *cxt)
 	}
 
 	warn_geometry(cxt);
-	warn_limits(cxt);
 	warn_alignment(cxt);
+
+	if (cxt->total_sectors > UINT_MAX && !nowarn) {
+		unsigned long long bytes = cxt->total_sectors * cxt->sector_size;
+		int giga = bytes / 1000000000;
+		int hectogiga = (giga + 50) / 100;
+
+		fdisk_warnx(cxt, _(
+			"WARNING: The size of this disk is %d.%d TB (%llu bytes). "
+			"DOS partition table format can not be used on drives for volumes "
+			"larger than (%llu bytes) for %ld-byte sectors. Use parted(1) and GUID "
+			"partition table format (GPT)."),
+			hectogiga / 10, hectogiga % 10,
+			bytes,
+			(sector_t ) UINT_MAX * cxt->sector_size,
+			cxt->sector_size);
+	}
 }
 
 static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
@@ -1562,7 +1577,6 @@ struct fdisk_label *fdisk_new_dos_label(struct fdisk_context *cxt)
 	lb->nparttypes = ARRAY_SIZE(dos_parttypes);
 
 	lb->flags |= FDISK_LABEL_FL_ADDPART_NOPARTNO;
-	lb->flags |= FDISK_LABEL_FL_REQUIRE_GEOMETRY;
 
 	return lb;
 }
@@ -1579,6 +1593,8 @@ int fdisk_dos_enable_compatible(struct fdisk_label *lb, int enable)
 		return -EINVAL;
 
 	dos->compatible = enable;
+	if (enable)
+		lb->flags |= FDISK_LABEL_FL_REQUIRE_GEOMETRY;
 	return 0;
 }
 
