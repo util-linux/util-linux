@@ -133,7 +133,8 @@ enum {
 	DMESG_TIMEFTM_DELTA,		/* [<delta>] */
 	DMESG_TIMEFTM_RELTIME,		/* [relative] */
 	DMESG_TIMEFTM_TIME,		/* [time] */
-	DMESG_TIMEFTM_TIME_DELTA	/* [time <delta>] */
+	DMESG_TIMEFTM_TIME_DELTA,	/* [time <delta>] */
+	DMESG_TIMEFTM_ISO8601		/* 2013-06-13T22:11:00,123456+0100 */
 };
 #define is_timefmt(c, f) (c->time_fmt == (DMESG_TIMEFTM_ ##f))
 
@@ -258,7 +259,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -w, --follow                wait for new messages\n"), out);
 	fputs(_(" -x, --decode                decode facility and level to readable string\n"), out);
 	fputs(_("     --time-format <format>  show time stamp using format:\n"
-		"                               [delta|reltime|ctime|notime]\n"), out);
+		"                               [delta|reltime|ctime|notime|iso]\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -794,6 +795,23 @@ static char *short_ctime(struct tm *tm, char *buf, size_t bufsiz)
 	return buf;
 }
 
+static char *iso_8601_time(struct dmesg_control *ctl, struct dmesg_record *rec,
+			   char *buf, size_t bufsiz)
+{
+	struct tm tm;
+	size_t len;
+	record_localtime(ctl, rec, &tm);
+	if (strftime(buf, bufsiz, "%Y-%m-%dT%H:%M:%S", &tm) == 0) {
+		*buf = '\0';
+		return buf;
+	}
+	len = strlen(buf);
+	snprintf(buf + len, bufsiz - len, ",%06d", (int)rec->tv.tv_usec);
+	len = strlen(buf);
+	strftime(buf + len, bufsiz - len, "%z", &tm);
+	return buf;
+}
+
 static double record_count_delta(struct dmesg_control *ctl,
 				 struct dmesg_record *rec)
 {
@@ -903,6 +921,9 @@ static void print_record(struct dmesg_control *ctl,
 	case DMESG_TIMEFTM_TIME_DELTA:
 		printf("[%5d.%06d <%12.06f>] ", (int)rec->tv.tv_sec,
 		       (int)rec->tv.tv_usec, record_count_delta(ctl, rec));
+		break;
+	case DMESG_TIMEFTM_ISO8601:
+		printf("%s ", iso_8601_time(ctl, rec, buf, sizeof(buf)));
 		break;
 	default:
 		abort();
@@ -1131,6 +1152,8 @@ static int which_time_format(const char *optarg)
 		return DMESG_TIMEFTM_DELTA;
 	if (!strcmp(optarg, "reltime"))
 		return DMESG_TIMEFTM_RELTIME;
+	if (!strcmp(optarg, "iso"))
+		return DMESG_TIMEFTM_ISO8601;
 	errx(EXIT_FAILURE, _("unknown time format: %s"), optarg);
 }
 
@@ -1314,7 +1337,7 @@ int main(int argc, char *argv[])
 	if (argc > 1)
 		usage(stderr);
 
-	if (is_timefmt(ctl, RELTIME) || is_timefmt(ctl, CTIME)) {
+	if (is_timefmt(ctl, RELTIME) || is_timefmt(ctl, CTIME) || is_timefmt(ctl, ISO8601)) {
 		ctl.boot_time = get_boot_time();
 		if (!ctl.boot_time)
 			ctl.time_fmt = DMESG_TIMEFTM_NONE;
