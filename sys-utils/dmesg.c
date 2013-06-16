@@ -257,6 +257,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -u, --userspace             display userspace messages\n"), out);
 	fputs(_(" -w, --follow                wait for new messages\n"), out);
 	fputs(_(" -x, --decode                decode facility and level to readable string\n"), out);
+	fputs(_("     --time-format <format>  show time stamp using format:\n"
+		"                               [delta|reltime|ctime|notime]\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -1119,6 +1121,19 @@ static int read_kmsg(struct dmesg_control *ctl)
 	return 0;
 }
 
+static int which_time_format(const char *optarg)
+{
+	if (!strcmp(optarg, "notime"))
+		return DMESG_TIMEFTM_NONE;
+	if (!strcmp(optarg, "ctime"))
+		return DMESG_TIMEFTM_CTIME;
+	if (!strcmp(optarg, "delta"))
+		return DMESG_TIMEFTM_DELTA;
+	if (!strcmp(optarg, "reltime"))
+		return DMESG_TIMEFTM_RELTIME;
+	errx(EXIT_FAILURE, _("unknown time format: %s"), optarg);
+}
+
 #undef is_timefmt
 #define is_timefmt(c, f) (c.time_fmt == (DMESG_TIMEFTM_ ##f))
 int main(int argc, char *argv[])
@@ -1137,6 +1152,9 @@ int main(int argc, char *argv[])
 		.time_fmt = DMESG_TIMEFTM_TIME,
 	};
 	int colormode = UL_COLORMODE_NEVER;
+	enum {
+		OPT_TIME_FORMAT = CHAR_MAX + 1,
+	};
 
 	static const struct option longopts[] = {
 		{ "buffer-size",   required_argument, NULL, 's' },
@@ -1163,6 +1181,7 @@ int main(int argc, char *argv[])
 		{ "nopager",       no_argument,       NULL, 'P' },
 		{ "userspace",     no_argument,       NULL, 'u' },
 		{ "version",       no_argument,	      NULL, 'V' },
+		{ "time-format",   required_argument, NULL, OPT_TIME_FORMAT },
 		{ NULL,	           0, NULL, 0 }
 	};
 
@@ -1280,6 +1299,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'x':
 			ctl.decode = 1;
+			break;
+		case OPT_TIME_FORMAT:
+			ctl.time_fmt = which_time_format(optarg);
 			break;
 		case '?':
 		default:
