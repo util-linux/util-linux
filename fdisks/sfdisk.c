@@ -2535,7 +2535,6 @@ unsigned long long total_size;
 
 int
 main(int argc, char **argv) {
-    char *progn;
     int c;
     char *dev;
     int opt_size = 0;
@@ -2555,14 +2554,10 @@ main(int argc, char **argv) {
 
     if (argc < 1)
 	errx(EXIT_FAILURE, _("no command?"));
-    if ((progn = strrchr(argv[0], '/')) == NULL)
-	progn = argv[0];
-    else
-	progn++;
-    if (!strcmp(progn, "activate"))
+    if (!strcmp(program_invocation_short_name, "activate"))
 	activate = 1;		/* equivalent to `sfdisk -A' */
 #if 0				/* not important enough to deserve a name */
-    else if (!strcmp(progn, "unhide"))
+    else if (!strcmp(program_invocation_short_name, "unhide"))
 	unhide = 1;		/* equivalent to `sfdisk -U' */
 #endif
 
