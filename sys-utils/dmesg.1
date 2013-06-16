@@ -153,6 +153,28 @@ Wait for new messages. This feature is supported on systems with readable
 /dev/kmsg only (since kernel 3.5.0).
 .IP "\fB\-x\fR, \fB\-\-decode\fR"
 Decode facility and level (priority) number to human readable prefixes.
+.IP "\fB\-\-time\-format\fR \fIformat\fR"
+Print time stam using format
+.IR ctime ,
+.IR delta ,
+.I reltime
+or
+.IR iso .
+The three first time formats are aliases of time format specific options.
+The
+.I iso
+is a
+.B dmesg
+implementation of ISO-8601 timestamp format.  Purpose of this format is
+to make comparing of timestamps in between two system, and other parsing,
+easy.  The defition of timestamp is YYYY-MM-DD<T stands for date and time
+separator>HH:MM:SS,<microseconds><-+><GMT-0 timezone offset>.
+.IP
+The
+.I iso
+time format has the same issue as
+.IR ctime ,
+the time may be inaccurate if a system is suspended and resumed.
 .SH SEE ALSO
 .BR syslogd (8)
 .SH AUTHORS
