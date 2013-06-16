@@ -138,6 +138,7 @@ main(int argc, char **argv)
 
 			if (pwd == NULL) {
 				warnx(_("unknown user %s"), *argv);
+				errs = 1;
 				continue;
 			}
 			who = pwd->pw_uid;
@@ -145,10 +146,11 @@ main(int argc, char **argv)
 			who = strtol(*argv, &endptr, 10);
 			if (who < 0 || *endptr) {
 				warnx(_("bad value %s"), *argv);
+				errs = 1;
 				continue;
 			}
 		}
-		errs += donice(which, who, prio);
+		errs |= donice(which, who, prio);
 	}
 	return errs != 0 ? EXIT_FAILURE : EXIT_SUCCESS;
 }
