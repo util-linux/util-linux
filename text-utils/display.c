@@ -295,7 +295,7 @@ get(void)
 int next(char **argv)
 {
 	static int done;
-	int statok;
+	int statok, exitval = 0;
 
 	if (argv) {
 		_argv = argv;
@@ -305,14 +305,14 @@ int next(char **argv)
 		if (*_argv) {
 			if (!(freopen(*_argv, "r", stdin))) {
 				warn("%s", *_argv);
-				exitval = EXIT_FAILURE;
+				exitval = 1;
 				++_argv;
 				continue;
 			}
 			statok = done = 1;
 		} else {
 			if (done++)
-				return(0);
+				return(exitval);
 			statok = 0;
 		}
 		if (skip)

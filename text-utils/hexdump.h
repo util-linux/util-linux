@@ -73,8 +73,6 @@ typedef struct _fs {			/* format strings */
 extern FU *endfu;
 extern FS *fshead;			/* head of format strings list */
 extern ssize_t blocksize;		/* data block size */
-extern int deprecated;			/* od compatibility */
-extern int exitval;			/* final exit value */
 extern ssize_t length;			/* max bytes to read */
 extern off_t skip;                      /* bytes to skip */
 
