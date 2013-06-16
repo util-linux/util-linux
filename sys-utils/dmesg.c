@@ -238,8 +238,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -C, --clear                 clear the kernel ring buffer\n"), out);
 	fputs(_(" -c, --read-clear            read and clear all messages\n"), out);
 	fputs(_(" -D, --console-off           disable printing messages to console\n"), out);
-	fputs(_(" -d, --show-delta            show time delta between printed messages\n"), out);
-	fputs(_(" -e, --reltime               show local time and time delta in readable format\n"), out);
 	fputs(_(" -E, --console-on            enable printing messages to console\n"), out);
 	fputs(_(" -F, --file <file>           use the file instead of the kernel log buffer\n"), out);
 	fputs(_(" -f, --facility <list>       restrict output to defined facilities\n"), out);
@@ -252,14 +250,16 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -r, --raw                   print the raw message buffer\n"), out);
 	fputs(_(" -S, --syslog                force to use syslog(2) rather than /dev/kmsg\n"), out);
 	fputs(_(" -s, --buffer-size <size>    buffer size to query the kernel ring buffer\n"), out);
-	fputs(_(" -T, --ctime                 show human readable timestamp (could be \n"
-		"                               inaccurate if you have used SUSPEND/RESUME)\n"), out);
-	fputs(_(" -t, --notime                don't print messages timestamp\n"), out);
 	fputs(_(" -u, --userspace             display userspace messages\n"), out);
 	fputs(_(" -w, --follow                wait for new messages\n"), out);
 	fputs(_(" -x, --decode                decode facility and level to readable string\n"), out);
+	fputs(_(" -d, --show-delta            show time delta between printed messages\n"), out);
+	fputs(_(" -e, --reltime               show local time and time delta in readable format\n"), out);
+	fputs(_(" -T, --ctime                 show human readable timestamp\n"), out);
+	fputs(_(" -t, --notime                don't print messages timestamp\n"), out);
 	fputs(_("     --time-format <format>  show time stamp using format:\n"
-		"                               [delta|reltime|ctime|notime|iso]\n"), out);
+		"                               [delta|reltime|ctime|notime|iso]\n"
+		"Suspending/resume will make ctime and iso timestamps inaccurate.\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
