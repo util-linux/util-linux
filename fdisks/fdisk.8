@@ -3,19 +3,21 @@
 .\" Copyright 2012 Davidlohr Bueso <dave@gnu.org>
 .\" May be distributed under the GNU General Public License
 .TH FDISK 8 "June 2012" "util-linux" "System Administration"
+
 .SH NAME
 fdisk \- manipulate disk partition table
+
 .SH SYNOPSIS
 .B fdisk
 .RB [ \-uc ]
 .RB [ \-b
 .IR sectorsize ]
 .RB [ \-C
-.IR cyls ]
+.IR cylinders ]
 .RB [ \-H
 .IR heads ]
 .RB [ \-S
-.IR sects ]
+.IR sectors ]
 .I device
 .sp
 .B fdisk \-l
@@ -28,6 +30,7 @@ fdisk \- manipulate disk partition table
 .B fdisk \-v
 .sp
 .B fdisk \-h
+
 .SH DESCRIPTION
 .B fdisk
 (in the first form of invocation)
@@ -41,7 +44,8 @@ for large partitions.  In these cases, use the more advanced GNU
 .BR parted (8).
 
 .B fdisk
-does not use DOS-compatible mode and cylinders as display units by default.
+does not use DOS-compatible mode and cylinders as display unit
+by default anymore.
 The old deprecated DOS behavior can be enabled with
 the '-c=dos -u=cylinders' command-line options.
 
@@ -52,7 +56,7 @@ This division is recorded in the
 found in sector 0 of the disk.
 (In the BSD world one talks about `disk slices' and a `disklabel'.)
 
-Linux needs at least one partition, namely for its root file system.
+Linux needs at least one partition, namely for its root filesystem.
 It can use swap files and/or swap partitions, but the latter are more
 efficient.  So, usually one will want a second Linux partition
 dedicated as swap partition.
@@ -147,13 +151,12 @@ this is unlikely to cause difficulty unless you have OS/2 on your machine.
 
 A sync() and an ioctl(BLKRRPART) (reread partition table from disk)
 are performed before exiting when the partition table has been updated.
-Long ago it used to be necessary to reboot after the use of fdisk.
+Long ago it used to be necessary to reboot after the use of \fBfdisk\fR.
 I do not think this is the case anymore -- indeed, rebooting too quickly
 might cause loss of not-yet-written data.  Note that both the kernel
 and the disk hardware may buffer data.
 
 .SH "DOS 6.x WARNING"
-
 The DOS 6.x FORMAT command looks for some information in the first
 sector of the data area of the partition, and treats this information
 as more reliable than the information in the partition table.  DOS
@@ -186,34 +189,34 @@ program and Linux partitions with the Linux fdisk or Linux cfdisk program.
 .BI "\-b " sectorsize
 Specify the sector size of the disk.  Valid values are 512, 1024, 2048 or 4096.
 (Recent kernels know the sector size.  Use this only on old kernels or
-to override the kernel's ideas.)  Since util-linux-2.17, fdisk differentiates
+to override the kernel's ideas.)  Since util-linux-2.17, \fBfdisk\fR differentiates
 between logical and physical sector size.  This option changes both sector sizes to
 .IB sectorsize .
 .TP
 .BI "\-c"[=mode]
 Specify the compatibility mode, 'dos' or 'nondos'.  The default is non-DOS
 mode.  For backward compatibility, it is possible to use the option without
-the <mode> argument -- then the default is used.  Note that the optional
-<mode> argument cannot be separated from the -c option by a space, the correct
-form is for example '-c=dos'. This option is DEPRECATED.
+the \fImode\fR argument -- then the default is used.  Note that the optional
+\fImode\fR argument cannot be separated from the \fB-c\fR option by a space,
+the correct form is for example '-c=dos'.  This option is DEPRECATED.
 .TP
-.BI "\-C " cyls
+.BI "\-C " cylinders
 Specify the number of cylinders of the disk.
-I have no idea why anybody would want to do so. This option is DEPRECATED.
+I have no idea why anybody would want to do so.  This option is DEPRECATED.
 .TP
 .BI "\-H " heads
 Specify the number of heads of the disk.  (Not the physical number,
 of course, but the number used for partition tables.)
-Reasonable values are 255 and 16. This option is DEPRECATED.
+Reasonable values are 255 and 16.  This option is DEPRECATED.
 .TP
-.BI "\-S " sects
+.BI "\-S " sectors
 Specify the number of sectors per track of the disk.
 (Not the physical number, of course, but the number used for
 partition tables.)
-A reasonable value is 63. This option is DEPRECATED.
+A reasonable value is 63.  This option is DEPRECATED.
 .TP
 .BI \-h
-Print help and then exit.
+Display a help text and exit.
 .TP
 .B \-l
 List the partition tables for the specified devices and then exit.
@@ -227,18 +230,15 @@ Print the size (in blocks) of each given partition.
 .BI "\-u"[=unit]
 When listing partition tables, show sizes in 'sectors' or in 'cylinders'.  The
 default is to show sizes in sectors.  For backward compatibility, it is possible
-to use the option without the <units> argument -- then the default is used.
-Note that the optional <unit> argument cannot be separated from the -u option
-by a space, the correct form is for example '-u=cylinders'.
+to use the option without the \fIunit\fR argument -- then the default is used.
+Note that the optional \fIunit\fR argument cannot be separated from the \fB-u\fR
+option by a space, the correct form is for example '-u=cylinders'.
 .TP
 .B \-v
-Print version number of
-.B fdisk
-program and exit.
+Display version information and exit.
 
 .SH ENVIRONMENT
-.IP FDISK_DEBUG=0xffff
-enables debug output
+.IP "Setting FDISK_DEBUG=0xffff enables debug output."
 
 .SH "SEE ALSO"
 .BR cfdisk (8),
@@ -247,6 +247,7 @@ enables debug output
 .BR parted (8),
 .BR partprobe (8),
 .BR kpartx (8)
+
 .SH AVAILABILITY
 The fdisk command is part of the util-linux package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux/.
