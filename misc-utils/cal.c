@@ -425,22 +425,21 @@ static int leap_year(long year)
 
 static void headers_init(int julian)
 {
-	int i, wd, spaces = julian ? J_DAY_LEN - 1 : DAY_LEN - 1;
+	size_t i, wd, spaces = julian ? J_DAY_LEN - 1 : DAY_LEN - 1;
 	char *cur_dh = day_headings;
 
 	for (i = 0; i < DAYS_IN_WEEK; i++) {
-		ssize_t space_left;
+		size_t space_left;
 		wd = (i + weekstart) % DAYS_IN_WEEK;
 
 		if (i)
 			strcat(cur_dh++, " ");
-		space_left =
-		    sizeof(day_headings) - (cur_dh - day_headings);
+		space_left = sizeof(day_headings) - (cur_dh - day_headings);
+
 		if (space_left <= spaces)
 			break;
-		cur_dh +=
-		    center_str(nl_langinfo(ABDAY_1 + wd), cur_dh,
-			       space_left, spaces);
+		cur_dh += center_str(nl_langinfo(ABDAY_1 + wd), cur_dh,
+				     space_left, spaces);
 	}
 
 	for (i = 0; i < MONTHS_IN_YEAR; i++)
@@ -591,7 +590,11 @@ static void yearly(int day, long year, int julian)
 	int col, *dp, i, month, row, which_cal;
 	int maxrow, sep_len, week_len;
 	int days[MONTHS_IN_YEAR][MAXDAYS];
-	char *p, lineout[100];
+	char *p;
+	/* three weeks + separators + \0 */
+	char lineout[ sizeof(day_headings) + 2 +
+		      sizeof(day_headings) + 2 +
+		      sizeof(day_headings) + 1 ];
 
 	if (julian) {
 		maxrow = J_MONTH_COLS;
@@ -627,6 +630,7 @@ static void yearly(int day, long year, int julian)
 			snprintf(lineout, sizeof(lineout),
 				 "\n%s%*s %s%*s %s\n", day_headings, sep_len,
 				 "", day_headings, sep_len, "", day_headings);
+
 		my_putstring(lineout);
 		for (row = 0; row < DAYS_IN_WEEK - 1; row++) {
 			p = lineout;
