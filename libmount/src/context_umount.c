@@ -71,10 +71,16 @@ int mnt_context_find_umount_fs(struct libmnt_context *cxt,
 	struct libmnt_cache *cache = NULL;
 	char *cn_tgt = NULL, *loopdev = NULL;
 
+	if (pfs)
+		*pfs = NULL;
+
 	if (!cxt || !tgt || !pfs)
 		return -EINVAL;
 
 	DBG(CXT, mnt_debug_h(cxt, "umount: lookup FS for '%s'", tgt));
+
+	if (!*tgt)
+		return 1; /* empty string is not error */
 
 	/*
 	 * The mtab file maybe huge and on systems with utab we have to merge
@@ -169,9 +175,12 @@ try_loopdev:
 		}
 	}
 
-	*pfs = fs;
+	if (pfs)
+		*pfs = fs;
 	free(loopdev);
 
+	DBG(CXT, mnt_debug_h(cxt, "umount fs: %s", fs ? mnt_fs_get_target(fs) :
+							"<not found>"));
 	return fs ? 0 : 1;
 err:
 	free(loopdev);
@@ -197,7 +206,7 @@ static int lookup_umount_fs(struct libmnt_context *cxt)
 	if (rc < 0)
 		return rc;
 	if (rc == 1 || !fs) {
-		DBG(CXT, mnt_debug_h(cxt, "umount: cannot find %s in mtab", tgt));
+		DBG(CXT, mnt_debug_h(cxt, "umount: cannot find '%s' in mtab", tgt));
 		return 0;
 	}
 

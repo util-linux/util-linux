@@ -151,6 +151,9 @@ canonicalize_dm_name(const char *ptname)
 	size_t	sz;
 	char	path[256], name[256], *res = NULL;
 
+	if (!ptname || !*ptname)
+		return NULL;
+
 	snprintf(path, sizeof(path), "/sys/block/%s/dm/name", ptname);
 	if (!(f = fopen(path, "r" UL_CLOEXECSTR)))
 		return NULL;
@@ -173,7 +176,7 @@ canonicalize_path(const char *path)
 	char canonical[PATH_MAX+2];
 	char *p;
 
-	if (path == NULL)
+	if (!path || !*path)
 		return NULL;
 
 	if (!myrealpath(path, canonical, PATH_MAX+1))
@@ -199,7 +202,7 @@ canonicalize_path_restricted(const char *path)
 	uid_t euid;
 	gid_t egid;
 
-	if (path == NULL)
+	if (!path || !*path)
 		return NULL;
 
 	euid = geteuid();

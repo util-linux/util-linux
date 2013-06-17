@@ -236,7 +236,10 @@ static int mk_exit_code(struct libmnt_context *cxt, int rc)
 			tgt);
 		break;
 	case ENOENT:
-		warnx(_("%s: not found"), tgt);
+		if (tgt && *tgt)
+			warnx(_("%s: mountpoint not found"), tgt);
+		else
+			warnx(_("undefined mountpoint"));
 		break;
 	case EPERM:
 		warnx(_("%s: must be superuser to unmount"), tgt);
