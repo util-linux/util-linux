@@ -274,7 +274,7 @@ int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 	if (!tb || !itr || !parent)
 		return -EINVAL;
 
-	DBG(TAB, mnt_debug_h(tb, "lookup next child of %s",
+	DBG(TAB, mnt_debug_h(tb, "lookup next child of '%s'",
 				mnt_fs_get_target(parent)));
 
 	parent_id = mnt_fs_get_id(parent);
@@ -442,12 +442,12 @@ struct libmnt_fs *mnt_table_find_mountpoint(struct libmnt_table *tb,
 {
 	char *mnt;
 
-	if (!tb || !path)
+	if (!tb || !path || !*path)
 		return NULL;
 	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
-	DBG(TAB, mnt_debug_h(tb, "lookup MOUNTPOINT: %s", path));
+	DBG(TAB, mnt_debug_h(tb, "lookup MOUNTPOINT: '%s'", path));
 
 	mnt = strdup(path);
 	if (!mnt)
@@ -494,12 +494,12 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 	assert(tb);
 	assert(path);
 
-	if (!tb || !path)
+	if (!tb || !path || !*path)
 		return NULL;
 	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
-	DBG(TAB, mnt_debug_h(tb, "lookup TARGET: %s", path));
+	DBG(TAB, mnt_debug_h(tb, "lookup TARGET: '%s'", path));
 
 	/* native @target */
 	mnt_reset_iter(&itr, direction);
@@ -509,6 +509,8 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 	}
 	if (!tb->cache || !(cn = mnt_resolve_path(path, tb->cache)))
 		return NULL;
+
+	DBG(TAB, mnt_debug_h(tb, "lookup canonical TARGET: '%s'", cn));
 
 	/* canonicalized paths in struct libmnt_table */
 	mnt_reset_iter(&itr, direction);
@@ -566,12 +568,12 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 	const char *p;
 
 	assert(tb);
-	if (!tb || !path)
+	if (!tb || !path || !*path)
 		return NULL;
 	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
-	DBG(TAB, mnt_debug_h(tb, "lookup srcpath: %s", path));
+	DBG(TAB, mnt_debug_h(tb, "lookup SRCPATH: '%s'", path));
 
 	/* native paths */
 	mnt_reset_iter(&itr, direction);
@@ -584,6 +586,8 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 
 	if (!path || !tb->cache || !(cn = mnt_resolve_path(path, tb->cache)))
 		return NULL;
+
+	DBG(TAB, mnt_debug_h(tb, "lookup canonical SRCPATH: '%s'", cn));
 
 	/* canonicalized paths in struct libmnt_table */
 	if (ntags < mnt_table_get_nents(tb)) {
@@ -672,7 +676,7 @@ struct libmnt_fs *mnt_table_find_tag(struct libmnt_table *tb, const char *tag,
 	assert(tag);
 	assert(val);
 
-	if (!tb || !tag || !val)
+	if (!tb || !tag || !*tag || !val)
 		return NULL;
 	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
@@ -721,9 +725,9 @@ struct libmnt_fs *mnt_table_find_source(struct libmnt_table *tb,
 	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
 
-	DBG(TAB, mnt_debug_h(tb, "lookup SOURCE: %s", source));
+	DBG(TAB, mnt_debug_h(tb, "lookup SOURCE: '%s'", source));
 
-	if (source && strchr(source, '=')) {
+	if (source && *source && strchr(source, '=')) {
 		char *tag, *val;
 
 		if (blkid_parse_tag_string(source, &tag, &val) == 0) {
@@ -761,7 +765,7 @@ struct libmnt_fs *mnt_table_find_pair(struct libmnt_table *tb, const char *sourc
 	assert(tb);
 	assert(target);
 
-	if (!tb || !target)
+	if (!tb || !target || !*target || !source || !*source)
 		return NULL;
 	if (direction != MNT_ITER_FORWARD && direction != MNT_ITER_BACKWARD)
 		return NULL;
@@ -841,7 +845,7 @@ struct libmnt_fs *mnt_table_get_fs_root(struct libmnt_table *tb,
 	assert(fs);
 	assert(fsroot);
 
-	DBG(TAB, mnt_debug("lookup fs-root for %s", mnt_fs_get_source(fs)));
+	DBG(TAB, mnt_debug("lookup fs-root for '%s'", mnt_fs_get_source(fs)));
 
 	fstype = mnt_fs_get_fstype(fs);
 
