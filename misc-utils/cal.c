@@ -598,7 +598,10 @@ void
 yearly(int day, int year) {
 	int col, *dp, i, month, row, which_cal;
 	int days[12][MAXDAYS];
-	char *p, lineout[100];
+	char *p;
+	char lineout[ sizeof(day_headings) + 2 +
+		      sizeof(day_headings) + 2 +
+		      sizeof(day_headings) + 1 ];
 
 	snprintf(lineout, sizeof(lineout), "%d", year);
 	center(lineout, WEEK_LEN*3 + HEAD_SEP*2 - 1, 0);
