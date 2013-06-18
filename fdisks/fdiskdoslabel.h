@@ -4,13 +4,9 @@
 
 struct dos_partition {
 	unsigned char boot_ind;         /* 0x80 - active */
-	unsigned char head;             /* starting head */
-	unsigned char sector;           /* starting sector */
-	unsigned char cyl;              /* starting cylinder */
+	unsigned char bh, bs, bc;       /* begin CHS */
 	unsigned char sys_ind;          /* What partition type */
-	unsigned char end_head;         /* end head */
-	unsigned char end_sector;       /* end sector */
-	unsigned char end_cyl;          /* end cylinder */
+	unsigned char eh, es, ec;       /* end CHS */
 	unsigned char start4[4];        /* starting sector counting from 0 */
 	unsigned char size4[4];         /* nr of sectors in partition */
 } __attribute__ ((packed));
@@ -90,8 +86,8 @@ static inline sector_t get_partition_start(struct pte *pe)
 
 static inline int is_cleared_partition(struct dos_partition *p)
 {
-	return !(!p || p->boot_ind || p->head || p->sector || p->cyl ||
-		 p->sys_ind || p->end_head || p->end_sector || p->end_cyl ||
+	return !(!p || p->boot_ind || p->bh || p->bs || p->bc ||
+		 p->sys_ind || p->eh || p->es || p->ec ||
 		 get_start_sect(p) || get_nr_sects(p));
 }
 

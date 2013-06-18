@@ -145,13 +145,13 @@ static void clear_partition(struct dos_partition *p)
 	if (!p)
 		return;
 	p->boot_ind = 0;
-	p->head = 0;
-	p->sector = 0;
-	p->cyl = 0;
+	p->bh = 0;
+	p->bs = 0;
+	p->bc = 0;
 	p->sys_ind = 0;
-	p->end_head = 0;
-	p->end_sector = 0;
-	p->end_cyl = 0;
+	p->eh = 0;
+	p->es = 0;
+	p->ec = 0;
 	set_start_sect(p,0);
 	set_nr_sects(p,0);
 }
@@ -418,8 +418,8 @@ static void get_partition_table_geometry(struct fdisk_context *cxt,
 	for (i=0; i<4; i++) {
 		p = pt_offset(bufp, i);
 		if (p->sys_ind != 0) {
-			h = p->end_head + 1;
-			s = (p->end_sector & 077);
+			h = p->eh + 1;
+			s = (p->es & 077);
 			if (first) {
 				hh = h;
 				ss = s;
@@ -553,10 +553,10 @@ static void set_partition(struct fdisk_context *cxt,
 	}
 	if (is_dos_compatible(cxt) && (start/(cxt->geom.sectors*cxt->geom.heads) > 1023))
 		start = cxt->geom.heads*cxt->geom.sectors*1024 - 1;
-	set_hsc(p->head, p->sector, p->cyl, start);
+	set_hsc(p->bh, p->bs, p->bc, start);
 	if (is_dos_compatible(cxt) && (stop/(cxt->geom.sectors*cxt->geom.heads) > 1023))
 		stop = cxt->geom.heads*cxt->geom.sectors*1024 - 1;
-	set_hsc(p->end_head, p->end_sector, p->end_cyl, stop);
+	set_hsc(p->eh, p->es, p->ec, stop);
 	ptes[i].changed = 1;
 }
 
@@ -865,14 +865,14 @@ static void check_consistency(struct fdisk_context *cxt, struct dos_partition *p
 		return;		/* do not check extended partitions */
 
 /* physical beginning c, h, s */
-	pbc = (p->cyl & 0xff) | ((p->sector << 2) & 0x300);
-	pbh = p->head;
-	pbs = p->sector & 0x3f;
+	pbc = (p->bc & 0xff) | ((p->bs << 2) & 0x300);
+	pbh = p->bh;
+	pbs = p->bs & 0x3f;
 
 /* physical ending c, h, s */
-	pec = (p->end_cyl & 0xff) | ((p->end_sector << 2) & 0x300);
-	peh = p->end_head;
-	pes = p->end_sector & 0x3f;
+	pec = (p->ec & 0xff) | ((p->es << 2) & 0x300);
+	peh = p->eh;
+	pes = p->es & 0x3f;
 
 /* compute logical beginning (c, h, s) */
 	long2chs(cxt, get_start_sect(p), &lbc, &lbh, &lbs);
@@ -926,7 +926,7 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 			if (get_partition_start(pe) < first[i])
 				printf(_("Warning: bad start-of-data in "
 					 "partition %zd\n"), i + 1);
-			check(cxt, i + 1, p->end_head, p->end_sector, p->end_cyl,
+			check(cxt, i + 1, p->eh, p->es, p->ec,
 			      last[i]);
 			total += last[i] + 1 - first[i];
 			for (j = 0; j < i; j++)
@@ -1307,11 +1307,11 @@ void dos_list_table_expert(struct fdisk_context *cxt, int extend)
 		p = (extend ? pe->ex_entry : pe->pt_entry);
 		if (p != NULL) {
                         printf("%2zd %02x%4d%4d%5d%4d%4d%5d%11lu%11lu %02x\n",
-				i + 1, p->boot_ind, p->head,
-				sector(p->sector),
-				cylinder(p->sector, p->cyl), p->end_head,
-				sector(p->end_sector),
-				cylinder(p->end_sector, p->end_cyl),
+				i + 1, p->boot_ind, p->bh,
+				sector(p->bs),
+				cylinder(p->bs, p->bc), p->eh,
+				sector(p->es),
+				cylinder(p->es, p->ec),
 				(unsigned long) get_start_sect(p),
 				(unsigned long) get_nr_sects(p), p->sys_ind);
 			if (p->sys_ind) {
