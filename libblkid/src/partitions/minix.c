@@ -12,7 +12,6 @@
 #include <stdint.h>
 
 #include "partitions.h"
-#include "dos.h"
 #include "minix.h"
 
 static int probe_minix_pt(blkid_probe pr,
@@ -47,9 +46,9 @@ static int probe_minix_pt(blkid_probe pr,
 		/* caller does not ask for details about partitions */
 		return 0;
 
-	p = (struct dos_partition *) (data + BLKID_MSDOS_PT_OFFSET);
+	p = (struct dos_partition *) (data + MBR_PT_OFFSET);
 
-	tab = blkid_partlist_new_parttable(ls, "minix", BLKID_MSDOS_PT_OFFSET);
+	tab = blkid_partlist_new_parttable(ls, "minix", MBR_PT_OFFSET);
 	if (!tab)
 		goto err;
 

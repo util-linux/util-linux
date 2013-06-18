@@ -14,7 +14,6 @@
 #include <stdint.h>
 
 #include "partitions.h"
-#include "dos.h"
 #include "aix.h"
 
 /* see superblocks/vfat.c */
@@ -61,7 +60,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 		if (!is_valid_mbr_signature(data))
 			goto leave;
 
-		p0 = (struct dos_partition *) (data + BLKID_MSDOS_PT_OFFSET);
+		p0 = (struct dos_partition *) (data + MBR_PT_OFFSET);
 
 		/* Usually, the first entry is the real data partition,
 		 * the 2nd entry is the next extended partition, or empty,
@@ -160,7 +159,7 @@ static int probe_dos_pt(blkid_probe pr,
 		goto nothing;
 	}
 
-	p0 = (struct dos_partition *) (data + BLKID_MSDOS_PT_OFFSET);
+	p0 = (struct dos_partition *) (data + MBR_PT_OFFSET);
 
 	/*
 	 * Reject PT where boot indicator is not 0 or 0x80.
@@ -181,8 +180,8 @@ static int probe_dos_pt(blkid_probe pr,
 		}
 	}
 
-	blkid_probe_use_wiper(pr, BLKID_MSDOS_PT_OFFSET,
-				  512 - BLKID_MSDOS_PT_OFFSET);
+	blkid_probe_use_wiper(pr, MBR_PT_OFFSET,
+				  512 - MBR_PT_OFFSET);
 
 	id = dos_parttable_id(data);
 	if (id)
@@ -207,7 +206,7 @@ static int probe_dos_pt(blkid_probe pr,
 	ssf = blkid_probe_get_sectorsize(pr) / 512;
 
 	/* allocate a new partition table */
-	tab = blkid_partlist_new_parttable(ls, "dos", BLKID_MSDOS_PT_OFFSET);
+	tab = blkid_partlist_new_parttable(ls, "dos", MBR_PT_OFFSET);
 	if (!tab)
 		goto err;
 
