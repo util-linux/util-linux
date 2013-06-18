@@ -214,18 +214,18 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 		_(" %s [options] [+line] [+/pattern/] [files]\n"),
 		program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -number      lines per page\n"), out);
-	fputs(_(" -c           clear screen before displaying\n"), out);
-	fputs(_(" -e           do not pause at end of a file\n"), out);
-	fputs(_(" -f           do not split long lines\n"), out);
-	fputs(_(" -n           terminate command with new line\n"), out);
-	fputs(_(" -p <prompt>  specify prompt\n"), out);
-	fputs(_(" -r           disallow shell escape\n"), out);
-	fputs(_(" -s           print messages to stdout\n"), out);
-	fputs(_(" +number      start at the given line\n"), out);
-	fputs(_(" +/pattern/   start at the line containing pattern\n"), out);
-	fputs(_(" -h           display this help and exit\n"), out);
-	fputs(_(" -V           output version information and exit\n"), out);
+	fputs(_(" -number       lines per page\n"), out);
+	fputs(_(" -c            clear screen before displaying\n"), out);
+	fputs(_(" -e            do not pause at end of a file\n"), out);
+	fputs(_(" -f            do not split long lines\n"), out);
+	fputs(_(" -n            terminate command with new line\n"), out);
+	fputs(_(" -p <prompt>   specify prompt\n"), out);
+	fputs(_(" -r            disallow shell escape\n"), out);
+	fputs(_(" -s            print messages to stdout\n"), out);
+	fputs(_(" +number       start at the given line\n"), out);
+	fputs(_(" +/pattern/    start at the line containing pattern\n"), out);
+	fputs(_(" -h, --help    display this help and exit\n"), out);
+	fputs(_(" -V, --version output version information and exit\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("pg(1)"));
 	quit(out == stderr ? 2 : 0);
 }
@@ -1542,6 +1542,16 @@ int main(int argc, char **argv)
 		if (*argv[arg] != '-' || argv[arg][1] == '\0')
 			break;
 		argc--;
+
+		if (!strcmp(argv[arg], "--help")) {
+		    usage(stdout);
+		}
+
+		if (!strcmp(argv[arg], "--version")) {
+		    printf(UTIL_LINUX_VERSION);
+		    return EXIT_SUCCESS;
+		}
+
 		for (i = 1; argv[arg][i]; i++) {
 			switch (argv[arg][i]) {
 			case '-':
