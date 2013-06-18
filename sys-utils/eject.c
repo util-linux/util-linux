@@ -53,6 +53,14 @@
 #include "pathnames.h"
 #include "sysfs.h"
 
+/*
+ * sg_io_hdr_t driver_status -- see kernel include/scsi/scsi.h
+ */
+#ifndef DRIVER_SENSE
+# define DRIVER_SENSE	0x08
+#endif
+
+
 #define EJECT_DEFAULT_DEVICE "/dev/cdrom"
 
 
@@ -604,17 +612,27 @@ static int eject_scsi(int fd)
 
 	io_hdr.cmdp = allowRmBlk;
 	status = ioctl(fd, SG_IO, (void *)&io_hdr);
-	if (status < 0)
+	if (status < 0 || io_hdr.host_status || io_hdr.driver_status)
 		return 0;
 
 	io_hdr.cmdp = startStop1Blk;
 	status = ioctl(fd, SG_IO, (void *)&io_hdr);
-	if (status < 0)
+	if (status < 0 || io_hdr.host_status)
+		return 0;
+
+	/* Ignore errors when there is not medium -- in this case driver sense
+	 * buffer sets MEDIUM NOT PRESENT (3a) bit. For more details see:
+	 * http://www.tldp.org/HOWTO/archived/SCSI-Programming-HOWTO/SCSI-Programming-HOWTO-22.html#sec-sensecodes
+	 * -- kzak Jun 2013
+	 */
+	if (io_hdr.driver_status != 0 &&
+	    !(io_hdr.driver_status == DRIVER_SENSE && io_hdr.sbp &&
+		                                      io_hdr.sbp[12] == 0x3a))
 		return 0;
 
 	io_hdr.cmdp = startStop2Blk;
 	status = ioctl(fd, SG_IO, (void *)&io_hdr);
-	if (status < 0)
+	if (status < 0 || io_hdr.host_status || io_hdr.driver_status)
 		return 0;
 
 	/* force kernel to reread partition table when new disc inserted */
