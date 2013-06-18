@@ -4,7 +4,7 @@
 struct dos_partition {
 	unsigned char boot_ind;		/* 0x80 - active */
 	unsigned char bh, bs, bc;	/* begin CHS */
-	unsigned char sys_type;
+	unsigned char sys_ind;
 	unsigned char eh, es, ec;	/* end CHS */
 	unsigned char start_sect[4];
 	unsigned char nr_sects[4];

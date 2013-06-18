@@ -33,9 +33,9 @@ static const struct dos_subtypes {
 
 static inline int is_extended(struct dos_partition *p)
 {
-	return (p->sys_type == MBR_DOS_EXTENDED_PARTITION ||
-		p->sys_type == MBR_W95_EXTENDED_PARTITION ||
-		p->sys_type == MBR_LINUX_EXTENDED_PARTITION);
+	return (p->sys_ind == MBR_DOS_EXTENDED_PARTITION ||
+		p->sys_ind == MBR_W95_EXTENDED_PARTITION ||
+		p->sys_ind == MBR_LINUX_EXTENDED_PARTITION);
 }
 
 static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
@@ -100,7 +100,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 			if (!par)
 				goto err;
 
-			blkid_partition_set_type(par, p->sys_type);
+			blkid_partition_set_type(par, p->sys_ind);
 			blkid_partition_set_flags(par, p->boot_ind);
 			blkid_partition_gen_uuid(par);
 			ct_nodata = 0;
@@ -174,7 +174,7 @@ static int probe_dos_pt(blkid_probe pr,
 	 * GPT uses valid MBR
 	 */
 	for (p = p0, i = 0; i < 4; i++, p++) {
-		if (p->sys_type == MBR_GPT_PARTITION) {
+		if (p->sys_ind == MBR_GPT_PARTITION) {
 			DBG(LOWPROBE, blkid_debug("probably GPT -- ignore"));
 			goto nothing;
 		}
@@ -230,7 +230,7 @@ static int probe_dos_pt(blkid_probe pr,
 		if (!par)
 			goto err;
 
-		blkid_partition_set_type(par, p->sys_type);
+		blkid_partition_set_type(par, p->sys_ind);
 		blkid_partition_set_flags(par, p->boot_ind);
 		blkid_partition_gen_uuid(par);
 	}
@@ -261,7 +261,7 @@ static int probe_dos_pt(blkid_probe pr,
 				continue;
 
 			for (n = 0; n < ARRAY_SIZE(dos_nested); n++) {
-				if (dos_nested[n].type != p->sys_type)
+				if (dos_nested[n].type != p->sys_ind)
 					continue;
 
 				if (blkid_partitions_do_subprobe(pr,

@@ -56,7 +56,7 @@ static int probe_minix_pt(blkid_probe pr,
 		uint32_t start, size;
 		blkid_partition par;
 
-		if (p->sys_type != MBR_MINIX_PARTITION)
+		if (p->sys_ind != MBR_MINIX_PARTITION)
 			continue;
 
 		start = dos_partition_start(p);
@@ -73,7 +73,7 @@ static int probe_minix_pt(blkid_probe pr,
 		if (!par)
 			goto err;
 
-		blkid_partition_set_type(par, p->sys_type);
+		blkid_partition_set_type(par, p->sys_ind);
 		blkid_partition_set_flags(par, p->boot_ind);
 	}
 
