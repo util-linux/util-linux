@@ -18,6 +18,14 @@ static inline unsigned int __dos_assemble4le(const unsigned char *p)
 	return p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
 }
 
+static inline void __dos_store_4le(unsigned char *p, unsigned int val)
+{
+	p[0] = (val & 0xff);
+	p[1] = ((val >> 8) & 0xff);
+	p[2] = ((val >> 16) & 0xff);
+	p[3] = ((val >> 24) & 0xff);
+}
+
 static inline unsigned int dos_partition_start(struct dos_partition *p)
 {
 	return __dos_assemble4le(&(p->start_sect[0]));
