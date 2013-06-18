@@ -4,14 +4,15 @@
 /*
  * per partition table entry data
  *
- * The four primary partitions have the same sectorbuffer (MBRbuffer)
- * and have NULL ext_pointer.
+ * The four primary partitions have the same sectorbuffer
+ * and have NULL ex_entry.
+ *
  * Each logical partition table entry has two pointers, one for the
  * partition and one link to the next one.
  */
 struct pte {
-	struct partition *part_table;	/* points into sectorbuffer */
-	struct partition *ext_pointer;	/* points into sectorbuffer */
+	struct partition *pt_entry;	/* on-disk MBR entry */
+	struct partition *ex_entry;	/* on-disk EBR entry */
 	char changed;			/* boolean */
 	sector_t offset;	        /* disk sector number */
 	unsigned char *sectorbuffer;	/* disk sector contents */
@@ -25,7 +26,7 @@ extern struct pte ptes[MAXIMUM_PARTS];
 extern sector_t extended_offset;
 
 /* A valid partition table sector ends in 0x55 0xaa */
-static inline unsigned int part_table_flag(unsigned char *b)
+static inline unsigned int pt_entry_flag(unsigned char *b)
 {
 	return ((unsigned int) b[510]) + (((unsigned int) b[511]) << 8);
 }
@@ -70,7 +71,7 @@ static inline sector_t get_start_sect(struct partition *p)
 
 static inline sector_t get_partition_start(struct pte *pe)
 {
-	return pe->offset + get_start_sect(pe->part_table);
+	return pe->offset + get_start_sect(pe->pt_entry);
 }
 
 static inline int is_cleared_partition(struct partition *p)
@@ -79,6 +80,8 @@ static inline int is_cleared_partition(struct partition *p)
 		 p->sys_ind || p->end_head || p->end_sector || p->end_cyl ||
 		 get_start_sect(p) || get_nr_sects(p));
 }
+
+extern struct partition *dos_get_pt_entry(int);
 
 extern void dos_print_mbr_id(struct fdisk_context *cxt);
 extern int dos_set_mbr_id(struct fdisk_context *cxt);

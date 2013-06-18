@@ -67,7 +67,6 @@ extern int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 extern void list_partition_types(struct fdisk_context *cxt);
 extern struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt);
 extern void reread_partition_table(struct fdisk_context *cxt, int leave);
-extern struct partition *get_part_table(int);
 extern unsigned int read_int(struct fdisk_context *cxt,
 			     unsigned int low, unsigned int dflt,
 			     unsigned int high, unsigned int base, char *mesg);

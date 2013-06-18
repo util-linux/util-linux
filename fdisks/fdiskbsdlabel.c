@@ -285,7 +285,7 @@ bsd_command_prompt (struct fdisk_context *cxt)
   assert(cxt->parent);
 
   for (t=0; t<4; t++) {
-    p = get_part_table(t);
+    p = dos_get_pt_entry(t);
     if (p && is_bsd_partition_type(p->sys_ind)) {
       xbsd_part = p;
       xbsd_part_index = t;
@@ -958,7 +958,7 @@ xbsd_link_part (struct fdisk_context *cxt)
 	if (xbsd_check_new_partition(cxt, &i))
 		return;
 
-	p = get_part_table(k);
+	p = dos_get_pt_entry(k);
 
 	xbsd_dlabel.d_partitions[i].p_size   = get_nr_sects(p);
 	xbsd_dlabel.d_partitions[i].p_offset = get_start_sect(p);
