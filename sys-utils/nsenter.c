@@ -72,6 +72,8 @@ static void usage(int status)
 	fputs(_(" -n, --net   [=<file>]  enter network namespace\n"), out);
 	fputs(_(" -p, --pid   [=<file>]  enter pid namespace\n"), out);
 	fputs(_(" -U, --user  [=<file>]  enter user namespace\n"), out);
+	fputs(_(" -S, --setuid <uid>     set uid in user namespace\n"), out);
+	fputs(_(" -G, --setgid <gid>     set gid in user namespace\n"), out);
 	fputs(_(" -r, --root  [=<dir>]   set the root directory\n"), out);
 	fputs(_(" -w, --wd    [=<dir>]   set the working directory\n"), out);
 	fputs(_(" -F, --no-fork          do not fork before exec'ing <program>\n"), out);
@@ -169,6 +171,8 @@ int main(int argc, char *argv[])
 		{ "net", optional_argument, NULL, 'n' },
 		{ "pid", optional_argument, NULL, 'p' },
 		{ "user", optional_argument, NULL, 'U' },
+		{ "setuid", required_argument, NULL, 'S' },
+		{ "setgid", required_argument, NULL, 'G' },
 		{ "root", optional_argument, NULL, 'r' },
 		{ "wd", optional_argument, NULL, 'w' },
 		{ "no-fork", no_argument, NULL, 'F' },
@@ -179,6 +183,8 @@ int main(int argc, char *argv[])
 	int c, namespaces = 0;
 	bool do_rd = false, do_wd = false;
 	int do_fork = -1; /* unknown yet */
+	uid_t uid = 0;
+	gid_t gid = 0;
 
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -186,7 +192,7 @@ int main(int argc, char *argv[])
 	atexit(close_stdout);
 
 	while ((c =
-		getopt_long(argc, argv, "hVt:m::u::i::n::p::U::r::w::F",
+		getopt_long(argc, argv, "hVt:m::u::i::n::p::U::S:G:r::w::F",
 			    longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
@@ -233,6 +239,12 @@ int main(int argc, char *argv[])
 				open_namespace_fd(CLONE_NEWUSER, optarg);
 			else
 				namespaces |= CLONE_NEWUSER;
+			break;
+		case 'S':
+			uid = strtoul_or_err(optarg, _("failed to parse uid"));
+			break;
+		case 'G':
+			gid = strtoul_or_err(optarg, _("failed to parse gid"));
 			break;
 		case 'F':
 			do_fork = 0;
@@ -314,6 +326,13 @@ int main(int argc, char *argv[])
 
 	if (do_fork == 1)
 		continue_as_child();
+
+	if (namespaces & CLONE_NEWUSER) {
+		if (setuid(uid) < 0)
+			err(EXIT_FAILURE, _("setuid failed"));
+		if (setgid(gid) < 0)
+			err(EXIT_FAILURE, _("setgid failed"));
+	}
 
 	if (optind < argc) {
 		execvp(argv[optind], argv + optind);
