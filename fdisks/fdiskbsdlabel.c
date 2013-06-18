@@ -79,10 +79,10 @@ static int xbsd_get_part_index (struct fdisk_context *cxt, int max, int *n);
 static int xbsd_check_new_partition (struct fdisk_context *cxt, int *i);
 static unsigned short xbsd_dkcksum (struct xbsd_disklabel *lp);
 static int xbsd_initlabel  (struct fdisk_context *cxt,
-			    struct partition *p, struct xbsd_disklabel *d);
+			    struct dos_partition *p, struct xbsd_disklabel *d);
 static int xbsd_readlabel  (struct fdisk_context *cxt,
-			    struct partition *p, struct xbsd_disklabel *d);
-static int xbsd_writelabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disklabel *d);
+			    struct dos_partition *p, struct xbsd_disklabel *d);
+static int xbsd_writelabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd_disklabel *d);
 static void sync_disks (void);
 
 #if defined (__alpha__)
@@ -92,7 +92,7 @@ void alpha_bootblock_checksum (char *boot);
 #if !defined (__alpha__)
 static int xbsd_translate_fstype (int linux_type);
 static void xbsd_link_part (struct fdisk_context *cxt);
-static struct partition *xbsd_part;
+static struct dos_partition *xbsd_part;
 static int xbsd_part_index;
 #endif
 
@@ -279,7 +279,7 @@ bsd_command_prompt (struct fdisk_context *cxt)
 {
 #if !defined (__alpha__)
   int t, ss;
-  struct partition *p;
+  struct dos_partition *p;
 
   assert(cxt);
   assert(cxt->parent);
@@ -751,7 +751,7 @@ xbsd_dkcksum (struct xbsd_disklabel *lp) {
 }
 
 static int xbsd_initlabel (struct fdisk_context *cxt,
-		struct partition *p,
+		struct dos_partition *p,
 		struct xbsd_disklabel *d)
 {
 	struct xbsd_partition *pp;
@@ -823,7 +823,7 @@ static int xbsd_initlabel (struct fdisk_context *cxt,
  * If it has the right magic, return 1.
  */
 static int
-xbsd_readlabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disklabel *d)
+xbsd_readlabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd_disklabel *d)
 {
 	int t, sector;
 
@@ -866,7 +866,7 @@ xbsd_readlabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disk
 }
 
 static int
-xbsd_writelabel (struct fdisk_context *cxt, struct partition *p, struct xbsd_disklabel *d)
+xbsd_writelabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd_disklabel *d)
 {
   unsigned int sector;
 
@@ -947,7 +947,7 @@ xbsd_link_part (struct fdisk_context *cxt)
 {
 	size_t k;
 	int i;
-	struct partition *p;
+	struct dos_partition *p;
 
 	if (!cxt->parent)
 		return;		/* not nested PT */

@@ -99,7 +99,7 @@ static int get_partition_unused_primary(struct fdisk_context *cxt)
 	}
 }
 
-struct partition *dos_get_pt_entry(int i)
+struct dos_partition *dos_get_pt_entry(int i)
 {
 	return ptes[i].pt_entry;
 }
@@ -140,7 +140,7 @@ static unsigned int mbr_get_id(const unsigned char *b)
 	return read4_little_endian(&b[440]);
 }
 
-static void clear_partition(struct partition *p)
+static void clear_partition(struct dos_partition *p)
 {
 	if (!p)
 		return;
@@ -197,8 +197,8 @@ void dos_init(struct fdisk_context *cxt)
 static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 {
 	struct pte *pe = &ptes[partnum];
-	struct partition *p = pe->pt_entry;
-	struct partition *q = pe->ex_entry;
+	struct dos_partition *p = pe->pt_entry;
+	struct dos_partition *q = pe->ex_entry;
 
 	/* Note that for the fifth partition (partnum == 4) we don't actually
 	   decrement partitions. */
@@ -257,7 +257,7 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 {
 	size_t i;
 	struct pte *pex;
-	struct partition *p, *q;
+	struct dos_partition *p, *q;
 
 	ext_index = ext;
 	pex = &ptes[ext];
@@ -409,7 +409,7 @@ static void get_partition_table_geometry(struct fdisk_context *cxt,
 			unsigned int *ph, unsigned int *ps)
 {
 	unsigned char *bufp = cxt->firstsector;
-	struct partition *p;
+	struct dos_partition *p;
 	int i, h, s, hh, ss;
 	int first = 1;
 	int bad = 0;
@@ -532,7 +532,7 @@ static void set_partition(struct fdisk_context *cxt,
 			  int i, int doext, sector_t start,
 			  sector_t stop, int sysid)
 {
-	struct partition *p;
+	struct dos_partition *p;
 	sector_t offset;
 
 	if (doext) {
@@ -584,7 +584,7 @@ static void fill_bounds(struct fdisk_context *cxt,
 {
 	size_t i;
 	struct pte *pe = &ptes[0];
-	struct partition *p;
+	struct dos_partition *p;
 
 	for (i = 0; i < cxt->label->nparts_max; pe++,i++) {
 		p = pe->pt_entry;
@@ -602,8 +602,8 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 {
 	int sys, read = 0, rc;
 	size_t i;
-	struct partition *p = ptes[n].pt_entry;
-	struct partition *q = ptes[ext_index].pt_entry;
+	struct dos_partition *p = ptes[n].pt_entry;
+	struct dos_partition *q = ptes[ext_index].pt_entry;
 	sector_t start, stop = 0, limit, temp,
 		first[cxt->label->nparts_max],
 		last[cxt->label->nparts_max];
@@ -850,7 +850,7 @@ long2chs(struct fdisk_context *cxt, unsigned long ls,
 	*s = ls % cxt->geom.sectors + 1;	/* sectors count from 1 */
 }
 
-static void check_consistency(struct fdisk_context *cxt, struct partition *p,
+static void check_consistency(struct fdisk_context *cxt, struct dos_partition *p,
 			      size_t partition)
 {
 	unsigned int pbc, pbh, pbs;	/* physical beginning c, h, s */
@@ -909,7 +909,7 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 	sector_t total = 1, n_sectors = cxt->total_sectors;
 	unsigned long long first[cxt->label->nparts_max],
 			   last[cxt->label->nparts_max];
-	struct partition *p;
+	struct dos_partition *p;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -1121,7 +1121,7 @@ static struct fdisk_parttype *dos_get_parttype(
 		size_t partnum)
 {
 	struct fdisk_parttype *t;
-	struct partition *p;
+	struct dos_partition *p;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -1142,7 +1142,7 @@ static int dos_set_parttype(
 		size_t partnum,
 		struct fdisk_parttype *t)
 {
-	struct partition *p;
+	struct dos_partition *p;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -1181,7 +1181,7 @@ static int dos_set_parttype(
 static int wrong_p_order(struct fdisk_context *cxt, size_t *prev)
 {
 	struct pte *pe;
-	struct partition *p;
+	struct dos_partition *p;
 	size_t last_p_start_pos = 0, p_start_pos;
 	size_t i, last_i = 0;
 
@@ -1213,7 +1213,7 @@ static int is_garbage_table(void)
 
 	for (i = 0; i < 4; i++) {
 		struct pte *pe = &ptes[i];
-		struct partition *p = pe->pt_entry;
+		struct dos_partition *p = pe->pt_entry;
 
 		if (p->boot_ind != 0 && p->boot_ind != 0x80)
 			return 1;
@@ -1224,7 +1224,7 @@ static int is_garbage_table(void)
 int dos_list_table(struct fdisk_context *cxt,
 		    int xtra  __attribute__ ((__unused__)))
 {
-	struct partition *p;
+	struct dos_partition *p;
 	size_t i, w;
 
 	assert(cxt);
@@ -1296,7 +1296,7 @@ int dos_list_table(struct fdisk_context *cxt,
 void dos_list_table_expert(struct fdisk_context *cxt, int extend)
 {
 	struct pte *pe;
-	struct partition *p;
+	struct dos_partition *p;
 	size_t i;
 
 	printf(_("\nDisk %s: %d heads, %llu sectors, %llu cylinders\n\n"),
@@ -1338,7 +1338,7 @@ void dos_list_table_expert(struct fdisk_context *cxt, int extend)
 static void fix_chain_of_logicals(struct fdisk_context *cxt)
 {
 	size_t j, oj, ojj, sj, sjj;
-	struct partition *pj,*pjj,tmp;
+	struct dos_partition *pj,*pjj,tmp;
 
 	/* Stage 1: sort sectors but leave sector of part 4 */
 	/* (Its sector is the global extended_offset.) */
@@ -1398,7 +1398,7 @@ void dos_fix_partition_table_order(struct fdisk_context *cxt)
 	while ((i = wrong_p_order(cxt, &k)) != 0 && i < 4) {
 		/* partition i should have come earlier, move it */
 		/* We have to move data in the MBR */
-		struct partition *pi, *pk, *pe, pbuf;
+		struct dos_partition *pi, *pk, *pe, pbuf;
 		pei = &ptes[i];
 		pek = &ptes[k];
 
@@ -1409,9 +1409,9 @@ void dos_fix_partition_table_order(struct fdisk_context *cxt)
 		pi = pei->pt_entry;
 		pk = pek->pt_entry;
 
-		memmove(&pbuf, pi, sizeof(struct partition));
-		memmove(pi, pk, sizeof(struct partition));
-		memmove(pk, &pbuf, sizeof(struct partition));
+		memmove(&pbuf, pi, sizeof(struct dos_partition));
+		memmove(pi, pk, sizeof(struct dos_partition));
+		memmove(pk, &pbuf, sizeof(struct dos_partition));
 
 		pei->changed = pek->changed = 1;
 	}
@@ -1426,7 +1426,7 @@ void dos_fix_partition_table_order(struct fdisk_context *cxt)
 void dos_move_begin(struct fdisk_context *cxt, int i)
 {
 	struct pte *pe = &ptes[i];
-	struct partition *p = pe->pt_entry;
+	struct dos_partition *p = pe->pt_entry;
 	unsigned int new, free_start, curr_start, last;
 	uintmax_t res = 0;
 	size_t x;
@@ -1452,7 +1452,7 @@ void dos_move_begin(struct fdisk_context *cxt, int i)
 	for (x = 0; x < cxt->label->nparts_max; x++) {
 		unsigned int end;
 		struct pte *prev_pe = &ptes[x];
-		struct partition *prev_p = prev_pe->pt_entry;
+		struct dos_partition *prev_p = prev_pe->pt_entry;
 
 		if (!prev_p)
 			continue;
@@ -1484,7 +1484,7 @@ static int dos_get_partition_status(
 		int *status)
 {
 	struct pte *pe;
-	struct partition *p;
+	struct dos_partition *p;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -1509,7 +1509,7 @@ static int dos_toggle_partition_flag(
 		unsigned long flag)
 {
 	struct pte *pe;
-	struct partition *p;
+	struct dos_partition *p;
 
 	assert(cxt);
 	assert(cxt->label);

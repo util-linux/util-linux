@@ -41,18 +41,6 @@ scround(struct fdisk_context *cxt, unsigned long num)
 	return (num + un - 1) / un;
 }
 
-struct partition {
-	unsigned char boot_ind;         /* 0x80 - active */
-	unsigned char head;             /* starting head */
-	unsigned char sector;           /* starting sector */
-	unsigned char cyl;              /* starting cylinder */
-	unsigned char sys_ind;          /* What partition type */
-	unsigned char end_head;         /* end head */
-	unsigned char end_sector;       /* end sector */
-	unsigned char end_cyl;          /* end cylinder */
-	unsigned char start4[4];        /* starting sector counting from 0 */
-	unsigned char size4[4];         /* nr of sectors in partition */
-} __attribute__ ((packed));
 
 extern int get_user_reply(struct fdisk_context *cxt,
 			  const char *prompt,

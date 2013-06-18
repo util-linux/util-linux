@@ -1,6 +1,20 @@
 #ifndef FDISK_DOS_LABEL_H
 #define FDISK_DOS_LABEL_H
 
+
+struct dos_partition {
+	unsigned char boot_ind;         /* 0x80 - active */
+	unsigned char head;             /* starting head */
+	unsigned char sector;           /* starting sector */
+	unsigned char cyl;              /* starting cylinder */
+	unsigned char sys_ind;          /* What partition type */
+	unsigned char end_head;         /* end head */
+	unsigned char end_sector;       /* end sector */
+	unsigned char end_cyl;          /* end cylinder */
+	unsigned char start4[4];        /* starting sector counting from 0 */
+	unsigned char size4[4];         /* nr of sectors in partition */
+} __attribute__ ((packed));
+
 /*
  * per partition table entry data
  *
@@ -11,8 +25,8 @@
  * partition and one link to the next one.
  */
 struct pte {
-	struct partition *pt_entry;	/* on-disk MBR entry */
-	struct partition *ex_entry;	/* on-disk EBR entry */
+	struct dos_partition *pt_entry;	/* on-disk MBR entry */
+	struct dos_partition *ex_entry;	/* on-disk EBR entry */
 	char changed;			/* boolean */
 	sector_t offset;	        /* disk sector number */
 	unsigned char *sectorbuffer;	/* disk sector contents */
@@ -20,8 +34,8 @@ struct pte {
 
 extern struct pte ptes[MAXIMUM_PARTS];
 
-#define pt_offset(b, n)	((struct partition *)((b) + 0x1be + \
-					      (n) * sizeof(struct partition)))
+#define pt_offset(b, n)	((struct dos_partition *)((b) + 0x1be + \
+					      (n) * sizeof(struct dos_partition)))
 
 extern sector_t extended_offset;
 
@@ -49,22 +63,22 @@ static inline unsigned int read4_little_endian(const unsigned char *cp)
 		+ ((unsigned int)(cp[3]) << 24);
 }
 
-static inline sector_t get_nr_sects(struct partition *p)
+static inline sector_t get_nr_sects(struct dos_partition *p)
 {
 	return read4_little_endian(p->size4);
 }
 
-static inline void set_nr_sects(struct partition *p, sector_t nr_sects)
+static inline void set_nr_sects(struct dos_partition *p, sector_t nr_sects)
 {
 	store4_little_endian(p->size4, nr_sects);
 }
 
-static inline void set_start_sect(struct partition *p, unsigned int start_sect)
+static inline void set_start_sect(struct dos_partition *p, unsigned int start_sect)
 {
 	store4_little_endian(p->start4, start_sect);
 }
 
-static inline sector_t get_start_sect(struct partition *p)
+static inline sector_t get_start_sect(struct dos_partition *p)
 {
 	return read4_little_endian(p->start4);
 }
@@ -74,14 +88,14 @@ static inline sector_t get_partition_start(struct pte *pe)
 	return pe->offset + get_start_sect(pe->pt_entry);
 }
 
-static inline int is_cleared_partition(struct partition *p)
+static inline int is_cleared_partition(struct dos_partition *p)
 {
 	return !(!p || p->boot_ind || p->head || p->sector || p->cyl ||
 		 p->sys_ind || p->end_head || p->end_sector || p->end_cyl ||
 		 get_start_sect(p) || get_nr_sects(p));
 }
 
-extern struct partition *dos_get_pt_entry(int);
+extern struct dos_partition *dos_get_pt_entry(int);
 
 extern void dos_print_mbr_id(struct fdisk_context *cxt);
 extern int dos_set_mbr_id(struct fdisk_context *cxt);
