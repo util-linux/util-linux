@@ -36,6 +36,14 @@ to make navigation possible.
 .B pg
 accepts the following options:
 .TP
+.BI + number
+Start at the given line.
+.TP
+.BI +/ pattern /
+Start at the line containing the Basic Regular Expression
+.I pattern
+given.
+.TP
 .BI \- number
 The number of lines per page.  Usually, this is the number of
 .SM CRT
@@ -78,14 +86,6 @@ Print messages in
 .I standout
 mode,
 if the terminfo entry for the terminal provides this capability.
-.TP
-.BI + number
-Start at the given line.
-.TP
-.BI +/ pattern /
-Start at the line containing the Basic Regular Expression
-.I pattern
-given.
 .TP
 .B \-h, \-\-help
 display short help and exit.
