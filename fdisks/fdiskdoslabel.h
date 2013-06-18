@@ -1,15 +1,7 @@
 #ifndef FDISK_DOS_LABEL_H
 #define FDISK_DOS_LABEL_H
 
-
-struct dos_partition {
-	unsigned char boot_ind;         /* 0x80 - active */
-	unsigned char bh, bs, bc;       /* begin CHS */
-	unsigned char sys_ind;          /* What partition type */
-	unsigned char eh, es, ec;       /* end CHS */
-	unsigned char start4[4];        /* starting sector counting from 0 */
-	unsigned char size4[4];         /* nr of sectors in partition */
-} __attribute__ ((packed));
+#include "pt-mbr.h"
 
 /*
  * per partition table entry data
@@ -61,22 +53,22 @@ static inline unsigned int read4_little_endian(const unsigned char *cp)
 
 static inline sector_t get_nr_sects(struct dos_partition *p)
 {
-	return read4_little_endian(p->size4);
+	return read4_little_endian(p->nr_sects);
 }
 
 static inline void set_nr_sects(struct dos_partition *p, sector_t nr_sects)
 {
-	store4_little_endian(p->size4, nr_sects);
+	store4_little_endian(p->nr_sects, nr_sects);
 }
 
 static inline void set_start_sect(struct dos_partition *p, unsigned int start_sect)
 {
-	store4_little_endian(p->start4, start_sect);
+	store4_little_endian(p->start_sect, start_sect);
 }
 
 static inline sector_t get_start_sect(struct dos_partition *p)
 {
-	return read4_little_endian(p->start4);
+	return read4_little_endian(p->start_sect);
 }
 
 static inline sector_t get_partition_start(struct pte *pe)
