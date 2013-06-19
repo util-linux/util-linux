@@ -27,12 +27,6 @@ extern struct pte ptes[MAXIMUM_PARTS];
 
 extern sector_t extended_offset;
 
-/* A valid partition table sector ends in 0x55 0xaa */
-static inline unsigned int pt_entry_flag(unsigned char *b)
-{
-	return ((unsigned int) b[510]) + (((unsigned int) b[511]) << 8);
-}
-
 static inline int is_cleared_partition(struct dos_partition *p)
 {
 	return !(!p || p->boot_ind || p->bh || p->bs || p->bc ||

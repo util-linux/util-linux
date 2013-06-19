@@ -487,9 +487,11 @@ static int dos_probe_label(struct fdisk_context *cxt)
 
 		if (!mbr_is_valid_magic(pe->sectorbuffer)) {
 			fprintf(stderr,
-				_("Warning: invalid flag 0x%04x of partition "
+				_("Warning: invalid flag 0x%02x%02x of partition "
 				"table %zd will be corrected by w(rite)\n"),
-				pt_entry_flag(pe->sectorbuffer), i + 1);
+				pe->sectorbuffer[510],
+				pe->sectorbuffer[511],
+				i + 1);
 			pe->changed = 1;
 			fdisk_label_set_changed(cxt->label, 1);
 		}
