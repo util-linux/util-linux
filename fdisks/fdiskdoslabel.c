@@ -55,6 +55,11 @@ static int MBRbuffer_changed;
 #define cround(c, n)	(fdisk_context_use_cylinders(c) ? \
 				((n) / fdisk_context_get_units_per_sector(c)) + 1 : (n))
 
+static sector_t get_abs_partition_start(struct pte *pe)
+{
+	return pe->offset + dos_partition_get_start(pe->pt_entry);
+}
+
 static void warn_alignment(struct fdisk_context *cxt)
 {
 	if (nowarn)
@@ -212,7 +217,7 @@ static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 
 			if (pete->pt_entry) /* prevent SEGFAULT */
 				dos_partition_set_start(pete->pt_entry,
-					       get_partition_start(pete) -
+					       get_abs_partition_start(pete) -
 					       extended_offset);
 			pete->offset = extended_offset;
 			pete->changed = 1;
@@ -572,7 +577,7 @@ static void fill_bounds(struct fdisk_context *cxt,
 			first[i] = 0xffffffff;
 			last[i] = 0;
 		} else {
-			first[i] = get_partition_start(pe);
+			first[i] = get_abs_partition_start(pe);
 			last[i] = first[i] + dos_partition_get_size(p) - 1;
 		}
 	}
@@ -902,8 +907,8 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 		p = pe->pt_entry;
 		if (p->sys_ind && !IS_EXTENDED (p->sys_ind)) {
 			check_consistency(cxt, p, i);
-			fdisk_warn_alignment(cxt, get_partition_start(pe), i);
-			if (get_partition_start(pe) < first[i])
+			fdisk_warn_alignment(cxt, get_abs_partition_start(pe), i);
+			if (get_abs_partition_start(pe) < first[i])
 				printf(_("Warning: bad start-of-data in "
 					 "partition %zd\n"), i + 1);
 			check(cxt, i + 1, p->eh, p->es, p->ec,
@@ -1172,7 +1177,7 @@ static int wrong_p_order(struct fdisk_context *cxt, size_t *prev)
 		}
 		pe = &ptes[i];
 		if ((p = pe->pt_entry)->sys_ind) {
-			p_start_pos = get_partition_start(pe);
+			p_start_pos = get_abs_partition_start(pe);
 
 			if (last_p_start_pos > p_start_pos) {
 				if (prev)
@@ -1250,14 +1255,14 @@ int dos_list_table(struct fdisk_context *cxt,
 			partname(cxt->dev_path, i+1, w+2),
 /* boot flag */		!p->boot_ind ? ' ' : p->boot_ind == ACTIVE_FLAG
 			? '*' : '?',
-/* start */		(unsigned long) cround(cxt, get_partition_start(pe)),
-/* end */		(unsigned long) cround(cxt, get_partition_start(pe) + psects
+/* start */		(unsigned long) cround(cxt, get_abs_partition_start(pe)),
+/* end */		(unsigned long) cround(cxt, get_abs_partition_start(pe) + psects
 				- (psects ? 1 : 0)),
 /* odd flag on end */	(unsigned long) pblocks, podd ? '+' : ' ',
 /* type id */		p->sys_ind,
 /* type name */		type ? type->name : _("Unknown"));
 			check_consistency(cxt, p, i);
-			fdisk_warn_alignment(cxt, get_partition_start(pe), i);
+			fdisk_warn_alignment(cxt, get_abs_partition_start(pe), i);
 		}
 	}
 
@@ -1296,7 +1301,7 @@ void dos_list_table_expert(struct fdisk_context *cxt, int extend)
 				(unsigned long) dos_partition_get_size(p), p->sys_ind);
 			if (p->sys_ind) {
 				check_consistency(cxt, p, i);
-				fdisk_warn_alignment(cxt, get_partition_start(pe), i);
+				fdisk_warn_alignment(cxt, get_abs_partition_start(pe), i);
 			}
 		}
 	}
@@ -1426,7 +1431,7 @@ void dos_move_begin(struct fdisk_context *cxt, int i)
 	 */
 	free_start = pe->offset ? pe->offset + 1 : 1;
 
-	curr_start = get_partition_start(pe);
+	curr_start = get_abs_partition_start(pe);
 
 	/* look for a free space before the current start of the partition */
 	for (x = 0; x < cxt->label->nparts_max; x++) {
@@ -1436,14 +1441,14 @@ void dos_move_begin(struct fdisk_context *cxt, int i)
 
 		if (!prev_p)
 			continue;
-		end = get_partition_start(prev_pe) + dos_partition_get_size(prev_p);
+		end = get_abs_partition_start(prev_pe) + dos_partition_get_size(prev_p);
 
 		if (!is_cleared_partition(prev_p) &&
 		    end > free_start && end <= curr_start)
 			free_start = end;
 	}
 
-	last = get_partition_start(pe) + dos_partition_get_size(p) - 1;
+	last = get_abs_partition_start(pe) + dos_partition_get_size(p) - 1;
 
 	if (fdisk_ask_number(cxt, free_start, curr_start, last,
 			_("New beginning of data"), &res))

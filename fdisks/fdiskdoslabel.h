@@ -33,11 +33,6 @@ static inline unsigned int pt_entry_flag(unsigned char *b)
 	return ((unsigned int) b[510]) + (((unsigned int) b[511]) << 8);
 }
 
-static inline sector_t get_partition_start(struct pte *pe)
-{
-	return pe->offset + dos_partition_get_start(pe->pt_entry);
-}
-
 static inline int is_cleared_partition(struct dos_partition *p)
 {
 	return !(!p || p->boot_ind || p->bh || p->bs || p->bc ||
