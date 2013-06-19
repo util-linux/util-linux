@@ -12,6 +12,12 @@ struct dos_partition {
 
 #define MBR_PT_OFFSET		0x1be
 
+static inline struct dos_partition *mbr_get_partition(unsigned char *mbr, int i)
+{
+	return (struct dos_partition *)
+		(mbr + MBR_PT_OFFSET + (i * sizeof(struct dos_partition)));
+}
+
 /* assemble badly aligned little endian integer */
 static inline unsigned int __dos_assemble_4le(const unsigned char *p)
 {

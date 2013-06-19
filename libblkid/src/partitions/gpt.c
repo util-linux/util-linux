@@ -172,9 +172,7 @@ static int is_pmbr_valid(blkid_probe pr)
 	if (!mbr_is_valid_magic(data))
 		goto failed;
 
-	p = (struct dos_partition *) (data + MBR_PT_OFFSET);
-
-	for (i = 0; i < 4; i++, p++) {
+	for (i = 0, p = mbr_get_partition(data, 0); i < 4; i++, p++) {
 		if (p->sys_ind == MBR_GPT_PARTITION)
 			goto ok;
 	}

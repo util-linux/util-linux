@@ -22,9 +22,6 @@ struct pte {
 
 extern struct pte ptes[MAXIMUM_PARTS];
 
-#define pt_offset(b, n)	((struct dos_partition *)((b) + 0x1be + \
-					      (n) * sizeof(struct dos_partition)))
-
 extern sector_t extended_offset;
 
 extern struct dos_partition *dos_get_pt_entry(int);

@@ -60,7 +60,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 		if (!mbr_is_valid_magic(data))
 			goto leave;
 
-		p0 = (struct dos_partition *) (data + MBR_PT_OFFSET);
+		p0 = mbr_get_partition(data, 0);
 
 		/* Usually, the first entry is the real data partition,
 		 * the 2nd entry is the next extended partition, or empty,
@@ -159,7 +159,7 @@ static int probe_dos_pt(blkid_probe pr,
 		goto nothing;
 	}
 
-	p0 = (struct dos_partition *) (data + MBR_PT_OFFSET);
+	p0 = mbr_get_partition(data, 0);
 
 	/*
 	 * Reject PT where boot indicator is not 0 or 0x80.
@@ -180,8 +180,7 @@ static int probe_dos_pt(blkid_probe pr,
 		}
 	}
 
-	blkid_probe_use_wiper(pr, MBR_PT_OFFSET,
-				  512 - MBR_PT_OFFSET);
+	blkid_probe_use_wiper(pr, MBR_PT_OFFSET, 512 - MBR_PT_OFFSET);
 
 	id = mbr_get_id(data);
 	if (id)

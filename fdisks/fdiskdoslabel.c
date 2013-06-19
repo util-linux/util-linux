@@ -159,7 +159,7 @@ void dos_init(struct fdisk_context *cxt)
 	for (i = 0; i < 4; i++) {
 		struct pte *pe = &ptes[i];
 
-		pe->pt_entry = pt_offset(cxt->firstsector, i);
+		pe->pt_entry = mbr_get_partition(cxt->firstsector, i);
 		pe->ex_entry = NULL;
 		pe->offset = 0;
 		pe->sectorbuffer = cxt->firstsector;
@@ -286,7 +286,7 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 		if (!extended_offset)
 			extended_offset = dos_partition_get_start(p);
 
-		q = p = pt_offset(pe->sectorbuffer, 0);
+		q = p = mbr_get_partition(pe->sectorbuffer, 0);
 		for (i = 0; i < 4; i++, p++) if (dos_partition_get_size(p)) {
 			if (IS_EXTENDED (p->sys_ind)) {
 				if (pe->ex_entry)
@@ -408,7 +408,7 @@ static void get_partition_table_geometry(struct fdisk_context *cxt,
 
 	hh = ss = 0;
 	for (i=0; i<4; i++) {
-		p = pt_offset(bufp, i);
+		p = mbr_get_partition(bufp, i);
 		if (p->sys_ind != 0) {
 			h = p->eh + 1;
 			s = (p->es & 077);
@@ -772,7 +772,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 		pen->ex_entry = p;
 		pe4->offset = extended_offset = start;
 		pe4->sectorbuffer = xcalloc(1, cxt->sector_size);
-		pe4->pt_entry = pt_offset(pe4->sectorbuffer, 0);
+		pe4->pt_entry = mbr_get_partition(pe4->sectorbuffer, 0);
 		pe4->ex_entry = pe4->pt_entry + 1;
 		pe4->changed = 1;
 		cxt->label->nparts_max = 5;
@@ -791,7 +791,7 @@ static int add_logical(struct fdisk_context *cxt)
 		struct pte *pe = &ptes[cxt->label->nparts_max];
 
 		pe->sectorbuffer = xcalloc(1, cxt->sector_size);
-		pe->pt_entry = pt_offset(pe->sectorbuffer, 0);
+		pe->pt_entry = mbr_get_partition(pe->sectorbuffer, 0);
 		pe->ex_entry = pe->pt_entry + 1;
 		pe->offset = 0;
 		pe->changed = 1;

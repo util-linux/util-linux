@@ -46,13 +46,13 @@ static int probe_minix_pt(blkid_probe pr,
 		/* caller does not ask for details about partitions */
 		return 0;
 
-	p = (struct dos_partition *) (data + MBR_PT_OFFSET);
-
 	tab = blkid_partlist_new_parttable(ls, "minix", MBR_PT_OFFSET);
 	if (!tab)
 		goto err;
 
-	for (i = 0; i < MINIX_MAXPARTITIONS; i++, p++) {
+	for (i = 0, p = mbr_get_partition(data, 0);
+			i < MINIX_MAXPARTITIONS; i++, p++) {
+
 		uint32_t start, size;
 		blkid_partition par;
 
