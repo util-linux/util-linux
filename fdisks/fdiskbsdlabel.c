@@ -171,8 +171,8 @@ static int xbsd_add_part (struct fdisk_context *cxt,
 		return rc;
 
 #if !defined (__alpha__) && !defined (__powerpc__) && !defined (__hppa__)
-	begin = get_start_sect(xbsd_part);
-	end = begin + get_nr_sects(xbsd_part) - 1;
+	begin = dos_partition_get_start(xbsd_part);
+	end = begin + dos_partition_get_size(xbsd_part) - 1;
 #else
 	begin = 0;
 	end = xbsd_dlabel.d_secperunit - 1;
@@ -289,7 +289,7 @@ bsd_command_prompt (struct fdisk_context *cxt)
     if (p && is_bsd_partition_type(p->sys_ind)) {
       xbsd_part = p;
       xbsd_part_index = t;
-      ss = get_start_sect(xbsd_part);
+      ss = dos_partition_get_start(xbsd_part);
 
       /* TODO - partname uses static buffer!!! */
       cxt->dev_path = partname(cxt->parent->dev_path, t+1, 0);
@@ -640,7 +640,7 @@ static int xbsd_write_bootstrap (struct fdisk_context *cxt)
 	sector = 0;
 	alpha_bootblock_checksum(disklabelbuffer);
 #else
-	sector = get_start_sect(xbsd_part);
+	sector = dos_partition_get_start(xbsd_part);
 #endif
 	if (lseek(cxt->dev_fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1) {
 		fdisk_warn(cxt, _("seek failed %s"), cxt->dev_path);
@@ -798,8 +798,8 @@ static int xbsd_initlabel (struct fdisk_context *cxt,
 	d -> d_npartitions = 4;
 	pp = &d -> d_partitions[2];		/* Partition C should be
 						   the NetBSD partition */
-	pp -> p_offset = get_start_sect(p);
-	pp -> p_size   = get_nr_sects(p);
+	pp -> p_offset = dos_partition_get_start(p);
+	pp -> p_size   = dos_partition_get_size(p);
 	pp -> p_fstype = BSD_FS_UNUSED;
 	pp = &d -> d_partitions[3];		/* Partition D should be
 						   the whole disk */
@@ -832,7 +832,7 @@ xbsd_readlabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd_
 
 	/* p is used only to get the starting sector */
 #if !defined (__alpha__)
-	sector = (p ? get_start_sect(p) : 0);
+	sector = (p ? dos_partition_get_start(p) : 0);
 #elif defined (__alpha__)
 	sector = 0;
 #endif
@@ -871,7 +871,7 @@ xbsd_writelabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd
   unsigned int sector;
 
 #if !defined (__alpha__) && !defined (__powerpc__) && !defined (__hppa__)
-  sector = get_start_sect(p) + BSD_LABELSECTOR;
+  sector = dos_partition_get_start(p) + BSD_LABELSECTOR;
 #else
   sector = BSD_LABELSECTOR;
 #endif
@@ -960,8 +960,8 @@ xbsd_link_part (struct fdisk_context *cxt)
 
 	p = dos_get_pt_entry(k);
 
-	xbsd_dlabel.d_partitions[i].p_size   = get_nr_sects(p);
-	xbsd_dlabel.d_partitions[i].p_offset = get_start_sect(p);
+	xbsd_dlabel.d_partitions[i].p_size   = dos_partition_get_size(p);
+	xbsd_dlabel.d_partitions[i].p_offset = dos_partition_get_start(p);
 	xbsd_dlabel.d_partitions[i].p_fstype = xbsd_translate_fstype(p->sys_ind);
 }
 #endif

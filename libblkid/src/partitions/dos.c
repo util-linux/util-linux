@@ -57,7 +57,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 		if (!data)
 			goto leave;	/* malformed partition? */
 
-		if (!is_valid_mbr_signature(data))
+		if (!mbr_is_valid_magic(data))
 			goto leave;
 
 		p0 = (struct dos_partition *) (data + MBR_PT_OFFSET);
@@ -79,8 +79,8 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 			blkid_partition par;
 
 			/* the start is relative to the parental ext.partition */
-			start = dos_partition_start(p) * ssf;
-			size = dos_partition_size(p) * ssf;
+			start = dos_partition_get_start(p) * ssf;
+			size = dos_partition_get_size(p) * ssf;
 			abs_start = cur_start + start;	/* absolute start */
 
 			if (!size || is_extended(p))
@@ -110,8 +110,8 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 		 * is junk.
 		 */
 		for (p = p0, i = 0; i < 4; i++, p++) {
-			start = dos_partition_start(p) * ssf;
-			size = dos_partition_size(p) * ssf;
+			start = dos_partition_get_start(p) * ssf;
+			size = dos_partition_get_size(p) * ssf;
 
 			if (size && is_extended(p))
 				break;
@@ -183,7 +183,7 @@ static int probe_dos_pt(blkid_probe pr,
 	blkid_probe_use_wiper(pr, MBR_PT_OFFSET,
 				  512 - MBR_PT_OFFSET);
 
-	id = dos_parttable_id(data);
+	id = mbr_get_id(data);
 	if (id)
 		snprintf(idstr, sizeof(idstr), "%08x", id);
 
@@ -217,8 +217,8 @@ static int probe_dos_pt(blkid_probe pr,
 	for (p = p0, i = 0; i < 4; i++, p++) {
 		blkid_partition par;
 
-		start = dos_partition_start(p) * ssf;
-		size = dos_partition_size(p) * ssf;
+		start = dos_partition_get_start(p) * ssf;
+		size = dos_partition_get_size(p) * ssf;
 
 		if (!size) {
 			/* Linux kernel ignores empty partitions, but partno for
@@ -242,8 +242,8 @@ static int probe_dos_pt(blkid_probe pr,
 
 	/* Parse logical partitions */
 	for (p = p0, i = 0; i < 4; i++, p++) {
-		start = dos_partition_start(p) * ssf;
-		size = dos_partition_size(p) * ssf;
+		start = dos_partition_get_start(p) * ssf;
+		size = dos_partition_get_size(p) * ssf;
 
 		if (!size)
 			continue;
@@ -257,7 +257,7 @@ static int probe_dos_pt(blkid_probe pr,
 		for (p = p0, i = 0; i < 4; i++, p++) {
 			size_t n;
 
-			if (!dos_partition_size(p) || is_extended(p))
+			if (!dos_partition_get_size(p) || is_extended(p))
 				continue;
 
 			for (n = 0; n < ARRAY_SIZE(dos_nested); n++) {

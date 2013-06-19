@@ -13,7 +13,7 @@ struct dos_partition {
 #define MBR_PT_OFFSET		0x1be
 
 /* assemble badly aligned little endian integer */
-static inline unsigned int __dos_assemble4le(const unsigned char *p)
+static inline unsigned int __dos_assemble_4le(const unsigned char *p)
 {
 	return p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
 }
@@ -26,24 +26,45 @@ static inline void __dos_store_4le(unsigned char *p, unsigned int val)
 	p[3] = ((val >> 24) & 0xff);
 }
 
-static inline unsigned int dos_partition_start(struct dos_partition *p)
+static inline unsigned int dos_partition_get_start(struct dos_partition *p)
 {
-	return __dos_assemble4le(&(p->start_sect[0]));
+	return __dos_assemble_4le(&(p->start_sect[0]));
 }
 
-static inline unsigned int dos_partition_size(struct dos_partition *p)
+static inline void dos_partition_set_start(struct dos_partition *p, unsigned int n)
 {
-	return __dos_assemble4le(&(p->nr_sects[0]));
+	__dos_store_4le(p->start_sect, n);
 }
 
-static inline int is_valid_mbr_signature(const unsigned char *mbr)
+static inline unsigned int dos_partition_get_size(struct dos_partition *p)
+{
+	return __dos_assemble_4le(&(p->nr_sects[0]));
+}
+
+static inline void dos_partition_set_size(struct dos_partition *p, unsigned int n)
+{
+	__dos_store_4le(p->nr_sects, n);
+}
+
+static inline int mbr_is_valid_magic(const unsigned char *mbr)
 {
 	return mbr[510] == 0x55 && mbr[511] == 0xaa ? 1 : 0;
 }
 
-static inline unsigned int dos_parttable_id(const unsigned char *mbr)
+static inline void mbr_set_magic(unsigned char *b)
 {
-	return __dos_assemble4le(&mbr[440]);
+	b[510] = 0x55;
+	b[511] = 0xaa;
+}
+
+static inline unsigned int mbr_get_id(const unsigned char *mbr)
+{
+	return __dos_assemble_4le(&mbr[440]);
+}
+
+static inline void mbr_set_id(unsigned char *b, unsigned int id)
+{
+	__dos_store_4le(&b[440], id);
 }
 
 enum {

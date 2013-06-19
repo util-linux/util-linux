@@ -33,54 +33,16 @@ static inline unsigned int pt_entry_flag(unsigned char *b)
 	return ((unsigned int) b[510]) + (((unsigned int) b[511]) << 8);
 }
 
-
-/* start_sect and nr_sects are stored little endian on all machines */
-/* moreover, they are not aligned correctly */
-static inline void store4_little_endian(unsigned char *cp, unsigned int val)
-{
-	cp[0] = (val & 0xff);
-	cp[1] = ((val >> 8) & 0xff);
-	cp[2] = ((val >> 16) & 0xff);
-	cp[3] = ((val >> 24) & 0xff);
-}
-
-static inline unsigned int read4_little_endian(const unsigned char *cp)
-{
-	return (unsigned int)(cp[0]) + ((unsigned int)(cp[1]) << 8)
-		+ ((unsigned int)(cp[2]) << 16)
-		+ ((unsigned int)(cp[3]) << 24);
-}
-
-static inline sector_t get_nr_sects(struct dos_partition *p)
-{
-	return read4_little_endian(p->nr_sects);
-}
-
-static inline void set_nr_sects(struct dos_partition *p, sector_t nr_sects)
-{
-	store4_little_endian(p->nr_sects, nr_sects);
-}
-
-static inline void set_start_sect(struct dos_partition *p, unsigned int start_sect)
-{
-	store4_little_endian(p->start_sect, start_sect);
-}
-
-static inline sector_t get_start_sect(struct dos_partition *p)
-{
-	return read4_little_endian(p->start_sect);
-}
-
 static inline sector_t get_partition_start(struct pte *pe)
 {
-	return pe->offset + get_start_sect(pe->pt_entry);
+	return pe->offset + dos_partition_get_start(pe->pt_entry);
 }
 
 static inline int is_cleared_partition(struct dos_partition *p)
 {
 	return !(!p || p->boot_ind || p->bh || p->bs || p->bc ||
 		 p->sys_ind || p->eh || p->es || p->ec ||
-		 get_start_sect(p) || get_nr_sects(p));
+		 dos_partition_get_start(p) || dos_partition_get_size(p));
 }
 
 extern struct dos_partition *dos_get_pt_entry(int);
@@ -95,8 +57,6 @@ extern void dos_list_table_expert(struct fdisk_context *cxt, int extend);
 extern void dos_fix_partition_table_order(struct fdisk_context *cxt);
 extern void dos_move_begin(struct fdisk_context *cxt, int i);
 extern void dos_toggle_active(struct fdisk_context *cxt, int i);
-
-extern int mbr_is_valid_magic(unsigned char *b);
 
 #define is_dos_compatible(_x) \
 		   (fdisk_is_disklabel(_x, DOS) && \

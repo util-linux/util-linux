@@ -59,8 +59,8 @@ static int probe_minix_pt(blkid_probe pr,
 		if (p->sys_ind != MBR_MINIX_PARTITION)
 			continue;
 
-		start = dos_partition_start(p);
-		size = dos_partition_size(p);
+		start = dos_partition_get_start(p);
+		size = dos_partition_get_size(p);
 
 		if (parent && !blkid_is_nested_dimension(parent, start, size)) {
 			DBG(LOWPROBE, blkid_debug(

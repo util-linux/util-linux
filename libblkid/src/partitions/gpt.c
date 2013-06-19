@@ -169,7 +169,7 @@ static int is_pmbr_valid(blkid_probe pr)
 	if (!data)
 		goto failed;
 
-	if (!is_valid_mbr_signature(data))
+	if (!mbr_is_valid_magic(data))
 		goto failed;
 
 	p = (struct dos_partition *) (data + MBR_PT_OFFSET);
