@@ -60,6 +60,13 @@ static sector_t get_abs_partition_start(struct pte *pe)
 	return pe->offset + dos_partition_get_start(pe->pt_entry);
 }
 
+static int is_cleared_partition(struct dos_partition *p)
+{
+	return !(!p || p->boot_ind || p->bh || p->bs || p->bc ||
+		 p->sys_ind || p->eh || p->es || p->ec ||
+		 dos_partition_get_start(p) || dos_partition_get_size(p));
+}
+
 static void warn_alignment(struct fdisk_context *cxt)
 {
 	if (nowarn)

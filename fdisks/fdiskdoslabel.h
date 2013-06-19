@@ -27,13 +27,6 @@ extern struct pte ptes[MAXIMUM_PARTS];
 
 extern sector_t extended_offset;
 
-static inline int is_cleared_partition(struct dos_partition *p)
-{
-	return !(!p || p->boot_ind || p->bh || p->bs || p->bc ||
-		 p->sys_ind || p->eh || p->es || p->ec ||
-		 dos_partition_get_start(p) || dos_partition_get_size(p));
-}
-
 extern struct dos_partition *dos_get_pt_entry(int);
 
 extern void dos_print_mbr_id(struct fdisk_context *cxt);
