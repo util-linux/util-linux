@@ -158,7 +158,7 @@ int warn_geometry(struct fdisk_context *cxt)
 				   "this from the extra functions menu."));
 		return 1;
 	}
-	return 1;
+	return 0;
 }
 
 static void toggle_dos_compatibility_flag(struct fdisk_context *cxt)

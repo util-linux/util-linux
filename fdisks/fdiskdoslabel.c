@@ -1522,8 +1522,6 @@ void dos_move_begin(struct fdisk_context *cxt, int i)
 	assert(cxt);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
-	if (warn_geometry(cxt))
-		return;
 	if (!p->sys_ind || !dos_partition_get_size(p) || IS_EXTENDED (p->sys_ind)) {
 		printf(_("Partition %d has no data area\n"), i + 1);
 		return;
