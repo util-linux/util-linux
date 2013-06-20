@@ -3,28 +3,12 @@
 
 #include "pt-mbr.h"
 
-/*
- * per partition table entry data
- *
- * The four primary partitions have the same sectorbuffer
- * and have NULL ex_entry.
- *
- * Each logical partition table entry has two pointers, one for the
- * partition and one link to the next one.
- */
-struct pte {
-	struct dos_partition *pt_entry;	/* on-disk MBR entry */
-	struct dos_partition *ex_entry;	/* on-disk EBR entry */
-	char changed;			/* boolean */
-	sector_t offset;	        /* disk sector number */
-	unsigned char *sectorbuffer;	/* disk sector contents */
-};
+extern struct dos_partition *fdisk_dos_get_partition(
+				struct fdisk_context *cxt,
+				size_t i);
 
-extern struct pte ptes[MAXIMUM_PARTS];
 
 extern sector_t extended_offset;
-
-extern struct dos_partition *dos_get_pt_entry(int);
 
 extern void dos_print_mbr_id(struct fdisk_context *cxt);
 extern int dos_set_mbr_id(struct fdisk_context *cxt);

@@ -362,21 +362,17 @@ print_buffer(struct fdisk_context *cxt, unsigned char pbuffer[]) {
 
 static void print_raw(struct fdisk_context *cxt)
 {
-	size_t i;
-
 	assert(cxt);
 	assert(cxt->label);
 
 	printf(_("Device: %s\n"), cxt->dev_path);
 	if (fdisk_is_disklabel(cxt, SUN) ||
 	    fdisk_is_disklabel(cxt, SGI) ||
-	    fdisk_is_disklabel(cxt, GPT))
+	    fdisk_is_disklabel(cxt, GPT) ||
+	    fdisk_is_disklabel(cxt, DOS))
 		print_buffer(cxt, cxt->firstsector);
 
-	else if (fdisk_is_disklabel(cxt, DOS)) {
-		for (i = 3; i < cxt->label->nparts_max; i++)
-		     print_buffer(cxt, ptes[i].sectorbuffer);
-	}
+	/* TODO: print also EBR (extended partition) buffer */
 }
 
 static void __attribute__ ((__noreturn__)) handle_quit(struct fdisk_context *cxt)

@@ -285,7 +285,7 @@ bsd_command_prompt (struct fdisk_context *cxt)
   assert(cxt->parent);
 
   for (t=0; t<4; t++) {
-    p = dos_get_pt_entry(t);
+    p = fdisk_dos_get_partition(cxt, t);
     if (p && is_bsd_partition_type(p->sys_ind)) {
       xbsd_part = p;
       xbsd_part_index = t;
@@ -949,7 +949,7 @@ xbsd_link_part (struct fdisk_context *cxt)
 	int i;
 	struct dos_partition *p;
 
-	if (!cxt->parent)
+	if (!cxt->parent || !fdisk_is_disklabel(cxt->parent, DOS))
 		return;		/* not nested PT */
 
 	if (fdisk_ask_partnum(cxt->parent, &k, FALSE))
@@ -958,7 +958,7 @@ xbsd_link_part (struct fdisk_context *cxt)
 	if (xbsd_check_new_partition(cxt, &i))
 		return;
 
-	p = dos_get_pt_entry(k);
+	p = fdisk_dos_get_partition(cxt->parent, k);
 
 	xbsd_dlabel.d_partitions[i].p_size   = dos_partition_get_size(p);
 	xbsd_dlabel.d_partitions[i].p_offset = dos_partition_get_start(p);
