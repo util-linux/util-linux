@@ -18,10 +18,6 @@ extern void dos_fix_partition_table_order(struct fdisk_context *cxt);
 extern void dos_move_begin(struct fdisk_context *cxt, int i);
 extern void dos_toggle_active(struct fdisk_context *cxt, int i);
 
-#define is_dos_compatible(_x) \
-		   (fdisk_is_disklabel(_x, DOS) && \
-                    fdisk_dos_is_compatible(fdisk_context_get_label(_x, NULL)))
-
 /* toggle flags */
 #define DOS_FLAG_ACTIVE	1
 

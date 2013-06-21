@@ -65,6 +65,9 @@ static struct fdisk_parttype dos_parttypes[] = {
 
 #define alignment_required(_x)	((_x)->grain != (_x)->sector_size)
 
+#define is_dos_compatible(_x) \
+		   (fdisk_is_disklabel(_x, DOS) && \
+                    fdisk_dos_is_compatible(fdisk_context_get_label(_x, NULL)))
 
 #define cround(c, n)	(fdisk_context_use_cylinders(c) ? \
 				((n) / fdisk_context_get_units_per_sector(c)) + 1 : (n))
