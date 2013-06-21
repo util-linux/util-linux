@@ -39,7 +39,8 @@ struct fdisk_dos_label {
 	struct pte	ptes[MAXIMUM_PARTS];	/* partition */
 	sector_t	ext_offset;
 	size_t		ext_index;
-	unsigned int	compatible : 1;		/* is DOS compatible? */
+	unsigned int	compatible : 1,		/* is DOS compatible? */
+			non_pt_changed : 1;	/* MBR, but no PT changed */
 };
 
 /*
@@ -64,8 +65,6 @@ static struct fdisk_parttype dos_parttypes[] = {
 
 #define alignment_required(_x)	((_x)->grain != (_x)->sector_size)
 
-
-static int MBRbuffer_changed;
 
 #define cround(c, n)	(fdisk_context_use_cylinders(c) ? \
 				((n) / fdisk_context_get_units_per_sector(c)) + 1 : (n))
@@ -449,6 +448,7 @@ int dos_set_mbr_id(struct fdisk_context *cxt)
 {
 	char *end = NULL, *str = NULL;
 	unsigned int id, old;
+	struct fdisk_dos_label *l = self_label(cxt);
 	int rc;
 
 	old = mbr_get_id(cxt->firstsector);
@@ -468,7 +468,7 @@ int dos_set_mbr_id(struct fdisk_context *cxt)
 			old, id);
 
 	mbr_set_id(cxt->firstsector, id);
-	MBRbuffer_changed = 1;
+	l->non_pt_changed = 1;
 	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
 }
@@ -1197,27 +1197,31 @@ static int write_sector(struct fdisk_context *cxt, sector_t secno,
 
 static int dos_write_disklabel(struct fdisk_context *cxt)
 {
+	struct fdisk_dos_label *l = self_label(cxt);
 	size_t i;
-	int rc = 0;
+	int rc = 0, mbr_changed = 0;
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
+	mbr_changed = l->non_pt_changed;
+
 	/* MBR (primary partitions) */
-	if (!MBRbuffer_changed) {
+	if (!mbr_changed) {
 		for (i = 0; i < 4; i++) {
 			struct pte *pe = self_pte(cxt, i);
 			if (pe->changed)
-				MBRbuffer_changed = 1;
+				mbr_changed = 1;
 		}
 	}
-	if (MBRbuffer_changed) {
+	if (mbr_changed) {
 		mbr_set_magic(cxt->firstsector);
 		rc = write_sector(cxt, 0, cxt->firstsector);
 		if (rc)
 			goto done;
 	}
+
 	/* EBR (logical partitions) */
 	for (i = 4; i < cxt->label->nparts_max; i++) {
 		struct pte *pe = self_pte(cxt, i);
