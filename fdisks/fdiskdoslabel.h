@@ -9,7 +9,6 @@ extern struct dos_partition *fdisk_dos_get_partition(
 
 extern void dos_print_mbr_id(struct fdisk_context *cxt);
 extern int dos_set_mbr_id(struct fdisk_context *cxt);
-extern void dos_init(struct fdisk_context *cxt);
 
 extern int dos_list_table(struct fdisk_context *cxt, int xtra);
 extern void dos_list_table_expert(struct fdisk_context *cxt, int extend);

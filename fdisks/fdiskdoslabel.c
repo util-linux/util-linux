@@ -6,8 +6,8 @@
 #include <unistd.h>
 #include <ctype.h>
 
+#include "c.h"
 #include "nls.h"
-#include "xalloc.h"
 #include "randutils.h"
 #include "common.h"
 #include "fdisk.h"
@@ -25,9 +25,11 @@
 struct pte {
 	struct dos_partition *pt_entry;	/* on-disk MBR entry */
 	struct dos_partition *ex_entry;	/* on-disk EBR entry */
-	char changed;			/* boolean */
 	sector_t offset;	        /* disk sector number */
 	unsigned char *sectorbuffer;	/* disk sector contents */
+
+	unsigned int changed : 1,
+		     private_sectorbuffer : 1;
 };
 
 /*
@@ -117,7 +119,7 @@ static void partition_set_changed(
 	if (!pe)
 		return;
 
-	pe->changed = changed;
+	pe->changed = changed ? 1 : 0;
 	if (changed)
 		fdisk_label_set_changed(cxt->label, 1);
 }
@@ -187,6 +189,7 @@ static int read_pte(struct fdisk_context *cxt, int pno, sector_t offset)
 
 	pe->offset = offset;
 	pe->sectorbuffer = buf;
+	pe->private_sectorbuffer = 1;
 
 	if (read_sector(cxt, offset, pe->sectorbuffer) != 0)
 		fdisk_warn(cxt, _("Failed to read extended partition table "
@@ -213,14 +216,18 @@ static void clear_partition(struct dos_partition *p)
 	dos_partition_set_size(p,0);
 }
 
-void dos_init(struct fdisk_context *cxt)
+static void dos_init(struct fdisk_context *cxt)
 {
 	struct fdisk_dos_label *l = self_label(cxt);
 	size_t i;
 
 	cxt->label->nparts_max = 4;	/* default, unlimited number of logical */
+
 	l->ext_index = 0;
 	l->ext_offset = 0;
+	l->non_pt_changed = 0;
+
+	memset(l->ptes, 0, sizeof(l->ptes));
 
 	for (i = 0; i < 4; i++) {
 		struct pte *pe = self_pte(cxt, i);
@@ -250,6 +257,23 @@ void dos_init(struct fdisk_context *cxt)
 			(sector_t ) UINT_MAX * cxt->sector_size,
 			cxt->sector_size);
 	}
+}
+
+/* callback called by libfdisk */
+static void dos_deinit(struct fdisk_label *lb)
+{
+	size_t i;
+	struct fdisk_dos_label *l = (struct fdisk_dos_label *) lb;
+
+	for (i = 0; i < ARRAY_SIZE(l->ptes); i++) {
+		struct pte *pe = &l->ptes[i];
+
+		if (pe->private_sectorbuffer)
+			free(pe->sectorbuffer);
+		pe->sectorbuffer = NULL;
+	}
+
+	memset(l->ptes, 0, sizeof(l->ptes));
 }
 
 static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
@@ -862,7 +886,10 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 		l->ext_index = n;
 		pen->ex_entry = p;
 		pe4->offset = l->ext_offset = start;
-		pe4->sectorbuffer = xcalloc(1, cxt->sector_size);
+		pe4->sectorbuffer = calloc(1, cxt->sector_size);
+		if (!pe4->sectorbuffer)
+			return -ENOMEM;
+		pe4->private_sectorbuffer = 1;
 		pe4->pt_entry = mbr_get_partition(pe4->sectorbuffer, 0);
 		pe4->ex_entry = pe4->pt_entry + 1;
 
@@ -887,7 +914,7 @@ static int add_logical(struct fdisk_context *cxt)
 		pe->sectorbuffer = calloc(1, cxt->sector_size);
 		if (!pe->sectorbuffer)
 			return -ENOMEM;
-
+		pe->private_sectorbuffer = 1;
 		pe->pt_entry = mbr_get_partition(pe->sectorbuffer, 0);
 		pe->ex_entry = pe->pt_entry + 1;
 		pe->offset = 0;
@@ -1678,6 +1705,8 @@ static const struct fdisk_label_operations dos_operations =
 	.part_get_status = dos_get_partition_status,
 
 	.reset_alignment = dos_reset_alignment,
+
+	.deinit		= dos_deinit,
 };
 
 /*
