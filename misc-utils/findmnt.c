@@ -831,14 +831,6 @@ static int match_func(struct libmnt_fs *fs,
 	const char *m;
 	void *md;
 
-	m = get_match(COL_TARGET);
-	if (m && !mnt_fs_match_target(fs, m, cache))
-		return rc;
-
-	m = get_match(COL_SOURCE);
-	if (m && !mnt_fs_match_source(fs, m, cache))
-		return rc;
-
 	m = get_match(COL_FSTYPE);
 	if (m && !mnt_fs_match_fstype(fs, m))
 		return rc;
@@ -849,6 +841,14 @@ static int match_func(struct libmnt_fs *fs,
 
 	md = get_match_data(COL_MAJMIN);
 	if (md && mnt_fs_get_devno(fs) != *((dev_t *) md))
+		return rc;
+
+	m = get_match(COL_TARGET);
+	if (m && !mnt_fs_match_target(fs, m, cache))
+		return rc;
+
+	m = get_match(COL_SOURCE);
+	if (m && !mnt_fs_match_source(fs, m, cache))
 		return rc;
 
 	if ((flags & FL_DF) && !(flags & FL_ALL)) {
