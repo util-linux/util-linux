@@ -440,7 +440,7 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 
 void dos_print_mbr_id(struct fdisk_context *cxt)
 {
-	fdisk_info(cxt, _("Disk identifier: 0x%08x\n"),
+	fdisk_info(cxt, _("Disk identifier: 0x%08x"),
 			mbr_get_id(cxt->firstsector));
 }
 
@@ -1180,7 +1180,7 @@ static int dos_add_partition(
 			return rc;
 		if (!buf[0]) {
 			c = dflt;
-			printf(_("Using default response %c\n"), c);
+			fdisk_info(cxt, _("Using default response %c"), c);
 		} else
 			c = tolower(buf[0]);
 
@@ -1673,7 +1673,7 @@ void dos_fix_partition_table_order(struct fdisk_context *cxt)
 	if (i)
 		fix_chain_of_logicals(cxt);
 
-	printf(_("Done.\n"));
+	fdisk_info(cxt, _("Done."));
 
 }
 
