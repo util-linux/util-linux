@@ -480,13 +480,18 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 	return 0;
 }
 
-int dos_set_mbr_id(struct fdisk_context *cxt)
+static int dos_set_disklabel_id(struct fdisk_context *cxt)
 {
 	char *end = NULL, *str = NULL;
 	unsigned int id, old;
-	struct fdisk_dos_label *l = self_label(cxt);
+	struct fdisk_dos_label *l;
 	int rc;
 
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, DOS));
+
+	l = self_label(cxt);
 	old = mbr_get_id(cxt->firstsector);
 	rc = fdisk_ask_string(cxt,
 			_("Enter of the new disk identifier"), &str);
@@ -1808,6 +1813,7 @@ static const struct fdisk_label_operations dos_operations =
 	.create		= dos_create_disklabel,
 	.list		= dos_list_disklabel,
 	.get_id		= dos_get_disklabel_id,
+	.set_id		= dos_set_disklabel_id,
 
 	.part_add	= dos_add_partition,
 	.part_delete	= dos_delete_partition,

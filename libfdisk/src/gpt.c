@@ -1791,6 +1791,49 @@ static int gpt_get_disklabel_id(struct fdisk_context *cxt, char **id)
 	return 0;
 }
 
+static int gpt_set_disklabel_id(struct fdisk_context *cxt)
+{
+	struct fdisk_gpt_label *gpt;
+	struct gpt_guid uuid;
+	char *str, *old, *new;
+	int rc;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, GPT));
+
+	gpt = self_label(cxt);
+	if (fdisk_ask_string(cxt,
+			_("Enter new disk UUID (in 8-4-4-4-12 format)"), &str))
+		return -EINVAL;
+
+	rc = string_to_guid(str, &uuid);
+	free(str);
+
+	if (rc) {
+		fdisk_warnx(cxt, _("Failed to parse your UUID."));
+		return rc;
+	}
+
+	gpt_get_disklabel_id(cxt, &old);
+
+	gpt->pheader->disk_guid = uuid;
+	gpt->bheader->disk_guid = uuid;
+
+	gpt_recompute_crc(gpt->pheader, gpt->ents);
+	gpt_recompute_crc(gpt->bheader, gpt->ents);
+
+	gpt_get_disklabel_id(cxt, &new);
+
+	fdisk_info(cxt, _("Changing disk identifier from %s to %s."), old, new);
+
+	free(old);
+	free(new);
+	fdisk_label_set_changed(cxt->label, 1);
+	return 0;
+}
+
+
 static struct fdisk_parttype *gpt_get_partition_type(
 		struct fdisk_context *cxt,
 		size_t i)
@@ -1894,8 +1937,10 @@ int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
 	rc = string_to_guid(str, &uuid);
 	free(str);
 
-	if (rc)
+	if (rc) {
+		fdisk_warnx(cxt, _("Failed to parse your UUID."));
 		return rc;
+	}
 
 	e = &gpt->ents[i];
 
@@ -1985,6 +2030,7 @@ static const struct fdisk_label_operations gpt_operations =
 	.create		= gpt_create_disklabel,
 	.list		= gpt_list_disklabel,
 	.get_id		= gpt_get_disklabel_id,
+	.set_id		= gpt_set_disklabel_id,
 
 	.part_add	= gpt_add_partition,
 	.part_delete	= gpt_delete_partition,

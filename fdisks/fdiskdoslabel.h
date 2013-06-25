@@ -7,9 +7,6 @@ extern struct dos_partition *fdisk_dos_get_partition(
 				struct fdisk_context *cxt,
 				size_t i);
 
-extern void dos_print_mbr_id(struct fdisk_context *cxt);
-extern int dos_set_mbr_id(struct fdisk_context *cxt);
-
 extern void dos_fix_partition_table_order(struct fdisk_context *cxt);
 extern void dos_move_begin(struct fdisk_context *cxt, int i);
 extern void dos_toggle_active(struct fdisk_context *cxt, int i);

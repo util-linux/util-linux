@@ -134,8 +134,10 @@ struct menu menu_gpt = {
 	.label = FDISK_DISKLABEL_GPT,
 	.entries = {
 		MENU_XSEP(N_("GPT")),
-		MENU_XENT('u', N_("change partition UUID")),
+		MENU_XENT('i', N_("change disk GUID")),
 		MENU_XENT('n', N_("change partition name")),
+		MENU_XENT('u', N_("change partition UUID")),
+
 		{ 0, NULL }
 	}
 };
@@ -388,6 +390,9 @@ static int gpt_menu_cb(struct fdisk_context *cxt,
 	assert(fdisk_is_disklabel(cxt, GPT));
 
 	DBG(FRONTEND, dbgprint("enter GPT menu"));
+
+	if (ent->key == 'i')
+		return fdisk_set_disklabel_id(cxt);
 
 	rc = fdisk_ask_partnum(cxt, &n, FALSE);
 	if (rc)

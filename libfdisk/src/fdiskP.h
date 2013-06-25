@@ -150,6 +150,8 @@ struct fdisk_label_operations {
 	int (*list)(struct fdisk_context *cxt);
 	/* get disk label ID */
 	int (*get_id)(struct fdisk_context *cxt, char **id);
+	/* set disk label ID */
+	int (*set_id)(struct fdisk_context *cxt);
 
 	/* new partition */
 	int (*part_add)(struct fdisk_context *cxt,

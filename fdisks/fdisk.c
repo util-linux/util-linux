@@ -425,8 +425,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 			fdisk_create_disklabel(cxt, "sgi");
 			break;
 		case 'i':
-			if (fdisk_is_disklabel(cxt, DOS))
-				dos_set_mbr_id(cxt);
+			fdisk_set_disklabel_id(cxt);
 			break;
 		case 'p':
 			list_table(cxt, 1);
