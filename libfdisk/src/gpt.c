@@ -1163,9 +1163,9 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 		trunc = 0;
 
 	tt_define_column(tb, _("Device"), 0.1, 0);
-	tt_define_column(tb, _("Start"),    9, TT_FL_RIGHT);
-	tt_define_column(tb, _("End"),      9, TT_FL_RIGHT);
-	tt_define_column(tb, _("Size"),     5, TT_FL_RIGHT);
+	tt_define_column(tb, _("Start"),   12, TT_FL_RIGHT);
+	tt_define_column(tb, _("End"),     12, TT_FL_RIGHT);
+	tt_define_column(tb, _("Size"),     6, TT_FL_RIGHT);
 	tt_define_column(tb, _("Type"),   0.1, trunc);
 
 	if (fdisk_context_display_details(cxt)) {
