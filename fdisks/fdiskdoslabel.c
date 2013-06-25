@@ -16,7 +16,6 @@
 #include "fdiskdoslabel.h"
 
 #define MAXIMUM_PARTS	60
-
 #define ACTIVE_FLAG     0x80
 
 #define IS_EXTENDED(i) \
@@ -1684,14 +1683,14 @@ static void fix_chain_of_logicals(struct fdisk_context *cxt)
 		l->ptes[j].changed = 1;
 }
 
-void dos_fix_partition_table_order(struct fdisk_context *cxt)
+int fdisk_dos_fix_order(struct fdisk_context *cxt)
 {
 	struct pte *pei, *pek;
 	size_t i,k;
 
 	if (!wrong_p_order(cxt, NULL)) {
 		fdisk_info(cxt, _("Nothing to do. Ordering is correct already."));
-		return;
+		return 0;
 	}
 
 	while ((i = wrong_p_order(cxt, &k)) != 0 && i < 4) {
@@ -1720,23 +1719,27 @@ void dos_fix_partition_table_order(struct fdisk_context *cxt)
 		fix_chain_of_logicals(cxt);
 
 	fdisk_info(cxt, _("Done."));
-
+	return 0;
 }
 
-void dos_move_begin(struct fdisk_context *cxt, int i)
+int fdisk_dos_move_begin(struct fdisk_context *cxt, int i)
 {
-	struct pte *pe = self_pte(cxt, i);
-	struct dos_partition *p = pe->pt_entry;
+	struct pte *pe;
+	struct dos_partition *p;
 	unsigned int new, free_start, curr_start, last;
 	uintmax_t res = 0;
 	size_t x;
+	int rc;
 
 	assert(cxt);
 	assert(fdisk_is_disklabel(cxt, DOS));
 
+	pe = self_pte(cxt, i);
+	p = pe->pt_entry;
+
 	if (!p->sys_ind || !dos_partition_get_size(p) || IS_EXTENDED (p->sys_ind)) {
 		fdisk_warn(cxt, _("Partition %d: no data area."), i + 1);
-		return;
+		return 0;
 	}
 
 	/* the default start is at the second sector of the disk or at the
@@ -1764,9 +1767,11 @@ void dos_move_begin(struct fdisk_context *cxt, int i)
 
 	last = get_abs_partition_start(pe) + dos_partition_get_size(p) - 1;
 
-	if (fdisk_ask_number(cxt, free_start, curr_start, last,
-			_("New beginning of data"), &res))
-		return;
+	rc = fdisk_ask_number(cxt, free_start, curr_start, last,
+			_("New beginning of data"), &res);
+	if (rc)
+		return rc;
+
 	new = res - pe->offset;
 
 	if (new != dos_partition_get_size(p)) {
@@ -1778,6 +1783,8 @@ void dos_move_begin(struct fdisk_context *cxt, int i)
 
 		partition_set_changed(cxt, i, 1);
 	}
+
+	return rc;
 }
 
 static int dos_get_partition_status(

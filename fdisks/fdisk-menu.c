@@ -458,14 +458,14 @@ static int dos_menu_cb(struct fdisk_context *cxt,
 		size_t n;
 		rc = fdisk_ask_partnum(cxt, &n, FALSE);
 		if (!rc)
-			dos_move_begin(cxt, n);
+			rc = fdisk_dos_move_begin(cxt, n);
 		break;
 	}
 	case 'e':
 		rc = fdisk_dos_list_extended(cxt);
 		break;
 	case 'f':
-		dos_fix_partition_table_order(cxt);
+		rc = fdisk_dos_fix_order(cxt);
 		break;
 	case 'i':
 		rc = fdisk_set_disklabel_id(cxt);
