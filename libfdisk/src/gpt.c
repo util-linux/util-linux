@@ -1709,7 +1709,7 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 {
 	int rc = 0;
 	ssize_t esz = 0;
-	struct gpt_guid *uid;
+	char str[37];
 	struct fdisk_gpt_label *gpt;
 
 	assert(cxt);
@@ -1765,19 +1765,30 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 	cxt->label->nparts_max = le32_to_cpu(gpt->pheader->npartition_entries);
 	cxt->label->nparts_cur = 0;
 
-	uid = &gpt->pheader->disk_guid;
-	fdisk_info(cxt, _("Building a new GPT disklabel "
-			    "(GUID: %08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X%02X%02X)\n"),
-			    uid->time_low, uid->time_mid,
-			    uid->time_hi_and_version,
-			    uid->clock_seq_hi,
-			    uid->clock_seq_low,
-			    uid->node[0], uid->node[1],
-			    uid->node[2], uid->node[3],
-			    uid->node[4], uid->node[5]);
+	guid_to_string(&gpt->pheader->disk_guid, str);
+	fdisk_info(cxt, _("Building a new GPT disklabel (GUID: %s)"), str);
 	fdisk_label_set_changed(cxt->label, 1);
 done:
 	return rc;
+}
+
+static int gpt_get_disklabel_id(struct fdisk_context *cxt, char **id)
+{
+	struct fdisk_gpt_label *gpt;
+	char str[37];
+
+	assert(cxt);
+	assert(id);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, GPT));
+
+	gpt = self_label(cxt);
+	guid_to_string(&gpt->pheader->disk_guid, str);
+
+	*id = strdup(str);
+	if (!*id)
+		return -ENOMEM;
+	return 0;
 }
 
 static struct fdisk_parttype *gpt_get_partition_type(
@@ -1973,6 +1984,8 @@ static const struct fdisk_label_operations gpt_operations =
 	.verify		= gpt_verify_disklabel,
 	.create		= gpt_create_disklabel,
 	.list		= gpt_list_disklabel,
+	.get_id		= gpt_get_disklabel_id,
+
 	.part_add	= gpt_add_partition,
 	.part_delete	= gpt_delete_partition,
 	.part_get_type	= gpt_get_partition_type,

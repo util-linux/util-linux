@@ -438,10 +438,20 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 	}
 }
 
-void dos_print_mbr_id(struct fdisk_context *cxt)
+static int dos_get_disklabel_id(struct fdisk_context *cxt, char **id)
 {
-	fdisk_info(cxt, _("Disk identifier: 0x%08x"),
-			mbr_get_id(cxt->firstsector));
+	unsigned int num;
+
+	assert(cxt);
+	assert(id);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, DOS));
+
+	num = mbr_get_id(cxt->firstsector);
+	if (asprintf(id, "0x%08x", num) > 0)
+		return 0;
+
+	return -ENOMEM;
 }
 
 static int dos_create_disklabel(struct fdisk_context *cxt)
@@ -1797,6 +1807,7 @@ static const struct fdisk_label_operations dos_operations =
 	.verify		= dos_verify_disklabel,
 	.create		= dos_create_disklabel,
 	.list		= dos_list_disklabel,
+	.get_id		= dos_get_disklabel_id,
 
 	.part_add	= dos_add_partition,
 	.part_delete	= dos_delete_partition,

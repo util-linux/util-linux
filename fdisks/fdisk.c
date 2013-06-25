@@ -229,8 +229,9 @@ static void change_partition_type(struct fdisk_context *cxt)
 	fdisk_free_parttype(org_t);
 }
 
-static void
-list_disk_geometry(struct fdisk_context *cxt) {
+static void list_disk_geometry(struct fdisk_context *cxt)
+{
+	char *id = NULL;
 	unsigned long long bytes = cxt->total_sectors * cxt->sector_size;
 	long megabytes = bytes/1000000;
 
@@ -262,8 +263,9 @@ list_disk_geometry(struct fdisk_context *cxt) {
 		printf(_("Alignment offset: %lu bytes\n"), cxt->alignment_offset);
 	if (fdisk_dev_has_disklabel(cxt))
 		printf(_("Disk label type: %s\n"), cxt->label->name);
-	if (fdisk_is_disklabel(cxt, DOS))
-		dos_print_mbr_id(cxt);
+
+	if (fdisk_get_disklabel_id(cxt, &id) == 0 && id)
+		printf(_("Disk identifier: %s\n"), id);
 	printf("\n");
 }
 

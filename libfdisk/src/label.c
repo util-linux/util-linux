@@ -236,6 +236,24 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 }
 
 /**
+ * fdisk_get_disklabel_id:
+ * @cxt: fdisk context
+ * @id: returns pointer to allocated string
+ *
+ * Returns 0 on success, otherwise, a corresponding error.
+ */
+int fdisk_get_disklabel_id(struct fdisk_context *cxt, char **id)
+{
+	if (!cxt || !cxt->label)
+		return -EINVAL;
+	if (!cxt->label->op->get_id)
+		return -ENOSYS;
+
+	DBG(LABEL, dbgprint("asking for %s ID", cxt->label->name));
+	return cxt->label->op->get_id(cxt, id);
+}
+
+/**
  * fdisk_get_partition_type:
  * @cxt: fdisk context
  * @partnum: partition number
