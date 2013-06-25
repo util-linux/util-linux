@@ -56,6 +56,8 @@
 
 #include "common.h"
 #include "fdisk.h"
+#include "pt-mbr.h"
+
 #define FREEBSD_PARTITION	0xa5
 #define NETBSD_PARTITION	0xa9
 #define DKTYPENAMES
@@ -610,7 +612,7 @@ static int xbsd_write_bootstrap (struct fdisk_context *cxt)
 		goto done;
 
 	/* We need a backup of the disklabel (xbsd_dlabel might have changed). */
-	d = &disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE];
+	d = &disklabelbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE];
 	memmove(&dl, d, sizeof(struct xbsd_disklabel));
 
 	/* The disklabel will be overwritten by 0's from bootxx anyway */
@@ -642,7 +644,7 @@ static int xbsd_write_bootstrap (struct fdisk_context *cxt)
 #else
 	sector = dos_partition_get_start(xbsd_part);
 #endif
-	if (lseek(cxt->dev_fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1) {
+	if (lseek(cxt->dev_fd, (off_t) sector * DEFAULT_SECTOR_SIZE, SEEK_SET) == -1) {
 		fdisk_warn(cxt, _("seek failed %s"), cxt->dev_path);
 		rc = -errno;
 		goto done;
@@ -774,7 +776,7 @@ static int xbsd_initlabel (struct fdisk_context *cxt,
 #else
 	d -> d_flags = 0;
 #endif
-	d -> d_secsize = SECTOR_SIZE;		/* bytes/sector  */
+	d -> d_secsize = DEFAULT_SECTOR_SIZE;		/* bytes/sector  */
 	d -> d_nsectors = cxt->geom.sectors;		/* sectors/track */
 	d -> d_ntracks = cxt->geom.heads;		/* tracks/cylinder (heads) */
 	d -> d_ncylinders = cxt->geom.cylinders;
@@ -837,13 +839,13 @@ xbsd_readlabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd_
 	sector = 0;
 #endif
 
-	if (lseek (cxt->dev_fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
+	if (lseek (cxt->dev_fd, (off_t) sector * DEFAULT_SECTOR_SIZE, SEEK_SET) == -1)
 		return 0;
 	if (BSD_BBSIZE != read (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE))
 		return 0;
 
 	memmove (d,
-	         &disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE + BSD_LABELOFFSET],
+	         &disklabelbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE + BSD_LABELOFFSET],
 	         sizeof (struct xbsd_disklabel));
 
 	if (d -> d_magic != BSD_DISKMAGIC || d -> d_magic2 != BSD_DISKMAGIC)
@@ -882,7 +884,7 @@ xbsd_writelabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd
   /* This is necessary if we want to write the bootstrap later,
      otherwise we'd write the old disklabel with the bootstrap.
   */
-  memmove (&disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE + BSD_LABELOFFSET], d,
+  memmove (&disklabelbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE + BSD_LABELOFFSET], d,
            sizeof (struct xbsd_disklabel));
 
 #if defined (__alpha__) && BSD_LABELSECTOR == 0
@@ -896,7 +898,7 @@ xbsd_writelabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd
 	  return -errno;
   }
 #else
-  if (lseek (cxt->dev_fd, (off_t) sector * SECTOR_SIZE + BSD_LABELOFFSET,
+  if (lseek (cxt->dev_fd, (off_t) sector * DEFAULT_SECTOR_SIZE + BSD_LABELOFFSET,
 		   SEEK_SET) == -1) {
 	  fdisk_warn(cxt, _("seek failed: %d"), cxt->dev_path);
 	  return -errno;

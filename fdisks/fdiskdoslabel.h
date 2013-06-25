@@ -1,8 +1,6 @@
 #ifndef FDISK_DOS_LABEL_H
 #define FDISK_DOS_LABEL_H
 
-#include "pt-mbr.h"
-
 extern struct dos_partition *fdisk_dos_get_partition(
 				struct fdisk_context *cxt,
 				size_t i);

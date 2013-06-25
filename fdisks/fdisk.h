@@ -8,29 +8,8 @@
  * maybe included when fdisk.c and libfdisk code will be completely spit.
  */
 #include "fdiskP.h"
+#include "blkdev.h"
 
-
-#define DEFAULT_SECTOR_SIZE	512
-#define MAX_SECTOR_SIZE	2048
-#define SECTOR_SIZE	512	/* still used in BSD code */
-#define MAXIMUM_PARTS	60
-
-#define ACTIVE_FLAG     0x80
-
-#define EXTENDED        0x05
-#define WIN98_EXTENDED  0x0f
-#define LINUX_PARTITION 0x81
-#define LINUX_SWAP      0x82
-#define LINUX_NATIVE    0x83
-#define LINUX_EXTENDED  0x85
-#define LINUX_LVM       0x8e
-#define LINUX_RAID      0xfd
-
-
-#define LINE_LENGTH	800
-
-#define IS_EXTENDED(i) \
-	((i) == EXTENDED || (i) == WIN98_EXTENDED || (i) == LINUX_EXTENDED)
 
 extern void toggle_units(struct fdisk_context *cxt);
 

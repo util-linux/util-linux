@@ -10,8 +10,19 @@
 #include "nls.h"
 #include "randutils.h"
 #include "common.h"
+#include "pt-mbr.h"
+
 #include "fdisk.h"
 #include "fdiskdoslabel.h"
+
+#define MAXIMUM_PARTS	60
+
+#define ACTIVE_FLAG     0x80
+
+#define IS_EXTENDED(i) \
+	((i) == MBR_DOS_EXTENDED_PARTITION \
+	 || (i) == MBR_W95_EXTENDED_PARTITION \
+	 || (i) == MBR_LINUX_EXTENDED_PARTITION)
 
 /*
  * per partition table entry data
@@ -742,7 +753,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 		first[cxt->label->nparts_max],
 		last[cxt->label->nparts_max];
 
-	sys = t ? t->type : LINUX_NATIVE;
+	sys = t ? t->type : MBR_LINUX_DATA_PARTITION;
 
 	if (p && p->sys_ind) {
 		fdisk_warnx(cxt, _("Partition %d is already defined.  Delete "
@@ -908,10 +919,11 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 	set_partition(cxt, n, 0, start, stop, sys);
 	if (n > 4) {
 		struct pte *pe = self_pte(cxt, n);
-		set_partition(cxt, n - 1, 1, pe->offset, stop, EXTENDED);
+		set_partition(cxt, n - 1, 1, pe->offset, stop,
+				MBR_DOS_EXTENDED_PARTITION);
 	}
 
-	if (IS_EXTENDED (sys)) {
+	if (IS_EXTENDED(sys)) {
 		struct pte *pe4 = self_pte(cxt, 4);
 		struct pte *pen = self_pte(cxt, n);
 
@@ -1079,7 +1091,7 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 		struct pte *pe = self_pte(cxt, i);
 
 		p = self_partition(cxt, i);
-		if (p->sys_ind && !IS_EXTENDED (p->sys_ind)) {
+		if (p->sys_ind && !IS_EXTENDED(p->sys_ind)) {
 			check_consistency(cxt, p, i);
 			fdisk_warn_alignment(cxt, get_abs_partition_start(pe), i);
 			if (get_abs_partition_start(pe) < first[i])
@@ -1193,7 +1205,7 @@ static int dos_add_partition(
 			rc = add_partition(cxt, j, t);
 	} else {
 		char buf[16];
-		char c, prompt[LINE_LENGTH];
+		char c, prompt[BUFSIZ];
 		int dflt;
 
 		dflt = (free_primary == 1 && !l->ext_offset) ? 'e' : 'p';
@@ -1228,7 +1240,8 @@ static int dos_add_partition(
 		} else if (c == 'e' && !l->ext_offset) {
 			int j = get_partition_unused_primary(cxt);
 			if (j >= 0) {
-				t = fdisk_get_parttype_from_code(cxt, EXTENDED);
+				t = fdisk_get_parttype_from_code(cxt,
+						MBR_DOS_EXTENDED_PARTITION);
 				rc = add_partition(cxt, j, t);
 			}
 			goto done;
