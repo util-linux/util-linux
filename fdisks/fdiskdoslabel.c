@@ -175,6 +175,24 @@ static int get_partition_unused_primary(struct fdisk_context *cxt)
 	}
 }
 
+static int seek_sector(struct fdisk_context *cxt, sector_t secno)
+{
+	off_t offset = (off_t) secno * cxt->sector_size;
+
+	return lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1 ? -errno : 0;
+}
+
+static int read_sector(struct fdisk_context *cxt, sector_t secno,
+			unsigned char *buf)
+{
+	int rc = seek_sector(cxt, secno);
+
+	if (rc < 0)
+		return rc;
+
+	return read(cxt->dev_fd, buf, cxt->sector_size) !=
+			(ssize_t) cxt->sector_size ? -errno : 0;
+}
 
 /* Allocate a buffer and read a partition table sector */
 static int read_pte(struct fdisk_context *cxt, int pno, sector_t offset)

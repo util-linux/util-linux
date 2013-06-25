@@ -55,38 +55,11 @@ extern int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 extern void list_partition_types(struct fdisk_context *cxt);
 extern struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt);
 extern void reread_partition_table(struct fdisk_context *cxt, int leave);
-extern unsigned int read_int(struct fdisk_context *cxt,
-			     unsigned int low, unsigned int dflt,
-			     unsigned int high, unsigned int base, char *mesg);
 
 extern char *partition_type(struct fdisk_context *cxt, unsigned char type);
-extern char read_chars(struct fdisk_context *cxt, char *mesg);
 extern int warn_geometry(struct fdisk_context *cxt);
 extern void toggle_dos_compatibility_flag(struct fdisk_context *cxt);
 extern void warn_limits(struct fdisk_context *cxt);
-extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
-					 unsigned int low, unsigned int dflt, unsigned int high,
-				  unsigned int base, char *mesg, int *is_suffix_used);
 
 extern int nowarn;
-
-
-static inline int seek_sector(struct fdisk_context *cxt, sector_t secno)
-{
-	off_t offset = (off_t) secno * cxt->sector_size;
-
-	return lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1 ? -errno : 0;
-}
-
-static inline int read_sector(struct fdisk_context *cxt, sector_t secno, unsigned char *buf)
-{
-	int rc = seek_sector(cxt, secno);
-
-	if (rc < 0)
-		return rc;
-
-	return read(cxt->dev_fd, buf, cxt->sector_size) !=
-			(ssize_t) cxt->sector_size ? -errno : 0;
-}
-
 
