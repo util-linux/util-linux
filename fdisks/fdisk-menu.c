@@ -8,6 +8,10 @@
 #include "c.h"
 #include "fdisk.h"
 #include "pt-sun.h"
+#include "pt-mbr.h"
+
+#include "fdiskdoslabel.h"
+#include "fdiskbsdlabel.h"
 
 struct menu_entry {
 	const char	key;
@@ -47,6 +51,7 @@ struct menu_context {
 DECLARE_MENU_CB(gpt_menu_cb);
 DECLARE_MENU_CB(sun_menu_cb);
 DECLARE_MENU_CB(geo_menu_cb);
+DECLARE_MENU_CB(dos_menu_cb);
 
 /*
  * Menu entry macros:
@@ -172,7 +177,7 @@ struct menu menu_sgi = {
 };
 
 struct menu menu_dos = {
-/*	.callback = dos_menu_cb, */
+	.callback = dos_menu_cb,
 	.label = FDISK_DISKLABEL_DOS,
 	.entries = {
 		MENU_BSEP(N_("DOS (MBR)")),
@@ -404,6 +409,66 @@ static int gpt_menu_cb(struct fdisk_context *cxt,
 		break;
 	case 'n':
 		rc = fdisk_gpt_partition_set_name(cxt, n);
+		break;
+	}
+	return rc;
+}
+
+
+/*
+ * This is fdisk frontend for MBR specific libfdisk functions that
+ * are not expported by generic libfdisk API.
+ */
+static int dos_menu_cb(struct fdisk_context *cxt,
+		       const struct menu *menu __attribute__((__unused__)),
+		       const struct menu_entry *ent)
+{
+	int rc = 0;
+
+	if (!ent->expert) {
+		switch (ent->key) {
+		case 'a':
+		{
+			size_t n;
+			rc = fdisk_ask_partnum(cxt, &n, FALSE);
+			if (!rc)
+				rc = fdisk_partition_toggle_flag(cxt, n, DOS_FLAG_ACTIVE);
+			break;
+		}
+		case 'b':
+		{
+			struct fdisk_context *bsd
+					= fdisk_new_nested_context(cxt, "bsd");
+			if (bsd)
+				bsd_command_prompt(bsd);
+			fdisk_free_context(bsd);
+			break;
+		}
+		case 'c':
+			toggle_dos_compatibility_flag(cxt);
+			break;
+		}
+		return rc;
+	}
+
+	/* expert mode */
+	switch (ent->key) {
+	case 'b':
+	{
+		size_t n;
+		rc = fdisk_ask_partnum(cxt, &n, FALSE);
+		if (!rc)
+			dos_move_begin(cxt, n);
+		break;
+	}
+	case 'e':
+		rc = fdisk_dos_list_extended(cxt);
+		break;
+	case 'f':
+		dos_fix_partition_table_order(cxt);
+		break;
+	case 'i':
+		rc = fdisk_set_disklabel_id(cxt);
 		break;
 	}
 	return rc;

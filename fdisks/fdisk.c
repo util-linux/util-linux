@@ -161,7 +161,7 @@ int warn_geometry(struct fdisk_context *cxt)
 	return 0;
 }
 
-static void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
+void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 {
 	struct fdisk_label *lb = fdisk_context_get_label(cxt, "dos");
 	int flag;
@@ -386,7 +386,6 @@ static void
 expert_command_prompt(struct fdisk_context *cxt)
 {
 	char c;
-	size_t n;
 
 	assert(cxt);
 
@@ -403,29 +402,13 @@ expert_command_prompt(struct fdisk_context *cxt)
 		 * are not yet implemented by menu callbacks. Let's
 		 * perform the commands here */
 		switch (c) {
-		case 'b':
-			if (fdisk_is_disklabel(cxt, DOS) &&
-			    fdisk_ask_partnum(cxt, &n, FALSE) == 0)
-				dos_move_begin(cxt, n);
-			break;
 		case 'd':
 			print_raw(cxt);
-			break;
-		case 'e':
-			if (fdisk_is_disklabel(cxt, DOS))
-				fdisk_dos_list_extended(cxt);
-			break;
-		case 'f':
-			if (fdisk_is_disklabel(cxt, DOS))
-				dos_fix_partition_table_order(cxt);
 			break;
 		case 'g':
 			/* Deprecated, use 'G' in main menu, just for backward
 			 * compatibility only. */
 			fdisk_create_disklabel(cxt, "sgi");
-			break;
-		case 'i':
-			fdisk_set_disklabel_id(cxt);
 			break;
 		case 'p':
 			list_table(cxt, 1);
@@ -551,11 +534,7 @@ static void command_prompt(struct fdisk_context *cxt)
 		 * perform the commands here */
 		switch (c) {
 		case 'a':
-			if (fdisk_is_disklabel(cxt, DOS) &&
-			    fdisk_ask_partnum(cxt, &n, FALSE) == 0)
-				fdisk_partition_toggle_flag(cxt, n, DOS_FLAG_ACTIVE);
-
-			else if (fdisk_is_disklabel(cxt, SGI) &&
+			if (fdisk_is_disklabel(cxt, SGI) &&
 				 fdisk_ask_partnum(cxt, &n, FALSE) == 0)
 				fdisk_partition_toggle_flag(cxt, n, SGI_FLAG_BOOT);
 			else
@@ -564,22 +543,11 @@ static void command_prompt(struct fdisk_context *cxt)
 		case 'b':
 			if (fdisk_is_disklabel(cxt, SGI))
 				sgi_set_bootfile(cxt);
-			else if (fdisk_is_disklabel(cxt, DOS)) {
-
-				struct fdisk_context *bsd;
-
-				bsd = fdisk_new_nested_context(cxt, "bsd");
-				if (bsd)
-					bsd_command_prompt(bsd);
-				fdisk_free_context(bsd);
-			} else
+			else
 				unknown_command(c);
 			break;
 		case 'c':
-			if (fdisk_is_disklabel(cxt, DOS))
-				toggle_dos_compatibility_flag(cxt);
-
-			else if (fdisk_is_disklabel(cxt, SGI) &&
+			if (fdisk_is_disklabel(cxt, SGI) &&
 				 fdisk_ask_partnum(cxt, &n, FALSE) == 0)
 				fdisk_partition_toggle_flag(cxt, n, SGI_FLAG_SWAP);
 			else

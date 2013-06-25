@@ -62,6 +62,7 @@ extern unsigned int read_int(struct fdisk_context *cxt,
 extern char *partition_type(struct fdisk_context *cxt, unsigned char type);
 extern char read_chars(struct fdisk_context *cxt, char *mesg);
 extern int warn_geometry(struct fdisk_context *cxt);
+extern void toggle_dos_compatibility_flag(struct fdisk_context *cxt);
 extern void warn_limits(struct fdisk_context *cxt);
 extern unsigned int read_int_with_suffix(struct fdisk_context *cxt,
 					 unsigned int low, unsigned int dflt, unsigned int high,
