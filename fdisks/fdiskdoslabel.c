@@ -1,18 +1,18 @@
 /*
- * Many, many hands.
- * Specific DOS label file  - Davidlohr Bueso <dave@gnu.org>
+ *
+ * Copyright (C) 2013 Karel Zak <kzak@redhat.com>
+ *
+ * This is re-written version for libfdisk, the original was fdiskdoslabel.c
+ * from util-linux fdisk.
  */
-
-#include <unistd.h>
-#include <ctype.h>
-
 #include "c.h"
 #include "nls.h"
 #include "randutils.h"
 #include "common.h"
 #include "pt-mbr.h"
 
-#include "fdisk.h"
+#include "fdiskP.h"
+
 #include "fdiskdoslabel.h"
 
 #define MAXIMUM_PARTS	60
@@ -147,7 +147,7 @@ static int is_cleared_partition(struct dos_partition *p)
 
 static void warn_alignment(struct fdisk_context *cxt)
 {
-	if (nowarn)
+	if (fdisk_context_listonly(cxt))
 		return;
 
 	if (cxt->sector_size != cxt->phy_sector_size)
@@ -269,7 +269,7 @@ static void dos_init(struct fdisk_context *cxt)
 	warn_geometry(cxt);
 	warn_alignment(cxt);
 
-	if (cxt->total_sectors > UINT_MAX && !nowarn) {
+	if (cxt->total_sectors > UINT_MAX && !fdisk_context_listonly(cxt)) {
 		unsigned long long bytes = cxt->total_sectors * cxt->sector_size;
 		int giga = bytes / 1000000000;
 		int hectogiga = (giga + 50) / 100;

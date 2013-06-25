@@ -47,8 +47,6 @@
 # include <linux/blkpg.h>
 #endif
 
-int	nowarn = 0;			/* no warnings for fdisk -l/-s */
-
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);
@@ -716,7 +714,7 @@ int main(int argc, char **argv)
 			 " be used with one specified device\n"));
 
 	if (optl) {
-		nowarn = 1;
+		fdisk_context_enable_listonly(cxt, 1);
 		if (argc > optind) {
 			int k;
 			for (k = optind; k < argc; k++)

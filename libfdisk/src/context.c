@@ -255,6 +255,29 @@ int fdisk_context_display_details(struct fdisk_context *cxt)
 	return cxt->display_details == 1;
 }
 
+/**
+ * fdisk_context_enable_listonly:
+ * cxt: context
+ * enable: true/flase
+ *
+ * Just list partition only, don't care about another details, mistakes, ...
+ *
+ * Returns: 0 on success, < 0 on error.
+ */
+int fdisk_context_enable_listonly(struct fdisk_context *cxt, int enable)
+{
+	assert(cxt);
+	cxt->listonly = enable ? 1 : 0;
+	return 0;
+}
+
+int fdisk_context_listonly(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	return cxt->listonly == 1;
+}
+
+
 /*
  * @str: "cylinder" or "sector".
  *

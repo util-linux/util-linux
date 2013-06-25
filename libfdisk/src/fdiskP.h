@@ -269,7 +269,8 @@ struct fdisk_context {
 	unsigned long alignment_offset;
 
 	unsigned int display_in_cyl_units : 1,	/* for obscure labels */
-		     display_details : 1;	/* expert display mode */
+		     display_details : 1,	/* expert display mode */
+		     listonly : 1;		/* list partition, nothing else */
 
 	/* alignment */
 	unsigned long grain;		/* alignment unit */
@@ -302,6 +303,8 @@ extern int __fdisk_context_switch_label(struct fdisk_context *cxt,
 
 extern int fdisk_context_use_cylinders(struct fdisk_context *cxt);
 extern int fdisk_context_display_details(struct fdisk_context *cxt);
+extern int fdisk_context_enable_listonly(struct fdisk_context *cxt, int enable);
+extern int fdisk_context_listonly(struct fdisk_context *cxt);
 
 
 /* alignment.c */

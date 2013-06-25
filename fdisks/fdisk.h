@@ -40,5 +40,3 @@ extern int warn_geometry(struct fdisk_context *cxt);
 extern void toggle_dos_compatibility_flag(struct fdisk_context *cxt);
 extern void warn_limits(struct fdisk_context *cxt);
 
-extern int nowarn;
-
