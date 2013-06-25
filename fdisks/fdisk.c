@@ -149,16 +149,6 @@ void list_partition_types(struct fdisk_context *cxt)
 	putchar('\n');
 }
 
-int warn_geometry(struct fdisk_context *cxt)
-{
-	if (fdisk_missing_geometry(cxt)) {
-		fdisk_warnx(cxt, _("Incomplete geometry setting. You can do "
-				   "this from the extra functions menu."));
-		return 1;
-	}
-	return 0;
-}
-
 void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 {
 	struct fdisk_label *lb = fdisk_context_get_label(cxt, "dos");

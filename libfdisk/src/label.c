@@ -90,12 +90,19 @@ int fdisk_require_geometry(struct fdisk_context *cxt)
 
 int fdisk_missing_geometry(struct fdisk_context *cxt)
 {
+	int rc;
+
 	assert(cxt);
 	assert(cxt->label);
 
-	return (fdisk_require_geometry(cxt) &&
+	rc = (fdisk_require_geometry(cxt) &&
 		    (!cxt->geom.heads || !cxt->geom.sectors
 				      || !cxt->geom.cylinders));
+
+	if (rc && !fdisk_context_listonly(cxt))
+		fdisk_warnx(cxt, _("Incomplete geometry setting."));
+
+	return rc;
 }
 
 /**

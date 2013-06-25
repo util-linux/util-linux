@@ -145,24 +145,6 @@ static int is_cleared_partition(struct dos_partition *p)
 		 dos_partition_get_start(p) || dos_partition_get_size(p));
 }
 
-static void warn_alignment(struct fdisk_context *cxt)
-{
-	if (fdisk_context_listonly(cxt))
-		return;
-
-	if (cxt->sector_size != cxt->phy_sector_size)
-		fdisk_info(cxt, _(
-"The device presents a logical sector size that is smaller than "
-"the physical sector size. Aligning to a physical sector (or optimal "
-"I/O) size boundary is recommended, or performance may be impacted."));
-
-	if (is_dos_compatible(cxt))
-		fdisk_warnx(cxt, _("DOS-compatible mode is deprecated."));
-
-	if (fdisk_context_use_cylinders(cxt))
-		fdisk_warnx(cxt, _("Cylinders as display units are deprecated."));
-
-}
 
 static int get_partition_unused_primary(struct fdisk_context *cxt)
 {
@@ -266,10 +248,28 @@ static void dos_init(struct fdisk_context *cxt)
 		pe->changed = 0;
 	}
 
-	warn_geometry(cxt);
-	warn_alignment(cxt);
+	if (fdisk_context_listonly(cxt))
+		return;
+	/*
+	 * Various warnings...
+	 */
+	if (fdisk_missing_geometry(cxt))
+		fdisk_warnx(cxt, _("You can set geometry from the extra functions menu."));
 
-	if (cxt->total_sectors > UINT_MAX && !fdisk_context_listonly(cxt)) {
+	if (is_dos_compatible(cxt)) {
+		fdisk_warnx(cxt, _("DOS-compatible mode is deprecated."));
+
+		if (cxt->sector_size != cxt->phy_sector_size)
+			fdisk_info(cxt, _(
+		"The device presents a logical sector size that is smaller than "
+		"the physical sector size. Aligning to a physical sector (or optimal "
+		"I/O) size boundary is recommended, or performance may be impacted."));
+	}
+
+	if (fdisk_context_use_cylinders(cxt))
+		fdisk_warnx(cxt, _("Cylinders as display units are deprecated."));
+
+	if (cxt->total_sectors > UINT_MAX) {
 		unsigned long long bytes = cxt->total_sectors * cxt->sector_size;
 		int giga = bytes / 1000000000;
 		int hectogiga = (giga + 50) / 100;
