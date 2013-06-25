@@ -71,8 +71,7 @@ static struct fdisk_parttype dos_parttypes[] = {
 		   (fdisk_is_disklabel(_x, DOS) && \
                     fdisk_dos_is_compatible(fdisk_context_get_label(_x, NULL)))
 
-#define cround(c, n)	(fdisk_context_use_cylinders(c) ? \
-				((n) / fdisk_context_get_units_per_sector(c)) + 1 : (n))
+#define cround(c, n)	fdisk_scround(c, n)
 
 
 static inline struct fdisk_dos_label *self_label(struct fdisk_context *cxt)
@@ -1372,10 +1371,106 @@ static int is_garbage_table(struct fdisk_context *cxt)
 	return 0;
 }
 
-int dos_list_table(struct fdisk_context *cxt,
-		    int xtra  __attribute__ ((__unused__)))
+/*
+ * List all PT fields.
+ *
+ * This is useful for PT debugging (or for 70's Hippies
+ * who are on permanent LSD trip).
+ */
+static int dos_fulllist_disklabel(struct fdisk_context *cxt, int ext)
 {
-	size_t i, w;
+	int rc;
+	size_t i;
+	struct tt *tb = NULL;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, DOS));
+
+	tb = tt_new_table(TT_FL_FREEDATA);
+	if (!tb)
+		return -ENOMEM;
+
+	tt_define_column(tb, _("Nr"), 2, TT_FL_RIGHT);
+	tt_define_column(tb, _("AF"), 2, TT_FL_RIGHT);
+
+	tt_define_column(tb, _("Hd"),  4, TT_FL_RIGHT);
+	tt_define_column(tb, _("Sec"), 4, TT_FL_RIGHT);
+	tt_define_column(tb, _("Cyl"), 5, TT_FL_RIGHT);
+
+	tt_define_column(tb, _("Hd"),  4, TT_FL_RIGHT);
+	tt_define_column(tb, _("Sec"), 4, TT_FL_RIGHT);
+	tt_define_column(tb, _("Cyl"), 5, TT_FL_RIGHT);
+
+	tt_define_column(tb, _("Start"), 9, TT_FL_RIGHT);
+	tt_define_column(tb, _("Size"),  9, TT_FL_RIGHT);
+	tt_define_column(tb, _("Id"),    2, TT_FL_RIGHT);
+
+	for (i = 0 ; i < cxt->label->nparts_max; i++) {
+		struct pte *pe = self_pte(cxt, i);
+		struct dos_partition *p;
+		struct tt_line *ln;
+		char *str;
+
+		p = ext ? pe->ex_entry : pe->pt_entry;
+		if (!p)
+			continue;
+		ln = tt_add_line(tb, NULL);
+		if (!ln)
+			continue;
+
+		if (asprintf(&str, "%zd",  i + 1) > 0)
+			tt_line_set_data(ln, 0, str);		/* Nr */
+		if (asprintf(&str, "%02x", p->boot_ind) > 0)
+			tt_line_set_data(ln, 1, str);		/* AF */
+
+		if (asprintf(&str, "%d", p->bh) > 0)
+			tt_line_set_data(ln, 2, str);		/* Hd */
+		if (asprintf(&str, "%d", sector(p->bs)) > 0)
+			tt_line_set_data(ln, 3, str);		/* Sec */
+		if (asprintf(&str, "%d", cylinder(p->bs, p->bc)) > 0)
+			tt_line_set_data(ln, 4, str);		/* Cyl */
+
+		if (asprintf(&str, "%d", p->eh) > 0)
+			tt_line_set_data(ln, 5, str);		/* Hd */
+		if (asprintf(&str, "%d", sector(p->es)) > 0)
+			tt_line_set_data(ln, 6, str);		/* Sec */
+		if (asprintf(&str, "%d", cylinder(p->es, p->ec)) > 0)
+			tt_line_set_data(ln, 7, str);		/* Cyl */
+
+		if (asprintf(&str, "%lu",
+			(unsigned long) dos_partition_get_start(p)) > 0)
+			tt_line_set_data(ln, 8, str);		/* Start */
+		if (asprintf(&str, "%lu",
+			(unsigned long) dos_partition_get_size(p)) > 0)
+			tt_line_set_data(ln, 9, str);		/* End */
+
+		if (asprintf(&str, "%02x", p->sys_ind) > 0)
+			tt_line_set_data(ln, 10, str);		/* Id */
+
+		if (p->sys_ind) {
+			check_consistency(cxt, p, i);
+			fdisk_warn_alignment(cxt,
+					get_abs_partition_start(pe), i);
+		}
+	}
+
+	rc = fdisk_print_table(cxt, tb);
+	tt_free_table(tb);
+
+	return rc;
+}
+
+int fdisk_dos_list_extended(struct fdisk_context *cxt)
+{
+	return dos_fulllist_disklabel(cxt, 1);
+}
+
+static int dos_list_disklabel(struct fdisk_context *cxt)
+{
+	int rc = 0, trunc = TT_FL_TRUNC;
+	size_t i;
+	struct tt *tb = NULL;
 
 	assert(cxt);
 	assert(cxt->label);
@@ -1387,50 +1482,86 @@ int dos_list_table(struct fdisk_context *cxt,
 			"Probably you selected the wrong device."));
 	}
 
-	/* Heuristic: we list partition 3 of /dev/foo as /dev/foo3,
-	   but if the device name ends in a digit, say /dev/foo1,
-	   then the partition is called /dev/foo1p3. */
-	w = strlen(cxt->dev_path);
-	if (w && isdigit(cxt->dev_path[w-1]))
-		w++;
-	if (w < 5)
-		w = 5;
+	if (fdisk_context_display_details(cxt))
+		return dos_fulllist_disklabel(cxt, 0);
 
-	printf(_("%*s Boot      Start         End      Blocks   Id  System\n"),
-	       (int) w + 1, _("Device"));
+	tb = tt_new_table(TT_FL_FREEDATA);
+	if (!tb)
+		return -ENOMEM;
+
+	/* don't trunc anything in expert mode */
+	if (fdisk_context_display_details(cxt))
+		trunc = 0;
+
+	tt_define_column(tb, _("Device"), 0.1, 0);
+	tt_define_column(tb, _("Boot"),     1, 0);
+	tt_define_column(tb, _("Start"),    9, TT_FL_RIGHT);
+	tt_define_column(tb, _("End"),      9, TT_FL_RIGHT);
+	/* TRANSLATORS: keep one blank space behind 'Blocks' */
+	tt_define_column(tb, _("Blocks "),  5, TT_FL_RIGHT);
+	tt_define_column(tb, _("Id"),       2, TT_FL_RIGHT);
+	tt_define_column(tb, _("System"), 0.1, trunc);
 
 	for (i = 0; i < cxt->label->nparts_max; i++) {
 		struct pte *pe = self_pte(cxt, i);
 		struct dos_partition *p = pe->pt_entry;
+		unsigned int psects, pblocks, podd = 0;;
+		struct fdisk_parttype *type;
+		struct tt_line *ln;
+		char *str;
 
-		if (p && !is_cleared_partition(p)) {
-			unsigned int psects = dos_partition_get_size(p);
-			unsigned int pblocks = psects;
-			unsigned int podd = 0;
-			struct fdisk_parttype *type =
-					fdisk_get_parttype_from_code(cxt, p->sys_ind);
+		if (!p || is_cleared_partition(p))
+			continue;
+		ln = tt_add_line(tb, NULL);
+		if (!ln)
+			continue;
 
-			if (cxt->sector_size < 1024) {
-				pblocks /= (1024 / cxt->sector_size);
-				podd = psects % (1024 / cxt->sector_size);
-			}
-			if (cxt->sector_size > 1024)
-				pblocks *= (cxt->sector_size / 1024);
-                        printf(
-			    "%s  %c %11lu %11lu %11lu%c  %2x  %s\n",
-			partname(cxt->dev_path, i+1, w+2),
-/* boot flag */		!p->boot_ind ? ' ' : p->boot_ind == ACTIVE_FLAG
-			? '*' : '?',
-/* start */		(unsigned long) cround(cxt, get_abs_partition_start(pe)),
-/* end */		(unsigned long) cround(cxt, get_abs_partition_start(pe) + psects
-				- (psects ? 1 : 0)),
-/* odd flag on end */	(unsigned long) pblocks, podd ? '+' : ' ',
-/* type id */		p->sys_ind,
-/* type name */		type ? type->name : _("Unknown"));
-			check_consistency(cxt, p, i);
-			fdisk_warn_alignment(cxt, get_abs_partition_start(pe), i);
+		pblocks = psects = dos_partition_get_size(p);
+		type = fdisk_get_parttype_from_code(cxt, p->sys_ind);
+
+		if (cxt->sector_size < 1024) {
+			pblocks /= (1024 / cxt->sector_size);
+			podd = psects % (1024 / cxt->sector_size);
 		}
+		if (cxt->sector_size > 1024)
+			pblocks *= (cxt->sector_size / 1024);
+
+		str = fdisk_partname(cxt->dev_path, i + 1);
+		if (str)
+			tt_line_set_data(ln, 0, str);		/* device */
+
+		str = strdup(p->boot_ind ?
+			     p->boot_ind == ACTIVE_FLAG ? "*" : "?" : " ");
+		if (str)
+			tt_line_set_data(ln, 1,	str);		/* boot flag */
+
+		if (asprintf(&str, "%lu", (unsigned long) cround(cxt,
+					get_abs_partition_start(pe))) > 0)
+			tt_line_set_data(ln, 2, str);		/* start */
+
+		if (asprintf(&str, "%lu", (unsigned long) cround(cxt,
+				get_abs_partition_start(pe)
+				+ psects - (psects ? 1 : 0))) > 0)
+			tt_line_set_data(ln, 3, str);		/* end */
+
+		if (asprintf(&str, "%lu%c", (unsigned long) pblocks,
+				podd ? '+' : ' ') > 0)
+			tt_line_set_data(ln, 4, str);		/* blocks<flag> */
+
+		if (asprintf(&str, "%x",  p->sys_ind) > 0)
+			tt_line_set_data(ln, 5, str);		/* id */
+
+		str = strdup(type ? type->name : _("Unknown"));
+		if (str)
+			tt_line_set_data(ln, 6, str);
+
+		check_consistency(cxt, p, i);
+		fdisk_warn_alignment(cxt, get_abs_partition_start(pe), i);
+		fdisk_free_parttype(type);
 	}
+
+	rc = fdisk_print_table(cxt, tb);
+	tt_free_table(tb);
 
 	/* Is partition table in disk order? It need not be, but... */
 	/* partition table entries are not checked for correct order if this
@@ -1439,40 +1570,9 @@ int dos_list_table(struct fdisk_context *cxt,
 		fdisk_info(cxt, _("Partition table entries are not in "
 				  "disk order."));
 
-	return 0;
+	return rc;
 }
 
-/*
- * TODO: merge into dos_list_table
- */
-void dos_list_table_expert(struct fdisk_context *cxt, int extend)
-{
-	struct pte *pe;
-	struct dos_partition *p;
-	size_t i;
-
-	printf(_("\nDisk %s: %d heads, %llu sectors, %llu cylinders\n\n"),
-		cxt->dev_path, cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
-        printf(_("Nr AF  Hd Sec  Cyl  Hd Sec  Cyl     Start      Size ID\n"));
-	for (i = 0 ; i < cxt->label->nparts_max; i++) {
-		pe = self_pte(cxt, i);
-		p = (extend ? pe->ex_entry : pe->pt_entry);
-		if (p != NULL) {
-                        printf("%2zd %02x%4d%4d%5d%4d%4d%5d%11lu%11lu %02x\n",
-				i + 1, p->boot_ind, p->bh,
-				sector(p->bs),
-				cylinder(p->bs, p->bc), p->eh,
-				sector(p->es),
-				cylinder(p->es, p->ec),
-				(unsigned long) dos_partition_get_start(p),
-				(unsigned long) dos_partition_get_size(p), p->sys_ind);
-			if (p->sys_ind) {
-				check_consistency(cxt, p, i);
-				fdisk_warn_alignment(cxt, get_abs_partition_start(pe), i);
-			}
-		}
-	}
-}
 
 /*
  * Fix the chain of logicals.
@@ -1696,6 +1796,8 @@ static const struct fdisk_label_operations dos_operations =
 	.write		= dos_write_disklabel,
 	.verify		= dos_verify_disklabel,
 	.create		= dos_create_disklabel,
+	.list		= dos_list_disklabel,
+
 	.part_add	= dos_add_partition,
 	.part_delete	= dos_delete_partition,
 	.part_get_type	= dos_get_parttype,

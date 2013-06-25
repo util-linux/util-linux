@@ -273,8 +273,6 @@ static void list_table(struct fdisk_context *cxt, int xtra)
 
 	if (fdisk_is_disklabel(cxt, OSF))
 		xbsd_print_disklabel(cxt, xtra);
-	else if (fdisk_is_disklabel(cxt, DOS))
-		dos_list_table(cxt, xtra);
 	else
 		fdisk_list_disklabel(cxt);
 
@@ -413,7 +411,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 			break;
 		case 'e':
 			if (fdisk_is_disklabel(cxt, DOS))
-				dos_list_table_expert(cxt, 1);
+				fdisk_dos_list_extended(cxt);
 			break;
 		case 'f':
 			if (fdisk_is_disklabel(cxt, DOS))
