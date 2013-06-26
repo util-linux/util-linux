@@ -115,6 +115,10 @@ struct dos_partition *fdisk_dos_get_partition(
 				struct fdisk_context *cxt,
 				size_t i)
 {
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, DOS));
+
 	return self_partition(cxt, i);
 }
 
@@ -135,6 +139,9 @@ static void partition_set_changed(
 
 static sector_t get_abs_partition_start(struct pte *pe)
 {
+	assert(pe);
+	assert(pe->pt_entry);
+
 	return pe->offset + dos_partition_get_start(pe->pt_entry);
 }
 
@@ -229,6 +236,10 @@ static void dos_init(struct fdisk_context *cxt)
 	struct fdisk_dos_label *l = self_label(cxt);
 	size_t i;
 
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, DOS));
+
 	cxt->label->nparts_max = 4;	/* default, unlimited number of logical */
 
 	l->ext_index = 0;
@@ -304,14 +315,20 @@ static void dos_deinit(struct fdisk_label *lb)
 
 static int dos_delete_partition(struct fdisk_context *cxt, size_t partnum)
 {
-	struct fdisk_dos_label *l = self_label(cxt);
-	struct pte *pe = self_pte(cxt, partnum);
+	struct fdisk_dos_label *l;
+	struct pte *pe;
 	struct dos_partition *p;
 	struct dos_partition *q;
 
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, DOS));
+
+	pe = self_pte(cxt, partnum);
 	if (!pe)
 		return -EINVAL;
 
+	l = self_label(cxt);
 	p = pe->pt_entry;
 	q = pe->ex_entry;
 
@@ -551,7 +568,7 @@ static void get_partition_table_geometry(struct fdisk_context *cxt,
 	int bad = 0;
 
 	hh = ss = 0;
-	for (i=0; i<4; i++) {
+	for (i = 0; i < 4; i++) {
 		p = mbr_get_partition(bufp, i);
 		if (p->sys_ind != 0) {
 			h = p->eh + 1;
@@ -1028,23 +1045,23 @@ static void check_consistency(struct fdisk_context *cxt, struct dos_partition *p
 	if (!cxt->geom.heads || !cxt->geom.sectors || (partition >= 4))
 		return;		/* do not check extended partitions */
 
-/* physical beginning c, h, s */
+	/* physical beginning c, h, s */
 	pbc = (p->bc & 0xff) | ((p->bs << 2) & 0x300);
 	pbh = p->bh;
 	pbs = p->bs & 0x3f;
 
-/* physical ending c, h, s */
+	/* physical ending c, h, s */
 	pec = (p->ec & 0xff) | ((p->es << 2) & 0x300);
 	peh = p->eh;
 	pes = p->es & 0x3f;
 
-/* compute logical beginning (c, h, s) */
+	/* compute logical beginning (c, h, s) */
 	long2chs(cxt, dos_partition_get_start(p), &lbc, &lbh, &lbs);
 
-/* compute logical ending (c, h, s) */
+	/* compute logical ending (c, h, s) */
 	long2chs(cxt, dos_partition_get_start(p) + dos_partition_get_size(p) - 1, &lec, &leh, &les);
 
-/* Same physical / logical beginning? */
+	/* Same physical / logical beginning? */
 	if (cxt->geom.cylinders <= 1024
 	    && (pbc != lbc || pbh != lbh || pbs != lbs)) {
 		fdisk_warnx(cxt, _("Partition %zd: different physical/logical "
@@ -1055,7 +1072,7 @@ static void check_consistency(struct fdisk_context *cxt, struct dos_partition *p
 			lbc, lbh, lbs);
 	}
 
-/* Same physical / logical ending? */
+	/* Same physical / logical ending? */
 	if (cxt->geom.cylinders <= 1024
 	    && (pec != lec || peh != leh || pes != les)) {
 		fdisk_warnx(cxt, _("Partition %zd: different physical/logical "
@@ -1065,7 +1082,7 @@ static void check_consistency(struct fdisk_context *cxt, struct dos_partition *p
 			lec, leh, les);
 	}
 
-/* Ending on cylinder boundary? */
+	/* Ending on cylinder boundary? */
 	if (peh != (cxt->geom.heads - 1) || pes != cxt->geom.sectors) {
 		fdisk_warnx(cxt, _("Partition %zd: does not end on "
 				   "cylinder boundary."),
@@ -1640,7 +1657,7 @@ static void fix_chain_of_logicals(struct fdisk_context *cxt)
 
 	/* Stage 1: sort sectors but leave sector of part 4 */
 	/* (Its sector is the global ext_offset.) */
- stage1:
+stage1:
 	for (j = 5; j < cxt->label->nparts_max - 1; j++) {
 		oj = l->ptes[j].offset;
 		ojj = l->ptes[j + 1].offset;
@@ -1660,7 +1677,7 @@ static void fix_chain_of_logicals(struct fdisk_context *cxt)
 	}
 
 	/* Stage 2: sort starting sectors */
- stage2:
+stage2:
 	for (j = 4; j < cxt->label->nparts_max - 1; j++) {
 		pj = l->ptes[j].pt_entry;
 		pjj = l->ptes[j + 1].pt_entry;
