@@ -58,8 +58,6 @@
 #include "fdisk.h"
 #include "pt-mbr.h"
 
-#define FREEBSD_PARTITION	0xa5
-#define NETBSD_PARTITION	0xa9
 #define DKTYPENAMES
 #include "fdiskbsdlabel.h"
 #include "all-io.h"
@@ -126,21 +124,6 @@ osf_probe_label(struct fdisk_context *cxt)
 		return 0;
 	return 1;
 }
-
-#if !defined (__alpha__)
-static int hidden(int type)
-{
-	return type ^ 0x10;
-}
-
-static int is_bsd_partition_type(int type)
-{
-	return (type == FREEBSD_PARTITION ||
-		type == hidden(FREEBSD_PARTITION) ||
-		type == NETBSD_PARTITION ||
-		type == hidden(NETBSD_PARTITION));
-}
-#endif
 
 static int xbsd_write_disklabel (struct fdisk_context *cxt)
 {
@@ -274,6 +257,20 @@ static int xbsd_create_disklabel(struct fdisk_context *cxt)
 
 	return rc;
 }
+
+#if !defined (__alpha__)
+#define HIDDEN_MASK	0x10
+
+static int is_bsd_partition_type(int type)
+{
+	return (type == MBR_FREEBSD_PARTITION ||
+		type == (MBR_FREEBSD_PARTITION ^ HIDDEN_MASK) ||
+		type == MBR_NETBSD_PARTITION ||
+		type == (MBR_NETBSD_PARTITION ^ HIDDEN_MASK) ||
+		type == MBR_OPENBSD_PARTITION ||
+		type == (MBR_OPENBSD_PARTITION ^ HIDDEN_MASK));
+}
+#endif
 
 void
 bsd_command_prompt (struct fdisk_context *cxt)
