@@ -15,6 +15,8 @@
 
 #include "fdiskdoslabel.h"
 
+#include <ctype.h>
+
 #define MAXIMUM_PARTS	60
 #define ACTIVE_FLAG     0x80
 
@@ -1203,7 +1205,7 @@ static int dos_add_partition(
 		if (j >= 0)
 			rc = add_partition(cxt, j, t);
 	} else {
-		char buf[16];
+		char *buf;
 		char c, prompt[BUFSIZ];
 		int dflt;
 
@@ -1213,13 +1215,13 @@ static int dos_add_partition(
 			 _("Partition type:\n"
 			   "   p   primary (%zd primary, %d extended, %zd free)\n"
 			   "%s\n"
-			   "Select (default %c): "),
+			   "Select (default %c)"),
 			 4 - (l->ext_offset ? 1 : 0) - free_primary,
 			 l->ext_offset ? 1 : 0, free_primary,
 			 l->ext_offset ? _("   l   logical (numbered from 5)") : _("   e   extended"),
 			 dflt);
 
-		rc = get_user_reply(cxt, prompt, buf, sizeof(buf));
+		rc = fdisk_ask_string(cxt, prompt, &buf);
 		if (rc)
 			return rc;
 		if (!buf[0]) {
@@ -1227,6 +1229,7 @@ static int dos_add_partition(
 			fdisk_info(cxt, _("Using default response %c"), c);
 		} else
 			c = tolower(buf[0]);
+		free(buf);
 
 		if (c == 'p') {
 			int j = get_partition_unused_primary(cxt);
