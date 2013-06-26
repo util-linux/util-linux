@@ -78,12 +78,12 @@ static int xbsd_write_bootstrap (struct fdisk_context *cxt);
 static void xbsd_change_fstype (struct fdisk_context *cxt);
 static int xbsd_get_part_index (struct fdisk_context *cxt, int max, int *n);
 static int xbsd_check_new_partition (struct fdisk_context *cxt, int *i);
-static unsigned short xbsd_dkcksum (struct xbsd_disklabel *lp);
+static unsigned short xbsd_dkcksum (struct bsd_disklabel *lp);
 static int xbsd_initlabel  (struct fdisk_context *cxt,
-			    struct dos_partition *p, struct xbsd_disklabel *d);
+			    struct dos_partition *p, struct bsd_disklabel *d);
 static int xbsd_readlabel  (struct fdisk_context *cxt,
-			    struct dos_partition *p, struct xbsd_disklabel *d);
-static int xbsd_writelabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd_disklabel *d);
+			    struct dos_partition *p, struct bsd_disklabel *d);
+static int xbsd_writelabel (struct fdisk_context *cxt, struct dos_partition *p, struct bsd_disklabel *d);
 static void sync_disks (void);
 
 #if defined (__alpha__)
@@ -104,7 +104,7 @@ static char disklabelbuffer[BSD_BBSIZE] __attribute__((aligned(8)));
 static char disklabelbuffer[BSD_BBSIZE];
 #endif
 
-static struct xbsd_disklabel xbsd_dlabel;
+static struct bsd_disklabel xbsd_dlabel;
 
 #define bsd_cround(c, n) \
 	(fdisk_context_use_cylinders(c) ? ((n)/xbsd_dlabel.d_secpercyl) + 1 : (n))
@@ -417,8 +417,8 @@ static int xbsd_delete_part(
 void
 xbsd_print_disklabel (struct fdisk_context *cxt, int show_all)
 {
-  struct xbsd_disklabel *lp = &xbsd_dlabel;
-  struct xbsd_partition *pp;
+  struct bsd_disklabel *lp = &xbsd_dlabel;
+  struct bsd_partition *pp;
   FILE *f = stdout;
   int i, j;
 
@@ -454,7 +454,7 @@ xbsd_print_disklabel (struct fdisk_context *cxt, int show_all)
     fprintf(f, _("track-to-track seek: %ld\t# milliseconds\n"),
 	    (long) lp->d_trkseek);
     fprintf(f, _("drivedata: "));
-    for (i = NDDATA - 1; i >= 0; i--)
+    for (i = ARRAY_SIZE(lp->d_drivedata)- 1; i >= 0; i--)
       if (lp->d_drivedata[i])
 	break;
     if (i < 0)
@@ -533,7 +533,7 @@ static uint16_t ask_uint16(struct fdisk_context *cxt,
 
 static void xbsd_edit_disklabel(struct fdisk_context *cxt)
 {
-	struct xbsd_disklabel *d;
+	struct bsd_disklabel *d;
 	uintmax_t res;
 
 	d = &xbsd_dlabel;
@@ -592,7 +592,7 @@ static int xbsd_write_bootstrap (struct fdisk_context *cxt)
 	char *res, *d, *p;
 	int rc;
 	sector_t sector;
-	struct xbsd_disklabel dl;
+	struct bsd_disklabel dl;
 
 	snprintf(buf, sizeof(buf),
 		_("Bootstrap: %1$sboot -> boot%1$s (default %1$s)"),
@@ -612,10 +612,10 @@ static int xbsd_write_bootstrap (struct fdisk_context *cxt)
 
 	/* We need a backup of the disklabel (xbsd_dlabel might have changed). */
 	d = &disklabelbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE];
-	memmove(&dl, d, sizeof(struct xbsd_disklabel));
+	memmove(&dl, d, sizeof(struct bsd_disklabel));
 
 	/* The disklabel will be overwritten by 0's from bootxx anyway */
-	memset(d, 0, sizeof(struct xbsd_disklabel));
+	memset(d, 0, sizeof(struct bsd_disklabel));
 
 	snprintf(buf, sizeof(buf), "%s/boot%s", BSD_LINUX_BOOTDIR, name);
 	rc = xbsd_get_bootstrap(cxt, buf,
@@ -625,7 +625,7 @@ static int xbsd_write_bootstrap (struct fdisk_context *cxt)
 		goto done;
 
 	/* check end of the bootstrap */
-	for (p = d; p < d + sizeof(struct xbsd_disklabel); p++) {
+	for (p = d; p < d + sizeof(struct bsd_disklabel); p++) {
 		if (!*p)
 			continue;
 		fdisk_warnx(cxt, _("Bootstrap overlaps with disk label!"));
@@ -633,7 +633,7 @@ static int xbsd_write_bootstrap (struct fdisk_context *cxt)
 	}
 
 	/* move disklabel back */
-	memmove(d, &dl, sizeof(struct xbsd_disklabel));
+	memmove(d, &dl, sizeof(struct bsd_disklabel));
 
 #if defined (__powerpc__) || defined (__hppa__)
 	sector = 0;
@@ -740,7 +740,7 @@ xbsd_check_new_partition(struct fdisk_context *cxt, int *i)
 }
 
 static unsigned short
-xbsd_dkcksum (struct xbsd_disklabel *lp) {
+xbsd_dkcksum (struct bsd_disklabel *lp) {
 	unsigned short *start, *end;
 	unsigned short sum = 0;
 
@@ -753,11 +753,11 @@ xbsd_dkcksum (struct xbsd_disklabel *lp) {
 
 static int xbsd_initlabel (struct fdisk_context *cxt,
 		struct dos_partition *p,
-		struct xbsd_disklabel *d)
+		struct bsd_disklabel *d)
 {
-	struct xbsd_partition *pp;
+	struct bsd_partition *pp;
 
-	memset (d, 0, sizeof (struct xbsd_disklabel));
+	memset (d, 0, sizeof (struct bsd_disklabel));
 
 	d -> d_magic = BSD_DISKMAGIC;
 
@@ -824,7 +824,7 @@ static int xbsd_initlabel (struct fdisk_context *cxt,
  * If it has the right magic, return 1.
  */
 static int
-xbsd_readlabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd_disklabel *d)
+xbsd_readlabel (struct fdisk_context *cxt, struct dos_partition *p, struct bsd_disklabel *d)
 {
 	int t, sector;
 
@@ -845,7 +845,7 @@ xbsd_readlabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd_
 
 	memmove (d,
 	         &disklabelbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE + BSD_LABELOFFSET],
-	         sizeof (struct xbsd_disklabel));
+	         sizeof (struct bsd_disklabel));
 
 	if (d -> d_magic != BSD_DISKMAGIC || d -> d_magic2 != BSD_DISKMAGIC)
 		return 0;
@@ -867,7 +867,7 @@ xbsd_readlabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd_
 }
 
 static int
-xbsd_writelabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd_disklabel *d)
+xbsd_writelabel (struct fdisk_context *cxt, struct dos_partition *p, struct bsd_disklabel *d)
 {
   unsigned int sector;
 
@@ -884,7 +884,7 @@ xbsd_writelabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd
      otherwise we'd write the old disklabel with the bootstrap.
   */
   memmove (&disklabelbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE + BSD_LABELOFFSET], d,
-           sizeof (struct xbsd_disklabel));
+           sizeof (struct bsd_disklabel));
 
 #if defined (__alpha__) && BSD_LABELSECTOR == 0
   alpha_bootblock_checksum (disklabelbuffer);
@@ -902,7 +902,7 @@ xbsd_writelabel (struct fdisk_context *cxt, struct dos_partition *p, struct xbsd
 	  fdisk_warn(cxt, _("seek failed: %d"), cxt->dev_path);
 	  return -errno;
   }
-  if (sizeof (struct xbsd_disklabel) != write (cxt->dev_fd, d, sizeof (struct xbsd_disklabel))) {
+  if (sizeof (struct bsd_disklabel) != write (cxt->dev_fd, d, sizeof (struct bsd_disklabel))) {
 	  fdisk_warn(cxt, _("write failed: %d"), cxt->dev_path);
 	  return -errno;
   }
@@ -1011,7 +1011,7 @@ static int xbsd_set_parttype(
 		size_t partnum,
 		struct fdisk_parttype *t)
 {
-	struct xbsd_partition *p;
+	struct bsd_partition *p;
 
 	assert(cxt);
 	assert(cxt->label);
