@@ -1,6 +1,7 @@
 /*
  *
- * Copyright (C) 2013 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2007-2013 Karel Zak <kzak@redhat.com>
+ *                    2012 Davidlohr Bueso <dave@gnu.org>
  *
  * This is re-written version for libfdisk, the original was fdiskdoslabel.c
  * from util-linux fdisk.
@@ -8,12 +9,9 @@
 #include "c.h"
 #include "nls.h"
 #include "randutils.h"
-#include "common.h"
 #include "pt-mbr.h"
 
 #include "fdiskP.h"
-
-#include "fdiskdoslabel.h"
 
 #include <ctype.h>
 
@@ -61,7 +59,7 @@ struct fdisk_dos_label {
  * Partition types
  */
 static struct fdisk_parttype dos_parttypes[] = {
-	#include "dos_part_types.h"
+	#include "pt-mbr-partnames.h"
 };
 
 #define set_hsc(h,s,c,sector) { \
@@ -146,7 +144,6 @@ static int is_cleared_partition(struct dos_partition *p)
 		 p->sys_ind || p->eh || p->es || p->ec ||
 		 dos_partition_get_start(p) || dos_partition_get_size(p));
 }
-
 
 static int get_partition_unused_primary(struct fdisk_context *cxt)
 {

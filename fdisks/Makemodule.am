@@ -5,14 +5,11 @@ if BUILD_FDISK
 sbin_PROGRAMS += fdisk
 dist_man_MANS += fdisks/fdisk.8
 fdisk_SOURCES = \
-	fdisks/dos_part_types.h \
 	fdisks/fdisk.c \
 	fdisks/fdisk.h \
 	fdisks/fdisk-ask.c \
 	fdisks/fdiskbsdlabel.c \
 	fdisks/fdiskbsdlabel.h \
-	fdisks/fdiskdoslabel.c \
-	fdisks/fdiskdoslabel.h \
 	fdisks/fdisk-menu.c \
 	fdisks/partname.c \
 	fdisks/common.h

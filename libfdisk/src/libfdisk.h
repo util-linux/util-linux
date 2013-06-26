@@ -184,6 +184,17 @@ extern int sgi_create_info(struct fdisk_context *cxt);
 extern int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i);
 extern int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i);
 
+/* dos.c */
+extern struct dos_partition *fdisk_dos_get_partition(
+				struct fdisk_context *cxt,
+				size_t i);
+
+extern int fdisk_dos_fix_order(struct fdisk_context *cxt);
+extern int fdisk_dos_move_begin(struct fdisk_context *cxt, int i);
+extern int fdisk_dos_list_extended(struct fdisk_context *cxt);
+
+#define DOS_FLAG_ACTIVE	1
+
 /* ask.c */
 #define fdisk_is_ask(a, x) (fdisk_ask_get_type(a) == FDISK_ASKTYPE_ ## x)
 

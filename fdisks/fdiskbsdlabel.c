@@ -62,7 +62,6 @@
 #define NETBSD_PARTITION	0xa9
 #define DKTYPENAMES
 #include "fdiskbsdlabel.h"
-#include "fdiskdoslabel.h"
 #include "all-io.h"
 
 /*

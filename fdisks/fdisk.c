@@ -37,7 +37,6 @@
 #include "closestream.h"
 
 #include "pt-sun.h"		/* to toggle flags */
-#include "fdiskdoslabel.h"
 #include "fdiskbsdlabel.h"
 
 #ifdef HAVE_LINUX_COMPILER_H

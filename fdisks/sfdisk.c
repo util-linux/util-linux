@@ -60,7 +60,7 @@ struct systypes {
 };
 
 static struct systypes i386_sys_types[] = {
-	#include "dos_part_types.h"
+	#include "pt-mbr-partnames.h"
 };
 
 /*

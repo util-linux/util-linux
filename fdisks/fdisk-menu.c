@@ -10,7 +10,6 @@
 #include "pt-sun.h"
 #include "pt-mbr.h"
 
-#include "fdiskdoslabel.h"
 #include "fdiskbsdlabel.h"
 
 struct menu_entry {
