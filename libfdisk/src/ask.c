@@ -185,11 +185,19 @@ int fdisk_ask_number_set_relative(struct fdisk_ask *ask, int relative)
 	return 0;
 }
 
+int fdisk_ask_number_inchars(struct fdisk_ask *ask)
+{
+	assert(ask);
+	assert(is_number_ask(ask));
+	return ask->data.num.inchars;
+}
+
 /*
  * Generates string with list ranges (e.g. 1,2,5-8) for the 'cur'
  */
+#define tochar(num)	((int) ('a' + num - 1))
 static char *mk_string_list(char *ptr, size_t *len, size_t *begin,
-			    size_t *run, ssize_t cur)
+			    size_t *run, ssize_t cur, int inchar)
 {
 	int rlen;
 
@@ -210,11 +218,16 @@ static char *mk_string_list(char *ptr, size_t *len, size_t *begin,
 
 					/* add to the list */
 	if (!*run)
-		rlen = snprintf(ptr, *len, "%zd,", *begin);
+		rlen = inchar ? snprintf(ptr, *len, "%c,", tochar(*begin)) :
+				snprintf(ptr, *len, "%zd,", *begin);
 	else if (*run == 1)
-		rlen = snprintf(ptr, *len, "%zd,%zd,", *begin, *begin + 1);
+		rlen = inchar ?
+			snprintf(ptr, *len, "%c,%c,", tochar(*begin), tochar(*begin + 1)) :
+			snprintf(ptr, *len, "%zd,%zd,", *begin, *begin + 1);
 	else
-		rlen = snprintf(ptr, *len, "%zd-%zd,", *begin, *begin + *run);
+		rlen = inchar ?
+			snprintf(ptr, *len, "%c-%c,", tochar(*begin), tochar(*begin + *run)) :
+			snprintf(ptr, *len, "%zd-%zd,", *begin, *begin + *run);
 
 	if (rlen < 0 || (size_t) rlen + 1 > *len)
 		return NULL;
@@ -241,7 +254,7 @@ static char *mk_string_list(char *ptr, size_t *len, size_t *begin,
 /* returns: 1=0 on success, < 0 on error, 1 if no free/used partition */
 int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 {
-	int rc = 0;
+	int rc = 0, inchar = 0;
 	char range[BUFSIZ], *ptr = range;
 	size_t i, len = sizeof(range), begin = 0, run = 0;
 	struct fdisk_ask *ask = NULL;
@@ -251,9 +264,15 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 	assert(cxt->label);
 	assert(partnum);
 
-	DBG(ASK, dbgprint("%s: asking for %s partition number (max: %zd)",
-				cxt->label->name, wantnew ? "new" : "used",
-				cxt->label->nparts_max));
+	if (cxt->label && cxt->label->flags & FDISK_LABEL_FL_INCHARS_PARTNO)
+		inchar = 1;
+
+	DBG(ASK, dbgprint("%s: asking for %s partition number "
+			  "(max: %zd, inchar: %s)",
+			cxt->label->name,
+			wantnew ? "new" : "used",
+			cxt->label->nparts_max,
+			inchar ? "yes" : "not"));
 
 	ask = fdisk_new_ask();
 	if (!ask)
@@ -262,6 +281,8 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 	fdisk_ask_set_type(ask, FDISK_ASKTYPE_NUMBER);
 	num = &ask->data.num;
 
+	ask->data.num.inchars = inchar ? 1 : 0;
+
 	for (i = 0; i < cxt->label->nparts_max; i++) {
 		int status = 0;
 
@@ -269,7 +290,7 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 		if (rc)
 			break;
 		if (wantnew && !(status & FDISK_PARTSTAT_USED)) {
-			ptr = mk_string_list(ptr, &len, &begin, &run, i);
+			ptr = mk_string_list(ptr, &len, &begin, &run, i, inchar);
 			if (!ptr) {
 				rc = -EINVAL;
 				break;
@@ -278,7 +299,7 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 				num->dfl = num->low = i + 1;
 			num->hig = i + 1;
 		} else if (!wantnew && (status & FDISK_PARTSTAT_USED)) {
-			ptr = mk_string_list(ptr, &len, &begin, &run, i);
+			ptr = mk_string_list(ptr, &len, &begin, &run, i, inchar);
 			if (!num->low)
 				num->low = i + 1;
 			num->dfl = num->hig = i + 1;
@@ -313,7 +334,7 @@ int fdisk_ask_partnum(struct fdisk_context *cxt, size_t *partnum, int wantnew)
 		goto dont_ask;
 	}
 	if (!rc) {
-		mk_string_list(ptr, &len, &begin, &run, -1);	/* terminate the list */
+		mk_string_list(ptr, &len, &begin, &run, -1, inchar);	/* terminate the list */
 		rc = fdisk_ask_number_set_range(ask, range);
 	}
 	if (!rc)

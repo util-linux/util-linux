@@ -207,7 +207,8 @@ struct fdisk_label {
 /* label driver flags */
 enum {
 	FDISK_LABEL_FL_ADDPART_NOPARTNO = (1 << 1),
-	FDISK_LABEL_FL_REQUIRE_GEOMETRY = (1 << 2)
+	FDISK_LABEL_FL_REQUIRE_GEOMETRY = (1 << 2),
+	FDISK_LABEL_FL_INCHARS_PARTNO   = (1 << 3)
 };
 
 /* label allocators */
@@ -235,7 +236,8 @@ struct fdisk_ask {
 			uint64_t	base;		/* for relative results */
 			uint64_t	unit;		/* unit for offsets */
 			const char	*range;		/* by library generated list */
-			unsigned int	relative:1;
+			unsigned int	relative :1,
+					inchars  :1;
 		} num;
 		/* FDISK_ASKTYPE_{WARN,WARNX,..} */
 		struct ask_print {
