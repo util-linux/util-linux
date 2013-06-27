@@ -295,8 +295,8 @@ static int menu_detect_collisions(struct fdisk_context *cxt)
 		if (r != e) {
 			DBG(FRONTEND, dbgprint("warning: duplicate key '%c'",
 						e->key));
-			DBG(FRONTEND, dbgprint("         %s", e->title));
-			DBG(FRONTEND, dbgprint("         %s", r->title));
+			DBG(FRONTEND, dbgprint("       : %s", e->title));
+			DBG(FRONTEND, dbgprint("       : %s", r->title));
 			abort();
 		}
 	}
@@ -438,7 +438,11 @@ static int dos_menu_cb(struct fdisk_context *cxt,
 		{
 			struct fdisk_context *bsd
 					= fdisk_new_nested_context(cxt, "bsd");
-			if (bsd)
+			if (!bsd)
+				return -ENOMEM;
+			if (!fdisk_dev_has_disklabel(bsd))
+				rc = fdisk_create_disklabel(bsd, "bsd");
+			if (!rc)
 				bsd_command_prompt(bsd);
 			fdisk_free_context(bsd);
 			break;

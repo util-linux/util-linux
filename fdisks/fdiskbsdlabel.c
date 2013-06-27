@@ -148,22 +148,77 @@ static struct bsd_disklabel xbsd_dlabel;
 #define bsd_cround(c, n) \
 	(fdisk_context_use_cylinders(c) ? ((n)/xbsd_dlabel.d_secpercyl) + 1 : (n))
 
-/*
- * Test whether the whole disk has BSD disk label magic. Returns 1 on success.
- *
- * Note: often reformatting with DOS-type label leaves the BSD magic,
- * so this does not mean that there is a BSD disk label.
- */
-static int
-osf_probe_label(struct fdisk_context *cxt)
+#define HIDDEN_MASK	0x10
+
+static int is_bsd_partition_type(int type)
 {
+	return (type == MBR_FREEBSD_PARTITION ||
+		type == (MBR_FREEBSD_PARTITION ^ HIDDEN_MASK) ||
+		type == MBR_NETBSD_PARTITION ||
+		type == (MBR_NETBSD_PARTITION ^ HIDDEN_MASK) ||
+		type == MBR_OPENBSD_PARTITION ||
+		type == (MBR_OPENBSD_PARTITION ^ HIDDEN_MASK));
+}
+
+/*
+ * look for DOS partition usable for nested BSD partition table
+ */
+static int bsd_assign_dos_partition(struct fdisk_context *cxt)
+{
+	size_t i;
+
+	assert(cxt);
+	assert(cxt->parent);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, OSF));
+
+	for (i = 0; i < 4; i++) {
+		sector_t ss;
+		struct dos_partition *p =
+				fdisk_dos_get_partition(cxt->parent, i);
+
+		if (!p || !is_bsd_partition_type(p->sys_ind))
+			continue;
+
+		xbsd_part = p;
+		xbsd_part_index = i;
+		ss = dos_partition_get_start(p);
+
+		if (!ss) {
+			fprintf (stderr, _("Partition %zd: has invalid starting sector 0.\n"), i + 1);
+			return -1;
+		}
+
+		if (cxt->parent->dev_path) {
+			free(cxt->dev_path);
+			cxt->dev_path = fdisk_partname(
+						cxt->parent->dev_path, i + 1);
+		}
+
+		DBG(LABEL, dbgprint("partition %zu assigned to BSD", i + 1));
+		return 0;
+	}
+
+	printf (_("There is no *BSD partition on %s.\n"), cxt->parent->dev_path);
+	return 1;
+}
+
+static int bsd_probe_label(struct fdisk_context *cxt)
+{
+	int rc = 0;
+
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, OSF));
 
-	if (xbsd_readlabel (cxt, NULL, &xbsd_dlabel) == 0)
-		return 0;
-	return 1;
+	if (cxt->parent)
+		/* nested BSD partiotn table */
+		rc = bsd_assign_dos_partition(cxt);
+	if (!rc)
+		rc = xbsd_readlabel(cxt, NULL, &xbsd_dlabel);
+	if (!rc)
+		return 1;	/* found BSD */
+	return 0;		/* not found */
 }
 
 static int xbsd_write_disklabel (struct fdisk_context *cxt)
@@ -277,94 +332,41 @@ static int xbsd_create_disklabel(struct fdisk_context *cxt)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, OSF));
 
-	fdisk_info(cxt, _("%s does not contain BSD disklabel."), cxt->dev_path);
+	fdisk_info(cxt, _("The device %s does not contain BSD disklabel."), cxt->dev_path);
 	rc = fdisk_ask_yesno(cxt,
 			_("Do you want to create a BSD disklabel?"),
 			&yes);
 
-	if (rc == 0 && yes) {
+	if (rc || !yes)
+		return rc;
+	if (cxt->parent) {
+		rc = bsd_assign_dos_partition(cxt);
+		if (rc == 1)
+			/* not found DOS partition usable for BSD label */
+			rc = -EINVAL;
+	}
+	if (rc)
+		return rc;
+
 #if defined (__alpha__) || defined (__powerpc__) || defined (__hppa__) || \
     defined (__s390__) || defined (__s390x__)
-		rc = xbsd_initlabel(cxt, NULL, &xbsd_dlabel);
+	rc = xbsd_initlabel(cxt, NULL, &xbsd_dlabel);
 #else
-		rc = xbsd_initlabel(cxt, xbsd_part, &xbsd_dlabel);
+	rc = xbsd_initlabel(cxt, xbsd_part, &xbsd_dlabel);
 #endif
-		if (rc == 0) {
-			xbsd_print_disklabel (cxt, 1);
-			cxt->label->nparts_cur = xbsd_dlabel.d_npartitions;
-			cxt->label->nparts_max = BSD_MAXPARTITIONS;
-		}
+	if (!rc) {
+		xbsd_print_disklabel (cxt, 1);
+		cxt->label->nparts_cur = xbsd_dlabel.d_npartitions;
+		cxt->label->nparts_max = BSD_MAXPARTITIONS;
 	}
 
 	return rc;
 }
 
-#if !defined (__alpha__)
-#define HIDDEN_MASK	0x10
-
-static int is_bsd_partition_type(int type)
-{
-	return (type == MBR_FREEBSD_PARTITION ||
-		type == (MBR_FREEBSD_PARTITION ^ HIDDEN_MASK) ||
-		type == MBR_NETBSD_PARTITION ||
-		type == (MBR_NETBSD_PARTITION ^ HIDDEN_MASK) ||
-		type == MBR_OPENBSD_PARTITION ||
-		type == (MBR_OPENBSD_PARTITION ^ HIDDEN_MASK));
-}
-#endif
 
 void
 bsd_command_prompt (struct fdisk_context *cxt)
 {
-#if !defined (__alpha__)
-  int t, ss;
-  struct dos_partition *p;
-
-  assert(cxt);
-  assert(cxt->parent);
-
-  for (t=0; t<4; t++) {
-    p = fdisk_dos_get_partition(cxt, t);
-    if (p && is_bsd_partition_type(p->sys_ind)) {
-      xbsd_part = p;
-      xbsd_part_index = t;
-      ss = dos_partition_get_start(xbsd_part);
-
-      /* TODO - partname uses static buffer!!! */
-      cxt->dev_path = partname(cxt->parent->dev_path, t+1, 0);
-      if (cxt->dev_path)
-	      cxt->dev_path = strdup(cxt->dev_path);
-
-      if (ss == 0) {
-	fprintf (stderr, _("Partition %s has invalid starting sector 0.\n"),
-		 cxt->dev_path);
-	return;
-      }
-      printf (_("Reading disklabel of %s at sector %d.\n"),
-		   cxt->dev_path, ss + BSD_LABELSECTOR);
-      if (xbsd_readlabel (cxt, xbsd_part, &xbsd_dlabel) == 0
-		&& xbsd_create_disklabel(cxt) != 0) {
-	fdisk_warnx(cxt, _("Failed to read and create BSD disklabel"));
-	return;
-      }
-      break;
-    }
-  }
-
-  if (t == 4) {
-    printf (_("There is no *BSD partition on %s.\n"), cxt->dev_path);
-    return;
-  }
-
-#elif defined (__alpha__)
-
-  if (xbsd_readlabel (cxt, NULL, &xbsd_dlabel) == 0
-	      && xbsd_create_disklabel(cxt) != 0) {
-    fdisk_warnx(cxt, _("Failed to read and create BSD disklabel"));
-    return;
-  }
-
-#endif
 
   while (1) {
     char buf[16];
@@ -859,7 +861,7 @@ static int xbsd_initlabel (struct fdisk_context *cxt,
 
 /*
  * Read a xbsd_disklabel from sector 0 or from the starting sector of p.
- * If it has the right magic, return 1.
+ * If it has the right magic, return 0.
  */
 static int
 xbsd_readlabel (struct fdisk_context *cxt, struct dos_partition *p, struct bsd_disklabel *d)
@@ -877,16 +879,16 @@ xbsd_readlabel (struct fdisk_context *cxt, struct dos_partition *p, struct bsd_d
 #endif
 
 	if (lseek (cxt->dev_fd, (off_t) sector * DEFAULT_SECTOR_SIZE, SEEK_SET) == -1)
-		return 0;
+		return -1;
 	if (BSD_BBSIZE != read (cxt->dev_fd, disklabelbuffer, BSD_BBSIZE))
-		return 0;
+		return -1;
 
 	memmove (d,
 	         &disklabelbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE + BSD_LABELOFFSET],
 	         sizeof (struct bsd_disklabel));
 
 	if (d -> d_magic != BSD_DISKMAGIC || d -> d_magic2 != BSD_DISKMAGIC)
-		return 0;
+		return -1;
 
 	for (t = d -> d_npartitions; t < BSD_MAXPARTITIONS; t++) {
 		d -> d_partitions[t].p_size   = 0;
@@ -901,7 +903,7 @@ xbsd_readlabel (struct fdisk_context *cxt, struct dos_partition *p, struct bsd_d
 
 	cxt->label->nparts_cur = d->d_npartitions;
 	cxt->label->nparts_max = BSD_MAXPARTITIONS;
-	return 1;
+	return 0;
 }
 
 static int
@@ -1069,7 +1071,7 @@ static int xbsd_set_parttype(
 
 static const struct fdisk_label_operations bsd_operations =
 {
-	.probe		= osf_probe_label,
+	.probe		= bsd_probe_label,
 	.write		= xbsd_write_disklabel,
 	.create		= xbsd_create_disklabel,
 	.part_add	= xbsd_add_part,
