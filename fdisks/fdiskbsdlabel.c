@@ -235,20 +235,16 @@ static int xbsd_write_disklabel (struct fdisk_context *cxt)
 }
 
 static int xbsd_add_part (struct fdisk_context *cxt,
-		size_t partnum __attribute__((__unused__)),
+		size_t i,
 		struct fdisk_parttype *t __attribute__((__unused__)))
 {
 	struct fdisk_ask *ask;
 	unsigned int begin, end;
-	int i, rc;
+	int rc;
 
 	assert(cxt);
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, OSF));
-
-	rc = xbsd_check_new_partition(cxt, &i);
-	if (rc)
-		return rc;
 
 #if !defined (__alpha__) && !defined (__powerpc__) && !defined (__hppa__)
 	begin = dos_partition_get_start(xbsd_part);
@@ -370,7 +366,8 @@ bsd_command_prompt (struct fdisk_context *cxt)
 
   while (1) {
     char buf[16];
-    int rc, n;
+    int rc;
+    size_t n;
 
     /*
      * BIG-FAT-TODO: don't use bsd_command_prompt(), just initialialize BSD
@@ -385,10 +382,8 @@ bsd_command_prompt (struct fdisk_context *cxt)
 
     switch (tolower(buf[0])) {
       case 'd':
-	rc = xbsd_get_part_index(cxt, xbsd_dlabel.d_npartitions, &n);
-	if (rc)
-		return;
-	xbsd_delete_part(cxt, n);
+	if (fdisk_ask_partnum(cxt, &n, FALSE) == 0)
+		xbsd_delete_part(cxt, n);
 	break;
       case 'e':
 	xbsd_edit_disklabel (cxt);
@@ -400,8 +395,9 @@ bsd_command_prompt (struct fdisk_context *cxt)
 	list_partition_types (cxt);
 	break;
       case 'n':
-	      xbsd_add_part (cxt, 0, 0);
-	      break;
+	if (fdisk_ask_partnum(cxt, &n, TRUE) == 0)
+	        xbsd_add_part(cxt, n, 0);
+	break;
       case 'p':
 	      xbsd_print_disklabel (cxt, 0);
 	break;
@@ -887,8 +883,10 @@ xbsd_readlabel (struct fdisk_context *cxt, struct dos_partition *p, struct bsd_d
 	         &disklabelbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE + BSD_LABELOFFSET],
 	         sizeof (struct bsd_disklabel));
 
-	if (d -> d_magic != BSD_DISKMAGIC || d -> d_magic2 != BSD_DISKMAGIC)
+	if (d -> d_magic != BSD_DISKMAGIC || d -> d_magic2 != BSD_DISKMAGIC) {
+		DBG(LABEL, dbgprint("not found magic"));
 		return -1;
+	}
 
 	for (t = d -> d_npartitions; t < BSD_MAXPARTITIONS; t++) {
 		d -> d_partitions[t].p_size   = 0;
@@ -903,6 +901,7 @@ xbsd_readlabel (struct fdisk_context *cxt, struct dos_partition *p, struct bsd_d
 
 	cxt->label->nparts_cur = d->d_npartitions;
 	cxt->label->nparts_max = BSD_MAXPARTITIONS;
+	DBG(LABEL, dbgprint("read BSD label"));
 	return 0;
 }
 
@@ -1069,6 +1068,30 @@ static int xbsd_set_parttype(
 	return 0;
 }
 
+static int bsd_get_partition_status(
+		struct fdisk_context *cxt,
+		size_t partnum,
+		int *status)
+{
+	struct bsd_partition *p;
+
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, OSF));
+
+	if (!status || partnum >= BSD_MAXPARTITIONS)
+		return -EINVAL;
+
+	p = &xbsd_dlabel.d_partitions[partnum];
+	*status = FDISK_PARTSTAT_NONE;
+
+	if (p->p_size)
+		*status = FDISK_PARTSTAT_USED;
+
+	return 0;
+}
+
+
 static const struct fdisk_label_operations bsd_operations =
 {
 	.probe		= bsd_probe_label,
@@ -1077,7 +1100,8 @@ static const struct fdisk_label_operations bsd_operations =
 	.part_add	= xbsd_add_part,
 	.part_delete	= xbsd_delete_part,
 	.part_get_type	= xbsd_get_parttype,
-	.part_set_type	= xbsd_set_parttype
+	.part_set_type	= xbsd_set_parttype,
+	.part_get_status= bsd_get_partition_status,
 };
 
 
@@ -1103,7 +1127,7 @@ struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt)
 	lb->parttypes = xbsd_fstypes;
 	lb->nparttypes = ARRAY_SIZE(xbsd_fstypes);
 
-	lb->flags |= FDISK_LABEL_FL_ADDPART_NOPARTNO;
+	lb->flags |= FDISK_LABEL_FL_INCHARS_PARTNO;
 	lb->flags |= FDISK_LABEL_FL_REQUIRE_GEOMETRY;
 
 	return lb;
