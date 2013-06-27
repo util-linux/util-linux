@@ -38,12 +38,11 @@ struct tt;
  * Supported partition table types (labels)
  */
 enum fdisk_labeltype {
-	FDISK_DISKLABEL_DOS = 1,
-	FDISK_DISKLABEL_SUN = 2,
-	FDISK_DISKLABEL_SGI = 4,
-	FDISK_DISKLABEL_OSF = 8,
-	FDISK_DISKLABEL_GPT = 32,
-	FDISK_DISKLABEL_ANY = -1
+	FDISK_DISKLABEL_DOS = (1 << 1),
+	FDISK_DISKLABEL_SUN = (1 << 2),
+	FDISK_DISKLABEL_SGI = (1 << 3),
+	FDISK_DISKLABEL_OSF = (1 << 4),
+	FDISK_DISKLABEL_GPT = (1 << 5)
 };
 
 enum {

@@ -13,13 +13,15 @@
 #include "fdiskbsdlabel.h"
 
 struct menu_entry {
-	const char	key;
-	const char	*title;
-	unsigned int	normal : 1,
-			expert : 1,
-			hidden : 1;
+	const char	key;			/* command key */
+	const char	*title;			/* help string */
+	unsigned int	normal : 1,		/* normal mode */
+			expert : 1,		/* expert mode */
+			hidden : 1;		/* be sensitive for this key,
+						   but don't print it in help */
 
-	enum fdisk_labeltype	exclude;
+	enum fdisk_labeltype	label;		/* only for this label */
+	enum fdisk_labeltype	exclude;	/* all labels except this */
 };
 
 #define IS_MENU_SEP(e)	((e)->key == '-')
@@ -57,8 +59,9 @@ DECLARE_MENU_CB(dos_menu_cb);
  *	MENU_X*    expert mode only
  *      MENU_B*    both -- expert + normal mode
  *
- *      *_E exclude
- *      *_H hidden
+ *      *_E  exclude this label
+ *      *_H  hidden
+ *      *_L  only for this label
  */
 
 /* separator */
@@ -69,6 +72,7 @@ DECLARE_MENU_CB(dos_menu_cb);
 /* entry */
 #define MENU_ENT(k, t)		{ .title = t, .key = k, .normal = 1 }
 #define MENU_ENT_E(k, t, l)	{ .title = t, .key = k, .normal = 1, .exclude = l }
+#define MENU_ENT_L(k, t, l)	{ .title = t, .key = k, .normal = 1, .label = l }
 
 #define MENU_XENT(k, t)		{ .title = t, .key = k, .expert = 1 }
 #define MENU_XENT_H(k, t)	{ .title = t, .key = k, .expert = 1, .hidden = 1 }
@@ -86,19 +90,21 @@ struct menu menu_generic = {
 		MENU_ENT  ('n', N_("add a new partition")),
 		MENU_BENT ('p', N_("print the partition table")),
 		MENU_ENT  ('t', N_("change a partition type")),
-		MENU_ENT  ('v', N_("verify the partition table")),
+		MENU_ENT_E('v', N_("verify the partition table"), FDISK_DISKLABEL_OSF),
 
 		MENU_XENT('d', N_("print the raw data of the first sector")),
 
 		MENU_SEP(N_("Misc")),
 		MENU_BENT ('m', N_("print this menu")),
 		MENU_ENT_E('u', N_("change display/entry units"), FDISK_DISKLABEL_GPT),
-		MENU_ENT  ('x', N_("extra functionality (experts only)")),
+		MENU_ENT_E('x', N_("extra functionality (experts only)"), FDISK_DISKLABEL_OSF),
 
 		MENU_BSEP(N_("Save & Exit")),
 		MENU_ENT_E('w', N_("write table to disk and exit"), FDISK_DISKLABEL_OSF),
+		MENU_ENT_L('w', N_("write table to disk"), FDISK_DISKLABEL_OSF),
 		MENU_BENT ('q', N_("quit without saving changes")),
 		MENU_XENT ('r', N_("return to main menu")),
+		MENU_ENT_L('r', N_("return to main menu"), FDISK_DISKLABEL_OSF),
 
 		{ 0, NULL }
 	}
@@ -123,7 +129,7 @@ struct menu menu_createlabel = {
 
 struct menu menu_geo = {
 	.callback = geo_menu_cb,
-	.exclude = FDISK_DISKLABEL_GPT,
+	.exclude = FDISK_DISKLABEL_GPT | FDISK_DISKLABEL_OSF,
 	.entries = {
 		MENU_XSEP(N_("Geometry")),
 		MENU_XENT('c', N_("change number of cylinders")),
@@ -200,7 +206,6 @@ struct menu menu_bsd = {
 		MENU_ENT('e', N_("edit drive data")),
 		MENU_ENT('i', N_("install bootstrap")),
 		MENU_ENT('s', N_("show complete disklabel")),
-		MENU_ENT('w', N_("write disklabel to disk")),
 #if !defined (__alpha__)
 		MENU_ENT('x', N_("link BSD partition to non-BSD partition")),
 #endif
@@ -238,9 +243,10 @@ static const struct menu_entry *next_menu_entry(
 			continue;
 		}
 
-		/* is the entry excluded for the current label? */
-		if ((e->exclude && cxt->label &&
-		     e->exclude & cxt->label->id) ||
+		/* excluded for the current label */
+		if ((e->exclude && cxt->label && e->exclude & cxt->label->id) ||
+		/* entry wanted for specified labels only */
+		    (e->label && cxt->label && !(e->label & cxt->label->id)) ||
 		/* exclude non-expert entries in expect mode */
 		    (e->expert == 0 && fdisk_context_display_details(cxt)) ||
 		/* exclude non-normal entries in normal mode */
