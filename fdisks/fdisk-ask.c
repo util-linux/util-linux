@@ -47,6 +47,7 @@ int get_user_reply(struct fdisk_context *cxt, const char *prompt,
 	return 0;
 }
 
+#define tochar(num)	((int) ('a' + num - 1))
 static int ask_number(struct fdisk_context *cxt,
 		      struct fdisk_ask *ask,
 		      char *buf, size_t bufsz)
@@ -58,37 +59,61 @@ static int ask_number(struct fdisk_context *cxt,
 	uint64_t dflt = fdisk_ask_number_get_default(ask),
 		 low = fdisk_ask_number_get_low(ask),
 		 high = fdisk_ask_number_get_high(ask);
+	int inchar = fdisk_ask_number_inchars(ask);
 
 	assert(q);
 
-	DBG(ASK, dbgprint("asking for number ['%s', <%jd,%jd>, default=%jd, range: %s]",
-				q, low, high, dflt, range));
-	if (range && dflt >= low && dflt <= high)
-		snprintf(prompt, sizeof(prompt), _("%s (%s, default %jd): "), q, range, dflt);
-	else if (dflt >= low && dflt <= high)
-		snprintf(prompt, sizeof(prompt), _("%s (%jd-%jd, default %jd): "), q, low, high, dflt);
+	DBG(ASK, dbgprint("asking for number "
+			"['%s', <%jd,%jd>, default=%jd, range: %s]",
+			q, low, high, dflt, range));
+
+	if (range && dflt >= low && dflt <= high) {
+		if (inchar)
+			snprintf(prompt, sizeof(prompt), _("%s (%s, default %c): "),
+					q, range, tochar(dflt));
+		else
+			snprintf(prompt, sizeof(prompt), _("%s (%s, default %jd): "),
+					q, range, dflt);
+
+	} else if (dflt >= low && dflt <= high) {
+		if (inchar)
+			snprintf(prompt, sizeof(prompt), _("%s (%c-%c, default %c): "),
+					q, tochar(low), tochar(high), tochar(dflt));
+		else
+			snprintf(prompt, sizeof(prompt), _("%s (%jd-%jd, default %jd): "),
+					q, low, high, dflt);
+	} else if (inchar)
+		snprintf(prompt, sizeof(prompt), _("%s (%c-%c): "),
+				q, tochar(low), tochar(high));
 	else
-		snprintf(prompt, sizeof(prompt), _("%s (%jd-%jd): "), q, low, high);
+		snprintf(prompt, sizeof(prompt), _("%s (%jd-%jd): "),
+				q, low, high);
 
 	do {
 		int rc = get_user_reply(cxt, prompt, buf, bufsz);
+		uint64_t num;
 
 		if (rc)
 			return rc;
 		if (!*buf && dflt >= low && dflt <= high)
 			return fdisk_ask_number_set_result(ask, dflt);
-		else if (isdigit_string(buf)) {
+
+		if (isdigit_string(buf)) {
 			char *end;
-			uint64_t num;
 
 			errno = 0;
 			num = strtoumax(buf, &end, 10);
 			if (errno || buf == end || (end && *end))
 				continue;
-			if (num >= low && num <= high)
-				return fdisk_ask_number_set_result(ask, num);
-			printf(_("Value out of range.\n"));
-		}
+		} else if (inchar && isalpha(*buf)) {
+			num = tolower(*buf) - 'a' + 1;
+		} else
+			rc = -EINVAL;
+
+		if (rc == 0 && num >= low && num <= high)
+			return fdisk_ask_number_set_result(ask, num);
+
+		printf(_("Value out of range.\n"));
 	} while (1);
 
 	return -1;
