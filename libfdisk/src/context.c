@@ -32,9 +32,9 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 				const char *name)
 {
 	struct fdisk_context *cxt;
+	struct fdisk_label *lb = NULL;
 
 	assert(parent);
-	assert(name);
 
 	cxt = calloc(1, sizeof(*cxt));
 	if (!cxt)
@@ -59,8 +59,23 @@ struct fdisk_context *fdisk_new_nested_context(struct fdisk_context *parent,
 
 	cxt->geom = parent->geom;
 
-	if (strcmp(name, "bsd") == 0)
-		cxt->label = cxt->labels[ cxt->nlabels++ ] = fdisk_new_bsd_label(cxt);
+	if (name && strcmp(name, "bsd") == 0)
+		lb = cxt->labels[ cxt->nlabels++ ] = fdisk_new_bsd_label(cxt);
+
+	if (lb) {
+		DBG(LABEL, dbgprint("probing for nested %s", lb->name));
+
+		cxt->label = lb;
+
+		if (lb->op->probe(cxt) == 1)
+			__fdisk_context_switch_label(cxt, lb);
+		else {
+			DBG(LABEL, dbgprint("not found %s label", lb->name));
+			if (lb->op->deinit)
+				lb->op->deinit(lb);
+			cxt->label = NULL;
+		}
+	}
 
 	return cxt;
 }
