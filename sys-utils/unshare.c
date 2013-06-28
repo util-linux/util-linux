@@ -24,6 +24,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/wait.h>
 
 #include "nls.h"
 #include "c.h"
@@ -46,6 +47,7 @@ static void usage(int status)
 	fputs(_(" -n, --net         unshare network namespace\n"), out);
 	fputs(_(" -p, --pid         unshare pid namespace\n"), out);
 	fputs(_(" -U, --user        unshare user namespace\n"), out);
+	fputs(_(" -f, --fork        fork before launching <program>\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -66,20 +68,23 @@ int main(int argc, char *argv[])
 		{ "net", no_argument, 0, 'n' },
 		{ "pid", no_argument, 0, 'p' },
 		{ "user", no_argument, 0, 'U' },
+		{ "fork", no_argument, 0, 'f' },
 		{ NULL, 0, 0, 0 }
 	};
 
 	int unshare_flags = 0;
-
-	int c;
+	int c, forkit = 0;
 
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "hVmuinpU", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "fhVmuinpU", longopts, NULL)) != -1) {
 		switch (c) {
+		case 'f':
+			forkit = 1;
+			break;
 		case 'h':
 			usage(EXIT_SUCCESS);
 		case 'V':
@@ -110,6 +115,26 @@ int main(int argc, char *argv[])
 
 	if (-1 == unshare(unshare_flags))
 		err(EXIT_FAILURE, _("unshare failed"));
+
+	if (forkit) {
+		int status;
+		pid_t pid = fork();
+
+		switch(pid) {
+		case -1:
+			err(EXIT_FAILURE, _("fork failed"));
+		case 0:	/* child */
+			break;
+		default: /* parent */
+			if (waitpid(pid, &status, 0) == -1)
+				err(EXIT_FAILURE, _("waitpid failed"));
+			if (WIFEXITED(status))
+				return WEXITSTATUS(status);
+			else if (WIFSIGNALED(status))
+				kill(getpid(), WTERMSIG(status));
+			err(EXIT_FAILURE, _("child exit failed"));
+		}
+	}
 
 	if (optind < argc) {
 		execvp(argv[optind], argv + optind);

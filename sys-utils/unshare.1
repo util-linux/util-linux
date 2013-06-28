@@ -56,13 +56,17 @@ Unshare the mount namespace.
 Unshare the network namespace.
 .TP
 .BR \-p , " \-\-pid"
-Unshare the pid namespace.
+Unshare the pid namespace. See also \fB--fork\fP option.
 .TP
 .BR \-u , " \-\-uts"
 Unshare the UTS namespace.
 .TP
 .BR \-U , " \-\-user"
 Unshare the user namespace.
+.TP
+.BR \-f , " \-\-fork"
+Fork the specified process as a child of unshare rather than running it
+directly.  This is useful when creating a new pid namespace.
 .SH SEE ALSO
 .BR unshare (2),
 .BR clone (2)
