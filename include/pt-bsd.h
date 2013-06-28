@@ -14,9 +14,6 @@
     defined (__ia64__) || defined (__hppa__)
 # define BSD_LABELSECTOR   0
 # define BSD_LABELOFFSET   64
-#elif defined(__sparc64__)
-# define BSD_LABELSECTOR   0
-# define BSD_LABELOFFSET   128
 #else
 # define BSD_LABELSECTOR   1
 # define BSD_LABELOFFSET   0
