@@ -17,10 +17,10 @@
 #include "pt-bsd.h"
 
 /* Returns 'blkid_idmag' in 512-sectors */
-#define BLKID_MAG_SECTOR(_mag)  (((_mag)->kboff * 2)  + ((_mag)->sboff >> 9))
+#define BLKID_MAG_SECTOR(_mag)  (((_mag)->kboff / 2)  + ((_mag)->sboff >> 9))
 
 /* Returns 'blkid_idmag' in bytes */
-#define BLKID_MAG_OFFSET(_mag)  ((_mag)->kboff >> 10) + ((_mag)->sboff)
+#define BLKID_MAG_OFFSET(_mag)  ((_mag)->kboff << 10) + ((_mag)->sboff)
 
 /* Returns 'blkid_idmag' offset in bytes within the last sector */
 #define BLKID_MAG_LASTOFFSET(_mag) \
