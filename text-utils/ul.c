@@ -491,11 +491,11 @@ static void initbuf(void)
 	if (obuf == NULL) {
 		/* First time. */
 		obuflen = BUFSIZ;
-		obuf = xmalloc(sizeof(struct CHAR) * obuflen);
-	}
+		obuf = xcalloc(obuflen, sizeof(struct CHAR));
+	} else
+		/* assumes NORMAL == 0 */
+		memset(obuf, 0, sizeof(struct CHAR) * maxcol);
 
-	/* assumes NORMAL == 0 */
-	memset(obuf, 0, sizeof(struct CHAR) * obuflen);
 	setcol(0);
 	maxcol = 0;
 	mode &= ALTSET;
