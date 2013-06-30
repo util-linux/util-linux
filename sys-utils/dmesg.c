@@ -145,7 +145,7 @@ struct dmesg_control {
 
 	struct timeval	lasttime;	/* last printed timestamp */
 	struct tm	lasttm;		/* last localtime */
-	time_t		boot_time;	/* system boot time */
+	struct timeval	boot_time;	/* system boot time */
 
 	int		action;		/* SYSLOG_ACTION_* */
 	int		method;		/* DMESG_METHOD_* */
@@ -472,17 +472,30 @@ static int get_syslog_buffer_size(void)
 	return n > 0 ? n : 0;
 }
 
-static time_t get_boot_time(void)
+static int get_boot_time(struct timeval *boot_time)
 {
+	struct timespec hires_uptime;
+	struct timeval lores_uptime, now;
 	struct sysinfo info;
-	struct timeval tv;
 
+	if (gettimeofday(&now, NULL) != 0) {
+		warn(_("gettimeofday failed"));
+		return -errno;
+	}
+
+#ifdef CLOCK_BOOTTIME
+	if (clock_gettime(CLOCK_BOOTTIME, &hires_uptime) == 0) {
+		TIMESPEC_TO_TIMEVAL(&lores_uptime, &hires_uptime);
+		timersub(&now, &lores_uptime, boot_time);
+		return 0;
+	}
+#endif
+	/* fallback */
 	if (sysinfo(&info) != 0)
 		warn(_("sysinfo failed"));
-	else if (gettimeofday(&tv, NULL) != 0)
-		warn(_("gettimeofday failed"));
-	else
-		return tv.tv_sec -= info.uptime;
+
+	boot_time->tv_sec = now.tv_sec - info.uptime;
+	boot_time->tv_usec = 0;
 	return 0;
 }
 
@@ -771,7 +784,7 @@ static struct tm *record_localtime(struct dmesg_control *ctl,
 				   struct dmesg_record *rec,
 				   struct tm *tm)
 {
-	time_t t = ctl->boot_time + rec->tv.tv_sec;
+	time_t t = ctl->boot_time.tv_sec + rec->tv.tv_sec;
 	return localtime_r(&t, tm);
 }
 
@@ -1339,8 +1352,7 @@ int main(int argc, char *argv[])
 	    is_timefmt(&ctl, CTIME) ||
 	    is_timefmt(&ctl, ISO8601)) {
 
-		ctl.boot_time = get_boot_time();
-		if (!ctl.boot_time)
+		if (get_boot_time(&ctl.boot_time) != 0)
 			ctl.time_fmt = DMESG_TIMEFTM_NONE;
 	}
 
