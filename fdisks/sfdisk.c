@@ -2543,10 +2543,6 @@ main(int argc, char **argv) {
 	errx(EXIT_FAILURE, _("no command?"));
     if (!strcmp(program_invocation_short_name, "activate"))
 	activate = 1;		/* equivalent to `sfdisk -A' */
-#if 0				/* not important enough to deserve a name */
-    else if (!strcmp(program_invocation_short_name, "unhide"))
-	unhide = 1;		/* equivalent to `sfdisk -U' */
-#endif
 
     while ((c = getopt_long(argc, argv, short_opts, long_opts, NULL)) != -1) {
 	switch (c) {
@@ -3030,12 +3026,12 @@ do_unhide(char **av, int ac, char *arg) {
 
     /* then write to disk */
     if (write_partitions(dev, fd, z))
-	my_warn(_("Done\n\n"));
+	warn(_("Donen"));
     else
 	exit_status = 1;
 
     if (close_fd(fd) != 0) {
-	my_warn(_("write failed"));
+	warn(_("write failed"));
 	exit_status = 1;
     }
 }
