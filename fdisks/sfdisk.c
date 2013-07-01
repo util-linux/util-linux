@@ -3026,7 +3026,7 @@ do_unhide(char **av, int ac, char *arg) {
 
     /* then write to disk */
     if (write_partitions(dev, fd, z))
-	warn(_("Donen"));
+	warn(_("Done"));
     else
 	exit_status = 1;
 
