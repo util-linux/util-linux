@@ -368,17 +368,24 @@ static char *get_tag_from_udev(const char *devname, int col)
 {
 	struct udev_device *dev;
 	const char *data = NULL;
-	char *res = NULL;
+	char *res = NULL, *path;
 
 	if (!udev)
 		udev = udev_new();
 	if (!udev)
 		return NULL;
 
+	/* libudev don't like /dev/mapper/ symlinks */
+	path = realpath(devname, NULL);
+	if (path)
+		devname = path;
+
 	if (strncmp(devname, "/dev/", 5) == 0)
 		devname += 5;
 
 	dev = udev_device_new_from_subsystem_sysname(udev, "block", devname);
+	free(path);
+
 	if (!dev)
 		return NULL;
 
