@@ -1258,7 +1258,7 @@ int main(int argc, char *argv[])
 			break;
 		case 'H':
 			ctl.time_fmt = DMESG_TIMEFTM_RELTIME;
-			ctl.color = 1;
+			colormode = UL_COLORMODE_AUTO;
 			ctl.pager = 1;
 			break;
 		case 'h':
