@@ -136,7 +136,7 @@ enum {
 	DMESG_TIMEFTM_TIME_DELTA,	/* [time <delta>] */
 	DMESG_TIMEFTM_ISO8601		/* 2013-06-13T22:11:00,123456+0100 */
 };
-#define is_timefmt(c, f) (c->time_fmt == (DMESG_TIMEFTM_ ##f))
+#define is_timefmt(c, f) ((c)->time_fmt == (DMESG_TIMEFTM_ ##f))
 
 struct dmesg_control {
 	/* bit arrays -- see include/bitops.h */
@@ -1157,8 +1157,6 @@ static int which_time_format(const char *optarg)
 	errx(EXIT_FAILURE, _("unknown time format: %s"), optarg);
 }
 
-#undef is_timefmt
-#define is_timefmt(c, f) (c.time_fmt == (DMESG_TIMEFTM_ ##f))
 int main(int argc, char *argv[])
 {
 	char *buf = NULL;
@@ -1337,7 +1335,10 @@ int main(int argc, char *argv[])
 	if (argc > 1)
 		usage(stderr);
 
-	if (is_timefmt(ctl, RELTIME) || is_timefmt(ctl, CTIME) || is_timefmt(ctl, ISO8601)) {
+	if (is_timefmt(&ctl, RELTIME) ||
+	    is_timefmt(&ctl, CTIME) ||
+	    is_timefmt(&ctl, ISO8601)) {
+
 		ctl.boot_time = get_boot_time();
 		if (!ctl.boot_time)
 			ctl.time_fmt = DMESG_TIMEFTM_NONE;
@@ -1356,7 +1357,8 @@ int main(int argc, char *argv[])
 		}
 
 	if (ctl.raw
-	    && (ctl.fltr_lev || ctl.fltr_fac || ctl.decode || !is_timefmt(ctl, NONE)))
+	    && (ctl.fltr_lev || ctl.fltr_fac || ctl.decode
+			     || !is_timefmt(&ctl, NONE)))
 	    errx(EXIT_FAILURE, _("--raw can't be used together with level, "
 				 "facility, decode, delta, ctime or notime options"));
 
