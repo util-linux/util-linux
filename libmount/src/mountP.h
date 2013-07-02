@@ -136,6 +136,8 @@ extern int startswith(const char *s, const char *sx)
 
 extern char *stripoff_last_component(char *path);
 
+extern int mnt_valid_tagname(const char *tagname);
+
 extern int is_file_empty(const char *name);
 
 extern int mkdir_p(const char *path, mode_t mode);

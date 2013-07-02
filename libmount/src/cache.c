@@ -583,22 +583,18 @@ error:
 char *mnt_resolve_spec(const char *spec, struct libmnt_cache *cache)
 {
 	char *cn = NULL;
+	char *t = NULL, *v = NULL;
 
 	if (!spec)
 		return NULL;
 
-	if (strchr(spec, '=')) {
-		char *tag, *val;
-
-		if (!blkid_parse_tag_string(spec, &tag, &val)) {
-			cn = mnt_resolve_tag(tag, val, cache);
-
-			free(tag);
-			free(val);
-		}
-	} else
+	if (blkid_parse_tag_string(spec, &t, &v) == 0 && mnt_valid_tagname(t))
+		cn = mnt_resolve_tag(t, v, cache);
+	else
 		cn = mnt_resolve_path(spec, cache);
 
+	free(t);
+	free(v);
 	return cn;
 }
 
@@ -663,6 +659,7 @@ int test_read_tags(struct libmnt_test *ts, int argc, char *argv[])
 
 	while(fgets(line, sizeof(line), stdin)) {
 		size_t sz = strlen(line);
+		char *t = NULL, *v = NULL;
 
 		if (sz > 0 && line[sz - 1] == '\n')
 			line[sz - 1] = '\0';
@@ -674,16 +671,14 @@ int test_read_tags(struct libmnt_test *ts, int argc, char *argv[])
 			if (mnt_cache_read_tags(cache, line) < 0)
 				fprintf(stderr, "%s: read tags failed\n", line);
 
-		} else if (strchr(line, '=')) {
-			char *tag, *val;
+		} else if (blkid_parse_tag_string(line, &t, &v) == 0) {
 			const char *cn = NULL;
 
-			if (!blkid_parse_tag_string(line, &tag, &val)) {
-				cn = cache_find_tag(cache, tag, val);
+			if (mnt_valid_tagname(t))
+				cn = cache_find_tag(cache, t, v);
+			free(t);
+			free(v);
 
-				free(tag);
-				free(val);
-			}
 			if (cn)
 				printf("%s: %s\n", line, cn);
 			else

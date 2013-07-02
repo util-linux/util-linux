@@ -716,7 +716,8 @@ struct libmnt_fs *mnt_table_find_tag(struct libmnt_table *tb, const char *tag,
 struct libmnt_fs *mnt_table_find_source(struct libmnt_table *tb,
 					const char *source, int direction)
 {
-	struct libmnt_fs *fs = NULL;
+	struct libmnt_fs *fs;
+	char *t = NULL, *v = NULL;
 
 	assert(tb);
 
@@ -727,18 +728,13 @@ struct libmnt_fs *mnt_table_find_source(struct libmnt_table *tb,
 
 	DBG(TAB, mnt_debug_h(tb, "lookup SOURCE: '%s'", source));
 
-	if (source && *source && strchr(source, '=')) {
-		char *tag, *val;
-
-		if (blkid_parse_tag_string(source, &tag, &val) == 0) {
-
-			fs = mnt_table_find_tag(tb, tag, val, direction);
-
-			free(tag);
-			free(val);
-		}
-	} else
+	if (blkid_parse_tag_string(source, &t, &v) || !mnt_valid_tagname(t))
 		fs = mnt_table_find_srcpath(tb, source, direction);
+	else
+		fs = mnt_table_find_tag(tb, t, v, direction);
+
+	free(t);
+	free(v);
 
 	return fs;
 }

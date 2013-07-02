@@ -318,9 +318,12 @@ int __mnt_fs_set_source_ptr(struct libmnt_fs *fs, char *source)
 
 	assert(fs);
 
-	if (source && *source != '/' && strchr(source, '=')) {
-		if (blkid_parse_tag_string(source, &t, &v) != 0)
-			return -1;
+	if (source && blkid_parse_tag_string(source, &t, &v) == 0 &&
+	    !mnt_valid_tagname(t)) {
+		/* parsable but unknown tag -- ignore */
+		free(t);
+		free(v);
+		t = v = NULL;
 	}
 
 	if (fs->source != source)

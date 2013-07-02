@@ -65,6 +65,18 @@ int is_file_empty(const char *name)
 	return (stat(name, &st) != 0 || st.st_size == 0);
 }
 
+int mnt_valid_tagname(const char *tagname)
+{
+	if (tagname && *tagname && (
+	    strcmp("UUID", tagname) == 0 ||
+	    strcmp("LABEL", tagname) == 0 ||
+	    strcmp("PARTUUID", tagname) == 0 ||
+	    strcmp("PARTLABEL", tagname) == 0))
+		return 1;
+
+	return 0;
+}
+
 int mnt_parse_offset(const char *str, size_t len, uintmax_t *res)
 {
 	char *p;
