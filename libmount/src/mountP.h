@@ -137,6 +137,7 @@ extern int startswith(const char *s, const char *sx)
 extern char *stripoff_last_component(char *path);
 
 extern int mnt_valid_tagname(const char *tagname);
+extern int append_string(char **a, const char *b);
 
 extern int is_file_empty(const char *name);
 
