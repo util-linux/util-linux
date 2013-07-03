@@ -56,7 +56,7 @@ Unshare the mount namespace.
 Unshare the network namespace.
 .TP
 .BR \-p , " \-\-pid"
-Unshare the pid namespace. See also \fB--fork\fP option.
+Unshare the pid namespace. See also \fB--fork\fP and \fB--mount-proc\fP options.
 .TP
 .BR \-u , " \-\-uts"
 Unshare the UTS namespace.
@@ -67,6 +67,12 @@ Unshare the user namespace.
 .BR \-f , " \-\-fork"
 Fork the specified process as a child of unshare rather than running it
 directly.  This is useful when creating a new pid namespace.
+.TP
+.BR "\fB\-\-mount-proc\fR [=\fImountpoint\fP]"
+Just before running the program, mount the proc filesystem at the \fImountpoint\fP
+(default is /proc).  This is useful when creating a new pid namespace.  It also
+implies creating a new mount namespace since the /proc mount would otherwise
+mess up existing programs on the system.
 .SH SEE ALSO
 .BR unshare (2),
 .BR clone (2)

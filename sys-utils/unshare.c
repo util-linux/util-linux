@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sys/mount.h>
 
 #include "nls.h"
 #include "c.h"
@@ -41,13 +42,14 @@ static void usage(int status)
 	      _(" %s [options] <program> [args...]\n"),	program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
-	fputs(_(" -m, --mount       unshare mounts namespace\n"), out);
-	fputs(_(" -u, --uts         unshare UTS namespace (hostname etc)\n"), out);
-	fputs(_(" -i, --ipc         unshare System V IPC namespace\n"), out);
-	fputs(_(" -n, --net         unshare network namespace\n"), out);
-	fputs(_(" -p, --pid         unshare pid namespace\n"), out);
-	fputs(_(" -U, --user        unshare user namespace\n"), out);
-	fputs(_(" -f, --fork        fork before launching <program>\n"), out);
+	fputs(_(" -m, --mount               unshare mounts namespace\n"), out);
+	fputs(_(" -u, --uts                 unshare UTS namespace (hostname etc)\n"), out);
+	fputs(_(" -i, --ipc                 unshare System V IPC namespace\n"), out);
+	fputs(_(" -n, --net                 unshare network namespace\n"), out);
+	fputs(_(" -p, --pid                 unshare pid namespace\n"), out);
+	fputs(_(" -U, --user                unshare user namespace\n"), out);
+	fputs(_(" -f, --fork                fork before launching <program>\n"), out);
+	fputs(_("     --mount-proc[=<dir>]  mount proc filesystem first (implies --mount)\n"), out);
 
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -59,6 +61,9 @@ static void usage(int status)
 
 int main(int argc, char *argv[])
 {
+	enum {
+		OPT_MOUNTPROC = CHAR_MAX + 1
+	};
 	static const struct option longopts[] = {
 		{ "help", no_argument, 0, 'h' },
 		{ "version", no_argument, 0, 'V'},
@@ -69,11 +74,13 @@ int main(int argc, char *argv[])
 		{ "pid", no_argument, 0, 'p' },
 		{ "user", no_argument, 0, 'U' },
 		{ "fork", no_argument, 0, 'f' },
+		{ "mount-proc", optional_argument, 0, OPT_MOUNTPROC },
 		{ NULL, 0, 0, 0 }
 	};
 
 	int unshare_flags = 0;
 	int c, forkit = 0;
+	const char *procmnt = NULL;
 
 	setlocale(LC_MESSAGES, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -108,6 +115,10 @@ int main(int argc, char *argv[])
 		case 'U':
 			unshare_flags |= CLONE_NEWUSER;
 			break;
+		case OPT_MOUNTPROC:
+			unshare_flags |= CLONE_NEWNS;
+			procmnt = optarg ? optarg : "/proc";
+			break;
 		default:
 			usage(EXIT_FAILURE);
 		}
@@ -135,6 +146,11 @@ int main(int argc, char *argv[])
 			err(EXIT_FAILURE, _("child exit failed"));
 		}
 	}
+
+	if (procmnt &&
+	    (mount("none", procmnt, NULL, MS_PRIVATE|MS_REC, NULL) != 0 ||
+	     mount("proc", procmnt, "proc", MS_NOSUID|MS_NOEXEC|MS_NODEV, NULL) != 0))
+			err(EXIT_FAILURE, _("mount %s failed"), procmnt);
 
 	if (optind < argc) {
 		execvp(argv[optind], argv + optind);
