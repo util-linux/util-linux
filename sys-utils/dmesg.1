@@ -20,7 +20,7 @@ dmesg \-\-console-off
 .B dmesg
 is used to examine or control the kernel ring buffer.
 .PP
-The default action is to read all messages from kernel ring buffer.
+The default action is to read all messages from the kernel ring buffer.
 .SH OPTIONS
 The \-\-clear, \-\-read-clear, \-\-console-on, \-\-console-off and
 \-\-console-level options are mutually exclusive.
@@ -28,25 +28,25 @@ The \-\-clear, \-\-read-clear, \-\-console-on, \-\-console-off and
 .IP "\fB\-C\fR, \fB\-\-clear\fR"
 Clear the ring buffer.
 .IP "\fB\-c\fR, \fB\-\-read-clear\fR"
-Clear the ring buffer contents after printing.
+Clear the ring buffer after first printing its contents.
 .IP "\fB\-D\fR, \fB\-\-console-off\fR"
 Disable printing messages to the console.
 .IP "\fB\-d\fR, \fB\-\-show-delta\fR"
-Display the timestamp and time delta spent between messages.  If used
+Display the timestamp and the time delta spent between messages.  If used
 together with
 .B \-\-notime
 then only the time delta without the timestamp is printed.
 .IP "\fB\-e\fR, \fB\-\-reltime\fR"
-Display the local time and delta in human readable format.
+Display the local time and the delta in human-readable format.
 .IP "\fB\-E\fR, \fB\-\-console-on\fR"
 Enable printing messages to the console.
 .IP "\fB\-F\fR, \fB\-\-file \fIfile\fR"
-Read log from
+Read the messages from the given
 .IR file .
 .IP "\fB\-f\fR, \fB\-\-facility \fIlist\fR"
-Restrict output to defined (comma separated)
+Restrict output to the given (comma-separated)
 .I list
-of facilities.  For example
+of facilities.  For example:
 .PP
 .RS 14
 dmesg \-\-facility=daemon
@@ -57,19 +57,20 @@ see
 .B dmesg \-\-help
 output.
 .IP "\fB\-H\fR, \fB\-\-human\fR"
-Enable human readable output.  See also \fB\-\-color\fR, \fB\-\-reltime\fR
+Enable human-readable output.  See also \fB\-\-color\fR, \fB\-\-reltime\fR
 and \fB\-\-nopager\fR.
 .IP "\fB\-h\fR, \fB\-\-help\fR"
 Print a help text and exit.
 .IP "\fB\-k\fR, \fB\-\-kernel\fR"
 Print kernel messages.
-.IP "\fB\-L\fR, \fB\-\-color\fR [=\fIwhen\fP]"
-Colorize important messages, the optional argumet \fIwhen\fP is 'auto', 'never'
-or 'always'. If the \fIwhen\fP argument is omitted then the default is 'auto'.
+.IP "\fB\-L\fR, \fB\-\-color\fR[=\fIwhen\fR]"
+Colorize important messages.  The optional argument \fIwhen\fP can be \fBauto\fR,
+\fBnever\fR or \fBalways\fR.  If the \fIwhen\fR argument is omitted,
+then it defaults to \fBauto\fR.
 .IP  "\fB\-l\fR, \fB\-\-level \fIlist\fR"
-Restrict output to defined (comma separated)
+Restrict output to the given (comma-separated)
 .I list
-of levels.  For example
+of levels.  For example:
 .PP
 .RS 14
 dmesg \-\-level=err,warn
@@ -81,7 +82,7 @@ output.
 .IP "\fB\-n\fR, \fB\-\-console-level \fIlevel\fR
 Set the
 .I level
-at which logging of messages is done to the console.  The
+at which printing of messages is done to the console.  The
 .I level
 is a level number or abbreviation of the level name.  For all supported
 levels see
@@ -105,24 +106,24 @@ will
 .I not
 print or clear the kernel ring buffer.
 .IP "\fB\-P\fR, \fB\-\-nopager\fR"
-Do not pipe output into a pager, the pager is enabled for \fB\-\-human\fR output.
+Do not pipe output into a pager.  A pager is enabled by default for \fB\-\-human\fR output.
 .IP "\fB\-r\fR, \fB\-\-raw\fR"
-Print the raw message buffer, i.e., do not strip the log level prefixes.
+Print the raw message buffer, i.e. do not strip the log-level prefixes.
 
-Note that the real raw format depends on method how
+Note that the real raw format depends on the method how
 .BR dmesg (1)
-reads kernel messages. The /dev/kmsg uses different format than
+reads kernel messages.  The /dev/kmsg device uses a different format than
 .BR syslog (2) .
-For backward compatibility
+For backward compatibility,
 .BR dmesg (1)
-returns data always in
+returns data always in the
 .BR syslog (2)
-format. The real raw data from /dev/kmsg is possible to read for example by
-command 'dd if=/dev/kmsg iflag=nonblock'.
+format.  It is possible to read the real raw data from /dev/kmsg by, for example,
+the command 'dd if=/dev/kmsg iflag=nonblock'.
 .IP "\fB\-S\fR, \fB\-\-syslog\fR"
-Force to use
+Force \fBdmesg\fR to use the
 .BR syslog (2)
-kernel interface to read kernel messages. The default is to use /dev/kmsg rather
+kernel interface to read kernel messages.  The default is to use /dev/kmsg rather
 than
 .BR syslog (2)
 since kernel 3.5.0.
@@ -131,11 +132,12 @@ Use a buffer of
 .I size
 to query the kernel ring buffer.  This is 16392 by default.  (The default
 kernel syslog buffer size was 4096 at first, 8192 since 1.3.54, 16384 since
-2.1.113.)  If you have set the kernel buffer to be larger than the default
+2.1.113.)  If you have set the kernel buffer to be larger than the default,
 then this option can be used to view the entire buffer.
 .IP "\fB\-T\fR, \fB\-\-ctime\fR"
-Print human readable timestamps.  The timestamp could be inaccurate!
+Print human-readable timestamps.
 .IP
+Be aware that the timestamp could be inaccurate!
 The
 .B time
 source used for the logs is
@@ -149,32 +151,32 @@ Print userspace messages.
 .IP "\fB\-V\fR, \fB\-\-version\fR"
 Output version information and exit.
 .IP "\fB\-w\fR, \fB\-\-follow\fR"
-Wait for new messages. This feature is supported on systems with readable
-/dev/kmsg only (since kernel 3.5.0).
+Wait for new messages.  This feature is supported only on systems with
+a readable /dev/kmsg (since kernel 3.5.0).
 .IP "\fB\-x\fR, \fB\-\-decode\fR"
-Decode facility and level (priority) number to human readable prefixes.
+Decode facility and level (priority) numbers to human-readable prefixes.
 .IP "\fB\-\-time\-format\fR \fIformat\fR"
-Print time stam using format
-.IR ctime ,
-.IR delta ,
-.I reltime
+Print timestamps using the given \fIformat\fR, which can be
+.BR ctime ,
+.BR reltime ,
+.BR delta
 or
-.IR iso .
-The three first time formats are aliases of time format specific options.
+.BR iso .
+The first three formats are aliases of the time-format-specific options.
 The
-.I iso
-is a
+.B iso
+format is a
 .B dmesg
-implementation of ISO-8601 timestamp format.  Purpose of this format is
-to make comparing of timestamps in between two system, and other parsing,
-easy.  The defition of timestamp is YYYY-MM-DD<T stands for date and time
-separator>HH:MM:SS,<microseconds><-+><GMT-0 timezone offset>.
+implementation of the ISO-8601 timestamp format.  The purpose of this format is
+to make the comparing of timestamps between two systems, and any other parsing,
+easy.  The definition of the \fBiso\fR timestamp is:
+YYYY-MM-DD<T>HH:MM:SS,<microseconds><-+><timezone offset from UTC>.
 .IP
 The
-.I iso
-time format has the same issue as
-.IR ctime ,
-the time may be inaccurate if a system is suspended and resumed.
+.B iso
+format has the same issue as
+.BR ctime :
+the time may be inaccurate when a system is suspended and resumed.
 .SH SEE ALSO
 .BR syslogd (8)
 .SH AUTHORS
