@@ -10,7 +10,7 @@
 sfdisk \- partition table manipulator for Linux
 .SH SYNOPSIS
 .B sfdisk
-.RI [ options ]
+.RB [ options ]
 .I device
 .br
 .B sfdisk \-s
@@ -28,7 +28,7 @@ designed for large partitions.  In these cases use the more advanced GNU
 
 Note that
 .B sfdisk
-does not align partitions to block device I/O limits. This functionality is
+does not align partitions to block-device I/O limits.  This functionality is
 provided by
 .BR fdisk (8).
 
@@ -223,37 +223,39 @@ and change nothing else. (Probably this fifth partition
 is called /dev/hdb5, but you are free to call it something else,
 like `/my_equipment/disks/2/5' or so).
 .TP
-\fB\-A\fR, \fB\-\-activate\fR [\fIdevice\fR or \fIpartition number\fR]
-The activate option will turn on bootable flag.
+\fB\-A\fR, \fB\-\-activate\fR[=\fIdevice_or_number\fR]
+Switch on the bootable flag.
 .IP
-The activate option takes optional argument.  When the option argument is
-not defined command will list partitions that has bootable flag set on
-for device given as command argument.  For example.
+This option takes an optional argument.  When no option argument is given,
+the command will list the partitions that have the bootable flag set
+for the device specified as command argument.  For example:
 .IP
 .nf
 .if t .ft CW
     % sfdisk --activate /dev/sda
 .fi
-When the activate has option argument, and command argument list, the
-partitions defined as command argument will be set to have bootable flag.
-Other partitions for the device are clered not to have bootable flag.
-For example the partitions 1 and 4 are set bootable, while 2 and 3 are
-cleared.
+.IP
+When a device name is given as option argument, the partitions specified
+as command argument will have the bootable flag switched on.
+Other partitions for the same device will have the bootable flag cleared.
+For example, with the following command the partitions 1 and 4 are set
+to be bootable, while 2 and 3 are cleared:
 .IP
 .nf
 .if t .ft CW
     % sfdisk --activate=/dev/sda 1 4
 .fi
-If only a single partition must be activated then the partition number
-must be given as option argument, and device as command argument.  For example.
+.IP
+If only a single partition needs to be activated, then the partition number
+must be given as option argument, and the device as command argument.  For example:
 .IP
 .nf
 .if t .ft CW
     % sfdisk --activate=1 /dev/sda
 .fi
 .IP
-The activate functionality is turned on when the program invocation name is
-.IR activate .
+The activate option is turned by default on when the program's invocation name is
+.BR activate .
 .TP
 .BR \-c ", " \-\-id " \fInumber\fR [\fIId\fR]"
 If no \fIId\fR argument given: print the partition Id of the indicated
