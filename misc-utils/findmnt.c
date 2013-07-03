@@ -417,7 +417,11 @@ static char *get_tag_from_udev(const char *devname, int col)
 #endif /* HAVE_LIBUDEV */
 
 /* Returns LABEL or UUID */
-static const char *get_tag(struct libmnt_fs *fs, const char *tagname, int col)
+static const char *get_tag(struct libmnt_fs *fs, const char *tagname, int col
+#ifndef HAVE_LIBUDEV
+		__attribute__((__unused__))
+#endif
+		)
 {
 	const char *t, *v, *res = NULL;
 
