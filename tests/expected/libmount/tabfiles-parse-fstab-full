@@ -1,14 +1,19 @@
 Initial comment:
-"# this is a leading comment
+"#
+ # this is a leading comment
+#
 
 "
 ------ fs:
 source: UUID=d3a8f783-df75-4dc8-9163-975a891052c0
 target: /
 fstype: ext3
-Non-data:
-"# this comments belongs to the first fs
-"
+optstr: noatime,defaults
+VFS-optstr: noatime
+freq:   1
+pass:   1
+comment: '# this comments belongs to the first fs
+'
 ------ fs:
 source: UUID=fef7ccb3-821c-4de8-88dc-71472be5946f
 target: /boot
@@ -21,11 +26,11 @@ pass:   2
 source: UUID=1f2aa318-9c34-462e-8d29-260819ffd657
 target: swap
 fstype: swap
-Non-data:
-"
+optstr: defaults
+comment: '
 # 3rd fs comment + newline padding
 
-"
+'
 ------ fs:
 source: tmpfs
 target: /dev/shm
@@ -51,9 +56,10 @@ optstr: defaults
 source: /dev/mapper/foo
 target: /home/foo
 fstype: ext4
-Non-data:
-"# this is comment
-"
+optstr: noatime,defaults
+VFS-optstr: noatime
+comment: '# this is comment
+'
 ------ fs:
 source: foo.com:/mnt/share
 target: /mnt/remote
