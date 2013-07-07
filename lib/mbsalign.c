@@ -254,8 +254,8 @@ mbsalign_unibyte:
   if (dest_size != 0)
     {
       char *dest_end = dest + dest_size - 1;
-      size_t start_spaces = n_spaces / 2 + n_spaces % 2;
-      size_t end_spaces = n_spaces / 2;
+      size_t start_spaces;
+      size_t end_spaces;
 
       switch (align)
         {
