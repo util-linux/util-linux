@@ -1580,7 +1580,7 @@ void search(char buf[], FILE *file, register int n)
 	long startline = Ftell(file);
 	register long line1 = startline;
 	register long line2 = startline;
-	register long line3 = startline;
+	register long line3;
 	register int lncount;
 	int saveln, rc;
 	regex_t re;
