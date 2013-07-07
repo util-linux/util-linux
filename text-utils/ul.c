@@ -463,11 +463,11 @@ static void iattr(void)
 {
 	register int i;
 #ifdef __GNUC__
-	register char *lbuf = __builtin_alloca((maxcol+1)*sizeof(char));
+	register wchar_t *lbuf = __builtin_alloca((maxcol+1)*sizeof(wchar_t));
 #else
-	char lbuf[BUFSIZ];
+	wchar_t lbuf[BUFSIZ];
 #endif
-	register char *cp = lbuf;
+	register wchar_t *cp = lbuf;
 
 	for (i = 0; i < maxcol; i++)
 		switch (obuf[i].c_mode) {
