@@ -1505,7 +1505,7 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
     struct partition pt;
     struct sector *s;
     struct part_desc *partitions = &(z->partitions[0]);
-    int pno = z->partno;
+    int pno;
     int bsd_later = 1;
     unsigned short sig, magic;
 #ifdef __linux__
