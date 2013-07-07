@@ -1234,7 +1234,6 @@ int loopcxt_setup_device(struct loopdev_cxt *lc)
 		goto err;
 
 	close(file_fd);
-	file_fd = -1;
 
 	memset(&lc->info, 0, sizeof(lc->info));
 	lc->has_info = 0;
