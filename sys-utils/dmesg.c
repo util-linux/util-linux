@@ -1364,6 +1364,9 @@ int main(int argc, char *argv[])
 		case DMESG_TIMEFTM_TIME:
 			ctl.time_fmt = DMESG_TIMEFTM_TIME_DELTA;
 			break;
+		case DMESG_TIMEFTM_ISO8601:
+			warnx(_("--show-delta is ignored when used together with iso8601 time format"));
+			break;
 		default:
 			ctl.time_fmt = DMESG_TIMEFTM_DELTA;
 		}
