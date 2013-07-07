@@ -636,7 +636,7 @@ static int eject_scsi(int fd)
 		return 0;
 
 	/* force kernel to reread partition table when new disc inserted */
-	status = ioctl(fd, BLKRRPART);
+	ioctl(fd, BLKRRPART);
 	return 1;
 }
 
