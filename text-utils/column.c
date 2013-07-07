@@ -392,7 +392,7 @@ static int input(FILE *fp, int *maxlength, wchar_t ***list, int *entries)
 			continue;
 		}
 		lineno++;
-		if (!feof(fp))
+		if (!feof(fp) && p)
 			*p = '\0';
 		len = wcs_width(buf);	/* len = p - buf; */
 		if (*maxlength < len)
