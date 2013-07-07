@@ -130,8 +130,10 @@ static int hypervisor_from_dmi_table(uint32_t base, uint16_t len,
 		 * is invalid, but we cannot reliably locate the next entry.
 		 * Better stop at this point.
 		 */
-		if (h.length < 4)
+		if (h.length < 4) {
+			free(data);
 			return HYPER_NONE;
+		}
 
 		/* look for the next handle */
 		next = data + h.length;
