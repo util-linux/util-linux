@@ -227,7 +227,6 @@ static int parse_argv(int argc, char *argv[], struct finfo *pinfo)
 			usage(stderr);
 		/* ok, we were given an argument */
 		info_given = true;
-		status = 0;
 
 		/* now store the argument */
 		switch (c) {
