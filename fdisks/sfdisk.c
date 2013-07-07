@@ -2992,7 +2992,8 @@ set_unhidden(struct disk_desc *z, char *pnam) {
 
     pno = asc_to_index(pnam, z);
     id = z->partitions[pno].p.sys_type;
-    if (id == 0x11 || id == 0x14 || id == 0x16 || id == 0x17)
+    if (id == 0x11 || id == 0x14 || id == 0x16 || id == 0x17 ||
+	id == 0x17 || id == 0x1b || id == 0x1c || id == 0x1e)
 	id -= 0x10;
     else
 	errx(EXIT_FAILURE, _("partition %s has id %x and is not hidden"), pnam, id);
