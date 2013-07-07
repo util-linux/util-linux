@@ -251,7 +251,7 @@ static void undump(FILE *in, FILE *out)
 	char s_addr[16], s_time[29], *linestart, *line;
 	int count = 0;
 
-	line = linestart = xmalloc(1024 * sizeof(*linestart));
+	linestart = xmalloc(1024 * sizeof(*linestart));
 	s_addr[15] = 0;
 	s_time[28] = 0;
 
@@ -265,7 +265,7 @@ static void undump(FILE *in, FILE *out)
 		line += gettok(line, ut.ut_line, sizeof(ut.ut_line), 1);
 		line += gettok(line, ut.ut_host, sizeof(ut.ut_host), 1);
 		line += gettok(line, s_addr, sizeof(s_addr) - 1, 1);
-		line += gettok(line, s_time, sizeof(s_time) - 1, 0);
+		gettok(line, s_time, sizeof(s_time) - 1, 0);
 
 		ut.ut_addr = inet_addr(s_addr);
 		ut.ut_time = strtotime(s_time);
