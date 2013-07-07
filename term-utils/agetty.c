@@ -463,9 +463,11 @@ static char *replace_u(char *str, char *username)
 		}
 		sz = strlen(str);
 
-		if (p == str && sz == 2)
+		if (p == str && sz == 2) {
 			/* 'str' contains only '\u' */
+			free(old);
 			return username;
+		}
 
 		tp = entry = malloc(sz + usz);
 		if (!tp)
