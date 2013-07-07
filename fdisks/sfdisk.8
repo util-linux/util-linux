@@ -328,6 +328,19 @@ DOS and Linux should interpret the partition table in the same way.
 Of course one can only know where cylinder boundaries are when
 one knows what geometry DOS will use for this disk.)
 .TP
+.BR \-U ", " "\-\-unhide " \fIdevice\fR
+Make various Microsoft partition types unhidden.  For full list see types
+output.
+.IP
+.nf
+.if t .ft CW
+    % sfdisk --list-types | grep Hidden
+.fi
+.IP
+Notice that the
+.B Hidden NTFS WinRE
+(Windows Recovery Environment) does not have non-hidden equivalent.
+.TP
 .BR \-\-IBM ", " \-\-leave\-last
 Certain IBM diagnostic programs assume that they can use the
 last cylinder on a disk for disk-testing purposes.  If you think
@@ -355,16 +368,18 @@ if it is.  This option suppresses the test.  (On the other hand, the \fB\-f\fR
 option would force \fBsfdisk\fR to continue even when this test fails.)
 .TP
 .B \-\-in\-order
-Caution, see warning section.  To be documented.
+Partitions are in order.  See also warning section.
 .TP
 .B \-\-not\-in\-order
-Caution, see warning section.  To be documented.
+Partitions are not in order.  See also warning section.
 .TP
 .B \-\-inside\-outer
-Caution, see warning section.  Chaining order.
+All logical partitions are inside outermost extended.  See also warning
+section and chaining.
 .TP
 .B \-\-not\-inside\-outer
-Caution, see warning section.  Chaining order.
+Some, or none, of the logical partitions are not inside outermost
+extended.  See also warning section and chaining.
 .TP
 .B \-\-nested
 Caution, see warning section.  Every partition is contained in the
@@ -394,6 +409,9 @@ After destroying your filesystems with an unfortunate
 .B sfdisk
 command, you would have been able to restore the old situation
 if only you had preserved it using the \fB\-O\fR flag.
+.TP
+.BR \-1 ", " \-\-one-only
+Reserved option that does nothing currently.
 
 .SH THEORY
 Block 0 of a disk (the Master Boot Record) contains among
