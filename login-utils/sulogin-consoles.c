@@ -719,7 +719,7 @@ console:
 
 fallback:
 	if (fallback >= 0) {
-		const char *name;
+		const char *name, *n;
 		struct console *console;
 
 		if (device && *device != '\0')
@@ -729,7 +729,11 @@ fallback:
 		if (!name)
 			name = "/dev/tty";
 
-		rc = append_console(consoles, strdup(name));
+		n = strdup(name);
+		if (!n)
+			return -ENOMEM;
+		rc = append_console(consoles, n);
+		free(n);
 		if (rc < 0)
 			return rc;
 		if (list_empty(consoles))
