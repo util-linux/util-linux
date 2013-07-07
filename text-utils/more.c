@@ -1058,8 +1058,7 @@ void erasep(register int col)
 		if (!dumb && eraseln)
 			my_putstring(eraseln);
 		else
-			for (col = promptlen - col; col > 0; col--)
-				putchar(' ');
+			printf("%*s", promptlen - col, "");
 	}
 	promptlen = 0;
 }
