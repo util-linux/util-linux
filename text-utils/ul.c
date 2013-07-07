@@ -447,8 +447,7 @@ static void overstrike(void)
 	putwchar('\r');
 	for (*cp = ' '; *cp == ' '; cp--)
 		*cp = 0;
-	for (cp = lbuf; *cp; cp++)
-		putwchar(*cp);
+	fputws(lbuf, stdout);
 	if (hadbold) {
 		putwchar('\r');
 		for (cp = lbuf; *cp; cp++)
@@ -481,8 +480,7 @@ static void iattr(void)
 		}
 	for (*cp = ' '; *cp == ' '; cp--)
 		*cp = 0;
-	for (cp = lbuf; *cp; cp++)
-		putwchar(*cp);
+	fputws(lbuf, stdout);
 	putwchar('\n');
 }
 
