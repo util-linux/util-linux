@@ -278,7 +278,6 @@ static void do_shm (char format, int unit)
 	 */
 	if (ipc_shm_get_info(-1, &shmds) < 1)
 		return;
-	shmdsp = shmds;
 
 	for (shmdsp = shmds; shmdsp->next != NULL; shmdsp = shmdsp->next) {
 		if (format == CREATOR)  {
@@ -396,7 +395,6 @@ static void do_sem (char format)
 	 */
 	if (ipc_sem_get_info(-1, &semds) < 1)
 		return;
-	semdsp = semds;
 
 	for (semdsp = semds; semdsp->next != NULL; semdsp = semdsp->next) {
 		if (format == CREATOR)  {
@@ -501,7 +499,6 @@ static void do_msg (char format, int unit)
 	 */
 	if (ipc_msg_get_info(-1, &msgds) < 1)
 		return;
-	msgdsp = msgds;
 
 	for (msgdsp = msgds; msgdsp->next != NULL; msgdsp = msgdsp->next) {
 		if (format == CREATOR) {
