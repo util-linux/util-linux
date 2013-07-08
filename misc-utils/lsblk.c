@@ -372,8 +372,12 @@ static char *get_device_mountpoint(struct blkdev_cxt *cxt)
 		mnt_table_parse_mtab(mtab, NULL);
 	}
 
-	/* try /etc/mtab or /proc/self/mountinfo */
-	fs = mnt_table_find_srcpath(mtab, cxt->filename, MNT_ITER_BACKWARD);
+	/* Note that maj:min in /proc/self/mouninfo does not have to match with
+	 * devno as returned by stat(), so we have to try devname too
+	 */
+	fs = mnt_table_find_devno(mtab, makedev(cxt->maj, cxt->min), MNT_ITER_BACKWARD);
+	if (!fs)
+		fs = mnt_table_find_srcpath(mtab, cxt->filename, MNT_ITER_BACKWARD);
 	if (!fs)
 		return is_active_swap(cxt->filename) ? xstrdup("[SWAP]") : NULL;
 
