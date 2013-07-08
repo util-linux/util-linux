@@ -1117,6 +1117,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	const char *src = NULL, *tgt = NULL;
 	char *xtgt = NULL;
 	int rc = 0;
+	dev_t devno = 0;
 
 	assert(tb);
 	assert(fstab_fs);
@@ -1148,6 +1149,14 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	if (src && tb->cache && !mnt_fs_is_pseudofs(fstab_fs))
 		src = mnt_resolve_spec(src, tb->cache);
 
+	if (src && root) {
+		struct stat st;
+
+		devno = mnt_fs_get_devno(fstab_fs);
+		if (!devno && stat(src, &st) == 0 && S_ISBLK(st.st_mode))
+			devno = st.st_rdev;
+	}
+
 	tgt = mnt_fs_get_target(fstab_fs);
 
 	if (!tgt || !src) {
@@ -1158,7 +1167,12 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 
 	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
 
-		if (!mnt_fs_streq_srcpath(fs, src)) {
+		int eq = mnt_fs_streq_srcpath(fs, src);
+
+		if (!eq && devno && mnt_fs_get_devno(fs) == devno)
+			eq = 1;
+
+		if (!eq) {
 			/* The source does not match. Maybe the source is a loop
 			 * device backing file.
 			 */
