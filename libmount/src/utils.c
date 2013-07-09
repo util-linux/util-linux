@@ -197,7 +197,8 @@ int mnt_chdir_to_parent(const char *target, char **filename)
 			memcpy(*filename, ".", 2);
 		else
 			memcpy(*filename, last, strlen(last) + 1);
-	}
+	} else
+		free(buf);
 	return 0;
 err:
 	free(buf);
