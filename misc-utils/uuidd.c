@@ -480,7 +480,7 @@ int main(int argc, char **argv)
 	const char	*socket_path = UUIDD_SOCKET_PATH;
 	const char	*pidfile_path = NULL;
 	const char	*pidfile_path_param = NULL;
-	const char	*err_context;
+	const char	*err_context = NULL;
 	char		buf[1024], *cp;
 	char		str[UUID_STR_LEN];
 	uuid_t		uu;
@@ -592,7 +592,7 @@ int main(int argc, char **argv)
 				  sizeof(buf), &num, &err_context);
 		if (ret < 0)
 			err(EXIT_FAILURE, _("error calling uuidd daemon (%s)"),
-					err_context);
+					err_context ? : _("unexpected error"));
 
 		if (do_type == UUIDD_OP_TIME_UUID) {
 			if (ret != sizeof(uu) + sizeof(num))
@@ -620,7 +620,7 @@ int main(int argc, char **argv)
 				  sizeof(uu), 0, &err_context);
 		if (ret < 0)
 			err(EXIT_FAILURE, _("error calling uuidd daemon (%s)"),
-					err_context);
+					err_context ? : _("unexpected error"));
 		if (ret != sizeof(uu))
 		        unexpected_size(ret);
 
