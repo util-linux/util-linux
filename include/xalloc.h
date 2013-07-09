@@ -49,7 +49,7 @@ void *xcalloc(const size_t nelems, const size_t size)
         return ret;
 }
 
-static inline char *xstrdup(const char *str)
+static inline char __attribute__((warn_unused_result)) *xstrdup(const char *str)
 {
         char *ret;
 
@@ -63,7 +63,7 @@ static inline char *xstrdup(const char *str)
         return ret;
 }
 
-static inline char *xstrndup(const char *str, size_t size)
+static inline char * __attribute__((warn_unused_result)) xstrndup(const char *str, size_t size)
 {
         char *ret;
 
@@ -92,7 +92,7 @@ static inline int __attribute__ ((__format__(printf, 2, 3)))
 }
 
 
-static inline char *xgethostname(void)
+static inline char * __attribute__((warn_unused_result)) xgethostname(void)
 {
 	char *name;
 	size_t sz = get_hostname_max() + 1;

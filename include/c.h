@@ -56,7 +56,7 @@
  */
 #ifndef __ul_alloc_size
 # if __GNUC_PREREQ (4, 3)
-#  define __ul_alloc_size(s) __attribute__((alloc_size(s)))
+#  define __ul_alloc_size(s) __attribute__((alloc_size(s), warn_unused_result))
 # else
 #  define __ul_alloc_size(s)
 # endif
@@ -64,7 +64,7 @@
 
 #ifndef __ul_calloc_size
 # if __GNUC_PREREQ (4, 3)
-#  define __ul_calloc_size(n, s) __attribute__((alloc_size(n, s)))
+#  define __ul_calloc_size(n, s) __attribute__((alloc_size(n, s), warn_unused_result))
 # else
 #  define __ul_calloc_size(n, s)
 # endif
