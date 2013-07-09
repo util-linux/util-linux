@@ -485,7 +485,7 @@ int main(int argc, char **argv)
 	const char	*socket_path = UUIDD_SOCKET_PATH;
 	const char	*pidfile_path = NULL;
 	const char	*pidfile_path_param = NULL;
-	const char	*err_context;
+	const char	*err_context = NULL;
 	char		buf[1024], *cp;
 	char		str[UUID_STR_LEN], *tmp;
 	uuid_t		uu;
