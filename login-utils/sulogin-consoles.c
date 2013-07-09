@@ -719,7 +719,8 @@ console:
 
 fallback:
 	if (fallback >= 0) {
-		const char *name, *n;
+		const char *name;
+	        char *n;
 		struct console *console;
 
 		if (device && *device != '\0')
