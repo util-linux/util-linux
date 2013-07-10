@@ -121,8 +121,6 @@ struct fdisk_bsd_label {
 
 
 static int xbsd_delete_part (struct fdisk_context *cxt, size_t partnum);
-static int xbsd_get_part_index (struct fdisk_context *cxt, int max, int *n);
-static int xbsd_check_new_partition (struct fdisk_context *cxt, int *i);
 static unsigned short xbsd_dkcksum (struct bsd_disklabel *lp);
 static int xbsd_initlabel(struct fdisk_context *cxt);
 static int xbsd_readlabel(struct fdisk_context *cxt);
@@ -244,6 +242,9 @@ static int xbsd_add_part (struct fdisk_context *cxt,
 	unsigned int begin = 0, end;
 	int rc;
 
+	if (i >= BSD_MAXPARTITIONS)
+		return -EINVAL;
+
 	if (l->dos_part) {
 		begin = dos_partition_get_start(l->dos_part);
 		end = begin + dos_partition_get_size(l->dos_part) - 1;
@@ -310,9 +311,11 @@ static int xbsd_add_part (struct fdisk_context *cxt,
 	d->d_partitions[i].p_offset = begin;
 	d->d_partitions[i].p_fstype = BSD_FS_UNUSED;
 
+	if (i >= d->d_npartitions)
+		d->d_npartitions = i + 1;
 	cxt->label->nparts_cur = d->d_npartitions;
-	fdisk_label_set_changed(cxt->label, 1);
 
+	fdisk_label_set_changed(cxt->label, 1);
 	return 0;
 }
 
@@ -611,62 +614,6 @@ done:
 	return rc;
 }
 
-static int xbsd_get_part_index(struct fdisk_context *cxt, int max, int *n)
-{
-	int c;
-	char prompt[256];
-
-	snprintf(prompt, sizeof(prompt), _("Partition (a-%c): "), 'a' + max - 1);
-	do {
-		char *res;
-		int rc = fdisk_ask_string(cxt, prompt, &res);
-
-		if (rc)
-			return rc;
-		c = tolower(*res);
-		free(res);
-	} while (c < 'a' || c > 'a' + max - 1);
-
-	*n = c - 'a';
-	return 0;
-}
-
-static int
-xbsd_check_new_partition(struct fdisk_context *cxt, int *i)
-{
-	int rc;
-	struct bsd_disklabel *d = self_disklabel(cxt);
-
-	/* room for more? various BSD flavours have different maxima */
-	if (d->d_npartitions == BSD_MAXPARTITIONS) {
-		int t;
-
-		for (t = 0; t < BSD_MAXPARTITIONS; t++)
-			if (d->d_partitions[t].p_size == 0)
-				break;
-
-		if (t == BSD_MAXPARTITIONS) {
-			fdisk_warnx(cxt, _("The maximum number of partitions "
-					   "has been created."));
-			return -EINVAL;
-		}
-	}
-
-	rc = xbsd_get_part_index(cxt, BSD_MAXPARTITIONS, i);
-	if (rc)
-		return rc;
-
-	if (*i >= d->d_npartitions)
-		d->d_npartitions = (*i) + 1;
-
-	if (d->d_partitions[*i].p_size != 0) {
-		fdisk_warnx(cxt, ("This partition already exists."));
-		return -EINVAL;
-	}
-
-	return 0;
-}
-
 static unsigned short
 xbsd_dkcksum (struct bsd_disklabel *lp) {
 	unsigned short *start, *end;
@@ -861,8 +808,8 @@ xbsd_translate_fstype (int linux_type)
  */
 int fdisk_bsd_link_partition(struct fdisk_context *cxt)
 {
-	size_t k;
-	int i, rc;
+	size_t k, i;
+	int rc;
 	struct dos_partition *p;
 	struct bsd_disklabel *d = self_disklabel(cxt);
 
@@ -871,21 +818,32 @@ int fdisk_bsd_link_partition(struct fdisk_context *cxt)
 		return -EINVAL;
 	}
 
+	/* ask for DOS partition */
 	rc = fdisk_ask_partnum(cxt->parent, &k, FALSE);
 	if (rc)
 		return rc;
-
-	rc = xbsd_check_new_partition(cxt, &i);
+	/* ask for BSD partition */
+	rc = fdisk_ask_partnum(cxt, &i, TRUE);
 	if (rc)
 		return rc;
 
-	/* TODO: what about to update label->dos_part? */
+	if (i >= BSD_MAXPARTITIONS)
+		return -EINVAL;
+
 	p = fdisk_dos_get_partition(cxt->parent, k);
 
 	d->d_partitions[i].p_size   = dos_partition_get_size(p);
 	d->d_partitions[i].p_offset = dos_partition_get_start(p);
 	d->d_partitions[i].p_fstype = xbsd_translate_fstype(p->sys_ind);
 
+	if (i >= d->d_npartitions)
+		d->d_npartitions = i + 1;
+
+	cxt->label->nparts_cur = d->d_npartitions;
+	fdisk_label_set_changed(cxt->label, 1);
+
+	fdisk_info(cxt, _("BSD partition '%c' linked to DOS partition %d."),
+			'a' + i, k + 1);
 	return 0;
 }
 
