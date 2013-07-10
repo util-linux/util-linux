@@ -782,26 +782,22 @@ static void sync_disks(struct fdisk_context *cxt)
 	sleep(4);
 }
 
-#if !defined (__alpha__)
-static int
-xbsd_translate_fstype (int linux_type)
+static int xbsd_translate_fstype (int linux_type)
 {
-  switch (linux_type)
-  {
-    case 0x01: /* DOS 12-bit FAT   */
-    case 0x04: /* DOS 16-bit <32M  */
-    case 0x06: /* DOS 16-bit >=32M */
-    case 0xe1: /* DOS access       */
-    case 0xe3: /* DOS R/O          */
-    case 0xf2: /* DOS secondary    */
-      return BSD_FS_MSDOS;
-    case 0x07: /* OS/2 HPFS        */
-      return BSD_FS_HPFS;
-    default:
-      return BSD_FS_OTHER;
-  }
+	switch (linux_type) {
+	case 0x01: /* DOS 12-bit FAT   */
+	case 0x04: /* DOS 16-bit <32M  */
+	case 0x06: /* DOS 16-bit >=32M */
+	case 0xe1: /* DOS access       */
+	case 0xe3: /* DOS R/O          */
+	case 0xf2: /* DOS secondary    */
+		return BSD_FS_MSDOS;
+	case 0x07: /* OS/2 HPFS        */
+		return BSD_FS_HPFS;
+	default:
+		return BSD_FS_OTHER;
+	}
 }
-#endif
 
 /*
  * link partition from parent (DOS) to nested BSD partition table
