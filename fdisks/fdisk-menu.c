@@ -10,8 +10,6 @@
 #include "pt-sun.h"
 #include "pt-mbr.h"
 
-#include "fdiskbsdlabel.h"
-
 struct menu_entry {
 	const char	key;			/* command key */
 	const char	*title;			/* help string */

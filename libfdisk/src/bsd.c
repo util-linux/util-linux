@@ -1,47 +1,13 @@
 /*
-   NetBSD disklabel editor for Linux fdisk
-   Written by Bernhard Fastenrath (fasten@informatik.uni-bonn.de)
-   with code from the NetBSD disklabel command:
-
-   Copyright (c) 1987, 1988 Regents of the University of California.
-   All rights reserved.
-
-   Redistribution and use in source and binary forms, with or without
-   modification, are permitted provided that the following conditions
-   are met:
-   1. Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-   2. Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-   3. All advertising materials mentioning features or use of this software
-      must display the following acknowledgement:
-	This product includes software developed by the University of
-	California, Berkeley and its contributors.
-   4. Neither the name of the University nor the names of its contributors
-      may be used to endorse or promote products derived from this software
-      without specific prior written permission.
-
-   THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
-   ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-   ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
-   FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-   DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
-   OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
-   HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-   LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
-   OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
-   SUCH DAMAGE.
-
-   Changes:
-   19990319 - Arnaldo Carvalho de Melo <acme@conectiva.com.br> - i18n/nls
-
-   20000101 - David Huggins-Daines <dhuggins@linuxcare.com> - Better
-   support for BSD/1 disklabels on Alpha.
-   Also fixed unaligned accesses in alpha_bootblock_checksum()
-*/
-
+ * Copyright (C) 2007-2013 Karel Zak <kzak@redhat.com>
+ *
+ * Based on the original code from fdisk
+ *    written by Bernhard Fastenrath (fasten@informatik.uni-bonn.de)
+ *    with code from the NetBSD disklabel command.
+ *
+ *    Arnaldo Carvalho de Melo <acme@conectiva.com.br>, March 1999
+ *    David Huggins-Daines <dhuggins@linuxcare.com>, January 2000
+ */
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -52,11 +18,11 @@
 
 #include <sys/param.h>
 
-#include "common.h"
-#include "fdisk.h"
+#include "nls.h"
+#include "blkdev.h"
+#include "fdiskP.h"
 #include "pt-mbr.h"
-
-#include "fdiskbsdlabel.h"
+#include "pt-bsd.h"
 #include "all-io.h"
 
 static const char *bsd_dktypenames[] = {
@@ -120,7 +86,6 @@ struct fdisk_bsd_label {
 static int bsd_list_disklabel(struct fdisk_context *cxt);
 static int bsd_initlabel(struct fdisk_context *cxt);
 static int bsd_readlabel(struct fdisk_context *cxt);
-static int bsd_writelabel(struct fdisk_context *cxt);
 static void sync_disks(struct fdisk_context *cxt);
 
 #define bsd_cround(c, n) \
@@ -220,14 +185,6 @@ static int bsd_probe_label(struct fdisk_context *cxt)
 	if (!rc)
 		return 1;	/* found BSD */
 	return 0;		/* not found */
-}
-
-static int bsd_write_disklabel (struct fdisk_context *cxt)
-{
-	fdisk_info(cxt,	_("Writing disklabel to %s."), cxt->dev_path);
-	bsd_writelabel(cxt);
-	reread_partition_table(cxt, 0);	/* no exit yet */
-	return 0;
 }
 
 static int bsd_add_part (struct fdisk_context *cxt,
@@ -779,14 +736,13 @@ static int bsd_readlabel(struct fdisk_context *cxt)
 	return 0;
 }
 
-static int bsd_writelabel(struct fdisk_context *cxt)
+static int bsd_write_disklabel(struct fdisk_context *cxt)
 {
 	off_t offset = 0;
-	struct fdisk_bsd_label *l;
-	struct bsd_disklabel *d;
+	struct fdisk_bsd_label *l = self_label(cxt);
+	struct bsd_disklabel *d = self_disklabel(cxt);
 
-	l = self_label(cxt);
-	d = self_disklabel(cxt);
+	fdisk_info(cxt, _("Writing disklabel to %s."), cxt->dev_path);
 
 	if (l->dos_part)
 		offset = dos_partition_get_start(l->dos_part) * cxt->sector_size;

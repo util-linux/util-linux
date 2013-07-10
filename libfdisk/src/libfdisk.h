@@ -165,6 +165,11 @@ extern int fdisk_sun_set_ilfact(struct fdisk_context *cxt);
 extern int fdisk_sun_set_rspeed(struct fdisk_context *cxt);
 extern int fdisk_sun_set_pcylcount(struct fdisk_context *cxt);
 
+/* bsd.c */
+extern int fdisk_bsd_edit_disklabel(struct fdisk_context *cxt);
+extern int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt);
+extern int fdisk_bsd_link_partition(struct fdisk_context *cxt);
+
 /* sgi.h */
 #define SGI_FLAG_BOOT	1
 #define SGI_FLAG_SWAP	2
