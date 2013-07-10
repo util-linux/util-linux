@@ -500,18 +500,6 @@ static void command_prompt(struct fdisk_context *cxt)
 
 	assert(cxt);
 
-	if (fdisk_is_disklabel(cxt, OSF)) {
-		putchar('\n');
-		/* OSF label, and no DOS label */
-		printf(_("Detected an OSF/1 disklabel on %s, entering "
-			 "disklabel mode.\n"),
-		       cxt->dev_path);
-		bsd_command_prompt(cxt);
-
-		/* If we return we may want to make an empty DOS label? */
-		fdisk_context_switch_label(cxt, "dos");
-	}
-
 	while (1) {
 		assert(cxt->label);
 

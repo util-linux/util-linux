@@ -37,8 +37,13 @@
 #include <stdint.h>
 #include "pt-bsd.h"
 
-extern void bsd_command_prompt(struct fdisk_context *cxt);
 extern int btrydev(struct fdisk_context *cxt);
 extern void xbsd_print_disklabel(struct fdisk_context *cxt, int);
+
+/* public bsd specific functions */
+extern int fdisk_bsd_edit_disklabel(struct fdisk_context *cxt);
+extern int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt);
+extern int fdisk_bsd_link_partition(struct fdisk_context *cxt);
+
 
 #endif /* FDISK_BSD_LABEL_H */

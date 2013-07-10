@@ -121,8 +121,6 @@ struct fdisk_bsd_label {
 
 
 static int xbsd_delete_part (struct fdisk_context *cxt, size_t partnum);
-static void xbsd_edit_disklabel (struct fdisk_context *cxt);
-static int xbsd_write_bootstrap (struct fdisk_context *cxt);
 static void xbsd_change_fstype (struct fdisk_context *cxt);
 static int xbsd_get_part_index (struct fdisk_context *cxt, int max, int *n);
 static int xbsd_check_new_partition (struct fdisk_context *cxt, int *i);
@@ -138,7 +136,6 @@ void alpha_bootblock_checksum (char *boot);
 
 #if !defined (__alpha__)
 static int xbsd_translate_fstype (int linux_type);
-static void xbsd_link_part (struct fdisk_context *cxt);
 #endif
 
 
@@ -352,46 +349,6 @@ static int xbsd_create_disklabel(struct fdisk_context *cxt)
 	return rc;
 }
 
-
-void
-bsd_command_prompt (struct fdisk_context *cxt)
-{
-
-  while (1) {
-    char buf[16];
-    int rc;
-    size_t n;
-
-    /*
-     * BIG-FAT-TODO: don't use bsd_command_prompt(), just initialialize BSD
-     * stuff by label probe() libfdisk function, and use standard fdisk.c
-     * menu code.
-     */
-    putchar ('\n');
-    rc = get_user_reply(cxt, _("BSD disklabel command (m for help): "),
-			    buf, sizeof(buf));
-    if (rc)
-      return;
-
-    switch (tolower(buf[0])) {
-      case 'e':
-	xbsd_edit_disklabel (cxt);
-	break;
-      case 'i':
-	xbsd_write_bootstrap (cxt);
-	break;
-      case 's':
-	      xbsd_print_disklabel (cxt, 1);
-	break;
-#if !defined (__alpha__)
-      case 'x':
-	xbsd_link_part (cxt);
-	break;
-#endif
-    }
-  }
-}
-
 static int xbsd_delete_part(
 		struct fdisk_context *cxt,
 		size_t partnum)
@@ -528,7 +485,7 @@ static uint16_t ask_uint16(struct fdisk_context *cxt,
 	return dflt;
 }
 
-static void xbsd_edit_disklabel(struct fdisk_context *cxt)
+int fdisk_bsd_edit_disklabel(struct fdisk_context *cxt)
 {
 	struct bsd_disklabel *d = self_disklabel(cxt);
 	uintmax_t res;
@@ -556,6 +513,7 @@ static void xbsd_edit_disklabel(struct fdisk_context *cxt)
 	d->d_trkseek = ask_uint32(cxt, d->d_trkseek, _("track-to-track seek"));
 
 	d->d_secperunit = d->d_secpercyl * d->d_ncylinders;
+	return 0;
 }
 
 static int xbsd_get_bootstrap(struct fdisk_context *cxt,
@@ -579,7 +537,7 @@ static int xbsd_get_bootstrap(struct fdisk_context *cxt,
 	return 0;
 }
 
-static int xbsd_write_bootstrap (struct fdisk_context *cxt)
+int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt)
 {
 	struct bsd_disklabel dl, *d = self_disklabel(cxt);
 	struct fdisk_bsd_label *l = self_label(cxt);
@@ -915,26 +873,30 @@ xbsd_translate_fstype (int linux_type)
       return BSD_FS_OTHER;
   }
 }
+#endif
 
 /*
  * link partition from parent (DOS) to nested BSD partition table
  */
-static void
-xbsd_link_part (struct fdisk_context *cxt)
+int fdisk_bsd_link_partition(struct fdisk_context *cxt)
 {
 	size_t k;
-	int i;
+	int i, rc;
 	struct dos_partition *p;
 	struct bsd_disklabel *d = self_disklabel(cxt);
 
-	if (!cxt->parent || !fdisk_is_disklabel(cxt->parent, DOS))
-		return;		/* not nested PT */
+	if (!cxt->parent || !fdisk_is_disklabel(cxt->parent, DOS)) {
+		fdisk_warnx(cxt, _("BSD label is not nested within a DOS partition"));
+		return -EINVAL;
+	}
 
-	if (fdisk_ask_partnum(cxt->parent, &k, FALSE))
-		return;
+	rc = fdisk_ask_partnum(cxt->parent, &k, FALSE);
+	if (rc)
+		return rc;
 
-	if (xbsd_check_new_partition(cxt, &i))
-		return;
+	rc = xbsd_check_new_partition(cxt, &i);
+	if (rc)
+		return rc;
 
 	/* TODO: what about to update label->dos_part? */
 	p = fdisk_dos_get_partition(cxt->parent, k);
@@ -942,8 +904,9 @@ xbsd_link_part (struct fdisk_context *cxt)
 	d->d_partitions[i].p_size   = dos_partition_get_size(p);
 	d->d_partitions[i].p_offset = dos_partition_get_start(p);
 	d->d_partitions[i].p_fstype = xbsd_translate_fstype(p->sys_ind);
+
+	return 0;
 }
-#endif
 
 #if defined (__alpha__)
 

@@ -53,6 +53,7 @@ DECLARE_MENU_CB(gpt_menu_cb);
 DECLARE_MENU_CB(sun_menu_cb);
 DECLARE_MENU_CB(geo_menu_cb);
 DECLARE_MENU_CB(dos_menu_cb);
+DECLARE_MENU_CB(bsd_menu_cb);
 
 /*
  * Menu entry macros:
@@ -199,16 +200,14 @@ struct menu menu_dos = {
 };
 
 struct menu menu_bsd = {
-/*	.callback = bsd_menu_cb,*/
+	.callback = bsd_menu_cb,
 	.label = FDISK_DISKLABEL_OSF,
 	.entries = {
 		MENU_SEP(N_("BSD")),
 		MENU_ENT('e', N_("edit drive data")),
 		MENU_ENT('i', N_("install bootstrap")),
 		MENU_ENT('s', N_("show complete disklabel")),
-#if !defined (__alpha__)
 		MENU_ENT('x', N_("link BSD partition to non-BSD partition")),
-#endif
 		{ 0, NULL }
 	}
 };
@@ -545,6 +544,40 @@ static int sun_menu_cb(struct fdisk_context **cxt0,
 		break;
 	case 'y':
 		rc = fdisk_sun_set_pcylcount(cxt);
+		break;
+	}
+	return rc;
+}
+
+/*
+ * This is fdisk frontend for BSD specific libfdisk functions that
+ * are not expported by generic libfdisk API.
+ */
+static int bsd_menu_cb(struct fdisk_context **cxt0,
+		       const struct menu *menu __attribute__((__unused__)),
+		       const struct menu_entry *ent)
+{
+	struct fdisk_context *cxt = *cxt0;
+	int rc = 0;
+
+	assert(cxt);
+	assert(ent);
+	assert(fdisk_is_disklabel(cxt, OSF));
+
+	DBG(FRONTEND, dbgprint("enter BSD menu"));
+
+	switch(ent->key) {
+	case 'e':
+		rc = fdisk_bsd_edit_disklabel(cxt);
+		break;
+	case 'i':
+		rc = fdisk_bsd_write_bootstrap(cxt);
+		break;
+	case 's':
+		xbsd_print_disklabel(cxt, 1);
+		break;
+	case 'x':
+		rc = fdisk_bsd_link_partition(cxt);
 		break;
 	}
 	return rc;
