@@ -41,7 +41,7 @@ enum fdisk_labeltype {
 	FDISK_DISKLABEL_DOS = (1 << 1),
 	FDISK_DISKLABEL_SUN = (1 << 2),
 	FDISK_DISKLABEL_SGI = (1 << 3),
-	FDISK_DISKLABEL_OSF = (1 << 4),
+	FDISK_DISKLABEL_BSD = (1 << 4),
 	FDISK_DISKLABEL_GPT = (1 << 5)
 };
 

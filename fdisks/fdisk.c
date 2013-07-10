@@ -260,7 +260,7 @@ static void list_table(struct fdisk_context *cxt, int xtra)
 {
 	list_disk_geometry(cxt);
 
-	if (fdisk_is_disklabel(cxt, OSF))
+	if (fdisk_is_disklabel(cxt, BSD))
 		xbsd_print_disklabel(cxt, xtra);
 	else
 		fdisk_list_disklabel(cxt);

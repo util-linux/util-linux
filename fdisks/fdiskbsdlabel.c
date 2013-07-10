@@ -38,7 +38,7 @@
    19990319 - Arnaldo Carvalho de Melo <acme@conectiva.com.br> - i18n/nls
 
    20000101 - David Huggins-Daines <dhuggins@linuxcare.com> - Better
-   support for OSF/1 disklabels on Alpha.
+   support for BSD/1 disklabels on Alpha.
    Also fixed unaligned accesses in alpha_bootblock_checksum()
 */
 
@@ -147,7 +147,7 @@ static inline struct fdisk_bsd_label *self_label(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, OSF));
+	assert(fdisk_is_disklabel(cxt, BSD));
 
 	return (struct fdisk_bsd_label *) cxt->label;
 }
@@ -156,7 +156,7 @@ static inline struct bsd_disklabel *self_disklabel(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
-	assert(fdisk_is_disklabel(cxt, OSF));
+	assert(fdisk_is_disklabel(cxt, BSD));
 
 	return &((struct fdisk_bsd_label *) cxt->label)->bsd;
 }
@@ -1015,7 +1015,7 @@ struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt)
 	/* initialize generic part of the driver */
 	lb = (struct fdisk_label *) bsd;
 	lb->name = "bsd";
-	lb->id = FDISK_DISKLABEL_OSF;
+	lb->id = FDISK_DISKLABEL_BSD;
 	lb->op = &bsd_operations;
 	lb->parttypes = xbsd_fstypes;
 	lb->nparttypes = ARRAY_SIZE(xbsd_fstypes);
