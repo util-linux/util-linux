@@ -37,8 +37,6 @@
 #include <stdint.h>
 #include "pt-bsd.h"
 
-extern int btrydev(struct fdisk_context *cxt);
-
 /* public bsd specific functions */
 extern int fdisk_bsd_edit_disklabel(struct fdisk_context *cxt);
 extern int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt);

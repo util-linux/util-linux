@@ -47,8 +47,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
-#include <ctype.h>
-#include <setjmp.h>
 #include <errno.h>
 #include "nls.h"
 
@@ -120,22 +118,10 @@ struct fdisk_bsd_label {
 };
 
 static int bsd_list_disklabel(struct fdisk_context *cxt);
-
-static int xbsd_delete_part (struct fdisk_context *cxt, size_t partnum);
-static unsigned short xbsd_dkcksum (struct bsd_disklabel *lp);
 static int xbsd_initlabel(struct fdisk_context *cxt);
 static int xbsd_readlabel(struct fdisk_context *cxt);
 static int xbsd_writelabel(struct fdisk_context *cxt);
 static void sync_disks(struct fdisk_context *cxt);
-
-#if defined (__alpha__)
-void alpha_bootblock_checksum (char *boot);
-#endif
-
-#if !defined (__alpha__)
-static int xbsd_translate_fstype (int linux_type);
-#endif
-
 
 #define bsd_cround(c, n) \
 	(fdisk_context_use_cylinders(c) ? ((n)/self_disklabel(c)->d_secpercyl) + 1 : (n))
@@ -158,6 +144,18 @@ static inline struct bsd_disklabel *self_disklabel(struct fdisk_context *cxt)
 
 	return &((struct fdisk_bsd_label *) cxt->label)->bsd;
 }
+
+#if defined (__alpha__)
+void alpha_bootblock_checksum (char *boot)
+{
+	uint64_t *dp = (uint64_t *) boot, sum = 0;
+	int i;
+
+	for (i = 0; i < 63; i++)
+		sum += dp[i];
+	dp[63] = sum;
+}
+#endif /* __alpha__ */
 
 #define HIDDEN_MASK	0x10
 
@@ -657,8 +655,8 @@ done:
 	return rc;
 }
 
-static unsigned short
-xbsd_dkcksum (struct bsd_disklabel *lp) {
+static unsigned short xbsd_dkcksum (struct bsd_disklabel *lp)
+{
 	unsigned short *start, *end;
 	unsigned short sum = 0;
 
@@ -885,26 +883,6 @@ int fdisk_bsd_link_partition(struct fdisk_context *cxt)
 			'a' + i, k + 1);
 	return 0;
 }
-
-#if defined (__alpha__)
-
-#if !defined(__GLIBC__)
-typedef unsigned long long u_int64_t;
-#endif
-
-void
-alpha_bootblock_checksum (char *boot)
-{
-  u_int64_t *dp, sum;
-  int i;
-
-  dp = (u_int64_t *)boot;
-  sum = 0;
-  for (i = 0; i < 63; i++)
-    sum += dp[i];
-  dp[63] = sum;
-}
-#endif /* __alpha__ */
 
 static struct fdisk_parttype *xbsd_get_parttype(
 		struct fdisk_context *cxt,
