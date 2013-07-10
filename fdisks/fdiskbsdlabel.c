@@ -130,7 +130,7 @@ static unsigned short xbsd_dkcksum (struct bsd_disklabel *lp);
 static int xbsd_initlabel(struct fdisk_context *cxt);
 static int xbsd_readlabel(struct fdisk_context *cxt);
 static int xbsd_writelabel(struct fdisk_context *cxt);
-static void sync_disks (void);
+static void sync_disks(struct fdisk_context *cxt);
 
 #if defined (__alpha__)
 void alpha_bootblock_checksum (char *boot);
@@ -194,7 +194,8 @@ static int bsd_assign_dos_partition(struct fdisk_context *cxt)
 
 		ss = dos_partition_get_start(l->dos_part);
 		if (!ss) {
-			fprintf (stderr, _("Partition %zd: has invalid starting sector 0.\n"), i + 1);
+			fdisk_warnx(cxt, _("Partition %zd: has invalid starting "
+					   "sector 0."), i + 1);
 			return -1;
 		}
 
@@ -208,7 +209,8 @@ static int bsd_assign_dos_partition(struct fdisk_context *cxt)
 		return 0;
 	}
 
-	printf (_("There is no *BSD partition on %s.\n"), cxt->parent->dev_path);
+	fdisk_warnx(cxt, _("There is no *BSD partition on %s."),
+				cxt->parent->dev_path);
 	free(cxt->dev_path);
 	cxt->dev_path = NULL;
 	l->dos_part = NULL;
@@ -230,7 +232,7 @@ static int bsd_probe_label(struct fdisk_context *cxt)
 
 static int xbsd_write_disklabel (struct fdisk_context *cxt)
 {
-	printf (_("Writing disklabel to %s.\n"), cxt->dev_path);
+	fdisk_info(cxt,	_("Writing disklabel to %s."), cxt->dev_path);
 	xbsd_writelabel(cxt);
 	reread_partition_table(cxt, 0);	/* no exit yet */
 	return 0;
@@ -675,7 +677,7 @@ static int xbsd_write_bootstrap (struct fdisk_context *cxt)
 	}
 
 	fdisk_info(cxt, _("Bootstrap installed on %s."), cxt->dev_path);
-	sync_disks ();
+	sync_disks(cxt);
 
 	rc = 0;
 done:
@@ -736,8 +738,8 @@ xbsd_check_new_partition(struct fdisk_context *cxt, int *i)
 				break;
 
 		if (t == BSD_MAXPARTITIONS) {
-			fprintf (stderr, _("The maximum number of partitions "
-					   "has been created\n"));
+			fdisk_warnx(cxt, _("The maximum number of partitions "
+					   "has been created."));
 			return -EINVAL;
 		}
 	}
@@ -750,7 +752,7 @@ xbsd_check_new_partition(struct fdisk_context *cxt, int *i)
 		d->d_npartitions = (*i) + 1;
 
 	if (d->d_partitions[*i].p_size != 0) {
-		fprintf (stderr, _("This partition already exists.\n"));
+		fdisk_warnx(cxt, ("This partition already exists."));
 		return -EINVAL;
 	}
 
@@ -914,16 +916,15 @@ static int xbsd_writelabel(struct fdisk_context *cxt)
 		fdisk_warn(cxt, _("write failed: %d"), cxt->dev_path);
 		return -errno;
 	}
-	sync_disks ();
+	sync_disks(cxt);
 	return 0;
 }
 
-static void
-sync_disks (void)
+static void sync_disks(struct fdisk_context *cxt)
 {
-  printf (_("\nSyncing disks.\n"));
-  sync ();
-  sleep (4);
+	fdisk_info(cxt, _("Syncing disks."));
+	sync();
+	sleep(4);
 }
 
 #if !defined (__alpha__)
