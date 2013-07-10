@@ -111,6 +111,12 @@ struct fdisk_bsd_label {
 
 	struct dos_partition *dos_part;		/* parent */
 	struct bsd_disklabel bsd;		/* on disk label */
+#if defined (__alpha__)
+	/* We access this through a u_int64_t * when checksumming */
+	char bsdbuffer[BSD_BBSIZE] __attribute__((aligned(8)));
+#else
+	char bsdbuffer[BSD_BBSIZE];
+#endif
 };
 
 
@@ -133,13 +139,6 @@ void alpha_bootblock_checksum (char *boot);
 #if !defined (__alpha__)
 static int xbsd_translate_fstype (int linux_type);
 static void xbsd_link_part (struct fdisk_context *cxt);
-#endif
-
-#if defined (__alpha__)
-/* We access this through a u_int64_t * when checksumming */
-static char bsdbuffer[BSD_BBSIZE] __attribute__((aligned(8)));
-#else
-static char bsdbuffer[BSD_BBSIZE];
 #endif
 
 
@@ -629,14 +628,12 @@ static int xbsd_write_bootstrap (struct fdisk_context *cxt)
 		name = res;
 
 	snprintf(buf, sizeof(buf), "%s/%sboot", BSD_LINUX_BOOTDIR, name);
-	rc = xbsd_get_bootstrap(cxt, buf,
-			bsdbuffer,
-			(int) d->d_secsize);
+	rc = xbsd_get_bootstrap(cxt, buf, l->bsdbuffer,	(int) d->d_secsize);
 	if (rc)
 		goto done;
 
 	/* We need a backup of the disklabel (might have changed). */
-	dp = &bsdbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE];
+	dp = &l->bsdbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE];
 	memmove(&dl, dp, sizeof(struct bsd_disklabel));
 
 	/* The disklabel will be overwritten by 0's from bootxx anyway */
@@ -644,7 +641,7 @@ static int xbsd_write_bootstrap (struct fdisk_context *cxt)
 
 	snprintf(buf, sizeof(buf), "%s/boot%s", BSD_LINUX_BOOTDIR, name);
 	rc = xbsd_get_bootstrap(cxt, buf,
-			&bsdbuffer[d->d_secsize],
+			&l->bsdbuffer[d->d_secsize],
 			(int) d->d_bbsize - d->d_secsize);
 	if (rc)
 		goto done;
@@ -664,14 +661,14 @@ static int xbsd_write_bootstrap (struct fdisk_context *cxt)
 	if (l->dos_part)
 		sector = dos_partition_get_start(l->dos_part);
 #if defined (__alpha__)
-	alpha_bootblock_checksum(bsdbuffer);
+	alpha_bootblock_checksum(l->bsdbuffer);
 #endif
 	if (lseek(cxt->dev_fd, (off_t) sector * DEFAULT_SECTOR_SIZE, SEEK_SET) == -1) {
 		fdisk_warn(cxt, _("seek failed %s"), cxt->dev_path);
 		rc = -errno;
 		goto done;
 	}
-	if (write_all(cxt->dev_fd, bsdbuffer, BSD_BBSIZE)) {
+	if (write_all(cxt->dev_fd, l->bsdbuffer, BSD_BBSIZE)) {
 		fdisk_warn(cxt, _("write failed %s"), cxt->dev_path);
 		rc = -errno;
 		goto done;
@@ -857,12 +854,12 @@ static int xbsd_readlabel(struct fdisk_context *cxt)
 
 	if (lseek(cxt->dev_fd, offset, SEEK_SET) == -1)
 		return -1;
-	if (read_all(cxt->dev_fd, bsdbuffer, sizeof(bsdbuffer)) < 0)
+	if (read_all(cxt->dev_fd, l->bsdbuffer, sizeof(l->bsdbuffer)) < 0)
 		return errno ? -errno : -1;
 
 	/* The offset to begin of the disk label. Note that BSD uses
 	 * 512-byte (default) sectors. */
-	memmove(d, &bsdbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE
+	memmove(d, &l->bsdbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE
 			      + BSD_LABELOFFSET], sizeof(*d));
 
 	if (d->d_magic != BSD_DISKMAGIC || d->d_magic2 != BSD_DISKMAGIC) {
@@ -902,18 +899,18 @@ static int xbsd_writelabel(struct fdisk_context *cxt)
 	d->d_checksum = xbsd_dkcksum(d);
 
 	/* Update label with in boot block. */
-	memmove(&bsdbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE
+	memmove(&l->bsdbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE
 			   + BSD_LABELOFFSET], d, sizeof(*d));
 
 #if defined (__alpha__) && BSD_LABELSECTOR == 0
 	/* write the check sum to the end of the first sector */
-	alpha_bootblock_checksum(bsdbuffer);
+	alpha_bootblock_checksum(l->bsdbuffer);
 #endif
 	if (lseek(cxt->dev_fd, offset, SEEK_SET) == -1) {
 		fdisk_warn(cxt, _("seek failed: %d"), cxt->dev_path);
 		return -errno;
 	}
-	if (write_all(cxt->dev_fd, bsdbuffer, sizeof(bsdbuffer))) {
+	if (write_all(cxt->dev_fd, l->bsdbuffer, sizeof(l->bsdbuffer))) {
 		fdisk_warn(cxt, _("write failed: %d"), cxt->dev_path);
 		return -errno;
 	}
