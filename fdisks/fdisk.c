@@ -287,6 +287,9 @@ static void write_table(struct fdisk_context *cxt)
 	rc = fdisk_write_disklabel(cxt);
 	if (rc)
 		err(EXIT_FAILURE, _("cannot write disk label"));
+	if (cxt->parent)
+		/* nested PT, don't leave */
+		return;
 
 	printf(_("The partition table has been altered!\n\n"));
 	reread_partition_table(cxt, 1);

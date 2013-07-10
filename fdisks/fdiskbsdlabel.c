@@ -374,51 +374,20 @@ bsd_command_prompt (struct fdisk_context *cxt)
       return;
 
     switch (tolower(buf[0])) {
-      case 'd':
-	if (fdisk_ask_partnum(cxt, &n, FALSE) == 0)
-		xbsd_delete_part(cxt, n);
-	break;
       case 'e':
 	xbsd_edit_disklabel (cxt);
 	break;
       case 'i':
 	xbsd_write_bootstrap (cxt);
 	break;
-      case 'l':
-	list_partition_types (cxt);
-	break;
-      case 'n':
-	if (fdisk_ask_partnum(cxt, &n, TRUE) == 0)
-	        xbsd_add_part(cxt, n, 0);
-	break;
-      case 'p':
-	      xbsd_print_disklabel (cxt, 0);
-	break;
-      case 'q':
-	close (cxt->dev_fd);
-	exit ( EXIT_SUCCESS );
-      case 'r':
-	return;
       case 's':
 	      xbsd_print_disklabel (cxt, 1);
-	break;
-      case 't':
-	xbsd_change_fstype (cxt);
-	break;
-      case 'u':
-	toggle_units(cxt);
-	break;
-      case 'w':
-	xbsd_write_disklabel (cxt);
 	break;
 #if !defined (__alpha__)
       case 'x':
 	xbsd_link_part (cxt);
 	break;
 #endif
-      default:
-	print_fdisk_menu(cxt);
-	break;
     }
   }
 }
