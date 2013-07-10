@@ -31,7 +31,7 @@ struct menu {
 	enum fdisk_labeltype	label;		/* only for this label */
 	enum fdisk_labeltype	exclude;	/* all labels except this */
 
-	int (*callback)(struct fdisk_context *,
+	int (*callback)(struct fdisk_context **,
 			const struct menu *,
 			const struct menu_entry *);
 
@@ -45,7 +45,7 @@ struct menu_context {
 
 #define MENU_CXT_EMPTY	{ 0, 0 }
 #define DECLARE_MENU_CB(x) \
-	static int x(struct fdisk_context *, \
+	static int x(struct fdisk_context **, \
 		     const struct menu *, \
 		     const struct menu_entry *)
 
@@ -199,7 +199,7 @@ struct menu menu_dos = {
 };
 
 struct menu menu_bsd = {
-/*	.callback = bsd_menu_cb, */
+/*	.callback = bsd_menu_cb,*/
 	.label = FDISK_DISKLABEL_OSF,
 	.entries = {
 		MENU_SEP(N_("BSD")),
@@ -339,12 +339,16 @@ int print_fdisk_menu(struct fdisk_context *cxt)
  * returns the command key if no callback for the command is
  * implemented.
  *
+ * Note that this function might exchange the context pointer to
+ * switch to another (nested) context.
+ *
  * Returns: <0 on error
  *           0 on success (the command performed)
  *          >0 if no callback (then returns the key)
  */
-int process_fdisk_menu(struct fdisk_context *cxt)
+int process_fdisk_menu(struct fdisk_context **cxt0)
 {
+	struct fdisk_context *cxt = *cxt0;
 	const struct menu_entry *ent;
 	const struct menu *menu;
 	int key, rc;
@@ -368,19 +372,23 @@ int process_fdisk_menu(struct fdisk_context *cxt)
 		return -EINVAL;
 	}
 
+	rc = 0;
 	DBG(FRONTEND, dbgprint("selected: key=%c, entry='%s'",
 				key, ent->title));
 	/* hardcoded help */
-	if (key == 'm') {
+	if (key == 'm')
 		print_fdisk_menu(cxt);
-		return 0;
 
 	/* menu has implemented callback, use it */
-	} else if (menu->callback)
-		return menu->callback(cxt, menu, ent);
+	else if (menu->callback)
+		rc = menu->callback(cxt0, menu, ent);
+	else {
+		DBG(FRONTEND, dbgprint("no callback, return key '%c'", key));
+		return key;
+	}
 
-	/* no callback, return the key */
-	return key;
+	DBG(FRONTEND, dbgprint("process menu done [rc=%d]", rc));
+	return rc;
 }
 
 
@@ -388,10 +396,11 @@ int process_fdisk_menu(struct fdisk_context *cxt)
  * This is fdisk frontend for GPT specific libfdisk functions that
  * are not expported by generic libfdisk API.
  */
-static int gpt_menu_cb(struct fdisk_context *cxt,
+static int gpt_menu_cb(struct fdisk_context **cxt0,
 		       const struct menu *menu __attribute__((__unused__)),
 		       const struct menu_entry *ent)
 {
+	struct fdisk_context *cxt = *cxt0;
 	size_t n;
 	int rc;
 
@@ -424,11 +433,14 @@ static int gpt_menu_cb(struct fdisk_context *cxt,
  * This is fdisk frontend for MBR specific libfdisk functions that
  * are not expported by generic libfdisk API.
  */
-static int dos_menu_cb(struct fdisk_context *cxt,
+static int dos_menu_cb(struct fdisk_context **cxt0,
 		       const struct menu *menu __attribute__((__unused__)),
 		       const struct menu_entry *ent)
 {
+	struct fdisk_context *cxt = *cxt0;
 	int rc = 0;
+
+	DBG(FRONTEND, dbgprint("enter DOS menu"));
 
 	if (!ent->expert) {
 		switch (ent->key) {
@@ -448,9 +460,10 @@ static int dos_menu_cb(struct fdisk_context *cxt,
 				return -ENOMEM;
 			if (!fdisk_dev_has_disklabel(bsd))
 				rc = fdisk_create_disklabel(bsd, "bsd");
-			if (!rc)
-				bsd_command_prompt(bsd);
-			fdisk_free_context(bsd);
+			if (rc)
+				fdisk_free_context(bsd);
+			else
+				*cxt0 = cxt = bsd;
 			break;
 		}
 		case 'c':
@@ -483,11 +496,14 @@ static int dos_menu_cb(struct fdisk_context *cxt,
 	return rc;
 }
 
-static int sun_menu_cb(struct fdisk_context *cxt,
+static int sun_menu_cb(struct fdisk_context **cxt0,
 		       const struct menu *menu __attribute__((__unused__)),
 		       const struct menu_entry *ent)
 {
+	struct fdisk_context *cxt = *cxt0;
 	int rc = 0;
+
+	DBG(FRONTEND, dbgprint("enter SUN menu"));
 
 	assert(cxt);
 	assert(ent);
@@ -535,12 +551,15 @@ static int sun_menu_cb(struct fdisk_context *cxt,
 }
 
 /* C/H/S commands */
-static int geo_menu_cb(struct fdisk_context *cxt,
+static int geo_menu_cb(struct fdisk_context **cxt0,
 		       const struct menu *menu __attribute__((__unused__)),
 		       const struct menu_entry *ent)
 {
+	struct fdisk_context *cxt = *cxt0;
 	int rc = -EINVAL;
 	uintmax_t c = 0, h = 0, s = 0;
+
+	DBG(FRONTEND, dbgprint("enter GEO menu"));
 
 	assert(cxt);
 	assert(ent);

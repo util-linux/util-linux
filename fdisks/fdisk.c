@@ -381,7 +381,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 	while(1) {
 		assert(cxt->label);
 
-		c = process_fdisk_menu(cxt);
+		c = process_fdisk_menu(&cxt);
 		if (c <= 0)
 			continue;
 
@@ -512,7 +512,7 @@ static void command_prompt(struct fdisk_context *cxt)
 	while (1) {
 		assert(cxt->label);
 
-		c = process_fdisk_menu(cxt);
+		c = process_fdisk_menu(&cxt);
 		if (c <= 0)
 			continue;
 
@@ -587,6 +587,14 @@ static void command_prompt(struct fdisk_context *cxt)
 			break;
 		case 'x':
 			expert_command_prompt(cxt);
+			break;
+		case 'r':
+			if (cxt->parent) {
+				struct fdisk_context *tmp = cxt->parent;
+
+				fdisk_free_context(cxt);
+				cxt = tmp;
+			}
 			break;
 		default:
 			unknown_command(c);
