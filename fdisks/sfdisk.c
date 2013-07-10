@@ -46,7 +46,7 @@
 #include "xalloc.h"
 #include "blkdev.h"
 #include "linux_version.h"
-#include "common.h"
+#include "partname.h"
 #include "wholedisk.h"
 #include "pathnames.h"
 #include "canonicalize.h"

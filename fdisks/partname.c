@@ -4,7 +4,7 @@
 
 #include "blkdev.h"
 #include "pathnames.h"
-#include "common.h"
+#include "partname.h"
 #include "c.h"
 
 /*

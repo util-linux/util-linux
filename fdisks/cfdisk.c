@@ -102,7 +102,6 @@
 #include "rpmatch.h"
 #include "blkdev.h"
 #include "strutils.h"
-#include "common.h"
 #include "mbsalign.h"
 #include "widechar.h"
 

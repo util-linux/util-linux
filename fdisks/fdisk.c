@@ -27,7 +27,6 @@
 #include "nls.h"
 #include "rpmatch.h"
 #include "blkdev.h"
-#include "common.h"
 #include "mbsalign.h"
 #include "fdisk.h"
 #include "wholedisk.h"

@@ -8,9 +8,7 @@ fdisk_SOURCES = \
 	fdisks/fdisk.c \
 	fdisks/fdisk.h \
 	fdisks/fdisk-ask.c \
-	fdisks/fdisk-menu.c \
-	fdisks/partname.c \
-	fdisks/common.h
+	fdisks/fdisk-menu.c
 
 fdisk_LDADD = $(LDADD) libcommon.la libfdisk.la
 fdisk_CFLAGS = $(AM_CFLAGS) -I$(ul_libfdisk_incdir)
@@ -49,7 +47,7 @@ dist_man_MANS += fdisks/sfdisk.8
 sfdisk_SOURCES = \
 	fdisks/partname.c \
 	fdisks/sfdisk.c \
-	fdisks/common.h
+	fdisks/partname.h
 sfdisk_LDADD = $(LDADD) libcommon.la
 
 if HAVE_STATIC_SFDISK
@@ -63,7 +61,7 @@ endif
 if BUILD_CFDISK
 sbin_PROGRAMS += cfdisk
 dist_man_MANS += fdisks/cfdisk.8
-cfdisk_SOURCES = fdisks/cfdisk.c fdisks/common.h
+cfdisk_SOURCES = fdisks/cfdisk.c
 cfdisk_CFLAGS =
 cfdisk_LDADD = $(LDADD) libcommon.la
 
