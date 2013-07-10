@@ -59,7 +59,7 @@
 #include "fdiskbsdlabel.h"
 #include "all-io.h"
 
-static char *xbsd_dktypenames[] = {
+static char *bsd_dktypenames[] = {
 	"unknown",
 	"SMD",
 	"MSCP",
@@ -73,9 +73,9 @@ static char *xbsd_dktypenames[] = {
 	"floppy",
 	0
 };
-#define BSD_DKMAXTYPES	(ARRAY_SIZE(xbsd_dktypenames) - 1)
+#define BSD_DKMAXTYPES	(ARRAY_SIZE(bsd_dktypenames) - 1)
 
-static struct fdisk_parttype xbsd_fstypes[] = {
+static struct fdisk_parttype bsd_fstypes[] = {
         {BSD_FS_UNUSED, "unused"},
 	{BSD_FS_SWAP,   "swap"},
 	{BSD_FS_V6,     "Version 6"},
@@ -99,7 +99,7 @@ static struct fdisk_parttype xbsd_fstypes[] = {
 	{BSD_FS_ADVFS,	"AdvFS"},
 	{ 0, NULL }
 };
-#define BSD_FSMAXTYPES (ARRAY_SIZE(xbsd_fstypes)-1)
+#define BSD_FSMAXTYPES (ARRAY_SIZE(bsd_fstypes)-1)
 
 /*
  * in-memory fdisk BSD stuff
@@ -118,9 +118,9 @@ struct fdisk_bsd_label {
 };
 
 static int bsd_list_disklabel(struct fdisk_context *cxt);
-static int xbsd_initlabel(struct fdisk_context *cxt);
-static int xbsd_readlabel(struct fdisk_context *cxt);
-static int xbsd_writelabel(struct fdisk_context *cxt);
+static int bsd_initlabel(struct fdisk_context *cxt);
+static int bsd_readlabel(struct fdisk_context *cxt);
+static int bsd_writelabel(struct fdisk_context *cxt);
 static void sync_disks(struct fdisk_context *cxt);
 
 #define bsd_cround(c, n) \
@@ -217,21 +217,21 @@ static int bsd_probe_label(struct fdisk_context *cxt)
 	if (cxt->parent)
 		rc = bsd_assign_dos_partition(cxt);	/* nested BSD partiotn table */
 	if (!rc)
-		rc = xbsd_readlabel(cxt);
+		rc = bsd_readlabel(cxt);
 	if (!rc)
 		return 1;	/* found BSD */
 	return 0;		/* not found */
 }
 
-static int xbsd_write_disklabel (struct fdisk_context *cxt)
+static int bsd_write_disklabel (struct fdisk_context *cxt)
 {
 	fdisk_info(cxt,	_("Writing disklabel to %s."), cxt->dev_path);
-	xbsd_writelabel(cxt);
+	bsd_writelabel(cxt);
 	reread_partition_table(cxt, 0);	/* no exit yet */
 	return 0;
 }
 
-static int xbsd_add_part (struct fdisk_context *cxt,
+static int bsd_add_part (struct fdisk_context *cxt,
 		size_t i,
 		struct fdisk_parttype *t __attribute__((__unused__)))
 {
@@ -319,7 +319,7 @@ static int xbsd_add_part (struct fdisk_context *cxt,
 }
 
 /* Returns 0 on success, < 0 on error. */
-static int xbsd_create_disklabel(struct fdisk_context *cxt)
+static int bsd_create_disklabel(struct fdisk_context *cxt)
 {
 	int rc, yes = 0;
 	struct bsd_disklabel *d = self_disklabel(cxt);
@@ -340,7 +340,7 @@ static int xbsd_create_disklabel(struct fdisk_context *cxt)
 	if (rc)
 		return rc;
 
-	rc = xbsd_initlabel(cxt);
+	rc = bsd_initlabel(cxt);
 	if (!rc) {
 		int org = fdisk_context_display_details(cxt);
 
@@ -355,7 +355,7 @@ static int xbsd_create_disklabel(struct fdisk_context *cxt)
 	return rc;
 }
 
-static int xbsd_delete_part(
+static int bsd_delete_part(
 		struct fdisk_context *cxt,
 		size_t partnum)
 {
@@ -389,7 +389,7 @@ static int bsd_list_disklabel(struct fdisk_context *cxt)
 		fdisk_info(cxt, "# %s:", cxt->dev_path);
 
 		if ((unsigned) d->d_type < BSD_DKMAXTYPES)
-			fdisk_info(cxt, _("type: %s"), xbsd_dktypenames[d->d_type]);
+			fdisk_info(cxt, _("type: %s"), bsd_dktypenames[d->d_type]);
 		else
 			fdisk_info(cxt, _("type: %d"), d->d_type);
 
@@ -481,7 +481,7 @@ static int bsd_list_disklabel(struct fdisk_context *cxt)
 		}
 
 		if ((unsigned) p->p_fstype < BSD_FSMAXTYPES)
-			rc = asprintf(&s, "%s", xbsd_fstypes[p->p_fstype].name);
+			rc = asprintf(&s, "%s", bsd_fstypes[p->p_fstype].name);
 		else
 			rc = asprintf(&s, "%x", p->p_fstype);
 		if (rc > 0)
@@ -559,7 +559,7 @@ int fdisk_bsd_edit_disklabel(struct fdisk_context *cxt)
 	return 0;
 }
 
-static int xbsd_get_bootstrap(struct fdisk_context *cxt,
+static int bsd_get_bootstrap(struct fdisk_context *cxt,
 			char *path, void *ptr, int size)
 {
 	int fd;
@@ -600,7 +600,7 @@ int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt)
 		name = res;
 
 	snprintf(buf, sizeof(buf), "%s/%sboot", BSD_LINUX_BOOTDIR, name);
-	rc = xbsd_get_bootstrap(cxt, buf, l->bsdbuffer,	(int) d->d_secsize);
+	rc = bsd_get_bootstrap(cxt, buf, l->bsdbuffer,	(int) d->d_secsize);
 	if (rc)
 		goto done;
 
@@ -612,7 +612,7 @@ int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt)
 	memset(dp, 0, sizeof(struct bsd_disklabel));
 
 	snprintf(buf, sizeof(buf), "%s/boot%s", BSD_LINUX_BOOTDIR, name);
-	rc = xbsd_get_bootstrap(cxt, buf,
+	rc = bsd_get_bootstrap(cxt, buf,
 			&l->bsdbuffer[d->d_secsize],
 			(int) d->d_bbsize - d->d_secsize);
 	if (rc)
@@ -655,7 +655,7 @@ done:
 	return rc;
 }
 
-static unsigned short xbsd_dkcksum (struct bsd_disklabel *lp)
+static unsigned short bsd_dkcksum (struct bsd_disklabel *lp)
 {
 	unsigned short *start, *end;
 	unsigned short sum = 0;
@@ -667,7 +667,7 @@ static unsigned short xbsd_dkcksum (struct bsd_disklabel *lp)
 	return sum;
 }
 
-static int xbsd_initlabel (struct fdisk_context *cxt)
+static int bsd_initlabel (struct fdisk_context *cxt)
 {
 	struct fdisk_bsd_label *l = self_label(cxt);
 	struct bsd_disklabel *d = self_disklabel(cxt);
@@ -732,10 +732,10 @@ static int xbsd_initlabel (struct fdisk_context *cxt)
 }
 
 /*
- * Read a xbsd_disklabel from sector 0 or from the starting sector of p.
+ * Read a bsd_disklabel from sector 0 or from the starting sector of p.
  * If it has the right magic, return 0.
  */
-static int xbsd_readlabel(struct fdisk_context *cxt)
+static int bsd_readlabel(struct fdisk_context *cxt)
 {
 	struct fdisk_bsd_label *l;
 	struct bsd_disklabel *d;
@@ -781,7 +781,7 @@ static int xbsd_readlabel(struct fdisk_context *cxt)
 	return 0;
 }
 
-static int xbsd_writelabel(struct fdisk_context *cxt)
+static int bsd_writelabel(struct fdisk_context *cxt)
 {
 	off_t offset = 0;
 	struct fdisk_bsd_label *l;
@@ -794,7 +794,7 @@ static int xbsd_writelabel(struct fdisk_context *cxt)
 		offset = dos_partition_get_start(l->dos_part) * cxt->sector_size;
 
 	d->d_checksum = 0;
-	d->d_checksum = xbsd_dkcksum(d);
+	d->d_checksum = bsd_dkcksum(d);
 
 	/* Update label with in boot block. */
 	memmove(&l->bsdbuffer[BSD_LABELSECTOR * DEFAULT_SECTOR_SIZE
@@ -823,7 +823,7 @@ static void sync_disks(struct fdisk_context *cxt)
 	sleep(4);
 }
 
-static int xbsd_translate_fstype (int linux_type)
+static int bsd_translate_fstype (int linux_type)
 {
 	switch (linux_type) {
 	case 0x01: /* DOS 12-bit FAT   */
@@ -871,7 +871,7 @@ int fdisk_bsd_link_partition(struct fdisk_context *cxt)
 
 	d->d_partitions[i].p_size   = dos_partition_get_size(p);
 	d->d_partitions[i].p_offset = dos_partition_get_start(p);
-	d->d_partitions[i].p_fstype = xbsd_translate_fstype(p->sys_ind);
+	d->d_partitions[i].p_fstype = bsd_translate_fstype(p->sys_ind);
 
 	if (i >= d->d_npartitions)
 		d->d_npartitions = i + 1;
@@ -884,7 +884,7 @@ int fdisk_bsd_link_partition(struct fdisk_context *cxt)
 	return 0;
 }
 
-static struct fdisk_parttype *xbsd_get_parttype(
+static struct fdisk_parttype *bsd_get_parttype(
 		struct fdisk_context *cxt,
 		size_t n)
 {
@@ -900,7 +900,7 @@ static struct fdisk_parttype *xbsd_get_parttype(
 	return t;
 }
 
-static int xbsd_set_parttype(
+static int bsd_set_parttype(
 		struct fdisk_context *cxt,
 		size_t partnum,
 		struct fdisk_parttype *t)
@@ -945,12 +945,12 @@ static const struct fdisk_label_operations bsd_operations =
 {
 	.probe		= bsd_probe_label,
 	.list		= bsd_list_disklabel,
-	.write		= xbsd_write_disklabel,
-	.create		= xbsd_create_disklabel,
-	.part_add	= xbsd_add_part,
-	.part_delete	= xbsd_delete_part,
-	.part_get_type	= xbsd_get_parttype,
-	.part_set_type	= xbsd_set_parttype,
+	.write		= bsd_write_disklabel,
+	.create		= bsd_create_disklabel,
+	.part_add	= bsd_add_part,
+	.part_delete	= bsd_delete_part,
+	.part_get_type	= bsd_get_parttype,
+	.part_set_type	= bsd_set_parttype,
 	.part_get_status= bsd_get_partition_status,
 };
 
@@ -974,8 +974,8 @@ struct fdisk_label *fdisk_new_bsd_label(struct fdisk_context *cxt)
 	lb->name = "bsd";
 	lb->id = FDISK_DISKLABEL_BSD;
 	lb->op = &bsd_operations;
-	lb->parttypes = xbsd_fstypes;
-	lb->nparttypes = ARRAY_SIZE(xbsd_fstypes);
+	lb->parttypes = bsd_fstypes;
+	lb->nparttypes = ARRAY_SIZE(bsd_fstypes);
 
 	lb->flags |= FDISK_LABEL_FL_INCHARS_PARTNO;
 	lb->flags |= FDISK_LABEL_FL_REQUIRE_GEOMETRY;
