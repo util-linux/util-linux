@@ -59,7 +59,7 @@
 #include "fdiskbsdlabel.h"
 #include "all-io.h"
 
-static char *bsd_dktypenames[] = {
+static const char *bsd_dktypenames[] = {
 	"unknown",
 	"SMD",
 	"MSCP",
@@ -126,7 +126,6 @@ static void sync_disks(struct fdisk_context *cxt);
 #define bsd_cround(c, n) \
 	(fdisk_context_use_cylinders(c) ? ((n)/self_disklabel(c)->d_secpercyl) + 1 : (n))
 
-
 static inline struct fdisk_bsd_label *self_label(struct fdisk_context *cxt)
 {
 	assert(cxt);
@@ -146,7 +145,7 @@ static inline struct bsd_disklabel *self_disklabel(struct fdisk_context *cxt)
 }
 
 #if defined (__alpha__)
-void alpha_bootblock_checksum (char *boot)
+static void alpha_bootblock_checksum (char *boot)
 {
 	uint64_t *dp = (uint64_t *) boot, sum = 0;
 	int i;
@@ -505,7 +504,6 @@ static int bsd_list_disklabel(struct fdisk_context *cxt)
 	return rc;
 }
 
-
 static uint32_t ask_uint32(struct fdisk_context *cxt,
 		uint32_t dflt, char *mesg)
 {
@@ -820,7 +818,6 @@ static void sync_disks(struct fdisk_context *cxt)
 {
 	fdisk_info(cxt, _("Syncing disks."));
 	sync();
-	sleep(4);
 }
 
 static int bsd_translate_fstype (int linux_type)
@@ -836,8 +833,10 @@ static int bsd_translate_fstype (int linux_type)
 	case 0x07: /* OS/2 HPFS        */
 		return BSD_FS_HPFS;
 	default:
-		return BSD_FS_OTHER;
+		break;
 	}
+
+	return BSD_FS_OTHER;
 }
 
 /*
