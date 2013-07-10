@@ -558,7 +558,7 @@ static int bsd_menu_cb(struct fdisk_context **cxt0,
 		       const struct menu_entry *ent)
 {
 	struct fdisk_context *cxt = *cxt0;
-	int rc = 0;
+	int rc = 0, org;
 
 	assert(cxt);
 	assert(ent);
@@ -574,7 +574,11 @@ static int bsd_menu_cb(struct fdisk_context **cxt0,
 		rc = fdisk_bsd_write_bootstrap(cxt);
 		break;
 	case 's':
-		xbsd_print_disklabel(cxt, 1);
+		org = fdisk_context_display_details(cxt);
+
+		fdisk_context_enable_details(cxt, 1);
+		fdisk_list_disklabel(cxt);
+		fdisk_context_enable_details(cxt, org);
 		break;
 	case 'x':
 		rc = fdisk_bsd_link_partition(cxt);

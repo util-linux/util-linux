@@ -256,15 +256,10 @@ static void list_disk_geometry(struct fdisk_context *cxt)
 	printf("\n");
 }
 
-static void list_table(struct fdisk_context *cxt, int xtra)
+static void list_table(struct fdisk_context *cxt)
 {
 	list_disk_geometry(cxt);
-
-	if (fdisk_is_disklabel(cxt, BSD))
-		xbsd_print_disklabel(cxt, xtra);
-	else
-		fdisk_list_disklabel(cxt);
-
+	fdisk_list_disklabel(cxt);
 }
 
 static void verify(struct fdisk_context *cxt)
@@ -401,7 +396,7 @@ expert_command_prompt(struct fdisk_context *cxt)
 			fdisk_create_disklabel(cxt, "sgi");
 			break;
 		case 'p':
-			list_table(cxt, 1);
+			list_table(cxt);
 			break;
 		case 'q':
 			handle_quit(cxt);
@@ -439,7 +434,7 @@ static void print_partition_table_from_option(
 		err(EXIT_FAILURE, _("cannot open %s"), device);
 
 	if (fdisk_dev_has_disklabel(cxt))
-		list_table(cxt, 0);
+		list_table(cxt);
 	else
 		list_disk_geometry(cxt);
 }
@@ -557,7 +552,7 @@ static void command_prompt(struct fdisk_context *cxt)
 			fdisk_create_disklabel(cxt, "dos");
 			break;
 		case 'p':
-			list_table(cxt, 0);
+			list_table(cxt);
 			break;
 		case 'q':
 			handle_quit(cxt);

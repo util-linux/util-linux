@@ -119,6 +119,7 @@ struct fdisk_bsd_label {
 #endif
 };
 
+static int bsd_list_disklabel(struct fdisk_context *cxt);
 
 static int xbsd_delete_part (struct fdisk_context *cxt, size_t partnum);
 static unsigned short xbsd_dkcksum (struct bsd_disklabel *lp);
@@ -343,9 +344,14 @@ static int xbsd_create_disklabel(struct fdisk_context *cxt)
 
 	rc = xbsd_initlabel(cxt);
 	if (!rc) {
-		xbsd_print_disklabel (cxt, 1);
+		int org = fdisk_context_display_details(cxt);
+
 		cxt->label->nparts_cur = d->d_npartitions;
 		cxt->label->nparts_max = BSD_MAXPARTITIONS;
+
+		fdisk_context_enable_details(cxt, 1);
+		bsd_list_disklabel(cxt);
+		fdisk_context_enable_details(cxt, org);
 	}
 
 	return rc;
@@ -370,100 +376,137 @@ static int xbsd_delete_part(
 	return 0;
 }
 
-void
-xbsd_print_disklabel (struct fdisk_context *cxt, int show_all)
+static int bsd_list_disklabel(struct fdisk_context *cxt)
 {
-  struct bsd_disklabel *lp = self_disklabel(cxt);
-  struct bsd_partition *pp;
-  FILE *f = stdout;
-  int i, j;
+	struct bsd_disklabel *d = self_disklabel(cxt);
+	struct bsd_partition *p;
+	struct tt *tb = NULL;
+	int i, rc, trunc = TT_FL_TRUNC;
 
-  if (show_all) {
-    fprintf(f, "# %s:\n", cxt->dev_path);
-    if ((unsigned) lp->d_type < BSD_DKMAXTYPES)
-      fprintf(f, _("type: %s\n"), xbsd_dktypenames[lp->d_type]);
-    else
-      fprintf(f, _("type: %d\n"), lp->d_type);
-    fprintf(f, _("disk: %.*s\n"), (int) sizeof(lp->d_typename), lp->d_typename);
-    fprintf(f, _("label: %.*s\n"), (int) sizeof(lp->d_packname), lp->d_packname);
-    fprintf(f, _("flags:"));
-    if (lp->d_flags & BSD_D_REMOVABLE)
-      fprintf(f, _(" removable"));
-    if (lp->d_flags & BSD_D_ECC)
-      fprintf(f, _(" ecc"));
-    if (lp->d_flags & BSD_D_BADSECT)
-      fprintf(f, _(" badsect"));
-    fprintf(f, "\n");
-    /* On various machines the fields of *lp are short/int/long */
-    /* In order to avoid problems, we cast them all to long. */
-    fprintf(f, _("bytes/sector: %ld\n"), (long) lp->d_secsize);
-    fprintf(f, _("sectors/track: %ld\n"), (long) lp->d_nsectors);
-    fprintf(f, _("tracks/cylinder: %ld\n"), (long) lp->d_ntracks);
-    fprintf(f, _("sectors/cylinder: %ld\n"), (long) lp->d_secpercyl);
-    fprintf(f, _("cylinders: %ld\n"), (long) lp->d_ncylinders);
-    fprintf(f, _("rpm: %d\n"), lp->d_rpm);
-    fprintf(f, _("interleave: %d\n"), lp->d_interleave);
-    fprintf(f, _("trackskew: %d\n"), lp->d_trackskew);
-    fprintf(f, _("cylinderskew: %d\n"), lp->d_cylskew);
-    fprintf(f, _("headswitch: %ld\t\t# milliseconds\n"),
-	    (long) lp->d_headswitch);
-    fprintf(f, _("track-to-track seek: %ld\t# milliseconds\n"),
-	    (long) lp->d_trkseek);
-    fprintf(f, _("drivedata: "));
-    for (i = ARRAY_SIZE(lp->d_drivedata)- 1; i >= 0; i--)
-      if (lp->d_drivedata[i])
-	break;
-    if (i < 0)
-      i = 0;
-    for (j = 0; j <= i; j++)
-      fprintf(f, "%ld ", (long) lp->d_drivedata[j]);
-  }
-  fprintf (f, _("\n%d partitions:\n"), lp->d_npartitions);
-  fprintf (f, _("#       start       end      size     fstype   [fsize bsize   cpg]\n"));
-  pp = lp->d_partitions;
-  for (i = 0; i < lp->d_npartitions; i++, pp++) {
-    if (pp->p_size) {
-      if (fdisk_context_use_cylinders(cxt) && lp->d_secpercyl) {
-	fprintf(f, "  %c: %8ld%c %8ld%c %8ld%c  ",
-		'a' + i,
-		(long) pp->p_offset / lp->d_secpercyl + 1,
-		(pp->p_offset % lp->d_secpercyl) ? '*' : ' ',
-		(long) (pp->p_offset + pp->p_size + lp->d_secpercyl - 1)
-			/ lp->d_secpercyl,
-		((pp->p_offset + pp->p_size) % lp->d_secpercyl) ? '*' : ' ',
-		(long) pp->p_size / lp->d_secpercyl,
-		(pp->p_size % lp->d_secpercyl) ? '*' : ' ');
-      } else {
-	fprintf(f, "  %c: %8ld  %8ld  %8ld   ",
-		'a' + i,
-		(long) pp->p_offset,
-		(long) pp->p_offset + pp->p_size - 1,
-		(long) pp->p_size);
-      }
-      if ((unsigned) pp->p_fstype < BSD_FSMAXTYPES)
-	fprintf(f, "%8.8s", xbsd_fstypes[pp->p_fstype].name);
-      else
-	fprintf(f, "%8x", pp->p_fstype);
-      switch (pp->p_fstype) {
-	case BSD_FS_UNUSED:
-	  fprintf(f, "    %5ld %5ld %5.5s ",
-		  (long) pp->p_fsize, (long) pp->p_fsize * pp->p_frag, "");
-	  break;
+	assert(cxt);
+	assert(cxt->label);
+	assert(fdisk_is_disklabel(cxt, BSD));
 
-	case BSD_FS_BSDFFS:
-	  fprintf(f, "    %5ld %5ld %5d ",
-		  (long) pp->p_fsize, (long) pp->p_fsize * pp->p_frag,
-		  pp->p_cpg);
-	  break;
+	if (fdisk_context_display_details(cxt)) {
+		fdisk_info(cxt, "# %s:", cxt->dev_path);
 
-	default:
-	  fprintf(f, "%22.22s", "");
-	  break;
-      }
-      fprintf(f, "\n");
-    }
-  }
+		if ((unsigned) d->d_type < BSD_DKMAXTYPES)
+			fdisk_info(cxt, _("type: %s"), xbsd_dktypenames[d->d_type]);
+		else
+			fdisk_info(cxt, _("type: %d"), d->d_type);
+
+		fdisk_info(cxt, _("disk: %.*s"), (int) sizeof(d->d_typename), d->d_typename);
+		fdisk_info(cxt, _("label: %.*s"), (int) sizeof(d->d_packname), d->d_packname);
+
+		fdisk_info(cxt, _("flags: %s"),
+			d->d_flags & BSD_D_REMOVABLE ? _(" removable") :
+			d->d_flags & BSD_D_ECC ? _(" ecc") :
+			d->d_flags & BSD_D_BADSECT ? _(" badsect") : "");
+
+		/* On various machines the fields of *lp are short/int/long */
+		/* In order to avoid problems, we cast them all to long. */
+		fdisk_info(cxt, _("bytes/sector: %ld"), (long) d->d_secsize);
+		fdisk_info(cxt, _("sectors/track: %ld"), (long) d->d_nsectors);
+		fdisk_info(cxt, _("tracks/cylinder: %ld"), (long) d->d_ntracks);
+		fdisk_info(cxt, _("sectors/cylinder: %ld"), (long) d->d_secpercyl);
+		fdisk_info(cxt, _("cylinders: %ld"), (long) d->d_ncylinders);
+		fdisk_info(cxt, _("rpm: %d"), d->d_rpm);
+		fdisk_info(cxt, _("interleave: %d"), d->d_interleave);
+		fdisk_info(cxt, _("trackskew: %d"), d->d_trackskew);
+		fdisk_info(cxt, _("cylinderskew: %d"), d->d_cylskew);
+		fdisk_info(cxt, _("headswitch: %ld (milliseconds)"), (long) d->d_headswitch);
+		fdisk_info(cxt, _("track-to-track seek: %ld (milliseconds)"), (long) d->d_trkseek);
+		/*
+		fdisk_info(cxt, _("drivedata: "));
+		for (i = ARRAY_SIZE(d->d_drivedata)- 1; i >= 0; i--)
+			if (d->d_drivedata[i])
+				break;
+		if (i < 0)
+			i = 0;
+		for (j = 0; j <= i; j++)
+			fdisk_info(cxt, "%ld ", (long) d->d_drivedata[j]);
+		*/
+	}
+
+	fdisk_info(cxt, _("partitions: %d"), d->d_npartitions);
+
+	tb = tt_new_table(TT_FL_FREEDATA);
+	if (!tb)
+		return -ENOMEM;
+
+	/* don't trunc anything in expert mode */
+	if (fdisk_context_display_details(cxt))
+		trunc = 0;
+
+	tt_define_column(tb, _("#"),        1, 0);
+	tt_define_column(tb, _("Start"),    9, TT_FL_RIGHT);
+	tt_define_column(tb, _("End"),      9, TT_FL_RIGHT);
+	tt_define_column(tb, _("Size"),     9, TT_FL_RIGHT);
+	tt_define_column(tb, _("Type"),     8, 0);
+	tt_define_column(tb, _("fsize"),    5, trunc);
+	tt_define_column(tb, _("bsize"),    5, trunc);
+	tt_define_column(tb, _("cpg"),      5, trunc);
+
+	for (i = 0, p = d->d_partitions; i < d->d_npartitions; i++, p++) {
+		char *s;
+		struct tt_line *ln;
+
+		if (!p->p_size)
+			continue;
+		ln = tt_add_line(tb, NULL);
+		if (!ln)
+			continue;
+
+		if (asprintf(&s, "%c", i + 'a') > 0)
+			tt_line_set_data(ln, 0, s);
+
+		if (fdisk_context_use_cylinders(cxt) && d->d_secpercyl) {
+			if (asprintf(&s, "%u%c",
+					p->p_offset / d->d_secpercyl + 1,
+					p->p_offset % d->d_secpercyl ? '*' : ' ') > 0)
+				tt_line_set_data(ln, 1, s);
+			if (asprintf(&s, "%u%c",
+					(p->p_offset + p->p_size + d->d_secpercyl - 1) / d->d_secpercyl,
+					(p->p_offset + p->p_size) % d->d_secpercyl ? '*' : ' ') > 0)
+				tt_line_set_data(ln, 2, s);
+			if (asprintf(&s, "%u%c",
+					p->p_size / d->d_secpercyl,
+					p->p_size % d->d_secpercyl ? '*' : ' ') > 0)
+				tt_line_set_data(ln, 3, s);
+		} else {
+			if (asprintf(&s, "%u", p->p_offset) > 0)
+				tt_line_set_data(ln, 1, s);
+			if (asprintf(&s, "%u", p->p_offset + p->p_size - 1) > 0)
+				tt_line_set_data(ln, 2, s);
+			if (asprintf(&s, "%u", p->p_size) > 0)
+				tt_line_set_data(ln, 3, s);
+		}
+
+		if ((unsigned) p->p_fstype < BSD_FSMAXTYPES)
+			rc = asprintf(&s, "%s", xbsd_fstypes[p->p_fstype].name);
+		else
+			rc = asprintf(&s, "%x", p->p_fstype);
+		if (rc > 0)
+			tt_line_set_data(ln, 4, s);
+
+		if (p->p_fstype == BSD_FS_UNUSED
+		    || p->p_fstype == BSD_FS_BSDFFS) {
+			if (asprintf(&s, "%u", p->p_fsize) > 0)
+				tt_line_set_data(ln, 5, s);
+			if (asprintf(&s, "%u", p->p_fsize * p->p_frag) > 0)
+				tt_line_set_data(ln, 6, s);
+		}
+		if (p->p_fstype == BSD_FS_BSDFFS
+		    && asprintf(&s, "%u", p->p_cpg) > 0)
+			tt_line_set_data(ln, 7, s);
+	}
+
+	rc = fdisk_print_table(cxt, tb);
+	tt_free_table(tb);
+
+	return rc;
 }
+
 
 static uint32_t ask_uint32(struct fdisk_context *cxt,
 		uint32_t dflt, char *mesg)
@@ -923,6 +966,7 @@ static int bsd_get_partition_status(
 static const struct fdisk_label_operations bsd_operations =
 {
 	.probe		= bsd_probe_label,
+	.list		= bsd_list_disklabel,
 	.write		= xbsd_write_disklabel,
 	.create		= xbsd_create_disklabel,
 	.part_add	= xbsd_add_part,
