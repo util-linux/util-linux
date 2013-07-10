@@ -121,7 +121,6 @@ struct fdisk_bsd_label {
 
 
 static int xbsd_delete_part (struct fdisk_context *cxt, size_t partnum);
-static void xbsd_change_fstype (struct fdisk_context *cxt);
 static int xbsd_get_part_index (struct fdisk_context *cxt, int max, int *n);
 static int xbsd_check_new_partition (struct fdisk_context *cxt, int *i);
 static unsigned short xbsd_dkcksum (struct bsd_disklabel *lp);
@@ -610,24 +609,6 @@ int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt)
 done:
 	free(res);
 	return rc;
-}
-
-/* TODO: remove this, use regular change_partition_type() in fdisk.c */
-static void xbsd_change_fstype (struct fdisk_context *cxt)
-{
-  int i;
-  struct fdisk_parttype *t;
-  struct bsd_disklabel *d = self_disklabel(cxt);
-
-  if (xbsd_get_part_index(cxt, d->d_npartitions, &i))
-	  return;
-  t = ask_partition_type(cxt);
-
-  if (t) {
-    d->d_partitions[i].p_fstype = t->type;
-    fdisk_free_parttype(t);
-    fdisk_label_set_changed(cxt->label, 1);
-  }
 }
 
 static int xbsd_get_part_index(struct fdisk_context *cxt, int max, int *n)
