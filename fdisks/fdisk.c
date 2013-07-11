@@ -68,17 +68,6 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-void toggle_units(struct fdisk_context *cxt)
-{
-	fdisk_context_set_unit(cxt,
-		fdisk_context_use_cylinders(cxt) ? "sectors" :
-						   "cylinders");
-	if (fdisk_context_use_cylinders(cxt))
-		fdisk_info(cxt, _("Changing display/entry units to cylinders (DEPRECATED!)."));
-	else
-		fdisk_info(cxt, _("Changing display/entry units to sectors."));
-}
-
 void list_partition_types(struct fdisk_context *cxt)
 {
 	struct fdisk_parttype *types;
@@ -167,17 +156,6 @@ void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 		fdisk_reset_alignment(cxt);
 }
 
-static void delete_partition(struct fdisk_context *cxt, int partnum)
-{
-	if (partnum < 0)
-		return;
-
-	if (fdisk_delete_partition(cxt, partnum) != 0)
-		printf(_("Could not delete partition %d\n"), partnum + 1);
-	else
-		printf(_("Partition %d is deleted\n"), partnum + 1);
-}
-
 static void change_partition_type(struct fdisk_context *cxt)
 {
 	size_t i;
@@ -252,25 +230,6 @@ static void list_disk_geometry(struct fdisk_context *cxt)
 	if (fdisk_get_disklabel_id(cxt, &id) == 0 && id)
 		printf(_("Disk identifier: %s\n"), id);
 	printf("\n");
-}
-
-static void list_table(struct fdisk_context *cxt)
-{
-	list_disk_geometry(cxt);
-	fdisk_list_disklabel(cxt);
-}
-
-static void verify(struct fdisk_context *cxt)
-{
-	fdisk_verify_disklabel(cxt);
-}
-
-static void new_partition(struct fdisk_context *cxt)
-{
-	assert(cxt);
-	assert(cxt->label);
-
-	fdisk_add_partition(cxt, NULL);
 }
 
 static void write_table(struct fdisk_context *cxt)
@@ -358,13 +317,6 @@ static void print_raw(struct fdisk_context *cxt)
 	/* TODO: print also EBR (extended partition) buffer */
 }
 
-static void __attribute__ ((__noreturn__)) handle_quit(struct fdisk_context *cxt)
-{
-	fdisk_free_context(cxt);
-	printf("\n");
-	exit(EXIT_SUCCESS);
-}
-
 static void
 expert_command_prompt(struct fdisk_context *cxt)
 {
@@ -389,15 +341,18 @@ expert_command_prompt(struct fdisk_context *cxt)
 			print_raw(cxt);
 			break;
 		case 'p':
-			list_table(cxt);
+			list_disk_geometry(cxt);
+			fdisk_list_disklabel(cxt);
 			break;
 		case 'q':
-			handle_quit(cxt);
+			fdisk_free_context(cxt);
+			printf("\n");
+			exit(EXIT_SUCCESS);
 		case 'r':
 			fdisk_context_enable_details(cxt, 0);
 			return;
 		case 'v':
-			verify(cxt);
+			fdisk_verify_disklabel(cxt);
 			break;
 		case 'w':
 			write_table(cxt);
@@ -426,10 +381,10 @@ static void print_partition_table_from_option(
 	if (fdisk_context_assign_device(cxt, device, 1) != 0)	/* read-only */
 		err(EXIT_FAILURE, _("cannot open %s"), device);
 
+	list_disk_geometry(cxt);
+
 	if (fdisk_dev_has_disklabel(cxt))
-		list_table(cxt);
-	else
-		list_disk_geometry(cxt);
+		fdisk_list_disklabel(cxt);
 }
 
 /*
@@ -467,23 +422,9 @@ print_all_partition_table_from_option(struct fdisk_context *cxt)
 	fclose(procpt);
 }
 
-static void
-unknown_command(int c) {
-	printf(_("%c: unknown command\n"), c);
-}
-
-static void print_welcome(void)
-{
-	printf(_("Welcome to fdisk (%s).\n\n"
-		 "Changes will remain in memory only, until you decide to write them.\n"
-		 "Be careful before using the write command.\n\n"), PACKAGE_STRING);
-
-	fflush(stdout);
-}
-
 static void command_prompt(struct fdisk_context *cxt)
 {
-	int c;
+	int c, rc = -EINVAL;
 	size_t n;
 
 	assert(cxt);
@@ -500,28 +441,42 @@ static void command_prompt(struct fdisk_context *cxt)
 		 * perform the commands here */
 		switch (c) {
 		case 'd':
-			if (fdisk_ask_partnum(cxt, &n, FALSE) == 0)
-				delete_partition(cxt, n);
+			rc = fdisk_ask_partnum(cxt, &n, FALSE);
+			if (!rc)
+				rc = fdisk_delete_partition(cxt, n);
+			if (rc)
+				fdisk_warnx(cxt, _("Could not delete partition %d"), n + 1);
+			else
+				fdisk_info(cxt, _("Partition %d is deleted"), n + 1);
 			break;
 		case 'l':
 			list_partition_types(cxt);
 			break;
 		case 'n':
-			new_partition(cxt);
+			rc = fdisk_add_partition(cxt, NULL);
 			break;
 		case 'p':
-			list_table(cxt);
+			list_disk_geometry(cxt);
+			fdisk_list_disklabel(cxt);
 			break;
 		case 'q':
-			handle_quit(cxt);
+			fdisk_free_context(cxt);
+			printf("\n");
+			exit(EXIT_SUCCESS);
 		case 't':
 			change_partition_type(cxt);
 			break;
 		case 'u':
-			toggle_units(cxt);
+			fdisk_context_set_unit(cxt,
+				fdisk_context_use_cylinders(cxt) ? "sectors" :
+								   "cylinders");
+			if (fdisk_context_use_cylinders(cxt))
+				fdisk_info(cxt, _("Changing display/entry units to cylinders (DEPRECATED!)."));
+			else
+				fdisk_info(cxt, _("Changing display/entry units to sectors."));
 			break;
 		case 'v':
-			verify(cxt);
+			fdisk_verify_disklabel(cxt);
 			break;
 		case 'w':
 			write_table(cxt);
@@ -538,7 +493,7 @@ static void command_prompt(struct fdisk_context *cxt)
 			}
 			break;
 		default:
-			unknown_command(c);
+			printf(_("%c: unknown command\n"), c);
 		}
 	}
 }
@@ -683,7 +638,10 @@ int main(int argc, char **argv)
 	if (fdisk_context_assign_device(cxt, argv[optind], 0) != 0)
 		err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
 
-	print_welcome();
+	printf(_("Welcome to fdisk (%s).\n\n"
+		 "Changes will remain in memory only, until you decide to write them.\n"
+		 "Be careful before using the write command.\n\n"), PACKAGE_STRING);
+	fflush(stdout);
 
 	if (!fdisk_dev_has_disklabel(cxt)) {
 		fprintf(stderr,
