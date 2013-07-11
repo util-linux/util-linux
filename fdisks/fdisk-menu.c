@@ -52,6 +52,7 @@ DECLARE_MENU_CB(sun_menu_cb);
 DECLARE_MENU_CB(geo_menu_cb);
 DECLARE_MENU_CB(dos_menu_cb);
 DECLARE_MENU_CB(bsd_menu_cb);
+DECLARE_MENU_CB(createlabel_menu_cb);
 
 /*
  * Menu entry macros:
@@ -110,7 +111,7 @@ struct menu menu_generic = {
 };
 
 struct menu menu_createlabel = {
-/*	.callback = createlabel_menu_cb, */
+	.callback = createlabel_menu_cb,
 	.exclude = FDISK_DISKLABEL_BSD,
 	.entries = {
 		MENU_SEP(N_("Create a new label")),
@@ -616,6 +617,35 @@ static int geo_menu_cb(struct fdisk_context **cxt0,
 
 	if (!rc)
 		fdisk_override_geometry(cxt, c, h, s);
+	return rc;
+}
+
+static int createlabel_menu_cb(struct fdisk_context **cxt0,
+		       const struct menu *menu __attribute__((__unused__)),
+		       const struct menu_entry *ent)
+{
+	struct fdisk_context *cxt = *cxt0;
+	int rc = -EINVAL;
+
+	DBG(FRONTEND, dbgprint("enter Create label menu"));
+
+	assert(cxt);
+	assert(ent);
+
+	switch (ent->key) {
+		case 'g':
+			fdisk_create_disklabel(cxt, "gpt");
+			break;
+		case 'G':
+			fdisk_create_disklabel(cxt, "sgi");
+			break;
+		case 'o':
+			fdisk_create_disklabel(cxt, "dos");
+			break;
+		case 's':
+			fdisk_create_disklabel(cxt, "sun");
+			break;
+	}
 	return rc;
 }
 

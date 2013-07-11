@@ -528,12 +528,6 @@ static void command_prompt(struct fdisk_context *cxt)
 			if (fdisk_ask_partnum(cxt, &n, FALSE) == 0)
 				delete_partition(cxt, n);
 			break;
-		case 'g':
-			fdisk_create_disklabel(cxt, "gpt");
-			break;
-		case 'G':
-			fdisk_create_disklabel(cxt, "sgi");
-			break;
 		case 'i':
 			if (fdisk_is_disklabel(cxt, SGI))
 				sgi_create_info(cxt);
@@ -546,17 +540,11 @@ static void command_prompt(struct fdisk_context *cxt)
 		case 'n':
 			new_partition(cxt);
 			break;
-		case 'o':
-			fdisk_create_disklabel(cxt, "dos");
-			break;
 		case 'p':
 			list_table(cxt);
 			break;
 		case 'q':
 			handle_quit(cxt);
-		case 's':
-			fdisk_create_disklabel(cxt, "sun");
-			break;
 		case 't':
 			change_partition_type(cxt);
 			break;
