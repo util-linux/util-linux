@@ -388,11 +388,6 @@ expert_command_prompt(struct fdisk_context *cxt)
 		case 'd':
 			print_raw(cxt);
 			break;
-		case 'g':
-			/* Deprecated, use 'G' in main menu, just for backward
-			 * compatibility only. */
-			fdisk_create_disklabel(cxt, "sgi");
-			break;
 		case 'p':
 			list_table(cxt);
 			break;
@@ -504,35 +499,9 @@ static void command_prompt(struct fdisk_context *cxt)
 		 * are not yet implemented by menu callbacks. Let's
 		 * perform the commands here */
 		switch (c) {
-		case 'a':
-			if (fdisk_is_disklabel(cxt, SGI) &&
-				 fdisk_ask_partnum(cxt, &n, FALSE) == 0)
-				fdisk_partition_toggle_flag(cxt, n, SGI_FLAG_BOOT);
-			else
-				unknown_command(c);
-			break;
-		case 'b':
-			if (fdisk_is_disklabel(cxt, SGI))
-				sgi_set_bootfile(cxt);
-			else
-				unknown_command(c);
-			break;
-		case 'c':
-			if (fdisk_is_disklabel(cxt, SGI) &&
-				 fdisk_ask_partnum(cxt, &n, FALSE) == 0)
-				fdisk_partition_toggle_flag(cxt, n, SGI_FLAG_SWAP);
-			else
-				unknown_command(c);
-			break;
 		case 'd':
 			if (fdisk_ask_partnum(cxt, &n, FALSE) == 0)
 				delete_partition(cxt, n);
-			break;
-		case 'i':
-			if (fdisk_is_disklabel(cxt, SGI))
-				sgi_create_info(cxt);
-			else
-				unknown_command(c);
 			break;
 		case 'l':
 			list_partition_types(cxt);

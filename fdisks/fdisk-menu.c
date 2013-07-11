@@ -49,6 +49,7 @@ struct menu_context {
 
 DECLARE_MENU_CB(gpt_menu_cb);
 DECLARE_MENU_CB(sun_menu_cb);
+DECLARE_MENU_CB(sgi_menu_cb);
 DECLARE_MENU_CB(geo_menu_cb);
 DECLARE_MENU_CB(dos_menu_cb);
 DECLARE_MENU_CB(bsd_menu_cb);
@@ -170,13 +171,14 @@ struct menu menu_sun = {
 };
 
 struct menu menu_sgi = {
-/*	.callback = sgi_menu_cb, */
+	.callback = sgi_menu_cb,
 	.label = FDISK_DISKLABEL_SGI,
 	.entries = {
 		MENU_SEP(N_("SGI")),
 		MENU_ENT('a', N_("select bootable partition")),
 		MENU_ENT('b', N_("edit bootfile entry")),
 		MENU_ENT('c', N_("select sgi swap partition")),
+		MENU_ENT('i', N_("create SGI info")),
 		{ 0, NULL }
 	}
 };
@@ -548,6 +550,45 @@ static int sun_menu_cb(struct fdisk_context **cxt0,
 	return rc;
 }
 
+static int sgi_menu_cb(struct fdisk_context **cxt0,
+		       const struct menu *menu __attribute__((__unused__)),
+		       const struct menu_entry *ent)
+{
+	struct fdisk_context *cxt = *cxt0;
+	int rc = -EINVAL;
+	size_t n = 0;
+
+	DBG(FRONTEND, dbgprint("enter SGI menu"));
+
+	assert(cxt);
+	assert(ent);
+	assert(fdisk_is_disklabel(cxt, SGI));
+
+	if (ent->expert)
+		return rc;
+
+	switch (ent->key) {
+	case 'a':
+		rc = fdisk_ask_partnum(cxt, &n, FALSE);
+		if (!rc)
+			rc = fdisk_partition_toggle_flag(cxt, n, SGI_FLAG_BOOT);
+		break;
+	case 'b':
+		sgi_set_bootfile(cxt);
+		break;
+	case 'c':
+		rc = fdisk_ask_partnum(cxt, &n, FALSE);
+		if (!rc)
+			rc = fdisk_partition_toggle_flag(cxt, n, SGI_FLAG_SWAP);
+		break;
+	case 'i':
+		rc = sgi_create_info(cxt);
+		break;
+	}
+
+	return rc;
+}
+
 /*
  * This is fdisk frontend for BSD specific libfdisk functions that
  * are not expported by generic libfdisk API.
@@ -631,6 +672,17 @@ static int createlabel_menu_cb(struct fdisk_context **cxt0,
 
 	assert(cxt);
 	assert(ent);
+
+	if (ent->expert) {
+		switch (ent->key) {
+		case 'g':
+			/* Deprecated, use 'G' in main menu, just for backward
+			 * compatibility only. */
+			rc = fdisk_create_disklabel(cxt, "sgi");
+			break;
+		}
+		return rc;
+	}
 
 	switch (ent->key) {
 		case 'g':
