@@ -173,16 +173,8 @@ extern int fdisk_bsd_link_partition(struct fdisk_context *cxt);
 /* sgi.h */
 #define SGI_FLAG_BOOT	1
 #define SGI_FLAG_SWAP	2
-
-extern int  sgi_change_sysid(struct fdisk_context *cxt, int i, int sys);
-extern unsigned int	sgi_get_start_sector(struct fdisk_context *cxt, int i );
-extern unsigned int	sgi_get_num_sectors(struct fdisk_context *cxt, int i );
-extern void	sgi_set_bootpartition(struct fdisk_context *cxt, int i );
-extern void	sgi_set_swappartition(struct fdisk_context *cxt, int i );
-extern int	sgi_get_bootpartition(struct fdisk_context *cxt);
-extern int	sgi_get_swappartition(struct fdisk_context *cxt);
-extern int sgi_set_bootfile(struct fdisk_context *cxt);
-extern int sgi_create_info(struct fdisk_context *cxt);
+extern int fdisk_sgi_set_bootfile(struct fdisk_context *cxt);
+extern int fdisk_sgi_create_info(struct fdisk_context *cxt);
 
 /* gpt */
 extern int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i);

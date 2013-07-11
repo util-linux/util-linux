@@ -57,6 +57,11 @@ static struct fdisk_parttype sgi_parttypes[] =
 	{0, NULL }
 };
 
+static unsigned int sgi_get_start_sector(struct fdisk_context *cxt, int i );
+static unsigned int sgi_get_num_sectors(struct fdisk_context *cxt, int i );
+static int sgi_get_bootpartition(struct fdisk_context *cxt);
+static int sgi_get_swappartition(struct fdisk_context *cxt);
+
 /* return poiter buffer with on-disk data */
 static inline struct sgi_disklabel *self_disklabel(struct fdisk_context *cxt)
 {
@@ -124,7 +129,7 @@ static void sgi_free_info(struct sgi_info *info)
 	free(info);
 }
 
-int sgi_create_info(struct fdisk_context *cxt)
+int fdisk_sgi_create_info(struct fdisk_context *cxt)
 {
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 
@@ -132,6 +137,8 @@ int sgi_create_info(struct fdisk_context *cxt)
 	sgilabel->volume[0].block_num = cpu_to_be32(2);
 	sgilabel->volume[0].num_bytes = cpu_to_be32(sizeof(struct sgi_info));
 	strncpy((char *) sgilabel->volume[0].name, "sgilabel", 8);
+
+	fdisk_info(cxt, _("SGI info created on second sector"));
 	return 0;
 }
 
@@ -360,13 +367,13 @@ static int sgi_list_table(struct fdisk_context *cxt)
 	return rc;
 }
 
-unsigned int sgi_get_start_sector(struct fdisk_context *cxt, int i)
+static unsigned int sgi_get_start_sector(struct fdisk_context *cxt, int i)
 {
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 	return be32_to_cpu(sgilabel->partitions[i].first_block);
 }
 
-unsigned int sgi_get_num_sectors(struct fdisk_context *cxt, int i)
+static unsigned int sgi_get_num_sectors(struct fdisk_context *cxt, int i)
 {
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 	return be32_to_cpu(sgilabel->partitions[i].num_blocks);
@@ -378,13 +385,13 @@ static int sgi_get_sysid(struct fdisk_context *cxt, int i)
 	return be32_to_cpu(sgilabel->partitions[i].type);
 }
 
-int sgi_get_bootpartition(struct fdisk_context *cxt)
+static int sgi_get_bootpartition(struct fdisk_context *cxt)
 {
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 	return be16_to_cpu(sgilabel->root_part_num);
 }
 
-int sgi_get_swappartition(struct fdisk_context *cxt)
+static int sgi_get_swappartition(struct fdisk_context *cxt)
 {
 	struct sgi_disklabel *sgilabel = self_disklabel(cxt);
 	return be16_to_cpu(sgilabel->swap_part_num);
@@ -431,7 +438,7 @@ static int sgi_check_bootfile(struct fdisk_context *cxt, const char *name)
 	return 1;	/* filename did not change */
 }
 
-int sgi_set_bootfile(struct fdisk_context *cxt)
+int fdisk_sgi_set_bootfile(struct fdisk_context *cxt)
 {
 	int rc = 0;
 	size_t sz;
