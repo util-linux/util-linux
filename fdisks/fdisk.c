@@ -156,7 +156,7 @@ void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 		fdisk_reset_alignment(cxt);
 }
 
-static void change_partition_type(struct fdisk_context *cxt)
+void change_partition_type(struct fdisk_context *cxt)
 {
 	size_t i;
 	struct fdisk_parttype *t, *org_t;
@@ -378,82 +378,6 @@ print_all_partition_table_from_option(struct fdisk_context *cxt)
 	fclose(procpt);
 }
 
-static void command_prompt(struct fdisk_context *cxt)
-{
-	int c, rc = -EINVAL;
-	size_t n;
-
-	assert(cxt);
-
-	while (1) {
-		assert(cxt->label);
-
-		c = process_fdisk_menu(&cxt);
-		if (c <= 0)
-			continue;
-
-		/* well, process_fdisk_menu() returns commands that
-		 * are not yet implemented by menu callbacks. Let's
-		 * perform the commands here */
-		switch (c) {
-		case 'd':
-			rc = fdisk_ask_partnum(cxt, &n, FALSE);
-			if (!rc)
-				rc = fdisk_delete_partition(cxt, n);
-			if (rc)
-				fdisk_warnx(cxt, _("Could not delete partition %d"), n + 1);
-			else
-				fdisk_info(cxt, _("Partition %d is deleted"), n + 1);
-			break;
-		case 'l':
-			list_partition_types(cxt);
-			break;
-		case 'n':
-			rc = fdisk_add_partition(cxt, NULL);
-			break;
-		case 'p':
-			list_disk_geometry(cxt);
-			fdisk_list_disklabel(cxt);
-			break;
-		case 'q':
-			fdisk_free_context(cxt);
-			printf("\n");
-			exit(EXIT_SUCCESS);
-		case 't':
-			change_partition_type(cxt);
-			break;
-		case 'u':
-			fdisk_context_set_unit(cxt,
-				fdisk_context_use_cylinders(cxt) ? "sectors" :
-								   "cylinders");
-			if (fdisk_context_use_cylinders(cxt))
-				fdisk_info(cxt, _("Changing display/entry units to cylinders (DEPRECATED!)."));
-			else
-				fdisk_info(cxt, _("Changing display/entry units to sectors."));
-			break;
-		case 'v':
-			fdisk_verify_disklabel(cxt);
-			break;
-		case 'w':
-			write_table(cxt);
-			break;
-		case 'x':
-			fdisk_context_enable_details(cxt, 1);
-			break;
-		case 'r':
-			if (cxt->parent) {
-				struct fdisk_context *tmp = cxt->parent;
-
-				fdisk_free_context(cxt);
-				cxt = tmp;
-			}
-			break;
-		default:
-			printf(_("%c: unknown command\n"), c);
-		}
-	}
-}
-
 static sector_t get_dev_blocks(char *dev)
 {
 	int fd;
@@ -605,7 +529,8 @@ int main(int argc, char **argv)
 		fdisk_create_disklabel(cxt, NULL);
 	}
 
-	command_prompt(cxt);
+	while (1)
+		process_fdisk_menu(&cxt);
 
 	fdisk_free_context(cxt);
 	return 0;

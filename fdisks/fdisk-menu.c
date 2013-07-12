@@ -80,6 +80,7 @@ DECLARE_MENU_CB(generic_menu_cb);
 #define MENU_XENT_H(k, t)	{ .title = t, .key = k, .expert = 1, .hidden = 1 }
 
 #define MENU_BENT(k, t)		{ .title = t, .key = k, .expert = 1, .normal = 1 }
+#define MENU_BENT_E(k, t, l)	{ .title = t, .key = k, .expert = 1, .normal = 1, .exclude = l }
 
 
 /* Generic menu */
@@ -92,7 +93,7 @@ struct menu menu_generic = {
 		MENU_ENT  ('n', N_("add a new partition")),
 		MENU_BENT ('p', N_("print the partition table")),
 		MENU_ENT  ('t', N_("change a partition type")),
-		MENU_ENT_E('v', N_("verify the partition table"), FDISK_DISKLABEL_BSD),
+		MENU_BENT_E('v', N_("verify the partition table"), FDISK_DISKLABEL_BSD),
 
 		MENU_XENT('d', N_("print the raw data of the first sector")),
 
@@ -106,7 +107,6 @@ struct menu menu_generic = {
 		MENU_ENT_L('w', N_("write table to disk"), FDISK_DISKLABEL_BSD),
 		MENU_BENT ('q', N_("quit without saving changes")),
 		MENU_XENT ('r', N_("return to main menu")),
-		MENU_ENT_L('r', N_("return to main menu"), FDISK_DISKLABEL_BSD),
 
 		{ 0, NULL }
 	}
@@ -376,16 +376,13 @@ int process_fdisk_menu(struct fdisk_context **cxt0)
 	rc = 0;
 	DBG(FRONTEND, dbgprint("selected: key=%c, entry='%s'",
 				key, ent->title));
-	/* hardcoded help */
-	if (key == 'm')
-		print_fdisk_menu(cxt);
 
 	/* menu has implemented callback, use it */
-	else if (menu->callback)
+	if (menu->callback)
 		rc = menu->callback(cxt0, menu, ent);
 	else {
-		DBG(FRONTEND, dbgprint("no callback, return key '%c'", key));
-		return key;
+		DBG(FRONTEND, dbgprint("no callback for key '%c'", key));
+		rc = -EINVAL;
 	}
 
 	DBG(FRONTEND, dbgprint("process menu done [rc=%d]", rc));
@@ -401,15 +398,10 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 {
 	struct fdisk_context *cxt = *cxt0;
 	int rc = 0;
+	size_t n;
 
-	if (!ent->expert)
-		return ent->key;
-
-	/* expert mode */
+	/* actions shared between expert and normal mode */
 	switch (ent->key) {
-	case 'd':
-		print_raw(cxt);
-		break;
 	case 'p':
 		list_disk_geometry(cxt);
 		rc = fdisk_list_disklabel(cxt);
@@ -418,16 +410,77 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		fdisk_free_context(cxt);
 		printf("\n");
 		exit(EXIT_SUCCESS);
-	case 'r':
-		rc = fdisk_context_enable_details(cxt, 0);
-		break;
-	case 'v':
-		rc = fdisk_verify_disklabel(cxt);
+	case 'm':
+		rc = print_fdisk_menu(cxt);
 		break;
 	case 'w':
 		write_table(cxt);
 		break;
+	case 'v':
+		rc = fdisk_verify_disklabel(cxt);
+		break;
 	}
+
+	/* expert mode */
+	if (ent->expert) {
+		switch (ent->key) {
+		case 'd':
+			print_raw(cxt);
+			break;
+		case 'r':
+			rc = fdisk_context_enable_details(cxt, 0);
+			break;
+		}
+		return rc;
+	}
+
+	/* normal mode */
+	switch (ent->key) {
+	case 'd':
+		rc = fdisk_ask_partnum(cxt, &n, FALSE);
+		if (!rc)
+			rc = fdisk_delete_partition(cxt, n);
+		if (rc)
+			fdisk_warnx(cxt, _("Could not delete partition %d"), n + 1);
+		else
+			fdisk_info(cxt, _("Partition %d is deleted"), n + 1);
+		break;
+	case 'l':
+		list_partition_types(cxt);
+		break;
+	case 'n':
+		rc = fdisk_add_partition(cxt, NULL);
+		break;
+	case 't':
+		change_partition_type(cxt);
+		break;
+	case 'u':
+		fdisk_context_set_unit(cxt,
+			fdisk_context_use_cylinders(cxt) ? "sectors" :
+							   "cylinders");
+		if (fdisk_context_use_cylinders(cxt))
+			fdisk_info(cxt, _("Changing display/entry units to cylinders (DEPRECATED!)."));
+		else
+			fdisk_info(cxt, _("Changing display/entry units to sectors."));
+		break;
+	case 'x':
+		fdisk_context_enable_details(cxt, 1);
+		break;
+	case 'r':
+		/* return from nested PT (e.g. BSD) */
+		if (cxt->parent) {
+			struct fdisk_context *tmp = cxt->parent;
+
+			fdisk_info(cxt, _("Leaving nested disk label."));
+			fdisk_free_context(cxt);
+			cxt = tmp;
+		}
+		break;
+	default:
+		fdisk_warnx(cxt, _("%c: unimplemented command"), ent->key);
+		break;
+	}
+
 	return rc;
 }
 
@@ -502,8 +555,10 @@ static int dos_menu_cb(struct fdisk_context **cxt0,
 				rc = fdisk_create_disklabel(bsd, "bsd");
 			if (rc)
 				fdisk_free_context(bsd);
-			else
+			else {
 				*cxt0 = cxt = bsd;
+				fdisk_info(cxt, _("Entering to nested BSD disk label"));
+			}
 			break;
 		}
 		case 'c':
