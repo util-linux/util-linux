@@ -232,21 +232,6 @@ void list_disk_geometry(struct fdisk_context *cxt)
 	printf("\n");
 }
 
-void write_table(struct fdisk_context *cxt)
-{
-	int rc;
-
-	rc = fdisk_write_disklabel(cxt);
-	if (rc)
-		err(EXIT_FAILURE, _("cannot write disk label"));
-	if (cxt->parent)
-		/* nested PT, don't leave */
-		return;
-
-	printf(_("The partition table has been altered!\n\n"));
-	reread_partition_table(cxt, 1);
-}
-
 void
 reread_partition_table(struct fdisk_context *cxt, int leave) {
 	int i;

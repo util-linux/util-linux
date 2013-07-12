@@ -406,15 +406,21 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		list_disk_geometry(cxt);
 		rc = fdisk_list_disklabel(cxt);
 		break;
+	case 'w':
+		rc = fdisk_write_disklabel(cxt);
+		if (rc)
+			err(EXIT_FAILURE, _("failed to write disk label"));
+		if (cxt->parent)
+			break; /* nested PT, don't leave */
+		fdisk_info(cxt, _("The partition table has been altered."));
+		reread_partition_table(cxt, 1);
+		break;
 	case 'q':
 		fdisk_free_context(cxt);
 		printf("\n");
 		exit(EXIT_SUCCESS);
 	case 'm':
 		rc = print_fdisk_menu(cxt);
-		break;
-	case 'w':
-		write_table(cxt);
 		break;
 	case 'v':
 		rc = fdisk_verify_disklabel(cxt);
