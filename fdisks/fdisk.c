@@ -192,7 +192,7 @@ static void change_partition_type(struct fdisk_context *cxt)
 	fdisk_free_parttype(org_t);
 }
 
-static void list_disk_geometry(struct fdisk_context *cxt)
+void list_disk_geometry(struct fdisk_context *cxt)
 {
 	char *id = NULL;
 	unsigned long long bytes = cxt->total_sectors * cxt->sector_size;
@@ -232,7 +232,7 @@ static void list_disk_geometry(struct fdisk_context *cxt)
 	printf("\n");
 }
 
-static void write_table(struct fdisk_context *cxt)
+void write_table(struct fdisk_context *cxt)
 {
 	int rc;
 
@@ -302,7 +302,7 @@ print_buffer(struct fdisk_context *cxt, unsigned char pbuffer[]) {
 	printf("\n");
 }
 
-static void print_raw(struct fdisk_context *cxt)
+void print_raw(struct fdisk_context *cxt)
 {
 	assert(cxt);
 	assert(cxt->label);
@@ -315,50 +315,6 @@ static void print_raw(struct fdisk_context *cxt)
 		print_buffer(cxt, cxt->firstsector);
 
 	/* TODO: print also EBR (extended partition) buffer */
-}
-
-static void
-expert_command_prompt(struct fdisk_context *cxt)
-{
-	char c;
-
-	assert(cxt);
-
-	fdisk_context_enable_details(cxt, 1);
-
-	while(1) {
-		assert(cxt->label);
-
-		c = process_fdisk_menu(&cxt);
-		if (c <= 0)
-			continue;
-
-		/* well, process_fdisk_menu() returns commands that
-		 * are not yet implemented by menu callbacks. Let's
-		 * perform the commands here */
-		switch (c) {
-		case 'd':
-			print_raw(cxt);
-			break;
-		case 'p':
-			list_disk_geometry(cxt);
-			fdisk_list_disklabel(cxt);
-			break;
-		case 'q':
-			fdisk_free_context(cxt);
-			printf("\n");
-			exit(EXIT_SUCCESS);
-		case 'r':
-			fdisk_context_enable_details(cxt, 0);
-			return;
-		case 'v':
-			fdisk_verify_disklabel(cxt);
-			break;
-		case 'w':
-			write_table(cxt);
-			break;
-		}
-	}
 }
 
 static int is_ide_cdrom_or_tape(char *device)
@@ -482,7 +438,7 @@ static void command_prompt(struct fdisk_context *cxt)
 			write_table(cxt);
 			break;
 		case 'x':
-			expert_command_prompt(cxt);
+			fdisk_context_enable_details(cxt, 1);
 			break;
 		case 'r':
 			if (cxt->parent) {

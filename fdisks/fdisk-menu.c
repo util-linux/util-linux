@@ -54,6 +54,7 @@ DECLARE_MENU_CB(geo_menu_cb);
 DECLARE_MENU_CB(dos_menu_cb);
 DECLARE_MENU_CB(bsd_menu_cb);
 DECLARE_MENU_CB(createlabel_menu_cb);
+DECLARE_MENU_CB(generic_menu_cb);
 
 /*
  * Menu entry macros:
@@ -83,7 +84,7 @@ DECLARE_MENU_CB(createlabel_menu_cb);
 
 /* Generic menu */
 struct menu menu_generic = {
-/*	.callback	= generic_menu_cb,*/
+	.callback	= generic_menu_cb,
 	.entries	= {
 		MENU_BSEP(N_("Generic")),
 		MENU_ENT  ('d', N_("delete a partition")),
@@ -388,6 +389,45 @@ int process_fdisk_menu(struct fdisk_context **cxt0)
 	}
 
 	DBG(FRONTEND, dbgprint("process menu done [rc=%d]", rc));
+	return rc;
+}
+
+/*
+ * Basic fdisk actions
+ */
+static int generic_menu_cb(struct fdisk_context **cxt0,
+		       const struct menu *menu __attribute__((__unused__)),
+		       const struct menu_entry *ent)
+{
+	struct fdisk_context *cxt = *cxt0;
+	int rc = 0;
+
+	if (!ent->expert)
+		return ent->key;
+
+	/* expert mode */
+	switch (ent->key) {
+	case 'd':
+		print_raw(cxt);
+		break;
+	case 'p':
+		list_disk_geometry(cxt);
+		rc = fdisk_list_disklabel(cxt);
+		break;
+	case 'q':
+		fdisk_free_context(cxt);
+		printf("\n");
+		exit(EXIT_SUCCESS);
+	case 'r':
+		rc = fdisk_context_enable_details(cxt, 0);
+		break;
+	case 'v':
+		rc = fdisk_verify_disklabel(cxt);
+		break;
+	case 'w':
+		write_table(cxt);
+		break;
+	}
 	return rc;
 }
 
