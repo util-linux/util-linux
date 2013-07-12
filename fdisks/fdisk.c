@@ -232,41 +232,6 @@ void list_disk_geometry(struct fdisk_context *cxt)
 	printf("\n");
 }
 
-void
-reread_partition_table(struct fdisk_context *cxt, int leave) {
-	int i;
-	struct stat statbuf;
-
-	i = fstat(cxt->dev_fd, &statbuf);
-	if (i == 0 && S_ISBLK(statbuf.st_mode)) {
-		sync();
-#ifdef BLKRRPART
-		printf(_("Calling ioctl() to re-read partition table.\n"));
-		i = ioctl(cxt->dev_fd, BLKRRPART);
-#else
-		errno = ENOSYS;
-		i = 1;
-#endif
-        }
-
-	if (i) {
-		printf(_("\nWARNING: Re-reading the partition table failed with error %d: %m.\n"
-			 "The kernel still uses the old table. The new table will be used at\n"
-			 "the next reboot or after you run partprobe(8) or kpartx(8)\n"),
-			errno);
-	}
-
-	if (leave) {
-		if (fsync(cxt->dev_fd) || close(cxt->dev_fd)) {
-			fprintf(stderr, _("\nError closing file\n"));
-			exit(1);
-		}
-
-		printf(_("Syncing disks.\n"));
-		sync();
-		exit(!!i);
-	}
-}
 
 #define MAX_PER_LINE	16
 static void

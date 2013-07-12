@@ -200,6 +200,23 @@ fail:
 	return -errno;
 }
 
+int fdisk_context_deassign_device(struct fdisk_context *cxt)
+{
+	assert(cxt);
+	assert(cxt->dev_fd >= 0);
+
+	if (fsync(cxt->dev_fd) || close(cxt->dev_fd)) {
+		fdisk_warn(cxt, _("%s: close device failed"), cxt->dev_path);
+		return -errno;
+	}
+
+	fdisk_info(cxt, _("Syncing disks."));
+	sync();
+
+	cxt->dev_fd = -1;
+	return 0;
+}
+
 /**
  * fdisk_free_context:
  * @cxt: fdisk context

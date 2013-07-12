@@ -79,6 +79,7 @@ extern int fdisk_context_set_ask(struct fdisk_context *cxt,
 
 extern int fdisk_context_assign_device(struct fdisk_context *cxt,
 				const char *fname, int readonly);
+extern int fdisk_context_deassign_device(struct fdisk_context *cxt);
 
 extern struct fdisk_label *fdisk_context_get_label(struct fdisk_context *cxt,
 				const char *name);
@@ -152,7 +153,7 @@ extern int fdisk_save_user_geometry(struct fdisk_context *cxt,
 extern int fdisk_save_user_sector_size(struct fdisk_context *cxt,
 				unsigned int phy,
 				unsigned int log);
-
+extern int fdisk_reread_partition_table(struct fdisk_context *cxt);
 
 /* dos.c */
 extern int fdisk_dos_enable_compatible(struct fdisk_label *lb, int enable);

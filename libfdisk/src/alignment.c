@@ -484,3 +484,35 @@ sector_t fdisk_scround(struct fdisk_context *cxt, sector_t num)
 	sector_t un = fdisk_context_get_units_per_sector(cxt);
 	return (num + un - 1) / un;
 }
+
+int fdisk_reread_partition_table(struct fdisk_context *cxt)
+{
+	int i;
+	struct stat statbuf;
+
+	assert(cxt);
+	assert(cxt->dev_fd >= 0);
+
+	i = fstat(cxt->dev_fd, &statbuf);
+	if (i == 0 && S_ISBLK(statbuf.st_mode)) {
+		sync();
+#ifdef BLKRRPART
+		fdisk_info(cxt, _("Calling ioctl() to re-read partition table."));
+		i = ioctl(cxt->dev_fd, BLKRRPART);
+#else
+		errno = ENOSYS;
+		i = 1;
+#endif
+	}
+
+	if (i) {
+		fdisk_warn(cxt, _("Re-reading the partition table failed."));
+		fdisk_info(cxt,	_(
+			"The kernel still uses the old table. The "
+			"new table will be used at the next reboot "
+			"or after you run partprobe(8) or kpartx(8)."));
+		return -errno;
+	}
+
+	return 0;
+}

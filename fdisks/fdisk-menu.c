@@ -413,12 +413,14 @@ static int generic_menu_cb(struct fdisk_context **cxt0,
 		if (cxt->parent)
 			break; /* nested PT, don't leave */
 		fdisk_info(cxt, _("The partition table has been altered."));
-		reread_partition_table(cxt, 1);
-		break;
+		rc = fdisk_reread_partition_table(cxt);
+		if (!rc)
+			rc = fdisk_context_deassign_device(cxt);
+		/* fallthrough */
 	case 'q':
 		fdisk_free_context(cxt);
-		printf("\n");
-		exit(EXIT_SUCCESS);
+		fputc('\n', stdout);
+		exit(rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE);
 	case 'm':
 		rc = print_fdisk_menu(cxt);
 		break;
