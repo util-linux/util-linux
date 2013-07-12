@@ -1127,6 +1127,7 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 	int rc, trunc = TT_FL_TRUNC;
 	uint32_t i;
 	struct fdisk_gpt_label *gpt;
+	struct gpt_header *h;
 	uint64_t fu;
 	uint64_t lu;
 	struct tt *tb = NULL;
@@ -1136,6 +1137,7 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 	assert(fdisk_is_disklabel(cxt, GPT));
 
 	gpt = self_label(cxt);
+	h = gpt->pheader;
 	fu = le64_to_cpu(gpt->pheader->first_usable_lba);
 	lu = le64_to_cpu(gpt->pheader->last_usable_lba);
 
@@ -1144,9 +1146,14 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 		return -ENOMEM;
 
 	/* don't trunc anything in expert mode */
-	if (fdisk_context_display_details(cxt))
+	if (fdisk_context_display_details(cxt)) {
 		trunc = 0;
-
+		fdisk_info(cxt, _("First LBA: %ju"), h->first_usable_lba);
+		fdisk_info(cxt, _("Last LBA: %ju"), h->last_usable_lba);
+		fdisk_info(cxt, _("Alternative LBA: %ju"), h->alternative_lba);
+		fdisk_info(cxt, _("Partitions entries LBA: %ju"), h->partition_entry_lba);
+		fdisk_info(cxt, _("Allocated partition entries: %ju"), h->npartition_entries);
+	}
 	tt_define_column(tb, _("Device"), 0.1, 0);
 	tt_define_column(tb, _("Start"),   12, TT_FL_RIGHT);
 	tt_define_column(tb, _("End"),     12, TT_FL_RIGHT);
@@ -1158,7 +1165,7 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 		tt_define_column(tb, _("Name"), 0.2, trunc);
 	}
 
-	for (i = 0; i < le32_to_cpu(gpt->pheader->npartition_entries); i++) {
+	for (i = 0; i < le32_to_cpu(h->npartition_entries); i++) {
 		struct gpt_entry *e = &gpt->ents[i];
 		char *sizestr = NULL, *p;
 		uint64_t start = gpt_partition_start(e);
