@@ -375,9 +375,7 @@ would happen if you used the
 program to set it while the system is running.  You can, however, do whatever
 you want to the Hardware Clock while the system is running, and the next
 time Linux starts up, it will do so with the adjusted time from the Hardware
-Clock.  You can also use the program
-.BR adjtimex (8)
-to smoothly adjust the System Time while the system runs.
+Clock.
 .PP
 A Linux kernel maintains a concept of a local timezone for the system.
 But don't be misled -- almost nobody cares what timezone the kernel
@@ -598,13 +596,6 @@ can turn it off by running anything, including
 .IR "hwclock \-\-hctosys" ,
 that sets the System Time the old fashioned way.
 
-To see if it is on or
-off, use the command
-.I adjtimex \-\-print
-and look at the value of "status".  If the "64" bit of this number
-(expressed in binary) equal to 0, 11 minute mode is on.  Otherwise, it
-is off.
-
 If your system runs with 11 minute mode on, don't use
 .I hwclock \-\-adjust
 or
@@ -650,7 +641,6 @@ on old systems)
 .I /proc/cpuinfo
 
 .SH "SEE ALSO"
-.BR adjtimex (8),
 .BR date (1),
 .BR gettimeofday (2),
 .BR settimeofday (2),
