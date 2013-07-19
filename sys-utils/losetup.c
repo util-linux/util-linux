@@ -620,6 +620,8 @@ int main(int argc, char **argv)
 		int hasdev = loopcxt_has_device(&lc);
 
 		do {
+			const char *errpre;
+
 			/* Note that loopcxt_{find_unused,set_device}() resets
 			 * loopcxt struct.
 			 */
@@ -641,12 +643,18 @@ int main(int argc, char **argv)
 			res = loopcxt_setup_device(&lc);
 			if (res == 0)
 				break;			/* success */
-			if (errno != EBUSY) {
-				warn(_("%s: failed to set up loop device"),
-					hasdev && loopcxt_get_fd(&lc) < 0 ?
-					    loopcxt_get_device(&lc) : file);
-				break;
-			}
+			if (errno == EBUSY)
+				continue;
+
+			/* errors */
+			errpre = hasdev && loopcxt_get_fd(&lc) < 0 ?
+					 loopcxt_get_device(&lc) : file;
+			if (errno == ERANGE && offset && offset % 512)
+				warnx(_("%s: failed to set up loop device, "
+					"offset is not 512-byte aligned."), errpre);
+			else
+				warn(_("%s: failed to set up loop device"), errpre);
+			break;
 		} while (hasdev == 0);
 
 		if (res == 0) {
