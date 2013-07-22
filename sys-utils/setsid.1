@@ -15,6 +15,11 @@ runs a program in a new session.
 .TP
 \fB\-c\fP, \fB\-\-ctty\fP
 Set the controlling terminal to the current one.
+.TP
+\fB\-w\fP, \fB\-\-wait\fP
+Wait the execution of the program to end, and return the exit value of
+the child as return value of the
+.BR setsid .
 .SH "SEE ALSO"
 .BR setsid (2)
 .SH AUTHOR
