@@ -252,18 +252,6 @@ AC_CHECK_MEMBERS([struct termios.c_line],,,
 AC_CHECK_MEMBERS([struct stat.st_mtim.tv_nsec],,,
 	[#include <sys/stat.h>])
 
-AC_CHECK_DECLS([
- UNAME26,
- ADDR_NO_RANDOMIZE,
- FDPIC_FUNCPTRS,
- MMAP_PAGE_ZERO,
- ADDR_COMPAT_LAYOUT,
- READ_IMPLIES_EXEC,
- ADDR_LIMIT_32BIT,
- WHOLE_SECONDS,
- STICKY_TIMEOUTS,
- ADDR_LIMIT_3GB], [], [], [#include <linux/personality.h>])
-
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
 [[
 #ifdef HAVE_SYS_SWAP_H
