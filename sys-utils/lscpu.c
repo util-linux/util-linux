@@ -569,15 +569,15 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 
 	/* IBM PR/SM */
 	} else if (path_exist(_PATH_PROC_SYSINFO)) {
-		FILE *fd = path_fopen("r", 0, _PATH_PROC_SYSINFO);
+		FILE *sysinfo_fd = path_fopen("r", 0, _PATH_PROC_SYSINFO);
 		char buf[BUFSIZ];
 
-		if (!fd)
+		if (!sysinfo_fd)
 			return;
 		desc->hyper = HYPER_IBM;
 		desc->hypervisor = "PR/SM";
 		desc->virtype = VIRT_FULL;
-		while (fgets(buf, sizeof(buf), fd) != NULL) {
+		while (fgets(buf, sizeof(buf), sysinfo_fd) != NULL) {
 			char *str;
 
 			if (!strstr(buf, "Control Program:"))
@@ -601,7 +601,7 @@ read_hypervisor(struct lscpu_desc *desc, struct lscpu_modifier *mod)
 			while ((str = strstr(desc->hypervisor, "  ")))
 				memmove(str, str + 1, strlen(str));
 		}
-		fclose(fd);
+		fclose(sysinfo_fd);
 	}
 
 	/* OpenVZ/Virtuozzo - /proc/vz dir should exist
