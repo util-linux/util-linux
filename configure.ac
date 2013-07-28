@@ -1347,7 +1347,7 @@ AS_IF([test "x$enable_socket_activation" = xyes], [
 
 AC_ARG_WITH([systemdsystemunitdir],
   AS_HELP_STRING([--with-systemdsystemunitdir=DIR], [directory for systemd service files]),
-  [], [with_systemdsystemunitdir=$($PKG_CONFIG --variable=systemdsystemunitdir systemd)])
+  [], [with_systemdsystemunitdir=`$PKG_CONFIG --variable=systemdsystemunitdir systemd`])
 
 AS_IF([test "x$with_systemdsystemunitdir" != "xno"], [
   AC_SUBST([systemdsystemunitdir], [$with_systemdsystemunitdir])
@@ -1359,8 +1359,8 @@ AM_CONDITIONAL([HAVE_SYSTEMD], [test -n "$with_systemdsystemunitdir" -a "x$with_
 AC_ARG_WITH([bashcompletiondir],
   AS_HELP_STRING([--with-bashcompletiondir=DIR], [Bash completions directory]),
   [],
-  [AS_IF([$($PKG_CONFIG --exists bash-completion)], [
-    with_bashcompletiondir=$($PKG_CONFIG --variable=completionsdir bash-completion)
+  [AS_IF([`$PKG_CONFIG --exists bash-completion`], [
+    with_bashcompletiondir=`$PKG_CONFIG --variable=completionsdir bash-completion`
   ], [
     with_bashcompletiondir=${datadir}/bash-completion/completions
   ])
