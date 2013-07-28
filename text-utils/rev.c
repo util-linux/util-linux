@@ -86,10 +86,20 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
+static void reverse_str(wchar_t *str, size_t n)
+{
+	size_t i;
+
+	for (i = 0; i < n / 2; ++i) {
+		wchar_t tmp = str[i];
+		str[i] = str[n - 1 - i];
+		str[n - 1 - i] = tmp;
+	}
+}
+
 int main(int argc, char *argv[])
 {
 	char *filename = "stdin";
-	wchar_t *t;
 	size_t len, bufsiz = BUFSIZ;
 	FILE *fp = stdin;
 	int ch, rval = EXIT_SUCCESS;
@@ -153,13 +163,8 @@ int main(int argc, char *argv[])
 
 				len = wcslen(buf);
 			}
-
-			if (*(t = buf + len - 1) == '\n')
-				--t;
-			for ( ; buf <= t; --t)
-				putwchar(*t);
-			if (!feof(fp))
-				putwchar('\n');
+			reverse_str(buf, len - 1);
+			fputws(buf, stdout);
 		}
 		if (ferror(fp)) {
 			warn("%s", filename);
