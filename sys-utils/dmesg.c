@@ -1318,6 +1318,8 @@ int main(int argc, char *argv[])
 	if (ctl.color)
 		ctl.color = colors_init() ? 1 : 0;
 
+	if (ctl.follow)
+		nopager = 1;
 	ctl.pager = nopager ? 0 : ctl.pager;
 	if (ctl.pager)
 		setup_pager();
