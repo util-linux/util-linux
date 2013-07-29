@@ -1378,7 +1378,8 @@ int main(int argc, char *argv[])
 				 "facility, decode, delta, ctime or notime options"));
 
 	ctl.color = colors_init(colormode) ? 1 : 0;
-
+	if (ctl.follow)
+		nopager = 1;
 	ctl.pager = nopager ? 0 : ctl.pager;
 	if (ctl.pager)
 		setup_pager();
