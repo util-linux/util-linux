@@ -404,10 +404,10 @@ static int append_comment(struct libmnt_table *tb,
 	if (intro)
 		rc = mnt_table_append_intro_comment(tb, comm);
 	else if (eof) {
-		rc = mnt_table_set_tailing_comment(tb,
+		rc = mnt_table_set_trailing_comment(tb,
 				mnt_fs_get_comment(fs));
 		if (!rc)
-			rc = mnt_table_append_tailing_comment(tb, comm);
+			rc = mnt_table_append_trailing_comment(tb, comm);
 		if (!rc)
 			rc = mnt_fs_set_comment(fs, NULL);
 	} else

@@ -137,7 +137,7 @@ int mnt_table_get_nents(struct libmnt_table *tb)
  * mnt_table_get_intro_comment(). The intro and the comment of the first fstab
  * entry has to be separated by blank line.  The filesystem comments are
  * accessible by mnt_fs_get_comment(). The tailing fstab comment is accessible
- * by mnt_table_get_tailing_comment().
+ * by mnt_table_get_trailing_comment().
  *
  * <informalexample>
  *  <programlisting>
@@ -216,26 +216,26 @@ int mnt_table_append_intro_comment(struct libmnt_table *tb, const char *comm)
 }
 
 /**
- * mnt_table_get_tailing_comment:
+ * mnt_table_get_trailing_comment:
  * @tb: pointer to tab
  *
  * Returns: table tailing comment
  */
-const char *mnt_table_get_tailing_comment(struct libmnt_table *tb)
+const char *mnt_table_get_trailing_comment(struct libmnt_table *tb)
 {
 	assert(tb);
 	return tb ? tb->comm_tail : NULL;
 }
 
 /**
- * mnt_table_set_tailing_comment
+ * mnt_table_set_trailing_comment
  * @tb: pointer to tab
  *
  * Sets tailing comment in table.
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_table_set_tailing_comment(struct libmnt_table *tb, const char *comm)
+int mnt_table_set_trailing_comment(struct libmnt_table *tb, const char *comm)
 {
 	char *p = NULL;
 
@@ -253,7 +253,7 @@ int mnt_table_set_tailing_comment(struct libmnt_table *tb, const char *comm)
 }
 
 /**
- * mnt_table_append_tailing_comment:
+ * mnt_table_append_trailing_comment:
  * @tb: pointer to tab
  * @comm: comment of NULL
  *
@@ -261,7 +261,7 @@ int mnt_table_set_tailing_comment(struct libmnt_table *tb, const char *comm)
  *
  * Returns: 0 on success or negative number in case of error.
  */
-int mnt_table_append_tailing_comment(struct libmnt_table *tb, const char *comm)
+int mnt_table_append_trailing_comment(struct libmnt_table *tb, const char *comm)
 {
 	assert(tb);
 	if (!tb)
@@ -1315,9 +1315,9 @@ int test_parse(struct libmnt_test *ts, int argc, char *argv[])
 	while(mnt_table_next_fs(tb, itr, &fs) == 0)
 		mnt_fs_print_debug(fs, stdout);
 
-	if (mnt_table_get_tailing_comment(tb))
+	if (mnt_table_get_trailing_comment(tb))
 		fprintf(stdout, "Trailing comment:\n\"%s\"\n",
-				mnt_table_get_tailing_comment(tb));
+				mnt_table_get_trailing_comment(tb));
 	rc = 0;
 done:
 	mnt_free_iter(itr);

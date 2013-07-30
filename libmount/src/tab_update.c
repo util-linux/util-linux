@@ -545,8 +545,8 @@ static int update_table(struct libmnt_update *upd, struct libmnt_table *tb)
 				goto leave;
 			}
 		}
-		if (tb->comms && mnt_table_get_tailing_comment(tb))
-			fputs(mnt_table_get_tailing_comment(tb), f);
+		if (tb->comms && mnt_table_get_trailing_comment(tb))
+			fputs(mnt_table_get_trailing_comment(tb), f);
 
 		if (fflush(f) != 0) {
 			rc = -errno;
@@ -603,8 +603,8 @@ int mnt_table_write_file(struct libmnt_table *tb, FILE *file)
 		if (rc)
 			return rc;
 	}
-	if (tb->comms && mnt_table_get_tailing_comment(tb))
-		fputs(mnt_table_get_tailing_comment(tb), file);
+	if (tb->comms && mnt_table_get_trailing_comment(tb))
+		fputs(mnt_table_get_trailing_comment(tb), file);
 
 	if (fflush(file) != 0)
 		rc = -errno;

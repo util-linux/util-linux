@@ -263,12 +263,12 @@ global:
 	mnt_fs_get_comment;
 	mnt_fs_set_comment;
 	mnt_table_append_intro_comment;
-	mnt_table_append_tailing_comment;
+	mnt_table_append_trailing_comment;
 	mnt_table_enable_comments;
 	mnt_table_get_intro_comment;
-	mnt_table_get_tailing_comment;
+	mnt_table_get_trailing_comment;
 	mnt_table_replace_file;
 	mnt_table_set_intro_comment;
-	mnt_table_set_tailing_comment;
+	mnt_table_set_trailing_comment;
 	mnt_table_write_file;
 } MOUNT_2.23;

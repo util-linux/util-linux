@@ -417,9 +417,9 @@ extern void mnt_table_enable_comments(struct libmnt_table *tb, int enable);
 extern const char *mnt_table_get_intro_comment(struct libmnt_table *tb);
 extern int mnt_table_set_intro_comment(struct libmnt_table *tb, const char *comm);
 extern int mnt_table_append_intro_comment(struct libmnt_table *tb, const char *comm);
-extern int mnt_table_set_tailing_comment(struct libmnt_table *tb, const char *comm);
-extern const char *mnt_table_get_tailing_comment(struct libmnt_table *tb);
-extern int mnt_table_append_tailing_comment(struct libmnt_table *tb, const char *comm);
+extern int mnt_table_set_trailing_comment(struct libmnt_table *tb, const char *comm);
+extern const char *mnt_table_get_trailing_comment(struct libmnt_table *tb);
+extern int mnt_table_append_trailing_comment(struct libmnt_table *tb, const char *comm);
 
 extern int mnt_table_set_cache(struct libmnt_table *tb, struct libmnt_cache *mpc);
 extern struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb);
