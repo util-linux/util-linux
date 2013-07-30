@@ -462,6 +462,9 @@ extern struct libmnt_update *mnt_new_update(void)
 			__ul_attribute__((warn_unused_result));
 extern void mnt_free_update(struct libmnt_update *upd);
 
+extern int mnt_table_replace_file(struct libmnt_table *tb, const char *filename);
+extern int mnt_table_write_file(struct libmnt_table *tb, FILE *file);
+
 extern int mnt_update_is_ready(struct libmnt_update *upd);
 extern int mnt_update_set_fs(struct libmnt_update *upd, unsigned long mountflags,
 	                      const char *target, struct libmnt_fs *fs);

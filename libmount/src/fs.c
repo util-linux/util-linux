@@ -1327,6 +1327,7 @@ int mnt_fs_set_comment(struct libmnt_fs *fs, const char *comm)
 /**
  * mnt_fs_append_comment:
  * @fs: fstab entry pointer
+ * @comm: comment string
  *
  * See also mnt_fs_set_comment().
  *

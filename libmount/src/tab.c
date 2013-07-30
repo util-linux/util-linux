@@ -130,6 +130,7 @@ int mnt_table_get_nents(struct libmnt_table *tb)
 /**
  * mnt_table_enable_comments:
  * @tb: pointer to tab
+ * @enable: TRUE or FALSE
  *
  * Enables parsing of comments.
  *
@@ -230,6 +231,7 @@ const char *mnt_table_get_trailing_comment(struct libmnt_table *tb)
 /**
  * mnt_table_set_trailing_comment
  * @tb: pointer to tab
+ * @comm: comment string
  *
  * Sets tailing comment in table.
  *

@@ -168,10 +168,12 @@ mnt_copy_fs
 mnt_free_fs
 mnt_free_mntent
 mnt_fs_append_attributes
+mnt_fs_append_comment
 mnt_fs_append_options
 mnt_fs_get_attribute
 mnt_fs_get_attributes
 mnt_fs_get_bindsrc
+mnt_fs_get_comment
 mnt_fs_get_devno
 mnt_fs_get_freq
 mnt_fs_get_fs_options
@@ -209,6 +211,7 @@ mnt_fs_prepend_options
 mnt_fs_print_debug
 mnt_fs_set_attributes
 mnt_fs_set_bindsrc
+mnt_fs_set_comment
 mnt_fs_set_freq
 mnt_fs_set_fstype
 mnt_fs_set_options
@@ -282,6 +285,9 @@ mnt_reset_table
 mnt_new_table_from_dir
 mnt_new_table_from_file
 mnt_table_add_fs
+mnt_table_append_intro_comment
+mnt_table_append_trailing_comment
+mnt_table_enable_comments
 mnt_table_find_devno
 mnt_table_find_mountpoint
 mnt_table_find_next_fs
@@ -291,8 +297,10 @@ mnt_table_find_srcpath
 mnt_table_find_tag
 mnt_table_find_target
 mnt_table_get_cache
+mnt_table_get_intro_comment
 mnt_table_get_nents
 mnt_table_get_root_fs
+mnt_table_get_trailing_comment
 mnt_table_is_fs_mounted
 mnt_table_next_child_fs
 mnt_table_next_fs
@@ -304,8 +312,10 @@ mnt_table_parse_stream
 mnt_table_parse_swaps
 mnt_table_remove_fs
 mnt_table_set_cache
+mnt_table_set_intro_comment
 mnt_table_set_iter
 mnt_table_set_parser_errcb
+mnt_table_set_trailing_comment
 </SECTION>
 
 <SECTION>
@@ -322,6 +332,8 @@ mnt_diff_tables
 libmnt_update
 mnt_free_update
 mnt_new_update
+mnt_table_replace_file
+mnt_table_write_file
 mnt_update_force_rdonly
 mnt_update_get_filename
 mnt_update_get_fs
