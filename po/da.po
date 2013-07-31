@@ -51,7 +51,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.23-rc2\n"
 "Report-Msgid-Bugs-To: util-linux@vger.kernel.org\n"
-"POT-Creation-Date: 2013-05-28 10:44+0200\n"
+"POT-Creation-Date: 2013-07-31 12:43+0200\n"
 "PO-Revision-Date: 2013-04-13 19:30+01:00\n"
 "Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
@@ -70,8 +70,8 @@ msgstr " %s <diskenhed> <partitionsnummer> <start> <længde>\n"
 #: disk-utils/blockdev.c:444 disk-utils/delpart.c:53 disk-utils/fdformat.c:62
 #: disk-utils/fdformat.c:154 disk-utils/fsck.c:1367
 #: disk-utils/fsck.cramfs.c:150 disk-utils/fsck.cramfs.c:511
-#: disk-utils/isosize.c:134 disk-utils/mkfs.bfs.c:184
-#: disk-utils/mkfs.cramfs.c:667 disk-utils/mkfs.cramfs.c:792
+#: disk-utils/isosize.c:134 disk-utils/mkfs.bfs.c:187
+#: disk-utils/mkfs.cramfs.c:666 disk-utils/mkfs.cramfs.c:791
 #: disk-utils/mkfs.minix.c:757 disk-utils/partx.c:939
 #: disk-utils/resizepart.c:95 disk-utils/swaplabel.c:105 fdisks/cfdisk.c:1824
 #: fdisks/cfdisk.c:1942 fdisks/cfdisk.c:2026 fdisks/fdisk.c:925
@@ -79,11 +79,11 @@ msgstr " %s <diskenhed> <partitionsnummer> <start> <længde>\n"
 #: lib/path.c:72 login-utils/islocal.c:87 login-utils/last.c:245
 #: login-utils/sulogin.c:399 login-utils/sulogin.c:437
 #: login-utils/utmpdump.c:118 login-utils/utmpdump.c:343
-#: login-utils/vipw.c:265 login-utils/vipw.c:283 misc-utils/findmnt.c:1013
+#: login-utils/vipw.c:265 login-utils/vipw.c:283 misc-utils/findmnt.c:1024
 #: misc-utils/mcookie.c:145 misc-utils/mcookie.c:179
 #: sys-utils/blkdiscard.c:140 sys-utils/cytune.c:178 sys-utils/cytune.c:404
 #: sys-utils/cytune.c:418 sys-utils/cytune.c:434 sys-utils/dmesg.c:491
-#: sys-utils/eject.c:500 sys-utils/eject.c:691 sys-utils/fallocate.c:153
+#: sys-utils/eject.c:503 sys-utils/eject.c:694 sys-utils/fallocate.c:153
 #: sys-utils/fsfreeze.c:124 sys-utils/fstrim.c:142 sys-utils/hwclock.c:265
 #: sys-utils/hwclock-cmos.c:636 sys-utils/hwclock-rtc.c:162
 #: sys-utils/hwclock-rtc.c:256 sys-utils/hwclock-rtc.c:414
@@ -338,8 +338,8 @@ msgstr ""
 "\n"
 
 #: disk-utils/fdformat.c:145 disk-utils/fsck.cramfs.c:146
-#: disk-utils/mkfs.bfs.c:177 disk-utils/mkfs.cramfs.c:755
-#: disk-utils/mkfs.cramfs.c:789 disk-utils/mkfs.minix.c:750
+#: disk-utils/mkfs.bfs.c:180 disk-utils/mkfs.cramfs.c:754
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/mkfs.minix.c:750
 #: disk-utils/partx.c:878 misc-utils/namei.c:231 sys-utils/blkdiscard.c:134
 #: sys-utils/dmesg.c:493 sys-utils/fsfreeze.c:127 sys-utils/fstrim.c:136
 #: sys-utils/swapon.c:446 sys-utils/switch_root.c:88
@@ -349,7 +349,7 @@ msgstr ""
 msgid "stat failed %s"
 msgstr "stat mislykkedes %s"
 
-#: disk-utils/fdformat.c:148 disk-utils/partx.c:936 misc-utils/lsblk.c:1251
+#: disk-utils/fdformat.c:148 disk-utils/partx.c:936 misc-utils/lsblk.c:1255
 #: sys-utils/blkdiscard.c:136 sys-utils/mountpoint.c:108
 #, c-format
 msgid "%s: not a block device"
@@ -433,8 +433,7 @@ msgstr "%s: fortolk fejl på linje %d - ignorer"
 msgid "%s: failed to parse fstab"
 msgstr "%s: kunne ikke fortolke fstab"
 
-#: disk-utils/fsck.c:584 sys-utils/umount.c:239 sys-utils/umount.c:397
-#: sys-utils/umount.c:420
+#: disk-utils/fsck.c:584 sys-utils/umount.c:400 sys-utils/umount.c:423
 #, c-format
 msgid "%s: not found"
 msgstr "%s: ikke fundet"
@@ -1373,12 +1372,12 @@ msgstr " -v, --verbose            vær mere uddybende\n"
 msgid "invalid divisor argument"
 msgstr "ugyldig parameter for nævner"
 
-#: disk-utils/mkfs.bfs.c:71
+#: disk-utils/mkfs.bfs.c:73
 #, c-format
 msgid "Usage: %s [options] device [block-count]\n"
 msgstr "Brug: %s [tilvalg] enhed [blokantal]\n"
 
-#: disk-utils/mkfs.bfs.c:73
+#: disk-utils/mkfs.bfs.c:75
 #, c-format
 msgid ""
 "\n"
@@ -1407,111 +1406,111 @@ msgstr ""
 " -h, --help          vis denne hjælpetekst og afslut\n"
 "\n"
 
-#: disk-utils/mkfs.bfs.c:136
+#: disk-utils/mkfs.bfs.c:139
 msgid "invalid number of inodes"
 msgstr "ugyldigt antal inoder"
 
-#: disk-utils/mkfs.bfs.c:142
+#: disk-utils/mkfs.bfs.c:145
 msgid "volume name too long"
 msgstr "navn på diskenhed er for langt"
 
-#: disk-utils/mkfs.bfs.c:149
+#: disk-utils/mkfs.bfs.c:152
 msgid "fsname name too long"
 msgstr "filsystemnavn er for langt"
 
-#: disk-utils/mkfs.bfs.c:180
+#: disk-utils/mkfs.bfs.c:183
 #, c-format
 msgid "%s is not a block special device"
 msgstr "%s er ikke en blokenhed"
 
-#: disk-utils/mkfs.bfs.c:188
+#: disk-utils/mkfs.bfs.c:191
 msgid "invalid block-count"
 msgstr "ugyldigt blokantal"
 
-#: disk-utils/mkfs.bfs.c:194
+#: disk-utils/mkfs.bfs.c:197
 #, c-format
 msgid "cannot get size of %s"
 msgstr "kan ikke indhente størrelsen af %s"
 
-#: disk-utils/mkfs.bfs.c:199
+#: disk-utils/mkfs.bfs.c:202
 #, c-format
 msgid "blocks argument too large, max is %llu"
 msgstr "blokparameter er for stort, maks er %llu"
 
-#: disk-utils/mkfs.bfs.c:214
+#: disk-utils/mkfs.bfs.c:217
 msgid "too many inodes - max is 512"
 msgstr "for mange inoder - øvre grænse er 512"
 
-#: disk-utils/mkfs.bfs.c:224
+#: disk-utils/mkfs.bfs.c:227
 #, c-format
 msgid "not enough space, need at least %llu blocks"
 msgstr "ikke plads nok, kræver mindst %llu blokke"
 
-#: disk-utils/mkfs.bfs.c:236 fdisks/fdisk.c:792
+#: disk-utils/mkfs.bfs.c:239 fdisks/fdisk.c:792
 #, c-format
 msgid "Device: %s\n"
 msgstr "Enhed: %s\n"
 
-#: disk-utils/mkfs.bfs.c:237
+#: disk-utils/mkfs.bfs.c:240
 #, c-format
 msgid "Volume: <%-6s>\n"
 msgstr "Diskenhed: <%-6s>\n"
 
-#: disk-utils/mkfs.bfs.c:238
+#: disk-utils/mkfs.bfs.c:241
 #, c-format
 msgid "FSname: <%-6s>\n"
 msgstr "FSnavn: <%-6s>\n"
 
-#: disk-utils/mkfs.bfs.c:239
+#: disk-utils/mkfs.bfs.c:242
 #, c-format
 msgid "BlockSize: %d\n"
 msgstr "Blokstørrelse: %d\n"
 
-#: disk-utils/mkfs.bfs.c:241
+#: disk-utils/mkfs.bfs.c:244
 #, c-format
 msgid "Inodes: %lu (in 1 block)\n"
 msgstr "Inoder: %lu (i en blok)\n"
 
-#: disk-utils/mkfs.bfs.c:244
+#: disk-utils/mkfs.bfs.c:247
 #, c-format
 msgid "Inodes: %lu (in %llu blocks)\n"
 msgstr "Inoder: %lu (i %llu blokke)\n"
 
-#: disk-utils/mkfs.bfs.c:246
+#: disk-utils/mkfs.bfs.c:249
 #, c-format
 msgid "Blocks: %lld\n"
 msgstr "Blokke: %lld\n"
 
-#: disk-utils/mkfs.bfs.c:247
+#: disk-utils/mkfs.bfs.c:250
 #, c-format
 msgid "Inode end: %d, Data end: %d\n"
 msgstr "Inode-slut: %d, data-slut: %d\n"
 
-#: disk-utils/mkfs.bfs.c:252
+#: disk-utils/mkfs.bfs.c:255
 msgid "error writing superblock"
 msgstr "fejl under skrivning af superblok"
 
-#: disk-utils/mkfs.bfs.c:272
+#: disk-utils/mkfs.bfs.c:276
 msgid "error writing root inode"
 msgstr "fejl under skrivning af rod-inode"
 
-#: disk-utils/mkfs.bfs.c:277
+#: disk-utils/mkfs.bfs.c:281
 msgid "error writing inode"
 msgstr "fejl under skrivning af inode"
 
-#: disk-utils/mkfs.bfs.c:280
+#: disk-utils/mkfs.bfs.c:284
 msgid "seek error"
 msgstr "søgefejl"
 
-#: disk-utils/mkfs.bfs.c:286
+#: disk-utils/mkfs.bfs.c:290
 msgid "error writing . entry"
 msgstr "fejl under skrivning af .-indgang"
 
-#: disk-utils/mkfs.bfs.c:290
+#: disk-utils/mkfs.bfs.c:294
 msgid "error writing .. entry"
 msgstr "fejl under skrivning af ..-indgang"
 
-#: disk-utils/mkfs.bfs.c:293
+#: disk-utils/mkfs.bfs.c:297
 #, c-format
 msgid "error closing %s"
 msgstr "fejl under lukning af %s"
@@ -1529,7 +1528,7 @@ msgid " %s [options] [-t <type>] [fs-options] <device> [<size>]\n"
 msgstr "Brug: %s [tilvalg] [-t type for fs-tilvalg] enhed [størrelse]\n"
 
 #: disk-utils/mkfs.c:42 fdisks/sfdisk.c:2384 include/c.h:276
-#: misc-utils/cal.c:799 misc-utils/getopt.c:322 misc-utils/logger.c:218
+#: misc-utils/cal.c:802 misc-utils/getopt.c:322 misc-utils/logger.c:218
 #: misc-utils/look.c:370 misc-utils/mcookie.c:72 misc-utils/namei.c:422
 #: misc-utils/uuidd.c:73 misc-utils/uuidgen.c:38 misc-utils/wipefs.c:373
 #: sys-utils/hwclock.c:1463 sys-utils/renice.c:62 term-utils/mesg.c:77
@@ -1636,12 +1635,12 @@ msgstr "read (læsning) mislykkedes: %s"
 msgid "open failed: %s"
 msgstr "open (åbn) mislykkedes: %s"
 
-#: disk-utils/mkfs.cramfs.c:302
+#: disk-utils/mkfs.cramfs.c:301
 #, c-format
 msgid "could not read directory %s"
 msgstr "kunne ikke læse mappe %s"
 
-#: disk-utils/mkfs.cramfs.c:327
+#: disk-utils/mkfs.cramfs.c:326
 #, c-format
 msgid ""
 "Very long (%zu bytes) filename `%s' found.\n"
@@ -1650,38 +1649,38 @@ msgstr ""
 "Fandt meget langt (%zu byte) filnavn »%s«.\n"
 " Forøg MAX_INPUT_NAMELEN i mkcramfs.c og genoversæt. Afslutter."
 
-#: disk-utils/mkfs.cramfs.c:449
+#: disk-utils/mkfs.cramfs.c:448
 msgid "filesystem too big.  Exiting."
 msgstr "for stort filsystem.  Afslutter."
 
-#: disk-utils/mkfs.cramfs.c:608
+#: disk-utils/mkfs.cramfs.c:607
 #, c-format
 msgid "AIEEE: block \"compressed\" to > 2*blocklength (%ld)\n"
 msgstr "AAARGH: blok blev »komprimeret« til > 2*bloklængden (%ld)\n"
 
-#: disk-utils/mkfs.cramfs.c:627
+#: disk-utils/mkfs.cramfs.c:626
 #, c-format
 msgid "%6.2f%% (%+ld bytes)\t%s\n"
 msgstr "%6.2f%% (%+ld byte)\t%s\n"
 
-#: disk-utils/mkfs.cramfs.c:672
+#: disk-utils/mkfs.cramfs.c:671
 #, c-format
 msgid "cannot close file %s"
 msgstr "kunne ikke lukke filen »%s«"
 
-#: disk-utils/mkfs.cramfs.c:733
+#: disk-utils/mkfs.cramfs.c:732
 msgid "invalid blocksize argument"
 msgstr "ugyldig blokstørrelsesparameter"
 
-#: disk-utils/mkfs.cramfs.c:739
+#: disk-utils/mkfs.cramfs.c:738
 msgid "edition number argument failed"
 msgstr "parameter for udgavenummer mislykkedes"
 
-#: disk-utils/mkfs.cramfs.c:749
+#: disk-utils/mkfs.cramfs.c:748
 msgid "invalid endianness given. Must be 'big', 'little', or 'host'"
 msgstr "ugyldig endianness angivet. Skal være »big«, »little« eller »host«"
 
-#: disk-utils/mkfs.cramfs.c:810
+#: disk-utils/mkfs.cramfs.c:809
 #, c-format
 msgid ""
 "warning: guestimate of required size (upper bound) is %lldMB, but maximum "
@@ -1690,78 +1689,78 @@ msgstr ""
 "advarsel: et gæt på den nødvendige størrelse (øvre grænse) er %lldMB, men "
 "den maksimale aftryksstørrelse er %uMB.  Vi bliver muligvis ikke færdige."
 
-#: disk-utils/mkfs.cramfs.c:834
+#: disk-utils/mkfs.cramfs.c:833
 msgid "ROM image map"
 msgstr "ROM-aftrykskort"
 
-#: disk-utils/mkfs.cramfs.c:846
+#: disk-utils/mkfs.cramfs.c:845
 #, c-format
 msgid "Including: %s\n"
 msgstr "Medtager: %s\n"
 
-#: disk-utils/mkfs.cramfs.c:852
+#: disk-utils/mkfs.cramfs.c:851
 #, c-format
 msgid "Directory data: %zd bytes\n"
 msgstr "Mappedata: %zd byte\n"
 
-#: disk-utils/mkfs.cramfs.c:860
+#: disk-utils/mkfs.cramfs.c:859
 #, c-format
 msgid "Everything: %zd kilobytes\n"
 msgstr "Alt: %zd kilobyte\n"
 
-#: disk-utils/mkfs.cramfs.c:865
+#: disk-utils/mkfs.cramfs.c:864
 #, c-format
 msgid "Super block: %zd bytes\n"
 msgstr "Superblok: %zd byte\n"
 
-#: disk-utils/mkfs.cramfs.c:872
+#: disk-utils/mkfs.cramfs.c:871
 #, c-format
 msgid "CRC: %x\n"
 msgstr "CRC: %x\n"
 
-#: disk-utils/mkfs.cramfs.c:877
+#: disk-utils/mkfs.cramfs.c:876
 #, c-format
 msgid "not enough space allocated for ROM image (%lld allocated, %zu used)"
 msgstr ""
 "der er tildelt for lidt plads til ROM-aftrykket (%lld tildelt, %zu brugt)"
 
-#: disk-utils/mkfs.cramfs.c:884
+#: disk-utils/mkfs.cramfs.c:883
 msgid "ROM image"
 msgstr "ROM-aftryk"
 
-#: disk-utils/mkfs.cramfs.c:886
+#: disk-utils/mkfs.cramfs.c:885
 #, c-format
 msgid "ROM image write failed (%zd %zd)"
 msgstr "Skrivning af ROM-aftryk mislykkedes (%zd %zd)"
 
-#: disk-utils/mkfs.cramfs.c:896
+#: disk-utils/mkfs.cramfs.c:895
 msgid "warning: filenames truncated to 255 bytes."
 msgstr "advarsel: filnavne afkortet til 255 byte."
 
-#: disk-utils/mkfs.cramfs.c:898
+#: disk-utils/mkfs.cramfs.c:897
 msgid "warning: files were skipped due to errors."
 msgstr "advarsel: filer oversprunget pga. fejl."
 
-#: disk-utils/mkfs.cramfs.c:900
+#: disk-utils/mkfs.cramfs.c:899
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte)."
 msgstr "advarsel: filstørrelser afkortet til %luMB (minus 1 byte)."
 
 # spørgsmålet er om det *giver* sikkerhedsproblemer, eller måske bare
 # er et symptom på at der kan være sikkerhedsproblemer :)
-#: disk-utils/mkfs.cramfs.c:904
+#: disk-utils/mkfs.cramfs.c:903
 #, c-format
 msgid "warning: uids truncated to %u bits.  (This may be a security concern.)"
 msgstr ""
 "advarsel: uids forkortet til %u bit. (Dette kan være et sikkerhedsproblem.)"
 
-#: disk-utils/mkfs.cramfs.c:907
+#: disk-utils/mkfs.cramfs.c:906
 #, c-format
 msgid "warning: gids truncated to %u bits.  (This may be a security concern.)"
 msgstr ""
 "advarsel: gids forkortet til %u bit. (Dette kan være et sikkerhedsproblem.)"
 
-#: disk-utils/mkfs.cramfs.c:910
+#: disk-utils/mkfs.cramfs.c:909
 #, c-format
 msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
@@ -2264,7 +2263,7 @@ msgstr "Forsøger at bruge »%s« for løkkeenheden\n"
 msgid "%s: failed to set backing file"
 msgstr "%s: Kunne ikke angive backing-fil"
 
-#: disk-utils/partx.c:124 sys-utils/losetup.c:626 sys-utils/mount.c:444
+#: disk-utils/partx.c:124 sys-utils/mount.c:444
 #, c-format
 msgid "%s: failed to setup loop device"
 msgstr "%s: klargøring af løkkeenhed mislykkedes"
@@ -2358,19 +2357,19 @@ msgid "#%2d: %9ju-%9ju (%9ju sectors, %6ju MB)\n"
 msgstr "#%2d: %9ju-%9ju (%9ju sektorer, %6ju MB)\n"
 
 # måske udskrift
-#: disk-utils/partx.c:543 misc-utils/findmnt.c:658 misc-utils/findmnt.c:675
+#: disk-utils/partx.c:543 misc-utils/findmnt.c:669 misc-utils/findmnt.c:686
 #: misc-utils/lslocks.c:396 sys-utils/prlimit.c:222 sys-utils/swapon.c:138
 #: sys-utils/wdctl.c:207
 msgid "failed to add line to output"
 msgstr "kunne ikke tilføje linje til uddata"
 
-#: disk-utils/partx.c:627 misc-utils/findmnt.c:1429 misc-utils/lsblk.c:1579
+#: disk-utils/partx.c:627 misc-utils/findmnt.c:1440 misc-utils/lsblk.c:1583
 #: misc-utils/lslocks.c:455 sys-utils/losetup.c:301 sys-utils/lscpu.c:1065
 #: sys-utils/prlimit.c:284 sys-utils/swapon.c:229 sys-utils/wdctl.c:249
 msgid "failed to initialize output table"
 msgstr "kunne ikke initialisere uddatatabel"
 
-#: disk-utils/partx.c:635 misc-utils/findmnt.c:1447 misc-utils/lsblk.c:1589
+#: disk-utils/partx.c:635 misc-utils/findmnt.c:1458 misc-utils/lsblk.c:1593
 #: misc-utils/lslocks.c:463 sys-utils/losetup.c:307 sys-utils/prlimit.c:292
 #: sys-utils/swapon.c:237 sys-utils/wdctl.c:258
 msgid "failed to initialize output column"
@@ -2420,7 +2419,7 @@ msgstr "              parametre\n"
 msgid " -u, --update         update specified partitions or all of them\n"
 msgstr ""
 
-#: disk-utils/partx.c:711 misc-utils/lsblk.c:1366
+#: disk-utils/partx.c:711 misc-utils/lsblk.c:1370
 msgid ""
 " -b, --bytes          print SIZE in bytes rather than in human readable "
 "format\n"
@@ -2438,12 +2437,12 @@ msgstr ""
 msgid " -o, --output <type>  define which output columns to use\n"
 msgstr ""
 
-#: disk-utils/partx.c:715 misc-utils/lsblk.c:1379
+#: disk-utils/partx.c:715 misc-utils/lsblk.c:1383
 #, fuzzy
 msgid " -P, --pairs          use key=\"value\" output format\n"
 msgstr " -V, --version                Vis versionsinformation\n"
 
-#: disk-utils/partx.c:716 misc-utils/lsblk.c:1380
+#: disk-utils/partx.c:716 misc-utils/lsblk.c:1384
 #, fuzzy
 msgid " -r, --raw            use raw output format\n"
 msgstr " -V, --version                Vis versionsinformation\n"
@@ -6373,7 +6372,7 @@ msgstr ""
 "<start> <størr> <type [E,S,L,X,hex]> <opstartsflag [-,*]> <c,h,s> <c,h,s>\n"
 "Du behøver normalt kun at angive <start> og <størr> (og måske <type>).\n"
 
-#: fdisks/sfdisk.c:2380 include/c.h:275 misc-utils/cal.c:794
+#: fdisks/sfdisk.c:2380 include/c.h:275 misc-utils/cal.c:797
 #: misc-utils/getopt.c:314 misc-utils/logger.c:214 misc-utils/look.c:366
 #: misc-utils/mcookie.c:68 misc-utils/namei.c:418 misc-utils/uuidd.c:69
 #: misc-utils/uuidgen.c:34 misc-utils/wipefs.c:369 sys-utils/hwclock.c:1442
@@ -6751,7 +6750,7 @@ msgstr ""
 #: schedutils/taskset.c:166 sys-utils/chcpu.c:307 sys-utils/cytune.c:378
 #: sys-utils/dmesg.c:1283 sys-utils/hwclock.c:1422 sys-utils/lscpu.c:1360
 #: sys-utils/renice.c:102 sys-utils/rtcwake.c:474 sys-utils/tunelp.c:249
-#: term-utils/agetty.c:656 term-utils/mesg.c:109 term-utils/script.c:212
+#: term-utils/agetty.c:658 term-utils/mesg.c:109 term-utils/script.c:212
 #: term-utils/scriptreplay.c:172 term-utils/setterm.c:812
 #: term-utils/wall.c:133 term-utils/write.c:113 text-utils/col.c:208
 #: text-utils/colcrt.c:118 text-utils/colrm.c:174 text-utils/column.c:152
@@ -6780,8 +6779,8 @@ msgstr "%s: tilvalg "
 msgid "are mutually exclusive."
 msgstr "udelukker hinanden"
 
-#: lib/exec_shell.c:26 login-utils/newgrp.c:186 login-utils/su-common.c:599
-#: login-utils/su-common.c:919 login-utils/sulogin.c:741
+#: lib/exec_shell.c:45 login-utils/newgrp.c:186 login-utils/su-common.c:599
+#: login-utils/su-common.c:924 login-utils/sulogin.c:741
 #: login-utils/sulogin.c:745 schedutils/chrt.c:334 schedutils/ionice.c:232
 #: schedutils/taskset.c:237 sys-utils/flock.c:298 sys-utils/nsenter.c:320
 #: sys-utils/prlimit.c:640 sys-utils/rtcwake.c:587 sys-utils/setarch.c:292
@@ -7190,7 +7189,7 @@ msgstr ""
 "Bygger en ny GPT-disketiket (GUID: %08X-%04X-%04X-%02X%02X-%02X%02X%02X%02X"
 "%02X%02X)\n"
 
-#: libfdisk/src/parttype.c:85 misc-utils/findmnt.c:626 schedutils/ionice.c:79
+#: libfdisk/src/parttype.c:85 misc-utils/findmnt.c:637 schedutils/ionice.c:79
 #: sys-utils/hwclock.c:317
 msgid "unknown"
 msgstr "ukendt"
@@ -7793,11 +7792,11 @@ msgstr "kunne ikke angive STI"
 msgid "cannot set groups"
 msgstr "kan ikke angive grupper"
 
-#: login-utils/su-common.c:555 sys-utils/eject.c:655
+#: login-utils/su-common.c:555 sys-utils/eject.c:658
 msgid "cannot set group id"
 msgstr "kan ikke angive gruppe-id"
 
-#: login-utils/su-common.c:557 sys-utils/eject.c:658
+#: login-utils/su-common.c:557 sys-utils/eject.c:661
 msgid "cannot set user id"
 msgstr "kan ikke angive bruger-id"
 
@@ -7883,7 +7882,11 @@ msgstr "gruppe %s findes ikke"
 msgid "can't specify more than %d supplemental groups"
 msgstr "kan ikke angive mere end %d supplementære grupper"
 
-#: login-utils/su-common.c:821
+#: login-utils/su-common.c:815
+msgid "ignore --preserve-environment, it's mutually exclusive to --login."
+msgstr ""
+
+#: login-utils/su-common.c:826
 msgid ""
 "options --{shell,fast,command,session-command,login} and --user are mutually "
 "exclusive."
@@ -7891,25 +7894,25 @@ msgstr ""
 "tilvalg --{shell,fast,command,session-command,login} og --user udelukker "
 "hinanden."
 
-#: login-utils/su-common.c:825
+#: login-utils/su-common.c:830
 msgid "COMMAND not specified."
 msgstr "KOMMANDO er ikke angivet."
 
-#: login-utils/su-common.c:839
+#: login-utils/su-common.c:844
 msgid "only root can specify alternative groups"
 msgstr "kun root (administrator) kan angive alternative grupper"
 
-#: login-utils/su-common.c:846
+#: login-utils/su-common.c:851
 #, c-format
 msgid "user %s does not exist"
 msgstr "bruger »%s« findes ikke"
 
-#: login-utils/su-common.c:892
+#: login-utils/su-common.c:897
 #, c-format
 msgid "using restricted shell %s"
 msgstr "bruger begrænset skal %s"
 
-#: login-utils/su-common.c:913
+#: login-utils/su-common.c:918
 #, c-format
 msgid "warning: cannot change directory to %s"
 msgstr "advarsel: kan ikke ændre mappe til %s"
@@ -7989,7 +7992,7 @@ msgid ""
 "fails\n"
 msgstr ""
 
-#: login-utils/sulogin.c:806 misc-utils/findmnt.c:1329 sys-utils/wdctl.c:505
+#: login-utils/sulogin.c:806 misc-utils/findmnt.c:1340 sys-utils/wdctl.c:505
 #: term-utils/wall.c:128
 msgid "invalid timeout argument"
 msgstr "ugyldig parameter for tidsudløb"
@@ -8148,12 +8151,12 @@ msgstr "ugyldig årsværdi: brug 1-9999"
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:796
+#: misc-utils/cal.c:799
 #, c-format
 msgid " %s [options] [[[day] month] year]\n"
 msgstr " %s [tilvalg] [[[dag] måned] år]\n"
 
-#: misc-utils/cal.c:800
+#: misc-utils/cal.c:803
 msgid ""
 " -1, --one        show only current month (default)\n"
 " -3, --three      show previous, current and next month\n"
@@ -8291,53 +8294,53 @@ msgstr ""
 msgid "unknown action: %s"
 msgstr "ukendt handling: %s"
 
-#: misc-utils/findmnt.c:614
+#: misc-utils/findmnt.c:625
 msgid "mount"
 msgstr "monter"
 
-#: misc-utils/findmnt.c:617
+#: misc-utils/findmnt.c:628
 msgid "umount"
 msgstr "afmonter"
 
-#: misc-utils/findmnt.c:620
+#: misc-utils/findmnt.c:631
 msgid "remount"
 msgstr "genmonter"
 
-#: misc-utils/findmnt.c:623
+#: misc-utils/findmnt.c:634
 msgid "move"
 msgstr "flyt"
 
 # evt. "i linje "
-#: misc-utils/findmnt.c:743
+#: misc-utils/findmnt.c:754
 #, c-format
 msgid "%s: parse error at line %d"
 msgstr "%s: fortolkningsfejl på linje %d"
 
-#: misc-utils/findmnt.c:772 misc-utils/findmnt.c:991 sys-utils/eject.c:709
+#: misc-utils/findmnt.c:783 misc-utils/findmnt.c:1002 sys-utils/eject.c:712
 #: sys-utils/mount.c:640
 msgid "failed to initialize libmount table"
 msgstr "kunne ikke initialisere libmount-tabel"
 
-#: misc-utils/findmnt.c:799 text-utils/parse.c:64
+#: misc-utils/findmnt.c:810 text-utils/parse.c:64
 #, c-format
 msgid "can't read %s"
 msgstr "kan ikke læse %s"
 
-#: misc-utils/findmnt.c:931 misc-utils/findmnt.c:997 sys-utils/mount.c:135
+#: misc-utils/findmnt.c:942 misc-utils/findmnt.c:1008 sys-utils/mount.c:135
 #: sys-utils/mount.c:183 sys-utils/swapoff.c:98 sys-utils/swapon.c:193
-#: sys-utils/swapon.c:225 sys-utils/swapon.c:606 sys-utils/umount.c:263
+#: sys-utils/swapon.c:225 sys-utils/swapon.c:606 sys-utils/umount.c:266
 msgid "failed to initialize libmount iterator"
 msgstr "kunne ikke initialisere libmount-iterator"
 
-#: misc-utils/findmnt.c:1003
+#: misc-utils/findmnt.c:1014
 msgid "failed to initialize libmount tabdiff"
 msgstr "kunne ikke initialisere libmount-tabelforskel"
 
-#: misc-utils/findmnt.c:1031
+#: misc-utils/findmnt.c:1042
 msgid "poll() failed"
 msgstr "poll() mislykkedes"
 
-#: misc-utils/findmnt.c:1093
+#: misc-utils/findmnt.c:1104
 #, c-format
 msgid ""
 " %1$s [options]\n"
@@ -8350,7 +8353,7 @@ msgstr ""
 " %1$s [tilvalg] <enhed> <monteringspunkt>\n"
 " %1$s [tilvalg] [--source <enhed>] [--target <monteringspunkt>]\n"
 
-#: misc-utils/findmnt.c:1100
+#: misc-utils/findmnt.c:1111
 #, c-format
 msgid ""
 "\n"
@@ -8362,7 +8365,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1107
+#: misc-utils/findmnt.c:1118
 #, c-format
 msgid ""
 " -p, --poll[=<list>]    monitor changes in table of mounted filesystems\n"
@@ -8370,7 +8373,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1111
+#: misc-utils/findmnt.c:1122
 #, c-format
 msgid ""
 " -A, --all              disable all built-in filters, print all filesystems\n"
@@ -8385,7 +8388,7 @@ msgid ""
 " -f, --first-only       print the first found filesystem only\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1122
+#: misc-utils/findmnt.c:1133
 #, c-format
 msgid ""
 " -i, --invert           invert the sense of matching\n"
@@ -8396,29 +8399,29 @@ msgid ""
 " -u, --notruncate       don't truncate text in columns\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1127
+#: misc-utils/findmnt.c:1138
 msgid " -O, --options <list>   limit the set of filesystems by mount options\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1128
+#: misc-utils/findmnt.c:1139
 msgid " -o, --output <list>    the output columns to be shown\n"
 msgstr " -o, --output <vis>     resultatkolonne, der skal vises\n"
 
-#: misc-utils/findmnt.c:1129
+#: misc-utils/findmnt.c:1140
 msgid " -P, --pairs            use key=\"value\" output format\n"
 msgstr " -P, --pairs            brug key\"value\" resultatformat\n"
 
-#: misc-utils/findmnt.c:1130
+#: misc-utils/findmnt.c:1141
 #, fuzzy
 msgid " -r, --raw              use raw output format\n"
 msgstr " -V, --version                Vis versionsinformation\n"
 
-#: misc-utils/findmnt.c:1131
+#: misc-utils/findmnt.c:1142
 #, fuzzy
 msgid " -t, --types <list>     limit the set of filesystems by FS types\n"
 msgstr "   l   vis liste over filsystemtyper"
 
-#: misc-utils/findmnt.c:1133
+#: misc-utils/findmnt.c:1144
 #, c-format
 msgid ""
 " -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
@@ -8428,7 +8431,7 @@ msgid ""
 " -T, --target <string>  the mountpoint to use\n"
 msgstr ""
 
-#: misc-utils/findmnt.c:1143 sys-utils/lscpu.c:1277
+#: misc-utils/findmnt.c:1154 sys-utils/lscpu.c:1277
 #, c-format
 msgid ""
 "\n"
@@ -8437,21 +8440,21 @@ msgstr ""
 "\n"
 "Tilgængelige kolonner:\n"
 
-#: misc-utils/findmnt.c:1243
+#: misc-utils/findmnt.c:1254
 #, c-format
 msgid "unknown direction '%s'"
 msgstr "ukendt retning »%s«"
 
-#: misc-utils/findmnt.c:1312
+#: misc-utils/findmnt.c:1323
 msgid "invalid TID argument"
 msgstr "ugyldig TID-parameter"
 
-#: misc-utils/findmnt.c:1369
+#: misc-utils/findmnt.c:1380
 msgid "--poll accepts only one file, but more specified by --tab-file"
 msgstr ""
 "--poll accepterer kun en fil, men yderligere specificeret af --tab-file"
 
-#: misc-utils/findmnt.c:1373
+#: misc-utils/findmnt.c:1384
 msgid ""
 "options --target and --source can't be used together with command line "
 "element that is not an option"
@@ -8459,11 +8462,11 @@ msgstr ""
 "tilvalgene --target og --source kan ikke bruges sammen med "
 "kommandolinjeelement som ikke er et tilvalg"
 
-#: misc-utils/findmnt.c:1418
+#: misc-utils/findmnt.c:1429
 msgid "failed to initialize libmount cache"
 msgstr "kunne ikke initialisere libmount-mellemlager"
 
-#: misc-utils/findmnt.c:1441
+#: misc-utils/findmnt.c:1452
 #, c-format
 msgid "%s column is requested, but --poll is not enabled"
 msgstr ""
@@ -8867,151 +8870,151 @@ msgstr "rettigheder for enhedsknude"
 msgid "device vendor"
 msgstr "enhedsnavn"
 
-#: misc-utils/lsblk.c:975
+#: misc-utils/lsblk.c:979
 #, c-format
 msgid "%s: failed to get device path"
 msgstr "%s: kunne ikke få enhedssti"
 
-#: misc-utils/lsblk.c:982
+#: misc-utils/lsblk.c:986
 #, c-format
 msgid "%s: unknown device name"
 msgstr "%s: ukendt enhedsnavn"
 
-#: misc-utils/lsblk.c:988 misc-utils/lsblk.c:995
+#: misc-utils/lsblk.c:992 misc-utils/lsblk.c:999
 #, c-format
 msgid "%s: failed to initialize sysfs handler"
 msgstr "%s: kunne ikke initialisere sysfs-håndtering"
 
-#: misc-utils/lsblk.c:1018
+#: misc-utils/lsblk.c:1022
 #, c-format
 msgid "%s: failed to get dm name"
 msgstr "%s: kunne ikke få dm-navn"
 
-#: misc-utils/lsblk.c:1059
+#: misc-utils/lsblk.c:1063
 msgid "failed to open device directory in sysfs"
 msgstr "kunne ikke åbne enhedsmappe i sysfs"
 
-#: misc-utils/lsblk.c:1227
+#: misc-utils/lsblk.c:1231
 #, fuzzy, c-format
 msgid "%s: failed to compose sysfs path"
 msgstr "kunne ikke sammensætte sysfs-sti for %s"
 
-#: misc-utils/lsblk.c:1233
+#: misc-utils/lsblk.c:1237
 #, c-format
 msgid "%s: failed to read link"
 msgstr "%s: kunne ikke læse henvisning"
 
-#: misc-utils/lsblk.c:1256
+#: misc-utils/lsblk.c:1260
 #, fuzzy, c-format
 msgid "%s: failed to get sysfs name"
 msgstr "%s: kunne ikke få dm-navn"
 
-#: misc-utils/lsblk.c:1265
+#: misc-utils/lsblk.c:1269
 #, c-format
 msgid "%s: failed to get whole-disk device number"
 msgstr "%s: kunne ikke få enhedsnummer for whole-disk (hel-disk)"
 
-#: misc-utils/lsblk.c:1317 misc-utils/lsblk.c:1319 misc-utils/lsblk.c:1344
-#: misc-utils/lsblk.c:1346
+#: misc-utils/lsblk.c:1321 misc-utils/lsblk.c:1323 misc-utils/lsblk.c:1348
+#: misc-utils/lsblk.c:1350
 #, c-format
 msgid "failed to parse list '%s'"
 msgstr "kunne ikke fortolke liste »%s«"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1324
+#: misc-utils/lsblk.c:1328
 #, c-format
 msgid "the list of excluded devices is too large (limit is %d devices)"
 msgstr ""
 "listen for udelukkede enheder er for stor (begrænsningen er på %d enheder)"
 
 #. TRANSLATORS: The standard value for %d is 256.
-#: misc-utils/lsblk.c:1351
+#: misc-utils/lsblk.c:1355
 #, c-format
 msgid "the list of included devices is too large (limit is %d devices)"
 msgstr ""
 "listen for inkluderede enheder er for stor (begrænsningen er på %d enheder)"
 
-#: misc-utils/lsblk.c:1363 sys-utils/wdctl.c:168
+#: misc-utils/lsblk.c:1367 sys-utils/wdctl.c:168
 #, fuzzy, c-format
 msgid " %s [options] [<device> ...]\n"
 msgstr "Brug: %s [tilvalg] enhed ...\n"
 
-#: misc-utils/lsblk.c:1365
+#: misc-utils/lsblk.c:1369
 #, fuzzy
 msgid " -a, --all            print all devices\n"
 msgstr " -a, --all      forespørg alle rå enheder\n"
 
-#: misc-utils/lsblk.c:1367
+#: misc-utils/lsblk.c:1371
 #, fuzzy
 msgid " -d, --nodeps         don't print slaves or holders\n"
 msgstr "    -n :                    undlad at skrive ændringerne til disken"
 
-#: misc-utils/lsblk.c:1368
+#: misc-utils/lsblk.c:1372
 msgid " -D, --discard        print discard capabilities\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1369
+#: misc-utils/lsblk.c:1373
 msgid ""
 " -e, --exclude <list> exclude devices by major number (default: RAM disks)\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1370
+#: misc-utils/lsblk.c:1374
 msgid " -I, --include <list> show only devices with specified major numbers\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1371
+#: misc-utils/lsblk.c:1375
 #, fuzzy
 msgid " -f, --fs             output info about filesystems\n"
 msgstr "  -u, --unqote                 Indskyd ikke anførselstegn i uddata\n"
 
-#: misc-utils/lsblk.c:1372
+#: misc-utils/lsblk.c:1376
 #, fuzzy
 msgid " -h, --help           usage information (this)\n"
 msgstr " -V, --version                Vis versionsinformation\n"
 
-#: misc-utils/lsblk.c:1373
+#: misc-utils/lsblk.c:1377
 #, fuzzy
 msgid " -i, --ascii          use ascii characters only\n"
 msgstr "  -T, --test                   Tjek versionen af getopt(1)\n"
 
-#: misc-utils/lsblk.c:1374
+#: misc-utils/lsblk.c:1378
 #, fuzzy
 msgid " -m, --perms          output info about permissions\n"
 msgstr " -V, --version                Vis versionsinformation\n"
 
-#: misc-utils/lsblk.c:1375
+#: misc-utils/lsblk.c:1379
 #, fuzzy
 msgid " -l, --list           use list format output\n"
 msgstr " -Q, --quiet-output           Ingen normale uddata\n"
 
-#: misc-utils/lsblk.c:1376
+#: misc-utils/lsblk.c:1380
 msgid " -n, --noheadings     don't print headings\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1377
+#: misc-utils/lsblk.c:1381
 msgid " -o, --output <list>  output columns\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1378
+#: misc-utils/lsblk.c:1382
 #, fuzzy
 msgid " -p, --paths          print complate device path\n"
 msgstr "  -V, --version                Vis versionsinformation\n"
 
-#: misc-utils/lsblk.c:1381
+#: misc-utils/lsblk.c:1385
 #, fuzzy
 msgid " -s, --inverse        inverse dependencies\n"
 msgstr "  -V, --version                Vis versionsinformation\n"
 
-#: misc-utils/lsblk.c:1382
+#: misc-utils/lsblk.c:1386
 msgid " -t, --topology       output info about topology\n"
 msgstr ""
 
-#: misc-utils/lsblk.c:1383
+#: misc-utils/lsblk.c:1387
 #, fuzzy
 msgid " -S, --scsi           output info about SCSI devices\n"
 msgstr "  -V, --version                Vis versionsinformation\n"
 
-#: misc-utils/lsblk.c:1388 misc-utils/lslocks.c:510 sys-utils/prlimit.c:188
+#: misc-utils/lsblk.c:1392 misc-utils/lslocks.c:510 sys-utils/prlimit.c:188
 #, c-format
 msgid ""
 "\n"
@@ -9020,7 +9023,7 @@ msgstr ""
 "\n"
 "Tilgængelige kolonner (for --output):\n"
 
-#: misc-utils/lsblk.c:1401
+#: misc-utils/lsblk.c:1405
 #, c-format
 msgid "failed to access sysfs directory: %s"
 msgstr "kunne ikke tilgå sysfs-mappe: %s"
@@ -9227,8 +9230,8 @@ msgstr "  -V, --version                Vis versionsinformation\n"
 msgid " -s, --symlink    act on symlink target\n"
 msgstr ""
 
-#: misc-utils/rename.c:151 sys-utils/ipcrm.c:154 term-utils/agetty.c:669
-#: term-utils/agetty.c:678
+#: misc-utils/rename.c:151 sys-utils/ipcrm.c:154 term-utils/agetty.c:671
+#: term-utils/agetty.c:680
 #, fuzzy
 msgid "not enough arguments"
 msgstr "Ikke nok parametre"
@@ -9764,7 +9767,7 @@ msgstr ""
 
 #: mount-deprecated/mount.c:1314
 #, fuzzy
-msgid "mount: tailed to initialize loopdev context"
+msgid "mount: failed to initialize loopdev context"
 msgstr "kunne ikke initialisere loopcxt"
 
 #: mount-deprecated/mount.c:1319
@@ -10151,7 +10154,7 @@ msgstr ""
 "Andre tilvalg: [-nfFrsvw] [-o tilvalg] [-p passwdfd].\n"
 "For mange flere detaljer, se man 8 mount.\n"
 
-#: mount-deprecated/mount.c:2445 sys-utils/losetup.c:503 sys-utils/mount.c:901
+#: mount-deprecated/mount.c:2445 sys-utils/losetup.c:503 sys-utils/mount.c:903
 msgid "--pass-fd is no longer supported"
 msgstr ""
 
@@ -11393,15 +11396,15 @@ msgstr ""
 msgid "--reltime can't be used together with --ctime "
 msgstr ""
 
-#: sys-utils/dmesg.c:1338
+#: sys-utils/dmesg.c:1340
 msgid "read kernel buffer failed"
 msgstr "læst kernemellemlager mislykkedes"
 
-#: sys-utils/dmesg.c:1351
+#: sys-utils/dmesg.c:1353
 msgid "unsupported command"
 msgstr "ikke understøttet kommando"
 
-#: sys-utils/dmesg.c:1357
+#: sys-utils/dmesg.c:1359
 msgid "klogctl failed"
 msgstr "klogctl mislykkedes"
 
@@ -11490,241 +11493,241 @@ msgstr ""
 msgid "CD-ROM tray close command not supported by this kernel\n"
 msgstr ""
 
-#: sys-utils/eject.c:405
+#: sys-utils/eject.c:408
 #, fuzzy
 msgid "CD-ROM eject unsupported"
 msgstr "hastighed %d er ikke understøttet"
 
-#: sys-utils/eject.c:436 sys-utils/eject.c:457 sys-utils/eject.c:1096
+#: sys-utils/eject.c:439 sys-utils/eject.c:460 sys-utils/eject.c:1099
 msgid "CD-ROM eject command failed"
 msgstr ""
 
-#: sys-utils/eject.c:439
+#: sys-utils/eject.c:442
 msgid "no CD-ROM information available"
 msgstr ""
 
-#: sys-utils/eject.c:442
+#: sys-utils/eject.c:445
 msgid "CD-ROM drive is not ready"
 msgstr ""
 
-#: sys-utils/eject.c:482
+#: sys-utils/eject.c:485
 msgid "CD-ROM select speed command failed"
 msgstr ""
 
-#: sys-utils/eject.c:484 sys-utils/eject.c:570
+#: sys-utils/eject.c:487 sys-utils/eject.c:573
 msgid "CD-ROM select speed command not supported by this kernel"
 msgstr ""
 
-#: sys-utils/eject.c:521
+#: sys-utils/eject.c:524
 #, fuzzy, c-format
 msgid "%s: failed to finding CD-ROM name"
 msgstr "%s: kunne ikke skrive etiket"
 
-#: sys-utils/eject.c:536
+#: sys-utils/eject.c:539
 #, c-format
 msgid "%s: failed to read speed"
 msgstr "%s: Kunne ikke læse hastigheden"
 
-#: sys-utils/eject.c:544
+#: sys-utils/eject.c:547
 msgid "failed to read speed"
 msgstr "kunne ikke læse hastigheden"
 
-#: sys-utils/eject.c:588
+#: sys-utils/eject.c:591
 msgid "not an sg device, or old sg driver"
 msgstr "hverken en sg-enhed eller gammel sg-driver"
 
-#: sys-utils/eject.c:650
+#: sys-utils/eject.c:653
 #, c-format
 msgid "%s: unmounting"
 msgstr ""
 
-#: sys-utils/eject.c:665
+#: sys-utils/eject.c:668
 #, fuzzy, c-format
 msgid "unable to exec /bin/umount of `%s'"
 msgstr "kunne ikke køre %s"
 
-#: sys-utils/eject.c:668
+#: sys-utils/eject.c:671
 msgid "unable to fork"
 msgstr "kunne ikke forgrene"
 
-#: sys-utils/eject.c:675
+#: sys-utils/eject.c:678
 #, fuzzy, c-format
 msgid "unmount of `%s' did not exit normally"
 msgstr "mount: monteringspunkt %s findes ikke"
 
-#: sys-utils/eject.c:678
+#: sys-utils/eject.c:681
 #, fuzzy, c-format
 msgid "unmount of `%s' failed\n"
 msgstr "open() af %s mislykkedes"
 
-#: sys-utils/eject.c:719
+#: sys-utils/eject.c:722
 msgid "failed to parse mount table"
 msgstr "kunne ikke fortolke monteringstabel"
 
-#: sys-utils/eject.c:780 sys-utils/eject.c:977
+#: sys-utils/eject.c:783 sys-utils/eject.c:980
 #, c-format
 msgid "%s: mounted on %s"
 msgstr "%s: monteret på %s"
 
-#: sys-utils/eject.c:877
+#: sys-utils/eject.c:880
 #, c-format
 msgid "%s: is removable device"
 msgstr "%s: er en ekstern enhed"
 
-#: sys-utils/eject.c:896
+#: sys-utils/eject.c:899
 #, c-format
 msgid "%s: connected by hotplug subsystem: %s"
 msgstr ""
 
-#: sys-utils/eject.c:917
+#: sys-utils/eject.c:920
 msgid "setting CD-ROM speed to auto"
 msgstr "sætter cd-rom-hastighed til auto"
 
-#: sys-utils/eject.c:919
+#: sys-utils/eject.c:922
 #, c-format
 msgid "setting CD-ROM speed to %ldX"
 msgstr "sætter cd-rom-hastighed til %ldX"
 
-#: sys-utils/eject.c:946
+#: sys-utils/eject.c:949
 #, c-format
 msgid "default device: `%s'"
 msgstr "Standardenhed: »%s«"
 
-#: sys-utils/eject.c:952
+#: sys-utils/eject.c:955
 #, c-format
 msgid "using default device `%s'"
 msgstr "bruger standardenhed »%s«"
 
-#: sys-utils/eject.c:971
+#: sys-utils/eject.c:974
 #, c-format
 msgid "%s: unable to find device"
 msgstr "%s: kunne ikke finde enhed"
 
-#: sys-utils/eject.c:973
+#: sys-utils/eject.c:976
 #, c-format
 msgid "device name is `%s'"
 msgstr "enhedsnavn er »%s«"
 
-#: sys-utils/eject.c:979 sys-utils/umount.c:227 sys-utils/umount.c:396
-#: sys-utils/umount.c:419
+#: sys-utils/eject.c:982 sys-utils/umount.c:227 sys-utils/umount.c:399
+#: sys-utils/umount.c:422
 #, c-format
 msgid "%s: not mounted"
 msgstr "%s: ikke monteret"
 
-#: sys-utils/eject.c:983
+#: sys-utils/eject.c:986
 #, c-format
 msgid "%s: disc device: %s (disk device will be used for eject)"
 msgstr ""
 
-#: sys-utils/eject.c:991
+#: sys-utils/eject.c:994
 #, c-format
 msgid "%s: not found mountpoint or device with the given name"
 msgstr ""
 
-#: sys-utils/eject.c:994
+#: sys-utils/eject.c:997
 #, fuzzy, c-format
 msgid "%s: is whole-disk device"
 msgstr "%s: Kunne ikke søge (seek) til swap-etiket"
 
-#: sys-utils/eject.c:998
+#: sys-utils/eject.c:1001
 #, fuzzy, c-format
 msgid "%s: is not hot-pluggable device"
 msgstr "%s: er ikke en blokenhed\n"
 
-#: sys-utils/eject.c:1002
+#: sys-utils/eject.c:1005
 #, c-format
 msgid "device is `%s'"
 msgstr "enhed er »%s«"
 
-#: sys-utils/eject.c:1003
+#: sys-utils/eject.c:1006
 msgid "exiting due to -n/--noop option"
 msgstr ""
 
-#: sys-utils/eject.c:1017
+#: sys-utils/eject.c:1020
 #, c-format
 msgid "%s: enabling auto-eject mode"
 msgstr ""
 
-#: sys-utils/eject.c:1019
+#: sys-utils/eject.c:1022
 #, c-format
 msgid "%s: disabling auto-eject mode"
 msgstr ""
 
-#: sys-utils/eject.c:1027
+#: sys-utils/eject.c:1030
 #, c-format
 msgid "%s: closing tray"
 msgstr ""
 
-#: sys-utils/eject.c:1036
+#: sys-utils/eject.c:1039
 #, c-format
 msgid "%s: toggling tray"
 msgstr ""
 
-#: sys-utils/eject.c:1045
+#: sys-utils/eject.c:1048
 #, c-format
 msgid "%s: listing CD-ROM speed"
 msgstr ""
 
-#: sys-utils/eject.c:1071
+#: sys-utils/eject.c:1074
 #, c-format
 msgid "error: %s: device in use"
 msgstr "fejl: %s: enhed er optaget"
 
-#: sys-utils/eject.c:1077
+#: sys-utils/eject.c:1080
 #, c-format
 msgid "%s: selecting CD-ROM disc #%ld"
 msgstr "%s: vælger cd-rom-disk #%ld"
 
-#: sys-utils/eject.c:1093
+#: sys-utils/eject.c:1096
 #, c-format
 msgid "%s: trying to eject using CD-ROM eject command"
 msgstr ""
 
-#: sys-utils/eject.c:1095
+#: sys-utils/eject.c:1098
 msgid "CD-ROM eject command succeeded"
 msgstr ""
 
-#: sys-utils/eject.c:1100
+#: sys-utils/eject.c:1103
 #, c-format
 msgid "%s: trying to eject using SCSI commands"
 msgstr ""
 
-#: sys-utils/eject.c:1102
+#: sys-utils/eject.c:1105
 msgid "SCSI eject succeeded"
 msgstr "SCSI-skub ud lykkedes"
 
-#: sys-utils/eject.c:1103
+#: sys-utils/eject.c:1106
 msgid "SCSI eject failed"
 msgstr "SCSI-skub ud mislykkedes"
 
-#: sys-utils/eject.c:1107
+#: sys-utils/eject.c:1110
 #, c-format
 msgid "%s: trying to eject using floppy eject command"
 msgstr ""
 
-#: sys-utils/eject.c:1109
+#: sys-utils/eject.c:1112
 msgid "floppy eject command succeeded"
 msgstr ""
 
-#: sys-utils/eject.c:1110
+#: sys-utils/eject.c:1113
 msgid "floppy eject command failed"
 msgstr ""
 
-#: sys-utils/eject.c:1114
+#: sys-utils/eject.c:1117
 #, c-format
 msgid "%s: trying to eject using tape offline command"
 msgstr ""
 
-#: sys-utils/eject.c:1116
+#: sys-utils/eject.c:1119
 msgid "tape offline command succeeded"
 msgstr ""
 
-#: sys-utils/eject.c:1117
+#: sys-utils/eject.c:1120
 #, fuzzy
 msgid "tape offline command failed"
 msgstr "kunne ikke åbne mappe\n"
 
-#: sys-utils/eject.c:1121
+#: sys-utils/eject.c:1124
 msgid "unable to eject"
 msgstr "kunne ikke skubbe ud"
 
@@ -13655,7 +13658,7 @@ msgid ""
 msgstr ""
 
 #: sys-utils/losetup.c:462 sys-utils/losetup.c:471 sys-utils/losetup.c:562
-#: sys-utils/losetup.c:575 sys-utils/losetup.c:644
+#: sys-utils/losetup.c:575 sys-utils/losetup.c:652
 #, fuzzy, c-format
 msgid "%s: failed to use device"
 msgstr "%s: Kan ikke undersøge enhed"
@@ -13679,27 +13682,37 @@ msgstr ""
 msgid "the option --offset is not allowed in this context."
 msgstr ""
 
-#: sys-utils/losetup.c:608
+#: sys-utils/losetup.c:610
 #, fuzzy
 msgid "not found unused device"
 msgstr "kan ikke finde enheden for %s"
 
-#: sys-utils/losetup.c:618
+#: sys-utils/losetup.c:620
 #, fuzzy, c-format
 msgid "%s: failed to use backing file"
 msgstr "genlæs partitionstabellen"
 
-#: sys-utils/losetup.c:655
+#: sys-utils/losetup.c:634
+#, fuzzy, c-format
+msgid "%s: failed to set up loop device, offset is not 512-byte aligned."
+msgstr "%s: klargøring af løkkeenhed mislykkedes"
+
+#: sys-utils/losetup.c:637
+#, fuzzy, c-format
+msgid "%s: failed to set up loop device"
+msgstr "%s: klargøring af løkkeenhed mislykkedes"
+
+#: sys-utils/losetup.c:663
 #, fuzzy
 msgid "find unused loop device failed"
 msgstr "tunelp: ioctl mislykkedes"
 
-#: sys-utils/losetup.c:671 sys-utils/umount.c:249
+#: sys-utils/losetup.c:679 sys-utils/umount.c:252
 #, c-format
 msgid "%s"
 msgstr ""
 
-#: sys-utils/losetup.c:676
+#: sys-utils/losetup.c:684
 #, fuzzy, c-format
 msgid "%s: set capacity failed"
 msgstr "%s: stat mislykkedes"
@@ -14004,7 +14017,7 @@ msgstr "fortolkningsfejl på linje: "
 msgid "failed to read mtab"
 msgstr "kunne ikke læse: %s"
 
-#: sys-utils/mount.c:193 sys-utils/umount.c:273
+#: sys-utils/mount.c:193 sys-utils/umount.c:276
 #, c-format
 msgid "%-25s: ignored\n"
 msgstr ""
@@ -14283,10 +14296,15 @@ msgstr "%s: Kunne ikke åbne"
 
 #: sys-utils/mount.c:686
 #, fuzzy, c-format
+msgid "unsupported option format: %s"
+msgstr "ikke understøttet parameter: %s"
+
+#: sys-utils/mount.c:688
+#, fuzzy, c-format
 msgid "failed to append option '%s'"
 msgstr "kunne ikke fortolke pid"
 
-#: sys-utils/mount.c:693
+#: sys-utils/mount.c:695
 #, fuzzy, c-format
 msgid ""
 " %1$s [-lhV]\n"
@@ -14302,7 +14320,7 @@ msgstr ""
 " %1$s [tilvalg] <enhed> <monteringspunkt>\n"
 " %1$s [tilvalg] [--source <enhed>] [--target <monteringspunkt>]\n"
 
-#: sys-utils/mount.c:702
+#: sys-utils/mount.c:704
 #, c-format
 msgid ""
 " -a, --all               mount all filesystems mentioned in fstab\n"
@@ -14312,7 +14330,7 @@ msgid ""
 " -T, --fstab <path>      alternative file to /etc/fstab\n"
 msgstr ""
 
-#: sys-utils/mount.c:708
+#: sys-utils/mount.c:710
 #, c-format
 msgid ""
 " -h, --help              display this help text and exit\n"
@@ -14321,7 +14339,7 @@ msgid ""
 " -n, --no-mtab           don't write to /etc/mtab\n"
 msgstr ""
 
-#: sys-utils/mount.c:713
+#: sys-utils/mount.c:715
 #, c-format
 msgid ""
 " -o, --options <list>    comma-separated list of mount options\n"
@@ -14330,14 +14348,14 @@ msgid ""
 " -t, --types <list>      limit the set of filesystem types\n"
 msgstr ""
 
-#: sys-utils/mount.c:718
+#: sys-utils/mount.c:720
 #, c-format
 msgid ""
 "     --source <src>      explicitly specifies source (path, label, uuid)\n"
 "     --target <target>   explicitly specifies mountpoint\n"
 msgstr ""
 
-#: sys-utils/mount.c:721
+#: sys-utils/mount.c:723
 #, fuzzy, c-format
 msgid ""
 " -v, --verbose           say what is being done\n"
@@ -14349,7 +14367,7 @@ msgstr ""
 " -h, --help       vis denne hjælpetekst og afslut\n"
 "\n"
 
-#: sys-utils/mount.c:730
+#: sys-utils/mount.c:732
 #, c-format
 msgid ""
 "\n"
@@ -14362,7 +14380,7 @@ msgid ""
 " PARTUUID=<uuid>         specifies device by partition UUID\n"
 msgstr ""
 
-#: sys-utils/mount.c:739
+#: sys-utils/mount.c:741
 #, c-format
 msgid ""
 " <device>                specifies device by path\n"
@@ -14370,7 +14388,7 @@ msgid ""
 " <file>                  regular file for loopdev setup\n"
 msgstr ""
 
-#: sys-utils/mount.c:744
+#: sys-utils/mount.c:746
 #, c-format
 msgid ""
 "\n"
@@ -14380,7 +14398,7 @@ msgid ""
 " -R, --rbind             mount a subtree and all submounts somewhere else\n"
 msgstr ""
 
-#: sys-utils/mount.c:749
+#: sys-utils/mount.c:751
 #, c-format
 msgid ""
 " --make-shared           mark a subtree as shared\n"
@@ -14389,7 +14407,7 @@ msgid ""
 " --make-unbindable       mark a subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:754
+#: sys-utils/mount.c:756
 #, c-format
 msgid ""
 " --make-rshared          recursively mark a whole subtree as shared\n"
@@ -14398,12 +14416,12 @@ msgid ""
 " --make-runbindable      recursively mark a whole subtree as unbindable\n"
 msgstr ""
 
-#: sys-utils/mount.c:841 sys-utils/umount.c:530
+#: sys-utils/mount.c:843 sys-utils/umount.c:533
 #, fuzzy
 msgid "libmount context allocation failed"
 msgstr "mount: montering mislykkedes"
 
-#: sys-utils/mount.c:898 sys-utils/umount.c:583
+#: sys-utils/mount.c:900 sys-utils/umount.c:586
 #, fuzzy
 msgid "failed to set options pattern"
 msgstr "kunne ikke indhente pid %d's attributter"
@@ -14867,34 +14885,34 @@ msgstr ""
 msgid "unknown user %s"
 msgstr "ukendt bruger: %s"
 
-#: sys-utils/renice.c:147
+#: sys-utils/renice.c:148
 #, c-format
 msgid "bad value %s"
 msgstr "ugyldig værdi %s"
 
-#: sys-utils/renice.c:159
+#: sys-utils/renice.c:161
 msgid "process ID"
 msgstr "proces-id"
 
-#: sys-utils/renice.c:162
+#: sys-utils/renice.c:164
 msgid "user ID"
 msgstr "bruger-id"
 
-#: sys-utils/renice.c:164
+#: sys-utils/renice.c:166
 msgid "process group ID"
 msgstr "procesgruppe-id"
 
-#: sys-utils/renice.c:169 sys-utils/renice.c:179
+#: sys-utils/renice.c:171 sys-utils/renice.c:181
 #, fuzzy, c-format
 msgid "failed to get priority for %d (%s)"
 msgstr "Kunne ikke angive personlighed som %s"
 
-#: sys-utils/renice.c:173
+#: sys-utils/renice.c:175
 #, fuzzy, c-format
 msgid "failed to set priority for %d (%s)"
 msgstr "Kunne ikke angive personlighed som %s"
 
-#: sys-utils/renice.c:183
+#: sys-utils/renice.c:185
 #, fuzzy, c-format
 msgid "%d (%s) old priority %d, new priority %d\n"
 msgstr "%d: gammel prioritet %d, ny prioritet %d\n"
@@ -15750,7 +15768,7 @@ msgstr "swapon %s\n"
 msgid "%s: swapon failed"
 msgstr "%s: swapon mislykkedes"
 
-#: sys-utils/swapon.c:602 sys-utils/umount.c:316
+#: sys-utils/swapon.c:602 sys-utils/umount.c:319
 #, c-format
 msgid "failed to parse %s"
 msgstr "kunne ikke fortolke %s"
@@ -16103,37 +16121,47 @@ msgstr ""
 "        (I nogle tilfælde kan brugbar information om processer,\n"
 "        som bruger enheden findes af lsof(8) eller fuser(1))"
 
+#: sys-utils/umount.c:240
+#, fuzzy, c-format
+msgid "%s: mountpoint not found"
+msgstr "%s: ikke fundet"
+
 #: sys-utils/umount.c:242
+#, fuzzy
+msgid "undefined mountpoint"
+msgstr "monteringspunkt"
+
+#: sys-utils/umount.c:245
 #, fuzzy, c-format
 msgid "%s: must be superuser to umount"
 msgstr "umount: %s: skal være superbruger for at afmontere"
 
-#: sys-utils/umount.c:245
+#: sys-utils/umount.c:248
 #, fuzzy, c-format
 msgid "%s: block devices not permitted on fs"
 msgstr "umount: %s: blokenheder tillades ikke på dette fs"
 
-#: sys-utils/umount.c:294
+#: sys-utils/umount.c:297
 #, fuzzy
 msgid "failed to set umount target"
 msgstr "kunne ikke indhente pid %d's attributter"
 
-#: sys-utils/umount.c:310
+#: sys-utils/umount.c:313
 #, fuzzy
 msgid "libmount table allocation failed"
 msgstr "mount: montering mislykkedes"
 
-#: sys-utils/umount.c:353 sys-utils/umount.c:431
+#: sys-utils/umount.c:356 sys-utils/umount.c:434
 #, fuzzy
 msgid "libmount iterator allocation failed"
 msgstr "mount: montering mislykkedes"
 
-#: sys-utils/umount.c:359
+#: sys-utils/umount.c:362
 #, fuzzy, c-format
 msgid "failed to get child fs of %s"
 msgstr "kunne ikke indhente pid %d's affinitet"
 
-#: sys-utils/umount.c:427
+#: sys-utils/umount.c:430
 #, fuzzy, c-format
 msgid "%s: failed to determine source"
 msgstr "%s: Kunne ikke åbne"
@@ -16348,275 +16376,277 @@ msgstr "%s: kunne ikke finde processen »%s«\n"
 msgid "%s: can't exec %s: %m"
 msgstr "%s: kunne ikke udføre %s: %m"
 
-#: term-utils/agetty.c:454 term-utils/agetty.c:721 term-utils/agetty.c:733
-#: term-utils/agetty.c:1210 term-utils/agetty.c:1228 term-utils/agetty.c:1505
-#: term-utils/agetty.c:1974
+#: term-utils/agetty.c:456 term-utils/agetty.c:723 term-utils/agetty.c:735
+#: term-utils/agetty.c:1212 term-utils/agetty.c:1230 term-utils/agetty.c:1507
+#: term-utils/agetty.c:1976
 #, fuzzy, c-format
 msgid "failed to allocate memory: %m"
 msgstr "kunne ikke allokere udmellemlager"
 
-#: term-utils/agetty.c:632
+#: term-utils/agetty.c:634
 #, c-format
 msgid "bad timeout value: %s"
 msgstr "ugyldig værdi for tidsudløb: %s"
 
-#: term-utils/agetty.c:751
+#: term-utils/agetty.c:753
 #, c-format
 msgid "bad speed: %s"
 msgstr "ugyldig hastighed: %s"
 
-#: term-utils/agetty.c:753
+#: term-utils/agetty.c:755
 msgid "too many alternate speeds"
 msgstr "for mange forskellige hastigheder"
 
-#: term-utils/agetty.c:874 term-utils/agetty.c:891 term-utils/agetty.c:931
+#: term-utils/agetty.c:876 term-utils/agetty.c:893 term-utils/agetty.c:933
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr "/dev/%s: kan ikke åbne som standard-ind: %m"
 
-#: term-utils/agetty.c:895 term-utils/agetty.c:899
+#: term-utils/agetty.c:897 term-utils/agetty.c:901
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr "/dev/%s: ikke en tegnenhed"
 
-#: term-utils/agetty.c:903 term-utils/agetty.c:935
+#: term-utils/agetty.c:905 term-utils/agetty.c:937
 #, fuzzy, c-format
 msgid "/dev/%s: cannot get controlling tty: %m"
 msgstr "/dev/%s: kan ikke åbne som standard-ind: %m"
 
-#: term-utils/agetty.c:925
+#: term-utils/agetty.c:927
 #, fuzzy, c-format
 msgid "/dev/%s: vhangup() failed: %m"
 msgstr "%s: calloc() mislykkedes: %s\n"
 
-#: term-utils/agetty.c:946
+#: term-utils/agetty.c:948
 #, c-format
 msgid "%s: not open for read/write"
 msgstr "%s: ikke åben for læsning/skrivning"
 
-#: term-utils/agetty.c:951
+#: term-utils/agetty.c:953
 #, fuzzy, c-format
 msgid "/dev/%s: cannot set process group: %m"
 msgstr "%s: kunne ikke finde processen »%s«\n"
 
-#: term-utils/agetty.c:965
+#: term-utils/agetty.c:967
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr "%s: dup-problem: %m"
 
-#: term-utils/agetty.c:982
+#: term-utils/agetty.c:984
 #, fuzzy, c-format
 msgid "%s: failed to get terminal attributes: %m"
 msgstr "kan ikke indhente terminalattributter for %s"
 
-#: term-utils/agetty.c:1140
+#: term-utils/agetty.c:1142
 #, fuzzy, c-format
 msgid "setting terminal attributes failed: %m"
 msgstr "kan ikke angive terminalattributter for %s"
 
-#: term-utils/agetty.c:1280
+#: term-utils/agetty.c:1282
 msgid "[press ENTER to login]"
 msgstr ""
 
-#: term-utils/agetty.c:1296
+#: term-utils/agetty.c:1298
 msgid "Num Lock off"
 msgstr ""
 
-#: term-utils/agetty.c:1299
+#: term-utils/agetty.c:1301
 msgid "Num Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:1302
+#: term-utils/agetty.c:1304
 msgid "Caps Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:1305
+#: term-utils/agetty.c:1307
 msgid "Scroll Lock on"
 msgstr ""
 
-#: term-utils/agetty.c:1308
+#: term-utils/agetty.c:1310
 #, fuzzy, c-format
 msgid ""
 "Hint: %s\n"
 "\n"
 msgstr "type: %s\n"
 
-#: term-utils/agetty.c:1426
+#: term-utils/agetty.c:1428
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: læst: %m"
 
-#: term-utils/agetty.c:1485
+#: term-utils/agetty.c:1487
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: inddataoverløb"
 
-#: term-utils/agetty.c:1501 term-utils/agetty.c:1509
+#: term-utils/agetty.c:1503 term-utils/agetty.c:1511
 #, c-format
 msgid "%s: invalid character conversion for login name"
 msgstr ""
 
-#: term-utils/agetty.c:1515
+#: term-utils/agetty.c:1517
 #, c-format
 msgid "%s: invalid character 0x%x in login name"
 msgstr ""
 
-#: term-utils/agetty.c:1600
+#: term-utils/agetty.c:1602
 #, fuzzy, c-format
 msgid "%s: failed to set terminal attributes: %m"
 msgstr "kan ikke angive terminalattributter for %s"
 
-#: term-utils/agetty.c:1636
+#: term-utils/agetty.c:1638
 #, c-format
 msgid ""
-" %1$s [options] line baud_rate,... [termtype]\n"
+" %1$s [options] line [baud_rate,...] [termtype]\n"
 " %1$s [options] baud_rate,... line [termtype]\n"
-msgstr ""
-
-#: term-utils/agetty.c:1639
-#, fuzzy
-msgid " -8, --8bits                assume 8-bit tty\n"
-msgstr "  -u, --unqote                 Indskyd ikke anførselstegn i uddata\n"
-
-#: term-utils/agetty.c:1640
-msgid " -a, --autologin <user>     login the specified user automatically\n"
 msgstr ""
 
 #: term-utils/agetty.c:1641
 #, fuzzy
-msgid " -c, --noreset              do not reset control mode\n"
+msgid " -8, --8bits                assume 8-bit tty\n"
 msgstr "  -u, --unqote                 Indskyd ikke anførselstegn i uddata\n"
 
 #: term-utils/agetty.c:1642
+msgid " -a, --autologin <user>     login the specified user automatically\n"
+msgstr ""
+
+#: term-utils/agetty.c:1643
+#, fuzzy
+msgid " -c, --noreset              do not reset control mode\n"
+msgstr "  -u, --unqote                 Indskyd ikke anførselstegn i uddata\n"
+
+#: term-utils/agetty.c:1644
 #, fuzzy
 msgid " -E, --remote               use -r <hostname> for login(1)\n"
 msgstr "  -T, --test                   Tjek versionen af getopt(1)\n"
 
-#: term-utils/agetty.c:1643
+#: term-utils/agetty.c:1645
 #, fuzzy
 msgid " -f, --issue-file <file>    display issue file\n"
 msgstr " -h, --help     vis denne hjælpetekst og afslut\n"
 
-#: term-utils/agetty.c:1644
+#: term-utils/agetty.c:1646
 msgid " -h, --flow-control         enable hardware flow control\n"
 msgstr ""
 
-#: term-utils/agetty.c:1645
+#: term-utils/agetty.c:1647
 #, fuzzy
 msgid " -H, --host <hostname>      specify login host\n"
 msgstr " -s, --shell <skal>  angiv logindskal\n"
 
-#: term-utils/agetty.c:1646
+#: term-utils/agetty.c:1648
 #, fuzzy
 msgid " -i, --noissue              do not display issue file\n"
 msgstr " -q, --stats                        vis statistik om tty'en\n"
 
-#: term-utils/agetty.c:1647
+#: term-utils/agetty.c:1649
 msgid " -I, --init-string <string> set init string\n"
 msgstr ""
 
-#: term-utils/agetty.c:1648
+#: term-utils/agetty.c:1650
 msgid " -l, --login-program <file> specify login program\n"
 msgstr ""
 
-#: term-utils/agetty.c:1649
+#: term-utils/agetty.c:1651
 msgid " -L, --local-line           force local line\n"
 msgstr ""
 
-#: term-utils/agetty.c:1650
+#: term-utils/agetty.c:1652
 msgid " -m, --extract-baud         extract baud rate during connect\n"
 msgstr ""
 
-#: term-utils/agetty.c:1651
+#: term-utils/agetty.c:1653
 #, fuzzy
 msgid " -n, --skip-login           do not prompt for login\n"
 msgstr "    -n :                    undlad at skrive ændringerne til disken"
 
-#: term-utils/agetty.c:1652
+#: term-utils/agetty.c:1654
 #, fuzzy
 msgid " -o, --login-options <opts> options that are passed to login\n"
 msgstr " -l, --longoptions <langtilvalg> Lange tilvalg, der skal genkendes\n"
 
-#: term-utils/agetty.c:1653
-msgid " -p, --loginpause           wait for any key before the login\n"
-msgstr ""
+#: term-utils/agetty.c:1655
+#, fuzzy
+msgid " -p, --login-pause          wait for any key before the login\n"
+msgstr "    -n :                    undlad at skrive ændringerne til disken"
 
-#: term-utils/agetty.c:1654
+#: term-utils/agetty.c:1656
 #, fuzzy
 msgid " -r, --chroot <dir>         change root to the directory\n"
 msgstr " -x, --destination <mappe>  udtræk til mappe\n"
 
-#: term-utils/agetty.c:1655
+#: term-utils/agetty.c:1657
 #, fuzzy
 msgid " -R, --hangup               do virtually hangup on the tty\n"
 msgstr " -u, --unqote                 Indskyd ikke anførselstegn i uddata\n"
 
-#: term-utils/agetty.c:1656
+#: term-utils/agetty.c:1658
 msgid " -s, --keep-baud            try to keep baud rate after break\n"
 msgstr ""
 
-#: term-utils/agetty.c:1657
+#: term-utils/agetty.c:1659
 msgid " -t, --timeout <number>     login process timeout\n"
 msgstr ""
 
-#: term-utils/agetty.c:1658
+#: term-utils/agetty.c:1660
 msgid " -U, --detect-case          detect uppercase terminal\n"
 msgstr ""
 
-#: term-utils/agetty.c:1659
+#: term-utils/agetty.c:1661
 #, fuzzy
 msgid " -w, --wait-cr              wait carriage-return\n"
 msgstr "  -u, --unqote                 Indskyd ikke anførselstegn i uddata\n"
 
-#: term-utils/agetty.c:1660
+#: term-utils/agetty.c:1662
 #, fuzzy
 msgid "     --noclear              do not clear the screen before prompt\n"
 msgstr " -u, --unqote                 Indskyd ikke anførselstegn i uddata\n"
 
-#: term-utils/agetty.c:1661
+#: term-utils/agetty.c:1663
 #, fuzzy
 msgid "     --nohints              do not print hints\n"
 msgstr "    -n :                    undlad at skrive ændringerne til disken"
 
-#: term-utils/agetty.c:1662
+#: term-utils/agetty.c:1664
 #, fuzzy
 msgid "     --nonewline            do not print a newline before issue\n"
 msgstr "  p          Udlæs partitionstabellen til skærmen eller en fil"
 
-#: term-utils/agetty.c:1663
-msgid "     --no-hostname          no hostname at all will be shown\n"
-msgstr ""
+#: term-utils/agetty.c:1665
+#, fuzzy
+msgid "     --nohostname           no hostname at all will be shown\n"
+msgstr "  p          Udlæs partitionstabellen til skærmen eller en fil"
 
-#: term-utils/agetty.c:1664
+#: term-utils/agetty.c:1666
 msgid "     --long-hostname        show full qualified hostname\n"
 msgstr ""
 
-#: term-utils/agetty.c:1665
+#: term-utils/agetty.c:1667
 msgid "     --erase-chars <string> additional backspace chars\n"
 msgstr ""
 
-#: term-utils/agetty.c:1666
+#: term-utils/agetty.c:1668
 msgid "     --kill-chars <string>  additional kill chars\n"
 msgstr ""
 
-#: term-utils/agetty.c:1667
+#: term-utils/agetty.c:1669
 #, fuzzy
 msgid "     --help                 display this help and exit\n"
 msgstr " -h, --help     vis denne hjælpetekst og afslut\n"
 
-#: term-utils/agetty.c:1668
+#: term-utils/agetty.c:1670
 #, fuzzy
 msgid "     --version              output version information and exit\n"
 msgstr "  -V, --version                Vis versionsinformation\n"
 
-#: term-utils/agetty.c:1939
+#: term-utils/agetty.c:1941
 #, fuzzy, c-format
 msgid "%d user"
 msgid_plural "%d users"
 msgstr[0] "bruger"
 msgstr[1] "bruger"
 
-#: term-utils/agetty.c:2062
+#: term-utils/agetty.c:2064
 #, fuzzy, c-format
 msgid "checkname failed: %m"
 msgstr "chown mislykkedes: %s"
