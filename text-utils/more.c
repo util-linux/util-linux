@@ -1030,6 +1030,12 @@ int get_line(register FILE *f, int *length)
 
 		if (column >= Mcol && fold_opt)
 			break;
+#ifdef HAVE_WIDECHAR
+		if (use_mbc_buffer_flag == 0 && p >= &Line[LineLen - 1 - 4])
+			/* don't read another char if there is no space for
+			 * whole multibyte sequence */
+			break;
+#endif
 		c = Getc(f);
 	}
 	if (column >= Mcol && Mcol > 0) {
