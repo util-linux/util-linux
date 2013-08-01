@@ -107,6 +107,9 @@ It is roughly 2GiB on i386, PPC, m68k and ARM, 1GiB on sparc, 512MiB on mips,
 128GiB on alpha, and 3TiB on sparc64.  For kernels after 2.3.3 (May 1999) there is no
 such limitation.
 
+The maximum number of the pages that is possible to address by swap area header
+is 4294967295 (UINT_MAX). The remaining space on the swap device is ignored.
+
 Note that before version 2.1.117 the kernel allocated one byte for each page,
 while it now allocates two bytes, so that taking into use a swap area of 2 GiB
 might require 2 MiB of kernel memory.
