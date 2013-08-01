@@ -912,7 +912,8 @@ int get_line(register FILE *f, int *length)
 					Fseek(f, file_pos_bak);
 					break_flag = 1;
 				} else {
-					for (i = 0; i < mbc_pos; i++)
+					for (i = 0; p < &Line[LineLen - 1] &&
+						    i < mbc_pos; i++)
 						*p++ = mbc[i];
 					if (wc_width > 0)
 						column += wc_width;
