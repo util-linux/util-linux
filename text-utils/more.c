@@ -835,7 +835,8 @@ void prepare_line_buffer(void)
 	if (nsz < LINSIZ)
 		nsz = LINSIZ;
 
-	nline = xrealloc(Line, nsz);
+	/* alloc nsz and extra space for \n\0 */
+	nline = xrealloc(Line, nsz + 2);
 	Line = nline;
 	LineLen = nsz;
 }
