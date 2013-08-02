@@ -10,8 +10,8 @@
  * @title: Iterator
  * @short_description: unified iterator
  *
- * The iterator keeps direction and last position for access to the internal
- * library tables/lists.
+ * The iterator keeps the direction and the last position
+ * for access to the internal library tables/lists.
  */
 #include <stdio.h>
 #include <string.h>
@@ -38,7 +38,7 @@ struct libmnt_iter *mnt_new_iter(int direction)
  * mnt_free_iter:
  * @itr: iterator pointer
  *
- * Deallocates iterator.
+ * Deallocates the iterator.
  */
 void mnt_free_iter(struct libmnt_iter *itr)
 {
@@ -48,9 +48,9 @@ void mnt_free_iter(struct libmnt_iter *itr)
 /**
  * mnt_reset_iter:
  * @itr: iterator pointer
- * @direction: MNT_INTER_{FOR,BACK}WARD or -1 to keep the derection unchanged
+ * @direction: MNT_INTER_{FOR,BACK}WARD or -1 to keep the direction unchanged
  *
- * Resets iterator.
+ * Resets the iterator.
  */
 void mnt_reset_iter(struct libmnt_iter *itr, int direction)
 {

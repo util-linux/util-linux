@@ -203,7 +203,7 @@ struct libmnt_iter {
 
 
 /*
- * This struct represents one entry in mtab/fstab/mountinfo file.
+ * This struct represents one entry in a mtab/fstab/mountinfo file.
  * (note that fstab[1] means the first column from fstab, and so on...)
  */
 struct libmnt_fs {
@@ -281,6 +281,7 @@ struct libmnt_table {
 
 
 	struct list_head	ents;	/* list of entries (libmnt_fs) */
+	void		*userdata;
 };
 
 extern struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt);
@@ -391,7 +392,7 @@ struct libmnt_context
 #define MNT_FL_SAVED_USER	(1 << 23)
 #define MNT_FL_PREPARED		(1 << 24)
 #define MNT_FL_HELPER		(1 << 25)	/* [u]mount.<type> */
-#define MNT_FL_LOOPDEV_READY	(1 << 26)	/* /dev/loop<N> initialized by library */
+#define MNT_FL_LOOPDEV_READY	(1 << 26)	/* /dev/loop<N> initialized by the library */
 #define MNT_FL_MOUNTOPTS_FIXED  (1 << 27)
 
 /* default flags */

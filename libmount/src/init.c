@@ -8,7 +8,7 @@
 /**
  * SECTION: init
  * @title: Library initialization
- * @short_description: initialize debuging
+ * @short_description: initialize debugging
  */
 
 #include <stdarg.h>
@@ -19,13 +19,13 @@ int libmount_debug_mask;
 
 /**
  * mnt_init_debug:
- * @mask: debug mask (0xffff to enable full debuging)
+ * @mask: debug mask (0xffff to enable full debugging)
  *
- * If the @mask is not specified then this function reads
- * LIBMOUNT_DEBUG environment variable to get the mask.
+ * If the @mask is not specified, then this function reads
+ * the LIBMOUNT_DEBUG environment variable to get the mask.
  *
- * Already initialized debugging stuff cannot be changed. It does not
- * have effect to call this function twice.
+ * Already initialized debugging stuff cannot be changed. Calling
+ * this function twice has no effect.
  */
 void mnt_init_debug(int mask)
 {

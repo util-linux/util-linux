@@ -23,7 +23,7 @@
  * umount2 flags
  */
 #ifndef MNT_FORCE
-# define MNT_FORCE        0x00000001	/* Attempt to forcibily umount */
+# define MNT_FORCE        0x00000001	/* Attempt to forcibly umount */
 #endif
 
 #ifndef MNT_DETACH
@@ -39,8 +39,8 @@
 #endif
 
 /*
- * Called by mtab parser to filter out entries, nonzero means that
- * entry has to be filter out.
+ * Called by mtab parser to filter out entries, non-zero means that
+ * an entry has to be filtered out.
  */
 static int mtab_filter(struct libmnt_fs *fs, void *data)
 {
@@ -80,16 +80,16 @@ int mnt_context_find_umount_fs(struct libmnt_context *cxt,
 	DBG(CXT, mnt_debug_h(cxt, "umount: lookup FS for '%s'", tgt));
 
 	if (!*tgt)
-		return 1; /* empty string is not error */
+		return 1; /* empty string is not an error */
 
 	/*
-	 * The mtab file maybe huge and on systems with utab we have to merge
+	 * The mtab file may be huge and on systems with utab we have to merge
 	 * userspace mount options into /proc/self/mountinfo. This all is
 	 * expensive. The mtab filter allows to filter out entries, then
 	 * mtab and utab are very tiny files.
 	 *
 	 * *but*... the filter uses mnt_fs_streq_{target,srcpath} functions
-	 * where LABEL, UUID or symlinks are to canonicalized. It means that
+	 * where LABEL, UUID or symlinks are canonicalized. It means that
 	 * it's usable only for canonicalized stuff (e.g. kernel mountinfo).
 	 */
 	if (!cxt->mtab_writable	&& *tgt == '/' &&
@@ -98,7 +98,7 @@ int mnt_context_find_umount_fs(struct libmnt_context *cxt,
 		struct stat st;
 
 		if (stat(tgt, &st) == 0 && S_ISDIR(st.st_mode)) {
-			/* we'll canonicalized /proc/self/mountinfo */
+			/* we'll canonicalize /proc/self/mountinfo */
 			cache = mnt_context_get_cache(cxt);
 			cn_tgt = mnt_resolve_path(tgt, cache);
 			if (cn_tgt)
@@ -246,7 +246,7 @@ static int is_associated_fs(const char *devname, struct libmnt_fs *fs)
 	if (!src)
 		return 0;
 
-	/* check for offset option in @fs */
+	/* check for the offset option in @fs */
 	optstr = (char *) mnt_fs_get_user_options(fs);
 
 	if (optstr &&
@@ -326,7 +326,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	}
 
 	/*
-	 * User mounts has to be in /etc/fstab
+	 * User mounts have to be in /etc/fstab
 	 */
 	rc = mnt_context_get_fstab(cxt, &fstab);
 	if (rc)
@@ -345,13 +345,13 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 	 *	/dev/sda1 /mnt/zip auto user,noauto  0 0
 	 *	/dev/sda4 /mnt/zip auto user,noauto  0 0
 	 * then "mount /dev/sda4" followed by "umount /mnt/zip" used to fail.
-	 * So, we must not look for file, but for the pair (dev,file) in fstab.
+	 * So, we must not look for the file, but for the pair (dev,file) in fstab.
 	  */
 	fs = mnt_table_find_pair(fstab, src, tgt, MNT_ITER_FORWARD);
 	if (!fs) {
 		/*
 		 * It's possible that there is /path/file.img in fstab and
-		 * /dev/loop0 in mtab -- then we have to check releation
+		 * /dev/loop0 in mtab -- then we have to check the relation
 		 * between loopdev and the file.
 		 */
 		fs = mnt_table_find_target(fstab, tgt, MNT_ITER_FORWARD);
@@ -393,7 +393,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		return 0;
 	}
 	/*
-	 * Check user=<username> setting from mtab if there is user, owner or
+	 * Check user=<username> setting from mtab if there is a user, owner or
 	 * group option in /etc/fstab
 	 */
 	if (u_flags & (MNT_MS_USER | MNT_MS_OWNER | MNT_MS_GROUP)) {
@@ -548,7 +548,7 @@ int mnt_context_umount_setopt(struct libmnt_context *cxt, int c, char *arg)
 	return rc;
 }
 
-/* Check whether the kernel supports UMOUNT_NOFOLLOW flag */
+/* Check whether the kernel supports the UMOUNT_NOFOLLOW flag */
 static int umount_nofollow_support(void)
 {
 	int res = umount2("", UMOUNT_UNUSED);
@@ -869,7 +869,7 @@ int mnt_context_umount(struct libmnt_context *cxt)
  *	mnt_context_set_options_pattern() to simulate umount -a -O pattern
  *	mnt_context_set_fstype_pattern()  to simulate umount -a -t pattern
  *
- * If the filesystem is not mounted or does not match defined criteria,
+ * If the filesystem is not mounted or does not match the defined criteria,
  * then the function mnt_context_next_umount() returns zero, but the @ignored is
  * non-zero. Note that the root filesystem is always ignored.
  *
@@ -918,11 +918,11 @@ int mnt_context_next_umount(struct libmnt_context *cxt,
 
 	DBG(CXT, mnt_debug_h(cxt, "next-umount: trying %s", tgt));
 
-	/* ignore filesystems not match with options patterns */
+	/* ignore filesystems which don't match options patterns */
 	if ((cxt->fstype_pattern && !mnt_fs_match_fstype(*fs,
 					cxt->fstype_pattern)) ||
 
-	/* ignore filesystems not match with type patterns */
+	/* ignore filesystems which don't match type patterns */
 	   (cxt->optstr_pattern && !mnt_fs_match_options(*fs,
 					cxt->optstr_pattern))) {
 		if (ignored)

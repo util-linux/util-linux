@@ -41,7 +41,7 @@ struct libmnt_cache;
 /**
  * libmnt_lock:
  *
- * Stores information about locked file (e.g. /etc/mtab)
+ * Stores information about the locked file (e.g. /etc/mtab)
  */
 struct libmnt_lock;
 
@@ -731,10 +731,10 @@ extern int mnt_context_set_syscall_status(struct libmnt_context *cxt, int status
 #define MS_NODIRATIME   0x800	/* 2048: Don't update directory access times */
 #endif
 #ifndef MS_BIND
-#define	MS_BIND		0x1000	/* 4096: Mount existing tree also elsewhere */
+#define	MS_BIND		0x1000	/* 4096: Mount existing tree elsewhere as well */
 #endif
 #ifndef MS_MOVE
-#define MS_MOVE		0x2000	/* 8192: Atomically move tree */
+#define MS_MOVE		0x2000	/* 8192: Atomically move the tree */
 #endif
 #ifndef MS_REC
 #define MS_REC		0x4000	/* 16384: Recursive loopback */

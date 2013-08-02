@@ -107,7 +107,7 @@ static inline int cpy_str_at_offset(void *new, const void *old, size_t offset)
 	char **n = (char **) (new + offset);
 
 	if (*n)
-		return 0;	/* already set, not overwrite */
+		return 0;	/* already set, don't overwrite */
 
 	return update_str(n, *o);
 }
@@ -118,7 +118,7 @@ static inline int cpy_str_at_offset(void *new, const void *old, size_t offset)
  * @src: source FS
  *
  * If @dest is NULL, then a new FS is allocated, if any @dest field is already
- * set then the field is NOT overwrited.
+ * set, then the field is NOT overwritten.
  *
  * This function does not copy userdata (se mnt_fs_set_userdata()). A new copy is
  * not linked with any existing mnt_tab.
@@ -311,7 +311,7 @@ const char *mnt_fs_get_source(struct libmnt_fs *fs)
 }
 
 /*
- * Used by parser ONLY (@source has to be freed on error)
+ * Used by the parser ONLY (@source has to be freed on error)
  */
 int __mnt_fs_set_source_ptr(struct libmnt_fs *fs, char *source)
 {
@@ -374,7 +374,7 @@ int mnt_fs_set_source(struct libmnt_fs *fs, const char *source)
  * @fs: fs
  * @path: source path
  *
- * Compares @fs source path with @path. The tailing slash is ignored.
+ * Compares @fs source path with @path. The trailing slash is ignored.
  * See also mnt_fs_match_source().
  *
  * Returns: 1 if @fs source path equal to @path, otherwise 0.
@@ -403,7 +403,7 @@ int mnt_fs_streq_srcpath(struct libmnt_fs *fs, const char *path)
  * @fs: fs
  * @path: mount point
  *
- * Compares @fs target path with @path. The tailing slash is ignored.
+ * Compares @fs target path with @path. The trailing slash is ignored.
  * See also mnt_fs_match_target().
  *
  * Returns: 1 if @fs target path equal to @path, otherwise 0.
@@ -422,8 +422,8 @@ int mnt_fs_streq_target(struct libmnt_fs *fs, const char *path)
  *
  * "TAG" is NAME=VALUE (e.g. LABEL=foo)
  *
- * The TAG is the first column in the fstab file. The TAG or "srcpath" has to
- * be always set for all entries.
+ * The TAG is the first column in the fstab file. The TAG or "srcpath" always has
+ * to be set for all entries.
  *
  * See also mnt_fs_get_source().
  *
@@ -445,7 +445,7 @@ int mnt_fs_streq_target(struct libmnt_fs *fs, const char *path)
  *   </programlisting>
  * </informalexample>
  *
- * Returns: 0 on success or negative number in case that a TAG is not defined.
+ * Returns: 0 on success or negative number in case a TAG is not defined.
  */
 int mnt_fs_get_tag(struct libmnt_fs *fs, const char **name, const char **value)
 {
@@ -506,10 +506,10 @@ static int mnt_fs_get_flags(struct libmnt_fs *fs)
 /**
  * mnt_fs_get_propagation:
  * @fs: mountinfo entry
- * @flags: returns propagation MS_* flags as present in mountinfo file
+ * @flags: returns propagation MS_* flags as present in the mountinfo file
  *
- * Note that this function set @flags to zero if not found any propagation flag
- * in mountinfo file. The kernel default is MS_PRIVATE, this flag is not stored
+ * Note that this function sets @flags to zero if no propagation flags are found
+ * in the mountinfo file. The kernel default is MS_PRIVATE, this flag is not stored
  * in the mountinfo file.
  *
  * Returns: 0 on success or negative number in case of error.
@@ -598,7 +598,7 @@ const char *mnt_fs_get_fstype(struct libmnt_fs *fs)
 	return fs ? fs->fstype : NULL;
 }
 
-/* Used by struct libmnt_file parser only */
+/* Used by the struct libmnt_file parser only */
 int __mnt_fs_set_fstype_ptr(struct libmnt_fs *fs, char *fstype)
 {
 	assert(fs);
@@ -674,7 +674,7 @@ static char *merge_optstr(const char *vfs, const char *fs)
 	if (!strcmp(vfs, fs))
 		return strdup(vfs);		/* e.g. "aaa" and "aaa" */
 
-	/* leave space for leading "r[ow],", "," and trailing zero */
+	/* leave space for the leading "r[ow],", "," and the trailing zero */
 	sz = strlen(vfs) + strlen(fs) + 5;
 	res = malloc(sz);
 	if (!res)
@@ -705,7 +705,7 @@ static char *merge_optstr(const char *vfs, const char *fs)
  * mnt_fs_strdup_options:
  * @fs: fstab/mtab/mountinfo entry pointer
  *
- * Merges all mount options (VFS, FS and userspace) to the one options string
+ * Merges all mount options (VFS, FS and userspace) to one options string
  * and returns the result. This function does not modigy @fs.
  *
  * Returns: pointer to string (can be freed by free(3)) or NULL in case of error.
@@ -761,10 +761,10 @@ const char *mnt_fs_get_optional_fields(struct libmnt_fs *fs)
  * @fs: fstab/mtab/mountinfo entry pointer
  * @optstr: options string
  *
- * Splits @optstr to VFS, FS and userspace mount options and update relevat
+ * Splits @optstr to VFS, FS and userspace mount options and updates relevant
  * parts of @fs.
  *
- * Returns: 0 on success, or negative number icase of error.
+ * Returns: 0 on success, or negative number in case of error.
  */
 int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr)
 {
@@ -803,7 +803,7 @@ int mnt_fs_set_options(struct libmnt_fs *fs, const char *optstr)
  * Parses (splits) @optstr and appends results to VFS, FS and userspace lists
  * of options.
  *
- * If @optstr is NULL then @fs is not modified and 0 is returned.
+ * If @optstr is NULL, then @fs is not modified and 0 is returned.
  *
  * Returns: 0 on success or negative number in case of error.
  */
@@ -840,10 +840,10 @@ int mnt_fs_append_options(struct libmnt_fs *fs, const char *optstr)
  * @fs: fstab/mtab/mountinfo entry
  * @optstr: mount options
  *
- * Parses (splits) @optstr and prepands results to VFS, FS and userspace lists
+ * Parses (splits) @optstr and prepends the results to VFS, FS and userspace lists
  * of options.
  *
- * If @optstr is NULL then @fs is not modified and 0 is returned.
+ * If @optstr is NULL, then @fs is not modified and 0 is returned.
  *
  * Returns: 0 on success or negative number in case of error.
  */
@@ -929,10 +929,10 @@ const char *mnt_fs_get_attributes(struct libmnt_fs *fs)
  * @optstr: options string
  *
  * Sets mount attributes. The attributes are mount(2) and mount(8) independent
- * options, these options are not send to kernel and are not interpreted by
+ * options, these options are not sent to the kernel and are not interpreted by
  * libmount. The attributes are stored in /run/mount/utab only.
  *
- * The atrtributes are managed by libmount in userspace only. It's possible
+ * The attributes are managed by libmount in userspace only. It's possible
  * that information stored in userspace will not be available for libmount
  * after CLONE_FS unshare. Be careful, and don't use attributes if possible.
  *
@@ -1225,7 +1225,7 @@ dev_t mnt_fs_get_devno(struct libmnt_fs *fs)
  * mnt_fs_get_tid:
  * @fs: /proc/tid/mountinfo entry
  *
- * Returns: TID (task ID) for filesystems read from mountinfo file
+ * Returns: TID (task ID) for filesystems read from the mountinfo file
  */
 pid_t mnt_fs_get_tid(struct libmnt_fs *fs)
 {
@@ -1237,10 +1237,10 @@ pid_t mnt_fs_get_tid(struct libmnt_fs *fs)
  * mnt_fs_get_option:
  * @fs: fstab/mtab/mountinfo entry pointer
  * @name: option name
- * @value: returns pointer to the begin of the value (e.g. name=VALUE) or NULL
+ * @value: returns pointer to the beginning of the value (e.g. name=VALUE) or NULL
  * @valsz: returns size of options value or 0
  *
- * Returns: 0 on success, 1 when not found the @name or negative number in case of error.
+ * Returns: 0 on success, 1 when @name not found or negative number in case of error.
  */
 int mnt_fs_get_option(struct libmnt_fs *fs, const char *name,
 		char **value, size_t *valsz)
@@ -1263,10 +1263,10 @@ int mnt_fs_get_option(struct libmnt_fs *fs, const char *name,
  * mnt_fs_get_attribute:
  * @fs: fstab/mtab/mountinfo entry pointer
  * @name: option name
- * @value: returns pointer to the begin of the value (e.g. name=VALUE) or NULL
+ * @value: returns pointer to the beginning of the value (e.g. name=VALUE) or NULL
  * @valsz: returns size of options value or 0
  *
- * Returns: 0 on success, 1 when not found the @name or negative number in case of error.
+ * Returns: 0 on success, 1 when @name not found or negative number in case of error.
  */
 int mnt_fs_get_attribute(struct libmnt_fs *fs, const char *name,
 		char **value, size_t *valsz)
@@ -1301,7 +1301,7 @@ const char *mnt_fs_get_comment(struct libmnt_fs *fs)
  * @comm: comment string
  *
  * Note that the comment has to be terminated by '\n' (new line), otherwise
- * whole filesystem entry will be written as a comment to the tabfile (e.g.
+ * the whole filesystem entry will be written as a comment to the tabfile (e.g.
  * fstab).
  *
  * Returns: 0 on success or <0 in case of error.
@@ -1356,7 +1356,7 @@ int mnt_fs_append_comment(struct libmnt_fs *fs, const char *comm)
  *
  * The 2nd and 3rd attempts are not performed when @cache is NULL.
  *
- * Returns: 1 if @fs target is equal to @target else 0.
+ * Returns: 1 if @fs target is equal to @target, else 0.
  */
 int mnt_fs_match_target(struct libmnt_fs *fs, const char *target,
 			struct libmnt_cache *cache)
@@ -1391,7 +1391,7 @@ int mnt_fs_match_target(struct libmnt_fs *fs, const char *target,
  * @source: tag or path (device or so) or NULL
  * @cache: tags/paths cache or NULL
  *
- * Possible are four attempts:
+ * Four attempts are possible:
  *	1) compare @source with @fs->source
  *	2) compare realpath(@source) with @fs->source
  *	3) compare realpath(@source) with realpath(@fs->source)
@@ -1400,7 +1400,7 @@ int mnt_fs_match_target(struct libmnt_fs *fs, const char *target,
  * The 2nd, 3rd and 4th attempts are not performed when @cache is NULL. The
  * 2nd and 3rd attempts are not performed if @fs->source is tag.
  *
- * Returns: 1 if @fs source is equal to @source else 0.
+ * Returns: 1 if @fs source is equal to @source, else 0.
  */
 int mnt_fs_match_source(struct libmnt_fs *fs, const char *source,
 			struct libmnt_cache *cache)
@@ -1444,14 +1444,14 @@ int mnt_fs_match_source(struct libmnt_fs *fs, const char *source,
 			return 1;
 	}
 	if (src || mnt_fs_get_tag(fs, &t, &v))
-		/* src path does not match and tag is not defined */
+		/* src path does not match and the tag is not defined */
 		return 0;
 
 	/* read @source's tags to the cache */
 	if (mnt_cache_read_tags(cache, cn) < 0) {
 		if (errno == EACCES) {
 			/* we don't have permissions to read TAGs from
-			 * @source, but can translate @fs tag to devname.
+			 * @source, but can translate the @fs tag to devname.
 			 *
 			 * (because libblkid uses udev symlinks and this is
 			 * accessible for non-root uses)
@@ -1463,7 +1463,7 @@ int mnt_fs_match_source(struct libmnt_fs *fs, const char *source,
 		return 0;
 	}
 
-	/* 4) has the @source a tag that matches with tag from @fs ? */
+	/* 4) has the @source a tag that matches with the tag from @fs ? */
 	if (mnt_cache_device_has_tag(cache, cn, t, v))
 		return 1;
 
@@ -1477,7 +1477,7 @@ int mnt_fs_match_source(struct libmnt_fs *fs, const char *source,
  *
  * For more details see mnt_match_fstype().
  *
- * Returns: 1 if @fs type is matching to @types else 0. The function returns
+ * Returns: 1 if @fs type is matching to @types, else 0. The function returns
  * 0 when types is NULL.
  */
 int mnt_fs_match_fstype(struct libmnt_fs *fs, const char *types)
@@ -1493,7 +1493,7 @@ int mnt_fs_match_fstype(struct libmnt_fs *fs, const char *types)
  *
  * For more details see mnt_match_options().
  *
- * Returns: 1 if @fs type is matching to @options else 0. The function returns
+ * Returns: 1 if @fs type is matching to @options, else 0. The function returns
  * 0 when types is NULL.
  */
 int mnt_fs_match_options(struct libmnt_fs *fs, const char *options)
@@ -1568,7 +1568,7 @@ int mnt_fs_print_debug(struct libmnt_fs *fs, FILE *file)
  * mnt_free_mntent:
  * @mnt: mount entry
  *
- * Deallocates "mntent.h" mount entry.
+ * Deallocates the "mntent.h" mount entry.
  */
 void mnt_free_mntent(struct mntent *mnt)
 {
@@ -1586,11 +1586,11 @@ void mnt_free_mntent(struct mntent *mnt)
  * @fs: filesystem
  * @mnt: mount description (as described in mntent.h)
  *
- * Copies information from @fs to struct mntent @mnt. If @mnt is already set
+ * Copies the information from @fs to struct mntent @mnt. If @mnt is already set,
  * then the struct mntent items are reallocated and updated. See also
  * mnt_free_mntent().
  *
- * Returns: 0 on success and negative number in case of error.
+ * Returns: 0 on success and a negative number in case of error.
  */
 int mnt_fs_to_mntent(struct libmnt_fs *fs, struct mntent **mnt)
 {

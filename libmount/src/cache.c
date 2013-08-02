@@ -10,7 +10,7 @@
  * @title: Cache
  * @short_description: paths and tags (UUID/LABEL) caching
  *
- * The cache is a very simple API for work with tags (LABEL, UUID, ...) and
+ * The cache is a very simple API for working with tags (LABEL, UUID, ...) and
  * paths. The cache uses libblkid as a backend for TAGs resolution.
  *
  * All returned paths are always canonicalized.
@@ -102,7 +102,7 @@ void mnt_free_cache(struct libmnt_cache *cache)
 	free(cache);
 }
 
-/* note that the @key could be tha same pointer as @value */
+/* note that the @key could be the same pointer as @value */
 static int cache_add_entry(struct libmnt_cache *cache, char *key,
 					char *value, int flag)
 {
@@ -135,7 +135,7 @@ static int cache_add_entry(struct libmnt_cache *cache, char *key,
 	return 0;
 }
 
-/* add tag to the cache, @devname has to be allocated string */
+/* add tag to the cache, @devname has to be an allocated string */
 static int cache_add_tag(struct libmnt_cache *cache, const char *tagname,
 				const char *tagval, char *devname, int flag)
 {
@@ -270,13 +270,13 @@ int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname)
 
 	DBG(CACHE, mnt_debug_h(cache, "tags for %s requested", devname));
 
-	/* check is device is already cached */
+	/* check if device is already cached */
 	for (i = 0; i < cache->nents; i++) {
 		struct mnt_cache_entry *e = &cache->ents[i];
 		if (!(e->flag & MNT_CACHE_TAGREAD))
 			continue;
 		if (strcmp(e->value, devname) == 0)
-			/* tags has been already read */
+			/* tags have already been read */
 			return 0;
 	}
 
@@ -335,7 +335,7 @@ error:
  * @token: tag name (e.g "LABEL")
  * @value: tag value
  *
- * Look up @cache to check it @tag+@value are associated with @devname.
+ * Look up @cache to check if @tag+@value are associated with @devname.
  *
  * Returns: 1 on success or 0.
  */
@@ -421,7 +421,7 @@ char *mnt_get_fstype(const char *devname, int *ambi, struct libmnt_cache *cache)
 
 	rc = blkid_do_safeprobe(pr);
 
-	DBG(CACHE, mnt_debug_h(cache, "liblkid rc=%d", rc));
+	DBG(CACHE, mnt_debug_h(cache, "libblkid rc=%d", rc));
 
 	if (!rc && !blkid_probe_lookup_value(pr, "TYPE", &data, NULL))
 		type = strdup(data);
@@ -493,7 +493,7 @@ error:
  *	- /dev/loopN to the loop backing filename
  *	- empty path (NULL) to 'none'
  *
- * Returns: new allocated string with path, result has to be always deallocated
+ * Returns: newly allocated string with path, result always has to be deallocated
  *          by free().
  */
 char *mnt_pretty_path(const char *path, struct libmnt_cache *cache)

@@ -11,9 +11,9 @@
  * @short_description: container for entries from fstab, mtab or mountinfo
  *
  * Note that mnt_table_find_* functions are mount(8) compatible. These functions
- * try to find an entry in more iterations where the first attempt is always
+ * try to find an entry in more iterations, where the first attempt is always
  * based on comparison with unmodified (non-canonicalized or un-evaluated)
- * paths or tags. For example fstab with two entries:
+ * paths or tags. For example a fstab with two entries:
  * <informalexample>
  *   <programlisting>
  *	LABEL=foo	/foo	auto   rw
@@ -39,7 +39,7 @@
  *	mnt_table_find_source(tb, "UUID=anyuuid", &fs);
  *  </programlisting>
  * </informalexample>
- * will returns the first entry (if UUID matches with the device).
+ * will return the first entry (if UUID matches with the device).
  */
 #include <blkid.h>
 
@@ -75,7 +75,7 @@ struct libmnt_table *mnt_new_table(void)
  * mnt_reset_table:
  * @tb: tab pointer
  *
- * Dealocates all entries (filesystems) from the table
+ * Deallocates all entries (filesystems) from the table.
  *
  * Returns: 0 on success or negative number in case of error.
  */
@@ -137,7 +137,7 @@ int mnt_table_get_nents(struct libmnt_table *tb)
  * The initial (intro) file comment is accessible by
  * mnt_table_get_intro_comment(). The intro and the comment of the first fstab
  * entry has to be separated by blank line.  The filesystem comments are
- * accessible by mnt_fs_get_comment(). The tailing fstab comment is accessible
+ * accessible by mnt_fs_get_comment(). The trailing fstab comment is accessible
  * by mnt_table_get_trailing_comment().
  *
  * <informalexample>
@@ -178,7 +178,7 @@ const char *mnt_table_get_intro_comment(struct libmnt_table *tb)
  * @tb: pointer to tab
  * @comm: comment or NULL
  *
- * Sets initial comment in tb.
+ * Sets the initial comment in tb.
  *
  * Returns: 0 on success or negative number in case of error.
  */
@@ -220,7 +220,7 @@ int mnt_table_append_intro_comment(struct libmnt_table *tb, const char *comm)
  * mnt_table_get_trailing_comment:
  * @tb: pointer to tab
  *
- * Returns: table tailing comment
+ * Returns: table trailing comment
  */
 const char *mnt_table_get_trailing_comment(struct libmnt_table *tb)
 {
@@ -233,7 +233,7 @@ const char *mnt_table_get_trailing_comment(struct libmnt_table *tb)
  * @tb: pointer to tab
  * @comm: comment string
  *
- * Sets tailing comment in table.
+ * Sets the trailing comment in table.
  *
  * Returns: 0 on success or negative number in case of error.
  */
@@ -259,7 +259,7 @@ int mnt_table_set_trailing_comment(struct libmnt_table *tb, const char *comm)
  * @tb: pointer to tab
  * @comm: comment of NULL
  *
- * Appends to the tailing table comment.
+ * Appends to the trailing table comment.
  *
  * Returns: 0 on success or negative number in case of error.
  */
@@ -276,7 +276,7 @@ int mnt_table_append_trailing_comment(struct libmnt_table *tb, const char *comm)
  * @tb: pointer to tab
  * @mpc: pointer to struct libmnt_cache instance
  *
- * Setups a cache for canonicalized paths and evaluated tags (LABEL/UUID). The
+ * Sets up a cache for canonicalized paths and evaluated tags (LABEL/UUID). The
  * cache is recommended for mnt_table_find_*() functions.
  *
  * The cache could be shared between more tabs. Be careful when you share the
@@ -357,18 +357,18 @@ int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
  * @tb: mountinfo file (/proc/self/mountinfo)
  * @root: returns pointer to the root filesystem (/)
  *
- * The function uses parent ID from mountinfo file to determine root filesystem
+ * The function uses the parent ID from the mountinfo file to determine the root filesystem
  * (the filesystem with the smallest ID). The function is designed mostly for
- * applications where is necessary to sort mountpoints by IDs to get the tree
+ * applications where it is necessary to sort mountpoints by IDs to get the tree
  * of the mountpoints (e.g. findmnt default output).
  *
- * If you're not sure than use
+ * If you're not sure, then use
  *
  *	mnt_table_find_target(tb, "/", MNT_ITER_BACKWARD);
  *
- * this is more robust and usable for arbitrary tab file (including fstab).
+ * this is more robust and usable for arbitrary tab files (including fstab).
  *
- * Returns: 0 on success or less then zero case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
 {
@@ -388,7 +388,7 @@ int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 		int id = mnt_fs_get_parent_id(fs);
 		if (!id)
-			break;		/* @tab is not mountinfo file? */
+			break;		/* @tab is not a mountinfo file? */
 
 		if (!*root || id < root_id) {
 			*root = fs;
@@ -406,10 +406,10 @@ int mnt_table_get_root_fs(struct libmnt_table *tb, struct libmnt_fs **root)
  * @parent: parental FS
  * @chld: returns the next child filesystem
  *
- * Note that filesystems are returned in the order how was mounted (according to
+ * Note that filesystems are returned in the order of mounting (according to
  * IDs in /proc/self/mountinfo).
  *
- * Returns: 0 on success, negative number in case of error or 1 at end of list.
+ * Returns: 0 on success, negative number in case of error or 1 at the end of list.
  */
 int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 			struct libmnt_fs *parent, struct libmnt_fs **chld)
@@ -444,7 +444,7 @@ int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 
 		id = mnt_fs_get_id(fs);
 
-		/* avoid infinite loop. This only happens in rare cases
+		/* avoid an infinite loop. This only happens in rare cases
 		 * such as in early userspace when the rootfs is its own parent */
 		if (id == parent_id)
 			continue;
@@ -471,7 +471,7 @@ int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
  * @itr: iterator
  * @fs: returns the next tab entry
  *
- * Returns: 0 on success, negative number in case of error or 1 at end of list.
+ * Returns: 0 on success, negative number in case of error or 1 at the end of list.
  *
  * Example:
  * <informalexample>
@@ -484,7 +484,7 @@ int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
  *   </programlisting>
  * </informalexample>
  *
- * lists all mountpoints from fstab in backward order.
+ * lists all mountpoints from fstab in reverse order.
  */
 int mnt_table_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr, struct libmnt_fs **fs)
 {
@@ -512,11 +512,11 @@ int mnt_table_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr, struct l
  * mnt_table_find_next_fs:
  * @tb: table
  * @itr: iterator
- * @match_func: function returns 1 or 0
+ * @match_func: function returning 1 or 0
  * @userdata: extra data for match_func
  * @fs: returns pointer to the next matching table entry
  *
- * This function allows search in @tb.
+ * This function allows searching in @tb.
  *
  * Returns: negative number in case of error, 1 at end of table or 0 o success.
  */
@@ -577,7 +577,7 @@ int mnt_table_set_iter(struct libmnt_table *tb, struct libmnt_iter *itr, struct 
  * @path: directory
  * @direction: MNT_ITER_{FORWARD,BACKWARD}
  *
- * Same like mnt_get_mountpoint(), but this function does not rely on
+ * Same as mnt_get_mountpoint(), except this function does not rely on
  * st_dev numbers.
  *
  * Returns: a tab entry or NULL.
@@ -624,10 +624,10 @@ struct libmnt_fs *mnt_table_find_mountpoint(struct libmnt_table *tb,
  * @path: mountpoint directory
  * @direction: MNT_ITER_{FORWARD,BACKWARD}
  *
- * Try to lookup an entry in given tab, possible are three iterations, first
- * with @path, second with realpath(@path) and third with realpath(@path)
+ * Try to lookup an entry in the given tab, three iterations are possible, the first
+ * with @path, the second with realpath(@path) and the third with realpath(@path)
  * against realpath(fs->target). The 2nd and 3rd iterations are not performed
- * when @tb cache is not set (see mnt_table_set_cache()).
+ * when the @tb cache is not set (see mnt_table_set_cache()).
  *
  * Returns: a tab entry or NULL.
  */
@@ -667,7 +667,7 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
 
 	/* non-canonicaled path in struct libmnt_table
 	 * -- note that mountpoint in /proc/self/mountinfo is already
-	 *    canonicalized by kernel
+	 *    canonicalized by the kernel
 	 */
 	mnt_reset_iter(&itr, direction);
 	while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
@@ -693,11 +693,11 @@ struct libmnt_fs *mnt_table_find_target(struct libmnt_table *tb, const char *pat
  * @path: source path (devname or dirname) or NULL
  * @direction: MNT_ITER_{FORWARD,BACKWARD}
  *
- * Try to lookup an entry in given tab, possible are four iterations, first
- * with @path, second with realpath(@path), third with tags (LABEL, UUID, ..)
- * from @path and fourth with realpath(@path) against realpath(entry->srcpath).
+ * Try to lookup an entry in the given tab, four iterations are possible, the first
+ * with @path, the second with realpath(@path), the third with tags (LABEL, UUID, ..)
+ * from @path and the fourth with realpath(@path) against realpath(entry->srcpath).
  *
- * The 2nd, 3rd and 4th iterations are not performed when @tb cache is not
+ * The 2nd, 3rd and 4th iterations are not performed when the @tb cache is not
  * set (see mnt_table_set_cache()).
  *
  * Note that NULL is a valid source path; it will be replaced with "none". The
@@ -762,9 +762,9 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 					return fs;
 			}
 		} else if (rc < 0 && errno == EACCES) {
-			/* @path is unaccessible, try evaluate all TAGs in @tb
+			/* @path is inaccessible, try evaluating all TAGs in @tb
 			 * by udev symlinks -- this could be expensive on systems
-			 * with huge fstab/mtab */
+			 * with a huge fstab/mtab */
 			 while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 				 const char *t, *v, *x;
 				 if (mnt_fs_get_tag(fs, &t, &v))
@@ -805,9 +805,9 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
  * @val: tag value
  * @direction: MNT_ITER_{FORWARD,BACKWARD}
  *
- * Try to lookup an entry in given tab, first attempt is lookup by @tag and
+ * Try to lookup an entry in the given tab, the first attempt is to lookup by @tag and
  * @val, for the second attempt the tag is evaluated (converted to the device
- * name) and mnt_table_find_srcpath() is preformed. The second attempt is not
+ * name) and mnt_table_find_srcpath() is performed. The second attempt is not
  * performed when @tb cache is not set (see mnt_table_set_cache()).
 
  * Returns: a tab entry or NULL.
@@ -853,9 +853,9 @@ struct libmnt_fs *mnt_table_find_tag(struct libmnt_table *tb, const char *tag,
  * @source: TAG or path
  * @direction: MNT_ITER_{FORWARD,BACKWARD}
  *
- * This is high-level API for mnt_table_find_{srcpath,tag}. You needn't to care
- * about @source format (device, LABEL, UUID, ...). This function parses @source
- * and calls mnt_table_find_tag() or mnt_table_find_srcpath().
+ * This is a high-level API for mnt_table_find_{srcpath,tag}. You needn't care
+ * about the @source format (device, LABEL, UUID, ...). This function parses
+ * the @source and calls mnt_table_find_tag() or mnt_table_find_srcpath().
  *
  * Returns: a tab entry or NULL.
  */
@@ -893,7 +893,7 @@ struct libmnt_fs *mnt_table_find_source(struct libmnt_table *tb,
  * @direction: MNT_ITER_{FORWARD,BACKWARD}
  *
  * This function is implemented by mnt_fs_match_source() and
- * mnt_fs_match_target() functions. It means that this is more expensive that
+ * mnt_fs_match_target() functions. It means that this is more expensive than
  * others mnt_table_find_* function, because every @tab entry is fully evaluated.
  *
  * Returns: a tab entry or NULL.
@@ -931,7 +931,7 @@ struct libmnt_fs *mnt_table_find_pair(struct libmnt_table *tb, const char *sourc
  * @devno: device number
  * @direction: MNT_ITER_{FORWARD,BACKWARD}
  *
- * Note that zero could be valid device number for root pseudo filesystem (e.g.
+ * Note that zero could be a valid device number for the root pseudo filesystem (e.g.
  * tmpfs).
  *
  * Returns: a tab entry or NULL.
@@ -965,7 +965,7 @@ struct libmnt_fs *mnt_table_find_devno(struct libmnt_table *tb,
  * tb: /proc/self/mountinfo
  * fs: filesystem
  * mountflags: MS_BIND or 0
- * fsroot: fs-root that will be probably used in the mountinfo file
+ * fsroot: fs-root that will probably be used in the mountinfo file
  *          for @fs after mount(2)
  *
  * For btrfs subvolumes this function returns NULL, but @fsroot properly set.
@@ -1091,20 +1091,20 @@ static int is_mountinfo(struct libmnt_table *tb)
 }
 
 /**
- * mnt_table_is_mounted:
+ * mnt_table_is_fs__mounted:
  * @tb: /proc/self/mountinfo file
  * @fstab_fs: /etc/fstab entry
  *
  * Checks if the @fstab_fs entry is already in the @tb table. The "swap" is
- * ignored. This function explicitly compares source, target and root of the
+ * ignored. This function explicitly compares the source, target and root of the
  * filesystems.
  *
  * Note that source and target are canonicalized only if a cache for @tb is
  * defined (see mnt_table_set_cache()). The target canonicalization may
- * triggers automount on autofs mountpoints!
+ * trigger automount on autofs mountpoints!
  *
  * Don't use it if you want to know if a device is mounted, just use
- * mnt_table_find_source() for the device.
+ * mnt_table_find_source() on the device.
  *
  * This function is designed mostly for "mount -a".
  *
@@ -1206,7 +1206,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 		}
 
 		/*
-		 * Compare target, try to minimize number of situations when we
+		 * Compare target, try to minimize the number of situations when we
 		 * need to canonicalize the path to avoid readlink() on
 		 * mountpoints.
 		 */
@@ -1236,7 +1236,7 @@ static int parser_errcb(struct libmnt_table *tb, const char *filename, int line)
 {
 	fprintf(stderr, "%s:%d: parse error\n", filename, line);
 
-	return 1;	/* all errors are recoverable -- this is default */
+	return 1;	/* all errors are recoverable -- this is the default */
 }
 
 struct libmnt_table *create_table(const char *file, int comments)

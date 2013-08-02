@@ -47,10 +47,10 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 	/* Automatically create a loop device from a regular file if a
 	 * filesystem is not specified or the filesystem is known for libblkid
 	 * (these filesystems work with block devices only). The file size
-	 * should be at least 1KiB otherwise we will create empty loopdev where
-	 * is no mountable filesystem...
+	 * should be at least 1KiB, otherwise we will create an empty loopdev with
+	 * no mountable filesystem...
 	 *
-	 * Note that there is not a restriction (on kernel side) that prevents regular
+	 * Note that there is no restriction (on kernel side) that would prevent a regular
 	 * file as a mount(2) source argument. A filesystem that is able to mount
 	 * regular files could be implemented.
 	 */
@@ -73,7 +73,7 @@ int mnt_context_is_loopdev(struct libmnt_context *cxt)
 }
 
 
-/* Check, if there already exists a mounted loop device on the mountpoint node
+/* Check if there already exists a mounted loop device on the mountpoint node
  * with the same parameters.
  */
 static int __attribute__((nonnull))
@@ -100,7 +100,7 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 	cache = mnt_context_get_cache(cxt);
 	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
 
-	/* Search for mountpoint node in mtab, procceed if any of these has the
+	/* Search for a mountpoint node in mtab, proceed if any of these have the
 	 * loop option set or the device is a loop device
 	 */
 	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
@@ -282,7 +282,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 		if ((cxt->user_mountflags & MNT_MS_LOOP) &&
 		    loopcxt_is_autoclear(&lc)) {
 			/*
-			 * autoclear flag accepted by kernel, don't store
+			 * autoclear flag accepted by the kernel, don't store
 			 * the "loop=" option to mtab.
 			 */
 			cxt->user_mountflags &= ~MNT_MS_LOOP;
@@ -298,7 +298,7 @@ int mnt_context_setup_loopdev(struct libmnt_context *cxt)
 			mnt_context_set_mflags(cxt, cxt->mountflags | MS_RDONLY);
 
 		/* we have to keep the device open until mount(1),
-		 * otherwise it will auto-cleared by kernel
+		 * otherwise it will be auto-cleared by kernel
 		 */
 		cxt->loopdev_fd = loopcxt_get_fd(&lc);
 		loopcxt_set_fd(&lc, -1, 0);

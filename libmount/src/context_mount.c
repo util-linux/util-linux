@@ -129,8 +129,8 @@ static int fix_optstr(struct libmnt_context *cxt)
 
 	/*
 	 * The "user" options is our business (so we can modify the option),
-	 * but exception is command line for /sbin/mount.<type> helpers. Let's
-	 * save the original user=<name> to call the helpers with unchanged
+	 * the exception is command line for /sbin/mount.<type> helpers. Let's
+	 * save the original user=<name> to call the helpers with an unchanged
 	 * "user" setting.
 	 */
 	if (cxt->user_mountflags & MNT_MS_USER) {
@@ -255,7 +255,7 @@ done:
 }
 
 /*
- * Converts already evaluated and fixed options to the form that is compatible
+ * Converts the already evaluated and fixed options to the form that is compatible
  * with /sbin/mount.type helpers.
  */
 static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
@@ -278,13 +278,13 @@ static int generate_helper_optstr(struct libmnt_context *cxt, char **optstr)
 	if (cxt->user_mountflags & MNT_MS_USER) {
 		/*
 		 * This is unnecessary for real user-mounts as mount.<type>
-		 * helpers have to always follow fstab rather than mount
-		 * options on command line.
+		 * helpers always have to follow fstab rather than mount
+		 * options on the command line.
 		 *
-		 * But if you call mount.<type> as root then the helper follows
-		 * command line. If there is (for example) "user,exec" in fstab
+		 * However, if you call mount.<type> as root, then the helper follows
+		 * the command line. If there is (for example) "user,exec" in fstab,
 		 * then we have to manually append the "exec" back to the options
-		 * string, bacause there is nothing like MS_EXEC (we have only
+		 * string, bacause there is nothing like MS_EXEC (we only have
 		 * MS_NOEXEC in mount flags and we don't care about the original
 		 * mount string in libmount for VFS options).
 		 */
@@ -330,7 +330,7 @@ err:
 /*
  * this has to be called before fix_optstr()
  *
- * Note that user=<name> maybe be used by some filesystems as filesystem
+ * Note that user=<name> may be used by some filesystems as a filesystem
  * specific option (e.g. cifs). Yes, developers of such filesystems have
  * allocated pretty hot place in hell...
  */
@@ -433,7 +433,7 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 /*
  * mnt_context_helper_setopt() backend
  *
- * This function applies mount.type command line option (for example parsed
+ * This function applies the mount.type command line option (for example parsed
  * by getopt() or getopt_long()) to @cxt. All unknown options are ignored and
  * then 1 is returned.
  *
@@ -519,7 +519,7 @@ static int exec_helper(struct libmnt_context *cxt)
 
 		/*
 		 * TODO: remove the exception for "nfs", -s is documented
-		 *       for years should be usable everywhere.
+		 *       for years and should be usable everywhere.
 		 */
 		if (mnt_context_is_sloppy(cxt) &&
 		    type && startswith(type, "nfs"))
@@ -651,7 +651,7 @@ static int do_mount(struct libmnt_context *cxt, const char *try_type)
 		return -EINVAL;
 	if (!src) {
 		/* unnecessary, should be already resolved in
-		 * mnt_context_prepare_srcpath(), but for sure... */
+		 * mnt_context_prepare_srcpath(), but to be sure... */
 		DBG(CXT, mnt_debug_h(cxt, "WARNING: source is NULL -- using \"none\"!"));
 		src = "none";
 	}
@@ -831,10 +831,10 @@ int mnt_context_prepare_mount(struct libmnt_context *cxt)
  * Call mount(2) or mount.type helper. Unnecessary for mnt_context_mount().
  *
  * Note that this function could be called only once. If you want to mount
- * another source or target than you have to call mnt_reset_context().
+ * another source or target, then you have to call mnt_reset_context().
  *
- * If you want to call mount(2) for the same source and target with a different
- * mount flags or fstype then call mnt_context_reset_status() and then try
+ * If you want to call mount(2) for the same source and target with different
+ * mount flags or fstype, then call mnt_context_reset_status() and then try
  * again mnt_context_do_mount().
  *
  * WARNING: non-zero return code does not mean that mount(2) syscall or
@@ -867,7 +867,7 @@ int mnt_context_do_mount(struct libmnt_context *cxt)
 	type = mnt_fs_get_fstype(cxt->fs);
 	if (type) {
 		if (strchr(type, ','))
-			/* this only happens if fstab contains list of filesystems */
+			/* this only happens if fstab contains a list of filesystems */
 			res = do_mount_by_pattern(cxt, type);
 		else
 			res = do_mount(cxt, NULL);
@@ -935,7 +935,7 @@ int mnt_context_finalize_mount(struct libmnt_context *cxt)
  * mnt_context_mount:
  * @cxt: mount context
  *
- * High-level, mounts filesystem by mount(2) or fork()+exec(/sbin/mount.type).
+ * High-level, mounts the filesystem by mount(2) or fork()+exec(/sbin/mount.type).
  *
  * This is similar to:
  *
@@ -945,10 +945,10 @@ int mnt_context_finalize_mount(struct libmnt_context *cxt)
  *
  * See also mnt_context_disable_helpers().
  *
- * Note that this function could be called only once. If you want to mount with
- * different setting than you have to call mnt_reset_context(). It's NOT enough
- * to call mnt_context_reset_status() if you want call this function more than
- * once, whole context has to be reseted.
+ * Note that this function should be called only once. If you want to mount with
+ * different settings, then you have to call mnt_reset_context(). It's NOT enough
+ * to call mnt_context_reset_status(). If you want to call this function more than
+ * once, the whole context has to be reset.
  *
  * WARNING: non-zero return code does not mean that mount(2) syscall or
  *          mount.type helper wasn't successfully called.
@@ -974,7 +974,7 @@ int mnt_context_mount(struct libmnt_context *cxt)
 	if (!rc)
 		rc = mnt_context_do_mount(cxt);
 
-	/* TODO: if mtab update is expected then check if the
+	/* TODO: if a mtab update is expected, then check if the
 	 * target is really mounted read-write to avoid 'ro' in
 	 * mtab and 'rw' in /proc/mounts.
 	 */
@@ -989,7 +989,7 @@ int mnt_context_mount(struct libmnt_context *cxt)
  * @itr: iterator
  * @fs: returns the current filesystem
  * @mntrc: returns the return code from mnt_context_mount()
- * @ignored: returns 1 for not matching and 2 for already mounted filesystems
+ * @ignored: returns 1 for non-matching and 2 for already mounted filesystems
  *
  * This function tries to mount the next filesystem from fstab (as returned by
  * mnt_context_get_fstab()). See also mnt_context_set_fstab().
@@ -1057,11 +1057,11 @@ int mnt_context_next_mount(struct libmnt_context *cxt,
 	/* ignore noauto filesystems */
 	   (o && mnt_optstr_get_option(o, "noauto", NULL, NULL) == 0) ||
 
-	/* ignore filesystems not match with options patterns */
+	/* ignore filesystems which don't match options patterns */
 	   (cxt->fstype_pattern && !mnt_fs_match_fstype(*fs,
 					cxt->fstype_pattern)) ||
 
-	/* ignore filesystems not match with type patterns */
+	/* ignore filesystems which don't match type patterns */
 	   (cxt->optstr_pattern && !mnt_fs_match_options(*fs,
 					cxt->optstr_pattern))) {
 		if (ignored)

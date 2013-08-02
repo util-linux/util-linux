@@ -78,7 +78,7 @@ static const struct libmnt_optmap linux_flags_map[] =
 
    { "dirsync",  MS_DIRSYNC },                /* synchronous directory modifications */
    { "remount",  MS_REMOUNT, MNT_NOMTAB },    /* alter flags of mounted FS */
-   { "bind",     MS_BIND },                   /* Remount part of tree elsewhere */
+   { "bind",     MS_BIND },                   /* Remount part of the tree elsewhere */
    { "rbind",    MS_BIND | MS_REC },          /* Idem, plus mounted subtrees */
 #ifdef MS_NOSUB
    { "sub",      MS_NOSUB, MNT_INVERT },      /* allow submounts */
@@ -133,7 +133,7 @@ static const struct libmnt_optmap userspace_opts_map[] =
    { "defaults", 0, 0 },               /* default options */
 
    { "auto",    MNT_MS_NOAUTO, MNT_NOHLPS | MNT_INVERT | MNT_NOMTAB },  /* Can be mounted using -a */
-   { "noauto",  MNT_MS_NOAUTO, MNT_NOHLPS | MNT_NOMTAB },  /* Can  only be mounted explicitly */
+   { "noauto",  MNT_MS_NOAUTO, MNT_NOHLPS | MNT_NOMTAB },  /* Can only be mounted explicitly */
 
    { "user[=]", MNT_MS_USER },                             /* Allow ordinary user to mount (mtab) */
    { "nouser",  MNT_MS_USER, MNT_INVERT | MNT_NOMTAB },    /* Forbid ordinary user to mount */
@@ -148,7 +148,7 @@ static const struct libmnt_optmap userspace_opts_map[] =
    { "nogroup", MNT_MS_GROUP, MNT_INVERT | MNT_NOMTAB },   /* Device group has no special privs */
 
    /*
-    * Note that traditional init scripts assume _netdev option in /etc/mtab to
+    * Note that traditional init scripts assume the _netdev option in /etc/mtab to
     * umount network block devices on shutdown.
     */
    { "_netdev", MNT_MS_NETDEV },                           /* Device requires network */
@@ -194,7 +194,7 @@ const struct libmnt_optmap *mnt_get_builtin_optmap(int id)
 }
 
 /*
- * Lookups for the @name in @maps and returns a map and in @mapent
+ * Looks up the @name in @maps and returns a map and in @mapent
  * returns the map entry
  */
 const struct libmnt_optmap *mnt_optmap_get_entry(

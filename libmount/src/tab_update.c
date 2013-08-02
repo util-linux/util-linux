@@ -10,10 +10,10 @@
  * @title: Tables update
  * @short_description: userspace mount information management
  *
- * The struct libmnt_update provides abstraction to manage mount options in
- * userspace independently on system configuration. This low-level API works on
- * system with and without /etc/mtab. On systems without the regular /etc/mtab
- * file are userspace mount options (e.g. user=) stored to the /run/mount/utab
+ * The struct libmnt_update provides an abstraction to manage mount options in
+ * userspace independently of system configuration. This low-level API works on
+ * systems both with and without /etc/mtab. On systems without the regular /etc/mtab
+ * file, the userspace mount options (e.g. user=) are stored in the /run/mount/utab
  * file.
  *
  * It's recommended to use high-level struct libmnt_context API.
@@ -125,7 +125,7 @@ int mnt_update_set_filename(struct libmnt_update *upd, const char *filename,
  * mnt_update_get_filename:
  * @upd: update
  *
- * This function returns file name (e.g. /etc/mtab) for the up-dated file.
+ * This function returns the file name (e.g. /etc/mtab) of the up-dated file.
  *
  * Returns: pointer to filename that will be updated or NULL in case of error.
  */
@@ -140,7 +140,7 @@ const char *mnt_update_get_filename(struct libmnt_update *upd)
  * @upd: update handler
  *
  * Returns: 1 if entry described by @upd is successfully prepared and will be
- * written to mtab/utab file.
+ * written to the mtab/utab file.
  */
 int mnt_update_is_ready(struct libmnt_update *upd)
 {
@@ -287,10 +287,10 @@ int mnt_update_force_rdonly(struct libmnt_update *upd, int rdonly)
 }
 
 /*
- * Allocates utab entry (upd->fs) for mount/remount. This function should be
+ * Allocates an utab entry (upd->fs) for mount/remount. This function should be
  * called *before* mount(2) syscall. The @fs is used as a read-only template.
  *
- * Returns: 0 on success, negative number on error, 1 if utabs update is
+ * Returns: 0 on success, negative number on error, 1 if utab's update is
  *          unnecessary.
  */
 static int utab_new_entry(struct libmnt_update *upd, struct libmnt_fs *fs,
@@ -357,7 +357,7 @@ err:
 
 /*
  * Sets fs-root and fs-type to @upd->fs according to the @fs template and
- * @mountfalgs. For MS_BIND mountflag it reads information about source
+ * @mountfalgs. For MS_BIND mountflag it reads information about the source
  * filesystem from /proc/self/mountinfo.
  */
 static int set_fs_root(struct libmnt_update *upd, struct libmnt_fs *fs,
@@ -618,7 +618,7 @@ int mnt_table_write_file(struct libmnt_table *tb, FILE *file)
  * @tb: parsed file (e.g. fstab)
  * @filename: target
  *
- * This function repaces @file by the new content from @tb.
+ * This function replaces @file by the new content from @tb.
  *
  * Returns: 0 on success, negative number on error.
  */
@@ -814,7 +814,7 @@ static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *
  * High-level API to update /etc/mtab (or private /run/mount/utab file).
  *
  * The @lc lock is optional and will be created if necessary. Note that
- * the automatically created lock blocks all signals.
+ * an automatically created lock blocks all signals.
  *
  * See also mnt_lock_block_signals() and mnt_context_get_lock().
  *
@@ -884,7 +884,7 @@ static int update(const char *target, struct libmnt_fs *fs, unsigned long mountf
 		goto done;
 	}
 
-	/* [... here should be mount(2) call ...]  */
+	/* [... mount(2) call should be here...]  */
 
 	rc = mnt_update_table(upd, NULL);
 done:
@@ -972,7 +972,7 @@ static int test_replace(struct libmnt_test *ts, int argc, char *argv[])
 int main(int argc, char *argv[])
 {
 	struct libmnt_test tss[] = {
-	{ "--add",    test_add,     "<src> <target> <type> <options>  add line to mtab" },
+	{ "--add",    test_add,     "<src> <target> <type> <options>  add a line to mtab" },
 	{ "--remove", test_remove,  "<target>                      MS_REMOUNT mtab change" },
 	{ "--move",   test_move,    "<old_target>  <target>        MS_MOVE mtab change" },
 	{ "--remount",test_remount, "<target>  <options>           MS_REMOUNT mtab change" },

@@ -25,7 +25,7 @@ struct libmnt_tabdiff {
 	int nchanges;			/* number of changes */
 
 	struct list_head changes;	/* list with modified entries */
-	struct list_head unused;	/* list with unuused entries */
+	struct list_head unused;	/* list with unused entries */
 };
 
 /**
@@ -89,7 +89,7 @@ void mnt_free_tabdiff(struct libmnt_tabdiff *df)
  *
  * The options @old_fs, @new_fs and @oper are optional.
  *
- * Returns: 0 on success, negative number in case of error or 1 at end of list.
+ * Returns: 0 on success, negative number in case of error or 1 at the end of list.
  */
 int mnt_tabdiff_next_change(struct libmnt_tabdiff *df, struct libmnt_iter *itr,
 		struct libmnt_fs **old_fs, struct libmnt_fs **new_fs, int *oper)
@@ -124,9 +124,9 @@ static int tabdiff_reset(struct libmnt_tabdiff *df)
 {
 	assert(df);
 
-	DBG(DIFF, mnt_debug_h(df, "reseting"));
+	DBG(DIFF, mnt_debug_h(df, "resetting"));
 
-	/* zeroize all entries and move them to the list of unuused
+	/* zeroize all entries and move them to the list of unused
 	 */
 	while (!list_empty(&df->changes)) {
 		struct tabdiff_entry *de = list_entry(df->changes.next,

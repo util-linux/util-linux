@@ -47,7 +47,7 @@ static int next_number(char **s, int *num)
 
 	*s = end;
 
-	/* valid end of number is space or terminator */
+	/* valid end of number is a space or a terminator */
 	if (*end == ' ' || *end == '\t' || *end == '\0')
 		return 0;
 	return -1;
@@ -82,7 +82,7 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
 		if (optstr && *optstr)
 			unmangle_string(optstr);
 
-		/* note that __foo functions does not reallocate the string
+		/* note that __foo functions do not reallocate the string
 		 */
 		rc = __mnt_fs_set_source_ptr(fs, src);
 		if (!rc) {
@@ -128,7 +128,7 @@ static int mnt_parse_table_line(struct libmnt_fs *fs, char *s)
 }
 
 /*
- * Parses one line from mountinfo file
+ * Parses one line from a mountinfo file
  */
 static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 {
@@ -158,7 +158,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 	/* (7) optional fields, terminated by " - " */
 	p = strstr(s, " - ");
 	if (!p) {
-		DBG(TAB, mnt_debug("mountinfo parse error: not found separator"));
+		DBG(TAB, mnt_debug("mountinfo parse error: separator not found"));
 		return -EINVAL;
 	}
 	if (p > s + 1)
@@ -192,7 +192,7 @@ static int mnt_parse_mountinfo_line(struct libmnt_fs *fs, char *s)
 				src = NULL;
 		}
 
-		/* merge VFS and FS options to the one string */
+		/* merge VFS and FS options to one string */
 		fs->optstr = mnt_fs_strdup_options(fs);
 		if (!fs->optstr)
 			rc = -ENOMEM;
@@ -323,8 +323,8 @@ static int mnt_parse_swaps_line(struct libmnt_fs *fs, char *s)
 /*
  * Returns {m,fs}tab or mountinfo file format (MNT_FMT_*)
  *
- * Note that we aren't trying to guess utab file format, because this file has
- * to be always parsed by private libmount routines with explicitly defined
+ * Note that we aren't trying to guess the utab file format, because this file
+ * always has to be parsed by private libmount routines with an explicitly defined
  * format.
  *
  * mountinfo: "<number> <number> ... "
@@ -372,8 +372,8 @@ static int is_terminated_by_blank(const char *str)
 /*
  * Reads the next line from the file.
  *
- * Returns 0 if the line is comment
- *         1 if the line is not comment
+ * Returns 0 if the line is a comment
+ *         1 if the line is not a comment
  *        <0 on error
  */
 static int next_comment_line(char *buf, size_t bufsz,
@@ -400,7 +400,7 @@ static int append_comment(struct libmnt_table *tb,
 
 	DBG(TAB, mnt_debug_h(tb, "appending %s comment",
 			intro ? "intro" :
-			eof ? "tailing" : "fs"));
+			eof ? "trailing" : "fs"));
 	if (intro)
 		rc = mnt_table_append_intro_comment(tb, comm);
 	else if (eof) {
@@ -438,7 +438,7 @@ next_line:
 		++*nlines;
 		s = strchr (buf, '\n');
 		if (!s) {
-			/* Missing final newline?  Otherwise extremely */
+			/* Missing final newline?  Otherwise an extremely */
 			/* long line - assume file was corrupted */
 			if (feof(f)) {
 				DBG(TAB, mnt_debug_h(tb,
@@ -512,7 +512,7 @@ err:
 				tb->fmt == MNT_FMT_FSTAB ? "tab" : "utab"));
 
 	/* by default all errors are recoverable, otherwise behavior depends on
-	 * errcb() function. See mnt_table_set_parser_errcb().
+	 * the errcb() function. See mnt_table_set_parser_errcb().
 	 */
 	return tb->errcb ? tb->errcb(tb, filename, *nlines) : 1;
 }
@@ -553,7 +553,7 @@ static int kernel_fs_postparse(struct libmnt_table *tb,
 	int rc = 0;
 	const char *src = mnt_fs_get_srcpath(fs);
 
-	/* This is filesystem description from /proc, so we're in some process
+	/* This is a filesystem description from /proc, so we're in some process
 	 * namespace. Let's remember the process PID.
 	 */
 	if (filename && *tid == -1)
@@ -653,10 +653,10 @@ err:
  * @tb: tab pointer
  * @filename: file
  *
- * Parses whole table (e.g. /etc/mtab) and appends new records to the @tab.
+ * Parses the whole table (e.g. /etc/mtab) and appends new records to the @tab.
  *
  * The libmount parser ignores broken (syntax error) lines, these lines are
- * reported to caller by errcb() function (see mnt_table_set_parser_errcb()).
+ * reported to the caller by the errcb() function (see mnt_table_set_parser_errcb()).
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -755,7 +755,7 @@ static int __mnt_table_parse_dir(struct libmnt_table *tb, const char *dirname)
 	if (n <= 0)
 		return 0;
 
-	/* let use "at" functions rather than play crazy games with paths... */
+	/* let's use "at" functions rather than playing crazy games with paths... */
 	dir = opendir(dirname);
 	if (!dir) {
 		r = -errno;
@@ -796,7 +796,7 @@ out:
  *
  * The directory:
  *	- files are sorted by strverscmp(3)
- *	- files that starts with "." are ignored (e.g. ".10foo.fstab")
+ *	- files that start with "." are ignored (e.g. ".10foo.fstab")
  *	- files without the ".fstab" extension are ignored
  *
  * Returns: 0 on success or negative number in case of error.
@@ -832,7 +832,7 @@ struct libmnt_table *__mnt_new_table_from_file(const char *filename, int fmt)
  * @filename: /etc/{m,fs}tab or /proc/self/mountinfo path
  *
  * Same as mnt_new_table() + mnt_table_parse_file(). Use this function for private
- * files only. This function does not allow to use error callback, so you
+ * files only. This function does not allow using the error callback, so you
  * cannot provide any feedback to end-users about broken records in files (e.g.
  * fstab).
  *
@@ -871,13 +871,13 @@ struct libmnt_table *mnt_new_table_from_dir(const char *dirname)
  * @cb: pointer to callback function
  *
  * The error callback function is called by table parser (mnt_table_parse_file())
- * in case of syntax error. The callback function could be used for errors
+ * in case of a syntax error. The callback function could be used for error
  * evaluation, libmount will continue/stop parsing according to callback return
  * codes:
  *
  *   <0  : fatal error (abort parsing)
- *    0	 : success (parsing continue)
- *   >0  : recoverable error (the line is ignored, parsing continue).
+ *    0	 : success (parsing continues)
+ *   >0  : recoverable error (the line is ignored, parsing continues).
  *
  * Returns: 0 on success or negative number in case of error.
  */
@@ -892,7 +892,7 @@ int mnt_table_set_parser_errcb(struct libmnt_table *tb,
 }
 
 /*
- * Filter out entries during tab file parsing. If @cb returns 1 then the entry
+ * Filter out entries during tab file parsing. If @cb returns 1, then the entry
  * is ignored.
  */
 int mnt_table_set_parser_fltrcb(struct libmnt_table *tb,
@@ -943,7 +943,7 @@ int mnt_table_parse_swaps(struct libmnt_table *tb, const char *filename)
  * @filename: overwrites default (/etc/fstab or $LIBMOUNT_FSTAB) or NULL
  *
  * This function parses /etc/fstab and appends new lines to the @tab. If the
- * @filename is a directory then mnt_table_parse_dir() is called.
+ * @filename is a directory, then mnt_table_parse_dir() is called.
  *
  * See also mnt_table_set_parser_errcb().
  *
@@ -976,7 +976,7 @@ int mnt_table_parse_fstab(struct libmnt_table *tb, const char *filename)
 }
 
 /*
- * This function uses @uf to found corresponding record in @tb, then the record
+ * This function uses @uf to find a corresponding record in @tb, then the record
  * from @tb is updated (user specific mount options are added).
  *
  * Note that @uf must contain only user specific mount options instead of
@@ -1078,7 +1078,7 @@ int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename)
 	if (mnt_table_get_nents(tb) == 0)
 		return 0;			/* empty, ignore utab */
 	/*
-	 * try to read user specific information from /run/mount/utabs
+	 * try to read the user specific information from /run/mount/utabs
 	 */
 	utab = mnt_get_utab_path();
 	if (!utab || is_file_empty(utab))
@@ -1097,7 +1097,7 @@ int mnt_table_parse_mtab(struct libmnt_table *tb, const char *filename)
 
 		mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
 
-		/*  merge user options into mountinfo from kernel */
+		/*  merge user options into mountinfo from the kernel */
 		while(mnt_table_next_fs(u_tb, &itr, &u_fs) == 0)
 			mnt_table_merge_user_fs(tb, u_fs);
 	}

@@ -80,7 +80,7 @@ int append_string(char **a, const char *b)
 }
 
 /*
- * Return 1 if the file does not accessible of empty
+ * Return 1 if the file is not accessible or empty
  */
 int is_file_empty(const char *name)
 {
@@ -142,8 +142,8 @@ char *stripoff_last_component(char *path)
 }
 
 /*
- * Note that the @target has to be absolute path (so at least "/").  The
- * @filename returns allocated buffer with last path component, for example:
+ * Note that the @target has to be an absolute path (so at least "/").  The
+ * @filename returns an allocated buffer with the last path component, for example:
  *
  * mnt_chdir_to_parent("/mnt/test", &buf) ==> chdir("/mnt"), buf="test"
  */
@@ -206,7 +206,7 @@ err:
 }
 
 /*
- * Check if @path is on read-only filesystem independently on file permissions.
+ * Check if @path is on a read-only filesystem independently of file permissions.
  */
 int mnt_is_readonly(const char *path)
 {
@@ -225,7 +225,7 @@ int mnt_is_readonly(const char *path)
 	 *   accessible for the current rUID. (Note that euidaccess(2) does not
 	 *   check for EROFS at all).
 	 *
-	 * - for read-write filesystem with read-only VFS node (aka -o remount,ro,bind)
+	 * - for a read-write filesystem with a read-only VFS node (aka -o remount,ro,bind)
 	 */
 	{
 		struct timespec times[2];
@@ -246,7 +246,7 @@ int mnt_is_readonly(const char *path)
  *
  * Encode @str to be compatible with fstab/mtab
  *
- * Returns: new allocated string or NULL in case of error.
+ * Returns: newly allocated string or NULL in case of error.
  */
 char *mnt_mangle(const char *str)
 {
@@ -259,7 +259,7 @@ char *mnt_mangle(const char *str)
  *
  * Decode @str from fstab/mtab
  *
- * Returns: new allocated string or NULL in case of error.
+ * Returns: newly allocated string or NULL in case of error.
  */
 char *mnt_unmangle(const char *str)
 {
@@ -338,7 +338,7 @@ int mnt_fstype_is_netfs(const char *type)
  * @type: filesystem type
  * @pattern: filesystem name or comma delimited list of names
  *
- * The @pattern list of filesystem can be prefixed with a global
+ * The @pattern list of filesystems can be prefixed with a global
  * "no" prefix to invert matching of the whole list. The "no" could
  * also be used for individual items in the @pattern list. So,
  * "nofoo,bar" has the same meaning as "nofoo,nobar".
@@ -396,14 +396,14 @@ static int check_option(const char *haystack, size_t len,
  * @optstr: options string
  * @pattern: comma delimited list of options
  *
- * The "no" could used for individual items in the @options list. The "no"
+ * The "no" could be used for individual items in the @options list. The "no"
  * prefix does not have a global meaning.
  *
  * Unlike fs type matching, nonetdev,user and nonetdev,nouser have
  * DIFFERENT meanings; each option is matched explicitly as specified.
  *
- * The "no" prefix interpretation could be disable by "+" prefix, for example
- * "+noauto" matches if @optstr literally contains "noauto" string.
+ * The "no" prefix interpretation could be disabled by the "+" prefix, for example
+ * "+noauto" matches if @optstr literally contains the "noauto" string.
  *
  * "xxx,yyy,zzz" : "nozzz"	-> False
  *
@@ -533,7 +533,7 @@ static int get_filesystems(const char *filename, char ***filesystems, const char
 }
 
 /*
- * Always check @filesystems pointer!
+ * Always check the @filesystems pointer!
  *
  * man mount:
  *
@@ -558,7 +558,7 @@ int mnt_get_filesystems(char ***filesystems, const char *pattern)
 
 	rc = get_filesystems(_PATH_PROC_FILESYSTEMS, filesystems, pattern);
 	if (rc == 1 && *filesystems)
-		rc = 0;			/* not found /proc/filesystems */
+		rc = 0;			/* /proc/filesystems not found */
 
 	return rc;
 }
@@ -574,7 +574,7 @@ static size_t get_pw_record_size(void)
 }
 
 /*
- * Returns allocated string with username or NULL.
+ * Returns an allocated string with username or NULL.
  */
 char *mnt_get_username(const uid_t uid)
 {
@@ -700,8 +700,8 @@ static int try_write(const char *filename)
  * @mtab: returns path to mtab
  * @writable: returns 1 if the file is writable
  *
- * If the file does not exist and @writable argument is not NULL then it will
- * try to create the file
+ * If the file does not exist and @writable argument is not NULL, then it will
+ * try to create the file.
  *
  * Returns: 1 if /etc/mtab is a regular file, and 0 in case of error (check
  *          errno for more details).
@@ -722,7 +722,7 @@ int mnt_has_regular_mtab(const char **mtab, int *writable)
 	rc = lstat(filename, &st);
 
 	if (rc == 0) {
-		/* file exist */
+		/* file exists */
 		if (S_ISREG(st.st_mode)) {
 			if (writable)
 				*writable = !try_write(filename);
@@ -746,7 +746,7 @@ done:
 /*
  * Don't export this to libmount API -- utab is private library stuff.
  *
- * If the file does not exist and @writable argument is not NULL then it will
+ * If the file does not exist and @writable argument is not NULL, then it will
  * try to create the directory (e.g. /run/mount) and the file.
  *
  * Returns: 1 if utab is a regular file, and 0 in case of
@@ -768,13 +768,13 @@ int mnt_has_regular_utab(const char **utab, int *writable)
 	rc = lstat(filename, &st);
 
 	if (rc == 0) {
-		/* file exist */
+		/* file exists */
 		if (S_ISREG(st.st_mode)) {
 			if (writable)
 				*writable = !try_write(filename);
 			return 1;
 		}
-		goto done;	/* it's not regular file */
+		goto done;	/* it's not a regular file */
 	}
 
 	if (writable) {
@@ -826,7 +826,7 @@ const char *mnt_get_fstab_path(void)
 /**
  * mnt_get_mtab_path:
  *
- * This function returns *default* location of the mtab file. The result does
+ * This function returns the *default* location of the mtab file. The result does
  * not have to be writable. See also mnt_has_regular_mtab().
  *
  * Returns: path to /etc/mtab or $LIBMOUNT_MTAB.
@@ -857,7 +857,7 @@ const char *mnt_get_utab_path(void)
 }
 
 
-/* returns file descriptor or -errno, @name returns uniques filename
+/* returns file descriptor or -errno, @name returns a unique filename
  */
 int mnt_open_uniq_filename(const char *filename, char **name)
 {
@@ -874,7 +874,7 @@ int mnt_open_uniq_filename(const char *filename, char **name)
 	if (rc <= 0)
 		return -errno;
 
-	/* This is for very old glibc and for compatibility with Posix where is
+	/* This is for very old glibc and for compatibility with Posix, which says
 	 * nothing about mkstemp() mode. All sane glibc use secure mode (0600).
 	 */
 	oldmode = umask(S_IRGRP|S_IWGRP|S_IXGRP|
@@ -897,7 +897,7 @@ int mnt_open_uniq_filename(const char *filename, char **name)
  * This function finds the mountpoint that a given path resides in. @path
  * should be canonicalized. The returned pointer should be freed by the caller.
  *
- * Returns: allocated string with target of the mounted device or NULL on error
+ * Returns: allocated string with the target of the mounted device or NULL on error
  */
 char *mnt_get_mountpoint(const char *path)
 {
@@ -967,7 +967,7 @@ char *mnt_get_fs_root(const char *path, const char *mnt)
 /*
  * Search for @name kernel command parametr.
  *
- * Returns newly allocated string with parameter argument if the @name is
+ * Returns newly allocated string with a parameter argument if the @name is
  * specified as "name=" or returns pointer to @name or returns NULL if not
  * found.
  *
@@ -1017,7 +1017,7 @@ char *mnt_get_kernel_cmdline_option(const char *name)
 		if (p != buf && !isblank(*(p - 1)))
 			continue;		/* no space before the option */
 		if (!val && *(p + len) != '\0' && !isblank(*(p + len)))
-			continue;		/* no space behind the option */
+			continue;		/* no space after the option */
 		if (val) {
 			char *v = p + len;
 
