@@ -780,10 +780,11 @@ void __attribute__((__noreturn__)) end_it(int dummy __attribute__((__unused__)))
 
 void copy_file(register FILE *f)
 {
-	register int c;
+	char buf[BUFSIZ];
+	size_t sz;
 
-	while ((c = getc(f)) != EOF)
-		putchar(c);
+	while ((sz = fread(&buf, sizeof(char), sizeof(buf), f)) > 0)
+		fwrite(&buf, sizeof(char), sz, stdout);
 }
 
 #define ringbell()	putcerr('\007')
