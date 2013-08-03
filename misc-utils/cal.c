@@ -197,14 +197,14 @@ struct fmt_st
 	char s[FMT_ST_LINES][FMT_ST_CHARS];
 };
 
-static int days_in_month[2][13] = {
+static const int days_in_month[2][13] = {
 	{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
 	{0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
 };
 
 /* September 1752 is special, and has static assignments for both date
  * and Julian representations.  */
-static int d_sep1752[MAXDAYS / 2] = {
+static const int d_sep1752[MAXDAYS / 2] = {
 	SPACE,	SPACE,	1,	2,	14,	15,	16,
 	17,	18,	19,	20,	21,	22,	23,
 	24,	25,	26,	27,	28,	29,	30
@@ -658,7 +658,7 @@ static void yearly(int day, long year, int julian)
 static void day_array(int day, int month, long year, int *days)
 {
 	int julday, daynum, dw, dm;
-	int *sep1752;
+	const int *sep1752;
 
 	memcpy(days, empty, MAXDAYS * sizeof(int));
 	if (year == REFORMATION_YEAR && month == REFORMATION_MONTH) {
