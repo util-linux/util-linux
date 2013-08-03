@@ -308,7 +308,7 @@ wchar_t *local_wcstok(wchar_t * p, const wchar_t * separator, int greedy,
 static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy, wchar_t *colsep)
 {
 	TBL *t;
-	int cnt, i;
+	int cnt;
 	wchar_t *p, **lp;
 	ssize_t *lens;
 	ssize_t maxcols = DEFCOLS, coloff;
@@ -347,8 +347,7 @@ static void maketbl(wchar_t **list, int entries, wchar_t *separator, int greedy,
 	for (t = tbl, cnt = 0; cnt < entries; ++cnt, ++t) {
 		for (coloff = 0; coloff < t->cols - 1; ++coloff) {
 			fputws(t->list[coloff], stdout);
-			for (i = lens[coloff] - t->len[coloff]; i > 0; i--)
-				putwchar(' ');
+			wprintf(L"%*s", lens[coloff] - t->len[coloff], "");
 			fputws(colsep, stdout);
 		}
 		if (coloff < t->cols) {
