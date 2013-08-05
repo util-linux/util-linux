@@ -49,6 +49,8 @@
  *
  * @UUID_SUB: subvolume uuid (e.g. btrfs)
  *
+ * @UUID_LOG: external log UUID (e.g. xfs)
+ *
  * @UUID_RAW: raw UUID from FS superblock
  *
  * @EXT_JOURNAL: external journal UUID
@@ -113,6 +115,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&swsuspend_idinfo,
 	&swap_idinfo,
 	&xfs_idinfo,
+	&xfs_log_idinfo,
 	&ext4dev_idinfo,
 	&ext4_idinfo,
 	&ext3_idinfo,

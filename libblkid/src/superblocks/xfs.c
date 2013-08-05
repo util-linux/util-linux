@@ -4,6 +4,7 @@
  * Copyright (C) 2001 by Andreas Dilger
  * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2013 Eric Sandeen <sandeen@redhat.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
@@ -61,3 +62,88 @@ const struct blkid_idinfo xfs_idinfo =
 	}
 };
 
+struct xlog_rec_header {
+	uint32_t	h_magicno;
+	uint32_t	h_dummy1[1];
+	uint32_t	h_version;
+	uint32_t	h_len;
+	uint32_t	h_dummy2[71];
+	uint32_t	h_fmt;
+	unsigned char	h_uuid[16];
+} __attribute__((packed));
+
+#define XLOG_HEADER_MAGIC_NUM 0xFEEDbabe
+
+/*
+ * For very small filesystems, the minimum log size
+ * can be smaller, but that seems vanishingly unlikely
+ * when used with an external log (which is used for
+ * performance reasons; tiny conflicts with that goal).
+ */
+#define XFS_MIN_LOG_BYTES	(10 * 1024 * 1024)
+
+#define XLOG_FMT_LINUX_LE	1
+#define XLOG_FMT_LINUX_BE	2
+#define XLOG_FMT_IRIX_BE	3
+
+#define XLOG_VERSION_1		1
+#define XLOG_VERSION_2		2	/* Large IClogs, Log sunit */
+#define XLOG_VERSION_OKBITS	(XLOG_VERSION_1 | XLOG_VERSION_2)
+
+static int xlog_valid_rec_header(struct xlog_rec_header *rhead)
+{
+	int hlen;
+
+	if (rhead->h_magicno != cpu_to_be32(XLOG_HEADER_MAGIC_NUM))
+		return 0;
+
+	if (!rhead->h_version ||
+            (be32_to_cpu(rhead->h_version) & (~XLOG_VERSION_OKBITS)))
+		return 0;
+
+	/* LR body must have data or it wouldn't have been written */
+	hlen = be32_to_cpu(rhead->h_len);
+	if (hlen <= 0 || hlen > INT_MAX)
+		return 0;
+
+	if (rhead->h_fmt != cpu_to_be32(XLOG_FMT_LINUX_LE) &&
+	    rhead->h_fmt != cpu_to_be32(XLOG_FMT_LINUX_BE) &&
+	    rhead->h_fmt != cpu_to_be32(XLOG_FMT_IRIX_BE))
+		return 0;
+
+	return 1;
+}
+
+/* xlog record header will be in some sector in the first 256k */
+static int probe_xfs_log(blkid_probe pr, const struct blkid_idmag *mag)
+{
+	int i;
+	struct xlog_rec_header *rhead;
+	unsigned char *buf;
+
+	buf = blkid_probe_get_buffer(pr, 0, 256*1024);
+	if (!buf)
+		return -1;
+
+	/* check the first 512 512-byte sectors */
+	for (i = 0; i < 512; i++) {
+		rhead = (struct xlog_rec_header *)&buf[i*512];
+
+		if (xlog_valid_rec_header(rhead)) {
+			blkid_probe_set_uuid(pr, rhead->h_uuid);
+			blkid_probe_set_uuid_as(pr, rhead->h_uuid, "UUID_LOG");
+			return 0;
+		}
+	}
+
+	return -1;
+}
+
+const struct blkid_idinfo xfs_log_idinfo =
+{
+	.name		= "xfs_external_log",
+	.usage		= BLKID_USAGE_OTHER,
+	.probefunc	= probe_xfs_log,
+	.magics		= BLKID_NONE_MAGIC,
+	.minsz		= XFS_MIN_LOG_BYTES,
+};
