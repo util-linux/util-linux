@@ -489,7 +489,8 @@ int main(int argc, char **argv)
 			break;
 		case 'c':
 			act = A_SET_CAPACITY;
-			if (loopcxt_set_device(&lc, optarg))
+			if (!is_loopdev(optarg) ||
+			    loopcxt_set_device(&lc, optarg))
 				err(EXIT_FAILURE, _("%s: failed to use device"),
 						optarg);
 			break;
@@ -498,7 +499,8 @@ int main(int argc, char **argv)
 			break;
 		case 'd':
 			act = A_DELETE;
-			if (loopcxt_set_device(&lc, optarg))
+			if (!is_loopdev(optarg) ||
+			    loopcxt_set_device(&lc, optarg))
 				err(EXIT_FAILURE, _("%s: failed to use device"),
 						optarg);
 			break;
@@ -595,7 +597,8 @@ int main(int argc, char **argv)
 		 * losetup [--list] <device>
 		 */
 		act = A_SHOW_ONE;
-		if (loopcxt_set_device(&lc, argv[optind]))
+		if (!is_loopdev(argv[optind]) ||
+		    loopcxt_set_device(&lc, argv[optind]))
 			err(EXIT_FAILURE, _("%s: failed to use device"),
 					argv[optind]);
 		optind++;
@@ -608,6 +611,7 @@ int main(int argc, char **argv)
 
 		if (optind >= argc)
 			errx(EXIT_FAILURE, _("no loop device specified"));
+		/* don't use is_loopdev() here, the device does not have exist yet */
 		if (loopcxt_set_device(&lc, argv[optind]))
 			err(EXIT_FAILURE, _("%s: failed to use device"),
 					argv[optind]);
@@ -685,7 +689,8 @@ int main(int argc, char **argv)
 	case A_DELETE:
 		res = delete_loop(&lc);
 		while (optind < argc) {
-			if (loopcxt_set_device(&lc, argv[optind]))
+			if (!is_loopdev(argv[optind]) ||
+			    loopcxt_set_device(&lc, argv[optind]))
 				warn(_("%s: failed to use device"),
 						argv[optind]);
 			optind++;
