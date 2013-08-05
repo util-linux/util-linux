@@ -160,6 +160,7 @@ static int show_all_loops(struct loopdev_cxt *lc, const char *file,
 			  uint64_t offset, int flags)
 {
 	struct stat sbuf, *st = &sbuf;
+	char *cn_file = NULL;
 
 	if (loopcxt_init_iterator(lc, LOOPITER_FL_USED))
 		return -1;
@@ -168,18 +169,23 @@ static int show_all_loops(struct loopdev_cxt *lc, const char *file,
 		st = NULL;
 
 	while (loopcxt_next(lc) == 0) {
-		if (file && !loopcxt_is_used(lc, st, file, offset, flags)) {
-			char *canonized;
-			int ret;
-			canonized = canonicalize_path(file);
-			ret = loopcxt_is_used(lc, st, canonized, offset, flags);
-			free(canonized);
-			if (!ret)
+		if (file) {
+			int used;
+			const char *bf = cn_file ? cn_file : file;
+
+			used = loopcxt_is_used(lc, st, bf, offset, flags);
+			if (!used && !cn_file) {
+				bf = cn_file = canonicalize_path(file);
+				used = loopcxt_is_used(lc, st, bf, offset, flags);
+			}
+			if (!used)
 				continue;
 		}
 		printf_loopdev(lc);
 	}
 	loopcxt_deinit_iterator(lc);
+	if (cn_file)
+		free(cn_file);
 	return 0;
 }
 
@@ -298,6 +304,7 @@ static int make_table(struct loopdev_cxt *lc,
 {
 	struct stat sbuf, *st = &sbuf;
 	struct tt_line *ln;
+	char *cn_file = NULL;
 	int i;
 
 	if (!(tt = tt_new_table(tt_flags)))
@@ -325,9 +332,18 @@ static int make_table(struct loopdev_cxt *lc,
 		st = NULL;
 
 	while (loopcxt_next(lc) == 0) {
-		if (file && !loopcxt_is_used(lc, st, file, offset, flags))
-			continue;
+		if (file) {
+			int used;
+			const char *bf = cn_file ? cn_file : file;
 
+			used = loopcxt_is_used(lc, st, bf, offset, flags);
+			if (!used && !cn_file) {
+				bf = cn_file = canonicalize_path(file);
+				used = loopcxt_is_used(lc, st, bf, offset, flags);
+			}
+			if (!used)
+				continue;
+		}
 
 		ln = tt_add_line(tt, NULL);
 		if (set_tt_data(lc, ln))
@@ -335,6 +351,8 @@ static int make_table(struct loopdev_cxt *lc,
 	}
 
 	loopcxt_deinit_iterator(lc);
+	if (cn_file)
+		free(cn_file);
 	return 0;
 }
 
