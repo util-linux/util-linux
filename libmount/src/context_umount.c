@@ -162,11 +162,9 @@ try_loopdev:
 
 		if (stat(tgt, &st) == 0 && S_ISREG(st.st_mode)) {
 			int count;
+			const char *bf = cache ? mnt_resolve_path(tgt, cache) : tgt;
 
-			cn_tgt = mnt_resolve_path(tgt, cache);
-			count = loopdev_count_by_backing_file(cn_tgt, &loopdev);
-			if (!cache)
-				free(cn_tgt);
+			count = loopdev_count_by_backing_file(bf, &loopdev);
 			if (count == 1) {
 				DBG(CXT, mnt_debug_h(cxt,
 					"umount: %s --> %s (retry)", tgt, loopdev));
@@ -361,7 +359,9 @@ static int evaluate_permissions(struct libmnt_context *cxt)
 		 */
 		fs = mnt_table_find_target(fstab, tgt, MNT_ITER_FORWARD);
 		if (fs) {
-			const char *dev = mnt_fs_get_srcpath(cxt->fs);		/* devname from mtab */
+			struct libmnt_cache *cache = mnt_context_get_cache(cxt);
+			const char *sp = mnt_fs_get_srcpath(cxt->fs);		/* devname from mtab */
+			const char *dev = sp && cache ? mnt_resolve_path(sp, cache) : sp;
 
 			if (!dev || !is_associated_fs(dev, fs))
 				fs = NULL;

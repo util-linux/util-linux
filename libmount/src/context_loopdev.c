@@ -86,6 +86,8 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 	struct libmnt_iter itr;
 	struct libmnt_fs *fs;
 	struct libmnt_cache *cache;
+	const char *bf;
+	int rc = 0;
 
 	assert(cxt);
 	assert(cxt->fs);
@@ -100,39 +102,36 @@ is_mounted_same_loopfile(struct libmnt_context *cxt,
 	cache = mnt_context_get_cache(cxt);
 	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
 
+	bf = cache ? mnt_resolve_path(backing_file, cache) : backing_file;
+
 	/* Search for a mountpoint node in mtab, proceed if any of these have the
 	 * loop option set or the device is a loop device
 	 */
-	while (mnt_table_next_fs(tb, &itr, &fs) == 0) {
+	while (rc == 0 && mnt_table_next_fs(tb, &itr, &fs) == 0) {
 		const char *src = mnt_fs_get_source(fs);
 		const char *opts = mnt_fs_get_user_options(fs);
 		char *val;
 		size_t len;
-		int res = 0;
 
 		if (!src || !mnt_fs_match_target(fs, target, cache))
 			continue;
 
+		rc = 0;
+
 		if (strncmp(src, "/dev/loop", 9) == 0) {
-			res = loopdev_is_used((char *) src, backing_file,
-					offset, LOOPDEV_FL_OFFSET);
+			rc = loopdev_is_used((char *) src, bf, offset, LOOPDEV_FL_OFFSET);
 
 		} else if (opts && (cxt->user_mountflags & MNT_MS_LOOP) &&
 		    mnt_optstr_get_option(opts, "loop", &val, &len) == 0 && val) {
 
 			val = strndup(val, len);
-			res = loopdev_is_used((char *) val, backing_file,
-					offset, LOOPDEV_FL_OFFSET);
+			rc = loopdev_is_used((char *) val, bf, offset, LOOPDEV_FL_OFFSET);
 			free(val);
 		}
-
-		if (res) {
-			DBG(CXT, mnt_debug_h(cxt, "%s already mounted", backing_file));
-			return 1;
-		}
 	}
-
-	return 0;
+	if (rc)
+		DBG(CXT, mnt_debug_h(cxt, "%s already mounted", backing_file));
+	return rc;
 }
 
 int mnt_context_setup_loopdev(struct libmnt_context *cxt)
