@@ -161,7 +161,12 @@ try_loopdev:
 		struct stat st;
 
 		if (stat(tgt, &st) == 0 && S_ISREG(st.st_mode)) {
-			int count = loopdev_count_by_backing_file(tgt, &loopdev);
+			int count;
+
+			cn_tgt = mnt_resolve_path(tgt, cache);
+			count = loopdev_count_by_backing_file(cn_tgt, &loopdev);
+			if (!cache)
+				free(cn_tgt);
 			if (count == 1) {
 				DBG(CXT, mnt_debug_h(cxt,
 					"umount: %s --> %s (retry)", tgt, loopdev));
