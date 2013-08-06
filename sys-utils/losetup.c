@@ -641,6 +641,8 @@ int main(int argc, char **argv)
 	{
 		int hasdev = loopcxt_has_device(&lc);
 
+		if (hasdev && !is_loopdev(loopcxt_get_device(&lc)))
+			loopcxt_add_device(&lc);
 		do {
 			const char *errpre;
 

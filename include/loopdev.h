@@ -149,6 +149,7 @@ extern void loopcxt_enable_debug(struct loopdev_cxt *lc, int enable);
 extern int loopcxt_set_device(struct loopdev_cxt *lc, const char *device)
 				__attribute__ ((warn_unused_result));
 extern int loopcxt_has_device(struct loopdev_cxt *lc);
+extern int loopcxt_add_device(struct loopdev_cxt *lc);
 extern char *loopcxt_strdup_device(struct loopdev_cxt *lc);
 extern const char *loopcxt_get_device(struct loopdev_cxt *lc);
 extern struct sysfs_cxt *loopcxt_get_sysfs(struct loopdev_cxt *lc);
