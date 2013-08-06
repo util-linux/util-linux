@@ -1,483 +1,851 @@
 /*
- * Berkeley last for Linux. Currently maintained by poe@daimi.aau.dk at
- * ftp://ftp.daimi.aau.dk/pub/linux/poe/admutil*
+ * last.c	Re-implementation of the 'last' command, this time
+ *		for Linux. Yes I know there is BSD last, but I
+ *		just felt like writing this. No thanks :-).
+ *		Also, this version gives lots more info (especially with -x)
  *
- * Copyright (c) 1987 Regents of the University of California.
- * All rights reserved.
+ * Author:	Miquel van Smoorenburg, miquels@cistron.nl
  *
- * Redistribution and use in source and binary forms are permitted
- * provided that the above copyright notice and this paragraph are
- * duplicated in all such forms and that any documentation,
- * advertising materials, and other materials related to such
- * distribution and use acknowledge that the software was developed
- * by the University of California, Berkeley.  The name of the
- * University may not be used to endorse or promote products derived
- * from this software without specific prior written permission.
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND WITHOUT ANY EXPRESS OR
- * IMPLIED WARRANTIES, INCLUDING, WITHOUT LIMITATION, THE IMPLIED
- * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * Version:	@(#)last  2.85  30-Jul-2004  miquels@cistron.nl
+ *
+ *		This file is part of the sysvinit suite,
+ *		Copyright (C) 1991-2004 Miquel van Smoorenburg.
+ *
+ *		This program is free software; you can redistribute it and/or modify
+ *		it under the terms of the GNU General Public License as published by
+ *		the Free Software Foundation; either version 2 of the License, or
+ *		(at your option) any later version.
+ *
+ *		This program is distributed in the hope that it will be useful,
+ *		but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *		GNU General Public License for more details.
+ *
+ *		You should have received a copy of the GNU General Public License
+ *		along with this program; if not, write to the Free Software
+ *		Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
 
- /* 1999-02-22 Arkadiusz Miśkiewicz <misiek@pld.ORG.PL>
-  * - added Native Language Support
-  */
-
- /* 2001-02-14 Marek Zelem <marek@fornax.sk>
-  * - using mmap() on Linux - great speed improvement
-  */
-
-/*
- * This command is deprecated.  The utility is in maintenance mode,
- * meaning we keep them in source tree for backward compatibility
- * only.  Do not waste time making this command better, unless the
- * fix is about security or other very critical issue.
- *
- * See Documentation/deprecated.txt for more information.
+/*              Deleting the -o option as well as any related code (utmp libc5 support),
+ *              declaring functions static and fixing a few warnings(sighandlers)
+ *              06-Aug-2013 Ondrej Oprala <ooprala@redhat.com>
  */
 
-/*
- * last
- */
-#include <sys/param.h>
-#include <sys/stat.h>
-#include <sys/file.h>
 #include <sys/types.h>
-#include <sys/mman.h>
-#include <signal.h>
-#include <string.h>
+#include <sys/stat.h>
+#include <sys/fcntl.h>
 #include <time.h>
-#include <utmp.h>
 #include <stdio.h>
-#include <getopt.h>
+#include <ctype.h>
+#include <utmp.h>
+#include <errno.h>
+#include <malloc.h>
 #include <stdlib.h>
 #include <unistd.h>
-
-#include <sys/socket.h>
+#include <string.h>
+#include <signal.h>
+#include <getopt.h>
 #include <netinet/in.h>
+#include <netdb.h>
 #include <arpa/inet.h>
 
-#include "closestream.h"
-#include "pathnames.h"
-#include "nls.h"
-#include "xalloc.h"
-#include "c.h"
-
-#define	SECDAY	(24*60*60)			/* seconds in a day */
-#define	NO	0				/* false/no */
-#define	YES	1				/* true/yes */
-
-static struct utmp	utmpbuf;
-
-#define	HMAX	(int)sizeof(utmpbuf.ut_host)	/* size of utmp host field */
-#define	LMAX	(int)sizeof(utmpbuf.ut_line)	/* size of utmp tty field */
-#define	NMAX	(int)sizeof(utmpbuf.ut_name)	/* size of utmp name field */
-
-/* maximum sizes used for printing */
-/* probably we want a two-pass version that computes the right length */
-#define P_HMAX	min(HMAX, 16)
-#define P_LMAX	min(LMAX, 8)
-#define P_NMAX	min(NMAX, 16)
-
-typedef struct arg {
-	char	*name;				/* argument */
-#define	HOST_TYPE	-2
-#define	TTY_TYPE	-3
-#define	USER_TYPE	-4
-#define INET_TYPE	-5
-	int	type;				/* type of arg */
-	struct arg	*next;			/* linked list pointer */
-} ARG;
-ARG	*arglist;				/* head of linked list */
-
-typedef struct ttytab {
-	long	logout;				/* log out time */
-	char	tty[LMAX + 1];			/* terminal name */
-	struct ttytab	*next;			/* linked list pointer */
-} TTY;
-TTY	*ttylist;				/* head of linked list */
-
-static long	currentout,			/* current logout value */
-		maxrec;				/* records to display */
-static char	*file = _PATH_WTMP;		/* wtmp file */
-
-static int	doyear = 0;			/* output year in dates */
-static int	dolong = 0;			/* print also ip-addr */
-
-static void wtmp(void);
-static void addarg(int, char *);
-static void hostconv(char *);
-static void onintr(int);
-static int want(struct utmp *, int);
-TTY *addtty(char *);
-static char *ttyconv(char *);
-
-int
-main(int argc, char **argv) {
-	int	ch;
-
-	setlocale(LC_ALL, "");
-	bindtextdomain(PACKAGE, LOCALEDIR);
-	textdomain(PACKAGE);
-	atexit(close_stdout);
-
-	while ((ch = getopt(argc, argv, "0123456789yli:f:h:t:")) != -1)
-		switch((char)ch) {
-		case '0': case '1': case '2': case '3': case '4':
-		case '5': case '6': case '7': case '8': case '9':
-			/*
-			 * kludge: last was originally designed to take
-			 * a number after a dash.
-			 */
-			if (!maxrec)
-				maxrec = atol(argv[optind - 1] + 1);
-			break;
-		case 'f':
-			file = optarg;
-			break;
-		case 'h':
-			hostconv(optarg);
-			addarg(HOST_TYPE, optarg);
-			break;
-		case 't':
-			addarg(TTY_TYPE, ttyconv(optarg));
-			break;
-		case 'y':
-			doyear = 1;
-			break;
-		case 'l':
-			dolong = 1;
-			break;
-		case 'i':
-			addarg(INET_TYPE, optarg);
-			break;
-		case '?':
-		default:
-			fputs(_("usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"), stderr);
-			exit(EXIT_FAILURE);
-		}
-	for (argv += optind; *argv; ++argv) {
-#define	COMPATIBILITY
-#ifdef	COMPATIBILITY
-		/* code to allow "last p5" to work */
-		addarg(TTY_TYPE, ttyconv(*argv));
+#ifndef SHUTDOWN_TIME
+#  define SHUTDOWN_TIME 254
 #endif
-		addarg(USER_TYPE, *argv);
-	}
-	wtmp();
 
-	return EXIT_SUCCESS;
-}
+char *Version = "@(#) last 2.85 31-Apr-2004 miquels";
 
-static char *utmp_ctime(struct utmp *u)
+#define CHOP_DOMAIN	0	/* Define to chop off local domainname. */
+#define UCHUNKSIZE	16384	/* How much we read at once. */
+
+/* Double linked list of struct utmp's */
+struct utmplist {
+  struct utmp ut;
+  struct utmplist *next;
+  struct utmplist *prev;
+};
+struct utmplist *utmplist = NULL;
+
+/* Types of listing */
+#define R_CRASH		1 /* No logout record, system boot in between */
+#define R_DOWN		2 /* System brought down in decent way */
+#define R_NORMAL	3 /* Normal */
+#define R_NOW		4 /* Still logged in */
+#define R_REBOOT	5 /* Reboot record. */
+#define R_PHANTOM	6 /* No logout record but session is stale. */
+#define R_TIMECHANGE	7 /* NEW_TIME or OLD_TIME */
+
+/* Global variables */
+int maxrecs = 0;	/* Maximum number of records to list. */
+int recsdone = 0;	/* Number of records listed */
+int showhost = 1;	/* Show hostname too? */
+int altlist = 0;	/* Show hostname at the end. */
+int usedns = 0;		/* Use DNS to lookup the hostname. */
+int useip = 0;		/* Print IP address in number format */
+int fulltime = 0;	/* Print full dates and times */
+int name_len = 8;	/* Default print 8 characters of name */
+int domain_len = 16;	/* Default print 16 characters of domain */
+char **show = NULL;	/* What do they want us to show */
+char *ufile;		/* Filename of this file */
+time_t lastdate;	/* Last date we've seen */
+char *progname;		/* Name of this program */
+#if CHOP_DOMAIN
+char hostname[256];	/* For gethostbyname() */
+char *domainname;	/* Our domainname. */
+#endif
+
+/*
+ *	Read one utmp entry, return in new format.
+ *	Automatically reposition file pointer.
+ */
+static int uread(FILE *fp, struct utmp *u, int *quit)
 {
-	time_t t = (time_t) u->ut_time;
-	return ctime(&t);
-}
+	static int utsize;
+	static char buf[UCHUNKSIZE];
+	char tmp[1024];
+	static off_t fpos;
+	static int bpos;
+	off_t o;
 
-/*
- * print_partial_line --
- *	print the first part of each output line according to specified format
- */
-static void
-print_partial_line(struct utmp *bp) {
-    char *ct;
-
-    ct = utmp_ctime(bp);
-    printf("%-*.*s  %-*.*s ", P_NMAX, P_NMAX, bp->ut_name,
-	   P_LMAX, P_LMAX, bp->ut_line);
-
-    if (dolong) {
-	if (bp->ut_addr) {
-	    struct in_addr foo;
-	    foo.s_addr = bp->ut_addr;
-	    printf("%-*.*s ", P_HMAX, P_HMAX, inet_ntoa(foo));
-	} else {
-	    printf("%-*.*s ", P_HMAX, P_HMAX, "");
-	}
-    } else {
-	printf("%-*.*s ", P_HMAX, P_HMAX, bp->ut_host);
-    }
-
-    if (doyear) {
-	printf("%10.10s %4.4s %5.5s ", ct, ct + 20, ct + 11);
-    } else {
-	printf("%10.10s %5.5s ", ct, ct + 11);
-    }
-}
-
-/*
- * wtmp --
- *	read through the wtmp file
- */
-static void
-wtmp(void) {
-	register struct utmp	*bp;		/* current structure */
-	register TTY	*T;			/* tty list entry */
-	long	delta;				/* time difference */
-	char *crmsg = NULL;
-	char *ct = NULL;
-	int fd;
-	struct utmp *utl;
-	struct stat st;
-	int utl_len;
-	int listnr = 0;
-	int i;
-
-	utmpname(file);
-
-	{
-#if defined(_HAVE_UT_TV)
-		struct timeval tv;
-		gettimeofday(&tv, NULL);
-		utmpbuf.ut_tv.tv_sec = tv.tv_sec;
-		utmpbuf.ut_tv.tv_usec = tv.tv_usec;
-#else
-		time_t t;
-		time(&t);
-		utmpbuf.ut_time = t;
-#endif
-	}
-
-	(void)signal(SIGINT, onintr);
-	(void)signal(SIGQUIT, onintr);
-
-	if ((fd = open(file,O_RDONLY)) < 0)
-		err(EXIT_FAILURE, _("cannot open %s"), file);
-
-	fstat(fd, &st);
-	utl_len = st.st_size;
-	utl = mmap(NULL, utl_len, PROT_READ|PROT_WRITE,
-		   MAP_PRIVATE|MAP_FILE, fd, 0);
-	if (utl == NULL)
-		err(EXIT_FAILURE, _("%s: mmap failed"), file);
-
-	listnr = utl_len/sizeof(struct utmp);
-
-	if(listnr) 
-		ct = utmp_ctime(&utl[0]);
-
-	for(i = listnr - 1; i >= 0; i--) {
-		bp = utl+i;
+	if (quit == NULL && u != NULL) {
 		/*
-		 * if the terminal line is '~', the machine stopped.
-		 * see utmp(5) for more info.
+		 *	Normal read.
 		 */
-		if (!strncmp(bp->ut_line, "~", LMAX)) {
-		    /* 
-		     * utmp(5) also mentions that the user 
-		     * name should be 'shutdown' or 'reboot'.
-		     * Not checking the name causes e.g. runlevel
-		     * changes to be displayed as 'crash'. -thaele
-		     */
-		    if (!strncmp(bp->ut_user, "reboot", NMAX) ||
-			!strncmp(bp->ut_user, "shutdown", NMAX)) {	
-			/* everybody just logged out */
-			for (T = ttylist; T; T = T->next)
-			    T->logout = -bp->ut_time;
-		    }
-
-		    currentout = -bp->ut_time;
-		    crmsg = (strncmp(bp->ut_name, "shutdown", NMAX)
-			    ? "crash" : "down ");
-		    if (!bp->ut_name[0])
-			(void)strcpy(bp->ut_name, "reboot");
-		    if (want(bp, NO)) {
-			ct = utmp_ctime(bp);
-			if(bp->ut_type != LOGIN_PROCESS) {
-			    print_partial_line(bp);
-			    putchar('\n');
-			}
-			if (maxrec && !--maxrec)
-			    return;
-		    }
-		    continue;
-		}
-		/* find associated tty */
-		for (T = ttylist;; T = T->next) {
-		    if (!T) {
-			/* add new one */
-			T = addtty(bp->ut_line);
-			break;
-		    }
-		    if (!strncmp(T->tty, bp->ut_line, LMAX))
-			break;
-		}
-		if (bp->ut_name[0] && bp->ut_type != LOGIN_PROCESS
-		    && bp->ut_type != DEAD_PROCESS
-		    && want(bp, YES)) {
-
-		    print_partial_line(bp);
-
-		    if (!T->logout)
-			puts(_("  still logged in"));
-		    else {
-			if (T->logout < 0) {
-			    T->logout = -T->logout;
-			    printf("- %s", crmsg);
-			}
-			else
-			    printf("- %5.5s", ctime(&T->logout)+11);
-			delta = T->logout - bp->ut_time;
-			if (delta < SECDAY)
-			    printf("  (%5.5s)\n", asctime(gmtime(&delta))+11);
-			else
-			    printf(" (%ld+%5.5s)\n", delta / SECDAY, asctime(gmtime(&delta))+11);
-		    }
-		    if (maxrec != -1 && !--maxrec)
-			return;
-		}
-		T->logout = bp->ut_time;
-		utmpbuf.ut_time = bp->ut_time;
+		return fread(u, sizeof(struct utmp), 1, fp);
 	}
-	munmap(utl,utl_len);
-	close(fd);
-	if(ct) printf(_("\nwtmp begins %s"), ct); 	/* ct already ends in \n */
-}
 
-/*
- * want --
- *	see if want this entry
- */
-static int
-want(struct utmp *bp, int check) {
-	register ARG	*step;
-
-	if (check) {
+	if (u == NULL) {
 		/*
-		 * when uucp and ftp log in over a network, the entry in
-		 * the utmp file is the name plus their process id.  See
-		 * etc/ftpd.c and usr.bin/uucp/uucpd.c for more information.
+		 *	Initialize and position.
 		 */
-		if (!strncmp(bp->ut_line, "ftp", sizeof("ftp") - 1))
-			bp->ut_line[3] = '\0';
-		else if (!strncmp(bp->ut_line, "uucp", sizeof("uucp") - 1))
-			bp->ut_line[4] = '\0';
-	}
-	if (!arglist)
-		return YES;
-
-	for (step = arglist; step; step = step->next)
-		switch(step->type) {
-		case HOST_TYPE:
-			if (!strncmp(step->name, bp->ut_host, HMAX))
-				return YES;
-			break;
-		case TTY_TYPE:
-			if (!strncmp(step->name, bp->ut_line, LMAX))
-				return YES;
-			break;
-		case USER_TYPE:
-			if (!strncmp(step->name, bp->ut_name, NMAX))
-				return YES;
-			break;
-		case INET_TYPE:
-			if ((in_addr_t) bp->ut_addr == inet_addr(step->name))
-			  return YES;
-			break;
-		default:
-			abort();
+		utsize = sizeof(struct utmp);
+		fseeko(fp, 0, SEEK_END);
+		fpos = ftello(fp);
+		if (fpos == 0)
+			return 0;
+		o = ((fpos - 1) / UCHUNKSIZE) * UCHUNKSIZE;
+		if (fseeko(fp, o, SEEK_SET) < 0) {
+			fprintf(stderr, "%s: seek failed!\n", progname);
+			return 0;
 		}
-	return NO;
-}
-
-/*
- * addarg --
- *	add an entry to a linked list of arguments
- */
-static void
-addarg(int type, char *arg) {
-	register ARG	*cur;
-
-	cur = xmalloc(sizeof(ARG));
-	cur->next = arglist;
-	cur->type = type;
-	cur->name = arg;
-	arglist = cur;
-}
-
-/*
- * addtty --
- *	add an entry to a linked list of ttys
- */
-TTY *
-addtty(char *ttyname) {
-	register TTY	*cur;
-
-	cur = xmalloc(sizeof(TTY));
-	cur->next = ttylist;
-	cur->logout = currentout;
-	memcpy(cur->tty, ttyname, LMAX);
-	return(ttylist = cur);
-}
-
-/*
- * hostconv --
- *	convert the hostname to search pattern; if the supplied host name
- *	has a domain attached that is the same as the current domain, rip
- *	off the domain suffix since that's what login(1) does.
- */
-static void
-hostconv(char *arg) {
-	static int	first = 1;
-	static char	*hostdot, *name;
-
-	char	*argdot;
-
-	if (!(argdot = strchr(arg, '.')))
-		return;
-
-	if (first) {
-		first = 0;
-		name = xgethostname();
-		if (!name)
-			err(EXIT_FAILURE, _("gethostname failed"));
-
-		hostdot = strchr(name, '.');
+		bpos = (int)(fpos - o);
+		if (fread(buf, bpos, 1, fp) != 1) {
+			fprintf(stderr, "%s: read failed!\n", progname);
+			return 0;
+		}
+		fpos = o;
+		return 1;
 	}
-	if (hostdot && !strcmp(hostdot, argdot))
-		*argdot = '\0';
-}
-
-/*
- * ttyconv --
- *	convert tty to correct name.
- */
-static char *
-ttyconv(char *arg) {
-	char	*mval;
 
 	/*
-	 * kludge -- we assume that all tty's end with
-	 * a two character suffix.
+	 *	Read one struct. From the buffer if possible.
 	 */
-	if (strlen(arg) == 2) {
-		/* either 6 for "ttyxx" or 8 for "console" */
-		mval = xmalloc(8);
-		if (!strncmp(arg, "co", 2))
-			(void)strcpy(mval, "console");
-		else {
-			(void)strcpy(mval, "tty");
-			(void)strncpy(mval + 3, arg, 4);
-		}
-		return mval;
+	bpos -= utsize;
+	if (bpos >= 0) {
+		memcpy(u, buf + bpos, sizeof(struct utmp));
+		return 1;
 	}
-	if (!strncmp(arg, "/dev/", sizeof("/dev/") - 1))
-		return arg + 5;
 
-	return arg;
+	/*
+	 *	Oops we went "below" the buffer. We should be able to
+	 *	seek back UCHUNKSIZE bytes.
+	 */
+	fpos -= UCHUNKSIZE;
+	if (fpos < 0)
+		return 0;
+
+	/*
+	 *	Copy whatever is left in the buffer.
+	 */
+	memcpy(tmp + (-bpos), buf, utsize + bpos);
+	if (fseeko(fp, fpos, SEEK_SET) < 0) {
+		perror("fseek");
+		return 0;
+	}
+
+	/*
+	 *	Read another UCHUNKSIZE bytes.
+	 */
+	if (fread(buf, UCHUNKSIZE, 1, fp) != 1) {
+		perror("fread");
+		return 0;
+	}
+
+	/*
+	 *	The end of the UCHUNKSIZE byte buffer should be the first
+	 *	few bytes of the current struct utmp.
+	 */
+	memcpy(tmp, buf + UCHUNKSIZE + bpos, -bpos);
+	bpos += UCHUNKSIZE;
+
+	memcpy(u, tmp, sizeof(struct utmp));
+
+	return 1;
 }
 
 /*
- * onintr --
- *	on interrupt, we inform the user how far we've gotten
+ *	Try to be smart about the location of the BTMP file
  */
-static void
-onintr(int signo) {
-	char	*ct;
+#ifndef BTMP_FILE
+#define BTMP_FILE getbtmp()
+static char *getbtmp(void)
+{
+	static char btmp[128];
+	char *p;
 
-	ct = utmp_ctime(&utmpbuf);
-	printf(_("\ninterrupted %10.10s %5.5s \n"), ct, ct + 11);
-	if (signo == SIGINT)
-		_exit(EXIT_FAILURE);
-	fflush(stdout);			/* fix required for rsh */
+	strcpy(btmp, WTMP_FILE);
+	if ((p = strrchr(btmp, '/')) == NULL)
+		p = btmp;
+	else
+		p++;
+	*p = 0;
+	strcat(btmp, "btmp");
+	return btmp;
+}
+#endif
+
+/*
+ *	Print a short date.
+ */
+static char *showdate(void)
+{
+	char *s = ctime(&lastdate);
+	s[16] = 0;
+	return s;
+}
+
+/*
+ *	SIGINT handler
+ */
+static void int_handler(int sig __attribute__((unused)))
+{
+	printf("Interrupted %s\n", showdate());
+	exit(1);
+}
+
+/*
+ *	SIGQUIT handler
+ */
+static void quit_handler(int sig __attribute__((unused)))
+{
+	printf("Interrupted %s\n", showdate());
+	signal(SIGQUIT, quit_handler);
+}
+
+/*
+ *	Get the basename of a filename
+ */
+static char *mybasename(char *s)
+{
+	char *p;
+
+	if ((p = strrchr(s, '/')) != NULL)
+		p++;
+	else
+		p = s;
+	return p;
+}
+
+/*
+ *	Lookup a host with DNS.
+ */
+static int dns_lookup(char *result, int size, int useip, int32_t *a)
+{
+	struct sockaddr_in	sin;
+	struct sockaddr_in6	sin6;
+	struct sockaddr		*sa;
+	int			salen, flags;
+	int			mapped = 0;
+
+	flags = useip ? NI_NUMERICHOST : 0;
+
+	/*
+	 *	IPv4 or IPv6 ?
+	 *	1. If last 3 4bytes are 0, must be IPv4
+	 *	2. If IPv6 in IPv4, handle as IPv4
+	 *	3. Anything else is IPv6
+	 *
+	 *	Ugly.
+	 */
+	if (a[0] == 0 && a[1] == 0 && a[2] == (int32_t)htonl (0xffff))
+		mapped = 1;
+
+	if (mapped || (a[1] == 0 && a[2] == 0 && a[3] == 0)) {
+		/* IPv4 */
+		sin.sin_family = AF_INET;
+		sin.sin_port = 0;
+		sin.sin_addr.s_addr = mapped ? a[3] : a[0];
+		sa = (struct sockaddr *)&sin;
+		salen = sizeof(sin);
+	} else {
+		/* IPv6 */
+		memset(&sin6, 0, sizeof(sin6));
+		sin6.sin6_family = AF_INET6;
+		sin6.sin6_port = 0;
+		memcpy(sin6.sin6_addr.s6_addr, a, 16);
+		sa = (struct sockaddr *)&sin6;
+		salen = sizeof(sin6);
+	}
+
+	return getnameinfo(sa, salen, result, size, NULL, 0, flags);
+}
+
+/*
+ *	Show one line of information on screen
+ */
+static int list(struct utmp *p, time_t t, int what)
+{
+	time_t		secs, tmp;
+	char		logintime[32];
+	char		logouttime[32];
+	char		length[32];
+	char		final[512];
+	char		utline[UT_LINESIZE+1];
+	char		domain[256];
+	char		*s, **walk;
+	int		mins, hours, days;
+	int		r, len;
+
+	/*
+	 *	uucp and ftp have special-type entries
+	 */
+	utline[0] = 0;
+	strncat(utline, p->ut_line, UT_LINESIZE);
+	if (strncmp(utline, "ftp", 3) == 0 && isdigit(utline[3]))
+		utline[3] = 0;
+	if (strncmp(utline, "uucp", 4) == 0 && isdigit(utline[4]))
+		utline[4] = 0;
+
+	/*
+	 *	Is this something we wanna show?
+	 */
+	if (show) {
+		for (walk = show; *walk; walk++) {
+			if (strncmp(p->ut_name, *walk, UT_NAMESIZE) == 0 ||
+			    strcmp(utline, *walk) == 0 ||
+			    (strncmp(utline, "tty", 3) == 0 &&
+			     strcmp(utline + 3, *walk) == 0)) break;
+		}
+		if (*walk == NULL) return 0;
+	}
+
+	/*
+	 *	Calculate times
+	 */
+	tmp = (time_t)p->ut_time;
+	strcpy(logintime, ctime(&tmp));
+	if (fulltime)
+		sprintf(logouttime, "- %s", ctime(&t));
+	else {
+		logintime[16] = 0;
+		sprintf(logouttime, "- %s", ctime(&t) + 11);
+		logouttime[7] = 0;
+	}
+	secs = t - p->ut_time;
+	mins  = (secs / 60) % 60;
+	hours = (secs / 3600) % 24;
+	days  = secs / 86400;
+	if (days)
+		sprintf(length, "(%d+%02d:%02d)", days, hours, mins);
+	else
+		sprintf(length, " (%02d:%02d)", hours, mins);
+
+	switch(what) {
+		case R_CRASH:
+			sprintf(logouttime, "- crash");
+			break;
+		case R_DOWN:
+			sprintf(logouttime, "- down ");
+			break;
+		case R_NOW:
+			length[0] = 0;
+			if (fulltime)
+				sprintf(logouttime, "  still logged in");
+			else {
+				sprintf(logouttime, "  still");
+				sprintf(length, "logged in");
+			}
+			break;
+		case R_PHANTOM:
+			length[0] = 0;
+			if (fulltime)
+				sprintf(logouttime, "  gone - no logout");
+			else {
+				sprintf(logouttime, "   gone");
+				sprintf(length, "- no logout");
+			}
+			break;
+		case R_REBOOT:
+			break;
+		case R_TIMECHANGE:
+			logouttime[0] = 0;
+			length[0] = 0;
+			break;
+		case R_NORMAL:
+			break;
+	}
+
+	/*
+	 *	Look up host with DNS if needed.
+	 */
+	r = -1;
+	if (usedns || useip)
+		r = dns_lookup(domain, sizeof(domain), useip, p->ut_addr_v6);
+	if (r < 0) {
+		len = UT_HOSTSIZE;
+		if (len >= (int)sizeof(domain)) len = sizeof(domain) - 1;
+		domain[0] = 0;
+		strncat(domain, p->ut_host, len);
+	}
+
+	if (showhost) {
+#if CHOP_DOMAIN
+		/*
+		 *	See if this is in our domain.
+		 */
+		if (!usedns && (s = strchr(p->ut_host, '.')) != NULL &&
+		     strcmp(s + 1, domainname) == 0) *s = 0;
+#endif
+		if (!altlist) {
+			len = snprintf(final, sizeof(final),
+				fulltime ?
+				"%-8.*s %-12.12s %-16.*s %-24.24s %-26.26s %-12.12s\n" :
+				"%-8.*s %-12.12s %-16.*s %-16.16s %-7.7s %-12.12s\n",
+				name_len, p->ut_name, utline,
+				domain_len, domain, logintime, logouttime, length);
+		} else {
+			len = snprintf(final, sizeof(final),
+				fulltime ?
+				"%-8.*s %-12.12s %-24.24s %-26.26s %-12.12s %s\n" :
+				"%-8.*s %-12.12s %-16.16s %-7.7s %-12.12s %s\n",
+				name_len, p->ut_name, utline,
+				logintime, logouttime, length, domain);
+		}
+	} else
+		len = snprintf(final, sizeof(final),
+			fulltime ?
+			"%-8.*s %-12.12s %-24.24s %-26.26s %-12.12s\n" :
+			"%-8.*s %-12.12s %-16.16s %-7.7s %-12.12s\n",
+			name_len, p->ut_name, utline,
+			logintime, logouttime, length);
+
+#if defined(__GLIBC__)
+#  if (__GLIBC__ == 2) && (__GLIBC_MINOR__ == 0)
+	final[sizeof(final)-1] = '\0';
+#  endif
+#endif
+
+	/*
+	 *	Print out "final" string safely.
+	 */
+	for (s = final; *s; s++) {
+		if (*s == '\n' || (*s >= 32 && (unsigned char)*s <= 126))
+			putchar(*s);
+		else
+			putchar('*');
+	}
+
+	if (len < 0 || (size_t)len >= sizeof(final))
+		putchar('\n');
+
+	recsdone++;
+	if (maxrecs && recsdone >= maxrecs)
+		return 1;
+
+	return 0;
+}
+
+
+/*
+ *	show usage
+ */
+static void usage(char *s)
+{
+	fprintf(stderr, "Usage: %s [-num | -n num] [-f file] "
+			"[-t YYYYMMDDHHMMSS] "
+			"[-R] [-adixFw] [username..] [tty..]\n", s);
+	exit(1);
+}
+
+static time_t parsetm(char *ts)
+{
+	struct tm	u, origu;
+	time_t		tm;
+
+	memset(&tm, 0, sizeof(tm));
+
+	if (sscanf(ts, "%4d%2d%2d%2d%2d%2d", &u.tm_year,
+	    &u.tm_mon, &u.tm_mday, &u.tm_hour, &u.tm_min,
+	    &u.tm_sec) != 6)
+		return (time_t)-1;
+
+	u.tm_year -= 1900;
+	u.tm_mon -= 1;
+	u.tm_isdst = -1;
+
+	origu = u;
+
+	if ((tm = mktime(&u)) == (time_t)-1)
+		return tm;
+
+	/*
+	 *	Unfortunately mktime() is much more forgiving than
+	 *	it should be.  For example, it'll gladly accept
+	 *	"30" as a valid month number.  This behavior is by
+	 *	design, but we don't like it, so we want to detect
+	 *	it and complain.
+	 */
+	if (u.tm_year != origu.tm_year ||
+	    u.tm_mon != origu.tm_mon ||
+	    u.tm_mday != origu.tm_mday ||
+	    u.tm_hour != origu.tm_hour ||
+	    u.tm_min != origu.tm_min ||
+	    u.tm_sec != origu.tm_sec)
+		return (time_t)-1;
+
+	return tm;
+}
+
+int main(int argc, char **argv)
+{
+  FILE *fp;		/* Filepointer of wtmp file */
+
+  struct utmp ut;	/* Current utmp entry */
+  struct utmplist *p;	/* Pointer into utmplist */
+  struct utmplist *next;/* Pointer into utmplist */
+
+  time_t lastboot = 0;  /* Last boottime */
+  time_t lastrch = 0;	/* Last run level change */
+  time_t lastdown;	/* Last downtime */
+  time_t begintime;	/* When wtmp begins */
+  int whydown = 0;	/* Why we went down: crash or shutdown */
+
+  int c, x;		/* Scratch */
+  struct stat st;	/* To stat the [uw]tmp file */
+  int quit = 0;		/* Flag */
+  int down = 0;		/* Down flag */
+  int lastb = 0;	/* Is this 'lastb' ? */
+  int extended = 0;	/* Lots of info. */
+  char *altufile = NULL;/* Alternate wtmp */
+
+  time_t until = 0;	/* at what time to stop parsing the file */
+
+  progname = mybasename(argv[0]);
+
+  /* Process the arguments. */
+  while((c = getopt(argc, argv, "f:n:RxadFit:0123456789w")) != EOF)
+    switch(c) {
+	case 'R':
+		showhost = 0;
+		break;
+	case 'x':
+		extended = 1;
+		break;
+	case 'n':
+		maxrecs = atoi(optarg);
+		break;
+	case 'f':
+		if((altufile = malloc(strlen(optarg)+1)) == NULL) {
+			fprintf(stderr, "%s: out of memory\n",
+				progname);
+			exit(1);
+		}
+		strcpy(altufile, optarg);
+		break;
+	case 'd':
+		usedns++;
+		break;
+	case 'i':
+		useip++;
+		break;
+	case 'a':
+		altlist++;
+		break;
+	case 'F':
+		fulltime++;
+		break;
+	case 't':
+		if ((until = parsetm(optarg)) == (time_t)-1) {
+			fprintf(stderr, "%s: Invalid time value \"%s\"\n",
+				progname, optarg);
+			usage(progname);
+		}
+		break;
+	case 'w':
+		if (UT_NAMESIZE > name_len)
+			name_len = UT_NAMESIZE;
+		if (UT_HOSTSIZE > domain_len)
+			domain_len = UT_HOSTSIZE;
+		break;
+	case '0': case '1': case '2': case '3': case '4':
+	case '5': case '6': case '7': case '8': case '9':
+		maxrecs = 10*maxrecs + c - '0';
+		break;
+	default:
+		usage(progname);
+		break;
+    }
+  if (optind < argc) show = argv + optind;
+
+  /*
+   *	Which file do we want to read?
+   */
+  if (strcmp(progname, "lastb") == 0) {
+	ufile = BTMP_FILE;
+	lastb = 1;
+  } else
+	ufile = WTMP_FILE;
+  if (altufile)
+	ufile = altufile;
+  time(&lastdown);
+  lastrch = lastdown;
+
+  /*
+   *	Fill in 'lastdate'
+   */
+  lastdate = lastdown;
+
+#if CHOP_DOMAIN
+  /*
+   *	Find out domainname.
+   *
+   *	This doesn't work on modern systems, where only a DNS
+   *	lookup of the result from hostname() will get you the domainname.
+   *	Remember that domainname() is the NIS domainname, not DNS.
+   *	So basically this whole piece of code is bullshit.
+   */
+  hostname[0] = 0;
+  (void) gethostname(hostname, sizeof(hostname));
+  if ((domainname = strchr(hostname, '.')) != NULL) domainname++;
+  if (domainname == NULL || domainname[0] == 0) {
+	hostname[0] = 0;
+	(void) getdomainname(hostname, sizeof(hostname));
+	hostname[sizeof(hostname) - 1] = 0;
+	domainname = hostname;
+	if (strcmp(domainname, "(none)") == 0 || domainname[0] == 0)
+		domainname = NULL;
+  }
+#endif
+
+  /*
+   *	Install signal handlers
+   */
+  signal(SIGINT, int_handler);
+  signal(SIGQUIT, quit_handler);
+
+  /*
+   *	Open the utmp file
+   */
+  if ((fp = fopen(ufile, "r")) == NULL) {
+	x = errno;
+	fprintf(stderr, "%s: %s: %s\n", progname, ufile, strerror(errno));
+	if (altufile == NULL && x == ENOENT)
+		fprintf(stderr, "Perhaps this file was removed by the "
+			"operator to prevent logging %s info.\n", progname);
+	exit(1);
+  }
+
+  /*
+   *	Optimize the buffer size.
+   */
+  setvbuf(fp, NULL, _IOFBF, UCHUNKSIZE);
+
+  /*
+   *	Read first structure to capture the time field
+   */
+  if (uread(fp, &ut, NULL) == 1)
+	begintime = ut.ut_time;
+  else {
+	fstat(fileno(fp), &st);
+	begintime = st.st_ctime;
+	quit = 1;
+  }
+
+  /*
+   *	Go to end of file minus one structure
+   *	and/or initialize utmp reading code.
+   */
+  uread(fp, NULL, NULL);
+
+  /*
+   *	Read struct after struct backwards from the file.
+   */
+  while(!quit) {
+
+	if (uread(fp, &ut, &quit) != 1)
+		break;
+
+	if (until && until < ut.ut_time)
+		continue;
+
+	lastdate = ut.ut_time;
+
+	if (lastb) {
+		quit = list(&ut, ut.ut_time, R_NORMAL);
+		continue;
+	}
+
+	/*
+	 *	Set ut_type to the correct type.
+	 */
+	if (strncmp(ut.ut_line, "~", 1) == 0) {
+		if (strncmp(ut.ut_user, "shutdown", 8) == 0)
+			ut.ut_type = SHUTDOWN_TIME;
+		else if (strncmp(ut.ut_user, "reboot", 6) == 0)
+			ut.ut_type = BOOT_TIME;
+		else if (strncmp(ut.ut_user, "runlevel", 8) == 0)
+			ut.ut_type = RUN_LVL;
+	}
+#if 1 /*def COMPAT*/
+	/*
+	 *	For stupid old applications that don't fill in
+	 *	ut_type correctly.
+	 */
+	else {
+		if (ut.ut_type != DEAD_PROCESS &&
+		    ut.ut_name[0] && ut.ut_line[0] &&
+		    strcmp(ut.ut_name, "LOGIN") != 0)
+			ut.ut_type = USER_PROCESS;
+		/*
+		 *	Even worse, applications that write ghost
+		 *	entries: ut_type set to USER_PROCESS but
+		 *	empty ut_name...
+		 */
+		if (ut.ut_name[0] == 0)
+			ut.ut_type = DEAD_PROCESS;
+
+		/*
+		 *	Clock changes.
+		 */
+		if (strcmp(ut.ut_name, "date") == 0) {
+			if (ut.ut_line[0] == '|') ut.ut_type = OLD_TIME;
+			if (ut.ut_line[0] == '{') ut.ut_type = NEW_TIME;
+		}
+	}
+#endif
+
+	switch (ut.ut_type) {
+		case SHUTDOWN_TIME:
+			if (extended) {
+				strcpy(ut.ut_line, "system down");
+				quit = list(&ut, lastboot, R_NORMAL);
+			}
+			lastdown = lastrch = ut.ut_time;
+			down = 1;
+			break;
+		case OLD_TIME:
+		case NEW_TIME:
+			if (extended) {
+				strcpy(ut.ut_line,
+				ut.ut_type == NEW_TIME ? "new time" :
+					"old time");
+				quit = list(&ut, lastdown, R_TIMECHANGE);
+			}
+			break;
+		case BOOT_TIME:
+			strcpy(ut.ut_line, "system boot");
+			quit = list(&ut, lastdown, R_REBOOT);
+			lastboot = ut.ut_time;
+			down = 1;
+			break;
+		case RUN_LVL:
+			x = ut.ut_pid & 255;
+			if (extended) {
+				sprintf(ut.ut_line, "(to lvl %c)", x);
+				quit = list(&ut, lastrch, R_NORMAL);
+			}
+			if (x == '0' || x == '6') {
+				lastdown = ut.ut_time;
+				down = 1;
+				ut.ut_type = SHUTDOWN_TIME;
+			}
+			lastrch = ut.ut_time;
+			break;
+
+		case USER_PROCESS:
+			/*
+			 *	This was a login - show the first matching
+			 *	logout record and delete all records with
+			 *	the same ut_line.
+			 */
+			c = 0;
+			for (p = utmplist; p; p = next) {
+				next = p->next;
+				if (strncmp(p->ut.ut_line, ut.ut_line,
+				    UT_LINESIZE) == 0) {
+					/* Show it */
+					if (c == 0) {
+						quit = list(&ut, p->ut.ut_time,
+							R_NORMAL);
+						c = 1;
+					}
+					if (p->next) p->next->prev = p->prev;
+					if (p->prev)
+						p->prev->next = p->next;
+					else
+						utmplist = p->next;
+					free(p);
+				}
+			}
+			/*
+			 *	Not found? Then crashed, down, still
+			 *	logged in, or missing logout record.
+			 */
+			if (c == 0) {
+				if (lastboot == 0) {
+					c = R_NOW;
+					/* Is process still alive? */
+					if (ut.ut_pid > 0 &&
+					    kill(ut.ut_pid, 0) != 0 &&
+					    errno == ESRCH)
+						c = R_PHANTOM;
+				} else
+					c = whydown;
+				quit = list(&ut, lastboot, c);
+			}
+			/* FALLTHRU */
+
+		case DEAD_PROCESS:
+			/*
+			 *	Just store the data if it is
+			 *	interesting enough.
+			 */
+			if (ut.ut_line[0] == 0)
+				break;
+			if ((p = malloc(sizeof(struct utmplist))) == NULL) {
+				fprintf(stderr, "%s: out of memory\n",
+					progname);
+				exit(1);
+			}
+			memcpy(&p->ut, &ut, sizeof(struct utmp));
+			p->next  = utmplist;
+			p->prev  = NULL;
+			if (utmplist) utmplist->prev = p;
+			utmplist = p;
+			break;
+
+	}
+	/*
+	 *	If we saw a shutdown/reboot record we can remove
+	 *	the entire current utmplist.
+	 */
+	if (down) {
+		lastboot = ut.ut_time;
+		whydown = (ut.ut_type == SHUTDOWN_TIME) ? R_DOWN : R_CRASH;
+		for (p = utmplist; p; p = next) {
+			next = p->next;
+			free(p);
+		}
+		utmplist = NULL;
+		down = 0;
+	}
+  }
+  printf("\n%s begins %s", mybasename(ufile), ctime(&begintime));
+
+  fclose(fp);
+
+  /*
+   *	Should we free memory here? Nah. This is not NT :)
+   */
+  return 0;
 }

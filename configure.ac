@@ -668,7 +668,6 @@ AC_ARG_ENABLE([most-builds],
 AS_IF([test "x$enable_most_builds" = xyes], [
   enable_chfn_chsh=yes
   enable_elvtune=check
-  enable_last=yes
   enable_line=yes
   enable_mesg=yes
   enable_newgrp=yes
@@ -1062,9 +1061,18 @@ UL_REQUIRES_LINUX([kill])
 AM_CONDITIONAL([BUILD_KILL], [test "x$build_kill" = xyes])
 
 
+AC_ARG_ENABLE([deprecated-last],
+  AS_HELP_STRING([--enable-deprecated-last], [build old deprecated last]),
+  [], [enable_deprecated_last=no]
+)
+UL_BUILD_INIT([deprecated_last])
+UL_CONFLICTS_BUILD([last], [deprecated_last], [old deprecated last version])
+AM_CONDITIONAL([BUILD_DEPRECATED_LAST], [test "x$build_deprecated_last" = xyes])
+
+
 AC_ARG_ENABLE([last],
-  AS_HELP_STRING([--enable-last], [build last]),
-  [], [enable_last=no]
+  AS_HELP_STRING([--disable-last], [do not build last]),
+  [], [enable_last=yes]
 )
 UL_BUILD_INIT([last])
 AM_CONDITIONAL([BUILD_LAST], [test "x$build_last" = xyes])

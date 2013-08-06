@@ -92,7 +92,7 @@ dist_bashcompletion_DATA += \
 	bash-completion/chfn \
 	bash-completion/chsh
 endif
-if BUILD_LAST
+if BUILD_DEPRECATED_LAST
 dist_bashcompletion_DATA += \
 	bash-completion/last
 endif
