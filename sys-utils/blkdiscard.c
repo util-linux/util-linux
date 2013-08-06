@@ -130,18 +130,17 @@ int main(int argc, char **argv)
 		usage(stderr);
 	}
 
-	if (stat(path, &sb) == -1)
-		err(EXIT_FAILURE, _("stat failed %s"), path);
-	if (!S_ISBLK(sb.st_mode))
-		errx(EXIT_FAILURE, _("%s: not a block device"), path);
-
 	fd = open(path, O_WRONLY);
 	if (fd < 0)
 		err(EXIT_FAILURE, _("cannot open %s"), path);
 
+	if (fstat(fd, &sb) == -1)
+		err(EXIT_FAILURE, _("stat failed %s"), path);
+	if (!S_ISBLK(sb.st_mode))
+		errx(EXIT_FAILURE, _("%s: not a block device"), path);
+
 	if (ioctl(fd, BLKGETSIZE64, &blksize))
 		err(EXIT_FAILURE, _("%s: BLKGETSIZE64 ioctl failed"), path);
-
 	if (ioctl(fd, BLKSSZGET, &secsize))
 		err(EXIT_FAILURE, _("%s: BLKSSZGET ioctl failed"), path);
 
