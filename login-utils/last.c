@@ -30,8 +30,6 @@
 #include <stdio.h>
 #include <ctype.h>
 #include <utmp.h>
-#include <errno.h>
-#include <malloc.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
@@ -44,6 +42,8 @@
 #include "c.h"
 #include "nls.h"
 #include "pathnames.h"
+#include "xalloc.h"
+#include "closestream.h"
 
 #ifndef SHUTDOWN_TIME
 # define SHUTDOWN_TIME 254
@@ -82,7 +82,6 @@ int domain_len = 16;	/* Default print 16 characters of domain */
 char **show = NULL;	/* What do they want us to show */
 char *ufile;		/* Filename of this file */
 time_t lastdate;	/* Last date we've seen */
-char *progname;		/* Name of this program */
 #if CHOP_DOMAIN
 char hostname[256];	/* For gethostbyname() */
 char *domainname;	/* Our domainname. */
@@ -119,12 +118,12 @@ static int uread(FILE *fp, struct utmp *u, int *quit)
 			return 0;
 		o = ((fpos - 1) / UCHUNKSIZE) * UCHUNKSIZE;
 		if (fseeko(fp, o, SEEK_SET) < 0) {
-			fprintf(stderr, "%s: seek failed!\n", progname);
+			warn(_("seek failed: %s"), ufile);
 			return 0;
 		}
 		bpos = (int)(fpos - o);
 		if (fread(buf, bpos, 1, fp) != 1) {
-			fprintf(stderr, "%s: read failed!\n", progname);
+			warn(_("read failed: %s"), ufile);
 			return 0;
 		}
 		fpos = o;
@@ -153,7 +152,7 @@ static int uread(FILE *fp, struct utmp *u, int *quit)
 	 */
 	memcpy(tmp + (-bpos), buf, utsize + bpos);
 	if (fseeko(fp, fpos, SEEK_SET) < 0) {
-		perror("fseek");
+		warn(_("seek failed: %s"), ufile);
 		return 0;
 	}
 
@@ -161,7 +160,7 @@ static int uread(FILE *fp, struct utmp *u, int *quit)
 	 *	Read another UCHUNKSIZE bytes.
 	 */
 	if (fread(buf, UCHUNKSIZE, 1, fp) != 1) {
-		perror("fread");
+		warn(_("read failed: %s"), ufile);
 		return 0;
 	}
 
@@ -192,8 +191,7 @@ static char *showdate(void)
  */
 static void int_handler(int sig __attribute__((unused)))
 {
-	printf("Interrupted %s\n", showdate());
-	exit(1);
+	errx(EXIT_FAILURE, _("Interrupted %s"), showdate());
 }
 
 /*
@@ -201,22 +199,8 @@ static void int_handler(int sig __attribute__((unused)))
  */
 static void quit_handler(int sig __attribute__((unused)))
 {
-	printf("Interrupted %s\n", showdate());
+	warnx(_("Interrupted %s"), showdate());
 	signal(SIGQUIT, quit_handler);
-}
-
-/*
- *	Get the basename of a filename
- */
-static char *mybasename(char *s)
-{
-	char *p;
-
-	if ((p = strrchr(s, '/')) != NULL)
-		p++;
-	else
-		p = s;
-	return p;
 }
 
 /*
@@ -540,8 +524,7 @@ int main(int argc, char **argv)
   setlocale(LC_ALL, "");
   bindtextdomain(PACKAGE, LOCALEDIR);
   textdomain(PACKAGE);
-
-  progname = mybasename(argv[0]);
+  atexit(close_stdout);
 
   while ((c = getopt_long(argc, argv,
 			"hVf:n:RxadFit:0123456789w", long_opts, NULL)) != -1) {
@@ -562,12 +545,7 @@ int main(int argc, char **argv)
 		maxrecs = atoi(optarg);
 		break;
 	case 'f':
-		if((altufile = malloc(strlen(optarg)+1)) == NULL) {
-			fprintf(stderr, "%s: out of memory\n",
-				progname);
-			exit(1);
-		}
-		strcpy(altufile, optarg);
+		altufile = xstrdup(optarg);
 		break;
 	case 'd':
 		usedns++;
@@ -582,11 +560,9 @@ int main(int argc, char **argv)
 		fulltime++;
 		break;
 	case 't':
-		if ((until = parsetm(optarg)) == (time_t)-1) {
-			fprintf(stderr, "%s: Invalid time value \"%s\"\n",
-				progname, optarg);
-			usage(stderr);
-		}
+		until = parsetm(optarg);
+		if (until == (time_t) -1)
+			errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
 		break;
 	case 'w':
 		if (UT_NAMESIZE > name_len)
@@ -608,13 +584,9 @@ int main(int argc, char **argv)
   /*
    *	Which file do we want to read?
    */
-  if (strcmp(progname, "lastb") == 0) {
-	ufile = _PATH_BTMP;
-	lastb = 1;
-  } else
-	ufile = _PATH_WTMP;
-  if (altufile)
-	ufile = altufile;
+  lastb = !strcmp(program_invocation_short_name, "lastb");
+  ufile = altufile ? altufile : lastb ? _PATH_BTMP : _PATH_WTMP;
+
   time(&lastdown);
   lastrch = lastdown;
 
@@ -654,14 +626,8 @@ int main(int argc, char **argv)
   /*
    *	Open the utmp file
    */
-  if ((fp = fopen(ufile, "r")) == NULL) {
-	x = errno;
-	fprintf(stderr, "%s: %s: %s\n", progname, ufile, strerror(errno));
-	if (altufile == NULL && x == ENOENT)
-		fprintf(stderr, "Perhaps this file was removed by the "
-			"operator to prevent logging %s info.\n", progname);
-	exit(1);
-  }
+  if ((fp = fopen(ufile, "r")) == NULL)
+	err(EXIT_FAILURE, _("cannot open %s"), ufile);
 
   /*
    *	Optimize the buffer size.
@@ -830,11 +796,7 @@ int main(int argc, char **argv)
 			 */
 			if (ut.ut_line[0] == 0)
 				break;
-			if ((p = malloc(sizeof(struct utmplist))) == NULL) {
-				fprintf(stderr, "%s: out of memory\n",
-					progname);
-				exit(1);
-			}
+			p = xmalloc(sizeof(struct utmplist));
 			memcpy(&p->ut, &ut, sizeof(struct utmp));
 			p->next  = utmplist;
 			p->prev  = NULL;
@@ -858,12 +820,8 @@ int main(int argc, char **argv)
 		down = 0;
 	}
   }
-  printf("\n%s begins %s", mybasename(ufile), ctime(&begintime));
+  printf(_("\n%s begins %s"), basename(ufile), ctime(&begintime));
 
   fclose(fp);
-
-  /*
-   *	Should we free memory here? Nah. This is not NT :)
-   */
-  return 0;
+  return EXIT_SUCCESS;
 }
