@@ -1,7 +1,7 @@
 
 if BUILD_LAST
 usrbin_exec_PROGRAMS += last
-dist_man_MANS +=
+dist_man_MANS += \
 	login-utils/last.1 \
 	login-utils/lastb.1
 last_SOURCES = login-utils/last.c
@@ -13,12 +13,11 @@ INSTALL_EXEC_HOOKS += install-exec-hook-last
 endif
 
 if BUILD_DEPRECATED_LAST
-
 usrbin_exec_PROGRAMS += last
 dist_man_MANS += login-utils/last-deprecated.1
 last_SOURCES = login-utils/last-deprecated.c
-
 endif # BUILD_DEPRECATED_LAST
+
 
 if BUILD_SULOGIN
 sbin_PROGRAMS += sulogin
