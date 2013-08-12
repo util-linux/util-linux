@@ -43,6 +43,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "pathnames.h"
 
 #ifndef SHUTDOWN_TIME
 # define SHUTDOWN_TIME 254
@@ -175,27 +176,6 @@ static int uread(FILE *fp, struct utmp *u, int *quit)
 
 	return 1;
 }
-
-/*
- *	Try to be smart about the location of the BTMP file
- */
-#ifndef BTMP_FILE
-#define BTMP_FILE getbtmp()
-static char *getbtmp(void)
-{
-	static char btmp[128];
-	char *p;
-
-	strcpy(btmp, WTMP_FILE);
-	if ((p = strrchr(btmp, '/')) == NULL)
-		p = btmp;
-	else
-		p++;
-	*p = 0;
-	strcat(btmp, "btmp");
-	return btmp;
-}
-#endif
 
 /*
  *	Print a short date.
@@ -460,7 +440,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -a, --hostlast       display hostnames in the last column\n"), out);
 	fputs(_(" -d, --dns            translate the IP number back into a hostname\n"), out);
 	fprintf(out,
-	      _(" -f, --file <file>    use a specific file instead of %s\n"), WTMP_FILE);
+	      _(" -f, --file <file>    use a specific file instead of %s\n"), _PATH_WTMP);
 	fputs(_(" -F, --fulltimes      print full login and logout times and dates\n"), out);
 	fputs(_(" -i, --ip             display IP numbers in numbers-and-dots notation\n"), out);
 	fputs(_(" -n, --limit <number> how many lines to show\n"), out);
@@ -629,10 +609,10 @@ int main(int argc, char **argv)
    *	Which file do we want to read?
    */
   if (strcmp(progname, "lastb") == 0) {
-	ufile = BTMP_FILE;
+	ufile = _PATH_BTMP;
 	lastb = 1;
   } else
-	ufile = WTMP_FILE;
+	ufile = _PATH_WTMP;
   if (altufile)
 	ufile = altufile;
   time(&lastdown);
