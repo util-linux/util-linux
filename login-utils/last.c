@@ -1,36 +1,28 @@
 /*
- * last.c	Re-implementation of the 'last' command, this time
- *		for Linux. Yes I know there is BSD last, but I
- *		just felt like writing this. No thanks :-).
- *		Also, this version gives lots more info (especially with -x)
+ * last(1) from sysvinit project, merged into util-linux in Aug 2013.
  *
- * Author:	Miquel van Smoorenburg, miquels@cistron.nl
+ * Copyright (C) 1991-2004 Miquel van Smoorenburg.
+ * Copyright (C) 2013      Ondrej Oprala <ooprala@redhat.com>
  *
- * Version:	@(#)last  2.85  30-Jul-2004  miquels@cistron.nl
+ * Re-implementation of the 'last' command, this time for Linux. Yes I know
+ * there is BSD last, but I just felt like writing this. No thanks :-).  Also,
+ * this version gives lots more info (especially with -x)
  *
- *		This file is part of the sysvinit suite,
- *		Copyright (C) 1991-2004 Miquel van Smoorenburg.
  *
- *		This program is free software; you can redistribute it and/or modify
- *		it under the terms of the GNU General Public License as published by
- *		the Free Software Foundation; either version 2 of the License, or
- *		(at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- *		This program is distributed in the hope that it will be useful,
- *		but WITHOUT ANY WARRANTY; without even the implied warranty of
- *		MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *		GNU General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- *		You should have received a copy of the GNU General Public License
- *		along with this program; if not, write to the Free Software
- *		Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
  */
-
-/*              Deleting the -o option as well as any related code (utmp libc5 support),
- *              declaring functions static and fixing a few warnings(sighandlers)
- *              06-Aug-2013 Ondrej Oprala <ooprala@redhat.com>
- */
-
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/fcntl.h>
@@ -50,19 +42,17 @@
 #include <arpa/inet.h>
 
 #ifndef SHUTDOWN_TIME
-#  define SHUTDOWN_TIME 254
+# define SHUTDOWN_TIME 254
 #endif
-
-char *Version = "@(#) last 2.85 31-Apr-2004 miquels";
 
 #define CHOP_DOMAIN	0	/* Define to chop off local domainname. */
 #define UCHUNKSIZE	16384	/* How much we read at once. */
 
 /* Double linked list of struct utmp's */
 struct utmplist {
-  struct utmp ut;
-  struct utmplist *next;
-  struct utmplist *prev;
+	struct utmp ut;
+	struct utmplist *next;
+	struct utmplist *prev;
 };
 struct utmplist *utmplist = NULL;
 

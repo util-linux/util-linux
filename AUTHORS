@@ -27,6 +27,8 @@ AUTHORS (merged projects & commands):
       getopt:          Frodo Looijaard <frodol@dds.nl>
       hwclock:         Bryan Henderson <bryanh@giraffe-data.com>
       ipcmk:           Hayden James <hayden.james@gmail.com>
+      last/lastb:      [merged from sysvinit]
+                       Miquel van Smoorenburg <miquels@cistron.nl>
       ldattach:        Tilman Schmidt <tilman@imap.cc>
       libblkid:        [merged from e2fsprogs]
                        Theodore Ts'o <tytso@mit.edu>

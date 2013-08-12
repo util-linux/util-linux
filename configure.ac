@@ -1066,15 +1066,15 @@ AC_ARG_ENABLE([deprecated-last],
   [], [enable_deprecated_last=no]
 )
 UL_BUILD_INIT([deprecated_last])
-UL_CONFLICTS_BUILD([last], [deprecated_last], [old deprecated last version])
 AM_CONDITIONAL([BUILD_DEPRECATED_LAST], [test "x$build_deprecated_last" = xyes])
 
 
 AC_ARG_ENABLE([last],
   AS_HELP_STRING([--disable-last], [do not build last]),
-  [], [enable_last=yes]
+  [], [enable_last=check]
 )
 UL_BUILD_INIT([last])
+UL_CONFLICTS_BUILD([last], [deprecated_last], [old deprecated last version])
 AM_CONDITIONAL([BUILD_LAST], [test "x$build_last" = xyes])
 
 
