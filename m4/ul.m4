@@ -217,6 +217,8 @@ AC_DEFUN([UL_CONFLICTS_BUILD], [
       [build_]suffix=no ;;
     check:yes)
       [build_]suffix=no ;;
+    check:no)
+      [build_]suffix=yes ;;
     yes:yes)
       AC_MSG_ERROR([$1 selected, but it conflicts with $3]);;
     esac
