@@ -41,6 +41,9 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
+#include "c.h"
+#include "nls.h"
+
 #ifndef SHUTDOWN_TIME
 # define SHUTDOWN_TIME 254
 #endif
@@ -446,16 +449,34 @@ static int list(struct utmp *p, time_t t, int what)
 }
 
 
-/*
- *	show usage
- */
-static void usage(char *s)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fprintf(stderr, "Usage: %s [-num | -n num] [-f file] "
-			"[-t YYYYMMDDHHMMSS] "
-			"[-R] [-adixFw] [username..] [tty..]\n", s);
-	exit(1);
+	fputs(USAGE_HEADER, out);
+	fprintf(out, _(
+		" %s [options]\n"), program_invocation_short_name);
+
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -<number>            how many lines to show\n"), out);
+	fputs(_(" -a, --hostlast       display hostnames in the last column\n"), out);
+	fputs(_(" -d, --dns            translate the IP number back into a hostname\n"), out);
+	fprintf(out,
+	      _(" -f, --file <file>    use a specific file instead of %s\n"), WTMP_FILE);
+	fputs(_(" -F, --fulltimes      print full login and logout times and dates\n"), out);
+	fputs(_(" -i, --ip             display IP numbers in numbers-and-dots notation\n"), out);
+	fputs(_(" -n, --limit <number> how many lines to show\n"), out);
+	fputs(_(" -R, --nohostname     don't display the hostname field\n"), out);
+	fputs(_(" -t, --until <YYYYMMDDHHMMSS>  display the state of the specified time\n"), out);
+	fputs(_(" -w, --fullnames      display full user and domain names\n"), out);
+	fputs(_(" -x, --system         display system shutdown entries and run level changes\n"), out);
+
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("last(1))"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
+
 
 static time_t parsetm(char *ts)
 {
@@ -520,11 +541,37 @@ int main(int argc, char **argv)
 
   time_t until = 0;	/* at what time to stop parsing the file */
 
+  static const struct option long_opts[] = {
+	{ "limit",	required_argument, NULL, 'n' },
+	{ "help",	no_argument,       NULL, 'h' },
+	{ "file",       required_argument, NULL, 'f' },
+	{ "nohostname", no_argument,       NULL, 'R' },
+	{ "version",    no_argument,       NULL, 'V' },
+	{ "hostlast",   no_argument,       NULL, 'a' },
+	{ "until",      required_argument, NULL, 't' },
+	{ "system",     no_argument,       NULL, 'x' },
+	{ "dns",        no_argument,       NULL, 'd' },
+	{ "ip",         no_argument,       NULL, 'i' },
+	{ "fulltimes",  no_argument,       NULL, 'F' },
+	{ "fullnames",  no_argument,       NULL, 'w' },
+	{ NULL, 0, NULL, 0 }
+  };
+
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
+
   progname = mybasename(argv[0]);
 
-  /* Process the arguments. */
-  while((c = getopt(argc, argv, "f:n:RxadFit:0123456789w")) != EOF)
+  while ((c = getopt_long(argc, argv,
+			"hVf:n:RxadFit:0123456789w", long_opts, NULL)) != -1) {
     switch(c) {
+	case 'h':
+		usage(stdout);
+		break;
+	case 'V':
+		printf(UTIL_LINUX_VERSION);
+		return EXIT_SUCCESS;
 	case 'R':
 		showhost = 0;
 		break;
@@ -558,7 +605,7 @@ int main(int argc, char **argv)
 		if ((until = parsetm(optarg)) == (time_t)-1) {
 			fprintf(stderr, "%s: Invalid time value \"%s\"\n",
 				progname, optarg);
-			usage(progname);
+			usage(stderr);
 		}
 		break;
 	case 'w':
@@ -572,9 +619,10 @@ int main(int argc, char **argv)
 		maxrecs = 10*maxrecs + c - '0';
 		break;
 	default:
-		usage(progname);
+		usage(stderr);
 		break;
     }
+  }
   if (optind < argc) show = argv + optind;
 
   /*
