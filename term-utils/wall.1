@@ -33,15 +33,17 @@
 .\"
 .\" Modified for Linux, Mon Mar  8 18:07:38 1993, faith@cs.unc.edu
 .\"
-.TH WALL "1" "September 2011" "util-linux" "User Commands"
+.TH WALL "1" "August 2013" "util-linux" "User Commands"
 .SH NAME
 wall \- write a message to users
 .SH SYNOPSIS
 .B wall
-[-n] [-t TIMEOUT] [file]
+[-n] [-t TIMEOUT] [file | message]
 .SH DESCRIPTION
 .B Wall
-displays the contents of
+displays a
+.I message
+or contents of
 .I file
 or, by default, its standard input, on the terminals of all currently logged
 in users.  The command will cut over 79 character long lines to new lines.
@@ -51,8 +53,9 @@ always put carriage return and new line at the end of each line.
 Only the superuser can write on the terminals of users who have chosen to
 deny messages or are using a program which automatically denies messages.
 .PP
-Reading from a file is refused when the invoker is not superuser and the
-program is suid or sgid.
+Reading from a
+.I file
+is refused when the invoker is not superuser and the program is suid or sgid.
 .SH OPTIONS
 .TP
 \fB\-n\fR, \fB\-\-nobanner\fR
