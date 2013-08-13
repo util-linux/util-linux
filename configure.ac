@@ -1095,8 +1095,8 @@ AM_CONDITIONAL([BUILD_LINE], [test "x$build_line" = xyes])
 
 
 AC_ARG_ENABLE([mesg],
-  AS_HELP_STRING([--enable-mesg], [build mesg]),
-  [], [enable_mesg=no]
+	      AS_HELP_STRING([--disable-mesg], [do not build mesg]),
+  [], [enable_mesg=yes]
 )
 UL_BUILD_INIT([mesg])
 AM_CONDITIONAL([BUILD_MESG], [test "x$build_mesg" = xyes])
