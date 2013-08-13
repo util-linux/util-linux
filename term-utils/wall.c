@@ -92,8 +92,8 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-int
-main(int argc, char **argv) {
+int main(int argc, char **argv)
+{
 	int ch;
 	struct iovec iov;
 	struct utmp *utmpptr;
@@ -165,7 +165,6 @@ main(int argc, char **argv) {
 		if (utmpptr->ut_type != USER_PROCESS)
 			continue;
 #endif
-
 		/* Joey Hess reports that use-sessreg in /etc/X11/wdm/
 		   produces ut_line entries like :0, and a write
 		   to /dev/:0 fails. */
@@ -181,15 +180,13 @@ main(int argc, char **argv) {
 	exit(EXIT_SUCCESS);
 }
 
-static char *makemsg(char *fname, char **mvec, int mvecsz, size_t *mbufsize, int print_banner)
+static char *makemsg(char *fname, char **mvec, int mvecsz,
+		     size_t *mbufsize, int print_banner)
 {
 	register int ch, cnt;
-	struct tm *lt;
-	struct passwd *pw;
 	struct stat sbuf;
-	time_t now;
 	FILE *fp;
-	char *p, *whom, *where, *lbuf, *tmpname, *mbuf;
+	char *p, *lbuf, *tmpname, *mbuf;
 	long line_max;
 
 	line_max = sysconf(_SC_LINE_MAX);
@@ -202,6 +199,10 @@ static char *makemsg(char *fname, char **mvec, int mvecsz, size_t *mbufsize, int
 
 	if (print_banner == TRUE) {
 		char *hostname = xgethostname();
+		char *whom, *where, *date;
+		struct passwd *pw;
+		time_t now;
+
 		if (!(whom = getlogin()) || !*whom)
 			whom = (pw = getpwuid(getuid())) ? pw->pw_name : "???";
 		if (!whom) {
@@ -212,9 +213,12 @@ static char *makemsg(char *fname, char **mvec, int mvecsz, size_t *mbufsize, int
 		if (!where) {
 			where = "somewhere";
 			warn(_("cannot get tty name"));
-		}
+		} else if (strncmp(where, "/dev/", 5) == 0)
+			where += 5;
+
 		time(&now);
-		lt = localtime(&now);
+		date = xstrdup(ctime(&now));
+		date[strlen(date) - 1] = '\0';
 
 		/*
 		 * all this stuff is to blank out a square for the message;
@@ -226,13 +230,11 @@ static char *makemsg(char *fname, char **mvec, int mvecsz, size_t *mbufsize, int
 		/* snprintf is not always available, but the sprintf's here
 		   will not overflow as long as %d takes at most 100 chars */
 		fprintf(fp, "\r%79s\r\n", " ");
-		sprintf(lbuf, _("Broadcast Message from %s@%s"),
-			      whom, hostname);
-		free(hostname);
+		sprintf(lbuf, _("Broadcast message from %s@%s (%s) (%s):"),
+			      whom, hostname, where, date);
 		fprintf(fp, "%-79.79s\007\007\r\n", lbuf);
-		sprintf(lbuf, "        (%s) at %d:%02d ...",
-			      where, lt->tm_hour, lt->tm_min);
-		fprintf(fp, "%-79.79s\r\n", lbuf);
+		free(hostname);
+		free(date);
 	}
 	fprintf(fp, "%79s\r\n", " ");
 
