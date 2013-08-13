@@ -1,7 +1,6 @@
 mkswap:  libblkid libselinux libuuid 
 swaplabel:  libblkid libuuid 
 blockdev:  
-elvtune:  
 fdformat:  
 fsck.cramfs:  libz 
 fsck.minix:  

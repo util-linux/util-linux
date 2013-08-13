@@ -667,7 +667,6 @@ AC_ARG_ENABLE([most-builds],
 )
 AS_IF([test "x$enable_most_builds" = xyes], [
   enable_chfn_chsh=yes
-  enable_elvtune=check
   enable_line=yes
   enable_mesg=yes
   enable_newgrp=yes
@@ -1032,15 +1031,6 @@ UL_BUILD_INIT([pivot_root])
 UL_REQUIRES_LINUX([switch_root])
 UL_REQUIRES_SYSCALL_CHECK([pivot_root], [UL_CHECK_SYSCALL([pivot_root])])
 AM_CONDITIONAL([BUILD_PIVOT_ROOT], [test "x$build_pivot_root" = xyes])
-
-
-AC_ARG_ENABLE([elvtune],
-  AS_HELP_STRING([--enable-elvtune], [build elvtune (only works with 2.2 and 2.4 kernels)]),
-  [], [enable_elvtune=no]
-)
-UL_BUILD_INIT([elvtune])
-UL_REQUIRES_LINUX([elvtune])
-AM_CONDITIONAL([BUILD_ELVTUNE], [test "x$build_elvtune" = xyes])
 
 
 AC_ARG_ENABLE([tunelp],
