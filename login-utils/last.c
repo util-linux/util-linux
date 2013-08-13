@@ -3,6 +3,7 @@
  *
  * Copyright (C) 1991-2004 Miquel van Smoorenburg.
  * Copyright (C) 2013      Ondrej Oprala <ooprala@redhat.com>
+ *                         Karel Zak <kzak@redhat.com>
  *
  * Re-implementation of the 'last' command, this time for Linux. Yes I know
  * there is BSD last, but I just felt like writing this. No thanks :-).  Also,
@@ -70,21 +71,21 @@ struct utmplist *utmplist = NULL;
 #define R_TIMECHANGE	7 /* NEW_TIME or OLD_TIME */
 
 /* Global variables */
-int maxrecs = 0;	/* Maximum number of records to list. */
-int recsdone = 0;	/* Number of records listed */
-int showhost = 1;	/* Show hostname too? */
-int altlist = 0;	/* Show hostname at the end. */
-int usedns = 0;		/* Use DNS to lookup the hostname. */
-int useip = 0;		/* Print IP address in number format */
-int fulltime = 0;	/* Print full dates and times */
-int name_len = 8;	/* Default print 8 characters of name */
-int domain_len = 16;	/* Default print 16 characters of domain */
-char **show = NULL;	/* What do they want us to show */
-char *ufile;		/* Filename of this file */
-time_t lastdate;	/* Last date we've seen */
-#if CHOP_DOMAIN
-char hostname[256];	/* For gethostbyname() */
-char *domainname;	/* Our domainname. */
+static int maxrecs = 0;		/* Maximum number of records to list. */
+static int recsdone = 0;	/* Number of records listed */
+static int showhost = 1;	/* Show hostname too? */
+static int altlist = 0;		/* Show hostname at the end. */
+static int usedns = 0;		/* Use DNS to lookup the hostname. */
+static int useip = 0;		/* Print IP address in number format */
+static int fulltime = 0;	/* Print full dates and times */
+static int name_len = 8;	/* Default print 8 characters of name */
+static int domain_len = 16;	/* Default print 16 characters of domain */
+static char **show = NULL;	/* What do they want us to show */
+static char *ufile;		/* Filename of this file */
+static time_t lastdate;		/* Last date we've seen */
+#if CHOP_DOMAIn
+static char hostname[256];	/* For gethostbyname() */
+static char *domainname;	/* Our domainname. */
 #endif
 
 /*
@@ -483,232 +484,237 @@ static time_t parsetm(char *ts)
 
 int main(int argc, char **argv)
 {
-  FILE *fp;		/* Filepointer of wtmp file */
+	FILE *fp;		/* Filepointer of wtmp file */
 
-  struct utmp ut;	/* Current utmp entry */
-  struct utmplist *p;	/* Pointer into utmplist */
-  struct utmplist *next;/* Pointer into utmplist */
+	struct utmp ut;		/* Current utmp entry */
+	struct utmplist *p;	/* Pointer into utmplist */
+	struct utmplist *next;	/* Pointer into utmplist */
 
-  time_t lastboot = 0;  /* Last boottime */
-  time_t lastrch = 0;	/* Last run level change */
-  time_t lastdown;	/* Last downtime */
-  time_t begintime;	/* When wtmp begins */
-  int whydown = 0;	/* Why we went down: crash or shutdown */
+	time_t lastboot = 0;	/* Last boottime */
+	time_t lastrch = 0;	/* Last run level change */
+	time_t lastdown;	/* Last downtime */
+	time_t begintime;	/* When wtmp begins */
+	int whydown = 0;	/* Why we went down: crash or shutdown */
 
-  int c, x;		/* Scratch */
-  struct stat st;	/* To stat the [uw]tmp file */
-  int quit = 0;		/* Flag */
-  int down = 0;		/* Down flag */
-  int lastb = 0;	/* Is this 'lastb' ? */
-  int extended = 0;	/* Lots of info. */
-  char *altufile = NULL;/* Alternate wtmp */
+	int c, x;		/* Scratch */
+	struct stat st;		/* To stat the [uw]tmp file */
+	int quit = 0;		/* Flag */
+	int down = 0;		/* Down flag */
+	int lastb = 0;		/* Is this 'lastb' ? */
+	int extended = 0;	/* Lots of info. */
+	char *altufile = NULL;	/* Alternate wtmp */
 
-  time_t until = 0;	/* at what time to stop parsing the file */
+	time_t until = 0;	/* at what time to stop parsing the file */
 
-  static const struct option long_opts[] = {
-	{ "limit",	required_argument, NULL, 'n' },
-	{ "help",	no_argument,       NULL, 'h' },
-	{ "file",       required_argument, NULL, 'f' },
-	{ "nohostname", no_argument,       NULL, 'R' },
-	{ "version",    no_argument,       NULL, 'V' },
-	{ "hostlast",   no_argument,       NULL, 'a' },
-	{ "until",      required_argument, NULL, 't' },
-	{ "system",     no_argument,       NULL, 'x' },
-	{ "dns",        no_argument,       NULL, 'd' },
-	{ "ip",         no_argument,       NULL, 'i' },
-	{ "fulltimes",  no_argument,       NULL, 'F' },
-	{ "fullnames",  no_argument,       NULL, 'w' },
-	{ NULL, 0, NULL, 0 }
-  };
+	static const struct option long_opts[] = {
+	      { "limit",	required_argument, NULL, 'n' },
+	      { "help",	no_argument,       NULL, 'h' },
+	      { "file",       required_argument, NULL, 'f' },
+	      { "nohostname", no_argument,       NULL, 'R' },
+	      { "version",    no_argument,       NULL, 'V' },
+	      { "hostlast",   no_argument,       NULL, 'a' },
+	      { "until",      required_argument, NULL, 't' },
+	      { "system",     no_argument,       NULL, 'x' },
+	      { "dns",        no_argument,       NULL, 'd' },
+	      { "ip",         no_argument,       NULL, 'i' },
+	      { "fulltimes",  no_argument,       NULL, 'F' },
+	      { "fullnames",  no_argument,       NULL, 'w' },
+	      { NULL, 0, NULL, 0 }
+	};
 
-  setlocale(LC_ALL, "");
-  bindtextdomain(PACKAGE, LOCALEDIR);
-  textdomain(PACKAGE);
-  atexit(close_stdout);
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	atexit(close_stdout);
 
-  while ((c = getopt_long(argc, argv,
+	while ((c = getopt_long(argc, argv,
 			"hVf:n:RxadFit:0123456789w", long_opts, NULL)) != -1) {
-    switch(c) {
-	case 'h':
-		usage(stdout);
-		break;
-	case 'V':
-		printf(UTIL_LINUX_VERSION);
-		return EXIT_SUCCESS;
-	case 'R':
-		showhost = 0;
-		break;
-	case 'x':
-		extended = 1;
-		break;
-	case 'n':
-		maxrecs = atoi(optarg);
-		break;
-	case 'f':
-		altufile = xstrdup(optarg);
-		break;
-	case 'd':
-		usedns++;
-		break;
-	case 'i':
-		useip++;
-		break;
-	case 'a':
-		altlist++;
-		break;
-	case 'F':
-		fulltime++;
-		break;
-	case 't':
-		until = parsetm(optarg);
-		if (until == (time_t) -1)
-			errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
-		break;
-	case 'w':
-		if (UT_NAMESIZE > name_len)
-			name_len = UT_NAMESIZE;
-		if (UT_HOSTSIZE > domain_len)
-			domain_len = UT_HOSTSIZE;
-		break;
-	case '0': case '1': case '2': case '3': case '4':
-	case '5': case '6': case '7': case '8': case '9':
-		maxrecs = 10*maxrecs + c - '0';
-		break;
-	default:
-		usage(stderr);
-		break;
-    }
-  }
-  if (optind < argc) show = argv + optind;
-
-  /*
-   *	Which file do we want to read?
-   */
-  lastb = !strcmp(program_invocation_short_name, "lastb");
-  ufile = altufile ? altufile : lastb ? _PATH_BTMP : _PATH_WTMP;
-
-  time(&lastdown);
-  lastrch = lastdown;
-
-  /*
-   *	Fill in 'lastdate'
-   */
-  lastdate = lastdown;
-
-#if CHOP_DOMAIN
-  /*
-   *	Find out domainname.
-   *
-   *	This doesn't work on modern systems, where only a DNS
-   *	lookup of the result from hostname() will get you the domainname.
-   *	Remember that domainname() is the NIS domainname, not DNS.
-   *	So basically this whole piece of code is bullshit.
-   */
-  hostname[0] = 0;
-  (void) gethostname(hostname, sizeof(hostname));
-  if ((domainname = strchr(hostname, '.')) != NULL) domainname++;
-  if (domainname == NULL || domainname[0] == 0) {
-	hostname[0] = 0;
-	(void) getdomainname(hostname, sizeof(hostname));
-	hostname[sizeof(hostname) - 1] = 0;
-	domainname = hostname;
-	if (strcmp(domainname, "(none)") == 0 || domainname[0] == 0)
-		domainname = NULL;
-  }
-#endif
-
-  /*
-   *	Install signal handlers
-   */
-  signal(SIGINT, int_handler);
-  signal(SIGQUIT, quit_handler);
-
-  /*
-   *	Open the utmp file
-   */
-  if ((fp = fopen(ufile, "r")) == NULL)
-	err(EXIT_FAILURE, _("cannot open %s"), ufile);
-
-  /*
-   *	Optimize the buffer size.
-   */
-  setvbuf(fp, NULL, _IOFBF, UCHUNKSIZE);
-
-  /*
-   *	Read first structure to capture the time field
-   */
-  if (uread(fp, &ut, NULL) == 1)
-	begintime = ut.ut_time;
-  else {
-	fstat(fileno(fp), &st);
-	begintime = st.st_ctime;
-	quit = 1;
-  }
-
-  /*
-   *	Go to end of file minus one structure
-   *	and/or initialize utmp reading code.
-   */
-  uread(fp, NULL, NULL);
-
-  /*
-   *	Read struct after struct backwards from the file.
-   */
-  while(!quit) {
-
-	if (uread(fp, &ut, &quit) != 1)
-		break;
-
-	if (until && until < ut.ut_time)
-		continue;
-
-	lastdate = ut.ut_time;
-
-	if (lastb) {
-		quit = list(&ut, ut.ut_time, R_NORMAL);
-		continue;
-	}
-
-	/*
-	 *	Set ut_type to the correct type.
-	 */
-	if (strncmp(ut.ut_line, "~", 1) == 0) {
-		if (strncmp(ut.ut_user, "shutdown", 8) == 0)
-			ut.ut_type = SHUTDOWN_TIME;
-		else if (strncmp(ut.ut_user, "reboot", 6) == 0)
-			ut.ut_type = BOOT_TIME;
-		else if (strncmp(ut.ut_user, "runlevel", 8) == 0)
-			ut.ut_type = RUN_LVL;
-	}
-#if 1 /*def COMPAT*/
-	/*
-	 *	For stupid old applications that don't fill in
-	 *	ut_type correctly.
-	 */
-	else {
-		if (ut.ut_type != DEAD_PROCESS &&
-		    ut.ut_name[0] && ut.ut_line[0] &&
-		    strcmp(ut.ut_name, "LOGIN") != 0)
-			ut.ut_type = USER_PROCESS;
-		/*
-		 *	Even worse, applications that write ghost
-		 *	entries: ut_type set to USER_PROCESS but
-		 *	empty ut_name...
-		 */
-		if (ut.ut_name[0] == 0)
-			ut.ut_type = DEAD_PROCESS;
-
-		/*
-		 *	Clock changes.
-		 */
-		if (strcmp(ut.ut_name, "date") == 0) {
-			if (ut.ut_line[0] == '|') ut.ut_type = OLD_TIME;
-			if (ut.ut_line[0] == '{') ut.ut_type = NEW_TIME;
+		switch(c) {
+		case 'h':
+			usage(stdout);
+			break;
+		case 'V':
+			printf(UTIL_LINUX_VERSION);
+			return EXIT_SUCCESS;
+		case 'R':
+			showhost = 0;
+			break;
+		case 'x':
+			extended = 1;
+			break;
+		case 'n':
+			maxrecs = atoi(optarg);
+			break;
+		case 'f':
+			altufile = xstrdup(optarg);
+			break;
+		case 'd':
+			usedns++;
+			break;
+		case 'i':
+			useip++;
+			break;
+		case 'a':
+			altlist++;
+			break;
+		case 'F':
+			fulltime++;
+			break;
+		case 't':
+			until = parsetm(optarg);
+			if (until == (time_t) -1)
+				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
+			break;
+		case 'w':
+			if (UT_NAMESIZE > name_len)
+				name_len = UT_NAMESIZE;
+			if (UT_HOSTSIZE > domain_len)
+				domain_len = UT_HOSTSIZE;
+			break;
+		case '0': case '1': case '2': case '3': case '4':
+		case '5': case '6': case '7': case '8': case '9':
+			maxrecs = 10 * maxrecs + c - '0';
+			break;
+		default:
+			usage(stderr);
+			break;
 		}
 	}
-#endif
 
-	switch (ut.ut_type) {
+	if (optind < argc)
+		show = argv + optind;
+
+	/*
+	 * Which file do we want to read?
+	 */
+	lastb = !strcmp(program_invocation_short_name, "lastb");
+	ufile = altufile ? altufile : lastb ? _PATH_BTMP : _PATH_WTMP;
+
+	time(&lastdown);
+	lastrch = lastdown;
+
+	/*
+	 * Fill in 'lastdate'
+	 */
+	lastdate = lastdown;
+
+#if CHOP_DOMAIN
+	/*
+	 * Find out domainname.
+	 *
+	 * This doesn't work on modern systems, where only a DNS
+	 * lookup of the result from hostname() will get you the domainname.
+	 * Remember that domainname() is the NIS domainname, not DNS.
+	 * So basically this whole piece of code is bullshit.
+	 */
+	hostname[0] = 0;
+	gethostname(hostname, sizeof(hostname));
+
+	if ((domainname = strchr(hostname, '.')) != NULL)
+		domainname++;
+	if (domainname == NULL || domainname[0] == 0) {
+		hostname[0] = 0;
+		getdomainname(hostname, sizeof(hostname));
+		hostname[sizeof(hostname) - 1] = 0;
+		domainname = hostname;
+
+		if (strcmp(domainname, "(none)") == 0 || domainname[0] == 0)
+			domainname = NULL;
+	}
+#endif
+	/*
+	 * Install signal handlers
+	 */
+	signal(SIGINT, int_handler);
+	signal(SIGQUIT, quit_handler);
+
+	/*
+	 * Open the utmp file
+	 */
+	if ((fp = fopen(ufile, "r")) == NULL)
+		err(EXIT_FAILURE, _("cannot open %s"), ufile);
+
+	/*
+	 * Optimize the buffer size.
+	 */
+	setvbuf(fp, NULL, _IOFBF, UCHUNKSIZE);
+
+	/*
+	 * Read first structure to capture the time field
+	 */
+	if (uread(fp, &ut, NULL) == 1)
+		begintime = ut.ut_time;
+	else {
+		fstat(fileno(fp), &st);
+		begintime = st.st_ctime;
+		quit = 1;
+	}
+
+	/*
+	 * Go to end of file minus one structure
+	 * and/or initialize utmp reading code.
+	 */
+	uread(fp, NULL, NULL);
+
+	/*
+	 * Read struct after struct backwards from the file.
+	 */
+	while (!quit) {
+
+		if (uread(fp, &ut, &quit) != 1)
+			break;
+
+		if (until && until < ut.ut_time)
+			continue;
+
+		lastdate = ut.ut_time;
+
+		if (lastb) {
+			quit = list(&ut, ut.ut_time, R_NORMAL);
+			continue;
+		}
+
+		/*
+		 * Set ut_type to the correct type.
+		 */
+		if (strncmp(ut.ut_line, "~", 1) == 0) {
+			if (strncmp(ut.ut_user, "shutdown", 8) == 0)
+				ut.ut_type = SHUTDOWN_TIME;
+			else if (strncmp(ut.ut_user, "reboot", 6) == 0)
+				ut.ut_type = BOOT_TIME;
+			else if (strncmp(ut.ut_user, "runlevel", 8) == 0)
+				ut.ut_type = RUN_LVL;
+		}
+#if 1 /*def COMPAT*/
+		/*
+		 * For stupid old applications that don't fill in
+		 * ut_type correctly.
+		 */
+		else {
+			if (ut.ut_type != DEAD_PROCESS &&
+			    ut.ut_name[0] && ut.ut_line[0] &&
+			    strcmp(ut.ut_name, "LOGIN") != 0)
+				ut.ut_type = USER_PROCESS;
+			/*
+			 * Even worse, applications that write ghost
+			 * entries: ut_type set to USER_PROCESS but
+			 * empty ut_name...
+			 */
+			if (ut.ut_name[0] == 0)
+				ut.ut_type = DEAD_PROCESS;
+
+			/*
+			 * Clock changes.
+			 */
+			if (strcmp(ut.ut_name, "date") == 0) {
+				if (ut.ut_line[0] == '|')
+					ut.ut_type = OLD_TIME;
+				if (ut.ut_line[0] == '{')
+					ut.ut_type = NEW_TIME;
+			}
+		}
+#endif
+		switch (ut.ut_type) {
 		case SHUTDOWN_TIME:
 			if (extended) {
 				strcpy(ut.ut_line, "system down");
@@ -748,9 +754,9 @@ int main(int argc, char **argv)
 
 		case USER_PROCESS:
 			/*
-			 *	This was a login - show the first matching
-			 *	logout record and delete all records with
-			 *	the same ut_line.
+			 * This was a login - show the first matching
+			 * logout record and delete all records with
+			 * the same ut_line.
 			 */
 			c = 0;
 			for (p = utmplist; p; p = next) {
@@ -772,8 +778,8 @@ int main(int argc, char **argv)
 				}
 			}
 			/*
-			 *	Not found? Then crashed, down, still
-			 *	logged in, or missing logout record.
+			 * Not found? Then crashed, down, still
+			 * logged in, or missing logout record.
 			 */
 			if (c == 0) {
 				if (lastboot == 0) {
@@ -791,8 +797,8 @@ int main(int argc, char **argv)
 
 		case DEAD_PROCESS:
 			/*
-			 *	Just store the data if it is
-			 *	interesting enough.
+			 * Just store the data if it is
+			 * interesting enough.
 			 */
 			if (ut.ut_line[0] == 0)
 				break;
@@ -804,24 +810,26 @@ int main(int argc, char **argv)
 			utmplist = p;
 			break;
 
-	}
-	/*
-	 *	If we saw a shutdown/reboot record we can remove
-	 *	the entire current utmplist.
-	 */
-	if (down) {
-		lastboot = ut.ut_time;
-		whydown = (ut.ut_type == SHUTDOWN_TIME) ? R_DOWN : R_CRASH;
-		for (p = utmplist; p; p = next) {
-			next = p->next;
-			free(p);
 		}
-		utmplist = NULL;
-		down = 0;
-	}
-  }
-  printf(_("\n%s begins %s"), basename(ufile), ctime(&begintime));
 
-  fclose(fp);
-  return EXIT_SUCCESS;
+		/*
+		 * If we saw a shutdown/reboot record we can remove
+		 * the entire current utmplist.
+		 */
+		if (down) {
+			lastboot = ut.ut_time;
+			whydown = (ut.ut_type == SHUTDOWN_TIME) ? R_DOWN : R_CRASH;
+			for (p = utmplist; p; p = next) {
+				next = p->next;
+				free(p);
+			}
+			utmplist = NULL;
+			down = 0;
+		}
+	}
+
+	printf(_("\n%s begins %s"), basename(ufile), ctime(&begintime));
+
+	fclose(fp);
+	return EXIT_SUCCESS;
 }
