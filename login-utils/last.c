@@ -343,6 +343,8 @@ static int list(struct utmp *p, time_t t, int what)
 			break;
 		case R_NORMAL:
 			break;
+		default:
+			abort();
 	}
 
 	/*
@@ -808,6 +810,15 @@ int main(int argc, char **argv)
 			utmplist = p;
 			break;
 
+		case EMPTY:
+		case INIT_PROCESS:
+		case LOGIN_PROCESS:
+		case ACCOUNTING:
+			/* ignored ut_types */
+			break;
+
+		default:
+			warnx("unrecogized ut_type: %d", ut.ut_type);
 		}
 
 		/*
