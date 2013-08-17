@@ -45,6 +45,7 @@
 #include "pathnames.h"
 #include "xalloc.h"
 #include "closestream.h"
+#include "carefulputc.h"
 
 #ifndef SHUTDOWN_TIME
 # define SHUTDOWN_TIME 254
@@ -396,12 +397,8 @@ static int list(struct utmp *p, time_t t, int what)
 	/*
 	 *	Print out "final" string safely.
 	 */
-	for (s = final; *s; s++) {
-		if (*s == '\n' || (*s >= 32 && (unsigned char)*s <= 126))
-			putchar(*s);
-		else
-			putchar('*');
-	}
+	for (s = final; *s; s++)
+		carefulputc(*s, stdout, '*');
 
 	if (len < 0 || (size_t)len >= sizeof(final))
 		putchar('\n');
