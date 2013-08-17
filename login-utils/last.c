@@ -46,6 +46,7 @@
 #include "xalloc.h"
 #include "closestream.h"
 #include "carefulputc.h"
+#include "strutils.h"
 
 #ifndef SHUTDOWN_TIME
 # define SHUTDOWN_TIME 254
@@ -72,8 +73,8 @@ struct utmplist *utmplist = NULL;
 #define R_TIMECHANGE	7 /* NEW_TIME or OLD_TIME */
 
 /* Global variables */
-static int maxrecs = 0;		/* Maximum number of records to list. */
-static int recsdone = 0;	/* Number of records listed */
+static unsigned int maxrecs = 0; /* Maximum number of records to list. */
+static unsigned int recsdone = 0; /* Number of records listed */
 static int showhost = 1;	/* Show hostname too? */
 static int altlist = 0;		/* Show hostname at the end. */
 static int usedns = 0;		/* Use DNS to lookup the hostname. */
@@ -540,7 +541,7 @@ int main(int argc, char **argv)
 			extended = 1;
 			break;
 		case 'n':
-			maxrecs = atoi(optarg);
+			maxrecs = strtos32_or_err(optarg, _("failed to parse number"));
 			break;
 		case 'f':
 			altufile = xstrdup(optarg);
