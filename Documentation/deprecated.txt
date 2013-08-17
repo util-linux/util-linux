@@ -51,11 +51,6 @@ Why:	parallel port printers are probably almost extinct devices
 
 --------------------------
 
-What:	elvtune
-Why:	useless for kernel >= 2.6.9
-
----------------------------
-
 What:	last(1)
 Why:	nobody uses this implementation
 

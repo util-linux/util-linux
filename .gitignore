@@ -85,7 +85,6 @@ tests/run.sh.trs
 /delpart
 /dmesg
 /eject
-/elvtune
 /fallocate
 /fdformat
 /fdisk
