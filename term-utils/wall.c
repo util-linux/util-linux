@@ -77,16 +77,16 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	fputs(_("\nUsage:\n"), out);
+	fputs(USAGE_HEADER, out);
 	fprintf(out,
-		_(" %s [options] [<file> | <message>]\n"),
-		program_invocation_short_name);
-
-	fputs(_("\nOptions:\n"), out);
-	fputs(_(" -n, --nobanner          do not print banner, works only for root\n"
-		" -t, --timeout <timeout> write timeout in seconds\n"
-		" -V, --version           output version information and exit\n"
-		" -h, --help              display this help and exit\n\n"), out);
+	      _(" %s [options] [<file> | <message>]\n"), program_invocation_short_name);
+	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -n, --nobanner          do not print banner, works only for root\n"), out);
+	fputs(_(" -t, --timeout <timeout> write timeout in seconds\n"), out);
+	fputs(USAGE_SEPARATOR, out);
+	fputs(USAGE_HELP, out);
+	fputs(USAGE_VERSION, out);
+	fprintf(out, USAGE_MAN_TAIL("wall(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
@@ -132,8 +132,7 @@ int main(int argc, char **argv)
 				errx(EXIT_FAILURE, _("invalid timeout argument: %s"), optarg);
 			break;
 		case 'V':
-			printf(_("%s from %s\n"), program_invocation_short_name,
-						  PACKAGE_STRING);
+			printf(UTIL_LINUX_VERSION);
 			exit(EXIT_SUCCESS);
 		case 'h':
 			usage(stdout);
