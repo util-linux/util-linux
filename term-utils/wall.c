@@ -69,7 +69,6 @@
 #include "fileutils.h"
 #include "closestream.h"
 
-#define	IGNOREUSER	"sleeper"
 #define WRITE_TIME_OUT	300		/* in seconds */
 
 /* Function prototypes */
@@ -157,9 +156,7 @@ int main(int argc, char **argv)
 	iov.iov_base = mbuf;
 	iov.iov_len = mbufsize;
 	while((utmpptr = getutent())) {
-		if (!utmpptr->ut_name[0] ||
-		    !strncmp(utmpptr->ut_name, IGNOREUSER,
-			     sizeof(utmpptr->ut_name)))
+		if (!utmpptr->ut_name[0])
 			continue;
 #ifdef USER_PROCESS
 		if (utmpptr->ut_type != USER_PROCESS)
