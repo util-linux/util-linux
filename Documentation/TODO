@@ -25,11 +25,6 @@ lscpu
   - detect more hypervisors, see 'virt-what' shell script
     http://people.redhat.com/~rjones/virt-what/
 
-minix (fsck, mkfs)
-------------------
-
- - clean up types -- use ino_t, size_t and ssize_t
-
 libmount (mount/umount)
 -----------------------
 
