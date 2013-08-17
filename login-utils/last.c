@@ -250,7 +250,7 @@ static int dns_lookup(char *result, int size, int useip, int32_t *a)
 /*
  *	Show one line of information on screen
  */
-static int list(struct utmp *p, time_t t, int what)
+static int list(struct utmp *p, time_t t, int what, time_t present)
 {
 	time_t		secs, tmp;
 	char		logintime[32];
@@ -291,6 +291,10 @@ static int list(struct utmp *p, time_t t, int what)
 	 *	Calculate times
 	 */
 	tmp = (time_t)p->ut_time;
+
+	if (present && (present < tmp || 0 == t || t < present))
+		return 0;
+
 	strcpy(logintime, ctime(&tmp));
 	if (fulltime)
 		sprintf(logouttime, "- %s", ctime(&t));
@@ -422,6 +426,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -n, --limit <number> how many lines to show\n"), out);
 	fputs(_(" -R, --nohostname     don't display the hostname field\n"), out);
 	fputs(_(" -t, --until <YYYYMMDDHHMMSS>  display the state of the specified time\n"), out);
+	fputs(_(" -p, --present <YYYYMMDDHHMMSS>  display who where present at the specified time\n"), out);
 	fputs(_(" -w, --fullnames      display full user and domain names\n"), out);
 	fputs(_(" -x, --system         display system shutdown entries and run level changes\n"), out);
 
@@ -473,7 +478,8 @@ static time_t parsetm(char *ts)
 	return tm;
 }
 
-static void process_wtmp_file(char *ufile, int lastb, int extended, time_t until)
+static void process_wtmp_file(char *ufile, int lastb, int extended,
+			      time_t until, time_t present)
 {
 	FILE *fp;		/* Filepointer of wtmp file */
 
@@ -548,7 +554,7 @@ static void process_wtmp_file(char *ufile, int lastb, int extended, time_t until
 		lastdate = ut.ut_time;
 
 		if (lastb) {
-			quit = list(&ut, ut.ut_time, R_NORMAL);
+			quit = list(&ut, ut.ut_time, R_NORMAL, present);
 			continue;
 		}
 
@@ -596,7 +602,7 @@ static void process_wtmp_file(char *ufile, int lastb, int extended, time_t until
 		case SHUTDOWN_TIME:
 			if (extended) {
 				strcpy(ut.ut_line, "system down");
-				quit = list(&ut, lastboot, R_NORMAL);
+				quit = list(&ut, lastboot, R_NORMAL, present);
 			}
 			lastdown = lastrch = ut.ut_time;
 			down = 1;
@@ -607,12 +613,12 @@ static void process_wtmp_file(char *ufile, int lastb, int extended, time_t until
 				strcpy(ut.ut_line,
 				ut.ut_type == NEW_TIME ? "new time" :
 					"old time");
-				quit = list(&ut, lastdown, R_TIMECHANGE);
+				quit = list(&ut, lastdown, R_TIMECHANGE, present);
 			}
 			break;
 		case BOOT_TIME:
 			strcpy(ut.ut_line, "system boot");
-			quit = list(&ut, lastdown, R_REBOOT);
+			quit = list(&ut, lastdown, R_REBOOT, present);
 			lastboot = ut.ut_time;
 			down = 1;
 			break;
@@ -620,7 +626,7 @@ static void process_wtmp_file(char *ufile, int lastb, int extended, time_t until
 			x = ut.ut_pid & 255;
 			if (extended) {
 				sprintf(ut.ut_line, "(to lvl %c)", x);
-				quit = list(&ut, lastrch, R_NORMAL);
+				quit = list(&ut, lastrch, R_NORMAL, present);
 			}
 			if (x == '0' || x == '6') {
 				lastdown = ut.ut_time;
@@ -644,7 +650,7 @@ static void process_wtmp_file(char *ufile, int lastb, int extended, time_t until
 					/* Show it */
 					if (c == 0) {
 						quit = list(&ut, p->ut.ut_time,
-							R_NORMAL);
+							R_NORMAL, present);
 						c = 1;
 					}
 					if (p->next) p->next->prev = p->prev;
@@ -669,7 +675,7 @@ static void process_wtmp_file(char *ufile, int lastb, int extended, time_t until
 						c = R_PHANTOM;
 				} else
 					c = whydown;
-				quit = list(&ut, lastboot, c);
+				quit = list(&ut, lastboot, c, present);
 			}
 			/* FALLTHRU */
 
@@ -728,6 +734,7 @@ int main(int argc, char **argv)
 	int extended = 0;	/* Lots of info. */
 
 	time_t until = 0;	/* at what time to stop parsing the file */
+	time_t present = 0;	/* who where present at time_t */
 
 	static const struct option long_opts[] = {
 	      { "limit",	required_argument, NULL, 'n' },
@@ -737,6 +744,7 @@ int main(int argc, char **argv)
 	      { "version",    no_argument,       NULL, 'V' },
 	      { "hostlast",   no_argument,       NULL, 'a' },
 	      { "until",      required_argument, NULL, 't' },
+	      { "present",    required_argument, NULL, 'p' },
 	      { "system",     no_argument,       NULL, 'x' },
 	      { "dns",        no_argument,       NULL, 'd' },
 	      { "ip",         no_argument,       NULL, 'i' },
@@ -751,7 +759,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv,
-			"hVf:n:RxadFit:0123456789w", long_opts, NULL)) != -1) {
+			"hVf:n:RxadFit:p:0123456789w", long_opts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 			usage(stdout);
@@ -784,6 +792,11 @@ int main(int argc, char **argv)
 			break;
 		case 'F':
 			fulltime++;
+			break;
+		case 'p':
+			present = parsetm(optarg);
+			if (present == (time_t) -1)
+				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
 			break;
 		case 't':
 			until = parsetm(optarg);
@@ -823,7 +836,7 @@ int main(int argc, char **argv)
 	}
 
 	for (i = 0; i < altc; i++) {
-		process_wtmp_file(altv[i], lastb, extended, until);
+		process_wtmp_file(altv[i], lastb, extended, until, present);
 		free(altv[i]);
 	}
 	free(altv);
