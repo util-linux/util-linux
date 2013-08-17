@@ -64,13 +64,15 @@ struct utmplist {
 struct utmplist *utmplist = NULL;
 
 /* Types of listing */
-#define R_CRASH		1 /* No logout record, system boot in between */
-#define R_DOWN		2 /* System brought down in decent way */
-#define R_NORMAL	3 /* Normal */
-#define R_NOW		4 /* Still logged in */
-#define R_REBOOT	5 /* Reboot record. */
-#define R_PHANTOM	6 /* No logout record but session is stale. */
-#define R_TIMECHANGE	7 /* NEW_TIME or OLD_TIME */
+enum {
+	R_CRASH = 1,	/* No logout record, system boot in between */
+	R_DOWN,		/* System brought down in decent way */
+	R_NORMAL,	/* Normal */
+	R_NOW,		/* Still logged in */
+	R_REBOOT,	/* Reboot record. */
+	R_PHANTOM,	/* No logout record but session is stale. */
+	R_TIMECHANGE	/* NEW_TIME or OLD_TIME */
+};
 
 /* Global variables */
 static unsigned int maxrecs = 0; /* Maximum number of records to list. */
