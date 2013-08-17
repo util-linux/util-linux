@@ -286,7 +286,7 @@ static char *makemsg(char *fname, char **mvec, int mvecsz,
 					cnt = 0;
 				}
 				if (ch != '\n')
-					carefulputc(ch, fp);
+					carefulputc(ch, fp, '^');
 			}
 		}
 	}
