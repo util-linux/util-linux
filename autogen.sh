@@ -12,7 +12,6 @@ test -z "$srcdir" && srcdir=.
 THEDIR=`pwd`
 cd $srcdir
 DIE=0
-HAS_GTKDOC=1
 
 test -f sys-utils/mount.c || {
 	echo
