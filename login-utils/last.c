@@ -52,7 +52,6 @@
 # define SHUTDOWN_TIME 254
 #endif
 
-#define CHOP_DOMAIN	0	/* Define to chop off local domainname. */
 #define UCHUNKSIZE	16384	/* How much we read at once. */
 
 /* Double linked list of struct utmp's */
@@ -87,10 +86,6 @@ static int domain_len = 16;	/* Default print 16 characters of domain */
 static char **show = NULL;	/* What do they want us to show */
 static char *ufile;		/* Filename of this file */
 static time_t lastdate;		/* Last date we've seen */
-#if CHOP_DOMAIn
-static char hostname[256];	/* For gethostbyname() */
-static char *domainname;	/* Our domainname. */
-#endif
 
 /*
  *	Read one utmp entry, return in new format.
@@ -363,13 +358,6 @@ static int list(struct utmp *p, time_t t, int what)
 	}
 
 	if (showhost) {
-#if CHOP_DOMAIN
-		/*
-		 *	See if this is in our domain.
-		 */
-		if (!usedns && (s = strchr(p->ut_host, '.')) != NULL &&
-		     strcmp(s + 1, domainname) == 0) *s = 0;
-#endif
 		if (!altlist) {
 			len = snprintf(final, sizeof(final),
 				fulltime ?
@@ -600,30 +588,6 @@ int main(int argc, char **argv)
 	 */
 	lastdate = lastdown;
 
-#if CHOP_DOMAIN
-	/*
-	 * Find out domainname.
-	 *
-	 * This doesn't work on modern systems, where only a DNS
-	 * lookup of the result from hostname() will get you the domainname.
-	 * Remember that domainname() is the NIS domainname, not DNS.
-	 * So basically this whole piece of code is bullshit.
-	 */
-	hostname[0] = 0;
-	gethostname(hostname, sizeof(hostname));
-
-	if ((domainname = strchr(hostname, '.')) != NULL)
-		domainname++;
-	if (domainname == NULL || domainname[0] == 0) {
-		hostname[0] = 0;
-		getdomainname(hostname, sizeof(hostname));
-		hostname[sizeof(hostname) - 1] = 0;
-		domainname = hostname;
-
-		if (strcmp(domainname, "(none)") == 0 || domainname[0] == 0)
-			domainname = NULL;
-	}
-#endif
 	/*
 	 * Install signal handlers
 	 */
