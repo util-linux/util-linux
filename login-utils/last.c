@@ -74,13 +74,13 @@ enum {
 };
 
 /* Global variables */
-static unsigned int maxrecs = 0; /* Maximum number of records to list. */
-static unsigned int recsdone = 0; /* Number of records listed */
+static unsigned int maxrecs;	/* Maximum number of records to list. */
+static unsigned int recsdone;	/* Number of records listed */
 static int showhost = 1;	/* Show hostname too? */
-static int altlist = 0;		/* Show hostname at the end. */
-static int usedns = 0;		/* Use DNS to lookup the hostname. */
-static int useip = 0;		/* Print IP address in number format */
-static int fulltime = 0;	/* Print full dates and times */
+static int altlist;		/* Show hostname at the end. */
+static int usedns;		/* Use DNS to lookup the hostname. */
+static int useip;		/* Print IP address in number format */
+static int fulltime;		/* Print full dates and times */
 static int name_len = 8;	/* Default print 8 characters of name */
 static int domain_len = 16;	/* Default print 16 characters of domain */
 static char **show = NULL;	/* What do they want us to show */
