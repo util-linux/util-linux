@@ -259,7 +259,7 @@ static int list(struct utmp *p, time_t t, int what)
 	char		final[512];
 	char		utline[UT_LINESIZE+1];
 	char		domain[256];
-	char		*s, **walk;
+	char		*s;
 	int		mins, hours, days;
 	int		r, len;
 
@@ -277,6 +277,7 @@ static int list(struct utmp *p, time_t t, int what)
 	 *	Is this something we wanna show?
 	 */
 	if (show) {
+		char **walk;
 		for (walk = show; *walk; walk++) {
 			if (strncmp(p->ut_name, *walk, UT_NAMESIZE) == 0 ||
 			    strcmp(utline, *walk) == 0 ||
