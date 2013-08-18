@@ -73,6 +73,12 @@ Output version and exit.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Output help and exit.
+.SH NOTES
+Some sessions, such as wdm, that has in beginning of
+.BR utmp (5)
+ut_type data ':' character will not get message from
+.BR wall .
+This is done to avoid write errors.
 .SH SEE ALSO
 .BR mesg (1),
 .BR talk (1),
