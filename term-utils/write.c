@@ -73,7 +73,7 @@ static void __attribute__ ((__noreturn__)) done(int);
 int term_chk(char *, int *, time_t *, int);
 int utmp_chk(char *, char *);
 
-static gid_t myegid;
+static gid_t root_access;
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
 			usage(stderr);
 		}
 
-	myegid = getegid();
+	root_access = !getegid();
 
 	/* check that sender has write enabled */
 	if (isatty(fileno(stdin)))
@@ -299,8 +299,9 @@ int term_chk(char *tty, int *msgsokP, time_t * atimeP, int showerror)
 		return 1;
 	}
 
-	/* group write bit and group ownership */
-	*msgsokP = (s.st_mode & (S_IWRITE >> 3)) && myegid == s.st_gid;
+	*msgsokP = !access(path, W_OK);
+	if (!root_access && *msgsokP)
+		*msgsokP = s.st_mode & S_IWGRP;
 	*atimeP = s.st_atime;
 	return 0;
 }
