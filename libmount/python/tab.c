@@ -1,0 +1,725 @@
+/*
+ * Python bindings for the libmount library.
+ *
+ * Copyright (C) 2013, Red Hat, Inc. All rights reserved.
+ * Written by Ondrej Oprala and Karel Zak
+ *
+ * This file is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This file is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this file; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+#include "pylibmount.h"
+
+static PyMemberDef Tab_members[] = {
+	{NULL}
+};
+
+static int Tab_set_parser_errcb(TabObject *self, PyObject *func, void *closure __attribute__((unused)))
+{
+	if (!func) {
+		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
+		return -1;
+	}
+	if (!PyCallable_Check(func))
+		return -1;
+	else {
+		PyObject *tmp = self->errcb;
+		Py_INCREF(func);
+		self->errcb = func;
+		Py_XDECREF(tmp);
+	}
+	return 0;
+}
+
+static PyObject *Tab_get_intro_comment(TabObject *self, void *closure __attribute__((unused)))
+{
+	return PyObjectResultStr(mnt_table_get_intro_comment(self->tab));
+}
+
+static int Tab_set_intro_comment(TabObject *self, PyObject *value, void *closure __attribute__((unused)))
+{
+	char *comment = NULL;
+	int rc = 0;
+	if (!value) {
+		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
+		return -1;
+	}
+	if (!(comment = pystos(value)))
+		return -1;
+
+	if ((rc = mnt_table_set_intro_comment(self->tab, comment))) {
+		UL_RaiseExc(-rc);
+		return -1;
+	}
+       return 0;
+}
+
+static PyObject *Tab_get_trailing_comment(TabObject *self, void *closure __attribute__((unused)))
+{
+	return PyObjectResultStr(mnt_table_get_trailing_comment(self->tab));
+}
+
+static int Tab_set_trailing_comment(TabObject *self, PyObject *value, void *closure __attribute__((unused)))
+{
+	char *comment = NULL;
+	int rc = 0;
+	if (!value) {
+		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
+		return -1;
+	}
+	if (!(comment = pystos(value)))
+		return -1;
+
+	if ((rc = mnt_table_set_trailing_comment(self->tab, comment))) {
+	     UL_RaiseExc(-rc);
+	     return -1;
+	}
+	   return 0;
+}
+#define Tab_enable_comments_HELP "enable_comments(enable)\n\n\
+Enables parsing of comments.\n\n\
+The initial (intro) file comment is accessible by\n\
+Tab.intro_comment. The intro and the comment of the first fstab\
+entry has to be separated by blank line.  The filesystem comments are\n\
+accessible by Fs.comment. The tailing fstab comment is accessible\n\
+by Tab.trailing_comment.\n\
+\n\
+<informalexample>\n\
+<programlisting>\n\
+#\n\
+# Intro comment\n\
+#\n\
+\n\
+# this comments belongs to the first fs\n\
+LABEL=foo /mnt/foo auto defaults 1 2\n\
+# this comments belongs to the second fs\n\
+LABEL=bar /mnt/bar auto defaults 1 2 \n\
+# tailing comment\n\
+</programlisting>\n\
+</informalexample>"
+static PyObject *Tab_enable_comments(TabObject *self, PyObject *args, PyObject *kwds)
+{
+	int enable = 0;
+	char *kwlist[] = {"enable", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &enable)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	mnt_table_enable_comments(self->tab, enable);
+	Py_INCREF(self);
+	return (PyObject *)self;
+}
+
+#define Tab_replace_file_HELP "replace_file(filename)\n\n\
+This function replaces filename with the new content from TabObject."
+static PyObject *Tab_replace_file(TabObject *self, PyObject *args, PyObject *kwds)
+{
+	int rc;
+	char *filename = NULL;
+	char *kwlist[] = {"filename", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &filename)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return (rc = mnt_table_replace_file(self->tab, filename)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+}
+
+#define Tab_write_file_HELP "write_file(file)\n\n\
+This function writes tab to file(stream)"
+static PyObject *Tab_write_file(TabObject *self, PyObject *args, PyObject *kwds)
+{
+	int rc;
+	PyFileObject *stream = NULL;
+	FILE *f = NULL;
+	char *kwlist[] = {"file", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", kwlist, &PyFile_Type, &stream)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	f = PyFile_AsFile((PyObject *)stream);
+	return (rc = mnt_table_write_file(self->tab, f)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+}
+
+#define Tab_find_devno_HELP "find_devno(devno, [direction])\n\n\
+Note that zero could be valid device number for root pseudo filesystem (e.g.\
+tmpfs\n\
+Returns a tab entry or None"
+static PyObject *Tab_find_devno(TabObject *self, PyObject *args, PyObject *kwds)
+{
+	dev_t devno;
+	int direction = MNT_ITER_BACKWARD;
+	char *kwlist[] = {"devno", "direction", NULL};
+	if (! PyArg_ParseTupleAndKeywords(args, kwds, "I|i", kwlist, &devno, &direction)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return PyObjectResultFs(mnt_table_find_devno(self->tab, devno, direction));
+}
+
+#define Tab_find_mountpoint_HELP "find_mountpoint(path, [direction])\n\n\
+Returns a tab entry or None."
+static PyObject *Tab_find_mountpoint(TabObject *self, PyObject *args, PyObject *kwds)
+{
+	char *path;
+	int direction = MNT_ITER_BACKWARD;
+	char *kwlist[] = {"path", "direction", NULL};
+	if (! PyArg_ParseTupleAndKeywords(args, kwds, "s|i", kwlist, &path, &direction)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return PyObjectResultFs(mnt_table_find_mountpoint(self->tab, path, direction));
+}
+
+#define Tab_find_pair_HELP "find_pair(source, target, [direction])\n\n\
+Returns a tab entry or None."
+static PyObject *Tab_find_pair(TabObject *self, PyObject *args, PyObject *kwds)
+{
+	char *kwlist[] = {"source", "target", "direction", NULL};
+	char *source;
+	char *target;
+	int direction = MNT_ITER_BACKWARD;
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "ss|i", kwlist, &source, &target, &direction)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return PyObjectResultFs(mnt_table_find_pair(self->tab, source, target, direction));
+}
+
+#define Tab_find_source_HELP "find_source(source, [direction])\n\n\
+Returns a tab entry or None."
+static PyObject *Tab_find_source(TabObject *self, PyObject *args, PyObject *kwds)
+{
+	char *kwlist[] = {"source", "direction", NULL};
+	char *source;
+	int direction = MNT_ITER_BACKWARD;
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|i", kwlist, &source, &direction)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return PyObjectResultFs(mnt_table_find_source(self->tab, source, direction));
+}
+
+#define Tab_find_target_HELP "find_target(target, [direction])\n\n\
+Try to lookup an entry in given tab, possible are three iterations, first\n\
+with path, second with realpath(path) and third with realpath(path)\n\
+against realpath(fs->target). The 2nd and 3rd iterations are not performed\n\
+when tb cache is not set (cache not implemented yet).n\
+\n\
+Returns a tab entry or None."
+static PyObject *Tab_find_target(TabObject *self, PyObject *args, PyObject *kwds)
+{
+	char *kwlist[] = {"target", "direction", NULL};
+	char *target;
+	int direction = MNT_ITER_BACKWARD;
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|i", kwlist, &target, &direction)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return PyObjectResultFs(mnt_table_find_target(self->tab, target, direction));
+}
+
+#define Tab_find_srcpath_HELP "find_srcpath(srcpath, [direction])\n\n\
+Try to lookup an entry in given tab, possible are four iterations, first\n\
+with path, second with realpath(path), third with tags (LABEL, UUID, ..)\n\
+from path and fourth with realpath(path) against realpath(entry->srcpath).\n\
+\n\
+The 2nd, 3rd and 4th iterations are not performed when tb cache is not\n\
+set (not implemented yet).\n\
+\n\
+Note that None is a valid source path; it will be replaced with \"none\". The\n\
+\"none\" is used in /proc/{mounts,self/mountinfo} for pseudo filesystems.\n\
+\n\
+Returns a tab entry or None."
+static PyObject *Tab_find_srcpath(TabObject *self, PyObject *args, PyObject *kwds)
+{
+	char *kwlist[] = {"srcpath", "direction", NULL};
+	char *srcpath;
+	int direction = MNT_ITER_BACKWARD;
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|i", kwlist, &srcpath, &direction)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return PyObjectResultFs(mnt_table_find_srcpath(self->tab, srcpath, direction));
+}
+
+#define Tab_find_tag_HELP "find_tag(tag, val, [direction])\n\n\
+Try to lookup an entry in given tab, first attempt is lookup by tag and\n\
+val, for the second attempt the tag is evaluated (converted to the device\n\
+name) and Tab.find_srcpath() is preformed. The second attempt is not\n\
+performed when tb cache is not set (not implemented yet).\n\
+\n\
+Returns a tab entry or NULL."
+static PyObject *Tab_find_tag(TabObject *self, PyObject *args, PyObject *kwds)
+{
+	char *kwlist[] = {"tag", "val", "direction", NULL};
+	char *tag;
+	char *val;
+	int direction = MNT_ITER_BACKWARD;
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "ss|i", kwlist, &tag, &val, &direction)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return PyObjectResultFs(mnt_table_find_tag(self->tab, tag, val, direction));
+}
+
+static PyObject *Tab_get_nents(TabObject *self)
+{
+	return PyObjectResultInt(mnt_table_get_nents(self->tab));
+}
+
+#define Tab_is_fs_mounted_HELP "is_fs_mounted(fstab_fs)\n\n\
+Checks if the fstab_fs entry is already in the tb table. The \"swap\" is\n\
+ignored. This function explicitly compares source, target and root of the\n\
+filesystems.\n\
+\n\
+Note that source and target are canonicalized only if a cache for tb is\n\
+defined (not implemented yet). The target canonicalization may\n\
+trigger automount on autofs mountpoints!\n\
+\n\
+Don't use it if you want to know if a device is mounted, just use\n\
+Tab.find_source() for the device.\n\
+\n\
+This function is designed mostly for \"mount -a\".\n\
+\n\
+Returns a boolean value."
+static PyObject *Tab_is_fs_mounted(TabObject *self, PyObject *args, PyObject *kwds)
+{
+	FsObject *fs;
+	char *kwlist[] = {"fstab_fs", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", kwlist, &FsType, &fs)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return PyBool_FromLong(mnt_table_is_fs_mounted(self->tab, fs->fs));
+}
+
+#define Tab_parse_file_HELP "parse_file(file)\n\n\
+Parses whole table (e.g. /etc/mtab) and appends new records to the tab.\n\
+\n\
+The libmount parser ignores broken (syntax error) lines, these lines are\n\
+reported to caller by errcb() function (see Tab.parser_errcb).\n\
+\n\
+Returns self or raises an exception in case of an error."
+static PyObject *Tab_parse_file(TabObject *self, PyObject* args, PyObject *kwds)
+{
+	int rc;
+	char *file = NULL;
+	char *kwlist[] = {"file", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &file)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return (rc = mnt_table_parse_file(self->tab, file)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+}
+
+#define Tab_parse_fstab_HELP "parse_fstab([fstab])\n\n\
+This function parses /etc/fstab and appends new lines to the tab. If the\n\
+filename is a directory then Tab.parse_dir() is called.\n\
+\n\
+See also Tab.parser_errcb.\n\
+\n\
+Returns self or raises an exception in case of an error."
+static PyObject *Tab_parse_fstab(TabObject *self, PyObject* args, PyObject *kwds)
+{
+	int rc;
+	char *fstab = NULL;
+	char *kwlist[] = {"fstab", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|s", kwlist, &fstab)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return (rc = mnt_table_parse_fstab(self->tab, fstab)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+}
+
+#define Tab_parse_mtab_HELP "parse_mtab([mtab])\n\n\
+This function parses /etc/mtab or /proc/self/mountinfo\n\
+/run/mount/utabs or /proc/mounts.\n\
+\n\
+See also Tab.parser_errcb().\n\
+\n\
+Returns self or raises an exception in case of an error."
+static PyObject *Tab_parse_mtab(TabObject *self, PyObject* args, PyObject *kwds)
+{
+	int rc;
+	char *mtab = NULL;
+	char *kwlist[] = {"mtab", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|s", kwlist, &mtab)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return (rc = mnt_table_parse_mtab(self->tab, mtab)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+}
+
+#define Tab_parse_dir_HELP "parse_dir(dir)\n\n\
+The directory:\n\
+- files are sorted by strverscmp(3)\n\
+- files that start with \".\" are ignored (e.g. \".10foo.fstab\")\n\
+- files without the \".fstab\" extension are ignored\n\
+\n\
+Returns self or raises an exception in case of an error."
+static PyObject *Tab_parse_dir(TabObject *self, PyObject* args, PyObject *kwds)
+{
+	int rc;
+	char *dir = NULL;
+	char *kwlist[] = {"dir", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &dir)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return (rc = mnt_table_parse_dir(self->tab, dir)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+}
+
+#define Tab_parse_swaps_HELP "parse_swaps(swaps)\n\n\
+This function parses /proc/swaps and appends new lines to the tab"
+static PyObject *Tab_parse_swaps(TabObject *self, PyObject* args, PyObject *kwds)
+{
+	int rc;
+	char *swaps = NULL;
+	char *kwlist[] = {"swaps", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &swaps)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return (rc = mnt_table_parse_swaps(self->tab, swaps)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+}
+
+#define Tab_parse_stream_HELP "parse_stream(stream, filename)\n\n\
+Returns self or raises an exception in case of an error."
+static PyObject *Tab_parse_stream(TabObject *self, PyObject* args, PyObject *kwds)
+{
+	int rc;
+	PyFileObject *stream = NULL;
+	char *filename = NULL;
+	FILE *f;
+	char *kwlist[] = {"stream", "filename", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!s", kwlist, &PyFile_Type, &stream, &filename)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	f = PyFile_AsFile((PyObject *)stream);
+	return (rc = mnt_table_parse_stream(self->tab, f, filename)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+}
+#define Tab_add_fs_HELP "add_fs(fs)\n\nAdds a new entry to tab.\n\
+Returns self or raises an exception in case of an error."
+
+static PyObject *Tab_add_fs(TabObject *self, PyObject* args, PyObject *kwds)
+{
+	int rc;
+	FsObject *fs = NULL;
+	char *kwlist[] = {"fs", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", kwlist, &FsType, &fs)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	Py_INCREF(fs);
+	return (rc = mnt_table_add_fs(self->tab, fs->fs)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+}
+
+#define Tab_remove_fs_HELP "remove_fs(fs)\n\n\
+Returns self or raises an exception in case of an error."
+static PyObject *Tab_remove_fs(TabObject *self, PyObject* args, PyObject *kwds)
+{
+	int rc;
+	FsObject *fs = NULL;
+	char *kwlist[] = {"fs", NULL};
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", kwlist, &FsType, &fs)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	rc = mnt_table_remove_fs(self->tab, fs->fs);
+	Py_DECREF(fs);
+	return (rc) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+}
+
+#define Tab_next_fs_HELP "next_fs()\n\n\
+Returns the next Fs on success, raises an exception in case of an error and None at end of list.\n\
+\n\
+Example:\n\
+<informalexample>\n\
+<programlisting>\n\
+import libmount\n\
+import functools\n\
+for fs in iter(functools.partial(tb.next_fs), None): {\n\
+    dir = Fs.target\n\
+    print \"mount point: {:s}\n\".format(dir)\n\
+}\n\
+</programlisting>\n\
+</informalexample>\n\
+\n\
+lists all mountpoints from fstab in backward order."
+static PyObject *Tab_next_fs(TabObject *self)
+{
+	struct libmnt_fs *fs;
+	int rc;
+
+	/* Reset the builtin iterator after reaching the end of the list */
+	rc = mnt_table_next_fs(self->tab, self->iter, &fs);
+	if (rc == 1) {
+		mnt_reset_iter(self->iter, MNT_ITER_FORWARD);
+		Py_RETURN_NONE;
+	} else if (rc)
+		return UL_RaiseExc(-rc);
+
+	return PyObjectResultFs(fs);
+}
+
+static PyMethodDef Tab_methods[] = {
+	{"enable_comments", (PyCFunction)Tab_enable_comments, METH_VARARGS|METH_KEYWORDS, Tab_enable_comments_HELP},
+	{"find_pair", (PyCFunction)Tab_find_pair, METH_VARARGS|METH_KEYWORDS, Tab_find_pair_HELP},
+	{"find_source", (PyCFunction)Tab_find_source, METH_VARARGS|METH_KEYWORDS, Tab_find_source_HELP},
+	{"find_srcpath", (PyCFunction)Tab_find_srcpath, METH_VARARGS|METH_KEYWORDS, Tab_find_srcpath_HELP},
+	{"find_tag", (PyCFunction)Tab_find_tag, METH_VARARGS|METH_KEYWORDS, Tab_find_tag_HELP},
+	{"find_target", (PyCFunction)Tab_find_target, METH_VARARGS|METH_KEYWORDS, Tab_find_target_HELP},
+	{"find_devno", (PyCFunction)Tab_find_devno, METH_VARARGS|METH_KEYWORDS, Tab_find_devno_HELP},
+	{"find_mountpoint", (PyCFunction)Tab_find_mountpoint, METH_VARARGS|METH_KEYWORDS, Tab_find_mountpoint_HELP},
+	{"parse_file", (PyCFunction)Tab_parse_file, METH_VARARGS|METH_KEYWORDS, Tab_parse_file_HELP},
+	{"parse_fstab", (PyCFunction)Tab_parse_fstab, METH_VARARGS|METH_KEYWORDS, Tab_parse_fstab_HELP},
+	{"parse_mtab", (PyCFunction)Tab_parse_mtab, METH_VARARGS|METH_KEYWORDS, Tab_parse_mtab_HELP},
+	{"parse_dir", (PyCFunction)Tab_parse_dir, METH_VARARGS|METH_KEYWORDS, Tab_parse_dir_HELP},
+	{"parse_swaps", (PyCFunction)Tab_parse_swaps, METH_VARARGS|METH_KEYWORDS, Tab_parse_swaps_HELP},
+	{"is_fs_mounted", (PyCFunction)Tab_is_fs_mounted, METH_VARARGS|METH_KEYWORDS, Tab_is_fs_mounted_HELP},
+	{"parse_stream", (PyCFunction)Tab_parse_stream, METH_VARARGS|METH_KEYWORDS, Tab_parse_stream_HELP},
+	{"add_fs", (PyCFunction)Tab_add_fs, METH_VARARGS|METH_KEYWORDS, Tab_add_fs_HELP},
+	{"remove_fs", (PyCFunction)Tab_remove_fs, METH_VARARGS|METH_KEYWORDS, Tab_remove_fs_HELP},
+	{"next_fs", (PyCFunction)Tab_next_fs, METH_NOARGS, Tab_next_fs_HELP},
+	{"write_file", (PyCFunction)Tab_write_file, METH_VARARGS|METH_KEYWORDS, Tab_write_file_HELP},
+	{"replace_file", (PyCFunction)Tab_replace_file, METH_VARARGS|METH_KEYWORDS, Tab_replace_file_HELP},
+	{NULL}
+};
+
+/* mnt_free_tab() with a few necessary additions */
+void pymnt_free_table(struct libmnt_table *tab)
+{
+	if (!tab)
+		return;
+
+	while (!list_empty(&tab->ents)) {
+		struct libmnt_fs *fs = list_entry(tab->ents.next, struct libmnt_fs, ents);
+
+		if (fs->userdata)
+			Py_DECREF(fs->userdata); /* (possible) destruction via object destructor */
+		else
+			mnt_free_fs(fs); /* no encapsulating object, free fs */
+	}
+
+	mnt_free_table(tab);
+}
+
+static void Tab_destructor(TabObject *self)
+{
+	pymnt_free_table(self->tab);
+	mnt_free_iter(self->iter);
+	Py_XDECREF(self->errcb);
+	self->ob_type->tp_free((PyObject*)self);
+}
+
+static PyObject *Tab_new(PyTypeObject *type, PyObject *args __attribute__((unused)),
+		PyObject *kwds __attribute__((unused)))
+{
+	TabObject *self = (TabObject*)type->tp_alloc(type, 0);
+	if (self) {
+		self->tab = NULL;
+		self->iter = NULL;
+		self->errcb = NULL;
+	}
+
+	return (PyObject *)self;
+}
+/* explicit tab.__init__() serves as mnt_reset_table(tab) would in C
+ * and as mnt_new_table{,_from_dir,_from_file}() with proper arguments */
+#define Tab_HELP "Tab(path=None, errcb=None)"
+static int Tab_init(TabObject *self, PyObject *args, PyObject *kwds)
+{
+	struct libmnt_cache *cache;
+	char *path = NULL;
+	char *kwlist[] = {"path", "errcb", NULL};
+	PyObject *errcb = NULL;
+	struct stat buf;
+	memset (&buf, 0, sizeof(struct stat));
+
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|sO", kwlist, &path, &errcb)) {
+		return -1;
+	}
+
+	pymnt_free_table(self->tab);
+	self->tab = NULL;
+
+	if (self->iter)
+		mnt_reset_iter(self->iter, MNT_ITER_FORWARD);
+	else
+		self->iter = mnt_new_iter(MNT_ITER_FORWARD);
+	if (errcb) {
+		if (!PyCallable_Check(errcb)) {
+			return -1;
+		}
+		PyObject *tmp = self->errcb;
+		Py_INCREF(errcb);
+		self->errcb = errcb;
+		Py_XDECREF(tmp);
+	} else {
+		Py_XDECREF(self->errcb);
+		self->errcb = NULL;
+	}
+
+	if (path) {
+		if (stat(path, &buf)) {
+			/* TODO: weird */
+			PyErr_SetFromErrno(PyExc_RuntimeError);
+			return -1;
+		}
+		if (S_ISREG(buf.st_mode))
+			self->tab = mnt_new_table_from_file(path);
+		else if (S_ISDIR(buf.st_mode))
+			self->tab = mnt_new_table_from_dir(path);
+	} else
+		self->tab = mnt_new_table();
+
+	/* Always set custom handler when using libmount from python */
+	self->tab->errcb = pymnt_table_parser_errcb;
+	self->tab->userdata = (void *)self;
+
+	/* TODO: perhaps make this optional? */
+	cache = mnt_new_cache();
+	if (!cache)
+		return -1;
+
+	mnt_table_set_cache(self->tab, cache);
+
+	return 0;
+}
+
+/* Handler for the tab->errcb callback */
+int pymnt_table_parser_errcb(struct libmnt_table *tb, const char *filename, int line)
+{
+	int rc = 0;
+	PyObject *arglist, *result;
+
+	if (tb->userdata && ((TabObject*)(tb->userdata))->errcb) {
+		arglist = Py_BuildValue("(Osi)", tb->userdata, filename, line);
+		if (!arglist)
+			return -ENOMEM;
+
+		/* A python callback was set, so tb is definitely encapsulated in an object */
+		result = PyEval_CallObject(((TabObject *)(tb->userdata))->errcb, arglist);
+		Py_DECREF(arglist);
+
+		if (!result)
+			return -EINVAL;
+
+		if (!PyArg_Parse(result, "i", &rc))
+			rc = -EINVAL;
+
+		Py_DECREF(result);
+	}
+	return rc;
+}
+
+PyObject *PyObjectResultTab(struct libmnt_table *tab)
+{
+	if (!tab) {
+		PyErr_SetString(LibmountError, "internal exception");
+		return NULL;
+	}
+	if (tab->userdata) {
+		Py_INCREF(tab->userdata);
+		return (PyObject *)tab->userdata;
+	}
+
+	TabObject *result = PyObject_New(TabObject, &TabType);
+	if (!result) {
+		UL_RaiseExc(ENOMEM);
+		return NULL;
+	}
+	/* Creating an encapsualing object: increment the refcount, so that code
+	 * such as:
+	 * cxt.get_fstab()
+	 * doesn't call the destructor, which would free our tab struct as well
+	 */
+	Py_INCREF(result);
+	result->tab = tab;
+	result->iter = mnt_new_iter(MNT_ITER_FORWARD);
+	result->tab->userdata = (void *)result;
+	result->errcb = NULL;
+	return (PyObject *)result;
+}
+
+static PyGetSetDef Tab_getseters[] = {
+	{"nents",		(getter)Tab_get_nents, NULL, "number of valid entries in tab", NULL},
+	{"intro_comment",	(getter)Tab_get_intro_comment, (setter)Tab_set_intro_comment, "fstab intro comment", NULL},
+	{"trailing_comment",	(getter)Tab_get_trailing_comment, (setter)Tab_set_trailing_comment, "fstab trailing comment", NULL},
+	{"errcb",		NULL, (setter)Tab_set_parser_errcb, "parser error callback", NULL},
+	{NULL}
+};
+
+
+static PyObject *Table_repr(TabObject *self)
+{
+	return PyString_FromFormat(
+			"<libmount.Table object at %p, entries=%d, comments_enabled=%s, errcb=%s>",
+			self,
+			self->tab->nents,
+			self->tab->comms ? "True" : "False",
+			self->errcb ? pystos(PyObject_Repr(self->errcb)) : "None");
+}
+
+PyTypeObject TabType = {
+	PyObject_HEAD_INIT(NULL)
+	0, /*ob_size*/
+	"libmount.Tab", /*tp_name*/
+	sizeof(TabObject), /*tp_basicsize*/
+	0, /*tp_itemsize*/
+	(destructor)Tab_destructor, /*tp_dealloc*/
+	0, /*tp_print*/
+	0, /*tp_getattr*/
+	0, /*tp_setattr*/
+	0, /*tp_compare*/
+	(reprfunc) Table_repr, /*tp_repr*/
+	0, /*tp_as_number*/
+	0, /*tp_as_sequence*/
+	0, /*tp_as_mapping*/
+	0, /*tp_hash */
+	0, /*tp_call*/
+	0, /*tp_str*/
+	0, /*tp_getattro*/
+	0, /*tp_setattro*/
+	0, /*tp_as_buffer*/
+	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
+	Tab_HELP, /* tp_doc */
+	0, /* tp_traverse */
+	0, /* tp_clear */
+	0, /* tp_richcompare */
+	0, /* tp_weaklistoffset */
+	0, /* tp_iter */
+	0, /* tp_iternext */
+	Tab_methods, /* tp_methods */
+	Tab_members, /* tp_members */
+	Tab_getseters, /* tp_getset */
+	0, /* tp_base */
+	0, /* tp_dict */
+	0, /* tp_descr_get */
+	0, /* tp_descr_set */
+	0, /* tp_dictoffset */
+	(initproc)Tab_init, /* tp_init */
+	0, /* tp_alloc */
+	Tab_new, /* tp_new */
+};
+
+void pymnt_init_table(PyObject *mod)
+{
+	if (PyType_Ready(&TabType) < 0)
+		return;
+
+	Py_INCREF(&TabType);
+	PyModule_AddObject(mod, "Tab", (PyObject *)&TabType);
+}
+

@@ -2,8 +2,13 @@
 if BUILD_PYLIBMOUNT
 pyexec_LTLIBRARIES += pylibmount.la
 
-pylibmount_la_SOURCES = 
-	
+pylibmount_la_SOURCES = \
+	libmount/python/pylibmount.c \
+	libmount/python/pylibmount.h \
+	libmount/python/fs.c \
+	libmount/python/tab.c \
+	libmount/python/context.c
+
 pylibmount_la_LIBADD = libmount.la -lpython$(PYTHON_VERSION)
 
 pylibmount_la_CFLAGS = \
