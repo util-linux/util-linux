@@ -12,6 +12,7 @@
 *.gcda
 *.gcno
 *.gcov
+*.pyc
 Makefile
 aclocal.m4
 autom4te.cache
