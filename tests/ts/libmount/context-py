@@ -1,0 +1,145 @@
+#!/bin/bash
+
+# Copyright (C) 2010 Karel Zak <kzak@redhat.com>
+
+TS_TOPDIR="$(dirname $0)/../.."
+export LD_LIBRARY_PATH="$TS_TOPDIR/../.libs"
+export PYTHONPATH="$TS_TOPDIR/../libmount/python:$TS_TOPDIR/../.libs"
+TS_DESC="context-py"
+PYDBG="python -m pdb"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+ts_skip_nonroot
+
+TESTPROG="$TS_HELPER_PYLIBMOUNT_CONTEXT"
+LABEL=libmount-test
+UUID=$(uuidgen)
+MOUNTPOINT="$TS_MOUNTPOINT"
+TS_NOEXIST="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-noex"
+[ -d $TS_NOEXIST ] && rmdir $TS_NOEXIST
+
+[ -x $TESTPROG ] || ts_skip "test not compiled"
+
+ts_log "Init device"
+umount $MOUNTPOINT &> /dev/null
+
+DEVICE=$(ts_scsi_debug_init dev_size_mb=100)
+DEVNAME=$(basename $DEVICE)
+
+ts_log "Create partitions"
+$TS_CMD_FDISK ${DEVICE} &> /dev/null <<EOF
+n
+p
+1
+
+
+w
+q
+EOF
+
+DEVICE="${DEVICE}1"
+
+sleep 1
+udevadm settle
+
+grep -q $DEVNAME /proc/partitions
+if [ $? -ne 0 ]; then
+	rmmod scsi_debug
+	ts_skip "no partition!"
+fi
+
+ts_log "Create filesystem"
+mkfs.ext4 -L "$LABEL" -U "$UUID" $DEVICE &> /dev/null
+
+ts_log "Do tests..."
+
+export LIBMOUNT_MTAB=$TS_OUTPUT.mtab
+> $LIBMOUNT_MTAB
+
+udevadm settle
+ts_device_has "TYPE" "ext4" $DEVICE || ts_die "Cannot find ext3 on $DEVICE" $DEVICE
+
+ts_init_subtest "mount-by-devname"
+mkdir -p $MOUNTPOINT &>  /dev/null
+$TESTPROG --mount $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
+
+grep -q $DEVICE $LIBMOUNT_MTAB || \
+	echo "(by device) cannot find $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "umount-by-devname"
+$TESTPROG --umount $DEVICE >> $TS_OUTPUT 2>&1
+grep -q $DEVICE $LIBMOUNT_MTAB &&
+	echo "umount (device) failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+
+ts_init_subtest "mount-by-label"
+mkdir -p $MOUNTPOINT &>  /dev/null
+$TESTPROG --mount LABEL="$LABEL" $MOUNTPOINT >> $TS_OUTPUT 2>&1
+grep -q $DEVICE $LIBMOUNT_MTAB || \
+	echo "(by label) cannot find $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+
+ts_init_subtest "umount-by-mountpoint"
+$TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+grep -q $DEVICE $LIBMOUNT_MTAB && \
+	echo "umount (mountpoint) failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+
+ts_init_subtest "mount-by-uuid"
+mkdir -p $MOUNTPOINT &> /dev/null
+$TESTPROG --mount UUID="$UUID" $MOUNTPOINT >> $TS_OUTPUT 2>&1
+grep -q $DEVICE $LIBMOUNT_MTAB || \
+	echo "(by uuid) cannot find $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+$TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+grep -q $DEVICE $LIBMOUNT_MTAB &&
+	echo "umount failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+
+ts_init_subtest "mount-flags"
+mkdir -p $MOUNTPOINT &> /dev/null
+$TESTPROG --mount -o ro,noexec,nosuid,strictatime $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
+$TS_CMD_FINDMNT --kernel $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>&1
+grep -q $DEVICE $LIBMOUNT_MTAB || \
+	echo "cannot find $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+
+$TESTPROG --mount -o remount,rw $MOUNTPOINT >> $TS_OUTPUT 2>&1
+$TS_CMD_FINDMNT --kernel $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>&1
+
+$TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+grep -q $DEVICE $LIBMOUNT_MTAB &&
+	echo "umount failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+
+ts_init_subtest "mount-loopdev"
+mkdir -p $MOUNTPOINT &> /dev/null
+img=$(ts_image_init)
+mkfs.ext3 -F $img &> /dev/null
+udevadm settle
+
+$TESTPROG --mount -o loop $img $MOUNTPOINT >> $TS_OUTPUT 2>&1
+grep -q $MOUNTPOINT $LIBMOUNT_MTAB || \
+	echo "(loopdev) cannot find $MOUNTPOINT in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+udevadm settle
+$TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+grep -q $MOUNTPOINT $LIBMOUNT_MTAB &&
+	echo "umount failed: found $MOUNTPOINT in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
+ts_finalize_subtest
+
+ts_init_subtest "x-mount.mkdir"
+$TS_CMD_MOUNT -o x-mount.mkdir --bind $MOUNTPOINT $TS_NOEXIST >> $TS_OUTPUT 2>&1 &&
+  echo "successfully mounted" >> $TS_OUTPUT
+ts_finalize_subtest
+
+$TS_CMD_UMOUNT $TS_NOEXIST
+rmdir $TS_NOEXIST
+
+ts_log "...done."
+rmmod scsi_debug
+ts_finalize

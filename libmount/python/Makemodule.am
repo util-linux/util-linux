@@ -21,6 +21,8 @@ pylibmount_la_CFLAGS = \
 pylibmount_la_LDFLAGS = \
 	-avoid-version -module -shared -export-dynamic
 
+EXTRA_DIST += libmount/python/libmount/__init__.py
+
 CLEANFILES += *.img
 
 endif # BUILD_PYLIBMOUNT
