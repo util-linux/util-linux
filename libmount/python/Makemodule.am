@@ -1,0 +1,21 @@
+
+if BUILD_PYLIBMOUNT
+pyexec_LTLIBRARIES += pylibmount.la
+
+pylibmount_la_SOURCES = 
+	
+pylibmount_la_LIBADD = libmount.la -lpython$(PYTHON_VERSION)
+
+pylibmount_la_CFLAGS = \
+	$(AM_CFLAGS) \
+	$(PYTHON_INCLUDES) \
+	$(PYTHON_CFLAGS) \
+	-I$(ul_libmount_incdir) \
+	-fno-strict-aliasing #-ggdb3 -O0
+
+pylibmount_la_LDFLAGS = \
+	-avoid-version -module -shared -export-dynamic
+
+CLEANFILES += *.img
+
+endif # BUILD_PYLIBMOUNT

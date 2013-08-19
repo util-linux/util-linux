@@ -1,6 +1,7 @@
 if BUILD_LIBMOUNT
 
 include libmount/src/Makemodule.am
+include libmount/python/Makemodule.am
 
 if ENABLE_GTK_DOC
 # Docs uses separate Makefiles
@@ -10,6 +11,5 @@ endif
 pkgconfig_DATA += libmount/mount.pc
 PATHFILES      += libmount/mount.pc
 EXTRA_DIST     += libmount/COPYING
-
 
 endif # BUILD_LIBMOUNT

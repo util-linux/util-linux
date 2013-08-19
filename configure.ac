@@ -1373,6 +1373,27 @@ AC_ARG_ENABLE([bash-completion],
 AM_CONDITIONAL([BUILD_BASH_COMPLETION], [test "x$enable_bash_completion" = xyes])
 
 
+AC_ARG_WITH([python],
+  AS_HELP_STRING([--without-python], [do not generate python bindings]),
+  [], [with_python=yes]
+)
+have_python=no
+AS_IF([test "x$with_python" = xyes], [
+  AM_PATH_PYTHON([2.4])
+  AS_IF([test -x "$PYTHON-config"], [
+    have_python=yes
+    PYTHON_INCLUDES=$($PYTHON-config --includes)
+    AC_SUBST(PYTHON_INCLUDES)
+  ])
+])
+
+
+UL_BUILD_INIT([pylibmount], [check])
+UL_REQUIRES_HAVE([pylibmount], [python])
+UL_REQUIRES_BUILD([pylibmount], [libmount])
+AM_CONDITIONAL([BUILD_PYLIBMOUNT], [test "x$build_pylibmount" = "xyes"])
+
+
 AC_ARG_ENABLE([pg-bell],
   AS_HELP_STRING([--disable-pg-bell], [let pg not ring the bell on invalid keys]),
   [], [enable_pg_bell=yes]

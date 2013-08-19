@@ -38,6 +38,7 @@ dist_man_MANS =
 man_MANS =
 pkgconfig_DATA =
 usrlib_exec_LTLIBRARIES =
+pyexec_LTLIBRARIES =
 bin_PROGRAMS =
 sbin_PROGRAMS =
 dist_usrbin_exec_SCRIPTS =
