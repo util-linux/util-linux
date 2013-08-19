@@ -67,12 +67,14 @@ static PyObject *Fs_print_debug(FsObject *self, PyObject *args, PyObject *kwds)
 	int rc;
 	FILE *f = NULL;
 	char *kwlist[] = {"ostream", NULL};
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", kwlist, &PyFile_Type, &stream)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	f = PyFile_AsFile((PyObject *)stream);
-	return (rc = mnt_fs_print_debug(self->fs, f)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	f = PyFile_AsFile((PyObject *) stream);
+	rc = mnt_fs_print_debug(self->fs, f);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 /*
  ** Fs getters/setters
@@ -138,6 +140,7 @@ static int Fs_set_source(FsObject *self, PyObject *value, void *closure __attrib
 {
 	char *source = NULL;
 	int rc = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -167,6 +170,7 @@ static int Fs_set_root(FsObject *self, PyObject *value, void *closure __attribut
 {
 	char *root = NULL;
 	int rc = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -191,6 +195,7 @@ static int Fs_set_target(FsObject *self, PyObject *value, void *closure __attrib
 {
 	char *target = NULL;
 	int rc = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -215,6 +220,7 @@ static int Fs_set_fstype(FsObject *self, PyObject *value, void *closure __attrib
 {
 	char *fstype = NULL;
 	int rc = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -239,6 +245,7 @@ static int Fs_set_options(FsObject *self, PyObject *value, void *closure __attri
 {
 	char *options = NULL;
 	int rc = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -287,6 +294,7 @@ static int Fs_set_attributes(FsObject *self, PyObject *value, void *closure __at
 {
 	char *attributes = NULL;
 	int rc = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -310,6 +318,7 @@ static PyObject *Fs_get_freq(FsObject *self, void *closure __attribute__((unused
 static int Fs_set_freq(FsObject *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	int freq = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -335,11 +344,11 @@ static PyObject *Fs_get_passno(FsObject *self)
 static int Fs_set_passno(FsObject *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	int passno = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
-	}
-	else if (!PyInt_Check(value)) {
+	} else if (!PyInt_Check(value)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return -1;
 	}
@@ -388,6 +397,7 @@ static PyObject *Fs_get_propagation(FsObject *self, PyObject *args, PyObject *kw
 {
 	unsigned long flags;
 	char *kwlist[] = {"flags", NULL};
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "k", kwlist, &flags)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
@@ -427,11 +437,13 @@ static PyObject *Fs_append_attributes(FsObject *self, PyObject *args, PyObject *
 	char *kwlist[] = {"optstr", NULL};
 	char *optstr = NULL;
 	int rc;
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &optstr)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_fs_append_attributes(self->fs, optstr)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_fs_append_attributes(self->fs, optstr);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 #define Fs_append_options_HELP "append_options(optstr)\n\n\
 Parses (splits) optstr and appends results to VFS, FS and userspace lists \
@@ -441,12 +453,15 @@ static PyObject *Fs_append_options(FsObject *self, PyObject *args, PyObject *kwd
 	char *kwlist[] = {"optstr", NULL};
 	char *optstr = NULL;
 	int rc;
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &optstr)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_fs_append_options(self->fs, optstr)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_fs_append_options(self->fs, optstr);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
+
 #define Fs_prepend_attributes_HELP "prepend_attributes(optstr)\n\n\
 Prepends mount attributes."
 static PyObject *Fs_prepend_attributes(FsObject *self, PyObject *args, PyObject *kwds)
@@ -454,12 +469,15 @@ static PyObject *Fs_prepend_attributes(FsObject *self, PyObject *args, PyObject 
 	char *kwlist[] = {"optstr", NULL};
 	char *optstr = NULL;
 	int rc;
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &optstr)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_fs_prepend_attributes(self->fs, optstr)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_fs_prepend_attributes(self->fs, optstr);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
+
 #define Fs_prepend_options_HELP "prepend_options(optstr)\n\n\
 Parses (splits) optstr and prepends results to VFS, FS and userspace lists \
 of options."
@@ -468,12 +486,15 @@ static PyObject *Fs_prepend_options(FsObject *self, PyObject *args, PyObject *kw
 	char *kwlist[] = {"optstr", NULL};
 	char *optstr = NULL;
 	int rc;
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &optstr)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_fs_prepend_options(self->fs, optstr)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_fs_prepend_options(self->fs, optstr);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
+
 #define Fs_match_fstype_HELP "match_fstype(pattern)\n\n\
 pattern: filesystem name or comma delimited list(string) of names\n\n\
 The pattern list of filesystem can be prefixed with a global\n\
@@ -488,12 +509,14 @@ static PyObject *Fs_match_fstype(FsObject *self, PyObject *args, PyObject *kwds)
 {
 	char *kwlist[] = {"pattern", NULL};
 	char *pattern = NULL;
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &pattern)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
 	return PyBool_FromLong(mnt_fs_match_fstype(self->fs, pattern));
 }
+
 #define Fs_match_options_HELP "match_options(options)\n\n\
 options: comma delimited list of options (and nooptions)\n\
 Returns True if fs type is matching to options else False."
@@ -501,12 +524,14 @@ static PyObject *Fs_match_options(FsObject *self, PyObject *args, PyObject *kwds
 {
 	char *kwlist[] = {"options", NULL};
 	char *options = NULL;
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &options)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
 	return PyBool_FromLong(mnt_fs_match_options(self->fs, options));
 }
+
 #define Fs_streq_srcpath_HELP "streq_srcpath(srcpath)\n\n\
 Compares fs source path with path. The tailing slash is ignored.\n\
 Returns True if fs source path equal to path, otherwise False."
@@ -514,12 +539,14 @@ static PyObject *Fs_streq_srcpath(FsObject *self, PyObject *args, PyObject *kwds
 {
 	char *kwlist[] = {"srcpath", NULL};
 	char *srcpath = NULL;
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &srcpath)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
 	return PyBool_FromLong(mnt_fs_streq_srcpath(self->fs, srcpath));
 }
+
 #define Fs_streq_target_HELP "streq_target(target)\n\n\
 Compares fs target path with path. The tailing slash is ignored.\n\
 See also Fs.match_target().\n\
@@ -528,6 +555,7 @@ static PyObject *Fs_streq_target(FsObject *self, PyObject *args, PyObject *kwds)
 {
 	char *kwlist[] = {"target", NULL};
 	char *target = NULL;
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &target)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
@@ -568,10 +596,10 @@ static PyObject *Fs_new(PyTypeObject *type, PyObject *args __attribute__((unused
 		PyObject *kwds __attribute__((unused)))
 {
 	FsObject *self = (FsObject*)type->tp_alloc(type, 0);
+
 	if (self)
 		self->fs = NULL;
-
-	return (PyObject *)self;
+	return (PyObject *) self;
 }
 
 static int Fs_init(FsObject *self, PyObject *args, PyObject *kwds)
@@ -582,6 +610,7 @@ static int Fs_init(FsObject *self, PyObject *args, PyObject *kwds)
 	int rc = 0;
 	char *kwlist[] = {"bindsrc", "source", "root", "target",
 	       "fstype", "options", "attributes", "freq", "passno", NULL};
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|sssssssii", kwlist,
 				&bindsrc, &source, &root, &target, &fstype, &options,
 				&attributes, &freq, &passno)) {
@@ -592,48 +621,35 @@ static int Fs_init(FsObject *self, PyObject *args, PyObject *kwds)
 		mnt_free_fs(self->fs);
 
 	self->fs = mnt_new_fs();
-	if (bindsrc) {
-		if ((rc = mnt_fs_set_bindsrc(self->fs, bindsrc))) {
-			PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
-			return rc;
-		}
+	if (bindsrc && (rc = mnt_fs_set_bindsrc(self->fs, bindsrc))) {
+		PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
+		return rc;
 	}
-	if (source) {
-		if ((rc = mnt_fs_set_source(self->fs, source))) {
-			PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
-			return rc;
-		}
+	if (source && (rc = mnt_fs_set_source(self->fs, source))) {
+		PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
+		return rc;
 	}
-	if (root) {
-		if ((rc = mnt_fs_set_root(self->fs, root))) {
-			PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
-			return rc;
-		}
+	if (root && (rc = mnt_fs_set_root(self->fs, root))) {
+		PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
+		return rc;
 	}
-	if (target) {
-		if ((rc = mnt_fs_set_target(self->fs, target))) {
-			PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
-			return rc;
-		}
+	if (target && (rc = mnt_fs_set_target(self->fs, target))) {
+		PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
+		return rc;
 	}
-	if (fstype) {
-		if ((rc = mnt_fs_set_fstype(self->fs, fstype))) {
-			PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
-			return rc;
-		}
+	if (fstype && (rc = mnt_fs_set_fstype(self->fs, fstype))) {
+		PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
+		return rc;
 	}
-	if (options) {
-		if ((rc = mnt_fs_set_options(self->fs, options))) {
-			PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
-			return rc;
-		}
+	if (options && (rc = mnt_fs_set_options(self->fs, options))) {
+		PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
+		return rc;
 	}
-	if (attributes) {
-		if ((rc = mnt_fs_set_attributes(self->fs, attributes))) {
-			PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
-			return rc;
-		}
+	if (attributes && (rc = mnt_fs_set_attributes(self->fs, attributes))) {
+		PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
+		return rc;
 	}
+
 	mnt_fs_set_freq(self->fs, freq);
 	mnt_fs_set_passno(self->fs, passno);
 	self->fs->userdata = (void *)self; /* store a pointer to self, convenient when resetting the table */
@@ -714,6 +730,7 @@ static PyObject *Fs_copy_fs(FsObject *self, PyObject *args, PyObject *kwds)
 {
 	PyObject *dest = NULL;
 	char *kwlist[] = {"dest", NULL};
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|O", kwlist, &dest)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
@@ -721,8 +738,7 @@ static PyObject *Fs_copy_fs(FsObject *self, PyObject *args, PyObject *kwds)
 	if (PyObject_TypeCheck(dest, &FsType)) { /* existing object passed as argument */
 		if (!mnt_copy_fs(((FsObject *)dest)->fs, self->fs))
 			return NULL;
-		else
-			return (PyObject *)dest;
+		return (PyObject *)dest;
 	}
 	else if (dest == Py_None) {  /* create new object */
 		FsObject *result = PyObject_New(FsObject, &FsType);
@@ -730,10 +746,9 @@ static PyObject *Fs_copy_fs(FsObject *self, PyObject *args, PyObject *kwds)
 		result->fs->userdata = (void *)result; /* keep a pointer to encapsulating object */
 		return (PyObject *)result;
 	}
-	else {
-		PyErr_SetString(PyExc_TypeError, ARG_ERR);
-		return NULL;
-	}
+
+	PyErr_SetString(PyExc_TypeError, ARG_ERR);
+	return NULL;
 }
 
 
