@@ -21,15 +21,17 @@
 #include "pylibmount.h"
 
 static PyMemberDef Cxt_members[] = {
-	{NULL}
+	{ NULL }
 };
 
-static PyObject *Cxt_set_tables_errcb(CxtObject *self, PyObject *func, void *closure __attribute__((unused)))
+static PyObject *Cxt_set_tables_errcb(CxtObject *self, PyObject *func,
+				      void *closure __attribute__((unused)))
 {
 	if (!func) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return NULL;
 	}
+
 	if (!PyCallable_Check(func))
 		return NULL;
 	else {
@@ -49,36 +51,36 @@ static void Cxt_dealloc(CxtObject *self)
 	if (!(self->cxt->flags & MNT_FL_EXTERN_FS)) {
 		if (self->cxt->fs && self->cxt->fs->userdata)
 			Py_DECREF(self->cxt->fs->userdata);
-		else {
+		else
 			mnt_free_fs(self->cxt->fs);
-		}
-			self->cxt->fs = NULL;
+		self->cxt->fs = NULL;
 	}
 
 	if (self->cxt->fstab && !(self->cxt->flags & MNT_FL_EXTERN_FSTAB)) {
 		if (self->cxt->fstab->userdata)
 			Py_DECREF(self->cxt->fstab->userdata);
-		else {
+		else
 			pymnt_free_table(self->cxt->fstab);
-		}
-			self->cxt->fstab = NULL;
+		self->cxt->fstab = NULL;
 	}
 	if (self->cxt->mtab) {
 		if (self->cxt->mtab->userdata)
 			Py_DECREF(self->cxt->mtab->userdata);
-		else {
+		else
 			pymnt_free_table(self->cxt->mtab);
-		}
-			self->cxt->mtab = NULL;
+		self->cxt->mtab = NULL;
 	}
+
 	mnt_free_context(self->cxt);
-	self->ob_type->tp_free((PyObject*)self);
+	self->ob_type->tp_free((PyObject*) self);
 }
 
-static PyObject *Cxt_new(PyTypeObject *type, PyObject *args __attribute__((unused)),
-	       	PyObject *kwds __attribute__((unused)))
+static PyObject *Cxt_new(PyTypeObject *type,
+			 PyObject *args __attribute__((unused)),
+			 PyObject *kwds __attribute__((unused)))
 {
-	CxtObject *self = (CxtObject*)type->tp_alloc(type, 0);
+	CxtObject *self = (CxtObject*) type->tp_alloc(type, 0);
+
 	if (self) {
 		self->cxt = NULL;
 		self->table_errcb = NULL;
@@ -86,7 +88,11 @@ static PyObject *Cxt_new(PyTypeObject *type, PyObject *args __attribute__((unuse
 
 	return (PyObject *)self;
 }
-/* Note there is no pointer to encapsulating object needed here, since Cxt is on top of the Context(Table(Filesystem)) hierarchy */
+
+/*
+ * Note there is no pointer to encapsulating object needed here, since Cxt is
+ * on top of the Context(Table(Filesystem)) hierarchy
+ */
 #define Cxt_HELP "Cxt(source=None, target=None, fstype=None, options=None, mflags=0, fstype_pattern=None, options_pattern=None, fs=None, fstab=None, optsmode=0, syscall_status=1)"
 static int Cxt_init(CxtObject *self, PyObject *args, PyObject *kwds)
 {
@@ -97,81 +103,82 @@ static int Cxt_init(CxtObject *self, PyObject *args, PyObject *kwds)
 	FsObject *fs = NULL;
 	TabObject *fstab = NULL;
 	int rc = 0;
-	char *kwlist[] = {"source", "target", "fstype", "options", "mflags", "fstype_pattern",
-		"options_pattern", "fs", "fstab", "optsmode", "syscall_status"};
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|sssskssO!O!ii", kwlist, &source, &target, &fstype, &options, &mflags, &fstype_pattern, &options_pattern, &FsType, &fs, &TabType, &fstab, &optsmode, &syscall_status)) {
+	char *kwlist[] = {
+		"source", "target", "fstype",
+		"options", "mflags", "fstype_pattern",
+		"options_pattern", "fs", "fstab",
+		"optsmode", "syscall_status"
+	};
+
+	if (!PyArg_ParseTupleAndKeywords(
+				args, kwds, "|sssskssO!O!ii", kwlist,
+				&source, &target, &fstype, &options, &mflags,
+				&fstype_pattern, &options_pattern, &FsType, &fs,
+				&TabType, &fstab, &optsmode, &syscall_status)) {
 			PyErr_SetString(PyExc_TypeError, ARG_ERR);
 			return -1;
-			}
+	}
+
 	if (self->cxt)
 		mnt_free_context(self->cxt);
 
 	if ((self->cxt = mnt_new_context())) {
-		if (source) {
-			if ((rc = mnt_context_set_source(self->cxt, source))) {
-				UL_RaiseExc(-rc);
-				return -1;
-			}
+
+		if (source && (rc = mnt_context_set_source(self->cxt, source))) {
+			UL_RaiseExc(-rc);
+			return -1;
 		}
-		if (target) {
-			if ((rc = mnt_context_set_target(self->cxt, target))) {
-				UL_RaiseExc(-rc);
-				return -1;
-			}
+
+		if (target && (rc = mnt_context_set_target(self->cxt, target))) {
+			UL_RaiseExc(-rc);
+			return -1;
 		}
-		if (fstype) {
-			if ((rc = mnt_context_set_fstype(self->cxt, fstype))) {
-				UL_RaiseExc(-rc);
-				return -1;
-			}
+
+		if (fstype && (rc = mnt_context_set_fstype(self->cxt, fstype))) {
+			UL_RaiseExc(-rc);
+			return -1;
 		}
-		if (options) {
-			if ((rc = mnt_context_set_options(self->cxt, options))) {
-				UL_RaiseExc(-rc);
-				return -1;
-			}
+
+		if (options && (rc = mnt_context_set_options(self->cxt, options))) {
+			UL_RaiseExc(-rc);
+			return -1;
 		}
-		if (fstype_pattern) {
-			if ((rc = mnt_context_set_fstype_pattern(self->cxt, fstype_pattern))) {
-				UL_RaiseExc(-rc);
-				return -1;
-			}
+
+		if (fstype_pattern && (rc = mnt_context_set_fstype_pattern(self->cxt, fstype_pattern))) {
+			UL_RaiseExc(-rc);
+			return -1;
 		}
-		if (options_pattern) {
-			if ((rc = mnt_context_set_options_pattern(self->cxt, options_pattern))) {
-				UL_RaiseExc(-rc);
-				return -1;
-			}
+
+		if (options_pattern && (rc = mnt_context_set_options_pattern(self->cxt, options_pattern))) {
+			UL_RaiseExc(-rc);
+			return -1;
 		}
-		if (fs) {
-			if ((rc = mnt_context_set_fs(self->cxt, fs->fs))) {
-				UL_RaiseExc(-rc);
-				return -1;
-			}
+
+		if (fs && (rc = mnt_context_set_fs(self->cxt, fs->fs))) {
+			UL_RaiseExc(-rc);
+			return -1;
 		}
-		if (fstab) {
-			if ((rc = mnt_context_set_fstab(self->cxt, fstab->tab))) {
-				UL_RaiseExc(-rc);
-				return -1;
-			}
+
+		if (fstab && (rc = mnt_context_set_fstab(self->cxt, fstab->tab))) {
+			UL_RaiseExc(-rc);
+			return -1;
 		}
-		if (optsmode) {
-			if ((rc = mnt_context_set_optsmode(self->cxt, optsmode))) {
-				UL_RaiseExc(-rc);
-				return -1;
-			}
+
+		if (optsmode && (rc = mnt_context_set_optsmode(self->cxt, optsmode))) {
+			UL_RaiseExc(-rc);
+			return -1;
 		}
-		if (syscall_status) {
-			if ((rc = mnt_context_set_syscall_status(self->cxt, syscall_status))) {
-				UL_RaiseExc(-rc);
-				return -1;
-			}
+
+		if (syscall_status && (rc = mnt_context_set_syscall_status(self->cxt, syscall_status))) {
+			UL_RaiseExc(-rc);
+			return -1;
 		}
+
 		mnt_context_set_mflags(self->cxt, mflags);
 		mnt_context_set_optsmode(self->cxt, optsmode);
 		mnt_context_set_syscall_status(self->cxt, syscall_status);
-	}
-	else {
+
+	} else {
 		PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
 		return -1;
 	}
@@ -187,12 +194,14 @@ static PyObject *Cxt_enable_fake(CxtObject *self, PyObject *args, PyObject *kwds
 {
 	int rc;
 	int enable;
-	char *kwlist[] = {"enable", NULL};
+	char *kwlist[] = { "enable", NULL };
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &enable)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_enable_fake(self->cxt, enable)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_context_enable_fake(self->cxt, enable);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_enable_force_HELP "enable_force(enable)\n\n\
@@ -203,12 +212,14 @@ static PyObject *Cxt_enable_force(CxtObject *self, PyObject *args, PyObject *kwd
 {
 	int rc;
 	int enable;
-	char *kwlist[] = {"enable", NULL};
+	char *kwlist[] = { "enable", NULL };
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &enable)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_enable_force(self->cxt, enable)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_context_enable_force(self->cxt, enable);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_enable_lazy_HELP "enable_lazy(enable)\n\n\
@@ -219,12 +230,14 @@ static PyObject *Cxt_enable_lazy(CxtObject *self, PyObject *args, PyObject *kwds
 {
 	int rc;
 	int enable;
-	char *kwlist[] = {"enable", NULL};
+	char *kwlist[] = { "enable", NULL };
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &enable)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_enable_lazy(self->cxt, enable)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_context_enable_lazy(self->cxt, enable);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_enable_loopdel_HELP "enable_loopdel(enable)\n\n\
@@ -235,12 +248,14 @@ static PyObject *Cxt_enable_loopdel(CxtObject *self, PyObject *args, PyObject *k
 {
 	int rc;
 	int enable;
-	char *kwlist[] = {"enable", NULL};
+	char *kwlist[] = { "enable", NULL };
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &enable)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_enable_loopdel(self->cxt, enable)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_context_enable_loopdel(self->cxt, enable);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_enable_rdonly_umount_HELP "enable_rdonly_umount(enable)\n\n\
@@ -252,12 +267,14 @@ static PyObject *Cxt_enable_rdonly_umount(CxtObject *self, PyObject *args, PyObj
 {
 	int rc;
 	int enable;
-	char *kwlist[] = {"enable", NULL};
+	char *kwlist[] = { "enable", NULL };
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &enable)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_enable_rdonly_umount(self->cxt, enable)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_context_enable_rdonly_umount(self->cxt, enable);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_enable_sloppy_HELP "enable_sloppy(enable)\n\n\
@@ -268,12 +285,14 @@ static PyObject *Cxt_enable_sloppy(CxtObject *self, PyObject *args, PyObject *kw
 {
 	int rc;
 	int enable;
-	char *kwlist[] = {"enable", NULL};
+	char *kwlist[] = { "enable", NULL };
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &enable)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_enable_sloppy(self->cxt, enable)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_context_enable_sloppy(self->cxt, enable);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_enable_verbose_HELP "enable_verbose(enable)\n\n\
@@ -284,12 +303,14 @@ static PyObject *Cxt_enable_verbose(CxtObject *self, PyObject *args, PyObject *k
 {
 	int rc;
 	int enable;
-	char *kwlist[] = {"enable", NULL};
+	char *kwlist[] = { "enable", NULL };
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &enable)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_enable_verbose(self->cxt, enable)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_context_enable_verbose(self->cxt, enable);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_enable_fork_HELP "enable_fork(enable)\n\n\
@@ -302,11 +323,13 @@ static PyObject *Cxt_enable_fork(CxtObject *self, PyObject *args, PyObject *kwds
 	int rc;
 	int enable;
 	char *kwlist[] = {"enable", NULL};
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &enable)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_enable_fork(self->cxt, enable)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_context_enable_fork(self->cxt, enable);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_disable_canonicalize_HELP "disable_canonicalize(disable)\n\n\
@@ -322,11 +345,13 @@ static PyObject *Cxt_disable_canonicalize(CxtObject *self, PyObject *args, PyObj
 	int rc;
 	int disable;
 	char *kwlist[] = {"disable", NULL};
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &disable)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_disable_canonicalize(self->cxt, disable)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_context_disable_canonicalize(self->cxt, disable);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_disable_helpers_HELP "disable_helpers(disable)\n\n\
@@ -338,11 +363,13 @@ static PyObject *Cxt_disable_helpers(CxtObject *self, PyObject *args, PyObject *
 	int rc;
 	int disable;
 	char *kwlist[] = {"disable", NULL};
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &disable)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_disable_helpers(self->cxt, disable)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_context_disable_helpers(self->cxt, disable);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_disable_mtab_HELP "disable_mtab(disable)\n\n\
@@ -353,12 +380,14 @@ static PyObject *Cxt_disable_mtab(CxtObject *self, PyObject *args, PyObject *kwd
 {
 	int rc;
 	int disable;
-	char *kwlist[] = {"disable", NULL};
+	char *kwlist[] = {"disable", NULL };
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &disable)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_disable_mtab(self->cxt, disable)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_context_disable_mtab(self->cxt, disable);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_disable_swapmatch_HELP "disable_swapmatch(disable)\n\n\
@@ -370,18 +399,21 @@ static PyObject *Cxt_disable_swapmatch(CxtObject *self, PyObject *args, PyObject
 {
 	int rc;
 	int disable;
-	char *kwlist[] = {"disable", NULL};
+	char *kwlist[] = { "disable", NULL };
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &disable)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_disable_swapmatch(self->cxt, disable)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	rc = mnt_context_disable_swapmatch(self->cxt, disable);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 static int Cxt_set_source(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	char *source;
 	int rc = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -401,6 +433,7 @@ static int Cxt_set_mountdata(CxtObject *self, PyObject *value, void *closure __a
 {
 	char *mountdata;
 	int rc = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -420,6 +453,7 @@ static int Cxt_set_target(CxtObject *self, PyObject *value, void *closure __attr
 {
 	char * target;
 	int rc = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -439,6 +473,7 @@ static int Cxt_set_fstype(CxtObject *self, PyObject *value, void *closure __attr
 {
 	char * fstype;
 	int rc = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -458,6 +493,7 @@ static int Cxt_set_options(CxtObject *self, PyObject *value, void *closure __att
 {
 	char * options;
 	int rc = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -477,6 +513,7 @@ static int Cxt_set_fstype_pattern(CxtObject *self, PyObject *value, void *closur
 {
 	char * fstype_pattern;
 	int rc = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -496,6 +533,7 @@ static int Cxt_set_options_pattern(CxtObject *self, PyObject *value, void *closu
 {
 	char * options_pattern;
 	int rc = 0;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -514,6 +552,7 @@ static int Cxt_set_options_pattern(CxtObject *self, PyObject *value, void *closu
 static int Cxt_set_fs(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	FsObject *fs;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -531,6 +570,7 @@ static int Cxt_set_fs(CxtObject *self, PyObject *value, void *closure __attribut
 static int Cxt_set_fstab(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	TabObject *fstab;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -548,6 +588,7 @@ static int Cxt_set_fstab(CxtObject *self, PyObject *value, void *closure __attri
 static int Cxt_set_optsmode(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	int optsmode;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -563,6 +604,7 @@ static int Cxt_set_optsmode(CxtObject *self, PyObject *value, void *closure __at
 static int Cxt_set_syscall_status(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	int syscall_status;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -578,6 +620,7 @@ static int Cxt_set_syscall_status(CxtObject *self, PyObject *value, void *closur
 static int Cxt_set_user_mflags(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	unsigned long flags;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -594,6 +637,7 @@ static int Cxt_set_user_mflags(CxtObject *self, PyObject *value, void *closure _
 static int Cxt_set_mflags(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	unsigned long flags;
+
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
@@ -605,10 +649,12 @@ static int Cxt_set_mflags(CxtObject *self, PyObject *value, void *closure __attr
 	flags = PyLong_AsUnsignedLong(value);
 	return mnt_context_set_mflags(self->cxt, flags);
 }
+
 /* returns a flags integer (behaviour differs from C API) */
 static PyObject *Cxt_get_mflags(CxtObject *self)
 {
 	unsigned long flags;
+
 	PyObject *result;
 	mnt_context_get_mflags(self->cxt, &flags);
 	result = Py_BuildValue("k", flags);
@@ -622,6 +668,7 @@ static PyObject *Cxt_get_mflags(CxtObject *self)
 static PyObject *Cxt_get_user_mflags(CxtObject *self)
 {
 	unsigned long flags;
+
 	PyObject *result;
 	mnt_context_get_user_mflags(self->cxt, &flags);
 	result = Py_BuildValue("k", flags);
@@ -641,8 +688,9 @@ options, evaluate permissions or apply stuff from fstab.\n\
 Returns self or raises an exception in case of an error."
 static PyObject *Cxt_reset_status(CxtObject *self)
 {
-	int rc;
-	return (rc = mnt_context_reset_status(self->cxt)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	int rc = mnt_context_reset_status(self->cxt);
+
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_is_fake_HELP "is_fake()\n\n\
@@ -680,8 +728,8 @@ Enable/disable read-only remount on failed umount(2)\n\
 Returns self on success, raises an exception in case of error."
 static PyObject *Cxt_is_rdonly_umount(CxtObject *self)
 {
-	int rc;
-	return (rc = mnt_context_is_rdonly_umount(self->cxt)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	int rc = mnt_context_is_rdonly_umount(self->cxt);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_is_restricted_HELP "is_restricted()\n\n\
@@ -711,7 +759,9 @@ static PyObject *Cxt_is_fs_mounted(CxtObject *self, PyObject *args, PyObject *kw
 	char *kwlist[] = {"fs", "mounted", NULL};
 	FsObject *fs;
 	int mounted;
-	if (PyArg_ParseTupleAndKeywords(args, kwds, "O!i", kwlist, &FsType, &fs, &mounted)) {
+
+	if (PyArg_ParseTupleAndKeywords(args, kwds, "O!i", kwlist,
+					&FsType, &fs, &mounted)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
@@ -788,11 +838,14 @@ Returns self or raises an exception in case of an error."
 static PyObject *Cxt_apply_fstab(CxtObject *self)
 {
 	int rc;
+
 	if (!self->cxt->fs) {
 		PyErr_SetString(PyExc_AssertionError, NOFS_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_apply_fstab(self->cxt)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+
+	rc = mnt_context_apply_fstab(self->cxt);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_helper_executed_HELP "helper_executed()\n\n\
@@ -830,6 +883,7 @@ static PyObject *Cxt_get_fs(CxtObject *self)
 static PyObject *Cxt_get_fstab(CxtObject *self)
 {
 	struct libmnt_table *tab = NULL;
+
 	mnt_context_get_fstab(self->cxt, &tab);
 	if (!tab)
 		return NULL;
@@ -839,6 +893,7 @@ static PyObject *Cxt_get_fstab(CxtObject *self)
 static PyObject *Cxt_get_mtab(CxtObject *self)
 {
 	struct libmnt_table *tab = NULL;
+
 	mnt_context_get_mtab(self->cxt, &tab);
 	return PyObjectResultTab(tab);
 }
@@ -860,11 +915,13 @@ static PyObject *Cxt_get_table(CxtObject *self, PyObject *args, PyObject *kwds)
 {
 	char *filename;
 	struct libmnt_table *tab = NULL;
-	char *kwlist[] = {"filename", NULL};
+	char *kwlist[] = { "filename", NULL };
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &filename)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
+
 	mnt_context_get_table(self->cxt, filename, &tab);
 	return PyObjectResultTab(tab);
 }
@@ -904,11 +961,14 @@ or an exception in case of other errors."
 static PyObject *Cxt_do_mount(CxtObject *self)
 {
 	int rc;
+
 	if (!self->cxt->fs) {
 		PyErr_SetString(PyExc_AssertionError, NOFS_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_do_mount(self->cxt)) ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
+
+	rc = mnt_context_do_mount(self->cxt);
+	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
 #define Cxt_do_umount_HELP "do_umount()\n\n\
@@ -926,8 +986,8 @@ Returns self on success\n\
 or an exception in case of other errors."
 static PyObject *Cxt_do_umount(CxtObject *self)
 {
-	int rc;
-	return (rc = mnt_context_do_umount(self->cxt)) ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
+	int rc = mnt_context_do_umount(self->cxt);
+	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
 #define Cxt_mount_HELP "mount()\n\n\
@@ -956,11 +1016,14 @@ or an exception in case of other errors."
 static PyObject *Cxt_mount(CxtObject *self)
 {
 	int rc;
+
 	if (!self->cxt->fs) {
 		PyErr_SetString(PyExc_AssertionError, NOFS_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_mount(self->cxt)) ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
+
+	rc = mnt_context_mount(self->cxt);
+	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
 #define Cxt_umount_HELP "umount()\n\n\
@@ -983,8 +1046,8 @@ Returns self on success\n\
 or an exception in case of other errors."
 static PyObject *Cxt_umount(CxtObject *self)
 {
-	int rc;
-	return (rc = mnt_context_umount(self->cxt)) ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
+	int rc =  mnt_context_umount(self->cxt);
+	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
 #define Cxt_finalize_mount_HELP "finalize_mount()\n\n\
@@ -995,11 +1058,14 @@ Returns self or raises an exception in case of an error."
 static PyObject *Cxt_finalize_mount(CxtObject *self)
 {
 	int rc;
+
 	if (!self->cxt->fs) {
 		PyErr_SetString(PyExc_AssertionError, NOFS_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_finalize_mount(self->cxt)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+
+	rc = mnt_context_finalize_mount(self->cxt);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_prepare_umount_HELP "prepare_umount()\n\n\
@@ -1008,8 +1074,8 @@ Prepare context for umounting, unnecessary for Cxt.umount().\n\
 Returns self or raises an exception in case of an error."
 static PyObject *Cxt_prepare_umount(CxtObject *self)
 {
-	int rc;
-	return (rc = mnt_context_prepare_umount(self->cxt)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	int rc = mnt_context_prepare_umount(self->cxt);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_prepare_mount_HELP "prepare_mount()\n\n\
@@ -1019,11 +1085,14 @@ Returns self or raises an exception in case of an error."
 static PyObject *Cxt_prepare_mount(CxtObject *self)
 {
 	int rc;
+
 	if (!self->cxt->fs) {
 		PyErr_SetString(PyExc_AssertionError, NOFS_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_prepare_mount(self->cxt)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+
+	rc = mnt_context_prepare_mount(self->cxt);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_finalize_umount_HELP "finalize_umount()\n\n\
@@ -1033,8 +1102,8 @@ after Cxt.do_umount(). See also Cxt.syscall_status.\n\
 Returns self on success, raises LibmountError if target filesystem not found, or other exception on error."
 static PyObject *Cxt_finalize_umount(CxtObject *self)
 {
-	int rc;
-	return (rc = mnt_context_finalize_umount(self->cxt)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	int rc = mnt_context_finalize_umount(self->cxt);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_find_umount_fs_HELP "find_umount_fs(tgt, pfs)\n\n\
@@ -1042,14 +1111,17 @@ Returns self or raises an exception in case of an error."
 static PyObject *Cxt_find_umount_fs(CxtObject *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
-	char *kwlist[] = {"tgt", "pfs", NULL};
+	char *kwlist[] = { "tgt", "pfs", NULL };
 	char *tgt = NULL;
 	FsObject *fs;
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "sO!", kwlist, &tgt, &FsType, &fs)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_find_umount_fs(self->cxt, tgt, &fs->fs)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+
+	rc = mnt_context_find_umount_fs(self->cxt, tgt, &fs->fs);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_append_options_HELP "append_options(optstr)\n\n\
@@ -1059,11 +1131,14 @@ static PyObject *Cxt_append_options(CxtObject *self, PyObject *args, PyObject *k
 	int rc;
 	char *kwlist[] = {"optstr", NULL};
 	char *optstr = NULL;
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &optstr)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_append_options(self->cxt, optstr)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+
+	rc = mnt_context_append_options(self->cxt, optstr);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_helper_setopt_HELP "helper_setopt(c, arg)\n\n\
@@ -1077,12 +1152,15 @@ static PyObject *Cxt_helper_setopt(CxtObject *self, PyObject *args, PyObject *kw
 	int rc;
 	int c;
 	char *arg;
-	char *kwlist[] = {"c", "arg", NULL};
+	char *kwlist[] = { "c", "arg", NULL };
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "is", kwlist, &c, &arg)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_helper_setopt(self->cxt, c, arg)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+
+	rc = mnt_context_helper_setopt(self->cxt, c, arg);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 #define Cxt_init_helper_HELP "init_helper(action, flags)\n\n\
@@ -1101,11 +1179,14 @@ static PyObject *Cxt_init_helper(CxtObject *self, PyObject *args, PyObject *kwds
 	int rc;
 	int action, flags;
 	char *kwlist[] = {"action", "flags", NULL};
+
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "ii", kwlist, &action, &flags)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	return (rc = mnt_context_init_helper(self->cxt, action, flags)) ? UL_RaiseExc(-rc) : UL_IncRef(self);
+
+	rc = mnt_context_init_helper(self->cxt, action, flags);
+	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
 static PyGetSetDef Cxt_getseters[] = {
@@ -1180,10 +1261,10 @@ static PyMethodDef Cxt_methods[] = {
 static PyObject *Context_repr(CxtObject *self)
 {
 	return PyString_FromFormat("<libmount.Context object at %p, mtab_path=%s, utab_path=%s, restricted=%s>",
-		       	self,
+			self,
 			self->cxt->mtab_path ? self->cxt->mtab_path : "None",
 			self->cxt->utab_path ? self->cxt->utab_path : "None",
-		       	self->cxt->restricted ? "True" : "False");
+			self->cxt->restricted ? "True" : "False");
 }
 
 PyTypeObject CxtType = {
