@@ -36,7 +36,7 @@ def mnt_run_test(tss, argv):
 
 def test_replace(ts, argv):
 	fs = mnt.Fs()
-	tb = mnt.Tab()
+	tb = mnt.Table()
 
 	if (len(argv) < 3):
 		return -1

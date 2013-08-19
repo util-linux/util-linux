@@ -20,11 +20,11 @@
  */
 #include "pylibmount.h"
 
-static PyMemberDef Cxt_members[] = {
+static PyMemberDef Context_members[] = {
 	{ NULL }
 };
 
-static PyObject *Cxt_set_tables_errcb(CxtObject *self, PyObject *func,
+static PyObject *Context_set_tables_errcb(ContextObjext *self, PyObject *func,
 				      void *closure __attribute__((unused)))
 {
 	if (!func) {
@@ -43,7 +43,7 @@ static PyObject *Cxt_set_tables_errcb(CxtObject *self, PyObject *func,
 	return UL_IncRef(self);
 }
 
-static void Cxt_dealloc(CxtObject *self)
+static void Context_dealloc(ContextObjext *self)
 {
 	if (!self->cxt) /* if init fails */
 		return;
@@ -75,11 +75,11 @@ static void Cxt_dealloc(CxtObject *self)
 	self->ob_type->tp_free((PyObject*) self);
 }
 
-static PyObject *Cxt_new(PyTypeObject *type,
+static PyObject *Context_new(PyTypeObject *type,
 			 PyObject *args __attribute__((unused)),
 			 PyObject *kwds __attribute__((unused)))
 {
-	CxtObject *self = (CxtObject*) type->tp_alloc(type, 0);
+	ContextObjext *self = (ContextObjext*) type->tp_alloc(type, 0);
 
 	if (self) {
 		self->cxt = NULL;
@@ -93,15 +93,15 @@ static PyObject *Cxt_new(PyTypeObject *type,
  * Note there is no pointer to encapsulating object needed here, since Cxt is
  * on top of the Context(Table(Filesystem)) hierarchy
  */
-#define Cxt_HELP "Cxt(source=None, target=None, fstype=None, options=None, mflags=0, fstype_pattern=None, options_pattern=None, fs=None, fstab=None, optsmode=0, syscall_status=1)"
-static int Cxt_init(CxtObject *self, PyObject *args, PyObject *kwds)
+#define Context_HELP "Cxt(source=None, target=None, fstype=None, options=None, mflags=0, fstype_pattern=None, options_pattern=None, fs=None, fstab=None, optsmode=0, syscall_status=1)"
+static int Context_init(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	char *source = NULL, *target = NULL, *fstype = NULL;
 	char *options = NULL, *fstype_pattern = NULL, *options_pattern = NULL;
 	unsigned long mflags = 0;
 	int optsmode = 0, syscall_status = 1;
 	FsObject *fs = NULL;
-	TabObject *fstab = NULL;
+	TableObject *fstab = NULL;
 	int rc = 0;
 	char *kwlist[] = {
 		"source", "target", "fstype",
@@ -114,7 +114,7 @@ static int Cxt_init(CxtObject *self, PyObject *args, PyObject *kwds)
 				args, kwds, "|sssskssO!O!ii", kwlist,
 				&source, &target, &fstype, &options, &mflags,
 				&fstype_pattern, &options_pattern, &FsType, &fs,
-				&TabType, &fstab, &optsmode, &syscall_status)) {
+				&TableType, &fstab, &optsmode, &syscall_status)) {
 			PyErr_SetString(PyExc_TypeError, ARG_ERR);
 			return -1;
 	}
@@ -186,11 +186,11 @@ static int Cxt_init(CxtObject *self, PyObject *args, PyObject *kwds)
 	return 0;
 }
 
-#define Cxt_enable_fake_HELP "enable_fake(enable)\n\n\
+#define Context_enable_fake_HELP "enable_fake(enable)\n\n\
 Enable/disable fake mounting (see mount(8) man page, option -f).\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_enable_fake(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_enable_fake(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	int enable;
@@ -204,11 +204,11 @@ static PyObject *Cxt_enable_fake(CxtObject *self, PyObject *args, PyObject *kwds
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_enable_force_HELP "enable_force(enable)\n\n\
+#define Context_enable_force_HELP "enable_force(enable)\n\n\
 Enable/disable force umounting (see umount(8) man page, option -f).\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_enable_force(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_enable_force(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	int enable;
@@ -222,11 +222,11 @@ static PyObject *Cxt_enable_force(CxtObject *self, PyObject *args, PyObject *kwd
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_enable_lazy_HELP "enable_lazy(enable)\n\n\
+#define Context_enable_lazy_HELP "enable_lazy(enable)\n\n\
 Enable/disable lazy umount (see umount(8) man page, option -l).\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_enable_lazy(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_enable_lazy(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	int enable;
@@ -240,11 +240,11 @@ static PyObject *Cxt_enable_lazy(CxtObject *self, PyObject *args, PyObject *kwds
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_enable_loopdel_HELP "enable_loopdel(enable)\n\n\
+#define Context_enable_loopdel_HELP "enable_loopdel(enable)\n\n\
 Enable/disable loop delete (destroy) after umount (see umount(8), option -d)\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_enable_loopdel(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_enable_loopdel(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	int enable;
@@ -258,12 +258,12 @@ static PyObject *Cxt_enable_loopdel(CxtObject *self, PyObject *args, PyObject *k
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_enable_rdonly_umount_HELP "enable_rdonly_umount(enable)\n\n\
+#define Context_enable_rdonly_umount_HELP "enable_rdonly_umount(enable)\n\n\
 Enable/disable read-only remount on failed umount(2)\n\
 (see umount(8) man page, option -r).\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_enable_rdonly_umount(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_enable_rdonly_umount(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	int enable;
@@ -277,11 +277,11 @@ static PyObject *Cxt_enable_rdonly_umount(CxtObject *self, PyObject *args, PyObj
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_enable_sloppy_HELP "enable_sloppy(enable)\n\n\
+#define Context_enable_sloppy_HELP "enable_sloppy(enable)\n\n\
 Set/unset sloppy mounting (see mount(8) man page, option -s).\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_enable_sloppy(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_enable_sloppy(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	int enable;
@@ -295,11 +295,11 @@ static PyObject *Cxt_enable_sloppy(CxtObject *self, PyObject *args, PyObject *kw
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_enable_verbose_HELP "enable_verbose(enable)\n\n\
+#define Context_enable_verbose_HELP "enable_verbose(enable)\n\n\
 Enable/disable verbose output (TODO: not implemented yet)\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_enable_verbose(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_enable_verbose(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	int enable;
@@ -313,12 +313,12 @@ static PyObject *Cxt_enable_verbose(CxtObject *self, PyObject *args, PyObject *k
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_enable_fork_HELP "enable_fork(enable)\n\n\
+#define Context_enable_fork_HELP "enable_fork(enable)\n\n\
 Enable/disable fork(2) call in Cxt.next_mount()(not yet implemented) (see mount(8) man\n\
 page, option -F).\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_enable_fork(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_enable_fork(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	int enable;
@@ -332,7 +332,7 @@ static PyObject *Cxt_enable_fork(CxtObject *self, PyObject *args, PyObject *kwds
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_disable_canonicalize_HELP "disable_canonicalize(disable)\n\n\
+#define Context_disable_canonicalize_HELP "disable_canonicalize(disable)\n\n\
 Enable/disable paths canonicalization and tags evaluation. The libmount context\n\
 canonicalies paths when search in fstab and when prepare source and target paths\n\
 for mount(2) syscall.\n\
@@ -340,7 +340,7 @@ for mount(2) syscall.\n\
 This fuction has effect to the private (within context) fstab instance only\n\
 (see Cxt.fstab).\n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_disable_canonicalize(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_disable_canonicalize(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	int disable;
@@ -354,11 +354,11 @@ static PyObject *Cxt_disable_canonicalize(CxtObject *self, PyObject *args, PyObj
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_disable_helpers_HELP "disable_helpers(disable)\n\n\
+#define Context_disable_helpers_HELP "disable_helpers(disable)\n\n\
 Enable/disable /sbin/[u]mount.* helpers (see mount(8) man page, option -i).\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_disable_helpers(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_disable_helpers(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	int disable;
@@ -372,11 +372,11 @@ static PyObject *Cxt_disable_helpers(CxtObject *self, PyObject *args, PyObject *
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_disable_mtab_HELP "disable_mtab(disable)\n\n\
+#define Context_disable_mtab_HELP "disable_mtab(disable)\n\n\
 Disable/enable mtab update (see mount(8) man page, option -n).\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_disable_mtab(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_disable_mtab(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	int disable;
@@ -390,12 +390,12 @@ static PyObject *Cxt_disable_mtab(CxtObject *self, PyObject *args, PyObject *kwd
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_disable_swapmatch_HELP "disable_swapmatch(disable)\n\n\
+#define Context_disable_swapmatch_HELP "disable_swapmatch(disable)\n\n\
 Disable/enable swap between source and target for mount(8) if only one path\n\
 is specified.\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_disable_swapmatch(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_disable_swapmatch(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	int disable;
@@ -409,7 +409,7 @@ static PyObject *Cxt_disable_swapmatch(CxtObject *self, PyObject *args, PyObject
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-static int Cxt_set_source(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Context_set_source(ContextObjext *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	char *source;
 	int rc = 0;
@@ -429,7 +429,7 @@ static int Cxt_set_source(CxtObject *self, PyObject *value, void *closure __attr
 	return 0;
 }
 
-static int Cxt_set_mountdata(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Context_set_mountdata(ContextObjext *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	char *mountdata;
 	int rc = 0;
@@ -449,7 +449,7 @@ static int Cxt_set_mountdata(CxtObject *self, PyObject *value, void *closure __a
 	return 0;
 }
 
-static int Cxt_set_target(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Context_set_target(ContextObjext *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	char * target;
 	int rc = 0;
@@ -469,7 +469,7 @@ static int Cxt_set_target(CxtObject *self, PyObject *value, void *closure __attr
 	return 0;
 }
 
-static int Cxt_set_fstype(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Context_set_fstype(ContextObjext *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	char * fstype;
 	int rc = 0;
@@ -489,7 +489,7 @@ static int Cxt_set_fstype(CxtObject *self, PyObject *value, void *closure __attr
 	return 0;
 }
 
-static int Cxt_set_options(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Context_set_options(ContextObjext *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	char * options;
 	int rc = 0;
@@ -509,7 +509,7 @@ static int Cxt_set_options(CxtObject *self, PyObject *value, void *closure __att
 	return 0;
 }
 
-static int Cxt_set_fstype_pattern(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Context_set_fstype_pattern(ContextObjext *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	char * fstype_pattern;
 	int rc = 0;
@@ -529,7 +529,7 @@ static int Cxt_set_fstype_pattern(CxtObject *self, PyObject *value, void *closur
 	return 0;
 }
 
-static int Cxt_set_options_pattern(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Context_set_options_pattern(ContextObjext *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	char * options_pattern;
 	int rc = 0;
@@ -549,7 +549,7 @@ static int Cxt_set_options_pattern(CxtObject *self, PyObject *value, void *closu
 	return 0;
 }
 
-static int Cxt_set_fs(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Context_set_fs(ContextObjext *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	FsObject *fs;
 
@@ -567,15 +567,15 @@ static int Cxt_set_fs(CxtObject *self, PyObject *value, void *closure __attribut
 	return mnt_context_set_fs(self->cxt, fs->fs);
 }
 
-static int Cxt_set_fstab(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Context_set_fstab(ContextObjext *self, PyObject *value, void *closure __attribute__((unused)))
 {
-	TabObject *fstab;
+	TableObject *fstab;
 
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
 	}
-	if (!PyArg_Parse(value, "O!", &TabType, &fstab)) {
+	if (!PyArg_Parse(value, "O!", &TableType, &fstab)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return -1;
 	}
@@ -585,7 +585,7 @@ static int Cxt_set_fstab(CxtObject *self, PyObject *value, void *closure __attri
 	return mnt_context_set_fstab(self->cxt, fstab->tab);
 }
 
-static int Cxt_set_optsmode(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Context_set_optsmode(ContextObjext *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	int optsmode;
 
@@ -601,7 +601,7 @@ static int Cxt_set_optsmode(CxtObject *self, PyObject *value, void *closure __at
 	return mnt_context_set_optsmode(self->cxt, optsmode);
 }
 
-static int Cxt_set_syscall_status(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Context_set_syscall_status(ContextObjext *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	int syscall_status;
 
@@ -617,7 +617,7 @@ static int Cxt_set_syscall_status(CxtObject *self, PyObject *value, void *closur
 	return mnt_context_set_syscall_status(self->cxt, syscall_status);
 }
 
-static int Cxt_set_user_mflags(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Context_set_user_mflags(ContextObjext *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	unsigned long flags;
 
@@ -634,7 +634,7 @@ static int Cxt_set_user_mflags(CxtObject *self, PyObject *value, void *closure _
 
 }
 
-static int Cxt_set_mflags(CxtObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Context_set_mflags(ContextObjext *self, PyObject *value, void *closure __attribute__((unused)))
 {
 	unsigned long flags;
 
@@ -651,7 +651,7 @@ static int Cxt_set_mflags(CxtObject *self, PyObject *value, void *closure __attr
 }
 
 /* returns a flags integer (behaviour differs from C API) */
-static PyObject *Cxt_get_mflags(CxtObject *self)
+static PyObject *Context_get_mflags(ContextObjext *self)
 {
 	unsigned long flags;
 
@@ -665,7 +665,7 @@ static PyObject *Cxt_get_mflags(CxtObject *self)
 
 }
 /* returns a flags integer (behaviour differs from C API) */
-static PyObject *Cxt_get_user_mflags(CxtObject *self)
+static PyObject *Context_get_user_mflags(ContextObjext *self)
 {
 	unsigned long flags;
 
@@ -678,7 +678,7 @@ static PyObject *Cxt_get_user_mflags(CxtObject *self)
 	return result;
 
 }
-#define Cxt_reset_status_HELP "reset_status()\n\n\
+#define Context_reset_status_HELP "reset_status()\n\n\
 Resets mount(2) and mount.type statuses, so Cxt.do_mount() or\n\
 Cxt.do_umount() could be again called with the same settings.\n\
 \n\
@@ -686,75 +686,75 @@ BE CAREFUL -- after this soft reset the libmount will NOT parse mount\n\
 options, evaluate permissions or apply stuff from fstab.\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_reset_status(CxtObject *self)
+static PyObject *Context_reset_status(ContextObjext *self)
 {
 	int rc = mnt_context_reset_status(self->cxt);
 
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_is_fake_HELP "is_fake()\n\n\
+#define Context_is_fake_HELP "is_fake()\n\n\
 Returns True if fake flag is enabled or False"
-static PyObject *Cxt_is_fake(CxtObject *self)
+static PyObject *Context_is_fake(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_fake(self->cxt));
 }
 
-#define Cxt_is_force_HELP "is_force()\n\n\
+#define Context_is_force_HELP "is_force()\n\n\
 Returns True if force umounting flag is enabled or False"
-static PyObject *Cxt_is_force(CxtObject *self)
+static PyObject *Context_is_force(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_force(self->cxt));
 }
 
-#define Cxt_is_lazy_HELP "is_lazy()\n\n\
+#define Context_is_lazy_HELP "is_lazy()\n\n\
 Returns True if lazy umount is enabled or False"
-static PyObject *Cxt_is_lazy(CxtObject *self)
+static PyObject *Context_is_lazy(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_lazy(self->cxt));
 }
 
-#define Cxt_is_nomtab_HELP "is_nomtab()\n\n\
+#define Context_is_nomtab_HELP "is_nomtab()\n\n\
 Returns True if no-mtab is enabled or False"
-static PyObject *Cxt_is_nomtab(CxtObject *self)
+static PyObject *Context_is_nomtab(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_nomtab(self->cxt));
 }
 
-#define Cxt_is_rdonly_umount_HELP "is_rdonly_umount()\n\n\
+#define Context_is_rdonly_umount_HELP "is_rdonly_umount()\n\n\
 Enable/disable read-only remount on failed umount(2)\n\
 (see umount(8) man page, option -r).\n\
 \n\
 Returns self on success, raises an exception in case of error."
-static PyObject *Cxt_is_rdonly_umount(CxtObject *self)
+static PyObject *Context_is_rdonly_umount(ContextObjext *self)
 {
 	int rc = mnt_context_is_rdonly_umount(self->cxt);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_is_restricted_HELP "is_restricted()\n\n\
+#define Context_is_restricted_HELP "is_restricted()\n\n\
 Returns False for unrestricted mount (user is root), or True for non-root mounts"
-static PyObject *Cxt_is_restricted(CxtObject *self)
+static PyObject *Context_is_restricted(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_restricted(self->cxt));
 }
 
-#define Cxt_is_sloppy_HELP "is_sloppy()\n\n\
+#define Context_is_sloppy_HELP "is_sloppy()\n\n\
 Returns True if sloppy flag is enabled or False"
-static PyObject *Cxt_is_sloppy(CxtObject *self)
+static PyObject *Context_is_sloppy(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_sloppy(self->cxt));
 }
 
-#define Cxt_is_verbose_HELP "is_verbose()\n\n\
+#define Context_is_verbose_HELP "is_verbose()\n\n\
 Returns True if verbose flag is enabled or False"
-static PyObject *Cxt_is_verbose(CxtObject *self)
+static PyObject *Context_is_verbose(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_verbose(self->cxt));
 }
-#define Cxt_is_fs_mounted_HELP "is_fs_mounted(fs, mounted)\n\n\
+#define Context_is_fs_mounted_HELP "is_fs_mounted(fs, mounted)\n\n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_is_fs_mounted(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_is_fs_mounted(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	char *kwlist[] = {"fs", "mounted", NULL};
 	FsObject *fs;
@@ -768,74 +768,74 @@ static PyObject *Cxt_is_fs_mounted(CxtObject *self, PyObject *args, PyObject *kw
 	return PyBool_FromLong(mnt_context_is_fs_mounted(self->cxt, fs->fs, &mounted));
 }
 
-#define Cxt_is_child_HELP "is_child()\n\n\
+#define Context_is_child_HELP "is_child()\n\n\
 Returns True if mount -F enabled and the current context is child, or False"
-static PyObject *Cxt_is_child(CxtObject *self)
+static PyObject *Context_is_child(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_child(self->cxt));
 }
 
-#define Cxt_is_fork_HELP "is_fork()\n\n\
+#define Context_is_fork_HELP "is_fork()\n\n\
 Returns True if fork (mount -F) is enabled or False"
-static PyObject *Cxt_is_fork(CxtObject *self)
+static PyObject *Context_is_fork(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_fork(self->cxt));
 }
 
-#define Cxt_is_parent_HELP "is_parent()\n\n\
+#define Context_is_parent_HELP "is_parent()\n\n\
 Returns True if mount -F enabled and the current context is parent, or False"
-static PyObject *Cxt_is_parent(CxtObject *self)
+static PyObject *Context_is_parent(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_parent(self->cxt));
 }
 
-#define Cxt_is_loopdel_HELP "is_loopdel()\n\n\
+#define Context_is_loopdel_HELP "is_loopdel()\n\n\
 Returns True if loop device should be deleted after umount (umount -d) or False."
-static PyObject *Cxt_is_loopdel(CxtObject *self)
+static PyObject *Context_is_loopdel(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_loopdel(self->cxt));
 }
 
-#define Cxt_is_nocanonicalize_HELP "is_nocanonicalize()\n\n\
+#define Context_is_nocanonicalize_HELP "is_nocanonicalize()\n\n\
 Returns True if no-canonicalize mode enabled or False."
-static PyObject *Cxt_is_nocanonicalize(CxtObject *self)
+static PyObject *Context_is_nocanonicalize(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_nocanonicalize(self->cxt));
 }
 
-#define Cxt_is_nohelpers_HELP "is_nohelpers()\n\n\
+#define Context_is_nohelpers_HELP "is_nohelpers()\n\n\
 Returns True if helpers are disabled (mount -i) or False."
-static PyObject *Cxt_is_nohelpers(CxtObject *self)
+static PyObject *Context_is_nohelpers(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_nohelpers(self->cxt));
 }
 
-#define Cxt_syscall_called_HELP "syscall_called()\n\n\
+#define Context_syscall_called_HELP "syscall_called()\n\n\
 Returns True if mount(2) syscall has been called, or False."
-static PyObject *Cxt_syscall_called(CxtObject *self)
+static PyObject *Context_syscall_called(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_syscall_called(self->cxt));
 }
 
-#define Cxt_is_swapmatch_HELP "is_swapmatch()\n\n\
+#define Context_is_swapmatch_HELP "is_swapmatch()\n\n\
 Returns True if swap between source and target is allowed (default is True) or False."
-static PyObject *Cxt_is_swapmatch(CxtObject *self)
+static PyObject *Context_is_swapmatch(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_swapmatch(self->cxt));
 }
 
-#define Cxt_tab_applied_HELP "tab_applied()\n\n\
+#define Context_tab_applied_HELP "tab_applied()\n\n\
 Returns True if fstab (or mtab) has been applied to the context, False otherwise."
-static PyObject *Cxt_tab_applied(CxtObject *self)
+static PyObject *Context_tab_applied(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_tab_applied(self->cxt));
 }
 
-#define Cxt_apply_fstab_HELP "apply_fstab()\n\n\
+#define Context_apply_fstab_HELP "apply_fstab()\n\n\
 This function is optional.\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_apply_fstab(CxtObject *self)
+static PyObject *Context_apply_fstab(ContextObjext *self)
 {
 	int rc;
 
@@ -848,39 +848,39 @@ static PyObject *Cxt_apply_fstab(CxtObject *self)
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_helper_executed_HELP "helper_executed()\n\n\
+#define Context_helper_executed_HELP "helper_executed()\n\n\
 Returns True if mount.type helper has been executed, or False."
-static PyObject *Cxt_helper_executed(CxtObject *self)
+static PyObject *Context_helper_executed(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_helper_executed(self->cxt));
 }
 
-static PyObject *Cxt_get_source(CxtObject *self)
+static PyObject *Context_get_source(ContextObjext *self)
 {
 	return PyObjectResultStr(mnt_context_get_source(self->cxt));
 }
 
-static PyObject *Cxt_get_target(CxtObject *self)
+static PyObject *Context_get_target(ContextObjext *self)
 {
 	return PyObjectResultStr(mnt_context_get_target(self->cxt));
 }
 
-static PyObject *Cxt_get_options(CxtObject *self)
+static PyObject *Context_get_options(ContextObjext *self)
 {
 	return PyObjectResultStr(mnt_context_get_options(self->cxt));
 }
 
-static PyObject *Cxt_get_fstype(CxtObject *self)
+static PyObject *Context_get_fstype(ContextObjext *self)
 {
 	return PyObjectResultStr(mnt_context_get_fstype(self->cxt));
 }
 
-static PyObject *Cxt_get_fs(CxtObject *self)
+static PyObject *Context_get_fs(ContextObjext *self)
 {
 	return PyObjectResultFs(mnt_context_get_fs(self->cxt));
 }
 
-static PyObject *Cxt_get_fstab(CxtObject *self)
+static PyObject *Context_get_fstab(ContextObjext *self)
 {
 	struct libmnt_table *tab = NULL;
 
@@ -890,14 +890,14 @@ static PyObject *Cxt_get_fstab(CxtObject *self)
 	return PyObjectResultTab(tab);
 }
 
-static PyObject *Cxt_get_mtab(CxtObject *self)
+static PyObject *Context_get_mtab(ContextObjext *self)
 {
 	struct libmnt_table *tab = NULL;
 
 	mnt_context_get_mtab(self->cxt, &tab);
 	return PyObjectResultTab(tab);
 }
-#define Cxt_get_table_HELP "get_table(filename)\n\n\
+#define Context_get_table_HELP "get_table(filename)\n\n\
 This function allocates a new table and parses the file. The parser error\n\
 callback and cache for tags and paths is set according to the cxt setting.\n\
 See also Tab.parse_file().\n\
@@ -911,7 +911,7 @@ The getters return a new reference to the result.\n\
 \n\
 Returns self or raises an exception in case of an error."
 /* output differs from the C API */
-static PyObject *Cxt_get_table(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_get_table(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	char *filename;
 	struct libmnt_table *tab = NULL;
@@ -926,22 +926,22 @@ static PyObject *Cxt_get_table(CxtObject *self, PyObject *args, PyObject *kwds)
 	return PyObjectResultTab(tab);
 }
 
-static PyObject *Cxt_get_optsmode(CxtObject *self)
+static PyObject *Context_get_optsmode(ContextObjext *self)
 {
 	return PyObjectResultInt(mnt_context_get_optsmode(self->cxt));
 }
 
-static PyObject *Cxt_get_status(CxtObject *self)
+static PyObject *Context_get_status(ContextObjext *self)
 {
 	return PyObjectResultInt(mnt_context_get_status(self->cxt));
 }
 
-static PyObject *Cxt_get_syscall_errno(CxtObject *self)
+static PyObject *Context_get_syscall_errno(ContextObjext *self)
 {
 	return PyObjectResultInt(mnt_context_get_syscall_errno(self->cxt));
 }
 
-#define Cxt_do_mount_HELP "do_mount()\n\n\
+#define Context_do_mount_HELP "do_mount()\n\n\
 Call mount(2) or mount.type helper. Unnecessary for Cxt.mount().\n\
 \n\
 Note that this function could be called only once. If you want to mount\n\
@@ -958,7 +958,7 @@ Check Cxt.status after error!\n\
 \n\
 Returns self on success\n\
 or an exception in case of other errors."
-static PyObject *Cxt_do_mount(CxtObject *self)
+static PyObject *Context_do_mount(ContextObjext *self)
 {
 	int rc;
 
@@ -971,7 +971,7 @@ static PyObject *Cxt_do_mount(CxtObject *self)
 	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
-#define Cxt_do_umount_HELP "do_umount()\n\n\
+#define Context_do_umount_HELP "do_umount()\n\n\
 Umount filesystem by umount(2) or fork()+exec(/sbin/umount.type).\n\
 Unnecessary for Cxt.umount().\n\
 \n\
@@ -984,13 +984,13 @@ Check Cxt.status after error!\n\
 \n\
 Returns self on success\n\
 or an exception in case of other errors."
-static PyObject *Cxt_do_umount(CxtObject *self)
+static PyObject *Context_do_umount(ContextObjext *self)
 {
 	int rc = mnt_context_do_umount(self->cxt);
 	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
-#define Cxt_mount_HELP "mount()\n\n\
+#define Context_mount_HELP "mount()\n\n\
 High-level, mounts filesystem by mount(2) or fork()+exec(/sbin/mount.type).\n\
 \n\
 This is similar to:\n\
@@ -1013,7 +1013,7 @@ Check Cxt.status after error!\n\
 \n\
 Returns self on success\n\
 or an exception in case of other errors."
-static PyObject *Cxt_mount(CxtObject *self)
+static PyObject *Context_mount(ContextObjext *self)
 {
 	int rc;
 
@@ -1026,7 +1026,7 @@ static PyObject *Cxt_mount(CxtObject *self)
 	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
-#define Cxt_umount_HELP "umount()\n\n\
+#define Context_umount_HELP "umount()\n\n\
 High-level, umounts filesystem by umount(2) or fork()+exec(/sbin/umount.type).\n\
 \n\
 This is similar to:\n\
@@ -1044,18 +1044,18 @@ Check Cxt.status after error!\n\
 \n\
 Returns self on success\n\
 or an exception in case of other errors."
-static PyObject *Cxt_umount(CxtObject *self)
+static PyObject *Context_umount(ContextObjext *self)
 {
 	int rc =  mnt_context_umount(self->cxt);
 	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
-#define Cxt_finalize_mount_HELP "finalize_mount()\n\n\
+#define Context_finalize_mount_HELP "finalize_mount()\n\n\
 Mtab update, etc. Unnecessary for Cxt.mount(), but should be called\n\
 after Cxt.do_mount(). See also Cxt.syscall_status.\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_finalize_mount(CxtObject *self)
+static PyObject *Context_finalize_mount(ContextObjext *self)
 {
 	int rc;
 
@@ -1068,21 +1068,21 @@ static PyObject *Cxt_finalize_mount(CxtObject *self)
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_prepare_umount_HELP "prepare_umount()\n\n\
+#define Context_prepare_umount_HELP "prepare_umount()\n\n\
 Prepare context for umounting, unnecessary for Cxt.umount().\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_prepare_umount(CxtObject *self)
+static PyObject *Context_prepare_umount(ContextObjext *self)
 {
 	int rc = mnt_context_prepare_umount(self->cxt);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_prepare_mount_HELP "prepare_mount()\n\n\
+#define Context_prepare_mount_HELP "prepare_mount()\n\n\
 Prepare context for mounting, unnecessary for Cxt.mount().\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_prepare_mount(CxtObject *self)
+static PyObject *Context_prepare_mount(ContextObjext *self)
 {
 	int rc;
 
@@ -1095,20 +1095,20 @@ static PyObject *Cxt_prepare_mount(CxtObject *self)
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_finalize_umount_HELP "finalize_umount()\n\n\
+#define Context_finalize_umount_HELP "finalize_umount()\n\n\
 Mtab update, etc. Unnecessary for Cxt.umount(), but should be called\n\
 after Cxt.do_umount(). See also Cxt.syscall_status.\n\
 \n\
 Returns self on success, raises LibmountError if target filesystem not found, or other exception on error."
-static PyObject *Cxt_finalize_umount(CxtObject *self)
+static PyObject *Context_finalize_umount(ContextObjext *self)
 {
 	int rc = mnt_context_finalize_umount(self->cxt);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_find_umount_fs_HELP "find_umount_fs(tgt, pfs)\n\n\
+#define Context_find_umount_fs_HELP "find_umount_fs(tgt, pfs)\n\n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_find_umount_fs(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_find_umount_fs(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	char *kwlist[] = { "tgt", "pfs", NULL };
@@ -1124,9 +1124,9 @@ static PyObject *Cxt_find_umount_fs(CxtObject *self, PyObject *args, PyObject *k
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_append_options_HELP "append_options(optstr)\n\n\
+#define Context_append_options_HELP "append_options(optstr)\n\n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_append_options(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_append_options(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	char *kwlist[] = {"optstr", NULL};
@@ -1141,13 +1141,13 @@ static PyObject *Cxt_append_options(CxtObject *self, PyObject *args, PyObject *k
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_helper_setopt_HELP "helper_setopt(c, arg)\n\n\
+#define Context_helper_setopt_HELP "helper_setopt(c, arg)\n\n\
 This function applies [u]mount.type command line option (for example parsed\n\
 by getopt or getopt_long) to cxt. All unknown options are ignored and\n\
 then ValueError is raised.\n\
 \n\
 Returns self on success, raises ValueError if c is unknown or other exception in case of an error."
-static PyObject *Cxt_helper_setopt(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_helper_setopt(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	int c;
@@ -1163,7 +1163,7 @@ static PyObject *Cxt_helper_setopt(CxtObject *self, PyObject *args, PyObject *kw
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Cxt_init_helper_HELP "init_helper(action, flags)\n\n\
+#define Context_init_helper_HELP "init_helper(action, flags)\n\n\
 This function infors libmount that used from [u]mount.type helper.\n\
 \n\
 The function also calls Cxt.disable_helpers() to avoid recursive\n\
@@ -1174,7 +1174,7 @@ feature by:\n\
 Cxt.disable_helpers(False);\n\
 \n\
 Returns self or raises an exception in case of an error."
-static PyObject *Cxt_init_helper(CxtObject *self, PyObject *args, PyObject *kwds)
+static PyObject *Context_init_helper(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
 	int action, flags;
@@ -1189,76 +1189,76 @@ static PyObject *Cxt_init_helper(CxtObject *self, PyObject *args, PyObject *kwds
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-static PyGetSetDef Cxt_getseters[] = {
-	{"tables_errcb",	NULL, (setter)Cxt_set_tables_errcb, "error callback function", NULL},
-	{"status",		(getter)Cxt_get_status, NULL, "status", NULL},
-	{"source",		(getter)Cxt_get_source, (setter)Cxt_set_source, "source", NULL},
-	{"target",		(getter)Cxt_get_target, (setter)Cxt_set_target, "target", NULL},
-	{"fstype",		(getter)Cxt_get_fstype, (setter)Cxt_set_fstype, "fstype", NULL},
-	{"options",		(getter)Cxt_get_options, (setter)Cxt_set_options, "options", NULL},
-	{"mflags",		(getter)Cxt_get_mflags, (setter)Cxt_set_mflags, "mflags", NULL},
-	{"mountdata",		NULL, (setter)Cxt_set_mountdata, "mountdata", NULL},
-	{"fstype_pattern",	NULL, (setter)Cxt_set_fstype_pattern, "fstype_pattern", NULL},
-	{"options_pattern",	NULL, (setter)Cxt_set_options_pattern, "options_pattern", NULL},
-	{"fs",			(getter)Cxt_get_fs, (setter)Cxt_set_fs, "filesystem description (type, mountpoint, device, ...)", NULL},
-	{"mtab",		(getter)Cxt_get_mtab, NULL, "mtab entries", NULL},
-	{"fstab",		(getter)Cxt_get_fstab, (setter)Cxt_set_fstab, "fstab (or mtab for some remounts)", NULL},
-	{"optsmode",		(getter)Cxt_get_optsmode, (setter)Cxt_set_optsmode, "fstab optstr mode MNT_OPTSMODE_{AUTO,FORCE,IGNORE}", NULL},
-	{"syscall_errno",	(getter)Cxt_get_syscall_errno, (setter)Cxt_set_syscall_status, "1: not_called yet, 0: success, <0: -errno", NULL},
-	{"user_mflags",		(getter)Cxt_get_user_mflags, (setter)Cxt_set_user_mflags, "user mflags", NULL},
+static PyGetSetDef Context_getseters[] = {
+	{"tables_errcb",	NULL, (setter)Context_set_tables_errcb, "error callback function", NULL},
+	{"status",		(getter)Context_get_status, NULL, "status", NULL},
+	{"source",		(getter)Context_get_source, (setter)Context_set_source, "source", NULL},
+	{"target",		(getter)Context_get_target, (setter)Context_set_target, "target", NULL},
+	{"fstype",		(getter)Context_get_fstype, (setter)Context_set_fstype, "fstype", NULL},
+	{"options",		(getter)Context_get_options, (setter)Context_set_options, "options", NULL},
+	{"mflags",		(getter)Context_get_mflags, (setter)Context_set_mflags, "mflags", NULL},
+	{"mountdata",		NULL, (setter)Context_set_mountdata, "mountdata", NULL},
+	{"fstype_pattern",	NULL, (setter)Context_set_fstype_pattern, "fstype_pattern", NULL},
+	{"options_pattern",	NULL, (setter)Context_set_options_pattern, "options_pattern", NULL},
+	{"fs",			(getter)Context_get_fs, (setter)Context_set_fs, "filesystem description (type, mountpoint, device, ...)", NULL},
+	{"mtab",		(getter)Context_get_mtab, NULL, "mtab entries", NULL},
+	{"fstab",		(getter)Context_get_fstab, (setter)Context_set_fstab, "fstab (or mtab for some remounts)", NULL},
+	{"optsmode",		(getter)Context_get_optsmode, (setter)Context_set_optsmode, "fstab optstr mode MNT_OPTSMODE_{AUTO,FORCE,IGNORE}", NULL},
+	{"syscall_errno",	(getter)Context_get_syscall_errno, (setter)Context_set_syscall_status, "1: not_called yet, 0: success, <0: -errno", NULL},
+	{"user_mflags",		(getter)Context_get_user_mflags, (setter)Context_set_user_mflags, "user mflags", NULL},
 	{NULL}
 };
-static PyMethodDef Cxt_methods[] = {
-	{"get_table",	(PyCFunction)Cxt_get_table, METH_VARARGS|METH_KEYWORDS, Cxt_get_table_HELP},
-	{"find_umount_fs",	(PyCFunction)Cxt_find_umount_fs, METH_VARARGS|METH_KEYWORDS, Cxt_find_umount_fs_HELP},
-	{"reset_status",	(PyCFunction)Cxt_reset_status, METH_NOARGS, Cxt_reset_status_HELP},
-	{"helper_executed",	(PyCFunction)Cxt_helper_executed, METH_NOARGS, Cxt_helper_executed_HELP},
-	{"init_helper",	(PyCFunction)Cxt_init_helper, METH_VARARGS|METH_KEYWORDS, Cxt_init_helper_HELP},
-	{"helper_setopt",	(PyCFunction)Cxt_helper_setopt, METH_VARARGS|METH_KEYWORDS, Cxt_helper_setopt_HELP},
-	{"append_options",	(PyCFunction)Cxt_append_options, METH_VARARGS|METH_KEYWORDS, Cxt_append_options_HELP},
-	{"apply_fstab",	(PyCFunction)Cxt_apply_fstab, METH_NOARGS, Cxt_apply_fstab_HELP},
-	{"disable_canonicalize",	(PyCFunction)Cxt_disable_canonicalize, METH_VARARGS|METH_KEYWORDS, Cxt_disable_canonicalize_HELP},
-	{"disable_helpers",	(PyCFunction)Cxt_disable_helpers, METH_VARARGS|METH_KEYWORDS, Cxt_disable_helpers_HELP},
-	{"disable_mtab",	(PyCFunction)Cxt_disable_mtab, METH_VARARGS|METH_KEYWORDS, Cxt_disable_mtab_HELP},
-	{"do_mount",	(PyCFunction)Cxt_do_mount, METH_NOARGS, Cxt_do_mount_HELP},
-	{"do_umount",	(PyCFunction)Cxt_do_umount, METH_NOARGS , Cxt_do_umount_HELP},
-	{"enable_fake",	(PyCFunction)Cxt_enable_fake, METH_VARARGS|METH_KEYWORDS, Cxt_enable_fake_HELP},
-	{"enable_force",	(PyCFunction)Cxt_enable_force, METH_VARARGS|METH_KEYWORDS, Cxt_enable_force_HELP},
-	{"enable_lazy",	(PyCFunction)Cxt_enable_lazy, METH_VARARGS|METH_KEYWORDS, Cxt_enable_lazy_HELP},
-	{"enable_loopdel",	(PyCFunction)Cxt_enable_loopdel, METH_VARARGS|METH_KEYWORDS, Cxt_enable_loopdel_HELP},
-	{"enable_rdonly_umount",	(PyCFunction)Cxt_enable_rdonly_umount, METH_VARARGS|METH_KEYWORDS, Cxt_enable_rdonly_umount_HELP},
-	{"enable_sloppy",	(PyCFunction)Cxt_enable_sloppy, METH_VARARGS|METH_KEYWORDS, Cxt_enable_sloppy_HELP},
-	{"enable_verbose",	(PyCFunction)Cxt_enable_verbose, METH_VARARGS|METH_KEYWORDS, Cxt_enable_verbose_HELP},
-	{"enable_fork",	(PyCFunction)Cxt_enable_fork, METH_VARARGS|METH_KEYWORDS, Cxt_enable_fork_HELP},
-	{"finalize_mount",	(PyCFunction)Cxt_finalize_mount, METH_NOARGS, Cxt_finalize_mount_HELP},
-	{"finalize_umount",	(PyCFunction)Cxt_finalize_umount, METH_NOARGS, Cxt_finalize_umount_HELP},
-	{"is_fake",	(PyCFunction)Cxt_is_fake, METH_NOARGS, Cxt_is_fake_HELP},
-	{"is_force",	(PyCFunction)Cxt_is_force, METH_NOARGS, Cxt_is_force_HELP},
-	{"is_fork",	(PyCFunction)Cxt_is_fork, METH_NOARGS, Cxt_is_fork_HELP},
-	{"is_fs_mounted",	(PyCFunction)Cxt_is_fs_mounted, METH_VARARGS|METH_KEYWORDS, Cxt_is_fs_mounted_HELP},
-	{"is_lazy",	(PyCFunction)Cxt_is_lazy, METH_NOARGS, Cxt_is_lazy_HELP},
-	{"is_nomtab",	(PyCFunction)Cxt_is_nomtab, METH_NOARGS, Cxt_is_nomtab_HELP},
-	{"is_rdonly_umount",	(PyCFunction)Cxt_is_rdonly_umount, METH_NOARGS, Cxt_is_rdonly_umount_HELP},
-	{"is_restricted",	(PyCFunction)Cxt_is_restricted, METH_NOARGS, Cxt_is_restricted_HELP},
-	{"is_sloppy",	(PyCFunction)Cxt_is_sloppy, METH_NOARGS, Cxt_is_sloppy_HELP},
-	{"is_verbose",	(PyCFunction)Cxt_is_verbose, METH_NOARGS, Cxt_is_verbose_HELP},
-	{"is_child",	(PyCFunction)Cxt_is_child, METH_NOARGS, Cxt_is_child_HELP},
-	{"is_parent",	(PyCFunction)Cxt_is_parent, METH_NOARGS, Cxt_is_parent_HELP},
-	{"is_loopdel",	(PyCFunction)Cxt_is_loopdel, METH_NOARGS, Cxt_is_loopdel_HELP},
-	{"is_nocanonicalize",	(PyCFunction)Cxt_is_nocanonicalize, METH_NOARGS, Cxt_is_nocanonicalize_HELP},
-	{"is_nohelpers",	(PyCFunction)Cxt_is_nohelpers, METH_NOARGS, Cxt_is_nohelpers_HELP},
-	{"is_swapmatch",	(PyCFunction)Cxt_is_swapmatch, METH_NOARGS, Cxt_is_swapmatch_HELP},
-	{"mount",	(PyCFunction)Cxt_mount, METH_NOARGS, Cxt_mount_HELP},
-	{"prepare_mount",	(PyCFunction)Cxt_prepare_mount, METH_NOARGS, Cxt_prepare_mount_HELP},
-	{"prepare_umount",	(PyCFunction)Cxt_prepare_umount, METH_NOARGS, Cxt_prepare_umount_HELP},
-	{"umount",	(PyCFunction)Cxt_umount, METH_NOARGS, Cxt_umount_HELP},
-	{"syscall_called",	(PyCFunction)Cxt_syscall_called, METH_NOARGS, Cxt_syscall_called_HELP},
-	{"disable_swapmatch",	(PyCFunction)Cxt_disable_swapmatch, METH_VARARGS|METH_KEYWORDS, Cxt_disable_swapmatch_HELP},
-	{"tab_applied",	(PyCFunction)Cxt_tab_applied, METH_NOARGS, Cxt_tab_applied_HELP},
+static PyMethodDef Context_methods[] = {
+	{"get_table",	(PyCFunction)Context_get_table, METH_VARARGS|METH_KEYWORDS, Context_get_table_HELP},
+	{"find_umount_fs",	(PyCFunction)Context_find_umount_fs, METH_VARARGS|METH_KEYWORDS, Context_find_umount_fs_HELP},
+	{"reset_status",	(PyCFunction)Context_reset_status, METH_NOARGS, Context_reset_status_HELP},
+	{"helper_executed",	(PyCFunction)Context_helper_executed, METH_NOARGS, Context_helper_executed_HELP},
+	{"init_helper",	(PyCFunction)Context_init_helper, METH_VARARGS|METH_KEYWORDS, Context_init_helper_HELP},
+	{"helper_setopt",	(PyCFunction)Context_helper_setopt, METH_VARARGS|METH_KEYWORDS, Context_helper_setopt_HELP},
+	{"append_options",	(PyCFunction)Context_append_options, METH_VARARGS|METH_KEYWORDS, Context_append_options_HELP},
+	{"apply_fstab",	(PyCFunction)Context_apply_fstab, METH_NOARGS, Context_apply_fstab_HELP},
+	{"disable_canonicalize",	(PyCFunction)Context_disable_canonicalize, METH_VARARGS|METH_KEYWORDS, Context_disable_canonicalize_HELP},
+	{"disable_helpers",	(PyCFunction)Context_disable_helpers, METH_VARARGS|METH_KEYWORDS, Context_disable_helpers_HELP},
+	{"disable_mtab",	(PyCFunction)Context_disable_mtab, METH_VARARGS|METH_KEYWORDS, Context_disable_mtab_HELP},
+	{"do_mount",	(PyCFunction)Context_do_mount, METH_NOARGS, Context_do_mount_HELP},
+	{"do_umount",	(PyCFunction)Context_do_umount, METH_NOARGS , Context_do_umount_HELP},
+	{"enable_fake",	(PyCFunction)Context_enable_fake, METH_VARARGS|METH_KEYWORDS, Context_enable_fake_HELP},
+	{"enable_force",	(PyCFunction)Context_enable_force, METH_VARARGS|METH_KEYWORDS, Context_enable_force_HELP},
+	{"enable_lazy",	(PyCFunction)Context_enable_lazy, METH_VARARGS|METH_KEYWORDS, Context_enable_lazy_HELP},
+	{"enable_loopdel",	(PyCFunction)Context_enable_loopdel, METH_VARARGS|METH_KEYWORDS, Context_enable_loopdel_HELP},
+	{"enable_rdonly_umount",	(PyCFunction)Context_enable_rdonly_umount, METH_VARARGS|METH_KEYWORDS, Context_enable_rdonly_umount_HELP},
+	{"enable_sloppy",	(PyCFunction)Context_enable_sloppy, METH_VARARGS|METH_KEYWORDS, Context_enable_sloppy_HELP},
+	{"enable_verbose",	(PyCFunction)Context_enable_verbose, METH_VARARGS|METH_KEYWORDS, Context_enable_verbose_HELP},
+	{"enable_fork",	(PyCFunction)Context_enable_fork, METH_VARARGS|METH_KEYWORDS, Context_enable_fork_HELP},
+	{"finalize_mount",	(PyCFunction)Context_finalize_mount, METH_NOARGS, Context_finalize_mount_HELP},
+	{"finalize_umount",	(PyCFunction)Context_finalize_umount, METH_NOARGS, Context_finalize_umount_HELP},
+	{"is_fake",	(PyCFunction)Context_is_fake, METH_NOARGS, Context_is_fake_HELP},
+	{"is_force",	(PyCFunction)Context_is_force, METH_NOARGS, Context_is_force_HELP},
+	{"is_fork",	(PyCFunction)Context_is_fork, METH_NOARGS, Context_is_fork_HELP},
+	{"is_fs_mounted",	(PyCFunction)Context_is_fs_mounted, METH_VARARGS|METH_KEYWORDS, Context_is_fs_mounted_HELP},
+	{"is_lazy",	(PyCFunction)Context_is_lazy, METH_NOARGS, Context_is_lazy_HELP},
+	{"is_nomtab",	(PyCFunction)Context_is_nomtab, METH_NOARGS, Context_is_nomtab_HELP},
+	{"is_rdonly_umount",	(PyCFunction)Context_is_rdonly_umount, METH_NOARGS, Context_is_rdonly_umount_HELP},
+	{"is_restricted",	(PyCFunction)Context_is_restricted, METH_NOARGS, Context_is_restricted_HELP},
+	{"is_sloppy",	(PyCFunction)Context_is_sloppy, METH_NOARGS, Context_is_sloppy_HELP},
+	{"is_verbose",	(PyCFunction)Context_is_verbose, METH_NOARGS, Context_is_verbose_HELP},
+	{"is_child",	(PyCFunction)Context_is_child, METH_NOARGS, Context_is_child_HELP},
+	{"is_parent",	(PyCFunction)Context_is_parent, METH_NOARGS, Context_is_parent_HELP},
+	{"is_loopdel",	(PyCFunction)Context_is_loopdel, METH_NOARGS, Context_is_loopdel_HELP},
+	{"is_nocanonicalize",	(PyCFunction)Context_is_nocanonicalize, METH_NOARGS, Context_is_nocanonicalize_HELP},
+	{"is_nohelpers",	(PyCFunction)Context_is_nohelpers, METH_NOARGS, Context_is_nohelpers_HELP},
+	{"is_swapmatch",	(PyCFunction)Context_is_swapmatch, METH_NOARGS, Context_is_swapmatch_HELP},
+	{"mount",	(PyCFunction)Context_mount, METH_NOARGS, Context_mount_HELP},
+	{"prepare_mount",	(PyCFunction)Context_prepare_mount, METH_NOARGS, Context_prepare_mount_HELP},
+	{"prepare_umount",	(PyCFunction)Context_prepare_umount, METH_NOARGS, Context_prepare_umount_HELP},
+	{"umount",	(PyCFunction)Context_umount, METH_NOARGS, Context_umount_HELP},
+	{"syscall_called",	(PyCFunction)Context_syscall_called, METH_NOARGS, Context_syscall_called_HELP},
+	{"disable_swapmatch",	(PyCFunction)Context_disable_swapmatch, METH_VARARGS|METH_KEYWORDS, Context_disable_swapmatch_HELP},
+	{"tab_applied",	(PyCFunction)Context_tab_applied, METH_NOARGS, Context_tab_applied_HELP},
 	{NULL}
 };
 
-static PyObject *Context_repr(CxtObject *self)
+static PyObject *Context_repr(ContextObjext *self)
 {
 	return PyString_FromFormat("<libmount.Context object at %p, mtab_path=%s, utab_path=%s, restricted=%s>",
 			self,
@@ -1267,13 +1267,13 @@ static PyObject *Context_repr(CxtObject *self)
 			self->cxt->restricted ? "True" : "False");
 }
 
-PyTypeObject CxtType = {
+PyTypeObject ContextType = {
 	PyObject_HEAD_INIT(NULL)
 	0, /*ob_size*/
-	"libmount.Cxt", /*tp_name*/
-	sizeof(CxtObject), /*tp_basicsize*/
+	"libmount.Context", /*tp_name*/
+	sizeof(ContextObjext), /*tp_basicsize*/
 	0, /*tp_itemsize*/
-	(destructor)Cxt_dealloc, /*tp_dealloc*/
+	(destructor)Context_dealloc, /*tp_dealloc*/
 	0, /*tp_print*/
 	0, /*tp_getattr*/
 	0, /*tp_setattr*/
@@ -1289,33 +1289,33 @@ PyTypeObject CxtType = {
 	0, /*tp_setattro*/
 	0, /*tp_as_buffer*/
 	Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
-	Cxt_HELP, /* tp_doc */
+	Context_HELP, /* tp_doc */
 	0, /* tp_traverse */
 	0, /* tp_clear */
 	0, /* tp_richcompare */
 	0, /* tp_weaklistoffset */
 	0, /* tp_iter */
 	0, /* tp_iternext */
-	Cxt_methods, /* tp_methods */
-	Cxt_members, /* tp_members */
-	Cxt_getseters, /* tp_getset */
+	Context_methods, /* tp_methods */
+	Context_members, /* tp_members */
+	Context_getseters, /* tp_getset */
 	0, /* tp_base */
 	0, /* tp_dict */
 	0, /* tp_descr_get */
 	0, /* tp_descr_set */
 	0, /* tp_dictoffset */
-	(initproc)Cxt_init, /* tp_init */
+	(initproc)Context_init, /* tp_init */
 	0, /* tp_alloc */
-	Cxt_new, /* tp_new */
+	Context_new, /* tp_new */
 };
 
 void pymnt_init_context(PyObject *mod)
 {
-	if (PyType_Ready(&CxtType) < 0)
+	if (PyType_Ready(&ContextType) < 0)
 		return;
 
-	Py_INCREF(&CxtType);
-	PyModule_AddObject(mod, "Cxt", (PyObject *)&CxtType);
+	Py_INCREF(&ContextType);
+	PyModule_AddObject(mod, "Context", (PyObject *)&ContextType);
 }
 
 

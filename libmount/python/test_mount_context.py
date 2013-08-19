@@ -41,7 +41,7 @@ def test_mount(ts, argv):
 	if len(argv) < 2:
 		return -errno.EINVAL
 
-	cxt = mnt.Cxt()
+	cxt = mnt.Context()
 
 	if argv[idx] == "-o":
 		cxt.options = argv[idx+1]
@@ -72,7 +72,7 @@ def test_umount(ts, argv):
 	if len(argv) < 2:
 		return -errno.EINVAL
 
-	cxt = mnt.Cxt()
+	cxt = mnt.Context()
 
 	if argv[idx] == "-t":
 		cxt.options = argv[idx+1]
@@ -106,7 +106,7 @@ def test_flags(ts, argv):
 	rc = 0
 	opt = ""
 	flags = 0
-	cxt = mnt.Cxt()
+	cxt = mnt.Context()
 
 	if argv[idx] == "-o":
 		cxt.options = argv[idx + 1]
@@ -132,7 +132,7 @@ def test_mountall(ts, argv):
 	mntrc = 1
 	ignored = 1
 	idx = 1
-	cxt = mnt.Cxt()
+	cxt = mnt.Context()
 
 	if len(argv) > 2:
 		if argv[idx] == "-O":

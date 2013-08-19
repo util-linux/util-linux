@@ -42,7 +42,8 @@ def parser_errcb(tb, fname, line):
 def create_table(f, comments):
 	if not f:
 		return None
-	tb = mnt.Tab()
+
+	tb = mnt.Table()
 	tb.enable_comments(comments)
 	tb.errcb = parser_errcb
 
@@ -140,7 +141,7 @@ def test_is_mounted(ts, argv):
 
 def test_find_mountpoint(ts, argv):
 	rc = -1
-	tb = mnt.Tab("/proc/self/mountinfo")
+	tb = mnt.Table("/proc/self/mountinfo")
 	if not tb:
 		return rc
 	fs = tb.find_mountpoint(argv[1], mnt.MNT_ITER_BACKWARD)

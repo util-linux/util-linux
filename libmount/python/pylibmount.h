@@ -37,9 +37,9 @@ typedef struct {
 	struct libmnt_table		*tab;
 	struct libmnt_iter		*iter;
 	PyObject			*errcb;
-} TabObject;
+} TableObject;
 
-extern PyTypeObject TabType;
+extern PyTypeObject TableType;
 
 extern PyObject *PyObjectResultTab(struct libmnt_table *tab);
 
@@ -56,9 +56,9 @@ typedef struct {
 	struct libmnt_context		*cxt;
 	PyObject			*table_errcb;
 
-} CxtObject;
+} ContextObjext;
 
-extern PyTypeObject CxtType;
+extern PyTypeObject ContextType;
 extern void pymnt_init_context(PyObject *mod);
 
 /*
