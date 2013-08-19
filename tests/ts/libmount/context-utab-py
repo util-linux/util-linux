@@ -2,20 +2,17 @@
 
 # Copyright (C) 2010 Karel Zak <kzak@redhat.com>
 TS_TOPDIR="$(dirname $0)/../.."
-export LD_LIBRARY_PATH="$TS_TOPDIR/../.libs"
-export PYTHONPATH="$TS_TOPDIR/../libmount/python:$TS_TOPDIR/../.libs"
 TS_DESC="context-py (utab)"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+ts_init_py libmount
 ts_skip_nonroot
 
 TESTPROG="$TS_HELPER_PYLIBMOUNT_CONTEXT"
 LABEL=libmount-test
 UUID=$(uuidgen)
 MOUNTPOINT="$TS_MOUNTPOINT"
-
-[ -x $TESTPROG ] || ts_skip "test not compiled"
 
 DEVICE=$(ts_scsi_debug_init dev_size_mb=100)
 DEVNAME=$(basename $DEVICE)

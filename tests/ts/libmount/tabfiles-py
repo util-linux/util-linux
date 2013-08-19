@@ -3,17 +3,14 @@
 # Copyright (C) 2010 Karel Zak <kzak@redhat.com>
 
 TS_TOPDIR="$(dirname $0)/../.."
-export LD_LIBRARY_PATH="$TS_TOPDIR/../.libs"
-export PYTHONPATH="$TS_TOPDIR/../libmount/python:$TS_TOPDIR/../.libs"
 TS_DESC="tab files-py"
 PYDBG="python -m pdb"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+ts_init_py libmount
 
 TESTPROG="$TS_HELPER_PYLIBMOUNT_TAB"
-
-[ -x $TESTPROG ] || ts_skip "test not compiled"
 
 ts_init_subtest "parse-fstab"
 $TESTPROG --parse "$TS_SELF/files/fstab" &> $TS_OUTPUT

@@ -8,11 +8,10 @@ PYDBG="python -m pdb"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+ts_init_py libmount
 ts_skip_nonroot
 
 TESTPROG="$TS_HELPER_PYLIBMOUNT_TAB"
-
-[ -x $TESTPROG ] || ts_skip "test not compiled"
 
 DEVICE=$(ts_scsi_debug_init dev_size_mb=50 sector_size=512)
 LABEL="testLibmount"

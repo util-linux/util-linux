@@ -242,6 +242,15 @@ function ts_init_suid {
 	chmod u+s $PROG &> /dev/null
 }
 
+function ts_init_py {
+	LIBNAME="$1"
+
+	[ -f "$TS_TOPDIR/../$LIBNAME.la" ] || ts_skip "py$LIBNAME not compiled"
+
+	export LD_LIBRARY_PATH="$TS_TOPDIR/../.libs"
+	export PYTHONPATH="$TS_TOPDIR/../$LIBNAME/python:$TS_TOPDIR/../.libs"
+}
+
 function ts_valgrind {
 	if [ -z "$TS_VALGRIND_CMD" ]; then
 		$*

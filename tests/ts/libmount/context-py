@@ -3,13 +3,12 @@
 # Copyright (C) 2010 Karel Zak <kzak@redhat.com>
 
 TS_TOPDIR="$(dirname $0)/../.."
-export LD_LIBRARY_PATH="$TS_TOPDIR/../.libs"
-export PYTHONPATH="$TS_TOPDIR/../libmount/python:$TS_TOPDIR/../.libs"
 TS_DESC="context-py"
 PYDBG="python -m pdb"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+ts_init_py libmount
 ts_skip_nonroot
 
 TESTPROG="$TS_HELPER_PYLIBMOUNT_CONTEXT"
@@ -18,8 +17,6 @@ UUID=$(uuidgen)
 MOUNTPOINT="$TS_MOUNTPOINT"
 TS_NOEXIST="$TS_OUTDIR/${TS_TESTNAME}-${TS_SUBNAME}-noex"
 [ -d $TS_NOEXIST ] && rmdir $TS_NOEXIST
-
-[ -x $TESTPROG ] || ts_skip "test not compiled"
 
 ts_log "Init device"
 umount $MOUNTPOINT &> /dev/null
