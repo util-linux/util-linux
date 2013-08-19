@@ -1,6 +1,9 @@
 
 if BUILD_PYLIBMOUNT
-pyexec_LTLIBRARIES += pylibmount.la
+
+pylibmountexecdir = $(pyexecdir)/libmount
+pylibmountexec_LTLIBRARIES = pylibmount.la
+pylibmountexec_SCRIPTS = libmount/python/libmount/__init__.py
 
 pylibmount_la_SOURCES = \
 	libmount/python/pylibmount.c \
@@ -20,8 +23,6 @@ pylibmount_la_CFLAGS = \
 
 pylibmount_la_LDFLAGS = \
 	-avoid-version -module -shared -export-dynamic
-
-EXTRA_DIST += libmount/python/libmount/__init__.py
 
 CLEANFILES += *.img
 
