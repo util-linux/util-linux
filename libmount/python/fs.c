@@ -27,7 +27,7 @@
 
 #include "pylibmount.h"
 
-#define Fs_HELP "Fs(bindsrc=None, source=None, root=None, target=None, fstype=None, options=None, attributes=None, freq=0, passno=0)"
+#define Fs_HELP "Fs(source=None, root=None, target=None, fstype=None, options=None, attributes=None, freq=0, passno=0)"
 
 static PyMemberDef Fs_members[] = {
 	{NULL}
@@ -45,33 +45,36 @@ static PyObject *Fs_get_tag(FsObject *self)
 		PyErr_SetString(PyExc_RuntimeError, CONSTRUCT_ERR);
 	return result;
 }
-/* id */
+
 static PyObject *Fs_get_id(FsObject *self)
 {
 	return PyObjectResultInt(mnt_fs_get_id(self->fs));
 }
-/* parent_id */
+
 static PyObject *Fs_get_parent_id(FsObject *self)
 {
 	return PyObjectResultInt(mnt_fs_get_parent_id(self->fs));
 }
-/* devno */
+
 static PyObject *Fs_get_devno(FsObject *self)
 {
 	return PyObjectResultInt(mnt_fs_get_devno(self->fs));
 }
+
 #define Fs_print_debug_HELP "print_debug(ostream)\n\n"
 static PyObject *Fs_print_debug(FsObject *self, PyObject *args, PyObject *kwds)
 {
 	PyFileObject *stream = NULL;
 	int rc;
 	FILE *f = NULL;
-	char *kwlist[] = {"ostream", NULL};
+	char *kwlist[] = { "ostream", NULL };
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", kwlist, &PyFile_Type, &stream)) {
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", kwlist,
+						&PyFile_Type, &stream)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
+
 	f = PyFile_AsFile((PyObject *) stream);
 	rc = mnt_fs_print_debug(self->fs, f);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
@@ -80,32 +83,6 @@ static PyObject *Fs_print_debug(FsObject *self, PyObject *args, PyObject *kwds)
  ** Fs getters/setters
  */
 
-/* bindsrc */
-static PyObject *Fs_get_bindsrc(FsObject *self, void *closure __attribute__((unused)))
-{
-	return PyObjectResultStr(mnt_fs_get_bindsrc(self->fs));
-}
-
-static int Fs_set_bindsrc(FsObject *self, PyObject *value, void *closure __attribute__((unused)))
-{
-	char *bindsrc = NULL;
-	int rc = 0;
-
-	if (!value) {
-		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
-		return -1;
-	}
-	if (!(bindsrc = pystos(value)))
-		return -1;
-
-	rc = mnt_fs_set_bindsrc(self->fs, bindsrc);
-	if (rc) {
-		UL_RaiseExc(-rc);
-		return -1;
-	}
-	return 0;
-}
-/* comment */
 static PyObject *Fs_get_comment(FsObject *self, void *closure __attribute__((unused)))
 {
 	return PyObjectResultStr(mnt_fs_get_comment(self->fs));
@@ -604,15 +581,15 @@ static PyObject *Fs_new(PyTypeObject *type, PyObject *args __attribute__((unused
 
 static int Fs_init(FsObject *self, PyObject *args, PyObject *kwds)
 {
-	char *bindsrc = NULL, *source = NULL, *root = NULL, *target = NULL;
+	char *source = NULL, *root = NULL, *target = NULL;
 	char *fstype = NULL, *options = NULL, *attributes =NULL;
 	int freq = 0; int passno = 0;
 	int rc = 0;
-	char *kwlist[] = {"bindsrc", "source", "root", "target",
+	char *kwlist[] = { "source", "root", "target",
 	       "fstype", "options", "attributes", "freq", "passno", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|sssssssii", kwlist,
-				&bindsrc, &source, &root, &target, &fstype, &options,
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|ssssssii", kwlist,
+				&source, &root, &target, &fstype, &options,
 				&attributes, &freq, &passno)) {
 		PyErr_SetString(PyExc_TypeError, "Invalid type");
 		return -1;
@@ -621,10 +598,6 @@ static int Fs_init(FsObject *self, PyObject *args, PyObject *kwds)
 		mnt_free_fs(self->fs);
 
 	self->fs = mnt_new_fs();
-	if (bindsrc && (rc = mnt_fs_set_bindsrc(self->fs, bindsrc))) {
-		PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
-		return rc;
-	}
 	if (source && (rc = mnt_fs_set_source(self->fs, source))) {
 		PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
 		return rc;
@@ -665,7 +638,6 @@ static PyGetSetDef Fs_getseters[] = {
 	{"id",		(getter)Fs_get_id, NULL, "mountinfo[1]: ID", NULL},
 	{"parent",	(getter)Fs_get_parent_id, NULL, "mountinfo[2]: parent", NULL},
 	{"devno",	(getter)Fs_get_devno, NULL, "mountinfo[3]: st_dev", NULL},
-	{"bindsrc",	(getter)Fs_get_bindsrc, (setter)Fs_set_bindsrc, "utab, full path from fstab[1] for bind mounts", NULL},
 	{"comment",	(getter)Fs_get_comment, (setter)Fs_set_comment, "fstab entry comment", NULL},
 	{"source",	(getter)Fs_get_source, (setter)Fs_set_source, "fstab[1], mountinfo[10], swaps[1]: source dev, file, dir or TAG", NULL},
 	{"srcpath",	(getter)Fs_get_srcpath, NULL, "mount source path or NULL in case of error or when the path is not defined.", NULL},
