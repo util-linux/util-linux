@@ -24,7 +24,8 @@ static PyMemberDef Table_members[] = {
 	{ NULL }
 };
 
-static int Table_set_parser_errcb(TableObject *self, PyObject *func, void *closure __attribute__((unused)))
+static int Table_set_parser_errcb(TableObject *self, PyObject *func,
+				  void *closure __attribute__((unused)))
 {
 	PyObject *tmp;
 
@@ -43,12 +44,14 @@ static int Table_set_parser_errcb(TableObject *self, PyObject *func, void *closu
 	return 0;
 }
 
-static PyObject *Table_get_intro_comment(TableObject *self, void *closure __attribute__((unused)))
+static PyObject *Table_get_intro_comment(TableObject *self,
+				void *closure __attribute__((unused)))
 {
 	return PyObjectResultStr(mnt_table_get_intro_comment(self->tab));
 }
 
-static int Table_set_intro_comment(TableObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Table_set_intro_comment(TableObject *self, PyObject *value,
+				void *closure __attribute__((unused)))
 {
 	char *comment = NULL;
 	int rc = 0;
@@ -67,12 +70,14 @@ static int Table_set_intro_comment(TableObject *self, PyObject *value, void *clo
 	return 0;
 }
 
-static PyObject *Table_get_trailing_comment(TableObject *self, void *closure __attribute__((unused)))
+static PyObject *Table_get_trailing_comment(TableObject *self,
+				void *closure __attribute__((unused)))
 {
 	return PyObjectResultStr(mnt_table_get_trailing_comment(self->tab));
 }
 
-static int Table_set_trailing_comment(TableObject *self, PyObject *value, void *closure __attribute__((unused)))
+static int Table_set_trailing_comment(TableObject *self, PyObject *value,
+				void *closure __attribute__((unused)))
 {
 	char *comment = NULL;
 	int rc = 0;
@@ -91,28 +96,29 @@ static int Table_set_trailing_comment(TableObject *self, PyObject *value, void *
 	return 0;
 }
 
-#define Table_enable_comments_HELP "enable_comments(enable)\n\n\
-Enables parsing of comments.\n\n\
-The initial (intro) file comment is accessible by\n\
-Tab.intro_comment. The intro and the comment of the first fstab\
-entry has to be separated by blank line.  The filesystem comments are\n\
-accessible by Fs.comment. The tailing fstab comment is accessible\n\
-by Tab.trailing_comment.\n\
-\n\
-<informalexample>\n\
-<programlisting>\n\
-#\n\
-# Intro comment\n\
-#\n\
-\n\
-# this comments belongs to the first fs\n\
-LABEL=foo /mnt/foo auto defaults 1 2\n\
-# this comments belongs to the second fs\n\
-LABEL=bar /mnt/bar auto defaults 1 2 \n\
-# tailing comment\n\
-</programlisting>\n\
-</informalexample>"
-static PyObject *Table_enable_comments(TableObject *self, PyObject *args, PyObject *kwds)
+#define Table_enable_comments_HELP "enable_comments(enable)\n\n" \
+	"Enables parsing of comments.\n\n" \
+	"The initial (intro) file comment is accessible by\n" \
+	"Tab.intro_comment. The intro and the comment of the first fstab" \
+	"entry has to be separated by blank line.  The filesystem comments are\n" \
+	"accessible by Fs.comment. The tailing fstab comment is accessible\n" \
+	"by Tab.trailing_comment.\n" \
+	"\n" \
+	"<informalexample>\n" \
+	"<programlisting>\n" \
+	"#\n" \
+	"# Intro comment\n" \
+	"#\n" \
+	"\n" \
+	"# this comments belongs to the first fs\n" \
+	"LABEL=foo /mnt/foo auto defaults 1 2\n" \
+	"# this comments belongs to the second fs\n" \
+	"LABEL=bar /mnt/bar auto defaults 1 2 \n" \
+	"# tailing comment\n" \
+	"</programlisting>\n" \
+	"</informalexample>"
+static PyObject *Table_enable_comments(TableObject *self, PyObject *args,
+					PyObject *kwds)
 {
 	int enable = 0;
 	char *kwlist[] = {"enable", NULL};
@@ -126,8 +132,8 @@ static PyObject *Table_enable_comments(TableObject *self, PyObject *args, PyObje
 	return (PyObject *)self;
 }
 
-#define Table_replace_file_HELP "replace_file(filename)\n\n\
-This function replaces filename with the new content from TableObject."
+#define Table_replace_file_HELP "replace_file(filename)\n\n" \
+		"This function replaces filename with the new content from TableObject."
 static PyObject *Table_replace_file(TableObject *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -142,8 +148,8 @@ static PyObject *Table_replace_file(TableObject *self, PyObject *args, PyObject 
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Table_write_file_HELP "write_file(file)\n\n\
-This function writes tab to file(stream)"
+#define Table_write_file_HELP "write_file(file)\n\n" \
+		"This function writes tab to file(stream)"
 static PyObject *Table_write_file(TableObject *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -151,7 +157,8 @@ static PyObject *Table_write_file(TableObject *self, PyObject *args, PyObject *k
 	FILE *f = NULL;
 	char *kwlist[] = {"file", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", kwlist, &PyFile_Type, &stream)) {
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", kwlist,
+					&PyFile_Type, &stream)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
@@ -160,25 +167,25 @@ static PyObject *Table_write_file(TableObject *self, PyObject *args, PyObject *k
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Table_find_devno_HELP "find_devno(devno, [direction])\n\n\
-Note that zero could be valid device number for root pseudo filesystem (e.g.\
-tmpfs\n\
-Returns a tab entry or None"
+#define Table_find_devno_HELP "find_devno(devno, [direction])\n\n" \
+		"Note that zero could be valid device number for root pseudo " \
+		"filesystem (e.g. tmpfs)\n" \
+		"Returns a tab entry or None"
 static PyObject *Table_find_devno(TableObject *self, PyObject *args, PyObject *kwds)
 {
 	dev_t devno;
 	int direction = MNT_ITER_BACKWARD;
 	char *kwlist[] = {"devno", "direction", NULL};
 
-	if (! PyArg_ParseTupleAndKeywords(args, kwds, "I|i", kwlist, &devno, &direction)) {
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "I|i", kwlist, &devno, &direction)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
 	return PyObjectResultFs(mnt_table_find_devno(self->tab, devno, direction));
 }
 
-#define Table_find_mountpoint_HELP "find_mountpoint(path, [direction])\n\n\
-Returns a tab entry or None."
+#define Table_find_mountpoint_HELP "find_mountpoint(path, [direction])\n\n" \
+		"Returns a tab entry or None."
 static PyObject *Table_find_mountpoint(TableObject *self, PyObject *args, PyObject *kwds)
 {
 	char *path;
@@ -192,8 +199,8 @@ static PyObject *Table_find_mountpoint(TableObject *self, PyObject *args, PyObje
 	return PyObjectResultFs(mnt_table_find_mountpoint(self->tab, path, direction));
 }
 
-#define Table_find_pair_HELP "find_pair(source, target, [direction])\n\n\
-Returns a tab entry or None."
+#define Table_find_pair_HELP "find_pair(source, target, [direction])\n\n" \
+		"Returns a tab entry or None."
 static PyObject *Table_find_pair(TableObject *self, PyObject *args, PyObject *kwds)
 {
 	char *kwlist[] = {"source", "target", "direction", NULL};
@@ -208,8 +215,8 @@ static PyObject *Table_find_pair(TableObject *self, PyObject *args, PyObject *kw
 	return PyObjectResultFs(mnt_table_find_pair(self->tab, source, target, direction));
 }
 
-#define Table_find_source_HELP "find_source(source, [direction])\n\n\
-Returns a tab entry or None."
+#define Table_find_source_HELP "find_source(source, [direction])\n\n" \
+		"Returns a tab entry or None."
 static PyObject *Table_find_source(TableObject *self, PyObject *args, PyObject *kwds)
 {
 	char *kwlist[] = {"source", "direction", NULL};
@@ -223,13 +230,13 @@ static PyObject *Table_find_source(TableObject *self, PyObject *args, PyObject *
 	return PyObjectResultFs(mnt_table_find_source(self->tab, source, direction));
 }
 
-#define Table_find_target_HELP "find_target(target, [direction])\n\n\
-Try to lookup an entry in given tab, possible are three iterations, first\n\
-with path, second with realpath(path) and third with realpath(path)\n\
-against realpath(fs->target). The 2nd and 3rd iterations are not performed\n\
-when tb cache is not set (cache not implemented yet).n\
-\n\
-Returns a tab entry or None."
+#define Table_find_target_HELP "find_target(target, [direction])\n\n" \
+		"Try to lookup an entry in given tab, possible are three iterations, first\n" \
+		"with path, second with realpath(path) and third with realpath(path)\n" \
+		"against realpath(fs->target). The 2nd and 3rd iterations are not performed\n" \
+		"when tb cache is not set (cache not implemented yet).\n" \
+		"\n" \
+		"Returns a tab entry or None."
 static PyObject *Table_find_target(TableObject *self, PyObject *args, PyObject *kwds)
 {
 	char *kwlist[] = {"target", "direction", NULL};
@@ -243,18 +250,18 @@ static PyObject *Table_find_target(TableObject *self, PyObject *args, PyObject *
 	return PyObjectResultFs(mnt_table_find_target(self->tab, target, direction));
 }
 
-#define Table_find_srcpath_HELP "find_srcpath(srcpath, [direction])\n\n\
-Try to lookup an entry in given tab, possible are four iterations, first\n\
-with path, second with realpath(path), third with tags (LABEL, UUID, ..)\n\
-from path and fourth with realpath(path) against realpath(entry->srcpath).\n\
-\n\
-The 2nd, 3rd and 4th iterations are not performed when tb cache is not\n\
-set (not implemented yet).\n\
-\n\
-Note that None is a valid source path; it will be replaced with \"none\". The\n\
-\"none\" is used in /proc/{mounts,self/mountinfo} for pseudo filesystems.\n\
-\n\
-Returns a tab entry or None."
+#define Table_find_srcpath_HELP "find_srcpath(srcpath, [direction])\n\n" \
+		"Try to lookup an entry in given tab, possible are four iterations, first\n" \
+		"with path, second with realpath(path), third with tags (LABEL, UUID, ..)\n" \
+		"from path and fourth with realpath(path) against realpath(entry->srcpath).\n" \
+		"\n" \
+		"The 2nd, 3rd and 4th iterations are not performed when tb cache is not\n" \
+		"set (not implemented yet).\n" \
+		"\n" \
+		"Note that None is a valid source path; it will be replaced with \"none\". The\n" \
+		"\"none\" is used in /proc/{mounts,self/mountinfo} for pseudo filesystems.\n" \
+		"\n" \
+		"Returns a tab entry or None."
 static PyObject *Table_find_srcpath(TableObject *self, PyObject *args, PyObject *kwds)
 {
 	char *kwlist[] = {"srcpath", "direction", NULL};
@@ -268,13 +275,13 @@ static PyObject *Table_find_srcpath(TableObject *self, PyObject *args, PyObject 
 	return PyObjectResultFs(mnt_table_find_srcpath(self->tab, srcpath, direction));
 }
 
-#define Table_find_tag_HELP "find_tag(tag, val, [direction])\n\n\
-Try to lookup an entry in given tab, first attempt is lookup by tag and\n\
-val, for the second attempt the tag is evaluated (converted to the device\n\
-name) and Tab.find_srcpath() is preformed. The second attempt is not\n\
-performed when tb cache is not set (not implemented yet).\n\
-\n\
-Returns a tab entry or NULL."
+#define Table_find_tag_HELP "find_tag(tag, val, [direction])\n\n" \
+		"Try to lookup an entry in given tab, first attempt is lookup by tag and\n" \
+		"val, for the second attempt the tag is evaluated (converted to the device\n" \
+		"name) and Tab.find_srcpath() is preformed. The second attempt is not\n" \
+		"performed when tb cache is not set (not implemented yet).\n" \
+		"\n" \
+		"Returns a tab entry or NULL."
 static PyObject *Table_find_tag(TableObject *self, PyObject *args, PyObject *kwds)
 {
 	char *kwlist[] = {"tag", "val", "direction", NULL};
@@ -294,21 +301,21 @@ static PyObject *Table_get_nents(TableObject *self)
 	return PyObjectResultInt(mnt_table_get_nents(self->tab));
 }
 
-#define Table_is_fs_mounted_HELP "is_fs_mounted(fstab_fs)\n\n\
-Checks if the fstab_fs entry is already in the tb table. The \"swap\" is\n\
-ignored. This function explicitly compares source, target and root of the\n\
-filesystems.\n\
-\n\
-Note that source and target are canonicalized only if a cache for tb is\n\
-defined (not implemented yet). The target canonicalization may\n\
-trigger automount on autofs mountpoints!\n\
-\n\
-Don't use it if you want to know if a device is mounted, just use\n\
-Tab.find_source() for the device.\n\
-\n\
-This function is designed mostly for \"mount -a\".\n\
-\n\
-Returns a boolean value."
+#define Table_is_fs_mounted_HELP "is_fs_mounted(fstab_fs)\n\n" \
+		"Checks if the fstab_fs entry is already in the tb table. The \"swap\" is\n" \
+		"ignored. This function explicitly compares source, target and root of the\n" \
+		"filesystems.\n" \
+		"\n" \
+		"Note that source and target are canonicalized only if a cache for tb is\n" \
+		"defined (not implemented yet). The target canonicalization may\n" \
+		"trigger automount on autofs mountpoints!\n" \
+		"\n" \
+		"Don't use it if you want to know if a device is mounted, just use\n" \
+		"Tab.find_source() for the device.\n" \
+		"\n" \
+		"This function is designed mostly for \"mount -a\".\n" \
+		"\n" \
+		"Returns a boolean value."
 static PyObject *Table_is_fs_mounted(TableObject *self, PyObject *args, PyObject *kwds)
 {
 	FsObject *fs;
@@ -321,13 +328,13 @@ static PyObject *Table_is_fs_mounted(TableObject *self, PyObject *args, PyObject
 	return PyBool_FromLong(mnt_table_is_fs_mounted(self->tab, fs->fs));
 }
 
-#define Table_parse_file_HELP "parse_file(file)\n\n\
-Parses whole table (e.g. /etc/mtab) and appends new records to the tab.\n\
-\n\
-The libmount parser ignores broken (syntax error) lines, these lines are\n\
-reported to caller by errcb() function (see Tab.parser_errcb).\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Table_parse_file_HELP "parse_file(file)\n\n" \
+		"Parses whole table (e.g. /etc/mtab) and appends new records to the tab.\n" \
+		"\n" \
+		"The libmount parser ignores broken (syntax error) lines, these lines are\n" \
+		"reported to caller by errcb() function (see Tab.parser_errcb).\n" \
+		"\n" \
+		"Returns self or raises an exception in case of an error."
 static PyObject *Table_parse_file(TableObject *self, PyObject* args, PyObject *kwds)
 {
 	int rc;
@@ -341,13 +348,13 @@ static PyObject *Table_parse_file(TableObject *self, PyObject* args, PyObject *k
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Table_parse_fstab_HELP "parse_fstab([fstab])\n\n\
-This function parses /etc/fstab and appends new lines to the tab. If the\n\
-filename is a directory then Tab.parse_dir() is called.\n\
-\n\
-See also Tab.parser_errcb.\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Table_parse_fstab_HELP "parse_fstab([fstab])\n\n" \
+		"This function parses /etc/fstab and appends new lines to the tab. If the\n" \
+		"filename is a directory then Tab.parse_dir() is called.\n" \
+		"\n" \
+		"See also Tab.parser_errcb.\n" \
+		"\n" \
+		"Returns self or raises an exception in case of an error."
 static PyObject *Table_parse_fstab(TableObject *self, PyObject* args, PyObject *kwds)
 {
 	int rc;
@@ -362,13 +369,13 @@ static PyObject *Table_parse_fstab(TableObject *self, PyObject* args, PyObject *
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Table_parse_mtab_HELP "parse_mtab([mtab])\n\n\
-This function parses /etc/mtab or /proc/self/mountinfo\n\
-/run/mount/utabs or /proc/mounts.\n\
-\n\
-See also Tab.parser_errcb().\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Table_parse_mtab_HELP "parse_mtab([mtab])\n\n" \
+		"This function parses /etc/mtab or /proc/self/mountinfo\n" \
+		"/run/mount/utabs or /proc/mounts.\n" \
+		"\n" \
+		"See also Tab.parser_errcb().\n" \
+		"\n" \
+		"Returns self or raises an exception in case of an error."
 static PyObject *Table_parse_mtab(TableObject *self, PyObject* args, PyObject *kwds)
 {
 	int rc;
@@ -383,13 +390,13 @@ static PyObject *Table_parse_mtab(TableObject *self, PyObject* args, PyObject *k
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Table_parse_dir_HELP "parse_dir(dir)\n\n\
-The directory:\n\
-- files are sorted by strverscmp(3)\n\
-- files that start with \".\" are ignored (e.g. \".10foo.fstab\")\n\
-- files without the \".fstab\" extension are ignored\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Table_parse_dir_HELP "parse_dir(dir)\n\n" \
+		"The directory:\n" \
+		"- files are sorted by strverscmp(3)\n" \
+		"- files that start with \".\" are ignored (e.g. \".10foo.fstab\")\n" \
+		"- files without the \".fstab\" extension are ignored\n" \
+		"\n" \
+		"Returns self or raises an exception in case of an error."
 static PyObject *Table_parse_dir(TableObject *self, PyObject* args, PyObject *kwds)
 {
 	int rc;
@@ -404,8 +411,8 @@ static PyObject *Table_parse_dir(TableObject *self, PyObject* args, PyObject *kw
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Table_parse_swaps_HELP "parse_swaps(swaps)\n\n\
-This function parses /proc/swaps and appends new lines to the tab"
+#define Table_parse_swaps_HELP "parse_swaps(swaps)\n\n" \
+		"This function parses /proc/swaps and appends new lines to the tab"
 static PyObject *Table_parse_swaps(TableObject *self, PyObject* args, PyObject *kwds)
 {
 	int rc;
@@ -420,8 +427,8 @@ static PyObject *Table_parse_swaps(TableObject *self, PyObject* args, PyObject *
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Table_parse_stream_HELP "parse_stream(stream, filename)\n\n\
-Returns self or raises an exception in case of an error."
+#define Table_parse_stream_HELP "parse_stream(stream, filename)\n\n" \
+		"Returns self or raises an exception in case of an error."
 static PyObject *Table_parse_stream(TableObject *self, PyObject* args, PyObject *kwds)
 {
 	int rc;
@@ -438,8 +445,8 @@ static PyObject *Table_parse_stream(TableObject *self, PyObject* args, PyObject 
 	rc = mnt_table_parse_stream(self->tab, f, filename);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
-#define Table_add_fs_HELP "add_fs(fs)\n\nAdds a new entry to tab.\n\
-Returns self or raises an exception in case of an error."
+#define Table_add_fs_HELP "add_fs(fs)\n\nAdds a new entry to tab.\n" \
+		"Returns self or raises an exception in case of an error."
 
 static PyObject *Table_add_fs(TableObject *self, PyObject* args, PyObject *kwds)
 {
@@ -456,8 +463,8 @@ static PyObject *Table_add_fs(TableObject *self, PyObject* args, PyObject *kwds)
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Table_remove_fs_HELP "remove_fs(fs)\n\n\
-Returns self or raises an exception in case of an error."
+#define Table_remove_fs_HELP "remove_fs(fs)\n\n" \
+		"Returns self or raises an exception in case of an error."
 static PyObject *Table_remove_fs(TableObject *self, PyObject* args, PyObject *kwds)
 {
 	int rc;
@@ -473,22 +480,23 @@ static PyObject *Table_remove_fs(TableObject *self, PyObject* args, PyObject *kw
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Table_next_fs_HELP "next_fs()\n\n\
-Returns the next Fs on success, raises an exception in case of an error and None at end of list.\n\
-\n\
-Example:\n\
-<informalexample>\n\
-<programlisting>\n\
-import libmount\n\
-import functools\n\
-for fs in iter(functools.partial(tb.next_fs), None): {\n\
-    dir = Fs.target\n\
-    print \"mount point: {:s}\n\".format(dir)\n\
-}\n\
-</programlisting>\n\
-</informalexample>\n\
-\n\
-lists all mountpoints from fstab in backward order."
+#define Table_next_fs_HELP "next_fs()\n\n" \
+		"Returns the next Fs on success, raises an exception in case " \
+		"of an error and None at end of list.\n" \
+		"\n" \
+		"Example:\n" \
+		"<informalexample>\n" \
+		"<programlisting>\n" \
+		"import libmount\n" \
+		"import functools\n" \
+		"for fs in iter(functools.partial(tb.next_fs), None):\n" \
+		"    dir = Fs.target\n" \
+		"    print \"mount point: {:s}\".format(dir)\n" \
+		"\n" \
+		"</programlisting>\n" \
+		"</informalexample>\n" \
+		"\n" \
+		"lists all mountpoints from fstab in backward order."
 static PyObject *Table_next_fs(TableObject *self)
 {
 	struct libmnt_fs *fs;
