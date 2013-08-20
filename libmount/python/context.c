@@ -93,7 +93,9 @@ static PyObject *Context_new(PyTypeObject *type,
  * Note there is no pointer to encapsulating object needed here, since Cxt is
  * on top of the Context(Table(Filesystem)) hierarchy
  */
-#define Context_HELP "Cxt(source=None, target=None, fstype=None, options=None, mflags=0, fstype_pattern=None, options_pattern=None, fs=None, fstab=None, optsmode=0, syscall_status=1)"
+#define Context_HELP "Context(source=None, target=None, fstype=None, " \
+		"options=None, mflags=0, fstype_pattern=None, " \
+		"options_pattern=None, fs=None, fstab=None, optsmode=0)"
 static int Context_init(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	char *source = NULL, *target = NULL, *fstype = NULL;
@@ -107,11 +109,11 @@ static int Context_init(ContextObjext *self, PyObject *args, PyObject *kwds)
 		"source", "target", "fstype",
 		"options", "mflags", "fstype_pattern",
 		"options_pattern", "fs", "fstab",
-		"optsmode", "syscall_status"
+		"optsmode"
 	};
 
 	if (!PyArg_ParseTupleAndKeywords(
-				args, kwds, "|sssskssO!O!ii", kwlist,
+				args, kwds, "|sssskssO!O!i", kwlist,
 				&source, &target, &fstype, &options, &mflags,
 				&fstype_pattern, &options_pattern, &FsType, &fs,
 				&TableType, &fstab, &optsmode, &syscall_status)) {
@@ -122,67 +124,61 @@ static int Context_init(ContextObjext *self, PyObject *args, PyObject *kwds)
 	if (self->cxt)
 		mnt_free_context(self->cxt);
 
-	if ((self->cxt = mnt_new_context())) {
-
-		if (source && (rc = mnt_context_set_source(self->cxt, source))) {
-			UL_RaiseExc(-rc);
-			return -1;
-		}
-
-		if (target && (rc = mnt_context_set_target(self->cxt, target))) {
-			UL_RaiseExc(-rc);
-			return -1;
-		}
-
-		if (fstype && (rc = mnt_context_set_fstype(self->cxt, fstype))) {
-			UL_RaiseExc(-rc);
-			return -1;
-		}
-
-		if (options && (rc = mnt_context_set_options(self->cxt, options))) {
-			UL_RaiseExc(-rc);
-			return -1;
-		}
-
-		if (fstype_pattern && (rc = mnt_context_set_fstype_pattern(self->cxt, fstype_pattern))) {
-			UL_RaiseExc(-rc);
-			return -1;
-		}
-
-		if (options_pattern && (rc = mnt_context_set_options_pattern(self->cxt, options_pattern))) {
-			UL_RaiseExc(-rc);
-			return -1;
-		}
-
-		if (fs && (rc = mnt_context_set_fs(self->cxt, fs->fs))) {
-			UL_RaiseExc(-rc);
-			return -1;
-		}
-
-		if (fstab && (rc = mnt_context_set_fstab(self->cxt, fstab->tab))) {
-			UL_RaiseExc(-rc);
-			return -1;
-		}
-
-		if (optsmode && (rc = mnt_context_set_optsmode(self->cxt, optsmode))) {
-			UL_RaiseExc(-rc);
-			return -1;
-		}
-
-		if (syscall_status && (rc = mnt_context_set_syscall_status(self->cxt, syscall_status))) {
-			UL_RaiseExc(-rc);
-			return -1;
-		}
-
-		mnt_context_set_mflags(self->cxt, mflags);
-		mnt_context_set_optsmode(self->cxt, optsmode);
-		mnt_context_set_syscall_status(self->cxt, syscall_status);
-
-	} else {
+	self->cxt = mnt_new_context();
+	if (!self->cxt) {
 		PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
 		return -1;
 	}
-	self->cxt->table_errcb = pymnt_table_parser_errcb;
+
+	if (source && (rc = mnt_context_set_source(self->cxt, source))) {
+		UL_RaiseExc(-rc);
+		return -1;
+	}
+
+	if (target && (rc = mnt_context_set_target(self->cxt, target))) {
+		UL_RaiseExc(-rc);
+		return -1;
+	}
+
+	if (fstype && (rc = mnt_context_set_fstype(self->cxt, fstype))) {
+		UL_RaiseExc(-rc);
+		return -1;
+	}
+
+	if (options && (rc = mnt_context_set_options(self->cxt, options))) {
+		UL_RaiseExc(-rc);
+		return -1;
+	}
+
+	if (fstype_pattern && (rc = mnt_context_set_fstype_pattern(self->cxt, fstype_pattern))) {
+		UL_RaiseExc(-rc);
+		return -1;
+	}
+
+	if (options_pattern && (rc = mnt_context_set_options_pattern(self->cxt, options_pattern))) {
+		UL_RaiseExc(-rc);
+		return -1;
+	}
+
+	if (fs && (rc = mnt_context_set_fs(self->cxt, fs->fs))) {
+		UL_RaiseExc(-rc);
+		return -1;
+	}
+
+	if (fstab && (rc = mnt_context_set_fstab(self->cxt, fstab->tab))) {
+		UL_RaiseExc(-rc);
+		return -1;
+	}
+
+	if (optsmode && (rc = mnt_context_set_optsmode(self->cxt, optsmode))) {
+		UL_RaiseExc(-rc);
+		return -1;
+	}
+
+	mnt_context_set_mflags(self->cxt, mflags);
+	mnt_context_set_optsmode(self->cxt, optsmode);
+	mnt_context_set_tables_errcb(self->cxt, pymnt_table_parser_errcb);
+
 	return 0;
 }
 

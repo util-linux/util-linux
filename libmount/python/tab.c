@@ -582,7 +582,7 @@ static PyObject *Table_new(PyTypeObject *type,
 
 /* explicit tab.__init__() serves as mnt_reset_table(tab) would in C
  * and as mnt_new_table{,_from_dir,_from_file}() with proper arguments */
-#define Table_HELP "Tab(path=None, errcb=None)"
+#define Table_HELP "Table(path=None, errcb=None)"
 static int Table_init(TableObject *self, PyObject *args, PyObject *kwds)
 {
 	struct libmnt_cache *cache;
