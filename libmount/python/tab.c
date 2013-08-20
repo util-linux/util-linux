@@ -540,14 +540,17 @@ static PyMethodDef Table_methods[] = {
 /* mnt_free_tab() with a few necessary additions */
 void pymnt_free_table(struct libmnt_table *tab)
 {
+	struct libmnt_fs *fs;
+
 	if (!tab)
 		return;
 
-	while (!list_empty(&tab->ents)) {
-		struct libmnt_fs *fs = list_entry(tab->ents.next, struct libmnt_fs, ents);
+	while (mnt_table_first_fs(tab, &fs) == 0) {
+		PyObject *obj = mnt_fs_get_userdata(fs);
 
-		if (fs->userdata)
-			Py_DECREF(fs->userdata); /* (possible) destruction via object destructor */
+		mnt_table_remove_fs(tab, fs);
+		if (obj)
+			Py_DECREF(obj); /* (possible) destruction via object destructor */
 		else
 			mnt_free_fs(fs); /* no encapsulating object, free fs */
 	}
@@ -563,8 +566,9 @@ static void Table_destructor(TableObject *self)
 	self->ob_type->tp_free((PyObject*)self);
 }
 
-static PyObject *Table_new(PyTypeObject *type, PyObject *args __attribute__((unused)),
-		PyObject *kwds __attribute__((unused)))
+static PyObject *Table_new(PyTypeObject *type,
+			   PyObject *args __attribute__((unused)),
+			   PyObject *kwds __attribute__((unused)))
 {
 	TableObject *self = (TableObject*)type->tp_alloc(type, 0);
 
@@ -575,6 +579,7 @@ static PyObject *Table_new(PyTypeObject *type, PyObject *args __attribute__((unu
 	}
 	return (PyObject *)self;
 }
+
 /* explicit tab.__init__() serves as mnt_reset_table(tab) would in C
  * and as mnt_new_table{,_from_dir,_from_file}() with proper arguments */
 #define Table_HELP "Tab(path=None, errcb=None)"
@@ -587,9 +592,9 @@ static int Table_init(TableObject *self, PyObject *args, PyObject *kwds)
 	struct stat buf;
 	memset (&buf, 0, sizeof(struct stat));
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|sO", kwlist, &path, &errcb)) {
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|sO",
+					kwlist, &path, &errcb))
 		return -1;
-	}
 
 	pymnt_free_table(self->tab);
 	self->tab = NULL;
@@ -598,10 +603,10 @@ static int Table_init(TableObject *self, PyObject *args, PyObject *kwds)
 		mnt_reset_iter(self->iter, MNT_ITER_FORWARD);
 	else
 		self->iter = mnt_new_iter(MNT_ITER_FORWARD);
+
 	if (errcb) {
-		if (!PyCallable_Check(errcb)) {
+		if (!PyCallable_Check(errcb))
 			return -1;
-		}
 		PyObject *tmp = self->errcb;
 		Py_INCREF(errcb);
 		self->errcb = errcb;
@@ -625,16 +630,14 @@ static int Table_init(TableObject *self, PyObject *args, PyObject *kwds)
 		self->tab = mnt_new_table();
 
 	/* Always set custom handler when using libmount from python */
-	self->tab->errcb = pymnt_table_parser_errcb;
-	self->tab->userdata = (void *)self;
+	mnt_table_set_parser_errcb(self->tab, pymnt_table_parser_errcb);
+	mnt_table_set_userdata(self->tab, self);
 
-	/* TODO: perhaps make this optional? */
-	cache = mnt_new_cache();
+	cache = mnt_new_cache();		/* TODO: make it optional? */
 	if (!cache)
 		return -1;
 
 	mnt_table_set_cache(self->tab, cache);
-
 	return 0;
 }
 
@@ -642,23 +645,24 @@ static int Table_init(TableObject *self, PyObject *args, PyObject *kwds)
 int pymnt_table_parser_errcb(struct libmnt_table *tb, const char *filename, int line)
 {
 	int rc = 0;
-	PyObject *arglist, *result;
+	PyObject *obj;
 
-	if (tb->userdata && ((TableObject*)(tb->userdata))->errcb) {
-		arglist = Py_BuildValue("(Osi)", tb->userdata, filename, line);
+	obj = mnt_table_get_userdata(tb);
+	if (obj && ((TableObject*) obj)->errcb) {
+		PyObject *arglist, *result;
+
+		arglist = Py_BuildValue("(Osi)", obj, filename, line);
 		if (!arglist)
 			return -ENOMEM;
 
 		/* A python callback was set, so tb is definitely encapsulated in an object */
-		result = PyEval_CallObject(((TableObject *)(tb->userdata))->errcb, arglist);
+		result = PyEval_CallObject(((TableObject *)obj)->errcb, arglist);
 		Py_DECREF(arglist);
 
 		if (!result)
 			return -EINVAL;
-
 		if (!PyArg_Parse(result, "i", &rc))
 			rc = -EINVAL;
-
 		Py_DECREF(result);
 	}
 	return rc;
@@ -666,31 +670,35 @@ int pymnt_table_parser_errcb(struct libmnt_table *tb, const char *filename, int 
 
 PyObject *PyObjectResultTab(struct libmnt_table *tab)
 {
+	TableObject *result;
+
 	if (!tab) {
 		PyErr_SetString(LibmountError, "internal exception");
 		return NULL;
 	}
-	if (tab->userdata) {
-		Py_INCREF(tab->userdata);
-		return (PyObject *)tab->userdata;
+
+	result = mnt_table_get_userdata(tab);
+	if (result) {
+		Py_INCREF(result);
+		return (PyObject *) result;
 	}
 
-	TableObject *result = PyObject_New(TableObject, &TableType);
+	/* Creating an encapsualing object: increment the refcount, so that
+	 * code such as: cxt.get_fstab() doesn't call the destructor, which
+	 * would free our tab struct as well
+	 */
+	result = PyObject_New(TableObject, &TableType);
 	if (!result) {
 		UL_RaiseExc(ENOMEM);
 		return NULL;
 	}
-	/* Creating an encapsualing object: increment the refcount, so that code
-	 * such as:
-	 * cxt.get_fstab()
-	 * doesn't call the destructor, which would free our tab struct as well
-	 */
+
 	Py_INCREF(result);
 	result->tab = tab;
 	result->iter = mnt_new_iter(MNT_ITER_FORWARD);
-	result->tab->userdata = (void *)result;
+	mnt_table_set_userdata(result->tab, result);
 	result->errcb = NULL;
-	return (PyObject *)result;
+	return (PyObject *) result;
 }
 
 static PyGetSetDef Table_getseters[] = {
@@ -707,8 +715,8 @@ static PyObject *Table_repr(TableObject *self)
 	return PyString_FromFormat(
 			"<libmount.Table object at %p, entries=%d, comments_enabled=%s, errcb=%s>",
 			self,
-			self->tab->nents,
-			self->tab->comms ? "True" : "False",
+			mnt_table_get_nents(self->tab),
+			mnt_table_with_comments(self->tab) ? "True" : "False",
 			self->errcb ? pystos(PyObject_Repr(self->errcb)) : "None");
 }
 
