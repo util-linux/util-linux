@@ -162,6 +162,18 @@ void mnt_table_enable_comments(struct libmnt_table *tb, int enable)
 }
 
 /**
+ * mnt_table_with_comments:
+ * @tb: pointer to table
+ *
+ * Returns: 1 if comments parsing is enabled, or 0.
+ */
+int mnt_table_with_comments(struct libmnt_table *tb)
+{
+	assert(tb);
+	return tb ? tb->comms : 0;
+}
+
+/**
  * mnt_table_get_intro_comment:
  * @tb: pointer to tab
  *
