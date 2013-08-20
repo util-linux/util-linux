@@ -429,6 +429,8 @@ extern int mnt_table_set_cache(struct libmnt_table *tb, struct libmnt_cache *mpc
 extern struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb);
 extern int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs);
 extern int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs);
+extern int mnt_table_first_fs(struct libmnt_table *tb, struct libmnt_fs **fs);
+extern int mnt_table_last_fs(struct libmnt_table *tb, struct libmnt_fs **fs);
 extern int mnt_table_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
 			     struct libmnt_fs **fs);
 extern int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,

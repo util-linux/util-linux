@@ -552,6 +552,46 @@ int mnt_table_next_fs(struct libmnt_table *tb, struct libmnt_iter *itr, struct l
 }
 
 /**
+ * mnt_table_first_fs:
+ * @tb: tab pointer
+ * @fs: returns the first tab entry
+ *
+ * Returns: 0 on success, negative number in case of error or 1 at the end of list.
+ */
+int mnt_table_first_fs(struct libmnt_table *tb, struct libmnt_fs **fs)
+{
+	assert(tb);
+	assert(fs);
+
+	if (!tb || !fs)
+		return -EINVAL;
+	if (list_empty(&tb->ents))
+		return 1;
+	*fs = list_first_entry(&tb->ents, struct libmnt_fs, ents);
+	return 0;
+}
+
+/**
+ * mnt_table_last_fs:
+ * @tb: tab pointer
+ * @fs: returns the last tab entry
+ *
+ * Returns: 0 on success, negative number in case of error or 1 at the end of list.
+ */
+int mnt_table_last_fs(struct libmnt_table *tb, struct libmnt_fs **fs)
+{
+	assert(tb);
+	assert(fs);
+
+	if (!tb || !fs)
+		return -EINVAL;
+	if (list_empty(&tb->ents))
+		return 1;
+	*fs = list_last_entry(&tb->ents, struct libmnt_fs, ents);
+	return 0;
+}
+
+/**
  * mnt_table_find_next_fs:
  * @tb: table
  * @itr: iterator
