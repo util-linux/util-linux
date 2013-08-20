@@ -128,6 +128,37 @@ int mnt_table_get_nents(struct libmnt_table *tb)
 }
 
 /**
+ * mnt_table_set_userdata:
+ * @tb: pointer to tab
+ * @data: pointer to user data
+ *
+ * Sets pointer to the private user data.
+ *
+ * Returns: 0 on success or negative number in case of error.
+ */
+int mnt_table_set_userdata(struct libmnt_table *tb, void *data)
+{
+	assert(tb);
+	if (!tb)
+		return -EINVAL;
+
+	tb->userdata = data;
+	return 0;
+}
+
+/**
+ * mnt_table_get_userdata:
+ * @tb: pointer to tab
+ *
+ * Returns: pointer to user's data.
+ */
+void *mnt_table_get_userdata(struct libmnt_table *tb)
+{
+	assert(tb);
+	return tb ? tb->userdata : NULL;
+}
+
+/**
  * mnt_table_enable_comments:
  * @tb: pointer to tab
  * @enable: TRUE or FALSE
