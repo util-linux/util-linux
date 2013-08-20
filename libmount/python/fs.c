@@ -636,7 +636,7 @@ static int Fs_init(FsObject *self, PyObject *args, PyObject *kwds)
 
 	mnt_fs_set_freq(self->fs, freq);
 	mnt_fs_set_passno(self->fs, passno);
-	self->fs->userdata = (void *) self; /* store a pointer to self, convenient when resetting the table */
+	mnt_fs_set_userdata(self->fs, self); /* store a pointer to self, convenient when resetting the table */
 	return 0;
 }
 
@@ -689,28 +689,32 @@ static PyObject *Fs_repr(FsObject *self)
 
 PyObject *PyObjectResultFs(struct libmnt_fs *fs)
 {
+	FsObject *result;
+
 	if (!fs) {
 		PyErr_SetString(LibmountError, "internal exception");
 		return NULL;
 	}
-	if (fs->userdata) {
-		Py_INCREF(fs->userdata);
-		return (PyObject *)fs->userdata;
+
+	result = mnt_fs_get_userdata(fs);
+	if (result) {
+		Py_INCREF(result);
+		return (PyObject *) result;
 	}
 
-	FsObject *result = PyObject_New(FsObject, &FsType);
+	/* Creating an encapsualing object: increment the refcount, so that code
+	 * such as tab.next_fs() doesn't call the destructor, which would free
+	 * our fs struct as well
+	 */
+	result = PyObject_New(FsObject, &FsType);
 	if (!result) {
 		UL_RaiseExc(ENOMEM);
 		return NULL;
 	}
-	/* Creating an encapsualing object: increment the refcount, so that code
-	 * such as:
-	 * tab.next_fs()
-	 * doesn't call the destructor, which would free our fs struct as well
-	 */
+
 	Py_INCREF(result);
 	result->fs = fs;
-	result->fs->userdata = (void *) result;
+	mnt_fs_set_userdata(fs, result);
 	return (PyObject *) result;
 }
 
@@ -731,7 +735,7 @@ static PyObject *Fs_copy_fs(FsObject *self, PyObject *args, PyObject *kwds)
 	} else if (dest == Py_None) {			/* create new object */
 		FsObject *result = PyObject_New(FsObject, &FsType);
 		result->fs = mnt_copy_fs(NULL, self->fs);
-		result->fs->userdata = (void *)result;	/* keep a pointer to encapsulating object */
+		mnt_fs_set_userdata(result->fs, result);	/* keep a pointer to encapsulating object */
 		return (PyObject *)result;
 	}
 
