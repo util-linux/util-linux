@@ -548,7 +548,6 @@ void pymnt_free_table(struct libmnt_table *tab)
 	while (mnt_table_first_fs(tab, &fs) == 0) {
 		PyObject *obj = mnt_fs_get_userdata(fs);
 
-		mnt_table_remove_fs(tab, fs);
 		if (obj)
 			Py_DECREF(obj); /* (possible) destruction via object destructor */
 		else
