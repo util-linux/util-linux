@@ -266,7 +266,6 @@ struct libmnt_fs {
  */
 struct libmnt_table {
 	int		fmt;		/* MNT_FMT_* file format */
-	int		nents;		/* number of valid entries */
 	int		comms;		/* enable/disable comment parsing */
 	char		*comm_intro;	/* First comment in file */
 	char		*comm_tail;	/* Last comment in file */

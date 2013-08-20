@@ -188,12 +188,14 @@ static int display_summary(void)
 	if (!st)
 		return -1;
 
+	if (mnt_table_is_empty(st))
+		return 0;
+
 	itr = mnt_new_iter(MNT_ITER_FORWARD);
 	if (!itr)
 		err(EXIT_FAILURE, _("failed to initialize libmount iterator"));
 
-	if (mnt_table_get_nents(st) > 0)
-		printf(_("%s\t\t\t\tType\t\tSize\tUsed\tPriority\n"), _("Filename"));
+	printf(_("%s\t\t\t\tType\t\tSize\tUsed\tPriority\n"), _("Filename"));
 
 	while (mnt_table_next_fs(st, itr, &fs) == 0) {
 		printf("%-39s\t%s\t%jd\t%jd\t%d\n",

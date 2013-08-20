@@ -92,7 +92,6 @@ int mnt_reset_table(struct libmnt_table *tb)
 		mnt_free_fs(fs);
 	}
 
-	tb->nents = 0;
 	return 0;
 }
 
@@ -123,8 +122,29 @@ void mnt_free_table(struct libmnt_table *tb)
  */
 int mnt_table_get_nents(struct libmnt_table *tb)
 {
+	struct list_head *p;
+	int i = 0;
+
 	assert(tb);
-	return tb ? tb->nents : 0;
+	if (!tb)
+		return -EINVAL;
+	if (list_empty(&tb->ents))
+		return 0;
+	list_for_each(p, &tb->ents)
+		i++;
+	return i;
+}
+
+/**
+ * mnt_table_is_empty:
+ * @tb: pointer to tab
+ *
+ * Returns: 1 if the table is without filesystems, or 0.
+ */
+int mnt_table_is_empty(struct libmnt_table *tb)
+{
+	assert(tb);
+	return tb == NULL || list_empty(&tb->ents) ? 1 : 0;
 }
 
 /**
@@ -372,7 +392,6 @@ int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 
 	DBG(TAB, mnt_debug_h(tb, "add entry: %s %s",
 			mnt_fs_get_source(fs), mnt_fs_get_target(fs)));
-	tb->nents++;
 	return 0;
 }
 
@@ -391,7 +410,6 @@ int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 	if (!tb || !fs)
 		return -EINVAL;
 	list_del(&fs->ents);
-	tb->nents--;
 	return 0;
 }
 
@@ -792,7 +810,7 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 {
 	struct libmnt_iter itr;
 	struct libmnt_fs *fs = NULL;
-	int ntags = 0;
+	int ntags = 0, nents;
 	char *cn;
 	const char *p;
 
@@ -818,8 +836,10 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 
 	DBG(TAB, mnt_debug_h(tb, "lookup canonical SRCPATH: '%s'", cn));
 
+	nents = mnt_table_get_nents(tb);
+
 	/* canonicalized paths in struct libmnt_table */
-	if (ntags < mnt_table_get_nents(tb)) {
+	if (ntags < nents) {
 		mnt_reset_iter(&itr, direction);
 		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 			if (mnt_fs_streq_srcpath(fs, cn))
@@ -862,7 +882,7 @@ struct libmnt_fs *mnt_table_find_srcpath(struct libmnt_table *tb, const char *pa
 	}
 
 	/* non-canonicalized paths in struct libmnt_table */
-	if (ntags <= mnt_table_get_nents(tb)) {
+	if (ntags <= nents) {
 		mnt_reset_iter(&itr, direction);
 		while(mnt_table_next_fs(tb, &itr, &fs) == 0) {
 			if (mnt_fs_is_netfs(fs) || mnt_fs_is_pseudofs(fs))
@@ -1210,7 +1230,7 @@ int mnt_table_is_fs_mounted(struct libmnt_table *tb, struct libmnt_fs *fstab_fs)
 	DBG(FS, mnt_debug_h(fstab_fs, "is FS mounted? [target=%s]",
 				mnt_fs_get_target(fstab_fs)));
 
-	if (mnt_fs_is_swaparea(fstab_fs) || mnt_table_get_nents(tb) == 0) {
+	if (mnt_fs_is_swaparea(fstab_fs) || mnt_table_is_empty(tb)) {
 		DBG(FS, mnt_debug_h(fstab_fs, "- ignore (swap or no data)"));
 		return 0;
 	}

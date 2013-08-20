@@ -269,6 +269,7 @@ global:
 	mnt_table_get_intro_comment;
 	mnt_table_get_trailing_comment;
 	mnt_table_get_userdata;
+	mnt_table_is_empty;
 	mnt_table_last_fs;
 	mnt_table_replace_file;
 	mnt_table_set_intro_comment;

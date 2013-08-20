@@ -303,6 +303,7 @@ mnt_table_get_nents
 mnt_table_get_root_fs
 mnt_table_get_trailing_comment
 mnt_table_get_userdata
+mnt_table_is_empty
 mnt_table_is_fs_mounted
 mnt_table_last_fs
 mnt_table_next_child_fs
