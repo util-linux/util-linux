@@ -3,6 +3,8 @@
 libmnt_cache
 mnt_new_cache
 mnt_free_cache
+mnt_ref_cache
+mnt_unref_cache
 mnt_cache_device_has_tag
 mnt_cache_find_tag_value
 mnt_cache_read_tags

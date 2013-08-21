@@ -48,6 +48,7 @@ struct libmnt_cache {
 	struct mnt_cache_entry	*ents;
 	size_t			nents;
 	size_t			nallocs;
+	int			refcount;
 
 	/* blkid_evaluate_tag() works in two ways:
 	 *
@@ -72,6 +73,7 @@ struct libmnt_cache *mnt_new_cache(void)
 	if (!cache)
 		return NULL;
 	DBG(CACHE, mnt_debug_h(cache, "alloc"));
+	cache->refcount = 1;
 	return cache;
 }
 
@@ -89,6 +91,7 @@ void mnt_free_cache(struct libmnt_cache *cache)
 		return;
 
 	DBG(CACHE, mnt_debug_h(cache, "free"));
+	WARN_REFCOUNT(CACHE, cache, cache->refcount);
 
 	for (i = 0; i < cache->nents; i++) {
 		struct mnt_cache_entry *e = &cache->ents[i];
@@ -101,6 +104,38 @@ void mnt_free_cache(struct libmnt_cache *cache)
 		blkid_put_cache(cache->bc);
 	free(cache);
 }
+
+/**
+ * mnt_ref_cache:
+ * @cache: cache pointer
+ *
+ * Increments reference counter.
+ */
+void mnt_ref_cache(struct libmnt_cache *cache)
+{
+	if (cache) {
+		cache->refcount++;
+		/*DBG(CACHE, mnt_debug_h(cache, "ref=%d", cache->refcount));*/
+	}
+}
+
+/**
+ * mnt_unref_cache:
+ * @cache: cache pointer
+ *
+ * De-increments reference counter, on zero the cache is automatically
+ * deallocated by mnt_free_cache().
+ */
+void mnt_unref_cache(struct libmnt_cache *cache)
+{
+	if (cache) {
+		cache->refcount--;
+		/*DBG(CACHE, mnt_debug_h(cache, "unref=%d", cache->refcount));*/
+		if (cache->refcount <= 0)
+			mnt_free_cache(cache);
+	}
+}
+
 
 /* note that the @key could be the same pointer as @value */
 static int cache_add_entry(struct libmnt_cache *cache, char *key,
@@ -620,7 +655,7 @@ int test_resolve_path(struct libmnt_test *ts, int argc, char *argv[])
 		p = mnt_resolve_path(line, cache);
 		printf("%s : %s\n", line, p);
 	}
-	mnt_free_cache(cache);
+	mnt_unref_cache(cache);
 	return 0;
 }
 
@@ -643,7 +678,7 @@ int test_resolve_spec(struct libmnt_test *ts, int argc, char *argv[])
 		p = mnt_resolve_spec(line, cache);
 		printf("%s : %s\n", line, p);
 	}
-	mnt_free_cache(cache);
+	mnt_unref_cache(cache);
 	return 0;
 }
 
@@ -695,7 +730,7 @@ int test_read_tags(struct libmnt_test *ts, int argc, char *argv[])
 				e->key + strlen(e->key) + 1);
 	}
 
-	mnt_free_cache(cache);
+	mnt_unref_cache(cache);
 	return 0;
 
 }

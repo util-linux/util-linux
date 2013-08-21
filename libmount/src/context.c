@@ -91,8 +91,8 @@ void mnt_free_context(struct libmnt_context *cxt)
 
 	if (!(cxt->flags & MNT_FL_EXTERN_FSTAB))
 		mnt_free_table(cxt->fstab);
-	if (!(cxt->flags & MNT_FL_EXTERN_CACHE))
-		mnt_free_cache(cxt->cache);
+
+	mnt_unref_cache(cxt->cache);
 
 	mnt_context_clear_loopdev(cxt);
 	mnt_free_lock(cxt->lock);
@@ -925,8 +925,6 @@ int mnt_context_set_fstab(struct libmnt_context *cxt, struct libmnt_table *tb)
  */
 int mnt_context_get_fstab(struct libmnt_context *cxt, struct libmnt_table **tb)
 {
-	struct libmnt_cache *cache;
-
 	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
@@ -944,11 +942,9 @@ int mnt_context_get_fstab(struct libmnt_context *cxt, struct libmnt_table **tb)
 			return rc;
 	}
 
-	cache = mnt_context_get_cache(cxt);
-
 	/*  never touch an external fstab */
 	if (!(cxt->flags & MNT_FL_EXTERN_FSTAB))
-		mnt_table_set_cache(cxt->fstab, cache);
+		mnt_table_set_cache(cxt->fstab, mnt_context_get_cache(cxt));
 
 	if (tb)
 		*tb = cxt->fstab;
@@ -967,8 +963,6 @@ int mnt_context_get_fstab(struct libmnt_context *cxt, struct libmnt_table **tb)
  */
 int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 {
-	struct libmnt_cache *cache;
-
 	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
@@ -991,8 +985,7 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 			return rc;
 	}
 
-	cache = mnt_context_get_cache(cxt);
-	mnt_table_set_cache(cxt->mtab, cache);
+	mnt_table_set_cache(cxt->mtab, mnt_context_get_cache(cxt));
 
 	if (tb)
 		*tb = cxt->mtab;
@@ -1048,7 +1041,6 @@ int mnt_context_set_tabfilter(struct libmnt_context *cxt,
 int mnt_context_get_table(struct libmnt_context *cxt,
 			  const char *filename, struct libmnt_table **tb)
 {
-	struct libmnt_cache *cache;
 	int rc;
 
 	assert(cxt);
@@ -1069,10 +1061,7 @@ int mnt_context_get_table(struct libmnt_context *cxt,
 		return rc;
 	}
 
-	cache = mnt_context_get_cache(cxt);
-	if (cache)
-		mnt_table_set_cache(*tb, cache);
-
+	mnt_table_set_cache(*tb, mnt_context_get_cache(cxt));
 	return 0;
 }
 
@@ -1106,12 +1095,14 @@ int mnt_context_set_tables_errcb(struct libmnt_context *cxt,
  * @cxt: mount context
  * @cache: cache instance or nULL
  *
- * The mount context maintains a private struct libmnt_cache by default.  This function
- * allows to overwrite the private cache with an external instance. Note that
- * the external instance is not deallocated by mnt_free_context().
+ * The mount context maintains a private struct libmnt_cache by default. This
+ * function allows to overwrite the private cache with an external instance.
+ * This function increments cache reference counter.
  *
  * If the @cache argument is NULL, then the current private cache instance is
  * reset.
+ *
+ * The old cache instance reference counter is de-incremented.
  *
  * Returns: 0 on success, negative number in case of error.
  */
@@ -1119,10 +1110,10 @@ int mnt_context_set_cache(struct libmnt_context *cxt, struct libmnt_cache *cache
 {
 	if (!cxt)
 		return -EINVAL;
-	if (!(cxt->flags & MNT_FL_EXTERN_CACHE))
-		mnt_free_cache(cxt->cache);
 
-	set_flag(cxt, MNT_FL_EXTERN_CACHE, cache != NULL);
+	mnt_ref_cache(cache);			/* new */
+	mnt_unref_cache(cxt->cache);		/* old */
+
 	cxt->cache = cache;
 	return 0;
 }
@@ -1145,7 +1136,6 @@ struct libmnt_cache *mnt_context_get_cache(struct libmnt_context *cxt)
 		cxt->cache = mnt_new_cache();
 		if (!cxt->cache)
 			return NULL;
-		cxt->flags &= ~MNT_FL_EXTERN_CACHE;
 	}
 	return cxt->cache;
 }

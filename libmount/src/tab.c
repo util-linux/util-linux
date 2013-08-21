@@ -109,6 +109,7 @@ void mnt_free_table(struct libmnt_table *tb)
 		return;
 
 	mnt_reset_table(tb);
+	mnt_unref_cache(tb->cache);
 
 	DBG(TAB, mnt_debug_h(tb, "free"));
 	free(tb->comm_intro);
@@ -338,6 +339,10 @@ int mnt_table_append_trailing_comment(struct libmnt_table *tb, const char *comm)
  * same cache between more threads -- currently the cache does not provide any
  * locking method.
  *
+ * This function increments cache refrence counter. It's recomented to use
+ * mnt_unref_cache() after mnt_table_set_cache() if you want to keep the cache
+ * referenced by @tb only.
+ *
  * See also mnt_new_cache().
  *
  * Returns: 0 on success or negative number in case of error.
@@ -347,6 +352,9 @@ int mnt_table_set_cache(struct libmnt_table *tb, struct libmnt_cache *mpc)
 	assert(tb);
 	if (!tb)
 		return -EINVAL;
+
+	mnt_ref_cache(mpc);			/* new */
+	mnt_unref_cache(tb->cache);		/* old */
 	tb->cache = mpc;
 	return 0;
 }
@@ -1456,6 +1464,7 @@ int test_find(struct libmnt_test *ts, int argc, char *argv[], int dr)
 	if (!mpc)
 		goto done;
 	mnt_table_set_cache(tb, mpc);
+	mnt_unref_cache(mpc);
 
 	if (strcasecmp(find, "source") == 0)
 		fs = mnt_table_find_source(tb, what, dr);
@@ -1470,7 +1479,6 @@ int test_find(struct libmnt_test *ts, int argc, char *argv[], int dr)
 	}
 done:
 	mnt_free_table(tb);
-	mnt_free_cache(mpc);
 	return rc;
 }
 
@@ -1498,6 +1506,7 @@ int test_find_pair(struct libmnt_test *ts, int argc, char *argv[])
 	if (!mpc)
 		goto done;
 	mnt_table_set_cache(tb, mpc);
+	mnt_unref_cache(mpc);
 
 	fs = mnt_table_find_pair(tb, argv[2], argv[3], MNT_ITER_FORWARD);
 	if (!fs)
@@ -1507,7 +1516,6 @@ int test_find_pair(struct libmnt_test *ts, int argc, char *argv[])
 	rc = 0;
 done:
 	mnt_free_table(tb);
-	mnt_free_cache(mpc);
 	return rc;
 }
 
@@ -1525,6 +1533,7 @@ int test_find_mountpoint(struct libmnt_test *ts, int argc, char *argv[])
 	if (!mpc)
 		goto done;
 	mnt_table_set_cache(tb, mpc);
+	mnt_unref_cache(mpc);
 
 	fs = mnt_table_find_mountpoint(tb, argv[1], MNT_ITER_BACKWARD);
 	if (!fs)
@@ -1534,7 +1543,6 @@ int test_find_mountpoint(struct libmnt_test *ts, int argc, char *argv[])
 	rc = 0;
 done:
 	mnt_free_table(tb);
-	mnt_free_cache(mpc);
 	return rc;
 }
 
@@ -1564,6 +1572,7 @@ static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
 	if (!mpc)
 		goto done;
 	mnt_table_set_cache(tb, mpc);
+	mnt_unref_cache(mpc);
 
 	while(mnt_table_next_fs(fstab, itr, &fs) == 0) {
 		if (mnt_table_is_fs_mounted(tb, fs))
@@ -1580,7 +1589,6 @@ static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
 done:
 	mnt_free_table(tb);
 	mnt_free_table(fstab);
-	mnt_free_cache(mpc);
 	mnt_free_iter(itr);
 	return rc;
 }

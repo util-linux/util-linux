@@ -216,6 +216,9 @@ extern struct libmnt_cache *mnt_new_cache(void)
 			__ul_attribute__((warn_unused_result));
 extern void mnt_free_cache(struct libmnt_cache *cache);
 
+extern void mnt_ref_cache(struct libmnt_cache *cache);
+extern void mnt_unref_cache(struct libmnt_cache *cache);
+
 extern int mnt_cache_read_tags(struct libmnt_cache *cache, const char *devname);
 
 extern int mnt_cache_device_has_tag(struct libmnt_cache *cache,
