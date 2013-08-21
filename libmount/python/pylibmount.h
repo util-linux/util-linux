@@ -5,7 +5,6 @@
 #include <structmember.h>
 
 #include "libmount.h"
-#include "mountP.h"
 
 #define NODEL_ATTR	"This attribute cannot be deleted"
 #define CONSTRUCT_ERR	"Error during object construction"

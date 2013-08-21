@@ -48,28 +48,9 @@ static void Context_dealloc(ContextObjext *self)
 	if (!self->cxt) /* if init fails */
 		return;
 
-	if (!(self->cxt->flags & MNT_FL_EXTERN_FS)) {
-		if (self->cxt->fs && self->cxt->fs->userdata)
-			Py_DECREF(self->cxt->fs->userdata);
-		else
-			mnt_free_fs(self->cxt->fs);
-		self->cxt->fs = NULL;
-	}
-
-	if (self->cxt->fstab && !(self->cxt->flags & MNT_FL_EXTERN_FSTAB)) {
-		if (self->cxt->fstab->userdata)
-			Py_DECREF(self->cxt->fstab->userdata);
-		else
-			pymnt_free_table(self->cxt->fstab);
-		self->cxt->fstab = NULL;
-	}
-	if (self->cxt->mtab) {
-		if (self->cxt->mtab->userdata)
-			Py_DECREF(self->cxt->mtab->userdata);
-		else
-			pymnt_free_table(self->cxt->mtab);
-		self->cxt->mtab = NULL;
-	}
+	Py_XDECREF(mnt_context_get_fs_userdata(self->cxt));
+	Py_XDECREF(mnt_context_get_fstab_userdata(self->cxt));
+	Py_XDECREF(mnt_context_get_mtab_userdata(self->cxt));
 
 	mnt_free_context(self->cxt);
 	self->ob_type->tp_free((PyObject*) self);
@@ -558,8 +539,8 @@ static int Context_set_fs(ContextObjext *self, PyObject *value, void *closure __
 		return -1;
 	}
 	Py_INCREF(fs);
-	if (self->cxt->fs)
-		Py_XDECREF(self->cxt->fs->userdata);
+	Py_XDECREF(mnt_context_get_fs_userdata(self->cxt));
+
 	return mnt_context_set_fs(self->cxt, fs->fs);
 }
 
@@ -576,8 +557,8 @@ static int Context_set_fstab(ContextObjext *self, PyObject *value, void *closure
 		return -1;
 	}
 	Py_INCREF(fstab);
-	if (self->cxt->fstab)
-		Py_XDECREF(self->cxt->fstab->userdata);
+	Py_XDECREF(mnt_context_get_fstab_userdata(self->cxt));
+
 	return mnt_context_set_fstab(self->cxt, fstab->tab);
 }
 
@@ -833,14 +814,7 @@ This function is optional.\n\
 Returns self or raises an exception in case of an error."
 static PyObject *Context_apply_fstab(ContextObjext *self)
 {
-	int rc;
-
-	if (!self->cxt->fs) {
-		PyErr_SetString(PyExc_AssertionError, NOFS_ERR);
-		return NULL;
-	}
-
-	rc = mnt_context_apply_fstab(self->cxt);
+	int rc = mnt_context_apply_fstab(self->cxt);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
@@ -956,14 +930,7 @@ Returns self on success\n\
 or an exception in case of other errors."
 static PyObject *Context_do_mount(ContextObjext *self)
 {
-	int rc;
-
-	if (!self->cxt->fs) {
-		PyErr_SetString(PyExc_AssertionError, NOFS_ERR);
-		return NULL;
-	}
-
-	rc = mnt_context_do_mount(self->cxt);
+	int rc = mnt_context_do_mount(self->cxt);
 	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
@@ -1011,14 +978,7 @@ Returns self on success\n\
 or an exception in case of other errors."
 static PyObject *Context_mount(ContextObjext *self)
 {
-	int rc;
-
-	if (!self->cxt->fs) {
-		PyErr_SetString(PyExc_AssertionError, NOFS_ERR);
-		return NULL;
-	}
-
-	rc = mnt_context_mount(self->cxt);
+	int rc = mnt_context_mount(self->cxt);
 	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
@@ -1042,7 +1002,7 @@ Returns self on success\n\
 or an exception in case of other errors."
 static PyObject *Context_umount(ContextObjext *self)
 {
-	int rc =  mnt_context_umount(self->cxt);
+	int rc = mnt_context_umount(self->cxt);
 	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
@@ -1053,14 +1013,7 @@ after Cxt.do_mount(). See also Cxt.syscall_status.\n\
 Returns self or raises an exception in case of an error."
 static PyObject *Context_finalize_mount(ContextObjext *self)
 {
-	int rc;
-
-	if (!self->cxt->fs) {
-		PyErr_SetString(PyExc_AssertionError, NOFS_ERR);
-		return NULL;
-	}
-
-	rc = mnt_context_finalize_mount(self->cxt);
+	int rc = mnt_context_finalize_mount(self->cxt);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
@@ -1080,14 +1033,7 @@ Prepare context for mounting, unnecessary for Cxt.mount().\n\
 Returns self or raises an exception in case of an error."
 static PyObject *Context_prepare_mount(ContextObjext *self)
 {
-	int rc;
-
-	if (!self->cxt->fs) {
-		PyErr_SetString(PyExc_AssertionError, NOFS_ERR);
-		return NULL;
-	}
-
-	rc = mnt_context_prepare_mount(self->cxt);
+	int rc = mnt_context_prepare_mount(self->cxt);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
@@ -1256,11 +1202,8 @@ static PyMethodDef Context_methods[] = {
 
 static PyObject *Context_repr(ContextObjext *self)
 {
-	return PyString_FromFormat("<libmount.Context object at %p, mtab_path=%s, utab_path=%s, restricted=%s>",
-			self,
-			self->cxt->mtab_path ? self->cxt->mtab_path : "None",
-			self->cxt->utab_path ? self->cxt->utab_path : "None",
-			self->cxt->restricted ? "True" : "False");
+	return PyString_FromFormat("<libmount.Context object at %p, restricted=%s>",
+			self, mnt_context_is_restricted(self->cxt) ? "True" : "False");
 }
 
 PyTypeObject ContextType = {
