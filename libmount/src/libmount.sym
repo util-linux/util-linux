@@ -265,6 +265,7 @@ global:
 	mnt_fs_append_comment;
 	mnt_fs_get_comment;
 	mnt_fs_set_comment;
+	mnt_ref_fs;
 	mnt_table_append_intro_comment;
 	mnt_table_append_trailing_comment;
 	mnt_table_enable_comments;
@@ -280,4 +281,5 @@ global:
 	mnt_table_set_userdata;
 	mnt_table_with_comments;
 	mnt_table_write_file;
+	mnt_unref_fs;
 } MOUNT_2.23;

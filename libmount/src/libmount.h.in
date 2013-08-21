@@ -302,6 +302,8 @@ extern int mnt_lock_block_signals(struct libmnt_lock *ml, int enable);
 extern struct libmnt_fs *mnt_new_fs(void)
 			__ul_attribute__((warn_unused_result));
 extern void mnt_free_fs(struct libmnt_fs *fs);
+extern void mnt_ref_fs(struct libmnt_fs *fs);
+extern void mnt_unref_fs(struct libmnt_fs *fs);
 
 extern void mnt_reset_fs(struct libmnt_fs *fs);
 extern struct libmnt_fs *mnt_copy_fs(struct libmnt_fs *dest,

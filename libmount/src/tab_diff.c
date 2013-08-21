@@ -54,6 +54,8 @@ static void free_tabdiff_entry(struct tabdiff_entry *de)
 	if (!de)
 		return;
 	list_del(&de->changes);
+	mnt_unref_fs(de->new_fs);
+	mnt_unref_fs(de->old_fs);
 	free(de);
 }
 
@@ -135,6 +137,9 @@ static int tabdiff_reset(struct libmnt_tabdiff *df)
 		list_del(&de->changes);
 		list_add_tail(&de->changes, &df->unused);
 
+		mnt_unref_fs(de->new_fs);
+		mnt_unref_fs(de->old_fs);
+
 		de->new_fs = de->old_fs = NULL;
 		de->oper = 0;
 	}
@@ -163,6 +168,12 @@ static int tabdiff_add_entry(struct libmnt_tabdiff *df, struct libmnt_fs *old,
 	}
 
 	INIT_LIST_HEAD(&de->changes);
+
+	mnt_ref_fs(new);
+	mnt_ref_fs(old);
+
+	mnt_unref_fs(de->new_fs);
+	mnt_unref_fs(de->old_fs);
 
 	de->old_fs = old;
 	de->new_fs = new;
@@ -280,6 +291,8 @@ int mnt_diff_tables(struct libmnt_tabdiff *df, struct libmnt_table *old_tab,
 
 			de = tabdiff_get_mount(df, src,	mnt_fs_get_id(fs));
 			if (de) {
+				mnt_ref_fs(fs);
+				mnt_unref_fs(de->old_fs);
 				de->oper = MNT_TABDIFF_MOVE;
 				de->old_fs = fs;
 			} else

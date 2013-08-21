@@ -630,8 +630,9 @@ int mnt_table_parse_stream(struct libmnt_table *tb, FILE *f, const char *filenam
 			if (rc == 0 && tb->fmt == MNT_FMT_MOUNTINFO)
 				rc = kernel_fs_postparse(tb, fs, &tid, filename);
 		}
+		mnt_unref_fs(fs);
+
 		if (rc) {
-			mnt_free_fs(fs);
 			if (rc == 1)
 				continue;	/* recoverable error */
 			if (feof(f))

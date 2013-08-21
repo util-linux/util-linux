@@ -75,7 +75,8 @@ struct libmnt_table *mnt_new_table(void)
  * mnt_reset_table:
  * @tb: tab pointer
  *
- * Deallocates all entries (filesystems) from the table.
+ * Removes all entries (filesystems) from the table. The filesystems with zero
+ * reference count will be deallocated.
  *
  * Returns: 0 on success or negative number in case of error.
  */
@@ -89,9 +90,10 @@ int mnt_reset_table(struct libmnt_table *tb)
 	while (!list_empty(&tb->ents)) {
 		struct libmnt_fs *fs = list_entry(tb->ents.next,
 				                  struct libmnt_fs, ents);
-		mnt_free_fs(fs);
+		mnt_table_remove_fs(tb, fs);
 	}
 
+	tb->nents = 0;
 	return 0;
 }
 
@@ -118,21 +120,11 @@ void mnt_free_table(struct libmnt_table *tb)
  * mnt_table_get_nents:
  * @tb: pointer to tab
  *
- * Returns: number of valid entries in tab.
+ * Returns: number of entries in table.
  */
 int mnt_table_get_nents(struct libmnt_table *tb)
 {
-	struct list_head *p;
-	int i = 0;
-
-	assert(tb);
-	if (!tb)
-		return -EINVAL;
-	if (list_empty(&tb->ents))
-		return 0;
-	list_for_each(p, &tb->ents)
-		i++;
-	return i;
+	return tb ? tb->nents : 0;
 }
 
 /**
@@ -376,7 +368,9 @@ struct libmnt_cache *mnt_table_get_cache(struct libmnt_table *tb)
  * @tb: tab pointer
  * @fs: new entry
  *
- * Adds a new entry to tab.
+ * Adds a new entry to tab and increment @fs reference counter. Don't forget to
+ * use mnt_unref_fs() after mnt_table_add_fs() you want to keep the @fs
+ * referenced by the table only.
  *
  * Returns: 0 on success or negative number in case of error.
  */
@@ -388,7 +382,9 @@ int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 	if (!tb || !fs)
 		return -EINVAL;
 
+	mnt_ref_fs(fs);
 	list_add_tail(&fs->ents, &tb->ents);
+	tb->nents++;
 
 	DBG(TAB, mnt_debug_h(tb, "add entry: %s %s",
 			mnt_fs_get_source(fs), mnt_fs_get_target(fs)));
@@ -400,6 +396,10 @@ int mnt_table_add_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
  * @tb: tab pointer
  * @fs: new entry
  *
+ * Removes the @fs from the table and de-increment reference counter of the @fs. The
+ * filesystem with zero reference counter will be deallocated. Don't forget to use
+ * mnt_ref_fs() before call mnt_table_remove_fs() if you want to use @fs later.
+ *
  * Returns: 0 on success or negative number in case of error.
  */
 int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
@@ -410,6 +410,8 @@ int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 	if (!tb || !fs)
 		return -EINVAL;
 	list_del(&fs->ents);
+	mnt_unref_fs(fs);
+	tb->nents--;
 	return 0;
 }
 
@@ -1387,7 +1389,7 @@ int test_copy_fs(struct libmnt_test *ts, int argc, char *argv[])
 
 	printf("COPY:\n");
 	mnt_fs_print_debug(fs, stdout);
-	mnt_free_fs(fs);
+	mnt_unref_fs(fs);
 	rc = 0;
 done:
 	mnt_free_table(tb);

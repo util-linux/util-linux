@@ -109,7 +109,7 @@ void mnt_free_context(struct libmnt_context *cxt)
  * @cxt: mount context
  *
  * Resets all information in the context that is directly related to
- * the latest mount (spec, source, target, mount options, ....)
+ * the latest mount (spec, source, target, mount options, ...).
  *
  * The match patterns, cached fstab, cached canonicalized paths and tags and
  * [e]uid are not reset. You have to use
@@ -136,9 +136,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 
 	fl = cxt->flags;
 
-	if (!(cxt->flags & MNT_FL_EXTERN_FS))
-		mnt_free_fs(cxt->fs);
-
+	mnt_unref_fs(cxt->fs);
 	mnt_free_table(cxt->mtab);
 
 	free(cxt->helper);
@@ -633,8 +631,9 @@ int mnt_context_is_loopdel(struct libmnt_context *cxt)
  * @fs: filesystem description
  *
  * The mount context uses private @fs by default. This function allows to
- * overwrite the private @fs with an external instance. Note that the external
- * @fs instance is not deallocated by mnt_free_context() or mnt_reset_context().
+ * overwrite the private @fs with an external instance. This function
+ * increments @fs reference counter (and deincrement reference counter of the
+ * old fs).
  *
  * The @fs will be modified by mnt_context_set_{source,target,options,fstype}
  * functions, If the @fs is NULL, then all current FS specific settings (source,
@@ -646,10 +645,9 @@ int mnt_context_set_fs(struct libmnt_context *cxt, struct libmnt_fs *fs)
 {
 	if (!cxt)
 		return -EINVAL;
-	if (!(cxt->flags & MNT_FL_EXTERN_FS))
-		mnt_free_fs(cxt->fs);
 
-	set_flag(cxt, MNT_FL_EXTERN_FS, fs != NULL);
+	mnt_ref_fs(fs);			/* new */
+	mnt_unref_fs(cxt->fs);		/* old */
 	cxt->fs = fs;
 	return 0;
 }
@@ -669,10 +667,8 @@ struct libmnt_fs *mnt_context_get_fs(struct libmnt_context *cxt)
 	assert(cxt);
 	if (!cxt)
 		return NULL;
-	if (!cxt->fs) {
+	if (!cxt->fs)
 		cxt->fs = mnt_new_fs();
-		cxt->flags &= ~MNT_FL_EXTERN_FS;
-	}
 	return cxt->fs;
 }
 

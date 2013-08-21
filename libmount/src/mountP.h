@@ -55,6 +55,13 @@
 # include <stdio.h>
 # include <stdarg.h>
 
+# define WARN_REFCOUNT(m, o, r) \
+			do { \
+				if ((MNT_DEBUG_ ## m) & libmount_debug_mask && r != 0) \
+					fprintf(stderr, "%d: libmount: %8s: [%p]: *** deallocates with refcount=%d\n", \
+							getpid(), # m, o, r); \
+			} while (0)
+
 # define ON_DBG(m, x)	do { \
 				if ((MNT_DEBUG_ ## m) & libmount_debug_mask) { \
 					x; \
@@ -100,6 +107,7 @@ mnt_debug_h(void *handler, const char *mesg, ...)
 }
 
 #else /* !CONFIG_LIBMOUNT_DEBUG */
+# define WARN_REFCOUNT(m,o,r)  do { ; } while (0)
 # define ON_DBG(m,x) do { ; } while (0)
 # define DBG(m,x) do { ; } while (0)
 # define DBG_FLUSH do { ; } while(0)
@@ -209,6 +217,7 @@ struct libmnt_iter {
 struct libmnt_fs {
 	struct list_head ents;
 
+	int		refcount;	/* reference counter */
 	int		id;		/* mountinfo[1]: ID */
 	int		parent;		/* mountinfo[2]: parent */
 	dev_t		devno;		/* mountinfo[3]: st_dev */
@@ -266,6 +275,7 @@ struct libmnt_fs {
  */
 struct libmnt_table {
 	int		fmt;		/* MNT_FMT_* file format */
+	int		nents;		/* number of entries */
 	int		comms;		/* enable/disable comment parsing */
 	char		*comm_intro;	/* First comment in file */
 	char		*comm_tail;	/* Last comment in file */
@@ -381,7 +391,6 @@ struct libmnt_context
 #define MNT_FL_FORK		(1 << 12)
 #define MNT_FL_NOSWAPMATCH	(1 << 13)
 
-#define MNT_FL_EXTERN_FS	(1 << 15)	/* cxt->fs is not private */
 #define MNT_FL_EXTERN_FSTAB	(1 << 16)	/* cxt->fstab is not private */
 #define MNT_FL_EXTERN_CACHE	(1 << 17)	/* cxt->cache is not private */
 

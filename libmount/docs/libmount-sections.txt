@@ -170,6 +170,8 @@ libmnt_fs
 mnt_copy_fs
 mnt_free_fs
 mnt_free_mntent
+mnt_ref_fs
+mnt_unref_fs
 mnt_fs_append_attributes
 mnt_fs_append_comment
 mnt_fs_append_options

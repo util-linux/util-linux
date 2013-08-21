@@ -21,6 +21,9 @@
 /**
  * mnt_new_fs:
  *
+ * The initial refcount is 1, and needs to be decremented to
+ * release the resources of the filesystem.
+ *
  * Returns: newly allocated struct libmnt_fs.
  */
 struct libmnt_fs *mnt_new_fs(void)
@@ -29,7 +32,7 @@ struct libmnt_fs *mnt_new_fs(void)
 	if (!fs)
 		return NULL;
 
-	/*DBG(FS, mnt_debug_h(fs, "alloc"));*/
+	fs->refcount = 1;
 	INIT_LIST_HEAD(&fs->ents);
 	return fs;
 }
@@ -38,7 +41,10 @@ struct libmnt_fs *mnt_new_fs(void)
  * mnt_free_fs:
  * @fs: fs pointer
  *
- * Deallocates the fs.
+ * Deallocates the fs. This function does not care about reference count. Don't
+ * use this function directly -- it's better to use use mnt_unref_fs().
+ *
+ * The reference counting is supported since util-linux v2.24.
  */
 void mnt_free_fs(struct libmnt_fs *fs)
 {
@@ -47,6 +53,7 @@ void mnt_free_fs(struct libmnt_fs *fs)
 	list_del(&fs->ents);
 
 	/*DBG(FS, mnt_debug_h(fs, "free"));*/
+	WARN_REFCOUNT(FS, fs, fs->refcount);
 
 	free(fs->source);
 	free(fs->bindsrc);
@@ -75,8 +82,45 @@ void mnt_free_fs(struct libmnt_fs *fs)
  */
 void mnt_reset_fs(struct libmnt_fs *fs)
 {
-	if (fs)
-		memset(fs, 0, sizeof(*fs));
+	int ref;
+
+	if (!fs)
+		return;
+
+	ref = fs->refcount;
+	memset(fs, 0, sizeof(*fs));
+	fs->refcount = ref;
+}
+
+/**
+ * mnt_ref_fs:
+ * @fs: fs pointer
+ *
+ * Increments reference counter.
+ */
+void mnt_ref_fs(struct libmnt_fs *fs)
+{
+	if (fs) {
+		fs->refcount++;
+		/*DBG(FS, mnt_debug_h(fs, "ref=%d", fs->refcount));*/
+	}
+}
+
+/**
+ * mnt_unref_fs:
+ * @fs: fs pointer
+ *
+ * De-increments reference counter, on zero the FS is automatically
+ * deallocated by mnt_free_fs().
+ */
+void mnt_unref_fs(struct libmnt_fs *fs)
+{
+	if (fs) {
+		fs->refcount--;
+		/*DBG(FS, mnt_debug_h(fs, "unref=%d", fs->refcount));*/
+		if (fs->refcount <= 0)
+			mnt_free_fs(fs);
+	}
 }
 
 static inline int update_str(char **dest, const char *src)
