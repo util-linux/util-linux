@@ -867,34 +867,6 @@ static PyObject *Context_get_mtab(ContextObjext *self)
 	mnt_context_get_mtab(self->cxt, &tab);
 	return PyObjectResultTab(tab);
 }
-#define Context_get_table_HELP "get_table(filename)\n\n\
-This function allocates a new table and parses the file. The parser error\n\
-callback and cache for tags and paths is set according to the cxt setting.\n\
-See also Tab.parse_file().\n\
-\n\
-It's strongly recommended to use Cxt.mtab and\n\
-Cxt.fstab for mtab and fstab files. These setters\n\
-do not care about LIBMOUNT_* env.variables and do not merge userspace\n\
-options.\n\
-\n\
-The getters return a new reference to the result.\n\
-\n\
-Returns self or raises an exception in case of an error."
-/* output differs from the C API */
-static PyObject *Context_get_table(ContextObjext *self, PyObject *args, PyObject *kwds)
-{
-	char *filename;
-	struct libmnt_table *tab = NULL;
-	char *kwlist[] = { "filename", NULL };
-
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist, &filename)) {
-		PyErr_SetString(PyExc_TypeError, ARG_ERR);
-		return NULL;
-	}
-
-	mnt_context_get_table(self->cxt, filename, &tab);
-	return PyObjectResultTab(tab);
-}
 
 static PyObject *Context_get_optsmode(ContextObjext *self)
 {
@@ -1151,7 +1123,6 @@ static PyGetSetDef Context_getseters[] = {
 	{NULL}
 };
 static PyMethodDef Context_methods[] = {
-	{"get_table",	(PyCFunction)Context_get_table, METH_VARARGS|METH_KEYWORDS, Context_get_table_HELP},
 	{"find_umount_fs",	(PyCFunction)Context_find_umount_fs, METH_VARARGS|METH_KEYWORDS, Context_find_umount_fs_HELP},
 	{"reset_status",	(PyCFunction)Context_reset_status, METH_NOARGS, Context_reset_status_HELP},
 	{"helper_executed",	(PyCFunction)Context_helper_executed, METH_NOARGS, Context_helper_executed_HELP},
