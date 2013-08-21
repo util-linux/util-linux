@@ -190,7 +190,7 @@ int main(int argc, char *argv[])
 		status |= swapoff_all();
 
 	free_tables();
-	mnt_free_cache(mntcache);
+	mnt_unref_cache(mntcache);
 
 	return status;
 }

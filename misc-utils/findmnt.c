@@ -1497,7 +1497,7 @@ leave:
 	tt_free_table(tt);
 
 	mnt_free_table(tb);
-	mnt_free_cache(cache);
+	mnt_unref_cache(cache);
 	free(tabfiles);
 #ifdef HAVE_LIBUDEV
 	udev_unref(udev);

@@ -729,7 +729,8 @@ static int device_get_mountpoint(char **devname, char **mnt)
 		if (!mtab)
 			err(EXIT_FAILURE, _("failed to initialize libmount table"));
 
-		cache = mnt_new_cache();
+		if (!cache)
+			cache = mnt_new_cache();
 		mnt_table_set_cache(mtab, cache);
 
 		if (p_option)
@@ -1147,7 +1148,7 @@ int main(int argc, char **argv)
 	free(mountpoint);
 
 	mnt_free_table(mtab);
-	mnt_free_cache(cache);
+	mnt_unref_cache(cache);
 
 	return EXIT_SUCCESS;
 }

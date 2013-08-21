@@ -1606,7 +1606,7 @@ leave:
 	tt_free_table(lsblk->tt);
 	mnt_free_table(mtab);
 	mnt_free_table(swaps);
-	mnt_free_cache(mntcache);
+	mnt_unref_cache(mntcache);
 #ifdef HAVE_LIBUDEV
 	udev_unref(udev);
 #endif

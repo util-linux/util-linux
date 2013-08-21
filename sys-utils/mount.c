@@ -163,7 +163,7 @@ static void print_all(struct libmnt_context *cxt, char *pattern, int show_label)
 		free(xsrc);
 	}
 
-	mnt_free_cache(cache);
+	mnt_unref_cache(cache);
 	mnt_free_iter(itr);
 }
 
@@ -990,8 +990,7 @@ int main(int argc, char **argv)
 		 * make a connection between the fstab and the canonicalization
 		 * cache.
 		 */
-		struct libmnt_cache *cache = mnt_context_get_cache(cxt);
-		mnt_table_set_cache(fstab, cache);
+		mnt_table_set_cache(fstab, mnt_context_get_cache(cxt));
 	}
 
 	if (!mnt_context_get_source(cxt) &&

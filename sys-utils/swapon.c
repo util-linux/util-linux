@@ -816,7 +816,7 @@ int main(int argc, char *argv[])
 		status |= do_swapon(*argv++, priority, discard, !CANONIC);
 
 	free_tables();
-	mnt_free_cache(mntcache);
+	mnt_unref_cache(mntcache);
 
 	return status;
 }

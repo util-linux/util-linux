@@ -83,6 +83,7 @@ static int dir_to_device(const char *spec, dev_t *dev)
 	/* to canonicalize all necessary paths */
 	cache = mnt_new_cache();
 	mnt_table_set_cache(tb, cache);
+	mnt_unref_cache(cache);
 
 	fs = mnt_table_find_target(tb, spec, MNT_ITER_BACKWARD);
 	if (fs && mnt_fs_get_target(fs)) {
@@ -91,7 +92,6 @@ static int dir_to_device(const char *spec, dev_t *dev)
 	}
 
 	mnt_free_table(tb);
-	mnt_free_cache(cache);
 	return rc;
 }
 

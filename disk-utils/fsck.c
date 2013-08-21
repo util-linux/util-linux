@@ -1576,7 +1576,7 @@ int main(int argc, char *argv[])
 	}
 	status |= wait_many(FLAG_WAIT_ALL);
 	free(fsck_path);
-	mnt_free_cache(mntcache);
+	mnt_unref_cache(mntcache);
 	mnt_free_table(fstab);
 	mnt_free_table(mtab);
 	return status;
