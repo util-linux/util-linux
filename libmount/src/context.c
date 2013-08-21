@@ -89,9 +89,7 @@ void mnt_free_context(struct libmnt_context *cxt)
 	free(cxt->fstype_pattern);
 	free(cxt->optstr_pattern);
 
-	if (!(cxt->flags & MNT_FL_EXTERN_FSTAB))
-		mnt_free_table(cxt->fstab);
-
+	mnt_unref_table(cxt->fstab);
 	mnt_unref_cache(cxt->cache);
 
 	mnt_context_clear_loopdev(cxt);
@@ -137,7 +135,7 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	fl = cxt->flags;
 
 	mnt_unref_fs(cxt->fs);
-	mnt_free_table(cxt->mtab);
+	mnt_unref_table(cxt->mtab);
 
 	free(cxt->helper);
 	free(cxt->orig_user);
@@ -163,8 +161,6 @@ int mnt_reset_context(struct libmnt_context *cxt)
 	mnt_context_set_tabfilter(cxt, NULL, NULL);
 
 	/* restore non-resettable flags */
-	cxt->flags |= (fl & MNT_FL_EXTERN_FSTAB);
-	cxt->flags |= (fl & MNT_FL_EXTERN_CACHE);
 	cxt->flags |= (fl & MNT_FL_NOMTAB);
 	cxt->flags |= (fl & MNT_FL_FAKE);
 	cxt->flags |= (fl & MNT_FL_SLOPPY);
@@ -891,7 +887,11 @@ int mnt_context_set_options_pattern(struct libmnt_context *cxt, const char *patt
  *
  * The mount context reads /etc/fstab to the private struct libmnt_table by default.
  * This function allows to overwrite the private fstab with an external
- * instance. Note that the external instance is not deallocated by mnt_free_context().
+ * instance.
+ *
+ * This function modify the @tb reference counter. This function does not set
+ * the cache for the @tb. You have to explicitly call mnt_table_set_cache(tb,
+ * mnt_context_get_cache(cxt));
  *
  * The fstab is used read-only and is not modified, it should be possible to
  * share the fstab between more mount contexts (TODO: test it.)
@@ -906,10 +906,10 @@ int mnt_context_set_fstab(struct libmnt_context *cxt, struct libmnt_table *tb)
 	assert(cxt);
 	if (!cxt)
 		return -EINVAL;
-	if (!(cxt->flags & MNT_FL_EXTERN_FSTAB))
-		mnt_free_table(cxt->fstab);
 
-	set_flag(cxt, MNT_FL_EXTERN_FSTAB, tb != NULL);
+	mnt_ref_table(tb);		/* new */
+	mnt_unref_table(cxt->fstab);	/* old */
+
 	cxt->fstab = tb;
 	return 0;
 }
@@ -936,15 +936,11 @@ int mnt_context_get_fstab(struct libmnt_context *cxt, struct libmnt_table **tb)
 			return -ENOMEM;
 		if (cxt->table_errcb)
 			mnt_table_set_parser_errcb(cxt->fstab, cxt->table_errcb);
-		cxt->flags &= ~MNT_FL_EXTERN_FSTAB;
+		mnt_table_set_cache(cxt->fstab, mnt_context_get_cache(cxt));
 		rc = mnt_table_parse_fstab(cxt->fstab, NULL);
 		if (rc)
 			return rc;
 	}
-
-	/*  never touch an external fstab */
-	if (!(cxt->flags & MNT_FL_EXTERN_FSTAB))
-		mnt_table_set_cache(cxt->fstab, mnt_context_get_cache(cxt));
 
 	if (tb)
 		*tb = cxt->fstab;
@@ -980,12 +976,11 @@ int mnt_context_get_mtab(struct libmnt_context *cxt, struct libmnt_table **tb)
 					cxt->table_fltrcb,
 					cxt->table_fltrcb_data);
 
+		mnt_table_set_cache(cxt->mtab, mnt_context_get_cache(cxt));
 		rc = mnt_table_parse_mtab(cxt->mtab, cxt->mtab_path);
 		if (rc)
 			return rc;
 	}
-
-	mnt_table_set_cache(cxt->mtab, mnt_context_get_cache(cxt));
 
 	if (tb)
 		*tb = cxt->mtab;
@@ -1057,7 +1052,7 @@ int mnt_context_get_table(struct libmnt_context *cxt,
 
 	rc = mnt_table_parse_file(*tb, filename);
 	if (rc) {
-		mnt_free_table(*tb);
+		mnt_unref_table(*tb);
 		return rc;
 	}
 
@@ -1086,6 +1081,11 @@ int mnt_context_set_tables_errcb(struct libmnt_context *cxt,
 	if (!cxt)
 		return -EINVAL;
 
+	if (cxt->mtab)
+		mnt_table_set_parser_errcb(cxt->mtab, cb);
+	if (cxt->fstab)
+		mnt_table_set_parser_errcb(cxt->fstab, cb);
+
 	cxt->table_errcb = cb;
 	return 0;
 }
@@ -1099,8 +1099,9 @@ int mnt_context_set_tables_errcb(struct libmnt_context *cxt,
  * function allows to overwrite the private cache with an external instance.
  * This function increments cache reference counter.
  *
- * If the @cache argument is NULL, then the current private cache instance is
- * reset.
+ * If the @cache argument is NULL, then the current cache instance is reset.
+ * This function apply the cache to fstab and mtab instances (if already
+ * exists).
  *
  * The old cache instance reference counter is de-incremented.
  *
@@ -1115,6 +1116,12 @@ int mnt_context_set_cache(struct libmnt_context *cxt, struct libmnt_cache *cache
 	mnt_unref_cache(cxt->cache);		/* old */
 
 	cxt->cache = cache;
+
+	if (cxt->mtab)
+		mnt_table_set_cache(cxt->mtab, cache);
+	if (cxt->fstab)
+		mnt_table_set_cache(cxt->fstab, cache);
+
 	return 0;
 }
 
@@ -1133,9 +1140,9 @@ struct libmnt_cache *mnt_context_get_cache(struct libmnt_context *cxt)
 		return NULL;
 
 	if (!cxt->cache) {
-		cxt->cache = mnt_new_cache();
-		if (!cxt->cache)
-			return NULL;
+		struct libmnt_cache *cache = mnt_new_cache();
+		mnt_context_set_cache(cxt, cache);
+		mnt_unref_cache(cache);
 	}
 	return cxt->cache;
 }

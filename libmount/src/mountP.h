@@ -276,6 +276,7 @@ struct libmnt_fs {
 struct libmnt_table {
 	int		fmt;		/* MNT_FMT_* file format */
 	int		nents;		/* number of entries */
+	int		refcount;	/* reference counter */
 	int		comms;		/* enable/disable comment parsing */
 	char		*comm_intro;	/* First comment in file */
 	char		*comm_tail;	/* Last comment in file */
@@ -390,9 +391,6 @@ struct libmnt_context
 #define MNT_FL_RDONLY_UMOUNT	(1 << 11)	/* remount,ro after EBUSY umount(2) */
 #define MNT_FL_FORK		(1 << 12)
 #define MNT_FL_NOSWAPMATCH	(1 << 13)
-
-#define MNT_FL_EXTERN_FSTAB	(1 << 16)	/* cxt->fstab is not private */
-#define MNT_FL_EXTERN_CACHE	(1 << 17)	/* cxt->cache is not private */
 
 #define MNT_FL_MOUNTDATA	(1 << 20)
 #define MNT_FL_TAB_APPLIED	(1 << 21)	/* mtab/fstab merged to cxt->fs */

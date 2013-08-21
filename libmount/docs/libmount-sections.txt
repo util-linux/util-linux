@@ -289,6 +289,8 @@ libmnt_table
 mnt_free_table
 mnt_new_table
 mnt_reset_table
+mnt_ref_table
+mnt_unref_table
 mnt_new_table_from_dir
 mnt_new_table_from_file
 mnt_table_add_fs

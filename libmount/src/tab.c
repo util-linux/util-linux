@@ -66,7 +66,7 @@ struct libmnt_table *mnt_new_table(void)
 		return NULL;
 
 	DBG(TAB, mnt_debug_h(tb, "alloc"));
-
+	tb->refcount = 1;
 	INIT_LIST_HEAD(&tb->ents);
 	return tb;
 }
@@ -98,10 +98,46 @@ int mnt_reset_table(struct libmnt_table *tb)
 }
 
 /**
+ * mnt_ref_table:
+ * @tb: table pointer
+ *
+ * Increments reference counter.
+ */
+void mnt_ref_table(struct libmnt_table *tb)
+{
+	if (tb) {
+		tb->refcount++;
+		/*DBG(FS, mnt_debug_h(tb, "ref=%d", tb->refcount));*/
+	}
+}
+
+/**
+ * mnt_unref_table:
+ * @tb: table pointer
+ *
+ * De-increments reference counter, on zero the FS is automatically
+ * deallocated by mnt_free_table().
+ */
+void mnt_unref_table(struct libmnt_table *tb)
+{
+	if (tb) {
+		tb->refcount--;
+		/*DBG(FS, mnt_debug_h(tb, "unref=%d", tb->refcount));*/
+		if (tb->refcount <= 0)
+			mnt_free_table(tb);
+	}
+}
+
+
+/**
  * mnt_free_table:
  * @tb: tab pointer
  *
- * Deallocates tab struct and all entries.
+ * Deallocates the table. This function does not care about reference count. Don't
+ * use this function directly -- it's better to use use mnt_unref_table().
+ *
+ * The table entries (filesystems) are unrefrenced by mnt_reset_table() and
+ * cache by mnt_unref_cache().
  */
 void mnt_free_table(struct libmnt_table *tb)
 {
@@ -109,9 +145,11 @@ void mnt_free_table(struct libmnt_table *tb)
 		return;
 
 	mnt_reset_table(tb);
-	mnt_unref_cache(tb->cache);
 
+	WARN_REFCOUNT(TAB, tb, tb->refcount);
 	DBG(TAB, mnt_debug_h(tb, "free"));
+
+	mnt_unref_cache(tb->cache);
 	free(tb->comm_intro);
 	free(tb->comm_tail);
 	free(tb);
@@ -551,7 +589,6 @@ int mnt_table_next_child_fs(struct libmnt_table *tb, struct libmnt_iter *itr,
  *		const char *dir = mnt_fs_get_target(fs);
  *		printf("mount point: %s\n", dir);
  *	}
- *	mnt_free_table(fi);
  *   </programlisting>
  * </informalexample>
  *
@@ -1370,7 +1407,7 @@ struct libmnt_table *create_table(const char *file, int comments)
 	return tb;
 err:
 	fprintf(stderr, "%s: parsing failed\n", file);
-	mnt_free_table(tb);
+	mnt_unref_table(tb);
 	return NULL;
 }
 
@@ -1400,7 +1437,7 @@ int test_copy_fs(struct libmnt_test *ts, int argc, char *argv[])
 	mnt_unref_fs(fs);
 	rc = 0;
 done:
-	mnt_free_table(tb);
+	mnt_unref_table(tb);
 	return rc;
 }
 
@@ -1436,7 +1473,7 @@ int test_parse(struct libmnt_test *ts, int argc, char *argv[])
 	rc = 0;
 done:
 	mnt_free_iter(itr);
-	mnt_free_table(tb);
+	mnt_unref_table(tb);
 	return rc;
 }
 
@@ -1478,7 +1515,7 @@ int test_find(struct libmnt_test *ts, int argc, char *argv[], int dr)
 		rc = 0;
 	}
 done:
-	mnt_free_table(tb);
+	mnt_unref_table(tb);
 	return rc;
 }
 
@@ -1515,7 +1552,7 @@ int test_find_pair(struct libmnt_test *ts, int argc, char *argv[])
 	mnt_fs_print_debug(fs, stdout);
 	rc = 0;
 done:
-	mnt_free_table(tb);
+	mnt_unref_table(tb);
 	return rc;
 }
 
@@ -1542,7 +1579,7 @@ int test_find_mountpoint(struct libmnt_test *ts, int argc, char *argv[])
 	mnt_fs_print_debug(fs, stdout);
 	rc = 0;
 done:
-	mnt_free_table(tb);
+	mnt_unref_table(tb);
 	return rc;
 }
 
@@ -1587,8 +1624,8 @@ static int test_is_mounted(struct libmnt_test *ts, int argc, char *argv[])
 
 	rc = 0;
 done:
-	mnt_free_table(tb);
-	mnt_free_table(fstab);
+	mnt_unref_table(tb);
+	mnt_unref_table(fstab);
 	mnt_free_iter(itr);
 	return rc;
 }

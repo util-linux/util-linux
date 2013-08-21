@@ -415,6 +415,9 @@ extern struct libmnt_table *mnt_new_table(void)
 			__ul_attribute__((warn_unused_result));
 extern void mnt_free_table(struct libmnt_table *tb);
 
+extern void mnt_ref_table(struct libmnt_table *table);
+extern void mnt_unref_table(struct libmnt_table *table);
+
 extern int mnt_reset_table(struct libmnt_table *tb);
 extern int mnt_table_get_nents(struct libmnt_table *tb);
 extern int mnt_table_is_empty(struct libmnt_table *tb);

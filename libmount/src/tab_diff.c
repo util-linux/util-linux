@@ -355,8 +355,8 @@ int test_diff(struct libmnt_test *ts, int argc, char *argv[])
 
 	rc = 0;
 done:
-	mnt_free_table(tb_old);
-	mnt_free_table(tb_new);
+	mnt_unref_table(tb_old);
+	mnt_unref_table(tb_new);
 	mnt_free_tabdiff(diff);
 	mnt_free_iter(itr);
 	return rc;

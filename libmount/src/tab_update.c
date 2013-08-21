@@ -71,7 +71,7 @@ void mnt_free_update(struct libmnt_update *upd)
 	DBG(UPDATE, mnt_debug_h(upd, "free"));
 
 	mnt_unref_fs(upd->fs);
-	mnt_free_table(upd->mountinfo);
+	mnt_unref_table(upd->mountinfo);
 	free(upd->target);
 	free(upd->filename);
 	free(upd);
@@ -698,7 +698,7 @@ static int update_add_entry(struct libmnt_update *upd, struct libmnt_lock *lc)
 	if (lc)
 		mnt_unlock_file(lc);
 
-	mnt_free_table(tb);
+	mnt_unref_table(tb);
 	return rc;
 }
 
@@ -729,7 +729,7 @@ static int update_remove_entry(struct libmnt_update *upd, struct libmnt_lock *lc
 	if (lc)
 		mnt_unlock_file(lc);
 
-	mnt_free_table(tb);
+	mnt_unref_table(tb);
 	return rc;
 }
 
@@ -761,7 +761,7 @@ static int update_modify_target(struct libmnt_update *upd, struct libmnt_lock *l
 	if (lc)
 		mnt_unlock_file(lc);
 
-	mnt_free_table(tb);
+	mnt_unref_table(tb);
 	return rc;
 }
 
@@ -803,7 +803,7 @@ static int update_modify_options(struct libmnt_update *upd, struct libmnt_lock *
 	if (lc)
 		mnt_unlock_file(lc);
 
-	mnt_free_table(tb);
+	mnt_unref_table(tb);
 	return rc;
 }
 
@@ -968,7 +968,7 @@ static int test_replace(struct libmnt_test *ts, int argc, char *argv[])
 	mnt_unref_fs(fs);
 
 	rc = mnt_table_replace_file(tb, mnt_get_fstab_path());
-	mnt_free_table(tb);
+	mnt_unref_table(tb);
 	return rc;
 }
 
