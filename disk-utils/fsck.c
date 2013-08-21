@@ -370,6 +370,7 @@ static void free_instance(struct fsck_instance *i)
 	if (lockdisk)
 		unlock_disk(i);
 	free(i->prog);
+	mnt_unref_fs(i->fs);
 	free(i);
 	return;
 }
@@ -379,10 +380,12 @@ static struct libmnt_fs *add_dummy_fs(const char *device)
 	struct libmnt_fs *fs = mnt_new_fs();
 
 	if (fs && mnt_fs_set_source(fs, device) == 0 &&
-		  mnt_table_add_fs(fstab, fs) == 0)
+				  mnt_table_add_fs(fstab, fs) == 0) {
+		mnt_unref_fs(fs);
 		return fs;
+	}
 
-	mnt_free_fs(fs);
+	mnt_unref_fs(fs);
 	err(FSCK_EX_ERROR, _("failed to setup description for %s"), device);
 }
 
@@ -582,7 +585,7 @@ static int execute(const char *type, struct libmnt_fs *fs, int interactive)
 	s = find_fsck(prog);
 	if (s == NULL) {
 		warnx(_("%s: not found"), prog);
-		free(inst);
+		free_instance(inst);
 		return ENOENT;
 	}
 
@@ -597,6 +600,7 @@ static int execute(const char *type, struct libmnt_fs *fs, int interactive)
 		printf("\n");
 	}
 
+	mnt_ref_fs(fs);
 	inst->fs = fs;
 	inst->lock = -1;
 
@@ -608,7 +612,7 @@ static int execute(const char *type, struct libmnt_fs *fs, int interactive)
 		pid = -1;
 	else if ((pid = fork()) < 0) {
 		warn(_("fork failed"));
-		free(inst);
+		free_instance(inst);
 		return errno;
 	} else if (pid == 0) {
 		if (!interactive)
