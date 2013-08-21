@@ -677,6 +677,42 @@ struct libmnt_fs *mnt_context_get_fs(struct libmnt_context *cxt)
 }
 
 /**
+ * mnt_context_get_fs_userdata:
+ * @cxt: mount context
+ *
+ * Returns: pointer to userdata or NULL.
+ */
+void *mnt_context_get_fs_userdata(struct libmnt_context *cxt)
+{
+	assert(cxt);
+	return cxt->fs ? mnt_fs_get_userdata(cxt->fs) : NULL;
+}
+
+/**
+ * mnt_context_get_fstab_userdata:
+ * @cxt: mount context
+ *
+ * Returns: pointer to userdata or NULL.
+ */
+void *mnt_context_get_fstab_userdata(struct libmnt_context *cxt)
+{
+	assert(cxt);
+	return cxt->fstab ? mnt_table_get_userdata(cxt->fstab) : NULL;
+}
+
+/**
+ * mnt_context_get_mtab_userdata:
+ * @cxt: mount context
+ *
+ * Returns: pointer to userdata or NULL.
+ */
+void *mnt_context_get_mtab_userdata(struct libmnt_context *cxt)
+{
+	assert(cxt);
+	return cxt->mtab ? mnt_table_get_userdata(cxt->mtab) : NULL;
+}
+
+/**
  * mnt_context_set_source:
  * @cxt: mount context
  * @source: mount source (device, directory, UUID, LABEL, ...)

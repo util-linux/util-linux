@@ -601,6 +601,10 @@ extern const char *mnt_context_get_source(struct libmnt_context *cxt);
 extern const char *mnt_context_get_target(struct libmnt_context *cxt);
 extern const char *mnt_context_get_fstype(struct libmnt_context *cxt);
 
+extern void *mnt_context_get_mtab_userdata(struct libmnt_context *cxt);
+extern void *mnt_context_get_fstab_userdata(struct libmnt_context *cxt);
+extern void *mnt_context_get_fs_userdata(struct libmnt_context *cxt);
+
 extern int mnt_context_set_options(struct libmnt_context *cxt, const char *optstr);
 extern int mnt_context_append_options(struct libmnt_context *cxt, const char *optstr);
 

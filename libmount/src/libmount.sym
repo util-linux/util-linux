@@ -259,6 +259,9 @@ global:
 
 MOUNT_2.24 {
 global:
+	mnt_context_get_fstab_userdata;
+	mnt_context_get_fs_userdata;
+	mnt_context_get_mtab_userdata;
 	mnt_fs_append_comment;
 	mnt_fs_get_comment;
 	mnt_fs_set_comment;
