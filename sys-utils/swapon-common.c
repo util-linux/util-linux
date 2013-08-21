@@ -41,8 +41,8 @@ struct libmnt_table *get_swaps(void)
 
 void free_tables(void)
 {
-	mnt_free_table(swaps);
-	mnt_free_table(fstab);
+	mnt_unref_table(swaps);
+	mnt_unref_table(fstab);
 }
 
 int match_swap(struct libmnt_fs *fs, void *data __attribute__((unused)))

@@ -91,7 +91,7 @@ static int dir_to_device(const char *spec, dev_t *dev)
 		rc = 0;
 	}
 
-	mnt_free_table(tb);
+	mnt_unref_table(tb);
 	return rc;
 }
 

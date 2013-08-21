@@ -106,7 +106,6 @@ static long int c_arg;
 static long int x_arg;
 
 struct libmnt_table *mtab;
-struct libmnt_cache *cache;
 
 static void vinfo(const char *fmt, va_list va)
 {
@@ -725,13 +724,15 @@ static int device_get_mountpoint(char **devname, char **mnt)
 	*mnt = NULL;
 
 	if (!mtab) {
+		struct libmnt_cache *cache;
+
 		mtab = mnt_new_table();
 		if (!mtab)
 			err(EXIT_FAILURE, _("failed to initialize libmount table"));
 
-		if (!cache)
-			cache = mnt_new_cache();
+		cache = mnt_new_cache();
 		mnt_table_set_cache(mtab, cache);
+		mnt_unref_cache(cache);
 
 		if (p_option)
 			rc = mnt_table_parse_file(mtab, _PATH_PROC_MOUNTINFO);
@@ -1147,8 +1148,7 @@ int main(int argc, char **argv)
 	free(device);
 	free(mountpoint);
 
-	mnt_free_table(mtab);
-	mnt_unref_cache(cache);
+	mnt_unref_table(mtab);
 
 	return EXIT_SUCCESS;
 }

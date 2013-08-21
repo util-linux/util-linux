@@ -641,6 +641,8 @@ static struct libmnt_table *append_fstab(struct libmnt_context *cxt,
 
 		mnt_table_set_parser_errcb(fstab, table_parser_errcb);
 		mnt_context_set_fstab(cxt, fstab);
+
+		mnt_unref_table(fstab);	/* reference is handled by @cxt now */
 	}
 
 	if (mnt_table_parse_fstab(fstab, path))
@@ -1078,7 +1080,6 @@ int main(int argc, char **argv)
 		success_message(cxt);
 done:
 	mnt_free_context(cxt);
-	mnt_free_table(fstab);
 	return rc;
 }
 

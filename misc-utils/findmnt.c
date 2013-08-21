@@ -806,7 +806,7 @@ static struct libmnt_table *parse_tabfiles(char **files,
 			break;
 		}
 		if (rc) {
-			mnt_free_table(tb);
+			mnt_unref_table(tb);
 			warn(_("can't read %s"), path);
 			return NULL;
 		}
@@ -1087,7 +1087,7 @@ static int poll_table(struct libmnt_table *tb, const char *tabfile,
 
 	rc = 0;
 done:
-	mnt_free_table(tb_new);
+	mnt_unref_table(tb_new);
 	mnt_free_tabdiff(diff);
 	mnt_free_iter(itr);
 	if (f)
@@ -1496,8 +1496,9 @@ int main(int argc, char *argv[])
 leave:
 	tt_free_table(tt);
 
-	mnt_free_table(tb);
+	mnt_unref_table(tb);
 	mnt_unref_cache(cache);
+
 	free(tabfiles);
 #ifdef HAVE_LIBUDEV
 	udev_unref(udev);

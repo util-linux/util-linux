@@ -1604,8 +1604,9 @@ int main(int argc, char *argv[])
 
 leave:
 	tt_free_table(lsblk->tt);
-	mnt_free_table(mtab);
-	mnt_free_table(swaps);
+
+	mnt_unref_table(mtab);
+	mnt_unref_table(swaps);
 	mnt_unref_cache(mntcache);
 #ifdef HAVE_LIBUDEV
 	udev_unref(udev);

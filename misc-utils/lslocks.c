@@ -592,6 +592,6 @@ int main(int argc, char *argv[])
 	if (!rc && !list_empty(&locks))
 		rc = show_locks(&locks, tt_flags);
 
-	mnt_free_table(tab);
+	mnt_unref_table(tab);
 	return rc;
 }
