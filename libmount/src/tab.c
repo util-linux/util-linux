@@ -455,7 +455,10 @@ int mnt_table_remove_fs(struct libmnt_table *tb, struct libmnt_fs *fs)
 
 	if (!tb || !fs)
 		return -EINVAL;
+
 	list_del(&fs->ents);
+	INIT_LIST_HEAD(&fs->ents);	/* otherwise FS still points to the list */
+
 	mnt_unref_fs(fs);
 	tb->nents--;
 	return 0;

@@ -34,6 +34,7 @@ struct libmnt_fs *mnt_new_fs(void)
 
 	fs->refcount = 1;
 	INIT_LIST_HEAD(&fs->ents);
+	/*DBG(FS, mnt_debug_h(fs, "alloc"));*/
 	return fs;
 }
 
@@ -89,6 +90,7 @@ void mnt_reset_fs(struct libmnt_fs *fs)
 
 	ref = fs->refcount;
 	memset(fs, 0, sizeof(*fs));
+	INIT_LIST_HEAD(&fs->ents);
 	fs->refcount = ref;
 }
 
@@ -295,7 +297,12 @@ err:
 void *mnt_fs_get_userdata(struct libmnt_fs *fs)
 {
 	assert(fs);
-	return fs ? fs->userdata : NULL;
+
+	if (!fs)
+		return NULL;
+
+	/*DBG(FS, mnt_debug_h(fs, "get userdata [%p]", fs->userdata));*/
+	return fs->userdata;
 }
 
 /**
@@ -312,6 +319,8 @@ int mnt_fs_set_userdata(struct libmnt_fs *fs, void *data)
 	assert(fs);
 	if (!fs)
 		return -EINVAL;
+
+	/*DBG(FS, mnt_debug_h(fs, "set userdata [%p]", fs->userdata));*/
 	fs->userdata = data;
 	return 0;
 }
