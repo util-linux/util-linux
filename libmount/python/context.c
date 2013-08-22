@@ -163,10 +163,10 @@ static int Context_init(ContextObjext *self, PyObject *args, PyObject *kwds)
 	return 0;
 }
 
-#define Context_enable_fake_HELP "enable_fake(enable)\n\n\
-Enable/disable fake mounting (see mount(8) man page, option -f).\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_enable_fake_HELP "enable_fake(enable)\n\n" \
+	"Enable/disable fake mounting (see mount(8) man page, option -f).\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_enable_fake(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -181,10 +181,10 @@ static PyObject *Context_enable_fake(ContextObjext *self, PyObject *args, PyObje
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_enable_force_HELP "enable_force(enable)\n\n\
-Enable/disable force umounting (see umount(8) man page, option -f).\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_enable_force_HELP "enable_force(enable)\n\n" \
+	"Enable/disable force umounting (see umount(8) man page, option -f).\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_enable_force(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -199,10 +199,10 @@ static PyObject *Context_enable_force(ContextObjext *self, PyObject *args, PyObj
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_enable_lazy_HELP "enable_lazy(enable)\n\n\
-Enable/disable lazy umount (see umount(8) man page, option -l).\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_enable_lazy_HELP "enable_lazy(enable)\n\n" \
+	"Enable/disable lazy umount (see umount(8) man page, option -l).\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_enable_lazy(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -217,10 +217,10 @@ static PyObject *Context_enable_lazy(ContextObjext *self, PyObject *args, PyObje
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_enable_loopdel_HELP "enable_loopdel(enable)\n\n\
-Enable/disable loop delete (destroy) after umount (see umount(8), option -d)\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_enable_loopdel_HELP "enable_loopdel(enable)\n\n" \
+	"Enable/disable loop delete (destroy) after umount (see umount(8), option -d)\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_enable_loopdel(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -235,11 +235,11 @@ static PyObject *Context_enable_loopdel(ContextObjext *self, PyObject *args, PyO
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_enable_rdonly_umount_HELP "enable_rdonly_umount(enable)\n\n\
-Enable/disable read-only remount on failed umount(2)\n\
-(see umount(8) man page, option -r).\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_enable_rdonly_umount_HELP "enable_rdonly_umount(enable)\n\n" \
+	"Enable/disable read-only remount on failed umount(2)\n "\
+	"(see umount(8) man page, option -r).\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_enable_rdonly_umount(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -254,10 +254,10 @@ static PyObject *Context_enable_rdonly_umount(ContextObjext *self, PyObject *arg
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_enable_sloppy_HELP "enable_sloppy(enable)\n\n\
-Set/unset sloppy mounting (see mount(8) man page, option -s).\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_enable_sloppy_HELP "enable_sloppy(enable)\n\n" \
+	"Set/unset sloppy mounting (see mount(8) man page, option -s).\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_enable_sloppy(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -272,10 +272,10 @@ static PyObject *Context_enable_sloppy(ContextObjext *self, PyObject *args, PyOb
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_enable_verbose_HELP "enable_verbose(enable)\n\n\
-Enable/disable verbose output (TODO: not implemented yet)\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_enable_verbose_HELP "enable_verbose(enable)\n\n" \
+	"Enable/disable verbose output (TODO: not implemented yet)\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_enable_verbose(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -290,11 +290,11 @@ static PyObject *Context_enable_verbose(ContextObjext *self, PyObject *args, PyO
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_enable_fork_HELP "enable_fork(enable)\n\n\
-Enable/disable fork(2) call in Cxt.next_mount()(not yet implemented) (see mount(8) man\n\
-page, option -F).\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_enable_fork_HELP "enable_fork(enable)\n\n" \
+	"Enable/disable fork(2) call in Cxt.next_mount()(not yet implemented) (see mount(8) man\n" \
+	"page, option -F).\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_enable_fork(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -309,14 +309,14 @@ static PyObject *Context_enable_fork(ContextObjext *self, PyObject *args, PyObje
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_disable_canonicalize_HELP "disable_canonicalize(disable)\n\n\
-Enable/disable paths canonicalization and tags evaluation. The libmount context\n\
-canonicalies paths when search in fstab and when prepare source and target paths\n\
-for mount(2) syscall.\n\
-\n\
-This fuction has effect to the private (within context) fstab instance only\n\
-(see Cxt.fstab).\n\
-Returns self or raises an exception in case of an error."
+#define Context_disable_canonicalize_HELP "disable_canonicalize(disable)\n\n" \
+	"Enable/disable paths canonicalization and tags evaluation. The libmount context\n" \
+	"canonicalies paths when search in fstab and when prepare source and target paths\n" \
+	"for mount(2) syscall.\n" \
+	"\n" \
+	"This fuction has effect to the private (within context) fstab instance only\n" \
+	"(see Cxt.fstab).\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_disable_canonicalize(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -331,10 +331,10 @@ static PyObject *Context_disable_canonicalize(ContextObjext *self, PyObject *arg
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_disable_helpers_HELP "disable_helpers(disable)\n\n\
-Enable/disable /sbin/[u]mount.* helpers (see mount(8) man page, option -i).\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_disable_helpers_HELP "disable_helpers(disable)\n\n" \
+	"Enable/disable /sbin/[u]mount.* helpers (see mount(8) man page, option -i).\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_disable_helpers(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -349,10 +349,10 @@ static PyObject *Context_disable_helpers(ContextObjext *self, PyObject *args, Py
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_disable_mtab_HELP "disable_mtab(disable)\n\n\
-Disable/enable mtab update (see mount(8) man page, option -n).\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_disable_mtab_HELP "disable_mtab(disable)\n\n" \
+	"Disable/enable mtab update (see mount(8) man page, option -n).\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_disable_mtab(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -367,11 +367,11 @@ static PyObject *Context_disable_mtab(ContextObjext *self, PyObject *args, PyObj
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_disable_swapmatch_HELP "disable_swapmatch(disable)\n\n\
-Disable/enable swap between source and target for mount(8) if only one path\n\
-is specified.\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_disable_swapmatch_HELP "disable_swapmatch(disable)\n\n" \
+	"Disable/enable swap between source and target for mount(8) if only one path\n" \
+	"is specified.\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_disable_swapmatch(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -655,14 +655,14 @@ static PyObject *Context_get_user_mflags(ContextObjext *self)
 	return result;
 
 }
-#define Context_reset_status_HELP "reset_status()\n\n\
-Resets mount(2) and mount.type statuses, so Cxt.do_mount() or\n\
-Cxt.do_umount() could be again called with the same settings.\n\
-\n\
-BE CAREFUL -- after this soft reset the libmount will NOT parse mount\n\
-options, evaluate permissions or apply stuff from fstab.\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_reset_status_HELP "reset_status()\n\n" \
+	"Resets mount(2) and mount.type statuses, so Cxt.do_mount() or\n" \
+	"Cxt.do_umount() could be again called with the same settings.\n" \
+	"\n" \
+	"BE CAREFUL -- after this soft reset the libmount will NOT parse mount\n" \
+	"options, evaluate permissions or apply stuff from fstab.\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_reset_status(ContextObjext *self)
 {
 	int rc = mnt_context_reset_status(self->cxt);
@@ -670,67 +670,67 @@ static PyObject *Context_reset_status(ContextObjext *self)
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_is_fake_HELP "is_fake()\n\n\
-Returns True if fake flag is enabled or False"
+#define Context_is_fake_HELP "is_fake()\n\n" \
+"Returns True if fake flag is enabled or False"
 static PyObject *Context_is_fake(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_fake(self->cxt));
 }
 
-#define Context_is_force_HELP "is_force()\n\n\
-Returns True if force umounting flag is enabled or False"
+#define Context_is_force_HELP "is_force()\n\n" \
+"Returns True if force umounting flag is enabled or False"
 static PyObject *Context_is_force(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_force(self->cxt));
 }
 
-#define Context_is_lazy_HELP "is_lazy()\n\n\
-Returns True if lazy umount is enabled or False"
+#define Context_is_lazy_HELP "is_lazy()\n\n" \
+"Returns True if lazy umount is enabled or False"
 static PyObject *Context_is_lazy(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_lazy(self->cxt));
 }
 
-#define Context_is_nomtab_HELP "is_nomtab()\n\n\
-Returns True if no-mtab is enabled or False"
+#define Context_is_nomtab_HELP "is_nomtab()\n\n" \
+	"Returns True if no-mtab is enabled or False"
 static PyObject *Context_is_nomtab(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_nomtab(self->cxt));
 }
 
-#define Context_is_rdonly_umount_HELP "is_rdonly_umount()\n\n\
-Enable/disable read-only remount on failed umount(2)\n\
-(see umount(8) man page, option -r).\n\
-\n\
-Returns self on success, raises an exception in case of error."
+#define Context_is_rdonly_umount_HELP "is_rdonly_umount()\n\n" \
+	"Enable/disable read-only remount on failed umount(2)\n" \
+	"(see umount(8) man page, option -r).\n" \
+	"\n" \
+	"Returns self on success, raises an exception in case of error."
 static PyObject *Context_is_rdonly_umount(ContextObjext *self)
 {
 	int rc = mnt_context_is_rdonly_umount(self->cxt);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_is_restricted_HELP "is_restricted()\n\n\
-Returns False for unrestricted mount (user is root), or True for non-root mounts"
+#define Context_is_restricted_HELP "is_restricted()\n\n" \
+	"Returns False for unrestricted mount (user is root), or True for non-root mounts"
 static PyObject *Context_is_restricted(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_restricted(self->cxt));
 }
 
-#define Context_is_sloppy_HELP "is_sloppy()\n\n\
-Returns True if sloppy flag is enabled or False"
+#define Context_is_sloppy_HELP "is_sloppy()\n\n" \
+	"Returns True if sloppy flag is enabled or False"
 static PyObject *Context_is_sloppy(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_sloppy(self->cxt));
 }
 
-#define Context_is_verbose_HELP "is_verbose()\n\n\
-Returns True if verbose flag is enabled or False"
+#define Context_is_verbose_HELP "is_verbose()\n\n" \
+	"Returns True if verbose flag is enabled or False"
 static PyObject *Context_is_verbose(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_verbose(self->cxt));
 }
-#define Context_is_fs_mounted_HELP "is_fs_mounted(fs, mounted)\n\n\
-Returns self or raises an exception in case of an error."
+#define Context_is_fs_mounted_HELP "is_fs_mounted(fs, mounted)\n\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_is_fs_mounted(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	char *kwlist[] = {"fs", "mounted", NULL};
@@ -745,81 +745,81 @@ static PyObject *Context_is_fs_mounted(ContextObjext *self, PyObject *args, PyOb
 	return PyBool_FromLong(mnt_context_is_fs_mounted(self->cxt, fs->fs, &mounted));
 }
 
-#define Context_is_child_HELP "is_child()\n\n\
-Returns True if mount -F enabled and the current context is child, or False"
+#define Context_is_child_HELP "is_child()\n\n" \
+	"Returns True if mount -F enabled and the current context is child, or False"
 static PyObject *Context_is_child(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_child(self->cxt));
 }
 
-#define Context_is_fork_HELP "is_fork()\n\n\
-Returns True if fork (mount -F) is enabled or False"
+#define Context_is_fork_HELP "is_fork()\n\n" \
+	"Returns True if fork (mount -F) is enabled or False"
 static PyObject *Context_is_fork(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_fork(self->cxt));
 }
 
-#define Context_is_parent_HELP "is_parent()\n\n\
-Returns True if mount -F enabled and the current context is parent, or False"
+#define Context_is_parent_HELP "is_parent()\n\n" \
+	"Returns True if mount -F enabled and the current context is parent, or False"
 static PyObject *Context_is_parent(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_parent(self->cxt));
 }
 
-#define Context_is_loopdel_HELP "is_loopdel()\n\n\
-Returns True if loop device should be deleted after umount (umount -d) or False."
+#define Context_is_loopdel_HELP "is_loopdel()\n\n" \
+	"Returns True if loop device should be deleted after umount (umount -d) or False."
 static PyObject *Context_is_loopdel(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_loopdel(self->cxt));
 }
 
-#define Context_is_nocanonicalize_HELP "is_nocanonicalize()\n\n\
-Returns True if no-canonicalize mode enabled or False."
+#define Context_is_nocanonicalize_HELP "is_nocanonicalize()\n\n" \
+	"Returns True if no-canonicalize mode enabled or False."
 static PyObject *Context_is_nocanonicalize(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_nocanonicalize(self->cxt));
 }
 
-#define Context_is_nohelpers_HELP "is_nohelpers()\n\n\
-Returns True if helpers are disabled (mount -i) or False."
+#define Context_is_nohelpers_HELP "is_nohelpers()\n\n" \
+	"Returns True if helpers are disabled (mount -i) or False."
 static PyObject *Context_is_nohelpers(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_nohelpers(self->cxt));
 }
 
-#define Context_syscall_called_HELP "syscall_called()\n\n\
-Returns True if mount(2) syscall has been called, or False."
+#define Context_syscall_called_HELP "syscall_called()\n\n" \
+	"Returns True if mount(2) syscall has been called, or False."
 static PyObject *Context_syscall_called(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_syscall_called(self->cxt));
 }
 
-#define Context_is_swapmatch_HELP "is_swapmatch()\n\n\
-Returns True if swap between source and target is allowed (default is True) or False."
+#define Context_is_swapmatch_HELP "is_swapmatch()\n\n" \
+	"Returns True if swap between source and target is allowed (default is True) or False."
 static PyObject *Context_is_swapmatch(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_is_swapmatch(self->cxt));
 }
 
-#define Context_tab_applied_HELP "tab_applied()\n\n\
-Returns True if fstab (or mtab) has been applied to the context, False otherwise."
+#define Context_tab_applied_HELP "tab_applied()\n\n" \
+	"Returns True if fstab (or mtab) has been applied to the context, False otherwise."
 static PyObject *Context_tab_applied(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_tab_applied(self->cxt));
 }
 
-#define Context_apply_fstab_HELP "apply_fstab()\n\n\
-This function is optional.\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_apply_fstab_HELP "apply_fstab()\n\n" \
+	"This function is optional.\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_apply_fstab(ContextObjext *self)
 {
 	int rc = mnt_context_apply_fstab(self->cxt);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_helper_executed_HELP "helper_executed()\n\n\
-Returns True if mount.type helper has been executed, or False."
+#define Context_helper_executed_HELP "helper_executed()\n\n" \
+	"Returns True if mount.type helper has been executed, or False."
 static PyObject *Context_helper_executed(ContextObjext *self)
 {
 	return PyBool_FromLong(mnt_context_helper_executed(self->cxt));
@@ -883,145 +883,141 @@ static PyObject *Context_get_syscall_errno(ContextObjext *self)
 	return PyObjectResultInt(mnt_context_get_syscall_errno(self->cxt));
 }
 
-#define Context_do_mount_HELP "do_mount()\n\n\
-Call mount(2) or mount.type helper. Unnecessary for Cxt.mount().\n\
-\n\
-Note that this function could be called only once. If you want to mount\n\
-another source or target than you have to call Cxt.reset_context().\n\
-\n\
-If you want to call mount(2) for the same source and target with a different\n\
-mount flags or fstype then call Cxt.reset_status() and then try\n\
-again Cxt.do_mount().\n\
-\n\
-WARNING: non-zero return code does not mean that mount(2) syscall or\n\
-mount.type helper wasn't successfully called.\n\
-\n\
-Check Cxt.status after error!\n\
-\n\
-Returns self on success\n\
-or an exception in case of other errors."
+#define Context_do_mount_HELP "do_mount()\n\n" \
+	"Call mount(2) or mount.type helper. Unnecessary for Cxt.mount().\n" \
+	"\n" \
+	"Note that this function could be called only once. If you want to mount\n" \
+	"another source or target than you have to call Cxt.reset_context().\n" \
+	"\n" \
+	"If you want to call mount(2) for the same source and target with a different\n" \
+	"mount flags or fstype then call Cxt.reset_status() and then try\n" \
+	"again Cxt.do_mount().\n" \
+	"\n" \
+	"WARNING: non-zero return code does not mean that mount(2) syscall or\n" \
+	"mount.type helper wasn't successfully called.\n" \
+	"\n" \
+	"Check Cxt.status after error!\n" \
+	"\n" \
+	"Returns self on success or an exception in case of other errors."
 static PyObject *Context_do_mount(ContextObjext *self)
 {
 	int rc = mnt_context_do_mount(self->cxt);
 	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
-#define Context_do_umount_HELP "do_umount()\n\n\
-Umount filesystem by umount(2) or fork()+exec(/sbin/umount.type).\n\
-Unnecessary for Cxt.umount().\n\
-\n\
-See also Cxt.disable_helpers().\n\
-\n\
-WARNING: non-zero return code does not mean that umount(2) syscall or\n\
-umount.type helper wasn't successfully called.\n\
-\n\
-Check Cxt.status after error!\n\
-\n\
-Returns self on success\n\
-or an exception in case of other errors."
+#define Context_do_umount_HELP "do_umount()\n\n" \
+	"Umount filesystem by umount(2) or fork()+exec(/sbin/umount.type).\n" \
+	"Unnecessary for Cxt.umount().\n" \
+	"\n" \
+	"See also Cxt.disable_helpers().\n" \
+	"\n" \
+	"WARNING: non-zero return code does not mean that umount(2) syscall or\n" \
+	"umount.type helper wasn't successfully called.\n" \
+	"\n" \
+	"Check Cxt.status after error!\n" \
+	"\n" \
+	"Returns self on success or an exception in case of other errors."
 static PyObject *Context_do_umount(ContextObjext *self)
 {
 	int rc = mnt_context_do_umount(self->cxt);
 	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
-#define Context_mount_HELP "mount()\n\n\
-High-level, mounts filesystem by mount(2) or fork()+exec(/sbin/mount.type).\n\
-\n\
-This is similar to:\n\
-\n\
-Cxt.prepare_mount();\n\
-Cxt.do_mount();\n\
-Cxt.finalize_mount();\n\
-\n\
-See also Cxt.disable_helper().\n\
-\n\
-Note that this function could be called only once. If you want to mount with\n\
-different setting than you have to call Cxt.reset_context(). It's NOT enough\n\
-to call Cxt.reset_status() if you want call this function more than\n\
-once, whole context has to be reset.\n\
-\n\
-WARNING: non-zero return code does not mean that mount(2) syscall or\n\
-mount.type helper wasn't successfully called.\n\
-\n\
-Check Cxt.status after error!\n\
-\n\
-Returns self on success\n\
-or an exception in case of other errors."
+#define Context_mount_HELP "mount()\n\n" \
+	"High-level, mounts filesystem by mount(2) or fork()+exec(/sbin/mount.type).\n" \
+	"\n" \
+	"This is similar to:\n" \
+	"\n" \
+	"Cxt.prepare_mount();\n" \
+	"Cxt.do_mount();\n" \
+	"Cxt.finalize_mount();\n" \
+	"\n" \
+	"See also Cxt.disable_helper().\n" \
+	"\n" \
+	"Note that this function could be called only once. If you want to mount with\n" \
+	"different setting than you have to call Cxt.reset_context(). It's NOT enough\n" \
+	"to call Cxt.reset_status() if you want call this function more than\n" \
+	"once, whole context has to be reset.\n" \
+	"\n" \
+	"WARNING: non-zero return code does not mean that mount(2) syscall or\n" \
+	"mount.type helper wasn't successfully called.\n" \
+	"\n" \
+	"Check Cxt.status after error!\n" \
+	"\n" \
+	"Returns self on success or an exception in case of other errors."
 static PyObject *Context_mount(ContextObjext *self)
 {
 	int rc = mnt_context_mount(self->cxt);
 	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
-#define Context_umount_HELP "umount()\n\n\
-High-level, umounts filesystem by umount(2) or fork()+exec(/sbin/umount.type).\n\
-\n\
-This is similar to:\n\
-\n\
-Cxt.prepare_umount();\n\
-Cxt.do_umount();\n\
-Cxt.finalize_umount();\n\
-\n\
-See also Cxt.disable_helpers().\n\
-\n\
-WARNING: non-zero return code does not mean that umount(2) syscall or\n\
-umount.type helper wasn't successfully called.\n\
-\n\
-Check Cxt.status after error!\n\
-\n\
-Returns self on success\n\
-or an exception in case of other errors."
+#define Context_umount_HELP "umount()\n\n" \
+	"High-level, umounts filesystem by umount(2) or fork()+exec(/sbin/umount.type).\n" \
+	"\n" \
+	"This is similar to:\n" \
+	"\n" \
+	"Cxt.prepare_umount();\n" \
+	"Cxt.do_umount();\n" \
+	"Cxt.finalize_umount();\n" \
+	"\n" \
+	"See also Cxt.disable_helpers().\n" \
+	"\n" \
+	"WARNING: non-zero return code does not mean that umount(2) syscall or\n" \
+	"umount.type helper wasn't successfully called.\n" \
+	"\n" \
+	"Check Cxt.status after error!\n" \
+	"\n" \
+	"Returns self on success or an exception in case of other errors."
 static PyObject *Context_umount(ContextObjext *self)
 {
 	int rc = mnt_context_umount(self->cxt);
 	return rc ? UL_RaiseExc(rc < 0 ? -rc : rc) : UL_IncRef(self);
 }
 
-#define Context_finalize_mount_HELP "finalize_mount()\n\n\
-Mtab update, etc. Unnecessary for Cxt.mount(), but should be called\n\
-after Cxt.do_mount(). See also Cxt.syscall_status.\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_finalize_mount_HELP "finalize_mount()\n\n" \
+	"Mtab update, etc. Unnecessary for Cxt.mount(), but should be called\n" \
+	"after Cxt.do_mount(). See also Cxt.syscall_status.\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_finalize_mount(ContextObjext *self)
 {
 	int rc = mnt_context_finalize_mount(self->cxt);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_prepare_umount_HELP "prepare_umount()\n\n\
-Prepare context for umounting, unnecessary for Cxt.umount().\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_prepare_umount_HELP "prepare_umount()\n\n" \
+	"Prepare context for umounting, unnecessary for Cxt.umount().\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_prepare_umount(ContextObjext *self)
 {
 	int rc = mnt_context_prepare_umount(self->cxt);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_prepare_mount_HELP "prepare_mount()\n\n\
-Prepare context for mounting, unnecessary for Cxt.mount().\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_prepare_mount_HELP "prepare_mount()\n\n" \
+	"Prepare context for mounting, unnecessary for Cxt.mount().\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_prepare_mount(ContextObjext *self)
 {
 	int rc = mnt_context_prepare_mount(self->cxt);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_finalize_umount_HELP "finalize_umount()\n\n\
-Mtab update, etc. Unnecessary for Cxt.umount(), but should be called\n\
-after Cxt.do_umount(). See also Cxt.syscall_status.\n\
-\n\
-Returns self on success, raises LibmountError if target filesystem not found, or other exception on error."
+#define Context_finalize_umount_HELP "finalize_umount()\n\n" \
+	"Mtab update, etc. Unnecessary for Cxt.umount(), but should be called\n" \
+	"after Cxt.do_umount(). See also Cxt.syscall_status.\n" \
+	"\n" \
+	"Returns self on success, raises LibmountError if target filesystem not found, or other exception on error."
 static PyObject *Context_finalize_umount(ContextObjext *self)
 {
 	int rc = mnt_context_finalize_umount(self->cxt);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_find_umount_fs_HELP "find_umount_fs(tgt, pfs)\n\n\
-Returns self or raises an exception in case of an error."
+#define Context_find_umount_fs_HELP "find_umount_fs(tgt, pfs)\n\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_find_umount_fs(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -1038,8 +1034,8 @@ static PyObject *Context_find_umount_fs(ContextObjext *self, PyObject *args, PyO
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_append_options_HELP "append_options(optstr)\n\n\
-Returns self or raises an exception in case of an error."
+#define Context_append_options_HELP "append_options(optstr)\n\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_append_options(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -1055,12 +1051,12 @@ static PyObject *Context_append_options(ContextObjext *self, PyObject *args, PyO
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_helper_setopt_HELP "helper_setopt(c, arg)\n\n\
-This function applies [u]mount.type command line option (for example parsed\n\
-by getopt or getopt_long) to cxt. All unknown options are ignored and\n\
-then ValueError is raised.\n\
-\n\
-Returns self on success, raises ValueError if c is unknown or other exception in case of an error."
+#define Context_helper_setopt_HELP "helper_setopt(c, arg)\n\n" \
+	"This function applies [u]mount.type command line option (for example parsed\n" \
+	"by getopt or getopt_long) to cxt. All unknown options are ignored and\n" \
+	"then ValueError is raised.\n" \
+	"\n" \
+	"Returns self on success, raises ValueError if c is unknown or other exception in case of an error."
 static PyObject *Context_helper_setopt(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
@@ -1077,17 +1073,17 @@ static PyObject *Context_helper_setopt(ContextObjext *self, PyObject *args, PyOb
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Context_init_helper_HELP "init_helper(action, flags)\n\n\
-This function infors libmount that used from [u]mount.type helper.\n\
-\n\
-The function also calls Cxt.disable_helpers() to avoid recursive\n\
-mount.type helpers calling. It you really want to call another\n\
-mount.type helper from your helper than you have to explicitly enable this\n\
-feature by:\n\
-\n\
-Cxt.disable_helpers(False);\n\
-\n\
-Returns self or raises an exception in case of an error."
+#define Context_init_helper_HELP "init_helper(action, flags)\n\n" \
+	"This function infors libmount that used from [u]mount.type helper.\n" \
+	"\n" \
+	"The function also calls Cxt.disable_helpers() to avoid recursive\n" \
+	"mount.type helpers calling. It you really want to call another\n" \
+	"mount.type helper from your helper than you have to explicitly enable this\n" \
+	"feature by:\n" \
+	"\n" \
+	"Cxt.disable_helpers(False);\n" \
+	"\n" \
+	"Returns self or raises an exception in case of an error."
 static PyObject *Context_init_helper(ContextObjext *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
