@@ -6,6 +6,54 @@
 
 #include "libmount.h"
 
+#define CONFIG_PYLIBMOUNT_DEBUG
+
+#define PYMNT_DEBUG_INIT	(1 << 1)
+#define PYMNT_DEBUG_TAB		(1 << 2)
+#define PYMNT_DEBUG_FS		(1 << 3)
+#define PYMNT_DEBUG_CXT		(1 << 4)
+
+#ifdef CONFIG_PYLIBMOUNT_DEBUG
+# include <stdio.h>
+# include <stdarg.h>
+
+# define DBG(m, x)	do { \
+				if ((PYMNT_DEBUG_ ## m) & pylibmount_debug_mask) { \
+					fprintf(stderr, "%d: pylibmount: %6s: ", getpid(), # m); \
+					x; \
+				} \
+			} while (0)
+
+extern int pylibmount_debug_mask;
+
+static inline void __attribute__ ((__format__ (__printf__, 1, 2)))
+pymnt_debug(const char *mesg, ...)
+{
+	va_list ap;
+	va_start(ap, mesg);
+	vfprintf(stderr, mesg, ap);
+	va_end(ap);
+	fputc('\n', stderr);
+}
+
+static inline void __attribute__ ((__format__ (__printf__, 2, 3)))
+pymnt_debug_h(void *handler, const char *mesg, ...)
+{
+	va_list ap;
+
+	if (handler)
+		fprintf(stderr, "[%p]: ", handler);
+	va_start(ap, mesg);
+	vfprintf(stderr, mesg, ap);
+	va_end(ap);
+	fputc('\n', stderr);
+}
+
+#else /* !CONFIG_PYLIBMOUNT_DEBUG */
+# define DBG(m,x) do { ; } while (0)
+#endif
+
+
 #define NODEL_ATTR	"This attribute cannot be deleted"
 #define CONSTRUCT_ERR	"Error during object construction"
 #define ARG_ERR		"Invalid number or type of arguments"

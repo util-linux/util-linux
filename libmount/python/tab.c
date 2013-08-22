@@ -546,11 +546,15 @@ void Table_unref(struct libmnt_table *tab)
 	if (!tab)
 		return;
 
+	DBG(TAB, pymnt_debug_h(tab, "un-referencing filesystems"));
+
 	iter = mnt_new_iter(MNT_ITER_BACKWARD);
 
 	/* remove pylibmount specific references to the entries */
 	while (mnt_table_next_fs(tab, iter, &fs) == 0)
 		Py_XDECREF(mnt_fs_get_userdata(fs));
+
+	DBG(TAB, pymnt_debug_h(tab, "un-referencing table"));
 
 	mnt_unref_table(tab);
 	mnt_free_iter(iter);
@@ -558,7 +562,11 @@ void Table_unref(struct libmnt_table *tab)
 
 static void Table_destructor(TableObject *self)
 {
+	DBG(TAB, pymnt_debug_h(self->tab, "destrutor py-obj: %p, py-refcnt=%d",
+				self, (int) ((PyObject *) self)->ob_refcnt));
 	Table_unref(self->tab);
+	self->tab = NULL;
+
 	mnt_free_iter(self->iter);
 	Py_XDECREF(self->errcb);
 	self->ob_type->tp_free((PyObject*)self);
@@ -571,6 +579,8 @@ static PyObject *Table_new(PyTypeObject *type,
 	TableObject *self = (TableObject*)type->tp_alloc(type, 0);
 
 	if (self) {
+		DBG(TAB, pymnt_debug_h(self, "new"));
+
 		self->tab = NULL;
 		self->iter = NULL;
 		self->errcb = NULL;
@@ -588,11 +598,14 @@ static int Table_init(TableObject *self, PyObject *args, PyObject *kwds)
 	char *kwlist[] = {"path", "errcb", NULL};
 	PyObject *errcb = NULL;
 	struct stat buf;
+
 	memset (&buf, 0, sizeof(struct stat));
 
 	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|sO",
 					kwlist, &path, &errcb))
 		return -1;
+
+	DBG(TAB, pymnt_debug_h(self, "init"));
 
 	Table_unref(self->tab);
 	self->tab = NULL;
@@ -615,6 +628,8 @@ static int Table_init(TableObject *self, PyObject *args, PyObject *kwds)
 	}
 
 	if (path) {
+		DBG(TAB, pymnt_debug_h(self, "init: path defined (%s)", path));
+
 		if (stat(path, &buf)) {
 			/* TODO: weird */
 			PyErr_SetFromErrno(PyExc_RuntimeError);
@@ -624,8 +639,10 @@ static int Table_init(TableObject *self, PyObject *args, PyObject *kwds)
 			self->tab = mnt_new_table_from_file(path);
 		else if (S_ISDIR(buf.st_mode))
 			self->tab = mnt_new_table_from_dir(path);
-	} else
+	} else {
+		DBG(TAB, pymnt_debug_h(self, "init: allocate empty table"));
 		self->tab = mnt_new_table();
+	}
 
 	/* Always set custom handler when using libmount from python */
 	mnt_table_set_parser_errcb(self->tab, pymnt_table_parser_errcb);
@@ -679,6 +696,8 @@ PyObject *PyObjectResultTab(struct libmnt_table *tab)
 	result = mnt_table_get_userdata(tab);
 	if (result) {
 		Py_INCREF(result);
+		DBG(TAB, pymnt_debug_h(tab, "result py-obj %p: already exists, py-refcnt=%d",
+				result, (int) ((PyObject *) result)->ob_refcnt));
 		return (PyObject *) result;
 	}
 
@@ -694,6 +713,9 @@ PyObject *PyObjectResultTab(struct libmnt_table *tab)
 
 	Py_INCREF(result);
 	mnt_ref_table(tab);
+
+	DBG(TAB, pymnt_debug_h(tab, "result py-obj %p new, py-refcnt=%d",
+				result, (int) ((PyObject *) result)->ob_refcnt));
 	result->tab = tab;
 	result->iter = mnt_new_iter(MNT_ITER_FORWARD);
 	mnt_table_set_userdata(result->tab, result);
@@ -766,6 +788,8 @@ void Table_AddModuleObject(PyObject *mod)
 {
 	if (PyType_Ready(&TableType) < 0)
 		return;
+
+	DBG(TAB, pymnt_debug("add to module"));
 
 	Py_INCREF(&TableType);
 	PyModule_AddObject(mod, "Table", (PyObject *)&TableType);

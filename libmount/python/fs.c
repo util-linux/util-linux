@@ -571,9 +571,10 @@ static PyMethodDef Fs_methods[] = {
 	{NULL}
 };
 
-static void Fs_dealloc(FsObject *self)
+static void Fs_destructor(FsObject *self)
 {
-	fprintf(stderr, "KZAK: [%p] delalocate\n", self->fs);
+	DBG(FS, pymnt_debug_h(self->fs, "destrutor py-obj: %p, py-refcnt=%d",
+				self, (int) ((PyObject *) self)->ob_refcnt));
 	mnt_unref_fs(self->fs);
 	self->ob_type->tp_free((PyObject*)self);
 }
@@ -583,8 +584,10 @@ static PyObject *Fs_new(PyTypeObject *type, PyObject *args __attribute__((unused
 {
 	FsObject *self = (FsObject*)type->tp_alloc(type, 0);
 
-	if (self)
+	if (self) {
 		self->fs = NULL;
+		DBG(FS, pymnt_debug_h(self, "new"));
+	}
 	return (PyObject *) self;
 }
 
@@ -606,6 +609,9 @@ static int Fs_init(FsObject *self, PyObject *args, PyObject *kwds)
 		PyErr_SetString(PyExc_TypeError, "Invalid type");
 		return -1;
 	}
+
+	DBG(FS, pymnt_debug_h(self, "init"));
+
 	if (self->fs)
 		mnt_unref_fs(self->fs);
 
@@ -701,6 +707,8 @@ PyObject *PyObjectResultFs(struct libmnt_fs *fs)
 	result = mnt_fs_get_userdata(fs);
 	if (result) {
 		Py_INCREF(result);
+		DBG(FS, pymnt_debug_h(fs, "result py-obj %p: already exists, py-refcnt=%d",
+				result, (int) ((PyObject *) result)->ob_refcnt));
 		return (PyObject *) result;
 	}
 
@@ -717,6 +725,8 @@ PyObject *PyObjectResultFs(struct libmnt_fs *fs)
 	Py_INCREF(result);
 	mnt_ref_fs(fs);
 
+	DBG(FS, pymnt_debug_h(fs, "result py-obj %p new, py-refcnt=%d",
+				result, (int) ((PyObject *) result)->ob_refcnt));
 	result->fs = fs;
 	mnt_fs_set_userdata(fs, result);
 	return (PyObject *) result;
@@ -734,10 +744,13 @@ static PyObject *Fs_copy_fs(FsObject *self, PyObject *args, PyObject *kwds)
 	if (PyObject_TypeCheck(dest, &FsType)) {	/* existing object passed as argument */
 		if (!mnt_copy_fs(((FsObject *)dest)->fs, self->fs))
 			return NULL;
+		DBG(FS, pymnt_debug_h(dest, "copy data"));
 		return (PyObject *)dest;
 
 	} else if (dest == Py_None) {			/* create new object */
 		FsObject *result = PyObject_New(FsObject, &FsType);
+
+		DBG(FS, pymnt_debug_h(result, "new copy"));
 		result->fs = mnt_copy_fs(NULL, self->fs);
 		mnt_fs_set_userdata(result->fs, result);	/* keep a pointer to encapsulating object */
 		return (PyObject *)result;
@@ -754,7 +767,7 @@ PyTypeObject FsType = {
 	"libmount.Fs", /*tp_name*/
 	sizeof(FsObject), /*tp_basicsize*/
 	0, /*tp_itemsize*/
-	(destructor)Fs_dealloc, /*tp_dealloc*/
+	(destructor)Fs_destructor, /*tp_dealloc*/
 	0, /*tp_print*/
 	0, /*tp_getattr*/
 	0, /*tp_setattr*/
@@ -795,6 +808,7 @@ void FS_AddModuleObject(PyObject *mod)
 	if (PyType_Ready(&FsType) < 0)
 		return;
 
+	DBG(FS, pymnt_debug("add to module"));
 	Py_INCREF(&FsType);
 	PyModule_AddObject(mod, "Fs", (PyObject *)&FsType);
 }

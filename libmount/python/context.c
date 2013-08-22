@@ -1224,6 +1224,8 @@ void Context_AddModuleObject(PyObject *mod)
 	if (PyType_Ready(&ContextType) < 0)
 		return;
 
+	DBG(CXT, pymnt_debug("add to module"));
+
 	Py_INCREF(&ContextType);
 	PyModule_AddObject(mod, "Context", (PyObject *)&ContextType);
 }
