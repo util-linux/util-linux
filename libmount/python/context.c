@@ -1219,7 +1219,7 @@ PyTypeObject ContextType = {
 	Context_new, /* tp_new */
 };
 
-void pymnt_init_context(PyObject *mod)
+void Context_AddModuleObject(PyObject *mod)
 {
 	if (PyType_Ready(&ContextType) < 0)
 		return;

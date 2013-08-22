@@ -24,8 +24,7 @@ typedef struct {
 extern PyTypeObject FsType;
 
 extern PyObject *PyObjectResultFs(struct libmnt_fs *fs);
-
-extern void pymnt_init_fs(PyObject *mod);
+extern void FS_AddModuleObject(PyObject *mod);
 
 /*
  * tab.c
@@ -42,8 +41,9 @@ extern PyTypeObject TableType;
 
 extern PyObject *PyObjectResultTab(struct libmnt_table *tab);
 
-extern void pymnt_init_table(PyObject *mod);
-extern void pymnt_free_table(struct libmnt_table *tab);
+extern void Table_unref(struct libmnt_table *tab);
+extern void Table_AddModuleObject(PyObject *mod);
+
 extern int pymnt_table_parser_errcb(struct libmnt_table *tb, const char *filename, int line);
 
 /*
@@ -58,7 +58,7 @@ typedef struct {
 } ContextObjext;
 
 extern PyTypeObject ContextType;
-extern void pymnt_init_context(PyObject *mod);
+extern void Context_AddModuleObject(PyObject *mod);
 
 /*
  * misc

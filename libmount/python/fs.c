@@ -573,7 +573,8 @@ static PyMethodDef Fs_methods[] = {
 
 static void Fs_dealloc(FsObject *self)
 {
-	mnt_free_fs(self->fs);
+	fprintf(stderr, "KZAK: [%p] delalocate\n", self->fs);
+	mnt_unref_fs(self->fs);
 	self->ob_type->tp_free((PyObject*)self);
 }
 
@@ -606,9 +607,10 @@ static int Fs_init(FsObject *self, PyObject *args, PyObject *kwds)
 		return -1;
 	}
 	if (self->fs)
-		mnt_free_fs(self->fs);
+		mnt_unref_fs(self->fs);
 
-	self->fs = mnt_new_fs();
+	self->fs = mnt_new_fs();		/* new FS with refcount=1 */
+
 	if (source && (rc = mnt_fs_set_source(self->fs, source))) {
 		PyErr_SetString(PyExc_MemoryError, MEMORY_ERR);
 		return rc;
@@ -713,6 +715,8 @@ PyObject *PyObjectResultFs(struct libmnt_fs *fs)
 	}
 
 	Py_INCREF(result);
+	mnt_ref_fs(fs);
+
 	result->fs = fs;
 	mnt_fs_set_userdata(fs, result);
 	return (PyObject *) result;
@@ -786,7 +790,7 @@ PyTypeObject FsType = {
 	Fs_new, /* tp_new */
 };
 
-void pymnt_init_fs(PyObject *mod)
+void FS_AddModuleObject(PyObject *mod)
 {
 	if (PyType_Ready(&FsType) < 0)
 		return;

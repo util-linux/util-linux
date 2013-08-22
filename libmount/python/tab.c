@@ -538,28 +538,27 @@ static PyMethodDef Table_methods[] = {
 };
 
 /* mnt_free_tab() with a few necessary additions */
-void pymnt_free_table(struct libmnt_table *tab)
+void Table_unref(struct libmnt_table *tab)
 {
 	struct libmnt_fs *fs;
+	struct libmnt_iter *iter;
 
 	if (!tab)
 		return;
 
-	while (mnt_table_first_fs(tab, &fs) == 0) {
-		PyObject *obj = mnt_fs_get_userdata(fs);
+	iter = mnt_new_iter(MNT_ITER_BACKWARD);
 
-		if (obj)
-			Py_DECREF(obj); /* (possible) destruction via object destructor */
-		else
-			mnt_free_fs(fs); /* no encapsulating object, free fs */
-	}
+	/* remove pylibmount specific references to the entries */
+	while (mnt_table_next_fs(tab, iter, &fs) == 0)
+		Py_XDECREF(mnt_fs_get_userdata(fs));
 
-	mnt_free_table(tab);
+	mnt_unref_table(tab);
+	mnt_free_iter(iter);
 }
 
 static void Table_destructor(TableObject *self)
 {
-	pymnt_free_table(self->tab);
+	Table_unref(self->tab);
 	mnt_free_iter(self->iter);
 	Py_XDECREF(self->errcb);
 	self->ob_type->tp_free((PyObject*)self);
@@ -595,7 +594,7 @@ static int Table_init(TableObject *self, PyObject *args, PyObject *kwds)
 					kwlist, &path, &errcb))
 		return -1;
 
-	pymnt_free_table(self->tab);
+	Table_unref(self->tab);
 	self->tab = NULL;
 
 	if (self->iter)
@@ -635,8 +634,9 @@ static int Table_init(TableObject *self, PyObject *args, PyObject *kwds)
 	cache = mnt_new_cache();		/* TODO: make it optional? */
 	if (!cache)
 		return -1;
-
 	mnt_table_set_cache(self->tab, cache);
+	mnt_unref_cache(cache);
+
 	return 0;
 }
 
@@ -693,6 +693,7 @@ PyObject *PyObjectResultTab(struct libmnt_table *tab)
 	}
 
 	Py_INCREF(result);
+	mnt_ref_table(tab);
 	result->tab = tab;
 	result->iter = mnt_new_iter(MNT_ITER_FORWARD);
 	mnt_table_set_userdata(result->tab, result);
@@ -761,7 +762,7 @@ PyTypeObject TableType = {
 	Table_new, /* tp_new */
 };
 
-void pymnt_init_table(PyObject *mod)
+void Table_AddModuleObject(PyObject *mod)
 {
 	if (PyType_Ready(&TableType) < 0)
 		return;

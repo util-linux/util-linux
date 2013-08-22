@@ -131,13 +131,15 @@ PyMODINIT_FUNC initpylibmount(void)
 	if (!m)
 		return;
 
+	/*mnt_init_debug(0xffff);*/
+
 	LibmountError = PyErr_NewException("libmount.Error", NULL, NULL);
 	Py_INCREF(LibmountError);
 	PyModule_AddObject(m, "Error", (PyObject *)LibmountError);
 
-	pymnt_init_fs(m);
-	pymnt_init_table(m);
-	pymnt_init_context(m);
+	FS_AddModuleObject(m);
+	Table_AddModuleObject(m);
+	Context_AddModuleObject(m);
 
 	/*
 	 * mount(8) userspace options masks (MNT_MAP_USERSPACE map)
