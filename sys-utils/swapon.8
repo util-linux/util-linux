@@ -42,41 +42,13 @@
 .SH NAME
 swapon, swapoff \- enable/disable devices and files for paging and swapping
 .SH SYNOPSIS
-Get info:
-.br
-.in +5
-.B swapon \-s
-.RB [ \-h ]
-.RB [ \-V ]
-.sp
-.in -5
-Enable/disable:
-.br
-.in +5
 .B swapon
-.RB [ \-d ]
-.RB [ \-f ]
-.RB [ \-p
-.IR priority ]
-.RB [ \-v ]
-.IR specialfile ...
+[ options ]
+.RI [ specialfile... ]
 .br
 .B swapoff
-.RB [ \-v ]
-.IR specialfile ...
-.sp
-.in -5
-Enable/disable all:
-.br
-.in +5
-.B swapon \-a
-.RB [ \-e ]
-.RB [ \-f ]
-.RB [ \-v ]
-.br
-.B swapoff \-a
-.RB [ \-v ]
-.in -5
+.RB [ \-va ]
+.RI [ specialfile... ]
 .SH DESCRIPTION
 .B swapon
 is used to specify devices on which paging and swapping are to take place.
@@ -175,7 +147,7 @@ When priority is not defined it defaults to \-1.
 Display swap usage summary by device. Equivalent to "cat /proc/swaps".
 Not available before Linux 2.1.25.
 .TP
-\fB\-\-show\fR [\fIcolumn,column\fR]
+\fB\-\-show\fR [\fIcolumn\fR, ...]
 Display definable device table similar to
 .B \-\-summary
 output.  See \-\-help output for
