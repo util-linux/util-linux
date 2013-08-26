@@ -1387,6 +1387,12 @@ AS_IF([test "x$with_python" = xyes], [
   ])
 ])
 
+dnl FIXME: the python3 should be fixed in future.
+AS_CASE([$PYTHON_VERSION],
+	[2.*], [],
+	[3.*], [AC_MSG_ERROR([pylibmount will not work with python3])],
+	[AC_MSG_ERROR([unanticipated python version])]
+)
 
 UL_BUILD_INIT([pylibmount], [check])
 UL_REQUIRES_HAVE([pylibmount], [python])
