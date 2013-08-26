@@ -88,17 +88,21 @@ This is a count telling
 .B last
 how many lines to show.
 .TP
-\fB\-t\fR, \fB\-\-until\fR \fIYYYYMMDDHHMMSS\fR
-Display the state of logins as of the specified time.  This is useful,
-e.g., to determine easily who was logged in at a particular time --
-specify that time with
-.B \-\-until
-and look for "still logged in".
+\fB\-s\fR, \fB\-\-since\fR \fItime\fR
+Display the state of logins since specified
+.IR time .
+This is useful, e.g., to determine easily who was logged in at a
+particular time.  The option is often combined with
+.BR \-\-until .
 .TP
-\fB\-p\fR, \fB\-\-present\fR \fIYYYYMMDDHHMMSS\fR
+\fB\-t\fR, \fB\-\-until\fR \fItime\fR
+Display the state of logins until the specified
+.IR time .
+.TP
+\fB\-p\fR, \fB\-\-present\fR \fItime\fR
 Display users who were present at the specified time.  This option is
 similar with
-.BR \-\-until ,
+.BR \-\-since " and " \-\-until ,
 without printing any other lines than the matching sessions.
 .TP
 \fB\-F\fR, \fB\-\-fulltimes\fR
@@ -131,6 +135,25 @@ Display full user and domain names in the output.
 .TP
 \fB\-x\fR, \fB\-\-system\fR
 Display the system shutdown entries and run level changes.
+.SH TIME FORMATS
+The options that take
+.I time
+argument will understand the following formats:
+.TS
+left l2 l2.
+YYYYMMDDhhmmss
+YYYY-MM-DD hh:mm:ss
+YYYY-MM-DD hh:mm	(seconds will be set to 00)
+YYYY-MM-DD	(time will be set to 00:00:00)
+hh:mm:ss	(date will be set to today)
+hh:mm	(date will be set to today, seconds to 00)
+now
+yesterday	(time is set to 00:00:00)
+today	(time is set to 00:00:00)
+tomorrow	(time is set to 00:00:00)
++5min
+-5days
+.TE
 .SH NOTES
 The files
 .I wtmp
