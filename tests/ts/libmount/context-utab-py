@@ -84,6 +84,7 @@ grep -q $DEVICE $LIBMOUNT_UTAB && \
 ts_finalize_subtest
 
 if [ -x "/sbin/mkfs.btrfs" ]; then
+	$TS_CMD_WIPEFS -a  $DEVICE &> /dev/null
 	ts_log "Create filesystem [btrfs]"
 	/sbin/mkfs.btrfs -L "$LABEL" $DEVICE &> /dev/null
 	udevadm settle

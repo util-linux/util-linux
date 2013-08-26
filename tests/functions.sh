@@ -492,7 +492,7 @@ function ts_scsi_debug_init {
 	modprobe scsi_debug $*
 	[ "$?" == 0 ] || ts_die "Cannot init device"
 
-	DEVNAME=$(grep scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
+	DEVNAME=$(grep --with-filename scsi_debug /sys/block/*/device/model | awk -F '/' '{print $4}')
 	[ "x${DEVNAME}" == "x" ] && ts_die "Cannot find device"
 
 	DEVICE="/dev/${DEVNAME}"

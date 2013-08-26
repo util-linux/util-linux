@@ -80,7 +80,7 @@ cd $TS_MOUNTPOINT
 
 ts_log "list the image"
 export TZ='GMT-1'
-ls -laR --time-style=long-iso . >> $TS_OUTPUT
+ls -laR --time-style=long-iso . | sed 's:\. : :g' >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "list checksums from new data"
