@@ -426,8 +426,9 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fputs(_(" -i, --ip             display IP numbers in numbers-and-dots notation\n"), out);
 	fputs(_(" -n, --limit <number> how many lines to show\n"), out);
 	fputs(_(" -R, --nohostname     don't display the hostname field\n"), out);
-	fputs(_(" -t, --until <YYYYMMDDHHMMSS>  display the state of the specified time\n"), out);
-	fputs(_(" -p, --present <YYYYMMDDHHMMSS>  display who where present at the specified time\n"), out);
+	fputs(_(" -s, --since <time>   display the lines since the specified time\n"), out);
+	fputs(_(" -t, --until <time>   display the lines until the specified time\n"), out);
+	fputs(_(" -p, --present <time> display who where present at the specified time\n"), out);
 	fputs(_(" -w, --fullnames      display full user and domain names\n"), out);
 	fputs(_(" -x, --system         display system shutdown entries and run level changes\n"), out);
 
@@ -441,7 +442,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 
 
 static void process_wtmp_file(char *ufile, int lastb, int extended,
-			      time_t until, time_t present)
+			      time_t since, time_t until, time_t present)
 {
 	FILE *fp;		/* Filepointer of wtmp file */
 
@@ -509,6 +510,9 @@ static void process_wtmp_file(char *ufile, int lastb, int extended,
 
 		if (uread(fp, &ut, &quit) != 1)
 			break;
+
+		if (since && ut.ut_time < since)
+			continue;
 
 		if (until && until < ut.ut_time)
 			continue;
@@ -695,7 +699,8 @@ int main(int argc, char **argv)
 	int lastb = 0;		/* Is this 'lastb' ? */
 	int extended = 0;	/* Lots of info. */
 
-	time_t until = 0;	/* at what time to stop parsing the file */
+	time_t since = 0;	/* at what time to start displaying the file */
+	time_t until = 0;	/* at what time to stop displaying the file */
 	time_t present = 0;	/* who where present at time_t */
 	usec_t p;
 
@@ -706,6 +711,7 @@ int main(int argc, char **argv)
 	      { "nohostname", no_argument,       NULL, 'R' },
 	      { "version",    no_argument,       NULL, 'V' },
 	      { "hostlast",   no_argument,       NULL, 'a' },
+	      { "since",      required_argument, NULL, 's' },
 	      { "until",      required_argument, NULL, 't' },
 	      { "present",    required_argument, NULL, 'p' },
 	      { "system",     no_argument,       NULL, 'x' },
@@ -722,7 +728,7 @@ int main(int argc, char **argv)
 	atexit(close_stdout);
 
 	while ((c = getopt_long(argc, argv,
-			"hVf:n:RxadFit:p:0123456789w", long_opts, NULL)) != -1) {
+			"hVf:n:RxadFit:p:s:0123456789w", long_opts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 			usage(stdout);
@@ -760,6 +766,14 @@ int main(int argc, char **argv)
 			if (parse_timestamp(optarg, &p) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
 			present = (time_t) (p / 1000000);
+			break;
+		case 's':
+			since = parsetm(optarg);
+			if (since != (time_t) -1)
+				break;
+			if (parse_timestamp(optarg, &p) < 0)
+				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
+			since = (time_t) (p / 1000000);
 			break;
 		case 't':
 			if (parse_timestamp(optarg, &p) < 0)
@@ -799,7 +813,7 @@ int main(int argc, char **argv)
 	}
 
 	for (i = 0; i < altc; i++) {
-		process_wtmp_file(altv[i], lastb, extended, until, present);
+		process_wtmp_file(altv[i], lastb, extended, since, until, present);
 		free(altv[i]);
 	}
 	free(altv);
