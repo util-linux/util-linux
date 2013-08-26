@@ -47,6 +47,7 @@
 #include "closestream.h"
 #include "carefulputc.h"
 #include "strutils.h"
+#include "time-util.h"
 
 #ifndef SHUTDOWN_TIME
 # define SHUTDOWN_TIME 254
@@ -735,6 +736,7 @@ int main(int argc, char **argv)
 
 	time_t until = 0;	/* at what time to stop parsing the file */
 	time_t present = 0;	/* who where present at time_t */
+	usec_t p;
 
 	static const struct option long_opts[] = {
 	      { "limit",	required_argument, NULL, 'n' },
@@ -795,13 +797,19 @@ int main(int argc, char **argv)
 			break;
 		case 'p':
 			present = parsetm(optarg);
-			if (present == (time_t) -1)
+			if (present != (time_t) -1)
+				break;
+			if (parse_timestamp(optarg, &p) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
+			present = (time_t) (p / 1000000);
 			break;
 		case 't':
 			until = parsetm(optarg);
-			if (until == (time_t) -1)
+			if (until != (time_t) -1)
+				break;
+			if (parse_timestamp(optarg, &p) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
+			until = (time_t) (p / 1000000);
 			break;
 		case 'w':
 			if (UT_NAMESIZE > name_len)
