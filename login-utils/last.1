@@ -105,6 +105,28 @@ similar with
 .BR \-\-since " and " \-\-until ,
 without printing any other lines than the matching sessions.
 .TP
+\fB\-\-time\-format\fR \fIformat\fR
+Define output timestamp
+.I format
+to be one of the
+.IR notime ,
+.IR short ,
+.IR full ,
+or
+.IR iso .
+.I notime
+will not print timestamp at all.
+.I short
+is default, and
+.I full
+is same as
+.B \-\-fulltimes
+option.  The
+.I iso
+will display time stamp in ISO-8601 format.  The iso format contains
+timezone information making it to be preferrable when print outs are
+investigated outside of the system.
+.TP
 \fB\-F\fR, \fB\-\-fulltimes\fR
 Print full login and logout times and dates.
 .TP
