@@ -29,9 +29,14 @@ libuuid_la_SOURCES = \
 
 libuuid_la_DEPENDENCIES = libuuid/src/uuid.sym
 libuuid_la_LIBADD       = $(SOCKET_LIBS)
-libuuid_la_CFLAGS       = -I$(ul_libuuid_incdir) -Ilibuuid/src
+
+libuuid_la_CFLAGS = \
+	 $(SOLIB_CFLAGS) \
+	 -I$(ul_libuuid_incdir) \
+	 -Ilibuuid/src
 
 libuuid_la_LDFLAGS = \
+	$(SOLIB_LDFLAGS) \
 	-Wl,--version-script=$(top_srcdir)/libuuid/src/uuid.sym \
 	-version-info $(LIBUUID_VERSION_INFO)
 

@@ -113,6 +113,7 @@ libblkid_la_LIBADD = libcommon.la
 
 
 libblkid_la_CFLAGS = \
+	$(SOLIB_CFLAGS) \
 	-I$(ul_libblkid_incdir) \
 	-I$(top_srcdir)/libblkid/src
 
@@ -128,6 +129,7 @@ libblkid_la_DEPENDENCIES = \
 	libblkid/src/blkid.h.in
 
 libblkid_la_LDFLAGS = \
+	$(SOLIB_LDFLAGS) \
 	-Wl,--version-script=$(top_srcdir)/libblkid/src/blkid.sym \
 	-version-info $(LIBBLKID_VERSION_INFO)
 

@@ -27,12 +27,12 @@ Compiling
 	The SUID_* feature is currently supported for chfn, chsh,
 	newgrp, su, write, mount, and umount.
 
-	Preferred compilation options for developers, when
-	using gcc, are:
+	Use DAEMON_CFLAGS and DAEMON_LDFLAGS when you want to define
+	special compiler options for daemons; supported for uuidd.
 
-	export CFLAGS="-Wmissing-parameter-type -Wsign-compare
-	-Wtype-limits -Wuninitialized -Wunused-parameter
-	-Wunused-but-set-parameter -fno-common"
+	Use SOLIB_CFLAGS and SOLIB_LDFLAGS when you want to define
+	special compiler options for shared libraries; supported for
+	libmount, libblkid and libuuid.
 
 	FIXME: add notes about klib and uClib.
 

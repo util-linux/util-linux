@@ -77,7 +77,8 @@ if BUILD_UUIDD
 usrsbin_exec_PROGRAMS += uuidd
 dist_man_MANS += misc-utils/uuidd.8
 uuidd_LDADD = $(LDADD) libuuid.la libcommon.la
-uuidd_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_incdir)
+uuidd_CFLAGS = $(DAEMON_CFLAGS) $(AM_CFLAGS) -I$(ul_libuuid_incdir)
+uuidd_LDFLAGS = $(DAEMON_LDFLAGS) $(AM_LDFLAGS)
 uuidd_SOURCES = misc-utils/uuidd.c
 if USE_SOCKET_ACTIVATION
 uuidd_SOURCES += misc-utils/sd-daemon.c misc-utils/sd-daemon.h

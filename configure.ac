@@ -1473,6 +1473,16 @@ AC_ARG_VAR([SUID_CFLAGS],
 AC_ARG_VAR([SUID_LDFLAGS],
 	   [LDFLAGS used for binaries which are usually with the suid bit])
 
+AC_ARG_VAR([DAEMON_CFLAGS],
+	   [CFLAGS used for binaries which are usually executed as daemons])
+AC_ARG_VAR([DAEMON_LDFLAGS],
+	   [LDFLAGS used for binaries which are usually executed as daemons])
+
+AC_ARG_VAR([SOLIB_CFLAGS],
+	   [CFLAGS used for shared libraries])
+AC_ARG_VAR([SOLIB_LDFLAGS],
+	   [LDFLAGS used for shared libraries])
+
 LIBS=""
 
 
