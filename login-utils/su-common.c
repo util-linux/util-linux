@@ -111,6 +111,9 @@ static int same_session = 0;
 /* SU_MODE_{RUNUSER,SU} */
 static int su_mode;
 
+/* Don't print PAM info messages (Last login, etc.). */
+static int suppress_pam_info;
+
 static bool _pam_session_opened;
 static bool _pam_cred_established;
 static sig_atomic_t volatile caught_signal = false;
@@ -208,10 +211,23 @@ static void log_btmp(struct passwd const *pw)
 	updwtmp(_PATH_BTMP, &ut);
 }
 
+
+static int su_pam_conv(int num_msg, const struct pam_message **msg,
+                       struct pam_response **resp, void *appdata_ptr)
+{
+	if (suppress_pam_info
+	    && num_msg == 1
+	    && msg
+	    && msg[0]->msg_style == PAM_TEXT_INFO)
+		return PAM_SUCCESS;
+
+	return misc_conv(num_msg, msg, resp, appdata_ptr);
+}
+
 static struct pam_conv conv =
 {
-  misc_conv,
-  NULL
+	su_pam_conv,
+	NULL
 };
 
 static void
@@ -926,6 +942,9 @@ su_main (int argc, char **argv, int mode)
   }
 
   init_groups (pw, groups, num_supp_groups);
+
+  if (!simulate_login || command)
+    suppress_pam_info = 1;		/* don't print PAM info messages */
 
   create_watching_parent ();
   /* Now we're in the child.  */
