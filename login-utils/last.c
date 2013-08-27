@@ -293,7 +293,7 @@ static int list(struct utmp *p, time_t t, int what, time_t present)
 	 */
 	tmp = (time_t)p->ut_time;
 
-	if (present && (present < tmp || 0 == t || t < present))
+	if (present && (present < tmp || (0 < t && t < present)))
 		return 0;
 
 	strcpy(logintime, ctime(&tmp));
