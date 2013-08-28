@@ -349,6 +349,23 @@ static int time_formatter(const struct last_control *ctl, char *dst,
 }
 
 /*
+ *	Remove trailing spaces from a string.
+ */
+static void trim_trailing_spaces(char *s)
+{
+	char *p;
+
+	for (p = s; *p; ++p)
+		continue;
+	while (p > s && isspace(*--p))
+		continue;
+	if (p > s)
+		++p;
+	*p++ = '\n';
+	*p = '\0';
+}
+
+/*
  *	Show one line of information on screen
  */
 static int list(const struct last_control *ctl, struct utmp *p, time_t t, int what)
@@ -490,6 +507,7 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 #  endif
 #endif
 
+	trim_trailing_spaces(final);
 	/*
 	 *	Print out "final" string safely.
 	 */
