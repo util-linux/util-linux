@@ -47,6 +47,7 @@ TS_CMD_IPCMK=${TS_CMD_IPCMK-"$top_builddir/ipcmk"}
 TS_CMD_IPCRM=${TS_CMD_IPCRM-"$top_builddir/ipcrm"}
 TS_CMD_IPCS=${TS_CMD_IPCS:-"$top_builddir/ipcs"}
 TS_CMD_ISOSIZE=${TS_CMD_ISOSIZE-"$top_builddir/isosize"}
+TS_CMD_LAST=${TS_CMD_LAST-"$top_builddir/last"}
 TS_CMD_LINE=${TS_CMD_LINE-"$top_builddir/line"}
 TS_CMD_LOOK=${TS_CMD_LOOK-"$top_builddir/look"}
 TS_CMD_LOSETUP=${TS_CMD_LOSETUP:-"$top_builddir/losetup"}

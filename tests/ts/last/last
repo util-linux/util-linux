@@ -1,0 +1,62 @@
+#!/bin/bash
+
+# This file is part of util-linux.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="last"
+
+. $TS_TOPDIR/functions.sh
+ts_init "$*"
+
+export LANG=C
+export TZ=GMT
+
+>| $TS_OUTPUT
+
+ts_log "~~~ basic output ~~~"
+$TS_CMD_LAST -f $TS_SELF/wtmp >> $TS_OUTPUT 2>/dev/null
+
+ts_log "~~~ include system ~~~"
+$TS_CMD_LAST -f $TS_SELF/wtmp -x >> $TS_OUTPUT 2>/dev/null
+
+ts_log "~~~ dns short ~~~"
+$TS_CMD_LAST -f $TS_SELF/wtmp -d root >> $TS_OUTPUT 2>/dev/null
+
+ts_log "~~~ dns long ~~~"
+$TS_CMD_LAST -f $TS_SELF/wtmp -w -d root >> $TS_OUTPUT 2>/dev/null
+
+ts_log "~~~ dns host last ~~~"
+$TS_CMD_LAST -f $TS_SELF/wtmp -a -d root >> $TS_OUTPUT 2>/dev/null
+
+ts_log "~~~ show ip ~~~"
+$TS_CMD_LAST -f $TS_SELF/wtmp -i torvalds >> $TS_OUTPUT 2>/dev/null
+
+ts_log "~~~ no host ~~~"
+$TS_CMD_LAST -f $TS_SELF/wtmp -R torvalds >> $TS_OUTPUT 2>/dev/null
+
+ts_log "~~~ full times ~~~"
+$TS_CMD_LAST -f $TS_SELF/wtmp -F >> $TS_OUTPUT 2>/dev/null
+
+ts_log "~~~ no time ~~~"
+$TS_CMD_LAST -f $TS_SELF/wtmp --time-format=notime >> $TS_OUTPUT 2>/dev/null
+
+ts_log "~~~ iso-8601 time ~~~"
+$TS_CMD_LAST -f $TS_SELF/wtmp --time-format=iso -w >> $TS_OUTPUT 2>/dev/null
+
+ts_log "~~~ since and until ~~~"
+$TS_CMD_LAST -f $TS_SELF/wtmp -s "2013-08-28 02:20" -t "2013-08-28 08:20" >> $TS_OUTPUT 2>/dev/null
+
+ts_log "~~~ present ~~~"
+$TS_CMD_LAST -f $TS_SELF/wtmp -p "2013-08-28 11:20" >> $TS_OUTPUT 2>/dev/null
+
+ts_finalize
