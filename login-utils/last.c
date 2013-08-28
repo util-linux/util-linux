@@ -462,7 +462,7 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 	if (ctl->showhost) {
 		if (!ctl->altlist) {
 			len = snprintf(final, sizeof(final),
-				"%-8.*s %-12.12s %-16.*s %-*.*s %-*.*s %-12.12s\n",
+				"%-8.*s %-12.12s %-16.*s %-*.*s %-*.*s %s\n",
 				ctl->name_len, p->ut_name, utline,
 				ctl->domain_len, domain,
 				tftl[ctl->time_fmt].in, tftl[ctl->time_fmt].in, logintime,
@@ -478,7 +478,7 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 		}
 	} else
 		len = snprintf(final, sizeof(final),
-			"%-8.*s %-12.12s %-*.*s %-*.*s %-12.12s\n",
+			"%-8.*s %-12.12s %-*.*s %-*.*s %s\n",
 			ctl->name_len, p->ut_name, utline,
 			tftl[ctl->time_fmt].in, tftl[ctl->time_fmt].in, logintime,
 			tftl[ctl->time_fmt].out, tftl[ctl->time_fmt].out, logouttime,
