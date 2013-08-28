@@ -1,7 +1,7 @@
 ~~~ basic output ~~~
 rick     long         never-gonna-logo Thu Jan  1 00:00 - 03:14 (24855+03:14)
 torvalds linux        hobby            Mon Aug 26 00:57   still logged in
-reboot   system boot  system-name      Wed Aug 28 18:00 - 18:50  (00:50)
+reboot   system boot  system-name      Wed Aug 28 18:00   still running
 reboot   system boot  system-name      Wed Aug 28 16:00 - 17:00  (01:00)
 IPv4     root         dns-server       Wed Aug 28 13:00 - 14:00  (01:00)
 nonvalid foo          zero             Wed Aug 28 12:00 - down   (03:00)
@@ -18,7 +18,7 @@ wtmp begins Wed Aug 28 03:00:00 2013
 ~~~ include system ~~~
 rick     long         never-gonna-logo Thu Jan  1 00:00 - 03:14 (24855+03:14)
 torvalds linux        hobby            Mon Aug 26 00:57   still logged in
-reboot   system boot  system-name      Wed Aug 28 18:00 - 18:50  (00:50)
+reboot   system boot  system-name      Wed Aug 28 18:00   still running
 shutdown system down  system-name      Wed Aug 28 17:00 - 18:00  (01:00)
 reboot   system boot  system-name      Wed Aug 28 16:00 - 17:00  (01:00)
 shutdown system down  system-name      Wed Aug 28 15:00 - 16:00  (01:00)
@@ -57,7 +57,7 @@ wtmp begins Wed Aug 28 03:00:00 2013
 ~~~ full times ~~~
 rick     long         never-gonna-logo Thu Jan  1 00:00:00 1970 - Tue Jan 19 03:14:07 2038 (24855+03:14)
 torvalds linux        hobby            Mon Aug 26 00:57:08 1991   still logged in
-reboot   system boot  system-name      Wed Aug 28 18:00:00 2013 - Wed Aug 28 18:50:27 2013  (00:50)
+reboot   system boot  system-name      Wed Aug 28 18:00:00 2013   still running
 reboot   system boot  system-name      Wed Aug 28 16:00:00 2013 - Wed Aug 28 17:00:00 2013  (01:00)
 IPv4     root         dns-server       Wed Aug 28 13:00:00 2013 - Wed Aug 28 14:00:00 2013  (01:00)
 nonvalid foo          zero             Wed Aug 28 12:00:00 2013 - down                      (03:00)
@@ -74,7 +74,7 @@ wtmp begins Wed Aug 28 03:00:00 2013
 ~~~ no time ~~~
 rick     long         never-gonna-logo   (24855+03:14)
 torvalds linux        hobby              logged in
-reboot   system boot  system-name         (00:50)
+reboot   system boot  system-name        running
 reboot   system boot  system-name         (01:00)
 IPv4     root         dns-server          (01:00)
 nonvalid foo          zero                (03:00)
@@ -91,7 +91,7 @@ wtmp begins Wed Aug 28 03:00:00 2013
 ~~~ iso-8601 time ~~~
 rick     long         never-gonna-logout 1970-01-01T00:00:00+0000 - 2038-01-19T03:14:07+0000 (24855+03:14)
 torvalds linux        hobby            1991-08-26T00:57:08+0000   still logged in
-reboot   system boot  system-name      2013-08-28T18:00:00+0000 - 2013-08-28T18:50:27+0000  (00:50)
+reboot   system boot  system-name      2013-08-28T18:00:00+0000   still running
 reboot   system boot  system-name      2013-08-28T16:00:00+0000 - 2013-08-28T17:00:00+0000  (01:00)
 IPv4     root         dns-server       2013-08-28T13:00:00+0000 - 2013-08-28T14:00:00+0000  (01:00)
 nonvalid foo          zero             2013-08-28T12:00:00+0000 - down                      (03:00)

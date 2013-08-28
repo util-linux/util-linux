@@ -370,7 +370,7 @@ static void trim_trailing_spaces(char *s)
  */
 static int list(const struct last_control *ctl, struct utmp *p, time_t t, int what)
 {
-	time_t		secs, tmp;
+	time_t		secs, tmp, epoch;
 	char		logintime[LAST_TIMESTAMP_LEN];
 	char		logouttime[LAST_TIMESTAMP_LEN];
 	char		length[LAST_TIMESTAMP_LEN];
@@ -421,7 +421,16 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 	mins  = (secs / 60) % 60;
 	hours = (secs / 3600) % 24;
 	days  = secs / 86400;
-	if (days)
+
+	epoch = time(NULL);
+	if (t == epoch) {
+		if (ctl->fulltime)
+			sprintf(logouttime, "  still running");
+		else {
+			sprintf(logouttime, "  still");
+			sprintf(length, "running");
+		}
+	} else if (days)
 		sprintf(length, "(%d+%02d:%02d)", days, hours, mins);
 	else
 		sprintf(length, " (%02d:%02d)", hours, mins);
