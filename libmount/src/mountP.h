@@ -137,11 +137,6 @@ extern int mnt_run_test(struct libmnt_test *tests, int argc, char *argv[]);
 #endif
 
 /* utils.c */
-extern int endswith(const char *s, const char *sx)
-			__attribute__((nonnull));
-extern int startswith(const char *s, const char *sx)
-			__attribute__((nonnull));
-
 extern char *stripoff_last_component(char *path);
 
 extern int mnt_valid_tagname(const char *tagname);

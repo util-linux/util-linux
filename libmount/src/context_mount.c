@@ -21,6 +21,7 @@
 
 #include "linux_version.h"
 #include "mountP.h"
+#include "strutils.h"
 
 /*
  * Kernel supports only one MS_PROPAGATION flag change by one mount(2) syscall,

@@ -23,37 +23,6 @@
 #include "env.h"
 #include "match.h"
 
-int endswith(const char *s, const char *sx)
-{
-	ssize_t off;
-
-	assert(s);
-	assert(sx);
-
-	off = strlen(s);
-	if (!off)
-		return 0;
-	off -= strlen(sx);
-	if (off < 0)
-		return 0;
-
-        return !strcmp(s + off, sx);
-}
-
-int startswith(const char *s, const char *sx)
-{
-	size_t off;
-
-	assert(s);
-	assert(sx);
-
-	off = strlen(sx);
-	if (!off)
-		return 0;
-
-        return !strncmp(s, sx, off);
-}
-
 int append_string(char **a, const char *b)
 {
 	size_t al, bl;

@@ -30,64 +30,6 @@
 
 #define streq(a,b) (strcmp((a),(b)) == 0)
 
-static char *startswith(const char *s, const char *prefix)
-{
-	const char *a, *b;
-
-	assert(s);
-	assert(prefix);
-
-	a = s, b = prefix;
-	for (;;) {
-		if (*b == 0)
-			return (char *)a;
-		if (*a != *b)
-			return NULL;
-
-		a++, b++;
-	}
-}
-
-static char *startswith_no_case(const char *s, const char *prefix)
-{
-	const char *a, *b;
-
-	assert(s);
-	assert(prefix);
-
-	a = s, b = prefix;
-	for (;;) {
-		if (*b == 0)
-			return (char *)a;
-		if (tolower(*a) != tolower(*b))
-			return NULL;
-
-		a++, b++;
-	}
-}
-
-static char *endswith(const char *s, const char *postfix)
-{
-	size_t sl, pl;
-
-	assert(s);
-	assert(postfix);
-
-	sl = strlen(s);
-	pl = strlen(postfix);
-
-	if (pl == 0)
-		return (char *)s + sl;
-
-	if (sl < pl)
-		return NULL;
-
-	if (memcmp(s + sl - pl, postfix, pl) != 0)
-		return NULL;
-
-	return (char *)s + sl - pl;
-}
-
 static int parse_sec(const char *t, usec_t *usec)
 {
 	 static const struct {

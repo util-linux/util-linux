@@ -102,4 +102,8 @@ extern int parse_range(const char *str, int *lower, int *upper, int def);
 
 extern int streq_except_trailing_slash(const char *s1, const char *s2);
 
+extern char *startswith(const char *s, const char *prefix);
+extern char *startswith_no_case(const char *s, const char *prefix);
+extern char *endswith(const char *s, const char *postfix);
+
 #endif

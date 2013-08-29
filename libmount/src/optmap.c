@@ -58,6 +58,7 @@
  * mount/mount.h.
  */
 #include "mountP.h"
+#include "strutils.h"
 
 /*
  * fs-independent mount flags (built-in MNT_LINUX_MAP)
