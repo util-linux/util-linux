@@ -155,7 +155,7 @@ int main(int argc, char **argv)
 	iov.iov_base = mbuf;
 	iov.iov_len = mbufsize;
 	while((utmpptr = getutent())) {
-		if (!utmpptr->ut_name[0])
+		if (!utmpptr->ut_user[0])
 			continue;
 #ifdef USER_PROCESS
 		if (utmpptr->ut_type != USER_PROCESS)

@@ -201,7 +201,7 @@ int utmp_chk(char *user, char *tty)
 
 	while ((uptr = getutent())) {
 		memcpy(&u, uptr, sizeof(u));
-		if (strncmp(user, u.ut_name, sizeof(u.ut_name)) == 0 &&
+		if (strncmp(user, u.ut_user, sizeof(u.ut_user)) == 0 &&
 		    strncmp(tty, u.ut_line, sizeof(u.ut_line)) == 0) {
 			res = 0;
 			break;
@@ -239,7 +239,7 @@ void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
 	user_is_me = 0;
 	while ((uptr = getutent())) {
 		memcpy(&u, uptr, sizeof(u));
-		if (strncmp(user, u.ut_name, sizeof(u.ut_name)) == 0) {
+		if (strncmp(user, u.ut_user, sizeof(u.ut_user)) == 0) {
 			++nloggedttys;
 			strncpy(atty, u.ut_line, sizeof(u.ut_line));
 			atty[sizeof(u.ut_line)] = '\0';

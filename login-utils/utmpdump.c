@@ -90,7 +90,11 @@ static void print_utline(struct utmp ut, FILE *out)
 
 	in.s_addr = ut.ut_addr;
 	addr_string = inet_ntoa(in);
-	time_string = timetostr(ut.ut_time);
+#if defined(_HAVE_UT_TV)
+	time_string = timetostr(ut.ut_tv.tv_sec);
+#else
+	time_string = timetostr((time_t)ut.ut_time);	/* ut_time is not always a time_t */
+#endif
 	cleanse(ut.ut_id);
 	cleanse(ut.ut_user);
 	cleanse(ut.ut_line);
@@ -268,8 +272,11 @@ static void undump(FILE *in, FILE *out)
 		gettok(line, s_time, sizeof(s_time) - 1, 0);
 
 		ut.ut_addr = inet_addr(s_addr);
+#if defined(_HAVE_UT_TV)
+		ut.ut_tv.tv_sec = strtotime(s_time);
+#else
 		ut.ut_time = strtotime(s_time);
-
+#endif
 		ignore_result( fwrite(&ut, sizeof(ut), 1, out) );
 
 		++count;
