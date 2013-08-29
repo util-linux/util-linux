@@ -440,45 +440,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 }
 
 
-static time_t parsetm(char *ts)
-{
-	struct tm	u, origu;
-	time_t		tm;
-
-	memset(&tm, 0, sizeof(tm));
-
-	if (sscanf(ts, "%4d%2d%2d%2d%2d%2d", &u.tm_year,
-	    &u.tm_mon, &u.tm_mday, &u.tm_hour, &u.tm_min,
-	    &u.tm_sec) != 6)
-		return (time_t)-1;
-
-	u.tm_year -= 1900;
-	u.tm_mon -= 1;
-	u.tm_isdst = -1;
-
-	origu = u;
-
-	if ((tm = mktime(&u)) == (time_t)-1)
-		return tm;
-
-	/*
-	 *	Unfortunately mktime() is much more forgiving than
-	 *	it should be.  For example, it'll gladly accept
-	 *	"30" as a valid month number.  This behavior is by
-	 *	design, but we don't like it, so we want to detect
-	 *	it and complain.
-	 */
-	if (u.tm_year != origu.tm_year ||
-	    u.tm_mon != origu.tm_mon ||
-	    u.tm_mday != origu.tm_mday ||
-	    u.tm_hour != origu.tm_hour ||
-	    u.tm_min != origu.tm_min ||
-	    u.tm_sec != origu.tm_sec)
-		return (time_t)-1;
-
-	return tm;
-}
-
 static void process_wtmp_file(char *ufile, int lastb, int extended,
 			      time_t until, time_t present)
 {
@@ -796,17 +757,11 @@ int main(int argc, char **argv)
 			fulltime++;
 			break;
 		case 'p':
-			present = parsetm(optarg);
-			if (present != (time_t) -1)
-				break;
 			if (parse_timestamp(optarg, &p) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
 			present = (time_t) (p / 1000000);
 			break;
 		case 't':
-			until = parsetm(optarg);
-			if (until != (time_t) -1)
-				break;
 			if (parse_timestamp(optarg, &p) < 0)
 				errx(EXIT_FAILURE, _("invalid time value \"%s\""), optarg);
 			until = (time_t) (p / 1000000);
