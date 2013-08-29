@@ -1,4 +1,3 @@
-#!/bin/python2
 import os
 import sys
 import stat
@@ -6,11 +5,11 @@ import errno
 import libmount as mnt
 
 def usage(tss):
-	print "\nUsage:\n\t{:s} <test> [testoptions]\nTests:\n".format(sys.argv[0])
+	print("\nUsage:\n\t{:s} <test> [testoptions]\nTests:\n".format(sys.argv[0]))
 	for i in tss:
-		print "\t{15:-s}".format(i[0])
+		print("\t{15:-s}".format(i[0]))
 		if i[2] != "":
-			print " {:s}\n".format(i[2])
+			print(" {:s}\n".format(i[2]))
 
 	print("\n")
 	return 1
@@ -27,7 +26,7 @@ def mnt_run_test(tss, argv):
 		if i[0] == argv[1]:
 			rc = i[1](i, argv[1:])
 			if rc:
-				print "FAILED [rc={:d}]".format(rc)
+				print("FAILED [rc={:d}]".format(rc))
 			break
 
 	if ((rc < 0) and (i == ())):

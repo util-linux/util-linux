@@ -4,66 +4,72 @@
 
 TS_TOPDIR="$(dirname $0)/../.."
 TS_DESC="tab files-py"
-PYDBG="python -m pdb"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+
+set -x
+
 ts_init_py libmount
 
+
+PYDBG="$PYTHON -m pdb"
 TESTPROG="$TS_HELPER_PYLIBMOUNT_TAB"
 
 ts_init_subtest "parse-fstab"
-$TESTPROG --parse "$TS_SELF/files/fstab" &> $TS_OUTPUT
+$PYTHON $TESTPROG --parse "$TS_SELF/files/fstab" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
+exit 1
+
 ts_init_subtest "parse-fstab-full"
-ts_valgrind $TESTPROG --parse "$TS_SELF/files/fstab.comment" --comments &> $TS_OUTPUT
+$PYTHON $TESTPROG --parse "$TS_SELF/files/fstab.comment" --comments &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "parse-mtab"
-ts_valgrind $TESTPROG --parse "$TS_SELF/files/mtab" &> $TS_OUTPUT
+$PYTHON $TESTPROG --parse "$TS_SELF/files/mtab" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "parse-fstab-broken"
-ts_valgrind $TESTPROG --parse "$TS_SELF/files/fstab.broken" &> $TS_OUTPUT
+$PYTHON $TESTPROG --parse "$TS_SELF/files/fstab.broken" &> $TS_OUTPUT
 sed -i -e 's/.*fstab.broken:[[:digit:]]*: parse error//g; s/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "parse-mountinfo"
-ts_valgrind $TESTPROG --parse "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
+$PYTHON $TESTPROG --parse "$TS_SELF/files/mountinfo" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "copy"
-ts_valgrind $TESTPROG --copy-fs "$TS_SELF/files/fstab" &> $TS_OUTPUT
+$PYTHON $TESTPROG --copy-fs "$TS_SELF/files/fstab" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "find-source"
-ts_valgrind $TESTPROG --find-forward "$TS_SELF/files/fstab" source UUID=fef7ccb3-821c-4de8-88dc-71472be5946f &> $TS_OUTPUT
+$PYTHON $TESTPROG --find-forward "$TS_SELF/files/fstab" source UUID=fef7ccb3-821c-4de8-88dc-71472be5946f &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "find-target"
-ts_valgrind $TESTPROG --find-forward "$TS_SELF/files/fstab" target /home/foo &> $TS_OUTPUT
+$PYTHON $TESTPROG --find-forward "$TS_SELF/files/fstab" target /home/foo &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "find-target2"
-ts_valgrind $TESTPROG --find-forward "$TS_SELF/files/fstab" target /any/foo &> $TS_OUTPUT
+$PYTHON $TESTPROG --find-forward "$TS_SELF/files/fstab" target /any/foo &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "find-target3"
-ts_valgrind $TESTPROG --find-forward "$TS_SELF/files/fstab" target /any/foo/ &> $TS_OUTPUT
+$PYTHON $TESTPROG --find-forward "$TS_SELF/files/fstab" target /any/foo/ &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "find-pair"
-ts_valgrind $TESTPROG --find-pair "$TS_SELF/files/mtab" /dev/mapper/kzak-home /home/kzak &> $TS_OUTPUT
+$PYTHON $TESTPROG --find-pair "$TS_SELF/files/mtab" /dev/mapper/kzak-home /home/kzak &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 

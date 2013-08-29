@@ -24,11 +24,19 @@
 PyObject *LibmountError;
 int pylibmount_debug_mask;
 
-
 PyObject *UL_IncRef(void *killme)
 {
 	Py_INCREF(killme);
 	return killme;
+}
+
+void PyFree(void *o)
+{
+#if PY_MAJOR_VERSION >= 3
+	Py_TYPE(o)->tp_free((PyObject *)o);
+#else
+	((PyObject *)o)->ob_type->tp_free((PyObject *)o);
+#endif
 }
 
 /* Demultiplexer for various possible error conditions across the libmount library */
@@ -95,14 +103,22 @@ PyObject *PyObjectResultStr(const char *s)
 	return result;
 }
 
-/* wrapper around a common use case for PyString_AsString() */
+/* wrapper around a common use case for PyUnicode_AsASCIIString() */
 char *pystos(PyObject *pys)
 {
+#if PY_MAJOR_VERSION >= 3
+	if (!PyUnicode_Check(pys)) {
+		PyErr_SetString(PyExc_TypeError, ARG_ERR);
+		return NULL;
+	}
+	return (char *)PyUnicode_1BYTE_DATA(pys);
+#else
 	if (!PyString_Check(pys)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
 	return PyString_AsString(pys);
+#endif
 }
 
 /*
@@ -118,20 +134,73 @@ char *pystos(PyObject *pys)
 	"and returns a (tag, value) tuple. Every attribute is \"filtered\"" \
 	"through appropriate getters/setters, no values are set directly."
 
-static PyMethodDef libmount_methods[] = {
-	{NULL} /* Sentinel */
+
+struct module_state {
+    PyObject *error;
 };
 
-#ifndef PyMODINIT_FUNC
-# define PyMODINIT_FUNC void
+#if PY_MAJOR_VERSION >= 3
+#define GETSTATE(m) ((struct module_state*)PyModule_GetState(m))
+#else
+#define GETSTATE(m) (&_state)
+static struct module_state _state;
 #endif
+
+static PyObject *
+error_out(PyObject *m __attribute__((unused))) {
+    struct module_state *st = GETSTATE(m);
+    PyErr_SetString(st->error, "something bad happened");
+    return NULL;
+}
+
+static PyMethodDef pylibmount_methods[] = {
+    {"error_out", (PyCFunction)error_out, METH_NOARGS, NULL},
+    {NULL, NULL}
+};
+
+#if PY_MAJOR_VERSION >= 3
+
+static int pylibmount_traverse(PyObject *m, visitproc visit, void *arg) {
+    Py_VISIT(GETSTATE(m)->error);
+    return 0;
+}
+
+static int pylibmount_clear(PyObject *m) {
+    Py_CLEAR(GETSTATE(m)->error);
+    return 0;
+}
+
+static struct PyModuleDef moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "pylibmount",
+        NULL,
+        sizeof(struct module_state),
+        pylibmount_methods,
+        NULL,
+        pylibmount_traverse,
+        pylibmount_clear,
+        NULL
+};
+#define INITERROR return NULL
+PyObject * PyInit_pylibmount(void);
+PyObject * PyInit_pylibmount(void)
+#else
+#define INITERROR return
+# ifndef PyMODINIT_FUNC
+#  define PyMODINIT_FUNC void
+# endif
 PyMODINIT_FUNC initpylibmount(void);
 PyMODINIT_FUNC initpylibmount(void)
+#endif
 {
-	PyObject *m = Py_InitModule3("pylibmount", libmount_methods, PYLIBMOUNT_DESC);
+#if PY_MAJOR_VERSION >= 3
+	PyObject *m = PyModule_Create(&moduledef);
+#else
+	PyObject *m = Py_InitModule3("pylibmount", pylibmount_methods, PYLIBMOUNT_DESC);
+#endif
 
 	if (!m)
-		return;
+		INITERROR;
 	/*
 	 * init debug stuff
 	 */
@@ -223,5 +292,9 @@ PyMODINIT_FUNC initpylibmount(void)
 	/* Still useful for functions using iterators internally */
 	PyModule_AddIntConstant(m, "MNT_ITER_FORWARD", MNT_ITER_FORWARD);
 	PyModule_AddIntConstant(m, "MNT_ITER_BACKWARD", MNT_ITER_BACKWARD);
+
+#if PY_MAJOR_VERSION >= 3
+	return m;
+#endif
 }
 

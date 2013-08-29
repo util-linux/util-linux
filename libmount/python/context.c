@@ -53,7 +53,7 @@ static void Context_dealloc(ContextObjext *self)
 	Py_XDECREF(mnt_context_get_mtab_userdata(self->cxt));
 
 	mnt_free_context(self->cxt);
-	self->ob_type->tp_free((PyObject*) self);
+	PyFree(self);
 }
 
 static PyObject *Context_new(PyTypeObject *type,
@@ -570,11 +570,11 @@ static int Context_set_optsmode(ContextObjext *self, PyObject *value, void *clos
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
 	}
-	else if (!PyInt_Check(value)) {
+	else if (!PyLong_Check(value)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return -1;
 	}
-	optsmode = PyInt_AsLong(value);
+	optsmode = PyLong_AsLong(value);
 	return mnt_context_set_optsmode(self->cxt, optsmode);
 }
 
@@ -586,11 +586,11 @@ static int Context_set_syscall_status(ContextObjext *self, PyObject *value, void
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
 	}
-	else if (!PyInt_Check(value)) {
+	else if (!PyLong_Check(value)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return -1;
 	}
-	syscall_status = PyInt_AsLong(value);
+	syscall_status = PyLong_AsLong(value);
 	return mnt_context_set_syscall_status(self->cxt, syscall_status);
 }
 
@@ -1169,13 +1169,12 @@ static PyMethodDef Context_methods[] = {
 
 static PyObject *Context_repr(ContextObjext *self)
 {
-	return PyString_FromFormat("<libmount.Context object at %p, restricted=%s>",
+	return PyUnicode_FromFormat("<libmount.Context object at %p, restricted=%s>",
 			self, mnt_context_is_restricted(self->cxt) ? "True" : "False");
 }
 
 PyTypeObject ContextType = {
-	PyObject_HEAD_INIT(NULL)
-	0, /*ob_size*/
+	PyVarObject_HEAD_INIT(NULL, 0)
 	"libmount.Context", /*tp_name*/
 	sizeof(ContextObjext), /*tp_basicsize*/
 	0, /*tp_itemsize*/

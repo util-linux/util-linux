@@ -26,6 +26,7 @@
  */
 
 #include "pylibmount.h"
+#include <errno.h>
 
 #define Fs_HELP "Fs(source=None, root=None, target=None, fstype=None, options=None, attributes=None, freq=0, passno=0)"
 
@@ -61,23 +62,57 @@ static PyObject *Fs_get_devno(FsObject *self)
 	return PyObjectResultInt(mnt_fs_get_devno(self->fs));
 }
 
-#define Fs_print_debug_HELP "print_debug(ostream)\n\n"
-static PyObject *Fs_print_debug(FsObject *self, PyObject *args, PyObject *kwds)
+#define Fs_print_debug_HELP "print_debug()\n\n"
+static PyObject *Fs_print_debug(FsObject *self)
 {
-	PyFileObject *stream = NULL;
-	int rc;
-	FILE *f = NULL;
-	char *kwlist[] = { "ostream", NULL };
+	PySys_WriteStdout("------ fs: %p\n", self->fs);
+	PySys_WriteStdout("source: %s\n", mnt_fs_get_source(self->fs));
+	PySys_WriteStdout("target: %s\n", mnt_fs_get_target(self->fs));
+	PySys_WriteStdout("fstype: %s\n", mnt_fs_get_fstype(self->fs));
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", kwlist,
-						&PyFile_Type, &stream)) {
-		PyErr_SetString(PyExc_TypeError, ARG_ERR);
-		return NULL;
-	}
+	if (mnt_fs_get_options(self->fs))
+		PySys_WriteStdout("optstr: %s\n", mnt_fs_get_options(self->fs));
+	if (mnt_fs_get_vfs_options(self->fs))
+		PySys_WriteStdout("VFS-optstr: %s\n", mnt_fs_get_vfs_options(self->fs));
+	if (mnt_fs_get_fs_options(self->fs))
+		PySys_WriteStdout("FS-opstr: %s\n", mnt_fs_get_fs_options(self->fs));
+	if (mnt_fs_get_user_options(self->fs))
+		PySys_WriteStdout("user-optstr: %s\n", mnt_fs_get_user_options(self->fs));
+	if (mnt_fs_get_optional_fields(self->fs))
+		PySys_WriteStdout("optional-fields: '%s'\n", mnt_fs_get_optional_fields(self->fs));
+	if (mnt_fs_get_attributes(self->fs))
+		PySys_WriteStdout("attributes: %s\n", mnt_fs_get_attributes(self->fs));
 
-	f = PyFile_AsFile((PyObject *) stream);
-	rc = mnt_fs_print_debug(self->fs, f);
-	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
+	if (mnt_fs_get_root(self->fs))
+		PySys_WriteStdout("root:   %s\n", mnt_fs_get_root(self->fs));
+
+	if (mnt_fs_get_swaptype(self->fs))
+		PySys_WriteStdout("swaptype: %s\n", mnt_fs_get_swaptype(self->fs));
+	if (mnt_fs_get_size(self->fs))
+		PySys_WriteStdout("size: %jd\n", mnt_fs_get_size(self->fs));
+	if (mnt_fs_get_usedsize(self->fs))
+		PySys_WriteStdout("usedsize: %jd\n", mnt_fs_get_usedsize(self->fs));
+	if (mnt_fs_get_priority(self->fs))
+		PySys_WriteStdout("priority: %d\n", mnt_fs_get_priority(self->fs));
+
+	if (mnt_fs_get_bindsrc(self->fs))
+		PySys_WriteStdout("bindsrc: %s\n", mnt_fs_get_bindsrc(self->fs));
+	if (mnt_fs_get_freq(self->fs))
+		PySys_WriteStdout("freq:   %d\n", mnt_fs_get_freq(self->fs));
+	if (mnt_fs_get_passno(self->fs))
+		PySys_WriteStdout("pass:   %d\n", mnt_fs_get_passno(self->fs));
+	if (mnt_fs_get_id(self->fs))
+		PySys_WriteStdout("id:     %d\n", mnt_fs_get_id(self->fs));
+	if (mnt_fs_get_parent_id(self->fs))
+		PySys_WriteStdout("parent: %d\n", mnt_fs_get_parent_id(self->fs));
+	if (mnt_fs_get_devno(self->fs))
+		PySys_WriteStdout("devno:  %d:%d\n", major(mnt_fs_get_devno(self->fs)),
+						minor(mnt_fs_get_devno(self->fs)));
+	if (mnt_fs_get_tid(self->fs))
+		PySys_WriteStdout("tid:    %d\n", mnt_fs_get_tid(self->fs));
+	if (mnt_fs_get_comment(self->fs))
+		PySys_WriteStdout("comment: '%s'\n", mnt_fs_get_comment(self->fs));
+	return UL_IncRef(self);
 }
 /*
  ** Fs getters/setters
@@ -304,12 +339,12 @@ static int Fs_set_freq(FsObject *self, PyObject *value,
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
 
-	} else if (!PyInt_Check(value)) {
+	} else if (!PyLong_Check(value)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return -1;
 	}
 
-	freq = PyInt_AsLong(value);
+	freq = PyLong_AsLong(value);
 	if (freq == -1 && PyErr_Occurred()) {
 		PyErr_SetString(PyExc_RuntimeError, "type conversion failed");
 		return -1;
@@ -329,12 +364,12 @@ static int Fs_set_passno(FsObject *self, PyObject *value, void *closure __attrib
 	if (!value) {
 		PyErr_SetString(PyExc_TypeError, NODEL_ATTR);
 		return -1;
-	} else if (!PyInt_Check(value)) {
+	} else if (!PyLong_Check(value)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return -1;
 	}
 
-	passno = PyInt_AsLong(value);
+	passno = PyLong_AsLong(value);
 	if (passno == -1 && PyErr_Occurred()) {
 		PyErr_SetString(PyExc_RuntimeError, "type conversion failed");
 		return -1;
@@ -567,7 +602,7 @@ static PyMethodDef Fs_methods[] = {
 	{"match_options",	(PyCFunction)Fs_match_options, METH_VARARGS|METH_KEYWORDS, Fs_match_options_HELP},
 	{"streq_srcpath",	(PyCFunction)Fs_streq_srcpath, METH_VARARGS|METH_KEYWORDS, Fs_streq_srcpath_HELP},
 	{"streq_target",	(PyCFunction)Fs_streq_target, METH_VARARGS|METH_KEYWORDS, Fs_streq_target_HELP},
-	{"print_debug",		(PyCFunction)Fs_print_debug, METH_VARARGS|METH_KEYWORDS, Fs_print_debug_HELP},
+	{"print_debug",		(PyCFunction)Fs_print_debug, METH_NOARGS, Fs_print_debug_HELP},
 	{NULL}
 };
 
@@ -576,7 +611,7 @@ static void Fs_destructor(FsObject *self)
 	DBG(FS, pymnt_debug_h(self->fs, "destrutor py-obj: %p, py-refcnt=%d",
 				self, (int) ((PyObject *) self)->ob_refcnt));
 	mnt_unref_fs(self->fs);
-	self->ob_type->tp_free((PyObject*)self);
+	PyFree(self);
 }
 
 static PyObject *Fs_new(PyTypeObject *type, PyObject *args __attribute__((unused)),
@@ -686,7 +721,7 @@ static PyObject *Fs_repr(FsObject *self)
 		   *tgt = mnt_fs_get_target(self->fs),
 		   *type = mnt_fs_get_fstype(self->fs);
 
-	return PyString_FromFormat(
+	return PyUnicode_FromFormat(
 			"<libmount.Fs object at %p, "
 			"source=%s, target=%s, fstype=%s>",
 			self,
@@ -762,8 +797,7 @@ static PyObject *Fs_copy_fs(FsObject *self, PyObject *args, PyObject *kwds)
 
 
 PyTypeObject FsType = {
-	PyObject_HEAD_INIT(NULL)
-	0, /*ob_size*/
+	PyVarObject_HEAD_INIT(NULL, 0)
 	"libmount.Fs", /*tp_name*/
 	sizeof(FsObject), /*tp_basicsize*/
 	0, /*tp_itemsize*/

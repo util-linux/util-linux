@@ -119,6 +119,7 @@ extern PyObject *PyObjectResultInt(int i);
 extern PyObject *PyObjectResultStr(const char *s);
 
 extern char *pystos(PyObject *pys);
+extern void PyFree(void *o);
 
 
 

@@ -1,10 +1,7 @@
 #!/bin/bash
 
 TS_TOPDIR="$(dirname $0)/../.."
-export LD_LIBRARY_PATH="$TS_TOPDIR/../.libs"
-export PYTHONPATH="$TS_TOPDIR/../libmount/python:$TS_TOPDIR/../.libs"
 TS_DESC="tags-py"
-PYDBG="python -m pdb"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
@@ -12,6 +9,8 @@ ts_init_py libmount
 ts_skip_nonroot
 
 TESTPROG="$TS_HELPER_PYLIBMOUNT_TAB"
+
+PYDBG="$PYTHON -m pdb"
 
 DEVICE=$(ts_scsi_debug_init dev_size_mb=50 sector_size=512)
 LABEL="testLibmount"
@@ -33,12 +32,12 @@ FSTAB="$TS_OUTDIR/fstab"
 echo "LABEL=$LABEL /mnt/mountpoint auto defaults" > $FSTAB
 
 ts_init_subtest "fstab-label2uuid"
-ts_valgrind $TESTPROG --find-forward $FSTAB source "UUID=$UUID" &> $TS_OUTPUT
+$PYTHON $TESTPROG --find-forward $FSTAB source "UUID=$UUID" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "fstab-label2dev"
-ts_valgrind $TESTPROG --find-forward $FSTAB source $DEVICE &> $TS_OUTPUT
+$PYTHON $TESTPROG --find-forward $FSTAB source $DEVICE &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
@@ -49,20 +48,20 @@ echo "UUID=$UUID  /mnt/mountpoint2 auto defaults" >> $FSTAB
 
 ts_init_subtest "fstab-uuid"
 # has to return /mnt/mountpoint2
-ts_valgrind $TESTPROG --find-forward $FSTAB source "UUID=$UUID" &> $TS_OUTPUT
+$PYTHON $TESTPROG --find-forward $FSTAB source "UUID=$UUID" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 ts_init_subtest "fstab-label"
 # has to return /mnt/mountpoint
-ts_valgrind $TESTPROG --find-forward $FSTAB source "LABEL=$LABEL" &> $TS_OUTPUT
+$PYTHON $TESTPROG --find-forward $FSTAB source "LABEL=$LABEL" &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
 
 ts_init_subtest "fstab-dev2label"
 # has to return /mnt/mountpoint
-ts_valgrind $TESTPROG --find-forward $FSTAB source $DEVICE &> $TS_OUTPUT
+$PYTHON $TESTPROG --find-forward $FSTAB source $DEVICE &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 ts_finalize_subtest
 
@@ -73,7 +72,7 @@ echo "$DEVICE  /mnt/mountpoint3 auto defaults" >> $FSTAB
 
 ts_init_subtest "fstab-dev"
 # has to return /mnt/mountpoint3
-ts_valgrind $TESTPROG --find-forward $FSTAB source $DEVICE &> $TS_OUTPUT
+$PYTHON $TESTPROG --find-forward $FSTAB source $DEVICE &> $TS_OUTPUT
 sed -i -e 's/fs: 0x.*/fs:/g' $TS_OUTPUT
 sed -i -e 's/source: .*//g' $TS_OUTPUT		# devname is generated, remove it
 ts_finalize_subtest

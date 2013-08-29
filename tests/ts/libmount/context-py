@@ -4,7 +4,6 @@
 
 TS_TOPDIR="$(dirname $0)/../.."
 TS_DESC="context-py"
-PYDBG="python -m pdb"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
@@ -12,6 +11,8 @@ ts_init_py libmount
 ts_skip_nonroot
 
 TESTPROG="$TS_HELPER_PYLIBMOUNT_CONTEXT"
+
+PYDBG="$PYTHON -m pdb"
 LABEL=libmount-test
 UUID=$(uuidgen)
 MOUNTPOINT="$TS_MOUNTPOINT"
@@ -59,14 +60,14 @@ ts_device_has "TYPE" "ext4" $DEVICE || ts_die "Cannot find ext3 on $DEVICE" $DEV
 
 ts_init_subtest "mount-by-devname"
 mkdir -p $MOUNTPOINT &>  /dev/null
-$TESTPROG --mount $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
+$PYTHON $TESTPROG --mount $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
 
 grep -q $DEVICE $LIBMOUNT_MTAB || \
 	echo "(by device) cannot find $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 ts_init_subtest "umount-by-devname"
-$TESTPROG --umount $DEVICE >> $TS_OUTPUT 2>&1
+$PYTHON $TESTPROG --umount $DEVICE >> $TS_OUTPUT 2>&1
 grep -q $DEVICE $LIBMOUNT_MTAB &&
 	echo "umount (device) failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
@@ -74,14 +75,14 @@ ts_finalize_subtest
 
 ts_init_subtest "mount-by-label"
 mkdir -p $MOUNTPOINT &>  /dev/null
-$TESTPROG --mount LABEL="$LABEL" $MOUNTPOINT >> $TS_OUTPUT 2>&1
+$PYTHON $TESTPROG --mount LABEL="$LABEL" $MOUNTPOINT >> $TS_OUTPUT 2>&1
 grep -q $DEVICE $LIBMOUNT_MTAB || \
 	echo "(by label) cannot find $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
 
 
 ts_init_subtest "umount-by-mountpoint"
-$TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+$PYTHON $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
 grep -q $DEVICE $LIBMOUNT_MTAB && \
 	echo "umount (mountpoint) failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
@@ -89,10 +90,10 @@ ts_finalize_subtest
 
 ts_init_subtest "mount-by-uuid"
 mkdir -p $MOUNTPOINT &> /dev/null
-$TESTPROG --mount UUID="$UUID" $MOUNTPOINT >> $TS_OUTPUT 2>&1
+$PYTHON $TESTPROG --mount UUID="$UUID" $MOUNTPOINT >> $TS_OUTPUT 2>&1
 grep -q $DEVICE $LIBMOUNT_MTAB || \
 	echo "(by uuid) cannot find $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
-$TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+$PYTHON $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
 grep -q $DEVICE $LIBMOUNT_MTAB &&
 	echo "umount failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
@@ -100,15 +101,15 @@ ts_finalize_subtest
 
 ts_init_subtest "mount-flags"
 mkdir -p $MOUNTPOINT &> /dev/null
-$TESTPROG --mount -o ro,noexec,nosuid,strictatime $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
+$PYTHON $TESTPROG --mount -o ro,noexec,nosuid,strictatime $DEVICE $MOUNTPOINT >> $TS_OUTPUT 2>&1
 $TS_CMD_FINDMNT --kernel $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>&1
 grep -q $DEVICE $LIBMOUNT_MTAB || \
 	echo "cannot find $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
 
-$TESTPROG --mount -o remount,rw $MOUNTPOINT >> $TS_OUTPUT 2>&1
+$PYTHON $TESTPROG --mount -o remount,rw $MOUNTPOINT >> $TS_OUTPUT 2>&1
 $TS_CMD_FINDMNT --kernel $MOUNTPOINT -o VFS-OPTIONS -n >> $TS_OUTPUT 2>&1
 
-$TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+$PYTHON $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
 grep -q $DEVICE $LIBMOUNT_MTAB &&
 	echo "umount failed: found $DEVICE in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest
@@ -120,11 +121,11 @@ img=$(ts_image_init)
 mkfs.ext3 -F $img &> /dev/null
 udevadm settle
 
-$TESTPROG --mount -o loop $img $MOUNTPOINT >> $TS_OUTPUT 2>&1
+$PYTHON $TESTPROG --mount -o loop $img $MOUNTPOINT >> $TS_OUTPUT 2>&1
 grep -q $MOUNTPOINT $LIBMOUNT_MTAB || \
 	echo "(loopdev) cannot find $MOUNTPOINT in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
 udevadm settle
-$TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
+$PYTHON $TESTPROG --umount $MOUNTPOINT >> $TS_OUTPUT 2>&1
 grep -q $MOUNTPOINT $LIBMOUNT_MTAB &&
 	echo "umount failed: found $MOUNTPOINT in $LIBMOUNT_MTAB" >> $TS_OUTPUT 2>&1
 ts_finalize_subtest

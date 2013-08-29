@@ -3,12 +3,11 @@
 # Copyright (C) 2010 Karel Zak <kzak@redhat.com>
 
 TS_TOPDIR="$(dirname $0)/../.."
-export LD_LIBRARY_PATH="$TS_TOPDIR/../.libs"
-export PYTHONPATH="$TS_TOPDIR/../libmount/python:$TS_TOPDIR/../.libs"
 TS_DESC="tab update-py"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+ts_init_py libmount
 ts_skip_nonroot
 
 TESTPROG="$TS_HELPER_PYLIBMOUNT_UPDATE"
@@ -23,7 +22,7 @@ rm -f $LIBMOUNT_FSTAB
 cp "$TS_SELF/files/fstab.comment" $LIBMOUNT_FSTAB
 
 ts_init_subtest "fstab-replace"
-$TESTPROG --replace "LABEL=foo" "/mnt/foo"
+$PYTHON $TESTPROG --replace "LABEL=foo" "/mnt/foo"
 cp $LIBMOUNT_FSTAB $TS_OUTPUT	# save the fstab aside
 ts_finalize_subtest		#checks the fstab
 

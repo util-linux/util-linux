@@ -1,4 +1,3 @@
-#!/bin/python2
 import os
 import sys
 import stat
@@ -6,11 +5,11 @@ import errno
 import libmount as mnt
 
 def usage(tss):
-	print "\nUsage:\n\t{:s} <test> [testoptions]\nTests:\n".format(sys.argv[0])
+	print("\nUsage:\n\t{:s} <test> [testoptions]\nTests:\n".format(sys.argv[0]))
 	for i in tss:
-		print "\t{15:-s}".format(i[0])
+		print("\t{15:-s}".format(i[0]))
 		if i[2] != "":
-			print " {:s}\n".format(i[2])
+			print(" {:s}\n".format(i[2]))
 
 	print("\n")
 	return 1
@@ -27,7 +26,7 @@ def mnt_run_test(tss, argv):
 		if i[0] == argv[1]:
 			rc = i[1](i, argv[1:])
 			if rc:
-				print "FAILED [rc={:d}]".format(rc)
+				print("FAILED [rc={:d}]".format(rc))
 			break
 
 	if ((rc < 0) and (i == ())):
@@ -61,9 +60,9 @@ def test_mount(ts, argv):
 	try:
 		cxt.mount()
 	except Exception:
-		print "failed to mount"
+		print("failed to mount")
 		return -1
-	print "successfully mounted"
+	print("successfully mounted")
 	return rc
 
 def test_umount(ts, argv):
@@ -96,9 +95,9 @@ def test_umount(ts, argv):
 	try:
 		cxt.umount()
 	except Exception:
-		print "failed to umount"
+		print("failed to umount")
 		return 1
-	print "successfully umounted"
+	print("successfully umounted")
 	return rc
 
 def test_flags(ts, argv):
@@ -119,13 +118,13 @@ def test_flags(ts, argv):
 		cxt.prepare_mount()
 	# catch ioerror here
 	except IOError as e:
-		print "failed to prepare mount {:s}".format(e.strerror)
+		print("failed to prepare mount {:s}".format(e.strerror))
 
 	opt = cxt.fs.options
 	if (opt):
-		print "options: {:s}", opt
+		print("options: {:s}", opt)
 
-	print "flags: {08:lx}".format(cxt.mflags())
+	print("flags: {08:lx}".format(cxt.mflags()))
 	return rc
 
 def test_mountall(ts, argv):
@@ -146,17 +145,17 @@ def test_mountall(ts, argv):
 	while (cxt.next_mount()):
 		tgt = i.target
 		if (ignored == 1):
-			print "{:s}: ignored: not match".format(tgt)
+			print("{:s}: ignored: not match".format(tgt))
 		elif (ignored == 2):
-			print "{:s}: ignored: already mounted".format(tgt)
+			print("{:s}: ignored: already mounted".format(tgt))
 		elif (not cxt.status):
 			if (mntrc > 0):
 				# ?? errno = mntrc
-				print "{:s}: mount failed".format(tgt)
+				print("{:s}: mount failed".format(tgt))
 			else:
-				print "{:s}: mount failed".format(tgt)
+				print("{:s}: mount failed".format(tgt))
 		else:
-			print "{:s}: successfully mounted".format(tgt)
+			print("{:s}: successfully mounted".format(tgt))
 
 	return 0
 

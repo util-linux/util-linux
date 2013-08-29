@@ -249,6 +249,11 @@ function ts_init_py {
 
 	export LD_LIBRARY_PATH="$TS_TOPDIR/../.libs"
 	export PYTHONPATH="$TS_TOPDIR/../$LIBNAME/python:$TS_TOPDIR/../.libs"
+
+	export PYTHON_VERSION=$(awk '/^PYTHON_VERSION/ { print $3 }' $top_builddir/Makefile)
+	export PYTHON_MAJOR_VERSION=$(echo $PYTHON_VERSION | sed 's/\..*//')
+
+	export PYTHON="python${PYTHON_MAJOR_VERSION}"
 }
 
 function ts_valgrind {

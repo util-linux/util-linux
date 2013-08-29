@@ -148,22 +148,25 @@ static PyObject *Table_replace_file(TableObject *self, PyObject *args, PyObject 
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Table_write_file_HELP "write_file(file)\n\n" \
+#define Table_write_file_HELP "write_file(path)\n\n" \
 		"This function writes tab to file(stream)"
 static PyObject *Table_write_file(TableObject *self, PyObject *args, PyObject *kwds)
 {
 	int rc;
-	PyFileObject *stream = NULL;
+	//PyObject *stream = NULL;
 	FILE *f = NULL;
-	char *kwlist[] = {"file", NULL};
+	char *path = NULL;
+	char *kwlist[] = {"path", NULL};
 
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!", kwlist,
-					&PyFile_Type, &stream)) {
+	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s", kwlist,
+					&path)) {
 		PyErr_SetString(PyExc_TypeError, ARG_ERR);
 		return NULL;
 	}
-	f = PyFile_AsFile((PyObject *)stream);
+	if (!(f = fopen(path, "w")))
+		return UL_RaiseExc(errno);
 	rc = mnt_table_write_file(self->tab, f);
+	fclose(f);
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
@@ -427,24 +430,6 @@ static PyObject *Table_parse_swaps(TableObject *self, PyObject* args, PyObject *
 	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
 }
 
-#define Table_parse_stream_HELP "parse_stream(stream, filename)\n\n" \
-		"Returns self or raises an exception in case of an error."
-static PyObject *Table_parse_stream(TableObject *self, PyObject* args, PyObject *kwds)
-{
-	int rc;
-	PyFileObject *stream = NULL;
-	char *filename = NULL;
-	FILE *f;
-	char *kwlist[] = {"stream", "filename", NULL};
-
-	if (!PyArg_ParseTupleAndKeywords(args, kwds, "O!s", kwlist, &PyFile_Type, &stream, &filename)) {
-		PyErr_SetString(PyExc_TypeError, ARG_ERR);
-		return NULL;
-	}
-	f = PyFile_AsFile((PyObject *)stream);
-	rc = mnt_table_parse_stream(self->tab, f, filename);
-	return rc ? UL_RaiseExc(-rc) : UL_IncRef(self);
-}
 #define Table_add_fs_HELP "add_fs(fs)\n\nAdds a new entry to tab.\n" \
 		"Returns self or raises an exception in case of an error."
 
@@ -528,7 +513,6 @@ static PyMethodDef Table_methods[] = {
 	{"parse_dir", (PyCFunction)Table_parse_dir, METH_VARARGS|METH_KEYWORDS, Table_parse_dir_HELP},
 	{"parse_swaps", (PyCFunction)Table_parse_swaps, METH_VARARGS|METH_KEYWORDS, Table_parse_swaps_HELP},
 	{"is_fs_mounted", (PyCFunction)Table_is_fs_mounted, METH_VARARGS|METH_KEYWORDS, Table_is_fs_mounted_HELP},
-	{"parse_stream", (PyCFunction)Table_parse_stream, METH_VARARGS|METH_KEYWORDS, Table_parse_stream_HELP},
 	{"add_fs", (PyCFunction)Table_add_fs, METH_VARARGS|METH_KEYWORDS, Table_add_fs_HELP},
 	{"remove_fs", (PyCFunction)Table_remove_fs, METH_VARARGS|METH_KEYWORDS, Table_remove_fs_HELP},
 	{"next_fs", (PyCFunction)Table_next_fs, METH_NOARGS, Table_next_fs_HELP},
@@ -569,7 +553,7 @@ static void Table_destructor(TableObject *self)
 
 	mnt_free_iter(self->iter);
 	Py_XDECREF(self->errcb);
-	self->ob_type->tp_free((PyObject*)self);
+	PyFree(self);
 }
 
 static PyObject *Table_new(PyTypeObject *type,
@@ -734,7 +718,7 @@ static PyGetSetDef Table_getseters[] = {
 
 static PyObject *Table_repr(TableObject *self)
 {
-	return PyString_FromFormat(
+	return PyUnicode_FromFormat(
 			"<libmount.Table object at %p, entries=%d, comments_enabled=%s, errcb=%s>",
 			self,
 			mnt_table_get_nents(self->tab),
@@ -743,8 +727,7 @@ static PyObject *Table_repr(TableObject *self)
 }
 
 PyTypeObject TableType = {
-	PyObject_HEAD_INIT(NULL)
-	0, /*ob_size*/
+	PyVarObject_HEAD_INIT(NULL, 0)
 	"libmount.Table", /*tp_name*/
 	sizeof(TableObject), /*tp_basicsize*/
 	0, /*tp_itemsize*/
