@@ -53,7 +53,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fprintf(out,
 	      _(" %1$s [options] <disk>    change partition table\n"
 	        " %1$s [options] -l <disk> list partition table(s)\n"
-	        " %1$s -s <partition>      give partition size(s) in blocks\n"),
+	        " %1$s -s <partition>      give partition size(s) in blocks (deprecated)\n"),
 	       program_invocation_short_name);
 
 	fputs(USAGE_OPTIONS, out);
@@ -451,6 +451,7 @@ int main(int argc, char **argv)
 		break;
 
 	case ACT_SHOWSIZE:
+		/* deprecated */
 		if (argc - optind <= 0)
 			usage(stderr);
 
