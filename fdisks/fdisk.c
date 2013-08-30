@@ -201,7 +201,7 @@ void list_disk_geometry(struct fdisk_context *cxt)
 	char *strsz = size_to_human_string(SIZE_SUFFIX_SPACE
 					   | SIZE_SUFFIX_3LETTER, bytes);
 
-	fdisk_info(cxt,	_("\nDisk %s: %s, %llu bytes, %llu sectors"),
+	fdisk_info(cxt,	_("Disk %s: %s, %llu bytes, %llu sectors"),
 			cxt->dev_path, strsz, bytes, cxt->total_sectors);
 	free(strsz);
 
@@ -458,7 +458,7 @@ int main(int argc, char **argv)
 			err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
 
 		/* Here starts interactive mode, use fdisk_{warn,info,..} functions */
-		fdisk_info(cxt, _("\nWelcome to fdisk (%s).\n\n"
+		fdisk_info(cxt, _("Welcome to fdisk (%s).\n\n"
 			 "Changes will remain in memory only, until you decide to write them.\n"
 			 "Be careful before using the write command.\n"), PACKAGE_STRING);
 		fflush(stdout);

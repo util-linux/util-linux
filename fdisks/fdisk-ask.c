@@ -12,6 +12,8 @@
 
 #include "fdisk.h"
 
+static unsigned int info_count;
+
 int get_user_reply(struct fdisk_context *cxt, const char *prompt,
 			  char *buf, size_t bufsz)
 {
@@ -190,6 +192,14 @@ static int ask_offset(struct fdisk_context *cxt,
 	return -1;
 }
 
+static void fputs_info(const char *msg, FILE *out)
+{
+	if (info_count == 1)
+		fputc('\n', out);
+	fputs(msg, out);
+	fputc('\n', out);
+}
+
 int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		    void *data __attribute__((__unused__)))
 {
@@ -199,14 +209,17 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 	assert(cxt);
 	assert(ask);
 
+	if (fdisk_ask_get_type(ask) != FDISK_ASKTYPE_INFO)
+		info_count = 0;
+
 	switch(fdisk_ask_get_type(ask)) {
 	case FDISK_ASKTYPE_NUMBER:
 		return ask_number(cxt, ask, buf, sizeof(buf));
 	case FDISK_ASKTYPE_OFFSET:
 		return ask_offset(cxt, ask, buf, sizeof(buf));
 	case FDISK_ASKTYPE_INFO:
-		fputs(fdisk_ask_print_get_mesg(ask), stdout);
-		fputc('\n', stdout);
+		info_count++;
+		fputs_info(fdisk_ask_print_get_mesg(ask), stdout);
 		break;
 	case FDISK_ASKTYPE_WARNX:
 		fputs(fdisk_ask_print_get_mesg(ask), stderr);
@@ -226,6 +239,7 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		DBG(ASK, dbgprint("yes-no ask: reply '%s' [rc=%d]", buf, rc));
 		break;
 	case FDISK_ASKTYPE_TABLE:
+		fputc('\n', stdout);
 		tt_print_table(fdisk_ask_get_table(ask));
 		break;
 	case FDISK_ASKTYPE_STRING:
