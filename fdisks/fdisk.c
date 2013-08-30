@@ -345,11 +345,16 @@ static sector_t get_dev_blocks(char *dev)
 	return size/2;
 }
 
+enum {
+	ACT_FDISK = 0,	/* default */
+	ACT_LIST,
+	ACT_SHOWSIZE
+};
+
 int main(int argc, char **argv)
 {
-	int c, optl = 0, opts = 0;
+	int i, c, act = ACT_FDISK;
 	struct fdisk_context *cxt;
-	struct fdisk_label *lb;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -384,7 +389,7 @@ int main(int argc, char **argv)
 			if (optarg) {
 				/* this setting is independent on the current
 				 * actively used label */
-				lb = fdisk_context_get_label(cxt, "dos");
+				struct fdisk_label *lb = fdisk_context_get_label(cxt, "dos");
 				if (!lb)
 					err(EXIT_FAILURE, _("not found DOS label driver"));
 				if (strcmp(optarg, "=dos") == 0)
@@ -408,10 +413,10 @@ int main(int argc, char **argv)
 					_("invalid sectors argument")));
 			break;
 		case 'l':
-			optl = 1;
+			act = ACT_LIST;
 			break;
 		case 's':
-			opts = 1;
+			act = ACT_SHOWSIZE;
 			break;
 		case 'u':
 			if (optarg && *optarg == '=')
@@ -430,12 +435,12 @@ int main(int argc, char **argv)
 		}
 	}
 
-
 	if (argc-optind != 1 && fdisk_has_user_device_properties(cxt))
 		warnx(_("The device properties (sector size and geometry) should"
 			" be used with one specified device only."));
 
-	if (optl) {
+	switch (act) {
+	case ACT_LIST:
 		fdisk_context_enable_listonly(cxt, 1);
 		if (argc > optind) {
 			int k;
@@ -443,44 +448,42 @@ int main(int argc, char **argv)
 				print_partition_table_from_option(cxt, argv[k]);
 		} else
 			print_all_partition_table_from_option(cxt);
-		exit(EXIT_SUCCESS);
-	}
+		break;
 
-	if (opts) {
-		/* print partition size for one or more devices */
-		int i, ndevs = argc - optind;
-		if (ndevs <= 0)
+	case ACT_SHOWSIZE:
+		if (argc - optind <= 0)
 			usage(stderr);
 
 		for (i = optind; i < argc; i++) {
-			if (ndevs == 1)
+			if (argc - optind == 1)
 				printf("%llu\n", get_dev_blocks(argv[i]));
 			else
 				printf("%s: %llu\n", argv[i], get_dev_blocks(argv[i]));
 		}
-		exit(EXIT_SUCCESS);
+		break;
+
+	case ACT_FDISK:
+		if (argc-optind != 1)
+			usage(stderr);
+
+		if (fdisk_context_assign_device(cxt, argv[optind], 0) != 0)
+			err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
+
+		/* Here starts interactive mode, use fdisk_{warn,info,..} functions */
+		fdisk_info(cxt, _("\nWelcome to fdisk (%s).\n\n"
+			 "Changes will remain in memory only, until you decide to write them.\n"
+			 "Be careful before using the write command.\n"), PACKAGE_STRING);
+		fflush(stdout);
+
+		if (!fdisk_dev_has_disklabel(cxt)) {
+			fdisk_warnx(cxt, _("Device does not contain a recognized partition table\n"));
+			fdisk_create_disklabel(cxt, NULL);
+		}
+
+		while (1)
+			process_fdisk_menu(&cxt);
 	}
-
-	if (argc-optind != 1)
-		usage(stderr);
-
-	if (fdisk_context_assign_device(cxt, argv[optind], 0) != 0)
-		err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
-
-	printf(_("Welcome to fdisk (%s).\n\n"
-		 "Changes will remain in memory only, until you decide to write them.\n"
-		 "Be careful before using the write command.\n\n"), PACKAGE_STRING);
-	fflush(stdout);
-
-	if (!fdisk_dev_has_disklabel(cxt)) {
-		fprintf(stderr,
-			_("Device does not contain a recognized partition table\n"));
-		fdisk_create_disklabel(cxt, NULL);
-	}
-
-	while (1)
-		process_fdisk_menu(&cxt);
 
 	fdisk_free_context(cxt);
-	return 0;
+	return EXIT_SUCCESS;
 }
