@@ -44,6 +44,8 @@
 # include <linux/blkpg.h>
 #endif
 
+#include "fdisk.h"
+
 static void __attribute__ ((__noreturn__)) usage(FILE *out)
 {
 	fputs(USAGE_HEADER, out);

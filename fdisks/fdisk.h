@@ -1,3 +1,5 @@
+#ifndef UTIL_LINUX_FDISK_H
+#define UTIL_LINUX_FDISK_H
 /*
    fdisk.h
 */
@@ -32,6 +34,9 @@ extern int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 
 /* prototypes for fdisk.c */
 extern void list_partition_types(struct fdisk_context *cxt);
+extern void list_disk_geometry(struct fdisk_context *cxt);
+extern void print_raw(struct fdisk_context *cxt);
+extern void change_partition_type(struct fdisk_context *cxt);
 extern struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt);
 extern void reread_partition_table(struct fdisk_context *cxt, int leave);
 
@@ -40,3 +45,4 @@ extern int warn_geometry(struct fdisk_context *cxt);
 extern void toggle_dos_compatibility_flag(struct fdisk_context *cxt);
 extern void warn_limits(struct fdisk_context *cxt);
 
+#endif /* UTIL_LINUX_FDISK_H */
