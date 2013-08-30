@@ -348,7 +348,6 @@ static sector_t get_dev_blocks(char *dev)
 int main(int argc, char **argv)
 {
 	int c, optl = 0, opts = 0;
-	unsigned long sector_size = 0;
 	struct fdisk_context *cxt;
 	struct fdisk_label *lb;
 
@@ -367,16 +366,14 @@ int main(int argc, char **argv)
 	while ((c = getopt(argc, argv, "b:c::C:hH:lsS:u::vV")) != -1) {
 		switch (c) {
 		case 'b':
-			/* Ugly: this sector size is really per device,
-			   so cannot be combined with multiple disks,
-			   and te same goes for the C/H/S options.
-			*/
-			sector_size = strtou32_or_err(optarg, _("invalid sector size argument"));
-			if (sector_size != 512 && sector_size != 1024 &&
-			    sector_size != 2048 && sector_size != 4096)
+		{
+			size_t sz = strtou32_or_err(optarg,
+					_("invalid sector size argument"));
+			if (sz != 512 && sz != 1024 && sz != 2048 && sz != 4096)
 				usage(stderr);
-			fdisk_save_user_sector_size(cxt, sector_size, sector_size);
+			fdisk_save_user_sector_size(cxt, sz, sz);
 			break;
+		}
 		case 'C':
 			fdisk_save_user_geometry(cxt,
 				strtou32_or_err(optarg,
@@ -434,9 +431,9 @@ int main(int argc, char **argv)
 	}
 
 
-	if (sector_size && argc-optind != 1)
-		printf(_("Warning: the -b (set sector size) option should"
-			 " be used with one specified device\n"));
+	if (argc-optind != 1 && fdisk_has_user_device_properties(cxt))
+		warnx(_("The device properties (sector size and geometry) should"
+			" be used with one specified device only."));
 
 	if (optl) {
 		fdisk_context_enable_listonly(cxt, 1);

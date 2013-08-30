@@ -196,6 +196,15 @@ int fdisk_save_user_sector_size(struct fdisk_context *cxt,
 	return 0;
 }
 
+int fdisk_has_user_device_properties(struct fdisk_context *cxt)
+{
+	return (cxt->user_pyh_sector
+		    || cxt->user_log_sector
+		    || cxt->user_geom.heads
+		    || cxt->user_geom.sectors
+		    || cxt->user_geom.cylinders);
+}
+
 int fdisk_apply_user_device_properties(struct fdisk_context *cxt)
 {
 	if (!cxt)

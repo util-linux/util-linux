@@ -153,6 +153,9 @@ extern int fdisk_save_user_geometry(struct fdisk_context *cxt,
 extern int fdisk_save_user_sector_size(struct fdisk_context *cxt,
 				unsigned int phy,
 				unsigned int log);
+
+extern int fdisk_has_user_device_properties(struct fdisk_context *cxt);
+
 extern int fdisk_reread_partition_table(struct fdisk_context *cxt);
 
 /* dos.c */
