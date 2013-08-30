@@ -281,10 +281,7 @@ static int is_ide_cdrom_or_tape(char *device)
 	return ret;
 }
 
-/* Print disk geometry and partition table of a specified device (-l option) */
-static void print_partition_table_from_option(
-			struct fdisk_context *cxt,
-			char *device)
+static void print_device_pt(struct fdisk_context *cxt, char *device)
 {
 	if (fdisk_context_assign_device(cxt, device, 1) != 0)	/* read-only */
 		err(EXIT_FAILURE, _("cannot open %s"), device);
@@ -295,39 +292,34 @@ static void print_partition_table_from_option(
 		fdisk_list_disklabel(cxt);
 }
 
-/*
- * for fdisk -l:
- * try all things in /proc/partitions that look like a full disk
- */
-static void
-print_all_partition_table_from_option(struct fdisk_context *cxt)
+static void print_all_devices_pt(struct fdisk_context *cxt)
 {
-	FILE *procpt;
-	char line[128 + 1], ptname[128 + 1], devname[256];
-	int ma, mi;
-	unsigned long long sz;
+	FILE *f;
+	char line[128 + 1];
 
-	procpt = fopen(_PATH_PROC_PARTITIONS, "r");
-	if (procpt == NULL) {
-		fprintf(stderr, _("cannot open %s\n"), _PATH_PROC_PARTITIONS);
+	f = fopen(_PATH_PROC_PARTITIONS, "r");
+	if (!f) {
+		warn(_("cannot open %s"), _PATH_PROC_PARTITIONS);
 		return;
 	}
 
-	while (fgets(line, sizeof(line), procpt)) {
-		if (sscanf (line, " %d %d %llu %128[^\n ]",
-			    &ma, &mi, &sz, ptname) != 4)
+	while (fgets(line, sizeof(line), f)) {
+		char ptname[128 + 1], devname[256];
+
+		if (sscanf(line, " %*d %*d %*d %128[^\n ]", ptname) != 4)
 			continue;
+
 		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
 		if (is_whole_disk(devname)) {
 			char *cn = canonicalize_path(devname);
 			if (cn) {
 				if (!is_ide_cdrom_or_tape(cn))
-					print_partition_table_from_option(cxt, cn);
+					print_device_pt(cxt, cn);
 				free(cn);
 			}
 		}
 	}
-	fclose(procpt);
+	fclose(f);
 }
 
 static sector_t get_dev_blocks(char *dev)
@@ -445,9 +437,9 @@ int main(int argc, char **argv)
 		if (argc > optind) {
 			int k;
 			for (k = optind; k < argc; k++)
-				print_partition_table_from_option(cxt, argv[k]);
+				print_device_pt(cxt, argv[k]);
 		} else
-			print_all_partition_table_from_option(cxt);
+			print_all_devices_pt(cxt);
 		break;
 
 	case ACT_SHOWSIZE:
