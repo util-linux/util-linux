@@ -197,41 +197,36 @@ void change_partition_type(struct fdisk_context *cxt)
 void list_disk_geometry(struct fdisk_context *cxt)
 {
 	char *id = NULL;
-	unsigned long long bytes = cxt->total_sectors * cxt->sector_size;
-	long megabytes = bytes/1000000;
+	uint64_t bytes = cxt->total_sectors * cxt->sector_size;
+	char *strsz = size_to_human_string(SIZE_SUFFIX_SPACE
+					   | SIZE_SUFFIX_3LETTER, bytes);
 
-	if (megabytes < 10000)
-		printf(_("\nDisk %s: %ld MB, %lld bytes"),
-		       cxt->dev_path, megabytes, bytes);
-	else {
-		long hectomega = (megabytes + 50) / 100;
-		printf(_("\nDisk %s: %ld.%ld GB, %llu bytes"),
-		       cxt->dev_path, hectomega / 10, hectomega % 10, bytes);
-	}
-	printf(_(", %llu sectors\n"), cxt->total_sectors);
+	fdisk_info(cxt,	_("\nDisk %s: %s, %llu bytes, %llu sectors"),
+			cxt->dev_path, strsz, bytes, cxt->total_sectors);
+	free(strsz);
 
 	if (fdisk_require_geometry(cxt))
-		printf(_("Geometry: %d heads, %llu sectors/track, %llu cylinders\n"),
-		       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
+		fdisk_info(cxt, _("Geometry: %d heads, %llu sectors/track, %llu cylinders"),
+			       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
 
-	printf(_("Units = %s of %d * %ld = %ld bytes\n"),
+	fdisk_info(cxt, _("Units: %s of %d * %ld = %ld bytes"),
 	       fdisk_context_get_unit(cxt, PLURAL),
 	       fdisk_context_get_units_per_sector(cxt),
 	       cxt->sector_size,
 	       fdisk_context_get_units_per_sector(cxt) * cxt->sector_size);
 
-	printf(_("Sector size (logical/physical): %lu bytes / %lu bytes\n"),
+	fdisk_info(cxt, _("Sector size (logical/physical): %lu bytes / %lu bytes"),
 				cxt->sector_size, cxt->phy_sector_size);
-	printf(_("I/O size (minimum/optimal): %lu bytes / %lu bytes\n"),
+	fdisk_info(cxt, _("I/O size (minimum/optimal): %lu bytes / %lu bytes"),
 				cxt->min_io_size, cxt->io_size);
 	if (cxt->alignment_offset)
-		printf(_("Alignment offset: %lu bytes\n"), cxt->alignment_offset);
+		fdisk_info(cxt, _("Alignment offset: %lu bytes"),
+				cxt->alignment_offset);
 	if (fdisk_dev_has_disklabel(cxt))
-		printf(_("Disk label type: %s\n"), cxt->label->name);
+		fdisk_info(cxt, _("Disk label type: %s"), cxt->label->name);
 
 	if (fdisk_get_disklabel_id(cxt, &id) == 0 && id)
-		printf(_("Disk identifier: %s\n"), id);
-	printf("\n");
+		fdisk_info(cxt, _("Disk identifier: %s"), id);
 }
 
 
