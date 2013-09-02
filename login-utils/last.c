@@ -74,13 +74,13 @@
 #define UCHUNKSIZE	16384	/* How much we read at once. */
 
 struct last_control {
-	char lastb;		/* Is this command 'lastb' */
-	char extended;		/* Lots of info */
-	char showhost;		/* Show hostname */
-	char altlist;		/* Hostname at the end */
-	char usedns;		/* Use DNS to lookup the hostname */
-	char useip;		/* Print IP address in number format */
-	char fulltime;		/* Print full dates and times */
+	unsigned int lastb :1,	  /* Is this command 'lastb' */
+		     extended :1, /* Lots of info */
+		     showhost :1, /* Show hostname */
+		     altlist :1,  /* Hostname at the end */
+		     usedns :1,	  /* Use DNS to lookup the hostname */
+		     useip :1,	  /* Print IP address in number format */
+		     fulltime :1; /* Print full dates and times */
 
 	unsigned int name_len;	/* Number of login name characters to print */
 	unsigned int domain_len; /* Number of domain name characters to print */
@@ -762,7 +762,7 @@ static void process_wtmp_file(const struct last_control *ctl)
 			 * logged in, or missing logout record.
 			 */
 			if (c == 0) {
-				if (lastboot == 0) {
+				if (!lastboot) {
 					c = R_NOW;
 					/* Is process still alive? */
 					if (ut.ut_pid > 0 &&
@@ -870,10 +870,10 @@ int main(int argc, char **argv)
 			printf(UTIL_LINUX_VERSION);
 			return EXIT_SUCCESS;
 		case 'R':
-			ctl.showhost = FALSE;
+			ctl.showhost = 0;
 			break;
 		case 'x':
-			ctl.extended = TRUE;
+			ctl.extended = 1;
 			break;
 		case 'n':
 			ctl.maxrecs = strtos32_or_err(optarg, _("failed to parse number"));
@@ -884,16 +884,16 @@ int main(int argc, char **argv)
 			ctl.altv[ctl.altc++] = xstrdup(optarg);
 			break;
 		case 'd':
-			ctl.usedns = TRUE;
+			ctl.usedns = 1;
 			break;
 		case 'i':
-			ctl.useip = TRUE;
+			ctl.useip = 1;
 			break;
 		case 'a':
-			ctl.altlist = TRUE;
+			ctl.altlist = 1;
 			break;
 		case 'F':
-			ctl.fulltime = TRUE;
+			ctl.fulltime = 1;
 			ctl.time_fmt = LAST_TIMEFTM_FULL_CTIME;
 			break;
 		case 'p':
@@ -924,7 +924,7 @@ int main(int argc, char **argv)
 		case OPT_TIME_FORMAT:
 			ctl.time_fmt = which_time_format(optarg);
 			if (ctl.time_fmt == LAST_TIMEFTM_ISO8601)
-				ctl.fulltime = TRUE;
+				ctl.fulltime = 1;
 			break;
 		default:
 			usage(stderr);
@@ -938,7 +938,7 @@ int main(int argc, char **argv)
 	/*
 	 * Which file do we want to read?
 	 */
-	ctl.lastb = !strcmp(program_invocation_short_name, "lastb");
+	ctl.lastb = strcmp(program_invocation_short_name, "lastb") == 0 ? 1 : 0;
 	if (!ctl.altc) {
 		ctl.altv = xmalloc(sizeof(char *));
 		if (ctl.lastb)
