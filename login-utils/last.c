@@ -42,6 +42,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "optutils.h"
 #include "pathnames.h"
 #include "xalloc.h"
 #include "closestream.h"
@@ -834,7 +835,6 @@ int main(int argc, char **argv)
 	enum {
 		OPT_TIME_FORMAT = CHAR_MAX + 1
 	};
-
 	static const struct option long_opts[] = {
 	      { "limit",	required_argument, NULL, 'n' },
 	      { "help",	no_argument,       NULL, 'h' },
@@ -853,6 +853,11 @@ int main(int argc, char **argv)
 	      { "time-format", required_argument, NULL, OPT_TIME_FORMAT },
 	      { NULL, 0, NULL, 0 }
 	};
+	static const ul_excl_t excl[] = {	/* rows and cols in in ASCII order */
+		{ 'F', OPT_TIME_FORMAT },	/* fulltime, time-format */
+		{ 0 }
+	};
+	int excl_st[ARRAY_SIZE(excl)] = UL_EXCL_STATUS_INIT;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -861,6 +866,9 @@ int main(int argc, char **argv)
 
 	while ((c = getopt_long(argc, argv,
 			"hVf:n:RxadFit:p:s:0123456789w", long_opts, NULL)) != -1) {
+
+		err_exclusive_options(c, long_opts, excl, excl_st);
+
 		switch(c) {
 		case 'h':
 			usage(stdout);
