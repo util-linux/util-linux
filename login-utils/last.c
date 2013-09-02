@@ -124,16 +124,17 @@ enum {
 	LAST_TIMEFTM_ISO8601
 };
 
-struct last_timefmt_lens {
+struct last_timefmt {
+	const char *name;
 	int in;
 	int out;
 };
 
-static struct last_timefmt_lens tftl[] = {
-	[LAST_TIMEFTM_NONE] 	   = {0, 0},
-	[LAST_TIMEFTM_SHORT_CTIME] = {16, 7},
-	[LAST_TIMEFTM_FULL_CTIME]  = {24, 26},
-	[LAST_TIMEFTM_ISO8601]	   = {24, 26}
+static struct last_timefmt timefmts[] = {
+	[LAST_TIMEFTM_NONE]	   = { "notime", 0, 0 },
+	[LAST_TIMEFTM_SHORT_CTIME] = { "short", 16, 7},
+	[LAST_TIMEFTM_FULL_CTIME]  = { "full",  24, 26},
+	[LAST_TIMEFTM_ISO8601]	   = { "iso", 24, 26}
 };
 
 /* Global variables */
@@ -143,14 +144,12 @@ static time_t lastdate;		/* Last date we've seen */
 /* --time-format=option parser */
 static int which_time_format(const char *optarg)
 {
-	if (!strcmp(optarg, "notime"))
-		return LAST_TIMEFTM_NONE;
-	if (!strcmp(optarg, "short"))
-		return LAST_TIMEFTM_SHORT_CTIME;
-	if (!strcmp(optarg, "full"))
-		return LAST_TIMEFTM_FULL_CTIME;
-	if (!strcmp(optarg, "iso"))
-		return LAST_TIMEFTM_ISO8601;
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(timefmts); i++) {
+		if (strcmp(timefmts[i].name, optarg) == 0)
+			return i;
+	}
 	errx(EXIT_FAILURE, _("unknown time format: %s"), optarg);
 }
 
@@ -386,6 +385,7 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 	char		*s;
 	int		mins, hours, days;
 	int		r, len;
+	struct last_timefmt *fmt;
 
 	/*
 	 *	uucp and ftp have special-type entries
@@ -491,30 +491,29 @@ static int list(const struct last_control *ctl, struct utmp *p, time_t t, int wh
 		strncat(domain, p->ut_host, len);
 	}
 
+	fmt = &timefmts[ctl->time_fmt];
+
 	if (ctl->showhost) {
 		if (!ctl->altlist) {
 			len = snprintf(final, sizeof(final),
 				"%-8.*s %-12.12s %-16.*s %-*.*s %-*.*s %s\n",
 				ctl->name_len, p->ut_user, utline,
 				ctl->domain_len, domain,
-				tftl[ctl->time_fmt].in, tftl[ctl->time_fmt].in, logintime,
-				tftl[ctl->time_fmt].out, tftl[ctl->time_fmt].out, logouttime,
-				length);
+				fmt->in, fmt->in, logintime, fmt->out, fmt->out,
+				logouttime, length);
 		} else {
 			len = snprintf(final, sizeof(final),
 				"%-8.*s %-12.12s %-*.*s %-*.*s %-12.12s %s\n",
 				ctl->name_len, p->ut_user, utline,
-				tftl[ctl->time_fmt].in, tftl[ctl->time_fmt].in, logintime,
-				tftl[ctl->time_fmt].out, tftl[ctl->time_fmt].out, logouttime,
-				length, domain);
+				fmt->in, fmt->in, logintime, fmt->out, fmt->out,
+				logouttime, length, domain);
 		}
 	} else
 		len = snprintf(final, sizeof(final),
 			"%-8.*s %-12.12s %-*.*s %-*.*s %s\n",
 			ctl->name_len, p->ut_user, utline,
-			tftl[ctl->time_fmt].in, tftl[ctl->time_fmt].in, logintime,
-			tftl[ctl->time_fmt].out, tftl[ctl->time_fmt].out, logouttime,
-			length);
+			fmt->in, fmt->in, logintime, fmt->out, fmt->out,
+			logouttime, length);
 
 #if defined(__GLIBC__)
 #  if (__GLIBC__ == 2) && (__GLIBC_MINOR__ == 0)
