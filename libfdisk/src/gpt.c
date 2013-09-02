@@ -460,7 +460,7 @@ static int gpt_mknew_header(struct fdisk_context *cxt,
  */
 static int valid_pmbr(struct fdisk_context *cxt)
 {
-	int i, ret = 0; /* invalid by default */
+	int i, part = 0, ret = 0; /* invalid by default */
 	struct gpt_legacy_mbr *pmbr = NULL;
 
 	if (!cxt->firstsector)
@@ -484,6 +484,7 @@ static int valid_pmbr(struct fdisk_context *cxt)
 			 * now check if there are other partition types for
 			 * hybrid MBR.
 			 */
+			part = i;
 			ret = GPT_MBR_PROTECTIVE;
 			goto check_hybrid;
 		}
@@ -504,7 +505,7 @@ check_hybrid:
 	 * Hybrid MBRs do not necessarily comply with this.
 	 */
 	if (ret == GPT_MBR_PROTECTIVE) {
-		if (le32_to_cpu(pmbr->partition_record[0].size_in_lba) !=
+		if (le32_to_cpu(pmbr->partition_record[part].size_in_lba) !=
 		    min((uint32_t) cxt->total_sectors - 1, 0xFFFFFFFF))
 			ret = 0;
 	}
