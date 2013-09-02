@@ -326,9 +326,11 @@ int print_fdisk_menu(struct fdisk_context *cxt)
 	while ((e = next_menu_entry(cxt, &mc))) {
 		if (IS_MENU_HID(e))
 			continue;	/* hidden entry */
-		if (IS_MENU_SEP(e))
+		if (IS_MENU_SEP(e)) {
+			color_enable(UL_COLOR_BOLD);
 			printf("\n  %s\n", _(e->title));
-		else
+			color_disable();
+		} else
 			printf("   %c   %s\n", e->key, _(e->title));
 	}
 	fputc('\n', stdout);

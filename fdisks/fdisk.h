@@ -11,7 +11,7 @@
  */
 #include "fdiskP.h"
 #include "blkdev.h"
-
+#include "colors.h"
 
 extern void toggle_units(struct fdisk_context *cxt);
 

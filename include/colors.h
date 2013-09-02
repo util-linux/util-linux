@@ -53,10 +53,25 @@ extern int colormode_or_err(const char *str, const char *errmsg);
 /* Initialize the global variable OUT_IS_TERM */
 extern int colors_init(int mode);
 
+/* Returns 1 or 0 */
+extern int colors_wanted(void);
+
 /* Set the color to CLR_SCHEME */
-extern void color_enable(const char *clr_scheme);
+extern void color_fenable(const char *clr_scheme, FILE *f);
+
+static inline void color_enable(const char *clr_scheme)
+{
+	color_fenable(clr_scheme, stdout);
+}
 
 /* Reset colors to default */
-extern void color_disable(void);
+extern void color_fdisable(FILE *f);
+
+static inline void color_disable(void)
+{
+	color_fdisable(stdout);
+}
+
+
 
 #endif /* UTIL_LINUX_COLORS_H */

@@ -60,6 +60,8 @@ static void __attribute__ ((__noreturn__)) usage(FILE *out)
 	fputs(_(" -b <size>         sector size (512, 1024, 2048 or 4096)\n"), out);
 	fputs(_(" -c[=<mode>]       compatible mode: 'dos' or 'nondos' (default)\n"), out);
 	fputs(_(" -h                print this help text\n"), out);
+	fputs(_(" -c[=<mode>]       compatible mode: 'dos' or 'nondos' (default)\n"), out);
+	fputs(_(" -L[=<when>]       colorize output (auto, always or never)\n"), out);
 	fputs(_(" -u[=<unit>]       display units: 'cylinders' or 'sectors' (default)\n"), out);
 	fputs(_(" -v                print program version\n"), out);
 	fputs(_(" -C <number>       specify the number of cylinders\n"), out);
@@ -341,6 +343,7 @@ enum {
 int main(int argc, char **argv)
 {
 	int i, c, act = ACT_FDISK;
+	int colormode = UL_COLORMODE_AUTO;
 	struct fdisk_context *cxt;
 
 	setlocale(LC_ALL, "");
@@ -355,7 +358,7 @@ int main(int argc, char **argv)
 
 	fdisk_context_set_ask(cxt, ask_callback, NULL);
 
-	while ((c = getopt(argc, argv, "b:c::C:hH:lsS:u::vV")) != -1) {
+	while ((c = getopt(argc, argv, "b:c::C:hH:lL::sS:u::vV")) != -1) {
 		switch (c) {
 		case 'b':
 		{
@@ -401,6 +404,11 @@ int main(int argc, char **argv)
 			break;
 		case 'l':
 			act = ACT_LIST;
+			break;
+		case 'L':
+			if (optarg)
+				colormode = colormode_or_err(optarg,
+						_("unsupported color mode"));
 			break;
 		case 's':
 			act = ACT_SHOWSIZE;
@@ -454,13 +462,17 @@ int main(int argc, char **argv)
 		if (argc-optind != 1)
 			usage(stderr);
 
+		colors_init(colormode);
+
 		if (fdisk_context_assign_device(cxt, argv[optind], 0) != 0)
 			err(EXIT_FAILURE, _("cannot open %s"), argv[optind]);
 
 		/* Here starts interactive mode, use fdisk_{warn,info,..} functions */
-		fdisk_info(cxt, _("Welcome to fdisk (%s).\n\n"
-			 "Changes will remain in memory only, until you decide to write them.\n"
-			 "Be careful before using the write command.\n"), PACKAGE_STRING);
+		color_enable(UL_COLOR_GREEN);
+		fdisk_info(cxt, _("Welcome to fdisk (%s).\n"), PACKAGE_STRING);
+		color_disable();
+		fdisk_info(cxt, _("Changes will remain in memory only, until you decide to write them.\n"
+				  "Be careful before using the write command.\n"));
 		fflush(stdout);
 
 		if (!fdisk_dev_has_disklabel(cxt)) {

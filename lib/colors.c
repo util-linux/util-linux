@@ -27,16 +27,21 @@ int colors_init(int mode)
 	return ul_color_term_ok;
 }
 
-void color_enable(const char *color_scheme)
+int colors_wanted(void)
 {
-	if (ul_color_term_ok && color_scheme)
-		fputs(color_scheme, stdout);
+	return ul_color_term_ok;
 }
 
-void color_disable(void)
+void color_fenable(const char *color_scheme, FILE *f)
+{
+	if (ul_color_term_ok && color_scheme)
+		fputs(color_scheme, f);
+}
+
+void color_fdisable(FILE *f)
 {
 	if (ul_color_term_ok)
-		fputs(UL_COLOR_RESET, stdout);
+		fputs(UL_COLOR_RESET, f);
 }
 
 int colormode_from_string(const char *str)
