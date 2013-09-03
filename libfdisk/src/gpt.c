@@ -768,6 +768,45 @@ invalid:
 	return NULL;
 }
 
+
+static int gpt_locate_disklabel(struct fdisk_context *cxt, int n,
+		const char **name, off_t *offset, size_t *size)
+{
+	struct fdisk_gpt_label *gpt;
+
+	assert(cxt);
+
+	*name = NULL;
+	*offset = 0;
+	*size = 0;
+
+	switch (n) {
+	case 0:
+		*name = "PMBR";
+		*offset = 0;
+		*size = 512;
+		break;
+	case 1:
+		*name = _("GPT Header");
+		*offset = GPT_PRIMARY_PARTITION_TABLE_LBA * cxt->sector_size;
+		*size = sizeof(struct gpt_header);
+		break;
+	case 2:
+		*name = _("GPT Entries");
+		gpt = self_label(cxt);
+		*offset = le64_to_cpu(gpt->pheader->partition_entry_lba) * cxt->sector_size;
+		*size = le32_to_cpu(gpt->pheader->npartition_entries) *
+			 le32_to_cpu(gpt->pheader->sizeof_partition_entry);
+		break;
+	default:
+		return 1;			/* no more chunks */
+	}
+
+	return 0;
+}
+
+
+
 /*
  * Returns the number of partitions that are in use.
  */
@@ -2031,6 +2070,7 @@ static const struct fdisk_label_operations gpt_operations =
 	.verify		= gpt_verify_disklabel,
 	.create		= gpt_create_disklabel,
 	.list		= gpt_list_disklabel,
+	.locate		= gpt_locate_disklabel,
 	.get_id		= gpt_get_disklabel_id,
 	.set_id		= gpt_set_disklabel_id,
 
