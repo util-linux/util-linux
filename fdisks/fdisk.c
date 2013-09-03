@@ -148,16 +148,14 @@ void toggle_dos_compatibility_flag(struct fdisk_context *cxt)
 		return;
 
 	flag = !fdisk_dos_is_compatible(lb);
-
-	if (flag)
-		printf(_("DOS Compatibility flag is set (DEPRECATED!)\n"));
-	else
-		printf(_("DOS Compatibility flag is not set\n"));
+	fdisk_info(cxt, flag ?
+			_("DOS Compatibility flag is set (DEPRECATED!)") :
+			_("DOS Compatibility flag is not set"));
 
 	fdisk_dos_enable_compatible(lb, flag);
 
 	if (fdisk_is_disklabel(cxt, DOS))
-		fdisk_reset_alignment(cxt);
+		fdisk_reset_alignment(cxt);	/* reset the current label */
 }
 
 void change_partition_type(struct fdisk_context *cxt)
@@ -173,7 +171,7 @@ void change_partition_type(struct fdisk_context *cxt)
 
 	org_t = t = fdisk_get_partition_type(cxt, i);
 	if (!t)
-                printf(_("Partition %zu does not exist yet!\n"), i + 1);
+                fdisk_warnx(cxt, _("Partition %zu does not exist yet!"), i + 1);
 
         else do {
 		t = ask_partition_type(cxt);
@@ -181,11 +179,13 @@ void change_partition_type(struct fdisk_context *cxt)
 			continue;
 
 		if (fdisk_set_partition_type(cxt, i, t) == 0) {
-			printf (_("Changed type of partition '%s' to '%s'\n"),
+			fdisk_info(cxt,
+				_("Changed type of partition '%s' to '%s'"),
 				org_t ? org_t->name : _("Unknown"),
 				    t ?     t->name : _("Unknown"));
 		} else {
-			printf (_("Type of partition %zu is unchanged: %s\n"),
+			fdisk_info(cxt,
+				_("Type of partition %zu is unchanged: %s"),
 				i + 1,
 				org_t ? org_t->name : _("Unknown"));
 		}
@@ -233,8 +233,8 @@ void list_disk_geometry(struct fdisk_context *cxt)
 
 
 #define MAX_PER_LINE	16
-static void
-print_buffer(struct fdisk_context *cxt, unsigned char pbuffer[]) {
+static void print_buffer(struct fdisk_context *cxt, unsigned char pbuffer[])
+{
 	unsigned int i, l;
 
 	for (i = 0, l = 0; i < cxt->sector_size; i++, l++) {
@@ -469,14 +469,14 @@ int main(int argc, char **argv)
 
 		/* Here starts interactive mode, use fdisk_{warn,info,..} functions */
 		color_enable(UL_COLOR_GREEN);
-		fdisk_info(cxt, _("Welcome to fdisk (%s).\n"), PACKAGE_STRING);
+		fdisk_info(cxt, _("Welcome to fdisk (%s)."), PACKAGE_STRING);
 		color_disable();
 		fdisk_info(cxt, _("Changes will remain in memory only, until you decide to write them.\n"
 				  "Be careful before using the write command.\n"));
 		fflush(stdout);
 
 		if (!fdisk_dev_has_disklabel(cxt)) {
-			fdisk_warnx(cxt, _("Device does not contain a recognized partition table\n"));
+			fdisk_warnx(cxt, _("Device does not contain a recognized partition table"));
 			fdisk_create_disklabel(cxt, NULL);
 		}
 

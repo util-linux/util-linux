@@ -115,7 +115,7 @@ static int ask_number(struct fdisk_context *cxt,
 		if (rc == 0 && num >= low && num <= high)
 			return fdisk_ask_number_set_result(ask, num);
 
-		printf(_("Value out of range.\n"));
+		fdisk_warnx(cxt, _("Value out of range."));
 	} while (1);
 
 	return -1;
@@ -186,7 +186,7 @@ static int ask_offset(struct fdisk_context *cxt,
 				fdisk_ask_number_set_relative(ask, 1);
 			return fdisk_ask_number_set_result(ask, num);
 		}
-		printf(_("Value out of range.\n"));
+		fdisk_warnx(cxt, _("Value out of range."));
 	} while (1);
 
 	return -1;
@@ -283,7 +283,6 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 	}
 	return rc;
 }
-
 
 struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt)
 {
