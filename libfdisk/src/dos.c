@@ -10,6 +10,7 @@
 #include "nls.h"
 #include "randutils.h"
 #include "pt-mbr.h"
+#include "strutils.h"
 
 #include "fdiskP.h"
 
@@ -164,7 +165,7 @@ static int get_partition_unused_primary(struct fdisk_context *cxt)
 
 	switch (rc) {
 	case 1:
-		fdisk_info(cxt, _("All primary partitions have been defined already"));
+		fdisk_info(cxt, _("All primary partitions have been defined already."));
 		return -1;
 	case 0:
 		return n;
@@ -280,19 +281,18 @@ static void dos_init(struct fdisk_context *cxt)
 		fdisk_warnx(cxt, _("Cylinders as display units are deprecated."));
 
 	if (cxt->total_sectors > UINT_MAX) {
-		unsigned long long bytes = cxt->total_sectors * cxt->sector_size;
-		int giga = bytes / 1000000000;
-		int hectogiga = (giga + 50) / 100;
-
+		uint64_t bytes = cxt->total_sectors * cxt->sector_size;
+		char *szstr = size_to_human_string(SIZE_SUFFIX_SPACE
+					   | SIZE_SUFFIX_3LETTER, bytes);
 		fdisk_warnx(cxt,
-		_("The size of this disk is %d.%d TB (%llu bytes). DOS "
+		_("The size of this disk is %s (%llu bytes). DOS "
 		  "partition table format can not be used on drives for "
 		  "volumes larger than (%llu bytes) for %ld-byte "
 		  "sectors. Use GUID partition table format (GPT)."),
-			hectogiga / 10, hectogiga % 10,
-			bytes,
+			szstr, bytes,
 			(sector_t ) UINT_MAX * cxt->sector_size,
 			cxt->sector_size);
+		free(szstr);
 	}
 }
 
@@ -397,7 +397,7 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 
 	p = pex->pt_entry;
 	if (!dos_partition_get_start(p)) {
-		fdisk_warnx(cxt, _("Bad offset in primary extended partition"));
+		fdisk_warnx(cxt, _("Bad offset in primary extended partition."));
 		return;
 	}
 
@@ -434,7 +434,7 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 				if (pe->ex_entry)
 					fdisk_warnx(cxt, _(
 					"Extra link pointer in partition "
-					"table %zd"),
+					"table %zd."),
 						cxt->label->nparts_max + 1);
 				else
 					pe->ex_entry = p;
@@ -442,7 +442,7 @@ static void read_extended(struct fdisk_context *cxt, int ext)
 				if (pe->pt_entry)
 					fdisk_warnx(cxt, _(
 					"Ignoring extra data in partition "
-					"table %zd"),
+					"table %zd."),
 						cxt->label->nparts_max + 1);
 				else
 					pe->pt_entry = p;
@@ -509,9 +509,6 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 	/* random disk signature */
 	random_get_bytes(&id, sizeof(id));
 
-	fdisk_info(cxt, ("Building a new DOS disklabel with disk "
-			 "identifier 0x%08x."), id);
-
 	dos_init(cxt);
 	fdisk_zeroize_firstsector(cxt);
 	fdisk_label_set_changed(cxt->label, 1);
@@ -521,6 +518,10 @@ static int dos_create_disklabel(struct fdisk_context *cxt)
 
 	/* Put MBR signature */
 	mbr_set_magic(cxt->firstsector);
+
+	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			("Created a new DOS disklabel with disk "
+			 "identifier 0x%08x."), id);
 	return 0;
 }
 
@@ -549,12 +550,14 @@ static int dos_set_disklabel_id(struct fdisk_context *cxt)
 		return -EINVAL;
 	}
 
-	fdisk_info(cxt, _("Changing disk identifier from 0x%08x to 0x%08x."),
-			old, id);
 
 	mbr_set_id(cxt->firstsector, id);
 	l->non_pt_changed = 1;
 	fdisk_label_set_changed(cxt->label, 1);
+
+	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("Disk identifier changed from 0x%08x to 0x%08x."),
+			old, id);
 	return 0;
 }
 
@@ -822,7 +825,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 			break;
 		if (start >= temp + fdisk_context_get_units_per_sector(cxt)
 		    && read) {
-			fdisk_info(cxt, _("Sector %llu is already allocated"),
+			fdisk_info(cxt, _("Sector %llu is already allocated."),
 					temp);
 			temp = start;
 			read = 0;
@@ -879,7 +882,7 @@ static int add_partition(struct fdisk_context *cxt, int n, struct fdisk_parttype
 			limit = first[i] - 1;
 	}
 	if (start > limit) {
-		fdisk_info(cxt, _("No free sectors available"));
+		fdisk_info(cxt, _("No free sectors available."));
 		if (n > 4)
 			cxt->label->nparts_max--;
 		return -ENOSPC;
@@ -1147,13 +1150,13 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 			if (!p->sys_ind) {
 				if (i != 4 || i + 1 < cxt->label->nparts_max)
 					fdisk_warnx(cxt,
-						_("Partition %zd: empty"),
+						_("Partition %zd: empty."),
 						i + 1);
 			} else if (first[i] < l->ext_offset
 				   || last[i] > e_last) {
 
 				fdisk_warnx(cxt, _("Logical partition %zd: "
-					"not entirely in partition %zd"),
+					"not entirely in partition %zd."),
 					i + 1, l->ext_index + 1);
 			}
 		}
@@ -1164,7 +1167,7 @@ static int dos_verify_disklabel(struct fdisk_context *cxt)
 			"than the maximum %llu."), total, n_sectors);
 	else if (total < n_sectors)
 		fdisk_warnx(cxt, _("Remaining %lld unallocated %ld-byte "
-			"sectors"), n_sectors - total, cxt->sector_size);
+			"sectors."), n_sectors - total, cxt->sector_size);
 
 	return 0;
 }
@@ -1240,7 +1243,7 @@ static int dos_add_partition(
 			return rc;
 		if (!buf[0]) {
 			c = dflt;
-			fdisk_info(cxt, _("Using default response %c"), c);
+			fdisk_info(cxt, _("Using default response %c."), c);
 		} else
 			c = tolower(buf[0]);
 		free(buf);
@@ -1262,7 +1265,7 @@ static int dos_add_partition(
 			}
 			goto done;
 		} else
-			fdisk_warnx(cxt, _("Invalid partition type `%c'"), c);
+			fdisk_warnx(cxt, _("Invalid partition type `%c'."), c);
 	}
 done:
 	if (rc == 0)
@@ -1755,7 +1758,7 @@ int fdisk_dos_move_begin(struct fdisk_context *cxt, int i)
 	p = pe->pt_entry;
 
 	if (!p->sys_ind || !dos_partition_get_size(p) || IS_EXTENDED (p->sys_ind)) {
-		fdisk_warn(cxt, _("Partition %d: no data area."), i + 1);
+		fdisk_warnx(cxt, _("Partition %d: no data area."), i + 1);
 		return 0;
 	}
 

@@ -342,36 +342,36 @@ static int bsd_list_disklabel(struct fdisk_context *cxt)
 	assert(fdisk_is_disklabel(cxt, BSD));
 
 	if (fdisk_context_display_details(cxt)) {
-		fdisk_info(cxt, "# %s:", cxt->dev_path);
+		fdisk_colon(cxt, "# %s:", cxt->dev_path);
 
 		if ((unsigned) d->d_type < BSD_DKMAXTYPES)
-			fdisk_info(cxt, _("type: %s"), bsd_dktypenames[d->d_type]);
+			fdisk_colon(cxt, _("type: %s"), bsd_dktypenames[d->d_type]);
 		else
-			fdisk_info(cxt, _("type: %d"), d->d_type);
+			fdisk_colon(cxt, _("type: %d"), d->d_type);
 
-		fdisk_info(cxt, _("disk: %.*s"), (int) sizeof(d->d_typename), d->d_typename);
-		fdisk_info(cxt, _("label: %.*s"), (int) sizeof(d->d_packname), d->d_packname);
+		fdisk_colon(cxt, _("disk: %.*s"), (int) sizeof(d->d_typename), d->d_typename);
+		fdisk_colon(cxt, _("label: %.*s"), (int) sizeof(d->d_packname), d->d_packname);
 
-		fdisk_info(cxt, _("flags: %s"),
+		fdisk_colon(cxt, _("flags: %s"),
 			d->d_flags & BSD_D_REMOVABLE ? _(" removable") :
 			d->d_flags & BSD_D_ECC ? _(" ecc") :
 			d->d_flags & BSD_D_BADSECT ? _(" badsect") : "");
 
 		/* On various machines the fields of *lp are short/int/long */
 		/* In order to avoid problems, we cast them all to long. */
-		fdisk_info(cxt, _("bytes/sector: %ld"), (long) d->d_secsize);
-		fdisk_info(cxt, _("sectors/track: %ld"), (long) d->d_nsectors);
-		fdisk_info(cxt, _("tracks/cylinder: %ld"), (long) d->d_ntracks);
-		fdisk_info(cxt, _("sectors/cylinder: %ld"), (long) d->d_secpercyl);
-		fdisk_info(cxt, _("cylinders: %ld"), (long) d->d_ncylinders);
-		fdisk_info(cxt, _("rpm: %d"), d->d_rpm);
-		fdisk_info(cxt, _("interleave: %d"), d->d_interleave);
-		fdisk_info(cxt, _("trackskew: %d"), d->d_trackskew);
-		fdisk_info(cxt, _("cylinderskew: %d"), d->d_cylskew);
-		fdisk_info(cxt, _("headswitch: %ld (milliseconds)"), (long) d->d_headswitch);
-		fdisk_info(cxt, _("track-to-track seek: %ld (milliseconds)"), (long) d->d_trkseek);
+		fdisk_colon(cxt, _("bytes/sector: %ld"), (long) d->d_secsize);
+		fdisk_colon(cxt, _("sectors/track: %ld"), (long) d->d_nsectors);
+		fdisk_colon(cxt, _("tracks/cylinder: %ld"), (long) d->d_ntracks);
+		fdisk_colon(cxt, _("sectors/cylinder: %ld"), (long) d->d_secpercyl);
+		fdisk_colon(cxt, _("cylinders: %ld"), (long) d->d_ncylinders);
+		fdisk_colon(cxt, _("rpm: %d"), d->d_rpm);
+		fdisk_colon(cxt, _("interleave: %d"), d->d_interleave);
+		fdisk_colon(cxt, _("trackskew: %d"), d->d_trackskew);
+		fdisk_colon(cxt, _("cylinderskew: %d"), d->d_cylskew);
+		fdisk_colon(cxt, _("headswitch: %ld (milliseconds)"), (long) d->d_headswitch);
+		fdisk_colon(cxt, _("track-to-track seek: %ld (milliseconds)"), (long) d->d_trkseek);
 		/*
-		fdisk_info(cxt, _("drivedata: "));
+		fdisk_colon(cxt, _("drivedata: "));
 		for (i = ARRAY_SIZE(d->d_drivedata)- 1; i >= 0; i--)
 			if (d->d_drivedata[i])
 				break;
@@ -382,7 +382,7 @@ static int bsd_list_disklabel(struct fdisk_context *cxt)
 		*/
 	}
 
-	fdisk_info(cxt, _("partitions: %d"), d->d_npartitions);
+	fdisk_colon(cxt, _("partitions: %d"), d->d_npartitions);
 
 	tb = tt_new_table(TT_FL_FREEDATA);
 	if (!tb)
@@ -530,7 +530,8 @@ static int bsd_get_bootstrap(struct fdisk_context *cxt,
 		return -errno;
 	}
 
-	fdisk_info(cxt, "bootstrap file %s successfully loaded", path);
+	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("The bootstrap file %s successfully loaded."), path);
 	close (fd);
 	return 0;
 }
@@ -601,7 +602,8 @@ int fdisk_bsd_write_bootstrap(struct fdisk_context *cxt)
 		goto done;
 	}
 
-	fdisk_info(cxt, _("Bootstrap installed on %s."), cxt->dev_path);
+	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("Bootstrap installed on %s."), cxt->dev_path);
 	sync_disks(cxt);
 
 	rc = 0;
@@ -742,7 +744,6 @@ static int bsd_write_disklabel(struct fdisk_context *cxt)
 	struct fdisk_bsd_label *l = self_label(cxt);
 	struct bsd_disklabel *d = self_disklabel(cxt);
 
-	fdisk_info(cxt, _("Writing disklabel to %s."), cxt->dev_path);
 
 	if (l->dos_part)
 		offset = dos_partition_get_start(l->dos_part) * cxt->sector_size;
@@ -767,6 +768,9 @@ static int bsd_write_disklabel(struct fdisk_context *cxt)
 		return -errno;
 	}
 	sync_disks(cxt);
+
+	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("Disklabel written to %s."), cxt->dev_path);
 	return 0;
 }
 
@@ -834,7 +838,8 @@ int fdisk_bsd_link_partition(struct fdisk_context *cxt)
 	cxt->label->nparts_cur = d->d_npartitions;
 	fdisk_label_set_changed(cxt->label, 1);
 
-	fdisk_info(cxt, _("BSD partition '%c' linked to DOS partition %d."),
+	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("BSD partition '%c' linked to DOS partition %d."),
 			'a' + i, k + 1);
 	return 0;
 }

@@ -256,7 +256,7 @@ static int sgi_list_table(struct fdisk_context *cxt)
 	int rc;
 
 	if (fdisk_context_display_details(cxt))
-		fdisk_info(cxt, _(
+		fdisk_colon(cxt, _(
 			"Label geometry: %d heads, %llu sectors\n"
 			"                %llu cylinders, %d physical cylinders\n"
 			"                %d extra sects/cyl, interleave %d:1\n"),
@@ -362,7 +362,7 @@ static int sgi_list_table(struct fdisk_context *cxt)
 		rc = fdisk_print_table(cxt, tb);
 	tt_free_table(tb);
 
-	fdisk_info(cxt, _("Bootfile: %s"), sgilabel->boot_file);
+	fdisk_colon(cxt, _("Bootfile: %s"), sgilabel->boot_file);
 
 	return rc;
 }
@@ -463,7 +463,8 @@ int fdisk_sgi_set_bootfile(struct fdisk_context *cxt)
 
 	memcpy(sgilabel->boot_file, name, sz);
 
-	fdisk_info(cxt,_("Bootfile is changed to \"%s\"."), name);
+	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("Bootfile is changed to \"%s\"."), name);
 done:
 	free(name);
 	return rc;
@@ -958,9 +959,6 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	assert(fdisk_is_disklabel(cxt, SGI));
 
 	sec_fac = cxt->sector_size / 512;	/* determine the sector factor */
-
-	fdisk_info(cxt,	_("Building a new SGI disklabel."));
-
 	res = blkdev_get_sectors(cxt->dev_fd, &llsectors);
 
 #ifdef HDIO_GETGEO
@@ -1040,6 +1038,9 @@ static int sgi_create_disklabel(struct fdisk_context *cxt)
 	sgi_set_volhdr(cxt);
 
 	cxt->label->nparts_cur = count_used_partitions(cxt);
+
+	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("Created a new SGI disklabel."));
 	return 0;
 }
 

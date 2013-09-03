@@ -125,9 +125,9 @@ static int sun_probe_label(struct fdisk_context *cxt)
 		csum ^= *ush--;
 
 	if (csum) {
-		fdisk_warnx(cxt, _("Detected sun disklabel with wrong checksum.\n"
-			      "Probably you'll have to set all the values,\n"
-			      "e.g. heads, sectors, cylinders and partitions\n"
+		fdisk_warnx(cxt, _("Detected sun disklabel with wrong checksum. "
+			      "Probably you'll have to set all the values, "
+			      "e.g. heads, sectors, cylinders and partitions "
 			      "or force a fresh label (s command in main menu)"));
 		return 1;
 	}
@@ -202,8 +202,6 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	assert(cxt->label);
 	assert(fdisk_is_disklabel(cxt, SUN));
 
-	fdisk_info(cxt, _("Building a new Sun disklabel."));
-
 	/* map first sector to header */
 	fdisk_zeroize_firstsector(cxt);
 	sun = (struct fdisk_sun_label *) cxt->label;
@@ -233,10 +231,10 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 		} else {
 			cxt->geom.cylinders = geometry.cylinders;
 			fdisk_warnx(cxt,
-				_("Warning:  BLKGETSIZE ioctl failed on %s.  "
-				  "Using geometry cylinder value of %llu.\n"
-				  "This value may be truncated for devices"
-				  " > 33.8 GB."),
+				_("BLKGETSIZE ioctl failed on %s. "
+				  "Using geometry cylinder value of %llu. "
+				  "This value may be truncated for devices "
+				  "> 33.8 GB."),
 				cxt->dev_path, cxt->geom.cylinders);
 		}
 	} else
@@ -285,6 +283,8 @@ static int sun_create_disklabel(struct fdisk_context *cxt)
 	fdisk_label_set_changed(cxt->label, 1);
 	cxt->label->nparts_cur = count_used_partitions(cxt);
 
+	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("Created a new Sun disklabel."));
 	return 0;
 }
 
@@ -397,7 +397,7 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
     for (k = 0; k < 7; k++) {
 	for (i = 0; i < SUN_MAXPARTITIONS; i++) {
 	    if (k && (lens[i] % (cxt->geom.heads * cxt->geom.sectors))) {
-	        fdisk_warnx(cxt, _("Partition %d doesn't end on cylinder boundary"), i+1);
+	        fdisk_warnx(cxt, _("Partition %d doesn't end on cylinder boundary."), i+1);
 	    }
 	    if (lens[i]) {
 	        for (j = 0; j < i; j++)
@@ -418,7 +418,7 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
 	                        if (starts[j]+lens[j] < endo)
 					endo = starts[j]+lens[j];
 	                        fdisk_warnx(cxt, _("Partition %d overlaps with others in "
-				       "sectors %d-%d"), i+1, starto, endo);
+				       "sectors %d-%d."), i+1, starto, endo);
 	                    }
 	                }
 	            }
@@ -437,20 +437,20 @@ static int sun_verify_disklabel(struct fdisk_context *cxt)
 	  verify_sun_starts);
 
     if (array[0] == -1) {
-	fdisk_info(cxt, _("No partitions defined"));
+	fdisk_info(cxt, _("No partitions defined."));
 	return 0;
     }
     stop = cxt->geom.cylinders * cxt->geom.heads * cxt->geom.sectors;
     if (starts[array[0]])
-        fdisk_warnx(cxt, _("Unused gap - sectors 0-%d"), starts[array[0]]);
+        fdisk_warnx(cxt, _("Unused gap - sectors 0-%d."), starts[array[0]]);
     for (i = 0; i < 7 && array[i+1] != -1; i++) {
-        fdisk_warnx(cxt, _("Unused gap - sectors %d-%d"),
+        fdisk_warnx(cxt, _("Unused gap - sectors %d-%d."),
 	       (starts[array[i]] + lens[array[i]]),
 	       starts[array[i+1]]);
     }
     start = (starts[array[i]] + lens[array[i]]);
     if (start < stop)
-        fdisk_warnx(cxt, _("Unused gap - sectors %d-%d"), start, stop);
+        fdisk_warnx(cxt, _("Unused gap - sectors %d-%d."), start, stop);
     return 0;
 }
 
@@ -526,9 +526,9 @@ static int sun_add_partition(
 				first += cs - x;
 		}
 		if (n == 2 && first != 0)
-			fdisk_warnx(cxt, _("\
-It is highly recommended that the third partition covers the whole disk\n\
-and is of type `Whole disk'"));
+			fdisk_warnx(cxt, _("It is highly recommended that the "
+				"third partition covers the whole disk "
+				"and is of type `Whole disk'"));
 		/* ewt asks to add: "don't start a partition at cyl 0"
 		   However, edmundo@rano.demon.co.uk writes:
 		   "In addition to having a Sun partition table, to be able to
@@ -677,19 +677,19 @@ static int sun_list_disklabel(struct fdisk_context *cxt)
 
 	sunlabel = self_disklabel(cxt);
 
-	if (fdisk_context_display_details(cxt))
-		fdisk_info(cxt,
+	if (fdisk_context_display_details(cxt)) {
+		fdisk_colon(cxt,
 		_("Label geometry: %d rpm, %d alternate and %d physical cylinders,\n"
-		  "                %d extra sects/cyl, interleave %d:1\n"
-		  "Label ID: %s\n"
-		  "Volume ID: %s\n"),
+		  "                %d extra sects/cyl, interleave %d:1"),
 		       be16_to_cpu(sunlabel->rpm),
 		       be16_to_cpu(sunlabel->acyl),
 		       be16_to_cpu(sunlabel->pcyl),
 		       be16_to_cpu(sunlabel->apc),
-		       be16_to_cpu(sunlabel->intrlv),
-		       sunlabel->label_id,
+		       be16_to_cpu(sunlabel->intrlv));
+		fdisk_colon(cxt, _("Label ID: %s"), sunlabel->label_id);
+		fdisk_colon(cxt, _("Volume ID: %s"),
 		       *sunlabel->vtoc.volume_id ? sunlabel->vtoc.volume_id : _("<none>"));
+	}
 
 	tb = tt_new_table(TT_FL_FREEDATA);
 	if (!tb)

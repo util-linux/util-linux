@@ -179,13 +179,13 @@ void change_partition_type(struct fdisk_context *cxt)
 			continue;
 
 		if (fdisk_set_partition_type(cxt, i, t) == 0) {
-			fdisk_info(cxt,
-				_("Changed type of partition '%s' to '%s'"),
+			fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+				_("Changed type of partition '%s' to '%s'."),
 				org_t ? org_t->name : _("Unknown"),
 				    t ?     t->name : _("Unknown"));
 		} else {
 			fdisk_info(cxt,
-				_("Type of partition %zu is unchanged: %s"),
+				_("Type of partition %zu is unchanged: %s".),
 				i + 1,
 				org_t ? org_t->name : _("Unknown"));
 		}
@@ -203,32 +203,32 @@ void list_disk_geometry(struct fdisk_context *cxt)
 	char *strsz = size_to_human_string(SIZE_SUFFIX_SPACE
 					   | SIZE_SUFFIX_3LETTER, bytes);
 
-	fdisk_info(cxt,	_("Disk %s: %s, %llu bytes, %llu sectors"),
+	fdisk_colon(cxt,	_("Disk %s: %s, %llu bytes, %llu sectors"),
 			cxt->dev_path, strsz, bytes, cxt->total_sectors);
 	free(strsz);
 
 	if (fdisk_require_geometry(cxt))
-		fdisk_info(cxt, _("Geometry: %d heads, %llu sectors/track, %llu cylinders"),
+		fdisk_colon(cxt, _("Geometry: %d heads, %llu sectors/track, %llu cylinders"),
 			       cxt->geom.heads, cxt->geom.sectors, cxt->geom.cylinders);
 
-	fdisk_info(cxt, _("Units: %s of %d * %ld = %ld bytes"),
+	fdisk_colon(cxt, _("Units: %s of %d * %ld = %ld bytes"),
 	       fdisk_context_get_unit(cxt, PLURAL),
 	       fdisk_context_get_units_per_sector(cxt),
 	       cxt->sector_size,
 	       fdisk_context_get_units_per_sector(cxt) * cxt->sector_size);
 
-	fdisk_info(cxt, _("Sector size (logical/physical): %lu bytes / %lu bytes"),
+	fdisk_colon(cxt, _("Sector size (logical/physical): %lu bytes / %lu bytes"),
 				cxt->sector_size, cxt->phy_sector_size);
-	fdisk_info(cxt, _("I/O size (minimum/optimal): %lu bytes / %lu bytes"),
+	fdisk_colon(cxt, _("I/O size (minimum/optimal): %lu bytes / %lu bytes"),
 				cxt->min_io_size, cxt->io_size);
 	if (cxt->alignment_offset)
-		fdisk_info(cxt, _("Alignment offset: %lu bytes"),
+		fdisk_colon(cxt, _("Alignment offset: %lu bytes"),
 				cxt->alignment_offset);
 	if (fdisk_dev_has_disklabel(cxt))
-		fdisk_info(cxt, _("Disk label type: %s"), cxt->label->name);
+		fdisk_colon(cxt, _("Disk label type: %s"), cxt->label->name);
 
 	if (fdisk_get_disklabel_id(cxt, &id) == 0 && id)
-		fdisk_info(cxt, _("Disk identifier: %s"), id);
+		fdisk_colon(cxt, _("Disk identifier: %s"), id);
 }
 
 
@@ -476,7 +476,7 @@ int main(int argc, char **argv)
 		fflush(stdout);
 
 		if (!fdisk_dev_has_disklabel(cxt)) {
-			fdisk_warnx(cxt, _("Device does not contain a recognized partition table"));
+			fdisk_warnx(cxt, _("Device does not contain a recognized partition table."));
 			fdisk_create_disklabel(cxt, NULL);
 		}
 

@@ -1149,11 +1149,11 @@ static int gpt_list_disklabel(struct fdisk_context *cxt)
 	/* don't trunc anything in expert mode */
 	if (fdisk_context_display_details(cxt)) {
 		trunc = 0;
-		fdisk_info(cxt, _("First LBA: %ju"), h->first_usable_lba);
-		fdisk_info(cxt, _("Last LBA: %ju"), h->last_usable_lba);
-		fdisk_info(cxt, _("Alternative LBA: %ju"), h->alternative_lba);
-		fdisk_info(cxt, _("Partitions entries LBA: %ju"), h->partition_entry_lba);
-		fdisk_info(cxt, _("Allocated partition entries: %ju"), h->npartition_entries);
+		fdisk_colon(cxt, _("First LBA: %ju"), h->first_usable_lba);
+		fdisk_colon(cxt, _("Last LBA: %ju"), h->last_usable_lba);
+		fdisk_colon(cxt, _("Alternative LBA: %ju"), h->alternative_lba);
+		fdisk_colon(cxt, _("Partitions entries LBA: %ju"), h->partition_entry_lba);
+		fdisk_colon(cxt, _("Allocated partition entries: %ju"), h->npartition_entries);
 	}
 	tt_define_column(tb, _("Device"), 0.1, 0);
 	tt_define_column(tb, _("Start"),   12, TT_FL_RIGHT);
@@ -1476,7 +1476,7 @@ static int gpt_verify_disklabel(struct fdisk_context *cxt)
 		uint32_t nsegments = 0;
 		uint64_t free_sectors = 0, largest_segment = 0;
 
-		fdisk_info(cxt, _("No errors detected"));
+		fdisk_info(cxt, _("No errors detected."));
 		fdisk_info(cxt, _("Header version: %s"), gpt_get_header_revstr(gpt->pheader));
 		fdisk_info(cxt, _("Using %u out of %d partitions."),
 		       partitions_in_use(gpt->pheader, gpt->ents),
@@ -1759,8 +1759,9 @@ static int gpt_create_disklabel(struct fdisk_context *cxt)
 	cxt->label->nparts_cur = 0;
 
 	guid_to_string(&gpt->pheader->disk_guid, str);
-	fdisk_info(cxt, _("Building a new GPT disklabel (GUID: %s)"), str);
 	fdisk_label_set_changed(cxt->label, 1);
+	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("Created a new GPT disklabel (GUID: %s)"), str);
 done:
 	return rc;
 }
@@ -1818,7 +1819,8 @@ static int gpt_set_disklabel_id(struct fdisk_context *cxt)
 
 	gpt_get_disklabel_id(cxt, &new);
 
-	fdisk_info(cxt, _("Changing disk identifier from %s to %s."), old, new);
+	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("Disk identifier changed from %s to %s."), old, new);
 
 	free(old);
 	free(new);
@@ -1939,14 +1941,15 @@ int fdisk_gpt_partition_set_uuid(struct fdisk_context *cxt, size_t i)
 
 	guid_to_string(&e->partition_guid, old_u);
 	guid_to_string(&uuid, new_u);
-	fdisk_info(cxt, _("Changing partition UUID from %s to %s"),
-			old_u, new_u);
 
 	e->partition_guid = uuid;
 	gpt_recompute_crc(gpt->pheader, gpt->ents);
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
-
 	fdisk_label_set_changed(cxt->label, 1);
+
+	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("Partition UUID changed from %s to %s"),
+			old_u, new_u);
 	return 0;
 }
 
@@ -1974,16 +1977,12 @@ int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i)
 	e = &gpt->ents[i];
 	old = encode_to_utf8((unsigned char *)e->name, sizeof(e->name));
 
-	fdisk_info(cxt, _("Changing partition name from '%s' to '%.*s'"),
-				old, GPT_PART_NAME_LEN, str);
 	sz = strlen(str);
 	if (sz) {
 		if (sz > GPT_PART_NAME_LEN)
 			sz = GPT_PART_NAME_LEN;
 		memcpy(name, str, sz);
 	}
-	free(str);
-	free(old);
 
 	for (i = 0; i < GPT_PART_NAME_LEN; i++)
 		e->name[i] = cpu_to_le16((uint16_t) name[i]);
@@ -1992,6 +1991,13 @@ int fdisk_gpt_partition_set_name(struct fdisk_context *cxt, size_t i)
 	gpt_recompute_crc(gpt->bheader, gpt->ents);
 
 	fdisk_label_set_changed(cxt->label, 1);
+
+	fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
+			_("Partition name changed from '%s' to '%.*s'"),
+			old, GPT_PART_NAME_LEN, str);
+	free(str);
+	free(old);
+
 	return 0;
 }
 
