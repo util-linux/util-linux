@@ -187,16 +187,14 @@ static const struct Speedtab speedtab[] = {
 	{2400, B2400},
 	{4800, B4800},
 	{9600, B9600},
-#ifdef	B19200
+#ifdef B19200
 	{19200, B19200},
-#endif
-#ifdef	B38400
-	{38400, B38400},
-#endif
-#ifdef	EXTA
+#elif defined(EXTA)
 	{19200, EXTA},
 #endif
-#ifdef	EXTB
+#ifdef B38400
+	{38400, B38400},
+#elif defined(EXTB)
 	{38400, EXTB},
 #endif
 #ifdef B57600
