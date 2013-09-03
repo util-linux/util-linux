@@ -62,7 +62,11 @@ enum {
 	FDISK_ASKTYPE_STRING
 };
 
-
+/* extra flags for info massages (see fdisk_sinfo() */
+enum {
+	FDISK_INFO_COLON = 1,	/* colorize "foo bar:" prefix in the message */
+	FDISK_INFO_SUCCESS,	/* info after successful action */
+};
 
 /* init.c */
 extern void fdisk_init_debug(int mask);
@@ -205,6 +209,9 @@ extern const char *fdisk_ask_get_query(struct fdisk_ask *ask);
 extern int fdisk_ask_set_query(struct fdisk_ask *ask, const char *str);
 extern int fdisk_ask_get_type(struct fdisk_ask *ask);
 extern int fdisk_ask_set_type(struct fdisk_ask *ask, int type);
+extern int fdisk_ask_set_flags(struct fdisk_ask *ask, unsigned int flags);
+extern unsigned int fdisk_ask_get_flags(struct fdisk_ask *ask);
+
 extern int fdisk_do_ask(struct fdisk_context *cxt, struct fdisk_ask *ask);
 
 extern const char *fdisk_ask_number_get_range(struct fdisk_ask *ask);
@@ -244,6 +251,9 @@ extern uint64_t fdisk_ask_yesno_get_result(struct fdisk_ask *ask);
 extern int fdisk_ask_yesno_set_result(struct fdisk_ask *ask, uint64_t result);
 
 extern int fdisk_info(struct fdisk_context *cxt, const char *fmt, ...);
+extern int fdisk_colon(struct fdisk_context *cxt, const char *fmt, ...);
+extern int fdisk_sinfo(struct fdisk_context *cxt, unsigned int flags, const char *fmt, ...);
+
 extern int fdisk_warnx(struct fdisk_context *cxt, const char *fmt, ...);
 extern int fdisk_warn(struct fdisk_context *cxt, const char *fmt, ...);
 

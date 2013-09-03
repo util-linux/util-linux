@@ -225,6 +225,7 @@ extern struct fdisk_label *fdisk_new_sun_label(struct fdisk_context *cxt);
 struct fdisk_ask {
 	int		type;		/* FDISK_ASKTYPE_* */
 	char		*query;
+	unsigned int	flags;
 
 	union {
 		/* FDISK_ASKTYPE_{NUMBER,OFFSET} */

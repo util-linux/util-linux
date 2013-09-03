@@ -192,31 +192,48 @@ static int ask_offset(struct fdisk_context *cxt,
 	return -1;
 }
 
-static void fputs_info(const char *msg, FILE *out, char *buf, size_t bufsz)
+static void fputs_info(struct fdisk_ask *ask, FILE *out, char *buf, size_t bufsz)
 {
+	const char *msg;
+	unsigned int flags;
+
+	assert(ask);
+
+	msg = fdisk_ask_print_get_mesg(ask);
+	flags = fdisk_ask_get_flags(ask);
+
+	if (!msg)
+		return;
 	if (info_count == 1)
 		fputc('\n', out);
+	if (flags == 0 || !colors_wanted())
+		goto simple;
 
-	if (msg && colors_wanted()) {
+	if (flags & FDISK_INFO_COLON) {
+		size_t sz;
 		char *sep = _(": ");
 		char *p = strstr(msg, sep);
 
-		if (p) {
-			size_t sz = strlen(sep);
+		if (!p)
+			goto simple;
 
-			strncpy(buf, msg, bufsz);
-			buf[p - msg + sz] = '\0';
+		sz = strlen(sep);
+		strncpy(buf, msg, bufsz);
+		buf[p - msg + sz] = '\0';
 
-			color_enable(UL_COLOR_BROWN);
-			fputs(buf, out);
-			color_disable();
-			fputs(p + sz, out);
-			goto done;
-		}
+		color_enable(UL_COLOR_BROWN);
+		fputs(buf, out);
+		color_disable();
+		fputs(p + sz, out);
+
+	} else if (flags & FDISK_INFO_SUCCESS) {
+		color_enable(UL_COLOR_BOLD);
+		fputs(msg, out);
+		color_disable();
+	} else {
+simple:
+		fputs(msg, out);
 	}
-
-	fputs(msg, out);
-done:
 	fputc('\n', out);
 }
 
@@ -239,7 +256,7 @@ int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		return ask_offset(cxt, ask, buf, sizeof(buf));
 	case FDISK_ASKTYPE_INFO:
 		info_count++;
-		fputs_info(fdisk_ask_print_get_mesg(ask), stdout, buf, sizeof(buf));
+		fputs_info(ask, stdout, buf, sizeof(buf));
 		break;
 	case FDISK_ASKTYPE_WARNX:
 		color_fenable(UL_COLOR_RED, stderr);
