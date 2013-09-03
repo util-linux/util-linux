@@ -33,9 +33,11 @@ extern int ask_callback(struct fdisk_context *cxt, struct fdisk_ask *ask,
 		    void *data __attribute__((__unused__)));
 
 /* prototypes for fdisk.c */
+extern void dump_firstsector(struct fdisk_context *cxt);
+extern void dump_disklabel(struct fdisk_context *cxt);
+
 extern void list_partition_types(struct fdisk_context *cxt);
 extern void list_disk_geometry(struct fdisk_context *cxt);
-extern void print_raw(struct fdisk_context *cxt);
 extern void change_partition_type(struct fdisk_context *cxt);
 extern struct fdisk_parttype *ask_partition_type(struct fdisk_context *cxt);
 extern void reread_partition_table(struct fdisk_context *cxt, int leave);

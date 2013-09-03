@@ -24,6 +24,7 @@
 
 #include "c.h"
 #include "xalloc.h"
+#include "all-io.h"
 #include "nls.h"
 #include "rpmatch.h"
 #include "blkdev.h"
@@ -231,39 +232,90 @@ void list_disk_geometry(struct fdisk_context *cxt)
 		fdisk_colon(cxt, _("Disk identifier: %s"), id);
 }
 
-
-#define MAX_PER_LINE	16
-static void print_buffer(struct fdisk_context *cxt, unsigned char pbuffer[])
+static size_t skip_empty(const unsigned char *buf, size_t i, size_t sz)
 {
-	unsigned int i, l;
+	size_t next;
+	const unsigned char *p0 = buf + i;
 
-	for (i = 0, l = 0; i < cxt->sector_size; i++, l++) {
-		if (l == 0)
-			printf("0x%03X:", i);
-		printf(" %02X", pbuffer[i]);
-		if (l == MAX_PER_LINE - 1) {
-			printf("\n");
+	for (next = i + 16; next < sz; next += 16) {
+		if (memcmp(p0, buf + next, 16) != 0)
+			break;
+	}
+
+	return next == i + 16 ? i : next;
+}
+
+static void dump_buffer(off_t base, unsigned char *buf, size_t sz, int all)
+{
+	size_t i, l, next = 0;
+
+	if (!buf)
+		return;
+	for (i = 0, l = 0; i < sz; i++, l++) {
+		if (l == 0) {
+			if (all == 0 && !next)
+				next = skip_empty(buf, i, sz);
+			printf("%08jx ", base + i);
+		}
+		printf(" %02x", buf[i]);
+		if (l == 7)				/* words separator */
+			fputs(" ", stdout);
+		else if (l == 15) {
+			fputc('\n', stdout);		/* next line */
 			l = -1;
+			if (next > i) {
+				printf("*\n");
+				i = next - 1;
+			}
+			next = 0;
 		}
 	}
 	if (l > 0)
 		printf("\n");
-	printf("\n");
 }
 
-void print_raw(struct fdisk_context *cxt)
+static void dump_blkdev(struct fdisk_context *cxt, const char *name,
+			off_t offset, size_t size, int all)
 {
+	unsigned char *buf = NULL;
+
+	fdisk_colon(cxt, _("\n%s: offset = %ju, size = %zu bytes."),
+			name, offset, size);
+
+	if (lseek(cxt->dev_fd, offset, SEEK_SET) == (off_t) -1)
+		fdisk_warn(cxt, _("cannot seek"));
+	else if (!(buf = malloc(size)))
+		fdisk_warn(cxt, _("cannot allocate"));
+	else if (read_all(cxt->dev_fd, (char *) buf, size) != (ssize_t) size)
+		fdisk_warn(cxt, _("cannot read"));
+	else
+		dump_buffer(offset, buf, size, all);
+	free(buf);
+}
+
+void dump_firstsector(struct fdisk_context *cxt)
+{
+	int all = !isatty(STDOUT_FILENO);
+
 	assert(cxt);
 	assert(cxt->label);
 
-	printf(_("Device: %s\n"), cxt->dev_path);
-	if (fdisk_is_disklabel(cxt, SUN) ||
-	    fdisk_is_disklabel(cxt, SGI) ||
-	    fdisk_is_disklabel(cxt, GPT) ||
-	    fdisk_is_disklabel(cxt, DOS))
-		print_buffer(cxt, cxt->firstsector);
+	dump_blkdev(cxt, _("First sector"), 0, cxt->sector_size, all);
+}
 
-	/* TODO: print also EBR (extended partition) buffer */
+void dump_disklabel(struct fdisk_context *cxt)
+{
+	int all = !isatty(STDOUT_FILENO);
+	int i = 0;
+	const char *name = NULL;
+	off_t offset = 0;
+	size_t size = 0;
+
+	assert(cxt);
+	assert(cxt->label);
+
+	while (fdisk_locate_disklabel(cxt, i++, &name, &offset, &size) == 0 && size)
+		dump_blkdev(cxt, name, offset, size, all);
 }
 
 static int is_ide_cdrom_or_tape(char *device)
