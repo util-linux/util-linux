@@ -245,6 +245,20 @@ int fdisk_create_disklabel(struct fdisk_context *cxt, const char *name)
 	return cxt->label->op->create(cxt);
 }
 
+
+int fdisk_locate_disklabel(struct fdisk_context *cxt, int n, const char **name,
+			   off_t *offset, size_t *size)
+{
+	if (!cxt || !cxt->label)
+		return -EINVAL;
+	if (!cxt->label->op->locate)
+		return -ENOSYS;
+
+	DBG(LABEL, dbgprint("locating %d chunk of %s.", n, cxt->label->name));
+	return cxt->label->op->locate(cxt, n, name, offset, size);
+}
+
+
 /**
  * fdisk_get_disklabel_id:
  * @cxt: fdisk context

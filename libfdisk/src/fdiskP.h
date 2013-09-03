@@ -148,6 +148,9 @@ struct fdisk_label_operations {
 	int (*create)(struct fdisk_context *cxt);
 	/* list partition table */
 	int (*list)(struct fdisk_context *cxt);
+	/* returns offset and size of the 'n' part of the PT */
+	int (*locate)(struct fdisk_context *cxt, int n, const char **name, off_t *offset, size_t *size);
+
 	/* get disk label ID */
 	int (*get_id)(struct fdisk_context *cxt, char **id);
 	/* set disk label ID */
