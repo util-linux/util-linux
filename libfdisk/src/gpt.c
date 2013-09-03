@@ -237,6 +237,7 @@ struct fdisk_gpt_label {
 };
 
 static void gpt_deinit(struct fdisk_label *lb);
+static struct fdisk_parttype *gpt_get_partition_type(struct fdisk_context *cxt, size_t i);
 
 static inline struct fdisk_gpt_label *self_label(struct fdisk_context *cxt)
 {
@@ -1684,9 +1685,11 @@ static int gpt_add_partition(
 				     user_f, user_l, &typeid, ents) != 0)
 		fdisk_warnx(cxt, _("Could not create partition %zd"), partnum + 1);
 	else {
-		fdisk_info(cxt, _("Created partition %zd\n"), partnum + 1);
 		cxt->label->nparts_cur++;
 		fdisk_label_set_changed(cxt->label, 1);
+		fdisk_info_new_partition(cxt, partnum + 1,
+				user_f, user_l,
+				gpt_get_partition_type(cxt, partnum));
 	}
 
 	rc = 0;

@@ -185,7 +185,7 @@ void change_partition_type(struct fdisk_context *cxt)
 				    t ?     t->name : _("Unknown"));
 		} else {
 			fdisk_info(cxt,
-				_("Type of partition %zu is unchanged: %s".),
+				_("Type of partition %zu is unchanged: %s."),
 				i + 1,
 				org_t ? org_t->name : _("Unknown"));
 		}

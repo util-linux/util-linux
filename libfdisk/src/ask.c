@@ -651,7 +651,7 @@ int fdisk_info_new_partition(
 				     (uint64_t)(stop - start + 1) * cxt->sector_size);
 
 	rc = fdisk_sinfo(cxt, FDISK_INFO_SUCCESS,
-			_("Partition %d of type %s and of size %s is set."),
+			_("Created a new partition %d of type '%s' and of size %s."),
 			num, t ? t->name : _("Unknown"), str);
 	free(str);
 	return rc;
