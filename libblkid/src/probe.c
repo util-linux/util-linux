@@ -1354,15 +1354,19 @@ int blkid_probe_set_magic(blkid_probe pr, blkid_loff_t offset,
 int blkid_probe_verify_csum(blkid_probe pr, uint64_t csum, uint64_t expected)
 {
 	if (csum != expected) {
+		struct blkid_chain *chn = blkid_probe_get_chain(pr);
+
 		DBG(LOWPROBE, blkid_debug(
 				"incorrect checksum for type %s,"
 				" got %jX, expected %jX",
 				blkid_probe_get_probername(pr),
 				csum, expected));
-		return 0;
+
+		if (!(chn->flags & BLKID_SUBLKS_BADCSUM))
+			return 0;
 	}
 
-	return 1;
+	return 1;	/* checksum accepted */
 }
 
 /**
