@@ -72,6 +72,7 @@ extern const struct blkid_idinfo befs_idinfo;
 extern const struct blkid_idinfo nilfs2_idinfo;
 extern const struct blkid_idinfo exfat_idinfo;
 extern const struct blkid_idinfo f2fs_idinfo;
+extern const struct blkid_idinfo bcache_idinfo;
 
 /*
  * superblock functions
