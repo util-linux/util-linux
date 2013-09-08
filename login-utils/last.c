@@ -819,6 +819,10 @@ static void process_wtmp_file(const struct last_control *ctl)
 
 	printf(_("\n%s begins %s"), basename(ctl->altv[ctl->alti]), ctime(&begintime));
 	fclose(fp);
+	for (p = utmplist; p; p = next) {
+		next = p->next;
+		free(p);
+	}
 }
 
 int main(int argc, char **argv)
