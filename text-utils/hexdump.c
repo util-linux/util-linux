@@ -47,11 +47,11 @@
 
 FS *fshead;				/* head of format strings */
 ssize_t blocksize;			/* data block size */
+int exitval;				/* final exit value */
 ssize_t length = -1;			/* max bytes to read */
 
 int main(int argc, char **argv)
 {
-	int exitval;			/* final exit value */
 	FS *tfs;
 	char *p;
 
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 	for (tfs = fshead; tfs; tfs = tfs->nextfs)
 		rewrite(tfs);
 
-	exitval = next(argv);
+	(void)next(argv);
 	display();
 	return exitval;
 }
