@@ -28,5 +28,9 @@ if [ -n "$CFLAGS" ]; then
 	export CFLAGS
 fi
 
+if [ ! -f ./configure ]; then
+	./autogen.sh
+fi
+
 echo
 ./configure $opts
