@@ -242,13 +242,13 @@ static void login_options_to_argv(char *argv[], int *argc, char *str, char *user
 static char *fakehost;
 
 #ifdef DEBUGGING
-#ifndef
-# define DEBUG_OUTPUT "/dev/ttyp0"
-#endif
-#define debug(s) do { fprintf(dbf,s); fflush(dbf); } while (0)
+# ifndef DEBUG_OUTPUT
+#  define DEBUG_OUTPUT "/dev/ttyp0"
+# endif
+# define debug(s) do { fprintf(dbf,s); fflush(dbf); } while (0)
 FILE *dbf;
 #else
-#define debug(s) do { ; } while (0)
+# define debug(s) do { ; } while (0)
 #endif
 
 int main(int argc, char **argv)
