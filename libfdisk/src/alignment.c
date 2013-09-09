@@ -193,11 +193,12 @@ int fdisk_discover_geometry(struct fdisk_context *cxt)
 
 	/* what the kernel/bios thinks the geometry is */
 	blkdev_get_geometry(cxt->dev_fd, &h, &s);
-	if (!h && !s) {
-		/* unable to discover geometry, use default values */
-		s = 63;
+
+	/* defaults */
+	if (!h)
 		h = 255;
-	}
+	if (!s)
+		s = 63;
 
 	/* obtained heads and sectors */
 	cxt->geom.heads = h;
