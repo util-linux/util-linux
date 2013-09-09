@@ -120,6 +120,11 @@ static unsigned long get_sector_size(int fd)
 
 static void recount_geometry(struct fdisk_context *cxt)
 {
+	if (!cxt->geom.heads)
+		cxt->geom.heads = 255;
+	if (!cxt->geom.sectors)
+		cxt->geom.sectors = 63;
+
 	cxt->geom.cylinders = cxt->total_sectors /
 		(cxt->geom.heads * cxt->geom.sectors);
 }
@@ -222,6 +227,7 @@ int fdisk_apply_user_device_properties(struct fdisk_context *cxt)
 		cxt->geom.heads = cxt->user_geom.heads;
 	if (cxt->user_geom.sectors)
 		cxt->geom.sectors = cxt->user_geom.sectors;
+
 	if (cxt->user_geom.cylinders)
 		cxt->geom.cylinders = cxt->user_geom.cylinders;
 	else if (cxt->user_geom.heads || cxt->user_geom.sectors)
@@ -284,7 +290,6 @@ int fdisk_reset_device_properties(struct fdisk_context *cxt)
 int fdisk_discover_geometry(struct fdisk_context *cxt)
 {
 	sector_t nsects;
-	unsigned int h = 0, s = 0;
 
 	assert(cxt);
 	assert(cxt->geom.heads == 0);
@@ -296,16 +301,9 @@ int fdisk_discover_geometry(struct fdisk_context *cxt)
 		cxt->total_sectors = (nsects / (cxt->sector_size >> 9));
 
 	/* what the kernel/bios thinks the geometry is */
-	blkdev_get_geometry(cxt->dev_fd, &h, &s);
-	if (!h && !s) {
-		/* unable to discover geometry, use default values */
-		s = 63;
-		h = 255;
-	}
+	blkdev_get_geometry(cxt->dev_fd, &cxt->geom.heads, &cxt->geom.sectors);
 
 	/* obtained heads and sectors */
-	cxt->geom.heads = h;
-	cxt->geom.sectors = s;
 	recount_geometry(cxt);
 
 	DBG(GEOMETRY, dbgprint("result: C/H/S: %u/%u/%u",
@@ -479,7 +477,7 @@ int fdisk_reset_alignment(struct fdisk_context *cxt)
 	if (cxt->label && cxt->label->op->reset_alignment)
 		rc = cxt->label->op->reset_alignment(cxt);
 
-	DBG(LABEL, dbgprint("%s alignment reseted to: "
+	DBG(TOPOLOGY, dbgprint("%s alignment reseted to: "
 			    "first LBA=%ju, grain=%lu [rc=%d]",
 			    cxt->label ? cxt->label->name : NULL,
 			    (uintmax_t) cxt->first_lba,
