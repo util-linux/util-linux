@@ -161,7 +161,7 @@ log_syslog(struct passwd const *pw, bool successful)
       old_user = pwd ? pwd->pw_name : "";
     }
 
-  if (get_terminal_name(STDERR_FILENO, NULL, &tty, NULL) == 0 && tty)
+  if (get_terminal_name(STDERR_FILENO, NULL, &tty, NULL) != 0 || !tty)
     tty = "none";
 
   openlog (program_invocation_short_name, 0 , LOG_AUTH);
@@ -482,9 +482,6 @@ authenticate (const struct passwd *pw)
     }
 
 done:
-
-  if (lpw && lpw->pw_name)
-     pw = lpw;
 
   log_syslog(pw, !is_pam_failure(retval));
 
