@@ -163,7 +163,9 @@ int main(int argc, char *argv[])
 
 				len = wcslen(buf);
 			}
-			reverse_str(buf, len - 1);
+			if (buf[len - 1] == '\n')
+				buf[len--] = '\0';
+			reverse_str(buf, len);
 			fputws(buf, stdout);
 		}
 		if (ferror(fp)) {
