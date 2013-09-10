@@ -21,6 +21,7 @@
 #include <limits.h>
 #include <sys/file.h>
 
+#include "strutils.h"
 #include "closestream.h"
 #include "pathnames.h"
 #include "mountP.h"

@@ -24,7 +24,8 @@
 #include <time.h>
 
 #include "c.h"
-#include "time-util.h"
+#include "strutils.h"
+#include "timeutils.h"
 
 #define WHITESPACE " \t\n\r"
 
