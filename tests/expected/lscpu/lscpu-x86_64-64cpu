@@ -11,6 +11,7 @@ Model:                 46
 Model name:            Intel(R) Xeon(R) CPU           X7550  @ 2.00GHz
 Stepping:              6
 CPU MHz:               1064.000
+CPU max MHz:           1996.0000
 BogoMIPS:              3989.44
 Virtualization:        VT-x
 L1d cache:             32K
